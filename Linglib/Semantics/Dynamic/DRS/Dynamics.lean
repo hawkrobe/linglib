@@ -11,7 +11,7 @@ format of [groenendijk-stokhof-1991]); a box is true under an input embedding
 `a` iff some output `a'` is related to it (p. 148). This is the dynamic / CCP
 face of DRT, dual to the static verifying-embedding semantics `DRS.Realize` —
 the total-assignment rendering of [kamp-reyle-1993]'s verification (see the
-deviation note in `DRS/Semantics.lean`).
+deviation note in `DRS/Verification.lean`).
 
 The two semantics are *defined independently* and proved equivalent — Muskens's
 remark that the relational interpretation "is in fact equivalent" to the
@@ -41,7 +41,7 @@ identification:
 
 Naming: the dynamic face (`toRel`, `holds`, `trueRel`) follows the spine's
 lowerCamel operation names (`neg`, `seq`, `closure`); the static face
-(`DRS.Realize`, `DRS/Semantics.lean`) follows mathlib's `Formula.Realize`.
+(`DRS.Realize`, `DRS/Verification.lean`) follows mathlib's `Formula.Realize`.
 -/
 
 open FirstOrder FirstOrder.Language
@@ -121,7 +121,7 @@ mutual
 /-- **SEM3 ≡ verification semantics**: the relational denotation
 agrees with the static verifying-embedding semantics — `toRel K a a'` holds iff
 the output `a'` extends the input `a` over `K`'s universe and verifies `K`.
-(Both sides are the total-assignment variant; see `DRS/Semantics.lean`.) -/
+(Both sides are the total-assignment variant; see `DRS/Verification.lean`.) -/
 theorem DRS.toRel_iff_realize (K : DRS L V) (a a' : V → M) :
     DRS.toRel K a a' ↔ (∀ x ∉ K.referents, a' x = a x) ∧ K.Realize a' := by
   match K with

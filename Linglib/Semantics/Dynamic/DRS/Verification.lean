@@ -1,7 +1,7 @@
 import Linglib.Semantics.Dynamic.DRS.Basic
 
 /-!
-# Model-theoretic semantics of DRSs
+# Verifying embeddings for DRSs
 
 DRS verification via *embeddings* into a mathlib `FirstOrder.Language.Structure`
 — [kamp-reyle-1993]'s Def. 1.4.4 in the *total-assignment* rendering. An
