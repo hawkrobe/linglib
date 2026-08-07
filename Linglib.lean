@@ -1381,7 +1381,6 @@ import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Tone.Plateauing
 import Linglib.Phonology.Tone.Surfacing
 import Linglib.Pragmatics.AsymmetricCommunication
-import Linglib.Pragmatics.AvoidAmbiguity
 import Linglib.Pragmatics.BToM
 import Linglib.Pragmatics.BToMCredence
 import Linglib.Pragmatics.Bias

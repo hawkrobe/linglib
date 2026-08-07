@@ -104,9 +104,9 @@ inductive MannerSubmaxim where
   /-- M1: "Avoid obscurity of expression." -/
   | avoidObscurity
   /-- M2: "Avoid ambiguity." Formalized as a parse-blocking
-  predicate in `Pragmatics.AvoidAmbiguity.Blocked`
+  predicate in `JereticEtAl2025.Blocked`
   ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
-  eq 37). -/
+  eq 37, `Studies/JereticEtAl2025.lean`). -/
   | avoidAmbiguity
   /-- M3: "Be brief (avoid unnecessary prolixity)." -/
   | beBrief
