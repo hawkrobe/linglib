@@ -76,6 +76,16 @@ end
 @[simp] theorem DRS.referents_map [DecidableEq W] (f : V → W) (K : DRS L V) :
     (K.map f).referents = K.referents.image f := by cases K; rfl
 
+@[simp] theorem DRS.conditions_map [DecidableEq W] (f : V → W) (K : DRS L V) :
+    (K.map f).conditions = Condition.mapList f K.conditions := by cases K; rfl
+
+/-- `mapList` is `List.map` (definable only after the mutual block). -/
+theorem Condition.mapList_eq_map [DecidableEq W] (f : V → W) (cs : List (Condition L V)) :
+    Condition.mapList f cs = cs.map (Condition.map f) := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => simp only [Condition.mapList, List.map_cons, ih]
+
 /-! ### Merge algebra -/
 
 namespace DRS

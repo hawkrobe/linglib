@@ -123,17 +123,17 @@ agrees with the static verifying-embedding semantics — `toRel K a a'` holds if
 the output `a'` extends the input `a` over `K`'s universe and verifies `K`.
 (Both sides are the total-assignment variant; see `DRS/Verification.lean`.) -/
 theorem DRS.toRel_iff_realize (K : DRS L V) (a a' : V → M) :
-    DRS.toRel K a a' ↔ (∀ x ∉ K.referents, a' x = a x) ∧ K.Realize a' := by
+    DRS.toRel K a a' ↔ K.Extends a a' ∧ K.Realize a' := by
   match K with
   | .mk U conds =>
-    simp only [DRS.toRel, DRS.referents_mk, DRS.realize_mk]
+    simp only [DRS.toRel, DRS.referents_mk, DRS.realize_mk, DRS.Extends]
     exact and_congr_right (fun _ => Condition.holdsAll_iff_realizeAll conds a')
 /-- A condition's set denotation agrees with its static `Realize`. -/
 theorem Condition.holds_iff_realize (c : Condition L V) (a : V → M) :
     c.holds a ↔ c.Realize a := by
   match c with
-  | .rel R args => exact Iff.rfl
-  | .eq u v => exact Iff.rfl
+  | .rel R args => simp only [Condition.holds_rel, Condition.realize_rel]
+  | .eq u v => simp only [Condition.holds_eq, Condition.realize_eq]
   | .neg K =>
     simp only [Condition.holds_neg, Condition.realize_neg]
     exact not_congr (exists_congr (fun a' => DRS.toRel_iff_realize K a a'))
@@ -149,11 +149,11 @@ theorem Condition.holds_iff_realize (c : Condition L V) (a : V → M) :
       (exists_congr (fun a' => DRS.toRel_iff_realize r a a'))
 /-- The list analogue of `Condition.holds_iff_realize`. -/
 theorem Condition.holdsAll_iff_realizeAll (cs : List (Condition L V)) (a : V → M) :
-    Condition.holdsAll cs a ↔ Condition.RealizeAll cs a := by
+    Condition.holdsAll cs a ↔ ∀ c ∈ cs, c.Realize a := by
   match cs with
-  | [] => exact Iff.rfl
+  | [] => simp
   | c :: cs =>
-    simp only [Condition.holdsAll_cons, Condition.realizeAll_cons]
+    simp only [Condition.holdsAll_cons, List.forall_mem_cons]
     exact and_congr (Condition.holds_iff_realize c a) (Condition.holdsAll_iff_realizeAll cs a)
 end
 
