@@ -86,6 +86,15 @@ def conditions : DRS L V → List (Condition L V)
 @[simp] theorem conditions_mk (u : Finset V) (c : List (Condition L V)) :
     (DRS.mk u c).conditions = c := rfl
 
+/-- A condition of a DRS is smaller than the DRS — the recursion measure for
+definitions descending through the nested `List (Condition L V)`. -/
+theorem sizeOf_lt_of_mem_conditions {K : DRS L V} {c : Condition L V}
+    (h : c ∈ K.conditions) : sizeOf c < sizeOf K := by
+  obtain ⟨U, conds⟩ := K
+  have := List.sizeOf_lt_of_mem (by simpa using h)
+  simp only [DRS.mk.sizeOf_spec]
+  omega
+
 /-- The empty DRS `⟨∅, []⟩`. -/
 def empty : DRS L V := .mk ∅ []
 

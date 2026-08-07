@@ -12,6 +12,7 @@ Structural operations and lemmas over the faithful `DRS` core (`DRS/Defs.lean`):
   identity is the identity" a free corollary, and `DRS.realize_map`
   (`DRS/Verification.lean`) shows variants have the same semantics.
 * `merge` algebra — identity (`empty`) and associativity.
+* `DRS.Extends` — K&R's extension relation `f [K] g` between embeddings.
 * `DRS.fv` / `DRS.IsProper` — free discourse referents (as a `Finset`) and
   properness (`fv K = ∅`, Def. 1.4.2–1.4.3).
 * `Condition.occ` / `DRS.occ` — occurring referents, as a decidable `Finset`.
@@ -107,6 +108,14 @@ theorem merge_assoc (K₁ K₂ K₃ : DRS L V) :
   rw [Finset.union_assoc, List.append_assoc]
 
 end DRS
+
+/-! ### The extension relation -/
+
+variable {M : Type*} in
+/-- `K.Extends f g` (K&R's `f [K] g`): the output embedding `g` differs from
+the input `f` at most on `K`'s universe — the total-assignment rendering of
+"`f ⊆ g` and `Dom g = Dom f ∪ U_K`". -/
+def DRS.Extends (K : DRS L V) (f g : V → M) : Prop := ∀ x ∉ K.referents, g x = f x
 
 /-! ### Occurring referents -/
 
