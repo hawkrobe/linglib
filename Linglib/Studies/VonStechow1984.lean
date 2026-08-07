@@ -130,17 +130,13 @@ def asSem (μ : Entity → ℚ) (x : Entity) (d₁ d₂ : ℚ) : Prop :=
 /-- R4 with a positive differential and `d₂ = μ b` yields the bare
 comparative. -/
 theorem moreSem_comparative_bridge (μ : Entity → ℚ) (a b : Entity)
-    (d₁ : ℚ) (hd₁ : 0 < d₁) :
-    moreSem μ a d₁ (μ b) → comparativeSem μ a b .positive := by
-  intro h
-  simp only [moreSem] at h
-  show μ b < μ a
-  linarith
+    {d₁ : ℚ} (hd₁ : 0 < d₁) (h : moreSem μ a d₁ (μ b)) :
+    comparativeSem μ a b .positive :=
+  (lt_add_of_pos_left (μ b) hd₁).trans_le h
 
 /-- An exact differential entails R4's at-least semantics. -/
-theorem moreSem_differential_bridge (μ : Entity → ℚ) (a b : Entity) (diff : ℚ) :
-    differentialComparative μ a b diff → moreSem μ a diff (μ b) := by
-  intro h
+theorem moreSem_differential_bridge (μ : Entity → ℚ) (a b : Entity) (diff : ℚ)
+    (h : differentialComparative μ a b diff) : moreSem μ a diff (μ b) := by
   simp only [moreSem, differentialComparative] at *
   linarith
 
@@ -150,9 +146,8 @@ theorem asSem_equative_bridge (μ : Entity → ℚ) (a b : Entity) :
   simp [asSem, equativeSem, one_mul]
 
 /-- A tight factor phrase entails R5's at-least semantics. -/
-theorem asSem_factor_bridge (μ : Entity → ℚ) (a b : Entity) (factor : ℚ) :
-    factorEquative μ a b factor → asSem μ a factor (μ b) := by
-  intro h
+theorem asSem_factor_bridge (μ : Entity → ℚ) (a b : Entity) (factor : ℚ)
+    (h : factorEquative μ a b factor) : asSem μ a factor (μ b) := by
   simp only [asSem, factorEquative] at *
   linarith
 
@@ -171,11 +166,9 @@ theorem tooSem_exceeds_counterfactual_worlds
     {threshold excess : ℚ} (hexcess : 0 < excess)
     (hmax : IsGreatest ((fun w => μ w x) '' acc) threshold)
     (htoo : tooSem (μ w₀) x excess threshold) :
-    ∀ w ∈ acc, μ w x < μ w₀ x := by
-  intro w hw
-  have hle : μ w x ≤ threshold := hmax.2 ⟨w, hw, rfl⟩
-  simp only [tooSem, moreSem] at htoo
-  linarith
+    ∀ w ∈ acc, μ w x < μ w₀ x :=
+  fun w hw => (hmax.2 ⟨w, hw, rfl⟩).trans_lt
+    ((lt_add_of_pos_left threshold hexcess).trans_le htoo)
 
 -- (227) (`Examples.ex227`): an 80 kg pack with a 30 kg liftable
 -- threshold is at least 50 kg too heavy.
