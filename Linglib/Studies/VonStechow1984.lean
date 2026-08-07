@@ -21,8 +21,8 @@ Example stimuli live in `Data.Examples.VonStechow1984` (`Examples.*`).
 
 * `deReComparative`, `deDictoComparative`: Russell's ambiguity as an
   ACTUALLY-anchored vs belief-world than-clause standard (§§II–V)
-* `moreSem`, `asSem`, `tooSem`: synthesis rules R4 (additive *more*),
-  R5 (multiplicative *as*), R13 (counterfactual *too*) (§XIII)
+* `moreSem`, `asSem`: synthesis rules R4 (additive *more*) and
+  R5 (multiplicative *as*) (§XIII)
 
 ## Main results
 
@@ -31,11 +31,13 @@ Example stimuli live in `Data.Examples.VonStechow1984` (`Examples.*`).
   worlds (§VIII)
 * `klein_agrees_on_simple`: the degree-free ordering matches degree
   comparison on simple comparatives, not on differentials (§XI)
+* `moreSem_exceeds_counterfactual_worlds`: R13 — *too* as `moreSem` with
+  a counterfactual threshold (§XIII.6)
 -/
 
 namespace VonStechow1984
 
-open Degree (comparativeSem equativeSem differentialComparative factorEquative)
+open Degree Intensional
 
 variable {W Entity D : Type*} [LinearOrder D]
 
@@ -55,7 +57,7 @@ def intensionalComparative (μ : W → Entity → D) (w : W) (a b : Entity) : Pr
 /-- A rigid measure reduces `intensionalComparative` to the extensional
 `comparativeSem`. -/
 theorem intensionalComparative_rigid (μe : Entity → D) (w : W) (a b : Entity) :
-    intensionalComparative (Intensional.Intension.rigid μe) w a b ↔
+    intensionalComparative (Intension.rigid μe) w a b ↔
       comparativeSem μe a b .positive :=
   Iff.rfl
 
@@ -88,30 +90,18 @@ example : deReComparative yachtLength true false () := by
 example : ¬ deDictoComparative yachtLength false () :=
   deDicto_absurd yachtLength false ()
 
-/-! ### Downward-entailing than-clauses (§§VI–VII)
-
-The Max operator makes the than-clause downward-entailing, licensing NPIs
-((iii), (70)–(72): `Examples.exIII`, `Examples.ex70` – `Examples.ex72b`,
-including the exclusion of the positive polarity item *already*) and
-strengthening disjunctive standards ((v), `Examples.exV`); Russell's and
-Hellan's accounts are not DE and miss the pattern. Unwarranted inferences
-like (vii) and the negative-quantifier oddities (99a), (99b) are instead
-blocked by failure of the degree description to denote. Substrate:
-`Degree.comparative_than_DE`;
-`Ladusaw1979.licensingStrength .comparativeS = .antiAdditive`. -/
-
-/-- (v): a disjunctive standard entails both disjuncts — "nicer than
-Düsseldorf or Stuttgart" entails "nicer than Düsseldorf and Stuttgart". -/
+/-- (v) (`Examples.exV`; §§VI–VII): a disjunctive standard entails both
+disjuncts — the downward-entailingness of the than-clause that also
+licenses its NPIs (`Degree.comparative_than_DE`;
+`Ladusaw1979.licensingStrength .comparativeS = .antiAdditive`). -/
 theorem disjunction_to_conjunction_in_than (μa μb μc : D)
     (h : μb ⊔ μc < μa) : μb < μa ∧ μc < μa :=
   sup_lt_iff.mp h
 
-/-! ### Modal comparatives (§VIII) -/
-
 /-- "A polar bear could be bigger than a grizzly bear could be" ((x),
-`Examples.exX`): if the greatest possible A-degree over the accessible
-worlds exceeds the greatest possible B-degree, some accessible A-world
-beats every B-world. -/
+`Examples.exX`; §VIII): if the greatest possible A-degree over the
+accessible worlds exceeds the greatest possible B-degree, some accessible
+A-world beats every B-world. -/
 theorem maxDeg_witness {acc : Set W} {μA μB : W → D} {maxA maxB : D}
     (hmaxA : IsGreatest (μA '' acc) maxA) (hmaxB : IsGreatest (μB '' acc) maxB)
     (hgt : maxB < maxA) :
@@ -119,92 +109,67 @@ theorem maxDeg_witness {acc : Set W} {μA μB : W → D} {maxA maxB : D}
   obtain ⟨w, hw, rfl⟩ := hmaxA.1
   exact ⟨w, hw, fun v hv => lt_of_le_of_lt (hmaxB.2 ⟨v, hv, rfl⟩) hgt⟩
 
-/-! ### Klein criticism (§XI) -/
-
-/-- Klein's degree-free ordering ([klein-1980], via `measureDelineation`)
-matches degree comparison on simple comparatives; the divergence is confined
-to differential and factor constructions ((171a)–(171c)). -/
+/-- Klein's degree-free ordering ([klein-1980]; §XI) matches degree
+comparison on simple comparatives via `measureDelineation`; the divergence
+is confined to differential and factor constructions ((171a)–(171c)). -/
 theorem klein_agrees_on_simple (μ : Entity → D) (cc : Set Entity)
     (a b : Entity) (ha : a ∈ cc) (hb : b ∈ cc) :
     comparativeSem μ a b .positive ↔
-      Degree.Delineation.ordering
-        (Degree.Delineation.measureDelineation μ) cc a b :=
-  (Degree.Delineation.ordering_iff_degree μ cc a b ha hb).symm
+      Delineation.ordering (Delineation.measureDelineation μ) cc a b :=
+  (Delineation.ordering_iff_degree μ cc a b ha hb).symm
 
-/-! ### Synthesis rules R4 (`moreSem`), R5 (`asSem`), R13 (`tooSem`) (§XIII) -/
+/-! ### Synthesis rules R4 (`moreSem`), R5 (`asSem`), R13 (*too*) (§XIII) -/
 
 /-- R4: `⟦more⟧(d₁)(A⁰)(d₂)(x)` iff `A⁰(x, d₁ + d₂)` with monotone `A⁰` —
 the differential `d₁` plus the than-clause maximum `d₂`. -/
-def moreSem (μ : Entity → ℚ) (x : Entity) (d₁ d₂ : ℚ) : Prop :=
-  μ x ≥ d₁ + d₂
+def moreSem [Add D] (μ : Entity → D) (x : Entity) (d₁ d₂ : D) : Prop :=
+  d₁ + d₂ ≤ μ x
 
 /-- R5: `⟦as⟧` multiplies where R4 adds ("twice as fat", (171b)). -/
-def asSem (μ : Entity → ℚ) (x : Entity) (d₁ d₂ : ℚ) : Prop :=
-  μ x ≥ d₁ * d₂
+def asSem [Mul D] (μ : Entity → D) (x : Entity) (d₁ d₂ : D) : Prop :=
+  d₁ * d₂ ≤ μ x
 
 /-- R4 with a positive differential and `d₂ = μ b` yields the bare
 comparative. -/
-theorem moreSem_comparative_bridge (μ : Entity → ℚ) (a b : Entity)
-    (d₁ : ℚ) (hd₁ : 0 < d₁) :
-    moreSem μ a d₁ (μ b) → comparativeSem μ a b .positive := by
-  intro h
-  simp only [moreSem] at h
-  show μ b < μ a
-  linarith
+theorem moreSem_comparative_bridge [AddCommMonoid D] [IsOrderedCancelAddMonoid D]
+    (μ : Entity → D) (a b : Entity) {d₁ : D} (hd₁ : 0 < d₁)
+    (h : moreSem μ a d₁ (μ b)) : comparativeSem μ a b .positive :=
+  (lt_add_of_pos_left (μ b) hd₁).trans_le h
 
 /-- An exact differential entails R4's at-least semantics. -/
-theorem moreSem_differential_bridge (μ : Entity → ℚ) (a b : Entity) (diff : ℚ) :
-    differentialComparative μ a b diff → moreSem μ a diff (μ b) := by
-  intro h
-  simp only [moreSem, differentialComparative] at *
-  linarith
+theorem moreSem_differential_bridge [AddCommGroup D] [IsOrderedAddMonoid D]
+    (μ : Entity → D) (a b : Entity) (diff : D)
+    (h : differentialComparative μ a b diff) : moreSem μ a diff (μ b) :=
+  le_of_eq (by rw [← h, sub_add_cancel])
 
 /-- R5 at factor 1 is the equative. -/
-theorem asSem_equative_bridge (μ : Entity → ℚ) (a b : Entity) :
+theorem asSem_equative_bridge [MulOneClass D] (μ : Entity → D) (a b : Entity) :
     asSem μ a 1 (μ b) ↔ equativeSem μ a b .positive := by
   simp [asSem, equativeSem, one_mul]
 
 /-- A tight factor phrase entails R5's at-least semantics. -/
-theorem asSem_factor_bridge (μ : Entity → ℚ) (a b : Entity) (factor : ℚ) :
-    factorEquative μ a b factor → asSem μ a factor (μ b) := by
-  intro h
-  simp only [asSem, factorEquative] at *
-  linarith
+theorem asSem_factor_bridge [Mul D] (μ : Entity → D) (a b : Entity)
+    (factor : D) (h : factorEquative μ a b factor) : asSem μ a factor (μ b) :=
+  le_of_eq h.symm
 
-/-! #### Cross-category comparatives (§XIII.4)
-
-The comparative morpheme is category-blind — only the measure varies:
-cardinality for plural nouns (217), amount for mass nouns (218), an event
-measure for adverbs (224c) (`Examples.ex217` – `Examples.ex224c`). -/
-
-/-! #### *too* as counterfactual comparative (§XIII.6)
-
-R13 (p. 69): `⟦too⟧(d₁)(A⁰)(p)(x) = the max.d [x is d-A⁰]
-λd₂ [p □→ A⁰(x, d₂ − d₁)]`; "at least fifty kilos too heavy to lift"
-((227), `Examples.ex227`). In the DegP head inventory *too* is
-`Degree.Head.excessive`. -/
-
-/-- R13's additive skeleton, definitionally `moreSem` — *too* and *-er*
-share R4's additive structure. The counterfactual threshold is
-`tooSem_exceeds_counterfactual_worlds`. -/
-def tooSem (μ : Entity → ℚ) (x : Entity) (excess threshold : ℚ) : Prop :=
-  moreSem μ x excess threshold
-
-/-- If `x` is `excess` too `A` for a threshold greatest over the accessible
-worlds, `x`'s actual degree exceeds its degree in every such world. -/
-theorem tooSem_exceeds_counterfactual_worlds
-    (μ : W → Entity → ℚ) (w₀ : W) (acc : Set W) (x : Entity)
-    {threshold excess : ℚ} (hexcess : 0 < excess)
+/-- R13 (p. 69, §XIII.6): `⟦too⟧(d₁)(A⁰)(p)(x) = the max.d [x is d-A⁰]
+λd₂ [p □→ A⁰(x, d₂ − d₁)]` — *too* is R4's `moreSem` with a
+counterfactually determined threshold (DegP head `Degree.Head.excessive`):
+when the threshold is greatest over the accessible worlds, being `excess`
+too `A` puts the actual degree above every accessible world's degree. -/
+theorem moreSem_exceeds_counterfactual_worlds
+    [AddCommMonoid D] [IsOrderedCancelAddMonoid D]
+    (μ : W → Entity → D) (w₀ : W) (acc : Set W) (x : Entity)
+    {threshold excess : D} (hexcess : 0 < excess)
     (hmax : IsGreatest ((fun w => μ w x) '' acc) threshold)
-    (htoo : tooSem (μ w₀) x excess threshold) :
-    ∀ w ∈ acc, μ w x < μ w₀ x := by
-  intro w hw
-  have hle : μ w x ≤ threshold := hmax.2 ⟨w, hw, rfl⟩
-  simp only [tooSem, moreSem] at htoo
-  linarith
+    (htoo : moreSem (μ w₀) x excess threshold) :
+    ∀ w ∈ acc, μ w x < μ w₀ x :=
+  fun w hw => (hmax.2 ⟨w, hw, rfl⟩).trans_lt
+    ((lt_add_of_pos_left threshold hexcess).trans_le htoo)
 
--- An 80 kg pack with a 30 kg liftable threshold is at least 50 kg too heavy.
-example : tooSem (fun _ : Unit => (80 : ℚ)) () 50 30 := by
-  norm_num [tooSem, moreSem]
+-- (227) (`Examples.ex227`): an 80 kg pack with a 30 kg liftable
+-- threshold is at least 50 kg too heavy.
+example : moreSem (fun _ : Unit => (80 : ℚ)) () 50 30 := by
+  norm_num [moreSem]
 
 end VonStechow1984
