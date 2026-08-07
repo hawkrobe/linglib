@@ -17,12 +17,10 @@ theory of dominance on trees ([kuhlmann-nivre-2006] §2).
 ## Main declarations
 
 * `Dominates`, `projection`, `mem_projection_iff` — the dominance
-  relation (decidable via `Core/Relation/ReflTransGen.lean`), the yield
-  of a position in ascending order, and the bridge between them.
+  relation, the yield of a position in ascending order, and the bridge
+  between them.
 * `Graph.IsTree` — no arc into the root, unique heads elsewhere,
-  acyclicity; decidable. `IsTree.rightUnique_flip_adj` is
-  single-headedness in mathlib's vocabulary: the child-to-head relation
-  is functional.
+  acyclicity; decidable.
 * `Dominates.antisymm`, `Dominates.to_head`, `Dominates.comparable` —
   on trees dominance is a partial order under which the dominators of
   any position form a chain.
@@ -33,6 +31,7 @@ theory of dominance on trees ([kuhlmann-nivre-2006] §2).
 mathlib's closure API (`.refl`, `.tail`, `.trans`, `.single`,
 `cases_tail`, `total_of_right_unique`, …) applies to dominance facts
 directly; this file adds only what mentions the dependency carrier.
+Decidability comes from `Core/Relation/ReflTransGen.lean`.
 -/
 
 namespace DependencyGrammar
@@ -41,13 +40,11 @@ section Dominance
 
 variable {n : ℕ}
 
-/-- Prop-level dominance: reachability in the graph's digraph
-    ([kuhlmann-nivre-2006] §2). -/
+/-- `v` dominates `x` if a (possibly empty) chain of arcs leads from `v`
+    to `x` ([kuhlmann-nivre-2006] §2). -/
 abbrev Dominates (g : Graph n) : Fin n → Fin n → Prop :=
   Relation.ReflTransGen g.Adj
 
-/-- Dominance is decidable: adjacency is decidable and successors lie in
-    `finRange n` (`Core/Relation/ReflTransGen.lean`). -/
 instance (g : Graph n) : DecidableRel (Dominates g) :=
   Relation.ReflTransGen.decidable_of_finite (List.finRange n)
     (λ _ b _ => List.mem_finRange b)
@@ -58,7 +55,6 @@ instance (g : Graph n) : DecidableRel (Dominates g) :=
 def projection (g : Graph n) (v : Fin n) : List (Fin n) :=
   (List.finRange n).filter (λ x => decide (Dominates g v x))
 
-/-- **Bridge**: projection membership is dominance. -/
 @[simp] theorem mem_projection_iff {g : Graph n} {v x : Fin n} :
     x ∈ projection g v ↔ Dominates g v x := by
   simp [projection]
@@ -90,44 +86,41 @@ instance (g : Graph n) (w : Fin n) : Decidable (∃! v, g.Adj v w) :=
 instance (g : Graph n) : Decidable g.IsTree :=
   decidable_of_iff _ (g.isTree_iff).symm
 
-/-- Single-headedness, in mathlib's vocabulary: the child-to-head
-    relation of a tree is functional. -/
-theorem Graph.IsTree.rightUnique_flip_adj {g : Graph n} (hT : g.IsTree) :
+/-! ### Dominance as an order on trees -/
+
+variable {g : Graph n} {v w : Fin n}
+
+/-- In a tree, a position has at most one head. -/
+theorem Graph.IsTree.rightUnique_flip_adj (hT : g.IsTree) :
     Relator.RightUnique (flip g.Adj) := by
   intro y u u' hu hu'
   have hy : y ≠ g.root := λ he => hT.not_adj_root u (he ▸ hu)
   obtain ⟨z, _, hz⟩ := hT.existsUnique_adj y hy
   exact (hz u hu).trans (hz u' hu').symm
 
-/-! ### Dominance as an order on trees -/
-
 /-- No arc closes a dominance cycle, on acyclic graphs. -/
-theorem not_adj_dominates {g : Graph n}
-    (hacyc : ∀ v, ¬ Relation.TransGen g.Adj v v)
-    {v w : Fin n} (hadj : g.Adj v w) (hdom : Dominates g w v) : False :=
+theorem not_adj_dominates (hacyc : ∀ v, ¬ Relation.TransGen g.Adj v v)
+    (hadj : g.Adj v w) (hdom : Dominates g w v) : False :=
   hacyc v (Relation.TransGen.head' hadj hdom)
 
 /-- Dominance is antisymmetric on acyclic graphs. -/
-theorem Dominates.antisymm {g : Graph n}
-    (hacyc : ∀ v, ¬ Relation.TransGen g.Adj v v)
-    {v w : Fin n} (hvw : Dominates g v w) (hwv : Dominates g w v) : v = w := by
+theorem Dominates.antisymm (hacyc : ∀ v, ¬ Relation.TransGen g.Adj v v)
+    (hvw : Dominates g v w) (hwv : Dominates g w v) : v = w := by
   rcases Relation.ReflTransGen.cases_head hvw with rfl | ⟨u, hvu, huw⟩
   · rfl
   · exact absurd (huw.trans hwv) (λ h => not_adj_dominates hacyc hvu h)
 
-/-- A strict dominator of `y` dominates `y`'s head. -/
-theorem Dominates.to_head {g : Graph n} (hT : g.IsTree) {x y h : Fin n}
-    (hxy : Dominates g x y) (hne : x ≠ y) (hh : g.Adj h y) :
-    Dominates g x h := by
-  rcases Relation.ReflTransGen.cases_tail hxy with rfl | ⟨u, hxu, huy⟩
+/-- A strict dominator of `w` dominates `w`'s head. -/
+theorem Dominates.to_head {u : Fin n} (hT : g.IsTree)
+    (hvw : Dominates g v w) (hne : v ≠ w) (hu : g.Adj u w) :
+    Dominates g v u := by
+  rcases Relation.ReflTransGen.cases_tail hvw with rfl | ⟨z, hvz, hzw⟩
   · exact absurd rfl hne
-  · exact hT.rightUnique_flip_adj huy hh ▸ hxu
+  · exact hT.rightUnique_flip_adj hzw hu ▸ hvz
 
 /-- On a tree, positions dominating a common position are comparable:
-    the dominators of any position form a chain. Mathlib's
-    `total_of_right_unique` for the functional child-to-head relation,
-    read backwards from `x`. -/
-theorem Dominates.comparable {g : Graph n} (hT : g.IsTree) {v w x : Fin n}
+    the dominators of any position form a chain. -/
+theorem Dominates.comparable {x : Fin n} (hT : g.IsTree)
     (hv : Dominates g v x) (hw : Dominates g w x) :
     Dominates g v w ∨ Dominates g w v :=
   (Relation.ReflTransGen.total_of_right_unique hT.rightUnique_flip_adj
