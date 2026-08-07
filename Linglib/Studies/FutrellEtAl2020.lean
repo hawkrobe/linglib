@@ -5,7 +5,7 @@ import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Syntax.DependencyGrammar.NonProjective
-import Linglib.Syntax.DependencyGrammar.DependencyLength
+import Linglib.Syntax.DependencyGrammar.Length
 
 /-!
 # Dependency Locality as an Explanatory Principle for Word Order
@@ -79,7 +79,7 @@ A head with three dependent phrases of sizes 1, 2, 3. In head-initial
 contexts (7), placing them short-to-long after the head minimizes total
 dependency length; the head-final long-before-short preference (8) is its
 exact mirror — here literally `Graph.mirror`, so the equal-cost claim is
-`Graph.totalDepLength_mirror`, not an inspection of hand-typed twins. -/
+`Graph.totalLength_mirror`, not an inspection of hand-typed twins. -/
 
 /-- (7a) A [B] [C D] [E F G]: dependents short-to-long after the head. -/
 def shortBeforeLong : Graph 7 :=
@@ -93,14 +93,14 @@ def longBeforeShort : Graph 7 :=
 
 /-- (7): short-before-long wins in head-initial contexts. -/
 theorem short_before_long_head_initial :
-    shortBeforeLong.totalDepLength < longBeforeShort.totalDepLength := by decide
+    shortBeforeLong.totalLength < longBeforeShort.totalLength := by decide
 
 /-- (8): the head-final regime is the mirror image, so long-before-short
     wins there at exactly the head-initial costs — by the general mirror
     invariance, no separate fixtures needed. -/
 theorem long_before_short_head_final :
-    shortBeforeLong.mirror.totalDepLength < longBeforeShort.mirror.totalDepLength := by
-  simpa [Graph.totalDepLength_mirror] using short_before_long_head_initial
+    shortBeforeLong.mirror.totalLength < longBeforeShort.mirror.totalLength := by
+  simpa [Graph.totalLength_mirror] using short_before_long_head_initial
 
 /-! ### Examples (9)–(10): head-direction consistency and its exceptions -/
 
@@ -117,7 +117,7 @@ def mixedChain : Graph 4 :=
 /-- (9): consistent head direction minimizes chain dependency length —
     the DLM route to the Greenbergian harmonic correlations. -/
 theorem consistent_chain_shorter :
-    consistentChain.totalDepLength < mixedChain.totalDepLength := by decide
+    consistentChain.totalLength < mixedChain.totalLength := by decide
 
 /-- (10a) A B C D: both dependents (B and C–D) after the head A. -/
 def dependentsSameSide : Graph 4 :=
@@ -133,7 +133,7 @@ def dependentsSplit : Graph 4 :=
     beats consistency ([gildea-temperley-2010]), predicting the documented
     exceptions (e.g. prenominal determiners in head-initial Spanish). -/
 theorem split_beats_consistency :
-    dependentsSplit.totalDepLength < dependentsSameSide.totalDepLength := by decide
+    dependentsSplit.totalLength < dependentsSameSide.totalLength := by decide
 
 /-! ### Example (11): heavy NP shift
 
@@ -170,16 +170,16 @@ def heavyParticleLate : Graph 9 :=
      (4, 5, .obl), (5, 7, .obl), (7, 6, .det), (1, 8, .compound)]
 
 -- The printed totals of the four figures.
-example : lightParticleEarly.totalDepLength = 6 := by decide
-example : lightParticleLate.totalDepLength = 7 := by decide
-example : heavyParticleEarly.totalDepLength = 11 := by decide
-example : heavyParticleLate.totalDepLength = 16 := by decide
+example : lightParticleEarly.totalLength = 6 := by decide
+example : lightParticleLate.totalLength = 7 := by decide
+example : heavyParticleEarly.totalLength = 11 := by decide
+example : heavyParticleLate.totalLength = 16 := by decide
 
 /-- The DLM penalty for late particle placement grows with object weight:
     1 for the light object, 5 for the heavy one. -/
 theorem dlm_penalty_grows_with_weight :
-    lightParticleLate.totalDepLength - lightParticleEarly.totalDepLength <
-    heavyParticleLate.totalDepLength - heavyParticleEarly.totalDepLength := by decide
+    lightParticleLate.totalLength - lightParticleEarly.totalLength <
+    heavyParticleLate.totalLength - heavyParticleEarly.totalLength := by decide
 
 /-! ### Example (13): the random-order baseline
 
@@ -200,14 +200,14 @@ private def σB : Equiv.Perm (Fin 6) :=
 /-- (13b) the reordering, as a relabeling of the attested structure. -/
 def reorderingB : Graph 6 := attestedOrder.relabel σB
 
-example : attestedOrder.totalDepLength = 6 := by decide
-example : reorderingB.totalDepLength = 9 := by decide
+example : attestedOrder.totalLength = 6 := by decide
+example : reorderingB.totalLength = 9 := by decide
 
 /-- The attested order beats the reordering — and since `reorderingB` is a
     `relabel` of `attestedOrder`, that they share a structure is not an
     assertion but a definition. -/
 theorem attested_below_reordering :
-    attestedOrder.totalDepLength < reorderingB.totalDepLength := by decide
+    attestedOrder.totalLength < reorderingB.totalLength := by decide
 
 /-! ### Table 2: head-finality and dependency length
 

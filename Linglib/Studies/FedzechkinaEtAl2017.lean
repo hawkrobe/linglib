@@ -1,5 +1,5 @@
 import Linglib.Processing.Memory.SurprisalTradeoff
-import Linglib.Syntax.DependencyGrammar.DependencyLength
+import Linglib.Syntax.DependencyGrammar.Length
 
 open Morphology (Word)
 
@@ -95,14 +95,14 @@ def langB_SOV : Graph 6 :=
 -- ============================================================================
 
 /-- Language A has total dep length 8. -/
-example : langA_SOV.totalDepLength = 8 := by decide
+example : langA_SOV.totalLength = 8 := by decide
 
 /-- Language B has total dep length 9. -/
-example : langB_SOV.totalDepLength = 9 := by decide
+example : langB_SOV.totalLength = 9 := by decide
 
 /-- Language A has shorter total dependency length than Language B. -/
 theorem langA_shorter_deps :
-    langA_SOV.totalDepLength < langB_SOV.totalDepLength := by decide
+    langA_SOV.totalLength < langB_SOV.totalLength := by decide
 
 -- ============================================================================
 -- Trade-off Curves (approximate from Figure 7)
@@ -153,7 +153,7 @@ This connects DLM (structural) to information-theoretic efficiency:
 shorter dependencies concentrate predictive information locally,
 yielding steeper I_t decay and better trade-off curves. -/
 theorem short_deps_implies_efficient :
-    langA_SOV.totalDepLength < langB_SOV.totalDepLength ∧
+    langA_SOV.totalLength < langB_SOV.totalLength ∧
     langACurve.auc < langBCurve.auc :=
   ⟨by native_decide, by native_decide⟩
 

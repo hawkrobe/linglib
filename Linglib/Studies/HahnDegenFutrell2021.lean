@@ -1,5 +1,5 @@
 import Linglib.Processing.Memory.SurprisalTradeoff
-import Linglib.Syntax.DependencyGrammar.DependencyLength
+import Linglib.Syntax.DependencyGrammar.Length
 import Linglib.Data.WALS.Languages
 
 /-!
@@ -436,14 +436,14 @@ private def disharmonicChain : DependencyGrammar.Graph 4 :=
 strictly shorter total dependency length than mixed direction on the same
 chain. -/
 theorem harmonic_dlm_holds :
-    harmonicChain.totalDepLength < disharmonicChain.totalDepLength := by decide
+    harmonicChain.totalLength < disharmonicChain.totalLength := by decide
 
 /-- The full chain: the structural DLM comparison holds, and all languages
 with low branching entropy (consistent direction, short dependencies) are
 efficient — connecting the structural argument to the
 information-theoretic result. -/
 theorem dlm_to_efficiency_chain :
-    harmonicChain.totalDepLength < disharmonicChain.totalDepLength ∧
+    harmonicChain.totalLength < disharmonicChain.totalLength ∧
     (allLanguages.filter (λ l =>
       match l.branchDirEntropy1000 with | some e => e < 300 | none => false
     )).all (·.moreEfficient) = true := by
