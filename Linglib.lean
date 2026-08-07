@@ -263,6 +263,7 @@ import Linglib.Core.Order.SetPreimage
 import Linglib.Core.Order.SignVectors
 import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Order.StrictBounds
+import Linglib.Core.Order.SuccPred.Tree
 import Linglib.Core.Order.TotalPreorder
 import Linglib.Core.Order.Tree
 import Linglib.Core.Order.TreePath
