@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.DRS.Semantics
+import Linglib.Semantics.Dynamic.DRS.Verification
 import Mathlib.ModelTheory.Semantics
 
 /-!

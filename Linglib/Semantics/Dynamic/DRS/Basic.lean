@@ -10,7 +10,7 @@ Structural operations and lemmas over the faithful `DRS` core (`DRS/Defs.lean`):
   `f : V → W`. When `f` is a bijection this is [kamp-reyle-1993]'s *alphabetic
   variant* (the prose preceding Def. 1.4.8); `map_id` makes "renaming to the
   identity is the identity" a free corollary, and `DRS.realize_map`
-  (`DRS/Semantics.lean`) shows variants have the same semantics.
+  (`DRS/Verification.lean`) shows variants have the same semantics.
 * `merge` algebra — identity (`empty`) and associativity.
 * `DRS.fv` / `DRS.IsProper` — free discourse referents (as a `Finset`) and
   properness (`fv K = ∅`, Def. 1.4.2–1.4.3).

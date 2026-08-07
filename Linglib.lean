@@ -1608,7 +1608,7 @@ import Linglib.Semantics.Dynamic.DRS.Defs
 import Linglib.Semantics.Dynamic.DRS.Dynamics
 import Linglib.Semantics.Dynamic.DRS.Indexed
 import Linglib.Semantics.Dynamic.DRS.Reduction
-import Linglib.Semantics.Dynamic.DRS.Semantics
+import Linglib.Semantics.Dynamic.DRS.Verification
 import Linglib.Semantics.Dynamic.FileChange
 import Linglib.Semantics.Dynamic.ICDRT.Basic
 import Linglib.Semantics.Dynamic.ICDRT.Defs
