@@ -7,7 +7,7 @@ import Mathlib.ModelTheory.Semantics
 The bespoke DRS box language is *equivalent to ordinary first-order
 logic*. We translate each DRS into a mathlib
 `FirstOrder.Language.Formula` and prove its `Realize` coincides with the
-bespoke `DRS.Verifies` — [kamp-reyle-1993]'s §1.5 ("From DRT to Predicate
+bespoke `Embedding.Verifies` — [kamp-reyle-1993]'s §1.5 ("From DRT to Predicate
 Logic") and [muskens-1996]'s "DRSs are already present in classical logic",
 now a Lean theorem (`DRS.realize_toFormula`) rather than an assertion.
 
@@ -142,7 +142,7 @@ theorem realize_closeForall [DecidableEq V] (U : Finset V) (φ : L.Formula V) (v
 
 mutual
 /-- **DRT ⊆ FOL** (§1.5): the
-translated formula's `Realize` coincides with the bespoke `DRS.Verifies`. As
+translated formula's `Realize` coincides with the bespoke `Embedding.Verifies`. As
 `toFormula` existentially closes the universe, the correspondence is with an
 embedding `v'` extending `v` over `K.referents`. -/
 theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
@@ -154,7 +154,7 @@ theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
     exact exists_congr fun v' =>
       and_congr_right fun _ => Condition.realize_toFormulaAll conds v'
 /-- The open body of a DRS (its conditions, no universe closure) realizes as
-`DRS.Verifies` (used for the antecedent of `⇒`). -/
+`Verifies` of the DRS (used for the antecedent of `⇒`). -/
 theorem DRS.realize_bodyFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
     (DRS.bodyFormula K).Realize v ↔ Verifies v K := by
   match K with
