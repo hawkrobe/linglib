@@ -1,5 +1,5 @@
 import Linglib.Syntax.DependencyGrammar.NonProjective
-import Linglib.Syntax.DependencyGrammar.DependencyLength
+import Linglib.Syntax.DependencyGrammar.Length
 import Linglib.Data.WALS.Features.F95A
 import Linglib.Data.UD.Basic
 import Linglib.Features.WordOrder
@@ -22,7 +22,7 @@ he uses (Tables 1–3, plus the Single-Word-Exceptions discussion at Table 4),
 the per-table harmonic-dominance theorems, the head-direction-generalization
 statement over those tables, and the DLM-vs-WALS consistency theorems that
 package the central claim. The DLM apparatus itself lives in
-`Syntax/DependencyGrammar/DependencyLength.lean`.
+`Syntax/DependencyGrammar/Length.lean`.
 
 ## Cross-tabulation apparatus
 
@@ -275,9 +275,9 @@ example : IsProjective harmonicHI ∧ IsProjective harmonicHF ∧
 /-- Harmonic order is strictly cheaper in both directions, and the mirror
     pair costs exactly the same. -/
 theorem harmonic_always_shorter :
-    harmonicHI.totalDepLength < disharmonicHF.totalDepLength ∧
-    harmonicHI.totalDepLength < disharmonicFH.totalDepLength ∧
-    harmonicHF.totalDepLength = harmonicHI.totalDepLength := by decide
+    harmonicHI.totalLength < disharmonicHF.totalLength ∧
+    harmonicHI.totalLength < disharmonicFH.totalLength ∧
+    harmonicHF.totalLength = harmonicHI.totalLength := by decide
 
 /-- Bridge to Behaghel: harmonic trees satisfy the Oberstes Gesetz at
     threshold 2; disharmonic trees do not. -/
@@ -296,8 +296,8 @@ def walsConfirmsHarmonic (t : CrossTab) : Bool :=
 /-- Combined consistency check: DLM prediction (harmonic strictly cheaper
     on the worked examples, both directions) and WALS observation agree. -/
 def dlmWalsConsistent (t : CrossTab) : Bool :=
-  decide (harmonicHI.totalDepLength < disharmonicHF.totalDepLength ∧
-          harmonicHI.totalDepLength < disharmonicFH.totalDepLength) &&
+  decide (harmonicHI.totalLength < disharmonicHF.totalLength ∧
+          harmonicHI.totalLength < disharmonicFH.totalLength) &&
   walsConfirmsHarmonic t
 
 /-- For all three of Gibson's construction pairs, DLM predicts harmonic is

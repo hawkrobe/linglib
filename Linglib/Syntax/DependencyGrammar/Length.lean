@@ -18,30 +18,29 @@ threshold. Arc length is `Nat.dist` on positions; the total is a
 
 `Graph.relabel` transports a graph along a position permutation — the
 formal core of [futrell-gibson-2020]'s random-reordering baselines — and
-`Graph.mirror` is relabeling along `Fin.rev`, with
-`totalDepLength_mirror` recording that the head-final mirror of a graph
-has the same total dependency length.
+`Graph.mirror` is relabeling along `Fin.rev`, with `totalLength_mirror`
+recording that the head-final mirror of a graph has the same total
+dependency length.
 -/
 
 namespace DependencyGrammar
 
 variable {n : ℕ}
 
-/-- The length of an arc between positions: their linear distance. -/
-def arcLength (v w : Fin n) : Nat := Nat.dist v w
-
-theorem arcLength_comm (v w : Fin n) : arcLength v w = arcLength w v :=
-  Nat.dist_comm v w
-
-/-- Total dependency length: the sum of arc lengths over all arcs — the
+/-- Total dependency length: the sum of `Nat.dist` over all arcs — the
     quantity dependency-length minimisation is about. -/
-def Graph.totalDepLength (g : Graph n) : Nat :=
-  ∑ v : Fin n, ∑ w ∈ Finset.univ.filter (g.Adj v ·), arcLength v w
+def Graph.totalLength (g : Graph n) : Nat :=
+  ∑ v : Fin n, ∑ w ∈ Finset.univ.filter (g.Adj v ·), Nat.dist v w
+
+/-- Total dependency length reads only the arc structure, never the
+    tokens. -/
+theorem Graph.totalLength_words (g : Graph n) (words' : Fin n → Morphology.Word) :
+    Graph.totalLength { g with words := words' } = g.totalLength := rfl
 
 /-- [behaghel-1932]'s Oberstes Gesetz: every arc has length at most
     `threshold`. -/
 def OberstesGesetz (g : Graph n) (threshold : Nat) : Prop :=
-  ∀ ⦃v w⦄, g.Adj v w → arcLength v w ≤ threshold
+  ∀ ⦃v w⦄, g.Adj v w → Nat.dist v w ≤ threshold
 
 instance (g : Graph n) (k : Nat) : Decidable (OberstesGesetz g k) :=
   inferInstanceAs (Decidable (∀ _, _))
@@ -61,24 +60,24 @@ def Graph.relabel (g : Graph n) (σ : Equiv.Perm (Fin n)) : Graph n :=
   Iff.rfl
 
 /-- The head-final mirror: relabel along position reversal. -/
-def Graph.mirror (g : Graph n) : Graph n := g.relabel (Fin.revPerm)
+def Graph.mirror (g : Graph n) : Graph n := g.relabel Fin.revPerm
 
 /-- Relabeling along an isometry of the positions preserves total
     dependency length. -/
-theorem Graph.totalDepLength_relabel (g : Graph n) (σ : Equiv.Perm (Fin n))
+theorem Graph.totalLength_relabel (g : Graph n) (σ : Equiv.Perm (Fin n))
     (hσ : ∀ v w : Fin n, Nat.dist (σ v) (σ w) = Nat.dist v w) :
-    (g.relabel σ).totalDepLength = g.totalDepLength := by
-  unfold totalDepLength
+    (g.relabel σ).totalLength = g.totalLength := by
+  unfold totalLength
   simp only [Finset.sum_filter]
   refine Fintype.sum_equiv σ.symm _ _ (λ v => ?_)
   refine Fintype.sum_equiv σ.symm _ _ (λ w => ?_)
   simp only [relabel_adj]
   by_cases h : g.Adj (σ.symm v) (σ.symm w) <;>
-    simp [h, arcLength, ← hσ (σ.symm v) (σ.symm w)]
+    simp [h, ← hσ (σ.symm v) (σ.symm w)]
 
-/-- Position reversal is an isometry. -/
-theorem Fin.dist_rev_rev (v w : Fin n) :
-    Nat.dist (Fin.rev v) (Fin.rev w) = Nat.dist v w := by
+/-- Position reversal preserves `Nat.dist`. -/
+theorem _root_.Fin.dist_rev_rev (v w : Fin n) :
+    Nat.dist v.rev w.rev = Nat.dist v w := by
   have hv := v.isLt
   have hw := w.isLt
   simp only [Nat.dist, Fin.val_rev]
@@ -87,8 +86,8 @@ theorem Fin.dist_rev_rev (v w : Fin n) :
 /-- The mirror image of a graph has the same total dependency length —
     the head-final preference is the exact mirror of the head-initial one
     ([futrell-gibson-2020], examples (7)–(8)). -/
-theorem Graph.totalDepLength_mirror (g : Graph n) :
-    g.mirror.totalDepLength = g.totalDepLength :=
-  g.totalDepLength_relabel _ (λ v w => Fin.dist_rev_rev v w)
+theorem Graph.totalLength_mirror (g : Graph n) :
+    g.mirror.totalLength = g.totalLength :=
+  g.totalLength_relabel _ (λ v w => Fin.dist_rev_rev v w)
 
 end DependencyGrammar
