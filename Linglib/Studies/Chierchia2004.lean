@@ -23,10 +23,10 @@ Numbered items follow the circulated manuscript (the "Bicocca, May 2001"
 version); the published chapter may renumber. The paper's scalar assertion `σ`
 is a definite description — *the* weakest alternative asymmetrically entailing
 the target, ⊥ if none — well-defined only when the stronger alternatives have a
-greatest element, as on the paper's linearly ordered scales. `krifkaRule` and
-`strongApplyDE` instead negate *all* strictly stronger alternatives, a total
+greatest element, as on the paper's linearly ordered scales. `Meaning.strengthen`
+and `strongApplyDE` instead negate *all* strictly stronger alternatives, a total
 operation that coincides with negating `σ` exactly where `σ` is defined
-(`krifkaRule_strong_eq_of_isGreatest`, `strongApplyDE_strong_eq_of_isGreatest`;
+(`strengthen_strong_eq_of_isGreatest`, `strongApplyDE_strong_eq_of_isGreatest`;
 the `σ = ⊥` case is the empty intersection). The
 appendix's `‖α‖^S` is a *set* of admissible strong meanings (implicature
 addition at a scope site is optional); `Meaning.strong` tracks the maximal
@@ -62,33 +62,39 @@ def Meaning.lexical (φ : Set World) (ALT : Set (Set World)) :
 def Meaning.StrengthCondition (sm : Meaning World) : Prop :=
   sm.strong ⊆ sm.plain
 
+theorem Meaning.lexical_strengthCondition (φ : Set World) (ALT : Set (Set World)) :
+    (Meaning.lexical φ ALT).StrengthCondition :=
+  λ _ h => h
+
 /-! ### Krifka's rule -/
 
-/-- Krifka's rule (75): at a scope site, conjoin the plain value with the
-negations of its strictly stronger alternatives. -/
-def krifkaRule (φ : Set World) (ALT : Set (Set World)) : Meaning World where
-  plain := φ
-  strong := φ ∩ ⋂ a ∈ {a ∈ ALT | a ⊂ φ}, aᶜ
-  alternatives := ALT
+/-- Krifka's rule (75) [krifka-1995a]: at a scope site, conjoin the strong
+value with the negations of the strictly stronger alternatives. -/
+def Meaning.strengthen (sm : Meaning World) : Meaning World where
+  plain := sm.plain
+  strong := sm.strong ∩ ⋂ a ∈ {a ∈ sm.alternatives | a ⊂ sm.plain}, aᶜ
+  alternatives := sm.alternatives
 
 @[simp]
-theorem mem_krifkaRule_strong {φ : Set World} {ALT : Set (Set World)} {w : World} :
-    w ∈ (krifkaRule φ ALT).strong ↔ w ∈ φ ∧ ∀ a ∈ ALT, a ⊂ φ → w ∉ a := by
-  simp [krifkaRule]
+theorem Meaning.mem_strengthen_strong {sm : Meaning World} {w : World} :
+    w ∈ sm.strengthen.strong ↔
+      w ∈ sm.strong ∧ ∀ a ∈ sm.alternatives, a ⊂ sm.plain → w ∉ a := by
+  simp [Meaning.strengthen]
 
-theorem krifkaRule_strengthCondition (φ : Set World) (ALT : Set (Set World)) :
-    (krifkaRule φ ALT).StrengthCondition :=
-  λ _ hw => hw.1
+/-- Strengthening preserves the Strength Condition. -/
+theorem Meaning.StrengthCondition.strengthen {sm : Meaning World}
+    (h : sm.StrengthCondition) : sm.strengthen.StrengthCondition :=
+  λ _ hw => h hw.1
 
 /-- Agreement with the paper's scalar assertion `σ`: whenever the strictly
 stronger alternatives have a weakest member `a₀` — the case in which (2)'s
 definite description is defined, as on linearly ordered scales — negating all
 of them is negating `a₀` alone. -/
-theorem krifkaRule_strong_eq_of_isGreatest {φ a₀ : Set World} {ALT : Set (Set World)}
-    (h : IsGreatest {a ∈ ALT | a ⊂ φ} a₀) :
-    (krifkaRule φ ALT).strong = φ ∩ a₀ᶜ := by
+theorem Meaning.strengthen_strong_eq_of_isGreatest {sm : Meaning World} {a₀ : Set World}
+    (h : IsGreatest {a ∈ sm.alternatives | a ⊂ sm.plain} a₀) :
+    sm.strengthen.strong = sm.strong ∩ a₀ᶜ := by
   ext w
-  simp only [mem_krifkaRule_strong, Set.mem_inter_iff, Set.mem_compl_iff]
+  simp only [mem_strengthen_strong, Set.mem_inter_iff, Set.mem_compl_iff]
   exact ⟨λ ⟨hw, hall⟩ => ⟨hw, hall a₀ h.1.1 h.1.2⟩,
     λ ⟨hw, h₀⟩ => ⟨hw, λ a haA haφ hwa => h₀ (h.2 ⟨haA, haφ⟩ hwa)⟩⟩
 
@@ -102,23 +108,25 @@ def ScaleAxioms (lexicalScale chosen : Set (Set World)) (utt : Set World) : Prop
   chosen ⊆ lexicalScale ∧ chosen.Nontrivial ∧ utt ∈ chosen ∧
     ((∃ a ∈ lexicalScale, a ⊂ utt) → ∃ a ∈ chosen, a ⊂ utt)
 
-/-- Krifka's rule strengthens properly whenever some activated alternative is
-strictly stronger and consistent. -/
-theorem krifkaRule_strong_ssubset {φ : Set World} {ALT : Set (Set World)}
-    (h : ∃ a ∈ ALT, a ⊂ φ ∧ a.Nonempty) :
-    (krifkaRule φ ALT).strong ⊂ φ := by
+/-- Strengthening is proper whenever some activated alternative is strictly
+stronger and consistent. -/
+theorem Meaning.strengthen_strong_ssubset {sm : Meaning World}
+    (hsc : sm.StrengthCondition)
+    (h : ∃ a ∈ sm.alternatives, a ⊂ sm.plain ∧ a.Nonempty) :
+    sm.strengthen.strong ⊂ sm.plain := by
   obtain ⟨a, haALT, haφ, w, hwa⟩ := h
-  refine ssubset_iff_subset_not_subset.mpr ⟨λ _ hw => hw.1, λ hsub => ?_⟩
-  exact (mem_krifkaRule_strong.1 (hsub (haφ.1 hwa))).2 a haALT haφ hwa
+  refine ssubset_iff_subset_not_subset.mpr ⟨λ _ hw => hsc hw.1, λ hsub => ?_⟩
+  exact (Meaning.mem_strengthen_strong.1 (hsub (haφ.1 hwa))).2 a haALT haφ hwa
 
 /-- Under the scale axioms, a stronger lexical alternative guarantees proper
 strengthening — the point of the (99c) proviso. -/
-theorem ScaleAxioms.krifkaRule_ssubset {lex chosen : Set (Set World)} {utt : Set World}
+theorem ScaleAxioms.strengthen_ssubset {lex chosen : Set (Set World)} {utt : Set World}
     (h : ScaleAxioms lex chosen utt) (hstr : ∃ a ∈ lex, a ⊂ utt)
     (hne : ∀ a ∈ chosen, a ⊂ utt → a.Nonempty) :
-    (krifkaRule utt chosen).strong ⊂ utt :=
+    (Meaning.lexical utt chosen).strengthen.strong ⊂ utt :=
   let ⟨a, ha, hau⟩ := h.2.2.2 hstr
-  krifkaRule_strong_ssubset ⟨a, ha, hau, hne a ha hau⟩
+  Meaning.strengthen_strong_ssubset (Meaning.lexical_strengthCondition utt chosen)
+    ⟨a, ha, hau, hne a ha hau⟩
 
 /-! ### Downward entailingness suspends implicatures -/
 
@@ -131,11 +139,11 @@ theorem si_npi_generalization {f : Set World → Set World} (hDE : IsDE f)
     f g.plain ⊆ f g.strong :=
   hDE hg
 
-/-- Instantiation of (53) at Krifka-strengthened arguments. -/
+/-- Instantiation of (53) at strengthened arguments. -/
 theorem de_blocks_direct_si {f : Set World → Set World} (hDE : IsDE f)
-    (φ : Set World) (ALT : Set (Set World)) :
-    f φ ⊆ f (krifkaRule φ ALT).strong :=
-  hDE (krifkaRule_strengthCondition φ ALT)
+    {sm : Meaning World} (hsc : sm.StrengthCondition) :
+    f sm.plain ⊆ f sm.strengthen.strong :=
+  si_npi_generalization hDE hsc.strengthen
 
 /-! ### Strong Application -/
 
@@ -209,13 +217,14 @@ theorem sawEvery_ssubset : sawEvery ⊂ sawSome := by
     simp [sawSome, hw]
   · exact absurd (h (show (1 : Fin 3) ∈ sawSome by simp [sawSome])) (by simp [sawEvery])
 
-/-- (74)–(76): Krifka's rule computes the direct implicature of "John saw some
-students" — some but not every. -/
+/-- (74)–(76): strengthening the lexical node of "John saw some students"
+computes the direct implicature — some but not every. -/
 theorem some_not_all_implicature :
-    (krifkaRule sawSome {sawSome, sawEvery}).strong = sawSome \ sawEvery := by
+    (Meaning.lexical sawSome {sawSome, sawEvery}).strengthen.strong =
+      sawSome \ sawEvery := by
   ext w
-  simp only [mem_krifkaRule_strong, Set.mem_insert_iff, Set.mem_singleton_iff,
-    Set.mem_sdiff, forall_eq_or_imp, forall_eq]
+  simp only [Meaning.mem_strengthen_strong, Meaning.lexical, Set.mem_insert_iff,
+    Set.mem_singleton_iff, Set.mem_sdiff, forall_eq_or_imp, forall_eq]
   exact ⟨λ ⟨hw, _, he⟩ => ⟨hw, he sawEvery_ssubset⟩,
     λ ⟨hw, he⟩ => ⟨hw, λ hss => absurd rfl hss.ne, λ _ => he⟩⟩
 

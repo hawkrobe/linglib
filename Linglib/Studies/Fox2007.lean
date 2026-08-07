@@ -120,18 +120,18 @@ open Exhaustification (IsMCSet IsInnocentlyExcludable exhIE) in
 /-- Fox (§4, "Chierchia's Puzzle") positions `exh` as the successor to
 [chierchia-2004]'s recursive strengthening. At a root scope site over a flat
 (linearly ordered) scale the two mechanisms agree in one direction: every
-innocently excludable alternative is strictly stronger, so Krifka's rule
-negates a superset and its output entails `exhIE` ([spector-2016]'s
-formalization of innocent exclusion). -/
-theorem krifkaRule_strong_subset_exhIE {World : Type*} (φ : Set World)
+innocently excludable alternative is strictly stronger, so Krifka-rule
+strengthening negates a superset and its output entails `exhIE`
+([spector-2016]'s formalization of innocent exclusion). -/
+theorem strengthen_strong_subset_exhIE {World : Type*} (φ : Set World)
     (ALT : Set (Set World)) (hMC : ∃ E, IsMCSet ALT φ E)
     (hFlat : ∀ a ∈ ALT, IsInnocentlyExcludable ALT φ a → a ⊂ φ) :
-    (Chierchia2004.krifkaRule φ ALT).strong ⊆ exhIE ALT φ := by
+    (Chierchia2004.Meaning.lexical φ ALT).strengthen.strong ⊆ exhIE ALT φ := by
   intro w hw ψ hψIE
   obtain ⟨E, hE⟩ := hMC
   rcases hE.1.2.1 ψ (hψIE E hE) with rfl | ⟨a, haALT, rfl⟩
-  · exact (Chierchia2004.mem_krifkaRule_strong.1 hw).1
-  · exact (Chierchia2004.mem_krifkaRule_strong.1 hw).2 a haALT
+  · exact (Chierchia2004.Meaning.mem_strengthen_strong.1 hw).1
+  · exact (Chierchia2004.Meaning.mem_strengthen_strong.1 hw).2 a haALT
       (hFlat a haALT ⟨haALT, hψIE⟩)
 
 end Fox2007
