@@ -154,23 +154,20 @@ theorem de_blocks_direct_si {f : Set World → Set World} (hDE : IsDE f)
 
 /-! ### Strong Application -/
 
-/-- Strong Application (84), non-DE clause: `‖[β γ]‖^S = ‖β‖^S(‖γ‖^S)`, with
-alternatives projected pointwise through the function ((82b)). -/
-def strongApplyUE (f fS : Set World → Set World) (g : Meaning World) :
-    Meaning World where
-  plain := f g.plain
-  strong := fS g.strong
-  alternatives := f '' g.alternatives
+/-- Apply a function and its strengthening to a node's two tracks, projecting
+alternatives pointwise ((82b)) — the non-DE clause of Strong Application (84). -/
+def Meaning.map (f fS : Set World → Set World) (g : Meaning World) : Meaning World :=
+  ⟨f g.plain, fS g.strong, f '' g.alternatives⟩
 
-/-- Strong Application (84), DE clause: apply the strengthened function to the
-*plain* argument — stripping the argument's direct implicatures — and negate the
-strictly stronger matrix-level images of its alternatives (the indirect
-implicatures). -/
-def strongApplyDE (f fS : Set World → Set World) (g : Meaning World) :
-    Meaning World where
-  plain := f g.plain
-  strong := fS g.plain ∩ ⋂ a ∈ {a ∈ g.alternatives | f a ⊂ f g.plain}, (f a)ᶜ
-  alternatives := f '' g.alternatives
+/-- The Strength-Condition fallback (§3.1): remove the argument's implicatures
+by resetting its strong track to the plain value. -/
+def Meaning.weaken (g : Meaning World) : Meaning World :=
+  ⟨g.plain, g.plain, g.alternatives⟩
+
+/-- Strong Application (84), DE clause: strip the argument's implicatures,
+apply, and re-strengthen at the matrix level. -/
+def strongApplyDE (f fS : Set World → Set World) (g : Meaning World) : Meaning World :=
+  (g.weaken.map f fS).strengthen
 
 variable {f fS : Set World → Set World} {g : Meaning World}
 
@@ -178,35 +175,27 @@ variable {f fS : Set World → Set World} {g : Meaning World}
 theorem mem_strongApplyDE_strong :
     w ∈ (strongApplyDE f fS g).strong ↔
       w ∈ fS g.plain ∧ ∀ a ∈ g.alternatives, f a ⊂ f g.plain → w ∉ f a := by
-  simp [strongApplyDE]
+  simp [strongApplyDE, Meaning.map, Meaning.weaken]
 
-/-- Agreement with (84)'s matrix-level `σ`: whenever the strictly stronger
-alternative images have a weakest member `ψ₀`, the DE clause's intersection
-negates `ψ₀` alone. -/
+/-- Agreement with (84)'s matrix-level `σ`: inherited from the (75) lemma, the
+DE clause being strengthening at the mapped node. -/
 theorem strongApplyDE_strong_eq_of_isGreatest {ψ₀ : Set World}
     (h : IsGreatest {ψ ∈ f '' g.alternatives | ψ ⊂ f g.plain} ψ₀) :
-    (strongApplyDE f fS g).strong = fS g.plain ∩ ψ₀ᶜ := by
-  ext w
-  simp only [mem_strongApplyDE_strong, Set.mem_inter_iff, Set.mem_compl_iff]
-  constructor
-  · rintro ⟨hw, hall⟩
-    obtain ⟨⟨a, haA, rfl⟩, hψφ⟩ := h.1
-    exact ⟨hw, hall a haA hψφ⟩
-  · exact λ ⟨hw, h₀⟩ =>
-      ⟨hw, λ a haA haφ hwa => h₀ (h.2 ⟨⟨a, haA, rfl⟩, haφ⟩ hwa)⟩
+    (strongApplyDE f fS g).strong = fS g.plain ∩ ψ₀ᶜ :=
+  Meaning.strengthen_strong_eq_of_isGreatest (sm := g.weaken.map f fS) h
 
-/-- The non-DE clause of (84) preserves the Strength Condition when the
-function's strengthening entails its plain value and the function is UE. -/
-theorem strongApplyUE_strengthCondition (hf : IsUE f) (hfS : ∀ X, fS X ⊆ f X)
+/-- The non-DE clause of (84) preserves the Strength Condition when `f` is UE
+and its strengthening entails it. -/
+theorem Meaning.map_strengthCondition (hf : IsUE f) (hfS : fS ≤ f)
     (hg : g.StrengthCondition) :
-    (strongApplyUE f fS g).StrengthCondition :=
-  λ _ hw => hf hg (hfS g.strong hw)
+    (g.map f fS).StrengthCondition :=
+  λ _ hw => hf hg (hfS _ hw)
 
 /-- The DE clause of (84) satisfies the Strength Condition by construction: it
-already falls back to the plain argument. -/
-theorem strongApplyDE_strengthCondition (hfS : ∀ X, fS X ⊆ f X) :
+falls back to the plain argument before re-strengthening. -/
+theorem strongApplyDE_strengthCondition (hfS : fS ≤ f) :
     (strongApplyDE f fS g).StrengthCondition :=
-  λ _ hw => hfS g.plain hw.1
+  Meaning.StrengthCondition.strengthen (hfS g.plain)
 
 /-! ### The direct implicature of "some" -/
 
