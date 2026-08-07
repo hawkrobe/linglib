@@ -122,36 +122,35 @@ theorem klein_agrees_on_simple (μ : Entity → D) (cc : Set Entity)
 
 /-- R4: `⟦more⟧(d₁)(A⁰)(d₂)(x)` iff `A⁰(x, d₁ + d₂)` with monotone `A⁰` —
 the differential `d₁` plus the than-clause maximum `d₂`. -/
-def moreSem (μ : Entity → ℚ) (x : Entity) (d₁ d₂ : ℚ) : Prop :=
-  μ x ≥ d₁ + d₂
+def moreSem [Add D] (μ : Entity → D) (x : Entity) (d₁ d₂ : D) : Prop :=
+  d₁ + d₂ ≤ μ x
 
 /-- R5: `⟦as⟧` multiplies where R4 adds ("twice as fat", (171b)). -/
-def asSem (μ : Entity → ℚ) (x : Entity) (d₁ d₂ : ℚ) : Prop :=
-  μ x ≥ d₁ * d₂
+def asSem [Mul D] (μ : Entity → D) (x : Entity) (d₁ d₂ : D) : Prop :=
+  d₁ * d₂ ≤ μ x
 
 /-- R4 with a positive differential and `d₂ = μ b` yields the bare
 comparative. -/
-theorem moreSem_comparative_bridge (μ : Entity → ℚ) (a b : Entity)
-    {d₁ : ℚ} (hd₁ : 0 < d₁) (h : moreSem μ a d₁ (μ b)) :
-    comparativeSem μ a b .positive :=
+theorem moreSem_comparative_bridge [AddCommMonoid D] [IsOrderedCancelAddMonoid D]
+    (μ : Entity → D) (a b : Entity) {d₁ : D} (hd₁ : 0 < d₁)
+    (h : moreSem μ a d₁ (μ b)) : comparativeSem μ a b .positive :=
   (lt_add_of_pos_left (μ b) hd₁).trans_le h
 
 /-- An exact differential entails R4's at-least semantics. -/
-theorem moreSem_differential_bridge (μ : Entity → ℚ) (a b : Entity) (diff : ℚ)
-    (h : differentialComparative μ a b diff) : moreSem μ a diff (μ b) := by
-  simp only [moreSem, differentialComparative] at *
-  linarith
+theorem moreSem_differential_bridge [AddCommGroup D] [IsOrderedAddMonoid D]
+    (μ : Entity → D) (a b : Entity) (diff : D)
+    (h : differentialComparative μ a b diff) : moreSem μ a diff (μ b) :=
+  le_of_eq (by rw [← h, sub_add_cancel])
 
 /-- R5 at factor 1 is the equative. -/
-theorem asSem_equative_bridge (μ : Entity → ℚ) (a b : Entity) :
+theorem asSem_equative_bridge [MulOneClass D] (μ : Entity → D) (a b : Entity) :
     asSem μ a 1 (μ b) ↔ equativeSem μ a b .positive := by
   simp [asSem, equativeSem, one_mul]
 
 /-- A tight factor phrase entails R5's at-least semantics. -/
-theorem asSem_factor_bridge (μ : Entity → ℚ) (a b : Entity) (factor : ℚ)
-    (h : factorEquative μ a b factor) : asSem μ a factor (μ b) := by
-  simp only [asSem, factorEquative] at *
-  linarith
+theorem asSem_factor_bridge [Mul D] (μ : Entity → D) (a b : Entity)
+    (factor : D) (h : factorEquative μ a b factor) : asSem μ a factor (μ b) :=
+  le_of_eq h.symm
 
 /-- R13 (p. 69, §XIII.6): `⟦too⟧(d₁)(A⁰)(p)(x) = the max.d [x is d-A⁰]
 λd₂ [p □→ A⁰(x, d₂ − d₁)]` — *too* is R4's `moreSem` with a
@@ -159,8 +158,9 @@ counterfactually determined threshold (DegP head `Degree.Head.excessive`):
 when the threshold is greatest over the accessible worlds, being `excess`
 too `A` puts the actual degree above every accessible world's degree. -/
 theorem moreSem_exceeds_counterfactual_worlds
-    (μ : W → Entity → ℚ) (w₀ : W) (acc : Set W) (x : Entity)
-    {threshold excess : ℚ} (hexcess : 0 < excess)
+    [AddCommMonoid D] [IsOrderedCancelAddMonoid D]
+    (μ : W → Entity → D) (w₀ : W) (acc : Set W) (x : Entity)
+    {threshold excess : D} (hexcess : 0 < excess)
     (hmax : IsGreatest ((fun w => μ w x) '' acc) threshold)
     (htoo : moreSem (μ w₀) x excess threshold) :
     ∀ w ∈ acc, μ w x < μ w₀ x :=
