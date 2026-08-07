@@ -35,7 +35,7 @@ Example stimuli live in `Data.Examples.VonStechow1984` (`Examples.*`).
 
 namespace VonStechow1984
 
-open Degree (comparativeSem equativeSem differentialComparative factorEquative)
+open Degree Intensional
 
 variable {W Entity D : Type*} [LinearOrder D]
 
@@ -55,7 +55,7 @@ def intensionalComparative (μ : W → Entity → D) (w : W) (a b : Entity) : Pr
 /-- A rigid measure reduces `intensionalComparative` to the extensional
 `comparativeSem`. -/
 theorem intensionalComparative_rigid (μe : Entity → D) (w : W) (a b : Entity) :
-    intensionalComparative (Intensional.Intension.rigid μe) w a b ↔
+    intensionalComparative (Intension.rigid μe) w a b ↔
       comparativeSem μe a b .positive :=
   Iff.rfl
 
@@ -127,9 +127,8 @@ to differential and factor constructions ((171a)–(171c)). -/
 theorem klein_agrees_on_simple (μ : Entity → D) (cc : Set Entity)
     (a b : Entity) (ha : a ∈ cc) (hb : b ∈ cc) :
     comparativeSem μ a b .positive ↔
-      Degree.Delineation.ordering
-        (Degree.Delineation.measureDelineation μ) cc a b :=
-  (Degree.Delineation.ordering_iff_degree μ cc a b ha hb).symm
+      Delineation.ordering (Delineation.measureDelineation μ) cc a b :=
+  (Delineation.ordering_iff_degree μ cc a b ha hb).symm
 
 /-! ### Synthesis rules R4 (`moreSem`), R5 (`asSem`), R13 (`tooSem`) (§XIII) -/
 
