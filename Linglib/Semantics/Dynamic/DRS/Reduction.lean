@@ -159,9 +159,9 @@ theorem DRS.realize_bodyFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
     (DRS.bodyFormula K).Realize v ↔ Verifies v K := by
   match K with
   | .mk _ conds => exact Condition.realize_toFormulaAll conds v
-/-- A single condition's translation realizes as `Condition.Verifies`. -/
+/-- A single condition's translation realizes as `VerifiesCond`. -/
 theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V → M) :
-    (Condition.toFormula c).Realize v ↔ Verifies v c := by
+    (Condition.toFormula c).Realize v ↔ VerifiesCond v c := by
   match c with
   | .rel R args =>
     simp [Condition.toFormula, Relations.formula, Formula.Realize,
@@ -182,7 +182,7 @@ theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V �
 /-- A list of conditions' conjoined translation realizes as the conjunction of
 their realizations. -/
 theorem Condition.realize_toFormulaAll [DecidableEq V] (cs : List (Condition L V)) (v : V → M) :
-    (Condition.toFormulaAll cs).Realize v ↔ ∀ c ∈ cs, Verifies v c := by
+    (Condition.toFormulaAll cs).Realize v ↔ ∀ c ∈ cs, VerifiesCond v c := by
   match cs with
   | [] => simp [Condition.toFormulaAll, Formula.realize_top]
   | c :: cs =>
