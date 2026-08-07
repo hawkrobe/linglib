@@ -36,6 +36,7 @@ identification:
   occurring referents (`DRS.occ`, from `DRS/Basic.lean`).
 * `DRS.toRel_merge` — the Merging Lemma: under freshness, `merge` denotes the
   spine sequencing `Update.seq` (relational composition) of the two box relations.
+* `DRS.trueRel_map` — alphabetic variants have the same dynamic truth.
 
 ## Implementation notes
 
@@ -164,6 +165,16 @@ theorem DRS.trueRel_iff_realize_toFormula [DecidableEq V] (K : DRS L V) (a : V �
     DRS.trueRel K a ↔ (K.toFormula).Realize a := by
   rw [DRS.trueRel_iff, DRS.realize_toFormula K a]
   exact exists_congr (fun a' => DRS.toRel_iff_verifies K a a')
+
+/-- Renaming along a bijection transports dynamic truth: alphabetic variants
+have the same truth conditions. -/
+theorem DRS.trueRel_map {W : Type*} [DecidableEq V] [DecidableEq W] (e : V ≃ W)
+    (K : DRS L V) (a : Embedding W M) :
+    DRS.trueRel (K.map e) a ↔ DRS.trueRel K (a ∘ e) := by
+  simp only [DRS.trueRel_iff]
+  exact (exists_congr fun a' => DRS.toRel_iff_verifies (K.map e) a a').trans
+    ((Embedding.exists_extends_verifies_map e a K).trans
+      (exists_congr fun a' => (DRS.toRel_iff_verifies K (a ∘ e) a').symm))
 
 /-! ### The coincidence lemma -/
 

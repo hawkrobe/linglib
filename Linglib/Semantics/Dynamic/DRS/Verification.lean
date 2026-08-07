@@ -145,7 +145,7 @@ private theorem verifies_map_all (e : V ≃ W) (K : DRS L V) (g : Embedding W M)
 
 /-- "Some extension of `f` verifies `K`" transported along renaming, given the
 transport for each condition of `K`. -/
-private theorem exists_extends_verifies_map (e : V ≃ W) (K : DRS L V) (f : Embedding W M)
+private theorem exists_extends_verifies_map_aux (e : V ≃ W) (K : DRS L V) (f : Embedding W M)
     (ih : ∀ c ∈ K.conditions, ∀ u : Embedding W M,
       u.VerifiesCondition (c.map e) ↔ VerifiesCondition (u ∘ e) c) :
     (∃ g, (K.map e).Extends f g ∧ g.Verifies (K.map e)) ↔
@@ -164,19 +164,19 @@ theorem verifies_map_condition (e : V ≃ W) : ∀ (f : Embedding W M) (c : Cond
   | f, .neg K => by
     simp only [Condition.map, verifies_neg]
     exact not_congr
-      (exists_extends_verifies_map e K f fun d _ u => verifies_map_condition e u d)
+      (exists_extends_verifies_map_aux e K f fun d _ u => verifies_map_condition e u d)
   | f, .imp a c => by
     simp only [Condition.map, verifies_imp]
     refine Iff.trans (forall_congr' fun g => imp_congr_right fun _ => imp_congr
       (verifies_map_all e a g fun d _ u => verifies_map_condition e u d)
-      (exists_extends_verifies_map e c g fun d _ u => verifies_map_condition e u d)) ?_
+      (exists_extends_verifies_map_aux e c g fun d _ u => verifies_map_condition e u d)) ?_
     exact DRS.forall_extends_map e a f
       (fun u => Verifies u a → ∃ h', c.Extends u h' ∧ Verifies h' c)
   | f, .dis l r => by
     simp only [Condition.map, verifies_dis]
     exact or_congr
-      (exists_extends_verifies_map e l f fun d _ u => verifies_map_condition e u d)
-      (exists_extends_verifies_map e r f fun d _ u => verifies_map_condition e u d)
+      (exists_extends_verifies_map_aux e l f fun d _ u => verifies_map_condition e u d)
+      (exists_extends_verifies_map_aux e r f fun d _ u => verifies_map_condition e u d)
 termination_by _ c => sizeOf c
 decreasing_by all_goals
   have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
@@ -188,6 +188,13 @@ iff `f ∘ e` verifies `K` — alphabetic variants have the same semantics. -/
 theorem verifies_map (e : V ≃ W) (f : Embedding W M) (K : DRS L V) :
     f.Verifies (K.map e) ↔ Verifies (f ∘ e) K :=
   verifies_map_all e K f (fun c _ u => verifies_map_condition e u c)
+
+/-- "Some extension verifies", transported along renaming: `f` has a verifying
+`K.map e`-extension iff `f ∘ e` has a verifying `K`-extension. -/
+theorem exists_extends_verifies_map (e : V ≃ W) (f : Embedding W M) (K : DRS L V) :
+    (∃ g, (K.map e).Extends f g ∧ g.Verifies (K.map e)) ↔
+      ∃ g, K.Extends (f ∘ e) g ∧ g.Verifies K :=
+  exists_extends_verifies_map_aux e K f fun c _ u => verifies_map_condition e u c
 
 end Map
 
