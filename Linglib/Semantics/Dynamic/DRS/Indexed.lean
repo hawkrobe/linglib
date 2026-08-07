@@ -509,7 +509,8 @@ diverge (Muskens's fn. 4; witness in `Studies/Muskens1996.lean`). -/
 to agreement on a disjoint base. -/
 private theorem DRS.toRelAt_of_toRel' {X U : Finset V} {conds : List (Condition L V)}
     (hXU : Disjoint X U)
-    (hIH : ∀ k : V → M, Condition.holdsAll conds k ↔ Condition.holdsAllAt (X ∪ U) conds k)
+    (hIH : ∀ k : V → M, (∀ c ∈ conds, Embedding.VerifiesCondition k c) ↔
+      Condition.holdsAllAt (X ∪ U) conds k)
     {g g' : V → M} (h : DRS.toRel (.mk U conds) g g') :
     DRS.toRelAt X (.mk U conds) g g' := by
   obtain ⟨hag, hh⟩ := h
@@ -520,7 +521,8 @@ private theorem DRS.toRelAt_of_toRel' {X U : Finset V} {conds : List (Condition 
 the input's values. -/
 private theorem DRS.toRel_of_toRelAt' {X U : Finset V} {conds : List (Condition L V)}
     (hfvc : Condition.fvL conds ⊆ X ∪ U)
-    (hIH : ∀ k : V → M, Condition.holdsAll conds k ↔ Condition.holdsAllAt (X ∪ U) conds k)
+    (hIH : ∀ k : V → M, (∀ c ∈ conds, Embedding.VerifiesCondition k c) ↔
+      Condition.holdsAllAt (X ∪ U) conds k)
     {g g' : V → M} (h : DRS.toRelAt X (.mk U conds) g g') :
     DRS.toRel (.mk U conds) g (fun x => if x ∈ U then g' x else g x) ∧
       Set.EqOn (fun x => if x ∈ U then g' x else g x) g' ↑(X ∪ U) := by
@@ -541,21 +543,21 @@ private theorem DRS.toRel_of_toRelAt' {X U : Finset V} {conds : List (Condition 
 mutual
 /-- On a reuse-free condition with free referents in the base, the flat set
 denotation and the indexed one coincide. -/
-theorem Condition.holds_iff_holdsAt {X : Finset V} (c : Condition L V)
+theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
     (hrf : Condition.ReuseFreeAt X c) (hfv : c.fv ⊆ X) (g : V → M) :
-    Condition.holds c g ↔ Condition.holdsAt X c g := by
+    Embedding.VerifiesCondition g c ↔ Condition.holdsAt X c g := by
   match c with
-  | .rel R args => exact Iff.rfl
-  | .eq u v => exact Iff.rfl
+  | .rel R args => simp only [Embedding.verifies_rel, Condition.holdsAt_rel]
+  | .eq u v => simp only [Embedding.verifies_eq, Condition.holdsAt_eq]
   | .neg K =>
     obtain ⟨U, conds⟩ := K
     simp only [Condition.reuseFreeAt_neg, DRS.reuseFreeAt_mk] at hrf
     rw [Condition.fv_neg] at hfv
     have hfvc := DRS.fv_subset_iff.mp hfv
-    have hIH : ∀ k : V → M, Condition.holdsAll conds k ↔
+    have hIH : ∀ k : V → M, (∀ c ∈ conds, Embedding.VerifiesCondition k c) ↔
         Condition.holdsAllAt (X ∪ U) conds k :=
-      fun k => Condition.holdsAll_iff_holdsAllAt conds hrf.2 hfvc k
-    simp only [Condition.holds_neg, Condition.holdsAt_neg]
+      fun k => Condition.verifiesAll_iff_holdsAllAt conds hrf.2 hfvc k
+    simp only [Embedding.verifies_neg, Condition.holdsAt_neg]
     exact not_congr ⟨fun ⟨k, hk⟩ => ⟨k, DRS.toRelAt_of_toRel' hrf.1 hIH hk⟩,
       fun ⟨k, hk⟩ => ⟨_, (DRS.toRel_of_toRelAt' hfvc hIH hk).1⟩⟩
   | .imp a c' =>
@@ -575,21 +577,21 @@ theorem Condition.holds_iff_holdsAt {X : Finset V} (c : Condition L V)
         · refine Finset.mem_union_left _ (Finset.mem_union_left _ (hfvc' ?_))
           rw [DRS.fv_mk, DRS.referents_mk, Finset.mem_sdiff, Finset.mem_sdiff]
           exact ⟨⟨hx, hxUc⟩, hxUa⟩
-    have hIHa : ∀ k : V → M, Condition.holdsAll ca k ↔
+    have hIHa : ∀ k : V → M, (∀ c ∈ ca, Embedding.VerifiesCondition k c) ↔
         Condition.holdsAllAt (X ∪ Ua) ca k :=
-      fun k => Condition.holdsAll_iff_holdsAllAt ca hrfa hfvca k
-    have hIHc : ∀ k : V → M, Condition.holdsAll cc k ↔
+      fun k => Condition.verifiesAll_iff_holdsAllAt ca hrfa hfvca k
+    have hIHc : ∀ k : V → M, (∀ c ∈ cc, Embedding.VerifiesCondition k c) ↔
         Condition.holdsAllAt ((X ∪ Ua) ∪ Uc) cc k :=
-      fun k => Condition.holdsAll_iff_holdsAllAt cc hrfc hfvcc k
-    simp only [Condition.holds_imp, Condition.holdsAt_imp, DRS.referents_mk]
+      fun k => Condition.verifiesAll_iff_holdsAllAt cc hrfc hfvcc k
+    simp only [Embedding.verifies_imp, Condition.holdsAt_imp, DRS.referents_mk]
     constructor
     · intro hL g₁ hg₁
       obtain ⟨hflat, heq⟩ := DRS.toRel_of_toRelAt' hfvca hIHa hg₁
-      obtain ⟨g₂, hg₂⟩ := hL _ hflat
+      obtain ⟨g₂, hg₂⟩ := hL _ hflat.1 hflat.2
       exact ⟨g₂, (DRS.toRelAt_congr_left (X ∪ Ua) _ heq).mp
         (DRS.toRelAt_of_toRel' hXUc hIHc hg₂)⟩
-    · intro hR g₁ hg₁
-      obtain ⟨g₂, hg₂⟩ := hR g₁ (DRS.toRelAt_of_toRel' hXUa hIHa hg₁)
+    · intro hR g₁ hg₁ hv₁
+      obtain ⟨g₂, hg₂⟩ := hR g₁ (DRS.toRelAt_of_toRel' hXUa hIHa ⟨hg₁, hv₁⟩)
       exact ⟨_, (DRS.toRel_of_toRelAt' hfvcc hIHc hg₂).1⟩
   | .dis l r =>
     obtain ⟨Ul, cl⟩ := l
@@ -599,31 +601,32 @@ theorem Condition.holds_iff_holdsAt {X : Finset V} (c : Condition L V)
     rw [Condition.fv_dis, Finset.union_subset_iff] at hfv
     have hfvcl : Condition.fvL cl ⊆ X ∪ Ul := DRS.fv_subset_iff.mp hfv.1
     have hfvcr : Condition.fvL cr ⊆ X ∪ Ur := DRS.fv_subset_iff.mp hfv.2
-    have hIHl : ∀ k : V → M, Condition.holdsAll cl k ↔
+    have hIHl : ∀ k : V → M, (∀ c ∈ cl, Embedding.VerifiesCondition k c) ↔
         Condition.holdsAllAt (X ∪ Ul) cl k :=
-      fun k => Condition.holdsAll_iff_holdsAllAt cl hrfl hfvcl k
-    have hIHr : ∀ k : V → M, Condition.holdsAll cr k ↔
+      fun k => Condition.verifiesAll_iff_holdsAllAt cl hrfl hfvcl k
+    have hIHr : ∀ k : V → M, (∀ c ∈ cr, Embedding.VerifiesCondition k c) ↔
         Condition.holdsAllAt (X ∪ Ur) cr k :=
-      fun k => Condition.holdsAll_iff_holdsAllAt cr hrfr hfvcr k
-    simp only [Condition.holds_dis, Condition.holdsAt_dis]
+      fun k => Condition.verifiesAll_iff_holdsAllAt cr hrfr hfvcr k
+    simp only [Embedding.verifies_dis, Condition.holdsAt_dis]
     constructor
-    · rintro ⟨k, hk | hk⟩
+    · rintro (⟨k, hk⟩ | ⟨k, hk⟩)
       · exact ⟨k, Or.inl (DRS.toRelAt_of_toRel' hXUl hIHl hk)⟩
       · exact ⟨k, Or.inr (DRS.toRelAt_of_toRel' hXUr hIHr hk)⟩
     · rintro ⟨k, hk | hk⟩
-      · exact ⟨_, Or.inl (DRS.toRel_of_toRelAt' hfvcl hIHl hk).1⟩
-      · exact ⟨_, Or.inr (DRS.toRel_of_toRelAt' hfvcr hIHr hk).1⟩
-/-- The list analogue of `Condition.holds_iff_holdsAt`. -/
-theorem Condition.holdsAll_iff_holdsAllAt {X : Finset V} (cs : List (Condition L V))
+      · exact Or.inl ⟨_, (DRS.toRel_of_toRelAt' hfvcl hIHl hk).1⟩
+      · exact Or.inr ⟨_, (DRS.toRel_of_toRelAt' hfvcr hIHr hk).1⟩
+/-- The list analogue of `Condition.verifies_iff_holdsAt`. -/
+theorem Condition.verifiesAll_iff_holdsAllAt {X : Finset V} (cs : List (Condition L V))
     (hrf : Condition.ReuseFreeAllAt X cs) (hfv : Condition.fvL cs ⊆ X) (g : V → M) :
-    Condition.holdsAll cs g ↔ Condition.holdsAllAt X cs g := by
+    (∀ c ∈ cs, Embedding.VerifiesCondition g c) ↔ Condition.holdsAllAt X cs g := by
   match cs with
-  | [] => exact Iff.rfl
+  | [] => simp
   | c :: cs =>
     simp only [Condition.reuseFreeAllAt_cons] at hrf
     rw [Condition.fvL_cons, Finset.union_subset_iff] at hfv
-    exact and_congr (Condition.holds_iff_holdsAt c hrf.1 hfv.1 g)
-      (Condition.holdsAll_iff_holdsAllAt cs hrf.2 hfv.2 g)
+    simp only [List.forall_mem_cons, Condition.holdsAllAt_cons]
+    exact and_congr (Condition.verifies_iff_holdsAt c hrf.1 hfv.1 g)
+      (Condition.verifiesAll_iff_holdsAllAt cs hrf.2 hfv.2 g)
 end
 
 /-- Flat-to-indexed: on a reuse-free DRS every flat output is a indexed output. -/
@@ -632,7 +635,7 @@ theorem DRS.toRelAt_of_toRel {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt
   obtain ⟨U, conds⟩ := K
   simp only [DRS.reuseFreeAt_mk] at hrf
   exact DRS.toRelAt_of_toRel' hrf.1
-    (fun k => Condition.holdsAll_iff_holdsAllAt conds hrf.2 (DRS.fv_subset_iff.mp hfv) k) h
+    (fun k => Condition.verifiesAll_iff_holdsAllAt conds hrf.2 (DRS.fv_subset_iff.mp hfv) k) h
 
 /-- Indexed-to-flat: on a reuse-free DRS a indexed output repairs, off the grown
 base, into a flat output. -/
@@ -642,7 +645,7 @@ theorem DRS.toRel_of_toRelAt {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt
   obtain ⟨U, conds⟩ := K
   simp only [DRS.reuseFreeAt_mk] at hrf
   exact ⟨_, DRS.toRel_of_toRelAt' (DRS.fv_subset_iff.mp hfv)
-    (fun k => Condition.holdsAll_iff_holdsAllAt conds hrf.2 (DRS.fv_subset_iff.mp hfv) k) h⟩
+    (fun k => Condition.verifiesAll_iff_holdsAllAt conds hrf.2 (DRS.fv_subset_iff.mp hfv) k) h⟩
 
 /-- **Truth-level reconciliation** (Muskens's fn. 4): on a reuse-free
 DRS the flat total-assignment semantics and the indexed persistence semantics

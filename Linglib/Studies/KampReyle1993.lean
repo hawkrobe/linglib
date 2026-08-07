@@ -59,7 +59,7 @@ abbrev rm {n} (R : krLang.Relations n) (x : Fin n → M) : Prop := Structure.Rel
 
 /-- Reindex a composed vector argument componentwise: with `comp_vecEmpty`, folds
 `fun i => v (![k₁, …] i)` to `![v k₁, …]`, so truth-condition proofs work with the
-atoms' assigned values directly. Point-ful because `Condition.holds_rel` produces
+atoms' assigned values directly. Point-ful because `Embedding.verifies_rel` produces
 the eta-expanded form, which the point-free mathlib lemmas (`Fin.comp_cons`,
 `FinVec.map_eq`) do not match. -/
 private theorem comp_vecCons {α β : Type*} (v : α → β) (k : α) {n : ℕ} (t : Fin n → α) :
@@ -83,8 +83,9 @@ def persistence : DRS krLang ℕ :=
 that is a man, walked in, and sat down. -/
 theorem persistence_tc (a : ℕ → M) :
     DRS.trueRel persistence a ↔ ∃ e : M, rm .man ![e] ∧ rm .walkedIn ![e] ∧ rm .satDown ![e] := by
-  simp only [DRS.trueRel_iff, persistence, DRS.toRel_mk, Condition.holdsAll_cons,
-    Condition.holdsAll_nil, Condition.holds_rel, comp_vecCons, comp_vecEmpty, and_true]
+  simp only [DRS.trueRel_iff, persistence, DRS.toRel_iff, DRS.Extends, DRS.referents_mk,
+    Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil, false_implies,
+    implies_true, Embedding.verifies_rel, comp_vecCons, comp_vecEmpty, and_true]
   constructor
   · rintro ⟨a', _, hm, hw, hs⟩; exact ⟨a' 1, hm, hw, hs⟩
   · rintro ⟨e, hm, hw, hs⟩
@@ -112,21 +113,22 @@ theorem donkey_universal_reading (a : ℕ → M) :
     DRS.trueRel donkey a ↔
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
       rm .beats ![e₁, e₂] := by
-  simp only [DRS.trueRel_iff, donkey, donkeyAnte, donkeyCons, DRS.toRel_mk,
-    Condition.holdsAll_cons, Condition.holdsAll_nil, Condition.holds_imp, Condition.holds_rel,
+  simp only [DRS.trueRel_iff, donkey, donkeyAnte, donkeyCons, DRS.toRel_iff, DRS.Extends,
+    DRS.referents_mk, Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil,
+    false_implies, implies_true, Embedding.verifies_imp, Embedding.verifies_rel,
     comp_vecCons, comp_vecEmpty, and_true]
   constructor
   · rintro ⟨a', _, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
     set v' := Function.update (Function.update a' 1 e₁) 2 e₂ with hv'
     have h1 : v' 1 = e₁ := by simp [hv', Function.update_of_ne, Function.update_self]
     have h2 : v' 2 = e₂ := by simp [hv', Function.update_self]
-    obtain ⟨v'', hag, hb⟩ := himp v' ⟨fun x hx => by
+    obtain ⟨v'', hag, hb⟩ := himp v' (fun x hx => by
         simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hx
-        simp [hv', Function.update_of_ne hx.1, Function.update_of_ne hx.2],
-      by rw [h1]; exact hf, by rw [h2]; exact hd, by rw [h1, h2]; exact ho⟩
+        simp [hv', Function.update_of_ne hx.1, Function.update_of_ne hx.2])
+      ⟨by rw [h1]; exact hf, by rw [h2]; exact hd, by rw [h1, h2]; exact ho⟩
     simpa [hag 1 (by simp), hag 2 (by simp), h1, h2] using hb
   · intro hall
-    exact ⟨a, fun _ _ => rfl, fun v' ⟨_, hf, hd, ho⟩ =>
+    exact ⟨a, fun _ _ => rfl, fun v' _ ⟨hf, hd, ho⟩ =>
       ⟨v', fun _ _ => rfl, hall (v' 1) (v' 2) ⟨hf, hd, ho⟩⟩⟩
 
 /-! ### Negation blocks anaphora -/
@@ -139,9 +141,10 @@ def negation : DRS krLang ℕ := .mk ∅ [.neg negInner]
 is bound inside the negation and inaccessible to any continuation. -/
 theorem negation_tc (a : ℕ → M) :
     DRS.trueRel negation a ↔ ¬ ∃ e : M, rm .man ![e] ∧ rm .walkedIn ![e] := by
-  simp only [DRS.trueRel_iff, negation, negInner, DRS.toRel_mk, Condition.holdsAll_cons,
-    Condition.holdsAll_nil, Condition.holds_neg, Condition.holds_rel, comp_vecCons,
-    comp_vecEmpty, and_true]
+  simp only [DRS.trueRel_iff, negation, negInner, DRS.toRel_iff, DRS.Extends,
+    DRS.referents_mk, Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil,
+    false_implies, implies_true, Embedding.verifies_neg, Embedding.verifies_rel,
+    comp_vecCons, comp_vecEmpty, and_true]
   constructor
   · rintro ⟨a', _, hneg⟩ ⟨e, hm, hw⟩
     exact hneg ⟨Function.update a' 1 e, fun x hx => by

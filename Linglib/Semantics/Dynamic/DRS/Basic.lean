@@ -199,6 +199,20 @@ end
   | nil => simp [Condition.occL]
   | cons c cs ih => simp [Condition.occL, ih, Finset.union_assoc]
 
+/-- A DRS's conditions' occurring referents are among the DRS's. -/
+theorem DRS.occL_subset_occ (K : DRS L V) : Condition.occL K.conditions ⊆ K.occ := by
+  cases K; exact Finset.subset_union_right
+
+/-- A condition's occurring referents are among its list's. -/
+theorem Condition.occ_subset_occL {c : Condition L V} {cs : List (Condition L V)}
+    (hc : c ∈ cs) : c.occ ⊆ Condition.occL cs := by
+  induction cs with
+  | nil => cases hc
+  | cons d ds ih =>
+    rcases List.mem_cons.mp hc with h | h
+    · exact h ▸ Finset.subset_union_left
+    · exact (ih h).trans Finset.subset_union_right
+
 end Occ
 
 /-! ### Free discourse referents and properness -/
