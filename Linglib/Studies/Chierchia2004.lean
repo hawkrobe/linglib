@@ -37,7 +37,10 @@ version); the published chapter may renumber. Where the paper's scalar
 assertion `σ` negates the *weakest* alternative asymmetrically entailing the
 target (⊥ if none), the definitions below negate *all* strictly stronger
 alternatives — equivalent on the linearly ordered scales the paper works with,
-since negating the weakest stronger member entails negating the rest.
+since negating the weakest stronger member entails negating the rest. The
+appendix's `‖α‖^S` is a *set* of admissible strong meanings (implicature
+addition at a scope site is optional); `Meaning.strong` tracks the maximal
+admissible strengthening, the path the paper's own computations follow.
 -/
 
 namespace Chierchia2004
@@ -48,9 +51,10 @@ variable {World : Type*}
 
 /-! ### Strengthened meanings -/
 
-/-- A propositional node of a derivation: the plain value `‖α‖`, the
-strengthened value `‖α‖^S`, and the active scalar alternatives. -/
-structure StrengthenedMeaning (World : Type*) where
+/-- The semantic values the parallel recursion assigns to a propositional
+node: the plain value `‖α‖`, the strengthened value `‖α‖^S`, and the active
+scalar alternatives. -/
+structure Meaning (World : Type*) where
   /-- The plain semantic value `‖α‖`. -/
   plain : Set World
   /-- The strengthened semantic value `‖α‖^S`. -/
@@ -59,20 +63,20 @@ structure StrengthenedMeaning (World : Type*) where
   alternatives : Set (Set World)
 
 /-- (73a): a lexical item's strong meaning is its plain meaning. -/
-def StrengthenedMeaning.lexical (φ : Set World) (ALT : Set (Set World)) :
-    StrengthenedMeaning World :=
+def Meaning.lexical (φ : Set World) (ALT : Set (Set World)) :
+    Meaning World :=
   ⟨φ, φ, ALT⟩
 
 /-- The Strength Condition (§3.1): the strong value entails the plain value,
 `sm.strong ⊆ sm.plain`. -/
-def StrengthenedMeaning.StrengthCondition (sm : StrengthenedMeaning World) : Prop :=
+def Meaning.StrengthCondition (sm : Meaning World) : Prop :=
   sm.strong ⊆ sm.plain
 
 /-! ### Krifka's rule -/
 
 /-- Krifka's rule (75): at a scope site, conjoin the plain value with the
 negations of its strictly stronger alternatives. -/
-def krifkaRule (φ : Set World) (ALT : Set (Set World)) : StrengthenedMeaning World where
+def krifkaRule (φ : Set World) (ALT : Set (Set World)) : Meaning World where
   plain := φ
   strong := φ ∩ ⋂ a ∈ {a ∈ ALT | a ⊂ φ}, aᶜ
   alternatives := ALT
@@ -121,7 +125,7 @@ a *weaker* matrix value, so keeping a direct implicature under DE embedding
 would violate the Strength Condition — implicatures are suspended in exactly
 the *any*-licensing environments. -/
 theorem si_npi_generalization {f : Set World → Set World} (hDE : IsDE f)
-    {g : StrengthenedMeaning World} (hg : g.StrengthCondition) :
+    {g : Meaning World} (hg : g.StrengthCondition) :
     f g.plain ⊆ f g.strong :=
   hDE hg
 
@@ -135,8 +139,8 @@ theorem de_blocks_direct_si {f : Set World → Set World} (hDE : IsDE f)
 
 /-- Strong Application (84), non-DE clause: `‖[β γ]‖^S = ‖β‖^S(‖γ‖^S)`, with
 alternatives projected pointwise through the function ((82b)). -/
-def strongApplyUE (f fS : Set World → Set World) (g : StrengthenedMeaning World) :
-    StrengthenedMeaning World where
+def strongApplyUE (f fS : Set World → Set World) (g : Meaning World) :
+    Meaning World where
   plain := f g.plain
   strong := fS g.strong
   alternatives := f '' g.alternatives
@@ -145,15 +149,15 @@ def strongApplyUE (f fS : Set World → Set World) (g : StrengthenedMeaning Worl
 *plain* argument — stripping the argument's direct implicatures — and negate the
 strictly stronger matrix-level images of its alternatives (the indirect
 implicatures). -/
-def strongApplyDE (f fS : Set World → Set World) (g : StrengthenedMeaning World) :
-    StrengthenedMeaning World where
+def strongApplyDE (f fS : Set World → Set World) (g : Meaning World) :
+    Meaning World where
   plain := f g.plain
   strong := fS g.plain ∩ ⋂ a ∈ {a ∈ g.alternatives | f a ⊂ f g.plain}, (f a)ᶜ
   alternatives := f '' g.alternatives
 
 @[simp]
 theorem mem_strongApplyDE_strong {f fS : Set World → Set World}
-    {g : StrengthenedMeaning World} {w : World} :
+    {g : Meaning World} {w : World} :
     w ∈ (strongApplyDE f fS g).strong ↔
       w ∈ fS g.plain ∧ ∀ a ∈ g.alternatives, f a ⊂ f g.plain → w ∉ f a := by
   simp [strongApplyDE]
@@ -161,7 +165,7 @@ theorem mem_strongApplyDE_strong {f fS : Set World → Set World}
 /-- The non-DE clause of (84) preserves the Strength Condition when the
 function's strengthening entails its plain value and the function is UE. -/
 theorem strongApplyUE_strengthCondition {f fS : Set World → Set World}
-    (hf : IsUE f) (hfS : ∀ X, fS X ⊆ f X) {g : StrengthenedMeaning World}
+    (hf : IsUE f) (hfS : ∀ X, fS X ⊆ f X) {g : Meaning World}
     (hg : g.StrengthCondition) :
     (strongApplyUE f fS g).StrengthCondition :=
   λ _ hw => hf hg (hfS g.strong hw)
@@ -169,7 +173,7 @@ theorem strongApplyUE_strengthCondition {f fS : Set World → Set World}
 /-- The DE clause of (84) satisfies the Strength Condition by construction: it
 already falls back to the plain argument. -/
 theorem strongApplyDE_strengthCondition {f fS : Set World → Set World}
-    (hfS : ∀ X, fS X ⊆ f X) (g : StrengthenedMeaning World) :
+    (hfS : ∀ X, fS X ⊆ f X) (g : Meaning World) :
     (strongApplyDE f fS g).StrengthCondition :=
   λ _ hw => hfS g.plain hw.1
 
@@ -220,7 +224,7 @@ theorem doubt_and_indirect_implicature :
   have hoc : drinkOrDriveᶜ ⊂ drinkAndDriveᶜ :=
     compl_lt_compl_iff_lt.mpr drinkAndDrive_ssubset
   ext w
-  simp only [mem_strongApplyDE_strong, StrengthenedMeaning.lexical,
+  simp only [mem_strongApplyDE_strong, Meaning.lexical,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
     Set.mem_inter_iff]
   exact ⟨λ ⟨hw, _, ho⟩ => ⟨hw, Set.notMem_compl_iff.1 (ho hoc)⟩,
@@ -246,7 +250,7 @@ def anyAndClosure : Set (Bool × Bool × Bool) :=
 
 /-- The *some*-competitor of (128): "I doubt that John ate the cake and drank
 some coffee" ((129a)), strengthened by the DE clause of (84). -/
-def someAndCompetitor : StrengthenedMeaning (Bool × Bool × Bool) :=
+def someAndCompetitor : Meaning (Bool × Bool × Bool) :=
   strongApplyDE compl compl
     (.lexical (ateCake ∩ drankC1) {ateCake ∩ drankC1, ateCake ∪ drankC1})
 
@@ -263,7 +267,7 @@ theorem someAndCompetitor_strong :
   have hoc : (ateCake ∪ drankC1)ᶜ ⊂ (ateCake ∩ drankC1)ᶜ :=
     compl_lt_compl_iff_lt.mpr cakeAnd_ssubset
   ext w
-  simp only [someAndCompetitor, mem_strongApplyDE_strong, StrengthenedMeaning.lexical,
+  simp only [someAndCompetitor, mem_strongApplyDE_strong, Meaning.lexical,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
     Set.mem_inter_iff]
   exact ⟨λ ⟨hw, _, ho⟩ => ⟨hw, Set.notMem_compl_iff.1 (ho hoc)⟩,
@@ -291,7 +295,7 @@ def anyOrClosure : Set (Bool × Bool × Bool) :=
 
 /-- The *some*-competitor of (130): under *doubt*, *or* is the strongest member
 of its scale, so no indirect implicature arises. -/
-def someOrCompetitor : StrengthenedMeaning (Bool × Bool × Bool) :=
+def someOrCompetitor : Meaning (Bool × Bool × Bool) :=
   strongApplyDE compl compl
     (.lexical (ateCake ∪ drankC1) {ateCake ∩ drankC1, ateCake ∪ drankC1})
 
@@ -300,7 +304,7 @@ strongest member of a scale triggers no implicature. -/
 theorem someOrCompetitor_strong :
     someOrCompetitor.strong = (ateCake ∪ drankC1)ᶜ := by
   ext w
-  simp only [someOrCompetitor, mem_strongApplyDE_strong, StrengthenedMeaning.lexical,
+  simp only [someOrCompetitor, mem_strongApplyDE_strong, Meaning.lexical,
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
   refine ⟨λ ⟨hw, _, _⟩ => hw, λ hw => ⟨hw, λ hss => ?_, λ hss => absurd rfl hss.ne⟩⟩
   exact absurd (compl_lt_compl_iff_lt.1 hss) (λ hlt => hlt.not_subset (λ _ h => Or.inl h.1))
