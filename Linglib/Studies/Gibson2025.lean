@@ -1,4 +1,4 @@
-import Linglib.Syntax.DependencyGrammar.NonProjective
+import Linglib.Syntax.DependencyGrammar.Projectivity
 import Linglib.Syntax.DependencyGrammar.Length
 import Linglib.Data.WALS.Features.F95A
 import Linglib.Data.UD.Basic

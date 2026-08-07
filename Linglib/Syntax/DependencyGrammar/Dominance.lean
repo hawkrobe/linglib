@@ -6,67 +6,29 @@ Authors: Robert Hawkins
 import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Core.Relation.ReflTransGen
 import Mathlib.Logic.Relation
-import Mathlib.Data.List.Sort
 
 /-!
-# Projections of dependency graphs
+# Dominance
 
-BFS-computed projections (yields) of positions, their interval/gap/block
-analysis, and Prop-level dominance as the reflexive-transitive closure of
-the graph adjacency, bridged to BFS membership.
-[kuhlmann-nivre-2006], [kuhlmann-2013].
+Dominance as the reflexive-transitive closure of the arc relation, the
+projection (yield) it induces, tree well-formedness, and the order
+theory of dominance on trees ([kuhlmann-nivre-2006] §2).
 
 ## Main declarations
 
-* `projection`, `Dominates` — the computable yield and its Prop-level
-  counterpart (reachability in `Graph.toDigraph`).
-* `mem_projection_iff` — projection membership is dominance, by
-  construction (decidable dominance via `Core/Relation/ReflTransGen.lean`).
-* `gapDegreeAt`, `Graph.gapDegree`, `blockDegreeAt`, `Graph.blockDegree`,
-  `isProjective` — the projectivity hierarchy.
-
-## Implementation notes
-
-* `insertionSort`, not `mergeSort`: the former is structurally recursive and
-  reduces under `decide`/`rfl`; `mergeSort` uses well-founded recursion and
-  does not reduce in the kernel.
-* The interval/gap/block combinatorics is stated over `List Nat`
-  (projection values), independent of the graph carrier.
+* `Dominates`, `projection`, `mem_projection_iff` — the dominance
+  relation (decidable via `Core/Relation/ReflTransGen.lean`), the yield
+  of a position in ascending order, and the bridge between them.
+* `Graph.IsTree` — no arc into the root, unique heads elsewhere,
+  acyclicity; decidable.
+* `Dominates.antisymm`, `Dominates.to_head`, `Dominates.comparable` —
+  on trees dominance is a partial order under which the dominators of
+  any position form a chain.
 -/
 
 namespace DependencyGrammar
 
-/-! ### Interval combinatorics on sorted position lists -/
-
-/-- Whether a sorted list of positions forms an interval with no internal
-    gaps. A projection is an interval iff its node has gap degree 0. -/
-def isInterval (sorted : List Nat) : Bool :=
-  match sorted with
-  | [] | [_] => true
-  | _ => sorted.getLast! - sorted.head! + 1 == sorted.length
-
-/-- The **gaps** in a sorted projection: adjacent pairs (jₖ, jₖ₊₁) with
-    jₖ₊₁ − jₖ > 1. ([kuhlmann-nivre-2006], Definition 6) -/
-def gaps (sorted : List Nat) : List (Nat × Nat) :=
-  sorted.zip (sorted.drop 1) |>.filter λ (a, b) => b - a > 1
-
-/-- The **blocks** of a sorted projection: maximal contiguous segments.
-    The number of blocks equals gap degree + 1 and corresponds to the
-    fan-out of the LCFRS rule extracted for that node. -/
-def blocks : List Nat → List (List Nat)
-  | [] => []
-  | [a] => [[a]]
-  | a :: b :: rest =>
-    if b = a + 1 then
-      match blocks (b :: rest) with
-      | [] => [[a]]
-      | first :: remaining => (a :: first) :: remaining
-    else [a] :: blocks (b :: rest)
-
-
-/-! ### Dominance and projection -/
-
-section Projection
+section Dominance
 
 variable {n : ℕ}
 
@@ -107,9 +69,8 @@ theorem Dominates.head_induction_on {g : Graph n} {v x : Fin n}
   Relation.ReflTransGen.head_induction_on h refl step
 
 /-- **Projection** π(v): the yield of position v — all positions it
-    dominates, including itself — in ascending position order.
-    ([kuhlmann-nivre-2006], Definition 3: a graph is projective iff every
-    projection is an interval.) -/
+    dominates, including itself — in ascending position order
+    ([kuhlmann-nivre-2006] §2). -/
 def projection (g : Graph n) (v : Fin n) : List (Fin n) :=
   (List.finRange n).filter (λ x => decide (Dominates g v x))
 
@@ -117,42 +78,6 @@ def projection (g : Graph n) (v : Fin n) : List (Fin n) :=
 @[simp] theorem mem_projection_iff {g : Graph n} {v x : Fin n} :
     x ∈ projection g v ↔ Dominates g v x := by
   simp [projection]
-
-/-- The projection as position values, for the interval combinatorics. -/
-def projectionVals (g : Graph n) (v : Fin n) : List Nat :=
-  (projection g v).map (·.val)
-
-/-- The projection is strictly increasing: it filters the ascending
-    `finRange`. -/
-theorem projection_chain (g : Graph n) (v : Fin n) :
-    (projectionVals g v).IsChain (· < ·) := by
-  refine List.isChain_iff_pairwise.mpr (List.Pairwise.map _ (λ a b h => h) ?_)
-  exact (List.pairwise_lt_finRange n).filter _
-
-/-- **Gap degree** of a position. ([kuhlmann-nivre-2006], Definition 6) -/
-def gapDegreeAt (g : Graph n) (v : Fin n) : Nat :=
-  (gaps (projectionVals g v)).length
-
-/-- **Gap degree** of a graph: max over positions.
-    ([kuhlmann-nivre-2006], Definition 7). Gap degree 0 ⟺ projective. -/
-def Graph.gapDegree (g : Graph n) : Nat :=
-  (List.finRange n).map (gapDegreeAt g) |>.foldl max 0
-
-/-- **Block-degree** of a position: blocks in its projection.
-    Block-degree = gap degree + 1 = fan-out of the extracted LCFRS rule. -/
-def blockDegreeAt (g : Graph n) (v : Fin n) : Nat :=
-  (blocks (projectionVals g v)).length
-
-/-- **Block-degree** of a graph: max over positions. Block-degree 1 ⟺
-    projective. Bounded block-degree + well-nestedness give polynomial
-    parsing ([kuhlmann-2013], Lemma 10). -/
-def Graph.blockDegree (g : Graph n) : Nat :=
-  (List.finRange n).map (blockDegreeAt g) |>.foldl max 0
-
-/-- **Projectivity**: every projection is an interval.
-    ([kuhlmann-nivre-2006], Definition 3) -/
-def isProjective (g : Graph n) : Bool :=
-  (List.finRange n).all λ v => isInterval (projectionVals g v)
 
 /-! ### Well-formedness -/
 
@@ -181,6 +106,8 @@ instance (g : Graph n) (w : Fin n) : Decidable (∃! v, g.Adj v w) :=
 instance (g : Graph n) : Decidable g.IsTree :=
   decidable_of_iff _ (g.isTree_iff).symm
 
+/-! ### Dominance as an order on trees -/
+
 /-- No arc closes a dominance cycle, on acyclic graphs. -/
 theorem not_adj_dominates {g : Graph n}
     (hacyc : ∀ v, ¬ Relation.TransGen g.Adj v v)
@@ -195,6 +122,32 @@ theorem Dominates.antisymm {g : Graph n}
   · rfl
   · exact absurd (huw.trans hwv) (λ h => not_adj_dominates hacyc hvu h)
 
-end Projection
+/-- A strict dominator of `y` dominates `y`'s head. -/
+theorem Dominates.to_head {g : Graph n} (hT : g.IsTree) {x y h : Fin n}
+    (hxy : Dominates g x y) (hne : x ≠ y) (hh : g.Adj h y) :
+    Dominates g x h := by
+  rcases Relation.ReflTransGen.cases_tail hxy with rfl | ⟨u, hxu, huy⟩
+  · exact absurd rfl hne
+  · have hyroot : y ≠ g.root := λ he => hT.not_adj_root u (he ▸ huy)
+    obtain ⟨z, _, hz⟩ := hT.existsUnique_adj y hyroot
+    exact ((hz u huy).trans (hz h hh).symm) ▸ hxu
+
+/-- On a tree, positions dominating a common position are comparable:
+    the dominators of any position form a chain. -/
+theorem Dominates.comparable {g : Graph n} (hT : g.IsTree) {v w x : Fin n}
+    (hv : Dominates g v x) (hw : Dominates g w x) :
+    Dominates g v w ∨ Dominates g w v := by
+  revert hw
+  induction hv with
+  | refl => exact λ hw => .inr hw
+  | @tail b y hb hby ih =>
+    intro hw
+    rcases Relation.ReflTransGen.cases_tail hw with rfl | ⟨u, hwu, huy⟩
+    · exact .inl (hb.tail hby)
+    · have hyroot : y ≠ g.root := λ he => hT.not_adj_root b (he ▸ hby)
+      obtain ⟨z, _, hz⟩ := hT.existsUnique_adj y hyroot
+      exact ih (((hz u huy).trans (hz b hby).symm) ▸ hwu)
+
+end Dominance
 
 end DependencyGrammar
