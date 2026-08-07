@@ -109,6 +109,22 @@ theorem Meaning.strengthen_strong_eq_of_isGreatest {a₀ : Set World}
   exact ⟨λ ⟨hw, hall⟩ => ⟨hw, hall a₀ h.1.1 h.1.2⟩,
     λ ⟨hw, h₀⟩ => ⟨hw, λ a haA haφ hwa => h₀ (h.2 ⟨haA, haφ⟩ hwa)⟩⟩
 
+/-- A node none of whose alternatives is strictly stronger strengthens
+vacuously — the strongest member of a scale triggers no implicature ((130)). -/
+theorem Meaning.strengthen_strong_eq_of_not_ssubset
+    (h : ∀ a ∈ sm.alternatives, ¬a ⊂ sm.plain) :
+    sm.strengthen.strong = sm.strong :=
+  Set.ext λ _ => ⟨λ hw => hw.1,
+    λ hw => mem_strengthen_strong.2 ⟨hw, λ a ha hss => absurd hss (h a ha)⟩⟩
+
+/-- Strengthening over a pair scale whose second member is strictly stronger:
+the classic "φ but not ψ" implicature. -/
+theorem Meaning.strengthen_strong_lexical_pair {φ ψ : Set World} (h : ψ ⊂ φ) :
+    (Meaning.lexical φ {φ, ψ}).strengthen.strong = φ \ ψ := by
+  rw [Set.sdiff_eq]
+  exact Meaning.strengthen_strong_eq_of_isGreatest
+    ⟨⟨Or.inr rfl, h⟩, by rintro a ⟨rfl | rfl, ha⟩; exacts [absurd ha (lt_irrefl _), le_rfl]⟩
+
 /-! ### Scale axioms -/
 
 /-- An admissible context choice of scale for an uttered scalar term — the
@@ -177,6 +193,13 @@ theorem mem_strongApplyDE_strong :
       w ∈ fS g.plain ∧ ∀ a ∈ g.alternatives, f a ⊂ f g.plain → w ∉ f a := by
   simp [strongApplyDE, Meaning.map, Meaning.weaken]
 
+/-- (84) at a lexical argument: apply plainly and re-run Krifka's rule over the
+image scale. -/
+theorem strongApplyDE_lexical (f : Set World → Set World) (φ : Set World)
+    (ALT : Set (Set World)) :
+    strongApplyDE f f (.lexical φ ALT) = (Meaning.lexical (f φ) (f '' ALT)).strengthen :=
+  rfl
+
 /-- Agreement with (84)'s matrix-level `σ`: inherited from the (75) lemma, the
 DE clause being strengthening at the mapped node. -/
 theorem strongApplyDE_strong_eq_of_isGreatest {ψ₀ : Set World}
@@ -205,51 +228,39 @@ def sawSome : Set (Fin 3) := {w | w ≠ 0}
 /-- "John saw every student" — true only in the saw-all world. -/
 def sawEvery : Set (Fin 3) := {w | w = 2}
 
-theorem sawEvery_ssubset : sawEvery ⊂ sawSome := by
-  refine ssubset_iff_subset_not_subset.mpr ⟨λ w hw => ?_, λ h => ?_⟩
-  · simp only [sawEvery, Set.mem_setOf_eq] at hw
-    simp [sawSome, hw]
-  · exact absurd (h (show (1 : Fin 3) ∈ sawSome by simp [sawSome])) (by simp [sawEvery])
+theorem sawEvery_ssubset : sawEvery ⊂ sawSome :=
+  (Set.ssubset_iff_of_subset (λ w hw => by simp_all [sawEvery, sawSome])).mpr
+    ⟨1, by simp [sawSome], by simp [sawEvery]⟩
 
 /-- (74)–(76): strengthening the lexical node of "John saw some students"
 computes the direct implicature — some but not every. -/
 theorem some_not_all_implicature :
     (Meaning.lexical sawSome {sawSome, sawEvery}).strengthen.strong =
-      sawSome \ sawEvery := by
-  ext w
-  simp only [Meaning.mem_strengthen_strong, Meaning.lexical, Set.mem_insert_iff,
-    Set.mem_singleton_iff, Set.mem_sdiff, forall_eq_or_imp, forall_eq]
-  exact ⟨λ ⟨hw, _, he⟩ => ⟨hw, he sawEvery_ssubset⟩,
-    λ ⟨hw, he⟩ => ⟨hw, λ hss => absurd rfl hss.ne, λ _ => he⟩⟩
+      sawSome \ sawEvery :=
+  Meaning.strengthen_strong_lexical_pair sawEvery_ssubset
 
 /-! ### The doubt example -/
 
-/-- Worlds valuate ⟨John drinks, John drives⟩. -/
-def drinkAndDrive : Set (Bool × Bool) := {w | w.1 ∧ w.2}
+/-- "John drinks", over worlds valuating ⟨drinks, drives⟩. -/
+def drinks : Set (Bool × Bool) := {w | w.1}
 
-/-- The *or*-alternative of `drinkAndDrive` on the ⟨or, and⟩ scale. -/
-def drinkOrDrive : Set (Bool × Bool) := {w | w.1 ∨ w.2}
+/-- "John drives". -/
+def drives : Set (Bool × Bool) := {w | w.2}
 
-theorem drinkAndDrive_ssubset : drinkAndDrive ⊂ drinkOrDrive := by
-  refine ssubset_iff_subset_not_subset.mpr
-    ⟨λ w hw => Or.inl hw.1, λ h => ?_⟩
-  exact absurd (h (show (true, false) ∈ drinkOrDrive from Or.inl rfl)) (by simp [drinkAndDrive])
+theorem drinks_ne_drives : drinks ≠ drives :=
+  λ h => by simpa [drinks, drives] using Set.ext_iff.1 h (true, false)
 
 /-- The (81)–(83) computation: embedding "John drinks and drives" under DE
 *doubt* (modelled as complement) yields the indirect implicature (83b) — doubt
 the conjunction yet believe the disjunction. -/
 theorem doubt_and_indirect_implicature :
     (strongApplyDE compl compl
-        (.lexical drinkAndDrive {drinkAndDrive, drinkOrDrive})).strong =
-      drinkAndDriveᶜ ∩ drinkOrDrive := by
-  have hoc : drinkOrDriveᶜ ⊂ drinkAndDriveᶜ :=
-    compl_lt_compl_iff_lt.mpr drinkAndDrive_ssubset
-  ext w
-  simp only [mem_strongApplyDE_strong, Meaning.lexical,
-    Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
-    Set.mem_inter_iff]
-  exact ⟨λ ⟨hw, _, ho⟩ => ⟨hw, Set.notMem_compl_iff.1 (ho hoc)⟩,
-    λ ⟨hw, ho⟩ => ⟨hw, λ hss => absurd rfl hss.ne, λ _ => Set.notMem_compl_iff.2 ho⟩⟩
+        (.lexical (drinks ∩ drives) {drinks ∩ drives, drinks ∪ drives})).strong =
+      (drinks ∩ drives)ᶜ ∩ (drinks ∪ drives) := by
+  have h : (drinks ∪ drives)ᶜ ⊂ (drinks ∩ drives)ᶜ :=
+    compl_lt_compl_iff_lt.2 (inf_lt_sup.2 drinks_ne_drives)
+  rw [strongApplyDE_lexical, Set.image_pair,
+    Meaning.strengthen_strong_lexical_pair h, Set.sdiff_compl]
 
 /-! ### Intervention -/
 
@@ -275,24 +286,18 @@ def someAndCompetitor : Meaning (Bool × Bool × Bool) :=
   strongApplyDE compl compl
     (.lexical (ateCake ∩ drankC1) {ateCake ∩ drankC1, ateCake ∪ drankC1})
 
-theorem cakeAnd_ssubset : ateCake ∩ drankC1 ⊂ ateCake ∪ drankC1 := by
-  refine ssubset_iff_subset_not_subset.mpr
-    ⟨λ w hw => Or.inl hw.1, λ h => ?_⟩
-  exact absurd (h (show (true, false, false) ∈ ateCake ∪ drankC1 from Or.inl rfl))
-    (by simp [ateCake, drankC1])
+theorem ateCake_ne_drankC1 : ateCake ≠ drankC1 :=
+  λ h => by simpa [ateCake, drankC1] using Set.ext_iff.1 h (true, false, false)
 
 /-- (129b): the competitor's strong meaning — doubt the conjunction yet believe
 John did one of the two. -/
 theorem someAndCompetitor_strong :
     someAndCompetitor.strong = (ateCake ∩ drankC1)ᶜ ∩ (ateCake ∪ drankC1) := by
-  have hoc : (ateCake ∪ drankC1)ᶜ ⊂ (ateCake ∩ drankC1)ᶜ :=
-    compl_lt_compl_iff_lt.mpr cakeAnd_ssubset
-  ext w
-  simp only [someAndCompetitor, mem_strongApplyDE_strong, Meaning.lexical,
-    Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
-    Set.mem_inter_iff]
-  exact ⟨λ ⟨hw, _, ho⟩ => ⟨hw, Set.notMem_compl_iff.1 (ho hoc)⟩,
-    λ ⟨hw, ho⟩ => ⟨hw, λ hss => absurd rfl hss.ne, λ _ => Set.notMem_compl_iff.2 ho⟩⟩
+  have h : (ateCake ∪ drankC1)ᶜ ⊂ (ateCake ∩ drankC1)ᶜ :=
+    compl_lt_compl_iff_lt.2 (inf_lt_sup.2 ateCake_ne_drankC1)
+  simp only [someAndCompetitor]
+  rw [strongApplyDE_lexical, Set.image_pair,
+    Meaning.strengthen_strong_lexical_pair h, Set.sdiff_compl]
 
 /-- (127)/(128): *any* is blocked under *doubt … and*. The universal closure
 fails to entail the competitor's *strong* meaning — the indirect implicature of
@@ -324,11 +329,12 @@ def someOrCompetitor : Meaning (Bool × Bool × Bool) :=
 strongest member of a scale triggers no implicature. -/
 theorem someOrCompetitor_strong :
     someOrCompetitor.strong = (ateCake ∪ drankC1)ᶜ := by
-  ext w
-  simp only [someOrCompetitor, mem_strongApplyDE_strong, Meaning.lexical,
-    Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
-  refine ⟨λ ⟨hw, _, _⟩ => hw, λ hw => ⟨hw, λ hss => ?_, λ hss => absurd rfl hss.ne⟩⟩
-  exact absurd (compl_lt_compl_iff_lt.1 hss) (λ hlt => hlt.not_subset (λ _ h => Or.inl h.1))
+  simp only [someOrCompetitor]
+  rw [strongApplyDE_lexical, Set.image_pair]
+  refine Meaning.strengthen_strong_eq_of_not_ssubset (λ a ha => ?_)
+  rcases ha with rfl | rfl
+  · exact λ hlt => lt_irrefl _ ((compl_lt_compl_iff_lt.1 hlt).trans_le inf_le_sup)
+  · exact lt_irrefl _
 
 /-- (130): *any* is licensed under *doubt … or* — the closure entails the
 competitor's strong meaning, which never gained an indirect implicature. -/
