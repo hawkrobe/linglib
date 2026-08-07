@@ -1,0 +1,676 @@
+[
+  {
+    "id": "lahiri1998_ex6a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(6a)"},
+    "language": "hind1269",
+    "primaryText": "koii bhii aayaa",
+    "glossedTokens": [
+      ["koii bhii", "anyone"], ["aayaa", "came"]
+    ],
+    "translation": "Anyone came.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "positive (UE)"]
+    ],
+    "comment": "Clausemate negation paradigm (4.1): NPI unlicensed in a positive episodic sentence."
+  },
+  {
+    "id": "lahiri1998_ex6b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(6b)"},
+    "language": "hind1269",
+    "primaryText": "koii bhii nahiiN aayaa",
+    "glossedTokens": [
+      ["koii bhii", "anyone"], ["nahiiN", "not"], ["aayaa", "came"]
+    ],
+    "translation": "No one came.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "negation"]
+    ],
+    "comment": "Subject NPI licensed by clausemate negation (4.1)."
+  },
+  {
+    "id": "lahiri1998_ex6c",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(6c)"},
+    "language": "hind1269",
+    "primaryText": "maiN-ne kisii-ko bhii dekhaa",
+    "glossedTokens": [
+      ["maiN-ne", "I-ERG"], ["kisii-ko bhii", "anyone"], ["dekhaa", "saw"]
+    ],
+    "translation": "I saw anyone.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "kisii-ko bhii"],
+      ["environment", "positive (UE)"]
+    ],
+    "comment": "Object NPI unlicensed in a positive sentence (4.1)."
+  },
+  {
+    "id": "lahiri1998_ex6d",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(6d)"},
+    "language": "hind1269",
+    "primaryText": "maiN-ne kisii-ko bhii nahiiN dekhaa",
+    "glossedTokens": [
+      ["maiN-ne", "I-ERG"], ["kisii-ko bhii", "anyone"], ["nahiiN", "not"], ["dekhaa", "saw"]
+    ],
+    "translation": "I didn't see anyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "kisii-ko bhii"],
+      ["environment", "negation"]
+    ],
+    "comment": "Object NPI licensed by clausemate negation (4.1)."
+  },
+  {
+    "id": "lahiri1998_ex7a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(7a)"},
+    "language": "hind1269",
+    "primaryText": "ek bhii aadmii aayaa",
+    "glossedTokens": [
+      ["ek bhii", "any"], ["aadmii", "man"], ["aayaa", "came"]
+    ],
+    "translation": "Any man came.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "positive (UE)"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "lahiri1998_ex7b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(7b)"},
+    "language": "hind1269",
+    "primaryText": "ek bhii aadmii nahiiN aayaa",
+    "glossedTokens": [
+      ["ek bhii", "any"], ["aadmii", "man"], ["nahiiN", "not"], ["aayaa", "came"]
+    ],
+    "translation": "No man came.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "negation"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "lahiri1998_ex8a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(8a)"},
+    "language": "hind1269",
+    "primaryText": "maiN-ne kuch bhii khaayaa",
+    "glossedTokens": [
+      ["maiN-ne", "I-ERG"], ["kuch bhii", "anything"], ["khaayaa", "ate"]
+    ],
+    "translation": "I ate anything.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "kuch bhii"],
+      ["environment", "positive (UE)"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "lahiri1998_ex8b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(8b)"},
+    "language": "hind1269",
+    "primaryText": "maiN-ne kuch bhii nahiiN khaayaa",
+    "glossedTokens": [
+      ["maiN-ne", "I-ERG"], ["kuch bhii", "anything"], ["nahiiN", "not"], ["khaayaa", "ate"]
+    ],
+    "translation": "I didn't eat anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "kuch bhii"],
+      ["environment", "negation"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "lahiri1998_ex9a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(9a)"},
+    "language": "hind1269",
+    "primaryText": "maiN-ne zaraa bhii khaanaa khaayaa",
+    "glossedTokens": [
+      ["maiN-ne", "I-ERG"], ["zaraa", "a little"], ["bhii", "even"], ["khaanaa", "food"],
+      ["khaayaa", "ate"]
+    ],
+    "translation": "I ate any food.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "zaraa bhii"],
+      ["environment", "positive (UE)"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "lahiri1998_ex9b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(9b)"},
+    "language": "hind1269",
+    "primaryText": "maiN-ne zaraa bhii khaanaa nahiiN khaayaa",
+    "glossedTokens": [
+      ["maiN-ne", "I-ERG"], ["zaraa", "a little"], ["bhii", "even"], ["khaanaa", "food"],
+      ["nahiiN", "not"], ["khaayaa", "ate"]
+    ],
+    "translation": "I didn't eat any food.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "zaraa bhii"],
+      ["environment", "negation"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "lahiri1998_ex10a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(10a)"},
+    "language": "hind1269",
+    "primaryText": "agar raam kisii-ko bhii dekhegaa to tumheN bataayegaa",
+    "glossedTokens": [
+      ["agar", "if"], ["raam", "Ram"], ["kisii-ko bhii", "anyone"], ["dekhegaa", "see-FUT"],
+      ["to", "then"], ["tumheN", "you"], ["bataayegaa", "tell-FUT"]
+    ],
+    "translation": "If Ram sees anyone, he will inform you.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "kisii-ko bhii"],
+      ["environment", "conditional protasis"]
+    ],
+    "comment": "NPIs licensed in the protasis of indicative and subjunctive conditionals (4.2)."
+  },
+  {
+    "id": "lahiri1998_ex10c",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(10c)"},
+    "language": "hind1269",
+    "primaryText": "agar raam aayegaa, to kuch bhii karegaa",
+    "glossedTokens": [
+      ["agar", "if"], ["raam", "Ram"], ["aayegaa", "come-FUT"], ["to", "then"],
+      ["kuch bhii", "anything"], ["karegaa", "do-FUT"]
+    ],
+    "translation": "If Ram comes, he will do anything.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "kuch bhii"],
+      ["environment", "conditional apodosis"]
+    ],
+    "comment": "NPI reading unavailable in the apodosis (4.2)."
+  },
+  {
+    "id": "lahiri1998_ex11a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(11a)"},
+    "language": "hind1269",
+    "primaryText": "aisaa har chaatr jisne ek bhii kitaab paRhii, paas ho gayaa",
+    "glossedTokens": [
+      ["aisaa", "such"], ["har", "every"], ["chaatr", "student"], ["jisne", "who"], ["ek", "one"],
+      ["bhii", "even"], ["kitaab", "book"], ["paRhii", "read"], ["paas ho gayaa", "passed"]
+    ],
+    "translation": "Every student who read any book passed.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "universal restrictor"]
+    ],
+    "comment": "NPIs allowed in the restriction of universal quantifiers, not the nuclear scope (4.3)."
+  },
+  {
+    "id": "lahiri1998_ex12a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(12a)"},
+    "language": "hind1269",
+    "primaryText": "aisaa koii chaatr jisne ek bhii kitaab paRhii, paas ho gayaa",
+    "glossedTokens": [
+      ["aisaa", "such"], ["koii", "some"], ["chaatr", "student"], ["jisne", "who"], ["ek", "one"],
+      ["bhii", "even"], ["kitaab", "book"], ["paRhii", "read"], ["paas ho gayaa", "passed"]
+    ],
+    "translation": "Some student who read any book passed.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "existential restrictor"]
+    ],
+    "comment": "Existential restrictors do not license NPIs (4.3)."
+  },
+  {
+    "id": "lahiri1998_ex29a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(29a)"},
+    "language": "hind1269",
+    "primaryText": "mujhe is baat par aaScarya huaa ki ek bhii aadmii tumhaare ghar gayaa",
+    "glossedTokens": [
+      ["mujhe", "me"], ["is baat par", "this fact on"], ["aaScarya", "surprise"], ["huaa", "be"],
+      ["ki", "that"], ["ek", "one"], ["bhii", "even"], ["aadmii", "person"], ["tumhaare", "your"],
+      ["ghar", "house"], ["gayaa", "went"]
+    ],
+    "translation": "I am surprised that anyone went to your house.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "adversative"]
+    ],
+    "comment": "Adversative predicate complements license NPIs; ek bhii and zaraa bhii are perfect there (4.5)."
+  },
+  {
+    "id": "lahiri1998_ex29b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(29b)"},
+    "language": "hind1269",
+    "primaryText": "mujhe is baat par aaScarya huaa ki koii bhii tumhaare ghar gayaa",
+    "glossedTokens": [
+      ["mujhe", "me"], ["is baat par", "this fact on"], ["aaScarya", "surprise"], ["huaa", "be"],
+      ["ki", "that"], ["koii bhii", "anyone"], ["tumhaare", "your"], ["ghar", "house"],
+      ["gayaa", "went"]
+    ],
+    "translation": "I am surprised that anyone went to your house.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "adversative"]
+    ],
+    "comment": "koii bhii and kuch bhii are sometimes slightly degraded under adversatives, but allowed (4.5)."
+  },
+  {
+    "id": "lahiri1998_ex29c",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(29c)"},
+    "language": "hind1269",
+    "primaryText": "maiN-ne rameS-ko kisii-se bhii baat-ciit karne-se manaa kiyaa",
+    "glossedTokens": [
+      ["maiN-ne", "I-ERG"], ["rameS-ko", "Rames"], ["kisii-se bhii", "anyone"],
+      ["baat-ciit karne-se", "talk"], ["manaa kiyaa", "prohibited"]
+    ],
+    "translation": "I prohibited Rames from talking to anyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "kisii-se bhii"],
+      ["environment", "prohibition verb"]
+    ],
+    "comment": "Object NPI in the scope of a prohibition verb (4.5); the paper also gives the variant (?)rokaa 'prevented'."
+  },
+  {
+    "id": "lahiri1998_ex29d",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(29d)"},
+    "language": "hind1269",
+    "primaryText": "maiN-ne kisii-ko bhii rameS-se baat-ciit karne-se manaa kiyaa",
+    "glossedTokens": [
+      ["maiN-ne", "I-ERG"], ["kisii-ko bhii", "anyone"], ["rameS-se", "Rames"],
+      ["baat-ciit karne-se", "talk"], ["manaa kiyaa", "prohibited"]
+    ],
+    "translation": "I prohibited anyone from talking to Rames.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "kisii-ko bhii"],
+      ["environment", "outside prohibition scope"]
+    ],
+    "comment": "The matrix object NPI is outside the DE scope of the prohibition verb (4.5); the paper also gives the variant rokaa 'prevented'."
+  },
+  {
+    "id": "lahiri1998_ex31a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(31a)"},
+    "language": "hind1269",
+    "primaryText": "maiN is baat par khuS huuN ki koii bhii mere ghar aayaa",
+    "glossedTokens": [
+      ["maiN", "I"], ["is baat par", "this fact on"], ["khuS", "happy"], ["huuN", "be"],
+      ["ki", "that"], ["koii bhii", "anyone"], ["mere", "my"], ["ghar", "house"],
+      ["aayaa", "came"]
+    ],
+    "translation": "I am glad that anyone came to my place.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "non-adversative factive"]
+    ],
+    "comment": "glad on the plain 'be happy' reading does not license NPIs (4.5)."
+  },
+  {
+    "id": "lahiri1998_ex31b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(31b)"},
+    "language": "hind1269",
+    "primaryText": "tum is baat se khuS raho ki koii bhii tumhaare ghar aayaa",
+    "glossedTokens": [
+      ["tum", "you"], ["is baat se", "this fact with"], ["khuS", "happy"], ["raho", "stay"],
+      ["ki", "that"], ["koii bhii", "anyone"], ["tumhaare", "your"], ["ghar", "house"],
+      ["aayaa", "came"]
+    ],
+    "translation": "Be glad that ANYONE came to your place.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "settle-for-less glad"]
+    ],
+    "comment": "The 'settle for less' reading of glad (marked by a different light verb) licenses NPIs (4.5)."
+  },
+  {
+    "id": "lahiri1998_ex32a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(32a)"},
+    "language": "hind1269",
+    "primaryText": "kisiike bhii aane-se pahle raam ghar calaa gayaa",
+    "glossedTokens": [
+      ["kisiike bhii", "anyone's"], ["aane-se", "coming"], ["pahle", "before"], ["raam", "Ram"],
+      ["ghar", "home"], ["calaa gayaa", "went"]
+    ],
+    "translation": "Ram went home before anyone came.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "kisiike bhii"],
+      ["environment", "before-clause"]
+    ],
+    "comment": "Before-clauses license NPIs; after-clauses do not (4.6)."
+  },
+  {
+    "id": "lahiri1998_ex34a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(34a)"},
+    "language": "hind1269",
+    "primaryText": "tumheN koii bhii kitaab pasand aayii kyaa?",
+    "glossedTokens": [
+      ["tumheN", "you"], ["koii bhii", "any"], ["kitaab", "book"], ["pasand aayii", "like"],
+      ["kyaa", "Q"]
+    ],
+    "translation": "Did you like any book?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "question"]
+    ],
+    "comment": "Yes-no and constituent questions license NPIs (4.7)."
+  },
+  {
+    "id": "lahiri1998_ex41a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(41a)"},
+    "language": "hind1269",
+    "primaryText": "koi bhii aadmii nahiiN aayaa",
+    "glossedTokens": [
+      ["koi bhii", "any"], ["aadmii", "man"], ["nahiiN", "not"], ["aayaa", "came"]
+    ],
+    "translation": "No one came.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "koi bhii"],
+      ["environment", "negation (subject NPI)"]
+    ],
+    "comment": "Hindi licenses subject NPIs under clausemate negation, unlike English (6)."
+  },
+  {
+    "id": "lahiri1998_ex35a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(35a)"},
+    "language": "hind1269",
+    "primaryText": "koii bhii aadmii is mez-ko uThaa letaa hai",
+    "glossedTokens": [
+      ["koii bhii", "any"], ["aadmii", "man"], ["is mez-ko", "this table"],
+      ["uThaa letaa hai", "lifts"]
+    ],
+    "translation": "Any man lifts this table.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "generic"]
+    ],
+    "comment": "Free-choice reading in generic contexts (5.1)."
+  },
+  {
+    "id": "lahiri1998_ex35b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(35b)"},
+    "language": "hind1269",
+    "primaryText": "koii bhii ulluu cuuhoN-kaa Sikaar karta hai",
+    "glossedTokens": [
+      ["koii bhii", "any"], ["ulluu", "owl"], ["cuuhoN-kaa", "mice"],
+      ["Sikaar karta hai", "hunts"]
+    ],
+    "translation": "Any owl hunts mice.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "generic"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "lahiri1998_ex35d",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(35d)"},
+    "language": "hind1269",
+    "primaryText": "ek bhii cingaarii ghar-ko jalaa detii hai",
+    "glossedTokens": [
+      ["ek", "one"], ["bhii", "even"], ["cingaarii", "spark"], ["ghar-ko", "house"],
+      ["jalaa detii hai", "burns"]
+    ],
+    "translation": "Even one spark burns/will burn the house.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "generic"]
+    ],
+    "comment": "Cardinality item in a generic context (5.1)."
+  },
+  {
+    "id": "lahiri1998_ex35e",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(35e)"},
+    "language": "hind1269",
+    "primaryText": "zaraa bhii zahar khaane-ko bigaaR detii hai",
+    "glossedTokens": [
+      ["zaraa", "a little"], ["bhii", "even"], ["zahar", "poison"], ["khaane-ko", "food"],
+      ["bigaaR detii hai", "spoils"]
+    ],
+    "translation": "Even a little poison spoils the food.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "zaraa bhii"],
+      ["environment", "generic"]
+    ],
+    "comment": "Measure item in a generic context (5.1)."
+  },
+  {
+    "id": "lahiri1998_ex36a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(36a)"},
+    "language": "hind1269",
+    "primaryText": "ek bhii aadmii is mez-ko uThaa saktaa hai",
+    "glossedTokens": [
+      ["ek", "one"], ["bhii", "even"], ["aadmii", "man"], ["is mez-ko", "this table"],
+      ["uThaa", "lift"], ["saktaa hai", "can"]
+    ],
+    "translation": "Even one person can lift this table.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "possibility modal"]
+    ],
+    "comment": "Possibility modals license the FC reading (5.2); repeated as (99a) in the section-8 contrast, where it carries a cardinality implicature."
+  },
+  {
+    "id": "lahiri1998_ex36b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(36b)"},
+    "language": "hind1269",
+    "primaryText": "koii bhii aadmii is mez-ko uThaa saktaa hai",
+    "glossedTokens": [
+      ["koii bhii", "any"], ["aadmii", "man"], ["is mez-ko", "this table"], ["uThaa", "lift"],
+      ["saktaa hai", "can"]
+    ],
+    "translation": "Anyone can lift this table.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "possibility modal"]
+    ],
+    "comment": "Repeated as (99b) in the section-8 contrast, with no cardinality implicature."
+  },
+  {
+    "id": "lahiri1998_ex36c",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(36c)"},
+    "language": "hind1269",
+    "primaryText": "tum kabhii bhii ghar jaa sakte ho",
+    "glossedTokens": [
+      ["tum", "you"], ["kabhii bhii", "anytime"], ["ghar", "home"], ["jaa", "go"],
+      ["sakte ho", "may"]
+    ],
+    "translation": "You may go home anytime.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "kabhii bhii"],
+      ["environment", "possibility modal"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "lahiri1998_ex36d",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(36d)"},
+    "language": "hind1269",
+    "primaryText": "kisii-ko bhii ghar jaanaa caahiye",
+    "glossedTokens": [
+      ["kisii-ko bhii", "anyone"], ["ghar", "home"], ["jaanaa", "go"], ["caahiye", "must"]
+    ],
+    "translation": "Anyone must go home.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "kisii-ko bhii"],
+      ["environment", "necessity modal"]
+    ],
+    "comment": "Necessity modals do not license the FC reading (5.2)."
+  },
+  {
+    "id": "lahiri1998_ex36e",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(36e)"},
+    "language": "hind1269",
+    "primaryText": "ek bhii aadmii-ko ghar jaanaa caahiye",
+    "glossedTokens": [
+      ["ek", "one"], ["bhii", "even"], ["aadmii-ko", "man"], ["ghar", "home"], ["jaanaa", "go"],
+      ["caahiye", "must"]
+    ],
+    "translation": "Even one person must go home.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "necessity modal"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "lahiri1998_ex39a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(39a)"},
+    "language": "hind1269",
+    "primaryText": "kuchh bhii khaa lo",
+    "glossedTokens": [
+      ["kuchh bhii", "anything"], ["khaa lo", "eat"]
+    ],
+    "translation": "Eat anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "kuchh bhii"],
+      ["environment", "imperative"]
+    ],
+    "comment": "Permission imperatives license the FC reading (5.4); the paper spells kuchh here vs kuch in (1)."
+  },
+  {
+    "id": "lahiri1998_ex39b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(39b)"},
+    "language": "hind1269",
+    "primaryText": "koii bhii seb uThaa lo",
+    "glossedTokens": [
+      ["koii bhii", "any"], ["seb", "apple"], ["uThaa lo", "pick"]
+    ],
+    "translation": "Pick any apple.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "imperative"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "lahiri1998_ex40a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(40a)"},
+    "language": "hind1269",
+    "primaryText": "zaraa bhii khaa lo",
+    "glossedTokens": [
+      ["zaraa", "a little"], ["bhii", "even"], ["khaa lo", "eat"]
+    ],
+    "translation": "Eat even a little.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["npi", "zaraa bhii"],
+      ["environment", "imperative"]
+    ],
+    "comment": "Paper's diacritic is *?: measure items seem odd in the imperative (5.4)."
+  },
+  {
+    "id": "lahiri1998_ex40b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(40b)"},
+    "language": "hind1269",
+    "primaryText": "ek bhii seb uThaa to",
+    "glossedTokens": [
+      ["ek", "one"], ["bhii", "even"], ["seb", "apple"], ["uThaa to", "pick"]
+    ],
+    "translation": "Pick even one apple.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "imperative"]
+    ],
+    "comment": "Paper's diacritic is *?; the paper prints uThaa to (sic) (5.4)."
+  },
+  {
+    "id": "lahiri1998_ex100a",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(100a)"},
+    "language": "hind1269",
+    "primaryText": "koii bhii tiin log is mez-ko uThaa sakte haiN",
+    "glossedTokens": [
+      ["koii bhii", "any"], ["tiin", "three"], ["log", "people"], ["is mez-ko", "this table"],
+      ["uThaa", "lift"], ["sakte haiN", "can"]
+    ],
+    "translation": "Any three people can lift this table.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "generic, with numeral"]
+    ],
+    "comment": "koii bhii combines with numerals in generic contexts (8)."
+  },
+  {
+    "id": "lahiri1998_ex100b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(100b)"},
+    "language": "hind1269",
+    "primaryText": "ek bhii tiin log is mez-ko uThaa sakte haiN",
+    "glossedTokens": [
+      ["ek", "one"], ["bhii", "even"], ["tiin", "three"], ["log", "people"],
+      ["is mez-ko", "this table"], ["uThaa", "lift"], ["sakte haiN", "can"]
+    ],
+    "translation": "Even one three people can lift this table.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "generic, with numeral"]
+    ],
+    "comment": "ek bhii's cardinality alternatives clash with the explicit numeral (8)."
+  }
+]
