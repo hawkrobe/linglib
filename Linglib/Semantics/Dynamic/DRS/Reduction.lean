@@ -1,16 +1,15 @@
 import Linglib.Semantics.Dynamic.DRS.Semantics
-import Mathlib.ModelTheory.Syntax
+import Mathlib.ModelTheory.Semantics
 
 /-!
 # From DRT to predicate logic: the DRS → first-order reduction
-[kamp-reyle-1993] (§1.5), [muskens-1996]
 
 The bespoke DRS box language is *equivalent to ordinary first-order
 logic*. We translate each DRS into a mathlib
-`FirstOrder.Language.Formula` and prove its `Realize` coincides with the bespoke
-`DRS.Realize` — Kamp & Reyle's §1.5 ("From DRT to Predicate Logic") and Muskens's
-"DRSs are already present in classical logic", now a Lean theorem
-(`DRS.realize_toFormula`) rather than an assertion.
+`FirstOrder.Language.Formula` and prove its `Realize` coincides with the
+bespoke `DRS.Realize` — [kamp-reyle-1993]'s §1.5 ("From DRT to Predicate
+Logic") and [muskens-1996]'s "DRSs are already present in classical logic",
+now a Lean theorem (`DRS.realize_toFormula`) rather than an assertion.
 
 The universe of a (sub-)DRS is *existentially closed* (`closeExists`, via
 mathlib's `Formula.iExs`); the antecedent of a `⇒` is *universally closed*
@@ -50,7 +49,7 @@ noncomputable def closeForall [DecidableEq V] (U : Finset V) (φ : L.Formula V) 
 
 mutual
 /-- Translate a DRS to a first-order formula: existentially close the universe
-over the conjunction of the (translated) conditions ([kamp-reyle-1993] §1.5). -/
+over the conjunction of the (translated) conditions (§1.5). -/
 noncomputable def DRS.toFormula [DecidableEq V] : DRS L V → L.Formula V
   | .mk U conds => closeExists U (Condition.toFormulaAll conds)
 /-- The conjunction of a DRS's conditions, *without* closing its universe (used
@@ -89,11 +88,11 @@ private theorem elim_comp_splitOn [DecidableEq V] (U : Finset V) (v : V → M)
   by_cases h : x ∈ U <;> simp [h]
 
 private theorem extendOn_agrees [DecidableEq V] (U : Finset V) (v : V → M)
-    (i : {x // x ∈ U} → M) : ∀ x, x ∉ U → extendOn U v i x = v x := by
+    (i : {x // x ∈ U} → M) : ∀ x ∉ U, extendOn U v i x = v x := by
   intro x hx; simp only [extendOn, dif_neg hx]
 
 private theorem extendOn_restrict [DecidableEq V] (U : Finset V) (v v' : V → M)
-    (h : ∀ x, x ∉ U → v' x = v x) : extendOn U v (fun s => v' s.val) = v' := by
+    (h : ∀ x ∉ U, v' x = v x) : extendOn U v (fun s => v' s.val) = v' := by
   funext x
   simp only [extendOn]
   by_cases hx : x ∈ U
@@ -105,7 +104,7 @@ over embeddings extending `v` on `U`. -/
 private theorem exists_extend_iff [DecidableEq V] (U : Finset V) (v : V → M)
     (P : (V → M) → Prop) :
     (∃ i : {x // x ∈ U} → M, P (extendOn U v i)) ↔
-      ∃ v', (∀ x, x ∉ U → v' x = v x) ∧ P v' := by
+      ∃ v', (∀ x ∉ U, v' x = v x) ∧ P v' := by
   constructor
   · rintro ⟨i, hi⟩
     exact ⟨extendOn U v i, extendOn_agrees U v i, hi⟩
@@ -117,7 +116,7 @@ private theorem exists_extend_iff [DecidableEq V] (U : Finset V) (v : V → M)
 private theorem forall_extend_iff [DecidableEq V] (U : Finset V) (v : V → M)
     (P : (V → M) → Prop) :
     (∀ i : {x // x ∈ U} → M, P (extendOn U v i)) ↔
-      ∀ v', (∀ x, x ∉ U → v' x = v x) → P v' := by
+      ∀ v', (∀ x ∉ U, v' x = v x) → P v' := by
   constructor
   · intro hi v' hagree
     have := hi (fun s => v' s.val)
@@ -128,7 +127,7 @@ private theorem forall_extend_iff [DecidableEq V] (U : Finset V) (v : V → M)
 /-- `closeExists` realizes as existential quantification over embeddings that
 extend `v` on `U`. -/
 theorem realize_closeExists [DecidableEq V] (U : Finset V) (φ : L.Formula V) (v : V → M) :
-    (closeExists U φ).Realize v ↔ ∃ v', (∀ x, x ∉ U → v' x = v x) ∧ φ.Realize v' := by
+    (closeExists U φ).Realize v ↔ ∃ v', (∀ x ∉ U, v' x = v x) ∧ φ.Realize v' := by
   rw [closeExists, Formula.realize_iExs]
   simp only [Formula.realize_relabel, elim_comp_splitOn]
   exact exists_extend_iff U v (Formula.Realize φ)
@@ -136,57 +135,57 @@ theorem realize_closeExists [DecidableEq V] (U : Finset V) (φ : L.Formula V) (v
 /-- `closeForall` realizes as universal quantification over embeddings that extend
 `v` on `U`. -/
 theorem realize_closeForall [DecidableEq V] (U : Finset V) (φ : L.Formula V) (v : V → M) :
-    (closeForall U φ).Realize v ↔ ∀ v', (∀ x, x ∉ U → v' x = v x) → φ.Realize v' := by
+    (closeForall U φ).Realize v ↔ ∀ v', (∀ x ∉ U, v' x = v x) → φ.Realize v' := by
   rw [closeForall, Formula.realize_iAlls]
   simp only [Formula.realize_relabel, elim_comp_splitOn]
   exact forall_extend_iff U v (Formula.Realize φ)
 
 mutual
-/-- **DRT ⊆ FOL** ([kamp-reyle-1993] §1.5; [muskens-1996]): the
+/-- **DRT ⊆ FOL** (§1.5): the
 translated formula's `Realize` coincides with the bespoke `DRS.Realize`. As
 `toFormula` existentially closes the universe, the correspondence is with an
 embedding `v'` extending `v` over `K.referents`. -/
 theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
-    (K.toFormula).Realize v ↔ ∃ v', (∀ x, x ∉ K.referents → v' x = v x) ∧ DRS.Realize v' K := by
+    (K.toFormula).Realize v ↔ ∃ v', (∀ x ∉ K.referents, v' x = v x) ∧ K.Realize v' := by
   match K with
   | .mk U conds =>
     rw [DRS.toFormula, realize_closeExists]
-    simp only [DRS.referents_mk, DRS.Realize]
+    simp only [DRS.referents_mk, DRS.realize_mk]
     exact exists_congr fun v' =>
       and_congr_right fun _ => Condition.realize_toFormulaAll conds v'
 /-- The open body of a DRS (its conditions, no universe closure) realizes as
 `DRS.Realize` (used for the antecedent of `⇒`). -/
 theorem DRS.realize_bodyFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
-    (DRS.bodyFormula K).Realize v ↔ DRS.Realize v K := by
+    (DRS.bodyFormula K).Realize v ↔ K.Realize v := by
   match K with
   | .mk _ conds => exact Condition.realize_toFormulaAll conds v
 /-- A single condition's translation realizes as `Condition.Realize`. -/
 theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V → M) :
-    (Condition.toFormula c).Realize v ↔ Condition.Realize v c := by
+    (Condition.toFormula c).Realize v ↔ c.Realize v := by
   match c with
   | .rel R args =>
-    simp [Condition.toFormula, Condition.Realize, Relations.formula, Formula.Realize,
+    simp [Condition.toFormula, Relations.formula, Formula.Realize,
       BoundedFormula.realize_rel, Term.realize_var]
-  | .eq a b => simp [Condition.toFormula, Condition.Realize, Formula.realize_equal]
+  | .eq a b => simp [Condition.toFormula, Formula.realize_equal]
   | .neg K =>
-    simp only [Condition.toFormula, Condition.Realize, Formula.realize_not]
+    simp only [Condition.toFormula, Condition.realize_neg, Formula.realize_not]
     rw [DRS.realize_toFormula K v]
   | .imp a c =>
-    simp only [Condition.toFormula, Condition.Realize]
+    simp only [Condition.toFormula, Condition.realize_imp]
     rw [realize_closeForall]
     simp only [Formula.realize_imp]
     refine forall_congr' (fun v' => imp_congr_right (fun _ => ?_))
     rw [DRS.realize_bodyFormula a v', DRS.realize_toFormula c v']
   | .dis l r =>
-    simp only [Condition.toFormula, Condition.Realize, Formula.realize_sup]
+    simp only [Condition.toFormula, Condition.realize_dis, Formula.realize_sup]
     rw [DRS.realize_toFormula l v, DRS.realize_toFormula r v]
 /-- A list of conditions' conjoined translation realizes as `RealizeAll`. -/
 theorem Condition.realize_toFormulaAll [DecidableEq V] (cs : List (Condition L V)) (v : V → M) :
-    (Condition.toFormulaAll cs).Realize v ↔ Condition.RealizeAll v cs := by
+    (Condition.toFormulaAll cs).Realize v ↔ Condition.RealizeAll cs v := by
   match cs with
-  | [] => simp [Condition.toFormulaAll, Condition.RealizeAll, Formula.realize_top]
+  | [] => simp [Condition.toFormulaAll, Formula.realize_top]
   | c :: cs =>
-    rw [Condition.toFormulaAll, Condition.RealizeAll, Formula.realize_inf,
+    rw [Condition.toFormulaAll, Condition.realizeAll_cons, Formula.realize_inf,
       Condition.realize_toFormula c v, Condition.realize_toFormulaAll cs v]
 end
 

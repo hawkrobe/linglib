@@ -3,14 +3,14 @@ import Mathlib.Data.Finset.Image
 
 /-!
 # DRS structural API: functorial renaming and merge algebra
-[kamp-reyle-1993]
 
 Structural operations and lemmas over the faithful `DRS` core (`DRS/Defs.lean`):
 
 * `DRS.map` / `Condition.map` — functorial renaming of discourse referents along
-  `f : V → W`. When `f` is a bijection this is Kamp & Reyle's *alphabetic
+  `f : V → W`. When `f` is a bijection this is [kamp-reyle-1993]'s *alphabetic
   variant* (the prose preceding Def. 1.4.8); `map_id` makes "renaming to the
-  identity is the identity" a free corollary.
+  identity is the identity" a free corollary, and `DRS.realize_map`
+  (`DRS/Semantics.lean`) shows variants have the same semantics.
 * `merge` algebra — identity (`empty`) and associativity.
 * `DRS.fv` / `DRS.IsProper` — free discourse referents (as a `Finset`) and
   properness (`fv K = ∅`, Def. 1.4.2–1.4.3).
@@ -72,6 +72,9 @@ theorem Condition.mapList_id [DecidableEq V] (cs : List (Condition L V)) :
   | [] => rfl
   | c :: cs => simp only [Condition.mapList, Condition.map_id c, Condition.mapList_id cs]
 end
+
+@[simp] theorem DRS.referents_map [DecidableEq W] (f : V → W) (K : DRS L V) :
+    (K.map f).referents = K.referents.image f := by cases K; rfl
 
 /-! ### Merge algebra -/
 
@@ -226,7 +229,7 @@ theorem DRS.fv_merge_subset {X : Finset V} {K₁ K₂ : DRS L V} (h₁ : K₁.fv
   exact Finset.union_subset (h₁.trans Finset.subset_union_left) h₂
 
 /-- A DRS is *proper* iff it has no free discourse referent
-([kamp-reyle-1993], Def. 1.4.2–1.4.3). -/
+(Def. 1.4.2–1.4.3). -/
 def DRS.IsProper (K : DRS L V) : Prop := K.fv = ∅
 
 /-- Merging preserves properness when the increment's free referents are
@@ -254,7 +257,7 @@ mutual
 /-- A DRS is *reuse-free* at ambient declarations `X`: its universe avoids `X`
 and its conditions are reuse-free at the grown set. -/
 def DRS.ReuseFreeAt (X : Finset V) : DRS L V → Prop
-  | .mk U conds => Disjoint X U ∧ Condition.ReuseFreeAtL (X ∪ U) conds
+  | .mk U conds => Disjoint X U ∧ Condition.ReuseFreeAllAt (X ∪ U) conds
 /-- A condition is reuse-free at ambient declarations `X`. -/
 def Condition.ReuseFreeAt (X : Finset V) : Condition L V → Prop
   | .rel _ _ => True
@@ -263,14 +266,14 @@ def Condition.ReuseFreeAt (X : Finset V) : Condition L V → Prop
   | .imp a c => DRS.ReuseFreeAt X a ∧ DRS.ReuseFreeAt (X ∪ a.referents) c
   | .dis l r => DRS.ReuseFreeAt X l ∧ DRS.ReuseFreeAt X r
 /-- Reuse-freeness for a list of conditions. -/
-def Condition.ReuseFreeAtL (X : Finset V) : List (Condition L V) → Prop
+def Condition.ReuseFreeAllAt (X : Finset V) : List (Condition L V) → Prop
   | [] => True
-  | c :: cs => Condition.ReuseFreeAt X c ∧ Condition.ReuseFreeAtL X cs
+  | c :: cs => Condition.ReuseFreeAt X c ∧ Condition.ReuseFreeAllAt X cs
 end
 
 @[simp] theorem DRS.reuseFreeAt_mk (X U : Finset V) (conds : List (Condition L V)) :
     DRS.ReuseFreeAt X (.mk U conds) ↔
-      Disjoint X U ∧ Condition.ReuseFreeAtL (X ∪ U) conds := Iff.rfl
+      Disjoint X U ∧ Condition.ReuseFreeAllAt (X ∪ U) conds := Iff.rfl
 
 @[simp] theorem Condition.reuseFreeAt_rel (X : Finset V) {n : ℕ} (R : L.Relations n)
     (args : Fin n → V) : Condition.ReuseFreeAt X (.rel R args) := trivial
@@ -289,19 +292,19 @@ end
     Condition.ReuseFreeAt X (.dis l r) ↔
       DRS.ReuseFreeAt X l ∧ DRS.ReuseFreeAt X r := Iff.rfl
 
-@[simp] theorem Condition.reuseFreeAtL_nil (X : Finset V) :
-    Condition.ReuseFreeAtL X ([] : List (Condition L V)) := trivial
+@[simp] theorem Condition.reuseFreeAllAt_nil (X : Finset V) :
+    Condition.ReuseFreeAllAt X ([] : List (Condition L V)) := trivial
 
-@[simp] theorem Condition.reuseFreeAtL_cons (X : Finset V) (c : Condition L V)
+@[simp] theorem Condition.reuseFreeAllAt_cons (X : Finset V) (c : Condition L V)
     (cs : List (Condition L V)) :
-    Condition.ReuseFreeAtL X (c :: cs) ↔
-      Condition.ReuseFreeAt X c ∧ Condition.ReuseFreeAtL X cs := Iff.rfl
+    Condition.ReuseFreeAllAt X (c :: cs) ↔
+      Condition.ReuseFreeAt X c ∧ Condition.ReuseFreeAllAt X cs := Iff.rfl
 
 end ReuseFree
 
 /-! ### Accessibility (decidable, host-relative)
 
-Accessibility ([kamp-reyle-1993], Def. 1.4.11) is intrinsically *relative to a
+Accessibility (Def. 1.4.11) is intrinsically *relative to a
 host DRS*: "`u` accessible at box `B`" means `u` lies in the universe of `B` or of
 a box on the path from the host down to `B`. A host-free `∃ D, WeakSubordinate K D
 ∧ u ∈ D.referents` is **vacuous** — a superordinate `D` introducing any referent
@@ -340,8 +343,8 @@ def Condition.accScopeL (s : Finset V) : List (Condition L V) → V → Option (
 end
 
 /-- The referents accessible from `u`'s introduction in `T`, as a decidable
-`Finset`; `∅` if `u` is not introduced in `T`. ([kamp-reyle-1993] Def. 1.4.11
-defines accessibility of a referent from a *condition*; this is the derived
+`Finset`; `∅` if `u` is not introduced in `T`. (Def. 1.4.11 defines
+accessibility of a referent from a *condition*; this is the derived
 referent-to-referent relation of the surrounding prose.) -/
 def DRS.accessibleFrom (T : DRS L V) (u : V) : Finset V := (DRS.accScope ∅ T u).getD ∅
 

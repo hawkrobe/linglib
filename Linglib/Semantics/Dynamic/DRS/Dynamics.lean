@@ -4,9 +4,8 @@ import Linglib.Semantics.Dynamic.Update
 
 /-!
 # Relational (dynamic) semantics of DRSs, and its equivalence with verifying embeddings
-[muskens-1996]
 
-Muskens's reformulation of DRT. Conditions denote *sets* of embeddings (SEM1/2);
+[muskens-1996]'s reformulation of DRT. Conditions denote *sets* of embeddings (SEM1/2);
 boxes denote *binary relations* between embeddings (SEM3, input → output, the
 format of [groenendijk-stokhof-1991]); a box is true under an input embedding
 `a` iff some output `a'` is related to it (p. 148). This is the dynamic / CCP
@@ -58,14 +57,14 @@ variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M]
 /-! ### The relational denotation -/
 
 mutual
-/-- The relational (dynamic) denotation of a DRS ([muskens-1996], SEM3): the
-input-output relation `⟨a, a'⟩` where `a'` differs from `a` at most on the
-universe and verifies every condition. -/
+/-- The relational (dynamic) denotation of a DRS (SEM3): the input-output
+relation `⟨a, a'⟩` where `a'` differs from `a` at most on the universe and
+verifies every condition. -/
 def DRS.toRel : DRS L V → Update (V → M)
-  | .mk U conds => fun a a' => (∀ x, x ∉ U → a' x = a x) ∧ Condition.holdsAll conds a'
-/-- The set denotation of a condition ([muskens-1996], SEM1/2): the set of
-embeddings at which it holds. Complex conditions apply the spine connectives
-`neg`/`impl`/`disj` to the box relations of their sub-DRSs. -/
+  | .mk U conds => fun a a' => (∀ x ∉ U, a' x = a x) ∧ Condition.holdsAll conds a'
+/-- The set denotation of a condition (SEM1/2): the set of embeddings at which
+it holds. Complex conditions apply the spine connectives `neg`/`impl`/`disj`
+to the box relations of their sub-DRSs. -/
 def Condition.holds : Condition L V → (V → M) → Prop
   | .rel R args => fun a => Structure.RelMap R (fun i => a (args i))
   | .eq u v => fun a => a u = a v
@@ -80,14 +79,14 @@ def Condition.holdsAll : List (Condition L V) → (V → M) → Prop
 end
 
 /-- A DRS is *true* under an input embedding `a` iff some output embedding is
-related to it ([muskens-1996], p. 148) — the spine's anaphoric `closure`. -/
+related to it (p. 148) — the spine's anaphoric `closure`. -/
 def DRS.trueRel (K : DRS L V) (a : V → M) : Prop := closure (DRS.toRel K) a
 
 /-! ### Structural simp API -/
 
 @[simp] theorem DRS.toRel_mk (U : Finset V) (conds : List (Condition L V)) (a a' : V → M) :
     DRS.toRel (.mk U conds) a a' ↔
-      (∀ x, x ∉ U → a' x = a x) ∧ Condition.holdsAll conds a' := Iff.rfl
+      (∀ x ∉ U, a' x = a x) ∧ Condition.holdsAll conds a' := Iff.rfl
 
 @[simp] theorem Condition.holds_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) (a : V → M) :
     (Condition.rel R args).holds a ↔ Structure.RelMap R (fun i => a (args i)) := Iff.rfl
@@ -119,48 +118,47 @@ theorem DRS.trueRel_iff (K : DRS L V) (a : V → M) :
 /-! ### Equivalence with the verifying-embedding semantics -/
 
 mutual
-/-- **SEM3 ≡ verification semantics** ([muskens-1996]): the relational denotation
+/-- **SEM3 ≡ verification semantics**: the relational denotation
 agrees with the static verifying-embedding semantics — `toRel K a a'` holds iff
 the output `a'` extends the input `a` over `K`'s universe and verifies `K`.
 (Both sides are the total-assignment variant; see `DRS/Semantics.lean`.) -/
 theorem DRS.toRel_iff_realize (K : DRS L V) (a a' : V → M) :
-    DRS.toRel K a a' ↔ (∀ x, x ∉ K.referents → a' x = a x) ∧ DRS.Realize a' K := by
+    DRS.toRel K a a' ↔ (∀ x ∉ K.referents, a' x = a x) ∧ K.Realize a' := by
   match K with
   | .mk U conds =>
-    simp only [DRS.toRel, DRS.referents_mk, DRS.Realize]
+    simp only [DRS.toRel, DRS.referents_mk, DRS.realize_mk]
     exact and_congr_right (fun _ => Condition.holdsAll_iff_realizeAll conds a')
 /-- A condition's set denotation agrees with its static `Realize`. -/
 theorem Condition.holds_iff_realize (c : Condition L V) (a : V → M) :
-    Condition.holds c a ↔ Condition.Realize a c := by
+    c.holds a ↔ c.Realize a := by
   match c with
   | .rel R args => exact Iff.rfl
   | .eq u v => exact Iff.rfl
   | .neg K =>
-    simp only [Condition.holds_neg, Condition.Realize]
+    simp only [Condition.holds_neg, Condition.realize_neg]
     exact not_congr (exists_congr (fun a' => DRS.toRel_iff_realize K a a'))
   | .imp ante cons =>
-    simp only [Condition.holds_imp, Condition.Realize]
+    simp only [Condition.holds_imp, Condition.realize_imp]
     refine forall_congr' (fun a' => ?_)
     rw [DRS.toRel_iff_realize ante a a', and_imp]
     refine imp_congr_right (fun _ => imp_congr_right (fun _ => ?_))
     exact exists_congr (fun a'' => DRS.toRel_iff_realize cons a' a'')
   | .dis l r =>
-    simp only [Condition.holds_dis, Condition.Realize, exists_or]
+    simp only [Condition.holds_dis, Condition.realize_dis, exists_or]
     exact or_congr (exists_congr (fun a' => DRS.toRel_iff_realize l a a'))
       (exists_congr (fun a' => DRS.toRel_iff_realize r a a'))
 /-- The list analogue of `Condition.holds_iff_realize`. -/
 theorem Condition.holdsAll_iff_realizeAll (cs : List (Condition L V)) (a : V → M) :
-    Condition.holdsAll cs a ↔ Condition.RealizeAll a cs := by
+    Condition.holdsAll cs a ↔ Condition.RealizeAll cs a := by
   match cs with
   | [] => exact Iff.rfl
   | c :: cs =>
-    simp only [Condition.holdsAll, Condition.RealizeAll]
+    simp only [Condition.holdsAll_cons, Condition.realizeAll_cons]
     exact and_congr (Condition.holds_iff_realize c a) (Condition.holdsAll_iff_realizeAll cs a)
 end
 
 /-- The dynamic truth of a DRS equals its first-order translation's `Realize`
-([muskens-1996]; [kamp-reyle-1993] §1.5) — the third edge of the
-`Realize`/`toFormula`/`toRel` triangle. -/
+— the third edge of the `Realize`/`toFormula`/`toRel` triangle. -/
 theorem DRS.trueRel_iff_realize_toFormula [DecidableEq V] (K : DRS L V) (a : V → M) :
     DRS.trueRel K a ↔ (K.toFormula).Realize a := by
   rw [DRS.trueRel_iff, DRS.realize_toFormula K a]
@@ -178,8 +176,8 @@ theorem DRS.trueRel_congr [DecidableEq V] (K : DRS L V) (a₁ a₂ : V → M)
   | .mk U conds =>
     simp only [DRS.trueRel_iff, DRS.toRel_mk]
     have key : ∀ (b₁ b₂ : V → M), Set.EqOn b₁ b₂ ↑(DRS.occ (DRS.mk U conds)) →
-        (∃ a', (∀ x, x ∉ U → a' x = b₁ x) ∧ Condition.holdsAll conds a') →
-        (∃ a', (∀ x, x ∉ U → a' x = b₂ x) ∧ Condition.holdsAll conds a') := by
+        (∃ a', (∀ x ∉ U, a' x = b₁ x) ∧ Condition.holdsAll conds a') →
+        (∃ a', (∀ x ∉ U, a' x = b₂ x) ∧ Condition.holdsAll conds a') := by
       rintro b₁ b₂ hb ⟨a', hag, hh⟩
       refine ⟨(Condition.occL conds).piecewise a' b₂, ?_, ?_⟩
       · intro x hx
@@ -282,7 +280,7 @@ end
   | nil => simp [Condition.holdsAll]
   | cons c cs ih => simp only [List.cons_append, Condition.holdsAll, ih, and_assoc]
 
-/-- **Merging Lemma** ([muskens-1996], §II.2): when `K₂`'s universe is fresh
+/-- **Merging Lemma** (§II.2): when `K₂`'s universe is fresh
 for `K₁`'s conditions, the merge `K₁ ⊕ K₂` denotes the spine sequencing
 (relational composition) of the two box relations — `‖K₁ ⊕ K₂‖ = seq ‖K₁‖ ‖K₂‖`.
 This is what gives `merge` its dynamic meaning. -/
