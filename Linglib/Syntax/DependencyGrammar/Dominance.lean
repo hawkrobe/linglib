@@ -9,6 +9,8 @@ import Mathlib.Logic.Relation
 import Mathlib.Data.Fintype.Card
 import Mathlib.Order.SuccPred.Basic
 import Mathlib.Order.SuccPred.Archimedean
+import Mathlib.Order.SuccPred.Tree
+import Linglib.Core.Order.SuccPred.Tree
 
 /-!
 # Dominance
@@ -29,11 +31,11 @@ theory of dominance on trees ([kuhlmann-nivre-2006] §2).
 * `Dominates.antisymm`, `Dominates.to_head`, `Dominates.comparable` —
   on trees dominance is a partial order under which the dominators of
   any position form a chain.
-* `Graph.headOf`, `DominanceOrder` — the head function, and `Fin n`
-  re-ordered by dominance: with `[Fact g.IsTree]` a `PartialOrder` +
-  `OrderBot` + `PredOrder` + `IsPredArchimedean` (root as `⊥`, head as
-  `Order.pred`), the order-theoretic reading of a rooted dependency
-  tree (cf. mathlib's `RootedTree`).
+* `Graph.headOf`, `DominanceOrder`, `Graph.toRootedTree` — the head
+  function; `Fin n` re-ordered by dominance, with `[Fact g.IsTree]` a
+  `PartialOrder` + `OrderBot` + `PredOrder` + `IsPredArchimedean` +
+  `SemilatticeInf` (root as `⊥`, head as `Order.pred`, lowest common
+  governor as `⊓`); and the bundling as mathlib's `RootedTree`.
 
 ## Implementation notes
 
@@ -234,6 +236,10 @@ instance [Fact g.IsTree] : PredOrder (DominanceOrder g) where
       Dominates.to_head (Fact.out : g.IsTree) h.le h.ne
         ((Fact.out : g.IsTree).adj_headOf hw)
 
+instance [Fact g.IsTree] :
+    DecidableRel ((· ≤ ·) : DominanceOrder g → DominanceOrder g → Prop) :=
+  λ v w => inferInstanceAs (Decidable (Dominates g v w))
+
 instance [Fact g.IsTree] : IsPredArchimedean (DominanceOrder g) where
   exists_pred_iterate_of_le {a b} h := by
     have h' : Relation.ReflTransGen g.Adj a b := h
@@ -246,7 +252,18 @@ instance [Fact g.IsTree] : IsPredArchimedean (DominanceOrder g) where
       rw [Function.iterate_succ_apply]
       exact (show Order.pred d = c from (Fact.out : g.IsTree).headOf_eq hcd) ▸ hk
 
+/-- Lowest common governor as the meet: the first head-iterate of one
+    argument that dominates the other. -/
+instance [Fact g.IsTree] : SemilatticeInf (DominanceOrder g) :=
+  IsPredArchimedean.semilatticeInf
+
 end DominanceOrder
+
+/-- A well-formed dependency graph, as mathlib's rooted tree: positions
+    ordered by dominance, the root as `⊥`, the head as `Order.pred`,
+    and the lowest common governor as `⊓`. -/
+def Graph.toRootedTree (g : Graph n) [Fact g.IsTree] : RootedTree :=
+  { α := DominanceOrder g }
 
 end Dominance
 
