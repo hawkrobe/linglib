@@ -21,8 +21,8 @@ Example stimuli live in `Data.Examples.VonStechow1984` (`Examples.*`).
 
 * `deReComparative`, `deDictoComparative`: Russell's ambiguity as an
   ACTUALLY-anchored vs belief-world than-clause standard (§§II–V)
-* `moreSem`, `asSem`, `tooSem`: synthesis rules R4 (additive *more*),
-  R5 (multiplicative *as*), R13 (counterfactual *too*) (§XIII)
+* `moreSem`, `asSem`: synthesis rules R4 (additive *more*) and
+  R5 (multiplicative *as*) (§XIII)
 
 ## Main results
 
@@ -31,6 +31,8 @@ Example stimuli live in `Data.Examples.VonStechow1984` (`Examples.*`).
   worlds (§VIII)
 * `klein_agrees_on_simple`: the degree-free ordering matches degree
   comparison on simple comparatives, not on differentials (§XI)
+* `moreSem_exceeds_counterfactual_worlds`: R13 — *too* as `moreSem` with
+  a counterfactual threshold (§XIII.6)
 -/
 
 namespace VonStechow1984
@@ -116,7 +118,7 @@ theorem klein_agrees_on_simple (μ : Entity → D) (cc : Set Entity)
       Delineation.ordering (Delineation.measureDelineation μ) cc a b :=
   (Delineation.ordering_iff_degree μ cc a b ha hb).symm
 
-/-! ### Synthesis rules R4 (`moreSem`), R5 (`asSem`), R13 (`tooSem`) (§XIII) -/
+/-! ### Synthesis rules R4 (`moreSem`), R5 (`asSem`), R13 (*too*) (§XIII) -/
 
 /-- R4: `⟦more⟧(d₁)(A⁰)(d₂)(x)` iff `A⁰(x, d₁ + d₂)` with monotone `A⁰` —
 the differential `d₁` plus the than-clause maximum `d₂`. -/
@@ -152,27 +154,22 @@ theorem asSem_factor_bridge (μ : Entity → ℚ) (a b : Entity) (factor : ℚ)
   linarith
 
 /-- R13 (p. 69, §XIII.6): `⟦too⟧(d₁)(A⁰)(p)(x) = the max.d [x is d-A⁰]
-λd₂ [p □→ A⁰(x, d₂ − d₁)]`. The additive skeleton is definitionally
-`moreSem` (*too* and *-er* share R4's structure; DegP head
-`Degree.Head.excessive`); the counterfactual threshold is
-`tooSem_exceeds_counterfactual_worlds`. -/
-def tooSem (μ : Entity → ℚ) (x : Entity) (excess threshold : ℚ) : Prop :=
-  moreSem μ x excess threshold
-
-/-- If `x` is `excess` too `A` for a threshold greatest over the accessible
-worlds, `x`'s actual degree exceeds its degree in every such world. -/
-theorem tooSem_exceeds_counterfactual_worlds
+λd₂ [p □→ A⁰(x, d₂ − d₁)]` — *too* is R4's `moreSem` with a
+counterfactually determined threshold (DegP head `Degree.Head.excessive`):
+when the threshold is greatest over the accessible worlds, being `excess`
+too `A` puts the actual degree above every accessible world's degree. -/
+theorem moreSem_exceeds_counterfactual_worlds
     (μ : W → Entity → ℚ) (w₀ : W) (acc : Set W) (x : Entity)
     {threshold excess : ℚ} (hexcess : 0 < excess)
     (hmax : IsGreatest ((fun w => μ w x) '' acc) threshold)
-    (htoo : tooSem (μ w₀) x excess threshold) :
+    (htoo : moreSem (μ w₀) x excess threshold) :
     ∀ w ∈ acc, μ w x < μ w₀ x :=
   fun w hw => (hmax.2 ⟨w, hw, rfl⟩).trans_lt
     ((lt_add_of_pos_left threshold hexcess).trans_le htoo)
 
 -- (227) (`Examples.ex227`): an 80 kg pack with a 30 kg liftable
 -- threshold is at least 50 kg too heavy.
-example : tooSem (fun _ : Unit => (80 : ℚ)) () 50 30 := by
-  norm_num [tooSem, moreSem]
+example : moreSem (fun _ : Unit => (80 : ℚ)) () 50 30 := by
+  norm_num [moreSem]
 
 end VonStechow1984
