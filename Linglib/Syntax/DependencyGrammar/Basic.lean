@@ -46,9 +46,6 @@ artificial root token, following [kuhlmann-nivre-2006].
 * `label` returns at most one relation per ordered pair: faithful to
   dependency trees and basic UD. If an enhanced-UD fixture ever needs
   parallel arcs on one pair, the field generalizes to a list.
-* Predicate-shape definitions return `Bool` rather than `Prop` +
-  `[Decidable]`; this is a substrate-wide convention that downstream files
-  inherit, and migrating it is a separate refactor.
 -/
 
 open Morphology (Word)

@@ -33,7 +33,7 @@ namespace WordGrammar
 open Features
 open Clause (EmbeddingContext)
 open WordGrammar.Inheritance
-open DependencyGrammar (Dir Valency Graph satisfiesValency)
+open DependencyGrammar (Dir Valency Graph SatisfiesValency)
 
 -- ============================================================================
 -- Node and Relation Types
@@ -238,12 +238,17 @@ def wordClassFor (f : Mood.Illocutionary) (e : EmbeddingContext) : String :=
   if f = .interrogative ∧ e = .matrix then "inverted_auxiliary"
   else "auxiliary"
 
-/-- License a dependency tree via the WG network: look up the word class
-for the clause context, resolve its argument structure from the network,
-and check the tree satisfies it. This is the end-to-end chain:
-`force × context → wordClass → network → valency → satisfiesValency`. -/
-def wgLicenses {n : ℕ} (net : WGNetwork) (t : Graph n) (auxIdx : Fin n)
-    (f : Mood.Illocutionary) (e : EmbeddingContext) : Bool :=
-  satisfiesValency t auxIdx (resolveValency net (wordClassFor f e))
+/-- The WG network licenses a dependency tree: the word class for the
+clause context resolves to an argument structure from the network, which
+the tree satisfies. The end-to-end chain:
+`force × context → wordClass → network → valency → SatisfiesValency`. -/
+def WGLicenses {n : ℕ} (net : WGNetwork) (t : Graph n) (auxIdx : Fin n)
+    (f : Mood.Illocutionary) (e : EmbeddingContext) : Prop :=
+  SatisfiesValency t auxIdx (resolveValency net (wordClassFor f e))
+
+instance {n : ℕ} (net : WGNetwork) (t : Graph n) (auxIdx : Fin n)
+    (f : Mood.Illocutionary) (e : EmbeddingContext) :
+    Decidable (WGLicenses net t auxIdx f e) :=
+  inferInstanceAs (Decidable (SatisfiesValency _ _ _))
 
 end WordGrammar

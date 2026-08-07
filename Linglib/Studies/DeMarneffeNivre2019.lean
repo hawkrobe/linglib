@@ -1,8 +1,6 @@
 import Linglib.Syntax.DependencyGrammar.Dominance
 import Linglib.Syntax.DependencyGrammar.Basic
 
-open Morphology (Word)
-
 /-!
 # de Marneffe & Nivre 2019: UD enhanced dependencies for English LD and coordination
 [de-marneffe-nivre-2019]
@@ -10,7 +8,8 @@ open Morphology (Word)
 Worked English examples illustrating Universal Dependencies' basic vs
 enhanced representations (cf. §4.2 and Figure 9 of
 [de-marneffe-nivre-2019]). Enhanced graphs are built by adding the
-extra arcs with `Graph.enhance`.
+extra arcs with `Graph.enhance`; per UD v2, coordinators attach via
+`cc` to the conjunct they introduce.
 
 ## Examples
 
@@ -31,22 +30,20 @@ extra arcs with `Graph.enhance`.
   (no shared-dependent propagation needed).
 * `exJohnSeesAndHearsMary` / `_enhanced` — VP coordination; the enhanced
   graph adds `obj` from `hears` to `Mary`.
-* `exOldAndWiseMan` — adjective coordination.
+* `exHappyAndSmartBoy` — adjective coordination.
 * `exRNR` / `_enhanced` — Right Node Raising; the enhanced graph adds
   `obj` to the second-conjunct verb.
 
 ## Implementation notes
 
-Fixtures use `Word.mk'` (featureless); the worked theorems are structural
-(`Graph.IsTree`, edge counts, `decide` over UD relation labels) and
-agreement / valence checks pass vacuously. A future revision could add
-feature-tagged fixtures if richer parallelism theorems are wanted.
+Fixtures use `Word.mk'` (featureless) except the wh-words; the worked
+theorems are structural (`Graph.IsTree`, arc labels, `decide`).
 -/
 
 namespace DeMarneffeNivre2019
 
-
 open DependencyGrammar
+open Morphology (Word)
 
 /-! ### Wh-question fixtures -/
 
@@ -122,14 +119,14 @@ def exJohnWondersWhatMarySaw : Graph 5 :=
 def exJohnAndMarySleep : Graph 4 :=
   .ofArcs [Word.mk' "John" .PROPN, Word.mk' "and" .CCONJ,
               Word.mk' "Mary" .PROPN, Word.mk' "sleep" .VERB]
-    3 [(3, 0, .nsubj), (0, 2, .conj)]
+    3 [(3, 0, .nsubj), (0, 2, .conj), (2, 1, .cc)]
 
 /-- "John sleeps and Mary sleeps" — S coordination. -/
 def exJohnSleepsAndMarySleeps : Graph 5 :=
   .ofArcs [Word.mk' "John" .PROPN, Word.mk' "sleeps" .VERB,
               Word.mk' "and" .CCONJ, Word.mk' "Mary" .PROPN,
               Word.mk' "sleeps" .VERB]
-    1 [(1, 0, .nsubj), (1, 4, .conj), (4, 3, .nsubj)]
+    1 [(1, 0, .nsubj), (1, 4, .conj), (4, 3, .nsubj), (4, 2, .cc)]
 
 /-- "John sees and hears Mary" — VP coordination (basic tree). `Mary`
 attaches as `obj` of `sees` only; `hears` is `conj` of `sees`. -/
@@ -137,7 +134,7 @@ def exJohnSeesAndHearsMary : Graph 5 :=
   .ofArcs [Word.mk' "John" .PROPN, Word.mk' "sees" .VERB,
               Word.mk' "and" .CCONJ, Word.mk' "hears" .VERB,
               Word.mk' "Mary" .PROPN]
-    1 [(1, 0, .nsubj), (1, 2, .cc), (1, 3, .conj), (1, 4, .obj)]
+    1 [(1, 0, .nsubj), (1, 3, .conj), (3, 2, .cc), (1, 4, .obj)]
 
 /-- Enhanced graph for "John sees and hears Mary": `Mary` is `obj` of
 *both* `sees` and `hears` (shared-dep propagation). -/
@@ -145,10 +142,10 @@ def exJohnSeesAndHearsMary_enhanced : Graph 5 :=
   exJohnSeesAndHearsMary.enhance [(3, 4, .obj)]
 
 /-- "the happy and smart boy" — adjective coordination. -/
-def exOldAndWiseMan : Graph 5 :=
+def exHappyAndSmartBoy : Graph 5 :=
   .ofArcs [Word.mk' "the" .DET, Word.mk' "happy" .ADJ,
            Word.mk' "and" .CCONJ, Word.mk' "smart" .ADJ, Word.mk' "boy" .NOUN]
-    4 [(4, 0, .det), (4, 1, .amod), (1, 3, .conj)]
+    4 [(4, 0, .det), (4, 1, .amod), (1, 3, .conj), (3, 2, .cc)]
 
 /-- "John likes and Mary hates pizza" — Right Node Raising (basic tree).
 `pizza` attaches to `likes` only. -/
@@ -156,26 +153,33 @@ def exRNR : Graph 6 :=
   .ofArcs [Word.mk' "John" .PROPN, Word.mk' "likes" .VERB,
            Word.mk' "and" .CCONJ, Word.mk' "Mary" .PROPN,
            Word.mk' "hates" .VERB, Word.mk' "pizza" .NOUN]
-    1 [(1, 0, .nsubj), (1, 4, .conj), (4, 3, .nsubj), (1, 5, .obj)]
+    1 [(1, 0, .nsubj), (1, 4, .conj), (4, 3, .nsubj), (4, 2, .cc), (1, 5, .obj)]
 
 /-- Enhanced graph for RNR: `pizza` is `obj` of both verbs. -/
 def exRNR_enhanced : Graph 6 := exRNR.enhance [(4, 5, .obj)]
 
+/-- All basic fixtures are well-formed trees. -/
+example : exWhatDidJohnSee.IsTree ∧ exWhoSawMary.IsTree ∧
+    exWhoDidJohnSee.IsTree ∧ exTheBookThatJohnRead.IsTree ∧
+    exJohnThinksThatMarySleeps.IsTree ∧ exJohnThinksMarySleeps.IsTree ∧
+    exJohnWondersIfMarySleeps.IsTree ∧ exJohnWondersWhatMarySaw.IsTree ∧
+    exJohnAndMarySleep.IsTree ∧ exJohnSleepsAndMarySleeps.IsTree ∧
+    exJohnSeesAndHearsMary.IsTree ∧ exHappyAndSmartBoy.IsTree ∧
+    exRNR.IsTree := by decide
+
 /-- Conjuncts share their category — the parallelism constraint on
     coordination ([de-marneffe-nivre-2019] §4.2), study-locally. -/
-def conjunctsCatMatch {n : ℕ} (g : Graph n) : Bool :=
-  (List.finRange n).all λ v => (List.finRange n).all λ w =>
-    if g.label v w == some .conj then (g.words v).cat == (g.words w).cat else true
+def ConjunctsCatMatch {n : ℕ} (g : Graph n) : Prop :=
+  ∀ v w, g.label v w = some .conj → (g.words v).cat = (g.words w).cat
+
+instance {n : ℕ} (g : Graph n) : Decidable (ConjunctsCatMatch g) :=
+  inferInstanceAs (Decidable (∀ _, _))
 
 /-! ### Worked theorems — long-distance dependencies -/
 
 /-- Object wh-questions have a `[wh]` filler at position 0. -/
 theorem whatDidJohnSee_has_wh :
     (exWhatDidJohnSee.words 0).features.isWh = true := rfl
-
-/-- Subject wh-questions need no gap: the basic tree is already a
-    well-formed tree. -/
-theorem whoSawMary_no_gap : exWhoSawMary.IsTree := by decide
 
 /-- The enhanced graph for "the book that John read" has the obj-gap arc;
     the basic tree lacks it. -/
@@ -196,12 +200,12 @@ theorem relclause_enhanced_not_tree :
 
 /-! ### Worked theorems — coordination -/
 
-theorem johnAndMary_cat_match : conjunctsCatMatch exJohnAndMarySleep = true := by decide
+theorem johnAndMary_cat_match : ConjunctsCatMatch exJohnAndMarySleep := by decide
 
 theorem johnSleepsAndMarySleeps_cat_match :
-    conjunctsCatMatch exJohnSleepsAndMarySleeps = true := by decide
+    ConjunctsCatMatch exJohnSleepsAndMarySleeps := by decide
 
-theorem oldAndWise_cat_match : conjunctsCatMatch exOldAndWiseMan = true := by decide
+theorem happyAndSmart_cat_match : ConjunctsCatMatch exHappyAndSmartBoy := by decide
 
 /-- Shared-dependent propagation adds the missing `obj` arc from `hears`
     to `Mary`; the basic tree lacks it. -/

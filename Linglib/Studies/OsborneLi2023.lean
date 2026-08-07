@@ -4,18 +4,12 @@ import Linglib.Data.Examples.Schema
 import Linglib.Morphology.Word.Basic
 import Linglib.Data.Examples.OsborneLi2023
 
-open Morphology (Word)
-
 /-!
 # CRDC: Conjunct Referential Dependency Constraint
 [osborne-li-2023]
 
-The Conjunct Referential Dependency Constraint (CRDC), formulated by
-[osborne-li-2023] in *Folia Linguistica* 57(3): 629–659, is a
-dependency-grammar constraint on co-valuation in sentences that involve
-coordinate structures.
-
-Paper text, p. 651 (verbatim):
+The Conjunct Referential Dependency Constraint of [osborne-li-2023],
+p. 651 (verbatim):
 
 > A referentially dependent conjunct valent can be co-valued with a full
 > co-valent, but a referentially dependent full valent can hardly be
@@ -23,246 +17,188 @@ Paper text, p. 651 (verbatim):
 
 The CRDC governs *only* configurations in which one of the relevant
 positions sits inside a coordinate structure; non-coordinate binding
-falls under standard binding-theoretic principles (Conditions A/B/C).
-The paper is explicit on p. 651: "The CRDC therefore says nothing about
-[cases where no coordination is involved]."
+falls under Conditions A/B/C, on which the paper is explicit that the
+CRDC is silent (p. 651). Marginality is constitutive of its empirical
+content: the paper's crowdsourced acceptability table (p. 630 fn. 3)
+maps mean scores to markers — `?` (1.65–2.29), `??` (2.30–2.94), `*`
+(2.95–4.00) — and the CRDC's prediction is `??`,
+`Judgment.questionable` in the project's enum.
 
-Marginality is constitutive of the CRDC's empirical content. The paper's
-crowdsourced acceptability table (p. 630 fn. 3) maps mean scores to
-markers — `?` (1.65–2.29), `??` (2.30–2.94), `*` (2.95–4.00). The CRDC's
-prediction is `??`, which corresponds to `Judgment.questionable` in the
-project's 5-level enum.
-
-## Main definitions
-
-* `isConjunctValent` / `isFullValent` — the paper's predicate-valent
-  type distinction, operationalised over `Graph` via
-  `UD.DepRel.isValencyArg` from `Core/UD.lean`.
-* `crdcPredictedJudgment` — the `Judgment` the CRDC assigns to a
-  candidate co-valuation; `.questionable` exactly when CRDC fires,
-  `.acceptable` when CRDC is silent (other binding principles may
-  still apply).
+Each theorem builds the tree of a stimulus from
+`Data.Examples.OsborneLi2023` and compares `crdcPredictedJudgment`
+with the row's recorded judgment: equality where the CRDC is the
+operative principle, and a recorded divergence for ex9b, whose
+sentence-level marginality is Condition B's contribution.
 
 ## Implementation notes
 
 * "Valent" is operationalised as a direct UD valency-relation dependent
-  of the predicate. This is a deliberate simplification of the paper's
-  catena-based notion (paper §4); the example set does not exercise the
-  distinction.
-* the conjunct helpers are study-local (two-liners over `children`) rather than
-  reinventing coord-structure traversal. UD's basic-tree convention
-  makes the first conjunct the head of the coordinate structure; the
-  remaining conjuncts attach via `.conj`.
-* The CRDC alone is not a full binding theory — it predicts only the
-  coord-conjunct-vs-full-valent contribution to acceptability. Example
-  (9b) "Max talked about him" is sentence-level `.questionable` from
-  Condition B, but `crdcPredictedJudgment` returns `.acceptable`
-  because the CRDC is silent on non-coordinate cases.
+  of the predicate (`UD.DepRel.isValencyArg`) — a deliberate
+  simplification of the paper's catena-based notion (§4); the example
+  set does not exercise the difference.
+* UD's basic-tree convention makes the first conjunct head the
+  coordinate structure, with remaining conjuncts attached via `.conj`;
+  the conjunct helpers are two-liners over `Graph.children`.
+* Binding theories elsewhere in linglib (`Studies/Chomsky1981.lean`,
+  `Syntax/HPSG/Coreference.lean`) make categorical predictions on
+  non-coordinate stimuli; the CRDC contributes a graded prediction on
+  coordinate ones. A head-to-head comparison needs coordination-aware
+  binding parsers and `Judgment`-valued output on their side.
 
-## Cross-framework relationship
+## TODO
 
-The standard binding theories formalized elsewhere in linglib —
-[chomsky-1981] (`Studies/Chomsky1981.lean`),
-[hudson-1990],
-[pollard-sag-1994] / [sag-wasow-bender-2003]
-(`Syntax/HPSG/Coreference.lean`,
-`Studies/SagWasowBender2003.lean`) — make *categorical*
-predictions via `Bool`-valued `grammaticalForCoreference`. The CRDC
-contributes a *graded* prediction (`.questionable`) that those
-predicates cannot express in their current shape; the comparison is
-not a head-to-head bake-off because the two frameworks answer
-different questions on disjoint stimulus subsets:
-
-* CRDC: graded marginality, coordinate-structure stimuli, silent
-  on non-coordinate cases (paper p. 651 explicit).
-* Conditions A/B/C: categorical grammaticality, non-coordinate
-  stimuli (current parsers do not traverse coordinate structures,
-  so any coordinated input categorically returns `false` — a
-  parser limitation, not a theoretical claim).
-
-A direct CRDC-vs-Conditions-A/B/C bake-off requires (a) extending
-the binding-theory parsers to coordination and (b) lifting their
-output to `Judgment`. Both are out of scope for this study file.
-
-## Todo
-
-* Paper §6 counterexamples (e.g. *vote*-predicate identity split,
-  example (55a) in the JSON) are encoded as data but not yet covered
-  by a CRDC-vs-data theorem; needs integration with a third-party-
-  referent disjunct.
-* Paper §7 — coordination-as-phrase-structure vs subordination-as-
-  dependency contrast — is theoretical commentary without formal
-  content here yet.
-* Bool→Prop migration of `isConjunctValent` / `isFullValent` should
-  happen as part of a unified `DependencyGrammar/*` sweep, not piecemeal.
-* Cross-framework CRDC-vs-Conditions-A/B/C bake-off blocked on
-  parser/coordination work (see Cross-framework relationship).
+* Cover §6's counterexamples (e.g. the *vote*-predicate identity split,
+  ex (55a) in the data) with a third-party-referent treatment.
 -/
 
 namespace OsborneLi2023
 
-
 open DependencyGrammar
-open Data.Examples (LinguisticExample)
 open Features (Judgment)
+open Morphology (Word)
 
 /-! ### Predicate-valent type -/
 
-/-- Word `valentIdx` is a *conjunct valent* of predicate `predIdx`: it
-    is a conjunct of a coordinate structure that fills a valency role
-    of `predIdx`. Concretely: there is a valency-eligible edge from
-    `predIdx` to some coord-head `c`, and `valentIdx` is in
-    `allConjuncts c` (the first conjunct, which heads the structure
-    in UD, plus the remaining conjuncts attached via `.conj`) — see
-    `isConjunctValent` below. -/
+/-- The conjuncts of the coordinate structure headed at `c`: the head
+    (first conjunct, per UD) plus its `.conj` dependents. -/
 def allConjuncts {n : ℕ} (g : Graph n) (c : Fin n) : List (Fin n) :=
   c :: (g.children c).filter (λ w => g.label c w == some .conj)
 
 /-- Position `c` heads a coordinate structure: it has a `conj` dependent. -/
-def hasConjuncts {n : ℕ} (g : Graph n) (c : Fin n) : Bool :=
-  (g.children c).any (λ w => g.label c w == some .conj)
+def HasConjuncts {n : ℕ} (g : Graph n) (c : Fin n) : Prop :=
+  ∃ w ∈ g.children c, g.label c w = some .conj
 
-/-- Word `valentIdx` is a *conjunct valent* of predicate `predIdx`. -/
-def isConjunctValent {n : ℕ} (g : Graph n) (predIdx valentIdx : Fin n) : Bool :=
-  (g.children predIdx).any λ c =>
-    (g.label predIdx c).any (·.isValencyArg)
-      && hasConjuncts g c
-      && (allConjuncts g c).contains valentIdx
+instance {n : ℕ} (g : Graph n) (c : Fin n) : Decidable (HasConjuncts g c) :=
+  List.decidableBEx _ _
 
-/-- Word `valentIdx` is a *full valent* of `predIdx`: a valent of
-    `predIdx` that is not a conjunct valent. Matches the paper's
-    definition (p. 651): "a valent of a given predicate is a full
-    valent thereof if it is complete, that is, it is *not* a conjunct
-    valent." Operationalised as "direct valency-eligible dependent of
-    `predIdx` AND not a conjunct valent." -/
-def isFullValent {n : ℕ} (g : Graph n) (predIdx valentIdx : Fin n) : Bool :=
-  (g.label predIdx valentIdx).any (·.isValencyArg)
-    && ¬ isConjunctValent g predIdx valentIdx
+/-- Word `valentIdx` is a *conjunct valent* of predicate `predIdx`: a
+    conjunct of a coordinate structure that fills a valency role of
+    `predIdx`. -/
+def IsConjunctValent {n : ℕ} (g : Graph n) (predIdx valentIdx : Fin n) : Prop :=
+  ∃ c ∈ g.children predIdx, ∃ r ∈ g.label predIdx c, r.isValencyArg
+    ∧ HasConjuncts g c ∧ valentIdx ∈ allConjuncts g c
+
+instance {n : ℕ} (g : Graph n) (predIdx valentIdx : Fin n) :
+    Decidable (IsConjunctValent g predIdx valentIdx) :=
+  List.decidableBEx _ _
+
+/-- Word `valentIdx` is a *full valent* of `predIdx`: a valent that is
+    not a conjunct valent — the paper's definition (p. 651): "a valent
+    of a given predicate is a full valent thereof if it is complete,
+    that is, it is *not* a conjunct valent." -/
+def IsFullValent {n : ℕ} (g : Graph n) (predIdx valentIdx : Fin n) : Prop :=
+  (∃ r ∈ g.label predIdx valentIdx, r.isValencyArg)
+    ∧ ¬ IsConjunctValent g predIdx valentIdx
+
+instance {n : ℕ} (g : Graph n) (predIdx valentIdx : Fin n) :
+    Decidable (IsFullValent g predIdx valentIdx) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-! ### CRDC prediction -/
 
 /-- The CRDC's predicted judgment for co-valuing anaphor `anaIdx` with
-    antecedent `anteIdx` under predicate `predIdx` in tree `t`.
-
-    Fires (`.questionable`) exactly when the anaphor is a full valent
-    and the antecedent is a conjunct valent of the same predicate.
-    Otherwise returns `.acceptable` — CRDC is silent, and other binding
-    principles (Conditions A/B/C) may still apply. -/
+    antecedent `anteIdx` under predicate `predIdx`: `.questionable`
+    exactly when the anaphor is a full valent and the antecedent a
+    conjunct valent of the same predicate; `.acceptable` otherwise —
+    the CRDC is silent, and other binding principles may still apply. -/
 def crdcPredictedJudgment {n : ℕ}
     (t : Graph n) (predIdx anaIdx anteIdx : Fin n) : Judgment :=
-  if isFullValent t predIdx anaIdx && isConjunctValent t predIdx anteIdx then
+  if IsFullValent t predIdx anaIdx ∧ IsConjunctValent t predIdx anteIdx then
     .questionable
   else
     .acceptable
 
-/-! ### CRDC-prediction theorems
+/-! ### CRDC predictions against the data rows -/
 
-Each theorem builds a `Tree` matching one of the example sentences
-and checks that `crdcPredictedJudgment` returns the contribution the
-CRDC is responsible for. For data points whose sentence-level judgment
-is set by a different principle (e.g. ex9b by Condition B, ex5a
-strengthened by `both...and`), the theorem records that CRDC alone
-predicts `.acceptable` or `.questionable` respectively — separating the
-CRDC's contribution from other determinants of acceptability. -/
-
-/-- Tree for "Max and Lucie talked about him."
+/-- Ex (2a): "Max and Lucie talked about him."
     `Max(0) and(1) Lucie(2) talked(3) about(4) him(5)`. -/
-def ex2a_tree : Graph 6 :=
-  .ofArcs [ { form :="Max", cat := .PROPN, features := {}}, { form :="and", cat := .CCONJ, features := {}}
-             , { form :="Lucie", cat := .PROPN, features := {}}, { form :="talked", cat := .VERB, features := {}}
-             , { form :="about", cat := .ADP, features := {}}, { form :="him", cat := .PRON, features := {}} ]
-    3 [ (3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj)
-             , (3, 5, .obl), (5, 4, .case_) ]
+def coordSubject : Graph 6 :=
+  .ofArcs
+    [Word.mk' "Max" .PROPN, Word.mk' "and" .CCONJ, Word.mk' "Lucie" .PROPN,
+     Word.mk' "talked" .VERB, Word.mk' "about" .ADP, Word.mk' "him" .PRON]
+    3
+    [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 5, .obl), (5, 4, .case_)]
 
-theorem ex2a_predicts_questionable :
-    crdcPredictedJudgment ex2a_tree 3 5 0 = .questionable := by decide
+/-- Full-valent `him` over conjunct-valent `Max`: the CRDC fires and
+    matches the observed `??`. -/
+theorem coordSubject_matches_data :
+    crdcPredictedJudgment coordSubject 3 5 0 = Examples.ex2a.judgment := by decide
 
-/-- Tree for "Max talked about himself." — non-coordinate baseline. -/
-def ex9a_tree : Graph 4 :=
-  .ofArcs [ { form :="Max", cat := .PROPN, features := {}}, { form :="talked", cat := .VERB, features := {}}
-             , { form :="about", cat := .ADP, features := {}}, { form :="himself", cat := .PRON, features := {}} ]
-    1 [ (1, 0, .nsubj), (1, 3, .obl), (3, 2, .case_) ]
+/-- Ex (9a): "Max talked about himself." — non-coordinate baseline. -/
+def reflexiveBaseline : Graph 4 :=
+  .ofArcs
+    [Word.mk' "Max" .PROPN, Word.mk' "talked" .VERB,
+     Word.mk' "about" .ADP, Word.mk' "himself" .PRON]
+    1
+    [(1, 0, .nsubj), (1, 3, .obl), (3, 2, .case_)]
 
-theorem ex9a_predicts_acceptable :
-    crdcPredictedJudgment ex9a_tree 1 3 0 = .acceptable := by decide
+theorem reflexiveBaseline_matches_data :
+    crdcPredictedJudgment reflexiveBaseline 1 3 0 = Examples.ex9a.judgment := by decide
 
-/-- Tree for "Max talked about him." — non-coordinate Condition B
-    context. The sentence-level `.questionable` reading comes from
-    Condition B, not the CRDC; here we record only that the CRDC is
-    silent. -/
-def ex9b_tree : Graph 4 :=
-  .ofArcs [ { form :="Max", cat := .PROPN, features := {}}, { form :="talked", cat := .VERB, features := {}}
-             , { form :="about", cat := .ADP, features := {}}, { form :="him", cat := .PRON, features := {}} ]
-    1 [ (1, 0, .nsubj), (1, 3, .obl), (3, 2, .case_) ]
+/-- Ex (9b): "Max talked about him." — non-coordinate Condition B context. The
+    CRDC is silent; the row's marginality is Condition B's
+    contribution, so prediction and row diverge by design. -/
+def pronounBaseline : Graph 4 :=
+  .ofArcs
+    [Word.mk' "Max" .PROPN, Word.mk' "talked" .VERB,
+     Word.mk' "about" .ADP, Word.mk' "him" .PRON]
+    1
+    [(1, 0, .nsubj), (1, 3, .obl), (3, 2, .case_)]
 
-theorem ex9b_crdc_silent :
-    crdcPredictedJudgment ex9b_tree 1 3 0 = .acceptable := by decide
+theorem pronounBaseline_crdc_silent :
+    crdcPredictedJudgment pronounBaseline 1 3 0 = .acceptable ∧
+    Examples.ex9b.judgment = .questionable := by decide
 
-/-- Tree for "John talked about himself and his mother." — coordinate
-    *object*. `himself` heads the coord, so it is a conjunct valent;
-    `John` is a full valent. CRDC's permitted direction (conjunct
-    anaphor of full antecedent). -/
-def ex24a_tree : Graph 7 :=
-  .ofArcs [ { form :="John", cat := .PROPN, features := {}}, { form :="talked", cat := .VERB, features := {}}
-             , { form :="about", cat := .ADP, features := {}}, { form :="himself", cat := .PRON, features := {}}
-             , { form :="and", cat := .CCONJ, features := {}}, { form :="his", cat := .PRON, features := {}}
-             , { form :="mother", cat := .NOUN, features := {}} ]
-    1 [ (1, 0, .nsubj), (1, 3, .obl), (3, 2, .case_)
-             , (3, 4, .cc), (3, 6, .conj), (6, 5, .nmod) ]
+/-- Ex (24a): "John talked about himself and his mother." — coordinate *object*;
+    `himself` heads the coordination, so it is a conjunct valent and
+    `John` a full valent: the CRDC's permitted direction. -/
+def coordObject : Graph 7 :=
+  .ofArcs
+    [Word.mk' "John" .PROPN, Word.mk' "talked" .VERB, Word.mk' "about" .ADP,
+     Word.mk' "himself" .PRON, Word.mk' "and" .CCONJ, Word.mk' "his" .PRON,
+     Word.mk' "mother" .NOUN]
+    1
+    [(1, 0, .nsubj), (1, 3, .obl), (3, 2, .case_),
+     (3, 4, .cc), (3, 6, .conj), (6, 5, .nmod)]
 
-theorem ex24a_predicts_acceptable :
-    crdcPredictedJudgment ex24a_tree 1 3 0 = .acceptable := by decide
+theorem coordObject_matches_data :
+    crdcPredictedJudgment coordObject 1 3 0 = Examples.ex24a.judgment := by decide
 
-/-- Tree for "Both John and Mary love him." — coordinate subject with
-    paired coordinator; pronoun in object position. The CRDC fires.
-    Sentence-level judgment is stronger (`.ungrammatical`) due to
-    `both...and` strengthening; the CRDC alone predicts
-    `.questionable`. -/
-def ex5a_tree : Graph 6 :=
-  .ofArcs [ { form :="Both", cat := .CCONJ, features := {}}, { form :="John", cat := .PROPN, features := {}}
-             , { form :="and", cat := .CCONJ, features := {}}, { form :="Mary", cat := .PROPN, features := {}}
-             , { form :="love", cat := .VERB, features := {}}, { form :="him", cat := .PRON, features := {}} ]
-    4 [ (4, 1, .nsubj), (1, 0, .cc), (1, 2, .cc)
-             , (1, 3, .conj), (4, 5, .obj) ]
+/-- Ex (5a): "Both John and Mary love him." — coordinate subject with paired
+    coordinator; pronoun in object position. The CRDC fires and matches
+    the observed `??`. -/
+def pairedCoordSubject : Graph 6 :=
+  .ofArcs
+    [Word.mk' "Both" .CCONJ, Word.mk' "John" .PROPN, Word.mk' "and" .CCONJ,
+     Word.mk' "Mary" .PROPN, Word.mk' "love" .VERB, Word.mk' "him" .PRON]
+    4
+    [(4, 1, .nsubj), (1, 0, .cc), (1, 2, .cc), (1, 3, .conj), (4, 5, .obj)]
 
-theorem ex5a_predicts_questionable :
-    crdcPredictedJudgment ex5a_tree 4 5 1 = .questionable := by decide
+theorem pairedCoordSubject_matches_data :
+    crdcPredictedJudgment pairedCoordSubject 4 5 1 = Examples.ex5a.judgment := by decide
 
-/-- Tree for "John expected Mary and him to be able to leave soon."
-    Coordinate-*object* under raising-to-object; `John` is the matrix
-    subject (full valent), `him` is a conjunct of the embedded subject
-    coord. Permitted direction; the CRDC is silent on `him↔John`
-    co-valuation because `him` is a conjunct valent (not a full valent). -/
-def ex28d_tree : Graph 8 :=
-  .ofArcs [ { form :="John", cat := .PROPN, features := {}}, { form :="expected", cat := .VERB, features := {}}
-             , { form :="Mary", cat := .PROPN, features := {}}, { form :="and", cat := .CCONJ, features := {}}
-             , { form :="him", cat := .PRON, features := {}}, { form :="to", cat := .PART, features := {}}
-             , { form :="leave", cat := .VERB, features := {}}, { form :="soon", cat := .ADV, features := {}} ]
-    1 [ (1, 0, .nsubj), (1, 2, .obj), (2, 3, .cc)
-             , (2, 4, .conj), (1, 6, .xcomp), (6, 5, .mark)
-             , (6, 7, .advmod) ]
+/-- Ex (28d): "John expected Mary and him to be able to leave soon." —
+    coordinate object under raising-to-object: `him` is a conjunct
+    valent, so the CRDC is silent on co-valuing it with `John`. -/
+def raisingCoordObject : Graph 8 :=
+  .ofArcs
+    [Word.mk' "John" .PROPN, Word.mk' "expected" .VERB, Word.mk' "Mary" .PROPN,
+     Word.mk' "and" .CCONJ, Word.mk' "him" .PRON, Word.mk' "to" .PART,
+     Word.mk' "leave" .VERB, Word.mk' "soon" .ADV]
+    1
+    [(1, 0, .nsubj), (1, 2, .obj), (2, 3, .cc), (2, 4, .conj),
+     (1, 6, .xcomp), (6, 5, .mark), (6, 7, .advmod)]
 
-theorem ex28d_predicts_acceptable :
-    crdcPredictedJudgment ex28d_tree 1 4 0 = .acceptable := by decide
+theorem raisingCoordObject_matches_data :
+    crdcPredictedJudgment raisingCoordObject 1 4 0 = Examples.ex28d.judgment := by decide
 
-/-! ### Directionality
+/-! ### Directionality -/
 
-The CRDC is asymmetric: full-anaphor-of-conjunct-antecedent triggers
-marginality (`.questionable`); the reverse direction (conjunct-anaphor
-of-full-antecedent) does not. The asymmetry is exhibited on a single
-tree by swapping `anaIdx` and `anteIdx`: only the (full, conjunct)
-ordering fires the constraint. -/
-
-/-- On ex2a's tree, swapping which index is the anaphor and which is
-    the antecedent flips the verdict — only `him` (full) over `Max`
-    (conjunct) triggers the CRDC. The reverse swap is structurally
-    irreflexive of CRDC's prediction function; it does not correspond
-    to a semantically coherent anaphoric reading. -/
+/-- The CRDC is asymmetric: on ex2a's tree, only the full-anaphor-of-
+    conjunct-antecedent direction fires; swapping anaphor and antecedent
+    leaves the CRDC silent. -/
 theorem direction_asymmetry :
-    -- (a) Blocked direction: full anaphor of conjunct antecedent
-    crdcPredictedJudgment ex2a_tree 3 5 0 = .questionable ∧
-    -- (b) Permitted direction (same tree, swapped indices)
-    crdcPredictedJudgment ex2a_tree 3 0 5 = .acceptable := by
-  refine ⟨?_, ?_⟩ <;> decide
+    crdcPredictedJudgment coordSubject 3 5 0 = .questionable ∧
+    crdcPredictedJudgment coordSubject 3 0 5 = .acceptable := by decide
 
 end OsborneLi2023
