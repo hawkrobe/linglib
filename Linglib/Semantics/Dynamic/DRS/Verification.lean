@@ -55,10 +55,12 @@ universe u v w x
 
 variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M]
 
+namespace Embedding
+
 /-- `f.VerifiesCondition c`: the embedding `f` *verifies* the DRS-condition `c`
 (Def. 1.4.4(ii)); a sub-DRS is entered by existentially (re)assigning along
 its extension relation and verifying each of its conditions. -/
-def Embedding.VerifiesCondition : Embedding V M → Condition L V → Prop
+def VerifiesCondition : Embedding V M → Condition L V → Prop
   | f, .rel R args => Structure.RelMap R (fun i => f (args i))
   | f, .eq a b => f a = f b
   | f, .neg K => ¬ ∃ g, K.Extends f g ∧ ∀ c ∈ K.conditions, g.VerifiesCondition c
@@ -76,10 +78,8 @@ decreasing_by all_goals
 
 /-- `f.Verifies K`: the embedding `f` *verifies* the DRS `K` — `f` verifies
 every condition of `K` (Def. 1.4.4). -/
-def Embedding.Verifies (f : Embedding V M) (K : DRS L V) : Prop :=
+def Verifies (f : Embedding V M) (K : DRS L V) : Prop :=
   ∀ c ∈ K.conditions, f.VerifiesCondition c
-
-namespace Embedding
 
 /-! ### Structural simp API -/
 
