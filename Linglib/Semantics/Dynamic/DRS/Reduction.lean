@@ -146,11 +146,11 @@ translated formula's `Realize` coincides with the bespoke `DRS.Realize`. As
 `toFormula` existentially closes the universe, the correspondence is with an
 embedding `v'` extending `v` over `K.referents`. -/
 theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
-    (K.toFormula).Realize v ↔ ∃ v', (∀ x ∉ K.referents, v' x = v x) ∧ K.Realize v' := by
+    (K.toFormula).Realize v ↔ ∃ v', K.Extends v v' ∧ K.Realize v' := by
   match K with
   | .mk U conds =>
     rw [DRS.toFormula, realize_closeExists]
-    simp only [DRS.referents_mk, DRS.realize_mk]
+    simp only [DRS.referents_mk, DRS.realize_mk, DRS.Extends]
     exact exists_congr fun v' =>
       and_congr_right fun _ => Condition.realize_toFormulaAll conds v'
 /-- The open body of a DRS (its conditions, no universe closure) realizes as
@@ -179,14 +179,15 @@ theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V �
   | .dis l r =>
     simp only [Condition.toFormula, Condition.realize_dis, Formula.realize_sup]
     rw [DRS.realize_toFormula l v, DRS.realize_toFormula r v]
-/-- A list of conditions' conjoined translation realizes as `RealizeAll`. -/
+/-- A list of conditions' conjoined translation realizes as the conjunction of
+their realizations. -/
 theorem Condition.realize_toFormulaAll [DecidableEq V] (cs : List (Condition L V)) (v : V → M) :
-    (Condition.toFormulaAll cs).Realize v ↔ Condition.RealizeAll cs v := by
+    (Condition.toFormulaAll cs).Realize v ↔ ∀ c ∈ cs, c.Realize v := by
   match cs with
   | [] => simp [Condition.toFormulaAll, Formula.realize_top]
   | c :: cs =>
-    rw [Condition.toFormulaAll, Condition.realizeAll_cons, Formula.realize_inf,
-      Condition.realize_toFormula c v, Condition.realize_toFormulaAll cs v]
+    rw [Condition.toFormulaAll, Formula.realize_inf, Condition.realize_toFormula c v,
+      Condition.realize_toFormulaAll cs v, List.forall_mem_cons]
 end
 
 end DRT
