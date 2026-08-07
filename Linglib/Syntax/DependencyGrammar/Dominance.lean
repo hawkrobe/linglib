@@ -36,9 +36,9 @@ theory of dominance on trees ([kuhlmann-nivre-2006] §2).
   `PartialOrder` + `OrderBot` + `PredOrder` + `IsPredArchimedean` +
   `SemilatticeInf` (root as `⊥`, head as `Order.pred`, lowest common
   governor as `⊓`); and the bundling as mathlib's `RootedTree`.
-* `Tree n` — the bundled subtype of well-formed graphs: tree-hood is
-  carried by the element, so the dominance-order instances hold with no
-  side conditions (`Tree.instFact` feeds the `Fact`-gated machinery).
+* `Tree n` — well-formed graphs bundled with their tree-hood
+  (`t.isTree`), so the dominance-order instances hold with no side
+  conditions and the graph API is a parent projection away.
 
 ## Implementation notes
 
@@ -274,22 +274,26 @@ def Graph.toRootedTree (g : Graph n) [Fact g.IsTree] : RootedTree :=
 /-! ### Bundled trees -/
 
 /-- A dependency tree: a graph bundled with its tree-hood, so that the
-    dominance-order structure holds with no side conditions. -/
-def Tree (n : ℕ) := {g : Graph n // g.IsTree}
+    dominance-order structure holds with no side conditions. Parent
+    projections give direct access to the graph API (`t.root`,
+    `t.label`, `t.gapDegree`, …). -/
+structure Tree (n : ℕ) extends Graph n where
+  /-- Well-formedness of the underlying graph. -/
+  isTree : toGraph.IsTree
 
 namespace Tree
 
-instance : Coe (Tree n) (Graph n) := ⟨Subtype.val⟩
+instance : Coe (Tree n) (Graph n) := ⟨toGraph⟩
 
 /-- Bundle a graph with `decide`-checked tree-hood. -/
 def mk' (g : Graph n) (h : g.IsTree := by decide) : Tree n := ⟨g, h⟩
 
 /-- A bundled tree's tree-hood, available to instance search: the
     `Fact`-gated dominance-order instances fire unconditionally. -/
-instance instFact (t : Tree n) : Fact (t.val : Graph n).IsTree := ⟨t.2⟩
+instance instFact (t : Tree n) : Fact t.toGraph.IsTree := ⟨t.isTree⟩
 
 /-- A dependency tree is a mathlib rooted tree. -/
-def toRootedTree (t : Tree n) : RootedTree := Graph.toRootedTree t.val
+def toRootedTree (t : Tree n) : RootedTree := Graph.toRootedTree t.toGraph
 
 end Tree
 

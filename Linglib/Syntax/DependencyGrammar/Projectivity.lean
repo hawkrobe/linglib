@@ -189,7 +189,7 @@ example : germanNested.gapDegree = 0 := by decide
     applies with no side conditions. -/
 def dutchTree : Tree 7 := .mk' dutchCrossSerial
 
-example : (⊥ : DominanceOrder dutchTree.val) = 0 := by decide
-example : Order.pred (5 : DominanceOrder dutchTree.val) = 4 := by decide
+example : (⊥ : DominanceOrder dutchTree.toGraph) = 0 := by decide
+example : Order.pred (5 : DominanceOrder dutchTree.toGraph) = 4 := by decide
 
 end DependencyGrammar
