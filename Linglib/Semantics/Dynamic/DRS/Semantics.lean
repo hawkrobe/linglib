@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.DRS.Defs
+import Linglib.Semantics.Dynamic.DRS.Basic
 
 /-!
 # Model-theoretic semantics of DRSs
@@ -30,6 +30,9 @@ says "every man is mortal" for K&R, "if there is a man there is a mortal" here.
   reusing mathlib's `Structure.RelMap` for atomic conditions.
 * `DRS.realize_perm` — verification reads the condition list as a set, cashing
   the `List`-representation note in `DRS/Defs.lean`.
+* `DRS.realize_map` — renaming along a bijection transports verification:
+  alphabetic variants (Def. 1.4.8, via `DRS.map` in `DRS/Basic.lean`) have the
+  same semantics.
 -/
 
 open FirstOrder FirstOrder.Language
@@ -118,5 +121,87 @@ semantics the `List`-valued `conditions` field promises (`DRS/Defs.lean`). -/
 theorem DRS.realize_perm {U : Finset V} {cs ds : List (Condition L V)} (h : cs.Perm ds) :
     (DRS.mk U cs).Realize v ↔ (DRS.mk U ds).Realize v :=
   Condition.realizeAll_perm h
+
+/-! ### Alphabetic variants -/
+
+section Map
+
+variable {W : Type*} [DecidableEq W]
+
+/-- Precomposition with `e` is a bijection between the embeddings extending `v`
+on `U.image e` and those extending `v ∘ e` on `U`. -/
+private theorem exists_precomp_extend_iff (e : V ≃ W) (U : Finset V) (v : W → M)
+    (P : (V → M) → Prop) :
+    (∃ v' : W → M, (∀ y ∉ U.image e, v' y = v y) ∧ P (v' ∘ e)) ↔
+      ∃ w' : V → M, (∀ x ∉ U, w' x = v (e x)) ∧ P w' := by
+  constructor
+  · rintro ⟨v', h, hp⟩
+    exact ⟨v' ∘ e, fun x hx => h (e x) (by simpa using hx), hp⟩
+  · rintro ⟨w', h, hp⟩
+    refine ⟨w' ∘ e.symm, fun y hy => ?_, ?_⟩
+    · have hx : e.symm y ∉ U := fun hmem => hy (by simpa using Finset.mem_image_of_mem e hmem)
+      simpa using h _ hx
+    · have key : (w' ∘ e.symm) ∘ e = w' := by funext x; simp
+      exact key.symm ▸ hp
+
+/-- The `∀` analogue of `exists_precomp_extend_iff`. -/
+private theorem forall_precomp_extend_iff (e : V ≃ W) (U : Finset V) (v : W → M)
+    (P : (V → M) → Prop) :
+    (∀ v' : W → M, (∀ y ∉ U.image e, v' y = v y) → P (v' ∘ e)) ↔
+      ∀ w' : V → M, (∀ x ∉ U, w' x = v (e x)) → P w' := by
+  constructor
+  · intro H w' h
+    have key : (w' ∘ e.symm) ∘ e = w' := by funext x; simp
+    refine key ▸ H (w' ∘ e.symm) fun y hy => ?_
+    have hx : e.symm y ∉ U := fun hmem => hy (by simpa using Finset.mem_image_of_mem e hmem)
+    simpa using h _ hx
+  · intro H v' h
+    exact H (v' ∘ e) fun x hx => h (e x) (by simpa using hx)
+
+mutual
+/-- Renaming along a bijection transports verification: `v` verifies `K.map e`
+iff `v ∘ e` verifies `K` — alphabetic variants have the same semantics. -/
+theorem DRS.realize_map (e : V ≃ W) (K : DRS L V) (v : W → M) :
+    (K.map e).Realize v ↔ K.Realize (v ∘ e) := by
+  match K with
+  | .mk U conds =>
+    simp only [DRS.map, DRS.realize_mk]
+    exact Condition.realizeAll_mapList e conds v
+/-- The condition analogue of `DRS.realize_map`. -/
+theorem Condition.realize_map (e : V ≃ W) (c : Condition L V) (v : W → M) :
+    (c.map e).Realize v ↔ c.Realize (v ∘ e) := by
+  match c with
+  | .rel R args => exact Iff.rfl
+  | .eq a b => exact Iff.rfl
+  | .neg K =>
+    simp only [Condition.map, Condition.realize_neg, DRS.referents_map]
+    exact not_congr ((exists_congr fun v' => and_congr_right fun _ =>
+      DRS.realize_map e K v').trans (exists_precomp_extend_iff e K.referents v K.Realize))
+  | .imp ante cons =>
+    simp only [Condition.map, Condition.realize_imp, DRS.referents_map]
+    refine Iff.trans (forall_congr' fun v' => imp_congr_right fun _ => imp_congr
+      (DRS.realize_map e ante v')
+      ((exists_congr fun v'' => and_congr_right fun _ => DRS.realize_map e cons v'').trans
+        (exists_precomp_extend_iff e cons.referents v' cons.Realize))) ?_
+    exact forall_precomp_extend_iff e ante.referents v
+      (fun u => ante.Realize u → ∃ w'', (∀ x ∉ cons.referents, w'' x = u x) ∧ cons.Realize w'')
+  | .dis l r =>
+    simp only [Condition.map, Condition.realize_dis, DRS.referents_map]
+    exact or_congr
+      ((exists_congr fun v' => and_congr_right fun _ => DRS.realize_map e l v').trans
+        (exists_precomp_extend_iff e l.referents v l.Realize))
+      ((exists_congr fun v' => and_congr_right fun _ => DRS.realize_map e r v').trans
+        (exists_precomp_extend_iff e r.referents v r.Realize))
+/-- The list analogue of `Condition.realize_map`. -/
+theorem Condition.realizeAll_mapList (e : V ≃ W) (cs : List (Condition L V)) (v : W → M) :
+    Condition.RealizeAll (Condition.mapList e cs) v ↔ Condition.RealizeAll cs (v ∘ e) := by
+  match cs with
+  | [] => exact Iff.rfl
+  | c :: cs =>
+    simp only [Condition.mapList, Condition.realizeAll_cons]
+    exact and_congr (Condition.realize_map e c v) (Condition.realizeAll_mapList e cs v)
+end
+
+end Map
 
 end DRT
