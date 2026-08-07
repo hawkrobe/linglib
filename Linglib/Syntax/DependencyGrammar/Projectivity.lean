@@ -185,4 +185,11 @@ example : ¬ IsProjective planarNotProjective := by decide
 example : dutchCrossSerial.gapDegree = 1 := by decide
 example : germanNested.gapDegree = 0 := by decide
 
+/-- The Dutch fixture as a bundled `Tree`: the dominance-order API
+    applies with no side conditions. -/
+def dutchTree : Tree 7 := .mk' dutchCrossSerial
+
+example : (⊥ : DominanceOrder dutchTree.val) = 0 := by decide
+example : Order.pred (5 : DominanceOrder dutchTree.val) = 4 := by decide
+
 end DependencyGrammar
