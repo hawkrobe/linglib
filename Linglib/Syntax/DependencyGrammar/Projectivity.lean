@@ -4,18 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.DependencyGrammar.Dominance
+import Mathlib.Order.Interval.Set.OrdConnected
+import Mathlib.Data.Finset.Lattice.Fold
 import Mathlib.Data.List.Sort
 
 /-!
 # Projectivity and its relaxations
 
 [kuhlmann-nivre-2006]'s hierarchy of structural constraints between
-projective and unrestricted dependency structures: projectivity
-(Definition 3), planarity (Definition 4 — the Link Grammar notion,
-traced there to [melcuk-1988]), gap degree (Definitions 6–7),
-block-degree (the LCFRS fan-out correspondent; bounded block-degree
-plus well-nestedness give polynomial parsing, [kuhlmann-2013]), and
-well-nestedness (Definition 8).
+projective and unrestricted dependency structures: projectivity as
+order-convexity of dominance cones (`Set.OrdConnected`; Definition 3),
+planarity (Definition 4 — the Link Grammar notion, traced there to
+[melcuk-1988]), gap degree (Definitions 6–7; gap degree + 1 is
+[kuhlmann-2013]'s block-degree, the LCFRS fan-out), and well-nestedness
+(Definition 8).
 
 Of the §3.5 hierarchy `projective ⊂ planar ⊂ well-nested`,
 `IsProjective.isPlanar` and `IsProjective.isWellNested` prove the
@@ -35,12 +37,11 @@ variable {n : ℕ}
 
 /-! ### The binary constraints: projectivity, planarity, well-nestedness -/
 
-/-- **Projectivity**, relationally: every dominance cone is order-convex.
-    Equivalent to "the yields of all nodes are intervals"
+/-- **Projectivity**: every dominance cone is order-convex. Equivalent
+    to "the yields of all nodes are intervals"
     ([kuhlmann-nivre-2006], Definition 3). -/
 def IsProjective (g : Graph n) : Prop :=
-  ∀ v : Fin n, ∀ ⦃a b c : Fin n⦄,
-    Dominates g v a → Dominates g v c → a ≤ b → b ≤ c → Dominates g v b
+  ∀ v : Fin n, Set.OrdConnected {x | Dominates g v x}
 
 /-- **Planarity**: no two links cross — spans, taken left-to-right, never
     strictly interleave. ([kuhlmann-nivre-2006], Definition 4; the Link
@@ -52,9 +53,8 @@ def IsPlanar (g : Graph n) : Prop :=
 /-- The subtrees at `v` and `w` interleave: each contributes two positions
     arranged strictly alternately. ([kuhlmann-nivre-2006], Definition 8) -/
 def Interleave (g : Graph n) (v w : Fin n) : Prop :=
-  ∃ a ∈ projection g v, ∃ b ∈ projection g v,
-    ∃ c ∈ projection g w, ∃ d ∈ projection g w,
-      a < c ∧ c < b ∧ b < d
+  ∃ a b, Dominates g v a ∧ Dominates g v b ∧
+    ∃ c d, Dominates g w c ∧ Dominates g w d ∧ a < c ∧ c < b ∧ b < d
 
 /-- **Well-nestedness**: disjoint subtrees (neither root dominating the
     other) never interleave. ([kuhlmann-nivre-2006], Definition 8) -/
@@ -62,13 +62,16 @@ def IsWellNested (g : Graph n) : Prop :=
   ∀ v w : Fin n, ¬ Dominates g v w → ¬ Dominates g w v → ¬ Interleave g v w
 
 instance (g : Graph n) : Decidable (IsProjective g) :=
-  inferInstanceAs (Decidable (∀ _, _))
+  decidable_of_iff (∀ v x, Dominates g v x → ∀ y, Dominates g v y → x ≤ y →
+      ∀ z, x ≤ z → z ≤ y → Dominates g v z) <| by
+    simp only [IsProjective, Set.ordConnected_iff, Set.subset_def, Set.mem_Icc,
+      Set.mem_setOf_eq, and_imp]
 
 instance (g : Graph n) : Decidable (IsPlanar g) :=
   inferInstanceAs (Decidable (∀ _, _))
 
 instance (g : Graph n) (v w : Fin n) : Decidable (Interleave g v w) :=
-  List.decidableBEx _ _
+  inferInstanceAs (Decidable (∃ _, _))
 
 instance (g : Graph n) : Decidable (IsWellNested g) :=
   inferInstanceAs (Decidable (∀ _, _))
@@ -84,84 +87,62 @@ theorem IsProjective.isPlanar {g : Graph n} (hT : g.IsTree)
   rintro a b c d hab hcd hL1 hL2 ⟨hac, hcb, hbd⟩
   rcases hL1 with h1 | h1 <;> rcases hL2 with h2 | h2
   · -- heads a and c
-    have hac' : Dominates g a c := hP a .refl (.edge h1) hac.le hcb.le
-    have hcb' : Dominates g c b := hP c .refl (.edge h2) hcb.le hbd.le
+    have hac' : Dominates g a c := (hP a).out .refl (.single h1) ⟨hac.le, hcb.le⟩
+    have hcb' : Dominates g c b := (hP c).out .refl (.single h2) ⟨hcb.le, hbd.le⟩
     exact hac.ne (Dominates.antisymm hT.acyclic hac'
-      (hcb'.to_head hT hcb.ne h1))
+      (Dominates.to_head hT hcb' hcb.ne h1))
   · -- heads a and d
-    have hac' : Dominates g a c := hP a .refl (.edge h1) hac.le hcb.le
-    have hdb' : Dominates g d b := hP d (.edge h2) .refl hcb.le hbd.le
+    have hac' : Dominates g a c := (hP a).out .refl (.single h1) ⟨hac.le, hcb.le⟩
+    have hdb' : Dominates g d b := (hP d).out (.single h2) .refl ⟨hcb.le, hbd.le⟩
     exact ((hac.trans hcb).trans hbd).ne (Dominates.antisymm hT.acyclic
-      (hac'.to_head hT hac.ne h2) (hdb'.to_head hT hbd.ne' h1))
+      (Dominates.to_head hT hac' hac.ne h2) (Dominates.to_head hT hdb' hbd.ne' h1))
   · -- heads b and c
-    have hbc' : Dominates g b c := hP b (.edge h1) .refl hac.le hcb.le
-    have hcb' : Dominates g c b := hP c .refl (.edge h2) hcb.le hbd.le
+    have hbc' : Dominates g b c := (hP b).out (.single h1) .refl ⟨hac.le, hcb.le⟩
+    have hcb' : Dominates g c b := (hP c).out .refl (.single h2) ⟨hcb.le, hbd.le⟩
     exact hcb.ne (Dominates.antisymm hT.acyclic hcb' hbc')
   · -- heads b and d
-    have hbc' : Dominates g b c := hP b (.edge h1) .refl hac.le hcb.le
-    have hdb' : Dominates g d b := hP d (.edge h2) .refl hcb.le hbd.le
+    have hbc' : Dominates g b c := (hP b).out (.single h1) .refl ⟨hac.le, hcb.le⟩
+    have hdb' : Dominates g d b := (hP d).out (.single h2) .refl ⟨hcb.le, hbd.le⟩
     exact hbd.ne (Dominates.antisymm hT.acyclic
-      (hbc'.to_head hT hcb.ne' h2) hdb')
+      (Dominates.to_head hT hbc' hcb.ne' h2) hdb')
 
 /-- On trees, projective structures are well-nested
     ([kuhlmann-nivre-2006] §3.5): interleaving would put a position
     under both subtree roots, which dominance comparability forbids. -/
 theorem IsProjective.isWellNested {g : Graph n} (hT : g.IsTree)
     (hP : IsProjective g) : IsWellNested g := by
-  rintro v w hvw hwv ⟨a, ha, b, hb, c, hc, d, hd, hac, hcb, hbd⟩
-  rw [mem_projection_iff] at ha hb hc
-  exact (hP v ha hb hac.le hcb.le).comparable hT hc |>.elim hvw hwv
+  rintro v w hvw hwv ⟨a, b, hva, hvb, c, _, hwc, _, hac, hcb, _⟩
+  exact (Dominates.comparable hT ((hP v).out hva hvb ⟨hac.le, hcb.le⟩) hwc).elim
+    hvw hwv
 
-/-! ### Gap degree and block-degree -/
+/-! ### Gap degree -/
 
 /-- The projection as position values, for the gap combinatorics. -/
 def projectionVals (g : Graph n) (v : Fin n) : List Nat :=
   (projection g v).map (·.val)
 
-/-- The projection is strictly increasing: it filters the ascending
+/-- The projection is strictly sorted: it filters the ascending
     `finRange`. -/
-theorem projection_chain (g : Graph n) (v : Fin n) :
-    (projectionVals g v).IsChain (· < ·) := by
-  refine List.isChain_iff_pairwise.mpr (List.Pairwise.map _ (λ a b h => h) ?_)
+theorem projectionVals_sortedLT (g : Graph n) (v : Fin n) :
+    (projectionVals g v).SortedLT := by
+  refine List.Pairwise.sortedLT (List.Pairwise.map _ (λ _ _ h => h) ?_)
   exact (List.pairwise_lt_finRange n).filter _
 
-/-- The **gaps** in a sorted projection: adjacent pairs (jₖ, jₖ₊₁) with
-    jₖ₊₁ − jₖ > 1. ([kuhlmann-nivre-2006], Definition 6) -/
-def gaps (sorted : List Nat) : List (Nat × Nat) :=
-  sorted.zip (sorted.drop 1) |>.filter λ (a, b) => b - a > 1
-
-/-- The **blocks** of a sorted projection: maximal contiguous segments.
-    The number of blocks equals gap degree + 1 and corresponds to the
-    fan-out of the LCFRS rule extracted for that node. -/
-def blocks : List Nat → List (List Nat)
-  | [] => []
-  | [a] => [[a]]
-  | a :: b :: rest =>
-    if b = a + 1 then
-      match blocks (b :: rest) with
-      | [] => [[a]]
-      | first :: remaining => (a :: first) :: remaining
-    else [a] :: blocks (b :: rest)
-
-/-- **Gap degree** of a position. ([kuhlmann-nivre-2006], Definition 6) -/
+/-- **Gap degree** of a position: the discontinuities in its projection —
+    adjacent projection members more than one position apart.
+    ([kuhlmann-nivre-2006], Definition 6) -/
 def gapDegreeAt (g : Graph n) (v : Fin n) : Nat :=
-  (gaps (projectionVals g v)).length
+  ((projectionVals g v).zip (projectionVals g v).tail).countP
+    (λ p => decide (1 < p.2 - p.1))
 
-/-- **Gap degree** of a graph: max over positions.
-    ([kuhlmann-nivre-2006], Definition 7). Gap degree 0 ⟺ projective. -/
+/-- **Gap degree** of a graph: the maximum over positions
+    ([kuhlmann-nivre-2006], Definition 7). Gap degree 0 is the paper's
+    characterization of projectivity, and gap degree + 1 is
+    [kuhlmann-2013]'s block-degree — the fan-out of the LCFRS rule
+    extracted at a node, whose boundedness (with well-nestedness) gives
+    polynomial parsing. -/
 def Graph.gapDegree (g : Graph n) : Nat :=
-  (List.finRange n).map (gapDegreeAt g) |>.foldl max 0
-
-/-- **Block-degree** of a position: blocks in its projection.
-    Block-degree = gap degree + 1 = fan-out of the extracted LCFRS rule. -/
-def blockDegreeAt (g : Graph n) (v : Fin n) : Nat :=
-  (blocks (projectionVals g v)).length
-
-/-- **Block-degree** of a graph: max over positions. Block-degree 1 ⟺
-    projective. Bounded block-degree + well-nestedness give polynomial
-    parsing ([kuhlmann-2013]). -/
-def Graph.blockDegree (g : Graph n) : Nat :=
-  (List.finRange n).map (blockDegreeAt g) |>.foldl max 0
+  Finset.univ.sup (gapDegreeAt g)
 
 end Defs
 
