@@ -1,135 +1,45 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Semantics.Entailment.NaturalLogic
 
 /-!
 # Focus-sensitive particles: even and only
 
-Traditional truth-conditional semantics for focus-sensitive particles
-(*even*, *only*), with NPI licensing derived from the scalar
-presupposition of *even*.
+Truth-conditional semantics for the focus particles *even* and *only*,
+with propositions as `Set World`. *Even*'s scalar presupposition
+([karttunen-peters-1979]) requires the prejacent to be less likely than
+every focus alternative; *only*'s assertion ([rooth-1992]) excludes
+every alternative; and `LikelihoodMonotone` — a likelihood ordering
+respecting entailment — is the property from which [lahiri-1998]
+derives the distribution of *even one* NPIs (cf. [crnic-2014]).
+[francescotti-1995] weakens the presupposition's universal force to a
+majority threshold — see `Studies/Francescotti1995.lean`.
 
 ## Main definitions
 
-* `FocusStructure α`: alternative-semantics pair of an ordinary value
-  and a list of alternatives.
-* `LikelihoodOrder W`: relation on `W → Bool` predicates expressing
-  context-dependent likelihood.
-* `TraditionalEven`, `TraditionalOnly`: bundled semantics of *even*
-  and *only*.
-* `npiLicensed`: NPI licensing condition keyed on `ContextPolarity`.
-* `LikelihoodMonotone`: monotonicity of a likelihood ordering with
-  respect to entailment.
-
-## References
-
-* [lahiri-1998], [crnic-2014], [karttunen-peters-1979],
-  [francescotti-1995], [rooth-1992].
+* `evenPresup`: the prejacent is less likely than every alternative.
+* `onlyAssertion`: no focus alternative holds.
+* `LikelihoodMonotone`: entailment-monotonicity of a likelihood
+  ordering.
 -/
 
 namespace Focus.Particles
 
-variable {World Entity : Type*}
+variable {World : Type*}
 
-/-- Alternative-semantics pair: an ordinary value plus a list of
-alternatives. -/
-structure FocusStructure (α : Type*) where
-  /-- The ordinary semantic value. -/
-  ordinary : α
-  /-- The focus alternatives. -/
-  alternatives : List α
+/-- The scalar presupposition of *even* ([karttunen-peters-1979]): the
+prejacent `p` is less likely than every focus alternative, where
+`r p q` reads "`p` is less likely than `q`". -/
+def evenPresup (r : Set World → Set World → Prop) (p : Set World)
+    (alts : List (Set World)) : Prop :=
+  ∀ q ∈ alts, r p q
 
-/-- Context-dependent likelihood ordering on `World → Bool` predicates.
-`lo a b` holds when `a` is less likely (more surprising) than `b`. -/
-def LikelihoodOrder (World : Type*) := (World → Bool) → (World → Bool) → Prop
+/-- The assertion of *only*: no focus alternative holds. The prejacent
+is presupposed separately; the alternative list excludes it. -/
+def onlyAssertion (alts : List (Set World)) : Set World :=
+  {w | ∀ q ∈ alts, w ∉ q}
 
-/-- Traditional EVEN semantics -/
-structure TraditionalEven where
-  /-- The prejacent proposition -/
-  prejacent : (World → Bool)
-  /-- Focus alternatives -/
-  alternatives : List ((World → Bool))
-  /-- Likelihood ordering -/
-  likelihood : LikelihoodOrder World
-
-/-- EVEN asserts the prejacent -/
-def TraditionalEven.assertion (even : TraditionalEven (World := World)) : (World → Bool) :=
-  even.prejacent
-
-/-- EVEN presupposes prejacent is least likely.
-    This is [karttunen-peters-1979]'s universal threshold: the prejacent
-    must be less likely than ALL alternatives. [francescotti-1995] argues
-    this is too strong — see the revised most-threshold in
-    `Studies/Francescotti1995.lean`. -/
-def TraditionalEven.presupposition (even : TraditionalEven (World := World)) : Prop :=
-  ∀ alt ∈ even.alternatives, even.likelihood even.prejacent alt
-
-/-- EVEN is defined (presupposition satisfied) -/
-def TraditionalEven.defined (even : TraditionalEven (World := World)) : Prop :=
-  even.presupposition
-
-/-- Full EVEN meaning: defined and true -/
-def TraditionalEven.trueAt (even : TraditionalEven (World := World)) (w : World) : Prop :=
-  even.defined ∧ even.prejacent w
-
-open NaturalLogic (ContextPolarity)
-
-/-- NPI licensing condition: EVEN presupposition must be satisfiable.
-    Uses `ContextPolarity` from `NaturalLogic`. -/
-def npiLicensed (pol : ContextPolarity) (npiDomain : Set Entity) (regularDomain : Set Entity)
-    (_hWider : regularDomain ⊆ npiDomain) : Prop :=
-  match pol with
-  | .downward =>
-      -- In DE: wider domain → less likely (after negation applies)
-      -- So NPI (wide domain) satisfies EVEN's "least likely" presupposition
-      True
-  | .upward =>
-      -- In UE: wider domain → more likely
-      -- NPI would violate EVEN's presupposition
-      False
-  | .nonMonotonic =>
-      -- Non-monotonic contexts (e.g., "exactly three") don't license NPIs
-      False
-
-/-- NPI licensed in DE contexts -/
-theorem npi_licensed_de (npiDomain regularDomain : Set Entity)
-    (hWider : regularDomain ⊆ npiDomain) :
-    npiLicensed .downward npiDomain regularDomain hWider = True := rfl
-
-/-- NPI unlicensed in UE contexts -/
-theorem npi_unlicensed_ue (npiDomain regularDomain : Set Entity)
-    (hWider : regularDomain ⊆ npiDomain) :
-    npiLicensed .upward npiDomain regularDomain hWider = False := rfl
-
-/-- NPI unlicensed in non-monotonic contexts -/
-theorem npi_unlicensed_nonmon (npiDomain regularDomain : Set Entity)
-    (hWider : regularDomain ⊆ npiDomain) :
-    npiLicensed .nonMonotonic npiDomain regularDomain hWider = False := rfl
-
-/-- Traditional "only" semantics -/
-structure TraditionalOnly where
-  /-- The prejacent (the focused element's contribution) -/
-  prejacent : (World → Bool)
-  /-- The alternatives (what focus evokes) -/
-  alternatives : List ((World → Bool))
-
-/-- "only" presupposes the prejacent -/
-def TraditionalOnly.presupposition (only : TraditionalOnly (World := World)) : (World → Bool) :=
-  only.prejacent
-
-/-- "only" asserts no alternative is true.
-    The alternatives list excludes the prejacent (Roothian focus alternatives
-    minus the focused element's contribution). -/
-def TraditionalOnly.assertion (only : TraditionalOnly (World := World)) : (World → Bool) :=
-  λ w => only.alternatives.all (λ alt => !alt w)
-
-/-- Full "only" meaning -/
-def TraditionalOnly.trueAt (only : TraditionalOnly (World := World)) (w : World) : Prop :=
-  only.prejacent w ∧ only.assertion w
-
-/-- A likelihood ordering is monotone with respect to entailment when a
-stronger proposition (true at fewer worlds) is less likely than a weaker
-one. -/
-def LikelihoodMonotone {W : Type*} (lessLikely : (W → Bool) → (W → Bool) → Prop) : Prop :=
-  ∀ (p q : (W → Bool)), (∀ w, p w = true → q w = true) → lessLikely p q
+/-- A likelihood ordering respects entailment: a stronger proposition
+is at most as likely. -/
+def LikelihoodMonotone (r : Set World → Set World → Prop) : Prop :=
+  ∀ ⦃p q : Set World⦄, p ⊆ q → r p q
 
 end Focus.Particles

@@ -1,15 +1,14 @@
 import Linglib.Pragmatics.DecisionTheoretic.Basic
 import Linglib.Pragmatics.DecisionTheoretic.But
-import Linglib.Semantics.Focus.Particles
 
 /-!
 # Decision-Theoretic Semantics: "Even" ([merin-1999-relevance] §5)
-[francescotti-1995] [kay-1990] [merin-1999-relevance]
 
 Merin's DTS account of the scalar particle "even". The felicity of
 "A CONJ even(B)" requires B to be *more* relevant than A, resolving the
-dispute between Anscombre (argumentative value), Kay (contextual entailment),
-and Francescotti (surprise) under a single relevance ordering.
+dispute between Anscombre (argumentative value), [kay-1990] (contextual
+entailment), and [francescotti-1995] (surprise) under a single
+relevance ordering.
 
 ## Key Definitions
 
@@ -79,27 +78,5 @@ theorem but_even_incompatible (ctx : DTSContext W) (a b : Set W)
   linarith
 
 end Predictions
-
--- ============================================================
--- Section 3: Bridge to Focus Particle Semantics
--- ============================================================
-
-/-- DTS Bayes factor ordering as a likelihood ordering for focus particles.
-
-    Higher BF = more informative about the issue = less likely a priori =
-    more surprising. This connects Merin's relevance ordering to the
-    traditional EVEN presupposition framework in `Focus.Particles`.
-
-    [merin-1999-relevance] subsumes [francescotti-1995]'s "surprise" and
-    [kay-1990]'s "informativeness" as special cases of signed relevance.
-
-    Note: `LikelihoodOrder` operates on `World → Bool` functions (the
-    upstream Focus.Particles interface). We embed each Bool predicate
-    into a Prop predicate via `· = true` to apply `bayesFactor`. -/
-def dtsLikelihood {W : Type} [Fintype W] (ctx : DTSContext W) :
-    Focus.Particles.LikelihoodOrder W :=
-  fun a b =>
-    bayesFactor ctx ({w | a w = true} : Set W) >
-      bayesFactor ctx ({w | b w = true} : Set W)
 
 end DTS.Even
