@@ -122,7 +122,7 @@ theorem bennett_too_weak :
 
 /-- The all-neighbors condition wrongly blocks "Even Albert failed the
 exam", since Marie is even less likely to fail. -/
-theorem kp_too_strong :
+theorem karttunen_peters_too_strong :
     Matches .universal scenario1 ∧ ¬ Matches .universal scenario2 := by decide
 
 /-- The most-threshold predicts both judgments correctly. -/
