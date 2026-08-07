@@ -28,31 +28,31 @@ open Focus.Particles (evenPresup LikelihoodMonotone)
 open Entailment (World entails pnot)
 open Semantics.Polarity
 
-/-! ### Morphological decomposition (paper p. 58)
+/-! ### Morphological decomposition (paper (1), p. 58)
 
-Every item in the paradigm is a weak indefinite plus *bhii*; the kind
+Every item in the paradigm is a weak indefinite plus *bhii*. The kind
 of alternatives an item activates (cardinality vs contextually salient
-properties, §8) is a lexical property. -/
+properties, §8) is a lexical property, stored on the fragment entries
+in `Hindi.PolarityItems`. (*kahiiN bhii*'s licensed uses in the paper
+are correlatives, §4.4, an environment not modeled here.) -/
 
-/-- A row of the paper's decomposition table: base indefinite, the
-*bhii*-compound, and the alternative type the item activates. -/
+/-- A row of the paper's decomposition table (1): base indefinite and
+the *bhii*-compound, with the paper's glosses. -/
 structure NPIDecomposition where
   base : String
   baseGloss : String
   npiForm : String
   npiGloss : String
-  alternativeType : AlternativeType
   deriving Repr
 
-/-- The paper's decomposition table (p. 58): *ek*/*zaraa* activate
-cardinality (measure) alternatives, the others contextual properties. -/
+/-- The paper's decomposition table ((1), p. 58). -/
 def hindiNPIs : List NPIDecomposition :=
-  [ ⟨"ek", "one", "ek bhii", "any, even one", .cardinality⟩
-  , ⟨"koii", "someone", "koii bhii", "anyone", .contextualProperty⟩
-  , ⟨"kuch", "something (mass)", "kuch bhii", "anything", .contextualProperty⟩
-  , ⟨"zaraa", "a little", "zaraa bhii", "even a little", .cardinality⟩
-  , ⟨"kabhii", "sometime", "kabhii bhii", "ever, anytime", .contextualProperty⟩
-  , ⟨"kahiiN", "somewhere", "kahiiN bhii", "anywhere", .contextualProperty⟩ ]
+  [ ⟨"ek", "one", "ek bhii", "any, even one"⟩
+  , ⟨"koii", "someone", "koii bhii", "anyone, any (count)"⟩
+  , ⟨"kuch", "something, a little", "kuch bhii", "anything, any (mass)"⟩
+  , ⟨"zaraa", "a little", "zaraa bhii", "even a little"⟩
+  , ⟨"kabhii", "sometime", "kabhii bhii", "anytime, ever"⟩
+  , ⟨"kahiiN", "somewhere", "kahiiN bhii", "anywhere"⟩ ]
 
 /-- Morphological uniformity: every NPI form is its base plus *bhii*. -/
 theorem npiForm_eq_base_bhii :
@@ -314,7 +314,7 @@ def npi_adversative_surprise_ek : HindiNPIDatum :=
   { sentence := "mujhe is baat par aaScarya huaa ki ek bhii aadmii tumhaare ghar gayaa"
   , npiItem := "ek bhii", grammatical := true
   , context := some .adversative
-  , notes := "(29a) 'I am surprised that even one person went to your house.'" }
+  , notes := "(29a) 'I am surprised that anyone went to your house.'" }
 
 def npi_adversative_surprise_koii : HindiNPIDatum :=
   { sentence := "mujhe is baat par aaScarya huaa ki koii bhii tumhaare ghar gayaa"
@@ -360,7 +360,7 @@ def npi_question : HindiNPIDatum :=
   { sentence := "tumheN koii bhii kitaab pasand aayii kyaa?"
   , npiItem := "koii bhii", grammatical := true
   , context := some .question
-  , notes := "(34a) 'Did you like any book?' Rhetorical → negative bias" }
+  , notes := "(34a) 'Did you like any book?'" }
 
 -- Subject position (§6): Hindi, unlike English, licenses subject NPIs
 -- under clausemate negation — negation scopes over the subject at LF.
@@ -536,6 +536,20 @@ numerals) while *koii* activates contextually salient properties —
 only the latter yield free-choice readings, and cardinality
 alternatives clash with explicit numerals ((99)–(100)). -/
 
+open Hindi.PolarityItems (koiiBhii koiiNahiin bhiiItems)
+
+/-- §8's contrast is lexical: the fragment's *ek bhii* activates
+cardinality alternatives, *koii bhii* contextual properties. -/
+theorem contrast_is_lexical :
+    Hindi.PolarityItems.ekBhii.alternativeType = .cardinality ∧
+    koiiBhii.alternativeType = .contextualProperty := ⟨rfl, rfl⟩
+
+/-- The imperative asymmetry ((39) vs (40)): the cardinality-alternative
+items are exactly the ones whose attested contexts exclude imperatives. -/
+theorem cardinality_items_resist_imperatives :
+    ∀ i ∈ bhiiItems, i.alternativeType = .cardinality →
+      .imperative ∉ i.licensingContexts := by decide
+
 /-- A minimal *ek bhii* / *koii bhii* pair in the same frame. -/
 structure EkKoiiContrastDatum where
   ekSentence : String
@@ -567,19 +581,21 @@ def generic_contrast : EkKoiiContrastDatum :=
 
 /-! ### Fragment grounding
 
-The fragment entry `Hindi.PolarityItems.koiiBhii` stores the
-distribution this study derives: DE environments for NPI readings,
-generic/modal environments for FC readings. -/
+The fragment entries in `Hindi.PolarityItems` store the distribution
+this study derives: DE environments for NPI readings, generic/modal
+environments for FC readings, necessity modals excluded ((36d)). -/
 
-open Hindi.PolarityItems (koiiBhii koiiNahiin)
-
-/-- The fragment's *koii bhii* matches the analysis: free-choice,
-indefinite + *even* morphology, contextual-property alternatives. -/
+/-- The fragment's *koii bhii* matches the analysis: a dual NPI/FC item
+with indefinite + *even* morphology, licensed under negation ((6b)) and
+in generics ((35a)) but not under necessity modals ((36d)). -/
 theorem koiiBhii_fragment_grounded :
+    koiiBhii.licensor = some .weak ∧
     koiiBhii.freeChoice = true ∧
     koiiBhii.morphology = .indefPlusEven ∧
-    koiiBhii.alternativeType = .contextualProperty :=
-  ⟨rfl, rfl, rfl⟩
+    .negation ∈ koiiBhii.licensingContexts ∧
+    .generic ∈ koiiBhii.licensingContexts ∧
+    .modalNecessity ∉ koiiBhii.licensingContexts := by
+  refine ⟨rfl, rfl, rfl, ?_, ?_, ?_⟩ <;> decide
 
 /-- The fragment's *koii nahiiN* is a strength-licensed NPI with
 indefinite + negation morphology — the non-*bhii* route. -/
