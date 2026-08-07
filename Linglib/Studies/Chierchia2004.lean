@@ -1,399 +1,314 @@
-/-
-# Parallel Recursive Strengthening: [chierchia-2004]
+import Linglib.Semantics.Entailment.Polarity
+import Mathlib.Data.Set.Lattice
 
-Formalizes the core architecture of [chierchia-2004] "Scalar Implicatures,
-Polarity Phenomena, and the Syntax/Pragmatics Interface" (§3).
+/-!
+# Chierchia 2004: parallel recursive strengthening
 
-Every expression gets both a plain meaning ‖α‖ and a strengthened meaning ‖α‖^S,
-computed in tandem at every compositional step.
+[chierchia-2004] ("Scalar Implicatures, Polarity Phenomena, and the
+Syntax/Pragmatics Interface", §3) computes two meanings for every expression in
+tandem: a plain value `‖α‖` and a strengthened value `‖α‖^S` that folds scalar
+implicatures in as soon as their triggers appear. Direct implicatures enter at
+scope sites by a variant of [krifka-1995a]'s rule (75); the Strength Condition
+(§3.1) requires `‖α‖^S` to entail `‖α‖` at every step; and Strong Application
+(84) dispatches on entailment behaviour: non-DE functions pass strengthened
+values through, DE functions strip the argument's implicatures and add indirect
+implicatures at the matrix level. Implicature suspension in exactly the
+*any*-licensing environments — the Generalization on SIs (53) — is `Antitone`
+reversal of the Strength Condition, and intervention (§4.3) follows from NPIs
+competing with strong rather than plain meanings (127).
 
-## Core mechanism
+## Main results
 
-1. **Krifka's Rule** (cf. (81)): At scope sites, ‖α‖^S = ‖α‖ ∧ ¬(‖alt‖)
-2. **Strength Condition** (82): ‖α‖^S must entail ‖α‖; otherwise fallback
-3. **Strong Application** (84): DE-sensitive function application
-   - If f is not DE: ‖[f g]‖^S = f^S(g^S)
-   - If f is DE: ‖[f g]‖^S = f^S(g) ∧ indirect implicatures
-4. **Scale Axioms** (99): Context selects ≥2 scale members; uttered ≠ strongest
+* `si_npi_generalization`: (53) — a DE function maps a strengthened argument to
+  a weaker matrix value, so direct implicatures cannot survive DE embedding.
+* `strongApplyUE_strengthCondition` / `strongApplyDE_strengthCondition`: both
+  clauses of (84) preserve the Strength Condition.
+* `doubt_and_indirect_implicature`: the (81)–(83) computation — "I doubt that
+  John drinks and drives" acquires the indirect implicature "but I believe he
+  does one of the two".
+* `and_blocks_any` / `or_licenses_any`: the (128)–(130) intervention contrast —
+  *and* blocks *any* under *doubt* while *or* licenses it — derived from
+  competition with strong meanings per (127).
 
-## Key results
+## Implementation notes
 
-- **SI-NPI Generalization** (53): SIs are suspended in exactly NPI-licensing (DE)
-  contexts — direct implicatures are blocked, indirect implicatures may arise
-- **Direct vs indirect implicatures**: Direct from Krifka's Rule at scope sites;
-  indirect from Strong Application in DE contexts
-- **Intervention effects**: Strong scalar terms (every, and) generate indirect
-  implicatures that can block NPI strengthening; weak terms (some, or) don't
-- **Bridge**: At root level in UE contexts, Chierchia's ‖S‖^S ⊆ exhIE(ALT, S)
-
+Numbered items follow the circulated manuscript (the "Bicocca, May 2001"
+version); the published chapter may renumber. Where the paper's scalar
+assertion `σ` negates the *weakest* alternative asymmetrically entailing the
+target (⊥ if none), the definitions below negate *all* strictly stronger
+alternatives — equivalent on the linearly ordered scales the paper works with,
+since negating the weakest stronger member entails negating the rest.
 -/
-
-import Linglib.Semantics.Exhaustification.Operators.Basic
-import Mathlib.Data.Set.Basic
 
 namespace Chierchia2004
 
-open Exhaustification
-
--- ============================================================================
--- A. Strengthened Meanings
--- ============================================================================
+open Entailment (IsDE IsUE)
 
 variable {World : Type*}
 
-/-- A strengthened meaning pairs a plain denotation with its strengthened version
-    and the alternatives used to compute the strengthening.
+/-! ### Strengthened meanings -/
 
-    This is the central data structure: every propositional node in a derivation
-    carries both ‖α‖ (plain) and ‖α‖^S (strong). -/
+/-- A propositional node of a derivation: the plain value `‖α‖`, the
+strengthened value `‖α‖^S`, and the active scalar alternatives. -/
 structure StrengthenedMeaning (World : Type*) where
-  /-- ‖α‖ — the plain semantic value -/
+  /-- The plain semantic value `‖α‖`. -/
   plain : Set World
-  /-- ‖α‖^S — the strengthened semantic value -/
+  /-- The strengthened semantic value `‖α‖^S`. -/
   strong : Set World
-  /-- The scalar alternatives considered -/
+  /-- The active scalar alternatives. -/
   alternatives : Set (Set World)
 
-/-- Lift a plain meaning to a trivially strengthened one (‖α‖^S = ‖α‖). -/
-def StrengthenedMeaning.trivial (φ : Set World) : StrengthenedMeaning World :=
-  { plain := φ, strong := φ, alternatives := ∅ }
+/-- (73a): a lexical item's strong meaning is its plain meaning. -/
+def StrengthenedMeaning.lexical (φ : Set World) (ALT : Set (Set World)) :
+    StrengthenedMeaning World :=
+  ⟨φ, φ, ALT⟩
 
--- ============================================================================
--- B. Scale Axioms (99)
--- ============================================================================
-
-/-- Chierchia's scale axioms (99a–c) as a predicate:
-    (a) Context activates at least 2 members of the scale
-    (b) The uttered term is a member of the activated scale
-    (c) The uttered term is not the strongest activated member
-
-    "Strictly stronger" means: a ⊆ utt (a entails utt, true in fewer worlds)
-    but not utt ⊆ a (utt does not entail a). -/
-def scaleAxiomsSatisfied (activated : Set (Set World)) (utt : Set World) : Prop :=
-  -- (99a): at least 2 alternatives
-  (∃ a b, a ∈ activated ∧ b ∈ activated ∧ a ≠ b) ∧
-  -- (99b): uttered is in the scale
-  utt ∈ activated ∧
-  -- (99c): uttered is not the strongest — some alt is strictly stronger
-  (∃ a ∈ activated, (a ⊆ utt) ∧ ¬(utt ⊆ a))
-
--- ============================================================================
--- C. Strength Condition (82)
--- ============================================================================
-
-/-- The Strength Condition (82): ‖α‖^S must entail ‖α‖.
-
-    If this fails, the strengthened meaning is discarded and we fall back
-    to the plain meaning. This prevents over-generation of implicatures. -/
-def strengthCondition (sm : StrengthenedMeaning World) : Prop :=
+/-- The Strength Condition (§3.1): the strong value entails the plain value,
+`sm.strong ⊆ sm.plain`. -/
+def StrengthenedMeaning.StrengthCondition (sm : StrengthenedMeaning World) : Prop :=
   sm.strong ⊆ sm.plain
 
-/-- Apply the strength condition: keep strengthened meaning if it entails plain;
-    otherwise fall back to plain. Uses a Boolean flag for decidability. -/
-def applyStrengthCondition (sm : StrengthenedMeaning World)
-    (holds : Bool) : StrengthenedMeaning World :=
-  if holds then sm
-  else { sm with strong := sm.plain }
+/-! ### Krifka's rule -/
 
--- ============================================================================
--- D. Krifka's Rule — Direct Implicatures (81)
--- ============================================================================
+/-- Krifka's rule (75): at a scope site, conjoin the plain value with the
+negations of its strictly stronger alternatives. -/
+def krifkaRule (φ : Set World) (ALT : Set (Set World)) : StrengthenedMeaning World where
+  plain := φ
+  strong := φ ∩ ⋂ a ∈ {a ∈ ALT | a ⊂ φ}, aᶜ
+  alternatives := ALT
 
-/-- Krifka's Rule (cf. (81)):
-    At a scope site, introduce a direct implicature by conjoining the plain
-    meaning with the negation of each strictly stronger alternative.
+@[simp]
+theorem mem_krifkaRule_strong {φ : Set World} {ALT : Set (Set World)} {w : World} :
+    w ∈ (krifkaRule φ ALT).strong ↔ w ∈ φ ∧ ∀ a ∈ ALT, a ⊂ φ → w ∉ a := by
+  simp [krifkaRule]
 
-    ‖S‖^S = ‖S‖ ∧ ⋂₀ {¬‖alt‖ : alt ∈ ALT, alt strictly stronger than ‖S‖}
+theorem krifkaRule_strengthCondition (φ : Set World) (ALT : Set (Set World)) :
+    (krifkaRule φ ALT).StrengthCondition :=
+  λ _ hw => hw.1
 
-    "Strictly stronger" = a ⊆ φ ∧ ¬(φ ⊆ a): the alternative entails the
-    uttered meaning but not vice versa (true in strictly fewer worlds).
+/-! ### Scale axioms -/
 
-    This is the source of DIRECT implicatures. -/
-def krifkaRule (φ : Set World) (ALT : Set (Set World)) : StrengthenedMeaning World :=
-  { plain := φ
-  , strong := φ ∩ (⋂₀ { ψ | ∃ a ∈ ALT, ψ = aᶜ ∧ (a ⊆ φ) ∧ ¬(φ ⊆ a) })
-  , alternatives := ALT }
+/-- The scale axioms (99): the context selects a subset of the uttered term's
+lexical scale (99a) with at least two members (99b), and the uttered term is not
+the strongest selected member whenever the lexical scale offers a stronger one —
+the "if possible" proviso of (99c). -/
+def ScaleAxioms (lexicalScale chosen : Set (Set World)) (utt : Set World) : Prop :=
+  chosen ⊆ lexicalScale ∧ chosen.Nontrivial ∧ utt ∈ chosen ∧
+    ((∃ a ∈ lexicalScale, a ⊂ utt) → ∃ a ∈ chosen, a ⊂ utt)
 
-/-- Direct implicatures satisfy the strength condition:
-    ‖S‖ ∧ ¬(stronger alts) entails ‖S‖. -/
-theorem krifkaRule_satisfies_strength (φ : Set World) (ALT : Set (Set World)) :
-    strengthCondition (krifkaRule φ ALT) := by
-  intro w ⟨hφ, _⟩
-  exact hφ
+/-- Krifka's rule strengthens properly whenever some activated alternative is
+strictly stronger and consistent. -/
+theorem krifkaRule_strong_ssubset {φ : Set World} {ALT : Set (Set World)}
+    (h : ∃ a ∈ ALT, a ⊂ φ ∧ a.Nonempty) :
+    (krifkaRule φ ALT).strong ⊂ φ := by
+  obtain ⟨a, haALT, haφ, w, hwa⟩ := h
+  refine ssubset_iff_subset_not_subset.mpr ⟨λ _ hw => hw.1, λ hsub => ?_⟩
+  exact (mem_krifkaRule_strong.1 (hsub (haφ.1 hwa))).2 a haALT haφ hwa
 
--- ============================================================================
--- E. DE-Sensitivity — Strong Application (84)
--- ============================================================================
+/-- Under the scale axioms, a stronger lexical alternative guarantees proper
+strengthening — the point of the (99c) proviso. -/
+theorem ScaleAxioms.krifkaRule_ssubset {lex chosen : Set (Set World)} {utt : Set World}
+    (h : ScaleAxioms lex chosen utt) (hstr : ∃ a ∈ lex, a ⊂ utt)
+    (hne : ∀ a ∈ chosen, a ⊂ utt → a.Nonempty) :
+    (krifkaRule utt chosen).strong ⊂ utt :=
+  let ⟨a, ha, hau⟩ := h.2.2.2 hstr
+  krifkaRule_strong_ssubset ⟨a, ha, hau, hne a ha hau⟩
 
-/-- A context function is downward-entailing (DE) over `Set World`.
+/-! ### Downward entailingness suspends implicatures -/
 
-    f is DE iff: φ ⊆ ψ → f(ψ) ⊆ f(φ).
+/-- Generalization on SIs (53): a DE function maps the strengthened argument to
+a *weaker* matrix value, so keeping a direct implicature under DE embedding
+would violate the Strength Condition — implicatures are suspended in exactly
+the *any*-licensing environments. -/
+theorem si_npi_generalization {f : Set World → Set World} (hDE : IsDE f)
+    {g : StrengthenedMeaning World} (hg : g.StrengthCondition) :
+    f g.plain ⊆ f g.strong :=
+  hDE hg
 
-    This reverses entailment: strengthening the argument weakens the result.
-
-    Note: This is the `World → Prop` version, paralleling `IsDownwardEntailing`
-    (`Antitone`) from `Entailment` which uses `World → Bool`. -/
-def IsDE (f : Set World → Set World) : Prop :=
-  ∀ φ ψ : Set World, (φ ⊆ ψ) → (f ψ ⊆ f φ)
-
-/-- Negation is DE. -/
-theorem compl_isDE : IsDE (World := World) Compl.compl := by
-  intro φ ψ hφψ w hnψ hφ
-  exact hnψ (hφψ hφ)
-
-/-- Strong Application (84): DE-sensitive function application.
-
-    This is the formal heart of [chierchia-2004].
-
-    **Non-DE case** (UE contexts): Pass strengthened meanings through.
-      ‖[f g]‖^S = f^S(g^S)
-
-    **DE case**: Strip implicatures from the argument (use plain meaning),
-      then add INDIRECT implicatures from the alternatives.
-      ‖[f g]‖^S = f^S(g) ∩ ⋂₀ {∼(f(alt)) : alt ∈ g.alternatives, f(alt) not entailed}
-
-    The key insight: in DE contexts, direct SIs of the argument are blocked
-    because strengthening the argument would WEAKEN the result.
-    But indirect implicatures arise at the matrix level from the alternatives. -/
-def strongApply (f fS : Set World → Set World) (g : StrengthenedMeaning World)
-    (fIsDE : Bool) : StrengthenedMeaning World :=
-  if fIsDE then
-    -- DE case: use PLAIN meaning of argument (strip its implicatures)
-    -- Then add indirect implicatures from alternatives
-    let indirectImplicatures : Set World :=
-      ⋂₀ { ψ | ∃ alt ∈ g.alternatives,
-            ψ = (f alt)ᶜ ∧
-            -- Only negate alternatives where f(alt) is not entailed by f(g.plain)
-            ¬(f alt ⊆ f g.plain) }
-    { plain := f g.plain
-    , strong := fS g.plain ∩ indirectImplicatures
-    , alternatives := g.alternatives }
-  else
-    -- UE case: pass strengthened meanings through
-    { plain := f g.plain
-    , strong := fS g.strong
-    , alternatives := g.alternatives }
-
--- ============================================================================
--- F. Direct vs Indirect Implicatures
--- ============================================================================
-
-/-- Classification of implicatures by their source. -/
-inductive ImplicatureType where
-  /-- Direct: from Krifka's Rule at a scope site (UE contexts) -/
-  | direct
-  /-- Indirect: from Strong Application through a DE function -/
-  | indirect
-  deriving DecidableEq, Repr
-
-/-- In UE contexts, scalar items generate DIRECT implicatures.
-    In DE contexts, the direct implicature is blocked, but the DE operator
-    may generate INDIRECT implicatures at the matrix level.
-
-    Example:
-    - UE: "John ate some cookies" → direct: ¬all (from Krifka's Rule)
-    - DE: "John didn't eat some cookies" → direct ¬all blocked;
-      indirect: ¬(¬all) = all may arise at matrix -/
-def implicatureSource (fIsDE : Bool) : ImplicatureType :=
-  if fIsDE then .indirect else .direct
-
--- ============================================================================
--- G. The SI-NPI Generalization (53)
--- ============================================================================
-
-/-- The SI-NPI Generalization ([chierchia-2004], (53)):
-
-    Scalar implicatures are systematically SUSPENDED in the same environments
-    that LICENSE negative polarity items (NPIs).
-
-    Formally: If f is DE, then direct scalar implicatures of its argument are
-    blocked. The strengthened argument g^S entails g (by the strength condition),
-    so DE reverses this: f(g) ⊆ f(g^S). Using the strengthened argument would
-    WEAKEN the matrix meaning, violating the strength condition at that level.
-
-    This is exactly the DE property that licenses NPIs: DE contexts are
-    precisely where scalar strengthening is blocked. -/
-theorem si_npi_generalization
-    (f : Set World → Set World) (hDE : IsDE f)
-    (g : StrengthenedMeaning World) (hStrength : g.strong ⊆ g.plain) :
-    f g.plain ⊆ f g.strong := by
-  exact hDE g.strong g.plain hStrength
-
-/-- Corollary: Under a DE function, applying f to the Krifka-strengthened
-    argument is WEAKER than applying f to the plain argument. -/
-theorem de_blocks_direct_si
-    (f : Set World → Set World) (hDE : IsDE f)
+/-- Instantiation of (53) at Krifka-strengthened arguments. -/
+theorem de_blocks_direct_si {f : Set World → Set World} (hDE : IsDE f)
     (φ : Set World) (ALT : Set (Set World)) :
-    let strengthened := (krifkaRule φ ALT).strong
-    f φ ⊆ f strengthened := by
-  simp only
-  apply hDE
-  exact krifkaRule_satisfies_strength φ ALT
+    f φ ⊆ f (krifkaRule φ ALT).strong :=
+  hDE (krifkaRule_strengthCondition φ ALT)
 
--- ============================================================================
--- H. NPI Licensing as Domain Widening + Strengthening
--- ============================================================================
+/-! ### Strong Application -/
 
-/-- Chierchia's O operator (cf. (127)): exhaustification over domain alternatives.
+/-- Strong Application (84), non-DE clause: `‖[β γ]‖^S = ‖β‖^S(‖γ‖^S)`, with
+alternatives projected pointwise through the function ((82b)). -/
+def strongApplyUE (f fS : Set World → Set World) (g : StrengthenedMeaning World) :
+    StrengthenedMeaning World where
+  plain := f g.plain
+  strong := fS g.strong
+  alternatives := f '' g.alternatives
 
-    For an indefinite with domain D, the O operator provides universal closure
-    over the domain — the NPI "widens" the domain to the maximal set,
-    and O yields the strengthened meaning.
+/-- Strong Application (84), DE clause: apply the strengthened function to the
+*plain* argument — stripping the argument's direct implicatures — and negate the
+strictly stronger matrix-level images of its alternatives (the indirect
+implicatures). -/
+def strongApplyDE (f fS : Set World → Set World) (g : StrengthenedMeaning World) :
+    StrengthenedMeaning World where
+  plain := f g.plain
+  strong := fS g.plain ∩ ⋂ a ∈ {a ∈ g.alternatives | f a ⊂ f g.plain}, (f a)ᶜ
+  alternatives := f '' g.alternatives
 
-    O_D(∃x∈D. P(x)) = ∃x∈D. P(x) ∧ ∀D'⊂D. ¬(∃x∈D'. P(x) ∧ ∀y∈D\D'. ¬P(y))
+@[simp]
+theorem mem_strongApplyDE_strong {f fS : Set World → Set World}
+    {g : StrengthenedMeaning World} {w : World} :
+    w ∈ (strongApplyDE f fS g).strong ↔
+      w ∈ fS g.plain ∧ ∀ a ∈ g.alternatives, f a ⊂ f g.plain → w ∉ f a := by
+  simp [strongApplyDE]
 
-    Simplified: the assertion holds AND no subdomain alternative holds. -/
-def domainExhaustify (assertion : Set World) (subdomainAlts : Set (Set World))
-    : Set World :=
-  assertion ∩ (⋂₀ { ψ | ∃ alt ∈ subdomainAlts, ψ = altᶜ })
+/-- The non-DE clause of (84) preserves the Strength Condition when the
+function's strengthening entails its plain value and the function is UE. -/
+theorem strongApplyUE_strengthCondition {f fS : Set World → Set World}
+    (hf : IsUE f) (hfS : ∀ X, fS X ⊆ f X) {g : StrengthenedMeaning World}
+    (hg : g.StrengthCondition) :
+    (strongApplyUE f fS g).StrengthCondition :=
+  λ _ hw => hf hg (hfS g.strong hw)
 
-/-- NPI strengthening succeeds when the exhaustified meaning entails the
-    plain meaning of the non-widened competitor.
+/-- The DE clause of (84) satisfies the Strength Condition by construction: it
+already falls back to the plain argument. -/
+theorem strongApplyDE_strengthCondition {f fS : Set World → Set World}
+    (hfS : ∀ X, fS X ⊆ f X) (g : StrengthenedMeaning World) :
+    (strongApplyDE f fS g).StrengthCondition :=
+  λ _ hw => hfS g.plain hw.1
 
-    (127): ‖any NP‖^S = O_D(∃x∈D.P(x)) must be stronger than ∃x∈D₀.P(x)
-    where D₀ is the default (non-widened) domain. -/
-def npiStrengtheningSucceeds (exhaustified competitor : Set World) : Prop :=
-  exhaustified ⊆ competitor
+/-! ### The direct implicature of "some" -/
 
-/-- NPI strengthening is BLOCKED when embedding under a DE function,
-    because the DE function reverses the strengthening relationship.
+/-- Worlds for "John saw some students": saw none, some-but-not-all, or all. -/
+def sawSome : Set (Fin 3) := {w | w ≠ 0}
 
-    This connects NPIs to scalar implicatures: both involve DE-ness,
-    but for NPIs, the blocking is what makes them grammatical in DE contexts
-    (they don't need to strengthen, so domain widening is "free"). -/
-theorem npi_blocked_under_de
-    (f : Set World → Set World) (hDE : IsDE f)
-    (widened competitor : Set World) (hStronger : widened ⊆ competitor) :
-    f competitor ⊆ f widened := by
-  exact hDE widened competitor hStronger
+/-- "John saw every student" — true only in the saw-all world. -/
+def sawEvery : Set (Fin 3) := {w | w = 2}
 
--- ============================================================================
--- I. Intervention Effects (§4.3)
--- ============================================================================
+theorem sawEvery_ssubset : sawEvery ⊂ sawSome := by
+  refine ssubset_iff_subset_not_subset.mpr ⟨λ w hw => ?_, λ h => ?_⟩
+  · simp only [sawEvery, Set.mem_setOf_eq] at hw
+    simp [sawSome, hw]
+  · exact absurd (h (show (1 : Fin 3) ∈ sawSome by simp [sawSome])) (by simp [sawEvery])
 
-/-- Intervention occurs when a strong scalar item (every, and, numerals)
-    sits between an NPI licensor and the NPI.
+/-- (74)–(76): Krifka's rule computes the direct implicature of "John saw some
+students" — some but not every. -/
+theorem some_not_all_implicature :
+    (krifkaRule sawSome {sawSome, sawEvery}).strong = sawSome \ sawEvery := by
+  ext w
+  simp only [mem_krifkaRule_strong, Set.mem_insert_iff, Set.mem_singleton_iff,
+    Set.mem_sdiff, forall_eq_or_imp, forall_eq]
+  exact ⟨λ ⟨hw, _, he⟩ => ⟨hw, he sawEvery_ssubset⟩,
+    λ ⟨hw, he⟩ => ⟨hw, λ hss => absurd rfl hss.ne, λ _ => he⟩⟩
 
-    The strong item generates an INDIRECT implicature that conflicts with
-    the NPI's domain-widening requirement.
+/-! ### The doubt example -/
 
-    Weak items (some, or) do not intervene because they don't generate
-    indirect implicatures that conflict. -/
-inductive ScalarStrength where
-  /-- Strong: top of scale (every, and, all numerals > 1). Generates indirect
-      implicatures that can interfere with NPI licensing. -/
-  | strong
-  /-- Weak: bottom of scale (some, or). No interfering indirect implicatures. -/
-  | weak
-  deriving DecidableEq, Repr
+/-- Worlds valuate ⟨John drinks, John drives⟩. -/
+def drinkAndDrive : Set (Bool × Bool) := {w | w.1 ∧ w.2}
 
-/-- Whether a scalar item of given strength intervenes in NPI licensing.
+/-- The *or*-alternative of `drinkAndDrive` on the ⟨or, and⟩ scale. -/
+def drinkOrDrive : Set (Bool × Bool) := {w | w.1 ∨ w.2}
 
-    Strong scalars generate indirect implicatures under DE operators;
-    these indirect implicatures can block NPI strengthening.
-    Weak scalars don't generate interfering implicatures. -/
-def intervenes (strength : ScalarStrength) : Bool :=
-  match strength with
-  | .strong => true
-  | .weak => false
+theorem drinkAndDrive_ssubset : drinkAndDrive ⊂ drinkOrDrive := by
+  refine ssubset_iff_subset_not_subset.mpr
+    ⟨λ w hw => Or.inl hw.1, λ h => ?_⟩
+  exact absurd (h (show (true, false) ∈ drinkOrDrive from Or.inl rfl)) (by simp [drinkAndDrive])
 
--- Verify: "every" intervenes, "some" doesn't
--- "*No one who read every book understood any theorem" (every intervenes)
--- "No one who read some book understood any theorem" (some doesn't)
-#guard intervenes .strong == true
-#guard intervenes .weak == false
+/-- The (81)–(83) computation: embedding "John drinks and drives" under DE
+*doubt* (modelled as complement) yields the indirect implicature (83b) — doubt
+the conjunction yet believe the disjunction. -/
+theorem doubt_and_indirect_implicature :
+    (strongApplyDE compl compl
+        (.lexical drinkAndDrive {drinkAndDrive, drinkOrDrive})).strong =
+      drinkAndDriveᶜ ∩ drinkOrDrive := by
+  have hoc : drinkOrDriveᶜ ⊂ drinkAndDriveᶜ :=
+    compl_lt_compl_iff_lt.mpr drinkAndDrive_ssubset
+  ext w
+  simp only [mem_strongApplyDE_strong, StrengthenedMeaning.lexical,
+    Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
+    Set.mem_inter_iff]
+  exact ⟨λ ⟨hw, _, ho⟩ => ⟨hw, Set.notMem_compl_iff.1 (ho hoc)⟩,
+    λ ⟨hw, ho⟩ => ⟨hw, λ hss => absurd rfl hss.ne, λ _ => Set.notMem_compl_iff.2 ho⟩⟩
 
--- ============================================================================
--- J. Bridge to exhIE ([fox-2007] / [spector-2016])
--- ============================================================================
+/-! ### Intervention -/
 
-/-- At a root-level scope site in a UE context, Chierchia's parallel
-    strengthening entails Fox's exhIE.
+/-- Worlds valuate ⟨John ate the cake, drank coffee c₁, drank coffee c₂⟩;
+`{c₁}` is the default coffee domain and `{c₁, c₂}` its widening. -/
+def ateCake : Set (Bool × Bool × Bool) := {w | w.1}
 
-    Krifka's Rule produces: φ ∧ ⋂₀ {¬alt : alt strictly stronger than φ}
-    exhIE produces: φ ∧ ⋂₀ {¬alt : alt innocently excludable}
+/-- "John drank some coffee" on the default domain `{c₁}`. -/
+def drankC1 : Set (Bool × Bool × Bool) := {w | w.2.1}
 
-    On "flat" (linearly ordered) scales, every innocently excludable alternative
-    is strictly stronger, so Krifka's output negates a superset and thus entails
-    exhIE. The hypothesis `hFlat` captures this: every IE alt is strictly stronger.
+/-- "John drank coffee c₂" — the widened part of the domain. -/
+def drankC2 : Set (Bool × Bool × Bool) := {w | w.2.2}
 
-    Requires MC-set existence to decompose IE members into φ or aᶜ forms. -/
-theorem root_ue_bridge (φ : Set World) (ALT : Set (Set World))
-    (hMC : ∃ E, IsMCSet ALT φ E)
-    (hFlat : ∀ a ∈ ALT, IsInnocentlyExcludable ALT φ a →
-      (a ⊆ φ) ∧ ¬(φ ⊆ a)) :
-    ∀ w, (krifkaRule φ ALT).strong w → exhIE ALT φ w := by
-  intro w ⟨hφ, hnegs⟩
-  -- hnegs : ∀ ψ ∈ {ψ | ∃ a ∈ ALT, ψ = aᶜ ∧ (a ⊆ φ) ∧ ¬(φ ⊆ a)}, ψ w
-  -- Goal: ∀ ψ ∈ IE ALT φ, ψ w
-  intro ψ hψ_IE
-  -- Use MC-set existence to determine the form of ψ
-  obtain ⟨E, hE_mc⟩ := hMC
-  have hψ_E : ψ ∈ E := hψ_IE E hE_mc
-  -- From compatibility: every member of E is φ or aᶜ for some a ∈ ALT
-  rcases hE_mc.1.2.1 ψ hψ_E with rfl | ⟨a, ha_ALT, rfl⟩
-  · -- Case ψ = φ: immediate from Krifka's hypothesis
-    exact hφ
-  · -- Case ψ = aᶜ for some a ∈ ALT: need ¬(a w)
-    -- Since aᶜ ∈ IE (it's in every MC-set), a is innocently excludable
-    have h_ie : IsInnocentlyExcludable ALT φ a := ⟨ha_ALT, hψ_IE⟩
-    -- By the flat-scale hypothesis: a is strictly stronger than φ
-    obtain ⟨ha_str, ha_strict⟩ := hFlat a ha_ALT h_ie
-    -- Krifka's Rule negated all strictly stronger alternatives, including a
-    exact hnegs (aᶜ) ⟨a, ha_ALT, rfl, ha_str, ha_strict⟩
+/-- (128b): universal closure over domain choices of "I doubt that John ate the
+cake and drank any coffee", spelled out over the nonempty subdomains of
+`{c₁, c₂}`. -/
+def anyAndClosure : Set (Bool × Bool × Bool) :=
+  (ateCake ∩ drankC1)ᶜ ∩ (ateCake ∩ drankC2)ᶜ ∩ (ateCake ∩ (drankC1 ∪ drankC2))ᶜ
 
--- ============================================================================
--- K. Scalar Licensing Parametrized by Direction ([schwab-2022])
--- ============================================================================
+/-- The *some*-competitor of (128): "I doubt that John ate the cake and drank
+some coffee" ((129a)), strengthened by the DE clause of (84). -/
+def someAndCompetitor : StrengthenedMeaning (Bool × Bool × Bool) :=
+  strongApplyDE compl compl
+    (.lexical (ateCake ∩ drankC1) {ateCake ∩ drankC1, ateCake ∪ drankC1})
 
-/-- Strength relation for scalar licensing.
+theorem cakeAnd_ssubset : ateCake ∩ drankC1 ⊂ ateCake ∪ drankC1 := by
+  refine ssubset_iff_subset_not_subset.mpr
+    ⟨λ w hw => Or.inl hw.1, λ h => ?_⟩
+  exact absurd (h (show (true, false, false) ∈ ateCake ∪ drankC1 from Or.inl rfl))
+    (by simp [ateCake, drankC1])
 
-    [krifka-1995a] and [chierchia-2004] treat all NPIs as STRENGTHENING:
-    the NPI makes the assertion stronger than its scalar alternatives,
-    so under negation the negated NPI statement is informationally weaker
-    (= more conservative), which is the hallmark of DE environments.
+/-- (129b): the competitor's strong meaning — doubt the conjunction yet believe
+John did one of the two. -/
+theorem someAndCompetitor_strong :
+    someAndCompetitor.strong = (ateCake ∩ drankC1)ᶜ ∩ (ateCake ∪ drankC1) := by
+  have hoc : (ateCake ∪ drankC1)ᶜ ⊂ (ateCake ∩ drankC1)ᶜ :=
+    compl_lt_compl_iff_lt.mpr cakeAnd_ssubset
+  ext w
+  simp only [someAndCompetitor, mem_strongApplyDE_strong, StrengthenedMeaning.lexical,
+    Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
+    Set.mem_inter_iff]
+  exact ⟨λ ⟨hw, _, ho⟩ => ⟨hw, Set.notMem_compl_iff.1 (ho hoc)⟩,
+    λ ⟨hw, ho⟩ => ⟨hw, λ hss => absurd rfl hss.ne, λ _ => Set.notMem_compl_iff.2 ho⟩⟩
 
-    [schwab-2022] observes that ATTENUATING NPIs (like German "so recht")
-    work in the opposite direction: they make the assertion WEAKER than
-    alternatives. Under negation, the negated attenuating statement is
-    actually STRONGER — which means attenuating NPIs should NOT produce
-    illusion effects in non-DE environments (and empirically, they don't). -/
-inductive StrengthRelation where
-  | strongerThan  -- for strengthening NPIs / Krifka's ScalAssert
-  | weakerThan    -- for attenuating NPIs / Schwab's condition
-  deriving DecidableEq, Repr
+/-- (127)/(128): *any* is blocked under *doubt … and*. The universal closure
+fails to entail the competitor's *strong* meaning — the indirect implicature of
+the intervening *and* is what breaks the entailment. -/
+theorem and_blocks_any : ¬anyAndClosure ⊆ someAndCompetitor.strong := by
+  intro h
+  have hw : (false, false, false) ∈ anyAndClosure := by
+    simp [anyAndClosure, ateCake, drankC1, drankC2]
+  have := (someAndCompetitor_strong ▸ h hw).2
+  simp [ateCake, drankC1] at this
 
-/-- Unified scalar licensing parametrized by direction.
+/-- The closure does entail the competitor's *plain* meaning: competition with
+plain meanings ((122)-style) would wrongly license *any* under *and*. -/
+theorem and_any_entails_plain : anyAndClosure ⊆ (ateCake ∩ drankC1)ᶜ :=
+  λ _ hw => hw.1.1
 
-    For **strengthening** (= Krifka's ScalAssert):
-    Assert φ and deny all strictly stronger alternatives.
-    φ ∧ ⋂₀ {¬alt : alt ∈ ALT, alt ⊂ φ}
+/-- (130): universal closure of "I doubt that John ate the cake or drank any
+coffee" over the nonempty subdomains of `{c₁, c₂}`. -/
+def anyOrClosure : Set (Bool × Bool × Bool) :=
+  (ateCake ∪ drankC1)ᶜ ∩ (ateCake ∪ drankC2)ᶜ ∩ (ateCake ∪ (drankC1 ∪ drankC2))ᶜ
 
-    For **attenuating** (Schwab & Liu's condition):
-    Assert φ and affirm the existence of a strictly stronger alternative.
-    φ ∧ ⋃₀ {alt : alt ∈ ALT, alt ⊂ φ}
-    (Simplified: we record the required relationship, not the full licensing.) -/
-def scalarLicensing (rel : StrengthRelation) (φ : Set World)
-    (ALT : Set (Set World)) : StrengthenedMeaning World :=
-  match rel with
-  | .strongerThan =>
-    -- Krifka's Rule: deny stronger alternatives
-    krifkaRule φ ALT
-  | .weakerThan =>
-    -- Attenuating: assert φ and require a stronger alternative exists
-    { plain := φ
-    , strong := φ ∩ (⋃₀ { ψ | ∃ a ∈ ALT, ψ = a ∧ (a ⊆ φ) ∧ ¬(φ ⊆ a) })
-    , alternatives := ALT }
+/-- The *some*-competitor of (130): under *doubt*, *or* is the strongest member
+of its scale, so no indirect implicature arises. -/
+def someOrCompetitor : StrengthenedMeaning (Bool × Bool × Bool) :=
+  strongApplyDE compl compl
+    (.lexical (ateCake ∪ drankC1) {ateCake ∩ drankC1, ateCake ∪ drankC1})
 
-/-- Bridge: `scalarLicensing.strongerThan` is exactly `krifkaRule`. -/
-theorem scalarLicensing_strongerThan_eq_krifkaRule (φ : Set World)
-    (ALT : Set (Set World)) :
-    scalarLicensing .strongerThan φ ALT = krifkaRule φ ALT := rfl
+/-- (130): the or-competitor's strong meaning is its plain meaning — the
+strongest member of a scale triggers no implicature. -/
+theorem someOrCompetitor_strong :
+    someOrCompetitor.strong = (ateCake ∪ drankC1)ᶜ := by
+  ext w
+  simp only [someOrCompetitor, mem_strongApplyDE_strong, StrengthenedMeaning.lexical,
+    Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
+  refine ⟨λ ⟨hw, _, _⟩ => hw, λ hw => ⟨hw, λ hss => ?_, λ hss => absurd rfl hss.ne⟩⟩
+  exact absurd (compl_lt_compl_iff_lt.1 hss) (λ hlt => hlt.not_subset (λ _ h => Or.inl h.1))
 
-/-- Strengthening licensing satisfies the strength condition (inherits from krifkaRule). -/
-theorem scalarLicensing_strongerThan_strength (φ : Set World)
-    (ALT : Set (Set World)) :
-    strengthCondition (scalarLicensing .strongerThan φ ALT) :=
-  krifkaRule_satisfies_strength φ ALT
+/-- (130): *any* is licensed under *doubt … or* — the closure entails the
+competitor's strong meaning, which never gained an indirect implicature. -/
+theorem or_licenses_any : anyOrClosure ⊆ someOrCompetitor.strong := by
+  rw [someOrCompetitor_strong]
+  exact λ _ hw => hw.1.1
 
 end Chierchia2004
