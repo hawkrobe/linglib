@@ -143,6 +143,16 @@ private theorem verifies_map_all (e : V ≃ W) (K : DRS L V) (g : Embedding W M)
   simp only [Verifies, DRS.conditions_map, Condition.mapList_eq_map, List.forall_mem_map]
   exact forall_congr' fun c => imp_congr_right fun hc => ih c hc g
 
+/-- "Some extension of `f` verifies `K`" transported along renaming, given the
+transport for each condition of `K`. -/
+private theorem exists_extends_verifies_map (e : V ≃ W) (K : DRS L V) (f : Embedding W M)
+    (ih : ∀ c ∈ K.conditions, ∀ u : Embedding W M,
+      u.VerifiesCondition (c.map e) ↔ VerifiesCondition (u ∘ e) c) :
+    (∃ g, (K.map e).Extends f g ∧ g.Verifies (K.map e)) ↔
+      ∃ g, K.Extends (f ∘ e) g ∧ g.Verifies K :=
+  (exists_congr fun g => and_congr_right fun _ => verifies_map_all e K g ih).trans
+    (DRS.exists_extends_map e K f (Verifies · K))
+
 /-- Renaming along a bijection transports verification (the condition form of
 `verifies_map`). -/
 theorem verifies_map_condition (e : V ≃ W) : ∀ (f : Embedding W M) (c : Condition L V),
@@ -152,33 +162,21 @@ theorem verifies_map_condition (e : V ≃ W) : ∀ (f : Embedding W M) (c : Cond
   | f, .eq a b => by
     simp [Condition.map, Function.comp]
   | f, .neg K => by
-    have hK := fun g : Embedding W M =>
-      verifies_map_all e K g (fun d hd u => verifies_map_condition e u d)
     simp only [Condition.map, verifies_neg]
-    exact not_congr ((exists_congr fun g => and_congr_right fun _ => hK g).trans
-      (DRS.exists_extends_map e K f (Verifies · K)))
+    exact not_congr
+      (exists_extends_verifies_map e K f fun d _ u => verifies_map_condition e u d)
   | f, .imp a c => by
-    have hA := fun g : Embedding W M =>
-      verifies_map_all e a g (fun d hd u => verifies_map_condition e u d)
-    have hC := fun g : Embedding W M =>
-      verifies_map_all e c g (fun d hd u => verifies_map_condition e u d)
     simp only [Condition.map, verifies_imp]
-    refine Iff.trans (forall_congr' fun g => imp_congr_right fun _ => imp_congr (hA g)
-      ((exists_congr fun h => and_congr_right fun _ => hC h).trans
-        (DRS.exists_extends_map e c g (Verifies · c)))) ?_
+    refine Iff.trans (forall_congr' fun g => imp_congr_right fun _ => imp_congr
+      (verifies_map_all e a g fun d _ u => verifies_map_condition e u d)
+      (exists_extends_verifies_map e c g fun d _ u => verifies_map_condition e u d)) ?_
     exact DRS.forall_extends_map e a f
       (fun u => Verifies u a → ∃ h', c.Extends u h' ∧ Verifies h' c)
   | f, .dis l r => by
-    have hL := fun g : Embedding W M =>
-      verifies_map_all e l g (fun d hd u => verifies_map_condition e u d)
-    have hR := fun g : Embedding W M =>
-      verifies_map_all e r g (fun d hd u => verifies_map_condition e u d)
     simp only [Condition.map, verifies_dis]
     exact or_congr
-      ((exists_congr fun g => and_congr_right fun _ => hL g).trans
-        (DRS.exists_extends_map e l f (Verifies · l)))
-      ((exists_congr fun g => and_congr_right fun _ => hR g).trans
-        (DRS.exists_extends_map e r f (Verifies · r)))
+      (exists_extends_verifies_map e l f fun d _ u => verifies_map_condition e u d)
+      (exists_extends_verifies_map e r f fun d _ u => verifies_map_condition e u d)
 termination_by _ c => sizeOf c
 decreasing_by all_goals
   have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
