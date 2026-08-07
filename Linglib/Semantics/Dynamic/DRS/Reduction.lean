@@ -145,8 +145,8 @@ mutual
 translated formula's `Realize` coincides with the bespoke `Embedding.Verifies`. As
 `toFormula` existentially closes the universe, the correspondence is with an
 embedding `v'` extending `v` over `K.referents`. -/
-theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
-    (K.toFormula).Realize v ↔ ∃ v', K.Extends v v' ∧ Verifies v' K := by
+theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : Embedding V M) :
+    (K.toFormula).Realize v ↔ ∃ v', K.Extends v v' ∧ v'.Verifies K := by
   match K with
   | .mk U conds =>
     rw [DRS.toFormula, realize_closeExists]
@@ -155,13 +155,13 @@ theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
       and_congr_right fun _ => Condition.realize_toFormulaAll conds v'
 /-- The open body of a DRS (its conditions, no universe closure) realizes as
 `Verifies` of the DRS (used for the antecedent of `⇒`). -/
-theorem DRS.realize_bodyFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
-    (DRS.bodyFormula K).Realize v ↔ Verifies v K := by
+theorem DRS.realize_bodyFormula [DecidableEq V] (K : DRS L V) (v : Embedding V M) :
+    (DRS.bodyFormula K).Realize v ↔ v.Verifies K := by
   match K with
   | .mk _ conds => exact Condition.realize_toFormulaAll conds v
 /-- A single condition's translation realizes as `VerifiesCond`. -/
-theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V → M) :
-    (Condition.toFormula c).Realize v ↔ VerifiesCond v c := by
+theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : Embedding V M) :
+    (Condition.toFormula c).Realize v ↔ v.VerifiesCond c := by
   match c with
   | .rel R args =>
     simp [Condition.toFormula, Relations.formula, Formula.Realize,
@@ -181,8 +181,9 @@ theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V �
     rw [DRS.realize_toFormula l v, DRS.realize_toFormula r v]
 /-- A list of conditions' conjoined translation realizes as the conjunction of
 their realizations. -/
-theorem Condition.realize_toFormulaAll [DecidableEq V] (cs : List (Condition L V)) (v : V → M) :
-    (Condition.toFormulaAll cs).Realize v ↔ ∀ c ∈ cs, VerifiesCond v c := by
+theorem Condition.realize_toFormulaAll [DecidableEq V] (cs : List (Condition L V))
+    (v : Embedding V M) :
+    (Condition.toFormulaAll cs).Realize v ↔ ∀ c ∈ cs, v.VerifiesCond c := by
   match cs with
   | [] => simp [Condition.toFormulaAll, Formula.realize_top]
   | c :: cs =>

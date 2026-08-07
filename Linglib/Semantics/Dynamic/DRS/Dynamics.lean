@@ -123,15 +123,15 @@ mutual
 agrees with the static verifying-embedding semantics — `toRel K a a'` holds iff
 the output `a'` extends the input `a` over `K`'s universe and verifies `K`.
 (Both sides are the total-assignment variant; see `DRS/Verification.lean`.) -/
-theorem DRS.toRel_iff_verifies (K : DRS L V) (a a' : V → M) :
-    DRS.toRel K a a' ↔ K.Extends a a' ∧ Verifies a' K := by
+theorem DRS.toRel_iff_verifies (K : DRS L V) (a a' : Embedding V M) :
+    DRS.toRel K a a' ↔ K.Extends a a' ∧ a'.Verifies K := by
   match K with
   | .mk U conds =>
     simp only [DRS.toRel, DRS.referents_mk, Embedding.verifies_mk, DRS.Extends]
     exact and_congr_right (fun _ => Condition.holdsAll_iff_verifies conds a')
 /-- A condition's set denotation agrees with its static `Verifies`. -/
-theorem Condition.holds_iff_verifies (c : Condition L V) (a : V → M) :
-    c.holds a ↔ VerifiesCond a c := by
+theorem Condition.holds_iff_verifies (c : Condition L V) (a : Embedding V M) :
+    c.holds a ↔ a.VerifiesCond c := by
   match c with
   | .rel R args => simp only [Condition.holds_rel, Embedding.verifies_rel]
   | .eq u v => simp only [Condition.holds_eq, Embedding.verifies_eq]
@@ -149,8 +149,8 @@ theorem Condition.holds_iff_verifies (c : Condition L V) (a : V → M) :
     exact or_congr (exists_congr (fun a' => DRS.toRel_iff_verifies l a a'))
       (exists_congr (fun a' => DRS.toRel_iff_verifies r a a'))
 /-- The list analogue of `Condition.holds_iff_verifies`. -/
-theorem Condition.holdsAll_iff_verifies (cs : List (Condition L V)) (a : V → M) :
-    Condition.holdsAll cs a ↔ ∀ c ∈ cs, VerifiesCond a c := by
+theorem Condition.holdsAll_iff_verifies (cs : List (Condition L V)) (a : Embedding V M) :
+    Condition.holdsAll cs a ↔ ∀ c ∈ cs, a.VerifiesCond c := by
   match cs with
   | [] => simp
   | c :: cs =>

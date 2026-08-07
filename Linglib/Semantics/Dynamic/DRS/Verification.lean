@@ -79,8 +79,6 @@ every condition of `K` (Def. 1.4.4). -/
 def Embedding.Verifies (f : Embedding V M) (K : DRS L V) : Prop :=
   ∀ c ∈ K.conditions, f.VerifiesCond c
 
-export Embedding (Verifies VerifiesCond)
-
 namespace Embedding
 
 /-! ### Structural simp API -/
@@ -89,6 +87,16 @@ variable {f : Embedding V M}
 
 @[simp] theorem verifies_mk (U : Finset V) (conds : List (Condition L V)) :
     f.Verifies (.mk U conds) ↔ ∀ c ∈ conds, f.VerifiesCond c := Iff.rfl
+
+theorem verifies_iff {K : DRS L V} :
+    f.Verifies K ↔ ∀ c ∈ K.conditions, f.VerifiesCond c := Iff.rfl
+
+@[simp] theorem verifies_empty : f.Verifies (.empty : DRS L V) := by
+  simp [DRS.empty]
+
+@[simp] theorem verifies_merge [DecidableEq V] (K₁ K₂ : DRS L V) :
+    f.Verifies (K₁.merge K₂) ↔ f.Verifies K₁ ∧ f.Verifies K₂ := by
+  simp only [verifies_iff, DRS.conditions_merge, List.forall_mem_append]
 
 @[simp] theorem verifies_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
     f.VerifiesCond (.rel R args) ↔ Structure.RelMap R (fun i => f (args i)) := by
@@ -160,15 +168,15 @@ private theorem forall_precomp_extend_iff (e : V ≃ W) (U : Finset V) (f : Embe
 original, given the transport for each of the DRS's conditions. -/
 private theorem verifies_map_all (e : V ≃ W) (K : DRS L V) (g : Embedding W M)
     (ih : ∀ c ∈ K.conditions, ∀ u : Embedding W M,
-      VerifiesCond u (c.map e) ↔ VerifiesCond (u ∘ e) c) :
-    Verifies g (K.map e) ↔ Verifies (g ∘ e) K := by
+      u.VerifiesCond (c.map e) ↔ VerifiesCond (u ∘ e) c) :
+    g.Verifies (K.map e) ↔ Verifies (g ∘ e) K := by
   simp only [Verifies, DRS.conditions_map, Condition.mapList_eq_map, List.forall_mem_map]
   exact forall_congr' fun c => imp_congr_right fun hc => ih c hc g
 
 /-- Renaming along a bijection transports verification (the condition form of
 `verifies_map`). -/
 theorem verifies_map_cond (e : V ≃ W) : ∀ (f : Embedding W M) (c : Condition L V),
-    VerifiesCond f (c.map e) ↔ VerifiesCond (f ∘ e) c
+    f.VerifiesCond (c.map e) ↔ VerifiesCond (f ∘ e) c
   | f, .rel R args => by
     simp [Condition.map, Function.comp]
   | f, .eq a b => by
@@ -211,7 +219,7 @@ decreasing_by all_goals
 /-- Renaming along a bijection transports verification: `f` verifies `K.map e`
 iff `f ∘ e` verifies `K` — alphabetic variants have the same semantics. -/
 theorem verifies_map (e : V ≃ W) (f : Embedding W M) (K : DRS L V) :
-    Verifies f (K.map e) ↔ Verifies (f ∘ e) K :=
+    f.Verifies (K.map e) ↔ Verifies (f ∘ e) K :=
   verifies_map_all e K f (fun c _ u => verifies_map_cond e u c)
 
 end Map
