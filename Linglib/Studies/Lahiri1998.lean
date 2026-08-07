@@ -1,147 +1,70 @@
 import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.Entailment.Basic
-import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Fragments.Hindi.PolarityItems
 
 /-!
-# Lahiri (1998): Focus and Negative Polarity in Hindi
-[lahiri-1998] [kadmon-landman-1993] [lee-horn-1994]
+# Lahiri 1998 — Focus and negative polarity in Hindi
 
-Hindi NPIs (*koii bhii* 'anyone', *ek bhii* 'even one', *kuch bhii* 'anything',
-*zaraa bhii* 'even a little') are morphologically composed of a weak indefinite
-plus the focus particle *bhii* ('even'). [lahiri-1998] shows that their
-distribution — both as NPIs and as free-choice items — follows from the
-compositional semantics of these parts.
-
-## The implicature clash mechanism
-
-1. *bhii* in focused contexts contributes a conventional implicature
-   ([karttunen-peters-1979]), reanalyzed by Lahiri as scalar, that
-   the assertion is the LEAST LIKELY among focus-induced alternatives
-2. Weak indefinites as bottom of scale: *ek* ('one') denotes the weakest
-   cardinality predicate — true of everything that exists
-3. In UE contexts: every alternative entails the assertion (because 'one'
-   is weakest), so the assertion is the MOST likely. The scalar implicature
-   requires the opposite. Contradiction → unacceptable.
-4. In DE contexts: entailment reverses, so the assertion is genuinely the
-   LEAST likely. The scalar implicature is satisfiable → acceptable.
-
-## The ek bhii / koii bhii distinction (§8)
-
-*ek bhii* introduces cardinality alternatives {one, two, three, ...}.
-*koii bhii* introduces contextually salient property alternatives.
-This explains why *koii bhii* has free-choice readings in generic contexts
-(the alternatives are contextual, not entailment-ordered) while *ek bhii*
-does not.
+Hindi NPIs (*koii bhii* 'anyone', *ek bhii* 'even one', *kuch bhii*
+'anything', *zaraa bhii* 'even a little') are morphologically an
+indefinite plus the focus particle *bhii* 'even' (paper p. 58).
+[lahiri-1998] derives their distribution — as NPIs and as free-choice
+items — compositionally: *bhii* contributes the scalar implicature
+([karttunen-peters-1979]) that the assertion is least likely among the
+focus alternatives, and the weak indefinite sits at the bottom of the
+entailment scale. In UE contexts every alternative entails the
+assertion, making it the *most* likely — the implicature is
+contradicted (§7.4). In DE contexts entailment reverses and the
+implicature is satisfiable. Free-choice readings arise where the
+implicature is satisfiable in generic and possibility-modal contexts
+(§5, §7.6); *ek bhii*'s cardinality alternatives vs *koii bhii*'s
+contextual-property alternatives explain their contrasts (§8).
 -/
 
 namespace Lahiri1998
 
 open Focus.Particles (evenPresup LikelihoodMonotone)
-open Entailment (World allWorlds entails pnot)
+open Entailment (World entails pnot)
 open Semantics.Polarity
 
-/-- A judged Hindi NPI sentence, paired with the licensing context (if any). -/
-structure HindiNPIDatum where
-  /-- The sentence -/
-  sentence : String
-  /-- The NPI item -/
-  npiItem : String
-  /-- Grammaticality judgment (true = OK, false = bad) -/
-  grammatical : Bool
-  /-- Type of licensing context (if grammatical) -/
-  context : Option LicensingContext
-  /-- Notes -/
-  notes : String
-  deriving Repr
+/-! ### Morphological decomposition (paper p. 58)
 
--- ============================================================================
--- §1. Morphological Decomposition
--- ============================================================================
+Every item in the paradigm is a weak indefinite plus *bhii*; the kind
+of alternatives an item activates (cardinality vs contextually salient
+properties, §8) is a lexical property. -/
 
-/-- The two readings of the Hindi particle *bhii*, disambiguated by focus.
-    In non-focused contexts *bhii* means 'also'; in focus-affected contexts
-    (including all NPI uses) it means 'even'. -/
-inductive BhiiReading where
-  | even  -- scalar 'even': least-likely implicature
-  | also  -- additive 'also': someone else has the property
-  deriving DecidableEq, Repr
-
-/-- Morphological decomposition of a Hindi NPI.
-    All items in the paradigm share the structure: base indefinite + *bhii*. -/
+/-- A row of the paper's decomposition table: base indefinite, the
+*bhii*-compound, and the alternative type the item activates. -/
 structure NPIDecomposition where
   base : String
   baseGloss : String
   npiForm : String
   npiGloss : String
+  alternativeType : AlternativeType
   deriving Repr
 
-def ekBhii : NPIDecomposition :=
-  { base := "ek", baseGloss := "one"
-  , npiForm := "ek bhii", npiGloss := "any, even one" }
-
-def koiiBhiiD : NPIDecomposition :=
-  { base := "koii", baseGloss := "someone"
-  , npiForm := "koii bhii", npiGloss := "anyone" }
-
-def kuchBhii : NPIDecomposition :=
-  { base := "kuch", baseGloss := "something (mass)"
-  , npiForm := "kuch bhii", npiGloss := "anything" }
-
-def zaraaBhii : NPIDecomposition :=
-  { base := "zaraa", baseGloss := "a little"
-  , npiForm := "zaraa bhii", npiGloss := "even a little" }
-
-def kabhiiBhii : NPIDecomposition :=
-  { base := "kabhii", baseGloss := "sometime"
-  , npiForm := "kabhii bhii", npiGloss := "ever, anytime" }
-
-def kahiiNBhii : NPIDecomposition :=
-  { base := "kahiiN", baseGloss := "somewhere"
-  , npiForm := "kahiiN bhii", npiGloss := "anywhere" }
-
-/-- All Hindi NPIs share the particle *bhii* — the morphological uniformity
-    that motivates the compositional analysis. Visible by inspection of the
-    `npiForm` field of every entry below. -/
+/-- The paper's decomposition table (p. 58): *ek*/*zaraa* activate
+cardinality (measure) alternatives, the others contextual properties. -/
 def hindiNPIs : List NPIDecomposition :=
-  [ekBhii, koiiBhiiD, kuchBhii, zaraaBhii, kabhiiBhii, kahiiNBhii]
+  [ ⟨"ek", "one", "ek bhii", "any, even one", .cardinality⟩
+  , ⟨"koii", "someone", "koii bhii", "anyone", .contextualProperty⟩
+  , ⟨"kuch", "something (mass)", "kuch bhii", "anything", .contextualProperty⟩
+  , ⟨"zaraa", "a little", "zaraa bhii", "even a little", .cardinality⟩
+  , ⟨"kabhii", "sometime", "kabhii bhii", "ever, anytime", .contextualProperty⟩
+  , ⟨"kahiiN", "somewhere", "kahiiN bhii", "anywhere", .contextualProperty⟩ ]
 
--- ============================================================================
--- §2. Alternative Types
--- ============================================================================
+/-- Morphological uniformity: every NPI form is its base plus *bhii*. -/
+theorem npiForm_eq_base_bhii :
+    ∀ d ∈ hindiNPIs, d.npiForm = d.base ++ " bhii" := by decide
 
-/-- *ek* and *zaraa* introduce cardinality/measure alternatives;
-    *koii* and *kuch* introduce contextual property alternatives.
+/-! ### The cardinality model
 
-    This distinction is stored in the lexicon (§8): the kind of alternatives
-    a lexical item allows is part of its lexical entry. -/
-def alternativeTypeOf (d : NPIDecomposition) : AlternativeType :=
-  if d.base == "ek" || d.base == "zaraa" then .cardinality
-  else .contextualProperty
+The scale `∃x[n(x) ∧ VP(x)]` over the 4-world semantics of
+`Entailment.Basic`: w0 = at least three entities satisfy the VP,
+w1 = exactly two, w2 = exactly one, w3 = none. -/
 
-#guard alternativeTypeOf ekBhii == .cardinality
-#guard alternativeTypeOf zaraaBhii == .cardinality
-#guard alternativeTypeOf koiiBhiiD == .contextualProperty
-#guard alternativeTypeOf kuchBhii == .contextualProperty
-
--- ============================================================================
--- §3. Concrete Model: The Cardinality Scale
--- ============================================================================
-
-/-! We model the cardinality scale using the existing 4-world semantics
-    from `Entailment.Basic`.
-
-    World assignment:
-    - w0: ≥3 entities satisfy the VP
-    - w1: exactly 2 satisfy the VP
-    - w2: exactly 1 satisfies the VP
-    - w3: 0 satisfy the VP
-
-    The propositions `∃x[n(x) ∧ VP(x)]` then have clear truth values,
-    and their entailment relations model the cardinality scale. -/
-
-/-- At least one entity satisfies the VP (Bool form for likelihood/EVEN API). -/
+/-- At least one entity satisfies the VP (Bool form). -/
 def atLeastOneB : (World → Bool) := λ w => w != .w3
 
 /-- At least two entities satisfy the VP (Bool form). -/
@@ -150,25 +73,19 @@ def atLeastTwoB : (World → Bool) := λ w => w == .w0 || w == .w1
 /-- At least three entities satisfy the VP (Bool form). -/
 def atLeastThreeB : (World → Bool) := λ w => w == .w0
 
-/-- At least one entity satisfies the VP (Set form for entails). True at w0, w1, w2. -/
+/-- At least one entity satisfies the VP. True at w0, w1, w2. -/
 def atLeastOne : Set World := {w | atLeastOneB w = true}
 
-/-- At least two entities satisfy the VP (Set form). True at w0, w1. -/
+/-- At least two entities satisfy the VP. True at w0, w1. -/
 def atLeastTwo : Set World := {w | atLeastTwoB w = true}
 
-/-- At least three entities satisfy the VP (Set form). True at w0 only. -/
+/-- At least three entities satisfy the VP. True at w0 only. -/
 def atLeastThree : Set World := {w | atLeastThreeB w = true}
 
--- ============================================================================
--- §4. Weakness of `one`
--- ============================================================================
+/-! ### Weakness of `one` (§7.4, eq. 70)
 
-/-! The central semantic property: `one` is the weakest cardinality predicate.
-    For any cardinality predicate P: ∃x[P(x) ∧ VP(x)] → ∃x[one(x) ∧ VP(x)].
-
-    In the 4-world model, this means every `atLeastN` proposition entails
-    `atLeastOne`, but not vice versa. This is eq. (70) in the paper:
-    ∀x(P(x) → one(x)). -/
+`one` is the weakest cardinality predicate: every `atLeastN`
+proposition entails `atLeastOne`, and not conversely. -/
 
 theorem two_entails_one : entails atLeastTwo atLeastOne := by
   intro w hw
@@ -195,40 +112,23 @@ theorem one_not_entails_three : ¬ entails atLeastOne atLeastThree := by
   have := h hw
   simp [atLeastThree, atLeastThreeB] at this
 
--- ============================================================================
--- §5. The Implicature Clash (§7.4)
--- ============================================================================
+/-! ### The implicature clash (§7.4, eqs. 66–79)
 
-/-! The paper's core result (§7.4, eqs. 66–79).
-
-    **UE (positive context)**: "*koii bhii aayaa" ('*Anyone came')
-    - Assertion: `atLeastOne` (= ∃x[one(x) ∧ came(x)])
-    - Alternatives: `atLeastTwo`, `atLeastThree`
-    - Each alternative entails the assertion (`two_entails_one`, `three_entails_one`)
-    - By likelihood monotonicity (eq. 71): likelihood(alt) ≤ likelihood(assertion)
-    - EVEN requires (eq. 69): likelihood(assertion) < likelihood(alt)
-    - Contradiction: can't have both
-
-    **DE (under negation)**: "koii bhii nahiiN aayaa" ('No one came')
-    - Assertion: `pnot atLeastOne` (= ¬∃x[one(x) ∧ came(x)])
-    - Alternatives: `pnot atLeastTwo`, `pnot atLeastThree`
-    - The assertion entails each alternative (negation reverses, eq. 78)
-    - By likelihood monotonicity (eq. 79): likelihood(assertion) ≤ likelihood(alt)
-    - EVEN requires (eq. 77): likelihood(assertion) < likelihood(alt)
-    - Compatible: `assertion ≤ alt` is consistent with `assertion < alt` -/
+In UE, each alternative entails the assertion, so a monotone
+likelihood ordering makes the assertion most likely — but EVEN demands
+it be least likely. Under negation the entailments reverse and EVEN is
+satisfiable. -/
 
 section ImplicatureClash
 
-/-- UE pattern: all alternatives entail the assertion.
-    This makes the assertion the MOST likely — fatal for EVEN. -/
+/-- UE pattern: all alternatives entail the assertion — fatal for EVEN. -/
 theorem ue_alt_entails_assertion :
     entails atLeastTwo atLeastOne ∧
     entails atLeastThree atLeastOne :=
   ⟨two_entails_one, three_entails_one⟩
 
-/-- DE pattern: the assertion entails all alternatives.
-    Negation reverses the entailment direction.
-    This makes the assertion the LEAST likely — satisfying EVEN. -/
+/-- DE pattern: the assertion entails all alternatives — EVEN is
+satisfiable. -/
 theorem de_assertion_entails_alt :
     entails (pnot atLeastOne) (pnot atLeastTwo) ∧
     entails (pnot atLeastOne) (pnot atLeastThree) := by
@@ -238,13 +138,13 @@ theorem de_assertion_entails_alt :
   · intro w hw hw'
     exact hw (three_entails_one hw')
 
-/-- The asymmetry: in UE the assertion does NOT entail alternatives. -/
+/-- In UE the assertion does NOT entail the alternatives. -/
 theorem ue_not_reverse :
     ¬ entails atLeastOne atLeastTwo ∧
     ¬ entails atLeastOne atLeastThree :=
   ⟨one_not_entails_two, one_not_entails_three⟩
 
-/-- The asymmetry: in DE the alternatives do NOT entail the assertion. -/
+/-- In DE the alternatives do NOT entail the assertion. -/
 theorem de_not_reverse :
     ¬ entails (pnot atLeastTwo) (pnot atLeastOne) ∧
     ¬ entails (pnot atLeastThree) (pnot atLeastOne) := by
@@ -253,59 +153,20 @@ theorem de_not_reverse :
     have h1 : (.w2 : World) ∈ pnot atLeastTwo := by
       simp [pnot, atLeastTwo, atLeastTwoB, Set.mem_compl_iff]
     have h2 := h h1
-    simp [pnot, atLeastOne, atLeastOneB, Set.mem_compl_iff] at h2
+    simp [pnot, atLeastOne, atLeastOneB] at h2
   · intro h
     have h1 : (.w1 : World) ∈ pnot atLeastThree := by
       simp [pnot, atLeastThree, atLeastThreeB, Set.mem_compl_iff]
     have h2 := h h1
-    simp [pnot, atLeastOne, atLeastOneB, Set.mem_compl_iff] at h2
+    simp [pnot, atLeastOne, atLeastOneB] at h2
 
 end ImplicatureClash
 
--- ============================================================================
--- §6. End-to-End: the EVEN presupposition on the cardinality model
--- ============================================================================
+/-! ### The clash through the EVEN presupposition -/
 
-/-! The cardinality model plugged into the `Focus.Particles` API.
-
-    In UE: `atLeastOne` is the prejacent, `[atLeastTwo, atLeastThree]` the
-    alternatives. `evenPresup` requires `atLeastOne` to be less likely than
-    each alternative — but each alternative entails `atLeastOne`, so the
-    opposite holds under any monotone likelihood ordering.
-
-    In DE: `pnot atLeastOne` is the prejacent. The assertion entails each
-    negated alternative, so the prejacent IS the least likely. -/
-
-/-- In UE, the EVEN presupposition for *ek bhii* is contradicted: each
-    alternative entails the assertion, so under any monotone likelihood
-    ordering the assertion cannot be strictly less likely (§7.4,
-    eqs. 68–71). -/
-theorem ekBhii_even_clash_UE
-    (lt le : Set World → Set World → Prop)
-    (hMono : LikelihoodMonotone le)
-    (hCompat : ∀ a b, lt a b → le b a → False)
-    (hEven : evenPresup lt atLeastOne [atLeastTwo, atLeastThree]) :
-    False :=
-  hCompat _ _ (hEven atLeastTwo (by simp)) (hMono two_entails_one)
-
-/-- In DE, the EVEN presupposition for *ek bhii nahiiN* is satisfiable:
-    the negated assertion entails each negated alternative, so the assertion
-    IS the least likely under a monotone ordering.
-
-    This is the paper's argument (§7.4, eqs. 76–79). -/
-theorem ekBhii_even_ok_DE :
-    entails (pnot atLeastOne) (pnot atLeastTwo) ∧
-    entails (pnot atLeastOne) (pnot atLeastThree) :=
-  de_assertion_entails_alt
-
--- ============================================================================
--- §7. Abstract Implicature Clash
--- ============================================================================
-
-/-- An EVEN scalar implicature is CONTRADICTED when the assertion is entailed
-    by an alternative. Under `LikelihoodMonotone`, the alternative is then
-    at most as likely as the assertion, but EVEN requires the assertion to
-    be strictly less likely. -/
+/-- An EVEN scalar implicature is contradicted whenever the assertion
+is entailed by an alternative: the alternative is then at most as
+likely, but EVEN requires the assertion to be strictly less likely. -/
 theorem even_clash_abstract {W : Type*}
     (lt le : Set W → Set W → Prop)
     (hMono : LikelihoodMonotone le)
@@ -316,15 +177,44 @@ theorem even_clash_abstract {W : Type*}
     False :=
   hCompat assertion alt hEven (hMono hEntails)
 
--- ============================================================================
--- §8. Hindi NPI Data (§4)
--- ============================================================================
+/-- In UE, the EVEN presupposition for *ek bhii* is contradicted
+(§7.4, eqs. 68–71). -/
+theorem ekBhii_even_clash_UE
+    (lt le : Set World → Set World → Prop)
+    (hMono : LikelihoodMonotone le)
+    (hCompat : ∀ a b, lt a b → le b a → False)
+    (hEven : evenPresup lt atLeastOne [atLeastTwo, atLeastThree]) :
+    False :=
+  even_clash_abstract lt le hMono hCompat two_entails_one
+    (hEven atLeastTwo (by simp))
 
-/-! Licensing judgments from [lahiri-1998] §4. Each datum demonstrates
-    the compositional prediction: bhii + indefinite is licensed in DE
-    contexts and blocked in UE contexts.
+/-- In DE, the EVEN presupposition for *ek bhii nahiiN* is satisfiable:
+the negated assertion entails each negated alternative (§7.4,
+eqs. 76–79). -/
+theorem ekBhii_even_ok_DE :
+    entails (pnot atLeastOne) (pnot atLeastTwo) ∧
+    entails (pnot atLeastOne) (pnot atLeastThree) :=
+  de_assertion_entails_alt
 
-    Uses the local `HindiNPIDatum` defined above. -/
+/-! ### NPI data (§4)
+
+Licensing judgments from [lahiri-1998] §4: *bhii* + indefinite is
+licensed in DE contexts and blocked in UE contexts. The adversative
+rescue in (31b) is [kadmon-landman-1993]'s "settle for less". -/
+
+/-- A judged Hindi NPI sentence, with the licensing context (if any). -/
+structure HindiNPIDatum where
+  /-- The sentence -/
+  sentence : String
+  /-- The NPI item -/
+  npiItem : String
+  /-- Grammaticality judgment (true = OK, false = bad) -/
+  grammatical : Bool
+  /-- Type of licensing context (if grammatical) -/
+  context : Option LicensingContext
+  /-- Paper reference and translation -/
+  notes : String
+  deriving Repr
 
 -- Clausemate negation (§4.1)
 
@@ -376,7 +266,7 @@ def zaraaBhii_pos : HindiNPIDatum :=
   , context := none
   , notes := "(9a) '*I ate any food.' UE → clash" }
 
--- Object position (§4.1, eqs. 6c-d)
+-- Object position (§4.1)
 
 def koiiBhii_obj_neg : HindiNPIDatum :=
   { sentence := "maiN-ne kisii-ko bhii nahiiN dekhaa"
@@ -454,7 +344,7 @@ def npi_glad_settle : HindiNPIDatum :=
   { sentence := "tum is baat se khuS raho ki koii bhii tumhaare ghar aayaa"
   , npiItem := "koii bhii", grammatical := true
   , context := some .adversative
-  , notes := "(31b) 'Be glad that ANYONE came.' K&L 'settle for less' → adversative reading" }
+  , notes := "(31b) 'Be glad that ANYONE came.' 'Settle for less' → adversative reading" }
 
 -- Before-clauses (§4.6)
 
@@ -472,213 +362,14 @@ def npi_question : HindiNPIDatum :=
   , context := some .question
   , notes := "(34a) 'Did you like any book?' Rhetorical → negative bias" }
 
--- Subject position (§6) — Hindi differs from English
+-- Subject position (§6): Hindi, unlike English, licenses subject NPIs
+-- under clausemate negation — negation scopes over the subject at LF.
 
 def npi_subject_hindi : HindiNPIDatum :=
   { sentence := "koi bhii aadmii nahiiN aayaa"
   , npiItem := "koi bhii", grammatical := true
   , context := some .negation
   , notes := "(41a) 'No one came.' Hindi: subject NPI + clausemate negation OK" }
-
--- ============================================================================
--- §9. Free Choice in Generic and Modal Contexts (§5)
--- ============================================================================
-
-/-! [lahiri-1998] §5: Hindi NPIs also behave as free-choice items in
-    generic and modal contexts. The environments are:
-
-    1. Generic sentences (§5.1): *koii bhii aadmii is mez-ko uThaa letaa hai*
-       'Any man lifts this table'
-    2. Modals of possibility (§5.2): *ek bhii aadmii is mez-ko uThaa saktaa hai*
-       'Even one person can lift this table'
-    3. **NOT** modals of necessity (§5.2): **kisii-ko bhii ghar jaanaa caahiye*
-       '*Anyone must go home'
-
-    The unified account: in generic contexts, indefinites are bound by
-    the GEN operator. The restriction of GEN is a strengthening environment
-    (§7.6, eqs. 95–98), so the EVEN implicature is satisfiable. Modals
-    of possibility pattern with generics; necessity modals do not. -/
-
-structure FCDatum where
-  sentence : String
-  npiItem : String
-  contextType : String
-  grammatical : Bool
-  notes : String := ""
-  deriving Repr
-
--- Generics (§5.1)
-
-def fc_generic_koii : FCDatum :=
-  { sentence := "koii bhii aadmii is mez-ko uThaa letaa hai"
-  , npiItem := "koii bhii", contextType := "generic"
-  , grammatical := true
-  , notes := "(35a) 'Any man lifts this table.' Generic → FC reading" }
-
-def fc_generic_owl : FCDatum :=
-  { sentence := "koii bhii ulluu cuuhoN-kaa Sikaar karta hai"
-  , npiItem := "koii bhii", contextType := "generic"
-  , grammatical := true
-  , notes := "(35b) 'Any owl hunts mice.' Generic → FC reading" }
-
-def fc_generic_ek : FCDatum :=
-  { sentence := "ek bhii cingaarii ghar-ko jalaa detii hai"
-  , npiItem := "ek bhii", contextType := "generic"
-  , grammatical := true
-  , notes := "(35d) 'Even one spark burns the house.' Generic + cardinality" }
-
-def fc_generic_zaraa : FCDatum :=
-  { sentence := "zaraa bhii zahar khaane-ko bigaaR detii hai"
-  , npiItem := "zaraa bhii", contextType := "generic"
-  , grammatical := true
-  , notes := "(35e) 'Even a little poison spoils the food.' Generic + measure" }
-
--- Modals of possibility (§5.2)
-
-def fc_possibility_ek : FCDatum :=
-  { sentence := "ek bhii aadmii is mez-ko uThaa saktaa hai"
-  , npiItem := "ek bhii", contextType := "modalPossibility"
-  , grammatical := true
-  , notes := "(36a) 'Even one person can lift this table.' Possibility modal" }
-
-def fc_possibility_koii : FCDatum :=
-  { sentence := "koii bhii aadmii is mez-ko uThaa saktaa hai"
-  , npiItem := "koii bhii", contextType := "modalPossibility"
-  , grammatical := true
-  , notes := "(36b) 'Anyone can lift this table.' Possibility modal" }
-
-def fc_possibility_kabhii : FCDatum :=
-  { sentence := "tum kabhii bhii ghar jaa sakte ho"
-  , npiItem := "kabhii bhii", contextType := "modalPossibility"
-  , grammatical := true
-  , notes := "(36c) 'You may go home anytime.' Possibility modal" }
-
--- Modals of necessity BLOCK NPIs (§5.2)
-
-def fc_necessity_kisii : FCDatum :=
-  { sentence := "*kisii-ko bhii ghar jaanaa caahiye"
-  , npiItem := "kisii-ko bhii", contextType := "modalNecessity"
-  , grammatical := false
-  , notes := "(36d) '*Anyone must go home.' Necessity blocks FC reading" }
-
-def fc_necessity_ek : FCDatum :=
-  { sentence := "*ek bhii aadmii-ko ghar jaanaa caahiye"
-  , npiItem := "ek bhii", contextType := "modalNecessity"
-  , grammatical := false
-  , notes := "(36e) '*Even one person must go home.' Necessity blocks" }
-
--- Imperatives (§5.4, §10)
-
-def fc_imperative_kuch : FCDatum :=
-  { sentence := "kuchh bhii khaa lo"
-  , npiItem := "kuchh bhii", contextType := "imperative"
-  , grammatical := true
-  , notes := "(39a) 'Eat anything.' Permission imperative → FC" }
-
-def fc_imperative_koii : FCDatum :=
-  { sentence := "koii bhii seb uThaa lo"
-  , npiItem := "koii bhii", contextType := "imperative"
-  , grammatical := true
-  , notes := "(39b) 'Pick any apple.' Permission imperative → FC" }
-
--- ek bhii / zaraa bhii ODD in imperatives (§5.4, ex. 40)
-
-def fc_imperative_zaraa_odd : FCDatum :=
-  { sentence := "*?zaraa bhii khaa lo"
-  , npiItem := "zaraa bhii", contextType := "imperative"
-  , grammatical := false
-  , notes := "(40a) '*?Eat even a little.' Numeral/measure NPIs degraded in imperatives" }
-
-def fc_imperative_ek_odd : FCDatum :=
-  { sentence := "*?ek bhii seb uThaa to"
-  , npiItem := "ek bhii", contextType := "imperative"
-  , grammatical := false
-  , notes := "(40b) '*?Pick even one apple.' Numeral NPIs degraded in imperatives" }
-
-def allFCData : List FCDatum :=
-  [ fc_generic_koii, fc_generic_owl, fc_generic_ek, fc_generic_zaraa
-  , fc_possibility_ek, fc_possibility_koii, fc_possibility_kabhii
-  , fc_necessity_kisii, fc_necessity_ek
-  , fc_imperative_kuch, fc_imperative_koii
-  , fc_imperative_zaraa_odd, fc_imperative_ek_odd ]
-
-/-- Generics and possibility modals license FC readings. -/
-theorem generic_and_possibility_license :
-    (allFCData.filter (λ d =>
-      d.contextType == "generic" || d.contextType == "modalPossibility")).all
-      (·.grammatical) = true := by decide
-
-/-- Necessity modals block FC readings. -/
-theorem necessity_blocks :
-    (allFCData.filter (λ d => d.contextType == "modalNecessity")).all
-      (! ·.grammatical) = true := by decide
-
--- ============================================================================
--- §10. The ek bhii / koii bhii Contrast (§8)
--- ============================================================================
-
-/-! [lahiri-1998] §8: The first approximation (§7) treats *koii bhii*
-    and *ek bhii* as semantically equivalent, but they differ:
-
-    (99a) *ek bhii aadmii is mez-ko uThaa saktaa hai*
-          'Even one person can lift this table.'
-          Implicature: more people lifting is MORE likely.
-    (99b) *koii bhii aadmii is mez-ko uThaa saktaa hai*
-          'Anyone can lift this table.'
-          No cardinality implicature; FC reading.
-
-    (100a) *koii bhii tiin log is mez-ko uThaa sakte haiN*
-           'Any three people can lift this table.' ✓
-    (100b) **ek bhii tiin log is mez-ko uThaa sakte haiN*
-           '*Even one three people can lift this table.' ✗
-
-    The explanation: *ek* introduces CARDINALITY alternatives (other
-    numerals), while *koii* introduces CONTEXTUAL PROPERTY alternatives
-    (pragmatically salient properties like 'not sick', 'strong', etc.).
-    Only contextual alternatives give rise to FC readings. -/
-
-structure EkKoiiContrastDatum where
-  ekSentence : String
-  koiiSentence : String
-  contextType : String
-  ekGrammatical : Bool
-  koiiGrammatical : Bool
-  notes : String := ""
-  deriving Repr
-
-/-- In generic contexts with numerals, *koii bhii* is fine but *ek bhii*
-    is blocked (100a vs 100b). -/
-def numeral_contrast : EkKoiiContrastDatum :=
-  { ekSentence := "*ek bhii tiin log is mez-ko uThaa sakte haiN"
-  , koiiSentence := "koii bhii tiin log is mez-ko uThaa sakte haiN"
-  , contextType := "generic_with_numeral"
-  , ekGrammatical := false
-  , koiiGrammatical := true
-  , notes := "(100) *ek bhii* blocked with numerals; *koii bhii* OK" }
-
-/-- In generic contexts, both are fine but carry different implicatures (99). -/
-def generic_contrast : EkKoiiContrastDatum :=
-  { ekSentence := "ek bhii aadmii is mez-ko uThaa saktaa hai"
-  , koiiSentence := "koii bhii aadmii is mez-ko uThaa saktaa hai"
-  , contextType := "generic_simple"
-  , ekGrammatical := true
-  , koiiGrammatical := true
-  , notes := "(99) Both OK, but ek bhii has cardinality implicature; koii bhii has FC reading" }
-
-theorem numeral_contrast_asymmetry :
-    numeral_contrast.ekGrammatical = false ∧
-    numeral_contrast.koiiGrammatical = true := ⟨rfl, rfl⟩
-
-/-- The alternative type distinction predicts the contrast: cardinality
-    alternatives clash with explicit numerals (one ≠ three), while
-    contextual property alternatives are compatible. -/
-theorem alternative_type_predicts_contrast :
-    alternativeTypeOf ekBhii = .cardinality ∧
-    alternativeTypeOf koiiBhiiD = .contextualProperty := ⟨rfl, rfl⟩
-
--- ============================================================================
--- §11. All NPI Data
--- ============================================================================
 
 def allHindiNPIData : List HindiNPIDatum :=
   [ koiiBhii_neg, koiiBhii_pos
@@ -693,21 +384,14 @@ def allHindiNPIData : List HindiNPIDatum :=
   , npi_glad_bad, npi_glad_settle
   , npi_before, npi_question, npi_subject_hindi ]
 
-/-- Every grammatical datum has a licensing context; every ungrammatical one does not. -/
-theorem licensing_context_iff_grammatical :
-    allHindiNPIData.Forall (λ d =>
-      (d.grammatical → d.context.isSome) ∧
-      (¬d.grammatical → d.context.isNone)) := by decide
-
 /-- A DE-or-question licenser, derived from `contextProperties`: the
-    context's Strawson row supplies Zwarts strength, or it licenses by
-    entropy (questions, which license via negative bias rather than
-    pure DE). -/
+context's Strawson row supplies Zwarts strength, or it licenses by
+entropy (questions license via negative bias rather than pure DE). -/
 abbrev isDEOrQuestion (c : LicensingContext) : Prop :=
   ((Semantics.Polarity.Licensing.contextProperties c).strawsonSignature.toDEStrength).isSome ∨
     (Semantics.Polarity.Licensing.contextProperties c).mechanism = .byEntropy
 
-/-- Predicate: a datum's context is some DE-or-question licenser. -/
+/-- The datum's context is some DE-or-question licenser. -/
 def hasDELicenser (d : HindiNPIDatum) : Prop :=
   match d.context with
   | none => False
@@ -717,77 +401,191 @@ instance : DecidablePred hasDELicenser := fun d => by
   unfold hasDELicenser
   cases d.context <;> infer_instance
 
+/-- Every grammatical datum's licensing context is DE (or a question):
+the distribution follows the implicature-clash prediction. -/
 theorem grammatical_contexts_are_de :
     (allHindiNPIData.filter (·.grammatical)).Forall hasDELicenser := by decide
 
--- ============================================================================
--- §12. Subject NPI Licensing: Hindi vs English (§6)
--- ============================================================================
+/-! ### Free choice in generic and modal contexts (§5)
 
-/-! [lahiri-1998] §6: Hindi allows subject NPIs under clausemate
-    negation, unlike English.
+Hindi NPIs are free-choice items in generic sentences and under
+possibility modals, but not under necessity modals; the GEN
+restriction is a strengthening environment, so the EVEN implicature is
+satisfiable there (§7.6, eqs. 95–98). -/
 
-    Hindi: "koi bhii aadmii nahiiN aayaa" ('No one came') ✓
-    English: "*Anyone didn't come" ✗
-
-    The paper's explanation: in Hindi, negation can take wide scope over
-    the subject indefinite (NegP > IP), placing the NPI in the semantic
-    scope of negation at LF. In English, the subject is outside NegP's
-    c-command domain at S-structure, and reconstruction is restricted.
-
-    This difference is *independent* of the implicature clash mechanism —
-    both languages have the same EVEN + weak predicate semantics, but
-    differ in whether the syntactic configuration allows the NPI to be
-    in the semantic scope of negation. -/
-
-structure SubjectNPIContrast where
-  hindiSentence : String
-  hindiGrammatical : Bool
-  englishSentence : String
-  englishGrammatical : Bool
-  notes : String
+/-- A judged free-choice datum: the environment tested and the
+judgment. -/
+structure FCDatum where
+  sentence : String
+  npiItem : String
+  contextType : LicensingContext
+  grammatical : Bool
+  notes : String := ""
   deriving Repr
 
-def subjectNPI : SubjectNPIContrast :=
-  { hindiSentence := "koi bhii aadmii nahiiN aayaa"
-  , hindiGrammatical := true
-  , englishSentence := "*Anyone didn't come"
-  , englishGrammatical := false
-  , notes := "Hindi NegP c-commands subject at LF; English NegP does not" }
+-- Generics (§5.1)
 
--- ============================================================================
--- §13. Connection to Existing Fragment Entries
--- ============================================================================
+def fc_generic_koii : FCDatum :=
+  { sentence := "koii bhii aadmii is mez-ko uThaa letaa hai"
+  , npiItem := "koii bhii", contextType := .generic
+  , grammatical := true
+  , notes := "(35a) 'Any man lifts this table.' Generic → FC reading" }
 
-/-! The fragment entry `Hindi.PolarityItems.koiiBhii` stores
-    licensing contexts as a list. [lahiri-1998]'s contribution is
-    showing that these contexts are not arbitrary — they are exactly the
-    DE environments (for NPI readings) and generic/modal environments
-    (for FC readings) where the EVEN implicature is satisfiable.
+def fc_generic_owl : FCDatum :=
+  { sentence := "koii bhii ulluu cuuhoN-kaa Sikaar karta hai"
+  , npiItem := "koii bhii", contextType := .generic
+  , grammatical := true
+  , notes := "(35b) 'Any owl hunts mice.' Generic → FC reading" }
 
-    The study file derives this; the fragment file stores it.
-    A future refactoring should make the fragment derive from the theory. -/
+def fc_generic_ek : FCDatum :=
+  { sentence := "ek bhii cingaarii ghar-ko jalaa detii hai"
+  , npiItem := "ek bhii", contextType := .generic
+  , grammatical := true
+  , notes := "(35d) 'Even one spark burns the house.' Generic + cardinality" }
+
+def fc_generic_zaraa : FCDatum :=
+  { sentence := "zaraa bhii zahar khaane-ko bigaaR detii hai"
+  , npiItem := "zaraa bhii", contextType := .generic
+  , grammatical := true
+  , notes := "(35e) 'Even a little poison spoils the food.' Generic + measure" }
+
+-- Modals of possibility (§5.2)
+
+def fc_possibility_ek : FCDatum :=
+  { sentence := "ek bhii aadmii is mez-ko uThaa saktaa hai"
+  , npiItem := "ek bhii", contextType := .modalPossibility
+  , grammatical := true
+  , notes := "(36a) 'Even one person can lift this table.' Possibility modal" }
+
+def fc_possibility_koii : FCDatum :=
+  { sentence := "koii bhii aadmii is mez-ko uThaa saktaa hai"
+  , npiItem := "koii bhii", contextType := .modalPossibility
+  , grammatical := true
+  , notes := "(36b) 'Anyone can lift this table.' Possibility modal" }
+
+def fc_possibility_kabhii : FCDatum :=
+  { sentence := "tum kabhii bhii ghar jaa sakte ho"
+  , npiItem := "kabhii bhii", contextType := .modalPossibility
+  , grammatical := true
+  , notes := "(36c) 'You may go home anytime.' Possibility modal" }
+
+-- Modals of necessity block FC readings (§5.2)
+
+def fc_necessity_kisii : FCDatum :=
+  { sentence := "*kisii-ko bhii ghar jaanaa caahiye"
+  , npiItem := "kisii-ko bhii", contextType := .modalNecessity
+  , grammatical := false
+  , notes := "(36d) '*Anyone must go home.' Necessity blocks FC reading" }
+
+def fc_necessity_ek : FCDatum :=
+  { sentence := "*ek bhii aadmii-ko ghar jaanaa caahiye"
+  , npiItem := "ek bhii", contextType := .modalNecessity
+  , grammatical := false
+  , notes := "(36e) '*Even one person must go home.' Necessity blocks" }
+
+-- Imperatives (§5.4): fine with contextual-property items, degraded
+-- with cardinality/measure items ((39) vs (40))
+
+def fc_imperative_kuch : FCDatum :=
+  { sentence := "kuchh bhii khaa lo"
+  , npiItem := "kuchh bhii", contextType := .imperative
+  , grammatical := true
+  , notes := "(39a) 'Eat anything.' Permission imperative → FC" }
+
+def fc_imperative_koii : FCDatum :=
+  { sentence := "koii bhii seb uThaa lo"
+  , npiItem := "koii bhii", contextType := .imperative
+  , grammatical := true
+  , notes := "(39b) 'Pick any apple.' Permission imperative → FC" }
+
+def fc_imperative_zaraa_odd : FCDatum :=
+  { sentence := "*?zaraa bhii khaa lo"
+  , npiItem := "zaraa bhii", contextType := .imperative
+  , grammatical := false
+  , notes := "(40a) '*?Eat even a little.' Measure NPIs degraded in imperatives" }
+
+def fc_imperative_ek_odd : FCDatum :=
+  { sentence := "*?ek bhii seb uThaa to"
+  , npiItem := "ek bhii", contextType := .imperative
+  , grammatical := false
+  , notes := "(40b) '*?Pick even one apple.' Numeral NPIs degraded in imperatives" }
+
+def allFCData : List FCDatum :=
+  [ fc_generic_koii, fc_generic_owl, fc_generic_ek, fc_generic_zaraa
+  , fc_possibility_ek, fc_possibility_koii, fc_possibility_kabhii
+  , fc_necessity_kisii, fc_necessity_ek
+  , fc_imperative_kuch, fc_imperative_koii
+  , fc_imperative_zaraa_odd, fc_imperative_ek_odd ]
+
+/-- Generics and possibility modals license FC readings. -/
+theorem generic_and_possibility_license :
+    ∀ d ∈ allFCData,
+      (d.contextType = .generic ∨ d.contextType = .modalPossibility) →
+        d.grammatical = true := by decide
+
+/-- Necessity modals block FC readings. -/
+theorem necessity_blocks :
+    ∀ d ∈ allFCData, d.contextType = .modalNecessity →
+      d.grammatical = false := by decide
+
+/-! ### The ek bhii / koii bhii contrast (§8)
+
+The first approximation treats *koii bhii* and *ek bhii* as
+equivalent, but *ek* activates cardinality alternatives (other
+numerals) while *koii* activates contextually salient properties —
+only the latter yield free-choice readings, and cardinality
+alternatives clash with explicit numerals ((99)–(100)). -/
+
+/-- A minimal *ek bhii* / *koii bhii* pair in the same frame. -/
+structure EkKoiiContrastDatum where
+  ekSentence : String
+  koiiSentence : String
+  ekGrammatical : Bool
+  koiiGrammatical : Bool
+  notes : String := ""
+  deriving Repr
+
+/-- With an explicit numeral, *koii bhii* is fine and *ek bhii* is
+blocked ((100a) vs (100b)): cardinality alternatives clash with the
+numeral. -/
+def numeral_contrast : EkKoiiContrastDatum :=
+  { ekSentence := "*ek bhii tiin log is mez-ko uThaa sakte haiN"
+  , koiiSentence := "koii bhii tiin log is mez-ko uThaa sakte haiN"
+  , ekGrammatical := false
+  , koiiGrammatical := true
+  , notes := "(100) '(*Even one)/(Any) three people can lift this table.'" }
+
+/-- Without a numeral both are fine, with different implicatures ((99)):
+*ek bhii* carries the cardinality implicature, *koii bhii* the FC
+reading. -/
+def generic_contrast : EkKoiiContrastDatum :=
+  { ekSentence := "ek bhii aadmii is mez-ko uThaa saktaa hai"
+  , koiiSentence := "koii bhii aadmii is mez-ko uThaa saktaa hai"
+  , ekGrammatical := true
+  , koiiGrammatical := true
+  , notes := "(99) Cardinality implicature vs FC reading" }
+
+/-! ### Fragment grounding
+
+The fragment entry `Hindi.PolarityItems.koiiBhii` stores the
+distribution this study derives: DE environments for NPI readings,
+generic/modal environments for FC readings. -/
 
 open Hindi.PolarityItems (koiiBhii koiiNahiin)
 
-theorem koiiBhii_is_fci : koiiBhii.freeChoice = true := rfl
-theorem koiiNahiin_is_npi : koiiNahiin.licensor = some .weak := rfl
-
-/-- The decomposition in this study matches the fragment entry. -/
-theorem decomposition_matches_fragment :
-    koiiBhiiD.npiForm = "koii bhii" ∧ koiiBhii.form = "koii bhii" :=
-  ⟨rfl, rfl⟩
-
-/-- The morphology classification in the fragment entry matches the
-    decomposition analysis: *koii bhii* is indefinite + even. -/
-theorem fragment_morphology_matches :
+/-- The fragment's *koii bhii* matches the analysis: free-choice,
+indefinite + *even* morphology, contextual-property alternatives. -/
+theorem koiiBhii_fragment_grounded :
+    koiiBhii.freeChoice = true ∧
     koiiBhii.morphology = .indefPlusEven ∧
-    koiiNahiin.morphology = .indefPlusNeg := ⟨rfl, rfl⟩
+    koiiBhii.alternativeType = .contextualProperty :=
+  ⟨rfl, rfl, rfl⟩
 
-/-- The alternative type in the fragment matches the study's prediction:
-    *koii bhii* introduces contextual property alternatives. -/
-theorem fragment_alternativeType_matches :
-    koiiBhii.alternativeType = .contextualProperty ∧
-    alternativeTypeOf koiiBhiiD = .contextualProperty := ⟨rfl, rfl⟩
+/-- The fragment's *koii nahiiN* is a strength-licensed NPI with
+indefinite + negation morphology — the non-*bhii* route. -/
+theorem koiiNahiin_fragment_grounded :
+    koiiNahiin.licensor = some .weak ∧
+    koiiNahiin.morphology = .indefPlusNeg :=
+  ⟨rfl, rfl⟩
 
 end Lahiri1998
