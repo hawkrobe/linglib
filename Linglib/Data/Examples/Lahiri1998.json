@@ -287,17 +287,20 @@
     "language": "hind1269",
     "primaryText": "maiN-ne rameS-ko kisii-se bhii baat-ciit karne-se manaa kiyaa",
     "glossedTokens": [
-      ["maiN-ne", "I-ERG"], ["rameS-ko", "Rames"], ["kisii-se bhii", "anyone"],
+      ["maiN-ne", "I"], ["rameS-ko", "Rames"], ["kisii-se bhii", "anyone"],
       ["baat-ciit karne-se", "talk"], ["manaa kiyaa", "prohibited"]
     ],
     "translation": "I prohibited Rames from talking to anyone.",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [
+      {"form": "maiN-ne rameS-ko kisii-se bhii baat-ciit karne-se rokaa", "judgment": "questionable"}
+    ],
     "paperFeatures": [
       ["npi", "kisii-se bhii"],
       ["environment", "prohibition verb"]
     ],
-    "comment": "Object NPI in the scope of a prohibition verb (4.5); the paper also gives the variant (?)rokaa 'prevented'."
+    "comment": "Object NPI in the scope of a prohibition verb (4.5). The rokaa 'prevented' variant carries the paper's (?) diacritic."
   },
   {
     "id": "lahiri1998_ex29d",
@@ -305,17 +308,20 @@
     "language": "hind1269",
     "primaryText": "maiN-ne kisii-ko bhii rameS-se baat-ciit karne-se manaa kiyaa",
     "glossedTokens": [
-      ["maiN-ne", "I-ERG"], ["kisii-ko bhii", "anyone"], ["rameS-se", "Rames"],
+      ["maiN-ne", "I"], ["kisii-ko bhii", "anyone"], ["rameS-se", "Rames"],
       ["baat-ciit karne-se", "talk"], ["manaa kiyaa", "prohibited"]
     ],
     "translation": "I prohibited anyone from talking to Rames.",
     "context": "",
     "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "maiN-ne kisii-ko bhii rameS-se baat-ciit karne-se rokaa", "judgment": "ungrammatical"}
+    ],
     "paperFeatures": [
       ["npi", "kisii-ko bhii"],
       ["environment", "outside prohibition scope"]
     ],
-    "comment": "The matrix object NPI is outside the DE scope of the prohibition verb (4.5); the paper also gives the variant rokaa 'prevented'."
+    "comment": "The matrix object NPI is outside the DE scope of the prohibition verb (4.5); starred with both manaa kiyaa 'prohibited' and rokaa 'prevented'."
   },
   {
     "id": "lahiri1998_ex31a",
