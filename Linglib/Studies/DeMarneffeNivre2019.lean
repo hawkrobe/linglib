@@ -1,4 +1,4 @@
-import Linglib.Syntax.DependencyGrammar.Projection
+import Linglib.Syntax.DependencyGrammar.Dominance
 import Linglib.Syntax.DependencyGrammar.Basic
 
 open Morphology (Word)
@@ -38,7 +38,7 @@ extra arcs with `Graph.enhance`.
 ## Implementation notes
 
 Fixtures use `Word.mk'` (featureless); the worked theorems are structural
-(`hasUniqueHeads`, edge counts, `decide` over UD relation labels) and
+(`Graph.IsTree`, edge counts, `decide` over UD relation labels) and
 agreement / valence checks pass vacuously. A future revision could add
 feature-tagged fixtures if richer parallelism theorems are wanted.
 -/

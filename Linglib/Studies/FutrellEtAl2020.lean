@@ -4,7 +4,7 @@ import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Syntax.DependencyGrammar.NonProjective
+import Linglib.Syntax.DependencyGrammar.Projectivity
 import Linglib.Syntax.DependencyGrammar.Length
 
 /-!
