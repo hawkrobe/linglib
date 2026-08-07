@@ -7,6 +7,8 @@ import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Core.Relation.ReflTransGen
 import Mathlib.Logic.Relation
 import Mathlib.Data.Fintype.Card
+import Mathlib.Order.SuccPred.Basic
+import Mathlib.Order.SuccPred.Archimedean
 
 /-!
 # Dominance
@@ -27,6 +29,11 @@ theory of dominance on trees ([kuhlmann-nivre-2006] §2).
 * `Dominates.antisymm`, `Dominates.to_head`, `Dominates.comparable` —
   on trees dominance is a partial order under which the dominators of
   any position form a chain.
+* `Graph.headOf`, `DominanceOrder` — the head function, and `Fin n`
+  re-ordered by dominance: with `[Fact g.IsTree]` a `PartialOrder` +
+  `OrderBot` + `PredOrder` + `IsPredArchimedean` (root as `⊥`, head as
+  `Order.pred`), the order-theoretic reading of a rooted dependency
+  tree (cf. mathlib's `RootedTree`).
 
 ## Implementation notes
 
@@ -148,6 +155,98 @@ theorem Graph.IsTree.root_dominates (hT : g.IsTree) (v : Fin n) :
 theorem projection_root (hT : g.IsTree) :
     projection g g.root = List.finRange n :=
   List.filter_eq_self.mpr λ x _ => decide_eq_true (hT.root_dominates x)
+
+/-! ### The head function -/
+
+/-- The first listed head of `v`, defaulting to `v` when headless —
+    under `IsTree`, the unique head of a non-root position and the root
+    at the root. -/
+def Graph.headOf (g : Graph n) (v : Fin n) : Fin n :=
+  (g.parents v).head?.getD v
+
+theorem Graph.IsTree.adj_headOf (hT : g.IsTree) {v : Fin n} (hv : v ≠ g.root) :
+    g.Adj (g.headOf v) v := by
+  obtain ⟨u, hu, -⟩ := hT.existsUnique_adj v hv
+  have hmem : u ∈ g.parents v := Graph.mem_parents.mpr hu
+  unfold Graph.headOf
+  cases hp : g.parents v with
+  | nil => exact absurd (hp ▸ hmem) List.not_mem_nil
+  | cons h t =>
+    simp only [List.head?_cons, Option.getD_some]
+    exact Graph.mem_parents.mp (hp ▸ List.mem_cons_self)
+
+theorem Graph.IsTree.headOf_eq (hT : g.IsTree) {u v : Fin n} (h : g.Adj u v) :
+    g.headOf v = u :=
+  hT.rightUnique_flip_adj
+    (hT.adj_headOf (λ he => hT.not_adj_root u (he ▸ h))) h
+
+theorem Graph.IsTree.headOf_root (hT : g.IsTree) : g.headOf g.root = g.root := by
+  unfold Graph.headOf
+  cases hp : g.parents g.root with
+  | nil => rfl
+  | cons h t =>
+    exact absurd (Graph.mem_parents.mp (hp ▸ List.mem_cons_self))
+      (hT.not_adj_root h)
+
+/-! ### The dominance order -/
+
+/-- `Fin n` carrying the dominance order of `g` instead of the
+    positional order. With `[Fact g.IsTree]` this is a partial order
+    with the root as bottom, the head as predecessor, and finite
+    descent — the order-theoretic reading of a rooted dependency tree
+    (cf. mathlib's `RootedTree`). -/
+def DominanceOrder (g : Graph n) := Fin n
+
+namespace DominanceOrder
+
+instance : Fintype (DominanceOrder g) := inferInstanceAs (Fintype (Fin n))
+instance : DecidableEq (DominanceOrder g) := inferInstanceAs (DecidableEq (Fin n))
+
+instance [Fact g.IsTree] : PartialOrder (DominanceOrder g) where
+  le v w := Dominates g v w
+  le_refl _ := .refl
+  le_trans _ _ _ h h' := h.trans h'
+  le_antisymm _ _ h h' := Dominates.antisymm (Fact.out : g.IsTree).acyclic h h'
+
+instance [Fact g.IsTree] : OrderBot (DominanceOrder g) where
+  bot := g.root
+  bot_le := (Fact.out : g.IsTree).root_dominates
+
+instance [Fact g.IsTree] : PredOrder (DominanceOrder g) where
+  pred := g.headOf
+  pred_le v := by
+    by_cases hv : v = g.root
+    · subst hv
+      exact le_of_eq ((Fact.out : g.IsTree).headOf_root)
+    · exact Relation.ReflTransGen.single ((Fact.out : g.IsTree).adj_headOf hv)
+  min_of_le_pred {v} h := by
+    by_cases hv : v = g.root
+    · subst hv
+      exact λ w _ => (Fact.out : g.IsTree).root_dominates w
+    · exact absurd h (λ hdom => not_adj_dominates (Fact.out : g.IsTree).acyclic
+        ((Fact.out : g.IsTree).adj_headOf hv) hdom)
+  le_pred_of_lt {v w} h := by
+    have hw : w ≠ g.root := λ he => h.ne (Dominates.antisymm
+      (Fact.out : g.IsTree).acyclic h.le
+      (he ▸ (Fact.out : g.IsTree).root_dominates v))
+    exact ((Fact.out : g.IsTree).headOf_eq
+        ((Fact.out : g.IsTree).adj_headOf hw)).symm ▸
+      Dominates.to_head (Fact.out : g.IsTree) h.le h.ne
+        ((Fact.out : g.IsTree).adj_headOf hw)
+
+instance [Fact g.IsTree] : IsPredArchimedean (DominanceOrder g) where
+  exists_pred_iterate_of_le {a b} h := by
+    have h' : Relation.ReflTransGen g.Adj a b := h
+    clear h
+    induction h' with
+    | refl => exact ⟨0, rfl⟩
+    | @tail c d hac hcd ih =>
+      obtain ⟨k, hk⟩ := ih
+      refine ⟨k + 1, ?_⟩
+      rw [Function.iterate_succ_apply]
+      exact (show Order.pred d = c from (Fact.out : g.IsTree).headOf_eq hcd) ▸ hk
+
+end DominanceOrder
 
 end Dominance
 
