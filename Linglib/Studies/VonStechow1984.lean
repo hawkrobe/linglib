@@ -19,8 +19,8 @@ Example stimuli live in `Data.Examples.VonStechow1984` (`Examples.*`).
 
 ## Main definitions
 
-* `actuallyDeg`, `deReComparative`, `deDictoComparative`: the ACTUALLY
-  analysis of Russell's ambiguity (§§II–V)
+* `deReComparative`, `deDictoComparative`: Russell's ambiguity as an
+  ACTUALLY-anchored vs belief-world than-clause standard (§§II–V)
 * `moreSem`, `asSem`, `tooSem`: synthesis rules R4 (additive *more*),
   R5 (multiplicative *as*), R13 (counterfactual *too*) (§XIII)
 
@@ -37,17 +37,16 @@ namespace VonStechow1984
 
 open Degree (comparativeSem equativeSem differentialComparative factorEquative)
 
-variable {W Entity D : Type*}
+variable {W Entity D : Type*} [LinearOrder D]
 
-/-! ### Intensional degree semantics (§§II–V) -/
+/-! ### Intensional degree semantics (§§II–V)
 
-/-- The ACTUALLY operator: the extension of an intension at the actual
-world `w₀` (`Intension.evalAt`, world first) — not [kaplan-1989]'s
-indexical ACTUALLY. -/
-def actuallyDeg (w₀ : W) (f : W → D) : D :=
-  Intensional.Intension.evalAt f w₀
-
-variable [LinearOrder D]
+`deReComparative` vs `deDictoComparative` is von Stechow's analysis of
+Russell's ambiguity ((1), `Examples.yacht`): the than-clause standard is
+either ACTUALLY-anchored to the actual world or evaluated in the belief
+world — no degree-operator scope is involved. The ambiguous counterfactual
+((26), `Examples.ex26`, §III) works the same way: its trivial reading's
+clauses are de dicto self-comparisons, contradictory by `deDicto_absurd`. -/
 
 /-- Comparative between world-indexed measures (R3): `a` exceeds `b` at `w`. -/
 def intensionalComparative (μ : W → Entity → D) (w : W) (a b : Entity) : Prop :=
@@ -60,10 +59,11 @@ theorem intensionalComparative_rigid (μe : Entity → D) (w : W) (a b : Entity)
       comparativeSem μe a b .positive :=
   Iff.rfl
 
-/-- De re reading of "I thought your yacht was larger than it is": ACTUALLY
-anchors the than-clause standard to `w₀`; the matrix is evaluated at `wBel`. -/
+/-- De re reading of "I thought your yacht was larger than it is": the
+than-clause standard is ACTUALLY-anchored — evaluated at the actual world
+`w₀` — while the matrix is evaluated at the belief world `wBel`. -/
 def deReComparative (μ : W → Entity → D) (w₀ wBel : W) (x : Entity) : Prop :=
-  μ wBel x > actuallyDeg w₀ (fun w => μ w x)
+  μ wBel x > μ w₀ x
 
 /-- De dicto reading: no ACTUALLY, so standard and matrix are both evaluated
 at `wBel`. -/
@@ -75,67 +75,36 @@ theorem deDicto_absurd (μ : W → Entity → D) (wBel : W) (x : Entity) :
     ¬ deDictoComparative μ wBel x :=
   lt_irrefl _
 
-/-- The de re reading compares `x`'s degrees at `w₀` and `wBel`. -/
-theorem deRe_unfolds (μ : W → Entity → D) (w₀ wBel : W) (x : Entity) :
-    deReComparative μ w₀ wBel x ↔ μ w₀ x < μ wBel x :=
-  Iff.rfl
-
 -- Russell's yacht ((1), `Examples.yacht`): actual length 5, believed length 8.
 private def yachtLength : Bool → Unit → ℕ
   | true,  () => 5
   | false, () => 8
 
 -- De re: the believed length exceeds the actual length. Consistent.
-example : deReComparative yachtLength true false () :=
-  (deRe_unfolds yachtLength true false ()).mpr (by decide)
+example : deReComparative yachtLength true false () := by
+  simp [deReComparative, yachtLength]
 
 -- De dicto: contradictory.
 example : ¬ deDictoComparative yachtLength false () :=
   deDicto_absurd yachtLength false ()
 
-/-! ### Ambiguous counterfactuals (§III)
+/-! ### Downward-entailing than-clauses (§§VI–VII)
 
-"If Mary had smoked less (than she did), she would be healthier (than she
-is)" ((26), `Examples.ex26`): the trivial reading evaluates the than-clauses
-in the counterfactual world (contradictory by `deDicto_absurd`); the
-informative reading anchors them with ACTUALLY. -/
-
--- Health degrees: actual world `true` (3), counterfactual world `false` (7).
-private def health : Bool → Unit → ℕ
-  | true,  () => 3
-  | false, () => 7
-
--- Informative reading of (26)'s consequent: coherent.
-example : deReComparative health true false () :=
-  (deRe_unfolds health true false ()).mpr (by decide)
-
--- Trivial reading: contradictory.
-example : ¬ deDictoComparative health false () :=
-  deDicto_absurd health false ()
-
-/-! ### NPI licensing in than-clauses (§VI)
-
-The Max operator makes the than-clause downward-entailing: Cresswell-style
-λ-abstraction over degrees is DE and predicts (70)–(72) (`Examples.ex70` –
-`Examples.ex72b`, including the exclusion of the positive polarity item
-*already*), while Russell's and Hellan's accounts are not. Substrate:
+The Max operator makes the than-clause downward-entailing, licensing NPIs
+((iii), (70)–(72): `Examples.exIII`, `Examples.ex70` – `Examples.ex72b`,
+including the exclusion of the positive polarity item *already*) and
+strengthening disjunctive standards ((v), `Examples.exV`); Russell's and
+Hellan's accounts are not DE and miss the pattern. Unwarranted inferences
+like (vii) and the negative-quantifier oddities (99a), (99b) are instead
+blocked by failure of the degree description to denote. Substrate:
 `Degree.comparative_than_DE`;
 `Ladusaw1979.licensingStrength .comparativeS = .antiAdditive`. -/
 
-/-! ### Quantifiers, connectives, and blocked inferences (§VII)
-
-(vii) (`Examples.exVII`) must not entail "fatter than everyone": Russell's
-description ιd[everyone is d-fat] fails to denote when people differ. In
-(99a), (99b) (`Examples.ex99a`, `Examples.ex99b`) a negative quantifier makes
-the description fail to denote (Russell) or the sentence a logical falsehood
-(Cresswell). -/
-
-/-- (v): exceeding the maximum of a disjunctive standard entails exceeding
-both disjuncts — "nicer than Düsseldorf or Stuttgart" entails "nicer than
-Düsseldorf and Stuttgart" (`Examples.exV`). -/
-theorem disjunction_to_conjunction_in_than (μa μb μc : D) (h : μa > μb ⊔ μc) :
-    μa > μb ∧ μa > μc :=
-  ⟨lt_of_le_of_lt le_sup_left h, lt_of_le_of_lt le_sup_right h⟩
+/-- (v): a disjunctive standard entails both disjuncts — "nicer than
+Düsseldorf or Stuttgart" entails "nicer than Düsseldorf and Stuttgart". -/
+theorem disjunction_to_conjunction_in_than (μa μb μc : D)
+    (h : μb ⊔ μc < μa) : μb < μa ∧ μc < μa :=
+  sup_lt_iff.mp h
 
 /-! ### Modal comparatives (§VIII) -/
 
@@ -159,9 +128,8 @@ theorem klein_agrees_on_simple (μ : Entity → D) (cc : Set Entity)
     (a b : Entity) (ha : a ∈ cc) (hb : b ∈ cc) :
     comparativeSem μ a b .positive ↔
       Degree.Delineation.ordering
-        (Degree.Delineation.measureDelineation μ) cc a b := by
-  simp only [comparativeSem,
-    Degree.Delineation.ordering_iff_degree μ cc a b ha hb]
+        (Degree.Delineation.measureDelineation μ) cc a b :=
+  (Degree.Delineation.ordering_iff_degree μ cc a b ha hb).symm
 
 /-! ### Synthesis rules R4 (`moreSem`), R5 (`asSem`), R13 (`tooSem`) (§XIII) -/
 
@@ -177,7 +145,7 @@ def asSem (μ : Entity → ℚ) (x : Entity) (d₁ d₂ : ℚ) : Prop :=
 /-- R4 with a positive differential and `d₂ = μ b` yields the bare
 comparative. -/
 theorem moreSem_comparative_bridge (μ : Entity → ℚ) (a b : Entity)
-    (d₁ : ℚ) (hd₁ : d₁ > 0) :
+    (d₁ : ℚ) (hd₁ : 0 < d₁) :
     moreSem μ a d₁ (μ b) → comparativeSem μ a b .positive := by
   intro h
   simp only [moreSem] at h
