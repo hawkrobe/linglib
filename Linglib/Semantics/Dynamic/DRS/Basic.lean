@@ -113,8 +113,12 @@ end DRS
 /-! ### Embeddings and the extension relation -/
 
 /-- An *embedding function*: an assignment of discourse referents to
-individuals in a model — in the total-assignment rendering (deviation note in
-`DRS/Verification.lean`). -/
+individuals in a given model, in the total-assignment rendering (deviation
+note in `DRS/Verification.lean`). `M` is the model's domain of individuals;
+the model itself — `M` together with an interpretation of the relation
+symbols — is the `L.Structure M` instance that verification
+(`Embedding.Verifies`) requires, so embeddings and the extension relation
+need no model theory, while `f.Verifies K` only exists in a given model. -/
 abbrev Embedding (V : Type w) (M : Type*) := V → M
 
 variable {M : Type*} in
