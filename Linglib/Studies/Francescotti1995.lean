@@ -24,7 +24,7 @@ vagueness of "most".
 
 namespace Francescotti1995
 
-open Focus.Particles (TraditionalEven)
+open Focus.Particles (evenPresup)
 
 /-! ### The three threshold conditions -/
 
@@ -73,11 +73,10 @@ theorem evenPresupWith_universal_iff :
   simp [evenPresupWith, countExceeded, List.countP_eq_length]
 
 /-- The universal threshold coincides with the traditional scalar
-presupposition of *even* (`Focus.Particles.TraditionalEven`). -/
-theorem traditionalEven_presup_iff_universal {W : Type*}
-    (te : TraditionalEven (World := W)) [DecidableRel te.likelihood] :
-    te.presupposition ↔
-      evenPresupWith te.prejacent te.alternatives te.likelihood .universal :=
+presupposition of *even* (`Focus.Particles.evenPresup`). -/
+theorem evenPresup_iff_universal {W : Type*}
+    (r : Set W → Set W → Prop) [DecidableRel r] (p : Set W) (alts : List (Set W)) :
+    evenPresup r p alts ↔ evenPresupWith p alts r .universal :=
   (evenPresupWith_universal_iff ..).symm
 
 /-! ### The two counterexamples (§I, pp. 155–156) -/

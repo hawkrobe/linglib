@@ -222,22 +222,14 @@ theorem direct_only_unsatisfiable :
   simp only [Focus.mem_onlyVia, Set.mem_empty_iff_false, iff_false]
   exact fun hw => hne (hw trivialR (by simp) (Set.mem_univ w))
 
-private def readingB : RWorld → Bool
-  | .readOnly | .readAndGrasp => true
-  | .neither => false
-private def graspingB : RWorld → Bool
-  | .readAndGrasp => true
-  | _ => false
-private def trivialB : RWorld → Bool := fun _ => true
-
-/-- The same over-generation exhibited on `TraditionalOnly` itself:
-    with a lexically carried full alternative list its assertion is
-    everywhere false in this model, and no pragmatic narrowing is
-    possible — the list is fixed in the lexical entry. -/
-theorem traditional_only_unsatisfiable (w : RWorld) :
-    (Focus.Particles.TraditionalOnly.mk
-      readingB [graspingB, trivialB]).assertion w = false := by
-  cases w <;> rfl
+/-- The same over-generation on the lexical semantics of *only*: with
+    the full focus value carried as a lexical alternative list, the
+    assertion is unsatisfiable, and no pragmatic narrowing is possible
+    — the list is fixed in the lexical entry. -/
+theorem lexical_only_unsatisfiable :
+    Focus.Particles.onlyAssertion [grasping, trivialR] = (∅ : Set RWorld) := by
+  rw [Set.eq_empty_iff_forall_notMem]
+  exact fun w hw => hw trivialR (by simp) (Set.mem_univ w)
 
 /-! ### Association with *only*
 

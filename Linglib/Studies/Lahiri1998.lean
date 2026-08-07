@@ -38,7 +38,7 @@ does not.
 
 namespace Lahiri1998
 
-open Focus.Particles (TraditionalEven LikelihoodOrder LikelihoodMonotone)
+open Focus.Particles (evenPresup LikelihoodMonotone)
 open Entailment (World allWorlds entails pnot)
 open Semantics.Polarity
 
@@ -263,55 +263,30 @@ theorem de_not_reverse :
 end ImplicatureClash
 
 -- ============================================================================
--- §6. End-to-End: TraditionalEven Instances
+-- §6. End-to-End: the EVEN presupposition on the cardinality model
 -- ============================================================================
 
-/-! We build `TraditionalEven` instances for *ek bhii* in UE and DE contexts,
-    connecting the cardinality model to the `Particles.lean` API.
+/-! The cardinality model plugged into the `Focus.Particles` API.
 
-    In UE: `atLeastOne` is the prejacent, `[atLeastTwo, atLeastThree]` are
-    alternatives. The presupposition requires `atLeastOne` to be less likely
-    than each alternative — but since each alternative entails `atLeastOne`,
-    the opposite holds under any monotone likelihood ordering.
+    In UE: `atLeastOne` is the prejacent, `[atLeastTwo, atLeastThree]` the
+    alternatives. `evenPresup` requires `atLeastOne` to be less likely than
+    each alternative — but each alternative entails `atLeastOne`, so the
+    opposite holds under any monotone likelihood ordering.
 
     In DE: `pnot atLeastOne` is the prejacent. The assertion entails each
     negated alternative, so the prejacent IS the least likely. -/
 
-/-- EVEN instance for *ek bhii aayaa ('*Even one came') in UE context. -/
-def ekBhiiEvenUE : TraditionalEven (World := World) :=
-  { prejacent := atLeastOneB
-  , alternatives := [atLeastTwoB, atLeastThreeB]
-  , likelihood := λ _ _ => True }  -- placeholder; clash proved independently
-
-/-- EVEN instance for *ek bhii nahiiN aayaa* ('Not even one came') in DE. -/
-def ekBhiiEvenDE : TraditionalEven (World := World) :=
-  { prejacent := λ w => !atLeastOneB w
-  , alternatives := [λ w => !atLeastTwoB w, λ w => !atLeastThreeB w]
-  , likelihood := λ _ _ => True }  -- placeholder; satisfaction proved independently
-
-/-- In UE, the EVEN presupposition for *ek bhii* is contradicted:
-    every alternative entails the assertion, so under any monotone likelihood
-    ordering the assertion cannot be strictly less likely than its alternatives.
-
-    This is the abstract version of the paper's argument (§7.4, eqs. 68–71). -/
+/-- In UE, the EVEN presupposition for *ek bhii* is contradicted: each
+    alternative entails the assertion, so under any monotone likelihood
+    ordering the assertion cannot be strictly less likely (§7.4,
+    eqs. 68–71). -/
 theorem ekBhii_even_clash_UE
-    (lt : (World → Bool) → (World → Bool) → Prop)
-    (le : (World → Bool) → (World → Bool) → Prop)
+    (lt le : Set World → Set World → Prop)
     (hMono : LikelihoodMonotone le)
-    (hCompat : ∀ (a b : (World → Bool)), lt a b → le b a → False)
-    (alt : (World → Bool))
-    (hAlt : alt = atLeastTwoB ∨ alt = atLeastThreeB)
-    (hEven : lt atLeastOneB alt) :
-    False := by
-  cases hAlt with
-  | inl h =>
-    exact hCompat atLeastOneB alt hEven
-      (hMono alt atLeastOneB
-        (by subst h; intro w; cases w <;> simp [atLeastOneB, atLeastTwoB]))
-  | inr h =>
-    exact hCompat atLeastOneB alt hEven
-      (hMono alt atLeastOneB
-        (by subst h; intro w; cases w <;> simp [atLeastOneB, atLeastThreeB]))
+    (hCompat : ∀ a b, lt a b → le b a → False)
+    (hEven : evenPresup lt atLeastOne [atLeastTwo, atLeastThree]) :
+    False :=
+  hCompat _ _ (hEven atLeastTwo (by simp)) (hMono two_entails_one)
 
 /-- In DE, the EVEN presupposition for *ek bhii nahiiN* is satisfiable:
     the negated assertion entails each negated alternative, so the assertion
@@ -328,21 +303,18 @@ theorem ekBhii_even_ok_DE :
 -- ============================================================================
 
 /-- An EVEN scalar implicature is CONTRADICTED when the assertion is entailed
-    by all alternatives. Under `LikelihoodMonotone`, each alternative is
-    then at most as likely as the assertion, but EVEN requires the assertion
-    to be strictly less likely than each alternative. -/
-theorem even_clash_abstract
-    {W : Type}
-    (lt : (W → Bool) → (W → Bool) → Prop)
-    (le : (W → Bool) → (W → Bool) → Prop)
-    (hMono : ∀ (p q : (W → Bool)), (∀ w, p w = true → q w = true) → le p q)
-    (hCompat : ∀ (a b : (W → Bool)), lt a b → le b a → False)
-    (assertion : (W → Bool))
-    (alt : (W → Bool))
-    (hEntails : ∀ w, alt w = true → assertion w = true)
+    by an alternative. Under `LikelihoodMonotone`, the alternative is then
+    at most as likely as the assertion, but EVEN requires the assertion to
+    be strictly less likely. -/
+theorem even_clash_abstract {W : Type*}
+    (lt le : Set W → Set W → Prop)
+    (hMono : LikelihoodMonotone le)
+    (hCompat : ∀ a b, lt a b → le b a → False)
+    {assertion alt : Set W}
+    (hEntails : alt ⊆ assertion)
     (hEven : lt assertion alt) :
     False :=
-  hCompat assertion alt hEven (hMono alt assertion hEntails)
+  hCompat assertion alt hEven (hMono hEntails)
 
 -- ============================================================================
 -- §8. Hindi NPI Data (§4)
