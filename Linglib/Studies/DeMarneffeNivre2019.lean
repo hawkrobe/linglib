@@ -1,5 +1,5 @@
 import Linglib.Syntax.DependencyGrammar.Projection
-import Linglib.Syntax.DependencyGrammar.EnhancedDependencies
+import Linglib.Syntax.DependencyGrammar.Basic
 
 open Morphology (Word)
 
@@ -9,10 +9,8 @@ open Morphology (Word)
 
 Worked English examples illustrating Universal Dependencies' basic vs
 enhanced representations (cf. §4.2 and Figure 9 of
-[de-marneffe-nivre-2019]). The substrate — gap-filling
-(`DependencyGrammar.LongDistance.fillGap`) and shared-dependent propagation
-(`DependencyGrammar.Coordination.enhanceSharedDeps`) — lives in the corresponding
-substrate files.
+[de-marneffe-nivre-2019]). Enhanced graphs are built by adding the
+extra arcs with `Graph.enhance`.
 
 ## Examples
 

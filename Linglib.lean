@@ -2836,7 +2836,6 @@ import Linglib.Syntax.Control.Diagnostics
 import Linglib.Syntax.Coordination
 import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Syntax.DependencyGrammar.Catena
-import Linglib.Syntax.DependencyGrammar.EnhancedDependencies
 import Linglib.Syntax.DependencyGrammar.Length
 import Linglib.Syntax.DependencyGrammar.NonProjective
 import Linglib.Syntax.DependencyGrammar.Projection
