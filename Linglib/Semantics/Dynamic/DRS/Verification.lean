@@ -134,36 +134,6 @@ section Map
 
 variable {W : Type*} [DecidableEq W]
 
-/-- Precomposition with `e` is a bijection between the embeddings extending `f`
-on `U.image e` and those extending `f ∘ e` on `U`. -/
-private theorem exists_precomp_extend_iff (e : V ≃ W) (U : Finset V) (f : Embedding W M)
-    (P : Embedding V M → Prop) :
-    (∃ g : Embedding W M, (∀ y ∉ U.image e, g y = f y) ∧ P (g ∘ e)) ↔
-      ∃ w' : Embedding V M, (∀ x ∉ U, w' x = f (e x)) ∧ P w' := by
-  constructor
-  · rintro ⟨g, h, hp⟩
-    exact ⟨g ∘ e, fun x hx => h (e x) (by simpa using hx), hp⟩
-  · rintro ⟨w', h, hp⟩
-    refine ⟨w' ∘ e.symm, fun y hy => ?_, ?_⟩
-    · have hx : e.symm y ∉ U := fun hmem => hy (by simpa using Finset.mem_image_of_mem e hmem)
-      simpa using h _ hx
-    · have key : (w' ∘ e.symm) ∘ e = w' := by funext x; simp
-      exact key.symm ▸ hp
-
-/-- The `∀` analogue of `exists_precomp_extend_iff`. -/
-private theorem forall_precomp_extend_iff (e : V ≃ W) (U : Finset V) (f : Embedding W M)
-    (P : Embedding V M → Prop) :
-    (∀ g : Embedding W M, (∀ y ∉ U.image e, g y = f y) → P (g ∘ e)) ↔
-      ∀ w' : Embedding V M, (∀ x ∉ U, w' x = f (e x)) → P w' := by
-  constructor
-  · intro H w' h
-    have key : (w' ∘ e.symm) ∘ e = w' := by funext x; simp
-    refine key ▸ H (w' ∘ e.symm) fun y hy => ?_
-    have hx : e.symm y ∉ U := fun hmem => hy (by simpa using Finset.mem_image_of_mem e hmem)
-    simpa using h _ hx
-  · intro H g h
-    exact H (g ∘ e) fun x hx => h (e x) (by simpa using hx)
-
 /-- An embedding verifies a renamed DRS iff its precomposition verifies the
 original, given the transport for each of the DRS's conditions. -/
 private theorem verifies_map_all (e : V ≃ W) (K : DRS L V) (g : Embedding W M)
@@ -184,32 +154,31 @@ theorem verifies_map_condition (e : V ≃ W) : ∀ (f : Embedding W M) (c : Cond
   | f, .neg K => by
     have hK := fun g : Embedding W M =>
       verifies_map_all e K g (fun d hd u => verifies_map_condition e u d)
-    simp only [Condition.map, verifies_neg, DRS.Extends, DRS.referents_map]
+    simp only [Condition.map, verifies_neg]
     exact not_congr ((exists_congr fun g => and_congr_right fun _ => hK g).trans
-      (exists_precomp_extend_iff e K.referents f (Verifies · K)))
+      (DRS.exists_extends_map e K f (Verifies · K)))
   | f, .imp a c => by
     have hA := fun g : Embedding W M =>
       verifies_map_all e a g (fun d hd u => verifies_map_condition e u d)
     have hC := fun g : Embedding W M =>
       verifies_map_all e c g (fun d hd u => verifies_map_condition e u d)
-    simp only [Condition.map, verifies_imp, DRS.Extends, DRS.referents_map]
+    simp only [Condition.map, verifies_imp]
     refine Iff.trans (forall_congr' fun g => imp_congr_right fun _ => imp_congr (hA g)
       ((exists_congr fun h => and_congr_right fun _ => hC h).trans
-        (exists_precomp_extend_iff e c.referents g (Verifies · c)))) ?_
-    exact forall_precomp_extend_iff e a.referents f
-      (fun u => Verifies u a →
-        ∃ w'', (∀ x ∉ c.referents, w'' x = u x) ∧ Verifies w'' c)
+        (DRS.exists_extends_map e c g (Verifies · c)))) ?_
+    exact DRS.forall_extends_map e a f
+      (fun u => Verifies u a → ∃ h', c.Extends u h' ∧ Verifies h' c)
   | f, .dis l r => by
     have hL := fun g : Embedding W M =>
       verifies_map_all e l g (fun d hd u => verifies_map_condition e u d)
     have hR := fun g : Embedding W M =>
       verifies_map_all e r g (fun d hd u => verifies_map_condition e u d)
-    simp only [Condition.map, verifies_dis, DRS.Extends, DRS.referents_map]
+    simp only [Condition.map, verifies_dis]
     exact or_congr
       ((exists_congr fun g => and_congr_right fun _ => hL g).trans
-        (exists_precomp_extend_iff e l.referents f (Verifies · l)))
+        (DRS.exists_extends_map e l f (Verifies · l)))
       ((exists_congr fun g => and_congr_right fun _ => hR g).trans
-        (exists_precomp_extend_iff e r.referents f (Verifies · r)))
+        (DRS.exists_extends_map e r f (Verifies · r)))
 termination_by _ c => sizeOf c
 decreasing_by all_goals
   have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
