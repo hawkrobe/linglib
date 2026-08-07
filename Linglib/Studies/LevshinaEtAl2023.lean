@@ -1,5 +1,4 @@
 import Linglib.Studies.Gibson2025
-import Linglib.Studies.HahnDegenFutrell2021
 import Linglib.Studies.FutrellEtAl2020
 
 /-!
@@ -275,22 +274,6 @@ theorem harmony_is_gradient_not_binary :
     harmonicProportion1000 voSubordinator ≠ harmonicProportion1000 voRelativeClause := by
   constructor <;> decide
 
--- Bridge 2: SO entropy ↔ branching direction entropy (HahnDegenFutrell2021.lean)
-
-/-- Languages with high SO entropy (> 600) in Levshina that also appear in Hahn et al.
-    all have high branching direction entropy (> 250) in Hahn et al.
-
-    Two independent measures of word-order freedom (SO entropy from corpus counts,
-    branching direction entropy from dependency trees) converge. -/
-theorem high_so_entropy_implies_high_branch_entropy :
-    let highSOEntropy := allProfiles.filter (λ p => p.soEntropy1000 > 600)
-    let sharedHighSO := highSOEntropy.filter (λ p =>
-      HahnDegenFutrell2021.allLanguages.any (·.isoCode == p.isoCode))
-    sharedHighSO.all (λ p =>
-      match HahnDegenFutrell2021.allLanguages.find? (·.isoCode == p.isoCode) with
-      | some h => match h.branchDirEntropy1000 with | some e => e > 250 | none => false
-      | none => false) = true := by decide
-
 -- Bridge 3: Head-final proportion ↔ SO proportion (FutrellEtAl2020.lean)
 
 /-- Languages with a high head-final proportion (> 700‰) in
@@ -304,18 +287,6 @@ theorem head_final_correlates_with_so :
       | some f => f.propHeadFinal1000 > 700
       | none => false)
     highHF.all (·.soProportion1000 > 700) = true := by decide
-
--- Bridge 4: Flexibility ↔ optimization exceptions (HahnDegenFutrell2021.lean)
-
-/-- Languages with soEntropy > 600 in Levshina include at least one of the
-    Hahn et al. exception languages. Latvian appears in both:
-    high SO entropy in Levshina, and a memory-surprisal optimization exception
-    in Hahn et al. Flexible word order weakens memory-surprisal optimization. -/
-theorem high_entropy_languages_include_exceptions :
-    let highEntropy := allProfiles.filter (·.soEntropy1000 > 600)
-    let hahnExceptions := HahnDegenFutrell2021.exceptionLanguages
-    highEntropy.any (λ p => hahnExceptions.any (·.isoCode == p.isoCode)) = true := by
-  decide
 
 -- ============================================================================
 -- §5: Register Variation (Russian Case Study, OSF Dataset6.txt)

@@ -13,14 +13,13 @@ import Linglib.Syntax.DependencyGrammar.Basic
 [osborne-2019] [tesniere-1959]
 
 [osborne-2019]'s dependency grammar, from the English Fragment lexicon:
-each verb's valency is derived from its Fragment `complementType` (not
-stipulated), concrete trees are checked against those valencies, the
-passive lexical rule derives the passive valency from the transitive one,
-catenae separate from constituents on the book's own examples, control
-and raising lose their embedded subjects in the basic tree and recover
-them in the enhanced graph, and gapping elides a catena that is not a
-constituent. Formerly three files (`Osborne2019Control`,
-`Osborne2019Ellipsis`); consolidated per the same-paper rule.
+each verb's valency (Ch. 6) is derived from its Fragment
+`complementType`, concrete trees are checked against those valencies,
+the passive valency is derived from the transitive one by lexical rule
+(passive participles: §6.6), catenae separate from constituents
+(Ch. 4), control and raising (§§6.8–6.9) lose their embedded subjects
+in the basic tree and recover them in the enhanced graph, and gapping
+(§12.7) elides a catena that is not a constituent.
 -/
 
 namespace Osborne2019
@@ -50,7 +49,7 @@ private abbrev seems := English.Predicates.Verbal.seem.toWord3sg
 private abbrev sleep_ := English.Predicates.Verbal.sleep.toWordBase
 private abbrev run_ := English.Predicates.Verbal.run.toWordBase
 
-/-! ### Valencies derived from the Fragment -/
+/-! ### Valencies derived from the Fragment (Ch. 6) -/
 
 theorem sleep_valency_from_fragment :
     English.Predicates.Verbal.sleep.complementType.valency =
@@ -79,10 +78,10 @@ def ditransTree : Graph 4 :=
   .ofArcs [john, gives, mary, book] 1
     [(1, 0, .nsubj), (1, 2, .iobj), (1, 3, .obj)]
 
-example : checkVerbSubcat intransTree (.ofList [(1, Valency.intransitive)]) = true := by
+example : intransTree.SatisfiesFrames (.ofList [(1, Valency.intransitive)]) := by
   decide
-example : checkVerbSubcat transTree (.ofList [(1, Valency.transitive)]) = true := by decide
-example : checkVerbSubcat ditransTree (.ofList [(1, Valency.ditransitive)]) = true := by
+example : transTree.SatisfiesFrames (.ofList [(1, Valency.transitive)]) := by decide
+example : ditransTree.SatisfiesFrames (.ofList [(1, Valency.ditransitive)]) := by
   decide
 
 /-! ### Ungrammatical trees violate them -/
@@ -94,12 +93,12 @@ def intransWithObj : Graph 3 :=
 /-- "*John devours": transitive missing its object. -/
 def transNoObj : Graph 2 := .ofArcs [john, devours] 1 [(1, 0, .nsubj)]
 
-example : checkVerbSubcat intransWithObj (.ofList [(1, Valency.intransitive)]) = false := by
+example : ¬ intransWithObj.SatisfiesFrames (.ofList [(1, Valency.intransitive)]) := by
   decide
-example : checkVerbSubcat transNoObj (.ofList [(1, Valency.transitive)]) = false := by
+example : ¬ transNoObj.SatisfiesFrames (.ofList [(1, Valency.transitive)]) := by
   decide
 
-/-! ### The passive lexical rule derives the passive valency -/
+/-! ### The passive valency is rule-derived (§6.6) -/
 
 private def lexKicked : LexEntry :=
   { form := kicked.form, cat := .VERB, features := kicked.features
@@ -119,10 +118,10 @@ def longPassiveTree : Graph 6 :=
   .ofArcs [the_, ball, was_, kickedPass, by_, john] 3
     [(1, 0, .det), (3, 1, .nsubj), (3, 2, .auxPass), (3, 5, .obl), (5, 4, .case_)]
 
-example : checkVerbSubcat passiveTree (.ofList [(3, Valency.passiveTransitive)]) = true := by
+example : passiveTree.SatisfiesFrames (.ofList [(3, Valency.passiveTransitive)]) := by
   decide
 example :
-    checkVerbSubcat longPassiveTree (.ofList [(3, Valency.passiveTransitive)]) = true := by
+    longPassiveTree.SatisfiesFrames (.ofList [(3, Valency.passiveTransitive)]) := by
   decide
 
 /-- "*The ball was kicked the pizza": passive with a leftover object. -/
@@ -131,7 +130,7 @@ def passiveWithObj : Graph 6 :=
     [(1, 0, .det), (3, 1, .nsubj), (3, 2, .auxPass), (3, 5, .obj), (5, 4, .det)]
 
 example :
-    checkVerbSubcat passiveWithObj (.ofList [(3, Valency.passiveTransitive)]) = false := by
+    ¬ passiveWithObj.SatisfiesFrames (.ofList [(3, Valency.passiveTransitive)]) := by
   decide
 
 /-! ### Catenae vs constituents (Ch. 4)
@@ -146,8 +145,8 @@ example : IsConstituent transTree {0, 1, 2} := by decide
 example : IsConstituent transTree {2} := by decide
 example : ¬ IsCatena transTree {0, 2} := by decide
 
-/-! ### Control and raising (Ch. 7): the basic tree loses the embedded
-subject; the enhanced graph recovers it -/
+/-! ### Control and raising (§§6.8–6.9): the basic tree loses the
+embedded subject; the enhanced graph recovers it -/
 
 /-- "John manages to sleep" — subject control, basic tree. -/
 def subjControl : Graph 4 :=
@@ -172,7 +171,7 @@ example : HasUnrepresentedArg objControl (objControl.enhance [(4, 2, .nsubj)]) 2
 example : HasUnrepresentedArg raising (raising.enhance [(3, 0, .nsubj)]) 0 := by decide
 example : ¬ (subjControl.enhance [(3, 0, .nsubj)]).IsTree := by decide
 
-/-! ### Gapping elides a catena that is not a constituent (Ch. 4, Ch. 12)
+/-! ### Gapping elides a catena that is not a constituent (§12.7)
 
 In gapping ("John devours pizza and Mary ___ wine"), the elided material —
 the verb with its subject slot but without its object — is a catena of the

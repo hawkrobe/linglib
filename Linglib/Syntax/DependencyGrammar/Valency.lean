@@ -26,9 +26,9 @@ lexical carrier (a verb's `complementType.valency`).
 * `Frames n`, `Frames.ofList` — the per-position valency table.
 * `Valency.intransitive/transitive/ditransitive/passiveTransitive`,
   `ComplementType.valency` — standard schemas and the lexical map into them.
-* `satisfiesValency`, `checkVerbSubcat` — valency satisfaction: every filler
-  on its slot's side of the head, required slots filled, no unlicensed core
-  arguments.
+* `SatisfiesValency`, `Graph.SatisfiesFrames` — valency satisfaction: every
+  filler on its slot's side of the head, required slots filled, no
+  unlicensed core arguments.
 -/
 
 namespace DependencyGrammar
@@ -43,11 +43,15 @@ inductive Dir where
   | right
   deriving Repr, DecidableEq
 
-/-- Whether a dependent at position `dep` sits on side `dir` of the head at
+/-- A dependent at position `dep` sits on side `dir` of the head at
     position `head`. -/
-def Dir.admits {n : ℕ} : Dir → Fin n → Fin n → Bool
+def Dir.Admits {n : ℕ} : Dir → Fin n → Fin n → Prop
   | .left, head, dep => dep < head
   | .right, head, dep => head < dep
+
+instance {n : ℕ} (dir : Dir) (head dep : Fin n) :
+    Decidable (dir.Admits head dep) := by
+  cases dir <;> exact inferInstanceAs (Decidable (_ < _))
 
 /-- A single valency slot: which relation fills it, on which side of the
     head, and whether it must be filled. -/
@@ -106,10 +110,13 @@ def Graph.fillersOf (g : Graph n) (v : Fin n) (rel : UD.DepRel) : List (Fin n) :
 
 /-- The graph satisfies a valency at head `v`: every filler of every slot
     sits on the slot's side of the head, and required slots are filled. -/
-def satisfiesValency (g : Graph n) (v : Fin n) (val : Valency) : Bool :=
-  val.all λ slot =>
-    (g.fillersOf v slot.depType).all (slot.dir.admits v ·) &&
-    (!slot.required || !(g.fillersOf v slot.depType).isEmpty)
+def SatisfiesValency (g : Graph n) (v : Fin n) (val : Valency) : Prop :=
+  ∀ slot ∈ val, (∀ w ∈ g.fillersOf v slot.depType, slot.dir.Admits v w) ∧
+    (slot.required → g.fillersOf v slot.depType ≠ [])
+
+instance (g : Graph n) (v : Fin n) (val : Valency) :
+    Decidable (SatisfiesValency g v val) :=
+  List.decidableBAll _ val
 
 /-- Core argument relations governed by lexical frames. Deliberately the
     nominal core only — UD's clausal core relations (csubj, ccomp, xcomp)
@@ -118,24 +125,26 @@ def satisfiesValency (g : Graph n) (v : Fin n) (val : Valency) : Bool :=
 private def coreArgRels : List UD.DepRel := [.nsubj, .obj, .iobj]
 
 /-- Every core-argument dependent of `v` is licensed by a slot of `val` —
-    the closed-world half of valency checking (`satisfiesValency` only
+    the closed-world half of valency checking (`SatisfiesValency` only
     checks that required slots are filled). -/
-private def coreArgsLicensed (g : Graph n) (v : Fin n) (val : Valency) : Bool :=
-  (g.children v).all λ w =>
-    match g.label v w with
-    | some r => !coreArgRels.contains r || val.any (·.depType == r)
-    | none => true
+private def CoreArgsLicensed (g : Graph n) (v : Fin n) (val : Valency) : Prop :=
+  ∀ w ∈ g.children v, ∀ r ∈ g.label v w,
+    r ∈ coreArgRels → ∃ slot ∈ val, slot.depType = r
 
-/-- Check each verb's dependents against its valency: required slots filled
-    in the right direction (`satisfiesValency`) and no unlicensed core arguments
-    (`coreArgsLicensed`). Verbs without a frame are skipped. -/
-def checkVerbSubcat (g : Graph n) (frames : Frames n) : Bool :=
-  (List.finRange n).all λ v =>
-    if (g.words v).cat == .VERB then
-      match frames v with
-      | some a => satisfiesValency g v a && coreArgsLicensed g v a
-      | none => true
-    else true
+private instance (g : Graph n) (v : Fin n) (val : Valency) :
+    Decidable (CoreArgsLicensed g v val) :=
+  List.decidableBAll _ _
+
+/-- Each verb's dependents satisfy its frame: required slots filled in the
+    right direction (`SatisfiesValency`) and no unlicensed core arguments
+    (`CoreArgsLicensed`). Verbs without a frame are unconstrained. -/
+def Graph.SatisfiesFrames (g : Graph n) (frames : Frames n) : Prop :=
+  ∀ v, (g.words v).cat = .VERB → ∀ val ∈ frames v,
+    SatisfiesValency g v val ∧ CoreArgsLicensed g v val
+
+instance (g : Graph n) (frames : Frames n) :
+    Decidable (g.SatisfiesFrames frames) :=
+  inferInstanceAs (Decidable (∀ _, _))
 
 end Satisfaction
 
