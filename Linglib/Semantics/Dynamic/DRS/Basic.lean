@@ -73,6 +73,9 @@ theorem Condition.mapList_id [DecidableEq V] (cs : List (Condition L V)) :
   | c :: cs => simp only [Condition.mapList, Condition.map_id c, Condition.mapList_id cs]
 end
 
+@[simp] theorem DRS.referents_map [DecidableEq W] (f : V → W) (K : DRS L V) :
+    (K.map f).referents = K.referents.image f := by cases K; rfl
+
 /-! ### Merge algebra -/
 
 namespace DRS
