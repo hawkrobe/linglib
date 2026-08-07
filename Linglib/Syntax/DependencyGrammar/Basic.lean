@@ -30,6 +30,11 @@ artificial root token, following [kuhlmann-nivre-2006].
   `SimpleGraph`), and `Graph.ofArcs` the constructor from CoNLL-U-style
   arc lists.
 * `Graph.parents`, `children`, `inDegree` — the local graph API.
+* `Graph.enhance`, `HasUnrepresentedArg` — arc addition and the
+  basic-vs-enhanced diagnostic for UD's *enhanced* representation
+  ([de-marneffe-nivre-2019]), which adds the predicate-argument
+  relations a single-headed tree cannot encode; basic sits below
+  enhanced in the `Digraph` order (`Graph.toDigraph_le_enhance`).
 * Well-formedness (`Graph.IsTree`) lives in `Projection.lean`, beside the
   dominance relation it is stated through. Feature-level constraints
   (agreement) are `Syntax/Agreement/`'s domain, not the carrier's.
@@ -114,6 +119,12 @@ def inDegree (w : Fin n) : Nat := (g.parents w).length
     w ∈ g.children v ↔ g.Adj v w := by
   simp [children, List.mem_filter]
 
+/-- The partial label function induced by a CoNLL-U-style arc list of
+    (head, dependent, relation) triples. First match wins. -/
+def arcsLabel (arcs : List (Fin n × Fin n × UD.DepRel)) (v w : Fin n) :
+    Option UD.DepRel :=
+  (arcs.find? λ a => a.1 == v && a.2.1 == w).map (·.2.2)
+
 /-- Build a graph from CoNLL-U-style data: the token list (whose length
     fixes `n`), the root position, and the arcs as
     (head, dependent, relation) triples. Later arcs for the same pair are
@@ -121,9 +132,26 @@ def inDegree (w : Fin n) : Nat := (g.parents w).length
 def ofArcs (words : List Word) (root : Fin words.length)
     (arcs : List (Fin words.length × Fin words.length × UD.DepRel)) :
     Graph words.length :=
-  { words := words.get
-    label := λ v w => (arcs.find? λ a => a.1 == v && a.2.1 == w).map (·.2.2)
-    root }
+  { words := words.get, label := arcsLabel arcs, root }
+
+/-- Add arcs to a graph (existing labels win), as in UD's *enhanced*
+    representation: semantic relations the single-headed tree cannot
+    encode — shared dependents in coordination, controlled subjects,
+    relative-clause gaps — become explicit arcs. -/
+def enhance (extra : List (Fin n × Fin n × UD.DepRel)) : Graph n :=
+  { g with label := λ v w => g.label v w <|> arcsLabel extra v w }
+
+/-- Enhancement only adds arcs. -/
+theorem Adj.enhance {g : Graph n} {v w : Fin n} (h : g.Adj v w)
+    (extra : List (Fin n × Fin n × UD.DepRel)) :
+    (g.enhance extra).Adj v w := by
+  obtain ⟨r, hr⟩ := Option.isSome_iff_exists.mp h
+  simp [Graph.Adj, Graph.enhance, hr]
+
+/-- The basic graph sits below its enhancement in the `Digraph` lattice. -/
+theorem toDigraph_le_enhance (extra : List (Fin n × Fin n × UD.DepRel)) :
+    g.toDigraph ≤ (g.enhance extra).toDigraph :=
+  toDigraph_mono (λ _ _ h => h.enhance extra)
 
 end Graph
 
@@ -136,5 +164,14 @@ instance {n : ℕ} (g : Graph n) (a b : Fin n) : Decidable (Linked g a b) :=
 
 @[simp] theorem Graph.toSimpleGraph_adj {n : ℕ} (g : Graph n) (v w : Fin n) :
     g.toSimpleGraph.Adj v w ↔ v ≠ w ∧ Linked g v w := Iff.rfl
+
+/-- Position `w` has an argument relation in the enhanced graph that the
+    basic graph fails to encode. -/
+def HasUnrepresentedArg {n : ℕ} (basic enhanced : Graph n) (w : Fin n) : Prop :=
+  ∃ v, enhanced.Adj v w ∧ ¬ basic.Adj v w
+
+instance {n : ℕ} (b e : Graph n) (w : Fin n) :
+    Decidable (HasUnrepresentedArg b e w) :=
+  inferInstanceAs (Decidable (∃ _, _))
 
 end DependencyGrammar
