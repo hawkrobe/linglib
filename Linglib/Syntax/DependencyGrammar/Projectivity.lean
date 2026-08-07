@@ -76,14 +76,37 @@ instance (g : Graph n) (v w : Fin n) : Decidable (Interleave g v w) :=
 instance (g : Graph n) : Decidable (IsWellNested g) :=
   inferInstanceAs (Decidable (∀ _, _))
 
+/-! ### Gap degree -/
+
+/-- The projection of `v`, as position values. -/
+def projectionVals (g : Graph n) (v : Fin n) : List Nat :=
+  (projection g v).map (·.val)
+
+/-- The projection is strictly sorted. -/
+theorem projectionVals_sortedLT (g : Graph n) (v : Fin n) :
+    (projectionVals g v).SortedLT := by
+  refine List.Pairwise.sortedLT (List.Pairwise.map _ (λ _ _ h => h) ?_)
+  exact (List.pairwise_lt_finRange n).filter _
+
+/-- **Gap degree** of a position: the discontinuities in its projection —
+    adjacent projection members more than one position apart.
+    ([kuhlmann-nivre-2006], Definition 6) -/
+def gapDegreeAt (g : Graph n) (v : Fin n) : Nat :=
+  ((projectionVals g v).zip (projectionVals g v).tail).countP
+    (λ p => decide (1 < p.2 - p.1))
+
+/-- **Gap degree** of a graph: the maximum over its positions
+    ([kuhlmann-nivre-2006], Definition 7). -/
+def Graph.gapDegree (g : Graph n) : Nat :=
+  Finset.univ.sup (gapDegreeAt g)
+
 /-! ### The hierarchy on trees -/
 
-/-- On trees, projective structures are planar ([kuhlmann-nivre-2006]
-    §3.5): were two links to cross, convexity of the heads' cones and
-    uniqueness of heads would force two distinct positions to dominate
-    each other. -/
-theorem IsProjective.isPlanar {g : Graph n} (hT : g.IsTree)
-    (hP : IsProjective g) : IsPlanar g := by
+variable {g : Graph n}
+
+/-- Every projective tree is planar ([kuhlmann-nivre-2006] §3.5). -/
+theorem IsProjective.isPlanar (hT : g.IsTree) (hP : IsProjective g) :
+    IsPlanar g := by
   rintro a b c d hab hcd hL1 hL2 ⟨hac, hcb, hbd⟩
   rcases hL1 with h1 | h1 <;> rcases hL2 with h2 | h2
   · -- heads a and c
@@ -106,43 +129,12 @@ theorem IsProjective.isPlanar {g : Graph n} (hT : g.IsTree)
     exact hbd.ne (Dominates.antisymm hT.acyclic
       (Dominates.to_head hT hbc' hcb.ne' h2) hdb')
 
-/-- On trees, projective structures are well-nested
-    ([kuhlmann-nivre-2006] §3.5): interleaving would put a position
-    under both subtree roots, which dominance comparability forbids. -/
-theorem IsProjective.isWellNested {g : Graph n} (hT : g.IsTree)
-    (hP : IsProjective g) : IsWellNested g := by
+/-- Every projective tree is well-nested ([kuhlmann-nivre-2006] §3.5). -/
+theorem IsProjective.isWellNested (hT : g.IsTree) (hP : IsProjective g) :
+    IsWellNested g := by
   rintro v w hvw hwv ⟨a, b, hva, hvb, c, _, hwc, _, hac, hcb, _⟩
   exact (Dominates.comparable hT ((hP v).out hva hvb ⟨hac.le, hcb.le⟩) hwc).elim
     hvw hwv
-
-/-! ### Gap degree -/
-
-/-- The projection as position values, for the gap combinatorics. -/
-def projectionVals (g : Graph n) (v : Fin n) : List Nat :=
-  (projection g v).map (·.val)
-
-/-- The projection is strictly sorted: it filters the ascending
-    `finRange`. -/
-theorem projectionVals_sortedLT (g : Graph n) (v : Fin n) :
-    (projectionVals g v).SortedLT := by
-  refine List.Pairwise.sortedLT (List.Pairwise.map _ (λ _ _ h => h) ?_)
-  exact (List.pairwise_lt_finRange n).filter _
-
-/-- **Gap degree** of a position: the discontinuities in its projection —
-    adjacent projection members more than one position apart.
-    ([kuhlmann-nivre-2006], Definition 6) -/
-def gapDegreeAt (g : Graph n) (v : Fin n) : Nat :=
-  ((projectionVals g v).zip (projectionVals g v).tail).countP
-    (λ p => decide (1 < p.2 - p.1))
-
-/-- **Gap degree** of a graph: the maximum over positions
-    ([kuhlmann-nivre-2006], Definition 7). Gap degree 0 is the paper's
-    characterization of projectivity, and gap degree + 1 is
-    [kuhlmann-2013]'s block-degree — the fan-out of the LCFRS rule
-    extracted at a node, whose boundedness (with well-nestedness) gives
-    polynomial parsing. -/
-def Graph.gapDegree (g : Graph n) : Nat :=
-  Finset.univ.sup (gapDegreeAt g)
 
 end Defs
 
