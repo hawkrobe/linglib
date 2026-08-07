@@ -9,10 +9,11 @@ Structural operations and lemmas over the faithful `DRS` core (`DRS/Defs.lean`):
 * `DRS.map` / `Condition.map` — functorial renaming of discourse referents along
   `f : V → W`. When `f` is a bijection this is [kamp-reyle-1993]'s *alphabetic
   variant* (the prose preceding Def. 1.4.8); `map_id` makes "renaming to the
-  identity is the identity" a free corollary, and `DRS.realize_map`
+  identity is the identity" a free corollary, and `Embedding.verifies_map`
   (`DRS/Verification.lean`) shows variants have the same semantics.
 * `merge` algebra — identity (`empty`) and associativity.
-* `DRS.Extends` — K&R's extension relation `f [K] g` between embeddings.
+* `Embedding` and `DRS.Extends` — embedding functions and K&R's extension
+  relation `f [K] g` between them.
 * `DRS.fv` / `DRS.IsProper` — free discourse referents (as a `Finset`) and
   properness (`fv K = ∅`, Def. 1.4.2–1.4.3).
 * `Condition.occ` / `DRS.occ` — occurring referents, as a decidable `Finset`.
@@ -109,13 +110,64 @@ theorem merge_assoc (K₁ K₂ K₃ : DRS L V) :
 
 end DRS
 
-/-! ### The extension relation -/
+/-! ### Embeddings and the extension relation -/
 
-variable {M : Type*} in
+/-- An *embedding function*: an assignment of discourse referents to
+individuals in a given model, in the total-assignment rendering (deviation
+note in `DRS/Verification.lean`). `M` is the model's domain of individuals;
+the model itself — `M` together with an interpretation of the relation
+symbols — is the `L.Structure M` instance that verification
+(`Embedding.Verifies`) requires, so embeddings and the extension relation
+need no model theory, while `f.Verifies K` only exists in a given model. -/
+abbrev Embedding (V : Type w) (M : Type*) := V → M
+
+section Extends
+
+variable {M : Type*}
+
 /-- `K.Extends f g` (K&R's `f [K] g`): the output embedding `g` differs from
 the input `f` at most on `K`'s universe — the total-assignment rendering of
 "`f ⊆ g` and `Dom g = Dom f ∪ U_K`". -/
-def DRS.Extends (K : DRS L V) (f g : V → M) : Prop := ∀ x ∉ K.referents, g x = f x
+def DRS.Extends (K : DRS L V) (f g : Embedding V M) : Prop := ∀ x ∉ K.referents, g x = f x
+
+/-- Extension along a renamed DRS is extension of the precompositions. -/
+theorem DRS.extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f g : Embedding W M) :
+    (K.map e).Extends f g ↔ K.Extends (f ∘ e) (g ∘ e) := by
+  simp only [DRS.Extends, DRS.referents_map, Function.comp_apply]
+  constructor
+  · intro h x hx
+    exact h (e x) (by simpa using hx)
+  · intro h y hy
+    have hx : e.symm y ∉ K.referents := fun hm =>
+      hy (by simpa using Finset.mem_image_of_mem e hm)
+    simpa using h (e.symm y) hx
+
+/-- The extensions of `f` at `K.map e` are the extensions of `f ∘ e` at `K`,
+via precomposition. -/
+theorem DRS.exists_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : Embedding W M)
+    (P : Embedding V M → Prop) :
+    (∃ g, (K.map e).Extends f g ∧ P (g ∘ e)) ↔ ∃ g, K.Extends (f ∘ e) g ∧ P g := by
+  simp only [DRS.extends_map]
+  constructor
+  · rintro ⟨g, hg, hp⟩
+    exact ⟨g ∘ e, hg, hp⟩
+  · rintro ⟨g, hg, hp⟩
+    have key : (g ∘ e.symm) ∘ e = g := by funext x; simp
+    exact ⟨g ∘ e.symm, key.symm ▸ hg, key.symm ▸ hp⟩
+
+/-- The `∀` analogue of `DRS.exists_extends_map`. -/
+theorem DRS.forall_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : Embedding W M)
+    (P : Embedding V M → Prop) :
+    (∀ g, (K.map e).Extends f g → P (g ∘ e)) ↔ ∀ g, K.Extends (f ∘ e) g → P g := by
+  simp only [DRS.extends_map]
+  constructor
+  · intro H g hg
+    have key : (g ∘ e.symm) ∘ e = g := by funext x; simp
+    exact key ▸ H (g ∘ e.symm) (key.symm ▸ hg)
+  · intro H g hg
+    exact H (g ∘ e) hg
+
+end Extends
 
 /-! ### Occurring referents -/
 
@@ -146,6 +198,20 @@ end
   induction cs with
   | nil => simp [Condition.occL]
   | cons c cs ih => simp [Condition.occL, ih, Finset.union_assoc]
+
+/-- A DRS's conditions' occurring referents are among the DRS's. -/
+theorem DRS.occL_subset_occ (K : DRS L V) : Condition.occL K.conditions ⊆ K.occ := by
+  cases K; exact Finset.subset_union_right
+
+/-- A condition's occurring referents are among its list's. -/
+theorem Condition.occ_subset_occL {c : Condition L V} {cs : List (Condition L V)}
+    (hc : c ∈ cs) : c.occ ⊆ Condition.occL cs := by
+  induction cs with
+  | nil => cases hc
+  | cons d ds ih =>
+    rcases List.mem_cons.mp hc with h | h
+    · exact h ▸ Finset.subset_union_left
+    · exact (ih h).trans Finset.subset_union_right
 
 end Occ
 

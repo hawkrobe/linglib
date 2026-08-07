@@ -1,47 +1,45 @@
-import Linglib.Semantics.Dynamic.DRS.Basic
+import Linglib.Semantics.Dynamic.DRS.Verification
 import Linglib.Semantics.Dynamic.DRS.Reduction
 import Linglib.Semantics.Dynamic.Update
 
 /-!
-# Relational (dynamic) semantics of DRSs, and its equivalence with verifying embeddings
+# The box relation: dynamic face of DRS verification
 
-[muskens-1996]'s reformulation of DRT. Conditions denote *sets* of embeddings (SEM1/2);
-boxes denote *binary relations* between embeddings (SEM3, input → output, the
-format of [groenendijk-stokhof-1991]); a box is true under an input embedding
-`a` iff some output `a'` is related to it (p. 148). This is the dynamic / CCP
-face of DRT, dual to the static verifying-embedding semantics `DRS.Realize` —
-the total-assignment rendering of [kamp-reyle-1993]'s verification (see the
-deviation note in `DRS/Verification.lean`).
-
-The two semantics are *defined independently* and proved equivalent — Muskens's
-remark that the relational interpretation "is in fact equivalent" to the
-verifying-embedding one (his fn. 4 scopes the remark: both sides here are the
-total-assignment variant). The equivalence is a theorem, not a definitional
-identification:
-
-* `DRS.toRel_iff_realize` — the relation `toRel K a a'` holds iff `a'` extends `a`
-  over `K`'s universe and verifies `K` (the keystone bridge).
-* `DRS.trueRel_iff_realize_toFormula` — the dynamic truth of a DRS equals its
-  first-order translation's `Realize`, closing the triangle with `Reduction`
-  (`Realize` — `toFormula` — `toRel`, each pair related by a proven theorem).
+The relational (input–output) face of the unified verification semantics
+(`DRS/Verification.lean`): the *box relation* `K.toRel a a'` holds when the
+output `a'` extends the input `a` across `K` and verifies `K`, and a DRS is
+*true* under an input iff some output is related to it (the spine's anaphoric
+`closure`). This is [muskens-1996]'s SEM3 format (input → output, the format
+of [groenendijk-stokhof-1991]), definable in one line from verification —
+Muskens's remark that his relational interpretation "is in fact equivalent"
+to the standard one (his fn. 3–4 scope it: constant-free constructs, and both
+sides in the total-assignment rendering; see the deviation note in
+`DRS/Verification.lean`). His SEM1/2 clauses — complex conditions as the
+spine connectives `neg`/`impl`/`disj` on box relations — are derived
+characterizations (`verifies_neg_toRel`, …), connecting DRS verification to
+the connective algebra shared across the dynamic-semantics spine.
 
 ## Main declarations
 
-* `DRS.toRel` / `Condition.holds` — the relational (SEM3) and set (SEM1/2)
-  denotations.
-* `DRS.trueRel` — relational truth: some output embedding is related to the input.
-* `DRS.toRel_iff_realize` / `Condition.holds_iff_realize` — equivalence with the
-  static `DRS.Realize` semantics.
-* `DRS.trueRel_congr` — the coincidence lemma: denotation depends only on the
-  occurring referents (`DRS.occ`, from `DRS/Basic.lean`).
+* `DRS.toRel` — the box relation; `DRS.trueRel` — relational truth, its
+  `closure`.
+* `Embedding.verifies_neg_toRel` (`_imp_`, `_dis_`) — complex conditions are
+  the spine connectives on box relations (SEM1/2).
+* `DRS.trueRel_iff_realize_toFormula` — dynamic truth equals the first-order
+  translation's `Realize` (`DRS/Reduction.lean`).
+* `DRS.trueRel_congr` — coincidence: truth reads the input only at the
+  occurring referents.
 * `DRS.toRel_merge` — the Merging Lemma: under freshness, `merge` denotes the
-  spine sequencing `Update.seq` (relational composition) of the two box relations.
+  spine sequencing `Update.seq` of the two box relations.
+* `DRS.trueRel_map` — alphabetic variants have the same truth conditions.
 
 ## Implementation notes
 
-Naming: the dynamic face (`toRel`, `holds`, `trueRel`) follows the spine's
-lowerCamel operation names (`neg`, `seq`, `closure`); the static face
-(`DRS.Realize`, `DRS/Verification.lean`) follows mathlib's `Formula.Realize`.
+Naming: the relational face (`toRel`, `trueRel`) follows the spine's
+lowerCamel operation names (`neg`, `seq`, `closure`); verification
+(`Embedding.Verifies`, `DRS/Verification.lean`) uses the field's own verb, and
+the first-order reduction (`DRS/Reduction.lean`) speaks mathlib's
+`Formula.Realize`.
 -/
 
 open FirstOrder FirstOrder.Language
@@ -54,231 +52,64 @@ universe u v w x
 
 variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M]
 
-/-! ### The relational denotation -/
+/-! ### The box relation -/
 
-mutual
-/-- The relational (dynamic) denotation of a DRS (SEM3): the input-output
-relation `⟨a, a'⟩` where `a'` differs from `a` at most on the universe and
-verifies every condition. -/
-def DRS.toRel : DRS L V → Update (V → M)
-  | .mk U conds => fun a a' => (∀ x ∉ U, a' x = a x) ∧ Condition.holdsAll conds a'
-/-- The set denotation of a condition (SEM1/2): the set of embeddings at which
-it holds. Complex conditions apply the spine connectives `neg`/`impl`/`disj`
-to the box relations of their sub-DRSs. -/
-def Condition.holds : Condition L V → (V → M) → Prop
-  | .rel R args => fun a => Structure.RelMap R (fun i => a (args i))
-  | .eq u v => fun a => a u = a v
-  | .neg K => neg (DRS.toRel K)
-  | .imp ante cons => impl (DRS.toRel ante) (DRS.toRel cons)
-  | .dis l r => disj (DRS.toRel l) (DRS.toRel r)
-/-- Every condition in the list holds at `a`. A `List` helper — the higher-order
-form fails the nested-inductive structural-recursion checker. -/
-def Condition.holdsAll : List (Condition L V) → (V → M) → Prop
-  | [] => fun _ => True
-  | c :: cs => fun a => Condition.holds c a ∧ Condition.holdsAll cs a
-end
+/-- The box relation (SEM3): the output `a'` extends the input `a` across `K`
+and verifies `K`. -/
+def DRS.toRel (K : DRS L V) : Update (V → M) :=
+  fun a a' => K.Extends a a' ∧ Embedding.Verifies a' K
+
+@[simp] theorem DRS.toRel_iff (K : DRS L V) (a a' : Embedding V M) :
+    DRS.toRel K a a' ↔ K.Extends a a' ∧ a'.Verifies K := Iff.rfl
 
 /-- A DRS is *true* under an input embedding `a` iff some output embedding is
-related to it (p. 148) — the spine's anaphoric `closure`. -/
+related to it — the spine's anaphoric `closure`. -/
 def DRS.trueRel (K : DRS L V) (a : V → M) : Prop := closure (DRS.toRel K) a
-
-/-! ### Structural simp API -/
-
-@[simp] theorem DRS.toRel_mk (U : Finset V) (conds : List (Condition L V)) (a a' : V → M) :
-    DRS.toRel (.mk U conds) a a' ↔
-      (∀ x ∉ U, a' x = a x) ∧ Condition.holdsAll conds a' := Iff.rfl
-
-@[simp] theorem Condition.holds_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) (a : V → M) :
-    (Condition.rel R args).holds a ↔ Structure.RelMap R (fun i => a (args i)) := Iff.rfl
-
-@[simp] theorem Condition.holds_eq (u v : V) (a : V → M) :
-    (Condition.eq u v : Condition L V).holds a ↔ a u = a v := Iff.rfl
-
-@[simp] theorem Condition.holds_neg (K : DRS L V) (a : V → M) :
-    (Condition.neg K).holds a ↔ ¬ ∃ a', DRS.toRel K a a' := Iff.rfl
-
-@[simp] theorem Condition.holds_imp (ante cons : DRS L V) (a : V → M) :
-    (Condition.imp ante cons).holds a ↔
-      ∀ a', DRS.toRel ante a a' → ∃ a'', DRS.toRel cons a' a'' := Iff.rfl
-
-@[simp] theorem Condition.holds_dis (l r : DRS L V) (a : V → M) :
-    (Condition.dis l r).holds a ↔ ∃ a', DRS.toRel l a a' ∨ DRS.toRel r a a' := Iff.rfl
-
-@[simp] theorem Condition.holdsAll_nil (a : V → M) :
-    Condition.holdsAll ([] : List (Condition L V)) a := trivial
-
-@[simp] theorem Condition.holdsAll_cons (c : Condition L V) (cs : List (Condition L V))
-    (a : V → M) :
-    Condition.holdsAll (c :: cs) a ↔ Condition.holds c a ∧ Condition.holdsAll cs a := Iff.rfl
 
 /-- `trueRel` unfolded: some output embedding is related to the input. -/
 theorem DRS.trueRel_iff (K : DRS L V) (a : V → M) :
     DRS.trueRel K a ↔ ∃ a', DRS.toRel K a a' := Iff.rfl
 
-/-! ### Equivalence with the verifying-embedding semantics -/
+/-! ### The spine connectives (SEM1/2) -/
 
-mutual
-/-- **SEM3 ≡ verification semantics**: the relational denotation
-agrees with the static verifying-embedding semantics — `toRel K a a'` holds iff
-the output `a'` extends the input `a` over `K`'s universe and verifies `K`.
-(Both sides are the total-assignment variant; see `DRS/Verification.lean`.) -/
-theorem DRS.toRel_iff_realize (K : DRS L V) (a a' : V → M) :
-    DRS.toRel K a a' ↔ K.Extends a a' ∧ K.Realize a' := by
-  match K with
-  | .mk U conds =>
-    simp only [DRS.toRel, DRS.referents_mk, DRS.realize_mk, DRS.Extends]
-    exact and_congr_right (fun _ => Condition.holdsAll_iff_realizeAll conds a')
-/-- A condition's set denotation agrees with its static `Realize`. -/
-theorem Condition.holds_iff_realize (c : Condition L V) (a : V → M) :
-    c.holds a ↔ c.Realize a := by
-  match c with
-  | .rel R args => simp only [Condition.holds_rel, Condition.realize_rel]
-  | .eq u v => simp only [Condition.holds_eq, Condition.realize_eq]
-  | .neg K =>
-    simp only [Condition.holds_neg, Condition.realize_neg]
-    exact not_congr (exists_congr (fun a' => DRS.toRel_iff_realize K a a'))
-  | .imp ante cons =>
-    simp only [Condition.holds_imp, Condition.realize_imp]
-    refine forall_congr' (fun a' => ?_)
-    rw [DRS.toRel_iff_realize ante a a', and_imp]
-    refine imp_congr_right (fun _ => imp_congr_right (fun _ => ?_))
-    exact exists_congr (fun a'' => DRS.toRel_iff_realize cons a' a'')
-  | .dis l r =>
-    simp only [Condition.holds_dis, Condition.realize_dis, exists_or]
-    exact or_congr (exists_congr (fun a' => DRS.toRel_iff_realize l a a'))
-      (exists_congr (fun a' => DRS.toRel_iff_realize r a a'))
-/-- The list analogue of `Condition.holds_iff_realize`. -/
-theorem Condition.holdsAll_iff_realizeAll (cs : List (Condition L V)) (a : V → M) :
-    Condition.holdsAll cs a ↔ ∀ c ∈ cs, c.Realize a := by
-  match cs with
-  | [] => simp
-  | c :: cs =>
-    simp only [Condition.holdsAll_cons, List.forall_mem_cons]
-    exact and_congr (Condition.holds_iff_realize c a) (Condition.holdsAll_iff_realizeAll cs a)
-end
+/-- A negated sub-DRS is the spine's `neg` of its box relation. -/
+theorem Embedding.verifies_neg_toRel (K : DRS L V) (f : Embedding V M) :
+    f.VerifiesCondition (.neg K) ↔ neg (DRS.toRel K) f := by
+  simp only [Embedding.verifies_neg]; rfl
+
+/-- A conditional is the spine's `impl` of the boxes' relations. -/
+theorem Embedding.verifies_imp_toRel (a c : DRS L V) (f : Embedding V M) :
+    f.VerifiesCondition (.imp a c) ↔ impl (DRS.toRel a) (DRS.toRel c) f := by
+  simp only [Embedding.verifies_imp, impl, DRS.toRel, and_imp]
+
+/-- A disjunction is the spine's `disj` of the boxes' relations. -/
+theorem Embedding.verifies_dis_toRel (l r : DRS L V) (f : Embedding V M) :
+    f.VerifiesCondition (.dis l r) ↔ disj (DRS.toRel l) (DRS.toRel r) f := by
+  simp only [Embedding.verifies_dis, disj]
+  exact exists_or.symm
+
+/-! ### Truth: the triangle, coincidence, and alphabetic variants -/
 
 /-- The dynamic truth of a DRS equals its first-order translation's `Realize`
-— the third edge of the `Realize`/`toFormula`/`toRel` triangle. -/
+— the third edge of the `Verifies`/`toFormula`/`toRel` triangle. -/
 theorem DRS.trueRel_iff_realize_toFormula [DecidableEq V] (K : DRS L V) (a : V → M) :
-    DRS.trueRel K a ↔ (K.toFormula).Realize a := by
-  rw [DRS.trueRel_iff, DRS.realize_toFormula K a]
-  exact exists_congr (fun a' => DRS.toRel_iff_realize K a a')
+    DRS.trueRel K a ↔ (K.toFormula).Realize a :=
+  (DRS.realize_toFormula K a).symm
 
-/-! ### The coincidence lemma -/
+/-- **Coincidence**: truth reads the input embedding only at the occurring
+referents. -/
+theorem DRS.trueRel_congr [DecidableEq V] {K : DRS L V} {a₁ a₂ : V → M}
+    (h : Set.EqOn a₁ a₂ ↑(DRS.occ K)) : DRS.trueRel K a₁ ↔ DRS.trueRel K a₂ :=
+  Embedding.exists_extends_verifies_congr h
 
-mutual
-/-- **Coincidence**: a DRS's relational truth depends only on the input
-embedding's values at its occurring referents. Proved by surgery on the output
-witness, the load-bearing case being the `imp` clause of `Condition.holds_congr`. -/
-theorem DRS.trueRel_congr [DecidableEq V] (K : DRS L V) (a₁ a₂ : V → M)
-    (h : Set.EqOn a₁ a₂ ↑(DRS.occ K)) : DRS.trueRel K a₁ ↔ DRS.trueRel K a₂ := by
-  match K with
-  | .mk U conds =>
-    simp only [DRS.trueRel_iff, DRS.toRel_mk]
-    have key : ∀ (b₁ b₂ : V → M), Set.EqOn b₁ b₂ ↑(DRS.occ (DRS.mk U conds)) →
-        (∃ a', (∀ x ∉ U, a' x = b₁ x) ∧ Condition.holdsAll conds a') →
-        (∃ a', (∀ x ∉ U, a' x = b₂ x) ∧ Condition.holdsAll conds a') := by
-      rintro b₁ b₂ hb ⟨a', hag, hh⟩
-      refine ⟨(Condition.occL conds).piecewise a' b₂, ?_, ?_⟩
-      · intro x hx
-        by_cases hxc : x ∈ Condition.occL conds
-        · rw [Finset.piecewise_eq_of_mem _ _ _ hxc, hag x hx]
-          refine hb ?_
-          simp only [DRS.occ, Finset.coe_union]
-          exact Or.inr (Finset.mem_coe.mpr hxc)
-        · rw [Finset.piecewise_eq_of_notMem _ _ _ hxc]
-      · refine (Condition.holdsAll_congr conds _ a' ?_).mpr hh
-        intro x hx
-        exact Finset.piecewise_eq_of_mem _ _ _ (Finset.mem_coe.mp hx)
-    exact ⟨key a₁ a₂ h, key a₂ a₁ h.symm⟩
-/-- A condition's set denotation depends only on its occurring referents. -/
-theorem Condition.holds_congr [DecidableEq V] (c : Condition L V) (a₁ a₂ : V → M)
-    (h : Set.EqOn a₁ a₂ ↑(Condition.occ c)) : Condition.holds c a₁ ↔ Condition.holds c a₂ := by
-  match c with
-  | .rel R args =>
-    simp only [Condition.holds]
-    have : (fun i => a₁ (args i)) = (fun i => a₂ (args i)) := by
-      funext i; refine h ?_; simp [Condition.occ]
-    rw [this]
-  | .eq u v =>
-    simp only [Condition.holds]
-    rw [h (show u ∈ ↑(Condition.occ (Condition.eq u v)) by simp [Condition.occ]),
-      h (show v ∈ ↑(Condition.occ (Condition.eq u v)) by simp [Condition.occ])]
-  | .neg K =>
-    simp only [Condition.holds_neg]
-    have hk := DRS.trueRel_congr K a₁ a₂ h
-    simp only [DRS.trueRel_iff] at hk
-    rw [hk]
-  | .imp ante cons =>
-    simp only [Condition.holds_imp]
-    have hante : ∀ (b₁ b₂ : V → M), Set.EqOn b₁ b₂ ↑(Condition.occ (Condition.imp ante cons)) →
-        (∀ a', DRS.toRel ante b₁ a' → ∃ a'', DRS.toRel cons a' a'') →
-        (∀ a', DRS.toRel ante b₂ a' → ∃ a'', DRS.toRel cons a' a'') := by
-      rintro b₁ b₂ hb hL a' ha'
-      cases ante with
-      | mk Ua condsa =>
-        obtain ⟨hag, hh⟩ := ha'
-        have hset : DRS.occ (DRS.mk Ua condsa) ∪ DRS.occ cons =
-            Condition.occ (Condition.imp (DRS.mk Ua condsa) cons) := by
-          simp [Condition.occ]
-        have hagree : Set.EqOn
-            ((DRS.occ (DRS.mk Ua condsa) ∪ DRS.occ cons).piecewise a' b₁) a'
-            ↑(DRS.occ cons) := by
-          intro x hx
-          exact Finset.piecewise_eq_of_mem _ _ _
-            (Finset.mem_union_right _ (Finset.mem_coe.mp hx))
-        have hr₁ : DRS.toRel (DRS.mk Ua condsa) b₁
-            ((DRS.occ (DRS.mk Ua condsa) ∪ DRS.occ cons).piecewise a' b₁) := by
-          refine ⟨?_, ?_⟩
-          · intro x hx
-            by_cases hxS : x ∈ DRS.occ (DRS.mk Ua condsa) ∪ DRS.occ cons
-            · rw [Finset.piecewise_eq_of_mem _ _ _ hxS, hag x hx]
-              exact (hb (Finset.mem_coe.mpr (hset ▸ hxS))).symm
-            · rw [Finset.piecewise_eq_of_notMem _ _ _ hxS]
-          · refine (Condition.holdsAll_congr condsa _ a' ?_).mpr hh
-            intro x hx
-            refine Finset.piecewise_eq_of_mem _ _ _ (Finset.mem_union_left _ ?_)
-            simp only [DRS.occ]
-            exact Finset.mem_union_right _ (Finset.mem_coe.mp hx)
-        obtain ⟨a₄, ha₄⟩ := hL _ hr₁
-        have hcc := DRS.trueRel_congr cons _ a' hagree
-        simp only [DRS.trueRel_iff] at hcc
-        exact hcc.mp ⟨a₄, ha₄⟩
-    exact ⟨hante a₁ a₂ h, hante a₂ a₁ h.symm⟩
-  | .dis l r =>
-    simp only [Condition.holds_dis, exists_or]
-    have hsub : ↑(DRS.occ l) ⊆ ↑(Condition.occ (Condition.dis l r)) :=
-      Finset.coe_subset.mpr Finset.subset_union_left
-    have hsubr : ↑(DRS.occ r) ⊆ ↑(Condition.occ (Condition.dis l r)) :=
-      Finset.coe_subset.mpr Finset.subset_union_right
-    have hl := DRS.trueRel_congr l a₁ a₂ (h.mono hsub)
-    have hr := DRS.trueRel_congr r a₁ a₂ (h.mono hsubr)
-    simp only [DRS.trueRel_iff] at hl hr
-    rw [hl, hr]
-/-- The list analogue of `Condition.holds_congr`. -/
-theorem Condition.holdsAll_congr [DecidableEq V] (cs : List (Condition L V)) (a₁ a₂ : V → M)
-    (h : Set.EqOn a₁ a₂ ↑(Condition.occL cs)) :
-    Condition.holdsAll cs a₁ ↔ Condition.holdsAll cs a₂ := by
-  match cs with
-  | [] => exact Iff.rfl
-  | c :: cs =>
-    simp only [Condition.holdsAll_cons]
-    have hsub : ↑(Condition.occ c) ⊆ ↑(Condition.occL (c :: cs)) :=
-      Finset.coe_subset.mpr Finset.subset_union_left
-    have hsubr : ↑(Condition.occL cs) ⊆ ↑(Condition.occL (c :: cs)) :=
-      Finset.coe_subset.mpr Finset.subset_union_right
-    exact and_congr (Condition.holds_congr c a₁ a₂ (h.mono hsub))
-      (Condition.holdsAll_congr cs a₁ a₂ (h.mono hsubr))
-end
+/-- Renaming along a bijection transports dynamic truth: alphabetic variants
+have the same truth conditions. -/
+theorem DRS.trueRel_map {W : Type*} [DecidableEq W] (e : V ≃ W)
+    (K : DRS L V) (a : Embedding W M) :
+    DRS.trueRel (K.map e) a ↔ DRS.trueRel K (a ∘ e) :=
+  Embedding.exists_extends_verifies_map e a K
 
 /-! ### The merging lemma: sequencing is merge, under freshness -/
-
-/-- The conjunction of conditions distributes over list append. -/
-@[simp] theorem Condition.holdsAll_append (cs ds : List (Condition L V)) (a : V → M) :
-    Condition.holdsAll (cs ++ ds) a ↔ Condition.holdsAll cs a ∧ Condition.holdsAll ds a := by
-  induction cs with
-  | nil => simp [Condition.holdsAll]
-  | cons c cs ih => simp only [List.cons_append, Condition.holdsAll, ih, and_assoc]
 
 /-- **Merging Lemma** (§II.2): when `K₂`'s universe is fresh
 for `K₁`'s conditions, the merge `K₁ ⊕ K₂` denotes the spine sequencing
@@ -292,8 +123,8 @@ theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
   simp only [DRS.referents_mk, DRS.conditions_mk, Finset.disjoint_left] at hfresh
   funext a a'
   apply propext
-  simp only [DRS.merge, DRS.referents_mk, DRS.conditions_mk, DRS.toRel,
-    Condition.holdsAll_append, seq, Relation.Comp]
+  simp only [DRS.toRel, DRS.Extends, DRS.merge, DRS.referents_mk, DRS.conditions_mk,
+    Embedding.verifies_mk, List.forall_mem_append, seq, Relation.Comp]
   constructor
   · rintro ⟨hag, hh₁, hh₂⟩
     refine ⟨U₂.piecewise a a', ⟨?_, ?_⟩, ?_, ?_⟩
@@ -304,10 +135,10 @@ theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
         refine hag x ?_
         rw [Finset.mem_union, not_or]
         exact ⟨hx, hxU2⟩
-    · refine (Condition.holdsAll_congr conds₁ _ a' ?_).mpr hh₁
-      intro x hx
+    · intro c hc
+      refine (Embedding.verifiesCondition_congr c fun x hx => ?_).mpr (hh₁ c hc)
       exact Finset.piecewise_eq_of_notMem _ _ _
-        (fun h => hfresh h (Finset.mem_coe.mp hx))
+        (fun hU => hfresh hU (Condition.occ_subset_occL hc (Finset.mem_coe.mp hx)))
     · intro x hx
       exact (Finset.piecewise_eq_of_notMem _ _ _ hx).symm
     · exact hh₂
@@ -316,7 +147,8 @@ theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
     · intro x hx
       rw [Finset.mem_union, not_or] at hx
       rw [hag2 x hx.2, hag1 x hx.1]
-    · exact (Condition.holdsAll_congr conds₁ a' a''
-        (fun x hx => hag2 x (fun hu => hfresh hu (Finset.mem_coe.mp hx)))).mpr hh1
+    · intro c hc
+      refine (Embedding.verifiesCondition_congr c fun x hx => ?_).mpr (hh1 c hc)
+      exact hag2 x fun hU => hfresh hU (Condition.occ_subset_occL hc (Finset.mem_coe.mp hx))
 
 end DRT
