@@ -17,27 +17,17 @@ implicatures at the matrix level. Implicature suspension in exactly the
 reversal of the Strength Condition, and intervention (§4.3) follows from NPIs
 competing with strong rather than plain meanings (127).
 
-## Main results
-
-* `si_npi_generalization`: (53) — a DE function maps a strengthened argument to
-  a weaker matrix value, so direct implicatures cannot survive DE embedding.
-* `strongApplyUE_strengthCondition` / `strongApplyDE_strengthCondition`: both
-  clauses of (84) preserve the Strength Condition.
-* `doubt_and_indirect_implicature`: the (81)–(83) computation — "I doubt that
-  John drinks and drives" acquires the indirect implicature "but I believe he
-  does one of the two".
-* `and_blocks_any` / `or_licenses_any`: the (128)–(130) intervention contrast —
-  *and* blocks *any* under *doubt* while *or* licenses it — derived from
-  competition with strong meanings per (127).
-
 ## Implementation notes
 
 Numbered items follow the circulated manuscript (the "Bicocca, May 2001"
-version); the published chapter may renumber. Where the paper's scalar
-assertion `σ` negates the *weakest* alternative asymmetrically entailing the
-target (⊥ if none), the definitions below negate *all* strictly stronger
-alternatives — equivalent on the linearly ordered scales the paper works with,
-since negating the weakest stronger member entails negating the rest. The
+version); the published chapter may renumber. The paper's scalar assertion `σ`
+is a definite description — *the* weakest alternative asymmetrically entailing
+the target, ⊥ if none — well-defined only when the stronger alternatives have a
+greatest element, as on the paper's linearly ordered scales. `krifkaRule` and
+`strongApplyDE` instead negate *all* strictly stronger alternatives, a total
+operation that coincides with negating `σ` exactly where `σ` is defined
+(`krifkaRule_strong_eq_of_isGreatest`, `strongApplyDE_strong_eq_of_isGreatest`;
+the `σ = ⊥` case is the empty intersection). The
 appendix's `‖α‖^S` is a *set* of admissible strong meanings (implicature
 addition at a scope site is optional); `Meaning.strong` tracks the maximal
 admissible strengthening, the path the paper's own computations follow.
@@ -89,6 +79,18 @@ theorem mem_krifkaRule_strong {φ : Set World} {ALT : Set (Set World)} {w : Worl
 theorem krifkaRule_strengthCondition (φ : Set World) (ALT : Set (Set World)) :
     (krifkaRule φ ALT).StrengthCondition :=
   λ _ hw => hw.1
+
+/-- Agreement with the paper's scalar assertion `σ`: whenever the strictly
+stronger alternatives have a weakest member `a₀` — the case in which (2)'s
+definite description is defined, as on linearly ordered scales — negating all
+of them is negating `a₀` alone. -/
+theorem krifkaRule_strong_eq_of_isGreatest {φ a₀ : Set World} {ALT : Set (Set World)}
+    (h : IsGreatest {a ∈ ALT | a ⊂ φ} a₀) :
+    (krifkaRule φ ALT).strong = φ ∩ a₀ᶜ := by
+  ext w
+  simp only [mem_krifkaRule_strong, Set.mem_inter_iff, Set.mem_compl_iff]
+  exact ⟨λ ⟨hw, hall⟩ => ⟨hw, hall a₀ h.1.1 h.1.2⟩,
+    λ ⟨hw, h₀⟩ => ⟨hw, λ a haA haφ hwa => h₀ (h.2 ⟨haA, haφ⟩ hwa)⟩⟩
 
 /-! ### Scale axioms -/
 
@@ -161,6 +163,22 @@ theorem mem_strongApplyDE_strong {f fS : Set World → Set World}
     w ∈ (strongApplyDE f fS g).strong ↔
       w ∈ fS g.plain ∧ ∀ a ∈ g.alternatives, f a ⊂ f g.plain → w ∉ f a := by
   simp [strongApplyDE]
+
+/-- Agreement with (84)'s matrix-level `σ`: whenever the strictly stronger
+alternative images have a weakest member `ψ₀`, the DE clause's intersection
+negates `ψ₀` alone. -/
+theorem strongApplyDE_strong_eq_of_isGreatest {f fS : Set World → Set World}
+    {g : Meaning World} {ψ₀ : Set World}
+    (h : IsGreatest {ψ ∈ f '' g.alternatives | ψ ⊂ f g.plain} ψ₀) :
+    (strongApplyDE f fS g).strong = fS g.plain ∩ ψ₀ᶜ := by
+  ext w
+  simp only [mem_strongApplyDE_strong, Set.mem_inter_iff, Set.mem_compl_iff]
+  constructor
+  · rintro ⟨hw, hall⟩
+    obtain ⟨⟨a, haA, rfl⟩, hψφ⟩ := h.1
+    exact ⟨hw, hall a haA hψφ⟩
+  · exact λ ⟨hw, h₀⟩ =>
+      ⟨hw, λ a haA haφ hwa => h₀ (h.2 ⟨⟨a, haA, rfl⟩, haφ⟩ hwa)⟩
 
 /-- The non-DE clause of (84) preserves the Strength Condition when the
 function's strengthening entails its plain value and the function is UE. -/
