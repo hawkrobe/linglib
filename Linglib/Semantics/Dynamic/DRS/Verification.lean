@@ -157,10 +157,8 @@ private theorem exists_extends_verifies_map_aux (e : V ≃ W) (K : DRS L V) (f :
 `verifies_map`). -/
 theorem verifies_map_condition (e : V ≃ W) : ∀ (f : Embedding W M) (c : Condition L V),
     f.VerifiesCondition (c.map e) ↔ VerifiesCondition (f ∘ e) c
-  | f, .rel R args => by
-    simp [Condition.map, Function.comp]
-  | f, .eq a b => by
-    simp [Condition.map, Function.comp]
+  | f, .rel R args => by simp [Condition.map, Function.comp]
+  | f, .eq a b => by simp [Condition.map, Function.comp]
   | f, .neg K => by
     simp only [Condition.map, verifies_neg]
     exact not_congr
