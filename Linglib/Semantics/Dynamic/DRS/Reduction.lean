@@ -150,7 +150,7 @@ theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : V â†’ M) :
   match K with
   | .mk U conds =>
     rw [DRS.toFormula, realize_closeExists]
-    simp only [DRS.referents_mk, verifies_mk, DRS.Extends]
+    simp only [DRS.referents_mk, Embedding.verifies_mk, DRS.Extends]
     exact exists_congr fun v' =>
       and_congr_right fun _ => Condition.realize_toFormulaAll conds v'
 /-- The open body of a DRS (its conditions, no universe closure) realizes as
@@ -168,16 +168,16 @@ theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V â
       BoundedFormula.realize_rel, Term.realize_var]
   | .eq a b => simp [Condition.toFormula, Formula.realize_equal]
   | .neg K =>
-    simp only [Condition.toFormula, verifies_neg, Formula.realize_not]
+    simp only [Condition.toFormula, Embedding.verifies_neg, Formula.realize_not]
     rw [DRS.realize_toFormula K v]
   | .imp a c =>
-    simp only [Condition.toFormula, verifies_imp]
+    simp only [Condition.toFormula, Embedding.verifies_imp]
     rw [realize_closeForall]
     simp only [Formula.realize_imp]
     refine forall_congr' (fun v' => imp_congr_right (fun _ => ?_))
     rw [DRS.realize_bodyFormula a v', DRS.realize_toFormula c v']
   | .dis l r =>
-    simp only [Condition.toFormula, verifies_dis, Formula.realize_sup]
+    simp only [Condition.toFormula, Embedding.verifies_dis, Formula.realize_sup]
     rw [DRS.realize_toFormula l v, DRS.realize_toFormula r v]
 /-- A list of conditions' conjoined translation realizes as the conjunction of
 their realizations. -/

@@ -9,7 +9,7 @@ Structural operations and lemmas over the faithful `DRS` core (`DRS/Defs.lean`):
 * `DRS.map` / `Condition.map` — functorial renaming of discourse referents along
   `f : V → W`. When `f` is a bijection this is [kamp-reyle-1993]'s *alphabetic
   variant* (the prose preceding Def. 1.4.8); `map_id` makes "renaming to the
-  identity is the identity" a free corollary, and `verifies_map`
+  identity is the identity" a free corollary, and `Embedding.verifies_map`
   (`DRS/Verification.lean`) shows variants have the same semantics.
 * `merge` algebra — identity (`empty`) and associativity.
 * `Embedding` and `DRS.Extends` — embedding functions and K&R's extension
