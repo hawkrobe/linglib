@@ -9,10 +9,11 @@ Structural operations and lemmas over the faithful `DRS` core (`DRS/Defs.lean`):
 * `DRS.map` / `Condition.map` — functorial renaming of discourse referents along
   `f : V → W`. When `f` is a bijection this is [kamp-reyle-1993]'s *alphabetic
   variant* (the prose preceding Def. 1.4.8); `map_id` makes "renaming to the
-  identity is the identity" a free corollary, and `DRS.verifies_map`
+  identity is the identity" a free corollary, and `verifies_map`
   (`DRS/Verification.lean`) shows variants have the same semantics.
 * `merge` algebra — identity (`empty`) and associativity.
-* `DRS.Extends` — K&R's extension relation `f [K] g` between embeddings.
+* `Embedding` and `DRS.Extends` — embedding functions and K&R's extension
+  relation `f [K] g` between them.
 * `DRS.fv` / `DRS.IsProper` — free discourse referents (as a `Finset`) and
   properness (`fv K = ∅`, Def. 1.4.2–1.4.3).
 * `Condition.occ` / `DRS.occ` — occurring referents, as a decidable `Finset`.
@@ -109,13 +110,18 @@ theorem merge_assoc (K₁ K₂ K₃ : DRS L V) :
 
 end DRS
 
-/-! ### The extension relation -/
+/-! ### Embeddings and the extension relation -/
+
+/-- An *embedding function*: an assignment of discourse referents to
+individuals in a model — in the total-assignment rendering (deviation note in
+`DRS/Verification.lean`). -/
+abbrev Embedding (V : Type w) (M : Type*) := V → M
 
 variable {M : Type*} in
 /-- `K.Extends f g` (K&R's `f [K] g`): the output embedding `g` differs from
 the input `f` at most on `K`'s universe — the total-assignment rendering of
 "`f ⊆ g` and `Dom g = Dom f ∪ U_K`". -/
-def DRS.Extends (K : DRS L V) (f g : V → M) : Prop := ∀ x ∉ K.referents, g x = f x
+def DRS.Extends (K : DRS L V) (f g : Embedding V M) : Prop := ∀ x ∉ K.referents, g x = f x
 
 /-! ### Occurring referents -/
 

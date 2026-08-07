@@ -124,33 +124,33 @@ agrees with the static verifying-embedding semantics — `toRel K a a'` holds if
 the output `a'` extends the input `a` over `K`'s universe and verifies `K`.
 (Both sides are the total-assignment variant; see `DRS/Verification.lean`.) -/
 theorem DRS.toRel_iff_verifies (K : DRS L V) (a a' : V → M) :
-    DRS.toRel K a a' ↔ K.Extends a a' ∧ DRS.Verifies a' K := by
+    DRS.toRel K a a' ↔ K.Extends a a' ∧ Verifies a' K := by
   match K with
   | .mk U conds =>
-    simp only [DRS.toRel, DRS.referents_mk, DRS.verifies_mk, DRS.Extends]
+    simp only [DRS.toRel, DRS.referents_mk, verifies_mk, DRS.Extends]
     exact and_congr_right (fun _ => Condition.holdsAll_iff_verifies conds a')
 /-- A condition's set denotation agrees with its static `Verifies`. -/
 theorem Condition.holds_iff_verifies (c : Condition L V) (a : V → M) :
-    c.holds a ↔ Condition.Verifies a c := by
+    c.holds a ↔ Verifies a c := by
   match c with
-  | .rel R args => simp only [Condition.holds_rel, Condition.verifies_rel]
-  | .eq u v => simp only [Condition.holds_eq, Condition.verifies_eq]
+  | .rel R args => simp only [Condition.holds_rel, verifies_rel]
+  | .eq u v => simp only [Condition.holds_eq, verifies_eq]
   | .neg K =>
-    simp only [Condition.holds_neg, Condition.verifies_neg]
+    simp only [Condition.holds_neg, verifies_neg]
     exact not_congr (exists_congr (fun a' => DRS.toRel_iff_verifies K a a'))
   | .imp ante cons =>
-    simp only [Condition.holds_imp, Condition.verifies_imp]
+    simp only [Condition.holds_imp, verifies_imp]
     refine forall_congr' (fun a' => ?_)
     rw [DRS.toRel_iff_verifies ante a a', and_imp]
     refine imp_congr_right (fun _ => imp_congr_right (fun _ => ?_))
     exact exists_congr (fun a'' => DRS.toRel_iff_verifies cons a' a'')
   | .dis l r =>
-    simp only [Condition.holds_dis, Condition.verifies_dis, exists_or]
+    simp only [Condition.holds_dis, verifies_dis, exists_or]
     exact or_congr (exists_congr (fun a' => DRS.toRel_iff_verifies l a a'))
       (exists_congr (fun a' => DRS.toRel_iff_verifies r a a'))
 /-- The list analogue of `Condition.holds_iff_verifies`. -/
 theorem Condition.holdsAll_iff_verifies (cs : List (Condition L V)) (a : V → M) :
-    Condition.holdsAll cs a ↔ ∀ c ∈ cs, Condition.Verifies a c := by
+    Condition.holdsAll cs a ↔ ∀ c ∈ cs, Verifies a c := by
   match cs with
   | [] => simp
   | c :: cs =>

@@ -146,43 +146,43 @@ translated formula's `Realize` coincides with the bespoke `DRS.Verifies`. As
 `toFormula` existentially closes the universe, the correspondence is with an
 embedding `v'` extending `v` over `K.referents`. -/
 theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
-    (K.toFormula).Realize v ↔ ∃ v', K.Extends v v' ∧ DRS.Verifies v' K := by
+    (K.toFormula).Realize v ↔ ∃ v', K.Extends v v' ∧ Verifies v' K := by
   match K with
   | .mk U conds =>
     rw [DRS.toFormula, realize_closeExists]
-    simp only [DRS.referents_mk, DRS.verifies_mk, DRS.Extends]
+    simp only [DRS.referents_mk, verifies_mk, DRS.Extends]
     exact exists_congr fun v' =>
       and_congr_right fun _ => Condition.realize_toFormulaAll conds v'
 /-- The open body of a DRS (its conditions, no universe closure) realizes as
 `DRS.Verifies` (used for the antecedent of `⇒`). -/
 theorem DRS.realize_bodyFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
-    (DRS.bodyFormula K).Realize v ↔ DRS.Verifies v K := by
+    (DRS.bodyFormula K).Realize v ↔ Verifies v K := by
   match K with
   | .mk _ conds => exact Condition.realize_toFormulaAll conds v
 /-- A single condition's translation realizes as `Condition.Verifies`. -/
 theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V → M) :
-    (Condition.toFormula c).Realize v ↔ Condition.Verifies v c := by
+    (Condition.toFormula c).Realize v ↔ Verifies v c := by
   match c with
   | .rel R args =>
     simp [Condition.toFormula, Relations.formula, Formula.Realize,
       BoundedFormula.realize_rel, Term.realize_var]
   | .eq a b => simp [Condition.toFormula, Formula.realize_equal]
   | .neg K =>
-    simp only [Condition.toFormula, Condition.verifies_neg, Formula.realize_not]
+    simp only [Condition.toFormula, verifies_neg, Formula.realize_not]
     rw [DRS.realize_toFormula K v]
   | .imp a c =>
-    simp only [Condition.toFormula, Condition.verifies_imp]
+    simp only [Condition.toFormula, verifies_imp]
     rw [realize_closeForall]
     simp only [Formula.realize_imp]
     refine forall_congr' (fun v' => imp_congr_right (fun _ => ?_))
     rw [DRS.realize_bodyFormula a v', DRS.realize_toFormula c v']
   | .dis l r =>
-    simp only [Condition.toFormula, Condition.verifies_dis, Formula.realize_sup]
+    simp only [Condition.toFormula, verifies_dis, Formula.realize_sup]
     rw [DRS.realize_toFormula l v, DRS.realize_toFormula r v]
 /-- A list of conditions' conjoined translation realizes as the conjunction of
 their realizations. -/
 theorem Condition.realize_toFormulaAll [DecidableEq V] (cs : List (Condition L V)) (v : V → M) :
-    (Condition.toFormulaAll cs).Realize v ↔ ∀ c ∈ cs, Condition.Verifies v c := by
+    (Condition.toFormulaAll cs).Realize v ↔ ∀ c ∈ cs, Verifies v c := by
   match cs with
   | [] => simp [Condition.toFormulaAll, Formula.realize_top]
   | c :: cs =>
