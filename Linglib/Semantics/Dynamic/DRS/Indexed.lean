@@ -4,15 +4,15 @@ import Linglib.Semantics.Dynamic.Transition
 
 /-!
 # Indexed relational semantics of DRSs
-[kamp-vangenabith-reyle-2011] (Defs. 19, 22, 24), [kamp-reyle-1993]
 
 The base-threaded verification semantics: `toRelAt X K f g` holds when the
 output `g` agrees with the input `f` *on the context base* `X` and verifies
 `K`'s conditions, sub-boxes entered at the grown base. This is the
-total-assignment rendering of K&R's partial-embedding semantics
-(Def. 19): values at established referents *persist* — contrast the flat
-`DRS.toRel` (`DRS/Dynamics.lean`), whose agree-off-universe clause freely
-reassigns re-declared referents (Muskens's fn. 4 divergence).
+total-assignment rendering of [kamp-vangenabith-reyle-2011]'s
+partial-embedding semantics (Defs. 19, 22, 24): values at established
+referents *persist*, as in [kamp-reyle-1993]'s original embeddings — contrast
+the flat `DRS.toRel` (`DRS/Dynamics.lean`), whose agree-off-universe clause
+freely reassigns re-declared referents ([muskens-1996]'s fn. 4 divergence).
 
 Persistence is what makes the indexed semantics well-typed: `toRelAt X K` is
 read only at `X` (`toRelAt_congr_left` — one line, no witness surgery) and
@@ -52,8 +52,8 @@ variable [DecidableEq V]
 /-! ### The base-threaded semantics -/
 
 mutual
-/-- Base-threaded relational semantics ([kamp-vangenabith-reyle-2011],
-Def. 19 in total-assignment form): the output agrees with the input *on the
+/-- Base-threaded relational semantics (Def. 19 in total-assignment
+form): the output agrees with the input *on the
 base* — established referents persist — and verifies the conditions, with
 sub-boxes entered at the grown base. -/
 def DRS.toRelAt (X : Finset V) : DRS L V → (V → M) → (V → M) → Prop
@@ -179,7 +179,7 @@ theorem DRS.toRelAt_congr_right {X : Finset V} (K : DRS L V) (hfv : K.fv ⊆ X)
 
 /-- A well-formed DRS denotes a transition from its context base to the
 base grown by its universe — `K.fv ⊆ X` is the *referential presupposition*
-([kamp-vangenabith-reyle-2011], Def. 27(i)). -/
+(Def. 27(i)). -/
 theorem DRS.readsAt_toRelAt {W : Type*} (X : Finset V) (K : DRS L V) :
     Transition.ReadsAt (W := W) ↑X fun _ => DRS.toRelAt (M := M) X K :=
   fun _ _ _ _ h => DRS.toRelAt_congr_left X K h
@@ -239,8 +239,8 @@ theorem DRS.transition_copy (W : Type*) {X X' : Finset V} (K : DRS L V)
       K.transition W X' hK' := by
   subst hX; rfl
 
-/-- The information state a proper DRS expresses
-([kamp-vangenabith-reyle-2011], Def. 22): act on the initial state. -/
+/-- The information state a proper DRS expresses (Def. 22): act on the
+initial state. -/
 def DRS.state (W : Type*) (K : DRS L V) (hK : K.IsProper) : State W V M :=
   (K.transition W ∅ (Finset.subset_empty.mpr hK)).applyState ⊥
 
@@ -479,7 +479,7 @@ theorem DRS.transition_merge (W : Type*) {X : Finset V} (K₁ K₂ : DRS L V)
   exact Transition.ofTotal_congr _ _
     (funext fun _ => (DRS.toRelAt_merge K₁ K₂ h₁ hfresh).symm)
 
-/-- **Action equation** ([kamp-vangenabith-reyle-2011], p. 159): applying a
+/-- **Action equation** (p. 159): applying a
 DRS's transition to the state a proper context DRS expresses yields the
 state of the merge — an instance of `Transition.apply_comp` through the
 transition-level Merging Lemma. -/
@@ -503,7 +503,7 @@ agree-off-universe semantics (`DRS.toRel`, `DRS/Dynamics.lean`) and the indexed
 persistence semantics coincide at truth level: every flat output is a indexed
 output, and a indexed output repairs, off the grown base, into a flat one.
 Reuse-freeness is needed — on a DRS that re-declares a referent the two
-diverge ([muskens-1996], fn. 4; witness in `Studies/Muskens1996.lean`). -/
+diverge (Muskens's fn. 4; witness in `Studies/Muskens1996.lean`). -/
 
 /-- Flat-to-indexed on a reuse-free box: agreement off the universe restricts
 to agreement on a disjoint base. -/
@@ -615,12 +615,12 @@ theorem Condition.holds_iff_holdsAt {X : Finset V} (c : Condition L V)
       · exact ⟨_, Or.inr (DRS.toRel_of_toRelAt' hfvcr hIHr hk).1⟩
 /-- The list analogue of `Condition.holds_iff_holdsAt`. -/
 theorem Condition.holdsAll_iff_holdsAllAt {X : Finset V} (cs : List (Condition L V))
-    (hrf : Condition.ReuseFreeAtL X cs) (hfv : Condition.fvL cs ⊆ X) (g : V → M) :
+    (hrf : Condition.ReuseFreeAllAt X cs) (hfv : Condition.fvL cs ⊆ X) (g : V → M) :
     Condition.holdsAll cs g ↔ Condition.holdsAllAt X cs g := by
   match cs with
   | [] => exact Iff.rfl
   | c :: cs =>
-    simp only [Condition.reuseFreeAtL_cons] at hrf
+    simp only [Condition.reuseFreeAllAt_cons] at hrf
     rw [Condition.fvL_cons, Finset.union_subset_iff] at hfv
     exact and_congr (Condition.holds_iff_holdsAt c hrf.1 hfv.1 g)
       (Condition.holdsAll_iff_holdsAllAt cs hrf.2 hfv.2 g)
@@ -644,7 +644,7 @@ theorem DRS.toRel_of_toRelAt {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt
   exact ⟨_, DRS.toRel_of_toRelAt' (DRS.fv_subset_iff.mp hfv)
     (fun k => Condition.holdsAll_iff_holdsAllAt conds hrf.2 (DRS.fv_subset_iff.mp hfv) k) h⟩
 
-/-- **Truth-level reconciliation** ([muskens-1996], fn. 4): on a reuse-free
+/-- **Truth-level reconciliation** (Muskens's fn. 4): on a reuse-free
 DRS the flat total-assignment semantics and the indexed persistence semantics
 have the same truth conditions. Reuse-freeness is needed — a re-declaring
 witness separates the two (`Studies/Muskens1996.lean`). -/

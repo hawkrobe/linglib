@@ -4,12 +4,11 @@ import Mathlib.ModelTheory.Basic
 
 /-!
 # Discourse Representation Structures (faithful, model-theoretic core)
-[kamp-reyle-1993]
 
 A faithful Lean model of the canonical DRS data type, built on mathlib's
 `FirstOrder.Language` so its semantics can be given model-theoretically (via
-`FirstOrder.Language.Structure` / `Realize`), exactly as Kamp & Reyle define it
-(verifying embeddings into a model, Def. 1.4.4–1.4.5).
+`FirstOrder.Language.Structure` / `Realize`), exactly as [kamp-reyle-1993]
+define it (verifying embeddings into a model, Def. 1.4.4–1.4.5).
 
 A DRS is a pair `⟨referents, conditions⟩` (Def. 1.4.1): `referents` is the
 *universe* `U` — a finite set of discourse referents — and `conditions` a
@@ -23,7 +22,8 @@ complex condition is `neg`; `imp` and `dis` are its Chapter 2 extension
 
 * `DRS L V`, `Condition L V` — the mutual data type over a language `L` (relation
   signature) and discourse-referent type `V`.
-* `DRS.merge` — the `⊕` operation (set-union referents, concatenate conditions).
+* `DRS.merge` — the `⊕` operation (set-union referents, concatenate
+  conditions); [muskens-1996]'s compositional operation.
 * `DirectlySubordinate`, `Subordinate`, `WeakSubordinate` — immediate
   subordination (Def. 1.4.10(i), extended to `⇒`/`∨` in Ch. 2) and its
   `Relation.TransGen` / `ReflTransGen` closures (Def. 1.4.10(ii)). Accessibility
@@ -35,8 +35,9 @@ complex condition is `neg`; `imp` and `dis` are its Chapter 2 extension
   `universe` is a Lean keyword and `univ` collides with `Finset.univ`.
 * The recursive `conditions` field is a `List`: Lean forbids nesting an inductive
   through `Finset`/`Multiset`. Set semantics are imposed by the interpretation.
-* The namespace is transitional `DRT` while the legacy `_root_.DRS` is migrated
-  out; it promotes to the root namespace once the legacy type is retired.
+* `DRT` is the owning namespace (mathlib's `FirstOrder.Language` pattern):
+  `DRS`, `Condition`, and `Ctx` are DRT's objects, keeping generic names
+  owner-relative rather than claiming them at the root.
 -/
 
 open FirstOrder
@@ -49,13 +50,13 @@ variable {L : Language.{u, v}} {V : Type w}
 
 mutual
 /-- A discourse representation structure: the pair `⟨referents, conditions⟩`
-([kamp-reyle-1993], Def. 1.4.1). `referents` is the universe `U` (a finite
-set of discourse referents); `conditions` the DRS-conditions. -/
+(Def. 1.4.1). `referents` is the universe `U` (a finite set of discourse
+referents); `conditions` the DRS-conditions. -/
 inductive DRS (L : Language.{u, v}) (V : Type w) where
   | mk (referents : Finset V) (conditions : List (Condition L V))
-/-- A DRS-condition ([kamp-reyle-1993]): atomic (`rel`, `eq`) or complex —
-`neg` per Def. 1.4.1, `imp`/`dis` per its Chapter 2 extension. Sub-DRSs occur
-only inside complex conditions. -/
+/-- A DRS-condition: atomic (`rel`, `eq`) or complex — `neg` per Def. 1.4.1,
+`imp`/`dis` per its Chapter 2 extension. Sub-DRSs occur only inside complex
+conditions. -/
 inductive Condition (L : Language.{u, v}) (V : Type w) where
   /-- Atomic condition: `n`-ary relation symbol `R` applied to referents `args`. -/
   | rel {n : ℕ} (R : L.Relations n) (args : Fin n → V)
@@ -89,9 +90,9 @@ def conditions : DRS L V → List (Condition L V)
 def empty : DRS L V := .mk ∅ []
 
 /-- Merge `⊕`: set-union the referents, concatenate the conditions. The binary
-DRS merge is [muskens-1996]'s compositional operation — Kamp & Reyle
-themselves combine DRSs incrementally via the construction algorithm, not a
-symmetric binary `⊕`. An operation, not a syntactic constructor. -/
+DRS merge is Muskens's compositional operation — Kamp & Reyle themselves
+combine DRSs incrementally via the construction algorithm, not a symmetric
+binary `⊕`. An operation, not a syntactic constructor. -/
 def merge [DecidableEq V] (K₁ K₂ : DRS L V) : DRS L V :=
   .mk (K₁.referents ∪ K₂.referents) (K₁.conditions ++ K₂.conditions)
 
@@ -106,8 +107,7 @@ end DRS
 /-! ### Subordination and accessibility -/
 
 /-- One-step subordination ("`K'` is *directly subordinate* to `K`"). The `neg`
-case is [kamp-reyle-1993] Def. 1.4.10(i); the `⇒`/`∨` cases are its Chapter 2
-extension:
+case is Def. 1.4.10(i); the `⇒`/`∨` cases are its Chapter 2 extension:
 
 * the body of a `¬` is subordinate to the containing DRS;
 * the antecedent of a `⇒` is subordinate to the containing DRS;
@@ -122,14 +122,14 @@ inductive DirectlySubordinate : DRS L V → DRS L V → Prop where
   | disR {D l r : DRS L V} : Condition.dis l r ∈ D.conditions → DirectlySubordinate r D
 
 /-- `K₁ < K₂`: subordinate — transitive closure of `DirectlySubordinate`
-([kamp-reyle-1993], Def. 1.4.10(ii)). Anchors Def. 1.4.10(ii) only:
+(Def. 1.4.10(ii)). Anchors Def. 1.4.10(ii) only:
 accessibility (`accessibleFrom`, `DRS/Basic.lean`) does not build on this
 closure. -/
 abbrev Subordinate : DRS L V → DRS L V → Prop :=
   Relation.TransGen DirectlySubordinate
 
 /-- `K₁ ≤ K₂`: weakly subordinate — reflexive-transitive closure
-([kamp-reyle-1993]; the `≤` of Def. 1.4.10). Anchors Def. 1.4.10(ii) only:
+(the `≤` of Def. 1.4.10). Anchors Def. 1.4.10(ii) only:
 accessibility does not build on this closure. -/
 abbrev WeakSubordinate : DRS L V → DRS L V → Prop :=
   Relation.ReflTransGen DirectlySubordinate
