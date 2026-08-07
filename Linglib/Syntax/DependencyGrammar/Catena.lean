@@ -59,4 +59,13 @@ theorem IsConstituent.isCatena {g : Graph n} {s : Finset (Fin n)}
   rw [IsCatena, show (↑s : Set (Fin n)) = {x | Dominates g v x} from Set.ext hv]
   exact connected_induce_cone g v
 
+/-- The whole sentence is a constituent: the root's dominance cone. -/
+theorem isConstituent_univ {g : Graph n} (hT : g.IsTree) :
+    IsConstituent g Finset.univ :=
+  ⟨g.root, λ w => ⟨λ _ => hT.root_dominates w, λ _ => Finset.mem_univ w⟩⟩
+
+/-- The whole sentence is a catena. -/
+theorem isCatena_univ {g : Graph n} (hT : g.IsTree) : IsCatena g Finset.univ :=
+  (isConstituent_univ hT).isCatena
+
 end DependencyGrammar

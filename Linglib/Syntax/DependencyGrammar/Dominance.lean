@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Core.Relation.ReflTransGen
 import Mathlib.Logic.Relation
+import Mathlib.Data.Fintype.Card
 
 /-!
 # Dominance
@@ -20,7 +21,9 @@ theory of dominance on trees ([kuhlmann-nivre-2006] §2).
   relation, the yield of a position in ascending order, and the bridge
   between them.
 * `Graph.IsTree` — no arc into the root, unique heads elsewhere,
-  acyclicity; decidable.
+  acyclicity; decidable. `IsTree.root_dominates`: the root dominates
+  every position, so dominance on a tree is a partial order with the
+  root as bottom.
 * `Dominates.antisymm`, `Dominates.to_head`, `Dominates.comparable` —
   on trees dominance is a partial order under which the dominators of
   any position form a chain.
@@ -127,6 +130,24 @@ theorem Dominates.comparable {x : Fin n} (hT : g.IsTree)
       (Relation.reflTransGen_swap.mpr hv)
       (Relation.reflTransGen_swap.mpr hw)).symm.imp
     Relation.reflTransGen_swap.mp Relation.reflTransGen_swap.mp
+
+/-- The root dominates every position: head chains ascend, without
+    repetition, to the unique headless position. -/
+theorem Graph.IsTree.root_dominates (hT : g.IsTree) (v : Fin n) :
+    Dominates g g.root v := by
+  haveI : Std.Irrefl (Relation.TransGen g.Adj) := ⟨hT.acyclic⟩
+  refine (Finite.wellFounded_of_trans_of_irrefl
+    (Relation.TransGen g.Adj)).induction (C := (Dominates g g.root ·)) v ?_
+  intro v ih
+  by_cases hv : v = g.root
+  · exact hv ▸ Relation.ReflTransGen.refl
+  · obtain ⟨u, hu, -⟩ := hT.existsUnique_adj v hv
+    exact (ih u (Relation.TransGen.single hu)).tail hu
+
+/-- The root's projection is the whole sentence. -/
+theorem projection_root (hT : g.IsTree) :
+    projection g g.root = List.finRange n :=
+  List.filter_eq_self.mpr λ x _ => decide_eq_true (hT.root_dominates x)
 
 end Dominance
 
