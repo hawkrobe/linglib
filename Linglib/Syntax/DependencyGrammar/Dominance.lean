@@ -36,6 +36,9 @@ theory of dominance on trees ([kuhlmann-nivre-2006] §2).
   `PartialOrder` + `OrderBot` + `PredOrder` + `IsPredArchimedean` +
   `SemilatticeInf` (root as `⊥`, head as `Order.pred`, lowest common
   governor as `⊓`); and the bundling as mathlib's `RootedTree`.
+* `Tree n` — the bundled subtype of well-formed graphs: tree-hood is
+  carried by the element, so the dominance-order instances hold with no
+  side conditions (`Tree.instFact` feeds the `Fact`-gated machinery).
 
 ## Implementation notes
 
@@ -204,6 +207,9 @@ namespace DominanceOrder
 instance : Fintype (DominanceOrder g) := inferInstanceAs (Fintype (Fin n))
 instance : DecidableEq (DominanceOrder g) := inferInstanceAs (DecidableEq (Fin n))
 
+instance {i : ℕ} [OfNat (Fin n) i] : OfNat (DominanceOrder g) i :=
+  inferInstanceAs (OfNat (Fin n) i)
+
 instance [Fact g.IsTree] : PartialOrder (DominanceOrder g) where
   le v w := Dominates g v w
   le_refl _ := .refl
@@ -264,6 +270,28 @@ end DominanceOrder
     and the lowest common governor as `⊓`. -/
 def Graph.toRootedTree (g : Graph n) [Fact g.IsTree] : RootedTree :=
   { α := DominanceOrder g }
+
+/-! ### Bundled trees -/
+
+/-- A dependency tree: a graph bundled with its tree-hood, so that the
+    dominance-order structure holds with no side conditions. -/
+def Tree (n : ℕ) := {g : Graph n // g.IsTree}
+
+namespace Tree
+
+instance : Coe (Tree n) (Graph n) := ⟨Subtype.val⟩
+
+/-- Bundle a graph with `decide`-checked tree-hood. -/
+def mk' (g : Graph n) (h : g.IsTree := by decide) : Tree n := ⟨g, h⟩
+
+/-- A bundled tree's tree-hood, available to instance search: the
+    `Fact`-gated dominance-order instances fire unconditionally. -/
+instance instFact (t : Tree n) : Fact (t.val : Graph n).IsTree := ⟨t.2⟩
+
+/-- A dependency tree is a mathlib rooted tree. -/
+def toRootedTree (t : Tree n) : RootedTree := Graph.toRootedTree t.val
+
+end Tree
 
 end Dominance
 
