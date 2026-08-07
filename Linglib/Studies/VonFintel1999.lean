@@ -195,7 +195,7 @@ example (dox bestOf : World → Set World) :
 [kadmon-landman-1993]): *glad* + NPI is grammatical on a rescued
 reading that `gladFull_isUE` cannot capture. -/
 theorem bridge_lahiri_glad_settle_overgeneration :
-    Lahiri1998.npi_glad_settle.grammatical = true ∧
+    Lahiri1998.Examples.ex31b.judgment = .acceptable ∧
     KadmonLandman1993.settleGladAnybody.grammatical = true ∧
     KadmonLandman1993.settleGladTickets.grammatical = true :=
   ⟨rfl, rfl, rfl⟩
