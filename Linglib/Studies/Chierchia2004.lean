@@ -75,22 +75,33 @@ def Meaning.strengthen (sm : Meaning World) : Meaning World where
   strong := sm.strong ∩ ⋂ a ∈ {a ∈ sm.alternatives | a ⊂ sm.plain}, aᶜ
   alternatives := sm.alternatives
 
+variable {sm : Meaning World} {w : World}
+
 @[simp]
-theorem Meaning.mem_strengthen_strong {sm : Meaning World} {w : World} :
+theorem Meaning.mem_strengthen_strong :
     w ∈ sm.strengthen.strong ↔
       w ∈ sm.strong ∧ ∀ a ∈ sm.alternatives, a ⊂ sm.plain → w ∉ a := by
   simp [Meaning.strengthen]
 
 /-- Strengthening preserves the Strength Condition. -/
-theorem Meaning.StrengthCondition.strengthen {sm : Meaning World}
-    (h : sm.StrengthCondition) : sm.strengthen.StrengthCondition :=
+theorem Meaning.StrengthCondition.strengthen (h : sm.StrengthCondition) :
+    sm.strengthen.StrengthCondition :=
   λ _ hw => h hw.1
+
+/-- Strengthening is proper whenever some activated alternative is strictly
+stronger and consistent. -/
+theorem Meaning.strengthen_strong_ssubset (hsc : sm.StrengthCondition)
+    (h : ∃ a ∈ sm.alternatives, a ⊂ sm.plain ∧ a.Nonempty) :
+    sm.strengthen.strong ⊂ sm.plain := by
+  obtain ⟨a, haALT, haφ, w, hwa⟩ := h
+  exact (Set.ssubset_iff_of_subset (λ _ hw => hsc hw.1)).mpr
+    ⟨w, haφ.1 hwa, λ hmem => (mem_strengthen_strong.1 hmem).2 a haALT haφ hwa⟩
 
 /-- Agreement with the paper's scalar assertion `σ`: whenever the strictly
 stronger alternatives have a weakest member `a₀` — the case in which (2)'s
 definite description is defined, as on linearly ordered scales — negating all
 of them is negating `a₀` alone. -/
-theorem Meaning.strengthen_strong_eq_of_isGreatest {sm : Meaning World} {a₀ : Set World}
+theorem Meaning.strengthen_strong_eq_of_isGreatest {a₀ : Set World}
     (h : IsGreatest {a ∈ sm.alternatives | a ⊂ sm.plain} a₀) :
     sm.strengthen.strong = sm.strong ∩ a₀ᶜ := by
   ext w
@@ -100,31 +111,27 @@ theorem Meaning.strengthen_strong_eq_of_isGreatest {sm : Meaning World} {a₀ : 
 
 /-! ### Scale axioms -/
 
-/-- The scale axioms (99): the context selects a subset of the uttered term's
-lexical scale (99a) with at least two members (99b), and the uttered term is not
-the strongest selected member whenever the lexical scale offers a stronger one —
-the "if possible" proviso of (99c). -/
-def ScaleAxioms (lexicalScale chosen : Set (Set World)) (utt : Set World) : Prop :=
-  chosen ⊆ lexicalScale ∧ chosen.Nontrivial ∧ utt ∈ chosen ∧
-    ((∃ a ∈ lexicalScale, a ⊂ utt) → ∃ a ∈ chosen, a ⊂ utt)
-
-/-- Strengthening is proper whenever some activated alternative is strictly
-stronger and consistent. -/
-theorem Meaning.strengthen_strong_ssubset {sm : Meaning World}
-    (hsc : sm.StrengthCondition)
-    (h : ∃ a ∈ sm.alternatives, a ⊂ sm.plain ∧ a.Nonempty) :
-    sm.strengthen.strong ⊂ sm.plain := by
-  obtain ⟨a, haALT, haφ, w, hwa⟩ := h
-  refine ssubset_iff_subset_not_subset.mpr ⟨λ _ hw => hsc hw.1, λ hsub => ?_⟩
-  exact (Meaning.mem_strengthen_strong.1 (hsub (haφ.1 hwa))).2 a haALT haφ hwa
+/-- An admissible context choice of scale for an uttered scalar term — the
+scale axioms (99). -/
+structure IsScaleSelection (lexicalScale chosen : Set (Set World)) (utt : Set World) :
+    Prop where
+  /-- (99a): the chosen scale is a subset of the lexical scale. -/
+  chosen_subset : chosen ⊆ lexicalScale
+  /-- (99b): the chosen scale has at least two members. -/
+  nontrivial : chosen.Nontrivial
+  /-- The uttered term belongs to its chosen scale (presupposed by (99)). -/
+  utt_mem : utt ∈ chosen
+  /-- (99c): the uttered term is not the strongest chosen member whenever the
+  lexical scale offers a stronger one — the "if possible" proviso. -/
+  not_strongest : (∃ a ∈ lexicalScale, a ⊂ utt) → ∃ a ∈ chosen, a ⊂ utt
 
 /-- Under the scale axioms, a stronger lexical alternative guarantees proper
 strengthening — the point of the (99c) proviso. -/
-theorem ScaleAxioms.strengthen_ssubset {lex chosen : Set (Set World)} {utt : Set World}
-    (h : ScaleAxioms lex chosen utt) (hstr : ∃ a ∈ lex, a ⊂ utt)
+theorem IsScaleSelection.strengthen_ssubset {lex chosen : Set (Set World)} {utt : Set World}
+    (h : IsScaleSelection lex chosen utt) (hstr : ∃ a ∈ lex, a ⊂ utt)
     (hne : ∀ a ∈ chosen, a ⊂ utt → a.Nonempty) :
     (Meaning.lexical utt chosen).strengthen.strong ⊂ utt :=
-  let ⟨a, ha, hau⟩ := h.2.2.2 hstr
+  let ⟨a, ha, hau⟩ := h.not_strongest hstr
   Meaning.strengthen_strong_ssubset (Meaning.lexical_strengthCondition utt chosen)
     ⟨a, ha, hau, hne a ha hau⟩
 
@@ -135,13 +142,13 @@ a *weaker* matrix value, so keeping a direct implicature under DE embedding
 would violate the Strength Condition — implicatures are suspended in exactly
 the *any*-licensing environments. -/
 theorem si_npi_generalization {f : Set World → Set World} (hDE : IsDE f)
-    {g : Meaning World} (hg : g.StrengthCondition) :
-    f g.plain ⊆ f g.strong :=
-  hDE hg
+    (hsc : sm.StrengthCondition) :
+    f sm.plain ⊆ f sm.strong :=
+  hDE hsc
 
 /-- Instantiation of (53) at strengthened arguments. -/
 theorem de_blocks_direct_si {f : Set World → Set World} (hDE : IsDE f)
-    {sm : Meaning World} (hsc : sm.StrengthCondition) :
+    (hsc : sm.StrengthCondition) :
     f sm.plain ⊆ f sm.strengthen.strong :=
   si_npi_generalization hDE hsc.strengthen
 
@@ -165,9 +172,10 @@ def strongApplyDE (f fS : Set World → Set World) (g : Meaning World) :
   strong := fS g.plain ∩ ⋂ a ∈ {a ∈ g.alternatives | f a ⊂ f g.plain}, (f a)ᶜ
   alternatives := f '' g.alternatives
 
+variable {f fS : Set World → Set World} {g : Meaning World}
+
 @[simp]
-theorem mem_strongApplyDE_strong {f fS : Set World → Set World}
-    {g : Meaning World} {w : World} :
+theorem mem_strongApplyDE_strong :
     w ∈ (strongApplyDE f fS g).strong ↔
       w ∈ fS g.plain ∧ ∀ a ∈ g.alternatives, f a ⊂ f g.plain → w ∉ f a := by
   simp [strongApplyDE]
@@ -175,8 +183,7 @@ theorem mem_strongApplyDE_strong {f fS : Set World → Set World}
 /-- Agreement with (84)'s matrix-level `σ`: whenever the strictly stronger
 alternative images have a weakest member `ψ₀`, the DE clause's intersection
 negates `ψ₀` alone. -/
-theorem strongApplyDE_strong_eq_of_isGreatest {f fS : Set World → Set World}
-    {g : Meaning World} {ψ₀ : Set World}
+theorem strongApplyDE_strong_eq_of_isGreatest {ψ₀ : Set World}
     (h : IsGreatest {ψ ∈ f '' g.alternatives | ψ ⊂ f g.plain} ψ₀) :
     (strongApplyDE f fS g).strong = fS g.plain ∩ ψ₀ᶜ := by
   ext w
@@ -190,16 +197,14 @@ theorem strongApplyDE_strong_eq_of_isGreatest {f fS : Set World → Set World}
 
 /-- The non-DE clause of (84) preserves the Strength Condition when the
 function's strengthening entails its plain value and the function is UE. -/
-theorem strongApplyUE_strengthCondition {f fS : Set World → Set World}
-    (hf : IsUE f) (hfS : ∀ X, fS X ⊆ f X) {g : Meaning World}
+theorem strongApplyUE_strengthCondition (hf : IsUE f) (hfS : ∀ X, fS X ⊆ f X)
     (hg : g.StrengthCondition) :
     (strongApplyUE f fS g).StrengthCondition :=
   λ _ hw => hf hg (hfS g.strong hw)
 
 /-- The DE clause of (84) satisfies the Strength Condition by construction: it
 already falls back to the plain argument. -/
-theorem strongApplyDE_strengthCondition {f fS : Set World → Set World}
-    (hfS : ∀ X, fS X ⊆ f X) (g : Meaning World) :
+theorem strongApplyDE_strengthCondition (hfS : ∀ X, fS X ⊆ f X) :
     (strongApplyDE f fS g).StrengthCondition :=
   λ _ hw => hfS g.plain hw.1
 
