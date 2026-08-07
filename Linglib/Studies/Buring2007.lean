@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Basic
 import Mathlib.Order.Interval.Basic
-import Linglib.Studies.VonStechow1984
+import Mathlib.Tactic.NormNum
 
 /-!
 # Büring 2007: Cross-Polar Nomalies
@@ -284,6 +284,55 @@ theorem klein_limitation_is_subcomparative {Entity D : Type*} [LinearOrder D]
     (μ₁ μ₂ : Entity → D) (a : Entity) :
     subcomparative μ₁ μ₂ a a ↔ (μ₁ a > μ₂ a) :=
   Iff.rfl
+
+/-! ### LITTLE–□ scope: the de Morgan asymmetry (§6)
+
+The two analyses place LITTLE on opposite sides of the than-clause modal,
+so the than-clause degree property is either LITTLE(□P) or □(LITTLE P).
+Over accessible worlds `acc` with world-indexed degree `μw`, a degree `d`
+is in LITTLE(□P) iff it exceeds some world's degree (it escapes the
+minimum), and in □(LITTLE P) iff it exceeds every world's degree (it
+escapes the maximum). □∘LITTLE entails LITTLE∘□ — the nontrivial direction
+of de Morgan for infinite meets — but not conversely, which is why the
+modal diagnostic below discriminates the two analyses. -/
+
+/-- LITTLE(□P): `d` exceeds the degree of some accessible world. -/
+def littleOverBox {W D : Type*} [LT D] (acc : Set W) (μw : W → D) (d : D) : Prop :=
+  ∃ w ∈ acc, μw w < d
+
+/-- □(LITTLE P): `d` exceeds the degree of every accessible world. -/
+def boxOverLittle {W D : Type*} [LT D] (acc : Set W) (μw : W → D) (d : D) : Prop :=
+  ∀ w ∈ acc, μw w < d
+
+/-- □(LITTLE P) entails LITTLE(□P) when some world is accessible: the
+nontrivial de Morgan direction. -/
+theorem boxOverLittle_implies_littleOverBox {W D : Type*} [LT D]
+    {acc : Set W} (μw : W → D) (d : D) (hne : acc.Nonempty) :
+    boxOverLittle acc μw d → littleOverBox acc μw d :=
+  fun hall => hne.elim fun w hw => ⟨w, hw, hall w hw⟩
+
+/-- The converse fails: over two worlds with degrees 5 and 10, the degree 7
+escapes the minimum but not the maximum. -/
+theorem littleOverBox_not_boxOverLittle :
+    ∃ (acc : Set Bool) (μw : Bool → ℚ) (d : ℚ),
+      littleOverBox acc μw d ∧ ¬ boxOverLittle acc μw d := by
+  refine ⟨{true, false}, (if · then 5 else 10), 7,
+    ⟨true, by simp, by norm_num⟩, fun h => ?_⟩
+  have := h false (by simp)
+  norm_num at this
+
+/-- When all accessible worlds agree on the degree, the two analyses
+collapse — modal scope is undetectable ([heim-2001]'s monotone collapse at
+the modal level). -/
+theorem littleBox_collapse_when_uniform {W D : Type*} [LT D]
+    {acc : Set W} (μw : W → D) (d : D) (hne : acc.Nonempty)
+    (hunif : ∀ w₁ ∈ acc, ∀ w₂ ∈ acc, μw w₁ = μw w₂) :
+    littleOverBox acc μw d ↔ boxOverLittle acc μw d := by
+  constructor
+  · rintro ⟨w, hw, hgt⟩ v hv
+    rw [hunif v hv w hw]
+    exact hgt
+  · exact boxOverLittle_implies_littleOverBox μw d hne
 
 /-! ### Modal Scope Diagnostic (§6) -/
 
