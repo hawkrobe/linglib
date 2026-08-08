@@ -17,7 +17,7 @@ freely reassigns re-declared referents ([muskens-1996]'s fn. 4 divergence).
 Persistence is what makes the indexed semantics well-typed: `toRelAt X K` is
 read only at `X` (`toRelAt_congr_left` — one line, no witness surgery) and
 written only at `X ∪ U` (`toRelAt_congr_right`, given the *referential
-presupposition* `K.fv ⊆ X`), so a well-formed DRS denotes a spine
+presupposition* `K.freeVarFinset ⊆ X`), so a well-formed DRS denotes a spine
 `Transition X (X ∪ U)` (`DRS.transition`), and a proper DRS expresses an
 information state by acting on `⊥` (`DRS.state`, Def. 22).
 
@@ -113,7 +113,7 @@ end
 
 The indexed clauses only mention the input through the agreement conjunct, so
 read-support is one line — the flat semantics' piecewise witness surgery
-disappears. Write-support needs the referential presupposition `fv ⊆ X`
+disappears. Write-support needs the referential presupposition `freeVarFinset ⊆ X`
 only at the atomic clauses. -/
 
 /-- `toRelAt X K` reads its input only at `X`. -/
@@ -126,7 +126,7 @@ theorem DRS.toRelAt_congr_left (X : Finset V) (K : DRS L V) {f f' g : V → M}
 /-- A condition with free referents in `X` depends on the assignment only at
 `X`. -/
 theorem Condition.holdsAt_congr {X : Finset V} (c : Condition L V)
-    (hfv : c.fv ⊆ X) {g g' : V → M} (hgg' : Set.EqOn g g' ↑X) :
+    (hfv : c.freeVarFinset ⊆ X) {g g' : V → M} (hgg' : Set.EqOn g g' ↑X) :
     Condition.holdsAt X c g ↔ Condition.holdsAt X c g' := by
   match c with
   | .rel R args =>
@@ -137,8 +137,8 @@ theorem Condition.holdsAt_congr {X : Finset V} (c : Condition L V)
     rw [this]
   | .eq u v =>
     simp only [Condition.holdsAt_eq]
-    rw [hgg' (Finset.mem_coe.mpr (hfv (by simp [Condition.fv_eq]))),
-      hgg' (Finset.mem_coe.mpr (hfv (by simp [Condition.fv_eq])))]
+    rw [hgg' (Finset.mem_coe.mpr (hfv (by simp [Condition.freeVarFinset_eq]))),
+      hgg' (Finset.mem_coe.mpr (hfv (by simp [Condition.freeVarFinset_eq])))]
   | .neg K =>
     simp only [Condition.holdsAt_neg]
     exact not_congr (exists_congr fun k => DRS.toRelAt_congr_left X K hgg')
@@ -153,18 +153,18 @@ theorem Condition.holdsAt_congr {X : Finset V} (c : Condition L V)
 
 /-- The list analogue of `Condition.holdsAt_congr`. -/
 theorem Condition.holdsAllAt_congr {X : Finset V} (cs : List (Condition L V))
-    (hfv : Condition.fvL cs ⊆ X) {g g' : V → M} (hgg' : Set.EqOn g g' ↑X) :
+    (hfv : Condition.freeVarFinsetL cs ⊆ X) {g g' : V → M} (hgg' : Set.EqOn g g' ↑X) :
     Condition.holdsAllAt X cs g ↔ Condition.holdsAllAt X cs g' := by
   induction cs with
   | nil => exact Iff.rfl
   | cons c cs ih =>
-    rw [Condition.fvL_cons, Finset.union_subset_iff] at hfv
+    rw [Condition.freeVarFinsetL_cons, Finset.union_subset_iff] at hfv
     simp only [Condition.holdsAllAt_cons]
     exact and_congr (Condition.holdsAt_congr c hfv.1 hgg') (ih hfv.2)
 
 /-- `toRelAt X K` writes its output only at `X ∪ U`, given the referential
-presupposition `K.fv ⊆ X`. -/
-theorem DRS.toRelAt_congr_right {X : Finset V} (K : DRS L V) (hfv : K.fv ⊆ X)
+presupposition `K.freeVarFinset ⊆ X`. -/
+theorem DRS.toRelAt_congr_right {X : Finset V} (K : DRS L V) (hfv : K.freeVarFinset ⊆ X)
     {f g g' : V → M} (hgg' : Set.EqOn g g' ↑(X ∪ K.referents)) :
     DRS.toRelAt X K f g ↔ DRS.toRelAt X K f g' := by
   obtain ⟨U, conds⟩ := K
@@ -173,19 +173,19 @@ theorem DRS.toRelAt_congr_right {X : Finset V} (K : DRS L V) (hfv : K.fv ⊆ X)
   simp only [DRS.toRelAt_mk]
   exact and_congr
     ⟨fun he => hX.symm.trans he, fun he => hX.trans he⟩
-    (Condition.holdsAllAt_congr conds (DRS.fv_subset_iff.mp hfv) hgg')
+    (Condition.holdsAllAt_congr conds (DRS.freeVarFinset_subset_iff.mp hfv) hgg')
 
 /-! ### A DRS as a spine transition -/
 
 /-- A well-formed DRS denotes a transition from its context base to the
-base grown by its universe — `K.fv ⊆ X` is the *referential presupposition*
+base grown by its universe — `K.freeVarFinset ⊆ X` is the *referential presupposition*
 (Def. 27(i)). -/
 theorem DRS.readsAt_toRelAt {W : Type*} (X : Finset V) (K : DRS L V) :
     Transition.ReadsAt (W := W) ↑X fun _ => DRS.toRelAt (M := M) X K :=
   fun _ _ _ _ h => DRS.toRelAt_congr_left X K h
 
 theorem DRS.writesAt_toRelAt {W : Type*} {X : Finset V} (K : DRS L V)
-    (hK : K.fv ⊆ X) :
+    (hK : K.freeVarFinset ⊆ X) :
     Transition.WritesAt (W := W) ↑(X ∪ K.referents)
       fun _ => DRS.toRelAt (M := M) X K :=
   fun _ _ _ _ h => DRS.toRelAt_congr_right K hK h
@@ -195,7 +195,7 @@ at `X`, write at `X ∪ U`. The referential presupposition documents
 Def. 24's domain condition; the congruence lemmas above are the bridge's
 support hypotheses. -/
 def DRS.transition (W : Type*) (K : DRS L V) (X : Finset V)
-    (_hK : K.fv ⊆ X) :
+    (_hK : K.freeVarFinset ⊆ X) :
     Transition W M (↑X : Set V) (↑(X ∪ K.referents) : Set V) :=
   Transition.ofTotal (Finset.coe_subset.mpr Finset.subset_union_left)
     fun _ => DRS.toRelAt X K
@@ -205,7 +205,7 @@ source: interpretation sends DRT's unit to the semantic unit. Nonempty
 entities are needed — under extension-typing an empty domain separates
 the empty box from the identity. -/
 theorem DRS.transition_empty [Nonempty M] (W : Type*) (X : Finset V)
-    (h : (DRS.empty : DRS L V).fv ⊆ X)
+    (h : (DRS.empty : DRS L V).freeVarFinset ⊆ X)
     (he : X ∪ (DRS.empty : DRS L V).referents = X) :
     (DRS.empty.transition (M := M) W X h).copy rfl (Finset.coe_inj.mpr he) =
       Transition.id (↑X : Set V) := by
@@ -225,7 +225,7 @@ theorem DRS.transition_empty [Nonempty M] (W : Type*) (X : Finset V)
 
 /-- Established referents persist along a DRS transition. -/
 theorem DRS.transition_isExtension (W : Type*) (K : DRS L V) (X : Finset V)
-    (hK : K.fv ⊆ X) : (K.transition (M := M) W X hK).IsExtension := by
+    (hK : K.freeVarFinset ⊆ X) : (K.transition (M := M) W X hK).IsExtension := by
   rintro w e e' ⟨f, g, rfl, rfl, hrel⟩
   obtain ⟨U, conds⟩ := K
   funext v
@@ -234,7 +234,7 @@ theorem DRS.transition_isExtension (W : Type*) (K : DRS L V) (X : Finset V)
 /-- Repackaging a DRS transition along an equality of context bases is the
 transition at the new base. -/
 theorem DRS.transition_copy (W : Type*) {X X' : Finset V} (K : DRS L V)
-    (hX : X = X') (hK : K.fv ⊆ X) (hK' : K.fv ⊆ X') :
+    (hX : X = X') (hK : K.freeVarFinset ⊆ X) (hK' : K.freeVarFinset ⊆ X') :
     (K.transition (M := M) W X hK).copy (Finset.coe_inj.mpr hX) (by rw [hX]) =
       K.transition W X' hK' := by
   subst hX; rfl
@@ -292,7 +292,7 @@ base referents needs no exclusion: persistence makes it inert. -/
 fresh `Δ` yields an output at the grown base, agreeing with the original on
 the working base. -/
 private theorem DRS.toRelAt_adjust {X Δ U : Finset V} {conds : List (Condition L V)}
-    (hΔU : Disjoint Δ U) (hfvc : Condition.fvL conds ⊆ X ∪ U)
+    (hΔU : Disjoint Δ U) (hfvc : Condition.freeVarFinsetL conds ⊆ X ∪ U)
     (hIH : ∀ k : V → M, Condition.holdsAllAt ((X ∪ U) ∪ Δ) conds k ↔
       Condition.holdsAllAt (X ∪ U) conds k)
     {g k : V → M} (hk : DRS.toRelAt X (.mk U conds) g k) :
@@ -339,17 +339,17 @@ mutual
 /-- **Base invariance**: a fresh base extension is invisible to a well-formed
 condition. -/
 theorem Condition.holdsAt_union_fresh {X Δ : Finset V} (c : Condition L V)
-    (hocc : Disjoint Δ c.occ) (hfv : c.fv ⊆ X) (g : V → M) :
+    (hocc : Disjoint Δ c.varFinset) (hfv : c.freeVarFinset ⊆ X) (g : V → M) :
     Condition.holdsAt (X ∪ Δ) c g ↔ Condition.holdsAt X c g := by
   match c with
   | .rel R args => exact Iff.rfl
   | .eq u v => exact Iff.rfl
   | .neg K =>
     obtain ⟨U, conds⟩ := K
-    simp only [Condition.occ, DRS.occ] at hocc
-    rw [Condition.fv_neg] at hfv
+    simp only [Condition.varFinset_neg, DRS.varFinset_mk] at hocc
+    rw [Condition.freeVarFinset_neg] at hfv
     obtain ⟨hΔU, hΔc⟩ := Finset.disjoint_union_right.mp hocc
-    have hfvc : Condition.fvL conds ⊆ X ∪ U := DRS.fv_subset_iff.mp hfv
+    have hfvc : Condition.freeVarFinsetL conds ⊆ X ∪ U := DRS.freeVarFinset_subset_iff.mp hfv
     have hIH : ∀ k : V → M, Condition.holdsAllAt ((X ∪ U) ∪ Δ) conds k ↔
         Condition.holdsAllAt (X ∪ U) conds k :=
       fun k => Condition.holdsAllAt_union_fresh conds hΔc hfvc k
@@ -359,21 +359,21 @@ theorem Condition.holdsAt_union_fresh {X Δ : Finset V} (c : Condition L V)
   | .imp a c' =>
     obtain ⟨Ua, ca⟩ := a
     obtain ⟨Uc, cc⟩ := c'
-    simp only [Condition.occ, DRS.occ] at hocc
+    simp only [Condition.varFinset_imp, DRS.varFinset_mk] at hocc
     obtain ⟨ha, hc⟩ := Finset.disjoint_union_right.mp hocc
     obtain ⟨hΔUa, hΔca⟩ := Finset.disjoint_union_right.mp ha
     obtain ⟨hΔUc, hΔcc⟩ := Finset.disjoint_union_right.mp hc
-    rw [Condition.fv_imp, Finset.union_subset_iff] at hfv
+    rw [Condition.freeVarFinset_imp, Finset.union_subset_iff] at hfv
     obtain ⟨hfva, hfvc'⟩ := hfv
-    have hfvca : Condition.fvL ca ⊆ X ∪ Ua := DRS.fv_subset_iff.mp hfva
-    have hfvcc : Condition.fvL cc ⊆ (X ∪ Ua) ∪ Uc := by
+    have hfvca : Condition.freeVarFinsetL ca ⊆ X ∪ Ua := DRS.freeVarFinset_subset_iff.mp hfva
+    have hfvcc : Condition.freeVarFinsetL cc ⊆ (X ∪ Ua) ∪ Uc := by
       intro x hx
       by_cases hxUc : x ∈ Uc
       · exact Finset.mem_union_right _ hxUc
       · by_cases hxUa : x ∈ Ua
         · exact Finset.mem_union_left _ (Finset.mem_union_right _ hxUa)
         · refine Finset.mem_union_left _ (Finset.mem_union_left _ (hfvc' ?_))
-          rw [DRS.fv_mk, DRS.referents_mk, Finset.mem_sdiff, Finset.mem_sdiff]
+          rw [DRS.freeVarFinset_mk, DRS.referents_mk, Finset.mem_sdiff, Finset.mem_sdiff]
           exact ⟨⟨hx, hxUc⟩, hxUa⟩
     have hIHa : ∀ k : V → M, Condition.holdsAllAt ((X ∪ Ua) ∪ Δ) ca k ↔
         Condition.holdsAllAt (X ∪ Ua) ca k :=
@@ -397,14 +397,14 @@ theorem Condition.holdsAt_union_fresh {X Δ : Finset V} (c : Condition L V)
   | .dis l r =>
     obtain ⟨Ul, cl⟩ := l
     obtain ⟨Ur, cr⟩ := r
-    simp only [Condition.occ, DRS.occ] at hocc
+    simp only [Condition.varFinset_dis, DRS.varFinset_mk] at hocc
     obtain ⟨hl, hr⟩ := Finset.disjoint_union_right.mp hocc
     obtain ⟨hΔUl, hΔcl⟩ := Finset.disjoint_union_right.mp hl
     obtain ⟨hΔUr, hΔcr⟩ := Finset.disjoint_union_right.mp hr
-    rw [Condition.fv_dis, Finset.union_subset_iff] at hfv
+    rw [Condition.freeVarFinset_dis, Finset.union_subset_iff] at hfv
     obtain ⟨hfvl, hfvr⟩ := hfv
-    have hfvcl : Condition.fvL cl ⊆ X ∪ Ul := DRS.fv_subset_iff.mp hfvl
-    have hfvcr : Condition.fvL cr ⊆ X ∪ Ur := DRS.fv_subset_iff.mp hfvr
+    have hfvcl : Condition.freeVarFinsetL cl ⊆ X ∪ Ul := DRS.freeVarFinset_subset_iff.mp hfvl
+    have hfvcr : Condition.freeVarFinsetL cr ⊆ X ∪ Ur := DRS.freeVarFinset_subset_iff.mp hfvr
     have hIHl : ∀ k : V → M, Condition.holdsAllAt ((X ∪ Ul) ∪ Δ) cl k ↔
         Condition.holdsAllAt (X ∪ Ul) cl k :=
       fun k => Condition.holdsAllAt_union_fresh cl hΔcl hfvcl k
@@ -421,15 +421,15 @@ theorem Condition.holdsAt_union_fresh {X Δ : Finset V} (c : Condition L V)
       · exact ⟨_, Or.inr (DRS.toRelAt_adjust hΔUr hfvcr hIHr hk).1⟩
 /-- The list analogue of `Condition.holdsAt_union_fresh`. -/
 theorem Condition.holdsAllAt_union_fresh {X Δ : Finset V}
-    (cs : List (Condition L V)) (hocc : Disjoint Δ (Condition.occL cs))
-    (hfv : Condition.fvL cs ⊆ X) (g : V → M) :
+    (cs : List (Condition L V)) (hocc : Disjoint Δ (Condition.varFinsetL cs))
+    (hfv : Condition.freeVarFinsetL cs ⊆ X) (g : V → M) :
     Condition.holdsAllAt (X ∪ Δ) cs g ↔ Condition.holdsAllAt X cs g := by
   match cs with
   | [] => exact Iff.rfl
   | c :: cs =>
-    simp only [Condition.occL] at hocc
+    simp only [Condition.varFinsetL] at hocc
     obtain ⟨hc, hcs⟩ := Finset.disjoint_union_right.mp hocc
-    rw [Condition.fvL_cons, Finset.union_subset_iff] at hfv
+    rw [Condition.freeVarFinsetL_cons, Finset.union_subset_iff] at hfv
     simp only [Condition.holdsAllAt_cons]
     exact and_congr (Condition.holdsAt_union_fresh c hc hfv.1 g)
       (Condition.holdsAllAt_union_fresh cs hcs hfv.2 g)
@@ -442,14 +442,14 @@ only that `K₂`'s universe not occur in `K₁`'s conditions (no *capture*);
 re-declaration of context or `K₁`-universe referents is allowed — persistence
 makes it inert. Contrast the flat lemma (`DRS.toRel_merge`), whose freshness
 hypothesis also had to forbid re-declaration. -/
-theorem DRS.toRelAt_merge {X : Finset V} (K₁ K₂ : DRS L V) (h₁ : K₁.fv ⊆ X)
-    (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions)) :
+theorem DRS.toRelAt_merge {X : Finset V} (K₁ K₂ : DRS L V) (h₁ : K₁.freeVarFinset ⊆ X)
+    (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions)) :
     (DRS.toRelAt X (K₁.merge K₂) : (V → M) → (V → M) → Prop) =
       DynamicSemantics.Update.seq (DRS.toRelAt X K₁)
         (DRS.toRelAt (X ∪ K₁.referents) K₂) := by
   obtain ⟨U₁, c₁⟩ := K₁
   obtain ⟨U₂, c₂⟩ := K₂
-  have hfvc₁ := DRS.fv_subset_iff.mp h₁
+  have hfvc₁ := DRS.freeVarFinset_subset_iff.mp h₁
   funext f g
   apply propext
   simp only [DRS.merge, DRS.toRelAt_mk,
@@ -467,10 +467,10 @@ theorem DRS.toRelAt_merge {X : Finset V} (K₁ K₂ : DRS L V) (h₁ : K₁.fv �
 /-- **Transition-level Merging Lemma**: sequencing the transitions is the
 merge's transition, repackaged along associativity of the grown bases. -/
 theorem DRS.transition_merge (W : Type*) {X : Finset V} (K₁ K₂ : DRS L V)
-    (h₁ : K₁.fv ⊆ X) (h₂ : K₂.fv ⊆ X ∪ K₁.referents)
-    (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions)) :
+    (h₁ : K₁.freeVarFinset ⊆ X) (h₂ : K₂.freeVarFinset ⊆ X ∪ K₁.referents)
+    (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions)) :
     (K₁.transition (M := M) W X h₁).comp (K₂.transition W (X ∪ K₁.referents) h₂) =
-      ((K₁.merge K₂).transition W X (DRS.fv_merge_subset h₁ h₂)).copy rfl
+      ((K₁.merge K₂).transition W X (DRS.freeVarFinset_merge_subset h₁ h₂)).copy rfl
         (by rw [DRS.referents_merge, ← Finset.union_assoc]) := by
   unfold DRS.transition
   rw [Transition.ofTotal_comp (DRS.readsAt_toRelAt (X ∪ K₁.referents) K₂),
@@ -483,8 +483,8 @@ DRS's transition to the state a proper context DRS expresses yields the
 state of the merge — an instance of `Transition.apply_comp` through the
 transition-level Merging Lemma. -/
 theorem DRS.state_merge (W : Type*) (K₁ K₂ : DRS L V) (h₁ : K₁.IsProper)
-    (h₂ : K₂.fv ⊆ K₁.referents)
-    (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions)) :
+    (h₂ : K₂.freeVarFinset ⊆ K₁.referents)
+    (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions)) :
     (K₂.transition (M := M) W K₁.referents h₂).applyState (K₁.state W h₁) =
       (K₁.merge K₂).state W (DRS.isProper_merge h₁ h₂) := by
   simp only [DRS.state]
@@ -519,7 +519,7 @@ private theorem DRS.toRelAt_of_toRel' {X U : Finset V} {conds : List (Condition 
 /-- Indexed-to-flat on a bounded box: repair the output off the grown base with
 the input's values. -/
 private theorem DRS.toRel_of_toRelAt' {X U : Finset V} {conds : List (Condition L V)}
-    (hfvc : Condition.fvL conds ⊆ X ∪ U)
+    (hfvc : Condition.freeVarFinsetL conds ⊆ X ∪ U)
     (hIH : ∀ k : V → M, (∀ c ∈ conds, Embedding.VerifiesCondition k c) ↔
       Condition.holdsAllAt (X ∪ U) conds k)
     {g g' : V → M} (h : DRS.toRelAt X (.mk U conds) g g') :
@@ -543,7 +543,7 @@ mutual
 /-- On a reuse-free condition with free referents in the base, the flat set
 denotation and the indexed one coincide. -/
 theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
-    (hrf : Condition.ReuseFreeAt X c) (hfv : c.fv ⊆ X) (g : V → M) :
+    (hrf : Condition.ReuseFreeAt X c) (hfv : c.freeVarFinset ⊆ X) (g : V → M) :
     Embedding.VerifiesCondition g c ↔ Condition.holdsAt X c g := by
   match c with
   | .rel R args => simp only [Embedding.verifies_rel, Condition.holdsAt_rel]
@@ -551,8 +551,8 @@ theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
   | .neg K =>
     obtain ⟨U, conds⟩ := K
     simp only [Condition.reuseFreeAt_neg, DRS.reuseFreeAt_mk] at hrf
-    rw [Condition.fv_neg] at hfv
-    have hfvc := DRS.fv_subset_iff.mp hfv
+    rw [Condition.freeVarFinset_neg] at hfv
+    have hfvc := DRS.freeVarFinset_subset_iff.mp hfv
     have hIH : ∀ k : V → M, (∀ c ∈ conds, Embedding.VerifiesCondition k c) ↔
         Condition.holdsAllAt (X ∪ U) conds k :=
       fun k => Condition.verifiesAll_iff_holdsAllAt conds hrf.2 hfvc k
@@ -564,17 +564,17 @@ theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
     obtain ⟨Uc, cc⟩ := c'
     simp only [Condition.reuseFreeAt_imp, DRS.reuseFreeAt_mk] at hrf
     obtain ⟨⟨hXUa, hrfa⟩, hXUc, hrfc⟩ := hrf
-    rw [Condition.fv_imp, Finset.union_subset_iff] at hfv
+    rw [Condition.freeVarFinset_imp, Finset.union_subset_iff] at hfv
     obtain ⟨hfva, hfvc'⟩ := hfv
-    have hfvca : Condition.fvL ca ⊆ X ∪ Ua := DRS.fv_subset_iff.mp hfva
-    have hfvcc : Condition.fvL cc ⊆ (X ∪ Ua) ∪ Uc := by
+    have hfvca : Condition.freeVarFinsetL ca ⊆ X ∪ Ua := DRS.freeVarFinset_subset_iff.mp hfva
+    have hfvcc : Condition.freeVarFinsetL cc ⊆ (X ∪ Ua) ∪ Uc := by
       intro x hx
       by_cases hxUc : x ∈ Uc
       · exact Finset.mem_union_right _ hxUc
       · by_cases hxUa : x ∈ Ua
         · exact Finset.mem_union_left _ (Finset.mem_union_right _ hxUa)
         · refine Finset.mem_union_left _ (Finset.mem_union_left _ (hfvc' ?_))
-          rw [DRS.fv_mk, DRS.referents_mk, Finset.mem_sdiff, Finset.mem_sdiff]
+          rw [DRS.freeVarFinset_mk, DRS.referents_mk, Finset.mem_sdiff, Finset.mem_sdiff]
           exact ⟨⟨hx, hxUc⟩, hxUa⟩
     have hIHa : ∀ k : V → M, (∀ c ∈ ca, Embedding.VerifiesCondition k c) ↔
         Condition.holdsAllAt (X ∪ Ua) ca k :=
@@ -597,9 +597,9 @@ theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
     obtain ⟨Ur, cr⟩ := r
     simp only [Condition.reuseFreeAt_dis, DRS.reuseFreeAt_mk] at hrf
     obtain ⟨⟨hXUl, hrfl⟩, hXUr, hrfr⟩ := hrf
-    rw [Condition.fv_dis, Finset.union_subset_iff] at hfv
-    have hfvcl : Condition.fvL cl ⊆ X ∪ Ul := DRS.fv_subset_iff.mp hfv.1
-    have hfvcr : Condition.fvL cr ⊆ X ∪ Ur := DRS.fv_subset_iff.mp hfv.2
+    rw [Condition.freeVarFinset_dis, Finset.union_subset_iff] at hfv
+    have hfvcl : Condition.freeVarFinsetL cl ⊆ X ∪ Ul := DRS.freeVarFinset_subset_iff.mp hfv.1
+    have hfvcr : Condition.freeVarFinsetL cr ⊆ X ∪ Ur := DRS.freeVarFinset_subset_iff.mp hfv.2
     have hIHl : ∀ k : V → M, (∀ c ∈ cl, Embedding.VerifiesCondition k c) ↔
         Condition.holdsAllAt (X ∪ Ul) cl k :=
       fun k => Condition.verifiesAll_iff_holdsAllAt cl hrfl hfvcl k
@@ -616,13 +616,13 @@ theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
       · exact Or.inr ⟨_, (DRS.toRel_of_toRelAt' hfvcr hIHr hk).1⟩
 /-- The list analogue of `Condition.verifies_iff_holdsAt`. -/
 theorem Condition.verifiesAll_iff_holdsAllAt {X : Finset V} (cs : List (Condition L V))
-    (hrf : Condition.ReuseFreeAllAt X cs) (hfv : Condition.fvL cs ⊆ X) (g : V → M) :
+    (hrf : Condition.ReuseFreeAllAt X cs) (hfv : Condition.freeVarFinsetL cs ⊆ X) (g : V → M) :
     (∀ c ∈ cs, Embedding.VerifiesCondition g c) ↔ Condition.holdsAllAt X cs g := by
   match cs with
   | [] => simp
   | c :: cs =>
     simp only [Condition.reuseFreeAllAt_cons] at hrf
-    rw [Condition.fvL_cons, Finset.union_subset_iff] at hfv
+    rw [Condition.freeVarFinsetL_cons, Finset.union_subset_iff] at hfv
     simp only [List.forall_mem_cons, Condition.holdsAllAt_cons]
     exact and_congr (Condition.verifies_iff_holdsAt c hrf.1 hfv.1 g)
       (Condition.verifiesAll_iff_holdsAllAt cs hrf.2 hfv.2 g)
@@ -630,28 +630,28 @@ end
 
 /-- Flat-to-indexed: on a reuse-free DRS every flat output is a indexed output. -/
 theorem DRS.toRelAt_of_toRel {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt X K)
-    (hfv : K.fv ⊆ X) {g g' : V → M} (h : DRS.toRel K g g') : DRS.toRelAt X K g g' := by
+    (hfv : K.freeVarFinset ⊆ X) {g g' : V → M} (h : DRS.toRel K g g') : DRS.toRelAt X K g g' := by
   obtain ⟨U, conds⟩ := K
   simp only [DRS.reuseFreeAt_mk] at hrf
   exact DRS.toRelAt_of_toRel' hrf.1
-    (fun k => Condition.verifiesAll_iff_holdsAllAt conds hrf.2 (DRS.fv_subset_iff.mp hfv) k) h
+    (fun k => Condition.verifiesAll_iff_holdsAllAt conds hrf.2 (DRS.freeVarFinset_subset_iff.mp hfv) k) h
 
 /-- Indexed-to-flat: on a reuse-free DRS a indexed output repairs, off the grown
 base, into a flat output. -/
 theorem DRS.toRel_of_toRelAt {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt X K)
-    (hfv : K.fv ⊆ X) {g g' : V → M} (h : DRS.toRelAt X K g g') :
+    (hfv : K.freeVarFinset ⊆ X) {g g' : V → M} (h : DRS.toRelAt X K g g') :
     ∃ g'', DRS.toRel K g g'' ∧ Set.EqOn g'' g' ↑(X ∪ K.referents) := by
   obtain ⟨U, conds⟩ := K
   simp only [DRS.reuseFreeAt_mk] at hrf
-  exact ⟨_, DRS.toRel_of_toRelAt' (DRS.fv_subset_iff.mp hfv)
-    (fun k => Condition.verifiesAll_iff_holdsAllAt conds hrf.2 (DRS.fv_subset_iff.mp hfv) k) h⟩
+  exact ⟨_, DRS.toRel_of_toRelAt' (DRS.freeVarFinset_subset_iff.mp hfv)
+    (fun k => Condition.verifiesAll_iff_holdsAllAt conds hrf.2 (DRS.freeVarFinset_subset_iff.mp hfv) k) h⟩
 
 /-- **Truth-level reconciliation** (Muskens's fn. 4): on a reuse-free
 DRS the flat total-assignment semantics and the indexed persistence semantics
 have the same truth conditions. Reuse-freeness is needed — a re-declaring
 witness separates the two (`Studies/Muskens1996.lean`). -/
 theorem DRS.trueRel_iff_toRelAt {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt X K)
-    (hfv : K.fv ⊆ X) (g : V → M) :
+    (hfv : K.freeVarFinset ⊆ X) (g : V → M) :
     DRS.trueRel K g ↔ ∃ g', DRS.toRelAt X K g g' := by
   rw [DRS.trueRel_iff]
   exact ⟨fun ⟨g', h⟩ => ⟨g', DRS.toRelAt_of_toRel hrf hfv h⟩,

@@ -88,11 +88,11 @@ theorem sentence₁_proper : sentence₁.IsProper := by simp [DRS.IsProper, sent
 
 /-- The referential presupposition: `sentence₂`'s free referent is supplied by
 `sentence₁`'s universe. -/
-theorem sentence₂_bound : sentence₂.fv ⊆ sentence₁.referents := by simp [sentence₂, sentence₁]
+theorem sentence₂_bound : sentence₂.freeVarFinset ⊆ sentence₁.referents := by simp [sentence₂, sentence₁]
 
 /-- No capture: `sentence₂` introduces no referent occurring in `sentence₁`. -/
 theorem sentence₂_fresh :
-    Disjoint sentence₂.referents (Condition.occL sentence₁.conditions) := by simp [sentence₂]
+    Disjoint sentence₂.referents (Condition.varFinsetL sentence₁.conditions) := by simp [sentence₂]
 
 /-- The action equation for the discourse: interpreting sentence two against
 the context sentence one expresses is interpreting their merge from scratch. -/

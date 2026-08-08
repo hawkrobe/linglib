@@ -6,8 +6,8 @@ import Linglib.Semantics.Dynamic.DRS.Basic
 [kamp-reyle-1993]'s Def. 1.4.4 in the *total-assignment* rendering, over a
 mathlib `FirstOrder.Language.Structure`. An *embedding function*
 `f : Embedding V M` assigns discourse referents to individuals in the model;
-`Box.Extends K f g` is K&R's extension relation `f [K] g` (both in
-`DRS/Basic.lean`); `f.Verifies K` says the embedding `f` *verifies* the DRS
+`Box.Extends K f g` is the extension relation `f [K] g` (both in
+`DRS/Box.lean`); `f.Verifies K` says the embedding `f` *verifies* the DRS
 `K` — it verifies every condition of `K` — and `f.VerifiesCondition c` that it
 verifies the DRS-condition `c`. A sub-DRS is entered by existentially
 (re)assigning along its extension relation. For `imp`, the consequent witness
@@ -19,12 +19,13 @@ closure of verification over the outer universe; it is delivered downstream
 as `DRS.trueRel` (`DRS/Dynamics.lean`) and as the first-order translation's
 realization (`DRS/Reduction.lean`).
 
-**Deviation** ([muskens-1996], fn. 4): K&R's embeddings are *partial* functions
-that sub-DRSs strictly *extend*, so a re-declared referent keeps its value; here
-embeddings are total and a re-declared referent is freely reassigned. The two
-agree on DRSs that declare each referent once — the construction algorithm never
-re-declares — but diverge on re-declaration: `[ | [x | man x] ⇒ [x | mortal x]]`
-says "every man is mortal" for K&R, "if there is a man there is a mortal" here.
+**Deviation** ([muskens-1996], fn. 4): the book's embeddings are *partial*
+functions that sub-DRSs strictly *extend*, so a re-declared referent keeps its
+value; here embeddings are total and a re-declared referent is freely
+reassigned. The two agree on DRSs that declare each referent once — the
+construction algorithm never re-declares — but diverge on re-declaration:
+`[ | [x | man x] ⇒ [x | mortal x]]` says "every man is mortal" there, "if
+there is a man there is a mortal" here.
 
 ## Main declarations
 
@@ -70,11 +71,6 @@ def VerifiesCondition : Embedding V M → Condition L V → Prop
   | f, .dis l r =>
       (∃ g, l.Extends f g ∧ ∀ c ∈ l.conditions, g.VerifiesCondition c) ∨
       (∃ g, r.Extends f g ∧ ∀ c ∈ r.conditions, g.VerifiesCondition c)
-termination_by _ c => sizeOf c
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
 
 /-- `f.Verifies K`: the embedding `f` *verifies* the DRS `K` — `f` verifies
 every condition of `K` (Def. 1.4.4). -/
@@ -140,7 +136,7 @@ private theorem verifies_map_all (e : V ≃ W) (K : DRS L V) (g : Embedding W M)
     (ih : ∀ c ∈ K.conditions, ∀ u : Embedding W M,
       u.VerifiesCondition (c.map e) ↔ VerifiesCondition (u ∘ e) c) :
     g.Verifies (K.map e) ↔ Verifies (g ∘ e) K := by
-  simp only [Verifies, DRS.conditions_map, Condition.mapList_eq_map, List.forall_mem_map]
+  simp only [Verifies, DRS.conditions_map, List.forall_mem_map]
   exact forall_congr' fun c => imp_congr_right fun hc => ih c hc g
 
 /-- "Some extension of `f` verifies `K`" transported along renaming, given the
@@ -155,31 +151,24 @@ private theorem exists_extends_verifies_map_aux (e : V ≃ W) (K : DRS L V) (f :
 
 /-- Renaming along a bijection transports verification (the condition form of
 `verifies_map`). -/
-theorem verifies_map_condition (e : V ≃ W) : ∀ (f : Embedding W M) (c : Condition L V),
-    f.VerifiesCondition (c.map e) ↔ VerifiesCondition (f ∘ e) c
-  | f, .rel R args => by simp [Condition.map, Function.comp]
-  | f, .eq a b => by simp [Condition.map, Function.comp]
-  | f, .neg K => by
+theorem verifies_map_condition (e : V ≃ W) (f : Embedding W M) (c : Condition L V) :
+    f.VerifiesCondition (c.map e) ↔ VerifiesCondition (f ∘ e) c := by
+  induction c generalizing f with
+  | rel R args => simp [Condition.map, Function.comp]
+  | eq a b => simp [Condition.map, Function.comp]
+  | neg K ih =>
     simp only [Condition.map, verifies_neg]
-    exact not_congr
-      (exists_extends_verifies_map_aux e K f fun d _ u => verifies_map_condition e u d)
-  | f, .imp a c => by
+    exact not_congr (exists_extends_verifies_map_aux e K f ih)
+  | imp a c iha ihc =>
     simp only [Condition.map, verifies_imp]
     refine Iff.trans (forall_congr' fun g => imp_congr_right fun _ => imp_congr
-      (verifies_map_all e a g fun d _ u => verifies_map_condition e u d)
-      (exists_extends_verifies_map_aux e c g fun d _ u => verifies_map_condition e u d)) ?_
+      (verifies_map_all e a g iha) (exists_extends_verifies_map_aux e c g ihc)) ?_
     exact DRS.forall_extends_map e a f
       (fun u => Verifies u a → ∃ h', c.Extends u h' ∧ Verifies h' c)
-  | f, .dis l r => by
+  | dis l r ihl ihr =>
     simp only [Condition.map, verifies_dis]
-    exact or_congr
-      (exists_extends_verifies_map_aux e l f fun d _ u => verifies_map_condition e u d)
-      (exists_extends_verifies_map_aux e r f fun d _ u => verifies_map_condition e u d)
-termination_by _ c => sizeOf c
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
+    exact or_congr (exists_extends_verifies_map_aux e l f ihl)
+      (exists_extends_verifies_map_aux e r f ihr)
 
 /-- Renaming along a bijection transports verification: `f` verifies `K.map e`
 iff `f ∘ e` verifies `K` — alphabetic variants have the same semantics. -/
@@ -206,110 +195,99 @@ variable [DecidableEq V]
 /-- "Some extension of `f₁` verifies `K`" survives changing `f₁` at
 non-occurring referents, given coincidence for each condition of `K`. -/
 private theorem exists_extends_verifies_congr_aux (K : DRS L V) {f₁ f₂ : Embedding V M}
-    (h : Set.EqOn f₁ f₂ ↑K.occ)
-    (ih : ∀ c ∈ K.conditions, ∀ g₁ g₂ : Embedding V M,
-      Set.EqOn g₁ g₂ ↑(Condition.occ c) → (g₁.VerifiesCondition c ↔ g₂.VerifiesCondition c)) :
+    (h : Set.EqOn f₁ f₂ ↑K.varFinset)
+    (ih : ∀ c ∈ K.conditions, ∀ {g₁ g₂ : Embedding V M},
+      Set.EqOn g₁ g₂ ↑(Condition.varFinset c) → (g₁.VerifiesCondition c ↔ g₂.VerifiesCondition c)) :
     (∃ g, K.Extends f₁ g ∧ g.Verifies K) → ∃ g, K.Extends f₂ g ∧ g.Verifies K := by
   obtain ⟨U, conds⟩ := K
   rintro ⟨g, hag, hh⟩
-  refine ⟨(Condition.occL conds).piecewise g f₂, ?_, ?_⟩
+  refine ⟨(Condition.varFinsetL conds).piecewise g f₂, ?_, ?_⟩
   · intro x hx
-    by_cases hxc : x ∈ Condition.occL conds
+    by_cases hxc : x ∈ Condition.varFinsetL conds
     · rw [Finset.piecewise_eq_of_mem _ _ _ hxc, hag x hx]
       refine h ?_
-      simp only [DRS.occ, Finset.coe_union]
+      simp only [DRS.varFinset, Finset.coe_union]
       exact Or.inr (Finset.mem_coe.mpr hxc)
     · rw [Finset.piecewise_eq_of_notMem _ _ _ hxc]
   · intro c hc
-    refine (ih c hc _ g fun x hx => ?_).mpr (hh c hc)
+    refine (ih c hc (g₂ := g) fun x hx => ?_).mpr (hh c hc)
     exact Finset.piecewise_eq_of_mem _ _ _
-      (Condition.occ_subset_occL hc (Finset.mem_coe.mp hx))
+      (Condition.varFinset_subset_varFinsetL hc (Finset.mem_coe.mp hx))
 
 /-- Verification of a condition reads the embedding only at its occurring
 referents. -/
-theorem verifiesCondition_congr : ∀ (c : Condition L V) {f₁ f₂ : Embedding V M},
-    Set.EqOn f₁ f₂ ↑(Condition.occ c) → (f₁.VerifiesCondition c ↔ f₂.VerifiesCondition c)
-  | .rel R args, f₁, f₂, h => by
+theorem verifiesCondition_congr (c : Condition L V) {f₁ f₂ : Embedding V M}
+    (h : Set.EqOn f₁ f₂ ↑(Condition.varFinset c)) :
+    f₁.VerifiesCondition c ↔ f₂.VerifiesCondition c := by
+  induction c generalizing f₁ f₂ with
+  | rel R args =>
     simp only [verifies_rel]
     rw [show (fun i => f₁ (args i)) = fun i => f₂ (args i) from
-      funext fun i => h (by simp [Condition.occ])]
-  | .eq a b, f₁, f₂, h => by
+      funext fun i => h (by simp)]
+  | eq a b =>
     simp only [verifies_eq]
-    rw [h (show a ∈ ↑(Condition.occ (.eq a b : Condition L V)) by simp [Condition.occ]),
-      h (show b ∈ ↑(Condition.occ (.eq a b : Condition L V)) by simp [Condition.occ])]
-  | .neg K, f₁, f₂, h => by
+    rw [h (show a ∈ ↑(Condition.varFinset (.eq a b : Condition L V)) by simp),
+      h (show b ∈ ↑(Condition.varFinset (.eq a b : Condition L V)) by simp)]
+  | neg K ih =>
     simp only [verifies_neg]
-    exact not_congr
-      ⟨exists_extends_verifies_congr_aux K h
-        fun d _ g₁ g₂ hg => verifiesCondition_congr d hg,
-       exists_extends_verifies_congr_aux K h.symm
-        fun d _ g₁ g₂ hg => verifiesCondition_congr d hg⟩
-  | .imp a c, f₁, f₂, h => by
+    rw [Condition.varFinset_neg] at h
+    exact not_congr ⟨exists_extends_verifies_congr_aux K h ih,
+      exists_extends_verifies_congr_aux K h.symm ih⟩
+  | imp a c iha ihc =>
     simp only [verifies_imp]
+    rw [Condition.varFinset_imp] at h
     have key : ∀ b₁ b₂ : Embedding V M,
-        Set.EqOn b₁ b₂ ↑(Condition.occ (.imp a c)) →
+        Set.EqOn b₁ b₂ ↑(DRS.varFinset a ∪ DRS.varFinset c) →
         (∀ g, a.Extends b₁ g → g.Verifies a →
           ∃ h', c.Extends g h' ∧ h'.Verifies c) →
         ∀ g, a.Extends b₂ g → g.Verifies a →
           ∃ h', c.Extends g h' ∧ h'.Verifies c := by
       rintro b₁ b₂ hb hL g hag hv
-      have hpg : Set.EqOn ((DRS.occ a ∪ DRS.occ c).piecewise g b₁) g ↑(DRS.occ a) :=
+      have hpg : Set.EqOn ((DRS.varFinset a ∪ DRS.varFinset c).piecewise g b₁) g ↑(DRS.varFinset a) :=
         fun x hx =>
           Finset.piecewise_eq_of_mem _ _ _ (Finset.mem_union_left _ (Finset.mem_coe.mp hx))
-      have hExt : a.Extends b₁ ((DRS.occ a ∪ DRS.occ c).piecewise g b₁) := by
+      have hExt : a.Extends b₁ ((DRS.varFinset a ∪ DRS.varFinset c).piecewise g b₁) := by
         intro x hx
-        by_cases hxS : x ∈ DRS.occ a ∪ DRS.occ c
+        by_cases hxS : x ∈ DRS.varFinset a ∪ DRS.varFinset c
         · rw [Finset.piecewise_eq_of_mem _ _ _ hxS, hag x hx]
           exact (hb (Finset.mem_coe.mpr hxS)).symm
         · rw [Finset.piecewise_eq_of_notMem _ _ _ hxS]
-      have hVer : Verifies ((DRS.occ a ∪ DRS.occ c).piecewise g b₁) a := fun d hd =>
-        (verifiesCondition_congr d (hpg.mono (Finset.coe_subset.mpr
-          ((Condition.occ_subset_occL hd).trans (DRS.occL_subset_occ a))))).mpr (hv d hd)
+      have hVer : Verifies ((DRS.varFinset a ∪ DRS.varFinset c).piecewise g b₁) a := fun d hd =>
+        (iha d hd (hpg.mono (Finset.coe_subset.mpr
+          ((Condition.varFinset_subset_varFinsetL hd).trans (DRS.varFinsetL_subset_varFinset a))))).mpr (hv d hd)
       obtain ⟨h', hch', hvh'⟩ := hL _ hExt hVer
-      have hpc : Set.EqOn ((DRS.occ a ∪ DRS.occ c).piecewise g b₁) g ↑(DRS.occ c) :=
+      have hpc : Set.EqOn ((DRS.varFinset a ∪ DRS.varFinset c).piecewise g b₁) g ↑(DRS.varFinset c) :=
         fun x hx =>
           Finset.piecewise_eq_of_mem _ _ _ (Finset.mem_union_right _ (Finset.mem_coe.mp hx))
-      exact exists_extends_verifies_congr_aux c hpc
-        (fun d _ g₁ g₂ hg => verifiesCondition_congr d hg) ⟨h', hch', hvh'⟩
+      exact exists_extends_verifies_congr_aux c hpc ihc ⟨h', hch', hvh'⟩
     exact ⟨key f₁ f₂ h, key f₂ f₁ h.symm⟩
-  | .dis l r, f₁, f₂, h => by
+  | dis l r ihl ihr =>
     simp only [verifies_dis]
-    have hl : Set.EqOn f₁ f₂ ↑(DRS.occ l) :=
-      h.mono (by simp only [Condition.occ, Finset.coe_union]; exact Set.subset_union_left)
-    have hr : Set.EqOn f₁ f₂ ↑(DRS.occ r) :=
-      h.mono (by simp only [Condition.occ, Finset.coe_union]; exact Set.subset_union_right)
+    have hl : Set.EqOn f₁ f₂ ↑(DRS.varFinset l) :=
+      h.mono (by simp only [Condition.varFinset_dis, Finset.coe_union]; exact Set.subset_union_left)
+    have hr : Set.EqOn f₁ f₂ ↑(DRS.varFinset r) :=
+      h.mono (by simp only [Condition.varFinset_dis, Finset.coe_union]; exact Set.subset_union_right)
     exact or_congr
-      ⟨exists_extends_verifies_congr_aux l hl
-        fun d _ g₁ g₂ hg => verifiesCondition_congr d hg,
-       exists_extends_verifies_congr_aux l hl.symm
-        fun d _ g₁ g₂ hg => verifiesCondition_congr d hg⟩
-      ⟨exists_extends_verifies_congr_aux r hr
-        fun d _ g₁ g₂ hg => verifiesCondition_congr d hg,
-       exists_extends_verifies_congr_aux r hr.symm
-        fun d _ g₁ g₂ hg => verifiesCondition_congr d hg⟩
-termination_by c => sizeOf c
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
+      ⟨exists_extends_verifies_congr_aux l hl ihl,
+       exists_extends_verifies_congr_aux l hl.symm ihl⟩
+      ⟨exists_extends_verifies_congr_aux r hr ihr,
+       exists_extends_verifies_congr_aux r hr.symm ihr⟩
 
 /-- Verification reads the embedding only at the DRS's occurring referents. -/
 theorem verifies_congr {K : DRS L V} {f₁ f₂ : Embedding V M}
-    (h : Set.EqOn f₁ f₂ ↑K.occ) : f₁.Verifies K ↔ f₂.Verifies K := by
+    (h : Set.EqOn f₁ f₂ ↑K.varFinset) : f₁.Verifies K ↔ f₂.Verifies K := by
   simp only [verifies_iff]
   exact forall_congr' fun c => imp_congr_right fun hc =>
     verifiesCondition_congr c (h.mono (Finset.coe_subset.mpr
-      ((Condition.occ_subset_occL hc).trans (DRS.occL_subset_occ K))))
+      ((Condition.varFinset_subset_varFinsetL hc).trans (DRS.varFinsetL_subset_varFinset K))))
 
 /-- "Some extension verifies" reads the input embedding only at the occurring
 referents. -/
 theorem exists_extends_verifies_congr {K : DRS L V} {f₁ f₂ : Embedding V M}
-    (h : Set.EqOn f₁ f₂ ↑K.occ) :
+    (h : Set.EqOn f₁ f₂ ↑K.varFinset) :
     (∃ g, K.Extends f₁ g ∧ g.Verifies K) ↔ ∃ g, K.Extends f₂ g ∧ g.Verifies K :=
-  ⟨exists_extends_verifies_congr_aux K h
-    fun c _ _ _ hg => verifiesCondition_congr c hg,
-   exists_extends_verifies_congr_aux K h.symm
-    fun c _ _ _ hg => verifiesCondition_congr c hg⟩
+  ⟨exists_extends_verifies_congr_aux K h fun c _ => verifiesCondition_congr c,
+   exists_extends_verifies_congr_aux K h.symm fun c _ => verifiesCondition_congr c⟩
 
 end Coincidence
 
