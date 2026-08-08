@@ -18,29 +18,56 @@ namespace DRT
 
 universe u v w x
 
-variable {L : Language.{u, v}} {V : Type w} {W : Type x}
+variable {L : Language.{u, v}} {V : Type w} {W : Type x} {C D E X : Type*}
 
 /-! ### Functorial renaming -/
+
+namespace Box
+
+variable [DecidableEq W] {f : V → W} {g : C → D} {K : Box V C}
+
+/-- `K.map f g` applies `f` to the universe and `g` to each condition. -/
+def map (f : V → W) (g : C → D) (K : Box V C) : Box W D :=
+  ⟨K.referents.image f, K.conditions.map g⟩
+
+/-- Well-founded recursions may traverse sub-boxes with `Box.map`: preprocessing
+re-marks the condition list, exposing `· ∈ K.conditions` to termination proofs. -/
+@[wf_preprocess] theorem map_wfParam :
+    map f g (wfParam K) = ⟨K.referents.image f, (wfParam K.conditions).map g⟩ := by
+  simp [wfParam, map]
+
+@[simp] theorem referents_map : (K.map f g).referents = K.referents.image f := rfl
+
+@[simp] theorem conditions_map : (K.map f g).conditions = K.conditions.map g := rfl
+
+@[simp] theorem map_id [DecidableEq V] : K.map id id = K := by
+  simp [map]
+
+theorem map_congr {g' : C → D} (h : ∀ c ∈ K.conditions, g c = g' c) :
+    K.map f g = K.map f g' := by
+  simp [map, List.map_congr_left h]
+
+theorem map_map [DecidableEq X] {f' : W → X} {g' : D → E} :
+    (K.map f g).map f' g' = K.map (f' ∘ f) (g' ∘ g) := by
+  simp [map, Finset.image_image, List.map_map]
+
+end Box
 
 /-- Rename discourse referents along `f` throughout a condition. -/
 def Condition.map [DecidableEq W] (f : V → W) : Condition L V → Condition L W
   | .rel R args => .rel R (fun i => f (args i))
   | .eq a b => .eq (f a) (f b)
-  | .neg K => .neg ⟨K.referents.image f, K.conditions.map (Condition.map f)⟩
-  | .imp a c =>
-      .imp ⟨a.referents.image f, a.conditions.map (Condition.map f)⟩
-        ⟨c.referents.image f, c.conditions.map (Condition.map f)⟩
-  | .dis l r =>
-      .dis ⟨l.referents.image f, l.conditions.map (Condition.map f)⟩
-        ⟨r.referents.image f, r.conditions.map (Condition.map f)⟩
+  | .neg K => .neg (K.map f (Condition.map f))
+  | .imp a c => .imp (a.map f (Condition.map f)) (c.map f (Condition.map f))
+  | .dis l r => .dis (l.map f (Condition.map f)) (r.map f (Condition.map f))
 decreasing_by all_goals
   have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
   simp_wf
   omega
 
 /-- Rename discourse referents along `f : V → W` throughout a DRS. -/
-def DRS.map [DecidableEq W] (f : V → W) (K : DRS L V) : DRS L W :=
-  ⟨K.referents.image f, K.conditions.map (Condition.map f)⟩
+def DRS.map [DecidableEq W] (f : V → W) : DRS L V → DRS L W :=
+  Box.map f (Condition.map f)
 
 @[simp] theorem DRS.referents_map [DecidableEq W] (f : V → W) (K : DRS L V) :
     (K.map f).referents = K.referents.image f := rfl
@@ -53,18 +80,16 @@ def DRS.map [DecidableEq W] (f : V → W) (K : DRS L V) : DRS L W :=
   | .rel R args => by simp only [Condition.map, id_eq]
   | .eq a b => by simp only [Condition.map, id_eq]
   | .neg K => by
-    have ih : ∀ d ∈ K.conditions, Condition.map id d = d := fun d _ => Condition.map_id d
-    simp only [Condition.map, Finset.image_id, List.map_congr_left ih, List.map_id']
+    have ih : ∀ d ∈ K.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
+    simp only [Condition.map, Box.map_congr ih, Box.map_id]
   | .imp a c => by
-    have iha : ∀ d ∈ a.conditions, Condition.map id d = d := fun d _ => Condition.map_id d
-    have ihc : ∀ d ∈ c.conditions, Condition.map id d = d := fun d _ => Condition.map_id d
-    simp only [Condition.map, Finset.image_id, List.map_congr_left iha,
-      List.map_congr_left ihc, List.map_id']
+    have iha : ∀ d ∈ a.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
+    have ihc : ∀ d ∈ c.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
+    simp only [Condition.map, Box.map_congr iha, Box.map_congr ihc, Box.map_id]
   | .dis l r => by
-    have ihl : ∀ d ∈ l.conditions, Condition.map id d = d := fun d _ => Condition.map_id d
-    have ihr : ∀ d ∈ r.conditions, Condition.map id d = d := fun d _ => Condition.map_id d
-    simp only [Condition.map, Finset.image_id, List.map_congr_left ihl,
-      List.map_congr_left ihr, List.map_id']
+    have ihl : ∀ d ∈ l.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
+    have ihr : ∀ d ∈ r.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
+    simp only [Condition.map, Box.map_congr ihl, Box.map_congr ihr, Box.map_id]
 decreasing_by all_goals
   have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
   simp_wf
@@ -72,11 +97,8 @@ decreasing_by all_goals
 
 /-- Renaming a DRS along the identity is the identity. -/
 @[simp] theorem DRS.map_id [DecidableEq V] (K : DRS L V) : DRS.map id K = K := by
-  obtain ⟨U, conds⟩ := K
-  have ih : ∀ d ∈ conds, Condition.map id d = d := fun d _ => Condition.map_id d
-  simp only [DRS.map, Finset.image_id, List.map_congr_left ih, List.map_id']
-
-variable {X : Type*}
+  have ih : ∀ d ∈ K.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
+  simp only [DRS.map, Box.map_congr ih, Box.map_id]
 
 /-- Renaming a condition along a composite is the composite of the renamings. -/
 theorem Condition.map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W) :
@@ -87,7 +109,7 @@ theorem Condition.map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V �
     have ih : ∀ d ∈ K.conditions,
         (Condition.map g ∘ Condition.map f) d = Condition.map (g ∘ f) d :=
       fun d _ => Condition.map_map g f d
-    simp only [Condition.map, Finset.image_image, List.map_map, List.map_congr_left ih]
+    simp only [Condition.map, Box.map_map, Box.map_congr ih]
   | .imp a c => by
     have iha : ∀ d ∈ a.conditions,
         (Condition.map g ∘ Condition.map f) d = Condition.map (g ∘ f) d :=
@@ -95,8 +117,7 @@ theorem Condition.map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V �
     have ihc : ∀ d ∈ c.conditions,
         (Condition.map g ∘ Condition.map f) d = Condition.map (g ∘ f) d :=
       fun d _ => Condition.map_map g f d
-    simp only [Condition.map, Finset.image_image, List.map_map, List.map_congr_left iha,
-      List.map_congr_left ihc]
+    simp only [Condition.map, Box.map_map, Box.map_congr iha, Box.map_congr ihc]
   | .dis l r => by
     have ihl : ∀ d ∈ l.conditions,
         (Condition.map g ∘ Condition.map f) d = Condition.map (g ∘ f) d :=
@@ -104,8 +125,7 @@ theorem Condition.map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V �
     have ihr : ∀ d ∈ r.conditions,
         (Condition.map g ∘ Condition.map f) d = Condition.map (g ∘ f) d :=
       fun d _ => Condition.map_map g f d
-    simp only [Condition.map, Finset.image_image, List.map_map, List.map_congr_left ihl,
-      List.map_congr_left ihr]
+    simp only [Condition.map, Box.map_map, Box.map_congr ihl, Box.map_congr ihr]
 decreasing_by all_goals
   have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
   simp_wf
@@ -117,7 +137,7 @@ theorem DRS.map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W) 
   have ih : ∀ d ∈ K.conditions,
       (Condition.map g ∘ Condition.map f) d = Condition.map (g ∘ f) d :=
     fun d _ => Condition.map_map g f d
-  simp only [DRS.map, Finset.image_image, List.map_map, List.map_congr_left ih]
+  simp only [DRS.map, Box.map_map, Box.map_congr ih]
 
 /-! ### Merge algebra -/
 
@@ -154,7 +174,7 @@ abbrev Embedding (V : Type w) (M : Type*) := V → M
 
 section Extends
 
-variable {M : Type*} {C : Type x}
+variable {M : Type*}
 
 /-- `K.Extends f g` (written `f [K] g`): the output embedding `g` differs from
 the input `f` at most on `K`'s universe — the total-assignment rendering of
