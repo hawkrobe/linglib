@@ -99,7 +99,7 @@ theorem DRS.trueRel_iff_realize_toFormula [DecidableEq V] (K : DRS L V) (a : V �
 /-- **Coincidence**: truth reads the input embedding only at the occurring
 referents. -/
 theorem DRS.trueRel_congr [DecidableEq V] {K : DRS L V} {a₁ a₂ : V → M}
-    (h : Set.EqOn a₁ a₂ ↑(DRS.occ K)) : DRS.trueRel K a₁ ↔ DRS.trueRel K a₂ :=
+    (h : Set.EqOn a₁ a₂ ↑(DRS.varFinset K)) : DRS.trueRel K a₁ ↔ DRS.trueRel K a₂ :=
   Embedding.exists_extends_verifies_congr h
 
 /-- Renaming along a bijection transports dynamic truth: alphabetic variants
@@ -116,7 +116,7 @@ for `K₁`'s conditions, the merge `K₁ ⊕ K₂` denotes the spine sequencing
 (relational composition) of the two box relations — `‖K₁ ⊕ K₂‖ = seq ‖K₁‖ ‖K₂‖`.
 This is what gives `merge` its dynamic meaning. -/
 theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
-    (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions)) :
+    (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions)) :
     (DRS.toRel (K₁.merge K₂) : Update (V → M)) = seq (DRS.toRel K₁) (DRS.toRel K₂) := by
   obtain ⟨U₁, conds₁⟩ := K₁
   obtain ⟨U₂, conds₂⟩ := K₂
@@ -138,7 +138,7 @@ theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
     · intro c hc
       refine (Embedding.verifiesCondition_congr c fun x hx => ?_).mpr (hh₁ c hc)
       exact Finset.piecewise_eq_of_notMem _ _ _
-        (fun hU => hfresh hU (Condition.occ_subset_occL hc (Finset.mem_coe.mp hx)))
+        (fun hU => hfresh hU (Condition.varFinset_subset_varFinsetL hc (Finset.mem_coe.mp hx)))
     · intro x hx
       exact (Finset.piecewise_eq_of_notMem _ _ _ hx).symm
     · exact hh₂
@@ -149,6 +149,6 @@ theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
       rw [hag2 x hx.2, hag1 x hx.1]
     · intro c hc
       refine (Embedding.verifiesCondition_congr c fun x hx => ?_).mpr (hh1 c hc)
-      exact hag2 x fun hU => hfresh hU (Condition.occ_subset_occL hc (Finset.mem_coe.mp hx))
+      exact hag2 x fun hU => hfresh hU (Condition.varFinset_subset_varFinsetL hc (Finset.mem_coe.mp hx))
 
 end DRT

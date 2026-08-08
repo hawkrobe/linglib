@@ -53,7 +53,7 @@ presupposition-as-anaphora) to the now-accessible believed event (his
 ## Substrate fit (what the faithful core does and does not provide)
 
 * **Accessibility / occurrence.** `DRS.Accessible`/`DRS.accessibleFrom` and
-  `DRS.occ` (`DRS/Basic.lean`) are decidable, host-relative, and reproduce Maier's
+  `DRS.varFinset` (`DRS/Basic.lean`) are decidable, host-relative, and reproduce Maier's
   parasitic asymmetry — the four theorems below are `decide`d against them.
   (`DRS.Accessible` is the *fixed* notion: an earlier host-free `∃`-over-
   superordinates formulation was vacuous.)
@@ -286,7 +286,7 @@ def sueBound : MentalState := sueMerged.bind 21 20
 /-- Before merge, the believed cheating event does not even occur in the lone
 hope description, so the *stop* presupposition has no antecedent to bind to —
 only (dispreferred) accommodation is available. -/
-theorem believed_event_absent_before_merge : 20 ∉ DRS.occ sueHope.flatten := by
+theorem believed_event_absent_before_merge : 20 ∉ DRS.varFinset sueHope.flatten := by
   simp [sueHope, MentalState.flatten]; decide
 
 /-- After merge, the believed cheating event `e` (20) is accessible from the
@@ -308,7 +308,7 @@ theorem parasitic_asymmetry : ¬ DRS.Accessible sueMerged.flatten 20 21 := by
 it has been identified with the believed event `e` (20), so the presupposition is
 resolved by binding (filtered), not accommodated or projected (Maier's (60)). -/
 theorem presup_resolved_after_binding :
-    21 ∉ DRS.occ sueBound.flatten ∧ 20 ∈ DRS.occ sueBound.flatten := by
+    21 ∉ DRS.varFinset sueBound.flatten ∧ 20 ∈ DRS.varFinset sueBound.flatten := by
   simp [sueBound, sueMerged, sueBelief, sueHope, MentalState.merge, mergeCompartments,
     MentalState.bind, MentalState.flatten, Condition.map]
   decide

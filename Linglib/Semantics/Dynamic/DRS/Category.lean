@@ -70,9 +70,9 @@ whose occurring referents are visible, and whose fresh introductions grow
   drs : DRS L V
   /-- The referential presupposition: free referents are supplied by the
   context. -/
-  presup : drs.fv ⊆ X.base
+  presup : drs.freeVarFinset ⊆ X.base
   /-- Visibility: every occurring referent is contextual or introduced. -/
-  occ_le : Condition.occL drs.conditions ⊆ X.base ∪ drs.referents
+  varFinsetL_le : Condition.varFinsetL drs.conditions ⊆ X.base ∪ drs.referents
   /-- Introductions are fresh for the context. -/
   fresh : Disjoint X.base drs.referents
   /-- The context grows by the introduced referents. -/
@@ -81,17 +81,17 @@ whose occurring referents are visible, and whose fresh introductions grow
 instance : Category (Ctx L V) where
   Hom := Hom
   id X :=
-    ⟨DRS.empty, by simp [DRS.empty], by simp [DRS.empty, Condition.occL],
+    ⟨DRS.empty, by simp [DRS.empty], by simp [DRS.empty, Condition.varFinsetL],
       by simp [DRS.empty], by simp [DRS.empty]⟩
   comp {X Y Z} u v :=
     { drs := u.drs.merge v.drs
-      presup := DRS.fv_merge_subset u.presup (by rw [u.target]; exact v.presup)
-      occ_le := by
-        rw [DRS.conditions_merge, Condition.occL_append, DRS.referents_merge,
+      presup := DRS.freeVarFinset_merge_subset u.presup (by rw [u.target]; exact v.presup)
+      varFinsetL_le := by
+        rw [DRS.conditions_merge, Condition.varFinsetL_append, DRS.referents_merge,
           ← Finset.union_assoc]
         exact Finset.union_subset
-          (u.occ_le.trans Finset.subset_union_left)
-          (by rw [u.target]; exact v.occ_le)
+          (u.varFinsetL_le.trans Finset.subset_union_left)
+          (by rw [u.target]; exact v.varFinsetL_le)
       fresh := by
         rw [DRS.referents_merge, Finset.disjoint_union_right]
         refine ⟨u.fresh, ?_⟩
@@ -123,11 +123,11 @@ def sem (W M : Type*) [L.Structure M] [Nonempty M] :
     exact DRS.transition_empty W X.base (by simp [DRS.empty]) (by simp [DRS.empty])
   map_comp {X Y Z} u v := by
     apply DynamicSemantics.Ctx.Hom.ext
-    have hocc : Condition.occL u.drs.conditions ⊆ Y.base := by
-      rw [← u.target]; exact u.occ_le
-    have hfresh : Disjoint v.drs.referents (Condition.occL u.drs.conditions) :=
+    have hocc : Condition.varFinsetL u.drs.conditions ⊆ Y.base := by
+      rw [← u.target]; exact u.varFinsetL_le
+    have hfresh : Disjoint v.drs.referents (Condition.varFinsetL u.drs.conditions) :=
       v.fresh.symm.mono_right hocc
-    have hv : v.drs.fv ⊆ X.base ∪ u.drs.referents := by
+    have hv : v.drs.freeVarFinset ⊆ X.base ∪ u.drs.referents := by
       rw [u.target]; exact v.presup
     show ((u ≫ v).drs.transition W X.base (u ≫ v).presup).copy rfl
         (Finset.coe_inj.mpr (u ≫ v).target) =
