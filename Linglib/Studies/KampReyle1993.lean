@@ -5,7 +5,7 @@ import Mathlib.Data.Fin.VecNotation
 # Kamp & Reyle (1993): From Discourse to Logic
 [kamp-reyle-1993]
 
-K&R's worked examples, evaluated through the faithful model-theoretic DRS core
+The book's worked examples, evaluated through the faithful model-theoretic DRS core
 (`Semantics/Dynamic/DRS/`). Each truth-condition is a theorem about the substrate
 denotation `DRS.trueRel` (Muskens's relational truth, equivalently `Embedding.Verifies`),
 not a local re-implementation.
@@ -16,7 +16,7 @@ not a local re-implementation.
    discourse referent persists across sentences — `∃ e, man e ∧ walked-in e ∧
    sat-down e` (`persistence_tc`).
 2. **Donkey anaphora**: "If a farmer owns a donkey, he beats it." The `⇒`
-   verification clause (K&R's Chapter 2 conditional semantics) yields the
+   verification clause (the Chapter 2 conditional semantics) yields the
    **universal** reading — `∀ farmer-donkey owning pairs, beats`
    (`donkey_universal_reading`). The antecedent's referents are universally
    bound and remain accessible in the consequent.
@@ -105,7 +105,7 @@ def donkeyCons : DRS krLang ℕ := .mk ∅ [.rel .beats (![1, 2])]
 /-- "If a¹ farmer owns a² donkey, he₁ beats it₂." — `[ | donkeyAnte ⇒ donkeyCons]`. -/
 def donkey : DRS krLang ℕ := .mk ∅ [.imp donkeyAnte donkeyCons]
 
-/-- The donkey universal reading: the `⇒` verification clause (K&R's Chapter 2
+/-- The donkey universal reading: the `⇒` verification clause (the Chapter 2
 conditional semantics) makes the antecedent's existentials universal — every
 owning farmer-donkey pair satisfies `beats`. The empty-universe consequent
 reuses the antecedent's values (the anaphora). -/

@@ -2,23 +2,14 @@ import Linglib.Semantics.Dynamic.DRS.Defs
 import Mathlib.Data.Finset.Image
 
 /-!
-# DRS structural API: functorial renaming and merge algebra
+# Structural operations on DRSs
 
-Structural operations and lemmas over the faithful `DRS` core (`DRS/Defs.lean`):
-
-* `DRS.map` / `Condition.map` — functorial renaming of discourse referents along
-  `f : V → W`. When `f` is a bijection this is [kamp-reyle-1993]'s *alphabetic
-  variant* (the prose preceding Def. 1.4.8); `map_id` makes "renaming to the
-  identity is the identity" a free corollary, and `Embedding.verifies_map`
-  (`DRS/Verification.lean`) shows variants have the same semantics.
-* `merge` algebra — identity (`empty`) and associativity.
-* `Embedding` and `Box.Extends` — embedding functions and K&R's extension
-  relation `f [K] g` between them.
-* `DRS.fv` / `DRS.IsProper` — free discourse referents (as a `Finset`) and
-  properness (`fv K = ∅`, Def. 1.4.2–1.4.3).
-* `Condition.occ` / `DRS.occ` — occurring referents, as a decidable `Finset`.
-* `DRS.accessibleFrom` / `DRS.Accessible` — decidable, host-relative
-  accessibility (Def. 1.4.11).
+This file develops the structural theory of the `DRS` type of `DRS/Defs.lean`:
+functorial renaming of discourse referents (`DRS.map`), the merge algebra,
+embedding functions (`Embedding`) with the extension relation `f [K] g`
+(`Box.Extends`), and the referent predicates `occ`, `fv` and `IsProper`,
+`ReuseFreeAt`, and `Accessible`. Renaming along a bijection is
+[kamp-reyle-1993]'s *alphabetic variant* (the prose preceding Def. 1.4.8).
 -/
 
 open FirstOrder
@@ -165,7 +156,7 @@ section Extends
 
 variable {M : Type*} {C : Type x}
 
-/-- `K.Extends f g` (K&R's `f [K] g`): the output embedding `g` differs from
+/-- `K.Extends f g` (written `f [K] g`): the output embedding `g` differs from
 the input `f` at most on `K`'s universe — the total-assignment rendering of
 "`f ⊆ g` and `Dom g = Dom f ∪ U_K`". Stated for any box, since only the
 universe is read. -/

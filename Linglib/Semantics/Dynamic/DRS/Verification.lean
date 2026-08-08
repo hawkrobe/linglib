@@ -6,7 +6,7 @@ import Linglib.Semantics.Dynamic.DRS.Basic
 [kamp-reyle-1993]'s Def. 1.4.4 in the *total-assignment* rendering, over a
 mathlib `FirstOrder.Language.Structure`. An *embedding function*
 `f : Embedding V M` assigns discourse referents to individuals in the model;
-`Box.Extends K f g` is K&R's extension relation `f [K] g` (both in
+`Box.Extends K f g` is the extension relation `f [K] g` (both in
 `DRS/Basic.lean`); `f.Verifies K` says the embedding `f` *verifies* the DRS
 `K` — it verifies every condition of `K` — and `f.VerifiesCondition c` that it
 verifies the DRS-condition `c`. A sub-DRS is entered by existentially
@@ -19,12 +19,13 @@ closure of verification over the outer universe; it is delivered downstream
 as `DRS.trueRel` (`DRS/Dynamics.lean`) and as the first-order translation's
 realization (`DRS/Reduction.lean`).
 
-**Deviation** ([muskens-1996], fn. 4): K&R's embeddings are *partial* functions
-that sub-DRSs strictly *extend*, so a re-declared referent keeps its value; here
-embeddings are total and a re-declared referent is freely reassigned. The two
-agree on DRSs that declare each referent once — the construction algorithm never
-re-declares — but diverge on re-declaration: `[ | [x | man x] ⇒ [x | mortal x]]`
-says "every man is mortal" for K&R, "if there is a man there is a mortal" here.
+**Deviation** ([muskens-1996], fn. 4): the book's embeddings are *partial*
+functions that sub-DRSs strictly *extend*, so a re-declared referent keeps its
+value; here embeddings are total and a re-declared referent is freely
+reassigned. The two agree on DRSs that declare each referent once — the
+construction algorithm never re-declares — but diverge on re-declaration:
+`[ | [x | man x] ⇒ [x | mortal x]]` says "every man is mortal" there, "if
+there is a man there is a mortal" here.
 
 ## Main declarations
 
