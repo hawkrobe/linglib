@@ -132,6 +132,25 @@ def merge [DecidableEq V] (K₁ K₂ : DRS L V) : DRS L V :=
 
 end DRS
 
+/-- Induction on conditions, descending into sub-boxes: to prove `motive c` for
+every condition, handle each constructor given the motive for every condition
+of its sub-boxes. -/
+@[induction_eliminator] theorem Condition.induction {motive : Condition L V → Prop}
+    (rel : ∀ {n : ℕ} (R : L.Relations n) (args : Fin n → V), motive (.rel R args))
+    (eq : ∀ u v, motive (.eq u v))
+    (neg : ∀ K, (∀ c ∈ K.conditions, motive c) → motive (.neg K))
+    (imp : ∀ a c, (∀ d ∈ a.conditions, motive d) → (∀ d ∈ c.conditions, motive d) →
+      motive (.imp a c))
+    (dis : ∀ l r, (∀ d ∈ l.conditions, motive d) → (∀ d ∈ r.conditions, motive d) →
+      motive (.dis l r)) : ∀ c, motive c
+  | .rel R args => rel R args
+  | .eq u v => eq u v
+  | .neg K => neg K fun c _ => Condition.induction rel eq neg imp dis c
+  | .imp a c => imp a c (fun d _ => Condition.induction rel eq neg imp dis d)
+      (fun d _ => Condition.induction rel eq neg imp dis d)
+  | .dis l r => dis l r (fun d _ => Condition.induction rel eq neg imp dis d)
+      (fun d _ => Condition.induction rel eq neg imp dis d)
+
 /-! ### Subordination -/
 
 /-- One-step subordination: `DirectlySubordinate K' K` says `K'` is *directly

@@ -43,13 +43,25 @@ re-marks the condition list, exposing `· ∈ K.conditions` to termination proof
 @[simp] theorem map_id [DecidableEq V] : K.map id id = K := by
   simp [map]
 
-theorem map_congr {g' : C → D} (h : ∀ c ∈ K.conditions, g c = g' c) :
-    K.map f g = K.map f g' := by
-  simp [map, List.map_congr_left h]
+@[simp] theorem map_id' [DecidableEq V] : K.map id (fun c => c) = K := map_id
+
+@[congr] theorem map_congr {f' : V → W} {g' : C → D} {K' : Box V C} (hf : f = f')
+    (hg : ∀ c ∈ K.conditions, g c = g' c) (hK : K = K') : K.map f g = K'.map f' g' := by
+  subst hK; subst hf
+  simp [map, List.map_congr_left hg]
 
 theorem map_map [DecidableEq X] {f' : W → X} {g' : D → E} :
     (K.map f g).map f' g' = K.map (f' ∘ f) (g' ∘ g) := by
   simp [map, Finset.image_image, List.map_map]
+
+theorem map_eq_self [DecidableEq V] {g : C → C} {K : Box V C}
+    (h : ∀ c ∈ K.conditions, g c = c) : K.map id g = K :=
+  (map_congr rfl h rfl).trans map_id'
+
+theorem map_map_of_forall [DecidableEq X] (f : V → W) (f' : W → X) {g' : D → E}
+    {g'' : C → E} (h : ∀ c ∈ K.conditions, g' (g c) = g'' c) :
+    (K.map f g).map f' g' = K.map (f' ∘ f) g'' :=
+  map_map.trans (map_congr rfl h rfl)
 
 end Box
 
@@ -64,42 +76,25 @@ def map [DecidableEq W] (f : V → W) : Condition L V → Condition L W
   | .dis l r => .dis (l.map f (map f)) (r.map f (map f))
 
 /-- Renaming a condition along the identity is the identity. -/
-@[simp] theorem map_id [DecidableEq V] : ∀ c : Condition L V, map id c = c
-  | .rel R args => by simp only [map, id_eq]
-  | .eq a b => by simp only [map, id_eq]
-  | .neg K => by
-    have ih : ∀ d ∈ K.conditions, map id d = id d := fun d _ => map_id d
-    simp only [map, Box.map_congr ih, Box.map_id]
-  | .imp a c => by
-    have iha : ∀ d ∈ a.conditions, map id d = id d := fun d _ => map_id d
-    have ihc : ∀ d ∈ c.conditions, map id d = id d := fun d _ => map_id d
-    simp only [map, Box.map_congr iha, Box.map_congr ihc, Box.map_id]
-  | .dis l r => by
-    have ihl : ∀ d ∈ l.conditions, map id d = id d := fun d _ => map_id d
-    have ihr : ∀ d ∈ r.conditions, map id d = id d := fun d _ => map_id d
-    simp only [map, Box.map_congr ihl, Box.map_congr ihr, Box.map_id]
+@[simp] theorem map_id [DecidableEq V] (c : Condition L V) : map id c = c := by
+  induction c with
+  | rel R args => simp [map]
+  | eq u v => simp [map]
+  | neg K ih => simp [map, Box.map_eq_self ih]
+  | imp a c iha ihc => simp [map, Box.map_eq_self iha, Box.map_eq_self ihc]
+  | dis l r ihl ihr => simp [map, Box.map_eq_self ihl, Box.map_eq_self ihr]
 
 /-- Renaming a condition along a composite is the composite of the renamings. -/
-theorem map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W) :
-    ∀ c : Condition L V, map g (map f c) = map (g ∘ f) c
-  | .rel R args => by simp only [map]; rfl
-  | .eq a b => by simp only [map]; rfl
-  | .neg K => by
-    have ih : ∀ d ∈ K.conditions, (map g ∘ map f) d = map (g ∘ f) d :=
-      fun d _ => map_map g f d
-    simp only [map, Box.map_map, Box.map_congr ih]
-  | .imp a c => by
-    have iha : ∀ d ∈ a.conditions, (map g ∘ map f) d = map (g ∘ f) d :=
-      fun d _ => map_map g f d
-    have ihc : ∀ d ∈ c.conditions, (map g ∘ map f) d = map (g ∘ f) d :=
-      fun d _ => map_map g f d
-    simp only [map, Box.map_map, Box.map_congr iha, Box.map_congr ihc]
-  | .dis l r => by
-    have ihl : ∀ d ∈ l.conditions, (map g ∘ map f) d = map (g ∘ f) d :=
-      fun d _ => map_map g f d
-    have ihr : ∀ d ∈ r.conditions, (map g ∘ map f) d = map (g ∘ f) d :=
-      fun d _ => map_map g f d
-    simp only [map, Box.map_map, Box.map_congr ihl, Box.map_congr ihr]
+theorem map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W)
+    (c : Condition L V) : map g (map f c) = map (g ∘ f) c := by
+  induction c with
+  | rel R args => simp [map]
+  | eq u v => simp [map]
+  | neg K ih => simp [map, Box.map_map_of_forall f g ih]
+  | imp a c iha ihc =>
+    simp [map, Box.map_map_of_forall f g iha, Box.map_map_of_forall f g ihc]
+  | dis l r ihl ihr =>
+    simp [map, Box.map_map_of_forall f g ihl, Box.map_map_of_forall f g ihr]
 
 end Condition
 
@@ -117,16 +112,12 @@ def map [DecidableEq W] (f : V → W) : DRS L V → DRS L W :=
 
 /-- Renaming a DRS along the identity is the identity. -/
 @[simp] theorem map_id [DecidableEq V] (K : DRS L V) : map id K = K := by
-  have ih : ∀ d ∈ K.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
-  simp only [map, Box.map_congr ih, Box.map_id]
+  simp [map]
 
 /-- Renaming a DRS along a composite is the composite of the renamings. -/
 theorem map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W) (K : DRS L V) :
     map g (map f K) = map (g ∘ f) K := by
-  have ih : ∀ d ∈ K.conditions,
-      (Condition.map g ∘ Condition.map f) d = Condition.map (g ∘ f) d :=
-    fun d _ => Condition.map_map g f d
-  simp only [map, Box.map_map, Box.map_congr ih]
+  simp [map, Box.map_map, Condition.map_map g f]
 
 end DRS
 
