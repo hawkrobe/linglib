@@ -18,7 +18,7 @@ namespace DRT
 
 universe u v w x
 
-variable {L : Language.{u, v}} {V : Type w} {W : Type x} {C D E X : Type*}
+variable {L : Language.{u, v}} {V : Type w} {W : Type x} {C D E M X : Type*}
 
 /-! ### Functorial renaming -/
 
@@ -139,23 +139,15 @@ end DRS
 
 /-! ### Embeddings and the extension relation -/
 
-/-- An *embedding function*: an assignment of discourse referents to
-individuals in a given model, in the total-assignment rendering (deviation
-note in `DRS/Verification.lean`). `M` is the model's domain of individuals;
-the model itself — `M` together with an interpretation of the relation
-symbols — is the `L.Structure M` instance that verification
-(`Embedding.Verifies`) requires, so embeddings and the extension relation
-need no model theory, while `f.Verifies K` only exists in a given model. -/
+/-- An *embedding function* is a function that maps discourse referents to
+individuals in a model — here total (deviation note in `DRS/Verification.lean`).
+Only the model's domain `M` appears; its interpretation of the relation
+symbols enters with verification (`f.Verifies K`, `DRS/Verification.lean`). -/
 abbrev Embedding (V : Type w) (M : Type*) := V → M
 
-section Extends
-
-variable {M : Type*}
-
-/-- `K.Extends f g` (written `f [K] g`): the output embedding `g` differs from
-the input `f` at most on `K`'s universe — the total-assignment rendering of
-"`f ⊆ g` and `Dom g = Dom f ∪ U_K`". Stated for any box, since only the
-universe is read. -/
+/-- `K.Extends f g` (written `f [K] g`) if the output embedding `g` differs
+from the input `f` at most on `K`'s universe — the total-assignment rendering
+of "`f ⊆ g` and `Dom g = Dom f ∪ U_K`". -/
 def Box.Extends (K : Box V C) (f g : Embedding V M) : Prop := ∀ x ∉ K.referents, g x = f x
 
 namespace DRS
@@ -164,13 +156,10 @@ namespace DRS
 theorem extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f g : Embedding W M) :
     (K.map e).Extends f g ↔ K.Extends (f ∘ e) (g ∘ e) := by
   simp only [Box.Extends, referents_map, Function.comp_apply]
-  constructor
-  · intro h x hx
-    exact h (e x) (by simpa using hx)
-  · intro h y hy
-    have hx : e.symm y ∉ K.referents := fun hm =>
-      hy (by simpa using Finset.mem_image_of_mem e hm)
-    simpa using h (e.symm y) hx
+  refine ⟨fun h x hx => h (e x) (by simpa using hx), fun h y hy => ?_⟩
+  have hx : e.symm y ∉ K.referents := fun hm =>
+    hy (by simpa using Finset.mem_image_of_mem e hm)
+  simpa using h (e.symm y) hx
 
 /-- The extensions of `f` at `K.map e` are the extensions of `f ∘ e` at `K`,
 via precomposition. -/
@@ -178,28 +167,20 @@ theorem exists_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : Embe
     (P : Embedding V M → Prop) :
     (∃ g, (K.map e).Extends f g ∧ P (g ∘ e)) ↔ ∃ g, K.Extends (f ∘ e) g ∧ P g := by
   simp only [extends_map]
-  constructor
-  · rintro ⟨g, hg, hp⟩
-    exact ⟨g ∘ e, hg, hp⟩
-  · rintro ⟨g, hg, hp⟩
-    have key : (g ∘ e.symm) ∘ e = g := by funext x; simp
-    exact ⟨g ∘ e.symm, key.symm ▸ hg, key.symm ▸ hp⟩
+  refine ⟨fun ⟨g, hg, hp⟩ => ⟨g ∘ e, hg, hp⟩, fun ⟨g, hg, hp⟩ => ⟨g ∘ e.symm, ?_⟩⟩
+  have key : (g ∘ e.symm) ∘ e = g := by funext x; simp
+  exact key.symm ▸ ⟨hg, hp⟩
 
 /-- The `∀` analogue of `DRS.exists_extends_map`. -/
 theorem forall_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : Embedding W M)
     (P : Embedding V M → Prop) :
     (∀ g, (K.map e).Extends f g → P (g ∘ e)) ↔ ∀ g, K.Extends (f ∘ e) g → P g := by
   simp only [extends_map]
-  constructor
-  · intro H g hg
-    have key : (g ∘ e.symm) ∘ e = g := by funext x; simp
-    exact key ▸ H (g ∘ e.symm) (key.symm ▸ hg)
-  · intro H g hg
-    exact H (g ∘ e) hg
+  refine ⟨fun H g hg => ?_, fun H g hg => H (g ∘ e) hg⟩
+  have key : (g ∘ e.symm) ∘ e = g := by funext x; simp
+  exact key ▸ H (g ∘ e.symm) (key.symm ▸ hg)
 
 end DRS
-
-end Extends
 
 /-! ### Occurring referents -/
 
