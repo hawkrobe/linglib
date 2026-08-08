@@ -140,7 +140,7 @@ private theorem verifies_map_all (e : V ≃ W) (K : DRS L V) (g : Embedding W M)
     (ih : ∀ c ∈ K.conditions, ∀ u : Embedding W M,
       u.VerifiesCondition (c.map e) ↔ VerifiesCondition (u ∘ e) c) :
     g.Verifies (K.map e) ↔ Verifies (g ∘ e) K := by
-  simp only [Verifies, DRS.conditions_map, Condition.mapList_eq_map, List.forall_mem_map]
+  simp only [Verifies, DRS.conditions_map, List.forall_mem_map]
   exact forall_congr' fun c => imp_congr_right fun hc => ih c hc g
 
 /-- "Some extension of `f` verifies `K`" transported along renaming, given the
