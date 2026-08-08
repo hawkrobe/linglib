@@ -91,10 +91,8 @@ theorem map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W)
   | rel R args => simp [map]
   | eq u v => simp [map]
   | neg K ih => simp [map, Box.map_map_of_forall f g ih]
-  | imp a c iha ihc =>
-    simp [map, Box.map_map_of_forall f g iha, Box.map_map_of_forall f g ihc]
-  | dis l r ihl ihr =>
-    simp [map, Box.map_map_of_forall f g ihl, Box.map_map_of_forall f g ihr]
+  | imp a c iha ihc => simp [map, Box.map_map_of_forall f g iha, Box.map_map_of_forall f g ihc]
+  | dis l r ihl ihr => simp [map, Box.map_map_of_forall f g ihl, Box.map_map_of_forall f g ihr]
 
 end Condition
 
@@ -119,11 +117,7 @@ theorem map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W) (K :
     map g (map f K) = map (g ∘ f) K := by
   simp [map, Box.map_map, Condition.map_map g f]
 
-end DRS
-
 /-! ### Merge algebra -/
-
-namespace DRS
 
 variable [DecidableEq V]
 
@@ -357,21 +351,15 @@ end DRS
 
 /-- Free referents of a condition occur. -/
 theorem Condition.fv_subset_occ (c : Condition L V) : c.fv ⊆ c.occ := by
-  match c with
-  | .rel R args => simp
-  | .eq u v => simp
-  | .neg K =>
-    have ih : ∀ d ∈ K.conditions, d.fv ⊆ d.occ := fun d _ => Condition.fv_subset_occ d
-    simpa using DRS.fv_subset_occ_of_forall ih
-  | .imp a c =>
-    have iha : ∀ d ∈ a.conditions, d.fv ⊆ d.occ := fun d _ => Condition.fv_subset_occ d
-    have ihc : ∀ d ∈ c.conditions, d.fv ⊆ d.occ := fun d _ => Condition.fv_subset_occ d
+  induction c with
+  | rel R args => simp
+  | eq u v => simp
+  | neg K ih => simpa using DRS.fv_subset_occ_of_forall ih
+  | imp a c iha ihc =>
     simp only [Condition.fv_imp, Condition.occ_imp]
     exact Finset.union_subset_union (DRS.fv_subset_occ_of_forall iha)
       (Finset.sdiff_subset.trans (DRS.fv_subset_occ_of_forall ihc))
-  | .dis l r =>
-    have ihl : ∀ d ∈ l.conditions, d.fv ⊆ d.occ := fun d _ => Condition.fv_subset_occ d
-    have ihr : ∀ d ∈ r.conditions, d.fv ⊆ d.occ := fun d _ => Condition.fv_subset_occ d
+  | dis l r ihl ihr =>
     simp only [Condition.fv_dis, Condition.occ_dis]
     exact Finset.union_subset_union (DRS.fv_subset_occ_of_forall ihl)
       (DRS.fv_subset_occ_of_forall ihr)

@@ -191,35 +191,20 @@ private theorem DRS.realize_toFormula_of_forall [DecidableEq V] {K : DRS L V}
 /-- A single condition's translation realizes as `VerifiesCondition`. -/
 theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : Embedding V M) :
     (Condition.toFormula c).Realize v ↔ v.VerifiesCondition c := by
-  match c with
-  | .rel R args =>
+  induction c generalizing v with
+  | rel R args =>
     simp [Condition.toFormula, Relations.formula, Formula.Realize,
       BoundedFormula.realize_rel, Term.realize_var]
-  | .eq a b => simp [Condition.toFormula, Formula.realize_equal]
-  | .neg K =>
-    have ih : ∀ d ∈ K.conditions, ∀ w : Embedding V M,
-        (Condition.toFormula d).Realize w ↔ w.VerifiesCondition d :=
-      fun d _ w => Condition.realize_toFormula d w
+  | eq a b => simp [Condition.toFormula, Formula.realize_equal]
+  | neg K ih =>
     rw [Condition.toFormula_neg, Formula.realize_not, DRS.realize_toFormula_of_forall ih,
       Embedding.verifies_neg]
-  | .imp a c' =>
-    have iha : ∀ d ∈ a.conditions, ∀ w : Embedding V M,
-        (Condition.toFormula d).Realize w ↔ w.VerifiesCondition d :=
-      fun d _ w => Condition.realize_toFormula d w
-    have ihc : ∀ d ∈ c'.conditions, ∀ w : Embedding V M,
-        (Condition.toFormula d).Realize w ↔ w.VerifiesCondition d :=
-      fun d _ w => Condition.realize_toFormula d w
+  | imp a c iha ihc =>
     rw [Condition.toFormula_imp, Embedding.verifies_imp, realize_closeForall]
     refine forall_congr' fun v' => imp_congr_right fun _ => ?_
     rw [Formula.realize_imp, DRS.realize_bodyFormula_of_forall fun d hd => iha d hd v',
       DRS.realize_toFormula_of_forall ihc]
-  | .dis l r =>
-    have ihl : ∀ d ∈ l.conditions, ∀ w : Embedding V M,
-        (Condition.toFormula d).Realize w ↔ w.VerifiesCondition d :=
-      fun d _ w => Condition.realize_toFormula d w
-    have ihr : ∀ d ∈ r.conditions, ∀ w : Embedding V M,
-        (Condition.toFormula d).Realize w ↔ w.VerifiesCondition d :=
-      fun d _ w => Condition.realize_toFormula d w
+  | dis l r ihl ihr =>
     rw [Condition.toFormula_dis, Formula.realize_sup, Embedding.verifies_dis,
       DRS.realize_toFormula_of_forall ihl, DRS.realize_toFormula_of_forall ihr]
 
