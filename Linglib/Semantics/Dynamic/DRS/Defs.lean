@@ -18,6 +18,12 @@ complex condition is `neg`; `imp` and `dis` are its Chapter 2 extension
 (conditionals and disjunction). Relation symbols come arity-indexed from a
 `FirstOrder.Language`.
 
+"Box" and "DRS" name the same object in the literature — the two-compartment
+diagram, [muskens-1996]'s linear `[u₁ … uₙ | γ₁ … γₘ]` — in diagrammatic vs.
+official register. Here `Box` is the generic shell that DRT variants
+re-instantiate at their condition types (Layered DRT's LDRSs), and `DRS` its
+instantiation at `Condition L V`.
+
 ## Main declarations
 
 * `Box`, `Condition L V`, `DRS L V` — the data type over a language `L`
@@ -54,13 +60,8 @@ universe u v w x
 
 variable {L : Language.{u, v}} {V : Type w}
 
-/-- A DRT *box* over condition type `C`: a universe of discourse referents and
-a list of conditions — the two-compartment diagram the field draws (universe
-above, conditions below; [muskens-1996]'s linear `[u₁ … uₙ | γ₁ … γₘ]`). "Box"
-and "DRS" name the same object in the literature, in diagrammatic vs. official
-register; here `Box` is the generic shell that DRT variants re-instantiate at
-their condition types (`DRS` at `Condition L V`; cf. Layered DRT's LDRSs), and
-the container the condition syntax nests through. -/
+/-- A DRT *box* consists of two parts: a universe of discourse referents, and
+conditions drawn from `C`. `DRS` instantiates `C` at `Condition L V`. -/
 @[ext] structure Box (V : Type w) (C : Type x) where
   /-- The universe `U`: the discourse referents the box introduces. -/
   referents : Finset V
@@ -82,8 +83,10 @@ inductive Condition (L : Language.{u, v}) (V : Type w) where
   /-- Complex condition `K₁ ∨ K₂`. -/
   | dis (left right : Box V (Condition L V))
 
-/-- A discourse representation structure: a box of DRS-conditions — the pair
-`⟨referents, conditions⟩` (Def. 1.4.1). -/
+/-- A discourse representation structure consists of two parts: a universe of
+discourse referents, which represent the objects under discussion, and the
+DRS-conditions, which encode the information that has accumulated on them
+(Def. 1.4.1). -/
 abbrev DRS (L : Language.{u, v}) (V : Type w) := Box V (Condition L V)
 
 namespace DRS
