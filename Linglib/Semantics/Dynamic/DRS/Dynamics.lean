@@ -120,10 +120,10 @@ theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
     (DRS.toRel (K₁.merge K₂) : Update (V → M)) = seq (DRS.toRel K₁) (DRS.toRel K₂) := by
   obtain ⟨U₁, conds₁⟩ := K₁
   obtain ⟨U₂, conds₂⟩ := K₂
-  simp only [DRS.referents_mk, DRS.conditions_mk, Finset.disjoint_left] at hfresh
+  simp only [Finset.disjoint_left] at hfresh
   funext a a'
   apply propext
-  simp only [DRS.toRel, DRS.Extends, DRS.merge, DRS.referents_mk, DRS.conditions_mk,
+  simp only [DRS.toRel, Box.Extends, DRS.merge, DRS.referents_mk,
     Embedding.verifies_mk, List.forall_mem_append, seq, Relation.Comp]
   constructor
   · rintro ⟨hag, hh₁, hh₂⟩
