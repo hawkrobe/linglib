@@ -286,22 +286,31 @@ def sueBound : MentalState := sueMerged.bind 21 20
 /-- Before merge, the believed cheating event does not even occur in the lone
 hope description, so the *stop* presupposition has no antecedent to bind to —
 only (dispreferred) accommodation is available. -/
-theorem believed_event_absent_before_merge : 20 ∉ DRS.occ sueHope.flatten := by decide
+theorem believed_event_absent_before_merge : 20 ∉ DRS.occ sueHope.flatten := by
+  simp [sueHope, MentalState.flatten]; decide
 
 /-- After merge, the believed cheating event `e` (20) is accessible from the
 desire-compartment presupposition `e'` (21): binding `e' = e` is licensed. This
 is the filtering, reusing the core's `DRS.Accessible` unchanged. -/
-theorem presup_binds_after_merge : DRS.Accessible sueMerged.flatten 21 20 := by decide
+theorem presup_binds_after_merge : DRS.Accessible sueMerged.flatten 21 20 := by
+  simp [DRS.Accessible, DRS.accessibleFrom, sueMerged, sueBelief, sueHope, MentalState.merge,
+    mergeCompartments, MentalState.flatten, DRS.accScope, Condition.accScopeL,
+    Condition.accScope, Option.orElse]
 
 /-- The dependence is asymmetric (Maier §3.1, fn. 11): the believed event in the
 belief layer does *not* see the desire-compartment referent. Belief can filter
 desire's presupposition, not conversely. -/
-theorem parasitic_asymmetry : ¬ DRS.Accessible sueMerged.flatten 20 21 := by decide
+theorem parasitic_asymmetry : ¬ DRS.Accessible sueMerged.flatten 20 21 := by
+  simp [DRS.Accessible, DRS.accessibleFrom, sueMerged, sueBelief, sueHope, MentalState.merge,
+    mergeCompartments, MentalState.flatten, DRS.accScope]
 
 /-- After binding, the presupposed cheating referent `e'` (21) no longer occurs:
 it has been identified with the believed event `e` (20), so the presupposition is
 resolved by binding (filtered), not accommodated or projected (Maier's (60)). -/
 theorem presup_resolved_after_binding :
-    21 ∉ DRS.occ sueBound.flatten ∧ 20 ∈ DRS.occ sueBound.flatten := by decide
+    21 ∉ DRS.occ sueBound.flatten ∧ 20 ∈ DRS.occ sueBound.flatten := by
+  simp [sueBound, sueMerged, sueBelief, sueHope, MentalState.merge, mergeCompartments,
+    MentalState.bind, MentalState.flatten, Condition.map]
+  decide
 
 end Maier2015

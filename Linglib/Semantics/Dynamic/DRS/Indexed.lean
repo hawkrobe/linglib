@@ -346,7 +346,7 @@ theorem Condition.holdsAt_union_fresh {X Δ : Finset V} (c : Condition L V)
   | .eq u v => exact Iff.rfl
   | .neg K =>
     obtain ⟨U, conds⟩ := K
-    simp only [Condition.occ, DRS.occ] at hocc
+    simp only [Condition.occ_neg, DRS.occ_mk] at hocc
     rw [Condition.fv_neg] at hfv
     obtain ⟨hΔU, hΔc⟩ := Finset.disjoint_union_right.mp hocc
     have hfvc : Condition.fvL conds ⊆ X ∪ U := DRS.fv_subset_iff.mp hfv
@@ -359,7 +359,7 @@ theorem Condition.holdsAt_union_fresh {X Δ : Finset V} (c : Condition L V)
   | .imp a c' =>
     obtain ⟨Ua, ca⟩ := a
     obtain ⟨Uc, cc⟩ := c'
-    simp only [Condition.occ, DRS.occ] at hocc
+    simp only [Condition.occ_imp, DRS.occ_mk] at hocc
     obtain ⟨ha, hc⟩ := Finset.disjoint_union_right.mp hocc
     obtain ⟨hΔUa, hΔca⟩ := Finset.disjoint_union_right.mp ha
     obtain ⟨hΔUc, hΔcc⟩ := Finset.disjoint_union_right.mp hc
@@ -397,7 +397,7 @@ theorem Condition.holdsAt_union_fresh {X Δ : Finset V} (c : Condition L V)
   | .dis l r =>
     obtain ⟨Ul, cl⟩ := l
     obtain ⟨Ur, cr⟩ := r
-    simp only [Condition.occ, DRS.occ] at hocc
+    simp only [Condition.occ_dis, DRS.occ_mk] at hocc
     obtain ⟨hl, hr⟩ := Finset.disjoint_union_right.mp hocc
     obtain ⟨hΔUl, hΔcl⟩ := Finset.disjoint_union_right.mp hl
     obtain ⟨hΔUr, hΔcr⟩ := Finset.disjoint_union_right.mp hr

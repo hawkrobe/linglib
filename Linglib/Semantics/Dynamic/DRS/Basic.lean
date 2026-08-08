@@ -215,34 +215,55 @@ end Extends
 section Occ
 variable [DecidableEq V]
 
-mutual
 /-- Occurring referents (free or bound) in a condition, as a `Finset` — the DRS
 analogue of mathlib's `Term.varFinset`. Membership `x ∈ occ c` is decidable, so
 downstream consumers get decidable occurrence for free. -/
 def Condition.occ : Condition L V → Finset V
   | .rel _ args => Finset.image args Finset.univ
   | .eq u v => {u, v}
-  | .neg K => DRS.occ K
-  | .imp a c => DRS.occ a ∪ DRS.occ c
-  | .dis l r => DRS.occ l ∪ DRS.occ r
-/-- Occurring referents in a DRS (its universe and those of its conditions). -/
-def DRS.occ : DRS L V → Finset V
-  | .mk U conds => U ∪ Condition.occL conds
+  | .neg K => K.referents ∪ (K.conditions.map Condition.occ).foldr (· ∪ ·) ∅
+  | .imp a c => (a.referents ∪ (a.conditions.map Condition.occ).foldr (· ∪ ·) ∅) ∪
+      (c.referents ∪ (c.conditions.map Condition.occ).foldr (· ∪ ·) ∅)
+  | .dis l r => (l.referents ∪ (l.conditions.map Condition.occ).foldr (· ∪ ·) ∅) ∪
+      (r.referents ∪ (r.conditions.map Condition.occ).foldr (· ∪ ·) ∅)
+decreasing_by all_goals
+  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
+  simp_wf
+  omega
+
 /-- Occurring referents in a list of conditions. -/
-def Condition.occL : List (Condition L V) → Finset V
-  | [] => ∅
-  | c :: cs => Condition.occ c ∪ Condition.occL cs
-end
+def Condition.occL (cs : List (Condition L V)) : Finset V :=
+  (cs.map Condition.occ).foldr (· ∪ ·) ∅
+
+/-- Occurring referents in a DRS (its universe and those of its conditions). -/
+def DRS.occ (K : DRS L V) : Finset V := K.referents ∪ Condition.occL K.conditions
+
+@[simp] theorem Condition.occL_nil : Condition.occL ([] : List (Condition L V)) = ∅ := rfl
+@[simp] theorem Condition.occL_cons (c : Condition L V) (cs : List (Condition L V)) :
+    Condition.occL (c :: cs) = c.occ ∪ Condition.occL cs := rfl
+@[simp] theorem DRS.occ_mk (U : Finset V) (conds : List (Condition L V)) :
+    DRS.occ ⟨U, conds⟩ = U ∪ Condition.occL conds := rfl
+@[simp] theorem Condition.occ_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
+    (Condition.rel R args).occ = Finset.image args Finset.univ := by
+  simp only [Condition.occ]
+@[simp] theorem Condition.occ_eq (u v : V) :
+    (Condition.eq u v : Condition L V).occ = {u, v} := by simp only [Condition.occ]
+@[simp] theorem Condition.occ_neg (K : DRS L V) : (Condition.neg K).occ = K.occ := by
+  simp only [Condition.occ]; rfl
+@[simp] theorem Condition.occ_imp (a c : DRS L V) :
+    (Condition.imp a c).occ = a.occ ∪ c.occ := by simp only [Condition.occ]; rfl
+@[simp] theorem Condition.occ_dis (l r : DRS L V) :
+    (Condition.dis l r).occ = l.occ ∪ r.occ := by simp only [Condition.occ]; rfl
 
 @[simp] theorem Condition.occL_append (cs ds : List (Condition L V)) :
     Condition.occL (cs ++ ds) = Condition.occL cs ∪ Condition.occL ds := by
   induction cs with
-  | nil => simp [Condition.occL]
-  | cons c cs ih => simp [Condition.occL, ih, Finset.union_assoc]
+  | nil => simp
+  | cons c cs ih => simp [ih, Finset.union_assoc]
 
 /-- A DRS's conditions' occurring referents are among the DRS's. -/
-theorem DRS.occL_subset_occ (K : DRS L V) : Condition.occL K.conditions ⊆ K.occ := by
-  cases K; exact Finset.subset_union_right
+theorem DRS.occL_subset_occ (K : DRS L V) : Condition.occL K.conditions ⊆ K.occ :=
+  Finset.subset_union_right
 
 /-- A condition's occurring referents are among its list's. -/
 theorem Condition.occ_subset_occL {c : Condition L V} {cs : List (Condition L V)}
@@ -261,38 +282,42 @@ end Occ
 section Fv
 variable [DecidableEq V]
 
-mutual
-/-- The free discourse referents of a DRS: referents occurring in its
-conditions and not bound by its universe or by an ancestor reachable "left
-and up" (the antecedent of a `⇒` threads its referents into the consequent).
-`K.fv ⊆ b` says every referent of `K` is bound in context `b`. -/
-def DRS.fv : DRS L V → Finset V
-  | .mk U conds => Condition.fvL conds \ U
 /-- The free discourse referents of a condition. -/
 def Condition.fv : Condition L V → Finset V
   | .rel _ args => Finset.image args Finset.univ
   | .eq u v => {u, v}
-  | .neg K => DRS.fv K
-  | .imp a c => DRS.fv a ∪ (DRS.fv c \ a.referents)
-  | .dis l r => DRS.fv l ∪ DRS.fv r
-/-- Free referents of a list of conditions. A `List` helper — the
-higher-order form fails the nested-inductive structural-recursion checker. -/
-def Condition.fvL : List (Condition L V) → Finset V
-  | [] => ∅
-  | c :: cs => Condition.fv c ∪ Condition.fvL cs
-end
+  | .neg K => (K.conditions.map Condition.fv).foldr (· ∪ ·) ∅ \ K.referents
+  | .imp a c => ((a.conditions.map Condition.fv).foldr (· ∪ ·) ∅ \ a.referents) ∪
+      (((c.conditions.map Condition.fv).foldr (· ∪ ·) ∅ \ c.referents) \ a.referents)
+  | .dis l r => ((l.conditions.map Condition.fv).foldr (· ∪ ·) ∅ \ l.referents) ∪
+      ((r.conditions.map Condition.fv).foldr (· ∪ ·) ∅ \ r.referents)
+decreasing_by all_goals
+  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
+  simp_wf
+  omega
+
+/-- Free referents of a list of conditions. -/
+def Condition.fvL (cs : List (Condition L V)) : Finset V :=
+  (cs.map Condition.fv).foldr (· ∪ ·) ∅
+
+/-- The free discourse referents of a DRS: referents occurring in its
+conditions and not bound by its universe or by an ancestor reachable "left
+and up" (the antecedent of a `⇒` threads its referents into the consequent).
+`K.fv ⊆ b` says every referent of `K` is bound in context `b`. -/
+def DRS.fv (K : DRS L V) : Finset V := Condition.fvL K.conditions \ K.referents
 
 @[simp] theorem DRS.fv_mk (U : Finset V) (conds : List (Condition L V)) :
     DRS.fv ⟨U, conds⟩ = Condition.fvL conds \ U := rfl
 @[simp] theorem Condition.fv_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
-    (Condition.rel R args).fv = Finset.image args Finset.univ := rfl
+    (Condition.rel R args).fv = Finset.image args Finset.univ := by simp only [Condition.fv]
 @[simp] theorem Condition.fv_eq (u v : V) :
-    (Condition.eq u v : Condition L V).fv = {u, v} := rfl
-@[simp] theorem Condition.fv_neg (K : DRS L V) : (Condition.neg K).fv = K.fv := rfl
+    (Condition.eq u v : Condition L V).fv = {u, v} := by simp only [Condition.fv]
+@[simp] theorem Condition.fv_neg (K : DRS L V) : (Condition.neg K).fv = K.fv := by
+  simp only [Condition.fv]; rfl
 @[simp] theorem Condition.fv_imp (a c : DRS L V) :
-    (Condition.imp a c).fv = a.fv ∪ (c.fv \ a.referents) := rfl
+    (Condition.imp a c).fv = a.fv ∪ (c.fv \ a.referents) := by simp only [Condition.fv]; rfl
 @[simp] theorem Condition.fv_dis (l r : DRS L V) :
-    (Condition.dis l r).fv = l.fv ∪ r.fv := rfl
+    (Condition.dis l r).fv = l.fv ∪ r.fv := by simp only [Condition.fv]; rfl
 @[simp] theorem Condition.fvL_nil : Condition.fvL ([] : List (Condition L V)) = ∅ := rfl
 @[simp] theorem Condition.fvL_cons (c : Condition L V) (cs : List (Condition L V)) :
     Condition.fvL (c :: cs) = c.fv ∪ Condition.fvL cs := rfl
@@ -304,37 +329,53 @@ theorem DRS.fv_subset_iff {U X : Finset V} {conds : List (Condition L V)} :
     DRS.fv ⟨U, conds⟩ ⊆ X ↔ Condition.fvL conds ⊆ X ∪ U := by
   rw [DRS.fv_mk, sdiff_le_iff, sup_comm, Finset.sup_eq_union]
 
-mutual
-/-- Free referents occur. -/
-theorem DRS.fv_subset_occ (K : DRS L V) : K.fv ⊆ K.occ := by
-  match K with
-  | .mk U conds =>
-    simp only [DRS.fv_mk, DRS.occ]
-    exact (Finset.sdiff_subset).trans (Condition.fvL_subset_occL conds) |>.trans
-      Finset.subset_union_right
+private theorem Condition.fvL_subset_occL_of_forall {cs : List (Condition L V)}
+    (h : ∀ c ∈ cs, c.fv ⊆ c.occ) : Condition.fvL cs ⊆ Condition.occL cs := by
+  induction cs with
+  | nil => simp
+  | cons c cs ih =>
+    simp only [Condition.fvL_cons, Condition.occL_cons]
+    exact Finset.union_subset_union (h c (by simp))
+      (ih fun d hd => h d (List.mem_cons_of_mem c hd))
+
+private theorem DRS.fv_subset_occ_of_forall {K : DRS L V}
+    (h : ∀ c ∈ K.conditions, c.fv ⊆ c.occ) : K.fv ⊆ K.occ :=
+  Finset.sdiff_subset.trans ((Condition.fvL_subset_occL_of_forall h).trans
+    Finset.subset_union_right)
+
 /-- Free referents of a condition occur. -/
 theorem Condition.fv_subset_occ (c : Condition L V) : c.fv ⊆ c.occ := by
   match c with
-  | .rel R args => simp [Condition.occ]
-  | .eq u v => simp [Condition.occ]
-  | .neg K => simpa [Condition.occ] using DRS.fv_subset_occ K
+  | .rel R args => simp
+  | .eq u v => simp
+  | .neg K =>
+    have ih : ∀ d ∈ K.conditions, d.fv ⊆ d.occ := fun d _ => Condition.fv_subset_occ d
+    simpa using DRS.fv_subset_occ_of_forall ih
   | .imp a c =>
-    simp only [Condition.fv_imp, Condition.occ]
-    exact Finset.union_subset_union (DRS.fv_subset_occ a)
-      ((Finset.sdiff_subset).trans (DRS.fv_subset_occ c))
+    have iha : ∀ d ∈ a.conditions, d.fv ⊆ d.occ := fun d _ => Condition.fv_subset_occ d
+    have ihc : ∀ d ∈ c.conditions, d.fv ⊆ d.occ := fun d _ => Condition.fv_subset_occ d
+    simp only [Condition.fv_imp, Condition.occ_imp]
+    exact Finset.union_subset_union (DRS.fv_subset_occ_of_forall iha)
+      (Finset.sdiff_subset.trans (DRS.fv_subset_occ_of_forall ihc))
   | .dis l r =>
-    simp only [Condition.fv_dis, Condition.occ]
-    exact Finset.union_subset_union (DRS.fv_subset_occ l) (DRS.fv_subset_occ r)
+    have ihl : ∀ d ∈ l.conditions, d.fv ⊆ d.occ := fun d _ => Condition.fv_subset_occ d
+    have ihr : ∀ d ∈ r.conditions, d.fv ⊆ d.occ := fun d _ => Condition.fv_subset_occ d
+    simp only [Condition.fv_dis, Condition.occ_dis]
+    exact Finset.union_subset_union (DRS.fv_subset_occ_of_forall ihl)
+      (DRS.fv_subset_occ_of_forall ihr)
+decreasing_by all_goals
+  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
+  simp_wf
+  omega
+
+/-- Free referents occur. -/
+theorem DRS.fv_subset_occ (K : DRS L V) : K.fv ⊆ K.occ :=
+  DRS.fv_subset_occ_of_forall fun c _ => Condition.fv_subset_occ c
+
 /-- The list analogue of `Condition.fv_subset_occ`. -/
 theorem Condition.fvL_subset_occL (cs : List (Condition L V)) :
-    Condition.fvL cs ⊆ Condition.occL cs := by
-  match cs with
-  | [] => simp
-  | c :: cs =>
-    simp only [Condition.fvL_cons, Condition.occL]
-    exact Finset.union_subset_union (Condition.fv_subset_occ c)
-      (Condition.fvL_subset_occL cs)
-end
+    Condition.fvL cs ⊆ Condition.occL cs :=
+  Condition.fvL_subset_occL_of_forall fun c _ => Condition.fv_subset_occ c
 
 @[simp] theorem Condition.fvL_append (cs ds : List (Condition L V)) :
     Condition.fvL (cs ++ ds) = Condition.fvL cs ∪ Condition.fvL ds := by
@@ -379,52 +420,74 @@ agree-off-universe semantics and the persistence semantics coincide
 section ReuseFree
 variable [DecidableEq V]
 
-mutual
-/-- A DRS is *reuse-free* at ambient declarations `X`: its universe avoids `X`
-and its conditions are reuse-free at the grown set. -/
-def DRS.ReuseFreeAt (X : Finset V) : DRS L V → Prop
-  | .mk U conds => Disjoint X U ∧ Condition.ReuseFreeAllAt (X ∪ U) conds
-/-- A condition is reuse-free at ambient declarations `X`. -/
+/-- A condition is reuse-free at ambient declarations `X`: each sub-box
+universe is fresh for the declarations in scope, threaded the way verification
+threads the base (the antecedent of a `⇒` feeds its referents into the
+consequent). -/
 def Condition.ReuseFreeAt (X : Finset V) : Condition L V → Prop
   | .rel _ _ => True
   | .eq _ _ => True
-  | .neg K => DRS.ReuseFreeAt X K
-  | .imp a c => DRS.ReuseFreeAt X a ∧ DRS.ReuseFreeAt (X ∪ a.referents) c
-  | .dis l r => DRS.ReuseFreeAt X l ∧ DRS.ReuseFreeAt X r
+  | .neg K => Disjoint X K.referents ∧
+      ∀ c ∈ K.conditions, Condition.ReuseFreeAt (X ∪ K.referents) c
+  | .imp a c =>
+      (Disjoint X a.referents ∧
+        ∀ d ∈ a.conditions, Condition.ReuseFreeAt (X ∪ a.referents) d) ∧
+      (Disjoint (X ∪ a.referents) c.referents ∧
+        ∀ d ∈ c.conditions, Condition.ReuseFreeAt (X ∪ a.referents ∪ c.referents) d)
+  | .dis l r =>
+      (Disjoint X l.referents ∧
+        ∀ d ∈ l.conditions, Condition.ReuseFreeAt (X ∪ l.referents) d) ∧
+      (Disjoint X r.referents ∧
+        ∀ d ∈ r.conditions, Condition.ReuseFreeAt (X ∪ r.referents) d)
+decreasing_by all_goals
+  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
+  simp_wf
+  omega
+
 /-- Reuse-freeness for a list of conditions. -/
-def Condition.ReuseFreeAllAt (X : Finset V) : List (Condition L V) → Prop
-  | [] => True
-  | c :: cs => Condition.ReuseFreeAt X c ∧ Condition.ReuseFreeAllAt X cs
-end
+def Condition.ReuseFreeAllAt (X : Finset V) (cs : List (Condition L V)) : Prop :=
+  ∀ c ∈ cs, Condition.ReuseFreeAt X c
+
+/-- A DRS is *reuse-free* at ambient declarations `X`: its universe avoids `X`
+and its conditions are reuse-free at the grown set. -/
+def DRS.ReuseFreeAt (X : Finset V) (K : DRS L V) : Prop :=
+  Disjoint X K.referents ∧ Condition.ReuseFreeAllAt (X ∪ K.referents) K.conditions
 
 @[simp] theorem DRS.reuseFreeAt_mk (X U : Finset V) (conds : List (Condition L V)) :
     DRS.ReuseFreeAt X (.mk U conds) ↔
       Disjoint X U ∧ Condition.ReuseFreeAllAt (X ∪ U) conds := Iff.rfl
 
 @[simp] theorem Condition.reuseFreeAt_rel (X : Finset V) {n : ℕ} (R : L.Relations n)
-    (args : Fin n → V) : Condition.ReuseFreeAt X (.rel R args) := trivial
+    (args : Fin n → V) : Condition.ReuseFreeAt X (.rel R args) := by
+  simp only [Condition.ReuseFreeAt]
 
 @[simp] theorem Condition.reuseFreeAt_eq (X : Finset V) (u v : V) :
-    Condition.ReuseFreeAt X (.eq u v : Condition L V) := trivial
+    Condition.ReuseFreeAt X (.eq u v : Condition L V) := by
+  simp only [Condition.ReuseFreeAt]
 
 @[simp] theorem Condition.reuseFreeAt_neg (X : Finset V) (K : DRS L V) :
-    Condition.ReuseFreeAt X (.neg K) ↔ DRS.ReuseFreeAt X K := Iff.rfl
+    Condition.ReuseFreeAt X (.neg K) ↔ DRS.ReuseFreeAt X K := by
+  simp only [Condition.ReuseFreeAt]; rfl
 
 @[simp] theorem Condition.reuseFreeAt_imp (X : Finset V) (a c : DRS L V) :
     Condition.ReuseFreeAt X (.imp a c) ↔
-      DRS.ReuseFreeAt X a ∧ DRS.ReuseFreeAt (X ∪ a.referents) c := Iff.rfl
+      DRS.ReuseFreeAt X a ∧ DRS.ReuseFreeAt (X ∪ a.referents) c := by
+  simp only [Condition.ReuseFreeAt]; rfl
 
 @[simp] theorem Condition.reuseFreeAt_dis (X : Finset V) (l r : DRS L V) :
     Condition.ReuseFreeAt X (.dis l r) ↔
-      DRS.ReuseFreeAt X l ∧ DRS.ReuseFreeAt X r := Iff.rfl
+      DRS.ReuseFreeAt X l ∧ DRS.ReuseFreeAt X r := by
+  simp only [Condition.ReuseFreeAt]; rfl
 
 @[simp] theorem Condition.reuseFreeAllAt_nil (X : Finset V) :
-    Condition.ReuseFreeAllAt X ([] : List (Condition L V)) := trivial
+    Condition.ReuseFreeAllAt X ([] : List (Condition L V)) := by
+  simp [Condition.ReuseFreeAllAt]
 
 @[simp] theorem Condition.reuseFreeAllAt_cons (X : Finset V) (c : Condition L V)
     (cs : List (Condition L V)) :
     Condition.ReuseFreeAllAt X (c :: cs) ↔
-      Condition.ReuseFreeAt X c ∧ Condition.ReuseFreeAllAt X cs := Iff.rfl
+      Condition.ReuseFreeAt X c ∧ Condition.ReuseFreeAllAt X cs := by
+  simp only [Condition.ReuseFreeAllAt, List.forall_mem_cons]
 
 end ReuseFree
 
@@ -440,33 +503,59 @@ in-scope referents (the same threading as `DRS.Bound`), which is also decidable.
 section Accessibility
 variable [DecidableEq V]
 
-mutual
-/-- Descend `T`, accumulating in-scope referents `s` ("left and up"); on reaching
-the box introducing `x`, return that box's in-scope set `s ∪ U`. The `⇒`-consequent
-additionally sees the antecedent's universe. -/
-def DRS.accScope (s : Finset V) : DRS L V → V → Option (Finset V)
-  | .mk U conds, x => if x ∈ U then some (s ∪ U) else Condition.accScopeL (s ∪ U) conds x
 /-- Accessibility threading through a condition. -/
 def Condition.accScope (s : Finset V) : Condition L V → V → Option (Finset V)
   | .rel _ _, _ => none
   | .eq _ _, _ => none
-  | .neg K, x => DRS.accScope s K x
+  | .neg K, x =>
+      if x ∈ K.referents then some (s ∪ K.referents)
+      else (K.conditions.map fun c => Condition.accScope (s ∪ K.referents) c x).foldr
+        (fun r acc => r.orElse fun _ => acc) none
   | .imp a c, x =>
-      match DRS.accScope s a x with
-      | some r => some r
-      | none => DRS.accScope (s ∪ a.referents) c x
+      (if x ∈ a.referents then some (s ∪ a.referents)
+       else (a.conditions.map fun d => Condition.accScope (s ∪ a.referents) d x).foldr
+         (fun r acc => r.orElse fun _ => acc) none).orElse fun _ =>
+      if x ∈ c.referents then some (s ∪ a.referents ∪ c.referents)
+      else (c.conditions.map fun d =>
+          Condition.accScope (s ∪ a.referents ∪ c.referents) d x).foldr
+        (fun r acc => r.orElse fun _ => acc) none
   | .dis l r, x =>
-      match DRS.accScope s l x with
-      | some r => some r
-      | none => DRS.accScope s r x
-/-- Accessibility threading through a list of conditions (mutual helper). -/
-def Condition.accScopeL (s : Finset V) : List (Condition L V) → V → Option (Finset V)
-  | [], _ => none
-  | c :: cs, x =>
-      match Condition.accScope s c x with
-      | some r => some r
-      | none => Condition.accScopeL s cs x
-end
+      (if x ∈ l.referents then some (s ∪ l.referents)
+       else (l.conditions.map fun d => Condition.accScope (s ∪ l.referents) d x).foldr
+         (fun r acc => r.orElse fun _ => acc) none).orElse fun _ =>
+      if x ∈ r.referents then some (s ∪ r.referents)
+      else (r.conditions.map fun d => Condition.accScope (s ∪ r.referents) d x).foldr
+        (fun r acc => r.orElse fun _ => acc) none
+decreasing_by all_goals
+  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
+  simp_wf
+  omega
+
+/-- Accessibility threading through a list of conditions: the first hit wins. -/
+def Condition.accScopeL (s : Finset V) (cs : List (Condition L V)) (x : V) :
+    Option (Finset V) :=
+  (cs.map fun c => Condition.accScope s c x).foldr (fun r acc => r.orElse fun _ => acc) none
+
+/-- Descend `K`, accumulating in-scope referents `s` ("left and up"); on reaching
+the box introducing `x`, return that box's in-scope set `s ∪ U`. The `⇒`-consequent
+additionally sees the antecedent's universe. -/
+def DRS.accScope (s : Finset V) (K : DRS L V) (x : V) : Option (Finset V) :=
+  if x ∈ K.referents then some (s ∪ K.referents)
+  else Condition.accScopeL (s ∪ K.referents) K.conditions x
+
+theorem Condition.accScope_neg (s : Finset V) (K : DRS L V) (x : V) :
+    Condition.accScope s (.neg K) x = DRS.accScope s K x := by
+  simp only [Condition.accScope]; rfl
+
+theorem Condition.accScope_imp (s : Finset V) (a c : DRS L V) (x : V) :
+    Condition.accScope s (.imp a c) x =
+      (DRS.accScope s a x).orElse fun _ => DRS.accScope (s ∪ a.referents) c x := by
+  simp only [Condition.accScope]; rfl
+
+theorem Condition.accScope_dis (s : Finset V) (l r : DRS L V) (x : V) :
+    Condition.accScope s (.dis l r) x =
+      (DRS.accScope s l x).orElse fun _ => DRS.accScope s r x := by
+  simp only [Condition.accScope]; rfl
 
 /-- The referents accessible from `u`'s introduction in `T`, as a decidable
 `Finset`; `∅` if `u` is not introduced in `T`. (Def. 1.4.11 defines
@@ -488,6 +577,8 @@ not accessible from `1` — the subordination asymmetry, now decidable (contrast
 old host-free `Accessible`, which was provable for *all* referents). -/
 example :
     DRS.Accessible (L := Language.empty) (.mk {1} [.neg (.mk {2} [])]) 2 1 ∧
-      ¬ DRS.Accessible (L := Language.empty) (.mk {1} [.neg (.mk {2} [])]) 1 2 := by decide
+      ¬ DRS.Accessible (L := Language.empty) (.mk {1} [.neg (.mk {2} [])]) 1 2 := by
+  simp [DRS.Accessible, DRS.accessibleFrom, DRS.accScope, Condition.accScopeL,
+    Condition.accScope_neg]
 
 end DRT

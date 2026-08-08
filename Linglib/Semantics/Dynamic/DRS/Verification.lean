@@ -232,13 +232,14 @@ theorem verifiesCondition_congr : ∀ (c : Condition L V) {f₁ f₂ : Embedding
   | .rel R args, f₁, f₂, h => by
     simp only [verifies_rel]
     rw [show (fun i => f₁ (args i)) = fun i => f₂ (args i) from
-      funext fun i => h (by simp [Condition.occ])]
+      funext fun i => h (by simp)]
   | .eq a b, f₁, f₂, h => by
     simp only [verifies_eq]
-    rw [h (show a ∈ ↑(Condition.occ (.eq a b : Condition L V)) by simp [Condition.occ]),
-      h (show b ∈ ↑(Condition.occ (.eq a b : Condition L V)) by simp [Condition.occ])]
+    rw [h (show a ∈ ↑(Condition.occ (.eq a b : Condition L V)) by simp),
+      h (show b ∈ ↑(Condition.occ (.eq a b : Condition L V)) by simp)]
   | .neg K, f₁, f₂, h => by
     simp only [verifies_neg]
+    rw [Condition.occ_neg] at h
     exact not_congr
       ⟨exists_extends_verifies_congr_aux K h
         fun d _ g₁ g₂ hg => verifiesCondition_congr d hg,
@@ -246,8 +247,9 @@ theorem verifiesCondition_congr : ∀ (c : Condition L V) {f₁ f₂ : Embedding
         fun d _ g₁ g₂ hg => verifiesCondition_congr d hg⟩
   | .imp a c, f₁, f₂, h => by
     simp only [verifies_imp]
+    rw [Condition.occ_imp] at h
     have key : ∀ b₁ b₂ : Embedding V M,
-        Set.EqOn b₁ b₂ ↑(Condition.occ (.imp a c)) →
+        Set.EqOn b₁ b₂ ↑(DRS.occ a ∪ DRS.occ c) →
         (∀ g, a.Extends b₁ g → g.Verifies a →
           ∃ h', c.Extends g h' ∧ h'.Verifies c) →
         ∀ g, a.Extends b₂ g → g.Verifies a →
@@ -275,9 +277,9 @@ theorem verifiesCondition_congr : ∀ (c : Condition L V) {f₁ f₂ : Embedding
   | .dis l r, f₁, f₂, h => by
     simp only [verifies_dis]
     have hl : Set.EqOn f₁ f₂ ↑(DRS.occ l) :=
-      h.mono (by simp only [Condition.occ, Finset.coe_union]; exact Set.subset_union_left)
+      h.mono (by simp only [Condition.occ_dis, Finset.coe_union]; exact Set.subset_union_left)
     have hr : Set.EqOn f₁ f₂ ↑(DRS.occ r) :=
-      h.mono (by simp only [Condition.occ, Finset.coe_union]; exact Set.subset_union_right)
+      h.mono (by simp only [Condition.occ_dis, Finset.coe_union]; exact Set.subset_union_right)
     exact or_congr
       ⟨exists_extends_verifies_congr_aux l hl
         fun d _ g₁ g₂ hg => verifiesCondition_congr d hg,
