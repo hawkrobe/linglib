@@ -71,11 +71,6 @@ def VerifiesCondition : Embedding V M → Condition L V → Prop
   | f, .dis l r =>
       (∃ g, l.Extends f g ∧ ∀ c ∈ l.conditions, g.VerifiesCondition c) ∨
       (∃ g, r.Extends f g ∧ ∀ c ∈ r.conditions, g.VerifiesCondition c)
-termination_by _ c => sizeOf c
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
 
 /-- `f.Verifies K`: the embedding `f` *verifies* the DRS `K` — `f` verifies
 every condition of `K` (Def. 1.4.4). -/
@@ -176,11 +171,6 @@ theorem verifies_map_condition (e : V ≃ W) : ∀ (f : Embedding W M) (c : Cond
     exact or_congr
       (exists_extends_verifies_map_aux e l f fun d _ u => verifies_map_condition e u d)
       (exists_extends_verifies_map_aux e r f fun d _ u => verifies_map_condition e u d)
-termination_by _ c => sizeOf c
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
 
 /-- Renaming along a bijection transports verification: `f` verifies `K.map e`
 iff `f ∘ e` verifies `K` — alphabetic variants have the same semantics. -/
@@ -290,11 +280,6 @@ theorem verifiesCondition_congr : ∀ (c : Condition L V) {f₁ f₂ : Embedding
         fun d _ g₁ g₂ hg => verifiesCondition_congr d hg,
        exists_extends_verifies_congr_aux r hr.symm
         fun d _ g₁ g₂ hg => verifiesCondition_congr d hg⟩
-termination_by c => sizeOf c
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
 
 /-- Verification reads the embedding only at the DRS's occurring referents. -/
 theorem verifies_congr {K : DRS L V} {f₁ f₂ : Embedding V M}

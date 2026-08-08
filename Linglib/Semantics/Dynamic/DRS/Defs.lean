@@ -106,6 +106,12 @@ theorem sizeOf_lt_of_mem_conditions {K : DRS L V} {c : Condition L V}
   simp only [Box.mk.sizeOf_spec]
   omega
 
+-- Registers the `Box`-through-`List` nesting step with the default termination
+-- tactic: recursions descending into a box's conditions need no `decreasing_by`.
+macro_rules
+  | `(tactic| decreasing_trivial) =>
+    `(tactic| have := DRS.sizeOf_lt_of_mem_conditions (by assumption); omega)
+
 /-- The empty DRS `⟨∅, []⟩`. -/
 def empty : DRS L V := .mk ∅ []
 

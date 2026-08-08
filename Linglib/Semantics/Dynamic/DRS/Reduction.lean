@@ -61,10 +61,6 @@ noncomputable def Condition.toFormula [DecidableEq V] : Condition L V → L.Form
   | .dis l r =>
       closeExists l.referents ((l.conditions.map Condition.toFormula).foldr (· ⊓ ·) ⊤) ⊔
         closeExists r.referents ((r.conditions.map Condition.toFormula).foldr (· ⊓ ·) ⊤)
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
 
 /-- The conjunction of a list of translated conditions. -/
 noncomputable def Condition.toFormulaAll [DecidableEq V] (cs : List (Condition L V)) :
@@ -226,10 +222,6 @@ theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : Emb
       fun d _ w => Condition.realize_toFormula d w
     rw [Condition.toFormula_dis, Formula.realize_sup, Embedding.verifies_dis,
       DRS.realize_toFormula_of_forall ihl, DRS.realize_toFormula_of_forall ihr]
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
 
 /-- A list of conditions' conjoined translation realizes as the conjunction of
 their realizations. -/

@@ -60,10 +60,6 @@ def Condition.map [DecidableEq W] (f : V → W) : Condition L V → Condition L 
   | .neg K => .neg (K.map f (Condition.map f))
   | .imp a c => .imp (a.map f (Condition.map f)) (c.map f (Condition.map f))
   | .dis l r => .dis (l.map f (Condition.map f)) (r.map f (Condition.map f))
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
 
 /-- Rename discourse referents along `f : V → W` throughout a DRS. -/
 def DRS.map [DecidableEq W] (f : V → W) : DRS L V → DRS L W :=
@@ -90,10 +86,6 @@ def DRS.map [DecidableEq W] (f : V → W) : DRS L V → DRS L W :=
     have ihl : ∀ d ∈ l.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
     have ihr : ∀ d ∈ r.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
     simp only [Condition.map, Box.map_congr ihl, Box.map_congr ihr, Box.map_id]
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
 
 /-- Renaming a DRS along the identity is the identity. -/
 @[simp] theorem DRS.map_id [DecidableEq V] (K : DRS L V) : DRS.map id K = K := by
@@ -126,10 +118,6 @@ theorem Condition.map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V �
         (Condition.map g ∘ Condition.map f) d = Condition.map (g ∘ f) d :=
       fun d _ => Condition.map_map g f d
     simp only [Condition.map, Box.map_map, Box.map_congr ihl, Box.map_congr ihr]
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
 
 /-- Renaming a DRS along a composite is the composite of the renamings. -/
 theorem DRS.map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W) (K : DRS L V) :
@@ -237,10 +225,6 @@ def Condition.occ : Condition L V → Finset V
       (c.referents ∪ (c.conditions.map Condition.occ).foldr (· ∪ ·) ∅)
   | .dis l r => (l.referents ∪ (l.conditions.map Condition.occ).foldr (· ∪ ·) ∅) ∪
       (r.referents ∪ (r.conditions.map Condition.occ).foldr (· ∪ ·) ∅)
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
 
 /-- Occurring referents in a list of conditions. -/
 def Condition.occL (cs : List (Condition L V)) : Finset V :=
@@ -302,10 +286,6 @@ def Condition.fv : Condition L V → Finset V
       (((c.conditions.map Condition.fv).foldr (· ∪ ·) ∅ \ c.referents) \ a.referents)
   | .dis l r => ((l.conditions.map Condition.fv).foldr (· ∪ ·) ∅ \ l.referents) ∪
       ((r.conditions.map Condition.fv).foldr (· ∪ ·) ∅ \ r.referents)
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
 
 /-- Free referents of a list of conditions. -/
 def Condition.fvL (cs : List (Condition L V)) : Finset V :=
@@ -374,10 +354,6 @@ theorem Condition.fv_subset_occ (c : Condition L V) : c.fv ⊆ c.occ := by
     simp only [Condition.fv_dis, Condition.occ_dis]
     exact Finset.union_subset_union (DRS.fv_subset_occ_of_forall ihl)
       (DRS.fv_subset_occ_of_forall ihr)
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
 
 /-- Free referents occur. -/
 theorem DRS.fv_subset_occ (K : DRS L V) : K.fv ⊆ K.occ :=
@@ -450,10 +426,6 @@ def Condition.ReuseFreeAt (X : Finset V) : Condition L V → Prop
         ∀ d ∈ l.conditions, Condition.ReuseFreeAt (X ∪ l.referents) d) ∧
       (Disjoint X r.referents ∧
         ∀ d ∈ r.conditions, Condition.ReuseFreeAt (X ∪ r.referents) d)
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
 
 /-- Reuse-freeness for a list of conditions. -/
 def Condition.ReuseFreeAllAt (X : Finset V) (cs : List (Condition L V)) : Prop :=
@@ -537,10 +509,6 @@ def Condition.accScope (s : Finset V) : Condition L V → V → Option (Finset V
       if x ∈ r.referents then some (s ∪ r.referents)
       else (r.conditions.map fun d => Condition.accScope (s ∪ r.referents) d x).foldr
         (fun r acc => r.orElse fun _ => acc) none
-decreasing_by all_goals
-  have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
-  simp_wf
-  omega
 
 /-- Accessibility threading through a list of conditions: the first hit wins. -/
 def Condition.accScopeL (s : Finset V) (cs : List (Condition L V)) (x : V) :
