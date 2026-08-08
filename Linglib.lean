@@ -1603,6 +1603,7 @@ import Linglib.Semantics.Dynamic.Category
 import Linglib.Semantics.Dynamic.Collapse
 import Linglib.Semantics.Dynamic.DPL
 import Linglib.Semantics.Dynamic.DRS.Basic
+import Linglib.Semantics.Dynamic.DRS.Box
 import Linglib.Semantics.Dynamic.DRS.Category
 import Linglib.Semantics.Dynamic.DRS.Defs
 import Linglib.Semantics.Dynamic.DRS.Dynamics

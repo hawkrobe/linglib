@@ -1,4 +1,4 @@
-import Mathlib.Data.Finset.Basic
+import Linglib.Semantics.Dynamic.DRS.Box
 import Mathlib.Logic.Relation
 import Mathlib.ModelTheory.Basic
 
@@ -20,9 +20,9 @@ complex condition is `neg`; `imp` and `dis` are its Chapter 2 extension
 
 "Box" and "DRS" name the same object in the literature — the two-compartment
 diagram, [muskens-1996]'s linear `[u₁ … uₙ | γ₁ … γₘ]` — in diagrammatic vs.
-official register. Here `Box` is the generic shell that DRT variants
-re-instantiate at their condition types (Layered DRT's LDRSs), and `DRS` its
-instantiation at `Condition L V`.
+official register. `Box` (`DRS/Box.lean`) is the generic shell that DRT
+variants re-instantiate at their condition types (Layered DRT's LDRSs), and
+`DRS` its instantiation at `Condition L V`.
 
 ## Main declarations
 
@@ -60,14 +60,6 @@ universe u v w x
 
 variable {L : Language.{u, v}} {V : Type w}
 
-/-- A DRT *box*, generic over the condition type `C`; `DRS` instantiates `C`
-at `Condition L V`. -/
-@[ext] structure Box (V : Type w) (C : Type x) where
-  /-- The universe `U`: the discourse referents the box introduces. -/
-  referents : Finset V
-  /-- The box's conditions. -/
-  conditions : List C
-
 /-- A DRS-condition: atomic (`rel`, `eq`) or complex — `neg` per Def. 1.4.1,
 `imp`/`dis` per its Chapter 2 extension. Sub-DRSs occur only inside complex
 conditions. -/
@@ -96,21 +88,6 @@ namespace DRS
 
 @[simp] theorem conditions_mk (u : Finset V) (c : List (Condition L V)) :
     (Box.mk u c).conditions = c := rfl
-
-/-- A condition of a DRS is smaller than the DRS — the recursion measure for
-definitions descending through the nested `List (Condition L V)`. -/
-theorem sizeOf_lt_of_mem_conditions {K : DRS L V} {c : Condition L V}
-    (h : c ∈ K.conditions) : sizeOf c < sizeOf K := by
-  obtain ⟨U, conds⟩ := K
-  have : sizeOf c < sizeOf conds := List.sizeOf_lt_of_mem h
-  simp only [Box.mk.sizeOf_spec]
-  omega
-
--- Registers the `Box`-through-`List` nesting step with the default termination
--- tactic: recursions descending into a box's conditions need no `decreasing_by`.
-macro_rules
-  | `(tactic| decreasing_trivial) =>
-    `(tactic| have := DRS.sizeOf_lt_of_mem_conditions (by assumption); omega)
 
 /-- The empty DRS `⟨∅, []⟩`. -/
 def empty : DRS L V := .mk ∅ []

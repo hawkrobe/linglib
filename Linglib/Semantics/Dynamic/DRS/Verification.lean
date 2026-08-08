@@ -7,7 +7,7 @@ import Linglib.Semantics.Dynamic.DRS.Basic
 mathlib `FirstOrder.Language.Structure`. An *embedding function*
 `f : Embedding V M` assigns discourse referents to individuals in the model;
 `Box.Extends K f g` is the extension relation `f [K] g` (both in
-`DRS/Basic.lean`); `f.Verifies K` says the embedding `f` *verifies* the DRS
+`DRS/Box.lean`); `f.Verifies K` says the embedding `f` *verifies* the DRS
 `K` — it verifies every condition of `K` — and `f.VerifiesCondition c` that it
 verifies the DRS-condition `c`. A sub-DRS is entered by existentially
 (re)assigning along its extension relation. For `imp`, the consequent witness

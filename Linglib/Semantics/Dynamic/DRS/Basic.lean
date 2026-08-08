@@ -1,15 +1,14 @@
 import Linglib.Semantics.Dynamic.DRS.Defs
-import Mathlib.Data.Finset.Image
 
 /-!
 # Structural operations on DRSs
 
 This file develops the structural theory of the `DRS` type of `DRS/Defs.lean`:
 functorial renaming of discourse referents (`DRS.map`), the merge algebra,
-embedding functions (`Embedding`) with the extension relation `f [K] g`
-(`Box.Extends`), and the referent predicates `varFinset`, `freeVarFinset` and
-`IsProper`, `ReuseFreeAt`, and `Accessible`. Renaming along a bijection is
-[kamp-reyle-1993]'s *alphabetic variant* (the prose preceding Def. 1.4.8).
+transport of the extension relation along renaming, and the referent
+predicates `varFinset`, `freeVarFinset` and `IsProper`, `ReuseFreeAt`, and
+`Accessible`. Renaming along a bijection is [kamp-reyle-1993]'s *alphabetic
+variant* (the prose preceding Def. 1.4.8).
 -/
 
 open FirstOrder
@@ -18,67 +17,7 @@ namespace DRT
 
 universe u v w x
 
-variable {L : Language.{u, v}} {V : Type w} {W : Type x} {C D E M X : Type*}
-
-/-- An *embedding function* is a function that maps discourse referents to
-individuals in a model — here total (deviation note in `DRS/Verification.lean`).
-Only the model's domain `M` appears; its interpretation of the relation
-symbols enters with verification (`f.Verifies K`, `DRS/Verification.lean`). -/
-abbrev Embedding (V : Type w) (M : Type*) := V → M
-
-/-! ## Boxes -/
-
-namespace Box
-
-variable [DecidableEq W] {f : V → W} {g : C → D} {K : Box V C}
-
-/-! ### Functorial action -/
-
-/-- `K.map f g` applies `f` to the universe and `g` to each condition. -/
-def map (f : V → W) (g : C → D) (K : Box V C) : Box W D :=
-  ⟨K.referents.image f, K.conditions.map g⟩
-
-/-- Well-founded recursions may traverse sub-boxes with `Box.map`: preprocessing
-re-marks the condition list, exposing `· ∈ K.conditions` to termination proofs. -/
-@[wf_preprocess] theorem map_wfParam :
-    map f g (wfParam K) = ⟨K.referents.image f, (wfParam K.conditions).map g⟩ := by
-  simp [wfParam, map]
-
-@[simp] theorem referents_map : (K.map f g).referents = K.referents.image f := rfl
-
-@[simp] theorem conditions_map : (K.map f g).conditions = K.conditions.map g := rfl
-
-@[simp] theorem map_id [DecidableEq V] : K.map id id = K := by
-  simp [map]
-
-@[simp] theorem map_id' [DecidableEq V] : K.map id (fun c => c) = K := map_id
-
-@[congr] theorem map_congr {f' : V → W} {g' : C → D} {K' : Box V C} (hf : f = f')
-    (hg : ∀ c ∈ K.conditions, g c = g' c) (hK : K = K') : K.map f g = K'.map f' g' := by
-  subst hK; subst hf
-  simp [map, List.map_congr_left hg]
-
-theorem map_map [DecidableEq X] {f' : W → X} {g' : D → E} :
-    (K.map f g).map f' g' = K.map (f' ∘ f) (g' ∘ g) := by
-  simp [map, Finset.image_image, List.map_map]
-
-theorem map_eq_self [DecidableEq V] {g : C → C} {K : Box V C}
-    (h : ∀ c ∈ K.conditions, g c = c) : K.map id g = K :=
-  (map_congr rfl h rfl).trans map_id'
-
-theorem map_map_of_forall [DecidableEq X] (f : V → W) (f' : W → X) {g' : D → E}
-    {g'' : C → E} (h : ∀ c ∈ K.conditions, g' (g c) = g'' c) :
-    (K.map f g).map f' g' = K.map (f' ∘ f) g'' :=
-  map_map.trans (map_congr rfl h rfl)
-
-/-! ### The extension relation -/
-
-/-- `K.Extends f g` (written `f [K] g`) if the output embedding `g` differs
-from the input `f` at most on `K`'s universe — the total-assignment rendering
-of "`f ⊆ g` and `Dom g = Dom f ∪ U_K`". -/
-def Extends (K : Box V C) (f g : Embedding V M) : Prop := ∀ x ∉ K.referents, g x = f x
-
-end Box
+variable {L : Language.{u, v}} {V : Type w} {W : Type x} {M X : Type*}
 
 /-! ## Conditions -/
 
