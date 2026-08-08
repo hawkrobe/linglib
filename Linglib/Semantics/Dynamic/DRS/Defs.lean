@@ -125,34 +125,32 @@ end DRS
 
 /-! ### Subordination -/
 
-/-- One-step subordination ("`K'` is *directly subordinate* to `K`"). The `neg`
-case is Def. 1.4.10(i); the `⇒`/`∨` cases are its Chapter 2 extension:
-
-* the body of a `¬` is subordinate to the containing DRS;
-* the antecedent of a `⇒` is subordinate to the containing DRS;
-* the consequent of a `⇒` is subordinate to its *antecedent* (the ⇒ asymmetry:
-  antecedent referents are accessible in the consequent, not conversely);
-* each disjunct of a `∨` is subordinate to the containing DRS.
-
-A relation on DRS *values*, where the textbook's is on box *occurrences*: on a
-degenerate `imp a a` the consequent edge makes `a` subordinate to itself. -/
+/-- One-step subordination: `DirectlySubordinate K' K` says `K'` is *directly
+subordinate* to `K` — the `neg` case per Def. 1.4.10(i), the `⇒`/`∨` cases per
+its Chapter 2 extension. A relation on DRS values, where the textbook's is on
+box occurrences: on a degenerate `imp a a` the consequent edge makes `a`
+subordinate to itself. -/
 inductive DirectlySubordinate : DRS L V → DRS L V → Prop where
+  /-- The body of a `¬` is directly subordinate to the containing DRS. -/
   | neg {D K : DRS L V} : Condition.neg K ∈ D.conditions → DirectlySubordinate K D
+  /-- The antecedent of a `⇒` is directly subordinate to the containing DRS. -/
   | impAnte {D a c : DRS L V} : Condition.imp a c ∈ D.conditions → DirectlySubordinate a D
+  /-- The consequent of a `⇒` is directly subordinate to its *antecedent* — the
+  asymmetry that makes antecedent referents accessible in the consequent. -/
   | impCons {D a c : DRS L V} : Condition.imp a c ∈ D.conditions → DirectlySubordinate c a
+  /-- The left disjunct of a `∨` is directly subordinate to the containing DRS. -/
   | disL {D l r : DRS L V} : Condition.dis l r ∈ D.conditions → DirectlySubordinate l D
+  /-- The right disjunct of a `∨` is directly subordinate to the containing DRS. -/
   | disR {D l r : DRS L V} : Condition.dis l r ∈ D.conditions → DirectlySubordinate r D
 
-/-- `K₁ < K₂`: subordinate — transitive closure of `DirectlySubordinate`
-(Def. 1.4.10(ii)). Anchors Def. 1.4.10(ii) only:
-accessibility (`accessibleFrom`, `DRS/Basic.lean`) does not build on this
-closure. -/
+/-- The `<` of Def. 1.4.10(ii): the transitive closure of `DirectlySubordinate`.
+Accessibility (`accessibleFrom`, `DRS/Basic.lean`) is host-relative and does
+not build on this closure. -/
 abbrev Subordinate : DRS L V → DRS L V → Prop :=
   Relation.TransGen DirectlySubordinate
 
-/-- `K₁ ≤ K₂`: weakly subordinate — reflexive-transitive closure
-(the `≤` of Def. 1.4.10). Anchors Def. 1.4.10(ii) only:
-accessibility does not build on this closure. -/
+/-- The `≤` of Def. 1.4.10(ii): the reflexive-transitive closure of
+`DirectlySubordinate`. -/
 abbrev WeakSubordinate : DRS L V → DRS L V → Prop :=
   Relation.ReflTransGen DirectlySubordinate
 
