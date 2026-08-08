@@ -53,79 +53,82 @@ theorem map_map [DecidableEq X] {f' : W → X} {g' : D → E} :
 
 end Box
 
+namespace Condition
+
 /-- Rename discourse referents along `f` throughout a condition. -/
-def Condition.map [DecidableEq W] (f : V → W) : Condition L V → Condition L W
+def map [DecidableEq W] (f : V → W) : Condition L V → Condition L W
   | .rel R args => .rel R (fun i => f (args i))
   | .eq a b => .eq (f a) (f b)
-  | .neg K => .neg (K.map f (Condition.map f))
-  | .imp a c => .imp (a.map f (Condition.map f)) (c.map f (Condition.map f))
-  | .dis l r => .dis (l.map f (Condition.map f)) (r.map f (Condition.map f))
-
-/-- Rename discourse referents along `f : V → W` throughout a DRS. -/
-def DRS.map [DecidableEq W] (f : V → W) : DRS L V → DRS L W :=
-  Box.map f (Condition.map f)
-
-@[simp] theorem DRS.referents_map [DecidableEq W] (f : V → W) (K : DRS L V) :
-    (K.map f).referents = K.referents.image f := rfl
-
-@[simp] theorem DRS.conditions_map [DecidableEq W] (f : V → W) (K : DRS L V) :
-    (K.map f).conditions = K.conditions.map (Condition.map f) := rfl
+  | .neg K => .neg (K.map f (map f))
+  | .imp a c => .imp (a.map f (map f)) (c.map f (map f))
+  | .dis l r => .dis (l.map f (map f)) (r.map f (map f))
 
 /-- Renaming a condition along the identity is the identity. -/
-@[simp] theorem Condition.map_id [DecidableEq V] : ∀ c : Condition L V, Condition.map id c = c
-  | .rel R args => by simp only [Condition.map, id_eq]
-  | .eq a b => by simp only [Condition.map, id_eq]
+@[simp] theorem map_id [DecidableEq V] : ∀ c : Condition L V, map id c = c
+  | .rel R args => by simp only [map, id_eq]
+  | .eq a b => by simp only [map, id_eq]
   | .neg K => by
-    have ih : ∀ d ∈ K.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
-    simp only [Condition.map, Box.map_congr ih, Box.map_id]
+    have ih : ∀ d ∈ K.conditions, map id d = id d := fun d _ => map_id d
+    simp only [map, Box.map_congr ih, Box.map_id]
   | .imp a c => by
-    have iha : ∀ d ∈ a.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
-    have ihc : ∀ d ∈ c.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
-    simp only [Condition.map, Box.map_congr iha, Box.map_congr ihc, Box.map_id]
+    have iha : ∀ d ∈ a.conditions, map id d = id d := fun d _ => map_id d
+    have ihc : ∀ d ∈ c.conditions, map id d = id d := fun d _ => map_id d
+    simp only [map, Box.map_congr iha, Box.map_congr ihc, Box.map_id]
   | .dis l r => by
-    have ihl : ∀ d ∈ l.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
-    have ihr : ∀ d ∈ r.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
-    simp only [Condition.map, Box.map_congr ihl, Box.map_congr ihr, Box.map_id]
-
-/-- Renaming a DRS along the identity is the identity. -/
-@[simp] theorem DRS.map_id [DecidableEq V] (K : DRS L V) : DRS.map id K = K := by
-  have ih : ∀ d ∈ K.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
-  simp only [DRS.map, Box.map_congr ih, Box.map_id]
+    have ihl : ∀ d ∈ l.conditions, map id d = id d := fun d _ => map_id d
+    have ihr : ∀ d ∈ r.conditions, map id d = id d := fun d _ => map_id d
+    simp only [map, Box.map_congr ihl, Box.map_congr ihr, Box.map_id]
 
 /-- Renaming a condition along a composite is the composite of the renamings. -/
-theorem Condition.map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W) :
-    ∀ c : Condition L V, Condition.map g (Condition.map f c) = Condition.map (g ∘ f) c
-  | .rel R args => by simp only [Condition.map]; rfl
-  | .eq a b => by simp only [Condition.map]; rfl
+theorem map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W) :
+    ∀ c : Condition L V, map g (map f c) = map (g ∘ f) c
+  | .rel R args => by simp only [map]; rfl
+  | .eq a b => by simp only [map]; rfl
   | .neg K => by
-    have ih : ∀ d ∈ K.conditions,
-        (Condition.map g ∘ Condition.map f) d = Condition.map (g ∘ f) d :=
-      fun d _ => Condition.map_map g f d
-    simp only [Condition.map, Box.map_map, Box.map_congr ih]
+    have ih : ∀ d ∈ K.conditions, (map g ∘ map f) d = map (g ∘ f) d :=
+      fun d _ => map_map g f d
+    simp only [map, Box.map_map, Box.map_congr ih]
   | .imp a c => by
-    have iha : ∀ d ∈ a.conditions,
-        (Condition.map g ∘ Condition.map f) d = Condition.map (g ∘ f) d :=
-      fun d _ => Condition.map_map g f d
-    have ihc : ∀ d ∈ c.conditions,
-        (Condition.map g ∘ Condition.map f) d = Condition.map (g ∘ f) d :=
-      fun d _ => Condition.map_map g f d
-    simp only [Condition.map, Box.map_map, Box.map_congr iha, Box.map_congr ihc]
+    have iha : ∀ d ∈ a.conditions, (map g ∘ map f) d = map (g ∘ f) d :=
+      fun d _ => map_map g f d
+    have ihc : ∀ d ∈ c.conditions, (map g ∘ map f) d = map (g ∘ f) d :=
+      fun d _ => map_map g f d
+    simp only [map, Box.map_map, Box.map_congr iha, Box.map_congr ihc]
   | .dis l r => by
-    have ihl : ∀ d ∈ l.conditions,
-        (Condition.map g ∘ Condition.map f) d = Condition.map (g ∘ f) d :=
-      fun d _ => Condition.map_map g f d
-    have ihr : ∀ d ∈ r.conditions,
-        (Condition.map g ∘ Condition.map f) d = Condition.map (g ∘ f) d :=
-      fun d _ => Condition.map_map g f d
-    simp only [Condition.map, Box.map_map, Box.map_congr ihl, Box.map_congr ihr]
+    have ihl : ∀ d ∈ l.conditions, (map g ∘ map f) d = map (g ∘ f) d :=
+      fun d _ => map_map g f d
+    have ihr : ∀ d ∈ r.conditions, (map g ∘ map f) d = map (g ∘ f) d :=
+      fun d _ => map_map g f d
+    simp only [map, Box.map_map, Box.map_congr ihl, Box.map_congr ihr]
+
+end Condition
+
+namespace DRS
+
+/-- Rename discourse referents along `f : V → W` throughout a DRS. -/
+def map [DecidableEq W] (f : V → W) : DRS L V → DRS L W :=
+  Box.map f (Condition.map f)
+
+@[simp] theorem referents_map [DecidableEq W] (f : V → W) (K : DRS L V) :
+    (K.map f).referents = K.referents.image f := rfl
+
+@[simp] theorem conditions_map [DecidableEq W] (f : V → W) (K : DRS L V) :
+    (K.map f).conditions = K.conditions.map (Condition.map f) := rfl
+
+/-- Renaming a DRS along the identity is the identity. -/
+@[simp] theorem map_id [DecidableEq V] (K : DRS L V) : map id K = K := by
+  have ih : ∀ d ∈ K.conditions, Condition.map id d = id d := fun d _ => Condition.map_id d
+  simp only [map, Box.map_congr ih, Box.map_id]
 
 /-- Renaming a DRS along a composite is the composite of the renamings. -/
-theorem DRS.map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W) (K : DRS L V) :
-    DRS.map g (DRS.map f K) = DRS.map (g ∘ f) K := by
+theorem map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W) (K : DRS L V) :
+    map g (map f K) = map (g ∘ f) K := by
   have ih : ∀ d ∈ K.conditions,
       (Condition.map g ∘ Condition.map f) d = Condition.map (g ∘ f) d :=
     fun d _ => Condition.map_map g f d
-  simp only [DRS.map, Box.map_map, Box.map_congr ih]
+  simp only [map, Box.map_map, Box.map_congr ih]
+
+end DRS
 
 /-! ### Merge algebra -/
 
@@ -170,10 +173,12 @@ the input `f` at most on `K`'s universe — the total-assignment rendering of
 universe is read. -/
 def Box.Extends (K : Box V C) (f g : Embedding V M) : Prop := ∀ x ∉ K.referents, g x = f x
 
+namespace DRS
+
 /-- Extension along a renamed DRS is extension of the precompositions. -/
-theorem DRS.extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f g : Embedding W M) :
+theorem extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f g : Embedding W M) :
     (K.map e).Extends f g ↔ K.Extends (f ∘ e) (g ∘ e) := by
-  simp only [Box.Extends, DRS.referents_map, Function.comp_apply]
+  simp only [Box.Extends, referents_map, Function.comp_apply]
   constructor
   · intro h x hx
     exact h (e x) (by simpa using hx)
@@ -184,10 +189,10 @@ theorem DRS.extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f g : Embed
 
 /-- The extensions of `f` at `K.map e` are the extensions of `f ∘ e` at `K`,
 via precomposition. -/
-theorem DRS.exists_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : Embedding W M)
+theorem exists_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : Embedding W M)
     (P : Embedding V M → Prop) :
     (∃ g, (K.map e).Extends f g ∧ P (g ∘ e)) ↔ ∃ g, K.Extends (f ∘ e) g ∧ P g := by
-  simp only [DRS.extends_map]
+  simp only [extends_map]
   constructor
   · rintro ⟨g, hg, hp⟩
     exact ⟨g ∘ e, hg, hp⟩
@@ -196,16 +201,18 @@ theorem DRS.exists_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : 
     exact ⟨g ∘ e.symm, key.symm ▸ hg, key.symm ▸ hp⟩
 
 /-- The `∀` analogue of `DRS.exists_extends_map`. -/
-theorem DRS.forall_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : Embedding W M)
+theorem forall_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : Embedding W M)
     (P : Embedding V M → Prop) :
     (∀ g, (K.map e).Extends f g → P (g ∘ e)) ↔ ∀ g, K.Extends (f ∘ e) g → P g := by
-  simp only [DRS.extends_map]
+  simp only [extends_map]
   constructor
   · intro H g hg
     have key : (g ∘ e.symm) ∘ e = g := by funext x; simp
     exact key ▸ H (g ∘ e.symm) (key.symm ▸ hg)
   · intro H g hg
     exact H (g ∘ e) hg
+
+end DRS
 
 end Extends
 
@@ -214,61 +221,69 @@ end Extends
 section Occ
 variable [DecidableEq V]
 
+namespace Condition
+
 /-- Occurring referents (free or bound) in a condition, as a `Finset` — the DRS
 analogue of mathlib's `Term.varFinset`. Membership `x ∈ occ c` is decidable, so
 downstream consumers get decidable occurrence for free. -/
-def Condition.occ : Condition L V → Finset V
+def occ : Condition L V → Finset V
   | .rel _ args => Finset.image args Finset.univ
   | .eq u v => {u, v}
-  | .neg K => K.referents ∪ (K.conditions.map Condition.occ).foldr (· ∪ ·) ∅
-  | .imp a c => (a.referents ∪ (a.conditions.map Condition.occ).foldr (· ∪ ·) ∅) ∪
-      (c.referents ∪ (c.conditions.map Condition.occ).foldr (· ∪ ·) ∅)
-  | .dis l r => (l.referents ∪ (l.conditions.map Condition.occ).foldr (· ∪ ·) ∅) ∪
-      (r.referents ∪ (r.conditions.map Condition.occ).foldr (· ∪ ·) ∅)
+  | .neg K => K.referents ∪ (K.conditions.map occ).foldr (· ∪ ·) ∅
+  | .imp a c => (a.referents ∪ (a.conditions.map occ).foldr (· ∪ ·) ∅) ∪
+      (c.referents ∪ (c.conditions.map occ).foldr (· ∪ ·) ∅)
+  | .dis l r => (l.referents ∪ (l.conditions.map occ).foldr (· ∪ ·) ∅) ∪
+      (r.referents ∪ (r.conditions.map occ).foldr (· ∪ ·) ∅)
 
 /-- Occurring referents in a list of conditions. -/
-def Condition.occL (cs : List (Condition L V)) : Finset V :=
-  (cs.map Condition.occ).foldr (· ∪ ·) ∅
+def occL (cs : List (Condition L V)) : Finset V := (cs.map occ).foldr (· ∪ ·) ∅
 
-/-- Occurring referents in a DRS (its universe and those of its conditions). -/
-def DRS.occ (K : DRS L V) : Finset V := K.referents ∪ Condition.occL K.conditions
+@[simp] theorem occL_nil : occL ([] : List (Condition L V)) = ∅ := rfl
+@[simp] theorem occL_cons (c : Condition L V) (cs : List (Condition L V)) :
+    occL (c :: cs) = c.occ ∪ occL cs := rfl
+@[simp] theorem occ_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
+    (rel R args).occ = Finset.image args Finset.univ := by simp only [occ]
+@[simp] theorem occ_eq (u v : V) :
+    (eq u v : Condition L V).occ = {u, v} := by simp only [occ]
 
-@[simp] theorem Condition.occL_nil : Condition.occL ([] : List (Condition L V)) = ∅ := rfl
-@[simp] theorem Condition.occL_cons (c : Condition L V) (cs : List (Condition L V)) :
-    Condition.occL (c :: cs) = c.occ ∪ Condition.occL cs := rfl
-@[simp] theorem DRS.occ_mk (U : Finset V) (conds : List (Condition L V)) :
-    DRS.occ ⟨U, conds⟩ = U ∪ Condition.occL conds := rfl
-@[simp] theorem Condition.occ_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
-    (Condition.rel R args).occ = Finset.image args Finset.univ := by
-  simp only [Condition.occ]
-@[simp] theorem Condition.occ_eq (u v : V) :
-    (Condition.eq u v : Condition L V).occ = {u, v} := by simp only [Condition.occ]
-@[simp] theorem Condition.occ_neg (K : DRS L V) : (Condition.neg K).occ = K.occ := by
-  simp only [Condition.occ]; rfl
-@[simp] theorem Condition.occ_imp (a c : DRS L V) :
-    (Condition.imp a c).occ = a.occ ∪ c.occ := by simp only [Condition.occ]; rfl
-@[simp] theorem Condition.occ_dis (l r : DRS L V) :
-    (Condition.dis l r).occ = l.occ ∪ r.occ := by simp only [Condition.occ]; rfl
-
-@[simp] theorem Condition.occL_append (cs ds : List (Condition L V)) :
-    Condition.occL (cs ++ ds) = Condition.occL cs ∪ Condition.occL ds := by
+@[simp] theorem occL_append (cs ds : List (Condition L V)) :
+    occL (cs ++ ds) = occL cs ∪ occL ds := by
   induction cs with
   | nil => simp
   | cons c cs ih => simp [ih, Finset.union_assoc]
 
-/-- A DRS's conditions' occurring referents are among the DRS's. -/
-theorem DRS.occL_subset_occ (K : DRS L V) : Condition.occL K.conditions ⊆ K.occ :=
-  Finset.subset_union_right
-
 /-- A condition's occurring referents are among its list's. -/
-theorem Condition.occ_subset_occL {c : Condition L V} {cs : List (Condition L V)}
-    (hc : c ∈ cs) : c.occ ⊆ Condition.occL cs := by
+theorem occ_subset_occL {c : Condition L V} {cs : List (Condition L V)}
+    (hc : c ∈ cs) : c.occ ⊆ occL cs := by
   induction cs with
   | nil => cases hc
   | cons d ds ih =>
     rcases List.mem_cons.mp hc with h | h
     · exact h ▸ Finset.subset_union_left
     · exact (ih h).trans Finset.subset_union_right
+
+end Condition
+
+namespace DRS
+
+/-- Occurring referents in a DRS (its universe and those of its conditions). -/
+def occ (K : DRS L V) : Finset V := K.referents ∪ Condition.occL K.conditions
+
+@[simp] theorem occ_mk (U : Finset V) (conds : List (Condition L V)) :
+    occ ⟨U, conds⟩ = U ∪ Condition.occL conds := rfl
+
+/-- A DRS's conditions' occurring referents are among the DRS's. -/
+theorem occL_subset_occ (K : DRS L V) : Condition.occL K.conditions ⊆ K.occ :=
+  Finset.subset_union_right
+
+end DRS
+
+@[simp] theorem Condition.occ_neg (K : DRS L V) : (Condition.neg K).occ = K.occ := by
+  simp only [Condition.occ]; rfl
+@[simp] theorem Condition.occ_imp (a c : DRS L V) :
+    (Condition.imp a c).occ = a.occ ∪ c.occ := by simp only [Condition.occ]; rfl
+@[simp] theorem Condition.occ_dis (l r : DRS L V) :
+    (Condition.dis l r).occ = l.occ ∪ r.occ := by simp only [Condition.occ]; rfl
 
 end Occ
 
@@ -277,62 +292,77 @@ end Occ
 section Fv
 variable [DecidableEq V]
 
+namespace Condition
+
 /-- The free discourse referents of a condition. -/
-def Condition.fv : Condition L V → Finset V
+def fv : Condition L V → Finset V
   | .rel _ args => Finset.image args Finset.univ
   | .eq u v => {u, v}
-  | .neg K => (K.conditions.map Condition.fv).foldr (· ∪ ·) ∅ \ K.referents
-  | .imp a c => ((a.conditions.map Condition.fv).foldr (· ∪ ·) ∅ \ a.referents) ∪
-      (((c.conditions.map Condition.fv).foldr (· ∪ ·) ∅ \ c.referents) \ a.referents)
-  | .dis l r => ((l.conditions.map Condition.fv).foldr (· ∪ ·) ∅ \ l.referents) ∪
-      ((r.conditions.map Condition.fv).foldr (· ∪ ·) ∅ \ r.referents)
+  | .neg K => (K.conditions.map fv).foldr (· ∪ ·) ∅ \ K.referents
+  | .imp a c => ((a.conditions.map fv).foldr (· ∪ ·) ∅ \ a.referents) ∪
+      (((c.conditions.map fv).foldr (· ∪ ·) ∅ \ c.referents) \ a.referents)
+  | .dis l r => ((l.conditions.map fv).foldr (· ∪ ·) ∅ \ l.referents) ∪
+      ((r.conditions.map fv).foldr (· ∪ ·) ∅ \ r.referents)
 
 /-- Free referents of a list of conditions. -/
-def Condition.fvL (cs : List (Condition L V)) : Finset V :=
-  (cs.map Condition.fv).foldr (· ∪ ·) ∅
+def fvL (cs : List (Condition L V)) : Finset V := (cs.map fv).foldr (· ∪ ·) ∅
+
+@[simp] theorem fv_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
+    (rel R args).fv = Finset.image args Finset.univ := by simp only [fv]
+@[simp] theorem fv_eq (u v : V) :
+    (eq u v : Condition L V).fv = {u, v} := by simp only [fv]
+@[simp] theorem fvL_nil : fvL ([] : List (Condition L V)) = ∅ := rfl
+@[simp] theorem fvL_cons (c : Condition L V) (cs : List (Condition L V)) :
+    fvL (c :: cs) = c.fv ∪ fvL cs := rfl
+
+@[simp] theorem fvL_append (cs ds : List (Condition L V)) :
+    fvL (cs ++ ds) = fvL cs ∪ fvL ds := by
+  induction cs with
+  | nil => simp
+  | cons c cs ih => simp [ih, Finset.union_assoc]
+
+private theorem fvL_subset_occL_of_forall {cs : List (Condition L V)}
+    (h : ∀ c ∈ cs, c.fv ⊆ c.occ) : fvL cs ⊆ occL cs := by
+  induction cs with
+  | nil => simp
+  | cons c cs ih =>
+    simp only [fvL_cons, occL_cons]
+    exact Finset.union_subset_union (h c (by simp))
+      (ih fun d hd => h d (List.mem_cons_of_mem c hd))
+
+end Condition
+
+namespace DRS
 
 /-- The free discourse referents of a DRS: referents occurring in its
 conditions and not bound by its universe or by an ancestor reachable "left
 and up" (the antecedent of a `⇒` threads its referents into the consequent).
 `K.fv ⊆ b` says every referent of `K` is bound in context `b`. -/
-def DRS.fv (K : DRS L V) : Finset V := Condition.fvL K.conditions \ K.referents
+def fv (K : DRS L V) : Finset V := Condition.fvL K.conditions \ K.referents
 
-@[simp] theorem DRS.fv_mk (U : Finset V) (conds : List (Condition L V)) :
-    DRS.fv ⟨U, conds⟩ = Condition.fvL conds \ U := rfl
-@[simp] theorem Condition.fv_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
-    (Condition.rel R args).fv = Finset.image args Finset.univ := by simp only [Condition.fv]
-@[simp] theorem Condition.fv_eq (u v : V) :
-    (Condition.eq u v : Condition L V).fv = {u, v} := by simp only [Condition.fv]
+@[simp] theorem fv_mk (U : Finset V) (conds : List (Condition L V)) :
+    fv ⟨U, conds⟩ = Condition.fvL conds \ U := rfl
+
+/-- The characteristic form of the referential presupposition: a box's free
+referents are supplied by `X` iff its conditions' are supplied by the grown
+base. -/
+theorem fv_subset_iff {U X : Finset V} {conds : List (Condition L V)} :
+    fv ⟨U, conds⟩ ⊆ X ↔ Condition.fvL conds ⊆ X ∪ U := by
+  rw [fv_mk, sdiff_le_iff, sup_comm, Finset.sup_eq_union]
+
+private theorem fv_subset_occ_of_forall {K : DRS L V}
+    (h : ∀ c ∈ K.conditions, c.fv ⊆ c.occ) : K.fv ⊆ K.occ :=
+  Finset.sdiff_subset.trans ((Condition.fvL_subset_occL_of_forall h).trans
+    Finset.subset_union_right)
+
+end DRS
+
 @[simp] theorem Condition.fv_neg (K : DRS L V) : (Condition.neg K).fv = K.fv := by
   simp only [Condition.fv]; rfl
 @[simp] theorem Condition.fv_imp (a c : DRS L V) :
     (Condition.imp a c).fv = a.fv ∪ (c.fv \ a.referents) := by simp only [Condition.fv]; rfl
 @[simp] theorem Condition.fv_dis (l r : DRS L V) :
     (Condition.dis l r).fv = l.fv ∪ r.fv := by simp only [Condition.fv]; rfl
-@[simp] theorem Condition.fvL_nil : Condition.fvL ([] : List (Condition L V)) = ∅ := rfl
-@[simp] theorem Condition.fvL_cons (c : Condition L V) (cs : List (Condition L V)) :
-    Condition.fvL (c :: cs) = c.fv ∪ Condition.fvL cs := rfl
-
-/-- The characteristic form of the referential presupposition: a box's free
-referents are supplied by `X` iff its conditions' are supplied by the grown
-base. -/
-theorem DRS.fv_subset_iff {U X : Finset V} {conds : List (Condition L V)} :
-    DRS.fv ⟨U, conds⟩ ⊆ X ↔ Condition.fvL conds ⊆ X ∪ U := by
-  rw [DRS.fv_mk, sdiff_le_iff, sup_comm, Finset.sup_eq_union]
-
-private theorem Condition.fvL_subset_occL_of_forall {cs : List (Condition L V)}
-    (h : ∀ c ∈ cs, c.fv ⊆ c.occ) : Condition.fvL cs ⊆ Condition.occL cs := by
-  induction cs with
-  | nil => simp
-  | cons c cs ih =>
-    simp only [Condition.fvL_cons, Condition.occL_cons]
-    exact Finset.union_subset_union (h c (by simp))
-      (ih fun d hd => h d (List.mem_cons_of_mem c hd))
-
-private theorem DRS.fv_subset_occ_of_forall {K : DRS L V}
-    (h : ∀ c ∈ K.conditions, c.fv ⊆ c.occ) : K.fv ⊆ K.occ :=
-  Finset.sdiff_subset.trans ((Condition.fvL_subset_occL_of_forall h).trans
-    Finset.subset_union_right)
 
 /-- Free referents of a condition occur. -/
 theorem Condition.fv_subset_occ (c : Condition L V) : c.fv ⊆ c.occ := by
@@ -364,34 +394,32 @@ theorem Condition.fvL_subset_occL (cs : List (Condition L V)) :
     Condition.fvL cs ⊆ Condition.occL cs :=
   Condition.fvL_subset_occL_of_forall fun c _ => Condition.fv_subset_occ c
 
-@[simp] theorem Condition.fvL_append (cs ds : List (Condition L V)) :
-    Condition.fvL (cs ++ ds) = Condition.fvL cs ∪ Condition.fvL ds := by
-  induction cs with
-  | nil => simp
-  | cons c cs ih => simp [ih, Finset.union_assoc]
+namespace DRS
 
 /-- Merging preserves boundedness: the merge's free referents are supplied by
 `X` when the context's are and the increment's are supplied by the grown base. -/
-theorem DRS.fv_merge_subset {X : Finset V} {K₁ K₂ : DRS L V} (h₁ : K₁.fv ⊆ X)
+theorem fv_merge_subset {X : Finset V} {K₁ K₂ : DRS L V} (h₁ : K₁.fv ⊆ X)
     (h₂ : K₂.fv ⊆ X ∪ K₁.referents) : (K₁.merge K₂).fv ⊆ X := by
   obtain ⟨U₁, c₁⟩ := K₁
   obtain ⟨U₂, c₂⟩ := K₂
-  rw [DRS.referents_mk] at h₂
-  rw [DRS.fv_subset_iff] at h₁ h₂
-  rw [DRS.merge, DRS.referents_mk, DRS.conditions_mk, DRS.fv_subset_iff,
+  rw [referents_mk] at h₂
+  rw [fv_subset_iff] at h₁ h₂
+  rw [merge, referents_mk, conditions_mk, fv_subset_iff,
     Condition.fvL_append, ← Finset.union_assoc]
   exact Finset.union_subset (h₁.trans Finset.subset_union_left) h₂
 
 /-- A DRS is *proper* iff it has no free discourse referent
 (Def. 1.4.2–1.4.3). -/
-def DRS.IsProper (K : DRS L V) : Prop := K.fv = ∅
+def IsProper (K : DRS L V) : Prop := K.fv = ∅
 
 /-- Merging preserves properness when the increment's free referents are
 supplied by the context DRS's universe. -/
-theorem DRS.isProper_merge {K₁ K₂ : DRS L V} (h₁ : K₁.IsProper)
+theorem isProper_merge {K₁ K₂ : DRS L V} (h₁ : K₁.IsProper)
     (h₂ : K₂.fv ⊆ K₁.referents) : (K₁.merge K₂).IsProper :=
-  Finset.subset_empty.mp (DRS.fv_merge_subset (Finset.subset_empty.mpr h₁)
+  Finset.subset_empty.mp (fv_merge_subset (Finset.subset_empty.mpr h₁)
     (h₂.trans Finset.subset_union_right))
+
+end DRS
 
 end Fv
 
@@ -407,46 +435,63 @@ agree-off-universe semantics and the persistence semantics coincide
 section ReuseFree
 variable [DecidableEq V]
 
+namespace Condition
+
 /-- A condition is reuse-free at ambient declarations `X`: each sub-box
 universe is fresh for the declarations in scope, threaded the way verification
 threads the base (the antecedent of a `⇒` feeds its referents into the
 consequent). -/
-def Condition.ReuseFreeAt (X : Finset V) : Condition L V → Prop
+def ReuseFreeAt (X : Finset V) : Condition L V → Prop
   | .rel _ _ => True
   | .eq _ _ => True
   | .neg K => Disjoint X K.referents ∧
-      ∀ c ∈ K.conditions, Condition.ReuseFreeAt (X ∪ K.referents) c
+      ∀ c ∈ K.conditions, ReuseFreeAt (X ∪ K.referents) c
   | .imp a c =>
       (Disjoint X a.referents ∧
-        ∀ d ∈ a.conditions, Condition.ReuseFreeAt (X ∪ a.referents) d) ∧
+        ∀ d ∈ a.conditions, ReuseFreeAt (X ∪ a.referents) d) ∧
       (Disjoint (X ∪ a.referents) c.referents ∧
-        ∀ d ∈ c.conditions, Condition.ReuseFreeAt (X ∪ a.referents ∪ c.referents) d)
+        ∀ d ∈ c.conditions, ReuseFreeAt (X ∪ a.referents ∪ c.referents) d)
   | .dis l r =>
       (Disjoint X l.referents ∧
-        ∀ d ∈ l.conditions, Condition.ReuseFreeAt (X ∪ l.referents) d) ∧
+        ∀ d ∈ l.conditions, ReuseFreeAt (X ∪ l.referents) d) ∧
       (Disjoint X r.referents ∧
-        ∀ d ∈ r.conditions, Condition.ReuseFreeAt (X ∪ r.referents) d)
+        ∀ d ∈ r.conditions, ReuseFreeAt (X ∪ r.referents) d)
 
 /-- Reuse-freeness for a list of conditions. -/
-def Condition.ReuseFreeAllAt (X : Finset V) (cs : List (Condition L V)) : Prop :=
-  ∀ c ∈ cs, Condition.ReuseFreeAt X c
+def ReuseFreeAllAt (X : Finset V) (cs : List (Condition L V)) : Prop :=
+  ∀ c ∈ cs, ReuseFreeAt X c
+
+@[simp] theorem reuseFreeAt_rel (X : Finset V) {n : ℕ} (R : L.Relations n)
+    (args : Fin n → V) : ReuseFreeAt X (.rel R args) := by
+  simp only [ReuseFreeAt]
+
+@[simp] theorem reuseFreeAt_eq (X : Finset V) (u v : V) :
+    ReuseFreeAt X (.eq u v : Condition L V) := by
+  simp only [ReuseFreeAt]
+
+@[simp] theorem reuseFreeAllAt_nil (X : Finset V) :
+    ReuseFreeAllAt X ([] : List (Condition L V)) := by
+  simp [ReuseFreeAllAt]
+
+@[simp] theorem reuseFreeAllAt_cons (X : Finset V) (c : Condition L V)
+    (cs : List (Condition L V)) :
+    ReuseFreeAllAt X (c :: cs) ↔ ReuseFreeAt X c ∧ ReuseFreeAllAt X cs := by
+  simp only [ReuseFreeAllAt, List.forall_mem_cons]
+
+end Condition
+
+namespace DRS
 
 /-- A DRS is *reuse-free* at ambient declarations `X`: its universe avoids `X`
 and its conditions are reuse-free at the grown set. -/
-def DRS.ReuseFreeAt (X : Finset V) (K : DRS L V) : Prop :=
+def ReuseFreeAt (X : Finset V) (K : DRS L V) : Prop :=
   Disjoint X K.referents ∧ Condition.ReuseFreeAllAt (X ∪ K.referents) K.conditions
 
-@[simp] theorem DRS.reuseFreeAt_mk (X U : Finset V) (conds : List (Condition L V)) :
-    DRS.ReuseFreeAt X (.mk U conds) ↔
+@[simp] theorem reuseFreeAt_mk (X U : Finset V) (conds : List (Condition L V)) :
+    ReuseFreeAt X (.mk U conds) ↔
       Disjoint X U ∧ Condition.ReuseFreeAllAt (X ∪ U) conds := Iff.rfl
 
-@[simp] theorem Condition.reuseFreeAt_rel (X : Finset V) {n : ℕ} (R : L.Relations n)
-    (args : Fin n → V) : Condition.ReuseFreeAt X (.rel R args) := by
-  simp only [Condition.ReuseFreeAt]
-
-@[simp] theorem Condition.reuseFreeAt_eq (X : Finset V) (u v : V) :
-    Condition.ReuseFreeAt X (.eq u v : Condition L V) := by
-  simp only [Condition.ReuseFreeAt]
+end DRS
 
 @[simp] theorem Condition.reuseFreeAt_neg (X : Finset V) (K : DRS L V) :
     Condition.ReuseFreeAt X (.neg K) ↔ DRS.ReuseFreeAt X K := by
@@ -462,16 +507,6 @@ def DRS.ReuseFreeAt (X : Finset V) (K : DRS L V) : Prop :=
       DRS.ReuseFreeAt X l ∧ DRS.ReuseFreeAt X r := by
   simp only [Condition.ReuseFreeAt]; rfl
 
-@[simp] theorem Condition.reuseFreeAllAt_nil (X : Finset V) :
-    Condition.ReuseFreeAllAt X ([] : List (Condition L V)) := by
-  simp [Condition.ReuseFreeAllAt]
-
-@[simp] theorem Condition.reuseFreeAllAt_cons (X : Finset V) (c : Condition L V)
-    (cs : List (Condition L V)) :
-    Condition.ReuseFreeAllAt X (c :: cs) ↔
-      Condition.ReuseFreeAt X c ∧ Condition.ReuseFreeAllAt X cs := by
-  simp only [Condition.ReuseFreeAllAt, List.forall_mem_cons]
-
 end ReuseFree
 
 /-! ### Accessibility (decidable, host-relative)
@@ -486,41 +521,60 @@ in-scope referents (the same threading as `DRS.Bound`), which is also decidable.
 section Accessibility
 variable [DecidableEq V]
 
+namespace Condition
+
 /-- Accessibility threading through a condition. -/
-def Condition.accScope (s : Finset V) : Condition L V → V → Option (Finset V)
+def accScope (s : Finset V) : Condition L V → V → Option (Finset V)
   | .rel _ _, _ => none
   | .eq _ _, _ => none
   | .neg K, x =>
       if x ∈ K.referents then some (s ∪ K.referents)
-      else (K.conditions.map fun c => Condition.accScope (s ∪ K.referents) c x).foldr
+      else (K.conditions.map fun c => accScope (s ∪ K.referents) c x).foldr
         (fun r acc => r.orElse fun _ => acc) none
   | .imp a c, x =>
       (if x ∈ a.referents then some (s ∪ a.referents)
-       else (a.conditions.map fun d => Condition.accScope (s ∪ a.referents) d x).foldr
+       else (a.conditions.map fun d => accScope (s ∪ a.referents) d x).foldr
          (fun r acc => r.orElse fun _ => acc) none).orElse fun _ =>
       if x ∈ c.referents then some (s ∪ a.referents ∪ c.referents)
       else (c.conditions.map fun d =>
-          Condition.accScope (s ∪ a.referents ∪ c.referents) d x).foldr
+          accScope (s ∪ a.referents ∪ c.referents) d x).foldr
         (fun r acc => r.orElse fun _ => acc) none
   | .dis l r, x =>
       (if x ∈ l.referents then some (s ∪ l.referents)
-       else (l.conditions.map fun d => Condition.accScope (s ∪ l.referents) d x).foldr
+       else (l.conditions.map fun d => accScope (s ∪ l.referents) d x).foldr
          (fun r acc => r.orElse fun _ => acc) none).orElse fun _ =>
       if x ∈ r.referents then some (s ∪ r.referents)
-      else (r.conditions.map fun d => Condition.accScope (s ∪ r.referents) d x).foldr
+      else (r.conditions.map fun d => accScope (s ∪ r.referents) d x).foldr
         (fun r acc => r.orElse fun _ => acc) none
 
 /-- Accessibility threading through a list of conditions: the first hit wins. -/
-def Condition.accScopeL (s : Finset V) (cs : List (Condition L V)) (x : V) :
-    Option (Finset V) :=
-  (cs.map fun c => Condition.accScope s c x).foldr (fun r acc => r.orElse fun _ => acc) none
+def accScopeL (s : Finset V) (cs : List (Condition L V)) (x : V) : Option (Finset V) :=
+  (cs.map fun c => accScope s c x).foldr (fun r acc => r.orElse fun _ => acc) none
+
+end Condition
+
+namespace DRS
 
 /-- Descend `K`, accumulating in-scope referents `s` ("left and up"); on reaching
 the box introducing `x`, return that box's in-scope set `s ∪ U`. The `⇒`-consequent
 additionally sees the antecedent's universe. -/
-def DRS.accScope (s : Finset V) (K : DRS L V) (x : V) : Option (Finset V) :=
+def accScope (s : Finset V) (K : DRS L V) (x : V) : Option (Finset V) :=
   if x ∈ K.referents then some (s ∪ K.referents)
   else Condition.accScopeL (s ∪ K.referents) K.conditions x
+
+/-- The referents accessible from `u`'s introduction in `T`, as a decidable
+`Finset`; `∅` if `u` is not introduced in `T`. (Def. 1.4.11 defines
+accessibility of a referent from a *condition*; this is the derived
+referent-to-referent relation of the surrounding prose.) -/
+def accessibleFrom (T : DRS L V) (u : V) : Finset V := (accScope ∅ T u).getD ∅
+
+/-- `v` is accessible from `u`'s position in `T`. Decidable (Finset membership). -/
+def Accessible (T : DRS L V) (u v : V) : Prop := v ∈ accessibleFrom T u
+
+instance (T : DRS L V) (u v : V) : Decidable (Accessible T u v) :=
+  inferInstanceAs (Decidable (v ∈ _))
+
+end DRS
 
 theorem Condition.accScope_neg (s : Finset V) (K : DRS L V) (x : V) :
     Condition.accScope s (.neg K) x = DRS.accScope s K x := by
@@ -535,18 +589,6 @@ theorem Condition.accScope_dis (s : Finset V) (l r : DRS L V) (x : V) :
     Condition.accScope s (.dis l r) x =
       (DRS.accScope s l x).orElse fun _ => DRS.accScope s r x := by
   simp only [Condition.accScope]; rfl
-
-/-- The referents accessible from `u`'s introduction in `T`, as a decidable
-`Finset`; `∅` if `u` is not introduced in `T`. (Def. 1.4.11 defines
-accessibility of a referent from a *condition*; this is the derived
-referent-to-referent relation of the surrounding prose.) -/
-def DRS.accessibleFrom (T : DRS L V) (u : V) : Finset V := (DRS.accScope ∅ T u).getD ∅
-
-/-- `v` is accessible from `u`'s position in `T`. Decidable (Finset membership). -/
-def DRS.Accessible (T : DRS L V) (u v : V) : Prop := v ∈ DRS.accessibleFrom T u
-
-instance (T : DRS L V) (u v : V) : Decidable (DRS.Accessible T u v) :=
-  inferInstanceAs (Decidable (v ∈ _))
 
 end Accessibility
 
