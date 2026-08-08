@@ -150,7 +150,7 @@ theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : Embedding V M) 
   match K with
   | .mk U conds =>
     rw [DRS.toFormula, realize_closeExists]
-    simp only [DRS.referents_mk, Embedding.verifies_mk, DRS.Extends]
+    simp only [Embedding.verifies_mk, Box.Extends]
     exact exists_congr fun v' =>
       and_congr_right fun _ => Condition.realize_toFormulaAll conds v'
 /-- The open body of a DRS (its conditions, no universe closure) realizes as

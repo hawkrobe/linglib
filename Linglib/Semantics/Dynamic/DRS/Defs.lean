@@ -20,8 +20,9 @@ complex condition is `neg`; `imp` and `dis` are its Chapter 2 extension
 
 ## Main declarations
 
-* `DRS L V`, `Condition L V` — the mutual data type over a language `L` (relation
-  signature) and discourse-referent type `V`.
+* `Box`, `Condition L V`, `DRS L V` — the data type over a language `L`
+  (relation signature) and discourse-referent type `V`: a DRS is a `Box` of
+  `Condition`s.
 * `DRS.merge` — the `⊕` operation (set-union referents, concatenate
   conditions); [muskens-1996]'s compositional operation.
 * `DirectlySubordinate`, `Subordinate`, `WeakSubordinate` — immediate
@@ -33,8 +34,13 @@ complex condition is `neg`; `imp` and `dis` are its Chapter 2 extension
 
 * `referents` is the textbook "universe `U`"; named for its contents because
   `universe` is a Lean keyword and `univ` collides with `Finset.univ`.
+* No mutual block: `Box` is a parameterized container structure the condition
+  syntax nests through, and `DRS` its instantiation at `Condition L V` — the
+  simultaneous Def. 1.4.1 rendered as nesting, with the structure API
+  (projections, `ext`, eta) for free.
 * The recursive `conditions` field is a `List`: Lean forbids nesting an inductive
-  through `Finset`/`Multiset`. Set semantics are imposed by the interpretation.
+  through `Finset`/`Multiset`. Set semantics are imposed by the interpretation
+  (`Embedding.verifies_perm`, `DRS/Verification.lean`).
 * `DRT` is the owning namespace (mathlib's `FirstOrder.Language` pattern):
   `DRS`, `Condition`, and `Ctx` are DRT's objects, keeping generic names
   owner-relative rather than claiming them at the root.
@@ -44,16 +50,23 @@ open FirstOrder
 
 namespace DRT
 
-universe u v w
+universe u v w x
 
 variable {L : Language.{u, v}} {V : Type w}
 
-mutual
-/-- A discourse representation structure: the pair `⟨referents, conditions⟩`
-(Def. 1.4.1). `referents` is the universe `U` (a finite set of discourse
-referents); `conditions` the DRS-conditions. -/
-inductive DRS (L : Language.{u, v}) (V : Type w) where
-  | mk (referents : Finset V) (conditions : List (Condition L V))
+/-- A DRT *box* over condition type `C`: a universe of discourse referents and
+a list of conditions — the two-compartment diagram the field draws (universe
+above, conditions below; [muskens-1996]'s linear `[u₁ … uₙ | γ₁ … γₘ]`). "Box"
+and "DRS" name the same object in the literature, in diagrammatic vs. official
+register; here `Box` is the generic shell that DRT variants re-instantiate at
+their condition types (`DRS` at `Condition L V`; cf. Layered DRT's LDRSs), and
+the container the condition syntax nests through. -/
+@[ext] structure Box (V : Type w) (C : Type x) where
+  /-- The universe `U`: the discourse referents the box introduces. -/
+  referents : Finset V
+  /-- The box's conditions. -/
+  conditions : List C
+
 /-- A DRS-condition: atomic (`rel`, `eq`) or complex — `neg` per Def. 1.4.1,
 `imp`/`dis` per its Chapter 2 extension. Sub-DRSs occur only inside complex
 conditions. -/
@@ -63,40 +76,37 @@ inductive Condition (L : Language.{u, v}) (V : Type w) where
   /-- Atomic equality condition `u = v`. -/
   | eq (u v : V)
   /-- Complex condition `¬K`. -/
-  | neg (K : DRS L V)
+  | neg (K : Box V (Condition L V))
   /-- Complex condition `K₁ ⇒ K₂` (antecedent ⇒ consequent). -/
-  | imp (ante cons : DRS L V)
+  | imp (ante cons : Box V (Condition L V))
   /-- Complex condition `K₁ ∨ K₂`. -/
-  | dis (left right : DRS L V)
-end
+  | dis (left right : Box V (Condition L V))
+
+/-- A discourse representation structure: a box of DRS-conditions — the pair
+`⟨referents, conditions⟩` (Def. 1.4.1). -/
+abbrev DRS (L : Language.{u, v}) (V : Type w) := Box V (Condition L V)
 
 namespace DRS
 
-/-- The referents (universe `U`) of a DRS — the discourse referents it introduces. -/
-def referents : DRS L V → Finset V
-  | .mk u _ => u
-
-/-- The conditions of a DRS. -/
-def conditions : DRS L V → List (Condition L V)
-  | .mk _ c => c
-
 @[simp] theorem referents_mk (u : Finset V) (c : List (Condition L V)) :
-    (DRS.mk u c).referents = u := rfl
+    (Box.mk u c).referents = u := rfl
 
 @[simp] theorem conditions_mk (u : Finset V) (c : List (Condition L V)) :
-    (DRS.mk u c).conditions = c := rfl
+    (Box.mk u c).conditions = c := rfl
 
 /-- A condition of a DRS is smaller than the DRS — the recursion measure for
 definitions descending through the nested `List (Condition L V)`. -/
 theorem sizeOf_lt_of_mem_conditions {K : DRS L V} {c : Condition L V}
     (h : c ∈ K.conditions) : sizeOf c < sizeOf K := by
   obtain ⟨U, conds⟩ := K
-  have := List.sizeOf_lt_of_mem (by simpa using h)
-  simp only [DRS.mk.sizeOf_spec]
+  have : sizeOf c < sizeOf conds := List.sizeOf_lt_of_mem h
+  simp only [Box.mk.sizeOf_spec]
   omega
 
 /-- The empty DRS `⟨∅, []⟩`. -/
 def empty : DRS L V := .mk ∅ []
+
+instance : Inhabited (DRS L V) := ⟨empty⟩
 
 /-- Merge `⊕`: set-union the referents, concatenate the conditions. The binary
 DRS merge is Muskens's compositional operation — Kamp & Reyle themselves
@@ -113,7 +123,7 @@ def merge [DecidableEq V] (K₁ K₂ : DRS L V) : DRS L V :=
 
 end DRS
 
-/-! ### Subordination and accessibility -/
+/-! ### Subordination -/
 
 /-- One-step subordination ("`K'` is *directly subordinate* to `K`"). The `neg`
 case is Def. 1.4.10(i); the `⇒`/`∨` cases are its Chapter 2 extension:
@@ -122,7 +132,10 @@ case is Def. 1.4.10(i); the `⇒`/`∨` cases are its Chapter 2 extension:
 * the antecedent of a `⇒` is subordinate to the containing DRS;
 * the consequent of a `⇒` is subordinate to its *antecedent* (the ⇒ asymmetry:
   antecedent referents are accessible in the consequent, not conversely);
-* each disjunct of a `∨` is subordinate to the containing DRS. -/
+* each disjunct of a `∨` is subordinate to the containing DRS.
+
+A relation on DRS *values*, where the textbook's is on box *occurrences*: on a
+degenerate `imp a a` the consequent edge makes `a` subordinate to itself. -/
 inductive DirectlySubordinate : DRS L V → DRS L V → Prop where
   | neg {D K : DRS L V} : Condition.neg K ∈ D.conditions → DirectlySubordinate K D
   | impAnte {D a c : DRS L V} : Condition.imp a c ∈ D.conditions → DirectlySubordinate a D

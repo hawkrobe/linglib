@@ -381,7 +381,7 @@ theorem Condition.holdsAt_union_fresh {X Δ : Finset V} (c : Condition L V)
     have hIHc : ∀ k : V → M, Condition.holdsAllAt (((X ∪ Ua) ∪ Uc) ∪ Δ) cc k ↔
         Condition.holdsAllAt ((X ∪ Ua) ∪ Uc) cc k :=
       fun k => Condition.holdsAllAt_union_fresh cc hΔcc hfvcc k
-    simp only [Condition.holdsAt_imp, DRS.referents_mk]
+    simp only [Condition.holdsAt_imp]
     constructor
     · intro hL g₁ hg₁
       obtain ⟨hadj, heq⟩ := DRS.toRelAt_adjust hΔUa hfvca hIHa hg₁
@@ -450,10 +450,9 @@ theorem DRS.toRelAt_merge {X : Finset V} (K₁ K₂ : DRS L V) (h₁ : K₁.fv �
   obtain ⟨U₁, c₁⟩ := K₁
   obtain ⟨U₂, c₂⟩ := K₂
   have hfvc₁ := DRS.fv_subset_iff.mp h₁
-  simp only [DRS.referents_mk, DRS.conditions_mk] at hfresh
   funext f g
   apply propext
-  simp only [DRS.merge, DRS.referents_mk, DRS.conditions_mk, DRS.toRelAt_mk,
+  simp only [DRS.merge, DRS.toRelAt_mk,
     Condition.holdsAllAt_append, DynamicSemantics.Update.seq, Relation.Comp]
   rw [← Finset.union_assoc]
   constructor
@@ -563,7 +562,7 @@ theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
   | .imp a c' =>
     obtain ⟨Ua, ca⟩ := a
     obtain ⟨Uc, cc⟩ := c'
-    simp only [Condition.reuseFreeAt_imp, DRS.reuseFreeAt_mk, DRS.referents_mk] at hrf
+    simp only [Condition.reuseFreeAt_imp, DRS.reuseFreeAt_mk] at hrf
     obtain ⟨⟨hXUa, hrfa⟩, hXUc, hrfc⟩ := hrf
     rw [Condition.fv_imp, Finset.union_subset_iff] at hfv
     obtain ⟨hfva, hfvc'⟩ := hfv
@@ -583,7 +582,7 @@ theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
     have hIHc : ∀ k : V → M, (∀ c ∈ cc, Embedding.VerifiesCondition k c) ↔
         Condition.holdsAllAt ((X ∪ Ua) ∪ Uc) cc k :=
       fun k => Condition.verifiesAll_iff_holdsAllAt cc hrfc hfvcc k
-    simp only [Embedding.verifies_imp, Condition.holdsAt_imp, DRS.referents_mk]
+    simp only [Embedding.verifies_imp, Condition.holdsAt_imp]
     constructor
     · intro hL g₁ hg₁
       obtain ⟨hflat, heq⟩ := DRS.toRel_of_toRelAt' hfvca hIHa hg₁

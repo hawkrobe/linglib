@@ -83,7 +83,7 @@ def persistence : DRS krLang ℕ :=
 that is a man, walked in, and sat down. -/
 theorem persistence_tc (a : ℕ → M) :
     DRS.trueRel persistence a ↔ ∃ e : M, rm .man ![e] ∧ rm .walkedIn ![e] ∧ rm .satDown ![e] := by
-  simp only [DRS.trueRel_iff, persistence, DRS.toRel_iff, DRS.Extends, DRS.referents_mk,
+  simp only [DRS.trueRel_iff, persistence, DRS.toRel_iff, Box.Extends,
     Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil, false_implies,
     implies_true, Embedding.verifies_rel, comp_vecCons, comp_vecEmpty, and_true]
   constructor
@@ -113,8 +113,8 @@ theorem donkey_universal_reading (a : ℕ → M) :
     DRS.trueRel donkey a ↔
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
       rm .beats ![e₁, e₂] := by
-  simp only [DRS.trueRel_iff, donkey, donkeyAnte, donkeyCons, DRS.toRel_iff, DRS.Extends,
-    DRS.referents_mk, Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil,
+  simp only [DRS.trueRel_iff, donkey, donkeyAnte, donkeyCons, DRS.toRel_iff, Box.Extends,
+    Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil,
     false_implies, implies_true, Embedding.verifies_imp, Embedding.verifies_rel,
     comp_vecCons, comp_vecEmpty, and_true]
   constructor
@@ -141,8 +141,8 @@ def negation : DRS krLang ℕ := .mk ∅ [.neg negInner]
 is bound inside the negation and inaccessible to any continuation. -/
 theorem negation_tc (a : ℕ → M) :
     DRS.trueRel negation a ↔ ¬ ∃ e : M, rm .man ![e] ∧ rm .walkedIn ![e] := by
-  simp only [DRS.trueRel_iff, negation, negInner, DRS.toRel_iff, DRS.Extends,
-    DRS.referents_mk, Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil,
+  simp only [DRS.trueRel_iff, negation, negInner, DRS.toRel_iff, Box.Extends,
+    Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil,
     false_implies, implies_true, Embedding.verifies_neg, Embedding.verifies_rel,
     comp_vecCons, comp_vecEmpty, and_true]
   constructor
@@ -157,13 +157,13 @@ theorem negation_tc (a : ℕ → M) :
 
 /-- The antecedent box is directly subordinate to the donkey DRS. -/
 theorem donkey_antecedent_subordinate : DirectlySubordinate donkeyAnte donkey :=
-  .impAnte (c := donkeyCons) (by simp [donkey, DRS.conditions])
+  .impAnte (c := donkeyCons) (by simp [donkey])
 
 /-- The consequent box is directly subordinate to the *antecedent* — the `⇒`
 asymmetry that makes the antecedent's referents accessible in the consequent. -/
 theorem donkey_consequent_subordinate : DirectlySubordinate donkeyCons donkeyAnte :=
   .impCons (show Condition.imp donkeyAnte donkeyCons ∈ donkey.conditions by
-    simp [donkey, DRS.conditions])
+    simp [donkey])
 
 /-! ### Model evaluation: donkey true in a concrete model
 

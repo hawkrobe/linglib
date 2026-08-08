@@ -12,7 +12,7 @@ Structural operations and lemmas over the faithful `DRS` core (`DRS/Defs.lean`):
   identity is the identity" a free corollary, and `Embedding.verifies_map`
   (`DRS/Verification.lean`) shows variants have the same semantics.
 * `merge` algebra — identity (`empty`) and associativity.
-* `Embedding` and `DRS.Extends` — embedding functions and K&R's extension
+* `Embedding` and `Box.Extends` — embedding functions and K&R's extension
   relation `f [K] g` between them.
 * `DRS.fv` / `DRS.IsProper` — free discourse referents (as a `Finset`) and
   properness (`fv K = ∅`, Def. 1.4.2–1.4.3).
@@ -54,11 +54,7 @@ mutual
 /-- Renaming along the identity is the identity. -/
 @[simp] theorem DRS.map_id [DecidableEq V] (K : DRS L V) : DRS.map id K = K := by
   match K with
-  | .mk refs conds =>
-      simp only [DRS.map, Condition.mapList_id]
-      congr 1
-      ext x
-      simp
+  | .mk refs conds => simp only [DRS.map, Condition.mapList_id, Finset.image_id]
 /-- Renaming a condition along the identity is the identity. -/
 @[simp] theorem Condition.map_id [DecidableEq V] (c : Condition L V) :
     Condition.map id c = c := by
@@ -123,17 +119,18 @@ abbrev Embedding (V : Type w) (M : Type*) := V → M
 
 section Extends
 
-variable {M : Type*}
+variable {M : Type*} {C : Type x}
 
 /-- `K.Extends f g` (K&R's `f [K] g`): the output embedding `g` differs from
 the input `f` at most on `K`'s universe — the total-assignment rendering of
-"`f ⊆ g` and `Dom g = Dom f ∪ U_K`". -/
-def DRS.Extends (K : DRS L V) (f g : Embedding V M) : Prop := ∀ x ∉ K.referents, g x = f x
+"`f ⊆ g` and `Dom g = Dom f ∪ U_K`". Stated for any box, since only the
+universe is read. -/
+def Box.Extends (K : Box V C) (f g : Embedding V M) : Prop := ∀ x ∉ K.referents, g x = f x
 
 /-- Extension along a renamed DRS is extension of the precompositions. -/
 theorem DRS.extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f g : Embedding W M) :
     (K.map e).Extends f g ↔ K.Extends (f ∘ e) (g ∘ e) := by
-  simp only [DRS.Extends, DRS.referents_map, Function.comp_apply]
+  simp only [Box.Extends, DRS.referents_map, Function.comp_apply]
   constructor
   · intro h x hx
     exact h (e x) (by simpa using hx)
@@ -242,7 +239,7 @@ def Condition.fvL : List (Condition L V) → Finset V
 end
 
 @[simp] theorem DRS.fv_mk (U : Finset V) (conds : List (Condition L V)) :
-    (DRS.mk U conds).fv = Condition.fvL conds \ U := rfl
+    DRS.fv ⟨U, conds⟩ = Condition.fvL conds \ U := rfl
 @[simp] theorem Condition.fv_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
     (Condition.rel R args).fv = Finset.image args Finset.univ := rfl
 @[simp] theorem Condition.fv_eq (u v : V) :
@@ -260,7 +257,7 @@ end
 referents are supplied by `X` iff its conditions' are supplied by the grown
 base. -/
 theorem DRS.fv_subset_iff {U X : Finset V} {conds : List (Condition L V)} :
-    (DRS.mk U conds).fv ⊆ X ↔ Condition.fvL conds ⊆ X ∪ U := by
+    DRS.fv ⟨U, conds⟩ ⊆ X ↔ Condition.fvL conds ⊆ X ∪ U := by
   rw [DRS.fv_mk, sdiff_le_iff, sup_comm, Finset.sup_eq_union]
 
 mutual
