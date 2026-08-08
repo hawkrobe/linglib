@@ -60,8 +60,8 @@ universe u v w x
 
 variable {L : Language.{u, v}} {V : Type w}
 
-/-- A DRT *box* consists of two parts: a universe of discourse referents, and
-conditions drawn from `C`. `DRS` instantiates `C` at `Condition L V`. -/
+/-- A DRT *box*, generic over the condition type `C`; `DRS` instantiates `C`
+at `Condition L V`. -/
 @[ext] structure Box (V : Type w) (C : Type x) where
   /-- The universe `U`: the discourse referents the box introduces. -/
   referents : Finset V
