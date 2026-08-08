@@ -20,9 +20,8 @@ complex condition is `neg`; `imp` and `dis` are its Chapter 2 extension
 
 "Box" and "DRS" name the same object in the literature — the two-compartment
 diagram, [muskens-1996]'s linear `[u₁ … uₙ | γ₁ … γₘ]` — in diagrammatic vs.
-official register. `Box` (`DRS/Box.lean`) is the generic shell that DRT
-variants re-instantiate at their condition types (Layered DRT's LDRSs), and
-`DRS` its instantiation at `Condition L V`.
+official register. `Box` (`DRS/Box.lean`) is the generic container; `DRS` is
+its instantiation at `Condition L V`.
 
 ## Main declarations
 

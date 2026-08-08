@@ -4,14 +4,12 @@ import Mathlib.Data.Finset.Image
 /-!
 # The DRT box
 
-The generic two-compartment shell of DRT: a *box* pairs a universe of
-discourse referents with a list of conditions, generic over the condition
-type `C`. DRT variants re-instantiate the shell at their own condition types
-(`DRS L V := Box V (Condition L V)` in `DRS/Defs.lean`; Layered DRT's LDRSs).
-Everything here is condition-agnostic: the functorial action `Box.map`, the
-extension relation `Box.Extends` between embedding functions, and the
-`sizeOf`/termination infrastructure for recursions that descend through the
-nested condition list.
+In discourse representation theory, a box contains two pieces of information:
+a universe of discourse referents, and a set of conditions recording what has
+been established about them. Boxes can be nested, and different theories
+instantiate conditions in different ways
+([venhuizen-bos-hendriks-brouwer-2018]; [liu-2021]). This file develops basic
+results about boxes, including renaming, extension, and recursions.
 -/
 
 namespace DRT
