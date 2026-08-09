@@ -22,7 +22,7 @@ by Degano & Aloni's variation/constancy types.
 
 namespace Features.ModalIndefinite
 
-open Semantics.Modality (ModalFlavor)
+open Modality (ModalFlavor)
 
 /-! ### Modal component status -/
 

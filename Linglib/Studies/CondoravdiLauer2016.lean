@@ -58,7 +58,7 @@ paper-specific; tracked in
 namespace CondoravdiLauer2016
 
 open Semantics.Attitudes.CondoravdiLauer
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 open Semantics.Conditionals.Restrictor
 open Core.Order
 

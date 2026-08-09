@@ -18,7 +18,7 @@ the `Finset Ordering` tense vocabulary (`Core.Order`, via `Tense`).
 
 open Tense
 
-namespace Semantics.Modality
+namespace Modality
 
 
 /-- Classification of modal base temporal character.
@@ -61,4 +61,4 @@ theorem ModalBaseKind.upper_limit_from_dox :
     ModalBaseKind.permitsOrientation .doxastic future = false := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
-end Semantics.Modality
+end Modality

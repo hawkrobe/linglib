@@ -47,7 +47,7 @@ the substrate's distribution lemmas directly.
 
 namespace CiardelliGuerrini2026
 
-open Semantics.Modality
+open Modality
 open Exhaustification.FreeChoice (diamond box diamond_distributes_iff FCAltSet free_choice_forward)
 open English.Auxiliaries
 

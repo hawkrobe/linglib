@@ -57,8 +57,8 @@ namespace FaginHalpern1994
 
 open Modal
   (AgentAccessRel AccessRel box IsEuclidean)
-open Semantics.Modality.EpistemicLogic (knows everyoneKnows)
-open Semantics.Modality.EpistemicProbability (WorldCredence nestedThreshold)
+open Modality.EpistemicLogic (knows everyoneKnows)
+open Modality.EpistemicProbability (WorldCredence nestedThreshold)
 
 -- ============================================================================
 -- §1. Kripke Probability Structures
@@ -359,7 +359,7 @@ theorem everyoneKnows_implies_everyoneProbOne {W E : Type*} [Fintype W]
   intro i hi
   simp only [nestedThreshold, decide_eq_true_eq]
   linarith [knows_implies_prob_one kp hCONS hNorm i φ w
-    (Semantics.Modality.EpistemicLogic.everyoneKnows_implies_knows
+    (Modality.EpistemicLogic.everyoneKnows_implies_knows
       kp.accessRel group _ w i hi h)]
 
 -- ============================================================================

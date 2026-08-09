@@ -10,7 +10,7 @@ modal base and ordering source for different types of modality.
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Modality.ModalTypes
 
-namespace Semantics.Modality.Kratzer
+namespace Modality.Kratzer
 
 variable {W : Type*}
 
@@ -61,7 +61,7 @@ Each flavor structure maps to the theory-neutral `ModalFlavor` enum from
 `Intensional`, bridging Kratzer's parameterized semantics to the
 typological meaning space (Imel, Guo, & [imel-guo-steinert-threlkeld-2026]). -/
 
-open Semantics.Modality (ModalFlavor)
+open Modality (ModalFlavor)
 
 /-- Epistemic modality maps to the epistemic flavor tag. -/
 def EpistemicFlavor.flavorTag : ModalFlavor := .epistemic
@@ -83,7 +83,7 @@ Each flavor structure maps to a `BackgroundClass` from
 traditional epistemic/circumstantial binary based on the **projection
 mode** of the conversational background ([matthewson-2016] Table 18.3). -/
 
-open Semantics.Modality (BackgroundClass ProjectionMode)
+open Modality (BackgroundClass ProjectionMode)
 
 /-- Epistemic modality: factual-evidential by default. -/
 def EpistemicFlavor.toBackgroundClass (_ : EpistemicFlavor W) : BackgroundClass :=
@@ -168,4 +168,4 @@ theorem KratzerParams.duality (params : KratzerParams W) (p : W → Prop)
     params.necessity p w ↔ ¬ params.possibility (fun w' => ¬ p w') w :=
   Kratzer.duality params.base params.ordering p w
 
-end Semantics.Modality.Kratzer
+end Modality.Kratzer

@@ -58,11 +58,11 @@ open Tense
 namespace Klecha2016
 
 open Features (Attitude Preferential Veridicality)
-open Semantics.Modality (ModalBaseKind)
+open Modality (ModalBaseKind)
 open HistoricalAlternatives
   (actualHistoryBase futureHistoryBase
    upperLimitConstraintModal upperLimitConstraintModal_implies_value)
-open Semantics.Modality.TemporalConstraint (attitudeTemporalConstraint
+open Modality.TemporalConstraint (attitudeTemporalConstraint
   doxConstrainsRT cirConstrainsRT Attitude.toModalBaseKind
   dox_compatible_with_past dox_incompatible_with_future cir_compatible_with_future
   permitsCirc_iff_cir ModalFlavor.toModalBaseKind
@@ -72,7 +72,7 @@ open Semantics.Modality.TemporalConstraint (attitudeTemporalConstraint
   attitudeTemporalConstraint_derived_circumstantial)
 open English.Predicates.Verbal (think believe hope pray)
 open Tense (upperLimitConstraint)
-open Semantics.Modality (ModalFlavor)
+open Modality (ModalFlavor)
 open Data.Examples (LinguisticExample)
 
 /-! ### The tense × modal-base four-cell matrix
@@ -538,7 +538,7 @@ theorem klecha_predicts_imaa_no_future :
     configurations are felicitous, not blocked. -/
 theorem matthewson_imaa_future_attested :
     Matthewson2013.fig4Cells.filter (fun c =>
-      c.orientation == Semantics.Modality.TemporalOrientation.future)
+      c.orientation == Modality.TemporalOrientation.future)
       = [⟨.present, .future, 42⟩, ⟨.past, .future, 44⟩] := rfl
 
 /-- The disagreement: Klecha predicts no felicitous future-oriented

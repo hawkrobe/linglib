@@ -37,7 +37,7 @@ this apparatus live in `Studies/Zheng2025.lean`.
 
 namespace Modality
 
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 open Semantics.Presupposition
 open Intensional.Premise
 
@@ -65,11 +65,11 @@ def toModalBase : ModalBase W :=
 
 /-- `K` is consistent iff `B_K ≠ ∅`. -/
 def isConsistent : Prop :=
-  Semantics.Modality.Kratzer.isConsistent k.props
+  Modality.Kratzer.isConsistent k.props
 
 /-- `φ` follows from `K` iff `B_K ⊆ ⟦φ⟧`. -/
 def followsFrom : Prop :=
-  Semantics.Modality.Kratzer.followsFrom φ k.props
+  Modality.Kratzer.followsFrom φ k.props
 
 /-- `φ` is compatible with `K` iff `B_K ∩ ⟦φ⟧ ≠ ∅`. -/
 def compatibleWith : Prop :=

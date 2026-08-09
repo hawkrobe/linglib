@@ -47,9 +47,9 @@ so the inquisitive route induces the initial state. Binding height
 namespace Mood
 
 open UpdateSemantics.Default
-open Semantics.Modality (ModalFlavor)
+open Modality (ModalFlavor)
 open HasTarget (target)
-open Semantics.Modality.EventRelativity (EventProjection)
+open Modality (EventProjection)
 
 variable {W : Type*}
 
@@ -156,7 +156,7 @@ modal-base flavors the informational, ordering-source flavors the
 preferential ([kratzer-1981]'s parameter roles; [portner-2018],
 p. 233). The third instance of the one classification, beside
 sentence and verbal mood. -/
-instance : HasTarget Semantics.Modality.ModalFlavor where
+instance : HasTarget Modality.ModalFlavor where
   target
     | .epistemic      => .informational
     | .deontic        => .preferential

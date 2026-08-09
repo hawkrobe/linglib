@@ -13,7 +13,7 @@ is the bundled, decidability-carrying form of the same pattern).
 
 One construction, several instantiations across the library:
 
-- `Semantics.Modality.Kratzer.kratzerPreorder` / `atLeastAsGoodAs` —
+- `Modality.Kratzer.kratzerPreorder` / `atLeastAsGoodAs` —
   worlds ordered by an ordering source.
 - `Core.Order.NormalityOrder.fromProps` — the same order repackaged as a
   `NormalityOrder` for the default-reasoning infrastructure.

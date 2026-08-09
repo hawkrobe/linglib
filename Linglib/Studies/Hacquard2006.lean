@@ -37,12 +37,7 @@ Substrate note: the event-relative machinery (`EventBinder`,
 
 namespace Hacquard2006
 
-open Semantics.Modality.EventRelativity
-open Semantics.Modality.Kratzer (simpleNecessity simplePossibility kratzerR
-  ConvBackground accessibleWorlds)
-open Semantics.Modality (TemporalPerspective)
-open Semantics.Modality.ActualityEntailments (AspectModalScope toAspectScope
-  actualityEntailmentPredicted)
+open Modality Modality.Kratzer
 open Semantics.Aspect (Perfectivity)
 open Data.Examples (LinguisticExample)
 

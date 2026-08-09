@@ -44,10 +44,9 @@ argument via an anchoring function.
 
 -/
 
-namespace Semantics.Modality.EventRelativity
+namespace Modality
 
-open Semantics.Modality (ModalFlavor)
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 
 
 -- ════════════════════════════════════════════════════
@@ -740,4 +739,4 @@ theorem events_richer_than_pairs :
       EventBinder.attitude.availableFlavors := ⟨rfl, rfl, rfl, rfl⟩
 
 
-end Semantics.Modality.EventRelativity
+end Modality

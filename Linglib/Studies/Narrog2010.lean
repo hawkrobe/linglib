@@ -5,7 +5,7 @@ import Linglib.Semantics.Modality.Narrog
 [narrog-2010]
 
 Study file connecting [narrog-2010]'s theoretical claims to the
-cross-linguistic data in `Semantics.Modality.DeonticNecessity`. The chapter argues
+cross-linguistic data in `Modality.DeonticNecessity`. The chapter argues
 that strong obligation markers are cross-linguistically uncommon because
 obligation is inherently face-threatening and socially costly, so languages
 tend not to grammaticalize it — or to do so only indirectly.
@@ -27,14 +27,14 @@ speaker-orientation. Face-threat is derived from this decomposition (see
 
 ## Bridges
 
-- `Semantics.Modality.DeonticNecessity`: provides the 200-language data.
-- `Semantics.Modality.Narrog`: provides the theoretical framework
+- `Modality.DeonticNecessity`: provides the 200-language data.
+- `Modality.Narrog`: provides the theoretical framework
   (volitivity, speaker-orientation, performativity, directionality).
 -/
 
 namespace Narrog2010
 
-open Semantics.Modality.Narrog
+open Modality.Narrog
 
 -- ============================================================================
 -- §−1. Diachronic Modal Change (Bybee et al. 1994, Table 2)
@@ -42,7 +42,7 @@ open Semantics.Modality.Narrog
 
 /-! Cross-linguistic patterns of diachronic change in modal and mood
 meanings, formalized on Narrog's 2D semantic map
-(`Semantics.Modality.Narrog`). The central claim: modal meanings always
+(`Modality.Narrog`). The central claim: modal meanings always
 shift **upward** in the semantic map — toward increased
 speaker-orientation — regardless of volitivity. The well-known deontic →
 epistemic shift is just one instance.

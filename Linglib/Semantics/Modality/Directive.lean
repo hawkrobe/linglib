@@ -41,9 +41,9 @@ The `DeonticStrength` structure pairs primary and secondary norms,
 bridging to `DeonticFlavor`.
 -/
 
-namespace Semantics.Modality.Directive
+namespace Modality.Directive
 
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 
 variable {W : Type*}
 
@@ -174,4 +174,4 @@ theorem weak_eq_strong_no_secondary (f : ModalBase W) (g : OrderingSource W)
     bestWorlds f g w from bestAmong_empty _]
   exact (necessity_iff_all f g p w).symm
 
-end Semantics.Modality.Directive
+end Modality.Directive

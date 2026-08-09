@@ -38,9 +38,9 @@ membership (see `actualHistoryBase_derives_ulc` in
 Klecha-namespace face of that derivation kernel-checked.
 -/
 
-namespace Semantics.Modality.TemporalConstraint
+namespace Modality.TemporalConstraint
 
-open Semantics.Modality (ModalBaseKind)
+open Modality (ModalBaseKind)
 open HistoricalAlternatives
   (isActualHistory isFutureHistory actualHistoryBase futureHistoryBase
    actualHistoryBase_time_actual futureHistoryBase_time_future)
@@ -188,10 +188,10 @@ theorem permitsCirc_iff_cir (a : Features.Attitude) :
 with its flavor. Epistemic modals are past/present-oriented (DOX-like);
 circumstantial, deontic, bouletic, and teleological modals are
 future-oriented (CIR-like). This function bridges the four-way
-`ModalFlavor` classification (from `Semantics.Modality`) to Klecha's binary
+`ModalFlavor` classification (from `Modality`) to Klecha's binary
 `ModalBaseKind`. -/
 
-open Semantics.Modality (ModalFlavor)
+open Modality (ModalFlavor)
 
 /-- Map modal flavor to modal base kind.
     Epistemic → DOX (past/present orientation).
@@ -237,4 +237,4 @@ theorem non_epistemic_is_cir (f : ModalFlavor) (h : f ≠ .epistemic) :
     ModalFlavor.toModalBaseKind f = ModalBaseKind.circumstantial := by
   cases f <;> simp_all [ModalFlavor.toModalBaseKind]
 
-end Semantics.Modality.TemporalConstraint
+end Modality.TemporalConstraint

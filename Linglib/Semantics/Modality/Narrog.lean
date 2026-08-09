@@ -41,9 +41,9 @@ subjectivity cline fails to distinguish (§2.4, ch. 3).
   the formalised study at `Studies/Narrog2010.lean`.
 -/
 
-namespace Semantics.Modality.Narrog
+namespace Modality.Narrog
 
-open Semantics.Modality (ModalFlavor)
+open Modality (ModalFlavor)
 open Features.Subjectivity (SubjectivityLevel Performativity)
 
 -- ============================================================================
@@ -263,4 +263,4 @@ Diachronic modal change data and directionality theorems are now in
 `NarrogRegion` and `SpeakerOrientationLevel` to formalize the claim
 that modal meanings always shift upward in the semantic map. -/
 
-end Semantics.Modality.Narrog
+end Modality.Narrog

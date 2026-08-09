@@ -16,8 +16,8 @@ Cartesian product {necessity, possibility} × {epistemic, deontic}.
 
 namespace Washo.Modals
 
-open Semantics.Modality (ForceFlavor)
-open Semantics.Modality.Typology (ModalExpression)
+open Modality (ForceFlavor)
+open Modality.Typology (ModalExpression)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic
 private abbrev nd := ForceFlavor.mk .necessity .deontic

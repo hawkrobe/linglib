@@ -178,7 +178,7 @@ result given the near-universal prior assumption that it is a clitic.
 ## Semantic scope bridge (criterion D)
 
 The scope irregularity of negation with modals provides a bridge to
-`Semantics.Modality`: *can't* means NOT(CAN(P)) but *mustn't*
+`Modality`: *can't* means NOT(CAN(P)) but *mustn't*
 means MUST(NOT(P)). This non-compositional scope behavior is characteristic
 of inflectional affixes, not clitics.
 
@@ -399,7 +399,7 @@ an accessibility relation under which the two scope readings diverge. -/
 
 section ScopeBridge
 
-open Semantics.Modality (ModalForce)
+open Modality (ModalForce)
 open Modal (AccessRel box diamond)
 
 abbrev World := Fin 4

@@ -30,7 +30,7 @@ namespace Discourse.Commitment.Frame
 
 open Modal (AccessRel AgentAccessRel IsKD45Frame IsK4EuclFrame
   IsEuclidean box diamond box_K box_four)
-open Semantics.Modality.EpistemicLogic (knows)
+open Modality.EpistemicLogic (knows)
 
 /-- Pair-indexed deontic accessibility: `commitment a b w v` means at
     `w`, the world `v` is among those satisfying everything `a` is

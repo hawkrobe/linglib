@@ -39,7 +39,7 @@ Sources:
 import Linglib.Semantics.Modality.Kratzer.Ordering
 import Linglib.Logic.Modal.Basic
 
-namespace Semantics.Modality.Kratzer
+namespace Modality.Kratzer
 
 open Modal
 
@@ -269,4 +269,4 @@ theorem totally_realistic_gives_T (f : ModalBase W) (g : OrderingSource W)
 def restrictedBase (f : ModalBase W) (antecedent : W → Prop) : ModalBase W :=
   fun w => antecedent :: f w
 
-end Semantics.Modality.Kratzer
+end Modality.Kratzer

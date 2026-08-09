@@ -23,7 +23,7 @@ distinction that [tsiakmakis-2025] argues is cross-linguistically valid.
 
 namespace Greek.StandardModern.Negation
 
-open Semantics.Modality.Kratzer (ModalBase OrderingSource necessity)
+open Modality.Kratzer (ModalBase OrderingSource necessity)
 -- NB: not opening Syntax.Negation namespace-wide to avoid
 -- collision with the local `MoodMarkerEntry` (Tsiakmakis 2025 paper
 -- apparatus). The Core entries below are fully qualified.

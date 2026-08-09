@@ -22,7 +22,7 @@ this pattern.
 
 ## Connections
 
-- `Semantics.Modality.Narrog`: speaker-orientation level maps to
+- `Modality.Narrog`: speaker-orientation level maps to
   subjectivity level; the directionality of modal change (see
   `Studies/Narrog2010.lean`) is an instance of subjectification.
 - `Quantification.Binominal`: the bleaching cline (N+PP → evaluative → intensifier)

@@ -51,7 +51,7 @@ account's systematic error.
 
 namespace LiuRotter2025
 
-open Semantics.Modality (ModalForce ModalItem)
+open Modality (ModalForce ModalItem)
 open English.Auxiliaries
 open Data.Examples (LinguisticExample)
 

@@ -14,7 +14,7 @@ relation, written `x ⊥ y` — the formal `Concept`s of `r` form an
 restricts to an order-reversing involution on extents.
 
 This is the framework-agnostic core of possibility semantics for orthologic
-([holliday-mandelkern-2024] Proposition 4.8): the `Semantics.Modality.Orthologic`
+([holliday-mandelkern-2024] Proposition 4.8): the `Orthologic`
 stack is the special case `r = ¬compat`, where `orthoNeg = upperPolar r`,
 `regularClosure = extentClosure r`, and the load-bearing involutivity
 (Proposition 4.8) is mathlib's `upperPolar_lowerPolar_upperPolar`. The bridge to
@@ -100,7 +100,7 @@ end Concept
 
 /-- An **orthoframe**: a set with a symmetric, irreflexive orthogonality
     relation `ortho` (written `x ⊥ y`). Its regular propositions form an
-    ortholattice (`Orthoframe.Regular`). The `Semantics.Modality.Orthologic`
+    ortholattice (`Orthoframe.Regular`). The `Orthologic`
     compatibility frames are the special case `ortho = ¬compat`. -/
 structure Orthoframe (S : Type*) where
   /-- The orthogonality relation, written `x ⊥ y`. -/

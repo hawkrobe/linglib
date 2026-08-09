@@ -38,7 +38,7 @@ EAT analysis (with the same partition reinterpreted) does not.
 The at-issue content is Kratzer strong necessity over the modal base,
 shared across all four lexical entries (modulo modal-base type). It is
 not formalized in this file; consumers wanting full denotations should
-combine `Modal.flavor` with `Semantics.Modality.Kratzer.necessity`.
+combine `Modal.flavor` with `Modality.Kratzer.necessity`.
 -/
 
 namespace Huijsmans2025
@@ -113,7 +113,7 @@ instance {Time : Type} [LinearOrder Time] [DecidableEq Time] (c : MBTProfile)
 structure Modal where
   label   : String
   /-- Modal flavor, or `none` for underspecified (Huijsmans p. 218). -/
-  flavor  : Option Semantics.Modality.ModalFlavor
+  flavor  : Option Modality.ModalFlavor
   profile : MBTProfile
   deriving Repr
 

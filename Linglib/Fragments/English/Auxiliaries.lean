@@ -57,7 +57,7 @@ namespace English.Auxiliaries
 
 
 section Modals
-open Semantics.Modality (ForceFlavor ModalForce ModalFlavor ModalInterpretability ModalFeature)
+open Modality (ForceFlavor ModalForce ModalFlavor ModalInterpretability ModalFeature)
 open Features.Register (Level)
 
 /-- Auxiliary type -/
@@ -252,7 +252,7 @@ def AuxEntry.toWord (a : AuxEntry) : Word :=
   }
 
 /-- Project to the shared modal item core (form + meaning + register). -/
-def AuxEntry.toModalItem (a : AuxEntry) : Semantics.Modality.ModalItem where
+def AuxEntry.toModalItem (a : AuxEntry) : Modality.ModalItem where
   form := a.form
   meaning := a.modalMeaning
   register := a.register
@@ -272,7 +272,7 @@ end Modals
 -- ============================================================================
 
 section ModalAdverbs
-open Semantics.Modality (ForceFlavor ModalForce ModalFlavor)
+open Modality (ForceFlavor ModalForce ModalFlavor)
 open Features.Register (Level)
 
 /-- Modal adverb entry: an adverb expressing modal force and flavor
@@ -292,7 +292,7 @@ def ModalAdvEntry.toWord (a : ModalAdvEntry) : Word :=
   { form := a.form, cat := .ADV, features := {} }
 
 /-- Project to the shared modal item core (form + meaning + register). -/
-def ModalAdvEntry.toModalItem (a : ModalAdvEntry) : Semantics.Modality.ModalItem where
+def ModalAdvEntry.toModalItem (a : ModalAdvEntry) : Modality.ModalItem where
   form := a.form
   meaning := a.modalMeaning
   register := a.register

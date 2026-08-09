@@ -104,7 +104,7 @@ open Exhaustification (innocent tolerant predToFinset altsFromPreds
   innocent_exh_pairwise_disjoint_partial)
 open Data.Examples (LinguisticExample)
 export Farsi.Determiners (EFCIRescue EFCIReading)
-export Semantics.Modality (ModalFlavor)
+export Modality (ModalFlavor)
 
 
 /-!

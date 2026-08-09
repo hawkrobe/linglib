@@ -22,7 +22,7 @@ X-marking does not change modal force — it shifts the modal parameters
 
 namespace Portuguese.Modals
 
-open Semantics.Modality
+open Modality
 
 /-! ## Helper -/
 

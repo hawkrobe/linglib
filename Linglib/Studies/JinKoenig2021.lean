@@ -909,7 +909,7 @@ satisfy ¬p. The ¬ in the complement is structural, not expletive —
 but from the language production perspective, the activation of ¬p
 alongside p (in worlds outside the modal base) triggers EN. -/
 
-open Semantics.Modality.Kratzer (necessity possibility necessity_iff_all possibility_iff_any
+open Modality.Kratzer (necessity possibility necessity_iff_all possibility_iff_any
   ModalBase OrderingSource bestWorlds)
 
 abbrev World := Fin 4

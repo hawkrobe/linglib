@@ -550,8 +550,8 @@ We make this critique computational by contrasting `Directive.weakNecessity`
 
 section DirectiveBridge
 
-open Semantics.Modality.Directive (weakNecessity)
-open Semantics.Modality.Kratzer (ModalBase OrderingSource)
+open Modality.Directive (weakNecessity)
+open Modality.Kratzer (ModalBase OrderingSource)
 
 /-- Local 4-world type for the bivalence demonstration. -/
 abbrev BridgeWorld := Fin 4

@@ -171,7 +171,7 @@ formalised here. -/
 /-! ### The Designated Goals proposal -/
 
 section DesignatedGoals
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 
 /-- [vonfintel-iatridou-2005] §6 parameter for a teleological
 modal: a *designated goal* supplied by the to/if-clause, *ancillary

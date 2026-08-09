@@ -278,7 +278,7 @@ end SimpleVersion
 
 section OrderingVersion
 
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 
 /-- Epistemic state (ordering version): a modal base (set of worlds)
     paired with an ordering source (set of propositions ranking those worlds).
@@ -645,7 +645,7 @@ end OrderingVersion
 
 section RelationalSemantics
 
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 
 /-- Relational semantics for might:
     ⟦might-p⟧ⁱ(w) = true iff ∃w' ∈ f_i(w), p(w') = true,

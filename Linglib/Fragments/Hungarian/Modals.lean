@@ -9,8 +9,8 @@ Modal expressions from Hungarian (Uralic), based on
 
 namespace Hungarian.Modals
 
-open Semantics.Modality (ForceFlavor)
-open Semantics.Modality.Typology (ModalExpression)
+open Modality (ForceFlavor)
+open Modality.Typology (ModalExpression)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic
 private abbrev pe := ForceFlavor.mk .possibility .epistemic

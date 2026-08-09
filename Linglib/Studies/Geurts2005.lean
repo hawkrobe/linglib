@@ -54,7 +54,7 @@ as Modals* (Natural Language Semantics 13:383–410). Following
 
 ## Implementation notes
 
-* Force is the project-canonical `Semantics.Modality.ModalForce` (necessity |
+* Force is the project-canonical `Modality.ModalForce` (necessity |
   weakNecessity | possibility, [von-fintel-iatridou-2008]). Geurts
   treats only ∃/∀; we route `weakNecessity` to the universal branch (every
   weak-necessity claim still quantifies universally over its refined
@@ -89,7 +89,7 @@ substantive move is the LF reanalysis (p.391), not a structural inference.
 
 namespace Geurts2005
 
-open Semantics.Modality
+open Modality
 open Semantics.Presupposition
 
 variable {W : Type*}

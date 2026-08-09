@@ -39,8 +39,8 @@ but only weakly.
 
 namespace Gitksan.Modals
 
-open Semantics.Modality (ForceFlavor ForceAnalysis BackgroundClass TemporalOrientation)
-open Semantics.Modality.Typology (ModalExpression)
+open Modality (ForceFlavor ForceAnalysis BackgroundClass TemporalOrientation)
+open Modality.Typology (ModalExpression)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic
 private abbrev pe := ForceFlavor.mk .possibility .epistemic

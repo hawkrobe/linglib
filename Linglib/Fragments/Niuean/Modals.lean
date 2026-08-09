@@ -52,8 +52,8 @@ in the root/circumstantial domain.
 
 namespace Niuean.Modals
 
-open Semantics.Modality (ForceFlavor ForceAnalysis)
-open Semantics.Modality.Typology (ModalExpression satisfiesIFF satisfiesSAV)
+open Modality (ForceFlavor ForceAnalysis)
+open Modality.Typology (ModalExpression satisfiesIFF satisfiesSAV)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic
 private abbrev pe := ForceFlavor.mk .possibility .epistemic
@@ -89,7 +89,7 @@ def forceAnalysis : ModalExpression → ForceAnalysis
 
 /-! ## Background classification -/
 
-open Semantics.Modality (BackgroundClass) in
+open Modality (BackgroundClass) in
 /-- Background class for each Niuean modal.
     liga is epistemic (factual-evidential); maeke and lata are
     circumstantial (factual-circumstantial). -/

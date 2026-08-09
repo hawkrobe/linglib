@@ -30,8 +30,8 @@ When non-restructured (high): epistemic readings available.
 
 namespace Italian.Modals
 
-open Semantics.Modality (ModalForce ModalFlavor ForceFlavor)
-open Semantics.Modality.EventRelativity (ModalPosition EventBinder)
+open Modality (ModalForce ModalFlavor ForceFlavor)
+open Modality (ModalPosition EventBinder)
 
 
 -- ════════════════════════════════════════════════════

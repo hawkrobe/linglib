@@ -6,7 +6,7 @@ import Linglib.Studies.Hacquard2010
 [narrog-2012]
 
 Study file formalizing the core contributions of [narrog-2012] beyond
-what is already captured in `Semantics.Modality.Narrog` (the 2D/3D semantic
+what is already captured in `Modality.Narrog` (the 2D/3D semantic
 map) and `Narrog2010` (Bybee et al. data + directionality).
 
 ## New contributions formalized here
@@ -37,8 +37,8 @@ map) and `Narrog2010` (Bybee et al. data + directionality).
 
 namespace Narrog2012
 
-open Semantics.Modality.Narrog
-open Semantics.Modality.EventRelativity (ModalPosition EventBinder)
+open Modality.Narrog
+open Modality (ModalPosition EventBinder)
 
 
 -- ============================================================================
@@ -372,7 +372,7 @@ theorem three_way_agreement_epistemic_above_root :
     This bridges the existing `ModalItem.meaning` (List ForceFlavor) data
     that fragment entries already carry to Narrog's orientation axis,
     without requiring changes to the `ModalItem` structure. -/
-def orientationOfFlavor : Semantics.Modality.ModalFlavor → SpeakerOrientationLevel
+def orientationOfFlavor : Modality.ModalFlavor → SpeakerOrientationLevel
   | .epistemic => .speakerOriented
   | .deontic => .speakerOriented
   | .bouletic => .speakerOriented
@@ -390,7 +390,7 @@ theorem epistemic_is_speaker_oriented :
     Bouletic collapses with deontic in Narrog's 2D space (both volitive,
     speaker-oriented), so the round-trip from `.bouletic` yields `.deontic`. -/
 theorem orientationOfFlavor_consistent :
-    ∀ f : Semantics.Modality.ModalFlavor, f ≠ .bouletic →
+    ∀ f : Modality.ModalFlavor, f ≠ .bouletic →
       ∃ r : NarrogRegion, r.toModalFlavor = some f ∧
         r.orientation = orientationOfFlavor f := by
   intro f hf; cases f with

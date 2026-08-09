@@ -79,7 +79,7 @@ the meaning postulate.
   ∩/∪ operators (which generalize to kinds) and of [grano-2024]'s
   eventuality abstraction approach.
 - The modal qualification of control connects to Kratzer's conversational
-  backgrounds (already formalized in `Semantics.Modality.Kratzer`).
+  backgrounds (already formalized in `Modality.Kratzer`).
 - The three control classes cut differently from Landau's predicative/logophoric
   split: Chierchia classifies ALL verbs with the CP as obligatory (including
   attitude verbs like want), while Landau separates attitude verbs as logophoric.
@@ -87,7 +87,7 @@ the meaning postulate.
 
 namespace Chierchia1984
 
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 open Semantics.Composition.TypeShifting (ComplementDenotation)
 
 abbrev World := Fin 4

@@ -64,7 +64,7 @@ def MutuallyCommitted (C : CommitmentSpace W A) (π : Set W) : Prop :=
     `EpistemicLogic.commonBelief` on the state's belief relation. -/
 def CommonlyBelieved (c : CommitmentState W A) (group : List A)
     (π : Set W) (bound : ℕ) (w : W) : Prop :=
-  Semantics.Modality.EpistemicLogic.commonBelief c.belief group
+  Modality.EpistemicLogic.commonBelief c.belief group
     (fun v => v ∈ π) bound w
 
 end CommitmentSpace

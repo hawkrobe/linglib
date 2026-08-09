@@ -309,7 +309,7 @@ identification read in the other direction — a Kratzer pair is a
 world-indexed family of expectation states — and the theorems below
 are his (3a)/(3b). -/
 
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 
 /-- The expectation state a modal base and ordering source induce at a
 world: accessible worlds as information, the ordering-source ranking

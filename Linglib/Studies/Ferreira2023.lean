@@ -44,9 +44,9 @@ SN → SN_Xg → SN_Xfg), forming a diamond. No reverse entailments hold.
 
 namespace Ferreira2023
 
-open Semantics.Modality.Kratzer
-open Semantics.Modality.Directive
-open Semantics.Modality
+open Modality.Kratzer
+open Modality.Directive
+open Modality
 
 variable {W : Type*}
 

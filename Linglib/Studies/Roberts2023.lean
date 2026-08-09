@@ -500,7 +500,7 @@ open Mood.Illocutionary (sincerityCondition)
 open Mood (State Component Illocutionary HasTarget)
 open UpdateSemantics.Default (ExpState)
 open HistoricalAlternatives
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 
 abbrev World := Fin 4
 
@@ -666,7 +666,7 @@ pattern with imperatives in directive force. -/
 
 /-- The flavor Roberts assigns to the imperative's prejacent-internal
     modal: teleological/circumstantial. -/
-def robertsImperativeFlavor : Semantics.Modality.ModalFlavor :=
+def robertsImperativeFlavor : Modality.ModalFlavor :=
   TeleologicalFlavor.flavorTag
 
 /-- **Cross-paper disagreement** — [ruytenbeek-etal-2017] Study 2
@@ -779,7 +779,7 @@ itself serves as a secondary ordering criterion (yielding weak
 necessity in the sense of [von-fintel-iatridou-2008], which
 linglib formalizes in `Semantics/Modality/Directive.lean`). -/
 
-open Semantics.Modality.Directive in
+open Modality.Directive in
 /-- Weak (suggestion/advice) reading of an imperative character: weak
     necessity under the primary teleological ordering plus a
     secondary ordering favoring the prejacent. -/
@@ -789,7 +789,7 @@ def ImperativeCharacter.weakRealize {W : Type*}
   weakNecessity ic.flavor.circumstances ic.flavor.goals secondaryGoals
     ic.prejacent w
 
-open Semantics.Modality.Directive in
+open Modality.Directive in
 /-- Commands entail suggestions: strong necessity entails weak
     necessity (`Directive.strong_entails_weak`), so a command-strength
     imperative a fortiori realizes the suggestion. -/
@@ -818,7 +818,7 @@ theorem cookie_not_command :
   rw [necessity_iff_all] at h'
   exact absurd (h' (1 : World) (empty_best (1 : World))) (by decide)
 
-open Semantics.Modality.Directive in
+open Modality.Directive in
 theorem cookie_is_suggestion :
     haveCookieExample.weakRealize
       (λ _ => [λ w => w = (0 : World)]) (0 : World) := by

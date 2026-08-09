@@ -25,7 +25,7 @@ O-marking as a Historical-Present shift ([schlenker-2004], [anand-toosarvandani-
 Stimuli: `Data/Examples/Mizuno2024.json` (module `Mizuno2024.Examples`); `#guard`s
 check observed directions on the named examples, row theorems quantify over
 `Examples.all`. Semantics: `Semantics.Conditionals.strictImp` over a
-`HistoricalAlternatives` base; `Semantics.Modality.Exclusion` supplies the X/O
+`HistoricalAlternatives` base; `Modality.Exclusion` supplies the X/O
 typology and exponent inventory.
 
 ## Main results
@@ -44,7 +44,7 @@ typology and exponent inventory.
 
 namespace Mizuno2024
 
-open Semantics.Modality.Exclusion (MarkingStrategy XMarkingExponent)
+open Modality.Exclusion (MarkingStrategy XMarkingExponent)
 open Semantics.Conditionals (strictImp mem_strictImp_of_subset not_subset_of_mem_strictImp)
 open HistoricalAlternatives (histEquiv_mono)
 open Intensional (WorldTimeIndex)

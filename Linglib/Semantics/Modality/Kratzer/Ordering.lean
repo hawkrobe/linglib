@@ -18,10 +18,10 @@ import Linglib.Core.Order.OfCriteria
 import Mathlib.Order.Basic
 import Mathlib.Data.Set.Basic
 
-namespace Semantics.Modality.Kratzer
+namespace Modality.Kratzer
 
 /-! The premise primitives live in `Intensional.Premise`; re-export
-them under `Semantics.Modality.Kratzer` so the historical `Kratzer.foo` call
+them under `Modality.Kratzer` so the historical `Kratzer.foo` call
 style continues to work. The conversational-background primitives
 (`ConvBackground`, `ModalBase`, …) are defined directly in this namespace by
 `ConversationalBackground.lean`. -/
@@ -223,4 +223,4 @@ theorem bestAmong_superset {sub sup : Set W} {ordering : List (W → Prop)} {w' 
     w' ∈ bestAmong sub ordering :=
   ⟨hMem, fun v hv hle => hBest.2 v (hSub hv) hle⟩
 
-end Semantics.Modality.Kratzer
+end Modality.Kratzer

@@ -50,8 +50,8 @@ St'át'imcets, Nez Perce, Niuean, and other languages.
 
 namespace Matthewson2016
 
-open Semantics.Modality (ForceFlavor ForceAnalysis BackgroundClass ProjectionMode)
-open Semantics.Modality.Typology (satisfiesIFF satisfiesSAV)
+open Modality (ForceFlavor ForceAnalysis BackgroundClass ProjectionMode)
+open Modality.Typology (satisfiesIFF satisfiesSAV)
 
 -- ============================================================================
 -- §1. Three-way background classification (Table 18.2, Table 18.3)
@@ -188,8 +188,8 @@ observable `ForcePattern` derived from the meaning. The stipulation
 adds explanatory content (variable-force vs strengthened), but it
 must be consistent with the structural facts. -/
 
-open Semantics.Modality.Typology (inferForcePattern)
-private abbrev consistent := Semantics.Modality.Typology.ForceAnalysis.isConsistentWith
+open Modality.Typology (inferForcePattern)
+private abbrev consistent := Modality.Typology.ForceAnalysis.isConsistentWith
 
 /-- Gitksan ima('a): variable-force analysis is consistent with
     multiForce pattern (both possibility and necessity in meaning). -/
@@ -269,7 +269,7 @@ theorem imaa_past_present_no_dim :
     [matthewson-2016] §18.4.3. -/
 structure TemporalMarkingMirror where
   /-- Which orientation is obligatorily marked. -/
-  obligatoryMarking : Semantics.Modality.TemporalOrientation
+  obligatoryMarking : Modality.TemporalOrientation
   /-- Name of the marker. -/
   marker : String
 
@@ -324,7 +324,7 @@ epistemic) is a further subdivision of the epistemic class that content
 licensing does not address — it depends on the *type* of content (inferential
 vs reportative), not on whether content exists. -/
 
-open Semantics.Modality.EventRelativity (EventBinder)
+open Modality (EventBinder)
 
 /-- Content licensing correctly predicts the coarse split.
     Contentful events → epistemic available; contentless → not. -/
@@ -363,7 +363,7 @@ theorem gitksan_consistent_with_content_licensing :
     here because their data source is [matthewson-2016], not the
     Imel et al. database. -/
 
-open Semantics.Modality.Typology (ModalInventory)
+open Modality.Typology (ModalInventory)
 
 def statimcetsInventory : ModalInventory where
   language := "St'át'imcets"

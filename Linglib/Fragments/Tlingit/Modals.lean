@@ -9,8 +9,8 @@ Modal expressions from Tlingit (Athabaskan-Eyak-Tlingit), based on
 
 namespace Tlingit.Modals
 
-open Semantics.Modality (ForceFlavor)
-open Semantics.Modality.Typology (ModalExpression)
+open Modality (ForceFlavor)
+open Modality.Typology (ModalExpression)
 
 private abbrev pe := ForceFlavor.mk .possibility .epistemic
 private abbrev nc := ForceFlavor.mk .necessity .circumstantial

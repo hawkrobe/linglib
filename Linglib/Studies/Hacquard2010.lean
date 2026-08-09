@@ -43,8 +43,8 @@ licensing. The accounts agree extensionally on matrix clauses
 
 namespace Hacquard2010
 
-open Semantics.Modality.EventRelativity
-open Semantics.Modality (ModalFlavor)
+open Modality
+open Modality (ModalFlavor)
 
 -- ============================================================================
 -- Part I: Italian Restructuring

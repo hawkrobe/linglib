@@ -35,7 +35,7 @@ counterfactuality. A counterfactual is built from ExclF, an aspectual component
 
 namespace Iatridou2000
 
-open Semantics.Modality.Exclusion
+open Modality.Exclusion
 open Semantics.Context
 open Mood (subjShift)
 open Data.Examples (LinguisticExample)

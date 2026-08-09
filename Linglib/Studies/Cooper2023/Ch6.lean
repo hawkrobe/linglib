@@ -1433,7 +1433,7 @@ conversational backgrounds...") promised but did not deliver. -/
 
 section TtrKratzerBridge
 
-open Semantics.Modality.Kratzer (ModalBase OrderingSource bestWorlds
+open Modality.Kratzer (ModalBase OrderingSource bestWorlds
   necessity possibility)
 open Modal (box diamond)
 

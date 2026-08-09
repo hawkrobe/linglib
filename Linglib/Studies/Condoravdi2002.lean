@@ -44,7 +44,7 @@ namespace Condoravdi2002
 open Features (Dynamicity)
 open Semantics.Aspect
 open HistoricalAlternatives
-open Semantics.Modality (TemporalPerspective TemporalOrientation)
+open Modality (TemporalPerspective TemporalOrientation)
 
 /-! ## The AT relation
 
