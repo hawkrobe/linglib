@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Data.UD.Basic
 import Linglib.Features.Case.Capabilities
+import Linglib.Features.Gender.Capabilities
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person.Capabilities
 
@@ -41,6 +42,8 @@ instance : HasNumber Word := ⟨fun w => w.features.number.bind Number.fromUD⟩
 instance : HasPerson Word := ⟨fun w => w.features.person.map Person.fromUD⟩
 
 instance : HasCase Word := ⟨fun w => w.features.case_.map Case.fromUD⟩
+
+instance : HasGender Word := ⟨fun w => w.features.gender.map Gender.fromUD⟩
 
 
 /-- Words compare by form and category, ignoring features, so homographs

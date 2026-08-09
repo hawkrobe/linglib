@@ -34,6 +34,8 @@ class HasGender (α : Type*) where
   /-- The comparative gender label the carrier bears. -/
   genderOf : α → Option Gender
 
+export HasGender (genderOf)
+
 /-- A UD morphology bundle bears the label its `gender` tag ingests
     (`Gender.fromUD`, total on UD genders). -/
 instance : HasGender UD.MorphFeatures :=
