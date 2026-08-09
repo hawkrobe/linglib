@@ -25,7 +25,7 @@ framework. `Minimalist.ClauseSpine` is the first instance
   clauses are finite is paper content, and verbless independent
   clauses (`Clause.Construction`) contest it.
 * `Clause.EmbeddedSubject` — the subject-requirement axis complement
-  frames record (`Syntax/Category/Verb/Frame.lean`)
+  frames record (`Syntax/Category/Verb/Complement/Basic.lean`)
 * `Clause.EmbeddingContext` — where a clause token occurs, the
   [bhatt-dayal-2020] embedding cells
 -/

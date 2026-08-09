@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.DependencyGrammar.Basic
-import Linglib.Syntax.Category.Verb.Frame
+import Linglib.Syntax.Category.Verb.Complement.Basic
 
 /-!
 # Valency: argument-structure frames over dependency graphs

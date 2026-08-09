@@ -2816,9 +2816,9 @@ import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
 import Linglib.Syntax.Category.Pronoun.Logophoric
 import Linglib.Syntax.Category.Pronoun.WALS
 import Linglib.Syntax.Category.Verb.Basic
+import Linglib.Syntax.Category.Verb.Complement.Basic
+import Linglib.Syntax.Category.Verb.Complement.Takes
 import Linglib.Syntax.Category.Verb.Defs
-import Linglib.Syntax.Category.Verb.Frame
-import Linglib.Syntax.Category.Verb.Takes
 import Linglib.Syntax.Category.Verb.Stem
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Clause.Chaining

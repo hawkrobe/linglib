@@ -2,7 +2,7 @@ import Linglib.Semantics.Attitudes.ClauseDenotation.Content
 import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
 import Linglib.Fragments.Buryat.Complementizers
 import Linglib.Fragments.Korean.Complementizers
-import Linglib.Syntax.Category.Verb.Takes
+import Linglib.Syntax.Category.Verb.Complement.Takes
 import Linglib.Data.Examples.Bondarenko2022
 
 /-!
