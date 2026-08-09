@@ -5,56 +5,45 @@ import Linglib.Data.Examples.Angelopoulos2026
 
 /-!
 # Angelopoulos 2026: On clausal complementation, once more
-[angelopoulos-2026]
 
-Greek *oti*- and *pu*-clauses present three puzzles (§1): near-
-complementary distribution after verbs (*oti* with saying/belief, *pu*
-with emotive factives, ex. 1); freedom as internal arguments and
-derived subjects but a ban from external-argument position (§2.2); and
-a novel stativity restriction on complement *pu*-clauses (§2.3).
+[angelopoulos-2026] derives the distribution of Greek *oti*- and
+*pu*-clauses — near-complementary after verbs (ex. 1), free as internal
+arguments and derived subjects yet banned as external arguments (§2.2),
+stativity-restricted as *pu*-complements (§2.3) — from reversed
+selection: *oti* and *pu* bear an uninterpretable [n]-feature checked
+by a light noun in their specifier (partly adopting [arsenijevic-2009])
+that must incorporate into a lexical verbal head, licit only from
+complement position (§3.1). The *oti* ~ *pu* split follows from the
+content/situation dichotomy (§3.2, adopting [bondarenko-2022]), the
+stativity restriction from aspectual-head selection (§4.1), and §7.3
+turns the §2 argumenthood diagnostics against Bondarenko's transparent
+syntax–semantics mapping: bare *oti*-clauses sit in complement position
+while composing via Predicate Modification (the explanans reading,
+[elliott-2020-embedding]). Typed paradigm sentences (ex. 1, 31–34) live
+in `Angelopoulos2026.Examples`.
 
-The analysis reverses selection (§3.1): *oti* and *pu* bear an
-uninterpretable [n]-feature checked by a light noun merged in their
-specifier (partly adopting Arsenijević 2009; the paper is neutral on
-the categorial status of *oti* and *pu* — Cs in [roussou-1994], Ds in
-[roussou-2010] — fn. 3). The noun must
-incorporate into a lexical verbal head — possible from complement
-position, impossible from Spec,vP (nearest head T) or under P — which
-derives the argument asymmetry and the P-ban (§3.1 ex. 27–32). The
-*oti* ~ *pu* distribution follows from the content/situation dichotomy
-(§3.2, adopting [bondarenko-2022]); the stativity restriction from
-aspectual-head selection (§4.1: vState selects both otiP and puP,
-vEvent only otiP). §7.1 extends the adjunct-selection account to
-Uyghur *dep* (= *de* 'say' + converb *-ip*, per Major 2024).
+## Main definitions
 
-§7.3 departs from [bondarenko-2022]'s transparent syntax–semantics
-mapping: bare *oti*-clauses are merged in COMPLEMENT position (the §2
-argumenthood diagnostics: clitic doubling, passivization, derived
-subjects) while composing via Predicate Modification (the explanans
-reading, [elliott-2020-embedding]) — the same syntactic position
-yields either composition mode.
+* `bearsN`, `otiOnlyVerbs`, `puOnlyVerbs`, `dualVerbs`: the §3.1
+  [n]-feature datum and the attested selection classes
+* `NounHost`, `ClausePosition`, `licensedIn`: incorporation licensing
+  by position
+* `selectsClause`, `AspectualHead.ofVendler`: the §4.1 stativity locus
+* `clauseSort`: *oti* = content, *pu* = situation
+  (`Bondarenko2022.NominalSort`, §3.2)
+* `bareOtiAttested`: the §7.3 (position, composition-path) attestations
 
-## Main declarations
+## Main results
 
-- `bearsN`, `bearsN_iff_sorted` — the §3.1 [n]-feature datum and its
-  alignment with the content/situation sorts
-- `otiOnlyVerbs`, `puOnlyVerbs`, `dualVerbs`, `factivity_anti_aligned` —
-  the attested selection classes (§1–§2.3) and the emotive/cognitive
-  factivity split they carry
-- `NounHost`, `ClausePosition`, `licensedIn`, `licensing_matches_judgments`
-  — the incorporation mechanism, the derived argument-position asymmetry,
-  and its check against the ex. 31–32 judgments
-- `selectsClause`, `AspectualHead.ofVendler`, `pu_complement_verb_stative`
-  — the §4.1 stativity locus and the derived §2.3 verb-level
-  generalization
-- `clauseSort` — *oti* = content, *pu* = situation, consuming
-  `Bondarenko2022.NominalSort` (§3.2 ex. 33–34)
-- `bareOtiAttested`, `transparency_conflates_axes` — the §7.3
-  counterclaim against `Bondarenko2022.transparentSSMapping`, stated
-  over `Bondarenko2022.CompositionPath`
-
-Typed paradigm sentences (ex. 1, 31–34) live in `Angelopoulos2026.Examples`,
-generated from `Data/Examples/Angelopoulos2026.json`.
+* `factivity_anti_aligned`: verb-level and C-level factivity are
+  anti-aligned on the sample
+* `licensing_matches_judgments`: the position asymmetry against the
+  ex. 31–32 judgments
+* `pu_complement_verb_stative`: the §2.3 verb-level stativity
+  generalization, derived from §4.1 selection
+* `bearsN_iff_sorted`: the [n]-bearers are the sorted complementizers
+* `transparency_conflates_axes`: the §7.3 counterclaim against
+  `Bondarenko2022.transparentSSMapping`
 -/
 
 namespace Angelopoulos2026
