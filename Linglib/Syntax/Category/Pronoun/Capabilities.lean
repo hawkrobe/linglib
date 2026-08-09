@@ -11,7 +11,7 @@ import Linglib.Features.Person.Capabilities
 import Linglib.Features.CoreferenceStatus
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Category.Pronoun.Basic
-import Linglib.Morphology.Word.Basic
+import Linglib.Morphology.Word.Agree
 
 /-!
 # Pronoun capabilities — a mixin tower over pronoun carriers
@@ -28,6 +28,8 @@ object (`Word`), or a future theory representation; each supplies its own instan
 ## Main declarations
 
 * `Proform` — the spine: a carrier exposes a surface `form` and agreement `phi`-features.
+* `Proform.Agree` — carrier-generic φ-agreement, the compatibility filter referent
+  resolution and agreement consumers share; `Word.Agree` is its `Word` specialization.
 * `instance Bound Pronoun` / `Bound PersonalPronoun` — the pronoun carriers' binding-axis
   instances. The `Bound` *class* (with `Anaphoric`/`Pronominal`/`Referring` and the
   `Bound.Is*` element predicates) is theory-neutral and lives beside its partial companion
@@ -77,6 +79,28 @@ instance : Proform Word := ⟨Word.form, Word.phi⟩
 instance : Proform Pronoun := ⟨Pronoun.form, fun p => p.toWord.phi⟩
 instance : Proform PersonalPronoun :=
   ⟨fun p => p.toPronoun.form, fun p => p.toPronoun.toWord.phi⟩
+
+/-! ### φ-agreement over carriers -/
+
+/-- φ-agreement between two pro-form carriers: their `phi`-features unify
+(`UD.MorphFeatures.compatible`), an unspecified feature acting as a wildcard —
+the carrier-generic form of `Word.Agree`. The compatibility filter referent
+resolution and agreement consumers share: a pronoun's φ narrows the candidate
+referents to those it agrees with. -/
+def Proform.Agree {α β : Type*} [Proform α] [Proform β] (a : α) (b : β) : Prop :=
+  (Proform.phi a).compatible (Proform.phi b)
+
+instance {α β : Type*} [Proform α] [Proform β] (a : α) (b : β) :
+    Decidable (Proform.Agree a b) := by
+  unfold Proform.Agree; infer_instance
+
+/-- On word tokens, carrier-generic agreement is `Word.Agree`. -/
+theorem Proform.agree_word (w1 w2 : Word) : Proform.Agree w1 w2 ↔ w1.Agree w2 := Iff.rfl
+
+/-- A pronoun agrees exactly as its projected word does — `Proform.phi` on
+`Pronoun` is projection-then-φ by construction. -/
+theorem Proform.agree_toWord {β : Type*} [Proform β] (p : Pronoun) (b : β) :
+    Proform.Agree p b ↔ Proform.Agree p.toWord b := Iff.rfl
 
 /-! ### The pronoun carriers' `Bound` instances, and the faithfulness certificate -/
 
