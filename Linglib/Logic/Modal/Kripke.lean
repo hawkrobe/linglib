@@ -27,7 +27,7 @@ the AAY-2024 extensions BSMLOr/BSMLEmpty, modal dependence logic in
 
 * `Logic/Modal/BSML/Defs.lean` — `BSMLModel` is an `abbrev` of
   this type.
-* `Logic/Modal/QBSML/Defs.lean` — `QBSMLModel` parameterises
+* `Logic/Modal/QBSML/Defs.lean` — `QBSML.Model` parameterises
   this carrier with an assignment type.
 * `Logic/Modal/Dependence.lean` — modal dependence logic (MDL).
 * `Studies/AloniAnttilaYang2024.lean` — BSMLOr,

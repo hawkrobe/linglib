@@ -35,7 +35,7 @@ deferred to the dissertation's Chapter 5).
 ## Main declarations
 
 * `reinterpret` — Yan's reinterpretation function `∥·∥_P` (Definition 32),
-  an instance of `QBSMLFormula.mapAtoms`.
+  an instance of `Formula.mapAtoms`.
 * `reinterpret_isNEFree`, `eval_reinterpret_iff` — reinterpretation stays
   NE-free and is bilaterally equivalent to the original (substitution
   *salva veritate*; the classical equivalence of `Qx` and
@@ -68,7 +68,7 @@ variable {Var Const Pred : Type*}
 /-- **Reinterpretation** `∥·∥_P` ([yan-2023] Definition 32): rewrite each
     atom `Q t` whose predicate has `P` as a (contextually salient)
     sub-predicate as the disjunction `(P t ∧ Q t) ∨ (¬P t ∧ Q t)`, and
-    commute with every connective (`QBSMLFormula.mapAtoms`).
+    commute with every connective (`Formula.mapAtoms`).
 
     `sub P Q` plays the paper's side condition `P ⊂ Q`. That condition is
     *denotational* there (the denotation of `P` a proper subset of `Q`'s),
@@ -84,12 +84,12 @@ variable {Var Const Pred : Type*}
     The paper's language `L_D` (its Definition 24) has primitive `□`,
     derived `◇`, and no `∀`, so Definition 32 has no `◇`/`∀` clauses: the
     `.poss` clause here recovers its derived-`◇` behaviour definitionally,
-    and `.univ` extends the function to the full `QBSMLFormula` language.
+    and `.univ` extends the function to the full `Formula` language.
     The `.ne` clause is a totality filler — the paper defines `∥·∥` on the
     NE-free fragment only. -/
 def reinterpret (sub : Pred → Pred → Prop) [DecidableRel sub] (P : Pred) :
-    QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred :=
-  QBSMLFormula.mapAtoms
+    Formula Var Const Pred → Formula Var Const Pred :=
+  Formula.mapAtoms
     (fun Q x =>
       if sub P Q then
         .disj (.conj (.pred P x) (.pred Q x))
@@ -106,7 +106,7 @@ variable (sub : Pred → Pred → Prop) [DecidableRel sub] (P : Pred)
 /-- Equation lemma: reinterpretation at a variable atom. Not `@[simp]` —
     unfolding is opt-in. -/
 theorem reinterpret_pred (Q : Pred) (x : Var) :
-    reinterpret sub P (.pred Q x : QBSMLFormula Var Const Pred) =
+    reinterpret sub P (.pred Q x : Formula Var Const Pred) =
       if sub P Q then
         .disj (.conj (.pred P x) (.pred Q x))
               (.conj (.neg (.pred P x)) (.pred Q x))
@@ -115,7 +115,7 @@ theorem reinterpret_pred (Q : Pred) (x : Var) :
 
 /-- Equation lemma: reinterpretation at a constant atom. -/
 theorem reinterpret_predc (Q : Pred) (c : Const) :
-    reinterpret sub P (.predc Q c : QBSMLFormula Var Const Pred) =
+    reinterpret sub P (.predc Q c : Formula Var Const Pred) =
       if sub P Q then
         .disj (.conj (.predc P c) (.predc Q c))
               (.conj (.neg (.predc P c)) (.predc Q c))
@@ -123,17 +123,17 @@ theorem reinterpret_predc (Q : Pred) (c : Const) :
   rfl
 
 /-- Reinterpretation preserves NE-freeness. -/
-theorem reinterpret_isNEFree {φ : QBSMLFormula Var Const Pred}
+theorem reinterpret_isNEFree {φ : Formula Var Const Pred}
     (h : φ.IsNEFree) : (reinterpret sub P φ).IsNEFree :=
   h.mapAtoms
     (fun Q x => by
-      show QBSMLFormula.IsNEFree (if sub P Q then _ else _)
+      show Formula.IsNEFree (if sub P Q then _ else _)
       split
       · exact .disj (.conj (.pred _ _) (.pred _ _))
           (.conj (.neg (.pred _ _)) (.pred _ _))
       · exact .pred _ _)
     (fun Q c => by
-      show QBSMLFormula.IsNEFree (if sub P Q then _ else _)
+      show Formula.IsNEFree (if sub P Q then _ else _)
       split
       · exact .disj (.conj (.predc _ _) (.predc _ _))
           (.conj (.neg (.predc _ _)) (.predc _ _))
@@ -154,14 +154,14 @@ section SalvaVeritate
 variable {W Var Domain Const Pred : Type*}
 variable [DecidableEq W]
 variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
-variable (M : QBSMLModel W Domain Const Pred)
+variable (M : Model W Domain Const Pred)
 
 private theorem eval_iff_of_atom_pred (P Q : Pred) (x : Var) (b : Bool)
     (s : Finset (Index W Var Domain)) :
-    eval M b (QBSMLFormula.disj
+    eval M b (Formula.disj
         (.conj (.pred P x) (.pred Q x))
         (.conj (.neg (.pred P x)) (.pred Q x))) s ↔
-      eval M b (QBSMLFormula.pred Q x) s := by
+      eval M b (Formula.pred Q x) s := by
   classical
   cases b with
   | true =>
@@ -208,10 +208,10 @@ private theorem eval_iff_of_atom_pred (P Q : Pred) (x : Var) (b : Bool)
 
 private theorem eval_iff_of_atom_predc (P Q : Pred) (c : Const) (b : Bool)
     (s : Finset (Index W Var Domain)) :
-    eval M b (QBSMLFormula.disj
+    eval M b (Formula.disj
         (.conj (.predc P c) (.predc Q c))
         (.conj (.neg (.predc P c)) (.predc Q c))) s ↔
-      eval M b (QBSMLFormula.predc Q c) s := by
+      eval M b (Formula.predc Q c) s := by
   classical
   cases b with
   | true =>
@@ -255,7 +255,7 @@ private theorem eval_iff_of_atom_predc (P Q : Pred) (c : Const) (b : Bool)
     not truth); `eval_mapAtoms_iff` reduces it to the two atom
     equivalences. -/
 theorem eval_reinterpret_iff (sub : Pred → Pred → Prop) [DecidableRel sub]
-    (P : Pred) (φ : QBSMLFormula Var Const Pred) (b : Bool)
+    (P : Pred) (φ : Formula Var Const Pred) (b : Bool)
     (s : Finset (Index W Var Domain)) :
     eval M b (reinterpret sub P φ) s ↔ eval M b φ s :=
   eval_mapAtoms_iff M
@@ -273,14 +273,14 @@ theorem eval_reinterpret_iff (sub : Pred → Pred → Prop) [DecidableRel sub]
 
 /-- Support is invariant under reinterpretation. -/
 theorem support_reinterpret_iff (sub : Pred → Pred → Prop) [DecidableRel sub]
-    (P : Pred) (φ : QBSMLFormula Var Const Pred)
+    (P : Pred) (φ : Formula Var Const Pred)
     (s : Finset (Index W Var Domain)) :
     support M (reinterpret sub P φ) s ↔ support M φ s :=
   eval_reinterpret_iff M sub P φ true s
 
 /-- Anti-support is invariant under reinterpretation. -/
 theorem antiSupport_reinterpret_iff (sub : Pred → Pred → Prop)
-    [DecidableRel sub] (P : Pred) (φ : QBSMLFormula Var Const Pred)
+    [DecidableRel sub] (P : Pred) (φ : Formula Var Const Pred)
     (s : Finset (Index W Var Domain)) :
     antiSupport M (reinterpret sub P φ) s ↔ antiSupport M φ s :=
   eval_reinterpret_iff M sub P φ false s
@@ -305,17 +305,17 @@ inductive RossPred | send | burn
   deriving DecidableEq, Repr
 
 /-- `SEND a`: the letter is sent (constant atom; `a` is the letter). -/
-def sendL : QBSMLFormula QVar Unit RossPred := .predc .send ()
+def sendL : Formula QVar Unit RossPred := .predc .send ()
 
 /-- `BURN a`: the letter is burnt. -/
-def burnL : QBSMLFormula QVar Unit RossPred := .predc .burn ()
+def burnL : Formula QVar Unit RossPred := .predc .burn ()
 
 theorem sendL_isNEFree : sendL.IsNEFree := .predc _ _
 theorem burnL_isNEFree : burnL.IsNEFree := .predc _ _
 
 /-- John's bouletic state: a single desire-world where the letter is sent
     and not burnt, reflexively accessible. -/
-def rossModel : QBSMLModel Unit Unit Unit RossPred where
+def rossModel : Model Unit Unit Unit RossPred where
   access _ := {()}
   interp _ := monadicStructure (fun _ => ()) (fun P _ => P = RossPred.send)
 
@@ -337,14 +337,14 @@ theorem ross_monotone {s : Finset (Index Unit QVar Unit)}
     enriched disjunctive want, both "it is ok to send" and the paradoxical
     "it is ok to burn". Direct instance of `boxFC`. -/
 theorem ross_fc {s : Finset (Index Unit QVar Unit)}
-    (h : support rossModel (QBSMLFormula.enrich (sendL.disj burnL).nec) s) :
+    (h : support rossModel (Formula.enrich (sendL.disj burnL).nec) s) :
     support rossModel (.poss sendL) s ∧ support rossModel (.poss burnL) s :=
   boxFC rossModel sendL_isNEFree burnL_isNEFree h
 
 /-- The premise is assertable: John's desire state supports the enriched
     `[□SEND a]⁺`. -/
 theorem ross_premise :
-    support rossModel (QBSMLFormula.enrich sendL.nec) rossState := by
+    support rossModel (Formula.enrich sendL.nec) rossState := by
   rw [support_enrich_nec_iff]
   refine ⟨fun i _ => ⟨fun j _ => rfl, ?_⟩, Finset.singleton_nonempty _⟩
   exact ⟨((), i.assign),
@@ -357,7 +357,7 @@ theorem ross_premise :
     the discourse never grants. -/
 theorem ross_blocked :
     ¬ support rossModel
-      (QBSMLFormula.enrich (sendL.disj burnL).nec) rossState := by
+      (Formula.enrich (sendL.disj burnL).nec) rossState := by
   intro h
   obtain ⟨-, hburn⟩ := ross_fc h
   obtain ⟨X, hX, ⟨w, hw⟩, hsupp⟩ :=
@@ -400,12 +400,12 @@ instance : DecidableRel subFree := fun a b =>
   | .trip, .trip => .isFalse id
 
 /-- `Fx ∧ Tx`: a free trip. -/
-def freeTrip : QBSMLFormula QVar Unit AsherPred :=
+def freeTrip : Formula QVar Unit AsherPred :=
   .conj (.pred .free .x) (.pred .trip .x)
 
 /-- `¬Fx ∧ Tx`: a non-free trip — the unwanted disjunct reinterpretation
     introduces. -/
-def nonFreeTrip : QBSMLFormula QVar Unit AsherPred :=
+def nonFreeTrip : Formula QVar Unit AsherPred :=
   .conj (.neg (.pred .free .x)) (.pred .trip .x)
 
 theorem freeTrip_isNEFree : freeTrip.IsNEFree := .conj (.pred _ _) (.pred _ _)
@@ -413,18 +413,18 @@ theorem nonFreeTrip_isNEFree : nonFreeTrip.IsNEFree :=
   .conj (.neg (.pred _ _)) (.pred _ _)
 
 /-- The premise `□∃x(Fx ∧ Tx)`: Nicholas wants a free trip. -/
-def asherPremise : QBSMLFormula QVar Unit AsherPred :=
-  (QBSMLFormula.exi .x freeTrip).nec
+def asherPremise : Formula QVar Unit AsherPred :=
+  (Formula.exi .x freeTrip).nec
 
 /-- The conclusion `□∃xTx`: Nicholas wants a trip. -/
-def asherConcl : QBSMLFormula QVar Unit AsherPred :=
-  (QBSMLFormula.exi QVar.x (.pred .trip .x)).nec
+def asherConcl : Formula QVar Unit AsherPred :=
+  (Formula.exi QVar.x (.pred .trip .x)).nec
 
 /-- Reinterpreting TRIP by FREE in the conclusion yields exactly the
     disjunctive want `□∃x((F ∧ T)x ∨ (¬F ∧ T)x)` — definitional. -/
 theorem reinterpret_asherConcl :
     reinterpret subFree .free asherConcl =
-      (QBSMLFormula.exi QVar.x (.disj freeTrip nonFreeTrip)).nec := rfl
+      (Formula.exi QVar.x (.disj freeTrip nonFreeTrip)).nec := rfl
 
 section AsherGeneric
 
@@ -433,7 +433,7 @@ variable {W Domain : Type*} [DecidableEq W] [DecidableEq Domain]
 
 /-- **Semantic validity of the monotonic step**: `□∃x(Fx ∧ Tx) ⊨ □∃xTx`
     (conjunction elimination under `∃` under `□`), for any model. -/
-theorem asher_monotone (M : QBSMLModel W Domain Unit AsherPred)
+theorem asher_monotone (M : Model W Domain Unit AsherPred)
     {s : Finset (Index W QVar Domain)}
     (h : support M asherPremise s) : support M asherConcl s :=
   support_nec_mono M
@@ -446,10 +446,10 @@ theorem asher_monotone (M : QBSMLModel W Domain Unit AsherPred)
     quantified □-FC, both "ok with a free trip" and "ok with a non-free
     trip" — the latter being what makes the monotonic conclusion sound
     wrong. -/
-theorem asher_fc (M : QBSMLModel W Domain Unit AsherPred)
+theorem asher_fc (M : Model W Domain Unit AsherPred)
     {s : Finset (Index W QVar Domain)}
     (h : support M
-      (QBSMLFormula.enrich (reinterpret subFree .free asherConcl)) s) :
+      (Formula.enrich (reinterpret subFree .free asherConcl)) s) :
     support M (.poss (.exi QVar.x freeTrip)) s ∧
     support M (.poss (.exi QVar.x nonFreeTrip)) s := by
   rw [reinterpret_asherConcl] at h
@@ -462,7 +462,7 @@ end AsherGeneric
     desire-world `true` every trip is free; the non-desire world `false`
     has a non-free trip; only the desire-world is bouletically
     accessible. -/
-def asherModel : QBSMLModel Bool Unit Unit AsherPred where
+def asherModel : Model Bool Unit Unit AsherPred where
   access _ := {true}
   interp w := monadicStructure (fun _ => ())
     (fun P _ => P = .trip ∨ w = true)
@@ -489,9 +489,9 @@ theorem asherModel_free_ssubset_trip :
 /-- The premise is assertable: the desire state supports
     `[□∃x(Fx ∧ Tx)]⁺`. -/
 theorem asher_premise :
-    support asherModel (QBSMLFormula.enrich asherPremise) asherState := by
+    support asherModel (Formula.enrich asherPremise) asherState := by
   show support asherModel
-    (QBSMLFormula.enrich (QBSMLFormula.exi QVar.x freeTrip).nec) asherState
+    (Formula.enrich (Formula.exi QVar.x freeTrip).nec) asherState
   rw [support_enrich_nec_iff]
   refine ⟨fun i _ => ?_, Finset.singleton_nonempty _⟩
   have hLne : (State.modalLift {true} i.assign :
@@ -521,7 +521,7 @@ theorem asher_premise :
     is licensed only by a premise the discourse never grants. -/
 theorem asher_blocked :
     ¬ support asherModel
-      (QBSMLFormula.enrich (reinterpret subFree .free asherConcl))
+      (Formula.enrich (reinterpret subFree .free asherConcl))
       asherState := by
   intro h
   obtain ⟨-, hnf⟩ := asher_fc asherModel h
@@ -549,9 +549,9 @@ theorem asher_blocked :
     form — the two classically equivalent formulas (`eval_reinterpret_iff`)
     come apart under `[·]⁺`, which is the paper's whole point. -/
 theorem asher_concl_enriched :
-    support asherModel (QBSMLFormula.enrich asherConcl) asherState := by
+    support asherModel (Formula.enrich asherConcl) asherState := by
   show support asherModel
-    (QBSMLFormula.enrich (QBSMLFormula.exi QVar.x (.pred .trip .x)).nec)
+    (Formula.enrich (Formula.exi QVar.x (.pred .trip .x)).nec)
     asherState
   rw [support_enrich_nec_iff]
   refine ⟨fun i _ => ?_, Finset.singleton_nonempty _⟩
@@ -601,25 +601,25 @@ instance : DecidableRel subTuesday := fun a b =>
   | .teach, .teach => .isFalse id
 
 /-- `TUEx ∧ TEACHx`: a Tuesday teaching. -/
-def tuesdayTeach : QBSMLFormula QVar Unit HeimPred :=
+def tuesdayTeach : Formula QVar Unit HeimPred :=
   .conj (.pred .tuesday .x) (.pred .teach .x)
 
 /-- `¬TUEx ∧ TEACHx`: a non-Tuesday teaching. -/
-def nonTuesdayTeach : QBSMLFormula QVar Unit HeimPred :=
+def nonTuesdayTeach : Formula QVar Unit HeimPred :=
   .conj (.neg (.pred .tuesday .x)) (.pred .teach .x)
 
 /-- The conclusion `□∃x TEACHx`: I want to teach next semester. -/
-def heimConcl : QBSMLFormula QVar Unit HeimPred :=
-  (QBSMLFormula.exi QVar.x (.pred .teach .x)).nec
+def heimConcl : Formula QVar Unit HeimPred :=
+  (Formula.exi QVar.x (.pred .teach .x)).nec
 
 /-- **The unwarranted inference** ([yan-2023] §4.4.3, "Reinterpretation of
     TEACH"): the enriched reinterpreted conclusion `[□∃x∥TEACHx∥_TUE]⁺`
     licenses "ok to teach on a non-Tuesday" by quantified □-FC. -/
 theorem heim_fc {W Domain : Type*} [DecidableEq W] [DecidableEq Domain]
-    [Fintype Domain] (M : QBSMLModel W Domain Unit HeimPred)
+    [Fintype Domain] (M : Model W Domain Unit HeimPred)
     {s : Finset (Index W QVar Domain)}
     (h : support M
-      (QBSMLFormula.enrich (reinterpret subTuesday .tuesday heimConcl)) s) :
+      (Formula.enrich (reinterpret subTuesday .tuesday heimConcl)) s) :
     support M (.poss (.exi QVar.x tuesdayTeach)) s ∧
     support M (.poss (.exi QVar.x nonTuesdayTeach)) s :=
   boxExiFC M

@@ -65,8 +65,8 @@ open Team
 variable {W Var Domain Const Pred : Type*}
 variable [DecidableEq W]
 variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
-variable (M : QBSMLModel W Domain Const Pred)
-variable {α β : QBSMLFormula Var Const Pred} {s : Finset (Index W Var Domain)}
+variable (M : Model W Domain Const Pred)
+variable {α β : Formula Var Const Pred} {s : Finset (Index W Var Domain)}
 
 /-! ### The diamond split -/
 
@@ -90,7 +90,7 @@ private theorem poss_of_subset_modalLift {X : Finset W}
     each disjunct — `poss_of_subset_modalLift` on each half of the split. -/
 theorem diamond_split {X : Finset W} {g : Assignment Var Domain}
     (hα : α.IsNEFree) (hβ : β.IsNEFree)
-    (hsupp : support M (QBSMLFormula.disj α β).enrich (State.modalLift X g)) :
+    (hsupp : support M (Formula.disj α β).enrich (State.modalLift X g)) :
     (∃ Y, Y ⊆ X ∧ Y.Nonempty ∧ support M α (State.modalLift Y g)) ∧
     (∃ Y, Y ⊆ X ∧ Y.Nonempty ∧ support M β (State.modalLift Y g)) := by
   obtain ⟨t₁, t₂, hsplit, h₁, h₂⟩ := hsupp.1
@@ -100,7 +100,7 @@ theorem diamond_split {X : Finset W} {g : Assignment Var Domain}
 /-- Per-index form of the core: a state whose every index sees an enriched
     split disjunction supports both diamonds (shared by Facts 8 and 9). -/
 private theorem possFC_on (hα : α.IsNEFree) (hβ : β.IsNEFree)
-    (h : support M (.poss (QBSMLFormula.disj α β).enrich) s) :
+    (h : support M (.poss (Formula.disj α β).enrich) s) :
     support M (.poss α) s ∧ support M (.poss β) s := by
   refine ⟨fun i hi => ?_, fun i hi => ?_⟩
   · obtain ⟨X, hX, -, hsupp⟩ := h i hi
@@ -120,7 +120,7 @@ private theorem possFC_on (hα : α.IsNEFree) (hβ : β.IsNEFree)
     Projects the diamond clause of the enrichment and applies the per-index
     core `possFC_on` at `s`. -/
 theorem narrowScopeFC (hα : α.IsNEFree) (hβ : β.IsNEFree)
-    (h : support M (QBSMLFormula.enrich (.poss (.disj α β))) s) :
+    (h : support M (Formula.enrich (.poss (.disj α β))) s) :
     support M (.poss α) s ∧ support M (.poss β) s :=
   possFC_on M hα hβ h.1
 
@@ -133,7 +133,7 @@ theorem narrowScopeFC (hα : α.IsNEFree) (hβ : β.IsNEFree)
     extension `s[x]`, so the conclusion is `possFC_on` at `s[x]` — the same
     per-index argument as Fact 8, one extension up. -/
 theorem universalFC {x : Var} (hα : α.IsNEFree) (hβ : β.IsNEFree)
-    (h : support M (QBSMLFormula.enrich (.univ x (.poss (.disj α β)))) s) :
+    (h : support M (Formula.enrich (.univ x (.poss (.disj α β)))) s) :
     support M (.univ x (.poss α)) s ∧ support M (.univ x (.poss β)) s :=
   possFC_on M hα hβ h.1.1
 
@@ -141,14 +141,14 @@ theorem universalFC {x : Var} (hα : α.IsNEFree) (hβ : β.IsNEFree)
 
     `[□(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β` for NE-free `α`, `β`.
 
-    `□` is derived (`QBSMLFormula.nec`), so the enrichment here is the
+    `□` is derived (`Formula.nec`), so the enrichment here is the
     negation-clause enrichment of `¬◇¬(α ∨ β)` rather than the paper's
     primitive `[□φ]⁺ = □[φ]⁺ ∧ NE` — but the fact holds all the same:
     `support_enrich_nec_iff` puts the enriched disjunction on each index's
     full accessible lift `R(wᵢ)[gᵢ]`, and `diamond_split` produces the
     witnesses. -/
 theorem boxFC (hα : α.IsNEFree) (hβ : β.IsNEFree)
-    (h : support M (QBSMLFormula.enrich (QBSMLFormula.nec (.disj α β))) s) :
+    (h : support M (Formula.enrich (Formula.nec (.disj α β))) s) :
     support M (.poss α) s ∧ support M (.poss β) s := by
   rw [support_enrich_nec_iff] at h
   exact ⟨fun i hi => (diamond_split M hα hβ (h.1 i hi)).1,
@@ -166,7 +166,7 @@ solutions invoke (its §4.4.3; see `Studies/Yan2023.lean`). -/
     `support_exi_of_update_closure`. The quantified analogue of
     `poss_of_subset_modalLift`. -/
 private theorem poss_exi_of_subset_extendFunctional
-    {γ : QBSMLFormula Var Const Pred} {X₀ : Finset W}
+    {γ : Formula Var Const Pred} {X₀ : Finset W}
     {g : Assignment Var Domain} {x : Var}
     {hf : Index W Var Domain → Finset Domain}
     {t : Finset (Index W Var Domain)}
@@ -208,7 +208,7 @@ private theorem poss_exi_of_subset_extendFunctional
     `poss_exi_of_subset_extendFunctional`. -/
 theorem boxExiFC {x : Var} (hα : α.IsNEFree) (hβ : β.IsNEFree)
     (h : support M
-      (QBSMLFormula.enrich (QBSMLFormula.nec (.exi x (.disj α β)))) s) :
+      (Formula.enrich (Formula.nec (.exi x (.disj α β)))) s) :
     support M (.poss (.exi x α)) s ∧ support M (.poss (.exi x β)) s := by
   rw [support_enrich_nec_iff] at h
   refine ⟨fun i hi => ?_, fun i hi => ?_⟩
@@ -256,7 +256,7 @@ private theorem poss_predc_of_stateBased {P : Pred} {c : Const}
     (the transplanted indices carry the wrong assignments). -/
 theorem ignorance {P Q : Pred} {c₁ c₂ : Const} (hSB : M.IsStateBased s)
     (h : support M
-      (QBSMLFormula.enrich (.disj (.predc P c₁) (.predc Q c₂))) s) :
+      (Formula.enrich (.disj (.predc P c₁) (.predc Q c₂))) s) :
     support M (.poss (.predc P c₁)) s ∧
     support M (.poss (.predc Q c₂)) s := by
   obtain ⟨t₁, t₂, hsplit, h₁, h₂⟩ := h.1
@@ -280,7 +280,7 @@ theorem ignorance {P Q : Pred} {c₁ c₂ : Const} (hSB : M.IsStateBased s)
     discharged by the three NE-strips, leaving classical anti-support on
     each disjunct. -/
 theorem negationStrip (hα : α.IsNEFree) (hβ : β.IsNEFree)
-    (h : support M (QBSMLFormula.enrich (.neg (.disj α β))) s) :
+    (h : support M (Formula.enrich (.neg (.disj α β))) s) :
     support M (.neg α) s ∧ support M (.neg β) s := by
   have hDisj : antiSupport M (.disj α.enrich β.enrich) s :=
     antiSupport_strip_ne M (.disj α.enrich β.enrich) s h.1
@@ -293,7 +293,7 @@ theorem negationStrip (hα : α.IsNEFree) (hβ : β.IsNEFree)
     that supports `γ` yields an existential witness on the singleton, by
     `support_exi_of_update_closure`. The engine of Fact 5. -/
 private theorem exi_of_subset_extendUniversal_singleton
-    {γ : QBSMLFormula Var Const Pred}
+    {γ : Formula Var Const Pred}
     {i : Index W Var Domain} {x : Var} {t : Finset (Index W Var Domain)}
     (htsub : t ⊆ State.extendUniversal {i} x) (htne : t.Nonempty)
     (hsupp : support M γ t) :
@@ -323,7 +323,7 @@ private theorem exi_of_subset_extendUniversal_singleton
     image of a functional extension witnessing the existential. -/
 theorem distribution {x : Var} {i : Index W Var Domain}
     (hα : α.IsNEFree) (hβ : β.IsNEFree)
-    (h : support M (QBSMLFormula.enrich (.univ x (.disj α β))) {i}) :
+    (h : support M (Formula.enrich (.univ x (.disj α β))) {i}) :
     support M (.exi x α) {i} ∧ support M (.exi x β) {i} := by
   obtain ⟨t₁, t₂, hsplit, h₁, h₂⟩ := h.1.1
   exact ⟨exi_of_subset_extendUniversal_singleton M
@@ -389,7 +389,7 @@ private theorem exi_poss_atom_of_subset_extendUniversal
     route through flatness). -/
 theorem distributionEpi {P Q : Pred} {x : Var} (hSB : M.IsStateBased s)
     (h : support M
-      (QBSMLFormula.enrich (.univ x (.disj (.pred P x) (.pred Q x)))) s) :
+      (Formula.enrich (.univ x (.disj (.pred P x) (.pred Q x)))) s) :
     support M (.exi x (.poss (.pred P x))) s ∧
     support M (.exi x (.poss (.pred Q x))) s := by
   obtain ⟨t₁, t₂, hsplit, h₁, h₂⟩ := h.1.1

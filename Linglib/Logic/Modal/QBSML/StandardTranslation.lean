@@ -155,7 +155,7 @@ def stTerm (k : ℕ) :
     | _ + 1, f => f.elim
 
 /-- Translate an embedded classical formula when it is a monadic atom
-    (`none` otherwise — which never arises from `QBSMLFormula.toModal?`
+    (`none` otherwise — which never arises from `Formula.toModal?`
     images, whose embedded formulas are exactly the atoms). -/
 def stAtom? (k : ℕ) :
     (monadicLang Const Pred).Formula Var →
@@ -541,8 +541,8 @@ variable [DecidableEq W] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
     of the standard translation over `stStructure` — the link along which
     classical model theory (compactness, Löwenheim–Skolem) transfers to the
     NE-free fragment. -/
-theorem support_singleton_iff_st (M : QBSMLModel W Domain Const Pred)
-    {φ : QBSMLFormula Var Const Pred}
+theorem support_singleton_iff_st (M : Model W Domain Const Pred)
+    {φ : Formula Var Const Pred}
     {τ : ModalFormula (monadicLang Const Pred) Var} {k : ℕ}
     {ψ : (stLang Const Pred).Formula (Var ⊕ ℕ)}
     (hτ : φ.toModal? = some τ) (hψ : τ.st? k = some ψ)
@@ -556,8 +556,8 @@ theorem support_singleton_iff_st (M : QBSMLModel W Domain Const Pred)
 
 /-- Support at a singleton state forces the closed standard translation,
     as a sentence of `stStructure`. -/
-theorem models_toSentence_of_support (M : QBSMLModel W Domain Const Pred)
-    {φ : QBSMLFormula Var Const Pred}
+theorem models_toSentence_of_support (M : Model W Domain Const Pred)
+    {φ : Formula Var Const Pred}
     {τ : ModalFormula (monadicLang Const Pred) Var}
     {ψ : (stLang Const Pred).Formula (Var ⊕ ℕ)}
     (hτ : φ.toModal? = some τ) (hψ : τ.st? 0 = some ψ)
@@ -583,8 +583,8 @@ theorem models_toSentence_of_support (M : QBSMLModel W Domain Const Pred)
 /-- Conversely, the closed standard translation as a sentence of
     `stStructure` yields support at some singleton state. -/
 theorem exists_support_of_models_toSentence [Nonempty Domain]
-    (M : QBSMLModel W Domain Const Pred)
-    {φ : QBSMLFormula Var Const Pred}
+    (M : Model W Domain Const Pred)
+    {φ : Formula Var Const Pred}
     {τ : ModalFormula (monadicLang Const Pred) Var}
     {ψ : (stLang Const Pred).Formula (Var ⊕ ℕ)}
     (hτ : φ.toModal? = some τ) (hψ : τ.st? 0 = some ψ)
@@ -634,7 +634,7 @@ open FirstOrder Language
     entailment-compactness in team logics. -/
 theorem support_compactness {Var : Type*} [DecidableEq Var] [Fintype Var]
     {Const : Type u} {Pred : Type v} {ι : Type*}
-    {φs : ι → QBSMLFormula Var Const Pred}
+    {φs : ι → Formula Var Const Pred}
     {τs : ι → ModalFormula (monadicLang Const Pred) Var}
     {ψs : ι → (stLang Const Pred).Formula (Var ⊕ ℕ)}
     (hτ : ∀ i, (φs i).toModal? = some (τs i))
@@ -642,7 +642,7 @@ theorem support_compactness {Var : Type*} [DecidableEq Var] [Fintype Var]
     (hcl : ∀ i, (stClose 0 (ψs i)).freeVarFinset = ∅)
     (hfin : ∀ s : Finset ι, ∃ (W Domain : Type max u v)
       (_ : DecidableEq W) (_ : DecidableEq Domain) (_ : Fintype Domain)
-      (M : QBSMLModel W Domain Const Pred) (i : Index W Var Domain)
+      (M : Model W Domain Const Pred) (i : Index W Var Domain)
       (v : Var → Domain), (∀ y, i.assign y = some (v y)) ∧
         ∀ j ∈ s, support M (φs j) {i}) :
     Theory.IsSatisfiable
