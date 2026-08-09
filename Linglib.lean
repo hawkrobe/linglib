@@ -693,6 +693,7 @@ import Linglib.Features.Number.Resolve
 import Linglib.Features.Person.Basic
 import Linglib.Features.Person.Capabilities
 import Linglib.Features.Person.Decomposition
+import Linglib.Features.Phi
 import Linglib.Features.Person.Interp
 import Linglib.Features.Person.PersonCaseConstraint
 import Linglib.Features.Person.Resolve

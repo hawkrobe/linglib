@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Data.UD.Basic
+import Linglib.Features.Phi
 import Linglib.Features.Case.Capabilities
 import Linglib.Features.Gender.Capabilities
 import Linglib.Features.Number.Capabilities
@@ -22,8 +23,9 @@ exactly the axes it touches.
 
 ## Main declarations
 
-* `Proform` — the base capability: a surface `form` and agreement `phi`-features.
-* `Proform.Agree` — carrier-generic φ-agreement; `Word.Agree` is the `Word` case.
+* `Proform` — a pro-form stands in for members of a form-class, its domain
+  ([bloomfield-1933]); standing in requires φ-agreement (`HasPhi.Agree`, from
+  `Features/Phi.lean`).
 * `Bound`, `HasNumber`, `HasPerson`, `HasCase`, `HasGender` instances for the
   pronoun carriers.
 * `bindingClassOf_toWord`, `numberOf_toWord`, `personOf_toWord`, `caseOf_toWord`,
@@ -39,43 +41,46 @@ Three axes are fields, not classes: deficiency (`Pronoun.strength`, per-series
 [cardinaletti-starke-1999]), lexical kind (`Pronoun.pronType`, UD morphology),
 and register/referential person (`PersonalPronoun` fields, borne by one
 carrier).
+
+`Proform.StandsInFor` is token-level: whether a stand-in site is a bare
+element or hosts deleted structure ([hankamer-sag-1976]; [baltin-2012]) is a
+theory question for study files.
 -/
 
 open Morphology (Word)
 
-/-! ### The spine: `Proform` -/
+/-! ### φ instances and the pro-form -/
 
-/-- A pro-form is an expression that can substitute for another expression,
-bearing a surface `form` and agreement `phi`-features. -/
-class Proform (α : Type*) where
-  /-- Surface form (romanization or orthographic). -/
-  form : α → String
-  /-- Agreement φ-features (person/number/gender). -/
-  phi : α → UD.MorphFeatures
-
-instance : Proform Word := ⟨Word.form, Word.phi⟩
-instance : Proform Pronoun := ⟨Pronoun.form, fun p => p.toWord.phi⟩
-instance : Proform PersonalPronoun :=
-  ⟨fun p => p.toPronoun.form, fun p => p.toPronoun.toWord.phi⟩
-
-/-! ### φ-agreement over carriers -/
-
-/-- Two pro-forms agree when their `phi`-features unify
-(`UD.MorphFeatures.compatible`), an unspecified feature acting as a wildcard.
-This is the carrier-generic form of `Word.Agree`. -/
-def Proform.Agree {α β : Type*} [Proform α] [Proform β] (a : α) (b : β) : Prop :=
-  (Proform.phi a).compatible (Proform.phi b)
-
-instance {α β : Type*} [Proform α] [Proform β] (a : α) (b : β) :
-    Decidable (Proform.Agree a b) := by
-  unfold Proform.Agree; infer_instance
-
-/-- On word tokens, carrier-generic agreement is `Word.Agree`. -/
-theorem Proform.agree_word (w1 w2 : Word) : Proform.Agree w1 w2 ↔ w1.Agree w2 := Iff.rfl
+instance : HasPhi Pronoun := ⟨fun p => p.toWord.phi⟩
+instance : HasPhi PersonalPronoun := ⟨fun p => p.toPronoun.toWord.phi⟩
 
 /-- A pronoun agrees exactly as its projected word does. -/
-theorem Proform.agree_toWord {β : Type*} [Proform β] (p : Pronoun) (b : β) :
-    Proform.Agree p b ↔ Proform.Agree p.toWord b := Iff.rfl
+theorem HasPhi.agree_toWord {β : Type*} [HasPhi β] (p : Pronoun) (b : β) :
+    HasPhi.Agree p b ↔ HasPhi.Agree p.toWord b := Iff.rfl
+
+/-- A pro-form is an expression that stands in for members of a form-class —
+its *domain* ([bloomfield-1933]) — under φ-agreement. -/
+class Proform (α : Type*) [HasPhi α] where
+  /-- `a` can substitute for the token `w`. -/
+  StandsInFor : α → Word → Prop
+  /-- Standing in requires φ-agreement. -/
+  agree_of_standsInFor : ∀ a w, StandsInFor a w → HasPhi.Agree a w
+
+/-- A pronoun's domain is the nominal tokens; it stands in for those it
+φ-agrees with. -/
+instance : Proform Pronoun where
+  StandsInFor p w := Binding.isNominalCat w.cat = true ∧ HasPhi.Agree p w
+  agree_of_standsInFor _ _ h := h.2
+
+instance : Proform PersonalPronoun where
+  StandsInFor p w := Binding.isNominalCat w.cat = true ∧ HasPhi.Agree p w
+  agree_of_standsInFor _ _ h := h.2
+
+instance (p : Pronoun) (w : Word) : Decidable (Proform.StandsInFor p w) :=
+  inferInstanceAs (Decidable (Binding.isNominalCat w.cat = true ∧ HasPhi.Agree p w))
+
+instance (p : PersonalPronoun) (w : Word) : Decidable (Proform.StandsInFor p w) :=
+  inferInstanceAs (Decidable (Binding.isNominalCat w.cat = true ∧ HasPhi.Agree p w))
 
 /-! ### The pronoun carriers' `Bound` instances, and the faithfulness certificate -/
 

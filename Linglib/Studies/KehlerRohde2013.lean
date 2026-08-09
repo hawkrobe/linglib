@@ -555,14 +555,14 @@ def masculineFoil : Word :=
 /-- The prompt *She* (the English Fragment entry) is φ-compatible with both
     characters, so gender cannot resolve the reference. -/
 theorem she_ambiguous_over_stimuli :
-    Proform.Agree English.Pronouns.she amanda ∧
-      Proform.Agree English.Pronouns.she brittany := by decide
+    HasPhi.Agree English.Pronouns.she amanda ∧
+      HasPhi.Agree English.Pronouns.she brittany := by decide
 
 /-- Against a mixed-gender pair the φ-filter resolves *she* by itself; the
     same-gender design is what forces the Bayesian competition. -/
 theorem she_resolved_against_masculine :
-    Proform.Agree English.Pronouns.she amanda ∧
-      ¬ Proform.Agree English.Pronouns.she masculineFoil := by decide
+    HasPhi.Agree English.Pronouns.she amanda ∧
+      ¬ HasPhi.Agree English.Pronouns.she masculineFoil := by decide
 
 section CenteringBridge
 

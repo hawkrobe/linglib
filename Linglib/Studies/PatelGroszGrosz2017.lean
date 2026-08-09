@@ -168,7 +168,7 @@ The PER series is the **weak** article (uniqueness); the marked DEM series the *
 (familiarity, `der_er_can_diverge` above) — article-strength is *per-series*, not a per-element slot
 (like deficiency, unlike the demonstrative's deixis). The load-bearing parallel to the demonstrative
 grounding (`Studies/Hanink2021`): there `deixis` filled `Description.demonstrative`'s slot; here the
-`Proform.phi` **gender** supplies the restrictor's presupposition. -/
+`HasPhi.phi` **gender** supplies the restrictor's presupposition. -/
 
 open Semantics.Presupposition.PhiFeatures (femSem)
 
