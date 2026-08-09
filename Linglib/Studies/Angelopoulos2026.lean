@@ -1,7 +1,7 @@
 import Linglib.Studies.Bondarenko2022
 import Linglib.Studies.Roussou2010
 import Linglib.Fragments.Greek.StandardModern.Complementizers
-import Linglib.Syntax.Category.Verb.Selection
+import Linglib.Syntax.Category.Verb.Complement.Takes
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Semantics.Attitudes.ClauseDenotation.Content
 import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
@@ -89,7 +89,7 @@ def dualVerbs : List (Verb × Verb) :=
 exclude *na*: coding and force underdetermine the split (§1). -/
 theorem frames_underdetermine_distribution :
     ∀ v ∈ otiOnlyVerbs ++ puOnlyVerbs,
-      v.realizes oti ∧ v.realizes pu ∧ ¬ v.realizes na := by
+      v.takes oti ∧ v.takes pu ∧ ¬ v.takes na := by
   decide
 
 /-- Verb-level and C-level factivity are anti-aligned: the
@@ -281,7 +281,7 @@ theorem simveni_rejects_both :
     ¬ mergeableInSpec .situation oti ∧
     simveni.vendlerClass.map AspectualHead.ofVendler = some .vEvent ∧
     ¬ selectsClause .vEvent pu ∧
-    simveni.realizes na ∧ ¬ simveni.realizes oti :=
+    simveni.takes na ∧ ¬ simveni.takes oti :=
   ⟨by decide, by decide, by decide,
     fun h => absurd (show pu = oti from h) (by decide), by decide, by decide⟩
 

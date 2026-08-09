@@ -116,6 +116,7 @@ import Linglib.Core.Data.List.TakeDrop
 import Linglib.Core.Data.Multiset.Antidiagonal
 import Linglib.Core.Data.Multiset.Powerset
 import Linglib.Core.Data.Multiset.Rel
+import Linglib.Core.Data.Option.Compatible
 import Linglib.Core.Data.Part
 import Linglib.Core.Data.RoseTree.Basic
 import Linglib.Core.Data.RoseTree.Count
@@ -2815,9 +2816,9 @@ import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
 import Linglib.Syntax.Category.Pronoun.Logophoric
 import Linglib.Syntax.Category.Pronoun.WALS
 import Linglib.Syntax.Category.Verb.Basic
+import Linglib.Syntax.Category.Verb.Complement.Basic
+import Linglib.Syntax.Category.Verb.Complement.Takes
 import Linglib.Syntax.Category.Verb.Defs
-import Linglib.Syntax.Category.Verb.Frame
-import Linglib.Syntax.Category.Verb.Selection
 import Linglib.Syntax.Category.Verb.Stem
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Clause.Chaining

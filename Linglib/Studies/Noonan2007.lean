@@ -1,5 +1,5 @@
 import Linglib.Data.Complementation.Noonan2007
-import Linglib.Syntax.Category.Verb.Frame
+import Linglib.Syntax.Category.Verb.Complement.Basic
 import Linglib.Syntax.Minimalist.LeftPeriphery
 import Linglib.Semantics.Mood.Defs
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
@@ -36,7 +36,7 @@ Five bridges connecting CTPClass to existing infrastructure:
 2. CTPClass ↔ SelectionClass (LeftPeriphery.lean) — map CTP to question embedding
 3. CTPClass ↔ Selector (Mood/Defs.lean) — map CTP to mood selection
 4. ComplementType ↔ Complement.Coding — via the substrate adapter
-   `ComplementType.toCoding` (`Syntax/Category/Verb/Selection.lean`)
+   `ComplementType.toCoding` (`Syntax/Category/Verb/Complement/Basic.lean`)
 5. VerbEntry → Selector — derive mood selection from verb features
 
 -/
@@ -357,7 +357,7 @@ theorem irrealis_not_indicative :
 typological categories
 
 The adapter itself is substrate: `ComplementType.toCoding` in
-`Syntax/Category/Verb/Selection.lean`. The coverage check stays here:
+`Syntax/Category/Verb/Complement/Basic.lean`. The coverage check stays here:
 the coded clausal cells map to Noonan types; small clauses and embedded
 questions are outside his coding inventory (`toCoding` is `none`). -/
 

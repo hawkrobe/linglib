@@ -1,5 +1,5 @@
 import Linglib.Syntax.Clause.Complementation
-import Linglib.Syntax.Category.Verb.Frame
+import Linglib.Syntax.Category.Verb.Complement.Basic
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Aktionsart
@@ -21,7 +21,7 @@ import Linglib.Semantics.ArgumentStructure.Root.Profile
 
 Framework-agnostic types for verb semantics: the selectional/inflectional enums
 (`VoiceType`, `SenseTag`, …; complementation enums live in
-`Features/Complementation.lean`) and the `Verb` structure that bundles the
+`Syntax/Clause/Complementation.lean`) and the `Verb` structure that bundles the
 semantic fields shared across languages.
 
 `Verb` is the **semantic spine** of a verb entry. Its fields are organised
@@ -31,7 +31,7 @@ into facet structures under the `Verb` namespace — `Verb.ArgStructure`,
 (`v.frames`, `v.attitude`, …) is preserved by `extends`-flattening, and
 language fragments extend `Verb` with their own inflectional paradigms.
 Complement selection is a list of typed `Frame`s
-(`Syntax/Category/Verb/Frame.lean`); frame-conditioned
+(`Syntax/Category/Verb/Complement/Basic.lean`); frame-conditioned
 attitude/opacity/control lives on `Verb.Reading` rows; the flat
 readers (`v.complementType`, `v.controlType`, …) are derived accessors
 over `frames`/`readings`.
@@ -165,7 +165,7 @@ structure ArgStructure where
   /-- Complement frames, citation frame first. `[]` for intransitives.
       The flat `ComplementType` cells are the `Frame.np`,
       `Frame.finiteClause`, … smart constructors
-      (`Syntax/Category/Verb/Frame.lean`). -/
+      (`Syntax/Category/Verb/Complement/Basic.lean`). -/
   frames : List Frame
   /-- Proto-role entailment profile for the subject (external argument).
       The authoritative representation of argument semantics

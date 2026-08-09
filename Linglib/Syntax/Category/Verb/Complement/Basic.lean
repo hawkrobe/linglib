@@ -29,7 +29,7 @@ categories. Frame-conditioned readings (attitude, opacity, control)
 are not per-position data — they live on `Verb.Reading`
 (`Syntax/Category/Verb/Defs.lean`), keyed to the verb's frames. The
 selection relation between verb frames and clause-typers
-(`Verb.realizes`) lives in `Syntax/Category/Verb/Selection.lean`.
+(`Verb.takes`) lives in `Syntax/Category/Verb/Complement/Takes.lean`.
 [deal-2026]'s CP-external shell inventory lives with its consumer in
 `Studies/Deal2026.lean`.
 -/
@@ -59,6 +59,11 @@ def coding? : Position → Option Coding
 /-- The position's recorded force, if clausal. -/
 def force? : Position → Option Mood.Illocutionary
   | clausal _ cf _ => cf
+  | _ => none
+
+/-- The position's recorded subject requirement, if clausal. -/
+def embeddedSubject? : Position → Option Clause.EmbeddedSubject
+  | clausal _ _ es => es
   | _ => none
 
 end Position
