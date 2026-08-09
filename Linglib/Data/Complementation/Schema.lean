@@ -1,4 +1,4 @@
-import Linglib.Features.Complementation
+import Linglib.Syntax.Clause.Complementation
 
 /-!
 # Complementation data schema

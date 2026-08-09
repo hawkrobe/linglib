@@ -1,5 +1,5 @@
 import Linglib.Semantics.Mood.Defs
-import Linglib.Features.Complementation
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Features.Case.Basic
 
 /-!

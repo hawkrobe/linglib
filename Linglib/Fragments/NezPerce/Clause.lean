@@ -1,4 +1,4 @@
-import Linglib.Features.Complementation
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
 
