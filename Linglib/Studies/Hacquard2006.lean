@@ -23,7 +23,7 @@ Substrate note: the event-relative machinery (`EventBinder`,
 
 ## Main results
 
-* `positionToPerspective`, `embedded_high_shifts_perspective` — the temporal
+* `positionPerspective`, `withAttitude_shifts_perspective` — the temporal
   perspective ([condoravdi-2002]) projected from the anchoring event, via
   `ModalPosition.defaultBinder` / `withAttitude`.
 * `epistemic_reading_possible`, `goal_reading_necessary` — the two readings
@@ -41,53 +41,39 @@ open Semantics.Modality.EventRelativity
 open Semantics.Modality.Kratzer (simpleNecessity simplePossibility kratzerR
   ConvBackground accessibleWorlds)
 open Semantics.Modality (TemporalPerspective)
+open Semantics.Modality.ActualityEntailments (AspectModalScope toAspectScope
+  actualityEntailmentPredicted)
+open Semantics.Aspect (Perfectivity)
 open Data.Examples (LinguisticExample)
 
 /-! ### Position → temporal perspective
 
 The anchoring event fixes the evaluation time: "the agent and temporal
 trace of the speech event" for speech-bound modals, "the subject and the
-time provided by Tense" for aspect-bound ones. In a past-tense clause the
-projected times are utterance time (speech event) vs. the past tense time
-(attitude and VP events). The perspective map factors through the
-substrate's binding maps; its codomain has no future case, so no position
-can yield a future perspective. -/
+time provided by Tense" for aspect-bound ones. The perspective map factors
+through the substrate's binding maps; its codomain has no future case, so
+no position yields a future perspective. -/
 
-/-- Temporal perspective projected from the anchoring event, for a
-past-tense clause: the speech event sits at utterance time, attitude and
-VP events at the (past) tense time. -/
+/-- Perspective of the anchoring event in a past-tense clause: only the
+speech event sits at utterance time. -/
 def binderPerspective : EventBinder → TemporalPerspective
   | .speechAct => .present
-  | .attitude => .past
-  | .vpEvent => .past
+  | _ => .past
 
-/-- Temporal perspective from modal position in a matrix clause, via
-`ModalPosition.defaultBinder`: high modals are speech-bound (present
-perspective), low modals aspect-bound (past perspective). -/
-def positionToPerspective (pos : ModalPosition) : TemporalPerspective :=
+/-- Perspective from modal position in a matrix clause. -/
+def positionPerspective (pos : ModalPosition) : TemporalPerspective :=
   binderPerspective pos.defaultBinder
-
-/-- High modals have present temporal perspective. -/
-theorem high_present_perspective :
-    positionToPerspective .aboveAsp = .present := rfl
-
-/-- Low modals have past temporal perspective. -/
-theorem low_past_perspective :
-    positionToPerspective .belowAsp = .past := rfl
 
 /-- The same modal (*devoir*, *pouvoir*) gets different temporal
 perspectives from different structural positions. -/
 theorem position_determines_perspective :
-    positionToPerspective .aboveAsp ≠ positionToPerspective .belowAsp := by
-  decide
+    positionPerspective .aboveAsp ≠ positionPerspective .belowAsp := nofun
 
-/-- Embedded under a (past) attitude, a high modal is keyed to the attitude
-time, not the speech time: "given what John thought *yesterday*...". The
-perspective shifts with the binder while the position stays high. -/
-theorem embedded_high_shifts_perspective :
-    binderPerspective (ModalPosition.aboveAsp.withAttitude) = .past ∧
-    binderPerspective ModalPosition.aboveAsp.defaultBinder = .present :=
-  ⟨rfl, rfl⟩
+/-- Embedded under a past attitude, a high modal is keyed to the attitude
+time: the perspective tracks the binder, not the position. -/
+theorem withAttitude_shifts_perspective :
+    binderPerspective ModalPosition.aboveAsp.withAttitude ≠
+    binderPerspective ModalPosition.aboveAsp.defaultBinder := nofun
 
 /-! ### Perspective and aspect scope
 
@@ -99,15 +85,13 @@ unsettled future property (metaphysical available). That machinery lives in
 `Semantics/Modality/HistoricalAlternatives.lean`; chaining the two halves
 into one composition theorem is left as follow-up. -/
 
-open Semantics.Modality.ActualityEntailments (AspectModalScope toAspectScope)
-
 /-- Position determines both perspective and aspect scope: high modals pair
 present perspective with MODAL > ASP, low modals pair past perspective with
 ASP > MODAL. -/
 theorem position_determines_modal_base_type :
-    (positionToPerspective .aboveAsp = .present ∧
+    (positionPerspective .aboveAsp = .present ∧
      toAspectScope .aboveAsp = .modalOverAspect) ∧
-    (positionToPerspective .belowAsp = .past ∧
+    (positionPerspective .belowAsp = .past ∧
      toAspectScope .belowAsp = .aspectOverModal) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
@@ -262,13 +246,9 @@ theorem binding_determines_epistemic_domain :
     ¬ kratzerR (fPenser .thinking) .lovesNot .lovesNot := by
   constructor <;> simp [fPenser, kratzerR]
 
-end Hacquard2006
+/-! ### Actuality entailments
 
-/-! ## Actuality entailments -/
-
-namespace Hacquard2006.ActualityInferences
-
-/-! Root modals with perfective aspect entail their complement; with
+Root modals with perfective aspect entail their complement; with
 imperfective they do not ([bhatt-1999]; French and Italian extensions in
 [hacquard-2006]). The stimuli live in `Data/Examples/Hacquard2006.json`:
 the French pairs (1) and (22)/(23), the Italian pair (22b)/(23b), and
@@ -276,11 +256,6 @@ Bhatt's English adverbial pair (2). Bhatt's primary Hindi and Greek data
 are not reproduced in the dissertation (its fn. 7), and its own Greek
 discussion (318) defers the language's complement-internal aspect, so no
 Hindi or Greek rows are included here. -/
-
-open Semantics.Aspect (Perfectivity)
-open Semantics.Modality.ActualityEntailments (actualityEntailmentPredicted)
-open Semantics.Modality.EventRelativity (ModalPosition)
-open Data.Examples (LinguisticExample)
 
 /-- Aspect and observed actuality entailment of an example row, read off
 its `paperFeatures`; `none` for rows without the aspect contrast. -/
@@ -303,4 +278,4 @@ theorem data_matches_position_theory :
       (λ d => d.2 == actualityEntailmentPredicted .belowAsp d.1) = true := by
   decide
 
-end Hacquard2006.ActualityInferences
+end Hacquard2006

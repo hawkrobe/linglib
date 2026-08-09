@@ -708,22 +708,22 @@ DIRECTION (DOX blocks future, CIR permits future). The Klecha2016
 docstring §4 (line 44) records the prose claim; this bridge makes
 it kernel-checked.
 
-[hacquard-2006]'s `positionToPerspective` covers past + present
+[hacquard-2006]'s `positionPerspective` covers past + present
 but is silent on future (its codomain, `TemporalPerspective`, has
 no future case). [klecha-2016]'s `ModalBaseKind.permitsOrientation`
 adds the future-orientation discriminator. Together they cover all
 three orientations. -/
 
 /-- Phase F bridge — Klecha-Hacquard complementarity:
-    [hacquard-2006]'s `positionToPerspective` covers past +
+    [hacquard-2006]'s `positionPerspective` covers past +
     present from modal position; [klecha-2016]'s
     `ModalBaseKind.permitsOrientation` covers future from modal base
     kind. The conjunction below confirms the four cells:
     `(aboveAsp → present)`, `(belowAsp → past)`,
     `(circumstantial permits future)`, `(doxastic blocks future)`. -/
 theorem klecha_hacquard_complementary :
-    Hacquard2006.positionToPerspective .aboveAsp = .present ∧
-    Hacquard2006.positionToPerspective .belowAsp = .past ∧
+    Hacquard2006.positionPerspective .aboveAsp = .present ∧
+    Hacquard2006.positionPerspective .belowAsp = .past ∧
     ModalBaseKind.permitsOrientation .circumstantial Tense.future = true ∧
     ModalBaseKind.permitsOrientation .doxastic Tense.future = false := by
   refine ⟨rfl, rfl, ?_, ?_⟩ <;> rfl
