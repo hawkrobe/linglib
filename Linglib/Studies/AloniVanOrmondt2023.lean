@@ -30,11 +30,13 @@ concrete model and proves the paper's one countermodel claim.
 split-disjunction clause quantifies over pairs of subteams (`2^12 × 2^12`
 at this file's model sizes), so kernel `decide` is infeasible for
 whole-formula claims; the Fact 4 countermodel is proved by hand, with
-`decide` confined to finite side conditions. Fact 3 is stated with the
-individual constants of the paper's Definition 4.1 (`QBSMLFormula.predc`
-atoms, world-relative `KripkeStructure.cInterp`). Atoms and worlds come
-from `Logic/Modal/BSML/Scenarios.lean`, so this file and
-`Studies/Aloni2022.lean` target the same world space.
+`decide` confined to finite side conditions. The propositional facts (3, 7,
+8, 10) are stated with the individual constants of the paper's
+Definition 4.1 (`QBSMLFormula.predc` atoms, world-relative
+`KripkeStructure.cInterp`), the quantified facts with variable atoms — both
+as in the paper. Atoms and worlds come from
+`Logic/Modal/BSML/Scenarios.lean`, so this file and `Studies/Aloni2022.lean`
+target the same world space.
 -/
 
 namespace AloniVanOrmondt2023
@@ -45,12 +47,11 @@ open BSML (FCAtom PowerSet2World QVar)
 
 /-! ### Predicates and variables -/
 
-/-- Two unary predicates `P` and `Q`: provides the non-degenerate disjunction
-    `Pa ∨ Qa` matching the paper's `Pa ∨ Pb` schema (where the `a, b` are
-    domain elements rather than predicate-instances). With monadic predicates
-    over a 2-element domain, `Pa ∨ Qa` and `Pa ∨ Pb` are equally non-trivial
-    instantiations of split disjunction. -/
-inductive QPred | P | Q
+/-- The paper's two predicate symbols. The quantified facts use both, in
+    the paper's schema `∀x(Px ∨ Qx)`; the propositional facts use `P` alone,
+    applied to two individual constants (`Pa ∨ Pb`). `univAccessModel`
+    interprets both by the same valuation; `fig14V` separates them. -/
+inductive Pred | P | Q
   deriving DecidableEq, Repr, Fintype
 
 /-! ### The concrete model -/
@@ -69,39 +70,38 @@ inductive QPred | P | Q
     state (`univAccessModel_indisputable`) and state-based exactly on states with
     full world projection (`univAccessModel_stateBased_of_full`) — same shape as
     `Aloni2022.deonticModel`. -/
-def univAccessModel : QBSMLModel PowerSet2World FCAtom FCAtom QPred where
+def univAccessModel : QBSMLModel PowerSet2World FCAtom FCAtom Pred where
   access := λ _ => Finset.univ
   interp := λ w => monadicStructure id (λ _ d => w.holds d)
 
-/-! ### Formulas -/
+/-! ### Formulas
 
-/-- The atomic formula `Px`. -/
-def Px {Const : Type*} : QBSMLFormula QVar Const QPred := .pred .P .x
+Constant atoms `Pa`, `Pb` build the propositional schemas of Facts 3, 7, 8
+and 10; variable atoms `Px`, `Qx` build the quantified schemas of Facts 4–6
+and 9 — both exactly as in the paper. -/
 
-/-- The atomic formula `Qx`. -/
-def Qx {Const : Type*} : QBSMLFormula QVar Const QPred := .pred .Q .x
+/-- The constant atom `Pa`. -/
+def Pa : QBSMLFormula QVar FCAtom Pred := .predc .P .a
 
-/-- Disjunction `Px ∨ Qx` — paper's `Pa ∨ Pb`-shape with two distinct
-    predicate-instances. -/
-def PxOrQx {Const : Type*} : QBSMLFormula QVar Const QPred := .disj Px Qx
+/-- The constant atom `Pb`. -/
+def Pb : QBSMLFormula QVar FCAtom Pred := .predc .P .b
 
-/-- The negation premise `¬(Px ∨ Qx)` corresponding to the paper's
-    `¬(Pa ∨ Pb)` schema. -/
-def negPxOrQx {Const : Type*} : QBSMLFormula QVar Const QPred := .neg PxOrQx
+/-- The variable atom `Px`. -/
+def Px {Const : Type*} : QBSMLFormula QVar Const Pred := .pred .P .x
 
-/-- The narrow-scope FC premise `◇(Px ∨ Qx)` corresponding to the paper's
-    `◇(Pa ∨ Pb)` schema. -/
-def possPxOrQx {Const : Type*} : QBSMLFormula QVar Const QPred := .poss PxOrQx
-
-/-- The □-FC premise `□(Px ∨ Qx)` (paper's Fact 7 schema; `□` derived). -/
-def necPxOrQx {Const : Type*} : QBSMLFormula QVar Const QPred := PxOrQx.nec
+/-- The variable atom `Qx`. -/
+def Qx {Const : Type*} : QBSMLFormula QVar Const Pred := .pred .Q .x
 
 /-- The universal-FC premise `∀x◇(Px ∨ Qx)` (paper's Fact 9 schema). -/
-def univPossPxOrQx {Const : Type*} : QBSMLFormula QVar Const QPred := .univ .x possPxOrQx
+def univPossPxOrQx {Const : Type*} : QBSMLFormula QVar Const Pred :=
+  .univ .x (.poss (.disj Px Qx))
 
 /-- The distribution premise `∀x(Px ∨ Qx)` (paper's Facts 4–6 schema). -/
-def univPxOrQx {Const : Type*} : QBSMLFormula QVar Const QPred := .univ .x PxOrQx
+def univPxOrQx {Const : Type*} : QBSMLFormula QVar Const Pred :=
+  .univ .x (.disj Px Qx)
 
+theorem Pa_isNEFree : Pa.IsNEFree := .predc _ _
+theorem Pb_isNEFree : Pb.IsNEFree := .predc _ _
 theorem Px_isNEFree {Const : Type*} : (Px (Const := Const)).IsNEFree := .pred _ _
 theorem Qx_isNEFree {Const : Type*} : (Qx (Const := Const)).IsNEFree := .pred _ _
 
@@ -109,38 +109,36 @@ theorem Qx_isNEFree {Const : Type*} : (Qx (Const := Const)).IsNEFree := .pred _ 
 
 /-- **Fact 10 (Negation behaviour)** at `univAccessModel`:
 
-    Enriched negation `[¬(Px ∨ Qx)]⁺` entails the conjunction of negated
-    disjuncts `¬Px ∧ ¬Qx`. One-line invocation of the substrate's
-    `negationStrip` (`Logic/Modal/QBSML/FreeChoice.lean`).
-    Mirrors `Aloni2022.aloni2022_fact11_dual_prohibition` style — substrate
-    theorem, model + NE-free witnesses applied. -/
+    `[¬(Pa ∨ Pb)]⁺` entails `¬Pa ∧ ¬Pb`. One-line invocation of the
+    substrate's `negationStrip`. Mirrors
+    `Aloni2022.aloni2022_fact11_dual_prohibition`. -/
 theorem fact10_negation
     (s : Finset (Index PowerSet2World QVar FCAtom))
-    (h : support univAccessModel negPxOrQx.enrich s) :
-    support univAccessModel (.neg Px) s ∧ support univAccessModel (.neg Qx) s :=
-  negationStrip univAccessModel Px_isNEFree Qx_isNEFree h
+    (h : support univAccessModel (QBSMLFormula.enrich (.neg (.disj Pa Pb))) s) :
+    support univAccessModel (.neg Pa) s ∧ support univAccessModel (.neg Pb) s :=
+  negationStrip univAccessModel Pa_isNEFree Pb_isNEFree h
 
 /-! ### Facts 7 and 8 (free choice): `[□/◇(Pa ∨ Pb)]⁺ ⊨ ◇Pa ∧ ◇Pb` -/
 
 /-- **Fact 8 (Narrow-Scope free choice / ◇-FC)** at `univAccessModel`:
 
-    Enriched possibility-disjunction `[◇(Px ∨ Qx)]⁺` entails `◇Px ∧ ◇Qx`.
-    One-line invocation of `narrowScopeFC`. The first-order analogue of
-    `Aloni2022.aloni2022_fact4_NS_FC` — same template, lifted to QBSML's
-    monadic predicate language. -/
+    `[◇(Pa ∨ Pb)]⁺` entails `◇Pa ∧ ◇Pb`. One-line invocation of
+    `narrowScopeFC`; the first-order analogue of
+    `Aloni2022.aloni2022_fact4_NS_FC`. -/
 theorem fact8_narrowScopeFC
     (s : Finset (Index PowerSet2World QVar FCAtom))
-    (h : support univAccessModel possPxOrQx.enrich s) :
-    support univAccessModel (.poss Px) s ∧ support univAccessModel (.poss Qx) s :=
-  narrowScopeFC univAccessModel Px_isNEFree Qx_isNEFree h
+    (h : support univAccessModel (QBSMLFormula.enrich (.poss (.disj Pa Pb))) s) :
+    support univAccessModel (.poss Pa) s ∧ support univAccessModel (.poss Pb) s :=
+  narrowScopeFC univAccessModel Pa_isNEFree Pb_isNEFree h
 
-/-- **Fact 7 (□-free choice)** at `univAccessModel`: `[□(Px ∨ Qx)]⁺` entails
-    `◇Px ∧ ◇Qx`, with the derived `□`. One-line invocation of `boxFC`. -/
+/-- **Fact 7 (□-free choice)** at `univAccessModel`: `[□(Pa ∨ Pb)]⁺` entails
+    `◇Pa ∧ ◇Pb`, with the derived `□`. One-line invocation of `boxFC`. -/
 theorem fact7_boxFC
     (s : Finset (Index PowerSet2World QVar FCAtom))
-    (h : support univAccessModel necPxOrQx.enrich s) :
-    support univAccessModel (.poss Px) s ∧ support univAccessModel (.poss Qx) s :=
-  boxFC univAccessModel Px_isNEFree Qx_isNEFree h
+    (h : support univAccessModel
+      (QBSMLFormula.enrich (QBSMLFormula.nec (.disj Pa Pb))) s) :
+    support univAccessModel (.poss Pa) s ∧ support univAccessModel (.poss Pb) s :=
+  boxFC univAccessModel Pa_isNEFree Pb_isNEFree h
 
 /-! ### Facts 9 and 5 (universal FC and distribution) -/
 
@@ -178,8 +176,8 @@ theorem univPxOrQx_classical
     support univAccessModel univPxOrQx s ↔
       ∀ i ∈ s, univAccessModel.RealizeAt i.world
         (Formula.all₁ QVar.x
-          ((monadicRel QPred.P).formula₁ (Term.var QVar.x) ⊔
-            (monadicRel QPred.Q).formula₁ (Term.var QVar.x))) (v i) :=
+          ((monadicRel Pred.P).formula₁ (Term.var QVar.x) ⊔
+            (monadicRel Pred.Q).formula₁ (Term.var QVar.x))) (v i) :=
   support_iff_forall_realizeAt univAccessModel rfl s v hv
 
 /-- The narrow-scope FC premise `◇(Px ∨ Qx)` translates into the modal layer
@@ -190,24 +188,24 @@ theorem possPxOrQx_classical
     (s : Finset (Index PowerSet2World QVar FCAtom))
     (v : Index PowerSet2World QVar FCAtom → QVar → FCAtom)
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
-    support univAccessModel possPxOrQx s ↔
+    support univAccessModel (.poss (.disj Px Qx)) s ↔
       ∀ i ∈ s,
         (ModalFormula.dia
-          (.sup (.ofFormula ((monadicRel QPred.P).formula₁ (Term.var QVar.x)))
+          (.sup (.ofFormula ((monadicRel Pred.P).formula₁ (Term.var QVar.x)))
             (.ofFormula
-              ((monadicRel QPred.Q).formula₁ (Term.var QVar.x))))).Realize
+              ((monadicRel Pred.Q).formula₁ (Term.var QVar.x))))).Realize
           univAccessModel i.world (v i) :=
   support_iff_forall_realize univAccessModel rfl s v hv
 
 /-- The closed standard translation of `∀x(Px ∨ Qx)`: quantifiers
     relativized to the individual sort, predicates world-relativized to the
     current-world variable `Sum.inr 0`. -/
-def stUnivPxOrQx : (stLang FCAtom QPred).Formula (QVar ⊕ ℕ) :=
+def stUnivPxOrQx : (stLang FCAtom Pred).Formula (QVar ⊕ ℕ) :=
   Formula.all₁ (Sum.inl QVar.x)
     ((stIndiv.formula₁ (Term.var (Sum.inl QVar.x))).imp
-      ((stRel QPred.P).formula₂ (Term.var (Sum.inr 0))
+      ((stRel Pred.P).formula₂ (Term.var (Sum.inr 0))
           (Term.var (Sum.inl QVar.x)) ⊔
-        (stRel QPred.Q).formula₂ (Term.var (Sum.inr 0))
+        (stRel Pred.Q).formula₂ (Term.var (Sum.inr 0))
           (Term.var (Sum.inl QVar.x))))
 
 /-- The closure is a genuine sentence: the compiler computes the
@@ -284,16 +282,14 @@ example :
 /-! ### Facts 3 and 6 (ignorance and distribution◇): the epistemic facts -/
 
 /-- **Fact 3 (ignorance)** at `univAccessModel`, on states of full world
-    projection (where `univAccessModel_stateBased_of_full` applies): the enriched
-    disjunction of constant atoms `[Pa ∨ Qb]⁺` entails `◇Pa ∧ ◇Qb`.
-    One-line invocation of `ignorance`. -/
+    projection (where `univAccessModel_stateBased_of_full` applies):
+    `[Pa ∨ Pb]⁺` entails `◇Pa ∧ ◇Pb`. One-line invocation of `ignorance`. -/
 theorem fact3_ignorance
     (s : Finset (Index PowerSet2World QVar FCAtom))
     (hfull : State.worldProj s = Finset.univ)
-    (h : support univAccessModel
-      (QBSMLFormula.enrich (.disj (.predc .P .a) (.predc .Q .b))) s) :
-    support univAccessModel (.poss (.predc .P .a)) s ∧
-    support univAccessModel (.poss (.predc .Q .b)) s :=
+    (h : support univAccessModel (QBSMLFormula.enrich (.disj Pa Pb)) s) :
+    support univAccessModel (.poss Pa) s ∧
+    support univAccessModel (.poss Pb) s :=
   ignorance univAccessModel (univAccessModel_stateBased_of_full hfull) h
 
 /-- **Fact 6 (distribution◇)** at `univAccessModel`, on states of full world
@@ -326,12 +322,12 @@ inductive Fig14Atom | a | b
 /-- Fig. 14 valuation: `P` holds exactly of `a`, and `Q` exactly of `b`,
     wherever the world carries the corresponding atom — so `P` and `Q` have
     *divergent* extensions, unlike `univAccessModel`'s. -/
-def fig14V (w : PowerSet2World) : QPred → Fig14Atom → Prop
+def fig14V (w : PowerSet2World) : Pred → Fig14Atom → Prop
   | .P, d => d = .a ∧ w.holds .a
   | .Q, d => d = .b ∧ w.holds .b
 
 /-- The Fig. 14 model: reflexive-only access at the `both` world. -/
-def fig14Model : QBSMLModel PowerSet2World Fig14Atom Fig14Atom QPred where
+def fig14Model : QBSMLModel PowerSet2World Fig14Atom Fig14Atom Pred where
   access := λ _ => {PowerSet2World.both}
   interp := λ w => monadicStructure id (fig14V w)
 
@@ -353,7 +349,7 @@ theorem fig14_stateBased : fig14Model.IsStateBased fig14State := by decide
     the `x/b` half supporting `[Qx]⁺` (paper Fig. 15). -/
 theorem fig14_premise : support fig14Model univPxOrQx.enrich fig14State := by
   refine ⟨?_, Finset.singleton_nonempty _⟩
-  show support fig14Model PxOrQx.enrich
+  show support fig14Model (QBSMLFormula.disj Px Qx).enrich
     (State.extendUniversal fig14State QVar.x)
   refine ⟨⟨{fig14Index.update .x .a}, {fig14Index.update .x .b},
     ?_, ⟨?_, Finset.singleton_nonempty _⟩, ⟨?_, Finset.singleton_nonempty _⟩⟩,
@@ -389,7 +385,7 @@ theorem fig14_conclusion_fails :
     `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)`, witnessed by the Fig. 14
     countermodel. -/
 theorem fact4_obviation :
-    ∃ (M : QBSMLModel PowerSet2World Fig14Atom Fig14Atom QPred)
+    ∃ (M : QBSMLModel PowerSet2World Fig14Atom Fig14Atom Pred)
       (s : Finset (Index PowerSet2World QVar Fig14Atom)),
       support M univPxOrQx.enrich s ∧
       ¬ support M (.univ .x (.conj (.poss Px) (.poss Qx))) s :=
