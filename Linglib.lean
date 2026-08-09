@@ -2818,7 +2818,7 @@ import Linglib.Syntax.Category.Pronoun.WALS
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Category.Verb.Defs
 import Linglib.Syntax.Category.Verb.Frame
-import Linglib.Syntax.Category.Verb.Selection
+import Linglib.Syntax.Category.Verb.Takes
 import Linglib.Syntax.Category.Verb.Stem
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Clause.Chaining

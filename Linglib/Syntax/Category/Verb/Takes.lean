@@ -2,10 +2,10 @@ import Linglib.Syntax.Category.Verb.Defs
 import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
-# Verb–complementizer selection
+# Verb–complementizer compatibility
 
 The hom between the `Verb` and `Complementizer` entry APIs: which
-clause-typers can head a predicate's complements. The core relation is
+clause-typers a predicate takes. The core relation is
 axis-wise compatibility between a clausal position's recorded axes and
 a clause-typer's — [noonan-2007]'s coding axis and the force
 axis — with no conflicting axis and at least one positively agreeing
@@ -16,7 +16,7 @@ is object-side and not matched: typers record no subject requirement.
 ## Main definitions
 
 - `Complement.Position.TypedBy` — the axis-matching core
-- `Frame.RealizedBy`, `Verb.realizes` — the derived lifts
+- `Frame.RealizedBy`, `Verb.takes` — the derived lifts
 - `Verb.typers` — the typers of a verb within an inventory
 
 ## Main results
@@ -104,13 +104,13 @@ theorem Frame.finiteClause_realizedBy {z : Complementizer}
      .inl ⟨Option.some_ne_none _, hc.symm⟩⟩⟩
 
 /-- Some frame of `v` is realized by clause-typer `c`. -/
-def Verb.realizes (v : Verb) (c : Complementizer) : Prop :=
+def Verb.takes (v : Verb) (c : Complementizer) : Prop :=
   ∃ fr ∈ v.frames, fr.RealizedBy c
 
-instance (v : Verb) (c : Complementizer) : Decidable (v.realizes c) :=
+instance (v : Verb) (c : Complementizer) : Decidable (v.takes c) :=
   inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
 
 /-- The typers of `v` within a language's complementizer inventory. -/
 def Verb.typers (v : Verb) (inv : List Complementizer) :
     List Complementizer :=
-  inv.filter (λ c => decide (v.realizes c))
+  inv.filter (λ c => decide (v.takes c))
