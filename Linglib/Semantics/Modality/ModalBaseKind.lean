@@ -11,9 +11,9 @@ circumstantial (CIR) modal base pronouns.
 DOX returns actual histories (ending at eval time) → past/present orientation.
 CIR returns future histories (departing from eval time) → future orientation.
 
-This type is referenced by both theory-layer modules
-(`Modality.TemporalConstraint`, `Tense.ModalTense`) and by study files. It depends only on
-the `Finset Ordering` tense vocabulary (`Core.Order`, via `Tense`).
+This type is referenced by the theory-layer `Tense.ModalTense` and by
+study files (`Studies/Klecha2016.lean`). It depends only on the
+`Finset Ordering` tense vocabulary (`Core.Order`, via `Tense`).
 -/
 
 open Tense
