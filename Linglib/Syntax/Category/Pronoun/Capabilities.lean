@@ -45,8 +45,8 @@ open Morphology (Word)
 
 /-! ### The spine: `Proform` -/
 
-/-- A pro-form carrier is one that bears a surface `form` and agreement
-`phi`-features — the base the other capabilities build over. -/
+/-- A pro-form is an expression that can substitute for another expression,
+bearing a surface `form` and agreement `phi`-features. -/
 class Proform (α : Type*) where
   /-- Surface form (romanization or orthographic). -/
   form : α → String
@@ -60,7 +60,7 @@ instance : Proform PersonalPronoun :=
 
 /-! ### φ-agreement over carriers -/
 
-/-- Two pro-form carriers agree when their `phi`-features unify
+/-- Two pro-forms agree when their `phi`-features unify
 (`UD.MorphFeatures.compatible`), an unspecified feature acting as a wildcard.
 This is the carrier-generic form of `Word.Agree`. -/
 def Proform.Agree {α β : Type*} [Proform α] [Proform β] (a : α) (b : β) : Prop :=
