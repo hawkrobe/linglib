@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.TweetyNixon
+import Linglib.Logic.TweetyNixon
 import Linglib.Core.Order.Normality
 import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Semantics.Dynamic.UpdateSemantics.Default
@@ -48,7 +48,7 @@ the normalcy predicate in the GEN operator for generic sentences.
 
 namespace Veltman1996
 
-open Core.Logic.TweetyNixon
+open TweetyNixon
 open UpdateSemantics.Default
 open Core.Order
 open Classical

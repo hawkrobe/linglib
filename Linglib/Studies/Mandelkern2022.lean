@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Assignment
+import Linglib.Logic.Assignment
 
 /-!
 # Mandelkern (2022) — Witnesses: the bounded theory of (in)definites
@@ -53,7 +53,7 @@ Formalised here:
 
 ## Connection to existing linglib infrastructure
 
-* `Core.Assignment.PartialAssign D := Nat → Option D` — used here, matching
+* `Assignment.PartialAssign D := Nat → Option D` — used here, matching
   [spector-2025] which formalises a *different* (trivalent-Transparency)
   competitor to Mandelkern's bounded theory. Both files share the
   partial-assignment substrate but diverge in their treatment of bounds vs.
@@ -67,7 +67,6 @@ Formalised here:
 
 namespace Mandelkern2022
 
-open Core
 
 universe u v
 

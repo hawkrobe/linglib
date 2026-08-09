@@ -1,6 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Semantics.Degree.Adjective
-import Linglib.Core.Logic.Aristotelian.Basic
+import Linglib.Core.Order.Aristotelian
 import Linglib.Semantics.Degree.Discrete
 
 /-!

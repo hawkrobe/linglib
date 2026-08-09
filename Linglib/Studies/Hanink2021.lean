@@ -95,7 +95,7 @@ def tableAtSit0 : DenotGS Item Room .et :=
 -- ════════════════════════════════════════════════════════════════
 
 /-- A trivial entity assignment. Entity binding is not exercised here. -/
-def g₀ : Core.Assignment Item := fun _ => Item.tableKitchen
+def g₀ : Assignment Item := fun _ => Item.tableKitchen
 
 /-- Situation assignment with pronoun 0 ↦ kitchen. -/
 def gsKitchen : SitAssignment Room := fun _ => Room.kitchen
@@ -223,7 +223,7 @@ def demDescription {E W : Type} (p : DemonstrativePronoun)
     presupposition filter, not a referent selector ([hanink-2021]). The Pronoun-API capability
     `Demonstrative.deixis` is exactly the presupposition that drops out of referent selection. -/
 theorem demDescription_eq_anaphoric {E W : Type} (p : DemonstrativePronoun)
-    (R : DenotGS E W .et) (sIdx d : Nat) (g : Core.Assignment E) (gs : SitAssignment W) :
+    (R : DenotGS E W .et) (sIdx d : Nat) (g : Assignment E) (gs : SitAssignment W) :
     interpret (demDescription p R sIdx d) g gs = interpret (.anaphoric R d) g gs :=
   interpret_demonstrative_eq_anaphoric R p.deixis sIdx d g gs
 
@@ -234,7 +234,7 @@ theorem demDescription_eq_anaphoric {E W : Type} (p : DemonstrativePronoun)
     demonstrativehood: PG&G's "*der* is not a `Demonstrative`" is a semantic fact, not just typing. -/
 theorem der_strong_vs_demonstrative {E W : Type} (p : DemonstrativePronoun)
     (hdist : (Demonstrative.deixis p).EncodesDistance)
-    (R : DenotGS E W .et) (sIdx d : Nat) (g : Core.Assignment E) (gs : SitAssignment W) :
+    (R : DenotGS E W .et) (sIdx d : Nat) (g : Assignment E) (gs : SitAssignment W) :
     interpret (demDescription p R sIdx d) g gs = interpret (.anaphoric R d) g gs
       ∧ (Demonstrative.deixis p).EncodesDistance :=
   ⟨demDescription_eq_anaphoric p R sIdx d g gs, hdist⟩

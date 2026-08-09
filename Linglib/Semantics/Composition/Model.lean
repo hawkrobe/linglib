@@ -141,7 +141,7 @@ def predicationTree : Tree Unit String :=
 backward FA) to a proposition `⟨s,t⟩`, threading worlds through the `.intens` type; its truth at a
 world bottoms out in `Structure.RelMap`. The engine needs no model-specific machinery. -/
 theorem interp_model_sourced (m : Model L) (subj : m.E) (R : L.Relations 1)
-    (g : Core.Assignment m.E) :
+    (g : Assignment m.E) :
     interp m.E m.W (lexFromModel m subj R) g predicationTree
       = some ⟨.intens .t, fun w => (m.interp w).RelMap R (fun _ => subj)⟩ :=
   rfl
@@ -150,7 +150,7 @@ theorem interp_model_sourced (m : Model L) (subj : m.E) (R : L.Relations 1)
 FA) to a truth value read off `RelMap` at the lexicon's world. The fragment supplies only the
 naming maps. -/
 theorem interp_lexiconAt_predication (m : Model L) (nm : LexNaming L) (w : m.W)
-    (g : Core.Assignment m.E) {s v : String} {c : L.Constants} {R : L.Relations 1}
+    (g : Assignment m.E) {s v : String} {c : L.Constants} {R : L.Relations 1}
     (hs : nm.names s = some c) (hv : nm.names v = none) (hv₁ : nm.preds₁ v = some R) :
     interp m.E m.W (m.lexiconAt nm w) g
       (.node () [.terminal () s, .terminal () v] : Tree Unit String)
@@ -180,14 +180,14 @@ stored on the `Pronoun` object (which has "no denotation of its own"). -/
 /-- A pronoun occurrence projects to a trace term: the engine interprets `heₙ` as the assignment
 value `g n`, an entity in the model's domain. The object supplies only the index. -/
 theorem interp_pronoun_trace (m : Model L) (lex : Lexicon m.E m.W)
-    (g : Core.Assignment m.E) (n : Nat) :
+    (g : Assignment m.E) (n : Nat) :
     interp m.E m.W lex g (.trace n () : Tree Unit String) = some ⟨.e, g n⟩ :=
   rfl
 
 /-- A φ-feature (here masculine gender) projects to a restriction on the referent, *read off the
 model*: `masc(g n)` at world `w`. The pronoun carries the feature; the model interprets it. -/
 def genderRestriction (m : Model L) (masc : L.Relations 1) (w : m.W)
-    (g : Core.Assignment m.E) (n : Nat) : Prop :=
+    (g : Assignment m.E) (n : Nat) : Prop :=
   (m.interp w).RelMap masc (fun _ => g n)
 
 end Semantics.Composition

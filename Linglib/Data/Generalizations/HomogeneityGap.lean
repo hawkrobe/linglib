@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Trivalent.Basic
+import Linglib.Core.Data.Trivalent
 import Linglib.Features.Polarity
 import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.KrizChemla2015

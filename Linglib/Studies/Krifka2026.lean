@@ -1,7 +1,7 @@
 import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Dynamic.ICDRT.Defs
 import Linglib.Semantics.Dynamic.Update
-import Linglib.Core.Logic.Assignment
+import Linglib.Logic.Assignment
 import Linglib.Features.MassCount
 
 /-!
@@ -216,8 +216,8 @@ variable {W E : Type*}
 
 /-- Heterogeneous assignment: drefs valued in entities, concepts, or indices
     ([krifka-2026] §4). Partiality is modeled by `DRefVal.undef`, so this is
-    `Core.Assignment (DRefVal W E)` rather than `Core.PartialAssign`. -/
-abbrev HAssign (W E : Type*) := Core.Assignment (DRefVal W E)
+    `Assignment (DRefVal W E)` rather than `PartialAssign`. -/
+abbrev HAssign (W E : Type*) := Assignment (DRefVal W E)
 
 /-- Existential introduction of an entity dref at index `n`, as by the indexed
     determiner *a₃* in (40c) — minus the falls-under-the-concept condition,

@@ -228,7 +228,7 @@ def thanTree : Tree Unit String :=
 /-- The engine derives the matrix clause: type-driven interpretation of
     `matrixTree` succeeds and denotes `matrixClause` (45.vi / 37.viii). -/
 theorem matrix_derivation_denotes (role : Ent → α → Prop) (P : α → Prop)
-    (μ0 : α → ℚ) (a : Ent) (δ : ℚ) (g : Core.Assignment (Dom Ent α)) :
+    (μ0 : α → ℚ) (a : Ent) (δ : ℚ) (g : Assignment (Dom Ent α)) :
     interp (Dom Ent α) Unit (lexicon role P μ0 a δ) g matrixTree =
       some ⟨.t, pure (matrixClause role P μ0 a δ)⟩ :=
   rfl
@@ -237,7 +237,7 @@ theorem matrix_derivation_denotes (role : Ent → α → Prop) (P : α → Prop)
     degree `d`, `thanTree` denotes membership of `d` in `thanClause`
     (39–41/47); degree abstraction is the meta-language λ over `d`. -/
 theorem than_derivation_denotes (role : Ent → α → Prop) (P : α → Prop)
-    (μ0 : α → ℚ) (b : Ent) (d : ℚ) (g : Core.Assignment (Dom Ent α)) :
+    (μ0 : α → ℚ) (b : Ent) (d : ℚ) (g : Assignment (Dom Ent α)) :
     interp (Dom Ent α) Unit (lexicon role P μ0 b d) g thanTree =
       some ⟨.t, pure (d ∈ thanClause role P μ0 b)⟩ :=
   rfl

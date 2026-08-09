@@ -199,10 +199,10 @@ with x = y; Beck returns "undefined" (presupposition failure). See
     insight; this is its first true cross-paper realization in linglib. -/
 theorem beck_cumulativity_on_equality_iff_HD_groupIdentity
     {E : Type} [DecidableEq E]
-    (uAnaph uAnt : Nat) (S : Core.PluralAssign E)
+    (uAnaph uAnt : Nat) (S : PluralAssign E)
     (xa xb : Finset E)
-    (hxa : ∀ d, d ∈ xa ↔ d ∈ Core.PluralAssign.sumDref S uAnaph)
-    (hxb : ∀ d, d ∈ xb ↔ d ∈ Core.PluralAssign.sumDref S uAnt) :
+    (hxa : ∀ d, d ∈ xa ↔ d ∈ PluralAssign.sumDref S uAnaph)
+    (hxb : ∀ d, d ∈ xb ↔ d ∈ PluralAssign.sumDref S uAnt) :
     Cumulative (fun a b : E => a = b) xa xb ↔
     groupIdentityCond uAnaph uAnt S ∅ :=
   (groupIdentityCond_iff_cumulative_eq uAnaph uAnt S xa xb hxa hxb).symm
@@ -224,10 +224,10 @@ theorem beck_cumulativity_on_equality_iff_HD_groupIdentity
     plural state. -/
 theorem reciprocity_factors_as_coverage_and_distinctness
     {E : Type} [DecidableEq E]
-    (uAnaph uAnt : Nat) (S : Core.PluralAssign E)
+    (uAnaph uAnt : Nat) (S : PluralAssign E)
     (xa xb : Finset E)
-    (hxa : ∀ d, d ∈ xa ↔ d ∈ Core.PluralAssign.sumDref S uAnaph)
-    (hxb : ∀ d, d ∈ xb ↔ d ∈ Core.PluralAssign.sumDref S uAnt) :
+    (hxa : ∀ d, d ∈ xa ↔ d ∈ PluralAssign.sumDref S uAnaph)
+    (hxb : ∀ d, d ∈ xb ↔ d ∈ PluralAssign.sumDref S uAnt) :
     -- Beck-shape: cumulativity-on-equality + per-state distinctness
     (Cumulative (fun a b : E => a = b) xa xb ∧
      ∀ s ∈ S, ∀ d_a d_b, s uAnaph = some d_a → s uAnt = some d_b → d_a ≠ d_b)

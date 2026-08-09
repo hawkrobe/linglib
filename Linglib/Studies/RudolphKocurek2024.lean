@@ -3,7 +3,7 @@ import Mathlib.Data.Multiset.Sort
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Discourse.CommonGround
 import Linglib.Core.Order.TotalPreorder
-import Linglib.Core.Logic.FirstOrder.Comparative
+import Linglib.Logic.FirstOrder.Comparative
 import Linglib.Core.Order.ComparativeProbability.Systems
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Delineation
@@ -23,7 +23,7 @@ The formalization is model-theoretic throughout: an interpretation — the
 paper's "function from expressions to intensions" — is a world-indexed family
 of first-order structures, and the language with its basic semantics IS the
 substrate's comparative-possibility logic
-(`Core/Logic/FirstOrder/Comparative`): `L.CompFormula E` evaluated by
+(`Logic/FirstOrder/Comparative`): `L.CompFormula E` evaluated by
 `CompFormula.Realize`, with ≻ the strict l-lifting. This file adds only what
 is RK-specific: acceptance and the common ground, degree modifiers and the
 conditional, the revised semantics, the delineation bridge, and the degree

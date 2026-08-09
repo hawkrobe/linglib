@@ -1,5 +1,5 @@
 import Linglib.Semantics.Composition.Model
-import Linglib.Core.Logic.FirstOrder.Binders
+import Linglib.Core.ModelTheory.Binders
 import Linglib.Semantics.Quantification.Basic
 import Mathlib.ModelTheory.Semantics
 import Mathlib.ModelTheory.Satisfiability
@@ -248,19 +248,19 @@ per world; `realizeAt`/`termAt` package that. -/
 
 /-- Realize a formula over the model's structure at world `w`. -/
 def Model.realizeAt (m : Model L) (w : m.W) (φ : L.Formula ℕ)
-    (g : Core.Assignment m.E) : Prop :=
+    (g : Assignment m.E) : Prop :=
   letI := m.interp w
   φ.Realize g
 
 /-- Realize a term over the model's structure at world `w`. -/
 def Model.termAt (m : Model L) (w : m.W) (τ : L.Term ℕ)
-    (g : Core.Assignment m.E) : m.E :=
+    (g : Assignment m.E) : m.E :=
   letI := m.interp w
   τ.realize g
 
 section RealizeAt
 
-variable (m : Model L) (w : m.W) (g : Core.Assignment m.E)
+variable (m : Model L) (w : m.W) (g : Assignment m.E)
 
 theorem Model.termAt_var (k : ℕ) : m.termAt w (Term.var k) g = g k := rfl
 
@@ -352,7 +352,7 @@ private theorem some_t_congr {p q : Denot E W .t} (h : p ↔ q) :
 /-- The `.bind` node at `Id`, given the body's interpretation at the outer
 assignment: it denotes an entity predicate agreeing pointwise with the body
 at updated assignments. -/
-private theorem interp_bind_exists (lex : Lexicon E W) (g : Core.Assignment E)
+private theorem interp_bind_exists (lex : Lexicon E W) (g : Assignment E)
     (k : ℕ) (c : Unit) (body : Tree Unit String) {p : Denot E W .t}
     (hbody : Tree.interp E W lex g body = some ⟨.t, p⟩) :
     ∃ F : Denot E W (.e ⇒ .t),
@@ -379,7 +379,7 @@ variable (m : Model L) (fw : FOWords) (nm : LexNaming L) (w : m.W)
 
 /-- Entity-subtree agreement: a compiled term's engine value is its
 realization over the model. -/
-theorem interp_compileTerm (g : Core.Assignment m.E) :
+theorem interp_compileTerm (g : Assignment m.E) :
     ∀ {t : Tree Unit String} {τ : L.Term ℕ}, compileTerm nm t = some τ →
       Tree.interp m.E m.W (m.lexiconFO fw nm w) g t
         = some ⟨.e, m.termAt w τ g⟩
@@ -395,7 +395,7 @@ theorem interp_compileTerm (g : Core.Assignment m.E) :
 
 /-- Predication agreement: subject term + predicate subtree compose to the
 compiled atom's realization. -/
-theorem interp_compilePred (hdj : nm.Disjoint) (g : Core.Assignment m.E)
+theorem interp_compilePred (hdj : nm.Disjoint) (g : Assignment m.E)
     {subj : Tree Unit String} {τ : L.Term ℕ}
     (hsubj : compileTerm nm subj = some τ) :
     ∀ {r : Tree Unit String} {φ : L.Formula ℕ}, compilePred nm τ r = some φ →
@@ -425,7 +425,7 @@ theorem interp_compilePred (hdj : nm.Disjoint) (g : Core.Assignment m.E)
 /-- Composition of a quantified clause `[[Q N] [bind k body]]` from the
 lexicon lookups of the quantifier and restrictor words and the `.bind`
 node's interpretation. -/
-private theorem interp_quantClause {g : Core.Assignment m.E} {q nw : String}
+private theorem interp_quantClause {g : Assignment m.E} {q nw : String}
     {Q : Denot m.E m.W ((.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t)}
     {N F : Denot m.E m.W (.e ⇒ .t)} {k : ℕ} {body : Tree Unit String}
     {a a₁ a₂ a₃ a₄ : Unit}
@@ -447,7 +447,7 @@ composed denotation *is* the realization of the compiled formula over the
 model at `w` — the DRT triangle for type-driven composition. -/
 theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     (hdj : nm.Disjoint) (t : Tree Unit String) :
-    ∀ {φ : L.Formula ℕ} (g : Core.Assignment m.E), compileFO fw nm t = some φ →
+    ∀ {φ : L.Formula ℕ} (g : Assignment m.E), compileFO fw nm t = some φ →
       Tree.interp m.E m.W (m.lexiconFO fw nm w) g t
         = some ⟨.t, m.realizeAt w φ g⟩ := by
   induction t using compileFO.induct fw with
@@ -593,13 +593,13 @@ variable (m : Model L) (fw : FOWords) (nm : LexNaming L) (w : m.W)
 
 /-- Truth of a tree at a model's world under an assignment: it composes to a
 true truth value. -/
-def HoldsAt (lex : Lexicon m.E m.W) (g : Core.Assignment m.E)
+def HoldsAt (lex : Lexicon m.E m.W) (g : Assignment m.E)
     (t : Tree Unit String) : Prop :=
   ∃ p, Tree.interp m.E m.W lex g t = some ⟨.t, p⟩ ∧ p
 
 theorem holdsAt_iff_realize (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     (hdj : nm.Disjoint) {t : Tree Unit String} {φ : L.Formula ℕ}
-    (h : compileFO fw nm t = some φ) (g : Core.Assignment m.E) :
+    (h : compileFO fw nm t = some φ) (g : Assignment m.E) :
     HoldsAt m (m.lexiconFO fw nm w) g t ↔ m.realizeAt w φ g := by
   constructor
   · rintro ⟨p, hp, htrue⟩
@@ -619,7 +619,7 @@ theorem holdsAt_of_models (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     (h₁ : compileFO fw nm t₁ = some φ₁) (h₂ : compileFO fw nm t₂ = some φ₂)
     (hmod : ∀ (M : Type) (S : L.Structure M) (v : ℕ → M),
       @Formula.Realize L M S ℕ φ₁ v → @Formula.Realize L M S ℕ φ₂ v)
-    (g : Core.Assignment m.E) :
+    (g : Assignment m.E) :
     HoldsAt m (m.lexiconFO fw nm w) g t₁ →
       HoldsAt m (m.lexiconFO fw nm w) g t₂ := by
   rw [holdsAt_iff_realize m fw nm w hnd hfr hdj h₁ g,
@@ -671,7 +671,7 @@ theorem models_imp_iff_entails (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     (hdj : nm.Disjoint) {t₁ t₂ : Tree Unit String} {φ₁ φ₂ : L₀.Formula ℕ}
     (h₁ : compileFO fw nm t₁ = some φ₁) (h₂ : compileFO fw nm t₂ = some φ₂) :
     (∅ : L₀.Theory) ⊨ᵇ φ₁.imp φ₂ ↔
-      ∀ (m : Model L₀), Nonempty m.E → ∀ (w : m.W) (g : Core.Assignment m.E),
+      ∀ (m : Model L₀), Nonempty m.E → ∀ (w : m.W) (g : Assignment m.E),
         HoldsAt m (m.lexiconFO fw nm w) g t₁ →
           HoldsAt m (m.lexiconFO fw nm w) g t₂ := by
   constructor
@@ -705,10 +705,10 @@ theorem holdsAt_compactness (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     (φs : ι → L₀.Formula ℕ)
     (hc : ∀ i, compileFO fw nm (trees i) = some (φs i))
     (hcl : ∀ i, (φs i).freeVarFinset = ∅) :
-    (∃ (m : Model L₀) (_ : Nonempty m.E) (w : m.W) (g : Core.Assignment m.E),
+    (∃ (m : Model L₀) (_ : Nonempty m.E) (w : m.W) (g : Assignment m.E),
         ∀ i, HoldsAt m (m.lexiconFO fw nm w) g (trees i)) ↔
       ∀ s : Finset ι,
-        ∃ (m : Model L₀) (_ : Nonempty m.E) (w : m.W) (g : Core.Assignment m.E),
+        ∃ (m : Model L₀) (_ : Nonempty m.E) (w : m.W) (g : Assignment m.E),
           ∀ i ∈ s, HoldsAt m (m.lexiconFO fw nm w) g (trees i) := by
   constructor
   · rintro ⟨m, hne, w, g, hall⟩ s

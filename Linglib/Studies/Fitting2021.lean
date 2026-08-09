@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Bilattice.Basic
+import Linglib.Core.Order.Bilattice.Basic
 
 /-!
 # Fitting 2021: strict/tolerant logics from logical bilattices
@@ -16,7 +16,7 @@ premises and tolerant (anticonsistent designated) conclusions; `C⟨B,F⟩` — 
 classical-like logic — runs valuations over the *exact* values.
 
 The chapter's central results, formalized here over the
-`Core.Logic.Bilattice` substrate:
+`Core.Order.Bilattice` substrate:
 
 * **`stValid_iff_cValid`** ([fitting-2021] Prop 8.7.2): `ST⟨B,F⟩` and
   `C⟨B,F⟩` validate exactly the same sequents. (Both directions are proved

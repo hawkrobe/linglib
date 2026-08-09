@@ -1,5 +1,5 @@
 import Linglib.Studies.KeshetAbney2024.Basic
-import Linglib.Core.Logic.Modal.Defs
+import Linglib.Logic.Modal.Defs
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
@@ -41,7 +41,7 @@ all `X ≡ φ` definitions regardless of their structural position.
 
 namespace KeshetAbney2024.PIP
 
-open Core.Logic.Modal (AccessRel box diamond)
+open Modal (AccessRel box diamond)
 
 /-- A finite domain of individuals for PIP quantifier evaluation. -/
 class FiniteDomain (D : Type*) where

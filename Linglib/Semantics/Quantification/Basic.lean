@@ -1,6 +1,6 @@
 import Linglib.Semantics.Quantification.Defs
 import Linglib.Semantics.Quantification.Properties
-import Linglib.Core.Logic.Aristotelian.Basic
+import Linglib.Core.Order.Aristotelian
 
 /-!
 # Concrete propositional generalized quantifiers

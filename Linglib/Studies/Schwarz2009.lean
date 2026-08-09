@@ -129,7 +129,7 @@ referent** in the entity assignment (`g d`). -/
     `interpSitPronoun sIdx` to fetch the resource situation. -/
 theorem weak_article_consults_situation_assignment
     (R : DenotGS E W .et) (sIdx : Nat)
-    (g : Core.Assignment E) (gs : SitAssignment W) :
+    (g : Assignment E) (gs : SitAssignment W) :
     interpret (.unique R sIdx) g gs =
       russellIota (fun x => R g gs x) := rfl
 
@@ -139,7 +139,7 @@ theorem weak_article_consults_situation_assignment
     constructor itself reads the entity slot. -/
 theorem strong_article_consults_entity_assignment
     (R : DenotGS E W .et) (d : Nat)
-    (g : Core.Assignment E) (gs : SitAssignment W) :
+    (g : Assignment E) (gs : SitAssignment W) :
     interpret (.anaphoric R d) g gs =
       (letI := Classical.dec (R g gs (g d))
        if R g gs (g d) then some (g d) else none) := rfl
@@ -342,7 +342,7 @@ def studentRestr : DenotGS Student Unit .et := fun _g _gs _x => True
 
 /-- Discourse referent at index 0 is Alice. The strong article
     (`.anaphoric`) reads off this slot. -/
-def gAlice : Core.Assignment Student := fun _ => Student.alice
+def gAlice : Assignment Student := fun _ => Student.alice
 
 def gs0 : SitAssignment Unit := fun _ => ()
 

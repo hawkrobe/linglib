@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Assignment
+import Linglib.Logic.Assignment
 import Linglib.Semantics.Dynamic.CDRT
 
 /-!
@@ -29,7 +29,6 @@ namespace DPL
 
 open DynamicSemantics
 open DynamicSemantics.Update
-open _root_.Core (Assignment)
 
 variable {E : Type*}
 

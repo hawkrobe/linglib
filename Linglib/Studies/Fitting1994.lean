@@ -1,5 +1,5 @@
-import Linglib.Core.Logic.Trivalent.Bilattice
-import Linglib.Core.Logic.Bilattice.Basic
+import Linglib.Core.Order.Bilattice.Kleene
+import Linglib.Core.Order.Bilattice.Basic
 
 /-!
 # Kleene's three-valued logic as the consistent fragment of Belnap's FOUR
@@ -12,7 +12,7 @@ Kleene values are exactly those `x` with `x ≤_k −x` — the *consistent*
 (non-glut) values.
 
 `FOUR` and its two orders / negation / conflation are the shared substrate in
-`Core.Logic.Bilattice`. Here we prove the slicing for linglib's `Trivalent`
+`Core.Order.Bilattice`. Here we prove the slicing for linglib's `Trivalent`
 (Kleene's three-valued logic, [kleene-1952]): `ofTruth` embeds `Trivalent` onto the
 consistent fragment of `FOUR`, matching the truth order (`Trivalent`'s `≤` vs
 `FOUR`'s `≤`), the knowledge order (`Trivalent.toFlat`, i.e. `Flat Bool`, vs

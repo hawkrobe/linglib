@@ -1,5 +1,5 @@
 import Linglib.Semantics.Intensional.Rigidity
-import Linglib.Core.Logic.Assignment
+import Linglib.Logic.Assignment
 import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Fragments.English.Predicates.Verbal
@@ -24,7 +24,7 @@ bind which variable.
 
 ## Situation Assignment Infrastructure
 
-Situation assignments specialize `Core.Assignment` from `D = Time`
+Situation assignments specialize `Assignment` from `D = Time`
 (Partee's temporal variables) to `D = WorldTimeIndex W Time` (Percus's
 situation variables).
 
@@ -49,7 +49,6 @@ open Tense
 
 namespace Percus2000
 
-open Core (Assignment)
 open Intensional (WorldTimeIndex)
 open Semantics.Context
 open Features (Attitude)

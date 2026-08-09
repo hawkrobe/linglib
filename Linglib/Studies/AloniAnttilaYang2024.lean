@@ -1,9 +1,9 @@
-import Linglib.Core.Logic.Modal.BSML.Defs
-import Linglib.Core.Logic.Modal.BSML.Properties
-import Linglib.Core.Logic.Modal.BSML.Bisimulation
-import Linglib.Core.Logic.Bilateral.Defs
-import Linglib.Core.Logic.Team.Algebra
-import Linglib.Core.Logic.Team.Closure
+import Linglib.Logic.Modal.BSML.Defs
+import Linglib.Logic.Modal.BSML.Properties
+import Linglib.Logic.Modal.BSML.Bisimulation
+import Linglib.Logic.Bilateral.Defs
+import Linglib.Logic.Team.Algebra
+import Linglib.Logic.Team.Closure
 
 /-!
 # State-based Modal Logics for Free Choice — Aloni, Anttila & Yang 2024
@@ -44,7 +44,7 @@ insight: each extension occupies a different cell of the
 * `BSMLOr.support` / `BSMLOr.antiSupport` (and the `BSMLEmpty` analogues)
   — convenience abbreviations.
 * `BSMLOr.isBilateral` / `BSMLEmpty.isBilateral` — instances of
-  `Core.Logic.Bilateral.IsBilateral`, reusing the BSML substrate.
+  `Bilateral.IsBilateral`, reusing the BSML substrate.
 * `BSMLEmpty.supClosed_support` — union-closure of BSML⊘ formulas
   (Fact 2.7; the second-consumer evidence that BSML's substrate
   generalises).
@@ -98,7 +98,7 @@ namespace AloniAnttilaYang2024
 variable {W W' : Type*} [DecidableEq W] [Fintype W] [DecidableEq W'] [Fintype W']
 variable {Atom : Type*}
 
-open Core.Logic.Modal.BSML (BSMLModel BSMLFormula StateBisim WorldBisim)
+open BSML (BSMLModel BSMLFormula StateBisim WorldBisim)
 
 /-! ### BSMLOr — BSML with global disjunction `⨼` -/
 
@@ -141,10 +141,10 @@ def eval (M : BSMLModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | false, .neg ψ,         t => eval M true ψ t
   | true,  .conj ψ₁ ψ₂,    t => eval M true ψ₁ t ∧ eval M true ψ₂ t
   | false, .conj ψ₁ ψ₂,    t => ∃ t₁ t₂ : Finset W,
-                                  Core.Logic.Team.splitsAs t t₁ t₂ ∧
+                                  Team.splitsAs t t₁ t₂ ∧
                                   eval M false ψ₁ t₁ ∧ eval M false ψ₂ t₂
   | true,  .disj ψ₁ ψ₂,    t => ∃ t₁ t₂ : Finset W,
-                                  Core.Logic.Team.splitsAs t t₁ t₂ ∧
+                                  Team.splitsAs t t₁ t₂ ∧
                                   eval M true ψ₁ t₁ ∧ eval M true ψ₂ t₂
   | false, .disj ψ₁ ψ₂,    t => eval M false ψ₁ t ∧ eval M false ψ₂ t
   | true,  .gdisj ψ₁ ψ₂,   t => eval M true ψ₁ t ∨ eval M true ψ₂ t
@@ -187,9 +187,9 @@ abbrev antiSupport (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) : P
 /-- `BSMLOr`'s `support`/`antiSupport` form a paraconsistent bilateral
     logic under `Formula.neg`. -/
 theorem isBilateral (M : BSMLModel W Atom) :
-    Core.Logic.Bilateral.IsBilateral
+    Bilateral.IsBilateral
       (support M) (antiSupport M) Formula.neg :=
-  Core.Logic.Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
+  Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
 
 /-! ### Modal depth and bisim invariance for BSMLOr (Theorem 3.8) -/
 
@@ -251,15 +251,15 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
       · rintro ⟨t, u, hsplit, h₁, h₂⟩
         obtain ⟨t', u', hsplit', hbt, hbu⟩ :=
           hbisim.splitPreserve hsplit
-            (Core.Logic.Team.splitsAs_left_subset hsplit)
-            (Core.Logic.Team.splitsAs_right_subset hsplit)
+            (Team.splitsAs_left_subset hsplit)
+            (Team.splitsAs_right_subset hsplit)
         exact ⟨t', u', hsplit', (ih₁ hd₁ hbt false).mp h₁,
                (ih₂ hd₂ hbu false).mp h₂⟩
       · rintro ⟨t', u', hsplit', h₁, h₂⟩
         obtain ⟨t, u, hsplit, hbt, hbu⟩ :=
           StateBisim.splitPreserve hbisim.symm hsplit'
-            (Core.Logic.Team.splitsAs_left_subset hsplit')
-            (Core.Logic.Team.splitsAs_right_subset hsplit')
+            (Team.splitsAs_left_subset hsplit')
+            (Team.splitsAs_right_subset hsplit')
         refine ⟨t, u, hsplit, ?_, ?_⟩
         · exact (ih₁ hd₁ hbt.symm false).mpr h₁
         · exact (ih₂ hd₂ hbu.symm false).mpr h₂
@@ -285,15 +285,15 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
       · rintro ⟨t, u, hsplit, h₁, h₂⟩
         obtain ⟨t', u', hsplit', hbt, hbu⟩ :=
           hbisim.splitPreserve hsplit
-            (Core.Logic.Team.splitsAs_left_subset hsplit)
-            (Core.Logic.Team.splitsAs_right_subset hsplit)
+            (Team.splitsAs_left_subset hsplit)
+            (Team.splitsAs_right_subset hsplit)
         exact ⟨t', u', hsplit', (ih₁ hd₁ hbt true).mp h₁,
                (ih₂ hd₂ hbu true).mp h₂⟩
       · rintro ⟨t', u', hsplit', h₁, h₂⟩
         obtain ⟨t, u, hsplit, hbt, hbu⟩ :=
           StateBisim.splitPreserve hbisim.symm hsplit'
-            (Core.Logic.Team.splitsAs_left_subset hsplit')
-            (Core.Logic.Team.splitsAs_right_subset hsplit')
+            (Team.splitsAs_left_subset hsplit')
+            (Team.splitsAs_right_subset hsplit')
         refine ⟨t, u, hsplit, ?_, ?_⟩
         · exact (ih₁ hd₁ hbt.symm true).mpr h₁
         · exact (ih₂ hd₂ hbu.symm true).mpr h₂
@@ -387,10 +387,10 @@ def eval (M : BSMLModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | false, .neg ψ,         t => eval M true ψ t
   | true,  .conj ψ₁ ψ₂,    t => eval M true ψ₁ t ∧ eval M true ψ₂ t
   | false, .conj ψ₁ ψ₂,    t => ∃ t₁ t₂ : Finset W,
-                                  Core.Logic.Team.splitsAs t t₁ t₂ ∧
+                                  Team.splitsAs t t₁ t₂ ∧
                                   eval M false ψ₁ t₁ ∧ eval M false ψ₂ t₂
   | true,  .disj ψ₁ ψ₂,    t => ∃ t₁ t₂ : Finset W,
-                                  Core.Logic.Team.splitsAs t t₁ t₂ ∧
+                                  Team.splitsAs t t₁ t₂ ∧
                                   eval M true ψ₁ t₁ ∧ eval M true ψ₂ t₂
   | false, .disj ψ₁ ψ₂,    t => eval M false ψ₁ t ∧ eval M false ψ₂ t
   | true,  .empt ψ,        t => eval M true ψ t ∨ t = ∅
@@ -429,14 +429,14 @@ abbrev antiSupport (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) : P
     antiSupport M (.empt φ) t ↔ antiSupport M φ t := Iff.rfl
 
 theorem isBilateral (M : BSMLModel W Atom) :
-    Core.Logic.Bilateral.IsBilateral
+    Bilateral.IsBilateral
       (support M) (antiSupport M) Formula.neg :=
-  Core.Logic.Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
+  Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
 
 /-! ### Fact 2.7: BSMLEmpty is union-closed -/
 
 /-- Joint sup-closure for both polarities of BSMLEmpty. The structure
-    mirrors `Core.Logic.Modal.BSML.support_and_antiSupport_unionClosed` — every
+    mirrors `BSML.support_and_antiSupport_unionClosed` — every
     clause in BSMLEmpty's `eval` preserves binary union, including the new
     `empt` clause: support of `⊘φ` is `support φ ∨ s = ∅`, which is
     preserved by binary union because the `s = ∅` case forces both
@@ -596,15 +596,15 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
       · rintro ⟨t, u, hsplit, h₁, h₂⟩
         obtain ⟨t', u', hsplit', hbt, hbu⟩ :=
           hbisim.splitPreserve hsplit
-            (Core.Logic.Team.splitsAs_left_subset hsplit)
-            (Core.Logic.Team.splitsAs_right_subset hsplit)
+            (Team.splitsAs_left_subset hsplit)
+            (Team.splitsAs_right_subset hsplit)
         exact ⟨t', u', hsplit', (ih₁ hd₁ hbt false).mp h₁,
                (ih₂ hd₂ hbu false).mp h₂⟩
       · rintro ⟨t', u', hsplit', h₁, h₂⟩
         obtain ⟨t, u, hsplit, hbt, hbu⟩ :=
           StateBisim.splitPreserve hbisim.symm hsplit'
-            (Core.Logic.Team.splitsAs_left_subset hsplit')
-            (Core.Logic.Team.splitsAs_right_subset hsplit')
+            (Team.splitsAs_left_subset hsplit')
+            (Team.splitsAs_right_subset hsplit')
         refine ⟨t, u, hsplit, ?_, ?_⟩
         · exact (ih₁ hd₁ hbt.symm false).mpr h₁
         · exact (ih₂ hd₂ hbu.symm false).mpr h₂
@@ -627,15 +627,15 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
       · rintro ⟨t, u, hsplit, h₁, h₂⟩
         obtain ⟨t', u', hsplit', hbt, hbu⟩ :=
           hbisim.splitPreserve hsplit
-            (Core.Logic.Team.splitsAs_left_subset hsplit)
-            (Core.Logic.Team.splitsAs_right_subset hsplit)
+            (Team.splitsAs_left_subset hsplit)
+            (Team.splitsAs_right_subset hsplit)
         exact ⟨t', u', hsplit', (ih₁ hd₁ hbt true).mp h₁,
                (ih₂ hd₂ hbu true).mp h₂⟩
       · rintro ⟨t', u', hsplit', h₁, h₂⟩
         obtain ⟨t, u, hsplit, hbt, hbu⟩ :=
           StateBisim.splitPreserve hbisim.symm hsplit'
-            (Core.Logic.Team.splitsAs_left_subset hsplit')
-            (Core.Logic.Team.splitsAs_right_subset hsplit')
+            (Team.splitsAs_left_subset hsplit')
+            (Team.splitsAs_right_subset hsplit')
         refine ⟨t, u, hsplit, ?_, ?_⟩
         · exact (ih₁ hd₁ hbt.symm true).mpr h₁
         · exact (ih₂ hd₂ hbu.symm true).mpr h₂
@@ -721,26 +721,26 @@ def BSMLEmpty.ofBSML : BSMLFormula Atom → BSMLEmpty.Formula Atom
     evaluation: BSMLOr is a faithful extension of BSML. -/
 theorem BSMLOr.eval_ofBSML (M : BSMLModel W Atom) (b : Bool)
     (φ : BSMLFormula Atom) (t : Finset W) :
-    BSMLOr.eval M b (BSMLOr.ofBSML φ) t ↔ Core.Logic.Modal.BSML.eval M b φ t := by
+    BSMLOr.eval M b (BSMLOr.ofBSML φ) t ↔ BSML.eval M b φ t := by
   induction φ generalizing b t with
   | atom p => cases b <;> rfl
   | ne => cases b <;> rfl
   | neg ψ ih =>
-    cases b <;> simp only [BSMLOr.ofBSML, BSMLOr.eval, Core.Logic.Modal.BSML.eval, ih]
+    cases b <;> simp only [BSMLOr.ofBSML, BSMLOr.eval, BSML.eval, ih]
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
     · -- antiSupport conj: split-existential, IH applied to both halves
-      simp only [BSMLOr.ofBSML, BSMLOr.eval, Core.Logic.Modal.BSML.eval]
+      simp only [BSMLOr.ofBSML, BSMLOr.eval, BSML.eval]
       constructor
       · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
         exact ⟨t₁, t₂, hsplit, (ih₁ false t₁).mp h₁, (ih₂ false t₂).mp h₂⟩
       · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
         exact ⟨t₁, t₂, hsplit, (ih₁ false t₁).mpr h₁, (ih₂ false t₂).mpr h₂⟩
-    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Core.Logic.Modal.BSML.eval, ih₁, ih₂]
+    · simp only [BSMLOr.ofBSML, BSMLOr.eval, BSML.eval, ih₁, ih₂]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
-    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Core.Logic.Modal.BSML.eval, ih₁, ih₂]
-    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Core.Logic.Modal.BSML.eval]
+    · simp only [BSMLOr.ofBSML, BSMLOr.eval, BSML.eval, ih₁, ih₂]
+    · simp only [BSMLOr.ofBSML, BSMLOr.eval, BSML.eval]
       constructor
       · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
         exact ⟨t₁, t₂, hsplit, (ih₁ true t₁).mp h₁, (ih₂ true t₂).mp h₂⟩
@@ -748,11 +748,11 @@ theorem BSMLOr.eval_ofBSML (M : BSMLModel W Atom) (b : Bool)
         exact ⟨t₁, t₂, hsplit, (ih₁ true t₁).mpr h₁, (ih₂ true t₂).mpr h₂⟩
   | poss ψ ih =>
     cases b
-    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Core.Logic.Modal.BSML.eval]
+    · simp only [BSMLOr.ofBSML, BSMLOr.eval, BSML.eval]
       constructor
       · intro h w hw; exact (ih false (M.access w)).mp (h w hw)
       · intro h w hw; exact (ih false (M.access w)).mpr (h w hw)
-    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Core.Logic.Modal.BSML.eval]
+    · simp only [BSMLOr.ofBSML, BSMLOr.eval, BSML.eval]
       constructor
       · intro h w hw
         obtain ⟨s, hsub, hne, hsupp⟩ := h w hw
@@ -765,25 +765,25 @@ theorem BSMLOr.eval_ofBSML (M : BSMLModel W Atom) (b : Bool)
     evaluation. -/
 theorem BSMLEmpty.eval_ofBSML (M : BSMLModel W Atom) (b : Bool)
     (φ : BSMLFormula Atom) (t : Finset W) :
-    BSMLEmpty.eval M b (BSMLEmpty.ofBSML φ) t ↔ Core.Logic.Modal.BSML.eval M b φ t := by
+    BSMLEmpty.eval M b (BSMLEmpty.ofBSML φ) t ↔ BSML.eval M b φ t := by
   induction φ generalizing b t with
   | atom p => cases b <;> rfl
   | ne => cases b <;> rfl
   | neg ψ ih =>
-    cases b <;> simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Core.Logic.Modal.BSML.eval, ih]
+    cases b <;> simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, BSML.eval, ih]
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
-    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Core.Logic.Modal.BSML.eval]
+    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, BSML.eval]
       constructor
       · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
         exact ⟨t₁, t₂, hsplit, (ih₁ false t₁).mp h₁, (ih₂ false t₂).mp h₂⟩
       · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
         exact ⟨t₁, t₂, hsplit, (ih₁ false t₁).mpr h₁, (ih₂ false t₂).mpr h₂⟩
-    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Core.Logic.Modal.BSML.eval, ih₁, ih₂]
+    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, BSML.eval, ih₁, ih₂]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
-    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Core.Logic.Modal.BSML.eval, ih₁, ih₂]
-    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Core.Logic.Modal.BSML.eval]
+    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, BSML.eval, ih₁, ih₂]
+    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, BSML.eval]
       constructor
       · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
         exact ⟨t₁, t₂, hsplit, (ih₁ true t₁).mp h₁, (ih₂ true t₂).mp h₂⟩
@@ -791,8 +791,8 @@ theorem BSMLEmpty.eval_ofBSML (M : BSMLModel W Atom) (b : Bool)
         exact ⟨t₁, t₂, hsplit, (ih₁ true t₁).mpr h₁, (ih₂ true t₂).mpr h₂⟩
   | poss ψ ih =>
     cases b
-    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Core.Logic.Modal.BSML.eval, ih]
-    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Core.Logic.Modal.BSML.eval]
+    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, BSML.eval, ih]
+    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, BSML.eval]
       constructor
       · intro h w hw
         obtain ⟨s, hsub, hne, hsupp⟩ := h w hw

@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.Defs.LinearOrder
 import Linglib.Semantics.Intensional.WorldTimeIndex
-import Linglib.Core.Logic.Temporal.Basic
+import Linglib.Logic.Temporal.Basic
 
 /-!
 # Historical Alternatives
@@ -21,7 +21,7 @@ perfectly match it in matters of particular fact up to that time
 * `histEquiv` : historical equivalence `≃_t` of [condoravdi-2002];
 * `metaphysicalBase` : the equivalence class of the evaluation world under `≃_t`;
 * `toTWFrame` : a relation with `HistoricalProperties`, viewed as a
-  `Core.Logic.Temporal.TWFrame` ([thomason-1984], [von-kutschera-1997]).
+  `Temporal.TWFrame` ([thomason-1984], [von-kutschera-1997]).
 
 ## Main results
 
@@ -471,14 +471,14 @@ theorem diverse_of_witnesses
 /-! ## Grounding in the T × W object logic
 
 A historical-alternatives relation with `HistoricalProperties` satisfies exactly
-the axioms of a `Core.Logic.Temporal.TWFrame` — per-time equivalence (via
+the axioms of a `Temporal.TWFrame` — per-time equivalence (via
 `histEquiv_equivalence'`) and backward closure — so it *is* a T × W frame. The
 object logic's historical necessity `N` then reduces to quantification over
 `metaphysicalBase`, making the denotational base and the object-language modality
 the same operator ([thomason-1984], [von-kutschera-1997]). -/
 
 section TWFrame
-open Core.Logic.Temporal
+open Temporal
 
 variable [LinearOrder Time] {Atom : Type*}
   (history : HistoricalAlternatives W Time) (hp : HistoricalProperties history)

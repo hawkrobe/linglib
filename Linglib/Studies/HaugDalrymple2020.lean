@@ -4,7 +4,7 @@ import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
 import Linglib.Semantics.Plurality.Cumulativity
 import Linglib.Semantics.Supervaluation
-import Linglib.Core.Logic.Trivalent.Prop3
+import Linglib.Logic.Trivalent.Prop3
 
 /-!
 # Haug & Dalrymple (2020) [haug-dalrymple-2020]
@@ -67,7 +67,6 @@ namespace HaugDalrymple2020
 
 open Semantics.Reference.Reciprocals
 open PPCDRT
-open Core
 open Trivalent (dist metaAssert)
 open Semantics.Plurality.Cumulativity
 

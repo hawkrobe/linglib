@@ -22,7 +22,6 @@ docstring asserted as prose.
 
 namespace PPCDRT
 
-open Core
 open Semantics.Plurality.Cumulativity
 
 variable {E : Type*}
@@ -73,8 +72,8 @@ theorem cumulative_eq_iff_finset_eq (x y : Finset E) :
     reciprocity-as-cumulativity claim within PPCDRT. -/
 theorem groupIdentityCond_iff_cumulative_eq
     (uAnaph uAnt : Nat) (S : PluralAssign E) (xa xb : Finset E)
-    (hxa : ∀ d, d ∈ xa ↔ d ∈ Core.PluralAssign.sumDref S uAnaph)
-    (hxb : ∀ d, d ∈ xb ↔ d ∈ Core.PluralAssign.sumDref S uAnt) :
+    (hxa : ∀ d, d ∈ xa ↔ d ∈ PluralAssign.sumDref S uAnaph)
+    (hxb : ∀ d, d ∈ xb ↔ d ∈ PluralAssign.sumDref S uAnt) :
     groupIdentityCond uAnaph uAnt S ∅ ↔
     Cumulative (fun a b : E => a = b) xa xb := by
   rw [cumulative_eq_iff_finset_eq]

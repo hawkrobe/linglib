@@ -1,5 +1,5 @@
 import Linglib.Semantics.Dynamic.DPL
-import Linglib.Core.Logic.Bilateral.Defs
+import Linglib.Logic.Bilateral.Defs
 
 /-!
 # Charlow (2025) — Staged updates: lifted interpretations for DNE in dynamic semantics
@@ -23,7 +23,7 @@ consumers exist. Currently only this file consumes the lift framework, so
 the typeclasses live here. Promotion to `Semantics/Dynamic/Lift.lean`
 is queued for when a Mandelkern2022 or Gotham2019 study lands.
 
-The framework is **strictly more general than `Core.Logic.Bilateral.IsBilateral`**:
+The framework is **strictly more general than `Bilateral.IsBilateral`**:
 the Krahmer-Muskens (Instance 1) lift is bilateral and derives its laws from
 `IsBilateral`, but the other three instances (Gotham decomposed, Staged updates,
 Canonical) have non-bilateral shapes. `IsLawfulDNELift` does not extend
@@ -436,7 +436,7 @@ and is distinguished syntactically from static conditions.
 This instance derives `IsLawfulDNELift` directly from the algebraic shape
 of `Prod`: `down (up m) = m` is `Prod.fst_mk`; `invneg (invneg M) = M` is
 `Prod.swap_swap`; `down (invneg (up m)) = neg m` is by computation. The
-swap-axiom witness is also packaged as a `Core.Logic.Bilateral.IsBilateral`
+swap-axiom witness is also packaged as a `Bilateral.IsBilateral`
 proof (see `kmIsBilateral` below), making the connection to existing
 linglib bilateral substrate explicit. -/
 
@@ -465,7 +465,7 @@ instance instIsLawfulDNELift : IsLawfulDNELift δ (KMLift δ) where
   down_invneg_up _ := rfl
 
 omit [DynamicSubstrate δ] in
-/-- **Connection to `Core.Logic.Bilateral.IsBilateral`**: the KM lift's
+/-- **Connection to `Bilateral.IsBilateral`**: the KM lift's
 projections witness the paraconsistent-bilateral pattern, with `positive`
 as the positive interpretation, `negative` as the negative interpretation,
 and a swap-style negate. Demonstrates linglib interconnection density.
@@ -474,7 +474,7 @@ The leading `omit [DynamicSubstrate δ]` clears the namespace-scoped variable
 that this lemma doesn't use (bilaterality of projection-and-swap is a
 Prod-shape fact, not a substrate fact). -/
 lemma kmIsBilateral :
-    Core.Logic.Bilateral.IsBilateral
+    Bilateral.IsBilateral
       (Form := KMLift δ) (Result := δ)
       KMLift.positive KMLift.negative
       (fun M => ⟨M.negative, M.positive⟩) :=

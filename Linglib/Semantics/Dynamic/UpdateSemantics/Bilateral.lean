@@ -1,6 +1,6 @@
 import Linglib.Semantics.Dynamic.State
 import Linglib.Semantics.Dynamic.Update
-import Linglib.Core.Logic.Bilateral.Defs
+import Linglib.Logic.Bilateral.Defs
 import Mathlib.Algebra.Group.Defs
 
 /-!
@@ -45,7 +45,7 @@ paper's separation of assertability (54) from Heimian familiarity rests.
   file's vocabulary became the module's.)
 - `egli`: Egli's theorem for the positive dimension, definitionally.
 - `isBilateral`: the update algebra is a bilateral logic in the sense of
-  `Core.Logic.Bilateral`.
+  `Bilateral`.
 
 ## Implementation notes
 
@@ -354,11 +354,11 @@ instance : InvolutiveNeg (BilateralDen W V E) where
   neg := neg
   neg_neg := neg_neg
 
-/-- BUS is a paraconsistent bilateral logic (`Core.Logic.Bilateral`): the
+/-- BUS is a paraconsistent bilateral logic (`Bilateral`): the
 denotation is the formula, the dimensions are the projections, and `neg`
 swaps them by definition. -/
 theorem isBilateral :
-    Core.Logic.Bilateral.IsBilateral
+    Bilateral.IsBilateral
       (Form := BilateralDen W V E)
       (Result := Set (Possibility W V (Part E)) → Set (Possibility W V (Part E)))
       (·.positive) (·.negative) neg where

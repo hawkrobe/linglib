@@ -34,7 +34,6 @@ namespace Semantics.Definiteness
 
 open Intensional
 open Intensional.Variables
-open Core (Assignment)
 
 variable {E W : Type}
 

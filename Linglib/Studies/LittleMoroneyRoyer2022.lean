@@ -1,6 +1,6 @@
 import Linglib.Features.NounCategorization.Basic
 import Linglib.Syntax.Tree.Cat
-import Linglib.Core.Logic.Assignment
+import Linglib.Logic.Assignment
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Composition.Tree
 import Linglib.Studies.Chierchia1998
@@ -105,7 +105,7 @@ inductive Dog | a | b | c
 `∅` excluded downstream by `.Nonempty`), with `Unit` indices (extensional). -/
 
 /-- Empty variable assignment; the §2.3 trees contain no traces. -/
-def emptyAssign : Core.Assignment (Finset Dog) := fun _ => ∅
+def emptyAssign : Assignment (Finset Dog) := fun _ => ∅
 
 /-- Ch'ol lexicon. cha' is the measure-loaded numeral
 `λκ λP λx. P x ∧ κ x ∧ |x| = 2`; kojty contributes a (semantically

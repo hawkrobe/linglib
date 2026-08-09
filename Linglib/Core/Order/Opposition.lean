@@ -1,12 +1,12 @@
 import Linglib.Core.Order.Relation
-import Linglib.Core.Logic.Aristotelian.Basic
+import Linglib.Core.Order.Aristotelian
 
 /-!
 # Comparison categories as an Aristotelian diagram
 
 The eight comparison categories (`Core.Order.Relation`) are the elements of the Boolean algebra
 `𝒫 {lt, eq, gt}`; their logical oppositions are exactly the four Aristotelian relations
-[demey-smessaert-2018] (`Core.Logic.Aristotelian`). This file is where the two finite-Boolean-algebra
+[demey-smessaert-2018] (`Core.Order.Aristotelian`). This file is where the two finite-Boolean-algebra
 developments meet: the comparison/point algebra (with `holds` its relation-algebra homomorphism) and
 the theory of opposition (over any `[BooleanAlgebra α]`).
 

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.RankingFunction
+import Linglib.Logic.RankingFunction
 
 /-!
 # Darwiche & Pearl (1997): On the Logic of Iterated Belief Revision
@@ -30,7 +30,7 @@ conditions are logically independent — none is derivable from the rest.
 
 ## Bridge to Ranking Functions
 
-`Core.Logic.Ranking.ranking_satisfies_C1..C4` proves that Spohn's
+`ranking_satisfies_C1..C4` proves that Spohn's
 A,α-conditionalization satisfies all four postulates. The counterexamples
 here use *non-ranking* revision operators — arbitrary total pre-order
 transformations that respect AGM success but violate the D&P constraints.
@@ -49,7 +49,6 @@ the ordering of live possibilities evolves rationally.
 
 namespace DarwichePearl1997
 
-open Core.Logic.Ranking
 open Core.Order.Normality
 
 -- ══════════════════════════════════════════════════════════════════════
@@ -264,7 +263,7 @@ theorem CR_independence :
 
 /-! [darwiche-pearl-1997], Theorem 17: Spohn's ranking conditioning
     satisfies C1–C4 (equivalently CR1–CR4). The proofs are in
-    `Core.Logic.Ranking`:
+    `RankingFunction`:
 
     - `ranking_satisfies_C1` — C1 holds for `conditionα` with any α, β
     - `ranking_satisfies_C2` — C2 holds for `conditionα` with any α, β

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.CylindricAlgebra
+import Linglib.Logic.CylindricAlgebra
 import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.DRS.Indexed
 import Mathlib.Data.Fin.VecNotation
@@ -302,7 +302,7 @@ the correspondence whose DPL face lives in
 
 section CylindricAlgebra
 
-open Core.CylindricAlgebra
+open CylindricAlgebra
 open CDRT
 
 /-- Discourse referent introduction under closure = cylindrification.

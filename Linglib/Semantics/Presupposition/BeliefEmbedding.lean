@@ -29,7 +29,7 @@ namespace Semantics.Presupposition.BeliefEmbedding
 open Semantics.Presupposition
 open CommonGround
 open Semantics.Presupposition.Context
-open Core.Logic.Modal (AgentAccessRel IsBeliefRefinementOf)
+open Modal (AgentAccessRel IsBeliefRefinementOf)
 
 variable {W : Type*} {Agent : Type*}
 
@@ -37,7 +37,7 @@ variable {W : Type*} {Agent : Type*}
 /--
 An agent's belief state at a world: the doxastically accessible worlds,
 viewed as a context set. Doxastic accessibility is the agent-indexed
-accessibility relation `Core.Logic.Modal.AgentAccessRel` ([hintikka-1962]):
+accessibility relation `Modal.AgentAccessRel` ([hintikka-1962]):
 `Dox agent w w'` means `w'` is compatible with what `agent` believes at `w`.
 -/
 def beliefState (Dox : AgentAccessRel W Agent) (agent : Agent) (w : W) : ContextSet W :=
@@ -190,7 +190,7 @@ theorem stop_ole_attribution :
 ### Refinement Between Knowledge and Belief Embeddings
 [hintikka-1962]
 
-Doxastic accessibility is `Core.Logic.Modal.AgentAccessRel` directly, so
+Doxastic accessibility is `Modal.AgentAccessRel` directly, so
 belief local contexts compose with the epistemic-logic frame conditions:
 when belief pointwise refines knowledge (`IsBeliefRefinementOf`), filtering
 under knowledge embedding implies filtering under belief embedding.

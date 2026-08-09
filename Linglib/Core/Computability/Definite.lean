@@ -7,7 +7,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Computability.Language
 import Mathlib.Logic.Function.Basic
-import Linglib.Core.Logic.FactorsThroughOn
+import Linglib.Core.Relation.FactorsThroughOn
 import Linglib.Core.Data.List.DropRight
 import Mathlib.Data.Fintype.Order
 import Mathlib.Data.Set.Finite.Lemmas

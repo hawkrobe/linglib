@@ -21,7 +21,7 @@ Several conditioning operations elsewhere in linglib are instances of
 conditional plausibility: `PMF.condProbSet` (`BayesianSemantics`) is the same
 ratio construction as `toCondMeasure`; eliminative update on possibility sets
 (`Semantics/Dynamic/Update.lean`) is the special case where P(A|B) ∈ {0, 1}; Spohn ranking
-conditionalization ([spohn-1988], `Core/Logic/RankingFunction`) is its
+conditionalization ([spohn-1988], `Logic/RankingFunction`) is its
 order-of-magnitude analogue. Bayesian conditioning is the point-partition
 special case of Jeffrey's rule (`bayesian_is_jeffrey`).
 -/

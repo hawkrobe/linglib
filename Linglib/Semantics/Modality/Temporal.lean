@@ -98,7 +98,7 @@ theorem temporal_eq_static {Time : Type*}
 
 /-- Temporal duality: □ₜp ↔ ¬◇ₜ¬p. One of five sibling `theorem duality`s — the
     box–diamond duality underlying the modal square of opposition
-    (`Core.Logic.Modal.modalSquare_relations`). -/
+    (`Modal.modalSquare_relations`). -/
 theorem temporal_duality {Time : Type*}
     (f : TemporalModalBase W Time) (g : TemporalOrderingSource W Time)
     (t : Time) (p : W → Prop) (w : W) :

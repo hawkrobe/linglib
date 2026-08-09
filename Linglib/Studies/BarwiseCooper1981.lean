@@ -6,7 +6,7 @@ import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Quantification.DomainRestriction
-import Linglib.Core.Logic.FirstOrder.EhrenfeuchtFraisseGame
+import Linglib.Core.ModelTheory.EhrenfeuchtFraisseGame
 
 /-!
 # Quantifier Universals Bridge
@@ -850,7 +850,7 @@ theorem more_than_half_not_definable :
 
 The proof above is B&C's hand-rolled Fraïssé argument. The same conclusion follows
 from the project's *general* finite-rank EF engine
-(`Core.Logic.FirstOrder.EhrenfeuchtFraisseGame`): build, for each rank `k`, a pair of
+(`Core.ModelTheory.EhrenfeuchtFraisseGame`): build, for each rank `k`, a pair of
 `L_UV`-structures that are rank-`k` back-and-forth equivalent yet separated by *more
 than half*, then feed `nEquiv_of_backForth` into `not_foDefinable_of_nEquiv`. This
 section is a *demonstration* of that apparatus on a known result — the colored-set
@@ -988,7 +988,7 @@ private theorem nEquiv_efWitness (k : ℕ) : NEquiv k (efWitnessA k) (efWitnessB
     (v := default) (w := default) ⟨fun i => i.elim0, fun i => i.elim0, fun i => i.elim0⟩
 
 /-- **C12 via the general EF apparatus** ([barwise-cooper-1981] Appendix C, reproved
-through `Core.Logic.FirstOrder.EhrenfeuchtFraisseGame`). *More than half the V's are U's*
+through `Core.ModelTheory.EhrenfeuchtFraisseGame`). *More than half the V's are U's*
 is not first-order definable: for each rank `k` the structures `efWitnessA k` and
 `efWitnessB k` are `k`-equivalent (a colored-set back-and-forth) yet disagree on the
 property, so `not_foDefinable_of_nEquiv` applies. Cf. `more_than_half_not_definable`, which
@@ -1498,7 +1498,7 @@ theorem no_tree_means_most (fw : FOWords) (nm : LexNaming L_UV)
     ¬ ∃ (t : Syntax.Tree Unit String) (φ : L_UV.Formula ℕ)
         (_ : compileFO fw nm t = some φ) (hcl : φ.freeVarFinset = ∅),
       ∀ (M : Type) [Fintype M] [Nonempty M] (S : L_UV.Structure M)
-        (g : Core.Assignment M),
+        (g : Assignment M),
         HoldsAt (Model.ofStructure M S)
           ((Model.ofStructure M S).lexiconFO fw nm ()) g t ↔
           Quantification.most_sem (fun x => S.RelMap vRel ![x])

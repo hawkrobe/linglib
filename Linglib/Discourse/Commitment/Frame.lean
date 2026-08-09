@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Logic.Modal.Defs
-import Linglib.Core.Logic.Modal.Basic
+import Linglib.Logic.Modal.Defs
+import Linglib.Logic.Modal.Basic
 import Linglib.Semantics.Modality.EpistemicLogic
 
 /-!
@@ -28,7 +28,7 @@ commitment to belief.
 
 namespace Discourse.Commitment.Frame
 
-open Core.Logic.Modal (AccessRel AgentAccessRel IsKD45Frame IsK4EuclFrame
+open Modal (AccessRel AgentAccessRel IsKD45Frame IsK4EuclFrame
   IsEuclidean box diamond box_K box_four)
 open Semantics.Modality.EpistemicLogic (knows)
 

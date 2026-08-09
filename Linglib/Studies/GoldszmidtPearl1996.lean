@@ -1,5 +1,5 @@
-import Linglib.Core.Logic.SystemZ
-import Linglib.Core.Logic.TweetyNixon
+import Linglib.Logic.SystemZ
+import Linglib.Logic.TweetyNixon
 import Linglib.Core.Probability.SoftmaxLimits
 import Linglib.Studies.Veltman1996
 import Mathlib.Algebra.Tropical.BigOperators
@@ -58,7 +58,7 @@ construction, admissibility, and specificity.
 
 namespace GoldszmidtPearl1996
 
-open Core.Logic.SystemZ Core.Logic.Ranking Core.Logic.TweetyNixon
+open SystemZ TweetyNixon
 open Core Real Finset Filter Topology Tropical BigOperators
 
 /-! ### Knowledge Base (rules r₁–r₃ from Example 17) -/

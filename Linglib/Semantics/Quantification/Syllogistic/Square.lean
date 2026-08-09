@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.Syllogistic.Forms
-import Linglib.Core.Logic.Aristotelian.Diagram
+import Linglib.Logic.Aristotelian.Diagram
 
 /-!
 # AIEO Square as a Diagram instance

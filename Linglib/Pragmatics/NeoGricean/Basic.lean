@@ -1,7 +1,7 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Linglib.Semantics.Entailment.AsymStronger
-import Linglib.Core.Logic.Modal.Defs
+import Linglib.Logic.Modal.Defs
 
 /-!
 # Neo-Gricean pragmatics: epistemic states and the Standard Recipe
@@ -10,7 +10,7 @@ import Linglib.Core.Logic.Modal.Defs
 The epistemic layer of Neo-Gricean implicature: an `EpistemicState` (the
 worlds compatible with the speaker's knowledge) with `knows` (K) and
 `possible` (P) realized as `box`/`diamond` over a serial accessibility
-from `Core.Logic.Modal`, and the Standard Recipe run over the derived
+from `Modal`, and the Standard Recipe run over the derived
 three-way `BeliefState` classification.
 
 [sauerland-2004] distinguishes **primary implicatures** ¬Kψ from
@@ -38,7 +38,7 @@ relates RSA speakers to IBR argmax behaviour.
 
 namespace NeoGricean
 
-open Core.Logic.Modal (AccessRel box diamond IsSerial)
+open Modal (AccessRel box diamond IsSerial)
 
 variable {W : Type*}
 
@@ -74,7 +74,7 @@ instance (e : EpistemicState W) (φ : W → Prop) [DecidablePred φ] :
 `knows`/`possible` are `box`/`diamond` over the (world-independent)
 epistemic accessibility `accessFrom e`, serial because `e.possible` is
 nonempty. The epistemic square of opposition is
-`Core.Logic.Modal.modalSquare (accessFrom e)` with `modalSquare_relations`
+`Modal.modalSquare (accessFrom e)` with `modalSquare_relations`
 discharged by this `IsSerial` instance. -/
 
 /-- Epistemic accessibility: from any world, the speaker's live possibilities. -/
@@ -91,7 +91,7 @@ theorem possible_eq_diamond (e : EpistemicState W) (φ : W → Prop) (w : W) :
     possible e φ = diamond (accessFrom e) φ w := rfl
 
 /-- Epistemic duality: ¬K¬φ ↔ Pφ — the box–diamond duality underlying
-the modal square of opposition (`Core.Logic.Modal.modalSquare_relations`). -/
+the modal square of opposition (`Modal.modalSquare_relations`). -/
 theorem duality (e : EpistemicState W) (φ : W → Prop) :
     ¬ knows e (fun w => ¬ φ w) ↔ possible e φ := by
   simp only [knows, possible, not_forall, not_not, exists_prop]

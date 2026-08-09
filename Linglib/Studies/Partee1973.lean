@@ -41,9 +41,9 @@ don't quantify.
 
 The definitions here are the temporal counterparts of [heim-kratzer-1998] entity
 variable infrastructure in `Semantics.Montague.Variables`. Both are
-instantiations of the generic `Core.Assignment` infrastructure:
+instantiations of the generic `Assignment` infrastructure:
 
-| Generic (Core.Assignment)        | Entity (Variables.lean)    | Temporal (this file)      |
+| Generic (Assignment)        | Entity (Variables.lean)    | Temporal (this file)      |
 |----------------------------------|---------------------------|---------------------------|
 | `Assignment D` (ℕ → D)           | `Assignment m` (ℕ → Ent)  | `TemporalAssignment Time` |
 | `g n`                            | `interpPronoun n g`       | `interpTense n g`         |

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.Syllogistic.Forms
-import Linglib.Core.Logic.Aristotelian.Probabilistic
+import Linglib.Logic.Aristotelian.Probabilistic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!

@@ -76,7 +76,7 @@ def quantLex : Lexicon ToyEntity Unit := λ word =>
   | "sees" => some ⟨.e ⇒ .e ⇒ .t, ToyLexicon.sees_sem⟩
   | _ => none
 
-def g₀ : Core.Assignment ToyEntity := λ _ => .john
+def g₀ : Assignment ToyEntity := λ _ => .john
 
 /-! ### "Every student sleeps" -/
 
@@ -227,14 +227,14 @@ example : (compileFO {} toyNaming tree_someStudentSleeps).isSome = true := rfl
 /-- The agreement theorem instantiated at the toy model: for any tree in the
 fragment, engine truth conditions are `Realize` of the compiled formula. -/
 theorem interp_eq_realize {t : Tree Unit String} {φ : toyLang.Formula ℕ}
-    (h : compileFO {} toyNaming t = some φ) (g : Core.Assignment ToyEntity) :
+    (h : compileFO {} toyNaming t = some φ) (g : Assignment ToyEntity) :
     Tree.interp ToyEntity Unit (toyModel.lexiconFO {} toyNaming ()) g t
       = some ⟨.t, toyModel.realizeAt () φ g⟩ :=
   interp_compileFO toyModel {} toyNaming () FOWords.nodup_default
     toyNaming_freshFor toyNaming_disjoint t g h
 
 /-- "Some student sleeps" holds in the toy model, via the engine. -/
-theorem someStudentSleeps_holds (g : Core.Assignment ToyEntity) :
+theorem someStudentSleeps_holds (g : Assignment ToyEntity) :
     HoldsAt toyModel (toyModel.lexiconFO {} toyNaming ()) g
       tree_someStudentSleeps :=
   ⟨_, rfl, ⟨ToyEntity.john, trivial, trivial⟩⟩
@@ -247,7 +247,7 @@ def tree_conj : Tree Unit String :=
 /-- **Consequence transfer**: conjunction elimination is a first-order
 consequence, so the entailment holds in the toy model — and by the same
 theorem in *every* composition model interpreting the signature. -/
-theorem conj_entails_first (g : Core.Assignment ToyEntity) :
+theorem conj_entails_first (g : Assignment ToyEntity) :
     HoldsAt toyModel (toyModel.lexiconFO {} toyNaming ()) g tree_conj →
       HoldsAt toyModel (toyModel.lexiconFO {} toyNaming ()) g
         (.bin (.leaf "John") (.leaf "sleeps")) :=
@@ -324,7 +324,7 @@ def interpMovement {E W : Type} (n : ℕ)
 A semantic interpretation context pairs a model with an assignment.
 -/
 structure InterpContext (E : Type) where
-  assignment : Core.Assignment E
+  assignment : Assignment E
 
 /--
 The semantic type corresponding to a syntactic object.
@@ -366,7 +366,7 @@ def interpSOTrace {E : Type} (n : ℕ) (so : Minimalist.SyntacticObject) :
 
 /-- Different indices yield independent interpretations. -/
 theorem trace_indices_independent {E : Type} (n₁ n₂ : ℕ) (h : n₁ ≠ n₂)
-    (x : E) (g : Core.Assignment E)
+    (x : E) (g : Assignment E)
     : interpTrace n₁ (g[n₂ ↦ x]) = interpTrace n₁ g := by
   simp only [interpTrace, interpPronoun]
   exact Function.update_of_ne h x g
@@ -376,7 +376,7 @@ Predicate abstraction creates the right binding:
 the abstracted variable is bound, other variables are free.
 -/
 theorem abstraction_binds_correct_variable {E : Type} (n : ℕ)
-    (g : Core.Assignment E) (x : E)
+    (g : Assignment E) (x : E)
     : interpTrace n (g[n ↦ x]) = x := by
   simp only [interpTrace, interpPronoun]
   exact Function.update_self n x g

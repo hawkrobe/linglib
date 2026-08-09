@@ -1,5 +1,5 @@
 import Linglib.Semantics.Questions.Basic
-import Linglib.Core.Logic.Modal.Inquisitive
+import Linglib.Logic.Modal.Inquisitive
 
 /-!
 # Ciardelli 2022 — InqML denotation into `Question`
@@ -29,8 +29,8 @@ the Heyting arrow.
 
 namespace Question
 
-open Core.Logic.Modal (KripkeModel)
-open Core.Logic.Modal.Inquisitive
+open Modal (KripkeModel)
+open Modal.Inquisitive
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 

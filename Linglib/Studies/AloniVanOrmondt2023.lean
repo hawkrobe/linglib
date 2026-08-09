@@ -1,6 +1,6 @@
-import Linglib.Core.Logic.Modal.QBSML.FreeChoice
-import Linglib.Core.Logic.Modal.QBSML.StandardTranslation
-import Linglib.Core.Logic.Modal.BSML.Scenarios
+import Linglib.Logic.Modal.QBSML.FreeChoice
+import Linglib.Logic.Modal.QBSML.StandardTranslation
+import Linglib.Logic.Modal.BSML.Scenarios
 
 /-!
 # [aloni-vanormondt-2023]: QBSML applied to modified numerals + split disjunction
@@ -26,11 +26,11 @@ The framework's central facts (paper §5):
 | 10  | `[¬(Pa ∨ Pb)]⁺ ⊨ ¬Pa ∧ ¬Pb` (negation behaviour; ignorance disappears) |
 
 Facts 3 and 5–10 are universal substrate theorems in
-`Core/Logic/Modal/QBSML/FreeChoice.lean` (framework substrate with multiple
+`Logic/Modal/QBSML/FreeChoice.lean` (framework substrate with multiple
 paper-anchored consumers — this file and `Studies/Yan2023.lean`); this file
 instantiates the unconditional ones at a concrete model (`avoModel`).
 Fact 4 is the paper's Fig. 14 countermodel, proved here. Facts 1–2 and
-Proposition 4.1 live in `Core/Logic/Modal/QBSML/{Enrichment,Properties}.lean`
+Proposition 4.1 live in `Logic/Modal/QBSML/{Enrichment,Properties}.lean`
 (the modal-free Proposition 4.1 against mathlib `Formula.Realize` is
 instantiated here at `avoModel`, the translation discharged by `rfl`).
 Fact 3 needs the individual constants of [aloni-vanormondt-2023]
@@ -47,16 +47,16 @@ via `QBSMLModel.cInterp`.
 
 ## Atoms and worlds
 
-The concrete model reuses `Core.Logic.Modal.BSML.{FCAtom, PowerSet2World}`
+The concrete model reuses `BSML.{FCAtom, PowerSet2World}`
 from the existing FreeChoice substrate, ensuring AvO 2023 + Aloni 2022 both
 target the same world space.
 -/
 
 namespace AloniVanOrmondt2023
 
-open Core.Logic.Modal.QBSML
+open QBSML
 open FirstOrder Language
-open Core.Logic.Modal.BSML (FCAtom PowerSet2World QVar)
+open BSML (FCAtom PowerSet2World QVar)
 
 /-! ### Predicates and variables -/
 
@@ -128,7 +128,7 @@ theorem Qx_isNEFree {Const : Type*} : (Qx (Const := Const)).IsNEFree := .pred _ 
 
     Enriched negation `[¬(Px ∨ Qx)]⁺` entails the conjunction of negated
     disjuncts `¬Px ∧ ¬Qx`. One-line invocation of the substrate's
-    `negationStrip` (`Core/Logic/Modal/QBSML/FreeChoice.lean`).
+    `negationStrip` (`Logic/Modal/QBSML/FreeChoice.lean`).
     Mirrors `Aloni2022.aloni2022_fact11_dual_prohibition` style — substrate
     theorem, model + NE-free witnesses applied. -/
 theorem fact10_negation

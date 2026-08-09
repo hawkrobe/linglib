@@ -1,5 +1,5 @@
 import Linglib.Semantics.Intensional.Rigidity
-import Linglib.Core.Logic.Assignment
+import Linglib.Logic.Assignment
 import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Core.Order.Relation
 import Linglib.Semantics.Tense.Defs
@@ -42,7 +42,6 @@ open Time
 
 open Core.Order
 open Intensional.ReferentialMode (ReferentialMode)
-open Core (Assignment)
 open Intensional (WorldTimeIndex)
 
 namespace Tense
@@ -77,7 +76,7 @@ abbrev TenseInterpretation := Intensional.ReferentialMode.ReferentialMode
 /-! ### Temporal Variable Infrastructure ([partee-1973]) -/
 
 /-! Temporal assignment functions are the temporal instantiation of
-`Core.Assignment` (`Assignment Time = ℕ → Time`). All update laws are mathlib's `Function.update` lemmas. -/
+`Assignment` (`Assignment Time = ℕ → Time`). All update laws are mathlib's `Function.update` lemmas. -/
 
 /-- Temporal assignment function: maps variable indices to times.
     The temporal analogue of H&K's `Assignment` (`ℕ → Entity`). -/

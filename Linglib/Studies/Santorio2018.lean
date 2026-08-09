@@ -1,7 +1,7 @@
 import Mathlib.Data.List.Sublists
 import Linglib.Semantics.Conditionals.Counterfactual
-import Linglib.Core.Logic.Trivalent.Basic
-import Linglib.Core.Logic.Duality
+import Linglib.Core.Data.Trivalent
+import Linglib.Logic.Duality
 import Linglib.Semantics.Truthmaker.Inexact
 import Linglib.Semantics.Truthmaker.Basic
 import Linglib.Studies.McKayVanInwagen1977

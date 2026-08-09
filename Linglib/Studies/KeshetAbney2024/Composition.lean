@@ -26,7 +26,7 @@ type and connected to it via bridge theorems.
 
 namespace KeshetAbney2024.PIP
 
-open Core.Logic.Modal (AccessRel box diamond)
+open Modal (AccessRel box diamond)
 
 
 -- ============================================================

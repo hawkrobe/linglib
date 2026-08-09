@@ -1,6 +1,6 @@
 import Linglib.Morphology.Morph
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Core.Logic.Modal.Basic
+import Linglib.Logic.Modal.Basic
 import Mathlib.Data.Fin.Basic
 
 -- ============================================================================
@@ -400,7 +400,7 @@ an accessibility relation under which the two scope readings diverge. -/
 section ScopeBridge
 
 open Semantics.Modality (ModalForce)
-open Core.Logic.Modal (AccessRel box diamond)
+open Modal (AccessRel box diamond)
 
 abbrev World := Fin 4
 

@@ -24,7 +24,7 @@ must be first-class data.
 
 The canonical form of an ordering-as-data is the model-theoretic one: a
 `Language.order.Structure` modeling the total-preorder theory
-(`Core/Logic/FirstOrder/TotalPreorder.lean`, where `toStructure`/`ofModel`
+(`Core/ModelTheory/TotalPreorder.lean`, where `toStructure`/`ofModel`
 exchange the two presentations). This bundle is that object's decidable,
 proof-transparent working presentation. Mathlib has no bundled
 order-on-a-carrier object (its `Preord` bundles a *type* with one order);

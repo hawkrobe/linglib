@@ -1,5 +1,5 @@
 import Mathlib.Logic.Equiv.Defs
-import Linglib.Core.Logic.Assignment
+import Linglib.Logic.Assignment
 
 /-!
 # Cooper (2023) — the TTR apparatus
@@ -183,11 +183,11 @@ theorem Parametric.trivial_fg {Content : Type*} (c : Content) (u : Unit) :
 /-! ### Assignments (§4.6) -/
 
 /-- Variable assignment: maps natural-number indices to individuals.
-    Equal to `Core.PartialAssign E`; the alias name is retained because
+    Equal to `PartialAssign E`; the alias name is retained because
     the book's prose uses 𝔰/𝔩/𝔯/𝔴/𝔤 as named "assignments" rather than
     as partial functions, and the inheritance carries the
     `valued`/`valued_update_at` simp set into this file's consumers. -/
-abbrev Assgnmnt (E : Type) := Core.PartialAssign E
+abbrev Assgnmnt (E : Type) := PartialAssign E
 
 /-- An assignment with at least n bindings (all indices < n defined). -/
 def Assgnmnt.hasBindings {E : Type} (g : Assgnmnt E) (n : Nat) : Prop :=
@@ -199,8 +199,8 @@ def Assgnmnt.merge {E : Type} (g₁ g₂ : Assgnmnt E) : Assgnmnt E :=
 
 /-- Merge with empty on the left returns the right assignment. -/
 theorem Assgnmnt.merge_empty_left {E : Type} (g : Assgnmnt E) :
-    Assgnmnt.merge Core.PartialAssign.empty g = g := by
-  funext i; simp [Assgnmnt.merge, Core.PartialAssign.empty, Option.orElse]
+    Assgnmnt.merge PartialAssign.empty g = g := by
+  funext i; simp [Assgnmnt.merge, PartialAssign.empty, Option.orElse]
 
 /-- Propositional context. -/
 abbrev PropCntxt := Type

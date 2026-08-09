@@ -107,7 +107,7 @@ def berSemG {E W : Type} {τ : Ty} (n : ℕ)
 
 /-- `berSemG` at a specific assignment is just `suppressArg` with `g(n)`. -/
 theorem berSemG_eq_suppressArg {E W : Type} {τ : Ty} (n : ℕ)
-    (vp : DenotG E W (.e ⇒ τ)) (g : Core.Assignment E) :
+    (vp : DenotG E W (.e ⇒ τ)) (g : Assignment E) :
     berSemG n vp g = suppressArg (g n) (vp g) := rfl
 
 /-- [beavers-zubair-2013]'s sortally-restricted causer suppression
@@ -166,7 +166,7 @@ theorem causerSuppress_eq_suppressArg {E W : Type} {τ : Ty}
     explicit) while ber- middles do not (the variable is unbound). -/
 def diSemProp {E W : Type} (n : ℕ)
     (vp : DenotG E W (.e ⇒ .e ⇒ .t))
-    : Core.Assignment E → E → Prop :=
+    : Assignment E → E → Prop :=
   fun g patient => ∃ x : E, vp (g[n ↦ x]) x patient
 
 -- ============================================================================
@@ -258,7 +258,7 @@ theorem incorporate_preserves_arity {E W : Type}
     (coreferent or disjoint), but the operation itself is agnostic. -/
 theorem berSemG_assignment_agnostic {E W : Type} {τ : Ty} (n : ℕ)
     (vp : DenotG E W (.e ⇒ τ))
-    (g₁ g₂ : Core.Assignment E) (h : g₁ n = g₂ n)
+    (g₁ g₂ : Assignment E) (h : g₁ n = g₂ n)
     (hvp : vp g₁ = vp g₂) :
     berSemG n vp g₁ = berSemG n vp g₂ := by
   simp only [berSemG, h, hvp]

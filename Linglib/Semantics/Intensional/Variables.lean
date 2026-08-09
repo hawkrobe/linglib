@@ -1,6 +1,6 @@
 import Linglib.Semantics.Intensional.Defs
-import Linglib.Core.Logic.Assignment
-import Linglib.Core.Logic.CylindricAlgebra
+import Linglib.Logic.Assignment
+import Linglib.Logic.CylindricAlgebra
 
 /-!
 # Variable Binding and Assignment Functions
@@ -12,7 +12,7 @@ built on `Intensional.Denot`.
 
 ## Main definitions
 
-- `Assignment` (from `Core/Logic/Assignment.lean`) instantiated at
+- `Assignment` (from `Logic/Assignment.lean`) instantiated at
   `E` for entity pronouns and `W` for situation pronouns;
   the `g[n ↦ x]` notation for `Function.update` is declared here
 - `DenotG` — assignment-relative denotations
@@ -24,7 +24,6 @@ built on `Intensional.Denot`.
 namespace Intensional.Variables
 
 open Intensional
-open _root_.Core (Assignment)
 
 /-- Heim-Kratzer assignment-modification notation: `g[n ↦ x]` is
 `Function.update g n x`. The `Function.update_*` lemmas (`update_self`,
@@ -202,9 +201,9 @@ theorem existsClosure_eq_exists_lambda (n : Nat) (body : DenotG E W .t) (g : Ass
     ∃ x : E, lambdaAbsG n body g x := by
   simp [existsClosure, lambdaAbsG]
 
--- Bridge to Core.CylindricAlgebra
+-- Bridge to CylindricAlgebra
 
-open Core.CylindricAlgebra
+open CylindricAlgebra
 
 theorem existsClosure_eq_cylindrify (n : Nat) (φ : Assignment E → Prop) :
     existsClosure n φ = cylindrify n φ := rfl
@@ -231,7 +230,7 @@ parameter handed to an interpretation function.
 Type-theoretically this is the dual of entity binding under `Ty.intens`:
 where entity pronouns are interpreted relative to `Assignment E := ℕ → E`,
 situation pronouns are interpreted relative to `SitAssignment W := ℕ → W`.
-Both reuse `Core.Assignment` at different instantiations, so mathlib's
+Both reuse `Assignment` at different instantiations, so mathlib's
 `Function.update` lemmas apply to both. -/
 
 /-- Situation assignment: maps situation-pronoun indices to frame indices.

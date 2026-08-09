@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Bilattice.Basic
+import Linglib.Core.Order.Bilattice.Basic
 
 /-!
 # Schöter's thesis: the guard as a presupposition operator

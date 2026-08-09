@@ -1,5 +1,5 @@
 import Linglib.Semantics.Presupposition.Context
-import Linglib.Core.Logic.Trivalent.Basic
+import Linglib.Core.Data.Trivalent
 import Linglib.Semantics.Presupposition.Accommodation
 import Linglib.Semantics.Presupposition.Context
 import Linglib.Studies.Beaver2001.ABLE

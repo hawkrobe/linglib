@@ -1,8 +1,8 @@
 import Linglib.Semantics.Supervaluation
-import Linglib.Core.Logic.Trivalent.Basic
-import Linglib.Core.Logic.Consequence
-import Linglib.Core.ModelTheory.Trivalent
-import Linglib.Core.Logic.Modal.Basic
+import Linglib.Core.Data.Trivalent
+import Linglib.Logic.Consequence
+import Linglib.Logic.Trivalent.Propositional
+import Linglib.Logic.Modal.Basic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Logic.Function.Basic
@@ -111,7 +111,7 @@ extension of `P`:
 - `tolerant P at a` ≡ `diamond (~_P) I(P) a` (Definition 9)
 
 The s ⊆ c ⊆ t hierarchy is the **T axiom** instantiated at `box`
-(`Core.Logic.Modal.box_T`); the t/s duality is the standard
+(`Modal.box_T`); the t/s duality is the standard
 modal de Morgan `box R ¬p ↔ ¬diamond R p`. T-models satisfy
 `frameConditions Logic.KTB` by construction (Definition 4 of
 [cobreros-etal-2012]); see `TModel.satisfies_KTB` for the explicit
@@ -186,9 +186,9 @@ is addressed in §8–§9 below.
 
 namespace Semantics.Supervaluation.TCS
 
-open Core.Logic.Modal
+open Modal
   (AccessRel IsKTBFrame IsSerial box diamond box_T Logic)
-open Core.Logic.Consequence (MixedConsequence SatImplies IsSelfDual
+open Consequence (MixedConsequence SatImplies IsSelfDual
   premise_monotone conclusion_monotone mixed_monotone)
 open Semantics.Supervaluation (SpecSpace superTrue
   superTrue_true_iff superTrue_false_iff superTrue_indet_iff
@@ -232,7 +232,7 @@ variable {D Pred : Type*}
 
 /-- The similarity relation as an `AccessRel` — the Kripke frame
     associated with each predicate. By construction this frame is
-    reflexive + symmetric, i.e., a **KTB frame** (`Core.Logic.Modal.Logic.KTB`). -/
+    reflexive + symmetric, i.e., a **KTB frame** (`Modal.Logic.KTB`). -/
 @[reducible] def simAccess (M : TModel D Pred) (P : Pred) : AccessRel D := M.sim P
 
 /-- Per-`(M, P)` KTB-frame instance: lets typeclass search reach
@@ -621,7 +621,7 @@ theorem identityModel.modes_agree (interp : Pred → D → Prop)
     n-satisfies the conclusion. The nine combinations (m, n ∈ {t, c, s})
     yield the nine consequence relations.
 
-    Specialisation of `Core.Logic.Consequence.MixedConsequence`. As an
+    Specialisation of `Consequence.MixedConsequence`. As an
     `abbrev` so the substrate API surface (`mixed_monotone`, etc.) is
     reachable without `unfold`. -/
 abbrev tcsConsequence
@@ -792,7 +792,7 @@ theorem tcsConsequence.cc_iff_ct_restricted
     the satisfaction mode via `dual`: `M ⊨ᵐ ¬φ ↔ ¬ M ⊨^{dual m} φ`.
     Definitionally true from `Sat.neg_eq`.
 
-    Note: the abstract `Core.Logic.Bilateral.SatDuality` structure
+    Note: the abstract `Bilateral.SatDuality` structure
     requires `neg` to be a syntactic involution (`¬¬φ = φ`). TCSFormula
     negation is NOT syntactically involutive (we have `.neg (.neg φ)`,
     not `φ`), so the abstract structure does not literally apply. The

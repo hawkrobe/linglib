@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Bilateral.Defs
+import Linglib.Logic.Bilateral.Defs
 import Linglib.Semantics.Questions.Basic
 
 /-!
@@ -30,7 +30,7 @@ combine both.
 - `Question.ofSet` is exactly Booth's `↓{·}` (Def 11 with a
   singleton input); `Question.info` is exactly `info(·)` (Def 12);
   `Question.alt` is exactly `alt` (Def 13).
-- `IsBilateral` (`Core/Logic/Bilateral.lean`) supplies the
+- `IsBilateral` (`Logic/Bilateral.lean`) supplies the
   bilateral-substrate predicate. The `BilatInqProp` instance is
   `rfl`-trivial — bilateral negation is bundled-record swap. This is
   the sixth consumer of the `IsBilateral` substrate (BSML, QBSML, BUS,
@@ -55,8 +55,7 @@ combine both.
 
 namespace Booth2022
 
-open Core
-open Core.Logic.Bilateral
+open Bilateral
 
 variable {W : Type*}
 
@@ -115,7 +114,7 @@ def negate (φ : BilatInqProp W) : BilatInqProp W where
 @[simp] theorem negate_negate (φ : BilatInqProp W) : φ.negate.negate = φ := rfl
 
 /-- **`BilatInqProp` is a bilateral structure** in the sense of
-    `Core.Logic.Bilateral.IsBilateral`. The instance is `rfl`-trivial
+    `Bilateral.IsBilateral`. The instance is `rfl`-trivial
     because `negate` is bundled-record swap. Sixth consumer of the
     `IsBilateral` substrate (alongside BSML, QBSML, BUS, ICDRT,
     Truthmaker `BilProp`). -/
@@ -166,7 +165,7 @@ def conj (φ ψ : BilatInqProp W) : BilatInqProp W where
 /-! ### §3 Necessity and possibility (Booth Def 14)
 
 `R : W → Set W` is the relevant-worlds accessibility relation
-(equivalent in expressive power to `Core.Logic.Modal.AccessRel W
+(equivalent in expressive power to `Modal.AccessRel W
 = W → W → Prop`; Booth uses the curried `W → Set W` form throughout
 his Def 14, which we mirror). -/
 

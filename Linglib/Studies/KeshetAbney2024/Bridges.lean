@@ -42,8 +42,8 @@ namespace KeshetAbney2024.PIP.Bridges
 
 open KeshetAbney2024.PIP
 open DynamicSemantics.ICDRT (IVar Assignment Entity Context)
-open Core.Logic.Modal (AccessRel box diamond)
-open Core.Logic.Modal.Logic (frameConditions)
+open Modal (AccessRel box diamond)
+open Modal.Logic (frameConditions)
 
 
 -- ============================================================
@@ -270,10 +270,10 @@ Stated for the Prop-valued `AccessRel`/`Std.Refl`/`frameConditions` API in
 operators now use directly.
 -/
 theorem reflexive_satisfies_T {W : Type*}
-    (R : Core.Logic.Modal.AccessRel W) [hRefl : Std.Refl R] :
-    frameConditions Core.Logic.Modal.Logic.T R := by
-  unfold frameConditions Core.Logic.Modal.Logic.hasAxiom
-    Core.Logic.Modal.Logic.T
+    (R : Modal.AccessRel W) [hRefl : Std.Refl R] :
+    frameConditions Modal.Logic.T R := by
+  unfold frameConditions Modal.Logic.hasAxiom
+    Modal.Logic.T
   refine ⟨fun _ => hRefl, fun h => ?_, fun h => ?_, fun h => ?_, fun h => ?_⟩ <;>
     simp_all [Finset.mem_singleton]
 

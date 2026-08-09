@@ -1435,7 +1435,7 @@ section TtrKratzerBridge
 
 open Semantics.Modality.Kratzer (ModalBase OrderingSource bestWorlds
   necessity possibility)
-open Core.Logic.Modal (box diamond)
+open Modal (box diamond)
 
 variable {W : Type}
 

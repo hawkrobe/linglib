@@ -1,6 +1,6 @@
 import Linglib.Fragments.Hausa.Focus
 import Linglib.Fragments.Hausa.TAM
-import Linglib.Core.Logic.FactorsThroughOn
+import Linglib.Core.Relation.FactorsThroughOn
 import Linglib.Semantics.Focus.Control
 import Linglib.Features.Reflex
 import Linglib.Data.Examples.HartmannZimmermann2007
@@ -19,7 +19,7 @@ The paper states the hypothesis it refutes as (21) "Meaning-Structure
 Mapping Hypothesis" (§3.1), the label following
 [vallduvi-vilkuna-1998]'s phrase "the meaning-structure mapping"; the
 shared schema is `Function.FactorsThroughOn`
-(`Core.Logic.FactorsThroughOn`), making the Hungarian/Hausa contrast
+(`Core.Relation.FactorsThroughOn`), making the Hungarian/Hausa contrast
 a difference of verdict on a single set-theoretic predicate. The §1.2
 control taxonomy (`Antecedent`, `Use`) and its factor-through theorems
 live in `Semantics/Focus/Control.lean`.

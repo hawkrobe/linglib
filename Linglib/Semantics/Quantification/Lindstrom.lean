@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.FirstOrder.Lindstrom
+import Linglib.Core.ModelTheory.Lindstrom
 import Linglib.Semantics.Quantification.Basic
 
 /-!
