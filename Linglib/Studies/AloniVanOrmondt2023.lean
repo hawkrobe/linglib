@@ -52,20 +52,9 @@ inductive Predicate | P | Q
 
 /-! ### The concrete model -/
 
-/-- Universal-access model on `PowerSet2World`.
-
-    The interpretation is the `monadicStructure` of the valuation
-    `V w P d := w.holds d`: both predicates hold of `d` at `w` iff `w`
-    models the atom `d`. The disjunction `Px ∨ Qx` is non-degenerate at the
-    *formula* level even though at this model the two interpretations
-    coincide. A model with divergent P and Q extensions would discriminate
-    further; this minimal model suffices for the substrate-instantiation
-    tests below.
-
-    Universal access (`access _ = univ`) makes `R` indisputable on every
-    state (`univAccessModel_indisputable`) and state-based exactly on states with
-    full world projection (`univAccessModel_stateBased_of_full`) — same shape as
-    `Aloni2022.deonticModel`. -/
+/-- Universal-access model on `PowerSet2World`: every world is accessible,
+    and both predicates hold of `d` at `w` iff `w` models the atom `d`.
+    Cf. `Aloni2022.deonticModel`. -/
 def univAccessModel : Model PowerSet2World FCAtom FCAtom Predicate where
   access := λ _ => Finset.univ
   interp := λ w => monadicStructure id (λ _ d => w.holds d)
