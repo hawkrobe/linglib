@@ -9,9 +9,9 @@ spatial analog of temporal intervals, carrying [zwarts-2005]'s Appendix A path
 algebra in discrete form: partial concatenation (defined only head-to-tail),
 the subpath order, and endpoint-sharing adjacency ([krifka-1998]). Zwarts's
 own paths are continuous constant-speed curves `[0,1] → ℝ³` — mathlib's
-topological `_root_.Path`, whose `trans` reparametrizes, so his algebra would
-need the arc-length quotient there; he notes the constructive
-sequence-of-places route is equally compatible with the algebra, and it keeps
+topological `_root_.Path`, whose `trans` reparametrizes, so the algebra would
+need the arc-length quotient there; the paper endorses the constructive
+sequence-of-places route as equally compatible with the algebra, and it keeps
 every operation computable.
 
 ## Main declarations
@@ -34,10 +34,8 @@ every operation computable.
 
 namespace Spatial
 
-/-- Spatial path: a directed trajectory through its visited locations, as a
-    start plus later stops ([zwarts-2005]: directed stretches of space with a
-    source and a goal). Parallels `NonemptyInterval` for the temporal
-    domain. -/
+/-- A directed trajectory through space, as the finite sequence of visited
+    locations. The spatial analog of a temporal `NonemptyInterval`. -/
 structure Path (Loc : Type*) where
   /-- The starting location p(0). -/
   source : Loc
@@ -73,9 +71,8 @@ private theorem getLastD_append {α : Type*} (l₁ l₂ : List α) (d : α) :
 
 /-! ### Concatenation and subpaths -/
 
-/-- (67) of [zwarts-2005]: `r` is the concatenation `p + q`. Partial —
-    defined only when `p` ends where `q` starts. Associative, neither
-    commutative nor idempotent. -/
+/-- `r` is the concatenation `p + q`, defined only when `p` ends where `q`
+    starts. Associative, neither commutative nor idempotent. -/
 def IsConcat (p q r : Path Loc) : Prop :=
   p.goal = q.source ∧ r = ⟨p.source, p.steps ++ q.steps⟩
 
@@ -94,18 +91,16 @@ theorem IsConcat.points_eq {p q r : Path Loc} (h : IsConcat p q r) :
     r.points = p.points ++ q.steps := by
   rw [h.2]; simp [points]
 
-/-- Constant paths concatenate with themselves to themselves: they are the
-    identity elements of concatenation. -/
+/-- A constant path concatenates with itself to itself. -/
 theorem isConcat_const (l : Loc) : IsConcat (const l) (const l) (const l) :=
   ⟨rfl, rfl⟩
 
-/-- (68) of [zwarts-2005]: `p` is a subpath of `q` iff `r + p + r′ = q` for
-    some `r`, `r′`. -/
+/-- `p` is a subpath of `q` if concatenating some `r`, `r′` around `p`
+    yields `q`. -/
 def Subpath (p q : Path Loc) : Prop :=
   ∃ r r' m, IsConcat r p m ∧ IsConcat m r' q
 
-/-- The working characterization: subpath-hood is infix-hood of point
-    sequences. -/
+/-- Subpath-hood is infix-hood of point sequences. -/
 theorem subpath_iff_infix {p q : Path Loc} :
     Subpath p q ↔ p.points <:+: q.points := by
   constructor
@@ -142,10 +137,10 @@ theorem subpath_iff_infix {p q : Path Loc} :
       · cases q
         simp_all [points, List.append_assoc]
 
-/-- The subpath order as an order instance — **scoped**, because path sets
-    are also studied under a rival total lattice sum ([krifka-1998]'s part
-    structures, hypothesized as `SemilatticeSup (Path Loc)` in
-    `Spatial/Trace.lean`); activate with `open scoped Spatial.Path`. -/
+/-- The subpath order, as a **scoped** instance: path sets are also studied
+    under a rival total lattice sum ([krifka-1998]'s part structures,
+    hypothesized as `SemilatticeSup (Path Loc)` in `Spatial/Trace.lean`).
+    Activate with `open scoped Spatial.Path`. -/
 scoped instance instSubpathOrder : PartialOrder (Path Loc) where
   le := Subpath
   le_refl p := subpath_iff_infix.mpr (List.infix_refl _)
@@ -154,16 +149,15 @@ scoped instance instSubpathOrder : PartialOrder (Path Loc) where
   le_antisymm _ _ hab hba := points_injective
     (List.infix_antisymm (subpath_iff_infix.mp hab) (subpath_iff_infix.mp hba))
 
-/-- Constant paths are least: `const p.source ≤ p`. -/
+/-- Constant paths are least in the subpath order. -/
 theorem const_source_le (p : Path Loc) : const p.source ≤ p :=
   subpath_iff_infix.mpr ⟨[], p.steps, rfl⟩
 
 /-! ### Adjacency -/
 
-/-- Two paths are spatially adjacent (`∞_H` in [krifka-1998]'s notation)
-    if they share an endpoint: one's goal is the other's source.
-    Instantiates K98's abstract adjacency primitive for concrete paths;
-    the spatial half of the movement relations in `Studies/Krifka1998.lean`. -/
+/-- Two paths are adjacent if one's goal is the other's source —
+    [krifka-1998]'s spatial adjacency `∞_H`, the spatial half of the
+    movement relations in `Studies/Krifka1998.lean`. -/
 def adjacent (p1 p2 : Path Loc) : Prop :=
   p1.goal = p2.source ∨ p2.goal = p1.source
 

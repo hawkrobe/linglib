@@ -29,11 +29,12 @@ open Mereology
 
 namespace Spatial
 
-/-- Spatial trace: `σ e` is the path traversed in event `e` ([zwarts-2005],
-    [gawron-2009]), parallel to the temporal trace τ (`Event.runtime`).
-    Structural assumptions on σ are stated as mixins at use sites, per
-    `Semantics/Events/CEM.lean`: `[Mereology.IsSumHom st.σ]` for sum
-    preservation, `Function.Injective st.σ` where QUA pullback needs it. -/
+/-- The spatial trace σ assigns each event the path it traverses
+    ([zwarts-2005], [gawron-2009]), parallel to the temporal trace τ
+    (`Event.runtime`). Structural assumptions on σ are stated as mixins at
+    use sites, per `Semantics/Events/CEM.lean`: `[Mereology.IsSumHom st.σ]`
+    for sum preservation, `Function.Injective st.σ` where QUA pullback
+    needs it. -/
 class Trace (Loc Time : Type*) [LinearOrder Time] where
   /-- The path traversed in an event. -/
   σ : Event Time → Path Loc
@@ -46,19 +47,19 @@ variable {Loc Time : Type*} [LinearOrder Time] [Event.Mereology Time]
   [ClassicalMereology (Event Time)] [SemilatticeSup (Path Loc)]
   [st : Trace Loc Time] {P : Path Loc → Prop}
 
-/-- Bounded path predicate → telic VP: QUA pulls back through an injective
-    sum-homomorphic σ — [krifka-1998]'s quantization route to telicity,
-    stated for path predicates. [zwarts-2005] argues bounded PPs are not in
+/-- QUA path predicates pull back through an injective sum-homomorphic σ to
+    QUA (telic) VP predicates — [krifka-1998]'s quantization route to
+    telicity, stated for paths. [zwarts-2005] argues bounded PPs are not in
     fact quantized (bounded = non-cumulative instead; see
-    `Studies/Zwarts2005.lean`), so this theorem records the Krifka-style
-    analysis, applicable when a path predicate is QUA. -/
+    `Studies/Zwarts2005.lean`), so this records the Krifka-style analysis,
+    applicable when a path predicate is QUA. -/
 theorem bounded_path_telic [hσ : IsSumHom st.σ]
     (hinj : Function.Injective st.σ) (hP : QUA P) : QUA (P ∘ st.σ) :=
   qua_of_injective_sumHom hσ hinj hP
 
-/-- Unbounded path predicate → atelic VP: CUM pulls back through a
-    sum-homomorphic σ. *Walk towards the store* is atelic because *towards
-    the store* denotes a CUM set of paths ([zwarts-2005]). -/
+/-- CUM path predicates pull back through a sum-homomorphic σ to CUM
+    (atelic) VP predicates: *walk towards the store* is atelic because
+    *towards the store* denotes a cumulative set of paths ([zwarts-2005]). -/
 theorem unbounded_path_atelic [hσ : IsSumHom st.σ] (hP : CUM P) :
     CUM (P ∘ st.σ) :=
   cum_pullback hσ hP
