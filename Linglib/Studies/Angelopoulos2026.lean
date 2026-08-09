@@ -2,6 +2,9 @@ import Linglib.Studies.Bondarenko2022
 import Linglib.Studies.Roussou2010
 import Linglib.Fragments.Greek.StandardModern.Complementizers
 import Linglib.Syntax.Category.Verb.Selection
+import Linglib.Syntax.Minimalist.Features
+import Linglib.Semantics.Attitudes.ClauseDenotation.Content
+import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
 import Linglib.Data.Examples.Angelopoulos2026
 
 /-!
@@ -15,8 +18,9 @@ selection: *oti* and *pu* bear an uninterpretable [n]-feature checked
 by a light noun in their specifier (partly adopting [arsenijevic-2009])
 that must incorporate into a lexical verbal head, licit only from
 complement position (§3.1). The *oti* ~ *pu* split follows from the
-content/situation dichotomy (§3.2, adopting [bondarenko-2022]), the
-stativity restriction from aspectual-head selection (§4.1), and §7.3
+content/situation dichotomy (§3.2, adopting [bondarenko-2022]) with
+*pu*'s factivity derived from situation-anchoring, the stativity
+restriction from aspectual-head selection (§4.1), and §7.3
 turns the §2 argumenthood diagnostics against Bondarenko's transparent
 syntax–semantics mapping: bare *oti*-clauses sit in complement position
 while composing via Predicate Modification (the explanans reading,
@@ -29,15 +33,40 @@ namespace Angelopoulos2026
 open Greek.StandardModern.Complementizers
 open Bondarenko2022 (NominalSort CompositionPath)
 open Features (VendlerClass)
+open Minimalist (GramFeature featuresMatch)
+open Semantics.Attitudes.ClauseDenotation.Content
+  (AttitudeVerbCI existsContentClosure)
+open Semantics.Attitudes.ClauseDenotation.Situation
+  (SituationVerb existsSituationClosure)
 
 /-! ### Reversed selection: the light noun (§3.1) -/
 
-/-- *oti* and *pu* select a light noun in their specifier, checking an
-uninterpretable [n]-feature; *na* does not (§3.1). -/
-def selectsLightNoun (c : Complementizer) : Prop := c = oti ∨ c = pu
+/-- The [n] probe: an unvalued categorial-N feature
+([panagiotidis-2015]'s referentiality feature) demanding a nominal
+goal in the specifier. -/
+def nProbe : GramFeature := .unvalued (.catN true)
+
+/-- The light noun's goal feature: valued [n]. -/
+def nGoal : GramFeature := .valued (.catN true)
+
+/-- The §3.1 lexical assignment: *oti* and *pu* carry the [n] probe,
+*an* and *na* none. -/
+def nProbes (c : Complementizer) : List GramFeature :=
+  if c = oti ∨ c = pu then [nProbe] else []
+
+/-- *oti* and *pu* select a light noun in their specifier: their
+feature bundle carries the [n] probe (§3.1). -/
+def selectsLightNoun (c : Complementizer) : Prop := nProbe ∈ nProbes c
 
 instance : DecidablePred selectsLightNoun :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
+  fun _ => inferInstanceAs (Decidable (_ ∈ _))
+
+/-- Merging a light noun in the specifier checks the probe: the goal
+matches it in type and is valued where the probe is not. -/
+theorem lightNoun_checks_nProbe :
+    featuresMatch nProbe nGoal = true ∧
+    nGoal.isValued = true ∧ nProbe.isUnvalued = true := by
+  decide
 
 /-! ### The attested selection classes (§1–§2.3) -/
 
@@ -250,6 +279,38 @@ theorem oti_pu_lexically_distinct :
     clauseSort oti ≠ clauseSort pu ∧
     Roussou2010.profile oti ≠ Roussou2010.profile pu := by
   decide
+
+/-! ### Factivity from situation semantics (§3.2) -/
+
+/-- A situation verb is anchored when it relates agents only to
+situation individuals realized at the evaluation situation. -/
+def Anchored {S X : Type*} (verb : SituationVerb S X) : Prop :=
+  ∀ a xs s, verb a xs s → xs.sit s
+
+/-- An anchored verb's *pu*-report entails its complement — the factive
+presupposition of *pu*-clauses derived from situation semantics
+(§3.2). -/
+theorem pu_report_factive {S X : Type*} {verb : SituationVerb S X}
+    (h : Anchored verb) (a : X) (q : S → Prop) (s : S) :
+    existsSituationClosure verb a q s → q s := by
+  rintro ⟨xs, hv, hq⟩
+  rw [← show xs.sit = q from hq]
+  exact h a xs s hv
+
+/-- Content reports carry no such entailment. -/
+theorem content_report_not_factive :
+    ¬ ∀ (verb : AttitudeVerbCI Bool Unit) (a : Unit) (p : Bool → Prop)
+        (w : Bool), existsContentClosure verb a p w → p w :=
+  fun h => h (fun _ _ _ => True) () (fun _ => False) true
+    ⟨⟨fun _ => False⟩, trivial, rfl⟩
+
+/-- Anchored regret over two situations. -/
+private def toyRegret : SituationVerb Bool Unit := fun _ xs s => xs.sit s
+
+/-- ex. 1b's *pu*-report composed through `existsSituationClosure`. -/
+theorem ex_1b_reading :
+    existsSituationClosure toyRegret () (· = true) true :=
+  ⟨⟨(· = true)⟩, rfl, rfl⟩
 
 /-! ### Against the transparent syntax–semantics mapping (§7.3) -/
 
