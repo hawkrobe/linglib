@@ -4,7 +4,8 @@ import Linglib.Features.Register
 # Modal Typological Types
 
 Theory-neutral vocabulary for cross-linguistic modal typology: `ModalForce`,
-`ModalFlavor`, `ForceFlavor`, `ModalItem`, `ConcordType`, `ModalDecomposition`.
+`ModalFlavor`, `ForceFlavor`, `ModalItem`, `ConcordType`, `ModalDecomposition`,
+and the modal-temporal axes `TemporalPerspective` / `TemporalOrientation`.
 
 These types classify modal meanings along two independent dimensions — force
 (quantificational strength) and flavor (contextual source) — following
@@ -465,5 +466,33 @@ def ForceAnalysis.HasDual : ForceAnalysis → Prop
 
 instance : DecidablePred ForceAnalysis.HasDual := fun a => by
   cases a <;> unfold ForceAnalysis.HasDual <;> infer_instance
+
+/-! ### Modal-temporal axes
+
+The two temporal axes of modal interpretation ([condoravdi-2002] §2): the
+*perspective* is the time at which the modal base and ordering source are
+evaluated, the *orientation* the relation between the perspective time
+and the prejacent's time. [condoravdi-2002] uses only the `future`/`past`
+orientations; the `present` cell goes unused there. -/
+
+/-- Temporal perspective: the time at which a modal base / ordering
+    source is evaluated. -/
+inductive TemporalPerspective where
+  /-- Modal base evaluated at the utterance time. -/
+  | present
+  /-- Modal base evaluated at a prior time (e.g., via PERF > MODAL). -/
+  | past
+  deriving DecidableEq, Repr, BEq, Inhabited
+
+/-- Temporal orientation: the temporal relation between the perspective
+    time and the prejacent's instantiation time. -/
+inductive TemporalOrientation where
+  /-- Prejacent instantiated before the perspective time. -/
+  | past
+  /-- Prejacent coincides with the perspective time. -/
+  | present
+  /-- Prejacent instantiated at or after the perspective time. -/
+  | future
+  deriving DecidableEq, Repr, BEq, Inhabited
 
 end Modality
