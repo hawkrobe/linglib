@@ -2,6 +2,7 @@ import Linglib.Semantics.Modality.TemporalAxes
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Modality.ActualityEntailments
+import Linglib.Studies.Condoravdi2002
 import Linglib.Data.Examples.Hacquard2006
 
 /-!
@@ -26,6 +27,11 @@ Substrate note: the event-relative machinery (`EventBinder`,
 * `positionPerspective`, `withAttitude_shifts_perspective` — the temporal
   perspective ([condoravdi-2002]) projected from the anchoring event, via
   `ModalPosition.defaultBinder` / `withAttitude`.
+* `high_position_epistemic_only`, `low_position_counterfactual_available` —
+  [condoravdi-2002]'s might-have ambiguity (176) recast positionally: the
+  high position pairs with the epistemic reading's perspective and its
+  settled prejacent blocks the metaphysical base; the low position pairs
+  with the counterfactual reading's, whose base only widens.
 * `epistemic_reading_possible`, `goal_reading_necessary` — the two readings
   of "Jane a dû prendre le train" (201) from one modal entry.
 * `aspect_bound_epistemic_necessity` — contentful complements license
@@ -70,25 +76,47 @@ theorem withAttitude_shifts_perspective :
     binderPerspective ModalPosition.aboveAsp.withAttitude ≠
     binderPerspective ModalPosition.aboveAsp.defaultBinder := nofun
 
-/-! ### Perspective and aspect scope
+/-! ### Condoravdi's ambiguity from position
 
-Position fixes the temporal *perspective* and the modal/aspect *scope* at
-once. On [condoravdi-2002]'s account this pair determines which modal base
-types are available: present perspective + MODAL > PERF yields a settled
-past property (epistemic only); past perspective + PERF > MODAL yields an
-unsettled future property (metaphysical available). That machinery lives in
-`Semantics/Modality/HistoricalAlternatives.lean`; chaining the two halves
-into one composition theorem is left as follow-up. -/
+"They might (already/still) have won the game" ((176), reproducing
+[condoravdi-2002]'s epistemic/counterfactual ambiguity): the dissertation
+recasts the scopal account positionally — MODAL > PERF is the high
+position with present perspective, PERF > MODAL the low position with past
+perspective. Composing with [condoravdi-2002]'s settledness machinery
+(`Studies/Condoravdi2002.lean`) derives which modal bases survive at each
+position. -/
 
-/-- Position determines both perspective and aspect scope: high modals pair
-present perspective with MODAL > ASP, low modals pair past perspective with
-ASP > MODAL. -/
-theorem position_determines_modal_base_type :
-    (positionPerspective .aboveAsp = .present ∧
-     toAspectScope .aboveAsp = .modalOverAspect) ∧
-    (positionPerspective .belowAsp = .past ∧
-     toAspectScope .belowAsp = .aspectOverModal) :=
-  ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
+section CondoravdiBridge
+
+open Condoravdi2002 HistoricalAlternatives
+
+variable {W Time : Type*} [LinearOrder Time]
+
+/-- From the high position, "might have" is epistemic-only: the high
+perspective is exactly the epistemic reading's, and the back-shifted
+prejacent, being settled, admits no diverse metaphysical base
+(`modal_over_perf_blocks_metaphysical`). -/
+theorem high_position_epistemic_only
+    (history : HistoricalAlternatives W Time) (MB : W → Time → Set W)
+    (cg : Set W) (now : Time) (P : W → Event Time → Prop)
+    (hMB : ∀ w ∈ cg, ∀ w' ∈ MB w now, histEquiv history now w w')
+    (hSettled : settled history cg now (λ w => perf .dynamic P w now)) :
+    positionPerspective .aboveAsp = ModalReading.epistemic.perspective ∧
+    ¬ diverse MB cg now (λ w => perf .dynamic P w now) :=
+  ⟨rfl, modal_over_perf_blocks_metaphysical history MB cg now P hMB hSettled⟩
+
+/-- From the low position, the counterfactual reading is available: the low
+perspective is exactly the counterfactual reading's, and moving the
+evaluation time back only widens the metaphysical base
+(`counterfactual_widens_domain`). -/
+theorem low_position_counterfactual_available
+    (history : HistoricalAlternatives W Time)
+    (hBC : history.backwardsClosed) (w : W) {t' now : Time} (hle : t' ≤ now) :
+    positionPerspective .belowAsp = ModalReading.counterfactual.perspective ∧
+    metaphysicalBase history w now ⊆ metaphysicalBase history w t' :=
+  ⟨rfl, counterfactual_widens_domain history hBC w hle⟩
+
+end CondoravdiBridge
 
 /-! ### Worked example: "Jane a dû prendre le train" (201)
 
