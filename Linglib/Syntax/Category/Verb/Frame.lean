@@ -61,6 +61,11 @@ def force? : Position → Option Mood.Illocutionary
   | clausal _ cf _ => cf
   | _ => none
 
+/-- The position's recorded subject requirement, if clausal. -/
+def embeddedSubject? : Position → Option Clause.EmbeddedSubject
+  | clausal _ _ es => es
+  | _ => none
+
 end Position
 
 end Complement
