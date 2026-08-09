@@ -1,6 +1,6 @@
 import Linglib.Core.Probability.Scores
 import Linglib.Pragmatics.RSA.Channel
-import Linglib.Pragmatics.RSA.Sequential
+import Linglib.Semantics.Probabilistic.Composition
 
 /-!
 # [schlotterbeck-wang-2023] — incremental RSA for adjective ordering
@@ -23,7 +23,7 @@ reported simulations, matching the exponent-free chain here.
 ## Main results
 
 * Order-independence of the prefix meaning — the paper's listener-level
-  sanity check — is the substrate lemma `RSA.prefixMeaning_perm`.
+  sanity check — is the substrate lemma `Semantics.Probabilistic.prodMeaning_perm`.
 * `size_first_when_size_discriminates` / `color_first_when_color_reliable`:
   the trajectory preference tracks discriminatory power (Scene A) and
   flips to the more reliable dimension under equal discrimination
@@ -38,8 +38,8 @@ reported simulations, matching the exponent-free chain here.
 The chain is exact ℚ≥0: `lex` is the Bernoulli-channel form of
 [degen-etal-2020]'s continuous semantics (reliability if the word truly
 applies, the complementary noise floor otherwise), prefix meanings are
-`RSA.prefixMeaning` products, `l0Score`/`s1Score` normalize via `PMF.normalizeScores`,
-and the PMF speaker is `PMF.ofScores`. Trajectories are `Fin`-indexed
+`Semantics.Probabilistic.prodMeaning` products, `l0Score`/`s1Score`
+normalize via `PMF.normalizeScores`, and the PMF speaker is `PMF.ofScores`. Trajectories are `Fin`-indexed
 products of speaker values, so ordering predictions close by
 `PMF.prod_ofScores_lt` with one kernel certificate each.
 -/
@@ -48,7 +48,7 @@ open scoped ENNReal NNRat
 
 namespace SchlotterbeckWang2023
 
-open RSA
+open Semantics.Probabilistic
 
 /-- Referents in the reference game. -/
 inductive Referent where
@@ -115,7 +115,7 @@ def lexB : Word → Referent → ℚ≥0 := lex (80/100) (95/100)
 /-- Literal listener over scene referents at each prefix extension. -/
 def l0Score (lex : Word → Referent → ℚ≥0) (scene : Referent → Bool)
     (ctx : List Word) (u : Word) : Referent → ℚ≥0 :=
-  PMF.normalizeScores fun r => if scene r then prefixMeaning lex (ctx ++ [u]) r else 0
+  PMF.normalizeScores fun r => if scene r then prodMeaning lex (ctx ++ [u]) r else 0
 
 /-- Word-level speaker (β = 1, no cost): renormalized literal posteriors. -/
 def s1Score (lex : Word → Referent → ℚ≥0) (scene : Referent → Bool)
@@ -188,7 +188,7 @@ theorem blue_more_informative_B :
 Scene A members. -/
 theorem both_orderings_identify_target_A (r : Referent)
     (hr : sceneA r = true) (hne : r ≠ target) :
-    prefixMeaning lexA [.big, .blue] r < prefixMeaning lexA [.big, .blue] target := by
+    prodMeaning lexA [.big, .blue] r < prodMeaning lexA [.big, .blue] target := by
   cases r
   · exact absurd rfl hne
   all_goals first | exact absurd hr (by decide) | decide +kernel
@@ -197,7 +197,7 @@ theorem both_orderings_identify_target_A (r : Referent)
 Scene B members. -/
 theorem both_orderings_identify_target_B (r : Referent)
     (hr : sceneB r = true) (hne : r ≠ target) :
-    prefixMeaning lexB [.big, .blue] r < prefixMeaning lexB [.big, .blue] target := by
+    prodMeaning lexB [.big, .blue] r < prodMeaning lexB [.big, .blue] target := by
   cases r
   · exact absurd rfl hne
   all_goals first | exact absurd hr (by decide) | decide +kernel

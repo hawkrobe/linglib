@@ -4,7 +4,7 @@ import Mathlib.Analysis.Complex.ExponentialBounds
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Core.Probability.Scores
 import Linglib.Pragmatics.RSA.Atoms
-import Linglib.Pragmatics.RSA.Sequential
+import Linglib.Semantics.Probabilistic.Composition
 
 /-!
 # [waldon-degen-2021] — Continuous-Incremental RSA (CI-RSA)
@@ -56,14 +56,14 @@ different (language × scene) configurations of the same chain.
   `RSA.Channel`. See `lexContinuous_as_noiseChannel`.
 - **Incremental RSA**: Extends [cohn-gordon-goodman-potts-2019] with
   continuous semantics and cross-linguistic word order variation.
-- **Sequential substrate**: `uttContinuousQ` is defined via
-  `RSA.prefixMeaning` (`Sequential.lean`), sharing the multiplicative
+- **Graded composition**: `uttContinuousQ` is defined via
+  `Semantics.Probabilistic.prodMeaning`, sharing the multiplicative
   composition with [schlotterbeck-wang-2023] by construction.
 -/
 
 namespace WaldonDegen2021
 
-open RSA
+open RSA Semantics.Probabilistic
 
 /-! ### Domain Types -/
 
@@ -111,9 +111,9 @@ def lexContinuousQ (r : Referent) (w : Word) : ℚ :=
   if wordApplies w r then semanticValueQ w else 1 - semanticValueQ w
 
 /-- Continuous utterance meaning ⟦u⟧^C(r) = ∏_{w ∈ u} L^C(r, w), the
-    `RSA.prefixMeaning` of the continuous lexicon. -/
+    `prodMeaning` of the continuous lexicon. -/
 def uttContinuousQ (r : Referent) (u : List Word) : ℚ :=
-  prefixMeaning (fun w r' => lexContinuousQ r' w) u r
+  prodMeaning (fun w r' => lexContinuousQ r' w) u r
 
 private theorem lexContinuousQ_nonneg (r : Referent) (w : Word) :
     0 ≤ lexContinuousQ r w := by
@@ -123,7 +123,7 @@ private theorem lexContinuousQ_nonneg (r : Referent) (w : Word) :
 
 private theorem uttContinuousQ_nonneg (r : Referent) (u : List Word) :
     0 ≤ uttContinuousQ r u :=
-  prefixMeaning_nonneg (fun w r' => lexContinuousQ_nonneg r' w) u r
+  prodMeaning_nonneg (fun w r' => lexContinuousQ_nonneg r' w) u r
 
 /-! ### Utterances (Scene-Filtered) -/
 

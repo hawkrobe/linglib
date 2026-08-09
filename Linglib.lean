@@ -1416,7 +1416,6 @@ import Linglib.Pragmatics.RSA.LexicalUncertainty
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.QUD
 import Linglib.Pragmatics.RSA.ScoreChain
-import Linglib.Pragmatics.RSA.Sequential
 import Linglib.Pragmatics.RSA.Silence
 import Linglib.Pragmatics.RSA.SimpAttr
 import Linglib.Pragmatics.RelevanceTheory.CognitiveEffects
@@ -1768,6 +1767,7 @@ import Linglib.Semantics.Presupposition.Quantified
 import Linglib.Semantics.Presupposition.TriggerTypology
 import Linglib.Semantics.Presupposition.Trivalent
 import Linglib.Semantics.Probabilistic.BayesianSemantics
+import Linglib.Semantics.Probabilistic.Composition
 import Linglib.Semantics.Probabilistic.ConditionalAssertability
 import Linglib.Semantics.Probabilistic.ParamPred
 import Linglib.Semantics.Probabilistic.PrototypeTheory
