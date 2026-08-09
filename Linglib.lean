@@ -1300,6 +1300,7 @@ import Linglib.Morphology.Realization
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Certificates
 import Linglib.Morphology.Root.Consonantal
+import Linglib.Morphology.Word.Agree
 import Linglib.Morphology.Word.Basic
 import Linglib.Morphology.Word.Tree
 import Linglib.Phonology.Autosegmental.AR

@@ -5,6 +5,8 @@ import Linglib.Data.UD.Basic
 import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Discourse.Accessibility
+import Linglib.Fragments.English.Pronouns
+import Linglib.Syntax.Category.Pronoun.Capabilities
 
 /-!
 # Pronoun interpretation: coherence vs. centering [kehler-rohde-2013]
@@ -30,6 +32,9 @@ experiments with transfer-of-possession and implicit-causality verbs.
   expectancy hypothesis the substrate's `predictedForm` encodes.
 * `cb_topichood_dissociation_under_voice`: Centering's backward-looking center is
   voice-blind where `topichood` is voice-sensitive.
+* `she_ambiguous_over_stimuli`: the φ-design premise — the prompt pronoun
+  (the English Fragment entry) φ-agrees with both same-gender characters, so
+  the φ-filter cannot resolve the reference the Bayesian model competes over.
 
 ## Implementation notes
 
@@ -47,6 +52,7 @@ namespace KehlerRohde2013
 
 open Discourse.Coherence
 open UD (Voice)
+open Morphology (Word)
 
 /-! ### Experimental design -/
 
@@ -526,28 +532,55 @@ yet `topichood` distinguishes them (passive subject `.strong`, active subject
 `.default_`). The voice-induced pronominalization gradient (87% vs. 62%) lives in
 the topichood signal, not the CB signal. -/
 
+/-! ### The φ-design premise
+
+The Bayesian competition presupposes that morphology underdetermines the
+referent: the passages pair same-gender characters, so the prompt pronoun
+φ-agrees with both candidates and `P(referent | pronoun)` must come from the
+coherence prior and the topichood likelihood. The premise is checked against
+the English Fragment entry rather than stipulated. -/
+
+/-- The two characters of the running example ("Amanda amazed Brittany"), both
+    third-person singular feminine. -/
+def amanda : Word :=
+  ⟨"Amanda", .PROPN, { person := some .third, number := some .Sing, gender := some .Fem }⟩
+
+def brittany : Word :=
+  ⟨"Brittany", .PROPN, { person := some .third, number := some .Sing, gender := some .Fem }⟩
+
+/-- A masculine token (a counterfactual foil, not a K&R stimulus). -/
+def masculineFoil : Word :=
+  ⟨"Bill", .PROPN, { person := some .third, number := some .Sing, gender := some .Masc }⟩
+
+/-- The prompt *She* (the English Fragment entry) is φ-compatible with both
+    characters, so gender cannot resolve the reference. -/
+theorem she_ambiguous_over_stimuli :
+    Proform.Agree English.Pronouns.she amanda ∧
+      Proform.Agree English.Pronouns.she brittany := by decide
+
+/-- Against a mixed-gender pair the φ-filter resolves *she* by itself; the
+    same-gender design is what forces the Bayesian competition. -/
+theorem she_resolved_against_masculine :
+    Proform.Agree English.Pronouns.she amanda ∧
+      ¬ Proform.Agree English.Pronouns.she masculineFoil := by decide
+
 section CenteringBridge
 
 open Discourse.Centering
 
-/-- Two referents in the toy KR2013 example: Amanda (subject across voice
-    manipulations) and Brittany (object/by-phrase). -/
-def amanda : Nat := 1
-def brittany : Nat := 2
-
 /-- Prior "Amanda V'd Brittany": Amanda SUBJ, Brittany OBJ. Under Kameyama's role
     ranking the forward-looking centers are `[Amanda, Brittany]` with Amanda Cp. -/
-def prevAmandaActive : Utterance Nat GrammaticalRole :=
+def prevAmandaActive : Utterance Word GrammaticalRole :=
   { realizations := [⟨amanda, .subject, false⟩, ⟨brittany, .object, false⟩] }
 
 /-- Active continuation "She V'd her" — Amanda still SUBJ, both pronouns. -/
-def curActive : Utterance Nat GrammaticalRole :=
+def curActive : Utterance Word GrammaticalRole :=
   { realizations := [⟨amanda, .subject, true⟩, ⟨brittany, .object, true⟩] }
 
 /-- Passive continuation "Amanda was V'd by Brittany" — Amanda promoted to SUBJ by
     the marked passive; Brittany now in the by-phrase (`OTHER`). The proposition is
     identical; only the construction differs. -/
-def curPassive : Utterance Nat GrammaticalRole :=
+def curPassive : Utterance Word GrammaticalRole :=
   { realizations := [⟨amanda, .subject, true⟩, ⟨brittany, .other, false⟩] }
 
 /-- Cp of the prior utterance is Amanda (SUBJ outranks OBJ). -/

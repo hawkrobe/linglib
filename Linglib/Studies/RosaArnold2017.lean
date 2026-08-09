@@ -2,6 +2,8 @@ import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Discourse.Coherence
 import Linglib.Discourse.Accessibility
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Pronouns
+import Linglib.Morphology.Word.Agree
 import Linglib.Studies.ArnoldEtAl2000
 import Linglib.Studies.KehlerRohde2013
 
@@ -87,6 +89,39 @@ inductive GenderContext where
   | sameGender       -- both characters same gender (pronoun ambiguous)
   | differentGender  -- different gender (pronoun unambiguous)
   deriving DecidableEq, Repr
+
+/-- The gender context of a referent pair. For the fully-φ-specified stimulus
+    tokens, a pair is `sameGender` exactly when the tokens φ-agree
+    (`Word.Agree`) — the pairs a third-singular gendered pronoun cannot
+    discriminate. -/
+def GenderContext.ofReferents (w1 w2 : Morphology.Word) : GenderContext :=
+  if w1.Agree w2 then .sameGender else .differentGender
+
+/-- The running example's characters ("Lisa gave the pie to Brendan"), as
+    φ-bearing tokens. -/
+def lisa : Morphology.Word :=
+  ⟨"Lisa", .PROPN, { person := some .third, number := some .Sing, gender := some .Fem }⟩
+
+def brendan : Morphology.Word :=
+  ⟨"Brendan", .PROPN, { person := some .third, number := some .Sing, gender := some .Masc }⟩
+
+/-- The running example is a `differentGender` item, derived from the tokens'
+    φ-features. -/
+theorem lisa_brendan_context :
+    GenderContext.ofReferents lisa brendan = .differentGender := by decide
+
+/-- In a `differentGender` pair *she* (the English Fragment entry) picks out
+    Lisa and excludes Brendan, so a pronoun is unambiguous — the condition
+    under which pronoun rates rise. -/
+theorem differentGender_phi_resolves :
+    Proform.Agree English.Pronouns.she lisa ∧
+      ¬ Proform.Agree English.Pronouns.she brendan := by decide
+
+/-- [kehler-rohde-2013]'s same-gender pair is a `sameGender` context under the
+    same derivation — the two studies' design premises are one φ-fact. -/
+theorem kr_stimuli_sameGender :
+    GenderContext.ofReferents KehlerRohde2013.amanda KehlerRohde2013.brittany =
+      .sameGender := by decide
 
 /-- Experimental paradigm. -/
 inductive Paradigm where
