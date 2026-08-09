@@ -315,9 +315,8 @@ theorem burnL_isNEFree : burnL.IsNEFree := .predc _ _
 
 /-- John's bouletic state: a single desire-world where the letter is sent
     and not burnt, reflexively accessible. -/
-def rossModel : Model Unit Unit Unit RossPred where
-  access _ := {()}
-  interp _ := monadicStructure (fun _ => ()) (fun P _ => P = RossPred.send)
+def rossModel : Model Unit Unit Unit RossPred :=
+  .ofMonadic (λ _ => {()}) (λ _ _ => ()) (λ _ P _ => P = RossPred.send)
 
 /-- The Ross evaluation state: the single desire-world with the empty
     assignment. -/
@@ -462,10 +461,8 @@ end AsherGeneric
     desire-world `true` every trip is free; the non-desire world `false`
     has a non-free trip; only the desire-world is bouletically
     accessible. -/
-def asherModel : Model Bool Unit Unit AsherPred where
-  access _ := {true}
-  interp w := monadicStructure (fun _ => ())
-    (fun P _ => P = .trip ∨ w = true)
+def asherModel : Model Bool Unit Unit AsherPred :=
+  .ofMonadic (λ _ => {true}) (λ _ _ => ()) (λ w P _ => P = .trip ∨ w = true)
 
 /-- The Asher evaluation state: the desire-world with the empty
     assignment. -/

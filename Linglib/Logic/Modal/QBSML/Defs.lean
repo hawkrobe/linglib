@@ -30,10 +30,10 @@ the `Team.isFlat_iff` template at the point type
 * `Formula`: the formula language ([aloni-vanormondt-2023]
   Definition 4.1), with `□` derived as `Formula.nec`.
 * `Formula.IsNEFree`: the NE-free fragment.
-* `monadicLang`, `monadicStructure`: the monadic first-order signature on
+* `Language.monadic`, `monadicStructure`: the monadic first-order signature on
   `Const` and `Pred` and its structures, as a mathlib `FirstOrder.Language`.
 * `Model` (an abbreviation for `FirstOrder.Language.KripkeStructure`
-  over `monadicLang`), `eval`, `support`, `antiSupport`: bilateral evaluation
+  over `Language.monadic`), `eval`, `support`, `antiSupport`: bilateral evaluation
   ([aloni-vanormondt-2023] Definition 4.9), with the interpretation carried
   as a world-indexed family of mathlib structures.
 * `isBilateral`: `support`/`antiSupport` form a
@@ -65,6 +65,8 @@ the `Team.isFlat_iff` template at the point type
 -/
 
 namespace QBSML
+
+open FirstOrder
 
 variable {W Var Domain : Type*}
 
@@ -437,7 +439,7 @@ theorem Formula.IsNEFree.mapAtoms
 /-- The monadic signature on `Const` and `Pred`: one individual constant per
     `Const`, one unary relation symbol per `Pred` — [aloni-vanormondt-2023]
     Definition 4.1's signature (terms `t := c | x`, monadic relations). -/
-def monadicLang.{u, v} (Const : Type u) (Pred : Type v) :
+def _root_.FirstOrder.Language.monadic.{u, v} (Const : Type u) (Pred : Type v) :
     FirstOrder.Language where
   Functions := fun n => match n with
     | 0 => Const
@@ -450,17 +452,17 @@ def monadicLang.{u, v} (Const : Type u) (Pred : Type v) :
     analogue of mathlib's per-symbol abbreviations, cf.
     `Fragments/English/Toy.lean`). -/
 abbrev monadicConst {Const Pred : Type*} (c : Const) :
-    (monadicLang Const Pred).Constants := c
+    (Language.monadic Const Pred).Constants := c
 
 /-- A predicate as a relation symbol of the monadic signature (defeq). -/
 abbrev monadicRel {Const Pred : Type*} (P : Pred) :
-    (monadicLang Const Pred).Relations 1 := P
+    (Language.monadic Const Pred).Relations 1 := P
 
-/-- The `monadicLang Const Pred` structure a constant interpretation and a
+/-- The `Language.monadic Const Pred` structure a constant interpretation and a
     predicate valuation induce. -/
 @[reducible] def monadicStructure {Const Pred Domain : Type*}
     (κ : Const → Domain) (V : Pred → Domain → Prop) :
-    (monadicLang Const Pred).Structure Domain where
+    (Language.monadic Const Pred).Structure Domain where
   funMap := fun {n} f => match n, f with
     | 0, c => fun _ => κ c
     | _ + 1, f => f.elim
@@ -489,7 +491,7 @@ abbrev monadicRel {Const Pred : Type*} (P : Pred) :
     construction, not by bridge. -/
 abbrev Model (W : Type*) (Domain : Type*) (Const : Type*)
     (Pred : Type*) :=
-  FirstOrder.Language.KripkeStructure (monadicLang Const Pred) W Domain
+  FirstOrder.Language.KripkeStructure (Language.monadic Const Pred) W Domain
 
 /-- The predicate denotation at a world, read off the model's structure
     family via `Structure.RelMap` — the world-relativized `I(w)(Pⁿ)` of
@@ -509,20 +511,23 @@ def _root_.FirstOrder.Language.KripkeStructure.cInterp
     (M : Model W Domain Const Pred) (c : Const) (w : W) : Domain :=
   (M.interp w).funMap (monadicConst c) default
 
-@[simp] theorem _root_.FirstOrder.Language.KripkeStructure.pInterp_monadicStructure
-    {W Domain Const Pred : Type*} (access : W → Finset W)
-    (κ : W → Const → Domain) (V : W → Pred → Domain → Prop) (P : Pred)
-    (w : W) (d : Domain) :
-    FirstOrder.Language.KripkeStructure.pInterp
-      ⟨access, fun w => monadicStructure (κ w) (V w)⟩ P w d ↔ V w P d :=
+/-- The QBSML model with accessibility `access`, constant interpretation
+    `κ`, and valuation `V`. -/
+def Model.ofMonadic {W Domain Const Pred : Type*} (access : W → Finset W)
+    (κ : W → Const → Domain) (V : W → Pred → Domain → Prop) :
+    Model W Domain Const Pred :=
+  ⟨access, fun w => monadicStructure (κ w) (V w)⟩
+
+@[simp] theorem pInterp_ofMonadic {W Domain Const Pred : Type*}
+    (access : W → Finset W) (κ : W → Const → Domain)
+    (V : W → Pred → Domain → Prop) (P : Pred) (w : W) (d : Domain) :
+    (Model.ofMonadic access κ V).pInterp P w d ↔ V w P d :=
   Iff.rfl
 
-@[simp] theorem _root_.FirstOrder.Language.KripkeStructure.cInterp_monadicStructure
-    {W Domain Const Pred : Type*} (access : W → Finset W)
-    (κ : W → Const → Domain) (V : W → Pred → Domain → Prop) (c : Const)
-    (w : W) :
-    FirstOrder.Language.KripkeStructure.cInterp
-      ⟨access, fun w => monadicStructure (κ w) (V w)⟩ c w = κ w c :=
+@[simp] theorem cInterp_ofMonadic {W Domain Const Pred : Type*}
+    (access : W → Finset W) (κ : W → Const → Domain)
+    (V : W → Pred → Domain → Prop) (c : Const) (w : W) :
+    (Model.ofMonadic access κ V).cInterp c w = κ w c :=
   rfl
 
 /-! ### Bilateral evaluation -/

@@ -55,9 +55,8 @@ inductive Predicate | P | Q
 /-- Universal-access model on `TwoAtomWorld`: every world is accessible,
     and both predicates hold of `d` at `w` iff `w` models the atom `d`.
     Cf. `Aloni2022.deonticModel`. -/
-def univAccessModel : Model TwoAtomWorld FCAtom FCAtom Predicate where
-  access := λ _ => Finset.univ
-  interp := λ w => monadicStructure id (λ _ d => w.holds d)
+def univAccessModel : Model TwoAtomWorld FCAtom FCAtom Predicate :=
+  .ofMonadic (λ _ => Finset.univ) (λ _ => id) (λ w _ d => w.holds d)
 
 /-! ### Formulas -/
 
@@ -120,12 +119,12 @@ theorem support_possPxOrQx_iff
 /-- The closed standard translation of `∀x(Px ∨ Qx)`: quantifiers
     relativized to the individual sort, predicates world-relativized to the
     current-world variable `Sum.inr 0`. -/
-def stUnivPxOrQx : (stLang FCAtom Predicate).Formula (QVar ⊕ ℕ) :=
+def stUnivPxOrQx : (Language.correspondence FCAtom Predicate).Formula (QVar ⊕ ℕ) :=
   Formula.all₁ (Sum.inl QVar.x)
-    ((stIndiv.formula₁ (Term.var (Sum.inl QVar.x))).imp
-      ((stRel Predicate.P).formula₂ (Term.var (Sum.inr 0))
+    ((corrIndiv.formula₁ (Term.var (Sum.inl QVar.x))).imp
+      ((corrRel Predicate.P).formula₂ (Term.var (Sum.inr 0))
           (Term.var (Sum.inl QVar.x)) ⊔
-        (stRel Predicate.Q).formula₂ (Term.var (Sum.inr 0))
+        (corrRel Predicate.Q).formula₂ (Term.var (Sum.inr 0))
           (Term.var (Sum.inl QVar.x))))
 
 /-- The closure is a genuine sentence: the compiler computes the
@@ -135,13 +134,13 @@ theorem stUnivPxOrQx_closed :
 
 /-- The sort-guarded closed standard translation of `∀x(Px ∨ Qx)`, as a
     sentence. -/
-def stUnivPxOrQxSentence : (stLang FCAtom Predicate).Sentence :=
+def stUnivPxOrQxSentence : (Language.correspondence FCAtom Predicate).Sentence :=
   (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed
 
-local instance : (stLang FCAtom Predicate).Structure (TwoAtomWorld ⊕ FCAtom) :=
-  univAccessModel.stStructure
+local instance : (Language.correspondence FCAtom Predicate).Structure (TwoAtomWorld ⊕ FCAtom) :=
+  univAccessModel.corrStructure
 
-/-- Truth of the standard-translation sentence in `univAccessModel.stStructure`
+/-- Truth of the standard-translation sentence in `univAccessModel.corrStructure`
     is support of `∀x(Px ∨ Qx)` at some singleton with a total assignment —
     the compactness-ready form of Proposition 4.1, every translation step
     (`toModal?`, `st?`, the free-variable check) computed by the compiler. -/
@@ -260,9 +259,8 @@ def fig14V (w : TwoAtomWorld) : Predicate → Fig14Atom → Prop
   | .P, d => d = .a ∧ w.holds .a
   | .Q, d => d = .b ∧ w.holds .b
 
-def fig14Model : Model TwoAtomWorld Fig14Atom Fig14Atom Predicate where
-  access := λ _ => {TwoAtomWorld.both}
-  interp := λ w => monadicStructure id (fig14V w)
+def fig14Model : Model TwoAtomWorld Fig14Atom Fig14Atom Predicate :=
+  .ofMonadic (λ _ => {TwoAtomWorld.both}) (λ _ => id) fig14V
 
 def fig14Index : Index TwoAtomWorld QVar Fig14Atom :=
   (TwoAtomWorld.both, fun _ => none)

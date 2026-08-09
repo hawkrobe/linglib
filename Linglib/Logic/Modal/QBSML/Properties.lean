@@ -612,7 +612,7 @@ theorem support_exi_of_update_closure (M : Model W Domain Const Pred)
 [aloni-vanormondt-2023] Proposition 4.1 reduces the NE-free fragment to
 classical quantified modal logic. The modal-free part of that reduction is
 stated against mathlib first-order satisfaction: `Formula.toFormula?`
-translates the fragment into `(monadicLang Const Pred).Formula Var` — quantifiers
+translates the fragment into `(Language.monadic Const Pred).Formula Var` — quantifiers
 via the computable named binders `Formula.all₁` / `Formula.ex₁` of
 `Core/ModelTheory/Binders.lean` — support at a singleton state is
 `Formula.Realize` in the structure the model carries at that world
@@ -660,7 +660,7 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Finty
     binders `Formula.all₁` / `Formula.ex₁` (`none` on `NE` and modal
     formulas). -/
 def Formula.toFormula? :
-    Formula Var Const Pred → Option ((monadicLang Const Pred).Formula Var)
+    Formula Var Const Pred → Option ((Language.monadic Const Pred).Formula Var)
   | .pred P x => some ((monadicRel P).formula₁ (Term.var x))
   | .predc P c => some ((monadicRel P).formula₁ (Constants.term (monadicConst c)))
   | .neg φ => φ.toFormula?.map (·.not)
@@ -673,7 +673,7 @@ def Formula.toFormula? :
 omit [DecidableEq W] [Fintype Var] in
 /-- Translatable formulas are NE-free. -/
 theorem isNEFree_of_toFormula? :
-    ∀ {φ : Formula Var Const Pred} {ψ : (monadicLang Const Pred).Formula Var},
+    ∀ {φ : Formula Var Const Pred} {ψ : (Language.monadic Const Pred).Formula Var},
       φ.toFormula? = some ψ → φ.IsNEFree := by
   intro φ
   induction φ with
@@ -735,7 +735,7 @@ private lemma update_refines {i : Index W Var Domain} {v : Var → Domain}
     valuation. -/
 private theorem support_and_antiSupport_singleton_realizeAt
     (M : Model W Domain Const Pred) :
-    ∀ {φ : Formula Var Const Pred} {ψ : (monadicLang Const Pred).Formula Var},
+    ∀ {φ : Formula Var Const Pred} {ψ : (Language.monadic Const Pred).Formula Var},
       φ.toFormula? = some ψ →
       ∀ {i : Index W Var Domain} {v : Var → Domain},
         (∀ y, i.assign y = some (v y)) →
@@ -973,7 +973,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
     classical first-order satisfaction at that index's world, for any total
     valuation the index's partial assignment refines. -/
 theorem support_singleton_iff_realizeAt (M : Model W Domain Const Pred)
-    {φ : Formula Var Const Pred} {ψ : (monadicLang Const Pred).Formula Var}
+    {φ : Formula Var Const Pred} {ψ : (Language.monadic Const Pred).Formula Var}
     (hψ : φ.toFormula? = some ψ) {i : Index W Var Domain}
     {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
     support M φ {i} ↔ M.RealizeAt i.world ψ v :=
@@ -982,7 +982,7 @@ theorem support_singleton_iff_realizeAt (M : Model W Domain Const Pred)
 /-- Anti-support of a translatable formula at a singleton state is the
     classical falsity of its translation. -/
 theorem antiSupport_singleton_iff_realizeAt (M : Model W Domain Const Pred)
-    {φ : Formula Var Const Pred} {ψ : (monadicLang Const Pred).Formula Var}
+    {φ : Formula Var Const Pred} {ψ : (Language.monadic Const Pred).Formula Var}
     (hψ : φ.toFormula? = some ψ) {i : Index W Var Domain}
     {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
     antiSupport M φ {i} ↔ ¬ M.RealizeAt i.world ψ v :=
@@ -993,7 +993,7 @@ theorem antiSupport_singleton_iff_realizeAt (M : Model W Domain Const Pred)
     satisfied at every index — `M, s ⊨ φ(x̄)` iff `M, w ⊨_g φ(x̄)` for all
     `⟨w, g⟩ ∈ s`, with the right-hand side mathlib's `Formula.Realize`. -/
 theorem support_iff_forall_realizeAt (M : Model W Domain Const Pred)
-    {φ : Formula Var Const Pred} {ψ : (monadicLang Const Pred).Formula Var}
+    {φ : Formula Var Const Pred} {ψ : (Language.monadic Const Pred).Formula Var}
     (hψ : φ.toFormula? = some ψ) (s : Finset (Index W Var Domain))
     (v : Index W Var Domain → Var → Domain)
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
@@ -1015,7 +1015,7 @@ every index. The translation is total on exactly the NE-free fragment. -/
     quantifiers become named binders; only `NE` returns `none`. -/
 def Formula.toModal? :
     Formula Var Const Pred →
-      Option (ModalFormula (monadicLang Const Pred) Var)
+      Option (ModalFormula (Language.monadic Const Pred) Var)
   | .pred P x => some (.ofFormula ((monadicRel P).formula₁ (Term.var x)))
   | .predc P c =>
       some (.ofFormula ((monadicRel P).formula₁
@@ -1034,7 +1034,7 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] in
 /-- Modally translatable formulas are NE-free. -/
 theorem isNEFree_of_toModal? :
     ∀ {φ : Formula Var Const Pred}
-      {τ : ModalFormula (monadicLang Const Pred) Var},
+      {τ : ModalFormula (Language.monadic Const Pred) Var},
       φ.toModal? = some τ → φ.IsNEFree := by
   intro φ
   induction φ with
@@ -1118,7 +1118,7 @@ theorem exists_toModal?_of_isNEFree :
 private theorem support_and_antiSupport_singleton_realize
     (M : Model W Domain Const Pred) :
     ∀ {φ : Formula Var Const Pred}
-      {τ : ModalFormula (monadicLang Const Pred) Var},
+      {τ : ModalFormula (Language.monadic Const Pred) Var},
       φ.toModal? = some τ →
       ∀ {i : Index W Var Domain} {v : Var → Domain},
         (∀ y, i.assign y = some (v y)) →
@@ -1400,7 +1400,7 @@ private theorem support_and_antiSupport_singleton_realize
     singleton state is Kripke satisfaction at that index's world. -/
 theorem support_singleton_iff_realize (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
-    {τ : ModalFormula (monadicLang Const Pred) Var}
+    {τ : ModalFormula (Language.monadic Const Pred) Var}
     (hτ : φ.toModal? = some τ) {i : Index W Var Domain}
     {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
     support M φ {i} ↔ τ.Realize M i.world v :=
@@ -1410,7 +1410,7 @@ theorem support_singleton_iff_realize (M : Model W Domain Const Pred)
     classical modal falsity. -/
 theorem antiSupport_singleton_iff_realize (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
-    {τ : ModalFormula (monadicLang Const Pred) Var}
+    {τ : ModalFormula (Language.monadic Const Pred) Var}
     (hτ : φ.toModal? = some τ) {i : Index W Var Domain}
     {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
     antiSupport M φ {i} ↔ ¬ τ.Realize M i.world v :=
@@ -1423,7 +1423,7 @@ theorem antiSupport_singleton_iff_realize (M : Model W Domain Const Pred)
     satisfaction over mathlib structures. -/
 theorem support_iff_forall_realize (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
-    {τ : ModalFormula (monadicLang Const Pred) Var}
+    {τ : ModalFormula (Language.monadic Const Pred) Var}
     (hτ : φ.toModal? = some τ) (s : Finset (Index W Var Domain))
     (v : Index W Var Domain → Var → Domain)
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
