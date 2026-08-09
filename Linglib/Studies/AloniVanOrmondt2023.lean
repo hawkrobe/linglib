@@ -251,12 +251,8 @@ theorem fact10_negation
 
 /-! ### Fact 4 (obviation): the Fig. 14 countermodel
 
-The paper's Fig. 14: a single index at the world where `Pa` and `Qb` both
-hold, with an empty assignment and reflexive-only access. Its universal
-`x`-extension supports the enriched disjunction by splitting *horizontally*
-(`x/a` supports `Px`, `x/b` supports `Qx`), so the enriched premise holds;
-but `∀x(◇Px ∧ ◇Qx)` fails because the `x/b` index cannot see any world
-where `P` holds of `b`. -/
+The paper's Fig. 14: a single index at the world `both` with the empty
+assignment, every world seeing exactly `{both}`. -/
 
 /-- The Fig. 14 domain: exactly the paper's two objects. (The third
     `FCAtom` atom would give the universal extension an `x/c` index
@@ -265,34 +261,28 @@ where `P` holds of `b`. -/
 inductive Fig14Atom | a | b
   deriving DecidableEq, Repr, Fintype
 
-/-- Fig. 14 valuation: `P` holds exactly of `a`, and `Q` exactly of `b`,
-    wherever the world carries the corresponding atom — so `P` and `Q` have
-    *divergent* extensions, unlike `univAccessModel`'s. -/
+/-- Fig. 14 valuation: `P` holds exactly of `a` and `Q` exactly of `b` —
+    divergent extensions, unlike `univAccessModel`'s. -/
 def fig14V (w : TwoAtomWorld) : Predicate → Fig14Atom → Prop
   | .P, d => d = .a ∧ w.holds .a
   | .Q, d => d = .b ∧ w.holds .b
 
-/-- The Fig. 14 model: reflexive-only access at the `both` world. -/
 def fig14Model : Model TwoAtomWorld Fig14Atom Fig14Atom Predicate where
   access := λ _ => {TwoAtomWorld.both}
   interp := λ w => monadicStructure id (fig14V w)
 
-/-- The Fig. 14 index: the `both` world with the empty assignment. -/
 def fig14Index : Index TwoAtomWorld QVar Fig14Atom :=
   (TwoAtomWorld.both, fun _ => none)
 
-/-- The Fig. 14 state: the single-index state of the counterexample. -/
 def fig14State : Finset (Index TwoAtomWorld QVar Fig14Atom) := {fig14Index}
 
-/-- The Fig. 14 accessibility is state-based on the countermodel state —
-    the epistemic reading Fact 4 assumes ("we assume again that ◇ is an
-    epistemic modal"). Obviation is thus not an artifact of dropping the
+/-- The countermodel's `R` is state-based on its state — the epistemic
+    reading Fact 4 assumes, so obviation is not an artifact of dropping the
     frame condition behind ignorance. -/
 theorem fig14_stateBased : fig14Model.IsStateBased fig14State := by decide
 
-/-- The Fig. 14 state supports the enriched premise `[∀x(Px ∨ Qx)]⁺`: its
-    universal extension splits into the `x/a` half supporting `[Px]⁺` and
-    the `x/b` half supporting `[Qx]⁺` (paper Fig. 15). -/
+/-- The universal extension splits into the `x/a` half supporting `[Px]⁺`
+    and the `x/b` half supporting `[Qx]⁺` (paper Fig. 15). -/
 theorem fig14_premise : support fig14Model univPxOrQx.enrich fig14State := by
   refine ⟨?_, Finset.singleton_nonempty _⟩
   show support fig14Model (Formula.disj Px Qx).enrich
@@ -311,9 +301,8 @@ theorem fig14_premise : support fig14Model univPxOrQx.enrich fig14State := by
     exact ⟨.b, rfl, rfl, rfl⟩
   · decide
 
-/-- The Fig. 14 state does **not** support `∀x(◇Px ∧ ◇Qx)`: at the `x/b`
-    index the only accessible world is `both`, where `P` holds of `a` alone
-    (paper Fig. 16's failing substate). -/
+/-- At the `x/b` index the only accessible world is `both`, where `P`
+    holds of `a` alone (paper Fig. 16's failing substate). -/
 theorem fig14_conclusion_fails :
     ¬ support fig14Model (.univ .x (.conj (.poss Px) (.poss Qx)))
       fig14State := by
@@ -326,10 +315,8 @@ theorem fig14_conclusion_fails :
   obtain rfl := Option.some.inj hd
   exact Fig14Atom.noConfusion hP.1
 
-/-- **Fact 4 (obviation)** of [aloni-vanormondt-2023]: the universal
-    quantifier obviates the free-choice/ignorance effect —
-    `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)`, witnessed by the Fig. 14
-    countermodel. -/
+/-- **Fact 4** (obviation): `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)` — the
+    universal quantifier obviates the free-choice/ignorance effect. -/
 theorem fact4_obviation :
     ∃ (M : Model TwoAtomWorld Fig14Atom Fig14Atom Predicate)
       (s : Finset (Index TwoAtomWorld QVar Fig14Atom)),
