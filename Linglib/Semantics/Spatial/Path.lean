@@ -21,7 +21,7 @@ boundedness; the event-side telicity transfer lives in
   spatial half of the movement relations in `Studies/Krifka1998.lean`.
 -/
 
-namespace Semantics.Spatial
+namespace Spatial
 
 /-! ### Paths -/
 
@@ -49,9 +49,12 @@ structure Path (Loc : Type*) where
     - `source`: origin-oriented ("from the store", "out of the room")
 
     This classifies the *set of paths* denoted by a PP, not individual
-    paths. "To X" denotes {p | p.goal = X} — a QUA set (no proper
-    subpath of a to-X path is also to-X). "Towards X" denotes a CUM
-    set (concatenating two towards-X paths gives another). -/
+    paths, by closure under path concatenation: "towards X" denotes a
+    cumulative set (concatenating two towards-X paths gives another),
+    while "to X" strictly read denotes a set with no concatenable pairs
+    at all. [zwarts-2005] shows bounded PPs are *not* quantized — a to-X
+    path has proper to-X subpaths — so boundedness is non-cumulativity,
+    not `Mereology.QUA`; see `Studies/Zwarts2005.lean`. -/
 inductive PathShape where
   | bounded
   | unbounded
@@ -88,4 +91,4 @@ theorem Path.adjacent_self {Loc : Type*} {p : Path Loc} :
     p.adjacent p ↔ p.goal = p.source :=
   or_self_iff
 
-end Semantics.Spatial
+end Spatial

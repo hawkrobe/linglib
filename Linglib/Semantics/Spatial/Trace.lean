@@ -27,7 +27,7 @@ homomorphism (`Mereology.IsSumHom`) and injectivity — are stated at use sites.
 open Features
 open Mereology
 
-namespace Semantics.Spatial
+namespace Spatial
 
 /-- Spatial trace: `σ e` is the path traversed in event `e` ([zwarts-2005],
     [gawron-2009]), parallel to the temporal trace τ (`Event.runtime`).
@@ -47,8 +47,11 @@ variable {Loc Time : Type*} [LinearOrder Time] [Event.Mereology Time]
   [st : Trace Loc Time] {P : Path Loc → Prop}
 
 /-- Bounded path predicate → telic VP: QUA pulls back through an injective
-    sum-homomorphic σ. *Walk to the store* is telic because *to the store*
-    denotes a QUA set of paths ([zwarts-2005]). -/
+    sum-homomorphic σ — [krifka-1998]'s quantization route to telicity,
+    stated for path predicates. [zwarts-2005] argues bounded PPs are not in
+    fact quantized (bounded = non-cumulative instead; see
+    `Studies/Zwarts2005.lean`), so this theorem records the Krifka-style
+    analysis, applicable when a path predicate is QUA. -/
 theorem bounded_path_telic [hσ : IsSumHom st.σ]
     (hinj : Function.Injective st.σ) (hP : QUA P) : QUA (P ∘ st.σ) :=
   qua_of_injective_sumHom hσ hinj hP
@@ -79,4 +82,4 @@ theorem telicity_boundedness_agree (s : PathShape) :
 
 end Trace
 
-end Semantics.Spatial
+end Spatial
