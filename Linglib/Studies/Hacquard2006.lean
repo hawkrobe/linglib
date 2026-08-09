@@ -121,25 +121,23 @@ end CondoravdiBridge
 /-! ### Worked example: "Jane a dû prendre le train" (201)
 
 `Examples.ex201` is ambiguous between an epistemic and a goal-oriented
-reading. The two readings differ only in the event that anchors the modal:
+reading, which differ only in the event that anchors the modal:
 
 | Reading | Event | holder(e) | τ(e) | Modal domain |
 |---------|-------|-----------|------|--------------|
 | Epistemic | speech act | speaker | now | speaker's evidence now |
 | Goal-oriented | VP event | Jane | then | Jane's circumstances then |
-
-The same modal *devoir* gets different parameters from different event
-bindings; no lexical ambiguity is needed. -/
+-/
 
 /-- Two individuals in the train scenario. -/
 inductive TrainPerson where | speaker | jane
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr
 
-/-- Two time points: speech time and the past event time. -/
+/-- Speech time and the past event time. -/
 inductive TrainTime where | now | then
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr
 
-/-- Two events: the speech act and Jane's train-taking. -/
+/-- The speech act and Jane's train-taking. -/
 inductive TrainEvent where | speechAct | janesTaking
   deriving DecidableEq, Repr
 
@@ -153,70 +151,40 @@ def trainProjection : EventProjection TrainEvent TrainPerson TrainTime where
     | .speechAct => .now
     | .janesTaking => .then
 
-/-- Speech event projects to (speaker, now). -/
-theorem speech_projects_to_speaker_now :
-    trainProjection.toPair .speechAct = ⟨.speaker, .now⟩ := rfl
-
-/-- VP event projects to (Jane, then). -/
-theorem vp_projects_to_jane_then :
-    trainProjection.toPair .janesTaking = ⟨.jane, .then⟩ := rfl
-
-/-- The same modal (*devoir*) gets different individual-time pairs from
-different event bindings: the epistemic reading relativizes to the
-speaker's evidence now, the goal-oriented reading to Jane's circumstances
-then. -/
-theorem same_modal_different_params :
-    trainProjection.toPair .speechAct ≠
-    trainProjection.toPair .janesTaking := by decide
-
-/-- Two worlds: one where Jane took the train, one where she didn't. -/
+/-- One world where Jane took the train, one where she didn't. -/
 inductive TrainWorld where | took | didnt
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr
 
-/-- Epistemic anchoring (via speech event): the speaker considers both
-worlds possible (no decisive evidence either way), so the background is
-empty at every projection. -/
-private def epistemicBg : TrainPerson → TrainTime → ConvBackground TrainWorld :=
-  λ _ _ _ => []
-
-/-- Goal-oriented anchoring (via VP event): given Jane's circumstances at
-the past time, only the took-world is compatible. -/
-private def goalBg : TrainPerson → TrainTime → ConvBackground TrainWorld
+/-- The scenario's facts by projected pair: the speaker's evidence now is
+undecided; Jane's circumstances then force the train. -/
+private def trainBg : TrainPerson → TrainTime → ConvBackground TrainWorld
   | .jane, .then, _ => [λ w => w = .took]
   | _, _, _ => []
 
-/-- The epistemic anchoring function (factored through projection). -/
-private def fEpistemicTrain : AnchoringFn TrainEvent TrainWorld :=
-  factoredAnchoring trainProjection epistemicBg
+/-- The single anchoring for *devoir*: no lexical ambiguity, just `trainBg`
+read through the projection. -/
+private def trainAnchoring : AnchoringFn TrainEvent TrainWorld :=
+  factoredAnchoring trainProjection trainBg
 
-/-- The goal-oriented anchoring function (factored through projection). -/
-private def fGoalTrain : AnchoringFn TrainEvent TrainWorld :=
-  factoredAnchoring trainProjection goalBg
-
-/-- Epistemic reading: modal anchored to the speech event.
-`◇_{f(e₀)} took` holds because the speaker considers `took` possible. -/
+/-- `took` is possible when the modal is anchored to the speech event —
+the epistemic reading. -/
 theorem epistemic_reading_possible :
-    simplePossibility (fEpistemicTrain .speechAct) (· = .took) .took :=
-  ⟨.took, by simp [fEpistemicTrain, factoredAnchoring, epistemicBg, kratzerR], rfl⟩
+    simplePossibility (trainAnchoring .speechAct) (· = .took) .took :=
+  ⟨.took, fun _ h => (List.not_mem_nil h).elim, rfl⟩
 
-/-- Goal-oriented reading: modal anchored to the VP event.
-`□_{f(e)} took` holds because only `took` is accessible. -/
+/-- `took` is necessary when the modal is anchored to the VP event — the
+goal-oriented reading. -/
 theorem goal_reading_necessary :
-    simpleNecessity (fGoalTrain .janesTaking) (· = .took) .took := by
-  intro w' hw'
-  simpa [fGoalTrain, factoredAnchoring, trainProjection, goalBg,
-    accessibleWorlds, kratzerR] using hw'
+    simpleNecessity (trainAnchoring .janesTaking) (· = .took) .took :=
+  fun _ h => h _ (List.Mem.head _)
 
-/-- The goal-oriented anchoring restricts the accessible worlds more than
-the epistemic one: the didnt-world is epistemically accessible but not
-goal-accessible. Both readings use the same modal; the difference comes
-entirely from the event bindings. -/
-theorem goal_restricts_more :
-    kratzerR (fEpistemicTrain .speechAct) .took .didnt ∧
-    ¬ kratzerR (fGoalTrain .janesTaking) .took .didnt := by
-  constructor <;>
-    simp [fEpistemicTrain, fGoalTrain, factoredAnchoring, trainProjection,
-      epistemicBg, goalBg, kratzerR]
+/-- The didnt-world is accessible from the speech event but not from the
+VP event. -/
+theorem same_modal_different_domains :
+    kratzerR (trainAnchoring .speechAct) .took .didnt ∧
+    ¬ kratzerR (trainAnchoring .janesTaking) .took .didnt :=
+  ⟨fun _ h => (List.not_mem_nil h).elim,
+   fun h => nomatch h _ (List.Mem.head _)⟩
 
 /-! ### Aspect-bound epistemics: (246)–(248)
 
@@ -231,7 +199,7 @@ speech-bound reading instead reports the speaker's evidence. -/
 
 /-- Two worlds for the (247b) scenario. -/
 inductive DarcyWorld where | loves | lovesNot
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr
 
 /-- Two candidate binders for the modal in (247b): the matrix speech act
 and Jane's thinking event. -/
@@ -245,29 +213,27 @@ private def fPenser : AnchoringFn PenserEvent DarcyWorld
   | .speech, _ => []
   | .thinking, _ => [λ w => w = .loves]
 
-/-- Aspect-bound epistemic: the modal bound to Jane's thinking event
-expresses an epistemic necessity for Jane — under CON(thinking), only the
-loves-world is accessible. -/
+/-- Bound to Jane's thinking event, `loves` is necessary — an epistemic
+necessity for Jane. -/
 theorem aspect_bound_epistemic_necessity :
-    simpleNecessity (fPenser .thinking) (· = .loves) .lovesNot := by
-  intro w' hw'
-  simpa [fPenser, accessibleWorlds, kratzerR] using hw'
+    simpleNecessity (fPenser .thinking) (· = .loves) .lovesNot :=
+  fun _ h => h _ (List.Mem.head _)
 
-/-- Speech-bound epistemic: bound to the speech event, both worlds remain
-possible for the speaker. -/
+/-- Bound to the speech event, both worlds remain possible for the
+speaker. -/
 theorem speech_bound_both_possible :
     simplePossibility (fPenser .speech) (· = .loves) .lovesNot ∧
     simplePossibility (fPenser .speech) (· = .lovesNot) .lovesNot :=
-  ⟨⟨.loves, by simp [fPenser, kratzerR], rfl⟩,
-   ⟨.lovesNot, by simp [fPenser, kratzerR], rfl⟩⟩
+  ⟨⟨.loves, fun _ h => (List.not_mem_nil h).elim, rfl⟩,
+   ⟨.lovesNot, fun _ h => (List.not_mem_nil h).elim, rfl⟩⟩
 
-/-- Same modal, different binders, different epistemic domains: the
-lovesNot-world is accessible from the speech event but not from Jane's
-thinking event. -/
+/-- The lovesNot-world is accessible from the speech event but not from
+Jane's thinking event. -/
 theorem binding_determines_epistemic_domain :
     kratzerR (fPenser .speech) .lovesNot .lovesNot ∧
-    ¬ kratzerR (fPenser .thinking) .lovesNot .lovesNot := by
-  constructor <;> simp [fPenser, kratzerR]
+    ¬ kratzerR (fPenser .thinking) .lovesNot .lovesNot :=
+  ⟨fun _ h => (List.not_mem_nil h).elim,
+   fun h => nomatch h _ (List.Mem.head _)⟩
 
 /-! ### Actuality entailments
 
