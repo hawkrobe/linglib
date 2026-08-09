@@ -90,10 +90,10 @@ inductive GenderContext where
   | differentGender  -- different gender (pronoun unambiguous)
   deriving DecidableEq, Repr
 
-/-- The gender context of a referent pair, derived from the tokens' φ-features:
-    for the fully-φ-specified character tokens of the stimuli, `sameGender` ⟺
-    the tokens φ-agree (`Word.Agree`) — exactly the pairs a third-singular
-    gendered pronoun cannot discriminate. -/
+/-- The gender context of a referent pair. For the fully-φ-specified stimulus
+    tokens, a pair is `sameGender` exactly when the tokens φ-agree
+    (`Word.Agree`) — the pairs a third-singular gendered pronoun cannot
+    discriminate. -/
 def GenderContext.ofReferents (w1 w2 : Morphology.Word) : GenderContext :=
   if w1.Agree w2 then .sameGender else .differentGender
 
@@ -106,13 +106,13 @@ def brendan : Morphology.Word :=
   ⟨"Brendan", .PROPN, { person := some .third, number := some .Sing, gender := some .Masc }⟩
 
 /-- The running example is a `differentGender` item, derived from the tokens'
-    φ-features rather than stipulated. -/
+    φ-features. -/
 theorem lisa_brendan_context :
     GenderContext.ofReferents lisa brendan = .differentGender := by decide
 
-/-- What `differentGender` buys the speaker: *she* (the English Fragment entry)
-    picks out Lisa and excludes Brendan, so a pronoun is unambiguous — the
-    condition under which pronoun rates rise. -/
+/-- In a `differentGender` pair *she* (the English Fragment entry) picks out
+    Lisa and excludes Brendan, so a pronoun is unambiguous — the condition
+    under which pronoun rates rise. -/
 theorem differentGender_phi_resolves :
     Proform.Agree English.Pronouns.she lisa ∧
       ¬ Proform.Agree English.Pronouns.she brendan := by decide

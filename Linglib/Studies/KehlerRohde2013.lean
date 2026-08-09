@@ -540,8 +540,8 @@ referent: the passages pair same-gender characters, so the prompt pronoun
 coherence prior and the topichood likelihood. The premise is checked against
 the English Fragment entry rather than stipulated. -/
 
-/-- The two characters of the running example ("Amanda amazed Brittany"), as
-    φ-bearing tokens: both third-person singular feminine. -/
+/-- The two characters of the running example ("Amanda amazed Brittany"), both
+    third-person singular feminine. -/
 def amanda : Word :=
   ⟨"Amanda", .PROPN, { person := some .third, number := some .Sing, gender := some .Fem }⟩
 
@@ -553,13 +553,12 @@ def masculineFoil : Word :=
   ⟨"Bill", .PROPN, { person := some .third, number := some .Sing, gender := some .Masc }⟩
 
 /-- The prompt *She* (the English Fragment entry) is φ-compatible with both
-    characters: gender cannot resolve the reference, so interpretation is left
-    to the coherence prior and topichood likelihood. -/
+    characters, so gender cannot resolve the reference. -/
 theorem she_ambiguous_over_stimuli :
     Proform.Agree English.Pronouns.she amanda ∧
       Proform.Agree English.Pronouns.she brittany := by decide
 
-/-- Against a mixed-gender pair the φ-filter resolves *she* by itself: the
+/-- Against a mixed-gender pair the φ-filter resolves *she* by itself; the
     same-gender design is what forces the Bayesian competition. -/
 theorem she_resolved_against_masculine :
     Proform.Agree English.Pronouns.she amanda ∧

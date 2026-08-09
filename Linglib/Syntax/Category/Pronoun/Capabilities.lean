@@ -45,8 +45,8 @@ open Morphology (Word)
 
 /-! ### The spine: `Proform` -/
 
-/-- A pronoun-like carrier: a surface `form` and agreement `phi`-features — the
-base the other capabilities build over. -/
+/-- A pro-form carrier is one that bears a surface `form` and agreement
+`phi`-features — the base the other capabilities build over. -/
 class Proform (α : Type*) where
   /-- Surface form (romanization or orthographic). -/
   form : α → String
@@ -60,9 +60,9 @@ instance : Proform PersonalPronoun :=
 
 /-! ### φ-agreement over carriers -/
 
-/-- φ-agreement between two pro-form carriers: their `phi`-features unify
-(`UD.MorphFeatures.compatible`), an unspecified feature acting as a wildcard —
-the carrier-generic form of `Word.Agree`. -/
+/-- Two pro-form carriers agree when their `phi`-features unify
+(`UD.MorphFeatures.compatible`), an unspecified feature acting as a wildcard.
+This is the carrier-generic form of `Word.Agree`. -/
 def Proform.Agree {α β : Type*} [Proform α] [Proform β] (a : α) (b : β) : Prop :=
   (Proform.phi a).compatible (Proform.phi b)
 
@@ -73,15 +73,14 @@ instance {α β : Type*} [Proform α] [Proform β] (a : α) (b : β) :
 /-- On word tokens, carrier-generic agreement is `Word.Agree`. -/
 theorem Proform.agree_word (w1 w2 : Word) : Proform.Agree w1 w2 ↔ w1.Agree w2 := Iff.rfl
 
-/-- A pronoun agrees exactly as its projected word does — `Proform.phi` on
-`Pronoun` is projection-then-φ by construction. -/
+/-- A pronoun agrees exactly as its projected word does. -/
 theorem Proform.agree_toWord {β : Type*} [Proform β] (p : Pronoun) (b : β) :
     Proform.Agree p b ↔ Proform.Agree p.toWord b := Iff.rfl
 
 /-! ### The pronoun carriers' `Bound` instances, and the faithfulness certificate -/
 
-/-- A bare `Pronoun`'s declared class, defaulting an undeclared φ-shell to Principle-B `.pronoun`
-([chomsky-1981]'s elsewhere case for a pro-form). -/
+/-- A bare `Pronoun`'s class is its declared `bindingClass`; an undeclared
+φ-shell defaults to Principle-B `.pronoun` ([chomsky-1981]'s elsewhere case). -/
 instance : Bound Pronoun := ⟨fun p => p.bindingClass.getD .pronoun⟩
 instance : Bound PersonalPronoun := ⟨fun p => p.toPronoun.bindingClass.getD .pronoun⟩
 
@@ -102,7 +101,7 @@ instance : HasNumber Pronoun := ⟨fun p => p.number⟩
 instance : HasNumber PersonalPronoun := ⟨fun p => numberOf p.toPronoun⟩
 
 /-- A pronoun's number survives projection to `Word` exactly on UD-expressible
-values: minimal/augmented are lost (`Number.toUD` is partial). -/
+values; the minimal/augmented values are lost, since `Number.toUD` is partial. -/
 theorem numberOf_toWord (p : Pronoun) :
     numberOf p.toWord = p.number.bind fun n => n.toUD.bind Number.fromUD := by
   show (p.number.bind Number.toUD).bind Number.fromUD = _
@@ -114,7 +113,8 @@ instance : HasPerson Pronoun := ⟨fun p => p.person⟩
 
 instance : HasPerson PersonalPronoun := ⟨fun p => personOf p.toPronoun⟩
 
-/-- Projection to `Word` coarsens person: UD realization has no clusivity. -/
+/-- Projection to `Word` coarsens person, since UD realization has no
+clusivity. -/
 theorem personOf_toWord (p : Pronoun) :
     personOf p.toWord = (personOf p).map Person.coarsen := by
   show (p.person.map Person.toUD).map Person.fromUD = p.person.map Person.coarsen
@@ -126,7 +126,7 @@ instance : HasCase Pronoun := ⟨fun p => p.case_⟩
 
 instance : HasCase PersonalPronoun := ⟨fun p => caseOf p.toPronoun⟩
 
-/-- Projection to `Word` preserves case: `Case.toUD` is a bijection. -/
+/-- Projection to `Word` preserves case, since `Case.toUD` is a bijection. -/
 theorem caseOf_toWord (p : Pronoun) : caseOf p.toWord = caseOf p := by
   show (p.case_.map Case.toUD).map Case.fromUD = p.case_
   simp [Option.map_map, Function.comp_def, Case.fromUD_toUD]
@@ -138,7 +138,7 @@ instance : HasGender Pronoun := ⟨fun p => p.gender⟩
 instance : HasGender PersonalPronoun := ⟨fun p => genderOf p.toPronoun⟩
 
 /-- A pronoun's gender survives projection to `Word` exactly on UD-expressible
-values: the animacy-based labels are lost (`Gender.toUD` is partial). -/
+values; the animacy-based labels are lost, since `Gender.toUD` is partial. -/
 theorem genderOf_toWord (p : Pronoun) :
     genderOf p.toWord = p.gender.bind fun g => g.toUD.map Gender.fromUD := by
   show (p.gender.bind Gender.toUD).map Gender.fromUD = _
