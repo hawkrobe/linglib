@@ -54,7 +54,7 @@ per `(U, W)` pair — each study constructs its own bundle:
 
 - Multiplicative continuous semantics ([degen-etal-2020],
   [waldon-degen-2021]): per-word channel values composed by
-  `RSA.prefixMeaning` (`Sequential.lean`); see `Studies/WaldonDegen2021.lean`.
+  `Semantics.Probabilistic.prodMeaning`; see `Studies/WaldonDegen2021.lean`.
 - Extension-counting Boolean semantics
   (`CohnGordonEtAl2019.IncrementalSemantics` in
   `Studies/CohnGordonEtAl2019.lean`; [cohn-gordon-goodman-potts-2019]).
