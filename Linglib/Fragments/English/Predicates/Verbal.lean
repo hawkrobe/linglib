@@ -1,6 +1,6 @@
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Features.Complementation
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Morphology.Word.Basic
 
 open Morphology (Word)

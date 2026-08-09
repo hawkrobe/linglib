@@ -1,4 +1,4 @@
-import Linglib.Features.Complementation
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Syntax.Category.Verb.Frame
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Presupposition.Basic
