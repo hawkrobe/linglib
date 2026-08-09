@@ -15,8 +15,8 @@ enum for infinitival complements (`ControlType`).
 
 The typed complement-frame object, the flat `ComplementType` view, and
 the adapter (`ComplementType.toCoding`) live in
-`Syntax/Category/Verb/Frame.lean`; the verb–complementizer
-compatibility relation in `Syntax/Category/Verb/Takes.lean`.
+`Syntax/Category/Verb/Complement/Basic.lean`; the verb–complementizer
+compatibility relation in `Syntax/Category/Verb/Complement/Takes.lean`.
 `Data/Complementation/Schema.lean` types its rows with these enums —
 the one deliberate theory-layer import in `Data/`, carrying descriptive
 typological vocabulary rather than analytical commitments.
