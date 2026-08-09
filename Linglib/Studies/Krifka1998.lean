@@ -259,7 +259,7 @@ open Semantics.Spatial.Path
 
 variable {Loc Time : Type*} [LinearOrder Time]
 variable [Event.Mereology Time] [ClassicalMereology (Event Time)] [SemilatticeSup (Path Loc)]
-variable [st : Trace Loc Time]
+variable [st : Trace Loc Time] [IsSumHom st.σ]
 
 /-- Bounded path (QUA) ↦ telic VP via the σ-pullback (K98 §4.5 *walked from X to Y*). -/
 theorem walked_from_to_telic_propositional

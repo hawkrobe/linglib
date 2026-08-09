@@ -76,6 +76,9 @@ def PathShape.toBoundedness : PathShape → Core.Order.Boundedness
   | .source => .closed
   | .unbounded => .open_
 
+instance : Core.Order.LicensingPipeline PathShape where
+  toBoundedness := PathShape.toBoundedness
+
 /-- Bounded paths are licensed (closed scale → admits degree modification).
     [zwarts-2005]: "to the store" creates a telic VP because the path
     set is bounded, corresponding to a closed scale. -/
