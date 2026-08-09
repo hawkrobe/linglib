@@ -1,6 +1,7 @@
 import Linglib.Studies.Bondarenko2022
 import Linglib.Studies.Roussou2010
 import Linglib.Fragments.Greek.StandardModern.Complementizers
+import Linglib.Syntax.Category.Verb.Selection
 import Linglib.Data.Examples.Angelopoulos2026
 
 /-!
@@ -24,8 +25,8 @@ in `Angelopoulos2026.Examples`.
 
 ## Main definitions
 
-* `bearsN`, `otiOnlyVerbs`, `puOnlyVerbs`, `dualVerbs`: the §3.1
-  [n]-feature datum and the attested selection classes
+* `selectsLightNoun`, `otiOnlyVerbs`, `puOnlyVerbs`, `dualVerbs`: the
+  §3.1 light-noun datum and the attested selection classes
 * `NounHost`, `ClausePosition`, `licensedIn`: incorporation licensing
   by position
 * `selectsClause`, `AspectualHead.ofVendler`: the §4.1 stativity locus
@@ -35,13 +36,16 @@ in `Angelopoulos2026.Examples`.
 
 ## Main results
 
+* `frames_underdetermine_distribution`: `Verb.realizes` admits both
+  *oti* and *pu* on the whole sample — the §1 puzzle
 * `factivity_anti_aligned`: verb-level and C-level factivity are
   anti-aligned on the sample
 * `licensing_matches_judgments`: the position asymmetry against the
   ex. 31–32 judgments
 * `pu_complement_verb_stative`: the §2.3 verb-level stativity
   generalization, derived from §4.1 selection
-* `bearsN_iff_sorted`: the [n]-bearers are the sorted complementizers
+* `selectsLightNoun_iff_sorted`: the light-noun selectors are the
+  sorted complementizers
 * `transparency_conflates_axes`: the §7.3 counterclaim against
   `Bondarenko2022.transparentSSMapping`
 -/
@@ -52,24 +56,23 @@ open Greek.StandardModern.Complementizers
 open Bondarenko2022 (NominalSort CompositionPath)
 open Features (VendlerClass)
 
-/-! ### Reversed selection: the [n]-feature (§3.1) -/
+/-! ### Reversed selection: the light noun (§3.1) -/
 
-/-- *oti* and *pu* bear an uninterpretable [n]-feature checked by a
-light noun merged in their specifier (§3.1); *na* does not (its
-licensing is mood-driven). Paper-specific datum projected over the
-fragment entries; the paper is neutral on the category of *oti* and
-*pu* (fn. 3). -/
-def bearsN (c : Complementizer) : Prop := c = oti ∨ c = pu
+/-- *oti* and *pu* select a light noun in their specifier, checking an
+uninterpretable [n]-feature (§3.1); *na* does not (its licensing is
+mood-driven). Paper-specific datum over the fragment entries; the paper
+is neutral on the category of *oti* and *pu* (fn. 3). -/
+def selectsLightNoun (c : Complementizer) : Prop := c = oti ∨ c = pu
 
-instance : DecidablePred bearsN := fun c => by
-  unfold bearsN; infer_instance
+instance : DecidablePred selectsLightNoun :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-! ### The attested selection classes (§1–§2.3) -/
 
 /-- Matrix verbs attested with *oti* only (ex. 1a, 3–4, 21): saying,
-belief, knowledge. Study-local lists: the analysis derives selection
-from light-noun incorporation and aspectual-head selection (§3.1,
-§4.1), so no verb-level feature records it. -/
+belief, knowledge. Study-local lists: the frame axes underdetermine the
+split (`frames_underdetermine_distribution`), and the account derives
+it semantically (§3.2, §4.1) rather than from a verb-level feature. -/
 def otiOnlyVerbs : List Verb :=
   [leo, pistevo, ksero, katalaveno, sinidhitopio, eksigo]
 
@@ -82,19 +85,28 @@ stative *pu*-sense) pairs of sense-tagged fragment entries. -/
 def dualVerbs : List (Verb × Verb) :=
   [(thimame, thimameStat), (thimono, thimonoStat)]
 
+/-- The §1 puzzle through the `Verb.realizes` selection hom: every verb
+in the sample types both *oti*- and *pu*-clauses on the coding/force
+axes (both are finite indicative declaratives), while subjunctive *na*
+is already excluded — the *oti* ~ *pu* residue is what the
+content/situation account derives. -/
+theorem frames_underdetermine_distribution :
+    ∀ v ∈ otiOnlyVerbs ++ puOnlyVerbs,
+      v.realizes oti ∧ v.realizes pu ∧ ¬ v.realizes na := by
+  decide
+
 /-- The emotive/cognitive factivity split: verb-level and C-level
-factivity are anti-aligned on the sample. Among the *oti*-selectors
-exactly the knowledge verbs (*kséro*, *katalavéno*, *sinidhitopió*)
-carry `Verb.factivePresup`, while *oti* records no lexical factivity;
-the *pu*-only emotive factives all escape `factivePresup` (preferential
-rather than veridical-doxastic attitude) yet select lexically factive
-*pu*. Complement factivity thus has two independent sources — verb and
-complementizer — which the Greek data tease apart. -/
+factivity are anti-aligned on the sample. The complement-presupposing
+*oti*-selectors are exactly the knowledge verbs, while *oti* records no
+lexical factivity; no *pu*-only emotive factive presupposes lexically
+(preferential rather than veridical-doxastic attitude), yet *pu* is
+lexically factive. Complement factivity thus has two independent
+sources — verb and complementizer — which the Greek data tease apart. -/
 theorem factivity_anti_aligned :
     oti.factive = none ∧ pu.factive = some true ∧
-    otiOnlyVerbs.map (·.factivePresup) = [false, false, true, true, true, false] ∧
-    (∀ v ∈ puOnlyVerbs, v.factivePresup = false) := by
-  decide
+    otiOnlyVerbs.filter (·.factivePresup) = [ksero, katalaveno, sinidhitopio] ∧
+    puOnlyVerbs.filter (·.factivePresup) = [] :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
 /-! ### Incorporation licensing and the argument asymmetry (§3.1) -/
 
@@ -242,11 +254,11 @@ theorem clauseSort_matches_diagnostics :
     NominalSort.occurrenceCompatible .situation := by
   decide
 
-/-- The [n]-bearers are exactly the sorted complementizers: light-noun
+/-- The light-noun selectors are exactly the sorted complementizers:
 incorporation presupposes a clause sort for the noun to match
 (§3.1–§3.2); *an* and *na* fall outside both. -/
-theorem bearsN_iff_sorted :
-    ∀ c ∈ complementizers, (bearsN c ↔ (clauseSort c).isSome) := by
+theorem selectsLightNoun_iff_sorted :
+    ∀ c ∈ complementizers, (selectsLightNoun c ↔ (clauseSort c).isSome) := by
   decide
 
 /-- fn. 17's rebuttal of a reviewer's oti ~ pu allomorphy alternative,
