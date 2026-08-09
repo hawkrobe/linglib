@@ -1,494 +1,306 @@
 import Linglib.Semantics.Modality.TemporalAxes
 import Linglib.Semantics.Modality.EventRelativity
-import Mathlib.Data.List.Defs
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Modality.ActualityEntailments
+import Linglib.Data.Examples.Hacquard2006
 
 /-!
-# Event Projection → Temporal Orientation
+# Hacquard 2006: Aspects of Modality
 
-[hacquard-2006] [hacquard-2010] [condoravdi-2002] [kratzer-2012]
+[hacquard-2006]: modals are relative to an *event* of evaluation, and the
+event fixes both the individual and the time the accessibility relation is
+keyed to — its holder and temporal trace. A high modal (above Asp) is bound
+by the speech event in matrix clauses and by the attitude event under
+attitude verbs; a low modal (below Asp) is bound by aspect to the VP event,
+whose time is the one provided by tense. Root modals under perfective yield
+actuality entailments ([bhatt-1999]'s discovery, extended to French and
+Italian); epistemics, being above aspect, are immune.
 
-Derives the temporal orientation of modals from event projection. High modals
-get the speech time (present perspective); low modals get the event time
-(past perspective).
+Substrate note: the event-relative machinery (`EventBinder`,
+`ModalPosition`, `EventProjection`, content licensing) lives in
+`Semantics/Modality/EventRelativity.lean`, anchored to the journal version
+[hacquard-2010]; this file uses those project-canonical types.
 
-## The Pattern
+## Main results
 
-| Position | Event binder | holder(e) | τ(e) | Temporal orientation |
-|----------|-------------|-----------|------|---------------------|
-| High (above Asp) | speech act e₀ | speaker | speech time (now) | Present |
-| Low (below Asp) | VP event e₂ | agent | event time (then) | Past/event-local |
-
-## Hacquard's Derivation
-
-Individual-time pairs are DERIVED from events via projection functions
-`holder(e)` and `τ(e)`. Since high modals bind to the speech event and
-low modals bind to the VP event, their temporal parameters differ:
-
-- "Jane a dû prendre le train" ([hacquard-2006], (201)):
-  - Epistemic (high): τ(e₀) = now → "Given my evidence NOW,..."
-  - Root (low): τ(e₂) = then → "Given Jane's circumstances THEN,..."
-
-This connects `EventProjection` (EventRelativity §11) to the temporal
-perspective/orientation axes of `Semantics/Modality/TemporalAxes.lean`.
-
+* `positionToPerspective`, `embedded_high_shifts_perspective` — the temporal
+  perspective ([condoravdi-2002]) projected from the anchoring event, via
+  `ModalPosition.defaultBinder` / `withAttitude`.
+* `epistemic_reading_possible`, `goal_reading_necessary` — the two readings
+  of "Jane a dû prendre le train" (201) from one modal entry.
+* `aspect_bound_epistemic_necessity` — contentful complements license
+  aspect-bound epistemics (246)–(248).
+* `data_matches_position_theory` — the perfective/imperfective actuality
+  split across `Data/Examples/Hacquard2006.json` rows matches the
+  position × aspect prediction.
 -/
 
 namespace Hacquard2006
 
 open Semantics.Modality.EventRelativity
-open Semantics.Modality (TemporalOrientation TemporalPerspective)
+open Semantics.Modality.Kratzer (simpleNecessity simplePossibility kratzerR
+  ConvBackground accessibleWorlds)
+open Semantics.Modality (TemporalPerspective)
+open Data.Examples (LinguisticExample)
 
+/-! ### Position → temporal perspective
 
--- ════════════════════════════════════════════════════
--- § 1. Temporal Orientation Type
--- ════════════════════════════════════════════════════
+The anchoring event fixes the evaluation time: "the agent and temporal
+trace of the speech event" for speech-bound modals, "the subject and the
+time provided by Tense" for aspect-bound ones. In a past-tense clause the
+projected times are utterance time (speech event) vs. the past tense time
+(attitude and VP events). The perspective map factors through the
+substrate's binding maps; its codomain has no future case, so no position
+can yield a future perspective. -/
 
-/-! [hacquard-2006] derives present vs. past from modal position
-(§ 3). [klecha-2016] adds future: derived not from position but
-from the modal base kind (CIR permits future orientation). The
-canonical 3-value `TemporalOrientation` lives in
-`Semantics/Modality/TemporalAxes.lean` and is opened above. -/
+/-- Temporal perspective projected from the anchoring event, for a
+past-tense clause: the speech event sits at utterance time, attitude and
+VP events at the (past) tense time. -/
+def binderPerspective : EventBinder → TemporalPerspective
+  | .speechAct => .present
+  | .attitude => .past
+  | .vpEvent => .past
 
-/-- A time type for the orientation examples. -/
-inductive OTime where
-  /-- Speech time (= utterance time) -/
-  | now
-  /-- Past event time -/
-  | then_
-  deriving DecidableEq, Repr
+/-- Temporal perspective from modal position in a matrix clause, via
+`ModalPosition.defaultBinder`: high modals are speech-bound (present
+perspective), low modals aspect-bound (past perspective). -/
+def positionToPerspective (pos : ModalPosition) : TemporalPerspective :=
+  binderPerspective pos.defaultBinder
 
+/-- High modals have present temporal perspective. -/
+theorem high_present_perspective :
+    positionToPerspective .aboveAsp = .present := rfl
 
--- ════════════════════════════════════════════════════
--- § 2. Event Projection Determines Temporal Orientation
--- ════════════════════════════════════════════════════
+/-- Low modals have past temporal perspective. -/
+theorem low_past_perspective :
+    positionToPerspective .belowAsp = .past := rfl
 
-/-- Two events: speech act and VP event. -/
-inductive OrientationEvent where
-  /-- The speech event (e₀) -/
-  | speech
-  /-- The VP event (e₂) -/
-  | vpEvent
-  deriving DecidableEq, Repr
+/-- The same modal (*devoir*, *pouvoir*) gets different temporal
+perspectives from different structural positions. -/
+theorem position_determines_perspective :
+    positionToPerspective .aboveAsp ≠ positionToPerspective .belowAsp := by
+  decide
 
-/-- Individuals: speaker and the described event's agent. -/
-inductive OrientationPerson where
-  | speaker
-  | agent
-  deriving DecidableEq, Repr
-
-/-- Event projection for the temporal orientation scenario.
-Speech events project to (speaker, now); VP events project to (agent, then). -/
-def orientationProjection : EventProjection OrientationEvent OrientationPerson OTime where
-  holder
-    | .speech => .speaker
-    | .vpEvent => .agent
-  time
-    | .speech => .now
-    | .vpEvent => .then_
-
-/-- Speech event projects to speech time (now). -/
-theorem speech_projects_to_now :
-    orientationProjection.time .speech = .now := rfl
-
-/-- VP event projects to event time (then). -/
-theorem vp_projects_to_then :
-    orientationProjection.time .vpEvent = .then_ := rfl
-
-
--- ════════════════════════════════════════════════════
--- § 3. Position → Temporal Orientation
--- ════════════════════════════════════════════════════
-
-/-- Derive temporal orientation from modal position, via event binding.
-
-High modals (above Asp) bind to the speech event → τ(e₀) = now → present.
-Low modals (below Asp) bind to the VP event → τ(e₂) = then → past. -/
-def positionToOrientation (pos : ModalPosition) : TemporalOrientation :=
-  match pos with
-  | .aboveAsp => .present    -- speech event time
-  | .belowAsp => .past       -- VP event time
-
-/-- High modals have present temporal orientation. -/
-theorem high_present :
-    positionToOrientation .aboveAsp = .present := rfl
-
-/-- Low modals have past temporal orientation. -/
-theorem low_past :
-    positionToOrientation .belowAsp = .past := rfl
-
-/-- The same modal (*devoir*, *pouvoir*) has different temporal perspectives
-depending on its structural position — derived from event projection,
-not stipulated. -/
-theorem position_determines_orientation :
-    positionToOrientation .aboveAsp ≠ positionToOrientation .belowAsp := by decide
-
-
--- ════════════════════════════════════════════════════
--- § 4. Event projection fixes the temporal perspective
--- ════════════════════════════════════════════════════
-
-/-- When the modal binds to event e with τ(e) = t, the conversational
-background is evaluated at time t — [condoravdi-2002]'s `f(w,t)`, with the
-time projected from whichever event binds the modal rather than stipulated
-as a separate index. [kratzer-2012] endorses exactly this event anchoring
-(introduction to her Ch. 2): modal bases "are projected from event
-arguments following very general recipes". -/
-theorem event_projection_fixes_perspective :
-    -- Speech event → t = now
-    orientationProjection.time .speech = .now ∧
-    -- VP event → t = then
-    orientationProjection.time .vpEvent = .then_ ∧
-    -- Different events → different times → different backgrounds
-    orientationProjection.time .speech ≠ orientationProjection.time .vpEvent := by
-  exact ⟨rfl, rfl, by decide⟩
-
-
--- ════════════════════════════════════════════════════
--- § 5. Worked Example: "Jane a dû prendre le train"
--- ════════════════════════════════════════════════════
-
-/-! ([hacquard-2006], (201)): two readings of the same sentence with
-different temporal perspectives, derived from event binding.
-
-Epistemic (high): "Given MY evidence NOW, Jane must have taken the train."
-  → modal bound to speech event → τ(e₀) = speech time = now
-  → background evaluated at speech time
-
-Root (low): "Given JANE'S circumstances THEN, Jane had to take the train."
-  → modal bound to VP event → τ(e₂) = event time = then
-  → background evaluated at event time -/
-
-/-- The full derivation chain for "Jane a dû prendre le train":
-event binding → event projection → temporal orientation.
-
-This is the payoff of event-relative modality: the same modal gets
-different temporal perspectives from different event bindings,
-without any stipulation about temporal orientation. -/
-theorem jane_train_orientation :
-    -- Epistemic reading: speech event → present orientation
-    orientationProjection.time .speech = .now ∧
-    positionToOrientation .aboveAsp = .present ∧
-    -- Root reading: VP event → past orientation
-    orientationProjection.time .vpEvent = .then_ ∧
-    positionToOrientation .belowAsp = .past :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-
--- ════════════════════════════════════════════════════
--- § 6. Hacquard ↔ Klecha comparison
--- ════════════════════════════════════════════════════
-
-/-! [hacquard-2006] and [klecha-2016] explain different aspects of
-temporal orientation:
-
-- **Hacquard**: Position (high/low) determines whether the conversational
-  background is evaluated at speech time (present) or event time (past).
-  This explains the epistemic/root contrast.
-
-- **Klecha**: Modal base kind (DOX/CIR) determines whether future-oriented
-  readings are available. DOX (doxastic) constrains RT ≤ EvalT (upper limit);
-  CIR (circumstantial) permits RT > EvalT (future orientation).
-
-The two theories are complementary: Hacquard tells you WHAT time the modal
-base is evaluated at; Klecha tells you WHICH DIRECTION of temporal reference
-is available from that time. -/
-
-/-- Hacquard's derivation covers present and past orientation.
-    Future orientation is NOT derived from position — it requires
-    [klecha-2016]'s modal base analysis. -/
-theorem position_covers_present_past :
-    positionToOrientation .aboveAsp = .present ∧
-    positionToOrientation .belowAsp = .past :=
+/-- Embedded under a (past) attitude, a high modal is keyed to the attitude
+time, not the speech time: "given what John thought *yesterday*...". The
+perspective shifts with the binder while the position stays high. -/
+theorem embedded_high_shifts_perspective :
+    binderPerspective (ModalPosition.aboveAsp.withAttitude) = .past ∧
+    binderPerspective ModalPosition.aboveAsp.defaultBinder = .present :=
   ⟨rfl, rfl⟩
 
-/-- Hacquard's positional analysis does not derive future orientation.
-    Future orientation is orthogonal to position — it is determined by the
-    modal base kind (CIR), not by where the modal is merged. -/
-theorem future_not_from_position :
-    positionToOrientation .aboveAsp ≠ .future ∧
-    positionToOrientation .belowAsp ≠ .future := by
-  exact ⟨by decide, by decide⟩
+/-! ### Perspective and aspect scope
 
-
-/-! ## Bridge: Hacquard ↔ [condoravdi-2002]
-
-[hacquard-2006] determines which time the modal base is evaluated at
-(via event projection); [condoravdi-2002] determines what modal base
-types are available at that time (via settledness and diversity).
-
-The half proved here is Hacquard's: position fixes the temporal
-*perspective* and the modal/aspect *scope* (`position_determines_modal_base_type`).
-On Condoravdi's account this feeds the second half — present perspective +
-MODAL > PERF yields a settled, non-diverse past property (epistemic only);
-past perspective + PERF > MODAL yields an unsettled future property
-(metaphysical available). That machinery lives in
+Position fixes the temporal *perspective* and the modal/aspect *scope* at
+once. On [condoravdi-2002]'s account this pair determines which modal base
+types are available: present perspective + MODAL > PERF yields a settled
+past property (epistemic only); past perspective + PERF > MODAL yields an
+unsettled future property (metaphysical available). That machinery lives in
 `Semantics/Modality/HistoricalAlternatives.lean`; chaining the two halves
 into one composition theorem is left as follow-up. -/
 
 open Semantics.Modality.ActualityEntailments (AspectModalScope toAspectScope)
 
-/-- Map Hacquard's temporal orientation to Condoravdi's temporal
-    perspective. Future orientation (Klecha 2016) has no Condoravdi
-    analogue — it is orthogonal to the scope–modality correlation. -/
-def toPerspective : TemporalOrientation → Option TemporalPerspective
-  | .present => some .present
-  | .past    => some .past
-  | .future  => none
-
-/-- High modals (above Asp) have Condoravdi's present perspective. -/
-theorem high_modal_present_perspective :
-    toPerspective (positionToOrientation .aboveAsp) = some .present := rfl
-
-/-- Low modals (below Asp) have Condoravdi's past perspective. -/
-theorem low_modal_past_perspective :
-    toPerspective (positionToOrientation .belowAsp) = some .past := rfl
-
-/-- The key derivation chain: position determines both perspective AND
-    aspect scope, and these two together determine which modal base
-    types are available.
-
-    - High (above Asp): present perspective + modal over aspect.
-      MODAL > PERF scoping → the property under the modal is past →
-      settled → diversity fails → metaphysical blocked → epistemic only.
-
-    - Low (below Asp): past perspective + aspect over modal.
-      PERF > MODAL scoping → the property under the modal is future
-      (of the past event time) → not settled → diversity satisfiable →
-      metaphysical available.
-
-    This connects Hacquard's structural account to Condoravdi's temporal
-    one without either stipulating anything. -/
+/-- Position determines both perspective and aspect scope: high modals pair
+present perspective with MODAL > ASP, low modals pair past perspective with
+ASP > MODAL. -/
 theorem position_determines_modal_base_type :
-    -- High → present perspective + MODAL > ASP (= epistemic scope)
-    (toPerspective (positionToOrientation .aboveAsp) = some .present ∧
+    (positionToPerspective .aboveAsp = .present ∧
      toAspectScope .aboveAsp = .modalOverAspect) ∧
-    -- Low → past perspective + ASP > MODAL (= root scope)
-    (toPerspective (positionToOrientation .belowAsp) = some .past ∧
+    (positionToPerspective .belowAsp = .past ∧
      toAspectScope .belowAsp = .aspectOverModal) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
+/-! ### Worked example: "Jane a dû prendre le train" (201)
+
+`Examples.ex201` is ambiguous between an epistemic and a goal-oriented
+reading. The two readings differ only in the event that anchors the modal:
+
+| Reading | Event | holder(e) | τ(e) | Modal domain |
+|---------|-------|-----------|------|--------------|
+| Epistemic | speech act | speaker | now | speaker's evidence now |
+| Goal-oriented | VP event | Jane | then | Jane's circumstances then |
+
+The same modal *devoir* gets different parameters from different event
+bindings; no lexical ambiguity is needed. -/
+
+/-- Two individuals in the train scenario. -/
+inductive TrainPerson where | speaker | jane
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Two time points: speech time and the past event time. -/
+inductive TrainTime where | now | then
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Two events: the speech act and Jane's train-taking. -/
+inductive TrainEvent where | speechAct | janesTaking
+  deriving DecidableEq, Repr
+
+/-- The event projection for the train scenario: the speech act projects
+to (speaker, now), the VP event to (Jane, then). -/
+def trainProjection : EventProjection TrainEvent TrainPerson TrainTime where
+  holder
+    | .speechAct => .speaker
+    | .janesTaking => .jane
+  time
+    | .speechAct => .now
+    | .janesTaking => .then
+
+/-- Speech event projects to (speaker, now). -/
+theorem speech_projects_to_speaker_now :
+    trainProjection.toPair .speechAct = ⟨.speaker, .now⟩ := rfl
+
+/-- VP event projects to (Jane, then). -/
+theorem vp_projects_to_jane_then :
+    trainProjection.toPair .janesTaking = ⟨.jane, .then⟩ := rfl
+
+/-- The same modal (*devoir*) gets different individual-time pairs from
+different event bindings: the epistemic reading relativizes to the
+speaker's evidence now, the goal-oriented reading to Jane's circumstances
+then. -/
+theorem same_modal_different_params :
+    trainProjection.toPair .speechAct ≠
+    trainProjection.toPair .janesTaking := by decide
+
+/-- Two worlds: one where Jane took the train, one where she didn't. -/
+inductive TrainWorld where | took | didnt
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Epistemic anchoring (via speech event): the speaker considers both
+worlds possible (no decisive evidence either way), so the background is
+empty at every projection. -/
+private def epistemicBg : TrainPerson → TrainTime → ConvBackground TrainWorld :=
+  λ _ _ _ => []
+
+/-- Goal-oriented anchoring (via VP event): given Jane's circumstances at
+the past time, only the took-world is compatible. -/
+private def goalBg : TrainPerson → TrainTime → ConvBackground TrainWorld
+  | .jane, .then, _ => [λ w => w = .took]
+  | _, _, _ => []
+
+/-- The epistemic anchoring function (factored through projection). -/
+private def fEpistemicTrain : AnchoringFn TrainEvent TrainWorld :=
+  factoredAnchoring trainProjection epistemicBg
+
+/-- The goal-oriented anchoring function (factored through projection). -/
+private def fGoalTrain : AnchoringFn TrainEvent TrainWorld :=
+  factoredAnchoring trainProjection goalBg
+
+/-- Epistemic reading: modal anchored to the speech event.
+`◇_{f(e₀)} took` holds because the speaker considers `took` possible. -/
+theorem epistemic_reading_possible :
+    simplePossibility (fEpistemicTrain .speechAct) (· = .took) .took :=
+  ⟨.took, by simp [fEpistemicTrain, factoredAnchoring, epistemicBg, kratzerR], rfl⟩
+
+/-- Goal-oriented reading: modal anchored to the VP event.
+`□_{f(e)} took` holds because only `took` is accessible. -/
+theorem goal_reading_necessary :
+    simpleNecessity (fGoalTrain .janesTaking) (· = .took) .took := by
+  intro w' hw'
+  simpa [fGoalTrain, factoredAnchoring, trainProjection, goalBg,
+    accessibleWorlds, kratzerR] using hw'
+
+/-- The goal-oriented anchoring restricts the accessible worlds more than
+the epistemic one: the didnt-world is epistemically accessible but not
+goal-accessible. Both readings use the same modal; the difference comes
+entirely from the event bindings. -/
+theorem goal_restricts_more :
+    kratzerR (fEpistemicTrain .speechAct) .took .didnt ∧
+    ¬ kratzerR (fGoalTrain .janesTaking) .took .didnt := by
+  constructor <;>
+    simp [fEpistemicTrain, fGoalTrain, factoredAnchoring, trainProjection,
+      epistemicBg, goalBg, kratzerR]
+
+/-! ### Aspect-bound epistemics: (246)–(248)
+
+A low modal is normally barred from epistemic readings: the event provided
+by aspect lacks propositional content (246) — the substrate's
+`position_determines_epistemic`. But when the complement itself supplies a
+contentful attitude event, aspect can bind it: in `Examples.ex247b` "Jane
+a pu penser que Darcy aimait Lizzie", the LF where the modal is merged
+below tense relativizes it to Jane's thinking event, reporting an
+epistemic state of the *subject* at a past belief state — the salient
+speech-bound reading instead reports the speaker's evidence. -/
+
+/-- Two worlds for the (247b) scenario. -/
+inductive DarcyWorld where | loves | lovesNot
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Two candidate binders for the modal in (247b): the matrix speech act
+and Jane's thinking event. -/
+inductive PenserEvent where | speech | thinking
+  deriving DecidableEq, Repr
+
+/-- Anchoring for (247b): the speech event carries the speaker's undecided
+evidence (both worlds accessible); the thinking event carries CON(e) =
+Jane's beliefs, which settle that Darcy loved Lizzie. -/
+private def fPenser : AnchoringFn PenserEvent DarcyWorld
+  | .speech, _ => []
+  | .thinking, _ => [λ w => w = .loves]
+
+/-- Aspect-bound epistemic: the modal bound to Jane's thinking event
+expresses an epistemic necessity for Jane — under CON(thinking), only the
+loves-world is accessible. -/
+theorem aspect_bound_epistemic_necessity :
+    simpleNecessity (fPenser .thinking) (· = .loves) .lovesNot := by
+  intro w' hw'
+  simpa [fPenser, accessibleWorlds, kratzerR] using hw'
+
+/-- Speech-bound epistemic: bound to the speech event, both worlds remain
+possible for the speaker. -/
+theorem speech_bound_both_possible :
+    simplePossibility (fPenser .speech) (· = .loves) .lovesNot ∧
+    simplePossibility (fPenser .speech) (· = .lovesNot) .lovesNot :=
+  ⟨⟨.loves, by simp [fPenser, kratzerR], rfl⟩,
+   ⟨.lovesNot, by simp [fPenser, kratzerR], rfl⟩⟩
+
+/-- Same modal, different binders, different epistemic domains: the
+lovesNot-world is accessible from the speech event but not from Jane's
+thinking event. -/
+theorem binding_determines_epistemic_domain :
+    kratzerR (fPenser .speech) .lovesNot .lovesNot ∧
+    ¬ kratzerR (fPenser .thinking) .lovesNot .lovesNot := by
+  constructor <;> simp [fPenser, kratzerR]
+
 end Hacquard2006
 
-/-! ## Bridge content (merged from ActualityInferencesBridge.lean) -/
-
-/-!
-# Actuality Inference Data (Cross-Linguistic)
-[bhatt-1999] [hacquard-2006] [nadathur-2023]
-
-Cross-linguistic empirical data on actuality inferences with ability modals.
-
-## Key Generalization ([nadathur-2023], Chapter 1)
-
-Across languages, ability modals with **perfective** aspect entail the
-complement, while those with **imperfective** aspect do not.
-
-| Language | Modal | PFV entails? | IMPF entails? |
-|----------|-------|-------------|---------------|
-| Greek | *boro* | Yes | No |
-| Hindi | *saknaa* | Yes | No |
-| French | *pouvoir* | Yes | No |
-| English | *be able* | Yes (episodic) | No (habitual) |
-
--/
+/-! ## Actuality entailments -/
 
 namespace Hacquard2006.ActualityInferences
 
+/-! Root modals with perfective aspect entail their complement; with
+imperfective they do not ([bhatt-1999]; French and Italian extensions in
+[hacquard-2006]). The stimuli live in `Data/Examples/Hacquard2006.json`:
+the French pairs (1) and (22)/(23), the Italian pair (22b)/(23b), and
+Bhatt's English adverbial pair (2). Bhatt's primary Hindi and Greek data
+are not reproduced in the dissertation (its fn. 7), and its own Greek
+discussion (318) defers the language's complement-internal aspect, so no
+Hindi or Greek rows are included here. -/
+
 open Semantics.Aspect (Perfectivity)
-
-/-- A single cross-linguistic data point for actuality inferences. -/
-structure ActualityDatum where
-  /-- Language name -/
-  language : String
-  /-- The modal form in that language -/
-  modalForm : String
-  /-- Viewpoint aspect of the sentence -/
-  aspect : Perfectivity
-  /-- Does the complement entailment hold? -/
-  complementEntailed : Bool
-  /-- Example sentence gloss -/
-  gloss : String
-  deriving Repr, DecidableEq
-
--- ════════════════════════════════════════════════════
--- Greek: boro 'can/be able'
--- ════════════════════════════════════════════════════
-
-/-- Greek *boro* + perfective (aorist): "She was-able.PFV to swim across"
-    → She swam across. -/
-def greek_pfv : ActualityDatum where
-  language := "Greek"
-  modalForm := "boro"
-  aspect := .perfective
-  complementEntailed := true
-  gloss := "Borese na kolimbisi apenant (She was-able.AOR to swim across)"
-
-/-- Greek *boro* + imperfective: "She was-able.IMPF to swim across"
-    ↛ She swam across. -/
-def greek_impf : ActualityDatum where
-  language := "Greek"
-  modalForm := "boro"
-  aspect := .imperfective
-  complementEntailed := false
-  gloss := "Boruse na kolimbisi apenant (She was-able.IMPF to swim across)"
-
--- ════════════════════════════════════════════════════
--- Hindi: saknaa 'can/be able'
--- ════════════════════════════════════════════════════
-
-/-- Hindi *saknaa* + perfective: "She was-able.PFV to swim across"
-    → She swam across. -/
-def hindi_pfv : ActualityDatum where
-  language := "Hindi"
-  modalForm := "saknaa"
-  aspect := .perfective
-  complementEntailed := true
-  gloss := "Voh pair ke tair sakii (She was-able.PFV to swim across)"
-
-/-- Hindi *saknaa* + imperfective: "She was-able.IMPF to swim across"
-    ↛ She swam across. -/
-def hindi_impf : ActualityDatum where
-  language := "Hindi"
-  modalForm := "saknaa"
-  aspect := .imperfective
-  complementEntailed := false
-  gloss := "Voh pair ke tair saktii thii (She was-able.IMPF to swim across)"
-
--- ════════════════════════════════════════════════════
--- French: pouvoir 'can/be able'
--- ════════════════════════════════════════════════════
-
-/-- French *pouvoir* + passé composé (perfective): "She was-able.PFV to swim across"
-    → She swam across. -/
-def french_pfv : ActualityDatum where
-  language := "French"
-  modalForm := "pouvoir"
-  aspect := .perfective
-  complementEntailed := true
-  gloss := "Elle a pu traverser à la nage (She was-able.PC to swim across)"
-
-/-- French *pouvoir* + imparfait (imperfective): "She was-able.IMPF to swim across"
-    ↛ She swam across. -/
-def french_impf : ActualityDatum where
-  language := "French"
-  modalForm := "pouvoir"
-  aspect := .imperfective
-  complementEntailed := false
-  gloss := "Elle pouvait traverser à la nage (She was-able.IMP to swim across)"
-
--- ════════════════════════════════════════════════════
--- English: be able (episodic vs habitual)
--- ════════════════════════════════════════════════════
-
-/-- English *be able* + episodic (perfective-like): "She was able to swim across"
-    → She swam across. -/
-def english_pfv : ActualityDatum where
-  language := "English"
-  modalForm := "be able"
-  aspect := .perfective
-  complementEntailed := true
-  gloss := "She was able to swim across (episodic reading)"
-
-/-- English *be able* + habitual (imperfective-like): "She was able to swim across"
-    ↛ She swam across on that occasion. -/
-def english_impf : ActualityDatum where
-  language := "English"
-  modalForm := "be able"
-  aspect := .imperfective
-  complementEntailed := false
-  gloss := "She was able to swim across (habitual/generic reading)"
-
--- ════════════════════════════════════════════════════
--- Dataset
--- ════════════════════════════════════════════════════
-
-/-- All actuality inference data points. -/
-def allData : List ActualityDatum :=
-  [greek_pfv, greek_impf, hindi_pfv, hindi_impf,
-   french_pfv, french_impf, english_pfv, english_impf]
-
-/-- The perfective subset. -/
-def perfData : List ActualityDatum :=
-  allData.filter (·.aspect == .perfective)
-
-/-- The imperfective subset. -/
-def impfData : List ActualityDatum :=
-  allData.filter (·.aspect == .imperfective)
-
--- ════════════════════════════════════════════════════
--- Verification Theorems
--- ════════════════════════════════════════════════════
-
-/-- All 4 perfective data points have `complementEntailed = true`. -/
-theorem perfective_entails :
-    perfData.all (·.complementEntailed) = true := by native_decide
-
-/-- All 4 imperfective data points have `complementEntailed = false`. -/
-theorem imperfective_no_entailment :
-    impfData.all (·.complementEntailed == false) = true := by native_decide
-
-/-- **Central empirical generalization**: across all 8 data points,
-    `complementEntailed` tracks `aspect ==.perfective` exactly.
-
-    This is the empirical observation that [nadathur-2023] explains
-    via the causal sufficiency + aspect interaction. -/
-theorem empirical_matches_theory :
-    allData.all (λ d => (d.aspect == .perfective) == d.complementEntailed) = true := by
-  native_decide
-
-/-- We have data from 4 distinct languages. -/
-theorem four_languages :
-    (allData.map (·.language)).dedup.length = 4 := by native_decide
-
-/-- Each language contributes exactly one perfective and one imperfective datum. -/
-theorem balanced_design :
-    perfData.length = 4 ∧ impfData.length = 4 := by
-  constructor <;> native_decide
-
-
--- ════════════════════════════════════════════════════
--- Bridge: Data → Position × Aspect Theory
--- ([hacquard-2006], via ActualityEntailments.lean)
--- ════════════════════════════════════════════════════
-
 open Semantics.Modality.ActualityEntailments (actualityEntailmentPredicted)
 open Semantics.Modality.EventRelativity (ModalPosition)
+open Data.Examples (LinguisticExample)
 
-/-- Every datum's `complementEntailed` field matches the position × aspect
-prediction for root modals. All data involves root/ability modals
-(below AspP), so the prediction is `actualityEntailmentPredicted.belowAsp d.aspect`.
+/-- Aspect and observed actuality entailment of an example row, read off
+its `paperFeatures`; `none` for rows without the aspect contrast. -/
+def aeDatum (e : LinguisticExample) : Option (Perfectivity × Bool) :=
+  match e.feature? "aspect", e.feature? "actualityEntailment" with
+  | some "perfective", some ae => some (.perfective, ae == "true")
+  | some "imperfective", some ae => some (.imperfective, ae == "true")
+  | _, _ => none
 
-This connects the theory-neutral empirical data (§§ above) to
-[hacquard-2006]'s structural explanation: root modals are below Asp,
-so perfective forces actualization. -/
+/-- Positive witness: the perfective French pair member carries the
+entailment. -/
+theorem ex22a_perfective_entails :
+    aeDatum Examples.ex22a = some (.perfective, true) := rfl
+
+/-- Every datum's observed entailment matches the position × aspect
+prediction for root modals (all rows are root: below Asp, so perfective
+forces actualization). -/
 theorem data_matches_position_theory :
-    allData.all (λ d =>
-      d.complementEntailed == actualityEntailmentPredicted .belowAsp d.aspect
-    ) = true := by native_decide
-
-/-- Per-language bridge: Greek data matches position theory. -/
-theorem greek_matches_theory :
-    greek_pfv.complementEntailed = actualityEntailmentPredicted .belowAsp .perfective ∧
-    greek_impf.complementEntailed = actualityEntailmentPredicted .belowAsp .imperfective :=
-  ⟨rfl, rfl⟩
-
-/-- Per-language bridge: Hindi data matches position theory. -/
-theorem hindi_matches_theory :
-    hindi_pfv.complementEntailed = actualityEntailmentPredicted .belowAsp .perfective ∧
-    hindi_impf.complementEntailed = actualityEntailmentPredicted .belowAsp .imperfective :=
-  ⟨rfl, rfl⟩
-
-/-- Per-language bridge: French data matches position theory. -/
-theorem french_matches_theory :
-    french_pfv.complementEntailed = actualityEntailmentPredicted .belowAsp .perfective ∧
-    french_impf.complementEntailed = actualityEntailmentPredicted .belowAsp .imperfective :=
-  ⟨rfl, rfl⟩
-
-/-- Per-language bridge: English data matches position theory. -/
-theorem english_matches_theory :
-    english_pfv.complementEntailed = actualityEntailmentPredicted .belowAsp .perfective ∧
-    english_impf.complementEntailed = actualityEntailmentPredicted .belowAsp .imperfective :=
-  ⟨rfl, rfl⟩
+    (Examples.all.filterMap aeDatum).all
+      (λ d => d.2 == actualityEntailmentPredicted .belowAsp d.1) = true := by
+  decide
 
 end Hacquard2006.ActualityInferences

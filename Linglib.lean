@@ -2938,3 +2938,4 @@ import Linglib.Data.Examples.Coon2019
 import Linglib.Data.Examples.Zheng2025
 import Linglib.Data.Examples.Lahiri1998
 import Linglib.Data.Examples.VonStechow1984
+import Linglib.Data.Examples.Hacquard2006
