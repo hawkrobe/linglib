@@ -47,11 +47,7 @@ open BSML (FCAtom PowerSet2World QVar)
 
 /-! ### Predicates and variables -/
 
-/-- The paper's two predicate symbols. The quantified facts use both, in
-    the paper's schema `∀x(Px ∨ Qx)`; the propositional facts use `P` alone,
-    applied to two individual constants (`Pa ∨ Pb`). `univAccessModel`
-    interprets both by the same valuation; `fig14V` separates them. -/
-inductive Pred | P | Q
+inductive Predicate | P | Q
   deriving DecidableEq, Repr, Fintype
 
 /-! ### The concrete model -/
@@ -70,7 +66,7 @@ inductive Pred | P | Q
     state (`univAccessModel_indisputable`) and state-based exactly on states with
     full world projection (`univAccessModel_stateBased_of_full`) — same shape as
     `Aloni2022.deonticModel`. -/
-def univAccessModel : QBSMLModel PowerSet2World FCAtom FCAtom Pred where
+def univAccessModel : QBSMLModel PowerSet2World FCAtom FCAtom Predicate where
   access := λ _ => Finset.univ
   interp := λ w => monadicStructure id (λ _ d => w.holds d)
 
@@ -81,23 +77,23 @@ and 10; variable atoms `Px`, `Qx` build the quantified schemas of Facts 4–6
 and 9 — both exactly as in the paper. -/
 
 /-- The constant atom `Pa`. -/
-def Pa : QBSMLFormula QVar FCAtom Pred := .predc .P .a
+def Pa : QBSMLFormula QVar FCAtom Predicate := .predc .P .a
 
 /-- The constant atom `Pb`. -/
-def Pb : QBSMLFormula QVar FCAtom Pred := .predc .P .b
+def Pb : QBSMLFormula QVar FCAtom Predicate := .predc .P .b
 
 /-- The variable atom `Px`. -/
-def Px {Const : Type*} : QBSMLFormula QVar Const Pred := .pred .P .x
+def Px {Const : Type*} : QBSMLFormula QVar Const Predicate := .pred .P .x
 
 /-- The variable atom `Qx`. -/
-def Qx {Const : Type*} : QBSMLFormula QVar Const Pred := .pred .Q .x
+def Qx {Const : Type*} : QBSMLFormula QVar Const Predicate := .pred .Q .x
 
 /-- The universal-FC premise `∀x◇(Px ∨ Qx)` (paper's Fact 9 schema). -/
-def univPossPxOrQx {Const : Type*} : QBSMLFormula QVar Const Pred :=
+def univPossPxOrQx {Const : Type*} : QBSMLFormula QVar Const Predicate :=
   .univ .x (.poss (.disj Px Qx))
 
 /-- The distribution premise `∀x(Px ∨ Qx)` (paper's Facts 4–6 schema). -/
-def univPxOrQx {Const : Type*} : QBSMLFormula QVar Const Pred :=
+def univPxOrQx {Const : Type*} : QBSMLFormula QVar Const Predicate :=
   .univ .x (.disj Px Qx)
 
 theorem Pa_isNEFree : Pa.IsNEFree := .predc _ _
@@ -176,8 +172,8 @@ theorem univPxOrQx_classical
     support univAccessModel univPxOrQx s ↔
       ∀ i ∈ s, univAccessModel.RealizeAt i.world
         (Formula.all₁ QVar.x
-          ((monadicRel Pred.P).formula₁ (Term.var QVar.x) ⊔
-            (monadicRel Pred.Q).formula₁ (Term.var QVar.x))) (v i) :=
+          ((monadicRel Predicate.P).formula₁ (Term.var QVar.x) ⊔
+            (monadicRel Predicate.Q).formula₁ (Term.var QVar.x))) (v i) :=
   support_iff_forall_realizeAt univAccessModel rfl s v hv
 
 /-- The narrow-scope FC premise `◇(Px ∨ Qx)` translates into the modal layer
@@ -191,21 +187,21 @@ theorem possPxOrQx_classical
     support univAccessModel (.poss (.disj Px Qx)) s ↔
       ∀ i ∈ s,
         (ModalFormula.dia
-          (.sup (.ofFormula ((monadicRel Pred.P).formula₁ (Term.var QVar.x)))
+          (.sup (.ofFormula ((monadicRel Predicate.P).formula₁ (Term.var QVar.x)))
             (.ofFormula
-              ((monadicRel Pred.Q).formula₁ (Term.var QVar.x))))).Realize
+              ((monadicRel Predicate.Q).formula₁ (Term.var QVar.x))))).Realize
           univAccessModel i.world (v i) :=
   support_iff_forall_realize univAccessModel rfl s v hv
 
 /-- The closed standard translation of `∀x(Px ∨ Qx)`: quantifiers
     relativized to the individual sort, predicates world-relativized to the
     current-world variable `Sum.inr 0`. -/
-def stUnivPxOrQx : (stLang FCAtom Pred).Formula (QVar ⊕ ℕ) :=
+def stUnivPxOrQx : (stLang FCAtom Predicate).Formula (QVar ⊕ ℕ) :=
   Formula.all₁ (Sum.inl QVar.x)
     ((stIndiv.formula₁ (Term.var (Sum.inl QVar.x))).imp
-      ((stRel Pred.P).formula₂ (Term.var (Sum.inr 0))
+      ((stRel Predicate.P).formula₂ (Term.var (Sum.inr 0))
           (Term.var (Sum.inl QVar.x)) ⊔
-        (stRel Pred.Q).formula₂ (Term.var (Sum.inr 0))
+        (stRel Predicate.Q).formula₂ (Term.var (Sum.inr 0))
           (Term.var (Sum.inl QVar.x))))
 
 /-- The closure is a genuine sentence: the compiler computes the
@@ -322,12 +318,12 @@ inductive Fig14Atom | a | b
 /-- Fig. 14 valuation: `P` holds exactly of `a`, and `Q` exactly of `b`,
     wherever the world carries the corresponding atom — so `P` and `Q` have
     *divergent* extensions, unlike `univAccessModel`'s. -/
-def fig14V (w : PowerSet2World) : Pred → Fig14Atom → Prop
+def fig14V (w : PowerSet2World) : Predicate → Fig14Atom → Prop
   | .P, d => d = .a ∧ w.holds .a
   | .Q, d => d = .b ∧ w.holds .b
 
 /-- The Fig. 14 model: reflexive-only access at the `both` world. -/
-def fig14Model : QBSMLModel PowerSet2World Fig14Atom Fig14Atom Pred where
+def fig14Model : QBSMLModel PowerSet2World Fig14Atom Fig14Atom Predicate where
   access := λ _ => {PowerSet2World.both}
   interp := λ w => monadicStructure id (fig14V w)
 
@@ -385,7 +381,7 @@ theorem fig14_conclusion_fails :
     `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)`, witnessed by the Fig. 14
     countermodel. -/
 theorem fact4_obviation :
-    ∃ (M : QBSMLModel PowerSet2World Fig14Atom Fig14Atom Pred)
+    ∃ (M : QBSMLModel PowerSet2World Fig14Atom Fig14Atom Predicate)
       (s : Finset (Index PowerSet2World QVar Fig14Atom)),
       support M univPxOrQx.enrich s ∧
       ¬ support M (.univ .x (.conj (.poss Px) (.poss Qx))) s :=
