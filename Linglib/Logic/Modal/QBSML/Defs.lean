@@ -27,17 +27,17 @@ the `Team.isFlat_iff` template at the point type
   ([aloni-vanormondt-2023] Definitions 4.5–4.7).
 * `State.modalLift`, `State.worldProj`: pairing accessible worlds with an
   assignment, and the world projection `s↓`.
-* `QBSMLFormula`: the formula language ([aloni-vanormondt-2023]
-  Definition 4.1), with `□` derived as `QBSMLFormula.nec`.
-* `QBSMLFormula.IsNEFree`: the NE-free fragment.
+* `Formula`: the formula language ([aloni-vanormondt-2023]
+  Definition 4.1), with `□` derived as `Formula.nec`.
+* `Formula.IsNEFree`: the NE-free fragment.
 * `monadicLang`, `monadicStructure`: the monadic first-order signature on
   `Const` and `Pred` and its structures, as a mathlib `FirstOrder.Language`.
-* `QBSMLModel` (an abbreviation for `FirstOrder.Language.KripkeStructure`
+* `Model` (an abbreviation for `FirstOrder.Language.KripkeStructure`
   over `monadicLang`), `eval`, `support`, `antiSupport`: bilateral evaluation
   ([aloni-vanormondt-2023] Definition 4.9), with the interpretation carried
   as a world-indexed family of mathlib structures.
 * `isBilateral`: `support`/`antiSupport` form a
-  `Bilateral.IsBilateral` under `QBSMLFormula.neg`.
+  `Bilateral.IsBilateral` under `Formula.neg`.
 * `KripkeStructure.IsStateBased`, `KripkeStructure.IsIndisputable`: frame
   conditions
   via `s↓` ([aloni-vanormondt-2023] Definition 4.10).
@@ -52,7 +52,7 @@ the `Team.isFlat_iff` template at the point type
 * The paper's domain `D` (part of `M = ⟨W, D, R, I⟩`) is a `Domain : Type*`
   parameter, with `[Fintype Domain]` where the universal extension must range
   over all of it. The interpretation `I` is a world-indexed family of mathlib
-  first-order structures: `QBSMLModel` is `FirstOrder.Language.KripkeStructure`
+  first-order structures: `Model` is `FirstOrder.Language.KripkeStructure`
   over the monadic signature, and `KripkeStructure.pInterp` /
   `KripkeStructure.cInterp` read the world-dependent (non-rigid) predicate
   and constant denotations off `Structure.RelMap` / `Structure.funMap`.
@@ -61,7 +61,7 @@ the `Team.isFlat_iff` template at the point type
   operations preserve it.
 * `□` is not primitive: the paper takes `□` primitive and derives `◇`; we
   invert this, so `eval`'s `poss` clauses match the paper's derived
-  `◇`-clauses and `QBSMLFormula.nec` matches its primitive `□`.
+  `◇`-clauses and `Formula.nec` matches its primitive `□`.
 -/
 
 namespace QBSML
@@ -340,55 +340,55 @@ variable {Const Pred : Type*}
     parameterized over variable type `Var`, constant type `Const`, and
     (monadic) predicate type `Pred`. The paper's terms `t := c | x` appear
     as the two atom constructors. `□` is not primitive — see
-    `QBSMLFormula.nec`. -/
-inductive QBSMLFormula (Var : Type*) (Const : Type*) (Pred : Type*) where
+    `Formula.nec`. -/
+inductive Formula (Var : Type*) (Const : Type*) (Pred : Type*) where
   /-- Monadic predicate applied to a variable. -/
-  | pred : Pred → Var → QBSMLFormula Var Const Pred
+  | pred : Pred → Var → Formula Var Const Pred
   /-- Monadic predicate applied to an individual constant. -/
-  | predc : Pred → Const → QBSMLFormula Var Const Pred
+  | predc : Pred → Const → Formula Var Const Pred
   /-- Non-emptiness atom: state is non-empty. -/
-  | ne : QBSMLFormula Var Const Pred
+  | ne : Formula Var Const Pred
   /-- Bilateral negation: swap support/anti-support. -/
-  | neg : QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred
+  | neg : Formula Var Const Pred → Formula Var Const Pred
   /-- Conjunction. -/
-  | conj : QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred →
-      QBSMLFormula Var Const Pred
+  | conj : Formula Var Const Pred → Formula Var Const Pred →
+      Formula Var Const Pred
   /-- Split (tensor) disjunction. -/
-  | disj : QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred →
-      QBSMLFormula Var Const Pred
+  | disj : Formula Var Const Pred → Formula Var Const Pred →
+      Formula Var Const Pred
   /-- Possibility modal. -/
-  | poss : QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred
+  | poss : Formula Var Const Pred → Formula Var Const Pred
   /-- Existential quantifier. -/
-  | exi : Var → QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred
+  | exi : Var → Formula Var Const Pred → Formula Var Const Pred
   /-- Universal quantifier. -/
-  | univ : Var → QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred
+  | univ : Var → Formula Var Const Pred → Formula Var Const Pred
   deriving Repr
 
 /-- Necessity, derived: `□φ := ¬◇¬φ`. [aloni-vanormondt-2023] takes `□`
     primitive and `◇ := ¬□¬` derived; we invert this, so `eval`'s `poss`
     clauses match the paper's derived `◇`-clauses and `nec` matches its
     primitive `□`. -/
-def QBSMLFormula.nec (φ : QBSMLFormula Var Const Pred) : QBSMLFormula Var Const Pred :=
+def Formula.nec (φ : Formula Var Const Pred) : Formula Var Const Pred :=
   .neg (.poss (.neg φ))
 
 /-- The NE-free fragment: formulas not containing the `NE` atom. On this
     fragment QBSML reduces to classical first-order modal logic
     ([aloni-vanormondt-2023] analogue of [anttila-2021]
     Proposition 2.2.16); see `Logic/Modal/QBSML/Properties.lean`. -/
-inductive QBSMLFormula.IsNEFree : QBSMLFormula Var Const Pred → Prop
+inductive Formula.IsNEFree : Formula Var Const Pred → Prop
   | pred (P : Pred) (x : Var) : IsNEFree (.pred P x)
   | predc (P : Pred) (c : Const) : IsNEFree (.predc P c)
-  | neg {φ : QBSMLFormula Var Const Pred} : IsNEFree φ → IsNEFree (.neg φ)
-  | conj {φ ψ : QBSMLFormula Var Const Pred} :
+  | neg {φ : Formula Var Const Pred} : IsNEFree φ → IsNEFree (.neg φ)
+  | conj {φ ψ : Formula Var Const Pred} :
       IsNEFree φ → IsNEFree ψ → IsNEFree (.conj φ ψ)
-  | disj {φ ψ : QBSMLFormula Var Const Pred} :
+  | disj {φ ψ : Formula Var Const Pred} :
       IsNEFree φ → IsNEFree ψ → IsNEFree (.disj φ ψ)
-  | poss {φ : QBSMLFormula Var Const Pred} : IsNEFree φ → IsNEFree (.poss φ)
-  | exi (x : Var) {φ : QBSMLFormula Var Const Pred} : IsNEFree φ → IsNEFree (.exi x φ)
-  | univ (x : Var) {φ : QBSMLFormula Var Const Pred} : IsNEFree φ → IsNEFree (.univ x φ)
+  | poss {φ : Formula Var Const Pred} : IsNEFree φ → IsNEFree (.poss φ)
+  | exi (x : Var) {φ : Formula Var Const Pred} : IsNEFree φ → IsNEFree (.exi x φ)
+  | univ (x : Var) {φ : Formula Var Const Pred} : IsNEFree φ → IsNEFree (.univ x φ)
 
 /-- The derived `□φ := ¬◇¬φ` preserves NE-freeness. -/
-theorem QBSMLFormula.IsNEFree.nec {φ : QBSMLFormula Var Const Pred}
+theorem Formula.IsNEFree.nec {φ : Formula Var Const Pred}
     (h : φ.IsNEFree) : φ.nec.IsNEFree :=
   .neg (.poss (.neg h))
 
@@ -401,10 +401,10 @@ theorem QBSMLFormula.IsNEFree.nec {φ : QBSMLFormula Var Const Pred}
     `Logic/Modal/QBSML/Properties.lean`), so each such operation — e.g.
     [yan-2023]'s reinterpretation function in `Studies/Yan2023.lean` — needs
     only its two atom lemmas. -/
-def QBSMLFormula.mapAtoms
-    (fp : Pred → Var → QBSMLFormula Var Const Pred)
-    (fc : Pred → Const → QBSMLFormula Var Const Pred) :
-    QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred
+def Formula.mapAtoms
+    (fp : Pred → Var → Formula Var Const Pred)
+    (fc : Pred → Const → Formula Var Const Pred) :
+    Formula Var Const Pred → Formula Var Const Pred
   | .pred P x => fp P x
   | .predc P c => fc P c
   | .ne => .ne
@@ -416,11 +416,11 @@ def QBSMLFormula.mapAtoms
   | .univ x φ => .univ x (φ.mapAtoms fp fc)
 
 /-- An atom substitution with NE-free images preserves NE-freeness. -/
-theorem QBSMLFormula.IsNEFree.mapAtoms
-    {fp : Pred → Var → QBSMLFormula Var Const Pred}
-    {fc : Pred → Const → QBSMLFormula Var Const Pred}
+theorem Formula.IsNEFree.mapAtoms
+    {fp : Pred → Var → Formula Var Const Pred}
+    {fc : Pred → Const → Formula Var Const Pred}
     (hfp : ∀ P x, (fp P x).IsNEFree) (hfc : ∀ P c, (fc P c).IsNEFree)
-    {φ : QBSMLFormula Var Const Pred} (h : φ.IsNEFree) :
+    {φ : Formula Var Const Pred} (h : φ.IsNEFree) :
     (φ.mapAtoms fp fc).IsNEFree := by
   induction h with
   | pred P x => exact hfp P x
@@ -487,7 +487,7 @@ abbrev monadicRel {Const Pred : Type*} (P : Pred) :
     world-indexed interpretation `I`, carried as a family of mathlib
     structures (`FirstOrder.Language.KripkeStructure`) — true by
     construction, not by bridge. -/
-abbrev QBSMLModel (W : Type*) (Domain : Type*) (Const : Type*)
+abbrev Model (W : Type*) (Domain : Type*) (Const : Type*)
     (Pred : Type*) :=
   FirstOrder.Language.KripkeStructure (monadicLang Const Pred) W Domain
 
@@ -497,7 +497,7 @@ abbrev QBSMLModel (W : Type*) (Domain : Type*) (Const : Type*)
     (cf. `Semantics.Composition.Model.pred₁ext`). -/
 def _root_.FirstOrder.Language.KripkeStructure.pInterp
     {W Domain Const Pred : Type*}
-    (M : QBSMLModel W Domain Const Pred) (P : Pred) (w : W) (d : Domain) :
+    (M : Model W Domain Const Pred) (P : Pred) (w : W) (d : Domain) :
     Prop :=
   (M.interp w).RelMap (monadicRel P) (fun _ => d)
 
@@ -506,7 +506,7 @@ def _root_.FirstOrder.Language.KripkeStructure.pInterp
     `Structure.funMap` (cf. `Semantics.Composition.Model.const`). -/
 def _root_.FirstOrder.Language.KripkeStructure.cInterp
     {W Domain Const Pred : Type*}
-    (M : QBSMLModel W Domain Const Pred) (c : Const) (w : W) : Domain :=
+    (M : Model W Domain Const Pred) (c : Const) (w : W) : Domain :=
   (M.interp w).funMap (monadicConst c) default
 
 @[simp] theorem _root_.FirstOrder.Language.KripkeStructure.pInterp_monadicStructure
@@ -536,8 +536,8 @@ variable [Fintype Domain]
     Definition 4.9): `eval M true φ s` is support (`M, s ⊨ φ`),
     `eval M false φ s` anti-support (`M, s ⫤ φ`). Negation flips the
     polarity, making double-negation elimination definitional. -/
-def eval (M : QBSMLModel W Domain Const Pred) :
-    Bool → QBSMLFormula Var Const Pred → Finset (Index W Var Domain) → Prop
+def eval (M : Model W Domain Const Pred) :
+    Bool → Formula Var Const Pred → Finset (Index W Var Domain) → Prop
   | true,  .pred P x, s =>
       ∀ i ∈ s, ∃ d, i.assign x = some d ∧ M.pInterp P i.world d
   | false, .pred P x, s =>
@@ -571,29 +571,29 @@ def eval (M : QBSMLModel W Domain Const Pred) :
   | false, .exi x ψ, s => eval M false ψ (State.extendUniversal s x)
 
 /-- Support: positive evaluation. -/
-abbrev support (M : QBSMLModel W Domain Const Pred) (φ : QBSMLFormula Var Const Pred)
+abbrev support (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   eval M true φ s
 
 /-- Anti-support: negative evaluation. -/
-abbrev antiSupport (M : QBSMLModel W Domain Const Pred) (φ : QBSMLFormula Var Const Pred)
+abbrev antiSupport (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   eval M false φ s
 
-@[simp] lemma support_neg (M : QBSMLModel W Domain Const Pred)
-    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain)) :
+@[simp] lemma support_neg (M : Model W Domain Const Pred)
+    (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain)) :
     support M (.neg φ) s ↔ antiSupport M φ s := Iff.rfl
 
-@[simp] lemma antiSupport_neg (M : QBSMLModel W Domain Const Pred)
-    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain)) :
+@[simp] lemma antiSupport_neg (M : Model W Domain Const Pred)
+    (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain)) :
     antiSupport M (.neg φ) s ↔ support M φ s := Iff.rfl
 
 /-- `support` and `antiSupport` form a paraconsistent bilateral logic
-    (`Bilateral.IsBilateral`) under `QBSMLFormula.neg`, like
+    (`Bilateral.IsBilateral`) under `Formula.neg`, like
     BSML's `isBilateral` at the point type `Index W Var Domain`. -/
-theorem isBilateral (M : QBSMLModel W Domain Const Pred) :
-    Bilateral.IsBilateral (Form := QBSMLFormula Var Const Pred)
-      (support M) (antiSupport M) QBSMLFormula.neg :=
+theorem isBilateral (M : Model W Domain Const Pred) :
+    Bilateral.IsBilateral (Form := Formula Var Const Pred)
+      (support M) (antiSupport M) Formula.neg :=
   Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
 
 end Evaluation
@@ -609,22 +609,22 @@ variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain]
     `Team.IsStateBased` applied to `State.worldProj s`, sharing
     BSML's frame-condition substrate. -/
 def _root_.FirstOrder.Language.KripkeStructure.IsStateBased
-    (M : QBSMLModel W Domain Const Pred)
+    (M : Model W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   Team.IsStateBased M.access (State.worldProj s)
 
 /-- `R` is indisputable on `(M, s)`: all worlds in `s↓` see the same
     accessible set ([aloni-vanormondt-2023] Definition 4.10). -/
 def _root_.FirstOrder.Language.KripkeStructure.IsIndisputable
-    (M : QBSMLModel W Domain Const Pred)
+    (M : Model W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   Team.IsIndisputable M.access (State.worldProj s)
 
-instance [Fintype W] (M : QBSMLModel W Domain Const Pred)
+instance [Fintype W] (M : Model W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Decidable (M.IsStateBased s) := by
   unfold FirstOrder.Language.KripkeStructure.IsStateBased; infer_instance
 
-instance [Fintype W] (M : QBSMLModel W Domain Const Pred)
+instance [Fintype W] (M : Model W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Decidable (M.IsIndisputable s) := by
   unfold FirstOrder.Language.KripkeStructure.IsIndisputable; infer_instance
 

@@ -17,7 +17,7 @@ a typo silently compiles to `false` under the
   a third proposition.
 * `QVar` — the shared toy variable type for quantified FC scenarios
   (QBSML); the first-order counterpart of `FCAtom`.
-* `PowerSet2World` — the 2² = 4 truth assignments to two atoms
+* `TwoAtomWorld` — the 2² = 4 truth assignments to two atoms
   ([aloni-2022] Figure 1: `w_∅`, `w_a`, `w_b`, `w_ab`), with the typed
   `holds` truth table.
 
@@ -64,23 +64,23 @@ inductive QVar | x
     - `onlyB`   = `w_b`: only `b`
     - `both`    = `w_ab`: both `a` and `b`
 -/
-inductive PowerSet2World
+inductive TwoAtomWorld
   | nothing
   | onlyA
   | onlyB
   | both
   deriving DecidableEq, Repr
 
-instance : Fintype PowerSet2World where
+instance : Fintype TwoAtomWorld where
   elems := {.nothing, .onlyA, .onlyB, .both}
   complete := by intro x; cases x <;> simp
 
-namespace PowerSet2World
+namespace TwoAtomWorld
 
 /-- Truth-table for the two-atom power set. The third atom (`c`) is
     unsatisfiable in this baseline 4-world model — embedded scenarios
     needing `c` should use a larger world type. -/
-def holds : PowerSet2World → FCAtom → Bool
+def holds : TwoAtomWorld → FCAtom → Bool
   | .both,    .a => true
   | .both,    .b => true
   | .onlyA,   .a => true
@@ -92,8 +92,8 @@ def holds : PowerSet2World → FCAtom → Bool
   | _,        .c => false
 
 /-- Synonym used by Studies that prefer the predicate spelling. -/
-abbrev satisfies : PowerSet2World → FCAtom → Bool := holds
+abbrev satisfies : TwoAtomWorld → FCAtom → Bool := holds
 
-end PowerSet2World
+end TwoAtomWorld
 
 end BSML

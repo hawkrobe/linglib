@@ -29,7 +29,7 @@ behaviour-under-negation pattern — the QBSML free-choice facts of
 
 ## Main declarations
 
-* `QBSMLFormula.enrich` — the enrichment function `[·]⁺`.
+* `Formula.enrich` — the enrichment function `[·]⁺`.
 * `enriched_support_implies_nonempty` — a state supporting an enriched
   formula is non-empty (the `NE` conjunct guards every clause).
 * `antiSupport_strip_ne`, `antiSupport_conj_ne_iff` — anti-support of
@@ -43,10 +43,10 @@ behaviour-under-negation pattern — the QBSML free-choice facts of
 
 ## Implementation notes
 
-`enrich` is total on `QBSMLFormula` for definitional convenience, but `[·]⁺`
+`enrich` is total on `Formula` for definitional convenience, but `[·]⁺`
 is defined only on the NE-free fragment in both papers, so the `.ne` case is
 a filler convention. The construction is structurally identical to BSML's
-`Logic/Modal/BSML/Enrichment.lean` but operates on `QBSMLFormula Var Const Pred`
+`Logic/Modal/BSML/Enrichment.lean` but operates on `Formula Var Const Pred`
 (quantifiers, predicate atoms) rather than `BSMLFormula Atom`. The two are
 kept parallel rather than unified: a shared "team-semantic formula language
 with an `NE` constructor" abstraction awaits a third instance, per the family
@@ -61,7 +61,7 @@ variable {Var Const Pred : Type*}
 
 /-- Pragmatic enrichment `[·]⁺` for QBSML formulas ([aloni-vanormondt-2023]
     Definition 4.13). Recursively conjoins `NE` to every clause. -/
-def QBSMLFormula.enrich : QBSMLFormula Var Const Pred → QBSMLFormula Var Const Pred
+def Formula.enrich : Formula Var Const Pred → Formula Var Const Pred
   | .pred P x   => .conj (.pred P x) .ne
   | .predc P c  => .conj (.predc P c) .ne
   | .ne         => .ne  -- totality filler; enrichment is defined only on the NE-free fragment
@@ -81,8 +81,8 @@ variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 /-- A QBSML state supporting an enriched formula must be non-empty. The NE
     conjunct guards every clause of `enrich φ`, forcing the witnessing state
     to satisfy `Nonempty`. -/
-theorem enriched_support_implies_nonempty (M : QBSMLModel W Domain Const Pred)
-    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
+theorem enriched_support_implies_nonempty (M : Model W Domain Const Pred)
+    (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain))
     (h : support M φ.enrich s) : s.Nonempty := by
   cases φ with
   | ne => exact h
@@ -95,8 +95,8 @@ theorem enriched_support_implies_nonempty (M : QBSMLModel W Domain Const Pred)
     `t₁ = s`. The QBSML analogue of `BSML/Enrichment`'s `antiSupport_strip_ne`;
     the workhorse of the free-choice derivations in
     `Studies/AloniVanOrmondt2023.lean`. -/
-theorem antiSupport_strip_ne (M : QBSMLModel W Domain Const Pred)
-    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
+theorem antiSupport_strip_ne (M : Model W Domain Const Pred)
+    (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain))
     (h : antiSupport M (.conj φ .ne) s) :
     antiSupport M φ s := by
   obtain ⟨t₁, t₂, hunion, h₁, h₂⟩ := h
@@ -107,15 +107,15 @@ theorem antiSupport_strip_ne (M : QBSMLModel W Domain Const Pred)
 
 /-- Anti-support of `φ` implies anti-support of `φ ∧ NE` via the trivial
     split `(s, ∅)`. The reverse direction of `antiSupport_strip_ne`. -/
-theorem antiSupport_conj_ne_of_antiSupport (M : QBSMLModel W Domain Const Pred)
-    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
+theorem antiSupport_conj_ne_of_antiSupport (M : Model W Domain Const Pred)
+    (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain))
     (h : antiSupport M φ s) :
     antiSupport M (.conj φ .ne) s :=
   ⟨s, ∅, Team.splitsAs_self_empty s, h, rfl⟩
 
 /-- Anti-support of `φ ∧ NE` ↔ anti-support of `φ`. -/
-theorem antiSupport_conj_ne_iff (M : QBSMLModel W Domain Const Pred)
-    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain)) :
+theorem antiSupport_conj_ne_iff (M : Model W Domain Const Pred)
+    (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain)) :
     antiSupport M (.conj φ .ne) s ↔ antiSupport M φ s :=
   ⟨antiSupport_strip_ne M φ s, antiSupport_conj_ne_of_antiSupport M φ s⟩
 
@@ -131,8 +131,8 @@ theorem antiSupport_conj_ne_iff (M : QBSMLModel W Domain Const Pred)
     All quantifier cases use `antiSupport_strip_ne` to peel the `NE`
     conjunct, then `extendUniversal` / `extendFunctional` to apply the IH
     on the extended state. -/
-private theorem enrichment_strengthens_both (M : QBSMLModel W Domain Const Pred)
-    {φ : QBSMLFormula Var Const Pred} (hNE : φ.IsNEFree) :
+private theorem enrichment_strengthens_both (M : Model W Domain Const Pred)
+    {φ : Formula Var Const Pred} (hNE : φ.IsNEFree) :
     (∀ s : Finset (Index W Var Domain), support M φ.enrich s → support M φ s) ∧
     (∀ s : Finset (Index W Var Domain),
         antiSupport M φ.enrich s → antiSupport M φ s) := by
@@ -213,16 +213,16 @@ private theorem enrichment_strengthens_both (M : QBSMLModel W Domain Const Pred)
 /-- **Enrichment strengthens (support direction)** — [aloni-2022] Fact 1
     extended to QBSML. For NE-free `φ`, supporting the enriched form implies
     supporting the original. -/
-theorem enrichment_strengthens_support (M : QBSMLModel W Domain Const Pred)
-    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
+theorem enrichment_strengthens_support (M : Model W Domain Const Pred)
+    (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain))
     (hNE : φ.IsNEFree)
     (h : support M φ.enrich s) :
     support M φ s :=
   (enrichment_strengthens_both M hNE).1 s h
 
 /-- **Enrichment strengthens (anti-support direction)**. -/
-theorem enrichment_strengthens_antiSupport (M : QBSMLModel W Domain Const Pred)
-    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain))
+theorem enrichment_strengthens_antiSupport (M : Model W Domain Const Pred)
+    (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain))
     (hNE : φ.IsNEFree)
     (h : antiSupport M φ.enrich s) :
     antiSupport M φ s :=
@@ -235,14 +235,14 @@ theorem enrichment_strengthens_antiSupport (M : QBSMLModel W Domain Const Pred)
     peel `[□φ]⁺ = [¬◇¬φ]⁺` down to `[φ]⁺` at each `R(wᵢ)[gᵢ]`, packaged
     once for the `□`-free-choice derivations
     (`Logic/Modal/QBSML/FreeChoice.lean`). -/
-theorem support_enrich_nec_iff (M : QBSMLModel W Domain Const Pred)
-    (φ : QBSMLFormula Var Const Pred) (s : Finset (Index W Var Domain)) :
+theorem support_enrich_nec_iff (M : Model W Domain Const Pred)
+    (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain)) :
     support M φ.nec.enrich s ↔
       (∀ i ∈ s, support M φ.enrich
         (State.modalLift (M.access i.world) i.assign)) ∧ s.Nonempty := by
   constructor
   · intro h
-    have h' : antiSupport M (.poss (QBSMLFormula.neg φ).enrich) s :=
+    have h' : antiSupport M (.poss (Formula.neg φ).enrich) s :=
       antiSupport_strip_ne M _ s h.1
     exact ⟨fun i hi => antiSupport_strip_ne M _ _ (h' i hi), h.2⟩
   · intro h
