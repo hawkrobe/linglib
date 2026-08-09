@@ -1,5 +1,5 @@
 import Linglib.Logic.Modal.QBSML.FreeChoice
-import Linglib.Logic.Modal.QBSML.StandardTranslation
+import Linglib.Logic.Modal.QBSML.Compactness
 import Linglib.Logic.Modal.BSML.Scenarios
 
 /-!

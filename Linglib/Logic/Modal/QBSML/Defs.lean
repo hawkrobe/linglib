@@ -1,6 +1,7 @@
 import Mathlib.Data.Finset.Union
 import Mathlib.Data.Fintype.Basic
-import Linglib.Logic.FirstOrder.Kripke
+import Linglib.Logic.Modal.FirstOrder.Kripke
+import Linglib.Logic.Modal.FirstOrder.Monadic
 import Linglib.Logic.Team.Algebra
 import Linglib.Logic.Bilateral.Defs
 
@@ -30,10 +31,11 @@ the `Team.isFlat_iff` template at the point type
 * `Formula`: the formula language ([aloni-vanormondt-2023]
   Definition 4.1), with `□` derived as `Formula.nec`.
 * `Formula.IsNEFree`: the NE-free fragment.
-* `Language.monadic`, `monadicStructure`: the monadic first-order signature on
+* `Language.monadicWithConstants` (in `Logic/Modal/FirstOrder/Monadic.lean`): the
+  monadic-with-constants signature on
   `Const` and `Pred` and its structures, as a mathlib `FirstOrder.Language`.
 * `Model` (an abbreviation for `FirstOrder.Language.KripkeStructure`
-  over `Language.monadic`), `eval`, `support`, `antiSupport`: bilateral evaluation
+  over `Language.monadicWithConstants`), `eval`, `support`, `antiSupport`: bilateral evaluation
   ([aloni-vanormondt-2023] Definition 4.9), with the interpretation carried
   as a world-indexed family of mathlib structures.
 * `isBilateral`: `support`/`antiSupport` form a
@@ -434,89 +436,25 @@ theorem Formula.IsNEFree.mapAtoms
   | exi x _ ih => exact .exi x ih
   | univ x _ ih => exact .univ x ih
 
-/-! ### The monadic signature and models -/
-
-/-- The monadic signature on `Const` and `Pred`: one individual constant per
-    `Const`, one unary relation symbol per `Pred` — [aloni-vanormondt-2023]
-    Definition 4.1's signature (terms `t := c | x`, monadic relations). -/
-def _root_.FirstOrder.Language.monadic.{u, v} (Const : Type u) (Pred : Type v) :
-    FirstOrder.Language where
-  Functions := fun n => match n with
-    | 0 => Const
-    | _ => PEmpty
-  Relations := fun n => match n with
-    | 1 => Pred
-    | _ => PEmpty
-
-/-- A constant as a symbol of the monadic signature (defeq; the parametric
-    analogue of mathlib's per-symbol abbreviations, cf.
-    `Fragments/English/Toy.lean`). -/
-abbrev monadicConst {Const Pred : Type*} (c : Const) :
-    (Language.monadic Const Pred).Constants := c
-
-/-- A predicate as a relation symbol of the monadic signature (defeq). -/
-abbrev monadicRel {Const Pred : Type*} (P : Pred) :
-    (Language.monadic Const Pred).Relations 1 := P
-
-/-- The `Language.monadic Const Pred` structure a constant interpretation and a
-    predicate valuation induce. -/
-@[reducible] def monadicStructure {Const Pred Domain : Type*}
-    (κ : Const → Domain) (V : Pred → Domain → Prop) :
-    (Language.monadic Const Pred).Structure Domain where
-  funMap := fun {n} f => match n, f with
-    | 0, c => fun _ => κ c
-    | _ + 1, f => f.elim
-  RelMap := fun {n} r => match n, r with
-    | 1, P => fun v => V P (v 0)
-    | 0, r => r.elim
-    | _ + 2, r => r.elim
-
-@[simp] theorem monadicStructure_relMap {Const Pred Domain : Type*}
-    (κ : Const → Domain) (V : Pred → Domain → Prop) (P : Pred)
-    (v : Fin 1 → Domain) :
-    (monadicStructure κ V).RelMap (monadicRel P) v ↔ V P (v 0) :=
-  Iff.rfl
-
-@[simp] theorem monadicStructure_funMap {Const Pred Domain : Type*}
-    (κ : Const → Domain) (V : Pred → Domain → Prop) (c : Const)
-    (v : Fin 0 → Domain) :
-    (monadicStructure κ V).funMap (monadicConst (Pred := Pred) c) v = κ c :=
-  rfl
+/-! ### Models -/
 
 /-- A QBSML model ([aloni-vanormondt-2023] Definition 4.2:
     `M = ⟨W, D, R, I⟩`) **is** a constant-domain first-order Kripke
-    structure over the monadic signature: accessibility `R` plus the
-    world-indexed interpretation `I`, carried as a family of mathlib
-    structures (`FirstOrder.Language.KripkeStructure`) — true by
+    structure over the monadic signature with constants: accessibility `R`
+    plus the world-indexed interpretation `I`, carried as a family of
+    mathlib structures (`FirstOrder.Language.KripkeStructure`) — true by
     construction, not by bridge. -/
 abbrev Model (W : Type*) (Domain : Type*) (Const : Type*)
     (Pred : Type*) :=
-  FirstOrder.Language.KripkeStructure (Language.monadic Const Pred) W Domain
-
-/-- The predicate denotation at a world, read off the model's structure
-    family via `Structure.RelMap` — the world-relativized `I(w)(Pⁿ)` of
-    [aloni-vanormondt-2023] Definition 4.2, specialised to monadic `P`
-    (cf. `Semantics.Composition.Model.pred₁ext`). -/
-def _root_.FirstOrder.Language.KripkeStructure.pInterp
-    {W Domain Const Pred : Type*}
-    (M : Model W Domain Const Pred) (P : Pred) (w : W) (d : Domain) :
-    Prop :=
-  (M.interp w).RelMap (monadicRel P) (fun _ => d)
-
-/-- The constant denotation at a world — the world-relative `I(w)(c)` of
-    [aloni-vanormondt-2023] Definitions 4.2 and 4.8, read off
-    `Structure.funMap` (cf. `Semantics.Composition.Model.const`). -/
-def _root_.FirstOrder.Language.KripkeStructure.cInterp
-    {W Domain Const Pred : Type*}
-    (M : Model W Domain Const Pred) (c : Const) (w : W) : Domain :=
-  (M.interp w).funMap (monadicConst c) default
+  FirstOrder.Language.KripkeStructure
+    (Language.monadicWithConstants Const Pred) W Domain
 
 /-- The QBSML model with accessibility `access`, constant interpretation
     `κ`, and valuation `V`. -/
 def Model.ofMonadic {W Domain Const Pred : Type*} (access : W → Finset W)
     (κ : W → Const → Domain) (V : W → Pred → Domain → Prop) :
     Model W Domain Const Pred :=
-  ⟨access, fun w => monadicStructure (κ w) (V w)⟩
+  ⟨access, fun w => Language.monadicWithConstantsStructure (κ w) (V w)⟩
 
 @[simp] theorem pInterp_ofMonadic {W Domain Const Pred : Type*}
     (access : W → Finset W) (κ : W → Const → Domain)
