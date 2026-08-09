@@ -1,5 +1,5 @@
 import Linglib.Syntax.Clause.Complementation
-import Linglib.Syntax.Category.Verb.Frame
+import Linglib.Syntax.Category.Verb.Complement.Basic
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Aktionsart
@@ -21,7 +21,7 @@ import Linglib.Semantics.ArgumentStructure.Root.Profile
 
 Framework-agnostic types for verb semantics: the selectional/inflectional enums
 (`VoiceType`, `SenseTag`, …; complementation enums live in
-`Features/Complementation.lean`) and the `Verb` structure that bundles the
+`Syntax/Clause/Complementation.lean`) and the `Verb` structure that bundles the
 semantic fields shared across languages.
 
 `Verb` is the **semantic spine** of a verb entry. Its fields are organised
