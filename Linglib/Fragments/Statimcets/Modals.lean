@@ -30,8 +30,8 @@ The system demonstrates two key typological properties:
 
 namespace Statimcets.Modals
 
-open Semantics.Modality (ForceFlavor ForceAnalysis)
-open Semantics.Modality.Typology (ModalExpression satisfiesIFF satisfiesSAV)
+open Modality (ForceFlavor ForceAnalysis)
+open Modality.Typology (ModalExpression satisfiesIFF satisfiesSAV)
 
 private abbrev nd := ForceFlavor.mk .necessity .deontic
 private abbrev pd := ForceFlavor.mk .possibility .deontic
@@ -69,7 +69,7 @@ Both St'át'imcets modals formalized here are factual-circumstantial:
 classes in St'át'imcets are expressed by the evidential elements k'a
 and lákw7a, which are not formalized here. -/
 
-open Semantics.Modality (BackgroundClass) in
+open Modality (BackgroundClass) in
 def backgroundClass : ModalExpression → BackgroundClass
   | _ => .factualCircumstantial
 

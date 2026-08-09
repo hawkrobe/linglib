@@ -51,7 +51,7 @@ set_option autoImplicit false
 
 namespace FrancikClark1985
 
-open Semantics.Modality (ModalFlavor)
+open Modality (ModalFlavor)
 
 
 -- ════════════════════════════════════════════════════

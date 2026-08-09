@@ -47,9 +47,8 @@ carries a stipulated `aspectGoverned := true`); a theorem deriving that bit
 from the aspect-scope licensing here would tie the two accounts together.
 -/
 
-namespace Semantics.Modality.ActualityEntailments
+namespace Modality
 
-open Semantics.Modality.EventRelativity
 open Semantics.Aspect (Perfectivity)
 
 
@@ -218,4 +217,4 @@ theorem three_way_interaction :
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 
-end Semantics.Modality.ActualityEntailments
+end Modality

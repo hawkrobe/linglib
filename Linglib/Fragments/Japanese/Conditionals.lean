@@ -20,7 +20,7 @@ Conditional morphemes in Japanese and their HC/PC restrictions.
 namespace Japanese.Conditionals
 
 open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
-open Semantics.Modality.Exclusion (XMarkingExponent)
+open Modality.Exclusion (XMarkingExponent)
 
 /-- Japanese -ra / -tara: HC-only conditional marker.
 

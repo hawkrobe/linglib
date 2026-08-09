@@ -306,7 +306,7 @@ Polymorphic over world type `W` and two parameters:
   compatible with what the agent at `w` believes.
 - `bestOf : W → Set W` — the worlds in `dox w` that maximally satisfy
   the attitude's preference / expectation ordering. Intended to be
-  instantiated with `Semantics.Modality.Kratzer.bestWorlds f g w`.
+  instantiated with `Modality.Kratzer.bestWorlds f g w`.
 
 Both `sorryFull` and `gladFull` use *doxastic factivity* (vF eq. 50/53):
 "α is sorry/glad that p" presupposes that the agent at `w` believes `p`,

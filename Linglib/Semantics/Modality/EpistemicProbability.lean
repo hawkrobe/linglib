@@ -57,7 +57,7 @@ the two formalizations agree.
 
 set_option autoImplicit false
 
-namespace Semantics.Modality.EpistemicProbability
+namespace Modality.EpistemicProbability
 
 open Semantics.Attitudes.EpistemicThreshold
 
@@ -179,4 +179,4 @@ theorem threshold_ordering :
   constructor <;> simp [θ_possibly, θ_probably, θ_certainly,
     EpistemicEntry.might_, EpistemicEntry.likely_, EpistemicEntry.certain_] <;> norm_num
 
-end Semantics.Modality.EpistemicProbability
+end Modality.EpistemicProbability

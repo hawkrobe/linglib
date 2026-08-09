@@ -17,7 +17,7 @@ force-flavor pairs) but conceptually independent.
 
 ## What belongs here vs. `Intensional`
 
-- **Here** (`Semantics.Modality`): `ModalForce`, `ModalFlavor`, `ForceFlavor`,
+- **Here** (`Modality`): `ModalForce`, `ModalFlavor`, `ForceFlavor`,
   `ModalItem`, `ConcordType`, `ModalDecomposition` — linguistic classification
   of modal meanings.
 - **There** (`Intensional`): `AccessRel`, `kripkeEval`, frame conditions
@@ -26,7 +26,7 @@ force-flavor pairs) but conceptually independent.
   the lattice of normal modal logics — mathematical semantics.
 -/
 
-namespace Semantics.Modality
+namespace Modality
 
 -- ============================================================================
 -- §1. Modal Force
@@ -466,4 +466,4 @@ def ForceAnalysis.HasDual : ForceAnalysis → Prop
 instance : DecidablePred ForceAnalysis.HasDual := fun a => by
   cases a <;> unfold ForceAnalysis.HasDual <;> infer_instance
 
-end Semantics.Modality
+end Modality

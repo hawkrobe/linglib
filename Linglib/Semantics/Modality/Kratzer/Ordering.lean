@@ -18,10 +18,10 @@ import Linglib.Core.Order.OfCriteria
 import Mathlib.Order.Basic
 import Mathlib.Data.Set.Basic
 
-namespace Semantics.Modality.Kratzer
+namespace Modality.Kratzer
 
 /-! The premise primitives live in `Intensional.Premise`; re-export
-them under `Semantics.Modality.Kratzer` so the historical `Kratzer.foo` call
+them under `Modality.Kratzer` so the historical `Kratzer.foo` call
 style continues to work. The conversational-background primitives
 (`ConvBackground`, `ModalBase`, …) are defined directly in this namespace by
 `ConversationalBackground.lean`. -/
@@ -149,6 +149,11 @@ These are exactly the worlds in ⋂f(w) — worlds compatible with all facts in 
 def accessibleWorlds (f : ModalBase W) (w : W) : Set W :=
   propIntersection (f w)
 
+/-- Growing the modal base can only shrink the accessible worlds. -/
+theorem accessibleWorlds_anti {f f' : ModalBase W} {w : W} (h : f w ⊆ f' w) :
+    accessibleWorlds f' w ⊆ accessibleWorlds f w :=
+  Intensional.Premise.propIntersection_anti_of_subset h
+
 /-- The best accessible worlds: those no accessible world strictly
 betters. [kratzer-1981]'s official necessity is the limit-free
 `humanNecessity`; it quantifies over exactly this set under the Limit
@@ -218,4 +223,4 @@ theorem bestAmong_superset {sub sup : Set W} {ordering : List (W → Prop)} {w' 
     w' ∈ bestAmong sub ordering :=
   ⟨hMem, fun v hv hle => hBest.2 v (hSub hv) hle⟩
 
-end Semantics.Modality.Kratzer
+end Modality.Kratzer

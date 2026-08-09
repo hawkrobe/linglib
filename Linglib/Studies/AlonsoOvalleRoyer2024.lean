@@ -38,10 +38,10 @@ access the speech event.
 
 namespace AlonsoOvalleRoyer2024
 
-open Semantics.Modality (ModalFlavor)
+open Modality (ModalFlavor)
 open Features.ModalIndefinite
-open Semantics.Modality.EventRelativity
-open Semantics.Modality.Kratzer
+open Modality
+open Modality.Kratzer
 open Chuj.ModalIndefinites
 open Spanish.ModalIndefinites
 open German.ModalIndefinites

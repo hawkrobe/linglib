@@ -23,7 +23,7 @@ several constructions in linglib:
 - `Core.Optimization.paretoPullbackPreorder` — the
   projection is the score vector, the target is `Profile β n` with
   pointwise ≤.
-- `Semantics.Modality.Kratzer.worldOrdering` — the projection is the
+- `Modality.Kratzer.worldOrdering` — the projection is the
   satisfied proposition set, same shape as `SatisfactionOrdering`.
 - `BundleLike.subsumptionPreorder` — the projection is a feature
   bundle's valuation, the target is `Features.Bundle` with subsumption.

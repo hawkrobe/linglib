@@ -29,7 +29,7 @@ trivially, so her verdicts require the minimality reading
 
 namespace Kratzer1981
 
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 
 /-- A world: does the speaker become mayor, and go to the pub regularly? -/
 abbrev World := Bool × Bool

@@ -628,7 +628,7 @@ theorem stalnakerCounterfactual_eq_willConditional_universe
     Semantics.Conditionals.selectionConditional
     Semantics.Conditionals.WillConditional.willConditional
     Semantics.Conditionals.WillConditional.restrict
-    Semantics.Modality.Selectional.willSem
+    Modality.Selectional.willSem
   rw [Set.univ_inter]
 
 /-- **Stalnaker counterfactual = would-conditional over the universe.**
@@ -715,7 +715,7 @@ private noncomputable def divergeSel : Semantics.Conditionals.SelectionFunction 
     structural source — single-valuedness of selection vs. universal
     quantification over a non-trivial closest set — drives the C&S
     *will* / `universalWill` split in
-    `Semantics.Modality.Selectional`. -/
+    `Modality.Selectional`. -/
 theorem stalnaker_lewis_would_diverge :
     ∃ (sim : SimilarityOrdering (Fin 3)) (A B : Fin 3 → Prop)
       (_ : DecidablePred A) (_ : DecidablePred B) (w : Fin 3),

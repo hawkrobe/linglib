@@ -28,9 +28,9 @@ UNVERIFIED reference: Kratzer (2012) Modals and Conditionals, OUP — chapter
 and section number not checked against the original.
 -/
 
-namespace Semantics.Modality.ProbabilityOrdering
+namespace Modality.ProbabilityOrdering
 
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 
 /-! ## Polymorphic core -/
 
@@ -172,4 +172,4 @@ theorem prob_necessity_at_best (p : World → Prop) (w : World) (hp : p 0) :
   rw [Set.mem_singleton_iff.mp hw']
   exact hp
 
-end Semantics.Modality.ProbabilityOrdering
+end Modality.ProbabilityOrdering

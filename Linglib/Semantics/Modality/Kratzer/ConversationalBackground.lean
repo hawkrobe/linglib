@@ -14,7 +14,7 @@ A conversational background maps worlds to sets of propositions. Two roles:
 
 open Intensional.Premise (propIntersection)
 
-namespace Semantics.Modality.Kratzer
+namespace Modality.Kratzer
 
 variable {W : Type*}
 
@@ -49,4 +49,4 @@ def isTotallyRealistic (f : ConvBackground W) : Prop :=
     trivially realistic. UNVERIFIED page reference. -/
 def emptyBackground : ConvBackground W := λ _ => []
 
-end Semantics.Modality.Kratzer
+end Modality.Kratzer

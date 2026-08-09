@@ -72,7 +72,7 @@ set_option autoImplicit false
 namespace CarianiSantorio2018
 
 open _root_.Semantics.Conditionals (SelectionFunction)
-open Semantics.Modality.Selectional
+open Modality.Selectional
 open Semantics.Conditionals.WillConditional
   (wouldConditional willConditional universalWillConditional compositional_CEM)
 open scoped ENNReal
@@ -384,7 +384,7 @@ theorem cap_will_conditional_cem :
 theorem universal_will_conditional_cem_fails :
     ¬ universalWillConditional wearsCap warriorsCap histAlt .cw ∧
     ¬ universalWillConditional wearsCap (fun w => ¬ warriorsCap w) histAlt .cw := by
-  unfold universalWillConditional _root_.Semantics.Modality.Selectional.universalWill
+  unfold universalWillConditional _root_.Modality.Selectional.universalWill
     _root_.Semantics.Conditionals.WillConditional.restrict
   refine ⟨fun h => ?_, fun h => ?_⟩
   · have hcg : (W.cg) ∈ warriorsCap :=

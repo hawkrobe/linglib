@@ -44,7 +44,7 @@ Japanese Historical Present of [mizuno-2024]) to grammatically
 distinguish live from non-live possibilities.
 -/
 
-namespace Semantics.Modality.Exclusion
+namespace Modality.Exclusion
 
 open Semantics.Context (KContext ContextTower temporalShift)
 open Mood (subjShift)
@@ -181,4 +181,4 @@ structure XMarkingExponent where
   components : List XMarkingHost
   deriving DecidableEq, Repr
 
-end Semantics.Modality.Exclusion
+end Modality.Exclusion

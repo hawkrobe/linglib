@@ -179,7 +179,7 @@ desires, by definition. -/
     Decidability is transported from the per-`DecProp` witnesses via
     `worldAtLeastAsGood_iff_decProp`. -/
 def worldAtLeastAsGood (GS : List (DecProp W)) (w z : W) : Prop :=
-  Semantics.Modality.Kratzer.atLeastAsGoodAs (GS.map (·.prop)) w z
+  Modality.Kratzer.atLeastAsGoodAs (GS.map (·.prop)) w z
 
 omit [Fintype W] [DecidableEq W] in
 /-- The ordering in its `DecProp`-quantified form, where each desire
@@ -202,7 +202,7 @@ omit [Fintype W] [DecidableEq W] in
     discoverability. -/
 theorem worldAtLeastAsGood_iff_kratzer (GS : List (DecProp W)) (w z : W) :
     worldAtLeastAsGood GS w z ↔
-      Semantics.Modality.Kratzer.atLeastAsGoodAs (GS.map (·.prop)) w z :=
+      Modality.Kratzer.atLeastAsGoodAs (GS.map (·.prop)) w z :=
   Iff.rfl
 
 /-- Standard von Fintel [von-fintel-1999] semantics: every undominated

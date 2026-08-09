@@ -76,7 +76,7 @@ abbrev World := Fin 4
 
 def allWorlds : List World := [0, 1, 2, 3]
 
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 
 /-- Computable list of accessible worlds for use in the Boylan framework.
     `accessibleWorlds` is now `Set`-valued (noncomputable); for the `decide`-

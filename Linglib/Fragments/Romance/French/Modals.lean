@@ -40,7 +40,7 @@ in position-sensitive flavor selection ([hacquard-2006]).
 
 namespace French.Modals
 
-open Semantics.Modality (ModalForce ModalFlavor ForceFlavor)
+open Modality (ModalForce ModalFlavor ForceFlavor)
 open Mood.Illocutionary (primaryFlavor)
 open Mood (Illocutionary)
 

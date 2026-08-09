@@ -44,7 +44,7 @@ is the German deontic scenario at p. 67 (examples 59-61).
 
 namespace Kratzer2012Conditionals
 
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 
 /-! ## §1. Four-conditional recipe (abstract) -/
 

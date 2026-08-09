@@ -36,8 +36,8 @@ https://clmbr.shane.st/modal-typology/
 
 namespace ImelGuoST2026
 
-open Semantics.Modality (ModalForce ModalFlavor ForceFlavor)
-open Semantics.Modality.Typology (ModalExpression ModalInventory satisfiesIFF)
+open Modality (ModalForce ModalFlavor ForceFlavor)
+open Modality.Typology (ModalExpression ModalInventory satisfiesIFF)
 
 /-! ## Abbreviations for the nine meaning points -/
 
@@ -97,14 +97,14 @@ theorem gitksan_size : gitksan.size = 5 := by native_decide
 /-- Gitksan's variable-force epistemic modals satisfy both SAV and IFF:
     {poss, nec} × {epistemic} varies on force only (single flavor). -/
 theorem gitksan_ima_sav :
-    Semantics.Modality.Typology.satisfiesSAV [pe, ne] = true := by native_decide
+    Modality.Typology.satisfiesSAV [pe, ne] = true := by native_decide
 
 theorem gitksan_ima_is_iff :
     satisfiesIFF [pe, ne] = true := by native_decide
 
 /-- Greek's Prepei violates SAV: it varies on both force and flavor axes. -/
 theorem prepei_not_sav :
-    Semantics.Modality.Typology.satisfiesSAV [ne, pe, nd, nc] = false := by native_decide
+    Modality.Typology.satisfiesSAV [ne, pe, nd, nc] = false := by native_decide
 
 -- ============================================================================
 -- §4: Korean (Koreanic) — [qing-uegaki-2025]
@@ -243,7 +243,7 @@ theorem washo_eq_iff :
 
 /-- *-eʔ* does NOT satisfy SAV: it varies on both force and flavor. -/
 theorem washo_eq_not_sav :
-    Semantics.Modality.Typology.satisfiesSAV [ne, nd, pe, pd] = false := by native_decide
+    Modality.Typology.satisfiesSAV [ne, nd, pe, pd] = false := by native_decide
 
 -- ============================================================================
 -- §12: Koryak (Chukotko-Kamchatkan) — [mocnik-abramovitz-2019]
@@ -275,7 +275,7 @@ theorem mighst_not_iff :
 
 /-- *mighst* also fails SAV (as expected, since SAV → IFF). -/
 theorem mighst_not_sav :
-    Semantics.Modality.Typology.satisfiesSAV [pe, nd] = false := by native_decide
+    Modality.Typology.satisfiesSAV [pe, nd] = false := by native_decide
 
 -- ============================================================================
 -- §14: Cross-Linguistic Summary

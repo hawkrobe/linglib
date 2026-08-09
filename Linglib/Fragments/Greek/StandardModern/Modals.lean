@@ -12,8 +12,8 @@ subsets of the meaning space.
 
 namespace Greek.StandardModern.Modals
 
-open Semantics.Modality (ForceFlavor)
-open Semantics.Modality.Typology (ModalExpression)
+open Modality (ForceFlavor)
+open Modality.Typology (ModalExpression)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic
 private abbrev pe := ForceFlavor.mk .possibility .epistemic

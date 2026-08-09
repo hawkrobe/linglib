@@ -55,9 +55,9 @@ namespace Rubinstein2014
 
 abbrev World := Fin 4
 
-open Semantics.Modality.Kratzer
-open Semantics.Modality.Directive
-open Semantics.Modality (ModalForce)
+open Modality.Kratzer
+open Modality.Directive
+open Modality (ModalForce)
 open Semantics.Homogeneity (negRaising_iff_subsingleton)
 open Data.Examples
 

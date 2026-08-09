@@ -26,7 +26,7 @@ the `future`/`past` orientations — the `present` cell of
 `TemporalOrientation` goes unused there.
 -/
 
-namespace Semantics.Modality
+namespace Modality
 
 /-- Temporal perspective: the time at which a modal base / ordering
     source is evaluated. -/
@@ -48,4 +48,4 @@ inductive TemporalOrientation where
   | future
   deriving DecidableEq, Repr, BEq, Inhabited
 
-end Semantics.Modality
+end Modality

@@ -1717,7 +1717,6 @@ import Linglib.Semantics.Modality.Orthologic.Modal
 import Linglib.Semantics.Modality.Orthologic.RegularProp
 import Linglib.Semantics.Modality.ProbabilityOrdering
 import Linglib.Semantics.Modality.Selectional
-import Linglib.Semantics.Modality.Temporal
 import Linglib.Semantics.Modality.TemporalAxes
 import Linglib.Semantics.Modality.TemporalConstraint
 import Linglib.Semantics.Modality.Typology
@@ -2939,3 +2938,4 @@ import Linglib.Data.Examples.Coon2019
 import Linglib.Data.Examples.Zheng2025
 import Linglib.Data.Examples.Lahiri1998
 import Linglib.Data.Examples.VonStechow1984
+import Linglib.Data.Examples.Hacquard2006

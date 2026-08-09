@@ -58,11 +58,11 @@ open Tense
 namespace Klecha2016
 
 open Features (Attitude Preferential Veridicality)
-open Semantics.Modality (ModalBaseKind)
+open Modality (ModalBaseKind)
 open HistoricalAlternatives
   (actualHistoryBase futureHistoryBase
    upperLimitConstraintModal upperLimitConstraintModal_implies_value)
-open Semantics.Modality.TemporalConstraint (attitudeTemporalConstraint
+open Modality.TemporalConstraint (attitudeTemporalConstraint
   doxConstrainsRT cirConstrainsRT Attitude.toModalBaseKind
   dox_compatible_with_past dox_incompatible_with_future cir_compatible_with_future
   permitsCirc_iff_cir ModalFlavor.toModalBaseKind
@@ -72,7 +72,7 @@ open Semantics.Modality.TemporalConstraint (attitudeTemporalConstraint
   attitudeTemporalConstraint_derived_circumstantial)
 open English.Predicates.Verbal (think believe hope pray)
 open Tense (upperLimitConstraint)
-open Semantics.Modality (ModalFlavor)
+open Modality (ModalFlavor)
 open Data.Examples (LinguisticExample)
 
 /-! ### The tense × modal-base four-cell matrix
@@ -538,7 +538,7 @@ theorem klecha_predicts_imaa_no_future :
     configurations are felicitous, not blocked. -/
 theorem matthewson_imaa_future_attested :
     Matthewson2013.fig4Cells.filter (fun c =>
-      c.orientation == Semantics.Modality.TemporalOrientation.future)
+      c.orientation == Modality.TemporalOrientation.future)
       = [⟨.present, .future, 42⟩, ⟨.past, .future, 44⟩] := rfl
 
 /-- The disagreement: Klecha predicts no felicitous future-oriented
@@ -708,22 +708,22 @@ DIRECTION (DOX blocks future, CIR permits future). The Klecha2016
 docstring §4 (line 44) records the prose claim; this bridge makes
 it kernel-checked.
 
-[hacquard-2006]'s `positionToOrientation` covers past + present
-but is silent on future (the position-to-orientation map has no
-future case). [klecha-2016]'s `ModalBaseKind.permitsOrientation`
+[hacquard-2006]'s `positionPerspective` covers past + present
+but is silent on future (its codomain, `TemporalPerspective`, has
+no future case). [klecha-2016]'s `ModalBaseKind.permitsOrientation`
 adds the future-orientation discriminator. Together they cover all
 three orientations. -/
 
 /-- Phase F bridge — Klecha-Hacquard complementarity:
-    [hacquard-2006]'s `positionToOrientation` covers past +
+    [hacquard-2006]'s `positionPerspective` covers past +
     present from modal position; [klecha-2016]'s
     `ModalBaseKind.permitsOrientation` covers future from modal base
     kind. The conjunction below confirms the four cells:
     `(aboveAsp → present)`, `(belowAsp → past)`,
     `(circumstantial permits future)`, `(doxastic blocks future)`. -/
 theorem klecha_hacquard_complementary :
-    Hacquard2006.positionToOrientation .aboveAsp = .present ∧
-    Hacquard2006.positionToOrientation .belowAsp = .past ∧
+    Hacquard2006.positionPerspective .aboveAsp = .present ∧
+    Hacquard2006.positionPerspective .belowAsp = .past ∧
     ModalBaseKind.permitsOrientation .circumstantial Tense.future = true ∧
     ModalBaseKind.permitsOrientation .doxastic Tense.future = false := by
   refine ⟨rfl, rfl, ?_, ?_⟩ <;> rfl

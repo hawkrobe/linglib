@@ -300,7 +300,7 @@ theorem aadaruu_matches_nonSpecific :
 theorem irgend_compatible_classifications :
     irgendEntry.surfaceDAType = some DAType.epistemic ∧
     irgendeinEntry.status = .notAtIssue ∧
-    irgendeinEntry.hasFlavor Semantics.Modality.ModalFlavor.epistemic = true := by
+    irgendeinEntry.hasFlavor Modality.ModalFlavor.epistemic = true := by
   exact ⟨by decide, rfl, rfl⟩
 
 -- ============================================================================

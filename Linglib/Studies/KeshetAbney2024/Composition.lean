@@ -195,7 +195,7 @@ The modal base β corresponds to `accessRelToBase R w` for an
 `AccessRel W` from `Intensional`. `PIP.Connectives.must`
 provides the dynamic implementation; `must_truth_iff_mustBase` below
 bridges the static `PIPExprF.must` to this set-based formulation.
-Cf. `Semantics.Modality.Kratzer.simpleNecessity` for the
+Cf. `Modality.Kratzer.simpleNecessity` for the
 Kratzerian analogue (monomorphic over `World`).
 -/
 def mustBase (β W₁ W₂ : Set W) : Prop := β ∩ W₁ ⊆ W₂

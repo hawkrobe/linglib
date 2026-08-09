@@ -44,10 +44,9 @@ argument via an anchoring function.
 
 -/
 
-namespace Semantics.Modality.EventRelativity
+namespace Modality
 
-open Semantics.Modality (ModalFlavor)
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 
 
 -- ════════════════════════════════════════════════════
@@ -444,9 +443,8 @@ for content licensing and actuality entailments. The finer-grained
 ordering relative to T and CF would require syntactic tree structure.
 
 This connects the clause structure formalized in
-`Syntax/Minimalism/Voice.lean` and the aspect operators
-in `Semantics/Lexical/Verb/ViewpointAspect.lean` to the
-event-relative framework. -/
+`Syntax/Minimalism/Voice.lean` and the viewpoint-aspect operators
+in `Semantics/Aspect/Basic.lean` to the event-relative framework. -/
 
 /-- Position of a modal relative to Aspect in the clause.
 [hacquard-2010]: this is the structural correlate of the
@@ -706,120 +704,7 @@ theorem factored_reduces {Event W Individual TimePoint : Type*}
 
 
 -- ════════════════════════════════════════════════════
--- § 12. Worked Example: "Jane a dû prendre le train"
---       ([hacquard-2006] -- UNVERIFIED: (201), pp.135–136)
--- ════════════════════════════════════════════════════
-
-/-! (201) "Jane a dû prendre le train."
-     Jane must-PST-PFV take the train.
-  a. Given MY evidence NOW, Jane must have taken the train. [epistemic]
-  b. Given JANE'S circumstances THEN, Jane had to take the train. [root]
-
-The sentence is ambiguous between an epistemic and a goal-oriented
-reading. The two readings differ in the event that anchors the modal:
-
-| Reading | Event | holder(e) | τ(e) | Modal domain |
-|---------|-------|-----------|------|-------------|
-| Epistemic | speech act e₀ | speaker | now | speaker's evidence NOW |
-| Root | VP event e₂ | Jane | then | Jane's circumstances THEN |
-
-The same modal *devoir* gets different parameters from different
-event bindings. No lexical ambiguity is needed. -/
-
-/-- Two individuals in the train scenario. -/
-inductive TrainPerson where | speaker | jane
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Two time points: speech time and the past event time. -/
-inductive TrainTime where | now | then
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Two events: the speech act and Jane's train-taking. -/
-inductive TrainEvent where | speechAct | janesTaking
-  deriving DecidableEq, Repr
-
-/-- The event projection for the train scenario.
-
-Speech act event: holder = speaker, τ = speech time (now).
-VP event (Jane's taking): holder = Jane, τ = past time (then). -/
-def trainProjection : EventProjection TrainEvent TrainPerson TrainTime where
-  holder
-    | .speechAct => .speaker
-    | .janesTaking => .jane
-  time
-    | .speechAct => .now
-    | .janesTaking => .then
-
-/-- Speech event projects to (speaker, now). -/
-theorem speech_projects_to_speaker_now :
-    trainProjection.toPair .speechAct = ⟨.speaker, .now⟩ := rfl
-
-/-- VP event projects to (Jane, then). -/
-theorem vp_projects_to_jane_then :
-    trainProjection.toPair .janesTaking = ⟨.jane, .then⟩ := rfl
-
-/-- The same modal (*devoir*) gets different individual-time pairs
-from different event bindings. This is (201): the epistemic reading
-relativizes to the speaker's evidence NOW; the root reading relativizes
-to Jane's circumstances THEN. -/
-theorem same_modal_different_params :
-    trainProjection.toPair .speechAct ≠
-    trainProjection.toPair .janesTaking := by decide
-
-/-- Two worlds: one where Jane took the train, one where she didn't. -/
-inductive TrainWorld where | took | didnt
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Epistemic anchoring (via speech event): the speaker considers both
-worlds possible (no decisive evidence either way), so the background
-is empty at every projection. -/
-private def epistemicBg : TrainPerson → TrainTime → ConvBackground TrainWorld :=
-  λ _ _ _ => []
-
-/-- Root/goal-oriented anchoring (via VP event): given Jane's
-circumstances at the past time, only the took-world is compatible
-(she was in a situation where she had to take the train). -/
-private def rootBg : TrainPerson → TrainTime → ConvBackground TrainWorld
-  | .jane, .then, _ => [λ w => w = .took]  -- only took-world accessible
-  | _, _, _ => []
-
-/-- The epistemic anchoring function (factored through projection). -/
-private def fEpistemicTrain : AnchoringFn TrainEvent TrainWorld :=
-  factoredAnchoring trainProjection epistemicBg
-
-/-- The root anchoring function (factored through projection). -/
-private def fRootTrain : AnchoringFn TrainEvent TrainWorld :=
-  factoredAnchoring trainProjection rootBg
-
-/-- Epistemic reading: modal anchored to speech event.
-`◇_{f(e₀)} (took)` holds because the speaker considers `took` possible. -/
-theorem epistemic_reading_possible :
-    simplePossibility (fEpistemicTrain .speechAct) (· = .took) .took := by
-  exact ⟨.took, by simp [fEpistemicTrain, factoredAnchoring, epistemicBg,
-    Semantics.Modality.Kratzer.accessibleWorlds, kratzerR], rfl⟩
-
-/-- Root reading: modal anchored to VP event.
-`□_{f(e₂)} (took)` holds because only `took` is accessible. -/
-theorem root_reading_necessary :
-    simpleNecessity (fRootTrain .janesTaking) (· = .took) .took := by
-  intro w' hw'
-  simpa [fRootTrain, factoredAnchoring, trainProjection, rootBg,
-    Semantics.Modality.Kratzer.accessibleWorlds, kratzerR] using hw'
-
-/-- The root anchoring via VP event restricts the accessible worlds
-more than the epistemic anchoring: the didnt-world is epistemically
-accessible but not root-accessible. Both readings use the SAME modal;
-the difference comes entirely from the event bindings. -/
-theorem root_restricts_more :
-    kratzerR (fEpistemicTrain .speechAct) .took .didnt ∧
-    ¬ kratzerR (fRootTrain .janesTaking) .took .didnt := by
-  constructor <;>
-    simp [fEpistemicTrain, fRootTrain, factoredAnchoring, trainProjection,
-      epistemicBg, rootBg, kratzerR]
-
-
--- ════════════════════════════════════════════════════
--- § 13. Events Carry More Than Pairs
+-- § 12. Events Carry More Than Pairs
 -- ════════════════════════════════════════════════════
 
 /-! Individual-time pairs capture WHO and WHEN, but events additionally
@@ -854,76 +739,4 @@ theorem events_richer_than_pairs :
       EventBinder.attitude.availableFlavors := ⟨rfl, rfl, rfl, rfl⟩
 
 
--- ════════════════════════════════════════════════════
--- § 14. Worked Example: Embedded Epistemic
---       "Jane thinks Mary might be pregnant"
---       ([hacquard-2006] -- UNVERIFIED: (247)–(249), pp.155–156)
--- ════════════════════════════════════════════════════
-
-/-! (248c) "Jane thinks Mary might be pregnant."
-
-*Might* is a high modal (above the embedded AspP) bound to the
-attitude event e₁ of *think*. Since thinking is contentful —
-CON(e₁) = Jane's beliefs — epistemic R is available. The modal
-domain is Jane's belief worlds, not the speaker's.
-
-This contrasts with the matrix case (§12): in "Mary might be
-pregnant" (no embedding), *might* binds to the speech event e₀
-and the modal domain is the speaker's evidence.
-
-| Context | Binding event | CON(e) | Epistemic domain |
-|---------|-------------|--------|-----------------|
-| Matrix | e₀ (speech act) | speaker's evidence | what speaker considers possible |
-| Embedded | e₁ (attitude) | Jane's beliefs | what Jane considers possible |
-
-The embedded case demonstrates that attitude events, like speech
-acts, are contentful (§8) — this is why `attitudes_pattern_with_speech`
-holds. -/
-
-/-- Two worlds for the pregnancy scenario. -/
-inductive PregWorld where | pregnant | notPregnant
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Two events: the matrix speech act and Jane's embedded thinking. -/
-inductive BeliefEvent where | speech | thinking
-  deriving DecidableEq, Repr
-
-/-- Anchoring function for the belief scenario.
-- Speech event: speaker has no decisive evidence (empty background →
-  both worlds accessible).
-- Thinking event: Jane believes Mary is pregnant (only the
-  pregnant-world is compatible with Jane's beliefs). -/
-private def fBelief : AnchoringFn BeliefEvent PregWorld
-  | .speech, _ => []  -- speaker uncertain
-  | .thinking, _ => [λ w => w = .pregnant]  -- Jane believes pregnant
-
-/-- Embedded epistemic: *might* bound to Jane's thinking event.
-Under Jane's beliefs, only the pregnant-world is accessible, so
-Mary's being pregnant is necessary (Jane is certain). -/
-theorem embedded_epistemic_necessity :
-    simpleNecessity (fBelief .thinking) (· = .pregnant) .notPregnant := by
-  intro w' hw'
-  simpa [fBelief, Semantics.Modality.Kratzer.accessibleWorlds, kratzerR] using hw'
-
-/-- Matrix epistemic: *might* bound to the speech event.
-The speaker considers both worlds possible, so Mary's NOT being
-pregnant is also possible. -/
-theorem matrix_epistemic_both_possible :
-    simplePossibility (fBelief .speech) (· = .pregnant) .notPregnant ∧
-    simplePossibility (fBelief .speech) (· = .notPregnant) .notPregnant := by
-  exact ⟨⟨.pregnant, by simp [fBelief, Semantics.Modality.Kratzer.accessibleWorlds,
-      kratzerR], rfl⟩,
-    ⟨.notPregnant, by simp [fBelief, Semantics.Modality.Kratzer.accessibleWorlds,
-      kratzerR], rfl⟩⟩
-
-/-- Same modal (*might*), different event bindings, different epistemic
-domains: the notPregnant-world is accessible from the speech event but
-not from Jane's thinking event. Attitude events are contentful (§8):
-the thinking event provides CON(e₁) = Jane's beliefs. -/
-theorem embedded_vs_matrix_epistemic :
-    kratzerR (fBelief .speech) .notPregnant .notPregnant ∧
-    ¬ kratzerR (fBelief .thinking) .notPregnant .notPregnant := by
-  constructor <;> simp [fBelief, kratzerR]
-
-
-end Semantics.Modality.EventRelativity
+end Modality

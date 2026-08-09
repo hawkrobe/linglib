@@ -17,7 +17,7 @@ language's X-marking exponent ([iatridou-2000], [von-fintel-iatridou-2023]).
 namespace English.Conditionals
 
 open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
-open Semantics.Modality.Exclusion (XMarkingExponent)
+open Modality.Exclusion (XMarkingExponent)
 
 /-- English if: HC and PC conditional marker.
 

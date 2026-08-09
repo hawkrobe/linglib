@@ -44,7 +44,7 @@ set_option autoImplicit false
 namespace Semantics.Conditionals.WillConditional
 
 open _root_.Semantics.Conditionals (SelectionFunction)
-open Semantics.Modality.Selectional
+open Modality.Selectional
 
 variable {W : Type*}
 

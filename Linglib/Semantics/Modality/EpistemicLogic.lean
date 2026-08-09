@@ -35,7 +35,7 @@ Following mathlib style, all operators are `Prop`-valued; computation
 on finite worlds goes through `Decidable` instances + `decide`.
 -/
 
-namespace Semantics.Modality.EpistemicLogic
+namespace Modality.EpistemicLogic
 
 open Modal
   (AccessRel AgentAccessRel box diamond IsSerial IsEuclidean IsBeliefRefinementOf
@@ -271,4 +271,4 @@ def s5ToSystemW {W : Type*} (R : AccessRel W) [hRefl : Std.Refl R] :
     ComparativeProbability.EpistemicSystemW W :=
   ComparativeProbability.dominationLiftSystemW (s5ToWorldOrder R) (fun w => hRefl.refl w)
 
-end Semantics.Modality.EpistemicLogic
+end Modality.EpistemicLogic

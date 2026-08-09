@@ -19,9 +19,9 @@ Single Axis of Variability (SAV) universal from cross-linguistic modal typology.
 
 -/
 
-namespace Semantics.Modality.Typology
+namespace Modality.Typology
 
-open Semantics.Modality (ModalForce ModalFlavor ForceFlavor)
+open Modality (ModalForce ModalFlavor ForceFlavor)
 
 /-! ## Modal Meaning Projections -/
 
@@ -348,7 +348,7 @@ def inferForcePattern (m : List ForceFlavor) : ForcePattern :=
   | [f] => .singleForce f
   | _ => .multiForce
 
-open Semantics.Modality (ForceAnalysis)
+open Modality (ForceAnalysis)
 
 /-- A `ForceAnalysis` is consistent with the observed `ForcePattern` when:
     - `fixed fo` requires `singleForce fo` (only one force attested)
@@ -372,7 +372,7 @@ structure ModalExpression where
 
 /-- Project to the shared modal item core. Register defaults to neutral
     since typological surveys don't annotate register. -/
-def ModalExpression.toModalItem (e : ModalExpression) : Semantics.Modality.ModalItem where
+def ModalExpression.toModalItem (e : ModalExpression) : Modality.ModalItem where
   form := e.form
   meaning := e.meaning
 
@@ -430,7 +430,7 @@ with fixed force and contextually variable flavors produces a meaning
 Variable-force modals (e.g., Gitksan ima'a) produce
 `cartesianProduct forces [flavor]`, also satisfying both. -/
 
-open Semantics.Modality.Kratzer (KratzerParams)
+open Modality.Kratzer (KratzerParams)
 
 variable {W : Type*} [DecidableEq W] [Fintype W]
 
@@ -441,10 +441,10 @@ structure FlavorAssignment (W : Type*) [DecidableEq W] [Fintype W] where
 
 /-- Canonical assignment from the standard Kratzer flavor structures. -/
 def canonicalAssignment
-    (epist : Semantics.Modality.Kratzer.EpistemicFlavor W)
-    (deont : Semantics.Modality.Kratzer.DeonticFlavor W)
-    (boul : Semantics.Modality.Kratzer.BouleticFlavor W)
-    (teleo : Semantics.Modality.Kratzer.TeleologicalFlavor W) :
+    (epist : Modality.Kratzer.EpistemicFlavor W)
+    (deont : Modality.Kratzer.DeonticFlavor W)
+    (boul : Modality.Kratzer.BouleticFlavor W)
+    (teleo : Modality.Kratzer.TeleologicalFlavor W) :
     FlavorAssignment W where
   assign
     | .epistemic => epist.toKratzerParams
@@ -461,7 +461,7 @@ compute the same property through different algorithms:
 
 Both reduce to: ∀ fo ∈ forces(m), ∀ fl ∈ flavors(m), ⟨fo, fl⟩ ∈ m. -/
 
-open Semantics.Modality (ModalItem ModalDecomposition)
+open Modality (ModalItem ModalDecomposition)
 
 /-- `eraseDups` preserves list membership.
     Required because Lean 4 core lacks this lemma for `BEq`-based `eraseDups`. -/
@@ -622,4 +622,4 @@ theorem allIFF_eq_all_decomposable (inv : ModalInventory) :
   congr 1; ext e
   exact (decomposition_eq_satisfiesIFF e.toModalItem).symm
 
-end Semantics.Modality.Typology
+end Modality.Typology

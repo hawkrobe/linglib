@@ -92,8 +92,8 @@ The outer conditional uses the canonical
 restrictor analysis: if-clauses restrict the modal base, then necessity
 quantifies over best worlds), with the inner conditional as the
 restrictor. -/
-def kratzerSemantics (f : Semantics.Modality.Kratzer.ModalBase W)
-    (g : Semantics.Modality.Kratzer.OrderingSource W) (lnc : LNC W) :
+def kratzerSemantics (f : Modality.Kratzer.ModalBase W)
+    (g : Modality.Kratzer.OrderingSource W) (lnc : LNC W) :
     Set W :=
   fun w => Semantics.Conditionals.Restrictor.conditionalNecessity f g
     lnc.innerConditional lnc.outerConsequent w
@@ -211,8 +211,8 @@ The LNC semantics is compositionally derived from Kratzer's conditional
 semantics - it's not stipulated specially for LNCs.
 -/
 theorem lnc_grounded {W : Type*}
-    (f : Semantics.Modality.Kratzer.ModalBase W)
-    (g : Semantics.Modality.Kratzer.OrderingSource W) (lnc : LNC W) :
+    (f : Modality.Kratzer.ModalBase W)
+    (g : Modality.Kratzer.OrderingSource W) (lnc : LNC W) :
     lnc.kratzerSemantics f g =
     fun w => Semantics.Conditionals.Restrictor.conditionalNecessity f g
       lnc.innerConditional lnc.outerConsequent w := rfl

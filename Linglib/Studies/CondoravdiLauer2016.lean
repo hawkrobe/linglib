@@ -58,7 +58,7 @@ paper-specific; tracked in
 namespace CondoravdiLauer2016
 
 open Semantics.Attitudes.CondoravdiLauer
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 open Semantics.Conditionals.Restrictor
 open Core.Order
 
@@ -91,8 +91,8 @@ The four contextual parameters:
 * `fBelS` — modal base of NEC, "speaker's true beliefs" (paper p. 41).
 * `gNorm` — ordering source of NEC, "stereotypical" (paper § 6.1).
 * `fHist` — modal base of MUST, "historical alternatives at time t"
-  (paper p. 42; `historicalNecessity` substrate exists at
-  `Semantics/Modality/Temporal.lean:119`, but the v1 LF here
+  (paper p. 42; the historical-alternatives substrate lives in
+  `Semantics/Modality/HistoricalAlternatives.lean`, but the v1 LF here
   takes an arbitrary modal base because the Hoboken theorem doesn't
   constrain it).
 * `gInner` — ordering source of MUST. Paper eq. (88) uses `g_epA`

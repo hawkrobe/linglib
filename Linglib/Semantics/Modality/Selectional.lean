@@ -66,7 +66,7 @@ must satisfy three constraints:
 
 set_option autoImplicit false
 
-namespace Semantics.Modality.Selectional
+namespace Modality.Selectional
 
 open _root_.Semantics.Conditionals (SelectionFunction)
 open HistoricalAlternatives
@@ -454,4 +454,4 @@ theorem wouldSem_eq_willSem (s : SelectionFunction W) (A : W → Prop)
     (f : Set W) (w : W) :
     wouldSem s A f w = willSem s A f w := rfl
 
-end Semantics.Modality.Selectional
+end Modality.Selectional

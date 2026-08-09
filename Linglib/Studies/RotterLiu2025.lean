@@ -56,7 +56,7 @@ kernel-checkable content is each analysis's systematic prediction.
 
 namespace RotterLiu2025
 
-open Semantics.Modality (ModalForce)
+open Modality (ModalForce)
 open Data.Examples (LinguisticExample)
 open LiuRotter2025 (ShiftObservation vacuityEffect spreadEffect cellMean forceKey)
 

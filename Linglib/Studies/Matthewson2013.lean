@@ -52,7 +52,7 @@ the chapter cites.
 namespace Matthewson2013
 
 open Gitksan.Modals
-open Semantics.Modality (ForceAnalysis TemporalPerspective TemporalOrientation)
+open Modality (ForceAnalysis TemporalPerspective TemporalOrientation)
 
 -- ============================================================================
 -- §1. Mixed-system thesis (Fig. 1)
@@ -106,7 +106,7 @@ theorem mixed_system :
     co-occurs with prospective `dim`, blocking the perfective
     configuration empirically. -/
 
-open Semantics.Modality.ActualityEntailments (actualityEntailmentPredicted)
+open Modality (actualityEntailmentPredicted)
 
 /-- [hacquard-2006]'s AE prediction for the root + perfective cell. -/
 @[simp] theorem hacquard_AE_root_perfective :
@@ -164,8 +164,8 @@ theorem oqa_admits_necessity :
 /-! [matthewson-2013] Fig. 4 (p. 369) cross-tabulates temporal
     perspective (past/present) with temporal orientation (past/present/
     future) for the two epistemic modals. The two axes are the
-    canonical `Semantics.Modality.TemporalPerspective` and
-    `Semantics.Modality.TemporalOrientation` opened above. -/
+    canonical `Modality.TemporalPerspective` and
+    `Modality.TemporalOrientation` opened above. -/
 
 /-- A Figure 4 cell: a temporal perspective × orientation pair, with
     the paper's example number for grounding. The dim-requirement is

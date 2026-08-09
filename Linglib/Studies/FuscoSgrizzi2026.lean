@@ -29,7 +29,7 @@ ordering source whose propositions describe normal continuation.
 
 namespace FuscoSgrizzi2026
 
-open Semantics.Modality Semantics.Modality.Kratzer
+open Modality Modality.Kratzer
 
 variable {W : Type*}
 

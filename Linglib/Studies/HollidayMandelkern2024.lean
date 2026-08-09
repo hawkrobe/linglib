@@ -307,7 +307,7 @@ instance : DecidableRel epistemicScale.toCompatFrame.compat :=
 decide-checked here). Bundled as `epistemicCompatFrame`, so
 `HollidayMandelkern2024.wittgenstein_p` and
 `wittgenstein_neg_p` collapse to one-line corollaries of the substrate
-`Semantics.Modality.Orthologic.wittgensteinLaw` (Proposition 4.27). -/
+`Orthologic.wittgensteinLaw` (Proposition 4.27). -/
 
 /-- `epistemicScale` is R-regular (Definition 4.20 / 4.26 clause). -/
 theorem epistemicScale_rRegular : IsRRegular epistemicScale := by decide

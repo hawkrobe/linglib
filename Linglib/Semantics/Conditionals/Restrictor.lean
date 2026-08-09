@@ -30,7 +30,7 @@ necessity (∀w' ∈ Best(f+α, ∅, w). β(w')) equals the strict conditional
 
 namespace Semantics.Conditionals.Restrictor
 
-open Semantics.Modality.Kratzer
+open Modality.Kratzer
 
 variable {W : Type*}
 

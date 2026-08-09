@@ -73,7 +73,7 @@ namespace Kubota2026
 
 open Pragmatics.Expressives (TwoDimProp SecondaryMeaningProperties expressiveProperties)
 open Intensional (Intension)
-open Semantics.Modality (ModalFlavor)
+open Modality (ModalFlavor)
 open Japanese.OutlookMarkers (OutlookMarkerForm)
 open Data.Examples (LinguisticExample)
 open Semantics.Presupposition (PartialProp)

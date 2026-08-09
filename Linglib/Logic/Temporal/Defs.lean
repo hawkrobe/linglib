@@ -12,7 +12,7 @@ import Linglib.Logic.Modal.Defs
 The object language and Kripke semantics of **T × W logic** ([thomason-1984], [von-kutschera-1997]):
 linear tense (`G`/`H`) with historical modality (`N` over historical alternatives `∼ₜ`, `box` over all
 worlds) on worlds sharing one time order. A `Core` restatement of the
-`Semantics.Modality.HistoricalAlternatives` substrate, kept Semantics-free for the metatheory
+`Modality.HistoricalAlternatives` substrate, kept Semantics-free for the metatheory
 (soundness; [dimaio-zanardo-1994] definability).
 
 ## Main definitions

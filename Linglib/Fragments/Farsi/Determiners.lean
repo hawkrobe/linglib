@@ -137,11 +137,11 @@ def indef_i : IndefiniteDeterminer :=
   }
 
 
-open Semantics.Modality (ModalFlavor)
+open Modality (ModalFlavor)
 
 /--
 Context for determining EFCI reading. Uses the project-canonical
-`Semantics.Modality.ModalFlavor`; [alonso-ovalle-moghiseh-2025] only
+`Modality.ModalFlavor`; [alonso-ovalle-moghiseh-2025] only
 distinguishes deontic (free choice) from epistemic (modal variation), so the
 other canonical flavors are not licensing-relevant here (see `getReading`).
 -/

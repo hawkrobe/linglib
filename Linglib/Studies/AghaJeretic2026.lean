@@ -42,9 +42,9 @@ neg-raising asymmetries between *should* and *must*.
 
 namespace AghaJeretic2026
 
-open Semantics.Modality (ModalForce ModalFlavor ForceFlavor ModalItem)
-open Semantics.Modality.Kratzer
-open Semantics.Modality.Directive
+open Modality (ModalForce ModalFlavor ForceFlavor ModalItem)
+open Modality.Kratzer
+open Modality.Directive
 open Semantics.Homogeneity (negRaising_iff_subsingleton)
 open English.Auxiliaries
 
@@ -132,8 +132,8 @@ entailment chain via the proven theorems in `Directive.lean`. -/
 
 /-- Re-export: strong necessity entails weak necessity (Directive.lean). -/
 theorem must_entails_ought_kratzer :
-    ∀ (f : Semantics.Modality.Kratzer.ModalBase World)
-      (g g' : Semantics.Modality.Kratzer.OrderingSource World)
+    ∀ (f : Modality.Kratzer.ModalBase World)
+      (g g' : Modality.Kratzer.OrderingSource World)
       (p : World → Prop) (_ : DecidablePred p)
       (w : World),
     strongNecessity f g p w →
@@ -143,8 +143,8 @@ theorem must_entails_ought_kratzer :
 /-- Re-export: the converse fails (Directive.lean). -/
 theorem ought_not_entails_must_kratzer :
     ¬(∀ (W : Type)
-        (f : Semantics.Modality.Kratzer.ModalBase W)
-        (g g' : Semantics.Modality.Kratzer.OrderingSource W)
+        (f : Modality.Kratzer.ModalBase W)
+        (g g' : Modality.Kratzer.OrderingSource W)
         (p : W → Prop) (w : W),
       weakNecessity f g g' p w →
       strongNecessity f g p w) :=

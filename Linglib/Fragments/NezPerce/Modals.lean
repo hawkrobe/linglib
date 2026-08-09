@@ -42,8 +42,8 @@ like with *some* but no *all* or *every*.
 
 namespace NezPerce.Modals
 
-open Semantics.Modality (ForceFlavor ForceAnalysis)
-open Semantics.Modality.Typology (ModalExpression satisfiesIFF satisfiesSAV)
+open Modality (ForceFlavor ForceAnalysis)
+open Modality.Typology (ModalExpression satisfiesIFF satisfiesSAV)
 
 private abbrev pc := ForceFlavor.mk .possibility .circumstantial
 
@@ -81,7 +81,7 @@ theorem oqa_admits_possibility :
 
 /-! ## Background classification -/
 
-open Semantics.Modality (BackgroundClass) in
+open Modality (BackgroundClass) in
 /-- o'qa is factual-circumstantial: the modal base provides facts about
     the actual world (circumstances), not evidence or information. -/
 def backgroundClass : ModalExpression → BackgroundClass
