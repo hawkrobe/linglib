@@ -37,8 +37,8 @@ not whether F is overt. See `MovedConstituent`.
 
 - `Dutch.Adpositions`: lexical inventory
 - `Minimalist.Formal.ExtendedProjection`: Place/Path in EP
-- `Semantics.Spatial.Path.PathShape`: bounded/unbounded/source classification
-- `Semantics.Spatial.Trace`: PathShape → telicity
+- `Spatial.PathShape`: bounded/unbounded/source classification
+- `Spatial.Trace`: PathShape → telicity
 - `AuxiliarySelection` auxiliary selection: Dutch *zijn*/*hebben* split
 - `Dendikken1995`: particles as P heads
 - `Data.WALS.Features.F85A`: cross-linguistic adposition order
@@ -48,7 +48,7 @@ namespace BroekhuisCorver2026
 
 open Dutch.Adpositions
 open Minimalist
-open Semantics.Spatial.Path (PathShape)
+open Spatial (PathShape)
 
 -- ════════════════════════════════════════════════════
 -- § 1. PP-internal structure and surface orders
@@ -190,7 +190,7 @@ theorem place_path_family :
     This connects through `PathShape → telicity → unaccusativity →
     auxiliary selection`. -/
 
-open Semantics.Spatial.Trace (pathShapeToTelicity)
+open Spatial.Trace (pathShapeToTelicity)
 open ArgumentStructure.AuxiliarySelection
 
 /-- All directional adpositions in the inventory carry a PathShape. -/

@@ -53,7 +53,7 @@ open _root_.Mereology
 open ArgumentStructure (IsCumThetaVerb)
 open Semantics.Aspect.Incremental (SINC IsSincVerb)
 open Semantics.Aspect.Cumulativity (VP cum_propagation qua_propagation)
-open Semantics.Spatial (Trace)
+open Spatial (Trace)
 
 variable {α β : Type*}
 
@@ -255,7 +255,7 @@ end K98PropositionalSubstrate
 
 section SpatialTracePullback
 
-open Semantics.Spatial.Path
+open Spatial
 
 variable {Loc Time : Type*} [LinearOrder Time]
 variable [Event.Mereology Time] [ClassicalMereology (Event Time)] [SemilatticeSup (Path Loc)]
@@ -281,8 +281,8 @@ end SpatialTracePullback
 section MotionData
 
 open Data.Examples (LinguisticExample)
-open Semantics.Spatial.Path (PathShape)
-open Semantics.Spatial.Trace (pathShapeToTelicity)
+open Spatial (PathShape)
+open Spatial.Trace (pathShapeToTelicity)
 
 /-- A motion VP datum: the path shape K98 assigns and the telicity it predicts. -/
 structure MotionDatum where
@@ -339,7 +339,7 @@ end Expansiveness
 
 section MovementInstances
 
-open Semantics.Spatial.Path
+open Spatial
 
 variable {Loc Time : Type*} [LinearOrder Time]
 variable [Event.Mereology Time] [ClassicalMereology (Event Time)]
