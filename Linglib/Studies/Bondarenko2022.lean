@@ -79,7 +79,7 @@ inductive NominalSort where
   /-- Situation nouns (§2.2): *situation*, *event*, *case*, *circumstance*,
       *state of affairs*. -/
   | situation
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 /-! ### Equality vs. subset vs. existential semantics
 

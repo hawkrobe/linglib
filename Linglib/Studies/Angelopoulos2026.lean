@@ -41,28 +41,29 @@ open Semantics.Attitudes.ClauseDenotation.Situation
 
 /-! ### Reversed selection: the light noun (§3.1) -/
 
-/-- The [n] probe: an unvalued categorial-N feature
-([panagiotidis-2015]'s referentiality feature) demanding a nominal
-goal in the specifier. -/
+/-- The uninterpretable [n]-feature *oti* and *pu* bear, checked by
+merging a light noun in their specifier (§3.1: selection as feature
+checking). -/
 def nProbe : GramFeature := .unvalued (.catN true)
 
-/-- The light noun's goal feature: valued [n]. -/
+/-- The light noun's [n]-feature, interpretable and valued on a
+nominal. -/
 def nGoal : GramFeature := .valued (.catN true)
 
-/-- The §3.1 lexical assignment: *oti* and *pu* carry the [n] probe,
+/-- The §3.1 lexical assignment: *oti* and *pu* carry the [n]-feature,
 *an* and *na* none. -/
 def nProbes (c : Complementizer) : List GramFeature :=
   if c = oti ∨ c = pu then [nProbe] else []
 
 /-- *oti* and *pu* select a light noun in their specifier: their
-feature bundle carries the [n] probe (§3.1). -/
+feature bundle carries the [n]-feature (§3.1). -/
 def selectsLightNoun (c : Complementizer) : Prop := nProbe ∈ nProbes c
 
 instance : DecidablePred selectsLightNoun :=
   fun _ => inferInstanceAs (Decidable (_ ∈ _))
 
-/-- Merging a light noun in the specifier checks the probe: the goal
-matches it in type and is valued where the probe is not. -/
+/-- The merged noun's valued [n] checks the complementizer's under
+specifier–head matching. -/
 theorem lightNoun_checks_nProbe :
     featuresMatch nProbe nGoal = true ∧
     nGoal.isValued = true ∧ nProbe.isUnvalued = true := by
@@ -228,26 +229,61 @@ def clauseSort (c : Complementizer) : Option NominalSort :=
   else if c = pu then some .situation
   else none
 
-/-- The sort of the light noun a verb selects: stative senses and
-stative preferential attitudes relate to situations; saying, belief,
-and knowledge to content (§3.2). -/
+/-- A light noun of sort `n` can merge in the complementizer's
+specifier iff its sort is the clause's sort (§3.2). -/
+def mergeableInSpec (n : NominalSort) (c : Complementizer) : Prop :=
+  clauseSort c = some n
+
+instance (n : NominalSort) (c : Complementizer) :
+    Decidable (mergeableInSpec n c) :=
+  inferInstanceAs (Decidable (clauseSort c = some n))
+
+/-- Only the content noun merges in Spec,otiP and only the situation
+noun in Spec,puP (§3.2). -/
+theorem spec_noun_sorted :
+    mergeableInSpec .content oti ∧ ¬ mergeableInSpec .situation oti ∧
+    mergeableInSpec .situation pu ∧ ¬ mergeableInSpec .content pu := by
+  decide
+
+/-- The sort of the light noun a verb verbalizes under incorporation:
+stative senses, stative preferential attitudes, and occurrence verbs
+relate to situations; saying, belief, and knowledge to content
+(§3.2). -/
 def nounSort (v : Verb) : Option NominalSort :=
   if v.senseTag = .stative then some .situation
+  else if v.unaccusative && v.attitude.isNone then some .situation
   else match v.attitude with
     | some (.preferential _) =>
         if v.vendlerClass = some .state then some .situation
         else some .content
     | _ => some .content
 
-/-- The near-complementary distribution follows from sort matching:
-each verb class pairs with exactly the complementizer whose clause
-sort matches its noun sort (§3.2). -/
-theorem distribution_from_sort_matching :
-    (∀ v ∈ otiOnlyVerbs, nounSort v = clauseSort oti) ∧
-    (∀ v ∈ puOnlyVerbs, nounSort v = clauseSort pu) ∧
-    (∀ p ∈ dualVerbs,
-      nounSort p.1 = clauseSort oti ∧ nounSort p.2 = clauseSort pu) := by
+/-- A verb verbalizes the light noun of sort `n` (§3.1–§3.2). -/
+def verbalizes (v : Verb) (n : NominalSort) : Prop := nounSort v = some n
+
+instance (v : Verb) (n : NominalSort) : Decidable (verbalizes v n) :=
+  inferInstanceAs (Decidable (nounSort v = some n))
+
+/-- The near-complementary distribution through the light noun: each
+attested pairing has a noun the verb verbalizes that merges in the
+complementizer's specifier (§3.2). -/
+theorem distribution_via_light_noun :
+    (∀ v ∈ otiOnlyVerbs, ∃ n, verbalizes v n ∧ mergeableInSpec n oti) ∧
+    (∀ v ∈ puOnlyVerbs, ∃ n, verbalizes v n ∧ mergeableInSpec n pu) ∧
+    (∀ p ∈ dualVerbs, (∃ n, verbalizes p.1 n ∧ mergeableInSpec n oti) ∧
+      (∃ n, verbalizes p.2 n ∧ mergeableInSpec n pu)) := by
   decide
+
+/-- *simvéni* 'happen' rejects *oti* by sort mismatch and *pu* by
+eventivity, leaving its subjunctive *na*-frame (fn. 14). -/
+theorem simveni_rejects_both :
+    nounSort simveni = some .situation ∧
+    ¬ mergeableInSpec .situation oti ∧
+    simveni.vendlerClass.map AspectualHead.ofVendler = some .vEvent ∧
+    ¬ selectsClause .vEvent pu ∧
+    simveni.realizes na ∧ ¬ simveni.realizes oti :=
+  ⟨by decide, by decide, by decide,
+    fun h => absurd (show pu = oti from h) (by decide), by decide, by decide⟩
 
 /-- The situation-sorted complementizer is the lexically factive one
 (§3.2). -/
