@@ -199,6 +199,34 @@ def clauseSort (c : Complementizer) : Option NominalSort :=
   else if c = pu then some .situation
   else none
 
+/-- The sort of the light noun a verb selects: stative senses and
+stative preferential attitudes relate to situations; saying, belief,
+and knowledge to content (§3.2). -/
+def nounSort (v : Verb) : Option NominalSort :=
+  if v.senseTag = .stative then some .situation
+  else match v.attitude with
+    | some (.preferential _) =>
+        if v.vendlerClass = some .state then some .situation
+        else some .content
+    | _ => some .content
+
+/-- The near-complementary distribution follows from sort matching:
+each verb class pairs with exactly the complementizer whose clause
+sort matches its noun sort (§3.2). -/
+theorem distribution_from_sort_matching :
+    (∀ v ∈ otiOnlyVerbs, nounSort v = clauseSort oti) ∧
+    (∀ v ∈ puOnlyVerbs, nounSort v = clauseSort pu) ∧
+    (∀ p ∈ dualVerbs,
+      nounSort p.1 = clauseSort oti ∧ nounSort p.2 = clauseSort pu) := by
+  decide
+
+/-- The situation-sorted complementizer is the lexically factive one
+(§3.2). -/
+theorem situation_clause_factive :
+    ∀ c ∈ complementizers,
+      clauseSort c = some .situation → c.factive = some true := by
+  decide
+
 /-- The sorts pass the §3.2 diagnostics: *oti*'s is truth-evaluable
 ('true'/'mistaken'), *pu*'s occurrence-compatible ('happen')
 (ex. 33–34). -/
