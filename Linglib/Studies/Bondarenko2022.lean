@@ -487,14 +487,14 @@ theorem mem_buryatContExponent_iff :
       (c ∈ buryatAnalysis.contExponent ↔ c.verbForm = none) := by
   decide
 
-/-- Each of *hanaxa*'s two frames (§4.4.3) is realized by exactly one
-clause-typer — bare by converbial *-žA*, nominalized by participial
+/-- Each of *hanaxa*'s two frames (§4.4.3) takes exactly one
+clause-typer — bare the converbial *-žA*, nominalized the participial
 *-Aːša* — and the say-root *gɘ* (which records no clausal axis)
 takes neither, so *hanaxa*'s typers within the closed inventory are
 exactly the two suffixes. -/
-theorem hanaxa_frames_realized :
-    (Frame.finiteClause.RealizedBy zha ∧ ¬ Frame.finiteClause.RealizedBy aasha) ∧
-    (nominalizedFrame.RealizedBy aasha ∧ ¬ nominalizedFrame.RealizedBy zha) ∧
+theorem hanaxa_typers :
+    (Frame.finiteClause.Takes zha ∧ ¬ Frame.finiteClause.Takes aasha) ∧
+    (nominalizedFrame.Takes aasha ∧ ¬ nominalizedFrame.Takes zha) ∧
     hanaxa.typers complementizers = [aasha, zha] := by decide
 
 /-- *hanaxa* think~remember (§4.4.3): the attitude flips with the frame —
