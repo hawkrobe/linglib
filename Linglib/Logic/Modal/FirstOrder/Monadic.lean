@@ -1,24 +1,25 @@
+import Linglib.Core.ModelTheory.FiniteModel
 import Linglib.Logic.Modal.FirstOrder.Kripke
 
 /-!
 # The monadic signature with individual constants
 
-The first-order signature with one individual constant per `Const` and one
-unary relation symbol per `Pred` — the object-language signature of monadic
-quantified modal logic ([aloni-vanormondt-2023] Definition 4.1: terms
-`t := c | x`, monadic relations) — together with its canonical structures
-and the world-relative denotation readers for Kripke structures over it.
+`Language.monadicWithConstants Const Pred` is the relations-only monadic
+language `Language.monadic Pred` (`Core/ModelTheory/FiniteModel.lean`) with
+constants adjoined by mathlib's `withConstants` — one individual constant
+per `Const`, one unary relation symbol per `Pred`: the object-language
+signature of monadic quantified modal logic ([aloni-vanormondt-2023]
+Definition 4.1, terms `t := c | x`). Structures compose from
+`monadicStructure` on the relations side and `constantsOn.structure` on
+the constants side.
 
-Up to definitional shape this signature is `(Language.monadic Pred)[[Const]]`
-(the relations-only `Language.monadic` of `Core/ModelTheory/FiniteModel.lean`
-with constants adjoined via mathlib's `withConstants`); it is kept as a
-direct definition so that interpretation `match` patterns stay structural.
+## Main definitions
 
-## Main declarations
-
-* `Language.monadicWithConstants` — the signature.
+* `Language.monadicWithConstants` — the signature, as
+  `(Language.monadic Pred)[[Const]]`.
 * `monadicWithConstantsStructure` — its structure from a constant
-  interpretation and a predicate valuation (cf. mathlib's `orderStructure`).
+  interpretation and a predicate valuation (cf. mathlib's
+  `orderStructure`).
 * `KripkeStructure.pInterp`, `KripkeStructure.cInterp` — world-relative
   predicate and constant denotations of a Kripke structure over the
   signature.
@@ -28,40 +29,30 @@ universe u v
 
 namespace FirstOrder.Language
 
-/-- The monadic signature with constants: one individual constant per
-    `Const`, one unary relation symbol per `Pred`. -/
-def monadicWithConstants.{u', v'} (Const : Type u') (Pred : Type v') :
-    Language where
-  Functions := fun n => match n with
-    | 0 => Const
-    | _ => PEmpty
-  Relations := fun n => match n with
-    | 1 => Pred
-    | _ => PEmpty
+/-- The monadic signature with constants:
+    `(Language.monadic Pred)[[Const]]`. -/
+abbrev monadicWithConstants (Const : Type u) (Pred : Type v) : Language :=
+  (monadic Pred)[[Const]]
 
 variable {Const Pred Domain : Type*}
 
-/-- A constant as a symbol of the signature (defeq; the parametric analogue
-    of mathlib's per-symbol abbreviations). -/
+/-- A constant as a symbol of the signature (mathlib's `Language.con`). -/
 abbrev monadicConst (c : Const) :
-    (monadicWithConstants Const Pred).Constants := c
+    (monadicWithConstants Const Pred).Constants := Sum.inr c
 
-/-- A predicate as a relation symbol of the signature (defeq). -/
+/-- A predicate as a relation symbol of the signature. -/
 abbrev monadicRel (P : Pred) :
-    (monadicWithConstants Const Pred).Relations 1 := P
+    (monadicWithConstants Const Pred).Relations 1 := Sum.inl P
 
 /-- The `monadicWithConstants` structure a constant interpretation and a
-    predicate valuation induce. -/
+    predicate valuation induce: `monadicStructure` on the relations side,
+    `constantsOn.structure` on the constants side. -/
 @[reducible] def monadicWithConstantsStructure (κ : Const → Domain)
     (V : Pred → Domain → Prop) :
-    (monadicWithConstants Const Pred).Structure Domain where
-  funMap := fun {n} f => match n, f with
-    | 0, c => fun _ => κ c
-    | _ + 1, f => f.elim
-  RelMap := fun {n} r => match n, r with
-    | 1, P => fun v => V P (v 0)
-    | 0, r => r.elim
-    | _ + 2, r => r.elim
+    (monadicWithConstants Const Pred).Structure Domain :=
+  letI := monadicStructure V
+  letI := constantsOn.structure κ
+  inferInstance
 
 @[simp] theorem monadicWithConstantsStructure_relMap (κ : Const → Domain)
     (V : Pred → Domain → Prop) (P : Pred) (v : Fin 1 → Domain) :

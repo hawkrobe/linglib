@@ -154,8 +154,10 @@ def stTerm (k : ℕ) :
   | .var (Sum.inl x) => corrIndivVar x
   | .var (Sum.inr i) => i.elim0
   | @Term.func _ _ l f _ => match l, f with
-    | 0, c => Term.func (corrConst c) ![corrWorldVar k]
-    | _ + 1, f => f.elim
+    | 0, Sum.inr c => Term.func (corrConst c) ![corrWorldVar k]
+    | 0, Sum.inl e => e.elim
+    | _ + 1, Sum.inl e => e.elim
+    | _ + 1, Sum.inr e => e.elim
 
 /-- Translate an embedded classical formula when it is a monadic atom
     (`none` otherwise — which never arises from `Formula.toModal?`
@@ -164,10 +166,13 @@ def stAtom? (k : ℕ) :
     (monadicWithConstants Const Pred).Formula Var →
       Option ((correspondence Const Pred).Formula (Var ⊕ ℕ))
   | @BoundedFormula.rel _ _ _ l R ts => match l, R, ts with
-    | 1, P, ts =>
+    | 1, Sum.inl P, ts =>
         some ((corrRel P).formula₂ (corrWorldVar k) (stTerm k (ts 0)))
-    | 0, r, _ => r.elim
-    | _ + 2, r, _ => r.elim
+    | 1, Sum.inr r, _ => r.elim
+    | 0, Sum.inl r, _ => r.elim
+    | 0, Sum.inr r, _ => r.elim
+    | _ + 2, Sum.inl r, _ => r.elim
+    | _ + 2, Sum.inr r, _ => r.elim
   | _ => none
 
 /-- The standard translation `ST_k` ([blackburn-derijke-venema-2001]): the
@@ -210,9 +215,12 @@ private theorem realize_stAtom? (K : KripkeStructure (monadicWithConstants Const
   | all χ' => simp [stAtom?] at hψ
   | @rel _ l R ts =>
     match l, R with
-    | 0, r => exact r.elim
-    | (n + 2), r => exact r.elim
-    | 1, (P : Pred) =>
+    | 0, Sum.inl r => exact r.elim
+    | 0, Sum.inr r => exact r.elim
+    | (n + 2), Sum.inl r => exact r.elim
+    | (n + 2), Sum.inr r => exact r.elim
+    | 1, Sum.inr r => exact r.elim
+    | 1, Sum.inl (P : Pred) =>
       rw [show stAtom? k (.rel (monadicRel P) ts) =
           some ((corrRel P).formula₂ (Term.var (Sum.inr k)) (stTerm k (ts 0)))
           from rfl, Option.some.injEq] at hψ
@@ -250,20 +258,22 @@ private theorem realize_stAtom? (K : KripkeStructure (monadicWithConstants Const
         | inr i => exact i.elim0
       | @func l' f args =>
         cases l' with
-        | succ m => exact f.elim
+        | succ m => obtain (e | e) := f <;> exact e.elim
         | zero =>
+          obtain (e | c) := f
+          · exact e.elim
           have hLHS : K.RealizeAt w (.rel (monadicRel P) ts) v ↔
-              K.pInterp P w (K.cInterp f w) := by
+              K.pInterp P w (K.cInterp c w) := by
             letI := K.interp w
             show (K.interp w).RelMap (monadicRel P)
                 (fun i => (ts i).realize (Sum.elim v (default : Fin 0 → M)))
               ↔ _
             have hfun : (fun i : Fin 1 => (ts i).realize
                 (Sum.elim v (default : Fin 0 → M))) =
-                fun _ => K.cInterp f w := by
+                fun _ => K.cInterp c w := by
               funext i
               rw [Subsingleton.elim i 0, hts]
-              show (K.interp w).funMap f
+              show (K.interp w).funMap (monadicConst c)
                   (fun j => (args j).realize (Sum.elim v default)) = _
               have hargs : (fun j : Fin 0 => (args j).realize
                   (Sum.elim v (default : Fin 0 → M))) = default :=
@@ -273,24 +283,24 @@ private theorem realize_stAtom? (K : KripkeStructure (monadicWithConstants Const
             rw [hfun]
             exact Iff.rfl
           rw [hLHS, Formula.realize_rel₂,
-            show (stTerm k (.func f args) :
+            show (stTerm k (.func (monadicConst c) args) :
                 (correspondence Const Pred).Term (Var ⊕ ℕ)) =
-              Term.func (corrConst f) ![Term.var (Sum.inr k)] from rfl,
+              Term.func (corrConst c) ![Term.var (Sum.inr k)] from rfl,
             corrStructure_relMap_rel]
-          have hcv : (Term.func (corrConst f)
+          have hcv : (Term.func (corrConst c)
               ![Term.var (Sum.inr k)] :
               (correspondence Const Pred).Term (Var ⊕ ℕ)).realize val
-              = Sum.inr (K.cInterp f w) :=
-            corrStructure_funMap_inl K f w _ hw
+              = Sum.inr (K.cInterp c w) :=
+            corrStructure_funMap_inl K c w _ hw
           constructor
           · intro h
-            exact ⟨w, K.cInterp f w, hw, hcv, h⟩
+            exact ⟨w, K.cInterp c w, hw, hcv, h⟩
           · rintro ⟨w', d, hw', hd, h⟩
             have hww : val (Sum.inr k) = Sum.inl w' := hw'
             obtain rfl : w = w' := Sum.inl.inj (hw.symm.trans hww)
-            have hdd : Sum.inr (K.cInterp f w) = Sum.inr d :=
+            have hdd : Sum.inr (K.cInterp c w) = Sum.inr d :=
               hcv.symm.trans hd
-            obtain rfl : K.cInterp f w = d := Sum.inr.inj hdd
+            obtain rfl : K.cInterp c w = d := Sum.inr.inj hdd
             exact h
 
 /-- An individual-sorted update of an individual-sorted valuation. -/
