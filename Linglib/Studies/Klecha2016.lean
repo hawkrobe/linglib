@@ -1,6 +1,8 @@
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Tense.Basic
-import Linglib.Semantics.Modality.TemporalConstraint
+import Linglib.Semantics.Modality.ModalBaseKind
+import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Features.Attitudes
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Studies.Matthewson2013
@@ -58,22 +60,109 @@ open Tense
 namespace Klecha2016
 
 open Features (Attitude Preferential Veridicality)
-open Modality (ModalBaseKind)
+open Modality (ModalBaseKind ModalFlavor)
 open HistoricalAlternatives
-  (actualHistoryBase futureHistoryBase
+  (isActualHistory isFutureHistory actualHistoryBase futureHistoryBase
+   actualHistoryBase_time_actual futureHistoryBase_time_future
    upperLimitConstraintModal upperLimitConstraintModal_implies_value)
-open Modality.TemporalConstraint (attitudeTemporalConstraint
-  doxConstrainsRT cirConstrainsRT Attitude.toModalBaseKind
-  dox_compatible_with_past dox_incompatible_with_future cir_compatible_with_future
-  permitsCirc_iff_cir ModalFlavor.toModalBaseKind
-  epistemic_blocks_future circumstantial_permits_future deontic_permits_future
-  non_epistemic_is_cir
-  attitudeTemporalConstraint_derived_doxastic
-  attitudeTemporalConstraint_derived_circumstantial)
 open English.Predicates.Verbal (think believe hope pray)
 open Tense (upperLimitConstraint)
-open Modality (ModalFlavor)
 open Data.Examples (LinguisticExample)
+
+/-! ### Modal-base pronoun temporal constraints
+
+The crucial temporal constraints are lexicalized in the modal base
+pronouns (35): *dox* returns the actual histories ending at the evaluation
+time, *cir* the future histories departing from it. The dispatch below
+selects the corresponding interval constraint from
+`HistoricalAlternatives`; the derivation theorems make each constraint a
+consequence of situation-base membership, contra [abusch-1997]'s
+stipulated ULC. -/
+
+/-- Temporal constraint imposed by the modal base pronoun: DOX confines
+the embedded reference time to the actual history (RT ≤ EvalT, the Upper
+Limit Constraint), CIR to the future histories (RT > EvalT). -/
+def attitudeTemporalConstraint {Time : Type*} [LinearOrder Time]
+    (kind : ModalBaseKind) (evalTime refTime : Time) : Prop :=
+  match kind with
+  | .doxastic => isActualHistory evalTime refTime
+  | .circumstantial => isFutureHistory evalTime refTime
+
+/-- Membership in `actualHistoryBase` derives the DOX constraint (35a):
+the ULC follows from the situation base rather than being stipulated. -/
+theorem attitudeTemporalConstraint_derived_doxastic
+    {W Time : Type*} [LinearOrder Time]
+    (history : HistoricalAlternatives W Time)
+    (s s' : Intensional.WorldTimeIndex W Time)
+    (h : s' ∈ actualHistoryBase history s) :
+    attitudeTemporalConstraint .doxastic s.time s'.time :=
+  actualHistoryBase_time_actual history s s' h
+
+/-- Membership in `futureHistoryBase` derives the CIR constraint (35b). -/
+theorem attitudeTemporalConstraint_derived_circumstantial
+    {W Time : Type*} [LinearOrder Time]
+    (history : HistoricalAlternatives W Time)
+    (s s' : Intensional.WorldTimeIndex W Time)
+    (h : s' ∈ futureHistoryBase history s) :
+    attitudeTemporalConstraint .circumstantial s.time s'.time :=
+  futureHistoryBase_time_future history s s' h
+
+/-- Past reference satisfies the DOX constraint. -/
+theorem dox_compatible_with_past {Time : Type*} [LinearOrder Time]
+    (evalTime refTime : Time) (hPast : refTime < evalTime) :
+    attitudeTemporalConstraint .doxastic evalTime refTime :=
+  le_of_lt hPast
+
+/-- Future reference violates the DOX constraint. -/
+theorem dox_incompatible_with_future {Time : Type*} [LinearOrder Time]
+    (evalTime refTime : Time) (hFut : refTime > evalTime) :
+    ¬ attitudeTemporalConstraint .doxastic evalTime refTime :=
+  not_le.mpr hFut
+
+/-- Future reference satisfies the CIR constraint. -/
+theorem cir_compatible_with_future {Time : Type*} [LinearOrder Time]
+    (evalTime refTime : Time) (hFut : refTime > evalTime) :
+    attitudeTemporalConstraint .circumstantial evalTime refTime :=
+  hFut
+
+/-- Modal base kind selected by an attitude class: doxastic attitudes
+select DOX; preferential attitudes select CIR, the kind that permits
+future orientation (they can also take DOX — "I hope she already left"). -/
+def Attitude.toModalBaseKind : Attitude → ModalBaseKind
+  | .doxastic _ => .doxastic
+  | .preferential _ => .circumstantial
+
+/-- `PermitsCircumstantial` matches the CIR-selecting attitudes. -/
+theorem permitsCirc_iff_cir (a : Attitude) :
+    a.PermitsCircumstantial ↔
+    Attitude.toModalBaseKind a = ModalBaseKind.circumstantial := by
+  cases a <;> simp [Features.Attitude.PermitsCircumstantial, Attitude.toModalBaseKind]
+
+/-- Modal base kind by flavor (Table 1): epistemic modals are DOX-like
+(past/present orientation), the rest CIR-like (future orientation). -/
+def ModalFlavor.toModalBaseKind : ModalFlavor → ModalBaseKind
+  | .epistemic => .doxastic
+  | _ => .circumstantial
+
+/-- All non-epistemic flavors map to CIR. -/
+theorem non_epistemic_is_cir (f : ModalFlavor) (h : f ≠ .epistemic) :
+    ModalFlavor.toModalBaseKind f = ModalBaseKind.circumstantial := by
+  cases f <;> simp_all [ModalFlavor.toModalBaseKind]
+
+/-- Epistemic modals block future orientation (Table 1). -/
+theorem epistemic_blocks_future :
+    ModalBaseKind.permitsOrientation
+      (ModalFlavor.toModalBaseKind .epistemic) Tense.future = false := by decide
+
+/-- Circumstantial modals permit future orientation (Table 1). -/
+theorem circumstantial_permits_future :
+    ModalBaseKind.permitsOrientation
+      (ModalFlavor.toModalBaseKind .circumstantial) Tense.future = true := by decide
+
+/-- Deontic modals permit future orientation (Table 1). -/
+theorem deontic_permits_future :
+    ModalBaseKind.permitsOrientation
+      (ModalFlavor.toModalBaseKind .deontic) Tense.future = true := by decide
 
 /-! ### The tense × modal-base four-cell matrix
 
@@ -90,10 +179,9 @@ The DOX/PAST cell gives the genuine past reading of "Martina thought
 Carissa got pregnant"; DOX/NPST forces simultaneity; CIR/NPST gives the
 future-oriented reading of "Martina hoped Carissa got pregnant" (surface
 PAST morphology analyzed as SOT agreement over semantic NPST per
-[klecha-2016] §3.3); CIR/PAST is empty. The
-`attitudeTemporalConstraint` dispatch lives in
-`Semantics/Modality/TemporalConstraint.lean`; the cells below are its
-tense-side projection. -/
+[klecha-2016] §3.3); CIR/PAST is empty. The cells below are the
+tense-side projection of the `attitudeTemporalConstraint` dispatch
+above. -/
 
 /-- DOX ∧ PAST = past: under a doxastic modal base with semantic past
     tense, the embedded reference time is strictly before the evaluation
@@ -275,8 +363,7 @@ DOX-pronoun's lexical entry, not a separately-asserted presupposition
 on T-nodes. The substrate derivation lives in
 `HistoricalAlternatives` (`actualHistoryBase_time_actual`,
 `futureHistoryBase_time_future`); the `attitudeTemporalConstraint`
-projection in `Semantics/Modality/TemporalConstraint.lean`
-delegates to it. -/
+projection above delegates to it. -/
 
 /-- ULC at ℤ via `actualHistoryBase` membership: any embedded situation
     in the matrix evaluation point's actual-history base satisfies the
