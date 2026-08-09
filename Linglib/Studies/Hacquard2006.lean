@@ -27,9 +27,6 @@ Substrate note: the event-relative machinery (`EventBinder`,
 * `positionPerspective`, `withAttitude_shifts_perspective` — the temporal
   perspective ([condoravdi-2002]) projected from the anchoring event, via
   `ModalPosition.defaultBinder` / `withAttitude`.
-* `positionPerspective_eq_readingPerspective` — the position map agrees
-  with [condoravdi-2002]'s reading classification; the settledness
-  consequences live in `Studies/Condoravdi2002.lean`.
 * `epistemic_reading_possible`, `goal_reading_necessary` — the two readings
   of "Jane a dû prendre le train" (201) from one modal entry.
 * `aspect_bound_epistemic_necessity` — contentful complements license
@@ -50,7 +47,11 @@ open Data.Examples (LinguisticExample)
 The anchoring event fixes the evaluation time: speech-bound modals sit at
 the utterance time, aspect-bound ones at the time provided by tense. The
 map factors through the substrate's binding maps, and its codomain has no
-future case. -/
+future case. It agrees with [condoravdi-2002]'s `ModalReading.perspective`
+classification — the "might (already/still) have won" ambiguity (176)
+recast positionally; the settledness consequences are proved in
+`Studies/Condoravdi2002.lean` (`modal_over_perf_blocks_metaphysical`,
+`counterfactual_widens_domain`). -/
 
 /-- Perspective of the anchoring event in a past-tense clause: only the
 speech event sits at utterance time. -/
@@ -62,6 +63,13 @@ def binderPerspective : EventBinder → TemporalPerspective
 def positionPerspective (pos : ModalPosition) : TemporalPerspective :=
   binderPerspective pos.defaultBinder
 
+-- pins the agreement with [condoravdi-2002]'s reading classification
+open Condoravdi2002 (ModalReading) in
+example :
+    positionPerspective .aboveAsp = ModalReading.epistemic.perspective ∧
+    positionPerspective .belowAsp = ModalReading.counterfactual.perspective :=
+  ⟨rfl, rfl⟩
+
 /-- The same modal (*devoir*, *pouvoir*) gets different temporal
 perspectives from different structural positions. -/
 theorem position_determines_perspective :
@@ -72,23 +80,6 @@ time: the perspective tracks the binder, not the position. -/
 theorem withAttitude_shifts_perspective :
     binderPerspective ModalPosition.aboveAsp.withAttitude ≠
     binderPerspective ModalPosition.aboveAsp.defaultBinder := nofun
-
-/-! ### Condoravdi's ambiguity from position
-
-"They might (already/still) have won the game" (176): the dissertation
-recasts [condoravdi-2002]'s scopal ambiguity positionally. The settledness
-consequences are proved in `Studies/Condoravdi2002.lean` —
-`modal_over_perf_blocks_metaphysical` (high: epistemic-only) and
-`counterfactual_widens_domain` (low: metaphysical available). -/
-
-open Condoravdi2002 (ModalReading) in
-/-- Hacquard's position-derived perspectives agree with [condoravdi-2002]'s
-reading classification: high is the epistemic reading's perspective, low
-the counterfactual reading's. -/
-theorem positionPerspective_eq_readingPerspective :
-    positionPerspective .aboveAsp = ModalReading.epistemic.perspective ∧
-    positionPerspective .belowAsp = ModalReading.counterfactual.perspective :=
-  ⟨rfl, rfl⟩
 
 /-! ### Worked example: "Jane a dû prendre le train" (201)
 
