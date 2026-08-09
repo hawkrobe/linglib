@@ -27,11 +27,9 @@ Substrate note: the event-relative machinery (`EventBinder`,
 * `positionPerspective`, `withAttitude_shifts_perspective` — the temporal
   perspective ([condoravdi-2002]) projected from the anchoring event, via
   `ModalPosition.defaultBinder` / `withAttitude`.
-* `high_position_epistemic_only`, `low_position_counterfactual_available` —
-  [condoravdi-2002]'s might-have ambiguity (176) recast positionally: the
-  high position pairs with the epistemic reading's perspective and its
-  settled prejacent blocks the metaphysical base; the low position pairs
-  with the counterfactual reading's, whose base only widens.
+* `positionPerspective_eq_readingPerspective` — the position map agrees
+  with [condoravdi-2002]'s reading classification; the settledness
+  consequences live in `Studies/Condoravdi2002.lean`.
 * `epistemic_reading_possible`, `goal_reading_necessary` — the two readings
   of "Jane a dû prendre le train" (201) from one modal entry.
 * `aspect_bound_epistemic_necessity` — contentful complements license
@@ -78,41 +76,19 @@ theorem withAttitude_shifts_perspective :
 /-! ### Condoravdi's ambiguity from position
 
 "They might (already/still) have won the game" (176): the dissertation
-recasts [condoravdi-2002]'s scopal ambiguity positionally; composing with
-the settledness machinery in `Studies/Condoravdi2002.lean` derives which
-modal bases survive at each position. -/
+recasts [condoravdi-2002]'s scopal ambiguity positionally. The settledness
+consequences are proved in `Studies/Condoravdi2002.lean` —
+`modal_over_perf_blocks_metaphysical` (high: epistemic-only) and
+`counterfactual_widens_domain` (low: metaphysical available). -/
 
-section CondoravdiBridge
-
-open Condoravdi2002 HistoricalAlternatives
-
-variable {W Time : Type*} [LinearOrder Time]
-
-/-- From the high position, "might have" is epistemic-only: the high
-perspective is exactly the epistemic reading's, and the back-shifted
-prejacent, being settled, admits no diverse metaphysical base
-(`modal_over_perf_blocks_metaphysical`). -/
-theorem high_position_epistemic_only
-    (history : HistoricalAlternatives W Time) (MB : W → Time → Set W)
-    (cg : Set W) (now : Time) (P : W → Event Time → Prop)
-    (hMB : ∀ w ∈ cg, ∀ w' ∈ MB w now, histEquiv history now w w')
-    (hSettled : settled history cg now (λ w => perf .dynamic P w now)) :
+open Condoravdi2002 (ModalReading) in
+/-- Hacquard's position-derived perspectives agree with [condoravdi-2002]'s
+reading classification: high is the epistemic reading's perspective, low
+the counterfactual reading's. -/
+theorem positionPerspective_eq_readingPerspective :
     positionPerspective .aboveAsp = ModalReading.epistemic.perspective ∧
-    ¬ diverse MB cg now (λ w => perf .dynamic P w now) :=
-  ⟨rfl, modal_over_perf_blocks_metaphysical history MB cg now P hMB hSettled⟩
-
-/-- From the low position, the counterfactual reading is available: the low
-perspective is exactly the counterfactual reading's, and moving the
-evaluation time back only widens the metaphysical base
-(`counterfactual_widens_domain`). -/
-theorem low_position_counterfactual_available
-    (history : HistoricalAlternatives W Time)
-    (hBC : history.backwardsClosed) (w : W) {t' now : Time} (hle : t' ≤ now) :
-    positionPerspective .belowAsp = ModalReading.counterfactual.perspective ∧
-    metaphysicalBase history w now ⊆ metaphysicalBase history w t' :=
-  ⟨rfl, counterfactual_widens_domain history hBC w hle⟩
-
-end CondoravdiBridge
+    positionPerspective .belowAsp = ModalReading.counterfactual.perspective :=
+  ⟨rfl, rfl⟩
 
 /-! ### Worked example: "Jane a dû prendre le train" (201)
 
