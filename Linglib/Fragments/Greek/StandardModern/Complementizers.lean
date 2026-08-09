@@ -192,4 +192,16 @@ def thimonoStat : Verb where
   attitude := some (.preferential (.degreeComparison .negative))
   vendlerClass := some .state
 
+/-! ### Occurrence verbs -/
+
+/-- *simvéni* (συμβαίνει) 'happen/occur' — unaccusative achievement,
+    the [angelopoulos-2026] ex. 34 diagnostic. Rejects both *oti*- and
+    *pu*-complements and takes subjunctive *na*-clauses
+    ([angelopoulos-2026] fn. 14). -/
+def simveni : Verb where
+  form := "simvéni"
+  frames := [[.clausal (coding := some .subjunctive)]]
+  vendlerClass := some .achievement
+  unaccusative := true
+
 end Greek.StandardModern.Complementizers
