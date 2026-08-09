@@ -1,6 +1,5 @@
 import Linglib.Processing.Psychophysics.SignalDetection
 import Linglib.Processing.Psychophysics.Psychophysics
-import Linglib.Pragmatics.RSA.Channel
 import Linglib.Studies.KursatDegen2021
 import Linglib.Studies.DegenEtAl2020
 import Linglib.Studies.EngelhardtEtAl2006
@@ -50,12 +49,12 @@ search using the sufficient attribute alone).
 
 ## Theoretical Implications
 
-The noise discrimination model (`RSA.Noise`) correctly predicts
-Finding 1–2 (discriminability drives overinformativeness) and
-Finding 3 (colour > material from gap ordering). But it *incorrectly*
-predicts that colour and orientation should be overinformed equally
-(since both have discrimination ≈ 0.98). Finding 4 falsifies this:
-colour has a **residual privilege** beyond discriminability.
+A discriminability-based noise model correctly predicts Findings 1–2
+(discriminability drives overinformativeness) and Finding 3 (colour >
+material). But it predicts that colour and orientation — equally
+discriminable, ≥99% labelling accuracy each — should be overinformed
+equally. Finding 4 falsifies this: colour has a **residual privilege**
+beyond discriminability.
 
 ## Verified Data
 
@@ -173,15 +172,19 @@ def exp2_orientation : BayesianCoefficient :=
 theorem exp1_all_significant :
     exp1_material_redundant.IsSignificant ∧
     exp1_baseline.IsSignificant ∧
-    exp1_sHighRLow.IsSignificant := by native_decide
+    exp1_sHighRLow.IsSignificant := by
+  norm_num [BayesianCoefficient.IsSignificant, exp1_material_redundant,
+    exp1_baseline, exp1_sHighRLow]
 
 /-- The colour vs orientation effect is significant. -/
 theorem exp2_orientation_significant :
-    exp2_orientation.IsSignificant := by native_decide
+    exp2_orientation.IsSignificant := by
+  norm_num [BayesianCoefficient.IsSignificant, exp2_orientation]
 
 /-- The low-frequency colour effect is NOT significant. -/
 theorem exp2_lf_colour_not_significant :
-    ¬exp2_lf_colour.IsSignificant := by native_decide
+    ¬exp2_lf_colour.IsSignificant := by
+  norm_num [BayesianCoefficient.IsSignificant, exp2_lf_colour]
 
 -- ============================================================================
 -- §5. Search Efficiency Predictions
@@ -191,13 +194,15 @@ theorem exp2_lf_colour_not_significant :
     When the sufficient attribute is hard to search and the redundant
     attribute facilitates search, speakers overinform more. -/
 theorem search_efficiency_ordering :
-    exp1_sHighRLow.IsSignificant ∧ exp1_sHighRLow.β < 0 := by native_decide
+    exp1_sHighRLow.IsSignificant ∧ exp1_sHighRLow.β < 0 := by
+  norm_num [BayesianCoefficient.IsSignificant, exp1_sHighRLow]
 
 /-- The search efficiency ordering: S-Low/R-High > Baseline.
     Speakers don't just mention all high-discriminability attributes;
     they selectively overinform to help difficult searches. -/
 theorem search_efficiency_vs_baseline :
-    exp1_baseline.IsSignificant ∧ exp1_baseline.β < 0 := by native_decide
+    exp1_baseline.IsSignificant ∧ exp1_baseline.β < 0 := by
+  norm_num [BayesianCoefficient.IsSignificant, exp1_baseline]
 
 -- ============================================================================
 -- §6. Bridge: Colour > Material (Cross-Modal Search Efficiency)
@@ -212,7 +217,8 @@ theorem search_efficiency_vs_baseline :
     equalized via psychophysical staircases. -/
 theorem colour_exceeds_material :
     exp1_material_redundant.IsSignificant ∧
-    exp1_material_redundant.β < 0 := by native_decide
+    exp1_material_redundant.β < 0 := by
+  norm_num [BayesianCoefficient.IsSignificant, exp1_material_redundant]
 
 /-- Converging evidence with [kursat-degen-2021]: both studies
     find colour used redundantly more than material. The present study
@@ -223,27 +229,17 @@ theorem converging_with_kursat_degen :
     -- Kursat & Degen 2021: colour > material (visual, perceptual difficulty)
     KursatDegen2021.exp2_redundancy.significant ∧
     KursatDegen2021.exp2_redundancy.beta > 0 :=
-  ⟨by native_decide, rfl, by native_decide⟩
-
--- ============================================================================
--- §7. Bridge: Noise Discrimination
--- ============================================================================
-
-/-- The noise model's discrimination ordering (colour > size > material)
-    is consistent with the search efficiency results of Exp 1:
-    higher discrimination → more overinformativeness when redundant. -/
-theorem noise_model_consistent_with_exp1 :
-    RSA.Noise.colorDiscrimination > RSA.Noise.sizeDiscrimination ∧
-    RSA.Noise.sizeDiscrimination > RSA.Noise.materialDiscrimination :=
-  RSA.Noise.discrimination_ordering
+  ⟨by norm_num [BayesianCoefficient.IsSignificant, exp1_material_redundant], rfl,
+   by norm_num [KursatDegen2021.exp2_redundancy]⟩
 
 -- ============================================================================
 -- §8. Colour Privilege: Limits of the Noise Model
 -- ============================================================================
 
-/-- The noise model predicts colour = orientation (both discrimination
-    0.98), but the data shows colour >> orientation (β = −0.97). This
-    is the central dissociation: search efficiency (noise discrimination)
+/-- The noise model predicts equally discriminable features are
+    overinformed equally, but the data shows colour >> orientation
+    (β = −0.97) at matched discriminability. This is the central
+    dissociation: search efficiency (noise discrimination)
     is *necessary but not sufficient* to explain overinformativeness
     patterns. Colour has a residual privilege.
 
@@ -255,37 +251,15 @@ theorem noise_model_consistent_with_exp1 :
        referential strategy and deploy it even when its search
        efficiency advantage is controlled away. -/
 theorem colour_privilege_residual :
-    -- Theory: colour and orientation have equal discrimination
-    RSA.Noise.colorDiscrimination = RSA.Noise.orientationDiscrimination ∧
-    -- Data: colour is overinformed SIGNIFICANTLY more than orientation
-    exp2_orientation.IsSignificant ∧ exp2_orientation.β < 0 :=
-  ⟨RSA.Noise.color_eq_orientation, by native_decide, by native_decide⟩
+    exp2_orientation.IsSignificant ∧ exp2_orientation.β < 0 := by
+  norm_num [BayesianCoefficient.IsSignificant, exp2_orientation]
 
 /-- Word frequency does not explain the colour privilege: low-frequency
     colour terms (teal, jade) produce overinformativeness rates
     indistinguishable from high-frequency terms (green, blue). -/
 theorem frequency_does_not_explain :
-    ¬exp2_lf_colour.IsSignificant := by native_decide
-
--- ============================================================================
--- §9. Bridge: cs-RSA and Overinformativeness
--- ============================================================================
-
-/-- The cs-RSA model ([degen-etal-2020]) explains redundant
-    modification via noisy perception. This study provides perceptual
-    grounding for the noise parameters: discriminability measured via
-    psychophysical staircases maps to the noise gap.
-
-    The cs-RSA prediction — that higher noise gap produces more
-    overinformativeness — is confirmed for the discriminability ×
-    sufficiency interaction (Exp 1 display type effects). -/
-theorem csrsa_grounding :
-    -- cs-RSA: colour has higher noise gap than material
-    RSA.Noise.noiseGap RSA.Noise.colorMatch RSA.Noise.colorMismatch >
-    RSA.Noise.noiseGap RSA.Noise.materialMatch RSA.Noise.materialMismatch ∧
-    -- Data: colour used redundantly more than material
-    exp1_material_redundant.IsSignificant :=
-  ⟨by native_decide, by native_decide⟩
+    ¬exp2_lf_colour.IsSignificant := by
+  norm_num [BayesianCoefficient.IsSignificant, exp2_lf_colour]
 
 -- ============================================================================
 -- §11. Bridge: [engelhardt-etal-2006] Over-Description Rates
@@ -300,7 +274,8 @@ theorem overinformativeness_is_efficient :
     EngelhardtEtAl2006.exp1_target_1ref.modified > 0.2 ∧
     -- This study: over-description tracks search efficiency
     exp1_sHighRLow.IsSignificant :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by norm_num [EngelhardtEtAl2006.exp1_target_1ref],
+   by norm_num [BayesianCoefficient.IsSignificant, exp1_sHighRLow]⟩
 
 -- ============================================================================
 -- §12. Search Efficiency Display Types
@@ -332,7 +307,7 @@ theorem display_type_predictions :
     - L0(target | sufficient+redundant) = sM·cM / (sMM·cM + sMM·cMM + sM·cM)
 
     Proved algebraically over free variables — a general property of the
-    Product of Experts architecture, not a finite data check. -/
+    product architecture, not a finite data check. -/
 theorem overmodification_iff_positive_gap
     (sM sMM cM cMM : ℚ) (hsM : 0 < sM) (hsMM : 0 < sMM)
     (hcM : 0 < cM) (hcMM : 0 < cMM) :
@@ -356,8 +331,8 @@ theorem overmodification_iff_positive_gap
     form. This unifies three levels of linglib:
 
     - **Psychophysics** (`Core.SDTModel`): d' measures perceptual sensitivity
-    - **Noise channel** (`RSA.Noise`): match/mismatch are hit/false-alarm rates
-    - **Pragmatics** (cs-RSA PoE): L0 posterior determines speaker choice
+    - **Noise parameters**: match/mismatch are hit/false-alarm rates
+    - **Pragmatics** (cs-RSA): L0 posterior determines speaker choice
 
     The match/mismatch noise parameters ARE the observer's hit rate and false
     alarm rate for feature verification. Positive d' means the observer can
@@ -383,16 +358,16 @@ theorem dprime_iff_overmodification
       (by exact_mod_cast hcM) hcM_lt1 (by exact_mod_cast hcMM) hcMM_lt1).mpr
       (by exact_mod_cast h)
 
-/-- Instantiation: for the standard [degen-etal-2020] noise parameters
-    (color match = 0.99, mismatch = 0.01), the redundant color modifier's
-    d' is positive, so L0 prefers "small blue" over "small."
+/-- Instantiation: for the illustrative colour channel of `DegenEtAl2020`
+    (match 0.99, mismatch 0.01), the redundant color modifier's d' is
+    positive, so L0 prefers "small blue" over "small."
 
     This connects the concrete cs-RSA demonstration to the general
     `dprime_iff_overmodification` theorem. -/
 theorem color_dprime_predicts_overmod :
     0 < Core.dPrimeFromRates
-      (↑RSA.Noise.colorMatch) (↑RSA.Noise.colorMismatch) := by
-  simp only [RSA.Noise.colorMatch, RSA.Noise.colorMismatch]
+      (↑DegenEtAl2020.colorMatch) (↑DegenEtAl2020.colorMismatch) := by
+  simp only [DegenEtAl2020.colorMatch, DegenEtAl2020.colorMismatch]
   exact (Core.dPrimeFromRates_pos_iff
     (by push_cast; norm_num) (by push_cast; norm_num)
     (by push_cast; norm_num) (by push_cast; norm_num)).mpr
@@ -451,44 +426,25 @@ theorem one_param_ratio_is_param_ordering
 -- §15. Symmetry-Breaking: Why Colour Is Special
 -- ============================================================================
 
-/-- The d'/likelihood-ratio model's monotonicity is *correct within*
-    a feature (higher d' → more overmod, §14) but *incomplete across*
-    features: two features with equal d' can have different overmod rates.
-
-    [giles-etal-2026] propose two accounts for the residual colour
-    privilege:
-
-    1. **Category optimality**: Colour naming systems are near-optimal
-       partitions of perceptual space ([regier-etal-2007],
-       [zaslavsky-etal-2019]). Colour categories maximise
-       discriminability *across natural contexts*, making colour
-       inherently more search-efficient than orientation even when
-       within-trial d' is equalized.
-
-    2. **Learned strategy**: Speakers learn from experience that colour
-       is a reliable referential cue and deploy it as a default strategy
-       even when its perceptual advantage is controlled away.
-
-    Both accounts locate the symmetry-breaking *outside* the single-trial
-    noise channel — in the ecological statistics of feature reliability
-    across contexts. -/
-theorem within_feature_monotonicity_but_not_across :
-    -- The model correctly predicts ordering WITHIN features...
-    RSA.Noise.colorDiscrimination > RSA.Noise.sizeDiscrimination ∧
-    RSA.Noise.sizeDiscrimination > RSA.Noise.materialDiscrimination ∧
-    -- ...but fails to distinguish BETWEEN equal-d' features
-    RSA.Noise.colorDiscrimination = RSA.Noise.orientationDiscrimination ∧
-    -- Data: colour >> orientation despite equal d'
-    exp2_orientation.IsSignificant ∧ exp2_orientation.β < 0 :=
-  ⟨RSA.Noise.color_gt_size, RSA.Noise.size_gt_material,
-   RSA.Noise.color_eq_orientation, by native_decide, by native_decide⟩
+/-! The d'/likelihood-ratio model's monotonicity is *correct within* a
+feature (higher d' → more overmod, §14) but *incomplete across* features:
+two features with equal d' can have different overmod rates
+(`colour_privilege_residual`). [giles-etal-2026] propose two accounts for
+the residual colour privilege: **category optimality** — colour naming
+systems are near-optimal partitions of perceptual space ([regier-etal-2007],
+[zaslavsky-etal-2019]), so colour categories maximise discriminability
+across natural contexts even when within-trial d' is equalized — and
+**learned strategy** — speakers learn that colour is a reliable referential
+cue and deploy it by default. Both accounts locate the symmetry-breaking
+*outside* the single-trial noise parameters, in the ecological statistics
+of feature reliability across contexts. -/
 
 -- ============================================================================
--- §15. Bridge: PoE Architecture from Dimension Independence
+-- §15. Bridge: Product Architecture from Dimension Independence
 -- ============================================================================
 
-/-- The cs-RSA Product of Experts architecture — φ(u, o) = ∏ features,
-    noiseChannel_f(u, o) — is the UNIQUE factoring consistent with
+/-- The cs-RSA product architecture — φ(u, o) = ∏ features,
+    channel_f(u, o) — is the UNIQUE factoring consistent with
     [luce-1959]'s dimension independence axiom, as proven by
     `Core.multidimensional_decomposition` in Psychophysics.lean.
 
@@ -496,26 +452,26 @@ theorem within_feature_monotonicity_but_not_across :
     1. Dimension independence ([luce-1959] §2.C): the ratio
        v(a[d↦s])/v(a) depends only on dimension d and the old/new values
     2. Decomposition theorem: under independence, v(a) = C · ∏ scale_d(a_d)
-    3. cs-RSA instantiation: scale_color(match) = colorMatch = 0.99,
-       scale_color(mismatch) = colorMismatch = 0.01, etc.
+    3. cs-RSA instantiation: scale_color(match) = `DegenEtAl2020.colorMatch`,
+       scale_color(mismatch) = `DegenEtAl2020.colorMismatch`, etc.
     4. [giles-etal-2026] ground the scale parameters in d' measured
        via psychophysical staircases
 
-    [degen-etal-2020] builds the factoring into the concrete φ (the
-    Product-of-Experts construction of `DegenEtAl2020.φ`). This bridge
+    [degen-etal-2020] builds the factoring into the concrete φ
+    (`DegenEtAl2020.φ` multiplies per-feature channels). This bridge
     connects to the ABSTRACT infrastructure that shows the factoring is
     forced by independence — not an ad hoc modelling choice. -/
 noncomputable def poeNoiseScales : Core.MultidimStimulus (Fin 2) (fun _ => Bool) where
   scale
-    | 0, true  => ↑RSA.Noise.sizeMatch
-    | 0, false => ↑RSA.Noise.sizeMismatch
-    | 1, true  => ↑RSA.Noise.colorMatch
-    | 1, false => ↑RSA.Noise.colorMismatch
+    | 0, true  => ↑DegenEtAl2020.sizeMatch
+    | 0, false => ↑DegenEtAl2020.sizeMismatch
+    | 1, true  => ↑DegenEtAl2020.colorMatch
+    | 1, false => ↑DegenEtAl2020.colorMismatch
   scale_pos
-    | 0, true  => by norm_num [RSA.Noise.sizeMatch]
-    | 0, false => by norm_num [RSA.Noise.sizeMismatch]
-    | 1, true  => by norm_num [RSA.Noise.colorMatch]
-    | 1, false => by norm_num [RSA.Noise.colorMismatch]
+    | 0, true  => by norm_num [DegenEtAl2020.sizeMatch]
+    | 0, false => by norm_num [DegenEtAl2020.sizeMismatch]
+    | 1, true  => by norm_num [DegenEtAl2020.colorMatch]
+    | 1, false => by norm_num [DegenEtAl2020.colorMismatch]
 
 /-- Map each world to its (sizeMatch?, colorMatch?) feature vector,
     relative to the "small blue" target from [degen-etal-2020]. -/
@@ -524,9 +480,9 @@ def worldStimulus : DegenEtAl2020.World → (Fin 2 → Bool)
   | .bigRed    => ![true,  false]
   | .smallBlue => ![false, true]
 
-/-- The cs-RSA PoE φ function, expressed as a `multidim_luce` model.
+/-- The cs-RSA φ function, expressed as a `multidim_luce` model.
     The score for each world is ∏ d, scale_d(stimulus(w)(d)), which
-    equals sizeParam × colorParam — exactly the Product of Experts. -/
+    equals sizeParam × colorParam — exactly the product factoring. -/
 noncomputable def poeAsMultidimLuce :
     Core.RationalAction Unit DegenEtAl2020.World :=
   Core.multidim_luce poeNoiseScales worldStimulus

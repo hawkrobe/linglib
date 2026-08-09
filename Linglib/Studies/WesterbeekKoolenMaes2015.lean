@@ -1,5 +1,4 @@
 import Linglib.Pragmatics.RSA.Operators
-import Linglib.Pragmatics.RSA.Channel
 import Linglib.Studies.DaleReiter1995
 
 /-!
@@ -658,14 +657,5 @@ feature dimension (color), varying the effectiveness of the bare noun
 by how well the perceived color matches stored expectations. Both
 mechanisms operate through continuous semantics. -/
 
-/-- Noise and typicality both modulate continuous semantics:
-    - Noise: color discrimination > size discrimination (across features)
-    - Typicality: atypical color → more color mention (within a feature)
-    Both are necessary: noise explains color > size; typicality explains
-    atypical > typical within color. -/
-theorem noise_and_typicality_complementary :
-    RSA.Noise.colorDiscrimination > RSA.Noise.sizeDiscrimination ∧
-    S1_q φ_atypical .withColor .target > S1_q φ_typical .withColor .target :=
-  ⟨RSA.Noise.color_gt_size, atypical_more_color⟩
 
 end WesterbeekKoolenMaes2015

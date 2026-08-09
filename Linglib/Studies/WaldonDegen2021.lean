@@ -1,7 +1,6 @@
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
 import Mathlib.Analysis.Complex.ExponentialBounds
-import Linglib.Pragmatics.RSA.Channel
 import Linglib.Core.Probability.Scores
 import Linglib.Pragmatics.RSA.Atoms
 import Linglib.Semantics.Probabilistic.Composition
@@ -52,8 +51,6 @@ different (language × scene) configurations of the same chain.
 
 ## Connections
 
-- **Noise theory**: `lexContinuousQ` instantiates the `noiseChannel` from
-  `RSA.Channel`. See `lexContinuous_as_noiseChannel`.
 - **Incremental RSA**: Extends [cohn-gordon-goodman-potts-2019] with
   continuous semantics and cross-linguistic word order variation.
 - **Graded composition**: `uttContinuousQ` is defined via
@@ -605,22 +602,6 @@ theorem color_more_reliable_than_size :
 theorem semantic_values_positive :
     ∀ w : Word, semanticValueQ w > 0 := by
   intro w; cases w <;> norm_num [semanticValueQ]
-
-/-! ### Noise Theory Connection -/
-
-/-- `lexContinuousQ` is an instance of the `noiseChannel` from
-    `RSA.Channel`. The continuous lexical semantics L^C(r, i) is exactly
-    the noise channel with onMatch = v^i, onMismatch = 1 - v^i,
-    b = 1 if item i is true of referent r, 0 otherwise.
-
-    This connects [waldon-degen-2021] to the [degen-etal-2020]
-    parameterization where mismatch = 1 - match. -/
-theorem lexContinuous_as_noiseChannel (r : Referent) (w : Word) :
-    lexContinuousQ r w =
-    RSA.Noise.noiseChannel (semanticValueQ w) (1 - semanticValueQ w)
-      (if wordApplies w r then 1 else 0 : ℚ) := by
-  simp only [lexContinuousQ, RSA.Noise.noiseChannel]
-  split <;> ring
 
 /-! ### Prediction 4: Overall Cross-Linguistic Redundancy -/
 

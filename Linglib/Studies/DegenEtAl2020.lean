@@ -1,5 +1,4 @@
 import Linglib.Pragmatics.RSA.Operators
-import Linglib.Pragmatics.RSA.Channel
 import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Studies.DaleReiter1995
 
@@ -29,7 +28,7 @@ comparison in `ℝ≥0∞`.
 * `bool_no_overmod_preference` — the Boolean model shows no overmod preference.
 * `nominal_overspec_preferred` / `nom_bool_no_overspec` — the Exp 3 noun analogue.
 * `unified_continuous_semantics` — both phenomena: cs-RSA yes, Boolean no.
-* `noise_grounds_asymmetry`, `cost_zero_is_no_brevity` — the structural bridges.
+* `cost_zero_is_no_brevity` — the structural bridge.
 
 ## Verified data (prose, per [degen-etal-2020])
 Effect sizes are documented here, not encoded as Lean data. Exp 1 (§3): main
@@ -65,15 +64,27 @@ inductive Utterance | big | small | blue | red | bigBlue | bigRed | smallBlue
 /-- The target object. -/
 abbrev target : World := .smallBlue
 
-/-- Size-match channel (real). -/ private noncomputable def sM : ℝ := RSA.Noise.sizeMatch
-/-- Size-mismatch channel (real). -/ private noncomputable def sm : ℝ := RSA.Noise.sizeMismatch
-/-- Colour-match channel (real). -/ private noncomputable def cM : ℝ := RSA.Noise.colorMatch
-/-- Colour-mismatch channel (real). -/ private noncomputable def cm : ℝ := RSA.Noise.colorMismatch
+/-- Illustrative channel values (match/mismatch per feature): colour highly
+    reliable, size less so. [degen-etal-2020] estimate continuous semantic
+    values from data rather than stipulating them; these conventional values
+    reproduce the qualitative colour/size asymmetry and are shared by the
+    downstream cs-RSA studies. -/
+def colorMatch : ℚ := 99/100
+/-- See `colorMatch`. -/
+def colorMismatch : ℚ := 1/100
+/-- See `colorMatch`. -/
+def sizeMatch : ℚ := 8/10
+/-- See `colorMatch`. -/
+def sizeMismatch : ℚ := 2/10
+
+/-- Size-match channel (real). -/ private noncomputable def sM : ℝ := sizeMatch
+/-- Size-mismatch channel (real). -/ private noncomputable def sm : ℝ := sizeMismatch
+/-- Colour-match channel (real). -/ private noncomputable def cM : ℝ := colorMatch
+/-- Colour-mismatch channel (real). -/ private noncomputable def cm : ℝ := colorMismatch
 
 private theorem noiseR : sM = 8/10 ∧ sm = 2/10 ∧ cM = 99/100 ∧ cm = 1/100 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    simp [sM, sm, cM, cm, RSA.Noise.sizeMatch, RSA.Noise.sizeMismatch, RSA.Noise.colorMatch,
-      RSA.Noise.colorMismatch]
+    simp [sM, sm, cM, cm, sizeMatch, sizeMismatch, colorMatch, colorMismatch]
 
 private theorem sumW (f : World → ℝ≥0∞) :
     ∑' w, f w = f .bigBlue + f .bigRed + f .smallBlue := by
@@ -160,23 +171,6 @@ theorem csrsa_overmod_preferred : S1 target .small < S1 target .smallBlue := by
 theorem csrsa_sufficient_beats_redundant : S1 target .blue < S1 target .small := by
   simp only [S1, rsa, ENNReal.rpow_one, mul_one, L0_blue_target, L0_small_target]
   rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num
-
-/-! ### φ grounded in the noise channels -/
-
-/-- `φ` uses the `RSA.Noise` channel parameters by construction. -/
-theorem φ_grounded_in_noise :
-    φ .blue .smallBlue = RSA.Noise.colorMatch_e ∧
-    φ .blue .bigRed = RSA.Noise.colorMismatch_e ∧
-    φ .small .smallBlue = RSA.Noise.sizeMatch_e ∧
-    φ .small .bigBlue = RSA.Noise.sizeMismatch_e :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-- The colour > size discrimination ordering grounds the modifier asymmetry. -/
-theorem noise_grounds_asymmetry :
-    φ .blue .smallBlue = RSA.Noise.colorMatch_e ∧
-    φ .small .smallBlue = RSA.Noise.sizeMatch_e ∧
-    RSA.Noise.colorDiscrimination > RSA.Noise.sizeDiscrimination :=
-  ⟨rfl, rfl, RSA.Noise.color_gt_size⟩
 
 /-! ### Boolean baseline -/
 

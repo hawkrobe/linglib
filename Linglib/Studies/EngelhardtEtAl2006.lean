@@ -56,9 +56,9 @@ namespace EngelhardtEtAl2006
     when a bare NP would have been sufficient. -/
 structure ProductionRate where
   /-- Proportion of modified NP productions -/
-  modified : Float
+  modified : ℚ
   /-- Standard error -/
-  se : Float
+  se : ℚ
   deriving Repr
 
 /-- 1-referent target: 31% over-description (Table 1). -/
@@ -83,13 +83,13 @@ def exp1_goal_competitor : ProductionRate := { modified := 0.92, se := 0.03 }
     so comparisons use independent-sample t-tests. -/
 structure JudgmentResult where
   /-- Mean rating for concise instruction -/
-  conciseRating : Float
+  conciseRating : ℚ
   /-- Mean rating for alternative instruction (over-described or modified) -/
-  altRating : Float
+  altRating : ℚ
   /-- Degrees of freedom -/
   df : Nat
   /-- t-statistic; `none` when paper reports "< 1" -/
-  tStat : Option Float
+  tStat : Option ℚ
   /-- Significant at p < .05 -/
   significant : Bool
   deriving Repr
@@ -127,9 +127,9 @@ def exp2_goal_competitor : JudgmentResult :=
 /-- Eye-tracking ANOVA result with by-subjects (F₁) and by-items (F₂)
     statistics. -/
 structure AnovaResult where
-  F1 : Float
+  F1 : ℚ
   df1 : Nat
-  F2 : Float
+  F2 : ℚ
   df2 : Nat
   significant : Bool
   deriving Repr
@@ -137,9 +137,9 @@ structure AnovaResult where
 /-- Eye-tracking reading measure with mean values and ANOVA. -/
 structure ReadingMeasure where
   /-- Mean for modified (over-described) condition -/
-  modified : Float
+  modified : ℚ
   /-- Mean for bare (concise) condition -/
-  bare : Float
+  bare : ℚ
   /-- ANOVA result -/
   anova : AnovaResult
   deriving Repr
@@ -203,19 +203,19 @@ theorem q2_implicit_processing_cost :
 /-- Over-descriptions slow head-noun reading: 531ms > 489ms. -/
 theorem over_description_slows_reading :
     exp3_headNoun_firstPass.modified > exp3_headNoun_firstPass.bare := by
-  native_decide
+  norm_num [exp3_headNoun_firstPass]
 
 /-- Over-descriptions double regression rate: 14.6% vs 7.3%. -/
 theorem over_description_doubles_regressions :
     exp3_postNoun_regressions.modified > exp3_postNoun_regressions.bare := by
-  native_decide
+  norm_num [exp3_postNoun_regressions]
 
 /-- Speakers are sensitive to discriminability: necessary modification
     is near-ceiling (~90%) while unnecessary modification is ~31%. -/
 theorem speakers_distinguish_necessity :
     exp1_target_2ref.modified > exp1_target_1ref.modified ∧
     exp1_goal_competitor.modified > exp1_goal_noCompetitor.modified := by
-  constructor <;> native_decide
+  constructor <;> norm_num [exp1_target_2ref, exp1_target_1ref, exp1_goal_competitor, exp1_goal_noCompetitor]
 
 -- ============================================================================
 -- § Bridge: Connection to Contrastive Inference
@@ -263,7 +263,7 @@ theorem moderately_gricean :
     -- Eye-tracking: Q2 violations implicitly detected
     exp3_headNoun_firstPass.anova.significant ∧
     exp3_postNoun_regressions.anova.significant := by
-  refine ⟨?_, by decide, rfl, rfl, rfl⟩; native_decide
+  refine ⟨?_, by decide, rfl, rfl, rfl⟩; norm_num [exp1_target_1ref]
 
 -- ============================================================================
 -- § Bridge: Support for No-Brevity (Dale & Reiter 1995)
@@ -288,6 +288,6 @@ theorem supports_noBrevity :
     exp2_target_2ref.significant ∧
     -- No Brevity is the weakest Q2 interpretation
     DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 := by
-  refine ⟨?_, by decide, rfl, rfl⟩; native_decide
+  refine ⟨?_, by decide, rfl, rfl⟩; norm_num [exp1_target_1ref]
 
 end EngelhardtEtAl2006
