@@ -5,7 +5,7 @@ import Linglib.Syntax.Category.Particle.Basic
 
 This file defines `Distributed α Ctx`: a carrier `α` with a recorded
 three-valued distribution over licensing contexts `Ctx`, the
-`Proform`-style capability behind `Particle`'s embedding facet
+`HasPhi`-style capability behind `Particle`'s embedding facet
 (instance for `Clause.EmbeddingContext`; `Studies/Stankova2026` adds a
 negation-position axis). The clause-type facet is projection-keyed
 (`ClauseDistribution` fields), so it has no context type to

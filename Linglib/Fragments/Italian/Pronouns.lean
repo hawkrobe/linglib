@@ -91,7 +91,7 @@ def allPronouns : List PersonalPronoun :=
 
 open Romance.Clitics (CliticEntry CliticCase)
 
-/-! Schema and capability instances (`Proform`/`Bound`/`HasPerson`/
+/-! Schema and capability instances (`HasPhi`/`Bound`/`HasPerson`/
 `HasNumber`/`HasCase`) are the shared Romance clitic schema
 (`Fragments/Romance/Clitics.lean`). -/
 

@@ -7,8 +7,8 @@ import Linglib.Features.Number.Basic
 [corbett-2000]
 
 The typeclass mixin for carriers that bear grammatical number — the number
-axis of the capability tower over lexical carriers (cf. `Proform` in
-`Syntax/Category/Pronoun/Capabilities.lean`, `Bound` in
+axis of the capability tower over lexical carriers (cf. `HasPhi` in
+`Features/Phi.lean`, `Bound` in
 `Features/CoreferenceStatus.lean`). A consumer (agreement
 checker, resolution, semantics) requires `[HasNumber α]` and works over any
 representation: a UD feature bundle, a `Word`, a `Pronoun`, an agreement

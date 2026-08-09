@@ -26,7 +26,7 @@ This file deliberately does not depend on the Degree/Kennedy semantics.
 * Dixon `PCClass` view (`ScalarDimension.pcClass`) — waits on wiring to
   `Verb.Root.PCClass` (in `Semantics/ArgumentStructure/Root/Classification.lean`).
 * The `Modifier`/`Gradable` capability classes — built at the second-carrier trigger
-  (an `Adverb`/degree-word struct), exactly as `Pronoun` deferred `Proform`.
+  (an `Adverb`/degree-word struct), exactly as `Pronoun` defers its deictic axis.
 
 This is the adjectival realization of a property concept; when a verb- or
 noun-strategy fragment lands, factor a `PropertyConcept` superclass.

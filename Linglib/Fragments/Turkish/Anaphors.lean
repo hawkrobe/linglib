@@ -66,7 +66,7 @@ structure TurkishAnaphor where
 /-! ### Anaphors as `Bound` carriers
 
 The anaphor's binding class is *derived* from its `anaphorType`, and `Anaphoric` records that the
-whole carrier is Principle-A. (`Proform` is not instanced: the struct carries no surface form —
+whole carrier is Principle-A. (`HasPhi` is not instanced: the struct carries no φ-features —
 the forms *birbirleri*/*kendi* live in the entry names, a pre-existing data gap.) -/
 
 /-- Binding class from the anaphor type: reciprocal → reciprocal, reflexive → reflexive. -/

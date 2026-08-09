@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Features.Phi
 import Linglib.Morphology.Word.Basic
 
 /-!
@@ -11,7 +12,7 @@ import Linglib.Morphology.Word.Basic
 `Word.phi` projects a word's person, number, and gender. Two words `Agree` when
 these features unify (`UD.MorphFeatures.compatible`), an unspecified feature
 acting as a wildcard; the relation is reflexive and symmetric but not
-transitive. `Proform.Agree` is its carrier-generic form.
+transitive. `HasPhi.Agree` is its generic form.
 -/
 
 namespace Morphology
@@ -21,10 +22,15 @@ def Word.phi (w : Word) : UD.MorphFeatures :=
   { person := w.features.person, number := w.features.number,
     gender := w.features.gender }
 
+instance : HasPhi Word := ⟨Word.phi⟩
+
 /-- Two words agree when their φ-features (person, number, gender) are
     compatible, an unspecified feature acting as a wildcard. This is the
     feature-based agreement check binding and concord consumers share. -/
 def Word.Agree (w1 w2 : Word) : Prop := w1.phi.compatible w2.phi
+
+/-- On word tokens, generic agreement is `Word.Agree`. -/
+theorem Word.hasPhi_agree (w1 w2 : Word) : HasPhi.Agree w1 w2 ↔ w1.Agree w2 := Iff.rfl
 
 instance (w1 w2 : Word) : Decidable (Word.Agree w1 w2) := by
   unfold Word.Agree; infer_instance

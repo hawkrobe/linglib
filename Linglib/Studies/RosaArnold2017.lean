@@ -114,8 +114,8 @@ theorem lisa_brendan_context :
     Lisa and excludes Brendan, so a pronoun is unambiguous — the condition
     under which pronoun rates rise. -/
 theorem differentGender_phi_resolves :
-    Proform.Agree English.Pronouns.she lisa ∧
-      ¬ Proform.Agree English.Pronouns.she brendan := by decide
+    HasPhi.Agree English.Pronouns.she lisa ∧
+      ¬ HasPhi.Agree English.Pronouns.she brendan := by decide
 
 /-- [kehler-rohde-2013]'s same-gender pair is a `sameGender` context under the
     same derivation — the two studies' design premises are one φ-fact. -/

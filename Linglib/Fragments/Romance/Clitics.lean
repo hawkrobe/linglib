@@ -26,7 +26,7 @@ Romanian contrasts reflexive accusative *se* with reflexive dative *își*,
 so a Romanian instantiation must split the REFL cell (or make the
 projection person-sensitive) rather than reuse this `toCase`.
 
-The clitic is its own bespoke struct — capabilities (`Proform`, `Bound`,
+The clitic is its own bespoke struct — capabilities (`HasPhi`, `Bound`,
 `HasPerson`, `HasNumber`, `HasCase`) abstract over it without merging it
 into `Pronoun` (the `FunLike`-over-many-hom-types pattern). Deficiency is
 deliberately *not* a capability: it is per-series (a whole clitic paradigm
@@ -69,9 +69,9 @@ instance : HasPerson CliticEntry := ⟨fun c => some (Person.fromUD c.person)⟩
     reflexives, neutralizing the contrast, bear `none`. -/
 instance : HasCase CliticEntry := ⟨fun c => c.case_.toCase⟩
 
-/-- A clitic's surface form + φ-features (person/number). -/
-instance : Proform CliticEntry :=
-  ⟨CliticEntry.form, fun c => { person := some c.person, number := some c.number }⟩
+/-- A clitic's φ-features (person/number). -/
+instance : HasPhi CliticEntry :=
+  ⟨fun c => { person := some c.person, number := some c.number }⟩
 
 /-- Binding class from the clitic's paradigm cell: a reflexive clitic is a
     Principle-A anaphor; an accusative/dative object clitic is a
