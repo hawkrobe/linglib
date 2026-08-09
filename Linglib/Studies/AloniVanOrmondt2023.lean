@@ -16,7 +16,7 @@ concrete model and proves the paper's one countermodel claim.
 
 ## Main declarations
 
-* `univAccessModel` — universal-access model over `BSML.PowerSet2World`.
+* `univAccessModel` — universal-access model over `BSML.TwoAtomWorld`.
 * `fact3_ignorance` … `fact10_negation` — the paper's §5 facts, as
   instances of the substrate theorems.
 * `fact4_obviation` — `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)`, by the paper's
@@ -43,7 +43,7 @@ namespace AloniVanOrmondt2023
 
 open QBSML
 open FirstOrder Language
-open BSML (FCAtom PowerSet2World QVar)
+open BSML (FCAtom TwoAtomWorld QVar)
 
 /-! ### Predicates and variables -/
 
@@ -52,10 +52,10 @@ inductive Predicate | P | Q
 
 /-! ### The concrete model -/
 
-/-- Universal-access model on `PowerSet2World`: every world is accessible,
+/-- Universal-access model on `TwoAtomWorld`: every world is accessible,
     and both predicates hold of `d` at `w` iff `w` models the atom `d`.
     Cf. `Aloni2022.deonticModel`. -/
-def univAccessModel : Model PowerSet2World FCAtom FCAtom Predicate where
+def univAccessModel : Model TwoAtomWorld FCAtom FCAtom Predicate where
   access := λ _ => Finset.univ
   interp := λ w => monadicStructure id (λ _ d => w.holds d)
 
@@ -98,7 +98,7 @@ theorem Qx_isNEFree {Const : Type*} : (Qx (Const := Const)).IsNEFree := .pred _ 
     substrate's `negationStrip`. Mirrors
     `Aloni2022.aloni2022_fact11_dual_prohibition`. -/
 theorem fact10_negation
-    (s : Finset (Index PowerSet2World QVar FCAtom))
+    (s : Finset (Index TwoAtomWorld QVar FCAtom))
     (h : support univAccessModel (Formula.enrich (.neg (.disj Pa Pb))) s) :
     support univAccessModel (.neg Pa) s ∧ support univAccessModel (.neg Pb) s :=
   negationStrip univAccessModel Pa_isNEFree Pb_isNEFree h
@@ -111,7 +111,7 @@ theorem fact10_negation
     `narrowScopeFC`; the first-order analogue of
     `Aloni2022.aloni2022_fact4_NS_FC`. -/
 theorem fact8_narrowScopeFC
-    (s : Finset (Index PowerSet2World QVar FCAtom))
+    (s : Finset (Index TwoAtomWorld QVar FCAtom))
     (h : support univAccessModel (Formula.enrich (.poss (.disj Pa Pb))) s) :
     support univAccessModel (.poss Pa) s ∧ support univAccessModel (.poss Pb) s :=
   narrowScopeFC univAccessModel Pa_isNEFree Pb_isNEFree h
@@ -119,7 +119,7 @@ theorem fact8_narrowScopeFC
 /-- **Fact 7 (□-free choice)** at `univAccessModel`: `[□(Pa ∨ Pb)]⁺` entails
     `◇Pa ∧ ◇Pb`, with the derived `□`. One-line invocation of `boxFC`. -/
 theorem fact7_boxFC
-    (s : Finset (Index PowerSet2World QVar FCAtom))
+    (s : Finset (Index TwoAtomWorld QVar FCAtom))
     (h : support univAccessModel
       (Formula.enrich (Formula.nec (.disj Pa Pb))) s) :
     support univAccessModel (.poss Pa) s ∧ support univAccessModel (.poss Pb) s :=
@@ -132,7 +132,7 @@ theorem fact7_boxFC
     `[∀x◇(Px ∨ Qx)]⁺` entails `∀x◇Px ∧ ∀x◇Qx`. One-line invocation of
     `universalFC` — the [chemla-2009]-attested pattern. -/
 theorem fact9_universalFC
-    (s : Finset (Index PowerSet2World QVar FCAtom))
+    (s : Finset (Index TwoAtomWorld QVar FCAtom))
     (h : support univAccessModel univPossPxOrQx.enrich s) :
     support univAccessModel (.univ .x (.poss Px)) s ∧
     support univAccessModel (.univ .x (.poss Qx)) s :=
@@ -142,7 +142,7 @@ theorem fact9_universalFC
     singleton state, `[∀x(Px ∨ Qx)]⁺` entails `∃xPx ∧ ∃xQx`. One-line
     invocation of `distribution`. -/
 theorem fact5_distribution
-    (i : Index PowerSet2World QVar FCAtom)
+    (i : Index TwoAtomWorld QVar FCAtom)
     (h : support univAccessModel univPxOrQx.enrich {i}) :
     support univAccessModel (.exi .x Px) {i} ∧ support univAccessModel (.exi .x Qx) {i} :=
   distribution univAccessModel Px_isNEFree Qx_isNEFree h
@@ -155,8 +155,8 @@ theorem fact5_distribution
     `univAccessModel`. The translation hypothesis is discharged by `rfl`: the
     compiler computes. -/
 theorem univPxOrQx_classical
-    (s : Finset (Index PowerSet2World QVar FCAtom))
-    (v : Index PowerSet2World QVar FCAtom → QVar → FCAtom)
+    (s : Finset (Index TwoAtomWorld QVar FCAtom))
+    (v : Index TwoAtomWorld QVar FCAtom → QVar → FCAtom)
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
     support univAccessModel univPxOrQx s ↔
       ∀ i ∈ s, univAccessModel.RealizeAt i.world
@@ -170,8 +170,8 @@ theorem univPxOrQx_classical
     every index — the **full** [aloni-vanormondt-2023] Proposition 4.1
     (modals included) at `univAccessModel`, the translation discharged by `rfl`. -/
 theorem possPxOrQx_classical
-    (s : Finset (Index PowerSet2World QVar FCAtom))
-    (v : Index PowerSet2World QVar FCAtom → QVar → FCAtom)
+    (s : Finset (Index TwoAtomWorld QVar FCAtom))
+    (v : Index TwoAtomWorld QVar FCAtom → QVar → FCAtom)
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
     support univAccessModel (.poss (.disj Px Qx)) s ↔
       ∀ i ∈ s,
@@ -203,11 +203,11 @@ theorem stUnivPxOrQx_closed :
     compactness-ready form, with every translation step (`toModal?`, `st?`,
     the free-variable check) computed by the compiler. -/
 theorem univPxOrQx_sentence
-    (i : Index PowerSet2World QVar FCAtom) (v : QVar → FCAtom)
+    (i : Index TwoAtomWorld QVar FCAtom) (v : QVar → FCAtom)
     (hv : ∀ y, i.assign y = some (v y))
     (h : support univAccessModel univPxOrQx {i}) :
     letI := univAccessModel.stStructure
-    (PowerSet2World ⊕ FCAtom) ⊨
+    (TwoAtomWorld ⊕ FCAtom) ⊨
       (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed :=
   models_toSentence_of_support univAccessModel rfl rfl stUnivPxOrQx_closed hv h
 
@@ -216,9 +216,9 @@ theorem univPxOrQx_sentence
     state-independent. -/
 theorem support_of_stUnivPxOrQx_sentence
     (h : letI := univAccessModel.stStructure
-         (PowerSet2World ⊕ FCAtom) ⊨
+         (TwoAtomWorld ⊕ FCAtom) ⊨
            (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed) :
-    ∃ (i : Index PowerSet2World QVar FCAtom) (v : QVar → FCAtom),
+    ∃ (i : Index TwoAtomWorld QVar FCAtom) (v : QVar → FCAtom),
       (∀ y, i.assign y = some (v y)) ∧ support univAccessModel univPxOrQx {i} :=
   haveI : Nonempty FCAtom := ⟨.a⟩
   exists_support_of_models_toSentence univAccessModel rfl rfl stUnivPxOrQx_closed h
@@ -233,15 +233,15 @@ theorem support_of_stUnivPxOrQx_sentence
     - Indisputable: all worlds in s↓ see the same accessible set (R constant).
     - State-based: every w ∈ s↓ sees exactly s↓ (R(w) = s↓). -/
 theorem univAccessModel_indisputable
-    (s : Finset (Index PowerSet2World QVar FCAtom)) :
+    (s : Finset (Index TwoAtomWorld QVar FCAtom)) :
     univAccessModel.IsIndisputable s :=
   fun _ _ _ _ => rfl
 
 /-- State-basedness is strictly stronger than indisputability; universal
     access delivers it exactly on states whose world projection exhausts
-    `PowerSet2World`. The precondition for the epistemic Facts 3 and 6. -/
+    `TwoAtomWorld`. The precondition for the epistemic Facts 3 and 6. -/
 theorem univAccessModel_stateBased_of_full
-    {s : Finset (Index PowerSet2World QVar FCAtom)}
+    {s : Finset (Index TwoAtomWorld QVar FCAtom)}
     (hfull : State.worldProj s = Finset.univ) :
     univAccessModel.IsStateBased s :=
   fun _ _ => hfull.symm
@@ -249,7 +249,7 @@ theorem univAccessModel_stateBased_of_full
 /-- A state with full world projection: every world, paired with the empty
     assignment. Witnesses that the epistemic hypothesis of `fact3_ignorance`
     and `fact6_distributionEpi` is satisfiable. -/
-def fullState : Finset (Index PowerSet2World QVar FCAtom) :=
+def fullState : Finset (Index TwoAtomWorld QVar FCAtom) :=
   Finset.univ.image (fun w => (w, fun _ => none))
 
 example : State.worldProj fullState = Finset.univ := by decide
@@ -260,8 +260,8 @@ example : univAccessModel.IsStateBased fullState := by decide
     the frame conditions genuinely separate. -/
 example :
     ¬ univAccessModel.IsStateBased
-      ({(PowerSet2World.both, fun _ => none)} :
-        Finset (Index PowerSet2World QVar FCAtom)) := by
+      ({(TwoAtomWorld.both, fun _ => none)} :
+        Finset (Index TwoAtomWorld QVar FCAtom)) := by
   decide
 
 /-! ### Facts 3 and 6 (ignorance and distribution◇): the epistemic facts -/
@@ -270,7 +270,7 @@ example :
     projection (where `univAccessModel_stateBased_of_full` applies):
     `[Pa ∨ Pb]⁺` entails `◇Pa ∧ ◇Pb`. One-line invocation of `ignorance`. -/
 theorem fact3_ignorance
-    (s : Finset (Index PowerSet2World QVar FCAtom))
+    (s : Finset (Index TwoAtomWorld QVar FCAtom))
     (hfull : State.worldProj s = Finset.univ)
     (h : support univAccessModel (Formula.enrich (.disj Pa Pb)) s) :
     support univAccessModel (.poss Pa) s ∧
@@ -281,7 +281,7 @@ theorem fact3_ignorance
     projection: `[∀x(Px ∨ Qx)]⁺` entails `∃x◇Px ∧ ∃x◇Qx`. One-line
     invocation of `distributionEpi`. -/
 theorem fact6_distributionEpi
-    (s : Finset (Index PowerSet2World QVar FCAtom))
+    (s : Finset (Index TwoAtomWorld QVar FCAtom))
     (hfull : State.worldProj s = Finset.univ)
     (h : support univAccessModel univPxOrQx.enrich s) :
     support univAccessModel (.exi .x (.poss Px)) s ∧
@@ -307,21 +307,21 @@ inductive Fig14Atom | a | b
 /-- Fig. 14 valuation: `P` holds exactly of `a`, and `Q` exactly of `b`,
     wherever the world carries the corresponding atom — so `P` and `Q` have
     *divergent* extensions, unlike `univAccessModel`'s. -/
-def fig14V (w : PowerSet2World) : Predicate → Fig14Atom → Prop
+def fig14V (w : TwoAtomWorld) : Predicate → Fig14Atom → Prop
   | .P, d => d = .a ∧ w.holds .a
   | .Q, d => d = .b ∧ w.holds .b
 
 /-- The Fig. 14 model: reflexive-only access at the `both` world. -/
-def fig14Model : Model PowerSet2World Fig14Atom Fig14Atom Predicate where
-  access := λ _ => {PowerSet2World.both}
+def fig14Model : Model TwoAtomWorld Fig14Atom Fig14Atom Predicate where
+  access := λ _ => {TwoAtomWorld.both}
   interp := λ w => monadicStructure id (fig14V w)
 
 /-- The Fig. 14 index: the `both` world with the empty assignment. -/
-def fig14Index : Index PowerSet2World QVar Fig14Atom :=
-  (PowerSet2World.both, fun _ => none)
+def fig14Index : Index TwoAtomWorld QVar Fig14Atom :=
+  (TwoAtomWorld.both, fun _ => none)
 
 /-- The Fig. 14 state: the single-index state of the counterexample. -/
-def fig14State : Finset (Index PowerSet2World QVar Fig14Atom) := {fig14Index}
+def fig14State : Finset (Index TwoAtomWorld QVar Fig14Atom) := {fig14Index}
 
 /-- The Fig. 14 accessibility is state-based on the countermodel state —
     the epistemic reading Fact 4 assumes ("we assume again that ◇ is an
@@ -358,9 +358,9 @@ theorem fig14_conclusion_fails :
       fig14State := by
   intro h
   obtain ⟨X, hX, hne, hsupp⟩ := h.1 (fig14Index.update .x .b) (by decide)
-  obtain rfl : X = {PowerSet2World.both} := hne.subset_singleton_iff.mp hX
+  obtain rfl : X = {TwoAtomWorld.both} := hne.subset_singleton_iff.mp hX
   obtain ⟨d, hd, hP⟩ := hsupp
-    (PowerSet2World.both, (fig14Index.update .x .b).assign)
+    (TwoAtomWorld.both, (fig14Index.update .x .b).assign)
     (State.mem_modalLift.mpr ⟨Finset.mem_singleton_self _, rfl⟩)
   obtain rfl := Option.some.inj hd
   exact Fig14Atom.noConfusion hP.1
@@ -370,8 +370,8 @@ theorem fig14_conclusion_fails :
     `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)`, witnessed by the Fig. 14
     countermodel. -/
 theorem fact4_obviation :
-    ∃ (M : Model PowerSet2World Fig14Atom Fig14Atom Predicate)
-      (s : Finset (Index PowerSet2World QVar Fig14Atom)),
+    ∃ (M : Model TwoAtomWorld Fig14Atom Fig14Atom Predicate)
+      (s : Finset (Index TwoAtomWorld QVar Fig14Atom)),
       support M univPxOrQx.enrich s ∧
       ¬ support M (.univ .x (.conj (.poss Px) (.poss Qx))) s :=
   ⟨fig14Model, fig14State, fig14_premise, fig14_conclusion_fails⟩

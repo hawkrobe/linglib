@@ -28,10 +28,10 @@ The universal results live in `Studies/Aloni2022/FreeChoice.lean`:
 
 This file uses **typed atoms** `FCAtom.{a, b}` (from `BSML.Atoms`)
 rather than String identifiers. The valuation routes directly through
-`PowerSet2World.holds`, eliminating the silent typo trap of the earlier
+`TwoAtomWorld.holds`, eliminating the silent typo trap of the earlier
 String-based pattern (`match p with | "coffee" => ... | _ => false`).
 
-Worlds are `PowerSet2World` (`nothing`/`onlyA`/`onlyB`/`both`), matching
+Worlds are `TwoAtomWorld` (`nothing`/`onlyA`/`onlyB`/`both`), matching
 Aloni 2022 Figure 1's `w_∅`/`w_a`/`w_b`/`w_ab`. We label `FCAtom.a` as
 "coffee" and `FCAtom.b` as "tea" in prose only — the formal types are
 the typed atoms throughout.
@@ -40,7 +40,7 @@ the typed atoms throughout.
 namespace Aloni2022
 
 open BSML
-open BSML (FCAtom PowerSet2World)
+open BSML (FCAtom TwoAtomWorld)
 
 -- ============================================================================
 -- §1 Teams
@@ -49,12 +49,12 @@ open BSML (FCAtom PowerSet2World)
 /-- The free-choice team: {`both`, `onlyA`, `onlyB`} = {w_ab, w_a, w_b}.
     Excludes `nothing` (= w_∅), the world that would supply a zero-witness
     substate for the disjunction enrichment. -/
-def freeChoiceTeam : Finset PowerSet2World :=
+def freeChoiceTeam : Finset TwoAtomWorld :=
   {.both, .onlyA, .onlyB}
 
 /-- The prohibition team: just `nothing` (= w_∅). With `restrictiveModel`,
     R[nothing] = {nothing} so the prohibition `¬◇(a ∨ b)` is supported. -/
-def prohibitionTeam : Finset PowerSet2World :=
+def prohibitionTeam : Finset TwoAtomWorld :=
   {.nothing}
 
 -- ============================================================================
@@ -67,14 +67,14 @@ def prohibitionTeam : Finset PowerSet2World :=
 
     Valuation: `val a w = w.holds a` — direct routing through the typed
     atom. No String fallthrough, no silent typos. -/
-def deonticModel : BSMLModel PowerSet2World FCAtom where
+def deonticModel : BSMLModel TwoAtomWorld FCAtom where
   access := λ _ => Finset.univ
   val := λ p w => w.holds p
 
 /-- Restrictive deontic model: from `nothing`, only `nothing` is accessible;
     from any other world, all worlds. Used for Dual Prohibition on the
     prohibition team `{nothing}`. -/
-def restrictiveModel : BSMLModel PowerSet2World FCAtom where
+def restrictiveModel : BSMLModel TwoAtomWorld FCAtom where
   access := λ w =>
     match w with
     | .nothing => {.nothing}
@@ -83,7 +83,7 @@ def restrictiveModel : BSMLModel PowerSet2World FCAtom where
 
 /-- State-based deontic model: R[w] = freeChoiceTeam for every world. Strictly
     stronger than indisputability; required for Modal Disjunction (Fact 3). -/
-def stateBasedModel : BSMLModel PowerSet2World FCAtom where
+def stateBasedModel : BSMLModel TwoAtomWorld FCAtom where
   access := λ _ => freeChoiceTeam
   val := λ p w => w.holds p
 
@@ -93,7 +93,7 @@ def stateBasedModel : BSMLModel PowerSet2World FCAtom where
     incidental: WS FC's conclusion may fail on this model even when its
     enriched premise is supported. (Aloni 2022 Figure 5(b) shape — non-indisputable R.
     Figure 5(a) shows the dual case where R is indisputable but enrichment fails.) -/
-def looseDeonticModel : BSMLModel PowerSet2World FCAtom where
+def looseDeonticModel : BSMLModel TwoAtomWorld FCAtom where
   access := λ w =>
     match w with
     | .both    => {.both, .onlyA}
