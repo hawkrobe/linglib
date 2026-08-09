@@ -14,61 +14,39 @@ import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Morphology.Word.Agree
 
 /-!
-# Pronoun capabilities — a mixin tower over pronoun carriers
+# Pronoun capabilities
 
-Pronoun *entries* (`Pronoun`, `PersonalPronoun`, `IndefinitePronoun`, …) are bundled `structure`
-values — many per language, like mathlib's `MonoidHom`. This file gives the *capabilities* a
-carrier `α` can have, as typeclass mixins abstracting over the representation — the
-`MonoidHomClass`/`ContinuousMul`-over-`MonoidHom`/`Mul` relationship, applied to pronouns. A
-consumer (binding engine, agreement module, …) then requires exactly the axes it touches:
-`[Proform α]` for form/φ, `[Bound α]` for the Principle A/B/C role, and so on — composed by
-instance parameters with no `extends`-diamond. The carrier may be a record (`Pronoun`), a syntactic
-object (`Word`), or a future theory representation; each supplies its own instances.
+Typeclass mixins for pronoun-like carriers. A carrier may be a lexical record
+(`Pronoun`, `PersonalPronoun`) or a surface token (`Word`); a consumer requires
+exactly the axes it touches.
 
 ## Main declarations
 
-* `Proform` — the spine: a carrier exposes a surface `form` and agreement `phi`-features.
-* `Proform.Agree` — carrier-generic φ-agreement, the compatibility filter referent
-  resolution and agreement consumers share; `Word.Agree` is its `Word` specialization.
-* `instance Bound Pronoun` / `Bound PersonalPronoun` — the pronoun carriers' binding-axis
-  instances. The `Bound` *class* (with `Anaphoric`/`Pronominal`/`Referring` and the
-  `Bound.Is*` element predicates) is theory-neutral and lives beside its partial companion
-  `Features.BindingSource` in `Features/CoreferenceStatus.lean`.
-* `bindingClassOf_toWord` — the faithfulness certificate: the binding engine's canonical
-  morphology source (`Binding.bindingClassOf`) agrees with the `Bound` mixin on every
-  projected pro-form, so the surface engine and the carrier capability never diverge.
-* `HasNumber`/`HasPerson`/`HasCase`/`HasGender` instances for the pronoun carriers, each
-  with a faithfulness theorem (`numberOf_toWord`, `personOf_toWord`, `caseOf_toWord`,
-  `genderOf_toWord`) locating exactly what `toWord`'s UD realization preserves or loses.
+* `Proform` — the base capability: a surface `form` and agreement `phi`-features.
+* `Proform.Agree` — carrier-generic φ-agreement; `Word.Agree` is the `Word` case.
+* `Bound`, `HasNumber`, `HasPerson`, `HasCase`, `HasGender` instances for the
+  pronoun carriers.
+* `bindingClassOf_toWord`, `numberOf_toWord`, `personOf_toWord`, `caseOf_toWord`,
+  `genderOf_toWord` — `Pronoun.toWord` commutes with each axis, up to what UD
+  realization can express: clusivity, minimal/augmented number, and animacy-based
+  gender are lost; case and binding class are preserved.
 
 ## Implementation notes
 
-Capabilities live near their domain (mathlib-style: `ContinuousMul` is in `Topology`, not
-`Algebra`). The word-class-neutral `Indefinite` capability (`[Indefinite α]`, Haspelmath
-function-coverage) therefore lives in `Features/Indefinite.lean`, and the binding axis `Bound`
-lives in `Features/CoreferenceStatus.lean` — neither is pronoun-specific.
-
-Three further axes are deferred, each for a principled reason. *Deficiency*
-([cardinaletti-starke-1999] `Pronoun.Strength`) is *per-series*, not per-element: every carrier's
-strength is carrier-uniform (Italian clitics are all `.clitic`; the Mixtec clitic/nonclitic *fields*
-have fixed strengths), so an `α → Strength` accessor would be constant on every carrier — a
-per-*type* fact, not a per-element capability. It is served by the `Pronoun.strength` field
-(series-level, `none` when not homogeneous) and the `Strength` linear order, not by a class.
-The finer *lexical-kind* axis (personal vs relative vs interrogative vs
-demonstrative) is `Pronoun.pronType` — real UD morphology on the carrier (no invented enum),
-threaded onto the projected word by `toWord`. The *deictic* axis (register, referential
-person) is borne by one carrier only, which carries it as fields
-(`PersonalPronoun.register`/`referentialPerson`); a class over those accessors earns its
-keep when a second carrier bears the axis.
+Word-class-neutral capabilities live with their domains: `Indefinite` in
+`Features/Indefinite.lean`, `Bound` in `Features/CoreferenceStatus.lean`.
+Three axes are fields, not classes: deficiency (`Pronoun.strength`, per-series
+[cardinaletti-starke-1999]), lexical kind (`Pronoun.pronType`, UD morphology),
+and register/referential person (`PersonalPronoun` fields, borne by one
+carrier).
 -/
 
 open Morphology (Word)
 
 /-! ### The spine: `Proform` -/
 
-/-- A pronoun-like carrier exposes a surface `form` and agreement `phi`-features — everything true
-of *every* pronoun, the base every other capability builds over (cf. `Mul`/`Semigroup` as the base
-operation class). -/
+/-- A pronoun-like carrier: a surface `form` and agreement `phi`-features — the
+base the other capabilities build over. -/
 class Proform (α : Type*) where
   /-- Surface form (romanization or orthographic). -/
   form : α → String
@@ -84,9 +62,7 @@ instance : Proform PersonalPronoun :=
 
 /-- φ-agreement between two pro-form carriers: their `phi`-features unify
 (`UD.MorphFeatures.compatible`), an unspecified feature acting as a wildcard —
-the carrier-generic form of `Word.Agree`. The compatibility filter referent
-resolution and agreement consumers share: a pronoun's φ narrows the candidate
-referents to those it agrees with. -/
+the carrier-generic form of `Word.Agree`. -/
 def Proform.Agree {α β : Type*} [Proform α] [Proform β] (a : α) (b : β) : Prop :=
   (Proform.phi a).compatible (Proform.phi b)
 
@@ -109,13 +85,8 @@ theorem Proform.agree_toWord {β : Type*} [Proform β] (p : Pronoun) (b : β) :
 instance : Bound Pronoun := ⟨fun p => p.bindingClass.getD .pronoun⟩
 instance : Bound PersonalPronoun := ⟨fun p => p.toPronoun.bindingClass.getD .pronoun⟩
 
-/-- The canonical morphology source agrees with the mixin: a pro-form's projected word
-classifies (`Binding.bindingClassOf`, reading `Reflex`/`PronType`/category) exactly as the
-carrier's `Bound` class — `Pronoun.toWord` threads the binding morphology faithfully, so the
-surface engine and the capability never diverge. Two coherence premises, both vacuous for
-every actual entry: the pronoun is not lexically declared an R-expression (its surface
-category `.PRON` would win), and it does not *store* `PronType=Rcp` (reciprocal is derived
-by `toWord` from `bindingClass = .reciprocal`, never stored). -/
+/-- A pronoun's projected word classifies (`Binding.bindingClassOf`) exactly as
+its `Bound` class. -/
 theorem bindingClassOf_toWord (p : Pronoun) (h : p.bindingClass ≠ some .rExpression)
     (hr : p.pronType = some .Rcp → p.bindingClass = some .reciprocal) :
     Binding.bindingClassOf p.toWord = Bound.source p := by
@@ -126,16 +97,12 @@ theorem bindingClassOf_toWord (p : Pronoun) (h : p.bindingClass ≠ some .rExpre
 
 /-! ### The number axis: `HasNumber` instances and faithfulness -/
 
-/-- A pronoun bears its analytical number directly — the carrier field is
-root-`Number`-typed. -/
 instance : HasNumber Pronoun := ⟨fun p => p.number⟩
 
 instance : HasNumber PersonalPronoun := ⟨fun p => numberOf p.toPronoun⟩
 
-/-- Projecting a pronoun to a `Word` realizes its number through UD: the
-round-trip is identity exactly on UD-expressible values — the
-minimal/augmented values are lost to realization (`Number.toUD` is
-partial), the number analogue of `personOf_toWord`'s coarsening. -/
+/-- A pronoun's number survives projection to `Word` exactly on UD-expressible
+values: minimal/augmented are lost (`Number.toUD` is partial). -/
 theorem numberOf_toWord (p : Pronoun) :
     numberOf p.toWord = p.number.bind fun n => n.toUD.bind Number.fromUD := by
   show (p.number.bind Number.toUD).bind Number.fromUD = _
@@ -143,16 +110,11 @@ theorem numberOf_toWord (p : Pronoun) :
 
 /-! ### The person axis: `HasPerson` instances and faithfulness -/
 
-/-- A pronoun bears its analytical person directly — the carrier field is
-root-`Person`-typed, clusivity included (Tagalog *kami* =
-`firstExclusive`). -/
 instance : HasPerson Pronoun := ⟨fun p => p.person⟩
 
 instance : HasPerson PersonalPronoun := ⟨fun p => personOf p.toPronoun⟩
 
-/-- Projecting a pronoun to a `Word` coarsens its person: `Word` carries
-UD realization, which has no clusivity — the mixin makes the loss
-explicit rather than silent. -/
+/-- Projection to `Word` coarsens person: UD realization has no clusivity. -/
 theorem personOf_toWord (p : Pronoun) :
     personOf p.toWord = (personOf p).map Person.coarsen := by
   show (p.person.map Person.toUD).map Person.fromUD = p.person.map Person.coarsen
@@ -160,33 +122,23 @@ theorem personOf_toWord (p : Pronoun) :
 
 /-! ### The case axis: `HasCase` instances and faithfulness -/
 
-/-- A pronoun bears its analytical case directly — the carrier field is
-root-`Case`-typed. -/
 instance : HasCase Pronoun := ⟨fun p => p.case_⟩
 
 instance : HasCase PersonalPronoun := ⟨fun p => caseOf p.toPronoun⟩
 
-/-- Projecting a pronoun to a `Word` realizes its case through UD
-losslessly: `Case.toUD` is currently a bijection, so — unlike person
-(clusivity lost) and number (minimal/augmented lost) — the round-trip is
-the identity. This is the theorem that degrades when an analytical
-refinement splits a UD cell (`Case.fromUD_toUD`). -/
+/-- Projection to `Word` preserves case: `Case.toUD` is a bijection. -/
 theorem caseOf_toWord (p : Pronoun) : caseOf p.toWord = caseOf p := by
   show (p.case_.map Case.toUD).map Case.fromUD = p.case_
   simp [Option.map_map, Function.comp_def, Case.fromUD_toUD]
 
 /-! ### The gender axis: `HasGender` instances and faithfulness -/
 
-/-- A pronoun bears its analytical gender directly — the carrier field is
-root-`Gender`-typed. -/
 instance : HasGender Pronoun := ⟨fun p => p.gender⟩
 
 instance : HasGender PersonalPronoun := ⟨fun p => genderOf p.toPronoun⟩
 
-/-- Projecting a pronoun to a `Word` realizes its gender through UD: the
-round-trip is identity exactly on UD-expressible values — the animacy-based
-labels are lost to realization (`Gender.toUD` is partial), the gender
-analogue of `numberOf_toWord`. -/
+/-- A pronoun's gender survives projection to `Word` exactly on UD-expressible
+values: the animacy-based labels are lost (`Gender.toUD` is partial). -/
 theorem genderOf_toWord (p : Pronoun) :
     genderOf p.toWord = p.gender.bind fun g => g.toUD.map Gender.fromUD := by
   show (p.gender.bind Gender.toUD).map Gender.fromUD = _
