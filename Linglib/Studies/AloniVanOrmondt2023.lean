@@ -21,8 +21,8 @@ concrete model and proves the paper's one countermodel claim.
   instances of the substrate theorems.
 * `fact4_obviation` — `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)`, by the paper's
   Fig. 14 countermodel.
-* `univPxOrQx_classical`, `univPxOrQx_sentence` — Proposition 4.1 at the
-  concrete model, the translations computed by `rfl`.
+* `support_univPxOrQx_iff`, `models_stUnivPxOrQxSentence_iff` —
+  Proposition 4.1 at the concrete model, the translations computed by `rfl`.
 
 ## Implementation notes
 
@@ -82,6 +82,10 @@ theorem Pb_isNEFree : Pb.IsNEFree := .predc _ _
 theorem Px_isNEFree {Const : Type*} : (Px (Const := Const)).IsNEFree := .pred _ _
 theorem Qx_isNEFree {Const : Type*} : (Qx (Const := Const)).IsNEFree := .pred _ _
 
+variable {s : Finset (Index TwoAtomWorld QVar FCAtom)}
+variable {i : Index TwoAtomWorld QVar FCAtom}
+variable {v : Index TwoAtomWorld QVar FCAtom → QVar → FCAtom}
+
 /-! ### Proposition 4.1 at the concrete model -/
 
 /-- The (unenriched) universal premise `∀x(Px ∨ Qx)` translates into mathlib
@@ -89,9 +93,7 @@ theorem Qx_isNEFree {Const : Type*} : (Qx (Const := Const)).IsNEFree := .pred _ 
     every index — [aloni-vanormondt-2023] Proposition 4.1 instantiated at
     `univAccessModel`. The translation hypothesis is discharged by `rfl`: the
     compiler computes. -/
-theorem univPxOrQx_classical
-    (s : Finset (Index TwoAtomWorld QVar FCAtom))
-    (v : Index TwoAtomWorld QVar FCAtom → QVar → FCAtom)
+theorem support_univPxOrQx_iff
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
     support univAccessModel univPxOrQx s ↔
       ∀ i ∈ s, univAccessModel.RealizeAt i.world
@@ -104,9 +106,7 @@ theorem univPxOrQx_classical
     over the monadic signature, and its support is Kripke satisfaction at
     every index — the **full** [aloni-vanormondt-2023] Proposition 4.1
     (modals included) at `univAccessModel`, the translation discharged by `rfl`. -/
-theorem possPxOrQx_classical
-    (s : Finset (Index TwoAtomWorld QVar FCAtom))
-    (v : Index TwoAtomWorld QVar FCAtom → QVar → FCAtom)
+theorem support_possPxOrQx_iff
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
     support univAccessModel (.poss (.disj Px Qx)) s ↔
       ∀ i ∈ s,
@@ -133,30 +133,26 @@ def stUnivPxOrQx : (stLang FCAtom Predicate).Formula (QVar ⊕ ℕ) :=
 theorem stUnivPxOrQx_closed :
     (stClose 0 stUnivPxOrQx).freeVarFinset = ∅ := by decide
 
-/-- Support of `∀x(Px ∨ Qx)` at a singleton forces its sort-guarded closed
-    standard translation as a **sentence** of `univAccessModel.stStructure` — the
-    compactness-ready form, with every translation step (`toModal?`, `st?`,
-    the free-variable check) computed by the compiler. -/
-theorem univPxOrQx_sentence
-    (i : Index TwoAtomWorld QVar FCAtom) (v : QVar → FCAtom)
-    (hv : ∀ y, i.assign y = some (v y))
-    (h : support univAccessModel univPxOrQx {i}) :
-    letI := univAccessModel.stStructure
-    (TwoAtomWorld ⊕ FCAtom) ⊨
-      (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed :=
-  models_toSentence_of_support univAccessModel rfl rfl stUnivPxOrQx_closed hv h
+/-- The sort-guarded closed standard translation of `∀x(Px ∨ Qx)`, as a
+    sentence. -/
+def stUnivPxOrQxSentence : (stLang FCAtom Predicate).Sentence :=
+  (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed
 
-/-- Conversely, the sentence yields support at some singleton — sentencehood
-    of the translation makes `∀x(Px ∨ Qx)`'s support assignment- and
-    state-independent. -/
-theorem support_of_stUnivPxOrQx_sentence
-    (h : letI := univAccessModel.stStructure
-         (TwoAtomWorld ⊕ FCAtom) ⊨
-           (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed) :
-    ∃ (i : Index TwoAtomWorld QVar FCAtom) (v : QVar → FCAtom),
-      (∀ y, i.assign y = some (v y)) ∧ support univAccessModel univPxOrQx {i} :=
+local instance : (stLang FCAtom Predicate).Structure (TwoAtomWorld ⊕ FCAtom) :=
+  univAccessModel.stStructure
+
+/-- Truth of the standard-translation sentence in `univAccessModel.stStructure`
+    is support of `∀x(Px ∨ Qx)` at some singleton with a total assignment —
+    the compactness-ready form of Proposition 4.1, every translation step
+    (`toModal?`, `st?`, the free-variable check) computed by the compiler. -/
+theorem models_stUnivPxOrQxSentence_iff :
+    (TwoAtomWorld ⊕ FCAtom) ⊨ stUnivPxOrQxSentence ↔
+      ∃ (i : Index TwoAtomWorld QVar FCAtom) (v : QVar → FCAtom),
+        (∀ y, i.assign y = some (v y)) ∧ support univAccessModel univPxOrQx {i} :=
   haveI : Nonempty FCAtom := ⟨.a⟩
-  exists_support_of_models_toSentence univAccessModel rfl rfl stUnivPxOrQx_closed h
+  ⟨exists_support_of_models_toSentence univAccessModel rfl rfl stUnivPxOrQx_closed,
+    fun ⟨_, _, hv, h⟩ =>
+      models_toSentence_of_support univAccessModel rfl rfl stUnivPxOrQx_closed hv h⟩
 
 /-! ### Frame conditions -/
 
@@ -200,9 +196,6 @@ example :
   decide
 
 /-! ### The §5 facts -/
-
-variable {s : Finset (Index TwoAtomWorld QVar FCAtom)}
-variable {i : Index TwoAtomWorld QVar FCAtom}
 
 /-- **Fact 3** (ignorance), on states of full world projection. -/
 theorem fact3_ignorance (hfull : State.worldProj s = Finset.univ)
