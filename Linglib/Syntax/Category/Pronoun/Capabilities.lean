@@ -24,8 +24,8 @@ exactly the axes it touches.
 ## Main declarations
 
 * `Proform` — a pro-form stands in for members of a form-class, its domain
-  ([bloomfield-1933]); standing in requires φ-agreement (`HasPhi.Agree`, from
-  `Features/Phi.lean`).
+  ([bloomfield-1933]); `Proform.StandsInFor` is derived — domain membership
+  plus φ-agreement (`HasPhi.Agree`, from `Features/Phi.lean`).
 * `Bound`, `HasNumber`, `HasPerson`, `HasCase`, `HasGender` instances for the
   pronoun carriers.
 * `bindingClassOf_toWord`, `numberOf_toWord`, `personOf_toWord`, `caseOf_toWord`,
@@ -59,28 +59,33 @@ theorem HasPhi.agree_toWord {β : Type*} [HasPhi β] (p : Pronoun) (b : β) :
     HasPhi.Agree p b ↔ HasPhi.Agree p.toWord b := Iff.rfl
 
 /-- A pro-form is an expression that stands in for members of a form-class —
-its *domain* ([bloomfield-1933]) — under φ-agreement. -/
-class Proform (α : Type*) [HasPhi α] where
-  /-- `a` can substitute for the token `w`. -/
-  StandsInFor : α → Word → Prop
-  /-- Standing in requires φ-agreement. -/
-  agree_of_standsInFor : ∀ a w, StandsInFor a w → HasPhi.Agree a w
+its *domain* ([bloomfield-1933]). -/
+class Proform (α : Type*) where
+  /-- `w` is in the form-class `a` replaces. -/
+  Domain : α → Word → Prop
 
-/-- A pronoun's domain is the nominal tokens; it stands in for those it
-φ-agrees with. -/
-instance : Proform Pronoun where
-  StandsInFor p w := Binding.isNominalCat w.cat = true ∧ HasPhi.Agree p w
-  agree_of_standsInFor _ _ h := h.2
+/-- A pro-form stands in for the domain members it φ-agrees with. -/
+def Proform.StandsInFor {α : Type*} [Proform α] [HasPhi α] (a : α) (w : Word) : Prop :=
+  Proform.Domain a w ∧ HasPhi.Agree a w
 
-instance : Proform PersonalPronoun where
-  StandsInFor p w := Binding.isNominalCat w.cat = true ∧ HasPhi.Agree p w
-  agree_of_standsInFor _ _ h := h.2
+/-- Standing in requires φ-agreement. -/
+theorem Proform.agree_of_standsInFor {α : Type*} [Proform α] [HasPhi α] {a : α}
+    {w : Word} (h : StandsInFor a w) : HasPhi.Agree a w := h.2
 
-instance (p : Pronoun) (w : Word) : Decidable (Proform.StandsInFor p w) :=
-  inferInstanceAs (Decidable (Binding.isNominalCat w.cat = true ∧ HasPhi.Agree p w))
+/-- A pronoun's domain is the nominal tokens. -/
+instance : Proform Pronoun := ⟨fun _ w => Binding.isNominalCat w.cat = true⟩
 
-instance (p : PersonalPronoun) (w : Word) : Decidable (Proform.StandsInFor p w) :=
-  inferInstanceAs (Decidable (Binding.isNominalCat w.cat = true ∧ HasPhi.Agree p w))
+instance : Proform PersonalPronoun := ⟨fun _ w => Binding.isNominalCat w.cat = true⟩
+
+instance (p : Pronoun) (w : Word) : Decidable (Proform.Domain p w) :=
+  inferInstanceAs (Decidable (_ = true))
+
+instance (p : PersonalPronoun) (w : Word) : Decidable (Proform.Domain p w) :=
+  inferInstanceAs (Decidable (_ = true))
+
+instance {α : Type*} [Proform α] [HasPhi α] (a : α) (w : Word)
+    [Decidable (Proform.Domain a w)] : Decidable (Proform.StandsInFor a w) := by
+  unfold Proform.StandsInFor; infer_instance
 
 /-! ### The pronoun carriers' `Bound` instances, and the faithfulness certificate -/
 
