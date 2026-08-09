@@ -49,11 +49,10 @@ open Data.Examples (LinguisticExample)
 
 /-! ### Position → temporal perspective
 
-The anchoring event fixes the evaluation time: "the agent and temporal
-trace of the speech event" for speech-bound modals, "the subject and the
-time provided by Tense" for aspect-bound ones. The perspective map factors
-through the substrate's binding maps; its codomain has no future case, so
-no position yields a future perspective. -/
+The anchoring event fixes the evaluation time: speech-bound modals sit at
+the utterance time, aspect-bound ones at the time provided by tense. The
+map factors through the substrate's binding maps, and its codomain has no
+future case. -/
 
 /-- Perspective of the anchoring event in a past-tense clause: only the
 speech event sits at utterance time. -/
@@ -78,13 +77,10 @@ theorem withAttitude_shifts_perspective :
 
 /-! ### Condoravdi's ambiguity from position
 
-"They might (already/still) have won the game" ((176), reproducing
-[condoravdi-2002]'s epistemic/counterfactual ambiguity): the dissertation
-recasts the scopal account positionally — MODAL > PERF is the high
-position with present perspective, PERF > MODAL the low position with past
-perspective. Composing with [condoravdi-2002]'s settledness machinery
-(`Studies/Condoravdi2002.lean`) derives which modal bases survive at each
-position. -/
+"They might (already/still) have won the game" (176): the dissertation
+recasts [condoravdi-2002]'s scopal ambiguity positionally; composing with
+the settledness machinery in `Studies/Condoravdi2002.lean` derives which
+modal bases survive at each position. -/
 
 section CondoravdiBridge
 
@@ -120,8 +116,7 @@ end CondoravdiBridge
 
 /-! ### Worked example: "Jane a dû prendre le train" (201)
 
-`Examples.ex201` is ambiguous between an epistemic and a goal-oriented
-reading, which differ only in the event that anchors the modal:
+`Examples.ex201`'s two readings differ only in the anchoring event:
 
 | Reading | Event | holder(e) | τ(e) | Modal domain |
 |---------|-------|-----------|------|--------------|
@@ -186,16 +181,13 @@ theorem same_modal_different_domains :
   ⟨fun _ h => (List.not_mem_nil h).elim,
    fun h => nomatch h _ (List.Mem.head _)⟩
 
-/-! ### Aspect-bound epistemics: (246)–(248)
+/-! ### Aspect-bound epistemics (246)–(248)
 
-A low modal is normally barred from epistemic readings: the event provided
-by aspect lacks propositional content (246) — the substrate's
-`position_determines_epistemic`. But when the complement itself supplies a
-contentful attitude event, aspect can bind it: in `Examples.ex247b` "Jane
-a pu penser que Darcy aimait Lizzie", the LF where the modal is merged
-below tense relativizes it to Jane's thinking event, reporting an
-epistemic state of the *subject* at a past belief state — the salient
-speech-bound reading instead reports the speaker's evidence. -/
+Low modals lack epistemic readings because aspect's event has no content
+(the substrate's `position_determines_epistemic`) — unless the complement
+supplies a contentful attitude event: `Examples.ex247b`'s aspect-bound LF
+reports Jane's past belief state, its speech-bound LF the speaker's
+evidence. -/
 
 /-- Two worlds for the (247b) scenario. -/
 inductive DarcyWorld where | loves | lovesNot
@@ -237,14 +229,10 @@ theorem binding_determines_epistemic_domain :
 
 /-! ### Actuality entailments
 
-Root modals with perfective aspect entail their complement; with
-imperfective they do not ([bhatt-1999]; French and Italian extensions in
-[hacquard-2006]). The stimuli live in `Data/Examples/Hacquard2006.json`:
-the French pairs (1) and (22)/(23), the Italian pair (22b)/(23b), and
-Bhatt's English adverbial pair (2). Bhatt's primary Hindi and Greek data
-are not reproduced in the dissertation (its fn. 7), and its own Greek
-discussion (318) defers the language's complement-internal aspect, so no
-Hindi or Greek rows are included here. -/
+Root modals entail their complement under perfective aspect but not
+imperfective ([bhatt-1999]; French/Italian extensions in [hacquard-2006]).
+No Hindi or Greek rows: the dissertation reproduces neither (fn. 7) and
+defers Greek's complement-internal aspect (318). -/
 
 /-- Aspect and observed actuality entailment of an example row, read off
 its `paperFeatures`; `none` for rows without the aspect contrast. -/
