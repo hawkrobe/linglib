@@ -12,8 +12,8 @@ Standard RSA with a Boolean semantics predicts no preference for overmodified
 referring expressions — if "small" already identifies the target, adding "blue"
 is literally uninformative. Yet speakers routinely overmodify, more with color
 than with size. [degen-etal-2020] resolve this by relaxing the semantics to a
-**continuous** meaning `φ(u, o) ∈ [0,1]` (a Product-of-Experts over noisy feature
-channels): redundant modifiers then carry real information, and the color/size
+**continuous** meaning `φ(u, o) ∈ [0,1]` (per-word noise channels multiplied over
+the utterance): redundant modifiers then carry real information, and the color/size
 *asymmetry* follows from color channels being less noisy than size channels.
 
 The model is the mathlib-`PMF` RSA pipeline (`RSA.L0OfMeaning` / `RSA.S1Belief`,
@@ -80,8 +80,8 @@ private theorem sumW (f : World → ℝ≥0∞) :
   rw [tsum_fintype, show (Finset.univ : Finset World) = {.bigBlue, .bigRed, .smallBlue} from rfl,
     Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton, add_assoc]
 
-/-- Continuous meaning `φ(u, o) ∈ ℝ≥0∞` via a Product of Experts: a single
-    adjective is its noise channel, a pair the product of its two channels. -/
+/-- Continuous meaning `φ(u, o) ∈ ℝ≥0∞`: a single adjective is its noise
+    channel, a pair the product of its two channels. -/
 noncomputable def φ : Utterance → World → ℝ≥0∞
   | .big, .bigBlue => .ofReal sM | .big, .bigRed => .ofReal sM | .big, .smallBlue => .ofReal sm
   | .small, .bigBlue => .ofReal sm | .small, .bigRed => .ofReal sm | .small, .smallBlue => .ofReal sM
@@ -121,7 +121,7 @@ theorem L0_small_target : L0 .small target = ENNReal.ofReal (2/3) := by
       ← div_eq_mul_inv, ← ENNReal.ofReal_div_of_pos (by norm_num)]
   congr 1; norm_num
 
-/-- L0(target | "small blue") = 99/124 — the redundant colour sharpens via PoE. -/
+/-- L0(target | "small blue") = 99/124 — the redundant colour sharpens the channel product. -/
 theorem L0_smallBlue_target : L0 .smallBlue target = ENNReal.ofReal (99/124) := by
   rw [L0, L0OfMeaning_apply, sumW]
   simp only [φ, noiseR.1, noiseR.2.1, noiseR.2.2.1, noiseR.2.2.2]
