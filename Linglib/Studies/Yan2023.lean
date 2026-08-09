@@ -25,8 +25,8 @@ under `[·]⁺`.
 
 This file derives the chapter's account from the QBSML substrate
 (`Core/Logic/Modal/QBSML/FreeChoice.lean`): the □-FC fact it invokes
-(Fact 13) is `boxFC_Q`; the quantified variant needed for Asher and Heim is
-`boxExiFC_Q`; the semantic validity of the monotonic steps is
+(Fact 13) is `boxFC`; the quantified variant needed for Asher and Heim is
+`boxExiFC`; the semantic validity of the monotonic steps is
 `support_disj_inl` / `support_nec_mono`. The verbs *want* / *it is ok* are
 the Hintikka-style `□`/`◇` over a bouletic accessibility relation, exactly
 as in the paper (§4.4.1; the positive semantics of *want* itself is
@@ -335,11 +335,11 @@ theorem ross_monotone {s : Finset (Index Unit QVar Unit)}
 /-- **Pragmatic validity of the FC step** ([yan-2023] (26), instance of
     Fact 13): `[□(SEND a ∨ BURN a)]⁺ ⊨ ◇SEND a ∧ ◇BURN a` — from the
     enriched disjunctive want, both "it is ok to send" and the paradoxical
-    "it is ok to burn". Direct instance of `boxFC_Q`. -/
+    "it is ok to burn". Direct instance of `boxFC`. -/
 theorem ross_fc {s : Finset (Index Unit QVar Unit)}
     (h : support rossModel (QBSMLFormula.enrich (sendL.disj burnL).nec) s) :
     support rossModel (.poss sendL) s ∧ support rossModel (.poss burnL) s :=
-  boxFC_Q rossModel sendL burnL s sendL_isNEFree burnL_isNEFree h
+  boxFC rossModel sendL_isNEFree burnL_isNEFree h
 
 /-- The premise is assertable: John's desire state supports the enriched
     `[□SEND a]⁺`. -/
@@ -453,7 +453,7 @@ theorem asher_fc (M : QBSMLModel W Domain Unit AsherPred)
     support M (.poss (.exi QVar.x freeTrip)) s ∧
     support M (.poss (.exi QVar.x nonFreeTrip)) s := by
   rw [reinterpret_asherConcl] at h
-  exact boxExiFC_Q M freeTrip nonFreeTrip QVar.x s
+  exact boxExiFC M
     freeTrip_isNEFree nonFreeTrip_isNEFree h
 
 end AsherGeneric
@@ -622,7 +622,7 @@ theorem heim_fc {W Domain : Type*} [DecidableEq W] [DecidableEq Domain]
       (QBSMLFormula.enrich (reinterpret subTuesday .tuesday heimConcl)) s) :
     support M (.poss (.exi QVar.x tuesdayTeach)) s ∧
     support M (.poss (.exi QVar.x nonTuesdayTeach)) s :=
-  boxExiFC_Q M tuesdayTeach nonTuesdayTeach QVar.x s
+  boxExiFC M
     (.conj (.pred _ _) (.pred _ _))
     (.conj (.neg (.pred _ _)) (.pred _ _)) h
 

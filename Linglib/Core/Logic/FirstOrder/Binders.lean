@@ -52,7 +52,7 @@ private theorem realize_relabel_update (n : α) (φ : L.Formula α) (v : α → 
   rw [BoundedFormula.realize_relabel]
   refine iff_of_eq (congrArg₂ (BoundedFormula.Realize φ) ?_ ?_)
   · funext k
-    by_cases hk : k = n <;> simp [hk, toBound, Function.update_apply, Fin.snoc]
+    by_cases hk : k = n <;> simp [hk, toBound, Fin.snoc]
   · funext i
     exact i.elim0
 

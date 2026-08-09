@@ -128,58 +128,58 @@ theorem Qx_isNEFree {Const : Type*} : (Qx (Const := Const)).IsNEFree := .pred _ 
 
     Enriched negation `[¬(Px ∨ Qx)]⁺` entails the conjunction of negated
     disjuncts `¬Px ∧ ¬Qx`. One-line invocation of the substrate's
-    `negationStrip_Q` (`Core/Logic/Modal/QBSML/FreeChoice.lean`).
+    `negationStrip` (`Core/Logic/Modal/QBSML/FreeChoice.lean`).
     Mirrors `Aloni2022.aloni2022_fact11_dual_prohibition` style — substrate
     theorem, model + NE-free witnesses applied. -/
 theorem fact10_negation
     (s : Finset (Index PowerSet2World QVar FCAtom))
     (h : support avoModel negPxOrQx.enrich s) :
     support avoModel (.neg Px) s ∧ support avoModel (.neg Qx) s :=
-  negationStrip_Q avoModel Px Qx s Px_isNEFree Qx_isNEFree h
+  negationStrip avoModel Px_isNEFree Qx_isNEFree h
 
 /-! ### Facts 7 and 8 (free choice): `[□/◇(Pa ∨ Pb)]⁺ ⊨ ◇Pa ∧ ◇Pb` -/
 
 /-- **Fact 8 (Narrow-Scope free choice / ◇-FC)** at `avoModel`:
 
     Enriched possibility-disjunction `[◇(Px ∨ Qx)]⁺` entails `◇Px ∧ ◇Qx`.
-    One-line invocation of `narrowScopeFC_Q`. The first-order analogue of
+    One-line invocation of `narrowScopeFC`. The first-order analogue of
     `Aloni2022.aloni2022_fact4_NS_FC` — same template, lifted to QBSML's
     monadic predicate language. -/
 theorem fact8_narrowScopeFC
     (s : Finset (Index PowerSet2World QVar FCAtom))
     (h : support avoModel possPxOrQx.enrich s) :
     support avoModel (.poss Px) s ∧ support avoModel (.poss Qx) s :=
-  narrowScopeFC_Q avoModel Px Qx s Px_isNEFree Qx_isNEFree h
+  narrowScopeFC avoModel Px_isNEFree Qx_isNEFree h
 
 /-- **Fact 7 (□-free choice)** at `avoModel`: `[□(Px ∨ Qx)]⁺` entails
-    `◇Px ∧ ◇Qx`, with the derived `□`. One-line invocation of `boxFC_Q`. -/
+    `◇Px ∧ ◇Qx`, with the derived `□`. One-line invocation of `boxFC`. -/
 theorem fact7_boxFC
     (s : Finset (Index PowerSet2World QVar FCAtom))
     (h : support avoModel necPxOrQx.enrich s) :
     support avoModel (.poss Px) s ∧ support avoModel (.poss Qx) s :=
-  boxFC_Q avoModel Px Qx s Px_isNEFree Qx_isNEFree h
+  boxFC avoModel Px_isNEFree Qx_isNEFree h
 
 /-! ### Facts 9 and 5 (universal FC and distribution) -/
 
 /-- **Fact 9 (Universal free choice)** at `avoModel`:
 
     `[∀x◇(Px ∨ Qx)]⁺` entails `∀x◇Px ∧ ∀x◇Qx`. One-line invocation of
-    `universalFC_Q` — the [chemla-2009]-attested pattern. -/
+    `universalFC` — the [chemla-2009]-attested pattern. -/
 theorem fact9_universalFC
     (s : Finset (Index PowerSet2World QVar FCAtom))
     (h : support avoModel univPossPxOrQx.enrich s) :
     support avoModel (.univ .x (.poss Px)) s ∧
     support avoModel (.univ .x (.poss Qx)) s :=
-  universalFC_Q avoModel Px Qx .x s Px_isNEFree Qx_isNEFree h
+  universalFC avoModel Px_isNEFree Qx_isNEFree h
 
 /-- **Fact 5 (Distribution at maximal information)** at `avoModel`: on any
     singleton state, `[∀x(Px ∨ Qx)]⁺` entails `∃xPx ∧ ∃xQx`. One-line
-    invocation of `distribution_Q`. -/
+    invocation of `distribution`. -/
 theorem fact5_distribution
     (i : Index PowerSet2World QVar FCAtom)
     (h : support avoModel univPxOrQx.enrich {i}) :
     support avoModel (.exi .x Px) {i} ∧ support avoModel (.exi .x Qx) {i} :=
-  distribution_Q avoModel Px Qx .x i Px_isNEFree Qx_isNEFree h
+  distribution avoModel Px_isNEFree Qx_isNEFree h
 
 /-! ### Proposition 4.1 at the concrete model -/
 
@@ -268,7 +268,7 @@ theorem support_of_stUnivPxOrQx_sentence
     - State-based: every w ∈ s↓ sees exactly s↓ (R(w) = s↓).
 
     State-basedness is strictly stronger and is the precondition for the
-    epistemic facts: Fact 3 (`ignorance_Q`) and Fact 6 (`distributionEpi_Q`),
+    epistemic facts: Fact 3 (`ignorance`) and Fact 6 (`distributionEpi`),
     which therefore stay substrate-level (universal access is not
     state-based). Facts 7, 8 and 10 need no frame condition at all — they
     hold on every model. -/

@@ -1030,7 +1030,7 @@ def QBSMLFormula.toModal? :
   | .exi x φ => φ.toModal?.map (ModalFormula.ex x ·)
   | .univ x φ => φ.toModal?.map (ModalFormula.all x ·)
 
-omit [DecidableEq W] [Fintype Var] in
+omit [DecidableEq W] [DecidableEq Var] [Fintype Var] in
 /-- Modally translatable formulas are NE-free. -/
 theorem isNEFree_of_toModal? :
     ∀ {φ : QBSMLFormula Var Const Pred}
@@ -1078,7 +1078,7 @@ theorem isNEFree_of_toModal? :
     | some α => exact .univ x (ih hφ)
   | ne => intro τ hτ; simp [QBSMLFormula.toModal?] at hτ
 
-omit [DecidableEq W] [Fintype Var] in
+omit [DecidableEq W] [DecidableEq Var] [Fintype Var] in
 /-- The modal translation is total on the NE-free fragment: together with
     `isNEFree_of_toModal?`, the translatable and NE-free fragments
     coincide. -/
