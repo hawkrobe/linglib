@@ -10,54 +10,45 @@ import Linglib.Logic.Bilateral.Defs
 
 Core definitions for QBSML, the first-order extension of BSML ([aloni-2022],
 [anttila-2021]) presented in [aloni-vanormondt-2023]: indices pair a world
-with a partial assignment, states are finite sets of indices, and the formula
-language adds predicates and quantifiers, the latter evaluated via state
-extensions. Bilateral evaluation, split disjunction (via
-`Team.splitsAs`), and the `NE` atom carry over from BSML; frame
-conditions are inherited through the world projection `s↓`, so `support` fits
-the `Team.isFlat_iff` template at the point type
-`Index W Var Domain` exactly as BSML's does at `W` (see
-`Logic/Modal/QBSML/Properties.lean`).
+with a partial assignment, states are finite sets of indices, and the
+formula language adds predicates and quantifiers, evaluated via state
+extensions. Bilateral evaluation, split disjunction (`Team.splitsAs`), and
+the `NE` atom carry over from BSML; frame conditions are inherited through
+the world projection `s↓`, so `support` fits the `Team.isFlat_iff` template
+at the point type `Index W Var Domain` exactly as BSML's does at `W`
+(`Logic/Modal/QBSML/Properties.lean`).
 
 ## Main declarations
 
 * `Assignment`, `Index`: partial variable assignments and world–assignment
   pairs ([aloni-vanormondt-2023] Definition 4.2).
-* `State.extendIndividual`, `State.extendUniversal`, `State.extendFunctional`:
-  the state extensions `s[x/d]`, `s[x]`, `s[x/h]` interpreting quantifiers
-  ([aloni-vanormondt-2023] Definitions 4.5–4.7).
+* `State.extendIndividual`, `State.extendUniversal`,
+  `State.extendFunctional`: the state extensions `s[x/d]`, `s[x]`, `s[x/h]`
+  interpreting quantifiers ([aloni-vanormondt-2023] Definitions 4.5–4.7).
 * `State.modalLift`, `State.worldProj`: pairing accessible worlds with an
   assignment, and the world projection `s↓`.
-* `Formula`: the formula language ([aloni-vanormondt-2023]
-  Definition 4.1), with `□` derived as `Formula.nec`.
-* `Formula.IsNEFree`: the NE-free fragment.
-* `Language.monadicWithConstants` (in `Logic/Modal/FirstOrder/Monadic.lean`): the
-  monadic-with-constants signature on
-  `Const` and `Pred` and its structures, as a mathlib `FirstOrder.Language`.
-* `Model` (an abbreviation for `FirstOrder.Language.KripkeStructure`
-  over `Language.monadicWithConstants`), `eval`, `support`, `antiSupport`: bilateral evaluation
-  ([aloni-vanormondt-2023] Definition 4.9), with the interpretation carried
-  as a world-indexed family of mathlib structures.
-* `isBilateral`: `support`/`antiSupport` form a
-  `Bilateral.IsBilateral` under `Formula.neg`.
+* `Formula`: the formula language ([aloni-vanormondt-2023] Definition 4.1),
+  with `□` derived as `Formula.nec`; `Formula.IsNEFree` is the NE-free
+  fragment.
+* `Model`, `Model.ofMonadic`: QBSML models ([aloni-vanormondt-2023]
+  Definition 4.2), as `KripkeStructure`s over
+  `Language.monadicWithConstants`.
+* `eval`, `support`, `antiSupport`: bilateral evaluation
+  ([aloni-vanormondt-2023] Definition 4.9).
+* `isBilateral`: `support`/`antiSupport` form a `Bilateral.IsBilateral`
+  under `Formula.neg`.
 * `KripkeStructure.IsStateBased`, `KripkeStructure.IsIndisputable`: frame
-  conditions
-  via `s↓` ([aloni-vanormondt-2023] Definition 4.10).
+  conditions via `s↓` ([aloni-vanormondt-2023] Definition 4.10).
 
 ## Implementation notes
 
 * Predicates are monadic and the paper's terms `t := c | x` appear as the
-  two atom constructors `pred` (variable) and `predc` (constant), so there is
-  no separate term type: [aloni-vanormondt-2023] interprets `Pⁿ(t₁ … tₙ)` for
-  arbitrary arity; higher arities can be added without changing the substrate
-  abstraction.
+  two atom constructors `pred` and `predc`, so there is no separate term
+  type; higher arities can be added without changing the abstraction.
 * The paper's domain `D` (part of `M = ⟨W, D, R, I⟩`) is a `Domain : Type*`
-  parameter, with `[Fintype Domain]` where the universal extension must range
-  over all of it. The interpretation `I` is a world-indexed family of mathlib
-  first-order structures: `Model` is `FirstOrder.Language.KripkeStructure`
-  over the monadic signature, and `KripkeStructure.pInterp` /
-  `KripkeStructure.cInterp` read the world-dependent (non-rigid) predicate
-  and constant denotations off `Structure.RelMap` / `Structure.funMap`.
+  parameter, with `[Fintype Domain]` where the universal extension must
+  range over all of it; the interpretation `I` is the world-indexed family
+  of structures the `KripkeStructure` carries.
 * The paper requires all indices in a state to share an assignment domain
   (`dom gᵢ = dom gⱼ`); this is not enforced at the type level — the state
   operations preserve it.
