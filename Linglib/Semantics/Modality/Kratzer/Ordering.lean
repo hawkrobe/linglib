@@ -149,6 +149,11 @@ These are exactly the worlds in ⋂f(w) — worlds compatible with all facts in 
 def accessibleWorlds (f : ModalBase W) (w : W) : Set W :=
   propIntersection (f w)
 
+/-- Growing the modal base can only shrink the accessible worlds. -/
+theorem accessibleWorlds_anti {f f' : ModalBase W} {w : W} (h : f w ⊆ f' w) :
+    accessibleWorlds f' w ⊆ accessibleWorlds f w :=
+  Intensional.Premise.propIntersection_anti_of_subset h
+
 /-- The best accessible worlds: those no accessible world strictly
 betters. [kratzer-1981]'s official necessity is the limit-free
 `humanNecessity`; it quantifies over exactly this set under the Limit

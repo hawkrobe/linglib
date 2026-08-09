@@ -185,6 +185,17 @@ theorem necessity_empty_iff_simple (f : ModalBase W) (p : W → Prop) (w : W) :
   simp only [necessity_iff_all, simpleNecessity_iff_all]
   rw [empty_ordering_emptyBackground]
 
+/-! ### Monotonicity in the modal base -/
+
+/-- Premise growth preserves simple necessity: more evidence, fewer accessible
+    worlds, at least as many necessities. This is [kratzer-2012]'s point about
+    epistemic change over time (Ch. 4's approaching-man dialogue): one
+    conversational background can represent evidence that grows as time goes by,
+    and what *must* hold on the earlier evidence still must on the later. -/
+theorem simpleNecessity_mono {f f' : ModalBase W} {p : W → Prop} {w : W}
+    (h : f w ⊆ f' w) (hNec : simpleNecessity f p w) : simpleNecessity f' p w :=
+  fun w' hw' => hNec w' (accessibleWorlds_anti h hw')
+
 /-! ### Frame conditions on `kratzerR` -/
 
 /-- A realistic modal base gives reflexive accessibility. -/

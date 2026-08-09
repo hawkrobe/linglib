@@ -1,6 +1,5 @@
 import Linglib.Semantics.Modality.TemporalAxes
 import Linglib.Semantics.Modality.EventRelativity
-import Linglib.Semantics.Modality.Temporal
 import Mathlib.Data.List.Defs
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Modality.ActualityEntailments
@@ -8,8 +7,11 @@ import Linglib.Semantics.Modality.ActualityEntailments
 /-!
 # Event Projection → Temporal Orientation
 
-[hacquard-2006] [hacquard-2010] [condoravdi-2002] [kratzer-2012]Derives the temporal orientation of modals from event projection. High modals get the speech time (present
-perspective); low modals get the event time (past perspective).
+[hacquard-2006] [hacquard-2010] [condoravdi-2002] [kratzer-2012]
+
+Derives the temporal orientation of modals from event projection. High modals
+get the speech time (present perspective); low modals get the event time
+(past perspective).
 
 ## The Pattern
 
@@ -29,14 +31,13 @@ low modals bind to the VP event, their temporal parameters differ:
   - Root (low): τ(e₂) = then → "Given Jane's circumstances THEN,..."
 
 This connects `EventProjection` (EventRelativity §11) to the temporal
-modal evaluation framework in `Temporal.lean`.
+perspective/orientation axes of `Semantics/Modality/TemporalAxes.lean`.
 
 -/
 
 namespace Hacquard2006
 
 open Semantics.Modality.EventRelativity
-open Semantics.Modality.Temporal
 open Semantics.Modality (TemporalOrientation TemporalPerspective)
 
 
@@ -125,18 +126,16 @@ theorem position_determines_orientation :
 
 
 -- ════════════════════════════════════════════════════
--- § 4. Bridge to Temporal.lean
+-- § 4. Event projection fixes the temporal perspective
 -- ════════════════════════════════════════════════════
 
-/-- The temporal orientation derived from event projection connects to
-`Temporal.lean`'s time-indexed conversational backgrounds.
-
-When the modal binds to event e with τ(e) = t, the conversational
-background is evaluated at time t: `f(w,t)`. The time IS the event's
-temporal trace. Event projection subsumes time-indexing: rather than
-stipulating which time to evaluate at, the time is projected from
-whichever event binds the modal. -/
-theorem event_projection_subsumes_temporal :
+/-- When the modal binds to event e with τ(e) = t, the conversational
+background is evaluated at time t — [condoravdi-2002]'s `f(w,t)`, with the
+time projected from whichever event binds the modal rather than stipulated
+as a separate index. [kratzer-2012] endorses exactly this event anchoring
+(introduction to her Ch. 2): modal bases "are projected from event
+arguments following very general recipes". -/
+theorem event_projection_fixes_perspective :
     -- Speech event → t = now
     orientationProjection.time .speech = .now ∧
     -- VP event → t = then
