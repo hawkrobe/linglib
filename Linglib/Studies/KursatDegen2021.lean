@@ -1,12 +1,8 @@
-import Linglib.Features.PropertyDomain
-import Linglib.Pragmatics.RSA.Channel
-import Linglib.Studies.DegenEtAl2020
 import Linglib.Studies.WaldonDegen2021
-import Linglib.Studies.EngelhardtEtAl2006
 
 /-!
 # [kursat-degen-2021]
-[degen-etal-2020] [waldon-degen-2021] [engelhardt-etal-2006]
+[degen-etal-2020] [waldon-degen-2021]
 
 Perceptual difficulty differences predict asymmetry in redundant
 modification with color and material adjectives. *Proceedings of the
@@ -39,46 +35,19 @@ difficulty of property verification.
 All regression coefficients verified against paper text (§2.3, §3.3,
 §4.3).
 
-## Derivational Chain
+## Noise-Model Connection
 
-The cs-RSA model ([degen-etal-2020]) explains redundant modification
-via noisy perception. The derivation proceeds in four steps:
-
-1. **Model structure**: The cs-RSA meaning function φ decomposes into
-   independent per-feature noise channels (the Product-of-Experts
-   construction of `DegenEtAl2020.φ`).
-
-2. **Parameterization**: Each noise channel has match/mismatch parameters
-   that determine its discrimination (noise gap). The cs-RSA model's
-   default color params (0.99/0.01) match the `RSA.Noise` module's
-   (proven below: `csrsa_params_match_noise`).
-
-3. **Ordering prediction**: The noise gap determines how much signal a
-   modifier provides. Color's gap (0.98) exceeds material's gap (0.40),
-   so color modifiers provide more discriminative signal to the L0
-   listener (proven: `color_gap_exceeds_material`).
-
-4. **Empirical confirmation**: The predicted ordering (color more
-   redundant than material) matches Exp 2 (β = 2.32, p < .0001), and
-   the perceptual difficulty ordering that grounds the noise parameters
-   is confirmed by Exps 1 and 3.
-
-Note: the material noise parameters in `RSA.Noise` (0.70/0.30) are
-hypothetical, not derived from this paper. This paper establishes the
-*ordering* (color easier than material), not the specific channel
-parameters. The full S1 redundancy prediction requires the incremental
-model of [waldon-degen-2021].
+The cs-RSA model ([degen-etal-2020]) explains redundant modification via
+noisy perception: features with higher perceptual discrimination contribute
+more signal to the literal listener. This paper grounds the asymmetry
+perceptually — material is harder to verify than color (Exps 1, 3), and
+color is used redundantly more (Exp 2) — establishing the *ordering*
+(color easier than material), not specific channel parameters. The full S1
+redundancy prediction requires the incremental model of
+[waldon-degen-2021] (re-exported below).
 -/
 
 namespace KursatDegen2021
-
--- ============================================================================
--- § Property Types
--- ============================================================================
-
-/-- Property types tested across experiments — re-exported from
-    `Features.PropertyDomain` for local use. -/
-abbrev PropertyType := Features.PropertyDomain
 
 -- ============================================================================
 -- § Regression Results
@@ -90,11 +59,11 @@ abbrev PropertyType := Features.PropertyDomain
     (more redundant). See individual def docstrings for interpretation. -/
 structure RegressionResult where
   /-- Fixed-effect coefficient -/
-  beta : Float
+  beta : ℚ
   /-- Standard error -/
-  se : Float
+  se : ℚ
   /-- t-statistic (when reported) -/
-  tStat : Option Float := none
+  tStat : Option ℚ := none
   /-- All reported effects are p < .0001 -/
   significant : Bool
   deriving Repr
@@ -159,7 +128,7 @@ theorem material_harder :
 theorem difficulty_direction :
     exp1_error.beta > 0 ∧ exp1_rt.beta > 0 ∧
     exp3_error.beta > 0 ∧ exp3_rt.beta > 0 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> norm_num [exp1_error, exp1_rt, exp3_error, exp3_rt]
 
 -- ============================================================================
 -- § Bridge: Redundancy Ordering
@@ -168,7 +137,7 @@ theorem difficulty_direction :
 /-- Color is used redundantly more than material: positive β in Exp 2. -/
 theorem color_more_redundant :
     exp2_redundancy.significant ∧ exp2_redundancy.beta > 0 := by
-  exact ⟨rfl, by native_decide⟩
+  exact ⟨rfl, by norm_num [exp2_redundancy]⟩
 
 -- ============================================================================
 -- § Bridge: Difficulty Predicts Redundancy
@@ -184,89 +153,7 @@ theorem difficulty_predicts_redundancy :
     exp3_error.significant ∧ exp3_error.beta > 0 ∧
     -- Color is more redundantly used (positive β = color > material)
     exp2_redundancy.significant ∧ exp2_redundancy.beta > 0 := by
-  refine ⟨rfl, ?_, rfl, ?_, rfl, ?_⟩ <;> native_decide
-
--- ============================================================================
--- § Step 1: cs-RSA φ decomposes into noise channels
--- ============================================================================
-
-/-! The cs-RSA model's meaning function φ ([degen-etal-2020]) is a
-product of independent per-feature noise channels (the Product-of-Experts
-construction of `DegenEtAl2020.φ`). The φ function uses the `ℝ≥0∞` `RSA.Noise`
-parameters by construction — this is structural, not coincidental
-(proven in `DegenEtAl2020.φ_grounded_in_noise`). -/
-
-/-- The cs-RSA φ function uses `RSA.Noise` parameters by construction (the
-    `ℝ≥0∞` channel siblings, since `DegenEtAl2020.φ` is `PMF`-valued).
-    Re-exported from the study file for local use. -/
-theorem csrsa_params_match_noise :
-    DegenEtAl2020.φ .blue .smallBlue = RSA.Noise.colorMatch_e ∧
-    DegenEtAl2020.φ .blue .bigRed = RSA.Noise.colorMismatch_e ∧
-    DegenEtAl2020.φ .small .smallBlue = RSA.Noise.sizeMatch_e ∧
-    DegenEtAl2020.φ .small .bigBlue = RSA.Noise.sizeMismatch_e :=
-  DegenEtAl2020.φ_grounded_in_noise
-
--- ============================================================================
--- § Step 2: Noise gap determines feature discrimination
--- ============================================================================
-
-/-- Map property types to RSA Noise discrimination values (noise gap =
-    onMatch − onMismatch). Larger gap → the feature provides a cleaner
-    signal to the L0 listener via the cs-RSA φ function.
-    Delegates to `PropertyDomain.noiseDiscrimination` for the three
-    parameterized domains. -/
-def propertyToDiscrimination : PropertyType → ℚ
-  | .color => RSA.Noise.colorDiscrimination
-  | .size => RSA.Noise.sizeDiscrimination
-  | .material => RSA.Noise.materialDiscrimination
-  | _ => 0  -- domains without established noise params
-
-/-- The local `propertyToDiscrimination` agrees with the canonical
-    `PropertyDomain.noiseDiscrimination` for all parameterized domains. -/
-theorem propertyToDiscrimination_canonical :
-    Features.PropertyDomain.noiseDiscrimination .color = some (propertyToDiscrimination .color) ∧
-    Features.PropertyDomain.noiseDiscrimination .size = some (propertyToDiscrimination .size) ∧
-    Features.PropertyDomain.noiseDiscrimination .material = some (propertyToDiscrimination .material) :=
-  ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- § Step 3: Ordering prediction — color gap > material gap
--- ============================================================================
-
-/-- Color's noise gap (0.98) exceeds material's (0.40). In the cs-RSA
-    product-of-experts model, this means a color modifier contributes a
-    stronger discriminative signal to φ than a material modifier:
-    φ_match/φ_mismatch = onMatch/onMismatch, which increases with gap. -/
-theorem color_gap_exceeds_material :
-    RSA.Noise.noiseGap RSA.Noise.colorMatch RSA.Noise.colorMismatch >
-    RSA.Noise.noiseGap RSA.Noise.materialMatch RSA.Noise.materialMismatch := by
-  native_decide
-
-/-- Full discrimination ordering: color > size > material. Each step in
-    this chain means the modifier provides less signal to the L0 listener,
-    so the S1 speaker has less reason to include it redundantly. -/
-theorem discrimination_ordering :
-    propertyToDiscrimination .color > propertyToDiscrimination .size ∧
-    propertyToDiscrimination .size > propertyToDiscrimination .material :=
-  RSA.Noise.discrimination_ordering
-
--- ============================================================================
--- § Step 4: Empirical confirmation
--- ============================================================================
-
-/-- The predicted ordering (color more redundant than material) matches
-    the observed data: Exp 2 β = 2.32 > 0 (color used redundantly more),
-    and the noise gap ordering (color > material) is grounded by the
-    perceptual difficulty data (Exps 1 and 3). -/
-theorem noise_predicts_redundancy :
-    -- Theory: color gap > material gap
-    propertyToDiscrimination .color > propertyToDiscrimination .material ∧
-    -- Data: color used redundantly more (Exp 2)
-    exp2_redundancy.significant ∧ exp2_redundancy.beta > 0 ∧
-    -- Grounding: material harder to perceive (Exps 1, 3)
-    exp1_error.significant ∧ exp1_error.beta > 0 ∧
-    exp3_error.significant ∧ exp3_error.beta > 0 := by
-  refine ⟨by native_decide, rfl, ?_, rfl, ?_, rfl, ?_⟩ <;> native_decide
+  refine ⟨rfl, ?_, rfl, ?_, rfl, ?_⟩ <;> norm_num [exp1_error, exp3_error, exp2_redundancy]
 
 -- ============================================================================
 -- § Incremental Model Connection
@@ -302,48 +189,5 @@ theorem incremental_model_predicts_color_asymmetry :
       WaldonDegen2021.s1PMF WaldonDegen2021.allUttsEng WaldonDegen2021.ssScene
         .smallBlue [.small, .blue, .pin] .stop :=
   WaldonDegen2021.prediction1_english_asymmetry
-
--- ============================================================================
--- § Connection to [engelhardt-etal-2006]
--- ============================================================================
-
-/-- Both this study and [engelhardt-etal-2006] show that speakers
-    produce unnecessary modifiers. [engelhardt-etal-2006] Exp 1
-    finds a 31% overall over-description rate; this study's Exp 2
-    further shows the rate varies by property type (β = 2.32: color >
-    material). The noise model explains this variation: high-discrimination
-    properties (color) provide more signal, so the S1 speaker has more
-    reason to include them even when not strictly necessary. -/
-theorem converging_production_with_engelhardt :
-    -- Engelhardt: speakers over-describe 31% of the time
-    EngelhardtEtAl2006.exp1_target_1ref.modified > 0 ∧
-    -- This study: color used redundantly more than material (significant)
-    exp2_redundancy.significant ∧ exp2_redundancy.beta > 0 ∧
-    -- Theory: color discrimination > material discrimination
-    propertyToDiscrimination .color > propertyToDiscrimination .material := by
-  refine ⟨?_, rfl, ?_, ?_⟩ <;> native_decide
-
--- ============================================================================
--- § Connection to [dale-reiter-1995]
--- ============================================================================
-
-/-- [dale-reiter-1995]'s Incremental Algorithm uses a fixed
-    `PreferredAttributes` list. This study's Exp 2 data — colour used
-    redundantly more than material (β = 2.32) — suggests the preference
-    ordering should track discrimination: higher-discrimination
-    properties (colour) are preferred over lower ones (material).
-
-    The noise discrimination ordering (colour > size > material) from
-    `RSA.Noise` provides exactly this ranking, connecting D&R's
-    preference-based REG to RSA's noise-based semantics. -/
-theorem discrimination_predicts_preference :
-    -- Noise ordering: colour > size > material
-    propertyToDiscrimination .color > propertyToDiscrimination .size ∧
-    propertyToDiscrimination .size > propertyToDiscrimination .material ∧
-    -- Empirical: colour used redundantly more than material
-    exp2_redundancy.significant ∧ exp2_redundancy.beta > 0 ∧
-    -- D&R's No-Brevity is the weakest Q2 interpretation
-    DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 := by
-  refine ⟨by native_decide, by native_decide, rfl, ?_, rfl⟩; native_decide
 
 end KursatDegen2021

@@ -1,5 +1,4 @@
 import Linglib.Semantics.Quantification.Syllogistic.Forms
-import Linglib.Pragmatics.RSA.Channel
 import Linglib.Core.Logic.Aristotelian.Probabilistic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
@@ -46,7 +45,7 @@ in this paper, so the asymmetric stance is encoded honestly.
 
 ## RSA pipeline
 
-- Noisy semantics via `RSA.Noise.noiseChannel`
+- Noisy semantics: truth misjudged with probability φ (`noisyConcMeaning`)
 - Belief Alignment utility via the inline discrete sum `∑ p · log(p/q)`
   (the canonical PMF form is `(P.klDiv Q).toReal`, bridged by
   `PMF.toReal_klDiv_eq_sum_log_div`; the (VennState → ℝ) form is natural here)
@@ -126,26 +125,25 @@ def concMeaning : Conclusion → VennState → Bool
     concMeaning .nvc s = true := rfl
 
 -- ============================================================================
--- §2. Noisy Semantics via RSA.Noise.noiseChannel
+-- §2. Noisy Semantics
 -- ============================================================================
 
-/-- Noisy semantics ℒ(u, s): a small probability φ of misjudging truth value.
-    Directly instantiates `RSA.Noise.noiseChannel(1−φ, φ, ⟦u⟧)`. -/
+/-- Noisy semantics ℒ(u, s): a small probability φ of misjudging truth value —
+    `1 − φ` where the conclusion is literally true, `φ` where it is false. -/
 def noisyConcMeaning (φ : ℚ) (c : Conclusion) (s : VennState) : ℚ :=
-  RSA.Noise.noiseChannel (1 - φ) φ (if concMeaning c s then 1 else 0)
+  if concMeaning c s then 1 - φ else φ
 
 /-- Noise zero ⇒ noisy meaning is literal meaning. -/
 theorem noisyConcMeaning_zero (c : Conclusion) (s : VennState) :
     noisyConcMeaning 0 c s = if concMeaning c s then 1 else 0 := by
-  simp only [noisyConcMeaning, RSA.Noise.noiseChannel]
+  simp only [noisyConcMeaning]
   split <;> ring
 
 /-- NVC's noisy meaning is `1 − φ` everywhere — hearing "nothing follows"
     does not update the listener's beliefs. -/
 theorem noisyConcMeaning_nvc (φ : ℚ) (s : VennState) :
     noisyConcMeaning φ .nvc s = 1 - φ := by
-  simp only [noisyConcMeaning, concMeaning, RSA.Noise.noiseChannel, ↓reduceIte]
-  ring
+  simp only [noisyConcMeaning, concMeaning, ↓reduceIte]
 
 -- ============================================================================
 -- §3. L₀ Premise Interpretation
@@ -155,8 +153,7 @@ theorem noisyConcMeaning_nvc (φ : ℚ) (s : VennState) :
     The uniform prior θ = 0.5 cancels in normalization (eq. 2). -/
 def l0PremiseLikelihood (φ : ℚ) (p1 p2 : VennState → Bool)
     (s : VennState) : ℚ :=
-  RSA.Noise.noiseChannel (1 - φ) φ (if p1 s then 1 else 0) *
-  RSA.Noise.noiseChannel (1 - φ) φ (if p2 s then 1 else 0)
+  (if p1 s then 1 - φ else φ) * (if p2 s then 1 - φ else φ)
 
 -- ============================================================================
 -- §4. Speaker Models (eqs. 3, 4, 6)

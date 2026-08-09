@@ -4,7 +4,6 @@ import Mathlib.Tactic.DeriveFintype
 import Linglib.Features.PropertyDomain
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Processing.VisualWorld
-import Linglib.Pragmatics.RSA.Channel
 import Linglib.Studies.SedivyEtAl1999
 
 /-!
@@ -128,8 +127,8 @@ Two prior accounts of the contrastive inference effect:
 2. **Perceptual discrimination** ([kursat-degen-2021],
    [giles-etal-2026]): high perceptual discriminability makes a
    contrastive description informative. Predicts an effect tracking
-   the noise-discrimination ordering color > size > material from
-   `RSA.Noise`.
+   the perceptual-difficulty ordering color > size > material
+   established by [kursat-degen-2021].
 
 Pattern (1) above is the joint envelope: scalar effect (lexical route),
 color effect (perceptual route), no material effect (fails both
@@ -140,17 +139,14 @@ is observable independent of any contrast manipulation.
 ## Open architectural threads
 
 - **No theoretical witness for `SatisfiesRonderosPattern`**: only the
-  trivial witness `trivialLooks` is provided. A natural deepening is
-  to instantiate `Pragmatics/RSA/Incremental.lean` with a
-  noise-perturbed `wordApplies` (using `RSA.Noise.noiseChannel` and
-  the per-domain match/mismatch parameters) and prove the resulting
-  `LookProportion` satisfies the pattern — this would derive the
-  Ronderos effects from the noise-discrimination ordering rather than
-  observing structural alignment between two independently stipulated
-  orderings. The CommonGround-style vanilla `IncrementalSemantics` (no noise
-  channel) cannot satisfy `SatisfiesRonderosPattern` because it would
-  predict equal contrast effects for all adjective types — a useful
-  negative result that could itself be a theorem.
+  trivial witness `trivialLooks` is provided. A natural deepening is an
+  incremental semantics with noise-perturbed `wordApplies` (per-domain
+  reliability parameters) whose `LookProportion` provably satisfies the
+  pattern — deriving the Ronderos effects from a perceptual-noise
+  asymmetry rather than stipulating the ordering. A vanilla Boolean
+  incremental semantics cannot satisfy `SatisfiesRonderosPattern`
+  because it would predict equal contrast effects for all adjective
+  types — a useful negative result that could itself be a theorem.
 - **Connection to `Semantics/Degree/`**: Ronderos's semantic factor
   (scalar = gradable + comparison-class-dependent; color/material =
   non-gradable) is derived through `AdjType.toClass`, which maps each
@@ -188,8 +184,7 @@ inductive AdjType where
     are spatial dimensions (`size`); color and material map to their
     eponymous domains. This is the bridge that lets cross-study
     theorems connect Ronderos's adjective-type stratification to
-    Sedivy's domain-level reasoning and to `RSA.Noise`'s
-    discrimination ordering. -/
+    Sedivy's domain-level reasoning. -/
 def AdjType.toDomain : AdjType → Features.PropertyDomain
   | .color    => .color
   | .scalar   => .size
@@ -432,8 +427,8 @@ theorem trivial_satisfies_pattern :
 
 /-! These theorems articulate the theoretical positions Ronderos's data
 take on. They are *type-level* connections to the relevant
-infrastructure (`Features.PropertyDomain`, `RSA.Noise`,
-`SedivyEtAl1999`), not restated empirical claims. -/
+infrastructure (`Features.PropertyDomain`, `SedivyEtAl1999`),
+not restated empirical claims. -/
 
 /-- **Agreement with [sedivy-etal-1999] on scalar adjectives.**
     Both studies place the scalar contrast effect on the size domain,
@@ -460,62 +455,27 @@ theorem color_does_not_require_comparison_class :
 theorem material_does_not_require_comparison_class :
     ¬ (AdjType.toClass .material).IsRelative := by decide
 
-/-- **Effect ordering aligns with noise discrimination.** The
-    perceptual-discrimination route predicts the cross-category
-    competitor reduction to track `RSA.Noise`'s discrimination
-    ordering. Ronderos's qualitative effect ordering — present for
-    color and scalar, absent for material — is consistent with
-    `RSA.Noise`'s ordering color (≈0.98) > size (≈0.60) > material
-    (≈0.40). [kursat-degen-2021] found the same direction on
-    the production side; [ronderos-etal-2024] extends it to
-    comprehension. -/
-theorem effect_ordering_aligns_with_noise_discrimination :
-    RSA.Noise.colorDiscrimination > RSA.Noise.sizeDiscrimination ∧
-    RSA.Noise.sizeDiscrimination > RSA.Noise.materialDiscrimination :=
-  ⟨RSA.Noise.color_gt_size, RSA.Noise.size_gt_material⟩
-
-/-- **PropertyDomain ↔ noise discrimination wiring.** Each adjective
-    type maps through `AdjType.toDomain` to a `PropertyDomain` that
-    `Features.PropertyDomain.noiseDiscrimination` resolves to the
-    corresponding `RSA.Noise` constant. Recorded here so the bridge
-    to discrimination ordering is auditable. -/
-theorem adjType_to_noise_discrimination :
-    Features.PropertyDomain.noiseDiscrimination (AdjType.toDomain .color)
-      = some RSA.Noise.colorDiscrimination ∧
-    Features.PropertyDomain.noiseDiscrimination (AdjType.toDomain .scalar)
-      = some RSA.Noise.sizeDiscrimination ∧
-    Features.PropertyDomain.noiseDiscrimination (AdjType.toDomain .material)
-      = some RSA.Noise.materialDiscrimination :=
-  ⟨rfl, rfl, rfl⟩
-
 /-- **The two empirical families project onto different mechanisms.**
-    The contrast-effect family is keyed off
-    `Features.PropertyDomain.noiseDiscrimination` (perceptual route): all
-    three adjective types have *some* discrimination value, but only
-    those above the material level produce a contrast effect. The
+    The contrast-effect family is keyed off perceptual discriminability
+    (perceptual route): only adjective types above the material level
+    produce a contrast effect. The
     baseline-restrictiveness family is keyed off `AdjType.toClass` /
     `AdjectiveClass.IsRelative` (semantic route): only the scalar type is
     a relative gradable adjective — requiring a comparison class — predicting
     the no-contrast baseline disadvantage to be uniquely scalar.
 
-    This theorem records the two-mechanism factorisation as a typed
-    statement: the scalar adjective type is the *unique* one whose
-    class is relative gradable; color and material are the
-    *two* whose domains have noise discrimination strictly above the
-    material baseline (where "above the material baseline" means
-    "strictly larger" — material is at the floor). The two
-    mechanisms therefore make orthogonal predictions, and Ronderos's
-    pattern is the joint envelope. -/
+    This theorem records the semantic route as a typed statement: the
+    scalar adjective type is the *unique* one whose class is relative
+    gradable. The perceptual route — color and scalar discriminable,
+    material at the floor — is the difficulty ordering established
+    experimentally by [kursat-degen-2021]; the two mechanisms make
+    orthogonal predictions, and Ronderos's pattern is the joint
+    envelope. -/
 theorem two_mechanisms_factorise :
     -- Semantic route: scalar uniquely is relative gradable (needs a CC)
     (AdjType.toClass .scalar).IsRelative ∧
     ¬ (AdjType.toClass .color).IsRelative ∧
-    ¬ (AdjType.toClass .material).IsRelative ∧
-    -- Perceptual route: color and scalar strictly above material
-    RSA.Noise.colorDiscrimination > RSA.Noise.materialDiscrimination ∧
-    RSA.Noise.sizeDiscrimination > RSA.Noise.materialDiscrimination :=
-  ⟨rfl, by decide, by decide,
-   lt_trans RSA.Noise.size_gt_material RSA.Noise.color_gt_size,
-   RSA.Noise.size_gt_material⟩
+    ¬ (AdjType.toClass .material).IsRelative :=
+  ⟨rfl, by decide, by decide⟩
 
 end RonderosEtAl2024

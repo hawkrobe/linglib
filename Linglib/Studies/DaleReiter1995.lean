@@ -1,5 +1,5 @@
 import Linglib.Pragmatics.GriceanMaxims
-import Linglib.Pragmatics.RSA.Channel
+import Linglib.Features.PropertyDomain
 
 /-!
 # [dale-reiter-1995]
@@ -61,9 +61,7 @@ The Brevity interpretations correspond to regimes in RSA's
 - No Brevity ≈ cost ≈ 0 (informativity only, no brevity pressure)
 
 The IA's `PreferredAttributes` list orders attributes by cognitive
-accessibility. The noise discrimination ordering in `RSA.Noise`
-(color > size > material) provides a related but distinct ordering
-based on perceptual reliability.
+accessibility.
 -/
 
 namespace DaleReiter1995
@@ -326,44 +324,6 @@ theorem brevity_hierarchy :
     out at least one distractor. -/
 theorem noBrevity_weakens_q2 :
     QuantityViolation.overInformative.submaxim = .Q2 := rfl
-
--- ============================================================================
--- § Bridge: Preference Order and Noise Discrimination
--- ============================================================================
-
-/-- The paper's preference order places colour before size among modifier
-    attributes. This aligns with the RSA noise discrimination ordering:
-    colour (0.98) has higher discrimination than size (0.60), so colour
-    modifiers provide more signal to the L0 listener. Higher-signal
-    attributes are both more preferred (D&R) and more discriminating
-    (RSA Noise). -/
-theorem preference_aligns_with_discrimination :
-    RSA.Noise.colorDiscrimination > RSA.Noise.sizeDiscrimination :=
-  RSA.Noise.color_gt_size
-
-/-- The full discrimination ordering: colour > size > material.
-    This predicts that speakers should prefer to include colour
-    modifiers (high signal) over material modifiers (low signal),
-    aligning with the empirical finding that colour is used
-    redundantly more than material. -/
-theorem full_discrimination_ordering :
-    RSA.Noise.colorDiscrimination > RSA.Noise.sizeDiscrimination ∧
-    RSA.Noise.sizeDiscrimination > RSA.Noise.materialDiscrimination :=
-  RSA.Noise.discrimination_ordering
-
--- ============================================================================
--- § Bridge: PropertyDomain Connection
--- ============================================================================
-
-/-- The IA's modifier attributes map to `PropertyDomain`, connecting
-    the classical REG representation to linglib's type infrastructure.
-    This means noise parameters, comparison-class properties, and
-    cross-study data are all accessible for IA modifier attributes. -/
-theorem modifier_domains_have_discrimination :
-    Features.PropertyDomain.noiseDiscrimination .color = some RSA.Noise.colorDiscrimination ∧
-    Features.PropertyDomain.noiseDiscrimination .size = some RSA.Noise.sizeDiscrimination ∧
-    Features.PropertyDomain.noiseDiscrimination .material = some RSA.Noise.materialDiscrimination :=
-  ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § Bridge: RSA Connection

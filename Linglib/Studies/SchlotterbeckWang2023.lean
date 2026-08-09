@@ -1,5 +1,4 @@
 import Linglib.Core.Probability.Scores
-import Linglib.Pragmatics.RSA.Channel
 import Linglib.Semantics.Probabilistic.Composition
 
 /-!
@@ -201,17 +200,5 @@ theorem both_orderings_identify_target_B (r : Referent)
   cases r
   · exact absurd rfl hne
   all_goals first | exact absurd hr (by decide) | decide +kernel
-
-/-- `lex` is the unified noise channel of `RSA.Noise` at
-onMatch = reliability, onMismatch = its complement — the
-[degen-etal-2020] parameterization. -/
-theorem lex_as_noiseChannel {sRel cRel : ℚ≥0} (hs : sRel ≤ 1) (hc : cRel ≤ 1)
-    (w : Word) (r : Referent) :
-    (lex sRel cRel w r : ℚ) =
-      RSA.Noise.noiseChannel (rel sRel cRel w) (1 - rel sRel cRel w)
-        (if wordApplies w r then 1 else 0) := by
-  have h1 : rel sRel cRel w ≤ 1 := by cases w <;> simp [rel] <;> assumption
-  simp only [lex, RSA.Noise.noiseChannel]
-  split <;> push_cast [NNRat.coe_sub h1] <;> ring
 
 end SchlotterbeckWang2023

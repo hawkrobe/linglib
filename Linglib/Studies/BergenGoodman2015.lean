@@ -2,7 +2,6 @@ import Linglib.Core.Probability.Scores
 import Linglib.Pragmatics.RSA.Atoms
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
-import Linglib.Pragmatics.RSA.Channel
 import Linglib.Data.Examples.BergenGoodman2015
 
 /-!
