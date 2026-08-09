@@ -53,7 +53,7 @@ Formalised here:
 
 ## Connection to existing linglib infrastructure
 
-* `Assignment.PartialAssign D := Nat → Option D` — used here, matching
+* `Assignment.PartialAssign ℕ D := Nat → Option D` — used here, matching
   [spector-2025] which formalises a *different* (trivalent-Transparency)
   competitor to Mandelkern's bounded theory. Both files share the
   partial-assignment substrate but diverge in their treatment of bounds vs.
@@ -76,7 +76,7 @@ universe u v
 
 /-- A bounded-theory **index**: a partial assignment + a world. Paper's
 `⟨g, w⟩`. -/
-abbrev Index (W E : Type*) := PartialAssign E × W
+abbrev Index (W E : Type*) := PartialAssign ℕ E × W
 
 /-- A **context** is a set of indices. Paper's `c`. Updates eliminate indices
 (Stalnakerian, paper §5.4) rather than extending assignments (Heimian). -/
@@ -95,7 +95,7 @@ Direct match-based definition (rather than `List.mapM`) so that it reduces
 via Lean's `match` reduction. The `List.mapM` form goes through
 `List.mapM.loop` internally, which is opaque to `simp`/`rfl` and prevents
 clean reasoning about the singleton case `resolveVars g [x]`. -/
-def resolveVars {E : Type v} (g : PartialAssign E) : List Nat → Option (List E)
+def resolveVars {E : Type v} (g : PartialAssign ℕ E) : List Nat → Option (List E)
   | [] => some []
   | x :: xs =>
     match g x with
@@ -105,7 +105,7 @@ def resolveVars {E : Type v} (g : PartialAssign E) : List Nat → Option (List E
       | none => none
       | some bs => some (a :: bs)
 
-@[simp] theorem resolveVars_nil {E : Type v} (g : PartialAssign E) :
+@[simp] theorem resolveVars_nil {E : Type v} (g : PartialAssign ℕ E) :
     resolveVars g [] = some [] := rfl
 
 -- ════════════════════════════════════════════════════════════════
@@ -145,7 +145,7 @@ classical: connectives are Boolean, indefinites are existential
 quantifiers, definites have the truth-conditions of their conjunction. The
 bounds dimension is `satt` below; truth is bound-insensitive. -/
 def truth {Atom : Type u} {W E : Type v} (av : AtomEval Atom W E) :
-    BoundedForm Atom → PartialAssign E → W → Prop
+    BoundedForm Atom → PartialAssign ℕ E → W → Prop
   | .atom A xs, g, w =>
       ∃ es, resolveVars g xs = some es ∧ av A es w = true
   | .top xs, g, _ =>
@@ -175,7 +175,7 @@ The key clauses:
 * **`.def_ x p q`**: familiarity bound + scope projection through `c^p`
   (paper §5.3 + p. 1107). -/
 def satt {Atom : Type u} {W E : Type v} (av : AtomEval Atom W E) :
-    BoundedForm Atom → Context W E → PartialAssign E → W → Prop
+    BoundedForm Atom → Context W E → PartialAssign ℕ E → W → Prop
   | .atom _ xs, _, g, _ => ∃ es, resolveVars g xs = some es
   | .top xs, _, g, _ => ∃ es, resolveVars g xs = some es
   | .conj p q, c, g, w =>
@@ -194,7 +194,7 @@ def satt {Atom : Type u} {W E : Type v} (av : AtomEval Atom W E) :
   | .indef x p q, c, g, w =>
       -- Existential satt requirement (projection, paper p. 1106): some
       -- assignment g' makes the conjunction p&q satt at ⟨c, g', w⟩.
-      (∃ g' : PartialAssign E,
+      (∃ g' : PartialAssign ℕ E,
           satt av p c g' w ∧
           satt av q
             {idx | idx ∈ c ∧ truth av p idx.1 idx.2 ∧ satt av p c idx.1 idx.2} g' w) ∧
@@ -298,7 +298,7 @@ Generalises [von-fintel-1999]'s Strawson entailment from
 presuppositions to bounds. -/
 def boundEntails {Atom : Type u} {W E : Type v} (av : AtomEval Atom W E)
     (p q : BoundedForm Atom) : Prop :=
-  ∀ (c : Context W E) (g : PartialAssign E) (w : W),
+  ∀ (c : Context W E) (g : PartialAssign ℕ E) (w : W),
     satt av p c g w → satt av q c g w →
     truth av p g w → truth av q g w
 
@@ -357,7 +357,7 @@ classical entailment immediately satisfies the bounded version (which
 trivially ignores the satt antecedents). -/
 theorem boundEntails_of_logicalEntails {Atom : Type u} {W E : Type v}
     (av : AtomEval Atom W E) {p q : BoundedForm Atom}
-    (h : ∀ (g : PartialAssign E) (w : W), truth av p g w → truth av q g w) :
+    (h : ∀ (g : PartialAssign ℕ E) (w : W), truth av p g w → truth av q g w) :
     boundEntails av p q :=
   fun _ g w _ _ hp => h g w hp
 
@@ -372,7 +372,7 @@ variable {Atom : Type u} {W E : Type v} (av : AtomEval Atom W E)
 /-- **Double negation elimination at truth** (paper §5.7): `¬¬p ≡ p`
 classically. The bounded system preserves this; dynamic semantics fails
 it (paper §4 (11)). -/
-theorem dne_truth (g : PartialAssign E) (w : W) (p : BoundedForm Atom) :
+theorem dne_truth (g : PartialAssign ℕ E) (w : W) (p : BoundedForm Atom) :
     truth av (.neg (.neg p)) g w ↔ truth av p g w := by
   show ¬ ¬ truth av p g w ↔ truth av p g w
   exact Classical.not_not
@@ -381,7 +381,7 @@ theorem dne_truth (g : PartialAssign E) (w : W) (p : BoundedForm Atom) :
 `¬p ∨ q ≡ ¬p ∨ (p&q)`. Bounded preserves this; dynamic semantics fails
 it (paper §4 (14) / Partee disjunctions). -/
 theorem disj_neg_eq_disj_neg_conj_truth
-    (g : PartialAssign E) (w : W) (p q : BoundedForm Atom) :
+    (g : PartialAssign ℕ E) (w : W) (p q : BoundedForm Atom) :
     truth av (.disj (.neg p) q) g w ↔ truth av (.disj (.neg p) (.conj p q)) g w := by
   show (¬ truth av p g w) ∨ truth av q g w ↔
        (¬ truth av p g w) ∨ (truth av p g w ∧ truth av q g w)
@@ -390,7 +390,7 @@ theorem disj_neg_eq_disj_neg_conj_truth
 /-- **De Morgan at truth**: `¬(p&q) ≡ ¬p ∨ ¬q`. Holds classically; dynamic
 semantics doesn't validate this in general. -/
 theorem demorgan_neg_conj_truth
-    (g : PartialAssign E) (w : W) (p q : BoundedForm Atom) :
+    (g : PartialAssign ℕ E) (w : W) (p q : BoundedForm Atom) :
     truth av (.neg (.conj p q)) g w ↔ truth av (.disj (.neg p) (.neg q)) g w := by
   show ¬ (truth av p g w ∧ truth av q g w) ↔
        (¬ truth av p g w) ∨ (¬ truth av q g w)
@@ -398,7 +398,7 @@ theorem demorgan_neg_conj_truth
 
 /-- **Excluded middle at truth**: `p ∨ ¬p` is true at every index. -/
 theorem excluded_middle_truth
-    (g : PartialAssign E) (w : W) (p : BoundedForm Atom) :
+    (g : PartialAssign ℕ E) (w : W) (p : BoundedForm Atom) :
     truth av (.disj p (.neg p)) g w := by
   show truth av p g w ∨ ¬ truth av p g w
   exact Classical.em _
@@ -420,7 +420,7 @@ doubly-negated indefinites antecede subsequent definites — the
 truth-conditional content survives DNE so the witness bound projects up.
 Trivial corollary of `dne_truth`. -/
 theorem dneg_indef_truth_eq_indef
-    (g : PartialAssign E) (w : W) (x : Nat) (p q : BoundedForm Atom) :
+    (g : PartialAssign ℕ E) (w : W) (x : Nat) (p q : BoundedForm Atom) :
     truth av (.neg (.neg (.indef x p q))) g w ↔ truth av (.indef x p q) g w :=
   dne_truth av g w (.indef x p q)
 
@@ -428,7 +428,7 @@ theorem dneg_indef_truth_eq_indef
 (paper §4): `¬ɜx(p,q) ≡ ∀x.¬(p&q)`. Direct from the definition of
 `truth` on `.neg` and `.indef`. -/
 theorem neg_indef_truth_iff_forall_neg
-    (g : PartialAssign E) (w : W) (x : Nat) (p q : BoundedForm Atom) :
+    (g : PartialAssign ℕ E) (w : W) (x : Nat) (p q : BoundedForm Atom) :
     truth av (.neg (.indef x p q)) g w ↔
     ¬ ∃ a : E, truth av p (g.update x a) w ∧ truth av q (g.update x a) w := by
   show ¬ (∃ _ : E, _) ↔ _
@@ -535,7 +535,7 @@ that lets atomic-truth-of-`Fx` imply `g(x)` defined.
 
 Proof via `by_contra` + `push_neg` to avoid `cases hgx : g x`-style
 substitution which Lean does eagerly, breaking the goal structure. -/
-theorem resolveVars_singleton_def {E : Type v} {g : PartialAssign E} {x : Nat}
+theorem resolveVars_singleton_def {E : Type v} {g : PartialAssign ℕ E} {x : Nat}
     {es : List E} (h : resolveVars g [x] = some es) : ∃ a, g x = some a := by
   by_contra hne
   push Not at hne
@@ -548,7 +548,7 @@ theorem resolveVars_singleton_def {E : Type v} {g : PartialAssign E} {x : Nat}
   simp at h
 
 /-- **`resolveVars [x]` for defined `g(x)`** computes `some [a]`. -/
-theorem resolveVars_singleton_some {E : Type v} {g : PartialAssign E} {x : Nat}
+theorem resolveVars_singleton_some {E : Type v} {g : PartialAssign ℕ E} {x : Nat}
     {a : E} (h : g x = some a) : resolveVars g [x] = some [a] := by
   unfold resolveVars
   rw [h]
@@ -656,7 +656,7 @@ variable {Atom : Type u} {W E : Type v} (av : AtomEval Atom W E)
 /-- **Negated-indefinite truth has universal-negation form** (paper §4 (11)
 truth-conditional content). Direct corollary of `neg_indef_truth_iff_forall_neg`. -/
 theorem negated_indefinite_universal
-    (g : PartialAssign E) (w : W) (x : Nat) (p q : BoundedForm Atom) :
+    (g : PartialAssign ℕ E) (w : W) (x : Nat) (p q : BoundedForm Atom) :
     truth av (.neg (.indef x p q)) g w ↔
     ∀ a : E, ¬ (truth av p (g.update x a) w ∧ truth av q (g.update x a) w) := by
   rw [neg_indef_truth_iff_forall_neg]
@@ -666,7 +666,7 @@ theorem negated_indefinite_universal
 `¬ɜx(B(x)) ∨ H(x)` is true iff either there is no B-thing or H(g(x)).
 Holds classically without difficulty. -/
 theorem bathroom_truth
-    (g : PartialAssign E) (w : W) (x : Nat) (B H : BoundedForm Atom) :
+    (g : PartialAssign ℕ E) (w : W) (x : Nat) (B H : BoundedForm Atom) :
     truth av (.disj (.neg (.indef x B (.top [x]))) H) g w ↔
     (¬ ∃ a : E, truth av B (g.update x a) w ∧ truth av (.top [x]) (g.update x a) w) ∨
     truth av H g w := by
@@ -733,17 +733,17 @@ def testAv : AtomEval TestAtom TestWorld TestE
   | _, _, _ => false
 
 /-- DNE classicality holds for the test atom set. -/
-example (g : PartialAssign TestE) (w : TestWorld) (p : BoundedForm TestAtom) :
+example (g : PartialAssign ℕ TestE) (w : TestWorld) (p : BoundedForm TestAtom) :
     truth testAv (.neg (.neg p)) g w ↔ truth testAv p g w :=
   dne_truth testAv g w p
 
 /-- Excluded middle holds. -/
-example (g : PartialAssign TestE) (w : TestWorld) (p : BoundedForm TestAtom) :
+example (g : PartialAssign ℕ TestE) (w : TestWorld) (p : BoundedForm TestAtom) :
     truth testAv (.disj p (.neg p)) g w :=
   excluded_middle_truth testAv g w p
 
 /-- De Morgan holds. -/
-example (g : PartialAssign TestE) (w : TestWorld) (p q : BoundedForm TestAtom) :
+example (g : PartialAssign ℕ TestE) (w : TestWorld) (p q : BoundedForm TestAtom) :
     truth testAv (.neg (.conj p q)) g w ↔
     truth testAv (.disj (.neg p) (.neg q)) g w :=
   demorgan_neg_conj_truth testAv g w p q

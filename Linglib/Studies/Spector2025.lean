@@ -42,8 +42,8 @@ in the conjunction column for `0 ∧ #`).
 
 ## Architecture
 
-The trivalent semantics uses partial assignments (`PartialAssign D`)
-and plural assignments (`PluralAssign D`) from `Assignment`.
+The trivalent semantics uses partial assignments (`PartialAssign ℕ D`)
+and plural assignments (`PluralAssign ℕ D`) from `Assignment`.
 Predicate application yields `#` when the variable is unvalued.
 The existential quantifier uses [mandelkern-2022]'s witness
 condition: `∃xφ` is true at `(w,g)` only if `g(x)` witnesses `φ`,
@@ -70,7 +70,7 @@ abbrev Interp (W : Type*) (D : Type u) := W → D → Bool
     - `1` if `g(x) ∈ I(P,w)`
     - `0` if `g(x) ≠ #` and `g(x) ∉ I(P,w)`
     - `#` if `g(x) = #` -/
-def evalPred (I : Interp W D) (g : PartialAssign D) (x : Nat)
+def evalPred (I : Interp W D) (g : PartialAssign ℕ D) (x : Nat)
     (w : W) : Trivalent :=
   match g x with
   | some d => Trivalent.ofBool (I w d)
@@ -78,29 +78,29 @@ def evalPred (I : Interp W D) (g : PartialAssign D) (x : Nat)
 
 /-- The `U(x)` predicate as a Trivalent value.
     Always bivalent: `true` if valued, `false` if not. -/
-def valuedT3 (g : PartialAssign D) (x : Nat) : Trivalent :=
-  Trivalent.ofBool (g.valued x)
+def valuedT3 (g : PartialAssign ℕ D) (x : Nat) : Trivalent :=
+  Trivalent.ofBool ((g x).isSome)
 
 /-- `U(x)` is never undefined. -/
-theorem valuedT3_defined (g : PartialAssign D) (x : Nat) :
+theorem valuedT3_defined (g : PartialAssign ℕ D) (x : Nat) :
     (valuedT3 g x).isDefined := by
-  simp [valuedT3, PartialAssign.valued, Trivalent.isDefined]
+  simp [valuedT3, Option.isSome, Trivalent.isDefined]
   cases g x <;> trivial
 
 /-- When `g` values `x`, evaluating a predicate at `x` is bivalent. -/
-theorem evalPred_valued (I : Interp W D) (g : PartialAssign D) (x : Nat) (w : W)
-    (h : g.valued x = true) :
+theorem evalPred_valued (I : Interp W D) (g : PartialAssign ℕ D) (x : Nat) (w : W)
+    (h : (g x).isSome = true) :
     (evalPred I g x w).isDefined := by
-  simp [evalPred, PartialAssign.valued] at *
+  simp [evalPred, Option.isSome] at *
   cases hg : g x with
   | none => simp [hg] at h
   | some d => simp [Trivalent.ofBool, Trivalent.isDefined]; cases I w d <;> trivial
 
 /-- When `g` does not value `x`, evaluating a predicate at `x` is undefined. -/
-theorem evalPred_unvalued (I : Interp W D) (g : PartialAssign D) (x : Nat) (w : W)
-    (h : g.valued x = false) :
+theorem evalPred_unvalued (I : Interp W D) (g : PartialAssign ℕ D) (x : Nat) (w : W)
+    (h : (g x).isSome = false) :
     evalPred I g x w = .indet := by
-  simp [evalPred, PartialAssign.valued] at *
+  simp [evalPred, Option.isSome] at *
   cases hg : g x with
   | none => rfl
   | some _ => simp [hg] at h
@@ -117,8 +117,8 @@ theorem evalPred_unvalued (I : Interp W D) (g : PartialAssign D) (x : Nat) (w : 
     if and only if there is an assignment function g such that
     ⟦φ⟧^{w,g} = 1." This bridges trivalent assignment-level
     semantics to world-level truth conditions. -/
-def trueAtWorld (φ : W → PartialAssign D → Trivalent) (w : W) : Prop :=
-  ∃ g : PartialAssign D, φ w g = .true
+def trueAtWorld (φ : W → PartialAssign ℕ D → Trivalent) (w : W) : Prop :=
+  ∃ g : PartialAssign ℕ D, φ w g = .true
 
 -- ════════════════════════════════════════════════════════════════
 -- §2.2: Contexts and the Transparency Principle
@@ -140,7 +140,7 @@ variants can reuse the same shape.
 
 /-- A context is a set of world-assignment pairs.
     §2.2.1: "We view a context C as a set of world-assignment pairs (w,g)." -/
-abbrev Ctx (W : Type*) (D : Type u) := W → PartialAssign D → Prop
+abbrev Ctx (W : Type*) (D : Type u) := W → PartialAssign ℕ D → Prop
 
 /-- The null context: all world-assignment pairs.
     §2.2.1: "the null context which contains all possible
@@ -151,16 +151,16 @@ def nullCtx : Ctx W D := λ _ _ => True
     §2.2.1: "if a sentence S is accepted as true in context C, then the
     resulting context is simply C intersected with the set of
     world-assignment pairs where S is true." -/
-def stalnakerUpdate (C : Ctx W D) (S : W → PartialAssign D → Trivalent) :
+def stalnakerUpdate (C : Ctx W D) (S : W → PartialAssign ℕ D → Trivalent) :
     Ctx W D :=
   λ w g => C w g ∧ S w g = .true
 
 /-- Two trivalent sentences agree throughout a context. -/
-def agreeIn (C : Ctx W D) (S1 S2 : W → PartialAssign D → Trivalent) : Prop :=
+def agreeIn (C : Ctx W D) (S1 S2 : W → PartialAssign ℕ D → Trivalent) : Prop :=
   ∀ w g, C w g → S1 w g = S2 w g
 
 /-- A trivalent sentence over world-assignment pairs. -/
-abbrev Sent (W : Type*) (D : Type u) := W → PartialAssign D → Trivalent
+abbrev Sent (W : Type*) (D : Type u) := W → PartialAssign ℕ D → Trivalent
 
 /-- A sentence frame: a sentence with a hole for a sub-sentence. -/
 abbrev Frame (W : Type*) (D : Type u) := Sent W D → Sent W D
@@ -283,10 +283,10 @@ The frame is `F(ψ) = ∃xT(x) ∧ ψ`, and the presupposition is `U(x)`.
 
     Derived from `conj_transparency_parametric`. -/
 theorem forward_conj_transparency
-    (E presup : W → PartialAssign D → Trivalent)
+    (E presup : W → PartialAssign ℕ D → Trivalent)
     (hwitness : ∀ w g, E w g = .true → presup w g = .true)
     (C : Ctx W D) :
-    ∀ (φ : Sent W D) (w : W) (g : PartialAssign D), C w g →
+    ∀ (φ : Sent W D) (w : W) (g : PartialAssign ℕ D), C w g →
       Trivalent.meetMiddle (E w g) (Trivalent.meetMiddle (presup w g) (φ w g)) =
       Trivalent.meetMiddle (E w g) (φ w g) :=
   fun φ w g _ => conj_transparency_parametric (E w g) (presup w g) (φ w g) (hwitness w g)
@@ -300,8 +300,8 @@ theorem forward_conj_transparency
     and `meetMiddle false # = false`). The key asymmetry of Middle Kleene:
     `meetMiddle false # = false` but `meetMiddle # _ = #`. -/
 theorem reverse_conj_transparency_fails :
-    ∃ (W : Type) (D : Type) (E presup φ : W → PartialAssign D → Trivalent)
-      (w : W) (g : PartialAssign D),
+    ∃ (W : Type) (D : Type) (E presup φ : W → PartialAssign ℕ D → Trivalent)
+      (w : W) (g : PartialAssign ℕ D),
       Trivalent.meetMiddle (Trivalent.meetMiddle (presup w g) (φ w g)) (E w g) ≠
       Trivalent.meetMiddle (φ w g) (E w g) := by
   -- presup = U(x) = false (unvalued), φ = P(x) = # (unvalued), E = ∃xT(x) = true
@@ -345,10 +345,10 @@ is `U(x)`.
     witness condition) means `g` values `x`, making `U(x)` redundant.
     Derived from `disj_transparency_parametric`. -/
 theorem bathroom_transparency
-    (negE presup : W → PartialAssign D → Trivalent)
+    (negE presup : W → PartialAssign ℕ D → Trivalent)
     (hwitness : ∀ w g, negE w g = .false → presup w g = .true)
     (C : Ctx W D) :
-    ∀ (φ : Sent W D) (w : W) (g : PartialAssign D), C w g →
+    ∀ (φ : Sent W D) (w : W) (g : PartialAssign ℕ D), C w g →
       Trivalent.joinMiddle (negE w g) (Trivalent.meetMiddle (presup w g) (φ w g)) =
       Trivalent.joinMiddle (negE w g) (φ w g) :=
   fun φ w g _ => disj_transparency_parametric (negE w g) (presup w g) (φ w g) (hwitness w g)
@@ -362,8 +362,8 @@ theorem bathroom_transparency
     `U(x) = false`, so `meetMiddle false # = false`, and
     `joinMiddle false (¬∃xB(x))` can be `true` — a difference. -/
 theorem reverse_bathroom_transparency_fails :
-    ∃ (W : Type) (D : Type) (negE presup φ : W → PartialAssign D → Trivalent)
-      (w : W) (g : PartialAssign D),
+    ∃ (W : Type) (D : Type) (negE presup φ : W → PartialAssign ℕ D → Trivalent)
+      (w : W) (g : PartialAssign ℕ D),
       Trivalent.joinMiddle (Trivalent.meetMiddle (presup w g) (φ w g)) (negE w g) ≠
       Trivalent.joinMiddle (φ w g) (negE w g) := by
   -- presup = false (U(x) unvalued), φ = # (P(x) unvalued), negE = true
@@ -423,7 +423,7 @@ variable {D : Type} {W : Type}
     - `F(x)`: `evalPred F g 0 w` (true/false/`#` depending on `g(0)`)
     - Overall: `joinMiddle (neg (∃xB(x))) (F(x))` -/
 def bathroomSent (B F : Interp W D) (dom : List D)
-    (w : W) (g : PartialAssign D) : Trivalent :=
+    (w : W) (g : PartialAssign ℕ D) : Trivalent :=
   let existsB : Trivalent :=
     if evalPred B g 0 w = .true then .true
     else if dom.all (λ d => B w d == false) then .false
@@ -562,8 +562,8 @@ end BathroomTruthConditions
 
     The identity frame `F(ψ) = ψ` represents a bare sentence. -/
 theorem bare_pronoun_fails_null :
-    ∃ (W : Type) (D : Type) (presup φ : W → PartialAssign D → Trivalent)
-      (w : W) (g : PartialAssign D),
+    ∃ (W : Type) (D : Type) (presup φ : W → PartialAssign ℕ D → Trivalent)
+      (w : W) (g : PartialAssign ℕ D),
       True  -- null context membership
       ∧ Trivalent.meetMiddle (presup w g) (φ w g) ≠ φ w g := by
   refine ⟨Unit, Unit, λ _ _ => .false, λ _ _ => .true,
@@ -611,7 +611,7 @@ everyone spoke to. The full system (§6) replaces individual partial
 assignments with **plural assignments** — sets of atomic assignments.
 
 Key changes from the simplified system:
-- Evaluation is relative to `(w, G)` where `G : PluralAssign D`
+- Evaluation is relative to `(w, G)` where `G : PluralAssign ℕ D`
 - `U(x)` is replaced by `atomic(x)`: `|G(x)| = 1` (all assignments
   in `G` that define `x` agree on its value)
 - The universal quantifier `∀xφ` is now well-defined
@@ -638,11 +638,11 @@ variable {D : Type*} {W : Type*}
 open Classical
 
 /-- Plural sentence: evaluated relative to a world and a plural assignment. -/
-abbrev PSent (W : Type*) (D : Type*) := W → PluralAssign D → Trivalent
+abbrev PSent (W : Type*) (D : Type*) := W → PluralAssign ℕ D → Trivalent
 
 /-- Alias for `PluralAssign.singularAt` — `G` assigns `x` uniquely to `d`.
     §6.2: `|G(x)| = 1` with `G(x) = d`. -/
-abbrev singularAt (G : PluralAssign D) (x : Nat) (d : D) : Prop :=
+abbrev singularAt (G : PluralAssign ℕ D) (x : Nat) (d : D) : Prop :=
   G.singularAt x d
 
 /-- Evaluate a one-place predicate relative to `(w, G)`.
@@ -650,7 +650,7 @@ abbrev singularAt (G : PluralAssign D) (x : Nat) (d : D) : Prop :=
     - `1` if `|G(x)| = 1` and `G(x) ∈ I(P,w)`
     - `0` if `|G(x)| = 1` and `G(x) ∉ I(P,w)`
     - `#` if `|G(x)| ≠ 1` -/
-noncomputable def evalPredPlural (I : Interp W D) (G : PluralAssign D)
+noncomputable def evalPredPlural (I : Interp W D) (G : PluralAssign ℕ D)
     (x : Nat) (w : W) : Trivalent :=
   if h : ∃ d, singularAt G x d then
     Trivalent.ofBool (I w (Classical.choose h))
@@ -660,11 +660,11 @@ noncomputable def evalPredPlural (I : Interp W D) (G : PluralAssign D)
     §6.3: `⟦atomic(x)⟧^{w,G} = 1` if `|G(x)| = 1`,
     `0` otherwise. Always bivalent (never `#`). Replaces `U(x)` from
     the simplified system. -/
-noncomputable def atomicT3 (G : PluralAssign D) (x : Nat) : Trivalent :=
+noncomputable def atomicT3 (G : PluralAssign ℕ D) (x : Nat) : Trivalent :=
   if G.singular x then .true else .false
 
 /-- `atomic(x)` is always defined (bivalent). -/
-theorem atomicT3_defined (G : PluralAssign D) (x : Nat) :
+theorem atomicT3_defined (G : PluralAssign ℕ D) (x : Nat) :
     (atomicT3 G x).isDefined := by
   unfold atomicT3
   by_cases h : G.singular x
@@ -677,9 +677,9 @@ theorem atomicT3_defined (G : PluralAssign D) (x : Nat) :
     - `0` if for every atomic `a ∈ D`, `G_{x=a} ≠ ∅` and `⟦φ⟧^{w,G_{x=a}} = 0`
     - `#` otherwise -/
 noncomputable def existsPlural (x : Nat) (φ : PSent W D) (dom : Set D)
-    (w : W) (G : PluralAssign D) : Trivalent :=
+    (w : W) (G : PluralAssign ℕ D) : Trivalent :=
   if φ w G = .true then .true
-  else if (∀ a ∈ dom, (G.restrict x a).IsNonempty) ∧
+  else if (∀ a ∈ dom, (G.restrict x a).Nonempty) ∧
           (∀ a ∈ dom, φ w (G.restrict x a) = .false) then .false
   else .indet
 
@@ -689,10 +689,10 @@ noncomputable def existsPlural (x : Nat) (φ : PSent W D) (dom : Set D)
     - `0` if the coverage condition holds and some `a` gives `⟦φ⟧^{w,G_{x=a}} = 0`
     - `#` otherwise -/
 noncomputable def forallPlural (x : Nat) (φ : PSent W D) (dom : Set D)
-    (w : W) (G : PluralAssign D) : Trivalent :=
-  if (∀ a ∈ dom, (G.restrict x a).IsNonempty) ∧
+    (w : W) (G : PluralAssign ℕ D) : Trivalent :=
+  if (∀ a ∈ dom, (G.restrict x a).Nonempty) ∧
      (∀ a ∈ dom, φ w (G.restrict x a) = .true) then .true
-  else if (∀ a ∈ dom, (G.restrict x a).IsNonempty) ∧
+  else if (∀ a ∈ dom, (G.restrict x a).Nonempty) ∧
           (∃ a ∈ dom, φ w (G.restrict x a) = .false) then .false
   else .indet
 
@@ -709,9 +709,9 @@ variable {D : Type*} {W : Type*}
 /-- Forward conjunction Transparency in the plural system, derived from
     the parametric version. -/
 theorem plural_forward_conj_transparency
-    (E presup : W → PluralAssign D → Trivalent)
+    (E presup : W → PluralAssign ℕ D → Trivalent)
     (hwitness : ∀ w G, E w G = .true → presup w G = .true) :
-    ∀ (φ : W → PluralAssign D → Trivalent) (w : W) (G : PluralAssign D),
+    ∀ (φ : W → PluralAssign ℕ D → Trivalent) (w : W) (G : PluralAssign ℕ D),
       Trivalent.meetMiddle (E w G) (Trivalent.meetMiddle (presup w G) (φ w G)) =
       Trivalent.meetMiddle (E w G) (φ w G) :=
   fun φ w G => conj_transparency_parametric (E w G) (presup w G) (φ w G) (hwitness w G)
@@ -719,9 +719,9 @@ theorem plural_forward_conj_transparency
 /-- Bathroom Transparency in the plural system, derived from
     the parametric version. -/
 theorem plural_bathroom_transparency
-    (negE presup : W → PluralAssign D → Trivalent)
+    (negE presup : W → PluralAssign ℕ D → Trivalent)
     (hwitness : ∀ w G, negE w G = .false → presup w G = .true) :
-    ∀ (φ : W → PluralAssign D → Trivalent) (w : W) (G : PluralAssign D),
+    ∀ (φ : W → PluralAssign ℕ D → Trivalent) (w : W) (G : PluralAssign ℕ D),
       Trivalent.joinMiddle (negE w G) (Trivalent.meetMiddle (presup w G) (φ w G)) =
       Trivalent.joinMiddle (negE w G) (φ w G) :=
   fun φ w G => disj_transparency_parametric (negE w G) (presup w G) (φ w G) (hwitness w G)
@@ -754,14 +754,14 @@ antecedent of a singular pronoun.
     is false (since `atomic(x)` is false when `|G(x)| > 1`) while
     the second is true. -/
 theorem universal_doesnt_license_anaphora :
-    ∃ (D : Type) (presup φ : PluralAssign D → Trivalent)
-      (G : PluralAssign D),
+    ∃ (D : Type) (presup φ : PluralAssign ℕ D → Trivalent)
+      (G : PluralAssign ℕ D),
       -- presup = atomic(x) = false (two values for x)
       -- φ = tautology = true
       Trivalent.meetMiddle (presup G) (φ G) ≠ φ G := by
   -- D = Bool, G has two assignments: one mapping x to true, one to false
   -- So |G(x)| = 2, atomic(x) = false
-  refine ⟨Bool, λ _ => .false, λ _ => .true, ⟨λ _ => True⟩, ?_⟩
+  refine ⟨Bool, λ _ => .false, λ _ => .true, Set.univ, ?_⟩
   simp [Trivalent.meetMiddle]
 
 end UniversalAnaphora
@@ -800,16 +800,16 @@ theorem covariation_fixed
     (w : W)
     (hcovar : ∀ a : D, a ∈ dom → ∃ b : D, b ∈ dom ∧ S w a b = true) :
     -- There exists a plural assignment G with a witness for each a
-    ∃ G : PluralAssign D,
-      ∀ a ∈ dom, ∃ b ∈ dom, ∃ g : PartialAssign D, g ∈ G ∧
+    ∃ G : PluralAssign ℕ D,
+      ∀ a ∈ dom, ∃ b ∈ dom, ∃ g : PartialAssign ℕ D, g ∈ G ∧
         g 0 = some a ∧ g 1 = some b ∧ S w a b = true := by
   -- Build G: for each a, include an assignment g_a with g(x)=a, g(y)=b
   -- where b is a's S-partner.
-  let G : PluralAssign D := ⟨λ g => ∃ a ∈ dom, ∃ b ∈ dom,
-    S w a b = true ∧ g 0 = some a ∧ g 1 = some b⟩
+  let G : PluralAssign ℕ D := {g | ∃ a ∈ dom, ∃ b ∈ dom,
+    S w a b = true ∧ g 0 = some a ∧ g 1 = some b}
   refine ⟨G, λ a ha => ?_⟩
   obtain ⟨b, hb, hSab⟩ := hcovar a ha
-  let g : PartialAssign D := λ n =>
+  let g : PartialAssign ℕ D := λ n =>
     if n = 0 then some a else if n = 1 then some b else none
   exact ⟨b, hb, g, ⟨a, ha, b, hb, hSab, rfl, rfl⟩, rfl, rfl, hSab⟩
 
@@ -822,7 +822,7 @@ theorem covariation_fails_individual :
     ∃ (D W : Type) (S : W → D → D → Bool) (w : W)
       (_ : ∀ a : D, ∃ b : D, S w a b = true),
       -- No single partial assignment g witnesses this for all x
-      ¬∃ g : PartialAssign D, ∀ a : D,
+      ¬∃ g : PartialAssign ℕ D, ∀ a : D,
         ∃ b : D, g 1 = some b ∧ S w a b = true := by
   refine ⟨Bool, Unit, λ _ a b => a != b, (), ?_, ?_⟩
   · intro a; exact ⟨!a, by cases a <;> rfl⟩
@@ -865,13 +865,13 @@ They diverge for donkey sentences.
 /-- Weak truth at a world: ∃G such that the sentence is true at (w,G).
     §7 (46a). -/
 def weakTruthP (φ : PSent W D) (w : W) : Prop :=
-  ∃ G : PluralAssign D, φ w G = .true
+  ∃ G : PluralAssign ℕ D, φ w G = .true
 
 /-- Strong truth at a world: weakly true AND not weakly false.
     §7 (46b). -/
 def strongTruthP (φ : PSent W D) (w : W) : Prop :=
-  (∃ G : PluralAssign D, φ w G = .true) ∧
-  ¬∃ G : PluralAssign D, φ w G = .false
+  (∃ G : PluralAssign ℕ D, φ w G = .true) ∧
+  ¬∃ G : PluralAssign ℕ D, φ w G = .false
 
 /-- Strong truth implies weak truth. -/
 theorem strongTruth_implies_weakTruth (φ : PSent W D) (w : W)
@@ -926,7 +926,7 @@ rather than globally. Key properties:
 /-- The Strong Trivalent Operator O.
     §7 (55). -/
 noncomputable def strongTruthOp (φ : PSent W D)
-    (w : W) (G : PluralAssign D) : Trivalent :=
+    (w : W) (G : PluralAssign ℕ D) : Trivalent :=
   if φ w G = .true ∧ ¬∃ G', φ w G' = .false then .true
   else if φ w G = .false ∧ ¬∃ G', φ w G' = .true then .false
   else .indet
@@ -942,7 +942,7 @@ theorem strongTruthOp_preserves_equiv (φ₁ φ₂ : PSent W D)
 
 /-- O(S) is true at (w,G) implies S is true at (w,G). -/
 theorem strongTruthOp_true_implies (φ : PSent W D) (w : W)
-    (G : PluralAssign D) (h : strongTruthOp φ w G = .true) :
+    (G : PluralAssign ℕ D) (h : strongTruthOp φ w G = .true) :
     φ w G = .true := by
   simp only [strongTruthOp] at h
   split at h

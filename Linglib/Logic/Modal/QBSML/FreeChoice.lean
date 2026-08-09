@@ -76,7 +76,7 @@ variable {α β : Formula Var Const Pred} {s : Finset (Index W Var Domain)}
     the enrichment (`enrichment_strengthens_support`). One-sided engine of
     `diamond_split`. -/
 private theorem poss_of_subset_modalLift {X : Finset W}
-    {g : Assignment Var Domain} {t : Finset (Index W Var Domain)}
+    {g : PartialAssign Var Domain} {t : Finset (Index W Var Domain)}
     (hα : α.IsNEFree) (ht : t ⊆ State.modalLift X g)
     (h : support M α.enrich t) :
     ∃ Y, Y ⊆ X ∧ Y.Nonempty ∧ support M α (State.modalLift Y g) :=
@@ -88,7 +88,7 @@ private theorem poss_of_subset_modalLift {X : Finset W}
 /-- The shared core of the free-choice facts: an enriched split disjunction
     supported on a modal pairing yields a non-empty world-set witness for
     each disjunct — `poss_of_subset_modalLift` on each half of the split. -/
-theorem diamond_split {X : Finset W} {g : Assignment Var Domain}
+theorem diamond_split {X : Finset W} {g : PartialAssign Var Domain}
     (hα : α.IsNEFree) (hβ : β.IsNEFree)
     (hsupp : support M (Formula.disj α β).enrich (State.modalLift X g)) :
     (∃ Y, Y ⊆ X ∧ Y.Nonempty ∧ support M α (State.modalLift Y g)) ∧
@@ -167,7 +167,7 @@ solutions invoke (its §4.4.3; see `Studies/Yan2023.lean`). -/
     `poss_of_subset_modalLift`. -/
 private theorem poss_exi_of_subset_extendFunctional
     {γ : Formula Var Const Pred} {X₀ : Finset W}
-    {g : Assignment Var Domain} {x : Var}
+    {g : PartialAssign Var Domain} {x : Var}
     {hf : Index W Var Domain → Finset Domain}
     {t : Finset (Index W Var Domain)}
     (htsub : t ⊆ State.extendFunctional (State.modalLift X₀ g) x hf)

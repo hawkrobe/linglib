@@ -1,5 +1,5 @@
 import Linglib.Logic.Modal.QBSML.FreeChoice
-import Linglib.Logic.Modal.QBSML.StandardTranslation
+import Linglib.Logic.Modal.QBSML.Compactness
 import Linglib.Logic.Modal.BSML.Scenarios
 
 /-!
@@ -21,8 +21,8 @@ concrete model and proves the paper's one countermodel claim.
   instances of the substrate theorems.
 * `fact4_obviation` — `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)`, by the paper's
   Fig. 14 countermodel.
-* `univPxOrQx_classical`, `univPxOrQx_sentence` — Proposition 4.1 at the
-  concrete model, the translations computed by `rfl`.
+* `support_univPxOrQx_iff`, `models_stUnivPxOrQxSentence_iff` —
+  Proposition 4.1 at the concrete model, the translations computed by `rfl`.
 
 ## Implementation notes
 
@@ -55,9 +55,8 @@ inductive Predicate | P | Q
 /-- Universal-access model on `TwoAtomWorld`: every world is accessible,
     and both predicates hold of `d` at `w` iff `w` models the atom `d`.
     Cf. `Aloni2022.deonticModel`. -/
-def univAccessModel : Model TwoAtomWorld FCAtom FCAtom Predicate where
-  access := λ _ => Finset.univ
-  interp := λ w => monadicStructure id (λ _ d => w.holds d)
+def univAccessModel : Model TwoAtomWorld FCAtom FCAtom Predicate :=
+  .ofMonadic (λ _ => Finset.univ) (λ _ => id) (λ w _ d => w.holds d)
 
 /-! ### Formulas -/
 
@@ -82,6 +81,10 @@ theorem Pb_isNEFree : Pb.IsNEFree := .predc _ _
 theorem Px_isNEFree {Const : Type*} : (Px (Const := Const)).IsNEFree := .pred _ _
 theorem Qx_isNEFree {Const : Type*} : (Qx (Const := Const)).IsNEFree := .pred _ _
 
+variable {s : Finset (Index TwoAtomWorld QVar FCAtom)}
+variable {i : Index TwoAtomWorld QVar FCAtom}
+variable {v : Index TwoAtomWorld QVar FCAtom → QVar → FCAtom}
+
 /-! ### Proposition 4.1 at the concrete model -/
 
 /-- The (unenriched) universal premise `∀x(Px ∨ Qx)` translates into mathlib
@@ -89,9 +92,7 @@ theorem Qx_isNEFree {Const : Type*} : (Qx (Const := Const)).IsNEFree := .pred _ 
     every index — [aloni-vanormondt-2023] Proposition 4.1 instantiated at
     `univAccessModel`. The translation hypothesis is discharged by `rfl`: the
     compiler computes. -/
-theorem univPxOrQx_classical
-    (s : Finset (Index TwoAtomWorld QVar FCAtom))
-    (v : Index TwoAtomWorld QVar FCAtom → QVar → FCAtom)
+theorem support_univPxOrQx_iff
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
     support univAccessModel univPxOrQx s ↔
       ∀ i ∈ s, univAccessModel.RealizeAt i.world
@@ -104,9 +105,7 @@ theorem univPxOrQx_classical
     over the monadic signature, and its support is Kripke satisfaction at
     every index — the **full** [aloni-vanormondt-2023] Proposition 4.1
     (modals included) at `univAccessModel`, the translation discharged by `rfl`. -/
-theorem possPxOrQx_classical
-    (s : Finset (Index TwoAtomWorld QVar FCAtom))
-    (v : Index TwoAtomWorld QVar FCAtom → QVar → FCAtom)
+theorem support_possPxOrQx_iff
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
     support univAccessModel (.poss (.disj Px Qx)) s ↔
       ∀ i ∈ s,
@@ -120,12 +119,12 @@ theorem possPxOrQx_classical
 /-- The closed standard translation of `∀x(Px ∨ Qx)`: quantifiers
     relativized to the individual sort, predicates world-relativized to the
     current-world variable `Sum.inr 0`. -/
-def stUnivPxOrQx : (stLang FCAtom Predicate).Formula (QVar ⊕ ℕ) :=
+def stUnivPxOrQx : (Language.correspondence FCAtom Predicate).Formula (QVar ⊕ ℕ) :=
   Formula.all₁ (Sum.inl QVar.x)
-    ((stIndiv.formula₁ (Term.var (Sum.inl QVar.x))).imp
-      ((stRel Predicate.P).formula₂ (Term.var (Sum.inr 0))
+    ((corrIndiv.formula₁ (Term.var (Sum.inl QVar.x))).imp
+      ((corrRel Predicate.P).formula₂ (Term.var (Sum.inr 0))
           (Term.var (Sum.inl QVar.x)) ⊔
-        (stRel Predicate.Q).formula₂ (Term.var (Sum.inr 0))
+        (corrRel Predicate.Q).formula₂ (Term.var (Sum.inr 0))
           (Term.var (Sum.inl QVar.x))))
 
 /-- The closure is a genuine sentence: the compiler computes the
@@ -133,30 +132,26 @@ def stUnivPxOrQx : (stLang FCAtom Predicate).Formula (QVar ⊕ ℕ) :=
 theorem stUnivPxOrQx_closed :
     (stClose 0 stUnivPxOrQx).freeVarFinset = ∅ := by decide
 
-/-- Support of `∀x(Px ∨ Qx)` at a singleton forces its sort-guarded closed
-    standard translation as a **sentence** of `univAccessModel.stStructure` — the
-    compactness-ready form, with every translation step (`toModal?`, `st?`,
-    the free-variable check) computed by the compiler. -/
-theorem univPxOrQx_sentence
-    (i : Index TwoAtomWorld QVar FCAtom) (v : QVar → FCAtom)
-    (hv : ∀ y, i.assign y = some (v y))
-    (h : support univAccessModel univPxOrQx {i}) :
-    letI := univAccessModel.stStructure
-    (TwoAtomWorld ⊕ FCAtom) ⊨
-      (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed :=
-  models_toSentence_of_support univAccessModel rfl rfl stUnivPxOrQx_closed hv h
+/-- The sort-guarded closed standard translation of `∀x(Px ∨ Qx)`, as a
+    sentence. -/
+def stUnivPxOrQxSentence : (Language.correspondence FCAtom Predicate).Sentence :=
+  (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed
 
-/-- Conversely, the sentence yields support at some singleton — sentencehood
-    of the translation makes `∀x(Px ∨ Qx)`'s support assignment- and
-    state-independent. -/
-theorem support_of_stUnivPxOrQx_sentence
-    (h : letI := univAccessModel.stStructure
-         (TwoAtomWorld ⊕ FCAtom) ⊨
-           (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed) :
-    ∃ (i : Index TwoAtomWorld QVar FCAtom) (v : QVar → FCAtom),
-      (∀ y, i.assign y = some (v y)) ∧ support univAccessModel univPxOrQx {i} :=
+local instance : (Language.correspondence FCAtom Predicate).Structure (TwoAtomWorld ⊕ FCAtom) :=
+  univAccessModel.corrStructure
+
+/-- Truth of the standard-translation sentence in `univAccessModel.corrStructure`
+    is support of `∀x(Px ∨ Qx)` at some singleton with a total assignment —
+    the compactness-ready form of Proposition 4.1, every translation step
+    (`toModal?`, `st?`, the free-variable check) computed by the compiler. -/
+theorem models_stUnivPxOrQxSentence_iff :
+    (TwoAtomWorld ⊕ FCAtom) ⊨ stUnivPxOrQxSentence ↔
+      ∃ (i : Index TwoAtomWorld QVar FCAtom) (v : QVar → FCAtom),
+        (∀ y, i.assign y = some (v y)) ∧ support univAccessModel univPxOrQx {i} :=
   haveI : Nonempty FCAtom := ⟨.a⟩
-  exists_support_of_models_toSentence univAccessModel rfl rfl stUnivPxOrQx_closed h
+  ⟨exists_support_of_models_toSentence univAccessModel rfl rfl stUnivPxOrQx_closed,
+    fun ⟨_, _, hv, h⟩ =>
+      models_toSentence_of_support univAccessModel rfl rfl stUnivPxOrQx_closed hv h⟩
 
 /-! ### Frame conditions -/
 
@@ -200,9 +195,6 @@ example :
   decide
 
 /-! ### The §5 facts -/
-
-variable {s : Finset (Index TwoAtomWorld QVar FCAtom)}
-variable {i : Index TwoAtomWorld QVar FCAtom}
 
 /-- **Fact 3** (ignorance), on states of full world projection. -/
 theorem fact3_ignorance (hfull : State.worldProj s = Finset.univ)
@@ -251,12 +243,8 @@ theorem fact10_negation
 
 /-! ### Fact 4 (obviation): the Fig. 14 countermodel
 
-The paper's Fig. 14: a single index at the world where `Pa` and `Qb` both
-hold, with an empty assignment and reflexive-only access. Its universal
-`x`-extension supports the enriched disjunction by splitting *horizontally*
-(`x/a` supports `Px`, `x/b` supports `Qx`), so the enriched premise holds;
-but `∀x(◇Px ∧ ◇Qx)` fails because the `x/b` index cannot see any world
-where `P` holds of `b`. -/
+The paper's Fig. 14: a single index at the world `both` with the empty
+assignment, every world seeing exactly `{both}`. -/
 
 /-- The Fig. 14 domain: exactly the paper's two objects. (The third
     `FCAtom` atom would give the universal extension an `x/c` index
@@ -265,34 +253,27 @@ where `P` holds of `b`. -/
 inductive Fig14Atom | a | b
   deriving DecidableEq, Repr, Fintype
 
-/-- Fig. 14 valuation: `P` holds exactly of `a`, and `Q` exactly of `b`,
-    wherever the world carries the corresponding atom — so `P` and `Q` have
-    *divergent* extensions, unlike `univAccessModel`'s. -/
+/-- Fig. 14 valuation: `P` holds exactly of `a` and `Q` exactly of `b` —
+    divergent extensions, unlike `univAccessModel`'s. -/
 def fig14V (w : TwoAtomWorld) : Predicate → Fig14Atom → Prop
   | .P, d => d = .a ∧ w.holds .a
   | .Q, d => d = .b ∧ w.holds .b
 
-/-- The Fig. 14 model: reflexive-only access at the `both` world. -/
-def fig14Model : Model TwoAtomWorld Fig14Atom Fig14Atom Predicate where
-  access := λ _ => {TwoAtomWorld.both}
-  interp := λ w => monadicStructure id (fig14V w)
+def fig14Model : Model TwoAtomWorld Fig14Atom Fig14Atom Predicate :=
+  .ofMonadic (λ _ => {TwoAtomWorld.both}) (λ _ => id) fig14V
 
-/-- The Fig. 14 index: the `both` world with the empty assignment. -/
 def fig14Index : Index TwoAtomWorld QVar Fig14Atom :=
   (TwoAtomWorld.both, fun _ => none)
 
-/-- The Fig. 14 state: the single-index state of the counterexample. -/
 def fig14State : Finset (Index TwoAtomWorld QVar Fig14Atom) := {fig14Index}
 
-/-- The Fig. 14 accessibility is state-based on the countermodel state —
-    the epistemic reading Fact 4 assumes ("we assume again that ◇ is an
-    epistemic modal"). Obviation is thus not an artifact of dropping the
+/-- The countermodel's `R` is state-based on its state — the epistemic
+    reading Fact 4 assumes, so obviation is not an artifact of dropping the
     frame condition behind ignorance. -/
 theorem fig14_stateBased : fig14Model.IsStateBased fig14State := by decide
 
-/-- The Fig. 14 state supports the enriched premise `[∀x(Px ∨ Qx)]⁺`: its
-    universal extension splits into the `x/a` half supporting `[Px]⁺` and
-    the `x/b` half supporting `[Qx]⁺` (paper Fig. 15). -/
+/-- The universal extension splits into the `x/a` half supporting `[Px]⁺`
+    and the `x/b` half supporting `[Qx]⁺` (paper Fig. 15). -/
 theorem fig14_premise : support fig14Model univPxOrQx.enrich fig14State := by
   refine ⟨?_, Finset.singleton_nonempty _⟩
   show support fig14Model (Formula.disj Px Qx).enrich
@@ -311,9 +292,8 @@ theorem fig14_premise : support fig14Model univPxOrQx.enrich fig14State := by
     exact ⟨.b, rfl, rfl, rfl⟩
   · decide
 
-/-- The Fig. 14 state does **not** support `∀x(◇Px ∧ ◇Qx)`: at the `x/b`
-    index the only accessible world is `both`, where `P` holds of `a` alone
-    (paper Fig. 16's failing substate). -/
+/-- At the `x/b` index the only accessible world is `both`, where `P`
+    holds of `a` alone (paper Fig. 16's failing substate). -/
 theorem fig14_conclusion_fails :
     ¬ support fig14Model (.univ .x (.conj (.poss Px) (.poss Qx)))
       fig14State := by
@@ -326,10 +306,8 @@ theorem fig14_conclusion_fails :
   obtain rfl := Option.some.inj hd
   exact Fig14Atom.noConfusion hP.1
 
-/-- **Fact 4 (obviation)** of [aloni-vanormondt-2023]: the universal
-    quantifier obviates the free-choice/ignorance effect —
-    `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)`, witnessed by the Fig. 14
-    countermodel. -/
+/-- **Fact 4** (obviation): `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)` — the
+    universal quantifier obviates the free-choice/ignorance effect. -/
 theorem fact4_obviation :
     ∃ (M : Model TwoAtomWorld Fig14Atom Fig14Atom Predicate)
       (s : Finset (Index TwoAtomWorld QVar Fig14Atom)),

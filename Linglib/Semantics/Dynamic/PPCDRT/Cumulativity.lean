@@ -71,7 +71,7 @@ theorem cumulative_eq_iff_finset_eq (x y : Finset E) :
     This theorem is the formal realisation of [langendoen-1978]'s
     reciprocity-as-cumulativity claim within PPCDRT. -/
 theorem groupIdentityCond_iff_cumulative_eq
-    (uAnaph uAnt : Nat) (S : PluralAssign E) (xa xb : Finset E)
+    (uAnaph uAnt : Nat) (S : PluralAssign ℕ E) (xa xb : Finset E)
     (hxa : ∀ d, d ∈ xa ↔ d ∈ PluralAssign.sumDref S uAnaph)
     (hxb : ∀ d, d ∈ xb ↔ d ∈ PluralAssign.sumDref S uAnt) :
     groupIdentityCond uAnaph uAnt S ∅ ↔

@@ -25,7 +25,7 @@ the PPCDRT substrate (`Semantics/Dynamic/PPCDRT/`):
 
 | Paper § | Topic                                  | Witness type               |
 |---------|----------------------------------------|----------------------------|
-| §3      | Scope readings (narrow / wide)         | `PluralAssign Person`      |
+| §3      | Scope readings (narrow / wide)         | `PluralAssign ℕ Person`      |
 | §3.3    | Crossed readings (4-cell classification) | `RecipReading` triples   |
 | §4.2    | Underspecified RECIP/REFL              | `underspecifiedCond` lattice |
 | §4.4    | Multiple reciprocals                   | Two-reciprocal witness     |
@@ -91,11 +91,11 @@ abbrev u₃ : Nat := 3
 abbrev u₄ : Nat := 4
 
 /-- A partial assignment with `u₁ ↦ a, u₂ ↦ b`. -/
-def assign2 (a b : Person) : PartialAssign Person :=
+def assign2 (a b : Person) : PartialAssign ℕ Person :=
   PartialAssign.update (PartialAssign.update PartialAssign.empty u₁ a) u₂ b
 
 /-- A partial assignment with `u₁ ↦ a, u₂ ↦ b, u₃ ↦ c`. -/
-def assign3 (a b c : Person) : PartialAssign Person :=
+def assign3 (a b c : Person) : PartialAssign ℕ Person :=
   PartialAssign.update (assign2 a b) u₃ c
 
 @[simp] theorem assign2_u₁ (a b : Person) : assign2 a b u₁ = some a := by
@@ -125,12 +125,12 @@ def assign3 (a b c : Person) : PartialAssign Person :=
     has herself as the embedded subject pronoun. The matrix subject (u₁)
     and the embedded subject pronoun (u₂) have IDENTICAL value-sets:
     {Tracy, Chris}. This is group identity (∪u₂ = ∪u₁). -/
-def narrowScopeState : PluralAssign Person :=
-  PluralAssign.ofPred (λ g =>
+def narrowScopeState : PluralAssign ℕ Person :=
+  setOf (λ g =>
     g = assign2 .tracy .tracy ∨ g = assign2 .chris .chris)
 
 /-- Membership lemma. -/
-theorem narrowScopeState_mem (g : PartialAssign Person) :
+theorem narrowScopeState_mem (g : PartialAssign ℕ Person) :
     g ∈ narrowScopeState ↔ g = assign2 .tracy .tracy ∨ g = assign2 .chris .chris :=
   Iff.rfl
 
@@ -192,7 +192,7 @@ theorem narrowScope_groupIdentity :
     `wideScopeState := narrowScopeState` reflects this collapse honestly:
     until the substrate exposes `δ_w`, the two states are extensionally
     identical for the 2-element domain. -/
-def wideScopeState : PluralAssign Person := narrowScopeState
+def wideScopeState : PluralAssign ℕ Person := narrowScopeState
 
 /-- **Wide scope is binding** (paper §3, eq 51). In every state of the
     plural information state, the embedded subject pronoun's value
@@ -218,11 +218,11 @@ theorem wideScope_also_groupIdentity :
     and u₂ (embedded subject) are group-identical (each girl thought of
     the group); u₃ (reciprocal) takes the *other* girl's value at each
     state. Tracy saw Chris, Chris saw Tracy. -/
-def reciprocityState : PluralAssign Person :=
-  PluralAssign.ofPred (λ g =>
+def reciprocityState : PluralAssign ℕ Person :=
+  setOf (λ g =>
     g = assign3 .tracy .tracy .chris ∨ g = assign3 .chris .chris .tracy)
 
-theorem reciprocityState_mem (g : PartialAssign Person) :
+theorem reciprocityState_mem (g : PartialAssign ℕ Person) :
     g ∈ reciprocityState ↔
     g = assign3 .tracy .tracy .chris ∨ g = assign3 .chris .chris .tracy :=
   Iff.rfl
@@ -328,14 +328,14 @@ theorem crossed_reading_high_groupIdentity_groupIdentity :
     They permit reflexive (binding-style), reciprocal, and mixed
     readings. The semantic core is just `groupIdentityCond` —
     reciprocity is one specialization among others. -/
-theorem underspec_admits_binding (uAnaph uAnt : Nat) (S : PluralAssign Person)
+theorem underspec_admits_binding (uAnaph uAnt : Nat) (S : PluralAssign ℕ Person)
     (Δ : Set Nat) (h : bindingCond uAnaph uAnt S Δ) :
     underspecifiedCond uAnaph uAnt S Δ :=
   binding_implies_groupIdentity uAnaph uAnt S Δ h
 
 /-- Underspecified anaphors also admit reciprocity readings —
     reciprocity strengthens underspecified by adding distinctness. -/
-theorem underspec_admits_reciprocity (uAnaph uAnt : Nat) (S : PluralAssign Person)
+theorem underspec_admits_reciprocity (uAnaph uAnt : Nat) (S : PluralAssign ℕ Person)
     (Δ : Set Nat) (h : reciprocityCond uAnaph uAnt S Δ) :
     underspecifiedCond uAnaph uAnt S Δ :=
   reciprocity_strengthens_underspecified uAnaph uAnt S Δ h
@@ -359,8 +359,8 @@ theorem underspec_admits_reciprocity (uAnaph uAnt : Nat) (S : PluralAssign Perso
     Distinctness conditions per eq 85b: ∂(u₁ ≠ u₂) and ∂(u₂ ≠ u₄).
     Each reciprocal is distinct from its OWN antecedent. There is no
     constraint between u₃ (pictures) and any reciprocal. -/
-def multipleRecipState : PluralAssign Person :=
-  PluralAssign.ofPred (λ g =>
+def multipleRecipState : PluralAssign ℕ Person :=
+  setOf (λ g =>
     -- Row 1: Tracy gave Chris a picture (matty as placeholder pic₁) of Tracy
     g = (PartialAssign.update (assign3 .tracy .chris .matty) u₄ .tracy) ∨
     -- Row 2: Chris gave Tracy a picture (matty as placeholder pic₂) of Chris
@@ -400,8 +400,8 @@ theorem multipleRecip_both_distinct :
     not exercise the equivalence-class structure that distribution
     builds. The δ-side of the analysis is substrate-deferred (PPCDRT
     `delta` was trimmed in P6). -/
-def forkChainState : PluralAssign Person :=
-  PluralAssign.ofPred (λ g =>
+def forkChainState : PluralAssign ℕ Person :=
+  setOf (λ g =>
     g = assign2 .tracy .chris ∨        -- tracy → chris
     g = assign2 .chris .matty ∨        -- chris → matty
     g = assign2 .matty .tracy)         -- matty → tracy
@@ -437,8 +437,8 @@ theorem forkChain_not_strong :
     fails (no per-state distinctness), but the sentence is felicitous
     because the collective interpretation of u₁ does the predicational
     work. Paper p. 39. -/
-def collectiveState : PluralAssign Person :=
-  PluralAssign.ofPred (λ g =>
+def collectiveState : PluralAssign ℕ Person :=
+  setOf (λ g =>
     g = assign3 .tracy .tracy .tracy ∨        -- tracy works on tracy's ship
     g = assign3 .chris .chris .chris ∨        -- chris on chris's
     g = assign3 .matty .matty .matty)         -- matty on matty's
@@ -609,7 +609,7 @@ theorem R_u_reciprocity_no_diagonal :
 
     The state here witnesses the pairwise reading: in each state, u₃
     (the picture's subject) and u₄ (the receiver) form a swap pair. -/
-def multiRecipPairwiseState : PluralAssign Person := multipleRecipState
+def multiRecipPairwiseState : PluralAssign ℕ Person := multipleRecipState
 
 /-- The pairwise `R_u u₂ u₁` for the first reciprocal (each other₁,
     antecedent u₁) has exactly two pairs: (Chris, Tracy) and (Tracy, Chris)
@@ -635,8 +635,8 @@ theorem multiRecipPairwise_R_u :
     Three-element antecedent group; the wide-scope reading on the matrix
     plural information state is witnessed below. Paper eq 136 shows the
     sample output state with three girls × two complement-mate pairs. -/
-def threeWayWideState : PluralAssign Person :=
-  PluralAssign.ofPred (λ g =>
+def threeWayWideState : PluralAssign ℕ Person :=
+  setOf (λ g =>
     g = assign3 .chris .chris .tracy ∨   -- chris thinks chris praised tracy
     g = assign3 .chris .chris .matty ∨   -- chris thinks chris praised matty
     g = assign3 .tracy .tracy .chris ∨   -- tracy thinks tracy praised chris

@@ -44,6 +44,6 @@ namespace PPCDRT
     Δ = ∅). It is preserved in the type so consumers that DO need
     distribution (e.g. a future Dotlačil 2013 study file) can plug in
     without changing this signature. -/
-abbrev PPDRSCond (E : Type*) := PluralAssign E → Set Nat → Prop
+abbrev PPDRSCond (E : Type*) := PluralAssign ℕ E → Set Nat → Prop
 
 end PPCDRT

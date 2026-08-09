@@ -1,99 +1,66 @@
 import Mathlib.Data.Finset.Union
 import Mathlib.Data.Fintype.Basic
-import Linglib.Logic.FirstOrder.Kripke
+import Linglib.Logic.Assignment
+import Linglib.Logic.Modal.FirstOrder.Kripke
+import Linglib.Logic.Modal.FirstOrder.Monadic
 import Linglib.Logic.Team.Algebra
 import Linglib.Logic.Bilateral.Defs
 
 /-!
 # Quantified bilateral state-based modal logic (QBSML)
 
-Core definitions for QBSML, the first-order extension of BSML ([aloni-2022],
-[anttila-2021]) presented in [aloni-vanormondt-2023]: indices pair a world
-with a partial assignment, states are finite sets of indices, and the formula
-language adds predicates and quantifiers, the latter evaluated via state
-extensions. Bilateral evaluation, split disjunction (via
-`Team.splitsAs`), and the `NE` atom carry over from BSML; frame
-conditions are inherited through the world projection `s↓`, so `support` fits
-the `Team.isFlat_iff` template at the point type
-`Index W Var Domain` exactly as BSML's does at `W` (see
-`Logic/Modal/QBSML/Properties.lean`).
+QBSML ([aloni-vanormondt-2023]) is the first-order extension of BSML
+([aloni-2022], [anttila-2021]). A formula is evaluated bilaterally —
+supported or anti-supported — at a *state*: a finite set of *indices*
+`⟨w, g⟩` pairing a world with a partial variable assignment. Quantifiers
+are interpreted by extending states, disjunction by splitting them, and
+the non-emptiness atom `NE` — the only source of non-classical behaviour —
+by state non-emptiness.
 
-## Main declarations
+## Main definitions
 
-* `Assignment`, `Index`: partial variable assignments and world–assignment
-  pairs ([aloni-vanormondt-2023] Definition 4.2).
-* `State.extendIndividual`, `State.extendUniversal`, `State.extendFunctional`:
-  the state extensions `s[x/d]`, `s[x]`, `s[x/h]` interpreting quantifiers
-  ([aloni-vanormondt-2023] Definitions 4.5–4.7).
-* `State.modalLift`, `State.worldProj`: pairing accessible worlds with an
-  assignment, and the world projection `s↓`.
-* `Formula`: the formula language ([aloni-vanormondt-2023]
-  Definition 4.1), with `□` derived as `Formula.nec`.
-* `Formula.IsNEFree`: the NE-free fragment.
-* `monadicLang`, `monadicStructure`: the monadic first-order signature on
-  `Const` and `Pred` and its structures, as a mathlib `FirstOrder.Language`.
-* `Model` (an abbreviation for `FirstOrder.Language.KripkeStructure`
-  over `monadicLang`), `eval`, `support`, `antiSupport`: bilateral evaluation
-  ([aloni-vanormondt-2023] Definition 4.9), with the interpretation carried
-  as a world-indexed family of mathlib structures.
-* `isBilateral`: `support`/`antiSupport` form a
-  `Bilateral.IsBilateral` under `Formula.neg`.
+* `Index`, `State.worldProj`: indices `⟨w, g⟩` and the world projection `s↓`.
+* `State.extendIndividual`, `State.extendUniversal`,
+  `State.extendFunctional`: the state extensions `s[x/d]`, `s[x]`, `s[x/h]`.
+* `State.modalLift`: a set of worlds, paired with one assignment.
+* `Formula`: the formula language; `Formula.nec` is the derived `□`;
+  `Formula.IsNEFree` the NE-free fragment.
+* `Model`, `Model.ofMonadic`: models, as `KripkeStructure`s over
+  `Language.monadicWithConstants`.
+* `eval`, `support`, `antiSupport`: bilateral evaluation.
 * `KripkeStructure.IsStateBased`, `KripkeStructure.IsIndisputable`: frame
-  conditions
-  via `s↓` ([aloni-vanormondt-2023] Definition 4.10).
+  conditions via `s↓`.
 
 ## Implementation notes
 
-* Predicates are monadic and the paper's terms `t := c | x` appear as the
-  two atom constructors `pred` (variable) and `predc` (constant), so there is
-  no separate term type: [aloni-vanormondt-2023] interprets `Pⁿ(t₁ … tₙ)` for
-  arbitrary arity; higher arities can be added without changing the substrate
-  abstraction.
-* The paper's domain `D` (part of `M = ⟨W, D, R, I⟩`) is a `Domain : Type*`
-  parameter, with `[Fintype Domain]` where the universal extension must range
-  over all of it. The interpretation `I` is a world-indexed family of mathlib
-  first-order structures: `Model` is `FirstOrder.Language.KripkeStructure`
-  over the monadic signature, and `KripkeStructure.pInterp` /
-  `KripkeStructure.cInterp` read the world-dependent (non-rigid) predicate
-  and constant denotations off `Structure.RelMap` / `Structure.funMap`.
-* The paper requires all indices in a state to share an assignment domain
-  (`dom gᵢ = dom gⱼ`); this is not enforced at the type level — the state
-  operations preserve it.
-* `□` is not primitive: the paper takes `□` primitive and derives `◇`; we
-  invert this, so `eval`'s `poss` clauses match the paper's derived
-  `◇`-clauses and `Formula.nec` matches its primitive `□`.
+* The paper takes `□` primitive and derives `◇`; we invert this, so
+  `eval`'s `poss` clauses match the paper's derived `◇`-clauses.
+* The paper's requirement that all indices of a state share an assignment
+  domain is not enforced at the type level; the state operations
+  preserve it.
 -/
 
 namespace QBSML
 
+open FirstOrder
+
 variable {W Var Domain : Type*}
 
-/-! ### Assignments and indices -/
-
-/-- A partial assignment of domain values to variables
-    ([aloni-vanormondt-2023] Definition 4.2: `gᵢ : V → D`); `Option D`
-    represents the partiality. -/
-abbrev Assignment (Var Domain : Type*) := Var → Option Domain
+/-! ### Indices -/
 
 /-- An index is a (world, assignment) pair ([aloni-vanormondt-2023]
-    Definition 4.2: `i = ⟨wᵢ, gᵢ⟩`). -/
-abbrev Index (W Var Domain : Type*) := W × Assignment Var Domain
+    Definition 4.2: `i = ⟨wᵢ, gᵢ⟩`), with `gᵢ` a `PartialAssign`. -/
+abbrev Index (W Var Domain : Type*) := W × PartialAssign Var Domain
 
 /-- The world component of an index. -/
 abbrev Index.world (i : Index W Var Domain) : W := i.1
 
 /-- The assignment component of an index. -/
-abbrev Index.assign (i : Index W Var Domain) : Assignment Var Domain := i.2
+abbrev Index.assign (i : Index W Var Domain) : PartialAssign Var Domain := i.2
 
 section Update
 
 variable [DecidableEq Var]
-
-/-- Update an assignment at a single variable: `g[x/d](y) = d` if `y = x`,
-    else `g(y)`. -/
-def Assignment.update (g : Assignment Var Domain) (x : Var) (d : Domain) :
-    Assignment Var Domain :=
-  Function.update g x (some d)
 
 /-- Update an index's assignment ([aloni-vanormondt-2023] Definitions 4.3–4.4:
     `i[x/d] := ⟨wᵢ, gᵢ[x/d]⟩`, with the assignment update `gᵢ[x/d]` as
@@ -277,11 +244,11 @@ variable [DecidableEq W] [Fintype Var] [DecidableEq Domain]
 /-- **Modal pairing** `R(wᵢ)[gᵢ]`: pair each accessible world with the
     assignment of the original index. Used in modal evaluation
     ([aloni-vanormondt-2023] Definition 4.9). -/
-def State.modalLift (X : Finset W) (g : Assignment Var Domain) :
+def State.modalLift (X : Finset W) (g : PartialAssign Var Domain) :
     Finset (Index W Var Domain) :=
   X.image (fun v => (v, g))
 
-@[simp] theorem State.mem_modalLift {X : Finset W} {g : Assignment Var Domain}
+@[simp] theorem State.mem_modalLift {X : Finset W} {g : PartialAssign Var Domain}
     {i : Index W Var Domain} :
     i ∈ State.modalLift X g ↔ i.world ∈ X ∧ i.assign = g := by
   constructor
@@ -292,12 +259,12 @@ def State.modalLift (X : Finset W) (g : Assignment Var Domain) :
     exact Finset.mem_image.mpr ⟨i.world, h, rfl⟩
 
 @[simp] theorem State.modalLift_singleton (w : W)
-    (g : Assignment Var Domain) :
+    (g : PartialAssign Var Domain) :
     State.modalLift {w} g = {(w, g)} :=
   Finset.image_singleton ..
 
 @[simp] theorem State.worldProj_modalLift (X : Finset W)
-    (g : Assignment Var Domain) :
+    (g : PartialAssign Var Domain) :
     State.worldProj (State.modalLift X g) = X := by
   ext w
   simp only [State.mem_worldProj, State.mem_modalLift]
@@ -310,7 +277,7 @@ def State.modalLift (X : Finset W) (g : Assignment Var Domain) :
     worlds and pairing them back with the same assignment: every index of
     `s ⊆ State.modalLift X g` carries the assignment `g`. -/
 theorem State.modalLift_worldProj_of_subset {s : Finset (Index W Var Domain)}
-    {X : Finset W} {g : Assignment Var Domain}
+    {X : Finset W} {g : PartialAssign Var Domain}
     (h : s ⊆ State.modalLift X g) :
     State.modalLift (State.worldProj s) g = s := by
   ext i
@@ -325,7 +292,7 @@ theorem State.modalLift_worldProj_of_subset {s : Finset (Index W Var Domain)}
 
 theorem State.worldProj_subset_of_subset_modalLift
     {s : Finset (Index W Var Domain)} {X : Finset W}
-    {g : Assignment Var Domain} (h : s ⊆ State.modalLift X g) :
+    {g : PartialAssign Var Domain} (h : s ⊆ State.modalLift X g) :
     State.worldProj s ⊆ X := by
   rw [← State.worldProj_modalLift X g]
   exact State.worldProj_mono h
@@ -432,97 +399,36 @@ theorem Formula.IsNEFree.mapAtoms
   | exi x _ ih => exact .exi x ih
   | univ x _ ih => exact .univ x ih
 
-/-! ### The monadic signature and models -/
-
-/-- The monadic signature on `Const` and `Pred`: one individual constant per
-    `Const`, one unary relation symbol per `Pred` — [aloni-vanormondt-2023]
-    Definition 4.1's signature (terms `t := c | x`, monadic relations). -/
-def monadicLang.{u, v} (Const : Type u) (Pred : Type v) :
-    FirstOrder.Language where
-  Functions := fun n => match n with
-    | 0 => Const
-    | _ => PEmpty
-  Relations := fun n => match n with
-    | 1 => Pred
-    | _ => PEmpty
-
-/-- A constant as a symbol of the monadic signature (defeq; the parametric
-    analogue of mathlib's per-symbol abbreviations, cf.
-    `Fragments/English/Toy.lean`). -/
-abbrev monadicConst {Const Pred : Type*} (c : Const) :
-    (monadicLang Const Pred).Constants := c
-
-/-- A predicate as a relation symbol of the monadic signature (defeq). -/
-abbrev monadicRel {Const Pred : Type*} (P : Pred) :
-    (monadicLang Const Pred).Relations 1 := P
-
-/-- The `monadicLang Const Pred` structure a constant interpretation and a
-    predicate valuation induce. -/
-@[reducible] def monadicStructure {Const Pred Domain : Type*}
-    (κ : Const → Domain) (V : Pred → Domain → Prop) :
-    (monadicLang Const Pred).Structure Domain where
-  funMap := fun {n} f => match n, f with
-    | 0, c => fun _ => κ c
-    | _ + 1, f => f.elim
-  RelMap := fun {n} r => match n, r with
-    | 1, P => fun v => V P (v 0)
-    | 0, r => r.elim
-    | _ + 2, r => r.elim
-
-@[simp] theorem monadicStructure_relMap {Const Pred Domain : Type*}
-    (κ : Const → Domain) (V : Pred → Domain → Prop) (P : Pred)
-    (v : Fin 1 → Domain) :
-    (monadicStructure κ V).RelMap (monadicRel P) v ↔ V P (v 0) :=
-  Iff.rfl
-
-@[simp] theorem monadicStructure_funMap {Const Pred Domain : Type*}
-    (κ : Const → Domain) (V : Pred → Domain → Prop) (c : Const)
-    (v : Fin 0 → Domain) :
-    (monadicStructure κ V).funMap (monadicConst (Pred := Pred) c) v = κ c :=
-  rfl
+/-! ### Models -/
 
 /-- A QBSML model ([aloni-vanormondt-2023] Definition 4.2:
     `M = ⟨W, D, R, I⟩`) **is** a constant-domain first-order Kripke
-    structure over the monadic signature: accessibility `R` plus the
-    world-indexed interpretation `I`, carried as a family of mathlib
-    structures (`FirstOrder.Language.KripkeStructure`) — true by
+    structure over the monadic signature with constants: accessibility `R`
+    plus the world-indexed interpretation `I`, carried as a family of
+    mathlib structures (`FirstOrder.Language.KripkeStructure`) — true by
     construction, not by bridge. -/
 abbrev Model (W : Type*) (Domain : Type*) (Const : Type*)
     (Pred : Type*) :=
-  FirstOrder.Language.KripkeStructure (monadicLang Const Pred) W Domain
+  FirstOrder.Language.KripkeStructure
+    (Language.monadicWithConstants Const Pred) W Domain
 
-/-- The predicate denotation at a world, read off the model's structure
-    family via `Structure.RelMap` — the world-relativized `I(w)(Pⁿ)` of
-    [aloni-vanormondt-2023] Definition 4.2, specialised to monadic `P`
-    (cf. `Semantics.Composition.Model.pred₁ext`). -/
-def _root_.FirstOrder.Language.KripkeStructure.pInterp
-    {W Domain Const Pred : Type*}
-    (M : Model W Domain Const Pred) (P : Pred) (w : W) (d : Domain) :
-    Prop :=
-  (M.interp w).RelMap (monadicRel P) (fun _ => d)
+/-- The QBSML model with accessibility `access`, constant interpretation
+    `κ`, and valuation `V`. -/
+def Model.ofMonadic {W Domain Const Pred : Type*} (access : W → Finset W)
+    (κ : W → Const → Domain) (V : W → Pred → Domain → Prop) :
+    Model W Domain Const Pred :=
+  ⟨access, fun w => Language.monadicWithConstantsStructure (κ w) (V w)⟩
 
-/-- The constant denotation at a world — the world-relative `I(w)(c)` of
-    [aloni-vanormondt-2023] Definitions 4.2 and 4.8, read off
-    `Structure.funMap` (cf. `Semantics.Composition.Model.const`). -/
-def _root_.FirstOrder.Language.KripkeStructure.cInterp
-    {W Domain Const Pred : Type*}
-    (M : Model W Domain Const Pred) (c : Const) (w : W) : Domain :=
-  (M.interp w).funMap (monadicConst c) default
-
-@[simp] theorem _root_.FirstOrder.Language.KripkeStructure.pInterp_monadicStructure
-    {W Domain Const Pred : Type*} (access : W → Finset W)
-    (κ : W → Const → Domain) (V : W → Pred → Domain → Prop) (P : Pred)
-    (w : W) (d : Domain) :
-    FirstOrder.Language.KripkeStructure.pInterp
-      ⟨access, fun w => monadicStructure (κ w) (V w)⟩ P w d ↔ V w P d :=
+@[simp] theorem pInterp_ofMonadic {W Domain Const Pred : Type*}
+    (access : W → Finset W) (κ : W → Const → Domain)
+    (V : W → Pred → Domain → Prop) (P : Pred) (w : W) (d : Domain) :
+    (Model.ofMonadic access κ V).pInterp P w d ↔ V w P d :=
   Iff.rfl
 
-@[simp] theorem _root_.FirstOrder.Language.KripkeStructure.cInterp_monadicStructure
-    {W Domain Const Pred : Type*} (access : W → Finset W)
-    (κ : W → Const → Domain) (V : W → Pred → Domain → Prop) (c : Const)
-    (w : W) :
-    FirstOrder.Language.KripkeStructure.cInterp
-      ⟨access, fun w => monadicStructure (κ w) (V w)⟩ c w = κ w c :=
+@[simp] theorem cInterp_ofMonadic {W Domain Const Pred : Type*}
+    (access : W → Finset W) (κ : W → Const → Domain)
+    (V : W → Pred → Domain → Prop) (c : Const) (w : W) :
+    (Model.ofMonadic access κ V).cInterp c w = κ w c :=
   rfl
 
 /-! ### Bilateral evaluation -/
