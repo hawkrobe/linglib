@@ -23,9 +23,9 @@ exactly the axes it touches.
 
 ## Main declarations
 
-* `Proform` — a pro-form substitutes for members of a form-class, its domain
-  ([bloomfield-1933]); `Proform.SubstitutesFor` is derived — domain membership
-  plus φ-agreement (`HasPhi.Agree`, from `Features/Phi.lean`).
+* `Proform` — a pro-form takes its antecedents from a fixed form-class, its
+  domain ([bloomfield-1933]); `Proform.CandidateAntecedent` is derived — domain
+  membership plus φ-agreement (`HasPhi.Agree`, from `Features/Phi.lean`).
 * `Bound`, `HasNumber`, `HasPerson`, `HasCase`, `HasGender` instances for the
   pronoun carriers.
 * `bindingClassOf_toWord`, `numberOf_toWord`, `personOf_toWord`, `caseOf_toWord`,
@@ -42,9 +42,9 @@ Three axes are fields, not classes: deficiency (`Pronoun.strength`, per-series
 and register/referential person (`PersonalPronoun` fields, borne by one
 carrier).
 
-`Proform.SubstitutesFor` is token-level: whether a substitution site is a bare
-element or hosts deleted structure ([hankamer-sag-1976]; [baltin-2012]) is a
-theory question for study files.
+`Proform.CandidateAntecedent` is token-level: whether an anaphoric site is a
+bare pro-form or hosts deleted structure ([hankamer-sag-1976]; [baltin-2012])
+is a theory question for study files.
 -/
 
 open Morphology (Word)
@@ -58,19 +58,21 @@ instance : HasPhi PersonalPronoun := ⟨fun p => p.toPronoun.toWord.phi⟩
 theorem HasPhi.agree_toWord {β : Type*} [HasPhi β] (p : Pronoun) (b : β) :
     HasPhi.Agree p b ↔ HasPhi.Agree p.toWord b := Iff.rfl
 
-/-- A pro-form is an expression that substitutes for members of a form-class —
-its *domain* ([bloomfield-1933]). -/
+/-- A pro-form takes its antecedents from a fixed form-class — its *domain*
+(the notion originates with [bloomfield-1933]'s substitutes). -/
 class Proform (α : Type*) where
-  /-- `w` is in the form-class `a` replaces. -/
+  /-- `w` is in the form-class `a` stands for. -/
   Domain : α → Word → Prop
 
-/-- A pro-form substitutes for the domain members it φ-agrees with. -/
-def Proform.SubstitutesFor {α : Type*} [Proform α] [HasPhi α] (a : α) (w : Word) : Prop :=
+/-- A candidate antecedent for a pro-form is a domain member that φ-agrees
+with it. -/
+def Proform.CandidateAntecedent {α : Type*} [Proform α] [HasPhi α]
+    (a : α) (w : Word) : Prop :=
   Proform.Domain a w ∧ HasPhi.Agree a w
 
-/-- Substitution requires φ-agreement. -/
-theorem Proform.agree_of_substitutesFor {α : Type*} [Proform α] [HasPhi α] {a : α}
-    {w : Word} (h : SubstitutesFor a w) : HasPhi.Agree a w := h.2
+/-- A candidate antecedent φ-agrees with its pro-form. -/
+theorem Proform.CandidateAntecedent.agree {α : Type*} [Proform α] [HasPhi α] {a : α}
+    {w : Word} (h : CandidateAntecedent a w) : HasPhi.Agree a w := h.2
 
 /-- A pronoun's domain is the nominal tokens. -/
 instance : Proform Pronoun := ⟨fun _ w => Binding.isNominalCat w.cat = true⟩
@@ -84,8 +86,8 @@ instance (p : PersonalPronoun) (w : Word) : Decidable (Proform.Domain p w) :=
   inferInstanceAs (Decidable (_ = true))
 
 instance {α : Type*} [Proform α] [HasPhi α] (a : α) (w : Word)
-    [Decidable (Proform.Domain a w)] : Decidable (Proform.SubstitutesFor a w) := by
-  unfold Proform.SubstitutesFor; infer_instance
+    [Decidable (Proform.Domain a w)] : Decidable (Proform.CandidateAntecedent a w) := by
+  unfold Proform.CandidateAntecedent; infer_instance
 
 /-! ### The pronoun carriers' `Bound` instances, and the faithfulness certificate -/
 
