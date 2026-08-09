@@ -1,5 +1,4 @@
 import Linglib.Semantics.Spatial.Trace
-import Mathlib.Data.List.Infix
 
 /-!
 # [zwarts-2005] *Prepositional Aspect and the Algebra of Paths*
@@ -7,17 +6,13 @@ import Mathlib.Data.List.Infix
 Directional-PP denotations are sets of paths; what distinguishes telic PPs
 (*to the house*) from atelic PPs (*towards the house*) is closure under the
 **partial** concatenation operation: atelic PPs are cumulative, telic PPs are
-not (21). The paper's Appendix A path algebra ⟨P, +⟩ is formalized here in
-discrete form — paths as location sequences rather than continuous
-constant-speed curves; Zwarts notes (§2) that the axiomatic and constructive
-routes are equally compatible with the algebra.
+not (21). The paper's Appendix A path algebra — `Spatial.Path` with
+`Path.IsConcat` (67) and the subpath order (68) — lives in
+`Semantics/Spatial/Path.lean`; this file formalizes the aspectual system
+built on it.
 
 ## Main definitions
 
-* `Path`, `Path.IsConcat` — the algebra: concatenation (67) is defined only
-  when the first path ends where the second starts; the subpath order (68) is
-  `Subpath`, with `subpath_iff_infix` the working characterization and a
-  `PartialOrder` instance.
 * `Cumulative` (17b, with the existence clause of fn. 7), `Bounded` (21) —
   stated over any ternary concatenation relation, since Appendix A pairs the
   path algebra with an event algebra of the same shape.
@@ -58,141 +53,10 @@ routes are equally compatible with the algebra.
 namespace Zwarts2005
 
 open Mereology (QUA)
+open Spatial
+open scoped Spatial.Path
 
 variable {Loc α : Type*}
-
-/-! ### The path algebra (Appendix A) -/
-
-/-- A path in discrete form: the visited locations, as a start plus later
-    stops. Zwarts's paths are continuous constant-speed curves `[0,1] → ℝ³`;
-    the sequence rendering keeps the algebra — endpoints, partial
-    concatenation, subpaths — while staying computable. -/
-structure Path (Loc : Type*) where
-  /-- The starting location p(0). -/
-  source : Loc
-  /-- The later locations, ending at p(1); empty for a constant path. -/
-  steps : List Loc
-  deriving DecidableEq, Repr
-
-namespace Path
-
-/-- The endpoint p(1). -/
-def goal (p : Path Loc) : Loc := p.steps.getLastD p.source
-
-/-- The full point sequence p(0) … p(1). -/
-def points (p : Path Loc) : List Loc := p.source :: p.steps
-
-/-- The constant path at a location: the identity elements of concatenation
-    and the least elements of the subpath order (Appendix A). -/
-def const (l : Loc) : Path Loc := ⟨l, []⟩
-
-@[simp] theorem goal_const (l : Loc) : (const l).goal = l := rfl
-
-theorem points_ne_nil (p : Path Loc) : p.points ≠ [] := List.cons_ne_nil _ _
-
-theorem points_injective : Function.Injective (points : Path Loc → List Loc) := by
-  rintro ⟨s, l⟩ ⟨s', l'⟩ h
-  simpa [points] using h
-
-private theorem getLastD_append (l₁ l₂ : List α) (d : α) :
-    (l₁ ++ l₂).getLastD d = l₂.getLastD (l₁.getLastD d) := by
-  simp only [List.getLastD_eq_getLast?, List.getLast?_append]
-  cases l₂.getLast? <;> simp
-
-/-- (67): `r` is the concatenation `p + q`. Partial — defined only when `p`
-    ends where `q` starts. Associative, neither commutative nor idempotent
-    (16). -/
-def IsConcat (p q r : Path Loc) : Prop :=
-  p.goal = q.source ∧ r = ⟨p.source, p.steps ++ q.steps⟩
-
-theorem IsConcat.source_eq {p q r : Path Loc} (h : IsConcat p q r) :
-    r.source = p.source := by rw [h.2]
-
-theorem IsConcat.goal_eq {p q r : Path Loc} (h : IsConcat p q r) :
-    r.goal = q.goal := by
-  obtain ⟨h1, rfl⟩ := h
-  show (p.steps ++ q.steps).getLastD p.source = q.goal
-  rw [getLastD_append]
-  show q.steps.getLastD p.goal = q.goal
-  rw [h1]; rfl
-
-theorem IsConcat.points_eq {p q r : Path Loc} (h : IsConcat p q r) :
-    r.points = p.points ++ q.steps := by
-  rw [h.2]; simp [points]
-
-/-- Every pair of constant paths at the same point concatenates to itself. -/
-theorem isConcat_const (l : Loc) : IsConcat (const l) (const l) (const l) :=
-  ⟨rfl, rfl⟩
-
-/-! ### The subpath order (68) -/
-
-/-- (68): `p` is a subpath of `q` iff `r + p + r′ = q` for some `r`, `r′`. -/
-def Subpath (p q : Path Loc) : Prop :=
-  ∃ r r' m, IsConcat r p m ∧ IsConcat m r' q
-
-/-- The working characterization: subpath-hood is infix-hood of point
-    sequences. -/
-theorem subpath_iff_infix {p q : Path Loc} :
-    Subpath p q ↔ p.points <:+: q.points := by
-  constructor
-  · rintro ⟨r, r', m, hrp, hmq⟩
-    refine ⟨r.points.dropLast, r'.steps, ?_⟩
-    have hgoal : r.points.getLast r.points_ne_nil = p.source := by
-      have : r.points.getLast r.points_ne_nil = r.goal := by
-        cases h : r.steps <;>
-          simp [points, goal, h, List.getLast_cons,
-            List.getLastD_eq_getLast?, List.getLast?_eq_some_getLast]
-      rw [this, hrp.1]
-    calc r.points.dropLast ++ p.points ++ r'.steps
-        = (r.points.dropLast ++ [p.source]) ++ p.steps ++ r'.steps := by
-          simp [points]
-      _ = r.points ++ p.steps ++ r'.steps := by
-          rw [← hgoal, List.dropLast_append_getLast]
-      _ = q.points := by rw [hmq.points_eq, hrp.points_eq]
-  · rintro ⟨A, B, hAB⟩
-    match A with
-    | [] =>
-      obtain ⟨hs, hst⟩ : q.source = p.source ∧ q.steps = p.steps ++ B := by
-        simpa [points, List.cons.injEq] using hAB.symm
-      exact ⟨const p.source, ⟨p.goal, B⟩, p,
-        ⟨rfl, by cases p; rfl⟩, ⟨rfl, by cases q; simp_all [points]⟩⟩
-    | a :: A' =>
-      obtain ⟨hs, hst⟩ : q.source = a ∧ q.steps = A' ++ (p.source :: p.steps) ++ B := by
-        simpa [points, List.cons.injEq, List.append_assoc] using hAB.symm
-      refine ⟨⟨a, A' ++ [p.source]⟩, ⟨p.goal, B⟩,
-        ⟨a, (A' ++ [p.source]) ++ p.steps⟩,
-        ⟨by simp [goal], rfl⟩,
-        ⟨?_, ?_⟩⟩
-      · show ((A' ++ [p.source]) ++ p.steps).getLastD a = p.goal
-        rw [getLastD_append, getLastD_append]
-        rfl
-      · cases q
-        simp_all [points, List.append_assoc]
-
-instance : PartialOrder (Path Loc) where
-  le := Subpath
-  le_refl p := subpath_iff_infix.mpr (List.infix_refl _)
-  le_trans _ _ _ hab hbc := subpath_iff_infix.mpr
-    ((subpath_iff_infix.mp hab).trans (subpath_iff_infix.mp hbc))
-  le_antisymm _ _ hab hba := points_injective
-    (List.infix_antisymm (subpath_iff_infix.mp hab) (subpath_iff_infix.mp hba))
-
-/-- Constant paths are least: `const p.source ≤ p`. -/
-theorem const_source_le (p : Path Loc) : const p.source ≤ p :=
-  subpath_iff_infix.mpr ⟨[], p.steps, rfl⟩
-
-/-- Bridge to the endpoint skeleton `Spatial.Path` of the substrate. -/
-def toSpatial (p : Path Loc) : Spatial.Path Loc := ⟨p.source, p.goal⟩
-
-/-- Concatenable paths are adjacent in the substrate's endpoint-sharing
-    sense (`Spatial.Path.adjacent`). -/
-theorem IsConcat.toSpatial_adjacent {p q r : Path Loc} (h : IsConcat p q r) :
-    p.toSpatial.adjacent q.toSpatial :=
-  Or.inl h.1
-
-end Path
-
-open Path
 
 /-! ### Cumulativity and boundedness (17b), (21)
 
@@ -267,7 +131,7 @@ def weakTo (x : Loc) : Set (Path Loc) := {p | p.goal = x}
     *to*/*into*, which is Zwarts's argument for the strict single-phase
     definitions (34)–(35). -/
 theorem weakTo_cumulative (x : Loc) : Cumulative Path.IsConcat (weakTo x) :=
-  ⟨⟨_, goal_const x, _, goal_const x, _, isConcat_const x⟩,
+  ⟨⟨_, Path.goal_const x, _, Path.goal_const x, _, Path.isConcat_const x⟩,
     fun _ _ _ hq _ hr => hr.goal_eq.trans hq⟩
 
 /-- The endpoint content of the strict goal PP (36): the path ends at the
@@ -351,7 +215,7 @@ theorem toPP_not_quantized : ¬ QUA (· ∈ toPP (0 : ℚ)) := by
   have hp : (⟨1, [0]⟩ : Path ℚ) ∈ toPP 0 := ⟨rfl, by norm_num⟩
   have hq : (⟨2, [1, 0]⟩ : Path ℚ) ∈ toPP 0 := ⟨rfl, by norm_num⟩
   have hle : (⟨1, [0]⟩ : Path ℚ) ≤ ⟨2, [1, 0]⟩ :=
-    subpath_iff_infix.mpr ⟨[2], [], rfl⟩
+    Path.subpath_iff_infix.mpr ⟨[2], [], rfl⟩
   exact h hp hq (by simp) hle
 
 /-! ### Plural PPs: the star operator (§4.2.2) -/
