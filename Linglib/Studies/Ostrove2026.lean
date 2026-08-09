@@ -11,7 +11,7 @@ import Linglib.Syntax.Control.Basic
 import Linglib.Syntax.Control.Diagnostics
 import Linglib.Studies.Landau2013
 import Linglib.Studies.Allotey2021
-import Linglib.Features.Complementation
+import Linglib.Syntax.Clause.Complementation
 
 /-!
 # Ostrove (2026): Obligatorily Overt PRO in San Martín Peras Mixtec

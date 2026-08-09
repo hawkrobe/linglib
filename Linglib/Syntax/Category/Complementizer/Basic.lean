@@ -1,6 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Semantics.Mood.Defs
-import Linglib.Features.Complementation
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Morphology.Word.Basic
 
 open Morphology (Word)

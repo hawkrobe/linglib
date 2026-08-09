@@ -660,7 +660,6 @@ import Linglib.Features.Case.Grammaticalization
 import Linglib.Features.Case.Source
 import Linglib.Features.Causation
 import Linglib.Features.Clusivity
-import Linglib.Features.Complementation
 import Linglib.Features.ContainmentPair
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Definiteness
@@ -2823,6 +2822,7 @@ import Linglib.Syntax.Category.Verb.Defs
 import Linglib.Syntax.Category.Verb.Stem
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Clause.Chaining
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Syntax.Clause.Construction
 import Linglib.Syntax.Comparative
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure

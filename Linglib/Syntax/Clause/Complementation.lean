@@ -13,11 +13,13 @@ complement-taking-predicate classes (`CTPClass`) with their default
 reality status (`RealityStatus`, `ctpRealityStatus`), plus the control
 enum for infinitival complements (`ControlType`).
 
-These enums stay in `Features/` because `Data/Complementation/Schema.lean`
-types its rows with them and the Data layer imports Features only. The
-typed complement-frame object and the flat `ComplementType` view live
-in `Syntax/Category/Verb/Frame.lean`; the adapter (`ComplementType.toCoding`)
-in `Syntax/Category/Verb/Selection.lean`.
+The typed complement-frame object, the flat `ComplementType` view, and
+the adapter (`ComplementType.toCoding`) live in
+`Syntax/Category/Verb/Complement/Basic.lean`; the verb–complementizer
+compatibility relation in `Syntax/Category/Verb/Complement/Takes.lean`.
+`Data/Complementation/Schema.lean` types its rows with these enums —
+the one deliberate theory-layer import in `Data/`, carrying descriptive
+typological vocabulary rather than analytical commitments.
 
 ## Main declarations
 

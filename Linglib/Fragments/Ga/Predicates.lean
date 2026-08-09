@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Fragments.Ga.Basic
-import Linglib.Features.Complementation
+import Linglib.Syntax.Clause.Complementation
 import Linglib.Features.Causation
 
 /-!

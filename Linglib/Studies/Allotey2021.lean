@@ -13,7 +13,7 @@ import Linglib.Syntax.Control.Diagnostics
 import Linglib.Studies.Landau2013
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Features.Complementation
+import Linglib.Syntax.Clause.Complementation
 
 /-!
 # Allotey (2021): Overt Pronouns of Infinitival Predicates of Gã
