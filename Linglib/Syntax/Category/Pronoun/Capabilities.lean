@@ -23,8 +23,8 @@ exactly the axes it touches.
 
 ## Main declarations
 
-* `Proform` — a pro-form stands in for members of a form-class, its domain
-  ([bloomfield-1933]); `Proform.StandsInFor` is derived — domain membership
+* `Proform` — a pro-form substitutes for members of a form-class, its domain
+  ([bloomfield-1933]); `Proform.SubstitutesFor` is derived — domain membership
   plus φ-agreement (`HasPhi.Agree`, from `Features/Phi.lean`).
 * `Bound`, `HasNumber`, `HasPerson`, `HasCase`, `HasGender` instances for the
   pronoun carriers.
@@ -42,7 +42,7 @@ Three axes are fields, not classes: deficiency (`Pronoun.strength`, per-series
 and register/referential person (`PersonalPronoun` fields, borne by one
 carrier).
 
-`Proform.StandsInFor` is token-level: whether a stand-in site is a bare
+`Proform.SubstitutesFor` is token-level: whether a substitution site is a bare
 element or hosts deleted structure ([hankamer-sag-1976]; [baltin-2012]) is a
 theory question for study files.
 -/
@@ -58,19 +58,19 @@ instance : HasPhi PersonalPronoun := ⟨fun p => p.toPronoun.toWord.phi⟩
 theorem HasPhi.agree_toWord {β : Type*} [HasPhi β] (p : Pronoun) (b : β) :
     HasPhi.Agree p b ↔ HasPhi.Agree p.toWord b := Iff.rfl
 
-/-- A pro-form is an expression that stands in for members of a form-class —
+/-- A pro-form is an expression that substitutes for members of a form-class —
 its *domain* ([bloomfield-1933]). -/
 class Proform (α : Type*) where
   /-- `w` is in the form-class `a` replaces. -/
   Domain : α → Word → Prop
 
-/-- A pro-form stands in for the domain members it φ-agrees with. -/
-def Proform.StandsInFor {α : Type*} [Proform α] [HasPhi α] (a : α) (w : Word) : Prop :=
+/-- A pro-form substitutes for the domain members it φ-agrees with. -/
+def Proform.SubstitutesFor {α : Type*} [Proform α] [HasPhi α] (a : α) (w : Word) : Prop :=
   Proform.Domain a w ∧ HasPhi.Agree a w
 
-/-- Standing in requires φ-agreement. -/
-theorem Proform.agree_of_standsInFor {α : Type*} [Proform α] [HasPhi α] {a : α}
-    {w : Word} (h : StandsInFor a w) : HasPhi.Agree a w := h.2
+/-- Substitution requires φ-agreement. -/
+theorem Proform.agree_of_substitutesFor {α : Type*} [Proform α] [HasPhi α] {a : α}
+    {w : Word} (h : SubstitutesFor a w) : HasPhi.Agree a w := h.2
 
 /-- A pronoun's domain is the nominal tokens. -/
 instance : Proform Pronoun := ⟨fun _ w => Binding.isNominalCat w.cat = true⟩
@@ -84,8 +84,8 @@ instance (p : PersonalPronoun) (w : Word) : Decidable (Proform.Domain p w) :=
   inferInstanceAs (Decidable (_ = true))
 
 instance {α : Type*} [Proform α] [HasPhi α] (a : α) (w : Word)
-    [Decidable (Proform.Domain a w)] : Decidable (Proform.StandsInFor a w) := by
-  unfold Proform.StandsInFor; infer_instance
+    [Decidable (Proform.Domain a w)] : Decidable (Proform.SubstitutesFor a w) := by
+  unfold Proform.SubstitutesFor; infer_instance
 
 /-! ### The pronoun carriers' `Bound` instances, and the faithfulness certificate -/
 
