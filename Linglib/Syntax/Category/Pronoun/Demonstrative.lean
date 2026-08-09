@@ -27,7 +27,7 @@ assignment keeps them apart by construction.
 
 * `DemonstrativePronoun` — the deictic demonstrative pronoun (`extends Pronoun` + `deixis`).
 * `instance : Demonstrative DemonstrativePronoun` — its deictic-contrast capability.
-* `HasPhi` / `Bound` instances routing it through the Pronoun API.
+* `HasPhi` / `Proform` / `Bound` instances routing it through the Pronoun API.
 -/
 
 set_option autoImplicit false
@@ -45,6 +45,8 @@ structure DemonstrativePronoun extends Pronoun where
 
 /-- A demonstrative pronoun bears φ via its `Pronoun` core. -/
 instance : HasPhi DemonstrativePronoun := ⟨fun d => d.toPronoun.toWord.phi⟩
+
+instance : Proform DemonstrativePronoun := ⟨fun d => Proform.Domain d.toPronoun⟩
 
 /-- Its binding class is the `Pronoun` core's, defaulting an undeclared shell to `.pronoun`. -/
 instance : Bound DemonstrativePronoun :=

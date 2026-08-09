@@ -110,12 +110,12 @@ def brendan : Morphology.Word :=
 theorem lisa_brendan_context :
     GenderContext.ofReferents lisa brendan = .differentGender := by decide
 
-/-- In a `differentGender` pair *she* (the English Fragment entry) picks out
-    Lisa and excludes Brendan, so a pronoun is unambiguous — the condition
+/-- In a `differentGender` pair *she* (the English Fragment entry) has Lisa as
+    its sole candidate antecedent, so a pronoun is unambiguous — the condition
     under which pronoun rates rise. -/
 theorem differentGender_phi_resolves :
-    HasPhi.Agree English.Pronouns.she lisa ∧
-      ¬ HasPhi.Agree English.Pronouns.she brendan := by decide
+    Proform.CandidateAntecedent English.Pronouns.she lisa ∧
+      ¬ Proform.CandidateAntecedent English.Pronouns.she brendan := by decide
 
 /-- [kehler-rohde-2013]'s same-gender pair is a `sameGender` context under the
     same derivation — the two studies' design premises are one φ-fact. -/

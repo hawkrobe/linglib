@@ -32,9 +32,10 @@ experiments with transfer-of-possession and implicit-causality verbs.
   expectancy hypothesis the substrate's `predictedForm` encodes.
 * `cb_topichood_dissociation_under_voice`: Centering's backward-looking center is
   voice-blind where `topichood` is voice-sensitive.
-* `she_ambiguous_over_stimuli`: the φ-design premise — the prompt pronoun
-  (the English Fragment entry) φ-agrees with both same-gender characters, so
-  the φ-filter cannot resolve the reference the Bayesian model competes over.
+* `she_ambiguous_over_stimuli`: the φ-design premise — both same-gender
+  characters are candidate antecedents (`Proform.CandidateAntecedent`) of the
+  prompt pronoun, so the φ-filter cannot resolve the reference the Bayesian
+  model competes over.
 
 ## Implementation notes
 
@@ -552,17 +553,17 @@ def brittany : Word :=
 def masculineFoil : Word :=
   ⟨"Bill", .PROPN, { person := some .third, number := some .Sing, gender := some .Masc }⟩
 
-/-- The prompt *She* (the English Fragment entry) is φ-compatible with both
-    characters, so gender cannot resolve the reference. -/
+/-- Both characters are candidate antecedents for the prompt *She* (the
+    English Fragment entry), so the φ-filter cannot resolve the reference. -/
 theorem she_ambiguous_over_stimuli :
-    HasPhi.Agree English.Pronouns.she amanda ∧
-      HasPhi.Agree English.Pronouns.she brittany := by decide
+    Proform.CandidateAntecedent English.Pronouns.she amanda ∧
+      Proform.CandidateAntecedent English.Pronouns.she brittany := by decide
 
-/-- Against a mixed-gender pair the φ-filter resolves *she* by itself; the
+/-- Against a mixed-gender pair the candidate set is a singleton; the
     same-gender design is what forces the Bayesian competition. -/
 theorem she_resolved_against_masculine :
-    HasPhi.Agree English.Pronouns.she amanda ∧
-      ¬ HasPhi.Agree English.Pronouns.she masculineFoil := by decide
+    Proform.CandidateAntecedent English.Pronouns.she amanda ∧
+      ¬ Proform.CandidateAntecedent English.Pronouns.she masculineFoil := by decide
 
 section CenteringBridge
 
