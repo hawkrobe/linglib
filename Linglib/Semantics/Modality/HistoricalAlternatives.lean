@@ -211,8 +211,8 @@ below make the projection kernel-checked.
 This is what distinguishes [klecha-2016]'s account from
 [abusch-1997]'s: both rely on the branching-futures motivation, but Klecha
 derives ULC from history structure while Abusch states it as a constraint on
-tense-node denotation. The Klecha-namespace dispatch on `ModalBaseKind` lives in
-`Semantics/Modality/TemporalConstraint.lean`. The modal-alternative
+tense-node denotation. The dispatch on `ModalBaseKind` lives in
+`Studies/Klecha2016.lean` (`attitudeTemporalConstraint`). The modal-alternative
 quantification in Abusch's formulation is captured here at the substrate level
 by `HistoricalAlternatives` membership; the value-level projection
 `s'.time ≤ s.time` recovers Abusch's bare-`≤` form. -/

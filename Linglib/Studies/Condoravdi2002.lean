@@ -1,6 +1,6 @@
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Modality.TemporalAxes
+import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Fragments.English.Auxiliaries
 
 /-!
@@ -244,7 +244,7 @@ end Operators
 /-! ## Reading classification
 
 Readings are classified along the canonical modal-temporal axes
-(`Semantics/Modality/TemporalAxes.lean`): `TemporalPerspective`
+(`Semantics/Modality/ModalTypes.lean`): `TemporalPerspective`
 (present/past evaluation of the modal base) and `TemporalOrientation`
 (direction from the perspective to the prejacent). Condoravdi's typology
 uses only the `future` and `past` orientations; the `present`-orientation
