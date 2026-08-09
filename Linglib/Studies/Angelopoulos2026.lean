@@ -22,32 +22,6 @@ syntax–semantics mapping: bare *oti*-clauses sit in complement position
 while composing via Predicate Modification (the explanans reading,
 [elliott-2020-embedding]). Typed paradigm sentences (ex. 1, 31–34) live
 in `Angelopoulos2026.Examples`.
-
-## Main definitions
-
-* `selectsLightNoun`, `otiOnlyVerbs`, `puOnlyVerbs`, `dualVerbs`: the
-  §3.1 light-noun datum and the attested selection classes
-* `NounHost`, `ClausePosition`, `licensedIn`: incorporation licensing
-  by position
-* `selectsClause`, `AspectualHead.ofVendler`: the §4.1 stativity locus
-* `clauseSort`: *oti* = content, *pu* = situation
-  (`Bondarenko2022.NominalSort`, §3.2)
-* `bareOtiAttested`: the §7.3 (position, composition-path) attestations
-
-## Main results
-
-* `frames_underdetermine_distribution`: `Verb.realizes` admits both
-  *oti* and *pu* on the whole sample — the §1 puzzle
-* `factivity_anti_aligned`: verb-level and C-level factivity are
-  anti-aligned on the sample
-* `licensing_matches_judgments`: the position asymmetry against the
-  ex. 31–32 judgments
-* `pu_complement_verb_stative`: the §2.3 verb-level stativity
-  generalization, derived from §4.1 selection
-* `selectsLightNoun_iff_sorted`: the light-noun selectors are the
-  sorted complementizers
-* `transparency_conflates_axes`: the §7.3 counterclaim against
-  `Bondarenko2022.transparentSSMapping`
 -/
 
 namespace Angelopoulos2026
