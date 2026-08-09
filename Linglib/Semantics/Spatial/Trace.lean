@@ -24,7 +24,6 @@ homomorphism (`Mereology.IsSumHom`) and injectivity — are stated at use sites.
   with scale boundedness (`Trace.telicity_boundedness_agree`).
 -/
 
-open Semantics.Spatial.Path
 open Features
 open Mereology
 

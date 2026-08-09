@@ -35,8 +35,7 @@ def Event.precedes {Time : Type*} [LinearOrder Time]
   e1.runtime.isBefore e2.runtime
 
 /-- Event adjacency is symmetric. -/
-theorem Event.adjacent_symm {Time : Type*} [LinearOrder Time]
-    (e1 e2 : Event Time) :
-    e1.adjacent e2 ↔ e2.adjacent e1 := by
-  unfold Event.adjacent
-  exact ⟨Or.symm, Or.symm⟩
+theorem Event.adjacent_comm {Time : Type*} [LinearOrder Time]
+    {e1 e2 : Event Time} :
+    e1.adjacent e2 ↔ e2.adjacent e1 :=
+  or_comm

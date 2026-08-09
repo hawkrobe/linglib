@@ -255,7 +255,7 @@ end K98PropositionalSubstrate
 
 section SpatialTracePullback
 
-open Semantics.Spatial.Path
+open Semantics.Spatial
 
 variable {Loc Time : Type*} [LinearOrder Time]
 variable [Event.Mereology Time] [ClassicalMereology (Event Time)] [SemilatticeSup (Path Loc)]
@@ -281,7 +281,7 @@ end SpatialTracePullback
 section MotionData
 
 open Data.Examples (LinguisticExample)
-open Semantics.Spatial.Path (PathShape)
+open Semantics.Spatial (PathShape)
 open Semantics.Spatial.Trace (pathShapeToTelicity)
 
 /-- A motion VP datum: the path shape K98 assigns and the telicity it predicts. -/
@@ -339,7 +339,7 @@ end Expansiveness
 
 section MovementInstances
 
-open Semantics.Spatial.Path
+open Semantics.Spatial
 
 variable {Loc Time : Type*} [LinearOrder Time]
 variable [Event.Mereology Time] [ClassicalMereology (Event Time)]

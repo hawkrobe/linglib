@@ -433,7 +433,7 @@ def isVerbOfCreation : LevinClass → Bool
     lexicalize a bounded path. Manner-of-motion verbs (51.3: run, walk)
     are path-neutral — the path comes from a PP complement.
     [talmy-2000]: verb-framed vs. satellite-framed distinction. -/
-def pathSpec : LevinClass → Option Semantics.Spatial.Path.PathShape
+def pathSpec : LevinClass → Option Semantics.Spatial.PathShape
   | .inherentlyDirectedMotion => some .bounded
   | .leave => some .source
   | .mannerOfMotion => none    -- path from PP

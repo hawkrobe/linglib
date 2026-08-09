@@ -37,7 +37,7 @@ not whether F is overt. See `MovedConstituent`.
 
 - `Dutch.Adpositions`: lexical inventory
 - `Minimalist.Formal.ExtendedProjection`: Place/Path in EP
-- `Semantics.Spatial.Path.PathShape`: bounded/unbounded/source classification
+- `Semantics.Spatial.PathShape`: bounded/unbounded/source classification
 - `Semantics.Spatial.Trace`: PathShape → telicity
 - `AuxiliarySelection` auxiliary selection: Dutch *zijn*/*hebben* split
 - `Dendikken1995`: particles as P heads
@@ -48,7 +48,7 @@ namespace BroekhuisCorver2026
 
 open Dutch.Adpositions
 open Minimalist
-open Semantics.Spatial.Path (PathShape)
+open Semantics.Spatial (PathShape)
 
 -- ════════════════════════════════════════════════════
 -- § 1. PP-internal structure and surface orders

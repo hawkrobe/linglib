@@ -24,7 +24,7 @@ core properties (R-pronominalization, complement types).
 
 namespace Dutch.Adpositions
 
-open Semantics.Spatial.Path (PathShape)
+open Semantics.Spatial (PathShape)
 
 /-- Complement types attested for Dutch adpositions.
     [broekhuis-corver-2026] §2.1: nominal (default), PP, adjectival,
