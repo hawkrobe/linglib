@@ -3,53 +3,47 @@ import Linglib.Logic.Modal.QBSML.StandardTranslation
 import Linglib.Logic.Modal.BSML.Scenarios
 
 /-!
-# [aloni-vanormondt-2023]: QBSML applied to modified numerals + split disjunction
+# [aloni-vanormondt-2023]: modified numerals and split disjunction
 
-[aloni-vanormondt-2023] [aloni-2022]
+Aloni & van Ormondt 2023 introduce QBSML, the first-order extension of
+[aloni-2022]'s BSML, and analyse modified numerals as split disjunctions
+(`at least n φ ↦ n ∨ more`, `at most n φ ↦ n ∨ less`), so that the
+neglect-zero enrichment `[·]⁺` derives their ignorance, obviation,
+distribution, free-choice and negation profile (paper §5). The universal
+facts (3, 5–10) are substrate theorems in
+`Logic/Modal/QBSML/FreeChoice.lean`; this file instantiates them at a
+concrete model and proves the paper's one countermodel claim.
 
-Aloni & van Ormondt 2023 introduces QBSML, the first-order extension of
-Aloni 2022's BSML, and applies it to a battery of inferences arising from
-modified numerals analysed as disjunctions:
-  `at least n φ ↦ n ∨ more`,  `at most n φ ↦ n ∨ less`.
+## Main declarations
 
-The framework's central facts (paper §5):
+* `univAccessModel` — universal-access model over `BSML.PowerSet2World`:
+  indisputable on every state (`univAccessModel_indisputable`) and state-based
+  exactly on states with full world projection
+  (`univAccessModel_stateBased_of_full`).
+* `fact3_ignorance` … `fact10_negation` — the paper's §5 facts at
+  `univAccessModel`, one-line instances of the substrate theorems; the epistemic
+  Facts 3 and 6 hold on full-world-projection states.
+* `fig14Model`, `fact4_obviation` — **Fact 4 (obviation)**:
+  `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)`, by the paper's Fig. 14 countermodel;
+  `R` is state-based on the countermodel state (`fig14_stateBased`), the
+  epistemic reading Fact 4 assumes.
+* `univPxOrQx_classical`, `possPxOrQx_classical`, `univPxOrQx_sentence` —
+  [aloni-vanormondt-2023] Proposition 4.1 at `univAccessModel`: support of NE-free
+  formulas is classical realization (mathlib `Formula.Realize`) resp. Kripke
+  satisfaction, the translations computed by `rfl`, and the standard
+  translation of `∀x(Px ∨ Qx)` a genuine sentence.
 
-| Fact | Statement |
-|------|-----------|
-| 3   | `[Pa ∨ Pb]⁺ ⊨_epi ◇Pa ∧ ◇Pb` (ignorance, R state-based) |
-| 4   | `[∀xPx ∨ Qx]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)` (obviation; counterexample on paper Fig. 14) |
-| 5   | `card(s)=1 ⇒ M, s ⊨ [∀x(Px ∨ Qx)]⁺ ⇒ M, s ⊨ ∃xPx ∧ ∃xQx` (distribution under full information) |
-| 6   | `[∀x(Px ∨ Qx)]⁺ ⊨_epi ∃x◇Px ∧ ∃x◇Qx` (distribution° on epistemic models) |
-| 7   | `[□(Pa ∨ Pb)]⁺ ⊨ ◇Pa ∧ ◇Pb` (□-free choice) |
-| 8   | `[◇(Pa ∨ Pb)]⁺ ⊨ ◇Pa ∧ ◇Pb` (◇-free choice; ≡ Aloni 2022 NS FC at first-order) |
-| 9   | `[∀x◇(Px ∨ Qx)]⁺ ⊨ ∀x◇Px ∧ ∀x◇Qx` (universal FC; [chemla-2009]) |
-| 10  | `[¬(Pa ∨ Pb)]⁺ ⊨ ¬Pa ∧ ¬Pb` (negation behaviour; ignorance disappears) |
+## Implementation notes
 
-Facts 3 and 5–10 are universal substrate theorems in
-`Logic/Modal/QBSML/FreeChoice.lean` (framework substrate with multiple
-paper-anchored consumers — this file and `Studies/Yan2023.lean`); this file
-instantiates the unconditional ones at a concrete model (`avoModel`).
-Fact 4 is the paper's Fig. 14 countermodel, proved here. Facts 1–2 and
-Proposition 4.1 live in `Logic/Modal/QBSML/{Enrichment,Properties}.lean`
-(the modal-free Proposition 4.1 against mathlib `Formula.Realize` is
-instantiated here at `avoModel`, the translation discharged by `rfl`).
-Fact 3 needs the individual constants of [aloni-vanormondt-2023]
-Definition 4.1 — `QBSMLFormula.predc` atoms, interpreted world-relatively
-via `QBSMLModel.cInterp`.
-
-## What is deferred
-
-- **`Decidable` instance for `QBSML.eval`**: well-defined, but of limited
-  use — the split-disjunction clauses quantify over pairs of subteams of
-  the index space (`2^12 × 2^12` already at this file's model sizes), so
-  kernel `decide` is infeasible for the interesting claims; the Fact 4
-  countermodel is therefore proved by hand.
-
-## Atoms and worlds
-
-The concrete model reuses `BSML.{FCAtom, PowerSet2World}`
-from the existing FreeChoice substrate, ensuring AvO 2023 + Aloni 2022 both
-target the same world space.
+`QBSML.eval` admits a `Decidable` instance in principle, but the
+split-disjunction clause quantifies over pairs of subteams (`2^12 × 2^12`
+at this file's model sizes), so kernel `decide` is infeasible for
+whole-formula claims; the Fact 4 countermodel is proved by hand, with
+`decide` confined to finite side conditions. Fact 3 is stated with the
+individual constants of the paper's Definition 4.1 (`QBSMLFormula.predc`
+atoms, world-relative `KripkeStructure.cInterp`). Atoms and worlds come
+from `Logic/Modal/BSML/Scenarios.lean`, so this file and
+`Studies/Aloni2022.lean` target the same world space.
 -/
 
 namespace AloniVanOrmondt2023
@@ -66,15 +60,11 @@ open BSML (FCAtom PowerSet2World QVar)
     over a 2-element domain, `Pa ∨ Qa` and `Pa ∨ Pb` are equally non-trivial
     instantiations of split disjunction. -/
 inductive QPred | P | Q
-  deriving DecidableEq, Repr
-
-instance : Fintype QPred where
-  elems := {.P, .Q}
-  complete := by intro p; cases p <;> simp
+  deriving DecidableEq, Repr, Fintype
 
 /-! ### The concrete model -/
 
-/-- Universal-access deontic-style model on `PowerSet2World`.
+/-- Universal-access model on `PowerSet2World`.
 
     The interpretation is the `monadicStructure` of the valuation
     `V w P d := w.holds d`: both predicates hold of `d` at `w` iff `w`
@@ -84,9 +74,11 @@ instance : Fintype QPred where
     further; this minimal model suffices for the substrate-instantiation
     tests below.
 
-    Universal access (`access _ = univ`) means R is indisputable on every
-    state but **not** state-based — same shape as `Aloni2022.deonticModel`. -/
-def avoModel : QBSMLModel PowerSet2World FCAtom FCAtom QPred where
+    Universal access (`access _ = univ`) makes `R` indisputable on every
+    state (`univAccessModel_indisputable`) and state-based exactly on states with
+    full world projection (`univAccessModel_stateBased_of_full`) — same shape as
+    `Aloni2022.deonticModel`. -/
+def univAccessModel : QBSMLModel PowerSet2World FCAtom FCAtom QPred where
   access := λ _ => Finset.univ
   interp := λ w => monadicStructure id (λ _ d => w.holds d)
 
@@ -124,7 +116,7 @@ theorem Qx_isNEFree {Const : Type*} : (Qx (Const := Const)).IsNEFree := .pred _ 
 
 /-! ### Fact 10 (negation): `[¬(Pa ∨ Pb)]⁺ ⊨ ¬Pa ∧ ¬Pb` -/
 
-/-- **Fact 10 (Negation behaviour)** at `avoModel`:
+/-- **Fact 10 (Negation behaviour)** at `univAccessModel`:
 
     Enriched negation `[¬(Px ∨ Qx)]⁺` entails the conjunction of negated
     disjuncts `¬Px ∧ ¬Qx`. One-line invocation of the substrate's
@@ -133,13 +125,13 @@ theorem Qx_isNEFree {Const : Type*} : (Qx (Const := Const)).IsNEFree := .pred _ 
     theorem, model + NE-free witnesses applied. -/
 theorem fact10_negation
     (s : Finset (Index PowerSet2World QVar FCAtom))
-    (h : support avoModel negPxOrQx.enrich s) :
-    support avoModel (.neg Px) s ∧ support avoModel (.neg Qx) s :=
-  negationStrip avoModel Px_isNEFree Qx_isNEFree h
+    (h : support univAccessModel negPxOrQx.enrich s) :
+    support univAccessModel (.neg Px) s ∧ support univAccessModel (.neg Qx) s :=
+  negationStrip univAccessModel Px_isNEFree Qx_isNEFree h
 
 /-! ### Facts 7 and 8 (free choice): `[□/◇(Pa ∨ Pb)]⁺ ⊨ ◇Pa ∧ ◇Pb` -/
 
-/-- **Fact 8 (Narrow-Scope free choice / ◇-FC)** at `avoModel`:
+/-- **Fact 8 (Narrow-Scope free choice / ◇-FC)** at `univAccessModel`:
 
     Enriched possibility-disjunction `[◇(Px ∨ Qx)]⁺` entails `◇Px ∧ ◇Qx`.
     One-line invocation of `narrowScopeFC`. The first-order analogue of
@@ -147,74 +139,74 @@ theorem fact10_negation
     monadic predicate language. -/
 theorem fact8_narrowScopeFC
     (s : Finset (Index PowerSet2World QVar FCAtom))
-    (h : support avoModel possPxOrQx.enrich s) :
-    support avoModel (.poss Px) s ∧ support avoModel (.poss Qx) s :=
-  narrowScopeFC avoModel Px_isNEFree Qx_isNEFree h
+    (h : support univAccessModel possPxOrQx.enrich s) :
+    support univAccessModel (.poss Px) s ∧ support univAccessModel (.poss Qx) s :=
+  narrowScopeFC univAccessModel Px_isNEFree Qx_isNEFree h
 
-/-- **Fact 7 (□-free choice)** at `avoModel`: `[□(Px ∨ Qx)]⁺` entails
+/-- **Fact 7 (□-free choice)** at `univAccessModel`: `[□(Px ∨ Qx)]⁺` entails
     `◇Px ∧ ◇Qx`, with the derived `□`. One-line invocation of `boxFC`. -/
 theorem fact7_boxFC
     (s : Finset (Index PowerSet2World QVar FCAtom))
-    (h : support avoModel necPxOrQx.enrich s) :
-    support avoModel (.poss Px) s ∧ support avoModel (.poss Qx) s :=
-  boxFC avoModel Px_isNEFree Qx_isNEFree h
+    (h : support univAccessModel necPxOrQx.enrich s) :
+    support univAccessModel (.poss Px) s ∧ support univAccessModel (.poss Qx) s :=
+  boxFC univAccessModel Px_isNEFree Qx_isNEFree h
 
 /-! ### Facts 9 and 5 (universal FC and distribution) -/
 
-/-- **Fact 9 (Universal free choice)** at `avoModel`:
+/-- **Fact 9 (Universal free choice)** at `univAccessModel`:
 
     `[∀x◇(Px ∨ Qx)]⁺` entails `∀x◇Px ∧ ∀x◇Qx`. One-line invocation of
     `universalFC` — the [chemla-2009]-attested pattern. -/
 theorem fact9_universalFC
     (s : Finset (Index PowerSet2World QVar FCAtom))
-    (h : support avoModel univPossPxOrQx.enrich s) :
-    support avoModel (.univ .x (.poss Px)) s ∧
-    support avoModel (.univ .x (.poss Qx)) s :=
-  universalFC avoModel Px_isNEFree Qx_isNEFree h
+    (h : support univAccessModel univPossPxOrQx.enrich s) :
+    support univAccessModel (.univ .x (.poss Px)) s ∧
+    support univAccessModel (.univ .x (.poss Qx)) s :=
+  universalFC univAccessModel Px_isNEFree Qx_isNEFree h
 
-/-- **Fact 5 (Distribution at maximal information)** at `avoModel`: on any
+/-- **Fact 5 (Distribution at maximal information)** at `univAccessModel`: on any
     singleton state, `[∀x(Px ∨ Qx)]⁺` entails `∃xPx ∧ ∃xQx`. One-line
     invocation of `distribution`. -/
 theorem fact5_distribution
     (i : Index PowerSet2World QVar FCAtom)
-    (h : support avoModel univPxOrQx.enrich {i}) :
-    support avoModel (.exi .x Px) {i} ∧ support avoModel (.exi .x Qx) {i} :=
-  distribution avoModel Px_isNEFree Qx_isNEFree h
+    (h : support univAccessModel univPxOrQx.enrich {i}) :
+    support univAccessModel (.exi .x Px) {i} ∧ support univAccessModel (.exi .x Qx) {i} :=
+  distribution univAccessModel Px_isNEFree Qx_isNEFree h
 
 /-! ### Proposition 4.1 at the concrete model -/
 
 /-- The (unenriched) universal premise `∀x(Px ∨ Qx)` translates into mathlib
     first-order syntax, and its support is classical `Formula.Realize` at
     every index — [aloni-vanormondt-2023] Proposition 4.1 instantiated at
-    `avoModel`. The translation hypothesis is discharged by `rfl`: the
+    `univAccessModel`. The translation hypothesis is discharged by `rfl`: the
     compiler computes. -/
 theorem univPxOrQx_classical
     (s : Finset (Index PowerSet2World QVar FCAtom))
     (v : Index PowerSet2World QVar FCAtom → QVar → FCAtom)
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
-    support avoModel univPxOrQx s ↔
-      ∀ i ∈ s, avoModel.RealizeAt i.world
+    support univAccessModel univPxOrQx s ↔
+      ∀ i ∈ s, univAccessModel.RealizeAt i.world
         (Formula.all₁ QVar.x
           ((monadicRel QPred.P).formula₁ (Term.var QVar.x) ⊔
             (monadicRel QPred.Q).formula₁ (Term.var QVar.x))) (v i) :=
-  support_iff_forall_realizeAt avoModel rfl s v hv
+  support_iff_forall_realizeAt univAccessModel rfl s v hv
 
 /-- The narrow-scope FC premise `◇(Px ∨ Qx)` translates into the modal layer
     over the monadic signature, and its support is Kripke satisfaction at
     every index — the **full** [aloni-vanormondt-2023] Proposition 4.1
-    (modals included) at `avoModel`, the translation discharged by `rfl`. -/
+    (modals included) at `univAccessModel`, the translation discharged by `rfl`. -/
 theorem possPxOrQx_classical
     (s : Finset (Index PowerSet2World QVar FCAtom))
     (v : Index PowerSet2World QVar FCAtom → QVar → FCAtom)
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
-    support avoModel possPxOrQx s ↔
+    support univAccessModel possPxOrQx s ↔
       ∀ i ∈ s,
         (ModalFormula.dia
           (.sup (.ofFormula ((monadicRel QPred.P).formula₁ (Term.var QVar.x)))
             (.ofFormula
               ((monadicRel QPred.Q).formula₁ (Term.var QVar.x))))).Realize
-          avoModel i.world (v i) :=
-  support_iff_forall_realize avoModel rfl s v hv
+          univAccessModel i.world (v i) :=
+  support_iff_forall_realize univAccessModel rfl s v hv
 
 /-- The closed standard translation of `∀x(Px ∨ Qx)`: quantifiers
     relativized to the individual sort, predicates world-relativized to the
@@ -233,49 +225,96 @@ theorem stUnivPxOrQx_closed :
     (stClose 0 stUnivPxOrQx).freeVarFinset = ∅ := by decide
 
 /-- Support of `∀x(Px ∨ Qx)` at a singleton forces its sort-guarded closed
-    standard translation as a **sentence** of `avoModel.stStructure` — the
+    standard translation as a **sentence** of `univAccessModel.stStructure` — the
     compactness-ready form, with every translation step (`toModal?`, `st?`,
     the free-variable check) computed by the compiler. -/
 theorem univPxOrQx_sentence
     (i : Index PowerSet2World QVar FCAtom) (v : QVar → FCAtom)
     (hv : ∀ y, i.assign y = some (v y))
-    (h : support avoModel univPxOrQx {i}) :
-    letI := avoModel.stStructure
+    (h : support univAccessModel univPxOrQx {i}) :
+    letI := univAccessModel.stStructure
     (PowerSet2World ⊕ FCAtom) ⊨
       (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed :=
-  models_toSentence_of_support avoModel rfl rfl stUnivPxOrQx_closed hv h
+  models_toSentence_of_support univAccessModel rfl rfl stUnivPxOrQx_closed hv h
 
 /-- Conversely, the sentence yields support at some singleton — sentencehood
     of the translation makes `∀x(Px ∨ Qx)`'s support assignment- and
     state-independent. -/
 theorem support_of_stUnivPxOrQx_sentence
-    (h : letI := avoModel.stStructure
+    (h : letI := univAccessModel.stStructure
          (PowerSet2World ⊕ FCAtom) ⊨
            (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed) :
     ∃ (i : Index PowerSet2World QVar FCAtom) (v : QVar → FCAtom),
-      (∀ y, i.assign y = some (v y)) ∧ support avoModel univPxOrQx {i} :=
+      (∀ y, i.assign y = some (v y)) ∧ support univAccessModel univPxOrQx {i} :=
   haveI : Nonempty FCAtom := ⟨.a⟩
-  exists_support_of_models_toSentence avoModel rfl rfl stUnivPxOrQx_closed h
+  exists_support_of_models_toSentence univAccessModel rfl rfl stUnivPxOrQx_closed h
 
-/-! ### Frame condition: avoModel is indisputable on every state -/
+/-! ### Frame conditions -/
 
-/-- `avoModel`'s universal accessibility makes R indisputable on every state
+/-- `univAccessModel`'s universal accessibility makes R indisputable on every state
     (every world sees the same `Finset.univ`). Mirrors
     `Aloni2022.deonticModel_indisputable_on_team` for the QBSML carrier.
 
     Indisputability vs state-basedness (paper §4.1.1, Definition 4.10):
     - Indisputable: all worlds in s↓ see the same accessible set (R constant).
-    - State-based: every w ∈ s↓ sees exactly s↓ (R(w) = s↓).
-
-    State-basedness is strictly stronger and is the precondition for the
-    epistemic facts: Fact 3 (`ignorance`) and Fact 6 (`distributionEpi`),
-    which therefore stay substrate-level (universal access is not
-    state-based). Facts 7, 8 and 10 need no frame condition at all — they
-    hold on every model. -/
-theorem avoModel_indisputable
+    - State-based: every w ∈ s↓ sees exactly s↓ (R(w) = s↓). -/
+theorem univAccessModel_indisputable
     (s : Finset (Index PowerSet2World QVar FCAtom)) :
-    avoModel.IsIndisputable s := by
-  intro _ _ _ _; rfl
+    univAccessModel.IsIndisputable s :=
+  fun _ _ _ _ => rfl
+
+/-- State-basedness is strictly stronger than indisputability; universal
+    access delivers it exactly on states whose world projection exhausts
+    `PowerSet2World`. The precondition for the epistemic Facts 3 and 6. -/
+theorem univAccessModel_stateBased_of_full
+    {s : Finset (Index PowerSet2World QVar FCAtom)}
+    (hfull : State.worldProj s = Finset.univ) :
+    univAccessModel.IsStateBased s :=
+  fun _ _ => hfull.symm
+
+/-- A state with full world projection: every world, paired with the empty
+    assignment. Witnesses that the epistemic hypothesis of `fact3_ignorance`
+    and `fact6_distributionEpi` is satisfiable. -/
+def fullState : Finset (Index PowerSet2World QVar FCAtom) :=
+  Finset.univ.image (fun w => (w, fun _ => none))
+
+example : State.worldProj fullState = Finset.univ := by decide
+
+example : univAccessModel.IsStateBased fullState := by decide
+
+/-- On a proper-projection state, universal access is *not* state-based:
+    the frame conditions genuinely separate. -/
+example :
+    ¬ univAccessModel.IsStateBased
+      ({(PowerSet2World.both, fun _ => none)} :
+        Finset (Index PowerSet2World QVar FCAtom)) := by
+  decide
+
+/-! ### Facts 3 and 6 (ignorance and distribution◇): the epistemic facts -/
+
+/-- **Fact 3 (ignorance)** at `univAccessModel`, on states of full world
+    projection (where `univAccessModel_stateBased_of_full` applies): the enriched
+    disjunction of constant atoms `[Pa ∨ Qb]⁺` entails `◇Pa ∧ ◇Qb`.
+    One-line invocation of `ignorance`. -/
+theorem fact3_ignorance
+    (s : Finset (Index PowerSet2World QVar FCAtom))
+    (hfull : State.worldProj s = Finset.univ)
+    (h : support univAccessModel
+      (QBSMLFormula.enrich (.disj (.predc .P .a) (.predc .Q .b))) s) :
+    support univAccessModel (.poss (.predc .P .a)) s ∧
+    support univAccessModel (.poss (.predc .Q .b)) s :=
+  ignorance univAccessModel (univAccessModel_stateBased_of_full hfull) h
+
+/-- **Fact 6 (distribution◇)** at `univAccessModel`, on states of full world
+    projection: `[∀x(Px ∨ Qx)]⁺` entails `∃x◇Px ∧ ∃x◇Qx`. One-line
+    invocation of `distributionEpi`. -/
+theorem fact6_distributionEpi
+    (s : Finset (Index PowerSet2World QVar FCAtom))
+    (hfull : State.worldProj s = Finset.univ)
+    (h : support univAccessModel univPxOrQx.enrich s) :
+    support univAccessModel (.exi .x (.poss Px)) s ∧
+    support univAccessModel (.exi .x (.poss Qx)) s :=
+  distributionEpi univAccessModel (univAccessModel_stateBased_of_full hfull) h
 
 /-! ### Fact 4 (obviation): the Fig. 14 countermodel
 
@@ -291,15 +330,11 @@ where `P` holds of `b`. -/
     supporting neither disjunct, breaking the premise — the paper notes the
     split works "because the domain contains two objects".) -/
 inductive Fig14Atom | a | b
-  deriving DecidableEq, Repr
-
-instance : Fintype Fig14Atom where
-  elems := {.a, .b}
-  complete := by intro d; cases d <;> simp
+  deriving DecidableEq, Repr, Fintype
 
 /-- Fig. 14 valuation: `P` holds exactly of `a`, and `Q` exactly of `b`,
     wherever the world carries the corresponding atom — so `P` and `Q` have
-    *divergent* extensions, unlike `avoModel`'s. -/
+    *divergent* extensions, unlike `univAccessModel`'s. -/
 def fig14V (w : PowerSet2World) : QPred → Fig14Atom → Prop
   | .P, d => d = .a ∧ w.holds .a
   | .Q, d => d = .b ∧ w.holds .b
@@ -316,6 +351,12 @@ def fig14Index : Index PowerSet2World QVar Fig14Atom :=
 /-- The Fig. 14 state: the single-index state of the counterexample. -/
 def fig14State : Finset (Index PowerSet2World QVar Fig14Atom) := {fig14Index}
 
+/-- The Fig. 14 accessibility is state-based on the countermodel state —
+    the epistemic reading Fact 4 assumes ("we assume again that ◇ is an
+    epistemic modal"). Obviation is thus not an artifact of dropping the
+    frame condition behind ignorance. -/
+theorem fig14_stateBased : fig14Model.IsStateBased fig14State := by decide
+
 /-- The Fig. 14 state supports the enriched premise `[∀x(Px ∨ Qx)]⁺`: its
     universal extension splits into the `x/a` half supporting `[Px]⁺` and
     the `x/b` half supporting `[Qx]⁺` (paper Fig. 15). -/
@@ -330,12 +371,10 @@ theorem fig14_premise : support fig14Model univPxOrQx.enrich fig14State := by
       = State.extendUniversal fig14State QVar.x
     decide
   · intro j hj
-    rw [Finset.mem_singleton] at hj
-    subst hj
+    obtain rfl := Finset.mem_singleton.mp hj
     exact ⟨.a, rfl, rfl, rfl⟩
   · intro j hj
-    rw [Finset.mem_singleton] at hj
-    subst hj
+    obtain rfl := Finset.mem_singleton.mp hj
     exact ⟨.b, rfl, rfl, rfl⟩
   · decide
 
@@ -347,20 +386,11 @@ theorem fig14_conclusion_fails :
       fig14State := by
   intro h
   obtain ⟨X, hX, hne, hsupp⟩ := h.1 (fig14Index.update .x .b) (by decide)
-  have hX' : X ⊆ ({PowerSet2World.both} : Finset PowerSet2World) := hX
-  have hXeq : X = {PowerSet2World.both} := by
-    rcases Finset.subset_singleton_iff.mp hX' with h0 | h0
-    · obtain ⟨y, hy⟩ := hne
-      rw [h0] at hy
-      exact absurd hy (Finset.notMem_empty y)
-    · exact h0
-  subst hXeq
+  obtain rfl : X = {PowerSet2World.both} := hne.subset_singleton_iff.mp hX
   obtain ⟨d, hd, hP⟩ := hsupp
     (PowerSet2World.both, (fig14Index.update .x .b).assign)
     (State.mem_modalLift.mpr ⟨Finset.mem_singleton_self _, rfl⟩)
-  rw [show (fig14Index.update QVar.x Fig14Atom.b).assign QVar.x
-      = some Fig14Atom.b from rfl, Option.some.injEq] at hd
-  subst hd
+  obtain rfl := Option.some.inj hd
   exact Fig14Atom.noConfusion hP.1
 
 /-- **Fact 4 (obviation)** of [aloni-vanormondt-2023]: the universal
