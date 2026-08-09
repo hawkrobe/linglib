@@ -26,7 +26,7 @@ bridge, syncretism) are typological and live in `Typology/Indefinite.lean`.
 
 * `Indefinite.IndefinitePronoun` — the lexical object (`extends Pronoun`).
 * `instance : Indefinite Indefinite.IndefinitePronoun` — the pronoun carrier of the series.
-* `HasPhi` / `Bound` instances routing the object through the Pronoun API.
+* `HasPhi` / `Proform` / `Bound` instances routing the object through the Pronoun API.
 -/
 
 set_option autoImplicit false
@@ -81,6 +81,8 @@ end Indefinite
 
 /-- An indefinite pronoun bears φ via its `Pronoun` core. -/
 instance : HasPhi Indefinite.IndefinitePronoun := ⟨fun e => e.toPronoun.toWord.phi⟩
+
+instance : Proform Indefinite.IndefinitePronoun := ⟨fun e => Proform.Domain e.toPronoun⟩
 
 /-- An indefinite pronoun is a Principle-B pronominal (its `Pronoun` core's class,
     defaulting an undeclared φ-shell to `.pronoun`). -/

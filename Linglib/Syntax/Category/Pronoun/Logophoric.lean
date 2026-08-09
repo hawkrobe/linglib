@@ -31,7 +31,7 @@ concrete by carrying both axes on one object (`zibun_anaphor_yet_pivot_oriented`
 
 * `LogophoricPronoun` — the lexical object (`extends Pronoun` + `requiredRole`).
 * `instance : Logophoric LogophoricPronoun` — the pronoun carrier of the series.
-* `HasPhi` / `Bound` instances routing the object through the Pronoun API.
+* `HasPhi` / `Proform` / `Bound` instances routing the object through the Pronoun API.
 * `ye`, `zibun` — worked [sells-1987] entries; licensing derived from the hierarchy.
 -/
 
@@ -51,6 +51,8 @@ structure LogophoricPronoun extends Pronoun where
 
 /-- A logophoric pronoun bears φ via its `Pronoun` core. -/
 instance : HasPhi LogophoricPronoun := ⟨fun p => p.toPronoun.toWord.phi⟩
+
+instance : Proform LogophoricPronoun := ⟨fun p => Proform.Domain p.toPronoun⟩
 
 /-- Its binding class is the `Pronoun` core's, defaulting an undeclared shell to `.pronoun` —
     independent of its logophoric orientation. -/
