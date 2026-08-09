@@ -25,8 +25,7 @@ derives the argument asymmetry and the P-ban (§3.1 ex. 27–32). The
 (§3.2, adopting [bondarenko-2022]); the stativity restriction from
 aspectual-head selection (§4.1: vState selects both otiP and puP,
 vEvent only otiP). §7.1 extends the adjunct-selection account to
-Uyghur *dep* (= *de* 'say' + converb *-ip*, per Major 2024) — the
-structural parallel of Buryat *gɘ-žɘ*.
+Uyghur *dep* (= *de* 'say' + converb *-ip*, per Major 2024).
 
 §7.3 departs from [bondarenko-2022]'s transparent syntax–semantics
 mapping: bare *oti*-clauses are merged in COMPLEMENT position (the §2
@@ -37,13 +36,17 @@ yields either composition mode.
 
 ## Main declarations
 
-- `bearsN` — the §3.1 [n]-feature datum over the fragment entries
+- `bearsN`, `bearsN_iff_sorted` — the §3.1 [n]-feature datum and its
+  alignment with the content/situation sorts
 - `otiOnlyVerbs`, `puOnlyVerbs`, `dualVerbs`, `factivity_anti_aligned` —
   the attested selection classes (§1–§2.3) and the emotive/cognitive
   factivity split they carry
-- `NounHost`, `ClausePosition`, `licensedIn` — the incorporation
-  mechanism and the derived argument-position asymmetry
-- `selectsClause`, `pu_requires_stative` — the §4.1 stativity locus
+- `NounHost`, `ClausePosition`, `licensedIn`, `licensing_matches_judgments`
+  — the incorporation mechanism, the derived argument-position asymmetry,
+  and its check against the ex. 31–32 judgments
+- `selectsClause`, `AspectualHead.ofVendler`, `pu_complement_verb_stative`
+  — the §4.1 stativity locus and the derived §2.3 verb-level
+  generalization
 - `clauseSort` — *oti* = content, *pu* = situation, consuming
   `Bondarenko2022.NominalSort` (§3.2 ex. 33–34)
 - `bareOtiAttested`, `transparency_conflates_axes` — the §7.3
@@ -58,6 +61,7 @@ namespace Angelopoulos2026
 
 open Greek.StandardModern.Complementizers
 open Bondarenko2022 (NominalSort CompositionPath)
+open Features (VendlerClass)
 
 /-! ### Reversed selection: the [n]-feature (§3.1) -/
 
@@ -90,16 +94,16 @@ def dualVerbs : List (Verb × Verb) :=
   [(thimame, thimameStat), (thimono, thimonoStat)]
 
 /-- The emotive/cognitive factivity split: verb-level and C-level
-factivity are anti-aligned on the sample. The complement-presupposing
-verbs (`Verb.factivePresup`: *kséro*, *katalavéno*, *sinidhitopió*)
-select *oti*, which records no lexical factive presupposition, while
+factivity are anti-aligned on the sample. Among the *oti*-selectors
+exactly the knowledge verbs (*kséro*, *katalavéno*, *sinidhitopió*)
+carry `Verb.factivePresup`, while *oti* records no lexical factivity;
 the *pu*-only emotive factives all escape `factivePresup` (preferential
 rather than veridical-doxastic attitude) yet select lexically factive
 *pu*. Complement factivity thus has two independent sources — verb and
 complementizer — which the Greek data tease apart. -/
 theorem factivity_anti_aligned :
     oti.factive = none ∧ pu.factive = some true ∧
-    (∀ v ∈ [ksero, katalaveno, sinidhitopio], v.factivePresup = true) ∧
+    otiOnlyVerbs.map (·.factivePresup) = [false, false, true, true, true, false] ∧
     (∀ v ∈ puOnlyVerbs, v.factivePresup = false) := by
   decide
 
@@ -112,13 +116,18 @@ inductive NounHost where
   | vLex
   | t
   | p
-  deriving DecidableEq, Fintype, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a host licenses light-noun incorporation. -/
 def NounHost.licenses : NounHost → Prop
   | .vLex => True
   | .t    => False
   | .p    => False
+
+instance : DecidablePred NounHost.licenses
+  | .vLex => isTrue trivial
+  | .t    => isFalse id
+  | .p    => isFalse id
 
 /-- Positions a bare oti/pu-clause can occupy, each with the nearest
 potential incorporation host: internal arguments sit under an
@@ -129,7 +138,7 @@ inductive ClausePosition where
   | derivedSubject
   | externalArgument
   | pComplement
-  deriving DecidableEq, Fintype, Repr
+  deriving DecidableEq, Repr
 
 /-- The nearest potential incorporation host from each position. -/
 def ClausePosition.nearestHost : ClausePosition → NounHost
@@ -143,18 +152,30 @@ host licenses light-noun incorporation — the paper's derivation of
 the distribution, not a stipulated table. -/
 def licensedIn (pos : ClausePosition) : Prop := pos.nearestHost.licenses
 
+instance : DecidablePred licensedIn := fun pos =>
+  inferInstanceAs (Decidable pos.nearestHost.licenses)
+
 /-- Internal arguments and derived subjects are licensed (§2.1–2.2). -/
 theorem internal_and_derived_subject_licensed :
     licensedIn .internalArgument ∧ licensedIn .derivedSubject :=
   ⟨trivial, trivial⟩
 
 /-- The external-argument ban (§2.2): T cannot host incorporation. -/
-theorem external_argument_banned : ¬ licensedIn .externalArgument :=
-  fun h => h
+theorem external_argument_banned : ¬ licensedIn .externalArgument := id
 
 /-- Bare clauses are excluded after P (ex. 31c, 32c). -/
-theorem p_complement_banned : ¬ licensedIn .pComplement :=
-  fun h => h
+theorem p_complement_banned : ¬ licensedIn .pComplement := id
+
+/-- The licensing predictions match the ex. 31–32 paradigm judgments:
+bare clauses are fine as internal arguments (31b, 32b) and out after
+P (31c, 32c). -/
+theorem licensing_matches_judgments :
+    ∀ p ∈ [(ClausePosition.internalArgument, Examples.ex_31b),
+           (.internalArgument, Examples.ex_32b),
+           (.pComplement, Examples.ex_31c),
+           (.pComplement, Examples.ex_32c)],
+      licensedIn p.1 ↔ p.2.judgment ≠ .ungrammatical := by
+  decide
 
 /-! ### The stativity locus (§4.1) -/
 
@@ -163,7 +184,14 @@ Borer and Merchant as cited there). -/
 inductive AspectualHead where
   | vState
   | vEvent
-  deriving DecidableEq, Fintype, Repr
+  deriving DecidableEq, Repr
+
+/-- The aspectual head introducing a verb's internal argument tracks
+the verb's Vendler class through its dynamicity (§4.1). -/
+def AspectualHead.ofVendler (vc : VendlerClass) : AspectualHead :=
+  match vc.dynamicity with
+  | .stative => .vState
+  | .dynamic => .vEvent
 
 /-- §4.1: vState selects both otiP and puP as its complement; vEvent
 selects only otiP. -/
@@ -179,17 +207,28 @@ theorem pu_requires_stative (h : AspectualHead)
   · rfl
   · exact absurd (show pu = oti from hp) (by decide)
 
-/-- The verb-level reflex over the fragment sample: the *pu*-only
-matrix verbs are all stative. -/
+/-- The §2.3 stativity generalization, derived: a verb whose aspectual
+head licenses a *pu*-complement is Vendler-stative. -/
+theorem pu_complement_verb_stative (vc : VendlerClass)
+    (hp : selectsClause (.ofVendler vc) pu) : vc = .state := by
+  cases vc
+  · rfl
+  all_goals exact absurd (show pu = oti from hp) (by decide)
+
+/-- The verb-level reflex over the fragment sample: each *pu*-only
+matrix verb's aspectual head is `vState`. -/
 theorem pu_only_verbs_stative :
-    ∀ v ∈ puOnlyVerbs, v.vendlerClass = some .state := by
+    ∀ v ∈ puOnlyVerbs,
+      v.vendlerClass.map AspectualHead.ofVendler = some .vState := by
   decide
 
 /-- The dual verbs realize the same restriction sense-internally:
-stative *pu*-sense, non-stative *oti*-sense (ex. 19, 22–23). -/
+`vState` for the *pu*-sense, `vEvent` for the *oti*-sense
+(ex. 19, 22–23). -/
 theorem dual_verbs_stative_with_pu :
-    ∀ p ∈ dualVerbs, p.2.vendlerClass = some .state ∧
-      p.1.vendlerClass ≠ some .state := by
+    ∀ p ∈ dualVerbs,
+      p.2.vendlerClass.map AspectualHead.ofVendler = some .vState ∧
+      p.1.vendlerClass.map AspectualHead.ofVendler = some .vEvent := by
   decide
 
 /-! ### Content vs situation (§3.2) -/
@@ -211,8 +250,15 @@ theorem clauseSort_matches_diagnostics :
     clauseSort oti = some .content ∧
     NominalSort.truthEvaluable .content ∧
     clauseSort pu = some .situation ∧
-    NominalSort.occurrenceCompatible .situation :=
-  ⟨by decide, trivial, by decide, trivial⟩
+    NominalSort.occurrenceCompatible .situation := by
+  decide
+
+/-- The [n]-bearers are exactly the sorted complementizers: light-noun
+incorporation presupposes a clause sort for the noun to match
+(§3.1–§3.2); *an* and *na* fall outside both. -/
+theorem bearsN_iff_sorted :
+    ∀ c ∈ complementizers, (bearsN c ↔ (clauseSort c).isSome) := by
+  decide
 
 /-- fn. 17's rebuttal of a reviewer's oti ~ pu allomorphy alternative,
 cross-checked against the rival lexical typology: both this account
@@ -245,31 +291,20 @@ def bareOtiAttested : SynPosition → CompositionPath → Prop
   | .adjunct,    .viaSituation  => True
   | .adjunct,    .viaDPArgument => False
 
-/-- [bondarenko-2022]'s transparent mapping restated on the split
-axes: a bare clause composing via PM must be a syntactic adjunct
-(the composition path is reflected in syntax). -/
-def transparentBare : SynPosition → CompositionPath → Prop
-  | .adjunct, .viaSituation => True
-  | _, _ => False
+/-- Bare clauses never compose via FA from either position: FA requires
+the nominalizing D (§7.3 ex. 57). -/
+theorem bare_never_via_dp : ∀ p, ¬ bareOtiAttested p .viaDPArgument :=
+  fun p => by cases p <;> exact id
 
-/-- The §7.3 divergence: bare *oti*-clauses occupy complement position
-while composing via PM — attested here, excluded by the transparent
-mapping. Conditional on the paper's premises: the clauses are BARE
-(no covert nominal shell — the analysis rejects Arsenijević's DP
-layer and Faure's case-less-DP treatment, §3.1) and are internal
-ARGUMENTS (clitic doubling, passivization, derived subjects,
-§2.1–2.2). [bondarenko-2022] can deny either premise. -/
-theorem diverges_from_transparent_mapping :
-    bareOtiAttested .complement .viaSituation ∧
-    ¬ transparentBare .complement .viaSituation :=
-  ⟨trivial, fun h => h⟩
-
-/-- Against `Bondarenko2022.transparentSSMapping` directly: Bondarenko
-predicts the (bare, argument) cell empty
-(`Bondarenko2022.bare_argument_predicted_impossible`), identifying
-argument position with the FA path; Greek realizes syntactic
-argumenthood for bare clauses WITHOUT FA — the identification of the
-two axes is what fails. -/
+/-- The §7.3 divergence: [bondarenko-2022] predicts the (bare, argument)
+cell empty (`Bondarenko2022.bare_argument_predicted_impossible`),
+identifying argument position with the FA path; Greek bare *oti*-clauses
+realize syntactic argumenthood while composing via PM — the
+identification of the two axes is what fails. Conditional on the paper's
+premises: the clauses are BARE (no covert nominal shell — the analysis
+rejects Arsenijević's DP layer and Faure's case-less-DP treatment, §3.1)
+and are internal ARGUMENTS (clitic doubling, passivization, derived
+subjects, §2.1–2.2). [bondarenko-2022] can deny either premise. -/
 theorem transparency_conflates_axes :
     ¬ Bondarenko2022.transparentSSMapping .bareArgument ∧
     bareOtiAttested .complement .viaSituation :=
