@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Assignment
+import Linglib.Logic.Assignment
 import Linglib.Semantics.Dynamic.Update
 
 /-!
@@ -26,7 +26,7 @@ as coordinates of a function type: `RegisterStructure V (V → E) E`.
   canonical instance at `V → E`.
 - `atom1`, `atom2`, `eq'`: atomic conditions from predicates and drefs.
 - `CDRT.State`, `CDRT.DProp`, `CDRT.SProp` and the box connectives:
-  the concrete CDRT instance at `State E := Core.Assignment E`, with
+  the concrete CDRT instance at `State E := Assignment E`, with
   `DProp.new n` agreeing with the register structure's random assignment
   (`DProp.new_eq_randomAssign`).
 
@@ -114,7 +114,7 @@ open DynamicSemantics DynamicSemantics.Update
 /-- CDRT state: Muskens' type `s`, concretely an assignment `Nat → E`.
 His *registers* are register indices `n : ℕ` with values read by `dref`
 (see the canonical `RegisterStructure` instance). -/
-abbrev State (E : Type*) := Core.Assignment E
+abbrev State (E : Type*) := Assignment E
 
 /-- Register lookup as a dref: Muskens' type `se`, picking out the value
 stored at position `n`. -/

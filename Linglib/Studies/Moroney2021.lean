@@ -727,7 +727,7 @@ theorem english_mandarin_inventory_distinct :
     definiteness via unblocked ι. -/
 theorem shan_bare_unique_agreement {E W : Type}
     (R : DenotGS E W .et) (sIdx : Nat)
-    (g : Core.Assignment E)
+    (g : Assignment E)
     (gs : SitAssignment W) :
     Semantics.Definiteness.interpret (.bare R) g gs =
       Semantics.Definiteness.interpret (.unique R sIdx) g gs := rfl
@@ -740,7 +740,7 @@ theorem shan_bare_unique_agreement {E W : Type}
     *add* spatial content rather than substituting a different selector. -/
 theorem shan_demonstrative_anaphoric_agreement {E W : Type}
     (R : DenotGS E W .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat)
-    (g : Core.Assignment E)
+    (g : Assignment E)
     (gs : SitAssignment W) :
     Semantics.Definiteness.interpret (.demonstrative R deictic sIdx d) g gs =
       Semantics.Definiteness.interpret (.anaphoric R d) g gs := rfl

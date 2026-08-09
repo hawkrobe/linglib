@@ -2,7 +2,7 @@ import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Semantics.Intensional.Variables
-import Linglib.Core.Logic.Assignment
+import Linglib.Logic.Assignment
 import Linglib.Semantics.Dynamic.Lookup
 import Linglib.Semantics.Definiteness.Interpret
 
@@ -42,7 +42,6 @@ set_option autoImplicit false
 open Semantics.Presupposition (PartialProp)
 open Semantics.Presupposition.PhiFeatures
 open Semantics.Reference (NominalDenot)
-open Core (Assignment)
 open Intensional.Variables (interpPronoun DenotGS SitAssignment)
 
 /-- The conjoined φ-feature presupposition of a pronoun entry, over an entity

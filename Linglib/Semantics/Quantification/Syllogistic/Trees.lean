@@ -99,7 +99,7 @@ variable {L : Language.{u, v}} {nm : LexNaming L}
   {x y z : String} {X Y Z : L.Relations 1}
   (hx : nm.preds₁ x = some X) (hy : nm.preds₁ y = some Y)
   (hz : nm.preds₁ z = some Z)
-  (m : Model L) (w : m.W) (g : Core.Assignment m.E)
+  (m : Model L) (w : m.W) (g : Assignment m.E)
 
 include hfr hdj hx hy hz
 

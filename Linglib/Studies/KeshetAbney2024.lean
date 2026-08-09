@@ -2,7 +2,7 @@ import Linglib.Studies.KeshetAbney2024.Bridges
 import Linglib.Studies.KeshetAbney2024.Connectives
 import Linglib.Studies.KeshetAbney2024.Felicity
 import Linglib.Semantics.Dynamic.Update
-import Linglib.Core.Logic.Assignment
+import Linglib.Logic.Assignment
 import Linglib.Data.Examples.Heim1982
 import Linglib.Data.Examples.ElliottSudo2025
 import Mathlib.Data.Set.Basic
@@ -50,7 +50,7 @@ finite models.
 [groenendijk-stokhof-1991] [muskens-1996]
 
 `Nat`-indexed dynamic operators on the Tarski-style state `Assignment E := Nat → E`
-(`Core.Assignment`), generic over `E`: `randomAssignAt n` (DPL `[x_n]`), `existsAt n φ`
+(`Assignment`), generic over `E`: `randomAssignAt n` (DPL `[x_n]`), `existsAt n φ`
 (DPL `∃x_n.φ`, CDRT `[u_n]; φ`), `forallAt n φ` (DPL `∀x_n.φ`), `closeAt φ` (DPL `◇φ`).
 `existsAt n` is `seq` after `randomAssignAt n`; `forallAt n` is `¬∃¬` via `test`/`neg`.
 `RegisterStructure` (`Dynamic/CDRT.lean`) abstracts these: its canonical
@@ -62,7 +62,6 @@ The DPL comparison below (`dpl_dne_fails_anaphora`) consumes these; they stay in
 
 namespace DynamicSemantics
 
-open _root_.Core (Assignment)
 open DynamicSemantics
 open DynamicSemantics.Update (test seq neg closure)
 
@@ -126,7 +125,7 @@ namespace KeshetAbney2024
 
 open KeshetAbney2024.PIP
 open DynamicSemantics.ICDRT (IVar Assignment Entity Context idUp)
-open Core.Logic.Modal (AccessRel)
+open Modal (AccessRel)
 
 
 -- ============================================================
@@ -1072,7 +1071,6 @@ section DPLComparison
 open DynamicSemantics (existsAt existsAt_iff)
 open DynamicSemantics (Update)
 open DynamicSemantics.Update (neg test)
-open _root_.Core (Assignment)
 
 /-!
 ### PIP vs DPL: The Architectural Difference

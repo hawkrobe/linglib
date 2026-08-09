@@ -404,10 +404,10 @@ section UpdateTheoretic
 variable {W E : Type*}
 
 /-- Charlow's context type: a set of world-assignment pairs. -/
-abbrev State (W E : Type*) := Set (W × Core.Assignment E)
+abbrev State (W E : Type*) := Set (W × Assignment E)
 
 /-- Context change potential over Charlow's contexts. -/
-abbrev State.CCP (W E : Type*) := DynamicSemantics.CCP (W × Core.Assignment E)
+abbrev State.CCP (W E : Type*) := DynamicSemantics.CCP (W × Assignment E)
 
 /-- Existential dref introduction at the state level (eq. 74): for each
 world–assignment pair in the context, non-deterministically extend the
@@ -466,8 +466,8 @@ theorem Mvar_u_nondistributive [PartialOrder E] [Nonempty W]
     ∃ (v : ℕ) (K : State.CCP W E), ¬ IsDistributive (Mvar_u v K) := by
   obtain ⟨w⟩ := ‹Nonempty W›
   refine ⟨0, id, fun h => ?_⟩
-  let g₁ : Core.Assignment E := Function.const _ a
-  let g₂ : Core.Assignment E := Function.const _ b
+  let g₁ : Assignment E := Function.const _ a
+  let g₂ : Assignment E := Function.const _ b
   let s : State W E := {(w, g₁), (w, g₂)}
   -- (w, g₁) is NOT in Mvar_u 0 id s: a is not maximal because b > a is also present
   have hnotmem : (w, g₁) ∉ Mvar_u 0 id s := by
@@ -536,7 +536,7 @@ private theorem evar_u_vvals (v : ℕ) (P : E → Prop) (s : State W E) (y : E)
 
 /-- The `v`-values after `Evar_u v P {i}` are exactly `{x | P x}`. -/
 private theorem evar_u_vvals_single (v : ℕ) (P : E → Prop)
-    (i : W × Core.Assignment E) (y : E) :
+    (i : W × Assignment E) (y : E) :
     (∃ q ∈ Evar_u v P ({i} : Set _), q.2 v = y) ↔ P y := by
   simp only [Evar_u, Set.mem_setOf_eq]
   constructor

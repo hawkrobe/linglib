@@ -2,7 +2,7 @@ import Linglib.Semantics.Dynamic.DPL
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Semantics.Dynamic.Lookup
 import Linglib.Semantics.Dynamic.ICDRT.Defs
-import Linglib.Core.Logic.CylindricAlgebra
+import Linglib.Logic.CylindricAlgebra
 
 /-!
 # Charlow (2019): Where Is the Destructive Update Problem?
@@ -20,7 +20,6 @@ open DPL
 open DynamicSemantics
 open DynamicSemantics.CCP (IsDistributive)
 open DynamicSemantics.ICDRT
-open _root_.Core (Assignment)
 
 /-- Truth at an assignment: K True at g ⟺ ∃h. K g h (Charlow's (7)). -/
 def trueAt {E : Type*} (K : DPLRel E) (g : Assignment E) : Prop :=
@@ -396,15 +395,15 @@ empty-set falsifier makes downstream lookup empty. -/
 --
 -- Charlow's `staticExists` / `dynamicExists` predicates have an
 -- algebraic interpretation: both reduce to `cylindrify` from
--- `Core.CylindricAlgebra`. These bridges previously lived in
--- `Linglib/Core/Logic/CylindricAlgebra/DynamicSemantics.lean`, but a Core
+-- `CylindricAlgebra`. These bridges previously lived in
+-- `Linglib/Logic/CylindricAlgebra/DynamicSemantics.lean`, but a Core
 -- file importing from Studies inverted the substrate→Studies dependency arrow.
 -- They live here now: a Studies file importing the Core substrate it
 -- depends on is layering-legal.
 
 section CylindricAlgebraBridges
 
-open Core.CylindricAlgebra
+open CylindricAlgebra
 open DPL
 
 /-- Static existential truth = cylindrification.

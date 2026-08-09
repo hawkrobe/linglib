@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Tactic.FinCases
-import Linglib.Core.Logic.FactorsThroughOn
+import Linglib.Core.Relation.FactorsThroughOn
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.Prosody.Phrase
 import Linglib.Semantics.Focus.Control

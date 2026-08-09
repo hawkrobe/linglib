@@ -1,5 +1,5 @@
-import Linglib.Core.Logic.Duality
-import Linglib.Core.Logic.Trivalent.Basic
+import Linglib.Logic.Duality
+import Linglib.Core.Data.Trivalent
 import Linglib.Semantics.Homogeneity.Usable
 import Linglib.Semantics.Plurality.Basic
 import Linglib.Semantics.Plurality.Cover

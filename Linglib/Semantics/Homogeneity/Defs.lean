@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Trivalent.Prop3
+import Linglib.Logic.Trivalent.Prop3
 
 /-!
 # Homogeneity

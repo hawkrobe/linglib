@@ -1,6 +1,6 @@
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Logic.Modal.Basic
+import Linglib.Logic.Modal.Basic
 import Linglib.Discourse.CommonGround
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Acceptability
@@ -188,7 +188,7 @@ open CommonGround (ContextSet)
 
 /-- Local Bool-valued accessibility used by Wang2025 for `List.all` evaluation
 of the speaker-K operator. The Prop-valued canonical version lives in
-`Core.Logic.Modal.AccessRel`; lift via
+`Modal.AccessRel`; lift via
 `fun a b => R a b = true` to bridge. -/
 abbrev BAccessRel (W : Type*) := W → W → Bool
 open Pragmatics.Expressives (TwoDimProp)

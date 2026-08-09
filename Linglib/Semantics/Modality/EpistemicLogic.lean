@@ -1,5 +1,5 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Core.Logic.Modal.Basic
+import Linglib.Logic.Modal.Basic
 import Linglib.Core.Order.ComparativeProbability.Systems
 
 /-!
@@ -37,7 +37,7 @@ on finite worlds goes through `Decidable` instances + `decide`.
 
 namespace Semantics.Modality.EpistemicLogic
 
-open Core.Logic.Modal
+open Modal
   (AccessRel AgentAccessRel box diamond IsSerial IsEuclidean IsBeliefRefinementOf
    box_T box_D box_four box_B box_five)
 

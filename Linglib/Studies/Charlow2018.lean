@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Functor
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Variables
-import Linglib.Core.Logic.Assignment
+import Linglib.Logic.Assignment
 import Mathlib.Control.Monad.Cont
 import Linglib.Semantics.Reference.Binding
 
@@ -121,7 +121,7 @@ theorem hk_decomposition (f : DenotG E W (σ ⇒ τ)) (x : DenotG E W σ) :
 /-- Non-pronominal entries in H&K are trivially assignment-dependent:
 `⟦John⟧ := λg. j`. This is exactly ρ(j). -/
 theorem hk_lexical_lift (d : Denot E W σ) :
-    constDenot d = fun (_ : Core.Assignment E) => d := rfl
+    constDenot d = fun (_ : Assignment E) => d := rfl
 
 /-- Composing two ρ-lifted entries via ⊛ yields ρ of the composition. -/
 theorem rho_ap_reduces (f : Denot E W (σ ⇒ τ)) (x : Denot E W σ) :
@@ -152,7 +152,7 @@ variable {E W : Type} {τ : Ty}
 
 /-- Λᵢ applied to a pronoun recovers the identity function:
 `Λₙ(proₙ) = λg λx. x`. -/
-theorem lambda_pronoun (n : Nat) (g : Core.Assignment E) (x : E) :
+theorem lambda_pronoun (n : Nat) (g : Assignment E) (x : E) :
     lambdaAbsG (W := W) n (interpPronoun n) g x = x := by
   simp [lambdaAbsG, interpPronoun]
 
@@ -160,7 +160,7 @@ theorem lambda_pronoun (n : Nat) (g : Core.Assignment E) (x : E) :
 `Λₙ(ρ(left) ⊛ proₙ) = λg λx. left(x) = ρ(left)`. -/
 theorem lambda_rho_ap_pronoun (n : Nat)
     (left : Denot E W (.e ⇒ .t))
-    (g : Core.Assignment E) (x : E) :
+    (g : Assignment E) (x : E) :
     lambdaAbsG n (applyG (constDenot left) (interpPronoun n)) g x =
     left x := by
   simp [lambdaAbsG, applyG, constDenot, interpPronoun]
@@ -308,7 +308,7 @@ anaphoric to *intensions* rather than *extensions*. The flattener μ
 garden-variety one. ρ, ⊛, and μ together form a monad (§4.3) — the
 Reader monad.
 
-The `Core.Assignment E = Nat → E` type can only store
+The `Assignment E = Nat → E` type can only store
 entities, not intensions; §5.1 proposes type-homogeneous assignments
 `gᵣ := ℕ → r` to fix this (next section). Here we show the paycheck
 truth conditions using externally-provided intensions. -/
@@ -330,7 +330,7 @@ theorem momIntension_eq_rho_ap_pro (mom : E → E) (n : Nat) :
 theorem paycheck_truth_conditions
     (mom : E → E)
     (likes : Denot E W (.e ⇒ .e ⇒ .t))
-    (bill : E) (n : Nat) (g : Core.Assignment E) :
+    (bill : E) (n : Nat) (g : Assignment E) :
     applyG (applyG (constDenot likes) (momIntension mom n))
            (constDenot bill) g =
     likes (mom (g n)) bill := rfl
@@ -339,7 +339,7 @@ theorem paycheck_truth_conditions
 theorem paycheck_reading
     (mom : E → E)
     (likes : Denot E W (.e ⇒ .e ⇒ .t))
-    (bill : E) (n : Nat) (g : Core.Assignment E) (h : g n = bill) :
+    (bill : E) (n : Nat) (g : Assignment E) (h : g n = bill) :
     applyG (applyG (constDenot likes) (momIntension mom n))
            (constDenot bill) g =
     likes (mom bill) bill := by
@@ -364,7 +364,7 @@ variable {E W : Type}
 theorem reconstruction_predicate
     (mom : E → E)
     (likes : Denot E W (.e ⇒ .e ⇒ .t))
-    (n : Nat) (g : Core.Assignment E) (x : E) :
+    (n : Nat) (g : Assignment E) (x : E) :
     lambdaAbsG n
       (applyG (applyG (constDenot likes) (momIntension mom n))
               (interpPronoun n))
@@ -377,7 +377,7 @@ theorem reconstruction_predicate
 theorem reconstruction_independent
     (mom : E → E)
     (likes : Denot E W (.e ⇒ .e ⇒ .t))
-    (n : Nat) (g₁ g₂ : Core.Assignment E) :
+    (n : Nat) (g₁ g₂ : Assignment E) :
     lambdaAbsG n
       (applyG (applyG (constDenot likes) (momIntension mom n))
               (interpPronoun n)) g₁ =
@@ -408,10 +408,10 @@ section TypedAssignments
 variable {E : Type}
 
 /-- Type-homogeneous assignment over carrier `r` (§5.2: `gᵣ := ℕ → r`).
-Equal to `Core.Assignment r`; aliased to read naturally in the paycheck
+Equal to `Assignment r`; aliased to read naturally in the paycheck
 composition where `r` ranges over both entity and intension carriers
 within one derivation. -/
-abbrev TypedAssignment (r : Type) := Core.Assignment r
+abbrev TypedAssignment (r : Type) := Assignment r
 
 /-- Self-contained paycheck derivation via composed `Gₑ ∘ G_{gₑ→e}`.
 
@@ -438,7 +438,7 @@ theorem typed_intension_is_rho_ap_pro (mom : E → E) :
     readerAp (readerPure (E := TypedAssignment E) mom) (fun h => h 0) =
     fun h => mom (h 0) := rfl
 
-/-- `G ∘ G` paycheck reading with `Core.Assignment` sorts: the doubly
+/-- `G ∘ G` paycheck reading with `Assignment` sorts: the doubly
 assignment-dependent meaning `λg λh. likes(g₁ h)(b)` depends on two
 assignments. -/
 theorem composed_paycheck
@@ -498,8 +498,8 @@ end VariableFree
 The paper's operations are instantiations of the Reader monad from
 `Binding.lean`:
 
-* `constDenot d` = Reader pure at `Core.Assignment E`
-* `applyG f x` = Reader `<*>` at `Core.Assignment E`
+* `constDenot d` = Reader pure at `Assignment E`
+* `applyG f x` = Reader `<*>` at `Assignment E`
 * `denotGJoin` (μ) = the W combinator
 * VF `readerPure` = Reader pure at Entity -/
 
@@ -512,7 +512,7 @@ variable {E W : Type}
 /-- `constDenot` is the Reader monad's `pure`. -/
 theorem constDenot_is_reader_pure {σ : Ty} (d : Denot E W σ) :
     constDenot d =
-    @Pure.pure (Semantics.Reference.Binding.Reader (Core.Assignment E)) _ _ d := rfl
+    @Pure.pure (Semantics.Reference.Binding.Reader (Assignment E)) _ _ d := rfl
 
 /-- VF `readerPure` is also the Reader monad's `pure`. -/
 theorem readerPure_is_reader_monad_pure {A : Type} (x : A) :
@@ -522,7 +522,7 @@ theorem readerPure_is_reader_monad_pure {A : Type} (x : A) :
 /-- `denotGJoin` (the paper's μ, eq. 19) is the `W` (duplicator)
 combinator from `Binding.lean`. -/
 theorem denotGJoin_is_W {A : Type}
-    (f : Core.Assignment E → Core.Assignment E → A) :
+    (f : Assignment E → Assignment E → A) :
     denotGJoin f = Semantics.Reference.Binding.W f := rfl
 
 end ReaderBridge

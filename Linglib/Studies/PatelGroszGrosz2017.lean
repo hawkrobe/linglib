@@ -188,7 +188,7 @@ theorem feminine_per_restrictor_is_femSem {E W : Type}
     restrictor of the weak-article definite (`ιx[isFemale x]`). -/
 theorem feminine_per_picks_unique_female {E W : Type}
     (isFemale : E → Prop) (sIdx : Nat)
-    (g : Core.Assignment E) (gs : Intensional.Variables.SitAssignment W) :
+    (g : Assignment E) (gs : Intensional.Variables.SitAssignment W) :
     Semantics.Definiteness.interpret
         (Semantics.Definiteness.Description.ofPresupType .uniqueness
           ((fun _ _ x => (femSem isFemale).presup x) :

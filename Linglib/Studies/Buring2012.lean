@@ -39,7 +39,6 @@ set_option autoImplicit false
 namespace Buring2012
 
 open English.Pronouns (she they)
-open Core (Assignment)
 open Intensional.Variables (interpPronoun)
 
 variable {E : Type} [PartialOrder E]

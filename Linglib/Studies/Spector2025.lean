@@ -1,5 +1,5 @@
-import Linglib.Core.Logic.Trivalent.Basic
-import Linglib.Core.Logic.Assignment
+import Linglib.Core.Data.Trivalent
+import Linglib.Logic.Assignment
 
 /-!
 # Spector 2025: Trivalence and Transparency
@@ -43,7 +43,7 @@ in the conjunction column for `0 ∧ #`).
 ## Architecture
 
 The trivalent semantics uses partial assignments (`PartialAssign D`)
-and plural assignments (`PluralAssign D`) from `Core.Assignment`.
+and plural assignments (`PluralAssign D`) from `Assignment`.
 Predicate application yields `#` when the variable is unvalued.
 The existential quantifier uses [mandelkern-2022]'s witness
 condition: `∃xφ` is true at `(w,g)` only if `g(x)` witnesses `φ`,
@@ -52,7 +52,6 @@ undefined if classically true but `g(x)` is not a witness.
 
 namespace Spector2025
 
-open Core
 open Trivalent (ofBool isDefined meetMiddle joinMiddle)
 
 universe u
@@ -621,11 +620,11 @@ Key changes from the simplified system:
 -/
 
 -- ════════════════════════════════════════════════════════════════
--- §6.0: PluralAssign substrate now lives in `Linglib.Core.Logic.Assignment`
+-- §6.0: PluralAssign substrate now lives in `Linglib.Logic.Assignment`
 -- [van-den-berg-1996] [nouwen-2003] [brasoveanu-2008]
 -- ════════════════════════════════════════════════════════════════
 
-/-! Plural assignments are imported from `Core.Assignment` (`open Core`
+/-! Plural assignments are imported from `Assignment` (`open Core`
     brings `PluralAssign`, `singularAt`, `singular`, `restrict`, `defined`,
     `null`, `ofPred`, `singleton`, `sumDref` into scope). Spector's static
     reuse is one consumer; the PPCDRT substrate

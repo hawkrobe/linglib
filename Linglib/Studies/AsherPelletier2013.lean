@@ -1,5 +1,5 @@
 import Linglib.Core.Order.Normality
-import Linglib.Core.Logic.TweetyNixon
+import Linglib.Logic.TweetyNixon
 import Linglib.Studies.Cohen1999
 
 /-!
@@ -20,7 +20,7 @@ not formalized.
 namespace AsherPelletier2013
 
 open Core.Order
-open Core.Logic.TweetyNixon
+open TweetyNixon
 
 /-! ### Per-individual evaluation (§12.3, exx. 7–8)
 

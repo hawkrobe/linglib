@@ -122,7 +122,7 @@ theorem planet_not_existsUnique : ¬ ∃! x, planet x := by
 
 /-- A trivial bi-assignment: every entity slot is `sun`, every situation
     slot is `()`. The diagnostics in this file do not bind anything. -/
-def g₀ : Core.Assignment Body := fun _ => Body.sun
+def g₀ : Assignment Body := fun _ => Body.sun
 def gs₀ : SitAssignment Unit := fun _ => ()
 
 /-- A `.unique` description whose restrictor lacks a unique satisfier

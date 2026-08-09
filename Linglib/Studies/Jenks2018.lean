@@ -132,7 +132,7 @@ theorem demonstrative_realized :
     layer. Parallels `Moroney2021.shan_bare_unique_agreement`. -/
 theorem bare_unique_agreement
     (R : DenotGS E W .et) (sIdx : Nat)
-    (g : Core.Assignment E)
+    (g : Assignment E)
     (gs : SitAssignment W) :
     interpret (.bare R) g gs = interpret (.unique R sIdx) g gs := rfl
 
@@ -143,7 +143,7 @@ theorem bare_unique_agreement
     `Moroney2021.shan_demonstrative_anaphoric_agreement`. -/
 theorem demonstrative_anaphoric_agreement
     (R : DenotGS E W .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat)
-    (g : Core.Assignment E)
+    (g : Assignment E)
     (gs : SitAssignment W) :
     interpret (.demonstrative R deictic sIdx d) g gs =
       interpret (.anaphoric R d) g gs := rfl
@@ -439,7 +439,7 @@ properly). -/
 theorem demonstrative_strict_under_situation_variation
     (R : DenotGS E W .et) (deictic : Features.Deixis.Feature)
     (sIdx d : Nat)
-    (g : Core.Assignment E)
+    (g : Assignment E)
     (gs₁ gs₂ : SitAssignment W)
     (hR : R g gs₁ (g d) = R g gs₂ (g d)) :
     interpret (.demonstrative R deictic sIdx d) g gs₁ =

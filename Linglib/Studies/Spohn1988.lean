@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.RankingFunction
+import Linglib.Logic.RankingFunction
 
 /-!
 # Spohn (1988): Ranking Functions for Graded Belief Revision
@@ -35,7 +35,6 @@ A,α-conditionalization algorithm.
 
 namespace Spohn1988
 
-open Core.Logic.Ranking
 
 -- ══════════════════════════════════════════════════════════════════════
 -- § 1. World Space and Prior

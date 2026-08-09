@@ -4,8 +4,8 @@ import Linglib.Semantics.Conditionals.WillConditional
 import Linglib.Semantics.Modality.Selectional
 import Linglib.Semantics.Supervaluation
 import Linglib.Semantics.Conditionals.SelectionFunction
-import Linglib.Core.Logic.Trivalent.Basic
-import Linglib.Core.Logic.Duality
+import Linglib.Core.Data.Trivalent
+import Linglib.Logic.Duality
 
 /-!
 # Counterfactual Conditionals: Three Theories

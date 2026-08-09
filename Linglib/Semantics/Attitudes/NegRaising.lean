@@ -1,5 +1,5 @@
 import Linglib.Semantics.Attitudes.Doxastic
-import Linglib.Core.Logic.Aristotelian.Square
+import Linglib.Logic.Aristotelian.Square
 import Linglib.Semantics.Homogeneity.Decided
 
 /-!

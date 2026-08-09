@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Assignment
+import Linglib.Logic.Assignment
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -34,7 +34,6 @@ current consumer).
 
 namespace PPCDRT
 
-open Core
 
 /-- A PPDRS condition: takes the (output) plural state and the
     distribution context `Δ`. [haug-dalrymple-2020] eq 27.

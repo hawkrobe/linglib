@@ -1,5 +1,5 @@
-import Linglib.Core.Logic.Modal.QBSML.FreeChoice
-import Linglib.Core.Logic.Modal.BSML.Scenarios
+import Linglib.Logic.Modal.QBSML.FreeChoice
+import Linglib.Logic.Modal.BSML.Scenarios
 
 /-!
 # [yan-2023]: Monotonicity under desire as a neglect-zero effect
@@ -24,7 +24,7 @@ classically equivalent (`eval_reinterpret_iff`) yet pragmatically distinct
 under `[·]⁺`.
 
 This file derives the chapter's account from the QBSML substrate
-(`Core/Logic/Modal/QBSML/FreeChoice.lean`): the □-FC fact it invokes
+(`Logic/Modal/QBSML/FreeChoice.lean`): the □-FC fact it invokes
 (Fact 13) is `boxFC`; the quantified variant needed for Asher and Heim is
 `boxExiFC`; the semantic validity of the monotonic steps is
 `support_disj_inl` / `support_nec_mono`. The verbs *want* / *it is ok* are
@@ -55,9 +55,9 @@ deferred to the dissertation's Chapter 5).
 
 namespace Yan2023
 
-open Core.Logic.Modal.QBSML
-open Core.Logic.Team (splitsAs_empty_self)
-open Core.Logic.Modal.BSML (QVar)
+open QBSML
+open Team (splitsAs_empty_self)
+open BSML (QVar)
 
 /-! ### The reinterpretation function -/
 

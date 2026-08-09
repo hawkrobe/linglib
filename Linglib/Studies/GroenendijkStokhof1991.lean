@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.CylindricAlgebra
+import Linglib.Logic.CylindricAlgebra
 import Linglib.Semantics.Dynamic.DPL
 import Linglib.Semantics.Dynamic.Transition
 
@@ -426,8 +426,7 @@ these computations are algebraic identities in the cylindric set algebra
 
 section SatisfactionSets
 
-open Core.CylindricAlgebra
-open Core (Assignment)
+open CylindricAlgebra
 open DynamicSemantics.Update (closure)
 
 /-- **DPL existential = cylindrification**: `\∃xφ\ = cₓ\φ\` — the

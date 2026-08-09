@@ -12,7 +12,7 @@ The team-semantic logic primitives D&A use (Hodges 1997 / Väänänen 2007:
 assignment teams, `variation`, `constancy`) are inlined here as a
 private namespace prelude — they currently have only one downstream
 linguistic consumer (this file + Bubnov 2026), so general placement in
-`Core/Logic/` would be premature. When a second framework (branching
+`Logic/` would be premature. When a second framework (branching
 quantifiers, IF-logic for definites, partial-information ellipsis)
 needs them, extract.
 
@@ -70,7 +70,7 @@ set_option autoImplicit false
 -- [hodges-1997] [vaananen-2007]
 -- ============================================================================
 -- Inlined here pending a second consumer (currently only D&A 2025 + Bubnov 2026
--- use these primitives). Promotion to `Core/Logic/DependenceLogic.lean` would
+-- use these primitives). Promotion to `Logic/DependenceLogic.lean` would
 -- create substrate without independent consumers, the anti-pattern noted in
 -- memory `project_pmf_check_mathlib_first.md`.
 

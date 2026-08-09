@@ -2,8 +2,8 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Setoid.Basic
 import Mathlib.Order.BooleanSubalgebra
 import Mathlib.Order.Hom.CompleteLattice
-import Linglib.Core.Logic.Modal.Defs
-import Linglib.Core.Logic.Trivalent.Prop3
+import Linglib.Logic.Modal.Defs
+import Linglib.Logic.Trivalent.Prop3
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -44,7 +44,7 @@ via the paper's translation: radically counterstance-contingent = strongly discr
   classification, plus the information-state-relativized `ObjectiveIn`/`DiscretionaryIn`/
   `StronglyDiscretionaryIn`.
 * `Accepts`, `Rejects`, `DisagreeAt`, `Opinionated` — doxastic accessibility as a binary
-  relation on outlooks (§5's `R_a`), acceptance as the Kripke box (`Core.Logic.Modal.box`).
+  relation on outlooks (§5's `R_a`), acceptance as the Kripke box (`Modal.box`).
 * `AtFault` — the norm of accuracy: asserting what is objectively false at the context world.
 * `think`, `tycka` — the attitude verbs as `PartialProp`s: same assertion (doxastic
   acceptance), differing only in *tycka*'s strong-discretionariness presupposition.
@@ -74,7 +74,7 @@ via the paper's translation: radically counterstance-contingent = strongly discr
 namespace Coppock2018
 
 open Trivalent (Prop3)
-open Core.Logic.Modal (AccessRel box)
+open Modal (AccessRel box)
 open Semantics.Presupposition (PartialProp)
 
 variable {W Ω : Type*}
@@ -271,7 +271,7 @@ An agent's accessibility is a binary relation on outlooks ([coppock-2018] §5's 
 doxastic state at `o` is the set of outlooks it reaches (states vary from outlook to
 outlook, since whether an agent holds a belief is itself settled by outlooks). To *accept*
 a proposition is for it to hold throughout one's accessible outlooks — the Kripke box
-(`Core.Logic.Modal.box`) over outlooks with the proposition's truth as valuation. -/
+(`Modal.box`) over outlooks with the proposition's truth as valuation. -/
 
 /-- An agent with accessibility `R` **accepts** `p` at `o`: `p` holds at every accessible
 outlook. -/
@@ -351,7 +351,7 @@ abbrev johnR : AccessRel ChiliOutlook := λ _ o' => o'.1 = true
 /-- Mary's doxastic state: only non-tasty-outlooks accessible. -/
 abbrev maryR : AccessRel ChiliOutlook := λ _ o' => o'.1 = false
 
-/-- An unopinionated agent: every outlook accessible (`Core.Logic.Modal.universalR`,
+/-- An unopinionated agent: every outlook accessible (`Modal.universalR`,
 inlined for decidability). -/
 abbrev openR : AccessRel ChiliOutlook := λ _ _ => True
 

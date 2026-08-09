@@ -1,5 +1,5 @@
-import Linglib.Core.Logic.Trivalent.Basic
-import Linglib.Core.Logic.Duality
+import Linglib.Core.Data.Trivalent
+import Linglib.Logic.Duality
 import Mathlib.Data.Finset.Basic
 
 /-!
@@ -165,7 +165,7 @@ theorem superTrue_indet_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred
 
     The bridge between Fine 1975 supervaluation (this file) and the
     canonical trivalent classifier (`Trivalent.dist` in
-    `Linglib/Core/Logic/Duality.lean`). Both are van Fraassen 1966's
+    `Linglib/Logic/Duality.lean`). Both are van Fraassen 1966's
     supervaluation construction; `dist` is the more general form
     parameterized over an arbitrary `Finset α + (α → Prop)`, while
     `superTrue` adds the `SpecSpace` wrapper (admissible Finset +

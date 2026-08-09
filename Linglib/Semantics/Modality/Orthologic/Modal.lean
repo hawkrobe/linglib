@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.Orthologic.Frames
-import Linglib.Core.Logic.Modal.Basic
+import Linglib.Logic.Modal.Basic
 import Mathlib.Data.Fintype.Pi
 
 /-!

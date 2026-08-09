@@ -1,6 +1,6 @@
 import Mathlib.Init
 import Linglib.Semantics.Intensional.Rigidity
-import Linglib.Core.Logic.Modal.Defs
+import Linglib.Logic.Modal.Defs
 import Linglib.Semantics.Quantification.Basic
 
 /-!
@@ -219,7 +219,7 @@ collapse — narrow readings under the modal remain available — and the
 individual skolem index carrying [owusu-2022]'s functional readings is
 beyond this fragment. -/
 
-open Core.Logic.Modal
+open Modal
 
 /-- Apply a skolemized CF at `s` to an intensional restrictor, evaluating
 both at the same index — [owusu-2022]'s f_s(P(s)) (entry (67), modulo

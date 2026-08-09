@@ -398,7 +398,7 @@ def tree_maryCutBjorn : Tree Unit String :=
   .bin (.leaf "Mary") (.bin (.leaf "cut") (.leaf "Björn"))
 
 /-- Default assignment for binding-free trees. -/
-private def g₀ : Core.Assignment E := λ _ => E.mary
+private def g₀ : Assignment E := λ _ => E.mary
 
 /-- Extract the Prop truth value from a tree interpretation.
     Returns `none` if the tree is uninterpretable or has non-`t` type. -/

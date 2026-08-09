@@ -1,5 +1,5 @@
 import Linglib.Features.Acceptability
-import Linglib.Core.Logic.Duality
+import Linglib.Logic.Duality
 import Linglib.Fragments.English.Determiners
 import Linglib.Semantics.Conditionals.Counterfactual
 import Linglib.Semantics.Conditionals.Counterfactual.QuantifierEmbedding

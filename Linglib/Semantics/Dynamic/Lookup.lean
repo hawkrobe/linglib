@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Assignment
+import Linglib.Logic.Assignment
 
 /-!
 # Fibered variable lookup
@@ -21,7 +21,6 @@ the family's file; the comparisons live in the studies that draw them
 
 namespace DynamicSemantics
 
-open _root_.Core (Assignment)
 
 universe u v w x
 

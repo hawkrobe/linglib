@@ -65,7 +65,7 @@ def denote {E W : Type} (n : ℕ)
 theorem denote_comm {E W : Type} (n : ℕ)
     (headNoun : DenotG E W (.e ⇒ .t))
     (relClauseBody : DenotG E W .t)
-    (g : Core.Assignment E)
+    (g : Assignment E)
     : denote n headNoun relClauseBody g =
       intersective (headNoun g) (lambdaAbsG n relClauseBody g) := by
   show intersective (lambdaAbsG n relClauseBody g) (headNoun g) =

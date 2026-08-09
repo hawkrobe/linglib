@@ -1,5 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.Logic.Aristotelian.Basic
+import Linglib.Core.Order.Aristotelian
 
 /-!
 # Antonymy — Contradictory vs Contrary Distinction

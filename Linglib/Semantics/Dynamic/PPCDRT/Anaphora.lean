@@ -42,7 +42,6 @@ multi-reciprocal pairwise prediction, the Tracy/Matty/Chris case) live in
 
 namespace PPCDRT
 
-open Core
 
 variable {E : Type*}
 variable (uAnaph uAnt : Nat) (S : PluralAssign E) (Δ : Set Nat)
@@ -70,7 +69,7 @@ def bindingCond : PPDRSCond E := λ S _Δ =>
     [haug-dalrymple-2020] eq 41 stipulates `∂(∪u = ∪𝒜(u))` for *each
     other* — exactly this symmetric equality on sum-drefs. -/
 def groupIdentityCond : PPDRSCond E := λ S _Δ =>
-  Core.PluralAssign.sumDref S uAnaph = Core.PluralAssign.sumDref S uAnt
+  PluralAssign.sumDref S uAnaph = PluralAssign.sumDref S uAnt
 
 /-! ### Reciprocity -/
 

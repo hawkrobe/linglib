@@ -218,7 +218,7 @@ is type-driven, not category-driven. This means the same function works
 for `Tree Cat String` (UD-grounded), `Tree Unit String` (category-free),
 or any other category system. -/
 def interp (E W : Type) {M : Type → Type} [Applicative M] [PredAbs M E W]
-    (lex : Lexicon E W M) (g : Core.Assignment E)
+    (lex : Lexicon E W M) (g : Assignment E)
     : Tree C String → Option (TypedDenot E W M)
   | .terminal _ w => interpTerminal E W lex w
   | .node _ (t :: []) => (interp E W lex g t).map interpNonBranching
@@ -240,7 +240,7 @@ def interp (E W : Type) {M : Type → Type} [Applicative M] [PredAbs M E W]
 discharge through per-effect handlers instead (`handleScope` and kin in
 `Studies/BumfordCharlow2024.lean`). -/
 def evalTree {E W : Type} [∀ (p : Denot E W .t), Decidable p]
-    (lex : Lexicon E W) (g : Core.Assignment E) (t : Tree C String)
+    (lex : Lexicon E W) (g : Assignment E) (t : Tree C String)
     : Option Bool :=
   match interp E W lex g t with
   | some ⟨.t, b⟩ => some (decide b)
@@ -253,7 +253,7 @@ def evalTree {E W : Type} [∀ (p : Denot E W .t), Decidable p]
     or other propositional operators. Evaluate the result at a
     specific world to get a truth value. -/
 def evalTreeProp {E W : Type} [∀ (p : Denot E W .t), Decidable p]
-    (lex : Lexicon E W) (g : Core.Assignment E) (t : Tree C String)
+    (lex : Lexicon E W) (g : Assignment E) (t : Tree C String)
     : Option (W → Bool) :=
   match interp E W lex g t with
   | some ⟨.intens .t, p⟩ => some (λ w => decide (p w))
@@ -307,11 +307,11 @@ section Reduction
 
 variable {C : Type} {E W : Type} {M : Type → Type} [Applicative M] [PredAbs M E W]
 
-@[simp] theorem interp_terminal (lex : Lexicon E W M) (g : Core.Assignment E)
+@[simp] theorem interp_terminal (lex : Lexicon E W M) (g : Assignment E)
     (c : C) (w : String) :
     interp E W lex g (.terminal c w : Tree C String) = interpTerminal E W lex w := rfl
 
-@[simp] theorem interp_node_binary (lex : Lexicon E W M) (g : Core.Assignment E)
+@[simp] theorem interp_node_binary (lex : Lexicon E W M) (g : Assignment E)
     (c : C) (t₁ t₂ : Tree C String) :
     interp E W lex g (.node c (t₁ :: t₂ :: []))
       = ((interp E W lex g t₁).bind fun d₁ =>
