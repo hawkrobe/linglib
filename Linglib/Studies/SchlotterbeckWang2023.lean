@@ -1,5 +1,6 @@
 import Linglib.Core.Probability.Scores
 import Linglib.Pragmatics.RSA.Channel
+import Linglib.Pragmatics.RSA.Sequential
 
 /-!
 # [schlotterbeck-wang-2023] — incremental RSA for adjective ordering
@@ -8,8 +9,8 @@ import Linglib.Pragmatics.RSA.Channel
 Schlotterbeck, F. & Wang, H. (2023). An incremental RSA model for adjective
 ordering preferences in referential visual context. *SCiL* 6, 121–132.
 
-**Scope.** This file formalizes the *symmetric-PoE sanity-check slice* of
-the paper, not its main asymmetric model: the order-independence of the
+**Scope.** This file formalizes the *symmetric-semantics sanity-check slice*
+of the paper, not its main asymmetric model: the order-independence of the
 incremental listener under symmetric per-class semantics, plus
 discrimination-driven ordering preferences at the speaker level as
 chain-rule trajectory products (per-step normalized; the paper's `S1^inc`
@@ -21,8 +22,8 @@ reported simulations, matching the exponent-free chain here.
 
 ## Main results
 
-* `meaning_perm`: the PoE prefix meaning is order-independent, for every
-  lexicon — the paper's listener-level sanity check.
+* Order-independence of the prefix meaning — the paper's listener-level
+  sanity check — is the substrate lemma `RSA.prefixMeaning_perm`.
 * `size_first_when_size_discriminates` / `color_first_when_color_reliable`:
   the trajectory preference tracks discriminatory power (Scene A) and
   flips to the more reliable dimension under equal discrimination
@@ -37,7 +38,7 @@ reported simulations, matching the exponent-free chain here.
 The chain is exact ℚ≥0: `lex` is the Bernoulli-channel form of
 [degen-etal-2020]'s continuous semantics (reliability if the word truly
 applies, the complementary noise floor otherwise), prefix meanings are
-`List` products, `l0Score`/`s1Score` normalize via `PMF.normalizeScores`,
+`RSA.prefixMeaning` products, `l0Score`/`s1Score` normalize via `PMF.normalizeScores`,
 and the PMF speaker is `PMF.ofScores`. Trajectories are `Fin`-indexed
 products of speaker values, so ordering predictions close by
 `PMF.prod_ofScores_lt` with one kernel certificate each.
@@ -46,6 +47,8 @@ products of speaker values, so ordering predictions close by
 open scoped ENNReal NNRat
 
 namespace SchlotterbeckWang2023
+
+open RSA
 
 /-- Referents in the reference game. -/
 inductive Referent where
@@ -84,16 +87,6 @@ complementary noise floor otherwise — the Bernoulli-channel form of
 def lex (sRel cRel : ℚ≥0) (w : Word) (r : Referent) : ℚ≥0 :=
   if wordApplies w r then rel sRel cRel w else 1 - rel sRel cRel w
 
-/-- PoE prefix meaning: the product of per-word noisy meanings. -/
-def meaning (lex : Word → Referent → ℚ≥0) (us : List Word) (r : Referent) : ℚ≥0 :=
-  (us.map (lex · r)).prod
-
-/-- The listener-level sanity check: the PoE prefix meaning is
-order-independent, for every lexicon and reliability setting. -/
-theorem meaning_perm (lex : Word → Referent → ℚ≥0) {us vs : List Word}
-    (h : us.Perm vs) (r : Referent) : meaning lex us r = meaning lex vs r :=
-  (h.map (lex · r)).prod_eq
-
 /-! ### Scenes -/
 
 /-- Scene A: size discriminates. Objects {big-blue, small-blue,
@@ -122,7 +115,7 @@ def lexB : Word → Referent → ℚ≥0 := lex (80/100) (95/100)
 /-- Literal listener over scene referents at each prefix extension. -/
 def l0Score (lex : Word → Referent → ℚ≥0) (scene : Referent → Bool)
     (ctx : List Word) (u : Word) : Referent → ℚ≥0 :=
-  PMF.normalizeScores fun r => if scene r then meaning lex (ctx ++ [u]) r else 0
+  PMF.normalizeScores fun r => if scene r then prefixMeaning lex (ctx ++ [u]) r else 0
 
 /-- Word-level speaker (β = 1, no cost): renormalized literal posteriors. -/
 def s1Score (lex : Word → Referent → ℚ≥0) (scene : Referent → Bool)
@@ -195,7 +188,7 @@ theorem blue_more_informative_B :
 Scene A members. -/
 theorem both_orderings_identify_target_A (r : Referent)
     (hr : sceneA r = true) (hne : r ≠ target) :
-    meaning lexA [.big, .blue] r < meaning lexA [.big, .blue] target := by
+    prefixMeaning lexA [.big, .blue] r < prefixMeaning lexA [.big, .blue] target := by
   cases r
   · exact absurd rfl hne
   all_goals first | exact absurd hr (by decide) | decide +kernel
@@ -204,7 +197,7 @@ theorem both_orderings_identify_target_A (r : Referent)
 Scene B members. -/
 theorem both_orderings_identify_target_B (r : Referent)
     (hr : sceneB r = true) (hne : r ≠ target) :
-    meaning lexB [.big, .blue] r < meaning lexB [.big, .blue] target := by
+    prefixMeaning lexB [.big, .blue] r < prefixMeaning lexB [.big, .blue] target := by
   cases r
   · exact absurd rfl hne
   all_goals first | exact absurd hr (by decide) | decide +kernel

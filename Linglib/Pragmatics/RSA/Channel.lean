@@ -52,9 +52,9 @@ The `noiseChannel` operation is the per-feature primitive consumed by
 reliability parameters, so there is no canonical `NoisySemantics` instance
 per `(U, W)` pair — each study constructs its own bundle:
 
-- Product-of-Experts noisy semantics (`WaldonDegen2021.NoisyLex` in
-  `Studies/WaldonDegen2021.lean`; [degen-etal-2020], [waldon-degen-2021]).
-  PoE prefix product via `RSA.prefixMeaning` (`Sequential.lean`).
+- Multiplicative continuous semantics ([degen-etal-2020],
+  [waldon-degen-2021]): per-word channel values composed by
+  `RSA.prefixMeaning` (`Sequential.lean`); see `Studies/WaldonDegen2021.lean`.
 - Extension-counting Boolean semantics
   (`CohnGordonEtAl2019.IncrementalSemantics` in
   `Studies/CohnGordonEtAl2019.lean`; [cohn-gordon-goodman-potts-2019]).

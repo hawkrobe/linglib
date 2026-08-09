@@ -56,9 +56,9 @@ different (language × scene) configurations of the same chain.
   `RSA.Channel`. See `lexContinuous_as_noiseChannel`.
 - **Incremental RSA**: Extends [cohn-gordon-goodman-potts-2019] with
   continuous semantics and cross-linguistic word order variation.
-- **PoE bundle**: `noisyLex` packages `lexContinuousQ` as a
-  `NoisyLex` (Product-of-Experts) bundle; the multiplicative prefix
-  meaning delegates to `RSA.prefixMeaning` (from `Sequential`).
+- **Sequential substrate**: `uttContinuousQ` is defined via
+  `RSA.prefixMeaning` (`Sequential.lean`), sharing the multiplicative
+  composition with [schlotterbeck-wang-2023] by construction.
 -/
 
 namespace WaldonDegen2021
@@ -110,9 +110,20 @@ def semanticValueQ : Word → ℚ
 def lexContinuousQ (r : Referent) (w : Word) : ℚ :=
   if wordApplies w r then semanticValueQ w else 1 - semanticValueQ w
 
-/-- Continuous utterance meaning ⟦u⟧^C(r) = ∏_{w ∈ u} L^C(r, w). -/
+/-- Continuous utterance meaning ⟦u⟧^C(r) = ∏_{w ∈ u} L^C(r, w), the
+    `RSA.prefixMeaning` of the continuous lexicon. -/
 def uttContinuousQ (r : Referent) (u : List Word) : ℚ :=
-  u.foldl (fun acc w => acc * lexContinuousQ r w) 1
+  prefixMeaning (fun w r' => lexContinuousQ r' w) u r
+
+private theorem lexContinuousQ_nonneg (r : Referent) (w : Word) :
+    0 ≤ lexContinuousQ r w := by
+  cases w <;> cases r <;>
+    (unfold lexContinuousQ; simp only [wordApplies, semanticValueQ];
+     split_ifs <;> norm_num)
+
+private theorem uttContinuousQ_nonneg (r : Referent) (u : List Word) :
+    0 ≤ uttContinuousQ r u :=
+  prefixMeaning_nonneg (fun w r' => lexContinuousQ_nonneg r' w) u r
 
 /-! ### Utterances (Scene-Filtered) -/
 
@@ -166,7 +177,7 @@ def continuousMeaningQ (utts : List (List Word)) (scene : Referent → Bool)
     (pfx : List Word) (r : Referent) : ℚ :=
   let exts := (sceneFilter utts scene).filter (pfx.isPrefixOf)
   if exts.isEmpty then 0
-  else exts.foldl (fun acc u => acc + uttContinuousQ r u) 0 / exts.length
+  else (exts.map (uttContinuousQ r)).sum / exts.length
 
 private theorem continuousMeaningQ_nonneg (utts : List (List Word))
     (scene : Referent → Bool) (pfx : List Word) (r : Referent) :
@@ -175,28 +186,11 @@ private theorem continuousMeaningQ_nonneg (utts : List (List Word))
   simp only
   split
   · exact le_refl _
-  · apply div_nonneg
-    · suffices ∀ (l : List (List Word)) (init : ℚ), 0 ≤ init →
-          0 ≤ l.foldl (fun acc u => acc + uttContinuousQ r u) init by
-        exact this _ 0 (le_refl _)
-      intro l; induction l with
-      | nil => intro init h; exact h
-      | cons u us ih =>
-        intro init hinit; simp only [List.foldl]
-        apply ih
-        apply add_nonneg hinit
-        unfold uttContinuousQ
-        suffices ∀ (l : List Word) (init : ℚ), 0 ≤ init →
-            0 ≤ l.foldl (fun acc w => acc * lexContinuousQ r w) init by
-          exact this _ 1 one_pos.le
-        intro l2; induction l2 with
-        | nil => intro init h; exact h
-        | cons w ws ih2 =>
-          intro init hinit; simp only [List.foldl]
-          exact ih2 _ (mul_nonneg hinit (by
-            cases r <;> cases w <;>
-              simp [lexContinuousQ, wordApplies, semanticValueQ] <;> norm_num))
-    · exact Nat.cast_nonneg _
+  · exact div_nonneg
+      (List.sum_nonneg fun x hx => by
+        obtain ⟨u, -, rfl⟩ := List.mem_map.1 hx
+        exact uttContinuousQ_nonneg r u)
+      (Nat.cast_nonneg _)
 
 /-! ### Scenes -/
 
@@ -612,64 +606,7 @@ theorem semantic_values_positive :
     ∀ w : Word, semanticValueQ w > 0 := by
   intro w; cases w <;> norm_num [semanticValueQ]
 
-/-! ### `NoisyLex` bundle
-
-A `NoisyLex U W` packages the per-(token, world) lex function underlying
-Product-of-Experts noisy semantics ([degen-etal-2020], [waldon-degen-2021]).
-`prefixMeaning` composes `lex` multiplicatively over a prefix, delegating to
-the polymorphic `RSA.prefixMeaning` from `Sequential.lean`. -/
-
-/-- Bundle of noisy lexical semantics: a per-(token, world) ℚ-valued score
-    that is non-negative everywhere. The `lex` field is the "Product of
-    Experts" per-word factor underlying [degen-etal-2020] and
-    [waldon-degen-2021]. -/
-structure NoisyLex (U W : Type) where
-  /-- Per-(token, world) noisy meaning value. -/
-  lex : U → W → ℚ
-  /-- Noisy meaning is non-negative. -/
-  lex_nonneg : ∀ u w, 0 ≤ lex u w
-
-namespace NoisyLex
-
-variable {U W : Type}
-
-/-- The PoE prefix meaning derived from the lex function — multiplicative
-    composition over a list of tokens. Delegates to `RSA.prefixMeaning`. -/
-def prefixMeaning (s : NoisyLex U W) (pfx : List U) (w : W) : ℚ :=
-  RSA.prefixMeaning s.lex pfx w
-
-theorem prefixMeaning_nonneg (s : NoisyLex U W) (pfx : List U) (w : W) :
-    0 ≤ s.prefixMeaning pfx w :=
-  RSA.prefixMeaning_nonneg s.lex_nonneg pfx w
-
-theorem prefixMeaning_perm (s : NoisyLex U W) {pfx pfx' : List U}
-    (h : pfx.Perm pfx') (w : W) :
-    s.prefixMeaning pfx w = s.prefixMeaning pfx' w :=
-  RSA.prefixMeaning_perm h w
-
-/-- Standard noisy-lex construction: pick a "true" reliability `r⁺` and
-    a noise floor `r⁻` (typically `1 - r⁺`), and let `lex u w = r⁺` when
-    `applies u w` and `r⁻` otherwise. Bernoulli-channel form:
-    `lex = RSA.Noise.noiseChannel r⁺ r⁻ (applies? 1 0)`. -/
-def ofChannel (applies : U → W → Bool) (rPlus rMinus : ℚ)
-    (h0 : 0 ≤ rMinus) (h1 : rMinus ≤ rPlus) : NoisyLex U W where
-  lex u w := if applies u w then rPlus else rMinus
-  lex_nonneg u w := by
-    by_cases h : applies u w
-    · simp [h]; linarith
-    · simp [h, h0]
-
-/-- The `ofChannel` lex agrees with `RSA.Noise.noiseChannel`. -/
-theorem ofChannel_lex_eq_noiseChannel (applies : U → W → Bool)
-    (rPlus rMinus : ℚ) (h0 : 0 ≤ rMinus) (h1 : rMinus ≤ rPlus) (u : U) (w : W) :
-    (ofChannel applies rPlus rMinus h0 h1).lex u w =
-      RSA.Noise.noiseChannel rPlus rMinus (if applies u w then 1 else 0) := by
-  simp only [ofChannel, RSA.Noise.noiseChannel]
-  by_cases h : applies u w <;> simp [h]
-
-end NoisyLex
-
-/-! ### Noise Theory Connection + Substrate Bridge -/
+/-! ### Noise Theory Connection -/
 
 /-- `lexContinuousQ` is an instance of the `noiseChannel` from
     `RSA.Channel`. The continuous lexical semantics L^C(r, i) is exactly
@@ -684,26 +621,6 @@ theorem lexContinuous_as_noiseChannel (r : Referent) (w : Word) :
       (if wordApplies w r then 1 else 0 : ℚ) := by
   simp only [lexContinuousQ, RSA.Noise.noiseChannel]
   split <;> ring
-
-/-- `lexContinuousQ` packaged as a `NoisyLex` bundle: `lex` and reliability
-    parameters, with the PoE prefix-product machinery
-    (`RSA.prefixMeaning` and friends) reused as-is. -/
-def noisyLex : NoisyLex Word Referent where
-  lex w r := lexContinuousQ r w
-  lex_nonneg w r := by
-    cases w <;> cases r <;>
-      (unfold lexContinuousQ; simp only [wordApplies, semanticValueQ];
-       split_ifs <;> norm_num)
-
-/-- `uttContinuousQ` is the `NoisyLex.prefixMeaning` of the bundled lex
-    (modulo argument order). Uses the polymorphic
-    `RSA.prefixMeaning_eq_foldl_mul` from `Sequential.lean` — no
-    study-local foldl helper needed. -/
-theorem uttContinuousQ_eq_prefixMeaning (r : Referent) (u : List Word) :
-    uttContinuousQ r u = noisyLex.prefixMeaning u r := by
-  unfold uttContinuousQ NoisyLex.prefixMeaning
-  rw [RSA.prefixMeaning_eq_foldl_mul]
-  rfl
 
 /-! ### Prediction 4: Overall Cross-Linguistic Redundancy -/
 
