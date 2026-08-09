@@ -1,7 +1,7 @@
 import Linglib.Logic.Modal.FirstOrder.Monadic
 
 /-!
-# The standard translation for monadic quantified modal logic
+# The correspondence language and the standard translation
 
 [blackburn-derijke-venema-2001] [aloni-vanormondt-2023]
 

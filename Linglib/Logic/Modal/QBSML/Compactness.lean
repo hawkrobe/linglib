@@ -1,12 +1,12 @@
 import Mathlib.ModelTheory.Satisfiability
-import Linglib.Logic.Modal.FirstOrder.StandardTranslation
+import Linglib.Logic.Modal.FirstOrder.Correspondence
 import Linglib.Logic.Modal.QBSML.Properties
 
 /-!
 # Classical model theory for the NE-free fragment of QBSML
 
 [aloni-vanormondt-2023] Proposition 4.1 composed with the standard
-translation (`Logic/Modal/FirstOrder/StandardTranslation.lean`): NE-free QBSML
+translation (`Logic/Modal/FirstOrder/Correspondence.lean`): NE-free QBSML
 support at a singleton state is mathlib `Formula.Realize` over the
 correspondence structure (`support_singleton_iff_st`), support forces the
 closed translation as a sentence and conversely

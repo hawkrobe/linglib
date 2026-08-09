@@ -162,7 +162,7 @@ import Linglib.Core.ModelTheory.EhrenfeuchtFraisseGame
 import Linglib.Core.ModelTheory.FiniteModel
 import Linglib.Logic.Modal.FirstOrder.Kripke
 import Linglib.Logic.Modal.FirstOrder.Monadic
-import Linglib.Logic.Modal.FirstOrder.StandardTranslation
+import Linglib.Logic.Modal.FirstOrder.Correspondence
 import Linglib.Core.ModelTheory.Lindstrom
 import Linglib.Core.ModelTheory.QuantifierRank
 import Linglib.Core.ModelTheory.TotalPreorder
