@@ -16,22 +16,13 @@ concrete model and proves the paper's one countermodel claim.
 
 ## Main declarations
 
-* `univAccessModel` — universal-access model over `BSML.PowerSet2World`:
-  indisputable on every state (`univAccessModel_indisputable`) and state-based
-  exactly on states with full world projection
-  (`univAccessModel_stateBased_of_full`).
-* `fact3_ignorance` … `fact10_negation` — the paper's §5 facts at
-  `univAccessModel`, one-line instances of the substrate theorems; the epistemic
-  Facts 3 and 6 hold on full-world-projection states.
-* `fig14Model`, `fact4_obviation` — **Fact 4 (obviation)**:
-  `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)`, by the paper's Fig. 14 countermodel;
-  `R` is state-based on the countermodel state (`fig14_stateBased`), the
-  epistemic reading Fact 4 assumes.
-* `univPxOrQx_classical`, `possPxOrQx_classical`, `univPxOrQx_sentence` —
-  [aloni-vanormondt-2023] Proposition 4.1 at `univAccessModel`: support of NE-free
-  formulas is classical realization (mathlib `Formula.Realize`) resp. Kripke
-  satisfaction, the translations computed by `rfl`, and the standard
-  translation of `∀x(Px ∨ Qx)` a genuine sentence.
+* `univAccessModel` — universal-access model over `BSML.PowerSet2World`.
+* `fact3_ignorance` … `fact10_negation` — the paper's §5 facts, as
+  instances of the substrate theorems.
+* `fact4_obviation` — `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)`, by the paper's
+  Fig. 14 countermodel.
+* `univPxOrQx_classical`, `univPxOrQx_sentence` — Proposition 4.1 at the
+  concrete model, the translations computed by `rfl`.
 
 ## Implementation notes
 
