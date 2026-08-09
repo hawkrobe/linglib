@@ -82,63 +82,6 @@ theorem Pb_isNEFree : Pb.IsNEFree := .predc _ _
 theorem Px_isNEFree {Const : Type*} : (Px (Const := Const)).IsNEFree := .pred _ _
 theorem Qx_isNEFree {Const : Type*} : (Qx (Const := Const)).IsNEFree := .pred _ _
 
-/-! ### Fact 10 (negation): `[¬(Pa ∨ Pb)]⁺ ⊨ ¬Pa ∧ ¬Pb` -/
-
-/-- **Fact 10 (Negation behaviour)** at `univAccessModel`:
-
-    `[¬(Pa ∨ Pb)]⁺` entails `¬Pa ∧ ¬Pb`. One-line invocation of the
-    substrate's `negationStrip`. Mirrors
-    `Aloni2022.aloni2022_fact11_dual_prohibition`. -/
-theorem fact10_negation
-    (s : Finset (Index TwoAtomWorld QVar FCAtom))
-    (h : support univAccessModel (Formula.enrich (.neg (.disj Pa Pb))) s) :
-    support univAccessModel (.neg Pa) s ∧ support univAccessModel (.neg Pb) s :=
-  negationStrip univAccessModel Pa_isNEFree Pb_isNEFree h
-
-/-! ### Facts 7 and 8 (free choice): `[□/◇(Pa ∨ Pb)]⁺ ⊨ ◇Pa ∧ ◇Pb` -/
-
-/-- **Fact 8 (Narrow-Scope free choice / ◇-FC)** at `univAccessModel`:
-
-    `[◇(Pa ∨ Pb)]⁺` entails `◇Pa ∧ ◇Pb`. One-line invocation of
-    `narrowScopeFC`; the first-order analogue of
-    `Aloni2022.aloni2022_fact4_NS_FC`. -/
-theorem fact8_narrowScopeFC
-    (s : Finset (Index TwoAtomWorld QVar FCAtom))
-    (h : support univAccessModel (Formula.enrich (.poss (.disj Pa Pb))) s) :
-    support univAccessModel (.poss Pa) s ∧ support univAccessModel (.poss Pb) s :=
-  narrowScopeFC univAccessModel Pa_isNEFree Pb_isNEFree h
-
-/-- **Fact 7 (□-free choice)** at `univAccessModel`: `[□(Pa ∨ Pb)]⁺` entails
-    `◇Pa ∧ ◇Pb`, with the derived `□`. One-line invocation of `boxFC`. -/
-theorem fact7_boxFC
-    (s : Finset (Index TwoAtomWorld QVar FCAtom))
-    (h : support univAccessModel
-      (Formula.enrich (Formula.nec (.disj Pa Pb))) s) :
-    support univAccessModel (.poss Pa) s ∧ support univAccessModel (.poss Pb) s :=
-  boxFC univAccessModel Pa_isNEFree Pb_isNEFree h
-
-/-! ### Facts 9 and 5 (universal FC and distribution) -/
-
-/-- **Fact 9 (Universal free choice)** at `univAccessModel`:
-
-    `[∀x◇(Px ∨ Qx)]⁺` entails `∀x◇Px ∧ ∀x◇Qx`. One-line invocation of
-    `universalFC` — the [chemla-2009]-attested pattern. -/
-theorem fact9_universalFC
-    (s : Finset (Index TwoAtomWorld QVar FCAtom))
-    (h : support univAccessModel univPossPxOrQx.enrich s) :
-    support univAccessModel (.univ .x (.poss Px)) s ∧
-    support univAccessModel (.univ .x (.poss Qx)) s :=
-  universalFC univAccessModel Px_isNEFree Qx_isNEFree h
-
-/-- **Fact 5 (Distribution at maximal information)** at `univAccessModel`: on any
-    singleton state, `[∀x(Px ∨ Qx)]⁺` entails `∃xPx ∧ ∃xQx`. One-line
-    invocation of `distribution`. -/
-theorem fact5_distribution
-    (i : Index TwoAtomWorld QVar FCAtom)
-    (h : support univAccessModel univPxOrQx.enrich {i}) :
-    support univAccessModel (.exi .x Px) {i} ∧ support univAccessModel (.exi .x Qx) {i} :=
-  distribution univAccessModel Px_isNEFree Qx_isNEFree h
-
 /-! ### Proposition 4.1 at the concrete model -/
 
 /-- The (unenriched) universal premise `∀x(Px ∨ Qx)` translates into mathlib
@@ -256,29 +199,55 @@ example :
         Finset (Index TwoAtomWorld QVar FCAtom)) := by
   decide
 
-/-! ### Facts 3 and 6 (ignorance and distribution◇): the epistemic facts -/
+/-! ### The §5 facts -/
 
-/-- **Fact 3 (ignorance)** at `univAccessModel`, on states of full world
-    projection (where `univAccessModel_stateBased_of_full` applies):
-    `[Pa ∨ Pb]⁺` entails `◇Pa ∧ ◇Pb`. One-line invocation of `ignorance`. -/
-theorem fact3_ignorance
-    (s : Finset (Index TwoAtomWorld QVar FCAtom))
-    (hfull : State.worldProj s = Finset.univ)
+variable {s : Finset (Index TwoAtomWorld QVar FCAtom)}
+variable {i : Index TwoAtomWorld QVar FCAtom}
+
+/-- **Fact 3** (ignorance), on states of full world projection. -/
+theorem fact3_ignorance (hfull : State.worldProj s = Finset.univ)
     (h : support univAccessModel (Formula.enrich (.disj Pa Pb)) s) :
-    support univAccessModel (.poss Pa) s ∧
-    support univAccessModel (.poss Pb) s :=
+    support univAccessModel (.poss Pa) s ∧ support univAccessModel (.poss Pb) s :=
   ignorance univAccessModel (univAccessModel_stateBased_of_full hfull) h
 
-/-- **Fact 6 (distribution◇)** at `univAccessModel`, on states of full world
-    projection: `[∀x(Px ∨ Qx)]⁺` entails `∃x◇Px ∧ ∃x◇Qx`. One-line
-    invocation of `distributionEpi`. -/
-theorem fact6_distributionEpi
-    (s : Finset (Index TwoAtomWorld QVar FCAtom))
-    (hfull : State.worldProj s = Finset.univ)
+/-- **Fact 5** (distribution at maximal information). -/
+theorem fact5_distribution (h : support univAccessModel univPxOrQx.enrich {i}) :
+    support univAccessModel (.exi .x Px) {i} ∧ support univAccessModel (.exi .x Qx) {i} :=
+  distribution univAccessModel Px_isNEFree Qx_isNEFree h
+
+/-- **Fact 6** (distribution◇), on states of full world projection. -/
+theorem fact6_distributionEpi (hfull : State.worldProj s = Finset.univ)
     (h : support univAccessModel univPxOrQx.enrich s) :
     support univAccessModel (.exi .x (.poss Px)) s ∧
     support univAccessModel (.exi .x (.poss Qx)) s :=
   distributionEpi univAccessModel (univAccessModel_stateBased_of_full hfull) h
+
+/-- **Fact 7** (□-free choice; `□` derived, `Formula.nec`). -/
+theorem fact7_boxFC
+    (h : support univAccessModel (Formula.enrich (Formula.nec (.disj Pa Pb))) s) :
+    support univAccessModel (.poss Pa) s ∧ support univAccessModel (.poss Pb) s :=
+  boxFC univAccessModel Pa_isNEFree Pb_isNEFree h
+
+/-- **Fact 8** (◇-free choice); cf. `Aloni2022.aloni2022_fact4_NS_FC`. -/
+theorem fact8_narrowScopeFC
+    (h : support univAccessModel (Formula.enrich (.poss (.disj Pa Pb))) s) :
+    support univAccessModel (.poss Pa) s ∧ support univAccessModel (.poss Pb) s :=
+  narrowScopeFC univAccessModel Pa_isNEFree Pb_isNEFree h
+
+/-- **Fact 9** (universal free choice), attested experimentally by
+    [chemla-2009]. -/
+theorem fact9_universalFC
+    (h : support univAccessModel univPossPxOrQx.enrich s) :
+    support univAccessModel (.univ .x (.poss Px)) s ∧
+    support univAccessModel (.univ .x (.poss Qx)) s :=
+  universalFC univAccessModel Px_isNEFree Qx_isNEFree h
+
+/-- **Fact 10** (negation behaviour); cf.
+    `Aloni2022.aloni2022_fact11_dual_prohibition`. -/
+theorem fact10_negation
+    (h : support univAccessModel (Formula.enrich (.neg (.disj Pa Pb))) s) :
+    support univAccessModel (.neg Pa) s ∧ support univAccessModel (.neg Pb) s :=
+  negationStrip univAccessModel Pa_isNEFree Pb_isNEFree h
 
 /-! ### Fact 4 (obviation): the Fig. 14 countermodel
 
