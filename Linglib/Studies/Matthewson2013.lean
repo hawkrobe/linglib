@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.TemporalAxes
+import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Fragments.NezPerce.Modals
 import Linglib.Studies.Condoravdi2002

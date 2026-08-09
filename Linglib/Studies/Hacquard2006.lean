@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.TemporalAxes
+import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Modality.ActualityEntailments
