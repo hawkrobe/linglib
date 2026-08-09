@@ -201,13 +201,13 @@ theorem semantic_justification :
     out reciprocity. -/
 theorem recip_needs_multiple_individuals :
     ¬ reciprocityCond (E := Nat) 0 1
-        (PluralAssign.singleton (PartialAssign.update
-          (PartialAssign.update PartialAssign.empty 0 0) 1 0)) ∅ := by
+        {PartialAssign.update
+          (PartialAssign.update PartialAssign.empty 0 0) 1 0} ∅ := by
   intro h
   have hg : (PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0) ∈
-            (PluralAssign.singleton (PartialAssign.update
-              (PartialAssign.update PartialAssign.empty 0 0) 1 0) : PluralAssign Nat) := by
-    simp [PluralAssign.singleton, Membership.mem]
+            ({PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0} :
+              PluralAssign ℕ Nat) :=
+    rfl
   have h0 : (PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0) 0 = some 0 := by
     simp [PartialAssign.update]
   have h1 : (PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0) 1 = some 0 := by
@@ -219,8 +219,8 @@ theorem recip_needs_multiple_individuals :
     semantic plurality requirement. -/
 theorem binding_ok_with_singleton :
     bindingCond (E := Nat) 0 1
-      (PluralAssign.singleton (PartialAssign.update
-        (PartialAssign.update PartialAssign.empty 0 42) 1 42)) ∅ :=
+      {PartialAssign.update
+        (PartialAssign.update PartialAssign.empty 0 42) 1 42} ∅ :=
   binding_compatible_with_singleton 42 0 1
 
 -- ════════════════════════════════════════════════════════════════

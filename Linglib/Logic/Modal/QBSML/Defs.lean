@@ -1,5 +1,6 @@
 import Mathlib.Data.Finset.Union
 import Mathlib.Data.Fintype.Basic
+import Linglib.Logic.Assignment
 import Linglib.Logic.Modal.FirstOrder.Kripke
 import Linglib.Logic.Modal.FirstOrder.Monadic
 import Linglib.Logic.Team.Algebra
@@ -45,32 +46,21 @@ open FirstOrder
 
 variable {W Var Domain : Type*}
 
-/-! ### Assignments and indices -/
-
-/-- A partial assignment of domain values to variables
-    ([aloni-vanormondt-2023] Definition 4.2: `gᵢ : V → D`); `Option D`
-    represents the partiality. -/
-abbrev Assignment (Var Domain : Type*) := Var → Option Domain
+/-! ### Indices -/
 
 /-- An index is a (world, assignment) pair ([aloni-vanormondt-2023]
-    Definition 4.2: `i = ⟨wᵢ, gᵢ⟩`). -/
-abbrev Index (W Var Domain : Type*) := W × Assignment Var Domain
+    Definition 4.2: `i = ⟨wᵢ, gᵢ⟩`), with `gᵢ` a `PartialAssign`. -/
+abbrev Index (W Var Domain : Type*) := W × PartialAssign Var Domain
 
 /-- The world component of an index. -/
 abbrev Index.world (i : Index W Var Domain) : W := i.1
 
 /-- The assignment component of an index. -/
-abbrev Index.assign (i : Index W Var Domain) : Assignment Var Domain := i.2
+abbrev Index.assign (i : Index W Var Domain) : PartialAssign Var Domain := i.2
 
 section Update
 
 variable [DecidableEq Var]
-
-/-- Update an assignment at a single variable: `g[x/d](y) = d` if `y = x`,
-    else `g(y)`. -/
-def Assignment.update (g : Assignment Var Domain) (x : Var) (d : Domain) :
-    Assignment Var Domain :=
-  Function.update g x (some d)
 
 /-- Update an index's assignment ([aloni-vanormondt-2023] Definitions 4.3–4.4:
     `i[x/d] := ⟨wᵢ, gᵢ[x/d]⟩`, with the assignment update `gᵢ[x/d]` as
@@ -254,11 +244,11 @@ variable [DecidableEq W] [Fintype Var] [DecidableEq Domain]
 /-- **Modal pairing** `R(wᵢ)[gᵢ]`: pair each accessible world with the
     assignment of the original index. Used in modal evaluation
     ([aloni-vanormondt-2023] Definition 4.9). -/
-def State.modalLift (X : Finset W) (g : Assignment Var Domain) :
+def State.modalLift (X : Finset W) (g : PartialAssign Var Domain) :
     Finset (Index W Var Domain) :=
   X.image (fun v => (v, g))
 
-@[simp] theorem State.mem_modalLift {X : Finset W} {g : Assignment Var Domain}
+@[simp] theorem State.mem_modalLift {X : Finset W} {g : PartialAssign Var Domain}
     {i : Index W Var Domain} :
     i ∈ State.modalLift X g ↔ i.world ∈ X ∧ i.assign = g := by
   constructor
@@ -269,12 +259,12 @@ def State.modalLift (X : Finset W) (g : Assignment Var Domain) :
     exact Finset.mem_image.mpr ⟨i.world, h, rfl⟩
 
 @[simp] theorem State.modalLift_singleton (w : W)
-    (g : Assignment Var Domain) :
+    (g : PartialAssign Var Domain) :
     State.modalLift {w} g = {(w, g)} :=
   Finset.image_singleton ..
 
 @[simp] theorem State.worldProj_modalLift (X : Finset W)
-    (g : Assignment Var Domain) :
+    (g : PartialAssign Var Domain) :
     State.worldProj (State.modalLift X g) = X := by
   ext w
   simp only [State.mem_worldProj, State.mem_modalLift]
@@ -287,7 +277,7 @@ def State.modalLift (X : Finset W) (g : Assignment Var Domain) :
     worlds and pairing them back with the same assignment: every index of
     `s ⊆ State.modalLift X g` carries the assignment `g`. -/
 theorem State.modalLift_worldProj_of_subset {s : Finset (Index W Var Domain)}
-    {X : Finset W} {g : Assignment Var Domain}
+    {X : Finset W} {g : PartialAssign Var Domain}
     (h : s ⊆ State.modalLift X g) :
     State.modalLift (State.worldProj s) g = s := by
   ext i
@@ -302,7 +292,7 @@ theorem State.modalLift_worldProj_of_subset {s : Finset (Index W Var Domain)}
 
 theorem State.worldProj_subset_of_subset_modalLift
     {s : Finset (Index W Var Domain)} {X : Finset W}
-    {g : Assignment Var Domain} (h : s ⊆ State.modalLift X g) :
+    {g : PartialAssign Var Domain} (h : s ⊆ State.modalLift X g) :
     State.worldProj s ⊆ X := by
   rw [← State.worldProj_modalLift X g]
   exact State.worldProj_mono h

@@ -44,7 +44,7 @@ namespace PPCDRT
 
 
 variable {E : Type*}
-variable (uAnaph uAnt : Nat) (S : PluralAssign E) (Δ : Set Nat)
+variable (uAnaph uAnt : Nat) (S : PluralAssign ℕ E) (Δ : Set Nat)
 
 /-! ### Binding -/
 
@@ -129,7 +129,7 @@ def R_u : Set (E × E) :=
   { p | ∃ s ∈ S, s uAnaph = some p.1 ∧ s uAnt = some p.2 }
 
 /-- A bigger plural state yields a (weakly) bigger R_u. -/
-theorem R_u_mono {S₁ S₂ : PluralAssign E}
+theorem R_u_mono {S₁ S₂ : PluralAssign ℕ E}
     (h : ∀ g, g ∈ S₁ → g ∈ S₂) :
     R_u uAnaph uAnt S₁ ⊆ R_u uAnaph uAnt S₂ := by
   rintro ⟨a, b⟩ ⟨g, hg, hAnaph, hAnt⟩

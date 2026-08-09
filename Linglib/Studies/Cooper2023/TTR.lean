@@ -183,11 +183,11 @@ theorem Parametric.trivial_fg {Content : Type*} (c : Content) (u : Unit) :
 /-! ### Assignments (§4.6) -/
 
 /-- Variable assignment: maps natural-number indices to individuals.
-    Equal to `PartialAssign E`; the alias name is retained because
+    Equal to `PartialAssign ℕ E`; the alias name is retained because
     the book's prose uses 𝔰/𝔩/𝔯/𝔴/𝔤 as named "assignments" rather than
     as partial functions, and the inheritance carries the
     `valued`/`valued_update_at` simp set into this file's consumers. -/
-abbrev Assgnmnt (E : Type) := PartialAssign E
+abbrev Assgnmnt (E : Type) := PartialAssign ℕ E
 
 /-- An assignment with at least n bindings (all indices < n defined). -/
 def Assgnmnt.hasBindings {E : Type} (g : Assgnmnt E) (n : Nat) : Prop :=

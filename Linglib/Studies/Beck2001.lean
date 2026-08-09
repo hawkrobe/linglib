@@ -199,7 +199,7 @@ with x = y; Beck returns "undefined" (presupposition failure). See
     insight; this is its first true cross-paper realization in linglib. -/
 theorem beck_cumulativity_on_equality_iff_HD_groupIdentity
     {E : Type} [DecidableEq E]
-    (uAnaph uAnt : Nat) (S : PluralAssign E)
+    (uAnaph uAnt : Nat) (S : PluralAssign ℕ E)
     (xa xb : Finset E)
     (hxa : ∀ d, d ∈ xa ↔ d ∈ PluralAssign.sumDref S uAnaph)
     (hxb : ∀ d, d ∈ xb ↔ d ∈ PluralAssign.sumDref S uAnt) :
@@ -224,7 +224,7 @@ theorem beck_cumulativity_on_equality_iff_HD_groupIdentity
     plural state. -/
 theorem reciprocity_factors_as_coverage_and_distinctness
     {E : Type} [DecidableEq E]
-    (uAnaph uAnt : Nat) (S : PluralAssign E)
+    (uAnaph uAnt : Nat) (S : PluralAssign ℕ E)
     (xa xb : Finset E)
     (hxa : ∀ d, d ∈ xa ↔ d ∈ PluralAssign.sumDref S uAnaph)
     (hxb : ∀ d, d ∈ xb ↔ d ∈ PluralAssign.sumDref S uAnt) :

@@ -507,7 +507,7 @@ theorem wan_log_is_at_least_pivot :
     [haug-dalrymple-2020] §§2.2--3, now over the PPCDRT substrate
     (`Semantics/Dynamic/PPCDRT/Anaphora.lean`). -/
 theorem bound_implies_wide_via_formal_semantics {E : Type}
-    (uAnaph uAnt : Nat) (S : PluralAssign E) (Δ : Set Nat)
+    (uAnaph uAnt : Nat) (S : PluralAssign ℕ E) (Δ : Set Nat)
     (h : bindingCond uAnaph uAnt S Δ) : groupIdentityCond uAnaph uAnt S Δ :=
   binding_implies_groupIdentity uAnaph uAnt S Δ h
 

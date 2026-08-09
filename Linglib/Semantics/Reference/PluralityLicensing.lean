@@ -118,7 +118,7 @@ theorem morphosyntactic_pl_licenses_both :
     jointly-defined witness produces a pair of distinct values.
 
     Partiality means we can't derive the existence of *some* jointly-defined
-    state from `S.IsNonempty` alone — the anaphor and antecedent could each
+    state from `S.Nonempty` alone — the anaphor and antecedent could each
     be defined on disjoint subsets of `S` (or nowhere), leaving the
     distinctness clause vacuously true. The strengthened hypothesis
     `hdef : ∃ s ∈ S, (s uAnaph).isSome ∧ (s uAnt).isSome` is the natural
@@ -132,7 +132,7 @@ theorem morphosyntactic_pl_licenses_both :
     the denotation is forced to contain plurality, regardless of whether
     the antecedent bears plural morphology. -/
 theorem reciprocity_implies_multiple_individuals (uAnaph uAnt : Nat)
-    (S : PluralAssign E) (Δ : Set Nat)
+    (S : PluralAssign ℕ E) (Δ : Set Nat)
     (hdef : ∃ s ∈ S, (s uAnaph).isSome ∧ (s uAnt).isSome)
     (h : reciprocityCond uAnaph uAnt S Δ) :
     ∃ (a b : E), a ≠ b := by
@@ -148,10 +148,9 @@ theorem reciprocity_implies_multiple_individuals (uAnaph uAnt : Nat)
     requirement. -/
 theorem binding_compatible_with_singleton (e : E) (uAnaph uAnt : Nat) :
     bindingCond uAnaph uAnt
-      (PluralAssign.singleton (PartialAssign.update (PartialAssign.update PartialAssign.empty uAnaph e) uAnt e)) ∅ := by
+      {PartialAssign.update (PartialAssign.update PartialAssign.empty uAnaph e) uAnt e} ∅ := by
   intro g hg
-  simp only [PluralAssign.singleton, Membership.mem] at hg
-  subst hg
+  obtain rfl : g = _ := hg
   by_cases h : uAnaph = uAnt
   · subst h; rfl
   · simp [PartialAssign.update_at, h]
