@@ -59,22 +59,14 @@ def univAccessModel : Model TwoAtomWorld FCAtom FCAtom Predicate where
   access := λ _ => Finset.univ
   interp := λ w => monadicStructure id (λ _ d => w.holds d)
 
-/-! ### Formulas
+/-! ### Formulas -/
 
-Constant atoms `Pa`, `Pb` build the propositional schemas of Facts 3, 7, 8
-and 10; variable atoms `Px`, `Qx` build the quantified schemas of Facts 4–6
-and 9 — both exactly as in the paper. -/
-
-/-- The constant atom `Pa`. -/
 def Pa : Formula QVar FCAtom Predicate := .predc .P .a
 
-/-- The constant atom `Pb`. -/
 def Pb : Formula QVar FCAtom Predicate := .predc .P .b
 
-/-- The variable atom `Px`. -/
 def Px {Const : Type*} : Formula QVar Const Predicate := .pred .P .x
 
-/-- The variable atom `Qx`. -/
 def Qx {Const : Type*} : Formula QVar Const Predicate := .pred .Q .x
 
 /-- The universal-FC premise `∀x◇(Px ∨ Qx)` (paper's Fact 9 schema). -/
