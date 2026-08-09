@@ -8,53 +8,35 @@ import Linglib.Logic.Bilateral.Defs
 /-!
 # Quantified bilateral state-based modal logic (QBSML)
 
-Core definitions for QBSML, the first-order extension of BSML ([aloni-2022],
-[anttila-2021]) presented in [aloni-vanormondt-2023]: indices pair a world
-with a partial assignment, states are finite sets of indices, and the
-formula language adds predicates and quantifiers, evaluated via state
-extensions. Bilateral evaluation, split disjunction (`Team.splitsAs`), and
-the `NE` atom carry over from BSML; frame conditions are inherited through
-the world projection `s↓`, so `support` fits the `Team.isFlat_iff` template
-at the point type `Index W Var Domain` exactly as BSML's does at `W`
-(`Logic/Modal/QBSML/Properties.lean`).
+QBSML ([aloni-vanormondt-2023]) is the first-order extension of BSML
+([aloni-2022], [anttila-2021]). A formula is evaluated bilaterally —
+supported or anti-supported — at a *state*: a finite set of *indices*
+`⟨w, g⟩` pairing a world with a partial variable assignment. Quantifiers
+are interpreted by extending states, disjunction by splitting them, and
+the non-emptiness atom `NE` — the only source of non-classical behaviour —
+by state non-emptiness.
 
-## Main declarations
+## Main definitions
 
-* `Assignment`, `Index`: partial variable assignments and world–assignment
-  pairs ([aloni-vanormondt-2023] Definition 4.2).
+* `Index`, `State.worldProj`: indices `⟨w, g⟩` and the world projection `s↓`.
 * `State.extendIndividual`, `State.extendUniversal`,
-  `State.extendFunctional`: the state extensions `s[x/d]`, `s[x]`, `s[x/h]`
-  interpreting quantifiers ([aloni-vanormondt-2023] Definitions 4.5–4.7).
-* `State.modalLift`, `State.worldProj`: pairing accessible worlds with an
-  assignment, and the world projection `s↓`.
-* `Formula`: the formula language ([aloni-vanormondt-2023] Definition 4.1),
-  with `□` derived as `Formula.nec`; `Formula.IsNEFree` is the NE-free
-  fragment.
-* `Model`, `Model.ofMonadic`: QBSML models ([aloni-vanormondt-2023]
-  Definition 4.2), as `KripkeStructure`s over
+  `State.extendFunctional`: the state extensions `s[x/d]`, `s[x]`, `s[x/h]`.
+* `State.modalLift`: a set of worlds, paired with one assignment.
+* `Formula`: the formula language; `Formula.nec` is the derived `□`;
+  `Formula.IsNEFree` the NE-free fragment.
+* `Model`, `Model.ofMonadic`: models, as `KripkeStructure`s over
   `Language.monadicWithConstants`.
-* `eval`, `support`, `antiSupport`: bilateral evaluation
-  ([aloni-vanormondt-2023] Definition 4.9).
-* `isBilateral`: `support`/`antiSupport` form a `Bilateral.IsBilateral`
-  under `Formula.neg`.
+* `eval`, `support`, `antiSupport`: bilateral evaluation.
 * `KripkeStructure.IsStateBased`, `KripkeStructure.IsIndisputable`: frame
-  conditions via `s↓` ([aloni-vanormondt-2023] Definition 4.10).
+  conditions via `s↓`.
 
 ## Implementation notes
 
-* Predicates are monadic and the paper's terms `t := c | x` appear as the
-  two atom constructors `pred` and `predc`, so there is no separate term
-  type; higher arities can be added without changing the abstraction.
-* The paper's domain `D` (part of `M = ⟨W, D, R, I⟩`) is a `Domain : Type*`
-  parameter, with `[Fintype Domain]` where the universal extension must
-  range over all of it; the interpretation `I` is the world-indexed family
-  of structures the `KripkeStructure` carries.
-* The paper requires all indices in a state to share an assignment domain
-  (`dom gᵢ = dom gⱼ`); this is not enforced at the type level — the state
-  operations preserve it.
-* `□` is not primitive: the paper takes `□` primitive and derives `◇`; we
-  invert this, so `eval`'s `poss` clauses match the paper's derived
-  `◇`-clauses and `Formula.nec` matches its primitive `□`.
+* The paper takes `□` primitive and derives `◇`; we invert this, so
+  `eval`'s `poss` clauses match the paper's derived `◇`-clauses.
+* The paper's requirement that all indices of a state share an assignment
+  domain is not enforced at the type level; the state operations
+  preserve it.
 -/
 
 namespace QBSML
