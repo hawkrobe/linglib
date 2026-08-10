@@ -1,6 +1,6 @@
 import Linglib.Semantics.Intensional.Variables
 import Linglib.Features.Deixis
-import Linglib.Features.Definiteness
+import Linglib.Semantics.Definiteness.Defs
 
 /-!
 # Nominal Descriptions: Unified Sum Type
@@ -57,7 +57,7 @@ unified `Denot E W` machinery rather than ad-hoc `E → Bool` predicates.
 
 - **No semantic interpretation here.** This file only declares the type and
   its Frame-free `kind` projection (classification predicates live on
-  `Features.Definiteness.DescriptionKind`). The interpretation function lives
+  `Semantics.Definiteness.DescriptionKind`). The interpretation function lives
   in `Semantics/Definiteness/Interpret.lean`.
 -/
 
@@ -119,9 +119,9 @@ namespace Description
 variable {E W : Type}
 
 /-- The Frame-free kind of a description: its constructor with payload erased
-    (`Features.Definiteness.DescriptionKind`). Inventory questions
+    (`Semantics.Definiteness.DescriptionKind`). Inventory questions
     (`Determiner.Inventory.Realizes`, marking typology) depend only on this. -/
-def kind : Description E W → Features.Definiteness.DescriptionKind
+def kind : Description E W → DescriptionKind
   | .bare _           => .bare
   | .indefinite _     => .indefinite
   | .unique _ _       => .unique
@@ -139,7 +139,7 @@ def kind : Description E W → Features.Definiteness.DescriptionKind
     `idx` is the strong article's anaphoric/discourse index; for the weak article
     it fills the situation-pronoun slot, which `interpret` discards
     (`interpret_unique_index_irrelevant`). -/
-def ofPresupType (p : Features.Definiteness.DefPresupType)
+def ofPresupType (p : DefPresupType)
     (restrictor : DenotGS E W .et) (idx : Nat) : Description E W :=
   match p with
   | .uniqueness  => .unique restrictor idx
@@ -149,7 +149,7 @@ def ofPresupType (p : Features.Definiteness.DefPresupType)
     (`DefPresupType.toKind`) — the Frame-aware and Frame-free realization maps
     agree. -/
 theorem kind_ofPresupType
-    (p : Features.Definiteness.DefPresupType) (R : DenotGS E W .et) (idx : Nat) :
+    (p : DefPresupType) (R : DenotGS E W .et) (idx : Nat) :
     (ofPresupType p R idx).kind = p.toKind := by
   cases p <;> rfl
 

@@ -1,27 +1,26 @@
 /-!
-# Definiteness: Types and Classifications
-[donnellan-1966] [hawkins-1978] [heim-1982] [patel-grosz-grosz-2017] [schwarz-2009] [schwarz-2013]
+# Definiteness classifications
 
-Framework-agnostic vocabulary for definiteness phenomena. These types classify
+Framework-agnostic vocabulary for definiteness phenomena: types classifying
 definite descriptions, article systems, and presupposition types without
-committing to any particular semantic theory.
+committing to a particular semantic theory.
 
-The organizing principle is `DefPresupType` (.uniqueness |.familiarity) —
-every other type in this module is a dimension that maps into this binary
-distinction: article morphology, pragmatic use type, bridging relation, etc.
-
-Used by:
-- `Semantics.Montague/Determiner/Definite.lean` (denotations: ⟦the⟧)
-- `Studies/Schwarz2009.lean` (weak/strong articles, donkey anaphora)
-- `Studies/Moroney2021.lean` (bridging subtypes)
-
+The organizing principle is `DefPresupType` — [schwarz-2009]'s binary between
+uniqueness and familiarity presuppositions. Every other type here is a
+dimension that maps into that distinction: description kinds
+(`DescriptionKind`), article inventories (`ArticleType`,
+[patel-grosz-grosz-2017]), [hawkins-1978]'s definite use types
+(`DefiniteUseType`, refined by [schwarz-2013]), bridging subtypes
+(`BridgingSubtype`), and marking typology (`DefMarkingStrategy`,
+[jenks-2018] extended by [moroney-2021]). The [heim-1982]
+novelty/familiarity contrast appears as the binary `Definiteness`. The
+denotational layer lives in `Semantics/Definiteness/Basic.lean` and
+`Semantics/Definiteness/Description.lean`.
 -/
 
-namespace Features.Definiteness
+namespace Semantics.Definiteness
 
--- ============================================================================
--- §1: The Core Binary Distinction
--- ============================================================================
+/-! ### The core binary distinction -/
 
 /-- The two presupposition types underlying definite descriptions.
 
@@ -117,9 +116,7 @@ theorem presupType_toKind (p : DefPresupType) :
 
 end DescriptionKind
 
--- ============================================================================
--- §2: Article Types ([schwarz-2009])
--- ============================================================================
+/-! ### Article types -/
 
 /-- [schwarz-2009]: article type in the D-domain.
 
@@ -159,9 +156,7 @@ presupposition type (modulo ambiguity). -/
 theorem one_form_one_distinguished :
     (articleTypeToDistinguishedPresup .weakOnly).length = 1 := rfl
 
--- ============================================================================
--- §3: Definite Use Types ([hawkins-1978] / [schwarz-2013])
--- ============================================================================
+/-! ### Definite use types -/
 
 /-- [hawkins-1978]'s four use types for definite descriptions.
 [schwarz-2013] shows these map systematically onto weak vs strong articles. -/
@@ -188,9 +183,7 @@ def useTypeToPresupType : DefiniteUseType → DefPresupType
   | .donkey             => .familiarity   -- Strong article: donkey anaphora patterns
                                           -- with familiarity ([schwarz-2009] §3)
 
--- ============================================================================
--- §4: Bridging Subtypes ([schwarz-2013] §3.2)
--- ============================================================================
+/-! ### Bridging subtypes -/
 
 /-- Bridging subtypes ([schwarz-2013] §3.2).
 German and Fering show that bridging splits across the two article forms:
@@ -209,9 +202,7 @@ def bridgingPresupType : BridgingSubtype → DefPresupType
   | .partWhole  => .uniqueness   -- weak: "the village ... the tower"
   | .relational => .familiarity  -- strong: "the play ... the author"
 
--- ============================================================================
--- §5: Weak Article Strategy ([schwarz-2013] §4)
--- ============================================================================
+/-! ### Weak article strategies -/
 
 /-- How a language expresses the weak/strong article contrast.
 
@@ -228,9 +219,7 @@ inductive WeakArticleStrategy where
   | sameAsStrong   -- Single form for both (Haitian Creole `la`)
   deriving DecidableEq, Repr
 
--- ============================================================================
--- §6: The Indefinite–Definite Contrast
--- ============================================================================
+/-! ### The indefinite–definite contrast -/
 
 /-- The fundamental semantic contrast between indefinite and definite:
 
@@ -251,9 +240,7 @@ theorem definite_indefinite_exhaustive :
     ∀ d : Definiteness, d = .indefinite ∨ d = .definite := by
   intro d; cases d <;> simp
 
--- ============================================================================
--- §7: Definiteness Marking Typology ([jenks-2018] / [moroney-2021])
--- ============================================================================
+/-! ### Definiteness marking typology -/
 
 /-- Cross-linguistic strategy for marking definiteness, following
 [jenks-2018]'s typology extended by [moroney-2021] with the
@@ -308,4 +295,4 @@ theorem strategy_finer_than_articleType :
     DefMarkingStrategy.generallyMarked ≠ .markedAnaphoric :=
   ⟨rfl, by decide⟩
 
-end Features.Definiteness
+end Semantics.Definiteness

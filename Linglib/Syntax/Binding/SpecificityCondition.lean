@@ -1,4 +1,4 @@
-import Linglib.Features.Definiteness
+import Linglib.Semantics.Definiteness.Defs
 
 /-!
 # Specificity Condition
@@ -41,7 +41,7 @@ coverage ([shen-huang-2026] §4.1).
 
 namespace Syntax.Binding.SpecificityCondition
 
-open Features.Definiteness
+open Semantics.Definiteness
 
 -- ============================================================================
 -- §1. Specificity

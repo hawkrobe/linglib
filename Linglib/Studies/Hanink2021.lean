@@ -52,7 +52,7 @@ namespace Hanink2021
 open Intensional
 open Intensional.Variables
 open Semantics.Definiteness
-open Features.Definiteness (DescriptionKind)
+open Semantics.Definiteness (DescriptionKind)
 
 -- ════════════════════════════════════════════════════════════════
 -- §1: A two-room frame for the resource-situation diagnostic

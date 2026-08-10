@@ -2,7 +2,7 @@ import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Reference.Donnellan
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Features.Definiteness
+import Linglib.Semantics.Definiteness.Defs
 import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Fragments.English.Determiners
 
@@ -46,7 +46,6 @@ open Quantification (every_sem some_sem)
 open Quantification.Quantifier (Ty.det)
 open Semantics.Composition.TypeShifting (iota)
 open Semantics.Presupposition (PartialProp)
-open Features.Definiteness (DefPresupType Definiteness)
 
 -- ============================================================================
 -- §1: Discourse Context
