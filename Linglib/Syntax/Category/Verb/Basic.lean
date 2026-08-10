@@ -176,16 +176,6 @@ def Verb.isENTrigger (v : Verb) : Bool :=
   -- STOP/PREVENT: causative prevent verbs
   (v.causative == some .prevent)
 
-/-- Does this causative verb assert necessity (like "cause")?
-
-    DERIVED: delegates to `Causative.AssertsNecessity`. -/
-def Verb.AssertsNecessity (v : Verb) : Prop :=
-  match v.causative with
-  | some c => c.AssertsNecessity
-  | none => False
-
-instance : DecidablePred Verb.AssertsNecessity := fun v => by
-  unfold Verb.AssertsNecessity; split <;> infer_instance
 
 /-- Is this verb a preferential attitude predicate? -/
 def Verb.isPreferentialAttitude (v : Verb) : Bool :=
