@@ -62,21 +62,14 @@ def reset (x : ℕ) : DPL.Rel E := agreeOn {x}ᶜ
 Definition 3.10 generates the existential. -/
 theorem exists_eq_reset_conj (x : ℕ) (φ : DPL.Rel E) :
     DPL.Rel.exists_ x φ = (reset x).conj φ := by
+  have h1 : DPL.Rel.exists_ x φ =
+      λ g h => ∃ d, φ (Function.update g x d) h := DPL.exists_eq x φ
+  rw [h1]
   funext g h
-  apply propext
-  constructor
-  · rintro ⟨d, hφ⟩
-    exact ⟨_, λ v hv => (if_neg hv).symm, hφ⟩
-  · rintro ⟨k, hk, hφ⟩
-    refine ⟨k x, ?_⟩
-    have hfk : (λ n => if n = x then k x else g n) = k := by
-      funext n
-      rcases eq_or_ne n x with rfl | hn
-      · rw [if_pos rfl]
-      · rw [if_neg hn]
-        exact hk hn
-    rw [hfk]
-    exact hφ
+  refine propext ⟨λ ⟨d, hφ⟩ =>
+      ⟨_, λ v hv => (Function.update_of_ne hv d g).symm, hφ⟩,
+    λ ⟨k, hk, hφ⟩ => ⟨k x, ?_⟩⟩
+  rwa [Function.update_eq_iff.mpr ⟨rfl, λ v hv => hk hv⟩]
 
 /-! ### Contexts (Definition 3.1) -/
 
