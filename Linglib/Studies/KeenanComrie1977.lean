@@ -8,6 +8,14 @@ import Linglib.Fragments.Korean.Relativization
 import Linglib.Fragments.Finnish.Relativization
 import Linglib.Fragments.Malagasy.Relativization
 import Linglib.Fragments.Mandarin.Relativization
+import Linglib.Fragments.Basque.Relativization
+import Linglib.Fragments.German.Relativization
+import Linglib.Fragments.HindiUrdu.Relativization
+import Linglib.Fragments.Japanese.Relativization
+import Linglib.Fragments.Romance.French.Relativization
+import Linglib.Fragments.Slavic.Russian.Relativization
+import Linglib.Fragments.Tagalog.Relativization
+import Linglib.Fragments.Turkish.Relativization
 import Linglib.Fragments.Yoruba.Relativization
 
 /-!
@@ -63,11 +71,15 @@ case marking) is the primary parameter distinguishing strategies.
 
 ## Sample
 
-Ten languages cover the key patterns: gap-to-resumptive split (Welsh,
-Hebrew, Arabic, Toba Batak), multi-strategy with prenominal RCs (Korean,
-Finnish), prenominal gap-to-resumptive split reaching OCOMP (Mandarin),
-single-strategy (Malagasy), and per-position strategy split
-with serial-verb-mediated obliques (Yoruba).
+Seventeen of the paper's Table 1 languages plus Yoruba (post-1977) cover
+the key patterns: gap-to-resumptive split (Welsh, Hebrew, Arabic, Toba
+Batak; prenominal and reaching OCOMP in Mandarin; below a participial
+cut-off in Turkish), multi-strategy with prenominal RCs (Korean, Finnish,
+Japanese, German), single-strategy (Malagasy, Basque, French, Russian),
+subject-only with voice-mediated promotion (Malagasy, Tagalog),
+correlative (Hindi), and per-position strategy split with
+serial-verb-mediated obliques (Yoruba). Every AH position from SU to GEN
+is attested as a primary cut-off (`each_upper_cutoff_attested`).
 -/
 
 namespace KeenanComrie1977
@@ -122,7 +134,7 @@ def lowestCovered (markers : List Marker) : AHPosition :=
 -- ============================================================================
 
 /-! Per-language abbrevs over Fragment marker lists. The original
-9-language sample from the paper plus Yoruba (added later via
+17-language sample from the paper plus Yoruba (added later via
 [awobuluyi-1978] + [keenan-comrie-1979]). -/
 
 abbrev english   := English.relMarkers
@@ -143,19 +155,29 @@ abbrev finnish   := Finnish.relMarkers
 abbrev malagasy  := Malagasy.relMarkers
 /-- K&C's "Chinese (spoken Pekingese)" (Table 1 pp. 76-79). -/
 abbrev mandarin  := Mandarin.relMarkers
+abbrev basque    := Basque.relMarkers
+abbrev french    := French.relMarkers
+abbrev german    := German.relMarkers
+/-- Table 1's "Hindi". -/
+abbrev hindi     := HindiUrdu.relMarkers
+abbrev japanese  := Japanese.relMarkers
+abbrev russian   := Russian.relMarkers
+abbrev tagalog   := Tagalog.relMarkers
+abbrev turkish   := Turkish.relMarkers
 abbrev yoruba    := Yoruba.relMarkers
 
-/-- The 9-language sub-sample from the original paper Table 1 (pp. 76-79). -/
+/-- The 17-language sub-sample from the original paper Table 1 (pp. 76-79). -/
 def originalSample : List (List Marker) :=
-  [english, welsh, arabic, hebrew, tobaBatak, korean, finnish, malagasy, mandarin]
+  [english, welsh, arabic, hebrew, tobaBatak, korean, finnish, malagasy, mandarin,
+   basque, french, german, hindi, japanese, russian, tagalog, turkish]
 
-/-- The original 9-language sample plus Yoruba (the only post-1977
+/-- The original 17-language sample plus Yoruba (the only post-1977
     addition; refutes one of the paper's implicit ±case generalizations
     — see `yoruba_refutes_minus_case_covers_subjects` below). -/
 def allSamples : List (List Marker) :=
   originalSample ++ [yoruba]
 
-theorem sample_size : allSamples.length = 10 := by decide
+theorem sample_size : allSamples.length = 18 := by decide
 
 -- ============================================================================
 -- § 3: Hierarchy Constraint Verification on Sample
@@ -197,7 +219,7 @@ theorem isUpperSet_of_satisfiesPRC {markers : List Marker} (h : SatisfiesPRC mar
 -- § 4: Cross-Linguistic Patterns
 -- ============================================================================
 
-/-- In the original 9-language sub-sample, every -case marker covers
+/-- In the original 17-language sub-sample, every -case marker covers
     subjects. The -case (gap/deletion) strategy is always primary when
     present in those languages.
 
@@ -228,11 +250,22 @@ theorem most_have_multiple_strategies :
 /-- +case markers that are non-primary (don't cover SU) never cover SU
     in our sample. This reflects the typological generalization that
     pronoun retention is used for lower, not higher, AH positions.
-    Holds across all 10 languages including Yoruba. -/
+    Holds across all 18 languages including Yoruba. -/
 theorem plus_case_secondary_excludes_su :
     ∀ markers ∈ allSamples,
       ∀ m ∈ markers, m.bearsCaseMarking = true → ¬ m.IsPrimary →
         ¬ m.Covers .subject := by decide
+
+/-- Every AH position from SU down to GEN is attested in the sample as
+    the cut-off of some primary marker — the paper's §1.3 justification
+    of HC₃ (each point on the AH is a possible cut-off point). The
+    paper's OCOMP-cutoff witnesses (Czech, Slovenian, Urhobo) are not in
+    the encoded sample. -/
+theorem each_upper_cutoff_attested :
+    ∀ p ∈ [AHPosition.subject, .directObject, .indirectObject,
+           .oblique, .genitive],
+      ∃ markers ∈ allSamples, ∃ m ∈ markers,
+        m.IsPrimary ∧ lowestCovered [m] = p := by decide
 
 -- ============================================================================
 -- § 5: Toba Batak DO Gap (paper p. 68-69, canonical example)
@@ -300,6 +333,54 @@ theorem mandarin_retention_reaches_ocomp :
     (mandarin.map (fun m => decide (m.Covers .directObject))) = [true, true] ∧
     lowestCovered mandarin = .objComparison := by decide
 
+/-- Basque (Table 1 p. 76; §1.3.3 p. 72): single -case strategy covering
+    SU/DO/IO — the sample's witness that IO is a possible primary
+    cut-off. -/
+theorem basque_cutoff_at_io :
+    basque.length = 1 ∧ lowestCovered basque = .indirectObject := by decide
+
+/-- French (Table 1 p. 76): the single +case relative pronoun system
+    covers SU–GEN (OCOMP blank). -/
+theorem french_single_strategy_to_gen :
+    french.length = 1 ∧ lowestCovered french = .genitive := by decide
+
+/-- German (Table 1 p. 77; §1.1 exx. (1)-(2), §1.3.1 p. 70): the +case
+    relative pronoun covers SU–GEN; the -case participial strategy
+    covers SU only. -/
+theorem german_participial_su_only :
+    (german.map (fun m => decide (m.Covers .subject))) = [true, true] ∧
+    (german.map (·.positions.length)) = [5, 1] := by decide
+
+/-- Hindi (Table 1 p. 77): both +case strategies (postnominal *jo*, the
+    correlative coded "internal" there) are primary and cover SU–GEN;
+    OCOMP is treated as an oblique. -/
+theorem hindi_both_strategies_primary :
+    ∀ m ∈ hindi, m.IsPrimary ∧ lowestCovered [m] = .genitive := by decide
+
+/-- Japanese (Table 1 p. 77): the -case gap strategy reaches GEN (OBL
+    and GEN only for some NPs); retention appears only at GEN. -/
+theorem japanese_gap_to_gen :
+    lowestCovered japanese = .genitive ∧
+    (japanese.map (fun m => decide (m.Covers .genitive))) = [true, true] := by decide
+
+/-- Russian (Table 1 p. 78): the single declining relative pronoun
+    *kotoryj* covers SU–GEN (OCOMP blank). -/
+theorem russian_single_strategy_to_gen :
+    russian.length = 1 ∧ lowestCovered russian = .genitive := by decide
+
+/-- Tagalog (Table 1 p. 79; §1.3.1 p. 70): two -case strategies
+    (postnominal and prenominal linker), each covering SU only. -/
+theorem tagalog_su_only :
+    ∀ m ∈ tagalog, m.positions = [.subject] := by decide
+
+/-- Turkish (Table 1 p. 79): -case participles cover SU–OBL; +case
+    retention covers GEN and (marginally) OCOMP — the Korean pattern
+    plus retention below the participial cut-off. -/
+theorem turkish_retention_below_participles :
+    lowestCovered turkish = .objComparison ∧
+    (turkish.map (fun m => decide (m.Covers .oblique)))  = [true, false] ∧
+    (turkish.map (fun m => decide (m.Covers .genitive))) = [false, true] := by decide
+
 /-- Finnish (Table 1 p. 76; paper §1.3.2 p. 70-71): the +case marker
     *joka* is the broader/primary one (covers SU–GEN); the -case
     participial marker also covers SU but is narrower (SU/DO only). -/
@@ -317,66 +398,7 @@ theorem yoruba_strategy_breakdown :
     (yoruba.map (fun m => decide m.IsPrimary))        = [true, false, false, false] := by decide
 
 -- ============================================================================
--- § 7: Bridge to the per-language relativization defs (Syntax layer)
--- ============================================================================
-
-/-! K&C 1977 Table 1's per-position coverage and each language's
-WALS-derived `Relativization.lowestRelativizable` encode complementary views of the same
-data. Bridge theorems below verify agreement on the lowest position
-covered, language by language. K&C's Table 1 is strictly more detailed
-than WALS Ch 122/123 (which only ask about subjects and obliques), so
-the K&C `lowestCovered` is at least as deep as the WALS
-`lowestRelativizable`. -/
-
-theorem english_kc_matches_wals :
-    lowestCovered english = .objComparison ∧
-    English.Relativization.lowestRelativizable = .objComparison := by decide
-
-theorem welsh_kc_covers_deeper_than_wals :
-    lowestCovered welsh = .objComparison ∧
-    Welsh.Relativization.lowestRelativizable = .oblique ∧
-    AHPosition.moreAccessible .oblique .objComparison := by decide
-
-theorem korean_kc_covers_deeper_than_wals :
-    lowestCovered korean = .genitive ∧
-    Korean.Relativization.lowestRelativizable = .oblique := by decide
-
-theorem malagasy_kc_matches_wals :
-    lowestCovered malagasy = .subject ∧
-    Malagasy.Relativization.lowestRelativizable = .subject := by decide
-
-theorem finnish_kc_matches_wals :
-    lowestCovered finnish = .genitive ∧
-    Finnish.Relativization.lowestRelativizable = .oblique := by decide
-
-theorem hebrew_kc_covers_deeper_than_wals :
-    lowestCovered hebrew = .objComparison ∧
-    Hebrew.Relativization.lowestRelativizable = .oblique := by decide
-
-theorem arabic_kc_covers_deeper_than_wals :
-    lowestCovered arabic = .objComparison ∧
-    Arabic.ModernStandard.Relativization.lowestRelativizable = .oblique := by decide
-
-theorem yoruba_kc_matches_wals :
-    lowestCovered yoruba = .genitive ∧
-    Yoruba.Relativization.lowestRelativizable = .genitive := by decide
-
-/-- **Systematic coverage agreement**: K&C is at least as detailed as
-    WALS for every sample language. The WALS profile never claims a
-    language can relativize a position that K&C Table 1 doesn't cover. -/
-theorem kc_at_least_as_detailed_as_wals :
-    (lowestCovered english).rank   ≤ English.Relativization.lowestRelativizable.rank ∧
-    (lowestCovered welsh).rank     ≤ Welsh.Relativization.lowestRelativizable.rank ∧
-    (lowestCovered korean).rank    ≤ Korean.Relativization.lowestRelativizable.rank ∧
-    (lowestCovered malagasy).rank  ≤ Malagasy.Relativization.lowestRelativizable.rank ∧
-    (lowestCovered finnish).rank   ≤ Finnish.Relativization.lowestRelativizable.rank ∧
-    (lowestCovered hebrew).rank    ≤ Hebrew.Relativization.lowestRelativizable.rank ∧
-    (lowestCovered arabic).rank    ≤ Arabic.ModernStandard.Relativization.lowestRelativizable.rank ∧
-    (lowestCovered yoruba).rank    ≤ Yoruba.Relativization.lowestRelativizable.rank :=
-  by decide
-
--- ============================================================================
--- § 8: Contiguity Examples (HC₂ instances)
+-- § 7: Contiguity Examples (HC₂ instances)
 -- ============================================================================
 
 /-! HC₂ ("any RC-forming strategy must apply to a continuous segment of the
@@ -408,7 +430,7 @@ theorem su_do_obl_not_contiguous :
     contiguousOnAH [AHPosition.subject, .directObject, .oblique] = false := rfl
 
 -- ============================================================================
--- § 9: Primary Relativization Constraint (General Proof)
+-- § 8: Primary Relativization Constraint (General Proof)
 -- ============================================================================
 
 /-! The PRC is the paper's main derivation: it follows from HC₁ + HC₂ rather
