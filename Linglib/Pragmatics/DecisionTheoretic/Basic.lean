@@ -120,6 +120,13 @@ def probSum {W : Type*} [Fintype W] (prior : W → ℚ) (p : Set W)
     [DecidablePred (· ∈ p)] : ℚ :=
   ∑ w : W, if w ∈ p then prior w else 0
 
+/-- `probSum` respects propositional equality of sets (the `Decidable`
+instances need not match). -/
+theorem probSum_congr {W : Type*} [Fintype W] (prior : W → ℚ) {p q : Set W}
+    [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] (h : p = q) :
+    probSum prior p = probSum prior q :=
+  Finset.sum_congr rfl fun _ _ => if_congr (h ▸ Iff.rfl) rfl rfl
+
 /-- Conditional probability P(E|H) = P(E∧H) / P(H).
 
 Returns 0 when P(H) = 0 (undefined conditioning). -/
@@ -262,11 +269,18 @@ private lemma probSum_pand_por_eq (prior : W → ℚ) (a b h : Set W)
   by_cases ha : w ∈ a <;> by_cases hb : w ∈ b <;> by_cases hh : w ∈ h <;>
     simp [Set.mem_union, Set.mem_inter_iff, ha, hb, hh]
 
-/-- Unfold condProb when the conditioning event has nonzero probability. -/
-private lemma condProb_unfold (prior : W → ℚ) (e h : Set W)
+/-- `condProb` as a ratio when the conditioning event has nonzero mass. -/
+theorem condProb_unfold (prior : W → ℚ) (e h : Set W)
     [DecidablePred (· ∈ e)] [DecidablePred (· ∈ h)] (hh : probSum prior h ≠ 0) :
     condProb prior e h = probSum prior (e ∩ h) / probSum prior h := by
   simp [condProb, hh]
+
+/-- Conditioning gives probability 1 to any superset of the conditioning event. -/
+theorem condProb_eq_one_of_subset (prior : W → ℚ) {e h : Set W}
+    [DecidablePred (· ∈ e)] [DecidablePred (· ∈ h)]
+    (hsub : h ⊆ e) (hh : probSum prior h ≠ 0) :
+    condProb prior e h = 1 := by
+  rw [condProb_unfold _ _ _ hh, probSum_congr prior (Set.inter_eq_right.mpr hsub), div_self hh]
 
 /-- Inclusion-exclusion for condProb: P(A∨B|H) + P(A∧B|H) = P(A|H) + P(B|H). -/
 private lemma condProb_por_add (prior : W → ℚ) (a b h : Set W)
@@ -290,7 +304,7 @@ theorem probSum_nonneg (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0)
   · exact le_refl 0
 
 /-- probSum is monotone when prior is non-negative. -/
-private lemma probSum_mono (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0)
+theorem probSum_mono (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0)
     (p q : Set W) [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)]
     (hsub : ∀ w, w ∈ p → w ∈ q) :
     probSum prior p ≤ probSum prior q := by
@@ -388,8 +402,8 @@ private lemma condProb_le_one (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0)
   refine (div_le_one hh).mpr (probSum_mono prior hP _ _ (λ w hw => ?_))
   exact hw.2
 
-/-- Unfold bayesFactor when P(E|¬H) ≠ 0. -/
-private lemma bayesFactor_unfold (ctx : DTSContext W) (e : Set W)
+/-- `bayesFactor` as a ratio when P(E∣¬H) ≠ 0. -/
+theorem bayesFactor_unfold (ctx : DTSContext W) (e : Set W)
     [DecidablePred (· ∈ e)]
     (hne : condProb ctx.prior e (ctx.topicᶜ) ≠ 0) :
     bayesFactor ctx e = condProb ctx.prior e ctx.topic /
