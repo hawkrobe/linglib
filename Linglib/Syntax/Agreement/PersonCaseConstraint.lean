@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Prod
-import Linglib.Features.Person.Decomposition
+import Linglib.Features.Person.Basic
 
 /-!
 # The Person Case Constraint
@@ -9,10 +9,10 @@ The PCC restricts which ⟨IO-person, DO-person⟩ combinations a clitic cluster
 realize — the classic ban of French *me lui*. This file defines the descriptive
 typology of PCC varieties (strong, ultra-strong, weak, super-strong, me-first, and the
 predicted PG1–PG3). Prominence thresholds are cuts on the entailment chain
-[author] ⟹ [participant] ⟹ [proximate], read off the person decomposition in
-`Features/Person/Decomposition.lean`, so the person hierarchy enters as a theorem
-(`inherentlyMetBy_antitone`) rather than a stipulation. Grammars are preordered
-by inclusion of their licit regions (`licitFinset`).
+[author] ⟹ [participant] ⟹ [proximate], denoting the person predicates
+`Person.IncludesSpeaker` and `Person.IsSAP`, so the person hierarchy enters as a
+theorem (`inherentlyMetBy_antitone`) rather than a stipulation. Grammars are
+preordered by inclusion of their licit regions (`licitFinset`).
 
 Which mechanism enforces the constraint is left open here: a morphological filter,
 φ-Agree, and perspectival semantics have all been proposed. The rival accounts are
@@ -45,24 +45,27 @@ instance : LinearOrder ProminenceThreshold :=
 /-- A person meets a prominence threshold by its own features: speech-act participants
     meet `proximate` and `participant`, the speaker meets `author`. A 3P meets
     `proximate` only contextually (`IOSatisfiesProminence`). -/
-def ProminenceThreshold.inherentlyMetBy : ProminenceThreshold → Person → Bool
-  | .proximate | .participant => Person.hasParticipant
-  | .author => Person.hasAuthor
+def ProminenceThreshold.InherentlyMetBy : ProminenceThreshold → Person → Prop
+  | .proximate | .participant => Person.IsSAP
+  | .author => Person.IncludesSpeaker
+
+instance : (t : ProminenceThreshold) → DecidablePred t.InherentlyMetBy
+  | .proximate | .participant => inferInstanceAs (DecidablePred Person.IsSAP)
+  | .author => inferInstanceAs (DecidablePred Person.IncludesSpeaker)
 
 /-- Prominence is an order-ideal on the person prominence chain: raising the
     threshold only shrinks the set of persons that inherently meet it. -/
 theorem ProminenceThreshold.inherentlyMetBy_antitone (p : Person) :
-    Antitone (inherentlyMetBy · p) := fun t₁ t₂ h => by
-  revert t₁ t₂ h
-  cases p <;> decide
+    Antitone (InherentlyMetBy · p) := fun t₁ t₂ ht hm => by
+  revert ht hm
+  cases p <;> cases t₁ <;> cases t₂ <;> decide
 
 /-! ### The PCC grammar -/
 
-/-- A PCC grammar: the four parameters of (12). The dependency between them —
-    P-Primacy presupposes active P-Uniqueness — is the field `primacy_le_uniqueness`,
-    so the impossible corner is unrepresentable. Field defaults are the paper's
-    default settings: `{}` is the strong PCC, and each named grammar overrides only
-    its departures. -/
+/-- A PCC grammar is a setting of the four P-Constraint parameters: the prominence
+    threshold, P-Uniqueness, P-Primacy, and the domain restriction. P-Primacy
+    presupposes P-Uniqueness (`primacy_le_uniqueness`); field defaults are the paper's
+    defaults, so `{}` is the strong PCC. -/
 structure Grammar where
   /-- P-Prominence: the threshold the IO must meet (always active). -/
   prominence : ProminenceThreshold := .proximate
@@ -97,20 +100,19 @@ def pg3Grammar : Grammar := { prominence := .author }
 
 /-! ### Subpredicates — the four clauses of (12) -/
 
-/-- (12b) The IO satisfies P-Prominence, inherently or — for `.proximate` only — by
-    contextual marking when paired with another non-proximate 3P. -/
+/-- (12b) The IO meets P-Prominence: inherently, or — under a `proximate` threshold
+    only — by contextual marking when paired with another non-proximate 3P. -/
 def IOSatisfiesProminence (g : Grammar) (io do_ : Person) : Prop :=
-  g.prominence.inherentlyMetBy io ∨
+  g.prominence.InherentlyMetBy io ∨
     (g.prominence = .proximate ∧
-     ¬ g.prominence.inherentlyMetBy io ∧
-     ¬ g.prominence.inherentlyMetBy do_)
+     ¬ g.prominence.InherentlyMetBy io ∧ ¬ g.prominence.InherentlyMetBy do_)
 
 instance (g : Grammar) (io do_ : Person) : Decidable (IOSatisfiesProminence g io do_) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-/-- (12c) The DO does not also inherently satisfy P-Prominence. -/
+/-- (12c) The DO does not also inherently meet P-Prominence. -/
 def UniquenessSatisfied (g : Grammar) (do_ : Person) : Prop :=
-  ¬ g.prominence.inherentlyMetBy do_
+  ¬ g.prominence.InherentlyMetBy do_
 
 instance (g : Grammar) (do_ : Person) : Decidable (UniquenessSatisfied g do_) :=
   inferInstanceAs (Decidable (¬ _))
@@ -123,26 +125,26 @@ instance (g : Grammar) (do_ : Person) : Decidable (UniquenessSatisfied g do_) :=
     permissive reading is deliberate: rival probe-based accounts part ways with the
     P-Constraint at exactly this cell (`Deal2024.sd_ultra_discrepancy_1_1`). -/
 def PrimacyRescues (g : Grammar) (io : Person) : Prop :=
-  g.primacy = true ∧ io.hasAuthor = true
+  g.primacy ∧ io.IncludesSpeaker
 
 instance (g : Grammar) (io : Person) : Decidable (PrimacyRescues g io) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- A person is *inherently* `[+proximate]` iff it is a speech-act participant
-    ([pancheva-zubizarreta-2018] (11)); a 3P is proximate only contextually. -/
-def IsInherentlyProximate (p : Person) : Prop := p.hasParticipant = true
+/-- A person is inherently proximate iff it is a speech-act participant; a 3P is
+    proximate only contextually. -/
+def IsInherentlyProximate (p : Person) : Prop :=
+  ProminenceThreshold.proximate.InherentlyMetBy p
 
-instance (p : Person) : Decidable (IsInherentlyProximate p) :=
-  inferInstanceAs (Decidable (_ = true))
+instance : DecidablePred IsInherentlyProximate := fun p =>
+  inferInstanceAs (Decidable (ProminenceThreshold.proximate.InherentlyMetBy p))
 
 /-- (12a) Domain-exempt: restricted domain with no DP bearing the prominence feature. The
     restriction presupposes an argument matching the P-Prominence value
     ([pancheva-zubizarreta-2018] §4.5: the restricted application "matches the feature
     value set in P-Prominence"; for me-first, ApplPs with a [+author] argument). -/
 def DomainExempt (g : Grammar) (io do_ : Person) : Prop :=
-  g.restrictedDomain = true ∧
-    g.prominence.inherentlyMetBy io = false ∧
-    g.prominence.inherentlyMetBy do_ = false
+  g.restrictedDomain ∧
+    ¬ g.prominence.InherentlyMetBy io ∧ ¬ g.prominence.InherentlyMetBy do_
 
 instance (g : Grammar) (io do_ : Person) : Decidable (DomainExempt g io do_) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
