@@ -49,28 +49,6 @@ open DPL DynamicSemantics
 
 variable {E : Type*}
 
-/-! ### Relations between assignments (Definition 2.2) -/
-
-/-- Definition 2.2's `≡_V`: relate assignments agreeing on `V`. -/
-def agreeOn (V : Set ℕ) : DPL.Rel E := λ f g => Set.EqOn f g V
-
-/-- The random reset at `x` — agree everywhere but `x`, the paper's
-`[x]`. -/
-def reset (x : ℕ) : DPL.Rel E := agreeOn {x}ᶜ
-
-/-- DPL's existential is the reset at `x` composed with the scope — how
-Definition 3.10 generates the existential. -/
-theorem exists_eq_reset_conj (x : ℕ) (φ : DPL.Rel E) :
-    DPL.Rel.exists_ x φ = (reset x).conj φ := by
-  have h1 : DPL.Rel.exists_ x φ =
-      λ g h => ∃ d, φ (Function.update g x d) h := DPL.exists_eq x φ
-  rw [h1]
-  funext g h
-  refine propext ⟨λ ⟨d, hφ⟩ =>
-      ⟨_, λ v hv => (Function.update_of_ne hv d g).symm, hφ⟩,
-    λ ⟨k, hk, hφ⟩ => ⟨k x, ?_⟩⟩
-  rwa [Function.update_eq_iff.mpr ⟨rfl, λ v hv => hk hv⟩]
-
 /-! ### Contexts (Definition 3.1) -/
 
 /-- A DPL-context (Definition 3.1): input set `I` (variables the incoming
@@ -178,24 +156,13 @@ structure HasContext (R : DPL.Rel E) (c : Context) : Prop where
 
 /-- The paper's equational form of Definition 3.4. -/
 theorem hasContext_iff_eq (R : DPL.Rel E) (c : Context) :
-    HasContext R c ↔ R = λ f g =>
-      (agreeOn ↑c.I).conj (R.conj (agreeOn ↑c.O)) f g
-        ∧ agreeOn (↑c.B)ᶜ f g := by
-  constructor
-  · intro h
-    funext f g
-    exact propext
-      ⟨λ hR => ⟨⟨f, Set.eqOn_refl _ _, g, hR, Set.eqOn_refl _ _⟩,
-        h.blocks hR⟩,
-      λ ⟨⟨f₀, hI, g₀, hR, hO⟩, hB⟩ => h.stable hR hI hO hB⟩
-  · intro h
-    constructor
-    · intro f g hR
-      rw [h] at hR
-      exact hR.2
-    · intro f f' g g' hR hI hO hB
-      rw [h]
-      exact ⟨⟨f, hI, g, hR, hO⟩, hB⟩
+    HasContext R c ↔
+      R = (agreeOn ↑c.I).conj (R.conj (agreeOn ↑c.O)) ⊓ agreeOn (↑c.B)ᶜ := by
+  rw [le_antisymm_iff, le_inf_iff, and_iff_right (le_agreeOn_conj R _ _)]
+  exact ⟨λ h => ⟨h.blocks,
+      λ f g ⟨⟨f₀, hI, g₀, hR, hO⟩, hB⟩ => h.stable hR hI hO hB⟩,
+    λ ⟨hb, hs⟩ => ⟨hb,
+      λ f f' g g' hR hI hO hB => hs f' g' ⟨⟨f, hI, g, hR, hO⟩, hB⟩⟩⟩
 
 /-- The `test V`-typed relations are exactly the `V`-invariant tests —
 Definition 2.2's ⟨V⟩-conditions (noted after Definition 3.4). -/
