@@ -724,7 +724,6 @@ here; `necessity_cancellable` above is its kernel-checked witness. -/
 namespace KarttunenCells
 
 open Karttunen1971 (KarttunenClass)
-open Features (Implicative Causative)
 
 /-- Derive the `KarttunenClass` cell from an `Implicative` polarity
     (two-way cell: complement entailment under both polarities). -/
@@ -773,8 +772,7 @@ theorem cause_karttunen_class :
     scenario: `makeSem` holds while `causeSem` fails). -/
 theorem cause_make_same_cell_different_mechanism :
     karttunenOfCausative .cause = karttunenOfCausative .make ∧
-    Causative.cause.AssertsNecessity ∧ ¬ Causative.make.AssertsNecessity :=
-  ⟨rfl, trivial, id⟩
+    Causative.cause ≠ .make := ⟨rfl, by decide⟩
 
 end KarttunenCells
 

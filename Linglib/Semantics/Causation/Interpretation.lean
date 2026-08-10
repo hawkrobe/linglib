@@ -1,6 +1,6 @@
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
-import Linglib.Features.Causation
+import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.Causation.CCSelection
@@ -15,7 +15,7 @@ import Linglib.Semantics.Causation.Prevention
 Maps `Causative` verb classifications to their compositional semantics
 under the **force-dynamic** view ([talmy-1988], [wolff-2003]),
 which collapses `enable`/`force`/`make` into a single sufficiency
-predicate (`makeSem`) distinguished post-hoc by `IsCoercive`/`IsPermissive`.
+predicate (`makeSem`); the three remain distinct lexical classifications.
 
 | Causative | Mechanism | English verbs | N&L property (derived) |
 |-----------|-----------|---------------|----------------------|
@@ -41,17 +41,14 @@ mapping exists; both dispatches coexist as named functions and the
 disagreement is theorem-provable.
 -/
 
-/-! ### Methods on `Features.Causative` -/
+/-! ### Methods on `Causative` -/
 
-/-! Methods on `Features.Causative` that depend on heavy semantic
+/-! Methods on `Causative` that depend on heavy semantic
 machinery (`Causation.SEM`, `CausalGraph`, the `Necessity`/
 `Sufficiency`/`Prevention` modules) live here rather than in
-`Features/Causation.lean`, which is kept import-free per the
-"Features/ stays lightweight" convention. The `namespace
-Features.Causative` block below is the standard mathlib pattern for
-distributing methods on a type across files based on import weight. -/
+`Semantics/Causation/VerbClass.lean`, which is kept import-free. -/
 
-namespace Features.Causative
+namespace Causative
 
 open Causation.CCSelection
 open Causation (SEM CausalGraph Valuation DecidableValuation)
@@ -86,18 +83,9 @@ theorem AssertsSufficiency.toSemantics_eq {V : Type*} {α : V → Type*}
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
     {b : Causative} (h : b.AssertsSufficiency) :
     b.toSemantics M = Causation.Sufficiency.makeSem M := by
-  cases b <;> first | rfl | exact (h : False).elim
+  rcases h with rfl | rfl | rfl <;> rfl
 
-/-- The necessity-asserting variant has `causeSem` truth conditions: the
-`AssertsNecessity` classification tracks the force-dynamic dispatch. -/
-theorem AssertsNecessity.toSemantics_eq {V : Type*} {α : V → Type*}
-    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
-    {b : Causative} (h : b.AssertsNecessity) :
-    b.toSemantics M = Causation.Necessity.causeSem M := by
-  cases b <;> first | rfl | exact (h : False).elim
-
-end Features.Causative
+end Causative
 
 /-! ### Derivation theorems (substrate-independent) -/
 
@@ -105,14 +93,6 @@ namespace Causation.Interpretation
 
 open ArgumentStructure
 open Features
-
-/-- `make` and `force` are distinguished by coercion despite sharing truth conditions. -/
-theorem make_force_distinguished_by_coercion :
-    ¬ Causative.make.IsCoercive ∧ Causative.force.IsCoercive := ⟨id, trivial⟩
-
-/-- `make` and `enable` are distinguished by permissivity despite sharing truth conditions. -/
-theorem make_enable_distinguished_by_permissivity :
-    ¬ Causative.make.IsPermissive ∧ Causative.enable.IsPermissive := ⟨id, trivial⟩
 
 /-! ### Bridge to CC-Selection -/
 
@@ -125,7 +105,7 @@ but connected: each variant has a canonical selection mode. -/
 theorem sufficiency_selects_completion (b : Causative)
     (h : b.AssertsSufficiency) :
     b.selectionMode = .completionOfSufficientSet := by
-  cases b <;> first | rfl | exact (h : False).elim
+  rcases h with rfl | rfl | rfl <;> rfl
 
 /-- Necessity variant has member selection mode. -/
 theorem necessity_selects_member :

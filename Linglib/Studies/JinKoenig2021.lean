@@ -1073,14 +1073,6 @@ close to w₀), but they derive from distinct semantic mechanisms:
 Each mechanism independently entails ¬p in the real world, unifying
 the class despite its heterogeneity. -/
 
-open Features (Causative Implicative)
-
-/-- FORGET is a negative implicative: "X forgot to do Y" entails that
-    Y did NOT happen (¬p in w₀). This is DERIVED from the implicative
-    builder's polarity, not stipulated.
-    [nadathur-2023]: negative implicatives entail complement falsity. -/
-theorem forget_grounded_in_implicativity :
-    ¬ Implicative.negative.EntailsComplement := id
 
 /-- STOP/PREVENT are causative preventatives: "X prevented Y" entails
     that Y did NOT occur (¬p in w₀). The negative entailment comes from
@@ -1088,7 +1080,7 @@ theorem forget_grounded_in_implicativity :
     [nadathur-lauer-2020]: prevent = effect blocked with preventer,
     would have occurred without it. -/
 theorem prevent_is_causative_builder :
-    ¬ Causative.prevent.AssertsSufficiency := id
+    ¬ Causative.prevent.AssertsSufficiency := by decide
 
 /-- The FORGET class is unified by real-world negative entailment:
     all subclasses entail ¬p in w₀ (or worlds close to w₀), but

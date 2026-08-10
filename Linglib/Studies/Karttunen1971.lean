@@ -50,8 +50,7 @@ Key differences from the modern analysis:
 
 namespace Karttunen1971
 
-open Causation.Implicative
-open Features (Causative)
+open Implicative
 open English.Predicates.Verbal
 open English.Predicates.Copular (beAble)
 open ArgumentStructure
@@ -195,10 +194,10 @@ theorem believe_not_implicative :
 -- ── Derived entailment predictions ──
 
 theorem manage_entails :
-    ∃ i ∈ manage.toVerb.implicative, i.EntailsComplement := ⟨.positive, rfl, trivial⟩
+    manage.toVerb.implicative = some .positive := rfl
 
 theorem fail_entails_not :
-    ∃ i ∈ fail.toVerb.implicative, ¬ i.EntailsComplement := ⟨.negative, rfl, id⟩
+    fail.toVerb.implicative = some .negative := rfl
 
 theorem hope_no_complement_entailment :
     hope.toVerb.implicative = none := rfl
@@ -253,10 +252,7 @@ theorem force_has_causative :
     force.toVerb.causative = some .force := rfl
 
 theorem force_asserts_sufficiency :
-    Causative.force.AssertsSufficiency := trivial
-
-theorem force_no_necessity :
-    ¬ Causative.force.AssertsNecessity := id
+    Causative.force.AssertsSufficiency := .inr (.inl rfl)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 6. KarttunenClass → Entailment Predictions

@@ -658,7 +658,6 @@ import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Capabilities
 import Linglib.Features.Case.Grammaticalization
 import Linglib.Features.Case.Source
-import Linglib.Features.Causation
 import Linglib.Features.Clusivity
 import Linglib.Features.ContainmentPair
 import Linglib.Features.CoreferenceStatus
@@ -1547,6 +1546,7 @@ import Linglib.Semantics.Causation.SEM.Deterministic
 import Linglib.Semantics.Causation.Strength
 import Linglib.Semantics.Causation.Sufficiency
 import Linglib.Semantics.Causation.Valuation
+import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.Classifier
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Semantics.Composition.Cont

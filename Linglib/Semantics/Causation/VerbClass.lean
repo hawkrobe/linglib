@@ -15,8 +15,6 @@ This file defines two classifications carried by verb lexical entries:
   of causal events*][wolff-2003]
 -/
 
-namespace Features
-
 /-! ### Force-dynamic causatives -/
 
 /-- Force-dynamic classification of causative verbs by the causal mechanism
@@ -40,39 +38,11 @@ namespace Causative
 
 /-- The variant asserts causal sufficiency: `make`, `force`, and `enable`
 share sufficiency truth conditions (`AssertsSufficiency.toSemantics_eq`). -/
-def AssertsSufficiency : Causative → Prop
-  | .make | .force | .enable => True
-  | .cause | .prevent => False
+def AssertsSufficiency (b : Causative) : Prop :=
+  b = make ∨ b = force ∨ b = enable
 
 instance : DecidablePred AssertsSufficiency := fun b => by
-  cases b <;> unfold AssertsSufficiency <;> infer_instance
-
-/-- The variant asserts causal necessity: only `cause`, whose truth conditions
-are counterfactual dependence (`AssertsNecessity.toSemantics_eq`). -/
-def AssertsNecessity : Causative → Prop
-  | .cause => True
-  | _ => False
-
-instance : DecidablePred AssertsNecessity := fun b => by
-  cases b <;> unfold AssertsNecessity <;> infer_instance
-
-/-- The variant encodes coercion: `force` lexicalizes overcoming the causee's
-resistance, distinguishing it from `make` despite shared truth conditions. -/
-def IsCoercive : Causative → Prop
-  | .force => True
-  | _ => False
-
-instance : DecidablePred IsCoercive := fun b => by
-  cases b <;> unfold IsCoercive <;> infer_instance
-
-/-- The variant encodes permission: `enable` lexicalizes removing a barrier,
-distinguishing it from `make` despite shared truth conditions. -/
-def IsPermissive : Causative → Prop
-  | .enable => True
-  | _ => False
-
-instance : DecidablePred IsPermissive := fun b => by
-  cases b <;> unfold IsPermissive <;> infer_instance
+  unfold AssertsSufficiency; infer_instance
 
 end Causative
 
@@ -86,17 +56,3 @@ inductive Implicative where
   /-- The verb entails the negation of its complement (*fail*, *forget*). -/
   | negative
   deriving DecidableEq, Repr
-
-namespace Implicative
-
-/-- The polarity entails the complement rather than its negation. -/
-def EntailsComplement : Implicative → Prop
-  | .positive => True
-  | .negative => False
-
-instance : DecidablePred EntailsComplement := fun i => by
-  cases i <;> unfold EntailsComplement <;> infer_instance
-
-end Implicative
-
-end Features

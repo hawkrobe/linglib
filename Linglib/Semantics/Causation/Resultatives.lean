@@ -44,7 +44,6 @@ open ConstructionGrammar.Resultatives
 open Features
 open ArgumentStructure
 open Features.ChangeOfState
-open Features (Causative)
 open Causation.ProductionDependence
 open Causation.CCSelection
 
@@ -90,14 +89,14 @@ def deriveCausativeBuilder (rel : SubeventRelation) (desc : SubeventDesc) :
   | .means, true => some .make
   | _, _ => none
 
-/-- `.make` is the unique builder asserting neutral sufficiency. -/
+/-- `.make` is the unique builder asserting neutral (non-coercive,
+    non-permissive) sufficiency. -/
 theorem make_unique_neutral_sufficiency (b : Causative)
     (hs : b.AssertsSufficiency)
-    (hc : ¬ b.IsCoercive)
-    (hp : ¬ b.IsPermissive) :
+    (hc : b ≠ .force)
+    (hp : b ≠ .enable) :
     b = .make := by
-  cases b <;> simp_all [Causative.AssertsSufficiency,
-    Causative.IsCoercive, Causative.IsPermissive]
+  rcases hs with rfl | rfl | rfl <;> simp_all
 
 /-- MEANS + CAUSE derives `.make`. -/
 theorem means_cause_derives_make (desc : SubeventDesc)
@@ -133,7 +132,7 @@ theorem derived_asserts_sufficiency (rel : SubeventRelation) (desc : SubeventDes
     b.AssertsSufficiency := by
   unfold deriveCausativeBuilder at h
   split at h
-  · simp only [Option.some.injEq] at h; subst h; trivial
+  · simp only [Option.some.injEq] at h; subst h; exact .inl rfl
   · simp at h
 
 /-- The resultative Causative, derived from MEANS + CAUSE. -/
