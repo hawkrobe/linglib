@@ -224,12 +224,13 @@ theorem patch_unique (h : HasContext R c) (hR : R f' g')
 /-- Theorem 3.8: composition of a `c`-relation and a `d`-relation is a
 `c * d`-relation. -/
 theorem conj (hR : HasContext R c) (hS : HasContext S d) :
-    HasContext (DPL.Rel.conj R S) (c * d) := by
-  constructor
-  · rintro f g ⟨k, hfk, hkg⟩ v hv
+    HasContext (DPL.Rel.conj R S) (c * d) where
+  blocks := by
+    rintro f g ⟨k, hfk, hkg⟩ v hv
     rw [Context.B_mul, Finset.coe_union, Set.compl_union] at hv
     exact (hR.blocks hfk hv.1).trans (hS.blocks hkg hv.2)
-  · rintro f f' g g' ⟨k, hfk, hkg⟩ hI hO hB
+  stable := by
+    rintro f f' g g' ⟨k, hfk, hkg⟩ hI hO hB
     -- Patch the intermediate assignment: keep it at `c.O ∪ d.I`, take
     -- the new output at the old blocks, the new input elsewhere.
     refine ⟨(c.O ∪ d.I).piecewise k (c.B.piecewise g' f'),
@@ -240,18 +241,15 @@ theorem conj (hR : HasContext R c) (hS : HasContext S d) :
         (λ v hv => (c.O ∪ d.I).piecewise_eq_of_mem _ _
           (Finset.mem_union_right _ hv))
         (hO.mono (Finset.coe_subset.mpr Finset.subset_union_right)) ?_⟩
-    · -- f' agrees with the patch off c.B
+    all_goals
       intro v hv
-      have hb := hR.blocks hfk
+      have hbR := hR.blocks hfk
+      have hbS := hS.blocks hkg
       have hc := c.coh_mem (v := v)
-      grind [Set.EqOn, Finset.piecewise_eq_of_mem,
-        Finset.piecewise_eq_of_notMem, Context.I_mul, Context.B_mul]
-    · -- the patch agrees with g' off d.B
-      intro v hv
-      have hb := hS.blocks hkg
       have hd := d.coh_mem (v := v)
       grind [Set.EqOn, Finset.piecewise_eq_of_mem,
-        Finset.piecewise_eq_of_notMem, Context.O_mul, Context.B_mul]
+        Finset.piecewise_eq_of_notMem, Context.I_mul, Context.O_mul,
+        Context.B_mul]
 
 /-- Theorem 3.9: DPL implication of a `c`-relation and a `d`-relation is
 a `(c → d)`-relation. -/
