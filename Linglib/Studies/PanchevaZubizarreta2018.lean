@@ -1,4 +1,4 @@
-import Linglib.Features.Person.PersonCaseConstraint
+import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Features.Logophoricity
 import Linglib.Features.Person.Decomposition
@@ -16,7 +16,7 @@ The Person Case Constraint: The Syntactic Encoding of Perspective.
 ## Summary
 
 Empirical predictions of the P-Constraint theory (formalized in
-`Features/Person/PersonCaseConstraint.lean`) for the eight grammar
+`Syntax/Agreement/PersonCaseConstraint.lean`) for the eight grammar
 instances P&Z discuss: five attested PCC varieties (strong, ultra-strong,
 weak, super-strong, me-first) plus three predicted varieties (PG1, PG2,
 PG3) that the four-parameter space generates.
@@ -36,7 +36,7 @@ PG3) that the four-parameter space generates.
   relevant role for clitic clusters.
 - **`readings_disagree_on_proximate`** and **`mefirst_wedge_with_cm`** —
   P&Z's rejection (page 1308) of [charnavel-mateu-2015]'s unification
-  of PCC and CLR (§ 10 below).
+  of PCC and CLR (§ 8 below).
 
 ## Forward references
 
@@ -52,7 +52,7 @@ open Minimalist (DecomposedPerson decomposePerson)
 open PCC
 
 -- The Sells correspondence (§6.2): a P&Z-specific theoretical reading,
--- defined here in the study file rather than baked into PConstraint.
+-- defined here in the study file rather than baked into the typology substrate.
 -- [charnavel-mateu-2015] (page 10) reject the claim that pivot is
 -- the relevant logophoric role for clitic clusters.
 
@@ -69,9 +69,9 @@ def pProminence_to_sellsRole : PProminence → LogophoricRole
 -- ════════════════════════════════════════════════════
 
 /-! P&Z's syntactic encoding: the interpretable person feature on Appl marks one DP as the
-point-of-view center. The theory-neutral PCC (`Features/Person/PersonCaseConstraint.lean`)
-is grounded here in that Appl model — a ⟨IO, DO⟩ is licit iff IO-as-POV-center is
-consistent with the Appl p-feature. -/
+point-of-view center. The descriptive PCC typology
+(`Syntax/Agreement/PersonCaseConstraint.lean`) is grounded here in that Appl model — a
+⟨IO, DO⟩ is licit iff IO-as-POV-center is consistent with the Appl p-feature. -/
 
 /-- A minimal model of the Appl phase: the two arguments and the chosen POV center. -/
 structure ApplDomain where

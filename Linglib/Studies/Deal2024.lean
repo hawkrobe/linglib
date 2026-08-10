@@ -1,4 +1,4 @@
-import Linglib.Features.Person.PersonCaseConstraint
+import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Studies.CoonKeine2021
 
