@@ -11,7 +11,7 @@ map (`ι : U → Option F`, or a total `g : U → F` — the `fromUD` ingests).
 
 The order-theoretic core is `Flat.compat_iff` (`Core.Order.Flat`); this file
 is the linglib-specific adapter on top of it, shared by the per-feature
-agreement-faithfulness theorems (`HasX.compatible_hasX` in
+agreement-faithfulness theorems (`UD.MorphFeatures.compatible_hasX` in
 `Features/{Person,Number,Gender,Case}/Capabilities.lean`). It is the
 slot-level face of subsumption-based agreement ([shieber-1986];
 [carpenter-1992]).
