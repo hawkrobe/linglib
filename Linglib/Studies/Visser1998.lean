@@ -207,13 +207,9 @@ theorem patch (h : HasContext R c) (hI : Set.EqOn f' f ↑c.I)
     (hR : R f g) : R f' (c.B.piecewise g f') := by
   refine h.stable hR hI (λ v hv => ?_)
     (λ v hv => (c.B.piecewise_eq_of_notMem _ _ hv).symm)
-  by_cases hvB : v ∈ c.B
-  · exact (c.B.piecewise_eq_of_mem _ _ hvB).symm
-  · rw [c.B.piecewise_eq_of_notMem _ _ hvB, ← h.blocks hR hvB]
-    rcases Finset.mem_union.mp (c.coh_mem.mpr (Finset.mem_union_left _ hv))
-      with hvi | hvB'
-    · exact (hI hvi).symm
-    · exact absurd hvB' hvB
+  have hb := h.blocks hR
+  have hc := c.coh_mem (v := v)
+  grind [Set.EqOn, Finset.piecewise_eq_of_mem, Finset.piecewise_eq_of_notMem]
 
 /-- Lemma 3.7, uniqueness: the patch is the only output over `f'`
 agreeing with `g` on the blocks. -/
@@ -290,10 +286,9 @@ theorem impl (hR : HasContext R c) (hS : HasContext S d) :
   -- Transport the consequent forward to `k` by the patch lemma.
   have hIk : Set.EqOn k (c.B.piecewise k f) ↑d.I := by
     intro v hv
-    by_cases hvB : v ∈ c.B
-    · exact (c.B.piecewise_eq_of_mem _ _ hvB).symm
-    · rw [c.B.piecewise_eq_of_notMem _ _ hvB, ← hR.blocks hRk hvB]
-      exact hI (Finset.mem_union_right _ (Finset.mem_sdiff.mpr ⟨hv, hvB⟩))
+    have hb := hR.blocks hRk
+    grind [Set.EqOn, Finset.piecewise_eq_of_mem,
+      Finset.piecewise_eq_of_notMem, Context.I_mul]
   exact ⟨_, hS.patch hIk hSj⟩
 
 end HasContext
