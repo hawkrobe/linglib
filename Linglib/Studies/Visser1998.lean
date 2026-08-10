@@ -188,16 +188,15 @@ variable {c d : Context} {R S : DPL.Rel E} {f f' g g' : ℕ → E}
 
 /-- Theorem 3.5(1): larger contexts type more relations —
 `c ≤ d` and `R` a `c`-relation make `R` a `d`-relation. -/
-theorem mono (hcd : c ≤ d) (h : HasContext R c) : HasContext R d := by
+theorem mono (h : HasContext R c) (hcd : c ≤ d) : HasContext R d := by
   obtain ⟨hI, hO, hB, hBio⟩ := hcd
-  constructor
-  · exact λ f g hR => (h.blocks hR).mono
-      (Set.compl_subset_compl.mpr (Finset.coe_subset.mpr hB))
-  · intro f f' g g' hR hI' hO' hB'
-    refine h.stable hR (hI'.mono (Finset.coe_subset.mpr hI))
-      (hO'.mono (Finset.coe_subset.mpr hO)) (λ v hv => ?_)
-    have hb := h.blocks hR
-    grind [Set.EqOn]
+  refine ⟨λ f g hR => (h.blocks hR).mono
+      (Set.compl_subset_compl.mpr (Finset.coe_subset.mpr hB)),
+    λ f f' g g' hR hI' hO' hB' => h.stable hR
+      (hI'.mono (Finset.coe_subset.mpr hI))
+      (hO'.mono (Finset.coe_subset.mpr hO)) (λ v hv => ?_)⟩
+  have hb := h.blocks hR
+  grind [Set.EqOn]
 
 /-! ### The unique-output lemma (Lemma 3.7) -/
 
@@ -312,12 +311,9 @@ theorem hasContext_atom (V : Finset ℕ) (p : (ℕ → E) → Prop)
 /-- The reset is typed at `⟨∅, {x}, ∅⟩` — Definition 3.12's `c_{∃v}`: it
 reads nothing, constrains no output, and blocks `x`. -/
 theorem hasContext_reset (x : ℕ) :
-    HasContext (reset (E := E) x) ⟨∅, {x}, ∅, rfl⟩ := by
-  constructor
-  · intro f g hR v hv
-    exact hR (by simpa using hv)
-  · intro f f' g g' _ _ _ hB v hv
-    exact hB (by simpa using hv)
+    HasContext (reset (E := E) x) ⟨∅, {x}, ∅, rfl⟩ :=
+  ⟨λ f g hR v hv => hR (by simpa using hv),
+   λ f f' g g' _ _ _ hB v hv => hB (by simpa using hv)⟩
 
 /-- The existential typing (Definition 3.12's `c_{∃v} • c_φ`): blocking
 `x` before a `c`-relation types `∃x φ`. -/
