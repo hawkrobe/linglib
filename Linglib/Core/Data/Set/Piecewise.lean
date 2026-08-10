@@ -5,9 +5,7 @@ import Mathlib.Data.Set.Piecewise
 
 Two functions agree on `s ∩ t` iff the piecewise combination — or some
 function — interpolates between them, agreeing with the first on `s`
-and with the second on `t`. Companion to mathlib's `Set.eqOn_union`;
-upstreamed as mathlib4 PR #42616 — dissolve this file at the pin bump
-once it lands.
+and with the second on `t`. Companion to mathlib's `Set.eqOn_union`.
 -/
 
 namespace Set
