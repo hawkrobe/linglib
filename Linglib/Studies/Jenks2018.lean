@@ -1,4 +1,4 @@
-import Linglib.Features.Definiteness
+import Linglib.Semantics.Definiteness.Defs
 import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Presupposition.MaximizePresupposition
@@ -25,7 +25,7 @@ selects between them.
 The substrate already operationalizes the inventory layer:
 `Semantics.Definiteness.Description.{unique,anaphoric}` are ι and ι^x;
 `Semantics.Definiteness.Determiner.Inventory.markingStrategy` derives the four-cell
-typology directly named after Jenks 2018 in `Features.Definiteness`.
+typology directly named after Jenks 2018 in `Semantics.Definiteness`.
 The Mandarin Fragment commits `marking := .markedAnaphoric`.
 This file focuses on what is distinctly Jenks: the typological
 prediction (§3 + §6), the bare/Dem competition (§5 paper), the
@@ -36,10 +36,9 @@ lives in `Moroney2021.lean` per chronology discipline.
 
 namespace Jenks2018
 
-open Features.Definiteness
+open Semantics.Definiteness
 open Intensional
 open Intensional.Variables
-open Semantics.Definiteness
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -159,7 +158,7 @@ Paper §3.3 (Mandarin donkey): demonstratives required in both
 *ruguo*/*dou*-conditionals (example 18) and relative-clause donkey
 configurations (example 20: `Mei ge … #(na zhi) shuiniu`); bare N is
 infelicitous (example 19). The substrate's
-`Features.Definiteness.bridgingPresupType` and `useTypeToPresupType`
+`Semantics.Definiteness.bridgingPresupType` and `useTypeToPresupType`
 encode these splits at the use-type level — proved here for Mandarin
 by re-using `Schwarz2009.lean` lemmas. -/
 

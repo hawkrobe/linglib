@@ -1,7 +1,7 @@
 import Linglib.Studies.Ross1967
 import Linglib.Studies.Adger2025
 import Linglib.Syntax.Binding.SpecificityCondition
-import Linglib.Features.Definiteness
+import Linglib.Semantics.Definiteness.Defs
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
@@ -54,7 +54,7 @@ namespace ShenHuang2026
 
 open Minimalist.Linearization
 open ArgumentStructure
-open Features.Definiteness
+open Semantics.Definiteness
 open Syntax.Binding.SpecificityCondition (ExternalOperator blocked)
 
 -- ============================================================================

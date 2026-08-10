@@ -662,7 +662,6 @@ import Linglib.Features.Causation
 import Linglib.Features.Clusivity
 import Linglib.Features.ContainmentPair
 import Linglib.Features.CoreferenceStatus
-import Linglib.Features.Definiteness
 import Linglib.Features.Deixis
 import Linglib.Features.Dimension
 import Linglib.Features.Empathy
@@ -1578,6 +1577,7 @@ import Linglib.Semantics.Conditionals.Stalnaker
 import Linglib.Semantics.Conditionals.Sweetser
 import Linglib.Semantics.Conditionals.WillConditional
 import Linglib.Semantics.Definiteness.Basic
+import Linglib.Semantics.Definiteness.Defs
 import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.DeterminerDenotation
 import Linglib.Semantics.Definiteness.Interpret

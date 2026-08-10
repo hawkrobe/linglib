@@ -61,7 +61,6 @@ namespace Semantics.Definiteness
 
 open Semantics.Reference (NominalDenot)
 open Intensional.Variables
-open Features.Definiteness (DefPresupType)
 
 variable {E W : Type}
 
