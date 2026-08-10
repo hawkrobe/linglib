@@ -1,827 +1,268 @@
-import Linglib.Features.Acceptability
+import Mathlib.Data.Set.Basic
 import Mathlib.Data.Rat.Defs
-import Linglib.Semantics.Conditionals.Exhaustivity
+import Mathlib.Tactic.NormNum
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Pragmatics.NeoGricean.Basic
+import Linglib.Studies.VonFintel2001
 import Linglib.Studies.BaleEtAl2025
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fintype.Basic
 
 /-!
-# [evcen-bale-barner-2026] — Conditional Perfection
-[von-fintel-2001] [horn-2000] [cornulier-1983]
+# Evcen, Bale & Barner (2026): QUD, knowledge, and conditional perfection
 
-Empirical data from three experiments on conditional perfection (CP)
-by [evcen-bale-barner-2026], plus the bridge connecting these findings to the
-answer-level exhaustification theory of conditional perfection.
+[evcen-bale-barner-2026] test [von-fintel-2001]'s answer-level exhaustivity
+account of conditional perfection in a three-button paradigm: Mary presses
+buttons that each play a sound only she can hear, answers a question with a
+conditional ("If you press the blue button, it will play a dog barking"), and
+participants judge whether a *different* button plays the sound ("No" =
+perfected). Perfection rates (estimated marginal means of "No" responses from
+logistic mixed-effects regressions):
 
-## Paradigm
+* **QUD** (Exp 1, N = 98, between-subjects): antecedent-focused questions
+  ("Which of these buttons will play a dog sound?") yield far more perfection
+  (M = 0.65) than consequent-focused (M = 0.22) or neutral (M = 0.29) ones,
+  which do not differ (p > .05).
+* **Answer form** (Exp 2, N = 55, within-subjects): optimally (M = 0.92) and
+  overly (M = 0.84) informative answers perfect at comparable rates
+  (p = .16) — overly informative answers still count as QUD answers.
+* **Speaker knowledge** (Exp 3, N = 72, within-subjects): a speaker who
+  tested all buttons (M = 0.72) licenses far more perfection than one who
+  tested only two (M = 0.21).
 
-Participants watch short videos in which a character, Mary, presses three buttons
-(red, blue, orange), each producing an animal sound audible only to her through
-headphones. Another character asks a question, and Mary responds with a conditional
-like "If you press the blue button, it will play a dog barking." Participants then
-judge whether pressing a *different* button will play the same sound, choosing
-among "Yes", "No" (= perfected), and "Can't tell" (= not perfected).
+The paper's ALT constraint — alternatives are QUD answers the speaker is
+competent about, `ALT(p) ⊆ ANS(QUD) ∩ {q : Kₛ(q) ∨ Kₛ(¬q)}` — is
+`exhaustificationLicensed`; the competence half is
+`BaleEtAl2025.toBeliefState`, the same mapping [bale-etal-2025]'s
+scalar-implicature paradigm uses, so conditional perfection and scalar
+implicature share the competence gate by construction. Perfection is not a semantic entailment
+(`Semantics.Conditionals.perfection_not_entailed_variablyStrict`), and
+coverage without exclusion does not suffice
+(`VonFintel2001.coverage_without_exclusion_insufficient`).
 
-## Key Findings
+## Main results
 
-1. **QUD** (Experiment 1, N=98): Antecedent-focused QUDs ("Which of these buttons
-   will play a dog sound?") yield significantly more "No" responses (M=0.65) than
-   consequent-focused ("What will happen if I press the blue button?", M=0.22) or
-   neutral ("What will happen if I press the buttons?", M=0.29) QUDs.
-   No significant difference between consequent-focused and neutral (p > .05).
-   Two follow-up experiments (each n=32) with alternative antecedent-focused
-   phrasings replicate the effect (M=0.86, M=0.77), ruling out a uniqueness
-   presupposition explanation.
-
-2. **Overly informative answers** (Experiment 2, N=55): Both optimally informative
-   (M=0.92) and overly informative (M=0.84) answers trigger perfection at
-   comparable rates under antecedent-focused QUDs (no significant difference,
-   p = .16), suggesting overly informative answers are treated as viable
-   alternatives for exhaustification.
-
-3. **Speaker knowledge** (Experiment 3, N=72): Speakers who have tested all buttons
-   (full knowledge, M=0.72) yield far more "No" responses than speakers who tested
-   only two buttons (partial knowledge, M=0.21).
-
-All findings support [von-fintel-2001]'s exhaustivity account over
-[horn-2000]: perfection tracks the availability of alternatives (made
-salient by QUD) and the license to exclude them (from speaker competence).
-
-Reported values are estimated marginal means from logistic mixed-effects
-regressions (on the probability scale), as reported in the paper.
+* `perfection_of_exhaustifiedAnswer`: in the three-button scenario,
+  exhaustifying Mary's answer yields `conditionalPerfection`.
+* `exhaustificationLicensed_iff`: exhaustification is licensed exactly under
+  an antecedent-focused QUD with a fully knowledgeable speaker.
+* `exp1_licensing` / `exp3_licensing`: the licensed condition shows the
+  highest observed perfection rate in each experiment.
+* `horn_not_entails_vonFintel`: [horn-2000]'s existential exclusion is
+  strictly weaker than per-trigger exclusion — the paradigm's per-button
+  "No" responses require the latter.
 -/
 
 namespace EvcenBaleBarner2026
 
--- ============================================================================
--- Experimental Conditions
--- ============================================================================
+open VonFintel2001 Semantics.Conditionals Exhaustification NeoGricean
+open BaleEtAl2025 (SpeakerKnowledge toBeliefState)
 
-/-- QUD manipulation (Experiment 1).
+/-! ### Experimental conditions and observed rates -/
 
-The question asked *before* Mary's conditional answer. -/
+/-- QUD manipulation (Experiment 1): the question Mary's conditional
+answers. -/
 inductive QUDType where
-  /-- "Which of these buttons will play a dog sound?" — antecedent-focus.
-  Makes alternative antecedents (other buttons) salient. -/
+  /-- "Which of these buttons will play a dog sound?" -/
   | antecedentFocused
-  /-- "What will happen if I press the blue button?" — consequent-focus.
-  Makes consequences of the mentioned button salient, not alternatives. -/
+  /-- "What will happen if I press the blue button?" -/
   | consequentFocused
-  /-- "What will happen if I press the buttons?" — neutral.
-  No specific focus on antecedents or consequences. -/
+  /-- "What will happen if I press the buttons?" -/
   | neutral
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- Answer type manipulation (Experiment 2).
-
-Whether Mary's conditional response matches the QUD's partitioning
-(optimally informative) or refers to a strict subset of a QUD cell
-(overly informative). -/
+/-- Answer-form manipulation (Experiment 2): whether Mary's conditional
+names a QUD cell or a strict subset of one. -/
 inductive AnswerType where
-  /-- Answer matches QUD cell, e.g. "If you press the triangles, it will
-  play a dog barking" in response to "Which shapes will play a dog sound?" -/
+  /-- "If you press the triangles, it will play a dog barking." -/
   | optimallyInformative
-  /-- Answer is more specific than QUD cell, e.g. "If you press the blue
-  square, it will play a dog barking" (a subset of the triangle/square
-  partition). -/
+  /-- "If you press the blue square, it will play a dog barking." -/
   | overlyInformative
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- Speaker knowledge manipulation (Experiment 3).
+/-- Experiment 1 perfection rate by QUD type (N = 98). Follow-ups with
+"what buttons" (M = 0.86, n = 32) and "which buttons" (M = 0.77, n = 32)
+phrasings replicate the antecedent-focused effect, ruling out a uniqueness
+presupposition from "which of these". -/
+def exp1Rate : QUDType → ℚ
+  | .antecedentFocused => 65 / 100
+  | .consequentFocused => 22 / 100
+  | .neutral => 29 / 100
 
-Whether Mary has tested all three buttons or only two of them. -/
-inductive KnowledgeCondition where
-  /-- Mary pressed and listened to all three buttons — full knowledge. -/
-  | fullKnowledge
-  /-- Mary pressed and listened to only two buttons — partial knowledge. -/
-  | partialKnowledge
-  deriving DecidableEq, Repr
+/-- Experiment 2 perfection rate by answer form (N = 55; QUD always
+antecedent-focused). The two rates do not differ reliably (p = .16). -/
+def exp2Rate : AnswerType → ℚ
+  | .optimallyInformative => 92 / 100
+  | .overlyInformative => 84 / 100
 
--- ============================================================================
--- Datum Structure
--- ============================================================================
+/-- Experiment 3 perfection rate by speaker knowledge (N = 72; QUD always
+antecedent-focused): Mary tested all three buttons or only two. -/
+def exp3Rate : SpeakerKnowledge → ℚ
+  | .fullKnowledge => 72 / 100
+  | .partialKnowledge => 21 / 100
 
-/-- A conditional perfection data point.
+/-! ### When exhaustification is licensed -/
 
-Each datum records the estimated marginal mean proportion of "No" responses
-(perfection) for a given experimental condition, from logistic mixed-effects
-regression on the probability scale. -/
-structure CPDatum where
-  /-- Description of the experimental condition -/
-  description : String
-  /-- Estimated marginal mean proportion of "No" responses (perfection rate) -/
-  perfectionRate : ℚ
-  /-- Experiment number (1, 2, or 3) -/
-  experiment : Nat
-  /-- Number of participants (post-exclusion) in the experiment -/
-  n : Nat
-  deriving Repr
+/-- A QUD makes alternative antecedents salient iff it is
+antecedent-focused. -/
+def qudProvidesAlternatives (q : QUDType) : Prop := q = .antecedentFocused
 
--- ============================================================================
--- Experiment 1: QUD Manipulation (between-subjects, N=98)
--- ============================================================================
+/-- Exhaustification is licensed when the QUD provides alternative
+antecedents and the speaker is competent about them — the paper's ALT
+constraint `ALT(p) ⊆ ANS(QUD) ∩ {q : Kₛ(q) ∨ Kₛ(¬q)}`. Competence is
+`BaleEtAl2025.toBeliefState`'s mapping into `NeoGricean.competent`. -/
+def exhaustificationLicensed (k : SpeakerKnowledge) (q : QUDType) : Prop :=
+  qudProvidesAlternatives q ∧ competent (toBeliefState k) = true
 
-/-- Experiment 1 data indexed by QUD type.
+/-- Exhaustification is licensed exactly under an antecedent-focused QUD
+with a fully knowledgeable speaker. -/
+@[simp] theorem exhaustificationLicensed_iff
+    {k : SpeakerKnowledge} {q : QUDType} :
+    exhaustificationLicensed k q ↔
+      q = .antecedentFocused ∧ k = .fullKnowledge := by
+  cases k <;>
+    simp [exhaustificationLicensed, qudProvidesAlternatives, toBeliefState,
+      competent]
 
-Between-subjects: 104 recruited, N=98 post-exclusion, randomly assigned
-to one of three conditions. -/
-def exp1Data : QUDType → CPDatum
-  | .antecedentFocused => {
-      description := "Antecedent-focused QUD: 'Which of these buttons will play a dog sound?'"
-      perfectionRate := 65 / 100  -- M=0.65, SE=0.10
-      experiment := 1
-      n := 98 }
-  | .consequentFocused => {
-      description := "Consequent-focused QUD: 'What will happen if I press the blue button?'"
-      perfectionRate := 22 / 100  -- M=0.22, SE=0.10
-      experiment := 1
-      n := 98 }
-  | .neutral => {
-      description := "Neutral QUD: 'What will happen if I press the buttons?'"
-      perfectionRate := 29 / 100  -- M=0.29, SE=0.11
-      experiment := 1
-      n := 98 }
+/-! ### Licensing predicts the observed rates -/
 
-/-- Follow-up experiment 1a (n=32): alternative antecedent-focused phrasing.
-QUD: "What buttons will play a dog sound?" (omitting "of these").
-Replicates the main effect, ruling out a uniqueness presupposition from
-"which of these." M=0.86, SE=0.11. -/
-def exp1a_whatButtons : CPDatum := {
-  description := "Follow-up 1a: 'What buttons will play a dog sound?'"
-  perfectionRate := 86 / 100  -- M=0.86
-  experiment := 1
-  n := 32
-}
+/-- Experiment 1 (fully knowledgeable speaker): every unlicensed QUD
+condition shows less perfection than the licensed one. -/
+theorem exp1_licensing (q : QUDType)
+    (h : ¬exhaustificationLicensed .fullKnowledge q) :
+    exp1Rate q < exp1Rate .antecedentFocused := by
+  cases q with
+  | antecedentFocused => exact absurd (by simp) h
+  | consequentFocused => norm_num [exp1Rate]
+  | neutral => norm_num [exp1Rate]
 
-/-- Follow-up experiment 1b (n=32): alternative antecedent-focused phrasing.
-QUD: "Which buttons will play a dog sound?" (omitting "of these").
-M=0.77, SE=0.13. -/
-def exp1b_whichButtons : CPDatum := {
-  description := "Follow-up 1b: 'Which buttons will play a dog sound?'"
-  perfectionRate := 77 / 100  -- M=0.77
-  experiment := 1
-  n := 32
-}
+/-- Experiment 3 (antecedent-focused QUD): the unlicensed knowledge
+condition shows less perfection than the licensed one. -/
+theorem exp3_licensing (k : SpeakerKnowledge)
+    (h : ¬exhaustificationLicensed k .antecedentFocused) :
+    exp3Rate k < exp3Rate .fullKnowledge := by
+  cases k with
+  | fullKnowledge => exact absurd (by simp) h
+  | partialKnowledge => norm_num [exp3Rate]
 
--- ============================================================================
--- Experiment 2: Overly Informative Answers (within-subjects, N=55)
--- ============================================================================
+/-- Experiment 2: both answer forms occur under licensed conditions, and
+both perfect above chance. -/
+theorem exp2_above_chance (a : AnswerType) : 1 / 2 < exp2Rate a := by
+  cases a <;> norm_num [exp2Rate]
 
-/-- Experiment 2 data indexed by answer type.
+/-! ### The three-button scenario -/
 
-Within-subjects: 56 recruited, N=55 post-exclusion. Shapes (triangles
-and squares in two colors) replace buttons. QUD is always antecedent-focused:
-"Which of these shapes, triangles or squares, will play a dog barking?" -/
-def exp2Data : AnswerType → CPDatum
-  | .optimallyInformative => {
-      description := "Optimally informative answer (matches QUD cell)"
-      perfectionRate := 92 / 100  -- M=0.92, SE=0.09
-      experiment := 2
-      n := 55 }
-  | .overlyInformative => {
-      description := "Overly informative answer (more specific than QUD cell)"
-      perfectionRate := 84 / 100  -- M=0.84, SE=0.07
-      experiment := 2
-      n := 55 }
-
--- ============================================================================
--- Experiment 3: Speaker Knowledge (within-subjects, N=72)
--- ============================================================================
-
-/-- Experiment 3 data indexed by knowledge condition.
-
-Within-subjects: 75 recruited, N=72 post-exclusion. QUD is always
-antecedent-focused. Mary either pressed all three buttons (full knowledge)
-or only two (partial knowledge) before making her conditional statement. -/
-def exp3Data : KnowledgeCondition → CPDatum
-  | .fullKnowledge => {
-      description := "Full knowledge: speaker has tested all buttons"
-      perfectionRate := 72 / 100  -- M=0.72, SE=0.13
-      experiment := 3
-      n := 72 }
-  | .partialKnowledge => {
-      description := "Partial knowledge: speaker has tested only two buttons"
-      perfectionRate := 21 / 100  -- M=0.21, SE=0.12
-      experiment := 3
-      n := 72 }
-
--- ============================================================================
--- Ordering Theorems
--- ============================================================================
-
-/-- Antecedent-focused QUDs promote perfection more than consequent-focused. -/
-theorem antecedentFocused_gt_consequentFocused :
-    (exp1Data .antecedentFocused).perfectionRate >
-    (exp1Data .consequentFocused).perfectionRate := by native_decide
-
-/-- Antecedent-focused QUDs promote perfection more than neutral. -/
-theorem antecedentFocused_gt_neutral :
-    (exp1Data .antecedentFocused).perfectionRate >
-    (exp1Data .neutral).perfectionRate := by native_decide
-
-/-- Antecedent-focused QUD yields the highest perfection rate across all
-QUD types. -/
-theorem antecedentFocused_maximizes :
-    ∀ q : QUDType,
-      (exp1Data .antecedentFocused).perfectionRate ≥
-      (exp1Data q).perfectionRate := by
-  intro q; cases q <;> simp [exp1Data] <;> native_decide
-
-/-- Consequent-focused and neutral QUDs produce similar (low) perfection
-rates: the gap between them (7pp) is smaller than either's gap to
-antecedent-focused (43pp, 36pp). The paper reports no significant
-difference between these two conditions (p > .05). -/
-theorem consequent_neutral_closer_than_antecedent :
-    (exp1Data .antecedentFocused).perfectionRate -
-    (exp1Data .neutral).perfectionRate >
-    (exp1Data .neutral).perfectionRate -
-    (exp1Data .consequentFocused).perfectionRate := by native_decide
-
-/-- Follow-up experiments replicate the antecedent-focused effect with
-alternative QUD phrasings, ruling out a uniqueness presupposition. -/
-theorem followups_replicate :
-    exp1a_whatButtons.perfectionRate > (exp1Data .antecedentFocused).perfectionRate ∧
-    exp1b_whichButtons.perfectionRate > (exp1Data .antecedentFocused).perfectionRate := by
-  constructor <;> native_decide
-
-/-- Both answer types trigger perfection well above chance (> 0.50).
-The paper reports no significant difference between them (p = .16),
-consistent with both being treated as viable alternatives. -/
-theorem both_answer_types_above_chance :
-    (exp2Data .optimallyInformative).perfectionRate > 1/2 ∧
-    (exp2Data .overlyInformative).perfectionRate > 1/2 := by
-  constructor <;> native_decide
-
-/-- Optimally and overly informative answers produce similar perfection
-rates: the 8pp gap is small relative to the overall effect size. -/
-theorem exp2_rates_close :
-    (exp2Data .optimallyInformative).perfectionRate -
-    (exp2Data .overlyInformative).perfectionRate < 1/10 := by native_decide
-
-/-- Full speaker knowledge promotes perfection more than partial knowledge. -/
-theorem fullKnowledge_gt_partialKnowledge :
-    (exp3Data .fullKnowledge).perfectionRate >
-    (exp3Data .partialKnowledge).perfectionRate := by native_decide
-
-/-- The knowledge effect is larger than the QUD effect.
-
-Full knowledge (72%) vs partial knowledge (21%) is a 51pp difference.
-Antecedent-focused (65%) vs consequent-focused (22%) is a 43pp difference.
-Speaker knowledge has a larger effect on perfection than QUD type,
-consistent with competence being a prerequisite for exhaustification. -/
-theorem knowledge_effect_larger_than_qud_effect :
-    (exp3Data .fullKnowledge).perfectionRate -
-    (exp3Data .partialKnowledge).perfectionRate >
-    (exp1Data .antecedentFocused).perfectionRate -
-    (exp1Data .consequentFocused).perfectionRate := by native_decide
-
--- ============================================================================
--- Bridge: Exhaustification Theory → Experimental Predictions
--- ============================================================================
-
-/-!
-## Bridge: Exhaustification Theory
-
-Connects the experimental findings to the answer-level exhaustification theory
-of conditional perfection.
-
-### Full Argument Chain
-
-The paper's argument proceeds in four steps:
-
-1. **Semantics**: The material conditional "if A then C" does not semantically
-   entail the biconditional (established in `Conditionals.Basic`).
-
-2. **Pragmatic mechanism**: Conditional perfection arises from answer-level
-   exhaustification ([von-fintel-2001], following [cornulier-1983]).
-   The QUD "which trigger causes C?" makes alternative triggers salient;
-   exhaustifying the answer "A causes C" against these alternatives yields
-   "only A causes C"; combined with coverage, this entails ¬A → ¬C.
-
-3. **Two prerequisites for perfection**:
-   - **QUD**: The QUD must make alternative antecedents salient
-     (antecedent-focused), triggering exhaustification.
-   - **Speaker competence**: The speaker must be assumed to know about
-     the alternative triggers, licensing exclusion of unmentioned alternatives.
-   Without either, perfection fails.
-
-4. **Against [horn-2000]**: Horn proposes the alternative to "if A then C"
-   is the unconditional "C regardless." This yields only an existential
-   inference (some circumstance where ¬C), not the per-trigger universal
-   that participants produce. The data support von Fintel's per-trigger
-   alternatives.
-
-### Dependency Chain
-
-```
-exhaustifiedAnswer (exhIE at answer level)
-    ↓ all_alt_innocently_excludable (3-button IE)
-exhaustification_yields_perfection (IE + coverage → perfection)
-    ↓
-theory_chain_3button_perfection (instantiated for experimental scenario)
-    ↓
-coverage_without_exclusion_insufficient (exclusion is necessary)
-vonFintel_strictly_stronger_than_horn (per-trigger > existential)
-    ↓
-Prediction: perfection iff QUD provides alternatives AND speaker is competent
-    ↓
-Data: antecedent-focused > neutral ≈ consequent-focused (Exp 1)
-      overly informative ≈ optimally informative (Exp 2)
-      full knowledge >> partial knowledge (Exp 3)
-```
--/
-
-open Semantics.Conditionals
-open Core.Order (SimilarityOrdering)
-open Semantics.Conditionals.Exhaustivity
-
-private theorem Bool.of_not_eq_true {b : Bool} (h : ¬(b = true)) : b = false := by
-  cases b <;> simp_all
-
--- ============================================================================
--- Section A: 3-Button Experimental Scenario
--- ============================================================================
-
-/-- Triggers in the experimental paradigm: three buttons. -/
-inductive Button3Trigger where
+/-- The three buttons of the experimental paradigm. -/
+inductive Button where
   | A | B | C
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- The 6 possible worlds in a 3-button scenario.
-
-Each world represents pressing one button and observing whether the target
-sound plays. -/
-inductive Button3World where
-  | pressA_plays
-  | pressA_silent
-  | pressB_plays
-  | pressB_silent
-  | pressC_plays
-  | pressC_silent
-  deriving DecidableEq, Repr
-
-instance : Fintype Button3World where
-  elems := {.pressA_plays, .pressA_silent, .pressB_plays,
-            .pressB_silent, .pressC_plays, .pressC_silent}
-  complete := fun x => by cases x <;> simp
+/-- Worlds of the paradigm: one button is pressed, and the target sound
+plays or stays silent. -/
+inductive ButtonWorld where
+  | pressA_plays | pressA_silent
+  | pressB_plays | pressB_silent
+  | pressC_plays | pressC_silent
+  deriving DecidableEq
 
 /-- Button A is pressed. -/
-def pressA : (Button3World → Bool)
-  | .pressA_plays | .pressA_silent => true
-  | _ => false
+def pressA : Set ButtonWorld := {.pressA_plays, .pressA_silent}
 
 /-- The target sound plays. -/
-def soundPlays : (Button3World → Bool)
-  | .pressA_plays | .pressB_plays | .pressC_plays => true
-  | _ => false
+def soundPlays : Set ButtonWorld := {.pressA_plays, .pressB_plays, .pressC_plays}
 
-/-- Button A causes the target sound. -/
-def aCausesSound : (Button3World → Bool)
-  | .pressA_plays => true | _ => false
+/-- Button `b` causes the target sound: `b` is pressed and the sound plays. -/
+def causes : Button → Set ButtonWorld
+  | .A => {.pressA_plays}
+  | .B => {.pressB_plays}
+  | .C => {.pressC_plays}
 
-/-- Button B causes the target sound. -/
-def bCausesSound : (Button3World → Bool)
-  | .pressB_plays => true | _ => false
+/-- All three buttons are salient triggers. -/
+def buttons : Set Button := {.A, .B, .C}
 
-/-- Button C causes the target sound. -/
-def cCausesSound : (Button3World → Bool)
-  | .pressC_plays => true | _ => false
+variable {w : ButtonWorld} {b : Button}
 
-/-- Causal relation for the 3-button paradigm: each button causes the
-target sound exactly when its associated `*CausesSound` predicate holds. -/
-def button3Causes : Button3Trigger → Set Button3World
-  | .A => fun w => aCausesSound w = true
-  | .B => fun w => bCausesSound w = true
-  | .C => fun w => cCausesSound w = true
+/-- Button A causes the sound only if button A is pressed. -/
+theorem causes_A_subset_pressA : causes .A ⊆ pressA := by
+  rintro w rfl; exact Set.mem_insert _ _
 
-/-- The salient triggers in the 3-button paradigm: all three buttons. -/
-def button3Triggers : Set Button3Trigger := {.A, .B, .C}
+/-- Coverage: every world where the sound plays has a button causing it. -/
+theorem coverage (hw : w ∈ soundPlays) : ∃ b ∈ buttons, w ∈ causes b := by
+  rcases hw with rfl | rfl | rfl
+  · exact ⟨.A, by simp [buttons], rfl⟩
+  · exact ⟨.B, by simp [buttons], rfl⟩
+  · exact ⟨.C, by simp [buttons], rfl⟩
 
--- ============================================================================
--- Section B: Theory Chain — Exhaustification → Perfection (3 Buttons)
--- ============================================================================
+/-- Every alternative button's answer is innocently excludable: at
+`pressA_plays`, A's answer holds while both alternatives fail. -/
+theorem alt_isInnocentlyExcludable (hb : b ∈ buttons) (hne : b ≠ .A) :
+    IsInnocentlyExcludable (answerAlternatives causes buttons .A)
+      (causes .A) (causes b) := by
+  refine .of_full_exclusion_consistent
+    (mem_answerAlternatives.mpr ⟨b, hb, hne, rfl⟩) ⟨.pressA_plays, rfl, ?_⟩
+  intro q hq
+  obtain ⟨b', -, hne', rfl⟩ := mem_answerAlternatives.mp hq
+  cases b' with
+  | A => exact absurd rfl hne'
+  | B => exact nofun
+  | C => exact nofun
 
-/-- **Theory chain: exhaustification yields perfection in the 3-button scenario.**
+/-- Theory chain: exhaustifying Mary's answer "button A plays the sound"
+yields conditional perfection — if A is not pressed, the sound does not
+play. -/
+theorem perfection_of_exhaustifiedAnswer
+    (h_exh : w ∈ exhaustifiedAnswer causes buttons .A) :
+    w ∈ conditionalPerfection pressA soundPlays :=
+  exhaustification_yields_perfection causes_A_subset_pressA
+    (fun _ hb hne => alt_isInnocentlyExcludable hb hne) coverage h_exh
 
-This instantiates `exhaustification_yields_perfection` for the 3-button
-experimental paradigm. With 3 buttons, there are 2 alternative triggers
-(B and C). The `all_alt_innocently_excludable` lemma establishes that both
-are innocently excludable — the key step that requires the general lemma
-rather than the singleton version.
-
-The hypotheses map to experimental conditions:
-- `h_exh`: exhaustified answer holds (antecedent-focus QUD + speaker knowledge)
-- `h_coverage`: every sound event has a button cause (closed domain)
-- `hnp`: button A is not pressed
-
-The IE condition is discharged by `all_alt_innocently_excludable`:
-the witness `pressA_plays` establishes consistency of φ ∧ ∀a∈ALT. ¬a
-(at pressA_plays, A causes the sound but B and C do not). -/
-theorem theory_chain_3button_perfection
-    (w : Button3World)
-    (h_exh : exhaustifiedAnswer button3Causes button3Triggers .A w)
-    (h_coverage : soundPlays w = true →
-      ∃ t' ∈ button3Triggers, button3Causes t' w)
-    (hnp : pressA w = false) : soundPlays w = false := by
-  -- Step 1: Trigger A requires pressing A
-  have h_trp : ∀ w', button3Causes .A w' → pressA w' = true := by
-    intro w' h; cases w' <;> simp_all [button3Causes, aCausesSound, pressA]
-  -- Step 2: All alternative triggers are IE
-  -- Apply the general IE criterion (`IsInnocentlyExcludable.of_full_exclusion_consistent`):
-  -- every alternative is IE when the prejacent and the negations of all
-  -- alternatives are jointly satisfiable. Witness: `pressA_plays` (A causes, B and C do not).
-  have h_consist : ∃ w, button3Causes .A w ∧
-      ∀ b ∈ answerAlternatives button3Causes button3Triggers .A, ¬ b w := by
-    refine ⟨.pressA_plays, rfl, ?_⟩
-    intro b hb
-    obtain ⟨t'', _, ht''_ne, ht''_eq⟩ := mem_answerAlternatives.mp hb
-    cases t'' with
-    | A => exact absurd rfl ht''_ne
-    | B => rw [← ht''_eq]; simp [button3Causes, bCausesSound]
-    | C => rw [← ht''_eq]; simp [button3Causes, cCausesSound]
-  have h_ie : ∀ t' ∈ button3Triggers, t' ≠ .A →
-      Exhaustification.IsInnocentlyExcludable
-        (answerAlternatives button3Causes button3Triggers .A)
-        (button3Causes .A)
-        (button3Causes t') := by
-    intro t' _ht' hne
-    have ht'_alt : button3Causes t' ∈
-        answerAlternatives button3Causes button3Triggers .A := by
-      rw [mem_answerAlternatives]
-      cases t' with
+/-- The participant's inference: granting exclusion of the other buttons,
+a world where A is unpressed is a world without the sound. -/
+theorem perfection_of_exclusion (hB : w ∉ causes .B) (hC : w ∉ causes .C) :
+    w ∈ conditionalPerfection pressA soundPlays :=
+  perfection_from_exclusion_and_coverage (fun h => causes_A_subset_pressA h)
+    (fun b _ hne => by
+      cases b with
       | A => exact absurd rfl hne
-      | B => exact ⟨.B, Or.inr (Or.inl rfl), Button3Trigger.noConfusion, rfl⟩
-      | C => exact ⟨.C, Or.inr (Or.inr rfl), Button3Trigger.noConfusion, rfl⟩
-    exact .of_full_exclusion_consistent ht'_alt h_consist
-  -- Step 3: ¬(pressA w = true)
-  have h_not_p : ¬(pressA w = true) := by simp [hnp]
-  -- Step 4: Apply the theory chain
-  have h_not_sound : ¬(soundPlays w = true) :=
-    exhaustification_yields_perfection button3Causes button3Triggers .A
-      (fun w => pressA w = true) (fun w => soundPlays w = true) w
-      h_trp h_ie h_coverage h_exh h_not_p
-  exact Bool.of_not_eq_true h_not_sound
+      | B => exact hB
+      | C => exact hC)
+    coverage
 
--- ============================================================================
--- Section C: Direct Verification (Agrees with Theory Chain)
--- ============================================================================
+/-! ### Per-trigger vs existential exclusion -/
 
-/-- **Direct verification: exclusion of B and C + ¬pressA → ¬sound.**
+section HornComparison
 
-Verified by exhaustive case analysis on the 6-world type. Sanity check:
-the theory chain agrees with brute-force verification. -/
-theorem three_button_perfection :
-    ∀ w : Button3World,
-      bCausesSound w = false → cCausesSound w = false →
-      pressA w = false → soundPlays w = false := by
-  native_decide
+variable {ι W : Type*}
 
--- ============================================================================
--- Section D: Horn's Alternative — Why It's Too Weak
--- ============================================================================
+/-- [von-fintel-2001]-style prediction: every alternative salient trigger
+is excluded. -/
+def vonFintelPrediction (causes : ι → Set W) (triggers : Set ι) (t : ι)
+    (w : W) : Prop :=
+  ∀ t' ∈ triggers, t' ≠ t → w ∉ causes t'
 
-/-- What [von-fintel-2001]'s account predicts about non-asserted triggers:
-each specific alternative trigger is excluded (universal, per-trigger). -/
-def vonFintelPrediction {ι W : Type*}
-    (causes : ι → Set W) (triggers : Set ι) (t : ι) (w : W) : Prop :=
-  ∀ t' ∈ triggers, t' ≠ t → ¬causes t' w
+/-- [horn-2000]-style prediction: some alternative salient trigger is
+excluded, with no commitment to which. -/
+def hornPrediction (causes : ι → Set W) (triggers : Set ι) (t : ι)
+    (w : W) : Prop :=
+  ∃ t' ∈ triggers, t' ≠ t ∧ w ∉ causes t'
 
-/-- What [horn-2000]'s account predicts: some non-asserted trigger is
-excluded, but we don't know which (existential, unspecified). -/
-def hornPrediction {ι W : Type*}
-    (causes : ι → Set W) (triggers : Set ι) (t : ι) (w : W) : Prop :=
-  ∃ t' ∈ triggers, t' ≠ t ∧ ¬causes t' w
-
-/-- **Von Fintel entails Horn**: per-trigger exclusion implies existential exclusion.
-
-If we know that every specific alternative trigger is excluded (von Fintel),
-then certainly some trigger is excluded (Horn). -/
-theorem vonFintel_entails_horn
-    {ι W : Type*} (causes : ι → Set W) (triggers : Set ι) (t : ι) (w : W)
-    (h_other : ∃ t' ∈ triggers, t' ≠ t)
+/-- Per-trigger exclusion implies existential exclusion. -/
+theorem vonFintel_entails_horn {causes : ι → Set W} {triggers : Set ι}
+    {t : ι} {w : W} (h_other : ∃ t' ∈ triggers, t' ≠ t)
     (h_vf : vonFintelPrediction causes triggers t w) :
-    hornPrediction causes triggers t w := by
-  obtain ⟨t', ht'_mem, ht'_ne⟩ := h_other
-  exact ⟨t', ht'_mem, ht'_ne, h_vf t' ht'_mem ht'_ne⟩
+    hornPrediction causes triggers t w :=
+  let ⟨t', ht', hne⟩ := h_other
+  ⟨t', ht', hne, h_vf t' ht' hne⟩
 
-/-- **Horn does NOT entail von Fintel**: existential exclusion does not
-determine which trigger is excluded.
+end HornComparison
 
-Counterexample: in the 3-button scenario at world `pressB_plays`, trigger B
-causes the sound and C does not. Horn's prediction holds (C doesn't cause it),
-but von Fintel's fails (B *does* cause it). The existential "some other button
-doesn't play the sound" is strictly weaker than the universal "each other
-button doesn't play the sound."
-
-This is the paper's key argument against Horn: participants respond "No" to
-*specific* other buttons (per-trigger judgment), not just "some other button
-won't play it." -/
+/-- At `pressB_plays`, Horn's existential holds (button C is excluded) but
+von Fintel's universal fails (button B does cause the sound): per-trigger
+exclusion is strictly stronger, and participants' "No" responses to
+*specific* other buttons require it. -/
 theorem horn_not_entails_vonFintel :
-    ∃ (w : Button3World),
-      hornPrediction button3Causes button3Triggers .A w ∧
-      ¬vonFintelPrediction button3Causes button3Triggers .A w := by
-  -- At pressB_plays: B causes sound (✓), C doesn't (✓)
-  -- Horn: ∃ t'≠A, ¬causes t' → C. ✓
-  -- von Fintel: ∀ t'≠A, ¬causes t' → B causes sound. ✗
-  refine ⟨.pressB_plays, ?_, ?_⟩
-  · exact ⟨.C, Or.inr (Or.inr rfl), Button3Trigger.noConfusion,
-      by simp [button3Causes, cCausesSound]⟩
-  · intro h
-    have := h .B (Or.inr (Or.inl rfl)) Button3Trigger.noConfusion
-    simp [button3Causes, bCausesSound] at this
-
-/-- **Von Fintel is strictly stronger than Horn.**
-
-Combining the two: von Fintel's per-trigger alternatives generate strictly
-stronger predictions than Horn's unconditional alternative. The 3-button
-paradigm discriminates between the two accounts. -/
-theorem vonFintel_strictly_stronger_than_horn :
-    -- von Fintel → Horn (forward direction)
-    (∀ w : Button3World, vonFintelPrediction button3Causes button3Triggers .A w →
-      hornPrediction button3Causes button3Triggers .A w) ∧
-    -- Horn ↛ von Fintel (backward direction fails)
-    (∃ w : Button3World, hornPrediction button3Causes button3Triggers .A w ∧
-      ¬vonFintelPrediction button3Causes button3Triggers .A w) := by
-  constructor
-  · intro w h
-    exact vonFintel_entails_horn button3Causes button3Triggers .A w
-      ⟨.B, Or.inr (Or.inl rfl), Button3Trigger.noConfusion⟩ h
-  · exact horn_not_entails_vonFintel
-
--- ============================================================================
--- Section E: Theory Predicts Asymmetry
--- ============================================================================
-
-/-- **Without exclusion, perfection fails.**
-
-Coverage alone (every C-event has some trigger) does NOT yield ¬p → ¬C.
-Witness: a scenario where trigger t requires p but trigger t' fires at ¬p-worlds.
-Coverage holds, but ¬p ∧ C.
-
-This is the other half of the theory's prediction: perfection requires
-exclusion (from exhaustification), not just coverage. Without exclusion
-(e.g., consequent-focus QUD or partial speaker knowledge), the theory predicts
-no perfection — matching the experimental findings. -/
-theorem coverage_without_exclusion_insufficient :
-    ∃ (W Trigger : Type)
-      (causes : Trigger → W → Prop) (triggers : Set Trigger)
-      (t : Trigger) (_ : t ∈ triggers)
-      (p C : W → Prop),
-      (∀ w, causes t w → p w) ∧
-      (∀ w, C w → ∃ t' ∈ triggers, causes t' w) ∧
-      (∃ w, ¬p w ∧ C w) := by
-  refine ⟨Bool, Bool, (fun trigger world => world = trigger), Set.univ,
-          true, Set.mem_univ _, (· = true), (fun _ => True), ?_, ?_, ?_⟩
-  · intro w h; exact h
-  · intro w _; exact ⟨w, Set.mem_univ w, rfl⟩
-  · exact ⟨false, Bool.false_ne_true, trivial⟩
-
--- ============================================================================
--- Section F: Prerequisites for Exhaustification
--- ============================================================================
-
-/-- Whether a QUD makes alternative antecedents salient.
-
-Antecedent-focused QUDs ("Which button will play a dog sound?") partition
-the answer space by antecedent, making alternative triggers salient for
-exhaustification. Consequent-focused and neutral QUDs do not. -/
-def qudProvidesAlternatives : QUDType → Bool
-  | .antecedentFocused => true
-  | .consequentFocused => false
-  | .neutral => false
-
-/-- Whether a speaker's epistemic state licenses the competence assumption.
-
-When the speaker has tested all buttons (full knowledge), the hearer can
-assume competence: the speaker's silence about other buttons is informative,
-licensing exclusion. With partial knowledge, silence reflects ignorance. -/
-def speakerCompetenceAssumed : KnowledgeCondition → Bool
-  | .fullKnowledge => true
-  | .partialKnowledge => false
-
-/-- **Exhaustification is licensed iff both prerequisites hold.**
-
-The theory predicts perfection only when:
-1. The QUD makes alternative antecedents salient (→ alternatives for Exh)
-2. The speaker is assumed competent (→ exclusion of alternatives)
-
-This is derived from the conjunction of the two independent prerequisites,
-not stipulated as a single function. -/
-def exhaustificationLicensed (knowledge : KnowledgeCondition) (qud : QUDType) : Bool :=
-  qudProvidesAlternatives qud && speakerCompetenceAssumed knowledge
-
-/-- With antecedent-focused QUD and full knowledge, exhaustification is licensed. -/
-theorem licensed_with_both :
-    exhaustificationLicensed .fullKnowledge .antecedentFocused = true := rfl
-
-/-- With consequent-focused QUD, exhaustification is not licensed
-(even with full knowledge) — because the QUD doesn't provide alternatives. -/
-theorem not_licensed_without_qud :
-    exhaustificationLicensed .fullKnowledge .consequentFocused = false := rfl
-
-/-- With partial knowledge, exhaustification is not licensed
-(even with antecedent-focused QUD) — because competence isn't assumed. -/
-theorem not_licensed_without_knowledge :
-    exhaustificationLicensed .partialKnowledge .antecedentFocused = false := rfl
-
--- ============================================================================
--- Section G: Data Confirms the Predicted Asymmetry
--- ============================================================================
-
-/-- **Data confirms: antecedent-focused QUD promotes perfection.**
-
-The theory predicts higher perfection under antecedent-focused QUDs (which
-make alternative triggers salient, licensing exhaustification) than under
-consequent-focused or neutral QUDs (which don't). Experiment 1 confirms
-both orderings, and antecedent-focused maximizes across all QUD types. -/
-theorem antecedentFocused_highest :
-    (exp1Data .antecedentFocused).perfectionRate >
-    (exp1Data .consequentFocused).perfectionRate ∧
-    (exp1Data .antecedentFocused).perfectionRate >
-    (exp1Data .neutral).perfectionRate := by
-  constructor <;> native_decide
-
-/-- **Data confirms: overly informative answers trigger perfection.**
-
-The theory predicts that if exhaustification operates over QUD-relevant
-alternatives, both optimally and overly informative answers should trigger
-perfection (since both are answers to the QUD). Experiment 2 confirms:
-both types yield high perfection rates with no significant difference. -/
-theorem overlyInformative_also_triggers_perfection :
-    (exp2Data .overlyInformative).perfectionRate > 1/2 ∧
-    (exp2Data .optimallyInformative).perfectionRate -
-    (exp2Data .overlyInformative).perfectionRate < 1/10 := by
-  constructor <;> native_decide
-
-/-- **Data confirms: speaker knowledge promotes perfection.**
-
-The theory predicts higher perfection when the speaker is knowledgeable
-(licensing the assumption that unmentioned alternatives are false, hence
-exclusion) than when ignorant (no exclusion license). Experiment 3 confirms
-with a large effect (51pp difference). -/
-theorem fullKnowledge_highest :
-    (exp3Data .fullKnowledge).perfectionRate >
-    (exp3Data .partialKnowledge).perfectionRate := by
-  native_decide
-
-/-- **Theory predicts the data pattern: perfection is high only when
-both prerequisites are met.**
-
-The exhaustification theory predicts perfection should be high only when
-`exhaustificationLicensed` returns true (antecedent-focused QUD + full
-knowledge). The data confirms: only the antecedent-focused condition (Exp 1)
-and the full-knowledge condition (Exp 3) show high perfection rates, while
-conditions missing either prerequisite show low rates. -/
-theorem high_perfection_matches_licensing :
-    -- Licensed conditions produce high perfection (> 50%)
-    (exp1Data .antecedentFocused).perfectionRate > 1/2 ∧
-    (exp3Data .fullKnowledge).perfectionRate > 1/2 ∧
-    -- Unlicensed conditions produce low perfection (< 30%)
-    (exp1Data .consequentFocused).perfectionRate < 3/10 ∧
-    (exp1Data .neutral).perfectionRate < 3/10 ∧
-    (exp3Data .partialKnowledge).perfectionRate < 3/10 := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
-
-/-- **Convergent evidence: CP is pragmatic.**
-
-The theory's prediction chain depends entirely on pragmatic factors
-(QUD, speaker knowledge, exhaustification). Two independent lines of evidence
-confirm the pragmatic nature:
-
-1. **Formal**: `perfection_not_entailed_variablyStrict` proves the biconditional
-   is not semantically entailed even under Stalnaker/Lewis variably strict
-   semantics — the framework the paper adopts. This is stronger than showing
-   it for material implication alone (a weaker semantics could fail to entail
-   perfection while a stronger one succeeds).
-
-2. **Experimental**: Perfection rates vary with QUD type and speaker knowledge.
-   Semantic entailments are invariant across these factors. -/
-theorem cp_is_pragmatic :
-    (∃ (W : Type) (sim : SimilarityOrdering W) (domain : Set W)
-       (p q : Set W) (w : W),
-      variablyStrictImp sim domain p q w ∧ ¬(conditionalPerfection p q w)) ∧
-    (exp1Data .antecedentFocused).perfectionRate ≠
-    (exp1Data .consequentFocused).perfectionRate ∧
-    (exp3Data .fullKnowledge).perfectionRate ≠
-    (exp3Data .partialKnowledge).perfectionRate := by
-  exact ⟨perfection_not_entailed_variablyStrict, by native_decide, by native_decide⟩
-
--- ============================================================================
--- Section H: Competence Bridge — CP uses the same mechanism as SI
--- ============================================================================
-
-/-! ## Competence Bridge
-
-The competence assumption in conditional perfection is the same mechanism
-formalized in `NeoGricean` and tested experimentally by
-[bale-etal-2025] for scalar implicatures. Both paradigms:
-- Map full speaker knowledge to `BeliefState.disbelief` (speaker knows ¬ψ)
-- Map partial knowledge to `BeliefState.noOpinion` (speaker is agnostic)
-- Derive strong inference only when competence holds
-
-This section connects `KnowledgeCondition` to the shared infrastructure. -/
-
-open NeoGricean
-
-private abbrev siToBeliefState :=
-  BaleEtAl2025.toBeliefState
-
-/-- Map speaker knowledge in the CP paradigm to NeoGricean belief state.
-
-Mirrors `BaleEtAl2025.toBeliefState`: full knowledge → `.disbelief` (speaker
-knows ¬ψ for each unmentioned alternative), partial knowledge → `.noOpinion`. -/
-def toBeliefStateCP : KnowledgeCondition → BeliefState
-  | .fullKnowledge => .disbelief
-  | .partialKnowledge => .noOpinion
-
-/-- The CP and SI competence mappings are identical: full knowledge maps to
-disbelief and partial knowledge maps to no opinion in both paradigms. -/
-theorem competence_mapping_agrees :
-    (toBeliefStateCP .fullKnowledge = siToBeliefState .fullKnowledge) ∧
-    (toBeliefStateCP .partialKnowledge = siToBeliefState .partialKnowledge) :=
-  ⟨rfl, rfl⟩
-
-/-- `speakerCompetenceAssumed` agrees with the NeoGricean `competent` predicate
-applied via `toBeliefStateCP`. This connects the study-specific Boolean to
-the general implicature infrastructure. -/
-theorem speakerCompetence_matches_neoGricean :
-    ∀ k : KnowledgeCondition,
-      speakerCompetenceAssumed k = competent (toBeliefStateCP k) := by
-  intro k; cases k <;> rfl
-
-/-- Full knowledge: `processAlternative` yields a strong inference
-(exclusion of unmentioned alternatives is licensed). -/
-theorem fk_processAlternative_strong :
-    let p := processAlternative true (toBeliefStateCP .fullKnowledge)
-    p.weakHolds = true ∧ p.competenceAssumed = true ∧ p.strongDerived = true := by
-  native_decide
-
-/-- Partial knowledge: `processAlternative` yields weak-only inference
-(exclusion not licensed — silence reflects ignorance, not absence). -/
-theorem pk_processAlternative_weak :
-    let p := processAlternative true (toBeliefStateCP .partialKnowledge)
-    p.weakHolds = true ∧ p.competenceAssumed = false ∧ p.strongDerived = false := by
-  native_decide
-
-/-- Cross-domain unity: CP and SI use the same competence-gated exhaustification.
-
-Both [evcen-bale-barner-2026] (conditional perfection) and
-[bale-etal-2025] (scalar implicatures) map full knowledge to strong
-inference and partial knowledge to weak-only, via the identical
-`processAlternative` machinery from `NeoGricean`. -/
-theorem cp_si_competence_unity :
-    -- CP: full knowledge → strong, partial → weak
-    (processAlternative true (toBeliefStateCP .fullKnowledge)).strongDerived = true ∧
-    (processAlternative true (toBeliefStateCP .partialKnowledge)).strongDerived = false ∧
-    -- SI: full knowledge → strong, partial → weak
-    (processAlternative true (siToBeliefState .fullKnowledge)).strongDerived = true ∧
-    (processAlternative true (siToBeliefState .partialKnowledge)).strongDerived = false := by
-  native_decide
-
--- ============================================================================
--- Section I: ALT Constraint (Footnote 7)
--- ============================================================================
-
-/-! ## ALT Constraint
-
-Footnote 7 of [evcen-bale-barner-2026] states the alternatives constraint:
-
-> ALT(p) ⊆ ANS(QUD) ∩ {q : Ks(q) ∨ Ks(¬q)}
-
-The alternatives used for exhaustification must be both answers to the QUD
-(contextual salience) AND propositions the speaker is competent about
-(epistemic license). This is exactly what `exhaustificationLicensed` encodes
-as a conjunction: `qudProvidesAlternatives qud && speakerCompetenceAssumed k`.
-
-- Experiment 1 manipulates the first factor (QUD determines ANS)
-- Experiment 3 manipulates the second factor (knowledge determines competence)
-- When either factor is absent, the intersection is empty → no exhaustification
--/
-
-/-- The ALT constraint as an intersection: alternatives are non-empty only when
-both QUD provides answers and speaker is competent. `exhaustificationLicensed`
-encodes this as a conjunction. -/
-theorem alt_constraint_is_intersection :
-    ∀ k : KnowledgeCondition, ∀ q : QUDType,
-      exhaustificationLicensed k q =
-      (qudProvidesAlternatives q && speakerCompetenceAssumed k) := by
-  intro k q; rfl
-
-/-- When QUD doesn't provide alternatives, exhaustification is blocked
-regardless of competence — the intersection has an empty first component. -/
-theorem no_qud_blocks_exhaustification :
-    ∀ k : KnowledgeCondition,
-      exhaustificationLicensed k .consequentFocused = false ∧
-      exhaustificationLicensed k .neutral = false := by
-  intro k; cases k <;> exact ⟨rfl, rfl⟩
-
-/-- When speaker lacks competence, exhaustification is blocked regardless
-of QUD — the intersection has an empty second component. -/
-theorem no_competence_blocks_exhaustification :
-    ∀ q : QUDType,
-      exhaustificationLicensed .partialKnowledge q = false := by
-  intro q; cases q <;> rfl
+    ∃ w, hornPrediction causes buttons .A w ∧
+      ¬vonFintelPrediction causes buttons .A w := by
+  refine ⟨.pressB_plays, ⟨.C, by simp [buttons], nofun, by simp [causes]⟩,
+    fun h => ?_⟩
+  exact h .B (by simp [buttons]) nofun rfl
 
 end EvcenBaleBarner2026
