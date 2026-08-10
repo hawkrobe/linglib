@@ -74,14 +74,16 @@ instance : One Context := ⟨⟨∅, ∅, ∅, rfl⟩⟩
 
 /-- Context composition (Definition 3.1):
 `⟨I,B,O⟩ * ⟨I',B',O'⟩ = ⟨I ∪ (I'∖B), B ∪ B', (O∖B') ∪ O'⟩`. -/
-instance : Mul Context :=
-  ⟨λ c d =>
-    ⟨c.I ∪ (d.I \ c.B), c.B ∪ d.B, (c.O \ d.B) ∪ d.O, by
-      ext v
-      have h1 := c.coh_mem (v := v)
-      have h2 := d.coh_mem (v := v)
-      simp only [Finset.mem_union, Finset.mem_sdiff] at *
-      tauto⟩⟩
+instance : Mul Context where
+  mul c d :=
+    { I := c.I ∪ (d.I \ c.B)
+      B := c.B ∪ d.B
+      O := (c.O \ d.B) ∪ d.O
+      coh := calc
+        (c.I ∪ (d.I \ c.B)) ∪ (c.B ∪ d.B)
+            = (c.I ∪ c.B) ∪ (d.I ∪ d.B) := by ext v; grind
+          _ = (c.O ∪ c.B) ∪ (d.O ∪ d.B) := by rw [c.coh, d.coh]
+          _ = ((c.O \ d.B) ∪ d.O) ∪ (c.B ∪ d.B) := by ext v; grind }
 
 @[simp] theorem I_mul (c d : Context) : (c * d).I = c.I ∪ (d.I \ c.B) := rfl
 @[simp] theorem B_mul (c d : Context) : (c * d).B = c.B ∪ d.B := rfl
