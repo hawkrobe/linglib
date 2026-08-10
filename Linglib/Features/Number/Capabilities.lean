@@ -1,70 +1,44 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Core.Order.Flat
 import Linglib.Features.Agreement
 import Linglib.Features.Number.Basic
 
 /-!
-# HasNumber — the number-bearing capability
-[corbett-2000]
+# The number-bearing capability
 
-The typeclass mixin for carriers that bear grammatical number — the number
-axis of the capability tower over lexical carriers (cf. `HasPhi` in
-`Features/Phi.lean`, `Bound` in
-`Features/CoreferenceStatus.lean`). A consumer (agreement
-checker, resolution, semantics) requires `[HasNumber α]` and works over any
-representation: a UD feature bundle, a `Word`, a `Pronoun`, an agreement
-paradigm cell.
-
-The accessor is `Option`-valued because underspecification is the
-typologically normal case ([corbett-2000]): a carrier with no number marking
-is a wildcard for agreement, not a default singular.
-
-Instances live with their carriers (mathlib-style): `UD.MorphFeatures` here
-(its type is below this file); `Word` in `Morphology/Word/Basic.lean`; `Pronoun`/
-`PersonalPronoun` in `Syntax/Category/Pronoun/Capabilities.lean`; paradigm `Cell` in
-`Syntax/Agreement/Paradigm.lean`.
-
-Named `HasNumber`, not `Numbered`: the bare name is taken by the carrier
-type itself, the situation where Lean retains the `Has` prefix
-(`HasEquiv`, `HasSubset`, `HasQuotient`), and the scheme scales across the
-φ-inventory (`HasPerson`, `HasGender`) where adjectival forms do not.
-
-The Minimalist probe/goal inventory (`Minimalist.PhiFeature.number`) is the
-other number-bearing route in the library; it carries `UD.Number` and
-relates to this one by `Number.fromUD`.
+`HasNumber` equips a carrier with the grammatical number it bears;
+`HasNumber.Compatible` is the induced agreement relation, slot compatibility
+in the flat information order. Underspecification is the typologically normal
+case ([corbett-2000]): an unmarked carrier (`none`) is a wildcard, not a
+default singular.
 -/
 
-set_option autoImplicit false
-
-/-- A carrier that bears grammatical number. `none` = unmarked or
-    underspecified (a wildcard for agreement, not a default value). -/
+/-- A carrier of grammatical number. `⊥` = the carrier does not mark
+number. -/
 class HasNumber (α : Type*) where
-  /-- The canonical number value the carrier bears. -/
-  numberOf : α → Option Number
+  /-- The number value the carrier bears, if marked. -/
+  numberOf : α → Flat Number
 
 export HasNumber (numberOf)
 
-/-- A UD morphology bundle bears the number its `number` tag ingests
-    (`Number.fromUD`); tags with no analytical equivalent (`Inv`/`Coll`/
-    `Count`) leave the carrier unvalued. -/
+/-- A UD bundle bears the number its `number` tag ingests (`Number.fromUD`);
+`Inv`/`Coll`/`Count` have no analytical value and leave it unmarked. -/
 instance : HasNumber UD.MorphFeatures :=
   ⟨fun f => f.number.bind Number.fromUD⟩
 
-namespace HasNumber
+instance : HasNumber Number := ⟨(↑·)⟩
 
-variable {α : Type*} {β : Type*} [HasNumber α] [HasNumber β]
+/-- Number compatibility: valued numbers coincide, an unvalued carrier is a
+wildcard. -/
+abbrev HasNumber.Compatible {α β : Type*} [HasNumber α] [HasNumber β]
+    (a : α) (b : β) : Prop :=
+  Compat (numberOf a) (numberOf b)
 
-/-- Number compatibility between two (possibly heterogeneous) carriers:
-    the slot values are compatible in the flat information order (`Compat`)
-    — valued numbers must coincide; an unvalued carrier is a wildcard.
-    The number axis of φ-agreement (`UD.MorphFeatures.compatible`). -/
-abbrev Compatible (a : α) (b : β) : Prop :=
-  Compat (α := Flat Number) (numberOf a) (numberOf b)
-
-end HasNumber
-
-/-- φ-compatibility entails number compatibility: the `HasNumber` mixin never
-    diverges from the unification-based agreement engine
-    (`UD.MorphFeatures.compatible`). -/
+/-- φ-compatibility of UD bundles entails number compatibility. -/
 theorem UD.MorphFeatures.compatible_hasNumber {f1 f2 : UD.MorphFeatures}
     (h : f1.compatible f2 = true) :
     HasNumber.Compatible f1 f2 :=
