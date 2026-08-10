@@ -173,11 +173,11 @@ theorem dependence_analogous_cause :
 
 /-- P-CAUSE's analogous builder asserts sufficiency. -/
 theorem production_asserts_sufficiency :
-    CausationType.production.analogousBuilder.assertsSufficiency = true := rfl
+    CausationType.production.analogousBuilder.AssertsSufficiency := trivial
 
 /-- D-CAUSE's analogous builder asserts necessity. -/
 theorem dependence_asserts_necessity :
-    CausationType.dependence.analogousBuilder.assertsNecessity = true := rfl
+    CausationType.dependence.analogousBuilder.AssertsNecessity := trivial
 
 /-! ## Bridge to Resultatives
 

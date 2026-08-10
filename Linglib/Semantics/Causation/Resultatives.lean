@@ -92,12 +92,12 @@ def deriveCausativeBuilder (rel : SubeventRelation) (desc : SubeventDesc) :
 
 /-- `.make` is the unique builder asserting neutral sufficiency. -/
 theorem make_unique_neutral_sufficiency (b : Causative)
-    (hs : b.assertsSufficiency = true)
-    (hc : b.isCoercive = false)
-    (hp : b.isPermissive = false) :
+    (hs : b.AssertsSufficiency)
+    (hc : ¬ b.IsCoercive)
+    (hp : ¬ b.IsPermissive) :
     b = .make := by
-  cases b <;> simp_all [Causative.assertsSufficiency,
-    Causative.isCoercive, Causative.isPermissive]
+  cases b <;> simp_all [Causative.AssertsSufficiency,
+    Causative.IsCoercive, Causative.IsPermissive]
 
 /-- MEANS + CAUSE derives `.make`. -/
 theorem means_cause_derives_make (desc : SubeventDesc)
@@ -130,10 +130,10 @@ theorem non_means_no_builder (desc : SubeventDesc) :
 /-- When `deriveCausativeBuilder` succeeds, the result asserts sufficiency. -/
 theorem derived_asserts_sufficiency (rel : SubeventRelation) (desc : SubeventDesc)
     (b : Causative) (h : deriveCausativeBuilder rel desc = some b) :
-    b.assertsSufficiency = true := by
+    b.AssertsSufficiency := by
   unfold deriveCausativeBuilder at h
   split at h
-  · simp only [Option.some.injEq] at h; subst h; rfl
+  · simp only [Option.some.injEq] at h; subst h; trivial
   · simp at h
 
 /-- The resultative Causative, derived from MEANS + CAUSE. -/
