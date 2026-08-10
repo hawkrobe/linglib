@@ -1,6 +1,6 @@
-import Linglib.Core.Data.Set.Piecewise
 import Linglib.Logic.Assignment
 import Linglib.Semantics.Dynamic.Update
+import Mathlib.Data.Set.Piecewise
 
 /-!
 # Dynamic Predicate Logic
@@ -103,8 +103,11 @@ theorem le_agreeOn_conj (R : Rel E) (V W : Set ℕ) :
 /-- Agreements compose to agreement on the intersection. -/
 theorem agreeOn_conj_agreeOn (V W : Set ℕ) :
     (agreeOn V).conj (agreeOn W) = agreeOn (E := E) (V ∩ W) := by
+  classical
   funext f h
-  exact propext Set.eqOn_inter.symm
+  exact propext ⟨λ ⟨g, hV, hW⟩ v hv => (hV hv.1).trans (hW hv.2),
+    λ hVW => ⟨V.piecewise f h, (V.piecewise_eqOn f h).symm,
+      V.eqOn_piecewise.mpr ⟨λ v hv => hVW ⟨hv.2, hv.1⟩, λ _ _ => rfl⟩⟩⟩
 
 /-- Agreements meet in agreement on the union. -/
 theorem agreeOn_inf_agreeOn (V W : Set ℕ) :
