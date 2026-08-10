@@ -126,6 +126,7 @@ import Linglib.Core.Data.RoseTree.Leaves
 import Linglib.Core.Data.RoseTree.Nonplanar
 import Linglib.Core.Data.RoseTree.Perm
 import Linglib.Core.Data.RoseTree.Traversable
+import Linglib.Core.Data.Set.Piecewise
 import Linglib.Core.Data.Setoid.Basic
 import Linglib.Core.GroupTheory.Congruence.Hom
 import Linglib.Core.InformationTheory.KullbackLeibler.Basic
