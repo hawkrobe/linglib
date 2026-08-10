@@ -6,9 +6,10 @@ import Linglib.Semantics.Possessive.Basic
 [vikner-jensen-2002]'s uniform argument-only analysis of the English prenominal
 genitive: the genitive always combines with a *relational* noun — a
 non-relational head is coerced via Barker's `π`, the relation type supplied by
-the noun's qualia (`availableRelations`). The genitive itself is a narrow-scope
-definite: the worked examples prove `iotaPresupposition` and feed the
-`Possessive.Definite` carrier's `existsUnique_possessee`.
+the noun's qualia (`availableRelations`, §3.1.2). The genitive clitic itself
+(`clitic`, their (16)) embeds a narrow-scope definite: the worked examples
+prove `iotaPresupposition` and feed the `Possessive.Definite` carrier's
+`existsUnique_possessee`.
 -/
 
 namespace ViknerJensen2002
@@ -18,9 +19,8 @@ open Possessive
 
 /-! ### Qualia structure (Pustejovsky, as used by Vikner & Jensen) -/
 
-/-- The relation-bearing lexical structure Vikner & Jensen read off a head
-noun. Their lexical entries also carry telic and formal qualia, but those
-license no genitive relation type, so they are omitted. -/
+/-- The relation-bearing lexical structure of a head noun. Telic and formal
+qualia license no genitive relation type and are omitted. -/
 structure NounQualia where
   /-- Inherently relational (e.g. *sister*, *teacher*) — bears its own relatum. -/
   isRelational : Prop
@@ -31,13 +31,10 @@ structure NounQualia where
 
 /-! ### Deriving the relation type from qualia -/
 
-/-- Vikner & Jensen's central thesis: the genitive's relation type is *derived*
-from the head noun's lexical structure, not stipulated. A noun licenses the
-inherent relation iff it is relational, the part-whole relation iff it bears a
-constitutive quale, the agentive relation iff it bears an agentive quale; the
-control relation is always available, ownership being only one special case of
-control. Selectional restrictions on the possessor slot (control wants an
-animate possessor, a quale constrains its own arguments) are idealized away. -/
+/-- The genitive relation types a head noun licenses: inherent iff it is
+relational, part-whole iff it bears a constitutive quale, agentive iff it bears
+an agentive quale, and control unconditionally. Possessor-side selectional
+restrictions are left out, as in the paper's own derivations. -/
 def availableRelations (q : NounQualia) : Set PossessionRelationType :=
   {r | r = .inherent ∧ q.isRelational ∨ r = .partWhole ∧ q.hasConstitutive ∨
     r = .agentive ∧ q.hasAgentive ∨ r = .control}
@@ -76,10 +73,19 @@ theorem poem_agentive :
 
 /-- *the girl's picture* is three ways ambiguous: inherent (*picture of the
 girl*), agentive (*picture the girl made*), and control (*picture at her
-disposal*) — but **not** part-whole. -/
+disposal*) — but not part-whole. -/
 theorem picture_three_ways :
     availableRelations picture = {.inherent, .agentive, .control} := by
   ext r; simp [availableRelations, picture]
+
+/-! ### The genitive clitic -/
+
+/-- The genitive clitic: from the possessor quantifier and the genitive
+relation to the head NP's quantifier, with an implicit definite — the unique
+relatum — scoping under the possessor quantifier. -/
+def clitic {E : Type*} (Q : Quantification.Quantifier E) (R : E → E → Prop) :
+    Quantification.Quantifier E :=
+  fun P => Q fun u => ∃ x, (∀ y, R u y ↔ y = x) ∧ P x
 
 /-! ### The denotation: possessor + narrow-scope definite
 
@@ -90,12 +96,24 @@ relation to the possessor. -/
 /-- The (inherent) teacher relation: `0`'s teacher is `1`. -/
 def teacherRel : Pred2 (Fin 4) Unit := fun x y _ => x = 0 ∧ y = 1
 
-/-- *the girl's teacher* (inherent): the possessee predicate is the relational
-noun's own relation applied to the possessor (`viaArgument`), and there is a
-unique satisfier — the narrow-scope definite, here as `iotaPresupposition`. -/
+/-- *the girl's teacher* (inherent): the relational noun's own relation applied
+to the possessor (`viaArgument`) has a unique satisfier. -/
 theorem girlsTeacher_unique (s : Unit) :
     iotaPresupposition (viaArgument (E := Fin 4) 0 teacherRel) s :=
   ⟨1, ⟨rfl, rfl⟩, fun _ hy => hy.2⟩
+
+/-- *a girl* as an indefinite possessor quantifier. -/
+def aGirl : Quantification.Quantifier (Fin 4) := fun P => ∃ z, z = 0 ∧ P z
+
+/-- *a girl's teacher* holds of `P` iff some girl has a unique teacher who is
+`P` — in this model, iff `P 1`. -/
+theorem aGirlsTeacher (P : Fin 4 → Prop) :
+    clitic aGirl (fun u y => teacherRel u y ()) P ↔ P 1 := by
+  simp only [clitic, aGirl, teacherRel]
+  constructor
+  · rintro ⟨z, rfl, x, hx, hP⟩
+    rwa [← (hx 1).mp ⟨rfl, rfl⟩] at hP
+  · exact fun hP => ⟨0, rfl, 1, fun y => by simp, hP⟩
 
 /-- *the girl's teacher* as a `Possessive.Definite` carrier: its unique referent
 is delivered by the carrier API's `existsUnique_possessee`, no bespoke proof. -/
@@ -114,10 +132,9 @@ def controlRel : Pred2 (Fin 4) Unit := fun x y _ => x = 0 ∧ y = 2
 /-- *car* as a sortal noun predicate. -/
 def carPred : Pred1 (Fin 4) Unit := fun y _ => y = 2
 
-/-- *the girl's car* (coerced, control): the sortal noun is first shifted to a
-relation by Barker's `π` with the control relation, then combines exactly like
-a relational noun (`viaArgument`) — the uniform argument-only analysis. The
-result again carries the definite's unique witness. -/
+/-- *the girl's car* (coerced, control): the sortal noun is `π`-shifted with
+the control relation, then combines exactly like a relational noun
+(`viaArgument`). The result again carries the definite's unique witness. -/
 theorem girlsCar_unique (s : Unit) :
     iotaPresupposition (viaArgument (E := Fin 4) 0 (π carPred controlRel)) s :=
   ⟨2, ⟨rfl, rfl, rfl⟩, fun _ hy => hy.1⟩
