@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
 import Linglib.Syntax.Category.Adposition.Order
 import Linglib.Studies.Dendikken1995ParticleVerbs
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
-import Linglib.Semantics.Spatial.Trace
+import Linglib.Semantics.Events.Path
 
 /-!
 # Broekhuis & Corver (2026): Adpositions in Dutch
@@ -37,8 +37,7 @@ not whether F is overt. See `MovedConstituent`.
 
 - `Dutch.Adpositions`: lexical inventory
 - `Minimalist.Formal.ExtendedProjection`: Place/Path in EP
-- `Spatial.PathShape`: bounded/unbounded/source classification
-- `Spatial.Trace`: PathShape → telicity
+- `Spatial.Path.Directionality` × `Telicity`: the two-axis PP classification
 - `AuxiliarySelection` auxiliary selection: Dutch *zijn*/*hebben* split
 - `Dendikken1995`: particles as P heads
 - `Data.WALS.Features.F85A`: cross-linguistic adposition order
@@ -48,7 +47,7 @@ namespace BroekhuisCorver2026
 
 open Dutch.Adpositions
 open Minimalist
-open Spatial (PathShape)
+open Spatial (Path)
 
 -- ════════════════════════════════════════════════════
 -- § 1. PP-internal structure and surface orders
@@ -182,41 +181,38 @@ theorem place_path_family :
     catFamily .Path = .adpositional := place_path_adpositional
 
 -- ════════════════════════════════════════════════════
--- § 5. End-to-end: PathShape → telicity → auxiliary
+-- § 5. End-to-end: path shape → telicity → auxiliary
 -- ════════════════════════════════════════════════════
 
 /-! [broekhuis-corver-2026] §2.2 ex. 22: directional *de heuvel op*
     takes *zijn* (be), locational *op de heuvel* takes *hebben* (have).
-    This connects through `PathShape → telicity → unaccusativity →
+    This connects through `directionality × telicity → unaccusativity →
     auxiliary selection`. -/
 
-open Spatial.Trace (pathShapeToTelicity)
 open ArgumentStructure.AuxiliarySelection
 
-/-- All directional adpositions in the inventory carry a PathShape. -/
-theorem directional_adpositions_have_pathShape :
-    ∀ a ∈ dutchAdpositions, a.directional → a.pathShape.isSome :=
-  directional_has_pathShape
+/-- All directional adpositions in the inventory carry directionality and telicity. -/
+theorem directional_adpositions_have_pathType :
+    ∀ a ∈ dutchAdpositions, a.directional → a.pathType.isSome :=
+  directional_has_pathType
 
 /-- PostP-capable adpositions are directional (and locational). -/
 theorem postP_implies_directional :
     ∀ a ∈ dutchAdpositions, a.postPOk → a.directional :=
   fun a ha hpost => (postP_has_both_readings a ha hpost).2
 
-/-- PostP-capable adpositions have a PathShape. -/
-theorem postP_has_pathShape :
-    ∀ a ∈ dutchAdpositions, a.postPOk → a.pathShape.isSome := by
+/-- PostP-capable adpositions carry directionality and telicity. -/
+theorem postP_has_pathType :
+    ∀ a ∈ dutchAdpositions, a.postPOk → a.pathType.isSome := by
   intro a ha hpost
-  exact directional_has_pathShape a ha (postP_implies_directional a ha hpost)
+  exact directional_has_pathType a ha (postP_implies_directional a ha hpost)
 
-/-- End-to-end chain for *op*: directional → bounded path → telic.
+/-- End-to-end chain for *op*: directional → goal-oriented bounded path → telic.
     [broekhuis-corver-2026] §2.2 ex. 22: *De fietser is de heuvel
     op gereden* "The cyclist rode onto the hill" — *zijn* (be) because
-    directional postP *op* denotes a bounded path, which is telic. -/
+    directional postP *op* denotes a goal-oriented bounded path. -/
 theorem op_bounded_telic :
-    op.pathShape = some .bounded ∧
-    pathShapeToTelicity .bounded = .telic :=
-  ⟨rfl, rfl⟩
+    op.pathType = some (.goal, .telic) := rfl
 
 /-- End-to-end: telic → unaccusative → *zijn* (be) in Dutch.
     Dutch has a split auxiliary system ([sorace-2000]); unaccusative
@@ -225,11 +221,11 @@ theorem op_bounded_telic :
 theorem telic_unaccusative_zijn :
     canonicalSelection .unaccusative = .be := rfl
 
-/-- *op* (bounded) vs *van* (source): distinct PathShapes but both telic.
-    Goal-oriented and origin-oriented directionality both yield telic VPs. -/
+/-- *op* (goal) vs *van* (source): distinct directionalities, both telic —
+    the two axes are independent, and source directionality yields telic
+    VPs just as goal directionality does. -/
 theorem op_van_both_telic :
-    pathShapeToTelicity .bounded = .telic ∧
-    pathShapeToTelicity .source = .telic :=
+    op.pathType = some (.goal, .telic) ∧ van.pathType = some (.source, .telic) :=
   ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════

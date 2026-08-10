@@ -1,6 +1,6 @@
 import Linglib.Semantics.Aspect.Cumulativity
 import Linglib.Semantics.Events.Adjacency
-import Linglib.Semantics.Spatial.Trace
+import Linglib.Semantics.Events.SpatialTrace
 import Linglib.Features.Aktionsart
 import Linglib.Data.Examples.Krifka1998
 import Mathlib.Data.Finset.Basic
@@ -13,7 +13,7 @@ paper's deepest results: CUM/QUA propagation, telicity by initial/final parts,
 and the path-bounded movement-relation analysis.
 
 The substrate predicates (MO, MSO, MSE, SINC, INC, CumTheta — K98 §3.2) live
-in `Semantics/Events/`; the σ-trace pullback in `Semantics/Spatial/Trace.lean`.
+in `Semantics/Events/`; the σ-trace pullback in `Semantics/Events/SpatialTrace.lean`.
 This file inlines the §4 movement-relation predicates (formerly in
 `Semantics/Events/MovementRelations.lean`).
 
@@ -33,7 +33,7 @@ This file inlines the §4 movement-relation predicates (formerly in
 * `telic_licenses_inX` / `durative_atelic_licenses_forX` — §3 for/in diagnostics.
 * `walked_from_to_telic_propositional` / `walked_towards_atelic_propositional` —
   σ-pullback backing the *walked from X to Y* / *walked towards X* analyses.
-* `pathShapeToTelicity_matches_motionData` — the substrate reproduces the §4.5
+* `pathType_telicity_matches_motionData` — the substrate reproduces the §4.5
   path-shape → telicity judgments of the `Data.Examples.Krifka1998` motion rows.
 
 ## TODO
@@ -281,19 +281,20 @@ end SpatialTracePullback
 section MotionData
 
 open Data.Examples (LinguisticExample)
-open Spatial (PathShape)
-open Spatial.Trace (pathShapeToTelicity)
+open Spatial (Path)
 
 /-- A motion VP datum: the path shape K98 assigns and the telicity it predicts. -/
 structure MotionDatum where
-  pathShape : PathShape
+  pathType : Path.Directionality × Telicity
   expectedTelicity : Telicity
   deriving DecidableEq, Repr
 
-private def parsePathShape : String → Option PathShape
-  | "bounded" => some .bounded
-  | "source" => some .source
-  | "unbounded" => some .unbounded
+-- The JSON rows label the K98-era single axis; the *towards* rows
+-- ("unbounded") are goal-directed per [zwarts-2005]'s (12b).
+private def parsePathType : String → Option (Path.Directionality × Telicity)
+  | "bounded" => some (.goal, .telic)
+  | "source" => some (.source, .telic)
+  | "unbounded" => some (.goal, .atelic)
   | _ => none
 
 private def parseTelicity : String → Option Telicity
@@ -303,17 +304,18 @@ private def parseTelicity : String → Option Telicity
 
 /-- Lift a `Data.Examples.Krifka1998` row to a `MotionDatum` via its paper features. -/
 def fromExample (e : LinguisticExample) : Option MotionDatum := do
-  let ps ← parsePathShape (← e.paperFeatures.lookup "pathShape")
+  let ps ← parsePathType (← e.paperFeatures.lookup "pathShape")
   let tel ← parseTelicity (← e.paperFeatures.lookup "expectedTelicity")
-  some { pathShape := ps, expectedTelicity := tel }
+  some { pathType := ps, expectedTelicity := tel }
 
 /-- The K98 §4.5 motion VP data, lifted from the JSON example rows. -/
 def motionData : List MotionDatum :=
   Examples.all.filterMap fromExample
 
-/-- `pathShapeToTelicity` reproduces the paper's telicity for every motion VP. -/
-theorem pathShapeToTelicity_matches_motionData :
-    ∀ d ∈ motionData, pathShapeToTelicity d.pathShape = d.expectedTelicity := by
+/-- The aspect axis of the path type reproduces the paper's telicity for
+    every motion VP. -/
+theorem pathType_telicity_matches_motionData :
+    ∀ d ∈ motionData, d.pathType.2 = d.expectedTelicity := by
   decide
 
 end MotionData

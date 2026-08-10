@@ -1645,7 +1645,9 @@ import Linglib.Semantics.Entailment.StrawsonSoundness
 import Linglib.Semantics.Events.Adjacency
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Events.CEM
+import Linglib.Semantics.Events.Path
 import Linglib.Semantics.Events.Phase
+import Linglib.Semantics.Events.SpatialTrace
 import Linglib.Semantics.Evidential.Basic
 import Linglib.Semantics.Evidential.Defs
 import Linglib.Semantics.Evidential.Epistemicity
@@ -1842,8 +1844,6 @@ import Linglib.Semantics.Reference.PluralityLicensing
 import Linglib.Semantics.Reference.PronounDenotation
 import Linglib.Semantics.Reference.Reciprocals
 import Linglib.Semantics.Reference.ShiftedIndexicals
-import Linglib.Semantics.Spatial.Path
-import Linglib.Semantics.Spatial.Trace
 import Linglib.Semantics.Supervaluation
 import Linglib.Semantics.Tense.Basic
 import Linglib.Semantics.Tense.Compositional

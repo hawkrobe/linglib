@@ -121,7 +121,7 @@ def MereoTag.toBoundedness : MereoTag → Boundedness
     instantiate this with different source types but the same target.
 
     Core instances (`Boundedness`, `MereoTag`) live here. Domain-specific
-    instances (`Telicity`, `VendlerClass`, `PathShape`, `BoundaryType`)
+    instances (`Telicity`, `VendlerClass`, `BoundaryType`)
     live in their respective theory/bridge files. -/
 class LicensingPipeline (α : Type*) where
   toBoundedness : α → Boundedness

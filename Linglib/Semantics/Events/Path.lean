@@ -9,9 +9,9 @@ spatial analog of temporal intervals, carrying [zwarts-2005]'s Appendix A path
 algebra in discrete form: partial concatenation (defined only head-to-tail),
 the subpath order, and endpoint-sharing adjacency ([krifka-1998]). Zwarts's
 own paths are continuous constant-speed curves `[0,1] → ℝ³` — mathlib's
-topological `_root_.Path`, whose `trans` reparametrizes, so his algebra would
-need the arc-length quotient there; he notes the constructive
-sequence-of-places route is equally compatible with the algebra, and it keeps
+topological `_root_.Path`, whose `trans` reparametrizes, so the algebra would
+need the arc-length quotient there; the paper endorses the constructive
+sequence-of-places route as equally compatible with the algebra, and it keeps
 every operation computable.
 
 ## Main declarations
@@ -28,16 +28,15 @@ every operation computable.
   (`open scoped Spatial.Path`).
 * `Path.adjacent`: endpoint-sharing spatial adjacency ([krifka-1998]), the
   spatial half of the movement relations in `Studies/Krifka1998.lean`.
-* `PathShape`: [zwarts-2005]'s boundedness classification of directional PPs,
-  with `PathShape.toBoundedness` into `Core.Order.Boundedness`.
+* `Path.Directionality`: the source/goal/route trichotomy of directional
+  prepositions ([zwarts-2005]); paired with `Features.Telicity` at use sites
+  — the paper's two independent classificatory axes.
 -/
 
 namespace Spatial
 
-/-- Spatial path: a directed trajectory through its visited locations, as a
-    start plus later stops ([zwarts-2005]: directed stretches of space with a
-    source and a goal). Parallels `NonemptyInterval` for the temporal
-    domain. -/
+/-- A directed trajectory through space, as the finite sequence of visited
+    locations. The spatial analog of a temporal `NonemptyInterval`. -/
 structure Path (Loc : Type*) where
   /-- The starting location p(0). -/
   source : Loc
@@ -73,9 +72,8 @@ private theorem getLastD_append {α : Type*} (l₁ l₂ : List α) (d : α) :
 
 /-! ### Concatenation and subpaths -/
 
-/-- (67) of [zwarts-2005]: `r` is the concatenation `p + q`. Partial —
-    defined only when `p` ends where `q` starts. Associative, neither
-    commutative nor idempotent. -/
+/-- `r` is the concatenation `p + q`, defined only when `p` ends where `q`
+    starts. Associative, neither commutative nor idempotent. -/
 def IsConcat (p q r : Path Loc) : Prop :=
   p.goal = q.source ∧ r = ⟨p.source, p.steps ++ q.steps⟩
 
@@ -94,18 +92,16 @@ theorem IsConcat.points_eq {p q r : Path Loc} (h : IsConcat p q r) :
     r.points = p.points ++ q.steps := by
   rw [h.2]; simp [points]
 
-/-- Constant paths concatenate with themselves to themselves: they are the
-    identity elements of concatenation. -/
+/-- A constant path concatenates with itself to itself. -/
 theorem isConcat_const (l : Loc) : IsConcat (const l) (const l) (const l) :=
   ⟨rfl, rfl⟩
 
-/-- (68) of [zwarts-2005]: `p` is a subpath of `q` iff `r + p + r′ = q` for
-    some `r`, `r′`. -/
+/-- `p` is a subpath of `q` if concatenating some `r`, `r′` around `p`
+    yields `q`. -/
 def Subpath (p q : Path Loc) : Prop :=
   ∃ r r' m, IsConcat r p m ∧ IsConcat m r' q
 
-/-- The working characterization: subpath-hood is infix-hood of point
-    sequences. -/
+/-- Subpath-hood is infix-hood of point sequences. -/
 theorem subpath_iff_infix {p q : Path Loc} :
     Subpath p q ↔ p.points <:+: q.points := by
   constructor
@@ -142,10 +138,10 @@ theorem subpath_iff_infix {p q : Path Loc} :
       · cases q
         simp_all [points, List.append_assoc]
 
-/-- The subpath order as an order instance — **scoped**, because path sets
-    are also studied under a rival total lattice sum ([krifka-1998]'s part
-    structures, hypothesized as `SemilatticeSup (Path Loc)` in
-    `Spatial/Trace.lean`); activate with `open scoped Spatial.Path`. -/
+/-- The subpath order, as a **scoped** instance: path sets are also studied
+    under a rival total lattice sum ([krifka-1998]'s part structures,
+    hypothesized as `SemilatticeSup (Path Loc)` in `Events/SpatialTrace.lean`).
+    Activate with `open scoped Spatial.Path`. -/
 scoped instance instSubpathOrder : PartialOrder (Path Loc) where
   le := Subpath
   le_refl p := subpath_iff_infix.mpr (List.infix_refl _)
@@ -154,16 +150,15 @@ scoped instance instSubpathOrder : PartialOrder (Path Loc) where
   le_antisymm _ _ hab hba := points_injective
     (List.infix_antisymm (subpath_iff_infix.mp hab) (subpath_iff_infix.mp hba))
 
-/-- Constant paths are least: `const p.source ≤ p`. -/
+/-- Constant paths are least in the subpath order. -/
 theorem const_source_le (p : Path Loc) : const p.source ≤ p :=
   subpath_iff_infix.mpr ⟨[], p.steps, rfl⟩
 
 /-! ### Adjacency -/
 
-/-- Two paths are spatially adjacent (`∞_H` in [krifka-1998]'s notation)
-    if they share an endpoint: one's goal is the other's source.
-    Instantiates K98's abstract adjacency primitive for concrete paths;
-    the spatial half of the movement relations in `Studies/Krifka1998.lean`. -/
+/-- Two paths are adjacent if one's goal is the other's source —
+    [krifka-1998]'s spatial adjacency `∞_H`, the spatial half of the
+    movement relations in `Studies/Krifka1998.lean`. -/
 def adjacent (p1 p2 : Path Loc) : Prop :=
   p1.goal = p2.source ∨ p2.goal = p1.source
 
@@ -183,39 +178,22 @@ theorem IsConcat.adjacent {p q r : Path Loc} (h : IsConcat p q r) :
     p.adjacent q :=
   Or.inl h.1
 
-end Path
+/-! ### Directionality -/
 
-/-! ### Path shape -/
-
-/-- Directional PP boundedness classification.
-    [zwarts-2005]: the boundedness of a directional PP determines
-    whether the VP it creates is telic or atelic.
-
-    - `bounded`: goal-oriented ("to the store", "into the room")
-    - `unbounded`: direction-oriented ("towards the store", "along the road")
-    - `source`: origin-oriented ("from the store", "out of the room")
-
-    This classifies the *set of paths* denoted by a PP, not individual
-    paths, by closure under path concatenation: "towards X" denotes a
-    cumulative set (concatenating two towards-X paths gives another),
-    while "to X" strictly read denotes a set with no concatenable pairs
-    at all. [zwarts-2005] shows bounded PPs are *not* quantized — a to-X
-    path has proper to-X subpaths — so boundedness is non-cumulativity,
-    not `Mereology.QUA`; see `Studies/Zwarts2005.lean`. -/
-inductive PathShape where
-  | bounded
-  | unbounded
+/-- The source/goal/route trichotomy of directional prepositions
+    ([zwarts-2005]): source prepositions (*from*, *out of*) locate the
+    starting point p(0), goal prepositions (*to*, *into*) the endpoint
+    p(1), route prepositions (*over*, *through*, *via*) an interior point.
+    Independent of prepositional aspect — *to* is goal-directed telic,
+    *towards* goal-directed atelic — so consumers pair it with
+    `Features.Telicity`; the aspect axis is grounded in
+    `Studies/Zwarts2005.lean`. -/
+inductive Directionality where
   | source
+  | goal
+  | route
   deriving DecidableEq, Repr
 
-/-- Path shape to scale boundedness: bounded/source paths correspond
-    to closed scales, unbounded paths to open scales. -/
-def PathShape.toBoundedness : PathShape → Core.Order.Boundedness
-  | .bounded => .closed
-  | .source => .closed
-  | .unbounded => .open_
-
-instance : Core.Order.LicensingPipeline PathShape where
-  toBoundedness := PathShape.toBoundedness
+end Path
 
 end Spatial
