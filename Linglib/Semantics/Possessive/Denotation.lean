@@ -22,7 +22,7 @@ relation), inheriting the possessor's intrinsic presupposition. So:
 * `Possessive.theOf R` — the Kleisli arrow: the unique `R`-possessee of a
   possessor, as a `NominalDenot`.
 * `Possessive.applyTo nd R = nd >>= theOf R` — *NP's N*.
-* `Possessive.Definite.toNominalDenot` — a definite carrier as a `NominalDenot`
+* `Possessive.Definite.toNominalDenot` — a definite description as a `NominalDenot`
   (always-defined selector, from `HasIotaWitness`).
 
 ## Main statements
@@ -76,11 +76,11 @@ theorem applyTo_applyTo (nd : NominalDenot Ctx W E) (R₁ R₂ : E → E → Pro
     applyTo (applyTo nd R₁) R₂ = nd >>= fun p => applyTo (theOf R₁ p) R₂ := by
   simp only [applyTo, NominalDenot.bind_assoc]
 
-/-! ### Definite carriers as nominal denotations -/
+/-! ### Definite descriptions as nominal denotations -/
 
-/-- A definite possessive carrier as a `NominalDenot` over its situations: the
+/-- A definite possessive description as a `NominalDenot` over its situations: the
 selector is `russellIota` of the possessee predicate, always defined because the
-carrier bears the iota-presupposition (`HasIotaWitness`). -/
+description bears the iota-presupposition (`HasIotaWitness`). -/
 noncomputable def Definite.toNominalDenot {S : Type} (d : Possessive.Definite E S) :
     NominalDenot Ctx S E where
   presup := fun _ _ => True

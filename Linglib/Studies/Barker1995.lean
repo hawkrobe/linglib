@@ -84,7 +84,7 @@ theorem narrowing_flips_truth_value :
 /-! ### Definiteness and the capability mixins
 
 A definite possessive ("the boy's cat") and a relational possessive ("John's
-sisters"), exercising the possessive-carrier capability mixins
+sisters"), exercising the possessive-description capability mixins
 (`HasIotaWitness`, `HasPossessor`, `HasPossessionRelation`). -/
 
 /-- "the boy's cat": possessor `0` (the boy), with a uniquely-identified cat
@@ -105,7 +105,7 @@ def sibling : Fin 3 → Fin 3 → Prop := fun x y => x = 0 ∧ (y = 1 ∨ y = 2)
 
 /-- "John's sisters": possessor `0` (John), with the sibling relation as the
 possession relation (a relational noun, so the restrictor is trivial). -/
-def johnsSisters : Possessive.Carrier (Fin 3) Unit where
+def johnsSisters : Possessive.Description (Fin 3) Unit where
   possessor := 0
   relation := fun x y _ => sibling x y
   restrictor := fun _ _ => True
@@ -117,27 +117,27 @@ theorem johnsSisters_possesseeSet (y : Fin 3) (s : Unit) :
     possesseeSet johnsSisters y s ↔ sibling 0 y :=
   Iff.rfl
 
-/-! ### Narrowing through a carrier
+/-! ### Narrowing through a description
 
-The same narrowing, now for a type ⟨1⟩ possessor ("planet 2's rings"). A carrier
+The same narrowing, now for a type ⟨1⟩ possessor ("planet 2's rings"). A description
 bundles a single possessor, so narrowing surfaces as existential import: routed
-through the unified `carrierGQ` denotation, *planet 2's rings are icy* is false
+through the unified `descriptionGQ` denotation, *planet 2's rings are icy* is false
 because planet 2 has no ring. Reuses the planets/rings model above. -/
 
 /-- "planet 2's rings": possessor `2`, with `hasRing` as the possession
 relation. -/
-def planet2sRings : Possessive.Carrier (Fin 5) Unit where
+def planet2sRings : Possessive.Description (Fin 5) Unit where
   possessor := 2
   relation := fun x y _ => hasRing x y
   restrictor := fun y _ => isRing y
 
-/-- *Planet 2's rings are icy* is false: via the unified carrier denotation,
-existential import (`carrierGQ_existential_import`) requires planet 2 to possess
+/-- *Planet 2's rings are icy* is false: via the unified description denotation,
+existential import (`descriptionGQ_existential_import`) requires planet 2 to possess
 a ring, but it has none — narrowing at the individual level. -/
 theorem planet2sRings_no_icy_rings :
-    ¬ carrierGQ planet2sRings some_sem () isRing isIcy := by
+    ¬ descriptionGQ planet2sRings some_sem () isRing isIcy := by
   intro h
-  obtain ⟨b, _, hr⟩ := carrierGQ_existential_import planet2sRings some_sem () h
+  obtain ⟨b, _, hr⟩ := descriptionGQ_existential_import planet2sRings some_sem () h
   have hb : hasRing 2 b := hr
   simp only [hasRing] at hb
   rcases hb with ⟨h2, _⟩ | ⟨h2, _⟩ <;> exact absurd h2 (by decide)

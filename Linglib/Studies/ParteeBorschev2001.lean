@@ -12,8 +12,8 @@ relation of a relational noun or adjective (an *argument* genitive).
 
 The argument/modifier distinction is **study-local**: it is P&B's analysis of a
 *construction*, contested by [vikner-jensen-2002] (who deny the split is
-grammatical), so it is not a field of the theory-neutral substrate carrier
-(`Possessive.Carrier`). The predicate form itself *is* substrate — the bare
+grammatical), so it is not a field of the theory-neutral substrate description
+(`Possessive.Description`). The predicate form itself *is* substrate — the bare
 ⟨e,t⟩ possessive predicate is `Possessive.viaArgument` (the relation applied to
 the possessor).
 

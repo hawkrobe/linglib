@@ -1,13 +1,13 @@
 import Linglib.Semantics.Possessive.Relational
 
 /-!
-# Possessive carriers and capabilities
+# Possessive descriptions and capabilities
 
 The unified `Possessive` namespace for the semantics of possessive
 constructions, built on the general relational-noun substrate
 (`ArgumentStructure.Relational`: `π`, `Ex`, `iotaPresupposition`, …). The
-quantificational layer (`Poss`, `PossW`, narrowing, `carrierGQ`) is in
-`Possessive/GQ.lean`; the determiner that denotes through these carriers is
+quantificational layer (`Poss`, `PossW`, narrowing, `descriptionGQ`) is in
+`Possessive/GQ.lean`; the determiner that denotes through these descriptions is
 `Possessive.denote` (`Semantics/Definiteness/DeterminerDenotation.lean`).
 
 ## Main declarations
@@ -16,14 +16,14 @@ quantificational layer (`Poss`, `PossW`, narrowing, `carrierGQ`) is in
   combines with a noun: with a relational noun's own relation (the argument
   genitive) or with a free relation over a sortal restrictor (the modifier
   genitive, Barker's `π`).
-* `Possessive.Carrier` — a possessor + relation + sortal restrictor; the
-  possessee predicate is *derived* (`viaModifier`), never stored, so a carrier
-  cannot be incoherent.
+* `Possessive.Description` — a possessor + relation + sortal restrictor; the
+  possessee predicate is *derived* (`viaModifier`), never stored, so a
+  description cannot be incoherent.
 * `Possessive.Definite` — a possessive carrying a Russellian uniqueness
   presupposition.
 * `HasPossessor`, `HasPossesseePredicate`, `HasPossessionRelation`,
   `HasIotaWitness` — composable capability mixins (root namespace, `Add`/`Mul`
-  idiom); carriers opt into whichever axes they bear.
+  idiom); description types opt into whichever axes they bear.
 * `possesseeSet`, `existsUnique_possessee` — capability-polymorphic consumers.
 * `Possessive.PossessionRelationType` — the four-way Vikner-Jensen possession
   taxonomy.
@@ -52,13 +52,14 @@ theorem viaArgument_eq_viaModifier_top (possessor : E) (R : E → E → S → Pr
     viaArgument possessor R = viaModifier possessor (fun _ _ => True) R := by
   funext y s; simp [viaArgument, viaModifier, π]
 
-/-! ### Carriers -/
+/-! ### Possessive descriptions -/
 
-/-- A possessive carrier: a possessor, a possession relation, and a sortal
-restrictor (the noun predicate; `⊤` for a purely relational noun). The possessee
-predicate is *derived* (`viaModifier`), not stored — so a carrier cannot bundle
-a predicate unrelated to its relation. -/
-structure Carrier (E S : Type*) where
+/-- A possessive description ([barker-1995]): a possessor, a possession
+relation, and a sortal restrictor (the noun predicate; `⊤` for a purely
+relational noun). The possessee predicate is *derived* (`viaModifier`), not
+stored — so a description cannot bundle a predicate unrelated to its
+relation. -/
+structure Description (E S : Type*) where
   /-- The possessor entity. -/
   possessor : E
   /-- The possession relation. -/
@@ -66,14 +67,14 @@ structure Carrier (E S : Type*) where
   /-- The sortal restrictor (the noun predicate). -/
   restrictor : E → S → Prop
 
-namespace Carrier
+namespace Description
 
 /-- The derived possessee predicate: the restrictor conjoined with the relation
 applied to the possessor. -/
-def possesseePred (c : Carrier E S) : E → S → Prop :=
-  viaModifier c.possessor c.restrictor c.relation
+def possesseePred (d : Description E S) : E → S → Prop :=
+  viaModifier d.possessor d.restrictor d.relation
 
-end Carrier
+end Description
 
 /-- A definite possessive carrying its Russellian uniqueness presupposition
 ("the boy's cat", "my mother"). -/
@@ -112,36 +113,36 @@ def asNPQ {E : Type*} (possessor : E) (R : E → E → Prop) :
 
 end Possessive
 
-/-! ### Composable carrier capabilities
+/-! ### Composable description capabilities
 
 Cross-cutting capability mixins for the long-run library where 20-30+ possessive
-carriers each implement a subset of the axes. Following the mathlib
+description types each implement a subset of the axes. Following the mathlib
 `Add`/`Mul`/`Inv`/`Neg` idiom: many small composable classes, each one
-operation; carriers opt in to whichever axes they bear.
+operation; description types opt in to whichever axes they bear.
 
-| Carrier | `HasPossessor` | `HasPossesseePredicate` | `HasPossessionRelation` | `HasIotaWitness` |
+| Type | `HasPossessor` | `HasPossesseePredicate` | `HasPossessionRelation` | `HasIotaWitness` |
 |---|---|---|---|---|
-| `Possessive.Carrier E S`  | ✓ | ✓ | ✓ | — |
-| `Possessive.Definite E S` | ✓ | ✓ | — | ✓ | -/
+| `Possessive.Description E S` | ✓ | ✓ | ✓ | — |
+| `Possessive.Definite E S`    | ✓ | ✓ | — | ✓ | -/
 
-/-- A carrier whose values bundle a possessor entity. -/
+/-- A type whose values bundle a possessor entity. -/
 class HasPossessor (α : Type*) (E : outParam Type*) where
   /-- Project the bundled possessor entity. -/
   possessor : α → E
 
-/-- A carrier whose values bundle a possessee predicate `E → S → Prop`. -/
+/-- A type whose values bundle a possessee predicate `E → S → Prop`. -/
 class HasPossesseePredicate (α : Type*) (E S : outParam Type*) where
   /-- Project the bundled possessee predicate. -/
   possesseePredicate : α → E → S → Prop
 
-/-- A carrier whose values bundle a possession relation `E → E → S → Prop`. Distinct
+/-- A type whose values bundle a possession relation `E → E → S → Prop`. Distinct
 from `HasPossesseePredicate`: a relational noun's R is the noun denotation
 itself, while a sortal-with-π construction carries R separately. -/
 class HasPossessionRelation (α : Type*) (E S : outParam Type*) where
   /-- Project the bundled possession relation. -/
   possessionRelation : α → E → E → S → Prop
 
-/-- Prop class: a possessive carrier whose possessee predicate has a unique
+/-- Prop class: a possessive description whose possessee predicate has a unique
 witness at every situation. Definite possessives bear this; existential and
 quantificational ones do not. -/
 class HasIotaWitness (α : Type*) (E S : outParam Type*)
@@ -154,9 +155,9 @@ namespace Possessive
 
 variable {E S : Type*}
 
-instance : HasPossessor (Carrier E S) E := ⟨Carrier.possessor⟩
-instance : HasPossesseePredicate (Carrier E S) E S := ⟨Carrier.possesseePred⟩
-instance : HasPossessionRelation (Carrier E S) E S := ⟨Carrier.relation⟩
+instance : HasPossessor (Description E S) E := ⟨Description.possessor⟩
+instance : HasPossesseePredicate (Description E S) E S := ⟨Description.possesseePred⟩
+instance : HasPossessionRelation (Description E S) E S := ⟨Description.relation⟩
 
 instance : HasPossessor (Definite E S) E := ⟨Definite.possessor⟩
 instance : HasPossesseePredicate (Definite E S) E S := ⟨Definite.predicate⟩
@@ -171,15 +172,15 @@ end Possessive
 
 variable {α E S : Type*}
 
-/-- The possessee set determined by any carrier bundling a possessor and a
+/-- The possessee set determined by any description bundling a possessor and a
 possession relation: the entities standing in the relation to the possessor. -/
 def possesseeSet [HasPossessor α E] [HasPossessionRelation α E S] (a : α) :
     E → S → Prop :=
   fun y s => HasPossessionRelation.possessionRelation a (HasPossessor.possessor a) y s
 
-/-- Any carrier bearing a Russellian iota-witness denotes a unique possessee at
-every situation. Definite possessives inherit `∃!`-reference with no
-carrier-specific reproof. -/
+/-- Any description bearing a Russellian iota-witness denotes a unique possessee
+at every situation. Definite possessives inherit `∃!`-reference with no
+type-specific reproof. -/
 theorem existsUnique_possessee [HasPossesseePredicate α E S] [HasIotaWitness α E S]
     (a : α) (s : S) :
     ∃! y : E, HasPossesseePredicate.possesseePredicate a y s :=

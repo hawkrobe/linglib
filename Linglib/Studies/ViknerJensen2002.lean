@@ -8,7 +8,7 @@ genitive: the genitive always combines with a *relational* noun — a
 non-relational head is coerced via Barker's `π`, the relation type supplied by
 the noun's qualia (`availableRelations`, §3.1.2). The genitive clitic itself
 (`clitic`, their (16)) embeds a narrow-scope definite: the worked examples
-prove `iotaPresupposition` and feed the `Possessive.Definite` carrier's
+prove `iotaPresupposition` and feed `Possessive.Definite`'s
 `existsUnique_possessee`.
 -/
 
@@ -115,8 +115,8 @@ theorem aGirlsTeacher (P : Fin 4 → Prop) :
     rwa [← (hx 1).mp ⟨rfl, rfl⟩] at hP
   · exact fun hP => ⟨0, rfl, 1, fun y => by simp, hP⟩
 
-/-- *the girl's teacher* as a `Possessive.Definite` carrier: its unique referent
-is delivered by the carrier API's `existsUnique_possessee`, no bespoke proof. -/
+/-- *the girl's teacher* as a `Possessive.Definite`: its unique referent is
+delivered by the capability API's `existsUnique_possessee`, no bespoke proof. -/
 def theGirlsTeacher : Possessive.Definite (Fin 4) Unit where
   possessor := 0
   predicate := viaArgument 0 teacherRel
