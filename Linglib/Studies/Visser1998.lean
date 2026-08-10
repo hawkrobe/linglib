@@ -23,8 +23,8 @@ substrate.
   relations as the `V`-invariant tests (`Update.IsTest`).
 - `HasContext.mono`: the order is sound for the typing — `c ≤ d` types more
   relations (Theorem 3.5(1)).
-- `HasContext.patch`, `HasContext.patch_unique`: the unique-output lemma
-  (Lemma 3.7).
+- `HasContext.patch`, `HasContext.patch_eqOn`, `HasContext.patch_unique`:
+  Lemma 3.7 — existence, transfer, and uniqueness of the patched output.
 - `HasContext.conj`, `HasContext.impl`, `HasContext.exists_`: composition,
   implication, and existential typing (Theorems 3.8–3.9 and
   Definition 3.12's `c_{∃v}`), from the typed generators `hasContext_atom`
@@ -200,16 +200,25 @@ theorem mono (h : HasContext R c) (hcd : c ≤ d) : HasContext R d := by
 
 /-! ### The unique-output lemma (Lemma 3.7) -/
 
+/-- Lemma 3.7, transfer: the patch agrees with `g` at the blocks and
+wherever the inputs agree. -/
+theorem patch_eqOn {J : Set ℕ} (h : HasContext R c) (hR : R f g)
+    (hJ : Set.EqOn f' f J) :
+    Set.EqOn (c.B.piecewise g f') g (J ∪ ↑c.B) := by
+  intro v hv
+  have hb := h.blocks hR
+  grind [Set.EqOn, Finset.piecewise_eq_of_mem, Finset.piecewise_eq_of_notMem]
+
 /-- Lemma 3.7, existence: if `f'` agrees with `f` on the inputs and
 `f R g`, then `R` relates `f'` to the patch of `f'` by `g` at the
 blocks. -/
 theorem patch (h : HasContext R c) (hI : Set.EqOn f' f ↑c.I)
-    (hR : R f g) : R f' (c.B.piecewise g f') := by
-  refine h.stable hR hI (λ v hv => ?_)
+    (hR : R f g) : R f' (c.B.piecewise g f') :=
+  h.stable hR hI
+    ((h.patch_eqOn hR hI).mono (λ v hv => by
+      have hc := c.coh_mem (v := v)
+      grind)).symm
     (λ v hv => (c.B.piecewise_eq_of_notMem _ _ hv).symm)
-  have hb := h.blocks hR
-  have hc := c.coh_mem (v := v)
-  grind [Set.EqOn, Finset.piecewise_eq_of_mem, Finset.piecewise_eq_of_notMem]
 
 /-- Lemma 3.7, uniqueness: the patch is the only output over `f'`
 agreeing with `g` on the blocks. -/
@@ -258,18 +267,12 @@ theorem impl (hR : HasContext R c) (hS : HasContext S d) :
   refine hasContext_test_iff.mpr ⟨λ _ _ h => h.1, ?_⟩
   rintro f f' hI ⟨-, hall⟩
   refine ⟨rfl, λ k hRk => ?_⟩
-  -- Transport the antecedent back to `f` by the patch lemma.
-  have hIff' : Set.EqOn f f' ↑c.I :=
-    (hI.mono (Finset.coe_subset.mpr Finset.subset_union_left)).symm
-  have hfk₀ := hR.patch hIff' hRk
-  obtain ⟨j, hSj⟩ := hall (c.B.piecewise k f) hfk₀
-  -- Transport the consequent forward to `k` by the patch lemma.
-  have hIk : Set.EqOn k (c.B.piecewise k f) ↑d.I := by
-    intro v hv
-    have hb := hR.blocks hRk
-    grind [Set.EqOn, Finset.piecewise_eq_of_mem,
-      Finset.piecewise_eq_of_notMem, Context.I_mul]
-  exact ⟨_, hS.patch hIk hSj⟩
+  -- Lemma 3.7 twice: patch the antecedent back to `f`, then transfer
+  -- the consequent forward to `k`.
+  obtain ⟨j, hSj⟩ := hall (c.B.piecewise k f) (hR.patch
+    (hI.mono (Finset.coe_subset.mpr Finset.subset_union_left)).symm hRk)
+  exact ⟨_, hS.patch ((hR.patch_eqOn hRk hI.symm).mono
+    (λ v hv => by grind [Context.I_mul])).symm hSj⟩
 
 end HasContext
 
