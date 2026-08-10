@@ -1,23 +1,20 @@
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Perspective
 
 /-!
-# Greek Temporal Deictic Adverbs
-[tsilia-zhao-2026]
+# Greek temporal deictic adverbs
 
-Lexical entry for Greek τότε "tóte" (then), typed by `ThenAdverb`.
-Cross-linguistic evidence for the then-present incompatibility.
-
+Lexical entry for Modern Greek τότε *tóte* 'then', typed by
+`Tense.Perspective.ThenAdverb` — [tsilia-zhao-2026]'s ⌈then⌉ class of
+temporal pronouns presupposing disjointness from the perspective time π.
 -/
 
 namespace Greek.StandardModern.TemporalDeictic
 
-open Tense
+open Tense.Perspective
 
-/-- Greek τότε "tóte" -/
+/-- Greek τότε *tóte* 'then' -/
 def tote : ThenAdverb where
-  language := "Greek"
   form := "τότε"
   gloss := "then"
-  shiftsPerspective := true
 
 end Greek.StandardModern.TemporalDeictic

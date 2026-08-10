@@ -55,7 +55,7 @@ modeling absent here.
 
 namespace PatelGroszGrosz2017
 
-open Features.Definiteness (ArticleType)
+open Semantics.Definiteness (ArticleType)
 
 /-- The **three** pragmatic contexts that license the strong-article ("DEM") series
     in German ([patel-grosz-grosz-2017] §5): a positive pragmatic effect must

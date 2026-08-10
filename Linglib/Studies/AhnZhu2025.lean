@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Possessive.Relational
-import Linglib.Features.Definiteness
+import Linglib.Semantics.Definiteness.Defs
 import Linglib.Studies.Jenks2018
 import Linglib.Data.Examples.AhnZhu2025
 
@@ -63,7 +63,7 @@ presupposition.
 namespace AhnZhu2025
 
 open ArgumentStructure.Relational
-open Features.Definiteness
+open Semantics.Definiteness
 
 variable {E S : Type*}
 
@@ -142,7 +142,7 @@ theorem bare_nonrelational_cannot_bridge :
 /-! ### Shared bridging split ([schwarz-2009] / [jenks-2018]) -/
 
 /-- [ahn-zhu-2025] inherit Schwarz's bridging split, shared with [jenks-2018] via
-the common `Features.Definiteness.bridgingPresupType`: part-whole bridging is the
+the common `Semantics.Definiteness.bridgingPresupType`: part-whole bridging is the
 uniqueness route (bare ι; bare nouns suffice), relational bridging the familiarity
 route (the relatum index; *na* or a lexical relation). -/
 theorem inherits_schwarz_bridging_split :

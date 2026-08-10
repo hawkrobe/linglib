@@ -661,7 +661,6 @@ import Linglib.Features.Case.Source
 import Linglib.Features.Clusivity
 import Linglib.Features.ContainmentPair
 import Linglib.Features.CoreferenceStatus
-import Linglib.Features.Definiteness
 import Linglib.Features.Deixis
 import Linglib.Features.Dimension
 import Linglib.Features.Empathy
@@ -847,7 +846,6 @@ import Linglib.Fragments.German.Predicates.Modal
 import Linglib.Fragments.German.Pronouns
 import Linglib.Fragments.German.Reciprocals
 import Linglib.Fragments.German.Relativization
-import Linglib.Fragments.German.TemporalDeictic
 import Linglib.Fragments.German.Tense
 import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.VerbParticles
@@ -904,7 +902,6 @@ import Linglib.Fragments.Hungarian.PolarityItems
 import Linglib.Fragments.Hungarian.Possession
 import Linglib.Fragments.Hungarian.Predicates
 import Linglib.Fragments.Hungarian.Reciprocals
-import Linglib.Fragments.Hungarian.TemporalDeictic
 import Linglib.Fragments.Hungarian.VowelHarmony
 import Linglib.Fragments.Icelandic.Case
 import Linglib.Fragments.Icelandic.Nominalizations
@@ -1022,7 +1019,6 @@ import Linglib.Fragments.Mandarin.Questions
 import Linglib.Fragments.Mandarin.Reciprocals
 import Linglib.Fragments.Mandarin.Relativization
 import Linglib.Fragments.Mandarin.Resultatives
-import Linglib.Fragments.Mandarin.TemporalDeictic
 import Linglib.Fragments.Mandarin.WordOrder
 import Linglib.Fragments.Maori.Negation
 import Linglib.Fragments.Maori.Phonology
@@ -1577,6 +1573,7 @@ import Linglib.Semantics.Conditionals.Stalnaker
 import Linglib.Semantics.Conditionals.Sweetser
 import Linglib.Semantics.Conditionals.WillConditional
 import Linglib.Semantics.Definiteness.Basic
+import Linglib.Semantics.Definiteness.Defs
 import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.DeterminerDenotation
 import Linglib.Semantics.Definiteness.Interpret
@@ -2760,7 +2757,6 @@ import Linglib.Studies.ZaslavskyEtAl2019
 import Linglib.Studies.ZaslavskyKempRegierTishby2018
 import Linglib.Studies.Zeijlstra2012
 import Linglib.Studies.Zhao2025
-import Linglib.Studies.Zhao2025ThenPresent
 import Linglib.Studies.Zheng2025
 import Linglib.Studies.Zimmermann2008
 import Linglib.Studies.Zimmermann2026

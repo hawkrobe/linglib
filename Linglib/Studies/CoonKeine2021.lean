@@ -64,7 +64,7 @@ formal.
   the explanatory work happens).
 - Against [pancheva-zubizarreta-2018]'s P-Constraint (criticized in
   their §2 as stipulating the licensing parameter): the gluttony
-  tables match `PConstraint.IsLicit` exactly for the weak and strong
+  tables match `PCC.IsLicit` exactly for the weak and strong
   grammars, and diverge on one cell each for ultrastrong (2>2) and
   me-first (1>1) — `*_matches_pConstraint` / `*_diverges_from_pConstraint`.
 

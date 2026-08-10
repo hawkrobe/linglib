@@ -1,23 +1,20 @@
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Perspective
 
 /-!
-# Hebrew Temporal Deictic Adverbs
-[tsilia-zhao-2026]
+# Hebrew temporal deictic adverbs
 
-Lexical entry for Hebrew אז "az" (then), typed by `ThenAdverb`.
-Cross-linguistic evidence for the then-present incompatibility.
-
+Lexical entry for Modern Hebrew אז *az* 'then', typed by
+`Tense.Perspective.ThenAdverb` — [tsilia-zhao-2026]'s ⌈then⌉ class of
+temporal pronouns presupposing disjointness from the perspective time π.
 -/
 
 namespace Hebrew.TemporalDeictic
 
-open Tense
+open Tense.Perspective
 
-/-- Hebrew אז "az" -/
+/-- Hebrew אז *az* 'then' -/
 def az : ThenAdverb where
-  language := "Hebrew"
   form := "אז"
   gloss := "then"
-  shiftsPerspective := true
 
 end Hebrew.TemporalDeictic

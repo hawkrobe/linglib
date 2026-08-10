@@ -1,4 +1,4 @@
-import Linglib.Features.Definiteness
+import Linglib.Semantics.Definiteness.Defs
 import Linglib.Features.Deixis
 import Linglib.Features.Number.Basic
 import Linglib.Morphology.Word.Basic
@@ -49,7 +49,7 @@ deferred; `Quantifier`/`Possessive` are declared but not fleshed out beyond `for
 This file stays the Frame-free lexical/typological layer.
 -/
 
-open Features.Definiteness
+open Semantics.Definiteness
   (DefPresupType DefiniteUseType DefMarkingStrategy Definiteness ArticleType
    DescriptionKind useTypeToPresupType strategyToArticleType)
 

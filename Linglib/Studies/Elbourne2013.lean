@@ -1,5 +1,5 @@
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Features.Definiteness
+import Linglib.Semantics.Definiteness.Defs
 import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Questions.Partition.QUD
@@ -65,7 +65,7 @@ open Semantics.Presupposition (PartialProp)
 open Semantics.Presupposition.PartialProp (presupOfReferent presupOfReferent_presup
   presupOfReferent_assertion_some presupOfReferent_assertion_none)
 open Semantics.Definiteness (russellIotaList)
-open Features.Definiteness (DefPresupType)
+open Semantics.Definiteness (DefPresupType)
 open Intensional.SitVarStatus (SitVarStatus)
 open Semantics.Definiteness (qforceToPresupType)
 open Semantics.Reference.Donnellan (UseMode definiteNominal)

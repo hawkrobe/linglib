@@ -1,4 +1,4 @@
-import Linglib.Features.Definiteness
+import Linglib.Semantics.Definiteness.Defs
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.Interpret
@@ -37,7 +37,7 @@ The split is operationalized in the Core layer by:
   `.anaphoric` (strong) constructors, with different argument shapes
   (`.unique` carries a *situation* index for resource-situation binding;
   `.anaphoric` carries a *discourse* index for antecedent lookup).
-- **`Features.Definiteness.DescriptionKind.presupType`** — projects each kind
+- **`Semantics.Definiteness.DescriptionKind.presupType`** — projects each kind
   to the [schwarz-2009] presupposition type it expresses.
 - **`Semantics.Definiteness.Determiner`** — the declared determiner set records the
   morphological inventory; `Determiner.Inventory.IsSyncretic` is the predicate that
@@ -66,10 +66,9 @@ We verify:
 
 namespace Schwarz2009
 
-open Features.Definiteness
+open Semantics.Definiteness
 open Intensional
 open Intensional.Variables
-open Semantics.Definiteness
 
 -- ════════════════════════════════════════════════════════════════
 -- §1: The two presupposition types are genuinely distinct

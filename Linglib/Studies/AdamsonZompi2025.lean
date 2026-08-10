@@ -408,8 +408,9 @@ theorem pcc_participant_equivalence (io do_ : Person) :
 -- ============================================================================
 
 /-- The P-Constraint ([pancheva-zubizarreta-2018]) derives PCC effects
-    from point-of-view encoding. `IsLicit` from `PConstraint.lean` evaluates
-    the constraint over interpretable person values.
+    from point-of-view encoding. `PCC.IsLicit`
+    (`Features/Person/PersonCaseConstraint.lean`) evaluates the
+    constraint over interpretable person values.
 
     The Weak PCC (P-Uniqueness inactive) produces the same judgments as
     our `weakPCC` function. -/
