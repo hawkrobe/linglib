@@ -1,11 +1,12 @@
 import Linglib.Logic.Assignment
-import Linglib.Semantics.Dynamic.CDRT
+import Linglib.Semantics.Dynamic.Update
+import Mathlib.Data.Set.Piecewise
 
 /-!
 # Dynamic Predicate Logic
-[groenendijk-stokhof-1991]
 
-The DPL substrate: meanings are relations between total assignments
+The DPL substrate ([groenendijk-stokhof-1991]): meanings are relations
+between total assignments
 (`Rel`, the paper's Definition 2), truth is having an output
 (Definition 3), and `♦` closes a meaning to its test (Definition 17).
 Conjunction is relational composition and the existential is random
@@ -24,7 +25,7 @@ restricted double-negation laws, interdefinability) are proved in
 - `trueAt`, `satisfactionSet`, `productionSet` (Definitions 3, 6, 9).
 - `toDRS`/`ofDRS`: a DPL relation is an `Update` over assignments — DPL
   embeds in dynamic Ty2 at `S = Assignment E`, each connective matching
-  its spine combinator (`conj_eq_dseq`, `neg_eq_test_dneg`, ...).
+  its spine combinator (`toDRS_conj`, `toDRS_neg`, ...).
 -/
 
 namespace DPL
@@ -99,6 +100,28 @@ theorem le_agreeOn_conj (R : Rel E) (V W : Set ℕ) :
     R ≤ (agreeOn V).conj (R.conj (agreeOn W)) :=
   λ f g hR => ⟨f, Set.eqOn_refl _ _, g, hR, Set.eqOn_refl _ _⟩
 
+/-- Agreements compose to agreement on the intersection. -/
+theorem agreeOn_conj_agreeOn (V W : Set ℕ) :
+    (agreeOn V).conj (agreeOn W) = agreeOn (E := E) (V ∩ W) := by
+  classical
+  funext f h
+  refine propext ⟨λ ⟨g, hV, hW⟩ v hv => (hV hv.1).trans (hW hv.2),
+    λ hVW => ⟨V.piecewise f h, (V.piecewise_eqOn f h).symm, λ v hv => ?_⟩⟩
+  by_cases hvV : v ∈ V
+  · exact (Set.piecewise_eq_of_mem _ _ _ hvV).trans (hVW ⟨hvV, hv⟩)
+  · exact Set.piecewise_eq_of_notMem _ _ _ hvV
+
+/-- Agreements meet in agreement on the union. -/
+theorem agreeOn_inf_agreeOn (V W : Set ℕ) :
+    agreeOn V ⊓ agreeOn W = agreeOn (E := E) (V ∪ W) := by
+  funext f g
+  exact propext Set.eqOn_union.symm
+
+/-- Agreement on no variables is trivial. -/
+theorem agreeOn_empty : agreeOn (E := E) ∅ = ⊤ := by
+  funext f g
+  exact propext ⟨λ _ => trivial, λ _ => Set.eqOn_empty f g⟩
+
 /-! ### Semantic notions (Definitions 3, 6, 9) -/
 
 /-- Truth (Definition 3): `φ` is true w.r.t. `g` iff it has an output. -/
@@ -119,18 +142,9 @@ DPL embeds directly into dynamic Ty2 at `S = Assignment E`: DPL
 assignments are Ty2 states, DPL relations are `Update` meanings, and
 each connective matches its spine combinator. -/
 
-/-- DPL dref: projection function for variable `n`. -/
-def dref (n : ℕ) : Dref (Assignment E) E := λ g => g n
-
 /-- DPL extend is `Function.update`. -/
 abbrev extend (g : Assignment E) (n : ℕ) (e : E) : Assignment E :=
   Function.update g n e
-
-theorem extend_at (g : Assignment E) (n : ℕ) (e : E) :
-    dref n (extend g n e) = e := by simp [dref, extend]
-
-theorem extend_other (g : Assignment E) (n m : ℕ) (e : E) (h : n ≠ m) :
-    dref m (extend g n e) = dref m g := by simp [dref, extend, h.symm]
 
 /-- A DPL relation is an `Update` over `Assignment E`. -/
 def toDRS (φ : Rel E) : Update (Assignment E) := φ
@@ -141,28 +155,18 @@ def ofDRS (D : Update (Assignment E)) : Rel E := D
 @[simp] theorem toDRS_ofDRS (φ : Rel E) : ofDRS (toDRS φ) = φ := rfl
 @[simp] theorem ofDRS_toDRS (D : Update (Assignment E)) : toDRS (ofDRS D) = D := rfl
 
-theorem atom_eq_test (p : Assignment E → Prop) :
-    toDRS (Rel.atom p) = test (λ g => p g) := by
-  ext g h
-  simp only [toDRS, Rel.atom, test]
-  constructor
-  · intro ⟨heq, hp⟩; exact ⟨heq, by rw [← heq]; exact hp⟩
-  · intro ⟨heq, hp⟩; exact ⟨heq, by rw [heq]; exact hp⟩
+theorem toDRS_atom (p : Assignment E → Prop) :
+    toDRS (Rel.atom p) = test (λ g => p g) :=
+  (test_eq_input _).symm
 
-theorem conj_eq_dseq (φ ψ : Rel E) :
-    toDRS (Rel.conj φ ψ) = seq (toDRS φ) (toDRS ψ) := by
-  ext g h
-  simp only [toDRS, Rel.conj, seq, Relation.Comp]
+theorem toDRS_conj (φ ψ : Rel E) :
+    toDRS (Rel.conj φ ψ) = seq (toDRS φ) (toDRS ψ) := rfl
 
-theorem neg_eq_test_dneg (φ : Rel E) :
-    toDRS (Rel.neg φ) = test (neg (toDRS φ)) := by
-  ext g h
-  simp only [toDRS, Rel.neg, test, neg]
-  constructor
-  · intro ⟨heq, hnex⟩; exact ⟨heq, by rw [← heq]; exact hnex⟩
-  · intro ⟨heq, hnex⟩; exact ⟨heq, by rw [heq]; exact hnex⟩
+theorem toDRS_neg (φ : Rel E) :
+    toDRS (Rel.neg φ) = test (neg (toDRS φ)) :=
+  (test_eq_input _).symm
 
-theorem exists_eq (x : ℕ) (φ : Rel E) :
+theorem toDRS_exists_ (x : ℕ) (φ : Rel E) :
     toDRS (Rel.exists_ x φ) = λ g h => ∃ d : E, toDRS φ (extend g x d) h := by
   have hup : ∀ (g : Assignment E) (d : E),
       (fun n => if n = x then d else g n) = Function.update g x d := fun g d => by
@@ -175,7 +179,7 @@ random reset at `x` composed with the scope. -/
 theorem exists_eq_reset_conj (x : ℕ) (φ : Rel E) :
     Rel.exists_ x φ = (reset x).conj φ := by
   have h1 : Rel.exists_ x φ =
-      λ g h => ∃ d, φ (Function.update g x d) h := exists_eq x φ
+      λ g h => ∃ d, φ (Function.update g x d) h := toDRS_exists_ x φ
   rw [h1]
   funext g h
   refine propext ⟨λ ⟨d, hφ⟩ =>
@@ -184,34 +188,29 @@ theorem exists_eq_reset_conj (x : ℕ) (φ : Rel E) :
   rwa [Function.update_eq_iff.mpr ⟨rfl, λ v hv => hk hv⟩]
 
 /-- DPL implication is the test of dynamic implication. -/
-theorem impl_eq_test_dimpl (φ ψ : Rel E) :
-    toDRS (Rel.impl φ ψ) = test (impl (toDRS φ) (toDRS ψ)) := by
-  ext g h
-  simp only [toDRS, Rel.impl, test, impl]
-  constructor
-  · intro ⟨heq, hall⟩; exact ⟨heq, by rw [← heq]; exact hall⟩
-  · intro ⟨heq, hall⟩; exact ⟨heq, by rw [heq]; exact hall⟩
+theorem toDRS_impl (φ ψ : Rel E) :
+    toDRS (Rel.impl φ ψ) = test (impl (toDRS φ) (toDRS ψ)) :=
+  (test_eq_input _).symm
 
 /-- DPL disjunction is the test of dynamic disjunction. -/
-theorem disj_eq_test_ddisj (φ ψ : Rel E) :
-    toDRS (Rel.disj φ ψ) = test (disj (toDRS φ) (toDRS ψ)) := by
-  ext g h
-  simp only [toDRS, Rel.disj, test, disj]
-  constructor
-  · intro ⟨heq, hd⟩; exact ⟨heq, by rw [← heq]; exact hd⟩
-  · intro ⟨heq, hd⟩; exact ⟨heq, by rw [heq]; exact hd⟩
+theorem toDRS_disj (φ ψ : Rel E) :
+    toDRS (Rel.disj φ ψ) = test (disj (toDRS φ) (toDRS ψ)) :=
+  (test_eq_input _).symm
 
 /-- DPL closure is the test of existential closure. -/
-theorem close_eq_test_closure (φ : Rel E) :
-    toDRS (Rel.close φ) = test (closure (toDRS φ)) := by
-  ext g h
-  simp only [toDRS, Rel.close, test, closure]
-  constructor
-  · intro ⟨heq, hc⟩; exact ⟨heq, by rw [← heq]; exact hc⟩
-  · intro ⟨heq, hc⟩; exact ⟨heq, by rw [heq]; exact hc⟩
+theorem toDRS_close (φ : Rel E) :
+    toDRS (Rel.close φ) = test (closure (toDRS φ)) :=
+  (test_eq_input _).symm
+
+/-- Total agreement is the unit update — the trivial test. -/
+theorem toDRS_agreeOn_univ :
+    toDRS (agreeOn Set.univ) = (1 : Update (Assignment E)) := by
+  funext f g
+  exact propext ⟨λ h => ⟨(Set.eqOn_univ f g).mp h, trivial⟩,
+    λ ⟨heq, _⟩ => (Set.eqOn_univ f g).mpr heq⟩
 
 /-- DPL truth is existential closure. -/
-theorem trueAt_eq_closure (φ : Rel E) (g : Assignment E) :
+theorem trueAt_iff_closure (φ : Rel E) (g : Assignment E) :
     Rel.trueAt φ g ↔ closure (toDRS φ) g := Iff.rfl
 
 end DPL

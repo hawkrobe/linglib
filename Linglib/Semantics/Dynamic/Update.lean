@@ -88,6 +88,12 @@ variable {S : Type*} {C : Condition S} {D : Update S} {i j : S}
 /-- `test C` checks `C` without changing the state. -/
 def test (C : Condition S) : Update S := λ i j => i = j ∧ C j
 
+/-- A test constrains its input and output alike. -/
+theorem test_eq_input (C : Condition S) :
+    test C = λ i j => i = j ∧ C i := by
+  ext i j
+  constructor <;> rintro ⟨rfl, h⟩ <;> exact ⟨rfl, h⟩
+
 /-- `neg D` holds at `i` iff no output `k` satisfies `D`. -/
 def neg (D : Update S) : Condition S := λ i => ¬∃ k, D i k
 

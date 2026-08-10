@@ -369,14 +369,14 @@ implication is the test of dynamic implication, so this is the generic
 deduction theorem read through the Ty2 embedding. -/
 theorem deduction (φ ψ : DPL.Rel E) :
     (toDRS φ ⊨ toDRS ψ) ↔ valid (toDRS (DPL.Rel.impl φ ψ)) := by
-  rw [impl_eq_test_dimpl]
+  rw [toDRS_impl]
   exact entails_iff_valid_test_impl (toDRS φ) (toDRS ψ)
 
 /-- Fact 12: s-entailment is dynamic entailment from the closed premiss
 `♦φ`. -/
 theorem sEntails_iff_close_entails (φ ψ : DPL.Rel E) :
     (toDRS φ ⊨ₛ toDRS ψ) ↔ (toDRS (DPL.Rel.close φ) ⊨ toDRS ψ) := by
-  rw [close_eq_test_closure]
+  rw [toDRS_close]
   exact sEntails_iff_test_closure_entails (toDRS φ) (toDRS ψ)
 
 /-- The flagship dynamic entailment (§3.5): `∃xPx ⊨ Px` — the premiss's
