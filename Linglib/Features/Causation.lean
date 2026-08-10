@@ -1,30 +1,18 @@
 /-!
 # Causative and implicative verb features
 
-Per-verb-entry taxonomies for causal verb classification: the force-dynamic
-`Causative` classification and the [karttunen-1971] `Implicative` polarity.
+This file defines two classifications carried by verb lexical entries:
+`Causative`, the force-dynamic mechanism a causative verb lexicalizes, and
+`Implicative`, the polarity of an implicative verb's complement entailment.
 
-`Causative`'s five-way `cause`/`make`/`force`/`enable`/`prevent` split extends
-the three-way force-dynamic taxonomy of [wolff-2003] (CAUSE / ENABLE / PREVENT)
-by subdividing CAUSE into counterfactual dependence (`cause`), direct
-sufficient guarantee (`make`), and coercive sufficiency (`force`) —
-distinctions [talmy-1988] discusses without crystallizing as named primitives.
-The `AssertsSufficiency`/`AssertsNecessity` classification follows
-[nadathur-lauer-2020]'s sufficiency/necessity decomposition and is
-characterized against the truth-conditional dispatch in
-`Semantics/Causation/Interpretation.lean` (`Causative.toSemantics`). Rival
-taxonomies carve causatives differently — [comrie-1989]'s
-lexical/morphological/syntactic scale, [shibatani-pardeshi-2002]'s directness
-continuum, [pylkkanen-2008]'s Cause-head theory — and are formalized in the
-studies that consume them.
+## References
 
-`Implicative` fixes [karttunen-1971]'s binary positive/negative bipartition;
-the finer nine-way entailment matrix of [nairn-condoravdi-karttunen-2006] and
-[karttunen-2012] is not encoded here. Implicatives differ structurally from
-causatives ([nadathur-2023-implicatives]): causatives predicate causation
-directly, while implicatives assert a prerequisite whose causal link to the
-complement is presupposed. `Semantics/Causation/Implicative.lean` carries that
-account.
+* [Lauri Karttunen, *Implicative Verbs*][karttunen-1971]
+* [Prerna Nadathur and Sven Lauer, *Causal Necessity, Causal Sufficiency, and
+  the Implications of Causative Verbs*][nadathur-lauer-2020]
+* [Leonard Talmy, *Force dynamics in language and cognition*][talmy-1988]
+* [Phillip Wolff, *Direct causation in the linguistic coding and individuation
+  of causal events*][wolff-2003]
 -/
 
 namespace Features
@@ -50,9 +38,8 @@ inductive Causative where
 
 namespace Causative
 
-/-- The variant asserts causal sufficiency ([nadathur-lauer-2020]): `make`,
-`force`, and `enable` share sufficiency truth conditions
-(`AssertsSufficiency.toSemantics_eq`). -/
+/-- The variant asserts causal sufficiency: `make`, `force`, and `enable`
+share sufficiency truth conditions (`AssertsSufficiency.toSemantics_eq`). -/
 def AssertsSufficiency : Causative → Prop
   | .make | .force | .enable => True
   | .cause | .prevent => False
@@ -60,9 +47,8 @@ def AssertsSufficiency : Causative → Prop
 instance : DecidablePred AssertsSufficiency := fun b => by
   cases b <;> unfold AssertsSufficiency <;> infer_instance
 
-/-- The variant asserts causal necessity ([nadathur-lauer-2020]): only `cause`,
-whose truth conditions are counterfactual dependence
-(`AssertsNecessity.toSemantics_eq`). -/
+/-- The variant asserts causal necessity: only `cause`, whose truth conditions
+are counterfactual dependence (`AssertsNecessity.toSemantics_eq`). -/
 def AssertsNecessity : Causative → Prop
   | .cause => True
   | _ => False
@@ -92,8 +78,8 @@ end Causative
 
 /-! ### Implicative polarity -/
 
-/-- [karttunen-1971] polarity for implicative verbs: positive implicatives
-entail their complement, negative implicatives entail its negation. -/
+/-- Polarity for implicative verbs: positive implicatives entail their
+complement, negative implicatives entail its negation. -/
 inductive Implicative where
   /-- The verb entails its complement (*manage*, *remember*). -/
   | positive
