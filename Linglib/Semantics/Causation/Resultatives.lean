@@ -44,7 +44,6 @@ open ConstructionGrammar.Resultatives
 open Features
 open ArgumentStructure
 open Features.ChangeOfState
-open Features (Causative)
 open Causation.ProductionDependence
 open Causation.CCSelection
 

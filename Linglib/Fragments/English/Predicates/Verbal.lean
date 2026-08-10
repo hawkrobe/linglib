@@ -22,7 +22,7 @@ namespace English.Predicates.Verbal
 -- Re-export Features verb-entry vocabulary so downstream files that open this
 -- namespace continue to find it. The `Verb`/`ComplementType`/… types now
 -- live at the root namespace (`Syntax/Category/Verb/Defs`), so they need no re-export.
-export Features (Preferential Attitude Causative Implicative)
+export Features (Preferential Attitude)
 
 open Features
 open ArgumentStructure
@@ -3534,12 +3534,12 @@ theorem lexical_causatives_match_make :
 /-- "manage" → polymorphic `Implicative.manageSem`. -/
 theorem manage_semantics_implicative :
     manage.implicative.map (Implicative.toSemantics M) =
-    some (Causation.Implicative.manageSem M) := rfl
+    some (Implicative.manageSem M) := rfl
 
 /-- "fail" → polymorphic `Implicative.failSem`. -/
 theorem fail_semantics_implicative :
     fail.implicative.map (Implicative.toSemantics M) =
-    some (Causation.Implicative.failSem M) := rfl
+    some (Implicative.failSem M) := rfl
 
 end V2
 

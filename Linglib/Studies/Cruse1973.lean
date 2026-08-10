@@ -45,7 +45,6 @@ namespace Cruse1973
 
 open ArgumentStructure
 open Causation.CoerciveImplication
-open Features (Causative)
 open Features
 open ArgumentStructure
 open Features

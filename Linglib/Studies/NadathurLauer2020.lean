@@ -724,7 +724,6 @@ here; `necessity_cancellable` above is its kernel-checked witness. -/
 namespace KarttunenCells
 
 open Karttunen1971 (KarttunenClass)
-open Features (Implicative Causative)
 
 /-- Derive the `KarttunenClass` cell from an `Implicative` polarity
     (two-way cell: complement entailment under both polarities). -/

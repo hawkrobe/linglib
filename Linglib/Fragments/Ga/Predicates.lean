@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Fragments.Ga.Basic
 import Linglib.Syntax.Clause.Complementation
-import Linglib.Features.Causation
+import Linglib.Semantics.Causation.VerbClass
 
 /-!
 # Gã Complement-Taking Predicates
@@ -29,7 +29,6 @@ See `Fragments/Ga/Basic.lean` for rationale.
 
 namespace Ga
 
-open Features (Implicative)
 
 /-- A Gã complement-taking predicate: form, gloss, the embedded clause
     types it is attested with, the control relation of its `ni`-frame

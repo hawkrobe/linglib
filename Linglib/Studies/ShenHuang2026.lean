@@ -4,7 +4,7 @@ import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Definiteness
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
-import Linglib.Features.Causation
+import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Fragments.English.Predicates.Verbal

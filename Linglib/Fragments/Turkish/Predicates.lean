@@ -13,7 +13,6 @@ namespace Turkish.Predicates
 
 open ArgumentStructure
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
-open Features (Causative)
 
 /-- Turkish verb entry: extends Verb with Turkish inflectional paradigm. -/
 structure TurkishVerbEntry extends Verb where

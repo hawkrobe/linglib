@@ -50,8 +50,7 @@ Key differences from the modern analysis:
 
 namespace Karttunen1971
 
-open Causation.Implicative
-open Features (Causative)
+open Implicative
 open English.Predicates.Verbal
 open English.Predicates.Copular (beAble)
 open ArgumentStructure

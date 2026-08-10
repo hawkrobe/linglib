@@ -17,7 +17,6 @@ despite being separate words.
 namespace French.Predicates
 
 open ArgumentStructure
-open Features (Causative)
 open ArgumentStructure
 open ArgumentStructure (experiencerProfile)
 

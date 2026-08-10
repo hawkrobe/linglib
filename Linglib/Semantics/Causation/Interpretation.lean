@@ -1,6 +1,6 @@
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
-import Linglib.Features.Causation
+import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.Causation.CCSelection
@@ -41,17 +41,14 @@ mapping exists; both dispatches coexist as named functions and the
 disagreement is theorem-provable.
 -/
 
-/-! ### Methods on `Features.Causative` -/
+/-! ### Methods on `Causative` -/
 
-/-! Methods on `Features.Causative` that depend on heavy semantic
+/-! Methods on `Causative` that depend on heavy semantic
 machinery (`Causation.SEM`, `CausalGraph`, the `Necessity`/
 `Sufficiency`/`Prevention` modules) live here rather than in
-`Features/Causation.lean`, which is kept import-free per the
-"Features/ stays lightweight" convention. The `namespace
-Features.Causative` block below is the standard mathlib pattern for
-distributing methods on a type across files based on import weight. -/
+`Semantics/Causation/VerbClass.lean`, which is kept import-free. -/
 
-namespace Features.Causative
+namespace Causative
 
 open Causation.CCSelection
 open Causation (SEM CausalGraph Valuation DecidableValuation)
@@ -97,7 +94,7 @@ theorem AssertsNecessity.toSemantics_eq {V : Type*} {α : V → Type*}
     b.toSemantics M = Causation.Necessity.causeSem M := by
   cases b <;> first | rfl | exact (h : False).elim
 
-end Features.Causative
+end Causative
 
 /-! ### Derivation theorems (substrate-independent) -/
 
