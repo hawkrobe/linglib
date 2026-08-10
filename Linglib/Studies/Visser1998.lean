@@ -18,9 +18,9 @@ substrate.
 - `Context` with `1`, `*`, and `≤`: the contexts form a monoid and the
   information order is a partial order (Theorem 3.3).
 - `HasContext R c`: `c` is a context for `R` (Definition 3.4), with
-  `hasContext_iff_eq` recovering the paper's equational form
-  `R = (≡ᵢ ; R ; ≡ₒ) ∩ [B]` and `hasContext_test_iff` characterizing the
-  `test V`-typed relations as the `V`-invariant tests (`Update.IsTest`).
+  `hasContext_iff_eq` recovering the paper's equational form of the
+  definition and `hasContext_test_iff` characterizing the `test V`-typed
+  relations as the `V`-invariant tests (`Update.IsTest`).
 - `HasContext.mono`: the order is sound for the typing — `c ≤ d` types more
   relations (Theorem 3.5(1)).
 - `HasContext.patch`, `HasContext.patch_unique`: the unique-output lemma
@@ -48,6 +48,35 @@ namespace Visser1998
 open DPL DynamicSemantics
 
 variable {E : Type*}
+
+/-! ### Relations between assignments (Definition 2.2) -/
+
+/-- Definition 2.2's `≡_V`: relate assignments agreeing on `V`. -/
+def agreeOn (V : Set ℕ) : DPL.Rel E := λ f g => Set.EqOn f g V
+
+/-- The random reset at `x` — agree everywhere but `x`, the paper's
+`[x]`. -/
+def reset (x : ℕ) : DPL.Rel E := agreeOn {x}ᶜ
+
+/-- DPL's existential is the reset at `x` composed with the scope — how
+Definition 3.10 generates the existential. -/
+theorem exists_eq_reset_conj (x : ℕ) (φ : DPL.Rel E) :
+    DPL.Rel.exists_ x φ = (reset x).conj φ := by
+  funext g h
+  apply propext
+  constructor
+  · rintro ⟨d, hφ⟩
+    exact ⟨_, λ v hv => (if_neg hv).symm, hφ⟩
+  · rintro ⟨k, hk, hφ⟩
+    refine ⟨k x, ?_⟩
+    have hfk : (λ n => if n = x then k x else g n) = k := by
+      funext n
+      rcases eq_or_ne n x with rfl | hn
+      · rw [if_pos rfl]
+      · rw [if_neg hn]
+        exact hk hn
+    rw [hfk]
+    exact hφ
 
 /-! ### Contexts (Definition 3.1) -/
 
@@ -143,10 +172,9 @@ end Context
 
 /-! ### c-relations (Definition 3.4) -/
 
-/-- `c` is a context for `R` (Definition 3.4): `R` reads inputs only at `c.I`,
-constrains outputs only at `c.O`, and changes values only at `c.B`.
-`blocks` is `R ⊆ [B]`; `stable` is the nontrivial inclusion of the
-paper's equation `R = (≡ᵢ ; R ; ≡ₒ) ∩ [B]`. -/
+/-- `c` is a context for `R` (Definition 3.4): `R` reads its input only
+at `c.I`, constrains its output only at `c.O`, and changes values only
+at `c.B`. -/
 structure HasContext (R : DPL.Rel E) (c : Context) : Prop where
   /-- Only blocked variables change. -/
   blocks : ∀ ⦃f g⦄, R f g → Set.EqOn f g (↑c.B)ᶜ
@@ -157,16 +185,16 @@ structure HasContext (R : DPL.Rel E) (c : Context) : Prop where
 
 /-- The paper's equational form of Definition 3.4. -/
 theorem hasContext_iff_eq (R : DPL.Rel E) (c : Context) :
-    HasContext R c ↔
-      R = λ f' g' => (∃ f g, Set.EqOn f' f ↑c.I ∧ R f g ∧
-        Set.EqOn g g' ↑c.O) ∧ Set.EqOn f' g' (↑c.B)ᶜ := by
+    HasContext R c ↔ R = λ f g =>
+      (agreeOn ↑c.I).conj (R.conj (agreeOn ↑c.O)) f g
+        ∧ agreeOn (↑c.B)ᶜ f g := by
   constructor
   · intro h
-    funext f' g'
-    simp only [eq_iff_iff]
-    exact ⟨λ hR => ⟨⟨f', g', Set.eqOn_refl _ _, hR, Set.eqOn_refl _ _⟩,
+    funext f g
+    exact propext
+      ⟨λ hR => ⟨⟨f, Set.eqOn_refl _ _, g, hR, Set.eqOn_refl _ _⟩,
         h.blocks hR⟩,
-      λ ⟨⟨f, g, hI, hR, hO⟩, hB⟩ => h.stable hR hI hO hB⟩
+      λ ⟨⟨f₀, hI, g₀, hR, hO⟩, hB⟩ => h.stable hR hI hO hB⟩
   · intro h
     constructor
     · intro f g hR
@@ -174,11 +202,10 @@ theorem hasContext_iff_eq (R : DPL.Rel E) (c : Context) :
       exact hR.2
     · intro f f' g g' hR hI hO hB
       rw [h]
-      exact ⟨⟨f, g, hI, hR, hO⟩, hB⟩
+      exact ⟨⟨f, hI, g, hR, hO⟩, hB⟩
 
 /-- The `test V`-typed relations are exactly the `V`-invariant tests —
-the ⟨V⟩-conditions of Definition 2.2, the paper's first insight after
-Definition 3.4. -/
+Definition 2.2's ⟨V⟩-conditions (noted after Definition 3.4). -/
 theorem hasContext_test_iff {V : Finset ℕ} {R : DPL.Rel E} :
     HasContext R (Context.test V) ↔
       Update.IsTest (toDRS R) ∧
@@ -197,12 +224,15 @@ theorem hasContext_test_iff {V : Finset ℕ} {R : DPL.Rel E} :
       obtain rfl : f' = g' := funext λ v => hB (by simp)
       exact hinv hI hR
 
+namespace HasContext
+
+variable {c d : Context} {R S : DPL.Rel E}
+
 /-! ### The order is sound for the typing (Theorem 3.5) -/
 
 /-- Theorem 3.5(1): larger contexts type more relations —
 `c ≤ d` and `R` a `c`-relation make `R` a `d`-relation. -/
-theorem HasContext.mono {c d : Context} {R : DPL.Rel E} (hcd : c ≤ d)
-    (h : HasContext R c) : HasContext R d := by
+theorem mono (hcd : c ≤ d) (h : HasContext R c) : HasContext R d := by
   obtain ⟨hI, hO, hB, hBio⟩ := hcd
   constructor
   · exact λ f g hR => (h.blocks hR).mono
@@ -215,10 +245,10 @@ theorem HasContext.mono {c d : Context} {R : DPL.Rel E} (hcd : c ≤ d)
 
 /-! ### The unique-output lemma (Lemma 3.7) -/
 
-/-- Lemma 3.7, existence: if `R` is a `c`-relation, `f' ≡ᵢ f`, and
-`f R g`, then `f'` reaches the patch of `f'` by `g` at the blocks. -/
-theorem HasContext.patch {c : Context} {R : DPL.Rel E}
-    (h : HasContext R c) {f f' g : ℕ → E}
+/-- Lemma 3.7, existence: if `f'` agrees with `f` on the inputs and
+`f R g`, then `R` relates `f'` to the patch of `f'` by `g` at the
+blocks. -/
+theorem patch (h : HasContext R c) {f f' g : ℕ → E}
     (hI : Set.EqOn f' f ↑c.I) (hR : R f g) :
     R f' (c.B.piecewise g f') := by
   refine h.stable hR hI (λ v hv => ?_)
@@ -233,8 +263,7 @@ theorem HasContext.patch {c : Context} {R : DPL.Rel E}
 
 /-- Lemma 3.7, uniqueness: the patch is the only output over `f'`
 agreeing with `g` on the blocks. -/
-theorem HasContext.patch_unique {c : Context} {R : DPL.Rel E}
-    (h : HasContext R c) {f' g g' : ℕ → E}
+theorem patch_unique (h : HasContext R c) {f' g g' : ℕ → E}
     (hR : R f' g') (hB : Set.EqOn g' g ↑c.B) :
     g' = c.B.piecewise g f' := by
   have hb := h.blocks hR
@@ -244,17 +273,16 @@ theorem HasContext.patch_unique {c : Context} {R : DPL.Rel E}
 /-! ### Composition and implication typing (Theorems 3.8–3.9) -/
 
 /-- Theorem 3.8: composition of a `c`-relation and a `d`-relation is a
-`c * d`-relation. The stability witness patches the intermediate
-assignment: keep it at `c.O ∪ d.I`, take the new output at the old
-blocks, the new input elsewhere. -/
-theorem HasContext.conj {c d : Context} {R S : DPL.Rel E}
-    (hR : HasContext R c) (hS : HasContext S d) :
+`c * d`-relation. -/
+theorem conj (hR : HasContext R c) (hS : HasContext S d) :
     HasContext (DPL.Rel.conj R S) (c * d) := by
   constructor
   · rintro f g ⟨k, hfk, hkg⟩ v hv
     rw [Context.B_mul, Finset.coe_union, Set.compl_union] at hv
     exact (hR.blocks hfk hv.1).trans (hS.blocks hkg hv.2)
   · rintro f f' g g' ⟨k, hfk, hkg⟩ hI hO hB
+    -- Patch the intermediate assignment: keep it at `c.O ∪ d.I`, take
+    -- the new output at the old blocks, the new input elsewhere.
     refine ⟨(c.O ∪ d.I).piecewise k (c.B.piecewise g' f'),
       hR.stable hfk (hI.mono (Finset.coe_subset.mpr Finset.subset_union_left))
         (λ v hv => ((c.O ∪ d.I).piecewise_eq_of_mem _ _
@@ -295,9 +323,8 @@ theorem HasContext.conj {c d : Context} {R S : DPL.Rel E}
             exact ⟨hvB, hv⟩)
 
 /-- Theorem 3.9: DPL implication of a `c`-relation and a `d`-relation is
-a `(c → d)`-relation, via two applications of the patch lemma. -/
-theorem HasContext.impl {c d : Context} {R S : DPL.Rel E}
-    (hR : HasContext R c) (hS : HasContext S d) :
+a `(c → d)`-relation. -/
+theorem impl (hR : HasContext R c) (hS : HasContext S d) :
     HasContext (DPL.Rel.impl R S) (c.impl d) := by
   refine hasContext_test_iff.mpr ⟨λ _ _ h => h.1, ?_⟩
   rintro f f' hI ⟨-, hall⟩
@@ -316,6 +343,8 @@ theorem HasContext.impl {c d : Context} {R S : DPL.Rel E}
       exact hI (Finset.mem_union_right _ (Finset.mem_sdiff.mpr ⟨hv, hvB⟩))
   exact ⟨_, hS.patch hIk hSj⟩
 
+end HasContext
+
 /-! ### The DPL generators, typed -/
 
 /-- A condition depending only on `V` is a `Context.test V`-relation as a
@@ -326,10 +355,6 @@ theorem hasContext_atom (V : Finset ℕ) (p : (ℕ → E) → Prop)
   hasContext_test_iff.mpr ⟨λ _ _ h => h.1,
     λ _ _ hV hR => ⟨rfl, hp hV.symm hR.2⟩⟩
 
-/-- The random reset at `x` — differ at most at `x`, the paper's `[x]` —
-read as a `DPL.Rel`. -/
-def reset (x : ℕ) : DPL.Rel E := λ f g => Set.EqOn f g {x}ᶜ
-
 /-- The reset is typed at `⟨∅, {x}, ∅⟩` — Definition 3.12's `c_{∃v}`: it
 reads nothing, constrains no output, and blocks `x`. -/
 theorem hasContext_reset (x : ℕ) :
@@ -339,26 +364,6 @@ theorem hasContext_reset (x : ℕ) :
     exact hR (by simpa using hv)
   · intro f f' g g' _ _ _ hB v hv
     exact hB (by simpa using hv)
-
-/-- DPL's existential factors as reset-then-scope, `∃x φ = [x] ; φ` —
-the generation of the existential behind Definition 3.10. -/
-theorem exists_eq_reset_conj (x : ℕ) (φ : DPL.Rel E) :
-    DPL.Rel.exists_ x φ = (reset x).conj φ := by
-  funext g h
-  apply propext
-  constructor
-  · rintro ⟨d, hφ⟩
-    exact ⟨_, λ v hv => (if_neg hv).symm, hφ⟩
-  · rintro ⟨k, hk, hφ⟩
-    refine ⟨k x, ?_⟩
-    have hfk : (λ n => if n = x then k x else g n) = k := by
-      funext n
-      rcases eq_or_ne n x with rfl | hn
-      · rw [if_pos rfl]
-      · rw [if_neg hn]
-        exact hk hn
-    rw [hfk]
-    exact hφ
 
 /-- The existential typing (Definition 3.12's `c_{∃v} • c_φ`): blocking
 `x` before a `c`-relation types `∃x φ`. -/
