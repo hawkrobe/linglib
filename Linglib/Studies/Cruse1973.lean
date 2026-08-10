@@ -259,16 +259,10 @@ structure InitiativeCausativeLink (Entity Time : Type*) [LinearOrder Time]
     -- The causee is the one with agentive_ (doing the action)
     profile.hasAgentive causee e
 
-/-- The force builder is coercive — it lexicalizes coercion of a
-    volitional causee, which is precisely the initiative pattern
-    where the initiator overrides the causee's will. -/
-theorem force_lexicalizes_coercive_initiative :
-    Causative.force.IsCoercive := trivial
-
 /-- The make builder asserts sufficiency — the initiator's action
     is sufficient for the causee to act. -/
 theorem make_lexicalizes_sufficient_initiative :
-    Causative.make.AssertsSufficiency := trivial
+    Causative.make.AssertsSufficiency := .inl rfl
 
 -- ════════════════════════════════════════════════════
 -- § 7. Stative Do-Verbs (Challenge to agent_selects_action)

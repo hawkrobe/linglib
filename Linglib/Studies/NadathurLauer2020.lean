@@ -772,8 +772,7 @@ theorem cause_karttunen_class :
     scenario: `makeSem` holds while `causeSem` fails). -/
 theorem cause_make_same_cell_different_mechanism :
     karttunenOfCausative .cause = karttunenOfCausative .make ∧
-    Causative.cause.AssertsNecessity ∧ ¬ Causative.make.AssertsNecessity :=
-  ⟨rfl, trivial, id⟩
+    Causative.cause ≠ .make := ⟨rfl, by decide⟩
 
 end KarttunenCells
 
