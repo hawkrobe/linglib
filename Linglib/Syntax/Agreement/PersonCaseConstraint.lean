@@ -3,16 +3,23 @@ import Mathlib.Data.Fintype.Prod
 import Linglib.Features.Person.Decomposition
 
 /-!
-# The Person Case Constraint (theory-neutral)
+# The Person Case Constraint — the descriptive typology layer
 
-The PCC ([bonet-1991]) restricts which ⟨IO-person, DO-person⟩ combinations a single probe
-can license in a clitic cluster. It is **person-feature combinatorics**, not a syntactic
-primitive: the licit region of each grammar is determined order-theoretically by the
-[author] ⟹ [participant] ⟹ [proximate] entailment chain ([nevins-2007]'s feature
-calculus, adopted by [pancheva-zubizarreta-2018] (11)), and the variants (strong/weak/
-ultra-strong/…) are points in a parameter lattice. So it lives on the person feature, not
-in the syntax. The Minimalist application — the interpretable p-feature on Appl, the phase
-edge — is `PanchevaZubizarreta2018.PConstraintSatisfied`, kept with its paper.
+The PCC ([bonet-1991]) restricts which ⟨IO-person, DO-person⟩ combinations a clitic
+cluster can realize. This file carries the descriptive typology: the licit region of
+each attested variety (strong/weak/ultra-strong/super-strong/me-first) is determined
+order-theoretically by the [author] ⟹ [participant] ⟹ [proximate] entailment chain
+([nevins-2007]'s feature calculus, adopted by [pancheva-zubizarreta-2018] (11)), with
+the varieties as points in [pancheva-zubizarreta-2018]'s four-parameter lattice — the
+most articulated published parameterization of the space.
+
+Where the constraint itself lives is the contested analytical layer, kept out of this
+file: a morphological filter for [bonet-1991], φ-Agree mechanics for
+[bejar-rezac-2009], [coon-keine-2021], and [deal-2024], perspectival semantics for
+[pancheva-zubizarreta-2018]. The rival mechanisms stay in their study files and prove
+match/divergence theorems against this grid (`Deal2024.strong_matches_pz`,
+`CoonKeine2021.weak_strong_match_pConstraint`,
+`PanchevaZubizarreta2018.isLicit_iff_exists_appl_satisfying`).
 
 ## Person prominence, derived from feature containment
 
