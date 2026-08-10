@@ -1089,8 +1089,8 @@ The following theorems make this architectural difference explicit.
 
 **Substrate names**: DPL relations are `Update (Assignment E)` from
 `Semantics/Dynamic/`. The DPL operator aliases are
-substrate operations: `DPLRel.neg φ` is `test (neg φ)`,
-`DPLRel.exists_ x φ` is `existsAt x φ`. -/
+substrate operations: `DPL.Rel.neg φ` is `test (neg φ)`,
+`DPL.Rel.exists_ x φ` is `existsAt x φ`. -/
 
 /--
 DPL negation resets the output assignment — it cannot export bindings.
