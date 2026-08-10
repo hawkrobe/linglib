@@ -45,7 +45,7 @@ open Semantics.Context (KContext)
     the shifted PRES (R = π') and a clausemate ⌈then⌉ (reference disjoint
     from π') read the same π' — no reference satisfies both the "during
     then" containment and disjointness. *Nate said Erica is angry (*then)*. -/
-theorem shifted_present_blocks_then {Time : Type*}
+theorem shifted_present_blocks_then {Time : Type*} [LinearOrder Time]
     (f : ReichenbachFrame Time) (attitudeTime : Time)
     (hPres : (opPi f attitudeTime).isPresent) :
     ¬∃ thenRef, (opPi f attitudeTime).referenceTime = thenRef ∧

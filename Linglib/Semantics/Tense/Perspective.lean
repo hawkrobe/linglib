@@ -18,7 +18,12 @@ remains satisfiable (`thenPresup_satisfiable`).
 In the point approximation used throughout, overlap is equality: the PRES
 presupposition *is* `ReichenbachFrame.isPresent` (R = π) and the PAST
 presupposition *is* `ReichenbachFrame.isPast` (R < π), so theorems here are
-stated directly with the frame predicates.
+stated directly with the frame predicates. Tenses and ⌈then⌉ are temporal
+pronouns in one architecture ([partee-1973], `TensePronoun`): each
+presupposes a comparison category (`Finset Ordering`) of its reference
+against π — PAST `Tense.past`, PRES `Tense.present`, and ⌈then⌉
+`Core.Order.distinct`, the complement of `Tense.present`, so the
+⌈then⌉-present clash is disjointness of comparison categories.
 -/
 
 open Time
@@ -30,13 +35,19 @@ open Tense
 /-! ### The ⌈then⌉ presupposition -/
 
 /-- Temporal ⌈then⌉ presupposes that its reference is disjoint from the
-    perspective π — in the point approximation, `thenRef ≠ perspective`
-    ([tsilia-zhao-2026]). This is ⌈then⌉'s own presupposition, separate from
-    the presuppositions of any co-clausal tense; the clash with PRES arises
-    because the temporal assertion ("during then") forces the PRES reference
-    inside the ⌈then⌉ reference. -/
-def thenPresup {Time : Type*} (thenRef perspective : Time) : Prop :=
-  thenRef ≠ perspective
+    perspective π: the `Core.Order.distinct` comparison category, the
+    complement of PRES's `Tense.present` ([tsilia-zhao-2026]). This is
+    ⌈then⌉'s own presupposition, separate from the presuppositions of any
+    co-clausal tense; the clash with PRES arises because the temporal
+    assertion ("during then") forces the PRES reference inside the ⌈then⌉
+    reference. -/
+def thenPresup {Time : Type*} [LinearOrder Time] (thenRef perspective : Time) : Prop :=
+  Core.Order.holds Core.Order.distinct thenRef perspective
+
+@[simp] theorem thenPresup_def {Time : Type*} [LinearOrder Time]
+    (thenRef perspective : Time) :
+    thenPresup thenRef perspective ↔ thenRef ≠ perspective :=
+  Core.Order.holds_distinct thenRef perspective
 
 /-- A ⌈then⌉-type temporal adverb: a lexical item denoting a temporal pronoun
     that carries the `thenPresup` disjointness presupposition (English *then*,
@@ -74,18 +85,19 @@ theorem opPi_eq_embeddedFrame {Time : Type*}
     PRES presupposes R = π (`isPresent`), the temporal assertion requires the
     ⌈then⌉ reference to contain — in the point approximation, equal — R
     ("during then"), and ⌈then⌉ presupposes its reference disjoint from π. -/
-theorem then_present_clash {Time : Type*} (f : ReichenbachFrame Time)
+theorem then_present_clash {Time : Type*} [LinearOrder Time]
+    (f : ReichenbachFrame Time)
     {thenRef : Time} (hPres : f.isPresent) (hDuring : f.referenceTime = thenRef)
     (hThen : thenPresup thenRef f.perspectiveTime) : False :=
-  hThen (hDuring.symm.trans hPres)
+  (thenPresup_def _ _).mp hThen (hDuring.symm.trans hPres)
 
 /-- ⌈then⌉'s presupposition is satisfiable on any timeline with two points.
     This is why ⌈then⌉ is compatible with *deleted* (SOT) tense
     ([tsilia-zhao-2026]): a deleted tense contributes no perspectival
     presupposition, leaving only `thenPresup`, which any reference off the
     perspective witnesses. -/
-theorem thenPresup_satisfiable {Time : Type*} [Nontrivial Time]
-    (perspective : Time) : ∃ thenRef, thenPresup thenRef perspective :=
-  exists_ne perspective
+theorem thenPresup_satisfiable {Time : Type*} [LinearOrder Time] [Nontrivial Time]
+    (perspective : Time) : ∃ thenRef, thenPresup thenRef perspective := by
+  simpa using exists_ne perspective
 
 end Tense.Perspective

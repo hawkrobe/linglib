@@ -95,10 +95,12 @@ def thenAdverbs : List ThenAdverb :=
 /-- Root clause ("Mary is feeling sick (*then)"): π = S, so a present-tensed
     clause admits no ⌈then⌉ restriction — no reference satisfies both the
     "during then" containment and ⌈then⌉'s disjointness from π. -/
-theorem then_present_root_clash {Time : Type*} (f : ReichenbachFrame Time)
+theorem then_present_root_clash {Time : Type*} [LinearOrder Time]
+    (f : ReichenbachFrame Time)
     (hSimple : f.isSimpleCase) (hPres : f.isPresent) :
     ¬∃ thenRef, f.referenceTime = thenRef ∧ thenPresup thenRef f.speechTime :=
   λ ⟨_, hDuring, hThen⟩ =>
-    then_present_clash f hPres hDuring (λ hEq => hThen (hEq.trans hSimple))
+    then_present_clash f hPres hDuring
+      ((show f.perspectiveTime = f.speechTime from hSimple).symm ▸ hThen)
 
 end Zhao2025
