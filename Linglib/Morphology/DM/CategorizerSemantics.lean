@@ -49,9 +49,9 @@ open ArgumentStructure.Relational
     denotation ([adamson-2024] §3.1). -/
 inductive NSemanticType where
   /-- Relational: n introduces a relation (body-part-of, part-of, etc.).
-      Result type: ⟨e,⟨e,t⟩⟩ = `Pred2`. -/
+      Result type: ⟨e,⟨e,t⟩⟩. -/
   | relational
-  /-- Sortal: n simply categorizes. Result type: ⟨e,t⟩ = `Pred1`. -/
+  /-- Sortal: n simply categorizes. Result type: ⟨e,t⟩. -/
   | sortal
   /-- Alienator: n existentially closes a relational root.
       Input type: ⟨e,⟨e,t⟩⟩; result type: ⟨e,t⟩. -/
@@ -79,13 +79,13 @@ def catHeadSemanticType (ch : CatHead) (mediatesAPossession : Bool := false)
 
     In π's convention: first arg = possessor, second arg = possessee. -/
 def nBodyPartDenot {E S : Type}
-    (rootPred : Pred1 E S) (bodyPartOf : Pred2 E S) : Pred2 E S :=
+    (rootPred : E → S → Prop) (bodyPartOf : E → E → S → Prop) : E → E → S → Prop :=
   π rootPred bodyPartOf
 
 /-- Denotation of n_{sortal}: the root predicate, unchanged.
 
     [adamson-2024] (37): ⟦nP⟧ = λx. ROOT(x) -/
-def nSortalDenot {E S : Type} (rootPred : Pred1 E S) : Pred1 E S :=
+def nSortalDenot {E S : Type} (rootPred : E → S → Prop) : E → S → Prop :=
   bareSemantics rootPred
 
 /-- Denotation of n_{alienator}: existentially closes the possessor
@@ -97,7 +97,7 @@ def nSortalDenot {E S : Type} (rootPred : Pred1 E S) : Pred1 E S :=
     existentially closed, yielding a one-place property of the
     possessee. -/
 def nAlienatorDenot {E S : Type}
-    (relation : Pred2 E S) (x : E) (s : S) : Prop :=
+    (relation : E → E → S → Prop) (x : E) (s : S) : Prop :=
   ∃ y, relation y x s
 
 -- ============================================================================
@@ -106,7 +106,7 @@ def nAlienatorDenot {E S : Type}
 
 /-- n_{body-part{D}} IS Barker's π: the relationalizer. -/
 theorem nBodyPartDenot_eq_pi {E S : Type}
-    (rootPred : Pred1 E S) (bodyPartOf : Pred2 E S) :
+    (rootPred : E → S → Prop) (bodyPartOf : E → E → S → Prop) :
     nBodyPartDenot rootPred bodyPartOf = π rootPred bodyPartOf := rfl
 
 /-- n_{alienator} is the argument-flipped version of Barker's Ex.
@@ -120,7 +120,7 @@ theorem nBodyPartDenot_eq_pi {E S : Type}
     Both perform existential closure; the difference is which argument
     of the relation represents the possessor vs possessee. -/
 theorem nAlienatorDenot_is_ex_flipped {E S : Type}
-    (R : Pred2 E S) (x : E) (s : S) :
+    (R : E → E → S → Prop) (x : E) (s : S) :
     nAlienatorDenot R x s ↔ Ex (λ a b t => R b a t) x s := by
   simp only [nAlienatorDenot, Ex]
 
@@ -138,14 +138,14 @@ theorem selectsD_iff_relational (ch : CatHead) :
 section TeopExample
 
 variable {E S : Type}
-variable (isSpleen : Pred1 E S)
-variable (bodyPartOf : Pred2 E S)
+variable (isSpleen : E → S → Prop)
+variable (bodyPartOf : E → E → S → Prop)
 
 /-- iPossession: √BINA + n_{body-part{D}} → relational noun.
 
     ⟦bina⟧ = λposs.λx. isSpleen(x) ∧ bodyPartOf(poss, x)
     'spleen of poss' -/
-def teopSpleenIPossessed : Pred2 E S :=
+def teopSpleenIPossessed : E → E → S → Prop :=
   nBodyPartDenot isSpleen bodyPartOf
 
 /-- aPossession: √BINA + n_{alienator} → existentially closed.
@@ -159,7 +159,7 @@ def teopSpleenAPossessed (x : E) (s : S) : Prop :=
 
     ⟦house⟧ = λx. isHouse(x)
     No possessor slot available. -/
-def teopHouseSortal (isHouse : Pred1 E S) : Pred1 E S :=
+def teopHouseSortal (isHouse : E → S → Prop) : E → S → Prop :=
   nSortalDenot isHouse
 
 /-- With a specific possessor, the iPossessed body part reduces to a
@@ -170,7 +170,7 @@ theorem ipossessed_with_possessor (john : E) (x : E) (s : S) :
 
 /-- The sortal noun has no relatum slot — it cannot directly take a
     possessor without π. -/
-theorem sortal_is_pred1 (isHouse : Pred1 E S) :
+theorem sortal_is_pred1 (isHouse : E → S → Prop) :
     teopHouseSortal isHouse = isHouse := rfl
 
 /-- Key insight: the SAME root (√BINA) yields different semantic types
@@ -217,15 +217,15 @@ is secondary (determined by whether aPossession is mediated). -/
     n_{sortal}. Since the alienator n is plain (no gender feature), the
     noun is feminine (unmarked). -/
 theorem alienator_retraction {E S : Type}
-    (P : Pred1 E S) (R : Pred2 E S) (x : E) (s : S) :
+    (P : E → S → Prop) (R : E → E → S → Prop) (x : E) (s : S) :
     nAlienatorDenot (π P R) x s ↔ ∃ y, P x s ∧ R y x s := by
   simp only [nAlienatorDenot, π]
 
 /-- NominalInterpType from Barker 2011 corresponds to NSemanticType. -/
 def NSemanticType.toBarker : NSemanticType → NominalInterpType
-  | .relational => .pred2
-  | .sortal     => .pred1
-  | .alienator  => .pred1  -- alienator yields Pred1 (after closure)
+  | .relational => .relational
+  | .sortal     => .sortal
+  | .alienator  => .sortal  -- alienator yields a one-place predicate (after closure)
 
 /-- Only relational nouns (n with {D}) can directly take a possessor.
     Sortal and alienated nouns cannot — they need Barker's π first. -/

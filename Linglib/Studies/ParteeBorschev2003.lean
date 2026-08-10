@@ -54,7 +54,7 @@ J&V, with the construction for P&B — but the result is identical. -/
 /-- **Convergence** (P&B §4.3): J&V's coerce-then-argument equals P&B's modifier
 genitive. The "two theories of genitives" are, on the coerced-sortal case, a
 single denotation reached two ways. -/
-theorem vj_coerce_eq_pb_modifier (possessor : E) (P : Pred1 E S) (R : Pred2 E S) :
+theorem vj_coerce_eq_pb_modifier (possessor : E) (P : E → S → Prop) (R : E → E → S → Prop) :
     viaArgument possessor (π P R) = viaModifier possessor P R :=
   rfl
 
@@ -66,8 +66,8 @@ elliptical argument NP, so English needs the modifier genitive — a problem for
 the uniform argument-only approach. -/
 
 /-- The predicate genitive *John's* is the possessee predicate `λx[R possessor x]`
-= `viaArgument possessor R`, a genuine ⟨e,t⟩ predicate (here `Pred1`). -/
-theorem predicateGenitive_eq (possessor : E) (R : Pred2 E S) :
+= `viaArgument possessor R`, a genuine ⟨e,t⟩ predicate. -/
+theorem predicateGenitive_eq (possessor : E) (R : E → E → S → Prop) :
     (fun x s => R possessor x s) = viaArgument possessor R :=
   rfl
 
@@ -81,14 +81,14 @@ alone; J&V's coercion can introduce `R` at the noun-shift, deriving both. -/
 
 /-- Reading A: the free relation is outside `former`'s scope — *a former mansion
 that is now Mary's*. The only reading P&B's split derives. -/
-def readingA (former : Pred1 E S → Pred1 E S) (possessor : E)
-    (noun : Pred1 E S) (R : Pred2 E S) : Pred1 E S :=
+def readingA (former : (E → S → Prop) → E → S → Prop) (possessor : E)
+    (noun : E → S → Prop) (R : E → E → S → Prop) : E → S → Prop :=
   viaModifier possessor (former noun) R
 
 /-- Reading B: the free relation is inside `formerRel`'s scope — *something that
 was formerly Mary's mansion*. Available on J&V's coercion. -/
-def readingB (formerRel : Pred2 E S → Pred2 E S) (possessor : E)
-    (noun : Pred1 E S) (R : Pred2 E S) : Pred1 E S :=
+def readingB (formerRel : (E → E → S → Prop) → E → E → S → Prop) (possessor : E)
+    (noun : E → S → Prop) (R : E → E → S → Prop) : E → S → Prop :=
   viaArgument possessor (formerRel (π noun R))
 
 namespace FormerMansion
@@ -99,13 +99,13 @@ abbrev Ent := Fin 2
 abbrev Tm := Bool
 
 /-- The building `0` is a mansion at every time. -/
-def mansion : Pred1 Ent Tm := fun x _ => x = 0
+def mansion : Ent → Tm → Prop := fun x _ => x = 0
 /-- Mary (`1`) owned the building (`0`) only in the past. -/
-def owns : Pred2 Ent Tm := fun o x t => o = 1 ∧ x = 0 ∧ t = false
+def owns : Ent → Ent → Tm → Prop := fun o x t => o = 1 ∧ x = 0 ∧ t = false
 /-- *former* P: was P in the past, no longer P now. -/
-def former (P : Pred1 Ent Tm) : Pred1 Ent Tm := fun x t => P x false ∧ ¬ P x t
+def former (P : Ent → Tm → Prop) : Ent → Tm → Prop := fun x t => P x false ∧ ¬ P x t
 /-- *former* on a relation: held in the past, no longer. -/
-def formerRel (Rel : Pred2 Ent Tm) : Pred2 Ent Tm :=
+def formerRel (Rel : Ent → Ent → Tm → Prop) : Ent → Ent → Tm → Prop :=
   fun o x t => Rel o x false ∧ ¬ Rel o x t
 
 /-- **Divergence**: the locus of the free relation is detectable under *former*.

@@ -94,7 +94,7 @@ single situation. The genitive picks the unique entity standing in the resolved
 relation to the possessor. -/
 
 /-- The (inherent) teacher relation: `0`'s teacher is `1`. -/
-def teacherRel : Pred2 (Fin 4) Unit := fun x y _ => x = 0 ∧ y = 1
+def teacherRel : Fin 4 → Fin 4 → Unit → Prop := fun x y _ => x = 0 ∧ y = 1
 
 /-- *the girl's teacher* (inherent): the relational noun's own relation applied
 to the possessor (`viaArgument`) has a unique satisfier. -/
@@ -127,10 +127,10 @@ theorem girlsTeacher_existsUnique (s : Unit) :
   existsUnique_possessee theGirlsTeacher s
 
 /-- The control relation: the girl `0` controls the car `2`. -/
-def controlRel : Pred2 (Fin 4) Unit := fun x y _ => x = 0 ∧ y = 2
+def controlRel : Fin 4 → Fin 4 → Unit → Prop := fun x y _ => x = 0 ∧ y = 2
 
 /-- *car* as a sortal noun predicate. -/
-def carPred : Pred1 (Fin 4) Unit := fun y _ => y = 2
+def carPred : Fin 4 → Unit → Prop := fun y _ => y = 2
 
 /-- *the girl's car* (coerced, control): the sortal noun is `π`-shifted with
 the control relation, then combines exactly like a relational noun

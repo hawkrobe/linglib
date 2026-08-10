@@ -144,7 +144,7 @@ standalone. -/
 
 variable {E S : Type*}
 
-theorem predicateForm_eq_viaArgument (possessor : E) (R : Pred2 E S) :
+theorem predicateForm_eq_viaArgument (possessor : E) (R : E → E → S → Prop) :
     (fun x s => R possessor x s) = Possessive.viaArgument possessor R :=
   rfl
 

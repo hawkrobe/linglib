@@ -250,26 +250,26 @@ theorem isHaveVerbLanguage_iff_copulaVI (v : Head) :
 open ArgumentStructure.Relational in
 
 /-- The relational HAVE reading requires the complement DP to have a
-    Pred2 interpretation (either lexically relational or via π-shift).
-    This is exactly `NominalInterpType.pred2` from [barker-2011].
+    two-place interpretation (either lexically relational or via π-shift).
+    This is exactly `NominalInterpType.relational` from [barker-2011].
 
     [myler-2016]: "The meanings [of HAVE] are a syntactic natural
     class: all introduced by heads inside DP." For relational HAVE, the
-    DP must supply a possessor slot — which is what Pred2 provides.
+    DP must supply a possessor slot — which is what a relational denotation provides.
 
     The bridge: relational HAVE ↔ possessedDP complement ↔
-    `NominalInterpType.pred2` (has relatum slot for possessor). -/
+    `NominalInterpType.relational` (has relatum slot for possessor). -/
 theorem relational_have_requires_pred2 :
-    NominalInterpType.pred2.hasRelatumSlot ∧
-    NominalInterpType.pred2.canTakePossessor := ⟨trivial, trivial⟩
+    NominalInterpType.relational.hasRelatumSlot ∧
+    NominalInterpType.relational.canTakePossessor := ⟨trivial, trivial⟩
 
 open ArgumentStructure.Relational in
 
-/-- Bare sortals (Pred1, no π) cannot appear in relational HAVE:
+/-- Bare sortals (one-place, no π) cannot appear in relational HAVE:
     "I have a cloud" requires a contextually supplied relation (π).
     Without π, the DP has no possessor slot, so no possessive reading. -/
 theorem bare_sortal_blocks_relational :
-    ¬ NominalInterpType.pred1.canTakePossessor := id
+    ¬ NominalInterpType.sortal.canTakePossessor := id
 
 -- ─── Bridge to NominalStructure (Possession Type) ───
 

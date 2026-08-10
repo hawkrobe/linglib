@@ -39,16 +39,16 @@ variable {E S : Type*}
 
 /-- Applying a possessor to a lexically relational noun — the *argument*
 genitive: `⟦John's teacher⟧ = λy. teacher(John)(y)`. -/
-def viaArgument (possessor : E) (nounRel : Pred2 E S) : Pred1 E S :=
+def viaArgument (possessor : E) (nounRel : E → E → S → Prop) : E → S → Prop :=
   fun y s => nounRel possessor y s
 
 /-- Applying a possessor to a sortal noun via Barker's `π` — the *modifier*
 genitive with a free relation `R`: `⟦John's team⟧ = λy. team(y) ∧ R(John)(y)`. -/
-def viaModifier (possessor : E) (nounPred : Pred1 E S) (R : Pred2 E S) : Pred1 E S :=
+def viaModifier (possessor : E) (nounPred : E → S → Prop) (R : E → E → S → Prop) : E → S → Prop :=
   fun y s => π nounPred R possessor y s
 
 /-- The argument genitive is the modifier genitive over a trivial restrictor. -/
-theorem viaArgument_eq_viaModifier_top (possessor : E) (R : Pred2 E S) :
+theorem viaArgument_eq_viaModifier_top (possessor : E) (R : E → E → S → Prop) :
     viaArgument possessor R = viaModifier possessor (fun _ _ => True) R := by
   funext y s; simp [viaArgument, viaModifier, π]
 
@@ -62,15 +62,15 @@ structure Carrier (E S : Type*) where
   /-- The possessor entity. -/
   possessor : E
   /-- The possession relation. -/
-  relation : Pred2 E S
+  relation : E → E → S → Prop
   /-- The sortal restrictor (the noun predicate). -/
-  restrictor : Pred1 E S
+  restrictor : E → S → Prop
 
 namespace Carrier
 
 /-- The derived possessee predicate: the restrictor conjoined with the relation
 applied to the possessor. -/
-def possesseePred (c : Carrier E S) : Pred1 E S :=
+def possesseePred (c : Carrier E S) : E → S → Prop :=
   viaModifier c.possessor c.restrictor c.relation
 
 end Carrier
@@ -81,7 +81,7 @@ structure Definite (E S : Type*) where
   /-- The possessor entity. -/
   possessor : E
   /-- The possessee predicate (a definite description's restrictor). -/
-  predicate : Pred1 E S
+  predicate : E → S → Prop
   /-- The possessee predicate has a unique witness at every situation. -/
   presupposition : ∀ s : S, iotaPresupposition predicate s
 
@@ -129,17 +129,17 @@ class HasPossessor (α : Type*) (E : outParam Type*) where
   /-- Project the bundled possessor entity. -/
   possessor : α → E
 
-/-- A carrier whose values bundle a possessee predicate `Pred1 E S`. -/
+/-- A carrier whose values bundle a possessee predicate `E → S → Prop`. -/
 class HasPossesseePredicate (α : Type*) (E S : outParam Type*) where
   /-- Project the bundled possessee predicate. -/
-  possesseePredicate : α → Pred1 E S
+  possesseePredicate : α → E → S → Prop
 
-/-- A carrier whose values bundle a possession relation `Pred2 E S`. Distinct
+/-- A carrier whose values bundle a possession relation `E → E → S → Prop`. Distinct
 from `HasPossesseePredicate`: a relational noun's R is the noun denotation
 itself, while a sortal-with-π construction carries R separately. -/
 class HasPossessionRelation (α : Type*) (E S : outParam Type*) where
   /-- Project the bundled possession relation. -/
-  possessionRelation : α → Pred2 E S
+  possessionRelation : α → E → E → S → Prop
 
 /-- Prop class: a possessive carrier whose possessee predicate has a unique
 witness at every situation. Definite possessives bear this; existential and
@@ -174,7 +174,7 @@ variable {α E S : Type*}
 /-- The possessee set determined by any carrier bundling a possessor and a
 possession relation: the entities standing in the relation to the possessor. -/
 def possesseeSet [HasPossessor α E] [HasPossessionRelation α E S] (a : α) :
-    Pred1 E S :=
+    E → S → Prop :=
   fun y s => HasPossessionRelation.possessionRelation a (HasPossessor.possessor a) y s
 
 /-- Any carrier bearing a Russellian iota-witness denotes a unique possessee at
