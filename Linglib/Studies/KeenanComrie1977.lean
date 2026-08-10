@@ -7,6 +7,7 @@ import Linglib.Fragments.TobaBatak.Relativization
 import Linglib.Fragments.Korean.Relativization
 import Linglib.Fragments.Finnish.Relativization
 import Linglib.Fragments.Malagasy.Relativization
+import Linglib.Fragments.Mandarin.Relativization
 import Linglib.Fragments.Yoruba.Relativization
 
 /-!
@@ -62,9 +63,10 @@ case marking) is the primary parameter distinguishing strategies.
 
 ## Sample
 
-Nine languages cover the key patterns: gap-to-resumptive split (Welsh,
+Ten languages cover the key patterns: gap-to-resumptive split (Welsh,
 Hebrew, Arabic, Toba Batak), multi-strategy with prenominal RCs (Korean,
-Finnish), single-strategy (Malagasy), and per-position strategy split
+Finnish), prenominal gap-to-resumptive split reaching OCOMP (Mandarin),
+single-strategy (Malagasy), and per-position strategy split
 with serial-verb-mediated obliques (Yoruba).
 -/
 
@@ -120,7 +122,7 @@ def lowestCovered (markers : List Marker) : AHPosition :=
 -- ============================================================================
 
 /-! Per-language abbrevs over Fragment marker lists. The original
-8-language sample from the paper plus Yoruba (added later via
+9-language sample from the paper plus Yoruba (added later via
 [awobuluyi-1978] + [keenan-comrie-1979]). -/
 
 abbrev english   := English.relMarkers
@@ -139,19 +141,21 @@ abbrev tobaBatak := TobaBatak.relMarkers
 abbrev korean    := Korean.relMarkers
 abbrev finnish   := Finnish.relMarkers
 abbrev malagasy  := Malagasy.relMarkers
+/-- K&C's "Chinese (spoken Pekingese)" (Table 1 pp. 76-79). -/
+abbrev mandarin  := Mandarin.relMarkers
 abbrev yoruba    := Yoruba.relMarkers
 
-/-- The 8-language sub-sample from the original paper Table 1 (pp. 76-79). -/
+/-- The 9-language sub-sample from the original paper Table 1 (pp. 76-79). -/
 def originalSample : List (List Marker) :=
-  [english, welsh, arabic, hebrew, tobaBatak, korean, finnish, malagasy]
+  [english, welsh, arabic, hebrew, tobaBatak, korean, finnish, malagasy, mandarin]
 
-/-- The original 8-language sample plus Yoruba (the only post-1977
+/-- The original 9-language sample plus Yoruba (the only post-1977
     addition; refutes one of the paper's implicit ±case generalizations
     — see `yoruba_refutes_minus_case_covers_subjects` below). -/
 def allSamples : List (List Marker) :=
   originalSample ++ [yoruba]
 
-theorem sample_size : allSamples.length = 9 := by decide
+theorem sample_size : allSamples.length = 10 := by decide
 
 -- ============================================================================
 -- § 3: Hierarchy Constraint Verification on Sample
@@ -193,7 +197,7 @@ theorem isUpperSet_of_satisfiesPRC {markers : List Marker} (h : SatisfiesPRC mar
 -- § 4: Cross-Linguistic Patterns
 -- ============================================================================
 
-/-- In the original 8-language sub-sample, every -case marker covers
+/-- In the original 9-language sub-sample, every -case marker covers
     subjects. The -case (gap/deletion) strategy is always primary when
     present in those languages.
 
@@ -224,7 +228,7 @@ theorem most_have_multiple_strategies :
 /-- +case markers that are non-primary (don't cover SU) never cover SU
     in our sample. This reflects the typological generalization that
     pronoun retention is used for lower, not higher, AH positions.
-    Holds across all 9 languages including Yoruba. -/
+    Holds across all 10 languages including Yoruba. -/
 theorem plus_case_secondary_excludes_su :
     ∀ markers ∈ allSamples,
       ∀ m ∈ markers, m.bearsCaseMarking = true → ¬ m.IsPrimary →
@@ -286,6 +290,15 @@ theorem korean_primary_su_to_obl :
     (korean.map (fun m => decide (m.Covers .subject)))  = [true, false] ∧
     (korean.map (fun m => decide (m.Covers .oblique)))  = [true, false] ∧
     (korean.map (fun m => decide (m.Covers .genitive))) = [false, true] := by decide
+
+/-- Mandarin — K&C's "Chinese (spoken Pekingese)" (Table 1 pp. 76-79):
+    -case gap covers SU/DO; +case retention covers DO–OCOMP. The two
+    strategies overlap at DO (retention optional there, Table 2), and
+    retention reaches the hierarchy floor despite the prenominal RC. -/
+theorem mandarin_retention_reaches_ocomp :
+    (mandarin.map (fun m => decide (m.Covers .subject)))      = [true, false] ∧
+    (mandarin.map (fun m => decide (m.Covers .directObject))) = [true, true] ∧
+    lowestCovered mandarin = .objComparison := by decide
 
 /-- Finnish (Table 1 p. 76; paper §1.3.2 p. 70-71): the +case marker
     *joka* is the broader/primary one (covers SU–GEN); the -case
