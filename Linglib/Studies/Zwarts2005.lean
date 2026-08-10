@@ -25,8 +25,8 @@ built on it.
 * `weakTo_cumulative` vs `toPP_bounded` — the §4.1.1 argument: the weak
   goal-PP denotation is cumulative (wrong aspect), the strict one bounded.
 * `fromPP_bounded` — source PPs are bounded like goal PPs: no aspectual
-  source/goal asymmetry (12a), grounding `Spatial.Trace.pathShapeToTelicity`
-  mapping `.source` to `.telic`.
+  source/goal asymmetry (12a), grounding the telic marking of
+  source-directionality PPs (`Spatial.Path.Directionality`).
 * `towardsPP_concat_closed`, `awayFromPP_concat_closed`,
   `towardsPP_cumulative` — the comparative definitions (45)/(48) are
   cumulative, grounding `.unbounded ↦ .atelic`.
@@ -154,8 +154,8 @@ theorem toPP_bounded (x : Loc) : Bounded Path.IsConcat (toPP x) :=
   bounded_of_no_pairs (toPP_no_pairs x)
 
 /-- Strict source PPs are bounded, exactly like goal PPs — there is no
-    aspectual source/goal asymmetry (12a). Grounds
-    `Spatial.Trace.pathShapeToTelicity` sending `.source` to `.telic`. -/
+    aspectual source/goal asymmetry (12a). Grounds the telic marking of
+    source-directionality PPs (`Spatial.Path.Directionality`). -/
 theorem fromPP_bounded (x : Loc) : Bounded Path.IsConcat (fromPP x) := by
   rintro ⟨⟨p, hp, q, hq, r, hr⟩, -⟩
   exact hp.2 (hr.1.trans hq.1)
@@ -163,8 +163,8 @@ theorem fromPP_bounded (x : Loc) : Bounded Path.IsConcat (fromPP x) := by
 /-! ### Towards and away from (§4.1.3)
 
 The comparative definitions over a distance measure `d` to the reference
-object: cumulative, hence unbounded — grounding
-`Spatial.Trace.pathShapeToTelicity` sending `.unbounded` to `.atelic`. -/
+object: cumulative, hence unbounded — grounding the atelic marking of the
+comparative prepositions in the fragments' directionality × telicity data. -/
 
 /-- (45): *towards x* — the path ends nearer to the reference object than it
     starts, measured by `d`. -/

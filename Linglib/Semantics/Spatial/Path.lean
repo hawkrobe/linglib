@@ -28,8 +28,9 @@ every operation computable.
   (`open scoped Spatial.Path`).
 * `Path.adjacent`: endpoint-sharing spatial adjacency ([krifka-1998]), the
   spatial half of the movement relations in `Studies/Krifka1998.lean`.
-* `PathShape`: [zwarts-2005]'s boundedness classification of directional PPs,
-  with `PathShape.toBoundedness` into `Core.Order.Boundedness`.
+* `Path.Directionality`: the source/goal/route trichotomy of directional
+  prepositions ([zwarts-2005]); paired with `Features.Telicity` at use sites
+  — the paper's two independent classificatory axes.
 -/
 
 namespace Spatial
@@ -177,39 +178,22 @@ theorem IsConcat.adjacent {p q r : Path Loc} (h : IsConcat p q r) :
     p.adjacent q :=
   Or.inl h.1
 
-end Path
+/-! ### Directionality -/
 
-/-! ### Path shape -/
-
-/-- Directional PP boundedness classification.
-    [zwarts-2005]: the boundedness of a directional PP determines
-    whether the VP it creates is telic or atelic.
-
-    - `bounded`: goal-oriented ("to the store", "into the room")
-    - `unbounded`: direction-oriented ("towards the store", "along the road")
-    - `source`: origin-oriented ("from the store", "out of the room")
-
-    This classifies the *set of paths* denoted by a PP, not individual
-    paths, by closure under path concatenation: "towards X" denotes a
-    cumulative set (concatenating two towards-X paths gives another),
-    while "to X" strictly read denotes a set with no concatenable pairs
-    at all. [zwarts-2005] shows bounded PPs are *not* quantized — a to-X
-    path has proper to-X subpaths — so boundedness is non-cumulativity,
-    not `Mereology.QUA`; see `Studies/Zwarts2005.lean`. -/
-inductive PathShape where
-  | bounded
-  | unbounded
+/-- The source/goal/route trichotomy of directional prepositions
+    ([zwarts-2005]): source prepositions (*from*, *out of*) locate the
+    starting point p(0), goal prepositions (*to*, *into*) the endpoint
+    p(1), route prepositions (*over*, *through*, *via*) an interior point.
+    Independent of prepositional aspect — *to* is goal-directed telic,
+    *towards* goal-directed atelic — so consumers pair it with
+    `Features.Telicity`; the aspect axis is grounded in
+    `Studies/Zwarts2005.lean`. -/
+inductive Directionality where
   | source
+  | goal
+  | route
   deriving DecidableEq, Repr
 
-/-- Path shape to scale boundedness: bounded/source paths correspond
-    to closed scales, unbounded paths to open scales. -/
-def PathShape.toBoundedness : PathShape → Core.Order.Boundedness
-  | .bounded => .closed
-  | .source => .closed
-  | .unbounded => .open_
-
-instance : Core.Order.LicensingPipeline PathShape where
-  toBoundedness := PathShape.toBoundedness
+end Path
 
 end Spatial

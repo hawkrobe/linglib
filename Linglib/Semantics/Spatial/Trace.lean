@@ -1,6 +1,5 @@
 import Linglib.Semantics.Events.CEM
 import Linglib.Semantics.Spatial.Path
-import Linglib.Features.Aktionsart
 
 /-!
 # Spatial trace function σ
@@ -20,11 +19,8 @@ homomorphism (`Mereology.IsSumHom`) and injectivity — are stated at use sites.
   *to the store* denotes a QUA set of paths ([zwarts-2005]).
 * `Trace.unbounded_path_atelic`: CUM path predicates pull back through a
   sum-homomorphic σ — *walk towards the store* is atelic.
-* `Trace.pathShapeToTelicity`: the `PathShape → Telicity` bridge, agreeing
-  with scale boundedness (`Trace.telicity_boundedness_agree`).
 -/
 
-open Features
 open Mereology
 
 namespace Spatial
@@ -63,23 +59,6 @@ theorem bounded_path_telic [hσ : IsSumHom st.σ]
 theorem unbounded_path_atelic [hσ : IsSumHom st.σ] (hP : CUM P) :
     CUM (P ∘ st.σ) :=
   cum_pullback hσ hP
-
-/-! ### PathShape → Telicity bridge -/
-
-/-- Bounded and source paths yield telic VPs; unbounded paths atelic ones —
-    [zwarts-2005]'s boundedness-telicity generalization at the `PathShape`
-    level, the spatial analog of `Features.VendlerClass.telicity`. -/
-def pathShapeToTelicity : PathShape → Telicity
-  | .bounded => .telic
-  | .source => .telic
-  | .unbounded => .atelic
-
-/-- The telicity bridge agrees with the scale-boundedness bridge
-    (`PathShape.toBoundedness`): a path shape is telic iff its boundedness
-    is licensed (closed scale). -/
-theorem telicity_boundedness_agree (s : PathShape) :
-    (pathShapeToTelicity s = .telic) ↔ s.toBoundedness.IsLicensed := by
-  cases s <;> decide
 
 end Trace
 

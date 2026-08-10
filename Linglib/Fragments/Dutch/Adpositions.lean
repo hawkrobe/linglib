@@ -1,4 +1,5 @@
 import Linglib.Semantics.Spatial.Path
+import Linglib.Features.Aktionsart
 
 /-!
 # Dutch Adposition Fragment
@@ -24,7 +25,8 @@ core properties (R-pronominalization, complement types).
 
 namespace Dutch.Adpositions
 
-open Spatial (PathShape)
+open Spatial (Path)
+open Features (Telicity)
 
 /-- Complement types attested for Dutch adpositions.
     [broekhuis-corver-2026] §2.1: nominal (default), PP, adjectival,
@@ -61,8 +63,8 @@ structure DutchAdposition where
   locational   : Bool := false
   /-- Has directional reading (path/change of location) -/
   directional  : Bool := false
-  /-- Path shape for directional uses (if any) -/
-  pathShape    : Option PathShape := none
+  /-- Directionality and telicity for directional uses (if any) -/
+  pathType     : Option (Path.Directionality × Telicity) := none
   /-- English gloss -/
   gloss        : String
   deriving DecidableEq, Repr
@@ -79,7 +81,7 @@ def op : DutchAdposition :=
   { form := "op", prePOk := true, postPOk := true
   , intransOk := true
   , locational := true, directional := true
-  , pathShape := some .bounded
+  , pathType := some (.goal, .telic)
   , gloss := "on/onto/up" }
 
 /-- §2.1 ex. 2a, §2.2 ex. 35a/58a: *in* is preP (locational "in") and postP
@@ -88,7 +90,7 @@ def in_ : DutchAdposition :=
   { form := "in", prePOk := true, postPOk := true
   , intransOk := true
   , locational := true, directional := true
-  , pathShape := some .bounded
+  , pathType := some (.goal, .telic)
   , gloss := "in/into" }
 
 /-- §2.1 ex. 2b: *naar* is preP only, inherently directional.
@@ -96,7 +98,7 @@ def in_ : DutchAdposition :=
 def naar : DutchAdposition :=
   { form := "naar", prePOk := true, postPOk := false
   , directional := true
-  , pathShape := some .bounded
+  , pathType := some (.goal, .telic)
   , gloss := "to" }
 
 /-- §2.1 ex. 6–7: *van* indicates starting point of a path.
@@ -107,7 +109,7 @@ def van : DutchAdposition :=
   , circumPart := some "af"
   , complTypes := [.nominal, .pp]
   , directional := true
-  , pathShape := some .source
+  , pathType := some (.source, .telic)
   , gloss := "from/of" }
 
 /-- §2.1 ex. 6–7: *tot* indicates endpoint of a path.
@@ -120,7 +122,7 @@ def tot : DutchAdposition :=
   { form := "tot", prePOk := true, postPOk := false
   , complTypes := [.nominal, .pp, .adjectival]
   , directional := true
-  , pathShape := some .bounded
+  , pathType := some (.goal, .telic)
   , gloss := "to/until" }
 
 /-- §3 ex. 31a, §2.3 ex. 28b: *achter* = "behind".
@@ -146,7 +148,7 @@ def onder : DutchAdposition :=
   { form := "onder", prePOk := true, postPOk := false
   , circumPart := some "door"
   , locational := true, directional := true
-  , pathShape := some .bounded
+  , pathType := some (.goal, .telic)
   , gloss := "under" }
 
 /-- §2.2 ex. 24b: *over* = "over/across". Circumposition with *heen*:
@@ -157,7 +159,7 @@ def over : DutchAdposition :=
   , circumPart := some "heen"
   , intransOk := true
   , locational := true, directional := true
-  , pathShape := some .bounded
+  , pathType := some (.goal, .telic)
   , gloss := "over/across" }
 
 /-- §2.2 ex. 25: *tussen* = "between". Circumposition with *in*:
@@ -192,7 +194,7 @@ def uit : DutchAdposition :=
   { form := "uit", prePOk := true, postPOk := false
   , intransOk := true
   , directional := true
-  , pathShape := some .source
+  , pathType := some (.source, .telic)
   , gloss := "out of" }
 
 /-- §2.3 ex. 28c: *om* = "around".
@@ -277,7 +279,7 @@ def af : DutchAdposition :=
   { form := "af", prePOk := false, postPOk := false
   , intransOk := true
   , directional := true
-  , pathShape := some .source
+  , pathType := some (.source, .telic)
   , gloss := "off/down" }
 
 /-- *heen* = directional particle. Primarily circumP second element
@@ -286,7 +288,7 @@ def heen : DutchAdposition :=
   { form := "heen", prePOk := false, postPOk := false
   , intransOk := true
   , directional := true
-  , pathShape := some .bounded
+  , pathType := some (.goal, .telic)
   , gloss := "thither (directional)" }
 
 -- ════════════════════════════════════════════════════
@@ -316,9 +318,9 @@ theorem complex_Ps_no_rPron :
 theorem circumP_parts_not_preP :
     af.prePOk = false ∧ heen.prePOk = false := ⟨rfl, rfl⟩
 
-/-- All adpositions with directional readings have a PathShape. -/
-theorem directional_has_pathShape :
-    ∀ a ∈ dutchAdpositions, a.directional → a.pathShape.isSome := by decide
+/-- All adpositions with directional readings carry directionality and telicity. -/
+theorem directional_has_pathType :
+    ∀ a ∈ dutchAdpositions, a.directional → a.pathType.isSome := by decide
 
 /-- PostP-capable adpositions have both locational and directional readings.
     §2.2 ex. 21: preP *op* = locational, postP *op* = directional. -/

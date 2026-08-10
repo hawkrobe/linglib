@@ -1,6 +1,7 @@
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.Spatial.Path
+import Linglib.Features.Aktionsart
 
 /-!
 # Verb classes: the [levin-1993] taxonomy
@@ -433,9 +434,9 @@ def isVerbOfCreation : LevinClass → Bool
     lexicalize a bounded path. Manner-of-motion verbs (51.3: run, walk)
     are path-neutral — the path comes from a PP complement.
     [talmy-2000]: verb-framed vs. satellite-framed distinction. -/
-def pathSpec : LevinClass → Option Spatial.PathShape
-  | .inherentlyDirectedMotion => some .bounded
-  | .leave => some .source
+def pathSpec : LevinClass → Option (Spatial.Path.Directionality × Features.Telicity)
+  | .inherentlyDirectedMotion => some (.goal, .telic)
+  | .leave => some (.source, .telic)
   | .mannerOfMotion => none    -- path from PP
   | .vehicleMotion => none     -- path from PP/context
   | .chase => none             -- path from complement
