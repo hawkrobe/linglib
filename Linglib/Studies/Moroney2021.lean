@@ -1,4 +1,4 @@
-import Linglib.Features.Definiteness
+import Linglib.Semantics.Definiteness.Defs
 import Linglib.Semantics.Mereology
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Definiteness.Description
@@ -48,7 +48,7 @@ type of definiteness.
 
 namespace Moroney2021
 
-open Features.Definiteness
+open Semantics.Definiteness
 open Features.Deixis (Feature)
 
 -- ============================================================================
@@ -56,7 +56,7 @@ open Features.Deixis (Feature)
 -- ============================================================================
 
 -- `DefMarkingStrategy` and `strategyToArticleType` live in
--- `Features.Definiteness`. Per-language strategy assignments are derived from
+-- `Semantics.Definiteness`. Per-language strategy assignments are derived from
 -- each language's `Determiner.Inventory.markingStrategy` over its declared
 -- `{Lang}.Determiners.inventory` (see §7 / §14) — the declared
 -- determiner set is the single source of truth for definiteness data.
@@ -76,7 +76,7 @@ inductive DefForm where
 
 /-- Cross-linguistic datum: what form does language L use for definite use
 type U? Connects [hawkins-1978]'s use types (already in
-`Features.Definiteness.DefiniteUseType`) to actual morphological expression. -/
+`Semantics.Definiteness.DefiniteUseType`) to actual morphological expression. -/
 structure DefExpressionDatum where
   language : String
   useType : DefiniteUseType
@@ -383,7 +383,7 @@ theorem shan_exists_is_last_resort :
 theorem shan_article_type :
     strategyToArticleType .unmarked = .none_ := rfl
 
-/-- `Features.Definiteness.articleTypeToDistinguishedPresup` correctly returns
+/-- `Semantics.Definiteness.articleTypeToDistinguishedPresup` correctly returns
 zero morphologically distinguished presupposition types for Shan. -/
 theorem shan_no_morphological_distinction :
     (articleTypeToDistinguishedPresup .none_).length = 0 := rfl

@@ -1,4 +1,4 @@
-import Linglib.Features.Definiteness
+import Linglib.Semantics.Definiteness.Defs
 import Linglib.Features.Deixis
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Definiteness.Maximality
@@ -36,7 +36,7 @@ situation) and add spatial content to the presupposition filter.
 
 namespace Shan.Definiteness
 
-open Features.Definiteness
+open Semantics.Definiteness
 open Semantics.Presupposition (PartialProp)
 open Semantics.Kinds
 
