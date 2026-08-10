@@ -3,68 +3,58 @@ import Mathlib.Data.Fintype.Prod
 import Linglib.Features.Person.Decomposition
 
 /-!
-# The Person Case Constraint — the descriptive typology layer
+# The Person Case Constraint
 
-The PCC ([bonet-1991]) restricts which ⟨IO-person, DO-person⟩ combinations a clitic
-cluster can realize. This file carries the descriptive typology: the licit region of
-each attested variety (strong/weak/ultra-strong/super-strong/me-first) is determined
-order-theoretically by the [author] ⟹ [participant] ⟹ [proximate] entailment chain
-([nevins-2007]'s feature calculus, adopted by [pancheva-zubizarreta-2018] (11)), with
-the varieties as points in [pancheva-zubizarreta-2018]'s four-parameter lattice — the
-most articulated published parameterization of the space.
+The PCC restricts which ⟨IO-person, DO-person⟩ combinations a clitic cluster can
+realize — the classic ban of French *me lui*. This file defines the descriptive
+typology of PCC varieties (strong, ultra-strong, weak, super-strong, me-first, and the
+predicted PG1–PG3). Prominence thresholds are cuts on the entailment chain
+[author] ⟹ [participant] ⟹ [proximate], read off the person decomposition in
+`Features/Person/Decomposition.lean`, so the person hierarchy enters as a theorem
+(`prominence_inherent_nested`) rather than a stipulation. Grammars are preordered by
+inclusion of their licit regions (`licitFinset`).
 
-Where the constraint itself lives is the contested analytical layer, kept out of this
-file: a morphological filter for [bonet-1991], φ-Agree mechanics for
-[bejar-rezac-2009], [coon-keine-2021], and [deal-2024], perspectival semantics for
-[pancheva-zubizarreta-2018]. The rival mechanisms stay in their study files and prove
-match/divergence theorems against this grid (`Deal2024.strong_matches_pz`,
-`CoonKeine2021.weak_strong_match_pConstraint`,
+Which mechanism enforces the constraint is left open here: a morphological filter,
+φ-Agree, and perspectival semantics have all been proposed. The rival accounts are
+formalized in their study files and compared cell-by-cell against this typology
+(`Deal2024.strong_matches_pz`,
 `PanchevaZubizarreta2018.isLicit_iff_exists_appl_satisfying`).
 
-## Person prominence, derived from feature containment
+## References
 
-`Person.Features` (`Features/Person/Decomposition.lean`) already carries the
-[±participant, ±author] decomposition with its containment order (author ⊏ participant).
-A person's prominence is read off it. **Inherently** `[+proximate] = [+participant]` (1P/2P
-are proximate, 3P is not); the proximate/participant *grammars* differ only in the
-contextual clause ([pancheva-zubizarreta-2018]: a 3P IO may count as proximate when paired
-with another 3P), encoded in `IOSatisfiesProminence`.
+* [bonet-1991]: the original formulation, as a morphological filter
+* [nevins-2007]: the strong/weak/ultra-strong/me-first taxonomy and the feature calculus
+* [pancheva-zubizarreta-2018]: the four-parameter grammar (their (11)–(12)) formalized here
+* [bejar-rezac-2009], [coon-keine-2021], [deal-2024]: φ-Agree rivals, compared in `Studies/`
 -/
 
 namespace PCC
 
-/-! ### Theory-neutral person-feature accessors -/
-
-/-- `[+author]` of a person, via the theory-neutral decomposition. -/
-def hasAuthor (p : Person) : Bool := (Person.toFeatures p).elim false (·.hasAuthor)
-
-/-- `[+participant]` of a person, via the theory-neutral decomposition. -/
-def hasParticipant (p : Person) : Bool := (Person.toFeatures p).elim false (·.hasParticipant)
-
-/-! ### P-Prominence: a cut on the [author] ⟹ [participant] ⟹ [proximate] chain -/
+/-! ### Prominence thresholds: cuts on the [author] ⟹ [participant] ⟹ [proximate] chain -/
 
 /-- The value the interpretable p-feature on the head requires of the IO
     ([pancheva-zubizarreta-2018] (12b)). `proximate` is the default (least restrictive);
     `participant` and `author` are the marked, more restrictive thresholds. -/
-inductive PProminence where
+inductive ProminenceThreshold where
   | proximate | participant | author
   deriving DecidableEq, Repr, Fintype
 
 /-- A person *inherently* satisfies a prominence threshold. The sets nest by feature
     containment (`prominence_inherent_nested`): author ⊆ participant = proximate. -/
-def PProminence.satisfiedInherentlyBy : PProminence → Person → Bool
-  | .proximate   => hasParticipant   -- inherent proximate = participant ([pancheva-zubizarreta-2018] (11))
-  | .participant => hasParticipant
-  | .author      => hasAuthor
+def ProminenceThreshold.satisfiedInherentlyBy : ProminenceThreshold → Person → Bool
+  | .proximate   => Person.hasParticipant   -- inherent proximate = participant ((11))
+  | .participant => Person.hasParticipant
+  | .author      => Person.hasAuthor
 
 /-- **Prominence is an order-ideal on the person prominence chain** ([nevins-2007]'s
     [author] ⟹ [participant] ⟹ [proximate]): the author-satisfiers are contained in the
     participant-satisfiers, which equal the (inherent) proximate-satisfiers. The person
     hierarchy is thus a theorem of feature containment, not a stipulated primitive. -/
 theorem prominence_inherent_nested (p : Person) :
-    (PProminence.author.satisfiedInherentlyBy p → PProminence.participant.satisfiedInherentlyBy p)
-    ∧ (PProminence.participant.satisfiedInherentlyBy p
-        ↔ PProminence.proximate.satisfiedInherentlyBy p) := by
+    (ProminenceThreshold.author.satisfiedInherentlyBy p →
+      ProminenceThreshold.participant.satisfiedInherentlyBy p) ∧
+    (ProminenceThreshold.participant.satisfiedInherentlyBy p ↔
+      ProminenceThreshold.proximate.satisfiedInherentlyBy p) := by
   cases p <;> decide
 
 /-! ### The PCC grammar — a constrained parameter lattice
@@ -76,7 +66,7 @@ a well-formedness invariant, so the impossible corner does not exist. -/
 /-- The raw four-parameter grammar ([pancheva-zubizarreta-2018] (12)). -/
 structure RawGrammar where
   /-- P-Prominence: the threshold the IO must meet (always active; default `.proximate`). -/
-  prominence : PProminence := .proximate
+  prominence : ProminenceThreshold := .proximate
   /-- P-Uniqueness: at most one DP agrees with the p-feature (default active). -/
   uniqueness : Bool := true
   /-- P-Primacy: a [+author] DP wins a tie; presupposes P-Uniqueness (default off). -/
@@ -98,7 +88,7 @@ instance : DecidableEq PCCGrammar := Subtype.instDecidableEq
 instance : Fintype PCCGrammar := Subtype.fintype _
 
 /-- Build a `PCCGrammar`, discharging well-formedness by `decide`. -/
-def mkGrammar (prominence : PProminence := .proximate) (uniqueness : Bool := true)
+def mkGrammar (prominence : ProminenceThreshold := .proximate) (uniqueness : Bool := true)
     (primacy : Bool := false) (restrictedDomain : Bool := false)
     (h : RawGrammar.WellFormed ⟨prominence, uniqueness, primacy, restrictedDomain⟩ := by decide) :
     PCCGrammar :=
@@ -106,7 +96,7 @@ def mkGrammar (prominence : PProminence := .proximate) (uniqueness : Bool := tru
 
 namespace PCCGrammar
 /-- Accessor: the prominence threshold. -/
-def prominence (g : PCCGrammar) : PProminence := g.val.prominence
+def prominence (g : PCCGrammar) : ProminenceThreshold := g.val.prominence
 /-- Accessor: P-Uniqueness. -/
 def uniqueness (g : PCCGrammar) : Bool := g.val.uniqueness
 /-- Accessor: P-Primacy. -/
@@ -162,14 +152,14 @@ instance (g : PCCGrammar) (do_ : Person) : Decidable (UniquenessSatisfied g do_)
     permissive reading is deliberate: rival probe-based accounts part ways with the
     P-Constraint at exactly this cell (`Deal2024.sd_ultra_discrepancy_1_1`). -/
 def PrimacyRescues (g : PCCGrammar) (io : Person) : Prop :=
-  g.primacy = true ∧ hasAuthor io = true
+  g.primacy = true ∧ io.hasAuthor = true
 
 instance (g : PCCGrammar) (io : Person) : Decidable (PrimacyRescues g io) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- A person is *inherently* `[+proximate]` iff it is a speech-act participant
     ([pancheva-zubizarreta-2018] (11)); a 3P is proximate only contextually. -/
-def IsInherentlyProximate (p : Person) : Prop := hasParticipant p = true
+def IsInherentlyProximate (p : Person) : Prop := p.hasParticipant = true
 
 instance (p : Person) : Decidable (IsInherentlyProximate p) :=
   inferInstanceAs (Decidable (_ = true))

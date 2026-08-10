@@ -29,7 +29,7 @@ PG3) that the four-parameter space generates.
 - **`isLicit_imp_io_pov`** — the four parametric clauses are recovered as
   the conditions under which selecting the IO as point-of-view center
   satisfies the P-Constraint semantically (§6.3, eq. 48).
-- **`pProminence_to_sellsRole`** — P&Z's identification of their P-Prominence
+- **`prominenceToSellsRole`** — P&Z's identification of their P-Prominence
   values with [sells-1987]'s logophoric roles (§6.2). This mapping is
   P&Z's specific theoretical claim, not a framework-neutral fact;
   [charnavel-mateu-2015] (page 10) reject the claim that pivot is the
@@ -59,7 +59,7 @@ open PCC
 /-- P&Z's identification of P-Prominence values with [sells-1987]'s
     logophoric roles (paper §6.2). This is the paper's theoretical claim,
     not a framework-neutral fact. -/
-def pProminence_to_sellsRole : PProminence → LogophoricRole
+def prominenceToSellsRole : ProminenceThreshold → LogophoricRole
   | .proximate   => .pivot
   | .participant => .self
   | .author      => .source
@@ -247,20 +247,20 @@ theorem super_le_strong : superStrongGrammar ≤ strongGrammar := by decide
     [charnavel-mateu-2015] dispute that pivot is the relevant role for
     clitic clusters; § 8 below records the disagreement. -/
 theorem prominence_logophoric_role :
-    pProminence_to_sellsRole .proximate = .pivot ∧
-    pProminence_to_sellsRole .participant = .self ∧
-    pProminence_to_sellsRole .author = .source := ⟨rfl, rfl, rfl⟩
+    prominenceToSellsRole .proximate = .pivot ∧
+    prominenceToSellsRole .participant = .self ∧
+    prominenceToSellsRole .author = .source := ⟨rfl, rfl, rfl⟩
 
 /-- Under P&Z's reading: the five attested grammars and the
     [+author]-prominence predicted family map onto Sells's hierarchy as
     strong/ultra/weak ⇒ pivot, super ⇒ self, me-first/pg3 ⇒ source. -/
 theorem family_logophoric_assignments :
-    pProminence_to_sellsRole strongGrammar.prominence = .pivot ∧
-    pProminence_to_sellsRole ultraStrongGrammar.prominence = .pivot ∧
-    pProminence_to_sellsRole weakGrammar.prominence = .pivot ∧
-    pProminence_to_sellsRole superStrongGrammar.prominence = .self ∧
-    pProminence_to_sellsRole meFirstGrammar.prominence = .source ∧
-    pProminence_to_sellsRole pg3Grammar.prominence = .source := by decide
+    prominenceToSellsRole strongGrammar.prominence = .pivot ∧
+    prominenceToSellsRole ultraStrongGrammar.prominence = .pivot ∧
+    prominenceToSellsRole weakGrammar.prominence = .pivot ∧
+    prominenceToSellsRole superStrongGrammar.prominence = .self ∧
+    prominenceToSellsRole meFirstGrammar.prominence = .source ∧
+    prominenceToSellsRole pg3Grammar.prominence = .source := by decide
 
 -- ============================================================================
 -- § 5: Point-of-View Derivation (paper §6.3, eq. 48)
@@ -431,16 +431,16 @@ open CharnavelMateu2015 (LogoCenter CLRViolated)
     rejects pivot as relevant for clitic clusters
     (`Studies/CharnavelMateu2015.lean`). The two readings map
     `.proximate` to incompatible places. -/
-def pProminence_to_cmCenter : PProminence → LogoCenter
+def prominenceToCmCenter : ProminenceThreshold → LogoCenter
   | .proximate   => .empathyLocus
   | .participant => .discourseParticipant
   | .author      => .discourseParticipant
 
 theorem readings_disagree_on_proximate :
-    pProminence_to_sellsRole .proximate = .pivot ∧
-    pProminence_to_cmCenter .proximate = .empathyLocus ∧
-    pProminence_to_sellsRole .proximate ≠ .self ∧
-    pProminence_to_sellsRole .proximate ≠ .source := by
+    prominenceToSellsRole .proximate = .pivot ∧
+    prominenceToCmCenter .proximate = .empathyLocus ∧
+    prominenceToSellsRole .proximate ≠ .self ∧
+    prominenceToSellsRole .proximate ≠ .source := by
   refine ⟨rfl, rfl, ?_, ?_⟩ <;> decide
 
 /-- **The me-first wedge.** P&Z predict me-first speakers should *lack*

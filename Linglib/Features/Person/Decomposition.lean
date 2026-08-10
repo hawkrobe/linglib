@@ -102,6 +102,13 @@ def toFeatures : Person → Option Features
   | .third => some thirdF
   | .zero => none
 
+/-- `[+author]` of a person, read off the decomposition (`false` for the
+    impersonal `zero`, which has none). -/
+def hasAuthor (p : Person) : Bool := (toFeatures p).elim false (·.hasAuthor)
+
+/-- `[+participant]` of a person, read off the decomposition (`false` for `zero`). -/
+def hasParticipant (p : Person) : Bool := (toFeatures p).elim false (·.hasParticipant)
+
 -- ============================================================================
 -- § 4: ContainmentPair Presentation
 -- ============================================================================
