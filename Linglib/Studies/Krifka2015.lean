@@ -523,7 +523,6 @@ theorem krifka_double_assert_eq_farkasBruce_assert_accept :
     fbState.dcL   = [isRaining] ∧
     fbState.table = [] := by
   refine ⟨rfl, rfl, rfl, ?_, ?_, ?_, ?_⟩ <;> simp
-  rfl
 
 /-- The headline observation: at a completed assertion+acceptance trace,
     the two frameworks agree on the **context-set projection** —

@@ -148,7 +148,6 @@ noncomputable def ofMultiset (m : Multiset (Nonplanar α)) :
     (ofMultiset (0 : Multiset (Nonplanar α)) : InsertionAlgebra α) = 0 := by
   show (Multiset.map _ 0).sum = 0
   rw [Multiset.map_zero, Multiset.sum_zero]
-  rfl
 
 @[simp] theorem ofMultiset_singleton (t : Nonplanar α) :
     (ofMultiset ({t} : Multiset (Nonplanar α)) : InsertionAlgebra α) =
@@ -163,7 +162,6 @@ noncomputable def ofMultiset (m : Multiset (Nonplanar α)) :
   show (Multiset.map _ (m₁ + m₂)).sum =
        (Multiset.map _ m₁).sum + (Multiset.map _ m₂).sum
   rw [Multiset.map_add, Multiset.sum_add]
-  rfl
 
 @[simp] theorem ofMultiset_cons (t : Nonplanar α) (m : Multiset (Nonplanar α)) :
     (ofMultiset (t ::ₘ m) : InsertionAlgebra α) = ofTree t + ofMultiset m := by

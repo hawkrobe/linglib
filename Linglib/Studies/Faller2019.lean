@@ -209,7 +209,6 @@ rather than reaching into substrate slate internals.
     (s : DiscourseState A W) (a : A) (φ : Set W) (src : CommitmentSource) :
     (s.addTruthCommit a φ src).CommittedTrue a φ := by
   simp [CommittedTrue, TaggedSlate.toSlate, TaggedSlate.add]
-  exact List.mem_cons_self
 
 @[simp] theorem committedTrue_addTruthCommit_of_ne [DecidableEq A]
     (s : DiscourseState A W) {a b : A} (h : b ≠ a) (φ ψ : Set W)
@@ -230,7 +229,6 @@ rather than reaching into substrate slate internals.
     (s : DiscourseState A W) (et : EvidenceType) (a : A) (φ : Set W) :
     (s.addEvidCommit et a φ).CommittedEvid et a φ := by
   simp [CommittedEvid, CommitmentSlate.add]
-  exact List.mem_cons_self
 
 @[simp] theorem committedEvid_addTruthCommit [DecidableEq A]
     (s : DiscourseState A W) (et : EvidenceType) (a b : A) (φ ψ : Set W)
@@ -246,7 +244,6 @@ rather than reaching into substrate slate internals.
 @[simp] theorem not_committedTrue_empty (a : A) (φ : Set W) :
     ¬ (empty : DiscourseState A W).CommittedTrue a φ := by
   simp [CommittedTrue, empty, TaggedSlate.toSlate, TaggedSlate.empty]
-  exact List.not_mem_nil
 
 end DiscourseState
 

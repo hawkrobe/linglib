@@ -334,7 +334,7 @@ private theorem third_lt_speakerU_only1 :
     _ ≤ 2 * ((4 : ℝ≥0∞)⁻¹) ^ 100 + 2 * ((4 : ℝ≥0∞)⁻¹) ^ 100
         + 2 * ((4 : ℝ≥0∞)⁻¹) ^ 100 + ((2 : ℝ≥0∞)⁻¹) ^ 100 := by
         refine add_le_add (add_le_add (add_le_add ?_ le_rfl) ?_) le_rfl <;>
-          exact mul_le_mul_left' (inv_pow_le_inv_pow (by norm_num) 100) 2
+          exact mul_le_mul_right (inv_pow_le_inv_pow (by norm_num) 100) 2
     _ = (6 : ℝ≥0∞) * ((4 : ℝ≥0∞)⁻¹) ^ 100 + ((2 : ℝ≥0∞)⁻¹) ^ 100 := by ring
     _ < ((2 : ℝ≥0∞)⁻¹) ^ 100 + ((2 : ℝ≥0∞)⁻¹) ^ 100 :=
         ENNReal.add_lt_add_right (ENNReal.pow_ne_top (by norm_num))
@@ -377,8 +377,8 @@ private theorem third_lt_speakerU_anyNum :
     _ ≤ 2 * ((4 : ℝ≥0∞)⁻¹) ^ 100 + 3 * ((4 : ℝ≥0∞)⁻¹) ^ 100
         + 2 * ((4 : ℝ≥0∞)⁻¹) ^ 100 + ((2 : ℝ≥0∞)⁻¹) ^ 100 := by
         refine add_le_add (add_le_add (add_le_add ?_ le_rfl) ?_) le_rfl
-        · exact mul_le_mul_left' (inv_pow_le_inv_pow (by norm_num) 100) 2
-        · exact mul_le_mul_left' (inv_pow_le_inv_pow (by norm_num) 100) 2
+        · exact mul_le_mul_right (inv_pow_le_inv_pow (by norm_num) 100) 2
+        · exact mul_le_mul_right (inv_pow_le_inv_pow (by norm_num) 100) 2
     _ = (7 : ℝ≥0∞) * ((4 : ℝ≥0∞)⁻¹) ^ 100 + ((2 : ℝ≥0∞)⁻¹) ^ 100 := by ring
     _ < ((2 : ℝ≥0∞)⁻¹) ^ 100 + ((2 : ℝ≥0∞)⁻¹) ^ 100 :=
         ENNReal.add_lt_add_right (ENNReal.pow_ne_top (by norm_num))

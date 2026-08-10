@@ -309,7 +309,6 @@ theorem diagram_edge_neg (form : Role → List α) (hasEdge : Role → Role → 
     [DecidableRel hasEdge] {r₁ r₂ : Role} (h : ¬ hasEdge r₁ r₂) :
     (diagram form hasEdge).edge r₁ r₂ = ∅ := by
   rw [diagram_edge, if_neg h]
-  rfl
 
 /-- A `diagram` over a symmetric predicate is a symmetric correspondence —
     symmetry *derived*, not stipulated. -/

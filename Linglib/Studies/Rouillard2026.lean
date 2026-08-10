@@ -1,4 +1,4 @@
-import Mathlib.Data.NNRat.Order
+import Mathlib.Algebra.Order.Ring.NNRat
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring

@@ -1391,7 +1391,6 @@ theorem bMinusLin_gl_mul (a : α)
           smul_zero,
           show unop (0 : GrossmanLarson R α) =
               (0 : ConnesKreimer R (Nonplanar α)) from rfl, add_zero]
-      exact (bMinusLin (R := R) a).map_zero
     · -- y = y₁ + y₂
       intro y₁ y₂ ih₁ ih₂
       let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r

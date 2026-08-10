@@ -980,12 +980,8 @@ private theorem nEquiv_efWitness (k : ℕ) : NEquiv k (efWitnessA k) (efWitnessB
   haveI : Nonempty (efWitnessA k : Type) := ⟨(0 : Fin (3 * (k + 1) + 1))⟩
   haveI : Nonempty (efWitnessB k : Type) := ⟨(0 : Fin (3 * (k + 1) + 1))⟩
   refine nEquiv_of_backForth (efWitnessA k) (efWitnessB k) ?_
-  rw [Subsingleton.elim (default : Fin 0 → (efWitnessA k : Type))
-        (default : Fin 0 → Fin (3 * (k + 1) + 1)),
-      Subsingleton.elim (default : Fin 0 → (efWitnessB k : Type))
-        (default : Fin 0 → Fin (3 * (k + 1) + 1))]
   exact backForth_of_regionMatch (k + 1) (3 * (k + 1) + 1) (by omega) k (ℓ := 0) (by omega)
-    (v := default) (w := default) ⟨fun i => i.elim0, fun i => i.elim0, fun i => i.elim0⟩
+    ⟨fun i => i.elim0, fun i => i.elim0, fun i => i.elim0⟩
 
 /-- **C12 via the general EF apparatus** ([barwise-cooper-1981] Appendix C, reproved
 through `Core.ModelTheory.EhrenfeuchtFraisseGame`). *More than half the V's are U's*

@@ -1465,7 +1465,6 @@ private theorem GL_T2_reindexing_key
   have hB_pl_len : B_pl.length = B.toList.length := by
     show (B.toList.map Quotient.out).length = B.toList.length
     rw [List.length_map]
-    rfl
   rw [show
       ((Multiset.ofList (RoseTree.Pathed.listChoices [true, false] B_pl.length)).map
         (fun assn =>
@@ -2234,7 +2233,6 @@ private theorem gl_product_eq_oudomGuinStar_tprod
                 (D * SymmetricAlgebra.ι ℤ (InsertionAlgebra α) v₂) := by
         rw [h_D_mul_add, oudomGuinStar_add_right]
       rw [h_star_add, map_add, h_D_mul_add, map_add, op_add, mul_add, ih₁, ih₂]
-      rfl
     · -- v = single t r: factor scalar out, reduce to v = ofTree t basis case.
       intro t r
       -- Reduce single t r = r • ofTree t.
