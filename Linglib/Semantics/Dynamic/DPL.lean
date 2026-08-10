@@ -19,6 +19,8 @@ restricted double-negation laws, interdefinability) are proved in
 
 - `Rel` with Definition 2's clauses: `atom`, `conj`, `exists_`,
   `neg`, `impl`, `disj`, `forall_`; `close` (Definition 17).
+- `agreeOn`, `reset`: the agreement relations, with the existential
+  factored through the reset (`exists_eq_reset_conj`).
 - `trueAt`, `satisfactionSet`, `productionSet` (Definitions 3, 6, 9).
 - `toDRS`/`ofDRS`: a DPL relation is an `Update` over assignments — DPL
   embeds in dynamic Ty2 at `S = Assignment E`, each connective matching
@@ -35,6 +37,9 @@ variable {E : Type*}
 /-- DPL semantic type (Definition 2): `⟦φ⟧ g h` means that starting from
 input assignment `g`, the formula `φ` can update to output `h`. -/
 def Rel (E : Type*) := (ℕ → E) → (ℕ → E) → Prop
+
+instance : CompleteLattice (Rel E) :=
+  inferInstanceAs (CompleteLattice ((ℕ → E) → (ℕ → E) → Prop))
 
 /-- Atomic predicate (clauses 1–2): test the input without changing it. -/
 def Rel.atom (p : (ℕ → E) → Prop) : Rel E :=
@@ -77,6 +82,22 @@ def Rel.forall_ (x : ℕ) (φ : Rel E) : Rel E :=
 successfully processed — the test with `φ`'s truth conditions. -/
 def Rel.close (φ : Rel E) : Rel E :=
   λ g h => g = h ∧ ∃ k, φ g k
+
+/-! ### Agreement relations -/
+
+/-- Agreement on `V`: relate the assignments equal on `V`
+([visser-1998], Definition 2.2). -/
+def agreeOn (V : Set ℕ) : Rel E := λ f g => Set.EqOn f g V
+
+/-- The random reset `k[x]g` of the existential clause: agree everywhere
+but `x`, [visser-1998]'s `[x]`. -/
+def reset (x : ℕ) : Rel E := agreeOn {x}ᶜ
+
+/-- A relation embeds in its composition with agreement on either
+side. -/
+theorem le_agreeOn_conj (R : Rel E) (V W : Set ℕ) :
+    R ≤ (agreeOn V).conj (R.conj (agreeOn W)) :=
+  λ f g hR => ⟨f, Set.eqOn_refl _ _, g, hR, Set.eqOn_refl _ _⟩
 
 /-! ### Semantic notions (Definitions 3, 6, 9) -/
 
@@ -148,6 +169,19 @@ theorem exists_eq (x : ℕ) (φ : Rel E) :
     funext n; simp [Function.update_apply]
   funext g h
   exact propext (exists_congr fun d => by rw [hup g d]; exact Iff.rfl)
+
+/-- The existential clause factored through the reset: `∃x φ` is the
+random reset at `x` composed with the scope. -/
+theorem exists_eq_reset_conj (x : ℕ) (φ : Rel E) :
+    Rel.exists_ x φ = (reset x).conj φ := by
+  have h1 : Rel.exists_ x φ =
+      λ g h => ∃ d, φ (Function.update g x d) h := exists_eq x φ
+  rw [h1]
+  funext g h
+  refine propext ⟨λ ⟨d, hφ⟩ =>
+      ⟨_, λ v hv => (Function.update_of_ne hv d g).symm, hφ⟩,
+    λ ⟨k, hk, hφ⟩ => ⟨k x, ?_⟩⟩
+  rwa [Function.update_eq_iff.mpr ⟨rfl, λ v hv => hk hv⟩]
 
 /-- DPL implication is the test of dynamic implication. -/
 theorem impl_eq_test_dimpl (φ ψ : Rel E) :
