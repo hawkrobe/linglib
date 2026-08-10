@@ -1080,7 +1080,7 @@ open Features (Causative Implicative)
     builder's polarity, not stipulated.
     [nadathur-2023]: negative implicatives entail complement falsity. -/
 theorem forget_grounded_in_implicativity :
-    Implicative.negative.entailsComplement = false := rfl
+    ¬ Implicative.negative.EntailsComplement := id
 
 /-- STOP/PREVENT are causative preventatives: "X prevented Y" entails
     that Y did NOT occur (¬p in w₀). The negative entailment comes from
@@ -1088,7 +1088,7 @@ theorem forget_grounded_in_implicativity :
     [nadathur-lauer-2020]: prevent = effect blocked with preventer,
     would have occurred without it. -/
 theorem prevent_is_causative_builder :
-    (Causative.prevent).assertsSufficiency = false := rfl
+    ¬ Causative.prevent.AssertsSufficiency := id
 
 /-- The FORGET class is unified by real-world negative entailment:
     all subclasses entail ¬p in w₀ (or worlds close to w₀), but
