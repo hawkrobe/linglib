@@ -143,13 +143,13 @@ def drt : AnaphoraFramework farmer donkey owns beats where
 
 /-! ### DPL (Groenendijk & Stokhof 1991)
 
-Donkey encoding: `DPLRel.impl (∃x. farmer x ∧ ∃y. donkey y ∧ owns x y)
+Donkey encoding: `DPL.Rel.impl (∃x. farmer x ∧ ∃y. donkey y ∧ owns x y)
                               (beats x y)`.
 By `donkey_equivalence` + `scope_extension`, this DPL formula has
 universal force.
 Truth equivalence reduces to the classical universal under DPL's
 externally-dynamic existential.
-Negation: `DPLRel.neg φ := λ g h => g = h ∧ ¬ ∃ k, φ g k`. The output
+Negation: `DPL.Rel.neg φ := λ g h => g = h ∧ ¬ ∃ k, φ g k`. The output
 assignment equals the input; drefs from inside negation are dropped
 (`dpl_dne_fails_anaphora`). -/
 def dpl : AnaphoraFramework farmer donkey owns beats where

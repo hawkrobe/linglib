@@ -78,7 +78,7 @@ universe u v w
 -- ════════════════════════════════════════════════════════════════
 
 /-- A **dynamic substrate** is a carrier with binary conjunction and unary
-negation. The paper's δ. Concrete instances: DPL `DPLRel E`, CDRT `DProp`,
+negation. The paper's δ. Concrete instances: DPL `DPL.Rel E`, CDRT `DProp`,
 ICDRT contexts, etc. The interpretation function [·] : ℒ → δ is supplied
 per-call as `interpAtom` and `interpExi` rather than as a typeclass field
 (no shared `Language` type exists across linglib's dynamic theories yet). -/
@@ -399,24 +399,24 @@ class DynamicTruth (δ : Type u) (i : outParam (Type v))
 
 open DPL
 
-/-- The DPL relational meaning type (`DPLRel E := (Nat → E) → (Nat → E) → Prop`)
+/-- The DPL relational meaning type (`DPL.Rel E := (Nat → E) → (Nat → E) → Prop`)
 is a `DynamicSubstrate` via its native conjunction and negation. -/
-instance instDynamicSubstrateDPLRel (E : Type u) : DynamicSubstrate (DPLRel E) where
-  conj := DPLRel.conj
-  neg := DPLRel.neg
+instance instDynamicSubstrateDPL.Rel (E : Type u) : DynamicSubstrate (DPL.Rel E) where
+  conj := DPL.Rel.conj
+  neg := DPL.Rel.neg
 
-/-- Program disjunction on `DPLRel`: pointwise OR. Note this differs from
-DPL's `DPLRel.disj` (which is externally-static, clearing the assignment);
+/-- Program disjunction on `DPL.Rel`: pointwise OR. Note this differs from
+DPL's `DPL.Rel.disj` (which is externally-static, clearing the assignment);
 program disjunction preserves output bindings. -/
-def dplProgramDisj {E : Type u} (φ ψ : DPLRel E) : DPLRel E :=
+def dplProgramDisj {E : Type u} (φ ψ : DPL.Rel E) : DPL.Rel E :=
   fun g h => φ g h ∨ ψ g h
 
-instance instDynamicProgramDisjDPLRel (E : Type u) :
-    DynamicProgramDisj (DPLRel E) where
+instance instDynamicProgramDisjDPL.Rel (E : Type u) :
+    DynamicProgramDisj (DPL.Rel E) where
   pdisj := dplProgramDisj
 
-instance instDynamicTruthDPLRel (E : Type u) :
-    DynamicTruth (DPLRel E) (Nat → E) where
+instance instDynamicTruthDPL.Rel (E : Type u) :
+    DynamicTruth (DPL.Rel E) (Nat → E) where
   truth m := fun g => ∃ h, m g h
   restrict m p := fun g h => p g ∧ m g h
 
@@ -609,27 +609,27 @@ end CanonicalLift
 
 section Tests
 
-/-- The KM lift over `DPLRel Bool` satisfies all three laws — confirmed via
+/-- The KM lift over `DPL.Rel Bool` satisfies all three laws — confirmed via
 typeclass synthesis. -/
-example : IsLawfulDNELift (DPLRel Bool) (KMLift (DPLRel Bool)) :=
+example : IsLawfulDNELift (DPL.Rel Bool) (KMLift (DPL.Rel Bool)) :=
   KMLift.instIsLawfulDNELift
 
-/-- The Canonical lift over `DPLRel Bool` satisfies all three laws. -/
-example : IsLawfulDNELift (DPLRel Bool) (CanonicalLift (DPLRel Bool)) :=
+/-- The Canonical lift over `DPL.Rel Bool` satisfies all three laws. -/
+example : IsLawfulDNELift (DPL.Rel Bool) (CanonicalLift (DPL.Rel Bool)) :=
   CanonicalLift.instIsLawfulDNELift
 
 /-- DNE holds in the KM lifted interpretation: `⟨¬¬φ⟩ = ⟨φ⟩`. Demonstrates
-Fact 1 over a concrete substrate (KMLift over DPLRel Bool). -/
-example (ia : Unit → DPLRel Bool) (ie : Nat → DPLRel Bool)
+Fact 1 over a concrete substrate (KMLift over DPL.Rel Bool). -/
+example (ia : Unit → DPL.Rel Bool) (ie : Nat → DPL.Rel Bool)
         (φ : DynForm Unit) :
-    (liftInterp (Δ := KMLift (DPLRel Bool)) ia ie (.neg (.neg φ))) =
+    (liftInterp (Δ := KMLift (DPL.Rel Bool)) ia ie (.neg (.neg φ))) =
     liftInterp ia ie φ :=
   liftInterp_dneg ia ie φ
 
 /-- DNE holds in the Canonical lifted interpretation: `⟨¬¬φ⟩ = ⟨φ⟩`. -/
-example (ia : Unit → DPLRel Bool) (ie : Nat → DPLRel Bool)
+example (ia : Unit → DPL.Rel Bool) (ie : Nat → DPL.Rel Bool)
         (φ : DynForm Unit) :
-    (liftInterp (Δ := CanonicalLift (DPLRel Bool)) ia ie (.neg (.neg φ))) =
+    (liftInterp (Δ := CanonicalLift (DPL.Rel Bool)) ia ie (.neg (.neg φ))) =
     liftInterp ia ie φ :=
   liftInterp_dneg ia ie φ
 

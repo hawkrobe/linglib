@@ -22,10 +22,10 @@ open DynamicSemantics.CCP (IsDistributive)
 open DynamicSemantics.ICDRT
 
 /-- Truth at an assignment: K True at g ⟺ ∃h. K g h (Charlow's (7)). -/
-def trueAt {E : Type*} (K : DPLRel E) (g : Assignment E) : Prop :=
+def trueAt {E : Type*} (K : DPL.Rel E) (g : Assignment E) : Prop :=
   ∃ h, K g h
 
-/-- `DPLRel.exists_`'s inline pointwise update equals `Function.update`. -/
+/-- `DPL.Rel.exists_`'s inline pointwise update equals `Function.update`. -/
 private theorem update_eq_ite {E : Type*} (g : Assignment E) (x : Nat) (d : E) :
     (fun n => if n = x then d else g n) = Function.update g x d := by
   funext n; simp [Function.update_apply]
@@ -33,11 +33,11 @@ private theorem update_eq_ite {E : Type*} (g : Assignment E) (x : Nat) (d : E) :
 /-- Destructive update preserves truth conditions (§4). -/
 theorem destructive_preserves_truth {E : Type*}
     (P Q : E → Prop) (g : Assignment E) :
-    trueAt (DPLRel.conj
-      (DPLRel.exists_ 6 (DPLRel.atom (λ g' => P (g' 6))))
-      (DPLRel.exists_ 6 (DPLRel.atom (λ g' => Q (g' 6)))))
+    trueAt (DPL.Rel.conj
+      (DPL.Rel.exists_ 6 (DPL.Rel.atom (λ g' => P (g' 6))))
+      (DPL.Rel.exists_ 6 (DPL.Rel.atom (λ g' => Q (g' 6)))))
     g ↔ (∃ x, P x) ∧ (∃ y, Q y) := by
-  simp only [trueAt, DPLRel.conj, DPLRel.exists_, DPLRel.atom]
+  simp only [trueAt, DPL.Rel.conj, DPL.Rel.exists_, DPL.Rel.atom]
   constructor
   · rintro ⟨h, k, ⟨d₁, hk, hP⟩, d₂, hh, hQ⟩
     subst hk; subst hh
@@ -48,12 +48,12 @@ theorem destructive_preserves_truth {E : Type*}
       y, update_eq_ite (Function.update g 6 x) 6 y, by simpa⟩
 
 /-- Static ↑: evaluates truth, discards modified assignment (Table 1, row 1). -/
-def staticExists {E : Type*} (x : Nat) (body : Assignment E → Prop) : DPLRel E :=
-  DPLRel.atom (λ g => ∃ d : E, body (Function.update g x d))
+def staticExists {E : Type*} (x : Nat) (body : Assignment E → Prop) : DPL.Rel E :=
+  DPL.Rel.atom (λ g => ∃ d : E, body (Function.update g x d))
 
 /-- Dynamic ↑: retains modified assignment (Table 1, row 2). -/
-def dynamicExists {E : Type*} (x : Nat) (body : Assignment E → Prop) : DPLRel E :=
-  DPLRel.exists_ x (DPLRel.atom (λ g => body g))
+def dynamicExists {E : Type*} (x : Nat) (body : Assignment E → Prop) : DPL.Rel E :=
+  DPL.Rel.exists_ x (DPL.Rel.atom (λ g => body g))
 
 /-- Static existential is a test: output = input. -/
 theorem static_is_test {E : Type*} (x : Nat) (body : Assignment E → Prop)
@@ -75,7 +75,7 @@ theorem dynamic_changes_assignment {E : Type*} [Nontrivial E] :
 theorem static_dynamic_same_truth {E : Type*}
     (x : Nat) (body : Assignment E → Prop) (g : Assignment E) :
     trueAt (staticExists x body) g ↔ trueAt (dynamicExists x body) g := by
-  simp only [trueAt, staticExists, dynamicExists, DPLRel.atom, DPLRel.exists_]
+  simp only [trueAt, staticExists, dynamicExists, DPL.Rel.atom, DPL.Rel.exists_]
   constructor
   · rintro ⟨h, heq, d, hbody⟩
     subst heq
@@ -86,18 +86,18 @@ theorem static_dynamic_same_truth {E : Type*}
 
 /-- Reachable: h is reachable from g via some DPL formula (Charlow's (24)). -/
 def reachable {E : Type*} (g h : Assignment E) : Prop :=
-  ∃ φ : DPLRel E, φ g h
+  ∃ φ : DPL.Rel E, φ g h
 
 /-- Reachability is reflexive. -/
 theorem reachable_refl {E : Type*} (g : Assignment E) : reachable g g :=
-  ⟨DPLRel.atom (λ _ => True), rfl, trivial⟩
+  ⟨DPL.Rel.atom (λ _ => True), rfl, trivial⟩
 
 /-- Reachability is transitive (via dynamic conjunction). -/
 theorem reachable_trans {E : Type*} {g h k : Assignment E}
     (hgh : reachable g h) (hhk : reachable h k) : reachable g k := by
   obtain ⟨φ, hφ⟩ := hgh
   obtain ⟨ψ, hψ⟩ := hhk
-  exact ⟨DPLRel.conj φ ψ, h, hφ, hψ⟩
+  exact ⟨DPL.Rel.conj φ ψ, h, hφ, hψ⟩
 
 /-- Antisymmetry fails: distinct assignments can be mutually reachable (§8). -/
 theorem antisymmetry_fails {E : Type*} [Nontrivial E] :
@@ -107,9 +107,9 @@ theorem antisymmetry_fails {E : Type*} [Nontrivial E] :
   let h : Assignment E := Function.update g 0 e₂
   refine ⟨g, h, ?_, ?_, ?_⟩
   · intro heq; exact hne (by simpa [g, h] using congr_fun heq 0)
-  · exact ⟨DPLRel.exists_ 0 (DPLRel.atom (λ g' => g' 0 = e₂)),
+  · exact ⟨DPL.Rel.exists_ 0 (DPL.Rel.atom (λ g' => g' 0 = e₂)),
            e₂, update_eq_ite g 0 e₂, by simp⟩
-  · refine ⟨DPLRel.exists_ 0 (DPLRel.atom (λ g' => g' 0 = e₁)),
+  · refine ⟨DPL.Rel.exists_ 0 (DPL.Rel.atom (λ g' => g' 0 = e₁)),
             e₁, ?_, by simp⟩
     funext n
     by_cases hn : n = 0 <;> simp [hn, g, h, Function.update_apply]
@@ -413,7 +413,7 @@ which is exactly `cylindrify x body`. -/
 theorem charlow_static_eq_cylindrify {E : Type*}
     (x : Nat) (body : Assignment E → Prop) (g : Assignment E) :
     trueAt (staticExists x body) g ↔ cylindrify x body g := by
-  simp only [trueAt, staticExists, DPLRel.atom, cylindrify]
+  simp only [trueAt, staticExists, DPL.Rel.atom, cylindrify]
   exact ⟨fun ⟨_, rfl, d, hb⟩ => ⟨d, hb⟩, fun ⟨d, hb⟩ => ⟨g, rfl, d, hb⟩⟩
 
 /-- Dynamic existential truth = cylindrification (same truth conditions). -/

@@ -34,7 +34,7 @@ framework-specific operations and cylindric ops.
 | CDRT | `eq' (dref n) (dref m)` | `diagonal n m` | `Studies/Muskens1996.lean` |
 | Charlow ([charlow-2019]) | `staticExists x body` | `cylindrify x body` | `Studies/Charlow2019.lean` |
 | Charlow | `dynamicExists x body` | `cylindrify x body` | `Studies/Charlow2019.lean` |
-| DPL ([groenendijk-stokhof-1991]) | `closure (DPLRel.exists_ x φ)` | `cylindrify x (closure φ)` | `Studies/GroenendijkStokhof1991.lean` |
+| DPL ([groenendijk-stokhof-1991]) | `closure (DPL.Rel.exists_ x φ)` | `cylindrify x (closure φ)` | `Studies/GroenendijkStokhof1991.lean` |
 | DPL | `closure (atom (g(x) = g(y)))` | `diagonal x y` | `Studies/GroenendijkStokhof1991.lean` |
 
 ### Unproved connections (same algebra, bridges not yet formalized)

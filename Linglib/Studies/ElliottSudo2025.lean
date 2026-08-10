@@ -342,8 +342,8 @@ because `¬¬φ = φ` (`dne_preserves_binding`), whereas in DPL negation is
 a test, so `¬¬∃xφ ≠ ∃xφ` and the discourse referent never escapes. -/
 theorem dpl_diverges_on_double_negation [Nontrivial E] :
     Examples.double_negation.judgment = .acceptable ∧
-    ∃ (x : Nat) (φ : DPL.DPLRel E),
-      DPL.DPLRel.neg (.neg (.exists_ x φ)) ≠ .exists_ x φ :=
+    ∃ (x : Nat) (φ : DPL.Rel E),
+      DPL.Rel.neg (.neg (.exists_ x φ)) ≠ .exists_ x φ :=
   ⟨rfl, GroenendijkStokhof1991.dne_fails_anaphora⟩
 
 /-! ### Bathroom configuration -/
