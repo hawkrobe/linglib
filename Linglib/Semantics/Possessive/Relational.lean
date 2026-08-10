@@ -49,12 +49,6 @@ namespace ArgumentStructure.Relational
 
 /-! ### Predicates and arity -/
 
-/-- One-place predicate over entities and states. -/
-abbrev Pred1 (E S : Type*) := E → S → Prop
-
-/-- Two-place predicate over entities and states. -/
-abbrev Pred2 (E S : Type*) := E → E → S → Prop
-
 /-! ### Type shifters -/
 
 section TypeShifters
@@ -62,18 +56,18 @@ section TypeShifters
 variable {E S : Type*}
 
 /-- Barker's relationalizer: `π P R x y s ↔ P y s ∧ R x y s`. -/
-def π (P : Pred1 E S) (R : Pred2 E S) : Pred2 E S :=
+def π (P : E → S → Prop) (R : E → E → S → Prop) : E → E → S → Prop :=
   λ x y s => P y s ∧ R x y s
 
 /-- Existential closure of a relation in its second argument:
 `Ex R x s ↔ ∃ y, R x y s`. -/
-def Ex (R : Pred2 E S) : Pred1 E S :=
+def Ex (R : E → E → S → Prop) : E → S → Prop :=
   λ x s => ∃ y, R x y s
 
 /-- `Ex (π P R) z s` is witnessed whenever some `y` satisfies both `P y s`
 and `R z y s`. -/
 theorem ex_pi_retraction [Nonempty E]
-    (P : Pred1 E S) (R : Pred2 E S) (y z : E) (s : S)
+    (P : E → S → Prop) (R : E → E → S → Prop) (y z : E) (s : S)
     (hP : P y s) (hR : R z y s) :
     Ex (π P R) z s :=
   ⟨y, hP, hR⟩
@@ -90,15 +84,15 @@ variable {E S : Type*}
 `ExistsUnique` (the body unfolds to `∃ x, P x s ∧ ∀ y, P y s → y = x`), so the
 full `ExistsUnique.*` API is available; the name records the linguistic role —
 the presupposition a definite description carries. -/
-abbrev iotaPresupposition (P : Pred1 E S) (s : S) : Prop := ∃! x, P x s
+abbrev iotaPresupposition (P : E → S → Prop) (s : S) : Prop := ∃! x, P x s
 
 /-- Demonstrative-headed nominal: `π` applied to a sortal noun with the
 demonstrative supplying the relatum. -/
-def naSemantics (nounPred : Pred1 E S) (R : Pred2 E S) (relatum : E) : Pred1 E S :=
+def naSemantics (nounPred : E → S → Prop) (R : E → E → S → Prop) (relatum : E) : E → S → Prop :=
   π nounPred R relatum
 
 /-- Bare nominal: identity on the predicate (no relatum slot). -/
-def bareSemantics (nounPred : Pred1 E S) : Pred1 E S :=
+def bareSemantics (nounPred : E → S → Prop) : E → S → Prop :=
   nounPred
 
 end Definites
@@ -128,26 +122,26 @@ instance : DecidablePred CanFillRelatum := λ s => by
 
 /-- Interpretation type of a nominal: with or without a relatum slot. -/
 inductive NominalInterpType where
-  /-- `Pred1`: no relatum slot (sortal, no `π`). -/
-  | pred1
-  /-- `Pred2`: relatum slot (relational or `π`-shifted). -/
-  | pred2
+  /-- No relatum slot (one-place; no `π`). -/
+  | sortal
+  /-- Relatum slot (two-place: lexically relational or `π`-shifted). -/
+  | relational
   deriving DecidableEq, Repr
 
 namespace NominalInterpType
 
 /-- Whether the interpretation type has a relatum slot. -/
 def hasRelatumSlot : NominalInterpType → Prop
-  | .pred1 => False
-  | .pred2 => True
+  | .sortal => False
+  | .relational => True
 
 instance : DecidablePred hasRelatumSlot := λ t => by
   cases t <;> unfold hasRelatumSlot <;> infer_instance
 
 /-- Whether the interpretation type can take a possessor argument. -/
 def canTakePossessor : NominalInterpType → Prop
-  | .pred1 => False
-  | .pred2 => True
+  | .sortal => False
+  | .relational => True
 
 instance : DecidablePred canTakePossessor := λ t => by
   cases t <;> unfold canTakePossessor <;> infer_instance

@@ -66,7 +66,7 @@ namespace HaninkKoontzGarboden2025
 open Verb Verb.Root
 open KoontzGarboden2009.Monotonicity
 open Morphology.DM (Categorizer)
-open ArgumentStructure.Relational (π Pred1 Pred2)
+open ArgumentStructure.Relational (π)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Morphological Classes and Semantic Types
@@ -143,14 +143,14 @@ variable {Entity State : Type}
     something satisfying P. Quantification over the possessum y is
     modeled via `List.any` over a finite entity domain. -/
 def vHave (entities : List Entity)
-    (P : Pred1 Entity State) (R : Pred2 Entity State)
+    (P : Entity → State → Prop) (R : Entity → Entity → State → Prop)
     (x : Entity) (s : State) : Prop :=
   ∃ y ∈ entities, P y s ∧ R x y s
 
 /-- v_have is Barker's π composed with existential closure:
     `vHave entities P R x s ↔ ∃y ∈ entities, (π P R) x y s` -/
 theorem vHave_is_ex_pi (entities : List Entity)
-    (P : Pred1 Entity State) (R : Pred2 Entity State)
+    (P : Entity → State → Prop) (R : Entity → Entity → State → Prop)
     (x : Entity) (s : State) :
     vHave entities P R x s ↔ ∃ y ∈ entities, (π P R) x y s := by
   simp only [vHave, π]

@@ -72,14 +72,14 @@ variable {E S : Type*}
 /-- Felicity of a **bare** definite (eq. 44a): the uniqueness presupposition of
 the noun alone. *bare P* denotes the unique `x` with `P x` in `s` — situational
 uniqueness (Schwarz-weak / [jenks-2018]'s ι). -/
-def bareDefiniteFelicitous (P : Pred1 E S) (s : S) : Prop :=
+def bareDefiniteFelicitous (P : E → S → Prop) (s : S) : Prop :=
   iotaPresupposition (bareSemantics P) s
 
 /-- Felicity of a **na** definite (eq. 48): the uniqueness presupposition of the
 relationalized predicate `π P R`. *na P* (with index `z`) denotes the unique `x`
 with `P x ∧ R z x` in `s`. The `ι` is the definiteness; the `π` is what *na*
 adds. -/
-def naDefiniteFelicitous (P : Pred1 E S) (R : Pred2 E S) (z : E) (s : S) : Prop :=
+def naDefiniteFelicitous (P : E → S → Prop) (R : E → E → S → Prop) (z : E) (s : S) : Prop :=
   iotaPresupposition (naSemantics P R z) s
 
 /-! ### The relationalizer restores uniqueness -/
@@ -93,7 +93,7 @@ This is [ahn-zhu-2025]'s bridging asymmetry *derived* from the denotations: the
 gap between bare and *na* is `π` restoring the `ι` presupposition, not a
 stipulation. -/
 theorem na_restores_uniqueness
-    (P : Pred1 E S) (R : Pred2 E S) (z : E) (s : S)
+    (P : E → S → Prop) (R : E → E → S → Prop) (z : E) (s : S)
     (hAmbiguous : ∃ a b, a ≠ b ∧ P a s ∧ P b s)
     (hDisambiguated : ∃! x, P x s ∧ R z x s) :
     ¬ bareDefiniteFelicitous P s ∧ naDefiniteFelicitous P R z s := by
@@ -104,12 +104,12 @@ theorem na_restores_uniqueness
   · obtain ⟨x, hx, huniq⟩ := hDisambiguated
     exact ⟨x, hx, huniq⟩
 
-/-- A lexically **relational** noun (a `Pred2`) supplies its own relatum: with the
+/-- A lexically **relational** noun (a two-place predicate) supplies its own relatum: with the
 antecedent `z` filling the internal argument (eq. 57–58: covert possessor /
 Mandarin argument-drop), the bare definite's uniqueness presupposition can be met
 without *na*. This is why bare relational bridging is licensed. -/
 theorem relational_bare_felicitous
-    (Rel : Pred2 E S) (z : E) (s : S)
+    (Rel : E → E → S → Prop) (z : E) (s : S)
     (hUnique : ∃! x, Rel z x s) :
     bareDefiniteFelicitous (fun x => Rel z x) s := by
   obtain ⟨x, hx, huniq⟩ := hUnique
@@ -166,7 +166,7 @@ The two accounts thus assign opposite status to the bare relational-bridging for
 Ahn & Zhu predict it licensed; Jenks predicts it blocked. Both halves below are
 derived from each account's own machinery. -/
 theorem diverges_from_jenks_on_bare_relational
-    (Rel : Pred2 E S) (z : E) (s : S) (hUnique : ∃! x, Rel z x s) :
+    (Rel : E → E → S → Prop) (z : E) (s : S) (hUnique : ∃! x, Rel z x s) :
     -- Ahn & Zhu: bare relational definite is felicitous (no *na* needed)
     bareDefiniteFelicitous (fun x => Rel z x) s ∧
     -- Jenks: Index! strictly prefers the indexed *na* form when an antecedent exists

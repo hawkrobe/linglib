@@ -44,12 +44,12 @@ Cambridge Studies in Linguistics 83. Cambridge University Press, 1997.
 - `Grammaticalization.GramStage`: the verbal cline
 - `ArgumentStructure.Relational`: π operator and
   arity tracking — connects to which schemas have possessor-as-subject
-  (Action, Companion = transitive/Pred2) vs possessee-as-subject (rest)
+  (Action, Companion = transitive/relational) vs possessee-as-subject (rest)
 -/
 
 open Possession
 open Grammaticalization
-open ArgumentStructure.Relational (Pred1 Pred2 NominalInterpType)
+open ArgumentStructure.Relational (NominalInterpType)
 
 namespace Heine1997
 
@@ -319,45 +319,45 @@ theorem location_not_permanent :
 
     Possessor-as-subject schemas (Action, Companion) produce transitive
     constructions: the possessive verb takes two core arguments (possessor
-    and possessee), corresponding to [barker-2011]'s Pred2.
+    and possessee), corresponding to [barker-2011]'s two-place relational type.
 
     Possessee-as-subject schemas produce intransitive/existential
     constructions: the possessee is the sole core argument, and the
-    possessor is an oblique adjunct. The possessive predicate is Pred1,
+    possessor is an oblique adjunct. The possessive predicate is one-place,
     with the possessor introduced by Ex closure or case marking. -/
 def schemaArity : Source → NominalInterpType
-  | .action    => .pred2  -- X takes Y: two core arguments
-  | .companion => .pred2  -- X is with Y: two core arguments
-  | _          => .pred1  -- Y exists/is-at/...: one core argument + oblique
+  | .action    => .relational  -- X takes Y: two core arguments
+  | .companion => .relational  -- X is with Y: two core arguments
+  | _          => .sortal  -- Y exists/is-at/...: one core argument + oblique
 
-/-- Possessor-as-subject correlates exactly with Pred2 (transitive). -/
-theorem possessor_subject_iff_pred2 :
+/-- Possessor-as-subject correlates exactly with the relational interpretation (transitive). -/
+theorem possessor_subject_iff_relational :
     ∀ s : Source,
-      schemaSubject s = .possessor ↔ schemaArity s = .pred2 := by
+      schemaSubject s = .possessor ↔ schemaArity s = .relational := by
   intro s; cases s <;> simp [schemaSubject, schemaArity]
 
-/-- Pred2 schemas are exactly the basic-structure schemas where the
+/-- Relational schemas are exactly the basic-structure schemas where the
     possessor is a core argument (not grafted on). Companion is the
-    exception: extended structure but still Pred2, because the comitative
+    exception: extended structure but still relational, because the comitative
     complement is reanalyzed as a core argument. -/
-theorem pred2_action_companion_only :
+theorem relational_action_companion_only :
     ∀ s : Source,
-      schemaArity s = .pred2 ↔ (s = .action ∨ s = .companion) := by
+      schemaArity s = .relational ↔ (s = .action ∨ s = .companion) := by
   intro s; cases s <;> simp [schemaArity]
 
-/-- The Pred1 schemas (Location, Genitive, Goal, Source, Topic, Equation)
+/-- The sortal schemas (Location, Genitive, Goal, Source, Topic, Equation)
     express possession via an existential predicate + oblique possessor.
     This matches Barker's ExProp closure: the possessor is introduced
     by existential quantification over a relation, not as a direct argument
     of the predicate.
 
     Structural consequence: in these schemas, the possessor does NOT
-    fill a relatum slot directly (as it would in Pred2). Instead, it is
+    fill a relatum slot directly (as it would with a relational noun). Instead, it is
     introduced via case morphology (locative, dative, genitive, etc.) —
     the morphological reflex of the oblique adjunct position. -/
-theorem pred1_possessee_subject :
+theorem sortal_possessee_subject :
     ∀ s : Source,
-      schemaArity s = .pred1 → schemaSubject s = .possessee := by
+      schemaArity s = .sortal → schemaSubject s = .possessee := by
   intro s h; cases s <;> simp [schemaArity] at h <;> simp [schemaSubject]
 
 /-- The Action Schema's grammaticalization path:
@@ -388,25 +388,25 @@ def predictionsFor (s : Source) : SchemaPrediction :=
     possessorIsSubject := schemaSubject s == .possessor
     arity := schemaArity s }
 
-/-- Location Schema predictions: have-only, possessee-as-subject, Pred1. -/
+/-- Location Schema predictions: have-only, possessee-as-subject, sortal. -/
 theorem location_predictions :
     let p := predictionsFor .location
     p.yieldsHave = true ∧ p.yieldsBelong = false ∧
-    p.possessorIsSubject = false ∧ p.arity = .pred1 := by
+    p.possessorIsSubject = false ∧ p.arity = .sortal := by
   exact ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Companion Schema predictions: have-only, possessor-as-subject, Pred2. -/
+/-- Companion Schema predictions: have-only, possessor-as-subject, relational. -/
 theorem companion_predictions :
     let p := predictionsFor .companion
     p.yieldsHave = true ∧ p.yieldsBelong = false ∧
-    p.possessorIsSubject = true ∧ p.arity = .pred2 := by
+    p.possessorIsSubject = true ∧ p.arity = .relational := by
   exact ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Genitive Schema predictions: have-only, possessee-as-subject, Pred1. -/
+/-- Genitive Schema predictions: have-only, possessee-as-subject, sortal. -/
 theorem genitive_predictions :
     let p := predictionsFor .genitive
     p.yieldsHave = true ∧ p.yieldsBelong = false ∧
-    p.possessorIsSubject = false ∧ p.arity = .pred1 := by
+    p.possessorIsSubject = false ∧ p.arity = .sortal := by
   exact ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
@@ -490,7 +490,7 @@ section Finnish
 open Finnish.Possession
 
 /-- Finnish's Location Schema matches Heine's predictions:
-    have-construction (not belong), possessee as subject, Pred1 arity. -/
+    have-construction (not belong), possessee as subject, sortal arity. -/
 theorem finnish_matches_heine_predictions :
     let p := predictionsFor sourceSchema
     p.yieldsHave = true ∧ p.yieldsBelong = false ∧
@@ -548,11 +548,11 @@ section Swahili
 open Swahili.Possession
 
 /-- Swahili's Companion Schema matches Heine's predictions:
-    have-construction (not belong), possessor as subject, Pred2. -/
+    have-construction (not belong), possessor as subject, relational. -/
 theorem swahili_companion_matches_heine :
     let p := predictionsFor sourceSchema
     p.yieldsHave = true ∧ p.yieldsBelong = false ∧
-    p.possessorIsSubject = true ∧ p.arity = .pred2 := by
+    p.possessorIsSubject = true ∧ p.arity = .relational := by
   exact ⟨rfl, rfl, rfl, rfl⟩
 
 /-- Swahili is at Stage III: the `-na` marker is no longer decomposable
