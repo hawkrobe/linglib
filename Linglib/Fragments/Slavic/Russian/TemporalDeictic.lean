@@ -1,23 +1,20 @@
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Perspective
 
 /-!
-# Russian Temporal Deictic Adverbs
-[tsilia-zhao-2026]
+# Russian temporal deictic adverbs
 
-Lexical entry for Russian тогда "togda" (then), typed by `ThenAdverb`.
-Cross-linguistic evidence for the then-present incompatibility.
-
+Lexical entry for Russian тогда *togda* 'then', typed by
+`Tense.Perspective.ThenAdverb` — [tsilia-zhao-2026]'s ⌈then⌉ class of
+temporal pronouns presupposing disjointness from the perspective time π.
 -/
 
 namespace Russian.TemporalDeictic
 
-open Tense
+open Tense.Perspective
 
-/-- Russian тогда "togda" -/
+/-- Russian тогда *togda* 'then' -/
 def togda : ThenAdverb where
-  language := "Russian"
   form := "тогда"
   gloss := "then"
-  shiftsPerspective := true
 
 end Russian.TemporalDeictic

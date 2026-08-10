@@ -302,22 +302,4 @@ theorem bound_tense_simultaneous {Time : Type*} [LinearOrder Time]
     (simultaneousFrame matrixFrame matrixFrame.eventTime).isPresent :=
   ⟨zeroTense_receives_binder_time g n matrixFrame.eventTime, rfl⟩
 
-
-/-! ### ThenAdverb -/
-
-/-- A "then"-type temporal adverb.
-    Cross-linguistically, "then" shifts the perspective time P away
-    from the speech time S ([zhao-2025], [tsilia-zhao-2026]). -/
-structure ThenAdverb where
-  /-- Language name -/
-  language : String
-  /-- Surface form -/
-  form : String
-  /-- English gloss -/
-  gloss : String
-  /-- "then" shifts P away from S: P ≠ S after "then" applies. -/
-  shiftsPerspective : Bool
-  deriving Repr, DecidableEq
-
-
 end Tense
