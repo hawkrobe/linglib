@@ -171,22 +171,18 @@ theorem hasContext_test_iff {V : Finset ℕ} {R : DPL.Rel E} :
       Update.IsTest (toDRS R) ∧
         ∀ ⦃f f'⦄, Set.EqOn f' f ↑V → R f f → R f' f' := by
   constructor
-  · intro h
-    refine ⟨λ f g hR => funext λ v => h.blocks hR (by simp), ?_⟩
-    intro f f' hV hR
-    exact h.stable hR hV hV.symm (λ v _ => rfl)
+  · exact λ h => ⟨λ f g hR => funext λ v => h.blocks hR (by simp),
+      λ f f' hV hR => h.stable hR hV hV.symm (Set.eqOn_refl _ _)⟩
   · rintro ⟨hdiag, hinv⟩
-    constructor
-    · intro f g hR v _
-      rw [hdiag hR]
-    · intro f f' g g' hR hI hO hB
-      obtain rfl : f = g := hdiag hR
-      obtain rfl : f' = g' := funext λ v => hB (by simp)
-      exact hinv hI hR
+    refine ⟨λ f g hR v _ => congrFun (hdiag hR) v,
+      λ f f' g g' hR hI hO hB => ?_⟩
+    obtain rfl : f = g := hdiag hR
+    obtain rfl : f' = g' := funext λ v => hB (by simp)
+    exact hinv hI hR
 
 namespace HasContext
 
-variable {c d : Context} {R S : DPL.Rel E}
+variable {c d : Context} {R S : DPL.Rel E} {f f' g g' : ℕ → E}
 
 /-! ### The order is sound for the typing (Theorem 3.5) -/
 
@@ -208,9 +204,8 @@ theorem mono (hcd : c ≤ d) (h : HasContext R c) : HasContext R d := by
 /-- Lemma 3.7, existence: if `f'` agrees with `f` on the inputs and
 `f R g`, then `R` relates `f'` to the patch of `f'` by `g` at the
 blocks. -/
-theorem patch (h : HasContext R c) {f f' g : ℕ → E}
-    (hI : Set.EqOn f' f ↑c.I) (hR : R f g) :
-    R f' (c.B.piecewise g f') := by
+theorem patch (h : HasContext R c) (hI : Set.EqOn f' f ↑c.I)
+    (hR : R f g) : R f' (c.B.piecewise g f') := by
   refine h.stable hR hI (λ v hv => ?_)
     (λ v hv => (c.B.piecewise_eq_of_notMem _ _ hv).symm)
   by_cases hvB : v ∈ c.B
@@ -223,9 +218,8 @@ theorem patch (h : HasContext R c) {f f' g : ℕ → E}
 
 /-- Lemma 3.7, uniqueness: the patch is the only output over `f'`
 agreeing with `g` on the blocks. -/
-theorem patch_unique (h : HasContext R c) {f' g g' : ℕ → E}
-    (hR : R f' g') (hB : Set.EqOn g' g ↑c.B) :
-    g' = c.B.piecewise g f' := by
+theorem patch_unique (h : HasContext R c) (hR : R f' g')
+    (hB : Set.EqOn g' g ↑c.B) : g' = c.B.piecewise g f' := by
   have hb := h.blocks hR
   funext v
   grind [Set.EqOn, Finset.piecewise_eq_of_mem, Finset.piecewise_eq_of_notMem]
