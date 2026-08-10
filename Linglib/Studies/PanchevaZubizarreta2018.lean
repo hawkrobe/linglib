@@ -90,19 +90,19 @@ instance (a : ApplDomain) : Decidable a.povIsIO :=
   inferInstanceAs (Decidable (a.povCenter = a.io))
 
 /-- The P-Constraint as a predicate over an Appl domain. -/
-def PConstraintSatisfied (g : PCCGrammar) (a : ApplDomain) : Prop :=
+def PConstraintSatisfied (g : Grammar) (a : ApplDomain) : Prop :=
   DomainExempt g a.io a.do_ ∨
     (a.povIsIO ∧ IOSatisfiesProminence g a.io a.do_ ∧
      (g.uniqueness = false ∨ UniquenessSatisfied g a.do_ ∨ PrimacyRescues g a.io))
 
-instance (g : PCCGrammar) (a : ApplDomain) : Decidable (PConstraintSatisfied g a) :=
+instance (g : Grammar) (a : ApplDomain) : Decidable (PConstraintSatisfied g a) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 /-- **Central derivation.** ⟨IO, DO⟩ is licit iff some Appl domain over them — IO as POV
     center — satisfies the P-Constraint. The four parametric clauses are not stipulated
     verdicts; they are the conditions under which IO-as-POV-center is consistent with the
     interpretable person feature on Appl. -/
-theorem isLicit_iff_exists_appl_satisfying (g : PCCGrammar) (io do_ : Person) :
+theorem isLicit_iff_exists_appl_satisfying (g : Grammar) (io do_ : Person) :
     IsLicit g io do_ ↔
       ∃ a : ApplDomain, a.io = io ∧ a.do_ = do_ ∧ PConstraintSatisfied g a := by
   constructor
@@ -214,7 +214,7 @@ theorem pg3_predictions :
     the residual difference in CLR effects on 3P combinations, outside
     this model.) -/
 theorem restricted_participant_surfaces_as_strong :
-    licitFinset (mkGrammar (prominence := .participant) (restrictedDomain := true)) =
+    licitFinset { prominence := .participant, restrictedDomain := true } =
       licitFinset strongGrammar := by decide
 
 -- ============================================================================
@@ -270,7 +270,7 @@ theorem family_logophoric_assignments :
     yields an Appl domain that semantically satisfies the P-Constraint.
     The four parametric clauses in (12) are not free-standing stipulations:
     they are precisely the conditions on IO-as-POV consistency. -/
-theorem isLicit_imp_io_pov (g : PCCGrammar) (io do_ : Person) :
+theorem isLicit_imp_io_pov (g : Grammar) (io do_ : Person) :
     IsLicit g io do_ → PConstraintSatisfied g ⟨io, do_, io⟩ := by
   rintro (h | ⟨hprom, hrest⟩)
   · exact Or.inl h
@@ -279,7 +279,7 @@ theorem isLicit_imp_io_pov (g : PCCGrammar) (io do_ : Person) :
 /-- Conversely, if any Appl domain over ⟨io, do_⟩ with IO as POV center
     satisfies the P-Constraint, the combination is licit. Together with
     `isLicit_imp_io_pov`, this characterizes `IsLicit` semantically. -/
-theorem io_pov_imp_isLicit (g : PCCGrammar) (io do_ : Person) :
+theorem io_pov_imp_isLicit (g : Grammar) (io do_ : Person) :
     PConstraintSatisfied g ⟨io, do_, io⟩ → IsLicit g io do_ := by
   rintro (h | ⟨_, hprom, hrest⟩)
   · exact Or.inl h

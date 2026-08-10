@@ -54,7 +54,7 @@ not addressee reference per se.
 namespace AdamsonZompi2025
 
 open Minimalist (DecomposedPerson decomposePerson)
-open PCC (PCCGrammar IsLicit weakGrammar strongGrammar
+open PCC (Grammar IsLicit weakGrammar strongGrammar
   IsInherentlyProximate)
 
 -- ============================================================================
