@@ -1,5 +1,4 @@
 import Linglib.Syntax.RelativeClause.Basic
-import Linglib.Syntax.RelativeClause.WALS
 
 /-!
 # Modern Standard Arabic Relativization Fragment
@@ -132,28 +131,5 @@ def relAsyndeticResumptive : Marker :=
     (no head NP) and are not included. -/
 def relMarkers : List Marker :=
   [relAlladhi, relResumptive, relAsyndeticGap, relAsyndeticResumptive]
-
-/-! Arabic relativization profile (WALS-style summary). Subject: no overt
-    element in relativized position; non-subject (definite head): resumptive
-    pronoun ([ryding-2005] §14).
-
-    `subjStrategy := .gap`: subject relativization uses no overt element
-    in the relativized position (Ryding §14.2). The resumptive marker
-    does not cover subject (Ryding gives no resumption-in-SU examples;
-    K&C confirm SU is gap-only). This matches the convention used for
-    Welsh and Hebrew, which also pair a SU gap-strategy with a non-SU
-    resumptive strategy.
-
-    `lowestRelativizable := .oblique`: the WALS Ch 122/123 coarse value;
-    K&C Table 1 records OCOMP coverage. The bridge theorem
-    `arabic_kc_covers_deeper_than_wals` in
-    `Studies/KeenanComrie1977.lean` documents
-    the systematic K&C-vs-WALS asymmetry. -/
-namespace Relativization
-def subjStrategy : SubjStrategy := .gap
-def oblStrategy : OblStrategy := .pronounRetention
-def rcPosition : RCPosition := .postNominal
-def lowestRelativizable : AHPosition := .oblique
-end Relativization
 
 end Arabic.ModernStandard

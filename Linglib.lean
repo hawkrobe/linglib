@@ -726,12 +726,12 @@ import Linglib.Fragments.Arabic.ModernStandard.Relativization
 import Linglib.Fragments.Arabic.ModernStandard.WordOrder
 import Linglib.Fragments.Armenian.ClassifierSystem
 import Linglib.Fragments.Aymara.Evidentiality
-import Linglib.Fragments.Bambara.Relativization
 import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Basque.Adposition
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Basque.Postsyntax
 import Linglib.Fragments.Basque.Pronouns
+import Linglib.Fragments.Basque.Relativization
 import Linglib.Fragments.Basque.WordOrder
 import Linglib.Fragments.Bulgarian.Clause
 import Linglib.Fragments.Burmese.Negation
@@ -1041,7 +1041,6 @@ import Linglib.Fragments.Mayan.Kiche.WordOrder
 import Linglib.Fragments.Mayan.Mam.Agreement
 import Linglib.Fragments.Mayan.Mam.Extraction
 import Linglib.Fragments.Mayan.Mam.Pronouns
-import Linglib.Fragments.Mayan.Mam.Relativization
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
 import Linglib.Fragments.Mayan.Params
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
@@ -1057,7 +1056,6 @@ import Linglib.Fragments.Mixtec.SMPM.Basic
 import Linglib.Fragments.Mongolian.Case
 import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Fragments.Navajo.Comparison
-import Linglib.Fragments.Navajo.Relativization
 import Linglib.Fragments.Ndebele.Clause
 import Linglib.Fragments.NezPerce.Clause
 import Linglib.Fragments.NezPerce.Modals
