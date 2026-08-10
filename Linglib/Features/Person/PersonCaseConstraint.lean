@@ -5,18 +5,14 @@ import Linglib.Features.Person.Decomposition
 /-!
 # The Person Case Constraint (theory-neutral)
 
-[pancheva-zubizarreta-2018] [nevins-2007] [bonet-1991]
-
-The PCC restricts which ⟨IO-person, DO-person⟩ combinations a single probe can license
-in a clitic cluster. It is **person-feature combinatorics**, not a syntactic primitive:
-the licit region of each grammar is determined order-theoretically by the
-[author] ⟹ [participant] ⟹ [proximate] entailment chain (Nevins 2007's feature calculus,
-adopted by [pancheva-zubizarreta-2018] (11)), and the variants (strong/weak/ultra-strong/
-…) are points in a parameter lattice. So it lives on the person feature, not in the
-syntax. The Minimalist application — the interpretable p-feature on Appl, the phase edge —
-is the consumer (`PConstraintSatisfied`), kept separately.
-
-Formerly `Syntax/Minimalist/PConstraint.lean`.
+The PCC ([bonet-1991]) restricts which ⟨IO-person, DO-person⟩ combinations a single probe
+can license in a clitic cluster. It is **person-feature combinatorics**, not a syntactic
+primitive: the licit region of each grammar is determined order-theoretically by the
+[author] ⟹ [participant] ⟹ [proximate] entailment chain ([nevins-2007]'s feature
+calculus, adopted by [pancheva-zubizarreta-2018] (11)), and the variants (strong/weak/
+ultra-strong/…) are points in a parameter lattice. So it lives on the person feature, not
+in the syntax. The Minimalist application — the interpretable p-feature on Appl, the phase
+edge — is `PanchevaZubizarreta2018.PConstraintSatisfied`, kept with its paper.
 
 ## Person prominence, derived from feature containment
 
@@ -29,8 +25,6 @@ with another 3P), encoded in `IOSatisfiesProminence`.
 -/
 
 namespace PCC
-
-open Person (Features)
 
 /-! ### Theory-neutral person-feature accessors -/
 
@@ -52,7 +46,7 @@ inductive PProminence where
 /-- A person *inherently* satisfies a prominence threshold. The sets nest by feature
     containment (`prominence_inherent_nested`): author ⊆ participant = proximate. -/
 def PProminence.satisfiedInherentlyBy : PProminence → Person → Bool
-  | .proximate   => hasParticipant   -- inherent proximate = participant ([pz-2018] (11))
+  | .proximate   => hasParticipant   -- inherent proximate = participant ([pancheva-zubizarreta-2018] (11))
   | .participant => hasParticipant
   | .author      => hasAuthor
 
@@ -64,7 +58,6 @@ theorem prominence_inherent_nested (p : Person) :
     (PProminence.author.satisfiedInherentlyBy p → PProminence.participant.satisfiedInherentlyBy p)
     ∧ (PProminence.participant.satisfiedInherentlyBy p
         ↔ PProminence.proximate.satisfiedInherentlyBy p) := by
-  refine ⟨?_, Iff.rfl⟩
   cases p <;> decide
 
 /-! ### The PCC grammar — a constrained parameter lattice
@@ -154,7 +147,13 @@ def UniquenessSatisfied (g : PCCGrammar) (do_ : Person) : Prop :=
 instance (g : PCCGrammar) (do_ : Person) : Decidable (UniquenessSatisfied g do_) :=
   inferInstanceAs (Decidable (¬ _))
 
-/-- (12d) A [+author] IO rescues an otherwise-blocking configuration when P-Primacy is on. -/
+/-- (12d) A [+author] IO rescues an otherwise-blocking configuration when P-Primacy is on.
+
+    The rescue checks only the IO, so primacy-active grammars license ⟨1,1⟩, where the
+    paper's descriptive statement (14d) — the DO must be 2P or 3P — would forbid it (the
+    paper never walks the mechanism through ⟨1,1⟩ for the [+proximate] family). The
+    permissive reading is deliberate: rival probe-based accounts part ways with the
+    P-Constraint at exactly this cell (`Deal2024.sd_ultra_discrepancy_1_1`). -/
 def PrimacyRescues (g : PCCGrammar) (io : Person) : Prop :=
   g.primacy = true ∧ hasAuthor io = true
 
@@ -168,9 +167,14 @@ def IsInherentlyProximate (p : Person) : Prop := hasParticipant p = true
 instance (p : Person) : Decidable (IsInherentlyProximate p) :=
   inferInstanceAs (Decidable (_ = true))
 
-/-- (12a) Domain-exempt: restricted domain with no [+author] DP present. -/
+/-- (12a) Domain-exempt: restricted domain with no DP bearing the prominence feature. The
+    restriction presupposes an argument matching the P-Prominence value
+    ([pancheva-zubizarreta-2018] §4.5: the restricted application "matches the feature
+    value set in P-Prominence"; for me-first, ApplPs with a [+author] argument). -/
 def DomainExempt (g : PCCGrammar) (io do_ : Person) : Prop :=
-  g.restrictedDomain = true ∧ hasAuthor io = false ∧ hasAuthor do_ = false
+  g.restrictedDomain = true ∧
+    g.prominence.satisfiedInherentlyBy io = false ∧
+    g.prominence.satisfiedInherentlyBy do_ = false
 
 instance (g : PCCGrammar) (io do_ : Person) : Decidable (DomainExempt g io do_) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
@@ -194,21 +198,15 @@ def cliticPairs : Finset (Person × Person) :=
 def licitFinset (g : PCCGrammar) : Finset (Person × Person) :=
   cliticPairs.filter fun p => IsLicit g p.1 p.2
 
-/-- Cardinality of the licit set (out of 9). -/
-def licitCount (g : PCCGrammar) : ℕ := (licitFinset g).card
-
-/-- Markedness rank: parametric departures from the default (strong PCC)
-    ([pancheva-zubizarreta-2018] §4.5 (31)) — strong = 0. -/
-def parameterDepartures (g : PCCGrammar) : ℕ :=
-  (if g.prominence = .proximate then 0 else 1) +
-  (if g.uniqueness then 0 else 1) +
-  (if g.primacy then 1 else 0) +
-  (if g.restrictedDomain then 1 else 0)
-
 @[simp] theorem mem_licitFinset (g : PCCGrammar) (p : Person × Person) :
     p ∈ licitFinset g ↔ p ∈ cliticPairs ∧ IsLicit g p.1 p.2 := by simp [licitFinset]
 
-/-! ### The typology as a partial order (entailment by licit-set inclusion) -/
+/-! ### The typology as a preorder (entailment by licit-set inclusion)
+
+Only a preorder: distinct parameter settings can share a licit set (e.g. the
+restricted-domain [+participant] grammar surfaces as the strong PCC,
+`PanchevaZubizarreta2018.restricted_participant_surfaces_as_strong`), so antisymmetry
+fails. -/
 
 instance : LE PCCGrammar where le g₁ g₂ := licitFinset g₁ ⊆ licitFinset g₂
 
@@ -222,20 +220,7 @@ instance (g₁ g₂ : PCCGrammar) : Decidable (g₁ ≤ g₂) :=
 /-- Entailment unfolded: every licit cell of `g₁` is licit in `g₂`. -/
 theorem le_iff_isLicit_imp (g₁ g₂ : PCCGrammar) :
     g₁ ≤ g₂ ↔ ∀ io do_ : Person, (io, do_) ∈ cliticPairs → IsLicit g₁ io do_ → IsLicit g₂ io do_ := by
-  constructor
-  · intro h io do_ hmem hlic
-    exact ((mem_licitFinset _ _).mp (h ((mem_licitFinset _ _).mpr ⟨hmem, hlic⟩))).2
-  · intro h p hp
-    rcases p with ⟨io, do_⟩
-    rw [mem_licitFinset] at hp ⊢
-    exact ⟨hp.1, h io do_ hp.1 hp.2⟩
-
-/-- **Within the proximate family the licit sets form a chain**
-    ([pancheva-zubizarreta-2018]): strong ⊆ ultra-strong ⊆ weak — monotone removal of
-    P-Primacy then P-Uniqueness only enlarges the licit region. (Cross-family the
-    typology is a lattice, not a chain: me-first/super-strong are incomparable.) -/
-theorem proximate_family_chain :
-    strongGrammar ≤ ultraStrongGrammar ∧ ultraStrongGrammar ≤ weakGrammar := by
-  constructor <;> decide
+  show licitFinset g₁ ⊆ licitFinset g₂ ↔ _
+  simp +contextual [Finset.subset_iff, Prod.forall, and_imp]
 
 end PCC

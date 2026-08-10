@@ -16,7 +16,7 @@ The Person Case Constraint: The Syntactic Encoding of Perspective.
 ## Summary
 
 Empirical predictions of the P-Constraint theory (formalized in
-`Syntax/Minimalism/PConstraint.lean`) for the eight grammar
+`Features/Person/PersonCaseConstraint.lean`) for the eight grammar
 instances P&Z discuss: five attested PCC varieties (strong, ultra-strong,
 weak, super-strong, me-first) plus three predicted varieties (PG1, PG2,
 PG3) that the four-parameter space generates.
@@ -71,8 +71,7 @@ def pProminence_to_sellsRole : PProminence → LogophoricRole
 /-! P&Z's syntactic encoding: the interpretable person feature on Appl marks one DP as the
 point-of-view center. The theory-neutral PCC (`Features/Person/PersonCaseConstraint.lean`)
 is grounded here in that Appl model — a ⟨IO, DO⟩ is licit iff IO-as-POV-center is
-consistent with the Appl p-feature. (Formerly `PConstraint.lean`'s §9 grounding; it has
-no consumers outside this study, so it lives with the paper that motivates it.) -/
+consistent with the Appl p-feature. -/
 
 /-- A minimal model of the Appl phase: the two arguments and the chosen POV center. -/
 structure ApplDomain where
@@ -158,7 +157,10 @@ theorem strong_predictions :
       {(.first, .third), (.second, .third), (.third, .third)} := by decide
 
 /-- Ultra-strong PCC (§4.1.2, eq. 14d): adds P-Primacy, so 1P-IO can rescue
-    1P/2P DO. ⟨1,2⟩ allowed but ⟨2,1⟩ banned. -/
+    1P/2P DO. ⟨1,2⟩ allowed but ⟨2,1⟩ banned.
+
+    NB: ⟨1,1⟩ is licit here, where the descriptive (14d) — the DO must be 2P
+    or 3P — would ban it; see `ultra_one_one_licensed` below. -/
 theorem ultra_predictions :
     licitFinset ultraStrongGrammar =
       {(.first, .first), (.first, .second), (.first, .third),
@@ -179,11 +181,8 @@ theorem super_predictions :
       {(.first, .third), (.second, .third)} := by decide
 
 /-- Me-first PCC (§4.3, eq. 14c): bans 1P DO with non-1P IO; restricted
-    domain exempts ⟨2P,2P⟩, ⟨2P,3P⟩, ⟨3P,2P⟩, ⟨3P,3P⟩ entirely.
-
-    NB: The implementation also bans ⟨1P,1P⟩ via P-Uniqueness. The paper
-    (§4.3, p. 1314: "allows all other combinations") does not explicitly
-    address this case; see `mefirst_one_one_excluded` below. -/
+    domain exempts ⟨2P,2P⟩, ⟨2P,3P⟩, ⟨3P,2P⟩, ⟨3P,3P⟩ entirely. ⟨1P,1P⟩
+    falls to P-Uniqueness (§4.5; see `mefirst_one_one_excluded` below). -/
 theorem mefirst_predictions :
     licitFinset meFirstGrammar =
       {(.first, .second), (.first, .third),
@@ -208,49 +207,31 @@ theorem pg3_predictions :
     licitFinset pg3Grammar =
       {(.first, .second), (.first, .third)} := by decide
 
--- ============================================================================
--- § 3: Licit Counts (kernel-checkable)
--- ============================================================================
-
-theorem licit_counts :
-    licitCount strongGrammar = 3 ∧
-    licitCount ultraStrongGrammar = 5 ∧
-    licitCount weakGrammar = 7 ∧
-    licitCount superStrongGrammar = 2 ∧
-    licitCount meFirstGrammar = 6 ∧
-    licitCount pg1Grammar = 4 ∧
-    licitCount pg2Grammar = 6 ∧
-    licitCount pg3Grammar = 2 := by decide
+/-- §4.5's closing observation: restricting the domain to ApplPs with a
+    [+participant] argument while setting P-Prominence to [+participant]
+    "results in grammars that on the surface are the same as those in
+    (31)" — its licit set is exactly the strong PCC's. (The paper locates
+    the residual difference in CLR effects on 3P combinations, outside
+    this model.) -/
+theorem restricted_participant_surfaces_as_strong :
+    licitFinset (mkGrammar (prominence := .participant) (restrictedDomain := true)) =
+      licitFinset strongGrammar := by decide
 
 -- ============================================================================
--- § 4: Markedness Table (paper §4.5, eq. 31)
+-- § 3: Entailment (Preorder via licit-set containment, paper §4.5 markedness chain)
 -- ============================================================================
 
-/-- The markedness rank of each grammar as the number of parameter
-    departures from the strong PCC default. Strong is the unique 0-rank
-    grammar; the four 1-rank grammars (ultra/weak/super/pg3) are the
-    "minimal departures"; the three 2-rank grammars (me-first/pg1/pg2)
-    are doubly marked. -/
-theorem markedness_table :
-    parameterDepartures strongGrammar = 0 ∧
-    parameterDepartures ultraStrongGrammar = 1 ∧
-    parameterDepartures weakGrammar = 1 ∧
-    parameterDepartures superStrongGrammar = 1 ∧
-    parameterDepartures pg3Grammar = 1 ∧
-    parameterDepartures meFirstGrammar = 2 ∧
-    parameterDepartures pg1Grammar = 2 ∧
-    parameterDepartures pg2Grammar = 2 := by decide
-
--- ============================================================================
--- § 5: Entailment (Preorder via licit-set containment)
--- ============================================================================
-
-/-- Strong PCC entails Weak PCC: every cell licit in strong is licit in
-    weak. Falls out of the `Preorder PCCGrammar` instance. -/
-theorem strong_le_weak : strongGrammar ≤ weakGrammar := by decide
-
-/-- Strong PCC entails Ultra-strong PCC. -/
+/-- Strong PCC entails Ultra-strong PCC: activating P-Primacy only
+    enlarges the licit region. -/
 theorem strong_le_ultra : strongGrammar ≤ ultraStrongGrammar := by decide
+
+/-- Ultra-strong PCC entails Weak PCC: dropping P-Uniqueness enlarges the
+    licit region further. -/
+theorem ultra_le_weak : ultraStrongGrammar ≤ weakGrammar := by decide
+
+/-- Strong PCC entails Weak PCC, through the ultra-strong midpoint. -/
+theorem strong_le_weak : strongGrammar ≤ weakGrammar :=
+  strong_le_ultra.trans ultra_le_weak
 
 /-- Super-strong PCC entails Strong PCC: super-strong's prominence on
     [+participant] is strictly more restrictive than strong's on
@@ -258,14 +239,13 @@ theorem strong_le_ultra : strongGrammar ≤ ultraStrongGrammar := by decide
 theorem super_le_strong : superStrongGrammar ≤ strongGrammar := by decide
 
 -- ============================================================================
--- § 6: Logophoric Reading (P&Z §6.2 — paper-specific claim)
+-- § 4: Logophoric Reading (P&Z §6.2 — paper-specific claim)
 -- ============================================================================
 
 /-- P&Z's claim (§6.2): each P-Prominence setting corresponds to a logophoric
     role of [sells-1987]. *This is the paper's theoretical reading.*
     [charnavel-mateu-2015] dispute that pivot is the relevant role for
-    clitic clusters; the bridge file `Anaphora/Antilogophoricity.lean`
-    documents this disagreement explicitly. -/
+    clitic clusters; § 8 below records the disagreement. -/
 theorem prominence_logophoric_role :
     pProminence_to_sellsRole .proximate = .pivot ∧
     pProminence_to_sellsRole .participant = .self ∧
@@ -283,7 +263,7 @@ theorem family_logophoric_assignments :
     pProminence_to_sellsRole pg3Grammar.prominence = .source := by decide
 
 -- ============================================================================
--- § 7: Point-of-View Derivation (paper §6.3, eq. 48)
+-- § 5: Point-of-View Derivation (paper §6.3, eq. 48)
 -- ============================================================================
 
 /-- Whenever ⟨IO, DO⟩ is licit, selecting the IO as point-of-view center
@@ -313,7 +293,7 @@ theorem pov_principle_at_io_attitude_grammar :
     pointOfViewPrinciple true true = true := rfl
 
 -- ============================================================================
--- § 8: Cross-Linguistic Anchors (paper §4)
+-- § 6: Cross-Linguistic Anchors (paper §4)
 --
 -- Where Fragment clitic data exists (Italian, Spanish), the PCC
 -- predictions are derived from the actual fragment forms via
@@ -405,15 +385,22 @@ theorem bulgarian_me_first_examples :
   decide
 
 -- ============================================================================
--- § 9: Documentation of substantive commitments beyond the paper
+-- § 7: The ⟨1,1⟩ corner across the families
 -- ============================================================================
 
-/-- The implementation rules out ⟨1P, 1P⟩ in me-first by P-Uniqueness on
-    [+author]: both arguments are [+author], so neither can be uniquely
-    the perspectival source. The paper (§4.3) explicitly bans only ⟨3,1⟩
-    and ⟨2,1⟩, leaving ⟨1,1⟩ unaddressed. The implementation's verdict
-    follows from (12c) applied to two coreferential [+author] DPs. -/
+/-- Me-first bans ⟨1P, 1P⟩ by P-Uniqueness on [+author]: both arguments
+    are [+author], so neither is uniquely the perspectival source. §4.5
+    confirms: P-Uniqueness prohibits the co-occurrence of two 1P
+    arguments "in PG3 and me-first". -/
 theorem mefirst_one_one_excluded : ¬ IsLicit meFirstGrammar .first .first := by
+  decide
+
+/-- Ultra-strong licenses ⟨1P, 1P⟩: `PCC.PrimacyRescues` checks only the
+    IO's [+author], not featural distinctness of the two arguments. The
+    descriptive statement (14d) — the DO must be 2P or 3P — would ban the
+    cell; the paper does not walk the mechanism through ⟨1,1⟩ for the
+    [+proximate] family. A substantive commitment beyond the paper. -/
+theorem ultra_one_one_licensed : IsLicit ultraStrongGrammar .first .first := by
   decide
 
 /-- The me-first family does not show *⟨3,3⟩ effects: 3P-IO with 3P-DO
@@ -424,7 +411,7 @@ theorem mefirst_three_three_exempt :
     IsLicit meFirstGrammar .third .third := by decide
 
 -- ============================================================================
--- § 10: P&Z's rejection of [charnavel-mateu-2015]'s unification
+-- § 8: P&Z's rejection of [charnavel-mateu-2015]'s unification
 --
 -- Paper page 1308: "We do not think the CLR and the PCC should be unified
 -- along the lines suggested by Charnavel and Mateu (2015). The two
@@ -441,7 +428,8 @@ open CharnavelMateu2015 (LogoCenter CLRViolated)
 /-- P&Z's reading of the dative clitic — as a `pivot` (Sells's broadest
     role) — is incompatible with [charnavel-mateu-2015]'s reading
     (page 10), which assigns the dative clitic to `empathyLocus` and
-    rejects pivot as relevant for clitic clusters. The two readings map
+    rejects pivot as relevant for clitic clusters
+    (`Studies/CharnavelMateu2015.lean`). The two readings map
     `.proximate` to incompatible places. -/
 def pProminence_to_cmCenter : PProminence → LogoCenter
   | .proximate   => .empathyLocus
