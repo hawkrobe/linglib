@@ -104,7 +104,7 @@ theorem le_agreeOn_conj (R : Rel E) (V W : Set ℕ) :
 theorem agreeOn_conj_agreeOn (V W : Set ℕ) :
     (agreeOn V).conj (agreeOn W) = agreeOn (E := E) (V ∩ W) := by
   funext f h
-  exact propext Set.eqOn_inter_iff_exists.symm
+  exact propext Set.eqOn_inter.symm
 
 /-- Agreements meet in agreement on the union. -/
 theorem agreeOn_inf_agreeOn (V W : Set ℕ) :
