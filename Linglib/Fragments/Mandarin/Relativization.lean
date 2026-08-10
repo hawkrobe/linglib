@@ -16,8 +16,9 @@ pronoun retention down to OCOMP, unlike the sample's other prenominal
 languages (Korean, Japanese, Basque).
 
 Data from [keenan-comrie-1977] Table 1 ("Chinese (spoken Pekingese)")
-and Table 2 (retention pattern).
--/
+and Table 2 (retention pattern); [keenan-comrie-1979] p. 334 names the
+"invariable particle *de*" and exemplifies the retention pattern
+(exx. (9)-(11): no pronoun for SU, optional for DO, obligatory below). -/
 
 namespace Mandarin
 

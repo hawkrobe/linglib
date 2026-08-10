@@ -17,7 +17,9 @@ open RelativeClause
 
 /-- Relative pronoun system *qui* (SU), *que* (DO), *dont* (GEN),
     *lequel* (with prepositions); postnominal RC. Covers SU–GEN
-    (Table 1 p. 76; OCOMP blank). -/
+    (Table 1 p. 76; OCOMP blank). "The form of the relative pronoun is
+    different for each position on the AH, so French has only a [+case]
+    RC-forming strategy" ([keenan-comrie-1979] p. 335, exx. (21)-(22)). -/
 def relQui : Marker :=
   { form := "qui/que/dont/lequel"
   , npRel := .relPronoun

@@ -21,8 +21,10 @@ namespace Tagalog
 
 open RelativeClause
 
-/-- Postnominal RC with the linker *na ~ -ng*; NP_rel (the *ang*-phrase)
-    is deleted. Subjects only (Table 1 p. 79). -/
+/-- Postnominal RC with the linker *na ~ -ng* — K&C's "invariable
+    particle *ng*" — NP_rel (the *ang*-phrase) deleted. Subjects only
+    (Table 1 p. 79; [keenan-comrie-1979] p. 347 ex. (110), from
+    [schachter-otanes-1972] p. 123). -/
 def relLinkerPost : Marker :=
   { form := "na/-ng"
   , npRel := .gap
@@ -32,7 +34,9 @@ def relLinkerPost : Marker :=
   , notes := "Linker; subject (ang-phrase) only; voice promotes non-subjects" }
 
 /-- Prenominal RC with the linker *na ~ -ng*; NP_rel is deleted.
-    Subjects only (Table 1 p. 79). -/
+    Subjects only. "Restricting clauses can sometimes, especially when
+    short, be presented to the left of the head ... a second RC-forming
+    strategy" ([keenan-comrie-1979] p. 347, ex. (111)). -/
 def relLinkerPre : Marker :=
   { form := "na/-ng"
   , npRel := .gap

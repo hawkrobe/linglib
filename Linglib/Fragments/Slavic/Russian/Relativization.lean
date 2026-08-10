@@ -18,7 +18,9 @@ namespace Russian
 open RelativeClause
 
 /-- Declining relative pronoun *kotoryj*; postnominal RC. Covers SU–GEN
-    (Table 1 p. 78; OCOMP blank). -/
+    (Table 1 p. 78; OCOMP blank). "The RC construction is essentially as
+    in Polish, the relative pronoun being *kotoryj*"
+    ([keenan-comrie-1979] p. 344, exx. (87)-(88)). -/
 def relKotoryj : Marker :=
   { form := "kotoryj"
   , npRel := .relPronoun

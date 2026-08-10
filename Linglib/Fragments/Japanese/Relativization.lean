@@ -31,7 +31,10 @@ def relGap : Marker :=
 
 /-- Unmarked prenominal RC with a retained pronoun in NP_rel. GEN only,
     and only for some NPs (Table 1 p. 77; Table 2 codes Japanese
-    retention as absent above GEN). -/
+    retention as absent above GEN): "occasionally, however, a pronoun
+    may be retained when the NP_rel is genitive"
+    ([keenan-comrie-1979] p. 339, ex. (49) with retained *zibun*,
+    citing Kuno). -/
 def relRetention : Marker :=
   { form := "∅ + pronoun"
   , npRel := .resumptive

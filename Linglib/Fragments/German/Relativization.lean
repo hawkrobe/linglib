@@ -21,7 +21,8 @@ open RelativeClause
 /-- Relative pronoun *der/die/das*, inflected for case; postnominal RC.
     Covers SU–GEN (Table 1 p. 77; OCOMP blank).
     The paper's ex. (1): "der Mann, der in seinem Büro arbeitet"
-    'the man who is working in his study'. -/
+    'the man who is working in his study'; [keenan-comrie-1979] p. 337
+    exx. (31)-(32) show the case contrast (*der* nom. vs *den* acc.). -/
 def relDer : Marker :=
   { form := "der/die/das"
   , npRel := .relPronoun

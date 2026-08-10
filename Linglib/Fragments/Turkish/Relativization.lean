@@ -20,8 +20,9 @@ namespace Turkish
 open RelativeClause
 
 /-- Prenominal participial RC (subject participle *-(y)En*, non-subject
-    participle *-DIK*); NP_rel is deleted. Covers SU–OBL
-    (Table 1 p. 79). -/
+    participle *-DIK*, RC subject in the genitive); NP_rel is deleted.
+    Covers SU–OBL (Table 1 p. 79; [keenan-comrie-1979] p. 348
+    exx. (117)-(118): *uyuy-an*, *ver-diğ-i*). -/
 def relParticiple : Marker :=
   { form := "-(y)En/-DIK"
   , npRel := .gap
@@ -30,16 +31,19 @@ def relParticiple : Marker :=
   , positions := [.subject, .directObject, .indirectObject, .oblique]
   , notes := "Participial; NP_rel deleted" }
 
-/-- Prenominal participial RC with a retained pronoun in NP_rel. Covers
-    GEN, and OCOMP with reduced acceptability (Table 1 p. 79; Table 2
-    codes retention as normal at GEN and OCOMP). -/
+/-- Prenominal participial RC with a retained pronominal element in
+    NP_rel: for an adnominal genitive, a possessive suffix retained on
+    the head noun (ex. (119) *tavuğ-u* 'chicken-her'); for OCOMP, a
+    stressed pronominal form (*kendisi*, ex. (120)), "although the
+    result is not too natural" ([keenan-comrie-1979] p. 348; Table 1
+    p. 79 codes OCOMP as +?). -/
 def relRetention : Marker :=
   { form := "-(y)En/-DIK + pronoun"
   , npRel := .resumptive
   , bearsCaseMarking := true
   , rcPosition := .preNominal
   , positions := [.genitive, .objComparison]
-  , notes := "Retained pronoun; OCOMP with reduced acceptability" }
+  , notes := "GEN: possessive suffix on head noun; OCOMP: stressed pronoun, marginal" }
 
 /-- All Turkish relative clause markers. -/
 def relMarkers : List Marker := [relParticiple, relRetention]

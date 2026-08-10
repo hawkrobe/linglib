@@ -24,8 +24,9 @@ namespace HindiUrdu
 open RelativeClause
 
 /-- Postnominal RC with the relative pronoun *jo* (oblique *jis-*),
-    inflected for case. Covers SU–GEN (Table 1 p. 77; OCOMP treated as
-    an oblique). -/
+    which "carries the same postpositions as ordinary NP's"; such RCs
+    "often occur to the right of the matrix verb". Covers SU–GEN
+    (Table 1 p. 77; [keenan-comrie-1979] p. 338, ex. (41) *jis se*). -/
 def relJo : Marker :=
   { form := "jo/jis-"
   , npRel := .relPronoun
@@ -34,10 +35,12 @@ def relJo : Marker :=
   , positions := [.subject, .directObject, .indirectObject, .oblique, .genitive]
   , notes := "Case-inflected relative pronoun; OCOMP starred (treated as OBL)" }
 
-/-- Correlative *jo … vo*: the *jo*-clause contains the head NP and is
-    resumed by a correlate in the main clause. Coded "internal, +case"
-    in Table 1 p. 77 (K&C's typology lacks a correlative category);
-    covers SU–GEN. -/
+/-- Correlative *jo … vo*: "the head NP in the NP_rel position, still
+    marked by the relativization marker, and cross-referenced in the
+    'matrix' clause which follows the entire restricting clause"
+    ([keenan-comrie-1979] p. 338, ex. (42) *jis caakuu … us caakuu*).
+    Coded "internal, +case" in Table 1 p. 77 (K&C's typology lacks a
+    correlative category); covers SU–GEN. -/
 def relCorrelative : Marker :=
   { form := "jo … vo"
   , npRel := .relPronoun
