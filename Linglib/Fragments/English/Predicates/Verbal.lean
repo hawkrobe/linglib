@@ -3384,16 +3384,16 @@ referenced `Causative.toSemantics` over `CausalDynamics`) were removed
 in Phase D-G in favor of the polymorphic V2 versions. -/
 
 /-- "make" asserts sufficiency — derived from its builder. -/
-theorem make_asserts_sufficiency : make.toVerb.assertsSufficiency = true := by decide
+theorem make_asserts_sufficiency : make.toVerb.AssertsSufficiency := by decide
 
 /-- "cause" asserts necessity — derived from its builder. -/
-theorem cause_asserts_necessity : cause.toVerb.assertsNecessity = true := by decide
+theorem cause_asserts_necessity : cause.toVerb.AssertsNecessity := by decide
 
 /-- "make" does NOT assert necessity. -/
-theorem make_not_necessity : make.toVerb.assertsNecessity = false := by decide
+theorem make_not_necessity : ¬ make.toVerb.AssertsNecessity := by decide
 
 /-- "cause" does NOT assert sufficiency. -/
-theorem cause_not_sufficiency : cause.toVerb.assertsSufficiency = false := by decide
+theorem cause_not_sufficiency : ¬ cause.toVerb.AssertsSufficiency := by decide
 
 /-- make-type verbs (make, have, get) share the `.make` builder. -/
 theorem make_type_verbs_share_semantics :
@@ -3402,16 +3402,16 @@ theorem make_type_verbs_share_semantics :
 
 /-- "force" is coercive — derived from its builder. -/
 theorem force_is_coercive :
-    force.causative.map (·.isCoercive) = some true := rfl
+    ∃ c ∈ force.causative, c.IsCoercive := ⟨.force, rfl, trivial⟩
 
 /-- "let" is permissive — derived from its builder. -/
 theorem let_is_permissive :
-    let_.causative.map (·.isPermissive) = some true := rfl
+    ∃ c ∈ let_.causative, c.IsPermissive := ⟨.enable, rfl, trivial⟩
 
 /-- "prevent" asserts neither sufficiency nor necessity —
     it uses the dual `preventSem` (blocking). -/
 theorem prevent_not_sufficiency :
-    prevent.toVerb.assertsSufficiency = false := by decide
+    ¬ prevent.toVerb.AssertsSufficiency := by decide
 
 /-- "prevent" is an EN trigger — it entails ¬p in w₀ (complement
     falsity), satisfying the FORGET class licensing condition
@@ -3438,11 +3438,11 @@ theorem lexical_causatives_use_make :
 
 /-- Lexical causatives all assert sufficiency — like periphrastic "make". -/
 theorem lexical_causatives_assert_sufficiency :
-    kill.toVerb.assertsSufficiency = true ∧
-    break_.toVerb.assertsSufficiency = true ∧
-    burn.toVerb.assertsSufficiency = true ∧
-    destroy.toVerb.assertsSufficiency = true ∧
-    melt.toVerb.assertsSufficiency = true := by
+    kill.toVerb.AssertsSufficiency ∧
+    break_.toVerb.AssertsSufficiency ∧
+    burn.toVerb.AssertsSufficiency ∧
+    destroy.toVerb.AssertsSufficiency ∧
+    melt.toVerb.AssertsSufficiency := by
   refine ⟨by decide, by decide, by decide,
           by decide, by decide⟩
 
@@ -3463,19 +3463,19 @@ removed in Phase D-G. -/
 
 /-- "manage" entails the complement — derived from its builder. -/
 theorem manage_entails_complement_derived :
-    manage.toVerb.entailsComplement = some true := by decide
+    ∃ i ∈ manage.toVerb.implicative, i.EntailsComplement := ⟨.positive, rfl, trivial⟩
 
 /-- "fail" entails NOT the complement — derived from its builder. -/
 theorem fail_entails_not_complement_derived :
-    fail.toVerb.entailsComplement = some false := by decide
+    ∃ i ∈ fail.toVerb.implicative, ¬ i.EntailsComplement := ⟨.negative, rfl, id⟩
 
 /-- "remember" entails the complement — derived from its builder. -/
 theorem remember_entails_complement_derived :
-    remember.toVerb.entailsComplement = some true := by decide
+    ∃ i ∈ remember.toVerb.implicative, i.EntailsComplement := ⟨.positive, rfl, trivial⟩
 
 /-- "forget" entails NOT the complement — derived from its builder. -/
 theorem forget_entails_not_complement_derived :
-    forget.toVerb.entailsComplement = some false := by decide
+    ∃ i ∈ forget.toVerb.implicative, ¬ i.EntailsComplement := ⟨.negative, rfl, id⟩
 
 -- ════════════════════════════════════════════════════
 -- § V2 Causative Grounding Theorems (Phase D-D)

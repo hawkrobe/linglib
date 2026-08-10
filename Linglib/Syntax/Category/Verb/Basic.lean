@@ -114,9 +114,14 @@ def Verb.isCausative (v : Verb) : Bool :=
 
 /-- Does this causative verb assert sufficiency (like "make")?
 
-    DERIVED: delegates to `Causative.assertsSufficiency`. -/
-def Verb.assertsSufficiency (v : Verb) : Bool :=
-  v.causative.map (·.assertsSufficiency) |>.getD false
+    DERIVED: delegates to `Causative.AssertsSufficiency`. -/
+def Verb.AssertsSufficiency (v : Verb) : Prop :=
+  match v.causative with
+  | some c => c.AssertsSufficiency
+  | none => False
+
+instance : DecidablePred Verb.AssertsSufficiency := fun v => by
+  unfold Verb.AssertsSufficiency; split <;> infer_instance
 
 /-- Lexicalist prediction of the external argument's theta role
     ([levin-1993], [rappaport-hovav-levin-1998]), based solely
@@ -173,17 +178,14 @@ def Verb.isENTrigger (v : Verb) : Bool :=
 
 /-- Does this causative verb assert necessity (like "cause")?
 
-    DERIVED: delegates to `Causative.assertsNecessity`. -/
-def Verb.assertsNecessity (v : Verb) : Bool :=
-  v.causative.map (·.assertsNecessity) |>.getD false
+    DERIVED: delegates to `Causative.AssertsNecessity`. -/
+def Verb.AssertsNecessity (v : Verb) : Prop :=
+  match v.causative with
+  | some c => c.AssertsNecessity
+  | none => False
 
-/-- Does success of this implicative verb entail the complement?
-
-    DERIVED: delegates to `Implicative.entailsComplement`.
-    Returns `some true` for positive implicatives (*manage*, *remember*),
-    `some false` for negative (*fail*, *forget*), `none` for non-implicatives. -/
-def Verb.entailsComplement (v : Verb) : Option Bool :=
-  v.implicative.map (·.entailsComplement)
+instance : DecidablePred Verb.AssertsNecessity := fun v => by
+  unfold Verb.AssertsNecessity; split <;> infer_instance
 
 /-- Is this verb a preferential attitude predicate? -/
 def Verb.isPreferentialAttitude (v : Verb) : Bool :=

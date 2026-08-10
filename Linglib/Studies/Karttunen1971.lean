@@ -195,13 +195,13 @@ theorem believe_not_implicative :
 -- ── Derived entailment predictions ──
 
 theorem manage_entails :
-    manage.toVerb.entailsComplement = some true := by native_decide
+    ∃ i ∈ manage.toVerb.implicative, i.EntailsComplement := ⟨.positive, rfl, trivial⟩
 
 theorem fail_entails_not :
-    fail.toVerb.entailsComplement = some false := by native_decide
+    ∃ i ∈ fail.toVerb.implicative, ¬ i.EntailsComplement := ⟨.negative, rfl, id⟩
 
 theorem hope_no_complement_entailment :
-    hope.toVerb.entailsComplement = none := rfl
+    hope.toVerb.implicative = none := rfl
 
 -- ── Raising vs control ──
 
@@ -253,10 +253,10 @@ theorem force_has_causative :
     force.toVerb.causative = some .force := rfl
 
 theorem force_asserts_sufficiency :
-    Causative.force.assertsSufficiency = true := rfl
+    Causative.force.AssertsSufficiency := trivial
 
 theorem force_no_necessity :
-    Causative.force.assertsNecessity = false := rfl
+    ¬ Causative.force.AssertsNecessity := id
 
 -- ════════════════════════════════════════════════════════════════
 -- § 6. KarttunenClass → Entailment Predictions

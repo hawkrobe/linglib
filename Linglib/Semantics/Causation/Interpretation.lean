@@ -15,7 +15,7 @@ import Linglib.Semantics.Causation.Prevention
 Maps `Causative` verb classifications to their compositional semantics
 under the **force-dynamic** view ([talmy-1988], [wolff-2003]),
 which collapses `enable`/`force`/`make` into a single sufficiency
-predicate (`causallySufficient`) distinguished post-hoc by `isCoercive`/`isPermissive`.
+predicate (`makeSem`) distinguished post-hoc by `IsCoercive`/`IsPermissive`.
 
 | Causative | Mechanism | English verbs | N&L property (derived) |
 |-----------|-----------|---------------|----------------------|
@@ -79,6 +79,24 @@ noncomputable def toSemantics {V : Type*} {α : V → Type*}
   | .enable => Causation.Sufficiency.makeSem M
   | .prevent => Causation.Prevention.preventSem M
 
+/-- Sufficiency-asserting variants share `makeSem` truth conditions: the
+`AssertsSufficiency` classification tracks the force-dynamic dispatch. -/
+theorem AssertsSufficiency.toSemantics_eq {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    {b : Causative} (h : b.AssertsSufficiency) :
+    b.toSemantics M = Causation.Sufficiency.makeSem M := by
+  cases b <;> first | rfl | exact (h : False).elim
+
+/-- The necessity-asserting variant has `causeSem` truth conditions: the
+`AssertsNecessity` classification tracks the force-dynamic dispatch. -/
+theorem AssertsNecessity.toSemantics_eq {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    {b : Causative} (h : b.AssertsNecessity) :
+    b.toSemantics M = Causation.Necessity.causeSem M := by
+  cases b <;> first | rfl | exact (h : False).elim
+
 end Features.Causative
 
 /-! ### Derivation theorems (substrate-independent) -/
@@ -90,13 +108,11 @@ open Features
 
 /-- `make` and `force` are distinguished by coercion despite sharing truth conditions. -/
 theorem make_force_distinguished_by_coercion :
-    Causative.make.isCoercive = false ∧
-    Causative.force.isCoercive = true := ⟨rfl, rfl⟩
+    ¬ Causative.make.IsCoercive ∧ Causative.force.IsCoercive := ⟨id, trivial⟩
 
 /-- `make` and `enable` are distinguished by permissivity despite sharing truth conditions. -/
 theorem make_enable_distinguished_by_permissivity :
-    Causative.make.isPermissive = false ∧
-    Causative.enable.isPermissive = true := ⟨rfl, rfl⟩
+    ¬ Causative.make.IsPermissive ∧ Causative.enable.IsPermissive := ⟨id, trivial⟩
 
 /-! ### Bridge to CC-Selection -/
 
@@ -107,9 +123,9 @@ but connected: each variant has a canonical selection mode. -/
 
 /-- Sufficiency variants have completion selection mode. -/
 theorem sufficiency_selects_completion (b : Causative)
-    (h : b.assertsSufficiency = true) :
+    (h : b.AssertsSufficiency) :
     b.selectionMode = .completionOfSufficientSet := by
-  cases b <;> simp_all [Causative.assertsSufficiency, Causative.selectionMode]
+  cases b <;> first | rfl | exact (h : False).elim
 
 /-- Necessity variant has member selection mode. -/
 theorem necessity_selects_member :
