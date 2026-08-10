@@ -1,5 +1,5 @@
 import Linglib.Semantics.Events.CEM
-import Linglib.Semantics.Spatial.Path
+import Linglib.Semantics.Events.Path
 
 /-!
 # Spatial trace function σ

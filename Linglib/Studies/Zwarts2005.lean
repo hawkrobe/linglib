@@ -1,4 +1,4 @@
-import Linglib.Semantics.Spatial.Trace
+import Linglib.Semantics.Events.SpatialTrace
 
 /-!
 # [zwarts-2005] *Prepositional Aspect and the Algebra of Paths*
@@ -8,7 +8,7 @@ Directional-PP denotations are sets of paths; what distinguishes telic PPs
 **partial** concatenation operation: atelic PPs are cumulative, telic PPs are
 not (21). The paper's Appendix A path algebra — `Spatial.Path` with
 `Path.IsConcat` (67) and the subpath order (68) — lives in
-`Semantics/Spatial/Path.lean`; this file formalizes the aspectual system
+`Semantics/Events/Path.lean`; this file formalizes the aspectual system
 built on it.
 
 ## Main definitions

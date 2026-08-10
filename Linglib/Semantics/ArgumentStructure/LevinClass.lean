@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Semantics.Spatial.Path
+import Linglib.Semantics.Events.Path
 import Linglib.Features.Aktionsart
 
 /-!

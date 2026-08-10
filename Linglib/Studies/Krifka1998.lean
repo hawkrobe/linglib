@@ -1,6 +1,6 @@
 import Linglib.Semantics.Aspect.Cumulativity
 import Linglib.Semantics.Events.Adjacency
-import Linglib.Semantics.Spatial.Trace
+import Linglib.Semantics.Events.SpatialTrace
 import Linglib.Features.Aktionsart
 import Linglib.Data.Examples.Krifka1998
 import Mathlib.Data.Finset.Basic
@@ -13,7 +13,7 @@ paper's deepest results: CUM/QUA propagation, telicity by initial/final parts,
 and the path-bounded movement-relation analysis.
 
 The substrate predicates (MO, MSO, MSE, SINC, INC, CumTheta — K98 §3.2) live
-in `Semantics/Events/`; the σ-trace pullback in `Semantics/Spatial/Trace.lean`.
+in `Semantics/Events/`; the σ-trace pullback in `Semantics/Events/SpatialTrace.lean`.
 This file inlines the §4 movement-relation predicates (formerly in
 `Semantics/Events/MovementRelations.lean`).
 

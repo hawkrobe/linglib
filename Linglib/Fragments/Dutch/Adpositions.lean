@@ -1,4 +1,4 @@
-import Linglib.Semantics.Spatial.Path
+import Linglib.Semantics.Events.Path
 import Linglib.Features.Aktionsart
 
 /-!
