@@ -1,22 +1,20 @@
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Perspective
 
 /-!
-# English Temporal Deictic Adverbs
-[zhao-2025]
+# English temporal deictic adverbs
 
-Lexical entry for English temporal "then", typed by `ThenAdverb`.
-
+Lexical entry for English *then*, typed by `Tense.Perspective.ThenAdverb` —
+[zhao-2025]'s ⌈then⌉ class of temporal pronouns presupposing disjointness
+from the perspective time π.
 -/
 
 namespace English.TemporalDeictic
 
-open Tense
+open Tense.Perspective
 
-/-- English "then" -/
+/-- English *then* -/
 def then_ : ThenAdverb where
-  language := "English"
   form := "then"
   gloss := "then"
-  shiftsPerspective := true
 
 end English.TemporalDeictic
