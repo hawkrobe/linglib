@@ -88,7 +88,7 @@ structure Definite (E S : Type*) where
 /-! ### Vikner-Jensen possession taxonomy -/
 
 /-- Four-way lexical taxonomy of possession relations from
-[vikner-jensen-2002] §3.1.2, reproduced in Fig 6.1 of [barker-2011]. The
+[vikner-jensen-2002] §3.1.2 (their Table 1), reproduced in [barker-2011]. The
 separate "pragmatic" interpretation is not lexical and is not one of these. -/
 inductive PossessionRelationType where
   /-- Inherent relation: lexically argument-structural (the teacher's class). -/
