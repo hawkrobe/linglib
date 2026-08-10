@@ -116,20 +116,11 @@ instance : DecidableLE Context := λ _ _ => decidable_of_iff' _ le_def
 instance : PartialOrder Context where
   le := (· ≤ ·)
   le_refl c := ⟨subset_rfl, subset_rfl, subset_rfl, Finset.subset_union_left⟩
-  le_trans c d e h h' :=
-    ⟨h.1.trans h'.1, h.2.1.trans h'.2.1, h.2.2.1.trans h'.2.2.1, by
-      intro v hv
-      rcases Finset.mem_union.mp (h'.2.2.2 hv) with hd | hio
-      · rcases Finset.mem_union.mp (h.2.2.2 hd) with hc | hio'
-        · exact Finset.mem_union_left _ hc
-        · exact Finset.mem_union_right _ (Finset.mem_inter.mpr
-            ⟨h'.1 (Finset.mem_inter.mp hio').1,
-             h'.2.1 (Finset.mem_inter.mp hio').2⟩)
-      · exact Finset.mem_union_right _ hio⟩
-  le_antisymm c d h h' :=
-    Context.ext (Finset.Subset.antisymm h.1 h'.1)
-      (Finset.Subset.antisymm h.2.2.1 h'.2.2.1)
-      (Finset.Subset.antisymm h.2.1 h'.2.1)
+  le_trans c d e h h' := by grind [le_def]
+  le_antisymm c d h h' := by
+    obtain ⟨hI, hO, hB, -⟩ := h
+    obtain ⟨hI', hO', hB', -⟩ := h'
+    exact Context.ext (hI.antisymm hI') (hB.antisymm hB') (hO.antisymm hO')
 
 /-- The test context at `V`: reads and writes `V`, blocks nothing.
 Conditions live here (`isCRel_atom`), and implication contexts are tests
