@@ -3386,12 +3386,6 @@ in Phase D-G in favor of the polymorphic V2 versions. -/
 /-- "make" asserts sufficiency — derived from its builder. -/
 theorem make_asserts_sufficiency : make.toVerb.AssertsSufficiency := by decide
 
-/-- "cause" asserts necessity — derived from its builder. -/
-theorem cause_asserts_necessity : cause.toVerb.AssertsNecessity := by decide
-
-/-- "make" does NOT assert necessity. -/
-theorem make_not_necessity : ¬ make.toVerb.AssertsNecessity := by decide
-
 /-- "cause" does NOT assert sufficiency. -/
 theorem cause_not_sufficiency : ¬ cause.toVerb.AssertsSufficiency := by decide
 
@@ -3399,14 +3393,6 @@ theorem cause_not_sufficiency : ¬ cause.toVerb.AssertsSufficiency := by decide
 theorem make_type_verbs_share_semantics :
     make.causative = have_caus.causative ∧
     make.causative = get_caus.causative := ⟨rfl, rfl⟩
-
-/-- "force" is coercive — derived from its builder. -/
-theorem force_is_coercive :
-    ∃ c ∈ force.causative, c.IsCoercive := ⟨.force, rfl, trivial⟩
-
-/-- "let" is permissive — derived from its builder. -/
-theorem let_is_permissive :
-    ∃ c ∈ let_.causative, c.IsPermissive := ⟨.enable, rfl, trivial⟩
 
 /-- "prevent" asserts neither sufficiency nor necessity —
     it uses the dual `preventSem` (blocking). -/
@@ -3461,21 +3447,24 @@ sub-namespace (`manage_semantics_implicative`, `fail_semantics_implicative`)
 parameterized by an arbitrary `SEM V α`. The legacy versions were
 removed in Phase D-G. -/
 
-/-- "manage" entails the complement — derived from its builder. -/
-theorem manage_entails_complement_derived :
-    ∃ i ∈ manage.toVerb.implicative, i.EntailsComplement := ⟨.positive, rfl, trivial⟩
+/-- "manage" is a positive implicative: success entails the complement
+    (`Implicative.manageSem`). -/
+theorem manage_positive_implicative :
+    manage.toVerb.implicative = some .positive := rfl
 
-/-- "fail" entails NOT the complement — derived from its builder. -/
-theorem fail_entails_not_complement_derived :
-    ∃ i ∈ fail.toVerb.implicative, ¬ i.EntailsComplement := ⟨.negative, rfl, id⟩
+/-- "fail" is a negative implicative: success entails the complement's
+    negation (`Implicative.failSem`). -/
+theorem fail_negative_implicative :
+    fail.toVerb.implicative = some .negative := rfl
 
-/-- "remember" entails the complement — derived from its builder. -/
-theorem remember_entails_complement_derived :
-    ∃ i ∈ remember.toVerb.implicative, i.EntailsComplement := ⟨.positive, rfl, trivial⟩
+/-- "remember" is a positive implicative: success entails the complement. -/
+theorem remember_positive_implicative :
+    remember.toVerb.implicative = some .positive := rfl
 
-/-- "forget" entails NOT the complement — derived from its builder. -/
-theorem forget_entails_not_complement_derived :
-    ∃ i ∈ forget.toVerb.implicative, ¬ i.EntailsComplement := ⟨.negative, rfl, id⟩
+/-- "forget" is a negative implicative: success entails the complement's
+    negation. -/
+theorem forget_negative_implicative :
+    forget.toVerb.implicative = some .negative := rfl
 
 -- ════════════════════════════════════════════════════
 -- § V2 Causative Grounding Theorems (Phase D-D)

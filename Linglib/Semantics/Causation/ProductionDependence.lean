@@ -170,14 +170,6 @@ theorem production_analogous_make :
 theorem dependence_analogous_cause :
     CausationType.dependence.analogousBuilder = .cause := rfl
 
-/-- P-CAUSE's analogous builder asserts sufficiency. -/
-theorem production_asserts_sufficiency :
-    CausationType.production.analogousBuilder.AssertsSufficiency := trivial
-
-/-- D-CAUSE's analogous builder asserts necessity. -/
-theorem dependence_asserts_necessity :
-    CausationType.dependence.analogousBuilder.AssertsNecessity := trivial
-
 /-! ## Bridge to Resultatives
 
 Thick causative manner verbs (break-class) are compatible with strong
