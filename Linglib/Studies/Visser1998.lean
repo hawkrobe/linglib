@@ -19,7 +19,8 @@ substrate.
   information order is a partial order (Theorem 3.3).
 - `IsCRel c R`: `R` is a `c`-relation (Definition 3.4), with
   `isCRel_iff_eq` recovering the paper's equational form
-  `R = (≡ᵢ ; R ; ≡ₒ) ∩ [B]`.
+  `R = (≡ᵢ ; R ; ≡ₒ) ∩ [B]` and `isCRel_test_iff` characterizing the
+  `test V`-typed relations as the `V`-invariant tests (`Update.IsTest`).
 - `IsCRel.mono`: the order is sound for the typing — `c ≤ d` types more
   relations (Theorem 3.5(1)).
 - `IsCRel.patch`, `IsCRel.patch_unique`: the unique-output lemma
@@ -44,7 +45,7 @@ substrate.
 
 namespace Visser1998
 
-open DPL
+open DPL DynamicSemantics
 
 variable {E : Type*}
 
@@ -175,6 +176,27 @@ theorem isCRel_iff_eq (c : Context) (R : DPL.Rel E) :
       rw [h]
       exact ⟨⟨f, g, hI, hR, hO⟩, hB⟩
 
+/-- The `test V`-typed relations are exactly the `V`-invariant tests —
+the ⟨V⟩-conditions of Definition 2.2, the paper's first insight after
+Definition 3.4. -/
+theorem isCRel_test_iff {V : Finset ℕ} {R : DPL.Rel E} :
+    IsCRel (Context.test V) R ↔
+      Update.IsTest (toDRS R) ∧
+        ∀ ⦃f f'⦄, Set.EqOn f' f ↑V → R f f → R f' f' := by
+  constructor
+  · intro h
+    refine ⟨λ f g hR => funext λ v => h.blocks hR (by simp), ?_⟩
+    intro f f' hV hR
+    exact h.stable hR hV hV.symm (λ v _ => rfl)
+  · rintro ⟨hdiag, hinv⟩
+    constructor
+    · intro f g hR v _
+      rw [hdiag hR]
+    · intro f f' g g' hR hI hO hB
+      obtain rfl : f = g := hdiag hR
+      obtain rfl : f' = g' := funext λ v => hB (by simp)
+      exact hinv hI hR
+
 /-! ### The order is sound for the typing (Theorem 3.5) -/
 
 /-- Theorem 3.5(1): larger contexts type more relations —
@@ -188,13 +210,8 @@ theorem IsCRel.mono {c d : Context} {R : DPL.Rel E} (hcd : c ≤ d)
   · intro f f' g g' hR hI' hO' hB'
     refine h.stable hR (hI'.mono (Finset.coe_subset.mpr hI))
       (hO'.mono (Finset.coe_subset.mpr hO)) (λ v hv => ?_)
-    by_cases hvd : v ∈ d.B
-    · rcases Finset.mem_union.mp (hBio hvd) with hc | hio
-      · exact absurd hc hv
-      · obtain ⟨hvi, hvo⟩ := Finset.mem_inter.mp hio
-        rw [hI' hvi, ← hO' hvo]
-        exact h.blocks hR hv
-    · exact hB' hvd
+    have hb := h.blocks hR
+    grind [Set.EqOn]
 
 /-! ### The unique-output lemma (Lemma 3.7) -/
 
@@ -220,12 +237,9 @@ theorem IsCRel.patch_unique {c : Context} {R : DPL.Rel E}
     (h : IsCRel c R) {f' g g' : ℕ → E}
     (hR : R f' g') (hB : Set.EqOn g' g ↑c.B) :
     g' = c.B.piecewise g f' := by
+  have hb := h.blocks hR
   funext v
-  by_cases hv : v ∈ c.B
-  · rw [c.B.piecewise_eq_of_mem _ _ hv]
-    exact hB hv
-  · rw [c.B.piecewise_eq_of_notMem _ _ hv]
-    exact (h.blocks hR hv).symm
+  grind [Set.EqOn, Finset.piecewise_eq_of_mem, Finset.piecewise_eq_of_notMem]
 
 /-! ### Composition and implication typing (Theorems 3.8–3.9) -/
 
@@ -243,13 +257,12 @@ theorem IsCRel.conj {c d : Context} {R S : DPL.Rel E}
   · rintro f f' g g' ⟨k, hfk, hkg⟩ hI hO hB
     refine ⟨(c.O ∪ d.I).piecewise k (c.B.piecewise g' f'),
       hR.stable hfk (hI.mono (Finset.coe_subset.mpr Finset.subset_union_left))
-        ?_ ?_,
-      hS.stable hkg ?_
+        (λ v hv => ((c.O ∪ d.I).piecewise_eq_of_mem _ _
+          (Finset.mem_union_left _ hv)).symm) ?_,
+      hS.stable hkg
+        (λ v hv => (c.O ∪ d.I).piecewise_eq_of_mem _ _
+          (Finset.mem_union_right _ hv))
         (hO.mono (Finset.coe_subset.mpr Finset.subset_union_right)) ?_⟩
-    · -- k agrees with the patch on c.O
-      intro v hv
-      exact ((c.O ∪ d.I).piecewise_eq_of_mem _ _
-        (Finset.mem_union_left _ hv)).symm
     · -- f' agrees with the patch off c.B
       intro v hv
       by_cases hoi : v ∈ c.O ∪ d.I
@@ -262,9 +275,6 @@ theorem IsCRel.conj {c d : Context} {R S : DPL.Rel E}
         · exact hI (Finset.mem_union_right _ (Finset.mem_sdiff.mpr ⟨hi, hv⟩))
       · rw [(c.O ∪ d.I).piecewise_eq_of_notMem _ _ hoi,
           c.B.piecewise_eq_of_notMem _ _ hv]
-    · -- the patch agrees with k on d.I
-      intro v hv
-      exact (c.O ∪ d.I).piecewise_eq_of_mem _ _ (Finset.mem_union_right _ hv)
     · -- the patch agrees with g' off d.B
       intro v hv
       by_cases hoi : v ∈ c.O ∪ d.I
@@ -289,25 +299,22 @@ a `(c → d)`-relation, via two applications of the patch lemma. -/
 theorem IsCRel.impl {c d : Context} {R S : DPL.Rel E}
     (hR : IsCRel c R) (hS : IsCRel d S) :
     IsCRel (c.impl d) (DPL.Rel.impl R S) := by
-  constructor
-  · rintro f g ⟨rfl, -⟩ v _
-    rfl
-  · rintro f f' g g' ⟨rfl, hall⟩ hI - hB
-    obtain rfl : f' = g' := funext λ v => hB (by simp)
-    refine ⟨rfl, λ k hRk => ?_⟩
-    -- Transport the antecedent back to `f` by the patch lemma.
-    have hIff' : Set.EqOn f f' ↑c.I :=
-      (hI.mono (Finset.coe_subset.mpr Finset.subset_union_left)).symm
-    have hfk₀ := hR.patch hIff' hRk
-    obtain ⟨j, hSj⟩ := hall (c.B.piecewise k f) hfk₀
-    -- Transport the consequent forward to `k` by the patch lemma.
-    have hIk : Set.EqOn k (c.B.piecewise k f) ↑d.I := by
-      intro v hv
-      by_cases hvB : v ∈ c.B
-      · exact (c.B.piecewise_eq_of_mem _ _ hvB).symm
-      · rw [c.B.piecewise_eq_of_notMem _ _ hvB, ← hR.blocks hRk hvB]
-        exact hI (Finset.mem_union_right _ (Finset.mem_sdiff.mpr ⟨hv, hvB⟩))
-    exact ⟨_, hS.patch hIk hSj⟩
+  refine isCRel_test_iff.mpr ⟨λ _ _ h => h.1, ?_⟩
+  rintro f f' hI ⟨-, hall⟩
+  refine ⟨rfl, λ k hRk => ?_⟩
+  -- Transport the antecedent back to `f` by the patch lemma.
+  have hIff' : Set.EqOn f f' ↑c.I :=
+    (hI.mono (Finset.coe_subset.mpr Finset.subset_union_left)).symm
+  have hfk₀ := hR.patch hIff' hRk
+  obtain ⟨j, hSj⟩ := hall (c.B.piecewise k f) hfk₀
+  -- Transport the consequent forward to `k` by the patch lemma.
+  have hIk : Set.EqOn k (c.B.piecewise k f) ↑d.I := by
+    intro v hv
+    by_cases hvB : v ∈ c.B
+    · exact (c.B.piecewise_eq_of_mem _ _ hvB).symm
+    · rw [c.B.piecewise_eq_of_notMem _ _ hvB, ← hR.blocks hRk hvB]
+      exact hI (Finset.mem_union_right _ (Finset.mem_sdiff.mpr ⟨hv, hvB⟩))
+  exact ⟨_, hS.patch hIk hSj⟩
 
 /-! ### The DPL generators, typed -/
 
@@ -315,13 +322,9 @@ theorem IsCRel.impl {c d : Context} {R S : DPL.Rel E}
 test (the atomic case of the paper's semantic Theorem 3.13). -/
 theorem isCRel_atom (V : Finset ℕ) (p : (ℕ → E) → Prop)
     (hp : ∀ ⦃f f'⦄, Set.EqOn f f' ↑V → p f → p f') :
-    IsCRel (Context.test V) (DPL.Rel.atom p) := by
-  constructor
-  · rintro f g ⟨rfl, -⟩ v -
-    rfl
-  · rintro f f' g g' ⟨rfl, hpf⟩ hI - hB
-    obtain rfl : f' = g' := funext λ v => hB (by simp)
-    exact ⟨rfl, hp hI.symm hpf⟩
+    IsCRel (Context.test V) (DPL.Rel.atom p) :=
+  isCRel_test_iff.mpr ⟨λ _ _ h => h.1,
+    λ _ _ hV hR => ⟨rfl, hp hV.symm hR.2⟩⟩
 
 /-- The random reset at `x` — differ at most at `x`, the paper's `[x]` —
 read as a `DPL.Rel`. -/
