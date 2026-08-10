@@ -4,7 +4,7 @@ import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
-import Linglib.Features.Causation
+import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.Entailment.NaturalLogic
 import Linglib.Semantics.Aspect.ChangeOfState

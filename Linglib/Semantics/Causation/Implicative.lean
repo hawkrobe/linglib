@@ -1,6 +1,6 @@
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
-import Linglib.Features.Causation
+import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.Causation.SEM.Counterfactual
@@ -39,9 +39,8 @@ were deleted in Phase D-H. The polymorphic V2 versions
 dispatch) are promoted to canonical here.
 -/
 
-namespace Causation.Implicative
+namespace Implicative
 
-open Features (Implicative)
 open Features
 open Causation (SEM CausalGraph Valuation DecidableValuation)
 
@@ -100,7 +99,7 @@ noncomputable instance {V : Type*} {α : V → Type*}
     TODO: this is denial of the sufficiency presupposition, which is what
     the Dreyfus infelicity judgments test, but it is NOT Proposal 32's
     semantics for negative implicative *assertions* (assert ¬A(x) with
-    both presuppositions intact); the `Features.Implicative.toSemantics`
+    both presuppositions intact); the `Implicative.toSemantics`
     `.negative` dispatch below inherits the same caveat. -/
 abbrev failSem {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
@@ -346,17 +345,15 @@ theorem specific_vs_bleached :
     (ImplicativeClass.manage.prerequisite.bind (some ·.isSpecific)) = some false := by
   exact ⟨rfl, rfl⟩
 
-end Causation.Implicative
+end Implicative
 
-/-! ### `Features.Implicative.toSemantics` dispatch (V2 polymorphic) -/
+/-! ### `Implicative.toSemantics` dispatch (V2 polymorphic) -/
 
-/-! Lives here rather than in `Features/Causation.lean` because the
+/-! Lives here rather than in `Semantics/Causation/VerbClass.lean` because the
 dispatch needs `Causation.SEM` + the `Implicative.manageSem`/`failSem`
-machinery defined above; `Features/Causation.lean` is kept import-free.
-Standard mathlib pattern: methods on a type may live in a sibling
-file via `namespace TypeName` block when import weight matters. -/
+machinery defined above; `VerbClass.lean` is kept import-free. -/
 
-namespace Features.Implicative
+namespace Implicative
 
 open Causation (SEM CausalGraph Valuation DecidableValuation)
 
@@ -366,7 +363,7 @@ noncomputable def toSemantics {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] :
     Implicative → Valuation α → ∀ p : V, α p → ∀ c : V, α c → Prop
-  | .positive => Causation.Implicative.manageSem M
-  | .negative => Causation.Implicative.failSem M
+  | .positive => Implicative.manageSem M
+  | .negative => Implicative.failSem M
 
-end Features.Implicative
+end Implicative

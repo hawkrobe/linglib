@@ -13,7 +13,6 @@ namespace Japanese.Predicates
 
 open ArgumentStructure
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
-open Features (Causative)
 
 /-- Japanese verb entry: extends Verb with Japanese inflectional paradigm. -/
 structure JapaneseVerbEntry extends Verb where

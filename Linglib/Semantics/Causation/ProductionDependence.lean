@@ -37,7 +37,6 @@ namespace Causation.ProductionDependence
 
 open Intensional (WorldTimeIndex)
 
-open Features (Causative)
 open Features
 
 /-! ## Causation Type

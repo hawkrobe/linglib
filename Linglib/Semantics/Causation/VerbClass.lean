@@ -15,8 +15,6 @@ This file defines two classifications carried by verb lexical entries:
   of causal events*][wolff-2003]
 -/
 
-namespace Features
-
 /-! ### Force-dynamic causatives -/
 
 /-- Force-dynamic classification of causative verbs by the causal mechanism
@@ -98,5 +96,3 @@ instance : DecidablePred EntailsComplement := fun i => by
   cases i <;> unfold EntailsComplement <;> infer_instance
 
 end Implicative
-
-end Features

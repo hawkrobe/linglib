@@ -1073,7 +1073,6 @@ close to w₀), but they derive from distinct semantic mechanisms:
 Each mechanism independently entails ¬p in the real world, unifying
 the class despite its heterogeneity. -/
 
-open Features (Causative Implicative)
 
 /-- FORGET is a negative implicative: "X forgot to do Y" entails that
     Y did NOT happen (¬p in w₀). This is DERIVED from the implicative
