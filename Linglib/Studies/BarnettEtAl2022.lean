@@ -1,3 +1,4 @@
+import Linglib.Core.Probability.ENNRealArith
 import Linglib.Core.Probability.Scores
 import Linglib.Pragmatics.DecisionTheoretic.Basic
 import Linglib.Pragmatics.RSA.CombinedUtility
@@ -209,26 +210,75 @@ theorem goalOriented_via_combined (uEpi uPers β : ℚ) (hβ : 0 ≤ β) :
     goalOrientedUtility uEpi uPers β = (1 + β) * combined (betaToLam β) uEpi uPers :=
   goalOriented_eq_scaled_combined uEpi uPers β hβ
 
-/-- The contest as a Merin/DTS context: uniform prior over the ten worlds,
-topic "longer" (prior mass 2/5). -/
-def stickContext : DTSContext StickWorld :=
-  ⟨{w | longer w}, fun w => inferInstanceAs (Decidable (longer w)), λ _ => 1/10⟩
+instance : MeasurableSpace StickWorld := ⊤
+instance : DiscreteMeasurableSpace StickWorld := ⟨fun _ => trivial⟩
 
-example : probSum stickContext.prior stickContext.topic = 2/5 := by decide +kernel
+/-- The contest as a Merin/DTS context: counting prior over the ten worlds,
+topic "longer" (4 of the 10 worlds; conditioning normalizes, so counting and
+uniform priors induce the same relevance facts). -/
+noncomputable def stickContext : DTS.Context StickWorld :=
+  ⟨{w | longer w}, .of_discrete, .count⟩
 
 /-- The evidence of showing stick `u`: the worlds containing it. -/
 def shows (u : Stick) : Set StickWorld := {w | worldContains w u}
 
-instance (u : Stick) : DecidablePred (· ∈ shows u) := fun w =>
-  inferInstanceAs (Decidable (worldContains w u))
+private lemma topic_eq : ({w | longer w} : Set StickWorld) =
+    ↑({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
+      Finset StickWorld) := by
+  ext w; cases w <;> simp [longer]
+
+private lemma shows_s4_eq : shows .s4 =
+    ↑({StickWorld.w124, StickWorld.w134, StickWorld.w145, StickWorld.w234,
+      StickWorld.w245, StickWorld.w345} : Finset StickWorld) := by
+  ext w; cases w <;> simp [shows, worldContains]
+
+private lemma shows_s3_eq : shows .s3 =
+    ↑({StickWorld.w123, StickWorld.w134, StickWorld.w135, StickWorld.w234,
+      StickWorld.w235, StickWorld.w345} : Finset StickWorld) := by
+  ext w; cases w <;> simp [shows, worldContains]
 
 /-- Showing stick 4 is positively relevant evidence for "longer" (Bayes
 factor 3/2): in [cummins-franke-2021]'s terms it has positive argumentative
 strength toward the goal. -/
-theorem s4_posRelevant : posRelevant stickContext (shows .s4) := by decide +kernel
+theorem s4_posRelevant : DTS.posRelevant stickContext (shows .s4) := by
+  simp only [DTS.posRelevant, DTS.bayesFactor, stickContext,
+    ProbabilityTheory.cond_apply MeasurableSet.of_discrete, topic_eq, shows_s4_eq,
+    ← Finset.coe_compl, ← Finset.coe_inter, MeasureTheory.Measure.count_apply_finset]
+  rw [show ({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
+      Finset StickWorld).card = 4 by decide,
+    show (({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
+      Finset StickWorld) ∩ {StickWorld.w124, StickWorld.w134, StickWorld.w145,
+      StickWorld.w234, StickWorld.w245, StickWorld.w345}).card = 3 by decide,
+    show (({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
+      Finset StickWorld)ᶜ).card = 6 by decide,
+    show ((({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
+      Finset StickWorld))ᶜ ∩ {StickWorld.w124, StickWorld.w134, StickWorld.w145,
+      StickWorld.w234, StickWorld.w245, StickWorld.w345}).card = 3 by decide]
+  rw [ENNReal.lt_div_iff_mul_lt (Or.inr (by finiteness)) (Or.inl (by finiteness)), one_mul]
+  gcongr <;> norm_num
 
 /-- Showing stick 3 is not positively relevant to "longer" (Bayes factor 3/4). -/
-theorem s3_not_posRelevant : ¬ posRelevant stickContext (shows .s3) := by decide +kernel
+theorem s3_not_posRelevant : ¬ DTS.posRelevant stickContext (shows .s3) := by
+  simp only [DTS.posRelevant, DTS.bayesFactor, stickContext,
+    ProbabilityTheory.cond_apply MeasurableSet.of_discrete, topic_eq, shows_s3_eq,
+    ← Finset.coe_compl, ← Finset.coe_inter, MeasureTheory.Measure.count_apply_finset]
+  rw [show ({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
+      Finset StickWorld).card = 4 by decide,
+    show (({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
+      Finset StickWorld) ∩ {StickWorld.w123, StickWorld.w134, StickWorld.w135,
+      StickWorld.w234, StickWorld.w235, StickWorld.w345}).card = 2 by decide,
+    show (({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
+      Finset StickWorld)ᶜ).card = 6 by decide,
+    show ((({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
+      Finset StickWorld))ᶜ ∩ {StickWorld.w123, StickWorld.w134, StickWorld.w135,
+      StickWorld.w234, StickWorld.w235, StickWorld.w345}).card = 4 by decide]
+  rw [not_lt]
+  refine ENNReal.le_of_toReal
+    ((ENNReal.div_lt_top (by finiteness)
+      (mul_ne_zero (ENNReal.inv_ne_zero.mpr (by finiteness)) (by norm_num))).ne)
+    ENNReal.one_ne_top ?_
+  rw [ENNReal.toReal_div]
+  norm_num [ENNReal.toReal_inv]
 
 /-- The weak evidence effect shows that argumentatively positive evidence
 can still backfire under a pragmatic listener model. This is the core

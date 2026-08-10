@@ -11,68 +11,54 @@ so a speaker who says "A or B" implicates ¬(A ∧ B).
 
 ## Key Definitions
 
-- `PSM` — Protentive Speaker Meaning (Def. 7): the hypothesis supported
-  by an utterance's relevance sign
+- `sgnRelevance` — Protentive Speaker Meaning (Def. 7): the hypothesis
+  supported by an utterance's relevance sign
 - `upwardCone` / `downwardCone` — alternatives ordered by Bayes factor
-- `Hypothesis1` — claim/counterclaim structure for scalar alternatives
+- `ScalarInterpretation` — claim/counterclaim structure for scalar
+  alternatives (Hypothesis 1)
 
 ## Main Results
 
-- **Prediction 1**: A disjunct does not always dominate its disjunction
-- **Prediction 2**: Under CIP, conjunction dominates both conjuncts and
-  disjunction
-
+- **Prediction 1** (`not_if_not_indeed_disjunct`): a disjunct does not
+  always dominate its disjunction
+- **Prediction 2** (`if_not_indeed_conjunction`): under CIP, conjunction
+  dominates both conjuncts and disjunction
 -/
+
+open MeasureTheory ProbabilityTheory
+open scoped ENNReal
 
 namespace DTS.ScalarImplicature
 
 open DTS
 
--- ============================================================
--- Section 1: Protentive Speaker Meaning (Def. 7)
--- ============================================================
+variable {W : Type*} [MeasurableSpace W]
 
-/-- Sign of relevance: positive, negative, or neutral. -/
+/-! ### Protentive Speaker Meaning (Def. 7) -/
+
+/-- Sign of relevance: positive (supports H), negative (supports ¬H), or
+neutral. -/
 inductive RelevanceSign where
-  | pos   -- supports H
-  | neg   -- supports ¬H
-  | neutral
+  | pos | neg | neutral
   deriving DecidableEq, Repr
 
-/-- Protentive Speaker Meaning (Def. 7): the hypothesis supported by
-an utterance's relevance sign.
-
-If E is positively relevant, PSM = H.
-If E is negatively relevant, PSM = ¬H.
-Otherwise neutral. -/
-def sgnRelevance {W : Type*} [Fintype W] (ctx : DTSContext W) (e : Set W)
-    [DecidablePred (· ∈ e)] : RelevanceSign :=
-  let bf := bayesFactor ctx e
-  if bf > 1 then .pos
-  else if bf < 1 then .neg
+open Classical in
+/-- Protentive Speaker Meaning (Def. 7): the hypothesis supported by an
+utterance's relevance sign. -/
+noncomputable def sgnRelevance (ctx : Context W) (e : Set W) : RelevanceSign :=
+  if 1 < bayesFactor ctx e then .pos
+  else if bayesFactor ctx e < 1 then .neg
   else .neutral
 
--- ============================================================
--- Section 2: Relevance-Ordered Alternatives (Def. 8)
--- ============================================================
+/-! ### Relevance-ordered alternatives (Def. 8) -/
 
-/-- Upward cone: alternatives at least as relevant as σ.
-
-Given a list of alternatives ordered by Bayes factor, the upward cone of σ
-contains all alternatives with BF ≥ BF(σ).
-
-Each alternative is bundled with its decidability instance so that
-`bayesFactor` (which requires `[DecidablePred]`) can be evaluated. -/
-def upwardCone {W : Type*} [Fintype W] (ctx : DTSContext W)
-    (alts : List (Σ p : Set W, DecidablePred (· ∈ p))) (σ : Set W)
-    [DecidablePred (· ∈ σ)] : List (Σ p : Set W, DecidablePred (· ∈ p)) :=
-  alts.filter (fun a => letI := a.2; bayesFactor ctx a.1 ≥ bayesFactor ctx σ)
+/-- Upward cone: alternatives at least as relevant as σ. -/
+def upwardCone (ctx : Context W) (alts : Set (Set W)) (σ : Set W) : Set (Set W) :=
+  {a ∈ alts | bayesFactor ctx σ ≤ bayesFactor ctx a}
 
 /-- Downward cone: alternatives at most as relevant as σ. -/
-def downwardCone {W : Type*} [Fintype W] (ctx : DTSContext W)
-    (alts : List (Σ p : Set W, DecidablePred (· ∈ p))) (σ : Set W)
-    [DecidablePred (· ∈ σ)] : List (Σ p : Set W, DecidablePred (· ∈ p)) :=
-  alts.filter (fun a => letI := a.2; bayesFactor ctx a.1 ≤ bayesFactor ctx σ)
+def downwardCone (ctx : Context W) (alts : Set (Set W)) (σ : Set W) : Set (Set W) :=
+  {a ∈ alts | bayesFactor ctx a ≤ bayesFactor ctx σ}
 
 /-- Hypothesis 1: Claim/counterclaim structure for scalar alternatives.
 
@@ -87,56 +73,56 @@ structure ScalarInterpretation (W : Type*) where
   /-- The counterclaim: disjunction of downward cone members. -/
   counterclaim : Set W
 
--- ============================================================
--- Section 3: Predictions
--- ============================================================
+/-! ### Predictions -/
 
-section Predictions
-
-variable {W : Type*} [Fintype W]
-
-/-- **Prediction 1**: It is NOT the case that a disjunct always dominates
-its disjunction in Bayes factor.
-
-This follows from Theorem 6b direction: XOR (and hence plain disjunction)
-need not track the relevance of individual disjuncts.
-
-TODO: Construct a concrete counterexample over `World4` with appropriate
-prior, decidable predicates, and the witnesses showing
-`bayesFactor ctx a = bayesFactor ctx (a ∪ b)` (so the
-strict `>` inequality fails). The original Bool proof relied on
-`decide` over a 4-world enumeration; a Prop-level counterexample
-needs explicit decidability for the chosen predicates. -/
+/-- **Prediction 1**: It is NOT the case that a disjunct always strictly
+dominates its disjunction in Bayes factor: a disjunction with an absorbed
+disjunct is exactly as relevant as the dominant disjunct. -/
 theorem not_if_not_indeed_disjunct :
-    ¬ (∀ (ctx : DTSContext World4) (a b : Set World4)
-       [DecidablePred (· ∈ a)] [DecidablePred (· ∈ b)],
+    ¬ (∀ (ctx : Context World4) (a b : Set World4),
       posRelevant ctx a → posRelevant ctx b →
-      bayesFactor ctx a > bayesFactor ctx (a ∪ b)) := by
-  sorry
+      bayesFactor ctx (a ∪ b) < bayesFactor ctx a) := by
+  intro h
+  have hsub : (↑({World4.w0} : Finset World4) : Set World4) ⊆
+      ↑({World4.w0, World4.w1} : Finset World4) :=
+    Finset.coe_subset.mpr (by decide)
+  have := h ⟨(↑({World4.w0} : Finset World4) : Set World4), .of_discrete, .count⟩
+    ↑({World4.w0, World4.w1} : Finset World4) ↑({World4.w0} : Finset World4) ?_ ?_
+  · rw [Set.union_eq_self_of_subset_right hsub] at this
+    exact lt_irrefl _ this
+  · -- BF({w0, w1}) = 3 > 1
+    simp only [posRelevant, bayesFactor, cond_apply MeasurableSet.of_discrete,
+      ← Finset.coe_compl, ← Finset.coe_inter, Measure.count_apply_finset]
+    rw [show ({World4.w0} : Finset World4).card = 1 by decide,
+      show ({World4.w0} ∩ {World4.w0, World4.w1} : Finset World4).card = 1 by decide,
+      show ({World4.w0}ᶜ : Finset World4).card = 3 by decide,
+      show ({World4.w0}ᶜ ∩ {World4.w0, World4.w1} : Finset World4).card = 1 by decide]
+    simp only [Nat.cast_one, Nat.cast_ofNat, inv_one]
+    norm_num
+  · -- BF({w0}) = ∞ > 1: the issue itself is infinitely relevant
+    simp only [posRelevant, bayesFactor, cond_apply MeasurableSet.of_discrete,
+      ← Finset.coe_compl, ← Finset.coe_inter, Measure.count_apply_finset]
+    rw [show ({World4.w0} : Finset World4).card = 1 by decide,
+      show ({World4.w0} ∩ {World4.w0} : Finset World4).card = 1 by decide,
+      show ({World4.w0}ᶜ : Finset World4).card = 3 by decide,
+      show ({World4.w0}ᶜ ∩ {World4.w0} : Finset World4).card = 0 by decide]
+    simp
 
-/-- **Prediction 2**: Under CIP with both A,B positively relevant,
+/-- **Prediction 2**: Under CIP with both A, B positively relevant,
 conjunction dominates both conjuncts and disjunction.
 
 This is the core of Merin's scalar implicature account: "A and B" is
 strictly more relevant than "A or B", explaining why "or" implicates ¬∧. -/
-theorem if_not_indeed_conjunction (ctx : DTSContext W) (a b : Set W)
-    [DecidablePred (· ∈ a)] [DecidablePred (· ∈ b)]
+theorem if_not_indeed_conjunction (ctx : Context W) [IsFiniteMeasure ctx.prior]
+    (a b : Set W) (hbm : MeasurableSet b)
     (hcip : CIP ctx a b)
     (hPosA : posRelevant ctx a) (hPosB : posRelevant ctx b)
-    (hNonzero : condProb ctx.prior a (ctx.topicᶜ) ≠ 0)
-    (hNonzero' : condProb ctx.prior b (ctx.topicᶜ) ≠ 0)
-    (hABNonzero : condProb ctx.prior (a ∩ b)
-      (ctx.topicᶜ) ≠ 0)
-    (hPrior : ∀ w, ctx.prior w ≥ 0) :
-    bayesFactor ctx (a ∩ b) > bayesFactor ctx a ∧
-    bayesFactor ctx (a ∩ b) >
-      bayesFactor ctx (a ∪ b) := by
-  have hFull := conjunction_dominates_disjunction ctx a b hcip hPosA hPosB
-    hNonzero hNonzero' hABNonzero hPrior
-  constructor
-  · exact lt_of_le_of_lt (le_max_left _ _) hFull.1
-  · exact lt_trans hFull.2.1 hFull.1
-
-end Predictions
+    (hNotH : ctx.prior[|ctx.topicᶜ] a ≠ 0)
+    (hNotH' : ctx.prior[|ctx.topicᶜ] b ≠ 0) :
+    bayesFactor ctx a < bayesFactor ctx (a ∩ b) ∧
+    bayesFactor ctx (a ∪ b) < bayesFactor ctx (a ∩ b) := by
+  have hFull := conjunction_dominates_disjunction ctx a b hbm hcip hPosA hPosB
+    hNotH hNotH'
+  exact ⟨lt_of_le_of_lt (le_max_left _ _) hFull.1, hFull.2.1.trans hFull.1⟩
 
 end DTS.ScalarImplicature
