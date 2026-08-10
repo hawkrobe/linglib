@@ -589,7 +589,6 @@ theorem rd_not_commits (u : FBPerformance W) :
   rintro ⟨hr, _⟩
   -- After update with rising=true, dcS = empty.dcS = []
   simp [Commits, update, hr]
-  exact List.not_mem_nil
 
 theorem rd_raises_issue (u : FBPerformance W) :
     RisingDecl u → RaisesIssue u := by
@@ -883,7 +882,6 @@ theorem committingDecl_lingmat : (fbOntology Bool).LINGMAT committingDecl :=
 theorem committingDecl_commits : (fbOntology Bool).Commits committingDecl := by
   show committingDecl.content ∈ (committingDecl.update DiscourseState.empty).dcS
   simp [FBPerformance.update, committingDecl]
-  exact List.mem_cons_self
 
 /-- A loud committing declarative performance. -/
 def committingLoud : FBPerformance Bool :=
@@ -898,7 +896,6 @@ theorem committingLoud_loud : (fbOntology Bool).Loud committingLoud := rfl
 theorem committingLoud_commits : (fbOntology Bool).Commits committingLoud := by
   show committingLoud.content ∈ (committingLoud.update DiscourseState.empty).dcS
   simp [FBPerformance.update, committingLoud]
-  exact List.mem_cons_self
 
 /-- A whispered committing declarative performance. -/
 def committingWhispered : FBPerformance Bool :=
@@ -916,7 +913,6 @@ theorem committingWhispered_commits :
   show committingWhispered.content ∈
        (committingWhispered.update DiscourseState.empty).dcS
   simp [FBPerformance.update, committingWhispered]
-  exact List.mem_cons_self
 
 /-- A rising-declarative performance (RESP, not committing). -/
 def risingDecl : FBPerformance Bool :=

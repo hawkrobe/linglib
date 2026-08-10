@@ -120,7 +120,6 @@ theorem mem_mul :
     r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', Compat p q ∧ r = p.union q := by
   show r ∈ Set.lubs s s' ↔ _
   simp only [Set.mem_lubs, Possibility.isLUB_pair_iff]
-  rfl
 
 /-- The Smyth face of the merge: upper closures compose by join. -/
 theorem upperClosure_mul :

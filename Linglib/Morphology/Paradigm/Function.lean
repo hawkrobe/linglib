@@ -459,7 +459,6 @@ theorem selectMinimal_map_payload (g : F → F') (v : List (Rule L P F)) (c : L 
       = (applicable v c).map (Rule.mapPayload g) := by
     simp only [applicable, List.filter_map, Function.comp_def, Rule.applies_iff,
       Rule.mapPayload_klass, Rule.mapPayload_props]
-    rfl
   rw [selectMinimal, selectMinimal, hA, List.find?_map]
   simp only [Function.comp_def, List.all_map, Rule.mapPayload_lt_iff]
 

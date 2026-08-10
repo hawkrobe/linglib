@@ -102,6 +102,6 @@ theorem epistemicAuthority_shift_invariant {W E P T : Type*} [DecidableEq E]
     (tower : ContextTower (KContext W E P T)) (σ : ContextShift (KContext W E P T))
     (knower : E) :
     epistemicAuthority (tower.push σ) knower = epistemicAuthority tower knower := by
-  simp only [epistemicAuthority, ContextTower.push_origin]; rfl
+  simp only [epistemicAuthority, ContextTower.push_origin]
 
 end Semantics.Epistemicity

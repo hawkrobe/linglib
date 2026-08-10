@@ -15,8 +15,6 @@ multiplicities*; this file computes those multiplicities: `(u, v)` occurs
 
 ## Main results
 
-* `Multiset.antidiagonal_add`: `(F + G).antidiagonal` as a bind/map product of the
-  summands' antidiagonals — the `+` analogue of `Multiset.antidiagonal_cons`.
 * `Multiset.powerset_partition_swap`: a partition sum over `C.powerset` is invariant
   under the involution `C₁ ↦ C - C₁`.
 * `Multiset.count_antidiagonal`: the closed form for `(antidiagonal w).count (u, v)`.
@@ -44,25 +42,6 @@ theorem antidiagonal_swap (s : Multiset α) :
       ← Prod.map_comp_swap, ← Multiset.map_map _ Prod.swap, ih, add_comm]
 
 variable [DecidableEq α]
-
-/-- The antidiagonal of a sum decomposes as the bind/map product of the summands'
-    antidiagonals: transport of `powerset_add` through
-    `antidiagonal_eq_map_powerset`, closed by
-    `(F + G) - (F₁ + G₁) = (F - F₁) + (G - G₁)` for `F₁ ≤ F, G₁ ≤ G`. The `+` analogue
-    of `antidiagonal_cons`. -/
-theorem antidiagonal_add (F G : Multiset α) :
-    (F + G).antidiagonal =
-      F.antidiagonal.bind (fun p =>
-        G.antidiagonal.map (fun q => (p.1 + q.1, p.2 + q.2))) := by
-  rw [antidiagonal_eq_map_powerset, powerset_add, map_bind,
-      antidiagonal_eq_map_powerset, bind_map]
-  refine bind_congr fun F₁ hF₁ => ?_
-  have hF₁_le : F₁ ≤ F := mem_powerset.mp hF₁
-  rw [map_map, antidiagonal_eq_map_powerset, map_map]
-  refine map_congr rfl fun G₁ hG₁ => ?_
-  have hG₁_le : G₁ ≤ G := mem_powerset.mp hG₁
-  show ((F + G) - (F₁ + G₁), F₁ + G₁) = ((F - F₁) + (G - G₁), F₁ + G₁)
-  rw [tsub_add_tsub_comm hF₁_le hG₁_le]
 
 /-- Reindex a partition-sum over `C.powerset` by the involution `C₁ ↦ C - C₁`: summing
     `f C₁ (C - C₁)` equals summing `f (C - C₁) C₁`. Specialisation of

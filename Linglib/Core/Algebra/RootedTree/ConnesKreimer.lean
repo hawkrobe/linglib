@@ -246,7 +246,7 @@ theorem smul_single_one (F : Forest T) (r : R) :
 theorem induction_linear {p : ConnesKreimer R T → Prop} (x : ConnesKreimer R T)
     (zero : p 0) (add : ∀ f g, p f → p g → p (f + g))
     (single : ∀ (F : Forest T) (r : R), p (ConnesKreimer.single F r)) : p x :=
-  AddMonoidAlgebra.induction_linear (p := fun y => p (⟨y⟩ : ConnesKreimer R T)) x.toFinsupp
+  AddMonoidAlgebra.induction_linear (motive := fun y => p (⟨y⟩ : ConnesKreimer R T)) x.toFinsupp
     zero (fun f g hf hg => add ⟨f⟩ ⟨g⟩ hf hg) single
 
 /-- **Bare embedding**: a forest as the basis vector `single F 1`. -/
