@@ -693,7 +693,6 @@ import Linglib.Features.Person.Capabilities
 import Linglib.Features.Person.Decomposition
 import Linglib.Features.Phi
 import Linglib.Features.Person.Interp
-import Linglib.Features.Person.PersonCaseConstraint
 import Linglib.Features.Person.Resolve
 import Linglib.Features.Polarity
 import Linglib.Features.Possession
@@ -2767,6 +2766,7 @@ import Linglib.Studies.Zwarts2005
 import Linglib.Studies.ZwickyPullum1983
 import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Paradigm
+import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Linglib.Syntax.Agreement.Profile
 import Linglib.Syntax.Agreement.Target
 import Linglib.Syntax.Anaphora.Basic

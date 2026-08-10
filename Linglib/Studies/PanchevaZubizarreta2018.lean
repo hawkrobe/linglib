@@ -1,4 +1,4 @@
-import Linglib.Features.Person.PersonCaseConstraint
+import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Features.Logophoricity
 import Linglib.Features.Person.Decomposition
@@ -16,7 +16,7 @@ The Person Case Constraint: The Syntactic Encoding of Perspective.
 ## Summary
 
 Empirical predictions of the P-Constraint theory (formalized in
-`Features/Person/PersonCaseConstraint.lean`) for the eight grammar
+`Syntax/Agreement/PersonCaseConstraint.lean`) for the eight grammar
 instances P&Z discuss: five attested PCC varieties (strong, ultra-strong,
 weak, super-strong, me-first) plus three predicted varieties (PG1, PG2,
 PG3) that the four-parameter space generates.
@@ -29,14 +29,14 @@ PG3) that the four-parameter space generates.
 - **`isLicit_imp_io_pov`** — the four parametric clauses are recovered as
   the conditions under which selecting the IO as point-of-view center
   satisfies the P-Constraint semantically (§6.3, eq. 48).
-- **`pProminence_to_sellsRole`** — P&Z's identification of their P-Prominence
+- **`prominenceToSellsRole`** — P&Z's identification of their P-Prominence
   values with [sells-1987]'s logophoric roles (§6.2). This mapping is
   P&Z's specific theoretical claim, not a framework-neutral fact;
   [charnavel-mateu-2015] (page 10) reject the claim that pivot is the
   relevant role for clitic clusters.
 - **`readings_disagree_on_proximate`** and **`mefirst_wedge_with_cm`** —
   P&Z's rejection (page 1308) of [charnavel-mateu-2015]'s unification
-  of PCC and CLR (§ 10 below).
+  of PCC and CLR (§ 8 below).
 
 ## Forward references
 
@@ -52,14 +52,14 @@ open Minimalist (DecomposedPerson decomposePerson)
 open PCC
 
 -- The Sells correspondence (§6.2): a P&Z-specific theoretical reading,
--- defined here in the study file rather than baked into PConstraint.
+-- defined here in the study file rather than baked into the typology substrate.
 -- [charnavel-mateu-2015] (page 10) reject the claim that pivot is
 -- the relevant logophoric role for clitic clusters.
 
 /-- P&Z's identification of P-Prominence values with [sells-1987]'s
     logophoric roles (paper §6.2). This is the paper's theoretical claim,
     not a framework-neutral fact. -/
-def pProminence_to_sellsRole : PProminence → LogophoricRole
+def prominenceToSellsRole : ProminenceThreshold → LogophoricRole
   | .proximate   => .pivot
   | .participant => .self
   | .author      => .source
@@ -69,9 +69,9 @@ def pProminence_to_sellsRole : PProminence → LogophoricRole
 -- ════════════════════════════════════════════════════
 
 /-! P&Z's syntactic encoding: the interpretable person feature on Appl marks one DP as the
-point-of-view center. The theory-neutral PCC (`Features/Person/PersonCaseConstraint.lean`)
-is grounded here in that Appl model — a ⟨IO, DO⟩ is licit iff IO-as-POV-center is
-consistent with the Appl p-feature. -/
+point-of-view center. The descriptive PCC typology
+(`Syntax/Agreement/PersonCaseConstraint.lean`) is grounded here in that Appl model — a
+⟨IO, DO⟩ is licit iff IO-as-POV-center is consistent with the Appl p-feature. -/
 
 /-- A minimal model of the Appl phase: the two arguments and the chosen POV center. -/
 structure ApplDomain where
@@ -90,19 +90,19 @@ instance (a : ApplDomain) : Decidable a.povIsIO :=
   inferInstanceAs (Decidable (a.povCenter = a.io))
 
 /-- The P-Constraint as a predicate over an Appl domain. -/
-def PConstraintSatisfied (g : PCCGrammar) (a : ApplDomain) : Prop :=
+def PConstraintSatisfied (g : Grammar) (a : ApplDomain) : Prop :=
   DomainExempt g a.io a.do_ ∨
     (a.povIsIO ∧ IOSatisfiesProminence g a.io a.do_ ∧
-     (g.uniqueness = false ∨ UniquenessSatisfied g a.do_ ∨ PrimacyRescues g a.io))
+     (g.uniqueness → UniquenessSatisfied g a.do_ ∨ PrimacyRescues g a.io))
 
-instance (g : PCCGrammar) (a : ApplDomain) : Decidable (PConstraintSatisfied g a) :=
+instance (g : Grammar) (a : ApplDomain) : Decidable (PConstraintSatisfied g a) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 /-- **Central derivation.** ⟨IO, DO⟩ is licit iff some Appl domain over them — IO as POV
     center — satisfies the P-Constraint. The four parametric clauses are not stipulated
     verdicts; they are the conditions under which IO-as-POV-center is consistent with the
     interpretable person feature on Appl. -/
-theorem isLicit_iff_exists_appl_satisfying (g : PCCGrammar) (io do_ : Person) :
+theorem isLicit_iff_exists_appl_satisfying (g : Grammar) (io do_ : Person) :
     IsLicit g io do_ ↔
       ∃ a : ApplDomain, a.io = io ∧ a.do_ = do_ ∧ PConstraintSatisfied g a := by
   constructor
@@ -214,7 +214,7 @@ theorem pg3_predictions :
     the residual difference in CLR effects on 3P combinations, outside
     this model.) -/
 theorem restricted_participant_surfaces_as_strong :
-    licitFinset (mkGrammar (prominence := .participant) (restrictedDomain := true)) =
+    licitFinset { prominence := .participant, restrictedDomain := true } =
       licitFinset strongGrammar := by decide
 
 -- ============================================================================
@@ -247,20 +247,20 @@ theorem super_le_strong : superStrongGrammar ≤ strongGrammar := by decide
     [charnavel-mateu-2015] dispute that pivot is the relevant role for
     clitic clusters; § 8 below records the disagreement. -/
 theorem prominence_logophoric_role :
-    pProminence_to_sellsRole .proximate = .pivot ∧
-    pProminence_to_sellsRole .participant = .self ∧
-    pProminence_to_sellsRole .author = .source := ⟨rfl, rfl, rfl⟩
+    prominenceToSellsRole .proximate = .pivot ∧
+    prominenceToSellsRole .participant = .self ∧
+    prominenceToSellsRole .author = .source := ⟨rfl, rfl, rfl⟩
 
 /-- Under P&Z's reading: the five attested grammars and the
     [+author]-prominence predicted family map onto Sells's hierarchy as
     strong/ultra/weak ⇒ pivot, super ⇒ self, me-first/pg3 ⇒ source. -/
 theorem family_logophoric_assignments :
-    pProminence_to_sellsRole strongGrammar.prominence = .pivot ∧
-    pProminence_to_sellsRole ultraStrongGrammar.prominence = .pivot ∧
-    pProminence_to_sellsRole weakGrammar.prominence = .pivot ∧
-    pProminence_to_sellsRole superStrongGrammar.prominence = .self ∧
-    pProminence_to_sellsRole meFirstGrammar.prominence = .source ∧
-    pProminence_to_sellsRole pg3Grammar.prominence = .source := by decide
+    prominenceToSellsRole strongGrammar.prominence = .pivot ∧
+    prominenceToSellsRole ultraStrongGrammar.prominence = .pivot ∧
+    prominenceToSellsRole weakGrammar.prominence = .pivot ∧
+    prominenceToSellsRole superStrongGrammar.prominence = .self ∧
+    prominenceToSellsRole meFirstGrammar.prominence = .source ∧
+    prominenceToSellsRole pg3Grammar.prominence = .source := by decide
 
 -- ============================================================================
 -- § 5: Point-of-View Derivation (paper §6.3, eq. 48)
@@ -270,7 +270,7 @@ theorem family_logophoric_assignments :
     yields an Appl domain that semantically satisfies the P-Constraint.
     The four parametric clauses in (12) are not free-standing stipulations:
     they are precisely the conditions on IO-as-POV consistency. -/
-theorem isLicit_imp_io_pov (g : PCCGrammar) (io do_ : Person) :
+theorem isLicit_imp_io_pov (g : Grammar) (io do_ : Person) :
     IsLicit g io do_ → PConstraintSatisfied g ⟨io, do_, io⟩ := by
   rintro (h | ⟨hprom, hrest⟩)
   · exact Or.inl h
@@ -279,7 +279,7 @@ theorem isLicit_imp_io_pov (g : PCCGrammar) (io do_ : Person) :
 /-- Conversely, if any Appl domain over ⟨io, do_⟩ with IO as POV center
     satisfies the P-Constraint, the combination is licit. Together with
     `isLicit_imp_io_pov`, this characterizes `IsLicit` semantically. -/
-theorem io_pov_imp_isLicit (g : PCCGrammar) (io do_ : Person) :
+theorem io_pov_imp_isLicit (g : Grammar) (io do_ : Person) :
     PConstraintSatisfied g ⟨io, do_, io⟩ → IsLicit g io do_ := by
   rintro (h | ⟨_, hprom, hrest⟩)
   · exact Or.inl h
@@ -431,16 +431,16 @@ open CharnavelMateu2015 (LogoCenter CLRViolated)
     rejects pivot as relevant for clitic clusters
     (`Studies/CharnavelMateu2015.lean`). The two readings map
     `.proximate` to incompatible places. -/
-def pProminence_to_cmCenter : PProminence → LogoCenter
+def prominenceToCmCenter : ProminenceThreshold → LogoCenter
   | .proximate   => .empathyLocus
   | .participant => .discourseParticipant
   | .author      => .discourseParticipant
 
 theorem readings_disagree_on_proximate :
-    pProminence_to_sellsRole .proximate = .pivot ∧
-    pProminence_to_cmCenter .proximate = .empathyLocus ∧
-    pProminence_to_sellsRole .proximate ≠ .self ∧
-    pProminence_to_sellsRole .proximate ≠ .source := by
+    prominenceToSellsRole .proximate = .pivot ∧
+    prominenceToCmCenter .proximate = .empathyLocus ∧
+    prominenceToSellsRole .proximate ≠ .self ∧
+    prominenceToSellsRole .proximate ≠ .source := by
   refine ⟨rfl, rfl, ?_, ?_⟩ <;> decide
 
 /-- **The me-first wedge.** P&Z predict me-first speakers should *lack*
