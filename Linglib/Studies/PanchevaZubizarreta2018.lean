@@ -93,7 +93,7 @@ instance (a : ApplDomain) : Decidable a.povIsIO :=
 def PConstraintSatisfied (g : Grammar) (a : ApplDomain) : Prop :=
   DomainExempt g a.io a.do_ ∨
     (a.povIsIO ∧ IOSatisfiesProminence g a.io a.do_ ∧
-     (g.uniqueness = false ∨ UniquenessSatisfied g a.do_ ∨ PrimacyRescues g a.io))
+     (g.uniqueness → UniquenessSatisfied g a.do_ ∨ PrimacyRescues g a.io))
 
 instance (g : Grammar) (a : ApplDomain) : Decidable (PConstraintSatisfied g a) :=
   inferInstanceAs (Decidable (_ ∨ _))

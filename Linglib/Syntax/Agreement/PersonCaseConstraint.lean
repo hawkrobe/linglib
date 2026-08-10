@@ -151,11 +151,13 @@ instance (g : Grammar) (io do_ : Person) : Decidable (DomainExempt g io do_) :=
 
 /-! ### Licit person combinations -/
 
-/-- The PCC verdict on ⟨IO, DO⟩ under `g`, composing the four clauses of (12). -/
+/-- ⟨IO, DO⟩ is licit under `g`: the domain restriction exempts the pair, or the IO
+    meets P-Prominence and — when P-Uniqueness is active — the DO does not compete or
+    P-Primacy rescues the tie. -/
 def IsLicit (g : Grammar) (io do_ : Person) : Prop :=
   DomainExempt g io do_ ∨
     (IOSatisfiesProminence g io do_ ∧
-      (g.uniqueness = false ∨ UniquenessSatisfied g do_ ∨ PrimacyRescues g io))
+      (g.uniqueness → UniquenessSatisfied g do_ ∨ PrimacyRescues g io))
 
 instance (g : Grammar) (io do_ : Person) : Decidable (IsLicit g io do_) :=
   inferInstanceAs (Decidable (_ ∨ _))
@@ -166,7 +168,7 @@ def cliticPairs : Finset (Person × Person) :=
 
 /-- The person combinations `g` predicts licit. -/
 def licitFinset (g : Grammar) : Finset (Person × Person) :=
-  cliticPairs.filter fun p => IsLicit g p.1 p.2
+  {p ∈ cliticPairs | IsLicit g p.1 p.2}
 
 @[simp] theorem mem_licitFinset (g : Grammar) (p : Person × Person) :
     p ∈ licitFinset g ↔ p ∈ cliticPairs ∧ IsLicit g p.1 p.2 := by simp [licitFinset]
@@ -178,11 +180,7 @@ restricted-domain [+participant] grammar surfaces as the strong PCC,
 `PanchevaZubizarreta2018.restricted_participant_surfaces_as_strong`), so antisymmetry
 fails. -/
 
-instance : LE Grammar where le g₁ g₂ := licitFinset g₁ ⊆ licitFinset g₂
-
-instance : Preorder Grammar where
-  le_refl _ := Finset.Subset.refl _
-  le_trans _ _ _ h₁₂ h₂₃ := Finset.Subset.trans h₁₂ h₂₃
+instance : Preorder Grammar := Preorder.lift licitFinset
 
 instance (g₁ g₂ : Grammar) : Decidable (g₁ ≤ g₂) :=
   inferInstanceAs (Decidable (licitFinset g₁ ⊆ licitFinset g₂))
