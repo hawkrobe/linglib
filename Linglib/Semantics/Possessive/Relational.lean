@@ -18,7 +18,7 @@ as separate predicates (`hasRelatumSlot`, `canTakePossessor`) over
 `NominalInterpType` because they describe distinct linguistic facts, even
 though they coincide by construction.
 
-The possessive-specific carriers, capability mixins, and quantificational layer
+The possessive-specific descriptions, capability mixins, and quantificational layer
 live in the unified `Possessive` namespace (`Semantics/Possessive/`), built on
 this substrate.
 

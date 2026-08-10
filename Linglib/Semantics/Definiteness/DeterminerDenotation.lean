@@ -45,8 +45,8 @@ deictic feature projects: deixis filters the referent but never selects it
   possessor; the GQ-form possessive (`PossW`, narrowing-aware) lives in
   `Semantics/Possessive/GQ.lean`.
 * `interpret_possessive_eq_viaModifier`, `Possessive.denote_isSome_iff_iotaPresupposition`,
-  `Possessive.toCarrier` — the determiner denotation *is* the `Possessive`
-  carrier API: same restrictor (Barker's `viaModifier`), same definedness
+  `Possessive.toDefinite` — the determiner denotation *is* the `Possessive`
+  description API: same restrictor (Barker's `viaModifier`), same definedness
   presupposition, same referent.
 
 ## Implementation notes
@@ -211,18 +211,18 @@ theorem Possessive.denote_realized (p : Possessive)
     Determiner.Inventory.Realizes [.possessive p] (Description.possessive R possessor rel).kind :=
   ⟨.possessive p, List.mem_singleton_self _, trivial⟩
 
-/-! ### Unification with the possessive carrier API
+/-! ### Unification with the possessive description API
 
 The possessive determiner's denotation (`Description.possessive`/`russellIota`)
-and the `Possessive` carrier API are not two analyses — they are the same
+and the `Possessive` description API are not two analyses — they are the same
 construction. The determiner's restrictor *is* Barker's `Possessive.viaModifier`
 (π of the noun predicate and the possession relation); its definedness
-presupposition *is* the carrier's Russellian iota-presupposition; and at a
+presupposition *is* the description's Russellian iota-presupposition; and at a
 context where the presupposition holds, the determiner assembles into a
-`Possessive.Definite` carrier whose `existsUnique_possessee` selects the very
+`Possessive.Definite` whose `existsUnique_possessee` selects the very
 referent the determiner does. -/
 
-section CarrierUnification
+section DescriptionUnification
 
 open _root_.ArgumentStructure.Relational
 
@@ -239,7 +239,7 @@ theorem interpret_possessive_eq_viaModifier :
           (fun y _ => R g gs y) (fun a b _ => rel g gs a b) x PUnit.unit) :=
   rfl
 
-/-- The possessive determiner's definedness presupposition *is* the carrier
+/-- The possessive determiner's definedness presupposition *is* the description
 API's Russellian iota-presupposition (`HasIotaWitness`'s condition). -/
 theorem Possessive.denote_isSome_iff_iotaPresupposition (p : Possessive) :
     ((p.denote R possessor rel).selector (g, gs) PUnit.unit).isSome
@@ -250,9 +250,9 @@ theorem Possessive.denote_isSome_iff_iotaPresupposition (p : Possessive) :
   rw [russellIota_isSome_iff_exists_unique]
 
 /-- At a context where its presupposition holds, the possessive determiner
-assembles into a `Possessive.Definite` carrier (over the trivial situation) whose
+assembles into a `Possessive.Definite` (over the trivial situation) whose
 possessee predicate is the determiner's restrictor. -/
-def Possessive.toCarrier
+def Possessive.toDefinite
     (h : iotaPresupposition
       (fun x (_ : PUnit) => R g gs x ∧ rel g gs (possessor g gs) x) PUnit.unit) :
     Possessive.Definite E PUnit where
@@ -260,16 +260,16 @@ def Possessive.toCarrier
   predicate := fun x _ => R g gs x ∧ rel g gs (possessor g gs) x
   presupposition := fun _ => h
 
-/-- The carrier's unique possessee (`existsUnique_possessee`, inherited from
+/-- The description's unique possessee (`existsUnique_possessee`, inherited from
 `HasIotaWitness`) is the referent the determiner selects — the two encodings
 agree by construction. -/
-theorem Possessive.toCarrier_existsUnique
+theorem Possessive.toDefinite_existsUnique
     (h : iotaPresupposition
       (fun x (_ : PUnit) => R g gs x ∧ rel g gs (possessor g gs) x) PUnit.unit) :
     ∃! y : E, HasPossesseePredicate.possesseePredicate
-      (Possessive.toCarrier R possessor rel g gs h) y PUnit.unit :=
+      (Possessive.toDefinite R possessor rel g gs h) y PUnit.unit :=
   existsUnique_possessee _ PUnit.unit
 
-end CarrierUnification
+end DescriptionUnification
 
 end Semantics.Definiteness

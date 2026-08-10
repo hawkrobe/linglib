@@ -164,28 +164,28 @@ theorem possW_individual_existential_import {Q₂ : GQ α} {R : α → α → Pr
     ∃ b, A b ∧ R a b :=
   h.1
 
-/-! ### Denoting a bundled carrier
+/-! ### Denoting a bundled description
 
-A possessive carrier bundling a possessor and a possession relation (any
-`HasPossessor` + `HasPossessionRelation` instance, e.g. `Possessive.Carrier`)
+A possessive description bundling a possessor and a possession relation (any
+`HasPossessor` + `HasPossessionRelation` instance, e.g. `Possessive.Description`)
 denotes, at a situation, as the `PossW` of its possessor taken whole. Routing
-every carrier through one operator is what makes the API unified: a carrier
+every description through one operator is what makes the API unified: a type
 inherits narrowing and existential import with no bespoke proof. -/
 
-/-- The quantificational denotation of a possessive carrier at a situation `s`:
+/-- The quantificational denotation of a possessive description at a situation `s`:
 its possessor (as an individual NP) and its possession relation (frozen at `s`)
 fed to `PossW`. `Q₂` is the (usually covert) possessee quantifier. -/
-def carrierGQ {γ E S : Type*} [HasPossessor γ E] [HasPossessionRelation γ E S]
+def descriptionGQ {γ E S : Type*} [HasPossessor γ E] [HasPossessionRelation γ E S]
     (a : γ) (Q₂ : GQ E) (s : S) : GQ E :=
   PossW (individual (HasPossessor.possessor a)) Q₂
     (fun x y => HasPossessionRelation.possessionRelation a x y s)
 
-/-- Every carrier inherits existential import: if its denotation holds of
+/-- Every description inherits existential import: if its denotation holds of
 possessee class `A` and scope `B`, the possessor stands in the possession
 relation to some `A`-thing. Free from `possW_individual_existential_import`. -/
-theorem carrierGQ_existential_import {γ E S : Type*}
+theorem descriptionGQ_existential_import {γ E S : Type*}
     [HasPossessor γ E] [HasPossessionRelation γ E S]
-    (a : γ) (Q₂ : GQ E) (s : S) {A B : E → Prop} (h : carrierGQ a Q₂ s A B) :
+    (a : γ) (Q₂ : GQ E) (s : S) {A B : E → Prop} (h : descriptionGQ a Q₂ s A B) :
     ∃ b, A b ∧ HasPossessionRelation.possessionRelation a
       (HasPossessor.possessor a) b s :=
   possW_individual_existential_import h
