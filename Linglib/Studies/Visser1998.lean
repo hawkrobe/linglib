@@ -242,34 +242,16 @@ theorem conj (hR : HasContext R c) (hS : HasContext S d) :
         (hO.mono (Finset.coe_subset.mpr Finset.subset_union_right)) ?_⟩
     · -- f' agrees with the patch off c.B
       intro v hv
-      by_cases hoi : v ∈ c.O ∪ d.I
-      · rw [(c.O ∪ d.I).piecewise_eq_of_mem _ _ hoi, ← hR.blocks hfk hv]
-        rcases Finset.mem_union.mp hoi with ho | hi
-        · rcases Finset.mem_union.mp
-            (c.coh_mem.mpr (Finset.mem_union_left _ ho)) with hvi | hvB
-          · exact hI (Finset.mem_union_left _ hvi)
-          · exact absurd hvB hv
-        · exact hI (Finset.mem_union_right _ (Finset.mem_sdiff.mpr ⟨hi, hv⟩))
-      · rw [(c.O ∪ d.I).piecewise_eq_of_notMem _ _ hoi,
-          c.B.piecewise_eq_of_notMem _ _ hv]
+      have hb := hR.blocks hfk
+      have hc := c.coh_mem (v := v)
+      grind [Set.EqOn, Finset.piecewise_eq_of_mem,
+        Finset.piecewise_eq_of_notMem, Context.I_mul, Context.B_mul]
     · -- the patch agrees with g' off d.B
       intro v hv
-      by_cases hoi : v ∈ c.O ∪ d.I
-      · rw [(c.O ∪ d.I).piecewise_eq_of_mem _ _ hoi]
-        rw [hS.blocks hkg hv]
-        rcases Finset.mem_union.mp hoi with ho | hi
-        · exact hO (Finset.mem_union_left _ (Finset.mem_sdiff.mpr ⟨ho, hv⟩))
-        · rcases Finset.mem_union.mp
-            (d.coh_mem.mp (Finset.mem_union_left _ hi)) with hvo | hvB
-          · exact hO (Finset.mem_union_right _ hvo)
-          · exact absurd hvB hv
-      · rw [(c.O ∪ d.I).piecewise_eq_of_notMem _ _ hoi]
-        by_cases hvB : v ∈ c.B
-        · exact c.B.piecewise_eq_of_mem _ _ hvB
-        · rw [c.B.piecewise_eq_of_notMem _ _ hvB]
-          exact hB (by
-            rw [Context.B_mul, Finset.coe_union, Set.compl_union]
-            exact ⟨hvB, hv⟩)
+      have hb := hS.blocks hkg
+      have hd := d.coh_mem (v := v)
+      grind [Set.EqOn, Finset.piecewise_eq_of_mem,
+        Finset.piecewise_eq_of_notMem, Context.O_mul, Context.B_mul]
 
 /-- Theorem 3.9: DPL implication of a `c`-relation and a `d`-relation is
 a `(c → d)`-relation. -/
