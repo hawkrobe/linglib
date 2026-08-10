@@ -1,5 +1,5 @@
 import Linglib.Core.Probability.Scores
-import Linglib.Pragmatics.RSA.ArgumentativeStrength
+import Linglib.Pragmatics.DecisionTheoretic.Basic
 import Linglib.Pragmatics.RSA.CombinedUtility
 
 /-!
@@ -24,9 +24,10 @@ the load-bearing structure: the prior favors ¬longer (2/5) and
   the strongest evidence cannot be explained away.
 * `l0_s5_positive` / `l0_s1_negative` / `l0_s5_strongest` / `l0_monotone`:
   the literal-listener evidence ordering.
-* `argStr_positive_but_backfires`: stick 4 has positive
-  [cummins-franke-2021] argumentative strength yet backfires — the model's
-  wedge between argumentative and pragmatic evidence.
+* `posRelevant_but_backfires`: stick 4 is positively relevant evidence for
+  "longer" ([merin-1999-relevance]'s sign of [cummins-franke-2021]'s
+  argumentative strength) yet backfires — the model's wedge between
+  argumentative and pragmatic evidence.
 * `model_predicts_interaction` / `pragmatic_backfire`: the predicted
   listener-type × evidence interaction matches the behavioral data.
 
@@ -41,7 +42,7 @@ open scoped ENNReal NNRat
 
 namespace BarnettEtAl2022
 
-open RSA.ArgumentativeStrength
+open DTS
 open RSA.CombinedUtility
 
 /-! ### Domain Types -/
@@ -110,9 +111,6 @@ theorem l0LongerQ_eq_eventMass (u : Stick) :
       (PMF.scoresWith .uniform fun w => if worldContains w u then 1 else 0)
       longer := by
   cases u <;> decide +kernel
-
-/-- Prior probability of "longer": 4 out of 10 worlds -/
-def priorLonger : ℚ := 2 / 5
 
 /-- Persuasive-speaker weight (eq. 8 at β = 2): `L0(longer|u)² · 𝟙[u ∈ w]`. -/
 def s1Score (w : StickWorld) (u : Stick) : ℚ≥0 :=
@@ -211,29 +209,38 @@ theorem goalOriented_via_combined (uEpi uPers β : ℚ) (hβ : 0 ≤ β) :
     goalOrientedUtility uEpi uPers β = (1 + β) * combined (betaToLam β) uEpi uPers :=
   goalOriented_eq_scaled_combined uEpi uPers β hβ
 
-/-- Connection to ArgumentativeStrength: stick 4 has positive argumentative
-strength for the goal "longer" (L0(longer|s4) = 1/2 > 2/5 = P(longer)). -/
-theorem s4_positive_argStr :
-    hasPositiveArgStr (l0LongerQ .s4 : ℚ) priorLonger := by
-  norm_num [hasPositiveArgStr, l0LongerQ, priorLonger]
+/-- The contest as a Merin/DTS context: uniform prior over the ten worlds,
+topic "longer" (prior mass 2/5). -/
+def stickContext : DTSContext StickWorld :=
+  ⟨{w | longer w}, fun w => inferInstanceAs (Decidable (longer w)), λ _ => 1/10⟩
 
-/-- Stick 3 does NOT have positive argumentative strength
-(L0(longer|s3) = 1/3 < 2/5 = P(longer)). -/
-theorem s3_not_positive_argStr :
-    ¬ hasPositiveArgStr (l0LongerQ .s3 : ℚ) priorLonger := by
-  norm_num [hasPositiveArgStr, l0LongerQ, priorLonger]
+example : probSum stickContext.prior stickContext.topic = 2/5 := by decide +kernel
+
+/-- The evidence of showing stick `u`: the worlds containing it. -/
+def shows (u : Stick) : Set StickWorld := {w | worldContains w u}
+
+instance (u : Stick) : DecidablePred (· ∈ shows u) := fun w =>
+  inferInstanceAs (Decidable (worldContains w u))
+
+/-- Showing stick 4 is positively relevant evidence for "longer" (Bayes
+factor 3/2): in [cummins-franke-2021]'s terms it has positive argumentative
+strength toward the goal. -/
+theorem s4_posRelevant : posRelevant stickContext (shows .s4) := by decide +kernel
+
+/-- Showing stick 3 is not positively relevant to "longer" (Bayes factor 3/4). -/
+theorem s3_not_posRelevant : ¬ posRelevant stickContext (shows .s3) := by decide +kernel
 
 /-- The weak evidence effect shows that argumentatively positive evidence
 can still backfire under a pragmatic listener model. This is the core
 insight connecting [barnett-griffiths-hawkins-2022] to
 [cummins-franke-2021]'s work on argumentative strength.
 
-Stick 4 has positive argStr at L0 (1/2 > 2/5), yet L1 assigns more mass
-to ¬longer than longer after seeing s4. -/
-theorem argStr_positive_but_backfires :
-    hasPositiveArgStr (l0LongerQ .s4 : ℚ) priorLonger ∧
+Stick 4 is positively relevant evidence for "longer", yet L1 assigns more
+mass to ¬longer than longer after seeing it. -/
+theorem posRelevant_but_backfires :
+    posRelevant stickContext (shows .s4) ∧
     l1Event .s4 longer < l1Event .s4 (fun w => ¬ longer w) :=
-  ⟨s4_positive_argStr, weak_evidence_effect⟩
+  ⟨s4_posRelevant, weak_evidence_effect⟩
 
 /-! ### Experimental Design & Behavioral Data -/
 
@@ -413,19 +420,19 @@ theorem literal_group_uses_j0 :
 
 /-- The RSA model predicts the qualitative pattern underlying the observed
 interaction between listener type and evidence strength (t(718) = 5.2,
-p < 0.001). The literal model (L0) assigns s4 positive argumentative strength,
+p < 0.001). To the literal model (L0), s4 is positively relevant evidence,
 predicting no backfire. The pragmatic model (L1) shows backfire. The experiment
 confirms exactly this divergence: pragmatic participants' mean (34.7) falls
 below neutral (50), while literal participants' mean (50.1) does not. -/
 theorem model_predicts_interaction :
     -- Model: L0 (literal) — s4 is positive evidence
-    hasPositiveArgStr (l0LongerQ .s4 : ℚ) priorLonger ∧
+    posRelevant stickContext (shows .s4) ∧
     -- Model: L1 (pragmatic) — s4 backfires
     l1Event .s4 longer < l1Event .s4 (fun w => ¬ longer w) ∧
     -- Data: pragmatic group shows backfire
     pragmaticResult.meanSlider < 50 ∧
     -- Data: literal group shows no backfire
     literalResult.meanSlider > 49 :=
-  ⟨s4_positive_argStr, weak_evidence_effect, pragmatic_backfire, literal_no_backfire⟩
+  ⟨s4_posRelevant, weak_evidence_effect, pragmatic_backfire, literal_no_backfire⟩
 
 end BarnettEtAl2022

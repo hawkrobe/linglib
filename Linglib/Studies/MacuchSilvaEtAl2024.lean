@@ -1,6 +1,6 @@
-import Linglib.Pragmatics.RSA.ArgumentativeStrength
 import Linglib.Semantics.Alternatives.Lexical
-import Mathlib.Data.Rat.Defs
+import Mathlib.Algebra.Order.Field.Rat
+import Mathlib.Data.Nat.Cast.Order.Basic
 
 /-!
 # [macuch-silva-etal-2024]: Strategic Use of English Quantifiers
@@ -41,13 +41,12 @@ quantitative result in a given direction. When difficulty is high (e.g.,
 framing bad results positively), speakers use informationally weaker
 quantifiers that are truthful over broader ranges of outcomes.
 This extends [cummins-franke-2021]'s argumentative strength framework
-from speaker-oriented argStr to a situation-oriented difficulty measure.
+from a speaker-oriented strength measure to a situation-oriented
+difficulty measure.
 
 -/
 
 namespace MacuchSilvaEtAl2024
-
-open RSA.ArgumentativeStrength
 
 
 -- ============================================================
@@ -100,25 +99,19 @@ def argumentativeDifficulty (s : ExamStimulus) (c : Condition) : ℚ :=
   | .highSuccess => 1 - p
   | .lowSuccess => p
 
-/-- Wrap as an ArgumentativeDifficulty from the theory layer -/
-def toArgDifficulty (s : ExamStimulus) (c : Condition) : ArgumentativeDifficulty :=
-  { proportion := s.proportion
-    isPositiveFrame := c == .highSuccess
-    difficulty := argumentativeDifficulty s c }
-
 -- Verify difficulty at extremes
 
 /-- Perfect score in high-success = 0 difficulty (easiest) -/
 theorem perfect_highSuccess_easy :
-    argumentativeDifficulty ⟨60, 60, le_refl 60⟩ .highSuccess = 0 := by native_decide
+    argumentativeDifficulty ⟨60, 60, le_refl 60⟩ .highSuccess = 0 := by decide +kernel
 
 /-- Zero correct in low-success = 0 difficulty (easiest) -/
 theorem zero_lowSuccess_easy :
-    argumentativeDifficulty ⟨0, 60, Nat.zero_le 60⟩ .lowSuccess = 0 := by native_decide
+    argumentativeDifficulty ⟨0, 60, Nat.zero_le 60⟩ .lowSuccess = 0 := by decide +kernel
 
 /-- 15/60 correct in high-success = 0.75 difficulty (hard) -/
 theorem quarter_highSuccess_hard :
-    argumentativeDifficulty ⟨15, 60, by omega⟩ .highSuccess = 3/4 := by native_decide
+    argumentativeDifficulty ⟨15, 60, by omega⟩ .highSuccess = 3/4 := by decide +kernel
 
 /-- Difficulty is monotone: more correct → harder to frame as low success -/
 theorem difficulty_monotone_lowSuccess
@@ -158,25 +151,25 @@ def strongestTruthfulPositive (s : ExamStimulus) : Alternatives.Quantifiers.Quan
 
 /-- Perfect score (difficulty 0.0): "all" is available -/
 theorem perfect_allows_all :
-    strongestTruthfulPositive ⟨60, 60, le_refl 60⟩ = .all := by native_decide
+    strongestTruthfulPositive ⟨60, 60, le_refl 60⟩ = .all := by decide +kernel
 
 /-- 42/60 correct (difficulty 0.3): "most" is strongest -/
 theorem fortytwo_allows_most :
-    strongestTruthfulPositive ⟨42, 60, by omega⟩ = .most := by native_decide
+    strongestTruthfulPositive ⟨42, 60, by omega⟩ = .most := by decide +kernel
 
 /-- 18/60 correct (difficulty 0.7): "some" is strongest -/
 theorem eighteen_allows_some :
-    strongestTruthfulPositive ⟨18, 60, by omega⟩ = .some_ := by native_decide
+    strongestTruthfulPositive ⟨18, 60, by omega⟩ = .some_ := by decide +kernel
 
 /-- Zero correct (difficulty 1.0): only "none" is truthful -/
 theorem zero_allows_none :
-    strongestTruthfulPositive ⟨0, 60, Nat.zero_le 60⟩ = .none_ := by native_decide
+    strongestTruthfulPositive ⟨0, 60, Nat.zero_le 60⟩ = .none_ := by decide +kernel
 
 /-- The quantifier ordering matches the Horn scale from `Degree` -/
 theorem quantifier_ordering_matches_scale :
     Alternatives.Quantifiers.entails .all .most = true ∧
     Alternatives.Quantifiers.entails .most .some_ = true ∧
-    Alternatives.Quantifiers.entails .some_ .none_ = false := by native_decide
+    Alternatives.Quantifiers.entails .some_ .none_ = false := by decide +kernel
 
 /-- The weakening pattern: increasing difficulty leads to weaker
 strongest-truthful quantifier. Demonstrated for high-success framing. -/
@@ -191,7 +184,7 @@ theorem weakening_with_difficulty :
     strongestTruthfulPositive ⟨18, 60, by omega⟩ = .some_ ∧
     -- difficulty 1.0: none (zero correct)
     strongestTruthfulPositive ⟨0, 60, Nat.zero_le 60⟩ = .none_ := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> decide +kernel
 
 
 -- ============================================================
@@ -211,7 +204,7 @@ def exp1_adjective_rate_lowSuccess : ℚ := 18 / 100
 theorem exp1_adjective_matches_condition :
     exp1_adjective_rate_highSuccess > 3/4 ∧
     exp1_adjective_rate_lowSuccess < 1/4 := by
-  constructor <;> native_decide
+  constructor <;> decide +kernel
 
 /-- Quantifier proportions for student reference (p. 505).
 "some and most are the quantifiers most frequently used to refer to students" -/
@@ -231,7 +224,7 @@ def exp1_quant_lowSuccess : Exp1QuantifierData :=
 theorem exp1_some_most_dominant :
     exp1_quant_highSuccess.someRate + exp1_quant_highSuccess.mostRate > 1/2 ∧
     exp1_quant_lowSuccess.someRate + exp1_quant_lowSuccess.mostRate > 1/2 := by
-  constructor <;> native_decide
+  constructor <;> decide +kernel
 
 /-- some + most combined rates -/
 def exp1_some_most_highSuccess : ℚ := 78 / 100  -- 38% + 40%
@@ -248,7 +241,7 @@ def exp1_questions_lowSuccess_all : ℚ := 33 / 100
 theorem exp1_questions_most_all_dominant :
     exp1_questions_highSuccess_most + exp1_questions_highSuccess_all > 1/2 ∧
     exp1_questions_lowSuccess_most + exp1_questions_lowSuccess_all > 1/2 := by
-  constructor <;> native_decide
+  constructor <;> decide +kernel
 
 
 -- ============================================================
@@ -269,13 +262,13 @@ def exp2_highSuccess_positive_rate : ℚ := 98 / 100
 def exp2_lowSuccess_negative_rate : ℚ := 51 / 100
 
 theorem exp2_positive_bias :
-    exp2_positive_bias_rate > 1/2 := by native_decide
+    exp2_positive_bias_rate > 1/2 := by decide +kernel
 
 /-- High-success overwhelmingly positive; low-success roughly split -/
 theorem exp2_framing_asymmetry :
     exp2_highSuccess_positive_rate > 9/10 ∧
     exp2_lowSuccess_negative_rate < 6/10 := by
-  constructor <;> native_decide
+  constructor <;> decide +kernel
 
 /-- Expression strategy categories (p. 512).
 Based on which referents (students, questions) receive quantity expressions. -/
@@ -294,11 +287,11 @@ def exp2_strategies : List ExpressionStrategy :=
 
 /-- Strategy proportions sum to 100% -/
 theorem exp2_strategies_sum :
-    (55 : ℚ)/100 + 33/100 + 9/100 + 3/100 = 1 := by native_decide
+    (55 : ℚ)/100 + 33/100 + 9/100 + 3/100 = 1 := by decide +kernel
 
 /-- Dual-reference (student + question) is the most common strategy -/
 theorem exp2_dual_most_common :
-    (55 : ℚ)/100 > 33/100 := by native_decide
+    (55 : ℚ)/100 > 33/100 := by decide +kernel
 
 /-- Among responses with quantifiers (151 observations; p. 515):
 all, most, some, none account for 67%; all + most = 54%. -/
@@ -308,7 +301,7 @@ def exp2_all_most_share : ℚ := 54 / 100
 theorem exp2_standard_quantifiers_dominant :
     exp2_standard_quantifier_share > 1/2 ∧
     exp2_all_most_share > 1/2 := by
-  constructor <;> native_decide
+  constructor <;> decide +kernel
 
 /-- Most prevalent cross-condition strategies (p. 515):
 20% use quantifiers for both referents,
@@ -317,7 +310,7 @@ def exp2_both_quantifiers_rate : ℚ := 20 / 100
 def exp2_student_quantifier_only_rate : ℚ := 19 / 100
 
 theorem exp2_top_strategies_close :
-    exp2_both_quantifiers_rate > exp2_student_quantifier_only_rate := by native_decide
+    exp2_both_quantifiers_rate > exp2_student_quantifier_only_rate := by decide +kernel
 
 
 -- ============================================================
@@ -352,7 +345,7 @@ def exp1_crossovers_highSuccess_right : List DifficultyQuantifierPrediction :=
 at each threshold, the dominant quantifier shifts one step down. -/
 theorem crossovers_follow_horn_scale :
     Alternatives.Quantifiers.entails .all .most = true ∧
-    Alternatives.Quantifiers.entails .most .some_ = true := by native_decide
+    Alternatives.Quantifiers.entails .most .some_ = true := by decide +kernel
 
 
 end MacuchSilvaEtAl2024

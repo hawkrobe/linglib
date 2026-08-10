@@ -139,7 +139,7 @@ def condProb {W : Type*} [Fintype W] (prior : W → ℚ)
 /-- Bayes factor: P(E|H) / P(E|¬H).
 
 The pre-log ratio that determines relevance sign and magnitude.
-Division-by-zero convention follows `ArgumentativeStrength.bayesFactor`:
+Division-by-zero convention:
 - P(E|¬H) = 0, P(E|H) > 0 → 1000 (effectively +∞)
 - P(E|¬H) = 0, P(E|H) = 0 → 1 (neutral) -/
 def bayesFactor {W : Type*} [Fintype W] (ctx : DTSContext W)
