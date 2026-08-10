@@ -196,11 +196,10 @@ theorem carrierGQ_existential_import {γ E S : Type*}
     `Possessive.asNPQ`) is `PossW` at a Montagovian individual with
     existential `Q₂` and trivial possessee restrictor — the possessee class is
     folded into `R` by Barker's π shift. -/
-theorem possessiveAsNPQ_iff_possW {E : Type*} (a : E) (R : E → E → Bool)
+theorem possessiveAsNPQ_iff_possW {E : Type*} (a : E) (R : E → E → Prop)
     (P : E → Prop) :
     Possessive.asNPQ a R P ↔
-      PossW (individual a) some_sem (fun x y => R x y = true)
-        (fun _ => True) P := by
+      PossW (individual a) some_sem R (fun _ => True) P := by
   unfold Possessive.asNPQ PossW dom
     individual some_sem
   constructor
