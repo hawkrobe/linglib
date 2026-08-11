@@ -26,7 +26,7 @@ class IsEuclidean {W : Type*} (R : W → W → Prop) : Prop where
 
 /-! ### Frame implications and instances -/
 
-variable {W : Type*}
+variable {W : Type*} {R : W → W → Prop}
 
 -- Seriality, symmetry, and transitivity of `⊤` follow from the two
 -- instances below via the derivations that follow.
@@ -34,26 +34,23 @@ instance : Std.Refl (⊤ : W → W → Prop) := ⟨fun _ => trivial⟩
 instance : IsEuclidean (⊤ : W → W → Prop) := ⟨fun _ _ _ _ _ => trivial⟩
 
 /-- Reflexive relations are serial. -/
-instance {R : W → W → Prop} [Std.Refl R] : IsSerial R where
-  serial w := ⟨w, Std.Refl.refl w⟩
+instance [hR : Std.Refl R] : IsSerial R where serial w := ⟨w, hR.refl w⟩
 
 /-- Reflexive + Euclidean implies symmetric. -/
-instance {R : W → W → Prop} [Std.Refl R] [IsEuclidean R] :
-    Std.Symm R where
-  symm w v hwv := IsEuclidean.eucl w v w hwv (Std.Refl.refl w)
+instance [hR : Std.Refl R] [hE : IsEuclidean R] : Std.Symm R where
+  symm w v hwv := hE.eucl w v w hwv (hR.refl w)
 
 /-- Reflexive + Euclidean implies transitive. -/
-instance {R : W → W → Prop} [Std.Refl R] [IsEuclidean R] :
-    IsTrans W R where
-  trans w v u hwv hvu :=
-    IsEuclidean.eucl v w u (IsEuclidean.eucl w v w hwv (Std.Refl.refl w)) hvu
+instance [hR : Std.Refl R] [hE : IsEuclidean R] : IsTrans W R where
+  trans w v u hwv hvu := hE.eucl v w u (hE.eucl w v w hwv (hR.refl w)) hvu
 
 /-- Symmetric + transitive implies euclidean. -/
-instance {R : W → W → Prop} [Std.Symm R] [IsTrans W R] :
-    IsEuclidean R where
-  eucl w v u hwv hwu := IsTrans.trans v w u (Std.Symm.symm w v hwv) hwu
+instance [hS : Std.Symm R] [hT : IsTrans W R] : IsEuclidean R where
+  eucl w v u hwv hwu := hT.trans v w u (hS.symm w v hwv) hwu
 
 /-! ### Box and diamond -/
+
+variable (R)
 
 /-- Restricted necessity: `□_R p` at world `w` holds iff `p v` for all
     `v` accessible from `w`.
@@ -62,25 +59,25 @@ instance {R : W → W → Prop} [Std.Symm R] [IsTrans W R] :
     generalization of the S5 necessity of [dowty-wall-peters-1981]'s IL,
     whose `Intensional.box` is the universal-accessibility special case.
     The `Set`-valued mathlib counterpart is `Rel.core`. -/
-def box (R : W → W → Prop) (p : W → Prop) (w : W) : Prop :=
+def box (p : W → Prop) (w : W) : Prop :=
   ∀ v, R w v → p v
 
 /-- Restricted possibility: `◇_R p` at world `w` holds iff `p v` for some
     `v` accessible from `w`. Dual of `box`; the `Set`-valued mathlib
     counterpart is `Rel.preimage`. -/
-def diamond (R : W → W → Prop) (p : W → Prop) (w : W) : Prop :=
+def diamond (p : W → Prop) (w : W) : Prop :=
   ∃ v, R w v ∧ p v
 
 /-! ### Duality -/
 
 /-- Restricted modal duality: `□_R p ↔ ¬◇_R ¬p`. -/
-theorem box_neg_diamond (R : W → W → Prop) (p : W → Prop) (w : W) :
+theorem box_neg_diamond (p : W → Prop) (w : W) :
     box R p w ↔ ¬ diamond R (fun v => ¬ p v) w :=
   ⟨fun hb ⟨v, hwv, hnp⟩ => hnp (hb v hwv),
    fun h v hwv => Classical.byContradiction fun hnp => h ⟨v, hwv, hnp⟩⟩
 
 /-- Dual form: `◇_R p ↔ ¬□_R ¬p`. -/
-theorem diamond_neg_box (R : W → W → Prop) (p : W → Prop) (w : W) :
+theorem diamond_neg_box (p : W → Prop) (w : W) :
     diamond R p w ↔ ¬ box R (fun v => ¬ p v) w :=
   ⟨fun ⟨v, hwv, hpv⟩ h => h v hwv hpv,
    fun h => Classical.byContradiction fun hne =>
