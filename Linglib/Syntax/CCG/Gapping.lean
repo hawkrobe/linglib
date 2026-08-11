@@ -118,7 +118,7 @@ Stripping is gapping with a single remnant.
 
 This is just a type-raised subject coordinating with a decomposed sentence.
 -/
-def strippingCategory : Cat Atom := backwardTypeRaise NP S
+def strippingCategory : Cat Atom := NP.backwardTypeRaise S
 
 theorem stripping_has_correct_category :
     strippingCategory = GappedSubj := rfl

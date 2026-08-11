@@ -20,14 +20,14 @@ live in `CCG.TargetRestricted`.
 
 ## Main definitions
 
-* `CCG.Cat`: categories over an atom type `α` — atoms plus directional slashes.
-* `CCG.forwardCompN`, `CCG.backwardCompN`: generalized composition of degree `n`, the
-  schema every binary rule instantiates.
-* `CCG.forwardApp`, `CCG.backwardApp`, `CCG.forwardComp`, `CCG.backwardComp`,
-  `CCG.forwardCompX`: the toy grammar's rule instances.
-* `CCG.forwardTypeRaise`, `CCG.backwardTypeRaise`: type-raising.
-* `CCG.LexEntry`: a lexical entry, pairing a surface form with its category.
-* `CCG.DerivStep`: a derivation tree; `DerivStep.cat` reads off its category,
+* `Cat`: categories over an atom type `α` — atoms plus directional slashes.
+* `Cat.generalizedForwardComp`, `Cat.generalizedBackwardComp`: generalized
+  composition of degree `n`, the schema every binary rule instantiates.
+* `Cat.forwardApp`, `Cat.backwardApp`, `Cat.forwardComp`, `Cat.backwardComp`,
+  `Cat.forwardCompX`: the toy grammar's rule instances.
+* `Cat.forwardTypeRaise`, `Cat.backwardTypeRaise`: type-raising.
+* `LexEntry`: a lexical entry, pairing a surface form with its category.
+* `DerivStep`: a derivation tree; `DerivStep.cat` reads off its category,
   `DerivStep.yield` the surface string it spells out, and `DerivStep.opCount` the
   number of rule applications.
 
@@ -84,6 +84,8 @@ end Categories
 
 variable {α : Type*} [DecidableEq α]
 
+namespace Cat
+
 section CombinatoryRules
 
 /-- Generalized forward composition `>Bⁿ`, the rule schema of
@@ -92,41 +94,41 @@ the secondary input's last `n` arguments — each keeping its own slash directio
 Principle of Inheritance — and matching the remainder against `Y`. Degree 0 is forward
 application; at degree ≥ 1 the harmonic and crossed instances fall out of the slash
 directions rather than being separate rule classes. -/
-def forwardCompN : Nat → Cat α → Cat α → Option (Cat α)
+def generalizedForwardComp : Nat → Cat α → Cat α → Option (Cat α)
   | 0, .rslash x y, z => if y = z then some x else none
-  | n + 1, f, .rslash g z => (forwardCompN n f g).map (Cat.rslash · z)
-  | n + 1, f, .lslash g z => (forwardCompN n f g).map (Cat.lslash · z)
+  | n + 1, f, .rslash g z => (generalizedForwardComp n f g).map (Cat.rslash · z)
+  | n + 1, f, .lslash g z => (generalizedForwardComp n f g).map (Cat.lslash · z)
   | _, _, _ => none
 
 /-- Generalized backward composition `<Bⁿ`: `Y|Z₁…|Zₙ X\Y ⇒ X|Z₁…|Zₙ`, the mirror of
-`forwardCompN`. Degree 0 is backward application. -/
-def backwardCompN : Nat → Cat α → Cat α → Option (Cat α)
+`generalizedForwardComp`. Degree 0 is backward application. -/
+def generalizedBackwardComp : Nat → Cat α → Cat α → Option (Cat α)
   | 0, z, .lslash x y => if y = z then some x else none
-  | n + 1, .rslash g z, f => (backwardCompN n g f).map (Cat.rslash · z)
-  | n + 1, .lslash g z, f => (backwardCompN n g f).map (Cat.lslash · z)
+  | n + 1, .rslash g z, f => (generalizedBackwardComp n g f).map (Cat.rslash · z)
+  | n + 1, .lslash g z, f => (generalizedBackwardComp n g f).map (Cat.lslash · z)
   | _, _, _ => none
 
-/-- Forward application `>`: X/Y Y ⇒ X — degree 0 of `forwardCompN`. -/
-def forwardApp : Cat α → Cat α → Option (Cat α) := forwardCompN 0
+/-- Forward application `>`: X/Y Y ⇒ X — degree 0 of `generalizedForwardComp`. -/
+def forwardApp : Cat α → Cat α → Option (Cat α) := generalizedForwardComp 0
 
-/-- Backward application `<`: Y X\Y ⇒ X — degree 0 of `backwardCompN`. -/
-def backwardApp : Cat α → Cat α → Option (Cat α) := backwardCompN 0
+/-- Backward application `<`: Y X\Y ⇒ X — degree 0 of `generalizedBackwardComp`. -/
+def backwardApp : Cat α → Cat α → Option (Cat α) := generalizedBackwardComp 0
 
 /-- Forward harmonic composition `>B`: X/Y Y/Z ⇒ X/Z — the degree-1 harmonic instance
-of `forwardCompN` (the toy grammar admits this but not its degree-1 backward crossed
+of `generalizedForwardComp` (the toy grammar admits this but not its degree-1 backward crossed
 mirror). -/
 def forwardComp : Cat α → Cat α → Option (Cat α)
-  | f, g@(.rslash _ _) => forwardCompN 1 f g
+  | f, g@(.rslash _ _) => generalizedForwardComp 1 f g
   | _, _ => none
 
 /-- Backward harmonic composition `<B`: Y\Z X\Y ⇒ X\Z — the degree-1 harmonic instance
-of `backwardCompN`. -/
+of `generalizedBackwardComp`. -/
 def backwardComp : Cat α → Cat α → Option (Cat α)
-  | f@(.lslash _ _), g => backwardCompN 1 f g
+  | f@(.lslash _ _), g => generalizedBackwardComp 1 f g
   | _, _ => none
 
 /-- Forward crossed composition `>B×`: X/Y Y\Z ⇒ X\Z — the degree-1 crossed instance
-of `forwardCompN`.
+of `generalizedForwardComp`.
 
 In [steedman-2000] this rule is language-specific and restricted (for Dutch,
 to `Y = VP₋SUB`; ch. 6 appendix) — unrestricted crossed composition licenses
@@ -134,7 +136,7 @@ scrambling. The restriction is expressible over a featured atom type; the toy
 `Atom` inventory carries no features, and the target-restricted schema lives in
 `CCG.TargetRestricted`. -/
 def forwardCompX : Cat α → Cat α → Option (Cat α)
-  | f, g@(.lslash _ _) => forwardCompN 1 f g
+  | f, g@(.lslash _ _) => generalizedForwardComp 1 f g
   | _, _ => none
 
 end CombinatoryRules
@@ -154,6 +156,8 @@ end TypeRaising
 /-- Coordination: X conj X => X. -/
 def coordinate : Cat α → Cat α → Option (Cat α)
   | x, y => if x = y then some x else none
+
+end Cat
 
 /-- A CCG lexical entry. -/
 structure LexEntry (α : Type*) where
@@ -192,29 +196,29 @@ def DerivStep.cat : DerivStep α → Option (Cat α)
   | .fapp d1 d2 => do
     let c1 ← d1.cat
     let c2 ← d2.cat
-    forwardApp c1 c2
+    c1.forwardApp c2
   | .bapp d1 d2 => do
     let c1 ← d1.cat
     let c2 ← d2.cat
-    backwardApp c1 c2
+    c1.backwardApp c2
   | .fcomp d1 d2 => do
     let c1 ← d1.cat
     let c2 ← d2.cat
-    forwardComp c1 c2
+    c1.forwardComp c2
   | .bcomp d1 d2 => do
     let c1 ← d1.cat
     let c2 ← d2.cat
-    backwardComp c1 c2
+    c1.backwardComp c2
   | .fcompx d1 d2 => do
     let c1 ← d1.cat
     let c2 ← d2.cat
-    forwardCompX c1 c2
-  | .ftr d t => d.cat.map (forwardTypeRaise · t)
-  | .btr d t => d.cat.map (backwardTypeRaise · t)
+    c1.forwardCompX c2
+  | .ftr d t => d.cat.map (·.forwardTypeRaise t)
+  | .btr d t => d.cat.map (·.backwardTypeRaise t)
   | .coord _ d1 d2 => do
     let c1 ← d1.cat
     let c2 ← d2.cat
-    coordinate c1 c2
+    c1.coordinate c2
 
 /-- The surface string a derivation spells out: its leaf forms and coordinators, left
 to right.

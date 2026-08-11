@@ -13,8 +13,8 @@ leftmost atom, after stripping all arguments) is a distinguished atom `s`. Their
 equivalence-with-TAG theorem needs it, and without it the power drops strictly below
 TAG.
 
-Rules are the degree-`n` composition schema `CCG.forwardCompN` / `CCG.backwardCompN`
-of `Syntax/CCG/Basic`, gated on the target. A derivation node records only its degree
+Rules are the generalized-composition schema `CCG.Cat.generalizedForwardComp` /
+`CCG.Cat.generalizedBackwardComp` of `Syntax/CCG/Basic`, gated on the target. A derivation node records only its degree
 and direction, per the [vijay-shanker-weir-1994] rule form: degree 0 is application,
 and the harmonic/crossed distinction is a consequence of the slash directions rather
 than a separate rule class.
@@ -69,11 +69,11 @@ def Derivation.cat [DecidableEq α] (s : α) : Derivation α → Option (Cat α)
   | .fc n l r => do
     let a ← l.cat s
     let b ← r.cat s
-    if target a = s then forwardCompN n a b else none
+    if target a = s then Cat.generalizedForwardComp n a b else none
   | .bc n l r => do
     let a ← l.cat s
     let b ← r.cat s
-    if target b = s then backwardCompN n a b else none
+    if target b = s then Cat.generalizedBackwardComp n a b else none
 
 /-- Surface string: leaf forms left to right. -/
 def Derivation.yield : Derivation α → List String

@@ -48,11 +48,11 @@ theorem type_raise_is_T {E W : Type} {x t : Cat Atom}
 
 /-- The type of a forward-type-raised category `T/(T\X)`. -/
 theorem ftr_type_is_T (x t : Cat Atom) :
-    catToTy (forwardTypeRaise x t) = ((catToTy x ⇒ catToTy t) ⇒ catToTy t) := rfl
+    catToTy (x.forwardTypeRaise t) = ((catToTy x ⇒ catToTy t) ⇒ catToTy t) := rfl
 
 /-- Backward type-raising has the same type as forward type-raising. -/
 theorem btr_type_is_T (x t : Cat Atom) :
-    catToTy (backwardTypeRaise x t) = ((catToTy x ⇒ catToTy t) ⇒ catToTy t) := rfl
+    catToTy (x.backwardTypeRaise t) = ((catToTy x ⇒ catToTy t) ⇒ catToTy t) := rfl
 
 /-- Forward substitution is `S`: `(X/Y)/Z  Y/Z ⇒ X/Z` with `S f g x = f x (g x)`.
 (The substitution rule is not part of the toy inventory in `Syntax/CCG/Basic`; the
