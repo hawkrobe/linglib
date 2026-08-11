@@ -2658,6 +2658,7 @@ import Linglib.Studies.Stalnaker1981
 import Linglib.Studies.Stankova2026
 import Linglib.Studies.StankovaSimik2024.Data
 import Linglib.Studies.StankovaSimik2025
+import Linglib.Studies.StanojevicSteedman2021
 import Linglib.Studies.StapsRooryck2024
 import Linglib.Studies.Stassen1985
 import Linglib.Studies.Stassen2000
