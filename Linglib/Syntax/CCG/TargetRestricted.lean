@@ -21,7 +21,7 @@ than a separate rule class.
 
 This substrate makes the CCG≡TAG weak-equivalence — and constructions of CCGs for
 non-context-free languages — expressible. It is distinct from the unrestricted,
-universal-rule CCG of `Syntax/CCG/Basic` (`CCG.DerivStep`), which
+universal-rule CCG of `Syntax/CCG/Basic` (`CCG.Derivation`), which
 [kuhlmann-koller-satta-2015] show is strictly weaker than TAG.
 
 ## Main definitions

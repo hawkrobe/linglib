@@ -18,13 +18,6 @@ namespace CCG.Scope
 open CCG
 open ScopeTheory
 
-/-- A scope-taking element in a CCG derivation. -/
-structure ScopeTaker where
-  id : String
-  surfacePosition : Nat
-  cat : Cat Atom
-  deriving Repr
-
 /-- Derivation type for scope analysis. -/
 inductive DerivationType where
   | directApp    -- Standard application: surface scope only
@@ -32,29 +25,23 @@ inductive DerivationType where
   | composed     -- Composition: enables scope inversion
   deriving DecidableEq, Repr
 
-/-- Analyze derivation to determine its type. -/
-def analyzeDerivation {α : Type*} : DerivStep α → DerivationType
-  | .lex _ => .directApp
-  | .fapp d1 d2 =>
-    match analyzeDerivation d1, analyzeDerivation d2 with
-    | .typeRaised, _ | _, .typeRaised => .typeRaised
-    | .composed, _ | _, .composed => .composed
-    | _, _ => .directApp
-  | .bapp d1 d2 =>
-    match analyzeDerivation d1, analyzeDerivation d2 with
-    | .typeRaised, _ | _, .typeRaised => .typeRaised
-    | .composed, _ | _, .composed => .composed
-    | _, _ => .directApp
-  | .fcomp _ _ => .composed
-  | .bcomp _ _ => .composed
-  | .fcompx _ _ => .composed
-  | .ftr _ _ => .typeRaised
-  | .btr _ _ => .typeRaised
-  | .coord _ d1 d2 =>
-    match analyzeDerivation d1, analyzeDerivation d2 with
-    | .typeRaised, _ | _, .typeRaised => .typeRaised
-    | .composed, _ | _, .composed => .composed
-    | _, _ => .directApp
+/-- Combine daughters' derivation types: type-raising dominates, then composition. -/
+def DerivationType.join : DerivationType → DerivationType → DerivationType
+  | .typeRaised, _ | _, .typeRaised => .typeRaised
+  | .composed, _ | _, .composed => .composed
+  | _, _ => .directApp
+
+/-- Analyze a derivation to determine its type. -/
+def analyzeDerivation {α : Type*} : {c : Cat α} → Derivation α c → DerivationType
+  | _, .lex _ => .directApp
+  | _, .fapp d1 d2 => (analyzeDerivation d1).join (analyzeDerivation d2)
+  | _, .bapp d1 d2 => (analyzeDerivation d1).join (analyzeDerivation d2)
+  | _, .fcomp _ _ => .composed
+  | _, .bcomp _ _ => .composed
+  | _, .fcompx _ _ => .composed
+  | _, .ftr _ _ => .typeRaised
+  | _, .btr _ _ => .typeRaised
+  | _, .coord _ d1 d2 => (analyzeDerivation d1).join (analyzeDerivation d2)
 
 /-- Determine scope availability from derivation type. -/
 def derivationTypeToAvailability : DerivationType → BinaryScopeAvailability
@@ -62,28 +49,17 @@ def derivationTypeToAvailability : DerivationType → BinaryScopeAvailability
   | .typeRaised => .ambiguous
   | .composed => .ambiguous
 
-/-- A CCG derivation annotated with scope-taker information. -/
-structure ScopedDerivation where
-  deriv : DerivStep Atom
-  scopeTakers : List ScopeTaker
-  hasTwoOrMore : scopeTakers.length ≥ 2 := by decide
-  deriving Repr
-
-def ScopedDerivation.availability (sd : ScopedDerivation) : BinaryScopeAvailability :=
-  derivationTypeToAvailability (analyzeDerivation sd.deriv)
-
-def ScopedDerivation.toAvailableScopes (sd : ScopedDerivation) : AvailableScopes :=
-  let ids := sd.scopeTakers.map (·.id)
-  sd.availability.toAvailableScopes (ids.head!) (ids.tail.head!)
-
 -- Examples
 
-def everyHorse_surface : DerivStep Atom :=
+/-- Surface-scope derivation: subject and predicate combine by plain application. -/
+def everyHorse_surface : Derivation Atom S :=
   .bapp (.lex ⟨"every horse", NP⟩) (.lex ⟨"didn't jump", IV⟩)
 
-def everyHorse_inverse : DerivStep Atom :=
-  let everyHorse_tr := DerivStep.ftr (.lex ⟨"every horse", NP⟩) S
-  .fcomp everyHorse_tr (.lex ⟨"didn't jump", IV⟩)
+/-- Inverse-capable derivation: the type-raised subject composes with the negated
+auxiliary before the verb applies. -/
+def everyHorse_inverse : Derivation Atom S :=
+  .fapp (.fcomp (.ftr (.lex ⟨"every horse", NP⟩) S)
+    (.lex ⟨"didn't", (S \ NP) / (S \ NP)⟩)) (.lex ⟨"jump", IV⟩)
 
 example : analyzeDerivation everyHorse_surface = .directApp := rfl
 example : analyzeDerivation everyHorse_inverse = .composed := rfl

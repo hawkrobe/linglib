@@ -16,7 +16,7 @@ grammar (here, via the target restriction modelled in `Syntax/CCG/TargetRestrict
 fires only when the *target* of its primary input category is `S`). For lexicalized CCG
 *without* target restrictions they prove the power is strictly below TAG: such a CCG that
 covers `aⁿbⁿcⁿ` also admits extra permuted strings, so it cannot generate the language
-*exactly*. `Syntax/CCG/Basic`'s `CCG.DerivStep` models a (rule-inventory) fragment of that
+*exactly*. `Syntax/CCG/Basic`'s `CCG.Derivation` models a (rule-inventory) fragment of that
 unrestricted variant, so this construction genuinely needs the restricted model
 `CCG.TargetRestricted`.
 
@@ -66,9 +66,9 @@ abbrev Scat : Cat Atom := .atom .S
 /-! ### The grammar `G₁` of Example 2 -/
 
 /-- `a := A`. -/
-def aLex : Derivation Atom := .lex Acat "a"
+def aLex : TargetRestricted.Derivation Atom := .lex Acat "a"
 /-- `c := C\A`. -/
-def cLex : Derivation Atom := .lex (Ccat \ Acat) "c"
+def cLex : TargetRestricted.Derivation Atom := .lex (Ccat \ Acat) "c"
 
 /-- The cluster category `S/C/…/C` with `n` forward `C`-arguments. -/
 def clusterCat : Nat → Cat Atom
@@ -77,27 +77,27 @@ def clusterCat : Nat → Cat Atom
 
 /-- Chain of degree-2 compositions: `b₁ = S/C/B` composed with `j` copies of
 `B/C/B`, giving `S/Cʲ⁺¹/B` and yield `bʲ⁺¹`. -/
-def fc2Chain : Nat → Derivation Atom
+def fc2Chain : Nat → TargetRestricted.Derivation Atom
   | 0 => .lex ((Scat / Ccat) / Bcat) "b"
   | j + 1 => .fc 2 (fc2Chain j) (.lex ((Bcat / Ccat) / Bcat) "b")
 
 /-- The `b`-cluster derivation for `n ≥ 1`, with category `clusterCat n`, yield `bⁿ`. -/
-def clusterDeriv : Nat → Derivation Atom
+def clusterDeriv : Nat → TargetRestricted.Derivation Atom
   | 0 => .lex Scat "b"            -- unused (the construction starts at n = 1)
   | 1 => .lex (Scat / Ccat) "b"
   | n + 2 => .fc 1 (fc2Chain n) (.lex (Bcat / Ccat) "b")
 
 /-- One peel: crossed-compose with a `c` on the right, then backward-apply an `a` on the
 left — wrapping the yield with `a … c` and removing one `C` argument. -/
-def peelStep (d : Derivation Atom) : Derivation Atom := .bc 0 aLex (.fc 1 d cLex)
+def peelStep (d : TargetRestricted.Derivation Atom) : TargetRestricted.Derivation Atom := .bc 0 aLex (.fc 1 d cLex)
 
 /-- Peel `k` times. -/
-def peel : Nat → Derivation Atom → Derivation Atom
+def peel : Nat → TargetRestricted.Derivation Atom → TargetRestricted.Derivation Atom
   | 0, d => d
   | k + 1, d => peel k (peelStep d)
 
 /-- The full derivation of `aⁿbⁿcⁿ`. -/
-def build (n : Nat) : Derivation Atom := peel n (clusterDeriv n)
+def build (n : Nat) : TargetRestricted.Derivation Atom := peel n (clusterDeriv n)
 
 /-! ### Target invariant -/
 
@@ -115,24 +115,24 @@ theorem fc2Chain_cat (j : Nat) :
   induction j with
   | zero => rfl
   | succ j ih =>
-    simp [fc2Chain, Derivation.cat, ih, Cat.generalizedForwardComp, target_clusterCat, clusterCat]
+    simp [fc2Chain, TargetRestricted.Derivation.cat, ih, Cat.generalizedForwardComp, target_clusterCat, clusterCat]
 
 /-- The cluster derivation has category `clusterCat n` for `n ≥ 1`. -/
 theorem clusterDeriv_cat : ∀ {n : Nat}, 1 ≤ n → (clusterDeriv n).cat .S = some (clusterCat n)
   | 1, _ => rfl
   | n + 2, _ => by
-    simp [clusterDeriv, Derivation.cat, fc2Chain_cat, Cat.generalizedForwardComp, target_clusterCat,
+    simp [clusterDeriv, TargetRestricted.Derivation.cat, fc2Chain_cat, Cat.generalizedForwardComp, target_clusterCat,
       clusterCat]
 
 /-- One peel removes one `C` argument from a cluster. -/
-theorem peelStep_cat {d : Derivation Atom} {k : Nat}
+theorem peelStep_cat {d : TargetRestricted.Derivation Atom} {k : Nat}
     (h : d.cat .S = some (clusterCat (k + 1))) :
     (peelStep d).cat .S = some (clusterCat k) := by
-  simp [peelStep, Derivation.cat, aLex, cLex, h, Cat.generalizedForwardComp, Cat.generalizedBackwardComp, clusterCat,
+  simp [peelStep, TargetRestricted.Derivation.cat, aLex, cLex, h, Cat.generalizedForwardComp, Cat.generalizedBackwardComp, clusterCat,
     target_clusterCat]
 
 /-- Peeling `k` times turns a `clusterCat k` derivation into one of category `S`. -/
-theorem peel_cat : ∀ (k : Nat) (d : Derivation Atom), d.cat .S = some (clusterCat k) →
+theorem peel_cat : ∀ (k : Nat) (d : TargetRestricted.Derivation Atom), d.cat .S = some (clusterCat k) →
     (peel k d).cat .S = some Scat
   | 0, d, h => by simpa [peel, clusterCat] using h
   | k + 1, d, h => by
@@ -154,21 +154,21 @@ private theorem replicate_cons_comm {α : Type*} (k : Nat) (a : α) (X : List α
 theorem fc2Chain_yield (j : Nat) : (fc2Chain j).yield = List.replicate (j + 1) "b" := by
   induction j with
   | zero => rfl
-  | succ j ih => simp [fc2Chain, Derivation.yield, ih, List.replicate_succ']
+  | succ j ih => simp [fc2Chain, TargetRestricted.Derivation.yield, ih, List.replicate_succ']
 
 theorem clusterDeriv_yield : ∀ {n : Nat}, 1 ≤ n →
     (clusterDeriv n).yield = List.replicate n "b"
   | 1, _ => rfl
-  | n + 2, _ => by simp [clusterDeriv, Derivation.yield, fc2Chain_yield, List.replicate_succ']
+  | n + 2, _ => by simp [clusterDeriv, TargetRestricted.Derivation.yield, fc2Chain_yield, List.replicate_succ']
 
-theorem peel_yield : ∀ (k : Nat) (d : Derivation Atom),
+theorem peel_yield : ∀ (k : Nat) (d : TargetRestricted.Derivation Atom),
     (peel k d).yield = List.replicate k "a" ++ d.yield ++ List.replicate k "c"
   | 0, d => by simp [peel]
   | k + 1, d => by
     simp only [peel]
     rw [peel_yield k (peelStep d)]
     have hy : (peelStep d).yield = "a" :: (d.yield ++ ["c"]) := by
-      simp [peelStep, Derivation.yield, aLex, cLex]
+      simp [peelStep, TargetRestricted.Derivation.yield, aLex, cLex]
     rw [hy, List.replicate_succ, List.replicate_succ]
     simp only [List.cons_append, List.append_assoc]
     exact replicate_cons_comm k "a" _
@@ -189,7 +189,7 @@ every string in the non-context-free language is the yield of a well-formed (tar
 restricted) CCG derivation. This is the completeness half of CCG ⊋ CFG; the language
 `anbnc` it covers is not context-free (`AnBnCn.anbnc_not_contextFree`). -/
 theorem ccg_generates_anbnc (w : List String) (hw : w ∈ anbncStrings) :
-    ∃ d : Derivation Atom, d.cat .S = some Scat ∧ d.yield = w := by
+    ∃ d : TargetRestricted.Derivation Atom, d.cat .S = some Scat ∧ d.yield = w := by
   obtain ⟨n, hn, rfl⟩ := hw
   exact ⟨build n, build_cat hn, build_yield hn⟩
 
