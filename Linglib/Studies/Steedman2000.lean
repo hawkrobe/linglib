@@ -6,6 +6,7 @@ import Linglib.Studies.BresnanEtAl1982
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.TargetRestricted
 import Linglib.Syntax.CCG.Interface
+import Linglib.Syntax.CCG.Intonation
 import Linglib.Features.ScopeTypes
 
 /-!
@@ -727,6 +728,59 @@ theorem predictedAvailability_eq_observed :
   decide
 
 end Quantification
+
+/-! ### Intonation and information structure
+
+The book's ch. 5 story: alternative derivations of one string are alternative
+information structures, disambiguated by tune. "(ANNA married)(MANNY)" carves the
+composed derivation into an L+H* LH% theme and an H* LL% rheme; prosodic phrases are
+tune-marked constituents, so only CCG constituents can be phrases (the Sense Unit
+Condition, [selkirk-1984]; [steedman-2000] ch. 2). -/
+
+section Intonation
+
+open CCG.Intonation Features.Prosody
+
+/-- Accents for "(ANNA married)(MANNY)": theme accent on "Anna", rheme accent on
+"Manny", "married" unaccented. -/
+def annaMannyAccents : AccentAssignment := fun w =>
+  match w with
+  | "Anna" => .L_plus_H_star
+  | "Manny" => .H_star
+  | _ => .null
+
+/-- "ANNA married": the composed theme constituent, category `S/NP`. -/
+def anna_married : Derivation Atom (S / NP) :=
+  .fcomp (.ftr (.lex "Anna" NP) S) (.lex "married" TV)
+
+/-- The theme constituent projects `θ`: the theme accent on "Anna" unifies with
+unaccented "married". -/
+theorem anna_married_theme :
+    anna_married.infoFeature annaMannyAccents = some .θ := rfl
+
+/-- The rheme "MANNY" projects `ρ`. -/
+theorem manny_rheme :
+    (Derivation.lex "Manny" NP).infoFeature annaMannyAccents = some .ρ := rfl
+
+/-- Folding the rheme into the theme's constituent clashes: with these accents the
+whole sentence projects no coherent single marking, so the tune forces the
+[Anna married][Manny] phrasing — intonation disambiguates the derivational
+ambiguity. -/
+theorem theme_rheme_clash :
+    (Derivation.fapp anna_married (.lex "Manny" NP)).infoFeature annaMannyAccents
+      = none := rfl
+
+/-- The utterance as two tune-marked phrases. -/
+def annaMannyUtterance : List ProsodicPhrase :=
+  [⟨_, anna_married, themeTune⟩, ⟨_, .lex "Manny" NP, rhemeTune⟩]
+
+/-- The extracted information structure: the theme is the `S/NP` constituent
+"ANNA married", the rheme is "MANNY". -/
+theorem annaMannyUtterance_infoStructure :
+    (extractInfoStructure annaMannyUtterance).map (fun i => (i.theme.map (·.cat), i.rheme.cat))
+      = some (some (S / NP), NP) := rfl
+
+end Intonation
 
 /-! ### Truth-conditional pipeline
 
