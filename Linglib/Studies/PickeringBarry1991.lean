@@ -1,4 +1,5 @@
 import Linglib.Processing.Cost.Profile
+import Linglib.Semantics.Composition.Combinator
 import Linglib.Studies.BresnanEtAl1982
 
 /-!
@@ -36,8 +37,7 @@ John saw" (ex 84):
 - whom : Q/(S/NP) combines with S/NP to form Q
 
 No empty category is needed because composition creates the filler-verb
-association directly. This is the `subject_verb_composition` theorem in
-`CCG.Combinators`.
+association directly — formalized below as `subject_verb_composition`.
 
 ## Sections
 
@@ -295,18 +295,14 @@ theorem german_nested_consistent :
 
 /-! ### Bridge to CCG combinators
 
-The gap-free account requires a grammar that can establish filler-verb
-associations without positing gap positions. CCG achieves this via forward
-composition (B) and type-raising (T):
+The gap-free account requires a grammar that can establish filler-verb associations
+without positing gap positions. CCG achieves this via forward composition (`B`) and
+type-raising (`T`): in derivation (84), "John saw" becomes a constituent `S/NP` via
+rule (80a), and "whom" : `Q/(S/NP)` combines with it to form `Q` — no trace needed. -/
 
-  `subject_verb_composition` in `CCG.Combinators` proves:
-    B (T subj) verb obj = verb obj subj
-
-This is exactly derivation (84) in the paper: "John saw" becomes
-a constituent S/NP via rule (80a) (type-raising + composition), and
-"whom" : Q/(S/NP) combines with S/NP to form Q — no trace needed. The variable-free semantics
-(`ccgVariableFree` in `CCG.Combinators`) guarantees that all semantic
-operations use combinators rather than bound variables, which is the
-formal counterpart of "no empty categories." -/
+/-- A type-raised subject composed with a transitive verb applies directly to the
+object: the combinator form of filler-verb association, with no gap position. -/
+theorem subject_verb_composition {α β γ : Type*} (subj : α) (verb : β → α → γ) (obj : β) :
+    Combinator.B (Combinator.T subj) verb obj = verb obj subj := rfl
 
 end PickeringBarry1991
