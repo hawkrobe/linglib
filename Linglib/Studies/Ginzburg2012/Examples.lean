@@ -149,7 +149,7 @@ inductive RainWorld where
 
 /-- "Is it raining?" — partition into rainy vs non-rainy. -/
 def isRainingQ : QUD RainWorld :=
-  QUD.ofProject (fun w => match w with | .rainy => true | _ => false) "raining?"
+  QUD.ofProject (fun w => match w with | .rainy => true | _ => false)
 
 /-- A tagged proposition for the rain example: pairs a `Set RainWorld`
     with a tag enabling decidable equality and Bool-valued resolution. -/

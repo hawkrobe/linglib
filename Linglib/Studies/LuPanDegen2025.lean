@@ -200,7 +200,7 @@ content — content variation is invisible, hence content is backgrounded.
 
 Built using `QUD.ofDecEq` from `Core/QUD.lean`. -/
 def mannerQUD : QUD (CommEvent Manner Content) :=
-  QUD.ofDecEq (·.manner) "manner"
+  QUD.ofDecEq (·.manner)
 
 /-- The **content QUD**: partitions communication events by WHAT was said.
 "What did John say?"
@@ -210,7 +210,7 @@ manner — manner variation is invisible, hence manner is backgrounded.
 
 Built using `QUD.ofDecEq` from `Core/QUD.lean`. -/
 def contentQUD : QUD (CommEvent Manner Content) :=
-  QUD.ofDecEq (·.content) "content"
+  QUD.ofDecEq (·.content)
 
 /-! ## QUD determines backgroundedness
 
