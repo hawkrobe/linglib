@@ -28,7 +28,7 @@ commitment to belief.
 
 namespace Discourse.Commitment.Frame
 
-open ModalLogic (IsKD45Frame IsK4EuclFrame IsEuclidean box diamond box_K box_four)
+open ModalLogic (IsKD45Frame IsK45Frame IsEuclidean box diamond box_K box_four)
 open Modality.EpistemicLogic (knows)
 
 /-- Pair-indexed deontic accessibility: `commitment a b w v` means at
@@ -50,7 +50,7 @@ structure CommitmentState (W : Type*) (A : Type*) where
   belief_kd45 : ∀ a, IsKD45Frame (belief a)
   /-- Commitment is K4-Euclidean (no seriality — violations are
       expressible) per pair. -/
-  commitment_k4eucl : ∀ a b, IsK4EuclFrame (commitment a b)
+  commitment_k4eucl : ∀ a b, IsK45Frame (commitment a b)
 
 namespace CommitmentState
 variable {W : Type*} {A : Type*}
@@ -58,7 +58,7 @@ variable {W : Type*} {A : Type*}
 instance (c : CommitmentState W A) (a : A) : IsKD45Frame (c.belief a) :=
   c.belief_kd45 a
 
-instance (c : CommitmentState W A) (a b : A) : IsK4EuclFrame (c.commitment a b) :=
+instance (c : CommitmentState W A) (a b : A) : IsK45Frame (c.commitment a b) :=
   c.commitment_k4eucl a b
 
 /-- The trivial state: every world doxastically/commitmentally
