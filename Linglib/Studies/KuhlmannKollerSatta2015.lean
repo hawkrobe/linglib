@@ -1,4 +1,4 @@
-import Linglib.Syntax.CCG.TargetRestricted
+import Linglib.Syntax.CCG.Grammar
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.List.Basic
 
@@ -12,13 +12,13 @@ terminology — that generates the non-context-free language `aⁿbⁿcⁿ`.
 
 The point is theoretical. [kuhlmann-koller-satta-2015] show that the CCG≡TAG weak
 equivalence holds for *target-restricted* CCG, where combinatory rules may be restricted per
-grammar (here, via the target restriction modelled in `Syntax/CCG/TargetRestricted`: every rule
+grammar (here, via the target restriction modelled in `Syntax/CCG/Grammar`: every rule
 fires only when the *target* of its primary input category is `S`). For lexicalized CCG
 *without* target restrictions they prove the power is strictly below TAG: such a CCG that
 covers `aⁿbⁿcⁿ` also admits extra permuted strings, so it cannot generate the language
-*exactly*. `Syntax/CCG/Basic`'s `CCG.Derivation` models a (rule-inventory) fragment of that
+*exactly*. `Syntax/CCG/Derivation`'s `CCG.Derivation` models a (rule-inventory) fragment of that
 unrestricted variant, so this construction genuinely needs the restricted model
-`CCG.TargetRestricted`.
+`CCG.Grammar`.
 
 Atoms follow the paper (`A, B, C, S`) as the study's own atom type — `CCG.Cat` is
 parameterized over its atoms, so the construction needs no proxy inventory.
@@ -47,7 +47,6 @@ the grammar's language is itself non-context-free.
 namespace KuhlmannKollerSatta2015
 
 open CCG
-open CCG.TargetRestricted
 
 /-- The atomic categories of the paper's Example 2 grammar. -/
 inductive Atom where
@@ -79,7 +78,7 @@ def clusterCat : Nat → Cat Atom
   | n + 1 => (clusterCat n) / Ccat
 
 /-- The cluster category always has target `S`. -/
-theorem target_clusterCat (n : Nat) : target (clusterCat n) = Atom.S := by
+theorem target_clusterCat (n : Nat) : (clusterCat n).target = Atom.S := by
   induction n with
   | zero => rfl
   | succ n ih => simpa [clusterCat] using ih

@@ -1,14 +1,14 @@
-import Linglib.Syntax.CCG.Basic
+import Linglib.Syntax.CCG.Cat
 import Mathlib.Data.Set.Defs
 
 /-!
-# Target-restricted CCG
+# CCG grammars and their languages
 
-This file defines the target-restricted variant of CCG — the formalism of
-[vijay-shanker-weir-1994] and [weir-joshi-1988], "VW-CCG" in
-[kuhlmann-koller-satta-2015]'s terminology — in which combinatory rules are
-restricted per grammar, rather than by the lexicalized slash modalities of the
-modern theory (`Syntax/CCG/Basic`). The restriction modelled is the one
+This file defines CCG grammars and their string languages, in the formalism of
+[vijay-shanker-weir-1994] and [weir-joshi-1988] ("VW-CCG" in
+[kuhlmann-koller-satta-2015]'s terminology), where combinatory rules are restricted
+per grammar rather than by the lexicalized slash modalities of the modern rule
+theory (`Syntax/CCG/Derivation`). The restriction modelled is the one
 [kuhlmann-koller-satta-2015]'s generative-capacity results turn on, a *target
 restriction*: a rule fires only when the target of its primary input category (the
 leftmost atom, after stripping all arguments) is a distinguished atom `s`.
@@ -27,19 +27,18 @@ to TAG, without them it is strictly weaker, and the slash-typing variant is like
 slightly less expressive than TAG. [schiffer-maletti-2021] upgrade the equivalence to
 *strong* equivalence (the same tree languages, modulo relabeling) for the modern
 capacity object: CCG without empty-string lexicon entries and with rules of degree at
-most 2 — with unbounded degree the formalism is Turing-complete. `Grammar` is that
+most 2 — with unbounded degree the formalism is Turing-complete. The `Grammar` of this file is that
 object (yields are token lists, so ε-entries are inexpressible by construction), and
 this file is the substrate for the constructions of CCGs for non-context-free
 languages in `Studies/KuhlmannKollerSatta2015`.
 
 ## Main definitions
 
-* `CCG.TargetRestricted.target`: the target of a category — its leftmost atom.
-* `CCG.TargetRestricted.Grammar`: the capacity object — a finite lexicon, the
-  distinguished atom, and a bound on composition degree.
-* `CCG.TargetRestricted.Grammar.Derives`: the derivability relation — `G.Derives c w`
-  says the grammar derives token string `w` at category `c`; `Grammar.language` is
-  the set of strings derived at the distinguished atom.
+* `CCG.Grammar`: the capacity object — a finite lexicon, the distinguished atom
+  (target restriction and start symbol), and a bound on composition degree.
+* `CCG.Grammar.Derives`: the derivability relation — `G.Derives c w` says the
+  grammar derives token string `w` at category `c`; `Grammar.language` is the set of
+  strings derived at the distinguished atom.
 
 ## Implementation notes
 
@@ -49,25 +48,9 @@ Derivability is an inductive `Prop`, mathlib's form for grammar formalisms
 derivations, and induction on `Derives` is exactly that quantification.
 -/
 
-namespace CCG.TargetRestricted
-
-open CCG
+namespace CCG
 
 variable {α : Type*}
-
-/-- The target of a category: its leftmost atom (strip all arguments). -/
-def target : Cat α → α
-  | .atom a => a
-  | .rslash x _ _ => target x
-  | .lslash x _ _ => target x
-
-@[simp] theorem target_atom (a : α) : target (Cat.atom a) = a := rfl
-
-@[simp] theorem target_rslash (x y : Cat α) (m : Modality) :
-    target (Cat.rslash x m y) = target x := rfl
-
-@[simp] theorem target_lslash (x y : Cat α) (m : Modality) :
-    target (Cat.lslash x m y) = target x := rfl
 
 /-! ### Grammars and their languages -/
 
@@ -95,12 +78,12 @@ inductive Grammar.Derives [DecidableEq α] (G : Grammar α) :
   /-- Forward composition of degree `n` (`>Bⁿ`; degree 0 is application), gated on the
   primary (left) target. -/
   | fc (n : Nat) {a b c : Cat α} {u v : List String} :
-      G.Derives a u → G.Derives b v → n ≤ G.degree → target a = G.start →
+      G.Derives a u → G.Derives b v → n ≤ G.degree → Cat.target a = G.start →
       Cat.generalizedForwardComp n a b = some c → G.Derives c (u ++ v)
   /-- Backward composition of degree `n` (`<Bⁿ`; degree 0 is application), gated on the
   primary (right) target. -/
   | bc (n : Nat) {a b c : Cat α} {u v : List String} :
-      G.Derives a u → G.Derives b v → n ≤ G.degree → target b = G.start →
+      G.Derives a u → G.Derives b v → n ≤ G.degree → Cat.target b = G.start →
       Cat.generalizedBackwardComp n a b = some c → G.Derives c (u ++ v)
 
 /-- The string language of a grammar: the token strings derived at the distinguished
@@ -109,4 +92,4 @@ the ε-freeness of [schiffer-maletti-2021]'s normal form holds by construction. 
 def Grammar.language [DecidableEq α] (G : Grammar α) : Set (List String) :=
   { w | G.Derives (.atom G.start) w }
 
-end CCG.TargetRestricted
+end CCG
