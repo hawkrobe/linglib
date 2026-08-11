@@ -27,7 +27,9 @@ lattice of normal modal logics as axiom sets over K.
   arbitrary operators ⊋ Kripke-definable (`∃ R, N = box R`) ⊋ S5.
 * `ModalLogic.frameConditions` — frame conditions for a normal modal
   logic, identified with its axiom set over K and ordered by the
-  `Finset` lattice (named logics `ModalLogic.K` … `ModalLogic.KD45`).
+  `Finset` lattice (named logics `ModalLogic.K` … `ModalLogic.KD45`);
+  `frameConditions_iff_valid` is the correspondence theorem: the
+  conditions hold iff every schema of the logic is valid.
 
 ## Connection to Kratzer semantics
 
@@ -241,25 +243,6 @@ class IsK45Frame {W : Type*} (R : W → W → Prop) : Prop
 class IsKTBFrame {W : Type*} (R : W → W → Prop) : Prop
   extends Std.Refl R, Std.Symm R
 
-/-! ### S5 and KD45 frames -/
-
-/-- With reflexive + euclidean accessibility (= S5 frame conditions),
-    `box` validates all of T, D, 4, B, 5. -/
-theorem S5_frame_all_axioms (R : W → W → Prop) [Std.Refl R] [IsEuclidean R] :
-    (∀ p w, box R p w → p w) ∧                          -- T
-    (∀ p w, box R p w → diamond R p w) ∧               -- D
-    (∀ p w, box R p w → box R (box R p) w) ∧          -- 4
-    (∀ p w, p w → box R (diamond R p) w) ∧             -- B
-    (∀ p w, diamond R p w → box R (diamond R p) w) := -- 5
-  ⟨box_T R, box_D R, box_four R, box_B R, box_five R⟩
-
-/-- KD45 frame conditions validate all three KD45 axioms (D, 4, 5). -/
-theorem KD45_frame_all_axioms (R : W → W → Prop) [IsKD45Frame R] :
-    (∀ p w, box R p w → diamond R p w) ∧               -- D
-    (∀ p w, box R p w → box R (box R p) w) ∧          -- 4
-    (∀ p w, diamond R p w → box R (diamond R p) w) := -- 5
-  ⟨box_D R, box_four R, box_five R⟩
-
 /-! ### The Gallin hierarchy
 
 Propositional operators form a three-level hierarchy: **general**
@@ -451,6 +434,72 @@ def frameConditions {W : Type*} (L : Finset Axiom) (R : W → W → Prop) : Prop
   (.B ∈ L → Std.Symm R) ∧
   (.four ∈ L → IsTrans W R) ∧
   (.five ∈ L → IsEuclidean R)
+
+/-- Validity of an axiom schema over an accessibility relation: the schema
+    holds for all propositions at all worlds. -/
+def Axiom.Valid {W : Type*} : Axiom → (W → W → Prop) → Prop
+  | .M, R => ∀ (p : W → Prop) (w : W), box R p w → p w
+  | .D, R => ∀ (p : W → Prop) (w : W), box R p w → diamond R p w
+  | .B, R => ∀ (p : W → Prop) (w : W), p w → box R (diamond R p) w
+  | .four, R => ∀ (p : W → Prop) (w : W), box R p w → box R (box R p) w
+  | .five, R => ∀ (p : W → Prop) (w : W), diamond R p w → box R (diamond R p) w
+
+/-- **Correspondence for M (= T)**: `□p → p` is valid over `R` iff `R` is
+    reflexive. -/
+theorem Axiom.valid_M_iff {W : Type*} {R : W → W → Prop} :
+    (Axiom.M).Valid R ↔ Std.Refl R :=
+  ⟨fun h => ⟨fun w => h (R w) w (fun _ hv => hv)⟩,
+   fun hR => haveI := hR; fun p w => box_T R p w⟩
+
+/-- **Correspondence for D**: `□p → ◇p` is valid over `R` iff `R` is serial. -/
+theorem Axiom.valid_D_iff {W : Type*} {R : W → W → Prop} :
+    (Axiom.D).Valid R ↔ IsSerial R :=
+  ⟨fun h => ⟨fun w => let ⟨v, hv, _⟩ := h (fun _ => True) w (fun _ _ => trivial); ⟨v, hv⟩⟩,
+   fun hR => haveI := hR; fun p w => box_D R p w⟩
+
+/-- **Correspondence for B**: `p → □◇p` is valid over `R` iff `R` is
+    symmetric. -/
+theorem Axiom.valid_B_iff {W : Type*} {R : W → W → Prop} :
+    (Axiom.B).Valid R ↔ Std.Symm R :=
+  ⟨fun h => ⟨fun w v hwv => match h (· = w) w rfl v hwv with | ⟨_, hvw, rfl⟩ => hvw⟩,
+   fun hR => haveI := hR; fun p w => box_B R p w⟩
+
+/-- **Correspondence for 4**: `□p → □□p` is valid over `R` iff `R` is
+    transitive. -/
+theorem Axiom.valid_four_iff {W : Type*} {R : W → W → Prop} :
+    (Axiom.four).Valid R ↔ IsTrans W R :=
+  ⟨fun h => ⟨fun w v u hwv hvu => h (R w) w (fun _ hv => hv) v hwv u hvu⟩,
+   fun hR => haveI := hR; fun p w => box_four R p w⟩
+
+/-- **Correspondence for 5**: `◇p → □◇p` is valid over `R` iff `R` is
+    euclidean. -/
+theorem Axiom.valid_five_iff {W : Type*} {R : W → W → Prop} :
+    (Axiom.five).Valid R ↔ IsEuclidean R :=
+  ⟨fun h => ⟨fun w v u hwv hwu =>
+     match h (· = u) w ⟨u, hwu, rfl⟩ v hwv with | ⟨_, hvu, rfl⟩ => hvu⟩,
+   fun hR => haveI := hR; fun p w => box_five R p w⟩
+
+/-- **The correspondence theorem**: `R` satisfies the frame conditions of `L`
+    iff every axiom schema of `L` is valid over `R`. Left to right is
+    soundness (`box_T` … `box_five`); the converse holds because each schema
+    elementarily defines its frame condition (`Axiom.valid_M_iff`, …). -/
+theorem frameConditions_iff_valid {W : Type*} {L : Finset Axiom}
+    {R : W → W → Prop} :
+    frameConditions L R ↔ ∀ a ∈ L, a.Valid R := by
+  constructor
+  · intro h a ha
+    cases a with
+    | M => exact Axiom.valid_M_iff.mpr (h.1 ha)
+    | D => exact Axiom.valid_D_iff.mpr (h.2.1 ha)
+    | B => exact Axiom.valid_B_iff.mpr (h.2.2.1 ha)
+    | four => exact Axiom.valid_four_iff.mpr (h.2.2.2.1 ha)
+    | five => exact Axiom.valid_five_iff.mpr (h.2.2.2.2 ha)
+  · intro h
+    exact ⟨fun hm => Axiom.valid_M_iff.mp (h _ hm),
+           fun hm => Axiom.valid_D_iff.mp (h _ hm),
+           fun hm => Axiom.valid_B_iff.mp (h _ hm),
+           fun hm => Axiom.valid_four_iff.mp (h _ hm),
+           fun hm => Axiom.valid_five_iff.mp (h _ hm)⟩
 
 /-- The syntactic-semantic bridge for `S5`: `frameConditions ModalLogic.S5 R`
     iff `R` is an S5 frame. -/
