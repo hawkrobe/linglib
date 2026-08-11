@@ -508,13 +508,13 @@ def InfHeadSub : Cat Atom := (VP \ NP) / VP
 
 /-- The Dutch fragment as a target-restricted grammar: the lexical entries the
 derivations below draw on, target and start `S`, degree bound 2. -/
-def dutchGrammar : Grammar Atom where
-  lexicon := [("Jan", NP), ("Piet", NP), ("Marie", NP),
-              ("zag", PercV), ("zag", PercVSub),
-              ("helpen", ControlVR), ("helpen", InfHeadSub),
-              ("zwemmen", VP), ("zwemmen", InfSubj)]
-  start := .S
-  degree := 2
+def dutchGrammar : Grammar Atom :=
+  .targetRestricted
+    [("Jan", NP), ("Piet", NP), ("Marie", NP),
+     ("zag", PercV), ("zag", PercVSub),
+     ("helpen", ControlVR), ("helpen", InfHeadSub),
+     ("zwemmen", VP), ("zwemmen", InfSubj)]
+    .S 2
 
 /-! ### Lexical entries, as derivability facts -/
 
@@ -539,8 +539,8 @@ cluster, so the derived strings do **not** match Dutch surface order. -/
 theorem verb_cluster_derives :
     dutchGrammar.Derives (((S \ NP) / NP) / NP) ["zag", "helpen", "zwemmen"] :=
   .fc 2 zag_vr_derives
-    (.fc 1 helpen_vr_derives zwemmen_vr_derives (by decide) (by decide) rfl)
-    (by decide) (by decide) rfl
+    (.fc 1 helpen_vr_derives zwemmen_vr_derives ⟨by decide, rfl⟩ rfl)
+    ⟨by decide, rfl⟩ rfl
 
 /-- The 2-verb verb-raising derivation derives `S` — at the string
 "Jan zag zwemmen Piet", which is **not** Dutch ("Jan Piet zag zwemmen"): the
@@ -549,9 +549,9 @@ surface-faithful derivations below get both. -/
 theorem jan_zag_zwemmen_piet_derives :
     dutchGrammar.Derives S ["Jan", "zag", "zwemmen", "Piet"] :=
   .bc 0 jan_derives
-    (.fc 0 (.fc 1 zag_vr_derives zwemmen_vr_derives (by decide) (by decide) rfl)
-      piet_derives (by decide) (by decide) rfl)
-    (by decide) (by decide) rfl
+    (.fc 0 (.fc 1 zag_vr_derives zwemmen_vr_derives ⟨by decide, rfl⟩ rfl)
+      piet_derives ⟨by decide, rfl⟩ rfl)
+    ⟨by decide, rfl⟩ rfl
 
 /-! ### Surface-faithful derivations (leftward argument categories)
 
@@ -565,8 +565,8 @@ predicate. -/
 theorem crossed_cluster_derives :
     dutchGrammar.Derives (((S \ NP) \ NP) \ NP) ["zag", "helpen", "zwemmen"] :=
   .fc 1 zag_sub_derives
-    (.fc 0 helpen_sub_derives zwemmen_bare_derives (by decide) (by decide) rfl)
-    (by decide) (by decide) rfl
+    (.fc 0 helpen_sub_derives zwemmen_bare_derives ⟨by decide, rfl⟩ rfl)
+    ⟨by decide, rfl⟩ rfl
 
 /-- "(dat) Jan Piet zag zwemmen": `zag` applies to bare `zwemmen` and the NPs attach
 leftward — the 2-verb cluster needs no composition, and the string is the attested
@@ -575,9 +575,9 @@ theorem two_np_sub_derives :
     dutchGrammar.Derives S ["Jan", "Piet", "zag", "zwemmen"] :=
   .bc 0 jan_derives
     (.bc 0 piet_derives
-      (.fc 0 zag_sub_derives zwemmen_bare_derives (by decide) (by decide) rfl)
-      (by decide) (by decide) rfl)
-    (by decide) (by decide) rfl
+      (.fc 0 zag_sub_derives zwemmen_bare_derives ⟨by decide, rfl⟩ rfl)
+      ⟨by decide, rfl⟩ rfl)
+    ⟨by decide, rfl⟩ rfl
 
 /-- "(dat) Jan Piet Marie zag helpen zwemmen": the three NPs attach leftward to the
 crossed cluster — Marie to `helpen`'s slot, Piet to `zag`'s object slot, Jan as
@@ -587,9 +587,9 @@ theorem three_np_sub_derives :
     dutchGrammar.Derives S ["Jan", "Piet", "Marie", "zag", "helpen", "zwemmen"] :=
   .bc 0 jan_derives
     (.bc 0 piet_derives
-      (.bc 0 marie_derives crossed_cluster_derives (by decide) (by decide) rfl)
-      (by decide) (by decide) rfl)
-    (by decide) (by decide) rfl
+      (.bc 0 marie_derives crossed_cluster_derives ⟨by decide, rfl⟩ rfl)
+      ⟨by decide, rfl⟩ rfl)
+    ⟨by decide, rfl⟩ rfl
 
 /-! ### Binding annotations -/
 
