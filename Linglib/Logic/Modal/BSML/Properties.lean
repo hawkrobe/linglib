@@ -46,6 +46,8 @@ separately and composing them via `Team.isFlat_iff`.
 
 namespace BSML
 
+open Modal (KripkeModel)
+
 open Team
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
@@ -56,7 +58,7 @@ variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
     disj-support cases need mutual induction on partitions; the neg case
     needs the polarity flip. -/
 private theorem support_and_antiSupport_unionClosed
-    (φ : BSMLFormula Atom) (M : BSMLModel W Atom) :
+    (φ : Formula Atom) (M : KripkeModel W Atom) :
     (∀ s t : Finset W, support M φ s → support M φ t → support M φ (s ∪ t)) ∧
     (∀ s t : Finset W, antiSupport M φ s → antiSupport M φ t → antiSupport M φ (s ∪ t)) := by
   induction φ with
@@ -138,7 +140,7 @@ private theorem support_and_antiSupport_unionClosed
 /-- BSML support is sup-closed (Anttila Proposition 2.2.8 part 2). BSML's
     connective set lacks the global disjunction ⨼, so the union-closure
     obstruction is absent and all formulas satisfy the property. -/
-theorem supClosed_support (M : BSMLModel W Atom) (φ : BSMLFormula Atom) :
+theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     SupClosed { t : Finset W | support M φ t } :=
   fun _ ha _ hb => (support_and_antiSupport_unionClosed φ M).1 _ _ ha hb
 
@@ -148,25 +150,25 @@ theorem supClosed_support (M : BSMLModel W Atom) (φ : BSMLFormula Atom) :
     anti-support on the empty team. Used as the engine for the bilateral
     mutual induction needed by the negation case. -/
 private theorem support_and_antiSupport_empty_of_isNEFree
-    (φ : BSMLFormula Atom) (hNE : φ.isNEFree = true) (M : BSMLModel W Atom) :
+    (φ : Formula Atom) (hNE : φ.isNEFree = true) (M : KripkeModel W Atom) :
     support M φ ∅ ∧ antiSupport M φ ∅ := by
   induction φ with
   | atom p =>
     refine ⟨?_, ?_⟩
     · intro w hw; exact absurd hw (by simp)
     · intro w hw; exact absurd hw (by simp)
-  | ne => simp [BSMLFormula.isNEFree] at hNE
+  | ne => simp [Formula.isNEFree] at hNE
   | neg ψ ih =>
     have hψ : ψ.isNEFree = true := by
-      simp [BSMLFormula.isNEFree] at hNE; exact hNE
+      simp [Formula.isNEFree] at hNE; exact hNE
     have ⟨hs, ha⟩ := ih hψ
     -- support (¬ψ) ∅ = antiSupport ψ ∅; antiSupport (¬ψ) ∅ = support ψ ∅
     exact ⟨ha, hs⟩
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     have h₁ : ψ₁.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
     have h₂ : ψ₂.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
     have ⟨hs₁, ha₁⟩ := ih₁ h₁
     have ⟨hs₂, ha₂⟩ := ih₂ h₂
     refine ⟨⟨hs₁, hs₂⟩, ?_⟩
@@ -177,9 +179,9 @@ private theorem support_and_antiSupport_empty_of_isNEFree
     simp
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     have h₁ : ψ₁.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
     have h₂ : ψ₂.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
     have ⟨hs₁, ha₁⟩ := ih₁ h₁
     have ⟨hs₂, ha₂⟩ := ih₂ h₂
     refine ⟨?_, ⟨ha₁, ha₂⟩⟩
@@ -194,8 +196,8 @@ private theorem support_and_antiSupport_empty_of_isNEFree
 
 /-- NE-free BSML formulas are supported on the empty team. The only
     obstruction is NE itself, which fails on ∅ by definition. -/
-theorem support_empty_of_isNEFree {φ : BSMLFormula Atom}
-    (hNE : φ.isNEFree = true) (M : BSMLModel W Atom) : support M φ ∅ :=
+theorem support_empty_of_isNEFree {φ : Formula Atom}
+    (hNE : φ.isNEFree = true) (M : KripkeModel W Atom) : support M φ ∅ :=
   (support_and_antiSupport_empty_of_isNEFree φ hNE M).1
 
 /-! ### Downward closure for NE-free formulas (Anttila 2.2.8 part 1) -/
@@ -204,8 +206,8 @@ theorem support_empty_of_isNEFree {φ : BSMLFormula Atom}
     anti-support downward-closed. The bilateral mutual induction handles
     the negation case (where support flips to antiSupport). -/
 private theorem support_and_antiSupport_downward_of_isNEFree
-    (φ : BSMLFormula Atom) (hNE : φ.isNEFree = true)
-    (M : BSMLModel W Atom) :
+    (φ : Formula Atom) (hNE : φ.isNEFree = true)
+    (M : KripkeModel W Atom) :
     (∀ s t : Finset W, t ⊆ s → support M φ s → support M φ t) ∧
     (∀ s t : Finset W, t ⊆ s → antiSupport M φ s → antiSupport M φ t) := by
   induction φ with
@@ -213,18 +215,18 @@ private theorem support_and_antiSupport_downward_of_isNEFree
     refine ⟨?_, ?_⟩
     · intro s t hsub hsupp w hw; exact hsupp w (hsub hw)
     · intro s t hsub hsupp w hw; exact hsupp w (hsub hw)
-  | ne => simp [BSMLFormula.isNEFree] at hNE
+  | ne => simp [Formula.isNEFree] at hNE
   | neg ψ ih =>
     have hψ : ψ.isNEFree = true := by
-      simp [BSMLFormula.isNEFree] at hNE; exact hNE
+      simp [Formula.isNEFree] at hNE; exact hNE
     have ⟨ihs, iha⟩ := ih hψ
     -- support (¬ψ) = antiSupport ψ; antiSupport (¬ψ) = support ψ
     exact ⟨iha, ihs⟩
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     have h₁ : ψ₁.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
     have h₂ : ψ₂.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
     have ⟨ihs₁, iha₁⟩ := ih₁ h₁
     have ⟨ihs₂, iha₂⟩ := ih₂ h₂
     refine ⟨?_, ?_⟩
@@ -245,9 +247,9 @@ private theorem support_and_antiSupport_downward_of_isNEFree
       · exact iha₂ t₂ (t₂ ∩ t) (Finset.inter_subset_left) ha₂
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     have h₁ : ψ₁.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
     have h₂ : ψ₂.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
     have ⟨ihs₁, iha₁⟩ := ih₁ h₁
     have ⟨ihs₂, iha₂⟩ := ih₂ h₂
     refine ⟨?_, ?_⟩
@@ -267,7 +269,7 @@ private theorem support_and_antiSupport_downward_of_isNEFree
       exact ⟨iha₁ s t hsub ha₁, iha₂ s t hsub ha₂⟩
   | poss ψ ih =>
     have hψ : ψ.isNEFree = true := by
-      simp [BSMLFormula.isNEFree] at hNE; exact hNE
+      simp [Formula.isNEFree] at hNE; exact hNE
     have ⟨_, _⟩ := ih hψ  -- IHs not used directly; the modal cases hold from per-w structure
     refine ⟨?_, ?_⟩
     · -- support (◇ψ) s = ∀ w ∈ s, ∃ subteam ⊆ R[w], nonempty, support ψ subteam.
@@ -280,8 +282,8 @@ private theorem support_and_antiSupport_downward_of_isNEFree
 
 /-- NE-free BSML formulas are downward-closed: support survives under
     taking subsets of the team. -/
-theorem isLowerSet_support_of_isNEFree {φ : BSMLFormula Atom}
-    (hNE : φ.isNEFree = true) (M : BSMLModel W Atom) :
+theorem isLowerSet_support_of_isNEFree {φ : Formula Atom}
+    (hNE : φ.isNEFree = true) (M : KripkeModel W Atom) :
     IsLowerSet { t : Finset W | support M φ t } :=
   fun _ _ hab hb =>
     (support_and_antiSupport_downward_of_isNEFree φ hNE M).1 _ _ hab hb
@@ -299,7 +301,7 @@ theorem isLowerSet_support_of_isNEFree {φ : BSMLFormula Atom}
     single endpoint: the upper (downward-closed-style) for atom, poss and the
     negative polarities; the lower for `ne` (nonemptiness is upward closed). -/
 private theorem support_and_antiSupport_ordConnected
-    (φ : BSMLFormula Atom) (M : BSMLModel W Atom) :
+    (φ : Formula Atom) (M : KripkeModel W Atom) :
     (∀ s t u : Finset W, s ⊆ t → t ⊆ u →
       support M φ s → support M φ u → support M φ t) ∧
     (∀ s t u : Finset W, s ⊆ t → t ⊆ u →
@@ -405,7 +407,7 @@ private theorem support_and_antiSupport_ordConnected
     recovers downward closure from convexity. Together with `supClosed_support`,
     this is the convex-and-union-closed property for which BSML is expressively
     complete ([anttila-2025]). -/
-theorem ordConnected_support (M : BSMLModel W Atom) (φ : BSMLFormula Atom) :
+theorem ordConnected_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     Set.OrdConnected { t : Finset W | support M φ t } := by
   refine ⟨?_⟩
   intro s hs u hu t ht
@@ -422,8 +424,8 @@ theorem ordConnected_support (M : BSMLModel W Atom) (φ : BSMLFormula Atom) :
     the three closure properties proved above. The same conclusion has a
     direct classical-evaluation-bridge proof in `Bridge.lean` as
     `neFree_flat_eq`. -/
-theorem isFlat_support_of_isNEFree {φ : BSMLFormula Atom}
-    (hNE : φ.isNEFree = true) (M : BSMLModel W Atom) :
+theorem isFlat_support_of_isNEFree {φ : Formula Atom}
+    (hNE : φ.isNEFree = true) (M : KripkeModel W Atom) :
     IsFlat { t : Finset W | support M φ t } :=
   isFlat_of_isLowerSet_supClosed_empty
     (isLowerSet_support_of_isNEFree hNE M)
@@ -441,7 +443,7 @@ open Team in
     Composes `ordConnected_support` and `supClosed_support` through the
     `Team/Definability.lean` bridge. The converse (every such property is
     BSML-definable) is the open half. -/
-theorem soundFor_convex_inter_unionClosed (M : BSMLModel W Atom) :
+theorem soundFor_convex_inter_unionClosed (M : KripkeModel W Atom) :
     SoundFor (support M) (convexProperties ∩ unionClosedProperties) := by
   unfold SoundFor
   apply Set.subset_inter
@@ -462,7 +464,7 @@ open Team in
     flat properties. Companion to `soundFor_convex_inter_unionClosed`: NE is
     exactly what moves a formula off the `flat` cell into the strictly larger
     convex, union-closed cell. -/
-theorem soundFor_flat_neFree (M : BSMLModel W Atom) :
+theorem soundFor_flat_neFree (M : KripkeModel W Atom) :
     definableClassWhere (support M) (fun φ => φ.isNEFree = true) ⊆ flatProperties := by
   unfold flatProperties
   exact definableClassWhere_subset (C := IsFlat)

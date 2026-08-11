@@ -21,10 +21,10 @@ a typo silently compiles to `false` under the
   ([aloni-2022] Figure 1: `w_∅`, `w_a`, `w_b`, `w_ab`), with the typed
   `holds` truth table.
 
-Studies instantiate `BSMLModel`'s String-keyed `val` field by
+Studies instantiate `KripkeModel`'s String-keyed `val` field by
 pattern-matching on the canonical names via `FCAtom.toName`. Eliminating
-the String layer entirely (making `BSMLModel.val : FCAtom → α → Bool`)
-would require parameterizing `BSMLFormula` and `BSMLModel` over the atom
+the String layer entirely (making `KripkeModel.val : FCAtom → α → Bool`)
+would require parameterizing `Formula` and `KripkeModel` over the atom
 type — a substrate-wide refactor deferred to a separate effort.
 -/
 
@@ -44,7 +44,7 @@ instance : Fintype FCAtom where
   elems := {.a, .b, .c}
   complete := by intro x; cases x <;> simp
 
-/-- Canonical String name of an atom. Used at `BSMLModel.val` boundaries
+/-- Canonical String name of an atom. Used at `KripkeModel.val` boundaries
     where the substrate's `val : String → α → Bool` field forces String. -/
 def FCAtom.toName : FCAtom → String
   | .a => "a"

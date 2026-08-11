@@ -20,7 +20,7 @@ proves the key equivalences and the replacement-failure counterexample.
   support of `φ` cannot share any world. Proved by structural induction.
 * `negation_incompatibility`: if `s` supports `¬φ` and `t` supports `φ`, then
   `s` and `t` are disjoint as finsets.
-* `replacement_failure_counterexample`: a concrete `BSMLModel` witnessing
+* `replacement_failure_counterexample`: a concrete `KripkeModel` witnessing
   `φ ≡ ψ ⇏ ¬φ ≡ ¬ψ`. The pair is `p ∧ ¬p` versus `¬NE`, both supported only
   by `∅`; their negations diverge there.
 
@@ -49,66 +49,68 @@ identification.
 
 namespace BSML
 
+open Modal (KripkeModel)
+
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
 /-! ### Box-diamond duality -/
 
 /-- Box-diamond duality (support): definitionally equal since `□ := ¬◇¬`. -/
-theorem box_diamond_duality_support (M : BSMLModel W Atom)
-    (φ : BSMLFormula Atom) (t : Finset W) :
+theorem box_diamond_duality_support (M : KripkeModel W Atom)
+    (φ : Formula Atom) (t : Finset W) :
     support M φ.nec t ↔ support M (.neg (.poss (.neg φ))) t := Iff.rfl
 
 /-- Box-diamond duality (anti-support): definitionally equal. -/
-theorem box_diamond_duality_antiSupport (M : BSMLModel W Atom)
-    (φ : BSMLFormula Atom) (t : Finset W) :
+theorem box_diamond_duality_antiSupport (M : KripkeModel W Atom)
+    (φ : Formula Atom) (t : Finset W) :
     antiSupport M φ.nec t ↔ antiSupport M (.neg (.poss (.neg φ))) t := Iff.rfl
 
 /-! ### De Morgan laws -/
 
 /-- De Morgan for conjunction (support): `¬(φ ∧ ψ) ≡ ¬φ ∨ ¬ψ`.
     Both sides reduce to the same SPLIT existential. -/
-theorem deMorgan_conj_support (M : BSMLModel W Atom)
-    (φ ψ : BSMLFormula Atom) (t : Finset W) :
+theorem deMorgan_conj_support (M : KripkeModel W Atom)
+    (φ ψ : Formula Atom) (t : Finset W) :
     support M (.neg (.conj φ ψ)) t ↔
     support M (.disj (.neg φ) (.neg ψ)) t := Iff.rfl
 
 /-- De Morgan for conjunction (anti-support). -/
-theorem deMorgan_conj_antiSupport (M : BSMLModel W Atom)
-    (φ ψ : BSMLFormula Atom) (t : Finset W) :
+theorem deMorgan_conj_antiSupport (M : KripkeModel W Atom)
+    (φ ψ : Formula Atom) (t : Finset W) :
     antiSupport M (.neg (.conj φ ψ)) t ↔
     antiSupport M (.disj (.neg φ) (.neg ψ)) t := Iff.rfl
 
 /-- De Morgan for disjunction (support): `¬(φ ∨ ψ) ≡ ¬φ ∧ ¬ψ`. -/
-theorem deMorgan_disj_support (M : BSMLModel W Atom)
-    (φ ψ : BSMLFormula Atom) (t : Finset W) :
+theorem deMorgan_disj_support (M : KripkeModel W Atom)
+    (φ ψ : Formula Atom) (t : Finset W) :
     support M (.neg (.disj φ ψ)) t ↔
     support M (.conj (.neg φ) (.neg ψ)) t := Iff.rfl
 
 /-- De Morgan for disjunction (anti-support). -/
-theorem deMorgan_disj_antiSupport (M : BSMLModel W Atom)
-    (φ ψ : BSMLFormula Atom) (t : Finset W) :
+theorem deMorgan_disj_antiSupport (M : KripkeModel W Atom)
+    (φ ψ : Formula Atom) (t : Finset W) :
     antiSupport M (.neg (.disj φ ψ)) t ↔
     antiSupport M (.conj (.neg φ) (.neg ψ)) t := Iff.rfl
 
 /-! ### Bilateral equivalence statements -/
 
 /-- DNE is a full bilateral equivalence. -/
-theorem dne_equivalent (φ : BSMLFormula Atom) :
+theorem dne_equivalent (φ : Formula Atom) :
     equivalent (W := W) (.neg (.neg φ)) φ :=
   fun _ _ => ⟨Iff.rfl, Iff.rfl⟩
 
 /-- Box-diamond duality is a full bilateral equivalence. -/
-theorem box_diamond_equivalent (φ : BSMLFormula Atom) :
+theorem box_diamond_equivalent (φ : Formula Atom) :
     equivalent (W := W) φ.nec (.neg (.poss (.neg φ))) :=
   fun _ _ => ⟨Iff.rfl, Iff.rfl⟩
 
 /-- De Morgan for conjunction is a full bilateral equivalence. -/
-theorem deMorgan_conj_equivalent (φ ψ : BSMLFormula Atom) :
+theorem deMorgan_conj_equivalent (φ ψ : Formula Atom) :
     equivalent (W := W) (.neg (.conj φ ψ)) (.disj (.neg φ) (.neg ψ)) :=
   fun _ _ => ⟨Iff.rfl, Iff.rfl⟩
 
 /-- De Morgan for disjunction is a full bilateral equivalence. -/
-theorem deMorgan_disj_equivalent (φ ψ : BSMLFormula Atom) :
+theorem deMorgan_disj_equivalent (φ ψ : Formula Atom) :
     equivalent (W := W) (.neg (.disj φ ψ)) (.conj (.neg φ) (.neg ψ)) :=
   fun _ _ => ⟨Iff.rfl, Iff.rfl⟩
 
@@ -117,7 +119,7 @@ theorem deMorgan_disj_equivalent (φ ψ : BSMLFormula Atom) :
 /-- Pointwise form of the disjointness fact, with explicit team variables so
     the inductive hypothesis can apply across arbitrary `s`, `t`. -/
 private theorem notMem_of_antiSupport_of_support
-    (M : BSMLModel W Atom) (φ : BSMLFormula Atom) :
+    (M : KripkeModel W Atom) (φ : Formula Atom) :
     ∀ (s t : Finset W), antiSupport M φ s → support M φ t →
       ∀ w, w ∈ s → w ∉ t := by
   induction φ with
@@ -151,8 +153,8 @@ private theorem notMem_of_antiSupport_of_support
 
 /-- Anti-support and support of the same `φ` are disjoint teams: if `s`
     anti-supports `φ` and `t` supports `φ`, no world lies in both. -/
-theorem disjoint_support_antiSupport (M : BSMLModel W Atom)
-    (φ : BSMLFormula Atom) {s t : Finset W}
+theorem disjoint_support_antiSupport (M : KripkeModel W Atom)
+    (φ : Formula Atom) {s t : Finset W}
     (hs : antiSupport M φ s) (ht : support M φ t) : Disjoint s t :=
   Finset.disjoint_left.mpr (notMem_of_antiSupport_of_support M φ s t hs ht)
 
@@ -160,8 +162,8 @@ theorem disjoint_support_antiSupport (M : BSMLModel W Atom)
     then `s` and `t` are disjoint as finsets.
 
     One-directional only — the converse fails in BSML; see [aloni-2022]. -/
-theorem negation_incompatibility (M : BSMLModel W Atom)
-    (φ : BSMLFormula Atom) {s t : Finset W}
+theorem negation_incompatibility (M : KripkeModel W Atom)
+    (φ : Formula Atom) {s t : Finset W}
     (hs : support M (.neg φ) s) (ht : support M φ t) : Disjoint s t :=
   disjoint_support_antiSupport M φ hs ht
 
@@ -175,7 +177,7 @@ theorem negation_incompatibility (M : BSMLModel W Atom)
     trivial split `∅ ∪ ∅`, while `¬¬NE = NE` requires a non-empty team. -/
 theorem replacement_failure_counterexample :
     ∃ (W : Type) (_ : DecidableEq W) (_ : Fintype W)
-      (M : BSMLModel W String) (t : Finset W),
+      (M : KripkeModel W String) (t : Finset W),
       (support M (.conj (.atom "p") (.neg (.atom "p"))) t ↔
        support M (.neg .ne) t) ∧
       ¬(support M (.neg (.conj (.atom "p") (.neg (.atom "p")))) t ↔

@@ -47,7 +47,7 @@ behaviour-under-negation pattern — the QBSML free-choice facts of
 is defined only on the NE-free fragment in both papers, so the `.ne` case is
 a filler convention. The construction is structurally identical to BSML's
 `Logic/Modal/BSML/Enrichment.lean` but operates on `Formula Var Const Pred`
-(quantifiers, predicate atoms) rather than `BSMLFormula Atom`. The two are
+(quantifiers, predicate atoms) rather than `BSML.Formula Atom`. The two are
 kept parallel rather than unified: a shared "team-semantic formula language
 with an `NE` constructor" abstraction awaits a third instance, per the family
 roadmap in `Logic/Team/Algebra.lean`.

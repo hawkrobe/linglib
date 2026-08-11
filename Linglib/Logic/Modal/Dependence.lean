@@ -88,9 +88,8 @@ under Lemma 4.2 part 1) rather than the literal `X ⊆ Y ∪ Z` from
 (T6); under downward closure they are equivalent.
 
 The `KripkeModel` carrier from `Logic/Modal/Kripke.lean` is the
-shared substrate; BSML, QBSML, and the AAY-2024 extensions
-(BSMLOr/BSMLEmpty) alias `BSMLModel := KripkeModel` for literature
-compatibility.
+shared substrate consumed by BSML, QBSML, and the AAY-2024
+extensions (BSMLOr/BSMLEmpty) alike.
 
 ## Sibling logics in `Logic/Modal/`
 

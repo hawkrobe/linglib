@@ -48,36 +48,36 @@ variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 /-- `⊤` as an NE-free BSML formula: `p ∨ ¬p` for the default atom. Classically
     evaluates to `true` at every world; supported by every team. Requires an
     atom (`[Inhabited Atom]`): BSML has no atom-free closed `⊤`. -/
-def verum [Inhabited Atom] : BSMLFormula Atom :=
+def verum [Inhabited Atom] : Formula Atom :=
   .disj (.atom default) (.neg (.atom default))
 
-@[simp] theorem classicalEval_verum [Inhabited Atom] (M : BSMLModel W Atom) (w : W) :
+@[simp] theorem classicalEval_verum [Inhabited Atom] (M : KripkeModel W Atom) (w : W) :
     classicalEval M verum w = true := by
   simp [verum, classicalEval, Bool.or_not_self]
 
 @[simp] theorem isNEFree_verum [Inhabited Atom] :
-    (verum : BSMLFormula Atom).isNEFree = true := by
-  simp [verum, BSMLFormula.isNEFree]
+    (verum : Formula Atom).isNEFree = true := by
+  simp [verum, Formula.isNEFree]
 
 /-- Finite conjunction of a list of formulas; the empty conjunction is `⊤`. -/
-def bigConj [Inhabited Atom] : List (BSMLFormula Atom) → BSMLFormula Atom
+def bigConj [Inhabited Atom] : List (Formula Atom) → Formula Atom
   | [] => verum
   | φ :: rest => .conj φ (bigConj rest)
 
-theorem classicalEval_bigConj [Inhabited Atom] (M : BSMLModel W Atom) (w : W)
-    (l : List (BSMLFormula Atom)) :
+theorem classicalEval_bigConj [Inhabited Atom] (M : KripkeModel W Atom) (w : W)
+    (l : List (Formula Atom)) :
     classicalEval M (bigConj l) w = true ↔ ∀ φ ∈ l, classicalEval M φ w = true := by
   induction l with
   | nil => simp [bigConj]
   | cons φ rest ih =>
     simp only [bigConj, classicalEval, Bool.and_eq_true, List.forall_mem_cons, ih]
 
-theorem isNEFree_bigConj [Inhabited Atom] (l : List (BSMLFormula Atom))
+theorem isNEFree_bigConj [Inhabited Atom] (l : List (Formula Atom))
     (h : ∀ φ ∈ l, φ.isNEFree = true) : (bigConj l).isNEFree = true := by
   induction l with
   | nil => simp [bigConj]
   | cons φ rest ih =>
-    simp only [bigConj, BSMLFormula.isNEFree, Bool.and_eq_true]
+    simp only [bigConj, Formula.isNEFree, Bool.and_eq_true]
     exact ⟨h φ (List.mem_cons.mpr (Or.inl rfl)),
            ih (fun ψ hψ => h ψ (List.mem_cons.mpr (Or.inr hψ)))⟩
 
@@ -87,21 +87,21 @@ theorem isNEFree_bigConj [Inhabited Atom] (l : List (BSMLFormula Atom))
     `p` (when `w ⊨ p`) or `¬p` (when `w ⊭ p`). The depth-0 characteristic
     formula. -/
 noncomputable def atomicType [Fintype Atom] [Inhabited Atom]
-    (M : BSMLModel W Atom) (w : W) : BSMLFormula Atom :=
+    (M : KripkeModel W Atom) (w : W) : Formula Atom :=
   bigConj ((Finset.univ : Finset Atom).toList.map
     (fun p => if M.val p w then .atom p else .neg (.atom p)))
 
 theorem isNEFree_atomicType [Fintype Atom] [Inhabited Atom]
-    (M : BSMLModel W Atom) (w : W) : (atomicType M w).isNEFree = true := by
+    (M : KripkeModel W Atom) (w : W) : (atomicType M w).isNEFree = true := by
   apply isNEFree_bigConj
   intro φ hφ
   obtain ⟨p, -, rfl⟩ := List.mem_map.mp hφ
-  cases M.val p w <;> simp [BSMLFormula.isNEFree]
+  cases M.val p w <;> simp [Formula.isNEFree]
 
 /-- The atomic type of `w` is classically satisfied at `v` exactly when `v` and
     `w` assign every atom the same value. -/
 theorem classicalEval_atomicType [Fintype Atom] [Inhabited Atom]
-    (M : BSMLModel W Atom) (w v : W) :
+    (M : KripkeModel W Atom) (w v : W) :
     classicalEval M (atomicType M w) v = true ↔ ∀ p : Atom, M.val p v = M.val p w := by
   rw [atomicType, classicalEval_bigConj]
   constructor
@@ -121,7 +121,7 @@ theorem classicalEval_atomicType [Fintype Atom] [Inhabited Atom]
     `v` iff `v` and `w` are 0-bisimilar. The base case of the characteristic-
     formula characterisation. -/
 theorem classicalEval_atomicType_iff_bisim0 [Fintype Atom] [Inhabited Atom]
-    (M : BSMLModel W Atom) (w v : W) :
+    (M : KripkeModel W Atom) (w v : W) :
     classicalEval M (atomicType M w) v = true ↔ WorldBisim 0 M w M v := by
   rw [classicalEval_atomicType]
   constructor

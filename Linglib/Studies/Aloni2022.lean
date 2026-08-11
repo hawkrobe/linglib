@@ -40,6 +40,7 @@ the typed atoms throughout.
 namespace Aloni2022
 
 open BSML
+open Modal (KripkeModel)
 open BSML (FCAtom TwoAtomWorld)
 
 -- ============================================================================
@@ -67,14 +68,14 @@ def prohibitionTeam : Finset TwoAtomWorld :=
 
     Valuation: `val a w = w.holds a` — direct routing through the typed
     atom. No String fallthrough, no silent typos. -/
-def deonticModel : BSMLModel TwoAtomWorld FCAtom where
+def deonticModel : KripkeModel TwoAtomWorld FCAtom where
   access := λ _ => Finset.univ
   val := λ p w => w.holds p
 
 /-- Restrictive deontic model: from `nothing`, only `nothing` is accessible;
     from any other world, all worlds. Used for Dual Prohibition on the
     prohibition team `{nothing}`. -/
-def restrictiveModel : BSMLModel TwoAtomWorld FCAtom where
+def restrictiveModel : KripkeModel TwoAtomWorld FCAtom where
   access := λ w =>
     match w with
     | .nothing => {.nothing}
@@ -83,7 +84,7 @@ def restrictiveModel : BSMLModel TwoAtomWorld FCAtom where
 
 /-- State-based deontic model: R[w] = freeChoiceTeam for every world. Strictly
     stronger than indisputability; required for Modal Disjunction (Fact 3). -/
-def stateBasedModel : BSMLModel TwoAtomWorld FCAtom where
+def stateBasedModel : KripkeModel TwoAtomWorld FCAtom where
   access := λ _ => freeChoiceTeam
   val := λ p w => w.holds p
 
@@ -93,7 +94,7 @@ def stateBasedModel : BSMLModel TwoAtomWorld FCAtom where
     incidental: WS FC's conclusion may fail on this model even when its
     enriched premise is supported. (Aloni 2022 Figure 5(b) shape — non-indisputable R.
     Figure 5(a) shows the dual case where R is indisputable but enrichment fails.) -/
-def looseDeonticModel : BSMLModel TwoAtomWorld FCAtom where
+def looseDeonticModel : KripkeModel TwoAtomWorld FCAtom where
   access := λ w =>
     match w with
     | .both    => {.both, .onlyA}
@@ -107,29 +108,29 @@ def looseDeonticModel : BSMLModel TwoAtomWorld FCAtom where
 -- ============================================================================
 
 /-- ◇(a ∨ b) — narrow-scope premise (Fact 4). -/
-def mayHaveCoffeeOrTea : BSMLFormula FCAtom :=
+def mayHaveCoffeeOrTea : Formula FCAtom :=
   .poss (.disj (.atom .a) (.atom .b))
 
-def mayCoffee : BSMLFormula FCAtom := .poss (.atom .a)
-def mayTea    : BSMLFormula FCAtom := .poss (.atom .b)
+def mayCoffee : Formula FCAtom := .poss (.atom .a)
+def mayTea    : Formula FCAtom := .poss (.atom .b)
 
 /-- ¬◇(a ∨ b) — Dual Prohibition premise (Fact 11). -/
-def prohibition : BSMLFormula FCAtom :=
+def prohibition : Formula FCAtom :=
   .neg (.poss (.disj (.atom .a) (.atom .b)))
 
-def notMayCoffee : BSMLFormula FCAtom := .neg (.poss (.atom .a))
-def notMayTea    : BSMLFormula FCAtom := .neg (.poss (.atom .b))
+def notMayCoffee : Formula FCAtom := .neg (.poss (.atom .a))
+def notMayTea    : Formula FCAtom := .neg (.poss (.atom .b))
 
 /-- ◇a ∨ ◇b — wide-scope disjunction premise (Fact 5). -/
-def wideScopeDisj : BSMLFormula FCAtom :=
+def wideScopeDisj : Formula FCAtom :=
   .disj (.poss (.atom .a)) (.poss (.atom .b))
 
 /-- ¬¬◇(a ∨ b) — double-negation premise (Fact 12). -/
-def doubleNegMayHaveCoffeeOrTea : BSMLFormula FCAtom :=
+def doubleNegMayHaveCoffeeOrTea : Formula FCAtom :=
   .neg (.neg (.poss (.disj (.atom .a) (.atom .b))))
 
 /-- a ∨ b — plain disjunction (Modal Disjunction premise, Fact 3). -/
-def plainDisj : BSMLFormula FCAtom :=
+def plainDisj : Formula FCAtom :=
   .disj (.atom .a) (.atom .b)
 
 -- ============================================================================

@@ -18,8 +18,8 @@ Formalisation of two extensions of BSML introduced in
 * `BSMLEmpty` — BSML extended with the **emptiness operator** `⊘`
   (Definition 2.1).
 
-Both extend BSML's `BSMLModel` (worlds + accessibility + valuation) and
-inherit the bilateral support/anti-support semantics. The new connectives
+Both share BSML's `KripkeModel` carrier (worlds + accessibility +
+valuation) and inherit the bilateral support/anti-support semantics. The new connectives
 are characterised by Fact 2.7 in the paper:
 
 | Logic     | Has `NE` | Has `⨼` | Downward-closed     | Union-closed   |
@@ -48,15 +48,15 @@ insight: each extension occupies a different cell of the
 * `BSMLEmpty.supClosed_support` — union-closure of BSML⊘ formulas
   (Fact 2.7; the second-consumer evidence that BSML's substrate
   generalises).
-* `BSMLOr.ofBSML` / `BSMLEmpty.ofBSML` — embedding `BSMLFormula` into each
+* `BSMLOr.ofBSML` / `BSMLEmpty.ofBSML` — embedding `BSML.Formula` into each
   extension, preserving semantics (`eval_ofBSML` theorems).
 
 ## Implementation notes
 
 The paper's BSML includes `⊥` (weak contradiction) as a primitive, whereas
-linglib's `BSMLFormula` (Aloni 2022) does not (the original defines
+linglib's `BSML.Formula` (Aloni 2022) does not (the original defines
 `⊥ := p ∧ ¬p`). The extension formula types here include `⊥` to match
-[aloni-anttila-yang-2024]; the embedding `BSMLFormula → Formula`
+[aloni-anttila-yang-2024]; the embedding `BSML.Formula → Formula`
 therefore has no preimage for `⊥`.
 
 `BSMLOr`'s global disjunction `⨼` is the team-semantic *inquisitive
@@ -98,8 +98,7 @@ namespace AloniAnttilaYang2024
 variable {W W' : Type*} [DecidableEq W] [Fintype W] [DecidableEq W'] [Fintype W']
 variable {Atom : Type*}
 
-open BSML (BSMLModel BSMLFormula)
-open Modal (StateBisim WorldBisim)
+open Modal (KripkeModel StateBisim WorldBisim)
 
 /-! ### BSMLOr — BSML with global disjunction `⨼` -/
 
@@ -131,7 +130,7 @@ inductive Formula (Atom : Type*) where
 /-- Bilateral evaluation for BSMLOr (Definition 2.3 of
     [aloni-anttila-yang-2024]). `eval M true φ t` is support;
     `eval M false φ t` is anti-support. Negation flips polarity. -/
-def eval (M : BSMLModel W Atom) : Bool → Formula Atom → Finset W → Prop
+def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .atom p,        t => ∀ w ∈ t, M.val p w = true
   | false, .atom p,        t => ∀ w ∈ t, M.val p w = false
   | true,  .bot,           t => t = ∅
@@ -154,40 +153,40 @@ def eval (M : BSMLModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | false, .poss ψ,        t => ∀ w ∈ t, eval M false ψ (M.access w)
 
 /-- Support: positive evaluation. -/
-abbrev support (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
+abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   eval M true φ t
 
 /-- Anti-support: negative evaluation. -/
-abbrev antiSupport (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
+abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   eval M false φ t
 
-@[simp] lemma support_neg (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) :
+@[simp] lemma support_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     support M (.neg φ) t ↔ antiSupport M φ t := Iff.rfl
 
-@[simp] lemma antiSupport_neg (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) :
+@[simp] lemma antiSupport_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     antiSupport M (.neg φ) t ↔ support M φ t := Iff.rfl
 
-@[simp] lemma support_bot (M : BSMLModel W Atom) (t : Finset W) :
+@[simp] lemma support_bot (M : KripkeModel W Atom) (t : Finset W) :
     support M (.bot : Formula Atom) t ↔ t = ∅ := Iff.rfl
 
-@[simp] lemma support_ne (M : BSMLModel W Atom) (t : Finset W) :
+@[simp] lemma support_ne (M : KripkeModel W Atom) (t : Finset W) :
     support M (.ne : Formula Atom) t ↔ t.Nonempty := Iff.rfl
 
-@[simp] lemma support_conj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+@[simp] lemma support_conj (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     support M (.conj φ ψ) t ↔ support M φ t ∧ support M ψ t := Iff.rfl
 
-@[simp] lemma antiSupport_disj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+@[simp] lemma antiSupport_disj (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     antiSupport M (.disj φ ψ) t ↔ antiSupport M φ t ∧ antiSupport M ψ t := Iff.rfl
 
-@[simp] lemma support_gdisj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+@[simp] lemma support_gdisj (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     support M (.gdisj φ ψ) t ↔ support M φ t ∨ support M ψ t := Iff.rfl
 
-@[simp] lemma antiSupport_gdisj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+@[simp] lemma antiSupport_gdisj (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     antiSupport M (.gdisj φ ψ) t ↔ antiSupport M φ t ∧ antiSupport M ψ t := Iff.rfl
 
 /-- `BSMLOr`'s `support`/`antiSupport` form a paraconsistent bilateral
     logic under `Formula.neg`. -/
-theorem isBilateral (M : BSMLModel W Atom) :
+theorem isBilateral (M : KripkeModel W Atom) :
     Bilateral.IsBilateral
       (support M) (antiSupport M) Formula.neg :=
   Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
@@ -212,7 +211,7 @@ def Formula.modalDepth : Formula Atom → ℕ
     `eval M b φ s ↔ eval M' b φ s'` for both polarities. -/
 theorem bisim_invariant_eval (φ : Formula Atom) :
     ∀ {k : ℕ}, φ.modalDepth ≤ k →
-    ∀ {M : BSMLModel W Atom} {M' : BSMLModel W' Atom}
+    ∀ {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
       {s : Finset W} {s' : Finset W'},
     StateBisim k M s M' s' →
     ∀ b : Bool, eval M b φ s ↔ eval M' b φ s' := by
@@ -377,7 +376,7 @@ inductive Formula (Atom : Type*) where
 
 /-- Bilateral evaluation for BSMLEmpty. The `empt` clause is:
     `support .empt φ s ↔ support φ s ∨ s = ∅` (Definition 2.3). -/
-def eval (M : BSMLModel W Atom) : Bool → Formula Atom → Finset W → Prop
+def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .atom p,        t => ∀ w ∈ t, M.val p w = true
   | false, .atom p,        t => ∀ w ∈ t, M.val p w = false
   | true,  .bot,           t => t = ∅
@@ -399,37 +398,37 @@ def eval (M : BSMLModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .poss ψ,        t => ∀ w ∈ t, ∃ s ⊆ M.access w, s.Nonempty ∧ eval M true ψ s
   | false, .poss ψ,        t => ∀ w ∈ t, eval M false ψ (M.access w)
 
-abbrev support (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
+abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   eval M true φ t
 
-abbrev antiSupport (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
+abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   eval M false φ t
 
-@[simp] lemma support_neg (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) :
+@[simp] lemma support_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     support M (.neg φ) t ↔ antiSupport M φ t := Iff.rfl
 
-@[simp] lemma antiSupport_neg (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) :
+@[simp] lemma antiSupport_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     antiSupport M (.neg φ) t ↔ support M φ t := Iff.rfl
 
-@[simp] lemma support_bot (M : BSMLModel W Atom) (t : Finset W) :
+@[simp] lemma support_bot (M : KripkeModel W Atom) (t : Finset W) :
     support M (.bot : Formula Atom) t ↔ t = ∅ := Iff.rfl
 
-@[simp] lemma support_ne (M : BSMLModel W Atom) (t : Finset W) :
+@[simp] lemma support_ne (M : KripkeModel W Atom) (t : Finset W) :
     support M (.ne : Formula Atom) t ↔ t.Nonempty := Iff.rfl
 
-@[simp] lemma support_conj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+@[simp] lemma support_conj (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     support M (.conj φ ψ) t ↔ support M φ t ∧ support M ψ t := Iff.rfl
 
-@[simp] lemma antiSupport_disj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+@[simp] lemma antiSupport_disj (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     antiSupport M (.disj φ ψ) t ↔ antiSupport M φ t ∧ antiSupport M ψ t := Iff.rfl
 
-@[simp] lemma support_empt (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) :
+@[simp] lemma support_empt (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     support M (.empt φ) t ↔ support M φ t ∨ t = ∅ := Iff.rfl
 
-@[simp] lemma antiSupport_empt (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) :
+@[simp] lemma antiSupport_empt (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     antiSupport M (.empt φ) t ↔ antiSupport M φ t := Iff.rfl
 
-theorem isBilateral (M : BSMLModel W Atom) :
+theorem isBilateral (M : KripkeModel W Atom) :
     Bilateral.IsBilateral
       (support M) (antiSupport M) Formula.neg :=
   Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
@@ -443,7 +442,7 @@ theorem isBilateral (M : BSMLModel W Atom) :
     preserved by binary union because the `s = ∅` case forces both
     sub-teams empty, and the `support φ` case uses the IH. -/
 private theorem support_and_antiSupport_supClosed
-    (φ : Formula Atom) (M : BSMLModel W Atom) :
+    (φ : Formula Atom) (M : KripkeModel W Atom) :
     (∀ s t : Finset W, support M φ s → support M φ t → support M φ (s ∪ t)) ∧
     (∀ s t : Finset W, antiSupport M φ s → antiSupport M φ t →
                        antiSupport M φ (s ∪ t)) := by
@@ -534,7 +533,7 @@ private theorem support_and_antiSupport_supClosed
     sup-closed support. Direct evidence that the team-semantics substrate
     generalises from BSML to BSML⊘ without changes — the substrate's
     payoff at a second logic. -/
-theorem supClosed_support (M : BSMLModel W Atom) (φ : Formula Atom) :
+theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     SupClosed { t : Finset W | support M φ t } :=
   fun _ ha _ hb => (support_and_antiSupport_supClosed φ M).1 _ _ ha hb
 
@@ -558,7 +557,7 @@ def Formula.modalDepth : Formula Atom → ℕ
     `eval M b φ s ↔ eval M' b φ s'` for both polarities. -/
 theorem bisim_invariant_eval (φ : Formula Atom) :
     ∀ {k : ℕ}, φ.modalDepth ≤ k →
-    ∀ {M : BSMLModel W Atom} {M' : BSMLModel W' Atom}
+    ∀ {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
       {s : Finset W} {s' : Finset W'},
     StateBisim k M s M' s' →
     ∀ b : Bool, eval M b φ s ↔ eval M' b φ s' := by
@@ -698,10 +697,10 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
 
 end BSMLEmpty
 
-/-! ### Embeddings: BSMLFormula ↪ extension formulas -/
+/-! ### Embeddings: BSML.Formula ↪ extension formulas -/
 
 /-- Embed a BSML formula into BSMLOr by inclusion of constructors. -/
-def BSMLOr.ofBSML : BSMLFormula Atom → BSMLOr.Formula Atom
+def BSMLOr.ofBSML : BSML.Formula Atom → BSMLOr.Formula Atom
   | .atom p     => .atom p
   | .ne         => .ne
   | .neg ψ      => .neg (ofBSML ψ)
@@ -710,7 +709,7 @@ def BSMLOr.ofBSML : BSMLFormula Atom → BSMLOr.Formula Atom
   | .poss ψ     => .poss (ofBSML ψ)
 
 /-- Embed a BSML formula into BSMLEmpty. -/
-def BSMLEmpty.ofBSML : BSMLFormula Atom → BSMLEmpty.Formula Atom
+def BSMLEmpty.ofBSML : BSML.Formula Atom → BSMLEmpty.Formula Atom
   | .atom p     => .atom p
   | .ne         => .ne
   | .neg ψ      => .neg (ofBSML ψ)
@@ -718,10 +717,10 @@ def BSMLEmpty.ofBSML : BSMLFormula Atom → BSMLEmpty.Formula Atom
   | .disj ψ₁ ψ₂ => .disj (ofBSML ψ₁) (ofBSML ψ₂)
   | .poss ψ     => .poss (ofBSML ψ)
 
-/-- The embedding `BSMLFormula → BSMLOr.Formula` preserves bilateral
+/-- The embedding `BSML.Formula → BSMLOr.Formula` preserves bilateral
     evaluation: BSMLOr is a faithful extension of BSML. -/
-theorem BSMLOr.eval_ofBSML (M : BSMLModel W Atom) (b : Bool)
-    (φ : BSMLFormula Atom) (t : Finset W) :
+theorem BSMLOr.eval_ofBSML (M : KripkeModel W Atom) (b : Bool)
+    (φ : BSML.Formula Atom) (t : Finset W) :
     BSMLOr.eval M b (BSMLOr.ofBSML φ) t ↔ BSML.eval M b φ t := by
   induction φ generalizing b t with
   | atom p => cases b <;> rfl
@@ -762,10 +761,10 @@ theorem BSMLOr.eval_ofBSML (M : BSMLModel W Atom) (b : Bool)
         obtain ⟨s, hsub, hne, hsupp⟩ := h w hw
         exact ⟨s, hsub, hne, (ih true s).mpr hsupp⟩
 
-/-- The embedding `BSMLFormula → BSMLEmpty.Formula` preserves bilateral
+/-- The embedding `BSML.Formula → BSMLEmpty.Formula` preserves bilateral
     evaluation. -/
-theorem BSMLEmpty.eval_ofBSML (M : BSMLModel W Atom) (b : Bool)
-    (φ : BSMLFormula Atom) (t : Finset W) :
+theorem BSMLEmpty.eval_ofBSML (M : KripkeModel W Atom) (b : Bool)
+    (φ : BSML.Formula Atom) (t : Finset W) :
     BSMLEmpty.eval M b (BSMLEmpty.ofBSML φ) t ↔ BSML.eval M b φ t := by
   induction φ generalizing b t with
   | atom p => cases b <;> rfl
