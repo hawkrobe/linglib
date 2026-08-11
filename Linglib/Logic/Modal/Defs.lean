@@ -6,11 +6,7 @@ import Mathlib.Order.Defs.Unbundled
 
 This file defines accessibility relations over an arbitrary world type, the
 frame conditions of modal correspondence theory, and the relational
-`box`/`diamond` of Kripke semantics ([kripke-1963]). The axiom-correspondence
-theorems, the `ModalLogic` lattice, and the Gallin operator hierarchy build on
-it in `Basic.lean`; Montague's S5 `box`/`diamond` in
-`Intensional.Quantification` is the universal-accessibility special case
-(`box universalR`).
+`box`/`diamond` of Kripke semantics ([kripke-1963]).
 -/
 
 namespace Modal
