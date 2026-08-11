@@ -28,21 +28,20 @@ commitment to belief.
 
 namespace Discourse.Commitment.Frame
 
-open ModalLogic (AccessRel AgentAccessRel IsKD45Frame IsK4EuclFrame
-  IsEuclidean box diamond box_K box_four)
+open ModalLogic (IsKD45Frame IsK4EuclFrame IsEuclidean box diamond box_K box_four)
 open Modality.EpistemicLogic (knows)
 
 /-- Pair-indexed deontic accessibility: `commitment a b w v` means at
     `w`, the world `v` is among those satisfying everything `a` is
     committed-towards-`b` to. Genuinely ternary; no analogue in
     linglib's unary-belief substrate. -/
-abbrev PairAccessRel (W A : Type*) := A → A → AccessRel W
+abbrev PairAccessRel (W A : Type*) := A → A → W → W → Prop
 
 /-- Multi-relational Kripke frame: belief (KD45) + commitment (K4 +
     Eucl., not serial) + atomic valuation. -/
 structure CommitmentState (W : Type*) (A : Type*) where
   /-- Per-agent doxastic accessibility. -/
-  belief : AgentAccessRel W A
+  belief : A → W → W → Prop
   /-- Pair-indexed deontic accessibility. -/
   commitment : PairAccessRel W A
   /-- Atomic-proposition valuation. -/

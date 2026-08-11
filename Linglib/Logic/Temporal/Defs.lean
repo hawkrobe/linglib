@@ -58,7 +58,7 @@ namespace TWFrame
 
 variable {Time : Type u} {World : Type v} {Atom : Type*} [LinearOrder Time]
 
-open ModalLogic (box universalR) in
+open ModalLogic (box) in
 /-- Satisfaction `V_{t,w}(A)` ([von-kutschera-1997]) relative to an atomic valuation `V`.
     `G`/`H`/`N`/`box` are `ModalLogic.box` Kripke modalities over, respectively, future
     precedence `<`, past precedence `>`, historical equivalence `sim t`, and the universal
@@ -71,7 +71,7 @@ def sat (F : TWFrame Time World) (V : Atom → Time → World → Prop) :
   | .G a,     t, w => box (· < ·) (fun t' => F.sat V a t' w) t
   | .H a,     t, w => box (· > ·) (fun t' => F.sat V a t' w) t
   | .N a,     t, w => box (F.sim t) (fun w' => F.sat V a t w') w
-  | .box a,   t, w => box universalR (fun w' => F.sat V a t w') w
+  | .box a,   t, w => box ⊤ (fun w' => F.sat V a t w') w
 
 /-- Local entailment in a model: `a` entails `b` iff `b` holds wherever `a` does. -/
 def entails (F : TWFrame Time World) (V : Atom → Time → World → Prop) (a b : OForm Atom) : Prop :=

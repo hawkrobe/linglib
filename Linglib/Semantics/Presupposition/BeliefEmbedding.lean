@@ -29,7 +29,7 @@ namespace Semantics.Presupposition.BeliefEmbedding
 open Semantics.Presupposition
 open CommonGround
 open Semantics.Presupposition.Context
-open ModalLogic (AgentAccessRel IsBeliefRefinementOf)
+open ModalLogic (IsBeliefRefinementOf)
 
 variable {W : Type*} {Agent : Type*}
 
@@ -37,17 +37,17 @@ variable {W : Type*} {Agent : Type*}
 /--
 An agent's belief state at a world: the doxastically accessible worlds,
 viewed as a context set. Doxastic accessibility is the agent-indexed
-accessibility relation `ModalLogic.AgentAccessRel` ([hintikka-1962]):
+agent-indexed accessibility relation `E → W → W → Prop` ([hintikka-1962]):
 `Dox agent w w'` means `w'` is compatible with what `agent` believes at `w`.
 -/
-def beliefState (Dox : AgentAccessRel W Agent) (agent : Agent) (w : W) : ContextSet W :=
+def beliefState (Dox : Agent → W → W → Prop) (agent : Agent) (w : W) : ContextSet W :=
   Dox agent w
 
 /--
 An agent believes a proposition at a world iff the proposition holds at all
 doxastically accessible worlds.
 -/
-def believes (Dox : AgentAccessRel W Agent) (agent : Agent) (p : W → Prop) (w : W) : Prop :=
+def believes (Dox : Agent → W → W → Prop) (agent : Agent) (p : W → Prop) (w : W) : Prop :=
   ∀ w', Dox agent w w' → p w'
 
 
@@ -66,7 +66,7 @@ structure BeliefLocalCtx (W : Type*) (Agent : Type*) where
   /-- The global context set -/
   globalCtx : ContextSet W
   /-- The doxastic accessibility relation -/
-  dox : AgentAccessRel W Agent
+  dox : Agent → W → W → Prop
   /-- The attitude holder -/
   agent : Agent
 
@@ -112,7 +112,7 @@ inductive SmokingAgent where
 /--
 John's belief state at each world.
 -/
-def smokingDox : AgentAccessRel SmokingWorld SmokingAgent
+def smokingDox : SmokingAgent → SmokingWorld → SmokingWorld → Prop
   -- At world where Mary used to smoke and John believes it:
   -- John's beliefs are consistent with Mary having smoked
   | .john, .maryUsedToSmoke_johnBelieves_maryQuit =>
@@ -190,7 +190,7 @@ theorem stop_ole_attribution :
 ### Refinement Between Knowledge and Belief Embeddings
 [hintikka-1962]
 
-Doxastic accessibility is `ModalLogic.AgentAccessRel` directly, so
+Doxastic accessibility is `E → W → W → Prop` directly, so
 belief local contexts compose with the epistemic-logic frame conditions:
 when belief pointwise refines knowledge (`IsBeliefRefinementOf`), filtering
 under knowledge embedding implies filtering under belief embedding.
@@ -201,7 +201,7 @@ section Refinement
 variable {W E : Type*}
 
 /-- Build a `BeliefLocalCtx` from an agent-indexed accessibility relation. -/
-def localCtxOf (Rs : AgentAccessRel W E) (ctx : ContextSet W) (i : E) :
+def localCtxOf (Rs : E → W → W → Prop) (ctx : ContextSet W) (i : E) :
     BeliefLocalCtx W E :=
   { globalCtx := ctx
   , dox := Rs
@@ -209,7 +209,7 @@ def localCtxOf (Rs : AgentAccessRel W E) (ctx : ContextSet W) (i : E) :
 
 /-- Belief-accessible worlds are a subset of knowledge-accessible worlds
     when belief refines knowledge pointwise. -/
-theorem localCtx_sub_of_refinement (Rk Rb : AgentAccessRel W E)
+theorem localCtx_sub_of_refinement (Rk Rb : E → W → W → Prop)
     (ctx : ContextSet W) (i : E) [hRef : IsBeliefRefinementOf (Rk i) (Rb i)]
     (w_star : W) :
     ∀ w, (localCtxOf Rb ctx i).atWorld w_star w →
@@ -220,7 +220,7 @@ theorem localCtx_sub_of_refinement (Rk Rb : AgentAccessRel W E)
 /-- If a presupposition is filtered under knowledge embedding, it is also
     filtered under any belief embedding that refines knowledge. -/
 theorem knowledge_filtered_implies_belief_filtered
-    (Rk Rb : AgentAccessRel W E) (ctx : ContextSet W) (i : E)
+    (Rk Rb : E → W → W → Prop) (ctx : ContextSet W) (i : E)
     [IsBeliefRefinementOf (Rk i) (Rb i)] (p : PartialProp W) (w_star : W) :
     ContextSet.entails ((localCtxOf Rk ctx i).atWorld w_star) p.presup →
     ContextSet.entails ((localCtxOf Rb ctx i).atWorld w_star) p.presup := by

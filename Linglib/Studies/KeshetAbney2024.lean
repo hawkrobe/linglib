@@ -125,7 +125,6 @@ namespace KeshetAbney2024
 
 open KeshetAbney2024.PIP
 open DynamicSemantics.ICDRT (IVar Assignment Entity Context idUp)
-open ModalLogic (AccessRel)
 
 
 -- ============================================================
@@ -155,7 +154,7 @@ def αWolf : FLabel := ⟨0⟩
 def vWolf : IVar := ⟨0⟩
 
 /-- Epistemic accessibility from actual world. -/
-def sAccess : AccessRel SWorld
+def sAccess : SWorld → SWorld → Prop
   | .actual, .wolfIn => True
   | .actual, .noWolf => True
   | _, _ => False
@@ -619,7 +618,7 @@ def ibWorlds : List IBWorld := [.actual, .burgerW]
 def αBurger : FLabel := ⟨10⟩
 def vBurger : IVar := ⟨10⟩
 
-def ibAccess : AccessRel IBWorld
+def ibAccess : IBWorld → IBWorld → Prop
   | .actual, .actual => True
   | .actual, .burgerW => True
   | _, _ => False
@@ -700,7 +699,7 @@ def αAnimal : FLabel := ⟨11⟩
 def vAnimal : IVar := ⟨11⟩
 
 /-- Realistic epistemic: actual accessible from itself. -/
-def iaAccess : AccessRel IAWorld
+def iaAccess : IAWorld → IAWorld → Prop
   | .actual, .actual => True
   | .actual, .shedW => True
   | _, _ => False
@@ -781,7 +780,7 @@ def αMA : FLabel := ⟨12⟩
 def vMA : IVar := ⟨12⟩
 
 /-- Realistic epistemic: actual accessible from itself, plus two alternatives. -/
-def maAccess : AccessRel MAWorld
+def maAccess : MAWorld → MAWorld → Prop
   | .actual, _ => True
   | _, _ => False
 
@@ -864,7 +863,7 @@ def αWinner : FLabel := ⟨20⟩
 def vWinner : IVar := ⟨20⟩
 
 /-- Epistemic: speaker considers all outcomes possible. -/
-def pcAccess : AccessRel PCWorld
+def pcAccess : PCWorld → PCWorld → Prop
   | .actual, _ => True
   | _, _ => False
 
@@ -1316,12 +1315,12 @@ def αWitch : FLabel := ⟨40⟩
 def vWitch : IVar := ⟨40⟩
 
 /-- Hob's doxastic accessibility: Hob believes from actual to hobBelief. -/
-def hobAccess : AccessRel HNWorld
+def hobAccess : HNWorld → HNWorld → Prop
   | .actual, .hobBelief => True
   | _, _ => False
 
 /-- Nob's bouletic accessibility: Nob wonders from actual to nobWonder. -/
-def nobAccess : AccessRel HNWorld
+def nobAccess : HNWorld → HNWorld → Prop
   | .actual, .nobWonder => True
   | _, _ => False
 

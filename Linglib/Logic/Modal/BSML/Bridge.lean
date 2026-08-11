@@ -223,7 +223,7 @@ open ModalLogic (diamond)
 ### Accessibility Type Bridge
 
 `KripkeModel.access : W → Finset W` can be converted to a Prop-valued
-`AccessRel W = W → W → Prop` via `fun w v => v ∈ M.access w`, which is the
+`W → W → Prop` via `fun w v => v ∈ M.access w`, which is the
 canonical accessibility-relation type in
 `Intensional`.
 -/
@@ -231,7 +231,7 @@ canonical accessibility-relation type in
 /-- Convert BSML accessibility (`Finset`-valued) to a classical Prop-valued
     accessibility relation. -/
 def _root_.ModalLogic.KripkeModel.toAccessRel (M : KripkeModel W Atom) :
-    ModalLogic.AccessRel W :=
+    W → W → Prop :=
   fun w v => v ∈ M.access w
 
 /-- `classicalEval` of ◇φ agrees with `diamond` (Prop-valued possibility),

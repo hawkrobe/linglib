@@ -56,7 +56,7 @@ set_option autoImplicit false
 namespace FaginHalpern1994
 
 open ModalLogic
-  (AgentAccessRel AccessRel box IsEuclidean)
+  (box IsEuclidean)
 open Modality.EpistemicLogic (knows everyoneKnows)
 open Modality.EpistemicProbability (WorldCredence nestedThreshold)
 
@@ -75,7 +75,7 @@ open Modality.EpistemicProbability (WorldCredence nestedThreshold)
     Structural conditions (CONS, UNIF, etc.) are separate predicates. -/
 structure KripkeKP (W E : Type*) where
   /-- Agent-indexed accessibility relation (information partition) -/
-  accessRel : AgentAccessRel W E
+  accessRel : E → W → W → Prop
   /-- World-dependent agent credence (probability spaces) -/
   worldCredence : WorldCredence E W
 
@@ -317,7 +317,7 @@ theorem probCKIter_monotone {W E : Type*}
     coincide whenever w' is accessible from w. This is the key property
     that makes S5 relations equivalence relations: accessibility classes
     are either identical or disjoint. -/
-private theorem s5_access_eq {W : Type*} {R : AccessRel W}
+private theorem s5_access_eq {W : Type*} {R : W → W → Prop}
     [Std.Refl R] [IsEuclidean R]
     {w w' : W} (hAcc : R w w') :
     ∀ v, R w v ↔ R w' v := by

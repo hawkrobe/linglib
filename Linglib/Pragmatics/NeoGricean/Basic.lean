@@ -38,7 +38,7 @@ relates RSA speakers to IBR argmax behaviour.
 
 namespace NeoGricean
 
-open ModalLogic (AccessRel box diamond IsSerial)
+open ModalLogic (box diamond IsSerial)
 
 variable {W : Type*}
 
@@ -78,7 +78,7 @@ nonempty. The epistemic square of opposition is
 discharged by this `IsSerial` instance. -/
 
 /-- Epistemic accessibility: from any world, the speaker's live possibilities. -/
-def accessFrom (e : EpistemicState W) : AccessRel W := fun _ w' => w' ∈ e.possible
+def accessFrom (e : EpistemicState W) : W → W → Prop := fun _ w' => w' ∈ e.possible
 
 instance (e : EpistemicState W) : IsSerial (accessFrom e) := ⟨fun _ => e.nonempty⟩
 

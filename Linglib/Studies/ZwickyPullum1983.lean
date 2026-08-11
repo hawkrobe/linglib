@@ -400,7 +400,7 @@ an accessibility relation under which the two scope readings diverge. -/
 section ScopeBridge
 
 open Modality (ModalForce)
-open ModalLogic (AccessRel box diamond)
+open ModalLogic (box diamond)
 
 abbrev World := Fin 4
 
@@ -452,7 +452,7 @@ every other world sees only itself.
 This suffices to separate ¬◇P from ◇¬P and ¬□P from □¬P at w0:
 when P holds at w1 and fails at w2, both accessible worlds disagree,
 so ◇P and ◇¬P are both true while ¬◇P is false. -/
-private def kripkeR : AccessRel World := fun w v =>
+private def kripkeR : World → World → Prop := fun w v =>
   match w with
   | 0 => v = (1 : World) ∨ v = (2 : World)
   | 1 => v = (1 : World)
@@ -485,7 +485,7 @@ There exists a Kripke accessibility relation where ¬◇P ≠ ◇¬P: when w0
 accesses worlds where P differs, ◇P and ◇¬P are both true, so
 ¬◇P = false but ◇¬P = true. -/
 theorem neg_over_poss_ne_poss_over_neg :
-    ∃ (R : AccessRel World),
+    ∃ (R : World → World → Prop),
     ¬(∀ (p : World → Prop) (w : World),
       ¬ diamond R p w ↔ diamond R (fun w' => ¬ p w') w) := by
   refine ⟨kripkeR, ?_⟩
@@ -499,7 +499,7 @@ There exists a Kripke accessibility relation where ¬□P ≠ □¬P: failing
 to be necessary (¬□P = true when P fails at w2) is weaker than being
 necessarily false (□¬P = false when P holds at w1). -/
 theorem neg_over_nec_ne_nec_over_neg :
-    ∃ (R : AccessRel World),
+    ∃ (R : World → World → Prop),
     ¬(∀ (p : World → Prop) (w : World),
       ¬ box R p w ↔ box R (fun w' => ¬ p w') w) := by
   refine ⟨kripkeR, ?_⟩
