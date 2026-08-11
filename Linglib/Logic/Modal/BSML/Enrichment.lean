@@ -159,21 +159,19 @@ theorem antiSupport_poss_weaken (M : KripkeModel W Atom)
 /-- Both directions of Fact 1 (enrichment strengthens), proved by simultaneous
     induction on formula structure. -/
 private theorem enrichment_strengthens_both (M : KripkeModel W Atom)
-    (φ : Formula Atom) (hNE : φ.isNEFree = true) :
+    (φ : Formula Atom) (hNE : φ.NEFree) :
     (∀ t, support M (enrich φ) t → support M φ t) ∧
     (∀ t, antiSupport M (enrich φ) t → antiSupport M φ t) := by
   induction φ with
-  | ne => simp [Formula.isNEFree] at hNE
+  | ne => exact hNE.elim
   | atom p =>
     exact ⟨fun t h => h.1, fun t h => antiSupport_strip_ne M (.atom p) t h⟩
   | neg ψ ih =>
-    have ⟨ih_s, ih_a⟩ := ih (by simp [Formula.isNEFree] at hNE; exact hNE)
+    have ⟨ih_s, ih_a⟩ := ih hNE
     exact ⟨fun t h => ih_a t h.1, fun t h => ih_s t (antiSupport_strip_ne M _ t h)⟩
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hψ₁ : ψ₁.isNEFree = true := by
-      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
-    have hψ₂ : ψ₂.isNEFree = true := by
-      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+    have hψ₁ := hNE.1
+    have hψ₂ := hNE.2
     have ⟨ih₁_s, ih₁_a⟩ := ih₁ hψ₁
     have ⟨ih₂_s, ih₂_a⟩ := ih₂ hψ₂
     constructor
@@ -183,10 +181,8 @@ private theorem enrichment_strengthens_both (M : KripkeModel W Atom)
       obtain ⟨s₁, s₂, hunion, h₁, h₂⟩ := h'
       exact ⟨s₁, s₂, hunion, ih₁_a s₁ h₁, ih₂_a s₂ h₂⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hψ₁ : ψ₁.isNEFree = true := by
-      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
-    have hψ₂ : ψ₂.isNEFree = true := by
-      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+    have hψ₁ := hNE.1
+    have hψ₂ := hNE.2
     have ⟨ih₁_s, ih₁_a⟩ := ih₁ hψ₁
     have ⟨ih₂_s, ih₂_a⟩ := ih₂ hψ₂
     constructor
@@ -197,7 +193,7 @@ private theorem enrichment_strengthens_both (M : KripkeModel W Atom)
       have h' := antiSupport_strip_ne M (.disj (enrich ψ₁) (enrich ψ₂)) t h
       exact ⟨ih₁_a t h'.1, ih₂_a t h'.2⟩
   | poss ψ ih =>
-    have ⟨ih_s, ih_a⟩ := ih (by simp [Formula.isNEFree] at hNE; exact hNE)
+    have ⟨ih_s, ih_a⟩ := ih hNE
     constructor
     · intro t h w hw
       obtain ⟨s, hs, hne, hsupp⟩ := h.1 w hw
@@ -214,7 +210,7 @@ supports the original α.
 -/
 theorem enrichment_strengthens_support (M : KripkeModel W Atom)
     (φ : Formula Atom) (t : Finset W)
-    (hNE : φ.isNEFree = true)
+    (hNE : φ.NEFree)
     (h : support M (enrich φ) t) :
     support M φ t :=
   (enrichment_strengthens_both M φ hNE).1 t h
@@ -222,7 +218,7 @@ theorem enrichment_strengthens_support (M : KripkeModel W Atom)
 /-- Enrichment strengthens (anti-support direction of Fact 1). -/
 theorem enrichment_strengthens_antiSupport (M : KripkeModel W Atom)
     (φ : Formula Atom) (t : Finset W)
-    (hNE : φ.isNEFree = true)
+    (hNE : φ.NEFree)
     (h : antiSupport M (enrich φ) t) :
     antiSupport M φ t :=
   (enrichment_strengthens_both M φ hNE).2 t h
@@ -236,7 +232,7 @@ Fact 2 from [aloni-2022]: [α]⁺ ⊨ α ∧ NE for NE-free α.
 -/
 theorem enrichment_entails_conj_ne (M : KripkeModel W Atom)
     (φ : Formula Atom) (t : Finset W)
-    (hNE : φ.isNEFree = true)
+    (hNE : φ.NEFree)
     (h : support M (enrich φ) t) :
     support M (.conj φ .ne) t :=
   ⟨enrichment_strengthens_support M φ t hNE h,
@@ -254,14 +250,13 @@ For positive α (no negation): ¬[α]⁺ ≡ ¬α (both support and anti-support
 -/
 theorem enrichment_vacuous_under_negation (M : KripkeModel W Atom)
     (φ : Formula Atom) (t : Finset W)
-    (hPos : φ.isPositive = true) :
+    (hPos : φ.Positive) :
     antiSupport M (enrich φ) t ↔ antiSupport M φ t := by
   induction φ generalizing t with
   | atom p => exact antiSupport_conj_ne_iff M (.atom p) t
   | ne => exact Iff.rfl
-  | neg _ => simp [Formula.isPositive] at hPos
+  | neg _ => exact hPos.elim
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    simp only [Formula.isPositive, Bool.and_eq_true] at hPos
     simp only [enrich]
     rw [antiSupport_conj_ne_iff]
     show (∃ t₁ t₂, t₁ ∪ t₂ = t ∧ antiSupport M (enrich ψ₁) t₁ ∧
@@ -273,7 +268,6 @@ theorem enrichment_vacuous_under_negation (M : KripkeModel W Atom)
     · rintro ⟨t₁, t₂, hu, h₁, h₂⟩
       exact ⟨t₁, t₂, hu, (ih₁ t₁ hPos.1).mpr h₁, (ih₂ t₂ hPos.2).mpr h₂⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    simp only [Formula.isPositive, Bool.and_eq_true] at hPos
     simp only [enrich]
     rw [antiSupport_conj_ne_iff]
     show antiSupport M (enrich ψ₁) t ∧ antiSupport M (enrich ψ₂) t ↔
@@ -281,7 +275,6 @@ theorem enrichment_vacuous_under_negation (M : KripkeModel W Atom)
     exact ⟨fun ⟨h₁, h₂⟩ => ⟨(ih₁ t hPos.1).mp h₁, (ih₂ t hPos.2).mp h₂⟩,
            fun ⟨h₁, h₂⟩ => ⟨(ih₁ t hPos.1).mpr h₁, (ih₂ t hPos.2).mpr h₂⟩⟩
   | poss ψ ih =>
-    simp only [Formula.isPositive] at hPos
     simp only [enrich]
     rw [antiSupport_conj_ne_iff]
     show (∀ w ∈ t, antiSupport M (enrich ψ) (M.access w)) ↔
@@ -292,7 +285,7 @@ theorem enrichment_vacuous_under_negation (M : KripkeModel W Atom)
 /-- Fact 9, support direction: support M (.neg (enrich φ)) t ↔ support M (.neg φ) t. -/
 theorem enrichment_vacuous_under_negation_support (M : KripkeModel W Atom)
     (φ : Formula Atom) (t : Finset W)
-    (hPos : φ.isPositive = true) :
+    (hPos : φ.Positive) :
     support M (.neg (enrich φ)) t ↔ support M (.neg φ) t :=
   enrichment_vacuous_under_negation M φ t hPos
 
@@ -309,11 +302,13 @@ def consequencePlus (φ ψ : Formula Atom) : Prop :=
 -- §11: BSML* ↔ BSML+ for Classical Positive Formulas (Fact 13)
 -- ============================================================================
 
-/-- A formula is classical positive: no NE atom and no negation.
-    These are the formulas for which BSML* and BSML+ consequence coincide
-    ([aloni-2022] Fact 13). -/
-def Formula.isClassicalPositive (φ : Formula Atom) : Bool :=
-  φ.isNEFree && φ.isPositive
+/-- `Formula.ClassicalPositive φ` holds when `φ` has no `NE` and no negation —
+    the fragment on which BSML* and BSML+ consequence coincide. -/
+def Formula.ClassicalPositive (φ : Formula Atom) : Prop :=
+  φ.NEFree ∧ φ.Positive
+
+instance (φ : Formula Atom) : Decidable φ.ClassicalPositive :=
+  inferInstanceAs (Decidable (φ.NEFree ∧ φ.Positive))
 
 /-- For classical positive formulas, enriched support is equivalent to BSML*
     support plus non-emptiness. The key insight is that enrichment adds NE at
@@ -321,21 +316,15 @@ def Formula.isClassicalPositive (φ : Formula Atom) : Bool :=
     intermediate states (including disjunction splits). -/
 private theorem enriched_iff_star_nonempty (M : KripkeModel W Atom)
     (φ : Formula Atom) (t : Finset W)
-    (hCP : φ.isClassicalPositive = true) :
+    (hCP : φ.ClassicalPositive) :
     support M (enrich φ) t ↔ supportStar M φ t ∧ t.Nonempty := by
   induction φ generalizing t with
-  | ne => simp [Formula.isClassicalPositive, Formula.isNEFree] at hCP
-  | neg _ => simp [Formula.isClassicalPositive, Formula.isPositive] at hCP
+  | ne => exact hCP.1.elim
+  | neg _ => exact hCP.2.elim
   | atom _ => exact Iff.rfl
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hψ₁ : ψ₁.isClassicalPositive = true := by
-      simp only [Formula.isClassicalPositive, Formula.isNEFree,
-                  Formula.isPositive, Bool.and_eq_true] at hCP ⊢
-      exact ⟨hCP.1.1, hCP.2.1⟩
-    have hψ₂ : ψ₂.isClassicalPositive = true := by
-      simp only [Formula.isClassicalPositive, Formula.isNEFree,
-                  Formula.isPositive, Bool.and_eq_true] at hCP ⊢
-      exact ⟨hCP.1.2, hCP.2.2⟩
+    have hψ₁ : ψ₁.ClassicalPositive := ⟨hCP.1.1, hCP.2.1⟩
+    have hψ₂ : ψ₂.ClassicalPositive := ⟨hCP.1.2, hCP.2.2⟩
     simp only [enrich, support, eval, supportStar]
     constructor
     · intro ⟨⟨h₁, h₂⟩, hne⟩
@@ -343,14 +332,8 @@ private theorem enriched_iff_star_nonempty (M : KripkeModel W Atom)
     · intro ⟨⟨h₁, h₂⟩, hne⟩
       exact ⟨⟨(ih₁ t hψ₁).mpr ⟨h₁, hne⟩, (ih₂ t hψ₂).mpr ⟨h₂, hne⟩⟩, hne⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hψ₁ : ψ₁.isClassicalPositive = true := by
-      simp only [Formula.isClassicalPositive, Formula.isNEFree,
-                  Formula.isPositive, Bool.and_eq_true] at hCP ⊢
-      exact ⟨hCP.1.1, hCP.2.1⟩
-    have hψ₂ : ψ₂.isClassicalPositive = true := by
-      simp only [Formula.isClassicalPositive, Formula.isNEFree,
-                  Formula.isPositive, Bool.and_eq_true] at hCP ⊢
-      exact ⟨hCP.1.2, hCP.2.2⟩
+    have hψ₁ : ψ₁.ClassicalPositive := ⟨hCP.1.1, hCP.2.1⟩
+    have hψ₂ : ψ₂.ClassicalPositive := ⟨hCP.1.2, hCP.2.2⟩
     simp only [enrich, support, eval, supportStar]
     constructor
     · intro ⟨⟨t₁, t₂, hu, h₁, h₂⟩, hne⟩
@@ -361,9 +344,7 @@ private theorem enriched_iff_star_nonempty (M : KripkeModel W Atom)
       exact ⟨⟨t₁, t₂, hu, (ih₁ t₁ hψ₁).mpr ⟨hs₁, hne₁⟩,
               (ih₂ t₂ hψ₂).mpr ⟨hs₂, hne₂⟩⟩, hne⟩
   | poss ψ ih =>
-    have hψ : ψ.isClassicalPositive = true := by
-      simp only [Formula.isClassicalPositive, Formula.isNEFree,
-                  Formula.isPositive] at hCP; exact hCP
+    have hψ : ψ.ClassicalPositive := hCP
     simp only [enrich, support, eval, supportStar]
     constructor
     · intro ⟨hposs, hne⟩
@@ -384,7 +365,7 @@ empty state syntactically (via [·]⁺ enrichment) is equivalent to ruling
 it out model-theoretically (via BSML* non-empty restriction).
 -/
 theorem bsmlStar_iff_bsmlPlus (φ ψ : Formula Atom)
-    (hφ : φ.isClassicalPositive = true) (hψ : ψ.isClassicalPositive = true) :
+    (hφ : φ.ClassicalPositive) (hψ : ψ.ClassicalPositive) :
     consequenceStar (W := W) φ ψ ↔ consequencePlus (W := W) φ ψ := by
   constructor
   · intro hStar M t hEnrich

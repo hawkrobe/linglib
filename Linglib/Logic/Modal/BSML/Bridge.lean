@@ -54,15 +54,14 @@ set_option maxHeartbeats 800000 in
     team members in terms of classical evaluation. -/
 private theorem neFree_flat_eq (M : KripkeModel W Atom)
     (φ : Formula Atom) (t : Finset W)
-    (hNE : φ.isNEFree = true) :
+    (hNE : φ.NEFree) :
     (support M φ t ↔ ∀ w ∈ t, classicalEval M φ w = true) ∧
     (antiSupport M φ t ↔ ∀ w ∈ t, classicalEval M φ w = false) := by
   induction φ generalizing t with
   | atom p => exact ⟨Iff.rfl, Iff.rfl⟩
-  | ne => simp [Formula.isNEFree] at hNE
+  | ne => exact hNE.elim
   | neg ψ ih =>
-    have hNE' := by simp [Formula.isNEFree] at hNE; exact hNE
-    have ⟨ih_s, ih_a⟩ := ih t hNE'
+    have ⟨ih_s, ih_a⟩ := ih t hNE
     constructor
     · -- support of ¬ψ = antiSupport of ψ
       simp only [classicalEval, Bool.not_eq_true']
@@ -71,8 +70,8 @@ private theorem neFree_flat_eq (M : KripkeModel W Atom)
       simp only [classicalEval, Bool.not_eq_false']
       exact ih_s
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hψ₁ := by simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
-    have hψ₂ := by simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+    have hψ₁ := hNE.1
+    have hψ₂ := hNE.2
     constructor
     · -- support of ψ₁ ∧ ψ₂ = ∀ w ∈ t, classicalEval (ψ₁ ∧ ψ₂) w
       simp only [classicalEval, Bool.and_eq_true]
@@ -109,8 +108,8 @@ private theorem neFree_flat_eq (M : KripkeModel W Atom)
             | inl h => simp [hce] at h
             | inr h => exact h)
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hψ₁ := by simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
-    have hψ₂ := by simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+    have hψ₁ := hNE.1
+    have hψ₂ := hNE.2
     constructor
     · -- support of ψ₁ ∨ ψ₂ (SPLIT) = ∀ w ∈ t, ce ψ₁ w ∨ ce ψ₂ w
       simp only [classicalEval, Bool.or_eq_true]
@@ -145,7 +144,6 @@ private theorem neFree_flat_eq (M : KripkeModel W Atom)
              fun h => ⟨(ih₁ t hψ₁).2.mpr (fun w hw => (h w hw).1),
                        (ih₂ t hψ₂).2.mpr (fun w hw => (h w hw).2)⟩⟩
   | poss ψ ih =>
-    have hNE' := by simp [Formula.isNEFree] at hNE; exact hNE
     constructor
     · -- support of ◇ψ ↔ ∀ w ∈ t, ∃ v ∈ R[w], ce ψ v = true
       simp only [classicalEval]
@@ -154,13 +152,13 @@ private theorem neFree_flat_eq (M : KripkeModel W Atom)
         obtain ⟨s, hs_sub, hs_ne, hs_supp⟩ := h w hw
         obtain ⟨v, hv⟩ := hs_ne
         have hv_acc := hs_sub (Finset.mem_coe.mpr hv)
-        have hv_ce := (ih s hNE').1.mp hs_supp v hv
+        have hv_ce := (ih s hNE).1.mp hs_supp v hv
         exact decide_eq_true ⟨v, hv_acc, hv_ce⟩
       · intro h w hw
         obtain ⟨v, hv_acc, hv_ce⟩ := of_decide_eq_true (h w hw)
         exact ⟨{v}, Finset.singleton_subset_iff.mpr hv_acc,
                ⟨v, Finset.mem_singleton.mpr rfl⟩,
-               (ih {v} hNE').1.mpr (fun u hu => by
+               (ih {v} hNE).1.mpr (fun u hu => by
                  rw [Finset.mem_singleton.mp hu]; exact hv_ce)⟩
     · -- antiSupport of ◇ψ ↔ ∀ w ∈ t, classicalEval ◇ψ w = false
       -- classicalEval ◇ψ w = false means ¬∃ v ∈ R[w], ce ψ v = true
@@ -169,12 +167,12 @@ private theorem neFree_flat_eq (M : KripkeModel W Atom)
       simp only [classicalEval]
       constructor
       · intro h w hw
-        have h_all := (ih (M.access w) hNE').2.mp (h w hw)
+        have h_all := (ih (M.access w) hNE).2.mp (h w hw)
         simp only [decide_eq_false_iff_not, not_exists]
         intro v ⟨hv_acc, hv_ce⟩; rw [h_all v hv_acc] at hv_ce; exact Bool.false_ne_true hv_ce
       · intro h w hw
         simp only [decide_eq_false_iff_not, not_exists] at h
-        exact (ih (M.access w) hNE').2.mpr (fun v hv =>
+        exact (ih (M.access w) hNE).2.mpr (fun v hv =>
           Bool.eq_false_iff.mpr (fun hce => h w hw v ⟨hv, hce⟩))
 
 -- ============================================================================
@@ -189,7 +187,7 @@ Kripke evaluation.
 -/
 theorem classicalCollapse (M : KripkeModel W Atom)
     (φ : Formula Atom) (w : W)
-    (hNE : φ.isNEFree = true) :
+    (hNE : φ.NEFree) :
     support M φ {w} ↔ classicalEval M φ w = true := by
   rw [(neFree_flat_eq M φ {w} hNE).1]
   simp [Finset.mem_singleton]
@@ -198,7 +196,7 @@ theorem classicalCollapse (M : KripkeModel W Atom)
     classical evaluation. -/
 theorem classicalCollapseAnti (M : KripkeModel W Atom)
     (φ : Formula Atom) (w : W)
-    (hNE : φ.isNEFree = true) :
+    (hNE : φ.NEFree) :
     antiSupport M φ {w} ↔ classicalEval M φ w = false := by
   rw [(neFree_flat_eq M φ {w} hNE).2]
   simp [Finset.mem_singleton]
@@ -211,7 +209,7 @@ theorem classicalCollapseAnti (M : KripkeModel W Atom)
     evaluation on all members. -/
 theorem neFree_flat (M : KripkeModel W Atom)
     (φ : Formula Atom) (t : Finset W)
-    (hNE : φ.isNEFree = true) :
+    (hNE : φ.NEFree) :
     support M φ t ↔ ∀ w ∈ t, classicalEval M φ w = true :=
   (neFree_flat_eq M φ t hNE).1
 

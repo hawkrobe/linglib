@@ -55,9 +55,8 @@ def verum [Inhabited Atom] : Formula Atom :=
     classicalEval M verum w = true := by
   simp [verum, classicalEval, Bool.or_not_self]
 
-@[simp] theorem isNEFree_verum [Inhabited Atom] :
-    (verum : Formula Atom).isNEFree = true := by
-  simp [verum, Formula.isNEFree]
+@[simp] theorem neFree_verum [Inhabited Atom] : (verum : Formula Atom).NEFree :=
+  ⟨trivial, trivial⟩
 
 /-- Finite conjunction of a list of formulas; the empty conjunction is `⊤`. -/
 def bigConj [Inhabited Atom] : List (Formula Atom) → Formula Atom
@@ -72,12 +71,11 @@ theorem classicalEval_bigConj [Inhabited Atom] (M : KripkeModel W Atom) (w : W)
   | cons φ rest ih =>
     simp only [bigConj, classicalEval, Bool.and_eq_true, List.forall_mem_cons, ih]
 
-theorem isNEFree_bigConj [Inhabited Atom] (l : List (Formula Atom))
-    (h : ∀ φ ∈ l, φ.isNEFree = true) : (bigConj l).isNEFree = true := by
+theorem neFree_bigConj [Inhabited Atom] (l : List (Formula Atom))
+    (h : ∀ φ ∈ l, φ.NEFree) : (bigConj l).NEFree := by
   induction l with
-  | nil => simp [bigConj]
+  | nil => exact neFree_verum
   | cons φ rest ih =>
-    simp only [bigConj, Formula.isNEFree, Bool.and_eq_true]
     exact ⟨h φ (List.mem_cons.mpr (Or.inl rfl)),
            ih (fun ψ hψ => h ψ (List.mem_cons.mpr (Or.inr hψ)))⟩
 
@@ -91,12 +89,12 @@ noncomputable def atomicType [Fintype Atom] [Inhabited Atom]
   bigConj ((Finset.univ : Finset Atom).toList.map
     (fun p => if M.val p w then .atom p else .neg (.atom p)))
 
-theorem isNEFree_atomicType [Fintype Atom] [Inhabited Atom]
-    (M : KripkeModel W Atom) (w : W) : (atomicType M w).isNEFree = true := by
-  apply isNEFree_bigConj
+theorem neFree_atomicType [Fintype Atom] [Inhabited Atom]
+    (M : KripkeModel W Atom) (w : W) : (atomicType M w).NEFree := by
+  apply neFree_bigConj
   intro φ hφ
   obtain ⟨p, -, rfl⟩ := List.mem_map.mp hφ
-  cases M.val p w <;> simp [Formula.isNEFree]
+  cases M.val p w <;> simp [Formula.NEFree]
 
 /-- The atomic type of `w` is classically satisfied at `v` exactly when `v` and
     `w` assign every atom the same value. -/

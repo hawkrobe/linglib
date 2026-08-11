@@ -161,7 +161,7 @@ theorem aloni2022_fact4_NS_FC
     support deonticModel mayCoffee freeChoiceTeam ∧
     support deonticModel mayTea    freeChoiceTeam :=
   narrowScopeFC deonticModel (.atom .a) (.atom .b) freeChoiceTeam
-    rfl rfl h
+    trivial trivial h
 
 /-- The premise of Fact 4 holds on this model + team. -/
 theorem aloni2022_fact4_premise_supported :
@@ -178,7 +178,7 @@ theorem aloni2022_fact11_dual_prohibition
     support restrictiveModel notMayCoffee prohibitionTeam ∧
     support restrictiveModel notMayTea    prohibitionTeam :=
   dualProhibition restrictiveModel (.atom .a) (.atom .b) prohibitionTeam
-    rfl rfl h
+    trivial trivial h
 
 theorem aloni2022_fact11_premise_supported :
     support restrictiveModel (enrich prohibition) prohibitionTeam := by decide
@@ -197,7 +197,7 @@ theorem aloni2022_fact5_WS_FC
     support deonticModel mayCoffee freeChoiceTeam ∧
     support deonticModel mayTea    freeChoiceTeam :=
   wideScopeFC deonticModel (.atom .a) (.atom .b) freeChoiceTeam
-    rfl rfl deonticModel_indisputable_on_team h
+    trivial trivial deonticModel_indisputable_on_team h
 
 theorem aloni2022_fact5_premise_supported :
     support deonticModel (enrich wideScopeDisj) freeChoiceTeam := by decide
@@ -234,7 +234,7 @@ theorem aloni2022_fact12_double_negation
     support deonticModel mayCoffee freeChoiceTeam ∧
     support deonticModel mayTea    freeChoiceTeam :=
   doubleNegationFC deonticModel (.atom .a) (.atom .b) freeChoiceTeam
-    rfl rfl h
+    trivial trivial h
 
 theorem aloni2022_fact12_premise_supported :
     support deonticModel (enrich doubleNegMayHaveCoffeeOrTea) freeChoiceTeam := by
@@ -252,7 +252,7 @@ theorem aloni2022_fact3_modal_disjunction
     support stateBasedModel mayCoffee freeChoiceTeam ∧
     support stateBasedModel mayTea    freeChoiceTeam :=
   modalDisjunction stateBasedModel (.atom .a) (.atom .b) freeChoiceTeam
-    rfl rfl stateBasedModel_state_based_on_team h
+    trivial trivial stateBasedModel_state_based_on_team h
 
 theorem aloni2022_fact3_premise_supported :
     support stateBasedModel (enrich plainDisj) freeChoiceTeam := by decide
