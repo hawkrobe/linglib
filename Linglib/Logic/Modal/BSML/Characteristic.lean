@@ -237,6 +237,55 @@ theorem classicalEval_charFormula_iff_bisim [Fintype Atom] [Inhabited Atom]
           ⟨charFormula M k u, List.mem_map.mpr ⟨u, Finset.mem_toList.mpr hu, rfl⟩,
            (ih u u').mpr hb⟩
 
+/-! ### Team support of the auxiliary connectives -/
+
+theorem support_verum [Inhabited Atom] (M : KripkeModel W Atom) (t : Finset W) :
+    support M (verum (Atom := Atom)) t := by
+  refine ⟨t.filter (fun w => M.val default w = true),
+          t.filter (fun w => M.val default w = false), ?_, ?_, ?_⟩
+  · show t.filter _ ∪ t.filter _ = t
+    ext w
+    simp only [Finset.mem_union, Finset.mem_filter]
+    constructor
+    · rintro (⟨h, -⟩ | ⟨h, -⟩) <;> exact h
+    · intro hw
+      cases hb : M.val default w
+      · exact Or.inr ⟨hw, rfl⟩
+      · exact Or.inl ⟨hw, rfl⟩
+  · exact fun w hw => (Finset.mem_filter.mp hw).2
+  · exact fun w hw => (Finset.mem_filter.mp hw).2
+
+theorem support_bigConj_iff [Inhabited Atom] (M : KripkeModel W Atom)
+    (l : List (Formula Atom)) (t : Finset W) :
+    support M (bigConj l) t ↔ ∀ φ ∈ l, support M φ t := by
+  induction l with
+  | nil => simpa [bigConj] using support_verum M t
+  | cons φ rest ih =>
+    simp only [bigConj, support_conj, ih, List.forall_mem_cons]
+
+/-- Team support of a flat disjunction of characteristic formulas: every
+    world of the team is `k`-bisimilar to some representative in `S`. -/
+theorem support_charDisj_iff [Fintype Atom] [Inhabited Atom]
+    (M : KripkeModel W Atom) (k : ℕ) (S : Finset W) (t : Finset W) :
+    support M (bigDisj (S.toList.map (charFormula M k))) t ↔
+      ∀ v ∈ t, ∃ w ∈ S, WorldBisim k M w M v := by
+  have hNE : (bigDisj (S.toList.map (charFormula M k))).NEFree := by
+    refine neFree_bigDisj _ (fun φ hφ => ?_)
+    obtain ⟨w, -, rfl⟩ := List.mem_map.mp hφ
+    exact neFree_charFormula M k w
+  rw [neFree_flat M _ t hNE]
+  constructor
+  · intro h v hv
+    obtain ⟨φ, hφ, hval⟩ := (classicalEval_bigDisj M v _).mp (h v hv)
+    obtain ⟨w, hw, rfl⟩ := List.mem_map.mp hφ
+    exact ⟨w, Finset.mem_toList.mp hw,
+      (classicalEval_charFormula_iff_bisim M k w v).mp hval⟩
+  · intro h v hv
+    obtain ⟨w, hw, hb⟩ := h v hv
+    exact (classicalEval_bigDisj M v _).mpr
+      ⟨charFormula M k w, List.mem_map.mpr ⟨w, Finset.mem_toList.mpr hw, rfl⟩,
+       (classicalEval_charFormula_iff_bisim M k w v).mpr hb⟩
+
 /-- On singleton teams, support of the characteristic formula is exactly
     `k`-bisimilarity — the team-semantic face of the characterisation, via
     the NE-free classical collapse. -/
