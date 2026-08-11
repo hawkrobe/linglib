@@ -95,7 +95,7 @@ category checks (and no casts) are needed; the result is `none` only when a word
 missing from the lexicon or a coordination is at a non-conjoinable type. -/
 def Derivation.interp {E W : Type} (lex : SemLexicon E W) :
     {c : Cat Atom} → Derivation Atom c → Option (Denot E W (catToTy c))
-  | _, .lex e => lex e.form e.cat
+  | _, .lex f c => lex f c
   | _, .fapp d1 d2 => do
       let m1 ← d1.interp lex
       let m2 ← d2.interp lex

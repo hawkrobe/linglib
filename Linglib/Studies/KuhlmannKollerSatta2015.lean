@@ -66,9 +66,9 @@ abbrev Scat : Cat Atom := .atom .S
 /-! ### The grammar `G₁` of Example 2 -/
 
 /-- `a := A`. -/
-def aLex : TargetRestricted.Derivation Atom := .lex Acat "a"
+def aLex : TargetRestricted.Derivation Atom := .lex "a" Acat
 /-- `c := C\A`. -/
-def cLex : TargetRestricted.Derivation Atom := .lex (Ccat \ Acat) "c"
+def cLex : TargetRestricted.Derivation Atom := .lex "c" (Ccat \ Acat)
 
 /-- The cluster category `S/C/…/C` with `n` forward `C`-arguments. -/
 def clusterCat : Nat → Cat Atom
@@ -78,14 +78,14 @@ def clusterCat : Nat → Cat Atom
 /-- Chain of degree-2 compositions: `b₁ = S/C/B` composed with `j` copies of
 `B/C/B`, giving `S/Cʲ⁺¹/B` and yield `bʲ⁺¹`. -/
 def fc2Chain : Nat → TargetRestricted.Derivation Atom
-  | 0 => .lex ((Scat / Ccat) / Bcat) "b"
-  | j + 1 => .fc 2 (fc2Chain j) (.lex ((Bcat / Ccat) / Bcat) "b")
+  | 0 => .lex "b" ((Scat / Ccat) / Bcat)
+  | j + 1 => .fc 2 (fc2Chain j) (.lex "b" ((Bcat / Ccat) / Bcat))
 
 /-- The `b`-cluster derivation for `n ≥ 1`, with category `clusterCat n`, yield `bⁿ`. -/
 def clusterDeriv : Nat → TargetRestricted.Derivation Atom
-  | 0 => .lex Scat "b"            -- unused (the construction starts at n = 1)
-  | 1 => .lex (Scat / Ccat) "b"
-  | n + 2 => .fc 1 (fc2Chain n) (.lex (Bcat / Ccat) "b")
+  | 0 => .lex "b" Scat            -- unused (the construction starts at n = 1)
+  | 1 => .lex "b" (Scat / Ccat)
+  | n + 2 => .fc 1 (fc2Chain n) (.lex "b" (Bcat / Ccat))
 
 /-- One peel: crossed-compose with a `c` on the right, then backward-apply an `a` on the
 left — wrapping the yield with `a … c` and removing one `C` argument. -/

@@ -70,26 +70,16 @@ def PercVSub : Cat Atom := ((S \ NP) \ NP) / VP
 `zien := (VP\NP)/VP₋SUB`). -/
 def InfHeadSub : Cat Atom := (VP \ NP) / VP
 
-/-- The Dutch lexicon (reference; the derivations below select specific entries). -/
-def dutchLexicon : List (LexEntry Atom) := [
-  ⟨"Jan", NP⟩, ⟨"Piet", NP⟩, ⟨"Marie", NP⟩, ⟨"Karel", NP⟩,
-  ⟨"zag", PercV⟩, ⟨"zag", PercVSub⟩,
-  ⟨"helpen", ControlV⟩, ⟨"laten", ControlV⟩,
-  ⟨"helpen", ControlVR⟩, ⟨"laten", ControlVR⟩,
-  ⟨"helpen", InfHeadSub⟩,
-  ⟨"zwemmen", VP⟩, ⟨"zwemmen", InfSubj⟩
-]
-
 /-! ### Lexical entries -/
 
-def jan_lex : TargetRestricted.Derivation Atom := .lex NP "Jan"
-def piet_lex : TargetRestricted.Derivation Atom := .lex NP "Piet"
-def marie_lex : TargetRestricted.Derivation Atom := .lex NP "Marie"
-def zag_lex : TargetRestricted.Derivation Atom := .lex PercV "zag"
+def jan_lex : TargetRestricted.Derivation Atom := .lex "Jan" NP
+def piet_lex : TargetRestricted.Derivation Atom := .lex "Piet" NP
+def marie_lex : TargetRestricted.Derivation Atom := .lex "Marie" NP
+def zag_lex : TargetRestricted.Derivation Atom := .lex "zag" PercV
 /-- `zwemmen` in its verb-raising category `(S\NP)/NP`. -/
-def zwemmen_vr : TargetRestricted.Derivation Atom := .lex InfSubj "zwemmen"
+def zwemmen_vr : TargetRestricted.Derivation Atom := .lex "zwemmen" InfSubj
 /-- `helpen` in its verb-raising category `((S\NP)/NP)/(S\NP)`. -/
-def helpen_vr : TargetRestricted.Derivation Atom := .lex ControlVR "helpen"
+def helpen_vr : TargetRestricted.Derivation Atom := .lex "helpen" ControlVR
 
 /-! ### Derivation: "Jan Piet zag zwemmen" (2 NPs, 2 Vs) -/
 
@@ -149,9 +139,9 @@ composes the cluster by forward **crossed** composition, so the
 NPs precede the whole cluster and the yield is the attested
 "Jan Piet (Marie) zag (helpen) zwemmen". -/
 
-def zag_sub : TargetRestricted.Derivation Atom := .lex PercVSub "zag"
-def helpen_sub : TargetRestricted.Derivation Atom := .lex InfHeadSub "helpen"
-def zwemmen_bare : TargetRestricted.Derivation Atom := .lex VP "zwemmen"
+def zag_sub : TargetRestricted.Derivation Atom := .lex "zag" PercVSub
+def helpen_sub : TargetRestricted.Derivation Atom := .lex "helpen" InfHeadSub
+def zwemmen_bare : TargetRestricted.Derivation Atom := .lex "zwemmen" VP
 
 /-- "(dat) Jan Piet zag zwemmen": `zag` applies to bare `zwemmen` and the
 NPs attach leftward — the 2-verb cluster needs no composition. -/

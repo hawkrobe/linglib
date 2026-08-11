@@ -24,7 +24,6 @@ The target-restricted (VW-CCG) schema derivations live in `CCG.TargetRestricted`
 * `Cat.generalizedForwardComp`, `Cat.generalizedBackwardComp`: generalized
   composition of degree `n`, the schema every binary rule instantiates.
 * `Cat.forwardTypeRaise`, `Cat.backwardTypeRaise`: type-raising.
-* `LexEntry`: a lexical entry, pairing a surface form with its category.
 * `Derivation`: intrinsically typed derivations, indexed by the category they derive;
   `Derivation.yield` reads off the surface string a derivation spells out and
   `Derivation.opCount` the number of rule applications.
@@ -41,7 +40,7 @@ the Steedman left-to-right reading.
 
 namespace CCG
 
-section Categories
+/-! ### Categories -/
 
 /-- The core atomic categories of the English fragment (`S`, `NP`, `N`, `PP`, as in
 [steedman-2000]), stated without features. -/
@@ -78,13 +77,11 @@ def IV : Cat Atom := S \ NP
 def TV : Cat Atom := (S \ NP) / NP
 def Det : Cat Atom := NP / N
 
-end Categories
-
 variable {α : Type*} [DecidableEq α]
 
 namespace Cat
 
-section CombinatoryRules
+/-! ### The generalized composition schema -/
 
 /-- `generalizedForwardComp n f g` is forward composition of degree `n` (`>Bⁿ`): when
 `f = X/Y` and `g = Y|Z₁…|Zₙ`, the result is `X|Z₁…|Zₙ` with each argument keeping its
@@ -97,16 +94,14 @@ def generalizedForwardComp : Nat → Cat α → Cat α → Option (Cat α)
 
 /-- `generalizedBackwardComp n g f` is backward composition of degree `n` (`<Bⁿ`), the
 mirror of `generalizedForwardComp`: when `g = Y|Z₁…|Zₙ` and `f = X\Y`, the result is
-`X|Z₁…|Zₙ`. -/
+`X|Z₁…|Zₙ`, and `none` otherwise. -/
 def generalizedBackwardComp : Nat → Cat α → Cat α → Option (Cat α)
   | 0, z, .lslash x y => if y = z then some x else none
   | n + 1, .rslash g z, f => (generalizedBackwardComp n g f).map (Cat.rslash · z)
   | n + 1, .lslash g z, f => (generalizedBackwardComp n g f).map (Cat.lslash · z)
   | _, _, _ => none
 
-end CombinatoryRules
-
-section TypeRaising
+/-! ### Type-raising -/
 
 /-- `forwardTypeRaise x t` is `t / (t \ x)` — forward type-raising `>T` of `x` to
 target `t`. -/
@@ -118,25 +113,17 @@ target `t`. -/
 def backwardTypeRaise (x : Cat α) (t : Cat α) : Cat α :=
   t \ (t / x)
 
-end TypeRaising
-
 end Cat
 
-/-- A CCG lexical entry. -/
-structure LexEntry (α : Type*) where
-  form : String
-  cat : Cat α
-  deriving Repr
-
-section Derivations
+/-! ### Derivations -/
 
 /-- A CCG derivation of category `c`, intrinsically typed: each constructor is one of
 the toy grammar's rule instances, so a value of `Derivation α c` *is* a well-formed
 derivation and "derives `c`" is typechecking. Backward crossed composition and the
 substitution rules of [steedman-2000] are not part of this inventory. -/
 inductive Derivation (α : Type*) : Cat α → Type _ where
-  /-- A lexical leaf, at its entry's category. -/
-  | lex (e : LexEntry α) : Derivation α e.cat
+  /-- A lexical leaf: a surface form, at category `c`. -/
+  | lex (form : String) (c : Cat α) : Derivation α c
   /-- Forward application `>`: X/Y Y ⇒ X. -/
   | fapp {x y : Cat α} : Derivation α (x / y) → Derivation α y → Derivation α x
   /-- Backward application `<`: Y X\Y ⇒ X. -/
@@ -166,7 +153,7 @@ Combinatory rules concatenate their daughters and type-raising leaves the string
 untouched, so the yield is independent of the derivation's combinatory structure —
 the property that lets a CCG derivation witness a string language. -/
 def Derivation.yield {c : Cat α} : Derivation α c → List String
-  | .lex e => [e.form]
+  | .lex f _ => [f]
   | .fapp d1 d2 => d1.yield ++ d2.yield
   | .bapp d1 d2 => d1.yield ++ d2.yield
   | .fcomp d1 d2 => d1.yield ++ d2.yield
@@ -178,7 +165,7 @@ def Derivation.yield {c : Cat α} : Derivation α c → List String
 
 /-- The number of combinatory rule applications in a derivation. -/
 def Derivation.opCount {c : Cat α} : Derivation α c → Nat
-  | .lex _ => 0
+  | .lex _ _ => 0
   | .fapp d1 d2 => 1 + d1.opCount + d2.opCount
   | .bapp d1 d2 => 1 + d1.opCount + d2.opCount
   | .fcomp d1 d2 => 1 + d1.opCount + d2.opCount
@@ -187,7 +174,5 @@ def Derivation.opCount {c : Cat α} : Derivation α c → Nat
   | .ftr d _ => 1 + d.opCount
   | .btr d _ => 1 + d.opCount
   | .coord _ d1 d2 => 1 + d1.opCount + d2.opCount
-
-end Derivations
 
 end CCG

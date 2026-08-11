@@ -44,20 +44,20 @@ object NP first, then the resulting `S\NP` looks left for the subject,
 enforcing SVO. -/
 
 def mary_eats_pizza : Derivation Atom S :=
-  .bapp (.lex ⟨"Mary", NP⟩) (.fapp (.lex ⟨"eats", TV⟩) (.lex ⟨"pizza", NP⟩))
+  .bapp (.lex "Mary" NP) (.fapp (.lex "eats" TV) (.lex "pizza" NP))
 
 def he_sees_her : Derivation Atom S :=
-  .bapp (.lex ⟨"he", NP⟩) (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"her", NP⟩))
+  .bapp (.lex "he" NP) (.fapp (.lex "sees" TV) (.lex "her" NP))
 
 def the_cat_eats_pizza : Derivation Atom S :=
-  .bapp (.fapp (.lex ⟨"the", Det⟩) (.lex ⟨"cat", N⟩))
-        (.fapp (.lex ⟨"eats", TV⟩) (.lex ⟨"pizza", NP⟩))
+  .bapp (.fapp (.lex "the" Det) (.lex "cat" N))
+        (.fapp (.lex "eats" TV) (.lex "pizza" NP))
 
 def john_sleeps : Derivation Atom S :=
-  .bapp (.lex ⟨"John", NP⟩) (.lex ⟨"sleeps", IV⟩)
+  .bapp (.lex "John" NP) (.lex "sleeps" IV)
 
 def john_sees_mary : Derivation Atom S :=
-  .bapp (.lex ⟨"John", NP⟩) (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩))
+  .bapp (.lex "John" NP) (.fapp (.lex "sees" TV) (.lex "Mary" NP))
 
 /-! ### Non-constituent coordination -/
 
@@ -66,21 +66,21 @@ section Coordination
 open Semantics.Montague
 
 /-- Type-raised subject "John": `S/(S\NP)`. -/
-def john_tr : Derivation Atom (S / (S \ NP)) := .ftr (.lex ⟨"John", NP⟩) S
+def john_tr : Derivation Atom (S / (S \ NP)) := .ftr (.lex "John" NP) S
 
 /-- "John likes": the type-raised subject composed with the transitive verb — a
 constituent of category `S/NP`. -/
-def john_likes : Derivation Atom (S / NP) := .fcomp john_tr (.lex ⟨"likes", TV⟩)
+def john_likes : Derivation Atom (S / NP) := .fcomp john_tr (.lex "likes" TV)
 
-def mary_tr : Derivation Atom (S / (S \ NP)) := .ftr (.lex ⟨"Mary", NP⟩) S
-def mary_hates : Derivation Atom (S / NP) := .fcomp mary_tr (.lex ⟨"hates", TV⟩)
+def mary_tr : Derivation Atom (S / (S \ NP)) := .ftr (.lex "Mary" NP) S
+def mary_hates : Derivation Atom (S / NP) := .fcomp mary_tr (.lex "hates" TV)
 
 /-- "John likes and Mary hates": coordination of two `S/NP` constituents. -/
 def john_likes_and_mary_hates : Derivation Atom (S / NP) :=
   .coord English.Coordination.and_ john_likes mary_hates
 
 def john_likes_and_mary_hates_beans : Derivation Atom S :=
-  .fapp john_likes_and_mary_hates (.lex ⟨"beans", NP⟩)
+  .fapp john_likes_and_mary_hates (.lex "beans" NP)
 
 /-- The derivation spells out the full surface string, coordinator included. -/
 theorem john_likes_and_mary_hates_beans_yield :
@@ -89,8 +89,8 @@ theorem john_likes_and_mary_hates_beans_yield :
 
 def john_sleeps_and_mary_sleeps : Derivation Atom S :=
   .coord English.Coordination.and_
-    (.bapp (.lex ⟨"John", NP⟩) (.lex ⟨"sleeps", IV⟩))
-    (.bapp (.lex ⟨"Mary", NP⟩) (.lex ⟨"sleeps", IV⟩))
+    (.bapp (.lex "John" NP) (.lex "sleeps" IV))
+    (.bapp (.lex "Mary" NP) (.lex "sleeps" IV))
 
 example : john_sleeps.opCount = 1 := rfl
 example : john_sleeps_and_mary_sleeps.opCount = 3 := rfl
@@ -134,7 +134,7 @@ example : (john_tr.interp toySemLexicon).isSome = true := rfl
 `john_tr : S/(S\NP)` uses forward application, and the derivation
 produces the same truth value as the canonical one. -/
 def john_sees_mary_via_tr : Derivation Atom S :=
-  .fapp john_tr (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩))
+  .fapp john_tr (.fapp (.lex "sees" TV) (.lex "Mary" NP))
 
 theorem interp_john_sees_mary_via_tr :
     john_sees_mary_via_tr.interp toySemLexicon = some True := rfl
@@ -169,8 +169,8 @@ theorem interp_john_likes_and_mary_hates_beans :
 /-- The spelled-out paraphrase "John likes beans and Mary hates beans". -/
 def john_likes_beans_and_mary_hates_beans : Derivation Atom S :=
   .coord English.Coordination.and_
-    (.bapp (.lex ⟨"John", NP⟩) (.fapp (.lex ⟨"likes", TV⟩) (.lex ⟨"beans", NP⟩)))
-    (.bapp (.lex ⟨"Mary", NP⟩) (.fapp (.lex ⟨"hates", TV⟩) (.lex ⟨"beans", NP⟩)))
+    (.bapp (.lex "John" NP) (.fapp (.lex "likes" TV) (.lex "beans" NP)))
+    (.bapp (.lex "Mary" NP) (.fapp (.lex "hates" TV) (.lex "beans" NP)))
 
 /-- The non-constituent coordination and its spelled-out paraphrase receive
 the same truth conditions — the book's claim that the composed derivation
@@ -196,8 +196,8 @@ private def pqLex : SemLexicon Unit Unit := fun w c =>
   | "q", .atom .S => some False
   | _, _ => none
 
-private def dp : Derivation Atom S := .lex ⟨"p", S⟩
-private def dq : Derivation Atom S := .lex ⟨"q", S⟩
+private def dp : Derivation Atom S := .lex "p" S
+private def dq : Derivation Atom S := .lex "q" S
 
 /-- The coordinator's `role` flips the truth conditions: English `and_` yields `p ∧ q`,
     `or_` yields `p ∨ q`, and these differ at `p = ⊤`, `q = ⊥`. Flipping a fragment
@@ -494,15 +494,15 @@ inductive VerbOrder where
 /-- Verb-raising order, Dutch (99a): the cluster *probeert te zingen*
 forms by crossed composition before taking the object to its left. -/
 def verbRaisingDeriv : Derivation Atom IV :=
-  .bapp (.lex ⟨"veel liederen", NP⟩)
-    (.fcompx (.lex ⟨"probeert", IV / IV⟩) (.lex ⟨"te zingen", IV \ NP⟩))
+  .bapp (.lex "veel liederen" NP)
+    (.fcompx (.lex "probeert" (IV / IV)) (.lex "te zingen" (IV \ NP)))
 
 /-- Verb-projection-raising order, Dutch (99b): the matrix verb applies to
 an already-saturated embedded VP, so the quantified object never combines
 with a function containing the tensed verb. -/
 def verbProjectionRaisingDeriv : Derivation Atom IV :=
-  .fapp (.lex ⟨"probeert", IV / IV⟩)
-    (.bapp (.lex ⟨"veel liederen", NP⟩) (.lex ⟨"te zingen", IV \ NP⟩))
+  .fapp (.lex "probeert" (IV / IV))
+    (.bapp (.lex "veel liederen" NP) (.lex "te zingen" (IV \ NP)))
 
 /-- The CCG derivation shape each verb order forces. -/
 def schematicDeriv : VerbOrder → Derivation Atom IV
@@ -570,23 +570,23 @@ open Semantics.Montague
 
 /-- "Mary sleeps" - backward application -/
 def ccg_mary_sleeps : Derivation Atom S :=
-  .bapp (.lex ⟨"Mary", NP⟩) (.lex ⟨"sleeps", IV⟩)
+  .bapp (.lex "Mary" NP) (.lex "sleeps" IV)
 
 /-- "John laughs" - backward application -/
 def ccg_john_laughs : Derivation Atom S :=
-  .bapp (.lex ⟨"John", NP⟩) (.lex ⟨"laughs", IV⟩)
+  .bapp (.lex "John" NP) (.lex "laughs" IV)
 
 /-- "Mary laughs" - backward application -/
 def ccg_mary_laughs : Derivation Atom S :=
-  .bapp (.lex ⟨"Mary", NP⟩) (.lex ⟨"laughs", IV⟩)
+  .bapp (.lex "Mary" NP) (.lex "laughs" IV)
 
 /-- "Mary sees John" - forward then backward application -/
 def ccg_mary_sees_john : Derivation Atom S :=
-  .bapp (.lex ⟨"Mary", NP⟩) (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"John", NP⟩))
+  .bapp (.lex "Mary" NP) (.fapp (.lex "sees" TV) (.lex "John" NP))
 
 /-- "John eats pizza" - forward then backward application -/
 def ccg_john_eats_pizza : Derivation Atom S :=
-  .bapp (.lex ⟨"John", NP⟩) (.fapp (.lex ⟨"eats", TV⟩) (.lex ⟨"pizza", NP⟩))
+  .bapp (.lex "John" NP) (.fapp (.lex "eats" TV) (.lex "pizza" NP))
 
 -- Extended Semantic Lexicon (matching the toy model)
 
