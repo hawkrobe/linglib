@@ -127,15 +127,15 @@ The INFORMATION feature projects through the category:
 - (Sθ\NPθ)/NPθ: All arguments and result share the same info value
 -/
 structure ProsodicCat where
-  cat : Cat
+  cat : Cat Atom
   info : InfoFeature
   deriving Repr, DecidableEq
 
 /-- Notation helpers -/
-def ProsodicCat.theme (c : Cat) : ProsodicCat := ⟨c, .θ⟩
-def ProsodicCat.rheme (c : Cat) : ProsodicCat := ⟨c, .ρ⟩
-def ProsodicCat.plain (c : Cat) : ProsodicCat := ⟨c, .unmarked⟩
-def ProsodicCat.phrasal (c : Cat) : ProsodicCat := ⟨c, .φ⟩
+def ProsodicCat.theme (c : Cat Atom) : ProsodicCat := ⟨c, .θ⟩
+def ProsodicCat.rheme (c : Cat Atom) : ProsodicCat := ⟨c, .ρ⟩
+def ProsodicCat.plain (c : Cat Atom) : ProsodicCat := ⟨c, .unmarked⟩
+def ProsodicCat.phrasal (c : Cat Atom) : ProsodicCat := ⟨c, .φ⟩
 
 -- Prosodic Lexical Entries
 
@@ -150,7 +150,7 @@ The pitch accent determines the INFORMATION feature:
 -/
 structure ProsodicLexEntry where
   form : String
-  cat : Cat
+  cat : Cat Atom
   accent : PitchAccent
   deriving Repr
 
@@ -266,7 +266,7 @@ inductive ProsodicDeriv where
   | bapp : ProsodicDeriv → ProsodicDeriv → ProsodicDeriv
   | fcomp : ProsodicDeriv → ProsodicDeriv → ProsodicDeriv
   | bcomp : ProsodicDeriv → ProsodicDeriv → ProsodicDeriv
-  | ftr : ProsodicDeriv → Cat → ProsodicDeriv  -- forward type-raise
+  | ftr : ProsodicDeriv → Cat Atom → ProsodicDeriv  -- forward type-raise
   | boundary : ProsodicDeriv → TerminalContour → ProsodicDeriv
   deriving Repr
 

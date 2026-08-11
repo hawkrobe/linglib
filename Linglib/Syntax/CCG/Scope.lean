@@ -22,7 +22,7 @@ open ScopeTheory
 structure ScopeTaker where
   id : String
   surfacePosition : Nat
-  cat : Cat
+  cat : Cat Atom
   deriving Repr
 
 /-- Derivation type for scope analysis. -/
@@ -33,7 +33,7 @@ inductive DerivationType where
   deriving DecidableEq, Repr
 
 /-- Analyze derivation to determine its type. -/
-def analyzeDerivation : DerivStep → DerivationType
+def analyzeDerivation {α : Type*} : DerivStep α → DerivationType
   | .lex _ => .directApp
   | .fapp d1 d2 =>
     match analyzeDerivation d1, analyzeDerivation d2 with
@@ -64,7 +64,7 @@ def derivationTypeToAvailability : DerivationType → BinaryScopeAvailability
 
 /-- A CCG derivation annotated with scope-taker information. -/
 structure ScopedDerivation where
-  deriv : DerivStep
+  deriv : DerivStep Atom
   scopeTakers : List ScopeTaker
   hasTwoOrMore : scopeTakers.length ≥ 2 := by decide
   deriving Repr
@@ -78,14 +78,14 @@ def ScopedDerivation.toAvailableScopes (sd : ScopedDerivation) : AvailableScopes
 
 -- Examples
 
-def everyHorse_surface : DerivStep :=
+def everyHorse_surface : DerivStep Atom :=
   .bapp (.lex ⟨"every horse", NP⟩) (.lex ⟨"didn't jump", IV⟩)
 
-def everyHorse_inverse : DerivStep :=
+def everyHorse_inverse : DerivStep Atom :=
   let everyHorse_tr := DerivStep.ftr (.lex ⟨"every horse", NP⟩) S
   .fcomp everyHorse_tr (.lex ⟨"didn't jump", IV⟩)
 
-#guard analyzeDerivation everyHorse_surface == .directApp
-#guard analyzeDerivation everyHorse_inverse == .composed
+example : analyzeDerivation everyHorse_surface = .directApp := rfl
+example : analyzeDerivation everyHorse_inverse = .composed := rfl
 
 end CCG.Scope

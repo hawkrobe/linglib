@@ -37,7 +37,7 @@ This defines equivalence for "spurious ambiguity" analysis.
 -/
 structure DerivEquiv (E W : Type) where
   /-- First derivation's category -/
-  cat : Cat
+  cat : Cat Atom
   /-- First derivation's meaning -/
   meaning₁ : Denot E W (catToTy cat)
   /-- Second derivation's meaning -/
@@ -48,20 +48,20 @@ structure DerivEquiv (E W : Type) where
 /--
 Semantic equivalence for category-meaning pairs.
 -/
-def semanticallyEquivalent {E W : Type} (cm₁ cm₂ : Σ c : Cat, Denot E W (catToTy c)) : Prop :=
+def semanticallyEquivalent {E W : Type} (cm₁ cm₂ : Σ c : Cat Atom, Denot E W (catToTy c)) : Prop :=
   ∃ (h : cm₁.1 = cm₂.1), h ▸ cm₁.2 = cm₂.2
 
 /--
 Semantic equivalence is reflexive.
 -/
-theorem sem_equiv_refl {E W : Type} (cm : Σ c : Cat, Denot E W (catToTy c)) :
+theorem sem_equiv_refl {E W : Type} (cm : Σ c : Cat Atom, Denot E W (catToTy c)) :
     semanticallyEquivalent cm cm := by
   use rfl
 
 /--
 Semantic equivalence is symmetric.
 -/
-theorem sem_equiv_symm {E W : Type} (cm₁ cm₂ : Σ c : Cat, Denot E W (catToTy c)) :
+theorem sem_equiv_symm {E W : Type} (cm₁ cm₂ : Σ c : Cat Atom, Denot E W (catToTy c)) :
     semanticallyEquivalent cm₁ cm₂ → semanticallyEquivalent cm₂ cm₁ := λ ⟨h, eq⟩ =>
   match cm₁, cm₂, h, eq with
   | ⟨_c, _m₁⟩, ⟨_, _m₂⟩, rfl, eq => ⟨rfl, eq.symm⟩
@@ -69,7 +69,7 @@ theorem sem_equiv_symm {E W : Type} (cm₁ cm₂ : Σ c : Cat, Denot E W (catToT
 /--
 Semantic equivalence is transitive.
 -/
-theorem sem_equiv_trans {E W : Type} (cm₁ cm₂ cm₃ : Σ c : Cat, Denot E W (catToTy c)) :
+theorem sem_equiv_trans {E W : Type} (cm₁ cm₂ cm₃ : Σ c : Cat Atom, Denot E W (catToTy c)) :
     semanticallyEquivalent cm₁ cm₂ → semanticallyEquivalent cm₂ cm₃ →
     semanticallyEquivalent cm₁ cm₃ := λ ⟨h₁, eq₁⟩ ⟨h₂, eq₂⟩ =>
   match cm₁, cm₂, cm₃, h₁, eq₁, h₂, eq₂ with
@@ -164,7 +164,7 @@ A chart entry: category + meaning for a span.
 structure ChartEntry (E W : Type) where
   leftPos : Nat
   rightPos : Nat
-  cat : Cat
+  cat : Cat Atom
   meaning : Denot E W (catToTy cat)
 
 /--
@@ -208,7 +208,7 @@ it provides more paths to the same meanings.
 An equivalence class of derivations: all have the same meaning.
 -/
 structure EquivalenceClass (E W : Type) where
-  cat : Cat
+  cat : Cat Atom
   meaning : Denot E W (catToTy cat)
   -- In a full implementation, would track the set of derivations
 

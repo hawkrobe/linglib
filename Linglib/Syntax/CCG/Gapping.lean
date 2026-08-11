@@ -43,12 +43,12 @@ This is built by:
 
 The result needs a VSO transitive verb ((S/NP)/NP) to its LEFT.
 -/
-def GappedTV : Cat := S \ ((S / NP) / NP)
+def GappedTV : Cat Atom := S \ ((S / NP) / NP)
 
 /--
 Category for a gapped subject alone (stripping: "and Warren (too)").
 -/
-def GappedSubj : Cat := S \ (S / NP)
+def GappedSubj : Cat Atom := S \ (S / NP)
 
 -- Type-Raised Argument Categories
 
@@ -56,20 +56,20 @@ def GappedSubj : Cat := S \ (S / NP)
 Backward type-raised NP (for SVO/VSO gapping).
 T\(T/NP) - combines with verbs to the LEFT.
 -/
-def BackwardRaisedNP : Cat := S \ (S / NP)
+def BackwardRaisedNP : Cat Atom := S \ (S / NP)
 
 /--
 Forward type-raised NP (for SOV argument clusters).
 T/(T\NP) - combines with verbs to the RIGHT.
 -/
-def ForwardRaisedNP : Cat := S / (S \ NP)
+def ForwardRaisedNP : Cat Atom := S / (S \ NP)
 
 /--
 The potential backward-gapped conjunct would need category S/((S\NP)/NP).
 But this requires forward composition of forward type-raised NPs.
 English doesn't license T/(T\NP) categories.
 -/
-def BackwardGappedTV : Cat := S / ((S \ NP) / NP)
+def BackwardGappedTV : Cat Atom := S / ((S \ NP) / NP)
 
 -- Gapped Conjunct Directionality
 
@@ -118,7 +118,7 @@ Stripping is gapping with a single remnant.
 
 This is just a type-raised subject coordinating with a decomposed sentence.
 -/
-def strippingCategory : Cat := backwardTypeRaise NP S
+def strippingCategory : Cat Atom := backwardTypeRaise NP S
 
 theorem stripping_has_correct_category :
     strippingCategory = GappedSubj := rfl
