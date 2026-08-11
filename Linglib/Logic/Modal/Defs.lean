@@ -33,27 +33,23 @@ variable {W : Type*}
 instance : Std.Refl (⊤ : W → W → Prop) := ⟨fun _ => trivial⟩
 instance : IsEuclidean (⊤ : W → W → Prop) := ⟨fun _ _ _ _ _ => trivial⟩
 
--- The derived instances get lowered priority: the Refl+Euclidean and
--- Symm+Trans derivations are mutually productive, and direct instances
--- should always be preferred.
-
 /-- Reflexive relations are serial. -/
-instance (priority := 100) {R : W → W → Prop} [Std.Refl R] : IsSerial R where
+instance {R : W → W → Prop} [Std.Refl R] : IsSerial R where
   serial w := ⟨w, Std.Refl.refl w⟩
 
 /-- Reflexive + Euclidean implies symmetric. -/
-instance (priority := 100) {R : W → W → Prop} [Std.Refl R] [IsEuclidean R] :
+instance {R : W → W → Prop} [Std.Refl R] [IsEuclidean R] :
     Std.Symm R where
   symm w v hwv := IsEuclidean.eucl w v w hwv (Std.Refl.refl w)
 
 /-- Reflexive + Euclidean implies transitive. -/
-instance (priority := 100) {R : W → W → Prop} [Std.Refl R] [IsEuclidean R] :
+instance {R : W → W → Prop} [Std.Refl R] [IsEuclidean R] :
     IsTrans W R where
   trans w v u hwv hvu :=
     IsEuclidean.eucl v w u (IsEuclidean.eucl w v w hwv (Std.Refl.refl w)) hvu
 
 /-- Symmetric + transitive implies euclidean. -/
-instance (priority := 100) {R : W → W → Prop} [Std.Symm R] [IsTrans W R] :
+instance {R : W → W → Prop} [Std.Symm R] [IsTrans W R] :
     IsEuclidean R where
   eucl w v u hwv hwu := IsTrans.trans v w u (Std.Symm.symm w v hwv) hwu
 
