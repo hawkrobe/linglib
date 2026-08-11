@@ -2772,7 +2772,7 @@ import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
 import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Syntax.CCG.Basic
-import Linglib.Syntax.CCG.Classical
+import Linglib.Syntax.CCG.TargetRestricted
 import Linglib.Syntax.CCG.Combinators
 import Linglib.Syntax.CCG.CrossSerial
 import Linglib.Syntax.CCG.Equivalence

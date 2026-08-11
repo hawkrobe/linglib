@@ -33,7 +33,7 @@ open Combinator
 /-! ### Type correspondence -/
 
 /-- Map CCG categories to semantic types -/
-def catToTy : Cat → Ty
+def catToTy : Cat Atom → Ty
   | .atom .S => .t
   | .atom .NP => .e
   | .atom .N => .e ⇒ .t    -- common nouns are properties
@@ -44,7 +44,7 @@ def catToTy : Cat → Ty
 /-- A CCG lexical entry with semantics -/
 structure SemLexEntry (E W : Type) where
   form : String
-  cat : Cat
+  cat : Cat Atom
   sem : Denot E W (catToTy cat)
 
 /-! ### Type preservation
@@ -54,12 +54,12 @@ combination succeeds, the semantic combination is well-typed. -/
 
 /-- Forward application preserves semantic typing:
     if X/Y combines with Y to give X, then (σ→τ) applied to σ gives τ. -/
-theorem forward_app_type_preservation (x y : Cat) :
+theorem forward_app_type_preservation (x y : Cat Atom) :
     catToTy (x.rslash y) = (catToTy y ⇒ catToTy x) := rfl
 
 /-- Backward application preserves semantic typing:
     if Y combines with X\Y to give X, then (σ→τ) applied to σ gives τ. -/
-theorem backward_app_type_preservation (x y : Cat) :
+theorem backward_app_type_preservation (x y : Cat Atom) :
     catToTy (x.lslash y) = (catToTy y ⇒ catToTy x) := rfl
 
 /-- Type correspondence for transitive verbs -/
@@ -74,11 +74,11 @@ theorem iv_type_is_property :
 
 /-- A semantic interpretation: category paired with its meaning -/
 structure Interp (E W : Type) where
-  cat : Cat
+  cat : Cat Atom
   meaning : Denot E W (catToTy cat)
 
 /-- Semantic lexicon: maps words to interpretations -/
-def SemLexicon (E W : Type) := String → Cat → Option (Interp E W)
+def SemLexicon (E W : Type) := String → Cat Atom → Option (Interp E W)
 
 /--
 Interpret a CCG derivation, computing its meaning from the lexicon.
@@ -89,7 +89,7 @@ function application, composition is the `B` combinator, type-raising is the
 conjoinable types). Returns `none` if the derivation is ill-formed or uses
 unknown words.
 -/
-def DerivStep.interp {E W : Type} (d : DerivStep) (lex : SemLexicon E W)
+def DerivStep.interp {E W : Type} (d : DerivStep Atom) (lex : SemLexicon E W)
     : Option (Interp E W) :=
   match d with
   | .lex entry => lex entry.form entry.cat
@@ -176,18 +176,19 @@ def DerivStep.interp {E W : Type} (d : DerivStep) (lex : SemLexicon E W)
       let ⟨x, m⟩ ← d.interp lex
       some ⟨backwardTypeRaise x t, T m⟩
 
-  | .coord role d1 d2 => do
+  | .coord c d1 d2 => do
       -- Coordination: X c X → X, via the Coordinator API — the meaning is `Coordinator.op`
       -- of the coordinator's own `role` (runtime form `engineOp`; = generalized conjunction
       -- [partee-rooth-1983] at `.j`), restricted to conjoinable types. The `role` is read off
-      -- the derivation, so *which* coordinator is used is truth-conditionally load-bearing.
+      -- the coordinator the derivation carries, so *which* coordinator is used is
+      -- truth-conditionally load-bearing.
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
       if h : c1 = c2 then
         let ty := catToTy c1
         if ty.isConjoinable then
           let m2' : Denot E W (catToTy c1) := h ▸ m2
-          some ⟨c1, Coordinator.engineOp role ty E W m1 m2'⟩
+          some ⟨c1, Coordinator.engineOp c.role ty E W m1 m2'⟩
         else none
       else none
 

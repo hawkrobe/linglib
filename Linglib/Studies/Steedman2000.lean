@@ -43,15 +43,21 @@ Slash direction encodes word order: `TV = (S\NP)/NP` looks right for the
 object NP first, then the resulting `S\NP` looks left for the subject,
 enforcing SVO. -/
 
-def mary_eats_pizza : DerivStep :=
+def mary_eats_pizza : DerivStep Atom :=
   .bapp (.lex ⟨"Mary", NP⟩) (.fapp (.lex ⟨"eats", TV⟩) (.lex ⟨"pizza", NP⟩))
 
-def he_sees_her : DerivStep :=
+def he_sees_her : DerivStep Atom :=
   .bapp (.lex ⟨"he", NP⟩) (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"her", NP⟩))
 
-def the_cat_eats_pizza : DerivStep :=
+def the_cat_eats_pizza : DerivStep Atom :=
   .bapp (.fapp (.lex ⟨"the", Det⟩) (.lex ⟨"cat", N⟩))
         (.fapp (.lex ⟨"eats", TV⟩) (.lex ⟨"pizza", NP⟩))
+
+def john_sleeps : DerivStep Atom :=
+  .bapp (.lex ⟨"John", NP⟩) (.lex ⟨"sleeps", IV⟩)
+
+def john_sees_mary : DerivStep Atom :=
+  .bapp (.lex ⟨"John", NP⟩) (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩))
 
 theorem mary_eats_pizza_cat : mary_eats_pizza.cat = some S := rfl
 theorem he_sees_her_cat : he_sees_her.cat = some S := rfl
@@ -63,20 +69,42 @@ section Coordination
 
 open Semantics.Montague
 
+/-- Type-raised subject "John": `S/(S\NP)`. -/
+def john_tr : DerivStep Atom := .ftr (.lex ⟨"John", NP⟩) S
+
+/-- "John likes": the type-raised subject composed with the transitive verb — a
+constituent of category `S/NP`. -/
+def john_likes : DerivStep Atom := .fcomp john_tr (.lex ⟨"likes", TV⟩)
+
+def mary_tr : DerivStep Atom := .ftr (.lex ⟨"Mary", NP⟩) S
+def mary_hates : DerivStep Atom := .fcomp mary_tr (.lex ⟨"hates", TV⟩)
+
+/-- "John likes and Mary hates": coordination of two `S/NP` constituents. -/
+def john_likes_and_mary_hates : DerivStep Atom :=
+  .coord English.Coordination.and_ john_likes mary_hates
+
+def john_likes_and_mary_hates_beans : DerivStep Atom :=
+  .fapp john_likes_and_mary_hates (.lex ⟨"beans", NP⟩)
+
 /-- CCG derives "John likes and Mary hates beans" (modeled on the book's
 "Anna married, and I detest, Manny") with category S: "John likes" is a
 constituent `S/NP` via type-raising + composition. -/
 theorem john_likes_and_mary_hates_beans_cat :
     john_likes_and_mary_hates_beans.cat = some S := rfl
 
-def john_sleeps_and_mary_sleeps : DerivStep :=
-  .coord .j
+/-- The derivation spells out the full surface string, coordinator included. -/
+theorem john_likes_and_mary_hates_beans_yield :
+    john_likes_and_mary_hates_beans.yield
+      = ["John", "likes", "and", "Mary", "hates", "beans"] := rfl
+
+def john_sleeps_and_mary_sleeps : DerivStep Atom :=
+  .coord English.Coordination.and_
     (.bapp (.lex ⟨"John", NP⟩) (.lex ⟨"sleeps", IV⟩))
     (.bapp (.lex ⟨"Mary", NP⟩) (.lex ⟨"sleeps", IV⟩))
 
-#guard john_sleeps.opCount == 1
-#guard john_sleeps_and_mary_sleeps.opCount == 3
-#guard john_likes_and_mary_hates_beans.opCount == 8
+example : john_sleeps.opCount = 1 := rfl
+example : john_sleeps_and_mary_sleeps.opCount = 3 := rfl
+example : john_likes_and_mary_hates_beans.opCount = 6 := rfl
 
 /-- Non-constituent coordination requires more combinatory operations than
 standard coordination. Reading operation count as processing difficulty is
@@ -112,22 +140,22 @@ theorem getMeaning_john_sleeps :
     getMeaning (john_sleeps.interp toySemLexicon) = some True := rfl
 
 theorem getMeaning_john_sees_mary :
-    getMeaning (CCG.john_sees_mary.interp toySemLexicon) = some True := rfl
+    getMeaning (john_sees_mary.interp toySemLexicon) = some True := rfl
 
-#guard (CCG.john_tr.interp toySemLexicon).isSome
+example : (john_tr.interp toySemLexicon).isSome = true := rfl
 
 /-- "John sees Mary" with a type-raised subject: the raised subject
-`CCG.john_tr : S/(S\NP)` uses forward application, and the derivation
+`john_tr : S/(S\NP)` uses forward application, and the derivation
 produces the same truth value as the canonical one. -/
-def john_sees_mary_via_tr : DerivStep :=
-  .fapp CCG.john_tr (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩))
+def john_sees_mary_via_tr : DerivStep Atom :=
+  .fapp john_tr (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩))
 
 theorem getMeaning_john_sees_mary_via_tr :
     getMeaning (john_sees_mary_via_tr.interp toySemLexicon) = some True := rfl
 
-#guard (CCG.john_likes.interp toySemLexicon).isSome
-#guard (john_likes_and_mary_hates.interp toySemLexicon).isSome
-#guard (john_likes_and_mary_hates_beans.interp toySemLexicon).isSome
+example : (john_likes.interp toySemLexicon).isSome = true := rfl
+example : (john_likes_and_mary_hates.interp toySemLexicon).isSome = true := rfl
+example : (john_likes_and_mary_hates_beans.interp toySemLexicon).isSome = true := rfl
 
 /-- The predicate "John likes and Mary hates" (category `S/NP`) evaluated
 at an entity. -/
@@ -154,8 +182,8 @@ theorem getMeaning_john_likes_and_mary_hates_beans :
             ToyLexicon.sees_sem ToyEntity.pizza ToyEntity.mary) := rfl
 
 /-- The spelled-out paraphrase "John likes beans and Mary hates beans". -/
-def john_likes_beans_and_mary_hates_beans : DerivStep :=
-  .coord .j
+def john_likes_beans_and_mary_hates_beans : DerivStep Atom :=
+  .coord English.Coordination.and_
     (.bapp (.lex ⟨"John", NP⟩) (.fapp (.lex ⟨"likes", TV⟩) (.lex ⟨"beans", NP⟩)))
     (.bapp (.lex ⟨"Mary", NP⟩) (.fapp (.lex ⟨"hates", TV⟩) (.lex ⟨"beans", NP⟩)))
 
@@ -183,18 +211,18 @@ private def pqLex : SemLexicon Unit Unit := fun w _ =>
   | "q" => some ⟨.atom .S, False⟩
   | _ => none
 
-private def dp : DerivStep := .lex ⟨"p", .atom .S⟩
-private def dq : DerivStep := .lex ⟨"q", .atom .S⟩
+private def dp : DerivStep Atom := .lex ⟨"p", .atom .S⟩
+private def dq : DerivStep Atom := .lex ⟨"q", .atom .S⟩
 
 /-- The coordinator's `role` flips the truth conditions: English `and_` yields `p ∧ q`,
     `or_` yields `p ∨ q`, and these differ at `p = ⊤`, `q = ⊥`. Flipping a fragment
     coordinator's `role` collapses the inequality, so the `role` marking is not decorative. -/
 theorem coord_role_load_bearing :
-    getMeaning ((DerivStep.coord English.Coordination.and_.role dp dq).interp pqLex) ≠
-    getMeaning ((DerivStep.coord English.Coordination.or_.role dp dq).interp pqLex) := by
-  have hand : getMeaning ((DerivStep.coord English.Coordination.and_.role dp dq).interp pqLex)
+    getMeaning ((DerivStep.coord English.Coordination.and_ dp dq).interp pqLex) ≠
+    getMeaning ((DerivStep.coord English.Coordination.or_ dp dq).interp pqLex) := by
+  have hand : getMeaning ((DerivStep.coord English.Coordination.and_ dp dq).interp pqLex)
       = some (True ∧ False) := rfl
-  have hor : getMeaning ((DerivStep.coord English.Coordination.or_.role dp dq).interp pqLex)
+  have hor : getMeaning ((DerivStep.coord English.Coordination.or_ dp dq).interp pqLex)
       = some (True ∨ False) := rfl
   rw [hand, hor, ne_eq, Option.some.injEq, eq_iff_iff]
   exact fun h => (h.mpr (Or.inl trivial)).2
@@ -409,7 +437,7 @@ annotating it by hand. -/
 structure AnnotatedDerivation where
   /-- Number of NP-verb pairs -/
   n : Nat
-  deriv : CCG.Classical.Derivation
+  deriv : CCG.TargetRestricted.Derivation Atom
   /-- Surface words -/
   words : List String
   /-- The NP-verb binding permutation -/
@@ -480,19 +508,19 @@ inductive VerbOrder where
 
 /-- Verb-raising order, Dutch (99a): the cluster *probeert te zingen*
 forms by crossed composition before taking the object to its left. -/
-def verbRaisingDeriv : DerivStep :=
+def verbRaisingDeriv : DerivStep Atom :=
   .bapp (.lex ⟨"veel liederen", NP⟩)
     (.fcompx (.lex ⟨"probeert", IV / IV⟩) (.lex ⟨"te zingen", IV \ NP⟩))
 
 /-- Verb-projection-raising order, Dutch (99b): the matrix verb applies to
 an already-saturated embedded VP, so the quantified object never combines
 with a function containing the tensed verb. -/
-def verbProjectionRaisingDeriv : DerivStep :=
+def verbProjectionRaisingDeriv : DerivStep Atom :=
   .fapp (.lex ⟨"probeert", IV / IV⟩)
     (.bapp (.lex ⟨"veel liederen", NP⟩) (.lex ⟨"te zingen", IV \ NP⟩))
 
 /-- The CCG derivation shape each verb order forces. -/
-def schematicDeriv : VerbOrder → DerivStep
+def schematicDeriv : VerbOrder → DerivStep Atom
   | .verbRaising => verbRaisingDeriv
   | .verbProjectionRaising => verbProjectionRaisingDeriv
 
@@ -537,9 +565,9 @@ def scopeData : List (VerbOrder × BinaryScopeAvailability) :=
 -- Drift sentry: every example in the JSON is either a ch. 7 gapping
 -- stimulus or a §6.8 scope example carrying both annotations; this
 -- fires if a row that is neither is added.
-#guard Examples.all.all λ ex =>
-  (ex.paperFeatures.lookup "phenomenon" == some "gapping") ||
-  ((wordOrderOf ex).isSome && (observedAvailability ex).isSome)
+example : Examples.all.all (λ ex =>
+    (ex.paperFeatures.lookup "phenomenon" == some "gapping") ||
+    ((wordOrderOf ex).isSome && (observedAvailability ex).isSome)) = true := by decide
 
 /-- The CCG prediction matches every §6.8 judgment. -/
 theorem predictedAvailability_eq_observed :
@@ -558,34 +586,27 @@ section TruthConditions
 open CCG
 open Semantics.Montague
 
--- CCG Derivations for Test Sentences
-
-/-- "John sleeps" - backward application -/
-def ccg_john_sleeps : DerivStep :=
-  .bapp (.lex ⟨"John", NP⟩) (.lex ⟨"sleeps", IV⟩)
+-- CCG Derivations for Test Sentences ("John sleeps" and "John sees Mary"
+-- are the file-level derivations above)
 
 /-- "Mary sleeps" - backward application -/
-def ccg_mary_sleeps : DerivStep :=
+def ccg_mary_sleeps : DerivStep Atom :=
   .bapp (.lex ⟨"Mary", NP⟩) (.lex ⟨"sleeps", IV⟩)
 
 /-- "John laughs" - backward application -/
-def ccg_john_laughs : DerivStep :=
+def ccg_john_laughs : DerivStep Atom :=
   .bapp (.lex ⟨"John", NP⟩) (.lex ⟨"laughs", IV⟩)
 
 /-- "Mary laughs" - backward application -/
-def ccg_mary_laughs : DerivStep :=
+def ccg_mary_laughs : DerivStep Atom :=
   .bapp (.lex ⟨"Mary", NP⟩) (.lex ⟨"laughs", IV⟩)
 
-/-- "John sees Mary" - forward then backward application -/
-def ccg_john_sees_mary : DerivStep :=
-  .bapp (.lex ⟨"John", NP⟩) (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩))
-
 /-- "Mary sees John" - forward then backward application -/
-def ccg_mary_sees_john : DerivStep :=
+def ccg_mary_sees_john : DerivStep Atom :=
   .bapp (.lex ⟨"Mary", NP⟩) (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"John", NP⟩))
 
 /-- "John eats pizza" - forward then backward application -/
-def ccg_john_eats_pizza : DerivStep :=
+def ccg_john_eats_pizza : DerivStep Atom :=
   .bapp (.lex ⟨"John", NP⟩) (.fapp (.lex ⟨"eats", TV⟩) (.lex ⟨"pizza", NP⟩))
 
 -- Extended Semantic Lexicon (matching the toy model)
@@ -611,14 +632,14 @@ def extendedLexicon : SemLexicon ToyEntity Unit := λ word cat =>
   | _, _ => none
 
 /-- Get meaning (as Prop) from CCG derivation -/
-def ccgMeaning (d : DerivStep) : Option Prop :=
+def ccgMeaning (d : DerivStep Atom) : Option Prop :=
   getMeaning (d.interp extendedLexicon)
 
 -- Pipeline Theorems: CCG Derives Correct Truth Conditions
 
 /-- CCG correctly predicts "John sleeps" is true -/
 theorem ccg_predicts_john_sleeps :
-    ccgMeaning ccg_john_sleeps = some True := rfl
+    ccgMeaning john_sleeps = some True := rfl
 
 /-- CCG correctly predicts "Mary sleeps" is false -/
 theorem ccg_predicts_mary_sleeps :
@@ -634,7 +655,7 @@ theorem ccg_predicts_mary_laughs :
 
 /-- CCG correctly predicts "John sees Mary" is true -/
 theorem ccg_predicts_john_sees_mary :
-    ccgMeaning ccg_john_sees_mary = some True := rfl
+    ccgMeaning john_sees_mary = some True := rfl
 
 /-- CCG correctly predicts "Mary sees John" is true -/
 theorem ccg_predicts_mary_sees_john :
