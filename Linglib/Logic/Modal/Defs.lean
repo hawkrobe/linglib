@@ -12,11 +12,7 @@ of Kripke semantics ([kripke-1963]).
 
 namespace ModalLogic
 
-/-! ### Frame conditions
-
-Reflexivity, symmetry, and transitivity are `Std.Refl R`, `Std.Symm R`,
-`IsTrans W R` from Lean core + mathlib. Seriality and Euclideanness are
-modal-logic-specific and defined here. -/
+/-! ### Frame conditions -/
 
 /-- Seriality: every world accesses at least one world.
 
