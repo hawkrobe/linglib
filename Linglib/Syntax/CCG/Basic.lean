@@ -308,32 +308,31 @@ abbrev bcompx2 (h : m ≤ Modality.cross)
     (d₂ : Derivation α (.lslash x m y)) :
     Derivation α (.rslash (.rslash x n z) p w) := .node (.bcompx2 h) d₁ d₂
 
-end Derivation
-
 /-- The surface string a derivation spells out: its leaf forms, left to right.
 
 Rule nodes concatenate their daughters, so the yield is independent of the
 derivation's combinatory structure — the property that lets a CCG derivation witness
 a string language. -/
-def Derivation.yield {c : Cat α} : Derivation α c → List String
+def yield {c : Cat α} : Derivation α c → List String
   | .lex f _ => [f]
   | .node _ d₁ d₂ => d₁.yield ++ d₂.yield
 
 /-- The number of combinatory rule applications in a derivation. -/
-def Derivation.opCount {c : Cat α} : Derivation α c → Nat
+def opCount {c : Cat α} : Derivation α c → Nat
   | .lex _ _ => 0
   | .node _ d₁ d₂ => 1 + d₁.opCount + d₂.opCount
 
 /-- The derivation contains a composition node (of any order or direction). -/
-def Derivation.HasComp {c : Cat α} : Derivation α c → Prop
+def HasComp {c : Cat α} : Derivation α c → Prop
   | .lex _ _ => False
   | .node ru d₁ d₂ => ru.IsComp ∨ d₁.HasComp ∨ d₂.HasComp
 
-instance Derivation.HasComp.decidable {c : Cat α} :
-    ∀ d : Derivation α c, Decidable d.HasComp
+instance HasComp.decidable {c : Cat α} : ∀ d : Derivation α c, Decidable d.HasComp
   | .lex _ _ => isFalse fun h => h
   | .node _ d₁ d₂ =>
       @instDecidableOr _ _ inferInstance
         (@instDecidableOr _ _ (decidable d₁) (decidable d₂))
+
+end Derivation
 
 end CCG
