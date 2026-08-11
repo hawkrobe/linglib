@@ -1,4 +1,4 @@
-import Linglib.Syntax.CCG.Basic
+import Linglib.Syntax.CCG.Derivation
 import Linglib.Features.Prosody
 import Linglib.Core.Order.PartialUnify
 import Mathlib.Tactic.DeriveFintype

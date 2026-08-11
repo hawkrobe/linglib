@@ -3,8 +3,8 @@ import Linglib.Syntax.Anaphora.Basic
 import Linglib.Fragments.English.Toy
 import Linglib.Fragments.English.Coordination
 import Linglib.Studies.BresnanEtAl1982
-import Linglib.Syntax.CCG.Basic
-import Linglib.Syntax.CCG.TargetRestricted
+import Linglib.Syntax.CCG.Derivation
+import Linglib.Syntax.CCG.Grammar
 import Linglib.Syntax.CCG.Interface
 import Linglib.Syntax.CCG.Intonation
 import Linglib.Features.ScopeTypes
@@ -508,7 +508,7 @@ def InfHeadSub : Cat Atom := (VP \ NP) / VP
 
 /-- The Dutch fragment as a target-restricted grammar: the lexical entries the
 derivations below draw on, target and start `S`, degree bound 2. -/
-def dutchGrammar : TargetRestricted.Grammar Atom where
+def dutchGrammar : Grammar Atom where
   lexicon := [("Jan", NP), ("Piet", NP), ("Marie", NP),
               ("zag", PercV), ("zag", PercVSub),
               ("helpen", ControlVR), ("helpen", InfHeadSub),
