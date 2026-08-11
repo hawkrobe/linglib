@@ -58,9 +58,10 @@ namespace CCG
 
 /-! ### Slash modalities -/
 
-/-- The Baldridge slash modalities ([baldridge-2002], [steedman-2019]), ordered by
-restrictiveness: a rule class indexed `m` applies to a slash of modality `s` iff
-`s ≤ m`. -/
+/-- The modality a slash carries, determining which rule classes it licenses. The
+order is reverse inclusion of licenses — `s ≤ m` iff `s` licenses every rule class
+`m` does — so composition gates on `s ≤ diamond` (harmonic) and `s ≤ cross`
+(crossing), while application is licensed by every modality (`s ≤ ⊤`). -/
 inductive Modality where
   /-- Unrestricted (written as an unannotated slash): combines by any rule. -/
   | dot
