@@ -332,7 +332,7 @@ theorem weakAnswer_polar_of_pos {p : Set W}
     weakAnswer (polar p) w = p := by
   ext v
   unfold weakAnswer
-  rw [Set.mem_setOf_eq]
+  rw [Set.mem_ofPred_eq]
   constructor
   · intro h
     rw [alt_polar_of_nontrivial hne hnu] at h
@@ -349,7 +349,7 @@ theorem weakAnswer_polar_of_neg {p : Set W}
     weakAnswer (polar p) w = pᶜ := by
   ext v
   unfold weakAnswer
-  rw [Set.mem_setOf_eq]
+  rw [Set.mem_ofPred_eq]
   constructor
   · intro h
     rw [alt_polar_of_nontrivial hne hnu] at h
@@ -366,7 +366,7 @@ theorem strongAnswer_polar_of_pos {p : Set W}
     strongAnswer (polar p) w = p := by
   ext v
   unfold strongAnswer
-  rw [Set.mem_setOf_eq]
+  rw [Set.mem_ofPred_eq]
   constructor
   · intro h
     have hp_mem : p ∈ alt (polar p) :=
@@ -385,7 +385,7 @@ theorem strongAnswer_polar_of_neg {p : Set W}
     strongAnswer (polar p) w = pᶜ := by
   ext v
   unfold strongAnswer
-  rw [Set.mem_setOf_eq]
+  rw [Set.mem_ofPred_eq]
   constructor
   · intro h
     have hpc_mem : pᶜ ∈ alt (polar p) :=
@@ -406,7 +406,7 @@ theorem weakAnswer_ofSet_of_pos {p : Set W}
     weakAnswer (ofSet p) w = p := by
   ext v
   unfold weakAnswer
-  rw [Set.mem_setOf_eq, Question.alt_ofSet]
+  rw [Set.mem_ofPred_eq, Question.alt_ofSet]
   refine ⟨fun h => h p (Set.mem_singleton p) hwp, fun hvp q hq _ => ?_⟩
   rw [Set.mem_singleton_iff] at hq
   exact hq ▸ hvp
@@ -417,7 +417,7 @@ theorem strongAnswer_ofSet_of_pos {p : Set W}
     strongAnswer (ofSet p) w = p := by
   ext v
   unfold strongAnswer
-  rw [Set.mem_setOf_eq, Question.alt_ofSet]
+  rw [Set.mem_ofPred_eq, Question.alt_ofSet]
   refine ⟨fun h => (h p (Set.mem_singleton p)).mp hwp, fun hvp q hq => ?_⟩
   rw [Set.mem_singleton_iff] at hq
   exact hq ▸ iff_of_true hwp hvp

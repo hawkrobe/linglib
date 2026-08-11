@@ -329,7 +329,7 @@ theorem mem_ofList {L : List (Set W)} {q : Set W} :
     q ∈ ofList L ↔ q = ∅ ∨ ∃ p ∈ L, q ⊆ p := by
   unfold ofList
   rw [mem_biSup_iff]
-  simp only [Set.mem_setOf_eq, mem_ofSet]
+  simp only [Set.mem_ofPred_eq, mem_ofSet]
 
 /-! ### `alt`-characterization for `ofList`
 
@@ -354,7 +354,7 @@ theorem alt_ofList_of_antichain_nonempty
     (hne : ∀ p ∈ L, p ≠ ∅) :
     alt (ofList L) = {p | p ∈ L} := by
   ext q
-  rw [Set.mem_setOf_eq, mem_alt]
+  rw [Set.mem_ofPred_eq, mem_alt]
   constructor
   · rintro ⟨hq, hmax⟩
     rcases mem_ofList.mp hq with rfl | ⟨p, hpL, hqp⟩

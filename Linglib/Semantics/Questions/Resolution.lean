@@ -139,7 +139,7 @@ theorem mentionAll_iff_of_alt_eq_range {ι : Type*} {P : ι → Set W}
 @[simp] theorem completeAnswers_bot :
     completeAnswers (⊥ : Question W) = Set.univ := by
   ext σ
-  simp only [completeAnswers, MentionAll, alt_bot, Set.mem_setOf_eq,
+  simp only [completeAnswers, MentionAll, alt_bot, Set.mem_ofPred_eq,
     Set.mem_univ, iff_true, Set.mem_singleton_iff]
   rintro p rfl
   exact Or.inr (by simp)
