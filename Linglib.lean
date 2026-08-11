@@ -297,6 +297,7 @@ import Linglib.Core.Probability.GibbsVariational
 import Linglib.Core.Probability.Gumbel
 import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.JointPosterior
+import Linglib.Core.Probability.LikelihoodRatio
 import Linglib.Core.Probability.LogitChoice
 import Linglib.Core.Probability.Marginal
 import Linglib.Core.Probability.PitmanYor
