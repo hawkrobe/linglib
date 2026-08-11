@@ -26,8 +26,8 @@ The target-restricted (VW-CCG) schema derivations live in `CCG.TargetRestricted`
 * `Cat.forwardTypeRaise`, `Cat.backwardTypeRaise`: type-raising.
 * `Derivation`: intrinsically typed derivations, indexed by the category they derive;
   `Derivation.yield` reads off the surface string a derivation spells out,
-  `Derivation.opCount` the number of rule applications, and `Derivation.HasComp` /
-  `Derivation.HasTypeRaise` whether a rule class occurs in the tree.
+  `Derivation.ruleClasses` the rule classes applied at its nodes — with `opCount`
+  (length) and `HasComp` / `HasTypeRaise` (membership) read off that fold.
 
 ## Notation
 
@@ -164,64 +164,48 @@ def Derivation.yield {c : Cat α} : Derivation α c → List String
   | .btr d _ => d.yield
   | .coord co d1 d2 => d1.yield ++ co.form :: d2.yield
 
+/-- The combinatory rule class applied at a derivation node. -/
+inductive RuleClass where
+  /-- Application (`fapp`, `bapp`). -/
+  | app
+  /-- Composition (`fcomp`, `bcomp`, `fcompx`). -/
+  | comp
+  /-- Type-raising (`ftr`, `btr`). -/
+  | typeRaise
+  /-- Coordination. -/
+  | coord
+  deriving DecidableEq, Repr
+
+/-- The rule classes applied in a derivation, one entry per node, in preorder. The
+structural observables below are all read off this fold: `opCount` is its length and
+`HasComp` / `HasTypeRaise` are membership. -/
+def Derivation.ruleClasses {c : Cat α} : Derivation α c → List RuleClass
+  | .lex _ _ => []
+  | .fapp d1 d2 => .app :: (d1.ruleClasses ++ d2.ruleClasses)
+  | .bapp d1 d2 => .app :: (d1.ruleClasses ++ d2.ruleClasses)
+  | .fcomp d1 d2 => .comp :: (d1.ruleClasses ++ d2.ruleClasses)
+  | .bcomp d1 d2 => .comp :: (d1.ruleClasses ++ d2.ruleClasses)
+  | .fcompx d1 d2 => .comp :: (d1.ruleClasses ++ d2.ruleClasses)
+  | .ftr d _ => .typeRaise :: d.ruleClasses
+  | .btr d _ => .typeRaise :: d.ruleClasses
+  | .coord _ d1 d2 => .coord :: (d1.ruleClasses ++ d2.ruleClasses)
+
 /-- The number of combinatory rule applications in a derivation. -/
-def Derivation.opCount {c : Cat α} : Derivation α c → Nat
-  | .lex _ _ => 0
-  | .fapp d1 d2 => 1 + d1.opCount + d2.opCount
-  | .bapp d1 d2 => 1 + d1.opCount + d2.opCount
-  | .fcomp d1 d2 => 1 + d1.opCount + d2.opCount
-  | .bcomp d1 d2 => 1 + d1.opCount + d2.opCount
-  | .fcompx d1 d2 => 1 + d1.opCount + d2.opCount
-  | .ftr d _ => 1 + d.opCount
-  | .btr d _ => 1 + d.opCount
-  | .coord _ d1 d2 => 1 + d1.opCount + d2.opCount
+def Derivation.opCount {c : Cat α} (d : Derivation α c) : Nat :=
+  d.ruleClasses.length
 
 /-- The derivation contains a composition node (`fcomp`, `bcomp`, or `fcompx`). -/
-def Derivation.HasComp {c : Cat α} : Derivation α c → Prop
-  | .lex _ _ => False
-  | .fapp d1 d2 => d1.HasComp ∨ d2.HasComp
-  | .bapp d1 d2 => d1.HasComp ∨ d2.HasComp
-  | .fcomp _ _ => True
-  | .bcomp _ _ => True
-  | .fcompx _ _ => True
-  | .ftr d _ => d.HasComp
-  | .btr d _ => d.HasComp
-  | .coord _ d1 d2 => d1.HasComp ∨ d2.HasComp
+def Derivation.HasComp {c : Cat α} (d : Derivation α c) : Prop :=
+  .comp ∈ d.ruleClasses
 
-instance Derivation.HasComp.decidable {c : Cat α} :
-    ∀ d : Derivation α c, Decidable d.HasComp
-  | .lex _ _ => isFalse fun h => h
-  | .fapp d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
-  | .bapp d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
-  | .fcomp _ _ => isTrue trivial
-  | .bcomp _ _ => isTrue trivial
-  | .fcompx _ _ => isTrue trivial
-  | .ftr d _ => decidable d
-  | .btr d _ => decidable d
-  | .coord _ d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
+instance {c : Cat α} (d : Derivation α c) : Decidable d.HasComp :=
+  inferInstanceAs (Decidable (RuleClass.comp ∈ d.ruleClasses))
 
 /-- The derivation contains a type-raising node (`ftr` or `btr`). -/
-def Derivation.HasTypeRaise {c : Cat α} : Derivation α c → Prop
-  | .lex _ _ => False
-  | .fapp d1 d2 => d1.HasTypeRaise ∨ d2.HasTypeRaise
-  | .bapp d1 d2 => d1.HasTypeRaise ∨ d2.HasTypeRaise
-  | .fcomp d1 d2 => d1.HasTypeRaise ∨ d2.HasTypeRaise
-  | .bcomp d1 d2 => d1.HasTypeRaise ∨ d2.HasTypeRaise
-  | .fcompx d1 d2 => d1.HasTypeRaise ∨ d2.HasTypeRaise
-  | .ftr _ _ => True
-  | .btr _ _ => True
-  | .coord _ d1 d2 => d1.HasTypeRaise ∨ d2.HasTypeRaise
+def Derivation.HasTypeRaise {c : Cat α} (d : Derivation α c) : Prop :=
+  .typeRaise ∈ d.ruleClasses
 
-instance Derivation.HasTypeRaise.decidable {c : Cat α} :
-    ∀ d : Derivation α c, Decidable d.HasTypeRaise
-  | .lex _ _ => isFalse fun h => h
-  | .fapp d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
-  | .bapp d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
-  | .fcomp d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
-  | .bcomp d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
-  | .fcompx d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
-  | .ftr _ _ => isTrue trivial
-  | .btr _ _ => isTrue trivial
-  | .coord _ d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
+instance {c : Cat α} (d : Derivation α c) : Decidable d.HasTypeRaise :=
+  inferInstanceAs (Decidable (RuleClass.typeRaise ∈ d.ruleClasses))
 
 end CCG
