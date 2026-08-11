@@ -74,7 +74,7 @@ theorem bayesFactor_lt_of_goal_entails (ctx : DTS.Context W) [IsFiniteMeasure ct
       Set.ext fun w => ⟨fun h => ⟨h.1.1, h.2⟩, fun h => ⟨⟨h.1, hsub h.2⟩, h.2⟩⟩] at hsplit
     rw [← hsplit]
     exact ENNReal.lt_add_right (measure_ne_top _ _) hgap
-  rw [bayesFactor, bayesFactor,
+  rw [bayesFactor_def, bayesFactor_def,
     cond_eq_one_of_subset _ hHm (hent.trans hsub) hG,
     cond_eq_one_of_subset _ hHm hent hG,
     cond_apply hHm.compl, cond_apply hHm.compl, one_div, one_div,
@@ -116,7 +116,7 @@ private lemma cond_count_ne {s e : Set Band} [DecidablePred (· ∈ s)] [Decidab
 /-- §5.1: the Bayes factor of *more than 100* toward success is 1 / (1/6) = 6 (the paper's
 log 6 ≈ 0.78). -/
 theorem bayesFactor_moreThan100 : bayesFactor successContext (moreThan 100) = 6 := by
-  rw [bayesFactor]
+  rw [bayesFactor_def]
   refine ENNReal.eq_of_toReal
     ((ENNReal.div_lt_top (cond_apply_ne_top _ MeasurableSet.of_discrete _)
       (cond_count_ne (by decide))).ne) (by finiteness) ?_
@@ -135,7 +135,7 @@ theorem bayesFactor_moreThan100 : bayesFactor successContext (moreThan 100) = 6 
 prints log 11 (see `bayesFactor_moreThan100_toward110`); the ordering against
 `bayesFactor_moreThan100` is the same. -/
 theorem bayesFactor_moreThan110 : bayesFactor successContext (moreThan 110) = 12 := by
-  rw [bayesFactor]
+  rw [bayesFactor_def]
   refine ENNReal.eq_of_toReal
     ((ENNReal.div_lt_top (cond_apply_ne_top _ MeasurableSet.of_discrete _)
       (cond_count_ne (by decide))).ne) (by finiteness) ?_
@@ -155,7 +155,7 @@ toward the goal *more than 110* ("the probability that *more than 100* is true g
 *more than 110* is false equals 1/11"). -/
 theorem bayesFactor_moreThan100_toward110 :
     bayesFactor ⟨moreThan 110, .of_discrete, .count⟩ (moreThan 100) = 11 := by
-  rw [bayesFactor]
+  rw [bayesFactor_def]
   refine ENNReal.eq_of_toReal
     ((ENNReal.div_lt_top (cond_apply_ne_top _ MeasurableSet.of_discrete _)
       (cond_count_ne (by decide))).ne) (by finiteness) ?_
@@ -278,7 +278,7 @@ private lemma assertable_bayesFactor_eval (n cap : ℕ) :
   have hcompl : (moreThan 120 ×ˢ (Set.univ : Set Interpretation))ᶜ =
       (moreThan 120)ᶜ ×ˢ (Set.univ : Set Interpretation) := by
     ext p; simp [Set.mem_prod]
-  rw [bayesFactor, assertabilityContext, assertable]
+  rw [bayesFactor_def, assertabilityContext, assertable]
   simp only
   rw [hcompl, cond_prod_byInterpretation _ _ MeasurableSet.of_discrete .of_discrete,
     cond_prod_byInterpretation _ _ MeasurableSet.of_discrete .of_discrete,

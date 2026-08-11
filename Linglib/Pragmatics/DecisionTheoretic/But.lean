@@ -85,19 +85,23 @@ CIP turns the total-probability decompositions of P(A∧B), P(A), and P(B)
 into a factorized cross-product whose factors contrariness makes jointly
 positive. -/
 theorem cip_contrariness_implies_unexpectedness (ctx : Context W)
-    [IsProbabilityMeasure ctx.prior] {a b : Set W} (ham : MeasurableSet a)
-    (hcip : CIP ctx a b) (hcontr : hContrary ctx a b)
-    (ha0 : ctx.prior a ≠ 0) (hb0 : ctx.prior b ≠ 0)
-    (hH : ctx.prior ctx.topic ≠ 0) (hNH : ctx.prior ctx.topicᶜ ≠ 0) :
+    [IsProbabilityMeasure ctx.prior] [ctx.Nondegenerate] {a b : Set W}
+    (ham : MeasurableSet a)
+    (hcip : CondIndepIssue ctx a b) (hcontr : hContrary ctx a b)
+    (ha0 : ctx.prior a ≠ 0) (hb0 : ctx.prior b ≠ 0) :
     ctx.prior[|a] b < ctx.prior b := by
+  have hH : ctx.prior ctx.topic ≠ 0 := Context.Nondegenerate.topic_ne_zero
+  have hNH : ctx.prior ctx.topicᶜ ≠ 0 := Context.Nondegenerate.compl_ne_zero
   set μ := ctx.prior
   set H := ctx.topic
   have hHm : MeasurableSet H := ctx.topicMeasurable
   -- Raw real forms of the CIP equations (before the shadows fold them).
-  have hcipH' := congrArg ENNReal.toReal hcip.1
+  have hcipH' := congrArg ENNReal.toReal
+    (show μ[|H] (a ∩ b) = μ[|H] a * μ[|H] b from (hcip true).measure_inter_eq_mul)
   rw [ENNReal.toReal_mul, cond_real_apply μ hHm, cond_real_apply μ hHm,
     cond_real_apply μ hHm] at hcipH'
-  have hcipNH' := congrArg ENNReal.toReal hcip.2
+  have hcipNH' := congrArg ENNReal.toReal
+    (show μ[|Hᶜ] (a ∩ b) = μ[|Hᶜ] a * μ[|Hᶜ] b from (hcip false).measure_inter_eq_mul)
   rw [ENNReal.toReal_mul, cond_real_apply μ hHm.compl, cond_real_apply μ hHm.compl,
     cond_real_apply μ hHm.compl] at hcipNH'
   -- ℝ shadows, conditioning-set first.
@@ -135,11 +139,11 @@ theorem cip_contrariness_implies_unexpectedness (ctx : Context W)
   -- Contrariness gives the sign of the factorized cross-product.
   have hSign : 0 < (pnH * aH - pH * anH) * (pH * bnH - pnH * bH) := by
     rcases hcontr with ⟨hposA, hnegB⟩ | ⟨hnegA, hposB⟩
-    · have hA := (posRelevant_iff_real_cross ctx hH hNH).mp hposA
-      have hB := (negRelevant_iff_real_cross ctx hb0 hH hNH).mp hnegB
+    · have hA := (posRelevant_iff_real_cross ctx).mp hposA
+      have hB := (negRelevant_iff_real_cross ctx hb0).mp hnegB
       nlinarith
-    · have hA := (negRelevant_iff_real_cross ctx ha0 hH hNH).mp hnegA
-      have hB := (posRelevant_iff_real_cross ctx hH hNH).mp hposB
+    · have hA := (negRelevant_iff_real_cross ctx ha0).mp hnegA
+      have hB := (posRelevant_iff_real_cross ctx).mp hposB
       nlinarith
   have hFact := cross_product_factorization aH anH bH bnH pH pnH hNormHP
   -- From CIP: P(A∧B)·pH·pnH = aH·bH·pnH + anH·bnH·pH.
@@ -159,14 +163,15 @@ theorem cip_contrariness_implies_unexpectedness (ctx : Context W)
   rw [cond_real_apply μ ham b, div_lt_iff₀ (ENNReal.toReal_pos ha0 (measure_ne_top μ a))]
   linarith [hKey, mul_comm (μ a).toReal (μ b).toReal]
 
-/-- **Theorem 9**: When H = B, CIP holds automatically for any A.
+/-- **Theorem 9**: When H = B, issue-conditional independence holds
+automatically for any A.
 
 P(A∧B∣B) = P(A∣B)·P(B∣B) because B∧(A∧B) = B∧A and P(B∣B) = 1, and
 P(A∧B∣¬B) = P(A∣¬B)·P(B∣¬B) because both sides vanish on ¬B. -/
-theorem topic_eq_b_satisfies_cip (μ : Measure W) [IsFiniteMeasure μ]
-    (a b : Set W) (hbm : MeasurableSet b) :
-    CIP (defaultButCtx μ b hbm) a b := by
-  constructor
+theorem condIndepIssue_defaultButCtx (μ : Measure W) [IsFiniteMeasure μ]
+    (a b : Set W) (ham : MeasurableSet a) (hbm : MeasurableSet b) :
+    CondIndepIssue (defaultButCtx μ b hbm) a b := by
+  refine (condIndepIssue_iff _ ham hbm).mpr ⟨?_, ?_⟩
   · show μ[|b] (a ∩ b) = μ[|b] a * μ[|b] b
     rcases eq_or_ne (μ b) 0 with h0 | h0
     · simp [ProbabilityTheory.cond, Measure.restrict_eq_zero.mpr h0]
@@ -192,7 +197,8 @@ theorem default_but_properties (μ : Measure W) [IsProbabilityMeasure μ]
     (hNegA : negRelevant (defaultButCtx μ b hbm) a)
     (ha0 : μ a ≠ 0) (hB : μ b ≠ 0) (hNB : μ bᶜ ≠ 0) :
     μ[|a] b < μ b := by
-  have hcross := (negRelevant_iff_real_cross (defaultButCtx μ b hbm) ha0 hB hNB).mp hNegA
+  haveI : (defaultButCtx μ b hbm).Nondegenerate := ⟨hB, hNB⟩
+  have hcross := (negRelevant_iff_real_cross (defaultButCtx μ b hbm) ha0).mp hNegA
   set pB := (μ b).toReal with hpB_def
   set pnB := (μ bᶜ).toReal with hpnB_def
   set xa := (μ (b ∩ a)).toReal with hxa_def
@@ -224,7 +230,7 @@ theorem harris_universal {E : Type*} (μ : Measure W) [IsFiniteMeasure μ]
     (_hnnir : NNIR E μ Q) :
     ¬ butFelicitous (defaultButCtx μ (Q b) hQb) (Q a) (Q b) := by
   rintro ⟨_, hNeg, _⟩
-  simp only [negRelevant, bayesFactor] at hNeg
+  simp only [negRelevant, bayesFactor_def] at hNeg
   rw [cond_eq_one_of_subset μ hQb subset_rfl hb,
     show μ[|(Q b)ᶜ] (Q b) = 0 from by
       rw [cond_apply hQb.compl, Set.compl_inter_self, measure_empty, mul_zero],

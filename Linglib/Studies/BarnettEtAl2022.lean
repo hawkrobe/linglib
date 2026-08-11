@@ -241,7 +241,7 @@ private lemma shows_s3_eq : shows .s3 =
 factor 3/2): in [cummins-franke-2021]'s terms it has positive argumentative
 strength toward the goal. -/
 theorem s4_posRelevant : DTS.posRelevant stickContext (shows .s4) := by
-  simp only [DTS.posRelevant, DTS.bayesFactor, stickContext,
+  simp only [DTS.posRelevant, DTS.bayesFactor_def, stickContext,
     ProbabilityTheory.cond_apply MeasurableSet.of_discrete, topic_eq, shows_s4_eq,
     ← Finset.coe_compl, ← Finset.coe_inter, MeasureTheory.Measure.count_apply_finset]
   rw [show ({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :
@@ -259,7 +259,7 @@ theorem s4_posRelevant : DTS.posRelevant stickContext (shows .s4) := by
 
 /-- Showing stick 3 is not positively relevant to "longer" (Bayes factor 3/4). -/
 theorem s3_not_posRelevant : ¬ DTS.posRelevant stickContext (shows .s3) := by
-  simp only [DTS.posRelevant, DTS.bayesFactor, stickContext,
+  simp only [DTS.posRelevant, DTS.bayesFactor_def, stickContext,
     ProbabilityTheory.cond_apply MeasurableSet.of_discrete, topic_eq, shows_s3_eq,
     ← Finset.coe_compl, ← Finset.coe_inter, MeasureTheory.Measure.count_apply_finset]
   rw [show ({StickWorld.w145, StickWorld.w235, StickWorld.w245, StickWorld.w345} :

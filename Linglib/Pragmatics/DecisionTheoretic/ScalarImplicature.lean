@@ -91,7 +91,7 @@ theorem not_if_not_indeed_disjunct :
   · rw [Set.union_eq_self_of_subset_right hsub] at this
     exact lt_irrefl _ this
   · -- BF({w0, w1}) = 3 > 1
-    simp only [posRelevant, bayesFactor, cond_apply MeasurableSet.of_discrete,
+    simp only [posRelevant, bayesFactor_def, cond_apply MeasurableSet.of_discrete,
       ← Finset.coe_compl, ← Finset.coe_inter, Measure.count_apply_finset]
     rw [show ({World4.w0} : Finset World4).card = 1 by decide,
       show ({World4.w0} ∩ {World4.w0, World4.w1} : Finset World4).card = 1 by decide,
@@ -100,7 +100,7 @@ theorem not_if_not_indeed_disjunct :
     simp only [Nat.cast_one, Nat.cast_ofNat, inv_one]
     norm_num
   · -- BF({w0}) = ∞ > 1: the issue itself is infinitely relevant
-    simp only [posRelevant, bayesFactor, cond_apply MeasurableSet.of_discrete,
+    simp only [posRelevant, bayesFactor_def, cond_apply MeasurableSet.of_discrete,
       ← Finset.coe_compl, ← Finset.coe_inter, Measure.count_apply_finset]
     rw [show ({World4.w0} : Finset World4).card = 1 by decide,
       show ({World4.w0} ∩ {World4.w0} : Finset World4).card = 1 by decide,
@@ -114,15 +114,15 @@ conjunction dominates both conjuncts and disjunction.
 This is the core of Merin's scalar implicature account: "A and B" is
 strictly more relevant than "A or B", explaining why "or" implicates ¬∧. -/
 theorem if_not_indeed_conjunction (ctx : Context W) [IsFiniteMeasure ctx.prior]
-    (a b : Set W) (hbm : MeasurableSet b)
-    (hcip : CIP ctx a b)
+    [ctx.Nondegenerate] (a b : Set W) (hbm : MeasurableSet b)
+    (hcip : CondIndepIssue ctx a b)
     (hPosA : posRelevant ctx a) (hPosB : posRelevant ctx b)
     (hNotH : ctx.prior[|ctx.topicᶜ] a ≠ 0)
     (hNotH' : ctx.prior[|ctx.topicᶜ] b ≠ 0) :
     bayesFactor ctx a < bayesFactor ctx (a ∩ b) ∧
     bayesFactor ctx (a ∪ b) < bayesFactor ctx (a ∩ b) := by
-  have hFull := conjunction_dominates_disjunction ctx a b hbm hcip hPosA hPosB
-    hNotH hNotH'
-  exact ⟨lt_of_le_of_lt (le_max_left _ _) hFull.1, hFull.2.1.trans hFull.1⟩
+  have hInter := hcip.max_bayesFactor_lt_inter hPosA hPosB hNotH hNotH'
+  have hUnion := hcip.bayesFactor_union_lt_max hbm hPosA hPosB hNotH hNotH'
+  exact ⟨lt_of_le_of_lt (le_max_left _ _) hInter, hUnion.trans hInter⟩
 
 end DTS.ScalarImplicature

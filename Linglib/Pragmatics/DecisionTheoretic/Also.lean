@@ -155,7 +155,7 @@ private lemma presup_implies_bf_one (ctx : Context W)
     rw [cond_apply ctx.topicMeasurable.compl, Set.inter_comm,
       presup_joint ctx.prior ha hp, mul_comm, mul_assoc,
       ENNReal.mul_inv_cancel hNH (measure_ne_top _ _), mul_one]
-  rw [bayesFactor, h1, h2, ENNReal.div_self hA (measure_ne_top _ _)]
+  rw [bayesFactor_def, h1, h2, ENNReal.div_self hA (measure_ne_top _ _)]
 
 /-- **Corollary 15**: "Also" requires non-identity.
 
@@ -179,9 +179,10 @@ theorem also_nonidentity {E : Type*} (ctx : Context W)
 conditionally independent of any other proposition given both H and ¬H. -/
 private lemma presup_implies_cip (ctx : Context W)
     [IsProbabilityMeasure ctx.prior] {a b : Set W} (ha : MeasurableSet a)
-    (hp : presupposedIrrelevant ctx.prior a) : CIP ctx a b := by
+    (hbm : MeasurableSet b)
+    (hp : presupposedIrrelevant ctx.prior a) : CondIndepIssue ctx a b := by
   have hA := presup_ne_zero ctx.prior hp
-  constructor
+  refine (condIndepIssue_iff _ ha hbm).mpr ⟨?_, ?_⟩
   · rcases eq_or_ne (ctx.prior ctx.topic) 0 with h0 | h0
     · simp [ProbabilityTheory.cond, Measure.restrict_eq_zero.mpr h0]
     · rw [cond_apply ctx.topicMeasurable, cond_apply ctx.topicMeasurable,
@@ -219,10 +220,11 @@ If A is presupposed, then BF(A∧B) = BF(A)·BF(B) with no independence
 assumption: inertness supplies the factorization. -/
 theorem presuppositional_independence_additivity (ctx : Context W)
     [IsProbabilityMeasure ctx.prior] {a b : Set W} (ha : MeasurableSet a)
+    (hbm : MeasurableSet b)
     (hp : presupposedIrrelevant ctx.prior a)
     (hNotH' : ctx.prior[|ctx.topicᶜ] b ≠ 0) :
     bayesFactor ctx (a ∩ b) = bayesFactor ctx a * bayesFactor ctx b :=
-  bayes_factor_multiplicative_under_cip ctx a b (presup_implies_cip ctx ha hp) hNotH'
+  (presup_implies_cip ctx ha hbm hp).bayesFactor_inter hNotH'
 
 /-! **Prediction 4** (not formalized): "Also" removes causal implicature.
 
