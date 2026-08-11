@@ -471,15 +471,12 @@ variable {W' : Type*} [DecidableEq W'] [Fintype W']
 
     Second consumer of the carrier-level bisimulation substrate (after BSML),
     which is what licensed lifting it out of `BSML/`. -/
-theorem bisim_invariant_eval (φ : Formula Atom) :
-    ∀ {k : ℕ}, φ.modalDepth ≤ k →
-    ∀ {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
-      {s : Finset W} {s' : Finset W'},
-    StateBisim k M s M' s' →
-    ∀ b : Bool, eval M b φ s ↔ eval M' b φ s' := by
-  induction φ with
+theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
+    (φ : Formula Atom) {k : ℕ} (hd : φ.modalDepth ≤ k)
+    {s : Finset W} {s' : Finset W'} (hbisim : StateBisim k M s M' s')
+    (b : Bool) : eval M b φ s ↔ eval M' b φ s' := by
+  induction φ generalizing k s s' b with
   | atom p =>
-    intro k _ M M' s s' hbisim b
     cases b <;>
     · constructor
       · intro h w' hw'
@@ -489,7 +486,6 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
         obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
         rw [hbw.val_eq]; exact h w' hw'
   | dep xs y =>
-    intro k _ M M' s s' hbisim b
     cases b
     · -- antiSupport (dep xs y) s = (s = ∅)
       exact hbisim.eq_empty_iff
@@ -509,14 +505,12 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
           intro x hx; rw [← hb₁.val_eq x, hagree x hx, hb₂.val_eq x]
         rw [hb₁.val_eq y, hb₂.val_eq y]; exact h w₁' hw₁' w₂' hw₂' hagree'
   | neg ψ ih =>
-    intro k hd M M' s s' hbisim b
     cases b
     · exact ih hd hbisim true
     · exact ih hd hbisim false
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    intro k hd M M' s s' hbisim b
-    have hd₁ : ψ₁.modalDepth ≤ k := le_trans (le_max_left _ _) hd
-    have hd₂ : ψ₂.modalDepth ≤ k := le_trans (le_max_right _ _) hd
+    have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
+    have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
     cases b
     · -- antiSupport (conj): split into (t, u)
       constructor
@@ -541,9 +535,8 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
       · rintro ⟨h₁, h₂⟩
         exact ⟨(ih₁ hd₁ hbisim true).mpr h₁, (ih₂ hd₂ hbisim true).mpr h₂⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    intro k hd M M' s s' hbisim b
-    have hd₁ : ψ₁.modalDepth ≤ k := le_trans (le_max_left _ _) hd
-    have hd₂ : ψ₂.modalDepth ≤ k := le_trans (le_max_right _ _) hd
+    have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
+    have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
     cases b
     · -- antiSupport (disj) = antiSupport ψ₁ ∧ antiSupport ψ₂
       constructor
@@ -568,47 +561,44 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
         exact ⟨t, u, hsplit, (ih₁ hd₁ hbt.symm true).mpr h₁,
                (ih₂ hd₂ hbu.symm true).mpr h₂⟩
   | poss ψ ih =>
-    intro k hd M M' s s' hbisim b
-    obtain ⟨k, rfl⟩ : ∃ k', k = k' + 1 := by
-      cases k with
-      | zero => exact absurd hd (by simp [Formula.modalDepth])
-      | succ k => exact ⟨k, rfl⟩
-    have hdψ : ψ.modalDepth ≤ k := by
-      have := hd; simp only [Formula.modalDepth] at this; omega
-    cases b
-    · -- antiSupport (poss ψ) s = antiSupport ψ (s.biUnion R), evaluated on the
-      -- union of images; `biUnionAccess` transports it.
-      show eval M false ψ (s.biUnion M.access) ↔ eval M' false ψ (s'.biUnion M'.access)
-      exact ih hdψ hbisim.biUnionAccess false
-    · -- support (poss ψ): single witness team Y. Shrink to its reachable part,
-      -- transport via `possWitness`, recurse.
-      constructor
-      · rintro ⟨Y, hwit, hYsupp⟩
-        show ∃ Y' : Finset W',
-          (∀ w' ∈ s', ∃ y' ∈ Y', y' ∈ M'.access w') ∧ eval M' true ψ Y'
-        obtain ⟨Y', _hY'sub, hY'wit, hYbisim⟩ :=
-          hbisim.possWitness (Y := Y ∩ s.biUnion M.access)
-            Finset.inter_subset_right
-            (fun w hw => by
-              obtain ⟨y, hyY, hyw⟩ := hwit w hw
-              exact ⟨y, Finset.mem_inter.mpr
-                ⟨hyY, Finset.mem_biUnion.mpr ⟨w, hw, hyw⟩⟩, hyw⟩)
-        exact ⟨Y', hY'wit,
-          (ih hdψ hYbisim true).mp
-            (isLowerSet_support M ψ Finset.inter_subset_left hYsupp)⟩
-      · rintro ⟨Y', hwit', hY'supp⟩
-        show ∃ Y : Finset W,
-          (∀ w ∈ s, ∃ y ∈ Y, y ∈ M.access w) ∧ eval M true ψ Y
-        obtain ⟨Y, _hYsub, hYwit, hYbisim⟩ :=
-          hbisim.symm.possWitness (Y := Y' ∩ s'.biUnion M'.access)
-            Finset.inter_subset_right
-            (fun w' hw' => by
-              obtain ⟨y', hy'Y, hy'w⟩ := hwit' w' hw'
-              exact ⟨y', Finset.mem_inter.mpr
-                ⟨hy'Y, Finset.mem_biUnion.mpr ⟨w', hw', hy'w⟩⟩, hy'w⟩)
-        exact ⟨Y, hYwit,
-          (ih hdψ hYbisim.symm true).mpr
-            (isLowerSet_support M' ψ Finset.inter_subset_left hY'supp)⟩
+    cases k with
+    | zero => exact absurd hd (Nat.not_succ_le_zero _)
+    | succ k =>
+      have hdψ : ψ.modalDepth ≤ k := Nat.le_of_succ_le_succ hd
+      cases b
+      · -- antiSupport (poss ψ) s = antiSupport ψ (s.biUnion R), evaluated on the
+        -- union of images; `biUnionAccess` transports it.
+        show eval M false ψ (s.biUnion M.access) ↔ eval M' false ψ (s'.biUnion M'.access)
+        exact ih hdψ hbisim.biUnionAccess false
+      · -- support (poss ψ): single witness team Y. Shrink to its reachable part,
+        -- transport via `possWitness`, recurse.
+        constructor
+        · rintro ⟨Y, hwit, hYsupp⟩
+          show ∃ Y' : Finset W',
+            (∀ w' ∈ s', ∃ y' ∈ Y', y' ∈ M'.access w') ∧ eval M' true ψ Y'
+          obtain ⟨Y', _hY'sub, hY'wit, hYbisim⟩ :=
+            hbisim.possWitness (Y := Y ∩ s.biUnion M.access)
+              Finset.inter_subset_right
+              (fun w hw => by
+                obtain ⟨y, hyY, hyw⟩ := hwit w hw
+                exact ⟨y, Finset.mem_inter.mpr
+                  ⟨hyY, Finset.mem_biUnion.mpr ⟨w, hw, hyw⟩⟩, hyw⟩)
+          exact ⟨Y', hY'wit,
+            (ih hdψ hYbisim true).mp
+              (isLowerSet_support M ψ Finset.inter_subset_left hYsupp)⟩
+        · rintro ⟨Y', hwit', hY'supp⟩
+          show ∃ Y : Finset W,
+            (∀ w ∈ s, ∃ y ∈ Y, y ∈ M.access w) ∧ eval M true ψ Y
+          obtain ⟨Y, _hYsub, hYwit, hYbisim⟩ :=
+            hbisim.symm.possWitness (Y := Y' ∩ s'.biUnion M'.access)
+              Finset.inter_subset_right
+              (fun w' hw' => by
+                obtain ⟨y', hy'Y, hy'w⟩ := hwit' w' hw'
+                exact ⟨y', Finset.mem_inter.mpr
+                  ⟨hy'Y, Finset.mem_biUnion.mpr ⟨w', hw', hy'w⟩⟩, hy'w⟩)
+          exact ⟨Y, hYwit,
+            (ih hdψ hYbisim.symm true).mpr
+              (isLowerSet_support M' ψ Finset.inter_subset_left hY'supp)⟩
 
 end Bisimulation
 

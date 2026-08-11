@@ -209,15 +209,12 @@ def Formula.modalDepth : Formula Atom → ℕ
 /-- **Theorem 3.8 of [aloni-anttila-yang-2024] for BSMLOr**: if
     `s ⇌_k s'` and `φ : Formula Atom` has modal depth `≤ k`, then
     `eval M b φ s ↔ eval M' b φ s'` for both polarities. -/
-theorem bisim_invariant_eval (φ : Formula Atom) :
-    ∀ {k : ℕ}, φ.modalDepth ≤ k →
-    ∀ {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
-      {s : Finset W} {s' : Finset W'},
-    StateBisim k M s M' s' →
-    ∀ b : Bool, eval M b φ s ↔ eval M' b φ s' := by
-  induction φ with
+theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
+    (φ : Formula Atom) {k : ℕ} (hd : φ.modalDepth ≤ k)
+    {s : Finset W} {s' : Finset W'} (hbisim : StateBisim k M s M' s')
+    (b : Bool) : eval M b φ s ↔ eval M' b φ s' := by
+  induction φ generalizing k s s' b with
   | atom p =>
-    intro k _ M M' s s' hbisim b
     cases b <;>
     · constructor
       · intro h w' hw'
@@ -227,24 +224,20 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
         obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
         rw [hbw.val_eq]; exact h w' hw'
   | bot =>
-    intro k _ M M' s s' hbisim b
     cases b
     · exact ⟨fun _ => trivial, fun _ => trivial⟩
     · exact hbisim.eq_empty_iff
   | ne =>
-    intro k _ M M' s s' hbisim b
     cases b
     · exact hbisim.eq_empty_iff
     · exact hbisim.nonempty_iff
   | neg ψ ih =>
-    intro k hd M M' s s' hbisim b
     cases b
     · exact ih hd hbisim true
     · exact ih hd hbisim false
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    intro k hd M M' s s' hbisim b
-    have hd₁ : ψ₁.modalDepth ≤ k := le_trans (le_max_left _ _) hd
-    have hd₂ : ψ₂.modalDepth ≤ k := le_trans (le_max_right _ _) hd
+    have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
+    have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
     cases b
     · -- antiSupport (conj): split-existential, use splitPreserve
       constructor
@@ -270,9 +263,8 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
       · rintro ⟨h₁, h₂⟩
         exact ⟨(ih₁ hd₁ hbisim true).mpr h₁, (ih₂ hd₂ hbisim true).mpr h₂⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    intro k hd M M' s s' hbisim b
-    have hd₁ : ψ₁.modalDepth ≤ k := le_trans (le_max_left _ _) hd
-    have hd₂ : ψ₂.modalDepth ≤ k := le_trans (le_max_right _ _) hd
+    have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
+    have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
     cases b
     · -- antiSupport (disj) = antiSupport ψ₁ ∧ antiSupport ψ₂
       constructor
@@ -300,9 +292,8 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
   | gdisj ψ₁ ψ₂ ih₁ ih₂ =>
     -- NEW CASE for BSMLOr: support .gdisj = support ψ₁ ∨ support ψ₂ (team-level),
     -- antiSupport .gdisj = antiSupport ψ₁ ∧ antiSupport ψ₂.
-    intro k hd M M' s s' hbisim b
-    have hd₁ : ψ₁.modalDepth ≤ k := le_trans (le_max_left _ _) hd
-    have hd₂ : ψ₂.modalDepth ≤ k := le_trans (le_max_right _ _) hd
+    have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
+    have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
     cases b
     · -- antiSupport: ∧, use IH for both halves
       constructor
@@ -319,38 +310,33 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
         · exact Or.inl ((ih₁ hd₁ hbisim true).mpr h)
         · exact Or.inr ((ih₂ hd₂ hbisim true).mpr h)
   | poss ψ ih =>
-    intro k hd M M' s s' hbisim b
-    obtain ⟨k, rfl⟩ : ∃ k', k = k' + 1 := by
-      cases k with
-      | zero => exact absurd hd (by simp [Formula.modalDepth])
-      | succ k => exact ⟨k, rfl⟩
-    have hdψ : ψ.modalDepth ≤ k := by
-      have := hd
-      simp only [Formula.modalDepth] at this
-      omega
-    cases b
-    · -- antiSupport (poss ψ): ∀ w ∈ s, antiSupport ψ (M.access w)
-      constructor
-      · intro h w' hw'
-        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-        exact (ih hdψ hbw.accessStateBisim false).mp (h w hw)
-      · intro h w hw
-        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        exact (ih hdψ hbw.accessStateBisim false).mpr (h w' hw')
-    · -- support (poss ψ): existential sub-team transported via image_subset
-      constructor
-      · intro h w' hw'
-        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-        obtain ⟨t, htsub, htne, htsupp⟩ := h w hw
-        obtain ⟨t', ht'sub, ht'ne, htbisim⟩ :=
-          hbw.accessStateBisim.exists_image_subset htsub
-        exact ⟨t', ht'sub, ht'ne htne, (ih hdψ htbisim true).mp htsupp⟩
-      · intro h w hw
-        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        obtain ⟨t', ht'sub, ht'ne, ht'supp⟩ := h w' hw'
-        obtain ⟨t, htsub, htne, htbisim⟩ :=
-          hbw.accessStateBisim.symm.exists_image_subset ht'sub
-        exact ⟨t, htsub, htne ht'ne, (ih hdψ htbisim.symm true).mpr ht'supp⟩
+    cases k with
+    | zero => exact absurd hd (Nat.not_succ_le_zero _)
+    | succ k =>
+      have hdψ : ψ.modalDepth ≤ k := Nat.le_of_succ_le_succ hd
+      cases b
+      · -- antiSupport (poss ψ): ∀ w ∈ s, antiSupport ψ (M.access w)
+        constructor
+        · intro h w' hw'
+          obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+          exact (ih hdψ hbw.accessStateBisim false).mp (h w hw)
+        · intro h w hw
+          obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+          exact (ih hdψ hbw.accessStateBisim false).mpr (h w' hw')
+      · -- support (poss ψ): existential sub-team transported via image_subset
+        constructor
+        · intro h w' hw'
+          obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+          obtain ⟨t, htsub, htne, htsupp⟩ := h w hw
+          obtain ⟨t', ht'sub, ht'ne, htbisim⟩ :=
+            hbw.accessStateBisim.exists_image_subset htsub
+          exact ⟨t', ht'sub, ht'ne htne, (ih hdψ htbisim true).mp htsupp⟩
+        · intro h w hw
+          obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+          obtain ⟨t', ht'sub, ht'ne, ht'supp⟩ := h w' hw'
+          obtain ⟨t, htsub, htne, htbisim⟩ :=
+            hbw.accessStateBisim.symm.exists_image_subset ht'sub
+          exact ⟨t, htsub, htne ht'ne, (ih hdψ htbisim.symm true).mpr ht'supp⟩
 
 end BSMLOr
 
@@ -555,15 +541,12 @@ def Formula.modalDepth : Formula Atom → ℕ
 /-- **Theorem 3.8 of [aloni-anttila-yang-2024] for BSMLEmpty**: if
     `s ⇌_k s'` and `φ : Formula Atom` has modal depth `≤ k`, then
     `eval M b φ s ↔ eval M' b φ s'` for both polarities. -/
-theorem bisim_invariant_eval (φ : Formula Atom) :
-    ∀ {k : ℕ}, φ.modalDepth ≤ k →
-    ∀ {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
-      {s : Finset W} {s' : Finset W'},
-    StateBisim k M s M' s' →
-    ∀ b : Bool, eval M b φ s ↔ eval M' b φ s' := by
-  induction φ with
+theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
+    (φ : Formula Atom) {k : ℕ} (hd : φ.modalDepth ≤ k)
+    {s : Finset W} {s' : Finset W'} (hbisim : StateBisim k M s M' s')
+    (b : Bool) : eval M b φ s ↔ eval M' b φ s' := by
+  induction φ generalizing k s s' b with
   | atom p =>
-    intro k _ M M' s s' hbisim b
     cases b <;>
     · constructor
       · intro h w' hw'
@@ -573,24 +556,20 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
         obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
         rw [hbw.val_eq]; exact h w' hw'
   | bot =>
-    intro k _ M M' s s' hbisim b
     cases b
     · exact ⟨fun _ => trivial, fun _ => trivial⟩
     · exact hbisim.eq_empty_iff
   | ne =>
-    intro k _ M M' s s' hbisim b
     cases b
     · exact hbisim.eq_empty_iff
     · exact hbisim.nonempty_iff
   | neg ψ ih =>
-    intro k hd M M' s s' hbisim b
     cases b
     · exact ih hd hbisim true
     · exact ih hd hbisim false
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    intro k hd M M' s s' hbisim b
-    have hd₁ : ψ₁.modalDepth ≤ k := le_trans (le_max_left _ _) hd
-    have hd₂ : ψ₂.modalDepth ≤ k := le_trans (le_max_right _ _) hd
+    have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
+    have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
     cases b
     · constructor
       · rintro ⟨t, u, hsplit, h₁, h₂⟩
@@ -614,9 +593,8 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
       · rintro ⟨h₁, h₂⟩
         exact ⟨(ih₁ hd₁ hbisim true).mpr h₁, (ih₂ hd₂ hbisim true).mpr h₂⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    intro k hd M M' s s' hbisim b
-    have hd₁ : ψ₁.modalDepth ≤ k := le_trans (le_max_left _ _) hd
-    have hd₂ : ψ₂.modalDepth ≤ k := le_trans (le_max_right _ _) hd
+    have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
+    have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
     cases b
     · constructor
       · rintro ⟨h₁, h₂⟩
@@ -642,7 +620,6 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
   | empt ψ ih =>
     -- NEW CASE for BSMLEmpty: support .empt = support ψ ∨ s = ∅,
     -- antiSupport .empt = antiSupport ψ.
-    intro k hd M M' s s' hbisim b
     cases b
     · -- antiSupport: just antiSupport ψ, use IH directly
       exact ih hd hbisim false
@@ -664,36 +641,31 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
           obtain ⟨w', hw', _⟩ := hbisim.1 w hw
           exact absurd hw' (h ▸ Finset.notMem_empty w')
   | poss ψ ih =>
-    intro k hd M M' s s' hbisim b
-    obtain ⟨k, rfl⟩ : ∃ k', k = k' + 1 := by
-      cases k with
-      | zero => exact absurd hd (by simp [Formula.modalDepth])
-      | succ k => exact ⟨k, rfl⟩
-    have hdψ : ψ.modalDepth ≤ k := by
-      have := hd
-      simp only [Formula.modalDepth] at this
-      omega
-    cases b
-    · constructor
-      · intro h w' hw'
-        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-        exact (ih hdψ hbw.accessStateBisim false).mp (h w hw)
-      · intro h w hw
-        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        exact (ih hdψ hbw.accessStateBisim false).mpr (h w' hw')
-    · constructor
-      · intro h w' hw'
-        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-        obtain ⟨t, htsub, htne, htsupp⟩ := h w hw
-        obtain ⟨t', ht'sub, ht'ne, htbisim⟩ :=
-          hbw.accessStateBisim.exists_image_subset htsub
-        exact ⟨t', ht'sub, ht'ne htne, (ih hdψ htbisim true).mp htsupp⟩
-      · intro h w hw
-        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        obtain ⟨t', ht'sub, ht'ne, ht'supp⟩ := h w' hw'
-        obtain ⟨t, htsub, htne, htbisim⟩ :=
-          hbw.accessStateBisim.symm.exists_image_subset ht'sub
-        exact ⟨t, htsub, htne ht'ne, (ih hdψ htbisim.symm true).mpr ht'supp⟩
+    cases k with
+    | zero => exact absurd hd (Nat.not_succ_le_zero _)
+    | succ k =>
+      have hdψ : ψ.modalDepth ≤ k := Nat.le_of_succ_le_succ hd
+      cases b
+      · constructor
+        · intro h w' hw'
+          obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+          exact (ih hdψ hbw.accessStateBisim false).mp (h w hw)
+        · intro h w hw
+          obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+          exact (ih hdψ hbw.accessStateBisim false).mpr (h w' hw')
+      · constructor
+        · intro h w' hw'
+          obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+          obtain ⟨t, htsub, htne, htsupp⟩ := h w hw
+          obtain ⟨t', ht'sub, ht'ne, htbisim⟩ :=
+            hbw.accessStateBisim.exists_image_subset htsub
+          exact ⟨t', ht'sub, ht'ne htne, (ih hdψ htbisim true).mp htsupp⟩
+        · intro h w hw
+          obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+          obtain ⟨t', ht'sub, ht'ne, ht'supp⟩ := h w' hw'
+          obtain ⟨t, htsub, htne, htbisim⟩ :=
+            hbw.accessStateBisim.symm.exists_image_subset ht'sub
+          exact ⟨t, htsub, htne ht'ne, (ih hdψ htbisim.symm true).mpr ht'supp⟩
 
 end BSMLEmpty
 
