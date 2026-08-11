@@ -28,10 +28,9 @@ class IsEuclidean {W : Type*} (R : W → W → Prop) : Prop where
 
 variable {W : Type*}
 
+-- Seriality, symmetry, and transitivity of `⊤` follow from the two
+-- instances below via the derivations that follow.
 instance : Std.Refl (⊤ : W → W → Prop) := ⟨fun _ => trivial⟩
-instance : IsSerial (⊤ : W → W → Prop) := ⟨fun w => ⟨w, trivial⟩⟩
-instance : IsTrans W (⊤ : W → W → Prop) := ⟨fun _ _ _ _ _ => trivial⟩
-instance : Std.Symm (⊤ : W → W → Prop) := ⟨fun _ _ _ => trivial⟩
 instance : IsEuclidean (⊤ : W → W → Prop) := ⟨fun _ _ _ _ _ => trivial⟩
 
 -- The derived instances get lowered priority: the Refl+Euclidean and
@@ -39,23 +38,24 @@ instance : IsEuclidean (⊤ : W → W → Prop) := ⟨fun _ _ _ _ _ => trivial�
 -- should always be preferred.
 
 /-- Reflexive relations are serial. -/
-instance (priority := 100) {R : W → W → Prop} [h : Std.Refl R] :
-    IsSerial R := ⟨fun w => ⟨w, h.refl w⟩⟩
+instance (priority := 100) {R : W → W → Prop} [Std.Refl R] : IsSerial R where
+  serial w := ⟨w, Std.Refl.refl w⟩
 
 /-- Reflexive + Euclidean implies symmetric. -/
-instance (priority := 100) {R : W → W → Prop} [hR : Std.Refl R] [hE : IsEuclidean R] :
-    Std.Symm R :=
-  ⟨fun w v hwv => hE.eucl w v w hwv (hR.refl w)⟩
+instance (priority := 100) {R : W → W → Prop} [Std.Refl R] [IsEuclidean R] :
+    Std.Symm R where
+  symm w v hwv := IsEuclidean.eucl w v w hwv (Std.Refl.refl w)
 
 /-- Reflexive + Euclidean implies transitive. -/
-instance (priority := 100) {R : W → W → Prop} [hR : Std.Refl R] [hE : IsEuclidean R] :
-    IsTrans W R :=
-  ⟨fun w v u hwv hvu => hE.eucl v w u (hE.eucl w v w hwv (hR.refl w)) hvu⟩
+instance (priority := 100) {R : W → W → Prop} [Std.Refl R] [IsEuclidean R] :
+    IsTrans W R where
+  trans w v u hwv hvu :=
+    IsEuclidean.eucl v w u (IsEuclidean.eucl w v w hwv (Std.Refl.refl w)) hvu
 
 /-- Symmetric + transitive implies euclidean. -/
-instance (priority := 100) {R : W → W → Prop} [hS : Std.Symm R] [hT : IsTrans W R] :
-    IsEuclidean R :=
-  ⟨fun w v u hwv hwu => hT.trans v w u (hS.symm w v hwv) hwu⟩
+instance (priority := 100) {R : W → W → Prop} [Std.Symm R] [IsTrans W R] :
+    IsEuclidean R where
+  eucl w v u hwv hwu := IsTrans.trans v w u (Std.Symm.symm w v hwv) hwu
 
 /-! ### Box and diamond -/
 
