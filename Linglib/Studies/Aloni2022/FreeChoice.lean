@@ -36,21 +36,21 @@ variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
 /-! ### Downward closure of atom and NE primitives -/
 
--- `BSML.isFlat_support_of_isNEFree` (in `Properties.lean`) gives
+-- `BSML.isFlat_support_of_neFree` (in `Properties.lean`) gives
 -- true pointwise-iff flatness for all NE-free formulas via the substrate.
 -- The two per-primitive theorems below isolate the *downward closure*
 -- clause that splits atom from NE: atoms have it, NE doesn't, and the FC
 -- arguments below depend only on this restriction, not on full flatness.
 
 /-- Atoms are downward-closed. Per-primitive isolation of the atom case of
-    `BSML.isLowerSet_support_of_isNEFree`. -/
+    `BSML.isLowerSet_support_of_neFree`. -/
 theorem atom_downwardClosed (M : KripkeModel W Atom) (p : Atom) :
     ∀ t t' : Finset W, t' ⊆ t → support M (.atom p) t → support M (.atom p) t' :=
   fun _ _ hSub hSupp w hw => hSupp w (hSub hw)
 
 /-- NE is NOT downward-closed: an inhabited team supports NE but ∅ doesn't.
     This is the obstruction that prevents
-    `isFlat_support_of_isNEFree` from extending to NE-bearing formulas. -/
+    `isFlat_support_of_neFree` from extending to NE-bearing formulas. -/
 theorem ne_not_downwardClosed [Nonempty W] (M : KripkeModel W Atom) :
     ¬(∀ t t' : Finset W, t' ⊆ t → support M .ne t → support M .ne t') := by
   intro hDC
@@ -74,7 +74,7 @@ is a subset of R[w] (via the union), yielding ◇α and ◇β.
 -/
 theorem narrowScopeFC (M : KripkeModel W Atom)
     (α β : Formula Atom) (t : Finset W)
-    (hα : α.isNEFree = true) (hβ : β.isNEFree = true)
+    (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (enrich (.poss (.disj α β))) t) :
     support M (.poss α) t ∧ support M (.poss β) t := by
   have hPoss := h.1
@@ -108,7 +108,7 @@ so s_a ⊆ R[w], yielding ◇α at every world. Symmetrically for β.
 -/
 theorem wideScopeFC (M : KripkeModel W Atom)
     (α β : Formula Atom) (t : Finset W)
-    (hα : α.isNEFree = true) (hβ : β.isNEFree = true)
+    (hα : α.NEFree) (hβ : β.NEFree)
     (hInd : M.IsIndisputable t)
     (h : support M (enrich (.disj (.poss α) (.poss β))) t) :
     support M (.poss α) t ∧ support M (.poss β) t := by
@@ -148,7 +148,7 @@ a non-empty subset of R[w], yielding ◇α and ◇β.
 -/
 theorem modalDisjunction (M : KripkeModel W Atom)
     (α β : Formula Atom) (t : Finset W)
-    (hα : α.isNEFree = true) (hβ : β.isNEFree = true)
+    (hα : α.NEFree) (hβ : β.NEFree)
     (hSB : M.IsStateBased t)
     (h : support M (enrich (.disj α β)) t) :
     support M (.poss α) t ∧ support M (.poss β) t := by
@@ -188,7 +188,7 @@ strips enrichment from the anti-supported disjuncts using Fact 1
 -/
 theorem dualProhibition (M : KripkeModel W Atom)
     (α β : Formula Atom) (t : Finset W)
-    (hα : α.isNEFree = true) (hβ : β.isNEFree = true)
+    (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (enrich (.neg (.poss (.disj α β)))) t) :
     support M (.neg (.poss α)) t ∧
     support M (.neg (.poss β)) t := by
@@ -218,7 +218,7 @@ swap), and narrow-scope FC (Fact 4) applies.
 -/
 theorem doubleNegationFC (M : KripkeModel W Atom)
     (α β : Formula Atom) (t : Finset W)
-    (hα : α.isNEFree = true) (hβ : β.isNEFree = true)
+    (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (enrich (.neg (.neg (.poss (.disj α β))))) t) :
     support M (.poss α) t ∧ support M (.poss β) t := by
   have h_strip := antiSupport_strip_ne M

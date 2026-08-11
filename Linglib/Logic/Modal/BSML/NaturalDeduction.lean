@@ -94,7 +94,7 @@ is NE-free exactly when `φ` is. -/
 /-- NE-free formulas cannot be both supported and anti-supported on a
     nonempty team. -/
 theorem eq_empty_of_support_antiSupport {φ : Formula Atom}
-    (hNE : φ.isNEFree = true) (M : KripkeModel W Atom) :
+    (hNE : φ.NEFree) (M : KripkeModel W Atom) :
     ∀ s : Finset W, support M φ s → antiSupport M φ s → s = ∅ := by
   induction φ with
   | atom p =>
@@ -103,40 +103,36 @@ theorem eq_empty_of_support_antiSupport {φ : Formula Atom}
     have h1 := hs w hw
     have h2 := ha w hw
     simp [h1] at h2
-  | ne => simp [Formula.isNEFree] at hNE
+  | ne => exact hNE.elim
   | neg ψ ih =>
     intro s hs ha
     exact ih hNE s ha hs
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    have h₁ : ψ₁.isNEFree = true := by
-      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
-    have h₂ : ψ₂.isNEFree = true := by
-      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+    have h₁ := hNE.1
+    have h₂ := hNE.2
     rintro s ⟨hs₁, hs₂⟩ ⟨t₁, t₂, hsp, ha₁, ha₂⟩
     have hsub₁ : t₁ ⊆ s := hsp ▸ Finset.subset_union_left
     have hsub₂ : t₂ ⊆ s := hsp ▸ Finset.subset_union_right
-    have he₁ := ih₁ h₁ t₁ (isLowerSet_support_of_isNEFree h₁ M hsub₁ hs₁) ha₁
-    have he₂ := ih₂ h₂ t₂ (isLowerSet_support_of_isNEFree h₂ M hsub₂ hs₂) ha₂
+    have he₁ := ih₁ h₁ t₁ (isLowerSet_support_of_neFree h₁ M hsub₁ hs₁) ha₁
+    have he₂ := ih₂ h₂ t₂ (isLowerSet_support_of_neFree h₂ M hsub₂ hs₂) ha₂
     rw [← hsp, he₁, he₂, Finset.union_empty]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have h₁ : ψ₁.isNEFree = true := by
-      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
-    have h₂ : ψ₂.isNEFree = true := by
-      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+    have h₁ := hNE.1
+    have h₂ := hNE.2
     rintro s ⟨t₁, t₂, hsp, hs₁, hs₂⟩ ⟨ha₁, ha₂⟩
     have hsub₁ : t₁ ⊆ s := hsp ▸ Finset.subset_union_left
     have hsub₂ : t₂ ⊆ s := hsp ▸ Finset.subset_union_right
     have he₁ := ih₁ h₁ t₁ hs₁
-      (isLowerSet_support_of_isNEFree (φ := .neg ψ₁) h₁ M hsub₁ ha₁)
+      (isLowerSet_support_of_neFree (φ := .neg ψ₁) h₁ M hsub₁ ha₁)
     have he₂ := ih₂ h₂ t₂ hs₂
-      (isLowerSet_support_of_isNEFree (φ := .neg ψ₂) h₂ M hsub₂ ha₂)
+      (isLowerSet_support_of_neFree (φ := .neg ψ₂) h₂ M hsub₂ ha₂)
     rw [← hsp, he₁, he₂, Finset.union_empty]
   | poss ψ ih =>
     intro s hs ha
     refine Finset.eq_empty_iff_forall_notMem.mpr (fun w hw => ?_)
     obtain ⟨t, hsub, hne, hψ⟩ := hs w hw
     have haψ : antiSupport M ψ t :=
-      isLowerSet_support_of_isNEFree (φ := .neg ψ) hNE M hsub (ha w hw)
+      isLowerSet_support_of_neFree (φ := .neg ψ) hNE M hsub (ha w hw)
     obtain ⟨v, hv⟩ := hne
     have := ih hNE t hψ haψ
     simp [this] at hv
@@ -144,7 +140,7 @@ theorem eq_empty_of_support_antiSupport {φ : Formula Atom}
 /-- **Bilateral determinacy on singletons** for NE-free formulas: every
     singleton team supports or anti-supports. -/
 theorem support_singleton_or_antiSupport_singleton {φ : Formula Atom}
-    (hNE : φ.isNEFree = true) (M : KripkeModel W Atom) :
+    (hNE : φ.NEFree) (M : KripkeModel W Atom) :
     ∀ w : W, support M φ {w} ∨ antiSupport M φ {w} := by
   induction φ with
   | atom p =>
@@ -152,31 +148,27 @@ theorem support_singleton_or_antiSupport_singleton {φ : Formula Atom}
     cases h : M.val p w with
     | true => exact Or.inl (fun v hv => by rw [Finset.mem_singleton] at hv; rw [hv, h])
     | false => exact Or.inr (fun v hv => by rw [Finset.mem_singleton] at hv; rw [hv, h])
-  | ne => simp [Formula.isNEFree] at hNE
+  | ne => exact hNE.elim
   | neg ψ ih => exact fun w => (ih hNE w).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    have h₁ : ψ₁.isNEFree = true := by
-      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
-    have h₂ : ψ₂.isNEFree = true := by
-      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+    have h₁ := hNE.1
+    have h₂ := hNE.2
     intro w
     rcases ih₁ h₁ w with hs₁ | ha₁
     · rcases ih₂ h₂ w with hs₂ | ha₂
       · exact Or.inl ⟨hs₁, hs₂⟩
       · exact Or.inr ⟨∅, {w}, by simp,
-          support_empty_of_isNEFree (φ := .neg ψ₁) h₁ M, ha₂⟩
+          support_empty_of_neFree (φ := .neg ψ₁) h₁ M, ha₂⟩
     · exact Or.inr ⟨{w}, ∅, by simp, ha₁,
-        support_empty_of_isNEFree (φ := .neg ψ₂) h₂ M⟩
+        support_empty_of_neFree (φ := .neg ψ₂) h₂ M⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have h₁ : ψ₁.isNEFree = true := by
-      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
-    have h₂ : ψ₂.isNEFree = true := by
-      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+    have h₁ := hNE.1
+    have h₂ := hNE.2
     intro w
     rcases ih₁ h₁ w with hs₁ | ha₁
-    · exact Or.inl ⟨{w}, ∅, by simp, hs₁, support_empty_of_isNEFree h₂ M⟩
+    · exact Or.inl ⟨{w}, ∅, by simp, hs₁, support_empty_of_neFree h₂ M⟩
     · rcases ih₂ h₂ w with hs₂ | ha₂
-      · exact Or.inl ⟨∅, {w}, by simp, support_empty_of_isNEFree h₁ M, hs₂⟩
+      · exact Or.inl ⟨∅, {w}, by simp, support_empty_of_neFree h₁ M, hs₂⟩
       · exact Or.inr ⟨ha₁, ha₂⟩
   | poss ψ ih =>
     intro w
@@ -188,7 +180,7 @@ theorem support_singleton_or_antiSupport_singleton {φ : Formula Atom}
     · refine Or.inr (fun v hv => ?_)
       rw [Finset.mem_singleton] at hv
       subst hv
-      have hflat := isFlat_support_of_isNEFree (φ := .neg ψ) hNE M
+      have hflat := isFlat_support_of_neFree (φ := .neg ψ) hNE M
       refine (hflat (M.access v)).mpr (fun u hu => ?_)
       rcases ih hNE u with hs | ha
       · exact absurd ⟨{u}, Finset.singleton_subset_iff.mpr hu, by simp, hs⟩ h
@@ -220,11 +212,11 @@ inductive Derives :
   /-- `∧E` (right). -/
   | conjE₂ {Γ φ ψ} : Derives Γ (.conj φ ψ) → Derives Γ ψ
   /-- `¬I`: classical `α`, NE-free undischarged assumptions. -/
-  | negI {Γ α} (p : Atom) : α.isNEFree = true →
-      (∀ γ ∈ Γ, Formula.isNEFree γ = true) →
+  | negI {Γ α} (p : Atom) : α.NEFree →
+      (∀ γ ∈ Γ, Formula.NEFree γ) →
       Derives (insert α Γ) (.bot p) → Derives Γ (.neg α)
   /-- `¬E`: ex falso for the classical fragment. -/
-  | negE {Γ₁ Γ₂ α β} : α.isNEFree = true → β.isNEFree = true →
+  | negE {Γ₁ Γ₂ α β} : α.NEFree → β.NEFree →
       Derives Γ₁ α → Derives Γ₂ (.neg α) → Derives (Γ₁ ∪ Γ₂) β
   /-- `¬¬E` (downward half of the invertible rule). -/
   | dneE {Γ φ} : Derives Γ (.neg (.neg φ)) → Derives Γ φ
@@ -247,7 +239,7 @@ inductive Derives :
   /-- `¬NEE` (upward half). -/
   | negNeI {Γ p} : Derives Γ (.bot p) → Derives Γ (.neg .ne)
   /-- `∨I`: the introduced disjunct must be NE-free. -/
-  | disjI {Γ φ ψ} : ψ.isNEFree = true → Derives Γ φ →
+  | disjI {Γ φ ψ} : ψ.NEFree → Derives Γ φ →
       Derives Γ (.disj φ ψ)
   /-- `∨W`: unconstrained introduction of the premise itself. -/
   | disjW {Γ φ} : Derives Γ φ → Derives Γ (.disj φ φ)
@@ -259,13 +251,13 @@ inductive Derives :
   /-- `∨E`: NE-free subderivation contexts (the `⫶`-freeness condition on
       `χ` is vacuous in the `⫶`-free language). -/
   | disjE {Γ Δ₁ Δ₂ φ ψ χ} :
-      (∀ γ ∈ Δ₁, Formula.isNEFree γ = true) →
-      (∀ γ ∈ Δ₂, Formula.isNEFree γ = true) →
+      (∀ γ ∈ Δ₁, Formula.NEFree γ) →
+      (∀ γ ∈ Δ₂, Formula.NEFree γ) →
       Derives Γ (.disj φ ψ) → Derives (insert φ Δ₁) χ →
       Derives (insert ψ Δ₂) χ → Derives (Γ ∪ Δ₁ ∪ Δ₂) χ
   /-- `∨Mon`: NE-free subderivation context. -/
   | disjMon {Γ Δ φ ψ χ} :
-      (∀ γ ∈ Δ, Formula.isNEFree γ = true) →
+      (∀ γ ∈ Δ, Formula.NEFree γ) →
       Derives Γ (.disj φ ψ) → Derives (insert ψ Δ) χ →
       Derives (Γ ∪ Δ) (.disj φ χ)
   /-- `⊥E`. -/
@@ -307,7 +299,7 @@ inductive Derives :
     shared-core rules): derivable consequence is team-semantic consequence —
     on every model, every team supporting all of `Γ` supports `φ`. The
     `∨`-rule cases run on the closure pillars: NE-free downward closure
-    (`isLowerSet_support_of_isNEFree`) for discharging side-conditioned
+    (`isLowerSet_support_of_neFree`) for discharging side-conditioned
     contexts on sub-teams, and unrestricted union closure
     (`supClosed_support`) for reassembling `∨E`'s conclusion. -/
 theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
@@ -327,7 +319,7 @@ theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
   | @negI Γ α p hα hΓNE _ ih =>
     intro s hΓ
     show antiSupport M α s
-    have hflat := isFlat_support_of_isNEFree (φ := .neg α) hα M
+    have hflat := isFlat_support_of_neFree (φ := .neg α) hα M
     refine (hflat s).mpr (fun w hw => ?_)
     rcases support_singleton_or_antiSupport_singleton hα M w with hsup | hanti
     · exfalso
@@ -336,7 +328,7 @@ theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
         simp at this
       · rcases hγ with rfl | hγ
         · exact hsup
-        · exact isLowerSet_support_of_isNEFree (hΓNE γ hγ) M
+        · exact isLowerSet_support_of_neFree (hΓNE γ hγ) M
             (Finset.singleton_subset_iff.mpr hw) (hΓ γ hγ)
     · exact hanti
   | @negE Γ₁ Γ₂ α β hα hβ _ _ ih₁ ih₂ =>
@@ -344,7 +336,7 @@ theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
     have h1 := ih₁ s (fun γ hγ => hΓ γ (Set.mem_union_left _ hγ))
     have h2 := ih₂ s (fun γ hγ => hΓ γ (Set.mem_union_right _ hγ))
     have hs : s = ∅ := eq_empty_of_support_antiSupport hα M s h1 h2
-    exact hs ▸ support_empty_of_isNEFree hβ M
+    exact hs ▸ support_empty_of_neFree hβ M
   | dneE _ ih => exact ih
   | dneI _ ih => exact ih
   | dmConjE _ ih => exact ih
@@ -357,7 +349,7 @@ theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
     exact fun s hΓ => (support_bot_iff M p s).mp (ih s hΓ)
   | disjI hψ _ ih =>
     exact fun s hΓ =>
-      ⟨s, ∅, by simp, ih s hΓ, support_empty_of_isNEFree hψ M⟩
+      ⟨s, ∅, by simp, ih s hΓ, support_empty_of_neFree hψ M⟩
   | disjW _ ih =>
     exact fun s hΓ => ⟨s, s, by simp, ih s hΓ, ih s hΓ⟩
   | disjCom _ ih =>
@@ -379,12 +371,12 @@ theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
     have hχ₁ := ih₁ t₁ (fun γ hγ => by
       rcases hγ with rfl | hγ
       · exact hφ
-      · exact isLowerSet_support_of_isNEFree (hΔ₁ γ hγ) M hsub₁
+      · exact isLowerSet_support_of_neFree (hΔ₁ γ hγ) M hsub₁
           (hΓ γ (Set.mem_union_left _ (Set.mem_union_right _ hγ))))
     have hχ₂ := ih₂ t₂ (fun γ hγ => by
       rcases hγ with rfl | hγ
       · exact hψ
-      · exact isLowerSet_support_of_isNEFree (hΔ₂ γ hγ) M hsub₂
+      · exact isLowerSet_support_of_neFree (hΔ₂ γ hγ) M hsub₂
           (hΓ γ (Set.mem_union_right _ hγ)))
     exact hsp ▸ supClosed_support M χ hχ₁ hχ₂
   | @disjMon Γ Δ φ ψ χ hΔ _ _ ihmaj ih =>
@@ -395,7 +387,7 @@ theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
     have hχ := ih t₂ (fun γ hγ => by
       rcases hγ with rfl | hγ
       · exact hψ
-      · exact isLowerSet_support_of_isNEFree (hΔ γ hγ) M hsub₂
+      · exact isLowerSet_support_of_neFree (hΔ γ hγ) M hsub₂
           (hΓ γ (Set.mem_union_right _ hγ)))
     exact ⟨t₁, t₂, hsp, hφ, hχ⟩
   | @botE Γ p φ _ ih =>
