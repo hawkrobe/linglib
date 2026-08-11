@@ -60,7 +60,7 @@ descriptive content.
 namespace Mirrazi2024
 
 open Quantification.ChoiceFunction
-open Semantics.Attitudes.Doxastic (AccessRel boxAt)
+open Semantics.Attitudes.Doxastic (boxAt)
 open Semantics.Attitudes.NegRaising (negRaisesAt)
 open Farsi.Determiners (ye candTa doTa PlainIndefiniteEntry)
 
@@ -128,7 +128,7 @@ theorem nonNegRaiser_suffices :
 /-- Structural verification: *think* supports neg-raising via the
     doxastic infrastructure. This connects to the library's `negRaisesAt`
     without claiming neg-raising explains the scope paradox. -/
-theorem think_does_neg_raise {W E : Type*} (R : AccessRel W E)
+theorem think_does_neg_raise {W E : Type*} (R : E → W → W → Prop)
     (agent : E) (worlds : List W) (p : W → Prop) (w : W)
     (hNeg : ¬ boxAt R agent w worlds p)
     (hExclMiddle : negRaisesAt R agent worlds p w) :
@@ -154,7 +154,7 @@ variable (W : Type*) (E : Type*)
     `R` connects to the doxastic infrastructure in `Attitudes.Doxastic`. -/
 def widePseudoDeDictoTC
     (f : SkolemCF W E)
-    (R : AccessRel W E) (agent : E) (worlds : List W)
+    (R : E → W → W → Prop) (agent : E) (worlds : List W)
     (nounProp : W → E → Prop)
     (vp : E → W → Prop)
     (w₀ : W) : Prop :=
@@ -170,7 +170,7 @@ def widePseudoDeDictoTC
     the individual is fixed across belief worlds. -/
 def wideDeReTC
     (f : SkolemCF W E)
-    (R : AccessRel W E) (agent : E) (worlds : List W)
+    (R : E → W → W → Prop) (agent : E) (worlds : List W)
     (nounProp : W → E → Prop)
     (vp : E → W → Prop)
     (w₀ : W) : Prop :=
@@ -187,7 +187,7 @@ def wideDeReTC
     "pseudo-de dicto" reading reduces to plain de re. -/
 theorem deRe_eq_pseudoDeDicto_when_rigid
     (f : SkolemCF W E)
-    (R : AccessRel W E) (agent : E) (worlds : List W)
+    (R : E → W → W → Prop) (agent : E) (worlds : List W)
     (nounProp : W → E → Prop)
     (vp : E → W → Prop) (w₀ : W)
     (hRigidNP : ∀ w, nounProp w = nounProp w₀)
@@ -224,7 +224,7 @@ end TruthConditions
     (since NEG is syntactically below the operator). -/
 theorem movement_above_neg_forces_deRe
     {W E : Type*} (f : SkolemCF W E)
-    (R : AccessRel W E) (agent : E) (worlds : List W)
+    (R : E → W → W → Prop) (agent : E) (worlds : List W)
     (nounProp : W → E → Prop) (vp : E → W → Prop) (w₀ : W) :
     -- If the CF is "moved" (evaluated at w₀ for both its world and NP args),
     -- the result is de re, not pseudo-de dicto.

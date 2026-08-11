@@ -59,20 +59,11 @@ export Features (Veridicality)
 -- Accessibility Relations
 
 /--
-Doxastic accessibility relation type (Prop-valued, mathlib convention).
-
-`R agent evalWorld accessibleWorld` holds iff accessibleWorld is compatible
-with what agent believes/knows in evalWorld. For computational evaluation
-add `[DecidableRel (R agent)]` instances at use sites.
--/
-abbrev AccessRel (W E : Type*) := E → W → W → Prop
-
-/--
 Universal modal: holds at w iff p holds at all accessible worlds.
 
 ⟦□p⟧(w) = ∀w' ∈ worlds. R(agent, w, w') → p(w')
 -/
-def boxAt {W E : Type*} (R : AccessRel W E) (agent : E) (w : W)
+def boxAt {W E : Type*} (R : E → W → W → Prop) (agent : E) (w : W)
     (worlds : List W) (p : W → Prop) : Prop :=
   ∀ w' ∈ worlds, R agent w w' → p w'
 
@@ -81,16 +72,16 @@ Existential modal: holds at w iff p holds at some accessible world.
 
 ⟦◇p⟧(w) = ∃w' ∈ worlds. R(agent, w, w') ∧ p(w')
 -/
-def diaAt {W E : Type*} (R : AccessRel W E) (agent : E) (w : W)
+def diaAt {W E : Type*} (R : E → W → W → Prop) (agent : E) (w : W)
     (worlds : List W) (p : W → Prop) : Prop :=
   ∃ w' ∈ worlds, R agent w w' ∧ p w'
 
-instance boxAt_decidable {W E : Type*} (R : AccessRel W E) [∀ a w w', Decidable (R a w w')]
+instance boxAt_decidable {W E : Type*} (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')]
     (agent : E) (w : W) (worlds : List W) (p : W → Prop) [DecidablePred p] :
     Decidable (boxAt R agent w worlds p) :=
   inferInstanceAs (Decidable (∀ w' ∈ worlds, _))
 
-instance diaAt_decidable {W E : Type*} (R : AccessRel W E) [∀ a w w', Decidable (R a w w')]
+instance diaAt_decidable {W E : Type*} (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')]
     (agent : E) (w : W) (worlds : List W) (p : W → Prop) [DecidablePred p] :
     Decidable (diaAt R agent w worlds p) :=
   inferInstanceAs (Decidable (∃ w' ∈ worlds, _))
@@ -465,7 +456,7 @@ structure DoxasticPredicate (W E : Type*) where
   /-- Name of the predicate -/
   name : String
   /-- Accessibility relation -/
-  access : AccessRel W E
+  access : E → W → W → Prop
   /-- Veridicality (veridical or not) -/
   veridicality : Veridicality
   /-- Does it create an opaque context? (substitution failures) -/
@@ -526,7 +517,7 @@ theorem DoxasticPredicate.toPartialProp_assertion {W E : Type*}
 
 /-- PartialProp for a hypothetical contrafactive verb: presupposes ¬p,
     asserts agent believes p. UNATTESTED — see [glass-2025]. -/
-def contrafactivePartialProp {W E : Type*} (R : AccessRel W E) (agent : E)
+def contrafactivePartialProp {W E : Type*} (R : E → W → W → Prop) (agent : E)
     (p : W → Prop) (worlds : List W) : PartialProp W :=
   { presup := λ w => ¬ p w
   , assertion := λ w => boxAt R agent w worlds p }
@@ -557,7 +548,7 @@ Abstract "believe" predicate template.
 
 Users instantiate with their specific accessibility relation.
 -/
-def believeTemplate {W E : Type*} (R : AccessRel W E) : DoxasticPredicate W E :=
+def believeTemplate {W E : Type*} (R : E → W → W → Prop) : DoxasticPredicate W E :=
   { name := "believe"
   , access := R
   , veridicality := .nonVeridical
@@ -569,7 +560,7 @@ Abstract "know" predicate template.
 
 Veridical: knowing p requires p to be true.
 -/
-def knowTemplate {W E : Type*} (R : AccessRel W E) : DoxasticPredicate W E :=
+def knowTemplate {W E : Type*} (R : E → W → W → Prop) : DoxasticPredicate W E :=
   { name := "know"
   , access := R
   , veridicality := .veridical
@@ -581,7 +572,7 @@ Abstract "think" predicate template.
 
 Non-veridical, typically less commitment than "believe".
 -/
-def thinkTemplate {W E : Type*} (R : AccessRel W E) : DoxasticPredicate W E :=
+def thinkTemplate {W E : Type*} (R : E → W → W → Prop) : DoxasticPredicate W E :=
   { name := "think"
   , access := R
   , veridicality := .nonVeridical

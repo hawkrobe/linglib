@@ -35,7 +35,7 @@ cannot capture.
 namespace Semantics.Attitudes.ContextQuantification
 
 open Semantics.Context
-open Semantics.Attitudes.Doxastic (AccessRel boxAt)
+open Semantics.Attitudes.Doxastic (boxAt)
 
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
 
@@ -55,7 +55,7 @@ variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
     sees the whole shifted tower, it can resolve both origin-reading and
     local-reading indexicals; the special case where `φ` consults only the
     innermost (shifted) context is `ctxBox` below. -/
-def sayM (R : AccessRel W E) (holder : E)
+def sayM (R : E → W → W → Prop) (holder : E)
     (φ : ContextTower (KContext W E P T) → W → Prop)
     (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) : Prop :=
   ∀ w' ∈ worlds, R holder w w' → φ (t.push (attitudeShift holder w')) w'
@@ -111,7 +111,7 @@ def ctxFromShift (t : ContextTower (KContext W E P T)) (holder : E) (w' : W) :
     unfold to the same term. The ONLY difference between them is whether
     the meaning function can see the tower. -/
 theorem sayM_reduces_to_box
-    (R : AccessRel W E) (holder : E) (p : W → Prop)
+    (R : E → W → W → Prop) (holder : E) (p : W → Prop)
     (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) :
     sayM R holder (fun _ w' => p w') t w worlds
     = boxAt R holder w worlds p := rfl
@@ -129,12 +129,12 @@ theorem sayM_reduces_to_box
     contexts ⟨holder, w', t, p⟩, not just worlds w'. Defined as `sayM` with
     `φ` factored through `.innermost` (which equals `ctxFromShift`), so the
     reduction and Fixity results below are specializations of `sayM`'s. -/
-def ctxBox (R : AccessRel W E) (holder : E)
+def ctxBox (R : E → W → W → Prop) (holder : E)
     (φ : KContext W E P T → Prop)
     (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) : Prop :=
   sayM R holder (fun tw _ => φ tw.innermost) t w worlds
 
-instance ctxBox_decidable (R : AccessRel W E) [∀ a w w', Decidable (R a w w')]
+instance ctxBox_decidable (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')]
     (holder : E) (φ : KContext W E P T → Prop) [DecidablePred φ]
     (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) :
     Decidable (ctxBox R holder φ t w worlds) :=
@@ -149,7 +149,7 @@ instance ctxBox_decidable (R : AccessRel W E) [∀ a w w', Decidable (R a w w')]
     perspective-dependent expressions, nothing that reads from the
     context beyond the world. -/
 theorem ctxBox_world_only
-    (R : AccessRel W E) (holder : E) (p : W → Prop)
+    (R : E → W → W → Prop) (holder : E) (p : W → Prop)
     (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) :
     ctxBox R holder (fun c => p c.world) t w worlds
     = boxAt R holder w worlds p := by
@@ -233,7 +233,7 @@ theorem fixity_world_only (p : W → Prop) :
 
     This is because `ctxBox` with world-only meaning reduces to
     `boxAt` (by `ctxBox_world_only`), which is tower-independent. -/
-theorem ctxBox_fixity (R : AccessRel W E) (holder : E)
+theorem ctxBox_fixity (R : E → W → W → Prop) (holder : E)
     (p : W → Prop)
     (t₁ t₂ : ContextTower (KContext W E P T))
     (w : W) (worlds : List W) :

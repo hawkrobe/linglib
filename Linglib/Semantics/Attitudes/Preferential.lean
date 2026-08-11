@@ -1127,7 +1127,7 @@ For modalized φ (might p, must p), verifiers are still pow(S ∩ p) —
 modalized complements raise the same issue as unmodalized ones.
 -/
 
-open Semantics.Attitudes.Doxastic (AccessRel diaAt boxAt)
+open Semantics.Attitudes.Doxastic (diaAt boxAt)
 
 /-- An emotive doxastic predicate: hybrid representational + preferential.
 
@@ -1139,7 +1139,7 @@ structure EmotiveDoxasticPredicate (W E : Type*) where
   /-- Name of the predicate -/
   name : String
   /-- Doxastic accessibility relation: DOX(x, w) -/
-  access : AccessRel W E
+  access : E → W → W → Prop
   /-- Preference function: μ(x, p) → degree -/
   μ : PreferenceFunction W E
   /-- Threshold function: θ(C) → degree -/
@@ -1203,13 +1203,13 @@ def EmotiveDoxasticPredicate.holdsAt {W E : Type*}
   V.preferenceAssertion agent p C
 
 /-- Hope: emotive doxastic with positive valence. -/
-def hopeHybrid {W E : Type*} (R : AccessRel W E)
+def hopeHybrid {W E : Type*} (R : E → W → W → Prop)
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
     EmotiveDoxasticPredicate W E :=
   { name := "hope", access := R, μ := μ, θ := θ, valence := .positive }
 
 /-- Fear: emotive doxastic with negative valence. -/
-def fearHybrid {W E : Type*} (R : AccessRel W E)
+def fearHybrid {W E : Type*} (R : E → W → W → Prop)
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
     EmotiveDoxasticPredicate W E :=
   { name := "fear", access := R, μ := μ, θ := θ, valence := .negative }
