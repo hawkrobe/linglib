@@ -35,18 +35,18 @@ languages in `Studies/KuhlmannKollerSatta2015`.
 ## Main definitions
 
 * `CCG.TargetRestricted.target`: the target of a category — its leftmost atom.
-* `CCG.TargetRestricted.Derivation`: a raw derivation tree whose nodes record degree
-  and direction; `Derivation.cat s` reads off its category under the target
-  restriction to `s`, and `Derivation.yield` its surface string.
 * `CCG.TargetRestricted.Grammar`: the capacity object — a finite lexicon, the
-  distinguished atom, and a degree bound; `Derivation.WellFormed` checks a candidate
-  tree against a grammar and `Grammar.language` is the set of yields it derives.
+  distinguished atom, and a bound on composition degree.
+* `CCG.TargetRestricted.Grammar.Derives`: the derivability relation — `G.Derives c w`
+  says the grammar derives token string `w` at category `c`; `Grammar.language` is
+  the set of strings derived at the distinguished atom.
 
 ## Implementation notes
 
-`Derivation` is deliberately extrinsic, in contrast to the intrinsically typed
-`CCG.Derivation`: the generative-capacity results quantify over candidate trees, so
-well-formedness is the proposition `d.cat s = some c` rather than a typing fact.
+Derivability is an inductive `Prop`, mathlib's form for grammar formalisms
+(`ContextFreeGrammar.Derives`), in contrast to the intrinsically typed
+`CCG.Derivation` of the interpreted theory: capacity arguments quantify over all
+derivations, and induction on `Derives` is exactly that quantification.
 -/
 
 namespace CCG.TargetRestricted
@@ -69,37 +69,6 @@ def target : Cat α → α
 @[simp] theorem target_lslash (x y : Cat α) (m : Modality) :
     target (Cat.lslash x m y) = target x := rfl
 
-/-- A raw derivation tree over the degree-`n` composition schema: nodes record degree
-and direction only; well-formedness under a target restriction is read off by
-`Derivation.cat`. -/
-inductive Derivation (α : Type*) where
-  /-- A lexical leaf: a surface form at a category. -/
-  | lex : String → Cat α → Derivation α
-  /-- Forward composition of degree `n` (`>Bⁿ`; degree 0 is application). -/
-  | fc : Nat → Derivation α → Derivation α → Derivation α
-  /-- Backward composition of degree `n` (`<Bⁿ`; degree 0 is application). -/
-  | bc : Nat → Derivation α → Derivation α → Derivation α
-  deriving Repr
-
-/-- The category derived under the target restriction to `s`: each rule fires only when
-the target of its primary (functor) input is `s` (`none` otherwise, or if the schema
-does not apply). -/
-def Derivation.cat [DecidableEq α] (s : α) : Derivation α → Option (Cat α)
-  | .lex _ c => some c
-  | .fc n l r => do
-    let a ← l.cat s
-    let b ← r.cat s
-    if target a = s then Cat.generalizedForwardComp n a b else none
-  | .bc n l r => do
-    let a ← l.cat s
-    let b ← r.cat s
-    if target b = s then Cat.generalizedBackwardComp n a b else none
-
-/-- Surface string: leaf forms left to right. -/
-def Derivation.yield : Derivation α → List String
-  | .lex w _ => [w]
-  | .fc _ l r | .bc _ l r => l.yield ++ r.yield
-
 /-! ### Grammars and their languages -/
 
 /-- A target-restricted CCG grammar: a finite lexicon, a distinguished atom serving as
@@ -115,30 +84,29 @@ structure Grammar (α : Type*) where
   /-- The bound on composition degree. -/
   degree : Nat
 
-/-- The derivation draws its leaves from the grammar's lexicon and respects its
-degree bound. Together with `Derivation.cat G.start`, this is derivational
-well-formedness over `G`. -/
-def Derivation.WellFormed (G : Grammar α) : Derivation α → Prop
-  | .lex w c => (w, c) ∈ G.lexicon
-  | .fc n l r => n ≤ G.degree ∧ l.WellFormed G ∧ r.WellFormed G
-  | .bc n l r => n ≤ G.degree ∧ l.WellFormed G ∧ r.WellFormed G
+/-- `G.Derives c w`: the grammar derives token string `w` at category `c` — a lexical
+entry, or a target-gated generalized composition of two adjacent derivations, within
+the grammar's degree bound. Capacity arguments proceed by induction on this
+relation. -/
+inductive Grammar.Derives [DecidableEq α] (G : Grammar α) :
+    Cat α → List String → Prop where
+  /-- A lexical entry derives its token. -/
+  | lex {w : String} {c : Cat α} : (w, c) ∈ G.lexicon → G.Derives c [w]
+  /-- Forward composition of degree `n` (`>Bⁿ`; degree 0 is application), gated on the
+  primary (left) target. -/
+  | fc (n : Nat) {a b c : Cat α} {u v : List String} :
+      G.Derives a u → G.Derives b v → n ≤ G.degree → target a = G.start →
+      Cat.generalizedForwardComp n a b = some c → G.Derives c (u ++ v)
+  /-- Backward composition of degree `n` (`<Bⁿ`; degree 0 is application), gated on the
+  primary (right) target. -/
+  | bc (n : Nat) {a b c : Cat α} {u v : List String} :
+      G.Derives a u → G.Derives b v → n ≤ G.degree → target b = G.start →
+      Cat.generalizedBackwardComp n a b = some c → G.Derives c (u ++ v)
 
-instance Derivation.WellFormed.decidable [DecidableEq α] (G : Grammar α) :
-    ∀ d : Derivation α, Decidable (d.WellFormed G)
-  | .lex w c => inferInstanceAs (Decidable ((w, c) ∈ G.lexicon))
-  | .fc _ l r =>
-      @instDecidableAnd _ _ inferInstance
-        (@instDecidableAnd _ _ (decidable G l) (decidable G r))
-  | .bc _ l r =>
-      @instDecidableAnd _ _ inferInstance
-        (@instDecidableAnd _ _ (decidable G l) (decidable G r))
-
-/-- The string language of a grammar: the yields of well-formed derivations of the
-distinguished atom. Yields are token lists, so empty-string lexical entries are
-inexpressible — the ε-freeness of [schiffer-maletti-2021]'s normal form holds by
-construction. -/
+/-- The string language of a grammar: the token strings derived at the distinguished
+atom. Strings are token lists, so empty-string lexical entries are inexpressible —
+the ε-freeness of [schiffer-maletti-2021]'s normal form holds by construction. -/
 def Grammar.language [DecidableEq α] (G : Grammar α) : Set (List String) :=
-  { w | ∃ d : Derivation α,
-      d.WellFormed G ∧ d.cat G.start = some (.atom G.start) ∧ d.yield = w }
+  { w | G.Derives (.atom G.start) w }
 
 end CCG.TargetRestricted

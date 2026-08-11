@@ -461,15 +461,14 @@ end Gapping
 
 /-! ### Cross-serial dependencies
 
-Dutch verb clusters ([bresnan-etal-1982]) with cross-serial NP-verb bindings, in the
-target-restricted model (every step has primary target `S`, so each is a valid rule
-instance of `CCG.TargetRestricted`). Two constructions are given. The *verb-raising*
-derivations (rightward `/NP` slots, harmonic `B`/`B²`) encode the cross-serial binding
-pattern but their yield does **not** match Dutch surface order (see
-`jan_zag_zwemmen_piet_yield`). The *surface-faithful* derivations (leftward `\NP`
+Dutch verb clusters ([bresnan-etal-1982]) with cross-serial NP-verb bindings, over a
+target-restricted grammar (`dutchGrammar`: every rule fires at primary target `S`).
+Two constructions are given as `Derives` facts — the relation carries category and
+string at once. The *verb-raising* derivations (rightward `/NP` slots, harmonic
+`B`/`B²`) encode the cross-serial binding pattern at a non-Dutch string (see
+`jan_zag_zwemmen_piet_derives`); the *surface-faithful* derivations (leftward `\NP`
 slots, forward crossed composition, following the book's own Dutch fragment — ch. 6;
-appendix summary) get both the binding and the attested word order, so the yield
-matches "Jan Piet (Marie) zag (helpen) zwemmen". -/
+appendix summary) derive the attested "Jan Piet (Marie) zag (helpen) zwemmen". -/
 
 section CrossSerial
 
@@ -480,9 +479,6 @@ open Features (VerbClusterBinding)
 
 /-- Verb phrase (infinitival). -/
 def VP : Cat Atom := S \ NP
-
-/-- Control verb: takes VP, gives VP (e.g. "helpen" in 2-verb clusters). -/
-def ControlV : Cat Atom := VP / VP
 
 /-- Perception verb: `(S\NP)/(S\NP)` (e.g. "zag" = saw). -/
 def PercV : Cat Atom := (S \ NP) / VP
@@ -510,146 +506,122 @@ def PercVSub : Cat Atom := ((S \ NP) \ NP) / VP
 `zien := (VP\NP)/VP₋SUB`). -/
 def InfHeadSub : Cat Atom := (VP \ NP) / VP
 
-/-! ### Lexical entries -/
+/-- The Dutch fragment as a target-restricted grammar: the lexical entries the
+derivations below draw on, target and start `S`, degree bound 2. -/
+def dutchGrammar : TargetRestricted.Grammar Atom where
+  lexicon := [("Jan", NP), ("Piet", NP), ("Marie", NP),
+              ("zag", PercV), ("zag", PercVSub),
+              ("helpen", ControlVR), ("helpen", InfHeadSub),
+              ("zwemmen", VP), ("zwemmen", InfSubj)]
+  start := .S
+  degree := 2
 
-def jan_lex : TargetRestricted.Derivation Atom := .lex "Jan" NP
-def piet_lex : TargetRestricted.Derivation Atom := .lex "Piet" NP
-def marie_lex : TargetRestricted.Derivation Atom := .lex "Marie" NP
-def zag_lex : TargetRestricted.Derivation Atom := .lex "zag" PercV
-/-- `zwemmen` in its verb-raising category `(S\NP)/NP`. -/
-def zwemmen_vr : TargetRestricted.Derivation Atom := .lex "zwemmen" InfSubj
-/-- `helpen` in its verb-raising category `((S\NP)/NP)/(S\NP)`. -/
-def helpen_vr : TargetRestricted.Derivation Atom := .lex "helpen" ControlVR
+/-! ### Lexical entries, as derivability facts -/
 
-/-! ### Derivation: "Jan Piet zag zwemmen" (2 NPs, 2 Vs) -/
+theorem jan_derives : dutchGrammar.Derives NP ["Jan"] := .lex (by decide)
+theorem piet_derives : dutchGrammar.Derives NP ["Piet"] := .lex (by decide)
+theorem marie_derives : dutchGrammar.Derives NP ["Marie"] := .lex (by decide)
+theorem zag_vr_derives : dutchGrammar.Derives PercV ["zag"] := .lex (by decide)
+theorem zwemmen_vr_derives : dutchGrammar.Derives InfSubj ["zwemmen"] := .lex (by decide)
+theorem helpen_vr_derives : dutchGrammar.Derives ControlVR ["helpen"] := .lex (by decide)
+theorem zag_sub_derives : dutchGrammar.Derives PercVSub ["zag"] := .lex (by decide)
+theorem helpen_sub_derives : dutchGrammar.Derives InfHeadSub ["helpen"] := .lex (by decide)
+theorem zwemmen_bare_derives : dutchGrammar.Derives VP ["zwemmen"] := .lex (by decide)
 
-/-- `zag >B zwemmen`: `(S\NP)/(S\NP) ∘ (S\NP)/NP = (S\NP)/NP`. -/
-def zag_comp_zwemmen : TargetRestricted.Derivation Atom := .fc 1 zag_lex zwemmen_vr
-/-- `(zag zwemmen) Piet`: `(S\NP)/NP NP = S\NP`. -/
-def zag_zwemmen_piet : TargetRestricted.Derivation Atom := .fc 0 zag_comp_zwemmen piet_lex
-/-- `Jan (zag zwemmen Piet)`: `NP S\NP = S`. -/
-def jan_zag_zwemmen_piet : TargetRestricted.Derivation Atom := .bc 0 jan_lex zag_zwemmen_piet
+/-! ### Verb-raising derivations
 
-/-! ### Derivation: "Jan Piet Marie zag helpen zwemmen" (3 NPs, 3 Vs)
+`B`/`B²` thread the raised argument slots through the cluster — the cross-serial
+*binding* pattern — but the rightward `/NP` slots spell the arguments out after the
+cluster, so the derived strings do **not** match Dutch surface order. -/
 
-The cross-serial bindings are Jan→zag, Piet→helpen, Marie→zwemmen. `helpen_vr` passes an
-`/NP` slot (for Piet) through while taking its VP complement, so `B`/`B²` thread both
-Piet's and Marie's slots through the cluster into `((S\NP)/NP)/NP`. -/
+/-- `zag >B² (helpen >B zwemmen)`: the cluster is a 3-place predicate
+`((S\NP)/NP)/NP` wanting Jan (`\NP`), Piet (`/NP`) and Marie (`/NP`). -/
+theorem verb_cluster_derives :
+    dutchGrammar.Derives (((S \ NP) / NP) / NP) ["zag", "helpen", "zwemmen"] :=
+  .fc 2 zag_vr_derives
+    (.fc 1 helpen_vr_derives zwemmen_vr_derives (by decide) (by decide) rfl)
+    (by decide) (by decide) rfl
 
-/-- `helpen >B zwemmen`: `((S\NP)/NP)/(S\NP) ∘ (S\NP)/NP = ((S\NP)/NP)/NP`. -/
-def helpen_comp_zwemmen : TargetRestricted.Derivation Atom := .fc 1 helpen_vr zwemmen_vr
-/-- `zag >B² (helpen zwemmen)`: `(S\NP)/(S\NP) ∘² ((S\NP)/NP)/NP = ((S\NP)/NP)/NP`. -/
-def zag_comp2_helpen_zwemmen : TargetRestricted.Derivation Atom := .fc 2 zag_lex helpen_comp_zwemmen
-/-- verb cluster + Marie: `((S\NP)/NP)/NP NP = (S\NP)/NP`. -/
-def verbs_marie : TargetRestricted.Derivation Atom := .fc 0 zag_comp2_helpen_zwemmen marie_lex
-/-- + Piet: `(S\NP)/NP NP = S\NP`. -/
-def verbs_marie_piet : TargetRestricted.Derivation Atom := .fc 0 verbs_marie piet_lex
-/-- + Jan: `NP S\NP = S`. -/
-def jan_piet_marie_zag_helpen_zwemmen_deriv : TargetRestricted.Derivation Atom := .bc 0 jan_lex verbs_marie_piet
-
-/-! ### Verification -/
-
-/-- The 2-NP cross-serial derivation yields category `S` (under the target restriction). -/
-theorem two_np_derives_S : jan_zag_zwemmen_piet.cat .S = some S := by decide
-
-/-- The 3-NP cross-serial derivation yields category `S`, threading three argument slots
-through the verb cluster via `B` and `B²`. -/
-theorem three_np_derives_S :
-    jan_piet_marie_zag_helpen_zwemmen_deriv.cat .S = some S := by decide
-
-/-- The verb cluster composes into `((S\NP)/NP)/NP` — a 3-place predicate wanting Jan
-(`\NP`), Piet (`/NP`) and Marie (`/NP`). -/
-theorem verb_cluster_cat :
-    zag_comp2_helpen_zwemmen.cat .S = some (((S \ NP) / NP) / NP) := by decide
-
-/-- The 2-verb derivation's surface yield.
-
-    **This does not match Dutch surface order** ("Jan Piet zag zwemmen"): the verb-cluster
-    category `(S\NP)/NP` looks rightward for its arguments, so the derivation tree spells
-    out "Jan zag zwemmen Piet". The categories here capture the cross-serial *binding*
-    pattern but not the *linear order*; the surface-faithful derivations below get both. -/
-theorem jan_zag_zwemmen_piet_yield :
-    jan_zag_zwemmen_piet.yield = ["Jan", "zag", "zwemmen", "Piet"] := by decide
+/-- The 2-verb verb-raising derivation derives `S` — at the string
+"Jan zag zwemmen Piet", which is **not** Dutch ("Jan Piet zag zwemmen"): the
+verb-raising categories capture the binding but not the linear order. The
+surface-faithful derivations below get both. -/
+theorem jan_zag_zwemmen_piet_derives :
+    dutchGrammar.Derives S ["Jan", "zag", "zwemmen", "Piet"] :=
+  .bc 0 jan_derives
+    (.fc 0 (.fc 1 zag_vr_derives zwemmen_vr_derives (by decide) (by decide) rfl)
+      piet_derives (by decide) (by decide) rfl)
+    (by decide) (by decide) rfl
 
 /-! ### Surface-faithful derivations (leftward argument categories)
 
-[steedman-2000]'s own analysis (ch. 6; appendix summary of the Dutch
-fragment) gives subordinate-clause cluster verbs *leftward* NP slots and
-composes the cluster by forward **crossed** composition, so the
-NPs precede the whole cluster and the yield is the attested
-"Jan Piet (Marie) zag (helpen) zwemmen". -/
+[steedman-2000]'s own analysis (ch. 6; appendix summary of the Dutch fragment) gives
+subordinate-clause cluster verbs *leftward* NP slots and composes the cluster by
+forward **crossed** composition, so the NPs precede the whole cluster and the derived
+strings are the attested "Jan Piet (Marie) zag (helpen) zwemmen". -/
 
-def zag_sub : TargetRestricted.Derivation Atom := .lex "zag" PercVSub
-def helpen_sub : TargetRestricted.Derivation Atom := .lex "helpen" InfHeadSub
-def zwemmen_bare : TargetRestricted.Derivation Atom := .lex "zwemmen" VP
+/-- The crossed cluster `zag >B× (helpen zwemmen)` is a leftward-seeking 3-place
+predicate. -/
+theorem crossed_cluster_derives :
+    dutchGrammar.Derives (((S \ NP) \ NP) \ NP) ["zag", "helpen", "zwemmen"] :=
+  .fc 1 zag_sub_derives
+    (.fc 0 helpen_sub_derives zwemmen_bare_derives (by decide) (by decide) rfl)
+    (by decide) (by decide) rfl
 
-/-- "(dat) Jan Piet zag zwemmen": `zag` applies to bare `zwemmen` and the
-NPs attach leftward — the 2-verb cluster needs no composition. -/
-def jan_piet_zag_zwemmen_sub : TargetRestricted.Derivation Atom :=
-  .bc 0 jan_lex (.bc 0 piet_lex (.fc 0 zag_sub zwemmen_bare))
+/-- "(dat) Jan Piet zag zwemmen": `zag` applies to bare `zwemmen` and the NPs attach
+leftward — the 2-verb cluster needs no composition, and the string is the attested
+order (contrast `jan_zag_zwemmen_piet_derives`). -/
+theorem two_np_sub_derives :
+    dutchGrammar.Derives S ["Jan", "Piet", "zag", "zwemmen"] :=
+  .bc 0 jan_derives
+    (.bc 0 piet_derives
+      (.fc 0 zag_sub_derives zwemmen_bare_derives (by decide) (by decide) rfl)
+      (by decide) (by decide) rfl)
+    (by decide) (by decide) rfl
 
-/-- "(dat) Jan Piet Marie zag helpen zwemmen": `helpen zwemmen : VP\NP`
-forms by application, `zag >B× (helpen zwemmen)` crosses the rightward
-`/VP` into a leftward-seeking cluster `((S\NP)\NP)\NP`, and the three NPs
-attach leftward — Marie to `helpen`'s slot, Piet to `zag`'s object slot,
-Jan as subject: the cross-serial binding falls out of the category
-threading. -/
-def jan_piet_marie_zag_helpen_zwemmen_sub : TargetRestricted.Derivation Atom :=
-  .bc 0 jan_lex (.bc 0 piet_lex (.bc 0 marie_lex
-    (.fc 1 zag_sub (.fc 0 helpen_sub zwemmen_bare))))
+/-- "(dat) Jan Piet Marie zag helpen zwemmen": the three NPs attach leftward to the
+crossed cluster — Marie to `helpen`'s slot, Piet to `zag`'s object slot, Jan as
+subject: the cross-serial binding falls out of the category threading, in the
+attested word order. -/
+theorem three_np_sub_derives :
+    dutchGrammar.Derives S ["Jan", "Piet", "Marie", "zag", "helpen", "zwemmen"] :=
+  .bc 0 jan_derives
+    (.bc 0 piet_derives
+      (.bc 0 marie_derives crossed_cluster_derives (by decide) (by decide) rfl)
+      (by decide) (by decide) rfl)
+    (by decide) (by decide) rfl
 
-theorem two_np_sub_derives_S :
-    jan_piet_zag_zwemmen_sub.cat .S = some S := by decide
+/-! ### Binding annotations -/
 
-theorem three_np_sub_derives_S :
-    jan_piet_marie_zag_helpen_zwemmen_sub.cat .S = some S := by decide
-
-/-- The crossed cluster is a leftward-seeking 3-place predicate. -/
-theorem crossed_cluster_cat :
-    (TargetRestricted.Derivation.fc 1 zag_sub (.fc 0 helpen_sub zwemmen_bare)).cat .S
-      = some (((S \ NP) \ NP) \ NP) := by decide
-
-/-- The surface-faithful derivations spell out the attested word order
-(contrast `jan_zag_zwemmen_piet_yield`). -/
-theorem two_np_sub_yield :
-    jan_piet_zag_zwemmen_sub.yield = ["Jan", "Piet", "zag", "zwemmen"] := by
-  decide
-
-theorem three_np_sub_yield :
-    jan_piet_marie_zag_helpen_zwemmen_sub.yield
-      = ["Jan", "Piet", "Marie", "zag", "helpen", "zwemmen"] := by decide
-
-/-- A CCG derivation annotated with which NP binds to which verb.
-TODO: compute `binding` from `deriv`'s composition structure instead of
-annotating it by hand. -/
+/-- A derived Dutch string annotated with which NP binds to which verb; carrying the
+derivability fact ties the words to the grammar. TODO: compute `binding` from a
+derivation's composition structure instead of annotating it by hand. -/
 structure AnnotatedDerivation where
   /-- Number of NP-verb pairs -/
   n : Nat
-  deriv : CCG.TargetRestricted.Derivation Atom
   /-- Surface words -/
   words : List String
   /-- The NP-verb binding permutation -/
-  binding : VerbClusterBinding n
-  deriving Repr
+  binding : Features.VerbClusterBinding n
+  /-- The grammar derives the words at `S`. -/
+  derives : dutchGrammar.Derives S words
 
 /-- "Jan Piet zag zwemmen" with cross-serial bindings: Jan is the subject
 of "zag", Piet the argument bound into the cluster. -/
 def dutch_jan_piet_zag_zwemmen : AnnotatedDerivation :=
   { n := 2
-  , deriv := jan_piet_zag_zwemmen_sub
   , words := ["Jan", "Piet", "zag", "zwemmen"]
   , binding := VerbClusterBinding.identity 2
+  , derives := two_np_sub_derives
   }
 
-/-- "Jan Piet Marie zag helpen zwemmen": `zag >B× (helpen zwemmen)` makes
-the cluster a leftward-seeking 3-place predicate; Marie binds `helpen`'s
-slot, Piet `zag`'s object slot, Jan the subject — the cross-serial
-binding pattern, in the attested word order. -/
+/-- "Jan Piet Marie zag helpen zwemmen", the cross-serial binding pattern in the
+attested word order. -/
 def dutch_jan_piet_marie_zag_helpen_zwemmen : AnnotatedDerivation :=
   { n := 3
-  , deriv := jan_piet_marie_zag_helpen_zwemmen_sub
   , words := ["Jan", "Piet", "Marie", "zag", "helpen", "zwemmen"]
   , binding := VerbClusterBinding.identity 3
+  , derives := three_np_sub_derives
   }
 
 /-- The annotated binding agrees with the empirical datum. -/
@@ -658,15 +630,6 @@ theorem dutch_jan_piet_zag_zwemmen_binding :
 
 theorem dutch_jan_piet_marie_zag_helpen_zwemmen_binding :
     dutch_jan_piet_marie_zag_helpen_zwemmen.binding = dutch_3np_3v.binding := rfl
-
-/-- The derivations spell out exactly the annotated surface words. -/
-theorem dutch_jan_piet_zag_zwemmen_yield :
-    dutch_jan_piet_zag_zwemmen.deriv.yield = dutch_jan_piet_zag_zwemmen.words := by
-  decide
-
-theorem dutch_jan_piet_marie_zag_helpen_zwemmen_yield :
-    dutch_jan_piet_marie_zag_helpen_zwemmen.deriv.yield
-      = dutch_jan_piet_marie_zag_helpen_zwemmen.words := by decide
 
 end CrossSerial
 
