@@ -25,9 +25,9 @@ lattice of normal modal logics as axiom sets over K.
   square, satisfying all six relations under seriality.
 * `PropOp`, `IsIndicial`, `s5Nec`, `poss`/`nec` — the Gallin hierarchy:
   arbitrary operators ⊋ Kripke-definable (`∃ R, N = box R`) ⊋ S5.
-* `Logic.frameConditions` — frame conditions for a normal modal logic,
-  identified with its axiom set over K and ordered by the `Finset`
-  lattice (named logics `Logic.K` … `Logic.KD45`).
+* `ModalLogic.frameConditions` — frame conditions for a normal modal
+  logic, identified with its axiom set over K and ordered by the
+  `Finset` lattice (named logics `ModalLogic.K` … `ModalLogic.KD45`).
 
 ## Connection to Kratzer semantics
 
@@ -357,11 +357,17 @@ instance diamond_decidable {W : Type*} [Fintype W]
     Decidable (diamond R p w) :=
   inferInstanceAs (Decidable (∃ v, R w v ∧ p v))
 
+end Modal
+
 /-! ### The lattice of normal modal logics
 
 A normal modal logic is identified with its set of axiom schemas over K;
 the `Finset` lattice (`⊆`, `∪`, `∩`, `⊥ = ∅ = K`) is the lattice of
 normal logics. -/
+
+namespace ModalLogic
+
+open Modal (AccessRel IsSerial IsEuclidean)
 
 /-- Axiom schemas addable to the base logic K. -/
 inductive Axiom where
@@ -380,7 +386,6 @@ inductive Axiom where
 instance : ToString Axiom where
   toString | .M => "M" | .D => "D" | .B => "B" | .four => "4" | .five => "5"
 
-namespace Logic
 
 /-- The base logic `K`: no additional axioms. -/
 def K : Finset Axiom := ∅
@@ -427,7 +432,7 @@ def frameConditions {W : Type*} (L : Finset Axiom) (R : AccessRel W) : Prop :=
   (.four ∈ L → IsTrans W R) ∧
   (.five ∈ L → IsEuclidean R)
 
-/-- The syntactic-semantic bridge for `S5`: `frameConditions Logic.S5 R`
+/-- The syntactic-semantic bridge for `S5`: `frameConditions ModalLogic.S5 R`
     iff `R` is an S5 frame. -/
 @[simp] theorem frameConditions_S5_iff {W : Type*} (R : AccessRel W) :
     frameConditions S5 R ↔ Std.Refl R ∧ IsEuclidean R := by
@@ -443,6 +448,4 @@ def frameConditions {W : Type*} (L : Finset Axiom) (R : AccessRel W) : Prop :=
     frameConditions KTB R ↔ Std.Refl R ∧ Std.Symm R := by
   simp [frameConditions, KTB]
 
-end Logic
-
-end Modal
+end ModalLogic
