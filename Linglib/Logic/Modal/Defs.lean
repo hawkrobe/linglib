@@ -2,11 +2,10 @@ import Mathlib.Logic.Basic
 import Mathlib.Order.Defs.Unbundled
 
 /-!
-# Polymorphic Kripke Foundation
+# Polymorphic Kripke foundation
 
-[kripke-1963]
-
-The bare foundation for accessibility-restricted modal logic, parameterised by
+The bare foundation for accessibility-restricted modal logic
+([kripke-1963]), parameterised by
 `{W : Type*}` — no Frame, no Entity, no type system: accessibility relations,
 frame conditions, and the relational `box`/`diamond`. The modal-axiom theorems
 (`Basic.lean`) build on it.
@@ -23,9 +22,7 @@ monotonicity, distribution, restriction, the Logic lattice, and the `PropOp`
 
 namespace Modal
 
--- ────────────────────────────────────────────────────────────────
--- §1 Accessibility Relations
--- ────────────────────────────────────────────────────────────────
+/-! ### Accessibility relations -/
 
 /-- An accessibility relation on worlds. `R w v` means world `v` is
     accessible from world `w`. -/
@@ -41,12 +38,7 @@ def universalR {W : Type*} : AccessRel W := fun _ _ => True
 /-- Empty accessibility: no world is accessible from any world. -/
 def emptyR {W : Type*} : AccessRel W := fun _ _ => False
 
-/-- Reflexive (identity) accessibility: each world accesses only itself. -/
-def identityR {W : Type*} : AccessRel W := fun w v => w = v
-
--- ────────────────────────────────────────────────────────────────
--- §2 Modal-Specific Frame Conditions
--- ────────────────────────────────────────────────────────────────
+/-! ### Frame conditions -/
 
 /-! Reflexivity, symmetry, and transitivity are `Std.Refl R`,
     `Std.Symm R`, `IsTrans W R` from Lean core + mathlib. Seriality
@@ -64,12 +56,7 @@ class IsSerial {W : Type*} (R : AccessRel W) : Prop where
 class IsEuclidean {W : Type*} (R : AccessRel W) : Prop where
   eucl : ∀ w v u, R w v → R w u → R v u
 
--- ────────────────────────────────────────────────────────────────
--- §3 Bundled Frame Classes
--- ────────────────────────────────────────────────────────────────
-
-/-- S4 frame: reflexive + transitive. -/
-class IsS4Frame {W : Type*} (R : AccessRel W) : Prop extends Std.Refl R, IsTrans W R
+/-! ### Bundled frame classes -/
 
 /-- S5 frame: reflexive + euclidean (implies symmetric + transitive). -/
 class IsS5Frame {W : Type*} (R : AccessRel W) : Prop extends Std.Refl R, IsEuclidean R
@@ -85,9 +72,6 @@ class IsKD45Frame {W : Type*} (R : AccessRel W) : Prop
 class IsK4EuclFrame {W : Type*} (R : AccessRel W) : Prop
   extends IsTrans W R, IsEuclidean R
 
-/-- KT frame: reflexive. (T axiom alone.) -/
-class IsKTFrame {W : Type*} (R : AccessRel W) : Prop extends Std.Refl R
-
 /-- KTB frame: reflexive + symmetric. The natural setting for tolerance
     semantics ([cobreros-etal-2012]) where each predicate's
     similarity relation is reflexive and symmetric but possibly
@@ -101,9 +85,7 @@ class IsKTBFrame {W : Type*} (R : AccessRel W) : Prop
 class IsBeliefRefinementOf {W : Type*} (Rk Rb : AccessRel W) : Prop where
   sub : ∀ w v, Rb w v → Rk w v
 
--- ────────────────────────────────────────────────────────────────
--- §4 Frame Condition Relationships and Instances
--- ────────────────────────────────────────────────────────────────
+/-! ### Frame implications and instances -/
 
 variable {W : Type*}
 
@@ -134,18 +116,14 @@ instance (priority := 100) {R : AccessRel W} [hS : Std.Symm R] [hT : IsTrans W R
     IsEuclidean R :=
   ⟨fun w v u hwv hwu => hT.trans v w u (hS.symm w v hwv) hwu⟩
 
--- ────────────────────────────────────────────────────────────────
--- §4 Restricted Box and Diamond
--- ────────────────────────────────────────────────────────────────
+/-! ### Box and diamond -/
 
 /-- Restricted necessity: `□_R p` at world `w` holds iff `p v` for all
     `v` accessible from `w`.
 
-    `⟦□_R φ⟧^w = 1` iff `⟦φ⟧^v = 1` for all `v` with `R(w,v)`.
-
-    This is the Kripke generalization of DWP's Rule B.13 (`box`); the
-    `Modal.box` operator in `Quantification.lean` is the
-    universal-accessibility special case. -/
+    `⟦□_R φ⟧^w = 1` iff `⟦φ⟧^v = 1` for all `v` with `R(w,v)` — the Kripke
+    generalization of the S5 necessity of [dowty-wall-peters-1981]'s IL,
+    whose `Intensional.box` is the universal-accessibility special case. -/
 def box (R : AccessRel W) (p : W → Prop) (w : W) : Prop :=
   ∀ v, R w v → p v
 
@@ -154,23 +132,19 @@ def box (R : AccessRel W) (p : W → Prop) (w : W) : Prop :=
 def diamond (R : AccessRel W) (p : W → Prop) (w : W) : Prop :=
   ∃ v, R w v ∧ p v
 
--- ────────────────────────────────────────────────────────────────
--- §5 Duality
--- ────────────────────────────────────────────────────────────────
+/-! ### Duality -/
 
-/-- `□_R p ↔ ¬◇_R ¬p` — restricted modal duality. -/
+/-- Restricted modal duality: `□_R p ↔ ¬◇_R ¬p`. -/
 theorem box_neg_diamond (R : AccessRel W) (p : W → Prop) (w : W) :
-    box R p w = ¬(diamond R (fun v => ¬(p v)) w) := by
-  simp only [box, diamond, not_exists, not_and, not_not]
+    box R p w ↔ ¬ diamond R (fun v => ¬ p v) w :=
+  ⟨fun hb ⟨v, hwv, hnp⟩ => hnp (hb v hwv),
+   fun h v hwv => Classical.byContradiction fun hnp => h ⟨v, hwv, hnp⟩⟩
 
-/-- `◇_R p ↔ ¬□_R ¬p` — dual form. -/
+/-- Dual form: `◇_R p ↔ ¬□_R ¬p`. -/
 theorem diamond_neg_box (R : AccessRel W) (p : W → Prop) (w : W) :
-    diamond R p w = ¬(box R (fun v => ¬(p v)) w) := by
-  simp only [diamond, box]
-  exact propext ⟨
-    fun ⟨v, hwv, hpv⟩ h => h v hwv hpv,
-    fun h => Classical.byContradiction fun hne => by
-      simp only [not_exists, not_and] at hne
-      exact h (fun v hwv => hne v hwv)⟩
+    diamond R p w ↔ ¬ box R (fun v => ¬ p v) w :=
+  ⟨fun ⟨v, hwv, hpv⟩ h => h v hwv hpv,
+   fun h => Classical.byContradiction fun hne =>
+     h fun v hwv hpv => hne ⟨v, hwv, hpv⟩⟩
 
 end Modal
