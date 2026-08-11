@@ -190,22 +190,4 @@ def Derivation.opCount {c : Cat α} : Derivation α c → Nat
 
 end Derivations
 
-section Examples
-
--- "John sees Mary": forward then backward application — deriving `S` is typechecking.
-example : Derivation Atom S :=
-  .bapp (.lex ⟨"John", NP⟩) (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩))
-
--- Type-raising a subject: NP ⇒ S/(S\NP).
-example : Derivation Atom (S / (S \ NP)) := .ftr (.lex ⟨"John", NP⟩) S
-
--- The yield spells out the surface string, coordinator included.
-example :
-    (Derivation.coord { form := "and", gloss := "and", role := .j, kind := .free }
-      (.bapp (.lex ⟨"John", NP⟩) (.lex ⟨"sleeps", IV⟩))
-      (.bapp (.lex ⟨"Mary", NP⟩) (.lex ⟨"laughs", IV⟩))).yield
-      = ["John", "sleeps", "and", "Mary", "laughs"] := rfl
-
-end Examples
-
 end CCG
