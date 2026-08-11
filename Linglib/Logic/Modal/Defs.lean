@@ -30,29 +30,6 @@ class IsSerial {W : Type*} (R : W → W → Prop) : Prop where
 class IsEuclidean {W : Type*} (R : W → W → Prop) : Prop where
   eucl : ∀ w v u, R w v → R w u → R v u
 
-/-! ### Bundled frame classes -/
-
-/-- S5 frame: reflexive + euclidean (implies symmetric + transitive). -/
-class IsS5Frame {W : Type*} (R : W → W → Prop) : Prop extends Std.Refl R, IsEuclidean R
-
-/-- KD45 frame for textbook belief: serial + transitive + euclidean. -/
-class IsKD45Frame {W : Type*} (R : W → W → Prop) : Prop
-  extends IsSerial R, IsTrans W R, IsEuclidean R
-
-/-- K4-Eucl frame: transitive + euclidean, NOT serial. The frame condition
-    for commitment in [stalnaker-1984]-style discourse models, where
-    commitment violations (no accessible compliance world) must be
-    expressible. -/
-class IsK4EuclFrame {W : Type*} (R : W → W → Prop) : Prop
-  extends IsTrans W R, IsEuclidean R
-
-/-- KTB frame: reflexive + symmetric. The natural setting for tolerance
-    semantics ([cobreros-etal-2012]) where each predicate's
-    similarity relation is reflexive and symmetric but possibly
-    non-transitive. -/
-class IsKTBFrame {W : Type*} (R : W → W → Prop) : Prop
-  extends Std.Refl R, Std.Symm R
-
 /-- `Rb` is a *belief refinement* of `Rk`: every belief-accessible world is
     knowledge-accessible. The pure subset condition; whether `Rk` is S5
     and `Rb` is KD45 is asserted by separate instance declarations. -/

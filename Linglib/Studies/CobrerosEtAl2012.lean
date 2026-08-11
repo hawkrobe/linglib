@@ -243,16 +243,11 @@ instance (M : TModel D Pred) (P : Pred) : IsKTBFrame (M.sim P) := M.sim_ktb P
 /-- **T-models are KTB frames by construction**: every per-predicate
     similarity relation `~_P` satisfies the frame conditions for the
     normal modal logic `KTB = K + T + B` (reflexive + symmetric Kripke
-    frame). The four flag-fields beyond `.M` and `.B` are vacuously
-    satisfied because `ModalLogic.KTB` doesn't require D, 4, or 5. -/
+    frame), via the `IsKTBFrame` instance and the syntactic-semantic
+    bridge `frameConditions_KTB_iff`. -/
 theorem satisfies_KTB (M : TModel D Pred) (P : Pred) :
-    frameConditions KTB (M.simAccess P) := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · intro _; exact inferInstance
-  · intro h; exact absurd h (by decide)
-  · intro _; exact inferInstance
-  · intro h; exact absurd h (by decide)
-  · intro h; exact absurd h (by decide)
+    frameConditions KTB (M.simAccess P) :=
+  (ModalLogic.frameConditions_KTB_iff _).mpr inferInstance
 
 end TModel
 

@@ -214,6 +214,33 @@ theorem self_imp_box_flip_diamond (R : W → W → Prop) (p : W → Prop) (w : W
     (h : p w) : box (flip R) (diamond R p) w :=
   fun _ hv => ⟨w, hv, h⟩
 
+/-! ### Bundled frame classes
+
+Named frame classes for the logics of `ModalLogic.frameConditions`; the
+per-logic correspondence theorems (`frameConditions_S5_iff`, …) live with
+the lattice below. -/
+
+/-- S5 frame: reflexive + euclidean (implies symmetric + transitive). -/
+class IsS5Frame {W : Type*} (R : W → W → Prop) : Prop extends Std.Refl R, IsEuclidean R
+
+/-- KD45 frame for textbook belief: serial + transitive + euclidean. -/
+class IsKD45Frame {W : Type*} (R : W → W → Prop) : Prop
+  extends IsSerial R, IsTrans W R, IsEuclidean R
+
+/-- K45 frame: transitive + euclidean, NOT serial. The frame condition
+    for commitment in [stalnaker-1984]-style discourse models, where
+    commitment violations (no accessible compliance world) must be
+    expressible. -/
+class IsK45Frame {W : Type*} (R : W → W → Prop) : Prop
+  extends IsTrans W R, IsEuclidean R
+
+/-- KTB frame: reflexive + symmetric. The natural setting for tolerance
+    semantics ([cobreros-etal-2012]) where each predicate's
+    similarity relation is reflexive and symmetric but possibly
+    non-transitive. -/
+class IsKTBFrame {W : Type*} (R : W → W → Prop) : Prop
+  extends Std.Refl R, Std.Symm R
+
 /-! ### S5 and KD45 frames -/
 
 /-- With reflexive + euclidean accessibility (= S5 frame conditions),
@@ -428,17 +455,35 @@ def frameConditions {W : Type*} (L : Finset Axiom) (R : W → W → Prop) : Prop
 /-- The syntactic-semantic bridge for `S5`: `frameConditions ModalLogic.S5 R`
     iff `R` is an S5 frame. -/
 @[simp] theorem frameConditions_S5_iff {W : Type*} (R : W → W → Prop) :
-    frameConditions S5 R ↔ Std.Refl R ∧ IsEuclidean R := by
-  simp [frameConditions, S5]
+    frameConditions S5 R ↔ IsS5Frame R :=
+  ⟨fun h => haveI := h.1 (by decide); haveI := h.2.2.2.2 (by decide); ⟨⟩,
+   fun h => ⟨fun _ => h.toRefl, fun hm => absurd hm (by decide),
+             fun hm => absurd hm (by decide), fun hm => absurd hm (by decide),
+             fun _ => h.toIsEuclidean⟩⟩
 
 /-- The syntactic-semantic bridge for `KD45`. -/
 @[simp] theorem frameConditions_KD45_iff {W : Type*} (R : W → W → Prop) :
-    frameConditions KD45 R ↔ IsSerial R ∧ IsTrans W R ∧ IsEuclidean R := by
-  simp [frameConditions, KD45]
+    frameConditions KD45 R ↔ IsKD45Frame R :=
+  ⟨fun h => haveI := h.2.1 (by decide); haveI := h.2.2.2.1 (by decide);
+     haveI := h.2.2.2.2 (by decide); ⟨⟩,
+   fun h => ⟨fun hm => absurd hm (by decide), fun _ => h.toIsSerial,
+             fun hm => absurd hm (by decide), fun _ => h.toIsTrans,
+             fun _ => h.toIsEuclidean⟩⟩
+
+/-- The syntactic-semantic bridge for `K45`. -/
+@[simp] theorem frameConditions_K45_iff {W : Type*} (R : W → W → Prop) :
+    frameConditions K45 R ↔ IsK45Frame R :=
+  ⟨fun h => haveI := h.2.2.2.1 (by decide); haveI := h.2.2.2.2 (by decide); ⟨⟩,
+   fun h => ⟨fun hm => absurd hm (by decide), fun hm => absurd hm (by decide),
+             fun hm => absurd hm (by decide), fun _ => h.toIsTrans,
+             fun _ => h.toIsEuclidean⟩⟩
 
 /-- The syntactic-semantic bridge for `KTB`. -/
 @[simp] theorem frameConditions_KTB_iff {W : Type*} (R : W → W → Prop) :
-    frameConditions KTB R ↔ Std.Refl R ∧ Std.Symm R := by
-  simp [frameConditions, KTB]
+    frameConditions KTB R ↔ IsKTBFrame R :=
+  ⟨fun h => haveI := h.1 (by decide); haveI := h.2.2.1 (by decide); ⟨⟩,
+   fun h => ⟨fun _ => h.toRefl, fun hm => absurd hm (by decide),
+             fun _ => h.toSymm, fun hm => absurd hm (by decide),
+             fun hm => absurd hm (by decide)⟩⟩
 
 end ModalLogic
