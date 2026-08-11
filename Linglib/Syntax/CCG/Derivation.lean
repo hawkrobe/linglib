@@ -26,7 +26,8 @@ not modeled.
   result category.
 * `Derivation`: intrinsically typed derivations — a lexical leaf or a binary `Rule`
   node; `Derivation.yield` reads off the surface string, `Derivation.opCount` the
-  number of rule applications, and `Derivation.HasComp` whether composition occurs.
+  number of rule applications, `Derivation.HasComp` whether composition occurs, and
+  `Derivation.LexIn` whether every leaf is drawn from a given lexicon.
 -/
 
 namespace CCG
@@ -163,6 +164,17 @@ def yield {c : Cat α} : Derivation α c → List String
 def opCount {c : Cat α} : Derivation α c → Nat
   | .lex _ _ => 0
   | .node _ d₁ d₂ => 1 + d₁.opCount + d₂.opCount
+
+/-- Every lexical leaf of the derivation is an entry of the lexicon `L`. -/
+def LexIn (L : List (String × Cat α)) {c : Cat α} : Derivation α c → Prop
+  | .lex f c => (f, c) ∈ L
+  | .node _ d₁ d₂ => d₁.LexIn L ∧ d₂.LexIn L
+
+instance LexIn.decidable (L : List (String × Cat α)) {c : Cat α} :
+    ∀ d : Derivation α c, Decidable (d.LexIn L)
+  | .lex f c => inferInstanceAs (Decidable ((f, c) ∈ L))
+  | .node _ d₁ d₂ =>
+      @instDecidableAnd _ _ (decidable L d₁) (decidable L d₂)
 
 /-- The derivation contains a composition node (of any order or direction). -/
 def HasComp {c : Cat α} : Derivation α c → Prop

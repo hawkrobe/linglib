@@ -1,4 +1,4 @@
-import Linglib.Syntax.CCG.Cat
+import Linglib.Syntax.CCG.Derivation
 import Mathlib.Data.Set.Defs
 
 /-!
@@ -43,6 +43,12 @@ languages in `Studies/KuhlmannKollerSatta2015`.
 * `CCG.Grammar.Derives`: the derivability relation — `G.Derives c w` says the
   grammar derives token string `w` at category `c`; `Grammar.language` is the set of
   strings derived at the distinguished atom.
+
+## Main statements
+
+* `CCG.Grammar.multimodal_derives_iff`: a multimodal grammar derives `w` at `c` iff
+  some intrinsically typed `CCG.Derivation` over its lexicon has yield `w` — the
+  relation is the string-language shadow of the tree calculus.
 
 ## Implementation notes
 
@@ -136,5 +142,105 @@ atom. Strings are token lists, so empty-string lexical entries are inexpressible
 the ε-freeness of [schiffer-maletti-2021]'s normal form holds by construction. -/
 def Grammar.language [DecidableEq α] (G : Grammar α) : Set (List String) :=
   { w | G.Derives (.atom G.start) w }
+
+/-! ### The multimodal gate and the tree calculus
+
+A multimodal grammar's derivability coincides with the existence of an intrinsically
+typed `Derivation` tree over its lexicon: the trees are the proof-relevant calculus
+(what `Derivation.interp` consumes), the relation is its string-language shadow. -/
+
+/-- Every `Derivation` tree over the lexicon witnesses multimodal derivability. -/
+theorem Derivation.derives_multimodal [DecidableEq α] {L : List (String × Cat α)}
+    {s : α} : {c : Cat α} → (d : Derivation α c) → d.LexIn L →
+    (Grammar.multimodal L s).Derives c d.yield
+  | _, .lex f c, h => .lex h
+  | _, .node ru d₁ d₂, h => by
+    obtain ⟨h₁, h₂⟩ := h
+    have ih₁ := d₁.derives_multimodal (s := s) h₁
+    have ih₂ := d₂.derives_multimodal (s := s) h₂
+    cases ru with
+    | fapp => exact .fc 0 ih₁ ih₂ trivial (by simp [Cat.generalizedForwardComp])
+    | bapp => exact .bc 0 ih₁ ih₂ trivial (by simp [Cat.generalizedBackwardComp])
+    | fcomp hm => exact .fc 1 ih₁ ih₂ hm (by simp [Cat.generalizedForwardComp])
+    | bcomp hm => exact .bc 1 ih₁ ih₂ hm (by simp [Cat.generalizedBackwardComp])
+    | fcompx hm => exact .fc 1 ih₁ ih₂ hm (by simp [Cat.generalizedForwardComp])
+    | bcompx hm => exact .bc 1 ih₁ ih₂ hm (by simp [Cat.generalizedBackwardComp])
+    | fcomp2 hm => exact .fc 2 ih₁ ih₂ hm (by simp [Cat.generalizedForwardComp])
+    | bcomp2 hm => exact .bc 2 ih₁ ih₂ hm (by simp [Cat.generalizedBackwardComp])
+    | fcompx2 hm => exact .fc 2 ih₁ ih₂ hm (by simp [Cat.generalizedForwardComp])
+    | bcompx2 hm => exact .bc 2 ih₁ ih₂ hm (by simp [Cat.generalizedBackwardComp])
+
+
+/-- Multimodal derivability yields a `Derivation` tree over the lexicon: the gate and
+the schema equation jointly force the shape of a rule of the modern inventory. -/
+theorem Grammar.Derives.to_derivation [DecidableEq α] {L : List (String × Cat α)}
+    {s : α} {c₀ : Cat α} {w : List String}
+    (h : (Grammar.multimodal L s).Derives c₀ w) :
+    ∃ d : Derivation α c₀, d.LexIn L ∧ d.yield = w := by
+  induction h with
+  | @lex w' c' hmem => exact ⟨.lex w' c', hmem, rfl⟩
+  | @fc n a b c u v _ _ hgate hc iha ihb =>
+    obtain ⟨da, hla, rfl⟩ := iha
+    obtain ⟨db, hlb, rfl⟩ := ihb
+    rcases n with _ | _ | _ | n
+    · rcases a with a | ⟨x, m, y⟩ | ⟨x, m, y⟩ <;> simp [Cat.generalizedForwardComp] at hc
+      obtain ⟨rfl, rfl⟩ := hc
+      exact ⟨.node .fapp da db, ⟨hla, hlb⟩, rfl⟩
+    · rcases a with a | ⟨x, m, y⟩ | ⟨x, m, y⟩ <;> try exact hgate.elim
+      rcases b with b | ⟨y', n', z⟩ | ⟨y', n', z⟩ <;> try exact hgate.elim
+      · simp [Cat.generalizedForwardComp] at hc
+        obtain ⟨rfl, rfl⟩ := hc
+        exact ⟨.node (.fcomp hgate) da db, ⟨hla, hlb⟩, rfl⟩
+      · simp [Cat.generalizedForwardComp] at hc
+        obtain ⟨rfl, rfl⟩ := hc
+        exact ⟨.node (.fcompx hgate) da db, ⟨hla, hlb⟩, rfl⟩
+    · rcases a with a | ⟨x, m, y⟩ | ⟨x, m, y⟩ <;> try exact hgate.elim
+      rcases b with b | ⟨b, p, w'⟩ | ⟨b, p, w'⟩ <;> try exact hgate.elim
+      · rcases b with b | ⟨y', n', z⟩ | ⟨y', n', z⟩ <;> try exact hgate.elim
+        simp [Cat.generalizedForwardComp] at hc
+        obtain ⟨rfl, rfl⟩ := hc
+        exact ⟨.node (.fcomp2 hgate) da db, ⟨hla, hlb⟩, rfl⟩
+      · rcases b with b | ⟨y', n', z⟩ | ⟨y', n', z⟩ <;> try exact hgate.elim
+        simp [Cat.generalizedForwardComp] at hc
+        obtain ⟨rfl, rfl⟩ := hc
+        exact ⟨.node (.fcompx2 hgate) da db, ⟨hla, hlb⟩, rfl⟩
+    · exact hgate.elim
+  | @bc n a b c u v _ _ hgate hc iha ihb =>
+    obtain ⟨da, hla, rfl⟩ := iha
+    obtain ⟨db, hlb, rfl⟩ := ihb
+    rcases n with _ | _ | _ | n
+    · rcases b with b | ⟨x, m, y⟩ | ⟨x, m, y⟩ <;> simp [Cat.generalizedBackwardComp] at hc
+      obtain ⟨rfl, rfl⟩ := hc
+      exact ⟨.node .bapp da db, ⟨hla, hlb⟩, rfl⟩
+    · rcases a with a | ⟨y', n', z⟩ | ⟨y', n', z⟩ <;> try exact hgate.elim
+      · rcases b with b | ⟨x, m, y⟩ | ⟨x, m, y⟩ <;> try exact hgate.elim
+        simp [Cat.generalizedBackwardComp] at hc
+        obtain ⟨rfl, rfl⟩ := hc
+        exact ⟨.node (.bcompx hgate) da db, ⟨hla, hlb⟩, rfl⟩
+      · rcases b with b | ⟨x, m, y⟩ | ⟨x, m, y⟩ <;> try exact hgate.elim
+        simp [Cat.generalizedBackwardComp] at hc
+        obtain ⟨rfl, rfl⟩ := hc
+        exact ⟨.node (.bcomp hgate) da db, ⟨hla, hlb⟩, rfl⟩
+    · rcases a with a | ⟨a, p, w'⟩ | ⟨a, p, w'⟩ <;> try exact hgate.elim
+      · rcases a with a | ⟨y', n', z⟩ | ⟨y', n', z⟩ <;> try exact hgate.elim
+        rcases b with b | ⟨x, m, y⟩ | ⟨x, m, y⟩ <;> try exact hgate.elim
+        simp [Cat.generalizedBackwardComp] at hc
+        obtain ⟨rfl, rfl⟩ := hc
+        exact ⟨.node (.bcompx2 hgate) da db, ⟨hla, hlb⟩, rfl⟩
+      · rcases a with a | ⟨y', n', z⟩ | ⟨y', n', z⟩ <;> try exact hgate.elim
+        rcases b with b | ⟨x, m, y⟩ | ⟨x, m, y⟩ <;> try exact hgate.elim
+        simp [Cat.generalizedBackwardComp] at hc
+        obtain ⟨rfl, rfl⟩ := hc
+        exact ⟨.node (.bcomp2 hgate) da db, ⟨hla, hlb⟩, rfl⟩
+    · exact hgate.elim
+
+/-- **Multimodal derivability is the tree calculus**: `G.Derives c w` for a
+multimodal grammar iff some intrinsically typed derivation over its lexicon has
+yield `w`. -/
+theorem Grammar.multimodal_derives_iff [DecidableEq α] {L : List (String × Cat α)}
+    {s : α} {c : Cat α} {w : List String} :
+    (Grammar.multimodal L s).Derives c w ↔
+      ∃ d : Derivation α c, d.LexIn L ∧ d.yield = w :=
+  ⟨Grammar.Derives.to_derivation, fun ⟨d, hl, hy⟩ => hy ▸ d.derives_multimodal hl⟩
 
 end CCG
