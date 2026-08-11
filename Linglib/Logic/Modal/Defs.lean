@@ -14,15 +14,12 @@ namespace ModalLogic
 
 /-! ### Frame conditions -/
 
-/-- Seriality: every world accesses at least one world.
-
-    Identical as a `Prop` to `Mathlib.Logic.Relator.LeftTotal R`, but
-    packaged as a class with the modal-logic-canonical name. -/
+/-- A relation is **serial** if every world accesses at least one world. -/
 class IsSerial {W : Type*} (R : W → W → Prop) : Prop where
   serial : ∀ w, ∃ v, R w v
 
-/-- Euclideanness: from any pair of `R`-successors of `w`, each is an
-    `R`-successor of the other. No mathlib analogue (modal-specific). -/
+/-- A relation is **euclidean** if from any pair of `R`-successors of `w`,
+    each is an `R`-successor of the other. -/
 class IsEuclidean {W : Type*} (R : W → W → Prop) : Prop where
   eucl : ∀ w v u, R w v → R w u → R v u
 
