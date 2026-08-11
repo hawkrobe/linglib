@@ -39,7 +39,7 @@ necessity is `box universalR` — see `box_restrict` for why restriction
 strengthens.
 -/
 
-namespace Modal
+namespace ModalLogic
 
 variable {W : Type*}
 
@@ -357,17 +357,11 @@ instance diamond_decidable {W : Type*} [Fintype W]
     Decidable (diamond R p w) :=
   inferInstanceAs (Decidable (∃ v, R w v ∧ p v))
 
-end Modal
-
 /-! ### The lattice of normal modal logics
 
 A normal modal logic is identified with its set of axiom schemas over K;
 the `Finset` lattice (`⊆`, `∪`, `∩`, `⊥ = ∅ = K`) is the lattice of
 normal logics. -/
-
-namespace ModalLogic
-
-open Modal (AccessRel IsSerial IsEuclidean)
 
 /-- Axiom schemas addable to the base logic K. -/
 inductive Axiom where

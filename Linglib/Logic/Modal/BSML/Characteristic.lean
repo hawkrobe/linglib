@@ -39,7 +39,7 @@ standard *classical* modal Hintikka characterisation.
 
 namespace BSML
 
-open Modal
+open ModalLogic
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 

@@ -38,7 +38,7 @@ relates RSA speakers to IBR argmax behaviour.
 
 namespace NeoGricean
 
-open Modal (AccessRel box diamond IsSerial)
+open ModalLogic (AccessRel box diamond IsSerial)
 
 variable {W : Type*}
 
@@ -74,7 +74,7 @@ instance (e : EpistemicState W) (φ : W → Prop) [DecidablePred φ] :
 `knows`/`possible` are `box`/`diamond` over the (world-independent)
 epistemic accessibility `accessFrom e`, serial because `e.possible` is
 nonempty. The epistemic square of opposition is
-`Modal.modalSquare (accessFrom e)` with `modalSquare_relations`
+`ModalLogic.modalSquare (accessFrom e)` with `modalSquare_relations`
 discharged by this `IsSerial` instance. -/
 
 /-- Epistemic accessibility: from any world, the speaker's live possibilities. -/
@@ -91,7 +91,7 @@ theorem possible_eq_diamond (e : EpistemicState W) (φ : W → Prop) (w : W) :
     possible e φ = diamond (accessFrom e) φ w := rfl
 
 /-- Epistemic duality: ¬K¬φ ↔ Pφ — the box–diamond duality underlying
-the modal square of opposition (`Modal.modalSquare_relations`). -/
+the modal square of opposition (`ModalLogic.modalSquare_relations`). -/
 theorem duality (e : EpistemicState W) (φ : W → Prop) :
     ¬ knows e (fun w => ¬ φ w) ↔ possible e φ := by
   simp only [knows, possible, not_forall, not_not, exists_prop]

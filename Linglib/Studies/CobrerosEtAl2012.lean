@@ -111,7 +111,7 @@ extension of `P`:
 - `tolerant P at a` ≡ `diamond (~_P) I(P) a` (Definition 9)
 
 The s ⊆ c ⊆ t hierarchy is the **T axiom** instantiated at `box`
-(`Modal.box_T`); the t/s duality is the standard
+(`ModalLogic.box_T`); the t/s duality is the standard
 modal de Morgan `box R ¬p ↔ ¬diamond R p`. T-models satisfy
 `frameConditions ModalLogic.KTB` by construction (Definition 4 of
 [cobreros-etal-2012]); see `TModel.satisfies_KTB` for the explicit
@@ -186,7 +186,7 @@ is addressed in §8–§9 below.
 
 namespace Semantics.Supervaluation.TCS
 
-open Modal
+open ModalLogic
   (AccessRel IsKTBFrame IsSerial box diamond box_T)
 open ModalLogic (KTB frameConditions)
 open Consequence (MixedConsequence SatImplies IsSelfDual

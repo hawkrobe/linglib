@@ -25,7 +25,7 @@ team semantics restricted to singleton teams.
 
 namespace BSML
 
-open Modal (KripkeModel)
+open ModalLogic (KripkeModel)
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
@@ -217,7 +217,7 @@ theorem neFree_flat (M : KripkeModel W Atom)
 -- §5: BSML–CML Type Bridge
 -- ============================================================================
 
-open Modal (diamond)
+open ModalLogic (diamond)
 
 /-!
 ### Accessibility Type Bridge
@@ -230,8 +230,8 @@ canonical accessibility-relation type in
 
 /-- Convert BSML accessibility (`Finset`-valued) to a classical Prop-valued
     accessibility relation. -/
-def _root_.Modal.KripkeModel.toAccessRel (M : KripkeModel W Atom) :
-    Modal.AccessRel W :=
+def _root_.ModalLogic.KripkeModel.toAccessRel (M : KripkeModel W Atom) :
+    ModalLogic.AccessRel W :=
   fun w v => v ∈ M.access w
 
 /-- `classicalEval` of ◇φ agrees with `diamond` (Prop-valued possibility),
@@ -241,6 +241,6 @@ theorem classicalEval_agrees_diamond_poss
     (M : KripkeModel W Atom) (φ : Formula Atom) (w : W) :
     classicalEval M (.poss φ) w = true ↔
     diamond M.toAccessRel (fun v => classicalEval M φ v = true) w := by
-  simp only [classicalEval, decide_eq_true_eq, diamond, Modal.KripkeModel.toAccessRel]
+  simp only [classicalEval, decide_eq_true_eq, diamond, ModalLogic.KripkeModel.toAccessRel]
 
 end BSML

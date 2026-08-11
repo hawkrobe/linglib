@@ -30,7 +30,7 @@ Free choice is DERIVED from three independent principles:
 namespace Aloni2022
 
 open BSML
-open Modal (KripkeModel)
+open ModalLogic (KripkeModel)
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 

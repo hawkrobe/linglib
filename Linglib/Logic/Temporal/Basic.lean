@@ -13,7 +13,7 @@ import Linglib.Logic.Modal.Basic
 Basic semantic lemmas for `Temporal` satisfaction: the satisfaction-clause `@[simp]`
 lemmas, the dual operators (`M`/`dia`/`Fut`/`Pst`), the modality hierarchy `box ⊃ N ⊃ A`, and the
 fact that historical necessity `N` and the all-worlds `box` are **S5** modalities. Since `sat`'s
-`G`/`H`/`N`/`box` clauses are `Modal.box` Kripke modalities, the hierarchy and S5 axioms
+`G`/`H`/`N`/`box` clauses are `ModalLogic.box` Kripke modalities, the hierarchy and S5 axioms
 are *derived from modal correspondence theory* (`box_T`/`box_four`/`box_restrict`) rather than
 re-proved — `N` is S5 because `∼ₜ` is an equivalence, `box` because the universal relation is
 ([von-kutschera-1997] A4, A5).
@@ -32,7 +32,7 @@ namespace Temporal.TWFrame
 variable {Time : Type*} {World : Type*} {Atom : Type*} [LinearOrder Time]
   (F : TWFrame Time World) (V : Atom → Time → World → Prop)
 
-open Modal (box_T box_four box_restrict box_isIndicial IsIndicial universalR)
+open ModalLogic (box_T box_four box_restrict box_isIndicial IsIndicial universalR)
 
 /-! ### Satisfaction clauses -/
 
@@ -78,7 +78,7 @@ open Modal (box_T box_four box_restrict box_isIndicial IsIndicial universalR)
 
 /-! ### The modality hierarchy `box ⊃ N ⊃ A` and S5, from modal correspondence
 
-`N` and `box` are `Modal.box` modalities, so the hierarchy and S5 axioms come from modal
+`N` and `box` are `ModalLogic.box` modalities, so the hierarchy and S5 axioms come from modal
 correspondence theory: `box ⊃ N` from `box_restrict` (the universal relation contains `∼ₜ`); the `T`
 axioms from reflexivity (`box_T`); the `4` axioms from transitivity (`box_four`); the `5` axioms from
 euclideanness of `∼ₜ`. -/
@@ -119,10 +119,10 @@ theorem sat_dia_imp_box_dia {a : OForm Atom} {t : Time} {w : World} :
   obtain ⟨w₀, ha⟩ := h
   exact ⟨w₀, ha⟩
 
-/-- Historical necessity `N` is a Kripke (indicial) modality — `Modal.box` over `∼ₜ`,
+/-- Historical necessity `N` is a Kripke (indicial) modality — `ModalLogic.box` over `∼ₜ`,
     [gallin-1975]'s indicial necessity. (`G`/`H` are tense over the time order, not world-PropOps,
     so they fall outside this world-indexed classification.) -/
-theorem N_isIndicial (t : Time) : IsIndicial (Modal.box (F.sim t)) :=
+theorem N_isIndicial (t : Time) : IsIndicial (ModalLogic.box (F.sim t)) :=
   box_isIndicial (F.sim t)
 
 /-! ### The temporal adjunctions `Fut ⊣ H`, `Pst ⊣ G`

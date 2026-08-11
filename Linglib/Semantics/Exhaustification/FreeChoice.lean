@@ -54,11 +54,11 @@ section FreeChoice
 variable {World : Type*}
 
 /-- Possibility modal `◇p = ∃ w, p w` — the flat S5 possibility
-`Modal.poss`, so the whole free-choice stack shares one modal. -/
-abbrev diamond (p : Set World) : Prop := Modal.poss p
+`ModalLogic.poss`, so the whole free-choice stack shares one modal. -/
+abbrev diamond (p : Set World) : Prop := ModalLogic.poss p
 
-/-- Necessity modal `□p = ∀ w, p w` — the flat S5 necessity `Modal.nec`. -/
-abbrev box (p : Set World) : Prop := Modal.nec p
+/-- Necessity modal `□p = ∀ w, p w` — the flat S5 necessity `ModalLogic.nec`. -/
+abbrev box (p : Set World) : Prop := ModalLogic.nec p
 
 /-- The alternative set for ◇(p ∨ q) consists of {◇p, ◇q, ◇(p ∧ q)}.
 

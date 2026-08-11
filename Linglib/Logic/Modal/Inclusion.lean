@@ -89,11 +89,11 @@ MIL would lose union closure. We follow the paper in using lax.
   this for the expressive completeness proof.
 -/
 
-namespace Modal.Inclusion
+namespace ModalLogic.Inclusion
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
-open Modal (KripkeModel)
+open ModalLogic (KripkeModel)
 
 /-! ### Syntax (AHY 2024 Definition 2.1) -/
 
@@ -366,4 +366,4 @@ theorem soundFor_unionClosed_inter_empty (M : KripkeModel W Atom) :
     show ∅ ∈ definedBy (support M) φ
     exact support_empty M φ
 
-end Modal.Inclusion
+end ModalLogic.Inclusion

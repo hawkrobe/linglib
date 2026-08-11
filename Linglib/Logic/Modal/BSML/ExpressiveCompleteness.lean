@@ -38,7 +38,7 @@ The theorem splits into two halves:
 
 namespace BSML
 
-open Team Modal
+open Team ModalLogic
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 

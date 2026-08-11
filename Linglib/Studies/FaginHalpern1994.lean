@@ -55,7 +55,7 @@ set_option autoImplicit false
 
 namespace FaginHalpern1994
 
-open Modal
+open ModalLogic
   (AgentAccessRel AccessRel box IsEuclidean)
 open Modality.EpistemicLogic (knows everyoneKnows)
 open Modality.EpistemicProbability (WorldCredence nestedThreshold)

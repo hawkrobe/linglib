@@ -49,7 +49,7 @@ identification.
 
 namespace BSML
 
-open Modal (KripkeModel)
+open ModalLogic (KripkeModel)
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 

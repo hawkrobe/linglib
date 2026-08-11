@@ -41,7 +41,7 @@ all `X ≡ φ` definitions regardless of their structural position.
 
 namespace KeshetAbney2024.PIP
 
-open Modal (AccessRel box diamond)
+open ModalLogic (AccessRel box diamond)
 
 /-- A finite domain of individuals for PIP quantifier evaluation. -/
 class FiniteDomain (D : Type*) where

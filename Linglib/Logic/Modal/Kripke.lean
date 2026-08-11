@@ -34,7 +34,7 @@ the AAY-2024 extensions BSMLOr/BSMLEmpty, modal dependence logic in
 * `Logic/Modal/Bisimulation.lean` — bounded bisimulation over this carrier.
 -/
 
-namespace Modal
+namespace ModalLogic
 
 /-- A **Kripke model** over world-type `W` and atom-type `Atom`:
     an accessibility relation `access : W → Finset W` (mapping each
@@ -51,4 +51,4 @@ structure KripkeModel (W : Type*) (Atom : Type*) [DecidableEq W] [Fintype W] whe
   /-- Valuation: `val p w` is the truth value of atom `p` at world `w`. -/
   val : Atom → W → Bool
 
-end Modal
+end ModalLogic

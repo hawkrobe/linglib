@@ -57,7 +57,7 @@ world and assignment consistent with γ.
 
 namespace KeshetAbney2024.PIP.Felicity
 
-open Modal (AccessRel box diamond)
+open ModalLogic (AccessRel box diamond)
 
 variable {W : Type*}
 

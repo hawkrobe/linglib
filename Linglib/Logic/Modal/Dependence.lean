@@ -115,11 +115,11 @@ infrastructure but differ in atom flavor:
   sibling at `Logic/Modal/Independence.lean`.
 -/
 
-namespace Modal.Dependence
+namespace ModalLogic.Dependence
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
-open Modal (KripkeModel)
+open ModalLogic (KripkeModel)
 
 /-! ### Syntax (Definition 1.1) -/
 
@@ -460,7 +460,7 @@ realised in a team, and functional dependence is a property of that set. -/
 
 section Bisimulation
 
-open Modal
+open ModalLogic
 
 variable {W' : Type*} [DecidableEq W'] [Fintype W']
 
@@ -602,4 +602,4 @@ theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
 
 end Bisimulation
 
-end Modal.Dependence
+end ModalLogic.Dependence

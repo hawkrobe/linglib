@@ -46,7 +46,7 @@ separately and composing them via `Team.isFlat_iff`.
 
 namespace BSML
 
-open Modal (KripkeModel)
+open ModalLogic (KripkeModel)
 
 open Team
 

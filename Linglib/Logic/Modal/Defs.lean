@@ -9,7 +9,7 @@ frame conditions of modal correspondence theory, and the relational
 `box`/`diamond` of Kripke semantics ([kripke-1963]).
 -/
 
-namespace Modal
+namespace ModalLogic
 
 /-! ### Accessibility relations -/
 
@@ -136,4 +136,4 @@ theorem diamond_neg_box (R : AccessRel W) (p : W → Prop) (w : W) :
    fun h => Classical.byContradiction fun hne =>
      h fun v hwv hpv => hne ⟨v, hwv, hpv⟩⟩
 
-end Modal
+end ModalLogic

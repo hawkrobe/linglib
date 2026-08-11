@@ -608,7 +608,7 @@ theorem doxastic_necessity_eq {Event W E : Type*}
     (holder : Event → E) (e : Event) (p : W → Prop) (w : W) :
     simpleNecessity (doxasticAnchoring R holder e) p w ↔
       ∀ w', R (holder e) w w' → p w' := by
-  simp [simpleNecessity, Modal.box, kratzerR, doxasticAnchoring]
+  simp [simpleNecessity, ModalLogic.box, kratzerR, doxasticAnchoring]
 
 /-- Possibility dually: some doxastic alternative of the holder
 satisfies p. -/
@@ -617,7 +617,7 @@ theorem doxastic_possibility_eq {Event W E : Type*}
     (holder : Event → E) (e : Event) (p : W → Prop) (w : W) :
     simplePossibility (doxasticAnchoring R holder e) p w ↔
       ∃ w', R (holder e) w w' ∧ p w' := by
-  simp [simplePossibility, Modal.diamond, kratzerR, doxasticAnchoring]
+  simp [simplePossibility, ModalLogic.diamond, kratzerR, doxasticAnchoring]
 
 
 -- ════════════════════════════════════════════════════

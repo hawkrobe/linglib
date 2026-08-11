@@ -41,7 +41,7 @@ import Linglib.Logic.Modal.Basic
 
 namespace Modality.Kratzer
 
-open Modal
+open ModalLogic
 
 variable {W : Type*}
 
@@ -236,7 +236,7 @@ theorem empty_base_universal_access (w : W) :
 
 /-- **Modal duality**: `□p ↔ ¬◇¬p`. Since `necessity = box (kratzerBestR f g)`,
     this is the box–diamond duality of the modal square of opposition
-    (`Modal.modalSquare_relations`). -/
+    (`ModalLogic.modalSquare_relations`). -/
 theorem duality (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) :
     necessity f g p w ↔ ¬ possibility f g (fun w' => ¬ p w') w := by
   rw [necessity, possibility, box_neg_diamond]

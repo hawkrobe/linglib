@@ -188,7 +188,7 @@ open CommonGround (ContextSet)
 
 /-- Local Bool-valued accessibility used by Wang2025 for `List.all` evaluation
 of the speaker-K operator. The Prop-valued canonical version lives in
-`Modal.AccessRel`; lift via
+`ModalLogic.AccessRel`; lift via
 `fun a b => R a b = true` to bridge. -/
 abbrev BAccessRel (W : Type*) := W → W → Bool
 open Pragmatics.Expressives (TwoDimProp)

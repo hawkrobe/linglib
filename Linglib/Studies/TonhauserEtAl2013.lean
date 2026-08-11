@@ -53,7 +53,7 @@ needs QUD/information-structure machinery).
 namespace TonhauserEtAl2013
 
 open CommonGround
-open Modal (AgentAccessRel)
+open ModalLogic (AgentAccessRel)
 open Semantics.Presupposition
 open Semantics.Presupposition.Context
 open Semantics.Presupposition.BeliefEmbedding

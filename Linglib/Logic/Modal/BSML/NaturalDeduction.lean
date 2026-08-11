@@ -48,7 +48,7 @@ exactly the NE-free fragment.
 
 namespace BSML
 
-open Modal (KripkeModel)
+open ModalLogic (KripkeModel)
 
 open Team
 

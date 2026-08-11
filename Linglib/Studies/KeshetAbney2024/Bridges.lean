@@ -42,7 +42,7 @@ namespace KeshetAbney2024.PIP.Bridges
 
 open KeshetAbney2024.PIP
 open DynamicSemantics.ICDRT (IVar Assignment Entity Context)
-open Modal (AccessRel box diamond)
+open ModalLogic (AccessRel box diamond)
 open ModalLogic (frameConditions)
 
 
@@ -270,7 +270,7 @@ Stated for the Prop-valued `AccessRel`/`Std.Refl`/`frameConditions` API in
 operators now use directly.
 -/
 theorem reflexive_satisfies_T {W : Type*}
-    (R : Modal.AccessRel W) [hRefl : Std.Refl R] :
+    (R : ModalLogic.AccessRel W) [hRefl : Std.Refl R] :
     frameConditions ModalLogic.T R :=
   ⟨fun _ => hRefl, fun h => absurd h (by decide), fun h => absurd h (by decide),
    fun h => absurd h (by decide), fun h => absurd h (by decide)⟩

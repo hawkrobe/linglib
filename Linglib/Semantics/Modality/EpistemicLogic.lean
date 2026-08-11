@@ -37,7 +37,7 @@ on finite worlds goes through `Decidable` instances + `decide`.
 
 namespace Modality.EpistemicLogic
 
-open Modal
+open ModalLogic
   (AccessRel AgentAccessRel box diamond IsSerial IsEuclidean IsBeliefRefinementOf
    box_T box_D box_four box_B box_five)
 
