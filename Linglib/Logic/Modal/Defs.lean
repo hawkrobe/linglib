@@ -2,22 +2,15 @@ import Mathlib.Logic.Basic
 import Mathlib.Order.Defs.Unbundled
 
 /-!
-# Polymorphic Kripke foundation
+# Accessibility relations and modal operators
 
-The bare foundation for accessibility-restricted modal logic
-([kripke-1963]), parameterised by
-`{W : Type*}` — no Frame, no Entity, no type system: accessibility relations,
-frame conditions, and the relational `box`/`diamond`. The modal-axiom theorems
-(`Basic.lean`) build on it.
-
-Montague's S5 `box`/`diamond` in `Intensional.Quantification` is the
-universal-accessibility special case (`box universalR`), but it lives in the
-typed IL layer and is developed independently there.
-
-`Defs.lean` is the foundation file in mathlib's sense: just the data and the
-relationships among frame conditions. Modal axiom correspondence (K/T/D/4/B/5),
-monotonicity, distribution, restriction, the Logic lattice, and the `PropOp`
-("Gallin") hierarchy live in `Basic.lean`.
+This file defines accessibility relations over an arbitrary world type, the
+frame conditions of modal correspondence theory, and the relational
+`box`/`diamond` of Kripke semantics ([kripke-1963]). The axiom-correspondence
+theorems, the `ModalLogic` lattice, and the Gallin operator hierarchy build on
+it in `Basic.lean`; Montague's S5 `box`/`diamond` in
+`Intensional.Quantification` is the universal-accessibility special case
+(`box universalR`).
 -/
 
 namespace Modal
