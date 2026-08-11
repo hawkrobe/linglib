@@ -41,14 +41,16 @@ variable {α : Type*}
 /-- The target of a category: its leftmost atom (strip all arguments). -/
 def target : Cat α → α
   | .atom a => a
-  | .rslash x _ => target x
-  | .lslash x _ => target x
+  | .rslash x _ _ => target x
+  | .lslash x _ _ => target x
 
 @[simp] theorem target_atom (a : α) : target (Cat.atom a) = a := rfl
 
-@[simp] theorem target_rslash (x y : Cat α) : target (Cat.rslash x y) = target x := rfl
+@[simp] theorem target_rslash (x y : Cat α) (m : Modality) :
+    target (Cat.rslash x m y) = target x := rfl
 
-@[simp] theorem target_lslash (x y : Cat α) : target (Cat.lslash x y) = target x := rfl
+@[simp] theorem target_lslash (x y : Cat α) (m : Modality) :
+    target (Cat.lslash x m y) = target x := rfl
 
 /-- A derivation under the rule-restricted degree-`n` composition schema: nodes record
 degree and direction only. -/

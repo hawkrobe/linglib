@@ -140,32 +140,7 @@ and type-raising preserves. `none` on a theme/rheme clash — the prosodic analo
 def _root_.CCG.Derivation.infoFeature (acc : AccentAssignment) :
     {c : Cat Atom} → Derivation Atom c → Option InfoFeature
   | _, .lex f _ => some (accentInfo (acc f))
-  | _, .fapp d1 d2 => do
-      let i1 ← d1.infoFeature acc
-      let i2 ← d2.infoFeature acc
-      i1.unify i2
-  | _, .bapp d1 d2 => do
-      let i1 ← d1.infoFeature acc
-      let i2 ← d2.infoFeature acc
-      i1.unify i2
-  | _, .fcomp d1 d2 => do
-      let i1 ← d1.infoFeature acc
-      let i2 ← d2.infoFeature acc
-      i1.unify i2
-  | _, .bcomp d1 d2 => do
-      let i1 ← d1.infoFeature acc
-      let i2 ← d2.infoFeature acc
-      i1.unify i2
-  | _, .fcompx d1 d2 => do
-      let i1 ← d1.infoFeature acc
-      let i2 ← d2.infoFeature acc
-      i1.unify i2
-  | _, .ftr d _ => d.infoFeature acc
-  | _, .btr d _ => d.infoFeature acc
-  | _, .coord _ d1 d2 => do
-      let i1 ← d1.infoFeature acc
-      let i2 ← d2.infoFeature acc
-      i1.unify i2
+  | _, .node _ d₁ d₂ => do (← d₁.infoFeature acc).unify (← d₂.infoFeature acc)
 
 /-! ### Tunes and prosodic phrases -/
 

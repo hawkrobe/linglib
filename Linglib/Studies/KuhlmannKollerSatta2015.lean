@@ -111,7 +111,7 @@ theorem target_clusterCat (n : Nat) : target (clusterCat n) = Atom.S := by
 
 /-- The degree-2 chain composes to `S/Cʲ⁺¹/B`. -/
 theorem fc2Chain_cat (j : Nat) :
-    (fc2Chain j).cat .S = some ((clusterCat (j + 1)).rslash Bcat) := by
+    (fc2Chain j).cat .S = some ((clusterCat (j + 1)).rslash .dot Bcat) := by
   induction j with
   | zero => rfl
   | succ j ih =>
