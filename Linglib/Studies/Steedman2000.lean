@@ -53,6 +53,12 @@ def the_cat_eats_pizza : DerivStep :=
   .bapp (.fapp (.lex ⟨"the", Det⟩) (.lex ⟨"cat", N⟩))
         (.fapp (.lex ⟨"eats", TV⟩) (.lex ⟨"pizza", NP⟩))
 
+def john_sleeps : DerivStep :=
+  .bapp (.lex ⟨"John", NP⟩) (.lex ⟨"sleeps", IV⟩)
+
+def john_sees_mary : DerivStep :=
+  .bapp (.lex ⟨"John", NP⟩) (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩))
+
 theorem mary_eats_pizza_cat : mary_eats_pizza.cat = some S := rfl
 theorem he_sees_her_cat : he_sees_her.cat = some S := rfl
 theorem the_cat_eats_pizza_cat : the_cat_eats_pizza.cat = some S := rfl
@@ -63,20 +69,42 @@ section Coordination
 
 open Semantics.Montague
 
+/-- Type-raised subject "John": `S/(S\NP)`. -/
+def john_tr : DerivStep := .ftr (.lex ⟨"John", NP⟩) S
+
+/-- "John likes": the type-raised subject composed with the transitive verb — a
+constituent of category `S/NP`. -/
+def john_likes : DerivStep := .fcomp john_tr (.lex ⟨"likes", TV⟩)
+
+def mary_tr : DerivStep := .ftr (.lex ⟨"Mary", NP⟩) S
+def mary_hates : DerivStep := .fcomp mary_tr (.lex ⟨"hates", TV⟩)
+
+/-- "John likes and Mary hates": coordination of two `S/NP` constituents. -/
+def john_likes_and_mary_hates : DerivStep :=
+  .coord English.Coordination.and_ john_likes mary_hates
+
+def john_likes_and_mary_hates_beans : DerivStep :=
+  .fapp john_likes_and_mary_hates (.lex ⟨"beans", NP⟩)
+
 /-- CCG derives "John likes and Mary hates beans" (modeled on the book's
 "Anna married, and I detest, Manny") with category S: "John likes" is a
 constituent `S/NP` via type-raising + composition. -/
 theorem john_likes_and_mary_hates_beans_cat :
     john_likes_and_mary_hates_beans.cat = some S := rfl
 
+/-- The derivation spells out the full surface string, coordinator included. -/
+theorem john_likes_and_mary_hates_beans_yield :
+    john_likes_and_mary_hates_beans.yield
+      = ["John", "likes", "and", "Mary", "hates", "beans"] := rfl
+
 def john_sleeps_and_mary_sleeps : DerivStep :=
-  .coord .j
+  .coord English.Coordination.and_
     (.bapp (.lex ⟨"John", NP⟩) (.lex ⟨"sleeps", IV⟩))
     (.bapp (.lex ⟨"Mary", NP⟩) (.lex ⟨"sleeps", IV⟩))
 
-#guard john_sleeps.opCount == 1
-#guard john_sleeps_and_mary_sleeps.opCount == 3
-#guard john_likes_and_mary_hates_beans.opCount == 8
+example : john_sleeps.opCount = 1 := rfl
+example : john_sleeps_and_mary_sleeps.opCount = 3 := rfl
+example : john_likes_and_mary_hates_beans.opCount = 6 := rfl
 
 /-- Non-constituent coordination requires more combinatory operations than
 standard coordination. Reading operation count as processing difficulty is
@@ -112,22 +140,22 @@ theorem getMeaning_john_sleeps :
     getMeaning (john_sleeps.interp toySemLexicon) = some True := rfl
 
 theorem getMeaning_john_sees_mary :
-    getMeaning (CCG.john_sees_mary.interp toySemLexicon) = some True := rfl
+    getMeaning (john_sees_mary.interp toySemLexicon) = some True := rfl
 
-#guard (CCG.john_tr.interp toySemLexicon).isSome
+example : (john_tr.interp toySemLexicon).isSome = true := rfl
 
 /-- "John sees Mary" with a type-raised subject: the raised subject
-`CCG.john_tr : S/(S\NP)` uses forward application, and the derivation
+`john_tr : S/(S\NP)` uses forward application, and the derivation
 produces the same truth value as the canonical one. -/
 def john_sees_mary_via_tr : DerivStep :=
-  .fapp CCG.john_tr (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩))
+  .fapp john_tr (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩))
 
 theorem getMeaning_john_sees_mary_via_tr :
     getMeaning (john_sees_mary_via_tr.interp toySemLexicon) = some True := rfl
 
-#guard (CCG.john_likes.interp toySemLexicon).isSome
-#guard (john_likes_and_mary_hates.interp toySemLexicon).isSome
-#guard (john_likes_and_mary_hates_beans.interp toySemLexicon).isSome
+example : (john_likes.interp toySemLexicon).isSome = true := rfl
+example : (john_likes_and_mary_hates.interp toySemLexicon).isSome = true := rfl
+example : (john_likes_and_mary_hates_beans.interp toySemLexicon).isSome = true := rfl
 
 /-- The predicate "John likes and Mary hates" (category `S/NP`) evaluated
 at an entity. -/
@@ -155,7 +183,7 @@ theorem getMeaning_john_likes_and_mary_hates_beans :
 
 /-- The spelled-out paraphrase "John likes beans and Mary hates beans". -/
 def john_likes_beans_and_mary_hates_beans : DerivStep :=
-  .coord .j
+  .coord English.Coordination.and_
     (.bapp (.lex ⟨"John", NP⟩) (.fapp (.lex ⟨"likes", TV⟩) (.lex ⟨"beans", NP⟩)))
     (.bapp (.lex ⟨"Mary", NP⟩) (.fapp (.lex ⟨"hates", TV⟩) (.lex ⟨"beans", NP⟩)))
 
@@ -190,11 +218,11 @@ private def dq : DerivStep := .lex ⟨"q", .atom .S⟩
     `or_` yields `p ∨ q`, and these differ at `p = ⊤`, `q = ⊥`. Flipping a fragment
     coordinator's `role` collapses the inequality, so the `role` marking is not decorative. -/
 theorem coord_role_load_bearing :
-    getMeaning ((DerivStep.coord English.Coordination.and_.role dp dq).interp pqLex) ≠
-    getMeaning ((DerivStep.coord English.Coordination.or_.role dp dq).interp pqLex) := by
-  have hand : getMeaning ((DerivStep.coord English.Coordination.and_.role dp dq).interp pqLex)
+    getMeaning ((DerivStep.coord English.Coordination.and_ dp dq).interp pqLex) ≠
+    getMeaning ((DerivStep.coord English.Coordination.or_ dp dq).interp pqLex) := by
+  have hand : getMeaning ((DerivStep.coord English.Coordination.and_ dp dq).interp pqLex)
       = some (True ∧ False) := rfl
-  have hor : getMeaning ((DerivStep.coord English.Coordination.or_.role dp dq).interp pqLex)
+  have hor : getMeaning ((DerivStep.coord English.Coordination.or_ dp dq).interp pqLex)
       = some (True ∨ False) := rfl
   rw [hand, hor, ne_eq, Option.some.injEq, eq_iff_iff]
   exact fun h => (h.mpr (Or.inl trivial)).2
@@ -537,9 +565,9 @@ def scopeData : List (VerbOrder × BinaryScopeAvailability) :=
 -- Drift sentry: every example in the JSON is either a ch. 7 gapping
 -- stimulus or a §6.8 scope example carrying both annotations; this
 -- fires if a row that is neither is added.
-#guard Examples.all.all λ ex =>
-  (ex.paperFeatures.lookup "phenomenon" == some "gapping") ||
-  ((wordOrderOf ex).isSome && (observedAvailability ex).isSome)
+example : Examples.all.all (λ ex =>
+    (ex.paperFeatures.lookup "phenomenon" == some "gapping") ||
+    ((wordOrderOf ex).isSome && (observedAvailability ex).isSome)) = true := by decide
 
 /-- The CCG prediction matches every §6.8 judgment. -/
 theorem predictedAvailability_eq_observed :
@@ -558,11 +586,8 @@ section TruthConditions
 open CCG
 open Semantics.Montague
 
--- CCG Derivations for Test Sentences
-
-/-- "John sleeps" - backward application -/
-def ccg_john_sleeps : DerivStep :=
-  .bapp (.lex ⟨"John", NP⟩) (.lex ⟨"sleeps", IV⟩)
+-- CCG Derivations for Test Sentences ("John sleeps" and "John sees Mary"
+-- are the file-level derivations above)
 
 /-- "Mary sleeps" - backward application -/
 def ccg_mary_sleeps : DerivStep :=
@@ -575,10 +600,6 @@ def ccg_john_laughs : DerivStep :=
 /-- "Mary laughs" - backward application -/
 def ccg_mary_laughs : DerivStep :=
   .bapp (.lex ⟨"Mary", NP⟩) (.lex ⟨"laughs", IV⟩)
-
-/-- "John sees Mary" - forward then backward application -/
-def ccg_john_sees_mary : DerivStep :=
-  .bapp (.lex ⟨"John", NP⟩) (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩))
 
 /-- "Mary sees John" - forward then backward application -/
 def ccg_mary_sees_john : DerivStep :=
@@ -618,7 +639,7 @@ def ccgMeaning (d : DerivStep) : Option Prop :=
 
 /-- CCG correctly predicts "John sleeps" is true -/
 theorem ccg_predicts_john_sleeps :
-    ccgMeaning ccg_john_sleeps = some True := rfl
+    ccgMeaning john_sleeps = some True := rfl
 
 /-- CCG correctly predicts "Mary sleeps" is false -/
 theorem ccg_predicts_mary_sleeps :
@@ -634,7 +655,7 @@ theorem ccg_predicts_mary_laughs :
 
 /-- CCG correctly predicts "John sees Mary" is true -/
 theorem ccg_predicts_john_sees_mary :
-    ccgMeaning ccg_john_sees_mary = some True := rfl
+    ccgMeaning john_sees_mary = some True := rfl
 
 /-- CCG correctly predicts "Mary sees John" is true -/
 theorem ccg_predicts_mary_sees_john :

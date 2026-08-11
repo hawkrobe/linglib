@@ -54,8 +54,10 @@ theorem ftr_type_is_T (x t : Cat) :
 theorem btr_type_is_T (x t : Cat) :
     catToTy (backwardTypeRaise x t) = ((catToTy x ⇒ catToTy t) ⇒ catToTy t) := rfl
 
-/-- Crossed composition is `S`: `(X/Y)/Z + Y/Z ⇒ X/Z` with `S f g x = f x (g x)`. -/
-theorem crossed_comp_is_S {E W : Type} {x y z : Cat}
+/-- Forward substitution is `S`: `(X/Y)/Z  Y/Z ⇒ X/Z` with `S f g x = f x (g x)`.
+(The substitution rule is not part of the toy inventory in `Syntax/CCG/Basic`; the
+correspondence is stated at the type level.) -/
+theorem substitution_is_S {E W : Type} {x y z : Cat}
     (f_sem : Denot E W (catToTy ((x.rslash y).rslash z)))
     (g_sem : Denot E W (catToTy (y.rslash z))) :
     (λ arg => f_sem arg (g_sem arg)) = Combinator.S f_sem g_sem := rfl
