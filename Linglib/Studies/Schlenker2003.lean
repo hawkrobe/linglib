@@ -41,7 +41,7 @@ namespace Schlenker2003
 
 open Semantics.Context
 open Semantics.Attitudes.ContextQuantification
-open Semantics.Attitudes.Doxastic (AccessRel boxAt)
+open Semantics.Attitudes.Doxastic (boxAt)
 open Semantics.Reference.ShiftedIndexicals (amharic_pronI)
 open Semantics.Reference.Kaplan (pronI_access)
 
@@ -66,7 +66,7 @@ def rootT : ContextTower Ctx := ContextTower.root speechCtx
 
 /-- Bob's doxastic accessibility: both worlds are compatible with
     what Bob believes. -/
-def bobBel : AccessRel World Person
+def bobBel : Person → World → World → Prop
   | .bob, _, _ => True
   | .alice, _, w' => w' = .w0
 

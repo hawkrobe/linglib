@@ -207,7 +207,7 @@ theorem must_empty (φ : W → Prop) : mustS ([] : InfoState W) φ := by
 /-- Representational attitude embedding: S' = DOX(x,w).
     The doxastic alternatives form the information state that
     embedded epistemics quantify over. -/
-def representationalS {E : Type*} (R : AccessRel W E) [∀ a w w', Decidable (R a w w')]
+def representationalS {E : Type*} (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')]
     (agent : E) (w : W) (worlds : List W) : InfoState W :=
   worlds.filter (fun w' => decide (R agent w w'))
 
@@ -217,7 +217,7 @@ def nonRepresentationalS : InfoState W := []
 
 /-- Representational attitudes yield non-trivial information states
     (when there is at least one accessible world). -/
-theorem representational_nontrivial {E : Type*} (R : AccessRel W E)
+theorem representational_nontrivial {E : Type*} (R : E → W → W → Prop)
     [∀ a w w', Decidable (R a w w')]
     (agent : E) (w : W) (worlds : List W)
     (h : ∃ w' ∈ worlds, R agent w w') :
@@ -241,7 +241,7 @@ theorem nonRepresentational_trivial :
 
 /-- Under a representational attitude, embedded `must p` holds iff
     all doxastic alternatives satisfy p — a non-trivial claim. -/
-theorem believe_must {E : Type*} (R : AccessRel W E)
+theorem believe_must {E : Type*} (R : E → W → W → Prop)
     [∀ a w w', Decidable (R a w w')]
     (agent : E) (w : W) (worlds : List W) (p : W → Prop) [DecidablePred p] :
     mustS (representationalS R agent w worlds) p ↔

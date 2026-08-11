@@ -51,7 +51,7 @@ namespace Semantics.Attitudes.NegRaising
 
 open Aristotelian (Square SquareRelations)
 open Semantics.Attitudes.Doxastic
-  (DoxasticPredicate Veridicality boxAt diaAt AccessRel)
+  (DoxasticPredicate Veridicality boxAt diaAt)
 
 /-! ### The doxastic square -/
 
@@ -63,7 +63,7 @@ corners of the doxastic square of opposition:
 - E = Bel(¬p): all doxastic alternatives satisfy ¬p
 - I = ◇p: some doxastic alternative satisfies p
 - O = ¬Bel(p): not all doxastic alternatives satisfy p -/
-def doxasticSquare {W E : Type*} (R : AccessRel W E) (agent : E)
+def doxasticSquare {W E : Type*} (R : E → W → W → Prop) (agent : E)
     (worlds : List W) (p : W → Prop) : Square (W → Prop) where
   A := λ w => boxAt R agent w worlds p
   E := λ w => boxAt R agent w worlds (λ w' => ¬ p w')
@@ -71,7 +71,7 @@ def doxasticSquare {W E : Type*} (R : AccessRel W E) (agent : E)
   O := λ w => ¬ boxAt R agent w worlds p
 
 /-- The doxastic square satisfies the A–O contradiction diagonal. -/
-theorem doxasticSquare_contradAO {W E : Type*} (R : AccessRel W E)
+theorem doxasticSquare_contradAO {W E : Type*} (R : E → W → W → Prop)
     (agent : E) (worlds : List W) (p : W → Prop) (w : W) :
     (doxasticSquare R agent worlds p).A w ↔
     ¬ (doxasticSquare R agent worlds p).O w := by
@@ -81,7 +81,7 @@ theorem doxasticSquare_contradAO {W E : Type*} (R : AccessRel W E)
 
 This requires that `diaAt` is the dual of `boxAt`: ◇p = ¬□¬p.
 We prove this from the definitions. -/
-theorem doxasticSquare_contradEI {W E : Type*} (R : AccessRel W E)
+theorem doxasticSquare_contradEI {W E : Type*} (R : E → W → W → Prop)
     (agent : E) (worlds : List W) (p : W → Prop) (w : W) :
     (doxasticSquare R agent worlds p).E w ↔
     ¬ (doxasticSquare R agent worlds p).I w := by
@@ -104,31 +104,31 @@ opinionated about *every* prejacent is exactly the decided/subsingleton limit
 validity rather than a defeasible move. -/
 
 /-- Neg-raising: the O→E inference `¬Bel(p) → Bel(¬p)` at a world. -/
-def negRaisesAt {W E : Type*} (R : AccessRel W E) (agent : E)
+def negRaisesAt {W E : Type*} (R : E → W → W → Prop) (agent : E)
     (worlds : List W) (p : W → Prop) (w : W) : Prop :=
   ¬ boxAt R agent w worlds p →
   boxAt R agent w worlds (λ w' => ¬ p w')
 
 /-- The **excluded-middle premise**: the agent is *opinionated* about `p`,
 believing `p` or believing `¬p`. Gajewski's neg-raising presupposition. -/
-def opinionated {W E : Type*} (R : AccessRel W E) (agent : E)
+def opinionated {W E : Type*} (R : E → W → W → Prop) (agent : E)
     (worlds : List W) (p : W → Prop) (w : W) : Prop :=
   boxAt R agent w worlds p ∨ boxAt R agent w worlds (λ w' => ¬ p w')
 
 /-- **The pragmatic mechanism.** Opinionatedness about `p` licenses the O→E
 strengthening — a disjunctive syllogism. Neg-raising is this inference run on the
 (pragmatically presupposed) excluded-middle premise, not a semantic entailment. -/
-theorem negRaisesAt_of_opinionated {W E : Type*} (R : AccessRel W E) (agent : E)
+theorem negRaisesAt_of_opinionated {W E : Type*} (R : E → W → W → Prop) (agent : E)
     (worlds : List W) (p : W → Prop) (w : W) :
     opinionated R agent worlds p w → negRaisesAt R agent worlds p w :=
   fun hem hnot => hem.resolve_left hnot
 
 /-- The accessible-worlds set at `w`; `boxAt … p` is `∀ w' ∈ accessibleSet, p w'`. -/
-def accessibleSet {W E : Type*} (R : AccessRel W E) (agent : E) (worlds : List W)
+def accessibleSet {W E : Type*} (R : E → W → W → Prop) (agent : E) (worlds : List W)
     (w : W) : Set W :=
   {w' | w' ∈ worlds ∧ R agent w w'}
 
-theorem boxAt_iff_forall_accessibleSet {W E : Type*} (R : AccessRel W E) (agent : E)
+theorem boxAt_iff_forall_accessibleSet {W E : Type*} (R : E → W → W → Prop) (agent : E)
     (worlds : List W) (p : W → Prop) (w : W) :
     boxAt R agent w worlds p ↔ ∀ w' ∈ accessibleSet R agent worlds w, p w' := by
   simp only [boxAt, accessibleSet, Set.mem_setOf_eq, and_imp]
@@ -136,7 +136,7 @@ theorem boxAt_iff_forall_accessibleSet {W E : Type*} (R : AccessRel W E) (agent 
 /-- **Validity ⟺ decided state.** The agent is opinionated about *every* prejacent
 (neg-raising then holds as a validity) iff the accessible state is decided — a
 subsingleton — connecting the doxastic layer to the shared `Homogeneity` core. -/
-theorem forall_opinionated_iff_subsingleton {W E : Type*} (R : AccessRel W E)
+theorem forall_opinionated_iff_subsingleton {W E : Type*} (R : E → W → W → Prop)
     (agent : E) (worlds : List W) (w : W) :
     (∀ p : W → Prop, opinionated R agent worlds p w) ↔
       (accessibleSet R agent worlds w).Subsingleton := by
@@ -171,14 +171,14 @@ theorem negRaising_iff_nonVeridical (v : Veridicality) :
 /-- The standard predicates' neg-raising status is *derived* from their
 veridicality, not stipulated as a flag: believe and think are non-veridical
 (neg-raising available), know is veridical (not). -/
-theorem believe_think_negRaise_know_not {W E : Type*} (R : AccessRel W E) :
+theorem believe_think_negRaise_know_not {W E : Type*} (R : E → W → W → Prop) :
     negRaisingAvailable (Doxastic.believeTemplate R).veridicality = true ∧
     negRaisingAvailable (Doxastic.thinkTemplate R).veridicality = true ∧
     negRaisingAvailable (Doxastic.knowTemplate R).veridicality = false :=
   ⟨rfl, rfl, rfl⟩
 
 /-- The doxastic square for "believe" satisfies the contradiction diagonals. -/
-theorem believe_square_contradictions {W E : Type*} (R : AccessRel W E)
+theorem believe_square_contradictions {W E : Type*} (R : E → W → W → Prop)
     (agent : E) (worlds : List W) (p : W → Prop) (w : W) :
     ((doxasticSquare R agent worlds p).A w ↔
       ¬ (doxasticSquare R agent worlds p).O w) ∧

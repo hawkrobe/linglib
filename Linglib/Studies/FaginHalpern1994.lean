@@ -15,7 +15,7 @@ probability operators (`EpistemicProbability.lean`) by defining
 
 ## Key contributions
 
-1. **`KripkeKP`**: bundles `BAgentAccessRel` (knowledge) + `WorldCredence`
+1. **`KripkeKP`**: bundles `E → W → W → Prop` (knowledge) + `WorldCredence`
    (probability) into a single structure.
 
 2. **Structural conditions**: CONS, OBJ, UNIF, SDP as predicates on

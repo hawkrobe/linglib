@@ -16,7 +16,6 @@ commitment to belief.
 
 ## Main definitions
 
-* `PairAccessRel W A` — pair-indexed deontic accessibility.
 * `CommitmentState W A` — frame: belief + commitment + valuation +
   bundled per-agent KD45 and per-pair K4-Euclidean frame conditions.
 * `Believes`, `Committed` — modal operators.
@@ -31,19 +30,15 @@ namespace Discourse.Commitment.Frame
 open ModalLogic (IsKD45Frame IsK45Frame IsEuclidean box diamond box_K box_four)
 open Modality.EpistemicLogic (knows)
 
-/-- Pair-indexed deontic accessibility: `commitment a b w v` means at
-    `w`, the world `v` is among those satisfying everything `a` is
-    committed-towards-`b` to. Genuinely ternary; no analogue in
-    linglib's unary-belief substrate. -/
-abbrev PairAccessRel (W A : Type*) := A → A → W → W → Prop
-
 /-- Multi-relational Kripke frame: belief (KD45) + commitment (K4 +
     Eucl., not serial) + atomic valuation. -/
 structure CommitmentState (W : Type*) (A : Type*) where
   /-- Per-agent doxastic accessibility. -/
   belief : A → W → W → Prop
-  /-- Pair-indexed deontic accessibility. -/
-  commitment : PairAccessRel W A
+  /-- Pair-indexed deontic accessibility: `commitment a b w v` means at `w`,
+      the world `v` is among those satisfying everything `a` is
+      committed-towards-`b` to. -/
+  commitment : A → A → W → W → Prop
   /-- Atomic-proposition valuation. -/
   interp : String → Set W
   /-- Belief is KD45 (serial + transitive + euclidean) per agent. -/

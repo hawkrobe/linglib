@@ -38,12 +38,8 @@ namespace Semantics.Attitudes.SituationDependent
 
 open Intensional (WorldTimeIndex)
 open Semantics.Attitudes.Doxastic
-  (Veridicality DoxasticPredicate AccessRel boxAt veridicalityHolds)
+  (Veridicality DoxasticPredicate boxAt veridicalityHolds)
 
-/-- Local alias for the agent-indexed accessibility relation
-    used by the situation-dependent operators. Aliased to
-    `Semantics.Attitudes.Doxastic.AccessRel` (Prop-valued, mathlib convention). -/
-abbrev BAgentAccessRel (W E : Type*) := AccessRel W E
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -55,7 +51,7 @@ abbrev BAgentAccessRel (W E : Type*) := AccessRel W E
 
 /-- Situation-dependent accessibility relation: Dox_y(w,t) = {(w',t') |...}.
 
-    Generalizes `BAgentAccessRel W E = E → W → W → Prop` to include
+    Generalizes `E → W → W → Prop = E → W → W → Prop` to include
     temporal coordinates in both the evaluation and accessible situations. -/
 abbrev SitAccessRel (W Time E : Type*) := E → WorldTimeIndex W Time → WorldTimeIndex W Time → Prop
 
@@ -115,7 +111,7 @@ def liftProp {W Time : Type*} (p : W → Prop) : SitProp W Time :=
     `liftAccess R agent s₁ s₂ = R agent s₁.world s₂.world`.
     This gives classic Hintikka behavior where doxastic alternatives
     differ only in world, not time. -/
-def liftAccess {W Time E : Type*} (R : BAgentAccessRel W E) : SitAccessRel W Time E :=
+def liftAccess {W Time E : Type*} (R : E → W → W → Prop) : SitAccessRel W Time E :=
   λ agent s₁ s₂ => R agent s₁.world s₂.world
 
 
@@ -132,7 +128,7 @@ def liftAccess {W Time E : Type*} (R : BAgentAccessRel W E) : SitAccessRel W Tim
     This means code using the old world-only operators produces
     identical results when embedded in the situation framework. -/
 theorem sitBoxAt_lift_eq_boxAt {W Time E : Type*}
-    (R : BAgentAccessRel W E) (agent : E) (s : WorldTimeIndex W Time)
+    (R : E → W → W → Prop) (agent : E) (s : WorldTimeIndex W Time)
     (sits : List (WorldTimeIndex W Time)) (p : W → Prop) :
     sitBoxAt (liftAccess R) agent s sits (liftProp p) ↔
     boxAt R agent s.world (sits.map (·.world)) p := by
@@ -294,11 +290,11 @@ connection between these temporal constraints and SOT readings.
     evaluation situation's time. This gives the "simultaneous"
     reading in sequence of tense. -/
 def temporallyBound {W Time E : Type*}
-    (R : BAgentAccessRel W E) : SitAccessRel W Time E :=
+    (R : E → W → W → Prop) : SitAccessRel W Time E :=
   λ agent s₁ s₂ => R agent s₁.world s₂.world ∧ s₂.time = s₁.time
 
 instance temporallyBound_decidable {W Time E : Type*} [DecidableEq Time]
-    (R : BAgentAccessRel W E) [∀ a w w', Decidable (R a w w')] :
+    (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')] :
     ∀ a s₁ s₂, Decidable (temporallyBound (Time := Time) R a s₁ s₂) := by
   intro a s₁ s₂; unfold temporallyBound; infer_instance
 
@@ -306,12 +302,12 @@ instance temporallyBound_decidable {W Time E : Type*} [DecidableEq Time]
     at or after the evaluation time. This models forward-looking
     attitudes like "expect" or "intend". -/
 def futureOriented {W Time E : Type*} [LE Time]
-    (R : BAgentAccessRel W E) : SitAccessRel W Time E :=
+    (R : E → W → W → Prop) : SitAccessRel W Time E :=
   λ agent s₁ s₂ => R agent s₁.world s₂.world ∧ s₁.time ≤ s₂.time
 
 instance futureOriented_decidable {W Time E : Type*} [LE Time]
     [DecidableRel (α := Time) (· ≤ ·)]
-    (R : BAgentAccessRel W E) [∀ a w w', Decidable (R a w w')] :
+    (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')] :
     ∀ a s₁ s₂, Decidable (futureOriented (Time := Time) R a s₁ s₂) := by
   intro a s₁ s₂; unfold futureOriented; infer_instance
 

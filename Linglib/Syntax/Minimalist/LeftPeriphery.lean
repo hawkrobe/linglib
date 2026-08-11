@@ -258,7 +258,7 @@ open Semantics.Attitudes.Doxastic
     This is PerspP's not-at-issue presupposition ([dayal-2025]: §2.3).
     Uses `diaAt` from Doxastic.lean and `QUD.ans` from
     Semantics/Questions/Partition/Cells.lean. -/
-def possibleIgnorance {W E : Type*} (R : AccessRel W E) (center : E)
+def possibleIgnorance {W E : Type*} (R : E → W → W → Prop) (center : E)
     (Q : QUD W) (w : W) (worlds : List W) : Prop :=
   diaAt R center w worlds (fun w' => QUD.ans Q w w' = false)
 
@@ -272,7 +272,7 @@ structure PerspPResult (W : Type*) where
   presupSatisfied : Prop
 
 /-- Apply PerspP to a question: checks possible-ignorance presupposition. -/
-def applyPerspP {W E : Type*} (R : AccessRel W E) (center : E)
+def applyPerspP {W E : Type*} (R : E → W → W → Prop) (center : E)
     (Q : QUD W) (w : W) (worlds : List W)
     (hamblinQ : Question W) : PerspPResult W :=
   { question := hamblinQ
@@ -289,7 +289,7 @@ in bare (non-negated, non-questioned) contexts.
 /-- box and dia are duals: □p → ¬◇¬p.
     If p holds at all accessible worlds, there is no accessible world where ¬p. -/
 theorem box_excludes_dia_neg {W E : Type*}
-    (R : AccessRel W E) (agent : E) (w : W) (worlds : List W)
+    (R : E → W → W → Prop) (agent : E) (w : W) (worlds : List W)
     (p : W → Prop)
     (hBox : boxAt R agent w worlds p) :
     ¬ diaAt R agent w worlds (fun w' => ¬ p w') := by
