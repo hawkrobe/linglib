@@ -473,7 +473,7 @@ Therefore PerspP is blocked, and the utterance is NOT a genuine question.
 
 Delegates to `responsive_contradicts_perspP_comp` from LeftPeriphery.lean. -/
 theorem wxdy_incredulity_blocks_perspP {W : Type*}
-    (q : Semantics.Questions.GSQuestion W) (w : W) :
+    (q : QUD W) (w : W) :
     perspPPresupComp (wxdyIncredulitySpeakerModel w) q w = false :=
   responsive_contradicts_perspP_comp q w
 
@@ -482,7 +482,7 @@ PerspP presupposition is satisfied → genuine question.
 
 Delegates to `rogative_allows_perspP_comp` from LeftPeriphery.lean. -/
 theorem wxdy_literal_allows_perspP {W : Type*}
-    (q : Semantics.Questions.GSQuestion W) (w : W) :
+    (q : QUD W) (w : W) :
     perspPPresupComp ignorantModel q w = true :=
   rogative_allows_perspP_comp q w
 
@@ -493,7 +493,7 @@ theorem wxdy_literal_allows_perspP {W : Type*}
 This is the deepest bridge: the form–function mismatch of WXDY is
 *derived* from the PerspP mechanism, not stipulated. -/
 theorem perspP_disambiguates_wxdy {W : Type*}
-    (q : Semantics.Questions.GSQuestion W) (w : W) :
+    (q : QUD W) (w : W) :
     perspPPresupComp (wxdyIncredulitySpeakerModel w) q w = false ∧
     perspPPresupComp ignorantModel q w = true :=
   ⟨wxdy_incredulity_blocks_perspP q w, wxdy_literal_allows_perspP q w⟩

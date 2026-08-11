@@ -1808,7 +1808,6 @@ import Linglib.Semantics.Questions.Hamblin
 import Linglib.Semantics.Questions.Highlighting
 import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Questions.Partition.Cells
-import Linglib.Semantics.Questions.Partition.Constructors
 import Linglib.Semantics.Questions.Partition.Lattice
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.Probabilistic

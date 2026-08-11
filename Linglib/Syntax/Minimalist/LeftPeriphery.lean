@@ -18,13 +18,11 @@ This is DERIVED, not stipulated.
 
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Partition.Cells
-import Linglib.Semantics.Questions.Partition.Constructors
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Fragments.English.Predicates.Verbal
 
 namespace Minimalist.LeftPeriphery
 
-open Semantics.Questions
 
 -- ============================================================================
 -- A. Clause-type feature
@@ -253,7 +251,6 @@ PerspP introduces a not-at-issue presupposition: the perspectival center
 -/
 
 open Semantics.Attitudes.Doxastic
-open Semantics.Questions
 
 /-- Whether x possibly doesn't know Ans(Q) at world w:
     ◇¬know(x, Ans(Q)) = ∃w' ∈ R(x,w). ¬(Ans(Q,w) holds at w')
@@ -262,7 +259,7 @@ open Semantics.Questions
     Uses `diaAt` from Doxastic.lean and `QUD.ans` from
     Semantics/Questions/Partition/Cells.lean. -/
 def possibleIgnorance {W E : Type*} (R : AccessRel W E) (center : E)
-    (Q : GSQuestion W) (w : W) (worlds : List W) : Prop :=
+    (Q : QUD W) (w : W) (worlds : List W) : Prop :=
   diaAt R center w worlds (fun w' => QUD.ans Q w w' = false)
 
 /-- PerspP as a presuppositional question denotation.
@@ -276,7 +273,7 @@ structure PerspPResult (W : Type*) where
 
 /-- Apply PerspP to a question: checks possible-ignorance presupposition. -/
 def applyPerspP {W E : Type*} (R : AccessRel W E) (center : E)
-    (Q : GSQuestion W) (w : W) (worlds : List W)
+    (Q : QUD W) (w : W) (worlds : List W)
     (hamblinQ : Question W) : PerspPResult W :=
   { question := hamblinQ
   , presupSatisfied := possibleIgnorance R center Q w worlds }
@@ -309,7 +306,7 @@ theorem box_excludes_dia_neg {W E : Type*}
     is a partition, that p determines the same cell as Ans(Q,w). -/
 theorem veridical_question_entails_box_ans {W E : Type*}
     (V : DoxasticPredicate W E) (_hV : V.veridicality = .veridical)
-    (agent : E) (Q : GSQuestion W) (w : W) (worlds : List W)
+    (agent : E) (Q : QUD W) (w : W) (worlds : List W)
     (hHolds : boxAt V.access agent w worlds (fun w' => QUD.ans Q w w' = true)) :
     ¬ diaAt V.access agent w worlds (fun w' => QUD.ans Q w w' = false) := by
   rintro ⟨w', hw', hR, hFalse⟩
@@ -325,7 +322,7 @@ theorem veridical_question_entails_box_ans {W E : Type*}
     □(Ans(Q)) contradicts PerspP's ◇¬(Ans(Q)). -/
 theorem veridical_blocks_perspP {W E : Type*}
     (V : DoxasticPredicate W E) (hV : V.veridicality = .veridical)
-    (agent : E) (Q : GSQuestion W) (w : W) (worlds : List W)
+    (agent : E) (Q : QUD W) (w : W) (worlds : List W)
     (hBox : boxAt V.access agent w worlds (fun w' => QUD.ans Q w w' = true)) :
     ¬ possibleIgnorance V.access agent Q w worlds := by
   simp only [possibleIgnorance]
@@ -481,7 +478,7 @@ structure EpistemicModel (W : Type*) where
     the agent does NOT know the complete answer to Q at w.
     Uses `QUD.ans` from Cells.lean. -/
 def perspPPresupComp {W : Type*} (ep : EpistemicModel W)
-    (q : GSQuestion W) (w : W) : Bool :=
+    (q : QUD W) (w : W) : Bool :=
   !(ep.knows (QUD.ans q w))
 
 /-! ## J2. Canonical epistemic models -/
@@ -505,13 +502,13 @@ compositional semantics. -/
 /-- A veridical knower's PerspP presupposition is false: they know Ans(Q,w),
     so possible ignorance fails. Uses `QUD.ans_true_at_index` from Cells.lean. -/
 theorem responsive_contradicts_perspP_comp {W : Type*}
-    (q : GSQuestion W) (w : W) :
+    (q : QUD W) (w : W) :
     perspPPresupComp (veridicalModel w) q w = false := by
   simp [perspPPresupComp, veridicalModel, QUD.ans_true_at_index]
 
 /-- An ignorant agent's PerspP presupposition is true: they don't know anything. -/
 theorem rogative_allows_perspP_comp {W : Type*}
-    (q : GSQuestion W) (w : W) :
+    (q : QUD W) (w : W) :
     perspPPresupComp ignorantModel q w = true := by
   simp [perspPPresupComp, ignorantModel]
 
@@ -522,7 +519,7 @@ theorem rogative_allows_perspP_comp {W : Type*}
     The compositional layer says: veridical model → ¬(possible ignorance). -/
 theorem perspP_boolean_grounded :
     (perspPConsistent .responsive false false = false) ∧
-    (∀ (W : Type) (q : GSQuestion W) (w : W),
+    (∀ (W : Type) (q : QUD W) (w : W),
       perspPPresupComp (veridicalModel w) q w = false) :=
   ⟨rfl, fun _ q w => responsive_contradicts_perspP_comp q w⟩
 
@@ -547,7 +544,7 @@ def doxasticToEpistemicModel {W E : Type*}
 theorem veridical_model_blocks_perspP {W E : Type*}
     (V : DoxasticPredicate W E) [∀ a w w', Decidable (V.access a w w')]
     (_hV : V.veridicality = .veridical)
-    (agent : E) (Q : GSQuestion W) (w : W) (worlds : List W)
+    (agent : E) (Q : QUD W) (w : W) (worlds : List W)
     (hHolds : V.holdsAt agent (fun w' => QUD.ans Q w w' = true) w worlds) :
     perspPPresupComp (doxasticToEpistemicModel V agent w worlds) Q w = false := by
   simp [perspPPresupComp, doxasticToEpistemicModel, hHolds]
