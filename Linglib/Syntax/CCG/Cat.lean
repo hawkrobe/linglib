@@ -151,6 +151,43 @@ def generalizedBackwardComp : Nat → Cat α → Cat α → Option (Cat α)
   | n + 1, .lslash g m z, f => (generalizedBackwardComp n g f).map (Cat.lslash · m z)
   | _, _, _ => none
 
+/-- The schema requires an atomic primary to fail: an atom has no argument to
+cancel. -/
+@[simp] theorem generalizedForwardComp_atom (n : Nat) (x : α) (b : Cat α) :
+    generalizedForwardComp n (Cat.atom x) b = none := by
+  induction n generalizing b with
+  | zero => rfl
+  | succ n ih => cases b <;> simp [generalizedForwardComp, ih]
+
+/-- A leftward primary fails forward composition at every degree. -/
+@[simp] theorem generalizedForwardComp_lslash (n : Nat) (x y : Cat α) (m : Modality)
+    (b : Cat α) : generalizedForwardComp n (Cat.lslash x m y) b = none := by
+  induction n generalizing b with
+  | zero => rfl
+  | succ n ih => cases b <;> simp [generalizedForwardComp, ih]
+
+/-- The mirror of `generalizedForwardComp_atom`. -/
+@[simp] theorem generalizedBackwardComp_atom (n : Nat) (a : Cat α) (x : α) :
+    generalizedBackwardComp n a (Cat.atom x) = none := by
+  induction n generalizing a with
+  | zero => rfl
+  | succ n ih => cases a <;> simp [generalizedBackwardComp, ih]
+
+/-- A rightward primary fails backward composition at every degree. -/
+@[simp] theorem generalizedBackwardComp_rslash (n : Nat) (a : Cat α) (x y : Cat α)
+    (m : Modality) : generalizedBackwardComp n a (Cat.rslash x m y) = none := by
+  induction n generalizing a with
+  | zero => rfl
+  | succ n ih => cases a <;> simp [generalizedBackwardComp, ih]
+
+/-- An atomic secondary offers no argument spine to peel. -/
+@[simp] theorem generalizedForwardComp_succ_atom (n : Nat) (f : Cat α) (x : α) :
+    generalizedForwardComp (n + 1) f (Cat.atom x) = none := rfl
+
+/-- The mirror of `generalizedForwardComp_succ_atom`. -/
+@[simp] theorem generalizedBackwardComp_succ_atom (n : Nat) (x : α) (b : Cat α) :
+    generalizedBackwardComp (n + 1) (Cat.atom x) b = none := rfl
+
 /-! ### Type-raising
 
 Type-raising is morpholexical in [steedman-2019] — the work of case morphemes rather
@@ -173,17 +210,21 @@ Each category has a *target* — its leftmost atom, "similar to the return type 
 function" ([steedman-2019]) — the locus of the per-grammar rule restrictions of
 `Syntax/CCG/Grammar`. -/
 
+omit [DecidableEq α] in
 /-- The target of a category: its leftmost atom, after stripping all arguments. -/
 def target : Cat α → α
   | .atom a => a
   | .rslash x _ _ => target x
   | .lslash x _ _ => target x
 
+omit [DecidableEq α] in
 @[simp] theorem target_atom (a : α) : target (Cat.atom a) = a := rfl
 
+omit [DecidableEq α] in
 @[simp] theorem target_rslash (x y : Cat α) (m : Modality) :
     target (Cat.rslash x m y) = target x := rfl
 
+omit [DecidableEq α] in
 @[simp] theorem target_lslash (x y : Cat α) (m : Modality) :
     target (Cat.lslash x m y) = target x := rfl
 

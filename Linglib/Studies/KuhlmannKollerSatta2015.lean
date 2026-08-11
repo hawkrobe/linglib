@@ -83,6 +83,19 @@ theorem target_clusterCat (n : Nat) : (clusterCat n).target = Atom.S := by
   | zero => rfl
   | succ n ih => simpa [clusterCat] using ih
 
+/-- No non-`S` atom is a cluster category: targets differ. -/
+@[simp] theorem acat_ne_clusterCat (k : Nat) : Acat ≠ clusterCat k := fun h => by
+  have := congrArg Cat.target h
+  simp [target_clusterCat] at this
+
+@[simp] theorem bcat_ne_clusterCat (k : Nat) : Bcat ≠ clusterCat k := fun h => by
+  have := congrArg Cat.target h
+  simp [target_clusterCat] at this
+
+@[simp] theorem ccat_ne_clusterCat (k : Nat) : Ccat ≠ clusterCat k := fun h => by
+  have := congrArg Cat.target h
+  simp [target_clusterCat] at this
+
 /-! ### The construction, as `Derives` inductions -/
 
 /-- Chain of degree-2 compositions: `b₁ = S/C/B` composed with `j` copies of
@@ -133,6 +146,208 @@ theorem peel_derives : ∀ (k : Nat) {w : List String},
       simpa [List.replicate_succ, List.cons_append, List.append_assoc,
         replicate_cons_comm] using hrec
 
+/-! ### Soundness
+
+The converse induction: every pair the grammar derives has one of the shapes of the
+completeness construction, so the language contains nothing beyond `aⁿbⁿcⁿ`. -/
+
+/-- The derivable category/string pairs of `G₁`: the six lexical shapes, the degree-2
+chain categories, the clusters (wrapped by `i` peels), and the peel intermediates. -/
+def Reachable : Cat Atom → List String → Prop := fun c w =>
+  (c = Acat ∧ w = ["a"]) ∨
+  (c = (Ccat \ Acat) ∧ w = ["c"]) ∨
+  (c = ((Bcat / Ccat) / Bcat) ∧ w = ["b"]) ∨
+  (c = (Bcat / Ccat) ∧ w = ["b"]) ∨
+  (∃ j : Nat, c = (clusterCat (j + 1)).rslash .dot Bcat ∧
+    w = List.replicate (j + 1) "b") ∨
+  (∃ k i : Nat, 1 ≤ k + i ∧ c = clusterCat k ∧
+    w = List.replicate i "a" ++ List.replicate (k + i) "b" ++ List.replicate i "c") ∨
+  (∃ k i : Nat, c = (clusterCat k).lslash .dot Acat ∧
+    w = List.replicate i "a" ++ List.replicate (k + 1 + i) "b" ++
+      List.replicate (i + 1) "c")
+
+/-- Every pair `G₁` derives is `Reachable`: the rule induction. The target gate kills
+every primary whose target is not `S`; the schema equation then forces one of the
+four rule instances of the completeness construction. -/
+theorem reachable_of_derives {c : Cat Atom} {w : List String}
+    (h : exampleGrammar.Derives c w) : Reachable c w := by
+  induction h with
+  | @lex w' c' hmem =>
+    simp only [exampleGrammar, Grammar.targetRestricted, List.mem_cons,
+      List.not_mem_nil, or_false, Prod.mk.injEq] at hmem
+    rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+      ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+    · exact Or.inl ⟨rfl, rfl⟩
+    · exact Or.inr (Or.inl ⟨rfl, rfl⟩)
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨0, rfl, rfl⟩))))
+    · exact Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
+        ⟨1, 0, by omega, rfl, rfl⟩)))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩)))
+  | @fc n a b c u v _ _ hgate hc iha ihb =>
+    obtain ⟨hn, hta⟩ := hgate
+    rcases iha with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+      ⟨j, rfl, rfl⟩ | ⟨k, i, hki, rfl, rfl⟩ | ⟨k, i, rfl, rfl⟩
+    · exact absurd hta (by decide)
+    · exact absurd hta (by decide)
+    · exact absurd hta (by decide)
+    · exact absurd hta (by decide)
+    · -- primary is the chain category `(S/Cʲ⁺¹)/B`
+      rcases n with _ | _ | _ | n
+      · rcases ihb with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+          ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
+        · simp [Cat.generalizedForwardComp] at hc
+        · simp [Cat.generalizedForwardComp] at hc
+        · simp [Cat.generalizedForwardComp] at hc
+        · simp [Cat.generalizedForwardComp] at hc
+        · simp [Cat.generalizedForwardComp] at hc
+        · rcases k' with _ | k' <;> simp [clusterCat, Cat.generalizedForwardComp] at hc
+        · simp [Cat.generalizedForwardComp] at hc
+      · rcases ihb with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+          ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
+        · simp [Cat.generalizedForwardComp] at hc
+        · simp [Cat.generalizedForwardComp] at hc
+        · simp [Cat.generalizedForwardComp] at hc
+        · -- live: chain ∘¹ B/C ⇒ next cluster
+          simp [Cat.generalizedForwardComp] at hc
+          subst hc
+          refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
+            ⟨j + 2, 0, by omega, rfl, ?_⟩)))))
+          simp [List.replicate_succ']
+        · rcases j' with _ | j' <;>
+            simp [clusterCat, Cat.generalizedForwardComp] at hc
+        · rcases k' with _ | k'
+          · simp [clusterCat] at hc
+          · rcases k' with _ | k' <;>
+              simp [clusterCat, Cat.generalizedForwardComp] at hc
+        · rcases k' with _ | k' <;>
+            simp [clusterCat, Cat.generalizedForwardComp] at hc
+      · rcases ihb with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+          ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
+        · simp [Cat.generalizedForwardComp] at hc
+        · simp [Cat.generalizedForwardComp] at hc
+        · -- live: chain ∘² (B/C)/B ⇒ next chain
+          simp [Cat.generalizedForwardComp] at hc
+          subst hc
+          exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
+            ⟨j + 1, rfl, by simp [List.replicate_succ']⟩))))
+        · simp [Cat.generalizedForwardComp] at hc
+        · rcases j' with _ | j' <;>
+            simp [clusterCat, Cat.generalizedForwardComp] at hc
+        · rcases k' with _ | k'
+          · simp [clusterCat] at hc
+          · rcases k' with _ | k' <;>
+              simp [clusterCat, Cat.generalizedForwardComp] at hc
+        · rcases k' with _ | k' <;>
+            simp [clusterCat, Cat.generalizedForwardComp] at hc
+      · exact absurd hn (by omega)
+    · -- primary is a cluster `S/Cᵏ`
+      rcases k with _ | k
+      · simp [clusterCat] at hc
+      · rcases n with _ | _ | _ | n
+        · rcases ihb with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+            ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
+          · simp [clusterCat, Cat.generalizedForwardComp] at hc
+          · simp [clusterCat, Cat.generalizedForwardComp] at hc
+          · simp [clusterCat, Cat.generalizedForwardComp] at hc
+          · simp [clusterCat, Cat.generalizedForwardComp] at hc
+          · simp [clusterCat, Cat.generalizedForwardComp] at hc
+          · rcases k' with _ | k' <;>
+              simp [clusterCat, Cat.generalizedForwardComp] at hc
+          · simp [clusterCat, Cat.generalizedForwardComp] at hc
+        · rcases ihb with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+            ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
+          · simp [Cat.generalizedForwardComp] at hc
+          · -- live: cluster ∘¹ C\A ⇒ peel intermediate
+            simp [clusterCat, Cat.generalizedForwardComp] at hc
+            subst hc
+            refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
+              ⟨k, i, rfl, ?_⟩)))))
+            have : k + 1 + i = k + i + 1 := by omega
+            simp [this, List.replicate_succ', List.append_assoc]
+          · simp [clusterCat, Cat.generalizedForwardComp] at hc
+          · simp [clusterCat, Cat.generalizedForwardComp] at hc
+          · rcases j' with _ | j' <;>
+              simp [clusterCat, Cat.generalizedForwardComp] at hc
+          · rcases k' with _ | k'
+            · simp [clusterCat] at hc
+            · rcases k' with _ | k' <;>
+                simp [clusterCat, Cat.generalizedForwardComp] at hc
+          · rcases k' with _ | k' <;>
+              simp [clusterCat, Cat.generalizedForwardComp] at hc
+        · rcases ihb with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+            ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
+          · simp [Cat.generalizedForwardComp] at hc
+          · simp [Cat.generalizedForwardComp] at hc
+          · simp [clusterCat, Cat.generalizedForwardComp] at hc
+          · simp [Cat.generalizedForwardComp] at hc
+          · rcases j' with _ | j' <;>
+              simp [clusterCat, Cat.generalizedForwardComp] at hc
+          · rcases k' with _ | k'
+            · simp [clusterCat] at hc
+            · rcases k' with _ | k' <;>
+                simp [clusterCat, Cat.generalizedForwardComp] at hc
+          · rcases k' with _ | k' <;>
+              simp [clusterCat, Cat.generalizedForwardComp] at hc
+        · exact absurd hn (by omega)
+    · -- primary is a peel intermediate `S/Cᵏ\A`: leftward, forward composition fails
+      simp at hc
+  | @bc n a b c u v _ _ hgate hc iha ihb =>
+    obtain ⟨hn, htb⟩ := hgate
+    rcases ihb with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+      ⟨j, rfl, rfl⟩ | ⟨k, i, hki, rfl, rfl⟩ | ⟨k, i, rfl, rfl⟩
+    · exact absurd htb (by decide)
+    · exact absurd htb (by decide)
+    · exact absurd htb (by decide)
+    · exact absurd htb (by decide)
+    · simp at hc
+    · rcases k with _ | k
+      · simp [clusterCat] at hc
+      · simp [clusterCat] at hc
+    · -- primary is a peel intermediate: only an `a` may backward-apply
+      rcases n with _ | _ | _ | n
+      · rcases iha with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+          ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
+        · -- live: A ∘⁰ peel intermediate ⇒ cluster
+          simp [Cat.generalizedBackwardComp] at hc
+          subst hc
+          refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl
+            ⟨k, i + 1, by omega, rfl, ?_⟩)))))
+          have : k + (i + 1) = k + 1 + i := by omega
+          simp [this, List.replicate_succ, List.append_assoc]
+        · simp [Cat.generalizedBackwardComp] at hc
+        · simp [Cat.generalizedBackwardComp] at hc
+        · simp [Cat.generalizedBackwardComp] at hc
+        · simp [Cat.generalizedBackwardComp] at hc
+        · rcases k' with _ | k' <;>
+            simp [clusterCat, Cat.generalizedBackwardComp] at hc
+        · simp [Cat.generalizedBackwardComp] at hc
+      · rcases iha with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+          ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
+        · simp [Cat.generalizedBackwardComp] at hc
+        · simp [Cat.generalizedBackwardComp] at hc
+        · simp [Cat.generalizedBackwardComp] at hc
+        · simp [Cat.generalizedBackwardComp] at hc
+        · simp [clusterCat, Cat.generalizedBackwardComp] at hc
+        · rcases k' with _ | k'
+          · simp [clusterCat] at hc
+          · simp [clusterCat, Cat.generalizedBackwardComp] at hc
+        · simp [Cat.generalizedBackwardComp] at hc
+      · rcases iha with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+          ⟨j', rfl, rfl⟩ | ⟨k', i', hki', rfl, rfl⟩ | ⟨k', i', rfl, rfl⟩
+        · simp [Cat.generalizedBackwardComp] at hc
+        · simp [Cat.generalizedBackwardComp] at hc
+        · simp [Cat.generalizedBackwardComp] at hc
+        · simp [Cat.generalizedBackwardComp] at hc
+        · simp [clusterCat, Cat.generalizedBackwardComp] at hc
+        · rcases k' with _ | k'
+          · simp [clusterCat] at hc
+          · rcases k' with _ | k' <;>
+              simp [clusterCat, Cat.generalizedBackwardComp] at hc
+        · rcases k' with _ | k' <;>
+            simp [clusterCat, Cat.generalizedBackwardComp] at hc
+      · exact absurd hn (by omega)
+
 /-! ### Generative-capacity result -/
 
 /-- The string language `aⁿbⁿcⁿ` (`n ≥ 1`) over `{"a","b","c"}`. -/
@@ -146,5 +361,25 @@ completeness half of CCG ⊋ CFG; the language `anbnc` it covers is not context-
 theorem ccg_generates_anbnc : anbncStrings ⊆ exampleGrammar.language := by
   rintro w ⟨n, hn, rfl⟩
   exact peel_derives n (cluster_derives hn)
+
+/-- **Soundness**: `G₁` derives nothing beyond `aⁿbⁿcⁿ`. -/
+theorem language_subset_anbnc : exampleGrammar.language ⊆ anbncStrings := by
+  rintro w hw
+  rcases reachable_of_derives hw with ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ |
+    ⟨j, h, _⟩ | ⟨k, i, hki, h, rfl⟩ | ⟨k, i, h, _⟩
+  · exact absurd h (by decide)
+  · exact absurd h (by decide)
+  · exact absurd h (by decide)
+  · exact absurd h (by decide)
+  · exact absurd h (by simp [clusterCat])
+  · rcases k with _ | k
+    · exact ⟨i, by omega, by simp⟩
+    · exact absurd h (by simp [clusterCat])
+  · exact absurd h (by simp)
+
+/-- **The language of `G₁` is exactly `aⁿbⁿcⁿ`** ([kuhlmann-koller-satta-2015],
+Ex. 2): completeness and soundness together. -/
+theorem language_eq_anbnc : exampleGrammar.language = anbncStrings :=
+  Set.Subset.antisymm language_subset_anbnc ccg_generates_anbnc
 
 end KuhlmannKollerSatta2015
