@@ -3,30 +3,31 @@ import Linglib.Syntax.CCG.Basic
 /-!
 # Target-restricted CCG
 
-The CCG formalism of [vijay-shanker-weir-1994] and [weir-joshi-1988] ("VW-CCG" in
-[kuhlmann-koller-satta-2015]'s terminology), in which combinatory rules may be
-**restricted per grammar**. The restriction modelled here is the one
-[kuhlmann-koller-satta-2015]'s generative-capacity results turn on, a **target
-restriction**: a rule fires only when the *target* of its primary input category (the
-leftmost atom, after stripping all arguments) is a distinguished atom `s` — their
+This file defines the target-restricted variant of CCG — the formalism of
+[vijay-shanker-weir-1994] and [weir-joshi-1988], "VW-CCG" in
+[kuhlmann-koller-satta-2015]'s terminology — in which combinatory rules may be
+restricted per grammar. The restriction modelled here is the one
+[kuhlmann-koller-satta-2015]'s generative-capacity results turn on, a *target
+restriction*: a rule fires only when the target of its primary input category (the
+leftmost atom, after stripping all arguments) is a distinguished atom `s`. Their
 equivalence-with-TAG theorem needs it, and without it the power drops strictly below
 TAG.
 
 Rules are the degree-`n` composition schema `CCG.forwardCompN` / `CCG.backwardCompN`
-of `Syntax/CCG/Basic`, gated on the target — a derivation node records only its degree
-and direction, per the [vijay-shanker-weir-1994] rule form (degree 0 is application;
-the harmonic/crossed distinction is a consequence of the slash directions, not a
-separate rule class).
+of `Syntax/CCG/Basic`, gated on the target. A derivation node records only its degree
+and direction, per the [vijay-shanker-weir-1994] rule form: degree 0 is application,
+and the harmonic/crossed distinction is a consequence of the slash directions rather
+than a separate rule class.
 
-This is the substrate that makes the CCG≡TAG weak-equivalence — and constructions of
-CCGs for non-context-free languages — expressible. It is distinct from the
-*unrestricted*, universal-rule CCG of `Syntax/CCG/Basic` (`CCG.DerivStep`), which
+This substrate makes the CCG≡TAG weak-equivalence — and constructions of CCGs for
+non-context-free languages — expressible. It is distinct from the unrestricted,
+universal-rule CCG of `Syntax/CCG/Basic` (`CCG.DerivStep`), which
 [kuhlmann-koller-satta-2015] show is strictly weaker than TAG.
 
 ## Main definitions
 
-- `CCG.TargetRestricted.target` — the target of a category: its leftmost atom.
-- `CCG.TargetRestricted.Derivation` — a derivation tree whose nodes record degree and
+* `CCG.TargetRestricted.target`: the target of a category — its leftmost atom.
+* `CCG.TargetRestricted.Derivation`: a derivation tree whose nodes record degree and
   direction; `Derivation.cat s` reads off its category under the target restriction
   to `s`, and `Derivation.yield` its surface string.
 -/

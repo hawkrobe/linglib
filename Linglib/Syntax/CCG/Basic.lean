@@ -3,31 +3,42 @@ import Linglib.Syntax.Category.Coordinator
 /-!
 # Combinatory Categorial Grammar (CCG)
 
-A lexicalized grammar in which categories encode argument structure and a small fixed
-set of combinatory rules derives phrases ([steedman-2000]): forward and backward
-application (`>`, `<`), harmonic composition (`B`), forward crossed composition (`>B×`),
-type-raising (`T`), and the coordination schema. Backward crossed composition and the
-substitution rules of [steedman-2000] are not part of this toy inventory; the
-target-restricted (VW-CCG) rules live in `CCG.TargetRestricted`.
+This file defines Combinatory Categorial Grammar (CCG): categories that encode
+argument structure through directional slashes, the combinatory rules that combine
+them, and derivation trees with their categories and surface yields ([steedman-2000]).
 
-Categories and rules are stated over an arbitrary type `α` of atomic categories, so a
-grammar needing featured atoms (e.g. [steedman-2000]'s `S₊SUB`, `VP₋SUB` for Dutch) can
-instantiate a richer inventory. `CCG.Atom` is the featureless toy inventory the English
-fragment and the worked studies use.
+Categories are stated over an arbitrary type `α` of atomic categories, so a grammar
+needing featured atoms (e.g. [steedman-2000]'s `S₊SUB` and `VP₋SUB` for Dutch) can
+instantiate a richer inventory than the featureless core `CCG.Atom`.
+
+Every binary rule is an instance of one schema, generalized composition of degree `n`:
+degree 0 is application, and at degree ≥ 1 the harmonic and crossed variants differ
+only in the slash directions the schema passes through. The named rules are the
+instances the toy grammar admits; backward crossed composition and the substitution
+rules of [steedman-2000] are not among them. The target-restricted (VW-CCG) rules
+live in `CCG.TargetRestricted`.
 
 ## Main definitions
 
-- `CCG.Cat` — categories over an atom type: atoms plus the directional slashes `/` and `\`
-- `CCG.forwardApp`, `backwardApp`, `forwardComp`, `backwardComp`, `forwardCompX` —
-  the combinatory rules as partial operations on categories
-- `CCG.DerivStep` — a derivation tree; `DerivStep.cat` reads off its category and
-  `DerivStep.yield` the surface string it spells out
+* `CCG.Cat`: categories over an atom type `α` — atoms plus directional slashes.
+* `CCG.forwardCompN`, `CCG.backwardCompN`: generalized composition of degree `n`, the
+  schema every binary rule instantiates.
+* `CCG.forwardApp`, `CCG.backwardApp`, `CCG.forwardComp`, `CCG.backwardComp`,
+  `CCG.forwardCompX`: the toy grammar's rule instances.
+* `CCG.forwardTypeRaise`, `CCG.backwardTypeRaise`: type-raising.
+* `CCG.LexEntry`: a lexical entry, pairing a surface form with its category.
+* `CCG.DerivStep`: a derivation tree; `DerivStep.cat` reads off its category,
+  `DerivStep.yield` the surface string it spells out, and `DerivStep.opCount` the
+  number of rule applications.
 
 ## Notation
 
-`/` and `\` build directional slash categories. Because `/` overloads Lean's
-division, categories are written fully parenthesized (`(S \ NP) / NP`) rather than
-relying on the Steedman left-to-right reading.
+* `X / Y`: the rightward-looking category `Cat.rslash X Y`.
+* `X \ Y`: the leftward-looking category `Cat.lslash X Y`.
+
+Both are scoped to the `CCG` namespace. Because `/` overloads Lean's division,
+categories are written fully parenthesized (`(S \ NP) / NP`) rather than relying on
+the Steedman left-to-right reading.
 -/
 
 namespace CCG
