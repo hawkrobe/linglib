@@ -25,23 +25,23 @@ parameterized over its atoms, so the construction needs no proxy inventory.
 
 ## Main definitions
 
-- `build` — the `n`-indexed `CCG.TargetRestricted.Derivation` of `aⁿbⁿcⁿ` (cluster of degree-2
-  compositions, peeled to `S` by crossed-composition with `c` and backward-application
-  with `a`).
+- `exampleGrammar` — the grammar `G₁` of Example 2: six lexical entries, target
+  restriction and start at `S`, degree bound 2.
 
 ## Main statements
 
-- `build_cat` — `(build n).cat = some S` for `n ≥ 1`.
-- `build_yield` — `(build n).yield = aⁿbⁿcⁿ`.
-- `ccg_generates_anbnc` — every `aⁿbⁿcⁿ` string is generated.
+- `cluster_derives` — the `b`-cluster: `G₁` derives `bⁿ` at category `S/Cⁿ`.
+- `peel_derives` — peeling: each `C` argument is discharged by crossed-composing a
+  `c` and backward-applying an `a`, wrapping the string as `a … c`.
+- `ccg_generates_anbnc` — `anbncStrings ⊆ exampleGrammar.language`.
 
 ## Implementation notes
 
 These are the *completeness* direction (`anbncStrings ⊆ exampleGrammar.language`).
-The converse *soundness* (`exampleGrammar.language ⊆ anbncStrings`, an all-derivations
-induction) is stateable over `TargetRestricted.Grammar` but not formalised here; with
-it, relabelling `{"a","b","c"} → ThreeSymbol` and `AnBnCn.anbnc_not_contextFree` would
-establish that the grammar's language is itself non-context-free.
+The converse *soundness* (`exampleGrammar.language ⊆ anbncStrings`, an induction on
+`Grammar.Derives`) is stateable but not formalised here; with it, relabelling
+`{"a","b","c"} → ThreeSymbol` and `AnBnCn.anbnc_not_contextFree` would establish that
+the grammar's language is itself non-context-free.
 -/
 
 namespace KuhlmannKollerSatta2015
@@ -63,17 +63,10 @@ abbrev Bcat : Cat Atom := .atom .B
 abbrev Ccat : Cat Atom := .atom .C
 abbrev Scat : Cat Atom := .atom .S
 
-/-! ### The grammar `G₁` of Example 2 -/
-
-/-- `a := A`. -/
-def aLex : TargetRestricted.Derivation Atom := .lex "a" Acat
-/-- `c := C\A`. -/
-def cLex : TargetRestricted.Derivation Atom := .lex "c" (Ccat \ Acat)
-
 /-- The grammar `G₁` of Example 2: the six lexical entries, target restriction and
 start at `S`, degree bound 2 — an instance of the modern capacity object
 ([schiffer-maletti-2021]: ε-free, degree at most 2). -/
-def exampleGrammar : TargetRestricted.Grammar Atom where
+def exampleGrammar : Grammar Atom where
   lexicon := [("a", Acat), ("c", Ccat \ Acat),
               ("b", (Scat / Ccat) / Bcat), ("b", (Bcat / Ccat) / Bcat),
               ("b", Scat / Ccat), ("b", Bcat / Ccat)]
@@ -85,75 +78,38 @@ def clusterCat : Nat → Cat Atom
   | 0 => Scat
   | n + 1 => (clusterCat n) / Ccat
 
-/-- Chain of degree-2 compositions: `b₁ = S/C/B` composed with `j` copies of
-`B/C/B`, giving `S/Cʲ⁺¹/B` and yield `bʲ⁺¹`. -/
-def fc2Chain : Nat → TargetRestricted.Derivation Atom
-  | 0 => .lex "b" ((Scat / Ccat) / Bcat)
-  | j + 1 => .fc 2 (fc2Chain j) (.lex "b" ((Bcat / Ccat) / Bcat))
-
-/-- The `b`-cluster derivation for `n ≥ 1`, with category `clusterCat n`, yield `bⁿ`. -/
-def clusterDeriv : Nat → TargetRestricted.Derivation Atom
-  | 0 => .lex "b" Scat            -- unused (the construction starts at n = 1)
-  | 1 => .lex "b" (Scat / Ccat)
-  | n + 2 => .fc 1 (fc2Chain n) (.lex "b" (Bcat / Ccat))
-
-/-- One peel: crossed-compose with a `c` on the right, then backward-apply an `a` on the
-left — wrapping the yield with `a … c` and removing one `C` argument. -/
-def peelStep (d : TargetRestricted.Derivation Atom) : TargetRestricted.Derivation Atom := .bc 0 aLex (.fc 1 d cLex)
-
-/-- Peel `k` times. -/
-def peel : Nat → TargetRestricted.Derivation Atom → TargetRestricted.Derivation Atom
-  | 0, d => d
-  | k + 1, d => peel k (peelStep d)
-
-/-- The full derivation of `aⁿbⁿcⁿ`. -/
-def build (n : Nat) : TargetRestricted.Derivation Atom := peel n (clusterDeriv n)
-
-/-! ### Target invariant -/
-
 /-- The cluster category always has target `S`. -/
 theorem target_clusterCat (n : Nat) : target (clusterCat n) = Atom.S := by
   induction n with
   | zero => rfl
   | succ n ih => simpa [clusterCat] using ih
 
-/-! ### Category of the construction (completeness, part 1) -/
+/-! ### The construction, as `Derives` inductions -/
 
-/-- The degree-2 chain composes to `S/Cʲ⁺¹/B`. -/
-theorem fc2Chain_cat (j : Nat) :
-    (fc2Chain j).cat .S = some ((clusterCat (j + 1)).rslash .dot Bcat) := by
+/-- Chain of degree-2 compositions: `b₁ = S/C/B` composed with `j` copies of
+`B/C/B` derives `bʲ⁺¹` at `S/Cʲ⁺¹/B`. -/
+theorem fc2Chain_derives (j : Nat) :
+    exampleGrammar.Derives ((clusterCat (j + 1)).rslash .dot Bcat)
+      (List.replicate (j + 1) "b") := by
   induction j with
-  | zero => rfl
+  | zero => exact .lex (by decide)
   | succ j ih =>
-    simp [fc2Chain, TargetRestricted.Derivation.cat, ih, Cat.generalizedForwardComp, target_clusterCat, clusterCat]
+      have h : exampleGrammar.Derives ((clusterCat (j + 2)).rslash .dot Bcat)
+          (List.replicate (j + 1) "b" ++ ["b"]) :=
+        .fc 2 ih (.lex (c := (Bcat / Ccat) / Bcat) (by decide)) (by decide)
+          (by simp [target_clusterCat, exampleGrammar]) rfl
+      simpa [List.replicate_succ'] using h
 
-/-- The cluster derivation has category `clusterCat n` for `n ≥ 1`. -/
-theorem clusterDeriv_cat : ∀ {n : Nat}, 1 ≤ n → (clusterDeriv n).cat .S = some (clusterCat n)
-  | 1, _ => rfl
+/-- The `b`-cluster: `G₁` derives `bⁿ` at category `clusterCat n`, for `n ≥ 1`. -/
+theorem cluster_derives : ∀ {n : Nat}, 1 ≤ n →
+    exampleGrammar.Derives (clusterCat n) (List.replicate n "b")
+  | 1, _ => .lex (by decide)
   | n + 2, _ => by
-    simp [clusterDeriv, TargetRestricted.Derivation.cat, fc2Chain_cat, Cat.generalizedForwardComp, target_clusterCat,
-      clusterCat]
-
-/-- One peel removes one `C` argument from a cluster. -/
-theorem peelStep_cat {d : TargetRestricted.Derivation Atom} {k : Nat}
-    (h : d.cat .S = some (clusterCat (k + 1))) :
-    (peelStep d).cat .S = some (clusterCat k) := by
-  simp [peelStep, TargetRestricted.Derivation.cat, aLex, cLex, h, Cat.generalizedForwardComp, Cat.generalizedBackwardComp, clusterCat,
-    target_clusterCat]
-
-/-- Peeling `k` times turns a `clusterCat k` derivation into one of category `S`. -/
-theorem peel_cat : ∀ (k : Nat) (d : TargetRestricted.Derivation Atom), d.cat .S = some (clusterCat k) →
-    (peel k d).cat .S = some Scat
-  | 0, d, h => by simpa [peel, clusterCat] using h
-  | k + 1, d, h => by
-    simp only [peel]
-    exact peel_cat k (peelStep d) (peelStep_cat h)
-
-/-- **Completeness, category part.** The construction derives `S` for every `n ≥ 1`. -/
-theorem build_cat {n : Nat} (hn : 1 ≤ n) : (build n).cat .S = some Scat :=
-  peel_cat n (clusterDeriv n) (clusterDeriv_cat hn)
-
-/-! ### Yield of the construction (completeness, part 2) -/
+      have h : exampleGrammar.Derives (clusterCat (n + 2))
+          (List.replicate (n + 1) "b" ++ ["b"]) :=
+        .fc 1 (fc2Chain_derives n) (.lex (c := Bcat / Ccat) (by decide)) (by decide)
+          (by simp [target_clusterCat, exampleGrammar]) rfl
+      simpa [List.replicate_succ'] using h
 
 private theorem replicate_cons_comm {α : Type*} (k : Nat) (a : α) (X : List α) :
     List.replicate k a ++ (a :: X) = a :: (List.replicate k a ++ X) := by
@@ -161,56 +117,22 @@ private theorem replicate_cons_comm {α : Type*} (k : Nat) (a : α) (X : List α
   | zero => rfl
   | succ k ih => simp [List.replicate_succ, List.cons_append, ih]
 
-theorem fc2Chain_yield (j : Nat) : (fc2Chain j).yield = List.replicate (j + 1) "b" := by
-  induction j with
-  | zero => rfl
-  | succ j ih => simp [fc2Chain, TargetRestricted.Derivation.yield, ih, List.replicate_succ']
-
-theorem clusterDeriv_yield : ∀ {n : Nat}, 1 ≤ n →
-    (clusterDeriv n).yield = List.replicate n "b"
-  | 1, _ => rfl
-  | n + 2, _ => by simp [clusterDeriv, TargetRestricted.Derivation.yield, fc2Chain_yield, List.replicate_succ']
-
-theorem peel_yield : ∀ (k : Nat) (d : TargetRestricted.Derivation Atom),
-    (peel k d).yield = List.replicate k "a" ++ d.yield ++ List.replicate k "c"
-  | 0, d => by simp [peel]
-  | k + 1, d => by
-    simp only [peel]
-    rw [peel_yield k (peelStep d)]
-    have hy : (peelStep d).yield = "a" :: (d.yield ++ ["c"]) := by
-      simp [peelStep, TargetRestricted.Derivation.yield, aLex, cLex]
-    rw [hy, List.replicate_succ, List.replicate_succ]
-    simp only [List.cons_append, List.append_assoc]
-    exact replicate_cons_comm k "a" _
-
-/-- **Completeness, yield part.** The construction spells out `aⁿbⁿcⁿ`. -/
-theorem build_yield {n : Nat} (hn : 1 ≤ n) :
-    (build n).yield = List.replicate n "a" ++ List.replicate n "b" ++ List.replicate n "c" := by
-  simp [build, peel_yield, clusterDeriv_yield hn, List.append_assoc]
-
-/-! ### Well-formedness over the grammar -/
-
-theorem fc2Chain_wf (j : Nat) : (fc2Chain j).WellFormed exampleGrammar := by
-  induction j with
-  | zero => decide
-  | succ j ih => exact ⟨by decide, ih, by decide⟩
-
-theorem clusterDeriv_wf : ∀ {n : Nat}, 1 ≤ n →
-    (clusterDeriv n).WellFormed exampleGrammar
-  | 1, _ => by decide
-  | n + 2, _ => ⟨by decide, fc2Chain_wf n, by decide⟩
-
-theorem peelStep_wf {d : TargetRestricted.Derivation Atom}
-    (h : d.WellFormed exampleGrammar) : (peelStep d).WellFormed exampleGrammar :=
-  ⟨by decide, by decide, by decide, h, by decide⟩
-
-theorem peel_wf : ∀ (k : Nat) (d : TargetRestricted.Derivation Atom),
-    d.WellFormed exampleGrammar → (peel k d).WellFormed exampleGrammar
-  | 0, _, h => h
-  | k + 1, d, h => peel_wf k (peelStep d) (peelStep_wf h)
-
-theorem build_wf {n : Nat} (hn : 1 ≤ n) : (build n).WellFormed exampleGrammar :=
-  peel_wf n (clusterDeriv n) (clusterDeriv_wf hn)
+/-- Peeling: from a derivation of `w` at `clusterCat k`, crossed-composing a `c` and
+backward-applying an `a` `k` times derives `aᵏ w cᵏ` at `S`. -/
+theorem peel_derives : ∀ (k : Nat) {w : List String},
+    exampleGrammar.Derives (clusterCat k) w →
+    exampleGrammar.Derives Scat
+      (List.replicate k "a" ++ w ++ List.replicate k "c")
+  | 0, w, h => by simpa [clusterCat] using h
+  | k + 1, w, h => by
+      have hstep : exampleGrammar.Derives (clusterCat k) ("a" :: (w ++ ["c"])) :=
+        .bc 0 (.lex (c := Acat) (by decide))
+          (.fc 1 h (.lex (c := Ccat \ Acat) (by decide)) (by decide)
+            (by simp [target_clusterCat, exampleGrammar]) rfl)
+          (by decide) (by simp [target_clusterCat, exampleGrammar]) rfl
+      have hrec := peel_derives k hstep
+      simpa [List.replicate_succ, List.cons_append, List.append_assoc,
+        replicate_cons_comm] using hrec
 
 /-! ### Generative-capacity result -/
 
@@ -224,6 +146,6 @@ completeness half of CCG ⊋ CFG; the language `anbnc` it covers is not context-
 (`AnBnCn.anbnc_not_contextFree`). -/
 theorem ccg_generates_anbnc : anbncStrings ⊆ exampleGrammar.language := by
   rintro w ⟨n, hn, rfl⟩
-  exact ⟨build n, build_wf hn, build_cat hn, build_yield hn⟩
+  exact peel_derives n (cluster_derives hn)
 
 end KuhlmannKollerSatta2015
