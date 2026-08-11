@@ -65,12 +65,12 @@ abbrev Scat : Cat Atom := .atom .S
 /-- The grammar `G₁` of Example 2: the six lexical entries, target restriction and
 start at `S`, degree bound 2 — an instance of the modern capacity object
 ([schiffer-maletti-2021]: ε-free, degree at most 2). -/
-def exampleGrammar : Grammar Atom where
-  lexicon := [("a", Acat), ("c", Ccat \ Acat),
-              ("b", (Scat / Ccat) / Bcat), ("b", (Bcat / Ccat) / Bcat),
-              ("b", Scat / Ccat), ("b", Bcat / Ccat)]
-  start := .S
-  degree := 2
+def exampleGrammar : Grammar Atom :=
+  .targetRestricted
+    [("a", Acat), ("c", Ccat \ Acat),
+     ("b", (Scat / Ccat) / Bcat), ("b", (Bcat / Ccat) / Bcat),
+     ("b", Scat / Ccat), ("b", Bcat / Ccat)]
+    .S 2
 
 /-- The cluster category `S/C/…/C` with `n` forward `C`-arguments. -/
 def clusterCat : Nat → Cat Atom
@@ -95,8 +95,8 @@ theorem fc2Chain_derives (j : Nat) :
   | succ j ih =>
       have h : exampleGrammar.Derives ((clusterCat (j + 2)).rslash .dot Bcat)
           (List.replicate (j + 1) "b" ++ ["b"]) :=
-        .fc 2 ih (.lex (c := (Bcat / Ccat) / Bcat) (by decide)) (by decide)
-          (by simp [target_clusterCat, exampleGrammar]) rfl
+        .fc 2 ih (.lex (c := (Bcat / Ccat) / Bcat) (by decide))
+          ⟨by decide, by simp [target_clusterCat]⟩ rfl
       simpa [List.replicate_succ'] using h
 
 /-- The `b`-cluster: `G₁` derives `bⁿ` at category `clusterCat n`, for `n ≥ 1`. -/
@@ -106,8 +106,8 @@ theorem cluster_derives : ∀ {n : Nat}, 1 ≤ n →
   | n + 2, _ => by
       have h : exampleGrammar.Derives (clusterCat (n + 2))
           (List.replicate (n + 1) "b" ++ ["b"]) :=
-        .fc 1 (fc2Chain_derives n) (.lex (c := Bcat / Ccat) (by decide)) (by decide)
-          (by simp [target_clusterCat, exampleGrammar]) rfl
+        .fc 1 (fc2Chain_derives n) (.lex (c := Bcat / Ccat) (by decide))
+          ⟨by decide, by simp [target_clusterCat]⟩ rfl
       simpa [List.replicate_succ'] using h
 
 private theorem replicate_cons_comm {α : Type*} (k : Nat) (a : α) (X : List α) :
@@ -126,9 +126,9 @@ theorem peel_derives : ∀ (k : Nat) {w : List String},
   | k + 1, w, h => by
       have hstep : exampleGrammar.Derives (clusterCat k) ("a" :: (w ++ ["c"])) :=
         .bc 0 (.lex (c := Acat) (by decide))
-          (.fc 1 h (.lex (c := Ccat \ Acat) (by decide)) (by decide)
-            (by simp [target_clusterCat, exampleGrammar]) rfl)
-          (by decide) (by simp [target_clusterCat, exampleGrammar]) rfl
+          (.fc 1 h (.lex (c := Ccat \ Acat) (by decide))
+            ⟨by decide, by simp [target_clusterCat]⟩ rfl)
+          ⟨by decide, by simp [target_clusterCat]⟩ rfl
       have hrec := peel_derives k hstep
       simpa [List.replicate_succ, List.cons_append, List.append_assoc,
         replicate_cons_comm] using hrec

@@ -4,11 +4,14 @@ import Mathlib.Data.Set.Defs
 /-!
 # CCG grammars and their languages
 
-This file defines CCG grammars and their string languages, in the formalism of
-[vijay-shanker-weir-1994] and [weir-joshi-1988] ("VW-CCG" in
-[kuhlmann-koller-satta-2015]'s terminology), where combinatory rules are restricted
-per grammar rather than by the lexicalized slash modalities of the modern rule
-theory (`Syntax/CCG/Derivation`). The restriction modelled is the one
+This file defines CCG grammars and their string languages. A grammar is a finite
+lexicon, a start atom, and its *rule system*, given as permission gates on the
+generalized composition schema; the formalisms of the literature are choices of
+gate. `Grammar.targetRestricted` is VW-CCG ([vijay-shanker-weir-1994],
+[weir-joshi-1988]), where the grammar owns a degree bound and a target restriction;
+`Grammar.multimodal` is the radically lexicalized modern formalism
+([baldridge-2002], [steedman-2019]), whose rule system is universal — a grammar is
+nothing but its lexicon and start symbol. The restriction modelled is the one
 [kuhlmann-koller-satta-2015]'s generative-capacity results turn on, a *target
 restriction*: a rule fires only when the target of its primary input category (the
 leftmost atom, after stripping all arguments) is a distinguished atom `s`.
@@ -34,8 +37,9 @@ languages in `Studies/KuhlmannKollerSatta2015`.
 
 ## Main definitions
 
-* `CCG.Grammar`: the capacity object — a finite lexicon, the distinguished atom
-  (target restriction and start symbol), and a bound on composition degree.
+* `CCG.Grammar`: a lexicon, a start atom, and rule-permission gates.
+* `CCG.Grammar.targetRestricted`, `CCG.Grammar.multimodal`: the two rule systems of
+  the literature, as gate choices.
 * `CCG.Grammar.Derives`: the derivability relation — `G.Derives c w` says the
   grammar derives token string `w` at category `c`; `Grammar.language` is the set of
   strings derived at the distinguished atom.
@@ -54,36 +58,77 @@ variable {α : Type*}
 
 /-! ### Grammars and their languages -/
 
-/-- A target-restricted CCG grammar: a finite lexicon, a distinguished atom serving as
-both the target restriction and the start symbol (the [kuhlmann-koller-satta-2015]
-simplification of per-rule restrictions), and a bound on composition degree
-(`degree = 2` in [schiffer-maletti-2021]'s normal form). -/
+/-- A CCG grammar: a finite lexicon, a distinguished start atom, and the grammar's
+rule system, given as permission gates — `allowsFwd n a b` says forward composition
+of degree `n` may combine primary `a` with secondary `b` (mirrored by `allowsBwd`).
+The formalisms of the literature are choices of gate: `Grammar.targetRestricted`
+(VW-CCG) and `Grammar.multimodal` (the universal modality-controlled rules). -/
 structure Grammar (α : Type*) where
   /-- Lexical entries, pairing a token with a category. -/
   lexicon : List (String × Cat α)
-  /-- The distinguished atom: rules fire only at this target, and the language
-  collects derivations of this category. -/
+  /-- The distinguished atom: the language collects derivations of this category. -/
   start : α
-  /-- The bound on composition degree. -/
-  degree : Nat
+  /-- May forward composition of degree `n` combine primary `a` with secondary `b`? -/
+  allowsFwd : Nat → Cat α → Cat α → Prop
+  /-- May backward composition of degree `n` combine secondary `a` with primary `b`? -/
+  allowsBwd : Nat → Cat α → Cat α → Prop
+
+/-- A target-restricted (VW-CCG) grammar ([vijay-shanker-weir-1994],
+[kuhlmann-koller-satta-2015]): rules up to a degree bound, gated on the primary
+input's target (`degree = 2` in [schiffer-maletti-2021]'s normal form). -/
+def Grammar.targetRestricted (lexicon : List (String × Cat α)) (start : α)
+    (degree : Nat) : Grammar α where
+  lexicon := lexicon
+  start := start
+  allowsFwd := fun n a _ => n ≤ degree ∧ Cat.target a = start
+  allowsBwd := fun n _ b => n ≤ degree ∧ Cat.target b = start
+
+/-- The universal rule system of multimodal CCG ([baldridge-2002], [steedman-2019]):
+degree at most 2, harmonic and crossing composition gated by the primary slash's
+modality, uniform secondary spines. -/
+def Multimodal.allowsFwd : Nat → Cat α → Cat α → Prop
+  | 0, _, _ => True
+  | 1, .rslash _ m _, .rslash _ _ _ => m ≤ Modality.diamond
+  | 1, .rslash _ m _, .lslash _ _ _ => m ≤ Modality.cross
+  | 2, .rslash _ m _, .rslash (.rslash _ _ _) _ _ => m ≤ Modality.diamond
+  | 2, .rslash _ m _, .lslash (.lslash _ _ _) _ _ => m ≤ Modality.cross
+  | _, _, _ => False
+
+/-- The mirror of `Multimodal.allowsFwd`. -/
+def Multimodal.allowsBwd : Nat → Cat α → Cat α → Prop
+  | 0, _, _ => True
+  | 1, .lslash _ _ _, .lslash _ m _ => m ≤ Modality.diamond
+  | 1, .rslash _ _ _, .lslash _ m _ => m ≤ Modality.cross
+  | 2, .lslash (.lslash _ _ _) _ _, .lslash _ m _ => m ≤ Modality.diamond
+  | 2, .rslash (.rslash _ _ _) _ _, .lslash _ m _ => m ≤ Modality.cross
+  | _, _, _ => False
+
+/-- A multimodal grammar: the radically lexicalized formalism of [steedman-2019],
+where a grammar is nothing but a lexicon and a start symbol — its rule system is the
+universal modality-controlled one. Strictly less expressive than the
+target-restricted grammars ([kuhlmann-koller-satta-2015]). -/
+def Grammar.multimodal (lexicon : List (String × Cat α)) (start : α) : Grammar α where
+  lexicon := lexicon
+  start := start
+  allowsFwd := Multimodal.allowsFwd
+  allowsBwd := Multimodal.allowsBwd
 
 /-- `G.Derives c w`: the grammar derives token string `w` at category `c` — a lexical
-entry, or a target-gated generalized composition of two adjacent derivations, within
-the grammar's degree bound. Capacity arguments proceed by induction on this
-relation. -/
+entry, or a generalized composition of two adjacent derivations permitted by the
+grammar's gates. Capacity arguments proceed by induction on this relation. -/
 inductive Grammar.Derives [DecidableEq α] (G : Grammar α) :
     Cat α → List String → Prop where
   /-- A lexical entry derives its token. -/
   | lex {w : String} {c : Cat α} : (w, c) ∈ G.lexicon → G.Derives c [w]
-  /-- Forward composition of degree `n` (`>Bⁿ`; degree 0 is application), gated on the
-  primary (left) target. -/
+  /-- Forward composition of degree `n` (`>Bⁿ`; degree 0 is application), if the
+  grammar's gate permits it. -/
   | fc (n : Nat) {a b c : Cat α} {u v : List String} :
-      G.Derives a u → G.Derives b v → n ≤ G.degree → Cat.target a = G.start →
+      G.Derives a u → G.Derives b v → G.allowsFwd n a b →
       Cat.generalizedForwardComp n a b = some c → G.Derives c (u ++ v)
-  /-- Backward composition of degree `n` (`<Bⁿ`; degree 0 is application), gated on the
-  primary (right) target. -/
+  /-- Backward composition of degree `n` (`<Bⁿ`; degree 0 is application), if the
+  grammar's gate permits it. -/
   | bc (n : Nat) {a b c : Cat α} {u v : List String} :
-      G.Derives a u → G.Derives b v → n ≤ G.degree → Cat.target b = G.start →
+      G.Derives a u → G.Derives b v → G.allowsBwd n a b →
       Cat.generalizedBackwardComp n a b = some c → G.Derives c (u ++ v)
 
 /-- The string language of a grammar: the token strings derived at the distinguished
