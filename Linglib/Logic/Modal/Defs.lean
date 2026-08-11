@@ -1,4 +1,5 @@
 import Mathlib.Logic.Basic
+import Mathlib.Logic.Relator
 import Mathlib.Order.Defs.Unbundled
 import Mathlib.Order.PropInstances
 
@@ -14,19 +15,16 @@ namespace ModalLogic
 
 /-! ### Frame conditions -/
 
-/-- A relation is **serial** if every world accesses at least one world. -/
+/-- `R` is **serial** if every world accesses at least one world. -/
 class IsSerial {W : Type*} (R : W → W → Prop) : Prop where
-  serial : ∀ w, ∃ v, R w v
+  serial : Relator.LeftTotal R
 
-/-- A relation is **euclidean** if from any pair of `R`-successors of `w`,
-    each is an `R`-successor of the other. -/
+/-- `R` is **Euclidean** if from any pair of `R`-successors of `w`, each is
+    an `R`-successor of the other. -/
 class IsEuclidean {W : Type*} (R : W → W → Prop) : Prop where
   eucl : ∀ w v u, R w v → R w u → R v u
 
-/-! ### Frame implications and instances
-
-The universal relation is `⊤ : W → W → Prop` and the empty relation `⊥`,
-via the pointwise lattice on relations. -/
+/-! ### Frame implications and instances -/
 
 variable {W : Type*}
 
