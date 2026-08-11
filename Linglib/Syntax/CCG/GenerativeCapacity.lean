@@ -6,7 +6,7 @@ import Linglib.Syntax.CCG.Basic
 /-!
 # CCG Generative Capacity
 
-CCG is mildly context-sensitive: classical CCG is weakly equivalent to TAG, hence
+CCG is mildly context-sensitive: target-restricted CCG is weakly equivalent to TAG, hence
 strictly more powerful than context-free grammars ([vijay-shanker-weir-1994],
 [weir-joshi-1988]). The classic witnesses are the counting / cross-serial languages
 aⁿbⁿcⁿ and aⁿbⁿcⁿdⁿ, which are not context-free.
@@ -21,7 +21,7 @@ aⁿbⁿcⁿ and aⁿbⁿcⁿdⁿ, which are not context-free.
 
 The "CCG generates a non-context-free language" direction depends critically on the form
 of CCG. [kuhlmann-koller-satta-2015] show that the CCG≡TAG equivalence holds for
-*classical* CCG, where combinatory rules may be **restricted per grammar** (e.g. fired
+*target-restricted* CCG ("VW-CCG"), where combinatory rules may be **restricted per grammar** (e.g. fired
 only when the target of the primary input category is `S`). For *lexicalized CCG without
 target restrictions* they prove the generative power is strictly *below TAG*. The key
 point is about generating a language *exactly*: without target restrictions a CCG that
@@ -30,7 +30,7 @@ covers `aⁿbⁿcⁿ` also admits extra permuted strings, so it does not generat
 `CCG.DerivStep` models the unrestricted, universal-rule variant (no rule restrictions), so
 it is the wrong model for the exact-language construction.
 
-A fully-proven construction of a rule-restricted (classical) CCG that generates aⁿbⁿcⁿ
+A fully-proven construction of a target-restricted CCG that generates aⁿbⁿcⁿ
 is therefore *not* expressible over `DerivStep`; it lives in
 `Studies/KuhlmannKollerSatta2015` (`ccg_generates_anbnc`), which models the target
 restriction explicitly. The concrete Dutch derivations in `CCG.CrossSerial` are 2- and
@@ -45,7 +45,7 @@ open FourSymbol
 
 /-- The witness language aⁿbⁿcⁿdⁿ is not context-free. Together with the rule-restricted
 construction in `Studies/KuhlmannKollerSatta2015` (for the simpler witness aⁿbⁿcⁿ) this is
-the non-context-free side of CFG ⊊ classical-CCG; on its own it establishes only that the
+the non-context-free side of CFG ⊊ target-restricted CCG; on its own it establishes only that the
 target language lies beyond the context-free tier. -/
 theorem ccg_exceeds_cfg : ¬ Language.IsContextFree anbncndn :=
   anbncndn_not_contextFree

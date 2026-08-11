@@ -26,44 +26,44 @@ open Combinator
 -- is written `Combinator.S` to keep it distinct from the sentence category `CCG.S`.
 
 /-- Forward composition is `B`: its semantics is `B f g`. -/
-theorem fcomp_is_B {E W : Type} {x y z : Cat}
+theorem fcomp_is_B {E W : Type} {x y z : Cat Atom}
     (f_sem : Denot E W (catToTy (x.rslash y)))
     (g_sem : Denot E W (catToTy (y.rslash z))) :
     (λ arg => f_sem (g_sem arg)) = B f_sem g_sem := rfl
 
 /-- The type of a forward-composition result. -/
-theorem fcomp_type_is_B (x _y z : Cat) :
+theorem fcomp_type_is_B (x _y z : Cat Atom) :
     catToTy (x.rslash z) = (catToTy z ⇒ catToTy x) := rfl
 
 /-- Backward composition is also `B`, with reversed linear order. -/
-theorem bcomp_is_B {E W : Type} {x y z : Cat}
+theorem bcomp_is_B {E W : Type} {x y z : Cat Atom}
     (g_sem : Denot E W (catToTy (y.lslash z)))
     (f_sem : Denot E W (catToTy (x.lslash y))) :
     (λ arg => f_sem (g_sem arg)) = B f_sem g_sem := rfl
 
 /-- Forward type-raising is `T`: its semantics is `T a`. -/
-theorem type_raise_is_T {E W : Type} {x t : Cat}
+theorem type_raise_is_T {E W : Type} {x t : Cat Atom}
     (a_sem : Denot E W (catToTy x)) :
     (λ (f : Denot E W (catToTy (t.lslash x))) => f a_sem) = T a_sem := rfl
 
 /-- The type of a forward-type-raised category `T/(T\X)`. -/
-theorem ftr_type_is_T (x t : Cat) :
+theorem ftr_type_is_T (x t : Cat Atom) :
     catToTy (forwardTypeRaise x t) = ((catToTy x ⇒ catToTy t) ⇒ catToTy t) := rfl
 
 /-- Backward type-raising has the same type as forward type-raising. -/
-theorem btr_type_is_T (x t : Cat) :
+theorem btr_type_is_T (x t : Cat Atom) :
     catToTy (backwardTypeRaise x t) = ((catToTy x ⇒ catToTy t) ⇒ catToTy t) := rfl
 
 /-- Forward substitution is `S`: `(X/Y)/Z  Y/Z ⇒ X/Z` with `S f g x = f x (g x)`.
 (The substitution rule is not part of the toy inventory in `Syntax/CCG/Basic`; the
 correspondence is stated at the type level.) -/
-theorem substitution_is_S {E W : Type} {x y z : Cat}
+theorem substitution_is_S {E W : Type} {x y z : Cat Atom}
     (f_sem : Denot E W (catToTy ((x.rslash y).rslash z)))
     (g_sem : Denot E W (catToTy (y.rslash z))) :
     (λ arg => f_sem arg (g_sem arg)) = Combinator.S f_sem g_sem := rfl
 
 /-- Forward application is `T` applied the other way: `f a = T a f`. -/
-theorem fapp_via_T {E W : Type} {x y : Cat}
+theorem fapp_via_T {E W : Type} {x y : Cat Atom}
     (f_sem : Denot E W (catToTy (x.rslash y)))
     (a_sem : Denot E W (catToTy y)) :
     f_sem a_sem = T a_sem f_sem := rfl
