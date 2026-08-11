@@ -64,21 +64,28 @@ def john_sees_mary : Derivation Atom S :=
 
 section Coordination
 
-open Semantics.Montague
+open Semantics.Montague Combinator
 
-/-- Type-raised subject "John": `S/(S\NP)`. -/
-def john_tr : Derivation Atom (S / (S \ NP)) := .ftr (.lex "John" NP) S
+/-- The type-raised subject "John", `S/(S\NP)` — a lexical leaf, since type-raising
+is morpholexical in the modern theory ([steedman-2019]; the book's syntactic `>T`
+yields the same category). -/
+def john_tr : Derivation Atom (S / (S \ NP)) := .lex "John" (S / (S \ NP))
 
 /-- "John likes": the type-raised subject composed with the transitive verb — a
 constituent of category `S/NP`. -/
-def john_likes : Derivation Atom (S / NP) := .fcomp john_tr (.lex "likes" TV)
+def john_likes : Derivation Atom (S / NP) := .fcomp (by decide) john_tr (.lex "likes" TV)
 
-def mary_tr : Derivation Atom (S / (S \ NP)) := .ftr (.lex "Mary" NP) S
-def mary_hates : Derivation Atom (S / NP) := .fcomp mary_tr (.lex "hates" TV)
+def mary_tr : Derivation Atom (S / (S \ NP)) := .lex "Mary" (S / (S \ NP))
+def mary_hates : Derivation Atom (S / NP) := .fcomp (by decide) mary_tr (.lex "hates" TV)
 
-/-- "John likes and Mary hates": coordination of two `S/NP` constituents. -/
+/-- The lexical conjunction category coordinating constituents of category `c`:
+`(X \⋆ X) /⋆ X`, whose `star` slashes confine it to application ([steedman-2019]). -/
+def conj (c : Cat Atom) : Cat Atom := (c \⋆ c) /⋆ c
+
+/-- "John likes and Mary hates": coordination of two `S/NP` constituents via the
+lexical conjunction — "and" is an ordinary leaf, not a rule. -/
 def john_likes_and_mary_hates : Derivation Atom (S / NP) :=
-  .coord English.Coordination.and_ john_likes mary_hates
+  .bapp john_likes (.fapp (.lex "and" (conj (S / NP))) mary_hates)
 
 def john_likes_and_mary_hates_beans : Derivation Atom S :=
   .fapp john_likes_and_mary_hates (.lex "beans" NP)
@@ -89,13 +96,12 @@ theorem john_likes_and_mary_hates_beans_yield :
       = ["John", "likes", "and", "Mary", "hates", "beans"] := rfl
 
 def john_sleeps_and_mary_sleeps : Derivation Atom S :=
-  .coord English.Coordination.and_
-    (.bapp (.lex "John" NP) (.lex "sleeps" IV))
-    (.bapp (.lex "Mary" NP) (.lex "sleeps" IV))
+  .bapp (.bapp (.lex "John" NP) (.lex "sleeps" IV))
+    (.fapp (.lex "and" (conj S)) (.bapp (.lex "Mary" NP) (.lex "sleeps" IV)))
 
 example : john_sleeps.opCount = 1 := rfl
-example : john_sleeps_and_mary_sleeps.opCount = 3 := rfl
-example : john_likes_and_mary_hates_beans.opCount = 6 := rfl
+example : john_sleeps_and_mary_sleeps.opCount = 4 := rfl
+example : john_likes_and_mary_hates_beans.opCount = 5 := rfl
 
 /-- Non-constituent coordination requires more combinatory operations than
 standard coordination. Reading operation count as processing difficulty is
@@ -115,12 +121,28 @@ def toySemLexicon : SemLexicon ToyEntity Unit := λ word cat =>
   | "John", .atom .NP => some ToyEntity.john
   | "Mary", .atom .NP => some ToyEntity.mary
   | "beans", .atom .NP => some ToyEntity.pizza
-  | "sleeps", .lslash (.atom .S) (.atom .NP) => some ToyLexicon.sleeps_sem
-  | "laughs", .lslash (.atom .S) (.atom .NP) => some ToyLexicon.laughs_sem
-  | "sees", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) => some ToyLexicon.sees_sem
-  | "eats", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) => some ToyLexicon.eats_sem
-  | "likes", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) => some ToyLexicon.sees_sem
-  | "hates", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) => some ToyLexicon.sees_sem
+  -- morpholexically raised subjects ([steedman-2019]): `T` applied in the lexicon
+  | "John", .rslash (.atom .S) _ (.lslash (.atom .S) _ (.atom .NP)) =>
+      some (T ToyEntity.john)
+  | "Mary", .rslash (.atom .S) _ (.lslash (.atom .S) _ (.atom .NP)) =>
+      some (T ToyEntity.mary)
+  | "sleeps", .lslash (.atom .S) _ (.atom .NP) => some ToyLexicon.sleeps_sem
+  | "laughs", .lslash (.atom .S) _ (.atom .NP) => some ToyLexicon.laughs_sem
+  | "sees", .rslash (.lslash (.atom .S) _ (.atom .NP)) _ (.atom .NP) =>
+      some ToyLexicon.sees_sem
+  | "eats", .rslash (.lslash (.atom .S) _ (.atom .NP)) _ (.atom .NP) =>
+      some ToyLexicon.eats_sem
+  | "likes", .rslash (.lslash (.atom .S) _ (.atom .NP)) _ (.atom .NP) =>
+      some ToyLexicon.sees_sem
+  | "hates", .rslash (.lslash (.atom .S) _ (.atom .NP)) _ (.atom .NP) =>
+      some ToyLexicon.sees_sem
+  -- sentential conjunction, a lexical entry
+  | "and", .rslash (.lslash (.atom .S) _ (.atom .S)) _ (.atom .S) =>
+      some (fun q p => p ∧ q)
+  -- generalized conjunction at `S/NP` ([partee-rooth-1983]), a lexical entry
+  | "and", .rslash (.lslash (.rslash (.atom .S) _ (.atom .NP)) _
+        (.rslash (.atom .S) _ (.atom .NP))) _ (.rslash (.atom .S) _ (.atom .NP)) =>
+      some (fun q p x => p x ∧ q x)
   | _, _ => none
 
 theorem interp_john_sleeps :
@@ -169,9 +191,9 @@ theorem interp_john_likes_and_mary_hates_beans :
 
 /-- The spelled-out paraphrase "John likes beans and Mary hates beans". -/
 def john_likes_beans_and_mary_hates_beans : Derivation Atom S :=
-  .coord English.Coordination.and_
-    (.bapp (.lex "John" NP) (.fapp (.lex "likes" TV) (.lex "beans" NP)))
-    (.bapp (.lex "Mary" NP) (.fapp (.lex "hates" TV) (.lex "beans" NP)))
+  .bapp (.bapp (.lex "John" NP) (.fapp (.lex "likes" TV) (.lex "beans" NP)))
+    (.fapp (.lex "and" (conj S))
+      (.bapp (.lex "Mary" NP) (.fapp (.lex "hates" TV) (.lex "beans" NP))))
 
 /-- The non-constituent coordination and its spelled-out paraphrase receive
 the same truth conditions — the book's claim that the composed derivation
@@ -195,6 +217,14 @@ private def pqLex : SemLexicon Unit Unit := fun w c =>
   match w, c with
   | "p", .atom .S => some True
   | "q", .atom .S => some False
+  -- the coordinators' meanings are `Coordinator.op` of the English fragment's roles,
+  -- instantiated at `Prop` — the marking's `role` selects the Boolean operation
+  | "and", .rslash (.lslash (.atom .S) _ (.atom .S)) _ (.atom .S) =>
+      some (show Prop → Prop → Prop from
+        fun q p => Coordinator.op English.Coordination.and_.role p q)
+  | "or", .rslash (.lslash (.atom .S) _ (.atom .S)) _ (.atom .S) =>
+      some (show Prop → Prop → Prop from
+        fun q p => Coordinator.op English.Coordination.or_.role p q)
   | _, _ => none
 
 private def dp : Derivation Atom S := .lex "p" S
@@ -204,11 +234,11 @@ private def dq : Derivation Atom S := .lex "q" S
     `or_` yields `p ∨ q`, and these differ at `p = ⊤`, `q = ⊥`. Flipping a fragment
     coordinator's `role` collapses the inequality, so the `role` marking is not decorative. -/
 theorem coord_role_load_bearing :
-    (Derivation.coord English.Coordination.and_ dp dq).interp pqLex ≠
-    (Derivation.coord English.Coordination.or_ dp dq).interp pqLex := by
-  have hand : (Derivation.coord English.Coordination.and_ dp dq).interp pqLex
+    (Derivation.bapp dp (.fapp (.lex "and" (conj S)) dq)).interp pqLex ≠
+    (Derivation.bapp dp (.fapp (.lex "or" (conj S)) dq)).interp pqLex := by
+  have hand : (Derivation.bapp dp (.fapp (.lex "and" (conj S)) dq)).interp pqLex
       = some (True ∧ False) := rfl
-  have hor : (Derivation.coord English.Coordination.or_ dp dq).interp pqLex
+  have hor : (Derivation.bapp dp (.fapp (.lex "or" (conj S)) dq)).interp pqLex
       = some (True ∨ False) := rfl
   rw [hand, hor, ne_eq, Option.some.injEq, eq_iff_iff]
   exact fun h => (h.mpr (Or.inl trivial)).2
@@ -232,7 +262,8 @@ backward type-raising both remnants and backward-composing them yields
 `S\((S/NP)/NP)` — a leftward-looking function over VSO-style transitive verbs, which
 is why forward gapping leaves the verb to the left. Deriving it is typechecking. -/
 def gappedConjunct : Derivation Atom (S \ ((S / NP) / NP)) :=
-  .bcomp (.btr (.lex "Warren" NP) (S / NP)) (.btr (.lex "potatoes" NP) S)
+  .bcomp (by decide) (.lex "Warren" ((S / NP) \ ((S / NP) / NP)))
+    (.lex "potatoes" (S \ (S / NP)))
 
 theorem gappedConjunct_yield : gappedConjunct.yield = ["Warren", "potatoes"] := rfl
 
@@ -240,7 +271,8 @@ theorem gappedConjunct_yield : gappedConjunct.yield = ["Warren", "potatoes"] := 
 type-raising and forward composition yield `S/((S\NP)\NP)`, a rightward-looking
 function over SOV transitive verbs — the verb must follow. -/
 def backwardGappedConjunct : Derivation Atom (S / ((S \ NP) \ NP)) :=
-  .fcomp (.ftr (.lex "Ken-ga" NP) S) (.ftr (.lex "Naomi-o" NP) (S \ NP))
+  .fcomp (by decide) (.lex "Ken-ga" (S / (S \ NP)))
+    (.lex "Naomi-o" ((S \ NP) / ((S \ NP) \ NP)))
 
 theorem backwardGappedConjunct_yield :
     backwardGappedConjunct.yield = ["Ken-ga", "Naomi-o"] := rfl
@@ -248,7 +280,7 @@ theorem backwardGappedConjunct_yield :
 /-- Stripping ("Dexter ran away, and Warren (too)") is the single-remnant case: one
 backward-raised subject, `S\(S/NP)`. -/
 def strippedConjunct : Derivation Atom (S \ (S / NP)) :=
-  .btr (.lex "Warren" NP) S
+  .lex "Warren" (S \ (S / NP))
 
 /-- Basic word order of a transitive clause (S = subject, V = verb,
 O = object). -/
@@ -666,7 +698,7 @@ inductive VerbOrder where
 forms by crossed composition before taking the object to its left. -/
 def verbRaisingDeriv : Derivation Atom IV :=
   .bapp (.lex "veel liederen" NP)
-    (.fcompx (.lex "probeert" (IV / IV)) (.lex "te zingen" (IV \ NP)))
+    (.fcompx (by decide) (.lex "probeert" (IV / IV)) (.lex "te zingen" (IV \ NP)))
 
 /-- Verb-projection-raising order, Dutch (99b): the matrix verb applies to
 an already-saturated embedded VP, so the quantified object never combines
@@ -683,16 +715,14 @@ def schematicDeriv : VerbOrder → Derivation Atom IV
 theorem verbRaisingDeriv_hasComp : verbRaisingDeriv.HasComp := by decide
 
 theorem verbProjectionRaisingDeriv_applicationOnly :
-    ¬verbProjectionRaisingDeriv.HasComp ∧ ¬verbProjectionRaisingDeriv.HasTypeRaise := by
-  decide
+    ¬verbProjectionRaisingDeriv.HasComp := by decide
 
 /-- Scope availability as CCG predicts it — the account's linking hypothesis: a
 cluster built with composition or type-raising is scope-ambiguous, an
 application-only cluster surface-only. [steedman-2000] notes this overgenerates as
 stated (§4.4 refines it). -/
 def predictedAvailability (vo : VerbOrder) : BinaryScopeAvailability :=
-  if (schematicDeriv vo).HasComp ∨ (schematicDeriv vo).HasTypeRaise then .ambiguous
-  else .surfaceOnly
+  if (schematicDeriv vo).HasComp then .ambiguous else .surfaceOnly
 
 /-- Read the §6.8 word-order classification off an example's
 `paperFeatures`. -/
@@ -751,7 +781,7 @@ def annaMannyAccents : AccentAssignment := fun w =>
 
 /-- "ANNA married": the composed theme constituent, category `S/NP`. -/
 def anna_married : Derivation Atom (S / NP) :=
-  .fcomp (.ftr (.lex "Anna" NP) S) (.lex "married" TV)
+  .fcomp (by decide) (.lex "Anna" (S / (S \ NP))) (.lex "married" TV)
 
 /-- The theme constituent projects `θ`: the theme accent on "Anna" unifies with
 unaccented "married". -/
@@ -826,12 +856,15 @@ def extendedLexicon : SemLexicon ToyEntity Unit := λ word cat =>
   | "pizza", .atom .NP => some ToyEntity.pizza
   | "book", .atom .NP => some ToyEntity.book
   -- Intransitive verbs
-  | "sleeps", .lslash (.atom .S) (.atom .NP) => some ToyLexicon.sleeps_sem
-  | "laughs", .lslash (.atom .S) (.atom .NP) => some ToyLexicon.laughs_sem
+  | "sleeps", .lslash (.atom .S) _ (.atom .NP) => some ToyLexicon.sleeps_sem
+  | "laughs", .lslash (.atom .S) _ (.atom .NP) => some ToyLexicon.laughs_sem
   -- Transitive verbs
-  | "sees", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) => some ToyLexicon.sees_sem
-  | "eats", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) => some ToyLexicon.eats_sem
-  | "reads", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) => some ToyLexicon.reads_sem
+  | "sees", .rslash (.lslash (.atom .S) _ (.atom .NP)) _ (.atom .NP) =>
+      some ToyLexicon.sees_sem
+  | "eats", .rslash (.lslash (.atom .S) _ (.atom .NP)) _ (.atom .NP) =>
+      some ToyLexicon.eats_sem
+  | "reads", .rslash (.lslash (.atom .S) _ (.atom .NP)) _ (.atom .NP) =>
+      some ToyLexicon.reads_sem
   | _, _ => none
 
 /-- Get meaning (as Prop) from CCG derivation -/
