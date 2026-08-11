@@ -13,7 +13,7 @@ instantiate a richer inventory than the featureless core `CCG.Atom`.
 
 Every binary rule is an instance of one schema, generalized composition of degree `n`:
 degree 0 is application, and at degree ≥ 1 the harmonic and crossed variants differ
-only in the slash directions the schema passes through. `Derivation` is intrinsically
+only in the slash directions the schema passes through (the Principle of Inheritance). `Derivation` is intrinsically
 typed — its constructors are the rule instances the toy grammar admits, so a value of
 `Derivation α c` *is* a derivation of category `c` and "derives `S`" is typechecking.
 The target-restricted (VW-CCG) schema derivations live in `CCG.TargetRestricted`.
@@ -86,20 +86,18 @@ namespace Cat
 
 section CombinatoryRules
 
-/-- Generalized forward composition `>Bⁿ`, the rule schema of
-[vijay-shanker-weir-1994] and [steedman-2000]: `X/Y Y|Z₁…|Zₙ ⇒ X|Z₁…|Zₙ`, peeling
-the secondary input's last `n` arguments — each keeping its own slash direction, the
-Principle of Inheritance — and matching the remainder against `Y`. Degree 0 is forward
-application; at degree ≥ 1 the harmonic and crossed instances fall out of the slash
-directions rather than being separate rule classes. -/
+/-- `generalizedForwardComp n f g` is forward composition of degree `n` (`>Bⁿ`): when
+`f = X/Y` and `g = Y|Z₁…|Zₙ`, the result is `X|Z₁…|Zₙ` with each argument keeping its
+own slash direction, and `none` otherwise. -/
 def generalizedForwardComp : Nat → Cat α → Cat α → Option (Cat α)
   | 0, .rslash x y, z => if y = z then some x else none
   | n + 1, f, .rslash g z => (generalizedForwardComp n f g).map (Cat.rslash · z)
   | n + 1, f, .lslash g z => (generalizedForwardComp n f g).map (Cat.lslash · z)
   | _, _, _ => none
 
-/-- Generalized backward composition `<Bⁿ`: `Y|Z₁…|Zₙ X\Y ⇒ X|Z₁…|Zₙ`, the mirror of
-`generalizedForwardComp`. Degree 0 is backward application. -/
+/-- `generalizedBackwardComp n g f` is backward composition of degree `n` (`<Bⁿ`), the
+mirror of `generalizedForwardComp`: when `g = Y|Z₁…|Zₙ` and `f = X\Y`, the result is
+`X|Z₁…|Zₙ`. -/
 def generalizedBackwardComp : Nat → Cat α → Cat α → Option (Cat α)
   | 0, z, .lslash x y => if y = z then some x else none
   | n + 1, .rslash g z, f => (generalizedBackwardComp n g f).map (Cat.rslash · z)
@@ -110,11 +108,13 @@ end CombinatoryRules
 
 section TypeRaising
 
-/-- Forward type-raising: X => T/(T\X). -/
+/-- `forwardTypeRaise x t` is `t / (t \ x)` — forward type-raising `>T` of `x` to
+target `t`. -/
 def forwardTypeRaise (x : Cat α) (t : Cat α) : Cat α :=
   t / (t \ x)
 
-/-- Backward type-raising: X => T\(T/X). -/
+/-- `backwardTypeRaise x t` is `t \ (t / x)` — backward type-raising `<T` of `x` to
+target `t`. -/
 def backwardTypeRaise (x : Cat α) (t : Cat α) : Cat α :=
   t \ (t / x)
 
