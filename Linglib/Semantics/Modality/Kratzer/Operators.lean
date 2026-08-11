@@ -51,14 +51,14 @@ variable {W : Type*}
 
     `kratzerR f w w'` iff `w'` satisfies all propositions in `f(w)`,
     i.e., `w' ∈ ⋂f(w)` in Kratzer's notation. -/
-def kratzerR (f : ModalBase W) : AccessRel W :=
+def kratzerR (f : ModalBase W) : W → W → Prop :=
   fun w w' => ∀ p ∈ f w, p w'
 
 /-- Accessibility restricted to best worlds (modal base + ordering source).
 
     `kratzerBestR f g w w'` iff `w'` is among the best accessible worlds
     from `w` — accessible via `f` and maximal under the `g(w)`-ordering. -/
-def kratzerBestR (f : ModalBase W) (g : OrderingSource W) : AccessRel W :=
+def kratzerBestR (f : ModalBase W) (g : OrderingSource W) : W → W → Prop :=
   fun w w' => w' ∈ bestWorlds f g w
 
 /-- With the empty ordering source, best-world accessibility reduces to base

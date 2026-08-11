@@ -32,7 +32,7 @@ namespace Temporal.TWFrame
 variable {Time : Type*} {World : Type*} {Atom : Type*} [LinearOrder Time]
   (F : TWFrame Time World) (V : Atom → Time → World → Prop)
 
-open ModalLogic (box_T box_four box_restrict box_isIndicial IsIndicial universalR)
+open ModalLogic (box_T box_four box_restrict box_isIndicial IsIndicial)
 
 /-! ### Satisfaction clauses -/
 
@@ -94,7 +94,7 @@ theorem sat_N_imp_self {a : OForm Atom} {t : Time} {w : World} :
 
 theorem sat_box_imp_self {a : OForm Atom} {t : Time} {w : World} :
     F.sat V (.box a) t w → F.sat V a t w :=
-  fun h => box_T universalR _ _ h
+  fun h => box_T ⊤ _ _ h
 
 theorem sat_N_imp_N_N {a : OForm Atom} {t : Time} {w : World} :
     F.sat V (.N a) t w → F.sat V (.N (.N a)) t w := by
@@ -103,7 +103,7 @@ theorem sat_N_imp_N_N {a : OForm Atom} {t : Time} {w : World} :
 
 theorem sat_box_imp_box_box {a : OForm Atom} {t : Time} {w : World} :
     F.sat V (.box a) t w → F.sat V (.box (.box a)) t w :=
-  fun h => box_four universalR _ _ h
+  fun h => box_four ⊤ _ _ h
 
 theorem sat_M_imp_N_M {a : OForm Atom} {t : Time} {w : World} :
     F.sat V a.M t w → F.sat V a.M.N t w := by

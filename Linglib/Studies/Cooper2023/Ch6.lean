@@ -25,7 +25,7 @@ single-paper Cooper-textbook replication: only `ChatzikyriakidisEtAl2025`
 
 **Bridges**:
   - ModalTypeSystem ↔ ModalSystem (Bool ↔ Prop)
-  - ModalSystem ↔ AccessRel (Kripke accessibility)
+  - ModalSystem ↔ Kripke accessibility relations
   - know = believe + veridicality (abstract doxastic bridge)
   - Topos → induced necessity/possibility (abstract Kratzer bridge)
 

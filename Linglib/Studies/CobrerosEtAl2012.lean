@@ -187,7 +187,7 @@ is addressed in §8–§9 below.
 namespace Semantics.Supervaluation.TCS
 
 open ModalLogic
-  (AccessRel IsKTBFrame IsSerial box diamond box_T)
+  (IsKTBFrame IsSerial box diamond box_T)
 open ModalLogic (KTB frameConditions)
 open Consequence (MixedConsequence SatImplies IsSelfDual
   premise_monotone conclusion_monotone mixed_monotone)
@@ -231,10 +231,10 @@ namespace TModel
 
 variable {D Pred : Type*}
 
-/-- The similarity relation as an `AccessRel` — the Kripke frame
+/-- The similarity relation as a Kripke accessibility relation — the frame
     associated with each predicate. By construction this frame is
     reflexive + symmetric, i.e., a **KTB frame** (`ModalLogic.KTB`). -/
-@[reducible] def simAccess (M : TModel D Pred) (P : Pred) : AccessRel D := M.sim P
+@[reducible] def simAccess (M : TModel D Pred) (P : Pred) : D → D → Prop := M.sim P
 
 /-- Per-`(M, P)` KTB-frame instance: lets typeclass search reach
     `Std.Refl` and `Std.Symm` on `M.sim P` from any call site. -/

@@ -68,7 +68,7 @@ The §3 prima-facie challenge is formalized abstractly:
 hypothesis on the conception. Substantive Ney soundness — that the
 resolution holds under a *realistic* CommonGround operator derived from
 `commonBelief` ([stalnaker-2002]) — requires a `CommonGround.toAgentAccess :
-CommonGround W → AgentAccessRel W E` bridge in `Discourse/CommonGround.lean`
+CommonGround W → E → W → W → Prop` bridge in `Discourse/CommonGround.lean`
 that does not yet exist. Until that bridge lands, the resolution
 theorems are witnessed by toy operators (a degenerate `inCG := · = True`
 that distinguishes intersection-CommonGround-transparency from union-CommonGround-transparency

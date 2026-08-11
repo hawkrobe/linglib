@@ -42,7 +42,7 @@ namespace KeshetAbney2024.PIP.Bridges
 
 open KeshetAbney2024.PIP
 open DynamicSemantics.ICDRT (IVar Assignment Entity Context)
-open ModalLogic (AccessRel box diamond)
+open ModalLogic (box diamond)
 open ModalLogic (frameConditions)
 
 
@@ -265,12 +265,12 @@ it is intentionally omitted.
 /--
 A reflexive accessibility relation satisfies ModalLogic.T's frame condition.
 
-Stated for the Prop-valued `AccessRel`/`Std.Refl`/`frameConditions` API in
+Stated for the Prop-valued `Std.Refl`/`frameConditions` API in
 `Intensional` — the same accessibility type PIP's modal
 operators now use directly.
 -/
 theorem reflexive_satisfies_T {W : Type*}
-    (R : ModalLogic.AccessRel W) [hRefl : Std.Refl R] :
+    (R : W → W → Prop) [hRefl : Std.Refl R] :
     frameConditions ModalLogic.T R :=
   ⟨fun _ => hRefl, fun h => absurd h (by decide), fun h => absurd h (by decide),
    fun h => absurd h (by decide), fun h => absurd h (by decide)⟩
@@ -300,13 +300,13 @@ The formal connection is established via `Intensional.box`:
 
 Direct import of `Semantics/Modality/Kratzer/` is not possible
 because Kratzer's implementation is monomorphic over `World4`. The
-correspondence is structural (via `AccessRel` ≅ `ModalBase`) rather
+correspondence is structural (via accessibility ≅ `ModalBase`) rather
 than definitional.
 -/
 
 /--
 Full Kratzer bridge: PIP's three-argument `mustBase` agrees with
-`box` when the modal base comes from an `AccessRel` and the restriction
+`box` when the modal base comes from an accessibility relation and the restriction
 is tautological.
 
 The composition: `mustBase (accessRelToBase R w) ⊤ {w' | φ.truth w'}` ↔
@@ -314,7 +314,7 @@ The composition: `mustBase (accessRelToBase R w) ⊤ {w' | φ.truth w'}` ↔
 "the body holds at every R-accessible world from w".
 -/
 theorem mustBase_agrees_box {W D : Type*}
-    (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+    (R : W → W → Prop) (φ : PIPExprF W D) (w : W) :
     mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' } ↔
     box R φ.truth w := by
   simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def,

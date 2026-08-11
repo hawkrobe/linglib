@@ -53,7 +53,6 @@ needs QUD/information-structure machinery).
 namespace TonhauserEtAl2013
 
 open CommonGround
-open ModalLogic (AgentAccessRel)
 open Semantics.Presupposition
 open Semantics.Presupposition.Context
 open Semantics.Presupposition.BeliefEmbedding
@@ -106,7 +105,7 @@ structure SCF_Allows (W : Type*) where
 OLE=yes means: under belief embedding, the local context is the attitude
 holder's belief state. The projective content is attributed to the holder.
 -/
-def OLE_Obligatory (Dox : AgentAccessRel W Agent)
+def OLE_Obligatory (Dox : Agent → W → W → Prop)
     (content : Set W) : Prop :=
   ∀ (c : ContextSet W) (agent : Agent) (w_star : W),
     c w_star →
@@ -124,7 +123,7 @@ but NOT in the attitude holder's beliefs. The content is "speaker-anchored"
 
 Class B triggers (expressives) and Class D triggers exhibit this behavior.
 -/
-def OLE_NotObligatory (Dox : AgentAccessRel W Agent)
+def OLE_NotObligatory (Dox : Agent → W → W → Prop)
     (content : Set W) : Prop :=
   ∃ (c : ContextSet W) (agent : Agent) (w_star : W),
     c w_star ∧

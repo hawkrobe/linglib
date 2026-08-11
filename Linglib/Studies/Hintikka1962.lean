@@ -17,7 +17,7 @@ the same substrate lemma to epistemic accessibility.
 namespace Hintikka1962
 
 open Discourse.Commitment.Frame
-open ModalLogic (box_not_moore AgentAccessRel IsSerial)
+open ModalLogic (box_not_moore IsSerial)
 open Modality.EpistemicLogic (knows)
 
 variable {W A : Type*}
@@ -65,7 +65,7 @@ theorem true_mem_mooreContent :
     "p but I don't know whether p" is unknowable. Direct corollary of
     `box_not_moore` for `knows`. -/
 theorem knowledge_unknowable
-    {E : Type*} (Rs : AgentAccessRel W E) (i : E)
+    {E : Type*} (Rs : E → W → W → Prop) (i : E)
     [IsSerial (Rs i)] [IsTrans W (Rs i)]
     (p : W → Prop) (w : W) :
     ¬ knows Rs i (fun v => p v ∧ ¬ knows Rs i p v) w :=

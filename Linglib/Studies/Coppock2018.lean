@@ -74,7 +74,7 @@ via the paper's translation: radically counterstance-contingent = strongly discr
 namespace Coppock2018
 
 open Trivalent (Prop3)
-open ModalLogic (AccessRel box)
+open ModalLogic (box)
 open Semantics.Presupposition (PartialProp)
 
 variable {W Ω : Type*}
@@ -275,25 +275,25 @@ a proposition is for it to hold throughout one's accessible outlooks — the Kri
 
 /-- An agent with accessibility `R` **accepts** `p` at `o`: `p` holds at every accessible
 outlook. -/
-def Accepts (R : AccessRel Ω) (p : Prop3 Ω) : Ω → Prop := box R (p · = .true)
+def Accepts (R : Ω → Ω → Prop) (p : Prop3 Ω) : Ω → Prop := box R (p · = .true)
 
 /-- An agent with accessibility `R` **rejects** `p` at `o`: `p` fails at every accessible
 outlook. Rejection is stronger than non-acceptance. -/
-def Rejects (R : AccessRel Ω) (p : Prop3 Ω) : Ω → Prop := box R (p · = .false)
+def Rejects (R : Ω → Ω → Prop) (p : Prop3 Ω) : Ω → Prop := box R (p · = .false)
 
 /-- Two agents **disagree** about `p` at `o` when one accepts it and the other rejects it. -/
-def DisagreeAt (R₁ R₂ : AccessRel Ω) (p : Prop3 Ω) (o : Ω) : Prop :=
+def DisagreeAt (R₁ R₂ : Ω → Ω → Prop) (p : Prop3 Ω) (o : Ω) : Prop :=
     Accepts R₁ p o ∧ Rejects R₂ p o
 
 /-- An agent is **opinionated** about `p` at `o` when they accept or reject it; lack of
 opinionatedness — both live possibilities — is the state *tycka*-reports deny without
 contradiction ([coppock-2018] (38)). -/
-def Opinionated (R : AccessRel Ω) (p : Prop3 Ω) (o : Ω) : Prop :=
+def Opinionated (R : Ω → Ω → Prop) (p : Prop3 Ω) (o : Ω) : Prop :=
     Accepts R p o ∨ Rejects R p o
 
 section Decidability
 
-variable [Fintype Ω] (R : AccessRel Ω) [DecidableRel R] (p : Prop3 Ω) (o : Ω)
+variable [Fintype Ω] (R : Ω → Ω → Prop) [DecidableRel R] (p : Prop3 Ω) (o : Ω)
 
 instance : Decidable (Accepts R p o) :=
   inferInstanceAs (Decidable (∀ o', R o o' → p o' = .true))
@@ -301,7 +301,7 @@ instance : Decidable (Accepts R p o) :=
 instance : Decidable (Rejects R p o) :=
   inferInstanceAs (Decidable (∀ o', R o o' → p o' = .false))
 
-instance (R₂ : AccessRel Ω) [DecidableRel R₂] : Decidable (DisagreeAt R R₂ p o) :=
+instance (R₂ : Ω → Ω → Prop) [DecidableRel R₂] : Decidable (DisagreeAt R R₂ p o) :=
   inferInstanceAs (Decidable (Accepts R p o ∧ Rejects R₂ p o))
 
 instance : Decidable (Opinionated R p o) :=
@@ -346,14 +346,14 @@ non-linguist world. -/
 example : ¬ StronglyDiscretionary3 chiliWorld sexyLinguist := by decide
 
 /-- John's doxastic state: only tasty-outlooks accessible. -/
-abbrev johnR : AccessRel ChiliOutlook := λ _ o' => o'.1 = true
+abbrev johnR : ChiliOutlook → ChiliOutlook → Prop := λ _ o' => o'.1 = true
 
 /-- Mary's doxastic state: only non-tasty-outlooks accessible. -/
-abbrev maryR : AccessRel ChiliOutlook := λ _ o' => o'.1 = false
+abbrev maryR : ChiliOutlook → ChiliOutlook → Prop := λ _ o' => o'.1 = false
 
-/-- An unopinionated agent: every outlook accessible (`ModalLogic.universalR`,
+/-- An unopinionated agent: every outlook accessible (`⊤`,
 inlined for decidability). -/
-abbrev openR : AccessRel ChiliOutlook := λ _ _ => True
+abbrev openR : ChiliOutlook → ChiliOutlook → Prop := λ _ _ => True
 
 /-- **The chili dialogue is a genuine disagreement**: at every outlook, John accepts *tasty*
 and Mary rejects it. -/
@@ -386,29 +386,29 @@ partiality); the presupposition is outlook-independent because discretionariness
 property of `p` against `C`. -/
 
 /-- *think*: bare doxastic acceptance, no presupposition. -/
-def think (R : AccessRel Ω) (p : Prop3 Ω) : PartialProp Ω :=
+def think (R : Ω → Ω → Prop) (p : Prop3 Ω) : PartialProp Ω :=
   ⟨λ _ => True, Accepts R p⟩
 
 /-- *tycka* 'think[opinion]': doxastic acceptance, presupposing that the complement is
 strongly discretionary relative to the information state `C`. -/
-def tycka (R : AccessRel Ω) (p : Prop3 Ω) : PartialProp Ω :=
+def tycka (R : Ω → Ω → Prop) (p : Prop3 Ω) : PartialProp Ω :=
   ⟨λ _ => StronglyDiscretionaryIn ρ C p, Accepts R p⟩
 
 /-- *think* and *tycka* assert the same thing — the verbs differ only in *tycka*'s
 discretionariness presupposition. -/
-theorem think_tycka_same_assertion (R : AccessRel Ω) (p : Prop3 Ω) :
+theorem think_tycka_same_assertion (R : Ω → Ω → Prop) (p : Prop3 Ω) :
     (think R p).assertion = (tycka ρ C R p).assertion := rfl
 
 /-- *tycka*'s subjectivity requirement projects through negation (via `PartialProp.neg`):
 *"#I don't think[opinion] it's Tuesday"* is as bad as the unnegated version. -/
-theorem tycka_presup_survives_neg (R : AccessRel Ω) (p : Prop3 Ω) :
+theorem tycka_presup_survives_neg (R : Ω → Ω → Prop) (p : Prop3 Ω) :
     (PartialProp.neg (tycka ρ C R p)).presup = (tycka ρ C R p).presup := rfl
 
 /-- An objective complement is presupposition failure for *tycka*, given that the state
 leaves some world's refinements open in a way `p` actually cuts — the
 *"#I think[opinion] it's Tuesday / that she's a doctor"* effect. -/
 theorem tycka_undefined_of_objectiveIn {p : Prop3 Ω} (hobj : ObjectiveIn ρ C p)
-    {w : W} (hw : (ρ ⁻¹' {w} ∩ C).Nonempty) (R : AccessRel Ω) (o : Ω) :
+    {w : W} (hw : (ρ ⁻¹' {w} ∩ C).Nonempty) (R : Ω → Ω → Prop) (o : Ω) :
     ¬ (tycka ρ C R p).presup o :=
   λ h =>
     let ⟨o₁, ho₁, o₂, ho₂, hw₁, hw₂, ht, hf⟩ := h w hw

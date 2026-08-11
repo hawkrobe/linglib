@@ -41,7 +41,7 @@ all `X ≡ φ` definitions regardless of their structural position.
 
 namespace KeshetAbney2024.PIP
 
-open ModalLogic (AccessRel box diamond)
+open ModalLogic (box diamond)
 
 /-- A finite domain of individuals for PIP quantifier evaluation. -/
 class FiniteDomain (D : Type*) where
@@ -87,10 +87,10 @@ inductive PIPExprF (W : Type*) (D : Type*) where
   | labelDef (label : FLabel) (φ : PIPExprF W D)
   /-- Modal necessity: □_R φ (MUST).
       Universal quantification over R-accessible worlds. -/
-  | must (R : AccessRel W) (φ : PIPExprF W D)
+  | must (R : W → W → Prop) (φ : PIPExprF W D)
   /-- Modal possibility: ◇_R φ (MIGHT).
       Existential quantification over R-accessible worlds. -/
-  | might (R : AccessRel W) (φ : PIPExprF W D)
+  | might (R : W → W → Prop) (φ : PIPExprF W D)
 
 
 -- ============================================================
@@ -233,7 +233,7 @@ theorem felicitousF_exists (body : D → PIPExprF W D) (w : W) :
     (∀ d, (body d).felicitous w) := rfl
 
 /-- Modal necessity felicity is universal over accessible worlds. -/
-theorem felicitousF_must (R : AccessRel W) (φ : PIPExprF W D)
+theorem felicitousF_must (R : W → W → Prop) (φ : PIPExprF W D)
     (w : W) :
     (PIPExprF.must R φ).felicitous w =
     box R φ.felicitous w := rfl

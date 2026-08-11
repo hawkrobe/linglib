@@ -21,7 +21,7 @@ force-flavor pairs) but conceptually independent.
 - **Here** (`Modality`): `ModalForce`, `ModalFlavor`, `ForceFlavor`,
   `ModalItem`, `ConcordType`, `ModalDecomposition` — linguistic classification
   of modal meanings.
-- **There** (`Intensional`): `AccessRel`, `kripkeEval`, frame conditions
+- **There** (`Intensional`): accessibility relations, `kripkeEval`, frame conditions
   (`IsReflexive`, `IsSerial`, `IsTransitive`, `IsSymmetric`, `IsEuclidean`),
   correspondence theorems,
   the lattice of normal modal logics — mathematical semantics.

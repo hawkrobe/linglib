@@ -269,20 +269,20 @@ theorem bound_free_collapse {S E : Type*} {O : (S → Prop) → S → Prop}
 the bound and free construals — two situations, a restrictor whose
 extension varies, a CF tracking its index. -/
 theorem bound_free_diverge_box :
-    ∃ (S E : Type) (R : AccessRel S) (f : SkolemCF S E)
+    ∃ (S E : Type) (R : S → S → Prop) (f : SkolemCF S E)
       (P : Intensional.Intension S (E → Prop)) (VP : E → S → Prop) (s₀ : S),
       box R (fun s => VP (f.applyIntensionAt .bound s s₀ P) s) s₀ ∧
       ¬ box R (fun s => VP (f.applyIntensionAt .free s s₀ P) s) s₀ := by
-  refine ⟨Bool, Bool, universalR, fun s _ => s, fun s x => x = s,
+  refine ⟨Bool, Bool, ⊤, fun s _ => s, fun s x => x = s,
     fun x s => x = s, false, fun v _ => rfl, fun h => ?_⟩
   exact Bool.noConfusion (h true trivial)
 
 /-- `box` is not extensional: the operator side of the dichotomy is
 genuine. -/
 theorem box_not_extensionalAt :
-    ∃ (S : Type) (R : AccessRel S) (s₀ : S),
+    ∃ (S : Type) (R : S → S → Prop) (s₀ : S),
       ¬ Intensional.IsExtensionalAt (box R) s₀ := by
-  refine ⟨Bool, universalR, false,
+  refine ⟨Bool, ⊤, false,
     Intensional.not_isExtensionalAt_iff_exists_witness.mpr ?_⟩
   refine ⟨fun s => s = s, fun s => false = s, rfl, fun h => ?_⟩
   exact Bool.noConfusion ((iff_of_eq h).mp (fun v _ => rfl) true trivial)
