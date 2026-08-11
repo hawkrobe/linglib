@@ -344,7 +344,7 @@ answer). The bridge `QUD.toQuestion` (in
 
 The proof is an order-theoretic one-liner over `Setoid`: every alternative
 of `Question.fromSetoid r` is either `∅` or an equivalence class of `r`
-(`alt_fromSetoid_subset_classes`), and the q-class of `w₀` is contained in
+(`eq_empty_or_mem_classes_of_mem_alt_fromSetoid`), and the q-class of `w₀` is contained in
 the q'-class of `w₀` by refinement, with `v₀` witnessing strict containment.
 This replaces a 100-line Bool/List proof that managed indices into
 `worlds : List W` and case-split on `properlyContains`. -/
@@ -383,15 +383,15 @@ theorem refinement_implies_wider {W : Type*}
   have hC₁_class : C₁ ∈ q.toSetoid.classes := Setoid.mem_classes q.toSetoid w₀
   have hC₂_class : C₂ ∈ q'.toSetoid.classes := Setoid.mem_classes q'.toSetoid w₀
   have hC₁_alt : C₁ ∈ Question.alt (Question.fromSetoid q.toSetoid) :=
-    Question.class_mem_alt_fromSetoid _ hC₁_class
+    Question.mem_alt_fromSetoid_of_mem_classes _ hC₁_class
   have hC₂_alt : C₂ ∈ Question.alt (Question.fromSetoid q'.toSetoid) :=
-    Question.class_mem_alt_fromSetoid _ hC₂_class
+    Question.mem_alt_fromSetoid_of_mem_classes _ hC₂_class
   refine ⟨?_, ?_, ?_⟩
   -- (a) Same info: both reduce to Set.univ
   · simp only [QUD.toQuestion, Question.info_fromSetoid]
   -- (b) No q'-alternative properly contained in any q-alternative
   · intro p₂ hp₂ p₁ hp₁ hssub
-    rcases Question.alt_fromSetoid_subset_classes _ hp₂ with hp₂_empty | hp₂_class
+    rcases Question.eq_empty_or_mem_classes_of_mem_alt_fromSetoid _ hp₂ with hp₂_empty | hp₂_class
     · -- p₂ = ∅ but the q'-class of w₀ contains w₀, so ∅ ∉ alt — contradiction
       have hC₂_props : C₂ ∈ (Question.fromSetoid q'.toSetoid).props :=
         Or.inr ⟨C₂, hC₂_class, subset_rfl⟩
@@ -400,7 +400,7 @@ theorem refinement_implies_wider {W : Type*}
       have hw₀_in : w₀ ∈ p₂ := by rw [heq]; exact Setoid.refl' q'.toSetoid w₀
       rw [hp₂_empty] at hw₀_in
       exact hw₀_in.elim
-    · rcases Question.alt_fromSetoid_subset_classes _ hp₁ with hp₁_empty | hp₁_class
+    · rcases Question.eq_empty_or_mem_classes_of_mem_alt_fromSetoid _ hp₁ with hp₁_empty | hp₁_class
       · -- p₁ = ∅, so p₂ ⊊ ∅: p₂ ⊆ ∅ AND ¬ ∅ ⊆ p₂. The latter is vacuously false.
         rw [hp₁_empty] at hssub
         exact hssub.2 (Set.empty_subset _)

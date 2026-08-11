@@ -357,7 +357,7 @@ def roomYesDishesNo : Set CDWorld := {x | roomDishesEquiv x .roomOnly}
 theorem confirm_deny_is_partial_answer :
     Question.PartiallyAnswers roomYesDishesNo roomDishesQUD :=
   ⟨roomYesDishesNo,
-   Question.class_mem_alt_fromSetoid roomDishesEquiv
+   Question.mem_alt_fromSetoid_of_mem_classes roomDishesEquiv
      (Setoid.mem_classes roomDishesEquiv .roomOnly),
    Or.inl subset_rfl⟩
 
