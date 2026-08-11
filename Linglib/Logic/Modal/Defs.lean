@@ -12,11 +12,11 @@ of Kripke semantics ([kripke-1963]).
 
 namespace ModalLogic
 
-/-! ### Frame conditions -/
+/-! ### Frame conditions
 
-/-! Reflexivity, symmetry, and transitivity are `Std.Refl R`,
-    `Std.Symm R`, `IsTrans W R` from Lean core + mathlib. Seriality
-    and Euclideanness are modal-logic-specific and defined here. -/
+Reflexivity, symmetry, and transitivity are `Std.Refl R`, `Std.Symm R`,
+`IsTrans W R` from Lean core + mathlib. Seriality and Euclideanness are
+modal-logic-specific and defined here. -/
 
 /-- Seriality: every world accesses at least one world.
 
@@ -29,12 +29,6 @@ class IsSerial {W : Type*} (R : W → W → Prop) : Prop where
     `R`-successor of the other. No mathlib analogue (modal-specific). -/
 class IsEuclidean {W : Type*} (R : W → W → Prop) : Prop where
   eucl : ∀ w v u, R w v → R w u → R v u
-
-/-- `Rb` is a *belief refinement* of `Rk`: every belief-accessible world is
-    knowledge-accessible. The pure subset condition; whether `Rk` is S5
-    and `Rb` is KD45 is asserted by separate instance declarations. -/
-class IsBeliefRefinementOf {W : Type*} (Rk Rb : W → W → Prop) : Prop where
-  sub : ∀ w v, Rb w v → Rk w v
 
 /-! ### Frame implications and instances
 
@@ -49,8 +43,12 @@ instance : IsTrans W (⊤ : W → W → Prop) := ⟨fun _ _ _ _ _ => trivial⟩
 instance : Std.Symm (⊤ : W → W → Prop) := ⟨fun _ _ _ => trivial⟩
 instance : IsEuclidean (⊤ : W → W → Prop) := ⟨fun _ _ _ _ _ => trivial⟩
 
+-- The derived instances get lowered priority: the Refl+Euclidean and
+-- Symm+Trans derivations are mutually productive, and direct instances
+-- should always be preferred.
+
 /-- Reflexive relations are serial. -/
-instance (priority := 100) Std.Refl.toIsSerial {R : W → W → Prop} [h : Std.Refl R] :
+instance (priority := 100) {R : W → W → Prop} [h : Std.Refl R] :
     IsSerial R := ⟨fun w => ⟨w, h.refl w⟩⟩
 
 /-- Reflexive + Euclidean implies symmetric. -/
@@ -61,7 +59,7 @@ instance (priority := 100) {R : W → W → Prop} [hR : Std.Refl R] [hE : IsEucl
 /-- Reflexive + Euclidean implies transitive. -/
 instance (priority := 100) {R : W → W → Prop} [hR : Std.Refl R] [hE : IsEuclidean R] :
     IsTrans W R :=
-  ⟨fun w v u hwv hvu => hE.eucl v w u (Std.Symm.symm w v hwv) hvu⟩
+  ⟨fun w v u hwv hvu => hE.eucl v w u (hE.eucl w v w hwv (hR.refl w)) hvu⟩
 
 /-- Symmetric + transitive implies euclidean. -/
 instance (priority := 100) {R : W → W → Prop} [hS : Std.Symm R] [hT : IsTrans W R] :
@@ -75,12 +73,14 @@ instance (priority := 100) {R : W → W → Prop} [hS : Std.Symm R] [hT : IsTran
 
     `⟦□_R φ⟧^w = 1` iff `⟦φ⟧^v = 1` for all `v` with `R(w,v)` — the Kripke
     generalization of the S5 necessity of [dowty-wall-peters-1981]'s IL,
-    whose `Intensional.box` is the universal-accessibility special case. -/
+    whose `Intensional.box` is the universal-accessibility special case.
+    The `Set`-valued mathlib counterpart is `Rel.core`. -/
 def box (R : W → W → Prop) (p : W → Prop) (w : W) : Prop :=
   ∀ v, R w v → p v
 
 /-- Restricted possibility: `◇_R p` at world `w` holds iff `p v` for some
-    `v` accessible from `w`. Dual of `box`. -/
+    `v` accessible from `w`. Dual of `box`; the `Set`-valued mathlib
+    counterpart is `Rel.preimage`. -/
 def diamond (R : W → W → Prop) (p : W → Prop) (w : W) : Prop :=
   ∃ v, R w v ∧ p v
 

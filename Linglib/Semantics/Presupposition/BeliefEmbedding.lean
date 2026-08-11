@@ -29,7 +29,6 @@ namespace Semantics.Presupposition.BeliefEmbedding
 open Semantics.Presupposition
 open CommonGround
 open Semantics.Presupposition.Context
-open ModalLogic (IsBeliefRefinementOf)
 
 variable {W : Type*} {Agent : Type*}
 
@@ -192,7 +191,7 @@ theorem stop_ole_attribution :
 
 Doxastic accessibility is `E → W → W → Prop` directly, so
 belief local contexts compose with the epistemic-logic frame conditions:
-when belief pointwise refines knowledge (`IsBeliefRefinementOf`), filtering
+when belief pointwise refines knowledge (`Rb i ≤ Rk i`), filtering
 under knowledge embedding implies filtering under belief embedding.
 -/
 
@@ -210,22 +209,22 @@ def localCtxOf (Rs : E → W → W → Prop) (ctx : ContextSet W) (i : E) :
 /-- Belief-accessible worlds are a subset of knowledge-accessible worlds
     when belief refines knowledge pointwise. -/
 theorem localCtx_sub_of_refinement (Rk Rb : E → W → W → Prop)
-    (ctx : ContextSet W) (i : E) [hRef : IsBeliefRefinementOf (Rk i) (Rb i)]
+    (ctx : ContextSet W) (i : E) (hsub : Rb i ≤ Rk i)
     (w_star : W) :
     ∀ w, (localCtxOf Rb ctx i).atWorld w_star w →
          (localCtxOf Rk ctx i).atWorld w_star w := by
   intro w ⟨hctx, hbel⟩
-  exact ⟨hctx, hRef.sub w_star w hbel⟩
+  exact ⟨hctx, hsub w_star w hbel⟩
 
 /-- If a presupposition is filtered under knowledge embedding, it is also
     filtered under any belief embedding that refines knowledge. -/
 theorem knowledge_filtered_implies_belief_filtered
     (Rk Rb : E → W → W → Prop) (ctx : ContextSet W) (i : E)
-    [IsBeliefRefinementOf (Rk i) (Rb i)] (p : PartialProp W) (w_star : W) :
+    (hsub : Rb i ≤ Rk i) (p : PartialProp W) (w_star : W) :
     ContextSet.entails ((localCtxOf Rk ctx i).atWorld w_star) p.presup →
     ContextSet.entails ((localCtxOf Rb ctx i).atWorld w_star) p.presup := by
   intro h_know w h_bel
-  exact h_know (localCtx_sub_of_refinement Rk Rb ctx i w_star w h_bel)
+  exact h_know (localCtx_sub_of_refinement Rk Rb ctx i hsub w_star w h_bel)
 
 end Refinement
 
