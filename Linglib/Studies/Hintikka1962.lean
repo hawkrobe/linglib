@@ -9,7 +9,7 @@ import Linglib.Discourse.Commitment.Frame
 worlds where `p` holds while the speaker fails to believe `p`. But its
 would-be-believed form `B_a (p ∧ ¬ B_a p)` is *indefensible* in any KD4
 doxastic model: a 1-line specialisation of
-`Modal.box_not_moore` to the agent-indexed belief
+`ModalLogic.box_not_moore` to the agent-indexed belief
 accessibility of `CommitmentState`. The knowledge analogue specialises
 the same substrate lemma to epistemic accessibility.
 -/
@@ -17,7 +17,7 @@ the same substrate lemma to epistemic accessibility.
 namespace Hintikka1962
 
 open Discourse.Commitment.Frame
-open Modal (box_not_moore AgentAccessRel IsSerial)
+open ModalLogic (box_not_moore AgentAccessRel IsSerial)
 open Modality.EpistemicLogic (knows)
 
 variable {W A : Type*}

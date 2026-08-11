@@ -28,7 +28,7 @@ commitment to belief.
 
 namespace Discourse.Commitment.Frame
 
-open Modal (AccessRel AgentAccessRel IsKD45Frame IsK4EuclFrame
+open ModalLogic (AccessRel AgentAccessRel IsKD45Frame IsK4EuclFrame
   IsEuclidean box diamond box_K box_four)
 open Modality.EpistemicLogic (knows)
 

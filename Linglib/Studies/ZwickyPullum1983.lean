@@ -400,7 +400,7 @@ an accessibility relation under which the two scope readings diverge. -/
 section ScopeBridge
 
 open Modality (ModalForce)
-open Modal (AccessRel box diamond)
+open ModalLogic (AccessRel box diamond)
 
 abbrev World := Fin 4
 

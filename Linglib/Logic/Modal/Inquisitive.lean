@@ -100,11 +100,11 @@ Per-world `□` semantics naturally fits the `R : W → Finset W` shape.
 * Bisim invariance — Ciardelli & Otto (2020) "Inquisitive bisimulation".
 -/
 
-namespace Modal.Inquisitive
+namespace ModalLogic.Inquisitive
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
-open Modal (KripkeModel)
+open ModalLogic (KripkeModel)
 
 /-! ### Syntax (Ciardelli §3 + §8) -/
 
@@ -300,4 +300,4 @@ theorem soundFor_downwardClosed_inter_empty (M : KripkeModel W Atom) :
     show ∅ ∈ definedBy (support M) φ
     exact support_empty M φ
 
-end Modal.Inquisitive
+end ModalLogic.Inquisitive

@@ -40,7 +40,7 @@ the typed atoms throughout.
 namespace Aloni2022
 
 open BSML
-open Modal (KripkeModel)
+open ModalLogic (KripkeModel)
 open BSML (FCAtom TwoAtomWorld)
 
 -- ============================================================================

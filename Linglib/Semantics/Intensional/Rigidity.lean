@@ -355,7 +355,7 @@ The operator-side dual of `IsRigid`: an operator on intensions is
 *extensional at* `w` when its value at `w` depends on its argument only
 through the argument's extension at `w` (local truth-functionality at
 `β = Prop`). Negation and the other pointwise connectives are extensional
-everywhere; quantifiers over indices (`Modal.box`) are not.
+everywhere; quantifiers over indices (`ModalLogic.box`) are not.
 Kamp-style extensional adjective operators
 (`Semantics/Modification/Classification.lean`) are the
 `α = β = E → Prop` instance of this notion. -/

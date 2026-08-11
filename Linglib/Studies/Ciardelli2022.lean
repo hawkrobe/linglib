@@ -29,8 +29,8 @@ the Heyting arrow.
 
 namespace Question
 
-open Modal (KripkeModel)
-open Modal.Inquisitive
+open ModalLogic (KripkeModel)
+open ModalLogic.Inquisitive
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 

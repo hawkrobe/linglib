@@ -165,7 +165,7 @@ def conj (φ ψ : BilatInqProp W) : BilatInqProp W where
 /-! ### §3 Necessity and possibility (Booth Def 14)
 
 `R : W → Set W` is the relevant-worlds accessibility relation
-(equivalent in expressive power to `Modal.AccessRel W
+(equivalent in expressive power to `ModalLogic.AccessRel W
 = W → W → Prop`; Booth uses the curried `W → Set W` form throughout
 his Def 14, which we mirror). -/
 

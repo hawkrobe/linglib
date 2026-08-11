@@ -98,7 +98,7 @@ namespace AloniAnttilaYang2024
 variable {W W' : Type*} [DecidableEq W] [Fintype W] [DecidableEq W'] [Fintype W']
 variable {Atom : Type*}
 
-open Modal (KripkeModel StateBisim WorldBisim)
+open ModalLogic (KripkeModel StateBisim WorldBisim)
 
 /-! ### BSMLOr — BSML with global disjunction `⨼` -/
 

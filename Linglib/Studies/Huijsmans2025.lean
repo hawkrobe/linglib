@@ -38,7 +38,7 @@ EAT analysis (with the same partition reinterpreted) does not.
 The at-issue content is Kratzer strong necessity over the modal base,
 shared across all four lexical entries (modulo modal-base type). It is
 not formalized in this file; consumers wanting full denotations should
-combine `Modal.flavor` with `Modality.Kratzer.necessity`.
+combine `ModalLogic.flavor` with `Modality.Kratzer.necessity`.
 -/
 
 namespace Huijsmans2025

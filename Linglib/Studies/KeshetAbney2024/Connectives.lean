@@ -35,7 +35,7 @@ namespace KeshetAbney2024.PIP
 
 open DynamicSemantics
 open DynamicSemantics.ICDRT
-open Modal (AccessRel box diamond box_T)
+open ModalLogic (AccessRel box diamond box_T)
 
 variable {W E : Type*}
 
@@ -332,7 +332,7 @@ holds at (g, w₀), then `p g w₀`.
 
 This derives PIP's key insight — must allows anaphora because a realistic
 modal base guarantees the description holds at the evaluation world — from
-`Modal.box_T`.
+`ModalLogic.box_T`.
 -/
 theorem must_realistic_of_refl [Fintype W]
     (R : AccessRel W) [Std.Refl R]

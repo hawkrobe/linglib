@@ -29,7 +29,7 @@ interpreted, yielding `Δ(A ∘ B)` rather than `ΔA ∘ ΔB`.
 | must A or must B | `□A ∨ □B`     | `□(A ∨ B)`      |
 | may A and may B  | `◇A ∧ ◇B`     | `◇(A ∧ B)`      |
 
-The modal operators `diamond`/`box` are `Modal.poss`/`nec` (the flat
+The modal operators `diamond`/`box` are `ModalLogic.poss`/`nec` (the flat
 S5 modals shared with the whole free-choice stack), so the scope theorems consume
 the substrate's distribution lemmas directly.
 
@@ -69,19 +69,19 @@ theorem scope_equivalence {World : Type*} (A B : Set World) :
 /-! ### Must-or-must: disjunctive obligation (§2)
 
 Under *necessity*, the scope distinction is **not** truth-conditionally vacuous.
-`diamond`/`box` here are `Modal.poss`/`nec`, so these theorems consume
+`diamond`/`box` here are `ModalLogic.poss`/`nec`, so these theorems consume
 the substrate's flat distribution directly. For disjunction the narrow LF
 `□(A ∪ B)` is strictly *weaker* than the wide LF `□A ∨ □B` — exactly C&G's
 must-or-must contrast: "(either) you must A or you must B" on its salient reading
 is a single disjunctive obligation `□(A ∨ B)`, not two obligations. -/
 
 /-- Wide ⟹ narrow: `□A ∨ □B → □(A ∪ B)`. The narrow disjunctive-obligation LF is
-the weaker reading (monotonicity of `Modal.nec`). -/
+the weaker reading (monotonicity of `ModalLogic.nec`). -/
 theorem disjunctive_obligation_narrow_weaker {World : Type*} (A B : Set World) :
     box A ∨ box B → box (A ∪ B) := by
   rintro (h | h)
-  · exact Modal.nec_mono (fun _ ha => Or.inl ha) h
-  · exact Modal.nec_mono (fun _ hb => Or.inr hb) h
+  · exact ModalLogic.nec_mono (fun _ ha => Or.inl ha) h
+  · exact ModalLogic.nec_mono (fun _ hb => Or.inr hb) h
 
 /-- …but **not** conversely: `□(A ∪ B)` does not entail `□A ∨ □B`. A disjunctive
 obligation leaves which disjunct is met open, so neither `□A` nor `□B` follows.

@@ -41,7 +41,7 @@ disj-support).
 
 namespace BSML
 
-open Modal
+open ModalLogic
 
 variable {W W' : Type*} [DecidableEq W] [Fintype W] [DecidableEq W'] [Fintype W']
 variable {Atom : Type*}

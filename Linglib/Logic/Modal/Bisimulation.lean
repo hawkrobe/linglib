@@ -43,7 +43,7 @@ other-side team by `Finset.filter` over the bisim's existential witnesses,
 using `Classical.choice` only inside pure-`Prop` existentials.
 -/
 
-namespace Modal
+namespace ModalLogic
 
 variable {W W' : Type*} [DecidableEq W] [Fintype W] [DecidableEq W'] [Fintype W']
 variable {Atom : Type*}
@@ -358,4 +358,4 @@ theorem StateBisim.possWitness {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
     obtain ⟨_, y, hyY, hby⟩ := Finset.mem_filter.mp hy'
     exact ⟨y, hyY, hby⟩
 
-end Modal
+end ModalLogic

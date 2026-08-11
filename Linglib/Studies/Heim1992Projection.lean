@@ -38,7 +38,7 @@ namespace Heim1992
 
 open Semantics.Presupposition (PartialProp)
 open CommonGround (ContextSet)
-open Modal (IsSerial IsEuclidean IsS5Frame IsKD45Frame
+open ModalLogic (IsSerial IsEuclidean IsS5Frame IsKD45Frame
   IsBeliefRefinementOf)
 open Semantics.Presupposition.Context (presupSatisfied)
 open Semantics.Presupposition.BeliefEmbedding

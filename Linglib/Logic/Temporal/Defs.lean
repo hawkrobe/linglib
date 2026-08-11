@@ -58,9 +58,9 @@ namespace TWFrame
 
 variable {Time : Type u} {World : Type v} {Atom : Type*} [LinearOrder Time]
 
-open Modal (box universalR) in
+open ModalLogic (box universalR) in
 /-- Satisfaction `V_{t,w}(A)` ([von-kutschera-1997]) relative to an atomic valuation `V`.
-    `G`/`H`/`N`/`box` are `Modal.box` Kripke modalities over, respectively, future
+    `G`/`H`/`N`/`box` are `ModalLogic.box` Kripke modalities over, respectively, future
     precedence `<`, past precedence `>`, historical equivalence `sim t`, and the universal
     relation — making the object logic a multimodal Kripke logic by construction. -/
 def sat (F : TWFrame Time World) (V : Atom → Time → World → Prop) :

@@ -125,7 +125,7 @@ namespace KeshetAbney2024
 
 open KeshetAbney2024.PIP
 open DynamicSemantics.ICDRT (IVar Assignment Entity Context idUp)
-open Modal (AccessRel)
+open ModalLogic (AccessRel)
 
 
 -- ============================================================

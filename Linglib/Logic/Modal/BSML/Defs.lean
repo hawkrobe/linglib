@@ -26,7 +26,7 @@ runs the same recursion over quantified atoms.
   parameter; `support`/`antiSupport` fix the polarity.
 * `Formula.NEFree`, `Formula.Positive` — the `NE`-free and negation-free
   syntactic fragments.
-* `Modal.KripkeModel.IsIndisputable`, `Modal.KripkeModel.IsStateBased` —
+* `ModalLogic.KripkeModel.IsIndisputable`, `ModalLogic.KripkeModel.IsStateBased` —
   the frame conditions governing wide-scope free choice.
 * `consequence`, `equivalent` — support consequence and bilateral
   equivalence.
@@ -51,13 +51,13 @@ atoms flip truth value:
 Encoding both polarities in one `eval` makes the duality a single recursion
 and double-negation elimination a `rfl`: `eval M true (.neg (.neg φ)) t`
 reduces to `eval M true φ t` by two negation clauses. Models are the shared
-`Modal.KripkeModel` carrier; teams are `Finset W`; `eval` is `Prop`-valued
+`ModalLogic.KripkeModel` carrier; teams are `Finset W`; `eval` is `Prop`-valued
 with a `Decidable` instance, so concrete claims close by `decide`.
 -/
 
 namespace BSML
 
-open Modal (KripkeModel)
+open ModalLogic (KripkeModel)
 
 /-! ### Formulas -/
 
@@ -206,13 +206,13 @@ lemma empty_supports_atom (M : KripkeModel W Atom) (p : Atom) :
 /-- Indisputable accessibility: all worlds in the team see the same
     accessible worlds — the frame condition for wide-scope free choice.
     Defined via `Team.IsIndisputable`, sharing substrate with QBSML. -/
-def _root_.Modal.KripkeModel.IsIndisputable (M : KripkeModel W Atom) (t : Finset W) : Prop :=
+def _root_.ModalLogic.KripkeModel.IsIndisputable (M : KripkeModel W Atom) (t : Finset W) : Prop :=
   Team.IsIndisputable M.access t
 
 /-- State-based accessibility: every world in the team has the team itself
     as its accessible worlds. Strictly stronger than indisputability.
     Defined via `Team.IsStateBased`. -/
-def _root_.Modal.KripkeModel.IsStateBased (M : KripkeModel W Atom) (t : Finset W) : Prop :=
+def _root_.ModalLogic.KripkeModel.IsStateBased (M : KripkeModel W Atom) (t : Finset W) : Prop :=
   Team.IsStateBased M.access t
 
 instance (M : KripkeModel W Atom) (t : Finset W) : Decidable (M.IsIndisputable t) :=

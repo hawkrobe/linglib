@@ -167,7 +167,7 @@ inductive Provable : OForm Atom → Prop where
 /-! ### Soundness -/
 
 open TWFrame
-open Modal (box_four self_imp_box_flip_diamond)
+open ModalLogic (box_four self_imp_box_flip_diamond)
 
 /-- **Soundness of `TW`** ([von-kutschera-1997]): every `TW`-provable formula is T × W-valid. -/
 theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
