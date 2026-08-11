@@ -34,7 +34,8 @@ namespace CCG
 
 section Categories
 
-/-- Atomic categories of the featureless toy inventory. -/
+/-- The core atomic categories of the English fragment (`S`, `NP`, `N`, `PP`, as in
+[steedman-2000]), stated without features. -/
 inductive Atom where
   /-- Sentence. -/
   | S
