@@ -37,11 +37,11 @@ parameterized over its atoms, so the construction needs no proxy inventory.
 
 ## Implementation notes
 
-These are the *completeness* direction (every target string is generated). The converse
-*soundness* (the target-restricted rules generate *only* count-matched strings) is an
-all-derivations induction not formalised here; with it, relabelling
-`{"a","b","c"} → ThreeSymbol` and `AnBnCn.anbnc_not_contextFree` would establish that the
-grammar's language is itself non-context-free.
+These are the *completeness* direction (`anbncStrings ⊆ exampleGrammar.language`).
+The converse *soundness* (`exampleGrammar.language ⊆ anbncStrings`, an all-derivations
+induction) is stateable over `TargetRestricted.Grammar` but not formalised here; with
+it, relabelling `{"a","b","c"} → ThreeSymbol` and `AnBnCn.anbnc_not_contextFree` would
+establish that the grammar's language is itself non-context-free.
 -/
 
 namespace KuhlmannKollerSatta2015
@@ -69,6 +69,16 @@ abbrev Scat : Cat Atom := .atom .S
 def aLex : TargetRestricted.Derivation Atom := .lex "a" Acat
 /-- `c := C\A`. -/
 def cLex : TargetRestricted.Derivation Atom := .lex "c" (Ccat \ Acat)
+
+/-- The grammar `G₁` of Example 2: the six lexical entries, target restriction and
+start at `S`, degree bound 2 — an instance of the modern capacity object
+([schiffer-maletti-2021]: ε-free, degree at most 2). -/
+def exampleGrammar : TargetRestricted.Grammar Atom where
+  lexicon := [("a", Acat), ("c", Ccat \ Acat),
+              ("b", (Scat / Ccat) / Bcat), ("b", (Bcat / Ccat) / Bcat),
+              ("b", Scat / Ccat), ("b", Bcat / Ccat)]
+  start := .S
+  degree := 2
 
 /-- The cluster category `S/C/…/C` with `n` forward `C`-arguments. -/
 def clusterCat : Nat → Cat Atom
@@ -178,19 +188,42 @@ theorem build_yield {n : Nat} (hn : 1 ≤ n) :
     (build n).yield = List.replicate n "a" ++ List.replicate n "b" ++ List.replicate n "c" := by
   simp [build, peel_yield, clusterDeriv_yield hn, List.append_assoc]
 
+/-! ### Well-formedness over the grammar -/
+
+theorem fc2Chain_wf (j : Nat) : (fc2Chain j).WellFormed exampleGrammar := by
+  induction j with
+  | zero => decide
+  | succ j ih => exact ⟨by decide, ih, by decide⟩
+
+theorem clusterDeriv_wf : ∀ {n : Nat}, 1 ≤ n →
+    (clusterDeriv n).WellFormed exampleGrammar
+  | 1, _ => by decide
+  | n + 2, _ => ⟨by decide, fc2Chain_wf n, by decide⟩
+
+theorem peelStep_wf {d : TargetRestricted.Derivation Atom}
+    (h : d.WellFormed exampleGrammar) : (peelStep d).WellFormed exampleGrammar :=
+  ⟨by decide, by decide, by decide, h, by decide⟩
+
+theorem peel_wf : ∀ (k : Nat) (d : TargetRestricted.Derivation Atom),
+    d.WellFormed exampleGrammar → (peel k d).WellFormed exampleGrammar
+  | 0, _, h => h
+  | k + 1, d, h => peel_wf k (peelStep d) (peelStep_wf h)
+
+theorem build_wf {n : Nat} (hn : 1 ≤ n) : (build n).WellFormed exampleGrammar :=
+  peel_wf n (clusterDeriv n) (clusterDeriv_wf hn)
+
 /-! ### Generative-capacity result -/
 
 /-- The string language `aⁿbⁿcⁿ` (`n ≥ 1`) over `{"a","b","c"}`. -/
 def anbncStrings : Set (List String) :=
   {w | ∃ n, 1 ≤ n ∧ w = List.replicate n "a" ++ List.replicate n "b" ++ List.replicate n "c"}
 
-/-- **The construction generates `aⁿbⁿcⁿ`** ([kuhlmann-koller-satta-2015], Ex. 2):
-every string in the non-context-free language is the yield of a well-formed (target-
-restricted) CCG derivation. This is the completeness half of CCG ⊋ CFG; the language
-`anbnc` it covers is not context-free (`AnBnCn.anbnc_not_contextFree`). -/
-theorem ccg_generates_anbnc (w : List String) (hw : w ∈ anbncStrings) :
-    ∃ d : TargetRestricted.Derivation Atom, d.cat .S = some Scat ∧ d.yield = w := by
-  obtain ⟨n, hn, rfl⟩ := hw
-  exact ⟨build n, build_cat hn, build_yield hn⟩
+/-- **`G₁` generates `aⁿbⁿcⁿ`** ([kuhlmann-koller-satta-2015], Ex. 2): every string
+in the non-context-free language is in the grammar's language. This is the
+completeness half of CCG ⊋ CFG; the language `anbnc` it covers is not context-free
+(`AnBnCn.anbnc_not_contextFree`). -/
+theorem ccg_generates_anbnc : anbncStrings ⊆ exampleGrammar.language := by
+  rintro w ⟨n, hn, rfl⟩
+  exact ⟨build n, build_wf hn, build_cat hn, build_yield hn⟩
 
 end KuhlmannKollerSatta2015
