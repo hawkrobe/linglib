@@ -98,7 +98,8 @@ namespace AloniAnttilaYang2024
 variable {W W' : Type*} [DecidableEq W] [Fintype W] [DecidableEq W'] [Fintype W']
 variable {Atom : Type*}
 
-open BSML (BSMLModel BSMLFormula StateBisim WorldBisim)
+open BSML (BSMLModel BSMLFormula)
+open Modal (StateBisim WorldBisim)
 
 /-! ### BSMLOr — BSML with global disjunction `⨼` -/
 

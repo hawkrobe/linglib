@@ -32,13 +32,7 @@ the AAY-2024 extensions BSMLOr/BSMLEmpty, modal dependence logic in
 * `Logic/Modal/Dependence.lean` — modal dependence logic (MDL).
 * `Studies/AloniAnttilaYang2024.lean` — BSMLOr,
   BSMLEmpty (via `BSMLModel` alias).
-
-## Todo
-
-* Lift bisimulation infrastructure currently at
-  `Logic/Modal/BSML/Bisimulation.lean` to a sibling
-  `Logic/Modal/Bisimulation.lean` once a non-BSML consumer
-  (MDL bisim invariance, modal inclusion logic) lands.
+* `Logic/Modal/Bisimulation.lean` — bounded bisimulation over this carrier.
 -/
 
 namespace Modal

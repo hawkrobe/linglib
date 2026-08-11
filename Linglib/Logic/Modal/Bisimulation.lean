@@ -18,9 +18,7 @@ bisimulation substrate shared by every team-semantic modal logic in
 Nothing here mentions a `Formula` type or an `eval` relation — everything
 is stated over the bare `KripkeModel` carrier (`access` + `val`). Each
 logic states its own `bisim_invariant_eval` against its own evaluation,
-recursing through these carrier lemmas at the modal step. This file is the
-genus-level home the per-logic invariance proofs were extracted to once a
-second consumer (MDL) landed; see `Logic/Modal/README.md`.
+recursing through these carrier lemmas at the modal step.
 
 ## Main declarations
 
@@ -31,10 +29,9 @@ second consumer (MDL) landed; see `Logic/Modal/README.md`.
 * `WorldBisim.val_eq`, `WorldBisim.accessStateBisim` — valuation and
   accessibility-image transfer.
 * `StateBisim.eq_empty_iff`, `StateBisim.nonempty_iff` — emptiness transfer.
-* `StateBisim.accessImage` — Lemma 3.7(i): per-world accessibility-image bisim.
+* `StateBisim.biUnionAccess` — Lemma 3.7(i): image-union preservation.
 * `StateBisim.splitPreserve` — Lemma 3.7(ii): team-split preservation.
 * `StateBisim.exists_image_subset` — sub-team transport (BSML's per-world ◇).
-* `StateBisim.biUnionAccess` — union-of-images preservation (MDL's anti-◇).
 * `StateBisim.possWitness` — single-witness team transport (MDL's ◇-support).
 
 ## Implementation notes
@@ -181,7 +178,8 @@ theorem WorldBisim.val_eq {k : ℕ} {M : KripkeModel W Atom} {w : W}
   | _ + 1, ⟨h, _, _⟩ => h p
 
 /-- World bisim at depth `k+1` yields state bisim of the accessibility
-    images at depth `k`. -/
+    images at depth `k` — the singleton form of Lemma 3.7(i), used by each
+    logic's modal case. -/
 theorem WorldBisim.accessStateBisim {k : ℕ} {M : KripkeModel W Atom} {w : W}
     {M' : KripkeModel W' Atom} {w' : W'}
     (h : WorldBisim (k + 1) M w M' w') :
@@ -243,23 +241,28 @@ theorem StateBisim.exists_image_subset {k : ℕ} {M : KripkeModel W Atom}
 
 /-! ### Lemma 3.7: state bisimulation preserves modal step and team splits -/
 
-/-- Lemma 3.7(i) of [aloni-anttila-yang-2024]: at depth `k+1`, state
-    bisim provides for each `w ∈ s` a witness `w' ∈ s'` such that the
-    accessibility images `R[w]` and `R'[w']` are state-bisimilar at
-    depth `k`. -/
-theorem StateBisim.accessImage {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
-    {M' : KripkeModel W' Atom} {s' : Finset W'} {w : W}
-    (h : StateBisim (k + 1) M s M' s') (hw : w ∈ s) :
-    ∃ w' ∈ s', StateBisim k M (M.access w) M' (M'.access w') := by
-  obtain ⟨w', hw', hbisim⟩ := h.1 w hw
-  obtain ⟨_, hforth, hback⟩ := hbisim
-  refine ⟨w', hw', ?_, ?_⟩
+/-- Lemma 3.7(i) of [aloni-anttila-yang-2024]: state bisim at depth `k+1`
+    yields state bisim of the **unions of accessibility images** at depth
+    `k`: `s.biUnion R ⇌_k s'.biUnion R'`. Also the transport principle for
+    the MDL anti-`◇` clause ([vaananen-2008] (T9)), which evaluates the
+    inner formula on this union. -/
+theorem StateBisim.biUnionAccess {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
+    {M' : KripkeModel W' Atom} {s' : Finset W'}
+    (h : StateBisim (k + 1) M s M' s') :
+    StateBisim k M (s.biUnion M.access) M' (s'.biUnion M'.access) := by
+  refine ⟨?_, ?_⟩
   · intro v hv
-    obtain ⟨v', hv', hbv⟩ := hforth v hv
-    exact ⟨v', hv', hbv⟩
+    rw [Finset.mem_biUnion] at hv
+    obtain ⟨w, hw, hvw⟩ := hv
+    obtain ⟨w', hw', hbw⟩ := h.1 w hw
+    obtain ⟨v', hv', hbv⟩ := hbw.accessStateBisim.1 v hvw
+    exact ⟨v', Finset.mem_biUnion.mpr ⟨w', hw', hv'⟩, hbv⟩
   · intro v' hv'
-    obtain ⟨v, hv, hbv⟩ := hback v' hv'
-    exact ⟨v, hv, hbv⟩
+    rw [Finset.mem_biUnion] at hv'
+    obtain ⟨w', hw', hvw'⟩ := hv'
+    obtain ⟨w, hw, hbw⟩ := h.2 w' hw'
+    obtain ⟨v, hv, hbv⟩ := hbw.accessStateBisim.2 v' hvw'
+    exact ⟨v, Finset.mem_biUnion.mpr ⟨w, hw, hv⟩, hbv⟩
 
 /-- Lemma 3.7(ii) of [aloni-anttila-yang-2024]: state bisim preserves
     binary team splits. Given `s = t ∪ u` and `s ⇌_k s'`, there exist
@@ -309,32 +312,11 @@ theorem StateBisim.splitPreserve {k : ℕ} {M : KripkeModel W Atom}
       obtain ⟨_, w, hw, hbisim⟩ := Finset.mem_filter.mp hw'
       exact ⟨w, hw, hbisim⟩
 
-/-! ### Single-relation modal step (Väänänen-style ◇)
+/-! ### Single-witness modal step (Väänänen-style ◇)
 
-The MDL modality uses the union of accessibility images (anti-support) and
-a single witness team (support), rather than BSML's per-world sub-witness.
-These two lemmas are the Lemma 3.7 analogues for that modality. -/
-
-/-- State bisim at depth `k+1` preserves the **union of accessibility images**
-    at depth `k`: `s.biUnion R ⇌_k s'.biUnion R'`. The MDL anti-`◇` clause
-    ([vaananen-2008] (T9)) evaluates the inner formula on this union. -/
-theorem StateBisim.biUnionAccess {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
-    {M' : KripkeModel W' Atom} {s' : Finset W'}
-    (h : StateBisim (k + 1) M s M' s') :
-    StateBisim k M (s.biUnion M.access) M' (s'.biUnion M'.access) := by
-  refine ⟨?_, ?_⟩
-  · intro v hv
-    rw [Finset.mem_biUnion] at hv
-    obtain ⟨w, hw, hvw⟩ := hv
-    obtain ⟨w', hw', hbw⟩ := h.1 w hw
-    obtain ⟨v', hv', hbv⟩ := hbw.accessStateBisim.1 v hvw
-    exact ⟨v', Finset.mem_biUnion.mpr ⟨w', hw', hv'⟩, hbv⟩
-  · intro v' hv'
-    rw [Finset.mem_biUnion] at hv'
-    obtain ⟨w', hw', hvw'⟩ := hv'
-    obtain ⟨w, hw, hbw⟩ := h.2 w' hw'
-    obtain ⟨v, hv, hbv⟩ := hbw.accessStateBisim.2 v' hvw'
-    exact ⟨v, Finset.mem_biUnion.mpr ⟨w, hw, hv⟩, hbv⟩
+The MDL `◇`-support clause uses a single witness team reached by every
+world, rather than BSML's per-world sub-witness; this lemma is its
+transport principle. The anti-`◇` side is `StateBisim.biUnionAccess`. -/
 
 /-- **Single-witness team transport.** Given `s ⇌_{k+1} s'` and a witness team
     `Y ⊆ s.biUnion R` that every world in `s` reaches (`∀ w ∈ s, ∃ y ∈ Y ∩
