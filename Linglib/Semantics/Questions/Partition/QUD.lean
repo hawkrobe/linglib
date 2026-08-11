@@ -56,9 +56,7 @@ instance instDecidableRel (q : QUD M) : DecidableRel q.r := q.decR
 /-- Forward `iseqv` from the underlying setoid. -/
 theorem iseqv (q : QUD M) : Equivalence q.r := q.toSetoid.iseqv
 
--- ════════════════════════════════════════════════════
--- § 1. Bool-view (sameAnswer + Bool-valued refl/symm/trans)
--- ════════════════════════════════════════════════════
+/-! ### Bool-view: `sameAnswer` -/
 
 /-- Decidable equivalence as a `Bool`. -/
 def sameAnswer (q : QUD M) (a b : M) : Bool := decide (q.r a b)
@@ -88,28 +86,10 @@ theorem trans (q : QUD M) (a b c : M)
     q.sameAnswer a c = true :=
   decide_eq_true (q.iseqv.trans (of_decide_eq_true h1) (of_decide_eq_true h2))
 
-section EquivalenceProperties
-variable (q : QUD M)
-
-/-- Reflexivity is guaranteed by construction. -/
-theorem isReflexive : ∀ m, q.sameAnswer m m = true := q.refl
-
-/-- Symmetry is guaranteed by construction. -/
-theorem isSymmetric : ∀ m1 m2, q.sameAnswer m1 m2 = q.sameAnswer m2 m1 := q.symm
-
-/-- Transitivity is guaranteed by construction. -/
-theorem isTransitive : ∀ m1 m2 m3,
-    q.sameAnswer m1 m2 = true → q.sameAnswer m2 m3 = true → q.sameAnswer m1 m3 = true :=
-  q.trans
-
-end EquivalenceProperties
-
 @[simp] theorem toSetoid_r (q : QUD M) (a b : M) :
     q.toSetoid.r a b ↔ q.r a b := Iff.rfl
 
--- ════════════════════════════════════════════════════
--- § 2. Constructors as bundles over mathlib Setoid
--- ════════════════════════════════════════════════════
+/-! ### Constructors as bundles over mathlib `Setoid` -/
 
 /-- Trivial QUD: all meanings are equivalent. Mathlib `⊤ : Setoid M`. -/
 def trivial : QUD M := ⟨⊤, λ _ _ => .isTrue ⟨⟩⟩
@@ -122,7 +102,7 @@ def trivial : QUD M := ⟨⊤, λ _ _ => .isTrue ⟨⟩⟩
 /-- Compose two QUDs: equivalent iff equivalent under both. Mathlib `q1 ⊓ q2`. -/
 def compose (q1 q2 : QUD M) : QUD M where
   toSetoid := q1.toSetoid ⊓ q2.toSetoid
-  decR := λ a b => decidable_of_iff _ Setoid.inf_iff_and.symm
+  decR := fun _ _ => decidable_of_iff _ Setoid.inf_iff_and.symm
 
 @[simp] theorem compose_r (q1 q2 : QUD M) (a b : M) :
     (compose q1 q2).r a b ↔ q1.r a b ∧ q2.r a b := Setoid.inf_iff_and
@@ -158,43 +138,37 @@ theorem mem_cell_iff_r (q : QUD M) (m m' : M) :
 
 theorem mem_cell_iff (q : QUD M) (m m' : M) :
     m' ∈ q.cell m ↔ q.sameAnswer m m' = true := by
-  simp only [cell, Set.mem_setOf_eq, sameAnswer_eq_true_iff]
+  simp only [cell, Set.mem_ofPred_eq, sameAnswer_eq_true_iff]
 
 theorem cell_self (q : QUD M) (m : M) : m ∈ q.cell m := q.iseqv.refl m
 
 theorem mem_cell_symm (q : QUD M) (m m' : M) :
     m' ∈ q.cell m ↔ m ∈ q.cell m' := by
-  simp only [cell, Set.mem_setOf_eq]
+  simp only [cell, Set.mem_ofPred_eq]
   exact ⟨q.iseqv.symm, q.iseqv.symm⟩
 
-/-- Build QUD from a projection function with `DecidableEq` codomain.
-The `name` argument is documentation-only; it is discarded. -/
-def ofDecEq {α : Type*} [DecidableEq α]
-    (project : M → α) (name : String := "") : QUD M :=
-  let _ := name
-  { toSetoid := Setoid.comap project ⊥
-    decR := λ a b => inferInstanceAs (Decidable (project a = project b)) }
+/-- Build QUD from a projection function with `DecidableEq` codomain. -/
+def ofDecEq {α : Type*} [DecidableEq α] (project : M → α) : QUD M where
+  toSetoid := Setoid.comap project ⊥
+  decR a b := inferInstanceAs (Decidable (project a = project b))
 
 @[simp] theorem ofDecEq_r {α : Type*} [DecidableEq α]
-    (project : M → α) (name : String) (w v : M) :
-    (ofDecEq project name).r w v ↔ project w = project v := Iff.rfl
+    (project : M → α) (w v : M) :
+    (ofDecEq project).r w v ↔ project w = project v := Iff.rfl
 
 @[simp] theorem ofDecEq_sameAnswer {α : Type*} [DecidableEq α]
-    (project : M → α) (name : String) (w v : M) :
-    (ofDecEq project name).sameAnswer w v = decide (project w = project v) := rfl
+    (project : M → α) (w v : M) :
+    (ofDecEq project).sameAnswer w v = decide (project w = project v) := rfl
 
 theorem ofDecEq_sameAnswer_iff {α : Type*} [DecidableEq α]
-    (project : M → α) (name : String) (w v : M) :
-    (ofDecEq project name).sameAnswer w v = true ↔ project w = project v := by
+    (project : M → α) (w v : M) :
+    (ofDecEq project).sameAnswer w v = true ↔ project w = project v := by
   simp only [ofDecEq_sameAnswer, decide_eq_true_eq]
 
-/-- Build QUD from a projection function with `BEq`/`LawfulBEq` codomain.
-The `name` argument is documentation-only; it is discarded. -/
-def ofProject {A : Type*} [BEq A] [LawfulBEq A]
-    (f : M → A) (name : String := "") : QUD M :=
-  let _ := name
-  { toSetoid := Setoid.comap f ⊥
-    decR := λ a b => decidable_of_iff (f a == f b) (by simp [beq_iff_eq]) }
+/-- Build QUD from a projection function with `BEq`/`LawfulBEq` codomain. -/
+def ofProject {A : Type*} [BEq A] [LawfulBEq A] (f : M → A) : QUD M where
+  toSetoid := Setoid.comap f ⊥
+  decR a b := decidable_of_iff (f a == f b) (by simp [beq_iff_eq])
 
 @[simp] theorem ofProject_r {A : Type*} [BEq A] [LawfulBEq A]
     (f : M → A) (m1 m2 : M) :
@@ -222,14 +196,14 @@ theorem ofProject_sameAnswer_iff {A : Type*} [BEq A] [LawfulBEq A]
 theorem ofProject_cell_eq_fiber {A : Type*} [BEq A] [LawfulBEq A] (f : M → A) (m : M) :
     (ofProject f).cell m = {m' : M | f m' = f m} := by
   ext m'
-  simp only [cell, Set.mem_setOf_eq, ofProject_r]
+  simp only [cell, Set.mem_ofPred_eq, ofProject_r]
   exact eq_comm
 
 section BEqConstructors
 variable [BEq M]
 
 /-- Identity QUD: each meaning is its own equivalence class. -/
-def exact [LawfulBEq M] : QUD M := ofProject (id : M → M) "exact"
+def exact [LawfulBEq M] : QUD M := ofProject (id : M → M)
 
 @[simp] theorem exact_r [LawfulBEq M] (m1 m2 : M) :
     (exact : QUD M).r m1 m2 ↔ m1 = m2 := Iff.rfl
@@ -251,10 +225,10 @@ namespace ProductQUD
 variable {A B : Type} [BEq A] [BEq B] [LawfulBEq A] [LawfulBEq B]
 
 /-- QUD that cares only about first component. -/
-def fst : QUD (A × B) := QUD.ofProject Prod.fst "fst"
+def fst : QUD (A × B) := QUD.ofProject Prod.fst
 
 /-- QUD that cares only about second component. -/
-def snd : QUD (A × B) := QUD.ofProject Prod.snd "snd"
+def snd : QUD (A × B) := QUD.ofProject Prod.snd
 
 /-- QUD that cares about both components (exact). -/
 def both : QUD (A × B) := QUD.exact (M := A × B)

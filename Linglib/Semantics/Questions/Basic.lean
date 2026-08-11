@@ -190,7 +190,7 @@ def ofSet (p : Set W) : Question W where
 
 @[simp] theorem info_ofSet (p : Set W) : (ofSet p).info = p := by
   ext w
-  simp only [info, ofSet, Set.mem_sUnion, Set.mem_setOf_eq]
+  simp only [info, ofSet, Set.mem_sUnion, Set.mem_ofPred_eq]
   refine ⟨?_, ?_⟩
   · rintro ⟨q, hq, hwq⟩; exact hq hwq
   · intro hw; exact ⟨p, Set.Subset.refl p, hw⟩
@@ -796,7 +796,7 @@ theorem info_mem_iff_eq_ofSet_info (P : Question W) :
   constructor
   · intro h
     ext q
-    simp only [← mem_props, ofSet, Set.mem_setOf_eq]
+    simp only [← mem_props, ofSet, Set.mem_ofPred_eq]
     refine ⟨?_, ?_⟩
     · intro hq w hwq
       exact ⟨q, hq, hwq⟩

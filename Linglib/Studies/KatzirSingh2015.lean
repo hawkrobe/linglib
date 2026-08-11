@@ -203,7 +203,7 @@ def italianWarmthScenario : Scenario ItalyWorld ItalyUtt where
     | all_,  allWarm => true  | all_,  noneWarm => false
   complexity | some_ => 1 | all_ => 1
   context    | allWarm => true | noneWarm => false
-  qud := QUD.ofDecEq warmthAnswer (name := "warm country?")
+  qud := QUD.ofDecEq warmthAnswer
   utterances := [some_, all_]
   worlds     := [allWarm, noneWarm]
 
@@ -270,7 +270,7 @@ def gradeScenario : Scenario GradeWorld GradeUtt where
     | all_,  allA => true | all_,  someNotAll => false | all_,  noneA => false
   complexity | some_ => 1 | all_ => 1
   context | allA => true | someNotAll => false | noneA => true
-  qud := QUD.ofDecEq gradeAnswer (name := "what grade did Kim give?")
+  qud := QUD.ofDecEq gradeAnswer
   utterances := [some_, all_]
   worlds     := [allA, someNotAll, noneA]
 
@@ -346,7 +346,7 @@ def hurfordScenario : Scenario VisitWorld VisitUtt where
     | franceOrParis, neither   => false
   complexity | france => 1 | franceOrParis => 2
   context := λ _ => true
-  qud := QUD.ofDecEq visitAnswer (name := "visited France?")
+  qud := QUD.ofDecEq visitAnswer
   utterances := [france, franceOrParis]
   worlds     := [parisOnly, franceNotParis, neither]
 
@@ -411,7 +411,7 @@ def deScenario : Scenario DEWorld DEUtt where
   complexity | some_ => 1 | all_ => 1
   -- CK rules out w2 (same as grade: CK makes some/all equivalent)
   context | w1 => true | w2 => false | w3 => true
-  qud := QUD.ofDecEq deAnswer (name := "A to some or all?")
+  qud := QUD.ofDecEq deAnswer
   utterances := [some_, all_]
   worlds     := [w1, w2, w3]
 
@@ -496,7 +496,7 @@ def maxPresupScenario : Scenario SunWorld SunUtt where
   complexity | aSun => 1 | theSun => 1
   -- CK: exactly one sun
   context | oneShining => true | oneNotShining => true | manySuns => false
-  qud := QUD.ofDecEq sunAnswer (name := "is the sun shining?")
+  qud := QUD.ofDecEq sunAnswer
   utterances := [aSun, theSun]
   worlds     := [oneShining, oneNotShining, manySuns]
 
@@ -597,13 +597,13 @@ open DEWorld in
 /-- Original DE discourse context (w2 ruled out by CK). -/
 def deDiscourseOriginal : DiscourseContext DEWorld where
   context | w1 => true | w2 => false | w3 => true
-  qud     := QUD.ofDecEq deAnswer (name := "A to some or all? (DE)")
+  qud     := QUD.ofDecEq deAnswer
 
 open DEWorld in
 /-- Alternative discourse context: all worlds CK-compatible. -/
 def deDiscourseOpen : DiscourseContext DEWorld where
   context := λ _ => true
-  qud     := QUD.ofDecEq deAnswer (name := "A to some or all? (open CK)")
+  qud     := QUD.ofDecEq deAnswer
 
 /-- The composed scenario matches the original `deScenario`. -/
 theorem compose_matches_de :
@@ -669,7 +669,7 @@ open WifeWorld in
 /-- Discourse context: CK = monogamous society (John has exactly one wife). -/
 def wifeContextCK : DiscourseContext WifeWorld where
   context | oneWife => true | twoWives => false | noWife => false
-  qud := QUD.ofDecEq wifeCount (name := "how many wives?")
+  qud := QUD.ofDecEq wifeCount
 
 def wifeScenario : Scenario WifeWorld WifeUtt :=
   Scenario.mk' wifeModel wifeContextCK
