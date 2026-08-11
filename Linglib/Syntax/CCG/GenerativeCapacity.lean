@@ -33,9 +33,9 @@ it is the wrong model for the exact-language construction.
 A fully-proven construction of a target-restricted CCG that generates aⁿbⁿcⁿ
 is therefore *not* expressible over `Derivation`; it lives in
 `Studies/KuhlmannKollerSatta2015` (`ccg_generates_anbnc`), which models the target
-restriction explicitly. The concrete Dutch derivations in `CCG.CrossSerial` are 2- and
+restriction explicitly. The concrete Dutch derivations in `Studies/Steedman2000` are 2- and
 3-verb instances — surface-faithful via crossed composition (see
-`CCG.CrossSerial.three_np_sub_yield`) — but finitely many instances do not establish a
+`Steedman2000.three_np_sub_yield`) — but finitely many instances do not establish a
 capacity claim.
 -/
 
