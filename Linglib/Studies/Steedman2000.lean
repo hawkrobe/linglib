@@ -219,11 +219,35 @@ end Coordination
 [ross-1970]'s generalization — gapping direction tracks word order —
 which [steedman-2000] derives from the Principles of Adjacency,
 Consistency, and Inheritance together with the order-preserving constraint
-on type-raising. Deriving `predictedGappingPattern` from the slash
-directions of `CCG.Gapping`'s gapped categories is TODO.
+on type-raising. The constituency half is derived below — the gapped conjunct is a
+typechecked derivation (`gappedConjunct`); deriving the `predictedGappingPattern`
+table itself from per-order verb categories is TODO.
 (Dutch licensing both directions is `mixed_allows_both`.) -/
 
 section Gapping
+
+/-- The gapped conjunct "Warren, potatoes" is a constituent ([steedman-2000] ch. 7):
+backward type-raising both remnants and backward-composing them yields
+`S\((S/NP)/NP)` — a leftward-looking function over VSO-style transitive verbs, which
+is why forward gapping leaves the verb to the left. Deriving it is typechecking. -/
+def gappedConjunct : Derivation Atom (S \ ((S / NP) / NP)) :=
+  .bcomp (.btr (.lex "Warren" NP) (S / NP)) (.btr (.lex "potatoes" NP) S)
+
+theorem gappedConjunct_yield : gappedConjunct.yield = ["Warren", "potatoes"] := rfl
+
+/-- The mirror cluster for backward gapping (Japanese "Ken-ga Naomi-o"): forward
+type-raising and forward composition yield `S/((S\NP)\NP)`, a rightward-looking
+function over SOV transitive verbs — the verb must follow. -/
+def backwardGappedConjunct : Derivation Atom (S / ((S \ NP) \ NP)) :=
+  .fcomp (.ftr (.lex "Ken-ga" NP) S) (.ftr (.lex "Naomi-o" NP) (S \ NP))
+
+theorem backwardGappedConjunct_yield :
+    backwardGappedConjunct.yield = ["Ken-ga", "Naomi-o"] := rfl
+
+/-- Stripping ("Dexter ran away, and Warren (too)") is the single-remnant case: one
+backward-raised subject, `S\(S/NP)`. -/
+def strippedConjunct : Derivation Atom (S \ (S / NP)) :=
+  .btr (.lex "Warren" NP) S
 
 /-- Basic word order of a transitive clause (S = subject, V = verb,
 O = object). -/
