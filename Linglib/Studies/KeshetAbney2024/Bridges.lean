@@ -271,11 +271,9 @@ operators now use directly.
 -/
 theorem reflexive_satisfies_T {W : Type*}
     (R : Modal.AccessRel W) [hRefl : Std.Refl R] :
-    frameConditions Modal.Logic.T R := by
-  unfold frameConditions Modal.Logic.hasAxiom
-    Modal.Logic.T
-  refine ⟨fun _ => hRefl, fun h => ?_, fun h => ?_, fun h => ?_, fun h => ?_⟩ <;>
-    simp_all [Finset.mem_singleton]
+    frameConditions Modal.Logic.T R :=
+  ⟨fun _ => hRefl, fun h => absurd h (by decide), fun h => absurd h (by decide),
+   fun h => absurd h (by decide), fun h => absurd h (by decide)⟩
 
 
 -- ============================================================

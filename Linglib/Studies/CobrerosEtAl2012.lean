@@ -187,7 +187,8 @@ is addressed in §8–§9 below.
 namespace Semantics.Supervaluation.TCS
 
 open Modal
-  (AccessRel IsKTBFrame IsSerial box diamond box_T Logic)
+  (AccessRel IsKTBFrame IsSerial box diamond box_T)
+open Modal.Logic (KTB frameConditions)
 open Consequence (MixedConsequence SatImplies IsSelfDual
   premise_monotone conclusion_monotone mixed_monotone)
 open Semantics.Supervaluation (SpecSpace superTrue
@@ -245,7 +246,7 @@ instance (M : TModel D Pred) (P : Pred) : IsKTBFrame (M.sim P) := M.sim_ktb P
     frame). The four flag-fields beyond `.M` and `.B` are vacuously
     satisfied because `Logic.KTB` doesn't require D, 4, or 5. -/
 theorem satisfies_KTB (M : TModel D Pred) (P : Pred) :
-    Logic.KTB.frameConditions (M.simAccess P) := by
+    frameConditions KTB (M.simAccess P) := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · intro _; exact inferInstance
   · intro h; exact absurd h (by decide)
