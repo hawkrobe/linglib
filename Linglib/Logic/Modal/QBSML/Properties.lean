@@ -17,9 +17,9 @@ empty-team support, hence flat support, via the same
 
 ## Main declarations
 
-* `support_empty_of_isNEFree`, `isLowerSet_support_of_isNEFree`,
-  `supClosed_support_of_isNEFree` — the three closure properties.
-* `isFlat_support_of_isNEFree` — flatness of the NE-free fragment
+* `support_empty_of_neFree`, `isLowerSet_support_of_neFree`,
+  `supClosed_support_of_neFree` — the three closure properties.
+* `isFlat_support_of_neFree` — flatness of the NE-free fragment
   ([anttila-2021] Proposition 2.2.16, QBSML specialisation).
 * `soundFor_flat_neFree` — the NE-free fragment is sound for the flat cell
   of `Team/Definability.lean`.
@@ -31,7 +31,7 @@ empty-team support, hence flat support, via the same
   Proposition 4.1: the NE-free fragment (modals included) translates into
   `ModalFormula` over `Logic/Modal/FirstOrder/Kripke.lean`, and support is
   Kripke satisfaction at every index; the translation is total on exactly
-  the NE-free fragment (`exists_toModal?_of_isNEFree`).
+  the NE-free fragment (`exists_toModal?_of_neFree`).
 * `eval_mapAtoms_iff` — atom-substitution congruence: an atom map with
   bilaterally equivalent images is *salva veritate*.
 * `support_disj_inl`, `support_nec_iff`, `support_nec_mono`,
@@ -65,8 +65,8 @@ variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
     the negation case (where support flips to antiSupport). All quantifier
     cases use `State.extendUniversal_empty` and
     `State.extendFunctional_empty`. -/
-private theorem support_and_antiSupport_empty_of_isNEFree
-    {φ : Formula Var Const Pred} (hNE : φ.IsNEFree)
+private theorem support_and_antiSupport_empty_of_neFree
+    {φ : Formula Var Const Pred} (hNE : φ.NEFree)
     (M : Model W Domain Const Pred) :
     support M φ (∅ : Finset (Index W Var Domain)) ∧
     antiSupport M φ (∅ : Finset (Index W Var Domain)) := by
@@ -112,10 +112,10 @@ private theorem support_and_antiSupport_empty_of_isNEFree
       exact ih.2
 
 /-- NE-free QBSML formulas are supported on the empty team. -/
-theorem support_empty_of_isNEFree {φ : Formula Var Const Pred}
-    (hNE : φ.IsNEFree) (M : Model W Domain Const Pred) :
+theorem support_empty_of_neFree {φ : Formula Var Const Pred}
+    (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     support M φ ∅ :=
-  (support_and_antiSupport_empty_of_isNEFree hNE M).1
+  (support_and_antiSupport_empty_of_neFree hNE M).1
 
 /-! ### Joint downward + sup closure for NE-free formulas -/
 
@@ -126,8 +126,8 @@ theorem support_empty_of_isNEFree {φ : Formula Var Const Pred}
     needs the IH's downward closure for the subformula to weaken
     `t.extendFunctional x h_t` to `(t \ s).extendFunctional x h_t`, so all
     four properties have to live inside one induction. -/
-private theorem support_and_antiSupport_dc_uc_of_isNEFree
-    {φ : Formula Var Const Pred} (hNE : φ.IsNEFree)
+private theorem support_and_antiSupport_dc_uc_of_neFree
+    {φ : Formula Var Const Pred} (hNE : φ.NEFree)
     (M : Model W Domain Const Pred) :
     -- (1) DC support
     (∀ s t : Finset (Index W Var Domain), t ⊆ s → support M φ s → support M φ t) ∧
@@ -346,11 +346,11 @@ private theorem support_and_antiSupport_dc_uc_of_isNEFree
 
 /-- NE-free QBSML formulas are downward-closed ([anttila-2021]
     Proposition 2.2.8 part 1, extended to first-order). -/
-theorem isLowerSet_support_of_isNEFree {φ : Formula Var Const Pred}
-    (hNE : φ.IsNEFree) (M : Model W Domain Const Pred) :
+theorem isLowerSet_support_of_neFree {φ : Formula Var Const Pred}
+    (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     IsLowerSet { t : Finset (Index W Var Domain) | support M φ t } :=
   fun _ _ hab hb =>
-    (support_and_antiSupport_dc_uc_of_isNEFree hNE M).1 _ _ hab hb
+    (support_and_antiSupport_dc_uc_of_neFree hNE M).1 _ _ hab hb
 
 /-- NE-free QBSML formulas have sup-closed support.
 
@@ -358,11 +358,11 @@ theorem isLowerSet_support_of_isNEFree {φ : Formula Var Const Pred}
     QBSML's `exi` UC case needs downward closure of the subformula as IH
     (see the module docstring), so the QBSML version narrows to NE-free.
     The downstream flat corollary consumes NE-free anyway. -/
-theorem supClosed_support_of_isNEFree {φ : Formula Var Const Pred}
-    (hNE : φ.IsNEFree) (M : Model W Domain Const Pred) :
+theorem supClosed_support_of_neFree {φ : Formula Var Const Pred}
+    (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     SupClosed { t : Finset (Index W Var Domain) | support M φ t } :=
   fun _ ha _ hb =>
-    (support_and_antiSupport_dc_uc_of_isNEFree hNE M).2.1 _ _ ha hb
+    (support_and_antiSupport_dc_uc_of_neFree hNE M).2.1 _ _ ha hb
 
 /-! ### Flatness corollary -/
 
@@ -370,13 +370,13 @@ theorem supClosed_support_of_isNEFree {φ : Formula Var Const Pred}
     QBSML formulas are flat. Derived from [anttila-2021] Proposition 2.2.2
     (`Team.isFlat_iff`) applied to the three closure properties
     above. -/
-theorem isFlat_support_of_isNEFree {φ : Formula Var Const Pred}
-    (hNE : φ.IsNEFree) (M : Model W Domain Const Pred) :
+theorem isFlat_support_of_neFree {φ : Formula Var Const Pred}
+    (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     IsFlat { t : Finset (Index W Var Domain) | support M φ t } :=
   isFlat_of_isLowerSet_supClosed_empty
-    (isLowerSet_support_of_isNEFree hNE M)
-    (supClosed_support_of_isNEFree hNE M)
-    (support_empty_of_isNEFree hNE M)
+    (isLowerSet_support_of_neFree hNE M)
+    (supClosed_support_of_neFree hNE M)
+    (support_empty_of_neFree hNE M)
 
 /-! ### Soundness for the flat cell (Definability bridge) -/
 
@@ -394,10 +394,10 @@ theorem isFlat_support_of_isNEFree {φ : Formula Var Const Pred}
     union-closed cell. -/
 theorem soundFor_flat_neFree (M : Model W Domain Const Pred) :
     definableClassWhere (support M)
-      (fun φ : Formula Var Const Pred => φ.IsNEFree) ⊆ flatProperties := by
+      (fun φ : Formula Var Const Pred => φ.NEFree) ⊆ flatProperties := by
   unfold flatProperties
   exact definableClassWhere_subset (C := IsFlat)
-    fun _φ hφ => isFlat_support_of_isNEFree hφ M
+    fun _φ hφ => isFlat_support_of_neFree hφ M
 
 /-! ### Fact 1: classical validities
 
@@ -453,15 +453,15 @@ end Fact1
 /-- Flat (NE-free) support is pointwise: a team supports `φ` iff each of its
     singletons does (`Team.IsFlat` unfolded at the support set). -/
 theorem support_iff_forall_singleton {φ : Formula Var Const Pred}
-    (hNE : φ.IsNEFree) (M : Model W Domain Const Pred)
+    (hNE : φ.NEFree) (M : Model W Domain Const Pred)
     (s : Finset (Index W Var Domain)) :
     support M φ s ↔ ∀ i ∈ s, support M φ {i} :=
-  isFlat_support_of_isNEFree hNE M s
+  isFlat_support_of_neFree hNE M s
 
 /-- Anti-support of an NE-free formula is likewise pointwise: flatness of the
     bilateral negation. -/
 theorem antiSupport_iff_forall_singleton {φ : Formula Var Const Pred}
-    (hNE : φ.IsNEFree) (M : Model W Domain Const Pred)
+    (hNE : φ.NEFree) (M : Model W Domain Const Pred)
     (s : Finset (Index W Var Domain)) :
     antiSupport M φ s ↔ ∀ i ∈ s, antiSupport M φ {i} :=
   support_iff_forall_singleton (.neg hNE) M s
@@ -562,10 +562,10 @@ theorem eval_mapAtoms_iff (M : Model W Domain Const Pred)
 /-- Disjunction introduction: `α ⊨ α ∨ β` for NE-free `β` (the right
     disjunct is supported by the empty half of the split). -/
 theorem support_disj_inl (M : Model W Domain Const Pred)
-    {α β : Formula Var Const Pred} (hβ : β.IsNEFree)
+    {α β : Formula Var Const Pred} (hβ : β.NEFree)
     {s : Finset (Index W Var Domain)} (h : support M α s) :
     support M (.disj α β) s :=
-  ⟨s, ∅, splitsAs_self_empty s, h, support_empty_of_isNEFree hβ M⟩
+  ⟨s, ∅, splitsAs_self_empty s, h, support_empty_of_neFree hβ M⟩
 
 /-- Support of the derived `□` is pointwise support at the full accessible
     lift — definitional, by the `neg`/`poss` clauses of `eval`. -/
@@ -672,9 +672,9 @@ def Formula.toFormula? :
 
 omit [DecidableEq W] [Fintype Var] in
 /-- Translatable formulas are NE-free. -/
-theorem isNEFree_of_toFormula? :
+theorem neFree_of_toFormula? :
     ∀ {φ : Formula Var Const Pred} {ψ : (Language.monadicWithConstants Const Pred).Formula Var},
-      φ.toFormula? = some ψ → φ.IsNEFree := by
+      φ.toFormula? = some ψ → φ.NEFree := by
   intro φ
   induction φ with
   | pred P x => exact fun _ => .pred P x
@@ -838,11 +838,11 @@ private theorem support_and_antiSupport_singleton_realizeAt
           · rintro (h | h)
             · exact ⟨{i}, ∅, Team.splitsAs_self_empty _,
                 ih₁a.mpr h,
-                (support_and_antiSupport_empty_of_isNEFree
-                  (isNEFree_of_toFormula? hφ₂) M).2⟩
+                (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toFormula? hφ₂) M).2⟩
             · exact ⟨∅, {i}, Team.splitsAs_empty_self _,
-                (support_and_antiSupport_empty_of_isNEFree
-                  (isNEFree_of_toFormula? hφ₁) M).2,
+                (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toFormula? hφ₁) M).2,
                 ih₂a.mpr h⟩
   | disj φ₁ φ₂ ih₁ ih₂ =>
     intro ψ hψ i v hv
@@ -873,11 +873,11 @@ private theorem support_and_antiSupport_singleton_realizeAt
           · rintro (h | h)
             · exact ⟨{i}, ∅, Team.splitsAs_self_empty _,
                 ih₁s.mpr h,
-                (support_and_antiSupport_empty_of_isNEFree
-                  (isNEFree_of_toFormula? hφ₂) M).1⟩
+                (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toFormula? hφ₂) M).1⟩
             · exact ⟨∅, {i}, Team.splitsAs_empty_self _,
-                (support_and_antiSupport_empty_of_isNEFree
-                  (isNEFree_of_toFormula? hφ₁) M).1,
+                (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toFormula? hφ₁) M).1,
                 ih₂s.mpr h⟩
         · rw [KripkeStructure.realizeAt_sup, not_or]
           exact and_congr ih₁a ih₂a
@@ -889,7 +889,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
       simp only [Formula.toFormula?, hφ] at hψ
       rw [Option.map_some, Option.some.injEq] at hψ
       subst hψ
-      have hNE : φ.IsNEFree := isNEFree_of_toFormula? hφ
+      have hNE : φ.NEFree := neFree_of_toFormula? hφ
       constructor
       · rw [KripkeStructure.realizeAt_ex₁]
         constructor
@@ -931,7 +931,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
       simp only [Formula.toFormula?, hφ] at hψ
       rw [Option.map_some, Option.some.injEq] at hψ
       subst hψ
-      have hNE : φ.IsNEFree := isNEFree_of_toFormula? hφ
+      have hNE : φ.NEFree := neFree_of_toFormula? hφ
       constructor
       · rw [KripkeStructure.realizeAt_all₁]
         show support M φ (State.extendUniversal {i} x) ↔ _
@@ -998,7 +998,7 @@ theorem support_iff_forall_realizeAt (M : Model W Domain Const Pred)
     (v : Index W Var Domain → Var → Domain)
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
     support M φ s ↔ ∀ i ∈ s, M.RealizeAt i.world ψ (v i) := by
-  rw [support_iff_forall_singleton (isNEFree_of_toFormula? hψ)]
+  rw [support_iff_forall_singleton (neFree_of_toFormula? hψ)]
   exact forall₂_congr fun i hi =>
     support_singleton_iff_realizeAt M hψ (hv i hi)
 
@@ -1032,10 +1032,10 @@ def Formula.toModal? :
 
 omit [DecidableEq W] [DecidableEq Var] [Fintype Var] in
 /-- Modally translatable formulas are NE-free. -/
-theorem isNEFree_of_toModal? :
+theorem neFree_of_toModal? :
     ∀ {φ : Formula Var Const Pred}
       {τ : ModalFormula (Language.monadicWithConstants Const Pred) Var},
-      φ.toModal? = some τ → φ.IsNEFree := by
+      φ.toModal? = some τ → φ.NEFree := by
   intro φ
   induction φ with
   | pred P x => exact fun _ => .pred P x
@@ -1080,10 +1080,10 @@ theorem isNEFree_of_toModal? :
 
 omit [DecidableEq W] [DecidableEq Var] [Fintype Var] in
 /-- The modal translation is total on the NE-free fragment: together with
-    `isNEFree_of_toModal?`, the translatable and NE-free fragments
+    `neFree_of_toModal?`, the translatable and NE-free fragments
     coincide. -/
-theorem exists_toModal?_of_isNEFree :
-    ∀ {φ : Formula Var Const Pred}, φ.IsNEFree →
+theorem exists_toModal?_of_neFree :
+    ∀ {φ : Formula Var Const Pred}, φ.NEFree →
       ∃ τ, φ.toModal? = some τ := by
   intro φ h
   induction h with
@@ -1222,11 +1222,11 @@ private theorem support_and_antiSupport_singleton_realize
           · rintro (h | h)
             · exact ⟨{i}, ∅, Team.splitsAs_self_empty _,
                 ih₁a.mpr h,
-                (support_and_antiSupport_empty_of_isNEFree
-                  (isNEFree_of_toModal? hφ₂) M).2⟩
+                (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toModal? hφ₂) M).2⟩
             · exact ⟨∅, {i}, Team.splitsAs_empty_self _,
-                (support_and_antiSupport_empty_of_isNEFree
-                  (isNEFree_of_toModal? hφ₁) M).2,
+                (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toModal? hφ₁) M).2,
                 ih₂a.mpr h⟩
   | disj φ₁ φ₂ ih₁ ih₂ =>
     intro τ hτ i v hv
@@ -1258,11 +1258,11 @@ private theorem support_and_antiSupport_singleton_realize
           · rintro (h | h)
             · exact ⟨{i}, ∅, Team.splitsAs_self_empty _,
                 ih₁s.mpr h,
-                (support_and_antiSupport_empty_of_isNEFree
-                  (isNEFree_of_toModal? hφ₂) M).1⟩
+                (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toModal? hφ₂) M).1⟩
             · exact ⟨∅, {i}, Team.splitsAs_empty_self _,
-                (support_and_antiSupport_empty_of_isNEFree
-                  (isNEFree_of_toModal? hφ₁) M).1,
+                (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toModal? hφ₁) M).1,
                 ih₂s.mpr h⟩
         · rw [ModalFormula.realize_sup, not_or]
           exact and_congr ih₁a ih₂a
@@ -1274,7 +1274,7 @@ private theorem support_and_antiSupport_singleton_realize
       simp only [Formula.toModal?, hφ] at hτ
       rw [Option.map_some, Option.some.injEq] at hτ
       subst hτ
-      have hNE : φ.IsNEFree := isNEFree_of_toModal? hφ
+      have hNE : φ.NEFree := neFree_of_toModal? hφ
       constructor
       · rw [ModalFormula.realize_dia]
         constructor
@@ -1317,7 +1317,7 @@ private theorem support_and_antiSupport_singleton_realize
       simp only [Formula.toModal?, hφ] at hτ
       rw [Option.map_some, Option.some.injEq] at hτ
       subst hτ
-      have hNE : φ.IsNEFree := isNEFree_of_toModal? hφ
+      have hNE : φ.NEFree := neFree_of_toModal? hφ
       constructor
       · rw [ModalFormula.realize_ex]
         constructor
@@ -1359,7 +1359,7 @@ private theorem support_and_antiSupport_singleton_realize
       simp only [Formula.toModal?, hφ] at hτ
       rw [Option.map_some, Option.some.injEq] at hτ
       subst hτ
-      have hNE : φ.IsNEFree := isNEFree_of_toModal? hφ
+      have hNE : φ.NEFree := neFree_of_toModal? hφ
       constructor
       · rw [ModalFormula.realize_all]
         show support M φ (State.extendUniversal {i} x) ↔ _
@@ -1428,7 +1428,7 @@ theorem support_iff_forall_realize (M : Model W Domain Const Pred)
     (v : Index W Var Domain → Var → Domain)
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
     support M φ s ↔ ∀ i ∈ s, τ.Realize M i.world (v i) := by
-  rw [support_iff_forall_singleton (isNEFree_of_toModal? hτ)]
+  rw [support_iff_forall_singleton (neFree_of_toModal? hτ)]
   exact forall₂_congr fun i hi =>
     support_singleton_iff_realize M hτ (hv i hi)
 
