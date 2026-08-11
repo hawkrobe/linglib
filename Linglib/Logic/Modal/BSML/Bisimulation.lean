@@ -7,14 +7,14 @@ import Linglib.Logic.Modal.Bisimulation
 The carrier-level bisimulation substrate (`WorldBisim`, `StateBisim`, and
 the Lemma 3.7 transport lemmas of [aloni-anttila-yang-2024]) lives in
 `Logic/Modal/Bisimulation.lean`, shared across the modal team logics. This
-file specialises it to BSML: the modal-depth measure on `BSMLFormula` and
+file specialises it to BSML: the modal-depth measure on `Formula` and
 the invariance result (Theorem 3.8) for BSML's bilateral evaluation, which
 the [anttila-2025] expressive-completeness development consumes in
 `BSML/ExpressiveCompleteness.lean`.
 
 ## Main declarations
 
-* `BSMLFormula.modalDepth` — modal depth (page 9): atoms/NE are 0,
+* `Formula.modalDepth` — modal depth (page 9): atoms/NE are 0,
   `conj`/`disj` take max, `poss` increments.
 * `bisim_invariant_eval` — Theorem 3.8 for BSML: `k`-bisimilar states agree
   on `eval` for all formulas of modal depth `≤ k`, for both polarities.
@@ -48,10 +48,10 @@ variable {Atom : Type*}
 
 /-! ### Modal depth -/
 
-/-- Modal depth of a `BSMLFormula` (page 9 of [aloni-anttila-yang-2024]).
+/-- Modal depth of a `Formula` (page 9 of [aloni-anttila-yang-2024]).
     Atoms and `NE` are 0; `neg` preserves depth; `conj` and `disj` take
     the max; `poss` increments. -/
-def BSMLFormula.modalDepth : BSMLFormula Atom → ℕ
+def Formula.modalDepth : Formula Atom → ℕ
   | .atom _ => 0
   | .ne => 0
   | .neg ψ => ψ.modalDepth
@@ -62,7 +62,7 @@ def BSMLFormula.modalDepth : BSMLFormula Atom → ℕ
 /-! ### Theorem 3.8: bisimulation invariance for BSML -/
 
 /-- **Theorem 3.8** of [aloni-anttila-yang-2024] specialised to BSML:
-    if `s ⇌_k s'` and `φ : BSMLFormula Atom` has modal depth `≤ k`, then
+    if `s ⇌_k s'` and `φ : Formula Atom` has modal depth `≤ k`, then
     `eval M b φ s ↔ eval M' b φ s'` for both polarities.
 
     Proved by structural induction on `φ`, with both polarities handled
@@ -71,8 +71,8 @@ def BSMLFormula.modalDepth : BSMLFormula Atom → ℕ
     `WorldBisim.accessStateBisim`; conjunction and disjunction use
     Lemma 3.7(ii) for the split-existential clauses (conj-antiSupport
     and disj-support). -/
-theorem bisim_invariant_eval {M : BSMLModel W Atom} {M' : BSMLModel W' Atom}
-    (φ : BSMLFormula Atom) {k : ℕ} (hd : φ.modalDepth ≤ k)
+theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
+    (φ : Formula Atom) {k : ℕ} (hd : φ.modalDepth ≤ k)
     {s : Finset W} {s' : Finset W'} (hbisim : StateBisim k M s M' s')
     (b : Bool) : eval M b φ s ↔ eval M' b φ s' := by
   induction φ generalizing k s s' b with

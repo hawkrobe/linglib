@@ -25,6 +25,8 @@ team semantics restricted to singleton teams.
 
 namespace BSML
 
+open Modal (KripkeModel)
+
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
 -- ============================================================================
@@ -34,7 +36,7 @@ variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 /-- Classical (Kripke) evaluation of a BSML formula at a single world.
     ∨ is pointwise, ◇ is existential, □ is universal — no team splitting.
     NE evaluates to true (singletons are non-empty). -/
-def classicalEval (M : BSMLModel W Atom) (φ : BSMLFormula Atom) (w : W) : Bool :=
+def classicalEval (M : KripkeModel W Atom) (φ : Formula Atom) (w : W) : Bool :=
   match φ with
   | .atom p => M.val p w
   | .ne => true
@@ -50,16 +52,16 @@ def classicalEval (M : BSMLModel W Atom) (φ : BSMLFormula Atom) (w : W) : Bool 
 set_option maxHeartbeats 800000 in
 /-- For NE-free formulas, support and anti-support decompose pointwise over
     team members in terms of classical evaluation. -/
-private theorem neFree_flat_eq (M : BSMLModel W Atom)
-    (φ : BSMLFormula Atom) (t : Finset W)
+private theorem neFree_flat_eq (M : KripkeModel W Atom)
+    (φ : Formula Atom) (t : Finset W)
     (hNE : φ.isNEFree = true) :
     (support M φ t ↔ ∀ w ∈ t, classicalEval M φ w = true) ∧
     (antiSupport M φ t ↔ ∀ w ∈ t, classicalEval M φ w = false) := by
   induction φ generalizing t with
   | atom p => exact ⟨Iff.rfl, Iff.rfl⟩
-  | ne => simp [BSMLFormula.isNEFree] at hNE
+  | ne => simp [Formula.isNEFree] at hNE
   | neg ψ ih =>
-    have hNE' := by simp [BSMLFormula.isNEFree] at hNE; exact hNE
+    have hNE' := by simp [Formula.isNEFree] at hNE; exact hNE
     have ⟨ih_s, ih_a⟩ := ih t hNE'
     constructor
     · -- support of ¬ψ = antiSupport of ψ
@@ -69,8 +71,8 @@ private theorem neFree_flat_eq (M : BSMLModel W Atom)
       simp only [classicalEval, Bool.not_eq_false']
       exact ih_s
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hψ₁ := by simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
-    have hψ₂ := by simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+    have hψ₁ := by simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
+    have hψ₂ := by simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
     constructor
     · -- support of ψ₁ ∧ ψ₂ = ∀ w ∈ t, classicalEval (ψ₁ ∧ ψ₂) w
       simp only [classicalEval, Bool.and_eq_true]
@@ -107,8 +109,8 @@ private theorem neFree_flat_eq (M : BSMLModel W Atom)
             | inl h => simp [hce] at h
             | inr h => exact h)
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hψ₁ := by simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
-    have hψ₂ := by simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+    have hψ₁ := by simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
+    have hψ₂ := by simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
     constructor
     · -- support of ψ₁ ∨ ψ₂ (SPLIT) = ∀ w ∈ t, ce ψ₁ w ∨ ce ψ₂ w
       simp only [classicalEval, Bool.or_eq_true]
@@ -143,7 +145,7 @@ private theorem neFree_flat_eq (M : BSMLModel W Atom)
              fun h => ⟨(ih₁ t hψ₁).2.mpr (fun w hw => (h w hw).1),
                        (ih₂ t hψ₂).2.mpr (fun w hw => (h w hw).2)⟩⟩
   | poss ψ ih =>
-    have hNE' := by simp [BSMLFormula.isNEFree] at hNE; exact hNE
+    have hNE' := by simp [Formula.isNEFree] at hNE; exact hNE
     constructor
     · -- support of ◇ψ ↔ ∀ w ∈ t, ∃ v ∈ R[w], ce ψ v = true
       simp only [classicalEval]
@@ -185,8 +187,8 @@ Classical Collapse (Fact 15 from [aloni-2022]).
 For NE-free formulas, BSML support on a singleton team equals classical
 Kripke evaluation.
 -/
-theorem classicalCollapse (M : BSMLModel W Atom)
-    (φ : BSMLFormula Atom) (w : W)
+theorem classicalCollapse (M : KripkeModel W Atom)
+    (φ : Formula Atom) (w : W)
     (hNE : φ.isNEFree = true) :
     support M φ {w} ↔ classicalEval M φ w = true := by
   rw [(neFree_flat_eq M φ {w} hNE).1]
@@ -194,8 +196,8 @@ theorem classicalCollapse (M : BSMLModel W Atom)
 
 /-- Anti-support collapse: singleton anti-support equals negation of
     classical evaluation. -/
-theorem classicalCollapseAnti (M : BSMLModel W Atom)
-    (φ : BSMLFormula Atom) (w : W)
+theorem classicalCollapseAnti (M : KripkeModel W Atom)
+    (φ : Formula Atom) (w : W)
     (hNE : φ.isNEFree = true) :
     antiSupport M φ {w} ↔ classicalEval M φ w = false := by
   rw [(neFree_flat_eq M φ {w} hNE).2]
@@ -207,8 +209,8 @@ theorem classicalCollapseAnti (M : BSMLModel W Atom)
 
 /-- NE-free formulas have flat support: team support = pointwise classical
     evaluation on all members. -/
-theorem neFree_flat (M : BSMLModel W Atom)
-    (φ : BSMLFormula Atom) (t : Finset W)
+theorem neFree_flat (M : KripkeModel W Atom)
+    (φ : Formula Atom) (t : Finset W)
     (hNE : φ.isNEFree = true) :
     support M φ t ↔ ∀ w ∈ t, classicalEval M φ w = true :=
   (neFree_flat_eq M φ t hNE).1
@@ -222,7 +224,7 @@ open Modal (diamond)
 /-!
 ### Accessibility Type Bridge
 
-`BSMLModel.access : W → Finset W` can be converted to a Prop-valued
+`KripkeModel.access : W → Finset W` can be converted to a Prop-valued
 `AccessRel W = W → W → Prop` via `fun w v => v ∈ M.access w`, which is the
 canonical accessibility-relation type in
 `Intensional`.
@@ -230,7 +232,7 @@ canonical accessibility-relation type in
 
 /-- Convert BSML accessibility (`Finset`-valued) to a classical Prop-valued
     accessibility relation. -/
-def BSMLModel.toAccessRel (M : BSMLModel W Atom) :
+def _root_.Modal.KripkeModel.toAccessRel (M : KripkeModel W Atom) :
     Modal.AccessRel W :=
   fun w v => v ∈ M.access w
 
@@ -238,9 +240,9 @@ def BSMLModel.toAccessRel (M : BSMLModel W Atom) :
     connecting BSML's classical evaluation to the shared modal logic
     infrastructure from `Intensional`. -/
 theorem classicalEval_agrees_diamond_poss
-    (M : BSMLModel W Atom) (φ : BSMLFormula Atom) (w : W) :
+    (M : KripkeModel W Atom) (φ : Formula Atom) (w : W) :
     classicalEval M (.poss φ) w = true ↔
     diamond M.toAccessRel (fun v => classicalEval M φ v = true) w := by
-  simp only [classicalEval, decide_eq_true_eq, diamond, BSMLModel.toAccessRel]
+  simp only [classicalEval, decide_eq_true_eq, diamond, Modal.KripkeModel.toAccessRel]
 
 end BSML

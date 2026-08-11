@@ -84,7 +84,7 @@ structure IsBilateral
     original values. This does NOT imply `negate (negate φ) = φ`
     syntactically; it implies the *interpretations agree*. Consumers
     where `negate (negate φ) = φ` syntactically (e.g., BSML's
-    `BSMLFormula.neg`) can derive the syntactic involution separately. -/
+    `BSML.Formula.neg`) can derive the syntactic involution separately. -/
 theorem IsBilateral.positive_negate_negate
     {positive negative : Form → Result} {negate : Form → Form}
     (h : IsBilateral positive negative negate) (φ : Form) :

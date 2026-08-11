@@ -501,7 +501,7 @@ dual `.neg` form where it differs). Each proof discharges the
 
 These are the building blocks for proving compactness of any specific
 `BilatInqProp` formula. (The fully general statement for arbitrary
-formulas requires an inductive `BSMLFormula` type with an interpretation
+formulas requires an inductive `BSML.Formula` type with an interpretation
 function; that's deferred.) -/
 
 /-- Compactness equation for `atom V`'s positive interpretation.

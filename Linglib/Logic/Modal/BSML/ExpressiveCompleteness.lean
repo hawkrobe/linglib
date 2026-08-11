@@ -48,24 +48,24 @@ variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
     `k` it is closed under `k`-bisimulation of teams within `M`. This is the
     closure invariant — alongside convexity and union closure — that
     characterises BSML-definability ([anttila-2025] Ch 3). -/
-def BisimClosed (M : BSMLModel W Atom) (P : TeamProperty W) : Prop :=
+def BisimClosed (M : KripkeModel W Atom) (P : TeamProperty W) : Prop :=
   ∃ k : ℕ, ∀ s s' : Finset W, StateBisim k M s M s' → (s ∈ P ↔ s' ∈ P)
 
 /-- The class of bounded-bisimulation-closed team properties of `M`. -/
-def bisimClosedProperties (M : BSMLModel W Atom) : Set (TeamProperty W) :=
+def bisimClosedProperties (M : KripkeModel W Atom) : Set (TeamProperty W) :=
   { P | BisimClosed M P }
 
 /-- **BSML support is bounded-bisimulation invariant within a model**: if
     `s ⇌_k s'` and `k ≥ φ.modalDepth`, then `s` and `s'` agree on `φ`. Immediate
     from Theorem 3.8 (`bisim_invariant_eval`) at `M' := M`. -/
-theorem bisimInvariant_support (M : BSMLModel W Atom) (φ : BSMLFormula Atom)
+theorem bisimInvariant_support (M : KripkeModel W Atom) (φ : Formula Atom)
     {k : ℕ} (hd : φ.modalDepth ≤ k) {s s' : Finset W}
     (h : StateBisim k M s M s') : support M φ s ↔ support M φ s' :=
   bisim_invariant_eval φ hd h true
 
 /-- Every BSML-definable team property is bounded-bisimulation-closed, with
     witnessing depth the formula's modal depth. -/
-theorem bisimClosed_definedBy (M : BSMLModel W Atom) (φ : BSMLFormula Atom) :
+theorem bisimClosed_definedBy (M : KripkeModel W Atom) (φ : Formula Atom) :
     BisimClosed M (definedBy (support M) φ) :=
   ⟨φ.modalDepth, fun _ _ h => bisimInvariant_support M φ le_rfl h⟩
 
@@ -74,7 +74,7 @@ theorem bisimClosed_definedBy (M : BSMLModel W Atom) (φ : BSMLFormula Atom) :
 /-- **Soundness half** ([anttila-2025] Ch 3): every BSML-definable team
     property is convex, union-closed, and bounded-bisimulation-closed. Assembles
     `ordConnected_support`, `supClosed_support`, and `bisimClosed_definedBy`. -/
-theorem expressiveSoundness (M : BSMLModel W Atom) :
+theorem expressiveSoundness (M : KripkeModel W Atom) :
     definableClass (support M) ⊆
       convexProperties ∩ unionClosedProperties ∩ bisimClosedProperties M := by
   intro P hP
@@ -96,7 +96,7 @@ theorem expressiveSoundness (M : BSMLModel W Atom) :
     with `NE` (the convex + union-closed normal form — the converse of
     Proposition 3.3.1). This is the within-model specialisation of Anttila's
     cross-model theorem. -/
-theorem expressiveCompleteness_converse (M : BSMLModel W Atom) :
+theorem expressiveCompleteness_converse (M : KripkeModel W Atom) :
     convexProperties ∩ unionClosedProperties ∩ bisimClosedProperties M ⊆
       definableClass (support M) := by
   sorry
@@ -104,7 +104,7 @@ theorem expressiveCompleteness_converse (M : BSMLModel W Atom) :
 /-- **BSML is expressively complete** for the convex, union-closed,
     bounded-bisimulation-closed team properties ([anttila-2025] Ch 3).
     Inherits the `sorry` of `expressiveCompleteness_converse`. -/
-theorem expressivelyComplete (M : BSMLModel W Atom) :
+theorem expressivelyComplete (M : KripkeModel W Atom) :
     ExpressivelyCompleteFor (support M)
       (convexProperties ∩ unionClosedProperties ∩ bisimClosedProperties M) :=
   Set.Subset.antisymm (expressiveSoundness M) (expressiveCompleteness_converse M)

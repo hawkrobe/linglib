@@ -20,7 +20,7 @@ exactly the NE-free fragment.
 
 ## Main declarations
 
-* `BSMLFormula.bot`, `BSMLFormula.botbot` — the weak contradiction `p ∧ ¬p`
+* `Formula.bot`, `Formula.botbot` — the weak contradiction `p ∧ ¬p`
   ([aloni-2022]'s definition; the paper takes `⊥` as primitive only to
   simplify exposition) and the strong contradiction `⊥ ∧ NE`.
 * `support_bot_iff` — `⊥` is supported exactly by the empty team.
@@ -35,7 +35,7 @@ exactly the NE-free fragment.
 
 ## Implementation notes
 
-* `BSMLFormula` has no `⊥` primitive (and `eval`'s shape is load-bearing
+* `Formula` has no `⊥` primitive (and `eval`'s shape is load-bearing
   downstream), so rules mentioning `⊥` are parameterized by a witness atom
   `p`; `support_bot_iff` shows support is `p`-independent.
 * The three `⊥NETrs` substitution rules completing the full BSML system
@@ -48,6 +48,8 @@ exactly the NE-free fragment.
 
 namespace BSML
 
+open Modal (KripkeModel)
+
 open Team
 
 variable {Atom : Type*} {W : Type*} [DecidableEq W] [Fintype W]
@@ -56,15 +58,15 @@ variable {Atom : Type*} {W : Type*} [DecidableEq W] [Fintype W]
 
 /-- The weak contradiction `⊥ := p ∧ ¬p` ([aloni-2022]; supported exactly by
     the empty team, for every choice of `p` — `support_bot_iff`). -/
-def BSMLFormula.bot (p : Atom) : BSMLFormula Atom :=
+def Formula.bot (p : Atom) : Formula Atom :=
   .conj (.atom p) (.neg (.atom p))
 
 /-- The strong contradiction `⊥⊥ := ⊥ ∧ NE` (supported by no team). -/
-def BSMLFormula.botbot (p : Atom) : BSMLFormula Atom :=
+def Formula.botbot (p : Atom) : Formula Atom :=
   .conj (.bot p) .ne
 
-theorem support_bot_iff (M : BSMLModel W Atom) (p : Atom) (s : Finset W) :
-    support M (BSMLFormula.bot p) s ↔ s = ∅ := by
+theorem support_bot_iff (M : KripkeModel W Atom) (p : Atom) (s : Finset W) :
+    support M (Formula.bot p) s ↔ s = ∅ := by
   constructor
   · rintro ⟨hpos, hneg⟩
     refine Finset.eq_empty_iff_forall_notMem.mpr (fun w hw => ?_)
@@ -74,8 +76,8 @@ theorem support_bot_iff (M : BSMLModel W Atom) (p : Atom) (s : Finset W) :
   · rintro rfl
     exact ⟨fun w hw => absurd hw (by simp), fun w hw => absurd hw (by simp)⟩
 
-theorem not_support_botbot (M : BSMLModel W Atom) (p : Atom) (s : Finset W) :
-    ¬ support M (BSMLFormula.botbot p) s := by
+theorem not_support_botbot (M : KripkeModel W Atom) (p : Atom) (s : Finset W) :
+    ¬ support M (Formula.botbot p) s := by
   rintro ⟨hbot, hne⟩
   have hs : s = ∅ := (support_bot_iff M p s).mp hbot
   subst hs
@@ -91,8 +93,8 @@ is NE-free exactly when `φ` is. -/
 
 /-- NE-free formulas cannot be both supported and anti-supported on a
     nonempty team. -/
-theorem eq_empty_of_support_antiSupport {φ : BSMLFormula Atom}
-    (hNE : φ.isNEFree = true) (M : BSMLModel W Atom) :
+theorem eq_empty_of_support_antiSupport {φ : Formula Atom}
+    (hNE : φ.isNEFree = true) (M : KripkeModel W Atom) :
     ∀ s : Finset W, support M φ s → antiSupport M φ s → s = ∅ := by
   induction φ with
   | atom p =>
@@ -101,15 +103,15 @@ theorem eq_empty_of_support_antiSupport {φ : BSMLFormula Atom}
     have h1 := hs w hw
     have h2 := ha w hw
     simp [h1] at h2
-  | ne => simp [BSMLFormula.isNEFree] at hNE
+  | ne => simp [Formula.isNEFree] at hNE
   | neg ψ ih =>
     intro s hs ha
     exact ih hNE s ha hs
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     have h₁ : ψ₁.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
     have h₂ : ψ₂.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
     rintro s ⟨hs₁, hs₂⟩ ⟨t₁, t₂, hsp, ha₁, ha₂⟩
     have hsub₁ : t₁ ⊆ s := hsp ▸ Finset.subset_union_left
     have hsub₂ : t₂ ⊆ s := hsp ▸ Finset.subset_union_right
@@ -118,9 +120,9 @@ theorem eq_empty_of_support_antiSupport {φ : BSMLFormula Atom}
     rw [← hsp, he₁, he₂, Finset.union_empty]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     have h₁ : ψ₁.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
     have h₂ : ψ₂.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
     rintro s ⟨t₁, t₂, hsp, hs₁, hs₂⟩ ⟨ha₁, ha₂⟩
     have hsub₁ : t₁ ⊆ s := hsp ▸ Finset.subset_union_left
     have hsub₂ : t₂ ⊆ s := hsp ▸ Finset.subset_union_right
@@ -141,8 +143,8 @@ theorem eq_empty_of_support_antiSupport {φ : BSMLFormula Atom}
 
 /-- **Bilateral determinacy on singletons** for NE-free formulas: every
     singleton team supports or anti-supports. -/
-theorem support_singleton_or_antiSupport_singleton {φ : BSMLFormula Atom}
-    (hNE : φ.isNEFree = true) (M : BSMLModel W Atom) :
+theorem support_singleton_or_antiSupport_singleton {φ : Formula Atom}
+    (hNE : φ.isNEFree = true) (M : KripkeModel W Atom) :
     ∀ w : W, support M φ {w} ∨ antiSupport M φ {w} := by
   induction φ with
   | atom p =>
@@ -150,13 +152,13 @@ theorem support_singleton_or_antiSupport_singleton {φ : BSMLFormula Atom}
     cases h : M.val p w with
     | true => exact Or.inl (fun v hv => by rw [Finset.mem_singleton] at hv; rw [hv, h])
     | false => exact Or.inr (fun v hv => by rw [Finset.mem_singleton] at hv; rw [hv, h])
-  | ne => simp [BSMLFormula.isNEFree] at hNE
+  | ne => simp [Formula.isNEFree] at hNE
   | neg ψ ih => exact fun w => (ih hNE w).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     have h₁ : ψ₁.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
     have h₂ : ψ₂.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
     intro w
     rcases ih₁ h₁ w with hs₁ | ha₁
     · rcases ih₂ h₂ w with hs₂ | ha₂
@@ -167,9 +169,9 @@ theorem support_singleton_or_antiSupport_singleton {φ : BSMLFormula Atom}
         support_empty_of_isNEFree (φ := .neg ψ₂) h₂ M⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     have h₁ : ψ₁.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.1
     have h₂ : ψ₂.isNEFree = true := by
-      simp only [BSMLFormula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
+      simp only [Formula.isNEFree, Bool.and_eq_true] at hNE; exact hNE.2
     intro w
     rcases ih₁ h₁ w with hs₁ | ha₁
     · exact Or.inl ⟨{w}, ∅, by simp, hs₁, support_empty_of_isNEFree h₂ M⟩
@@ -203,9 +205,9 @@ theorem support_singleton_or_antiSupport_singleton {φ : BSMLFormula Atom}
     (`weaken` is the formal counterpart of the paper's "derivable *from
     formulas in* Φ"), so NE-freeness side conditions on subderivation
     contexts match the paper's conditions on undischarged assumptions.
-    Rules mentioning `⊥` carry a witness atom `p` (`BSMLFormula.bot`). -/
+    Rules mentioning `⊥` carry a witness atom `p` (`Formula.bot`). -/
 inductive Derives :
-    Set (BSMLFormula Atom) → BSMLFormula Atom → Prop where
+    Set (Formula Atom) → Formula Atom → Prop where
   /-- Assumption. -/
   | hyp (φ) : Derives {φ} φ
   /-- Weakening (the paper's subset-closure of `Φ ⊢ ψ`). -/
@@ -219,7 +221,7 @@ inductive Derives :
   | conjE₂ {Γ φ ψ} : Derives Γ (.conj φ ψ) → Derives Γ ψ
   /-- `¬I`: classical `α`, NE-free undischarged assumptions. -/
   | negI {Γ α} (p : Atom) : α.isNEFree = true →
-      (∀ γ ∈ Γ, BSMLFormula.isNEFree γ = true) →
+      (∀ γ ∈ Γ, Formula.isNEFree γ = true) →
       Derives (insert α Γ) (.bot p) → Derives Γ (.neg α)
   /-- `¬E`: ex falso for the classical fragment. -/
   | negE {Γ₁ Γ₂ α β} : α.isNEFree = true → β.isNEFree = true →
@@ -257,13 +259,13 @@ inductive Derives :
   /-- `∨E`: NE-free subderivation contexts (the `⫶`-freeness condition on
       `χ` is vacuous in the `⫶`-free language). -/
   | disjE {Γ Δ₁ Δ₂ φ ψ χ} :
-      (∀ γ ∈ Δ₁, BSMLFormula.isNEFree γ = true) →
-      (∀ γ ∈ Δ₂, BSMLFormula.isNEFree γ = true) →
+      (∀ γ ∈ Δ₁, Formula.isNEFree γ = true) →
+      (∀ γ ∈ Δ₂, Formula.isNEFree γ = true) →
       Derives Γ (.disj φ ψ) → Derives (insert φ Δ₁) χ →
       Derives (insert ψ Δ₂) χ → Derives (Γ ∪ Δ₁ ∪ Δ₂) χ
   /-- `∨Mon`: NE-free subderivation context. -/
   | disjMon {Γ Δ φ ψ χ} :
-      (∀ γ ∈ Δ, BSMLFormula.isNEFree γ = true) →
+      (∀ γ ∈ Δ, Formula.isNEFree γ = true) →
       Derives Γ (.disj φ ψ) → Derives (insert ψ Δ) χ →
       Derives (Γ ∪ Δ) (.disj φ χ)
   /-- `⊥E`. -/
@@ -276,14 +278,14 @@ inductive Derives :
       Derives Γ (.poss ψ)
   /-- `□Mon` (finitary): the subderivation's undischarged assumptions are
       among the boxed premises. -/
-  | necMon {Γ ψ} (φs : List (BSMLFormula Atom)) :
-      Derives {δ | δ ∈ φs} ψ → (∀ δ ∈ φs, Derives Γ (BSMLFormula.nec δ)) →
-      Derives Γ (BSMLFormula.nec ψ)
+  | necMon {Γ ψ} (φs : List (Formula Atom)) :
+      Derives {δ | δ ∈ φs} ψ → (∀ δ ∈ φs, Derives Γ (Formula.nec δ)) →
+      Derives Γ (Formula.nec ψ)
   /-- `Inter◇□` (downward half). -/
   | interE {Γ φ} : Derives Γ (.neg (.poss φ)) →
-      Derives Γ (BSMLFormula.nec (.neg φ))
+      Derives Γ (Formula.nec (.neg φ))
   /-- `Inter◇□` (upward half). -/
-  | interI {Γ φ} : Derives Γ (BSMLFormula.nec (.neg φ)) →
+  | interI {Γ φ} : Derives Γ (Formula.nec (.neg φ)) →
       Derives Γ (.neg (.poss φ))
   /-- `◇Sep` (FC-entailment for pragmatically enriched formulas). -/
   | possSep {Γ φ ψ} : Derives Γ (.poss (.disj φ (.conj ψ .ne))) →
@@ -292,12 +294,12 @@ inductive Derives :
   | possJoin {Γ₁ Γ₂ φ ψ} : Derives Γ₁ (.poss φ) → Derives Γ₂ (.poss ψ) →
       Derives (Γ₁ ∪ Γ₂) (.poss (.disj φ ψ))
   /-- `□Inst`: `□` implies `◇` when accessible worlds exist. -/
-  | necInst {Γ φ} : Derives Γ (BSMLFormula.nec (.conj φ .ne)) →
+  | necInst {Γ φ} : Derives Γ (Formula.nec (.conj φ .ne)) →
       Derives Γ (.poss φ)
   /-- `□◇Join`. -/
-  | necPossJoin {Γ₁ Γ₂ φ ψ} : Derives Γ₁ (BSMLFormula.nec φ) →
+  | necPossJoin {Γ₁ Γ₂ φ ψ} : Derives Γ₁ (Formula.nec φ) →
       Derives Γ₂ (.poss ψ) →
-      Derives (Γ₁ ∪ Γ₂) (BSMLFormula.nec (.disj φ ψ))
+      Derives (Γ₁ ∪ Γ₂) (Formula.nec (.disj φ ψ))
 
 /-! ### Soundness -/
 
@@ -308,8 +310,8 @@ inductive Derives :
     (`isLowerSet_support_of_isNEFree`) for discharging side-conditioned
     contexts on sub-teams, and unrestricted union closure
     (`supClosed_support`) for reassembling `∨E`'s conclusion. -/
-theorem soundness {Γ : Set (BSMLFormula Atom)} {φ : BSMLFormula Atom}
-    (h : Derives Γ φ) (M : BSMLModel W Atom) :
+theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
+    (h : Derives Γ φ) (M : KripkeModel W Atom) :
     ∀ s : Finset W, (∀ γ ∈ Γ, support M γ s) → support M φ s := by
   induction h with
   | hyp φ =>
@@ -446,8 +448,8 @@ theorem soundness {Γ : Set (BSMLFormula Atom)} {φ : BSMLFormula Atom}
     the disjuncts, and one `◇Sep` extracts each conjunct-possibility — the
     proof-theoretic counterpart of [aloni-2022]'s FC-entailment, here for the
     right disjunct. `soundness` transports it to team-semantic consequence. -/
-example (φ ψ : BSMLFormula Atom) :
-    Derives {BSMLFormula.poss (.disj φ (.conj ψ .ne))} (.poss ψ) :=
+example (φ ψ : Formula Atom) :
+    Derives {Formula.poss (.disj φ (.conj ψ .ne))} (.poss ψ) :=
   .possSep (.hyp _)
 
 end BSML
