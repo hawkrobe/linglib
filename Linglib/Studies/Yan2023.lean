@@ -36,7 +36,7 @@ deferred to the dissertation's Chapter 5).
 
 * `reinterpret` — Yan's reinterpretation function `∥·∥_P` (Definition 32),
   an instance of `Formula.mapAtoms`.
-* `reinterpret_isNEFree`, `eval_reinterpret_iff` — reinterpretation stays
+* `reinterpret_neFree`, `eval_reinterpret_iff` — reinterpretation stays
   NE-free and is bilaterally equivalent to the original (substitution
   *salva veritate*; the classical equivalence of `Qx` and
   `(Px ∧ Qx) ∨ (¬Px ∧ Qx)` lifted to team semantics).
@@ -123,17 +123,17 @@ theorem reinterpret_predc (Q : Pred) (c : Const) :
   rfl
 
 /-- Reinterpretation preserves NE-freeness. -/
-theorem reinterpret_isNEFree {φ : Formula Var Const Pred}
-    (h : φ.IsNEFree) : (reinterpret sub P φ).IsNEFree :=
+theorem reinterpret_neFree {φ : Formula Var Const Pred}
+    (h : φ.NEFree) : (reinterpret sub P φ).NEFree :=
   h.mapAtoms
     (fun Q x => by
-      show Formula.IsNEFree (if sub P Q then _ else _)
+      show Formula.NEFree (if sub P Q then _ else _)
       split
       · exact .disj (.conj (.pred _ _) (.pred _ _))
           (.conj (.neg (.pred _ _)) (.pred _ _))
       · exact .pred _ _)
     (fun Q c => by
-      show Formula.IsNEFree (if sub P Q then _ else _)
+      show Formula.NEFree (if sub P Q then _ else _)
       split
       · exact .disj (.conj (.predc _ _) (.predc _ _))
           (.conj (.neg (.predc _ _)) (.predc _ _))
@@ -202,9 +202,9 @@ private theorem eval_iff_of_atom_pred (P Q : Pred) (x : Var) (b : Bool)
       · exact hnQ₁ i hit₂
     · intro h
       exact ⟨⟨∅, s, splitsAs_empty_self s,
-          support_empty_of_isNEFree (.neg (.pred P x)) M, h⟩,
+          support_empty_of_neFree (.neg (.pred P x)) M, h⟩,
         ⟨∅, s, splitsAs_empty_self s,
-          support_empty_of_isNEFree (.pred P x) M, h⟩⟩
+          support_empty_of_neFree (.pred P x) M, h⟩⟩
 
 private theorem eval_iff_of_atom_predc (P Q : Pred) (c : Const) (b : Bool)
     (s : Finset (Index W Var Domain)) :
@@ -241,9 +241,9 @@ private theorem eval_iff_of_atom_predc (P Q : Pred) (c : Const) (b : Bool)
       · exact hnQ₁ i hit₂
     · intro h
       exact ⟨⟨∅, s, splitsAs_empty_self s,
-          support_empty_of_isNEFree (.neg (.predc P c)) M, h⟩,
+          support_empty_of_neFree (.neg (.predc P c)) M, h⟩,
         ⟨∅, s, splitsAs_empty_self s,
-          support_empty_of_isNEFree (.predc P c) M, h⟩⟩
+          support_empty_of_neFree (.predc P c) M, h⟩⟩
 
 /-- **Substitution salva veritate** ([yan-2023] §4.3.2): reinterpretation
     is bilaterally equivalent to the original — `∥φ∥_P` and `φ` are
@@ -310,8 +310,8 @@ def sendL : Formula QVar Unit RossPred := .predc .send ()
 /-- `BURN a`: the letter is burnt. -/
 def burnL : Formula QVar Unit RossPred := .predc .burn ()
 
-theorem sendL_isNEFree : sendL.IsNEFree := .predc _ _
-theorem burnL_isNEFree : burnL.IsNEFree := .predc _ _
+theorem sendL_neFree : sendL.NEFree := .predc _ _
+theorem burnL_neFree : burnL.NEFree := .predc _ _
 
 /-- John's bouletic state: a single desire-world where the letter is sent
     and not burnt, reflexively accessible. -/
@@ -329,7 +329,7 @@ theorem ross_monotone {s : Finset (Index Unit QVar Unit)}
     (h : support rossModel sendL.nec s) :
     support rossModel (sendL.disj burnL).nec s :=
   support_nec_mono rossModel
-    (fun _ ht => support_disj_inl rossModel burnL_isNEFree ht) h
+    (fun _ ht => support_disj_inl rossModel burnL_neFree ht) h
 
 /-- **Pragmatic validity of the FC step** ([yan-2023] (26), instance of
     Fact 13): `[□(SEND a ∨ BURN a)]⁺ ⊨ ◇SEND a ∧ ◇BURN a` — from the
@@ -338,7 +338,7 @@ theorem ross_monotone {s : Finset (Index Unit QVar Unit)}
 theorem ross_fc {s : Finset (Index Unit QVar Unit)}
     (h : support rossModel (Formula.enrich (sendL.disj burnL).nec) s) :
     support rossModel (.poss sendL) s ∧ support rossModel (.poss burnL) s :=
-  boxFC rossModel sendL_isNEFree burnL_isNEFree h
+  boxFC rossModel sendL_neFree burnL_neFree h
 
 /-- The premise is assertable: John's desire state supports the enriched
     `[□SEND a]⁺`. -/
@@ -407,8 +407,8 @@ def freeTrip : Formula QVar Unit AsherPred :=
 def nonFreeTrip : Formula QVar Unit AsherPred :=
   .conj (.neg (.pred .free .x)) (.pred .trip .x)
 
-theorem freeTrip_isNEFree : freeTrip.IsNEFree := .conj (.pred _ _) (.pred _ _)
-theorem nonFreeTrip_isNEFree : nonFreeTrip.IsNEFree :=
+theorem freeTrip_neFree : freeTrip.NEFree := .conj (.pred _ _) (.pred _ _)
+theorem nonFreeTrip_neFree : nonFreeTrip.NEFree :=
   .conj (.neg (.pred _ _)) (.pred _ _)
 
 /-- The premise `□∃x(Fx ∧ Tx)`: Nicholas wants a free trip. -/
@@ -453,7 +453,7 @@ theorem asher_fc (M : Model W Domain Unit AsherPred)
     support M (.poss (.exi QVar.x nonFreeTrip)) s := by
   rw [reinterpret_asherConcl] at h
   exact boxExiFC M
-    freeTrip_isNEFree nonFreeTrip_isNEFree h
+    freeTrip_neFree nonFreeTrip_neFree h
 
 end AsherGeneric
 

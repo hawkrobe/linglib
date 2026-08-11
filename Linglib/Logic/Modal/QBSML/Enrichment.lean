@@ -132,7 +132,7 @@ theorem antiSupport_conj_ne_iff (M : Model W Domain Const Pred)
     conjunct, then `extendUniversal` / `extendFunctional` to apply the IH
     on the extended state. -/
 private theorem enrichment_strengthens_both (M : Model W Domain Const Pred)
-    {φ : Formula Var Const Pred} (hNE : φ.IsNEFree) :
+    {φ : Formula Var Const Pred} (hNE : φ.NEFree) :
     (∀ s : Finset (Index W Var Domain), support M φ.enrich s → support M φ s) ∧
     (∀ s : Finset (Index W Var Domain),
         antiSupport M φ.enrich s → antiSupport M φ s) := by
@@ -215,7 +215,7 @@ private theorem enrichment_strengthens_both (M : Model W Domain Const Pred)
     supporting the original. -/
 theorem enrichment_strengthens_support (M : Model W Domain Const Pred)
     (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain))
-    (hNE : φ.IsNEFree)
+    (hNE : φ.NEFree)
     (h : support M φ.enrich s) :
     support M φ s :=
   (enrichment_strengthens_both M hNE).1 s h
@@ -223,7 +223,7 @@ theorem enrichment_strengthens_support (M : Model W Domain Const Pred)
 /-- **Enrichment strengthens (anti-support direction)**. -/
 theorem enrichment_strengthens_antiSupport (M : Model W Domain Const Pred)
     (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain))
-    (hNE : φ.IsNEFree)
+    (hNE : φ.NEFree)
     (h : antiSupport M φ.enrich s) :
     antiSupport M φ s :=
   (enrichment_strengthens_both M hNE).2 s h

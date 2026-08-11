@@ -76,10 +76,10 @@ def univPossPxOrQx {Const : Type*} : Formula QVar Const Predicate :=
 def univPxOrQx {Const : Type*} : Formula QVar Const Predicate :=
   .univ .x (.disj Px Qx)
 
-theorem Pa_isNEFree : Pa.IsNEFree := .predc _ _
-theorem Pb_isNEFree : Pb.IsNEFree := .predc _ _
-theorem Px_isNEFree {Const : Type*} : (Px (Const := Const)).IsNEFree := .pred _ _
-theorem Qx_isNEFree {Const : Type*} : (Qx (Const := Const)).IsNEFree := .pred _ _
+theorem Pa_neFree : Pa.NEFree := .predc _ _
+theorem Pb_neFree : Pb.NEFree := .predc _ _
+theorem Px_neFree {Const : Type*} : (Px (Const := Const)).NEFree := .pred _ _
+theorem Qx_neFree {Const : Type*} : (Qx (Const := Const)).NEFree := .pred _ _
 
 variable {s : Finset (Index TwoAtomWorld QVar FCAtom)}
 variable {i : Index TwoAtomWorld QVar FCAtom}
@@ -205,7 +205,7 @@ theorem fact3_ignorance (hfull : State.worldProj s = Finset.univ)
 /-- **Fact 5** (distribution at maximal information). -/
 theorem fact5_distribution (h : support univAccessModel univPxOrQx.enrich {i}) :
     support univAccessModel (.exi .x Px) {i} ∧ support univAccessModel (.exi .x Qx) {i} :=
-  distribution univAccessModel Px_isNEFree Qx_isNEFree h
+  distribution univAccessModel Px_neFree Qx_neFree h
 
 /-- **Fact 6** (distribution◇), on states of full world projection. -/
 theorem fact6_distributionEpi (hfull : State.worldProj s = Finset.univ)
@@ -218,13 +218,13 @@ theorem fact6_distributionEpi (hfull : State.worldProj s = Finset.univ)
 theorem fact7_boxFC
     (h : support univAccessModel (Formula.enrich (Formula.nec (.disj Pa Pb))) s) :
     support univAccessModel (.poss Pa) s ∧ support univAccessModel (.poss Pb) s :=
-  boxFC univAccessModel Pa_isNEFree Pb_isNEFree h
+  boxFC univAccessModel Pa_neFree Pb_neFree h
 
 /-- **Fact 8** (◇-free choice); cf. `Aloni2022.aloni2022_fact4_NS_FC`. -/
 theorem fact8_narrowScopeFC
     (h : support univAccessModel (Formula.enrich (.poss (.disj Pa Pb))) s) :
     support univAccessModel (.poss Pa) s ∧ support univAccessModel (.poss Pb) s :=
-  narrowScopeFC univAccessModel Pa_isNEFree Pb_isNEFree h
+  narrowScopeFC univAccessModel Pa_neFree Pb_neFree h
 
 /-- **Fact 9** (universal free choice), attested experimentally by
     [chemla-2009]. -/
@@ -232,14 +232,14 @@ theorem fact9_universalFC
     (h : support univAccessModel univPossPxOrQx.enrich s) :
     support univAccessModel (.univ .x (.poss Px)) s ∧
     support univAccessModel (.univ .x (.poss Qx)) s :=
-  universalFC univAccessModel Px_isNEFree Qx_isNEFree h
+  universalFC univAccessModel Px_neFree Qx_neFree h
 
 /-- **Fact 10** (negation behaviour); cf.
     `Aloni2022.aloni2022_fact11_dual_prohibition`. -/
 theorem fact10_negation
     (h : support univAccessModel (Formula.enrich (.neg (.disj Pa Pb))) s) :
     support univAccessModel (.neg Pa) s ∧ support univAccessModel (.neg Pb) s :=
-  negationStrip univAccessModel Pa_isNEFree Pb_isNEFree h
+  negationStrip univAccessModel Pa_neFree Pb_neFree h
 
 /-! ### Fact 4 (obviation): the Fig. 14 countermodel
 

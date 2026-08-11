@@ -30,8 +30,8 @@ runs the same recursion over quantified atoms.
   the frame conditions governing wide-scope free choice.
 * `consequence`, `equivalent` — support consequence and bilateral
   equivalence.
-* `supportStar`, `consequenceStar` — the BSML* variant excluding `∅` from
-  intermediate states.
+* `evalStar`, `consequenceStar` — BSML*, the variant excluding `∅` from
+  the possible states; `supportStar`/`antiSupportStar` fix the polarity.
 
 ## Implementation notes
 
@@ -234,22 +234,46 @@ def equivalent (φ ψ : Formula Atom) : Prop :=
 
 /-! ### BSML* -/
 
-/-- BSML* support ([aloni-2022] §6.3.1): like `support` but `∅` is excluded
-    from intermediate states — in disjunction, both parts of the split must
-    be non-empty (`Team.splitsAsNE`).
+/-- Bilateral evaluation for BSML* ([aloni-2022] §6.3.1): like `eval`, but
+    `∅` is not among the possible states, so the split clauses
+    (disjunction-support, conjunction-anti-support) quantify over
+    `Team.splitsAsNE` decompositions into non-empty parts. The exclusion is
+    imposed wherever states are quantified — the splits here and the outer
+    team in `consequenceStar` — while the atom, `ne`, and modal clauses
+    keep their BSML form. -/
+def evalStar (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
+  | true,  .atom p,       t => ∀ w ∈ t, M.val p w = true
+  | false, .atom p,       t => ∀ w ∈ t, M.val p w = false
+  | true,  .ne,           t => t.Nonempty
+  | false, .ne,           t => t = ∅
+  | true,  .neg ψ,        t => evalStar M false ψ t
+  | false, .neg ψ,        t => evalStar M true ψ t
+  | true,  .conj ψ₁ ψ₂,  t => evalStar M true ψ₁ t ∧ evalStar M true ψ₂ t
+  | false, .conj ψ₁ ψ₂,  t => ∃ t₁ t₂ : Finset W,
+                                Team.splitsAsNE t t₁ t₂ ∧
+                                evalStar M false ψ₁ t₁ ∧ evalStar M false ψ₂ t₂
+  | true,  .disj ψ₁ ψ₂,  t => ∃ t₁ t₂ : Finset W,
+                                Team.splitsAsNE t t₁ t₂ ∧
+                                evalStar M true ψ₁ t₁ ∧ evalStar M true ψ₂ t₂
+  | false, .disj ψ₁ ψ₂,  t => evalStar M false ψ₁ t ∧ evalStar M false ψ₂ t
+  | true,  .poss ψ,       t => ∀ w ∈ t, ∃ s ⊆ M.access w, s.Nonempty ∧ evalStar M true ψ s
+  | false, .poss ψ,       t => ∀ w ∈ t, evalStar M false ψ (M.access w)
 
-    NOTE: the negation case `| .neg _, _ => True` is a placeholder. Aloni's
-    actual BSML* uses bilateral polarity mirroring BSML's; completing this
-    requires a polarity-flipped `supportStar`, tracked as out of scope. -/
-def supportStar (M : KripkeModel W Atom) : Formula Atom → Finset W → Prop
-  | .atom p, t => ∀ w ∈ t, M.val p w = true
-  | .ne, t => t.Nonempty
-  | .neg _, _ => True
-  | .conj φ ψ, t => supportStar M φ t ∧ supportStar M ψ t
-  | .disj φ ψ, t => ∃ t₁ t₂ : Finset W,
-      Team.splitsAsNE t t₁ t₂ ∧
-      supportStar M φ t₁ ∧ supportStar M ψ t₂
-  | .poss φ, t => ∀ w ∈ t, ∃ s ⊆ M.access w, s.Nonempty ∧ supportStar M φ s
+/-- BSML* support: positive evaluation with non-empty intermediate states. -/
+abbrev supportStar (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
+  evalStar M true φ t
+
+/-- BSML* anti-support. -/
+abbrev antiSupportStar (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
+  evalStar M false φ t
+
+@[simp] lemma supportStar_neg (M : KripkeModel W Atom)
+    (φ : Formula Atom) (t : Finset W) :
+    supportStar M (.neg φ) t ↔ antiSupportStar M φ t := Iff.rfl
+
+@[simp] lemma antiSupportStar_neg (M : KripkeModel W Atom)
+    (φ : Formula Atom) (t : Finset W) :
+    antiSupportStar M (.neg φ) t ↔ supportStar M φ t := Iff.rfl
 
 /-- BSML* consequence: `supportStar` consequence on non-empty teams — in
     BSML*, `∅` is not among the possible states. -/
