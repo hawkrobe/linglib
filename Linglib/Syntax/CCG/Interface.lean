@@ -71,6 +71,15 @@ theorem tv_type_is_relation :
 theorem iv_type_is_property :
     catToTy IV = (.e ⇒ .t) := rfl
 
+/-- Type correspondence for forward type-raising: `T/(T\X)` denotes a function over
+`X`-seeking functions. -/
+theorem forward_type_raise_type (x t : Cat Atom) :
+    catToTy (x.forwardTypeRaise t) = ((catToTy x ⇒ catToTy t) ⇒ catToTy t) := rfl
+
+/-- Type correspondence for backward type-raising, identical to the forward case. -/
+theorem backward_type_raise_type (x t : Cat Atom) :
+    catToTy (x.backwardTypeRaise t) = ((catToTy x ⇒ catToTy t) ⇒ catToTy t) := rfl
+
 /-! ### Derivation interpretation -/
 
 /-- Semantic lexicon: for each word and queried category, optionally a meaning at that
