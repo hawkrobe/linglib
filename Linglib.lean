@@ -2778,7 +2778,6 @@ import Linglib.Syntax.CCG.Gapping
 import Linglib.Syntax.CCG.GenerativeCapacity
 import Linglib.Syntax.CCG.Interface
 import Linglib.Syntax.CCG.Intonation
-import Linglib.Syntax.CCG.Scope
 import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Case.Assigner
 import Linglib.Syntax.Case.Dependent

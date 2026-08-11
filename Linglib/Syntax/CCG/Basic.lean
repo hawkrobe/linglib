@@ -25,8 +25,9 @@ The target-restricted (VW-CCG) schema derivations live in `CCG.TargetRestricted`
   composition of degree `n`, the schema every binary rule instantiates.
 * `Cat.forwardTypeRaise`, `Cat.backwardTypeRaise`: type-raising.
 * `Derivation`: intrinsically typed derivations, indexed by the category they derive;
-  `Derivation.yield` reads off the surface string a derivation spells out and
-  `Derivation.opCount` the number of rule applications.
+  `Derivation.yield` reads off the surface string a derivation spells out,
+  `Derivation.opCount` the number of rule applications, and `analyzeDerivation` the
+  strongest rule class used (`DerivationType`).
 
 ## Notation
 
@@ -174,5 +175,36 @@ def Derivation.opCount {c : Cat α} : Derivation α c → Nat
   | .ftr d _ => 1 + d.opCount
   | .btr d _ => 1 + d.opCount
   | .coord _ d1 d2 => 1 + d1.opCount + d2.opCount
+
+/-- The rule classes a derivation can be built from, for structural analysis:
+pure application, or the scope-relevant devices composition and type-raising. -/
+inductive DerivationType where
+  /-- Pure application. -/
+  | directApp
+  /-- At least one type-raising node. -/
+  | typeRaised
+  /-- At least one composition node (and no type-raising). -/
+  | composed
+  deriving DecidableEq, Repr
+
+/-- Combine daughters' derivation types — the maximum under
+`directApp < composed < typeRaised`. -/
+def DerivationType.join : DerivationType → DerivationType → DerivationType
+  | .typeRaised, _ | _, .typeRaised => .typeRaised
+  | .composed, _ | _, .composed => .composed
+  | _, _ => .directApp
+
+/-- The derivation type of a derivation: composition and type-raising nodes dominate
+their subtrees. -/
+def analyzeDerivation {c : Cat α} : Derivation α c → DerivationType
+  | .lex _ _ => .directApp
+  | .fapp d1 d2 => (analyzeDerivation d1).join (analyzeDerivation d2)
+  | .bapp d1 d2 => (analyzeDerivation d1).join (analyzeDerivation d2)
+  | .fcomp _ _ => .composed
+  | .bcomp _ _ => .composed
+  | .fcompx _ _ => .composed
+  | .ftr _ _ => .typeRaised
+  | .btr _ _ => .typeRaised
+  | .coord _ d1 d2 => (analyzeDerivation d1).join (analyzeDerivation d2)
 
 end CCG

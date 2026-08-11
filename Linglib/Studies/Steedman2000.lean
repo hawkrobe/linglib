@@ -6,7 +6,7 @@ import Linglib.Studies.BresnanEtAl1982
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.CrossSerial
 import Linglib.Syntax.CCG.Interface
-import Linglib.Syntax.CCG.Scope
+import Linglib.Features.ScopeTypes
 
 /-!
 # Steedman 2000: The Syntactic Process
@@ -27,7 +27,7 @@ CCG predictions from [steedman-2000], one section per phenomenon:
   categories and forward crossed composition.
 - **Verb clusters and quantifier scope** (§6.8): verb-raising orders are
   scope-ambiguous, verb-projection-raising orders surface-only; predictions
-  are computed via `CCG.Scope.analyzeDerivation` and checked against the
+  are computed via `CCG.analyzeDerivation` and checked against the
   §6.8 judgments in `Linglib.Data.Examples.Steedman2000` ([bayer-1996],
   [kayne-1998], [haegeman-van-riemsdijk-1986], [haegeman-1992] are
   credited per example in the JSON).
@@ -481,7 +481,16 @@ drops the book's features, e.g. the `VP₋SUB` restriction on `>B×`.) -/
 
 section Quantification
 
-open CCG.Scope ScopeTheory Data.Examples
+open ScopeTheory Data.Examples
+
+/-- Scope availability from derivation type — the account's linking hypothesis: both
+non-application types map to `.ambiguous`. This is the bare derivation–scope link,
+which [steedman-2000] notes overgenerates as stated (§4.4 refines it). -/
+def derivationTypeToAvailability : DerivationType → BinaryScopeAvailability
+  | .directApp => .surfaceOnly
+  | .typeRaised => .ambiguous
+  | .composed => .ambiguous
+
 
 /-- Word order in a West Germanic verb cluster ([steedman-2000] §6.8). -/
 inductive VerbOrder where
