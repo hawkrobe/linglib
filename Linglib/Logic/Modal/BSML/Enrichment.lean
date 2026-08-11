@@ -325,7 +325,7 @@ private theorem enriched_iff_star_nonempty (M : KripkeModel W Atom)
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     have hψ₁ : ψ₁.ClassicalPositive := ⟨hCP.1.1, hCP.2.1⟩
     have hψ₂ : ψ₂.ClassicalPositive := ⟨hCP.1.2, hCP.2.2⟩
-    simp only [enrich, support, eval, supportStar]
+    simp only [enrich, support, eval, supportStar, evalStar]
     constructor
     · intro ⟨⟨h₁, h₂⟩, hne⟩
       exact ⟨⟨((ih₁ t hψ₁).mp h₁).1, ((ih₂ t hψ₂).mp h₂).1⟩, hne⟩
@@ -334,7 +334,7 @@ private theorem enriched_iff_star_nonempty (M : KripkeModel W Atom)
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     have hψ₁ : ψ₁.ClassicalPositive := ⟨hCP.1.1, hCP.2.1⟩
     have hψ₂ : ψ₂.ClassicalPositive := ⟨hCP.1.2, hCP.2.2⟩
-    simp only [enrich, support, eval, supportStar]
+    simp only [enrich, support, eval, supportStar, evalStar]
     constructor
     · intro ⟨⟨t₁, t₂, hu, h₁, h₂⟩, hne⟩
       have ⟨hs₁, hne₁⟩ := (ih₁ t₁ hψ₁).mp h₁
@@ -345,7 +345,7 @@ private theorem enriched_iff_star_nonempty (M : KripkeModel W Atom)
               (ih₂ t₂ hψ₂).mpr ⟨hs₂, hne₂⟩⟩, hne⟩
   | poss ψ ih =>
     have hψ : ψ.ClassicalPositive := hCP
-    simp only [enrich, support, eval, supportStar]
+    simp only [enrich, support, eval, supportStar, evalStar]
     constructor
     · intro ⟨hposs, hne⟩
       refine ⟨fun w hw => ?_, hne⟩
@@ -355,6 +355,21 @@ private theorem enriched_iff_star_nonempty (M : KripkeModel W Atom)
       refine ⟨fun w hw => ?_, hne⟩
       obtain ⟨s, hs, hne_s, hstar⟩ := hposs w hw
       exact ⟨s, hs, hne_s, (ih s hψ).mpr ⟨hstar, hne_s⟩⟩
+
+/-- **Negative free choice in BSML*** ([aloni-2022] Fact 14):
+    `◇¬(α ∧ β) ⊨ ◇¬α` in the star system. The conjunction anti-support
+    split requires two *non-empty* parts, so an accessible team
+    anti-supporting `α ∧ β` yields a non-empty sub-team anti-supporting
+    `α`. BSML+ does not validate this inference. -/
+theorem negativeFC_star (M : KripkeModel W Atom) (α β : Formula Atom)
+    (t : Finset W) (h : supportStar M (.poss (.neg (.conj α β))) t) :
+    supportStar M (.poss (.neg α)) t := by
+  intro w hw
+  obtain ⟨s, hs, hne, hstar⟩ := h w hw
+  have hstar' : ∃ s₁ s₂ : Finset W, Team.splitsAsNE s s₁ s₂ ∧
+      antiSupportStar M α s₁ ∧ antiSupportStar M β s₂ := hstar
+  obtain ⟨s₁, s₂, ⟨hsplit, hne₁, -⟩, h₁, -⟩ := hstar'
+  exact ⟨s₁, fun x hx => hs (hsplit ▸ Finset.mem_union_left s₂ hx), hne₁, h₁⟩
 
 /--
 For classical positive formulas, BSML* and BSML+ consequence coincide
