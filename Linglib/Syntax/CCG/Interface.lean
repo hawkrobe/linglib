@@ -169,12 +169,12 @@ def DerivStep.interp {E W : Type} (d : DerivStep Atom) (lex : SemLexicon E W)
   | .ftr d t => do
       -- Forward type-raising: X → T/(T\X), semantically T (λf. f x)
       let ⟨x, m⟩ ← d.interp lex
-      some ⟨forwardTypeRaise x t, T m⟩
+      some ⟨x.forwardTypeRaise t, T m⟩
 
   | .btr d t => do
       -- Backward type-raising: X → T\(T/X), semantically T (λf. f x)
       let ⟨x, m⟩ ← d.interp lex
-      some ⟨backwardTypeRaise x t, T m⟩
+      some ⟨x.backwardTypeRaise t, T m⟩
 
   | .coord c d1 d2 => do
       -- Coordination: X c X → X, via the Coordinator API — the meaning is `Coordinator.op`

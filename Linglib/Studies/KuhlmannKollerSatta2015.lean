@@ -115,20 +115,20 @@ theorem fc2Chain_cat (j : Nat) :
   induction j with
   | zero => rfl
   | succ j ih =>
-    simp [fc2Chain, Derivation.cat, ih, forwardCompN, target_clusterCat, clusterCat]
+    simp [fc2Chain, Derivation.cat, ih, Cat.generalizedForwardComp, target_clusterCat, clusterCat]
 
 /-- The cluster derivation has category `clusterCat n` for `n ≥ 1`. -/
 theorem clusterDeriv_cat : ∀ {n : Nat}, 1 ≤ n → (clusterDeriv n).cat .S = some (clusterCat n)
   | 1, _ => rfl
   | n + 2, _ => by
-    simp [clusterDeriv, Derivation.cat, fc2Chain_cat, forwardCompN, target_clusterCat,
+    simp [clusterDeriv, Derivation.cat, fc2Chain_cat, Cat.generalizedForwardComp, target_clusterCat,
       clusterCat]
 
 /-- One peel removes one `C` argument from a cluster. -/
 theorem peelStep_cat {d : Derivation Atom} {k : Nat}
     (h : d.cat .S = some (clusterCat (k + 1))) :
     (peelStep d).cat .S = some (clusterCat k) := by
-  simp [peelStep, Derivation.cat, aLex, cLex, h, forwardCompN, backwardCompN, clusterCat,
+  simp [peelStep, Derivation.cat, aLex, cLex, h, Cat.generalizedForwardComp, Cat.generalizedBackwardComp, clusterCat,
     target_clusterCat]
 
 /-- Peeling `k` times turns a `clusterCat k` derivation into one of category `S`. -/

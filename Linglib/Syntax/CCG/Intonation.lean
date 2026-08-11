@@ -291,7 +291,7 @@ def ProsodicDeriv.prosodicCat : ProsodicDeriv → Option ProsodicCat
     prosodicBackwardComp c1 c2
   | .ftr d t => do
     let ⟨x, i⟩ ← d.prosodicCat
-    some ⟨forwardTypeRaise x t, i⟩
+    some ⟨x.forwardTypeRaise t, i⟩
   | .boundary d tc => do
     let c ← d.prosodicCat
     some (applyBoundary c tc)

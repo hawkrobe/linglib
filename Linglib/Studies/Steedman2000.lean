@@ -489,7 +489,7 @@ composition, so a quantified argument combines with a function containing
 the tensed verb and can take scope over it; in the verb-projection-raising
 order it combines with the embedded verb alone. The derivations below are
 category-checked `DerivStep` trees: the verb-raising cluster forms by
-forward crossed composition (`CCG.forwardCompX`), the
+forward crossed composition (`CCG.Cat.forwardCompX`), the
 verb-projection-raising order by plain application — the composed-cluster
 vs. applied-cluster contrast driving the account. (The toy `Cat` still
 drops the book's features, e.g. the `VP₋SUB` restriction on `>B×`.) -/
