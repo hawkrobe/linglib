@@ -26,8 +26,8 @@ The target-restricted (VW-CCG) schema derivations live in `CCG.TargetRestricted`
 * `Cat.forwardTypeRaise`, `Cat.backwardTypeRaise`: type-raising.
 * `Derivation`: intrinsically typed derivations, indexed by the category they derive;
   `Derivation.yield` reads off the surface string a derivation spells out,
-  `Derivation.opCount` the number of rule applications, and `analyzeDerivation` the
-  strongest rule class used (`DerivationType`).
+  `Derivation.opCount` the number of rule applications, and `Derivation.HasComp` /
+  `Derivation.HasTypeRaise` whether a rule class occurs in the tree.
 
 ## Notation
 
@@ -176,35 +176,52 @@ def Derivation.opCount {c : Cat α} : Derivation α c → Nat
   | .btr d _ => 1 + d.opCount
   | .coord _ d1 d2 => 1 + d1.opCount + d2.opCount
 
-/-- The rule classes a derivation can be built from, for structural analysis:
-pure application, or the scope-relevant devices composition and type-raising. -/
-inductive DerivationType where
-  /-- Pure application. -/
-  | directApp
-  /-- At least one type-raising node. -/
-  | typeRaised
-  /-- At least one composition node (and no type-raising). -/
-  | composed
-  deriving DecidableEq, Repr
+/-- The derivation contains a composition node (`fcomp`, `bcomp`, or `fcompx`). -/
+def Derivation.HasComp {c : Cat α} : Derivation α c → Prop
+  | .lex _ _ => False
+  | .fapp d1 d2 => d1.HasComp ∨ d2.HasComp
+  | .bapp d1 d2 => d1.HasComp ∨ d2.HasComp
+  | .fcomp _ _ => True
+  | .bcomp _ _ => True
+  | .fcompx _ _ => True
+  | .ftr d _ => d.HasComp
+  | .btr d _ => d.HasComp
+  | .coord _ d1 d2 => d1.HasComp ∨ d2.HasComp
 
-/-- Combine daughters' derivation types — the maximum under
-`directApp < composed < typeRaised`. -/
-def DerivationType.join : DerivationType → DerivationType → DerivationType
-  | .typeRaised, _ | _, .typeRaised => .typeRaised
-  | .composed, _ | _, .composed => .composed
-  | _, _ => .directApp
+instance Derivation.HasComp.decidable {c : Cat α} :
+    ∀ d : Derivation α c, Decidable d.HasComp
+  | .lex _ _ => isFalse fun h => h
+  | .fapp d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
+  | .bapp d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
+  | .fcomp _ _ => isTrue trivial
+  | .bcomp _ _ => isTrue trivial
+  | .fcompx _ _ => isTrue trivial
+  | .ftr d _ => decidable d
+  | .btr d _ => decidable d
+  | .coord _ d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
 
-/-- The derivation type of a derivation: composition and type-raising nodes dominate
-their subtrees. -/
-def analyzeDerivation {c : Cat α} : Derivation α c → DerivationType
-  | .lex _ _ => .directApp
-  | .fapp d1 d2 => (analyzeDerivation d1).join (analyzeDerivation d2)
-  | .bapp d1 d2 => (analyzeDerivation d1).join (analyzeDerivation d2)
-  | .fcomp _ _ => .composed
-  | .bcomp _ _ => .composed
-  | .fcompx _ _ => .composed
-  | .ftr _ _ => .typeRaised
-  | .btr _ _ => .typeRaised
-  | .coord _ d1 d2 => (analyzeDerivation d1).join (analyzeDerivation d2)
+/-- The derivation contains a type-raising node (`ftr` or `btr`). -/
+def Derivation.HasTypeRaise {c : Cat α} : Derivation α c → Prop
+  | .lex _ _ => False
+  | .fapp d1 d2 => d1.HasTypeRaise ∨ d2.HasTypeRaise
+  | .bapp d1 d2 => d1.HasTypeRaise ∨ d2.HasTypeRaise
+  | .fcomp d1 d2 => d1.HasTypeRaise ∨ d2.HasTypeRaise
+  | .bcomp d1 d2 => d1.HasTypeRaise ∨ d2.HasTypeRaise
+  | .fcompx d1 d2 => d1.HasTypeRaise ∨ d2.HasTypeRaise
+  | .ftr _ _ => True
+  | .btr _ _ => True
+  | .coord _ d1 d2 => d1.HasTypeRaise ∨ d2.HasTypeRaise
+
+instance Derivation.HasTypeRaise.decidable {c : Cat α} :
+    ∀ d : Derivation α c, Decidable d.HasTypeRaise
+  | .lex _ _ => isFalse fun h => h
+  | .fapp d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
+  | .bapp d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
+  | .fcomp d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
+  | .bcomp d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
+  | .fcompx d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
+  | .ftr _ _ => isTrue trivial
+  | .btr _ _ => isTrue trivial
+  | .coord _ d1 d2 => @instDecidableOr _ _ (decidable d1) (decidable d2)
 
 end CCG

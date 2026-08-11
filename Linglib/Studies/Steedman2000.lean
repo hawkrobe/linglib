@@ -27,7 +27,7 @@ CCG predictions from [steedman-2000], one section per phenomenon:
   categories and forward crossed composition.
 - **Verb clusters and quantifier scope** (§6.8): verb-raising orders are
   scope-ambiguous, verb-projection-raising orders surface-only; predictions
-  are computed via `CCG.analyzeDerivation` and checked against the
+  are read off the derivations' structure (`Derivation.HasComp`) and checked against the
   §6.8 judgments in `Linglib.Data.Examples.Steedman2000` ([bayer-1996],
   [kayne-1998], [haegeman-van-riemsdijk-1986], [haegeman-1992] are
   credited per example in the JSON).
@@ -483,15 +483,6 @@ section Quantification
 
 open ScopeTheory Data.Examples
 
-/-- Scope availability from derivation type — the account's linking hypothesis: both
-non-application types map to `.ambiguous`. This is the bare derivation–scope link,
-which [steedman-2000] notes overgenerates as stated (§4.4 refines it). -/
-def derivationTypeToAvailability : DerivationType → BinaryScopeAvailability
-  | .directApp => .surfaceOnly
-  | .typeRaised => .ambiguous
-  | .composed => .ambiguous
-
-
 /-- Word order in a West Germanic verb cluster ([steedman-2000] §6.8). -/
 inductive VerbOrder where
   /-- Object precedes the whole verb cluster: NP … V_emb V_matrix. -/
@@ -518,16 +509,19 @@ def schematicDeriv : VerbOrder → Derivation Atom IV
   | .verbRaising => verbRaisingDeriv
   | .verbProjectionRaising => verbProjectionRaisingDeriv
 
-theorem analyzeDerivation_verbRaisingDeriv :
-    analyzeDerivation verbRaisingDeriv = .composed := rfl
+theorem verbRaisingDeriv_hasComp : verbRaisingDeriv.HasComp := by decide
 
-theorem analyzeDerivation_verbProjectionRaisingDeriv :
-    analyzeDerivation verbProjectionRaisingDeriv = .directApp := rfl
+theorem verbProjectionRaisingDeriv_applicationOnly :
+    ¬verbProjectionRaisingDeriv.HasComp ∧ ¬verbProjectionRaisingDeriv.HasTypeRaise := by
+  decide
 
-/-- Scope availability as CCG predicts it: analyze the derivation the
-word order forces and read availability off its derivation type. -/
+/-- Scope availability as CCG predicts it — the account's linking hypothesis: a
+cluster built with composition or type-raising is scope-ambiguous, an
+application-only cluster surface-only. [steedman-2000] notes this overgenerates as
+stated (§4.4 refines it). -/
 def predictedAvailability (vo : VerbOrder) : BinaryScopeAvailability :=
-  derivationTypeToAvailability (analyzeDerivation (schematicDeriv vo))
+  if (schematicDeriv vo).HasComp ∨ (schematicDeriv vo).HasTypeRaise then .ambiguous
+  else .surfaceOnly
 
 /-- Read the §6.8 word-order classification off an example's
 `paperFeatures`. -/
