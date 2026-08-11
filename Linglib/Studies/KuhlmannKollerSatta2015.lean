@@ -20,9 +20,8 @@ covers `aⁿbⁿcⁿ` also admits extra permuted strings, so it cannot generate 
 unrestricted variant, so this construction genuinely needs the restricted model
 `CCG.TargetRestricted`.
 
-Atoms follow the paper (`A, B, C, S`); we realise them with the project's `CCG.Cat` atoms
-as `A = NP`, `B = N`, `C = PP`, `S = S` — abstract placeholders, the content is generative
-capacity, not syntax.
+Atoms follow the paper (`A, B, C, S`) as the study's own atom type — `CCG.Cat` is
+parameterized over its atoms, so the construction needs no proxy inventory.
 
 ## Main definitions
 
@@ -50,12 +49,19 @@ namespace KuhlmannKollerSatta2015
 open CCG
 open CCG.TargetRestricted
 
-/-- Abstract atom `A`, realised as `NP`. -/
-abbrev Acat : Cat Atom := NP
-/-- Abstract atom `B`, realised as `N`. -/
-abbrev Bcat : Cat Atom := N
-/-- Abstract atom `C`, realised as `PP`. -/
-abbrev Ccat : Cat Atom := PP
+/-- The atomic categories of the paper's Example 2 grammar. -/
+inductive Atom where
+  | A
+  | B
+  | C
+  /-- The distinguished atom the target restriction is stated at. -/
+  | S
+  deriving Repr, DecidableEq
+
+abbrev Acat : Cat Atom := .atom .A
+abbrev Bcat : Cat Atom := .atom .B
+abbrev Ccat : Cat Atom := .atom .C
+abbrev Scat : Cat Atom := .atom .S
 
 /-! ### The grammar `G₁` of Example 2 -/
 
@@ -66,19 +72,19 @@ def cLex : Derivation Atom := .lex (Ccat \ Acat) "c"
 
 /-- The cluster category `S/C/…/C` with `n` forward `C`-arguments. -/
 def clusterCat : Nat → Cat Atom
-  | 0 => S
+  | 0 => Scat
   | n + 1 => (clusterCat n) / Ccat
 
 /-- Chain of degree-2 compositions: `b₁ = S/C/B` composed with `j` copies of
 `B/C/B`, giving `S/Cʲ⁺¹/B` and yield `bʲ⁺¹`. -/
 def fc2Chain : Nat → Derivation Atom
-  | 0 => .lex ((S / Ccat) / Bcat) "b"
+  | 0 => .lex ((Scat / Ccat) / Bcat) "b"
   | j + 1 => .fc 2 (fc2Chain j) (.lex ((Bcat / Ccat) / Bcat) "b")
 
 /-- The `b`-cluster derivation for `n ≥ 1`, with category `clusterCat n`, yield `bⁿ`. -/
 def clusterDeriv : Nat → Derivation Atom
-  | 0 => .lex S "b"            -- unused (the construction starts at n = 1)
-  | 1 => .lex (S / Ccat) "b"
+  | 0 => .lex Scat "b"            -- unused (the construction starts at n = 1)
+  | 1 => .lex (Scat / Ccat) "b"
   | n + 2 => .fc 1 (fc2Chain n) (.lex (Bcat / Ccat) "b")
 
 /-- One peel: crossed-compose with a `c` on the right, then backward-apply an `a` on the
@@ -127,14 +133,14 @@ theorem peelStep_cat {d : Derivation Atom} {k : Nat}
 
 /-- Peeling `k` times turns a `clusterCat k` derivation into one of category `S`. -/
 theorem peel_cat : ∀ (k : Nat) (d : Derivation Atom), d.cat .S = some (clusterCat k) →
-    (peel k d).cat .S = some S
+    (peel k d).cat .S = some Scat
   | 0, d, h => by simpa [peel, clusterCat] using h
   | k + 1, d, h => by
     simp only [peel]
     exact peel_cat k (peelStep d) (peelStep_cat h)
 
 /-- **Completeness, category part.** The construction derives `S` for every `n ≥ 1`. -/
-theorem build_cat {n : Nat} (hn : 1 ≤ n) : (build n).cat .S = some S :=
+theorem build_cat {n : Nat} (hn : 1 ≤ n) : (build n).cat .S = some Scat :=
   peel_cat n (clusterDeriv n) (clusterDeriv_cat hn)
 
 /-! ### Yield of the construction (completeness, part 2) -/
@@ -183,7 +189,7 @@ every string in the non-context-free language is the yield of a well-formed (tar
 restricted) CCG derivation. This is the completeness half of CCG ⊋ CFG; the language
 `anbnc` it covers is not context-free (`AnBnCn.anbnc_not_contextFree`). -/
 theorem ccg_generates_anbnc (w : List String) (hw : w ∈ anbncStrings) :
-    ∃ d : Derivation Atom, d.cat .S = some S ∧ d.yield = w := by
+    ∃ d : Derivation Atom, d.cat .S = some Scat ∧ d.yield = w := by
   obtain ⟨n, hn, rfl⟩ := hw
   exact ⟨build n, build_cat hn, build_yield hn⟩
 
