@@ -33,7 +33,7 @@ def DerivationType.join : DerivationType → DerivationType → DerivationType
 
 /-- Analyze a derivation to determine its type. -/
 def analyzeDerivation {α : Type*} : {c : Cat α} → Derivation α c → DerivationType
-  | _, .lex _ => .directApp
+  | _, .lex _ _ => .directApp
   | _, .fapp d1 d2 => (analyzeDerivation d1).join (analyzeDerivation d2)
   | _, .bapp d1 d2 => (analyzeDerivation d1).join (analyzeDerivation d2)
   | _, .fcomp _ _ => .composed
@@ -53,13 +53,13 @@ def derivationTypeToAvailability : DerivationType → BinaryScopeAvailability
 
 /-- Surface-scope derivation: subject and predicate combine by plain application. -/
 def everyHorse_surface : Derivation Atom S :=
-  .bapp (.lex ⟨"every horse", NP⟩) (.lex ⟨"didn't jump", IV⟩)
+  .bapp (.lex "every horse" NP) (.lex "didn't jump" IV)
 
 /-- Inverse-capable derivation: the type-raised subject composes with the negated
 auxiliary before the verb applies. -/
 def everyHorse_inverse : Derivation Atom S :=
-  .fapp (.fcomp (.ftr (.lex ⟨"every horse", NP⟩) S)
-    (.lex ⟨"didn't", (S \ NP) / (S \ NP)⟩)) (.lex ⟨"jump", IV⟩)
+  .fapp (.fcomp (.ftr (.lex "every horse" NP) S)
+    (.lex "didn't" ((S \ NP) / (S \ NP)))) (.lex "jump" IV)
 
 example : analyzeDerivation everyHorse_surface = .directApp := rfl
 example : analyzeDerivation everyHorse_inverse = .composed := rfl

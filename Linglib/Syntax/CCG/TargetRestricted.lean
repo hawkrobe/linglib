@@ -53,8 +53,8 @@ def target : Cat α → α
 /-- A derivation under the rule-restricted degree-`n` composition schema: nodes record
 degree and direction only. -/
 inductive Derivation (α : Type*) where
-  /-- A lexical leaf: category and surface form. -/
-  | lex : Cat α → String → Derivation α
+  /-- A lexical leaf: a surface form at a category. -/
+  | lex : String → Cat α → Derivation α
   /-- Forward composition of degree `n` (`>Bⁿ`; degree 0 is application). -/
   | fc : Nat → Derivation α → Derivation α → Derivation α
   /-- Backward composition of degree `n` (`<Bⁿ`; degree 0 is application). -/
@@ -65,7 +65,7 @@ inductive Derivation (α : Type*) where
 the target of its primary (functor) input is `s` (`none` otherwise, or if the schema
 does not apply). -/
 def Derivation.cat [DecidableEq α] (s : α) : Derivation α → Option (Cat α)
-  | .lex c _ => some c
+  | .lex _ c => some c
   | .fc n l r => do
     let a ← l.cat s
     let b ← r.cat s
@@ -77,7 +77,7 @@ def Derivation.cat [DecidableEq α] (s : α) : Derivation α → Option (Cat α)
 
 /-- Surface string: leaf forms left to right. -/
 def Derivation.yield : Derivation α → List String
-  | .lex _ w => [w]
+  | .lex w _ => [w]
   | .fc _ l r | .bc _ l r => l.yield ++ r.yield
 
 end CCG.TargetRestricted
