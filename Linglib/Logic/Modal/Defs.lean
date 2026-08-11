@@ -8,7 +8,8 @@ import Mathlib.Order.PropInstances
 
 This file defines the frame conditions of modal correspondence theory for
 accessibility relations `W → W → Prop`, and the relational `box`/`diamond`
-of Kripke semantics ([kripke-1963]).
+of Kripke semantics ([kripke-1963]); their `Set`-valued mathlib
+counterparts are `Rel.core` and `Rel.preimage`.
 -/
 
 namespace ModalLogic
@@ -52,19 +53,13 @@ instance [hS : Std.Symm R] [hT : IsTrans W R] : IsEuclidean R where
 
 variable (R)
 
-/-- Restricted necessity: `□_R p` at world `w` holds iff `p v` for all
-    `v` accessible from `w`.
-
-    `⟦□_R φ⟧^w = 1` iff `⟦φ⟧^v = 1` for all `v` with `R(w,v)` — the Kripke
-    generalization of the S5 necessity of [dowty-wall-peters-1981]'s IL,
-    whose `Intensional.box` is the universal-accessibility special case.
-    The `Set`-valued mathlib counterpart is `Rel.core`. -/
+/-- Restricted necessity: `box R p w` holds iff `p v` for all `v`
+    accessible from `w`. -/
 def box (p : W → Prop) (w : W) : Prop :=
   ∀ v, R w v → p v
 
-/-- Restricted possibility: `◇_R p` at world `w` holds iff `p v` for some
-    `v` accessible from `w`. Dual of `box`; the `Set`-valued mathlib
-    counterpart is `Rel.preimage`. -/
+/-- Restricted possibility: `diamond R p w` holds iff `p v` for some `v`
+    accessible from `w`. Dual of `box`. -/
 def diamond (p : W → Prop) (w : W) : Prop :=
   ∃ v, R w v ∧ p v
 
