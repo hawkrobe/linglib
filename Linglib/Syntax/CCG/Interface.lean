@@ -20,6 +20,14 @@ derivation's meaning is read off compositionally from its structure.
   type-raising is the `T` combinator, coordination is generalized
   conjunction ([partee-rooth-1983])
 
+## Main statements
+
+- `DerivStep.cat_of_interp` — soundness: over a well-typed lexicon, a derivation's
+  meaning is assigned at exactly the category `DerivStep.cat` derives.
+- `DerivStep.interp_fcomp_assoc`, `interp_fapp_fcomp` (and backward mirrors) —
+  spurious ambiguity: reassociating a composition-application chain cannot change a
+  constituent's interpretation.
+
 Worked toy-fragment derivations and the non-constituent-coordination
 semantics theorems live in `Studies/Steedman2000.lean`.
 -/
@@ -191,6 +199,328 @@ def DerivStep.interp {E W : Type} (d : DerivStep Atom) (lex : SemLexicon E W)
           some ⟨c1, Coordinator.engineOp c.role ty E W m1 m2'⟩
         else none
       else none
+
+/-! ### Soundness: interpretation refines category assignment -/
+
+/-- A semantic lexicon is *well-typed* when every interpretation it returns is at the
+queried category. -/
+def SemLexicon.WellTyped {E W : Type} (lex : SemLexicon E W) : Prop :=
+  ∀ w c i, lex w c = some i → i.cat = c
+
+/-- Soundness of the interface: over a well-typed lexicon, `DerivStep.interp` and
+`DerivStep.cat` agree — a derivation that receives a meaning receives it at exactly the
+category the syntax derives. -/
+theorem DerivStep.cat_of_interp {E W : Type} {lex : SemLexicon E W}
+    (hlex : lex.WellTyped) {d : DerivStep Atom} :
+    ∀ {i : Interp E W}, d.interp lex = some i → d.cat = some i.cat := by
+  induction d with
+  | lex e =>
+    intro i h
+    simp only [DerivStep.interp] at h
+    simp [DerivStep.cat, hlex _ _ _ h]
+  | fapp d1 d2 ih1 ih2 =>
+    intro i h
+    rcases h1 : d1.interp lex with _ | ⟨c1, m1⟩
+    · simp [DerivStep.interp, h1] at h
+    rcases h2 : d2.interp lex with _ | ⟨c2, m2⟩
+    · simp [DerivStep.interp, h1, h2] at h
+    simp only [DerivStep.interp] at h
+    rw [h1, h2] at h
+    rcases c1 with _ | ⟨x, y⟩ | ⟨x, y⟩ <;>
+      try (change (none : Option (Interp E W)) = some i at h; simp at h)
+    change (if h' : c2 = y then
+        some (⟨x, m1 (h' ▸ m2)⟩ : Interp E W) else none) = some i at h
+    by_cases hc : c2 = y
+    · rw [dif_pos hc] at h
+      injection h with h; subst h; subst hc
+      show (d1.fapp d2).cat = some x
+      simp [DerivStep.cat, ih1 h1, ih2 h2]
+    · rw [dif_neg hc] at h
+      simp at h
+  | bapp d1 d2 ih1 ih2 =>
+    intro i h
+    rcases h1 : d1.interp lex with _ | ⟨c1, m1⟩
+    · simp [DerivStep.interp, h1] at h
+    rcases h2 : d2.interp lex with _ | ⟨c2, m2⟩
+    · simp [DerivStep.interp, h1, h2] at h
+    simp only [DerivStep.interp] at h
+    rw [h1, h2] at h
+    rcases c2 with _ | ⟨x, y⟩ | ⟨x, y⟩ <;>
+      try (change (none : Option (Interp E W)) = some i at h; simp at h)
+    change (if h' : c1 = y then
+        some (⟨x, m2 (h' ▸ m1)⟩ : Interp E W) else none) = some i at h
+    by_cases hc : c1 = y
+    · rw [dif_pos hc] at h
+      injection h with h; subst h; subst hc
+      show (d1.bapp d2).cat = some x
+      simp [DerivStep.cat, ih1 h1, ih2 h2]
+    · rw [dif_neg hc] at h
+      simp at h
+  | fcomp d1 d2 ih1 ih2 =>
+    intro i h
+    rcases h1 : d1.interp lex with _ | ⟨c1, m1⟩
+    · simp [DerivStep.interp, h1] at h
+    rcases h2 : d2.interp lex with _ | ⟨c2, m2⟩
+    · simp [DerivStep.interp, h1, h2] at h
+    simp only [DerivStep.interp] at h
+    rw [h1, h2] at h
+    rcases c1 with _ | ⟨x, y⟩ | ⟨x, y⟩ <;> rcases c2 with _ | ⟨y', z⟩ | ⟨y', z⟩ <;>
+      try (change (none : Option (Interp E W)) = some i at h; simp at h)
+    change (if h' : y = y' then
+        some (⟨x / z, B m1 (h' ▸ m2)⟩ : Interp E W) else none) = some i at h
+    by_cases hc : y = y'
+    · rw [dif_pos hc] at h
+      injection h with h; subst h; subst hc
+      show (d1.fcomp d2).cat = some (x / z)
+      simp [DerivStep.cat, ih1 h1, ih2 h2]
+    · rw [dif_neg hc] at h
+      simp at h
+  | bcomp d1 d2 ih1 ih2 =>
+    intro i h
+    rcases h1 : d1.interp lex with _ | ⟨c1, m1⟩
+    · simp [DerivStep.interp, h1] at h
+    rcases h2 : d2.interp lex with _ | ⟨c2, m2⟩
+    · simp [DerivStep.interp, h1, h2] at h
+    simp only [DerivStep.interp] at h
+    rw [h1, h2] at h
+    rcases c1 with _ | ⟨y, z⟩ | ⟨y, z⟩ <;> rcases c2 with _ | ⟨x, y'⟩ | ⟨x, y'⟩ <;>
+      try (change (none : Option (Interp E W)) = some i at h; simp at h)
+    change (if h' : y = y' then
+        some (⟨x \ z, B m2 (h' ▸ m1)⟩ : Interp E W) else none) = some i at h
+    by_cases hc : y = y'
+    · rw [dif_pos hc] at h
+      injection h with h; subst h; subst hc
+      show (d1.bcomp d2).cat = some (x \ z)
+      simp [DerivStep.cat, ih1 h1, ih2 h2]
+    · rw [dif_neg hc] at h
+      simp at h
+  | fcompx d1 d2 ih1 ih2 =>
+    intro i h
+    rcases h1 : d1.interp lex with _ | ⟨c1, m1⟩
+    · simp [DerivStep.interp, h1] at h
+    rcases h2 : d2.interp lex with _ | ⟨c2, m2⟩
+    · simp [DerivStep.interp, h1, h2] at h
+    simp only [DerivStep.interp] at h
+    rw [h1, h2] at h
+    rcases c1 with _ | ⟨x, y⟩ | ⟨x, y⟩ <;> rcases c2 with _ | ⟨y', z⟩ | ⟨y', z⟩ <;>
+      try (change (none : Option (Interp E W)) = some i at h; simp at h)
+    change (if h' : y = y' then
+        some (⟨x \ z, B m1 (h' ▸ m2)⟩ : Interp E W) else none) = some i at h
+    by_cases hc : y = y'
+    · rw [dif_pos hc] at h
+      injection h with h; subst h; subst hc
+      show (d1.fcompx d2).cat = some (x \ z)
+      simp [DerivStep.cat, ih1 h1, ih2 h2]
+    · rw [dif_neg hc] at h
+      simp at h
+  | ftr d t ih =>
+    intro i h
+    rcases h1 : d.interp lex with _ | ⟨x, m⟩
+    · simp [DerivStep.interp, h1] at h
+    simp only [DerivStep.interp, h1] at h
+    injection h with h; subst h
+    simp [DerivStep.cat, ih h1]
+  | btr d t ih =>
+    intro i h
+    rcases h1 : d.interp lex with _ | ⟨x, m⟩
+    · simp [DerivStep.interp, h1] at h
+    simp only [DerivStep.interp, h1] at h
+    injection h with h; subst h
+    simp [DerivStep.cat, ih h1]
+  | coord c d1 d2 ih1 ih2 =>
+    intro i h
+    rcases h1 : d1.interp lex with _ | ⟨c1, m1⟩
+    · simp [DerivStep.interp, h1] at h
+    rcases h2 : d2.interp lex with _ | ⟨c2, m2⟩
+    · simp [DerivStep.interp, h1, h2] at h
+    simp only [DerivStep.interp] at h
+    rw [h1, h2] at h
+    change (if h' : c1 = c2 then
+        (if (catToTy c1).isConjoinable then
+          some (⟨c1, Coordinator.engineOp c.role (catToTy c1) E W m1 (h' ▸ m2)⟩ : Interp E W)
+        else none) else none) = some i at h
+    by_cases hc : c1 = c2
+    · rw [dif_pos hc] at h
+      by_cases hconj : (catToTy c1).isConjoinable
+      · rw [if_pos hconj] at h
+        injection h with h; subst h; subst hc
+        show (DerivStep.coord c d1 d2).cat = some c1
+        simp [DerivStep.cat, ih1 h1, ih2 h2]
+      · rw [if_neg hconj] at h
+        simp at h
+    · rw [dif_neg hc] at h
+      simp at h
+
+/-! ### Spurious ambiguity
+
+Composition is semantically associative, so left- and right-branching derivations of
+the same composition-application chain receive the same interpretation — category and
+meaning alike, with no assumption on the lexicon. This is the local source of CCG's
+"spurious ambiguity" ([steedman-2000]; the matching-entry tests of [karttunen-1989]
+and [pareschi-steedman-1987] exploit exactly this invariance): a chart parser may keep
+one derivation per equivalence class, because reassociating `fcomp`/`fapp` (or
+`bcomp`/`bapp`) nodes cannot change what a constituent means. -/
+
+set_option maxHeartbeats 800000 in
+/-- Reassociating a forward-composition chain preserves interpretation: `B` is
+semantically associative. -/
+theorem DerivStep.interp_fcomp_assoc {E W : Type} (lex : SemLexicon E W)
+    (d₁ d₂ d₃ : DerivStep Atom) :
+    (DerivStep.fcomp (.fcomp d₁ d₂) d₃).interp lex
+      = (DerivStep.fcomp d₁ (.fcomp d₂ d₃)).interp lex := by
+  simp only [DerivStep.interp]
+  rcases d₁.interp lex with _ | ⟨c₁, m₁⟩
+  · rfl
+  rcases d₂.interp lex with _ | ⟨c₂, m₂⟩
+  · rfl
+  rcases d₃.interp lex with _ | ⟨c₃, m₃⟩
+  · rcases c₁ with _ | ⟨x, y⟩ | ⟨x, y⟩
+    · rfl
+    · rcases c₂ with _ | ⟨y', z⟩ | ⟨y', z⟩
+      · rfl
+      · by_cases h : y = y' <;> simp [h]
+      · rfl
+    · rfl
+  rcases c₁ with _ | ⟨x, y⟩ | ⟨x, y⟩
+  · rcases c₂ with _ | ⟨y', z⟩ | ⟨y', z⟩
+    · rfl
+    · rcases c₃ with _ | ⟨z', w⟩ | ⟨z', w⟩
+      · rfl
+      · by_cases h : z = z' <;> simp [h]
+      · rfl
+    · rfl
+  · rcases c₂ with _ | ⟨y', z⟩ | ⟨y', z⟩
+    · rfl
+    · rcases c₃ with _ | ⟨z', w⟩ | ⟨z', w⟩
+      · by_cases h : y = y' <;> simp [h]
+      · by_cases hy : y = y' <;> by_cases hz : z = z'
+        · subst hy; subst hz; simp
+          rfl
+        · simp [hy, hz]
+        · simp [hy, hz]
+        · simp [hy, hz]
+      · by_cases h : y = y' <;> simp [h]
+    · rfl
+  · rcases c₂ with _ | ⟨y', z⟩ | ⟨y', z⟩
+    · rfl
+    · rcases c₃ with _ | ⟨z', w⟩ | ⟨z', w⟩
+      · rfl
+      · by_cases h : z = z' <;> simp [h]
+      · rfl
+    · rfl
+
+/-- Composing before applying is the same as applying twice: `B f g x = f (g x)`,
+lifted to derivations. -/
+theorem DerivStep.interp_fapp_fcomp {E W : Type} (lex : SemLexicon E W)
+    (d₁ d₂ d₃ : DerivStep Atom) :
+    (DerivStep.fapp (.fcomp d₁ d₂) d₃).interp lex
+      = (DerivStep.fapp d₁ (.fapp d₂ d₃)).interp lex := by
+  simp only [DerivStep.interp]
+  rcases d₁.interp lex with _ | ⟨c₁, m₁⟩
+  · rfl
+  rcases d₂.interp lex with _ | ⟨c₂, m₂⟩
+  · rfl
+  rcases d₃.interp lex with _ | ⟨c₃, m₃⟩
+  · rcases c₁ with _ | ⟨x, y⟩ | ⟨x, y⟩
+    · rfl
+    · rcases c₂ with _ | ⟨y', z⟩ | ⟨y', z⟩
+      · rfl
+      · by_cases h : y = y' <;> simp [h]
+      · rfl
+    · rfl
+  rcases c₁ with _ | ⟨x, y⟩ | ⟨x, y⟩
+  · rcases c₂ with _ | ⟨y', z⟩ | ⟨y', z⟩
+    · rfl
+    · by_cases h : c₃ = z <;> simp [h]
+    · rfl
+  · rcases c₂ with _ | ⟨y', z⟩ | ⟨y', z⟩
+    · rfl
+    · by_cases hy : y = y' <;> by_cases hz : c₃ = z
+      · subst hy; subst hz; simp
+      · simp [hy, hz, eq_comm]
+      · simp [hy, hz, eq_comm]
+      · simp [hy, hz, eq_comm]
+    · rfl
+  · rcases c₂ with _ | ⟨y', z⟩ | ⟨y', z⟩
+    · rfl
+    · by_cases h : c₃ = z <;> simp [h]
+    · rfl
+
+set_option maxHeartbeats 800000 in
+/-- Reassociating a backward-composition chain preserves interpretation — the mirror
+of `interp_fcomp_assoc`. -/
+theorem DerivStep.interp_bcomp_assoc {E W : Type} (lex : SemLexicon E W)
+    (d₁ d₂ d₃ : DerivStep Atom) :
+    (DerivStep.bcomp (.bcomp d₁ d₂) d₃).interp lex
+      = (DerivStep.bcomp d₁ (.bcomp d₂ d₃)).interp lex := by
+  simp only [DerivStep.interp]
+  rcases d₁.interp lex with _ | ⟨c₁, m₁⟩
+  · rfl
+  rcases d₂.interp lex with _ | ⟨c₂, m₂⟩
+  · rfl
+  rcases d₃.interp lex with _ | ⟨c₃, m₃⟩
+  · rcases c₁ with _ | ⟨a, b⟩ | ⟨a, b⟩
+    · rfl
+    · rfl
+    · rcases c₂ with _ | ⟨c, e⟩ | ⟨c, e⟩
+      · rfl
+      · rfl
+      · by_cases h : a = e <;> simp [h]
+  rcases c₁ with _ | ⟨a, b⟩ | ⟨a, b⟩
+  · rcases c₂ with _ | ⟨c, e⟩ | ⟨c, e⟩
+    · rfl
+    · rfl
+    · rcases c₃ with _ | ⟨v, w⟩ | ⟨v, w⟩
+      · rfl
+      · rfl
+      · by_cases h : c = w <;> simp [h]
+  · rcases c₂ with _ | ⟨c, e⟩ | ⟨c, e⟩
+    · rfl
+    · rfl
+    · rcases c₃ with _ | ⟨v, w⟩ | ⟨v, w⟩
+      · rfl
+      · rfl
+      · by_cases h : c = w <;> simp [h]
+  · rcases c₂ with _ | ⟨c, e⟩ | ⟨c, e⟩
+    · rfl
+    · rfl
+    · rcases c₃ with _ | ⟨v, w⟩ | ⟨v, w⟩
+      · by_cases h : a = e <;> simp [h]
+      · by_cases h : a = e <;> simp [h]
+      · by_cases h₁ : a = e <;> by_cases h₂ : c = w
+        · subst h₁; subst h₂; simp
+          rfl
+        · simp [h₁, h₂]
+        · simp [h₁, h₂]
+        · simp [h₁, h₂]
+
+/-- Applying twice is the same as backward-composing first — the mirror of
+`interp_fapp_fcomp`. -/
+theorem DerivStep.interp_bapp_bcomp {E W : Type} (lex : SemLexicon E W)
+    (d₁ d₂ d₃ : DerivStep Atom) :
+    (DerivStep.bapp (.bapp d₁ d₂) d₃).interp lex
+      = (DerivStep.bapp d₁ (.bcomp d₂ d₃)).interp lex := by
+  simp only [DerivStep.interp]
+  rcases d₁.interp lex with _ | ⟨c₁, m₁⟩
+  · rfl
+  rcases d₂.interp lex with _ | ⟨c₂, m₂⟩
+  · rfl
+  rcases d₃.interp lex with _ | ⟨c₃, m₃⟩
+  · rcases c₂ with _ | ⟨x, y⟩ | ⟨x, y⟩
+    · rfl
+    · rfl
+    · by_cases h : c₁ = y <;> simp [h]
+  rcases c₂ with _ | ⟨x, y⟩ | ⟨x, y⟩
+  · rfl
+  · rfl
+  · rcases c₃ with _ | ⟨v, w⟩ | ⟨v, w⟩
+    · by_cases h : c₁ = y <;> simp [h]
+    · by_cases h : c₁ = y <;> simp [h]
+    · by_cases h₁ : c₁ = y <;> by_cases h₂ : x = w
+      · subst h₁; subst h₂; simp
+      · simp [h₁, h₂]
+      · simp [h₁, h₂]
+      · simp [h₁, h₂]
 
 /-- Extract a sentence meaning (category S) from an interpretation result. -/
 def getMeaning {E W : Type} (result : Option (Interp E W)) : Option Prop :=

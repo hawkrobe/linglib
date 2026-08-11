@@ -139,6 +139,24 @@ def forwardCompX : Cat α → Cat α → Option (Cat α)
   | f, g@(.lslash _ _) => generalizedForwardComp 1 f g
   | _, _ => none
 
+@[simp] theorem forwardApp_rslash (x y : Cat α) : forwardApp (x / y) y = some x := by
+  simp [forwardApp, generalizedForwardComp]
+
+@[simp] theorem backwardApp_lslash (x y : Cat α) : backwardApp y (x \ y) = some x := by
+  simp [backwardApp, generalizedBackwardComp]
+
+@[simp] theorem forwardComp_rslash (x y z : Cat α) :
+    forwardComp (x / y) (y / z) = some (x / z) := by
+  simp [forwardComp, generalizedForwardComp]
+
+@[simp] theorem backwardComp_lslash (x y z : Cat α) :
+    backwardComp (y \ z) (x \ y) = some (x \ z) := by
+  simp [backwardComp, generalizedBackwardComp]
+
+@[simp] theorem forwardCompX_lslash (x y z : Cat α) :
+    forwardCompX (x / y) (y \ z) = some (x \ z) := by
+  simp [forwardCompX, generalizedForwardComp]
+
 end CombinatoryRules
 
 section TypeRaising
@@ -156,6 +174,9 @@ end TypeRaising
 /-- Coordination: X conj X => X. -/
 def coordinate : Cat α → Cat α → Option (Cat α)
   | x, y => if x = y then some x else none
+
+@[simp] theorem coordinate_self (x : Cat α) : coordinate x x = some x := by
+  simp [coordinate]
 
 end Cat
 
