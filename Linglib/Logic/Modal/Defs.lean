@@ -9,7 +9,7 @@ import Mathlib.Order.Defs.Unbundled
 The bare foundation for accessibility-restricted modal logic, parameterised by
 `{W : Type*}` — no Frame, no Entity, no type system: accessibility relations,
 frame conditions, and the relational `box`/`diamond`. The modal-axiom theorems
-(`RestrictedModality.lean`) build on it.
+(`Basic.lean`) build on it.
 
 Montague's S5 `box`/`diamond` in `Intensional.Quantification` is the
 universal-accessibility special case (`box universalR`), but it lives in the
@@ -18,7 +18,7 @@ typed IL layer and is developed independently there.
 `Defs.lean` is the foundation file in mathlib's sense: just the data and the
 relationships among frame conditions. Modal axiom correspondence (K/T/D/4/B/5),
 monotonicity, distribution, restriction, the Logic lattice, and the `PropOp`
-("Gallin") hierarchy live in `RestrictedModality.lean`.
+("Gallin") hierarchy live in `Basic.lean`.
 -/
 
 namespace Modal

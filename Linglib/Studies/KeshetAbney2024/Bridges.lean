@@ -43,7 +43,7 @@ namespace KeshetAbney2024.PIP.Bridges
 open KeshetAbney2024.PIP
 open DynamicSemantics.ICDRT (IVar Assignment Entity Context)
 open Modal (AccessRel box diamond)
-open Modal.Logic (frameConditions)
+open ModalLogic (frameConditions)
 
 
 -- ============================================================
@@ -263,7 +263,7 @@ it is intentionally omitted.
 -/
 
 /--
-A reflexive accessibility relation satisfies Logic.T's frame condition.
+A reflexive accessibility relation satisfies ModalLogic.T's frame condition.
 
 Stated for the Prop-valued `AccessRel`/`Std.Refl`/`frameConditions` API in
 `Intensional` — the same accessibility type PIP's modal
@@ -271,11 +271,9 @@ operators now use directly.
 -/
 theorem reflexive_satisfies_T {W : Type*}
     (R : Modal.AccessRel W) [hRefl : Std.Refl R] :
-    frameConditions Modal.Logic.T R := by
-  unfold frameConditions Modal.Logic.hasAxiom
-    Modal.Logic.T
-  refine ⟨fun _ => hRefl, fun h => ?_, fun h => ?_, fun h => ?_, fun h => ?_⟩ <;>
-    simp_all [Finset.mem_singleton]
+    frameConditions ModalLogic.T R :=
+  ⟨fun _ => hRefl, fun h => absurd h (by decide), fun h => absurd h (by decide),
+   fun h => absurd h (by decide), fun h => absurd h (by decide)⟩
 
 
 -- ============================================================

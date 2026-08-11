@@ -113,7 +113,7 @@ extension of `P`:
 The s ⊆ c ⊆ t hierarchy is the **T axiom** instantiated at `box`
 (`Modal.box_T`); the t/s duality is the standard
 modal de Morgan `box R ¬p ↔ ¬diamond R p`. T-models satisfy
-`frameConditions Logic.KTB` by construction (Definition 4 of
+`frameConditions ModalLogic.KTB` by construction (Definition 4 of
 [cobreros-etal-2012]); see `TModel.satisfies_KTB` for the explicit
 witness. The Brouwersche axiom B / symmetric-frame correspondence is
 a standard Sahlqvist result; for systematic treatment see
@@ -187,7 +187,8 @@ is addressed in §8–§9 below.
 namespace Semantics.Supervaluation.TCS
 
 open Modal
-  (AccessRel IsKTBFrame IsSerial box diamond box_T Logic)
+  (AccessRel IsKTBFrame IsSerial box diamond box_T)
+open ModalLogic (KTB frameConditions)
 open Consequence (MixedConsequence SatImplies IsSelfDual
   premise_monotone conclusion_monotone mixed_monotone)
 open Semantics.Supervaluation (SpecSpace superTrue
@@ -232,7 +233,7 @@ variable {D Pred : Type*}
 
 /-- The similarity relation as an `AccessRel` — the Kripke frame
     associated with each predicate. By construction this frame is
-    reflexive + symmetric, i.e., a **KTB frame** (`Modal.Logic.KTB`). -/
+    reflexive + symmetric, i.e., a **KTB frame** (`ModalLogic.KTB`). -/
 @[reducible] def simAccess (M : TModel D Pred) (P : Pred) : AccessRel D := M.sim P
 
 /-- Per-`(M, P)` KTB-frame instance: lets typeclass search reach
@@ -243,9 +244,9 @@ instance (M : TModel D Pred) (P : Pred) : IsKTBFrame (M.sim P) := M.sim_ktb P
     similarity relation `~_P` satisfies the frame conditions for the
     normal modal logic `KTB = K + T + B` (reflexive + symmetric Kripke
     frame). The four flag-fields beyond `.M` and `.B` are vacuously
-    satisfied because `Logic.KTB` doesn't require D, 4, or 5. -/
+    satisfied because `ModalLogic.KTB` doesn't require D, 4, or 5. -/
 theorem satisfies_KTB (M : TModel D Pred) (P : Pred) :
-    Logic.KTB.frameConditions (M.simAccess P) := by
+    frameConditions KTB (M.simAccess P) := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · intro _; exact inferInstance
   · intro h; exact absurd h (by decide)
