@@ -2773,7 +2773,6 @@ import Linglib.Syntax.Binding.Semantics
 import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.TargetRestricted
-import Linglib.Syntax.CCG.CrossSerial
 import Linglib.Syntax.CCG.Gapping
 import Linglib.Syntax.CCG.GenerativeCapacity
 import Linglib.Syntax.CCG.Interface
