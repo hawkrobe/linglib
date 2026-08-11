@@ -1,4 +1,3 @@
-import Linglib.Semantics.Questions.Partition.Constructors
 import Linglib.Studies.GroenendijkStokhof1984
 
 /-!
@@ -7,7 +6,7 @@ import Linglib.Studies.GroenendijkStokhof1984
 Single-paper formalisation of the answerhood theorems from
 [belnap-1982] ("Approaches to the semantics of questions in
 natural language", in *Issues in the Logic of Questions*), formulated
-over the `GSQuestion W` substrate.
+over the `QUD W` substrate.
 
 ## Theorems
 
@@ -26,7 +25,6 @@ over the `GSQuestion W` substrate.
 
 namespace Belnap1982
 
-open Semantics.Questions
 open GroenendijkStokhof1984
 
 /-! ### Unique Answer Fallacy (§2.3) -/
@@ -36,7 +34,7 @@ open GroenendijkStokhof1984
     the G&S framework, `ans q w` varies with the index `w` — the same
     question Q yields different complete true answers at different
     worlds. Direct restatement of `ans_situation_dependent`. -/
-theorem unique_answer_fallacy {W : Type*} (q : GSQuestion W) (w v : W)
+theorem unique_answer_fallacy {W : Type*} (q : QUD W) (w v : W)
     (hDiff : ¬ q.r w v) :
     ∃ u, QUD.ans q w u ≠ QUD.ans q v u :=
   ans_situation_dependent q w v hDiff
@@ -60,7 +58,7 @@ theorem unique_answer_fallacy {W : Type*} (q : GSQuestion W) (w v : W)
 theorem distributivity_principle {W E : Type*} [DecidableEq E]
     (domain : List E) (pred : E → W → Bool) (w : W)
     (epState : W → Bool) :
-    let q := GSQuestion.ofProject (λ w' => domain.map (λ x => pred x w'))
+    let q := QUD.ofProject (λ w' => domain.map (λ x => pred x w'))
     (∀ v, epState v = true → QUD.ans q w v = true) ↔
     (∀ e ∈ domain, ∀ v, epState v = true → pred e v = pred e w) := by
   simp only [exhaustive_answers]
@@ -71,7 +69,7 @@ theorem distributivity_principle {W E : Type*} [DecidableEq E]
 /-! ### Distributivity Test (§2.4, p. 177) -/
 
 /-- Partial answer: eliminates some cells but not all. -/
-def isPartialAnswer {W : Type*} [DecidableEq W] (p : W → Bool) (q : GSQuestion W)
+def isPartialAnswer {W : Type*} [DecidableEq W] (p : W → Bool) (q : QUD W)
     (worlds : List W) : Bool :=
   let cells := q.toCells worlds
   let compatible := cells.filter λ cell =>
@@ -93,7 +91,7 @@ def isPartialAnswer {W : Type*} [DecidableEq W] (p : W → Bool) (q : GSQuestion
     an epistemic state (set of worlds the agent considers possible)
     that is a subset of `P` (the agent knows `P`) but **not** a subset
     of `ans(Q, w)` (the agent doesn't know `Q`). -/
-def failsDistributivityTest {W : Type*} (p : W → Bool) (q : GSQuestion W)
+def failsDistributivityTest {W : Type*} (p : W → Bool) (q : QUD W)
     (w : W) (worlds : List W) : Bool :=
   worlds.any λ v => p v && !QUD.ans q w v
 
@@ -101,7 +99,7 @@ def failsDistributivityTest {W : Type*} (p : W → Bool) (q : GSQuestion W)
     exists), then knowing `P` implies knowing `Q` — i.e., `P` is at
     least as informative as `Q` w.r.t. the partition. Contrapositive
     of the test. -/
-theorem passes_test_implies_answer {W : Type*} (p : W → Bool) (q : GSQuestion W)
+theorem passes_test_implies_answer {W : Type*} (p : W → Bool) (q : QUD W)
     (w : W) (worlds : List W)
     (hPasses : failsDistributivityTest p q w worlds = false) :
     ∀ v ∈ worlds, p v = true → QUD.ans q w v = true := by
@@ -131,7 +129,7 @@ theorem passes_test_implies_answer {W : Type*} (p : W → Bool) (q : GSQuestion 
       who kicked Sam);
     * "w.val < 2" (an irrelevant fact) fails the test. -/
 theorem distributivity_test_examples :
-    let q : GSQuestion (Fin 3) := QUD.ofProject id
+    let q : QUD (Fin 3) := QUD.ofProject id
     let worlds : List (Fin 3) := [0, 1, 2]
     failsDistributivityTest (λ w => decide (w = (0 : Fin 3))) q 0 worlds = false ∧
     failsDistributivityTest (λ w => decide (w.val < 2)) q 0 worlds = true := by

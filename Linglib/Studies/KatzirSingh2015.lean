@@ -1,6 +1,5 @@
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Studies.Magri2009
-import Linglib.Semantics.Questions.Partition.Constructors
 
 /-!
 # Economy of Structure and Information

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Questions.Partition.Constructors
+import Linglib.Semantics.Questions.Partition.Cells
 import Linglib.Data.Examples.GroenendijkStokhof1984
 
 /-!
@@ -7,7 +7,8 @@ import Linglib.Data.Examples.GroenendijkStokhof1984
 
 Single-paper formalisation of the partition-semantics theorems from
 [groenendijk-stokhof-1984] (Ch. I), formulated over the
-`GSQuestion W` substrate. The substrate primitive `ans` and its
+`QUD W` substrate (a G&S question just is an equivalence relation on
+worlds). The substrate primitive `ans` and its
 basic algebraic properties live in
 `Semantics/Questions/Partition/Cells.lean`; this file owns the paper-anchored
 theorems about refinement, exhaustivity, and de dicto answers.
@@ -39,8 +40,7 @@ future contribution.
 
 namespace GroenendijkStokhof1984
 
-open Semantics.Questions
-open scoped GSQuestion  -- For ⊑ notation
+open scoped QUD  -- for ⊑ notation
 
 /-! ### Wh ↔ polar refinement -/
 
@@ -54,8 +54,8 @@ open scoped GSQuestion  -- For ⊑ notation
     `pred e w = pred e v` for any `e ∈ domain` (same polar answer). -/
 theorem wh_refines_polar {W E : Type*} [DecidableEq E]
     (domain : List E) (pred : E → W → Bool) (e : E) (he : e ∈ domain) :
-    let whQ := GSQuestion.ofProject (λ w => domain.map (λ x => pred x w))
-    let polarQ := polarQuestion (pred e)
+    let whQ := QUD.ofProject (λ w => domain.map (λ x => pred x w))
+    let polarQ := QUD.ofProject (pred e)
     whQ ⊑ polarQ := by
   intro whQ polarQ w v h
   have h' : domain.map (λ x => pred x w) = domain.map (λ x => pred x v) := by
@@ -70,29 +70,29 @@ theorem wh_refines_polar {W E : Type*} [DecidableEq E]
 theorem wh_ans_determines_polar_ans {W E : Type*} [DecidableEq E]
     (domain : List E) (pred : E → W → Bool) (e : E) (he : e ∈ domain)
     (w v : W) :
-    let whQ := GSQuestion.ofProject (λ w' => domain.map (λ x => pred x w'))
+    let whQ := QUD.ofProject (λ w' => domain.map (λ x => pred x w'))
     QUD.ans whQ w v = true →
-    let polarQ := polarQuestion (pred e)
+    let polarQ := QUD.ofProject (pred e)
     QUD.ans polarQ w v = true := by
   intro whQ h polarQ
   exact wh_refines_polar domain pred e he w v h
 
 /-- Composed polar questions refine their components. -/
 theorem composed_polar_refines {W : Type*} (p1 p2 : W → Bool) :
-    QUD.compose (polarQuestion p1) (polarQuestion p2) ⊑ polarQuestion p1 :=
+    QUD.compose (QUD.ofProject p1) (QUD.ofProject p2) ⊑ QUD.ofProject p1 :=
   QUD.compose_refines_left _ _
 
 /-! ### Answerhood thesis (p. 15) -/
 
 /-- [groenendijk-stokhof-1984] p. 15: the complete true answer at
     any index is determined by Q (functionally projected). -/
-theorem answerhood_thesis {W : Type*} (q : GSQuestion W) (i : W) :
+theorem answerhood_thesis {W : Type*} (q : QUD W) (i : W) :
     ∃ (p : W → Bool), p = QUD.ans q i :=
   ⟨QUD.ans q i, rfl⟩
 
 /-- The same question can have different answers at different
     indices. -/
-theorem ans_situation_dependent {W : Type*} (q : GSQuestion W) (w v : W)
+theorem ans_situation_dependent {W : Type*} (q : QUD W) (w v : W)
     (hDiff : ¬ q.r w v) :
     ∃ u, QUD.ans q w u ≠ QUD.ans q v u := by
   use w
@@ -107,10 +107,10 @@ theorem ans_situation_dependent {W : Type*} (q : GSQuestion W) (w v : W)
     predicate. -/
 theorem exhaustive_answers {W E : Type*} [DecidableEq E]
     (domain : List E) (pred : E → W → Bool) (w v : W) :
-    let q := GSQuestion.ofProject (λ w' => domain.map (λ x => pred x w'))
+    let q := QUD.ofProject (λ w' => domain.map (λ x => pred x w'))
     QUD.ans q w v = true ↔
     (∀ e ∈ domain, pred e w = pred e v) := by
-  simp only [QUD.ans, GSQuestion.ofProject, QUD.ofProject_sameAnswer_iff]
+  simp only [QUD.ans, QUD.ofProject_sameAnswer_iff]
   constructor
   · intro h e he
     have := List.map_eq_map_iff.mp h e he
@@ -145,7 +145,7 @@ def deDictoAnswer {W E : Type*} [DecidableEq E]
 theorem nonrigid_may_fail_semantic {W E : Type*} [DecidableEq E]
     (description : W → E)
     (hNonrigid : ∃ w v, description w ≠ description v) :
-    ∃ (pred : E → W → Bool) (q : GSQuestion W) (w v : W),
+    ∃ (pred : E → W → Bool) (q : QUD W) (w v : W),
       q.r w v ∧
       deDictoAnswer description pred w = true ∧
       deDictoAnswer description pred v = false := by
@@ -160,19 +160,19 @@ theorem nonrigid_may_fail_semantic {W E : Type*} [DecidableEq E]
 
 /-- G&S refinement transfers answers: `q1 ⊑ q2` implies that any
     `ans q1`-true world `v` is also `ans q2`-true. -/
-theorem refinement_transfers_answers {W : Type*} (q1 q2 : GSQuestion W)
+theorem refinement_transfers_answers {W : Type*} (q1 q2 : QUD W)
     (hRefines : q1 ⊑ q2) (w : W) :
     ∀ v, QUD.ans q1 w v = true → QUD.ans q2 w v = true :=
   λ v h => hRefines w v h
 
 /-- Converse: ANS-transfer implies refinement. -/
-theorem answer_transfer_implies_refinement {W : Type*} (q1 q2 : GSQuestion W)
+theorem answer_transfer_implies_refinement {W : Type*} (q1 q2 : QUD W)
     (hTransfer : ∀ w v, QUD.ans q1 w v = true → QUD.ans q2 w v = true) :
     q1 ⊑ q2 :=
   hTransfer
 
 /-- G&S refinement ↔ answer transfer. -/
-theorem refinement_iff_answer_transfer {W : Type*} (q1 q2 : GSQuestion W) :
+theorem refinement_iff_answer_transfer {W : Type*} (q1 q2 : QUD W) :
     q1 ⊑ q2 ↔ (∀ w v, QUD.ans q1 w v = true → QUD.ans q2 w v = true) :=
   ⟨λ h => refinement_transfers_answers q1 q2 h,
    λ h => answer_transfer_implies_refinement q1 q2 h⟩
