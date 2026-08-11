@@ -24,7 +24,7 @@ by state non-emptiness.
   `State.extendFunctional`: the state extensions `s[x/d]`, `s[x]`, `s[x/h]`.
 * `State.modalLift`: a set of worlds, paired with one assignment.
 * `Formula`: the formula language; `Formula.nec` is the derived `□`;
-  `Formula.IsNEFree` the NE-free fragment.
+  `Formula.NEFree` the NE-free fragment.
 * `Model`, `Model.ofMonadic`: models, as `KripkeStructure`s over
   `Language.monadicWithConstants`.
 * `eval`, `support`, `antiSupport`: bilateral evaluation.
@@ -342,21 +342,21 @@ def Formula.nec (φ : Formula Var Const Pred) : Formula Var Const Pred :=
     fragment QBSML reduces to classical first-order modal logic
     ([aloni-vanormondt-2023] analogue of [anttila-2021]
     Proposition 2.2.16); see `Logic/Modal/QBSML/Properties.lean`. -/
-inductive Formula.IsNEFree : Formula Var Const Pred → Prop
-  | pred (P : Pred) (x : Var) : IsNEFree (.pred P x)
-  | predc (P : Pred) (c : Const) : IsNEFree (.predc P c)
-  | neg {φ : Formula Var Const Pred} : IsNEFree φ → IsNEFree (.neg φ)
+inductive Formula.NEFree : Formula Var Const Pred → Prop
+  | pred (P : Pred) (x : Var) : NEFree (.pred P x)
+  | predc (P : Pred) (c : Const) : NEFree (.predc P c)
+  | neg {φ : Formula Var Const Pred} : NEFree φ → NEFree (.neg φ)
   | conj {φ ψ : Formula Var Const Pred} :
-      IsNEFree φ → IsNEFree ψ → IsNEFree (.conj φ ψ)
+      NEFree φ → NEFree ψ → NEFree (.conj φ ψ)
   | disj {φ ψ : Formula Var Const Pred} :
-      IsNEFree φ → IsNEFree ψ → IsNEFree (.disj φ ψ)
-  | poss {φ : Formula Var Const Pred} : IsNEFree φ → IsNEFree (.poss φ)
-  | exi (x : Var) {φ : Formula Var Const Pred} : IsNEFree φ → IsNEFree (.exi x φ)
-  | univ (x : Var) {φ : Formula Var Const Pred} : IsNEFree φ → IsNEFree (.univ x φ)
+      NEFree φ → NEFree ψ → NEFree (.disj φ ψ)
+  | poss {φ : Formula Var Const Pred} : NEFree φ → NEFree (.poss φ)
+  | exi (x : Var) {φ : Formula Var Const Pred} : NEFree φ → NEFree (.exi x φ)
+  | univ (x : Var) {φ : Formula Var Const Pred} : NEFree φ → NEFree (.univ x φ)
 
 /-- The derived `□φ := ¬◇¬φ` preserves NE-freeness. -/
-theorem Formula.IsNEFree.nec {φ : Formula Var Const Pred}
-    (h : φ.IsNEFree) : φ.nec.IsNEFree :=
+theorem Formula.NEFree.nec {φ : Formula Var Const Pred}
+    (h : φ.NEFree) : φ.nec.NEFree :=
   .neg (.poss (.neg h))
 
 /-! ### Atom substitution -/
@@ -383,12 +383,12 @@ def Formula.mapAtoms
   | .univ x φ => .univ x (φ.mapAtoms fp fc)
 
 /-- An atom substitution with NE-free images preserves NE-freeness. -/
-theorem Formula.IsNEFree.mapAtoms
+theorem Formula.NEFree.mapAtoms
     {fp : Pred → Var → Formula Var Const Pred}
     {fc : Pred → Const → Formula Var Const Pred}
-    (hfp : ∀ P x, (fp P x).IsNEFree) (hfc : ∀ P c, (fc P c).IsNEFree)
-    {φ : Formula Var Const Pred} (h : φ.IsNEFree) :
-    (φ.mapAtoms fp fc).IsNEFree := by
+    (hfp : ∀ P x, (fp P x).NEFree) (hfc : ∀ P c, (fc P c).NEFree)
+    {φ : Formula Var Const Pred} (h : φ.NEFree) :
+    (φ.mapAtoms fp fc).NEFree := by
   induction h with
   | pred P x => exact hfp P x
   | predc P c => exact hfc P c
