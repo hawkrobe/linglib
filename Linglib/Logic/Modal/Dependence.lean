@@ -105,20 +105,13 @@ infrastructure but differ in atom flavor:
   (Grädel and Väänänen).
 * `Modal/Bilateral.lean` (future, after BSML's eventual Core/
   graduation) — BSML's bilateral negation + NE atom.
-
-The bisimulation substrate currently lives at
-`Logic/Modal/BSML/Bisimulation.lean` for historical reasons; a
-future refactor lifts it to `Logic/Modal/Bisimulation.lean`.
+* `Modal/Bisimulation.lean` — the shared bisimulation substrate.
 
 ## Todo
 
 * [lohmann-vollmer-2013] — adds classical disjunction `⓿` (the
   BSML∨ analogue) and complete satisfiability complexity classification.
   Natural second consumer paper, with a Studies file anchored on it.
-* Bisim invariance for MDL — same shape as BSML/BSMLOr/BSMLEmpty
-  proofs in `BSML/Bisimulation.lean` and `Studies/AloniAnttilaYang2024`,
-  but the modal-case argument differs because MDL's ◇ uses single-
-  witness semantics rather than per-world.
 * Modal independence logic (Grädel and Väänänen's independence atoms) —
   sibling at `Logic/Modal/Independence.lean`.
 -/
@@ -460,9 +453,9 @@ MDL's modality differs from BSML's: anti-`◇` uses the union of accessibility
 images (clause (T9)), and `◇`-support a single witness team (clause (T8)),
 rather than BSML's per-world sub-witnesses. The invariance proof therefore
 recurses through `StateBisim.biUnionAccess` and `StateBisim.possWitness`
-(the carrier-level Lemma 3.7 analogues in `Logic/Modal/Bisimulation.lean`)
-at the modal step, where BSML uses `StateBisim.accessImage` /
-`exists_image_subset`. The dependence-atom case is depth-0 and turns on
+(carrier-level transport lemmas in `Logic/Modal/Bisimulation.lean`)
+at the modal step, where BSML uses `WorldBisim.accessStateBisim` /
+`StateBisim.exists_image_subset`. The dependence-atom case is depth-0 and turns on
 `WorldBisim.val_eq`: state bisim preserves the set of atom-valuation profiles
 realised in a team, and functional dependence is a property of that set. -/
 

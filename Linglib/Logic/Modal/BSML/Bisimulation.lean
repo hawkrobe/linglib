@@ -4,13 +4,13 @@ import Linglib.Logic.Modal.Bisimulation
 /-!
 # Bisimulation invariance for BSML
 
-[aloni-anttila-yang-2024] [anttila-2025]
-
 The carrier-level bisimulation substrate (`WorldBisim`, `StateBisim`, and
-the Lemma 3.7 transport lemmas) lives in `Logic/Modal/Bisimulation.lean`,
-shared across the modal team logics. This file specialises it to BSML: the
-modal-depth measure on `BSMLFormula` and the headline invariance result
-(Theorem 3.8) for BSML's bilateral evaluation.
+the Lemma 3.7 transport lemmas of [aloni-anttila-yang-2024]) lives in
+`Logic/Modal/Bisimulation.lean`, shared across the modal team logics. This
+file specialises it to BSML: the modal-depth measure on `BSMLFormula` and
+the invariance result (Theorem 3.8) for BSML's bilateral evaluation, which
+the [anttila-2025] expressive-completeness development consumes in
+`BSML/ExpressiveCompleteness.lean`.
 
 ## Main declarations
 
@@ -23,32 +23,25 @@ modal-depth measure on `BSMLFormula` and the headline invariance result
 
 The bisim-invariance proof inducts on the formula, handling both polarities
 (`eval M b φ s`) jointly at each step. The negation case flips polarity
-without changing depth; the modal case uses `StateBisim.accessImage`
-(Lemma 3.7(i)) to recurse at depth `k`; conjunction and disjunction use
-`StateBisim.splitPreserve` (Lemma 3.7(ii)) for the split-existential clauses
-(conj-antiSupport and disj-support).
+without changing depth; the modal case recurses at depth `k` through
+`WorldBisim.accessStateBisim` (the singleton form of Lemma 3.7(i)), with
+`StateBisim.exists_image_subset` transporting the `poss`-support witness
+sub-team; conjunction and disjunction use `StateBisim.splitPreserve`
+(Lemma 3.7(ii)) for the split-existential clauses (conj-antiSupport and
+disj-support).
 
 ## Todo
 
 * Hennessy-Milner direction (Theorem 3.3): `k`-equivalence implies
   `k`-bisimilarity, via Hintikka formulas. Requires a finite atom set
   hypothesis (`[Fintype Atom]`) for the characteristic-formula construction.
-  Deferred — Theorem 3.8 alone is enough for the expressive-completeness side
-  of [aloni-anttila-yang-2024] §3.
-* Bisim invariance for `BSMLOr.eval` and `BSMLEmpty.eval`. Same shape with one
-  new case each (`gdisj` is structurally like `support_conj` at the team
-  level; `empt` reduces to support of the inner formula or `s = ∅`, both
-  bisim-preserved).
+  Deferred — Theorem 3.8 alone is enough for the soundness half of the
+  expressive-completeness theorem in `BSML/ExpressiveCompleteness.lean`.
 -/
 
 namespace BSML
 
 open Modal
-
--- Re-export the carrier-level bisimulation names under the BSML namespace so
--- consumers that historically opened `BSML (StateBisim …)`
--- continue to resolve after the lift to `Modal`.
-export Modal (WorldBisim StateBisim)
 
 variable {W W' : Type*} [DecidableEq W] [Fintype W] [DecidableEq W'] [Fintype W']
 variable {Atom : Type*}
@@ -74,18 +67,16 @@ def BSMLFormula.modalDepth : BSMLFormula Atom → ℕ
 
     Proved by structural induction on `φ`, with both polarities handled
     jointly at each step. The `neg` case flips polarity without changing
-    depth; the `poss` case uses Lemma 3.7(i) to recurse at depth `k`;
-    conjunction and disjunction use Lemma 3.7(ii) for the split-existential
-    clauses (conj-antiSupport and disj-support). -/
-theorem bisim_invariant_eval (φ : BSMLFormula Atom) :
-    ∀ {k : ℕ}, φ.modalDepth ≤ k →
-    ∀ {M : BSMLModel W Atom} {M' : BSMLModel W' Atom}
-      {s : Finset W} {s' : Finset W'},
-    StateBisim k M s M' s' →
-    ∀ b : Bool, eval M b φ s ↔ eval M' b φ s' := by
-  induction φ with
+    depth; the `poss` case recurses at depth `k` through
+    `WorldBisim.accessStateBisim`; conjunction and disjunction use
+    Lemma 3.7(ii) for the split-existential clauses (conj-antiSupport
+    and disj-support). -/
+theorem bisim_invariant_eval {M : BSMLModel W Atom} {M' : BSMLModel W' Atom}
+    (φ : BSMLFormula Atom) {k : ℕ} (hd : φ.modalDepth ≤ k)
+    {s : Finset W} {s' : Finset W'} (hbisim : StateBisim k M s M' s')
+    (b : Bool) : eval M b φ s ↔ eval M' b φ s' := by
+  induction φ generalizing k s s' b with
   | atom p =>
-    intro k _ M M' s s' hbisim b
     -- For both polarities: each side of the iff uses the bisim partner's
     -- valuation, related by `WorldBisim.val_eq`.
     cases b <;>
@@ -97,23 +88,18 @@ theorem bisim_invariant_eval (φ : BSMLFormula Atom) :
         obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
         rw [hbw.val_eq]; exact h w' hw'
   | ne =>
-    intro k _ M M' s s' hbisim b
     cases b
     · exact hbisim.eq_empty_iff
     · exact hbisim.nonempty_iff
   | neg ψ ih =>
-    intro k hd M M' s s' hbisim b
     cases b
     · -- antiSupport (neg ψ) = support ψ
       exact ih hd hbisim true
     · -- support (neg ψ) = antiSupport ψ
       exact ih hd hbisim false
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    intro k hd M M' s s' hbisim b
-    have hd₁ : ψ₁.modalDepth ≤ k :=
-      le_trans (le_max_left _ _) hd
-    have hd₂ : ψ₂.modalDepth ≤ k :=
-      le_trans (le_max_right _ _) hd
+    have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
+    have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
     cases b
     · -- antiSupport (conj ψ₁ ψ₂): ∃ t u, splitsAs ∧ antiSupport ψ₁ t ∧ antiSupport ψ₂ u
       constructor
@@ -139,11 +125,8 @@ theorem bisim_invariant_eval (φ : BSMLFormula Atom) :
       · rintro ⟨h₁, h₂⟩
         exact ⟨(ih₁ hd₁ hbisim true).mpr h₁, (ih₂ hd₂ hbisim true).mpr h₂⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    intro k hd M M' s s' hbisim b
-    have hd₁ : ψ₁.modalDepth ≤ k :=
-      le_trans (le_max_left _ _) hd
-    have hd₂ : ψ₂.modalDepth ≤ k :=
-      le_trans (le_max_right _ _) hd
+    have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
+    have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
     cases b
     · -- antiSupport (disj ψ₁ ψ₂) = antiSupport ψ₁ ∧ antiSupport ψ₂
       constructor
@@ -169,42 +152,38 @@ theorem bisim_invariant_eval (φ : BSMLFormula Atom) :
         · exact (ih₁ hd₁ hbt.symm true).mpr h₁
         · exact (ih₂ hd₂ hbu.symm true).mpr h₂
   | poss ψ ih =>
-    intro k hd M M' s s' hbisim b
-    -- modalDepth (poss ψ) = ψ.modalDepth + 1, so we need k = succ for accessImage
-    obtain ⟨k, rfl⟩ : ∃ k', k = k' + 1 := by
-      cases k with
-      | zero => exact absurd hd (by simp [BSMLFormula.modalDepth])
-      | succ k => exact ⟨k, rfl⟩
-    have hdψ : ψ.modalDepth ≤ k := by
-      have := hd
-      simp only [BSMLFormula.modalDepth] at this
-      omega
-    cases b
-    · -- antiSupport (poss ψ): ∀ w ∈ s, antiSupport ψ (M.access w).
-      -- For each side, find the bisim-partner world and use IH at the
-      -- accessibility-image state bisim.
-      constructor
-      · intro h w' hw'
-        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-        exact (ih hdψ hbw.accessStateBisim false).mp (h w hw)
-      · intro h w hw
-        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        exact (ih hdψ hbw.accessStateBisim false).mpr (h w' hw')
-    · -- support (poss ψ): ∀ w ∈ s, ∃ t ⊆ R[w], t.Nonempty ∧ support ψ t.
-      -- The witness sub-team `t` of the access image transports across
-      -- models via `exists_image_subset`.
-      constructor
-      · intro h w' hw'
-        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-        obtain ⟨t, htsub, htne, htsupp⟩ := h w hw
-        obtain ⟨t', ht'sub, ht'ne, htbisim⟩ :=
-          hbw.accessStateBisim.exists_image_subset htsub
-        exact ⟨t', ht'sub, ht'ne htne, (ih hdψ htbisim true).mp htsupp⟩
-      · intro h w hw
-        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        obtain ⟨t', ht'sub, ht'ne, ht'supp⟩ := h w' hw'
-        obtain ⟨t, htsub, htne, htbisim⟩ :=
-          hbw.accessStateBisim.symm.exists_image_subset ht'sub
-        exact ⟨t, htsub, htne ht'ne, (ih hdψ htbisim.symm true).mpr ht'supp⟩
+    -- modalDepth (poss ψ) = ψ.modalDepth + 1, so `k` is a successor and the
+    -- recursion through `accessStateBisim` happens one depth down.
+    cases k with
+    | zero => exact absurd hd (Nat.not_succ_le_zero _)
+    | succ k =>
+      have hdψ : ψ.modalDepth ≤ k := Nat.le_of_succ_le_succ hd
+      cases b
+      · -- antiSupport (poss ψ): ∀ w ∈ s, antiSupport ψ (M.access w).
+        -- For each side, find the bisim-partner world and use IH at the
+        -- accessibility-image state bisim.
+        constructor
+        · intro h w' hw'
+          obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+          exact (ih hdψ hbw.accessStateBisim false).mp (h w hw)
+        · intro h w hw
+          obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+          exact (ih hdψ hbw.accessStateBisim false).mpr (h w' hw')
+      · -- support (poss ψ): ∀ w ∈ s, ∃ t ⊆ R[w], t.Nonempty ∧ support ψ t.
+        -- The witness sub-team `t` of the access image transports across
+        -- models via `exists_image_subset`.
+        constructor
+        · intro h w' hw'
+          obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+          obtain ⟨t, htsub, htne, htsupp⟩ := h w hw
+          obtain ⟨t', ht'sub, ht'ne, htbisim⟩ :=
+            hbw.accessStateBisim.exists_image_subset htsub
+          exact ⟨t', ht'sub, ht'ne htne, (ih hdψ htbisim true).mp htsupp⟩
+        · intro h w hw
+          obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+          obtain ⟨t', ht'sub, ht'ne, ht'supp⟩ := h w' hw'
+          obtain ⟨t, htsub, htne, htbisim⟩ :=
+            hbw.accessStateBisim.symm.exists_image_subset ht'sub
+          exact ⟨t, htsub, htne ht'ne, (ih hdψ htbisim.symm true).mpr ht'supp⟩
 
 end BSML
