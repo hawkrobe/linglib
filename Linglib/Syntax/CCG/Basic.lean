@@ -26,8 +26,8 @@ The target-restricted (VW-CCG) schema derivations live in `CCG.TargetRestricted`
 * `Cat.forwardTypeRaise`, `Cat.backwardTypeRaise`: type-raising.
 * `Derivation`: intrinsically typed derivations, indexed by the category they derive;
   `Derivation.yield` reads off the surface string a derivation spells out,
-  `Derivation.ruleClasses` the rule classes applied at its nodes — with `opCount`
-  (length) and `HasComp` / `HasTypeRaise` (membership) read off that fold.
+  `Derivation.trace` the rule applications at its nodes in the schema's vocabulary —
+  with `opCount` (length) and `HasComp` / `HasTypeRaise` (membership) read off it.
 
 ## Notation
 
@@ -164,48 +164,68 @@ def Derivation.yield {c : Cat α} : Derivation α c → List String
   | .btr d _ => d.yield
   | .coord co d1 d2 => d1.yield ++ co.form :: d2.yield
 
-/-- The combinatory rule class applied at a derivation node. -/
-inductive RuleClass where
-  /-- Application (`fapp`, `bapp`). -/
-  | app
-  /-- Composition (`fcomp`, `bcomp`, `fcompx`). -/
-  | comp
-  /-- Type-raising (`ftr`, `btr`). -/
-  | typeRaise
+/-- A rule application, in the schema's own vocabulary: generalized composition is
+identified by direction and degree (degree 0 is application; the harmonic/crossed
+distinction lives in the categories, not the rule), alongside type-raising and
+coordination. This is also the node alphabet of `CCG.TargetRestricted.Derivation`. -/
+inductive RuleApp where
+  /-- Forward generalized composition of degree `n` (`>Bⁿ`; degree 0 is `>`). -/
+  | fc (n : Nat)
+  /-- Backward generalized composition of degree `n` (`<Bⁿ`; degree 0 is `<`). -/
+  | bc (n : Nat)
+  /-- Forward type-raising `>T`. -/
+  | ftr
+  /-- Backward type-raising `<T`. -/
+  | btr
   /-- Coordination. -/
   | coord
   deriving DecidableEq, Repr
 
-/-- The rule classes applied in a derivation, one entry per node, in preorder. The
-structural observables below are all read off this fold: `opCount` is its length and
+/-- The rule application is a composition proper: degree at least 1. -/
+def RuleApp.IsComp : RuleApp → Prop
+  | .fc (_ + 1) => True
+  | .bc (_ + 1) => True
+  | _ => False
+
+instance : DecidablePred RuleApp.IsComp
+  | .fc 0 => isFalse fun h => h
+  | .fc (_ + 1) => isTrue trivial
+  | .bc 0 => isFalse fun h => h
+  | .bc (_ + 1) => isTrue trivial
+  | .ftr => isFalse fun h => h
+  | .btr => isFalse fun h => h
+  | .coord => isFalse fun h => h
+
+/-- The trace of a derivation: the rule applications at its nodes, in preorder. The
+structural observables below are read off the trace: `opCount` is its length and
 `HasComp` / `HasTypeRaise` are membership. -/
-def Derivation.ruleClasses {c : Cat α} : Derivation α c → List RuleClass
+def Derivation.trace {c : Cat α} : Derivation α c → List RuleApp
   | .lex _ _ => []
-  | .fapp d1 d2 => .app :: (d1.ruleClasses ++ d2.ruleClasses)
-  | .bapp d1 d2 => .app :: (d1.ruleClasses ++ d2.ruleClasses)
-  | .fcomp d1 d2 => .comp :: (d1.ruleClasses ++ d2.ruleClasses)
-  | .bcomp d1 d2 => .comp :: (d1.ruleClasses ++ d2.ruleClasses)
-  | .fcompx d1 d2 => .comp :: (d1.ruleClasses ++ d2.ruleClasses)
-  | .ftr d _ => .typeRaise :: d.ruleClasses
-  | .btr d _ => .typeRaise :: d.ruleClasses
-  | .coord _ d1 d2 => .coord :: (d1.ruleClasses ++ d2.ruleClasses)
+  | .fapp d1 d2 => .fc 0 :: (d1.trace ++ d2.trace)
+  | .bapp d1 d2 => .bc 0 :: (d1.trace ++ d2.trace)
+  | .fcomp d1 d2 => .fc 1 :: (d1.trace ++ d2.trace)
+  | .bcomp d1 d2 => .bc 1 :: (d1.trace ++ d2.trace)
+  | .fcompx d1 d2 => .fc 1 :: (d1.trace ++ d2.trace)
+  | .ftr d _ => .ftr :: d.trace
+  | .btr d _ => .btr :: d.trace
+  | .coord _ d1 d2 => .coord :: (d1.trace ++ d2.trace)
 
 /-- The number of combinatory rule applications in a derivation. -/
 def Derivation.opCount {c : Cat α} (d : Derivation α c) : Nat :=
-  d.ruleClasses.length
+  d.trace.length
 
-/-- The derivation contains a composition node (`fcomp`, `bcomp`, or `fcompx`). -/
+/-- The derivation contains a composition node: a rule of degree at least 1 fired. -/
 def Derivation.HasComp {c : Cat α} (d : Derivation α c) : Prop :=
-  .comp ∈ d.ruleClasses
+  ∃ r ∈ d.trace, r.IsComp
 
 instance {c : Cat α} (d : Derivation α c) : Decidable d.HasComp :=
-  inferInstanceAs (Decidable (RuleClass.comp ∈ d.ruleClasses))
+  inferInstanceAs (Decidable (∃ r ∈ d.trace, r.IsComp))
 
-/-- The derivation contains a type-raising node (`ftr` or `btr`). -/
+/-- The derivation contains a type-raising node. -/
 def Derivation.HasTypeRaise {c : Cat α} (d : Derivation α c) : Prop :=
-  .typeRaise ∈ d.ruleClasses
+  .ftr ∈ d.trace ∨ .btr ∈ d.trace
 
 instance {c : Cat α} (d : Derivation α c) : Decidable d.HasTypeRaise :=
-  inferInstanceAs (Decidable (RuleClass.typeRaise ∈ d.ruleClasses))
+  inferInstanceAs (Decidable (_ ∈ d.trace ∨ _ ∈ d.trace))
 
 end CCG
