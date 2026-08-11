@@ -82,23 +82,23 @@ def dutchLexicon : List (LexEntry Atom) := [
 
 /-! ### Lexical entries -/
 
-def jan_lex : Derivation Atom := .lex NP "Jan"
-def piet_lex : Derivation Atom := .lex NP "Piet"
-def marie_lex : Derivation Atom := .lex NP "Marie"
-def zag_lex : Derivation Atom := .lex PercV "zag"
+def jan_lex : TargetRestricted.Derivation Atom := .lex NP "Jan"
+def piet_lex : TargetRestricted.Derivation Atom := .lex NP "Piet"
+def marie_lex : TargetRestricted.Derivation Atom := .lex NP "Marie"
+def zag_lex : TargetRestricted.Derivation Atom := .lex PercV "zag"
 /-- `zwemmen` in its verb-raising category `(S\NP)/NP`. -/
-def zwemmen_vr : Derivation Atom := .lex InfSubj "zwemmen"
+def zwemmen_vr : TargetRestricted.Derivation Atom := .lex InfSubj "zwemmen"
 /-- `helpen` in its verb-raising category `((S\NP)/NP)/(S\NP)`. -/
-def helpen_vr : Derivation Atom := .lex ControlVR "helpen"
+def helpen_vr : TargetRestricted.Derivation Atom := .lex ControlVR "helpen"
 
 /-! ### Derivation: "Jan Piet zag zwemmen" (2 NPs, 2 Vs) -/
 
 /-- `zag >B zwemmen`: `(S\NP)/(S\NP) ∘ (S\NP)/NP = (S\NP)/NP`. -/
-def zag_comp_zwemmen : Derivation Atom := .fc 1 zag_lex zwemmen_vr
+def zag_comp_zwemmen : TargetRestricted.Derivation Atom := .fc 1 zag_lex zwemmen_vr
 /-- `(zag zwemmen) Piet`: `(S\NP)/NP NP = S\NP`. -/
-def zag_zwemmen_piet : Derivation Atom := .fc 0 zag_comp_zwemmen piet_lex
+def zag_zwemmen_piet : TargetRestricted.Derivation Atom := .fc 0 zag_comp_zwemmen piet_lex
 /-- `Jan (zag zwemmen Piet)`: `NP S\NP = S`. -/
-def jan_zag_zwemmen_piet : Derivation Atom := .bc 0 jan_lex zag_zwemmen_piet
+def jan_zag_zwemmen_piet : TargetRestricted.Derivation Atom := .bc 0 jan_lex zag_zwemmen_piet
 
 /-! ### Derivation: "Jan Piet Marie zag helpen zwemmen" (3 NPs, 3 Vs)
 
@@ -107,15 +107,15 @@ The cross-serial bindings are Jan→zag, Piet→helpen, Marie→zwemmen. `helpen
 Piet's and Marie's slots through the cluster into `((S\NP)/NP)/NP`. -/
 
 /-- `helpen >B zwemmen`: `((S\NP)/NP)/(S\NP) ∘ (S\NP)/NP = ((S\NP)/NP)/NP`. -/
-def helpen_comp_zwemmen : Derivation Atom := .fc 1 helpen_vr zwemmen_vr
+def helpen_comp_zwemmen : TargetRestricted.Derivation Atom := .fc 1 helpen_vr zwemmen_vr
 /-- `zag >B² (helpen zwemmen)`: `(S\NP)/(S\NP) ∘² ((S\NP)/NP)/NP = ((S\NP)/NP)/NP`. -/
-def zag_comp2_helpen_zwemmen : Derivation Atom := .fc 2 zag_lex helpen_comp_zwemmen
+def zag_comp2_helpen_zwemmen : TargetRestricted.Derivation Atom := .fc 2 zag_lex helpen_comp_zwemmen
 /-- verb cluster + Marie: `((S\NP)/NP)/NP NP = (S\NP)/NP`. -/
-def verbs_marie : Derivation Atom := .fc 0 zag_comp2_helpen_zwemmen marie_lex
+def verbs_marie : TargetRestricted.Derivation Atom := .fc 0 zag_comp2_helpen_zwemmen marie_lex
 /-- + Piet: `(S\NP)/NP NP = S\NP`. -/
-def verbs_marie_piet : Derivation Atom := .fc 0 verbs_marie piet_lex
+def verbs_marie_piet : TargetRestricted.Derivation Atom := .fc 0 verbs_marie piet_lex
 /-- + Jan: `NP S\NP = S`. -/
-def jan_piet_marie_zag_helpen_zwemmen_deriv : Derivation Atom := .bc 0 jan_lex verbs_marie_piet
+def jan_piet_marie_zag_helpen_zwemmen_deriv : TargetRestricted.Derivation Atom := .bc 0 jan_lex verbs_marie_piet
 
 /-! ### Verification -/
 
@@ -149,13 +149,13 @@ composes the cluster by forward **crossed** composition, so the
 NPs precede the whole cluster and the yield is the attested
 "Jan Piet (Marie) zag (helpen) zwemmen". -/
 
-def zag_sub : Derivation Atom := .lex PercVSub "zag"
-def helpen_sub : Derivation Atom := .lex InfHeadSub "helpen"
-def zwemmen_bare : Derivation Atom := .lex VP "zwemmen"
+def zag_sub : TargetRestricted.Derivation Atom := .lex PercVSub "zag"
+def helpen_sub : TargetRestricted.Derivation Atom := .lex InfHeadSub "helpen"
+def zwemmen_bare : TargetRestricted.Derivation Atom := .lex VP "zwemmen"
 
 /-- "(dat) Jan Piet zag zwemmen": `zag` applies to bare `zwemmen` and the
 NPs attach leftward — the 2-verb cluster needs no composition. -/
-def jan_piet_zag_zwemmen_sub : Derivation Atom :=
+def jan_piet_zag_zwemmen_sub : TargetRestricted.Derivation Atom :=
   .bc 0 jan_lex (.bc 0 piet_lex (.fc 0 zag_sub zwemmen_bare))
 
 /-- "(dat) Jan Piet Marie zag helpen zwemmen": `helpen zwemmen : VP\NP`
@@ -164,7 +164,7 @@ forms by application, `zag >B× (helpen zwemmen)` crosses the rightward
 attach leftward — Marie to `helpen`'s slot, Piet to `zag`'s object slot,
 Jan as subject: the cross-serial binding falls out of the category
 threading. -/
-def jan_piet_marie_zag_helpen_zwemmen_sub : Derivation Atom :=
+def jan_piet_marie_zag_helpen_zwemmen_sub : TargetRestricted.Derivation Atom :=
   .bc 0 jan_lex (.bc 0 piet_lex (.bc 0 marie_lex
     (.fc 1 zag_sub (.fc 0 helpen_sub zwemmen_bare))))
 
@@ -176,7 +176,7 @@ theorem three_np_sub_derives_S :
 
 /-- The crossed cluster is a leftward-seeking 3-place predicate. -/
 theorem crossed_cluster_cat :
-    (Derivation.fc 1 zag_sub (.fc 0 helpen_sub zwemmen_bare)).cat .S
+    (TargetRestricted.Derivation.fc 1 zag_sub (.fc 0 helpen_sub zwemmen_bare)).cat .S
       = some (((S \ NP) \ NP) \ NP) := by decide
 
 /-- The surface-faithful derivations spell out the attested word order

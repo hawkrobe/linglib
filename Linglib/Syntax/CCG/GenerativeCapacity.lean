@@ -27,11 +27,11 @@ target restrictions* they prove the generative power is strictly *below TAG*. Th
 point is about generating a language *exactly*: without target restrictions a CCG that
 covers `aⁿbⁿcⁿ` also admits extra permuted strings, so it does not generate the language
 `aⁿbⁿcⁿ` itself — it is the target restriction that filters these out. This subsystem's
-`CCG.DerivStep` models the unrestricted, universal-rule variant (no rule restrictions), so
+`CCG.Derivation` models the unrestricted, universal-rule variant (no rule restrictions), so
 it is the wrong model for the exact-language construction.
 
 A fully-proven construction of a target-restricted CCG that generates aⁿbⁿcⁿ
-is therefore *not* expressible over `DerivStep`; it lives in
+is therefore *not* expressible over `Derivation`; it lives in
 `Studies/KuhlmannKollerSatta2015` (`ccg_generates_anbnc`), which models the target
 restriction explicitly. The concrete Dutch derivations in `CCG.CrossSerial` are 2- and
 3-verb instances — surface-faithful via crossed composition (see
