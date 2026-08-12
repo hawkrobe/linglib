@@ -151,10 +151,8 @@ possibility, with the ∃∀ clause as the strict Smyth order via
 theorem realize_comp_iff_strict_dominationLift :
     Realize interp (.comp A B) ord.le i w ↔
     Strict (dominationLift (flip ord.le))
-      {x | ord.le x i ∧ Realize interp A ord.le x w ∧
-        ¬ Realize interp B ord.le x w}
-      {x | ord.le x i ∧ Realize interp B ord.le x w ∧
-        ¬ Realize interp A ord.le x w} :=
+      (coneDiff ord.le (Realize interp A ord.le · w) (Realize interp B ord.le · w) i)
+      (coneDiff ord.le (Realize interp B ord.le · w) (Realize interp A ord.le · w) i) :=
   coneStrictLift_iff_strict_dominationLift
     (fun a b => ord.le_total b a) (fun _ _ => Iff.rfl) _ _ _
 
