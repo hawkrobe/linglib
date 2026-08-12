@@ -9,12 +9,19 @@ import Mathlib.Order.Lattice
 
 This file proves the order theory of `box` and `diamond`: the Galois
 connection `◇[R] ⊣ □[flip R]` and the normality laws it yields,
-antitonicity in the relation ([kratzer-1981]'s conversational backgrounds
-strengthen necessity by shrinking accessibility), and the modal square of
-opposition ([carnielli-pizzi-2008]). It also defines the bundled frame
-classes `IsS5Frame`, `IsKD45Frame`, `IsK45Frame`, `IsKTBFrame`, and
-[gallin-1975]'s indicial operators, with Montague's S5 `box`/`diamond`
-([dowty-wall-peters-1981]) as the universal-accessibility case `R = ⊤`.
+antitonicity in the relation (conversational backgrounds strengthen
+necessity by shrinking accessibility), and the modal square of
+opposition. It also defines the bundled frame classes `IsS5Frame`,
+`IsKD45Frame`, `IsK45Frame`, `IsKTBFrame`, and the indicial operators,
+with Montague's S5 `box`/`diamond` as the universal-accessibility case
+`R = ⊤`.
+
+## References
+
+* [kratzer-1981] — necessity strengthened by restricting accessibility
+* [carnielli-pizzi-2008] — the modal square of opposition
+* [gallin-1975] — the indicial operator hierarchy
+* [dowty-wall-peters-1981] — Montague's S5 operators
 
 -/
 
