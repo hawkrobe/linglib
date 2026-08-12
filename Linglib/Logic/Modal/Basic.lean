@@ -16,86 +16,49 @@ operators, placing Montague's S5 `box`/`diamond`
 ([dowty-wall-peters-1981]) as the universal-accessibility case; and the
 lattice of normal modal logics as axiom sets over K.
 
-## Main declarations
-
-* `modalSquare`, `modalSquare_relations` — the `□`/`◇` Aristotelian
-  square, satisfying all six relations under seriality.
-* `PropOp`, `IsIndicial`, `s5Nec`, `poss`/`nec` — the Gallin hierarchy:
-  arbitrary operators ⊋ Kripke-definable (`∃ R, N = box R`) ⊋ S5.
-* `ModalLogic.frameConditions` — frame conditions for a normal modal
-  logic, identified with its axiom set over K and ordered by the
-  `Finset` lattice (named logics `ModalLogic.K` … `ModalLogic.KD45`);
-  `frameConditions_iff_valid` is the correspondence theorem: the
-  conditions hold iff every schema of the logic is valid.
-
-## Connection to Kratzer semantics
-
-Kratzer's conversational backgrounds derive accessibility from a modal
-base: `R_f(w, w') ≡ w' ∈ ⋂f(w)`, with the ordering source further
-restricting to best worlds. Simple Kratzer necessity is `box R_f`, full
-Kratzer necessity is `box` of the best-world restriction, and S5
-necessity is `box ⊤` — see `box_restrict` for why restriction
-strengthens.
 -/
 
 namespace ModalLogic
 
 variable {W : Type*}
 
-/-! ### Modal square of opposition
+/-! ### Modal square of opposition -/
 
-The `□`/`◇` pair forms an Aristotelian square (`A = □p`, `E = □¬p`,
-`I = ◇p`, `O = ¬□p`). Under seriality — the D axiom (`box_D`) — it
-satisfies all six relations of the square of opposition, so every serial
-modality (epistemic, deontic, temporal, doxastic) inherits the square. -/
+variable {R : W → W → Prop} {p : W → Prop}
 
-/-- Under seriality, `□p` and `□¬p` are incompatible: no world satisfies both. -/
-theorem box_disjoint_compl (R : W → W → Prop) [hS : IsSerial R] (p : W → Prop) :
-    Disjoint (box R p) (box R pᶜ) := by
-  rw [Pi.disjoint_iff]
-  intro w
-  rw [disjoint_iff_inf_le]
-  rintro ⟨hp, hnp⟩
-  obtain ⟨v, hwv⟩ := hS.serial w
-  exact hnp v hwv (hp v hwv)
+/-- Over a serial relation, `□p` and `□¬p` are incompatible. -/
+theorem box_disjoint_compl [hS : IsSerial R] : Disjoint (□[R] p) (□[R] pᶜ) :=
+  Pi.disjoint_iff.mpr fun w => Prop.disjoint_iff.mpr fun ⟨hp, hnp⟩ =>
+    let ⟨v, hwv⟩ := hS.serial w
+    hnp v hwv (hp v hwv)
 
-/-- Box–diamond duality as an equation of predicates: `◇p = ¬□¬p`. -/
-theorem diamond_eq_compl_box_compl (R : W → W → Prop) (p : W → Prop) :
-    diamond R p = (box R pᶜ)ᶜ := by
+/-- Box–diamond duality as an equation of predicates: `¬□¬p = ◇p`. -/
+theorem compl_box_compl (R : W → W → Prop) (p : W → Prop) :
+    (□[R] pᶜ)ᶜ = ◇[R] p := by
   funext w
-  apply propext
-  constructor
-  · rintro ⟨v, hv, hpv⟩ hbox
-    exact hbox v hv hpv
-  · intro h
-    by_contra hne
-    exact h (fun v hv hpv => hne ⟨v, hv, hpv⟩)
+  simp [not_box]
 
-/-- The **modal square of opposition** over an accessibility relation `R`:
-    `A = □p`, `E = □¬p`, `I = ◇p`, `O = ¬□p`. -/
+/-- The **modal square of opposition** over `R`: `A = □p`, `E = □¬p`,
+    `I = ◇p`, `O = ¬□p`. -/
 def modalSquare (R : W → W → Prop) (p : W → Prop) : Aristotelian.Square (W → Prop) where
-  A := box R p
-  E := box R pᶜ
-  I := diamond R p
-  O := (box R p)ᶜ
+  A := □[R] p
+  E := □[R] pᶜ
+  I := ◇[R] p
+  O := (□[R] p)ᶜ
 
-/-- The modal square satisfies all six Aristotelian relations whenever `R` is
-**serial**. `subalternAI` is exactly the D axiom (`box_D` : `□p → ◇p`); the two
-contradiction diagonals combine `isCompl_compl` with box–diamond duality; and
-contrariety/subcontrariety reduce to `box_disjoint_compl`. -/
+/-- Over a serial relation the modal square satisfies all six Aristotelian
+    relations; the `A`-to-`I` subalternation is the D axiom (`box_D`). -/
 theorem modalSquare_relations (R : W → W → Prop) [IsSerial R] (p : W → Prop) :
     Aristotelian.SquareRelations (modalSquare R p) where
-  subalternAI := by rw [Pi.le_def]; exact fun _ => box_D
-  subalternEO := le_compl_iff_disjoint_right.mpr (box_disjoint_compl R p).symm
+  subalternAI := fun _ => box_D
+  subalternEO := le_compl_iff_disjoint_right.mpr box_disjoint_compl.symm
   contradAO := isCompl_compl
   contradEI := by
-    show IsCompl (box R pᶜ) (diamond R p)
-    rw [diamond_eq_compl_box_compl]; exact isCompl_compl
-  contraryAE := box_disjoint_compl R p
-  subcontrIO := by
-    show Codisjoint (diamond R p) ((box R p)ᶜ)
-    rw [diamond_eq_compl_box_compl, codisjoint_iff, ← compl_inf,
-        disjoint_iff.mp (box_disjoint_compl R p).symm, compl_bot]
+    show IsCompl (□[R] pᶜ) (◇[R] p)
+    rw [← compl_box_compl]; exact isCompl_compl
+  contraryAE := box_disjoint_compl
+  subcontrIO := Pi.codisjoint_iff.mpr fun w => Prop.codisjoint_iff.mpr
+    (or_iff_not_imp_right.mpr fun h => box_D (not_not.mp h))
 
 /-! ### Monotonicity and distribution -/
 
