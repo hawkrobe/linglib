@@ -172,10 +172,6 @@ inductive Axiom where
   | five
   deriving DecidableEq, Repr, Inhabited
 
-instance : ToString Axiom where
-  toString | .M => "M" | .D => "D" | .B => "B" | .four => "4" | .five => "5"
-
-
 /-- The base logic `K`: no additional axioms. -/
 def K : Finset Axiom := ∅
 
@@ -209,116 +205,81 @@ def KD45 : Finset Axiom := {.D, .four, .five}
 /-- `K45 = K + 4 + 5`. -/
 def K45 : Finset Axiom := {.four, .five}
 
-/-- `K` is the bottom of the lattice of normal logics. -/
-theorem K_bot : K = ⊥ := rfl
+/-- The frame condition of an axiom schema. -/
+def Axiom.FrameCondition : Axiom → (W → W → Prop) → Prop
+  | .M => Std.Refl
+  | .D => IsSerial
+  | .B => Std.Symm
+  | .four => IsTrans W
+  | .five => IsEuclidean
 
-/-- Frame conditions required by a logic: for each axiom schema present,
-    the corresponding condition on `R`. -/
-def frameConditions {W : Type*} (L : Finset Axiom) (R : W → W → Prop) : Prop :=
-  (.M ∈ L → Std.Refl R) ∧
-  (.D ∈ L → IsSerial R) ∧
-  (.B ∈ L → Std.Symm R) ∧
-  (.four ∈ L → IsTrans W R) ∧
-  (.five ∈ L → IsEuclidean R)
+/-- Validity of an axiom schema over an accessibility relation. -/
+def Axiom.Valid : Axiom → (W → W → Prop) → Prop
+  | .M, R => ∀ p, □[R] p ≤ p
+  | .D, R => ∀ p, □[R] p ≤ ◇[R] p
+  | .B, R => ∀ p, p ≤ □[R] (◇[R] p)
+  | .four, R => ∀ p, □[R] p ≤ □[R] (□[R] p)
+  | .five, R => ∀ p, ◇[R] p ≤ □[R] (◇[R] p)
 
-/-- Validity of an axiom schema over an accessibility relation: the schema
-    holds for all propositions at all worlds. -/
-def Axiom.Valid {W : Type*} : Axiom → (W → W → Prop) → Prop
-  | .M, R => ∀ (p : W → Prop) (w : W), box R p w → p w
-  | .D, R => ∀ (p : W → Prop) (w : W), box R p w → diamond R p w
-  | .B, R => ∀ (p : W → Prop) (w : W), p w → box R (diamond R p) w
-  | .four, R => ∀ (p : W → Prop) (w : W), box R p w → box R (box R p) w
-  | .five, R => ∀ (p : W → Prop) (w : W), diamond R p w → box R (diamond R p) w
+/-- **Correspondence, per axiom**: a schema is valid over `R` iff `R`
+    satisfies its frame condition. -/
+theorem Axiom.valid_iff {R : W → W → Prop} :
+    ∀ a : Axiom, a.Valid R ↔ a.FrameCondition R
+  | .M => ⟨fun h => ⟨fun w => h (R w) w fun _ hv => hv⟩,
+           fun hR => haveI : Std.Refl R := hR; fun _ _ h => box_T h⟩
+  | .D => ⟨fun h => ⟨fun w =>
+             let ⟨v, hv, _⟩ := h (fun _ => True) w fun _ _ => trivial; ⟨v, hv⟩⟩,
+           fun hR => haveI : IsSerial R := hR; fun _ _ h => box_D h⟩
+  | .B => ⟨fun h => ⟨fun w v hwv =>
+             match h (· = w) w rfl v hwv with | ⟨_, hvw, rfl⟩ => hvw⟩,
+           fun hR => haveI : Std.Symm R := hR; fun _ _ h => box_B h⟩
+  | .four => ⟨fun h => ⟨fun w v u hwv hvu => h (R w) w (fun _ hv => hv) v hwv u hvu⟩,
+              fun hR => haveI : IsTrans W R := hR; fun _ _ h => box_four h⟩
+  | .five => ⟨fun h => ⟨fun w v u hwv hwu =>
+               match h (· = u) w ⟨u, hwu, rfl⟩ v hwv with | ⟨_, hvu, rfl⟩ => hvu⟩,
+              fun hR => haveI : IsEuclidean R := hR; fun _ _ h => box_five h⟩
 
-/-- **Correspondence for M (= T)**: `□p → p` is valid over `R` iff `R` is
-    reflexive. -/
-theorem Axiom.valid_M_iff {W : Type*} {R : W → W → Prop} :
-    (Axiom.M).Valid R ↔ Std.Refl R :=
-  ⟨fun h => ⟨fun w => h (R w) w (fun _ hv => hv)⟩,
-   fun hR => haveI := hR; fun _ _ => box_T⟩
+/-- Frame conditions of a logic: every axiom schema present imposes its
+    condition on `R`. -/
+def frameConditions (L : Finset Axiom) (R : W → W → Prop) : Prop :=
+  ∀ a ∈ L, a.FrameCondition R
 
-/-- **Correspondence for D**: `□p → ◇p` is valid over `R` iff `R` is serial. -/
-theorem Axiom.valid_D_iff {W : Type*} {R : W → W → Prop} :
-    (Axiom.D).Valid R ↔ IsSerial R :=
-  ⟨fun h => ⟨fun w => let ⟨v, hv, _⟩ := h (fun _ => True) w (fun _ _ => trivial); ⟨v, hv⟩⟩,
-   fun hR => haveI := hR; fun _ _ => box_D⟩
+/-- **The correspondence theorem**: `R` satisfies the frame conditions of
+    `L` iff every axiom schema of `L` is valid over `R`. -/
+theorem frameConditions_iff_valid {L : Finset Axiom} {R : W → W → Prop} :
+    frameConditions L R ↔ ∀ a ∈ L, a.Valid R :=
+  forall₂_congr fun a _ => (Axiom.valid_iff a).symm
 
-/-- **Correspondence for B**: `p → □◇p` is valid over `R` iff `R` is
-    symmetric. -/
-theorem Axiom.valid_B_iff {W : Type*} {R : W → W → Prop} :
-    (Axiom.B).Valid R ↔ Std.Symm R :=
-  ⟨fun h => ⟨fun w v hwv => match h (· = w) w rfl v hwv with | ⟨_, hvw, rfl⟩ => hvw⟩,
-   fun hR => haveI := hR; fun _ _ => box_B⟩
-
-/-- **Correspondence for 4**: `□p → □□p` is valid over `R` iff `R` is
-    transitive. -/
-theorem Axiom.valid_four_iff {W : Type*} {R : W → W → Prop} :
-    (Axiom.four).Valid R ↔ IsTrans W R :=
-  ⟨fun h => ⟨fun w v u hwv hvu => h (R w) w (fun _ hv => hv) v hwv u hvu⟩,
-   fun hR => haveI := hR; fun _ _ => box_four⟩
-
-/-- **Correspondence for 5**: `◇p → □◇p` is valid over `R` iff `R` is
-    euclidean. -/
-theorem Axiom.valid_five_iff {W : Type*} {R : W → W → Prop} :
-    (Axiom.five).Valid R ↔ IsEuclidean R :=
-  ⟨fun h => ⟨fun w v u hwv hwu =>
-     match h (· = u) w ⟨u, hwu, rfl⟩ v hwv with | ⟨_, hvu, rfl⟩ => hvu⟩,
-   fun hR => haveI := hR; fun _ _ => box_five⟩
-
-/-- **The correspondence theorem**: `R` satisfies the frame conditions of `L`
-    iff every axiom schema of `L` is valid over `R`. Left to right is
-    soundness (`box_T` … `box_five`); the converse holds because each schema
-    elementarily defines its frame condition (`Axiom.valid_M_iff`, …). -/
-theorem frameConditions_iff_valid {W : Type*} {L : Finset Axiom}
-    {R : W → W → Prop} :
-    frameConditions L R ↔ ∀ a ∈ L, a.Valid R := by
-  constructor
-  · intro h a ha
-    cases a with
-    | M => exact Axiom.valid_M_iff.mpr (h.1 ha)
-    | D => exact Axiom.valid_D_iff.mpr (h.2.1 ha)
-    | B => exact Axiom.valid_B_iff.mpr (h.2.2.1 ha)
-    | four => exact Axiom.valid_four_iff.mpr (h.2.2.2.1 ha)
-    | five => exact Axiom.valid_five_iff.mpr (h.2.2.2.2 ha)
-  · intro h
-    exact ⟨fun hm => Axiom.valid_M_iff.mp (h _ hm),
-           fun hm => Axiom.valid_D_iff.mp (h _ hm),
-           fun hm => Axiom.valid_B_iff.mp (h _ hm),
-           fun hm => Axiom.valid_four_iff.mp (h _ hm),
-           fun hm => Axiom.valid_five_iff.mp (h _ hm)⟩
-
-/-- The syntactic-semantic bridge for `S5`: `frameConditions ModalLogic.S5 R`
-    iff `R` is an S5 frame. -/
-@[simp] theorem frameConditions_S5_iff {W : Type*} (R : W → W → Prop) :
-    frameConditions S5 R ↔ IsS5Frame R :=
-  ⟨fun h => haveI := h.1 (by decide); haveI := h.2.2.2.2 (by decide); ⟨⟩,
-   fun h => ⟨fun _ => h.toRefl, fun hm => absurd hm (by decide),
-             fun hm => absurd hm (by decide), fun hm => absurd hm (by decide),
-             fun _ => h.toIsEuclidean⟩⟩
+/-- The syntactic-semantic bridge for `S5`. -/
+@[simp] theorem frameConditions_S5_iff (R : W → W → Prop) :
+    frameConditions S5 R ↔ IsS5Frame R := by
+  simp only [frameConditions, S5, Axiom.FrameCondition, Finset.mem_insert,
+    Finset.mem_singleton, forall_eq_or_imp, forall_eq]
+  exact ⟨fun ⟨h1, h2⟩ => haveI := h1; haveI := h2; ⟨⟩,
+         fun h => ⟨h.toRefl, h.toIsEuclidean⟩⟩
 
 /-- The syntactic-semantic bridge for `KD45`. -/
-@[simp] theorem frameConditions_KD45_iff {W : Type*} (R : W → W → Prop) :
-    frameConditions KD45 R ↔ IsKD45Frame R :=
-  ⟨fun h => haveI := h.2.1 (by decide); haveI := h.2.2.2.1 (by decide);
-     haveI := h.2.2.2.2 (by decide); ⟨⟩,
-   fun h => ⟨fun hm => absurd hm (by decide), fun _ => h.toIsSerial,
-             fun hm => absurd hm (by decide), fun _ => h.toIsTrans,
-             fun _ => h.toIsEuclidean⟩⟩
+@[simp] theorem frameConditions_KD45_iff (R : W → W → Prop) :
+    frameConditions KD45 R ↔ IsKD45Frame R := by
+  simp only [frameConditions, KD45, Axiom.FrameCondition, Finset.mem_insert,
+    Finset.mem_singleton, forall_eq_or_imp, forall_eq]
+  exact ⟨fun ⟨h1, h2, h3⟩ => haveI := h1; haveI := h2; haveI := h3; ⟨⟩,
+         fun h => ⟨h.toIsSerial, h.toIsTrans, h.toIsEuclidean⟩⟩
 
 /-- The syntactic-semantic bridge for `K45`. -/
-@[simp] theorem frameConditions_K45_iff {W : Type*} (R : W → W → Prop) :
-    frameConditions K45 R ↔ IsK45Frame R :=
-  ⟨fun h => haveI := h.2.2.2.1 (by decide); haveI := h.2.2.2.2 (by decide); ⟨⟩,
-   fun h => ⟨fun hm => absurd hm (by decide), fun hm => absurd hm (by decide),
-             fun hm => absurd hm (by decide), fun _ => h.toIsTrans,
-             fun _ => h.toIsEuclidean⟩⟩
+@[simp] theorem frameConditions_K45_iff (R : W → W → Prop) :
+    frameConditions K45 R ↔ IsK45Frame R := by
+  simp only [frameConditions, K45, Axiom.FrameCondition, Finset.mem_insert,
+    Finset.mem_singleton, forall_eq_or_imp, forall_eq]
+  exact ⟨fun ⟨h1, h2⟩ => haveI := h1; haveI := h2; ⟨⟩,
+         fun h => ⟨h.toIsTrans, h.toIsEuclidean⟩⟩
 
 /-- The syntactic-semantic bridge for `KTB`. -/
-@[simp] theorem frameConditions_KTB_iff {W : Type*} (R : W → W → Prop) :
-    frameConditions KTB R ↔ IsKTBFrame R :=
-  ⟨fun h => haveI := h.1 (by decide); haveI := h.2.2.1 (by decide); ⟨⟩,
-   fun h => ⟨fun _ => h.toRefl, fun hm => absurd hm (by decide),
-             fun _ => h.toSymm, fun hm => absurd hm (by decide),
-             fun hm => absurd hm (by decide)⟩⟩
+@[simp] theorem frameConditions_KTB_iff (R : W → W → Prop) :
+    frameConditions KTB R ↔ IsKTBFrame R := by
+  simp only [frameConditions, KTB, Axiom.FrameCondition, Finset.mem_insert,
+    Finset.mem_singleton, forall_eq_or_imp, forall_eq]
+  exact ⟨fun ⟨h1, h2⟩ => haveI := h1; haveI := h2; ⟨⟩,
+         fun h => ⟨h.toRefl, h.toSymm⟩⟩
 
 end ModalLogic

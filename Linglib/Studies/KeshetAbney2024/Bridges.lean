@@ -272,8 +272,7 @@ operators now use directly.
 theorem reflexive_satisfies_T {W : Type*}
     (R : W → W → Prop) [hRefl : Std.Refl R] :
     frameConditions ModalLogic.T R :=
-  ⟨fun _ => hRefl, fun h => absurd h (by decide), fun h => absurd h (by decide),
-   fun h => absurd h (by decide), fun h => absurd h (by decide)⟩
+  fun a ha => by obtain rfl := Finset.mem_singleton.mp ha; exact hRefl
 
 
 -- ============================================================
