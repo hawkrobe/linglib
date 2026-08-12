@@ -110,7 +110,7 @@ theorem support_possPxOrQx_iff
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
     support univAccessModel (.poss (.disj Px Qx)) s ↔
       ∀ i ∈ s,
-        (ModalFormula.dia
+        (ModalFormula.diamond
           ((monadicRel Predicate.P).modalFormula₁ (Term.var QVar.x) ⊔
             (monadicRel Predicate.Q).modalFormula₁ (Term.var QVar.x))).Realize
           univAccessModel i.world (v i) :=

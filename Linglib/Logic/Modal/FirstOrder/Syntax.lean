@@ -6,7 +6,7 @@ import Mathlib.ModelTheory.Syntax
 `ModalFormula L α`: modal formulas over `L` with named free variables `α`,
 in mathlib's `BoundedFormula` basis — atomic `equal`/`rel`, `falsum`,
 `imp` — plus `□` and named universal quantification, with `∼`, `⊤`, `⊓`,
-`⊔`, `ex`, and `dia` derived exactly as for `BoundedFormula`.
+`⊔`, `ex`, and `diamond` derived exactly as for `BoundedFormula`.
 `[UPSTREAM]` candidate for `Mathlib/ModelTheory`.
 -/
 
@@ -16,7 +16,7 @@ variable {L : Language} {α : Type*}
 
 /-- Modal formulas over `L` with named free variables `α`: mathlib's
     `BoundedFormula` basis — atomic `equal`/`rel`, `falsum`, `imp` — plus
-    `□` and named quantification; `∼`, `⊤`, `⊓`, `⊔`, `ex`, and `dia` are
+    `□` and named quantification; `∼`, `⊤`, `⊓`, `⊔`, `ex`, and `diamond` are
     derived exactly as for `BoundedFormula`. -/
 inductive ModalFormula (L : Language) (α : Type*) where
   /-- The proposition that two terms are equal. -/
@@ -55,7 +55,7 @@ protected def ex (x : α) (φ : ModalFormula L α) : ModalFormula L α :=
 
 /-- Possibility, derived: `◇φ := ∼□∼φ` — to `box` what `ex` is to `all`. -/
 @[match_pattern]
-def dia (φ : ModalFormula L α) : ModalFormula L α := (box φ.not).not
+def diamond (φ : ModalFormula L α) : ModalFormula L α := (box φ.not).not
 
 end ModalFormula
 

@@ -1011,7 +1011,7 @@ translates the **whole NE-free fragment** — modals included — into
 every index. The translation is total on exactly the NE-free fragment. -/
 
 /-- Translate QBSML into modal formulas over the monadic signature: atoms
-    embed as classical formulas, `◇` becomes the derived `ModalFormula.dia`,
+    embed as classical formulas, `◇` becomes the derived `ModalFormula.diamond`,
     quantifiers become named binders; only `NE` returns `none`. -/
 def Formula.toModal? :
     Formula Var Const Pred →
@@ -1025,7 +1025,7 @@ def Formula.toModal? :
       φ.toModal?.bind fun α => ψ.toModal?.map (α ⊓ ·)
   | .disj φ ψ =>
       φ.toModal?.bind fun α => ψ.toModal?.map (α ⊔ ·)
-  | .poss φ => φ.toModal?.map ModalFormula.dia
+  | .poss φ => φ.toModal?.map ModalFormula.diamond
   | .exi x φ => φ.toModal?.map (ModalFormula.ex x ·)
   | .univ x φ => φ.toModal?.map (ModalFormula.all x ·)
 
@@ -1101,7 +1101,7 @@ theorem exists_toModal?_of_neFree :
     exact ⟨τ₁ ⊔ τ₂, by simp [Formula.toModal?, hτ₁, hτ₂]⟩
   | poss _ ih =>
     obtain ⟨τ, hτ⟩ := ih
-    exact ⟨τ.dia, by simp [Formula.toModal?, hτ]⟩
+    exact ⟨τ.diamond, by simp [Formula.toModal?, hτ]⟩
   | @exi x _ _ ih =>
     obtain ⟨τ, hτ⟩ := ih
     exact ⟨.ex x τ, by simp [Formula.toModal?, hτ]⟩
