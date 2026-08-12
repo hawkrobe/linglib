@@ -418,9 +418,9 @@ theorem evalMCond_iff_entails (hB : B.CompFree) :
       {x | CompFormula.Realize interp B ord.le x w} := by
   constructor
   · rintro h x ⟨hx1, hx2⟩
-    exact (CompFormula.realize_congr_of_compFree interp B hB _ _ x w).mp (h x hx1 hx2)
+    exact hB.realize_congr.mp (h x hx1 hx2)
   · intro h x hx hAx
-    exact (CompFormula.realize_congr_of_compFree interp B hB _ _ x w).mpr (h ⟨hx, hAx⟩)
+    exact hB.realize_congr.mpr (h ⟨hx, hAx⟩)
 
 end MCond
 
