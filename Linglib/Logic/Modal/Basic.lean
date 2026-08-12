@@ -47,18 +47,10 @@ def modalSquare (R : W → W → Prop) (p : W → Prop) : Aristotelian.Square (W
   O := (□[R] p)ᶜ
 
 /-- Over a serial relation the modal square satisfies all six Aristotelian
-    relations; the `A`-to-`I` subalternation is the D axiom (`box_D`). -/
+    relations. -/
 theorem modalSquare_relations (R : W → W → Prop) [IsSerial R] (p : W → Prop) :
-    Aristotelian.SquareRelations (modalSquare R p) where
-  subalternAI := fun _ => box_D
-  subalternEO := le_compl_iff_disjoint_right.mpr box_disjoint_compl.symm
-  contradAO := isCompl_compl
-  contradEI := by
-    show IsCompl (□[R] pᶜ) (◇[R] p)
-    rw [← compl_box_compl]; exact isCompl_compl
-  contraryAE := box_disjoint_compl
-  subcontrIO := Pi.codisjoint_iff.mpr fun w => Prop.codisjoint_iff.mpr
-    (or_iff_not_imp_right.mpr fun h => box_D (not_not.mp h))
+    Aristotelian.SquareRelations (modalSquare R p) :=
+  .of_disjoint (compl_box_compl R p).symm rfl box_disjoint_compl
 
 /-! ### Monotonicity and distribution -/
 
