@@ -59,9 +59,8 @@ variable {W M Var : Type*}
 /-! ### The correspondence language and the encoded structure -/
 
 /-- The correspondence language of `L`: every `L`-symbol world-relativized
-    to one arity higher (the new first argument the world), plus an
-    individual-sort predicate (unary, `corrIndiv`) and an accessibility
-    relation (binary, `corrAcc`). -/
+    to one arity higher — the new first argument the world — plus an
+    individual-sort predicate and the accessibility relation. -/
 def correspondence (L : Language) : Language where
   Functions := fun n => match n with
     | 0 => PEmpty
