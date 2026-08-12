@@ -156,12 +156,11 @@ def ModalFormula.st (k : ℕ) :
   | .rel R ts =>
       (corrRel R).formula (Fin.cons (corrWorldVar k) fun i => stTerm k (ts i))
   | .falsum => ⊥
-  | .imp φ ψ => (φ.st k).imp (ψ.st k)
+  | .imp φ ψ => φ.st k ⟹ ψ.st k
   | .box φ => Formula.all₁ (Sum.inr (k + 1))
-      ((corrAcc.formula₂ (corrWorldVar k) (corrWorldVar (k + 1))).imp
-        (φ.st (k + 1)))
+      (corrAcc.formula₂ (corrWorldVar k) (corrWorldVar (k + 1)) ⟹ φ.st (k + 1))
   | .all x φ => Formula.all₁ (Sum.inl x)
-      ((corrIndiv.formula₁ (corrIndivVar x)).imp (φ.st k))
+      (corrIndiv.formula₁ (corrIndivVar x) ⟹ φ.st k)
 
 /-! ### Satisfaction preservation -/
 
