@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Basic
 import Linglib.Logic.Modal.Defs
 import Linglib.Logic.Modal.Basic
-import Linglib.Semantics.Modality.EpistemicLogic
+import Linglib.Logic.Modal.Epistemic
 
 /-!
 # Doxastic / Deontic Commitment Frame
@@ -28,7 +28,7 @@ commitment to belief.
 namespace Discourse.Commitment.Frame
 
 open ModalLogic (IsKD45Frame IsK45Frame IsEuclidean box diamond box_K box_four)
-open Modality.EpistemicLogic (knows)
+open ModalLogic.Epistemic (knows)
 
 /-- Multi-relational Kripke frame: belief (KD45) + commitment (K4 +
     Eucl., not serial) + atomic valuation. -/

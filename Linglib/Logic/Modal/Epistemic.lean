@@ -35,16 +35,15 @@ Following mathlib style, all operators are `Prop`-valued; computation
 on finite worlds goes through `Decidable` instances + `decide`.
 -/
 
-namespace Modality.EpistemicLogic
+namespace ModalLogic.Epistemic
 
 open ModalLogic
   (box diamond IsSerial IsEuclidean box_T box_D box_four box_B box_five)
 
 /-! ## Individual Knowledge
 
-Agent i knows φ at world w iff φ holds at all worlds accessible to i.
-This re-uses `box` from `RestrictedModality.lean` with agent-indexed
-accessibility relations. -/
+Agent i knows φ at world w iff φ holds at all worlds accessible to i:
+`box` with agent-indexed accessibility relations. -/
 
 /-- Agent i knows φ at world w: Kᵢ(φ)(w) = □ᵢ φ(w). -/
 def knows {W E : Type*} (Rs : E → W → W → Prop) (i : E)
@@ -269,4 +268,4 @@ def s5ToSystemW {W : Type*} (R : W → W → Prop) [hRefl : Std.Refl R] :
     ComparativeProbability.EpistemicSystemW W :=
   ComparativeProbability.dominationLiftSystemW (s5ToWorldOrder R) (fun w => hRefl.refl w)
 
-end Modality.EpistemicLogic
+end ModalLogic.Epistemic

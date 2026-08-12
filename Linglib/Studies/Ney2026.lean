@@ -119,7 +119,7 @@ intentional states (not unified here).
    principled fix is to refactor `demonstratum` to a relation
    `C → E → Prop`.
 2. `inCG : Prop → Prop` (here taken as hypothesis) should connect to
-   `commonBelief` in `Semantics/Modality/EpistemicLogic.lean`
+   `commonBelief` in `Logic/Modal/Epistemic.lean`
    once a `CommonGround.toAgentAccess` bridge exists.
 3. `SpeakerIntention.intendedRef` parallel-stipulates with
    `Donnellan.DefiniteDescription.intendedRef`; not unified.
