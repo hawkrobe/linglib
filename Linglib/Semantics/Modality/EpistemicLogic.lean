@@ -38,7 +38,7 @@ on finite worlds goes through `Decidable` instances + `decide`.
 namespace Modality.EpistemicLogic
 
 open ModalLogic
-  (box diamond IsSerial IsEuclidean IsBeliefRefinementOf box_T box_D box_four box_B box_five)
+  (box diamond IsSerial IsEuclidean box_T box_D box_four box_B box_five)
 
 /-! ## Individual Knowledge
 
@@ -188,14 +188,13 @@ def distributedBelief {W E : Type*} (Rs : E → W → W → Prop)
   box (groupAccessRel Rs group) φ w
 
 /-- Knowledge implies belief: Kᵢ(φ) → Bᵢ(φ), given that every
-    belief-accessible world is knowledge-accessible. The
-    `[IsBeliefRefinementOf (Rk i) (Rb i)]` constraint encodes the
-    pointwise refinement; whether `Rk` is S5 and `Rb` is KD45 is
+    belief-accessible world is knowledge-accessible (`Rb i ≤ Rk i` in the
+    pointwise order on relations); whether `Rk` is S5 and `Rb` is KD45 is
     a separate stipulation (cf. Hintikka 1962). -/
 theorem knows_implies_believes {W E : Type*}
-    (Rk Rb : E → W → W → Prop) (i : E) [hRef : IsBeliefRefinementOf (Rk i) (Rb i)]
+    (Rk Rb : E → W → W → Prop) (i : E) (hsub : Rb i ≤ Rk i)
     (φ : W → Prop) (w : W) (h : knows Rk i φ w) :
-    believes Rb i φ w := fun v hv => h v (hRef.sub w v hv)
+    believes Rb i φ w := fun v hv => h v (hsub w v hv)
 
 /-- Belief is consistent: Bᵢ(φ) → ◇ᵢφ (the D axiom).
     Follows from seriality of the belief accessibility relation. -/

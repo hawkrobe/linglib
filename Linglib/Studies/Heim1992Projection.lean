@@ -38,7 +38,7 @@ namespace Heim1992
 
 open Semantics.Presupposition (PartialProp)
 open CommonGround (ContextSet)
-open ModalLogic (IsSerial IsEuclidean IsS5Frame IsKD45Frame IsBeliefRefinementOf)
+open ModalLogic (IsSerial IsEuclidean IsS5Frame IsKD45Frame)
 open Semantics.Presupposition.Context (presupSatisfied)
 open Semantics.Presupposition.BeliefEmbedding
 
@@ -124,9 +124,9 @@ instance : IsS5Frame (agentKnowsR .john) where
 /-- John's belief is KD45. -/
 instance : IsKD45Frame (agentBelievesR .john) where
 
-/-- Belief refines knowledge for John: R_B ⊆ R_K. -/
-instance : IsBeliefRefinementOf (agentKnowsR .john) (agentBelievesR .john) :=
-  ⟨fun _ _ _ => trivial⟩
+/-- Belief refines knowledge for John: `R_B ≤ R_K`. -/
+theorem agentBelieves_le_knows : agentBelievesR .john ≤ agentKnowsR .john :=
+  fun _ _ _ => trivial
 
 /-! ## Presupposition -/
 
