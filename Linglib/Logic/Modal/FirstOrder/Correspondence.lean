@@ -1,22 +1,19 @@
-import Linglib.Core.ModelTheory.FiniteModel
 import Linglib.Logic.Modal.FirstOrder.Semantics
 
 /-!
 # The correspondence language and the standard translation
 
-The standard translation of modal logic into first-order logic, for the
-monadic signature with constants: modal formulas over
-`Language.monadicWithConstants Const Pred` translate into plain mathlib
-first-order formulas over the correspondence language
-`Language.correspondence Const Pred` — accessibility as a binary relation,
-predicates world-relativized to binary relations, constants world-indexed
-to unary functions, and an individual-sort predicate — interpreted on the
-two-sorted-as-one carrier `W ⊕ M`. `realize_st` is satisfaction
-preservation.
+The standard translation of quantified modal logic into first-order logic,
+for an arbitrary signature: modal formulas over `L` translate into plain
+mathlib first-order formulas over the correspondence language
+`L.correspondence` — every symbol world-relativized to one arity higher,
+plus a binary accessibility relation and an individual-sort predicate —
+interpreted on the two-sorted-as-one carrier `W ⊕ M`. `realize_st` is
+satisfaction preservation.
 
 ## Main declarations
 
-* `Language.correspondence` — the target signature;
+* `Language.correspondence` — the correspondence language of `L`;
   `ModalStructure.corrStructure` — the `W ⊕ M` encoding of a modal
   structure as one mathlib structure.
 * `ModalFormula.st` — the standard translation, total: the current world is
@@ -30,6 +27,14 @@ preservation.
 
 ## Implementation notes
 
+* The canonical object here is the *two-sorted* first-order view of a
+  modal structure (worlds with accessibility; individuals; world-relativized
+  symbols) — the same object, in the correspondence-theory sense. The
+  `W ⊕ M` carrier, the sort predicate, and the off-sort guards are the
+  standard many-sorted-to-one-sorted coding, forced by mathlib's
+  single-sorted `Structure`; they have no independent standing. Junk
+  totalization of world-relativized functions is by `[Inhabited M]` —
+  constant-domain semantics presupposes a nonempty domain.
 * The valuation in `realize_st` is an arbitrary `val : Var ⊕ ℕ → W ⊕ M`
   constrained only at individual variables and at the current world index —
   quantifiers in the translation range over the full mixed carrier, with
@@ -45,130 +50,130 @@ preservation.
 ## References
 
 * [blackburn-derijke-venema-2001] — the standard translation
-* [aloni-vanormondt-2023] — Proposition 4.1, composed with the translation
-  for compactness
 -/
 
 namespace FirstOrder.Language
 
-variable {W M Var Const Pred : Type*}
+variable {W M Var : Type*}
 
-/-! ### The target signature and the encoded structure -/
+/-! ### The correspondence language and the encoded structure -/
 
-/-- The standard-translation target signature: world-indexed constants as
-    unary functions, an individual-sort predicate (unary), and
-    world-relativized monadic predicates plus accessibility (binary). -/
-def correspondence (Const : Type*) (Pred : Type*) : FirstOrder.Language where
+/-- The correspondence language of `L`: every `L`-symbol world-relativized
+    to one arity higher (the new first argument the world), plus an
+    individual-sort predicate (unary, `corrIndiv`) and an accessibility
+    relation (binary, `corrAcc`). -/
+def correspondence (L : Language) : Language where
   Functions := fun n => match n with
-    | 1 => Const
-    | _ => PEmpty
+    | 0 => PEmpty
+    | n + 1 => L.Functions n
   Relations := fun n => match n with
-    | 1 => PUnit
-    | 2 => Pred ⊕ PUnit
-    | _ => PEmpty
+    | 0 => PEmpty
+    | n + 1 => L.Relations n ⊕ (match n with | 0 | 1 => PUnit | _ => PEmpty)
 
-/-- A constant as a unary function symbol of the target signature. -/
-abbrev corrConst (c : Const) :
-    (correspondence Const Pred).Functions 1 := c
+variable {L : Language}
+
+/-- An `L`-function symbol, world-relativized. -/
+abbrev corrFunc {n : ℕ} (f : L.Functions n) :
+    L.correspondence.Functions (n + 1) := f
+
+/-- An `L`-relation symbol, world-relativized. -/
+abbrev corrRel {n : ℕ} (R : L.Relations n) :
+    L.correspondence.Relations (n + 1) := Sum.inl R
 
 /-- The individual-sort predicate. -/
-abbrev corrIndiv : (correspondence Const Pred).Relations 1 :=
-  PUnit.unit
-
-/-- A predicate as a world-relativized binary relation symbol. -/
-abbrev corrRel (P : Pred) :
-    (correspondence Const Pred).Relations 2 := Sum.inl P
+abbrev corrIndiv : L.correspondence.Relations 1 := Sum.inr PUnit.unit
 
 /-- The accessibility relation symbol. -/
-abbrev corrAcc : (correspondence Const Pred).Relations 2 :=
-  Sum.inr PUnit.unit
+abbrev corrAcc : L.correspondence.Relations 2 := Sum.inr PUnit.unit
 
 /-- An individual variable as a sorted term of the correspondence
     language. -/
 abbrev corrIndivVar (x : Var) :
-    (correspondence Const Pred).Term (Var ⊕ ℕ) := Term.var (Sum.inl x)
+    L.correspondence.Term (Var ⊕ ℕ) := Term.var (Sum.inl x)
 
 /-- A world variable as a sorted term of the correspondence language. -/
 abbrev corrWorldVar (k : ℕ) :
-    (correspondence Const Pred).Term (Var ⊕ ℕ) := Term.var (Sum.inr k)
+    L.correspondence.Term (Var ⊕ ℕ) := Term.var (Sum.inr k)
 
-/-- The `W ⊕ M` encoding of a Kripke model over the monadic signature
-    as a single mathlib structure: worlds and individuals share the carrier,
-    sorted by `corrIndiv`; relational guards make all off-sort atoms false. -/
-@[reducible] def ModalStructure.corrStructure
-    (K : ModalStructure (monadicWithConstants Const Pred) W M) :
-    (correspondence Const Pred).Structure (W ⊕ M) where
-  funMap := fun {n} f => match n, f with
-    | 1, c => fun z => match z 0 with
-      | Sum.inl w => Sum.inr (K.constInterp c w)
-      | Sum.inr d => Sum.inr d
+/-- The `W ⊕ M` encoding of a modal structure as a single mathlib
+    structure: worlds and individuals share the carrier, sorted by
+    `corrIndiv`; relational guards make all off-sort atoms false, and
+    off-sort function arguments default. -/
+@[reducible] def ModalStructure.corrStructure [Inhabited M]
+    (K : ModalStructure L W M) :
+    L.correspondence.Structure (W ⊕ M) where
+  funMap := fun {n} f z => match n, f with
     | 0, f => f.elim
-    | _ + 2, f => f.elim
-  RelMap := fun {n} r => match n, r with
-    | 1, _ => fun z => ∃ d : M, z 0 = Sum.inr d
-    | 2, Sum.inl P => fun z =>
-        ∃ w d, z 0 = Sum.inl w ∧ z 1 = Sum.inr d ∧ K.relInterp₁ P w d
-    | 2, Sum.inr _ => fun z =>
-        ∃ w₁ w₂, z 0 = Sum.inl w₁ ∧ z 1 = Sum.inl w₂ ∧ w₂ ∈ K.access w₁
+    | _ + 1, f => match z 0 with
+      | Sum.inl w =>
+          Sum.inr (K.funInterp f w fun i => (z i.succ).elim (fun _ => default) id)
+      | Sum.inr d => Sum.inr d
+  RelMap := fun {n} r z => match n, r with
     | 0, r => r.elim
-    | _ + 3, r => r.elim
+    | n + 1, r => r.elim
+        (fun R => ∃ (w : W) (ds : Fin n → M),
+          z 0 = Sum.inl w ∧ (∀ i, z i.succ = Sum.inr (ds i)) ∧
+            K.relInterp R w ds)
+        (fun u => match n, z, u with
+          | 0, z, _ => ∃ d : M, z 0 = Sum.inr d
+          | 1, z, _ =>
+              ∃ w₁ w₂, z 0 = Sum.inl w₁ ∧ z 1 = Sum.inl w₂ ∧ w₂ ∈ K.access w₁
+          | _ + 2, _, u => u.elim)
 
-@[simp] theorem corrStructure_relMap_rel
-    (K : ModalStructure (monadicWithConstants Const Pred) W M)
-    (P : Pred) (z : Fin 2 → W ⊕ M) :
-    (K.corrStructure).RelMap (corrRel P) z ↔
-      ∃ w d, z 0 = Sum.inl w ∧ z 1 = Sum.inr d ∧ K.relInterp₁ P w d :=
+variable [Inhabited M]
+
+@[simp] theorem corrStructure_relMap_rel (K : ModalStructure L W M)
+    {n : ℕ} (R : L.Relations n) (z : Fin (n + 1) → W ⊕ M) :
+    (K.corrStructure).RelMap (corrRel R) z ↔
+      ∃ (w : W) (ds : Fin n → M),
+        z 0 = Sum.inl w ∧ (∀ i, z i.succ = Sum.inr (ds i)) ∧
+          K.relInterp R w ds :=
   Iff.rfl
 
-@[simp] theorem corrStructure_relMap_acc (K : ModalStructure (monadicWithConstants Const Pred) W M)
+@[simp] theorem corrStructure_relMap_acc (K : ModalStructure L W M)
     (z : Fin 2 → W ⊕ M) :
-    (K.corrStructure).RelMap (corrAcc (Const := Const)) z ↔
+    (K.corrStructure).RelMap (corrAcc (L := L)) z ↔
       ∃ w₁ w₂, z 0 = Sum.inl w₁ ∧ z 1 = Sum.inl w₂ ∧ w₂ ∈ K.access w₁ :=
   Iff.rfl
 
-@[simp] theorem corrStructure_relMap_indiv
-    (K : ModalStructure (monadicWithConstants Const Pred) W M)
+@[simp] theorem corrStructure_relMap_indiv (K : ModalStructure L W M)
     (z : Fin 1 → W ⊕ M) :
-    (K.corrStructure).RelMap (corrIndiv (Const := Const)) z ↔
+    (K.corrStructure).RelMap (corrIndiv (L := L)) z ↔
       ∃ d : M, z 0 = Sum.inr d :=
   Iff.rfl
 
-theorem corrStructure_funMap_inl (K : ModalStructure (monadicWithConstants Const Pred) W M)
-    (c : Const) (w : W) (z : Fin 1 → W ⊕ M) (hz : z 0 = Sum.inl w) :
-    (K.corrStructure).funMap (corrConst (Pred := Pred) c) z =
-      Sum.inr (K.constInterp c w) := by
+theorem corrStructure_funMap_inl (K : ModalStructure L W M)
+    {n : ℕ} (f : L.Functions n) (w : W) (z : Fin (n + 1) → W ⊕ M)
+    (ds : Fin n → M) (hz : z 0 = Sum.inl w)
+    (hds : ∀ i, z i.succ = Sum.inr (ds i)) :
+    (K.corrStructure).funMap (corrFunc f) z = Sum.inr (K.funInterp f w ds) := by
   show (match z 0 with
-    | Sum.inl w' => Sum.inr (K.constInterp c w')
+    | Sum.inl w' =>
+        Sum.inr (K.funInterp f w' fun i => (z i.succ).elim (fun _ => default) id)
     | Sum.inr d => Sum.inr d) = _
   rw [hz]
+  exact congrArg Sum.inr (congrArg _ (funext fun i => by rw [hds i]; rfl))
 
 /-! ### The translation -/
 
 variable [DecidableEq Var]
 
-/-- Translate a monadic term: variables stay, constants become their unary
-    function applied to the current world variable. -/
-def stTerm (k : ℕ) :
-    (monadicWithConstants Const Pred).Term Var →
-      (correspondence Const Pred).Term (Var ⊕ ℕ)
+/-- Translate a term: variables stay, function symbols apply their
+    world-relativized forms at the current world variable. -/
+def stTerm (k : ℕ) : L.Term Var → L.correspondence.Term (Var ⊕ ℕ)
   | .var x => corrIndivVar x
-  | @Term.func _ _ l f _ => match l, f with
-    | 0, c => Term.func (corrConst c) ![corrWorldVar k]
-    | _ + 1, f => f.elim
+  | .func f args =>
+      Term.func (corrFunc f) (Fin.cons (corrWorldVar k) fun i => stTerm k (args i))
 
 /-- The standard translation `ST_k` ([blackburn-derijke-venema-2001]): the
-    current world is the free variable `Sum.inr k`; `box` relativizes a
-    fresh world variable `Sum.inr (k + 1)` along accessibility; quantifiers
-    relativize to the individual sort. Total — `ModalFormula` atoms are
-    atomic. -/
+    current world is the free variable `Sum.inr k`; atoms world-relativize;
+    `box` relativizes a fresh world variable `Sum.inr (k + 1)` along
+    accessibility; quantifiers relativize to the individual sort. -/
 def ModalFormula.st (k : ℕ) :
-    ModalFormula (monadicWithConstants Const Pred) Var →
-      (correspondence Const Pred).Formula (Var ⊕ ℕ)
+    ModalFormula L Var → L.correspondence.Formula (Var ⊕ ℕ)
   | .equal t₁ t₂ => Term.equal (stTerm k t₁) (stTerm k t₂)
-  | @ModalFormula.rel _ _ l R ts => match l, R, ts with
-    | 1, P, ts => (corrRel P).formula₂ (corrWorldVar k) (stTerm k (ts 0))
-    | 0, r, _ => r.elim
-    | _ + 2, r, _ => r.elim
+  | .rel R ts =>
+      (corrRel R).formula (Fin.cons (corrWorldVar k) fun i => stTerm k (ts i))
   | .falsum => ⊥
   | .imp φ ψ => (φ.st k).imp (ψ.st k)
   | .box φ => Formula.all₁ (Sum.inr (k + 1))
@@ -182,34 +187,28 @@ def ModalFormula.st (k : ℕ) :
 omit [DecidableEq Var] in
 /-- Translated terms realize to the individual sort: `stTerm` commutes with
     realization, via the world pinned at index `k`. -/
-private theorem realize_stTerm
-    (K : ModalStructure (monadicWithConstants Const Pred) W M)
+private theorem realize_stTerm (K : ModalStructure L W M)
     {k : ℕ} {val : Var ⊕ ℕ → W ⊕ M} {w : W} {v : Var → M}
     (hind : ∀ x, val (Sum.inl x) = Sum.inr (v x))
-    (hw : val (Sum.inr k) = Sum.inl w)
-    (t : (monadicWithConstants Const Pred).Term Var) :
-    (letI := K.corrStructure; (stTerm k t).realize val) =
-      Sum.inr (letI := K.interp w; t.realize v) := by
-  let _S := K.corrStructure
-  cases t with
-  | var x => exact hind x
-  | @func l f args =>
-    match l, f with
-    | _ + 1, f => exact f.elim
-    | 0, c =>
-      let _I := K.interp w
-      rw [show stTerm k (.func c args) =
-          Term.func (corrConst c) ![corrWorldVar k] from rfl,
-        show (Term.func (corrConst c) ![corrWorldVar k] :
-            (correspondence Const Pred).Term (Var ⊕ ℕ)).realize val =
-          (K.corrStructure).funMap (corrConst c)
-            fun i => (![corrWorldVar k] i).realize val from rfl,
-        corrStructure_funMap_inl K c w _ (by simpa using hw)]
-      refine congrArg Sum.inr ?_
-      show (K.interp w).funMap (monadicConst c) default = _
-      show _ = (K.interp w).funMap (monadicConst c) fun i => (args i).realize v
-      exact congrArg _ (funext fun i => i.elim0)
+    (hw : val (Sum.inr k) = Sum.inl w) :
+    ∀ t : L.Term Var,
+      (letI := K.corrStructure; (stTerm k t).realize val) =
+        Sum.inr (letI := K.interp w; t.realize v)
+  | .var x => hind x
+  | .func f args => by
+    let _S := K.corrStructure
+    let _I := K.interp w
+    rw [show stTerm k (.func f args) = Term.func (corrFunc f)
+        (Fin.cons (corrWorldVar k) fun i => stTerm k (args i)) from rfl,
+      Term.realize_func,
+      corrStructure_funMap_inl K f w _
+        (fun i => (letI := K.interp w; (args i).realize v))
+        (by simpa using hw)
+        (fun i => by
+          simpa [Fin.cons_succ] using realize_stTerm K hind hw (args i))]
+    rfl
 
+omit [Inhabited M] in
 /-- An individual-sorted update of an individual-sorted valuation. -/
 private theorem sorted_update {val : Var ⊕ ℕ → W ⊕ M} {v : Var → M}
     (hind : ∀ x, val (Sum.inl x) = Sum.inr (v x)) (x : Var) (d : M) :
@@ -221,6 +220,7 @@ private theorem sorted_update {val : Var ⊕ ℕ → W ⊕ M} {v : Var → M}
   · rw [Function.update_of_ne (by simpa using hy), Function.update_of_ne hy,
       hind]
 
+omit [Inhabited M] in
 /-- Individual updates leave the pinned world index untouched. -/
 private theorem pinned_update {val : Var ⊕ ℕ → W ⊕ M} {w : W} {k : ℕ}
     (hw : val (Sum.inr k) = Sum.inl w) (x : Var) (z : W ⊕ M) :
@@ -233,8 +233,8 @@ private theorem pinned_update {val : Var ⊕ ℕ → W ⊕ M} {w : W} {k : ℕ}
     world variable `Sum.inr k` to `w`. Off-sort quantifier instances are
     discharged by the relational guards, and `box`'s fresh world variable
     `k + 1` leaves the pinned index untouched. -/
-theorem realize_st (K : ModalStructure (monadicWithConstants Const Pred) W M)
-    {φ : ModalFormula (monadicWithConstants Const Pred) Var} {k : ℕ}
+theorem realize_st (K : ModalStructure L W M)
+    {φ : ModalFormula L Var} {k : ℕ}
     {val : Var ⊕ ℕ → W ⊕ M} {w : W} {v : Var → M}
     (hind : ∀ x, val (Sum.inl x) = Sum.inr (v x))
     (hw : val (Sum.inr k) = Sum.inl w) :
@@ -296,30 +296,27 @@ theorem realize_st (K : ModalStructure (monadicWithConstants Const Pred) W M)
         (hz ⟨d, ?_⟩)
       show Function.update val (Sum.inl x) (Sum.inr d) (Sum.inl x) = _
       rw [Function.update_self]
-  | @rel l R ts =>
-    match l, R with
-    | 0, r => exact r.elim
-    | (n + 2), r => exact r.elim
-    | 1, (P : Pred) =>
-      let _S := K.corrStructure
-      rw [show (ModalFormula.rel (P : (monadicWithConstants Const
-            Pred).Relations 1) ts).st k =
-          (corrRel P).formula₂ (corrWorldVar k) (stTerm k (ts 0)) from rfl,
-        Formula.realize_rel₂, corrStructure_relMap_rel,
-        ModalFormula.realize_rel,
-        show (fun i => letI := K.interp w; ((ts i).realize v)) =
-          fun _ => (letI := K.interp w; (ts 0).realize v) from
-          funext fun i => by rw [Subsingleton.elim i 0] ]
-      constructor
-      · intro h
-        exact ⟨w, (letI := K.interp w; (ts 0).realize v), by simpa using hw,
-          realize_stTerm K hind hw (ts 0), h⟩
-      · rintro ⟨w', d, hw', hd, h⟩
-        obtain rfl : w = w' := Sum.inl.inj ((by simpa using hw : (corrWorldVar
-          (Const := Const) (Pred := Pred) k).realize val = Sum.inl w).symm.trans hw')
-        obtain rfl : (letI := K.interp w; (ts 0).realize v) = d :=
-          Sum.inr.inj ((realize_stTerm K hind hw (ts 0)).symm.trans hd)
-        exact h
+  | @rel n R ts =>
+    let _S := K.corrStructure
+    rw [ModalFormula.st, Formula.realize_rel, corrStructure_relMap_rel,
+      ModalFormula.realize_rel]
+    constructor
+    · intro h
+      refine ⟨w, (fun i => letI := K.interp w; (ts i).realize v),
+        by simpa using hw,
+        fun i => by simpa [Fin.cons_succ] using realize_stTerm K hind hw (ts i),
+        h⟩
+    · rintro ⟨w', ds, hw', hds, h⟩
+      obtain rfl : w = w' := by
+        rw [show ((Fin.cons (corrWorldVar k)
+            (fun i => stTerm k (ts i)) : Fin _ → _) 0).realize val =
+          val (Sum.inr k) from rfl] at hw'
+        exact Sum.inl.inj (hw.symm.trans hw')
+      have hds' : (fun i => letI := K.interp w; (ts i).realize v) = ds :=
+        funext fun i => Sum.inr.inj
+          ((realize_stTerm K hind hw (ts i)).symm.trans
+            (by simpa [Fin.cons_succ] using hds i))
+      exact hds' ▸ h
 
 /-! ### Sort-guarded sentence closure -/
 
@@ -327,15 +324,15 @@ theorem realize_st (K : ModalStructure (monadicWithConstants Const Pred) W M)
     `Sum.inr k`: `∃z(¬IsIndiv(z) ∧ ψ)`. The guard is load-bearing on the
     mixed carrier — a bare `ex₁` could be witnessed by a junk
     individual-as-world, which satisfies `□⊥` vacuously. -/
-def stClose (k : ℕ) (ψ : (correspondence Const Pred).Formula (Var ⊕ ℕ)) :
-    (correspondence Const Pred).Formula (Var ⊕ ℕ) :=
+def stClose (k : ℕ) (ψ : L.correspondence.Formula (Var ⊕ ℕ)) :
+    L.correspondence.Formula (Var ⊕ ℕ) :=
   Formula.ex₁ (Sum.inr k)
     ((corrIndiv.formula₁ (corrWorldVar k)).not ⊓ ψ)
 
 /-- Over `corrStructure`, the guarded witness of `stClose` is exactly a
     world. -/
-theorem realize_stClose (K : ModalStructure (monadicWithConstants Const Pred) W M)
-    (k : ℕ) (ψ : (correspondence Const Pred).Formula (Var ⊕ ℕ))
+theorem realize_stClose (K : ModalStructure L W M)
+    (k : ℕ) (ψ : L.correspondence.Formula (Var ⊕ ℕ))
     (val : Var ⊕ ℕ → W ⊕ M) :
     (letI := K.corrStructure; (stClose k ψ).Realize val) ↔
       ∃ w : W,
