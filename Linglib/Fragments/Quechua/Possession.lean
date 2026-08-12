@@ -25,6 +25,5 @@ def obligatoryPossession : Obligatoriness := .exists_
 def possessiveClassification : Classification := .twoWay
 def predicativeStrategy : PredicativeStrategy := .haveVerb
 def adnominalStrategy : AdnominalMarking := .doubleMarking
-def affixPosition : Option AffixPosition := some .noAffix
 
 end Quechua.Possession

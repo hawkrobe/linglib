@@ -125,6 +125,5 @@ def possessiveClassification : Classification := .noClassification
     (the strict [nichols-1986] typology classifies it differently in some
     descriptions). -/
 def adnominalStrategy : AdnominalMarking := .headMarking
-def affixPosition : Option AffixPosition := some .suffixes
 
 end Swahili.Possession

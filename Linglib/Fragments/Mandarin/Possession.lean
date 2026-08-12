@@ -22,6 +22,5 @@ def obligatoryPossession : Obligatoriness := .noObligatory
 def possessiveClassification : Classification := .noClassification
 def predicativeStrategy : PredicativeStrategy := .haveVerb
 def adnominalStrategy : AdnominalMarking := .dependentMarking
-def affixPosition : Option AffixPosition := some .noAffix
 
 end Mandarin.Possession

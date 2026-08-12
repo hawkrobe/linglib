@@ -17,7 +17,7 @@ bare `def`s in `Fragments/<Lang>/Possession.lean`, consumed by
 
 ## Main definitions
 
-`Obligatoriness` (WALS 58A), `Classification` (59A), `AffixPosition` (57A),
+`Obligatoriness` (WALS 58A), `Classification` (59A),
 `PredicativeStrategy` ([stassen-2009] four-way; [stassen-2013b] adds Genitive),
 `AdnominalMarking` ([nichols-1986]), `Notion` and `Source` ([heine-1997]),
 `InalienabilityRank`, and the neutral `Alienability` cut. Per-language values
@@ -83,18 +83,6 @@ inductive AdnominalMarking where
   | doubleMarking
   /-- No overt marker; word order alone (WALS "no marking"; Vietnamese). -/
   | zeroMarking
-  deriving DecidableEq, Repr
-
-/-- WALS 57A: position of pronominal possessive affixes on the noun. -/
-inductive AffixPosition where
-  /-- Possessive prefixes (Bantu, many Papuan). -/
-  | prefixes
-  /-- Possessive suffixes (Turkish, Hungarian, Finnish). -/
-  | suffixes
-  /-- Both prefixes and suffixes. -/
-  | both
-  /-- No affixes; independent words/clitics (English `my`, Mandarin `de`). -/
-  | noAffix
   deriving DecidableEq, Repr
 
 /-- [heine-1997]: semantic targets of possession (vs `Source`, the diachronic origin). -/

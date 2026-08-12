@@ -11,7 +11,7 @@ through Fragments" rule ([stassen-2009]; [nichols-1986]; [heine-1997];
 ## Main declarations
 
 * `obligatoryPossession`, `possessiveClassification`, `predicativeStrategy`,
-  `adnominalStrategy`, `affixPosition`: the five possession-profile values.
+  `adnominalStrategy`: the four possession-profile values.
 
 ## Implementation notes
 
@@ -36,6 +36,5 @@ def obligatoryPossession : Obligatoriness := .exists_
 def possessiveClassification : Classification := .threeOrMore
 def predicativeStrategy : PredicativeStrategy := .locational
 def adnominalStrategy : AdnominalMarking := .headMarking
-def affixPosition : Option AffixPosition := some .prefixes
 
 end Tsotsil.Possession

@@ -192,12 +192,12 @@ theorem two_way_dominates_three_plus :
 -- ============================================================================
 
 /-- In the sample, locational strategies are the most common predicative
-    possession type (12 languages), followed by have-verb (4), genitive (1),
+    possession type (11 languages), followed by have-verb (4), genitive (2),
     topic (1), and comitative (1). -/
 theorem predicative_distribution :
-    countByPredicative allLanguages .locational = 12 ∧
+    countByPredicative allLanguages .locational = 11 ∧
     countByPredicative allLanguages .haveVerb = 4 ∧
-    countByPredicative allLanguages .genitive = 1 ∧
+    countByPredicative allLanguages .genitive = 2 ∧
     countByPredicative allLanguages .topic = 1 ∧
     countByPredicative allLanguages .comitative = 1 := by
   native_decide
@@ -269,14 +269,16 @@ theorem head_marking_mostly_complex_possession :
 -- ============================================================================
 
 /-- In the sample, locational/existential predicative possession is the most
-    widespread strategy (12 languages: Russian, Finnish, Hungarian, Korean,
-    Georgian, Hawaiian, Fijian, Tsotsil, Tseltal, plus Hindi-Urdu, Irish, and
+    widespread strategy (11 languages: Russian, Finnish, Hungarian, Korean,
+    Georgian, Fijian, Tsotsil, Tseltal, plus Hindi-Urdu, Irish, and
     Arabic, whose "at/near"-oblique possessives are Locational, not Genitive).
     The Eurasian "habeo-less" belt stretches from Finland through Korea, and
-    locational strategies also appear in Oceanic and Mayan languages. (Turkish,
-    with its genitive `var`-existential, is the sample's sole Genitive type.) -/
+    locational strategies also appear in Oceanic and Mayan languages. (The
+    Genitive type appears twice: Turkish's genitive `var`-existential and
+    Hawaiian's *He puke kaʻu*, the construction WALS 117A codes as Genitive
+    in Māori and Tahitian.) -/
 theorem locational_count :
-    (allLanguages.filter (·.usesLocational)).length = 12 := by
+    (allLanguages.filter (·.usesLocational)).length = 11 := by
   native_decide
 
 -- ============================================================================

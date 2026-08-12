@@ -142,6 +142,5 @@ def obligatoryPossession : Obligatoriness := .exists_
 def possessiveClassification : Classification := .noClassification
 /-- GEN on possessor + possessive suffix on the head (`Ali-nin kitab-i`). -/
 def adnominalStrategy : AdnominalMarking := .doubleMarking
-def affixPosition : Option AffixPosition := some .suffixes
 
 end Turkish.Possession

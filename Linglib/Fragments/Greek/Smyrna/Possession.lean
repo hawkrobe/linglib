@@ -70,6 +70,5 @@ def predicativeStrategy : PredicativeStrategy := .haveVerb
     Establishes the bidirectionality of the Modern Greek dialect continuum:
     SMG sits between Smyrna's over-extension and Grevena's complete loss. -/
 def adnominalStrategy : AdnominalMarking := .dependentMarking
-def affixPosition : Option AffixPosition := some .noAffix
 
 end Greek.Smyrna.Possession
