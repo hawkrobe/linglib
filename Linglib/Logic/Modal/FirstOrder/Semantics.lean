@@ -112,8 +112,8 @@ variable (K : ModalStructure L W M) (w : W) (v : α → M)
   simp [ModalFormula.ex, not_forall]
 
 @[simp] theorem realize_dia (φ : ModalFormula L α) :
-    (dia φ).Realize K w v ↔ ∃ w' ∈ K.access w, φ.Realize K w' v := by
-  simp [dia, not_forall]
+    (diamond φ).Realize K w v ↔ ∃ w' ∈ K.access w, φ.Realize K w' v := by
+  simp [diamond, not_forall]
 
 /-! ### The Barcan laws
 
