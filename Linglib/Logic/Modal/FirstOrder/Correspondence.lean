@@ -25,28 +25,6 @@ satisfaction preservation.
 * `stClose` — sort-guarded existential closure of the current-world
   variable, turning translations into sentence candidates.
 
-## Implementation notes
-
-* The canonical object here is the *two-sorted* first-order view of a
-  modal structure (worlds with accessibility; individuals; world-relativized
-  symbols) — the same object, in the correspondence-theory sense. The
-  `W ⊕ M` carrier, the sort predicate, and the off-sort guards are the
-  standard many-sorted-to-one-sorted coding, forced by mathlib's
-  single-sorted `Structure`; they have no independent standing. Junk
-  totalization of world-relativized functions is by `[Inhabited M]` —
-  constant-domain semantics presupposes a nonempty domain.
-* `realize_st` evaluates translations at sorted valuations `stVal v u` —
-  the valuation invariant is carried by the constructor rather than by
-  hypotheses. `stVal`'s simp interface (evaluation plus the two
-  update-commutation lemmas) lets `simp` discharge every case, including
-  the off-sort quantifier instances behind the sort guards.
-* Freshness of world variables is by increment: each `box` shifts the
-  current index from `k` to `k + 1`, and the constraint set of the theorem
-  pins only index `k`, so no freshness side conditions arise.
-* `freeVarFinset = ∅` side conditions on closures are hypotheses,
-  dischargeable by `decide` per instance — no generic free-variable
-  bookkeeping for `st`.
-
 ## References
 
 * [blackburn-derijke-venema-2001] — the standard translation
