@@ -95,10 +95,11 @@ variable {v : Index TwoAtomWorld QVar FCAtom → QVar → FCAtom}
 theorem support_univPxOrQx_iff
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
     support univAccessModel univPxOrQx s ↔
-      ∀ i ∈ s, univAccessModel.RealizeAt i.world
+      ∀ i ∈ s,
         (Formula.all₁ QVar.x
           ((monadicRel Predicate.P).formula₁ (Term.var QVar.x) ⊔
-            (monadicRel Predicate.Q).formula₁ (Term.var QVar.x))) (v i) :=
+            (monadicRel Predicate.Q).formula₁
+              (Term.var QVar.x))).RealizeAt univAccessModel.interp i.world (v i) :=
   support_iff_forall_realizeAt univAccessModel rfl s v hv
 
 /-- The narrow-scope FC premise `◇(Px ∨ Qx)` translates into the modal layer
