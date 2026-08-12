@@ -97,22 +97,17 @@ theorem diamond_restrict (p : W → Prop) : Monotone fun R : W → W → Prop =>
 
 /-! ### Bundled frame classes -/
 
-/-- S5 frame: reflexive + euclidean (implies symmetric + transitive). -/
+/-- `R` is an **S5 frame** if it is reflexive and Euclidean. -/
 class IsS5Frame : Prop extends Std.Refl R, IsEuclidean R
 
-/-- KD45 frame for textbook belief: serial + transitive + euclidean. -/
+/-- `R` is a **KD45 frame** — the doxastic frame — if it is serial,
+    transitive, and Euclidean. -/
 class IsKD45Frame : Prop extends IsSerial R, IsTrans W R, IsEuclidean R
 
-/-- K45 frame: transitive + euclidean, NOT serial. The frame condition
-    for commitment in [stalnaker-1984]-style discourse models, where
-    commitment violations (no accessible compliance world) must be
-    expressible. -/
+/-- `R` is a **K45 frame** if it is transitive and Euclidean. -/
 class IsK45Frame : Prop extends IsTrans W R, IsEuclidean R
 
-/-- KTB frame: reflexive + symmetric. The natural setting for tolerance
-    semantics ([cobreros-etal-2012]) where each predicate's
-    similarity relation is reflexive and symmetric but possibly
-    non-transitive. -/
+/-- `R` is a **KTB frame** if it is reflexive and symmetric. -/
 class IsKTBFrame : Prop extends Std.Refl R, Std.Symm R
 
 /-! ### The Gallin hierarchy
@@ -128,7 +123,6 @@ case `R = ⊤`. Tense and other non-Kripke operators live outside
 def IsIndicial (N : (W → Prop) → W → Prop) : Prop :=
   ∃ R : W → W → Prop, N = box R
 
-/-- Every `box R` is indicial. -/
 theorem box_isIndicial : IsIndicial □[R] := ⟨R, rfl⟩
 
 /-! ### Flat S5 operators
@@ -144,18 +138,16 @@ def poss (p : W → Prop) : Prop := ∃ w, p w
 def nec (p : W → Prop) : Prop := ∀ w, p w
 
 theorem nec_mono : Monotone (nec (W := W)) :=
-  fun _ q h hn w => h w (hn w)
+  fun _ _ h hn w => h w (hn w)
 
 /-! ### Decidability over finite worlds -/
 
-instance box_decidable {W : Type*} [Fintype W]
-    (R : W → W → Prop) (p : W → Prop) (w : W)
+instance [Fintype W] (R : W → W → Prop) (p : W → Prop) (w : W)
     [∀ v, Decidable (R w v)] [DecidablePred p] :
     Decidable (box R p w) :=
   inferInstanceAs (Decidable (∀ v, R w v → p v))
 
-instance diamond_decidable {W : Type*} [Fintype W]
-    (R : W → W → Prop) (p : W → Prop) (w : W)
+instance [Fintype W] (R : W → W → Prop) (p : W → Prop) (w : W)
     [∀ v, Decidable (R w v)] [DecidablePred p] :
     Decidable (diamond R p w) :=
   inferInstanceAs (Decidable (∃ v, R w v ∧ p v))
