@@ -387,6 +387,11 @@ instance (le below : W → W → Prop) (P Q : W → Prop) (i : W) [Fintype W]
     Decidable (coneStrictLift le below P Q i) := by
   unfold coneStrictLift; infer_instance
 
+/-- The cone difference set at `i`: `≤`-cone members where `P` holds and `Q`
+fails ([kratzer-2012]'s difference sets, localized to the cone). -/
+def coneDiff (le : W → W → Prop) (P Q : W → Prop) (i : W) : Set W :=
+  {x | le x i ∧ P x ∧ ¬ Q x}
+
 /-- Whenever `below` is the strict form of the total `ge_w`, the
 cone-localized clause is the strict l-lifting on the cone difference sets. -/
 theorem coneStrictLift_iff_strict_dominationLift {le below : W → W → Prop}
@@ -395,9 +400,9 @@ theorem coneStrictLift_iff_strict_dominationLift {le below : W → W → Prop}
     (P Q : W → Prop) (i : W) :
     coneStrictLift le below P Q i ↔
     ComparativeProbability.Strict (dominationLift ge_w)
-      {x | le x i ∧ P x ∧ ¬ Q x} {x | le x i ∧ Q x ∧ ¬ P x} := by
+      (coneDiff le P Q i) (coneDiff le Q P i) := by
   rw [strict_dominationLift_iff_below hTotal hBelow]
-  unfold coneStrictLift
+  unfold coneStrictLift coneDiff
   simp only [Set.mem_setOf_eq, and_imp, and_assoc]
 
 /-- The l-lifting satisfies determination by singletons. -/
