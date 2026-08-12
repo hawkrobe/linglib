@@ -2,7 +2,8 @@ import Mathlib.Data.Finset.Union
 import Mathlib.Data.Fintype.Basic
 import Linglib.Logic.Assignment
 import Linglib.Logic.Modal.FirstOrder.Semantics
-import Linglib.Logic.Modal.FirstOrder.Monadic
+import Linglib.Core.ModelTheory.FiniteModel
+import Linglib.Logic.Modal.FirstOrder.Semantics
 import Linglib.Logic.Team.Algebra
 import Linglib.Logic.Bilateral.Defs
 
@@ -422,7 +423,7 @@ def Model.ofMonadic {W Domain Const Pred : Type*} (access : W → Finset W)
 @[simp] theorem predInterp_ofMonadic {W Domain Const Pred : Type*}
     (access : W → Finset W) (κ : W → Const → Domain)
     (V : W → Pred → Domain → Prop) (P : Pred) (w : W) (d : Domain) :
-    (Model.ofMonadic access κ V).predInterp P w d ↔ V w P d :=
+    (Model.ofMonadic access κ V).relInterp₁ P w d ↔ V w P d :=
   Iff.rfl
 
 @[simp] theorem constInterp_ofMonadic {W Domain Const Pred : Type*}
@@ -445,13 +446,13 @@ variable [Fintype Domain]
 def eval (M : Model W Domain Const Pred) :
     Bool → Formula Var Const Pred → Finset (Index W Var Domain) → Prop
   | true,  .pred P x, s =>
-      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ M.predInterp P i.world d
+      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ M.relInterp₁ P i.world d
   | false, .pred P x, s =>
-      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ ¬ M.predInterp P i.world d
+      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ ¬ M.relInterp₁ P i.world d
   | true,  .predc P c, s =>
-      ∀ i ∈ s, M.predInterp P i.world (M.constInterp c i.world)
+      ∀ i ∈ s, M.relInterp₁ P i.world (M.constInterp c i.world)
   | false, .predc P c, s =>
-      ∀ i ∈ s, ¬ M.predInterp P i.world (M.constInterp c i.world)
+      ∀ i ∈ s, ¬ M.relInterp₁ P i.world (M.constInterp c i.world)
   | true,  .ne, s => s.Nonempty
   | false, .ne, s => s = ∅
   | true,  .neg ψ, s => eval M false ψ s

@@ -628,7 +628,7 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Finty
     (M : Model W Domain Const Pred)
     (P : Pred) (x : Var) (w : W) (v : Var → Domain) :
     ((monadicRel P).formula₁ (Term.var x)).RealizeAt M.interp w v ↔
-      M.predInterp P w (v x) := by
+      M.relInterp₁ P w (v x) := by
   let _S := M.interp w
   show ((monadicRel P).formula₁ (Term.var x)).Realize v ↔ _
   have hfun : (![v x] : Fin 1 → Domain) = fun _ => v x := by
@@ -643,7 +643,7 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Finty
     (v : Var → Domain) :
     ((monadicRel P).formula₁
       (Constants.term (monadicConst c))).RealizeAt M.interp w v ↔
-      M.predInterp P w (M.constInterp c w) := by
+      M.relInterp₁ P w (M.constInterp c w) := by
   let _S := M.interp w
   show ((monadicRel P).formula₁ (Constants.term (monadicConst c))).Realize v
     ↔ _
@@ -1132,7 +1132,7 @@ private theorem support_and_antiSupport_singleton_realize
       Option.some.injEq] at hτ
     subst hτ
     let _I := M.interp i.world
-    rw [ModalFormula.realize_monadicRel, Term.realize_var]
+    rw [ModalFormula.realize_rel₁, Term.realize_var]
     constructor
     · constructor
       · intro h
@@ -1160,7 +1160,7 @@ private theorem support_and_antiSupport_singleton_realize
           (Constants.term (monadicConst c))) from rfl,
       Option.some.injEq] at hτ
     subst hτ
-    rw [ModalFormula.realize_monadicRel, realize_monadicConst]
+    rw [ModalFormula.realize_rel₁, ModalStructure.realize_constants]
     constructor
     · constructor
       · intro h
@@ -1276,7 +1276,7 @@ private theorem support_and_antiSupport_singleton_realize
       subst hτ
       have hNE : φ.NEFree := neFree_of_toModal? hφ
       constructor
-      · rw [ModalFormula.realize_dia]
+      · rw [ModalFormula.realize_diamond]
         constructor
         · intro h
           obtain ⟨X, hX, ⟨w', hw'⟩, hsupp⟩ :=
@@ -1293,7 +1293,7 @@ private theorem support_and_antiSupport_singleton_realize
           exact ((ih hφ (i := (w', j.assign)) hv).1).mpr hreal
       · constructor
         · intro h hex
-          rw [ModalFormula.realize_dia] at hex
+          rw [ModalFormula.realize_diamond] at hex
           obtain ⟨w', hw', hreal⟩ := hex
           have hanti := (antiSupport_iff_forall_singleton hNE M _).mp
             (h i (Finset.mem_singleton_self i)) (w', i.assign)
@@ -1307,7 +1307,7 @@ private theorem support_and_antiSupport_singleton_realize
           obtain ⟨hkw, hka⟩ := State.mem_modalLift.mp hk
           refine ((ih hφ (i := k) fun y => by rw [hka]; exact hv y).2).mpr ?_
           intro hreal
-          exact h ((ModalFormula.realize_dia M j.world v α).mpr
+          exact h ((ModalFormula.realize_diamond M j.world v α).mpr
             ⟨k.world, hkw, hreal⟩)
   | exi x φ ih =>
     intro τ hτ i v hv

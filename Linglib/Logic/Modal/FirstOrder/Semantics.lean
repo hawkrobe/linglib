@@ -67,6 +67,19 @@ def relInterp {n : ℕ} (R : L.Relations n) (w : W) : (Fin n → M) → Prop :=
 def funInterp {n : ℕ} (f : L.Functions n) (w : W) : (Fin n → M) → M :=
   (K.interp w).funMap f
 
+/-- The relation a unary relation symbol denotes at a world, curried. -/
+def relInterp₁ (R : L.Relations 1) (w : W) (d : M) : Prop :=
+  K.relInterp R w (fun _ => d)
+
+/-- The element a constant denotes at a world. -/
+def constInterp (c : L.Constants) (w : W) : M :=
+  K.funInterp c w default
+
+/-- A constant term's value at a world is its `constInterp` denotation. -/
+theorem realize_constants {α : Type*} (w : W) (v : α → M) (c : L.Constants) :
+    (letI := K.interp w; (Constants.term c).realize v) = K.constInterp c w :=
+  congrArg _ (funext fun i => i.elim0)
+
 end ModalStructure
 
 namespace ModalFormula
@@ -136,9 +149,18 @@ variable (K : ModalStructure L W M) (w : W) (v : α → M)
       ∃ d : M, φ.Realize K w (Function.update v x d) := by
   simp [ModalFormula.ex, not_forall]
 
-@[simp] theorem realize_dia (φ : ModalFormula L α) :
+@[simp] theorem realize_diamond (φ : ModalFormula L α) :
     (diamond φ).Realize K w v ↔ ∃ w' ∈ K.access w, φ.Realize K w' v := by
   simp [diamond, not_forall]
+
+/-- Realization of a unary atom: the symbol's denotation at the world, of
+    the term's value. -/
+@[simp] theorem realize_rel₁ (R : L.Relations 1) (t : L.Term α) :
+    ((R.modalFormula₁ t).Realize K w v) ↔
+      K.relInterp₁ R w (letI := K.interp w; t.realize v) := by
+  rw [Relations.modalFormula₁, ModalFormula.realize_rel]
+  exact iff_of_eq (congrArg _
+    (funext fun i => by rw [Subsingleton.elim i 0, Matrix.cons_val_zero]))
 
 /-! ### The Barcan laws
 
