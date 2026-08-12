@@ -100,14 +100,14 @@ abbrev corrWorldVar (k : ℕ) :
     (correspondence Const Pred).Structure (W ⊕ M) where
   funMap := fun {n} f => match n, f with
     | 1, c => fun z => match z 0 with
-      | Sum.inl w => Sum.inr (K.cInterp c w)
+      | Sum.inl w => Sum.inr (K.constInterp c w)
       | Sum.inr d => Sum.inr d
     | 0, f => f.elim
     | _ + 2, f => f.elim
   RelMap := fun {n} r => match n, r with
     | 1, _ => fun z => ∃ d : M, z 0 = Sum.inr d
     | 2, Sum.inl P => fun z =>
-        ∃ w d, z 0 = Sum.inl w ∧ z 1 = Sum.inr d ∧ K.pInterp P w d
+        ∃ w d, z 0 = Sum.inl w ∧ z 1 = Sum.inr d ∧ K.predInterp P w d
     | 2, Sum.inr _ => fun z =>
         ∃ w₁ w₂, z 0 = Sum.inl w₁ ∧ z 1 = Sum.inl w₂ ∧ w₂ ∈ K.access w₁
     | 0, r => r.elim
@@ -117,7 +117,7 @@ abbrev corrWorldVar (k : ℕ) :
     (K : KripkeModel (monadicWithConstants Const Pred) W M)
     (P : Pred) (z : Fin 2 → W ⊕ M) :
     (K.corrStructure).RelMap (corrRel P) z ↔
-      ∃ w d, z 0 = Sum.inl w ∧ z 1 = Sum.inr d ∧ K.pInterp P w d :=
+      ∃ w d, z 0 = Sum.inl w ∧ z 1 = Sum.inr d ∧ K.predInterp P w d :=
   Iff.rfl
 
 @[simp] theorem corrStructure_relMap_acc (K : KripkeModel (monadicWithConstants Const Pred) W M)
@@ -136,9 +136,9 @@ abbrev corrWorldVar (k : ℕ) :
 theorem corrStructure_funMap_inl (K : KripkeModel (monadicWithConstants Const Pred) W M)
     (c : Const) (w : W) (z : Fin 1 → W ⊕ M) (hz : z 0 = Sum.inl w) :
     (K.corrStructure).funMap (corrConst (Pred := Pred) c) z =
-      Sum.inr (K.cInterp c w) := by
+      Sum.inr (K.constInterp c w) := by
   show (match z 0 with
-    | Sum.inl w' => Sum.inr (K.cInterp c w')
+    | Sum.inl w' => Sum.inr (K.constInterp c w')
     | Sum.inr d => Sum.inr d) = _
   rw [hz]
 
@@ -230,7 +230,7 @@ private theorem realize_stAtom? (K : KripkeModel (monadicWithConstants Const Pre
         cases s with
         | inl x =>
           have hLHS : Formula.RealizeAt (.rel (monadicRel P) ts) K.interp w v ↔
-              K.pInterp P w (v x) := by
+              K.predInterp P w (v x) := by
             let _S := K.interp w
             show (K.interp w).RelMap (monadicRel P)
                 (fun i => (ts i).realize (Sum.elim v (default : Fin 0 → M)))
@@ -263,14 +263,14 @@ private theorem realize_stAtom? (K : KripkeModel (monadicWithConstants Const Pre
           obtain (e | c) := f
           · exact e.elim
           have hLHS : Formula.RealizeAt (.rel (monadicRel P) ts) K.interp w v ↔
-              K.pInterp P w (K.cInterp c w) := by
+              K.predInterp P w (K.constInterp c w) := by
             let _S := K.interp w
             show (K.interp w).RelMap (monadicRel P)
                 (fun i => (ts i).realize (Sum.elim v (default : Fin 0 → M)))
               ↔ _
             have hfun : (fun i : Fin 1 => (ts i).realize
                 (Sum.elim v (default : Fin 0 → M))) =
-                fun _ => K.cInterp c w := by
+                fun _ => K.constInterp c w := by
               funext i
               rw [Subsingleton.elim i 0, hts]
               show (K.interp w).funMap (monadicConst c)
@@ -290,17 +290,17 @@ private theorem realize_stAtom? (K : KripkeModel (monadicWithConstants Const Pre
           have hcv : (Term.func (corrConst c)
               ![Term.var (Sum.inr k)] :
               (correspondence Const Pred).Term (Var ⊕ ℕ)).realize val
-              = Sum.inr (K.cInterp c w) :=
+              = Sum.inr (K.constInterp c w) :=
             corrStructure_funMap_inl K c w _ hw
           constructor
           · intro h
-            exact ⟨w, K.cInterp c w, hw, hcv, h⟩
+            exact ⟨w, K.constInterp c w, hw, hcv, h⟩
           · rintro ⟨w', d, hw', hd, h⟩
             have hww : val (Sum.inr k) = Sum.inl w' := hw'
             obtain rfl : w = w' := Sum.inl.inj (hw.symm.trans hww)
-            have hdd : Sum.inr (K.cInterp c w) = Sum.inr d :=
+            have hdd : Sum.inr (K.constInterp c w) = Sum.inr d :=
               hcv.symm.trans hd
-            obtain rfl : K.cInterp c w = d := Sum.inr.inj hdd
+            obtain rfl : K.constInterp c w = d := Sum.inr.inj hdd
             exact h
 
 /-- An individual-sorted update of an individual-sorted valuation. -/

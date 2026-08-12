@@ -10,6 +10,10 @@ models:
   symbols are `Sym` (mathlib precedent: `Language.graph`, one binary symbol),
   with `monadicStructure` building its structures from a `Sym → E → Prop`
   table.
+* `Language.monadicWithConstants Const Pred` — the monadic signature with
+  individual constants adjoined (`(monadic Pred)[[Const]]`), with
+  `monadicWithConstantsStructure` building its structures from a constant
+  interpretation and a predicate valuation.
 * `BoundedFormula.decRealize` — decidable realization over a finite structure
   with decidable atoms, by structural recursion on the formula. Mathlib has no
   such instance; with it, `decide` kernel-checks `Formula.Realize` facts on
@@ -54,6 +58,42 @@ instance {Sym E : Type*} (holds : Sym → E → Prop)
     (r : (monadic Sym).Relations n) (v : Fin n → E) :
     Decidable (@Structure.RelMap _ _ (monadicStructure holds) n r v) :=
   monadicStructure.decRelMap holds n r v
+
+/-- The monadic signature with constants:
+    `(Language.monadic Pred)[[Const]]`. -/
+abbrev monadicWithConstants (Const : Type*) (Pred : Type*) : Language :=
+  (monadic Pred)[[Const]]
+
+variable {Const Pred Domain : Type*}
+
+/-- A constant as a symbol of the signature (mathlib's `Language.con`). -/
+abbrev monadicConst (c : Const) :
+    (monadicWithConstants Const Pred).Constants := Sum.inr c
+
+/-- A predicate as a relation symbol of the signature. -/
+abbrev monadicRel (P : Pred) :
+    (monadicWithConstants Const Pred).Relations 1 := Sum.inl P
+
+/-- The `monadicWithConstants` structure a constant interpretation and a
+    predicate valuation induce: `monadicStructure` on the relations side,
+    `constantsOn.structure` on the constants side. -/
+@[reducible] def monadicWithConstantsStructure (κ : Const → Domain)
+    (V : Pred → Domain → Prop) :
+    (monadicWithConstants Const Pred).Structure Domain :=
+  letI := monadicStructure V
+  letI := constantsOn.structure κ
+  inferInstance
+
+@[simp] theorem monadicWithConstantsStructure_relMap (κ : Const → Domain)
+    (V : Pred → Domain → Prop) (P : Pred) (v : Fin 1 → Domain) :
+    (monadicWithConstantsStructure κ V).RelMap (monadicRel P) v ↔ V P (v 0) :=
+  Iff.rfl
+
+@[simp] theorem monadicWithConstantsStructure_funMap (κ : Const → Domain)
+    (V : Pred → Domain → Prop) (c : Const) (v : Fin 0 → Domain) :
+    (monadicWithConstantsStructure κ V).funMap
+      (monadicConst (Pred := Pred) c) v = κ c :=
+  rfl
 
 /-- Decidable realization on a finite structure with decidable atoms:
 structural recursion on the formula. `decide` kernel-reduces through it. -/

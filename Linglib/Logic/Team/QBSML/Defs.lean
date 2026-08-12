@@ -419,16 +419,16 @@ def Model.ofMonadic {W Domain Const Pred : Type*} (access : W → Finset W)
     Model W Domain Const Pred :=
   ⟨access, fun w => Language.monadicWithConstantsStructure (κ w) (V w)⟩
 
-@[simp] theorem pInterp_ofMonadic {W Domain Const Pred : Type*}
+@[simp] theorem predInterp_ofMonadic {W Domain Const Pred : Type*}
     (access : W → Finset W) (κ : W → Const → Domain)
     (V : W → Pred → Domain → Prop) (P : Pred) (w : W) (d : Domain) :
-    (Model.ofMonadic access κ V).pInterp P w d ↔ V w P d :=
+    (Model.ofMonadic access κ V).predInterp P w d ↔ V w P d :=
   Iff.rfl
 
-@[simp] theorem cInterp_ofMonadic {W Domain Const Pred : Type*}
+@[simp] theorem constInterp_ofMonadic {W Domain Const Pred : Type*}
     (access : W → Finset W) (κ : W → Const → Domain)
     (V : W → Pred → Domain → Prop) (c : Const) (w : W) :
-    (Model.ofMonadic access κ V).cInterp c w = κ w c :=
+    (Model.ofMonadic access κ V).constInterp c w = κ w c :=
   rfl
 
 /-! ### Bilateral evaluation -/
@@ -445,13 +445,13 @@ variable [Fintype Domain]
 def eval (M : Model W Domain Const Pred) :
     Bool → Formula Var Const Pred → Finset (Index W Var Domain) → Prop
   | true,  .pred P x, s =>
-      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ M.pInterp P i.world d
+      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ M.predInterp P i.world d
   | false, .pred P x, s =>
-      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ ¬ M.pInterp P i.world d
+      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ ¬ M.predInterp P i.world d
   | true,  .predc P c, s =>
-      ∀ i ∈ s, M.pInterp P i.world (M.cInterp c i.world)
+      ∀ i ∈ s, M.predInterp P i.world (M.constInterp c i.world)
   | false, .predc P c, s =>
-      ∀ i ∈ s, ¬ M.pInterp P i.world (M.cInterp c i.world)
+      ∀ i ∈ s, ¬ M.predInterp P i.world (M.constInterp c i.world)
   | true,  .ne, s => s.Nonempty
   | false, .ne, s => s = ∅
   | true,  .neg ψ, s => eval M false ψ s
