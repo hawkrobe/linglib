@@ -12,8 +12,6 @@ Per-language possession values for Korean (Koreanic, ISO `kor`): forms
 values live in `Studies/NicholsBickel2013.lean`.
 -/
 
-set_option autoImplicit false
-
 namespace Korean.Possession
 
 open _root_.Possession

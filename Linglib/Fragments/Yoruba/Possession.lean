@@ -14,8 +14,6 @@ Examples: mo ni iwe; iwe mi. Have-verb ni; juxtaposition for adnominal
 (possessum-possessor).
 -/
 
-set_option autoImplicit false
-
 namespace Yoruba.Possession
 
 open _root_.Possession

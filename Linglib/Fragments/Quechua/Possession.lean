@@ -15,8 +15,6 @@ obligatory on kinship and body-part nouns; -yuq 'having' for predicative;
 GEN + POSS double-marking.
 -/
 
-set_option autoImplicit false
-
 namespace Quechua.Possession
 
 open _root_.Possession

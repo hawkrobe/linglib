@@ -44,8 +44,6 @@ Kampanarou & Alexiadou's bidirectional cross-dialectal argument: SMG sits
 on a continuum between Smyrna's over-extension and GG's complete loss.
 -/
 
-set_option autoImplicit false
-
 namespace Greek.Grevena.Possession
 
 open _root_.Possession

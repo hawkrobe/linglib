@@ -26,8 +26,6 @@ Turkish lives in `Studies/Heine1997.lean`.
 - `Kitab-ım var.` 'I have a book.' (book-POSS.1SG existent; Genitive)
 -/
 
-set_option autoImplicit false
-
 namespace Turkish.Possession
 
 open _root_.Possession

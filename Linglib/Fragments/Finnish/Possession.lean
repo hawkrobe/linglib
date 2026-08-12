@@ -29,8 +29,6 @@ Finnish lives in `Studies/Heine1997.lean`.
 - `Minulla ei ole rahaa.` 'I have no money.' (I.ADESS not be money.PART)
 -/
 
-set_option autoImplicit false
-
 namespace Finnish.Possession
 
 open _root_.Possession

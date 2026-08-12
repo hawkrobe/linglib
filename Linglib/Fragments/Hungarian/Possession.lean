@@ -28,8 +28,6 @@ morphological GEN, and `Fragments/Hungarian/Case.lean` reflects this
 by omitting `.gen` from its `caseInventory`.
 -/
 
-set_option autoImplicit false
-
 namespace Hungarian.Possession
 
 open _root_.Possession

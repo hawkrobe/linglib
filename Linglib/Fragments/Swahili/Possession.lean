@@ -37,8 +37,6 @@ associative particle `a` carrying class agreement to the possessum.
 - `Saa ni y-angu.` 'The watch is mine.' (Equation: watch is of-me)
 -/
 
-set_option autoImplicit false
-
 namespace Swahili.Possession
 
 open _root_.Possession

@@ -12,8 +12,6 @@ genitive case on the possessor in adnominal possession. Substrate types
 values live in `Studies/NicholsBickel2013.lean`.
 -/
 
-set_option autoImplicit false
-
 namespace Irish.Possession
 
 open _root_.Possession

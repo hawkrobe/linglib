@@ -12,8 +12,6 @@ Cross-linguistic theorems consuming these values live in
 `Studies/NicholsBickel2013.lean`.
 -/
 
-set_option autoImplicit false
-
 namespace English.Possession
 
 open _root_.Possession

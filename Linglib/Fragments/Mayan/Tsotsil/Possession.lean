@@ -26,8 +26,6 @@ possessum for adnominal (head-marking); three noun classes: must/may/cannot
 be possessed ([aissen-polian-2025]).
 -/
 
-set_option autoImplicit false
-
 namespace Tsotsil.Possession
 
 open _root_.Possession

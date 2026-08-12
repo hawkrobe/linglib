@@ -40,8 +40,6 @@ Sibling profiles: `Fragments/Greek/Possession.lean` (SMG, transitional)
 and `Fragments/Greek/Grevena/Possession.lean` (GG, genitive lost).
 -/
 
-set_option autoImplicit false
-
 namespace Greek.Smyrna.Possession
 
 open _root_.Possession
