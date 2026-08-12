@@ -206,7 +206,7 @@ private theorem realize_stAtom? (K : KripkeStructure (monadicWithConstants Const
     (hψ : stAtom? k χ = some ψ) {val : Var ⊕ ℕ → W ⊕ M} {w : W}
     {v : Var → M} (hind : ∀ x, val (Sum.inl x) = Sum.inr (v x))
     (hw : val (Sum.inr k) = Sum.inl w) :
-    K.RealizeAt w χ v ↔ (letI := K.corrStructure; ψ.Realize val) := by
+    χ.RealizeAt K.interp w v ↔ (letI := K.corrStructure; ψ.Realize val) := by
   let _S := K.corrStructure
   cases χ with
   | falsum => simp [stAtom?] at hψ
@@ -229,7 +229,7 @@ private theorem realize_stAtom? (K : KripkeStructure (monadicWithConstants Const
       | var s =>
         cases s with
         | inl x =>
-          have hLHS : K.RealizeAt w (.rel (monadicRel P) ts) v ↔
+          have hLHS : Formula.RealizeAt (.rel (monadicRel P) ts) K.interp w v ↔
               K.pInterp P w (v x) := by
             let _S := K.interp w
             show (K.interp w).RelMap (monadicRel P)
@@ -262,7 +262,7 @@ private theorem realize_stAtom? (K : KripkeStructure (monadicWithConstants Const
         | zero =>
           obtain (e | c) := f
           · exact e.elim
-          have hLHS : K.RealizeAt w (.rel (monadicRel P) ts) v ↔
+          have hLHS : Formula.RealizeAt (.rel (monadicRel P) ts) K.interp w v ↔
               K.pInterp P w (K.cInterp c w) := by
             let _S := K.interp w
             show (K.interp w).RelMap (monadicRel P)

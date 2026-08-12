@@ -58,7 +58,7 @@ theorem models_toSentence_of_support (M : Model W Domain Const Pred)
     (hv : ∀ y, i.assign y = some (v y)) (hsupp : support M φ {i}) :
     (letI := M.corrStructure
      (W ⊕ Domain) ⊨ (stClose 0 ψ).toSentence hcl) := by
-  letI := M.corrStructure
+  let _S := M.corrStructure
   have h1 : ψ.Realize
       (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ (fun _ => i.world))) :=
     (support_singleton_iff_st M hτ hψ (fun _ => i.world) hv rfl).mp hsupp
@@ -85,7 +85,7 @@ theorem exists_support_of_models_toSentence [Nonempty Domain]
          (W ⊕ Domain) ⊨ (stClose 0 ψ).toSentence hcl) :
     ∃ (i : Index W Var Domain) (v : Var → Domain),
       (∀ y, i.assign y = some (v y)) ∧ support M φ {i} := by
-  letI := M.corrStructure
+  let _S := M.corrStructure
   obtain ⟨d₀⟩ := ‹Nonempty Domain›
   have h0 : (stClose 0 ψ).Realize
       (fun _ => (Sum.inr d₀ : W ⊕ Domain)) :=
@@ -136,9 +136,9 @@ theorem support_compactness {Var : Type*} [DecidableEq Var] [Fintype Var]
   classical
   choose f hf using fun x : T₀ => hT₀ x.2
   obtain ⟨W, Domain, _, _, _, M, i, v, hv, hs⟩ := hfin (Finset.univ.image f)
-  letI := M.corrStructure
-  haveI : Nonempty (W ⊕ Domain) := ⟨Sum.inl i.world⟩
-  haveI : (W ⊕ Domain) ⊨ (T₀ : (Language.correspondence Const Pred).Theory) := by
+  let _S := M.corrStructure
+  have : Nonempty (W ⊕ Domain) := ⟨Sum.inl i.world⟩
+  have : (W ⊕ Domain) ⊨ (T₀ : (Language.correspondence Const Pred).Theory) := by
     refine ⟨fun σ hσ => ?_⟩
     obtain ⟨x, rfl⟩ : ∃ x : T₀,
         (stClose 0 (ψs (f x))).toSentence (hcl (f x)) = σ :=
