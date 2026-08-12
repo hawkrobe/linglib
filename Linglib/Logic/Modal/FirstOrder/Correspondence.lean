@@ -69,11 +69,11 @@ def correspondence (L : Language) : Language where
     | 0 => PEmpty
     | n + 1 => L.Relations n ⊕ (match n with | 0 | 1 => PUnit | _ => PEmpty)
 
-variable {L : Language}
+variable {L : Language} {n : ℕ}
 
-abbrev corrFunc {n : ℕ} (f : L.Functions n) : L.correspondence.Functions (n + 1) := f
+abbrev corrFunc (f : L.Functions n) : L.correspondence.Functions (n + 1) := f
 
-abbrev corrRel {n : ℕ} (R : L.Relations n) : L.correspondence.Relations (n + 1) := Sum.inl R
+abbrev corrRel (R : L.Relations n) : L.correspondence.Relations (n + 1) := Sum.inl R
 
 /-- The individual-sort predicate. -/
 abbrev corrIndiv : L.correspondence.Relations 1 := Sum.inr PUnit.unit
@@ -112,7 +112,7 @@ abbrev corrWorldVar (k : ℕ) : L.correspondence.Term (Var ⊕ ℕ) := Term.var 
 variable [Inhabited M]
 
 @[simp] theorem correspondence_relMap_rel (K : ModalStructure L W M)
-    {n : ℕ} (R : L.Relations n) (z : Fin (n + 1) → W ⊕ M) :
+    (R : L.Relations n) (z : Fin (n + 1) → W ⊕ M) :
     (K.correspondence).RelMap (corrRel R) z ↔
       ∃ (w : W) (ds : Fin n → M),
         z 0 = Sum.inl w ∧ (∀ i, z i.succ = Sum.inr (ds i)) ∧
@@ -132,13 +132,14 @@ variable [Inhabited M]
   Iff.rfl
 
 theorem correspondence_funMap_inl (K : ModalStructure L W M)
-    {n : ℕ} (f : L.Functions n) (w : W) (z : Fin (n + 1) → W ⊕ M)
+    (f : L.Functions n) (w : W) (z : Fin (n + 1) → W ⊕ M)
     (ds : Fin n → M) (hz : z 0 = Sum.inl w)
     (hds : ∀ i, z i.succ = Sum.inr (ds i)) :
     (K.correspondence).funMap (corrFunc f) z = Sum.inr (K.funInterp f w ds) := by
   show Sum.inr ((z 0).elim
       (fun w' => K.funInterp f w' fun i => (z i.succ).getRight?.getD default) id) = _
   rw [hz]
+  show Sum.inr (K.funInterp f w fun i => (z i.succ).getRight?.getD default) = _
   exact congrArg Sum.inr (congrArg _ (funext fun i => by rw [hds i]; rfl))
 
 /-! ### The translation -/
