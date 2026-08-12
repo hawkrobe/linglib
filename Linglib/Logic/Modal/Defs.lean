@@ -6,12 +6,16 @@ import Mathlib.Order.PropInstances
 /-!
 # Modal operators and frame conditions
 
-This file defines the relational `box`/`diamond` of Kripke semantics
-([kripke-1963]), the frame conditions of modal correspondence theory for
-accessibility relations `W → W → Prop`, and the per-axiom correspondences
-(K, T, D, 4, B, 5) connecting them (frame definability,
-[blackburn-derijke-venema-2001] Chapter 3); the `Set`-valued mathlib counterparts
-of the operators are `Rel.core` and `Rel.preimage`.
+This file defines the relational `box`/`diamond` of Kripke semantics,
+the frame conditions of modal correspondence theory for accessibility
+relations `W → W → Prop`, and the per-axiom correspondences (K, T, D, 4,
+B, 5) connecting them; the `Set`-valued mathlib counterparts of the
+operators are `Rel.core` and `Rel.preimage`.
+
+## References
+
+* [kripke-1963] — relational semantics
+* [blackburn-derijke-venema-2001] — Chapter 3, frame definability
 -/
 
 namespace ModalLogic
