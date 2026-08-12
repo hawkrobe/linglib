@@ -41,9 +41,8 @@ theorem support_singleton_iff_st (M : Model W Domain Const Pred)
     (hv : ∀ y, i.assign y = some (v y)) (hu : u k = i.world) :
     support M φ {i} ↔
       (letI := M.correspondence
-       (τ.st k).Realize (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ u))) :=
-  (support_singleton_iff_realize M hτ hv).trans
-    (realize_st M (fun _ => rfl) (by rw [Sum.elim_inr, Function.comp_apply, hu]))
+       (τ.st k).Realize (stVal v u)) :=
+  (support_singleton_iff_realize M hτ hv).trans (hu ▸ realize_st M)
 
 /-- Support at a singleton state forces the closed standard translation,
     as a sentence of `M.correspondence`. -/
@@ -57,16 +56,13 @@ theorem models_toSentence_of_support (M : Model W Domain Const Pred)
     (letI := M.correspondence
      (W ⊕ Domain) ⊨ (stClose 0 (τ.st 0)).toSentence hcl) := by
   let _S := M.correspondence
-  have h1 : (τ.st 0).Realize
-      (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ (fun _ => i.world))) :=
+  have h1 : (τ.st 0).Realize (stVal v (fun _ => i.world)) :=
     (support_singleton_iff_st M hτ (fun _ => i.world) hv rfl).mp hsupp
   refine (Formula.realize_toSentence _ hcl
-    (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ (fun _ => i.world)))).mpr ?_
+    (stVal v (fun _ => i.world))).mpr ?_
   refine (realize_stClose M 0 (τ.st 0) _).mpr ⟨i.world, ?_⟩
-  rw [show Function.update
-      (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ (fun _ => i.world)))
-      (Sum.inr 0) (Sum.inl i.world)
-      = Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ (fun _ => i.world)) from
+  rw [show Function.update (stVal v (fun _ => i.world))
+      (Sum.inr 0) (Sum.inl i.world) = stVal v (fun _ => i.world) from
     Function.update_eq_self _ _]
   exact h1
 
@@ -84,16 +80,13 @@ theorem exists_support_of_models_toSentence
       (∀ y, i.assign y = some (v y)) ∧ support M φ {i} := by
   let _S := M.correspondence
   have d₀ : Domain := default
-  have h0 : (stClose 0 (τ.st 0)).Realize
-      (fun _ => (Sum.inr d₀ : W ⊕ Domain)) :=
-    (Formula.realize_toSentence _ hcl _).mp h
-  obtain ⟨w, hw⟩ := (realize_stClose M 0 (τ.st 0) _).mp h0
-  have hsorted : ∀ x : Var, Function.update
-      (fun _ : Var ⊕ ℕ => (Sum.inr d₀ : W ⊕ Domain)) (Sum.inr 0)
-      (Sum.inl w) (Sum.inl x) = Sum.inr d₀ := fun x => by
-    rw [Function.update_of_ne (by simp)]
-  have hmodal : τ.Realize M w (fun _ => d₀) :=
-    (realize_st M hsorted (Function.update_self _ _ _)).mpr hw
+  obtain ⟨w₀, -⟩ := (realize_stClose M 0 (τ.st 0) _).mp
+    ((Formula.realize_toSentence _ hcl (fun _ => (Sum.inr d₀ : W ⊕ Domain))).mp h)
+  obtain ⟨w, hw⟩ := (realize_stClose M 0 (τ.st 0) _).mp
+    ((Formula.realize_toSentence _ hcl (stVal (fun _ => d₀) (fun _ => w₀))).mp h)
+  rw [stVal_update_world] at hw
+  have hmodal := (realize_st (u := Function.update (fun _ => w₀) 0 w) M).mpr hw
+  rw [Function.update_self] at hmodal
   exact ⟨⟨w, fun _ => some d₀⟩, fun _ => d₀, fun _ => rfl,
     (support_singleton_iff_realize M hτ fun _ => rfl).mpr hmodal⟩
 

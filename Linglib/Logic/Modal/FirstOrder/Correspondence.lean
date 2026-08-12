@@ -35,11 +35,11 @@ satisfaction preservation.
   single-sorted `Structure`; they have no independent standing. Junk
   totalization of world-relativized functions is by `[Inhabited M]` —
   constant-domain semantics presupposes a nonempty domain.
-* The valuation in `realize_st` is an arbitrary `val : Var ⊕ ℕ → W ⊕ M`
-  constrained only at individual variables and at the current world index —
-  quantifiers in the translation range over the full mixed carrier, with
-  off-sort values discharged by the relational guards, so no
-  `Sum.elim`-update commutation is needed in the induction.
+* `realize_st` evaluates translations at sorted valuations `stVal v u` —
+  the valuation invariant is carried by the constructor rather than by
+  hypotheses. Binder cases reduce to the two update-commutation lemmas
+  (`stVal_update_indiv`, `stVal_update_world`) and the two relativization
+  lemmas, which discharge off-sort quantifier instances via the guards.
 * Freshness of world variables is by increment: each `box` shifts the
   current index from `k` to `k + 1`, and the constraint set of the theorem
   pins only index `k`, so no freshness side conditions arise.
@@ -162,137 +162,166 @@ def ModalFormula.st (k : ℕ) :
   | .all x φ => Formula.all₁ (Sum.inl x)
       (corrIndiv.formula₁ (corrIndivVar x) ⟹ φ.st k)
 
+/-! ### Sorted valuations and relativized quantifiers -/
+
+omit [Inhabited M] in
+/-- The sorted valuation of an individual assignment `v` and a world
+    assignment `u`. `realize_st` evaluates translations at these. -/
+def stVal (v : Var → M) (u : ℕ → W) : Var ⊕ ℕ → W ⊕ M :=
+  Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ u)
+
+omit [Inhabited M] in
+/-- Updating an individual slot of a sorted valuation updates the
+    individual assignment. -/
+theorem stVal_update_indiv (v : Var → M) (u : ℕ → W) (x : Var) (d : M) :
+    Function.update (stVal v u) (Sum.inl x) (Sum.inr d) =
+      stVal (Function.update v x d) u := by
+  funext y
+  rcases y with x' | j
+  · rcases eq_or_ne x' x with rfl | hx
+    · simp [stVal]
+    · rw [Function.update_of_ne (by simpa using hx)]
+      simp [stVal, Function.update_of_ne hx]
+  · rw [Function.update_of_ne (by simp)]; rfl
+
+omit [Inhabited M] in
+/-- Updating a world slot of a sorted valuation updates the world
+    assignment. -/
+theorem stVal_update_world (v : Var → M) (u : ℕ → W) (j : ℕ) (w : W) :
+    Function.update (stVal v u) (Sum.inr j) (Sum.inl w) =
+      stVal v (Function.update u j w) := by
+  funext y
+  rcases y with x | j'
+  · rw [Function.update_of_ne (by simp)]; rfl
+  · rcases eq_or_ne j' j with rfl | hj
+    · simp [stVal]
+    · rw [Function.update_of_ne (by simpa using hj)]
+      simp [stVal, Function.update_of_ne hj]
+
+/-- A sort-guarded universal quantifies exactly over individuals. -/
+theorem realize_all₁_indivGuard {y : Var ⊕ ℕ}
+    {ψ : L.correspondence.Formula (Var ⊕ ℕ)} {val : Var ⊕ ℕ → W ⊕ M} :
+    (letI := K.correspondence;
+      (Formula.all₁ y (corrIndiv.formula₁ (Term.var y) ⟹ ψ)).Realize val) ↔
+      ∀ d : M,
+        (letI := K.correspondence;
+          ψ.Realize (Function.update val y (Sum.inr d))) := by
+  let _S := K.correspondence
+  rw [Formula.realize_all₁]
+  constructor
+  · intro h d
+    have hz := h (Sum.inr d)
+    rw [Formula.realize_imp, Formula.realize_rel₁] at hz
+    exact hz ⟨d, Function.update_self ..⟩
+  · intro h z
+    rw [Formula.realize_imp, Formula.realize_rel₁]
+    intro hsort
+    obtain ⟨d, hd⟩ : ∃ d : M, Function.update val y z y = Sum.inr d := by
+      simpa [correspondence_relMap_indiv] using hsort
+    rw [Function.update_self] at hd
+    subst hd
+    exact h d
+
+/-- An accessibility-guarded universal quantifies exactly over the worlds
+    accessible from the world pinned at index `k`. -/
+theorem realize_all₁_accGuard {j k : ℕ} (hjk : k ≠ j)
+    {ψ : L.correspondence.Formula (Var ⊕ ℕ)} {val : Var ⊕ ℕ → W ⊕ M}
+    {w : W} (hw : val (Sum.inr k) = Sum.inl w) :
+    (letI := K.correspondence;
+      (Formula.all₁ (Sum.inr j)
+        (corrAcc.formula₂ (corrWorldVar k) (corrWorldVar j) ⟹ ψ)).Realize
+          val) ↔
+      ∀ w' ∈ K.access w,
+        (letI := K.correspondence;
+          ψ.Realize (Function.update val (Sum.inr j) (Sum.inl w'))) := by
+  let _S := K.correspondence
+  rw [Formula.realize_all₁]
+  constructor
+  · intro h w' hw'
+    have hz := h (Sum.inl w')
+    rw [Formula.realize_imp, Formula.realize_rel₂] at hz
+    simp only [Term.realize_var, Function.update_of_ne
+      (by simpa using hjk : (Sum.inr k : Var ⊕ ℕ) ≠ Sum.inr j),
+      Function.update_self, hw] at hz
+    exact hz ⟨w, w', rfl, rfl, hw'⟩
+  · intro h z
+    rw [Formula.realize_imp, Formula.realize_rel₂]
+    simp only [Term.realize_var, Function.update_of_ne
+      (by simpa using hjk : (Sum.inr k : Var ⊕ ℕ) ≠ Sum.inr j),
+      Function.update_self, hw]
+    rintro ⟨w₁, w₂, hw₁, hw₂, hmem⟩
+    obtain rfl : w = w₁ := Sum.inl.inj hw₁
+    subst hw₂
+    exact h w₂ hmem
+
 /-! ### Satisfaction preservation -/
 
 omit [DecidableEq Var] in
 /-- Translated terms realize to the individual sort: `stTerm` commutes with
-    realization, via the world pinned at index `k`. -/
-private theorem realize_stTerm {k : ℕ} {val : Var ⊕ ℕ → W ⊕ M} {w : W} {v : Var → M}
-    (hind : ∀ x, val (Sum.inl x) = Sum.inr (v x))
-    (hw : val (Sum.inr k) = Sum.inl w) :
+    realization at a sorted valuation. -/
+private theorem realize_stTerm {k : ℕ} {v : Var → M} {u : ℕ → W} :
     ∀ t : L.Term Var,
-      (letI := K.correspondence; (stTerm k t).realize val) =
-        Sum.inr (letI := K.interp w; t.realize v)
-  | .var x => hind x
+      (letI := K.correspondence; (stTerm k t).realize (stVal v u)) =
+        Sum.inr (letI := K.interp (u k); t.realize v)
+  | .var x => rfl
   | .func f args => by
     let _S := K.correspondence
-    let _I := K.interp w
+    let _I := K.interp (u k)
     rw [show stTerm k (.func f args) = Term.func (corrFunc f)
         (Fin.cons (corrWorldVar k) fun i => stTerm k (args i)) from rfl,
       Term.realize_func,
-      correspondence_funMap_inl K f w _
-        (fun i => (letI := K.interp w; (args i).realize v))
-        (by simpa using hw)
-        (fun i => by
-          simpa [Fin.cons_succ] using realize_stTerm hind hw (args i))]
+      correspondence_funMap_inl K f (u k) _
+        (fun i => (letI := K.interp (u k); (args i).realize v))
+        rfl
+        (fun i => by simpa [Fin.cons_succ] using realize_stTerm (args i))]
     rfl
 
-omit [Inhabited M] in
-/-- An individual-sorted update of an individual-sorted valuation. -/
-private theorem sorted_update {val : Var ⊕ ℕ → W ⊕ M} {v : Var → M}
-    (hind : ∀ x, val (Sum.inl x) = Sum.inr (v x)) (x : Var) (d : M) :
-    ∀ y, Function.update val (Sum.inl x) (Sum.inr d) (Sum.inl y) =
-      Sum.inr (Function.update v x d y) := by
-  intro y
-  by_cases hy : y = x
-  · subst hy; rw [Function.update_self, Function.update_self]
-  · rw [Function.update_of_ne (by simpa using hy), Function.update_of_ne hy,
-      hind]
-
-omit [Inhabited M] in
-/-- Individual updates leave the pinned world index untouched. -/
-private theorem pinned_update {val : Var ⊕ ℕ → W ⊕ M} {w : W} {k : ℕ}
-    (hw : val (Sum.inr k) = Sum.inl w) (x : Var) (z : W ⊕ M) :
-    Function.update val (Sum.inl x) z (Sum.inr k) = Sum.inl w := by
-  rw [Function.update_of_ne (by simp)]; exact hw
-
 /-- **Satisfaction preservation for the standard translation**: Kripke
-    satisfaction at `w` is first-order realization over `correspondence`, for
-    any valuation that is individual-sorted on `Var` and pins the current
-    world variable `Sum.inr k` to `w`. Off-sort quantifier instances are
-    discharged by the relational guards, and `box`'s fresh world variable
-    `k + 1` leaves the pinned index untouched. -/
+    satisfaction at the world pinned at index `k` is first-order
+    realization over `K.correspondence` at the sorted valuation.
+    Off-sort quantifier instances are discharged by the relational guards
+    (`realize_all₁_indivGuard`, `realize_all₁_accGuard`), and `box`'s fresh
+    world variable `k + 1` leaves index `k` untouched. -/
 theorem realize_st {φ : ModalFormula L Var} {k : ℕ}
-    {val : Var ⊕ ℕ → W ⊕ M} {w : W} {v : Var → M}
-    (hind : ∀ x, val (Sum.inl x) = Sum.inr (v x))
-    (hw : val (Sum.inr k) = Sum.inl w) :
-    φ.Realize K w v ↔ (letI := K.correspondence; (φ.st k).Realize val) := by
-  induction φ generalizing k val w v with
+    {v : Var → M} {u : ℕ → W} :
+    φ.Realize K (u k) v ↔
+      (letI := K.correspondence; (φ.st k).Realize (stVal v u)) := by
+  induction φ generalizing k v u with
   | equal t₁ t₂ =>
     let _S := K.correspondence
     rw [ModalFormula.st, ModalFormula.realize_equal, Formula.realize_equal,
-      realize_stTerm K hind hw, realize_stTerm K hind hw]
+      realize_stTerm K, realize_stTerm K]
     exact ⟨congrArg _, Sum.inr.inj⟩
   | falsum => exact Iff.rfl
   | imp φ ψ ih₁ ih₂ =>
     let _S := K.correspondence
     rw [ModalFormula.realize_imp, ModalFormula.st, Formula.realize_imp]
-    exact imp_congr (ih₁ hind hw) (ih₂ hind hw)
+    exact imp_congr ih₁ ih₂
   | box φ ih =>
-    let _S := K.correspondence
-    rw [ModalFormula.realize_box, ModalFormula.st, Formula.realize_all₁]
-    constructor
-    · intro h z
-      rw [Formula.realize_imp, Formula.realize_rel₂]
-      simp only [Term.realize_var, Function.update_of_ne
-        (by simp : (Sum.inr k : Var ⊕ ℕ) ≠ Sum.inr (k + 1)),
-        Function.update_self, hw]
-      rintro ⟨w₁, w₂, hw₁, hw₂, hmem⟩
-      obtain rfl : w = w₁ := Sum.inl.inj hw₁
-      subst hw₂
-      refine (ih ?_ ?_).mp (h w₂ hmem)
-      · intro x
-        rw [Function.update_of_ne (by simp), hind]
-      · rw [Function.update_self]
-    · intro h w' hw'
-      have hz := h (Sum.inl w')
-      rw [Formula.realize_imp, Formula.realize_rel₂] at hz
-      simp only [Term.realize_var, Function.update_of_ne
-        (by simp : (Sum.inr k : Var ⊕ ℕ) ≠ Sum.inr (k + 1)),
-        Function.update_self, hw] at hz
-      refine (ih ?_ ?_).mpr (hz ⟨w, w', rfl, rfl, hw'⟩)
-      · intro x
-        rw [Function.update_of_ne (by simp), hind]
-      · rw [Function.update_self]
+    rw [ModalFormula.realize_box, ModalFormula.st,
+      realize_all₁_accGuard K (Nat.succ_ne_self k).symm rfl]
+    refine forall₂_congr fun w' _ => ?_
+    rw [stVal_update_world]
+    simpa using ih (k := k + 1) (u := Function.update u (k + 1) w')
   | all x φ ih =>
-    let _S := K.correspondence
-    rw [ModalFormula.realize_all, ModalFormula.st, Formula.realize_all₁]
-    constructor
-    · intro h z
-      rw [Formula.realize_imp, Formula.realize_rel₁]
-      intro hsort
-      obtain ⟨d, hd⟩ : ∃ d : M,
-          Function.update val (Sum.inl x) z (Sum.inl x) = Sum.inr d := by
-        simpa [correspondence_relMap_indiv] using hsort
-      rw [Function.update_self] at hd
-      subst hd
-      exact (ih (sorted_update hind x d) (pinned_update hw x _)).mp (h d)
-    · intro h d
-      have hz := h (Sum.inr d)
-      rw [Formula.realize_imp, Formula.realize_rel₁] at hz
-      refine (ih (sorted_update hind x d) (pinned_update hw x _)).mpr
-        (hz ⟨d, ?_⟩)
-      show Function.update val (Sum.inl x) (Sum.inr d) (Sum.inl x) = _
-      rw [Function.update_self]
+    rw [ModalFormula.realize_all, ModalFormula.st,
+      realize_all₁_indivGuard K]
+    refine forall_congr' fun d => ?_
+    rw [stVal_update_indiv]
+    exact ih
   | @rel n R ts =>
     let _S := K.correspondence
     rw [ModalFormula.st, Formula.realize_rel, correspondence_relMap_rel,
       ModalFormula.realize_rel]
     constructor
     · intro h
-      refine ⟨w, (fun i => letI := K.interp w; (ts i).realize v),
-        by simpa using hw,
-        fun i => by simpa [Fin.cons_succ] using realize_stTerm K hind hw (ts i),
-        h⟩
+      exact ⟨u k, (fun i => letI := K.interp (u k); (ts i).realize v), rfl,
+        fun i => by simpa [Fin.cons_succ] using realize_stTerm K (ts i), h⟩
     · rintro ⟨w', ds, hw', hds, h⟩
-      obtain rfl : w = w' := by
-        rw [show ((Fin.cons (corrWorldVar k)
-            (fun i => stTerm k (ts i)) : Fin _ → _) 0).realize val =
-          val (Sum.inr k) from rfl] at hw'
-        exact Sum.inl.inj (hw.symm.trans hw')
-      have hds' : (fun i => letI := K.interp w; (ts i).realize v) = ds :=
+      obtain rfl : u k = w' := Sum.inl.inj hw'
+      have hds' : (fun i => letI := K.interp (u k); (ts i).realize v) = ds :=
         funext fun i => Sum.inr.inj
-          ((realize_stTerm K hind hw (ts i)).symm.trans
+          ((realize_stTerm K (ts i)).symm.trans
             (by simpa [Fin.cons_succ] using hds i))
       exact hds' ▸ h
 
