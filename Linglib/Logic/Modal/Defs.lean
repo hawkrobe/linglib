@@ -115,30 +115,29 @@ Each axiom, read as an inequality between operators on `W → Prop`,
 characterizes its frame condition. -/
 
 /-- **T** defines reflexivity. -/
-theorem box_T_iff : box R ≤ id ↔ Std.Refl R :=
-  ⟨fun h => ⟨fun w => h (R w) w fun _ hv => hv⟩, fun hR _ w h => h w (hR.refl w)⟩
+theorem box_T_iff : box R ≤ id ↔ Std.Refl R where
+  mp h := ⟨fun w => h (R w) w fun _ hv => hv⟩
+  mpr hR _ w h := h w (hR.refl w)
 
 /-- **D** defines seriality. -/
-theorem box_D_iff : box R ≤ diamond R ↔ IsSerial R :=
-  ⟨fun h => ⟨fun w =>
-     let ⟨v, hv, _⟩ := h (fun _ => True) w fun _ _ => trivial; ⟨v, hv⟩⟩,
-   fun hS _ w h => let ⟨v, hwv⟩ := hS.serial w; ⟨v, hwv, h v hwv⟩⟩
+theorem box_D_iff : box R ≤ diamond R ↔ IsSerial R where
+  mp h := ⟨fun w => let ⟨v, hv, _⟩ := h (fun _ => True) w fun _ _ => trivial; ⟨v, hv⟩⟩
+  mpr hS _ w h := let ⟨v, hwv⟩ := hS.serial w; ⟨v, hwv, h v hwv⟩
 
 /-- **B** defines symmetry. -/
-theorem box_B_iff : id ≤ box R ∘ diamond R ↔ Std.Symm R :=
-  ⟨fun h => ⟨fun w v hwv =>
-     match h (· = w) w rfl v hwv with | ⟨_, hvw, rfl⟩ => hvw⟩,
-   fun hS _ w h v hwv => ⟨w, hS.symm w v hwv, h⟩⟩
+theorem box_B_iff : id ≤ box R ∘ diamond R ↔ Std.Symm R where
+  mp h := ⟨fun w v hwv => match h (· = w) w rfl v hwv with | ⟨_, hvw, rfl⟩ => hvw⟩
+  mpr hS _ w h v hwv := ⟨w, hS.symm w v hwv, h⟩
 
 /-- **4** defines transitivity. -/
-theorem box_four_iff : box R ≤ box R ∘ box R ↔ IsTrans W R :=
-  ⟨fun h => ⟨fun w v u hwv hvu => h (R w) w (fun _ hv => hv) v hwv u hvu⟩,
-   fun hT _ w h v hwv u hvu => h u (hT.trans w v u hwv hvu)⟩
+theorem box_four_iff : box R ≤ box R ∘ box R ↔ IsTrans W R where
+  mp h := ⟨fun w v u hwv hvu => h (R w) w (fun _ hv => hv) v hwv u hvu⟩
+  mpr hT _ w h v hwv u hvu := h u (hT.trans w v u hwv hvu)
 
 /-- **5** defines the Euclidean property. -/
-theorem box_five_iff : diamond R ≤ box R ∘ diamond R ↔ IsEuclidean R :=
-  ⟨fun h => ⟨fun w v u hwv hwu =>
-     match h (· = u) w ⟨u, hwu, rfl⟩ v hwv with | ⟨_, hvu, rfl⟩ => hvu⟩,
-   fun hE _ w h v hwv => let ⟨u, hwu, hpu⟩ := h; ⟨u, hE.eucl w v u hwv hwu, hpu⟩⟩
+theorem box_five_iff : diamond R ≤ box R ∘ diamond R ↔ IsEuclidean R where
+  mp h := ⟨fun w v u hwv hwu =>
+    match h (· = u) w ⟨u, hwu, rfl⟩ v hwv with | ⟨_, hvu, rfl⟩ => hvu⟩
+  mpr hE _ w h v hwv := let ⟨u, hwu, hpu⟩ := h; ⟨u, hE.eucl w v u hwv hwu, hpu⟩
 
 end ModalLogic
