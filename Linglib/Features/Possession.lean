@@ -6,23 +6,22 @@ Authors: Robert Hawkins
 
 /-!
 # Possession — typological feature substrate
-[stassen-2009] [stassen-2013b] [nichols-1986] [nichols-bickel-2013]
-[nichols-bickel-2013c] [heine-1997] [heine-2009] [aikhenvald-2012] [wals-2013]
 
-Theory-neutral classification enums for possession. Per-language values are
-bare `def`s in `Fragments/<Lang>/Possession.lean`, consumed by
-`Studies/NicholsBickel2013`, `Studies/Heine1997`, and
-`Studies/KampanarouAlexiadou2026`. Bare-root `Possession` namespace under
-`Features/`, like `Features/Case`.
+Theory-neutral classification enums for possession, following the WALS
+possession chapters ([wals-2013]). Per-language values are bare `def`s in
+`Fragments/<Lang>/Possession.lean`, consumed by `Studies/NicholsBickel2013`,
+`Studies/Heine1997`, and `Studies/KampanarouAlexiadou2026`. Bare-root
+`Possession` namespace under `Features/`, like `Features/Case`.
 
 ## Main definitions
 
-`Obligatoriness` (WALS 58A), `Classification` (59A),
-`PredicativeStrategy` ([stassen-2009] four-way; [stassen-2013b] adds Genitive),
-`AdnominalMarking` ([nichols-1986]), `Notion` and `Source` ([heine-1997]),
-`InalienabilityRank`, and the neutral `Alienability` cut. Per-language values
-are bare `def`s in `Fragments/<Lang>/Possession.lean`; cross-linguistic
-aggregation uses a study-local row in `Studies/NicholsBickel2013.lean`.
+`Obligatoriness` and `Classification` (WALS 58A and 59A,
+[nichols-bickel-2013]), `PredicativeStrategy` ([stassen-2009] four-way;
+[stassen-2013b] adds Genitive), `AdnominalMarking` ([nichols-1986]; WALS 24A,
+[nichols-bickel-2013c]), `Notion` and `Source` ([heine-1997], [heine-2009]),
+`InalienabilityRank` ([aikhenvald-2012]), and the neutral `Alienability` cut.
+Cross-linguistic aggregation uses a study-local row in
+`Studies/NicholsBickel2013.lean`.
 
 ## Notes
 
@@ -32,13 +31,20 @@ grouped with Locational as "Oblique Possessive"); `Classification` collapses
 Mayan/Oceanic multi-class systems into `threeOrMore`; `Source` (Heine's event
 schemas) and `PredicativeStrategy` are parallel typologies bridged by
 `predicativeSource`.
--/
 
-set_option autoImplicit false
+## References
+
+* [nichols-bickel-2013], [nichols-bickel-2013c], [wals-2013] — the WALS
+  chapters (24A, 58A, 59A)
+* [stassen-2009], [stassen-2013b] — predicative possession (WALS 117A)
+* [nichols-1986] — head- vs dependent-marking
+* [heine-1997], [heine-2009] — possessive notions and source schemas
+* [aikhenvald-2012] — inalienability
+-/
 
 namespace Possession
 
-/-- WALS 58A: whether some nouns (kinship, body parts) require possessive marking. -/
+/-- Whether some nouns (kinship, body parts) require possessive marking (WALS 58A). -/
 inductive Obligatoriness where
   /-- Obligatory possessive inflection exists (Mohawk, Navajo). -/
   | exists_
@@ -48,18 +54,19 @@ inductive Obligatoriness where
   | unclear
   deriving DecidableEq, Repr
 
-/-- WALS 59A: whether possession is morphosyntactically classified (alienability). -/
+/-- Whether possession is morphosyntactically classified, typically by
+    alienability (WALS 59A). -/
 inductive Classification where
   /-- One construction for all nouns (English, Russian). -/
   | noClassification
-  /-- Two-way, typically alienable vs inalienable (Fijian, Hawaiian). -/
+  /-- Two-way, typically alienable vs inalienable (Ewe, Rapanui). -/
   | twoWay
   /-- Three or more possessive classes. -/
   | threeOrMore
   deriving DecidableEq, Repr
 
-/-- How a language predicates possession ("I have X"); [stassen-2009] four-way,
-    [stassen-2013b] (WALS 117A) adds Genitive. -/
+/-- Stassen's classification of how a language predicates possession
+    ("I have X"), with the Genitive type added in WALS 117A. -/
 inductive PredicativeStrategy where
   /-- Transitive 'have' verb (English, Mandarin). -/
   | haveVerb
@@ -73,7 +80,7 @@ inductive PredicativeStrategy where
   | comitative
   deriving DecidableEq, Repr
 
-/-- [nichols-1986]; WALS 24A [nichols-bickel-2013c]: locus of NP-internal marking. -/
+/-- The locus of marking inside the possessive NP (WALS 24A). -/
 inductive AdnominalMarking where
   /-- Marker on the possessed head noun (Hungarian, Swahili). -/
   | headMarking
@@ -85,7 +92,8 @@ inductive AdnominalMarking where
   | zeroMarking
   deriving DecidableEq, Repr
 
-/-- [heine-1997]: semantic targets of possession (vs `Source`, the diachronic origin). -/
+/-- Heine's semantic targets of possession, as opposed to `Source`, the
+    diachronic origin. -/
 inductive Notion where
   /-- Physical possession ("a pen in my hand"). -/
   | physical
@@ -103,9 +111,10 @@ inductive Notion where
   | inanimateAlienable
   deriving DecidableEq, Repr
 
-/-- Coarse inalienability cline (body-part/kinship rank highest). `toNat` is an
-    operationalization for comparison, not a claimed universal — [nichols-1986]
-    and [aikhenvald-2012] treat kinship and body-parts as co-central. -/
+/-- Coarse inalienability cline, body parts and kinship ranking highest.
+    `toNat` is an operationalization for comparison rather than a claimed
+    universal, since Nichols and Aikhenvald treat kinship and body parts as
+    co-central. -/
 inductive InalienabilityRank where
   | bodyPart
   | kinship
@@ -124,7 +133,7 @@ def InalienabilityRank.toNat : InalienabilityRank → Nat
   | .culturalItem    => 1
   | .generalProperty => 0
 
-/-- [heine-1997] / [heine-2009]: diachronic source schemas of predicative possession. -/
+/-- Heine's diachronic source schemas of predicative possession. -/
 inductive Source where
   /-- Action "X takes Y" (English `have` < OE `habban`). -/
   | action
@@ -167,7 +176,8 @@ def Classification.drawsAlienabilityCut : Classification → Bool
   | .noClassification => false
   | _                 => true
 
-/-- Coarsen the cline at a language's `cut`: ranks at or above `cut` are inalienable. -/
+/-- Coarsening of the cline that counts ranks at or above `cut` as
+    inalienable. -/
 def InalienabilityRank.alienabilityAt (cut : InalienabilityRank) :
     InalienabilityRank → Alienability :=
   fun r => if cut.toNat ≤ r.toNat then .inalienable else .alienable

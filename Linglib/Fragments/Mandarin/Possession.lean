@@ -12,8 +12,6 @@ adnominal possession but drops with inalienable/close relations. Substrate types
 values live in `Studies/NicholsBickel2013.lean`.
 -/
 
-set_option autoImplicit false
-
 namespace Mandarin.Possession
 
 open _root_.Possession

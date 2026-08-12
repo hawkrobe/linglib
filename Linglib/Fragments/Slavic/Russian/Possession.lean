@@ -29,8 +29,6 @@ Russian lives in `Studies/Heine1997.lean`.
 - `On imeet pravo.` 'He has a right.' (he has.3SG right; Action Schema)
 -/
 
-set_option autoImplicit false
-
 namespace Russian.Possession
 
 open _root_.Possession

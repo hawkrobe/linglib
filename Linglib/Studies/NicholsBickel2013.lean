@@ -23,7 +23,6 @@ import Linglib.Fragments.Mayan.Tseltal.Possession
 
 /-!
 # Nichols & Bickel (2013): WALS chapters on possession (57A, 58A, 58B, 59A)
-[nichols-bickel-2013] [wals-2013]
 
 The four WALS chapters by Nichols & Bickel (2013):
 
@@ -44,9 +43,11 @@ absent** — verifying that `X.Possession.predicativeStrategy` equals
 `Data.WALS.lookup "iso"` is "encoding conclusions as definitions": the
 two would have to silently diverge for the theorem to fail, and the typed
 Fragment value already encodes the WALS coding at definition site.
--/
 
-set_option autoImplicit false
+## References
+
+[nichols-bickel-2013] [wals-2013]
+-/
 
 namespace NicholsBickel2013
 

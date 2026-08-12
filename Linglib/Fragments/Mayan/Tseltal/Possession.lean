@@ -25,8 +25,6 @@ predicative; Set A prefixes on possessum for adnominal (head-marking); three
 noun classes as in Tsotsil ([aissen-polian-2025]).
 -/
 
-set_option autoImplicit false
-
 namespace Tseltal.Possession
 
 open _root_.Possession

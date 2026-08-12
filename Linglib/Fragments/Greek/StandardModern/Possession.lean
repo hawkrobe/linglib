@@ -44,8 +44,6 @@ and `Fragments/Greek/Smyrna/Possession.lean` (over-extended genitive per
 [kampanarou-alexiadou-2026] fn 7, citing [liosis-2016]).
 -/
 
-set_option autoImplicit false
-
 namespace Greek.StandardModern.Possession
 
 open _root_.Possession

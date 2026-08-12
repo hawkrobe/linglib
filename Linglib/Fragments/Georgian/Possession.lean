@@ -14,8 +14,6 @@ Examples: me m-akvs cigni; kac-is saxl-i. Dative experiencer + verb
 agreeing with possessum; genitive on possessor in adnominal constructions.
 -/
 
-set_option autoImplicit false
-
 namespace Georgian.Possession
 
 open _root_.Possession

@@ -17,8 +17,6 @@ construct state (no nunation, no definite article) and the possessor in
 the genitive.
 -/
 
-set_option autoImplicit false
-
 namespace Arabic.ModernStandard.Possession
 
 open _root_.Possession

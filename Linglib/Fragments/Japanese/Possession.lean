@@ -12,8 +12,6 @@ in `Linglib/Features/Possession.lean`. Cross-linguistic theorems consuming these
 values live in `Studies/NicholsBickel2013.lean`.
 -/
 
-set_option autoImplicit false
-
 namespace Japanese.Possession
 
 open _root_.Possession
