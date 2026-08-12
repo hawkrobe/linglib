@@ -7,20 +7,17 @@ import Mathlib.Order.Lattice
 /-!
 # Modal logic over accessibility relations
 
-Axiom correspondence, normality, and the operator hierarchy for the
-relational `box`/`diamond` of `Defs.lean` ([kripke-1963]): which frame
-conditions validate the T, D, 4, B, and 5 schemas; monotonicity and
-distribution; restriction — [kratzer-1981]'s insight that conversational
-backgrounds strengthen necessity by shrinking accessibility; the modal
-square of opposition ([carnielli-pizzi-2008]); [gallin-1975]'s hierarchy
-of propositional operators, placing Montague's S5 `box`/`diamond`
+Normality and the operator hierarchy for the relational `box`/`diamond`
+of `Defs.lean`: monotonicity and distribution; restriction —
+[kratzer-1981]'s insight that conversational backgrounds strengthen
+necessity by shrinking accessibility; the modal square of opposition
+([carnielli-pizzi-2008]); [gallin-1975]'s hierarchy of propositional
+operators, placing Montague's S5 `box`/`diamond`
 ([dowty-wall-peters-1981]) as the universal-accessibility case; and the
 lattice of normal modal logics as axiom sets over K.
 
 ## Main declarations
 
-* `box_K` … `box_five` — per-axiom frame correspondences; `box_not_moore`
-  is the Moore-sentence reductio for any KD4 modality ([hintikka-1962]).
 * `modalSquare`, `modalSquare_relations` — the `□`/`◇` Aristotelian
   square, satisfying all six relations under seriality.
 * `PropOp`, `IsIndicial`, `s5Nec`, `poss`/`nec` — the Gallin hierarchy:
@@ -43,42 +40,7 @@ strengthens.
 
 namespace ModalLogic
 
-variable {W : Type*} {R : W → W → Prop} {p q : W → Prop} {w : W}
-
-/-! ### Axiom correspondence -/
-
-/-- **K**: `□(p → q) → □p → □q`, over any relation. -/
-theorem box_K (hpq : □[R] (fun v => p v → q v) w) (hp : □[R] p w) : □[R] q w :=
-  fun v hwv => hpq v hwv (hp v hwv)
-
-/-- **T**: over a reflexive relation, `□p → p`. -/
-theorem box_T [Std.Refl R] (h : □[R] p w) : p w :=
-  h w (Std.Refl.refl w)
-
-/-- **D**: over a serial relation, `□p → ◇p`. -/
-theorem box_D [hS : IsSerial R] (h : □[R] p w) : ◇[R] p w :=
-  let ⟨v, hwv⟩ := hS.serial w; ⟨v, hwv, h v hwv⟩
-
-/-- **4**: over a transitive relation, `□p → □□p`. -/
-theorem box_four [IsTrans W R] (h : □[R] p w) : □[R] (□[R] p) w :=
-  fun v hwv u hvu => h u (IsTrans.trans w v u hwv hvu)
-
-/-- **B**: over a symmetric relation, `p → □◇p`. -/
-theorem box_B [Std.Symm R] (h : p w) : □[R] (◇[R] p) w :=
-  fun v hwv => ⟨w, Std.Symm.symm w v hwv, h⟩
-
-/-- **5**: over a Euclidean relation, `◇p → □◇p`. -/
-theorem box_five [hE : IsEuclidean R] (h : ◇[R] p w) : □[R] (◇[R] p) w :=
-  let ⟨u, hwu, hpu⟩ := h
-  fun v hwv => ⟨u, hE.eucl w v u hwv hwu, hpu⟩
-
-/-- **Moore reductio for KD4**: no world satisfies `□(p ∧ ¬□p)` over a
-    serial transitive relation — the content is satisfiable; boxing it
-    is not. -/
-theorem box_not_moore [hS : IsSerial R] [IsTrans W R] :
-    ¬ □[R] (fun v => p v ∧ ¬ □[R] p v) w := fun h =>
-  have ⟨v, hv⟩ := hS.serial w
-  (h v hv).2 (box_four (fun u hu => (h u hu).1) v hv)
+variable {W : Type*}
 
 /-! ### Modal square of opposition
 
