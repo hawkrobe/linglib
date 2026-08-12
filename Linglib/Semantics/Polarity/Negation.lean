@@ -14,14 +14,14 @@ coherent architecture with three layers:
    (weak DE / anti-additive / anti-morphic) determines the polarity licensing
    profile, connecting the `Prop`-based semantic properties in
    `Entailment` to the `Bool`-valued empirical classification
-   in `Semantics.Negation`
+   in `Negation`
 3. **Scoped vs unscoped negation** — a negation operator that retains scope
    into a domain preserves its semantic properties; when scope is blocked
    (e.g., by phase transfer), it loses antitonicity and hence licensing ability
 
 ## Dependencies
 
-- `Semantics.Negation` — framework-agnostic classification types (ENType, ENStrength,
+- `Negation` — framework-agnostic classification types (ENType, ENStrength,
   PolarityClass, PolarityLicensing) with Mathlib lattice instances
 - `Mathlib.Data.Set.Basic` — set complement (`pᶜ`) is the canonical
   propositional negation (no custom `pnot` wrapper)
@@ -33,9 +33,9 @@ coherent architecture with three layers:
   `IsAntiMorphic`, `pnot_isAntiMorphic`, `licensesWeakNPI`, `licensesStrongNPI`
 -/
 
-namespace Semantics.Negation
+namespace Negation
 
-open Semantics.Negation (ENType ENStrength PolarityLicensing PolarityClass
+open Negation (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile standardNegProfile)
 open NaturalLogic (DEStrength strengthSufficient)
 open Entailment (World)
@@ -125,7 +125,7 @@ theorem standardNeg_isAntiMorphic :
 
 /-! ### The entailment hierarchy determines polarity licensing
 
-The `Bool`-valued `PolarityLicensing` profile in `Semantics.Negation` is a
+The `Bool`-valued `PolarityLicensing` profile in `Negation` is a
 *consequence* of the `Prop`-based entailment properties in
 `Entailment`:
 
@@ -290,4 +290,4 @@ theorem unscoped_neg_licenses_nothing :
 theorem scope_determines_licensing (b : Bool) :
     scopeToLicensing b = enStrengthToLicensing (enTypeToStrength (scopeToENType b)) := rfl
 
-end Semantics.Negation
+end Negation

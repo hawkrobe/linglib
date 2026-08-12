@@ -58,7 +58,7 @@ structure MannerEffect where
 -- § 1. High vs Low EN (re-exported from ExpletiveNegation)
 -- ════════════════════════════════════════════════════
 
-open Semantics.Negation (ENType)
+open Negation (ENType)
 
 /-- Constructions relevant to EN licensing. Each has a theory-derived
     ambidirectionality status (§3) and an empirically-observed EN status

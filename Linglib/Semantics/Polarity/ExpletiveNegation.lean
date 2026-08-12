@@ -26,7 +26,7 @@ without committing to a syntactic analysis. The syntactic derivation
 `Studies/Greco2020.lean` under `namespace Minimalist.NegScope`.
 -/
 
-namespace Semantics.Negation
+namespace Negation
 
 
 /-! ### EN blocking reasons -/
@@ -235,4 +235,4 @@ instance : OrderTop PolarityLicensing where
 /-- Strong EN (⊥) ≤ weak EN in the licensing lattice. -/
 theorem strongEN_le_weakEN : strongENProfile ≤ weakENProfile := by decide
 
-end Semantics.Negation
+end Negation
