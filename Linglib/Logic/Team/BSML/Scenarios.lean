@@ -38,7 +38,7 @@ inductive FCAtom
   | b
   /-- Third atom for embedded scenarios (negative free choice). -/
   | c
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype FCAtom where
   elems := {.a, .b, .c}

@@ -23,14 +23,14 @@ open FirstOrder Language
 
 variable {W Var Const Pred Domain : Type*}
 variable [DecidableEq W] [DecidableEq Var] [Fintype Var]
-variable [DecidableEq Domain] [Fintype Domain]
+variable [DecidableEq Domain] [Fintype Domain] [Inhabited Domain]
 
 /-! ### Proposition 4.1, composed: QBSML support is first-order realization -/
 
 /-- **NE-free QBSML support is single-structure first-order satisfaction**:
     [aloni-vanormondt-2023] Proposition 4.1 composed with the standard
     translation. Support at a singleton state is mathlib `Formula.Realize`
-    of the standard translation over `corrStructure` — the link along which
+    of the standard translation over `M.correspondence` — the link along which
     classical model theory (compactness, Löwenheim–Skolem) transfers to the
     NE-free fragment. -/
 theorem support_singleton_iff_st (M : Model W Domain Const Pred)
@@ -40,13 +40,12 @@ theorem support_singleton_iff_st (M : Model W Domain Const Pred)
     {i : Index W Var Domain} {v : Var → Domain} (u : ℕ → W)
     (hv : ∀ y, i.assign y = some (v y)) (hu : u k = i.world) :
     support M φ {i} ↔
-      (letI := M.corrStructure
-       (τ.st k).Realize (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ u))) :=
-  (support_singleton_iff_realize M hτ hv).trans
-    (realize_st M (fun _ => rfl) (by rw [Sum.elim_inr, Function.comp_apply, hu]))
+      (letI := M.correspondence
+       (τ.st k).Realize (stVal v u)) :=
+  (support_singleton_iff_realize M hτ hv).trans (hu ▸ realize_st M)
 
 /-- Support at a singleton state forces the closed standard translation,
-    as a sentence of `corrStructure`. -/
+    as a sentence of `M.correspondence`. -/
 theorem models_toSentence_of_support (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
     {τ : ModalFormula (Language.monadicWithConstants Const Pred) Var}
@@ -54,46 +53,40 @@ theorem models_toSentence_of_support (M : Model W Domain Const Pred)
     (hcl : (stClose 0 (τ.st 0)).freeVarFinset = ∅)
     {i : Index W Var Domain} {v : Var → Domain}
     (hv : ∀ y, i.assign y = some (v y)) (hsupp : support M φ {i}) :
-    (letI := M.corrStructure
+    (letI := M.correspondence
      (W ⊕ Domain) ⊨ (stClose 0 (τ.st 0)).toSentence hcl) := by
-  let _S := M.corrStructure
-  have h1 : (τ.st 0).Realize
-      (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ (fun _ => i.world))) :=
+  let _S := M.correspondence
+  have h1 : (τ.st 0).Realize (stVal v (fun _ => i.world)) :=
     (support_singleton_iff_st M hτ (fun _ => i.world) hv rfl).mp hsupp
   refine (Formula.realize_toSentence _ hcl
-    (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ (fun _ => i.world)))).mpr ?_
-  refine (realize_stClose M 0 (τ.st 0) _).mpr ⟨i.world, ?_⟩
-  rw [show Function.update
-      (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ (fun _ => i.world)))
-      (Sum.inr 0) (Sum.inl i.world)
-      = Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ (fun _ => i.world)) from
+    (stVal v (fun _ => i.world))).mpr ?_
+  refine (realize_stClose 0 (τ.st 0) _ fun _ => Iff.rfl).mpr ⟨i.world, ?_⟩
+  rw [show Function.update (stVal v (fun _ => i.world))
+      (Sum.inr 0) (Sum.inl i.world) = stVal v (fun _ => i.world) from
     Function.update_eq_self _ _]
   exact h1
 
 /-- Conversely, the closed standard translation as a sentence of
-    `corrStructure` yields support at some singleton state. -/
-theorem exists_support_of_models_toSentence [Nonempty Domain]
+    `M.correspondence` yields support at some singleton state. -/
+theorem exists_support_of_models_toSentence
     (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
     {τ : ModalFormula (Language.monadicWithConstants Const Pred) Var}
     (hτ : φ.toModal? = some τ)
     (hcl : (stClose 0 (τ.st 0)).freeVarFinset = ∅)
-    (h : letI := M.corrStructure
+    (h : letI := M.correspondence
          (W ⊕ Domain) ⊨ (stClose 0 (τ.st 0)).toSentence hcl) :
     ∃ (i : Index W Var Domain) (v : Var → Domain),
       (∀ y, i.assign y = some (v y)) ∧ support M φ {i} := by
-  let _S := M.corrStructure
-  obtain ⟨d₀⟩ := ‹Nonempty Domain›
-  have h0 : (stClose 0 (τ.st 0)).Realize
-      (fun _ => (Sum.inr d₀ : W ⊕ Domain)) :=
-    (Formula.realize_toSentence _ hcl _).mp h
-  obtain ⟨w, hw⟩ := (realize_stClose M 0 (τ.st 0) _).mp h0
-  have hsorted : ∀ x : Var, Function.update
-      (fun _ : Var ⊕ ℕ => (Sum.inr d₀ : W ⊕ Domain)) (Sum.inr 0)
-      (Sum.inl w) (Sum.inl x) = Sum.inr d₀ := fun x => by
-    rw [Function.update_of_ne (by simp)]
-  have hmodal : τ.Realize M w (fun _ => d₀) :=
-    (realize_st M hsorted (Function.update_self _ _ _)).mpr hw
+  let _S := M.correspondence
+  have d₀ : Domain := default
+  obtain ⟨w₀, -⟩ := (realize_stClose 0 (τ.st 0) _ fun _ => Iff.rfl).mp
+    ((Formula.realize_toSentence _ hcl (fun _ => (Sum.inr d₀ : W ⊕ Domain))).mp h)
+  obtain ⟨w, hw⟩ := (realize_stClose 0 (τ.st 0) _ fun _ => Iff.rfl).mp
+    ((Formula.realize_toSentence _ hcl (stVal (fun _ => d₀) (fun _ => w₀))).mp h)
+  rw [stVal_update_world] at hw
+  have hmodal := (realize_st (u := Function.update (fun _ => w₀) 0 w) M).mpr hw
+  rw [Function.update_self] at hmodal
   exact ⟨⟨w, fun _ => some d₀⟩, fun _ => d₀, fun _ => rfl,
     (support_singleton_iff_realize M hτ fun _ => rfl).mpr hmodal⟩
 
@@ -120,7 +113,7 @@ theorem support_compactness {Var : Type*} [DecidableEq Var] [Fintype Var]
     (hτ : ∀ i, (φs i).toModal? = some (τs i))
     (hcl : ∀ i, (stClose 0 ((τs i).st 0)).freeVarFinset = ∅)
     (hfin : ∀ s : Finset ι, ∃ (W Domain : Type max u v)
-      (_ : DecidableEq W) (_ : DecidableEq Domain) (_ : Fintype Domain)
+      (_ : DecidableEq W) (_ : DecidableEq Domain) (_ : Fintype Domain) (_ : Inhabited Domain)
       (M : Model W Domain Const Pred) (i : Index W Var Domain)
       (v : Var → Domain), (∀ y, i.assign y = some (v y)) ∧
         ∀ j ∈ s, support M (φs j) {i}) :
@@ -130,10 +123,10 @@ theorem support_compactness {Var : Type*} [DecidableEq Var] [Fintype Var]
   intro T₀ hT₀
   classical
   choose f hf using fun x : T₀ => hT₀ x.2
-  obtain ⟨W, Domain, _, _, _, M, i, v, hv, hs⟩ := hfin (Finset.univ.image f)
-  let _S := M.corrStructure
+  obtain ⟨W, Domain, _, _, _, _, M, i, v, hv, hs⟩ := hfin (Finset.univ.image f)
+  let _S := M.correspondence
   have : Nonempty (W ⊕ Domain) := ⟨Sum.inl i.world⟩
-  have : (W ⊕ Domain) ⊨ (T₀ : (Language.correspondence Const Pred).Theory) := by
+  have : (W ⊕ Domain) ⊨ (T₀ : (Language.monadicWithConstants Const Pred).correspondence.Theory) := by
     refine ⟨fun σ hσ => ?_⟩
     obtain ⟨x, rfl⟩ : ∃ x : T₀,
         (stClose 0 ((τs (f x)).st 0)).toSentence (hcl (f x)) = σ :=

@@ -126,7 +126,7 @@ def univPxOrQxModal :
 /-- The standard translation of `∀x(Px ∨ Qx)`, computed by `st`: quantifiers
     relativized to the individual sort, predicates world-relativized to the
     current-world variable `Sum.inr 0`. -/
-def stUnivPxOrQx : (Language.correspondence FCAtom Predicate).Formula (QVar ⊕ ℕ) :=
+def stUnivPxOrQx : (Language.monadicWithConstants FCAtom Predicate).correspondence.Formula (QVar ⊕ ℕ) :=
   univPxOrQxModal.st 0
 
 /-- The closure is a genuine sentence: the compiler computes the
@@ -136,13 +136,13 @@ theorem stUnivPxOrQx_closed :
 
 /-- The sort-guarded closed standard translation of `∀x(Px ∨ Qx)`, as a
     sentence. -/
-def stUnivPxOrQxSentence : (Language.correspondence FCAtom Predicate).Sentence :=
+def stUnivPxOrQxSentence : (Language.monadicWithConstants FCAtom Predicate).correspondence.Sentence :=
   (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed
 
-local instance : (Language.correspondence FCAtom Predicate).Structure (TwoAtomWorld ⊕ FCAtom) :=
-  univAccessModel.corrStructure
+local instance : (Language.monadicWithConstants FCAtom Predicate).correspondence.Structure (TwoAtomWorld ⊕ FCAtom) :=
+  univAccessModel.correspondence
 
-/-- Truth of the standard-translation sentence in `univAccessModel.corrStructure`
+/-- Truth of the standard-translation sentence in `univAccessModel.correspondence`
     is support of `∀x(Px ∨ Qx)` at some singleton with a total assignment —
     the compactness-ready form of Proposition 4.1, every translation step
     (`toModal?`, `st`, the free-variable check) computed by the compiler. -/
@@ -150,7 +150,6 @@ theorem models_stUnivPxOrQxSentence_iff :
     (TwoAtomWorld ⊕ FCAtom) ⊨ stUnivPxOrQxSentence ↔
       ∃ (i : Index TwoAtomWorld QVar FCAtom) (v : QVar → FCAtom),
         (∀ y, i.assign y = some (v y)) ∧ support univAccessModel univPxOrQx {i} :=
-  haveI : Nonempty FCAtom := ⟨.a⟩
   ⟨exists_support_of_models_toSentence univAccessModel (τ := univPxOrQxModal) rfl stUnivPxOrQx_closed,
     fun ⟨_, _, hv, h⟩ =>
       models_toSentence_of_support univAccessModel (τ := univPxOrQxModal) rfl stUnivPxOrQx_closed hv h⟩
