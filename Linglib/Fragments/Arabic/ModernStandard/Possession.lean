@@ -27,6 +27,5 @@ def obligatoryPossession : Obligatoriness := .noObligatory
 def possessiveClassification : Classification := .noClassification
 def predicativeStrategy : PredicativeStrategy := .locational
 def adnominalStrategy : AdnominalMarking := .zeroMarking
-def affixPosition : Option AffixPosition := some .suffixes
 
 end Arabic.ModernStandard.Possession

@@ -22,6 +22,5 @@ def obligatoryPossession : Obligatoriness := .noObligatory
 def possessiveClassification : Classification := .noClassification
 def predicativeStrategy : PredicativeStrategy := .locational
 def adnominalStrategy : AdnominalMarking := .dependentMarking
-def affixPosition : Option AffixPosition := Option.none
 
 end Korean.Possession

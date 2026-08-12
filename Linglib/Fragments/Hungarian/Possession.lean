@@ -38,6 +38,5 @@ def obligatoryPossession : Obligatoriness := .exists_
 def possessiveClassification : Classification := .noClassification
 def predicativeStrategy : PredicativeStrategy := .locational
 def adnominalStrategy : AdnominalMarking := .headMarking
-def affixPosition : Option AffixPosition := some .suffixes
 
 end Hungarian.Possession

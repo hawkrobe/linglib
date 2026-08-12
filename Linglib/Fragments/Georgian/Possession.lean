@@ -24,6 +24,5 @@ def obligatoryPossession : Obligatoriness := .noObligatory
 def possessiveClassification : Classification := .noClassification
 def predicativeStrategy : PredicativeStrategy := .locational
 def adnominalStrategy : AdnominalMarking := .doubleMarking
-def affixPosition : Option AffixPosition := some .noAffix
 
 end Georgian.Possession

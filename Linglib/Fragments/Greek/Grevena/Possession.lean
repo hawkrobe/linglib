@@ -79,6 +79,5 @@ def predicativeStrategy : PredicativeStrategy := .haveVerb
     distinguish from juxtaposition (a structure SMG apo-PPs do NOT support,
     see [kampanarou-alexiadou-2026] §4). -/
 def adnominalStrategy : AdnominalMarking := .zeroMarking
-def affixPosition : Option AffixPosition := some .noAffix
 
 end Greek.Grevena.Possession

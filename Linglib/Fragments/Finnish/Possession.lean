@@ -127,6 +127,5 @@ theorem covers_all_notions :
 
 def obligatoryPossession : Obligatoriness := .noObligatory
 def possessiveClassification : Classification := .noClassification
-def affixPosition : Option AffixPosition := some .suffixes
 
 end Finnish.Possession

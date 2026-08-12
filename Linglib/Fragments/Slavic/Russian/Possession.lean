@@ -105,6 +105,5 @@ def obligatoryPossession : Obligatoriness := .noObligatory
 def possessiveClassification : Classification := .noClassification
 /-- Adnominal NP-GEN (`kniga Ivana`): dependent-marking. -/
 def adnominalStrategy : AdnominalMarking := .dependentMarking
-def affixPosition : Option AffixPosition := some .noAffix
 
 end Russian.Possession

@@ -12,7 +12,10 @@ these values live in `Studies/NicholsBickel2013.lean`.
 
 Examples: na liga-qu (body-part); na ke-qu kakana (food); na me-qu ti
 (drink); na no-qu vale (house). Four-way possessive classification: direct
-(body/kin), ke- (edible), me- (drinkable), no- (general alienable).
+(body/kin), ke- (edible), me- (drinkable), no- (general alienable). WALS 59A
+nonetheless codes Fijian as *No possessive classification* under Nichols &
+Bickel's criterion; the value here follows the descriptive four-class
+tradition.
 -/
 
 set_option autoImplicit false
@@ -25,6 +28,5 @@ def obligatoryPossession : Obligatoriness := .noObligatory
 def possessiveClassification : Classification := .threeOrMore
 def predicativeStrategy : PredicativeStrategy := .locational
 def adnominalStrategy : AdnominalMarking := .headMarking
-def affixPosition : Option AffixPosition := some .suffixes
 
 end Fijian.Possession
