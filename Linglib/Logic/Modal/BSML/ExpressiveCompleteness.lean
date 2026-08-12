@@ -41,7 +41,7 @@ namespace BSML
 
 open Team ModalLogic
 
-variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
+variable {W : Type*} [DecidableEq W] {Atom : Type*}
 
 /-! ### Bounded-bisimulation closure (the third soundness pillar) -/
 
@@ -97,7 +97,7 @@ theorem expressiveSoundness (M : KripkeModel W Atom) :
     which yields a team `s₀ ∈ P` whose classes `t` covers, and `s₀ ∪ (U`
     restricted to `t`'s classes`)` lies in `P` by convexity between `s₀`
     and `U` and is bisimilar to `t` — so `t ∈ P` by bisimulation closure. -/
-theorem expressiveCompleteness_converse [Fintype Atom] [Inhabited Atom]
+theorem expressiveCompleteness_converse [Fintype W] [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) :
     convexProperties ∩ unionClosedProperties ∩ bisimClosedProperties M ⊆
       definableClass (support M) := by
@@ -188,7 +188,7 @@ theorem expressiveCompleteness_converse [Fintype Atom] [Inhabited Atom]
 /-- **BSML is expressively complete** for the convex, union-closed,
     bounded-bisimulation-closed team properties ([anttila-2025] Ch 3, in
     within-model finite-atom form). -/
-theorem expressivelyComplete [Fintype Atom] [Inhabited Atom]
+theorem expressivelyComplete [Fintype W] [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) :
     ExpressivelyCompleteFor (support M)
       (convexProperties ∩ unionClosedProperties ∩ bisimClosedProperties M) :=

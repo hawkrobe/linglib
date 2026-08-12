@@ -246,7 +246,7 @@ theorem K_axiom (f : ModalBase W) (g : OrderingSource W) (p q : W → Prop) (w :
     (hImpl : necessity f g (fun w' => p w' → q w') w)
     (hP : necessity f g p w) :
     necessity f g q w :=
-  box_K (kratzerBestR f g) p q w hImpl hP
+  box_K hImpl hP
 
 /-- Totally realistic base: simple T holds for full necessity. -/
 theorem totally_realistic_gives_T (f : ModalBase W) (g : OrderingSource W)

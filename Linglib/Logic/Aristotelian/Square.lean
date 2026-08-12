@@ -47,6 +47,24 @@ structure SquareRelations (sq : Square α) where
   /-- I and O are subcontraries. -/
   subcontrIO : Codisjoint sq.I sq.O
 
+/-- The classical square: when the particulars are the complements of the
+    opposite universals (`I = Eᶜ`, `O = Aᶜ`), the contradiction diagonals
+    hold outright and the remaining relations are each equivalent to
+    contrariety, so `Disjoint A E` yields the full square. Under the modern
+    Boolean reading, contrariety is where existential import lives: it
+    fails when the universals hold vacuously (empty subject term; modally,
+    a dead-end world), and the discharging assumption — a non-empty term,
+    seriality — enters through this hypothesis. -/
+theorem SquareRelations.of_disjoint {sq : Square α}
+    (hI : sq.I = sq.Eᶜ) (hO : sq.O = sq.Aᶜ) (h : Disjoint sq.A sq.E) :
+    SquareRelations sq := by
+  refine ⟨?_, ?_, ?_, ?_, h, ?_⟩
+  · rw [hI]; exact le_compl_iff_disjoint_right.mpr h
+  · rw [hO]; exact le_compl_iff_disjoint_right.mpr h.symm
+  · rw [hO]; exact isCompl_compl
+  · rw [hI]; exact isCompl_compl
+  · rw [hI, hO, codisjoint_iff, ← compl_inf, disjoint_iff.mp h.symm, compl_bot]
+
 /-! ### Bridges to the Aristotelian predicates -/
 
 /-- Lift to `IsSubaltern sq.A sq.I` given strictness `sq.A ≠ sq.I`. -/

@@ -43,7 +43,7 @@ namespace BSML
 
 open ModalLogic
 
-variable {W W' : Type*} [DecidableEq W] [Fintype W] [DecidableEq W'] [Fintype W']
+variable {W W' : Type*} [DecidableEq W] [DecidableEq W']
 variable {Atom : Type*}
 
 /-! ### Modal depth -/

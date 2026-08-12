@@ -112,10 +112,9 @@ extension of `P`:
 
 The s ⊆ c ⊆ t hierarchy is the **T axiom** instantiated at `box`
 (`ModalLogic.box_T`); the t/s duality is the standard
-modal de Morgan `box R ¬p ↔ ¬diamond R p`. T-models satisfy
-`frameConditions ModalLogic.KTB` by construction (Definition 4 of
-[cobreros-etal-2012]); see `TModel.satisfies_KTB` for the explicit
-witness. The Brouwersche axiom B / symmetric-frame correspondence is
+modal de Morgan `box R ¬p ↔ ¬diamond R p`. T-models are KTB frames by
+construction (Definition 4 of [cobreros-etal-2012]): each `~_P`
+carries an `IsKTBFrame` instance. The Brouwersche axiom B / symmetric-frame correspondence is
 a standard Sahlqvist result; for systematic treatment see
 [blackburn-derijke-venema-2001] §3.5–3.6 and the model-theoretic
 overview [goranko-otto-2007]. The non-equivalence-relation
@@ -188,7 +187,6 @@ namespace Semantics.Supervaluation.TCS
 
 open ModalLogic
   (IsKTBFrame IsSerial box diamond box_T)
-open ModalLogic (KTB frameConditions)
 open Consequence (MixedConsequence SatImplies IsSelfDual
   premise_monotone conclusion_monotone mixed_monotone)
 open Semantics.Supervaluation (SpecSpace superTrue
@@ -233,21 +231,12 @@ variable {D Pred : Type*}
 
 /-- The similarity relation as a Kripke accessibility relation — the frame
     associated with each predicate. By construction this frame is
-    reflexive + symmetric, i.e., a **KTB frame** (`ModalLogic.KTB`). -/
+    reflexive + symmetric, i.e., a **KTB frame** (`ModalLogic.IsKTBFrame`). -/
 @[reducible] def simAccess (M : TModel D Pred) (P : Pred) : D → D → Prop := M.sim P
 
 /-- Per-`(M, P)` KTB-frame instance: lets typeclass search reach
     `Std.Refl` and `Std.Symm` on `M.sim P` from any call site. -/
 instance (M : TModel D Pred) (P : Pred) : IsKTBFrame (M.sim P) := M.sim_ktb P
-
-/-- **T-models are KTB frames by construction**: every per-predicate
-    similarity relation `~_P` satisfies the frame conditions for the
-    normal modal logic `KTB = K + T + B` (reflexive + symmetric Kripke
-    frame), via the `IsKTBFrame` instance and the syntactic-semantic
-    bridge `frameConditions_KTB_iff`. -/
-theorem satisfies_KTB (M : TModel D Pred) (P : Pred) :
-    frameConditions KTB (M.simAccess P) :=
-  (ModalLogic.frameConditions_KTB_iff _).mpr inferInstance
 
 end TModel
 
@@ -310,7 +299,7 @@ theorem tolerantAt_eq_diamond (M : TModel D Pred) (P : Pred) (a : D) :
     `~_P`. This is the **T axiom** instantiated. -/
 theorem StrictAt.imp_classical (M : TModel D Pred) (P : Pred) (a : D)
     (hs : StrictAt M P a) : M.interp P a :=
-  box_T (M.simAccess P) _ a hs
+  box_T hs
 
 /-- **Classical ⟹ tolerant** at the atomic level: `a` itself
     witnesses the existential by reflexivity of `~_P`. -/

@@ -341,7 +341,7 @@ theorem must_realistic_of_refl [Fintype W]
     (hd : (g, w₀) ∈ d.info)
     (hmust : (g, w₀) ∈ (must R (Finset.univ : Finset W).toList (atom p) d).info) :
     p g w₀ :=
-  box_T R (p g) w₀ ((must_truth_agrees_box R p d g w₀ hd).mp hmust)
+  box_T ((must_truth_agrees_box R p d g w₀ hd).mp hmust)
 
 /--
 Pointwise realistic base: if `R w₀ w₀` and must holds at w₀,

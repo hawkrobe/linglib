@@ -32,9 +32,8 @@ namespace Question
 open ModalLogic (KripkeModel)
 open ModalLogic.Inquisitive
 
-variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
+variable {W : Type*} [Fintype W] {Atom : Type*}
 
-omit [DecidableEq W] in
 /-- The image of a lower family of teams under the `Finset W → Set W`
     coercion is again lower (`Fintype W`: every state is the coercion of
     its `toFinset`). The reusable bridge any downward-closed team logic

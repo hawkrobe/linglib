@@ -50,7 +50,7 @@ open ModalLogic (KripkeModel)
 
 open Team
 
-variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
+variable {W : Type*} [DecidableEq W] {Atom : Type*}
 
 /-! ### Sup-closure (Anttila 2.2.8 part 2) -/
 

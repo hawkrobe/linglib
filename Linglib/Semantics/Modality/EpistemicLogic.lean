@@ -202,7 +202,7 @@ theorem believes_consistent {W E : Type*}
     {Rs : E → W → W → Prop} (i : E) [IsSerial (Rs i)]
     (φ : W → Prop) (w : W) (h : believes Rs i φ w) :
     diamond (Rs i) φ w :=
-  box_D (Rs i) φ w h
+  box_D h
 
 /-- Positive introspection: Bᵢ(φ) → Bᵢ(Bᵢ(φ)) (the 4 axiom).
     Follows from transitivity of the belief accessibility relation. -/
@@ -210,7 +210,7 @@ theorem believes_positive_introspection {W E : Type*}
     {Rs : E → W → W → Prop} (i : E) [IsTrans W (Rs i)]
     (φ : W → Prop) (w : W) (h : believes Rs i φ w) :
     believes Rs i (believes Rs i φ) w :=
-  box_four (Rs i) φ w h
+  box_four h
 
 /-- Negative introspection: ◇Bφ → □◇Bφ (the 5 axiom).
     Follows from Euclideanness of the belief accessibility relation. -/
@@ -218,7 +218,7 @@ theorem believes_negative_introspection {W E : Type*}
     {Rs : E → W → W → Prop} (i : E) [IsEuclidean (Rs i)]
     (φ : W → Prop) (w : W) (h : diamond (Rs i) φ w) :
     box (Rs i) (diamond (Rs i) φ) w :=
-  box_five (Rs i) φ w h
+  box_five h
 
 /-- Belief is not veridical: there exist frames where Bᵢ(φ) ∧ ¬φ.
     Unlike knowledge (which requires reflexivity), belief frames are

@@ -43,7 +43,6 @@ namespace KeshetAbney2024.PIP.Bridges
 open KeshetAbney2024.PIP
 open DynamicSemantics.ICDRT (IVar Assignment Entity Context)
 open ModalLogic (box diamond)
-open ModalLogic (frameConditions)
 
 
 -- ============================================================
@@ -235,49 +234,7 @@ theorem properPlural_implies_plural {α : Type*} {a b : α}
 
 
 -- ============================================================
--- § 4. Modal Logic Classification
--- ============================================================
-
-/-!
-### Modal Logic: PIP's must needs the T axiom
-
-PIP's must allows anaphora because of a **realistic modal base**
-([kratzer-1991]): the evaluation world w* is accessible from
-itself (`R w* w*`). This is exactly the T axiom (`□p → p`,
-frame condition: reflexivity).
-
-The `must_truth_agrees_box` and `must_realistic_of_refl`
-theorems in `Connectives.lean` already prove this correspondence.
-This section classifies PIP's modal operators in the lattice of
-normal modal logics from `Intensional`.
--/
-
-/-!
-PIP's anaphora-enabling modality needs the **T axiom** (reflexivity): a
-realistic modal base guarantees the description holds at the evaluation
-world. The content of that claim is carried by `reflexive_satisfies_T`
-below (reflexivity ⟹ T's frame condition) together with
-`Connectives.must_realistic_of_refl` (which consumes `Std.Refl R` to
-derive `p g w₀`). A bare `K ≤ T` lemma would be vacuous — `K = ⊥` — so
-it is intentionally omitted.
--/
-
-/--
-A reflexive accessibility relation satisfies ModalLogic.T's frame condition.
-
-Stated for the Prop-valued `Std.Refl`/`frameConditions` API in
-`Intensional` — the same accessibility type PIP's modal
-operators now use directly.
--/
-theorem reflexive_satisfies_T {W : Type*}
-    (R : W → W → Prop) [hRefl : Std.Refl R] :
-    frameConditions ModalLogic.T R :=
-  ⟨fun _ => hRefl, fun h => absurd h (by decide), fun h => absurd h (by decide),
-   fun h => absurd h (by decide), fun h => absurd h (by decide)⟩
-
-
--- ============================================================
--- § 5. Kratzer Correspondence
+-- § 4. Kratzer Correspondence
 -- ============================================================
 
 /-!
@@ -322,7 +279,7 @@ theorem mustBase_agrees_box {W D : Type*}
 
 
 -- ============================================================
--- § 6. Static↔Dynamic Agreement
+-- § 5. Static↔Dynamic Agreement
 -- ============================================================
 
 /-!

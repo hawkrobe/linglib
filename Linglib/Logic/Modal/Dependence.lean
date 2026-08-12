@@ -117,7 +117,7 @@ infrastructure but differ in atom flavor:
 
 namespace ModalLogic.Dependence
 
-variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
+variable {W : Type*} [DecidableEq W] {Atom : Type*}
 
 open ModalLogic (KripkeModel)
 
@@ -462,7 +462,7 @@ section Bisimulation
 
 open ModalLogic
 
-variable {W' : Type*} [DecidableEq W'] [Fintype W']
+variable {W' : Type*} [DecidableEq W']
 
 /-- **Bisimulation invariance for MDL** (the [aloni-anttila-yang-2024]
     Theorem 3.8 analogue for [vaananen-2008]'s modal dependence logic):

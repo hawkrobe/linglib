@@ -28,7 +28,7 @@ namespace BSML
 
 open ModalLogic (KripkeModel)
 
-variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
+variable {W : Type*} [DecidableEq W] {Atom : Type*}
 
 -- ============================================================================
 -- §1: Pragmatic Enrichment (Definition 6)

@@ -43,7 +43,7 @@ namespace BSML
 
 open ModalLogic
 
-variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
+variable {W : Type*} {Atom : Type*}
 
 /-! ### `⊤` and finite conjunction -/
 
@@ -238,6 +238,8 @@ theorem classicalEval_charFormula_iff_bisim [Fintype Atom] [Inhabited Atom]
            (ih u u').mpr hb⟩
 
 /-! ### Team support of the auxiliary connectives -/
+
+variable [DecidableEq W]
 
 theorem support_verum [Inhabited Atom] (M : KripkeModel W Atom) (t : Finset W) :
     support M (verum (Atom := Atom)) t := by

@@ -32,7 +32,7 @@ namespace Aloni2022
 open BSML
 open ModalLogic (KripkeModel)
 
-variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
+variable {W : Type*} [DecidableEq W] {Atom : Type*}
 
 /-! ### Downward closure of atom and NE primitives -/
 
@@ -51,7 +51,7 @@ theorem atom_downwardClosed (M : KripkeModel W Atom) (p : Atom) :
 /-- NE is NOT downward-closed: an inhabited team supports NE but ∅ doesn't.
     This is the obstruction that prevents
     `isFlat_support_of_neFree` from extending to NE-bearing formulas. -/
-theorem ne_not_downwardClosed [Nonempty W] (M : KripkeModel W Atom) :
+theorem ne_not_downwardClosed [Fintype W] [Nonempty W] (M : KripkeModel W Atom) :
     ¬(∀ t t' : Finset W, t' ⊆ t → support M .ne t → support M .ne t') := by
   intro hDC
   have hFull : (Finset.univ : Finset W).Nonempty := Finset.univ_nonempty
