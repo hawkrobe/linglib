@@ -27,7 +27,7 @@ three LF positions (her (16)) — outer (PolP), medial (ModP), inner (TP)
   columns jointly fingerprint the three positions.
 * `nahodou_identifies_outer`, `jeste_identifies_inner`,
   `fakt_plus_no_jeste_identifies_medial` — per-particle pinning.
-* `instance Distributed Particle NegPosition` — Table 1 as a licensing
+* `instance Distributed Particle Position` — Table 1 as a licensing
   axis alongside clause type and embedding.
 * `czech_refines_loNQ` — Czech splits [romero-2024]'s LoNQ into inner
   and medial.
@@ -44,13 +44,13 @@ three LF positions (her (16)) — outer (PolP), medial (ModP), inner (TP)
 
 namespace Stankova2026
 
-open Semantics.Negation.CzechNegation
+open Czech.Negation
 
 /-! ### Table 1 fingerprints -/
 
 /-- The Boolean signature of a negation position across the five
 Table 1 diagnostics. -/
-def signature (pos : NegPosition) : List Bool :=
+def signature (pos : Position) : List Bool :=
   [ licenses pos .ppiOutscoping
   , licenses pos .nciLicensed
   , licenses pos .nahodou
@@ -69,7 +69,7 @@ theorem signatures_distinct :
 requires LF c-command, and medial and outer negation are too high
 ([stankova-2026] (6), (10)). -/
 theorem only_inner_licenses_nci :
-    ∀ p : NegPosition, licenses p .nciLicensed = true → p = .inner := by
+    ∀ p : Position, licenses p .nciLicensed = true → p = .inner := by
   intro p h; cases p <;> simp_all [licenses]
 
 /-! ### The diagnostic particles ([stankova-2026] §2.2, Table 1)
@@ -103,31 +103,31 @@ def diagnostic? (p : Particle) : Option Diagnostic :=
 
 /-- Table 1 as a `Distributed` axis: negation position is a licensing
 context like clause type and embedding. -/
-instance : Distributed Particle NegPosition :=
+instance : Distributed Particle Position :=
   ⟨fun p pos => (diagnostic? p).map fun d =>
     if licenses pos d then .optional else .excluded⟩
 
 /-- Table 1 compatibility of a particle with a negation position, when
 the particle carries a diagnostic. -/
-def compatibleWith? (p : Particle) (pos : NegPosition) : Option Bool :=
+def compatibleWith? (p : Particle) (pos : Position) : Option Bool :=
   (diagnostic? p).map (licenses pos)
 
-example : Distributed.LicensedIn nahodou NegPosition.outer := by decide
+example : Distributed.LicensedIn nahodou Position.outer := by decide
 
 /-- *náhodou* uniquely identifies outer negation. -/
 theorem nahodou_identifies_outer :
-    ∀ pos : NegPosition, compatibleWith? nahodou pos = some true → pos = .outer := by
+    ∀ pos : Position, compatibleWith? nahodou pos = some true → pos = .outer := by
   intro pos; cases pos <;> decide
 
 /-- *ještě* uniquely identifies inner negation. -/
 theorem jeste_identifies_inner :
-    ∀ pos : NegPosition, compatibleWith? jeste pos = some true → pos = .inner := by
+    ∀ pos : Position, compatibleWith? jeste pos = some true → pos = .inner := by
   intro pos; cases pos <;> decide
 
 /-- *fakt* accepted while *ještě* is rejected identifies medial
 negation. -/
 theorem fakt_plus_no_jeste_identifies_medial :
-    ∀ pos : NegPosition,
+    ∀ pos : Position,
       compatibleWith? fakt pos = some true ∧ compatibleWith? jeste pos = some false →
       pos = .medial := by
   intro pos; cases pos <;> decide
@@ -135,7 +135,7 @@ theorem fakt_plus_no_jeste_identifies_medial :
 /-- The three Table 1 particles jointly fingerprint the three negation
 positions. -/
 theorem particle_signatures_distinct :
-    ∀ pos pos' : NegPosition,
+    ∀ pos pos' : Position,
       (∀ p ∈ [nahodou, jeste, fakt], compatibleWith? p pos = compatibleWith? p pos') →
       pos = pos' := by
   intro pos pos' h
@@ -175,7 +175,7 @@ inductive CzechPQForm where
 
 end Stankova2026
 
-namespace Semantics.Negation.CzechNegation
+namespace Czech.Negation
 
 open Semantics.Questions.Bias
 open Stankova2026 (CzechPQForm)
@@ -183,41 +183,33 @@ open StankovaSimik2025 (VerbPosition)
 
 /-- [romero-2024] PQ form of a negation position: outer is high
 negation (HiNQ), inner and medial are both low (LoNQ). -/
-def NegPosition.toPQForm : NegPosition → PQForm
+def Position.toPQForm : Position → PQForm
   | .inner | .medial => .LoNQ
   | .outer => .HiNQ
 
-/-- Evidential bias strength of a negation position ([stankova-2026]
-§3.1): inner strong, medial weak, outer none (FALSUM is
-epistemic-bias-based). -/
-def NegPosition.biasStrength : NegPosition → EvidentialBiasStrength
-  | .inner  => .strong
-  | .medial => .weak
-  | .outer  => .none_
-
 /-- Only outer negation (FALSUM) is obligatorily focused
 ([stankova-2026] §3.2). -/
-def NegPosition.requiresFocus : NegPosition → Bool
+def Position.requiresFocus : Position → Bool
   | .outer => true
   | .medial | .inner => false
 
 /-- Verb position realizing a negation position: outer is V1, inner and
 medial are nonV1. -/
-def NegPosition.toVerbPosition : NegPosition → VerbPosition
+def Position.toVerbPosition : Position → VerbPosition
   | .inner | .medial => .nonV1
   | .outer => .v1
 
 /-- [simik-2024] PQ form of a negation position: outer is InterNPQ,
 inner and medial are DeclNPQ. -/
-def NegPosition.toCzechPQForm : NegPosition → CzechPQForm
+def Position.toCzechPQForm : Position → CzechPQForm
   | .inner | .medial => .declNPQ
   | .outer => .interNPQ
 
-end Semantics.Negation.CzechNegation
+end Czech.Negation
 
 namespace Stankova2026
 
-open Semantics.Negation.CzechNegation
+open Czech.Negation
 open Semantics.Questions.Bias
 open StankovaSimik2025 (VerbPosition)
 
@@ -231,47 +223,47 @@ def CzechPQForm.toPQForm : CzechPQForm → PQForm
 /-- The two form typologies agree: [simik-2024]'s grid refines
 [romero-2024]'s. -/
 theorem czechPQForm_consistent_with_pqForm :
-    ∀ pos : NegPosition, pos.toCzechPQForm.toPQForm = pos.toPQForm := by
+    ∀ pos : Position, pos.toCzechPQForm.toPQForm = pos.toPQForm := by
   intro pos; cases pos <;> rfl
 
 /-- Czech refines [romero-2024]'s LoNQ: inner and medial share the LoNQ
 form but differ in evidential bias strength and in their Table 1
 signatures. -/
 theorem czech_refines_loNQ :
-    NegPosition.inner.toPQForm = NegPosition.medial.toPQForm ∧
-    NegPosition.inner.biasStrength ≠ NegPosition.medial.biasStrength ∧
+    Position.inner.toPQForm = Position.medial.toPQForm ∧
+    Position.inner.biasStrength ≠ Position.medial.biasStrength ∧
     signature .inner ≠ signature .medial :=
   ⟨rfl, by decide, by (unfold signature licenses; decide)⟩
 
 /-- Obligatory focus singles out outer negation ([stankova-2026]
 §3.2). -/
 theorem only_outer_requires_focus :
-    ∀ p : NegPosition, p.requiresFocus = true → p = .outer := by
-  intro p h; cases p <;> simp_all [NegPosition.requiresFocus]
+    ∀ p : Position, p.requiresFocus = true → p = .outer := by
+  intro p h; cases p <;> simp_all [Position.requiresFocus]
 
 /-- Czech outer negation is a HiNQ with mandatory original bias for p,
 matching [romero-2024]'s Table 1. -/
 theorem czech_outer_matches_romero_hiNQ_bias :
-    NegPosition.outer.toPQForm = .HiNQ ∧
+    Position.outer.toPQForm = .HiNQ ∧
     originalBiasOK .HiNQ .forP = true ∧
     originalBiasOK .HiNQ .neutral = false := ⟨rfl, rfl, rfl⟩
 
 /-- Czech low negation is a LoNQ compatible with neutral original bias,
 matching [romero-2024]'s Table 1. -/
 theorem czech_low_neg_matches_romero_loNQ_bias :
-    NegPosition.inner.toPQForm = .LoNQ ∧
+    Position.inner.toPQForm = .LoNQ ∧
     originalBiasOK .LoNQ .neutral = true := ⟨rfl, rfl⟩
 
 /-- Czech inner negation requires contextual evidence against p,
 matching [romero-2024]'s Table 2 for LoNQs. -/
 theorem czech_inner_matches_romero_evidence_bias :
-    NegPosition.inner.toPQForm = .LoNQ ∧
+    Position.inner.toPQForm = .LoNQ ∧
     evidenceBiasOK .LoNQ .againstP = true := ⟨rfl, rfl⟩
 
 /-- Czech outer negation (HiNQ) is compatible with evidence against p
 (contradiction scenarios). -/
 theorem czech_outer_matches_romero_evidence :
-    NegPosition.outer.toPQForm = .HiNQ ∧
+    Position.outer.toPQForm = .HiNQ ∧
     evidenceBiasOK .HiNQ .againstP = true := ⟨rfl, rfl⟩
 
 /-! ### Verb position and context sensitivity
@@ -286,14 +278,6 @@ nonV1/inner strong. -/
 theorem context_tracks_bias_strength :
     VerbPosition.v1.defaultReading.biasStrength = .none_ ∧
     VerbPosition.nonV1.defaultReading.biasStrength = .strong := ⟨rfl, rfl⟩
-
-/-- [stankova-2025]'s evidence requirement is the strong tier of this
-paper's bias-strength scale; a reading needs negative contextual
-evidence iff its evidential bias is strong. -/
-theorem needsNegativeEvidence_iff_strong :
-    ∀ pos : NegPosition,
-      pos.needsNegativeEvidence = true ↔ pos.biasStrength = .strong := by
-  intro pos; cases pos <;> simp [NegPosition.needsNegativeEvidence, NegPosition.biasStrength]
 
 /-! ### The Czech bias profile ([simik-2024] Table 2) -/
 
@@ -345,7 +329,7 @@ open Data.Examples (LinguisticExample)
 
 /-- The paper's polarity/particle examples with their negation reading
 and tested diagnostic. -/
-def analyzedExamples : List (LinguisticExample × NegPosition × Diagnostic) :=
+def analyzedExamples : List (LinguisticExample × Position × Diagnostic) :=
   [ (Examples.ex6a,  .inner,  .nciLicensed)
   , (Examples.ex6b,  .outer,  .nciLicensed)
   , (Examples.ex7a,  .medial, .ppiOutscoping)

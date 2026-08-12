@@ -79,7 +79,7 @@ open Negation (ENType ENStrength PolarityLicensing PolarityClass weakENProfile s
     above the inflectional domain. The merge position determines scope,
     truth-conditionality, and polarity licensing.
 
-    Compare `Semantics.Negation.CzechNegation.NegPosition`
+    Compare `Czech.Negation.Position`
     which classifies three LF positions (inner/medial/outer) for
     Czech negation. This type is coarser: TP subsumes both inner
     and medial positions. -/
@@ -269,7 +269,7 @@ abstraction over the three-way Czech distinction — any result
 proved for `NegMergePosition` applies to Czech negation positions
 via this mapping. -/
 
-open Semantics.Negation.CzechNegation (NegPosition)
+open Czech.Negation (Position)
 
 /-- Map Czech three-way negation positions to the coarser two-way
     EN merge position.
@@ -277,35 +277,35 @@ open Semantics.Negation.CzechNegation (NegPosition)
     - **Inner** (TP, propositional ¬p): inflectional domain → tp
     - **Medial** (ModP, scopes over □_ev): still inflectional → tp
     - **Outer** (PolP, FALSUM): CP area → cp -/
-def NegPosition.toNegMergePosition : NegPosition → NegMergePosition
+def Position.toNegMergePosition : Position → NegMergePosition
   | .inner  => .tp
   | .medial => .tp
   | .outer  => .cp
 
 /-- Inner/medial map to tp, outer maps to cp. -/
-theorem inner_is_tp : NegPosition.toNegMergePosition .inner = .tp := rfl
-theorem medial_is_tp : NegPosition.toNegMergePosition .medial = .tp := rfl
-theorem outer_is_cp : NegPosition.toNegMergePosition .outer = .cp := rfl
+theorem inner_is_tp : Position.toNegMergePosition .inner = .tp := rfl
+theorem medial_is_tp : Position.toNegMergePosition .medial = .tp := rfl
+theorem outer_is_cp : Position.toNegMergePosition .outer = .cp := rfl
 
 /-- The Czech NCI licensing diagnostic aligns with vP scope:
     inner licenses NCIs (scopes into vP), outer does not (no vP scope). -/
 theorem nci_licensing_matches_scope :
-    Semantics.Negation.CzechNegation.licenses .inner .nciLicensed =
-    (NegPosition.toNegMergePosition .inner).scopesIntoVP ∧
-    Semantics.Negation.CzechNegation.licenses .outer .nciLicensed =
-    (NegPosition.toNegMergePosition .outer).scopesIntoVP := ⟨rfl, rfl⟩
+    Czech.Negation.licenses .inner .nciLicensed =
+    (Position.toNegMergePosition .inner).scopesIntoVP ∧
+    Czech.Negation.licenses .outer .nciLicensed =
+    (Position.toNegMergePosition .outer).scopesIntoVP := ⟨rfl, rfl⟩
 
 /-- The Czech three-way → two-way coarsening preserves scope ordering:
     inner ≤ medial ≤ outer maps to tp ≤ tp ≤ cp (monotone). -/
 theorem toNegMergePosition_monotone :
-    Monotone NegPosition.toNegMergePosition := by
+    Monotone Position.toNegMergePosition := by
   intro a b hab
   -- Both ≤ relations reduce to toNat comparisons via LinearOrder.lift'
   change NegMergePosition.toNat _ ≤ NegMergePosition.toNat _
-  change NegPosition.toNat a ≤ NegPosition.toNat b at hab
+  change Position.toNat a ≤ Position.toNat b at hab
   cases a <;> cases b <;>
-    simp only [NegPosition.toNegMergePosition, NegMergePosition.toNat,
-               NegPosition.toNat] at * <;> omega
+    simp only [Position.toNegMergePosition, NegMergePosition.toNat,
+               Position.toNat] at * <;> omega
 
 end Minimalist.NegScope
 
