@@ -235,11 +235,11 @@ theorem empty_base_universal_access (w : W) :
 /-! ### Modal axioms (from `RestrictedModality`) -/
 
 /-- **Modal duality**: `□p ↔ ¬◇¬p`. Since `necessity = box (kratzerBestR f g)`,
-    this is the box–diamond duality of the modal square of opposition
-    (`ModalLogic.modalSquare_relations`). -/
+    this is the box–diamond duality (`ModalLogic.not_diamond`). -/
 theorem duality (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) :
     necessity f g p w ↔ ¬ possibility f g (fun w' => ¬ p w') w := by
-  rw [necessity, possibility, box_neg_diamond]
+  rw [necessity, possibility, ModalLogic.not_diamond]
+  simp [ModalLogic.box]
 
 /-- **K (Distribution)**: `□(p → q) → □p → □q`. -/
 theorem K_axiom (f : ModalBase W) (g : OrderingSource W) (p q : W → Prop) (w : W)

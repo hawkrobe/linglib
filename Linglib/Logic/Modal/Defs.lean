@@ -4,30 +4,59 @@ import Mathlib.Order.Defs.Unbundled
 import Mathlib.Order.PropInstances
 
 /-!
-# Frame conditions and modal operators
+# Modal operators and frame conditions
 
-This file defines the frame conditions of modal correspondence theory for
-accessibility relations `W → W → Prop`, and the relational `box`/`diamond`
-of Kripke semantics ([kripke-1963]); their `Set`-valued mathlib
-counterparts are `Rel.core` and `Rel.preimage`.
+This file defines the relational `box`/`diamond` of Kripke semantics
+([kripke-1963]) and the frame conditions of modal correspondence theory
+for accessibility relations `W → W → Prop`; the `Set`-valued mathlib
+counterparts of the operators are `Rel.core` and `Rel.preimage`.
 -/
 
 namespace ModalLogic
 
+variable {W : Type*} (R : W → W → Prop)
+
+/-! ### Box and diamond -/
+
+/-- Restricted necessity: `box R p w` holds iff `p v` for all `v`
+    accessible from `w`. -/
+def box (p : W → Prop) (w : W) : Prop :=
+  ∀ v, R w v → p v
+
+/-- Restricted possibility: `diamond R p w` holds iff `p v` for some `v`
+    accessible from `w`. Dual of `box`. -/
+def diamond (p : W → Prop) (w : W) : Prop :=
+  ∃ v, R w v ∧ p v
+
+@[inherit_doc] scoped notation:max "□[" R "]" => box R
+@[inherit_doc] scoped notation:max "◇[" R "]" => diamond R
+
+/-! ### Duality -/
+
+/-- Push negation through `box`: `¬□p ↔ ◇¬p`. -/
+@[simp] theorem not_box (p : W → Prop) (w : W) :
+    ¬ □[R] p w ↔ ◇[R] (fun v => ¬ p v) w := by
+  simp [box, diamond, not_forall]
+
+/-- Push negation through `diamond`: `¬◇p ↔ □¬p`. -/
+@[simp] theorem not_diamond (p : W → Prop) (w : W) :
+    ¬ ◇[R] p w ↔ □[R] (fun v => ¬ p v) w := by
+  simp [box, diamond, not_and]
+
 /-! ### Frame conditions -/
 
 /-- `R` is **serial** if every world accesses at least one world. -/
-class IsSerial {W : Type*} (R : W → W → Prop) : Prop where
+class IsSerial : Prop where
   serial : Relator.LeftTotal R
 
 /-- `R` is **Euclidean** if from any pair of `R`-successors of `w`, each is
     an `R`-successor of the other. -/
-class IsEuclidean {W : Type*} (R : W → W → Prop) : Prop where
+class IsEuclidean : Prop where
   eucl : ∀ w v u, R w v → R w u → R v u
 
 /-! ### Frame implications and instances -/
 
-variable {W : Type*} {R : W → W → Prop}
+variable {R}
 
 -- Seriality, symmetry, and transitivity of `⊤` follow from the two
 -- instances below via the derivations that follow.
@@ -48,34 +77,5 @@ instance [hR : Std.Refl R] [hE : IsEuclidean R] : IsTrans W R where
 /-- Symmetric + transitive implies euclidean. -/
 instance [hS : Std.Symm R] [hT : IsTrans W R] : IsEuclidean R where
   eucl w v u hwv hwu := hT.trans v w u (hS.symm w v hwv) hwu
-
-/-! ### Box and diamond -/
-
-variable (R)
-
-/-- Restricted necessity: `box R p w` holds iff `p v` for all `v`
-    accessible from `w`. -/
-def box (p : W → Prop) (w : W) : Prop :=
-  ∀ v, R w v → p v
-
-/-- Restricted possibility: `diamond R p w` holds iff `p v` for some `v`
-    accessible from `w`. Dual of `box`. -/
-def diamond (p : W → Prop) (w : W) : Prop :=
-  ∃ v, R w v ∧ p v
-
-/-! ### Duality -/
-
-/-- Restricted modal duality: `□_R p ↔ ¬◇_R ¬p`. -/
-theorem box_neg_diamond (p : W → Prop) (w : W) :
-    box R p w ↔ ¬ diamond R (fun v => ¬ p v) w :=
-  ⟨fun hb ⟨v, hwv, hnp⟩ => hnp (hb v hwv),
-   fun h v hwv => Classical.byContradiction fun hnp => h ⟨v, hwv, hnp⟩⟩
-
-/-- Dual form: `◇_R p ↔ ¬□_R ¬p`. -/
-theorem diamond_neg_box (p : W → Prop) (w : W) :
-    diamond R p w ↔ ¬ box R (fun v => ¬ p v) w :=
-  ⟨fun ⟨v, hwv, hpv⟩ h => h v hwv hpv,
-   fun h => Classical.byContradiction fun hne =>
-     h fun v hwv hpv => hne ⟨v, hwv, hpv⟩⟩
 
 end ModalLogic
