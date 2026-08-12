@@ -2,50 +2,23 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# Kripke models for modal logic
+# Kripke models
 
-[vaananen-2008]
+This file defines `KripkeModel`, the finite Kripke carrier — successor
+`Finset`s and a `Bool` valuation — that the team-semantic modal logics
+(BSML, QBSML, modal dependence and inclusion logic, InqML) evaluate on.
+It is the decidable specialization of the relational primitives of
+`Defs.lean`.
 
-A **Kripke model** for modal logic over a finite world-type `W` and an
-atom-type `Atom`: an accessibility relation `R : W → Finset W` together
-with a Boolean valuation `V : Atom → W → Bool`. This is the standard
-Kripke structure used as the carrier for classical modal logic and
-its team-semantic extensions (BSML, MDL, modal inclusion logic, etc.).
+## References
 
-The `Finset` form of accessibility (rather than `Set` or a binary
-relation) reflects the decidable / finite-witness use case shared by
-the modal team-semantic logics — all current consumers (BSML, QBSML,
-the AAY-2024 extensions BSMLOr/BSMLEmpty, modal dependence logic in
-`Logic/Modal/Dependence.lean`) consume this finite form.
-
-## Main declarations
-
-* `KripkeModel W Atom` — the carrier structure: accessibility (`access`)
-  + valuation (`val`).
-
-## Consumers
-
-* `Logic/Modal/BSML/Defs.lean` — BSML's bilateral `eval` reads
-  this carrier directly.
-* `Logic/Modal/QBSML/Defs.lean` — `QBSML.Model` parameterises
-  this carrier with an assignment type.
-* `Logic/Modal/Dependence.lean` — modal dependence logic (MDL).
-* `Studies/AloniAnttilaYang2024.lean` — BSMLOr, BSMLEmpty.
-* `Logic/Modal/Bisimulation.lean` — bounded bisimulation over this carrier.
+* [vaananen-2008] — modal dependence logic and team semantics
 -/
 
 namespace ModalLogic
 
-/-- A **Kripke model** over world-type `W` and atom-type `Atom`:
-    an accessibility relation `access : W → Finset W` (mapping each
-    world to its set of successors) together with a Boolean valuation
-    `val : Atom → W → Bool` (mapping each atom to its truth value at
-    each world).
-
-    The universe of worlds is given by `[Fintype W]` — use `Finset.univ`
-    for the full set. Decidable equality on `W` is required so that
-    accessibility images are well-behaved as `Finset`s. -/
-structure KripkeModel (W : Type*) (Atom : Type*) [DecidableEq W] [Fintype W] where
+/-- A **Kripke model** over worlds `W` and atoms `Atom`. -/
+structure KripkeModel (W : Type*) (Atom : Type*) where
   /-- Accessibility: `access w` is the set of worlds accessible from `w`. -/
   access : W → Finset W
   /-- Valuation: `val p w` is the truth value of atom `p` at world `w`. -/
