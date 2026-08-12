@@ -102,7 +102,7 @@ Per-world `□` semantics naturally fits the `R : W → Finset W` shape.
 
 namespace ModalLogic.Inquisitive
 
-variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
+variable {W : Type*} {Atom : Type*}
 
 open ModalLogic (KripkeModel)
 
@@ -241,8 +241,8 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
     each support `p \\/ q` (the first supports `p`, the second supports
     `q`), but `{w₁, w₂}` supports neither. This is the canonical
     inquisitive UC-failure pattern. -/
-theorem not_supClosed_inqDisj_of_witness {p q : Atom} {w₁ w₂ : W}
-    {M : KripkeModel W Atom}
+theorem not_supClosed_inqDisj_of_witness [DecidableEq W] {p q : Atom}
+    {w₁ w₂ : W} {M : KripkeModel W Atom}
     (hp₁ : M.val p w₁ = true) (hq₁ : M.val q w₁ = false)
     (hp₂ : M.val p w₂ = false) (hq₂ : M.val q w₂ = true) :
     ¬ SupClosed { s : Finset W | support M (.inqDisj (.atom p) (.atom q)) s } := by

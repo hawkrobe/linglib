@@ -126,7 +126,7 @@ instance instDecidablePositive : (φ : Formula Atom) → Decidable φ.Positive
 
 /-! ### Bilateral evaluation -/
 
-variable {W : Type*} [DecidableEq W] [Fintype W]
+variable {W : Type*} [DecidableEq W]
 
 /-- Bilateral evaluation with polarity parameter: `eval M true φ t` is
     support (`⊨⁺`), `eval M false φ t` is anti-support (`⊨⁻`), and negation

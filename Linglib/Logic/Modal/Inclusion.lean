@@ -91,7 +91,7 @@ MIL would lose union closure. We follow the paper in using lax.
 
 namespace ModalLogic.Inclusion
 
-variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
+variable {W : Type*} [DecidableEq W] {Atom : Type*}
 
 open ModalLogic (KripkeModel)
 

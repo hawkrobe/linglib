@@ -41,7 +41,7 @@ namespace BSML
 
 open ModalLogic
 
-variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
+variable {W : Type*} [DecidableEq W] {Atom : Type*}
 
 /-! ### `⊤` and finite conjunction -/
 
