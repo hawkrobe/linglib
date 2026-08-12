@@ -1,7 +1,7 @@
 import Mathlib.Data.Finset.Union
 import Mathlib.Data.Fintype.Basic
 import Linglib.Logic.Assignment
-import Linglib.Logic.Modal.FirstOrder.Kripke
+import Linglib.Logic.Modal.FirstOrder.Semantics
 import Linglib.Logic.Modal.FirstOrder.Monadic
 import Linglib.Logic.Team.Algebra
 import Linglib.Logic.Bilateral.Defs
