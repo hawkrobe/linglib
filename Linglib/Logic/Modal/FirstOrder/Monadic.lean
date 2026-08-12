@@ -18,18 +18,18 @@ namespace FirstOrder.Language
 
 variable {Const Pred Domain W : Type*}
 
-/-- The predicate denotation at a world, read off a Kripke model's
-    world-indexed family via `Structure.RelMap`. -/
+/-- The predicate denotation at a world: `relInterp`, curried for the
+    monadic signature. -/
 def ModalStructure.predInterp
     (K : ModalStructure (monadicWithConstants Const Pred) W Domain)
     (P : Pred) (w : W) (d : Domain) : Prop :=
-  (K.interp w).RelMap (monadicRel P) (fun _ => d)
+  K.relInterp (monadicRel P) w (fun _ => d)
 
-/-- The constant denotation at a world, read off `Structure.funMap`. -/
+/-- The constant denotation at a world: `funInterp` at the constant. -/
 def ModalStructure.constInterp
     (K : ModalStructure (monadicWithConstants Const Pred) W Domain)
     (c : Const) (w : W) : Domain :=
-  (K.interp w).funMap (monadicConst c) default
+  K.funInterp (monadicConst c) w default
 
 /-- Realization of a monadic atom: the predicate denotation at the world,
     of the term's value. -/

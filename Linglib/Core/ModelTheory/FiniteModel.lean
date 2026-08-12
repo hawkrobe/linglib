@@ -11,9 +11,8 @@ models:
   with `monadicStructure` building its structures from a `Sym → E → Prop`
   table.
 * `Language.monadicWithConstants Const Pred` — the monadic signature with
-  individual constants adjoined (`(monadic Pred)[[Const]]`), with
-  `monadicWithConstantsStructure` building its structures from a constant
-  interpretation and a predicate valuation.
+  individual constants, with `monadicWithConstantsStructure` building its
+  structures from a constant interpretation and a predicate valuation.
 * `BoundedFormula.decRealize` — decidable realization over a finite structure
   with decidable atoms, by structural recursion on the formula. Mathlib has no
   such instance; with it, `decide` kernel-checks `Formula.Realize` facts on
@@ -59,30 +58,40 @@ instance {Sym E : Type*} (holds : Sym → E → Prop)
     Decidable (@Structure.RelMap _ _ (monadicStructure holds) n r v) :=
   monadicStructure.decRelMap holds n r v
 
-/-- The monadic signature with constants:
-    `(Language.monadic Pred)[[Const]]`. -/
-abbrev monadicWithConstants (Const : Type*) (Pred : Type*) : Language :=
-  (monadic Pred)[[Const]]
+/-- The monadic signature with individual constants: constant symbols
+    `Const` and unary relation symbols `Pred`, defined directly
+    (mathlib precedent: `Language.graph`; `withConstants` is the
+    elementary-diagram device, not a signature constructor). -/
+def monadicWithConstants (Const : Type*) (Pred : Type*) : Language where
+  Functions := fun n => match n with
+    | 0 => Const
+    | _ => PEmpty
+  Relations := fun n => match n with
+    | 1 => Pred
+    | _ => PEmpty
 
 variable {Const Pred Domain : Type*}
 
-/-- A constant as a symbol of the signature (mathlib's `Language.con`). -/
+/-- A constant as a symbol of the signature. -/
 abbrev monadicConst (c : Const) :
-    (monadicWithConstants Const Pred).Constants := Sum.inr c
+    (monadicWithConstants Const Pred).Constants := c
 
 /-- A predicate as a relation symbol of the signature. -/
 abbrev monadicRel (P : Pred) :
-    (monadicWithConstants Const Pred).Relations 1 := Sum.inl P
+    (monadicWithConstants Const Pred).Relations 1 := P
 
 /-- The `monadicWithConstants` structure a constant interpretation and a
-    predicate valuation induce: `monadicStructure` on the relations side,
-    `constantsOn.structure` on the constants side. -/
+    predicate valuation induce. -/
 @[reducible] def monadicWithConstantsStructure (κ : Const → Domain)
     (V : Pred → Domain → Prop) :
-    (monadicWithConstants Const Pred).Structure Domain :=
-  letI := monadicStructure V
-  letI := constantsOn.structure κ
-  inferInstance
+    (monadicWithConstants Const Pred).Structure Domain where
+  funMap := fun {n} f => match n, f with
+    | 0, c => fun _ => κ c
+    | _ + 1, f => f.elim
+  RelMap := fun {n} r => match n, r with
+    | 1, P => fun v => V P (v 0)
+    | 0, r => r.elim
+    | _ + 2, r => r.elim
 
 @[simp] theorem monadicWithConstantsStructure_relMap (κ : Const → Domain)
     (V : Pred → Domain → Prop) (P : Pred) (v : Fin 1 → Domain) :

@@ -29,6 +29,11 @@ Kripke satisfaction `K, w ⊨_v φ`.
   `Function.update` semantics (the `Formula.all₁` / `ex₁` convention of
   `Core/ModelTheory/Binders.lean`), not de Bruijn indices: the modal
   layer's consumers carry named variables.
+
+## References
+
+* [fitting-mendelsohn-2023] — constant-domain models, world-relative
+  interpretation, the Barcan formulas
 -/
 
 namespace FirstOrder.Language
@@ -43,6 +48,26 @@ structure ModalStructure (L : Language) (W M : Type*) where
   access : W → Finset W
   /-- World-indexed interpretation of the signature. -/
   interp : W → L.Structure M
+
+namespace ModalStructure
+
+/-! ### World-relative interpretation
+
+The interpretation function `I(w)(·)` of first-order modal semantics
+([fitting-mendelsohn-2023] Definition 8.6.2): what a symbol denotes at a
+world, read off the world's structure. -/
+
+variable (K : ModalStructure L W M)
+
+/-- The relation a relation symbol denotes at a world. -/
+def relInterp {n : ℕ} (R : L.Relations n) (w : W) : (Fin n → M) → Prop :=
+  (K.interp w).RelMap R
+
+/-- The function a function symbol denotes at a world. -/
+def funInterp {n : ℕ} (f : L.Functions n) (w : W) : (Fin n → M) → M :=
+  (K.interp w).funMap f
+
+end ModalStructure
 
 namespace ModalFormula
 

@@ -153,10 +153,8 @@ def stTerm (k : ℕ) :
       (correspondence Const Pred).Term (Var ⊕ ℕ)
   | .var x => corrIndivVar x
   | @Term.func _ _ l f _ => match l, f with
-    | 0, Sum.inr c => Term.func (corrConst c) ![corrWorldVar k]
-    | 0, Sum.inl e => e.elim
-    | _ + 1, Sum.inl e => e.elim
-    | _ + 1, Sum.inr e => e.elim
+    | 0, c => Term.func (corrConst c) ![corrWorldVar k]
+    | _ + 1, f => f.elim
 
 /-- The standard translation `ST_k` ([blackburn-derijke-venema-2001]): the
     current world is the free variable `Sum.inr k`; `box` relativizes a
@@ -168,13 +166,9 @@ def ModalFormula.st (k : ℕ) :
       (correspondence Const Pred).Formula (Var ⊕ ℕ)
   | .equal t₁ t₂ => Term.equal (stTerm k t₁) (stTerm k t₂)
   | @ModalFormula.rel _ _ l R ts => match l, R, ts with
-    | 1, Sum.inl P, ts =>
-        (corrRel P).formula₂ (corrWorldVar k) (stTerm k (ts 0))
-    | 1, Sum.inr r, _ => r.elim
-    | 0, Sum.inl r, _ => r.elim
-    | 0, Sum.inr r, _ => r.elim
-    | _ + 2, Sum.inl r, _ => r.elim
-    | _ + 2, Sum.inr r, _ => r.elim
+    | 1, P, ts => (corrRel P).formula₂ (corrWorldVar k) (stTerm k (ts 0))
+    | 0, r, _ => r.elim
+    | _ + 2, r, _ => r.elim
   | .falsum => ⊥
   | .imp φ ψ => (φ.st k).imp (ψ.st k)
   | .box φ => Formula.all₁ (Sum.inr (k + 1))
@@ -201,12 +195,10 @@ private theorem realize_stTerm
   | var x => exact hind x
   | @func l f args =>
     match l, f with
-    | 0, Sum.inl e => exact e.elim
-    | _ + 1, Sum.inl e => exact e.elim
-    | _ + 1, Sum.inr e => exact e.elim
-    | 0, Sum.inr c =>
+    | _ + 1, f => exact f.elim
+    | 0, c =>
       let _I := K.interp w
-      rw [show stTerm k (.func (Sum.inr c) args) =
+      rw [show stTerm k (.func c args) =
           Term.func (corrConst c) ![corrWorldVar k] from rfl,
         show (Term.func (corrConst c) ![corrWorldVar k] :
             (correspondence Const Pred).Term (Var ⊕ ℕ)).realize val =
@@ -317,14 +309,11 @@ theorem realize_st (K : ModalStructure (monadicWithConstants Const Pred) W M)
       rw [Function.update_self]
   | @rel l R ts =>
     match l, R with
-    | 0, Sum.inl r => exact r.elim
-    | 0, Sum.inr r => exact r.elim
-    | (n + 2), Sum.inl r => exact r.elim
-    | (n + 2), Sum.inr r => exact r.elim
-    | 1, Sum.inr r => exact r.elim
-    | 1, Sum.inl (P : Pred) =>
+    | 0, r => exact r.elim
+    | (n + 2), r => exact r.elim
+    | 1, (P : Pred) =>
       let _S := K.corrStructure
-      rw [show (ModalFormula.rel (Sum.inl P : (monadicWithConstants Const
+      rw [show (ModalFormula.rel (P : (monadicWithConstants Const
             Pred).Relations 1) ts).st k =
           (corrRel P).formula₂ (corrWorldVar k) (stTerm k (ts 0)) from rfl,
         Formula.realize_rel₂, corrStructure_relMap_rel,
