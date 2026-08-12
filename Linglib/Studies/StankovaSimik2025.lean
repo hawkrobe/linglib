@@ -1,5 +1,6 @@
 import Linglib.Fragments.Slavic.Czech.Particles
 import Linglib.Semantics.Polarity.CzechNegation
+import Linglib.Data.Examples.StankovaSimik2025
 
 /-!
 # Negation in Czech polar questions (Staňková & Šimík 2025)
@@ -17,6 +18,9 @@ Table 1 diagnostics are [stankova-2026]'s and live in `Stankova2026`.
 * `VerbPosition.defaultReading`, `nci_diagnoses_nonV1`,
   `ppi_diagnoses_v1` — the main experiment's INDEFINITE effects derived
   from Table 1 licensing: PPIs preferred in V1 PQs, NCIs in nonV1.
+* `stimuli_match_default_licensing`, `nahodou_stimuli_match_falsum` —
+  the typed stimuli ((13), (17)-(18); `Data.Examples.StankovaSimik2025`)
+  check against that licensing.
 * `requiresEvidentialBias`, `nahodou_copak_opposite_context` — the
   experimentally separated bias dimensions: *náhodou*
   context-insensitive, *copak* evidential-bias-sensitive.
@@ -34,12 +38,16 @@ open Semantics.Negation.CzechNegation
 /-! ### The main experiment (§5)
 
 A 2×2×2 naturalness rating study (75 participants, Likert 1-7, CLMM
-analysis) crossing verb position with indefinite type (NCI *žádný* vs
-PPI *nějaký*) and context (negative vs neutral). The indefinites proxy
-for the negation reading, so Table 1's licensing column derives the
-observed directions: PPIs more natural in V1 PQs (p < .001), NCIs in
-nonV1 (p < .001); context mattered only in nonV1 (p < .01, negative >
-neutral) — FALSUM conveys epistemic, not evidential, bias. -/
+analysis; §5.1, item (13)) crossing verb position with indefinite type
+(NCI *žádný* vs PPI *nějaký*) and context (negative vs neutral). The
+indefinites proxy for the negation reading, so Table 1's licensing
+column derives the observed directions (§5.2): PPIs more natural in V1
+PQs (z = −15.674, p < .001), NCIs in nonV1 (z = 6.208, p < 0.01);
+context mattered only in nonV1 (z = 8.674, p < 0.01, negative >
+neutral; V1 n.s., z = −1.374, p = 0.169) — FALSUM conveys epistemic,
+not evidential, bias. A follow-up in positive-evidence contexts ((14),
+§5.3; median 6 vs 5 neutral) shows Czech FALSUM compatible even with
+positive evidential bias, unlike English high negation. -/
 
 /-- Verb position in Czech PQs: V1 (interrogative word order) vs nonV1
 (declarative word order); *ne-* is inseparable from the finite verb, so
@@ -89,6 +97,24 @@ theorem ppi_diagnoses_v1 :
       licenses wp.defaultReading .ppiOutscoping = true → wp = .v1 := by
   intro wp; cases wp <;> decide
 
+open Data.Examples (LinguisticExample)
+
+/-- The (13) stimulus quadruple with the verb position and Table 1
+diagnostic each variant manipulates. -/
+def analyzedStimuli : List (LinguisticExample × VerbPosition × Diagnostic) :=
+  [ (Examples.ex13_v1_nci,    .v1,    .nciLicensed)
+  , (Examples.ex13_v1_ppi,    .v1,    .ppiOutscoping)
+  , (Examples.ex13_nonv1_nci, .nonV1, .nciLicensed)
+  , (Examples.ex13_nonv1_ppi, .nonV1, .ppiOutscoping) ]
+
+/-- Table 1 licensing under the default reading predicts each (13)
+variant's naturalness: the diagnostic is licensed at the verb position's
+default reading iff the variant is fully natural in its context. -/
+theorem stimuli_match_default_licensing :
+    analyzedStimuli.all (fun (e, wp, d) =>
+      (e.judgment == .acceptable) == licenses wp.defaultReading d) = true := by
+  decide
+
 /-! ### Classification -/
 
 /-- Semantic classification of the Czech PQ particles ([stankova-2025]
@@ -131,6 +157,21 @@ be used as an overt indicator of the covert FALSUM operator being
 present in the structure" — and FALSUM is context-insensitive. -/
 theorem nahodou_context_insensitive :
     requiresEvidentialBias nahodou = some false := by decide
+
+/-- The §6.1 stimuli ((17) both variants, plus the nonV1 (18)) with the
+diagnostic each manipulates. -/
+def nahodouStimuli : List (LinguisticExample × Diagnostic) :=
+  [ (Examples.ex17_ppi, .ppiOutscoping)
+  , (Examples.ex17_nci, .nciLicensed)
+  , (Examples.ex18,     .ppiOutscoping) ]
+
+/-- *náhodou* pins the negation to FALSUM, so Table 1's outer row
+predicts each §6.1 variant's naturalness — regardless of verb position:
+(18) is a nonV1 PQ and still patterns with outer negation. -/
+theorem nahodou_stimuli_match_falsum :
+    nahodouStimuli.all (fun (e, d) =>
+      (e.judgment == .acceptable) == licenses .outer d) = true := by
+  decide
 
 /-- The §6.2 subexperiment: *copak* "strongly indicates a conflict
 between speaker's prior belief and the currently available evidence"
