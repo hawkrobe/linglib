@@ -24,19 +24,19 @@ also the lift of Kratzer's ordering semantics.
 
 namespace FirstOrder.Language
 
+variable {L : Language} {I W E : Type*}
+
 /-- The extension of a unary relation symbol in a structure carried as a
 term. -/
-def Structure.ext₁ {L : Language} {E : Type*} (S : L.Structure E)
-    (R : L.Relations 1) : Set E :=
+def Structure.ext₁ (S : L.Structure E) (R : L.Relations 1) : Set E :=
   {e | S.RelMap R ![e]}
 
-@[simp] theorem Structure.mem_ext₁ {L : Language} {E : Type*}
-    {S : L.Structure E} {R : L.Relations 1} {e : E} :
-    e ∈ S.ext₁ R ↔ S.RelMap R ![e] :=
+@[simp] theorem Structure.mem_ext₁ {S : L.Structure E} {R : L.Relations 1}
+    {e : E} : e ∈ S.ext₁ R ↔ S.RelMap R ![e] :=
   Iff.rfl
 
-instance {L : Language} {E : Type*} (S : L.Structure E) (R : L.Relations 1)
-    (e : E) [h : Decidable (S.RelMap R ![e])] : Decidable (e ∈ S.ext₁ R) :=
+instance (S : L.Structure E) (R : L.Relations 1) (e : E)
+    [h : Decidable (S.RelMap R ![e])] : Decidable (e ∈ S.ext₁ R) :=
   h
 
 /-- Comparative-possibility formulas: an embedded classical formula (free
@@ -51,8 +51,6 @@ inductive CompFormula (L : Language) (E : Type*) where
   | comp : CompFormula L E → CompFormula L E → CompFormula L E
 
 namespace CompFormula
-
-variable {L : Language} {E : Type*}
 
 /-- Ground unary predication `R(e)`, as an embedded formula. -/
 abbrev matom (R : L.Relations 1) (e : E) : CompFormula L E :=
@@ -76,8 +74,7 @@ end CompFormula
 /-- Pointwise decidability of atoms across a doubly-indexed structure family —
 the hook that makes `decide` available on finite models; the semantics itself
 is decidability-free. -/
-abbrev DecidableAtoms {L : Language} {I W E : Type*}
-    (interp : I → W → L.Structure E) :=
+abbrev DecidableAtoms (interp : I → W → L.Structure E) :=
   ∀ (i : I) (w : W) (n : ℕ) (r : L.Relations n) (x : Fin n → E),
     Decidable ((interp i w).RelMap r x)
 
@@ -86,7 +83,7 @@ namespace CompFormula
 open Core.Order (TotalPreorder)
 open ComparativeProbability
 
-variable {L : Language} {I W E : Type*} (interp : I → W → L.Structure E)
+variable (interp : I → W → L.Structure E)
 
 /-- Truth at an index of an ordered structure family, relative to a raw
 ordering relation `le` (restricted orderings need not be total). The
