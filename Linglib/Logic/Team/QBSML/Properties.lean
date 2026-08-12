@@ -624,7 +624,7 @@ bridge: their right-hand side is classical *modal* logic, which mathlib's
 open FirstOrder Language
 
 omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
-@[simp] theorem _root_.FirstOrder.Language.KripkeModel.realizeAt_rel₁
+@[simp] theorem _root_.FirstOrder.Language.ModalStructure.realizeAt_rel₁
     (M : Model W Domain Const Pred)
     (P : Pred) (x : Var) (w : W) (v : Var → Domain) :
     ((monadicRel P).formula₁ (Term.var x)).RealizeAt M.interp w v ↔
@@ -638,7 +638,7 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Finty
   exact Iff.rfl
 
 omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
-@[simp] theorem _root_.FirstOrder.Language.KripkeModel.realizeAt_rel₁_const
+@[simp] theorem _root_.FirstOrder.Language.ModalStructure.realizeAt_rel₁_const
     (M : Model W Domain Const Pred) (P : Pred) (c : Const) (w : W)
     (v : Var → Domain) :
     ((monadicRel P).formula₁
@@ -749,7 +749,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
         some ((monadicRel P).formula₁ (Term.var x)) from rfl,
       Option.some.injEq] at hψ
     subst hψ
-    rw [KripkeModel.realizeAt_rel₁]
+    rw [ModalStructure.realizeAt_rel₁]
     constructor
     · constructor
       · intro h
@@ -777,7 +777,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
         from rfl,
       Option.some.injEq] at hψ
     subst hψ
-    rw [KripkeModel.realizeAt_rel₁_const]
+    rw [ModalStructure.realizeAt_rel₁_const]
     constructor
     · constructor
       · intro h

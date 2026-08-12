@@ -6,15 +6,15 @@ import Linglib.Logic.Modal.FirstOrder.Syntax
 # Constant-domain Kripke semantics
 
 `[UPSTREAM]` candidates for `Mathlib/ModelTheory`, which is classical: one
-structure, no accessibility. A `KripkeModel L W M` is a `W`-indexed
-family of `L`-structures on a constant domain `M` together with
-`Finset`-valued accessibility; `ModalFormula L α` is the quantified modal
+structure, no accessibility. A `ModalStructure L W M` — the modal analogue
+of `L.Structure` — is a `W`-indexed family of `L`-structures on a constant
+domain `M` together with `Finset`-valued accessibility; `ModalFormula L α` is the quantified modal
 language in `BoundedFormula`'s basis, and `ModalFormula.Realize` is
 Kripke satisfaction `K, w ⊨_v φ`.
 
 ## Main declarations
 
-* `KripkeModel` — accessibility plus a world-indexed family of
+* `ModalStructure` — accessibility plus a world-indexed family of
   first-order structures on a constant domain (classical satisfaction at an
   index is `Core/ModelTheory/StructureFamily.lean`'s `Formula.RealizeAt`).
 * `ModalFormula.Realize` — Kripke satisfaction for the modal language of
@@ -35,10 +35,10 @@ namespace FirstOrder.Language
 
 variable {L : Language} {W M α : Type*}
 
-/-- A constant-domain first-order Kripke model: `Finset`-valued
-    accessibility plus a `W`-indexed family of `L`-structures on the
-    domain `M`. -/
-structure KripkeModel (L : Language) (W M : Type*) where
+/-- A structure for the quantified modal language — the model object of
+    constant-domain Kripke semantics: `Finset`-valued accessibility plus a
+    `W`-indexed family of `L`-structures on the domain `M`. -/
+structure ModalStructure (L : Language) (W M : Type*) where
   /-- Accessibility relation (per-world set of accessible worlds). -/
   access : W → Finset W
   /-- World-indexed interpretation of the signature. -/
@@ -51,7 +51,7 @@ variable [DecidableEq α]
 /-- Kripke satisfaction `K, w ⊨_v φ`: atoms evaluate at the world's
     structure, `□` quantifies over accessible worlds, and named
     quantifiers update the valuation. -/
-def Realize (K : KripkeModel L W M) :
+def Realize (K : ModalStructure L W M) :
     W → ModalFormula L α → (α → M) → Prop
   | w, .equal t₁ t₂, v => letI := K.interp w; t₁.realize v = t₂.realize v
   | w, .rel R ts, v =>
@@ -61,7 +61,7 @@ def Realize (K : KripkeModel L W M) :
   | w, .box φ, v => ∀ w' ∈ K.access w, Realize K w' φ v
   | w, .all x φ, v => ∀ d : M, Realize K w φ (Function.update v x d)
 
-variable (K : KripkeModel L W M) (w : W) (v : α → M)
+variable (K : ModalStructure L W M) (w : W) (v : α → M)
 
 @[simp] theorem realize_equal (t₁ t₂ : L.Term α) :
     (equal t₁ t₂).Realize K w v ↔
