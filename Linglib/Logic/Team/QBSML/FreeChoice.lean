@@ -355,7 +355,7 @@ private theorem exi_poss_atom_of_subset_extendUniversal
     Option.some.injEq] at hassign
   rw [← hassign] at hmem
   rw [Index.world_update] at hmem
-  -- hmem : d ∈ M.predInterp P i₀.world
+  -- hmem : d ∈ M.relInterp₁ P i₀.world
   refine ⟨fun _ => {d}, fun j _ => Finset.singleton_nonempty d, ?_⟩
   intro j hj
   obtain ⟨i, his, d'', hd'', hupd'⟩ := State.mem_extendFunctional.mp hj

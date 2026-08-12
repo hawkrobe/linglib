@@ -163,7 +163,6 @@ import Linglib.Core.ModelTheory.EhrenfeuchtFraisseGame
 import Linglib.Core.ModelTheory.FiniteModel
 import Linglib.Logic.Modal.FirstOrder.Semantics
 import Linglib.Logic.Modal.FirstOrder.Syntax
-import Linglib.Logic.Modal.FirstOrder.Monadic
 import Linglib.Logic.Modal.FirstOrder.Correspondence
 import Linglib.Core.ModelTheory.Lindstrom
 import Linglib.Core.ModelTheory.QuantifierRank

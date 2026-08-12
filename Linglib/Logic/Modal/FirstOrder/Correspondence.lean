@@ -1,4 +1,5 @@
-import Linglib.Logic.Modal.FirstOrder.Monadic
+import Linglib.Core.ModelTheory.FiniteModel
+import Linglib.Logic.Modal.FirstOrder.Semantics
 
 /-!
 # The correspondence language and the standard translation
@@ -107,7 +108,7 @@ abbrev corrWorldVar (k : ℕ) :
   RelMap := fun {n} r => match n, r with
     | 1, _ => fun z => ∃ d : M, z 0 = Sum.inr d
     | 2, Sum.inl P => fun z =>
-        ∃ w d, z 0 = Sum.inl w ∧ z 1 = Sum.inr d ∧ K.predInterp P w d
+        ∃ w d, z 0 = Sum.inl w ∧ z 1 = Sum.inr d ∧ K.relInterp₁ P w d
     | 2, Sum.inr _ => fun z =>
         ∃ w₁ w₂, z 0 = Sum.inl w₁ ∧ z 1 = Sum.inl w₂ ∧ w₂ ∈ K.access w₁
     | 0, r => r.elim
@@ -117,7 +118,7 @@ abbrev corrWorldVar (k : ℕ) :
     (K : ModalStructure (monadicWithConstants Const Pred) W M)
     (P : Pred) (z : Fin 2 → W ⊕ M) :
     (K.corrStructure).RelMap (corrRel P) z ↔
-      ∃ w d, z 0 = Sum.inl w ∧ z 1 = Sum.inr d ∧ K.predInterp P w d :=
+      ∃ w d, z 0 = Sum.inl w ∧ z 1 = Sum.inr d ∧ K.relInterp₁ P w d :=
   Iff.rfl
 
 @[simp] theorem corrStructure_relMap_acc (K : ModalStructure (monadicWithConstants Const Pred) W M)
