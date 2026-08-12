@@ -157,7 +157,6 @@ import Linglib.Logic.CylindricAlgebra
 import Linglib.Logic.Duality
 import Linglib.Core.Relation.FactorsThroughOn
 import Linglib.Core.ModelTheory.Binders
-import Linglib.Logic.Modal.FirstOrder.Comparative
 import Linglib.Core.ModelTheory.EhrenfeuchtFraisse
 import Linglib.Core.ModelTheory.EhrenfeuchtFraisseGame
 import Linglib.Core.ModelTheory.FiniteModel
@@ -2588,7 +2587,8 @@ import Linglib.Studies.Roussou2010
 import Linglib.Studies.Rubinstein2014
 import Linglib.Studies.Rudin2025
 import Linglib.Studies.Rudin2025LI
-import Linglib.Studies.RudolphKocurek2024
+import Linglib.Studies.RudolphKocurek2024.Basic
+import Linglib.Studies.RudolphKocurek2024.Comparative
 import Linglib.Studies.RumbergLauer2023
 import Linglib.Studies.RuytenbeekEtAl2017
 import Linglib.Studies.Saab2026
