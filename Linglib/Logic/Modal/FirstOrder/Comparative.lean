@@ -82,10 +82,10 @@ def ComparativeFree : ComparativeFormula L E → Prop
 variable (interp : I → W → L.Structure E)
 
 /-- The strict (asymmetric) part of a raw ordering relation. -/
-private def strictPart (le : I → I → Prop) (b a : I) : Prop :=
+def strictPart (le : I → I → Prop) (b a : I) : Prop :=
   le b a ∧ ¬ le a b
 
-private instance {le : I → I → Prop} [DecidableRel le] :
+instance {le : I → I → Prop} [DecidableRel le] :
     DecidableRel (strictPart le) :=
   fun _ _ => inferInstanceAs (Decidable (_ ∧ _))
 
