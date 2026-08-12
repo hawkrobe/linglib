@@ -5,7 +5,7 @@ import Linglib.Core.Order.ComparativeProbability.Systems
 /-!
 # Comparative possibility over a first-order base
 
-This file defines `CompFormula`, Lewis's comparative-possibility language
+This file defines `ComparativeFormula`, Lewis's comparative-possibility language
 over an embedded classical first-order layer, and its truth relation
 `Realize` at an index of an ordered family of structures: `A ≻ B` holds
 when some (A ∧ ¬B)-index in the cone strictly dominates every
@@ -50,29 +50,29 @@ abbrev DecidableAtoms (interp : I → W → L.Structure E) :=
 variables valued by domain elements), booleans, and the comparative ≻
 (`.comp`). Booleans exist at both layers because negation and the derived
 `equi` must scope over ≻. -/
-inductive CompFormula (L : Language) (E : Type*) where
-  | ofFormula : L.Formula E → CompFormula L E
-  | not : CompFormula L E → CompFormula L E
-  | inf : CompFormula L E → CompFormula L E → CompFormula L E
-  | sup : CompFormula L E → CompFormula L E → CompFormula L E
-  | comp : CompFormula L E → CompFormula L E → CompFormula L E
+inductive ComparativeFormula (L : Language) (E : Type*) where
+  | ofFormula : L.Formula E → ComparativeFormula L E
+  | not : ComparativeFormula L E → ComparativeFormula L E
+  | inf : ComparativeFormula L E → ComparativeFormula L E → ComparativeFormula L E
+  | sup : ComparativeFormula L E → ComparativeFormula L E → ComparativeFormula L E
+  | comp : ComparativeFormula L E → ComparativeFormula L E → ComparativeFormula L E
 
-namespace CompFormula
+namespace ComparativeFormula
 
 open Core.Order (TotalPreorder)
 open ComparativeProbability
 
 /-- Ground unary predication `R(e)`, as an embedded formula. -/
-abbrev matom (R : L.Relations 1) (e : E) : CompFormula L E :=
+abbrev matom (R : L.Relations 1) (e : E) : ComparativeFormula L E :=
   .ofFormula (R.formula ![Term.var e])
 
 /-- Equipossibility: `A ≈ B := ¬(A ≻ B) ∧ ¬(B ≻ A)`. -/
-def equi (A B : CompFormula L E) : CompFormula L E :=
+def equi (A B : ComparativeFormula L E) : ComparativeFormula L E :=
   .inf (.not (.comp A B)) (.not (.comp B A))
 
 /-- Formulas free of the comparative: the fragment whose truth does not
 consult the ordering (`CompFree.realize_congr`). -/
-def CompFree : CompFormula L E → Prop
+def CompFree : ComparativeFormula L E → Prop
   | .ofFormula _ => True
   | .not A => A.CompFree
   | .inf A B => A.CompFree ∧ B.CompFree
@@ -81,48 +81,41 @@ def CompFree : CompFormula L E → Prop
 
 variable (interp : I → W → L.Structure E)
 
+/-- The strict (asymmetric) part of a raw ordering relation. -/
+private def strictPart (le : I → I → Prop) (b a : I) : Prop :=
+  le b a ∧ ¬ le a b
+
+private instance {le : I → I → Prop} [DecidableRel le] :
+    DecidableRel (strictPart le) :=
+  fun _ _ => inferInstanceAs (Decidable (_ ∧ _))
+
 /-- Truth at an index of an ordered structure family, relative to a raw
 ordering relation `le` (restricted orderings need not be total). The
 comparative: some (A∧¬B)-index in the ≤-cone strictly dominates every
 (B∧¬A)-index. -/
-def Realize (φ : CompFormula L E) (le : I → I → Prop) (i : I) (w : W) : Prop :=
-  match φ with
-  | .ofFormula ψ => letI := interp i w; ψ.Realize id
-  | .not A => ¬ Realize A le i w
-  | .inf A B => Realize A le i w ∧ Realize B le i w
-  | .sup A B => Realize A le i w ∨ Realize B le i w
-  | .comp A B =>
-      coneStrictLift le (fun b a => le b a ∧ ¬ le a b)
-        (fun j => Realize A le j w) (fun j => Realize B le j w) i
+def Realize : ComparativeFormula L E → (I → I → Prop) → I → W → Prop
+  | .ofFormula ψ, _, i, w => letI := interp i w; ψ.Realize id
+  | .not A, le, i, w => ¬ Realize A le i w
+  | .inf A B, le, i, w => Realize A le i w ∧ Realize B le i w
+  | .sup A B, le, i, w => Realize A le i w ∨ Realize B le i w
+  | .comp A B, le, i, w =>
+      coneStrictLift le (strictPart le) (Realize A le · w) (Realize B le · w) i
 
 instance instDec [Fintype I] [Fintype E] [DecidableEq E]
-    [hA : DecidableAtoms interp]
-    (φ : CompFormula L E) (le : I → I → Prop) [DecidableRel le] (i : I) (w : W) :
-    Decidable (Realize interp φ le i w) :=
-  match φ with
-  | .ofFormula ψ =>
+    [hA : DecidableAtoms interp] (le : I → I → Prop) [DecidableRel le] :
+    ∀ (φ : ComparativeFormula L E) (i : I) (w : W), Decidable (Realize interp φ le i w)
+  | .ofFormula ψ, i, w =>
       @Formula.decRealize L E (interp i w) _ _ (fun n r x => hA i w n r x) E ψ id
-  | .not A =>
-      haveI := instDec A le i w
-      inferInstanceAs (Decidable (¬ Realize interp A le i w))
-  | .inf A B =>
-      haveI := instDec A le i w
-      haveI := instDec B le i w
-      inferInstanceAs (Decidable (Realize interp A le i w ∧ Realize interp B le i w))
-  | .sup A B =>
-      haveI := instDec A le i w
-      haveI := instDec B le i w
-      inferInstanceAs (Decidable (Realize interp A le i w ∨ Realize interp B le i w))
-  | .comp A B =>
-      haveI : DecidablePred (fun j => Realize interp A le j w) :=
-        fun j => instDec A le j w
-      haveI : DecidablePred (fun j => Realize interp B le j w) :=
-        fun j => instDec B le j w
-      inferInstanceAs (Decidable (coneStrictLift
-        le (fun b a => le b a ∧ ¬ le a b)
-        (fun j => Realize interp A le j w) (fun j => Realize interp B le j w) i))
+  | .not A, i, w => @instDecidableNot _ (instDec le A i w)
+  | .inf A B, i, w => @instDecidableAnd _ _ (instDec le A i w) (instDec le B i w)
+  | .sup A B, i, w => @instDecidableOr _ _ (instDec le A i w) (instDec le B i w)
+  | .comp A B, i, w =>
+      haveI : DecidablePred (Realize interp A le · w) := fun j => instDec le A j w
+      haveI : DecidablePred (Realize interp B le · w) := fun j => instDec le B j w
+      inferInstanceAs (Decidable (coneStrictLift le (strictPart le)
+        (Realize interp A le · w) (Realize interp B le · w) i))
 
-variable {interp} {A B : CompFormula L E} {le : I → I → Prop}
+variable {interp} {A B : ComparativeFormula L E} {le : I → I → Prop}
   {ord : TotalPreorder I} {i : I} {w : W}
 
 /-- The comparative clause over a total preorder — definitional; the rewriting
@@ -146,7 +139,7 @@ theorem realize_comp_iff :
 
 /-- Comparative-free formulas are ordering-invariant. -/
 theorem CompFree.realize_congr :
-    ∀ {φ : CompFormula L E}, φ.CompFree →
+    ∀ {φ : ComparativeFormula L E}, φ.CompFree →
       ∀ {le le' : I → I → Prop} {i : I} {w : W},
       Realize interp φ le i w ↔ Realize interp φ le' i w
   | .ofFormula _, _ => Iff.rfl
@@ -183,6 +176,6 @@ theorem realize_equi_comm :
     Realize interp (A.equi B) le i w ↔ Realize interp (B.equi A) le i w :=
   and_comm
 
-end CompFormula
+end ComparativeFormula
 
 end FirstOrder.Language
