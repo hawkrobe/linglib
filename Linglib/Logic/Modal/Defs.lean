@@ -90,53 +90,53 @@ variable {p q : W → Prop} {w : W}
 theorem box_K (hpq : □[R] (fun v => p v → q v) w) (hp : □[R] p w) : □[R] q w :=
   fun v hwv => hpq v hwv (hp v hwv)
 
-/-- **T**: over a reflexive relation, `□p → p`. -/
-theorem box_T [Std.Refl R] (h : □[R] p w) : p w :=
-  h w (Std.Refl.refl w)
-
-/-- **D**: over a serial relation, `□p → ◇p`. -/
-theorem box_D [hS : IsSerial R] (h : □[R] p w) : ◇[R] p w :=
-  let ⟨v, hwv⟩ := hS.serial w; ⟨v, hwv, h v hwv⟩
-
-/-- **4**: over a transitive relation, `□p → □□p`. -/
-theorem box_four [IsTrans W R] (h : □[R] p w) : □[R] (□[R] p) w :=
-  fun v hwv u hvu => h u (IsTrans.trans w v u hwv hvu)
-
-/-- **B**: over a symmetric relation, `p → □◇p`. -/
-theorem box_B [Std.Symm R] (h : p w) : □[R] (◇[R] p) w :=
-  fun v hwv => ⟨w, Std.Symm.symm w v hwv, h⟩
-
-/-- **5**: over a Euclidean relation, `◇p → □◇p`. -/
-theorem box_five [hE : IsEuclidean R] (h : ◇[R] p w) : □[R] (◇[R] p) w :=
-  let ⟨u, hwu, hpu⟩ := h
-  fun v hwv => ⟨u, hE.eucl w v u hwv hwu, hpu⟩
-
-/-- **Correspondence for T**: `□p ≤ p` for all `p` iff `R` is reflexive. -/
+/-- **T** defines reflexivity: `□p ≤ p` for all `p` iff `R` is reflexive. -/
 theorem box_T_iff : (∀ p : W → Prop, □[R] p ≤ p) ↔ Std.Refl R :=
   ⟨fun h => ⟨fun w => h (R w) w fun _ hv => hv⟩,
-   fun hR => haveI := hR; fun _ _ h => box_T h⟩
+   fun hR _ w h => h w (hR.refl w)⟩
 
-/-- **Correspondence for D**: `□p ≤ ◇p` for all `p` iff `R` is serial. -/
+/-- **T**: over a reflexive relation, `□p → p`. -/
+theorem box_T [hR : Std.Refl R] (h : □[R] p w) : p w :=
+  box_T_iff.mpr hR _ _ h
+
+/-- **D** defines seriality: `□p ≤ ◇p` for all `p` iff `R` is serial. -/
 theorem box_D_iff : (∀ p : W → Prop, □[R] p ≤ ◇[R] p) ↔ IsSerial R :=
   ⟨fun h => ⟨fun w =>
      let ⟨v, hv, _⟩ := h (fun _ => True) w fun _ _ => trivial; ⟨v, hv⟩⟩,
-   fun hR => haveI := hR; fun _ _ h => box_D h⟩
+   fun hS _ w h => let ⟨v, hwv⟩ := hS.serial w; ⟨v, hwv, h v hwv⟩⟩
 
-/-- **Correspondence for B**: `p ≤ □◇p` for all `p` iff `R` is symmetric. -/
+/-- **D**: over a serial relation, `□p → ◇p`. -/
+theorem box_D [hS : IsSerial R] (h : □[R] p w) : ◇[R] p w :=
+  box_D_iff.mpr hS _ _ h
+
+/-- **B** defines symmetry: `p ≤ □◇p` for all `p` iff `R` is symmetric. -/
 theorem box_B_iff : (∀ p : W → Prop, p ≤ □[R] (◇[R] p)) ↔ Std.Symm R :=
   ⟨fun h => ⟨fun w v hwv =>
      match h (· = w) w rfl v hwv with | ⟨_, hvw, rfl⟩ => hvw⟩,
-   fun hR => haveI := hR; fun _ _ h => box_B h⟩
+   fun hS _ w h v hwv => ⟨w, hS.symm w v hwv, h⟩⟩
 
-/-- **Correspondence for 4**: `□p ≤ □□p` for all `p` iff `R` is transitive. -/
+/-- **B**: over a symmetric relation, `p → □◇p`. -/
+theorem box_B [hS : Std.Symm R] (h : p w) : □[R] (◇[R] p) w :=
+  box_B_iff.mpr hS _ _ h
+
+/-- **4** defines transitivity: `□p ≤ □□p` for all `p` iff `R` is transitive. -/
 theorem box_four_iff : (∀ p : W → Prop, □[R] p ≤ □[R] (□[R] p)) ↔ IsTrans W R :=
   ⟨fun h => ⟨fun w v u hwv hvu => h (R w) w (fun _ hv => hv) v hwv u hvu⟩,
-   fun hR => haveI := hR; fun _ _ h => box_four h⟩
+   fun hT _ w h v hwv u hvu => h u (hT.trans w v u hwv hvu)⟩
 
-/-- **Correspondence for 5**: `◇p ≤ □◇p` for all `p` iff `R` is Euclidean. -/
+/-- **4**: over a transitive relation, `□p → □□p`. -/
+theorem box_four [hT : IsTrans W R] (h : □[R] p w) : □[R] (□[R] p) w :=
+  box_four_iff.mpr hT _ _ h
+
+/-- **5** defines the Euclidean property: `◇p ≤ □◇p` for all `p` iff `R` is
+    Euclidean. -/
 theorem box_five_iff : (∀ p : W → Prop, ◇[R] p ≤ □[R] (◇[R] p)) ↔ IsEuclidean R :=
   ⟨fun h => ⟨fun w v u hwv hwu =>
      match h (· = u) w ⟨u, hwu, rfl⟩ v hwv with | ⟨_, hvu, rfl⟩ => hvu⟩,
-   fun hR => haveI := hR; fun _ _ h => box_five h⟩
+   fun hE _ w h v hwv => let ⟨u, hwu, hpu⟩ := h; ⟨u, hE.eucl w v u hwv hwu, hpu⟩⟩
+
+/-- **5**: over a Euclidean relation, `◇p → □◇p`. -/
+theorem box_five [hE : IsEuclidean R] (h : ◇[R] p w) : □[R] (◇[R] p) w :=
+  box_five_iff.mpr hE _ _ h
 
 end ModalLogic
