@@ -1,24 +1,28 @@
 import Mathlib.Order.Nat
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Semantics.Questions.Bias
 
 /-!
 # Czech Three-Way Negation: Core Types
 
-Pure type definitions for [stankova-2026]'s three-way negation distinction in
-Czech polar questions, kept free of empirical data so that Fragment files can
-reference these types without importing it. NCI licensing by Agree follows
-[zeijlstra-2004].
+The three-way negation distinction in Czech polar questions
+([stankova-2026]): the LF positions, the Table 1 diagnostics that
+fingerprint them, and their evidential bias strengths. Kept free of
+lexical entries so that Fragment files can reference these types
+without importing them. NCI licensing by Agree follows [zeijlstra-2004].
 -/
 
-namespace Semantics.Negation.CzechNegation
+namespace Czech.Negation
+
+open Semantics.Questions.Bias (EvidentialBiasStrength)
 
 /-- The three LF positions for negation in Czech PQs ([stankova-2026], her (16)).
 
   [CP... [PolP ne- [ModP ne- [TP ne-]]]]
               OUTER MEDIAL INNER
 -/
-inductive NegPosition where
+inductive Position where
   /-- Inner negation: in TP, propositional ¬p. Narrow scope.
       Licenses NCIs by Agree, licenses NPIs. Standard sentential negation. -/
   | inner
@@ -31,14 +35,14 @@ inductive NegPosition where
   deriving DecidableEq, Repr, Fintype
 
 /-- Numeric embedding: inner ↦ 0, medial ↦ 1, outer ↦ 2 (by scope width). -/
-def NegPosition.toNat : NegPosition → Nat
+def Position.toNat : Position → Nat
   | .inner  => 0
   | .medial => 1
   | .outer  => 2
 
-instance : LinearOrder NegPosition :=
-  LinearOrder.lift' NegPosition.toNat
-    (fun a b h => by cases a <;> cases b <;> simp_all [NegPosition.toNat])
+instance : LinearOrder Position :=
+  LinearOrder.lift' Position.toNat
+    (fun a b h => by cases a <;> cases b <;> simp_all [Position.toNat])
 
 /-- Diagnostics that distinguish the three negation readings (Table 1). -/
 inductive Diagnostic where
@@ -59,7 +63,7 @@ with polarity items and particles.
 
 This is the core empirical fingerprint: each negation position has a unique
 Boolean signature across the five diagnostics. -/
-def licenses : NegPosition → Diagnostic → Bool
+def licenses : Position → Diagnostic → Bool
   | .outer,  .ppiOutscoping => true
   | .outer,  .nciLicensed   => false
   | .outer,  .nahodou       => true
@@ -76,7 +80,7 @@ def licenses : NegPosition → Diagnostic → Bool
   | .inner,  .jeste         => true
   | .inner,  .fakt          => true
 
-/-- Each NegPosition has a unique 5-bit diagnostic signature.
+/-- Each Position has a unique 5-bit diagnostic signature.
     This is the formal statement that the diagnostic table (Table 1)
     distinguishes all three negation readings. -/
 theorem licenses_injective :
@@ -87,9 +91,17 @@ theorem licenses_injective :
   have h3 : licenses a .fakt = licenses b .fakt := congr_fun h _
   cases a <;> cases b <;> simp_all [licenses]
 
-/-- Scope ordering: inner < medial < outer. -/
-theorem inner_lt_medial : NegPosition.inner < .medial := by decide
-theorem medial_lt_outer : NegPosition.medial < .outer := by decide
-theorem inner_lt_outer : NegPosition.inner < .outer := by decide
+/-- Evidential bias strength of a negation position — inner strong,
+medial weak, outer none, FALSUM being epistemic-bias-based
+([stankova-2026] §3.1). -/
+def Position.biasStrength : Position → EvidentialBiasStrength
+  | .inner  => .strong
+  | .medial => .weak
+  | .outer  => .none_
 
-end Semantics.Negation.CzechNegation
+/-- Scope ordering: inner < medial < outer. -/
+theorem inner_lt_medial : Position.inner < .medial := by decide
+theorem medial_lt_outer : Position.medial < .outer := by decide
+theorem inner_lt_outer : Position.inner < .outer := by decide
+
+end Czech.Negation
