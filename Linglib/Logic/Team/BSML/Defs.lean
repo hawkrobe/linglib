@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Logic.Team.Algebra
 import Linglib.Logic.Bilateral.Defs
-import Linglib.Logic.Modal.Kripke
+import Linglib.Logic.Team.Kripke
 
 /-!
 # Bilateral state-based modal logic: core definitions

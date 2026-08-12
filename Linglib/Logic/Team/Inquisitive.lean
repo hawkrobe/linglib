@@ -1,4 +1,4 @@
-import Linglib.Logic.Modal.Kripke
+import Linglib.Logic.Team.Kripke
 import Linglib.Logic.Team.Closure
 import Linglib.Logic.Team.Definability
 
@@ -78,7 +78,7 @@ using a relation `R : W × ℘(W)` instead of `R : W × W`) — deferred to
 a follow-up file/PR because it requires a different model carrier
 than `KripkeModel`.
 
-The KripkeModel carrier from `Logic/Modal/Kripke.lean` is reused.
+The KripkeModel carrier from `Logic/Team/Kripke.lean` is reused.
 Per-world `□` semantics naturally fits the `R : W → Finset W` shape.
 
 ## Sibling logics in `Logic/Modal/`

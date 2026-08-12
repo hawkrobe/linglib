@@ -1,5 +1,5 @@
-import Linglib.Logic.Modal.BSML.Properties
-import Linglib.Logic.Modal.BSML.Characteristic
+import Linglib.Logic.Team.BSML.Properties
+import Linglib.Logic.Team.BSML.Characteristic
 
 /-!
 # Expressive completeness for BSML

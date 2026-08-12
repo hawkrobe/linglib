@@ -1,4 +1,4 @@
-import Linglib.Logic.Modal.BSML.Properties
+import Linglib.Logic.Team.BSML.Properties
 
 /-!
 # Natural deduction for BSML, and its soundness

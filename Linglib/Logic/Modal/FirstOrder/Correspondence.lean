@@ -13,7 +13,7 @@ language `Language.correspondence Const Pred` — accessibility as a binary
 relation, predicates world-relativized to binary relations, constants
 world-indexed to unary functions, and an individual-sort predicate —
 interpreted on the two-sorted-as-one carrier `W ⊕ M`. `realize_st?` is
-satisfaction preservation. `Logic/Modal/QBSML/Compactness.lean` composes
+satisfaction preservation. `Logic/Team/QBSML/Compactness.lean` composes
 the translation with [aloni-vanormondt-2023] Proposition 4.1.
 
 ## Main declarations

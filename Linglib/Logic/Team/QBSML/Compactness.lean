@@ -1,6 +1,6 @@
 import Mathlib.ModelTheory.Satisfiability
 import Linglib.Logic.Modal.FirstOrder.Correspondence
-import Linglib.Logic.Modal.QBSML.Properties
+import Linglib.Logic.Team.QBSML.Properties
 
 /-!
 # Classical model theory for the NE-free fragment of QBSML

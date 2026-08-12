@@ -1,4 +1,4 @@
-import Linglib.Logic.Modal.QBSML.Defs
+import Linglib.Logic.Team.QBSML.Defs
 
 /-!
 # Pragmatic enrichment for QBSML
@@ -25,7 +25,7 @@ participants systematically ignore empty configurations when interpreting,
 so each clause must witness a non-empty state. Combined with split
 disjunction, this derives ignorance, distribution, free choice, and the
 behaviour-under-negation pattern — the QBSML free-choice facts of
-`Logic/Modal/QBSML/FreeChoice.lean`.
+`Logic/Team/QBSML/FreeChoice.lean`.
 
 ## Main declarations
 
@@ -46,7 +46,7 @@ behaviour-under-negation pattern — the QBSML free-choice facts of
 `enrich` is total on `Formula` for definitional convenience, but `[·]⁺`
 is defined only on the NE-free fragment in both papers, so the `.ne` case is
 a filler convention. The construction is structurally identical to BSML's
-`Logic/Modal/BSML/Enrichment.lean` but operates on `Formula Var Const Pred`
+`Logic/Team/BSML/Enrichment.lean` but operates on `Formula Var Const Pred`
 (quantifiers, predicate atoms) rather than `BSML.Formula Atom`. The two are
 kept parallel rather than unified: a shared "team-semantic formula language
 with an `NE` constructor" abstraction awaits a third instance, per the family
@@ -234,7 +234,7 @@ theorem enrichment_strengthens_antiSupport (M : Model W Domain Const Pred)
     the full accessible lifts, plus non-emptiness: the two NE-strips that
     peel `[□φ]⁺ = [¬◇¬φ]⁺` down to `[φ]⁺` at each `R(wᵢ)[gᵢ]`, packaged
     once for the `□`-free-choice derivations
-    (`Logic/Modal/QBSML/FreeChoice.lean`). -/
+    (`Logic/Team/QBSML/FreeChoice.lean`). -/
 theorem support_enrich_nec_iff (M : Model W Domain Const Pred)
     (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain)) :
     support M φ.nec.enrich s ↔

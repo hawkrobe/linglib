@@ -1,4 +1,4 @@
-import Linglib.Logic.Modal.Kripke
+import Linglib.Logic.Team.Kripke
 import Linglib.Logic.Team.Algebra
 import Linglib.Logic.Team.Closure
 import Linglib.Logic.Team.Definability

@@ -1,6 +1,6 @@
-import Linglib.Logic.Modal.QBSML.FreeChoice
-import Linglib.Logic.Modal.QBSML.Compactness
-import Linglib.Logic.Modal.BSML.Scenarios
+import Linglib.Logic.Team.QBSML.FreeChoice
+import Linglib.Logic.Team.QBSML.Compactness
+import Linglib.Logic.Team.BSML.Scenarios
 
 /-!
 # [aloni-vanormondt-2023]: modified numerals and split disjunction
@@ -11,7 +11,7 @@ Aloni & van Ormondt 2023 introduce QBSML, the first-order extension of
 neglect-zero enrichment `[·]⁺` derives their ignorance, obviation,
 distribution, free-choice and negation profile (paper §5). The universal
 facts (3, 5–10) are substrate theorems in
-`Logic/Modal/QBSML/FreeChoice.lean`; this file instantiates them at a
+`Logic/Team/QBSML/FreeChoice.lean`; this file instantiates them at a
 concrete model and proves the paper's one countermodel claim.
 
 ## Main declarations
@@ -35,7 +35,7 @@ whole-formula claims; the Fact 4 countermodel is proved by hand, with
 Definition 4.1 (`Formula.predc` atoms, world-relative
 `KripkeStructure.cInterp`), the quantified facts with variable atoms — both
 as in the paper. Atoms and worlds come from
-`Logic/Modal/BSML/Scenarios.lean`, so this file and `Studies/Aloni2022.lean`
+`Logic/Team/BSML/Scenarios.lean`, so this file and `Studies/Aloni2022.lean`
 target the same world space.
 -/
 

@@ -1,4 +1,4 @@
-import Linglib.Logic.Modal.BSML.Scenarios
+import Linglib.Logic.Team.BSML.Scenarios
 import Linglib.Studies.Aloni2022.FreeChoice
 
 /-!
