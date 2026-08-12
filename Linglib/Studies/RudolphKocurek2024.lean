@@ -1,10 +1,10 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Multiset.Sort
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Discourse.CommonGround
+import Linglib.Core.ModelTheory.FiniteModel
 import Linglib.Core.Order.TotalPreorder
-import Linglib.Studies.RudolphKocurek2024.Comparative
 import Linglib.Core.Order.ComparativeProbability.Systems
+import Linglib.Discourse.CommonGround
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Delineation
 
@@ -21,19 +21,17 @@ where ≤ is a total preorder over interpretations, and `A ≻ B` holds iff some
 
 The formalization is model-theoretic throughout: an interpretation — the
 paper's "function from expressions to intensions" — is a world-indexed family
-of first-order structures, and the language with its basic semantics IS the
-substrate's comparative-possibility logic
-(`Logic/Modal/FirstOrder/Comparative`): `L.ComparativeFormula E` evaluated by
-`ComparativeFormula.Realize`, with ≻ the strict l-lifting. This file adds only what
-is RK-specific: acceptance and the common ground, degree modifiers and the
-conditional, the revised semantics, the delineation bridge, and the degree
-theory.
+of first-order structures. The file first defines [lewis-1973]'s
+comparative-possibility language (`ComparativeFormula`, with ≻ the strict
+l-lifting), then the RK-specific superstructure: acceptance and the common
+ground, degree modifiers and the conditional, the revised semantics, the
+delineation bridge, and the degree theory.
 
 ## Main definitions
 
-* `SemanticOrdering`, `Eval`, `EvalRevised` — the substrate's `ComparativeFormula`
-  language with the paper's basic (§4.2) and revised (supplement §B)
-  semantics.
+* `ComparativeFormula`, `SemanticOrdering`, `Eval`, `EvalRevised` — the
+  comparative language with the paper's basic (§4.2) and revised
+  (supplement §B) semantics.
 * `AssertoricContent`, `MetalinguisticCG` — acceptance and the common ground:
   the substrate's `ContextSet` at the ordering-world index, with assertion as
   `ContextSet.update` and the Stalnaker laws inherited.
@@ -63,9 +61,171 @@ theory.
   counterexample and its revised-semantics repair.
 -/
 
+/-! ## The comparative-possibility language
+
+[lewis-1973]'s comparative possibility over an embedded classical first-order
+layer: `A ≻ B` holds at an index of an ordered structure family when some
+(A ∧ ¬B)-index in the cone strictly dominates every (B ∧ ¬A)-index.
+`realize_comp_iff_strict_dominationLift` identifies ≻ with the strict
+domination lift ([holliday-icard-2013]; Lewis's lift, also the lift of
+[kratzer-1991]'s ordering semantics, with complete logic WJR [halpern-2003];
+comparing difference sets follows [kratzer-2012]). -/
+
+namespace FirstOrder.Language
+
+variable {L : Language} {I W E : Type*}
+
+/-- The extension of a unary relation symbol in a structure carried as a
+term. -/
+def Structure.ext₁ (S : L.Structure E) (R : L.Relations 1) : Set E :=
+  {e | S.RelMap R ![e]}
+
+@[simp] theorem Structure.mem_ext₁ {S : L.Structure E} {R : L.Relations 1}
+    {e : E} : e ∈ S.ext₁ R ↔ S.RelMap R ![e] :=
+  Iff.rfl
+
+instance (S : L.Structure E) (R : L.Relations 1) (e : E)
+    [h : Decidable (S.RelMap R ![e])] : Decidable (e ∈ S.ext₁ R) :=
+  h
+
+/-- Pointwise decidability of atoms across a doubly-indexed structure family —
+the hook that makes `decide` available on finite models; the semantics itself
+is decidability-free. -/
+abbrev DecidableAtoms (interp : I → W → L.Structure E) :=
+  ∀ (i : I) (w : W) (n : ℕ) (r : L.Relations n) (x : Fin n → E),
+    Decidable ((interp i w).RelMap r x)
+
+/-- Comparative-possibility formulas: an embedded classical formula (free
+variables valued by domain elements), booleans, and the comparative ≻
+(`.comp`). Booleans exist at both layers because negation and the derived
+`equi` must scope over ≻. -/
+inductive ComparativeFormula (L : Language) (E : Type*) where
+  | ofFormula : L.Formula E → ComparativeFormula L E
+  | not : ComparativeFormula L E → ComparativeFormula L E
+  | inf : ComparativeFormula L E → ComparativeFormula L E → ComparativeFormula L E
+  | sup : ComparativeFormula L E → ComparativeFormula L E → ComparativeFormula L E
+  | comp : ComparativeFormula L E → ComparativeFormula L E → ComparativeFormula L E
+
+namespace ComparativeFormula
+
+open Core.Order (TotalPreorder)
+open ComparativeProbability
+
+/-- Ground unary predication `R(e)`, as an embedded formula. -/
+abbrev matom (R : L.Relations 1) (e : E) : ComparativeFormula L E :=
+  .ofFormula (R.formula ![Term.var e])
+
+/-- Equipossibility: `A ≈ B := ¬(A ≻ B) ∧ ¬(B ≻ A)`. -/
+def equi (A B : ComparativeFormula L E) : ComparativeFormula L E :=
+  .inf (.not (.comp A B)) (.not (.comp B A))
+
+/-- Formulas free of the comparative: the fragment whose truth does not
+consult the ordering (`ComparativeFree.realize_congr`). -/
+def ComparativeFree : ComparativeFormula L E → Prop
+  | .ofFormula _ => True
+  | .not A => A.ComparativeFree
+  | .inf A B => A.ComparativeFree ∧ B.ComparativeFree
+  | .sup A B => A.ComparativeFree ∧ B.ComparativeFree
+  | .comp _ _ => False
+
+variable (interp : I → W → L.Structure E)
+
+/-! ### Realization -/
+
+/-- Truth at an index of an ordered structure family, relative to a raw
+ordering relation `le` (restricted orderings need not be total). The
+comparative: some (A∧¬B)-index in the ≤-cone strictly dominates every
+(B∧¬A)-index. -/
+def Realize : ComparativeFormula L E → (I → I → Prop) → I → W → Prop
+  | .ofFormula ψ, _, i, w => letI := interp i w; ψ.Realize id
+  | .not A, le, i, w => ¬ Realize A le i w
+  | .inf A B, le, i, w => Realize A le i w ∧ Realize B le i w
+  | .sup A B, le, i, w => Realize A le i w ∨ Realize B le i w
+  | .comp A B, le, i, w =>
+      coneStrictLift le (Strict le) (Realize A le · w) (Realize B le · w) i
+
+instance instDec [Fintype I] [Fintype E] [DecidableEq E]
+    [hA : DecidableAtoms interp] (le : I → I → Prop) [DecidableRel le] :
+    ∀ (φ : ComparativeFormula L E) (i : I) (w : W), Decidable (Realize interp φ le i w)
+  | .ofFormula ψ, i, w =>
+      @Formula.decRealize L E (interp i w) _ _ (fun n r x => hA i w n r x) E ψ id
+  | .not A, i, w => @instDecidableNot _ (instDec le A i w)
+  | .inf A B, i, w => @instDecidableAnd _ _ (instDec le A i w) (instDec le B i w)
+  | .sup A B, i, w => @instDecidableOr _ _ (instDec le A i w) (instDec le B i w)
+  | .comp A B, i, w =>
+      haveI : DecidablePred (Realize interp A le · w) := fun j => instDec le A j w
+      haveI : DecidablePred (Realize interp B le · w) := fun j => instDec le B j w
+      inferInstanceAs (Decidable (coneStrictLift le (Strict le)
+        (Realize interp A le · w) (Realize interp B le · w) i))
+
+variable {interp} {A B : ComparativeFormula L E} {le : I → I → Prop}
+  {ord : TotalPreorder I} {i : I} {w : W}
+
+/-- The comparative clause over a total preorder — definitional; the rewriting
+interface, with the domination conjunction packaged as `ord.lt`. -/
+theorem realize_comp_iff :
+    Realize interp (.comp A B) ord.le i w ↔
+    ∃ i', ord.le i' i ∧ Realize interp A ord.le i' w ∧
+      ¬ Realize interp B ord.le i' w ∧
+      ∀ i'', ord.le i'' i → Realize interp B ord.le i'' w →
+        ¬ Realize interp A ord.le i'' w → ord.lt i'' i' :=
+  Iff.rfl
+
+/-- Realization of a ground unary atom. -/
+@[simp] theorem realize_matom (R : L.Relations 1) (e : E) :
+    Realize interp (.matom R e) le i w ↔ (interp i w).RelMap R ![e] := by
+  let _S : L.Structure E := interp i w
+  show @Formula.Realize L E (interp i w) E (R.formula ![Term.var e]) id ↔ _
+  have hv : (fun j => ((![Term.var e] : Fin 1 → L.Term E) j).realize (M := E) id)
+      = ![e] := funext fun j => by rw [Subsingleton.elim j 0]; simp
+  rw [Formula.realize_rel, hv]
+
+/-- Comparative-free formulas are ordering-invariant. -/
+theorem ComparativeFree.realize_congr :
+    ∀ {φ : ComparativeFormula L E}, φ.ComparativeFree →
+      ∀ {le le' : I → I → Prop} {i : I} {w : W},
+      Realize interp φ le i w ↔ Realize interp φ le' i w
+  | .ofFormula _, _ => Iff.rfl
+  | .not A, h => not_congr (ComparativeFree.realize_congr (show A.ComparativeFree from h))
+  | .inf _ _, h => and_congr (ComparativeFree.realize_congr h.1) (ComparativeFree.realize_congr h.2)
+  | .sup _ _, h => or_congr (ComparativeFree.realize_congr h.1) (ComparativeFree.realize_congr h.2)
+  | .comp _ _, h => h.elim
+
+/-! ### The domination-lift identification -/
+
+/-- ≻ is the *strict l-lifting* of the ordering ([holliday-icard-2013];
+Lewis's lifting) applied to the cone at the evaluation index: comparative
+possibility, with the ∃∀ clause as the strict Smyth order via
+`strict_dominationLift_iff`. -/
+theorem realize_comp_iff_strict_dominationLift :
+    Realize interp (.comp A B) ord.le i w ↔
+    Strict (dominationLift (flip ord.le))
+      (coneDiff ord.le (Realize interp A ord.le · w) (Realize interp B ord.le · w) i)
+      (coneDiff ord.le (Realize interp B ord.le · w) (Realize interp A ord.le · w) i) :=
+  coneStrictLift_iff_strict_dominationLift
+    (fun a b => ord.le_total b a) (fun _ _ => Iff.rfl) _ _ _
+
+/-! ### Basic properties of ≻ and ≈ -/
+
+/-- ≻ is irreflexive — a witness would make A both true and false. -/
+theorem not_realize_comp_self : ¬ Realize interp (.comp A A) le i w :=
+  fun ⟨_, _, hA, hnA, _⟩ => hnA hA
+
+/-- ≈ is reflexive. -/
+theorem realize_equi_self : Realize interp (A.equi A) le i w :=
+  ⟨not_realize_comp_self, not_realize_comp_self⟩
+
+/-- ≈ is symmetric. -/
+theorem realize_equi_comm :
+    Realize interp (A.equi B) le i w ↔ Realize interp (B.equi A) le i w :=
+  and_comm
+
+end ComparativeFormula
+
+end FirstOrder.Language
+
 namespace RudolphKocurek2024
 
-open FirstOrder FirstOrder.Language in
 /-! ### Interpretations and semantic orderings -/
 
 open Core.Order (TotalPreorder)
@@ -209,8 +369,8 @@ theorem evalMuchMore_iff_strict_dominationLift :
     EvalMuchMore interp φ ψ ord d i w ↔
     Strict
       (dominationLift (fun a b => ¬ FarBelow ord d a b))
-      {x | ord.le x i ∧ Eval interp φ ord x w ∧ ¬ Eval interp ψ ord x w}
-      {x | ord.le x i ∧ Eval interp ψ ord x w ∧ ¬ Eval interp φ ord x w} :=
+      (coneDiff ord.le (Eval interp φ ord · w) (Eval interp ψ ord · w) i)
+      (coneDiff ord.le (Eval interp ψ ord · w) (Eval interp φ ord · w) i) :=
   coneStrictLift_iff_strict_dominationLift
     (fun a b => not_farBelow_total d a b)
     (fun _ _ => ⟨fun h => ⟨FarBelow.asymm d h, not_not_intro h⟩,
@@ -228,7 +388,7 @@ theorem evalMostly_iff_strict_dominationLift :
       {x | ord.lt x i ∧ ∀ j, ord.equiv j x → ¬ Eval interp φ ord j w} := by
   rw [strict_dominationLift_iff_below
     (fun a b => ord.le_total b a) (fun _ _ => Iff.rfl)]
-  simp only [Set.mem_setOf_eq, and_imp, and_assoc]
+  simp only [Set.mem_ofPred_eq, and_imp, and_assoc]
   rfl
 
 end ModifierGroundings
@@ -312,44 +472,33 @@ basic semantics fails ME transitivity; the revision strengthens the MC: the
 Properties ([kocurek-2024-supplement] §B): all basic entailment patterns
 (Fact 3 a–n) are preserved (Fact 5); ME transitivity is validated (Fact 6);
 interdefinable with the basic semantics (Fact 7). -/
-def EvalRevised (φ : L.ComparativeFormula E) (ord : SemanticOrdering I) (i : I) (w : W) : Prop :=
-  match φ with
-  | .ofFormula ψ => @Formula.Realize _ _ (interp i w) _ ψ id
-  | .not A => ¬ EvalRevised A ord i w
-  | .inf A B => EvalRevised A ord i w ∧ EvalRevised B ord i w
-  | .sup A B => EvalRevised A ord i w ∨ EvalRevised B ord i w
-  | .comp A B =>
+def EvalRevised : L.ComparativeFormula E → SemanticOrdering I → I → W → Prop
+  | .ofFormula ψ, _, i, w => letI := interp i w; ψ.Realize id
+  | .not A, ord, i, w => ¬ EvalRevised A ord i w
+  | .inf A B, ord, i, w => EvalRevised A ord i w ∧ EvalRevised B ord i w
+  | .sup A B, ord, i, w => EvalRevised A ord i w ∨ EvalRevised B ord i w
+  | .comp A B, ord, i, w =>
       ∃ i', ord.le i' i ∧ EvalRevised A ord i' w ∧
         ¬ EvalRevised B ord i' w ∧
         ((∀ i'', ord.le i'' i → EvalRevised B ord i'' w → ord.lt i'' i') ∨
          (∀ i'', ord.le i'' i → ¬ EvalRevised A ord i'' w → ord.lt i'' i'))
 
 instance EvalRevised.instDec [Fintype I] [Fintype E] [DecidableEq E]
-    [hA : DecidableAtoms interp]
-    (φ : L.ComparativeFormula E) (ord : SemanticOrdering I) [DecidableRel ord.le]
-    (i : I) (w : W) :
-    Decidable (EvalRevised interp φ ord i w) :=
-  match φ with
-  | .ofFormula ψ =>
+    [hA : DecidableAtoms interp] (ord : SemanticOrdering I) [DecidableRel ord.le] :
+    ∀ (φ : L.ComparativeFormula E) (i : I) (w : W),
+      Decidable (EvalRevised interp φ ord i w)
+  | .ofFormula ψ, i, w =>
       @Formula.decRealize L E (interp i w) _ _ (fun n r x => hA i w n r x) E ψ id
-  | .not A =>
-      haveI := EvalRevised.instDec A ord i w
-      inferInstanceAs (Decidable (¬ EvalRevised interp A ord i w))
-  | .inf A B =>
-      haveI := EvalRevised.instDec A ord i w
-      haveI := EvalRevised.instDec B ord i w
-      inferInstanceAs (Decidable (EvalRevised interp A ord i w ∧
-        EvalRevised interp B ord i w))
-  | .sup A B =>
-      haveI := EvalRevised.instDec A ord i w
-      haveI := EvalRevised.instDec B ord i w
-      inferInstanceAs (Decidable (EvalRevised interp A ord i w ∨
-        EvalRevised interp B ord i w))
-  | .comp A B =>
-      haveI : ∀ j v, Decidable (EvalRevised interp A ord j v) :=
-        (EvalRevised.instDec A ord · ·)
-      haveI : ∀ j v, Decidable (EvalRevised interp B ord j v) :=
-        (EvalRevised.instDec B ord · ·)
+  | .not A, i, w => @instDecidableNot _ (EvalRevised.instDec ord A i w)
+  | .inf A B, i, w =>
+      @instDecidableAnd _ _ (EvalRevised.instDec ord A i w) (EvalRevised.instDec ord B i w)
+  | .sup A B, i, w =>
+      @instDecidableOr _ _ (EvalRevised.instDec ord A i w) (EvalRevised.instDec ord B i w)
+  | .comp A B, i, w =>
+      haveI : ∀ j, Decidable (EvalRevised interp A ord j w) :=
+        (EvalRevised.instDec ord A · w)
+      haveI : ∀ j, Decidable (EvalRevised interp B ord j w) :=
+        (EvalRevised.instDec ord B · w)
       inferInstanceAs (Decidable (∃ i', ord.le i' i ∧
         EvalRevised interp A ord i' w ∧ ¬ EvalRevised interp B ord i' w ∧
         ((∀ i'', ord.le i'' i → EvalRevised interp B ord i'' w → ord.lt i'' i') ∨
@@ -509,22 +658,21 @@ noncomputable section DegreeTheory
 variable {L : Language} {I W E : Type*} [Fintype I] [DecidableEq I]
   (interp : I → W → L.Structure E) (ord : SemanticOrdering I) (i : I)
 
+open Classical
+
 /-! ### Field and Denotation Sets -/
 
-open Classical in
 /-- The field I_i: the set of interpretations ranked at or below i.
 Classical: the degree theory proves structure, it never computes. -/
 def field : Finset I :=
   Finset.univ.filter (fun j => ord.le j i)
 
-open Classical in
 /-- The denotation of a formula: the set of interpretations in I_i
 where the formula is true (under the revised semantics). -/
 def denotation (φ : L.ComparativeFormula E) (w : W) : Finset I :=
   (field ord i).filter (fun j => EvalRevised interp φ ord j w)
 
 omit [DecidableEq I] in
-open Classical in
 theorem denotation_subset_field (φ : L.ComparativeFormula E) (w : W) :
     denotation interp ord i φ w ⊆ field ord i :=
   Finset.filter_subset _ _
@@ -980,8 +1128,8 @@ theorem degreeEquiv_trans (X Y Z : Finset I)
 An element is *redundant* when it has an `X`-mate weakly above it and a
 field-outsider weakly above it — `equivCond2` made unary: dropping it leaves
 the degree unchanged. Iterated dropping yields a normal form; the degree of a
-set is the level multiset of its normal form (spike-verified: ⊐ is the
-descending lexicographic order on those multisets). -/
+set is the level multiset of its normal form; `strictlyBetter_iff_degList_lex`
+shows ⊐ is the descending lexicographic order on those multisets. -/
 
 /-- `x` is redundant in `X`: an `X`-mate and a field-outsider both sit weakly
 above it. -/
@@ -1011,7 +1159,6 @@ theorem degreeEquiv_erase_of_redundant {X : Finset I} {x : I}
   exact Finset.mem_sdiff.mpr ⟨hzf.1, fun hzu =>
     hzf.2 ((Finset.mem_union.mp hzu).elim id Finset.mem_of_mem_erase)⟩
 
-open Classical in
 /-- The degree normal form: drop redundant elements until none remain. -/
 def normalize (X : Finset I) : Finset I :=
   if h : ∃ x ∈ X, Redundant ord i X x then
@@ -1021,7 +1168,6 @@ termination_by X.card
 decreasing_by
   exact Finset.card_erase_lt_of_mem h.choose_spec.1
 
-open Classical in
 theorem normalize_subset (X : Finset I) : normalize ord i X ⊆ X := by
   rw [normalize]
   split_ifs with h
@@ -1031,7 +1177,6 @@ termination_by X.card
 decreasing_by
   exact Finset.card_erase_lt_of_mem h.choose_spec.1
 
-open Classical in
 /-- Normalization preserves the degree. -/
 theorem degreeEquiv_normalize (X : Finset I) (hX : X ⊆ field ord i) :
     degreeEquiv ord i X (normalize ord i X) := by
@@ -1060,7 +1205,6 @@ termination_by X.card
 decreasing_by
   exact Finset.card_erase_lt_of_mem h.choose_spec.1
 
-open Classical in
 /-- The rank of an interpretation: how many interpretations sit strictly
 below it. Order-reflecting into ℕ (`lt_iff_rank_lt`, `equiv_iff_rank_eq`),
 so degree invariants can live in `List ℕ` under mathlib's lex order. -/
@@ -1068,7 +1212,6 @@ noncomputable def rank (x : I) : ℕ :=
   (Finset.univ.filter (ord.lt · x)).card
 
 omit [DecidableEq I] in
-open Classical in
 theorem lt_iff_rank_lt {x y : I} :
     ord.lt x y ↔ rank ord x < rank ord y := by
   constructor
@@ -1086,7 +1229,6 @@ theorem lt_iff_rank_lt {x y : I} :
       (Nat.not_le.mpr h)
 
 omit [DecidableEq I] in
-open Classical in
 theorem equiv_iff_rank_eq {x y : I} :
     ord.equiv x y ↔ rank ord x = rank ord y := by
   constructor
@@ -1102,13 +1244,11 @@ theorem equiv_iff_rank_eq {x y : I} :
       ord.le_of_not_lt fun hlt => Nat.lt_irrefl _
         (h ▸ (lt_iff_rank_lt ord).mp hlt)⟩
 
-open Classical in
 /-- The degree list: ranks of the normal form, in descending order. ⊐ is the
 lexicographic order on degree lists (`strictlyBetter_iff_degList_lex`). -/
 noncomputable def degList (X : Finset I) : List ℕ :=
   ((normalize ord i X).val.map (rank ord)).sort (· ≥ ·)
 
-open Classical in
 /-- Normalization is idempotent: normal forms are fixed points. -/
 theorem normalize_idem (X : Finset I) :
     normalize ord i (normalize ord i X) = normalize ord i X := by
@@ -1119,14 +1259,12 @@ theorem normalize_idem (X : Finset I) :
     exact not_redundant_normalize ord i X x hx hred
   · rfl
 
-open Classical in
 /-- The degree list is invariant under normalization. -/
 theorem degList_normalize (X : Finset I) :
     degList ord i (normalize ord i X) = degList ord i X := by
   unfold degList
   rw [normalize_idem]
 
-open Classical in
 /-- Redundancy from `equivCond2`, one side: if `x ∈ X`, `x ∉ Y`, and the cond2
 witnesses exist for `x`, then `x` is redundant in `X`. -/
 private theorem redundant_of_cond2_witness {X Y : Finset I}
@@ -1144,7 +1282,6 @@ private theorem redundant_of_cond2_witness {X Y : Finset I}
       ⟨(Finset.mem_sdiff.mp hz).1,
        fun h => (Finset.mem_sdiff.mp hz).2 (Finset.mem_union.mpr (Or.inl h))⟩
 
-open Classical in
 /-- Under `equivCond2` with both sides normal, the sets are equal — every
 element of the symmetric difference would be redundant in one side. -/
 private theorem equivCond2_of_normal_eq {X Y : Finset I}
@@ -1172,7 +1309,6 @@ private theorem equivCond2_of_normal_eq {X Y : Finset I}
         ⟨(Finset.mem_sdiff.mp hz).1,
          fun h => (Finset.mem_sdiff.mp hz).2 (Finset.mem_union.mpr (Or.inr h))⟩
 
-open Classical in
 /-- `strictlyBetter` is invariant under normalization on both sides. -/
 private theorem strictlyBetter_normalize_iff (X Y : Finset I)
     (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
@@ -1192,7 +1328,6 @@ private theorem strictlyBetter_normalize_iff (X Y : Finset I)
         h (degreeEquiv_symm ord i X NX hX_eq))
       (degreeEquiv_symm ord i Y NY hY_eq)
 
-open Classical in
 /-- `degreeEquiv` is invariant under normalization on both sides. -/
 private theorem degreeEquiv_normalize_iff (X Y : Finset I)
     (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
@@ -1214,7 +1349,6 @@ private theorem degreeEquiv_normalize_iff (X Y : Finset I)
 
 /-! ### Normal-form structure -/
 
-open Classical in
 /-- **Normal-form structure**: a set without redundant elements has at most
 one element or is upward closed in the field. If some weak up-set escapes,
 its base has an outside witness, so non-redundancy makes it the strict top of
@@ -1239,7 +1373,6 @@ private theorem card_le_one_or_upset_of_not_redundant (X : Finset I)
         v, hout, ord.le_trans y x₀ v hyx₀ hlev⟩
     exact Finset.card_le_one.mpr fun a ha b hb => (hkey a ha).trans (hkey b hb).symm
 
-open Classical in
 /-- A maximal element `s` of the symmetric difference between
 `equivCond1`-related normal forms forces both sides to singletons at one
 level: any companion element would be redundant, with the match across the
@@ -1286,37 +1419,31 @@ private theorem eq_singletons_of_equivCond1_max {X Y : Finset I}
 
 /-! ### Rank multisets: invariance under ∼ -/
 
-open Classical in
 /-- The rank multiset of a finset — its elements' ranks bagged. `degList` is
 this multiset sorted descending. -/
 noncomputable def rankMS (X : Finset I) : Multiset ℕ :=
   X.val.map (rank ord)
 
 omit [DecidableEq I] in
-open Classical in
 private theorem mem_sort_rankMS {S : Finset I} {r : ℕ} :
     r ∈ (rankMS ord S).sort (· ≥ ·) ↔ ∃ x ∈ S, rank ord x = r := by
   simp [rankMS, Multiset.mem_sort]
 
 omit [DecidableEq I] in
-open Classical in
 private theorem length_sort_rankMS (S : Finset I) :
     ((rankMS ord S).sort (· ≥ ·)).length = S.card := by
   simp [rankMS, Multiset.length_sort]
 
 omit [DecidableEq I] in
-open Classical in
 private theorem sort_rankMS_empty :
     (rankMS ord (∅ : Finset I)).sort (· ≥ ·) = [] := by
   simp [rankMS, Multiset.sort_zero]
 
 omit [DecidableEq I] in
-open Classical in
 private theorem sort_rankMS_singleton (a : I) :
     (rankMS ord {a}).sort (· ≥ ·) = [rank ord a] := by
   simp [rankMS, Multiset.sort_singleton]
 
-open Classical in
 /-- **Multiset invariance on normal forms** (equivCond1 case): either the
 sets are equal, or a maximal element of the symmetric difference forces both
 into same-level singletons (`eq_singletons_of_equivCond1_max`). -/
@@ -1340,7 +1467,6 @@ private theorem rankMS_eq_of_equivCond1_normal
       rw [hXeq, hYeq]
       simp [rankMS, (equiv_iff_rank_eq ord).mp hst]
 
-open Classical in
 /-- **Multiset invariance on normal forms** (main lemma): ∼-equivalent
 normalized sets have the same rank multiset. -/
 private theorem rankMS_eq_of_degreeEquiv_normal
@@ -1353,7 +1479,6 @@ private theorem rankMS_eq_of_degreeEquiv_normal
   · exact rankMS_eq_of_equivCond1_normal ord i X Y hX hY hnX hnY h1
   · rw [equivCond2_of_normal_eq ord i hnX hnY h2]
 
-open Classical in
 /-- ∼-equivalent sets have equal degree lists: reduce to normal forms via
 `degreeEquiv_normalize_iff`, then sort the invariant rank multiset. -/
 private theorem degList_eq_of_degreeEquiv (X Y : Finset I)
@@ -1383,7 +1508,6 @@ private theorem lex_lt_append {l t : List ℕ} (ht : t ≠ []) :
     exact List.Lex.nil
   | cons a l ih => exact List.Lex.cons ih
 
-open Classical in
 /-- The sorted rank list of a set splits at a subset separated from its
 complement: the subset's ranks form the prefix, the strictly-lower
 remainder's the suffix. -/
@@ -1405,7 +1529,6 @@ private theorem sort_rankMS_eq_append_of_sep {M N : Finset I} (hNM : N ⊆ M)
     rw [Finset.sdiff_val]
     exact (add_tsub_cancel_of_le (Finset.val_le_iff.mpr hNM)).symm
 
-open Classical in
 /-- On normal forms, ⊐ forces the lexicographic order — by case split on
 `card_le_one_or_upset_of_not_redundant`. Against a small `Y` the head ranks
 decide (`Y`'s lone rank is bounded by `X`'s top, with a longer tail on
@@ -1498,7 +1621,6 @@ private theorem lex_degList_of_strictlyBetter_normal
         (Finset.card_eq_zero.mp hlen.symm ▸ Finset.mem_sdiff.mpr ⟨hmX, hmY⟩)
         (Finset.notMem_empty m)
 
-open Classical in
 /-- `strictlyBetter` implies degree lists are lex-ordered: reduce to normal
 forms via `strictlyBetter_normalize_iff`. -/
 private theorem lex_degList_of_strictlyBetter (X Y : Finset I)
@@ -1521,15 +1643,8 @@ private theorem lex_degList_of_strictlyBetter (X Y : Finset I)
 private theorem list_lex_lt_irrefl (l : List ℕ) :
     ¬ List.Lex (· < ·) l l := fun h => Std.Asymm.asymm _ _ h h
 
-open Classical in
-/-- **Degree characterization** (spike-verified oracle:
-`scratch/colex_spike2.lean`): ⊐ is the descending lexicographic order on
-degree lists.
-
-Proof structure: forward direction reduces to normal forms and locates the
-top-rank divergence via the ⊐ witness; backward direction uses ⊐-trichotomy
-(`strictlyBetter_total`), asymmetry of `List.Lex`, and
-`degList_eq_of_degreeEquiv` to eliminate the other two cases. -/
+/-- **Degree characterization**: ⊐ is the descending lexicographic order on
+degree lists. -/
 theorem strictlyBetter_iff_degList_lex (X Y : Finset I)
     (hX : X ⊆ field ord i) (hY : Y ⊆ field ord i) :
     strictlyBetter ord i X Y ↔
@@ -1543,7 +1658,6 @@ theorem strictlyBetter_iff_degList_lex (X Y : Finset I)
   · have h_rev := lex_degList_of_strictlyBetter ord i Y X hY hX h_sb'
     exact absurd h_rev (Std.Asymm.asymm _ _ h_lex)
 
-open Classical in
 /-- Degree equivalence is equality of degree lists. Follows from
 `strictlyBetter_iff_degList_lex` and `List.Lex` trichotomy on `List ℕ`
 (via ⊐-trichotomy: if X ⊐ Y or Y ⊐ X, lex holds, contradicting list
@@ -1938,9 +2052,6 @@ is coherent — it expresses a borderline case. -/
 theorem obs5_me_neg_consistent :
     Eval interp₂ (La.equi (.not La)) tiedOrd .j0 .w0 := by decide
 
-/-- ¬La -/
-abbrev NLa : PredLang.ComparativeFormula Entity := .not La
-
 /-! ### Assertoric Content and Acceptance-Preservation -/
 
 /- Observation 3 (acceptance-preservation): A ∧ ¬B ⊩ A ≻ B.
@@ -1974,8 +2085,8 @@ theorem tautology_accepted :
 accepted on the tied model — the analogue of informational entailment for
 epistemic modals ([yalcin-2007]). -/
 theorem mc_disj_not_accepted :
-    AssertoricContent interp₂ (.sup (.comp La (.not La)) (.comp (.not La) La))
-      tiedOrd .w0 = false := by decide
+    ¬ AssertoricContent interp₂ (.sup (.comp La (.not La)) (.comp (.not La) La))
+      tiedOrd .w0 := by decide
 
 /-! ### Degree Modifiers (§6.1) -/
 
@@ -2143,7 +2254,7 @@ than not", the analogue of epistemic "if p then probably p"
 ([yalcin-2007]). -/
 theorem mcond_m1 :
     ∀ (i : I3),
-      EvalMCond interp₃ La (.comp La NLa) ord₃ i .w0 := by decide
+      EvalMCond interp₃ La (.comp La (.not La)) ord₃ i .w0 := by decide
 
 /-! ### ME transitivity: basic vs revised semantics ([kocurek-2024-supplement] §B)
 
