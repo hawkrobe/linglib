@@ -127,7 +127,7 @@ def allExamples : List ENExample :=
 
 /-! ### Structural Constraints on EN -/
 
-open Semantics.Negation (ENBlockingReason)
+open _root_.Negation (ENBlockingReason)
 
 /-- Why REGRET does not trigger EN in Januubi: Januubi speakers disprefer
     modal operators in complement clauses, and REGRET-class EN requires

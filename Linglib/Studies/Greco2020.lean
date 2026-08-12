@@ -46,7 +46,7 @@ the representation [CP ... [X° non] ... [FocP [TP ...] Foc° ...]]:
 
 ## Connections
 
-- `Semantics.Negation` — framework-agnostic EN types (ENType, ENStrength, PolarityLicensing)
+- `Negation` — framework-agnostic EN types (ENType, ENStrength, PolarityLicensing)
 - `Minimalist.NegScope` — merge position, scope, classification chain (defined below)
 - `ENEnvironment` (below) — the eleven Italian EN environments of Tables 1–2
 - `SnegAttestation` (below) — per-language head status, Greco's own classification
@@ -68,7 +68,7 @@ paper picks them up.
 namespace Minimalist.NegScope
 
 open Minimalist (Cat fValue isCPArea)
-open Semantics.Negation (ENType ENStrength PolarityLicensing PolarityClass weakENProfile strongENProfile)
+open Negation (ENType ENStrength PolarityLicensing PolarityClass weakENProfile strongENProfile)
 
 /-! ### Neg merge position -/
 
@@ -180,7 +180,7 @@ theorem equiv_factors_enstrength (p : NegMergePosition) :
 
 -- ── Bridge to Defs.lean semantic chain ──
 
-open Semantics.Negation (scopeToENType scopeToLicensing enTypeToLicensing)
+open Negation (scopeToENType scopeToLicensing enTypeToLicensing)
 
 /-- Merge position's `scopesIntoVP` determines EN type via the
     semantic chain from `Defs.lean`. -/
@@ -313,7 +313,7 @@ namespace Greco2020
 
 open Minimalist (Cat fValue isCPArea)
 open Minimalist.NegScope (NegMergePosition)
-open Semantics.Negation (ENStrength PolarityLicensing PolarityClass weakENProfile strongENProfile)
+open Negation (ENStrength PolarityLicensing PolarityClass weakENProfile strongENProfile)
 
 /-! ### Tables 1–2: the eleven Italian EN environments
 
