@@ -287,6 +287,14 @@ theorem context_tracks_bias_strength :
     VerbPosition.v1.defaultReading.biasStrength = .none_ ∧
     VerbPosition.nonV1.defaultReading.biasStrength = .strong := ⟨rfl, rfl⟩
 
+/-- [stankova-2025]'s evidence requirement is the strong tier of this
+paper's bias-strength scale; a reading needs negative contextual
+evidence iff its evidential bias is strong. -/
+theorem needsNegativeEvidence_iff_strong :
+    ∀ pos : NegPosition,
+      pos.needsNegativeEvidence = true ↔ pos.biasStrength = .strong := by
+  intro pos; cases pos <;> simp [NegPosition.needsNegativeEvidence, NegPosition.biasStrength]
+
 /-! ### The Czech bias profile ([simik-2024] Table 2) -/
 
 /-- Which Czech PQ forms are felicitous per contextual evidence ×
@@ -359,7 +367,7 @@ def biasCheckedExamples :
     List (LinguisticExample × ContextualEvidence × OriginalBias × CzechPQForm) :=
   [ (StankovaSimik2025.Examples.ex14, .forP, .neutral, .interNPQ) ]
 
-/-- The bias profile predicts the positive-evidence stimulus: the form
+/-- The bias profile predicts the positive-evidence stimulus — the form
 is felicitous iff it appears in its evidence × original-bias cell. -/
 theorem bias_examples_match_profile :
     biasCheckedExamples.all (fun (e, ev, ob, f) =>
