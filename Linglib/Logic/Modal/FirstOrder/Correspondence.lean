@@ -3,18 +3,15 @@ import Linglib.Logic.Modal.FirstOrder.Monadic
 /-!
 # The correspondence language and the standard translation
 
-[blackburn-derijke-venema-2001] [aloni-vanormondt-2023]
-
-The standard translation of modal logic into first-order logic
-([blackburn-derijke-venema-2001]), for the monadic signature with
-constants: modal formulas over `Language.monadicWithConstants Const Pred`
-translate into plain mathlib first-order formulas over the correspondence
-language `Language.correspondence Const Pred` — accessibility as a binary
-relation, predicates world-relativized to binary relations, constants
-world-indexed to unary functions, and an individual-sort predicate —
-interpreted on the two-sorted-as-one carrier `W ⊕ M`. `realize_st?` is
-satisfaction preservation. `Logic/Team/QBSML/Compactness.lean` composes
-the translation with [aloni-vanormondt-2023] Proposition 4.1.
+The standard translation of modal logic into first-order logic, for the
+monadic signature with constants: modal formulas over
+`Language.monadicWithConstants Const Pred` translate into plain mathlib
+first-order formulas over the correspondence language
+`Language.correspondence Const Pred` — accessibility as a binary relation,
+predicates world-relativized to binary relations, constants world-indexed
+to unary functions, and an individual-sort predicate — interpreted on the
+two-sorted-as-one carrier `W ⊕ M`. `realize_st?` is satisfaction
+preservation.
 
 ## Main declarations
 
@@ -44,9 +41,13 @@ the translation with [aloni-vanormondt-2023] Proposition 4.1.
 * `freeVarFinset = ∅` side conditions on closures are hypotheses,
   dischargeable by `decide` per instance — no generic free-variable
   bookkeeping for `st?`.
--/
 
-universe u v
+## References
+
+* [blackburn-derijke-venema-2001] — the standard translation
+* [aloni-vanormondt-2023] — Proposition 4.1, composed with the translation
+  for compactness
+-/
 
 namespace FirstOrder.Language
 
@@ -57,8 +58,7 @@ variable {W M Var Const Pred : Type*}
 /-- The standard-translation target signature: world-indexed constants as
     unary functions, an individual-sort predicate (unary), and
     world-relativized monadic predicates plus accessibility (binary). -/
-def correspondence (Const : Type u)
-    (Pred : Type v) : FirstOrder.Language where
+def correspondence (Const : Type*) (Pred : Type*) : FirstOrder.Language where
   Functions := fun n => match n with
     | 1 => Const
     | _ => PEmpty
@@ -68,28 +68,28 @@ def correspondence (Const : Type u)
     | _ => PEmpty
 
 /-- A constant as a unary function symbol of the target signature. -/
-abbrev corrConst {Const Pred : Type*} (c : Const) :
+abbrev corrConst (c : Const) :
     (correspondence Const Pred).Functions 1 := c
 
 /-- The individual-sort predicate. -/
-abbrev corrIndiv {Const Pred : Type*} : (correspondence Const Pred).Relations 1 :=
+abbrev corrIndiv : (correspondence Const Pred).Relations 1 :=
   PUnit.unit
 
 /-- A predicate as a world-relativized binary relation symbol. -/
-abbrev corrRel {Const Pred : Type*} (P : Pred) :
+abbrev corrRel (P : Pred) :
     (correspondence Const Pred).Relations 2 := Sum.inl P
 
 /-- The accessibility relation symbol. -/
-abbrev corrAcc {Const Pred : Type*} : (correspondence Const Pred).Relations 2 :=
+abbrev corrAcc : (correspondence Const Pred).Relations 2 :=
   Sum.inr PUnit.unit
 
 /-- An individual variable as a sorted term of the correspondence
     language. -/
-abbrev corrIndivVar {Const Pred Var : Type*} (x : Var) :
+abbrev corrIndivVar (x : Var) :
     (correspondence Const Pred).Term (Var ⊕ ℕ) := Term.var (Sum.inl x)
 
 /-- A world variable as a sorted term of the correspondence language. -/
-abbrev corrWorldVar {Const Pred Var : Type*} (k : ℕ) :
+abbrev corrWorldVar (k : ℕ) :
     (correspondence Const Pred).Term (Var ⊕ ℕ) := Term.var (Sum.inr k)
 
 /-- The `W ⊕ M` encoding of a Kripke structure over the monadic signature
@@ -207,7 +207,7 @@ private theorem realize_stAtom? (K : KripkeStructure (monadicWithConstants Const
     {v : Var → M} (hind : ∀ x, val (Sum.inl x) = Sum.inr (v x))
     (hw : val (Sum.inr k) = Sum.inl w) :
     K.RealizeAt w χ v ↔ (letI := K.corrStructure; ψ.Realize val) := by
-  letI := K.corrStructure
+  let _S := K.corrStructure
   cases χ with
   | falsum => simp [stAtom?] at hψ
   | equal t₁ t₂ => simp [stAtom?] at hψ
@@ -231,7 +231,7 @@ private theorem realize_stAtom? (K : KripkeStructure (monadicWithConstants Const
         | inl x =>
           have hLHS : K.RealizeAt w (.rel (monadicRel P) ts) v ↔
               K.pInterp P w (v x) := by
-            letI := K.interp w
+            let _S := K.interp w
             show (K.interp w).RelMap (monadicRel P)
                 (fun i => (ts i).realize (Sum.elim v (default : Fin 0 → M)))
               ↔ _
@@ -264,7 +264,7 @@ private theorem realize_stAtom? (K : KripkeStructure (monadicWithConstants Const
           · exact e.elim
           have hLHS : K.RealizeAt w (.rel (monadicRel P) ts) v ↔
               K.pInterp P w (K.cInterp c w) := by
-            letI := K.interp w
+            let _S := K.interp w
             show (K.interp w).RelMap (monadicRel P)
                 (fun i => (ts i).realize (Sum.elim v (default : Fin 0 → M)))
               ↔ _
@@ -320,7 +320,6 @@ private theorem pinned_update {val : Var ⊕ ℕ → W ⊕ M} {w : W} {k : ℕ}
     Function.update val (Sum.inl x) z (Sum.inr k) = Sum.inl w := by
   rw [Function.update_of_ne (by simp)]; exact hw
 
-
 /-- **Satisfaction preservation for the standard translation**: Kripke
     satisfaction at `w` is first-order realization over `corrStructure`, for
     any valuation that is individual-sorted on `Var` and pins the current
@@ -338,24 +337,24 @@ theorem realize_st? (K : KripkeStructure (monadicWithConstants Const Pred) W M)
   | ofFormula χ => exact realize_stAtom? K hψ hind hw
   | not φ ih =>
     obtain ⟨a, hφ, rfl⟩ := Option.map_eq_some_iff.mp hψ
-    letI := K.corrStructure
+    let _S := K.corrStructure
     rw [ModalFormula.realize_not, Formula.realize_not]
     exact not_congr (ih hφ hind hw)
   | inf φ₁ φ₂ ih₁ ih₂ =>
     obtain ⟨a, hφ₁, hb⟩ := Option.bind_eq_some_iff.mp hψ
     obtain ⟨b, hφ₂, rfl⟩ := Option.map_eq_some_iff.mp hb
-    letI := K.corrStructure
+    let _S := K.corrStructure
     rw [ModalFormula.realize_inf, Formula.realize_inf]
     exact and_congr (ih₁ hφ₁ hind hw) (ih₂ hφ₂ hind hw)
   | sup φ₁ φ₂ ih₁ ih₂ =>
     obtain ⟨a, hφ₁, hb⟩ := Option.bind_eq_some_iff.mp hψ
     obtain ⟨b, hφ₂, rfl⟩ := Option.map_eq_some_iff.mp hb
-    letI := K.corrStructure
+    let _S := K.corrStructure
     rw [ModalFormula.realize_sup, Formula.realize_sup]
     exact or_congr (ih₁ hφ₁ hind hw) (ih₂ hφ₂ hind hw)
   | box φ ih =>
     obtain ⟨a, hφ, rfl⟩ := Option.map_eq_some_iff.mp hψ
-    letI := K.corrStructure
+    let _S := K.corrStructure
     rw [ModalFormula.realize_box, Formula.realize_all₁]
     constructor
     · intro h z
@@ -382,7 +381,7 @@ theorem realize_st? (K : KripkeStructure (monadicWithConstants Const Pred) W M)
       · rw [Function.update_self]
   | all x φ ih =>
     obtain ⟨a, hφ, rfl⟩ := Option.map_eq_some_iff.mp hψ
-    letI := K.corrStructure
+    let _S := K.corrStructure
     rw [ModalFormula.realize_all, Formula.realize_all₁]
     constructor
     · intro h z
@@ -403,7 +402,7 @@ theorem realize_st? (K : KripkeStructure (monadicWithConstants Const Pred) W M)
       rw [Function.update_self]
   | ex x φ ih =>
     obtain ⟨a, hφ, rfl⟩ := Option.map_eq_some_iff.mp hψ
-    letI := K.corrStructure
+    let _S := K.corrStructure
     rw [ModalFormula.realize_ex, Formula.realize_ex₁]
     constructor
     · rintro ⟨d, hd⟩
@@ -422,7 +421,6 @@ theorem realize_st? (K : KripkeStructure (monadicWithConstants Const Pred) W M)
       rw [Function.update_self] at hd
       subst hd
       exact ⟨d, (ih hφ (sorted_update hind x d) (pinned_update hw x _)).mpr hreal⟩
-
 
 /-! ### Sort-guarded sentence closure -/
 
@@ -444,7 +442,7 @@ theorem realize_stClose (K : KripkeStructure (monadicWithConstants Const Pred) W
       ∃ w : W,
         (letI := K.corrStructure
          ψ.Realize (Function.update val (Sum.inr k) (Sum.inl w))) := by
-  letI := K.corrStructure
+  let _S := K.corrStructure
   unfold stClose
   rw [Formula.realize_ex₁]
   constructor
