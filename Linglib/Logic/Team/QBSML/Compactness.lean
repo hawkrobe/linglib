@@ -60,7 +60,7 @@ theorem models_toSentence_of_support (M : Model W Domain Const Pred)
     (support_singleton_iff_st M hτ (fun _ => i.world) hv rfl).mp hsupp
   refine (Formula.realize_toSentence _ hcl
     (stVal v (fun _ => i.world))).mpr ?_
-  refine (realize_stClose M 0 (τ.st 0) _).mpr ⟨i.world, ?_⟩
+  refine (realize_stClose 0 (τ.st 0) _ fun _ => Iff.rfl).mpr ⟨i.world, ?_⟩
   rw [show Function.update (stVal v (fun _ => i.world))
       (Sum.inr 0) (Sum.inl i.world) = stVal v (fun _ => i.world) from
     Function.update_eq_self _ _]
@@ -80,9 +80,9 @@ theorem exists_support_of_models_toSentence
       (∀ y, i.assign y = some (v y)) ∧ support M φ {i} := by
   let _S := M.correspondence
   have d₀ : Domain := default
-  obtain ⟨w₀, -⟩ := (realize_stClose M 0 (τ.st 0) _).mp
+  obtain ⟨w₀, -⟩ := (realize_stClose 0 (τ.st 0) _ fun _ => Iff.rfl).mp
     ((Formula.realize_toSentence _ hcl (fun _ => (Sum.inr d₀ : W ⊕ Domain))).mp h)
-  obtain ⟨w, hw⟩ := (realize_stClose M 0 (τ.st 0) _).mp
+  obtain ⟨w, hw⟩ := (realize_stClose 0 (τ.st 0) _ fun _ => Iff.rfl).mp
     ((Formula.realize_toSentence _ hcl (stVal (fun _ => d₀) (fun _ => w₀))).mp h)
   rw [stVal_update_world] at hw
   have hmodal := (realize_st (u := Function.update (fun _ => w₀) 0 w) M).mpr hw

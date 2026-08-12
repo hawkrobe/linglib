@@ -112,6 +112,55 @@ theorem stVal_update_world [DecidableEq Var] (v : Var → M) (u : ℕ → W) (j 
       stVal v (Function.update u j w) := by
   simp only [stVal, Sum.update_elim_inr, Function.comp_update]
 
+/-! ### The translation -/
+
+/-- `stTerm` translates terms: a variable stays put; a function symbol
+    applies its world-relativized form at the current world variable. -/
+def stTerm (k : ℕ) : L.Term Var → L.correspondence.Term (Var ⊕ ℕ)
+  | .var x => corrIndivVar x
+  | .func f args =>
+      Term.func (corrFunc f) (Fin.cons (corrWorldVar k) fun i => stTerm k (args i))
+
+/-- The standard translation `ST_k` of [blackburn-derijke-venema-2001].
+    The current world is the free variable `Sum.inr k`; atoms
+    world-relativize; `box` relativizes a fresh world variable
+    `Sum.inr (k + 1)` along accessibility; quantifiers relativize to the
+    individual sort. -/
+def ModalFormula.st [DecidableEq Var] (k : ℕ) :
+    ModalFormula L Var → L.correspondence.Formula (Var ⊕ ℕ)
+  | .equal t₁ t₂ => Term.equal (stTerm k t₁) (stTerm k t₂)
+  | .rel R ts =>
+      (corrRel R).formula (Fin.cons (corrWorldVar k) fun i => stTerm k (ts i))
+  | .falsum => ⊥
+  | .imp φ ψ => φ.st k ⟹ ψ.st k
+  | .box φ => Formula.all₁ (Sum.inr (k + 1))
+      (corrAcc.formula₂ (corrWorldVar k) (corrWorldVar (k + 1)) ⟹ φ.st (k + 1))
+  | .all x φ => Formula.all₁ (Sum.inl x)
+      (corrIndiv.formula₁ (corrIndivVar x) ⟹ φ.st k)
+
+/-! ### Sort-guarded sentence closure -/
+
+/-- `stClose` closes the current-world variable `Sum.inr k` under a
+    sort-guarded existential, `∃z(¬IsIndiv(z) ∧ ψ)`. The guard is
+    load-bearing on the mixed carrier — a bare `ex₁` could be witnessed by
+    a junk individual-as-world, which satisfies `□⊥` vacuously. -/
+def stClose [DecidableEq Var] (k : ℕ) (ψ : L.correspondence.Formula (Var ⊕ ℕ)) :
+    L.correspondence.Formula (Var ⊕ ℕ) :=
+  Formula.ex₁ (Sum.inr k)
+    ((corrIndiv.formula₁ (corrWorldVar k)).not ⊓ ψ)
+
+/-- Over any correspondence structure on `W ⊕ M` whose individual-sort
+    predicate holds exactly of the second summand — as
+    `ModalStructure.correspondence`'s does definitionally — the guarded
+    witness of `stClose` is exactly a world. -/
+theorem realize_stClose [DecidableEq Var] [L.correspondence.Structure (W ⊕ M)]
+    (k : ℕ) (ψ : L.correspondence.Formula (Var ⊕ ℕ)) (val : Var ⊕ ℕ → W ⊕ M)
+    (hind : ∀ z : W ⊕ M,
+      Structure.RelMap (corrIndiv (L := L)) ![z] ↔ ∃ d : M, z = Sum.inr d) :
+    (stClose k ψ).Realize val ↔
+      ∃ w : W, ψ.Realize (Function.update val (Sum.inr k) (Sum.inl w)) := by
+  simp [stClose, Formula.realize_ex₁, hind, Sum.exists]
+
 /-! ### The encoded structure -/
 
 variable [Inhabited M] (K : ModalStructure L W M)
@@ -164,32 +213,6 @@ theorem correspondence_funMap_inl (f : L.Functions n) (w : W) (z : Fin (n + 1) �
     funext fun j => Fin.cases hz hds j
   rfl
 
-/-! ### The translation -/
-
-/-- `stTerm` translates terms: a variable stays put; a function symbol
-    applies its world-relativized form at the current world variable. -/
-def stTerm (k : ℕ) : L.Term Var → L.correspondence.Term (Var ⊕ ℕ)
-  | .var x => corrIndivVar x
-  | .func f args =>
-      Term.func (corrFunc f) (Fin.cons (corrWorldVar k) fun i => stTerm k (args i))
-
-/-- The standard translation `ST_k` of [blackburn-derijke-venema-2001].
-    The current world is the free variable `Sum.inr k`; atoms
-    world-relativize; `box` relativizes a fresh world variable
-    `Sum.inr (k + 1)` along accessibility; quantifiers relativize to the
-    individual sort. -/
-def ModalFormula.st [DecidableEq Var] (k : ℕ) :
-    ModalFormula L Var → L.correspondence.Formula (Var ⊕ ℕ)
-  | .equal t₁ t₂ => Term.equal (stTerm k t₁) (stTerm k t₂)
-  | .rel R ts =>
-      (corrRel R).formula (Fin.cons (corrWorldVar k) fun i => stTerm k (ts i))
-  | .falsum => ⊥
-  | .imp φ ψ => φ.st k ⟹ ψ.st k
-  | .box φ => Formula.all₁ (Sum.inr (k + 1))
-      (corrAcc.formula₂ (corrWorldVar k) (corrWorldVar (k + 1)) ⟹ φ.st (k + 1))
-  | .all x φ => Formula.all₁ (Sum.inl x)
-      (corrIndiv.formula₁ (corrIndivVar x) ⟹ φ.st k)
-
 /-! ### Satisfaction preservation -/
 
 /-- Translated terms realize to the individual sort: `stTerm` commutes with
@@ -230,49 +253,5 @@ theorem realize_st [DecidableEq Var] {φ : ModalFormula L Var} {k : ℕ}
     simp [ModalFormula.st, Formula.realize_all₁, stVal_update_indiv, ← ih]
   | @rel n R ts =>
     simp [ModalFormula.st, realize_stTerm K, ModalStructure.relInterp, ← funext_iff]
-
-/-! ### Sort-guarded sentence closure -/
-
-/-- `stClose` closes the current-world variable `Sum.inr k` under a
-    sort-guarded existential, `∃z(¬IsIndiv(z) ∧ ψ)`. The guard is
-    load-bearing on the mixed carrier — a bare `ex₁` could be witnessed by
-    a junk individual-as-world, which satisfies `□⊥` vacuously. -/
-def stClose [DecidableEq Var] (k : ℕ) (ψ : L.correspondence.Formula (Var ⊕ ℕ)) :
-    L.correspondence.Formula (Var ⊕ ℕ) :=
-  Formula.ex₁ (Sum.inr k)
-    ((corrIndiv.formula₁ (corrWorldVar k)).not ⊓ ψ)
-
-/-- Over `correspondence`, the guarded witness of `stClose` is exactly a
-    world. -/
-theorem realize_stClose [DecidableEq Var] (k : ℕ)
-    (ψ : L.correspondence.Formula (Var ⊕ ℕ)) (val : Var ⊕ ℕ → W ⊕ M) :
-    (letI := K.correspondence; (stClose k ψ).Realize val) ↔
-      ∃ w : W,
-        (letI := K.correspondence
-         ψ.Realize (Function.update val (Sum.inr k) (Sum.inl w))) := by
-  let _S := K.correspondence
-  unfold stClose
-  rw [Formula.realize_ex₁]
-  constructor
-  · rintro ⟨z, hz⟩
-    rw [Formula.realize_inf, Formula.realize_not, Formula.realize_rel₁,
-      correspondence_relMap_indiv] at hz
-    obtain ⟨hguard, hzψ⟩ := hz
-    cases z with
-    | inl w => exact ⟨w, hzψ⟩
-    | inr d =>
-      refine absurd ⟨d, ?_⟩ hguard
-      show Function.update val (Sum.inr k) (Sum.inr d) (Sum.inr k) = _
-      rw [Function.update_self]
-  · rintro ⟨w, hw⟩
-    refine ⟨Sum.inl w, ?_⟩
-    rw [Formula.realize_inf, Formula.realize_not, Formula.realize_rel₁,
-      correspondence_relMap_indiv]
-    refine ⟨?_, hw⟩
-    rintro ⟨d, hd⟩
-    have hd' : Function.update val (Sum.inr k) (Sum.inl w) (Sum.inr k)
-        = Sum.inr d := hd
-    rw [Function.update_self] at hd'
-    exact Sum.inl_ne_inr hd'
 
 end FirstOrder.Language
