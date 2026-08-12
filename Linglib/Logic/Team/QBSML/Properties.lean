@@ -628,7 +628,7 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Finty
     (M : Model W Domain Const Pred)
     (P : Pred) (x : Var) (w : W) (v : Var → Domain) :
     ((monadicRel P).formula₁ (Term.var x)).RealizeAt M.interp w v ↔
-      M.pInterp P w (v x) := by
+      M.predInterp P w (v x) := by
   let _S := M.interp w
   show ((monadicRel P).formula₁ (Term.var x)).Realize v ↔ _
   have hfun : (![v x] : Fin 1 → Domain) = fun _ => v x := by
@@ -643,12 +643,12 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Finty
     (v : Var → Domain) :
     ((monadicRel P).formula₁
       (Constants.term (monadicConst c))).RealizeAt M.interp w v ↔
-      M.pInterp P w (M.cInterp c w) := by
+      M.predInterp P w (M.constInterp c w) := by
   let _S := M.interp w
   show ((monadicRel P).formula₁ (Constants.term (monadicConst c))).Realize v
     ↔ _
   have hfun : (![(Constants.term (monadicConst (Pred := Pred) c)).realize v] :
-      Fin 1 → Domain) = fun _ => M.cInterp c w := by
+      Fin 1 → Domain) = fun _ => M.constInterp c w := by
     funext j
     rw [Matrix.cons_val_fin_one]
     exact Term.realize_constants

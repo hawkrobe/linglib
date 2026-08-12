@@ -174,9 +174,9 @@ private theorem eval_iff_of_atom_pred (P Q : Pred) (x : Var) (b : Bool)
       · exact hQ₂ i h
     · intro hQ
       refine ⟨s.filter (fun i => ∀ d, i.assign x = some d →
-          M.pInterp P i.world d),
+          M.predInterp P i.world d),
         s.filter (fun i => ¬ ∀ d, i.assign x = some d →
-          M.pInterp P i.world d),
+          M.predInterp P i.world d),
         Finset.filter_union_filter_not_eq _ s, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
       · intro i hi
         obtain ⟨his, hcond⟩ := Finset.mem_filter.mp hi
@@ -223,8 +223,8 @@ private theorem eval_iff_of_atom_predc (P Q : Pred) (c : Const) (b : Bool)
       · exact hQ₁ i h
       · exact hQ₂ i h
     · intro hQ
-      refine ⟨s.filter (fun i => M.pInterp P i.world (M.cInterp c i.world)),
-        s.filter (fun i => ¬ M.pInterp P i.world (M.cInterp c i.world)),
+      refine ⟨s.filter (fun i => M.predInterp P i.world (M.constInterp c i.world)),
+        s.filter (fun i => ¬ M.predInterp P i.world (M.constInterp c i.world)),
         Finset.filter_union_filter_not_eq _ s, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
       · exact fun i hi => (Finset.mem_filter.mp hi).2
       · exact fun i hi => hQ i (Finset.mem_of_mem_filter i hi)
@@ -474,9 +474,9 @@ def asherState : Finset (Index Bool QVar Unit) := {(true, fun _ => none)}
     necessarily so, since blocking requires no accessible non-free trip;
     see `reinterpret`.) -/
 theorem asherModel_free_ssubset_trip :
-    (∀ w d, asherModel.pInterp .free w d → asherModel.pInterp .trip w d) ∧
-    ∃ w d, asherModel.pInterp .trip w d ∧
-      ¬ asherModel.pInterp .free w d :=
+    (∀ w d, asherModel.predInterp .free w d → asherModel.predInterp .trip w d) ∧
+    ∃ w d, asherModel.predInterp .trip w d ∧
+      ¬ asherModel.predInterp .free w d :=
   ⟨fun _ _ _ => Or.inl rfl,
    false, (), Or.inl rfl, fun h => by
      rcases h with h | h
@@ -503,7 +503,7 @@ theorem asher_premise :
         ⟨j, hj, (), Finset.mem_singleton_self _, rfl⟩⟩
   have hpt : ∀ P : AsherPred, ∀ j ∈ State.extendFunctional
       (State.modalLift {true} i.assign) QVar.x (fun _ => ({()} : Finset Unit)),
-      ∃ d, j.assign QVar.x = some d ∧ asherModel.pInterp P j.world d := by
+      ∃ d, j.assign QVar.x = some d ∧ asherModel.predInterp P j.world d := by
     intro P j hj
     obtain ⟨i', hi', d, -, rfl⟩ := State.mem_extendFunctional.mp hj
     exact ⟨d, by simp,
