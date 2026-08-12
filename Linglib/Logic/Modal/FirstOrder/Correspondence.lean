@@ -85,14 +85,14 @@ abbrev corrIndivVar (x : Var) : L.correspondence.Term (Var ⊕ ℕ) := Term.var 
 
 abbrev corrWorldVar (k : ℕ) : L.correspondence.Term (Var ⊕ ℕ) := Term.var (Sum.inr k)
 
+variable [Inhabited M] (K : ModalStructure L W M)
+
 /-- `K.correspondence` encodes a modal structure as a single mathlib
     structure on `W ⊕ M` — the structure half of `Language.correspondence`:
     worlds and individuals share the carrier, sorted by `corrIndiv`;
     relational guards make all off-sort atoms false, and off-sort function
     arguments default. -/
-@[reducible] def ModalStructure.correspondence [Inhabited M]
-    (K : ModalStructure L W M) :
-    L.correspondence.Structure (W ⊕ M) where
+@[reducible] def ModalStructure.correspondence : L.correspondence.Structure (W ⊕ M) where
   funMap := fun {n} f z => match n, f with
     | 0, f => f.elim
     | _ + 1, f => Sum.inr <| (z 0).elim
@@ -109,30 +109,24 @@ abbrev corrWorldVar (k : ℕ) : L.correspondence.Term (Var ⊕ ℕ) := Term.var 
               ∃ w₁ w₂, z 0 = Sum.inl w₁ ∧ z 1 = Sum.inl w₂ ∧ w₂ ∈ K.access w₁
           | _ + 2, _, u => u.elim)
 
-variable [Inhabited M]
-
-@[simp] theorem correspondence_relMap_rel (K : ModalStructure L W M)
-    (R : L.Relations n) (z : Fin (n + 1) → W ⊕ M) :
+@[simp] theorem correspondence_relMap_rel (R : L.Relations n) (z : Fin (n + 1) → W ⊕ M) :
     (K.correspondence).RelMap (corrRel R) z ↔
       ∃ (w : W) (ds : Fin n → M),
         z 0 = Sum.inl w ∧ (∀ i, z i.succ = Sum.inr (ds i)) ∧
           K.relInterp R w ds :=
   Iff.rfl
 
-@[simp] theorem correspondence_relMap_acc (K : ModalStructure L W M)
-    (z : Fin 2 → W ⊕ M) :
+@[simp] theorem correspondence_relMap_acc (z : Fin 2 → W ⊕ M) :
     (K.correspondence).RelMap (corrAcc (L := L)) z ↔
       ∃ w₁ w₂, z 0 = Sum.inl w₁ ∧ z 1 = Sum.inl w₂ ∧ w₂ ∈ K.access w₁ :=
   Iff.rfl
 
-@[simp] theorem correspondence_relMap_indiv (K : ModalStructure L W M)
-    (z : Fin 1 → W ⊕ M) :
+@[simp] theorem correspondence_relMap_indiv (z : Fin 1 → W ⊕ M) :
     (K.correspondence).RelMap (corrIndiv (L := L)) z ↔
       ∃ d : M, z 0 = Sum.inr d :=
   Iff.rfl
 
-theorem correspondence_funMap_inl (K : ModalStructure L W M)
-    (f : L.Functions n) (w : W) (z : Fin (n + 1) → W ⊕ M)
+theorem correspondence_funMap_inl (f : L.Functions n) (w : W) (z : Fin (n + 1) → W ⊕ M)
     (ds : Fin n → M) (hz : z 0 = Sum.inl w)
     (hds : ∀ i, z i.succ = Sum.inr (ds i)) :
     (K.correspondence).funMap (corrFunc f) z = Sum.inr (K.funInterp f w ds) := by
@@ -176,8 +170,7 @@ def ModalFormula.st (k : ℕ) :
 omit [DecidableEq Var] in
 /-- Translated terms realize to the individual sort: `stTerm` commutes with
     realization, via the world pinned at index `k`. -/
-private theorem realize_stTerm (K : ModalStructure L W M)
-    {k : ℕ} {val : Var ⊕ ℕ → W ⊕ M} {w : W} {v : Var → M}
+private theorem realize_stTerm {k : ℕ} {val : Var ⊕ ℕ → W ⊕ M} {w : W} {v : Var → M}
     (hind : ∀ x, val (Sum.inl x) = Sum.inr (v x))
     (hw : val (Sum.inr k) = Sum.inl w) :
     ∀ t : L.Term Var,
@@ -194,7 +187,7 @@ private theorem realize_stTerm (K : ModalStructure L W M)
         (fun i => (letI := K.interp w; (args i).realize v))
         (by simpa using hw)
         (fun i => by
-          simpa [Fin.cons_succ] using realize_stTerm K hind hw (args i))]
+          simpa [Fin.cons_succ] using realize_stTerm hind hw (args i))]
     rfl
 
 omit [Inhabited M] in
@@ -222,8 +215,7 @@ private theorem pinned_update {val : Var ⊕ ℕ → W ⊕ M} {w : W} {k : ℕ}
     world variable `Sum.inr k` to `w`. Off-sort quantifier instances are
     discharged by the relational guards, and `box`'s fresh world variable
     `k + 1` leaves the pinned index untouched. -/
-theorem realize_st (K : ModalStructure L W M)
-    {φ : ModalFormula L Var} {k : ℕ}
+theorem realize_st {φ : ModalFormula L Var} {k : ℕ}
     {val : Var ⊕ ℕ → W ⊕ M} {w : W} {v : Var → M}
     (hind : ∀ x, val (Sum.inl x) = Sum.inr (v x))
     (hw : val (Sum.inr k) = Sum.inl w) :
@@ -320,8 +312,7 @@ def stClose (k : ℕ) (ψ : L.correspondence.Formula (Var ⊕ ℕ)) :
 
 /-- Over `correspondence`, the guarded witness of `stClose` is exactly a
     world. -/
-theorem realize_stClose (K : ModalStructure L W M)
-    (k : ℕ) (ψ : L.correspondence.Formula (Var ⊕ ℕ))
+theorem realize_stClose (k : ℕ) (ψ : L.correspondence.Formula (Var ⊕ ℕ))
     (val : Var ⊕ ℕ → W ⊕ M) :
     (letI := K.correspondence; (stClose k ψ).Realize val) ↔
       ∃ w : W,
