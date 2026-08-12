@@ -182,6 +182,21 @@ variable (K : KripkeStructure L W M) (w : W) (v : α → M)
     (dia φ).Realize K w v ↔ ∃ w' ∈ K.access w, φ.Realize K w' v := by
   simp only [dia, realize_not, realize_box, not_forall, not_not, exists_prop]
 
+/-! ### The Barcan laws
+
+Constant domains validate the Barcan formula and its converse: `□` and `∀`
+are both world-independent universal quantifiers, so they commute. -/
+
+/-- The Barcan formula `∀x □φ → □ ∀x φ`. -/
+theorem realize_barcan (x : α) (φ : ModalFormula L α) :
+    (all x (box φ)).Realize K w v → (box (all x φ)).Realize K w v :=
+  fun h w' hw' d => h d w' hw'
+
+/-- The converse Barcan formula `□ ∀x φ → ∀x □φ`. -/
+theorem realize_converseBarcan (x : α) (φ : ModalFormula L α) :
+    (box (all x φ)).Realize K w v → (all x (box φ)).Realize K w v :=
+  fun h d w' hw' => h w' hw' d
+
 end ModalFormula
 
 end FirstOrder.Language
