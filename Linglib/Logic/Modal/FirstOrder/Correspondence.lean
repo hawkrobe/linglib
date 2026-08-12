@@ -58,9 +58,9 @@ variable {W M Var : Type*}
 
 /-! ### The correspondence language and the encoded structure -/
 
-/-- The correspondence language of `L`: every `L`-symbol world-relativized
-    to one arity higher — the new first argument the world — plus an
-    individual-sort predicate and the accessibility relation. -/
+/-- The correspondence language of `L` has an `(n + 1)`-ary symbol for
+    each `n`-ary `L`-symbol — the new first argument the world — together
+    with an individual-sort predicate and an accessibility relation. -/
 def correspondence (L : Language) : Language where
   Functions := fun n => match n with
     | 0 => PEmpty
@@ -89,9 +89,9 @@ abbrev corrIndivVar (x : Var) :
 abbrev corrWorldVar (k : ℕ) :
     L.correspondence.Term (Var ⊕ ℕ) := Term.var (Sum.inr k)
 
-/-- The `W ⊕ M` encoding of a modal structure as a single mathlib
-    structure: worlds and individuals share the carrier, sorted by
-    `corrIndiv`; relational guards make all off-sort atoms false, and
+/-- `corrStructure` encodes a modal structure as a single mathlib
+    structure on `W ⊕ M`: worlds and individuals share the carrier, sorted
+    by `corrIndiv`; relational guards make all off-sort atoms false, and
     off-sort function arguments default. -/
 @[reducible] def ModalStructure.corrStructure [Inhabited M]
     (K : ModalStructure L W M) :
@@ -152,17 +152,18 @@ theorem corrStructure_funMap_inl (K : ModalStructure L W M)
 
 variable [DecidableEq Var]
 
-/-- Translate a term: variables stay, function symbols apply their
-    world-relativized forms at the current world variable. -/
+/-- `stTerm` translates terms: a variable stays put; a function symbol
+    applies its world-relativized form at the current world variable. -/
 def stTerm (k : ℕ) : L.Term Var → L.correspondence.Term (Var ⊕ ℕ)
   | .var x => corrIndivVar x
   | .func f args =>
       Term.func (corrFunc f) (Fin.cons (corrWorldVar k) fun i => stTerm k (args i))
 
-/-- The standard translation `ST_k` ([blackburn-derijke-venema-2001]): the
-    current world is the free variable `Sum.inr k`; atoms world-relativize;
-    `box` relativizes a fresh world variable `Sum.inr (k + 1)` along
-    accessibility; quantifiers relativize to the individual sort. -/
+/-- The standard translation `ST_k` of [blackburn-derijke-venema-2001].
+    The current world is the free variable `Sum.inr k`; atoms
+    world-relativize; `box` relativizes a fresh world variable
+    `Sum.inr (k + 1)` along accessibility; quantifiers relativize to the
+    individual sort. -/
 def ModalFormula.st (k : ℕ) :
     ModalFormula L Var → L.correspondence.Formula (Var ⊕ ℕ)
   | .equal t₁ t₂ => Term.equal (stTerm k t₁) (stTerm k t₂)
@@ -314,10 +315,10 @@ theorem realize_st (K : ModalStructure L W M)
 
 /-! ### Sort-guarded sentence closure -/
 
-/-- Sort-guarded existential closure of the current-world variable
-    `Sum.inr k`: `∃z(¬IsIndiv(z) ∧ ψ)`. The guard is load-bearing on the
-    mixed carrier — a bare `ex₁` could be witnessed by a junk
-    individual-as-world, which satisfies `□⊥` vacuously. -/
+/-- `stClose` closes the current-world variable `Sum.inr k` under a
+    sort-guarded existential, `∃z(¬IsIndiv(z) ∧ ψ)`. The guard is
+    load-bearing on the mixed carrier — a bare `ex₁` could be witnessed by
+    a junk individual-as-world, which satisfies `□⊥` vacuously. -/
 def stClose (k : ℕ) (ψ : L.correspondence.Formula (Var ⊕ ℕ)) :
     L.correspondence.Formula (Var ⊕ ℕ) :=
   Formula.ex₁ (Sum.inr k)
