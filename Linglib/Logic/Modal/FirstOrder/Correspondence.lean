@@ -337,24 +337,24 @@ theorem realize_st? (K : KripkeStructure (monadicWithConstants Const Pred) W M)
   | ofFormula χ => exact realize_stAtom? K hψ hind hw
   | not φ ih =>
     obtain ⟨a, hφ, rfl⟩ := Option.map_eq_some_iff.mp hψ
-    letI := K.corrStructure
+    let _S := K.corrStructure
     rw [ModalFormula.realize_not, Formula.realize_not]
     exact not_congr (ih hφ hind hw)
   | inf φ₁ φ₂ ih₁ ih₂ =>
     obtain ⟨a, hφ₁, hb⟩ := Option.bind_eq_some_iff.mp hψ
     obtain ⟨b, hφ₂, rfl⟩ := Option.map_eq_some_iff.mp hb
-    letI := K.corrStructure
+    let _S := K.corrStructure
     rw [ModalFormula.realize_inf, Formula.realize_inf]
     exact and_congr (ih₁ hφ₁ hind hw) (ih₂ hφ₂ hind hw)
   | sup φ₁ φ₂ ih₁ ih₂ =>
     obtain ⟨a, hφ₁, hb⟩ := Option.bind_eq_some_iff.mp hψ
     obtain ⟨b, hφ₂, rfl⟩ := Option.map_eq_some_iff.mp hb
-    letI := K.corrStructure
+    let _S := K.corrStructure
     rw [ModalFormula.realize_sup, Formula.realize_sup]
     exact or_congr (ih₁ hφ₁ hind hw) (ih₂ hφ₂ hind hw)
   | box φ ih =>
     obtain ⟨a, hφ, rfl⟩ := Option.map_eq_some_iff.mp hψ
-    letI := K.corrStructure
+    let _S := K.corrStructure
     rw [ModalFormula.realize_box, Formula.realize_all₁]
     constructor
     · intro h z
@@ -381,7 +381,7 @@ theorem realize_st? (K : KripkeStructure (monadicWithConstants Const Pred) W M)
       · rw [Function.update_self]
   | all x φ ih =>
     obtain ⟨a, hφ, rfl⟩ := Option.map_eq_some_iff.mp hψ
-    letI := K.corrStructure
+    let _S := K.corrStructure
     rw [ModalFormula.realize_all, Formula.realize_all₁]
     constructor
     · intro h z
@@ -402,7 +402,7 @@ theorem realize_st? (K : KripkeStructure (monadicWithConstants Const Pred) W M)
       rw [Function.update_self]
   | ex x φ ih =>
     obtain ⟨a, hφ, rfl⟩ := Option.map_eq_some_iff.mp hψ
-    letI := K.corrStructure
+    let _S := K.corrStructure
     rw [ModalFormula.realize_ex, Formula.realize_ex₁]
     constructor
     · rintro ⟨d, hd⟩
@@ -442,7 +442,7 @@ theorem realize_stClose (K : KripkeStructure (monadicWithConstants Const Pred) W
       ∃ w : W,
         (letI := K.corrStructure
          ψ.Realize (Function.update val (Sum.inr k) (Sum.inl w))) := by
-  letI := K.corrStructure
+  let _S := K.corrStructure
   unfold stClose
   rw [Formula.realize_ex₁]
   constructor
