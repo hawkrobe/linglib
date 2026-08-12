@@ -58,6 +58,14 @@ variable {W M Var : Type*}
 
 /-! ### The correspondence language and the encoded structure -/
 
+/-- The symbols a correspondence language adds beyond the world-relativized
+    `L`-symbols. -/
+inductive CorrExtra : ℕ → Type
+  /-- The individual-sort predicate symbol. -/
+  | indiv : CorrExtra 1
+  /-- The accessibility relation symbol. -/
+  | acc : CorrExtra 2
+
 /-- The correspondence language of `L` has an `(n + 1)`-ary symbol for
     each `n`-ary `L`-symbol — the new first argument the world — together
     with an individual-sort predicate and an accessibility relation. -/
@@ -67,7 +75,7 @@ def correspondence (L : Language) : Language where
     | n + 1 => L.Functions n
   Relations := fun n => match n with
     | 0 => PEmpty
-    | n + 1 => L.Relations n ⊕ (match n with | 0 | 1 => PUnit | _ => PEmpty)
+    | n + 1 => L.Relations n ⊕ CorrExtra (n + 1)
 
 variable {L : Language} {n : ℕ}
 
@@ -75,11 +83,9 @@ abbrev corrFunc (f : L.Functions n) : L.correspondence.Functions (n + 1) := f
 
 abbrev corrRel (R : L.Relations n) : L.correspondence.Relations (n + 1) := Sum.inl R
 
-/-- The individual-sort predicate. -/
-abbrev corrIndiv : L.correspondence.Relations 1 := Sum.inr PUnit.unit
+abbrev corrIndiv : L.correspondence.Relations 1 := Sum.inr .indiv
 
-/-- The accessibility relation symbol. -/
-abbrev corrAcc : L.correspondence.Relations 2 := Sum.inr PUnit.unit
+abbrev corrAcc : L.correspondence.Relations 2 := Sum.inr .acc
 
 abbrev corrIndivVar (x : Var) : L.correspondence.Term (Var ⊕ ℕ) := Term.var (Sum.inl x)
 
@@ -104,10 +110,9 @@ variable [Inhabited M] (K : ModalStructure L W M)
           z 0 = Sum.inl w ∧ (∀ i, z i.succ = Sum.inr (ds i)) ∧
             K.relInterp R w ds)
         (fun u => match n, z, u with
-          | 0, z, _ => ∃ d : M, z 0 = Sum.inr d
-          | 1, z, _ =>
-              ∃ w₁ w₂, z 0 = Sum.inl w₁ ∧ z 1 = Sum.inl w₂ ∧ w₂ ∈ K.access w₁
-          | _ + 2, _, u => u.elim)
+          | _, z, .indiv => ∃ d : M, z 0 = Sum.inr d
+          | _, z, .acc =>
+              ∃ w₁ w₂, z 0 = Sum.inl w₁ ∧ z 1 = Sum.inl w₂ ∧ w₂ ∈ K.access w₁)
 
 @[simp] theorem correspondence_relMap_rel (R : L.Relations n) (z : Fin (n + 1) → W ⊕ M) :
     (K.correspondence).RelMap (corrRel R) z ↔
