@@ -95,10 +95,8 @@ abbrev corrWorldVar (k : ℕ) : L.correspondence.Term (Var ⊕ ℕ) := Term.var 
     L.correspondence.Structure (W ⊕ M) where
   funMap := fun {n} f z => match n, f with
     | 0, f => f.elim
-    | _ + 1, f => match z 0 with
-      | Sum.inl w =>
-          Sum.inr (K.funInterp f w fun i => (z i.succ).getRight?.getD default)
-      | Sum.inr d => Sum.inr d
+    | _ + 1, f => Sum.inr <| (z 0).elim
+        (fun w => K.funInterp f w fun i => (z i.succ).getRight?.getD default) id
   RelMap := fun {n} r z => match n, r with
     | 0, r => r.elim
     | n + 1, r => r.elim
@@ -138,10 +136,8 @@ theorem correspondence_funMap_inl (K : ModalStructure L W M)
     (ds : Fin n → M) (hz : z 0 = Sum.inl w)
     (hds : ∀ i, z i.succ = Sum.inr (ds i)) :
     (K.correspondence).funMap (corrFunc f) z = Sum.inr (K.funInterp f w ds) := by
-  show (match z 0 with
-    | Sum.inl w' =>
-        Sum.inr (K.funInterp f w' fun i => (z i.succ).getRight?.getD default)
-    | Sum.inr d => Sum.inr d) = _
+  show Sum.inr ((z 0).elim
+      (fun w' => K.funInterp f w' fun i => (z i.succ).getRight?.getD default) id) = _
   rw [hz]
   exact congrArg Sum.inr (congrArg _ (funext fun i => by rw [hds i]; rfl))
 
