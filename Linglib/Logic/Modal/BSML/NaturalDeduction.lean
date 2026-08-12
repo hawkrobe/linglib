@@ -52,7 +52,7 @@ open ModalLogic (KripkeModel)
 
 open Team
 
-variable {Atom : Type*} {W : Type*} [DecidableEq W] [Fintype W]
+variable {Atom : Type*} {W : Type*} [DecidableEq W]
 
 /-! ### Contradictions -/
 

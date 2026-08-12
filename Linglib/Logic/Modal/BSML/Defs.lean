@@ -215,10 +215,12 @@ def _root_.ModalLogic.KripkeModel.IsIndisputable (M : KripkeModel W Atom) (t : F
 def _root_.ModalLogic.KripkeModel.IsStateBased (M : KripkeModel W Atom) (t : Finset W) : Prop :=
   Team.IsStateBased M.access t
 
-instance (M : KripkeModel W Atom) (t : Finset W) : Decidable (M.IsIndisputable t) :=
+instance [Fintype W] (M : KripkeModel W Atom) (t : Finset W) :
+    Decidable (M.IsIndisputable t) :=
   inferInstanceAs (Decidable (Team.IsIndisputable M.access t))
 
-instance (M : KripkeModel W Atom) (t : Finset W) : Decidable (M.IsStateBased t) :=
+instance [Fintype W] (M : KripkeModel W Atom) (t : Finset W) :
+    Decidable (M.IsStateBased t) :=
   inferInstanceAs (Decidable (Team.IsStateBased M.access t))
 
 /-! ### Consequence and equivalence -/
@@ -283,7 +285,7 @@ def consequenceStar (φ ψ : Formula Atom) : Prop :=
 /-! ### Decidability of evaluation -/
 
 /-- Decidability of `eval` by structural recursion on the formula. -/
-def decidableEval (M : KripkeModel W Atom) :
+def decidableEval [Fintype W] (M : KripkeModel W Atom) :
     (pol : Bool) → (φ : Formula Atom) → (t : Finset W) → Decidable (eval M pol φ t)
   | true,  .atom _, t => by unfold eval; infer_instance
   | false, .atom _, t => by unfold eval; infer_instance
@@ -347,7 +349,7 @@ def decidableEval (M : KripkeModel W Atom) :
         (fun w _ => eval M false ψ (M.access w))
         (fun w _ => decidableEval M false ψ (M.access w))
 
-instance instDecidableEval (M : KripkeModel W Atom) (pol : Bool) (φ : Formula Atom)
+instance instDecidableEval [Fintype W] (M : KripkeModel W Atom) (pol : Bool) (φ : Formula Atom)
     (t : Finset W) : Decidable (eval M pol φ t) := decidableEval M pol φ t
 
 end BSML

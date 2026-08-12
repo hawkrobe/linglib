@@ -25,9 +25,12 @@ team semantics restricted to singleton teams.
 
 namespace BSML
 
-open ModalLogic (KripkeModel)
+open ModalLogic (KripkeModel diamond)
 
-variable {W : Type*} [DecidableEq W] {Atom : Type*}
+variable {W : Type*} {Atom : Type*}
+
+section
+variable [DecidableEq W]
 
 -- ============================================================================
 -- §1: Classical Evaluation
@@ -217,8 +220,6 @@ theorem neFree_flat (M : KripkeModel W Atom)
 -- §5: BSML–CML Type Bridge
 -- ============================================================================
 
-open ModalLogic (diamond)
-
 /-!
 ### Accessibility Type Bridge
 
@@ -233,6 +234,8 @@ canonical accessibility-relation type in
 def _root_.ModalLogic.KripkeModel.toAccessRel (M : KripkeModel W Atom) :
     W → W → Prop :=
   fun w v => v ∈ M.access w
+
+end
 
 /-- `classicalEval` of ◇φ agrees with `diamond` (Prop-valued possibility),
     connecting BSML's classical evaluation to the shared modal logic

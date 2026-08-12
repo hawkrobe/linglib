@@ -95,7 +95,7 @@ BSMLEmpty omits `⨼`, union closure is preserved.
 
 namespace AloniAnttilaYang2024
 
-variable {W W' : Type*} [DecidableEq W] [Fintype W] [DecidableEq W'] [Fintype W']
+variable {W W' : Type*} [DecidableEq W] [DecidableEq W']
 variable {Atom : Type*}
 
 open ModalLogic (KripkeModel StateBisim WorldBisim)
