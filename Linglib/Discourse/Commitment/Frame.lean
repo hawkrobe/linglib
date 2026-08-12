@@ -130,13 +130,13 @@ def Committed (c : CommitmentState W A) (a b : A) (π : Set W) (w : W) : Prop :=
 theorem believes_four (c : CommitmentState W A) (a : A) (π : Set W) (w : W)
     (h : Believes c a π w) :
     Believes c a (fun v => Believes c a π v) w :=
-  box_four (c.belief a) (fun v => v ∈ π) w h
+  box_four h
 
 /-- Commitment satisfies the 4 axiom. -/
 theorem committed_four (c : CommitmentState W A) (a b : A) (π : Set W) (w : W)
     (h : Committed c a b π w) :
     Committed c a b (fun v => Committed c a b π v) w :=
-  box_four (c.commitment a b) (fun v => v ∈ π) w h
+  box_four h
 
 /-! ### Frame conditions linking belief and commitment -/
 

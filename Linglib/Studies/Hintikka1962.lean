@@ -39,7 +39,7 @@ def DoxasticallyIndefensible (c : CommitmentState W A) (a : A) (P : Set W) : Pro
 theorem mooreContent_doxasticallyIndefensible
     (c : CommitmentState W A) (a : A) (p : Set W) :
     DoxasticallyIndefensible c a (mooreContent c a p) :=
-  fun w => box_not_moore (c.belief a) (fun v => v ∈ p) w
+  fun _ => box_not_moore
 
 /-- A two-world KD4 frame: every world treats only `false` as belief-
     accessible. Used as a witness for `true_mem_mooreContent`. -/
@@ -69,7 +69,7 @@ theorem knowledge_unknowable
     [IsSerial (Rs i)] [IsTrans W (Rs i)]
     (p : W → Prop) (w : W) :
     ¬ knows Rs i (fun v => p v ∧ ¬ knows Rs i p v) w :=
-  box_not_moore (Rs i) p w
+  box_not_moore
 
 /-- **Performatory corollary** (state-theoretic restatement of Hintikka
     §4.10): under sincerity, no commitment state hosts a self-commitment

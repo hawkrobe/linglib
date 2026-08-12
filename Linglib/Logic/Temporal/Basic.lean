@@ -90,20 +90,20 @@ theorem sat_box_imp_N {a : OForm Atom} {t : Time} {w : World} :
 theorem sat_N_imp_self {a : OForm Atom} {t : Time} {w : World} :
     F.sat V (.N a) t w → F.sat V a t w := by
   haveI : Std.Refl (F.sim t) := ⟨(F.sim_equiv t).refl⟩
-  exact fun h => box_T (F.sim t) _ _ h
+  exact fun h => box_T h
 
 theorem sat_box_imp_self {a : OForm Atom} {t : Time} {w : World} :
     F.sat V (.box a) t w → F.sat V a t w :=
-  fun h => box_T ⊤ _ _ h
+  fun h => box_T h
 
 theorem sat_N_imp_N_N {a : OForm Atom} {t : Time} {w : World} :
     F.sat V (.N a) t w → F.sat V (.N (.N a)) t w := by
   haveI : IsTrans World (F.sim t) := ⟨fun _ _ _ => (F.sim_equiv t).trans⟩
-  exact fun h => box_four (F.sim t) _ _ h
+  exact fun h => box_four h
 
 theorem sat_box_imp_box_box {a : OForm Atom} {t : Time} {w : World} :
     F.sat V (.box a) t w → F.sat V (.box (.box a)) t w :=
-  fun h => box_four ⊤ _ _ h
+  fun h => box_four h
 
 theorem sat_M_imp_N_M {a : OForm Atom} {t : Time} {w : World} :
     F.sat V a.M t w → F.sat V a.M.N t w := by

@@ -310,7 +310,7 @@ theorem tolerantAt_eq_diamond (M : TModel D Pred) (P : Pred) (a : D) :
     `~_P`. This is the **T axiom** instantiated. -/
 theorem StrictAt.imp_classical (M : TModel D Pred) (P : Pred) (a : D)
     (hs : StrictAt M P a) : M.interp P a :=
-  box_T (M.simAccess P) _ a hs
+  box_T hs
 
 /-- **Classical ⟹ tolerant** at the atomic level: `a` itself
     witnesses the existential by reflexivity of `~_P`. -/

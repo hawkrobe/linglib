@@ -193,7 +193,7 @@ theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
       simp only [sat_imp, sat_G, sat_Pst]
       exact fun ha => self_imp_box_flip_diamond (· > ·) (fun t' => F.sat V _ t' w) t ha
   | a2 _ =>
-      simp only [sat_imp]; exact fun h => box_four (· < ·) _ _ h
+      simp only [sat_imp]; exact fun h => box_four h
   | a3a _ | a3b _ =>
       simp only [sat_imp, sat_G, sat_H, sat_or, sat_Fut, sat_Pst]
       rintro ⟨t₀, _, ha⟩ t' _

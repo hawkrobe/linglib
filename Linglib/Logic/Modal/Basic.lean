@@ -43,68 +43,42 @@ strengthens.
 
 namespace ModalLogic
 
-variable {W : Type*}
+variable {W : Type*} {R : W → W → Prop} {p q : W → Prop} {w : W}
 
 /-! ### Axiom correspondence -/
 
-/-- `box R p w` unfolds to `∀ v, R w v → p v`. -/
-theorem box_eq_forall (R : W → W → Prop) (p : W → Prop) (w : W) :
-    box R p w = (∀ v, R w v → p v) := rfl
-
-/-- `diamond R p w` unfolds to `∃ v, R w v ∧ p v`. -/
-theorem diamond_eq_exists (R : W → W → Prop) (p : W → Prop) (w : W) :
-    diamond R p w = (∃ v, R w v ∧ p v) := rfl
-
-/-- **K axiom**: `□_R(p → q) → (□_R p → □_R q)`.
-    Holds for any accessibility relation. -/
-theorem box_K (R : W → W → Prop) (p q : W → Prop) (w : W)
-    (hpq : box R (fun v => p v → q v) w)
-    (hp : box R p w) : box R q w :=
+/-- **K**: `□(p → q) → □p → □q`, over any relation. -/
+theorem box_K (hpq : □[R] (fun v => p v → q v) w) (hp : □[R] p w) : □[R] q w :=
   fun v hwv => hpq v hwv (hp v hwv)
 
-/-- **T axiom**: reflexive `R` gives `□_R p w → p w`.
-    What is necessary is actual. -/
-theorem box_T (R : W → W → Prop) [Std.Refl R] (p : W → Prop) (w : W)
-    (h : box R p w) : p w :=
+/-- **T**: over a reflexive relation, `□p → p`. -/
+theorem box_T [Std.Refl R] (h : □[R] p w) : p w :=
   h w (Std.Refl.refl w)
 
-/-- **D axiom**: serial `R` gives `□_R p w → ◇_R p w`.
-    What is necessary is possible. -/
-theorem box_D (R : W → W → Prop) [hS : IsSerial R] (p : W → Prop) (w : W)
-    (h : box R p w) : diamond R p w :=
+/-- **D**: over a serial relation, `□p → ◇p`. -/
+theorem box_D [hS : IsSerial R] (h : □[R] p w) : ◇[R] p w :=
   let ⟨v, hwv⟩ := hS.serial w; ⟨v, hwv, h v hwv⟩
 
-/-- **4 axiom**: transitive `R` gives `□_R p → □_R □_R p`.
-    Positive introspection. -/
-theorem box_four (R : W → W → Prop) [IsTrans W R] (p : W → Prop) (w : W)
-    (h : box R p w) : box R (box R p) w :=
+/-- **4**: over a transitive relation, `□p → □□p`. -/
+theorem box_four [IsTrans W R] (h : □[R] p w) : □[R] (□[R] p) w :=
   fun v hwv u hvu => h u (IsTrans.trans w v u hwv hvu)
 
-/-- **B axiom**: symmetric `R` gives `p w → □_R ◇_R p w`.
-    What is actual is necessarily possible. -/
-theorem box_B (R : W → W → Prop) [Std.Symm R] (p : W → Prop) (w : W)
-    (h : p w) : box R (diamond R p) w :=
+/-- **B**: over a symmetric relation, `p → □◇p`. -/
+theorem box_B [Std.Symm R] (h : p w) : □[R] (◇[R] p) w :=
   fun v hwv => ⟨w, Std.Symm.symm w v hwv, h⟩
 
-/-- **5 axiom**: euclidean `R` gives `◇_R p w → □_R ◇_R p w`.
-    Positive possibility introspection. -/
-theorem box_five (R : W → W → Prop) [hE : IsEuclidean R] (p : W → Prop) (w : W)
-    (h : diamond R p w) : box R (diamond R p) w :=
+/-- **5**: over a Euclidean relation, `◇p → □◇p`. -/
+theorem box_five [hE : IsEuclidean R] (h : ◇[R] p w) : □[R] (◇[R] p) w :=
   let ⟨u, hwu, hpu⟩ := h
   fun v hwv => ⟨u, hE.eucl w v u hwv hwu, hpu⟩
 
-/-- **Moore reductio for KD4**: no world satisfies `□_R (p ∧ ¬□_R p)` when
-    `R` is serial and transitive. The content `p ∧ ¬□_R p` is itself
-    satisfiable; what fails is *boxing* it. Specialise to belief,
-    knowledge, or any other KD4 modality. -/
-theorem box_not_moore (R : W → W → Prop) [hS : IsSerial R] [IsTrans W R]
-    (p : W → Prop) (w : W) :
-    ¬ box R (fun v => p v ∧ ¬ box R p v) w := by
-  intro h
-  have hbp : box R p w := fun v hwv => (h v hwv).1
-  have hbbp : box R (box R p) w := box_four R p w hbp
-  obtain ⟨v, hv⟩ := hS.serial w
-  exact (h v hv).2 (hbbp v hv)
+/-- **Moore reductio for KD4**: no world satisfies `□(p ∧ ¬□p)` over a
+    serial transitive relation — the content is satisfiable; boxing it
+    is not. -/
+theorem box_not_moore [hS : IsSerial R] [IsTrans W R] :
+    ¬ □[R] (fun v => p v ∧ ¬ □[R] p v) w := fun h =>
+  have ⟨v, hv⟩ := hS.serial w
+  (h v hv).2 (box_four (fun u hu => (h u hu).1) v hv)
 
 /-! ### Modal square of opposition
 
@@ -149,7 +123,7 @@ contradiction diagonals combine `isCompl_compl` with box–diamond duality; and
 contrariety/subcontrariety reduce to `box_disjoint_compl`. -/
 theorem modalSquare_relations (R : W → W → Prop) [IsSerial R] (p : W → Prop) :
     Aristotelian.SquareRelations (modalSquare R p) where
-  subalternAI := by rw [Pi.le_def]; exact fun w => box_D R p w
+  subalternAI := by rw [Pi.le_def]; exact fun _ => box_D
   subalternEO := le_compl_iff_disjoint_right.mpr (box_disjoint_compl R p).symm
   contradAO := isCompl_compl
   contradEI := by
@@ -449,27 +423,27 @@ def Axiom.Valid {W : Type*} : Axiom → (W → W → Prop) → Prop
 theorem Axiom.valid_M_iff {W : Type*} {R : W → W → Prop} :
     (Axiom.M).Valid R ↔ Std.Refl R :=
   ⟨fun h => ⟨fun w => h (R w) w (fun _ hv => hv)⟩,
-   fun hR => haveI := hR; fun p w => box_T R p w⟩
+   fun hR => haveI := hR; fun _ _ => box_T⟩
 
 /-- **Correspondence for D**: `□p → ◇p` is valid over `R` iff `R` is serial. -/
 theorem Axiom.valid_D_iff {W : Type*} {R : W → W → Prop} :
     (Axiom.D).Valid R ↔ IsSerial R :=
   ⟨fun h => ⟨fun w => let ⟨v, hv, _⟩ := h (fun _ => True) w (fun _ _ => trivial); ⟨v, hv⟩⟩,
-   fun hR => haveI := hR; fun p w => box_D R p w⟩
+   fun hR => haveI := hR; fun _ _ => box_D⟩
 
 /-- **Correspondence for B**: `p → □◇p` is valid over `R` iff `R` is
     symmetric. -/
 theorem Axiom.valid_B_iff {W : Type*} {R : W → W → Prop} :
     (Axiom.B).Valid R ↔ Std.Symm R :=
   ⟨fun h => ⟨fun w v hwv => match h (· = w) w rfl v hwv with | ⟨_, hvw, rfl⟩ => hvw⟩,
-   fun hR => haveI := hR; fun p w => box_B R p w⟩
+   fun hR => haveI := hR; fun _ _ => box_B⟩
 
 /-- **Correspondence for 4**: `□p → □□p` is valid over `R` iff `R` is
     transitive. -/
 theorem Axiom.valid_four_iff {W : Type*} {R : W → W → Prop} :
     (Axiom.four).Valid R ↔ IsTrans W R :=
   ⟨fun h => ⟨fun w v u hwv hvu => h (R w) w (fun _ hv => hv) v hwv u hvu⟩,
-   fun hR => haveI := hR; fun p w => box_four R p w⟩
+   fun hR => haveI := hR; fun _ _ => box_four⟩
 
 /-- **Correspondence for 5**: `◇p → □◇p` is valid over `R` iff `R` is
     euclidean. -/
@@ -477,7 +451,7 @@ theorem Axiom.valid_five_iff {W : Type*} {R : W → W → Prop} :
     (Axiom.five).Valid R ↔ IsEuclidean R :=
   ⟨fun h => ⟨fun w v u hwv hwu =>
      match h (· = u) w ⟨u, hwu, rfl⟩ v hwv with | ⟨_, hvu, rfl⟩ => hvu⟩,
-   fun hR => haveI := hR; fun p w => box_five R p w⟩
+   fun hR => haveI := hR; fun _ _ => box_five⟩
 
 /-- **The correspondence theorem**: `R` satisfies the frame conditions of `L`
     iff every axiom schema of `L` is valid over `R`. Left to right is
