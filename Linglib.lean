@@ -157,6 +157,7 @@ import Linglib.Logic.CylindricAlgebra
 import Linglib.Logic.Duality
 import Linglib.Core.Relation.FactorsThroughOn
 import Linglib.Core.ModelTheory.Binders
+import Linglib.Core.ModelTheory.StructureFamily
 import Linglib.Core.ModelTheory.EhrenfeuchtFraisse
 import Linglib.Core.ModelTheory.EhrenfeuchtFraisseGame
 import Linglib.Core.ModelTheory.FiniteModel

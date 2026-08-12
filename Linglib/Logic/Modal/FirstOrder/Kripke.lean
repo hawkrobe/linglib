@@ -1,5 +1,5 @@
 import Mathlib.ModelTheory.Semantics
-import Linglib.Core.ModelTheory.Binders
+import Linglib.Core.ModelTheory.StructureFamily
 
 /-!
 # Constant-domain first-order Kripke structures and modal formulas
@@ -14,18 +14,14 @@ quantifiers over embedded classical `L.Formula`s, and
 ## Main declarations
 
 * `KripkeStructure` — accessibility plus a world-indexed family of
-  first-order structures on a constant domain.
-* `KripkeStructure.RealizeAt` — classical satisfaction at a world, with the
-  transported `Formula.realize_*` simp set.
+  first-order structures on a constant domain (classical satisfaction at an
+  index is `Core/ModelTheory/StructureFamily.lean`'s `Formula.RealizeAt`).
 * `ModalFormula`, `ModalFormula.Realize` — modal formulas over embedded
   classical formulas, and Kripke satisfaction; `ModalFormula.dia` is the
   derived `◇ := ¬□¬`.
 
 ## Implementation notes
 
-* Structures are carried as **terms**, not instances — a world-indexed
-  family cannot be instance-based — so interfacing with instance-based
-  mathlib API (`Formula.Realize`) threads `letI := K.interp w`.
 * Accessibility is `Finset`-valued (computability-first, matching the
   team-semantics consumers); generalize to a `Prop`-valued relation when a
   consumer needs infinite branching.
@@ -49,57 +45,6 @@ structure KripkeStructure (L : Language) (W M : Type*) where
   access : W → Finset W
   /-- World-indexed interpretation of the signature. -/
   interp : W → L.Structure M
-
-namespace KripkeStructure
-
-/-- Classical first-order satisfaction at a world — `K, w ⊨_v ψ`, mathlib's
-    `Formula.Realize` in the structure the Kripke structure carries
-    at `w`. -/
-def RealizeAt (K : KripkeStructure L W M) (w : W) (ψ : L.Formula α)
-    (v : α → M) : Prop :=
-  letI := K.interp w; ψ.Realize v
-
-@[simp] theorem realizeAt_not (K : KripkeStructure L W M) (w : W)
-    (ψ : L.Formula α) (v : α → M) :
-    K.RealizeAt w ψ.not v ↔ ¬ K.RealizeAt w ψ v :=
-  letI := K.interp w
-  Formula.realize_not
-
-@[simp] theorem realizeAt_inf (K : KripkeStructure L W M) (w : W)
-    (ψ₁ ψ₂ : L.Formula α) (v : α → M) :
-    K.RealizeAt w (ψ₁ ⊓ ψ₂) v ↔
-      K.RealizeAt w ψ₁ v ∧ K.RealizeAt w ψ₂ v :=
-  letI := K.interp w
-  Formula.realize_inf
-
-@[simp] theorem realizeAt_sup (K : KripkeStructure L W M) (w : W)
-    (ψ₁ ψ₂ : L.Formula α) (v : α → M) :
-    K.RealizeAt w (ψ₁ ⊔ ψ₂) v ↔
-      K.RealizeAt w ψ₁ v ∨ K.RealizeAt w ψ₂ v :=
-  letI := K.interp w
-  Formula.realize_sup
-
-section Binders
-
-variable [DecidableEq α]
-
-@[simp] theorem realizeAt_all₁ (K : KripkeStructure L W M) (w : W) (x : α)
-    (ψ : L.Formula α) (v : α → M) :
-    K.RealizeAt w (Formula.all₁ x ψ) v ↔
-      ∀ d : M, K.RealizeAt w ψ (Function.update v x d) :=
-  letI := K.interp w
-  Formula.realize_all₁
-
-@[simp] theorem realizeAt_ex₁ (K : KripkeStructure L W M) (w : W) (x : α)
-    (ψ : L.Formula α) (v : α → M) :
-    K.RealizeAt w (Formula.ex₁ x ψ) v ↔
-      ∃ d : M, K.RealizeAt w ψ (Function.update v x d) :=
-  letI := K.interp w
-  Formula.realize_ex₁
-
-end Binders
-
-end KripkeStructure
 
 /-- Modal formulas over `L` with named free variables `α`: classical
     `L.Formula`s embedded wholesale via `ofFormula`, closed under the
@@ -134,7 +79,7 @@ variable [DecidableEq α]
     quantifiers update the valuation. -/
 def Realize (K : KripkeStructure L W M) :
     W → ModalFormula L α → (α → M) → Prop
-  | w, .ofFormula ψ, v => K.RealizeAt w ψ v
+  | w, .ofFormula ψ, v => ψ.RealizeAt K.interp w v
   | w, .not φ, v => ¬ Realize K w φ v
   | w, .inf φ ψ, v => Realize K w φ v ∧ Realize K w ψ v
   | w, .sup φ ψ, v => Realize K w φ v ∨ Realize K w ψ v
@@ -146,7 +91,7 @@ variable (K : KripkeStructure L W M) (w : W) (v : α → M)
 
 /-- Embedded classical formulas realize classically — by construction. -/
 @[simp] theorem realize_ofFormula (ψ : L.Formula α) :
-    (ofFormula ψ : ModalFormula L α).Realize K w v ↔ K.RealizeAt w ψ v :=
+    (ofFormula ψ : ModalFormula L α).Realize K w v ↔ ψ.RealizeAt K.interp w v :=
   Iff.rfl
 
 @[simp] theorem realize_not (φ : ModalFormula L α) :
