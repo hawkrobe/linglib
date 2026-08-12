@@ -71,11 +71,9 @@ def correspondence (L : Language) : Language where
 
 variable {L : Language}
 
-/-- An `L`-function symbol, world-relativized. -/
 abbrev corrFunc {n : ℕ} (f : L.Functions n) :
     L.correspondence.Functions (n + 1) := f
 
-/-- An `L`-relation symbol, world-relativized. -/
 abbrev corrRel {n : ℕ} (R : L.Relations n) :
     L.correspondence.Relations (n + 1) := Sum.inl R
 
@@ -85,12 +83,9 @@ abbrev corrIndiv : L.correspondence.Relations 1 := Sum.inr PUnit.unit
 /-- The accessibility relation symbol. -/
 abbrev corrAcc : L.correspondence.Relations 2 := Sum.inr PUnit.unit
 
-/-- An individual variable as a sorted term of the correspondence
-    language. -/
 abbrev corrIndivVar (x : Var) :
     L.correspondence.Term (Var ⊕ ℕ) := Term.var (Sum.inl x)
 
-/-- A world variable as a sorted term of the correspondence language. -/
 abbrev corrWorldVar (k : ℕ) :
     L.correspondence.Term (Var ⊕ ℕ) := Term.var (Sum.inr k)
 
