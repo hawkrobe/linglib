@@ -1,5 +1,5 @@
 import Linglib.Logic.Modal.BSML.Properties
-import Linglib.Logic.Modal.BSML.Bisimulation
+import Linglib.Logic.Modal.BSML.Characteristic
 
 /-!
 # Expressive completeness for BSML
@@ -20,10 +20,11 @@ The theorem splits into two halves:
   `ordConnected_support` (convexity, Proposition 3.3.1), `supClosed_support`
   (union closure), and `bisimClosed_definedBy` (Theorem 3.8 / bisimulation
   invariance, `BSML/Bisimulation.lean`).
-* **Completeness** (`cell ⊆ ⟦BSML⟧`) — the hard converse: every property in the
-  cell is BSML-definable. Stated here as `expressiveCompleteness_converse` with
-  a `sorry`; it is the within-model specialisation of [anttila-2025] Ch 3
-  and requires the characteristic-formula machinery (see the TODO there).
+* **Completeness** (`cell ⊆ ⟦BSML⟧`) — the converse: every property in the
+  cell is BSML-definable, proved for finite atom types via the
+  characteristic-formula machinery of `BSML/Characteristic.lean` (the
+  within-model, finite-atom specialisation of [anttila-2025] Ch 3, whose
+  cross-model theorem indexes bisimulation by finite atom sets).
 
 ## Main declarations
 
@@ -32,8 +33,8 @@ The theorem splits into two halves:
 * `bisimInvariant_support` — Theorem 3.8 specialised to one model.
 * `bisimClosed_definedBy` — every BSML-definable property is bisim-closed.
 * `expressiveSoundness` — `⟦BSML⟧ ⊆` the convex/union-closed/bisim-closed cell.
-* `expressiveCompleteness_converse` — the open converse (`sorry`).
-* `expressivelyComplete` — the headline equality (inherits the converse `sorry`).
+* `expressiveCompleteness_converse` — the converse.
+* `expressivelyComplete` — the headline equality.
 -/
 
 namespace BSML
@@ -83,28 +84,112 @@ theorem expressiveSoundness (M : KripkeModel W Atom) :
   exact ⟨⟨ordConnected_support M φ, supClosed_support M φ⟩, bisimClosed_definedBy M φ⟩
 
 /-- **Completeness half** ([anttila-2025] Ch 3 — the hard direction, the
-    BSML expressive-power problem left open by [aloni-anttila-yang-2024]
-    and solved via Knudstorp's convexity machinery): every convex, union-closed,
+    BSML expressive-power problem left open by [aloni-anttila-yang-2024] —
+    in its within-model, finite-atom form): every convex, union-closed,
     bounded-bisimulation-closed team property is BSML-definable.
 
-    TODO: prove via characteristic formulas. The prerequisite is the
-    Hennessy-Milner direction (Theorem 3.3, deferred in `BSML/Bisimulation.lean`):
-    for `[Fintype Atom]`, build NE-free Hintikka formulas `χ_w^k` satisfying
-    `{v} ⊨ χ_w^k ↔ WorldBisim k M w M v`, lift them to characteristic formulas
-    for teams, then assemble `P` as a split disjunction over the
-    inclusion-minimal teams of `P` of their characteristic formulas conjoined
-    with `NE` (the convex + union-closed normal form — the converse of
-    Proposition 3.3.1). This is the within-model specialisation of Anttila's
-    cross-model theorem. -/
-theorem expressiveCompleteness_converse (M : KripkeModel W Atom) :
+    The defining formula conjoins an upper bound — the flat disjunction
+    `δ_U` of the characteristic formulas of the union `U` of all teams of
+    `P` — with, for every set `T` of worlds whose bisimilarity classes meet
+    every team of `P`, the hitting disjunct `(δ_T ∧ NE) ∨ δ_U`. A
+    supporting team `t` lies under `U` and meets every such transversal;
+    the worlds not bisimilar into `t` therefore fail to be a transversal,
+    which yields a team `s₀ ∈ P` whose classes `t` covers, and `s₀ ∪ (U`
+    restricted to `t`'s classes`)` lies in `P` by convexity between `s₀`
+    and `U` and is bisimilar to `t` — so `t ∈ P` by bisimulation closure. -/
+theorem expressiveCompleteness_converse [Fintype Atom] [Inhabited Atom]
+    (M : KripkeModel W Atom) :
     convexProperties ∩ unionClosedProperties ∩ bisimClosedProperties M ⊆
       definableClass (support M) := by
-  sorry
+  classical
+  rintro P ⟨⟨hconv, hsup⟩, hbc⟩
+  obtain ⟨k, hbisim⟩ := hbc
+  have hconv' : Set.OrdConnected P := hconv
+  have hsup' : SupClosed P := hsup
+  rw [mem_definableClass]
+  rcases Set.eq_empty_or_nonempty P with rfl | hP
+  · refine ⟨.conj falsum .ne, ?_⟩
+    ext t
+    constructor
+    · exact fun h => h.elim
+    · rintro ⟨⟨h1, h2⟩, w, hw⟩
+      exact absurd ((h1 w hw).symm.trans (h2 w hw)) (by decide)
+  · set PF : Finset (Finset W) := P.toFinset with hPF
+    have hPFne : PF.Nonempty := Set.toFinset_nonempty.mpr hP
+    set U : Finset W := PF.sup id with hUdef
+    have hUP : U ∈ P :=
+      hsup'.finsetSup_mem hPFne (fun s hs => Set.mem_toFinset.mp hs)
+    have hsubU : ∀ s ∈ P, s ⊆ U :=
+      fun s hs => Finset.le_sup (f := id) (Set.mem_toFinset.mpr hs)
+    set 𝒯 : Finset (Finset W) := Finset.univ.filter
+      (fun T => ∀ s ∈ PF, ∃ v ∈ s, ∃ w ∈ T, WorldBisim k M w M v) with h𝒯
+    set δ : Finset W → Formula Atom :=
+      fun S => bigDisj (S.toList.map (charFormula M k)) with hδdef
+    refine ⟨.conj (δ U)
+      (bigConj (𝒯.toList.map (fun T => .disj (.conj (δ T) .ne) (δ U)))), ?_⟩
+    ext t
+    constructor
+    · intro htP
+      refine ⟨(support_charDisj_iff M k U t).mpr
+        (fun v hv => ⟨v, hsubU t htP hv, WorldBisim.refl k M v⟩), ?_⟩
+      refine (support_bigConj_iff M _ t).mpr (fun ψ hψ => ?_)
+      obtain ⟨T, hT, rfl⟩ := List.mem_map.mp hψ
+      have hTtrans := (Finset.mem_filter.mp (Finset.mem_toList.mp hT)).2
+      obtain ⟨v, hvt, w, hwT, hb⟩ := hTtrans t (Set.mem_toFinset.mpr htP)
+      refine ⟨{v}, t, ?_, ⟨?_, Finset.singleton_nonempty v⟩, ?_⟩
+      · show {v} ∪ t = t
+        exact Finset.union_eq_right.mpr (Finset.singleton_subset_iff.mpr hvt)
+      · refine (support_charDisj_iff M k T {v}).mpr (fun x hx => ?_)
+        obtain rfl := Finset.mem_singleton.mp hx
+        exact ⟨w, hwT, hb⟩
+      · exact (support_charDisj_iff M k U t).mpr
+          (fun x hx => ⟨x, hsubU t htP hx, WorldBisim.refl k M x⟩)
+    · rintro ⟨hupper, hhits⟩
+      have hcov : ∀ v ∈ t, ∃ w ∈ U, WorldBisim k M w M v :=
+        (support_charDisj_iff M k U t).mp hupper
+      set T₀ : Finset W := Finset.univ.filter
+        (fun w => ¬ ∃ v ∈ t, WorldBisim k M w M v) with hT₀def
+      have hT₀notin : T₀ ∉ 𝒯 := by
+        intro hmem
+        have hhit := (support_bigConj_iff M _ t).mp hhits _
+          (List.mem_map.mpr ⟨T₀, Finset.mem_toList.mpr hmem, rfl⟩)
+        obtain ⟨t₁, t₂, hsplit, ⟨hδ₁, hne₁⟩, -⟩ := hhit
+        obtain ⟨x, hx⟩ := hne₁
+        obtain ⟨w, hwT₀, hb⟩ := (support_charDisj_iff M k T₀ t₁).mp hδ₁ x hx
+        exact (Finset.mem_filter.mp hwT₀).2
+          ⟨x, Team.splitsAs_left_subset hsplit hx, hb⟩
+      have hs₀ : ∃ s₀ ∈ PF, ∀ w ∈ s₀, ∃ v ∈ t, WorldBisim k M w M v := by
+        by_contra hno
+        refine hT₀notin (Finset.mem_filter.mpr ⟨Finset.mem_univ _, fun s hs => ?_⟩)
+        by_contra hall
+        refine hno ⟨s, hs, fun w hw => ?_⟩
+        by_contra hwnc
+        exact hall ⟨w, hw, w,
+          Finset.mem_filter.mpr ⟨Finset.mem_univ _, hwnc⟩, WorldBisim.refl k M w⟩
+      obtain ⟨s₀, hs₀PF, hs₀cov⟩ := hs₀
+      have hs₀P : s₀ ∈ P := Set.mem_toFinset.mp hs₀PF
+      set t'' : Finset W :=
+        s₀ ∪ U.filter (fun w => ∃ v ∈ t, WorldBisim k M w M v) with ht''def
+      have hbis : StateBisim k M t'' M t := by
+        constructor
+        · intro w hw
+          rcases Finset.mem_union.mp hw with hw₀ | hwU
+          · exact hs₀cov w hw₀
+          · exact (Finset.mem_filter.mp hwU).2
+        · intro v hv
+          obtain ⟨w, hwU, hb⟩ := hcov v hv
+          exact ⟨w, Finset.mem_union_right _ (Finset.mem_filter.mpr ⟨hwU, v, hv, hb⟩), hb⟩
+      have ht''P : t'' ∈ P :=
+        hconv'.out hs₀P hUP (Set.mem_Icc.mpr
+          ⟨Finset.subset_union_left,
+           Finset.union_subset (hsubU s₀ hs₀P) (Finset.filter_subset _ _)⟩)
+      exact (hbisim t'' t hbis).mp ht''P
 
 /-- **BSML is expressively complete** for the convex, union-closed,
-    bounded-bisimulation-closed team properties ([anttila-2025] Ch 3).
-    Inherits the `sorry` of `expressiveCompleteness_converse`. -/
-theorem expressivelyComplete (M : KripkeModel W Atom) :
+    bounded-bisimulation-closed team properties ([anttila-2025] Ch 3, in
+    within-model finite-atom form). -/
+theorem expressivelyComplete [Fintype Atom] [Inhabited Atom]
+    (M : KripkeModel W Atom) :
     ExpressivelyCompleteFor (support M)
       (convexProperties ∩ unionClosedProperties ∩ bisimClosedProperties M) :=
   Set.Subset.antisymm (expressiveSoundness M) (expressiveCompleteness_converse M)
