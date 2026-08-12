@@ -20,14 +20,14 @@ on determiners is the primary scope diagnostic for negation position.
 - The žádný/nějaký contrast mirrors English *any* (NPI) vs *some* (PPI),
   but Czech žádný is an NCI requiring Agree with ¬,
   not just DE licensing.
-- Bridges to `Semantics.Negation.CzechNegation.Diagnostic` for per-position
+- Bridges to `Czech.Negation.Diagnostic` for per-position
   compatibility.
 
 -/
 
 namespace Czech.Determiners
 
-open Semantics.Negation.CzechNegation
+open Czech.Negation
 
 -- ============================================================================
 -- Polarity Type
@@ -150,7 +150,7 @@ def DetEntry.isPPI (d : DetEntry) : Bool := d.polarityType == .ppi
 
 /-- Whether a determiner is compatible with a given negation position,
 derived from the `licenses` function in CzechThreeWayNeg. -/
-def compatibleWith (d : DetEntry) (pos : NegPosition) : Bool :=
+def compatibleWith (d : DetEntry) (pos : Position) : Bool :=
   match d.diagnostic with
   | some diag => licenses pos diag
   | none      => true  -- neutral items are compatible everywhere
@@ -169,14 +169,14 @@ theorem nejaky_outer  : compatibleWith nejaky .outer  = true  := rfl
 exactly the positions where žádný is licensed, nějaký is blocked, and vice versa.
 This is the core diagnostic for distinguishing inner from non-inner negation. -/
 theorem zadny_nejaky_complementary :
-    ∀ pos : NegPosition,
+    ∀ pos : Position,
       compatibleWith zadny pos = !compatibleWith nejaky pos := by
   intro pos; cases pos <;> rfl
 
 /-- The NCI/PPI contrast uniquely identifies inner negation:
 inner is the only position where žádný is OK and nějaký is blocked. -/
 theorem nci_ppi_identifies_inner :
-    ∀ pos : NegPosition,
+    ∀ pos : Position,
       (compatibleWith zadny pos = true ∧ compatibleWith nejaky pos = false)
       → pos = .inner := by
   intro pos; cases pos <;> decide

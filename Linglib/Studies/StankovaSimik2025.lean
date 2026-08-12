@@ -23,23 +23,11 @@ diagnostics are [stankova-2026]'s and live in `Stankova2026`.
 * [stankova-2025], [stankova-2023], [simik-2024], [nekula-1996].
 -/
 
-namespace Semantics.Negation.CzechNegation
-
-/-- Whether a negation reading requires negative contextual evidence
-(§5.3); by inner negation the speaker "questions or double-checks
-evidential bias", by FALSUM epistemic bias. Medial, [stankova-2026]'s
-refinement, carries only weak evidential bias. -/
-def NegPosition.needsNegativeEvidence : NegPosition → Bool
-  | .inner => true
-  | .medial | .outer => false
-
-end Semantics.Negation.CzechNegation
-
 namespace StankovaSimik2025
 
 open Czech.Particles (nahodou snad copak)
 open Czech.Determiners (zadny nejaky)
-open Semantics.Negation.CzechNegation
+open Czech.Negation
 open Semantics.Questions.Bias (ContextualEvidence evidenceBiasOK)
 open Features (Judgment)
 
@@ -61,29 +49,29 @@ inductive VerbPosition where
   | nonV1
   deriving DecidableEq, Repr
 
-/-- Height of the negated verb in `NegPosition.toNat` coordinates; the
+/-- Height of the negated verb in `Position.toNat` coordinates; the
 V1 verb raises into the outer (PolP) region, the nonV1 verb stays in TP
 ((11)-(12)). -/
 def VerbPosition.verbHeight : VerbPosition → ℕ
-  | .v1    => NegPosition.outer.toNat
-  | .nonV1 => NegPosition.inner.toNat
+  | .v1    => Position.outer.toNat
+  | .nonV1 => Position.inner.toNat
 
 /-- Negation readings available per verb position ((11)-(12)) — V1 only
 outer; nonV1 also inner (outer there needs a contrastive topic and a
 focused verb, ex. 18). The substrate's medial reading, [stankova-2026]'s
 refinement, patterns with inner. -/
-def VerbPosition.availableReadings : VerbPosition → List NegPosition
+def VerbPosition.availableReadings : VerbPosition → List Position
   | .v1    => [.outer]
   | .nonV1 => [.inner, .medial, .outer]
 
 /-- A reading is available at a verb position iff its operator sits at
 or above the negated verb — the c-command condition behind (11)-(12). -/
-theorem mem_availableReadings_iff (wp : VerbPosition) (pos : NegPosition) :
+theorem mem_availableReadings_iff (wp : VerbPosition) (pos : Position) :
     pos ∈ wp.availableReadings ↔ wp.verbHeight ≤ pos.toNat := by
   cases wp <;> cases pos <;> decide
 
 /-- The default (unmarked) negation reading per verb position. -/
-def VerbPosition.defaultReading : VerbPosition → NegPosition
+def VerbPosition.defaultReading : VerbPosition → Position
   | .v1    => .outer
   | .nonV1 => .inner
 
@@ -98,7 +86,7 @@ evidence (§5). Context sensitivity tracks the reading, not the word
 order; V1's FALSUM default is natural under any evidential bias,
 nonV1's inner default needs negative evidence. -/
 def VerbPosition.requiresContextualEvidence (wp : VerbPosition) : Bool :=
-  wp.defaultReading.needsNegativeEvidence
+  wp.defaultReading.biasStrength == .strong
 
 /-- An NCI-tolerant default reading identifies declarative word order;
 the NCI advantage in nonV1 PQs diagnoses inner negation. -/
@@ -132,7 +120,7 @@ def Indefinite.diagnostic : Indefinite → Diagnostic
   | .ppi => .ppiOutscoping
 
 /-- The negation reading each indefinite proxies for (§5.1). -/
-def Indefinite.reading : Indefinite → NegPosition
+def Indefinite.reading : Indefinite → Position
   | .nci => .inner
   | .ppi => .outer
 
@@ -150,7 +138,7 @@ reading, indefinite against context, verb position against context. -/
 /-- The number of clashes in a condition of the §5.1 design. -/
 def clashCount (wp : VerbPosition) (ind : Indefinite) (ctx : ContextualEvidence) : ℕ :=
   (if ind.reading == wp.defaultReading then 0 else 1) +
-  (if ind.reading.needsNegativeEvidence && (ctx != .againstP) then 1 else 0) +
+  (if (ind.reading.biasStrength == .strong) && (ctx != .againstP) then 1 else 0) +
   (if wp.requiresContextualEvidence && (ctx != .againstP) then 1 else 0)
 
 /-- The judgment tier predicted from the clash count. -/
