@@ -37,9 +37,9 @@ namespace FirstOrder.Language
 
 variable {L : Language} {W M α : Type*}
 
-/-- A constant-domain first-order Kripke structure: `Finset`-valued
-    accessibility plus a `W`-indexed family of `L`-structures on the
-    domain `M`. -/
+/-- A constant-domain first-order Kripke structure — the Kripke analogue
+    of mathlib's `L.Structure`: `Finset`-valued accessibility plus a
+    `W`-indexed family of `L`-structures on the domain `M`. -/
 structure KripkeStructure (L : Language) (W M : Type*) where
   /-- Accessibility relation (per-world set of accessible worlds). -/
   access : W → Finset W
