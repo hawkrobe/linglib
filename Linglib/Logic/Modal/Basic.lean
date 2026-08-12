@@ -64,19 +64,15 @@ theorem diamond_box_gc : GaloisConnection ◇[R] □[flip R] :=
     ⟨fun h v hp w hwv => h w ⟨v, hwv, hp⟩,
      fun h w => fun ⟨v, hwv, hp⟩ => h v hp w hwv⟩
 
-/-- `box R` is monotone. -/
 theorem box_mono : Monotone □[R] :=
   (diamond_box_gc (flip R)).monotone_u
 
-/-- `diamond R` is monotone. -/
 theorem diamond_mono : Monotone ◇[R] :=
   (diamond_box_gc R).monotone_l
 
-/-- `□` distributes over `⊓`. -/
 theorem box_inf : □[R] (p ⊓ q) = □[R] p ⊓ □[R] q :=
   (diamond_box_gc (flip R)).u_inf
 
-/-- `◇` distributes over `⊔`. -/
 theorem diamond_sup : ◇[R] (p ⊔ q) = ◇[R] p ⊔ ◇[R] q :=
   (diamond_box_gc R).l_sup
 
@@ -103,141 +99,56 @@ theorem diamond_restrict {R₁ R₂ : W → W → Prop} (h : R₂ ≤ R₁) (p :
     ◇[R₂] p ≤ ◇[R₁] p :=
   fun _ hd => let ⟨v, hwv, hpv⟩ := hd; ⟨v, h _ _ hwv, hpv⟩
 
-/-! ### Bundled frame classes
-
-Named frame classes for the logics of `ModalLogic.frameConditions`; the
-per-logic correspondence theorems (`frameConditions_S5_iff`, …) live with
-the lattice below. -/
+/-! ### Bundled frame classes -/
 
 /-- S5 frame: reflexive + euclidean (implies symmetric + transitive). -/
-class IsS5Frame {W : Type*} (R : W → W → Prop) : Prop extends Std.Refl R, IsEuclidean R
+class IsS5Frame : Prop extends Std.Refl R, IsEuclidean R
 
 /-- KD45 frame for textbook belief: serial + transitive + euclidean. -/
-class IsKD45Frame {W : Type*} (R : W → W → Prop) : Prop
-  extends IsSerial R, IsTrans W R, IsEuclidean R
+class IsKD45Frame : Prop extends IsSerial R, IsTrans W R, IsEuclidean R
 
 /-- K45 frame: transitive + euclidean, NOT serial. The frame condition
     for commitment in [stalnaker-1984]-style discourse models, where
     commitment violations (no accessible compliance world) must be
     expressible. -/
-class IsK45Frame {W : Type*} (R : W → W → Prop) : Prop
-  extends IsTrans W R, IsEuclidean R
+class IsK45Frame : Prop extends IsTrans W R, IsEuclidean R
 
 /-- KTB frame: reflexive + symmetric. The natural setting for tolerance
     semantics ([cobreros-etal-2012]) where each predicate's
     similarity relation is reflexive and symmetric but possibly
     non-transitive. -/
-class IsKTBFrame {W : Type*} (R : W → W → Prop) : Prop
-  extends Std.Refl R, Std.Symm R
+class IsKTBFrame : Prop extends Std.Refl R, Std.Symm R
 
 /-! ### The Gallin hierarchy
 
-Propositional operators form a three-level hierarchy: **general**
-(`PropOp` — arbitrary properties of propositions, varying by world),
-**indicial** (Kripke-definable: `N = box R` for some accessibility `R`),
-and **S5** (the indicial case with `R = ⊤`). Non-indicial
-operators (tense, present progressive) live outside `IsIndicial`;
-`Logic/Temporal/Basic.lean` consumes this boundary. -/
+Operators `(W → Prop) → W → Prop` form a three-level hierarchy
+([gallin-1975]): arbitrary operators, the **indicial** (Kripke-definable)
+ones — `box R` for some accessibility relation — and S5, the indicial
+case `R = ⊤`. Tense and other non-Kripke operators live outside
+`IsIndicial`. -/
 
-/-- A propositional operator: any function from propositions to propositions,
-    parametrized by world — Gallin's most general level.
-
-    Examples: necessity (`box R`), possibility (`diamond R`),
-    past tense (`∃ v, v < w ∧ p v`), present progressive, habituals. -/
-abbrev PropOp (W : Type*) := (W → Prop) → W → Prop
-
-/-- A propositional operator `N` is **monotone** if `p ≤ q` pointwise implies
-    `N p ≤ N q` pointwise. Every normal (K-)operator is monotone. -/
-def PropOp.Monotone {W : Type*} (N : PropOp W) : Prop :=
-  ∀ ⦃p q : W → Prop⦄, (∀ v, p v → q v) → ∀ w, N p w → N q w
-
-/-- A propositional operator distributes over conjunction (one direction of
-    the K axiom: `□(p ∧ q) → □p ∧ □q`). -/
-def PropOp.DistribConj {W : Type*} (N : PropOp W) : Prop :=
-  ∀ (p q : W → Prop) (w : W), N (fun v => p v ∧ q v) w → N p w ∧ N q w
-
-/-- A propositional operator is **indicial** (Kripke-definable) if it is
-    `box R` for some accessibility relation `R`. The non-indicial case is
-    where tense and other non-Kripke operators live. -/
-def IsIndicial {W : Type*} (N : PropOp W) : Prop :=
+/-- An operator on world-propositions is **indicial** (Kripke-definable)
+    if it is `box R` for some accessibility relation `R`. -/
+def IsIndicial (N : (W → Prop) → W → Prop) : Prop :=
   ∃ R : W → W → Prop, N = box R
 
 /-- Every `box R` is indicial. -/
-theorem box_isIndicial (R : W → W → Prop) : IsIndicial (box R) :=
-  ⟨R, rfl⟩
-
-/-- Every indicial operator is monotone (every Kripke operator is a
-    K-operator). -/
-theorem monotone_box (R : W → W → Prop) : PropOp.Monotone (box R) :=
-  fun _ _ h w hb => box_mono R h w hb
-
-/-- Every indicial operator distributes over conjunction. -/
-theorem distribConj_box (R : W → W → Prop) : PropOp.DistribConj (box R) :=
-  fun p q w h => ⟨fun v hwv => (h v hwv).1, fun v hwv => (h v hwv).2⟩
-
-/-- S5 necessity as a `PropOp`: `p` holds at all worlds. -/
-def s5Nec {W : Type*} : PropOp W :=
-  fun p _ => ∀ w, p w
-
-/-- S5 possibility as a `PropOp`: `p` holds at some world. -/
-def s5Poss {W : Type*} : PropOp W :=
-  fun p _ => ∃ w, p w
-
-/-- **S5 = box over the universal relation**: the S5 necessity operator is
-    the indicial operator with universal accessibility — S5 sits at the top
-    of the indicial hierarchy. -/
-theorem s5Nec_eq_box_top : s5Nec (W := W) = box ⊤ := by
-  ext p w
-  exact ⟨fun h v _ => h v, fun h v => h v trivial⟩
-
-/-- S5 necessity is indicial. -/
-theorem s5Nec_isIndicial : IsIndicial (s5Nec (W := W)) :=
-  ⟨⊤, s5Nec_eq_box_top⟩
-
-/-- S5 necessity is the weakest indicial operator: for any `R`,
-    `s5Nec p w → box R p w`. Fewer accessible worlds means a stronger
-    necessity — Kratzer restriction at the `PropOp` level (`box_restrict`). -/
-theorem s5Nec_weakest (R : W → W → Prop) (p : W → Prop) (w : W)
-    (h : s5Nec p w) : box R p w :=
-  fun v _ => h v
-
-/-- The empty relation gives the strongest (vacuously true) necessity. -/
-theorem box_bot (p : W → Prop) (w : W) : box (⊥ : W → W → Prop) p w :=
-  fun _ hv => False.elim hv
+theorem box_isIndicial : IsIndicial □[R] := ⟨R, rfl⟩
 
 /-! ### Flat S5 operators
 
-`poss`/`nec` are the genuinely flat existential/universal modals (`∃ w` / `∀ w`),
-the world-collapsed projection of `s5Poss`/`s5Nec`, whose evaluation world is
-vestigial. These are the canonical flat modals consumed by the implicature
-calculus (`Exhaustification.FreeChoice`) and free-choice scope theory, which do
-not track an evaluation world; `s5Poss_apply`/`s5Nec_apply` connect them back to
-the `PropOp` hierarchy. -/
+`poss`/`nec` are the flat existential/universal modals (`∃ w` / `∀ w`) —
+the S5 operators `□[⊤]`/`◇[⊤]` with their vestigial evaluation world
+dropped. -/
 
-/-- Flat S5 possibility: `◇p = ∃ w, p w` (no evaluation world). -/
+/-- Flat S5 possibility: `poss p` iff `p` holds at some world. -/
 def poss (p : W → Prop) : Prop := ∃ w, p w
 
-/-- Flat S5 necessity: `□p = ∀ w, p w` (no evaluation world). -/
+/-- Flat S5 necessity: `nec p` iff `p` holds at every world. -/
 def nec (p : W → Prop) : Prop := ∀ w, p w
 
-@[simp] theorem s5Poss_apply (p : W → Prop) (w : W) : s5Poss p w = poss p := rfl
-@[simp] theorem s5Nec_apply (p : W → Prop) (w : W) : s5Nec p w = nec p := rfl
-
-/-- ◇ distributes over ∨ (flat): `◇(p ∨ q) = ◇p ∨ ◇q`. -/
-theorem poss_or (p q : W → Prop) : poss (fun w => p w ∨ q w) = (poss p ∨ poss q) :=
-  propext exists_or
-
-/-- □ distributes over ∧ (flat): `□(p ∧ q) = □p ∧ □q`. -/
-theorem nec_and (p q : W → Prop) : nec (fun w => p w ∧ q w) = (nec p ∧ nec q) :=
-  propext forall_and
-
-/-- ◇ is monotone. -/
-theorem poss_mono {p q : W → Prop} (h : ∀ w, p w → q w) : poss p → poss q :=
-  fun ⟨w, hw⟩ => ⟨w, h w hw⟩
-
-/-- □ is monotone. -/
-theorem nec_mono {p q : W → Prop} (h : ∀ w, p w → q w) : nec p → nec q :=
-  fun hn w => h w (hn w)
+theorem nec_mono : Monotone (nec (W := W)) :=
+  fun _ q h hn w => h w (hn w)
 
 /-! ### Decidability over finite worlds -/
 
