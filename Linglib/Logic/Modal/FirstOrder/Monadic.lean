@@ -20,8 +20,8 @@ the constants side.
 * `monadicWithConstantsStructure` — its structure from a constant
   interpretation and a predicate valuation (cf. mathlib's
   `orderStructure`).
-* `KripkeStructure.pInterp`, `KripkeStructure.cInterp` — world-relative
-  predicate and constant denotations of a Kripke structure over the
+* `KripkeModel.pInterp`, `KripkeModel.cInterp` — world-relative
+  predicate and constant denotations of a Kripke model over the
   signature.
 -/
 
@@ -67,20 +67,20 @@ abbrev monadicRel (P : Pred) :
 
 variable {W : Type*}
 
-/-- The predicate denotation at a world, read off a Kripke structure's
+/-- The predicate denotation at a world, read off a Kripke model's
     world-indexed family via `Structure.RelMap` — the world-relativized
     `I(w)(Pⁿ)` of [aloni-vanormondt-2023] Definition 4.2, specialised to
     monadic `P`. -/
-def KripkeStructure.pInterp
-    (K : KripkeStructure (monadicWithConstants Const Pred) W Domain)
+def KripkeModel.pInterp
+    (K : KripkeModel (monadicWithConstants Const Pred) W Domain)
     (P : Pred) (w : W) (d : Domain) : Prop :=
   (K.interp w).RelMap (monadicRel P) (fun _ => d)
 
 /-- The constant denotation at a world — the world-relative `I(w)(c)` of
     [aloni-vanormondt-2023] Definitions 4.2 and 4.8, read off
     `Structure.funMap`. -/
-def KripkeStructure.cInterp
-    (K : KripkeStructure (monadicWithConstants Const Pred) W Domain)
+def KripkeModel.cInterp
+    (K : KripkeModel (monadicWithConstants Const Pred) W Domain)
     (c : Const) (w : W) : Domain :=
   (K.interp w).funMap (monadicConst c) default
 

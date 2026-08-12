@@ -16,7 +16,7 @@ preservation.
 ## Main declarations
 
 * `Language.correspondence` — the target signature;
-  `KripkeStructure.corrStructure` — the `W ⊕ M` encoding of a Kripke
+  `KripkeModel.corrStructure` — the `W ⊕ M` encoding of a Kripke
   structure as one mathlib structure.
 * `ModalFormula.st?` — the standard translation, with the current world as
   the free variable `Sum.inr k` and box introducing the fresh world
@@ -92,11 +92,11 @@ abbrev corrIndivVar (x : Var) :
 abbrev corrWorldVar (k : ℕ) :
     (correspondence Const Pred).Term (Var ⊕ ℕ) := Term.var (Sum.inr k)
 
-/-- The `W ⊕ M` encoding of a Kripke structure over the monadic signature
+/-- The `W ⊕ M` encoding of a Kripke model over the monadic signature
     as a single mathlib structure: worlds and individuals share the carrier,
     sorted by `corrIndiv`; relational guards make all off-sort atoms false. -/
-@[reducible] def KripkeStructure.corrStructure
-    (K : KripkeStructure (monadicWithConstants Const Pred) W M) :
+@[reducible] def KripkeModel.corrStructure
+    (K : KripkeModel (monadicWithConstants Const Pred) W M) :
     (correspondence Const Pred).Structure (W ⊕ M) where
   funMap := fun {n} f => match n, f with
     | 1, c => fun z => match z 0 with
@@ -114,26 +114,26 @@ abbrev corrWorldVar (k : ℕ) :
     | _ + 3, r => r.elim
 
 @[simp] theorem corrStructure_relMap_rel
-    (K : KripkeStructure (monadicWithConstants Const Pred) W M)
+    (K : KripkeModel (monadicWithConstants Const Pred) W M)
     (P : Pred) (z : Fin 2 → W ⊕ M) :
     (K.corrStructure).RelMap (corrRel P) z ↔
       ∃ w d, z 0 = Sum.inl w ∧ z 1 = Sum.inr d ∧ K.pInterp P w d :=
   Iff.rfl
 
-@[simp] theorem corrStructure_relMap_acc (K : KripkeStructure (monadicWithConstants Const Pred) W M)
+@[simp] theorem corrStructure_relMap_acc (K : KripkeModel (monadicWithConstants Const Pred) W M)
     (z : Fin 2 → W ⊕ M) :
     (K.corrStructure).RelMap (corrAcc (Const := Const)) z ↔
       ∃ w₁ w₂, z 0 = Sum.inl w₁ ∧ z 1 = Sum.inl w₂ ∧ w₂ ∈ K.access w₁ :=
   Iff.rfl
 
 @[simp] theorem corrStructure_relMap_indiv
-    (K : KripkeStructure (monadicWithConstants Const Pred) W M)
+    (K : KripkeModel (monadicWithConstants Const Pred) W M)
     (z : Fin 1 → W ⊕ M) :
     (K.corrStructure).RelMap (corrIndiv (Const := Const)) z ↔
       ∃ d : M, z 0 = Sum.inr d :=
   Iff.rfl
 
-theorem corrStructure_funMap_inl (K : KripkeStructure (monadicWithConstants Const Pred) W M)
+theorem corrStructure_funMap_inl (K : KripkeModel (monadicWithConstants Const Pred) W M)
     (c : Const) (w : W) (z : Fin 1 → W ⊕ M) (hz : z 0 = Sum.inl w) :
     (K.corrStructure).funMap (corrConst (Pred := Pred) c) z =
       Sum.inr (K.cInterp c w) := by
@@ -200,7 +200,7 @@ def ModalFormula.st? (k : ℕ) :
 
 omit [DecidableEq Var] in
 /-- Satisfaction preservation for embedded atoms. -/
-private theorem realize_stAtom? (K : KripkeStructure (monadicWithConstants Const Pred) W M)
+private theorem realize_stAtom? (K : KripkeModel (monadicWithConstants Const Pred) W M)
     {k : ℕ} {χ : (monadicWithConstants Const Pred).Formula Var}
     {ψ : (correspondence Const Pred).Formula (Var ⊕ ℕ)}
     (hψ : stAtom? k χ = some ψ) {val : Var ⊕ ℕ → W ⊕ M} {w : W}
@@ -326,7 +326,7 @@ private theorem pinned_update {val : Var ⊕ ℕ → W ⊕ M} {w : W} {k : ℕ}
     world variable `Sum.inr k` to `w`. Off-sort quantifier instances are
     discharged by the relational guards, and `box`'s fresh world variable
     `k + 1` leaves the pinned index untouched. -/
-theorem realize_st? (K : KripkeStructure (monadicWithConstants Const Pred) W M)
+theorem realize_st? (K : KripkeModel (monadicWithConstants Const Pred) W M)
     {φ : ModalFormula (monadicWithConstants Const Pred) Var} {k : ℕ}
     {ψ : (correspondence Const Pred).Formula (Var ⊕ ℕ)}
     (hψ : φ.st? k = some ψ) {val : Var ⊕ ℕ → W ⊕ M} {w : W} {v : Var → M}
@@ -435,7 +435,7 @@ def stClose (k : ℕ) (ψ : (correspondence Const Pred).Formula (Var ⊕ ℕ)) :
 
 /-- Over `corrStructure`, the guarded witness of `stClose` is exactly a
     world. -/
-theorem realize_stClose (K : KripkeStructure (monadicWithConstants Const Pred) W M)
+theorem realize_stClose (K : KripkeModel (monadicWithConstants Const Pred) W M)
     (k : ℕ) (ψ : (correspondence Const Pred).Formula (Var ⊕ ℕ))
     (val : Var ⊕ ℕ → W ⊕ M) :
     (letI := K.corrStructure; (stClose k ψ).Realize val) ↔
