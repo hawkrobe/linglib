@@ -4,14 +4,12 @@ import Linglib.Core.ModelTheory.Binders
 /-!
 # Constant-domain first-order Kripke structures and modal formulas
 
-Mathlib's `ModelTheory` is classical: one structure, no accessibility. A
-`KripkeStructure L W M` is a `W`-indexed family of `L`-structures on a
-constant domain `M` together with `Finset`-valued accessibility — the shape
-`Semantics/Composition/Model.lean` (without accessibility) and
-`Logic/Team/QBSML/Defs.lean` already instantiate. On top,
-`ModalFormula L α` layers `□` and named quantifiers over embedded classical
-`L.Formula`s, and `ModalFormula.Realize` is Kripke satisfaction
-`K, w ⊨_v φ`. Upstream candidates.
+`[UPSTREAM]` candidates for `Mathlib/ModelTheory`, which is classical: one
+structure, no accessibility. A `KripkeStructure L W M` is a `W`-indexed
+family of `L`-structures on a constant domain `M` together with
+`Finset`-valued accessibility; `ModalFormula L α` layers `□` and named
+quantifiers over embedded classical `L.Formula`s, and
+`ModalFormula.Realize` is Kripke satisfaction `K, w ⊨_v φ`.
 
 ## Main declarations
 
@@ -39,16 +37,14 @@ constant domain `M` together with `Finset`-valued accessibility — the shape
   (`ModalFormula.realize_ofFormula` is `Iff.rfl`).
 -/
 
-universe u v
-
 namespace FirstOrder.Language
 
-variable {L : Language.{u, v}} {W M : Type*} {α : Type*}
+variable {L : Language} {W M α : Type*}
 
 /-- A constant-domain first-order Kripke structure: `Finset`-valued
     accessibility plus a `W`-indexed family of `L`-structures on the
     domain `M`. -/
-structure KripkeStructure (L : Language.{u, v}) (W : Type*) (M : Type*) where
+structure KripkeStructure (L : Language) (W M : Type*) where
   /-- Accessibility relation (per-world set of accessible worlds). -/
   access : W → Finset W
   /-- World-indexed interpretation of the signature. -/
@@ -61,27 +57,27 @@ namespace KripkeStructure
     at `w`. -/
 def RealizeAt (K : KripkeStructure L W M) (w : W) (ψ : L.Formula α)
     (v : α → M) : Prop :=
-  @Formula.Realize _ _ (K.interp w) _ ψ v
+  letI := K.interp w; ψ.Realize v
 
 @[simp] theorem realizeAt_not (K : KripkeStructure L W M) (w : W)
     (ψ : L.Formula α) (v : α → M) :
-    K.RealizeAt w ψ.not v ↔ ¬ K.RealizeAt w ψ v := by
+    K.RealizeAt w ψ.not v ↔ ¬ K.RealizeAt w ψ v :=
   letI := K.interp w
-  exact Formula.realize_not
+  Formula.realize_not
 
 @[simp] theorem realizeAt_inf (K : KripkeStructure L W M) (w : W)
     (ψ₁ ψ₂ : L.Formula α) (v : α → M) :
     K.RealizeAt w (ψ₁ ⊓ ψ₂) v ↔
-      K.RealizeAt w ψ₁ v ∧ K.RealizeAt w ψ₂ v := by
+      K.RealizeAt w ψ₁ v ∧ K.RealizeAt w ψ₂ v :=
   letI := K.interp w
-  exact Formula.realize_inf
+  Formula.realize_inf
 
 @[simp] theorem realizeAt_sup (K : KripkeStructure L W M) (w : W)
     (ψ₁ ψ₂ : L.Formula α) (v : α → M) :
     K.RealizeAt w (ψ₁ ⊔ ψ₂) v ↔
-      K.RealizeAt w ψ₁ v ∨ K.RealizeAt w ψ₂ v := by
+      K.RealizeAt w ψ₁ v ∨ K.RealizeAt w ψ₂ v :=
   letI := K.interp w
-  exact Formula.realize_sup
+  Formula.realize_sup
 
 section Binders
 
@@ -90,16 +86,16 @@ variable [DecidableEq α]
 @[simp] theorem realizeAt_all₁ (K : KripkeStructure L W M) (w : W) (x : α)
     (ψ : L.Formula α) (v : α → M) :
     K.RealizeAt w (Formula.all₁ x ψ) v ↔
-      ∀ d : M, K.RealizeAt w ψ (Function.update v x d) := by
+      ∀ d : M, K.RealizeAt w ψ (Function.update v x d) :=
   letI := K.interp w
-  exact Formula.realize_all₁
+  Formula.realize_all₁
 
 @[simp] theorem realizeAt_ex₁ (K : KripkeStructure L W M) (w : W) (x : α)
     (ψ : L.Formula α) (v : α → M) :
     K.RealizeAt w (Formula.ex₁ x ψ) v ↔
-      ∃ d : M, K.RealizeAt w ψ (Function.update v x d) := by
+      ∃ d : M, K.RealizeAt w ψ (Function.update v x d) :=
   letI := K.interp w
-  exact Formula.realize_ex₁
+  Formula.realize_ex₁
 
 end Binders
 
@@ -109,7 +105,7 @@ end KripkeStructure
     `L.Formula`s embedded wholesale via `ofFormula`, closed under the
     connectives, `□`, and named quantifiers (`◇` is derived —
     `ModalFormula.dia`). -/
-inductive ModalFormula (L : Language.{u, v}) (α : Type*) where
+inductive ModalFormula (L : Language) (α : Type*) where
   /-- An embedded classical (modal-free) formula. -/
   | ofFormula : L.Formula α → ModalFormula L α
   /-- Negation. -/
