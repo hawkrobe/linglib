@@ -4,6 +4,7 @@ import Linglib.Semantics.Polarity.CzechNegation
 import Linglib.Studies.StankovaSimik2025
 import Linglib.Semantics.Questions.Bias
 import Linglib.Data.Examples.Stankova2026
+import Linglib.Data.Examples.StankovaSimik2025
 
 /-!
 # Czech three-way negation in polar questions (Staňková 2026)
@@ -351,5 +352,18 @@ acceptable. -/
 theorem examples_match_table1 :
     analyzedExamples.all (fun (e, pos, d) =>
       (e.judgment == .acceptable) == licenses pos d) = true := by decide
+
+/-- [stankova-2025]'s positive-evidence stimulus ((14): V1 negative PQ
+after evidence for p) with the bias-profile cell it occupies. -/
+def biasCheckedExamples :
+    List (LinguisticExample × ContextualEvidence × OriginalBias × CzechPQForm) :=
+  [ (StankovaSimik2025.Examples.ex14, .forP, .neutral, .interNPQ) ]
+
+/-- The bias profile predicts the positive-evidence stimulus: the form
+is felicitous iff it appears in its evidence × original-bias cell. -/
+theorem bias_examples_match_profile :
+    biasCheckedExamples.all (fun (e, ev, ob, f) =>
+      (e.judgment == .acceptable) == (czechBiasProfile ev ob).contains f) = true := by
+  decide
 
 end Stankova2026
