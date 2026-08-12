@@ -153,16 +153,10 @@ theorem copak_no_diagnostic : diagnostic? copak = none := by decide
 Czech PQs come in V1 (interrogative) and nonV1 (declarative) word
 orders; since *ne-* is inseparable from the finite verb, verb position
 determines the syntactic position of negation ([stankova-2025] §2,
-[stankova-2026] §1). Crossing word order with polarity gives
-[simik-2024]'s 2×2 grid of PQ forms, which maps onto [romero-2024]'s
-PosQ/LoNQ/HiNQ typology. -/
-
-/-- Verb position in Czech PQs: V1 (interrogative word order, verb+ne-
-high) vs nonV1 (declarative word order, verb+ne- in TP). -/
-inductive VerbPosition where
-  | v1
-  | nonV1
-  deriving DecidableEq, Repr
+[stankova-2026] §1). The `VerbPosition` API lives with the experiment
+that established it, in `StankovaSimik2025`. Crossing word order with
+polarity gives [simik-2024]'s 2×2 grid of PQ forms, which maps onto
+[romero-2024]'s PosQ/LoNQ/HiNQ typology. -/
 
 /-- [simik-2024]'s 2×2 grid of Czech PQ forms ([simik-2024] §3.2,
 exx. 11-17): word order (interrogative vs declarative) × polarity. -/
@@ -183,7 +177,8 @@ end Stankova2026
 namespace Semantics.Negation.CzechNegation
 
 open Semantics.Questions.Bias
-open Stankova2026 (VerbPosition CzechPQForm)
+open Stankova2026 (CzechPQForm)
+open StankovaSimik2025 (VerbPosition)
 
 /-- [romero-2024] PQ form of a negation position: outer is high
 negation (HiNQ), inner and medial are both low (LoNQ). -/
@@ -223,6 +218,7 @@ namespace Stankova2026
 
 open Semantics.Negation.CzechNegation
 open Semantics.Questions.Bias
+open StankovaSimik2025 (VerbPosition)
 
 /-- [romero-2024] PQ form of each [simik-2024] grid cell: InterNPQ is
 HiNQ, DeclNPQ is LoNQ, positive forms are PosQ. -/
@@ -277,29 +273,12 @@ theorem czech_outer_matches_romero_evidence :
     NegPosition.outer.toPQForm = .HiNQ ∧
     evidenceBiasOK .HiNQ .againstP = true := ⟨rfl, rfl⟩
 
-/-! ### Verb position and context sensitivity -/
+/-! ### Verb position and context sensitivity
 
-/-- Negation readings available per verb position ([stankova-2025]
-eqs. 11-12 with [stankova-2026]'s medial added): V1 only outer; nonV1
-all three (outer in nonV1 needs contrastive topic + focused verb,
-[stankova-2025] ex. 18). -/
-def VerbPosition.availableReadings : VerbPosition → List NegPosition
-  | .v1    => [.outer]
-  | .nonV1 => [.inner, .medial, .outer]
-
-/-- The default (unmarked) negation reading per verb position. -/
-def VerbPosition.defaultReading : VerbPosition → NegPosition
-  | .v1    => .outer
-  | .nonV1 => .inner
-
-/-- Whether a verb position's default reading requires contextual
-evidence ([stankova-2025] §5): V1 (FALSUM) is context-insensitive —
-compatible with positive, negative, and neutral evidential bias, unlike
-English HiNQs — while nonV1 (inner) requires negative evidential
-bias. -/
-def VerbPosition.requiresContextualEvidence : VerbPosition → Bool
-  | .v1    => false
-  | .nonV1 => true
+The verb-position API (`availableReadings`, `defaultReading`,
+`requiresContextualEvidence`) is [stankova-2025]'s and lives in
+`StankovaSimik2025`; this paper adds the link to evidential bias
+strength. -/
 
 /-- Context sensitivity tracks evidential bias strength: V1/outer none,
 nonV1/inner strong. -/
