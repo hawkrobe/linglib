@@ -85,7 +85,7 @@ euclideanness of `∼ₜ`. -/
 
 theorem sat_box_imp_N {a : OForm Atom} {t : Time} {w : World} :
     F.sat V (.box a) t w → F.sat V (.N a) t w :=
-  fun h => box_restrict (fun _ _ _ => trivial) _ _ h
+  fun h => box_restrict _ (fun _ _ _ => trivial) _ h
 
 theorem sat_N_imp_self {a : OForm Atom} {t : Time} {w : World} :
     F.sat V (.N a) t w → F.sat V a t w := by

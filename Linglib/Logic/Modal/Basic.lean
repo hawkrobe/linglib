@@ -87,17 +87,13 @@ theorem self_imp_box_flip_diamond (p : W → Prop) : p ≤ □[flip R] (◇[R] p
 
 /-! ### Accessibility restriction -/
 
-/-- Restricting accessibility strengthens necessity: `box` is antitone
-    in the relation. -/
-theorem box_restrict {R₁ R₂ : W → W → Prop} (h : R₂ ≤ R₁) (p : W → Prop) :
-    □[R₁] p ≤ □[R₂] p :=
-  fun _ hb v hwv => hb v (h _ _ hwv)
+/-- Restricting accessibility strengthens necessity. -/
+theorem box_restrict (p : W → Prop) : Antitone fun R : W → W → Prop => □[R] p :=
+  fun _ _ h _ hb v hwv => hb v (h _ _ hwv)
 
-/-- Restricting accessibility weakens possibility: `diamond` is monotone
-    in the relation. -/
-theorem diamond_restrict {R₁ R₂ : W → W → Prop} (h : R₂ ≤ R₁) (p : W → Prop) :
-    ◇[R₂] p ≤ ◇[R₁] p :=
-  fun _ hd => let ⟨v, hwv, hpv⟩ := hd; ⟨v, h _ _ hwv, hpv⟩
+/-- Restricting accessibility weakens possibility. -/
+theorem diamond_restrict (p : W → Prop) : Monotone fun R : W → W → Prop => ◇[R] p :=
+  fun _ _ h _ hd => let ⟨v, hwv, hpv⟩ := hd; ⟨v, h _ _ hwv, hpv⟩
 
 /-! ### Bundled frame classes -/
 
