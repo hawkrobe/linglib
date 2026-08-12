@@ -33,7 +33,7 @@ whole-formula claims; the Fact 4 countermodel is proved by hand, with
 `decide` confined to finite side conditions. The propositional facts (3, 7,
 8, 10) are stated with the individual constants of the paper's
 Definition 4.1 (`Formula.predc` atoms, world-relative
-`KripkeStructure.cInterp`), the quantified facts with variable atoms — both
+`KripkeModel.cInterp`), the quantified facts with variable atoms — both
 as in the paper. Atoms and worlds come from
 `Logic/Team/BSML/Scenarios.lean`, so this file and `Studies/Aloni2022.lean`
 target the same world space.

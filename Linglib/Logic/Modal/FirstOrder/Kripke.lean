@@ -2,10 +2,10 @@ import Mathlib.ModelTheory.Semantics
 import Linglib.Core.ModelTheory.StructureFamily
 
 /-!
-# Constant-domain first-order Kripke structures and modal formulas
+# Constant-domain first-order Kripke models and modal formulas
 
 `[UPSTREAM]` candidates for `Mathlib/ModelTheory`, which is classical: one
-structure, no accessibility. A `KripkeStructure L W M` is a `W`-indexed
+structure, no accessibility. A `KripkeModel L W M` is a `W`-indexed
 family of `L`-structures on a constant domain `M` together with
 `Finset`-valued accessibility; `ModalFormula L α` layers `□` and named
 quantifiers over embedded classical `L.Formula`s, and
@@ -13,7 +13,7 @@ quantifiers over embedded classical `L.Formula`s, and
 
 ## Main declarations
 
-* `KripkeStructure` — accessibility plus a world-indexed family of
+* `KripkeModel` — accessibility plus a world-indexed family of
   first-order structures on a constant domain (classical satisfaction at an
   index is `Core/ModelTheory/StructureFamily.lean`'s `Formula.RealizeAt`).
 * `ModalFormula`, `ModalFormula.Realize` — modal formulas over embedded
@@ -37,10 +37,10 @@ namespace FirstOrder.Language
 
 variable {L : Language} {W M α : Type*}
 
-/-- A constant-domain first-order Kripke structure — the Kripke analogue
-    of mathlib's `L.Structure`: `Finset`-valued accessibility plus a
-    `W`-indexed family of `L`-structures on the domain `M`. -/
-structure KripkeStructure (L : Language) (W M : Type*) where
+/-- A constant-domain first-order Kripke model: `Finset`-valued
+    accessibility plus a `W`-indexed family of `L`-structures on the
+    domain `M`. -/
+structure KripkeModel (L : Language) (W M : Type*) where
   /-- Accessibility relation (per-world set of accessible worlds). -/
   access : W → Finset W
   /-- World-indexed interpretation of the signature. -/
@@ -77,7 +77,7 @@ variable [DecidableEq α]
 /-- Kripke satisfaction `K, w ⊨_v φ`: classical formulas evaluate at the
     world's structure, `□` quantifies over accessible worlds, and named
     quantifiers update the valuation. -/
-def Realize (K : KripkeStructure L W M) :
+def Realize (K : KripkeModel L W M) :
     W → ModalFormula L α → (α → M) → Prop
   | w, .ofFormula ψ, v => ψ.RealizeAt K.interp w v
   | w, .not φ, v => ¬ Realize K w φ v
@@ -87,7 +87,7 @@ def Realize (K : KripkeStructure L W M) :
   | w, .all x φ, v => ∀ d : M, Realize K w φ (Function.update v x d)
   | w, .ex x φ, v => ∃ d : M, Realize K w φ (Function.update v x d)
 
-variable (K : KripkeStructure L W M) (w : W) (v : α → M)
+variable (K : KripkeModel L W M) (w : W) (v : α → M)
 
 /-- Embedded classical formulas realize classically — by construction. -/
 @[simp] theorem realize_ofFormula (ψ : L.Formula α) :
