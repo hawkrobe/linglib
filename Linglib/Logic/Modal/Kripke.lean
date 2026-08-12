@@ -1,5 +1,4 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Finset.Defs
 
 /-!
 # Kripke models
