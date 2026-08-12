@@ -33,12 +33,10 @@ def diamond (p : W → Prop) (w : W) : Prop :=
 
 /-! ### Duality -/
 
-/-- Push negation through `box`: `¬□p ↔ ◇¬p`. -/
 @[simp] theorem not_box (p : W → Prop) (w : W) :
     ¬ □[R] p w ↔ ◇[R] (fun v => ¬ p v) w := by
   simp [box, diamond, not_forall]
 
-/-- Push negation through `diamond`: `¬◇p ↔ □¬p`. -/
 @[simp] theorem not_diamond (p : W → Prop) (w : W) :
     ¬ ◇[R] p w ↔ □[R] (fun v => ¬ p v) w := by
   simp [box, diamond, not_and]
