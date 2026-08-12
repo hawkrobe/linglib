@@ -156,7 +156,9 @@ instance [Fintype W] (R : W → W → Prop) (p : W → Prop) (w : W)
 
 A normal modal logic is identified with its set of axiom schemas over K;
 the `Finset` lattice (`⊆`, `∪`, `∩`, `⊥ = ∅ = K`) is the lattice of
-normal logics. -/
+normal logics. The named logics below follow the textbook scheme — the
+name lists the axioms added to `K` — plus the historical names `T`,
+`S4`, `S5`. -/
 
 /-- Axiom schemas addable to the base logic K. -/
 inductive Axiom where
@@ -172,37 +174,16 @@ inductive Axiom where
   | five
   deriving DecidableEq, Repr, Inhabited
 
-/-- The base logic `K`: no additional axioms. -/
 def K : Finset Axiom := ∅
-
-/-- `T = K + M`. -/
 def T : Finset Axiom := {.M}
-
-/-- `D = K + D`. -/
 def D : Finset Axiom := {.D}
-
-/-- `KB = K + B`. -/
 def KB : Finset Axiom := {.B}
-
-/-- `K4 = K + 4`. -/
 def K4 : Finset Axiom := {.four}
-
-/-- `K5 = K + 5`. -/
 def K5 : Finset Axiom := {.five}
-
-/-- `S4 = K + M + 4`. -/
 def S4 : Finset Axiom := {.M, .four}
-
-/-- `S5 = K + M + 5`. -/
 def S5 : Finset Axiom := {.M, .five}
-
-/-- `KTB = K + M + B`. -/
 def KTB : Finset Axiom := {.M, .B}
-
-/-- `KD45 = K + D + 4 + 5` (the doxastic logic). -/
 def KD45 : Finset Axiom := {.D, .four, .five}
-
-/-- `K45 = K + 4 + 5`. -/
 def K45 : Finset Axiom := {.four, .five}
 
 /-- The frame condition of an axiom schema. -/
