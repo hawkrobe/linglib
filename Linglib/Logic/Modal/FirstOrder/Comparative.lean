@@ -39,6 +39,13 @@ instance (S : L.Structure E) (R : L.Relations 1) (e : E)
     [h : Decidable (S.RelMap R ![e])] : Decidable (e ∈ S.ext₁ R) :=
   h
 
+/-- Pointwise decidability of atoms across a doubly-indexed structure family —
+the hook that makes `decide` available on finite models; the semantics itself
+is decidability-free. -/
+abbrev DecidableAtoms (interp : I → W → L.Structure E) :=
+  ∀ (i : I) (w : W) (n : ℕ) (r : L.Relations n) (x : Fin n → E),
+    Decidable ((interp i w).RelMap r x)
+
 /-- Comparative-possibility formulas: an embedded classical formula (free
 variables valued by domain elements), booleans, and the comparative ≻
 (`.comp`). Booleans exist at both layers because negation and the derived
@@ -52,6 +59,9 @@ inductive CompFormula (L : Language) (E : Type*) where
 
 namespace CompFormula
 
+open Core.Order (TotalPreorder)
+open ComparativeProbability
+
 /-- Ground unary predication `R(e)`, as an embedded formula. -/
 abbrev matom (R : L.Relations 1) (e : E) : CompFormula L E :=
   .ofFormula (R.formula ![Term.var e])
@@ -61,27 +71,13 @@ def equi (A B : CompFormula L E) : CompFormula L E :=
   .inf (.not (.comp A B)) (.not (.comp B A))
 
 /-- Formulas free of the comparative: the fragment whose truth does not
-consult the ordering (`realize_congr_of_compFree`). -/
+consult the ordering (`CompFree.realize_congr`). -/
 def CompFree : CompFormula L E → Prop
   | .ofFormula _ => True
   | .not A => A.CompFree
   | .inf A B => A.CompFree ∧ B.CompFree
   | .sup A B => A.CompFree ∧ B.CompFree
   | .comp _ _ => False
-
-end CompFormula
-
-/-- Pointwise decidability of atoms across a doubly-indexed structure family —
-the hook that makes `decide` available on finite models; the semantics itself
-is decidability-free. -/
-abbrev DecidableAtoms (interp : I → W → L.Structure E) :=
-  ∀ (i : I) (w : W) (n : ℕ) (r : L.Relations n) (x : Fin n → E),
-    Decidable ((interp i w).RelMap r x)
-
-namespace CompFormula
-
-open Core.Order (TotalPreorder)
-open ComparativeProbability
 
 variable (interp : I → W → L.Structure E)
 
