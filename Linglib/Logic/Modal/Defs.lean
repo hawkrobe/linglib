@@ -107,4 +107,32 @@ theorem box_five [hE : IsEuclidean R] (h : ◇[R] p w) : □[R] (◇[R] p) w :=
   let ⟨u, hwu, hpu⟩ := h
   fun v hwv => ⟨u, hE.eucl w v u hwv hwu, hpu⟩
 
+/-- **Correspondence for T**: `□p ≤ p` for all `p` iff `R` is reflexive. -/
+theorem box_T_iff : (∀ p : W → Prop, □[R] p ≤ p) ↔ Std.Refl R :=
+  ⟨fun h => ⟨fun w => h (R w) w fun _ hv => hv⟩,
+   fun hR => haveI := hR; fun _ _ h => box_T h⟩
+
+/-- **Correspondence for D**: `□p ≤ ◇p` for all `p` iff `R` is serial. -/
+theorem box_D_iff : (∀ p : W → Prop, □[R] p ≤ ◇[R] p) ↔ IsSerial R :=
+  ⟨fun h => ⟨fun w =>
+     let ⟨v, hv, _⟩ := h (fun _ => True) w fun _ _ => trivial; ⟨v, hv⟩⟩,
+   fun hR => haveI := hR; fun _ _ h => box_D h⟩
+
+/-- **Correspondence for B**: `p ≤ □◇p` for all `p` iff `R` is symmetric. -/
+theorem box_B_iff : (∀ p : W → Prop, p ≤ □[R] (◇[R] p)) ↔ Std.Symm R :=
+  ⟨fun h => ⟨fun w v hwv =>
+     match h (· = w) w rfl v hwv with | ⟨_, hvw, rfl⟩ => hvw⟩,
+   fun hR => haveI := hR; fun _ _ h => box_B h⟩
+
+/-- **Correspondence for 4**: `□p ≤ □□p` for all `p` iff `R` is transitive. -/
+theorem box_four_iff : (∀ p : W → Prop, □[R] p ≤ □[R] (□[R] p)) ↔ IsTrans W R :=
+  ⟨fun h => ⟨fun w v u hwv hvu => h (R w) w (fun _ hv => hv) v hwv u hvu⟩,
+   fun hR => haveI := hR; fun _ _ h => box_four h⟩
+
+/-- **Correspondence for 5**: `◇p ≤ □◇p` for all `p` iff `R` is Euclidean. -/
+theorem box_five_iff : (∀ p : W → Prop, ◇[R] p ≤ □[R] (◇[R] p)) ↔ IsEuclidean R :=
+  ⟨fun h => ⟨fun w v u hwv hwu =>
+     match h (· = u) w ⟨u, hwu, rfl⟩ v hwv with | ⟨_, hvu, rfl⟩ => hvu⟩,
+   fun hR => haveI := hR; fun _ _ h => box_five h⟩
+
 end ModalLogic
