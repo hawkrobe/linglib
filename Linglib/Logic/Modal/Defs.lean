@@ -9,7 +9,8 @@ import Mathlib.Order.PropInstances
 This file defines the relational `box`/`diamond` of Kripke semantics
 ([kripke-1963]), the frame conditions of modal correspondence theory for
 accessibility relations `W → W → Prop`, and the per-axiom correspondences
-(K, T, D, 4, B, 5) connecting them; the `Set`-valued mathlib counterparts
+(K, T, D, 4, B, 5) connecting them (frame definability,
+[blackburn-derijke-venema-2001] Chapter 3); the `Set`-valued mathlib counterparts
 of the operators are `Rel.core` and `Rel.preimage`.
 -/
 
@@ -105,13 +106,5 @@ theorem box_B [Std.Symm R] (h : p w) : □[R] (◇[R] p) w :=
 theorem box_five [hE : IsEuclidean R] (h : ◇[R] p w) : □[R] (◇[R] p) w :=
   let ⟨u, hwu, hpu⟩ := h
   fun v hwv => ⟨u, hE.eucl w v u hwv hwu, hpu⟩
-
-/-- **Moore reductio for KD4**: no world satisfies `□(p ∧ ¬□p)` over a
-    serial transitive relation — the content is satisfiable; boxing it
-    is not. -/
-theorem box_not_moore [hS : IsSerial R] [IsTrans W R] :
-    ¬ □[R] (fun v => p v ∧ ¬ □[R] p v) w := fun h =>
-  have ⟨v, hv⟩ := hS.serial w
-  (h v hv).2 (box_four (fun u hu => (h u hu).1) v hv)
 
 end ModalLogic

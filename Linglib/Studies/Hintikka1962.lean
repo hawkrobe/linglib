@@ -8,19 +8,27 @@ import Linglib.Discourse.Commitment.Frame
 "p but I do not believe that p" is not self-contradictory — there are
 worlds where `p` holds while the speaker fails to believe `p`. But its
 would-be-believed form `B_a (p ∧ ¬ B_a p)` is *indefensible* in any KD4
-doxastic model: a 1-line specialisation of
-`ModalLogic.box_not_moore` to the agent-indexed belief
-accessibility of `CommitmentState`. The knowledge analogue specialises
-the same substrate lemma to epistemic accessibility.
+doxastic model: the `box_not_moore` reductio below, specialised to the
+agent-indexed belief accessibility of `CommitmentState`. The knowledge
+analogue specialises the same reductio to epistemic accessibility.
 -/
 
 namespace Hintikka1962
 
 open Discourse.Commitment.Frame
-open ModalLogic (box_not_moore IsSerial)
+open ModalLogic (box box_four IsSerial)
 open Modality.EpistemicLogic (knows)
 
 variable {W A : Type*}
+
+/-- **Moore reductio for KD4** ([hintikka-1962] Ch. 4): no world satisfies
+    `□(p ∧ ¬□p)` over a serial transitive relation — the content is
+    satisfiable; boxing it is not. -/
+theorem box_not_moore {R : W → W → Prop} {p : W → Prop} {w : W}
+    [hS : IsSerial R] [IsTrans W R] :
+    ¬ box R (fun v => p v ∧ ¬ box R p v) w := fun h =>
+  have ⟨v, hv⟩ := hS.serial w
+  (h v hv).2 (box_four (fun u hu => (h u hu).1) v hv)
 
 /-- The Moore content for speaker `s` and proposition `p`: worlds where
     `p` holds and `s` does not believe `p`. -/
