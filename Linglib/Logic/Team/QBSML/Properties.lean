@@ -29,7 +29,7 @@ empty-team support, hence flat support, via the same
   is mathlib `Formula.Realize` at every index.
 * `Formula.toModal?`, `support_iff_forall_realize` — the **full**
   Proposition 4.1: the NE-free fragment (modals included) translates into
-  `ModalFormula` over `Logic/Modal/FirstOrder/Kripke.lean`, and support is
+  `ModalFormula` over `Logic/Modal/FirstOrder/Semantics.lean`, and support is
   Kripke satisfaction at every index; the translation is total on exactly
   the NE-free fragment (`exists_toModal?_of_neFree`).
 * `eval_mapAtoms_iff` — atom-substitution congruence: an atom map with
@@ -1007,7 +1007,7 @@ theorem support_iff_forall_realizeAt (M : Model W Domain Const Pred)
 The complete [aloni-vanormondt-2023] Proposition 4.1: `Formula.toModal?`
 translates the **whole NE-free fragment** — modals included — into
 `ModalFormula` over the monadic signature
-(`Logic/Modal/FirstOrder/Kripke.lean`), and support is Kripke satisfaction at
+(`Logic/Modal/FirstOrder/Semantics.lean`), and support is Kripke satisfaction at
 every index. The translation is total on exactly the NE-free fragment. -/
 
 /-- Translate QBSML into modal formulas over the monadic signature: atoms
@@ -1016,16 +1016,15 @@ every index. The translation is total on exactly the NE-free fragment. -/
 def Formula.toModal? :
     Formula Var Const Pred →
       Option (ModalFormula (Language.monadicWithConstants Const Pred) Var)
-  | .pred P x => some (.ofFormula ((monadicRel P).formula₁ (Term.var x)))
+  | .pred P x => some ((monadicRel P).modalFormula₁ (Term.var x))
   | .predc P c =>
-      some (.ofFormula ((monadicRel P).formula₁
-        (Constants.term (monadicConst c))))
+      some ((monadicRel P).modalFormula₁ (Constants.term (monadicConst c)))
   | .ne => none
   | .neg φ => φ.toModal?.map .not
   | .conj φ ψ =>
-      φ.toModal?.bind fun α => ψ.toModal?.map (ModalFormula.inf α ·)
+      φ.toModal?.bind fun α => ψ.toModal?.map (α ⊓ ·)
   | .disj φ ψ =>
-      φ.toModal?.bind fun α => ψ.toModal?.map (ModalFormula.sup α ·)
+      φ.toModal?.bind fun α => ψ.toModal?.map (α ⊔ ·)
   | .poss φ => φ.toModal?.map ModalFormula.dia
   | .exi x φ => φ.toModal?.map (ModalFormula.ex x ·)
   | .univ x φ => φ.toModal?.map (ModalFormula.all x ·)
@@ -1095,11 +1094,11 @@ theorem exists_toModal?_of_neFree :
   | conj _ _ ih₁ ih₂ =>
     obtain ⟨τ₁, hτ₁⟩ := ih₁
     obtain ⟨τ₂, hτ₂⟩ := ih₂
-    exact ⟨.inf τ₁ τ₂, by simp [Formula.toModal?, hτ₁, hτ₂]⟩
+    exact ⟨τ₁ ⊓ τ₂, by simp [Formula.toModal?, hτ₁, hτ₂]⟩
   | disj _ _ ih₁ ih₂ =>
     obtain ⟨τ₁, hτ₁⟩ := ih₁
     obtain ⟨τ₂, hτ₂⟩ := ih₂
-    exact ⟨.sup τ₁ τ₂, by simp [Formula.toModal?, hτ₁, hτ₂]⟩
+    exact ⟨τ₁ ⊔ τ₂, by simp [Formula.toModal?, hτ₁, hτ₂]⟩
   | poss _ ih =>
     obtain ⟨τ, hτ⟩ := ih
     exact ⟨τ.dia, by simp [Formula.toModal?, hτ]⟩
@@ -1129,10 +1128,11 @@ private theorem support_and_antiSupport_singleton_realize
   | pred P x =>
     intro τ hτ i v hv
     rw [show (Formula.pred P x).toModal? =
-        some (.ofFormula ((monadicRel P).formula₁ (Term.var x))) from rfl,
+        some ((monadicRel P).modalFormula₁ (Term.var x)) from rfl,
       Option.some.injEq] at hτ
     subst hτ
-    rw [ModalFormula.realize_ofFormula, KripkeModel.realizeAt_rel₁]
+    let _I := M.interp i.world
+    rw [ModalFormula.realize_monadicRel, Term.realize_var]
     constructor
     · constructor
       · intro h
@@ -1156,11 +1156,11 @@ private theorem support_and_antiSupport_singleton_realize
   | predc P c =>
     intro τ hτ i v hv
     rw [show (Formula.predc P c).toModal? =
-        some (.ofFormula ((monadicRel P).formula₁
-          (Constants.term (monadicConst c)))) from rfl,
+        some ((monadicRel P).modalFormula₁
+          (Constants.term (monadicConst c))) from rfl,
       Option.some.injEq] at hτ
     subst hτ
-    rw [ModalFormula.realize_ofFormula, KripkeModel.realizeAt_rel₁_const]
+    rw [ModalFormula.realize_monadicRel, realize_monadicConst]
     constructor
     · constructor
       · intro h

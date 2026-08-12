@@ -111,22 +111,23 @@ theorem support_possPxOrQx_iff
     support univAccessModel (.poss (.disj Px Qx)) s ↔
       ∀ i ∈ s,
         (ModalFormula.dia
-          (.sup (.ofFormula ((monadicRel Predicate.P).formula₁ (Term.var QVar.x)))
-            (.ofFormula
-              ((monadicRel Predicate.Q).formula₁ (Term.var QVar.x))))).Realize
+          ((monadicRel Predicate.P).modalFormula₁ (Term.var QVar.x) ⊔
+            (monadicRel Predicate.Q).modalFormula₁ (Term.var QVar.x))).Realize
           univAccessModel i.world (v i) :=
   support_iff_forall_realize univAccessModel rfl s v hv
 
-/-- The closed standard translation of `∀x(Px ∨ Qx)`: quantifiers
+/-- The modal image of `∀x(Px ∨ Qx)` under `toModal?`. -/
+def univPxOrQxModal :
+    ModalFormula (Language.monadicWithConstants FCAtom Predicate) QVar :=
+  ModalFormula.all QVar.x
+    ((monadicRel Predicate.P).modalFormula₁ (Term.var QVar.x) ⊔
+      (monadicRel Predicate.Q).modalFormula₁ (Term.var QVar.x))
+
+/-- The standard translation of `∀x(Px ∨ Qx)`, computed by `st`: quantifiers
     relativized to the individual sort, predicates world-relativized to the
     current-world variable `Sum.inr 0`. -/
 def stUnivPxOrQx : (Language.correspondence FCAtom Predicate).Formula (QVar ⊕ ℕ) :=
-  Formula.all₁ (Sum.inl QVar.x)
-    ((corrIndiv.formula₁ (Term.var (Sum.inl QVar.x))).imp
-      ((corrRel Predicate.P).formula₂ (Term.var (Sum.inr 0))
-          (Term.var (Sum.inl QVar.x)) ⊔
-        (corrRel Predicate.Q).formula₂ (Term.var (Sum.inr 0))
-          (Term.var (Sum.inl QVar.x))))
+  univPxOrQxModal.st 0
 
 /-- The closure is a genuine sentence: the compiler computes the
     free-variable finset. -/
@@ -144,15 +145,15 @@ local instance : (Language.correspondence FCAtom Predicate).Structure (TwoAtomWo
 /-- Truth of the standard-translation sentence in `univAccessModel.corrStructure`
     is support of `∀x(Px ∨ Qx)` at some singleton with a total assignment —
     the compactness-ready form of Proposition 4.1, every translation step
-    (`toModal?`, `st?`, the free-variable check) computed by the compiler. -/
+    (`toModal?`, `st`, the free-variable check) computed by the compiler. -/
 theorem models_stUnivPxOrQxSentence_iff :
     (TwoAtomWorld ⊕ FCAtom) ⊨ stUnivPxOrQxSentence ↔
       ∃ (i : Index TwoAtomWorld QVar FCAtom) (v : QVar → FCAtom),
         (∀ y, i.assign y = some (v y)) ∧ support univAccessModel univPxOrQx {i} :=
   haveI : Nonempty FCAtom := ⟨.a⟩
-  ⟨exists_support_of_models_toSentence univAccessModel rfl rfl stUnivPxOrQx_closed,
+  ⟨exists_support_of_models_toSentence univAccessModel (τ := univPxOrQxModal) rfl stUnivPxOrQx_closed,
     fun ⟨_, _, hv, h⟩ =>
-      models_toSentence_of_support univAccessModel rfl rfl stUnivPxOrQx_closed hv h⟩
+      models_toSentence_of_support univAccessModel (τ := univPxOrQxModal) rfl stUnivPxOrQx_closed hv h⟩
 
 /-! ### Frame conditions -/
 

@@ -1,24 +1,24 @@
 import Mathlib.ModelTheory.Semantics
 import Linglib.Core.ModelTheory.StructureFamily
+import Linglib.Logic.Modal.FirstOrder.Syntax
 
 /-!
-# Constant-domain first-order Kripke models and modal formulas
+# Constant-domain Kripke semantics
 
 `[UPSTREAM]` candidates for `Mathlib/ModelTheory`, which is classical: one
 structure, no accessibility. A `KripkeModel L W M` is a `W`-indexed
 family of `L`-structures on a constant domain `M` together with
-`Finset`-valued accessibility; `ModalFormula L α` layers `□` and named
-quantifiers over embedded classical `L.Formula`s, and
-`ModalFormula.Realize` is Kripke satisfaction `K, w ⊨_v φ`.
+`Finset`-valued accessibility; `ModalFormula L α` is the quantified modal
+language in `BoundedFormula`'s basis, and `ModalFormula.Realize` is
+Kripke satisfaction `K, w ⊨_v φ`.
 
 ## Main declarations
 
 * `KripkeModel` — accessibility plus a world-indexed family of
   first-order structures on a constant domain (classical satisfaction at an
   index is `Core/ModelTheory/StructureFamily.lean`'s `Formula.RealizeAt`).
-* `ModalFormula`, `ModalFormula.Realize` — modal formulas over embedded
-  classical formulas, and Kripke satisfaction; `ModalFormula.dia` is the
-  derived `◇ := ¬□¬`.
+* `ModalFormula.Realize` — Kripke satisfaction for the modal language of
+  `Syntax.lean`, with the `realize_*` simp set and the Barcan laws.
 
 ## Implementation notes
 
@@ -28,9 +28,7 @@ quantifiers over embedded classical `L.Formula`s, and
 * `ModalFormula` quantifiers bind **named** variables with
   `Function.update` semantics (the `Formula.all₁` / `ex₁` convention of
   `Core/ModelTheory/Binders.lean`), not de Bruijn indices: the modal
-  layer's consumers carry named variables, and the embedding of classical
-  formulas via `ofFormula` makes satisfaction commute by construction
-  (`ModalFormula.realize_ofFormula` is `Iff.rfl`).
+  layer's consumers carry named variables.
 -/
 
 namespace FirstOrder.Language
@@ -46,86 +44,76 @@ structure KripkeModel (L : Language) (W M : Type*) where
   /-- World-indexed interpretation of the signature. -/
   interp : W → L.Structure M
 
-/-- Modal formulas over `L` with named free variables `α`: classical
-    `L.Formula`s embedded wholesale via `ofFormula`, closed under the
-    connectives, `□`, and named quantifiers (`◇` is derived —
-    `ModalFormula.dia`). -/
-inductive ModalFormula (L : Language) (α : Type*) where
-  /-- An embedded classical (modal-free) formula. -/
-  | ofFormula : L.Formula α → ModalFormula L α
-  /-- Negation. -/
-  | not : ModalFormula L α → ModalFormula L α
-  /-- Conjunction. -/
-  | inf : ModalFormula L α → ModalFormula L α → ModalFormula L α
-  /-- Disjunction. -/
-  | sup : ModalFormula L α → ModalFormula L α → ModalFormula L α
-  /-- Necessity. -/
-  | box : ModalFormula L α → ModalFormula L α
-  /-- Universal quantification of a named variable. -/
-  | all : α → ModalFormula L α → ModalFormula L α
-  /-- Existential quantification of a named variable. -/
-  | ex : α → ModalFormula L α → ModalFormula L α
-
 namespace ModalFormula
-
-/-- Possibility, derived: `◇φ := ¬□¬φ`. -/
-def dia (φ : ModalFormula L α) : ModalFormula L α :=
-  .not (.box (.not φ))
 
 variable [DecidableEq α]
 
-/-- Kripke satisfaction `K, w ⊨_v φ`: classical formulas evaluate at the
-    world's structure, `□` quantifies over accessible worlds, and named
+/-- Kripke satisfaction `K, w ⊨_v φ`: atoms evaluate at the world's
+    structure, `□` quantifies over accessible worlds, and named
     quantifiers update the valuation. -/
 def Realize (K : KripkeModel L W M) :
     W → ModalFormula L α → (α → M) → Prop
-  | w, .ofFormula ψ, v => ψ.RealizeAt K.interp w v
-  | w, .not φ, v => ¬ Realize K w φ v
-  | w, .inf φ ψ, v => Realize K w φ v ∧ Realize K w ψ v
-  | w, .sup φ ψ, v => Realize K w φ v ∨ Realize K w ψ v
+  | w, .equal t₁ t₂, v => letI := K.interp w; t₁.realize v = t₂.realize v
+  | w, .rel R ts, v =>
+      letI := K.interp w; Structure.RelMap R fun i => (ts i).realize v
+  | _, .falsum, _ => False
+  | w, .imp φ ψ, v => Realize K w φ v → Realize K w ψ v
   | w, .box φ, v => ∀ w' ∈ K.access w, Realize K w' φ v
   | w, .all x φ, v => ∀ d : M, Realize K w φ (Function.update v x d)
-  | w, .ex x φ, v => ∃ d : M, Realize K w φ (Function.update v x d)
 
 variable (K : KripkeModel L W M) (w : W) (v : α → M)
 
-/-- Embedded classical formulas realize classically — by construction. -/
-@[simp] theorem realize_ofFormula (ψ : L.Formula α) :
-    (ofFormula ψ : ModalFormula L α).Realize K w v ↔ ψ.RealizeAt K.interp w v :=
+@[simp] theorem realize_equal (t₁ t₂ : L.Term α) :
+    (equal t₁ t₂).Realize K w v ↔
+      (letI := K.interp w; t₁.realize v = t₂.realize v) :=
+  Iff.rfl
+
+@[simp] theorem realize_rel {n : ℕ} (R : L.Relations n) (ts : Fin n → L.Term α) :
+    (rel R ts).Realize K w v ↔
+      (letI := K.interp w; Structure.RelMap R fun i => (ts i).realize v) :=
+  Iff.rfl
+
+@[simp] theorem realize_bot :
+    (⊥ : ModalFormula L α).Realize K w v ↔ False :=
+  Iff.rfl
+
+@[simp] theorem realize_imp (φ ψ : ModalFormula L α) :
+    (imp φ ψ).Realize K w v ↔ (φ.Realize K w v → ψ.Realize K w v) :=
   Iff.rfl
 
 @[simp] theorem realize_not (φ : ModalFormula L α) :
     (ModalFormula.not φ).Realize K w v ↔ ¬ φ.Realize K w v :=
   Iff.rfl
 
+@[simp] theorem realize_top :
+    (⊤ : ModalFormula L α).Realize K w v ↔ True := by
+  simp [Top.top]
+
 @[simp] theorem realize_inf (φ ψ : ModalFormula L α) :
-    (ModalFormula.inf φ ψ).Realize K w v ↔
-      φ.Realize K w v ∧ ψ.Realize K w v :=
-  Iff.rfl
+    (φ ⊓ ψ).Realize K w v ↔ φ.Realize K w v ∧ ψ.Realize K w v := by
+  simp [Min.min]
 
 @[simp] theorem realize_sup (φ ψ : ModalFormula L α) :
-    (ModalFormula.sup φ ψ).Realize K w v ↔
-      φ.Realize K w v ∨ ψ.Realize K w v :=
-  Iff.rfl
+    (φ ⊔ ψ).Realize K w v ↔ φ.Realize K w v ∨ ψ.Realize K w v := by
+  simp [Max.max, imp_iff_not_or]
 
 @[simp] theorem realize_box (φ : ModalFormula L α) :
-    (ModalFormula.box φ).Realize K w v ↔
-      ∀ w' ∈ K.access w, φ.Realize K w' v :=
+    (box φ).Realize K w v ↔ ∀ w' ∈ K.access w, φ.Realize K w' v :=
   Iff.rfl
 
 @[simp] theorem realize_all (x : α) (φ : ModalFormula L α) :
-    (ModalFormula.all x φ).Realize K w v ↔
+    (all x φ).Realize K w v ↔
       ∀ d : M, φ.Realize K w (Function.update v x d) :=
   Iff.rfl
 
 @[simp] theorem realize_ex (x : α) (φ : ModalFormula L α) :
     (ModalFormula.ex x φ).Realize K w v ↔
-      ∃ d : M, φ.Realize K w (Function.update v x d) :=
-  Iff.rfl
+      ∃ d : M, φ.Realize K w (Function.update v x d) := by
+  simp [ModalFormula.ex, not_forall]
 
 @[simp] theorem realize_dia (φ : ModalFormula L α) :
     (dia φ).Realize K w v ↔ ∃ w' ∈ K.access w, φ.Realize K w' v := by
-  simp only [dia, realize_not, realize_box, not_forall, not_not, exists_prop]
+  simp [dia, not_forall]
 
 /-! ### The Barcan laws
 

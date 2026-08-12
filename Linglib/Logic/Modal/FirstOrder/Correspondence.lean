@@ -149,159 +149,74 @@ variable [DecidableEq Var]
 /-- Translate a monadic term: variables stay, constants become their unary
     function applied to the current world variable. -/
 def stTerm (k : ℕ) :
-    (monadicWithConstants Const Pred).Term (Var ⊕ Fin 0) →
+    (monadicWithConstants Const Pred).Term Var →
       (correspondence Const Pred).Term (Var ⊕ ℕ)
-  | .var (Sum.inl x) => corrIndivVar x
-  | .var (Sum.inr i) => i.elim0
+  | .var x => corrIndivVar x
   | @Term.func _ _ l f _ => match l, f with
     | 0, Sum.inr c => Term.func (corrConst c) ![corrWorldVar k]
     | 0, Sum.inl e => e.elim
     | _ + 1, Sum.inl e => e.elim
     | _ + 1, Sum.inr e => e.elim
 
-/-- Translate an embedded classical formula when it is a monadic atom
-    (`none` otherwise — which never arises from `Formula.toModal?`
-    images, whose embedded formulas are exactly the atoms). -/
-def stAtom? (k : ℕ) :
-    (monadicWithConstants Const Pred).Formula Var →
-      Option ((correspondence Const Pred).Formula (Var ⊕ ℕ))
-  | @BoundedFormula.rel _ _ _ l R ts => match l, R, ts with
+/-- The standard translation `ST_k` ([blackburn-derijke-venema-2001]): the
+    current world is the free variable `Sum.inr k`; `box` relativizes a
+    fresh world variable `Sum.inr (k + 1)` along accessibility; quantifiers
+    relativize to the individual sort. Total — `ModalFormula` atoms are
+    atomic. -/
+def ModalFormula.st (k : ℕ) :
+    ModalFormula (monadicWithConstants Const Pred) Var →
+      (correspondence Const Pred).Formula (Var ⊕ ℕ)
+  | .equal t₁ t₂ => Term.equal (stTerm k t₁) (stTerm k t₂)
+  | @ModalFormula.rel _ _ l R ts => match l, R, ts with
     | 1, Sum.inl P, ts =>
-        some ((corrRel P).formula₂ (corrWorldVar k) (stTerm k (ts 0)))
+        (corrRel P).formula₂ (corrWorldVar k) (stTerm k (ts 0))
     | 1, Sum.inr r, _ => r.elim
     | 0, Sum.inl r, _ => r.elim
     | 0, Sum.inr r, _ => r.elim
     | _ + 2, Sum.inl r, _ => r.elim
     | _ + 2, Sum.inr r, _ => r.elim
-  | _ => none
-
-/-- The standard translation `ST_k` ([blackburn-derijke-venema-2001]): the
-    current world is the free variable `Sum.inr k`; `box` relativizes a
-    fresh world variable `Sum.inr (k + 1)` along accessibility; quantifiers
-    relativize to the individual sort. -/
-def ModalFormula.st? (k : ℕ) :
-    ModalFormula (monadicWithConstants Const Pred) Var →
-      Option ((correspondence Const Pred).Formula (Var ⊕ ℕ))
-  | .ofFormula χ => stAtom? k χ
-  | .not φ => (φ.st? k).map (·.not)
-  | .inf φ ψ => (φ.st? k).bind fun a => (ψ.st? k).map (a ⊓ ·)
-  | .sup φ ψ => (φ.st? k).bind fun a => (ψ.st? k).map (a ⊔ ·)
-  | .box φ => (φ.st? (k + 1)).map fun a =>
-      Formula.all₁ (Sum.inr (k + 1))
-        ((corrAcc.formula₂ (corrWorldVar k) (corrWorldVar (k + 1))).imp a)
-  | .all x φ => (φ.st? k).map fun a =>
-      Formula.all₁ (Sum.inl x)
-        ((corrIndiv.formula₁ (corrIndivVar x)).imp a)
-  | .ex x φ => (φ.st? k).map fun a =>
-      Formula.ex₁ (Sum.inl x)
-        (corrIndiv.formula₁ (corrIndivVar x) ⊓ a)
+  | .falsum => ⊥
+  | .imp φ ψ => (φ.st k).imp (ψ.st k)
+  | .box φ => Formula.all₁ (Sum.inr (k + 1))
+      ((corrAcc.formula₂ (corrWorldVar k) (corrWorldVar (k + 1))).imp
+        (φ.st (k + 1)))
+  | .all x φ => Formula.all₁ (Sum.inl x)
+      ((corrIndiv.formula₁ (corrIndivVar x)).imp (φ.st k))
 
 /-! ### Satisfaction preservation -/
 
 omit [DecidableEq Var] in
-/-- Satisfaction preservation for embedded atoms. -/
-private theorem realize_stAtom? (K : KripkeModel (monadicWithConstants Const Pred) W M)
-    {k : ℕ} {χ : (monadicWithConstants Const Pred).Formula Var}
-    {ψ : (correspondence Const Pred).Formula (Var ⊕ ℕ)}
-    (hψ : stAtom? k χ = some ψ) {val : Var ⊕ ℕ → W ⊕ M} {w : W}
-    {v : Var → M} (hind : ∀ x, val (Sum.inl x) = Sum.inr (v x))
-    (hw : val (Sum.inr k) = Sum.inl w) :
-    χ.RealizeAt K.interp w v ↔ (letI := K.corrStructure; ψ.Realize val) := by
+/-- Translated terms realize to the individual sort: `stTerm` commutes with
+    realization, via the world pinned at index `k`. -/
+private theorem realize_stTerm
+    (K : KripkeModel (monadicWithConstants Const Pred) W M)
+    {k : ℕ} {val : Var ⊕ ℕ → W ⊕ M} {w : W} {v : Var → M}
+    (hind : ∀ x, val (Sum.inl x) = Sum.inr (v x))
+    (hw : val (Sum.inr k) = Sum.inl w)
+    (t : (monadicWithConstants Const Pred).Term Var) :
+    (letI := K.corrStructure; (stTerm k t).realize val) =
+      Sum.inr (letI := K.interp w; t.realize v) := by
   let _S := K.corrStructure
-  cases χ with
-  | falsum => simp [stAtom?] at hψ
-  | equal t₁ t₂ => simp [stAtom?] at hψ
-  | imp χ₁ χ₂ => simp [stAtom?] at hψ
-  | all χ' => simp [stAtom?] at hψ
-  | @rel _ l R ts =>
-    match l, R with
-    | 0, Sum.inl r => exact r.elim
-    | 0, Sum.inr r => exact r.elim
-    | (n + 2), Sum.inl r => exact r.elim
-    | (n + 2), Sum.inr r => exact r.elim
-    | 1, Sum.inr r => exact r.elim
-    | 1, Sum.inl (P : Pred) =>
-      rw [show stAtom? k (.rel (monadicRel P) ts) =
-          some ((corrRel P).formula₂ (Term.var (Sum.inr k)) (stTerm k (ts 0)))
-          from rfl, Option.some.injEq] at hψ
-      subst hψ
-      cases hts : ts 0 with
-      | var s =>
-        cases s with
-        | inl x =>
-          have hLHS : Formula.RealizeAt (.rel (monadicRel P) ts) K.interp w v ↔
-              K.predInterp P w (v x) := by
-            let _S := K.interp w
-            show (K.interp w).RelMap (monadicRel P)
-                (fun i => (ts i).realize (Sum.elim v (default : Fin 0 → M)))
-              ↔ _
-            have hfun : (fun i : Fin 1 => (ts i).realize
-                (Sum.elim v (default : Fin 0 → M))) = fun _ => v x := by
-              funext i
-              rw [Subsingleton.elim i 0, hts]
-              rfl
-            rw [hfun]
-            exact Iff.rfl
-          rw [hLHS, Formula.realize_rel₂,
-            show (stTerm k (.var (Sum.inl x)) :
-                (correspondence Const Pred).Term (Var ⊕ ℕ)) =
-              Term.var (Sum.inl x) from rfl,
-            corrStructure_relMap_rel]
-          simp only [Term.realize_var, hw, hind]
-          constructor
-          · intro h
-            exact ⟨w, v x, rfl, rfl, h⟩
-          · rintro ⟨w', d, hw', hd, h⟩
-            obtain rfl : w = w' := Sum.inl.inj hw'
-            obtain rfl : v x = d := Sum.inr.inj hd
-            exact h
-        | inr i => exact i.elim0
-      | @func l' f args =>
-        cases l' with
-        | succ m => obtain (e | e) := f <;> exact e.elim
-        | zero =>
-          obtain (e | c) := f
-          · exact e.elim
-          have hLHS : Formula.RealizeAt (.rel (monadicRel P) ts) K.interp w v ↔
-              K.predInterp P w (K.constInterp c w) := by
-            let _S := K.interp w
-            show (K.interp w).RelMap (monadicRel P)
-                (fun i => (ts i).realize (Sum.elim v (default : Fin 0 → M)))
-              ↔ _
-            have hfun : (fun i : Fin 1 => (ts i).realize
-                (Sum.elim v (default : Fin 0 → M))) =
-                fun _ => K.constInterp c w := by
-              funext i
-              rw [Subsingleton.elim i 0, hts]
-              show (K.interp w).funMap (monadicConst c)
-                  (fun j => (args j).realize (Sum.elim v default)) = _
-              have hargs : (fun j : Fin 0 => (args j).realize
-                  (Sum.elim v (default : Fin 0 → M))) = default :=
-                funext fun j => j.elim0
-              rw [hargs]
-              rfl
-            rw [hfun]
-            exact Iff.rfl
-          rw [hLHS, Formula.realize_rel₂,
-            show (stTerm k (.func (monadicConst c) args) :
-                (correspondence Const Pred).Term (Var ⊕ ℕ)) =
-              Term.func (corrConst c) ![Term.var (Sum.inr k)] from rfl,
-            corrStructure_relMap_rel]
-          have hcv : (Term.func (corrConst c)
-              ![Term.var (Sum.inr k)] :
-              (correspondence Const Pred).Term (Var ⊕ ℕ)).realize val
-              = Sum.inr (K.constInterp c w) :=
-            corrStructure_funMap_inl K c w _ hw
-          constructor
-          · intro h
-            exact ⟨w, K.constInterp c w, hw, hcv, h⟩
-          · rintro ⟨w', d, hw', hd, h⟩
-            have hww : val (Sum.inr k) = Sum.inl w' := hw'
-            obtain rfl : w = w' := Sum.inl.inj (hw.symm.trans hww)
-            have hdd : Sum.inr (K.constInterp c w) = Sum.inr d :=
-              hcv.symm.trans hd
-            obtain rfl : K.constInterp c w = d := Sum.inr.inj hdd
-            exact h
+  cases t with
+  | var x => exact hind x
+  | @func l f args =>
+    match l, f with
+    | 0, Sum.inl e => exact e.elim
+    | _ + 1, Sum.inl e => exact e.elim
+    | _ + 1, Sum.inr e => exact e.elim
+    | 0, Sum.inr c =>
+      let _I := K.interp w
+      rw [show stTerm k (.func (Sum.inr c) args) =
+          Term.func (corrConst c) ![corrWorldVar k] from rfl,
+        show (Term.func (corrConst c) ![corrWorldVar k] :
+            (correspondence Const Pred).Term (Var ⊕ ℕ)).realize val =
+          (K.corrStructure).funMap (corrConst c)
+            fun i => (![corrWorldVar k] i).realize val from rfl,
+        corrStructure_funMap_inl K c w _ (by simpa using hw)]
+      refine congrArg Sum.inr ?_
+      show (K.interp w).funMap (monadicConst c) default = _
+      show _ = (K.interp w).funMap (monadicConst c) fun i => (args i).realize v
+      exact congrArg _ (funext fun i => i.elim0)
 
 /-- An individual-sorted update of an individual-sorted valuation. -/
 private theorem sorted_update {val : Var ⊕ ℕ → W ⊕ M} {v : Var → M}
@@ -326,36 +241,34 @@ private theorem pinned_update {val : Var ⊕ ℕ → W ⊕ M} {w : W} {k : ℕ}
     world variable `Sum.inr k` to `w`. Off-sort quantifier instances are
     discharged by the relational guards, and `box`'s fresh world variable
     `k + 1` leaves the pinned index untouched. -/
-theorem realize_st? (K : KripkeModel (monadicWithConstants Const Pred) W M)
+theorem realize_st (K : KripkeModel (monadicWithConstants Const Pred) W M)
     {φ : ModalFormula (monadicWithConstants Const Pred) Var} {k : ℕ}
-    {ψ : (correspondence Const Pred).Formula (Var ⊕ ℕ)}
-    (hψ : φ.st? k = some ψ) {val : Var ⊕ ℕ → W ⊕ M} {w : W} {v : Var → M}
+    {val : Var ⊕ ℕ → W ⊕ M} {w : W} {v : Var → M}
     (hind : ∀ x, val (Sum.inl x) = Sum.inr (v x))
     (hw : val (Sum.inr k) = Sum.inl w) :
-    φ.Realize K w v ↔ (letI := K.corrStructure; ψ.Realize val) := by
-  induction φ generalizing k ψ val w v with
-  | ofFormula χ => exact realize_stAtom? K hψ hind hw
-  | not φ ih =>
-    obtain ⟨a, hφ, rfl⟩ := Option.map_eq_some_iff.mp hψ
+    φ.Realize K w v ↔ (letI := K.corrStructure; (φ.st k).Realize val) := by
+  induction φ generalizing k val w v with
+  | equal t₁ t₂ =>
     let _S := K.corrStructure
-    rw [ModalFormula.realize_not, Formula.realize_not]
-    exact not_congr (ih hφ hind hw)
-  | inf φ₁ φ₂ ih₁ ih₂ =>
-    obtain ⟨a, hφ₁, hb⟩ := Option.bind_eq_some_iff.mp hψ
-    obtain ⟨b, hφ₂, rfl⟩ := Option.map_eq_some_iff.mp hb
+    rw [show (ModalFormula.equal t₁ t₂).st k =
+        Term.equal (stTerm k t₁) (stTerm k t₂) from rfl]
+    rw [ModalFormula.realize_equal, Formula.realize_equal,
+      realize_stTerm K hind hw, realize_stTerm K hind hw]
+    exact ⟨congrArg _, Sum.inr.inj⟩
+  | falsum => exact Iff.rfl
+  | imp φ ψ ih₁ ih₂ =>
     let _S := K.corrStructure
-    rw [ModalFormula.realize_inf, Formula.realize_inf]
-    exact and_congr (ih₁ hφ₁ hind hw) (ih₂ hφ₂ hind hw)
-  | sup φ₁ φ₂ ih₁ ih₂ =>
-    obtain ⟨a, hφ₁, hb⟩ := Option.bind_eq_some_iff.mp hψ
-    obtain ⟨b, hφ₂, rfl⟩ := Option.map_eq_some_iff.mp hb
-    let _S := K.corrStructure
-    rw [ModalFormula.realize_sup, Formula.realize_sup]
-    exact or_congr (ih₁ hφ₁ hind hw) (ih₂ hφ₂ hind hw)
+    rw [ModalFormula.realize_imp,
+      show (ModalFormula.imp φ ψ).st k = (φ.st k).imp (ψ.st k) from rfl,
+      Formula.realize_imp]
+    exact imp_congr (ih₁ hind hw) (ih₂ hind hw)
   | box φ ih =>
-    obtain ⟨a, hφ, rfl⟩ := Option.map_eq_some_iff.mp hψ
     let _S := K.corrStructure
-    rw [ModalFormula.realize_box, Formula.realize_all₁]
+    rw [ModalFormula.realize_box,
+      show (ModalFormula.box φ).st k = Formula.all₁ (Sum.inr (k + 1))
+        ((corrAcc.formula₂ (corrWorldVar k) (corrWorldVar (k + 1))).imp
+          (φ.st (k + 1))) from rfl,
+      Formula.realize_all₁]
     constructor
     · intro h z
       rw [Formula.realize_imp, Formula.realize_rel₂]
@@ -365,7 +278,7 @@ theorem realize_st? (K : KripkeModel (monadicWithConstants Const Pred) W M)
       rintro ⟨w₁, w₂, hw₁, hw₂, hmem⟩
       obtain rfl : w = w₁ := Sum.inl.inj hw₁
       subst hw₂
-      refine (ih hφ ?_ ?_).mp (h w₂ hmem)
+      refine (ih ?_ ?_).mp (h w₂ hmem)
       · intro x
         rw [Function.update_of_ne (by simp), hind]
       · rw [Function.update_self]
@@ -375,14 +288,16 @@ theorem realize_st? (K : KripkeModel (monadicWithConstants Const Pred) W M)
       simp only [Term.realize_var, Function.update_of_ne
         (by simp : (Sum.inr k : Var ⊕ ℕ) ≠ Sum.inr (k + 1)),
         Function.update_self, hw] at hz
-      refine (ih hφ ?_ ?_).mpr (hz ⟨w, w', rfl, rfl, hw'⟩)
+      refine (ih ?_ ?_).mpr (hz ⟨w, w', rfl, rfl, hw'⟩)
       · intro x
         rw [Function.update_of_ne (by simp), hind]
       · rw [Function.update_self]
   | all x φ ih =>
-    obtain ⟨a, hφ, rfl⟩ := Option.map_eq_some_iff.mp hψ
     let _S := K.corrStructure
-    rw [ModalFormula.realize_all, Formula.realize_all₁]
+    rw [ModalFormula.realize_all,
+      show (ModalFormula.all x φ).st k = Formula.all₁ (Sum.inl x)
+        ((corrIndiv.formula₁ (corrIndivVar x)).imp (φ.st k)) from rfl,
+      Formula.realize_all₁]
     constructor
     · intro h z
       rw [Formula.realize_imp, Formula.realize_rel₁]
@@ -392,35 +307,41 @@ theorem realize_st? (K : KripkeModel (monadicWithConstants Const Pred) W M)
         simpa [corrStructure_relMap_indiv] using hsort
       rw [Function.update_self] at hd
       subst hd
-      exact (ih hφ (sorted_update hind x d) (pinned_update hw x _)).mp (h d)
+      exact (ih (sorted_update hind x d) (pinned_update hw x _)).mp (h d)
     · intro h d
       have hz := h (Sum.inr d)
       rw [Formula.realize_imp, Formula.realize_rel₁] at hz
-      refine (ih hφ (sorted_update hind x d) (pinned_update hw x _)).mpr
+      refine (ih (sorted_update hind x d) (pinned_update hw x _)).mpr
         (hz ⟨d, ?_⟩)
       show Function.update val (Sum.inl x) (Sum.inr d) (Sum.inl x) = _
       rw [Function.update_self]
-  | ex x φ ih =>
-    obtain ⟨a, hφ, rfl⟩ := Option.map_eq_some_iff.mp hψ
-    let _S := K.corrStructure
-    rw [ModalFormula.realize_ex, Formula.realize_ex₁]
-    constructor
-    · rintro ⟨d, hd⟩
-      refine ⟨Sum.inr d, ?_⟩
-      rw [Formula.realize_inf, Formula.realize_rel₁]
-      refine ⟨⟨d, ?_⟩,
-        (ih hφ (sorted_update hind x d) (pinned_update hw x _)).mp hd⟩
-      show Function.update val (Sum.inl x) (Sum.inr d) (Sum.inl x) = _
-      rw [Function.update_self]
-    · rintro ⟨z, hz⟩
-      rw [Formula.realize_inf, Formula.realize_rel₁] at hz
-      obtain ⟨hsort, hreal⟩ := hz
-      obtain ⟨d, hd⟩ : ∃ d : M,
-          Function.update val (Sum.inl x) z (Sum.inl x) = Sum.inr d := by
-        simpa [corrStructure_relMap_indiv] using hsort
-      rw [Function.update_self] at hd
-      subst hd
-      exact ⟨d, (ih hφ (sorted_update hind x d) (pinned_update hw x _)).mpr hreal⟩
+  | @rel l R ts =>
+    match l, R with
+    | 0, Sum.inl r => exact r.elim
+    | 0, Sum.inr r => exact r.elim
+    | (n + 2), Sum.inl r => exact r.elim
+    | (n + 2), Sum.inr r => exact r.elim
+    | 1, Sum.inr r => exact r.elim
+    | 1, Sum.inl (P : Pred) =>
+      let _S := K.corrStructure
+      rw [show (ModalFormula.rel (Sum.inl P : (monadicWithConstants Const
+            Pred).Relations 1) ts).st k =
+          (corrRel P).formula₂ (corrWorldVar k) (stTerm k (ts 0)) from rfl,
+        Formula.realize_rel₂, corrStructure_relMap_rel,
+        ModalFormula.realize_rel,
+        show (fun i => letI := K.interp w; ((ts i).realize v)) =
+          fun _ => (letI := K.interp w; (ts 0).realize v) from
+          funext fun i => by rw [Subsingleton.elim i 0] ]
+      constructor
+      · intro h
+        exact ⟨w, (letI := K.interp w; (ts 0).realize v), by simpa using hw,
+          realize_stTerm K hind hw (ts 0), h⟩
+      · rintro ⟨w', d, hw', hd, h⟩
+        obtain rfl : w = w' := Sum.inl.inj ((by simpa using hw : (corrWorldVar
+          (Const := Const) (Pred := Pred) k).realize val = Sum.inl w).symm.trans hw')
+        obtain rfl : (letI := K.interp w; (ts 0).realize v) = d :=
+          Sum.inr.inj ((realize_stTerm K hind hw (ts 0)).symm.trans hd)
+        exact h
 
 /-! ### Sort-guarded sentence closure -/
 
