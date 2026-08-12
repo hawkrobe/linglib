@@ -71,12 +71,12 @@ def equi (A B : ComparativeFormula L E) : ComparativeFormula L E :=
   .inf (.not (.comp A B)) (.not (.comp B A))
 
 /-- Formulas free of the comparative: the fragment whose truth does not
-consult the ordering (`CompFree.realize_congr`). -/
-def CompFree : ComparativeFormula L E → Prop
+consult the ordering (`ComparativeFree.realize_congr`). -/
+def ComparativeFree : ComparativeFormula L E → Prop
   | .ofFormula _ => True
-  | .not A => A.CompFree
-  | .inf A B => A.CompFree ∧ B.CompFree
-  | .sup A B => A.CompFree ∧ B.CompFree
+  | .not A => A.ComparativeFree
+  | .inf A B => A.ComparativeFree ∧ B.ComparativeFree
+  | .sup A B => A.ComparativeFree ∧ B.ComparativeFree
   | .comp _ _ => False
 
 variable (interp : I → W → L.Structure E)
@@ -138,14 +138,14 @@ theorem realize_comp_iff :
   rw [Formula.realize_rel, hv]
 
 /-- Comparative-free formulas are ordering-invariant. -/
-theorem CompFree.realize_congr :
-    ∀ {φ : ComparativeFormula L E}, φ.CompFree →
+theorem ComparativeFree.realize_congr :
+    ∀ {φ : ComparativeFormula L E}, φ.ComparativeFree →
       ∀ {le le' : I → I → Prop} {i : I} {w : W},
       Realize interp φ le i w ↔ Realize interp φ le' i w
   | .ofFormula _, _ => Iff.rfl
-  | .not A, h => not_congr (CompFree.realize_congr (show A.CompFree from h))
-  | .inf _ _, h => and_congr (CompFree.realize_congr h.1) (CompFree.realize_congr h.2)
-  | .sup _ _, h => or_congr (CompFree.realize_congr h.1) (CompFree.realize_congr h.2)
+  | .not A, h => not_congr (ComparativeFree.realize_congr (show A.ComparativeFree from h))
+  | .inf _ _, h => and_congr (ComparativeFree.realize_congr h.1) (ComparativeFree.realize_congr h.2)
+  | .sup _ _, h => or_congr (ComparativeFree.realize_congr h.1) (ComparativeFree.realize_congr h.2)
   | .comp _ _, h => h.elim
 
 /-- ≻ is the *strict l-lifting* of the ordering ([holliday-icard-2013];

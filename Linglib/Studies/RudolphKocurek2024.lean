@@ -411,7 +411,7 @@ MC-free — the metalinguistic conditional is Stalnakerian entailment
 (`ContextSet.entails`) of the consequent by the ranked antecedent-cone. The
 antecedent may contain ≻ freely: it is always evaluated at the full ordering,
 and an MC-free consequent never consults the restricted one. -/
-theorem evalMCond_iff_entails (hB : B.CompFree) :
+theorem evalMCond_iff_entails (hB : B.ComparativeFree) :
     EvalMCond interp A B ord i w ↔
     CommonGround.ContextSet.entails
       {x | ord.le x i ∧ ComparativeFormula.Realize interp A ord.le x w}
