@@ -81,13 +81,7 @@ def ComparativeFree : ComparativeFormula L E → Prop
 
 variable (interp : I → W → L.Structure E)
 
-/-- The strict (asymmetric) part of a raw ordering relation. -/
-def strictPart (le : I → I → Prop) (b a : I) : Prop :=
-  le b a ∧ ¬ le a b
-
-instance {le : I → I → Prop} [DecidableRel le] :
-    DecidableRel (strictPart le) :=
-  fun _ _ => inferInstanceAs (Decidable (_ ∧ _))
+/-! ### Realization -/
 
 /-- Truth at an index of an ordered structure family, relative to a raw
 ordering relation `le` (restricted orderings need not be total). The
@@ -99,7 +93,7 @@ def Realize : ComparativeFormula L E → (I → I → Prop) → I → W → Prop
   | .inf A B, le, i, w => Realize A le i w ∧ Realize B le i w
   | .sup A B, le, i, w => Realize A le i w ∨ Realize B le i w
   | .comp A B, le, i, w =>
-      coneStrictLift le (strictPart le) (Realize A le · w) (Realize B le · w) i
+      coneStrictLift le (Strict le) (Realize A le · w) (Realize B le · w) i
 
 instance instDec [Fintype I] [Fintype E] [DecidableEq E]
     [hA : DecidableAtoms interp] (le : I → I → Prop) [DecidableRel le] :
@@ -112,7 +106,7 @@ instance instDec [Fintype I] [Fintype E] [DecidableEq E]
   | .comp A B, i, w =>
       haveI : DecidablePred (Realize interp A le · w) := fun j => instDec le A j w
       haveI : DecidablePred (Realize interp B le · w) := fun j => instDec le B j w
-      inferInstanceAs (Decidable (coneStrictLift le (strictPart le)
+      inferInstanceAs (Decidable (coneStrictLift le (Strict le)
         (Realize interp A le · w) (Realize interp B le · w) i))
 
 variable {interp} {A B : ComparativeFormula L E} {le : I → I → Prop}
@@ -148,20 +142,23 @@ theorem ComparativeFree.realize_congr :
   | .sup _ _, h => or_congr (ComparativeFree.realize_congr h.1) (ComparativeFree.realize_congr h.2)
   | .comp _ _, h => h.elim
 
+/-! ### The domination-lift identification -/
+
 /-- ≻ is the *strict l-lifting* of the ordering ([holliday-icard-2013];
 Lewis's lifting) applied to the cone at the evaluation index: comparative
 possibility, with the ∃∀ clause as the strict Smyth order via
 `strict_dominationLift_iff`. -/
 theorem realize_comp_iff_strict_dominationLift :
     Realize interp (.comp A B) ord.le i w ↔
-    Strict
-      (dominationLift (fun a b => ord.le b a))
+    Strict (dominationLift (flip ord.le))
       {x | ord.le x i ∧ Realize interp A ord.le x w ∧
         ¬ Realize interp B ord.le x w}
       {x | ord.le x i ∧ Realize interp B ord.le x w ∧
         ¬ Realize interp A ord.le x w} :=
   coneStrictLift_iff_strict_dominationLift
     (fun a b => ord.le_total b a) (fun _ _ => Iff.rfl) _ _ _
+
+/-! ### Basic properties of ≻ and ≈ -/
 
 /-- ≻ is irreflexive — a witness would make A both true and false. -/
 theorem not_realize_comp_self : ¬ Realize interp (.comp A A) le i w :=

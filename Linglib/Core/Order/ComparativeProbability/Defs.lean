@@ -34,6 +34,9 @@ variable {α : Type*} [BooleanAlgebra α]
 /-- `Strict r a b` ("`a ≻ b`"): `a` is at least as likely as `b` but not conversely. -/
 def Strict (r : α → α → Prop) (a b : α) : Prop := r a b ∧ ¬ r b a
 
+instance {r : α → α → Prop} [DecidableRel r] : DecidableRel (Strict r) :=
+  fun _ _ => inferInstanceAs (Decidable (_ ∧ _))
+
 /-- `Probably r a` ("`△a`"): `a` is strictly more likely than its complement. -/
 def Probably (r : α → α → Prop) (a : α) : Prop := Strict r a aᶜ
 
