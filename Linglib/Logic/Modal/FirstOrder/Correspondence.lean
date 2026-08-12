@@ -71,11 +71,9 @@ def correspondence (L : Language) : Language where
 
 variable {L : Language}
 
-abbrev corrFunc {n : ℕ} (f : L.Functions n) :
-    L.correspondence.Functions (n + 1) := f
+abbrev corrFunc {n : ℕ} (f : L.Functions n) : L.correspondence.Functions (n + 1) := f
 
-abbrev corrRel {n : ℕ} (R : L.Relations n) :
-    L.correspondence.Relations (n + 1) := Sum.inl R
+abbrev corrRel {n : ℕ} (R : L.Relations n) : L.correspondence.Relations (n + 1) := Sum.inl R
 
 /-- The individual-sort predicate. -/
 abbrev corrIndiv : L.correspondence.Relations 1 := Sum.inr PUnit.unit
@@ -83,11 +81,9 @@ abbrev corrIndiv : L.correspondence.Relations 1 := Sum.inr PUnit.unit
 /-- The accessibility relation symbol. -/
 abbrev corrAcc : L.correspondence.Relations 2 := Sum.inr PUnit.unit
 
-abbrev corrIndivVar (x : Var) :
-    L.correspondence.Term (Var ⊕ ℕ) := Term.var (Sum.inl x)
+abbrev corrIndivVar (x : Var) : L.correspondence.Term (Var ⊕ ℕ) := Term.var (Sum.inl x)
 
-abbrev corrWorldVar (k : ℕ) :
-    L.correspondence.Term (Var ⊕ ℕ) := Term.var (Sum.inr k)
+abbrev corrWorldVar (k : ℕ) : L.correspondence.Term (Var ⊕ ℕ) := Term.var (Sum.inr k)
 
 /-- `K.correspondence` encodes a modal structure as a single mathlib
     structure on `W ⊕ M` — the structure half of `Language.correspondence`:
