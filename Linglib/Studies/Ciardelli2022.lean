@@ -1,5 +1,5 @@
 import Linglib.Semantics.Questions.Basic
-import Linglib.Logic.Modal.Inquisitive
+import Linglib.Logic.Team.Inquisitive
 
 /-!
 # Ciardelli 2022 — InqML denotation into `Question`

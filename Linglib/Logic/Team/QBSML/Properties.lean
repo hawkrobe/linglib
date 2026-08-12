@@ -1,6 +1,6 @@
 import Mathlib.ModelTheory.Semantics
 import Linglib.Core.ModelTheory.Binders
-import Linglib.Logic.Modal.QBSML.Defs
+import Linglib.Logic.Team.QBSML.Defs
 import Linglib.Logic.Team.Closure
 import Linglib.Logic.Team.Definability
 
@@ -13,7 +13,7 @@ The QBSML instances of the closure properties of [anttila-2021]
 Proposition 2.2.8: NE-free formulas have downward-closed, sup-closed,
 empty-team support, hence flat support, via the same
 `Team.isFlat_iff` template as
-`Logic/Modal/BSML/Properties.lean`.
+`Logic/Team/BSML/Properties.lean`.
 
 ## Main declarations
 
@@ -592,7 +592,7 @@ theorem support_nec_mono (M : Model W Domain Const Pred)
     the values whose updates land in `t` reconstructs `t` exactly
     (`State.extendFunctional_filter_of_update_mem`). The shared
     existential-witness step of the free-choice facts
-    (`Logic/Modal/QBSML/FreeChoice.lean`). -/
+    (`Logic/Team/QBSML/FreeChoice.lean`). -/
 theorem support_exi_of_update_closure (M : Model W Domain Const Pred)
     {γ : Formula Var Const Pred} {x : Var}
     {s t : Finset (Index W Var Domain)}

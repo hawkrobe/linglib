@@ -218,7 +218,7 @@ theorem State.extendUniversal_eq_extendFunctional [Fintype Domain]
     by the functional collecting, at each index, the values whose updates
     land in `t`. The shared Finset surgery behind the existential-witness
     steps of the free-choice facts
-    (`Logic/Modal/QBSML/FreeChoice.lean`). -/
+    (`Logic/Team/QBSML/FreeChoice.lean`). -/
 theorem State.extendFunctional_filter_of_update_mem [Fintype Domain]
     {s t : Finset (Index W Var Domain)} {x : Var}
     (hpar : ∀ j ∈ t, ∃ i ∈ s, ∃ d, i.update x d = j) :
@@ -341,7 +341,7 @@ def Formula.nec (φ : Formula Var Const Pred) : Formula Var Const Pred :=
 /-- The NE-free fragment: formulas not containing the `NE` atom. On this
     fragment QBSML reduces to classical first-order modal logic
     ([aloni-vanormondt-2023] analogue of [anttila-2021]
-    Proposition 2.2.16); see `Logic/Modal/QBSML/Properties.lean`. -/
+    Proposition 2.2.16); see `Logic/Team/QBSML/Properties.lean`. -/
 inductive Formula.NEFree : Formula Var Const Pred → Prop
   | pred (P : Pred) (x : Var) : NEFree (.pred P x)
   | predc (P : Pred) (c : Const) : NEFree (.predc P c)
@@ -365,7 +365,7 @@ theorem Formula.NEFree.nec {φ : Formula Var Const Pred}
     quantifier (and fixing `NE`). The generic congruence machinery for
     atom-rewriting operations: an atom map whose images are bilaterally
     equivalent to the atoms is *salva veritate* (`eval_mapAtoms_iff` in
-    `Logic/Modal/QBSML/Properties.lean`), so each such operation — e.g.
+    `Logic/Team/QBSML/Properties.lean`), so each such operation — e.g.
     [yan-2023]'s reinterpretation function in `Studies/Yan2023.lean` — needs
     only its two atom lemmas. -/
 def Formula.mapAtoms

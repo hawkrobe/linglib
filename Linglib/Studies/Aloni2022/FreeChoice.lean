@@ -1,4 +1,4 @@
-import Linglib.Logic.Modal.BSML.Enrichment
+import Linglib.Logic.Team.BSML.Enrichment
 
 /-!
 # BSML Free Choice Theorems

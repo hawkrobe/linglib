@@ -1,4 +1,4 @@
-import Linglib.Logic.Modal.BSML.Defs
+import Linglib.Logic.Team.BSML.Defs
 
 /-!
 # BSML Pragmatic Enrichment

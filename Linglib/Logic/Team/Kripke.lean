@@ -7,7 +7,7 @@ This file defines `KripkeModel`, the finite Kripke carrier — successor
 `Finset`s and a `Bool` valuation — that the team-semantic modal logics
 (BSML, QBSML, modal dependence and inclusion logic, InqML) evaluate on.
 It is the decidable specialization of the relational primitives of
-`Defs.lean`.
+`Logic/Modal/Defs.lean`.
 
 ## References
 

@@ -6,7 +6,7 @@ import Mathlib.ModelTheory.Semantics
 Mathlib quantification on `BoundedFormula` is de Bruijn; formalizations whose
 formulas carry named free variables (trace indices in
 `Semantics/Composition/Reduction.lean`, QBSML variables in
-`Logic/Modal/QBSML/Properties.lean`) need to close a *single named*
+`Logic/Team/QBSML/Properties.lean`) need to close a *single named*
 variable. `Formula.all₁` / `Formula.ex₁` do so computably (unlike mathlib's
 `Formula.iAlls` / `iExs`), with realization phrased via `Function.update`.
 Upstream candidates.

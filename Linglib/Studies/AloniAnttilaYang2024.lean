@@ -1,6 +1,6 @@
-import Linglib.Logic.Modal.BSML.Defs
-import Linglib.Logic.Modal.BSML.Properties
-import Linglib.Logic.Modal.BSML.Bisimulation
+import Linglib.Logic.Team.BSML.Defs
+import Linglib.Logic.Team.BSML.Properties
+import Linglib.Logic.Team.BSML.Bisimulation
 import Linglib.Logic.Bilateral.Defs
 import Linglib.Logic.Team.Algebra
 import Linglib.Logic.Team.Closure

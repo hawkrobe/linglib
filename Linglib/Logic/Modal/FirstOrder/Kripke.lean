@@ -8,7 +8,7 @@ Mathlib's `ModelTheory` is classical: one structure, no accessibility. A
 `KripkeStructure L W M` is a `W`-indexed family of `L`-structures on a
 constant domain `M` together with `Finset`-valued accessibility — the shape
 `Semantics/Composition/Model.lean` (without accessibility) and
-`Logic/Modal/QBSML/Defs.lean` already instantiate. On top,
+`Logic/Team/QBSML/Defs.lean` already instantiate. On top,
 `ModalFormula L α` layers `□` and named quantifiers over embedded classical
 `L.Formula`s, and `ModalFormula.Realize` is Kripke satisfaction
 `K, w ⊨_v φ`. Upstream candidates.

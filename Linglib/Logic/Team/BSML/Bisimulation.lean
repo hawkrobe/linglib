@@ -1,12 +1,12 @@
-import Linglib.Logic.Modal.BSML.Defs
-import Linglib.Logic.Modal.Bisimulation
+import Linglib.Logic.Team.BSML.Defs
+import Linglib.Logic.Team.Bisimulation
 
 /-!
 # Bisimulation invariance for BSML
 
 The carrier-level bisimulation substrate (`WorldBisim`, `StateBisim`, and
 the Lemma 3.7 transport lemmas of [aloni-anttila-yang-2024]) lives in
-`Logic/Modal/Bisimulation.lean`, shared across the modal team logics. This
+`Logic/Team/Bisimulation.lean`, shared across the modal team logics. This
 file specialises it to BSML: the modal-depth measure on `Formula` and
 the invariance result (Theorem 3.8) for BSML's bilateral evaluation, which
 the [anttila-2025] expressive-completeness development consumes in

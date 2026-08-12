@@ -1,4 +1,4 @@
-import Linglib.Logic.Modal.BSML.Defs
+import Linglib.Logic.Team.BSML.Defs
 import Linglib.Logic.Team.Closure
 import Linglib.Logic.Team.Definability
 

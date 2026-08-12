@@ -1,5 +1,5 @@
-import Linglib.Logic.Modal.Kripke
-import Linglib.Logic.Modal.Bisimulation
+import Linglib.Logic.Team.Kripke
+import Linglib.Logic.Team.Bisimulation
 import Linglib.Logic.Bilateral.Defs
 import Linglib.Logic.Team.Algebra
 import Linglib.Logic.Team.Closure
@@ -87,7 +87,7 @@ clause is the under-DC simplified form `X = Y ∪ Z` (paper's (T6)'
 under Lemma 4.2 part 1) rather than the literal `X ⊆ Y ∪ Z` from
 (T6); under downward closure they are equivalent.
 
-The `KripkeModel` carrier from `Logic/Modal/Kripke.lean` is the
+The `KripkeModel` carrier from `Logic/Team/Kripke.lean` is the
 shared substrate consumed by BSML, QBSML, and the AAY-2024
 extensions (BSMLOr/BSMLEmpty) alike.
 
@@ -452,7 +452,7 @@ MDL's modality differs from BSML's: anti-`◇` uses the union of accessibility
 images (clause (T9)), and `◇`-support a single witness team (clause (T8)),
 rather than BSML's per-world sub-witnesses. The invariance proof therefore
 recurses through `StateBisim.biUnionAccess` and `StateBisim.possWitness`
-(carrier-level transport lemmas in `Logic/Modal/Bisimulation.lean`)
+(carrier-level transport lemmas in `Logic/Team/Bisimulation.lean`)
 at the modal step, where BSML uses `WorldBisim.accessStateBisim` /
 `StateBisim.exists_image_subset`. The dependence-atom case is depth-0 and turns on
 `WorldBisim.val_eq`: state bisim preserves the set of atom-valuation profiles

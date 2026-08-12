@@ -1,5 +1,5 @@
-import Linglib.Logic.Modal.QBSML.Enrichment
-import Linglib.Logic.Modal.QBSML.Properties
+import Linglib.Logic.Team.QBSML.Enrichment
+import Linglib.Logic.Team.QBSML.Properties
 
 /-!
 # QBSML free-choice facts
@@ -40,7 +40,7 @@ stay substrate-level.
 ## Implementation notes
 
 1. **Enrichment strengthens** (`enrichment_strengthens_support`,
-   `Logic/Modal/QBSML/Enrichment.lean`): the enriched form entails
+   `Logic/Team/QBSML/Enrichment.lean`): the enriched form entails
    the original on the NE-free fragment.
 2. **Diamond split** (`diamond_split`): the split `t₁ ∪ t₂ = modalLift X g`
    supports the enriched disjuncts on its pieces; each piece is recovered
@@ -48,7 +48,7 @@ stay substrate-level.
 3. **NE strips**: `support_enrich_nec_iff` peels the derived `□`'s
    enrichment; `antiSupport_strip_ne` the remaining `NE` conjuncts.
 4. **Witness reconstruction** (`support_exi_of_update_closure`,
-   `Logic/Modal/QBSML/Properties.lean`): existential witnesses for
+   `Logic/Team/QBSML/Properties.lean`): existential witnesses for
    the quantified facts.
 
 The negation fact requires no frame condition on `R` ([aloni-vanormondt-2023]

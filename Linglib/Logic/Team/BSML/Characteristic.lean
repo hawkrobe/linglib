@@ -1,5 +1,5 @@
-import Linglib.Logic.Modal.BSML.Bridge
-import Linglib.Logic.Modal.BSML.Bisimulation
+import Linglib.Logic.Team.BSML.Bridge
+import Linglib.Logic.Team.BSML.Bisimulation
 
 /-!
 # Characteristic (Hintikka) formulas for BSML — foundation
