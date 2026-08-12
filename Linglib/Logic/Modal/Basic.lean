@@ -7,13 +7,14 @@ import Mathlib.Order.Lattice
 /-!
 # Modal logic over accessibility relations
 
-Normality and the operator hierarchy for the relational `box`/`diamond`
-of `Defs.lean`: monotonicity and distribution; restriction —
-[kratzer-1981]'s insight that conversational backgrounds strengthen
-necessity by shrinking accessibility; the modal square of opposition
-([carnielli-pizzi-2008]); [gallin-1975]'s hierarchy of propositional
-operators, placing Montague's S5 `box`/`diamond`
-([dowty-wall-peters-1981]) as the universal-accessibility case.
+This file proves the order theory of `box` and `diamond`: the Galois
+connection `◇[R] ⊣ □[flip R]` and the normality laws it yields,
+antitonicity in the relation ([kratzer-1981]'s conversational backgrounds
+strengthen necessity by shrinking accessibility), and the modal square of
+opposition ([carnielli-pizzi-2008]). It also defines the bundled frame
+classes `IsS5Frame`, `IsKD45Frame`, `IsK45Frame`, `IsKTBFrame`, and
+[gallin-1975]'s indicial operators, with Montague's S5 `box`/`diamond`
+([dowty-wall-peters-1981]) as the universal-accessibility case `R = ⊤`.
 
 -/
 
