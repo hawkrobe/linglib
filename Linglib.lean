@@ -2587,8 +2587,7 @@ import Linglib.Studies.Roussou2010
 import Linglib.Studies.Rubinstein2014
 import Linglib.Studies.Rudin2025
 import Linglib.Studies.Rudin2025LI
-import Linglib.Studies.RudolphKocurek2024.Basic
-import Linglib.Studies.RudolphKocurek2024.Comparative
+import Linglib.Studies.RudolphKocurek2024
 import Linglib.Studies.RumbergLauer2023
 import Linglib.Studies.RuytenbeekEtAl2017
 import Linglib.Studies.Saab2026
