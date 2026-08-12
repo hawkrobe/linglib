@@ -2,6 +2,7 @@ import Linglib.Logic.Modal.Defs
 import Linglib.Logic.Aristotelian.Square
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Order.GaloisConnection.Basic
 import Mathlib.Order.Lattice
 
 /-!
@@ -52,60 +53,55 @@ theorem modalSquare_relations (R : W → W → Prop) [IsSerial R] (p : W → Pro
     Aristotelian.SquareRelations (modalSquare R p) :=
   .of_disjoint (compl_box_compl R p).symm rfl box_disjoint_compl
 
-/-! ### Monotonicity and distribution -/
+/-! ### The Galois connection and normality -/
 
-/-- `box R` is monotone: if `p ≤ q` pointwise, then `□_R p ≤ □_R q`. -/
-theorem box_mono (R : W → W → Prop) {p q : W → Prop}
-    (h : ∀ v, p v → q v) (w : W)
-    (hb : box R p w) : box R q w :=
-  fun v hwv => h v (hb v hwv)
+variable (R) {q : W → Prop}
+
+/-- `◇` along `R` is left adjoint to `□` along the converse relation —
+    the characteristic adjunction of relational modality. -/
+theorem diamond_box_gc : GaloisConnection ◇[R] □[flip R] :=
+  fun _ _ =>
+    ⟨fun h v hp w hwv => h w ⟨v, hwv, hp⟩,
+     fun h w => fun ⟨v, hwv, hp⟩ => h v hp w hwv⟩
+
+/-- `box R` is monotone. -/
+theorem box_mono : Monotone □[R] :=
+  (diamond_box_gc (flip R)).monotone_u
 
 /-- `diamond R` is monotone. -/
-theorem diamond_mono (R : W → W → Prop) {p q : W → Prop}
-    (h : ∀ v, p v → q v) (w : W)
-    (hd : diamond R p w) : diamond R q w :=
-  let ⟨v, hwv, hpv⟩ := hd; ⟨v, hwv, h v hpv⟩
+theorem diamond_mono : Monotone ◇[R] :=
+  (diamond_box_gc R).monotone_l
 
-/-- `□_R` distributes over `∧`. -/
-theorem box_conj (R : W → W → Prop) (p q : W → Prop) (w : W) :
-    box R (fun v => p v ∧ q v) w ↔ box R p w ∧ box R q w :=
-  ⟨fun h => ⟨fun v hwv => (h v hwv).1, fun v hwv => (h v hwv).2⟩,
-   fun ⟨hp, hq⟩ v hwv => ⟨hp v hwv, hq v hwv⟩⟩
+/-- `□` distributes over `⊓`. -/
+theorem box_inf : □[R] (p ⊓ q) = □[R] p ⊓ □[R] q :=
+  (diamond_box_gc (flip R)).u_inf
 
-/-- `◇_R` distributes over `∨`. -/
-theorem diamond_disj (R : W → W → Prop) (p q : W → Prop) (w : W) :
-    diamond R (fun v => p v ∨ q v) w ↔ diamond R p w ∨ diamond R q w :=
-  ⟨fun ⟨v, hwv, h⟩ => h.elim (fun hp => .inl ⟨v, hwv, hp⟩) (fun hq => .inr ⟨v, hwv, hq⟩),
-   fun h => h.elim (fun ⟨v, hwv, hp⟩ => ⟨v, hwv, .inl hp⟩)
-                   (fun ⟨v, hwv, hq⟩ => ⟨v, hwv, .inr hq⟩)⟩
+/-- `◇` distributes over `⊔`. -/
+theorem diamond_sup : ◇[R] (p ⊔ q) = ◇[R] p ⊔ ◇[R] q :=
+  (diamond_box_gc R).l_sup
 
-/-- Necessitation: if `p` holds at every world, then `□_R p` holds everywhere. -/
-theorem box_necessitation (R : W → W → Prop) (p : W → Prop)
-    (h : ∀ v, p v) (w : W) : box R p w :=
-  fun v _ => h v
+/-- Necessitation: `□⊤ = ⊤`. -/
+theorem box_top : □[R] ⊤ = ⊤ :=
+  (diamond_box_gc (flip R)).u_top
+
+/-- **Conversion** (Prior's tense axiom `A ⊃ G P A`): the unit of the
+    adjunction — over any relation, `p ≤ □_{flip R} ◇_R p`. -/
+theorem self_imp_box_flip_diamond (p : W → Prop) : p ≤ □[flip R] (◇[R] p) :=
+  (diamond_box_gc R).le_u_l p
 
 /-! ### Accessibility restriction -/
 
-/-- Restricting accessibility strengthens necessity:
-    if `R₂ ⊆ R₁`, then `□_{R₁} p → □_{R₂} p`. -/
-theorem box_restrict {R₁ R₂ : W → W → Prop}
-    (h : ∀ w v, R₂ w v → R₁ w v) (p : W → Prop) (w : W)
-    (hb : box R₁ p w) : box R₂ p w :=
-  fun v hwv => hb v (h w v hwv)
+/-- Restricting accessibility strengthens necessity: `box` is antitone
+    in the relation. -/
+theorem box_restrict {R₁ R₂ : W → W → Prop} (h : R₂ ≤ R₁) (p : W → Prop) :
+    □[R₁] p ≤ □[R₂] p :=
+  fun _ hb v hwv => hb v (h _ _ hwv)
 
-/-- Restricting accessibility weakens possibility:
-    if `R₂ ⊆ R₁`, then `◇_{R₂} p → ◇_{R₁} p`. -/
-theorem diamond_restrict {R₁ R₂ : W → W → Prop}
-    (h : ∀ w v, R₂ w v → R₁ w v) (p : W → Prop) (w : W)
-    (hd : diamond R₂ p w) : diamond R₁ p w :=
-  let ⟨v, hwv, hpv⟩ := hd; ⟨v, h w v hwv, hpv⟩
-
-/-- **Conversion** (Prior's tense axiom `A ⊃ G P A` / `A ⊃ H F A`): for `R` and its converse
-    `flip R`, `p w → □_{flip R} ◇_R p w`. The correspondence fact that two modalities over a
-    relation and its converse are temporally adjoint (holds for *any* `R`). -/
-theorem self_imp_box_flip_diamond (R : W → W → Prop) (p : W → Prop) (w : W)
-    (h : p w) : box (flip R) (diamond R p) w :=
-  fun _ hv => ⟨w, hv, h⟩
+/-- Restricting accessibility weakens possibility: `diamond` is monotone
+    in the relation. -/
+theorem diamond_restrict {R₁ R₂ : W → W → Prop} (h : R₂ ≤ R₁) (p : W → Prop) :
+    ◇[R₂] p ≤ ◇[R₁] p :=
+  fun _ hd => let ⟨v, hwv, hpv⟩ := hd; ⟨v, h _ _ hwv, hpv⟩
 
 /-! ### Bundled frame classes
 
@@ -177,7 +173,7 @@ theorem monotone_box (R : W → W → Prop) : PropOp.Monotone (box R) :=
 
 /-- Every indicial operator distributes over conjunction. -/
 theorem distribConj_box (R : W → W → Prop) : PropOp.DistribConj (box R) :=
-  fun p q w h => (box_conj R p q w).mp h
+  fun p q w h => ⟨fun v hwv => (h v hwv).1, fun v hwv => (h v hwv).2⟩
 
 /-- S5 necessity as a `PropOp`: `p` holds at all worlds. -/
 def s5Nec {W : Type*} : PropOp W :=
