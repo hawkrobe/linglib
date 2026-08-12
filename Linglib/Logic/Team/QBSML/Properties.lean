@@ -627,9 +627,9 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Finty
 @[simp] theorem _root_.FirstOrder.Language.KripkeStructure.realizeAt_rel₁
     (M : Model W Domain Const Pred)
     (P : Pred) (x : Var) (w : W) (v : Var → Domain) :
-    M.RealizeAt w ((monadicRel P).formula₁ (Term.var x)) v ↔
+    ((monadicRel P).formula₁ (Term.var x)).RealizeAt M.interp w v ↔
       M.pInterp P w (v x) := by
-  letI := M.interp w
+  let _S := M.interp w
   show ((monadicRel P).formula₁ (Term.var x)).Realize v ↔ _
   have hfun : (![v x] : Fin 1 → Domain) = fun _ => v x := by
     funext j
@@ -641,10 +641,10 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Finty
 @[simp] theorem _root_.FirstOrder.Language.KripkeStructure.realizeAt_rel₁_const
     (M : Model W Domain Const Pred) (P : Pred) (c : Const) (w : W)
     (v : Var → Domain) :
-    M.RealizeAt w
-      ((monadicRel P).formula₁ (Constants.term (monadicConst c))) v ↔
+    ((monadicRel P).formula₁
+      (Constants.term (monadicConst c))).RealizeAt M.interp w v ↔
       M.pInterp P w (M.cInterp c w) := by
-  letI := M.interp w
+  let _S := M.interp w
   show ((monadicRel P).formula₁ (Constants.term (monadicConst c))).Realize v
     ↔ _
   have hfun : (![(Constants.term (monadicConst (Pred := Pred) c)).realize v] :
@@ -739,8 +739,8 @@ private theorem support_and_antiSupport_singleton_realizeAt
       φ.toFormula? = some ψ →
       ∀ {i : Index W Var Domain} {v : Var → Domain},
         (∀ y, i.assign y = some (v y)) →
-        (support M φ {i} ↔ M.RealizeAt i.world ψ v) ∧
-        (antiSupport M φ {i} ↔ ¬ M.RealizeAt i.world ψ v) := by
+        (support M φ {i} ↔ ψ.RealizeAt M.interp i.world v) ∧
+        (antiSupport M φ {i} ↔ ¬ ψ.RealizeAt M.interp i.world v) := by
   intro φ
   induction φ with
   | pred P x =>
@@ -803,9 +803,9 @@ private theorem support_and_antiSupport_singleton_realizeAt
       subst hψ
       obtain ⟨ihs, iha⟩ := ih hφ hv
       constructor
-      · rw [KripkeStructure.realizeAt_not]
+      · rw [Formula.realizeAt_not]
         exact iha
-      · rw [KripkeStructure.realizeAt_not, not_not]
+      · rw [Formula.realizeAt_not, not_not]
         exact ihs
   | conj φ₁ φ₂ ih₁ ih₂ =>
     intro ψ hψ i v hv
@@ -821,9 +821,9 @@ private theorem support_and_antiSupport_singleton_realizeAt
         obtain ⟨ih₁s, ih₁a⟩ := ih₁ hφ₁ hv
         obtain ⟨ih₂s, ih₂a⟩ := ih₂ hφ₂ hv
         constructor
-        · rw [KripkeStructure.realizeAt_inf]
+        · rw [Formula.realizeAt_inf]
           exact and_congr ih₁s ih₂s
-        · rw [KripkeStructure.realizeAt_inf, not_and_or]
+        · rw [Formula.realizeAt_inf, not_and_or]
           constructor
           · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
             have hsub₁ : t₁ ⊆ ({i} : Finset (Index W Var Domain)) :=
@@ -858,7 +858,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
         obtain ⟨ih₁s, ih₁a⟩ := ih₁ hφ₁ hv
         obtain ⟨ih₂s, ih₂a⟩ := ih₂ hφ₂ hv
         constructor
-        · rw [KripkeStructure.realizeAt_sup]
+        · rw [Formula.realizeAt_sup]
           constructor
           · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
             have hsub₁ : t₁ ⊆ ({i} : Finset (Index W Var Domain)) :=
@@ -879,7 +879,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
                 (support_and_antiSupport_empty_of_neFree
                   (neFree_of_toFormula? hφ₁) M).1,
                 ih₂s.mpr h⟩
-        · rw [KripkeStructure.realizeAt_sup, not_or]
+        · rw [Formula.realizeAt_sup, not_or]
           exact and_congr ih₁a ih₂a
   | exi x φ ih =>
     intro ψ hψ i v hv
@@ -891,7 +891,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
       subst hψ
       have hNE : φ.NEFree := neFree_of_toFormula? hφ
       constructor
-      · rw [KripkeStructure.realizeAt_ex₁]
+      · rw [Formula.realizeAt_ex₁]
         constructor
         · rintro ⟨h, hne, hsupp⟩
           have hsupp' := (support_iff_forall_singleton hNE M _).mp hsupp
@@ -909,7 +909,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
           subst hd'
           subst hupd
           exact ((ih hφ (update_refines hv x d')).1).mpr hd
-      · rw [KripkeStructure.realizeAt_ex₁, not_exists]
+      · rw [Formula.realizeAt_ex₁, not_exists]
         show antiSupport M φ (State.extendUniversal {i} x) ↔ _
         rw [antiSupport_iff_forall_singleton hNE]
         constructor
@@ -933,7 +933,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
       subst hψ
       have hNE : φ.NEFree := neFree_of_toFormula? hφ
       constructor
-      · rw [KripkeStructure.realizeAt_all₁]
+      · rw [Formula.realizeAt_all₁]
         show support M φ (State.extendUniversal {i} x) ↔ _
         rw [support_iff_forall_singleton hNE]
         constructor
@@ -947,7 +947,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
           subst hi'
           subst hupd
           exact ((ih hφ (update_refines hv x d)).1).mpr (h d)
-      · rw [KripkeStructure.realizeAt_all₁, not_forall]
+      · rw [Formula.realizeAt_all₁, not_forall]
         constructor
         · rintro ⟨h, hne, hanti⟩
           have hanti' := (antiSupport_iff_forall_singleton hNE M _).mp hanti
@@ -976,7 +976,7 @@ theorem support_singleton_iff_realizeAt (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} {ψ : (Language.monadicWithConstants Const Pred).Formula Var}
     (hψ : φ.toFormula? = some ψ) {i : Index W Var Domain}
     {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
-    support M φ {i} ↔ M.RealizeAt i.world ψ v :=
+    support M φ {i} ↔ ψ.RealizeAt M.interp i.world v :=
   (support_and_antiSupport_singleton_realizeAt M hψ hv).1
 
 /-- Anti-support of a translatable formula at a singleton state is the
@@ -985,7 +985,7 @@ theorem antiSupport_singleton_iff_realizeAt (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} {ψ : (Language.monadicWithConstants Const Pred).Formula Var}
     (hψ : φ.toFormula? = some ψ) {i : Index W Var Domain}
     {v : Var → Domain} (hv : ∀ y, i.assign y = some (v y)) :
-    antiSupport M φ {i} ↔ ¬ M.RealizeAt i.world ψ v :=
+    antiSupport M φ {i} ↔ ¬ ψ.RealizeAt M.interp i.world v :=
   (support_and_antiSupport_singleton_realizeAt M hψ hv).2
 
 /-- **[aloni-vanormondt-2023] Proposition 4.1** (modal-free fragment): a
@@ -997,7 +997,7 @@ theorem support_iff_forall_realizeAt (M : Model W Domain Const Pred)
     (hψ : φ.toFormula? = some ψ) (s : Finset (Index W Var Domain))
     (v : Index W Var Domain → Var → Domain)
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
-    support M φ s ↔ ∀ i ∈ s, M.RealizeAt i.world ψ (v i) := by
+    support M φ s ↔ ∀ i ∈ s, ψ.RealizeAt M.interp i.world (v i) := by
   rw [support_iff_forall_singleton (neFree_of_toFormula? hψ)]
   exact forall₂_congr fun i hi =>
     support_singleton_iff_realizeAt M hψ (hv i hi)
