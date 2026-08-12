@@ -176,13 +176,7 @@ omit [Inhabited M] in
 theorem stVal_update_indiv (v : Var → M) (u : ℕ → W) (x : Var) (d : M) :
     Function.update (stVal v u) (Sum.inl x) (Sum.inr d) =
       stVal (Function.update v x d) u := by
-  funext y
-  rcases y with x' | j
-  · rcases eq_or_ne x' x with rfl | hx
-    · simp [stVal]
-    · rw [Function.update_of_ne (by simpa using hx)]
-      simp [stVal, Function.update_of_ne hx]
-  · rw [Function.update_of_ne (by simp)]; rfl
+  simp only [stVal, Sum.update_elim_inl, Function.comp_update]
 
 omit [Inhabited M] in
 /-- Updating a world slot of a sorted valuation updates the world
@@ -190,13 +184,7 @@ omit [Inhabited M] in
 theorem stVal_update_world (v : Var → M) (u : ℕ → W) (j : ℕ) (w : W) :
     Function.update (stVal v u) (Sum.inr j) (Sum.inl w) =
       stVal v (Function.update u j w) := by
-  funext y
-  rcases y with x | j'
-  · rw [Function.update_of_ne (by simp)]; rfl
-  · rcases eq_or_ne j' j with rfl | hj
-    · simp [stVal]
-    · rw [Function.update_of_ne (by simpa using hj)]
-      simp [stVal, Function.update_of_ne hj]
+  simp only [stVal, Sum.update_elim_inr, Function.comp_update]
 
 /-- A sort-guarded universal quantifies exactly over individuals. -/
 theorem realize_all₁_indivGuard {y : Var ⊕ ℕ}
@@ -206,21 +194,7 @@ theorem realize_all₁_indivGuard {y : Var ⊕ ℕ}
       ∀ d : M,
         (letI := K.correspondence;
           ψ.Realize (Function.update val y (Sum.inr d))) := by
-  let _S := K.correspondence
-  rw [Formula.realize_all₁]
-  constructor
-  · intro h d
-    have hz := h (Sum.inr d)
-    rw [Formula.realize_imp, Formula.realize_rel₁] at hz
-    exact hz ⟨d, Function.update_self ..⟩
-  · intro h z
-    rw [Formula.realize_imp, Formula.realize_rel₁]
-    intro hsort
-    obtain ⟨d, hd⟩ : ∃ d : M, Function.update val y z y = Sum.inr d := by
-      simpa [correspondence_relMap_indiv] using hsort
-    rw [Function.update_self] at hd
-    subst hd
-    exact h d
+  simp [Formula.realize_all₁]
 
 /-- An accessibility-guarded universal quantifies exactly over the worlds
     accessible from the world pinned at index `k`. -/
@@ -234,25 +208,7 @@ theorem realize_all₁_accGuard {j k : ℕ} (hjk : k ≠ j)
       ∀ w' ∈ K.access w,
         (letI := K.correspondence;
           ψ.Realize (Function.update val (Sum.inr j) (Sum.inl w'))) := by
-  let _S := K.correspondence
-  rw [Formula.realize_all₁]
-  constructor
-  · intro h w' hw'
-    have hz := h (Sum.inl w')
-    rw [Formula.realize_imp, Formula.realize_rel₂] at hz
-    simp only [Term.realize_var, Function.update_of_ne
-      (by simpa using hjk : (Sum.inr k : Var ⊕ ℕ) ≠ Sum.inr j),
-      Function.update_self, hw] at hz
-    exact hz ⟨w, w', rfl, rfl, hw'⟩
-  · intro h z
-    rw [Formula.realize_imp, Formula.realize_rel₂]
-    simp only [Term.realize_var, Function.update_of_ne
-      (by simpa using hjk : (Sum.inr k : Var ⊕ ℕ) ≠ Sum.inr j),
-      Function.update_self, hw]
-    rintro ⟨w₁, w₂, hw₁, hw₂, hmem⟩
-    obtain rfl : w = w₁ := Sum.inl.inj hw₁
-    subst hw₂
-    exact h w₂ hmem
+  simp [Formula.realize_all₁, Function.update_of_ne (Sum.inr_injective.ne hjk), hw]
 
 /-! ### Satisfaction preservation -/
 
