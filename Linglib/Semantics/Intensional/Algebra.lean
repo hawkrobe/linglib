@@ -220,7 +220,7 @@ theorem entails_nil (q : Denot E W .prop) :
 /-- Single-premise entailment: `p ⊨ q` iff `□(p → q)`. -/
 theorem entails_singleton (p q : Denot E W .prop) :
     entails (E := E) (W := W) [p] q = box (fun i => impl (p i) (q i)) := by
-  simp [entails, trueAt, box, impl]
+  simp [entails, trueAt, box, ModalLogic.nec, impl]
 
 -- ════════════════════════════════════════════════════════════════
 -- § Boolean-Algebra Instances on `Denot E W τ`

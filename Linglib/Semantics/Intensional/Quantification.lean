@@ -1,4 +1,5 @@
 import Linglib.Semantics.Intensional.Defs
+import Linglib.Logic.Modal.Basic
 
 /-!
 # IL Quantification, Modality, and Identity
@@ -152,22 +153,22 @@ theorem identIntens_up {a : Ty} (x y : Denot E W a)
     (`Semantics/Modality/Kratzer/`) restricts quantification
     to accessible worlds via a modal base and ordering source. -/
 def box (p : Denot E W .prop) : Denot E W .t :=
-  ∀ i : W, p i
+  ModalLogic.nec p
 
 /-- Possibility (◇): a proposition is possible iff it is true at
     some index. Dual of `box`. -/
 def diamond (p : Denot E W .prop) : Denot E W .t :=
-  ∃ i : W, p i
+  ModalLogic.poss p
 
 /-- □ and ◇ are duals: `□p ↔ ¬◇¬p`. -/
 theorem box_neg_diamond (p : Denot E W .prop) :
     box (E := E) (W := W) p = neg (diamond (fun i => neg (p i))) := by
-  simp only [box, diamond, neg, not_exists_not]
+  simp only [box, diamond, ModalLogic.nec, ModalLogic.poss, neg, not_exists_not]
 
 /-- `◇p ↔ ¬□¬p`. -/
 theorem diamond_neg_box (p : Denot E W .prop) :
     diamond (E := E) (W := W) p = neg (box (fun i => neg (p i))) := by
-  simp only [diamond, box, neg, not_forall_not]
+  simp only [diamond, box, ModalLogic.nec, ModalLogic.poss, neg, not_forall_not]
 
 /-- **K axiom**: `□(p → q) → (□p → □q)`.
     The fundamental distribution axiom of normal modal logic. -/
@@ -192,13 +193,13 @@ theorem necessitation (p : Denot E W .prop)
 theorem box_conj (p q : Denot E W .prop) :
     box (E := E) (W := W) (fun i => conj (p i) (q i)) =
     conj (box p) (box q) := by
-  simp only [box, conj, forall_and]
+  simp only [box, ModalLogic.nec, conj, forall_and]
 
 /-- ◇ distributes over ∨. -/
 theorem diamond_disj (p q : Denot E W .prop) :
     diamond (E := E) (W := W) (fun i => disj (p i) (q i)) =
     disj (diamond p) (diamond q) := by
-  simp only [diamond, disj, exists_or]
+  simp only [diamond, ModalLogic.poss, disj, exists_or]
 
 /-- `□p → ◇p` (seriality — holds vacuously when Index is inhabited). -/
 theorem box_implies_diamond [Inhabited W]
@@ -230,7 +231,7 @@ theorem box_or_box_neg_of_up (p : Denot E W .t) :
     that `up` followed by `box` is equivalent to the original proposition. -/
 theorem box_up_iff [Inhabited W] (p : Denot E W .t) :
     box (E := E) (W := W) (up p) = p := by
-  simp only [box, up]
+  simp only [box, ModalLogic.nec, up]
   exact propext ⟨fun h => h default, fun h _ => h⟩
 
 /-- `□` applied to the intension of `p` is `p` evaluated at every index.

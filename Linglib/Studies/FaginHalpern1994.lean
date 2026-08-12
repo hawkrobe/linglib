@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.EpistemicLogic
+import Linglib.Logic.Modal.Epistemic
 import Linglib.Semantics.Modality.EpistemicProbability
 import Mathlib.Data.Fintype.Basic
 
@@ -57,7 +57,7 @@ namespace FaginHalpern1994
 
 open ModalLogic
   (box IsEuclidean)
-open Modality.EpistemicLogic (knows everyoneKnows)
+open ModalLogic.Epistemic (knows everyoneKnows)
 open Modality.EpistemicProbability (WorldCredence nestedThreshold)
 
 -- ============================================================================
@@ -359,7 +359,7 @@ theorem everyoneKnows_implies_everyoneProbOne {W E : Type*} [Fintype W]
   intro i hi
   simp only [nestedThreshold, decide_eq_true_eq]
   linarith [knows_implies_prob_one kp hCONS hNorm i φ w
-    (Modality.EpistemicLogic.everyoneKnows_implies_knows
+    (ModalLogic.Epistemic.everyoneKnows_implies_knows
       kp.accessRel group _ w i hi h)]
 
 -- ============================================================================

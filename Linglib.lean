@@ -1694,7 +1694,7 @@ import Linglib.Semantics.Mereology
 import Linglib.Semantics.Modality.ActualityEntailments
 import Linglib.Semantics.Modality.BranchingTime
 import Linglib.Semantics.Modality.Directive
-import Linglib.Semantics.Modality.EpistemicLogic
+import Linglib.Logic.Modal.Epistemic
 import Linglib.Semantics.Modality.EpistemicProbability
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Modality.Exclusion

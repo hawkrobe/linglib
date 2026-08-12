@@ -17,7 +17,7 @@ namespace Hintikka1962
 
 open Discourse.Commitment.Frame
 open ModalLogic (box box_four IsSerial)
-open Modality.EpistemicLogic (knows)
+open ModalLogic.Epistemic (knows)
 
 variable {W A : Type*}
 
