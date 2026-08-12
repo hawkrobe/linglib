@@ -140,9 +140,9 @@ def stUnivPxOrQxSentence : (Language.monadicWithConstants FCAtom Predicate).corr
   (stClose 0 stUnivPxOrQx).toSentence stUnivPxOrQx_closed
 
 local instance : (Language.monadicWithConstants FCAtom Predicate).correspondence.Structure (TwoAtomWorld ⊕ FCAtom) :=
-  univAccessModel.corrStructure
+  univAccessModel.correspondence
 
-/-- Truth of the standard-translation sentence in `univAccessModel.corrStructure`
+/-- Truth of the standard-translation sentence in `univAccessModel.correspondence`
     is support of `∀x(Px ∨ Qx)` at some singleton with a total assignment —
     the compactness-ready form of Proposition 4.1, every translation step
     (`toModal?`, `st`, the free-variable check) computed by the compiler. -/

@@ -30,7 +30,7 @@ variable [DecidableEq Domain] [Fintype Domain] [Inhabited Domain]
 /-- **NE-free QBSML support is single-structure first-order satisfaction**:
     [aloni-vanormondt-2023] Proposition 4.1 composed with the standard
     translation. Support at a singleton state is mathlib `Formula.Realize`
-    of the standard translation over `corrStructure` — the link along which
+    of the standard translation over `M.correspondence` — the link along which
     classical model theory (compactness, Löwenheim–Skolem) transfers to the
     NE-free fragment. -/
 theorem support_singleton_iff_st (M : Model W Domain Const Pred)
@@ -40,13 +40,13 @@ theorem support_singleton_iff_st (M : Model W Domain Const Pred)
     {i : Index W Var Domain} {v : Var → Domain} (u : ℕ → W)
     (hv : ∀ y, i.assign y = some (v y)) (hu : u k = i.world) :
     support M φ {i} ↔
-      (letI := M.corrStructure
+      (letI := M.correspondence
        (τ.st k).Realize (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ u))) :=
   (support_singleton_iff_realize M hτ hv).trans
     (realize_st M (fun _ => rfl) (by rw [Sum.elim_inr, Function.comp_apply, hu]))
 
 /-- Support at a singleton state forces the closed standard translation,
-    as a sentence of `corrStructure`. -/
+    as a sentence of `M.correspondence`. -/
 theorem models_toSentence_of_support (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
     {τ : ModalFormula (Language.monadicWithConstants Const Pred) Var}
@@ -54,9 +54,9 @@ theorem models_toSentence_of_support (M : Model W Domain Const Pred)
     (hcl : (stClose 0 (τ.st 0)).freeVarFinset = ∅)
     {i : Index W Var Domain} {v : Var → Domain}
     (hv : ∀ y, i.assign y = some (v y)) (hsupp : support M φ {i}) :
-    (letI := M.corrStructure
+    (letI := M.correspondence
      (W ⊕ Domain) ⊨ (stClose 0 (τ.st 0)).toSentence hcl) := by
-  let _S := M.corrStructure
+  let _S := M.correspondence
   have h1 : (τ.st 0).Realize
       (Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ (fun _ => i.world))) :=
     (support_singleton_iff_st M hτ (fun _ => i.world) hv rfl).mp hsupp
@@ -71,18 +71,18 @@ theorem models_toSentence_of_support (M : Model W Domain Const Pred)
   exact h1
 
 /-- Conversely, the closed standard translation as a sentence of
-    `corrStructure` yields support at some singleton state. -/
+    `M.correspondence` yields support at some singleton state. -/
 theorem exists_support_of_models_toSentence
     (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
     {τ : ModalFormula (Language.monadicWithConstants Const Pred) Var}
     (hτ : φ.toModal? = some τ)
     (hcl : (stClose 0 (τ.st 0)).freeVarFinset = ∅)
-    (h : letI := M.corrStructure
+    (h : letI := M.correspondence
          (W ⊕ Domain) ⊨ (stClose 0 (τ.st 0)).toSentence hcl) :
     ∃ (i : Index W Var Domain) (v : Var → Domain),
       (∀ y, i.assign y = some (v y)) ∧ support M φ {i} := by
-  let _S := M.corrStructure
+  let _S := M.correspondence
   have d₀ : Domain := default
   have h0 : (stClose 0 (τ.st 0)).Realize
       (fun _ => (Sum.inr d₀ : W ⊕ Domain)) :=
@@ -131,7 +131,7 @@ theorem support_compactness {Var : Type*} [DecidableEq Var] [Fintype Var]
   classical
   choose f hf using fun x : T₀ => hT₀ x.2
   obtain ⟨W, Domain, _, _, _, _, M, i, v, hv, hs⟩ := hfin (Finset.univ.image f)
-  let _S := M.corrStructure
+  let _S := M.correspondence
   have : Nonempty (W ⊕ Domain) := ⟨Sum.inl i.world⟩
   have : (W ⊕ Domain) ⊨ (T₀ : (Language.monadicWithConstants Const Pred).correspondence.Theory) := by
     refine ⟨fun σ hσ => ?_⟩
