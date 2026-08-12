@@ -20,21 +20,21 @@ variable {Const Pred Domain W : Type*}
 
 /-- The predicate denotation at a world, read off a Kripke model's
     world-indexed family via `Structure.RelMap`. -/
-def KripkeModel.predInterp
-    (K : KripkeModel (monadicWithConstants Const Pred) W Domain)
+def ModalStructure.predInterp
+    (K : ModalStructure (monadicWithConstants Const Pred) W Domain)
     (P : Pred) (w : W) (d : Domain) : Prop :=
   (K.interp w).RelMap (monadicRel P) (fun _ => d)
 
 /-- The constant denotation at a world, read off `Structure.funMap`. -/
-def KripkeModel.constInterp
-    (K : KripkeModel (monadicWithConstants Const Pred) W Domain)
+def ModalStructure.constInterp
+    (K : ModalStructure (monadicWithConstants Const Pred) W Domain)
     (c : Const) (w : W) : Domain :=
   (K.interp w).funMap (monadicConst c) default
 
 /-- Realization of a monadic atom: the predicate denotation at the world,
     of the term's value. -/
 @[simp] theorem ModalFormula.realize_monadicRel {α : Type*} [DecidableEq α]
-    (K : KripkeModel (monadicWithConstants Const Pred) W Domain)
+    (K : ModalStructure (monadicWithConstants Const Pred) W Domain)
     (w : W) (v : α → Domain) (P : Pred)
     (t : (monadicWithConstants Const Pred).Term α) :
     ((monadicRel P).modalFormula₁ t).Realize K w v ↔
@@ -44,7 +44,7 @@ def KripkeModel.constInterp
 
 /-- A constant term's value at a world is its `constInterp` denotation. -/
 theorem realize_monadicConst {α : Type*}
-    (K : KripkeModel (monadicWithConstants Const Pred) W Domain)
+    (K : ModalStructure (monadicWithConstants Const Pred) W Domain)
     (w : W) (v : α → Domain) (c : Const) :
     (letI := K.interp w;
       (Constants.term (monadicConst (Pred := Pred) c)).realize v) =

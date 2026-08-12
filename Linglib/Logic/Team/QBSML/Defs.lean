@@ -25,10 +25,10 @@ by state non-emptiness.
 * `State.modalLift`: a set of worlds, paired with one assignment.
 * `Formula`: the formula language; `Formula.nec` is the derived `□`;
   `Formula.NEFree` the NE-free fragment.
-* `Model`, `Model.ofMonadic`: models, as `KripkeModel`s over
+* `Model`, `Model.ofMonadic`: models, as `ModalStructure`s over
   `Language.monadicWithConstants`.
 * `eval`, `support`, `antiSupport`: bilateral evaluation.
-* `KripkeModel.IsStateBased`, `KripkeModel.IsIndisputable`: frame
+* `ModalStructure.IsStateBased`, `ModalStructure.IsIndisputable`: frame
   conditions via `s↓`.
 
 ## Implementation notes
@@ -405,11 +405,11 @@ theorem Formula.NEFree.mapAtoms
     `M = ⟨W, D, R, I⟩`) **is** a constant-domain first-order Kripke
     structure over the monadic signature with constants: accessibility `R`
     plus the world-indexed interpretation `I`, carried as a family of
-    mathlib structures (`FirstOrder.Language.KripkeModel`) — true by
+    mathlib structures (`FirstOrder.Language.ModalStructure`) — true by
     construction, not by bridge. -/
 abbrev Model (W : Type*) (Domain : Type*) (Const : Type*)
     (Pred : Type*) :=
-  FirstOrder.Language.KripkeModel
+  FirstOrder.Language.ModalStructure
     (Language.monadicWithConstants Const Pred) W Domain
 
 /-- The QBSML model with accessibility `access`, constant interpretation
@@ -514,25 +514,25 @@ variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain]
     ([aloni-vanormondt-2023] Definition 4.10). Defined via
     `Team.IsStateBased` applied to `State.worldProj s`, sharing
     BSML's frame-condition substrate. -/
-def _root_.FirstOrder.Language.KripkeModel.IsStateBased
+def _root_.FirstOrder.Language.ModalStructure.IsStateBased
     (M : Model W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   Team.IsStateBased M.access (State.worldProj s)
 
 /-- `R` is indisputable on `(M, s)`: all worlds in `s↓` see the same
     accessible set ([aloni-vanormondt-2023] Definition 4.10). -/
-def _root_.FirstOrder.Language.KripkeModel.IsIndisputable
+def _root_.FirstOrder.Language.ModalStructure.IsIndisputable
     (M : Model W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   Team.IsIndisputable M.access (State.worldProj s)
 
 instance [Fintype W] (M : Model W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Decidable (M.IsStateBased s) := by
-  unfold FirstOrder.Language.KripkeModel.IsStateBased; infer_instance
+  unfold FirstOrder.Language.ModalStructure.IsStateBased; infer_instance
 
 instance [Fintype W] (M : Model W Domain Const Pred)
     (s : Finset (Index W Var Domain)) : Decidable (M.IsIndisputable s) := by
-  unfold FirstOrder.Language.KripkeModel.IsIndisputable; infer_instance
+  unfold FirstOrder.Language.ModalStructure.IsIndisputable; infer_instance
 
 end FrameConditions
 
