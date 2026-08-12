@@ -11,19 +11,18 @@ first-order formulas over the correspondence language
 `Language.correspondence Const Pred` — accessibility as a binary relation,
 predicates world-relativized to binary relations, constants world-indexed
 to unary functions, and an individual-sort predicate — interpreted on the
-two-sorted-as-one carrier `W ⊕ M`. `realize_st?` is satisfaction
+two-sorted-as-one carrier `W ⊕ M`. `realize_st` is satisfaction
 preservation.
 
 ## Main declarations
 
 * `Language.correspondence` — the target signature;
-  `ModalStructure.corrStructure` — the `W ⊕ M` encoding of a Kripke
+  `ModalStructure.corrStructure` — the `W ⊕ M` encoding of a modal
   structure as one mathlib structure.
-* `ModalFormula.st?` — the standard translation, with the current world as
-  the free variable `Sum.inr k` and box introducing the fresh world
-  variable `Sum.inr (k + 1)` (partial: embedded classical formulas
-  translate when atomic, which covers all `toModal?` images).
-* `realize_st?` — satisfaction preservation: Kripke satisfaction at `w` is
+* `ModalFormula.st` — the standard translation, total: the current world is
+  the free variable `Sum.inr k`, and `box` introduces the fresh world
+  variable `Sum.inr (k + 1)`.
+* `realize_st` — satisfaction preservation: Kripke satisfaction at `w` is
   first-order realization over `corrStructure` at any sorted valuation
   pinning `Sum.inr k` to `w`.
 * `stClose` — sort-guarded existential closure of the current-world
@@ -31,7 +30,7 @@ preservation.
 
 ## Implementation notes
 
-* The valuation in `realize_st?` is an arbitrary `val : Var ⊕ ℕ → W ⊕ M`
+* The valuation in `realize_st` is an arbitrary `val : Var ⊕ ℕ → W ⊕ M`
   constrained only at individual variables and at the current world index —
   quantifiers in the translation range over the full mixed carrier, with
   off-sort values discharged by the relational guards, so no
@@ -41,7 +40,7 @@ preservation.
   pins only index `k`, so no freshness side conditions arise.
 * `freeVarFinset = ∅` side conditions on closures are hypotheses,
   dischargeable by `decide` per instance — no generic free-variable
-  bookkeeping for `st?`.
+  bookkeeping for `st`.
 
 ## References
 
@@ -243,25 +242,17 @@ theorem realize_st (K : ModalStructure (monadicWithConstants Const Pred) W M)
   induction φ generalizing k val w v with
   | equal t₁ t₂ =>
     let _S := K.corrStructure
-    rw [show (ModalFormula.equal t₁ t₂).st k =
-        Term.equal (stTerm k t₁) (stTerm k t₂) from rfl]
-    rw [ModalFormula.realize_equal, Formula.realize_equal,
+    rw [ModalFormula.st, ModalFormula.realize_equal, Formula.realize_equal,
       realize_stTerm K hind hw, realize_stTerm K hind hw]
     exact ⟨congrArg _, Sum.inr.inj⟩
   | falsum => exact Iff.rfl
   | imp φ ψ ih₁ ih₂ =>
     let _S := K.corrStructure
-    rw [ModalFormula.realize_imp,
-      show (ModalFormula.imp φ ψ).st k = (φ.st k).imp (ψ.st k) from rfl,
-      Formula.realize_imp]
+    rw [ModalFormula.realize_imp, ModalFormula.st, Formula.realize_imp]
     exact imp_congr (ih₁ hind hw) (ih₂ hind hw)
   | box φ ih =>
     let _S := K.corrStructure
-    rw [ModalFormula.realize_box,
-      show (ModalFormula.box φ).st k = Formula.all₁ (Sum.inr (k + 1))
-        ((corrAcc.formula₂ (corrWorldVar k) (corrWorldVar (k + 1))).imp
-          (φ.st (k + 1))) from rfl,
-      Formula.realize_all₁]
+    rw [ModalFormula.realize_box, ModalFormula.st, Formula.realize_all₁]
     constructor
     · intro h z
       rw [Formula.realize_imp, Formula.realize_rel₂]
@@ -287,10 +278,7 @@ theorem realize_st (K : ModalStructure (monadicWithConstants Const Pred) W M)
       · rw [Function.update_self]
   | all x φ ih =>
     let _S := K.corrStructure
-    rw [ModalFormula.realize_all,
-      show (ModalFormula.all x φ).st k = Formula.all₁ (Sum.inl x)
-        ((corrIndiv.formula₁ (corrIndivVar x)).imp (φ.st k)) from rfl,
-      Formula.realize_all₁]
+    rw [ModalFormula.realize_all, ModalFormula.st, Formula.realize_all₁]
     constructor
     · intro h z
       rw [Formula.realize_imp, Formula.realize_rel₁]
