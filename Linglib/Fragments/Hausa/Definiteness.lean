@@ -3,22 +3,21 @@ import Linglib.Syntax.Category.Determiner.Basic
 /-!
 # Hausa Definiteness Fragment
 
-Hausa (Chadic, ISO `ha`). Two overt definite forms — the weak suffix *-n*
-(masc./pl.; fem. *-r̃*), for uniquely identifiable referents including
-first-mention inferables, and the strong *ɗîn*, restricted to hearer- or
-discourse-old referents — a *bipartite* article system ([schwarz-2013] §4.2.2,
-reporting [buba-1997] and [jaggar-2001]). The cell is provisional: bare
-nominals also express definites (globally unique *rānā* 'sun', even some
-re-mentions), and consonant-final loanwords take *ɗîn* as their sole definite
-form, neutralizing the contrast there. Covarying (donkey) uses are unreported
-for either form, so neither entry records one.
+Hausa (Chadic, ISO `ha`) has two definite articles ([schwarz-2013] §4.2.2,
+after [buba-1997] and [jaggar-2001]): the weak suffix *-n* (*-r̃* after
+feminine nouns), used for uniquely identifiable referents including inferable
+first mentions, and the strong *ɗîn*, used for referents already in the
+discourse. The two-article classification is tentative, since bare nominals
+can also be definite and consonant-final loanwords take *ɗîn* for both uses.
+Covarying (donkey) uses are unreported for both articles. The marked
+indefinite is *wani* ([jaggar-2001] §12.3).
 -/
 
-namespace Hausa.Definiteness
+namespace Hausa.Determiners
 
-/-- Hausa: weak *-n* (situational uniqueness), strong *ɗîn* (anaphoric), and
-    the marked indefinite *wani* (fem. *wata*, pl. *wasu*; [jaggar-2001] §12.3). -/
-def _root_.Hausa.Determiners.inventory : Determiner.Inventory :=
+/-- The Hausa determiners are the weak definite *-n*, the strong definite
+    *ɗîn*, and the marked indefinite *wani* (feminine *wata*, plural *wasu*). -/
+def inventory : Determiner.Inventory :=
   [ .article { form := "-n", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := [.largerSituation] },
     .article { form := "ɗîn", definiteness := .definite, exponent := .dedicatedMorpheme,
@@ -26,6 +25,6 @@ def _root_.Hausa.Determiners.inventory : Determiner.Inventory :=
     .article { form := "wani", definiteness := .indefinite, exponent := .dedicatedMorpheme } ]
 
 /-- Hausa derives the `.bipartite` Moroney cell. -/
-theorem marking : Determiners.inventory.markingStrategy = .bipartite := by decide
+theorem marking : inventory.markingStrategy = .bipartite := by decide
 
-end Hausa.Definiteness
+end Hausa.Determiners
