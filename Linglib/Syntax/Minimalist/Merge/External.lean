@@ -84,7 +84,7 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*}
           show ({S'} : Forest (Nonplanar α)) = S' ::ₘ (0 : Forest (Nonplanar α))
             from rfl, comulForestN_cons, comulForestN_zero, mul_one]]
   -- Step 3: split each comulTreeN into prim + cut-sum; distribute.
-  unfold comulTreeN
+  unfold comulTreeN comulTreeNG
   rw [add_mul, mul_add, mul_add]
   simp only [map_add]
   -- Term 1 (prim × prim): the surviving contribution.
@@ -206,7 +206,7 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R] {α : Type*}
   rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply, map_mul,
       show comulAlgHomN (R := R) (α := α) (of' ({T} : Forest (Nonplanar α)))
           = comulTreeN (R := R) T from comulAlgHomN_apply_ofTree T]
-  unfold comulTreeN
+  unfold comulTreeN comulTreeNG
   rw [add_mul]
   simp only [map_add]
   -- prim term `ofTree T ⊗ 1`: vanishes since `{T} ⊄ {S, S'}`.

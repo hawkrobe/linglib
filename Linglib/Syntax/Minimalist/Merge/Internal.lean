@@ -62,7 +62,7 @@ theorem mergeOpUnit_apply_singleton {α : Type*} [DecidableEq (Nonplanar α)]
   rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply,
       show comulAlgHomN (R := R) (α := α) (of' ({T} : Forest (Nonplanar α)))
           = comulTreeN (R := R) T from comulAlgHomN_apply_ofTree T]
-  unfold comulTreeN
+  unfold comulTreeN comulTreeNG
   rw [map_add]
   congr 1
   · -- primitive part: `if {T} = {β} then of' {β} * 1 else 0` ↔ `if T = β then of' {β} else 0`.
