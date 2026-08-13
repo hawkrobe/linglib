@@ -11,17 +11,23 @@ set_option autoImplicit false
 
 /-!
 # Trace-stripping and `Sum.inl` embedding on rose trees
-[marcolli-chomsky-berwick-2025]
 
-`RoseTree.stripTrace` removes `Sum.inr`-rooted (trace-placeholder)
-subtrees from a `RoseTree (α ⊕ β)`, returning `none` iff the root itself
-is a placeholder; `RoseTree.Nonplanar.stripTrace` is its descent through
-the `Perm` quotient. `RoseTree.Nonplanar.embedInl` embeds trace-free
-trees via `Sum.inl`, and stripping inverts the embedding
-(`RoseTree.Nonplanar.stripTrace_embedInl`).
+Removal of `Sum.inr`-rooted (trace-placeholder) subtrees from
+`Sum`-labeled rose trees, and the `Sum.inl` embedding it inverts — the
+tree-level substrate of the deletion coproduct Δ^d of
+[marcolli-chomsky-berwick-2025], packaged as algebra homs in
+`Core/Algebra/RootedTree/Coproduct/DeletionNonplanar.lean`.
 
-These are the combinatorial legs of the deletion coproduct Δ^d, packaged
-as algebra homs in `Core/Algebra/RootedTree/Coproduct/DeletionNonplanar.lean`.
+## Main definitions
+
+* `RoseTree.stripTrace` — strip trace-placeholder subtrees from a planar
+  tree, `none` iff the root itself is a placeholder.
+* `RoseTree.Nonplanar.stripTrace` — the descent through the `Perm` quotient.
+* `RoseTree.Nonplanar.embedInl` — the componentwise `Sum.inl` embedding.
+
+## Main results
+
+* `RoseTree.Nonplanar.stripTrace_embedInl` — stripping inverts the embedding.
 -/
 
 variable {α β : Type*}

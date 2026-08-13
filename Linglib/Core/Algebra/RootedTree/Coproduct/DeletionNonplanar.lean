@@ -13,62 +13,47 @@ open RoseTree RoseTree.Nonplanar
 set_option autoImplicit false
 
 /-!
-# Δ^d on `ConnesKreimer R (Nonplanar (α ⊕ β))` via projection from Δ^c
-[marcolli-chomsky-berwick-2025]
+# The deletion coproduct Δ^d
 
-The **deletion variant** of the Connes-Kreimer admissible-cut coproduct,
-derived from Δ^c (`Coproduct/TraceNonplanar.lean`) by stripping
-trace-placeholder leaves from the right channel — MCB Lemma 1.3.10
-(p. 44):
+The deletion variant of the Connes-Kreimer admissible-cut coproduct
+([marcolli-chomsky-berwick-2025] Lemma 1.3.10, p. 44), obtained from the
+trace coproduct Δ^c (`Coproduct/TraceNonplanar.lean`) by stripping
+trace-placeholder leaves from both tensor channels:
+`Δ^d = (Π_{d,c} ⊗ Π_{d,c}) ∘ Δ^c`, where `Π_{d,c}` deletes
+trace-placeholder leaves.
 
-  Δ^d = (id ⊗ Π_{d,c}) ∘ Δ^c = (id ⊗ Π_{d,p}) ∘ Δ^ρ
+## Main definitions
 
-where Π_{d,c} deletes trace-placeholder leaves and Π_{d,p} is the
-binary-rebinarize step.
+* `ConnesKreimer.stripTraceAlgHom` — `Π_{d,c}` as an algebra hom
+  `ConnesKreimer R (Nonplanar (α ⊕ β)) →ₐ[R] ConnesKreimer R (Nonplanar α)`,
+  induced by the tree-level strip (`Core/Data/RoseTree/StripTrace.lean`)
+  via `ConnesKreimer.mapDomainAlgHom`.
+* `ConnesKreimer.embedInlAlgHom` — the `Sum.inl` embedding as an algebra hom.
+* `ConnesKreimer.comulDN` — the deletion coproduct, as the composite above.
 
-## In our n-ary substrate
+## Main results
 
-MCB works with binary trees throughout. Their Π_{d,p} (the "rebinarize"
-step) contracts degree-1 vertices to recover binary structure. In our
-`Nonplanar α` substrate trees can be arbitrary n-ary, so **Π_{d,p} is
-the identity**: no degree-1 smoothing needed, no rebinarization step.
+* `ConnesKreimer.stripTraceAlgHom_comp_embedInlAlgHom` — stripping
+  inverts the embedding.
+* `ConnesKreimer.comulDN_embedInl_eq_comulAlgHomN` — on embedded
+  trace-free trees, Δ^d agrees with the pruning coproduct Δ^ρ.
 
-Δ^d in our setting therefore reduces to the trace-strip projection from
-Δ^c, applied to **both** tensor channels so that the target carrier is
-uniformly `Nonplanar α`:
+## Implementation notes
 
-  Δ^d := (Π_{d,c} ⊗ Π_{d,c}) ∘ Δ^c
+[marcolli-chomsky-berwick-2025] work with binary trees: their Δ^d
+composes with a second projection `Π_{d,p}` contracting degree-1
+vertices to restore binary structure, and their comparison
+`Δ^d = (id ⊗ Π_{d,p}) ∘ Δ^ρ` holds only weakly (Lemma 1.2.12, a
+distance-≤-1 multiplicity discrepancy). On n-ary `Nonplanar` trees
+`Π_{d,p}` is the identity, the strip alone defines Δ^d, and the Δ^ρ
+comparison is an exact equality. We strip both tensor channels so the
+target carrier is uniformly trace-free; on the embedded trace-free
+inputs of the comparison the crown-channel strip is the identity,
+recovering MCB's one-channel form `(id ⊗ Π_{d,c}) ∘ Δ^c`.
 
-(On the inputs where Δ^d is compared with Δ^ρ — embedded trace-free
-trees — the crown channel carries no markers and its strip is the
-identity, recovering MCB's one-channel form.)
-
-The strip and the `Sum.inl` embedding are tree-level operations
-(`Core/Data/RoseTree/StripTrace.lean`); this file packages them as
-algebra homs — `stripTraceAlgHom :
-ConnesKreimer R (Nonplanar (α ⊕ β)) →ₐ[R] ConnesKreimer R (Nonplanar α)`
-(Π_{d,c}) and `embedInlAlgHom` — via `ConnesKreimer.mapDomainAlgHom`,
-and defines `comulDN` as the composition above.
-
-## Relationship to Δ^ρ
-
-The Sum.inl embedding lets us compare the two:
-
-  `comulDN ∘ embedInlAlgHom = comulAlgHomN`  (`comulDN_embedInl_eq_comulAlgHomN`)
-
-i.e., starting from a trace-free tree, applying Δ^c then stripping
-gives the same result as Δ^ρ directly. This is the n-ary specialization
-of MCB's `Δ^d = (id ⊗ Π_{d,p}) ∘ Δ^ρ` (since Π_{d,p} is identity here).
-
-## Bialgebra structure
-
-Δ^d does **not** have a separate Bialgebra structure in this file. By
-the equivalence theorem, consumers wanting a Bialgebra should compose
-through `embedInlAlgHom` and use the Δ^ρ structure (`instBialgebraRho`,
-`Coproduct/PruningDuality.lean`). MCB's Lemma 1.2.12 (Δ^d weak
-coassoc with distance-≤-1 multiplicity discrepancy) is specific to the
-binary `Π_{d,p}` step which is identity in our setting; in our n-ary
-substrate Δ^d ≡ Δ^ρ (modulo the embedding) has strict coassoc.
+Δ^d carries no separate `Bialgebra` structure: consumers compose through
+`embedInlAlgHom` and use the Δ^ρ instance (`instBialgebraRho`,
+`Coproduct/PruningDuality.lean`).
 
 ## Status
 
