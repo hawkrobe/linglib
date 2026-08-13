@@ -422,6 +422,7 @@ import Linglib.Data.PHOIBLE.Inventories.Hungarian
 import Linglib.Data.PHOIBLE.Inventories.Japanese
 import Linglib.Data.PHOIBLE.Inventories.MandarinChinese
 import Linglib.Data.PHOIBLE.Inventories.Maori
+import Linglib.Data.PHOIBLE.Inventories.Persian
 import Linglib.Data.PHOIBLE.Inventories.Russian
 import Linglib.Data.PHOIBLE.Inventories.Spanish
 import Linglib.Data.PHOIBLE.Inventories.Swahili
@@ -799,6 +800,7 @@ import Linglib.Fragments.English.V2
 import Linglib.Fragments.English.WordOrder
 import Linglib.Fragments.Farsi.Coordination
 import Linglib.Fragments.Farsi.Determiners
+import Linglib.Fragments.Farsi.Phonology
 import Linglib.Fragments.Fering.Definiteness
 import Linglib.Fragments.Fijian.Possession
 import Linglib.Fragments.Finnish.Case

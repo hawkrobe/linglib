@@ -1,5 +1,6 @@
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Phonology.Segmental.Defs
+import Linglib.Fragments.Farsi.Phonology
 import Linglib.Core.Probability.LogitChoice
 import Mathlib.Data.Fin.VecNotation
 
@@ -23,7 +24,7 @@ the suffixed form homophonous with the bare stem. Storme's Table 4 evaluates
 Jurgec's frequencies; marginalization (his Table 5) recovers the per-suffix
 realization probabilities.
 
-Forms are segment strings over the `Phonology.Segment` substrate and the three
+Forms are strings of `Fragments/Farsi/Phonology.lean` segments and the three
 resolutions are operations at the stem–suffix juncture, so the paradigm's
 structure is derived rather than stipulated: homophony is string identity,
 \*Hiatus counts vowel–vowel adjacencies via `Segment.IsVowel`, and Max and Dep
@@ -53,56 +54,7 @@ count deleted and inserted segments.
 
 namespace Storme2026
 
-open Constraints HarmonicGrammar Phonology
-
-/-! ### The Persian segments
-
-The segments of the /hutʃɑ/ paradigm, specified with [hayes-2009]'s feature
-values over the shared `Phonology.Segment` substrate. -/
-
-/-- /h/ — voiceless glottal fricative. -/
-def h : Segment := Segment.ofSpecs
-  [(.syllabic, false), (.consonantal, false), (.sonorant, false),
-   (.continuant, true), (.voice, false), (.spreadGlottis, true)]
-
-/-- /u/ — high back rounded vowel. -/
-def u : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.consonantal, false), (.sonorant, true),
-   (.continuant, true), (.voice, true), (.dorsal, true),
-   (.high, true), (.low, false), (.back, true), (.round, true)]
-
-/-- /tʃ/ — voiceless postalveolar affricate. -/
-def ch : Segment := Segment.ofSpecs
-  [(.syllabic, false), (.consonantal, true), (.sonorant, false),
-   (.continuant, false), (.delayedRelease, true), (.voice, false),
-   (.coronal, true), (.anterior, false), (.strident, true)]
-
-/-- /ɑ/ — low back unrounded vowel. -/
-def aa : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.consonantal, false), (.sonorant, true),
-   (.continuant, true), (.voice, true), (.dorsal, true),
-   (.high, false), (.low, true), (.back, true), (.front, false)]
-
-/-- /e/ — mid front unrounded vowel. -/
-def e : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.consonantal, false), (.sonorant, true),
-   (.continuant, true), (.voice, true), (.dorsal, true),
-   (.high, false), (.low, false), (.front, true), (.back, false)]
-
-/-- /m/ — bilabial nasal. -/
-def m : Segment := Segment.ofSpecs
-  [(.syllabic, false), (.consonantal, true), (.sonorant, true),
-   (.nasal, true), (.voice, true), (.labial, true)]
-
-/-- /n/ — alveolar nasal. -/
-def n : Segment := Segment.ofSpecs
-  [(.syllabic, false), (.consonantal, true), (.sonorant, true),
-   (.nasal, true), (.voice, true), (.coronal, true), (.anterior, true)]
-
-/-- /ʔ/ — glottal stop, the epenthetic hiatus-breaker. -/
-def glottal : Segment := Segment.ofSpecs
-  [(.syllabic, false), (.consonantal, false), (.sonorant, false),
-   (.continuant, false), (.voice, false), (.constrGlottis, true)]
+open Constraints HarmonicGrammar Phonology Farsi.Phonology
 
 /-! ### The paradigm as segment strings -/
 
