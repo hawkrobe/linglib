@@ -111,6 +111,16 @@ def elideV1 : List Segment := j.stemBody ++ j.suffix
 /-- V2 elision: the suffix-initial vowel goes. -/
 def elideV2 : List Segment := j.stem ++ j.suffixBody
 
+/-- The faithful concatenation is longer than the bare stem. -/
+theorem input_ne_stem : j.input ≠ j.stem := fun h => by
+  have := congrArg List.length h
+  simp [input, stem] at this
+
+/-- The epenthesized form is longer than the bare stem. -/
+theorem epenthesize_ne_stem (c : Segment) : j.epenthesize c ≠ j.stem := fun h => by
+  have := congrArg List.length h
+  simp [epenthesize, stem] at this
+
 /-- V2 elision merges the suffixed form with the bare stem exactly when the
 suffix is monosegmental — the categorical core of suffix-length-conditioned
 hiatus resolution. -/
