@@ -12,8 +12,9 @@ location is predictable in loanwords, compounds, and affixed words. This
 file formalizes the survey's core generalizations — the Table 1 comparison
 of the antepenultimate accent rule ([mccawley-1968]) with the Latin Stress
 Rule ([hayes-1995]), the accent-to-tone derivation and its culminativity
-(`accentToTones_culminative`), the eight-way affix accent typology, and
-NonFinality ([prince-smolensky-1993]) in compound accent.
+(`accentToTones_culminative`), and NonFinality ([prince-smolensky-1993]) in
+compound accent. The §6 affix accent lexicon lives in
+`Fragments/Japanese/Prosody.lean`.
 -/
 
 namespace Kawahara2015
@@ -301,26 +302,6 @@ theorem accentToTones_culminative (a : Option ℕ) (n : ℕ) :
       (fun j hj => by
         obtain ⟨k, -, rfl⟩ := List.mem_map.mp hj
         exact Nat.succ_le_succ k.zero_le)
-
-/-! ### Affix accent typology (§6)
-
-The eight affix accent types and their projection to the coarse
-dominant/recessive split. -/
-
-/-- The eight affix types project onto the coarse dominant/recessive
-    distinction, with three preserving root accent when present (recessive,
-    recessive pre-accenting, accent-shifting) and five overriding it
-    (§6). -/
-theorem affix_typology_coarse_partition :
-    taraSuffix.accentType.toProsodicDominance = .recessive ∧
-      siSuffix.accentType.toProsodicDominance = .recessive ∧
-      monoSuffix.accentType.toProsodicDominance = .recessive ∧
-      ppoiSuffix.accentType.toProsodicDominance = .dominant ∧
-      keSuffix.accentType.toProsodicDominance = .dominant ∧
-      oPrefix.accentType.toProsodicDominance = .dominant ∧
-      tekiSuffix.accentType.toProsodicDominance = .dominant ∧
-      zuSuffix.accentType.toProsodicDominance = .dominant :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-! ### Compound accent (§4)
 
