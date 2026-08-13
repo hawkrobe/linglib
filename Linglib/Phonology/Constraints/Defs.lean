@@ -52,6 +52,16 @@ theorem Constraint.binary_le_one (P : C → Prop) [DecidablePred P] (c : C) :
     Constraint.binary P c ≤ 1 := by
   simp only [Constraint.binary]; split <;> omega
 
+/-- A binary constraint is satisfied exactly when its predicate fails. -/
+theorem Constraint.binary_eq_zero_iff (P : C → Prop) [DecidablePred P] (c : C) :
+    Constraint.binary P c = 0 ↔ ¬P c := by
+  simp [Constraint.binary]
+
+/-- A binary constraint is violated exactly when its predicate holds. -/
+theorem Constraint.binary_eq_one_iff (P : C → Prop) [DecidablePred P] (c : C) :
+    Constraint.binary P c = 1 ↔ P c := by
+  simp [Constraint.binary]
+
 /-- Pull a constraint back along `f : C → D`: evaluate the `D`-constraint on the
 image. Lets a specific carrier reuse a constraint defined on a more general one. -/
 def Constraint.comap (f : C → D) (con : Constraint D) : Constraint C := con ∘ f
