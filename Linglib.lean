@@ -310,6 +310,10 @@ import Linglib.Core.Probability.Softmax
 import Linglib.Core.Probability.SoftmaxLimits
 import Linglib.Core.Probability.SoftmaxTheory
 import Linglib.Core.Relation.ReflTransGen
+import Linglib.Core.RingTheory.Bialgebra.Basic
+import Linglib.Core.RingTheory.Bialgebra.DualPrimitives
+import Linglib.Core.RingTheory.Coalgebra.Basic
+import Linglib.Core.RingTheory.Coalgebra.Convolution
 import Linglib.Core.RingTheory.HopfAlgebra.SymmetricAlgebra
 import Linglib.Data.Complementation.Noonan2007
 import Linglib.Data.Complementation.Schema
