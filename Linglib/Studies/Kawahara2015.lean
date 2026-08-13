@@ -179,50 +179,31 @@ theorem trisyllabic_tone_patterns :
 `accentToTones_culminative` derives this for every accent location and word
 length. -/
 
-/-- The number of H-to-L falls in a tone string. -/
-def hlFallCount : List LevelTone → ℕ
-  | .H :: .L :: rest => hlFallCount (.L :: rest) + 1
-  | _ :: rest => hlFallCount rest
-  | [] => 0
-
-theorem count_L_tail_le : ∀ l : List LevelTone, l.tail.count .L ≤ l.count .L
-  | [] => Nat.le_refl _
-  | .H :: _ => by rw [List.tail_cons, List.count_cons_of_ne (by decide)]
-  | .L :: _ => by rw [List.tail_cons, List.count_cons_self]; exact Nat.le_succ _
+/-- The number of H-to-L falls in a tone string — the occurrences of
+    `(H, L)` among adjacent pairs. -/
+def hlFallCount (l : List LevelTone) : ℕ := (l.zip l.tail).count (.H, .L)
 
 /-- An L head opens no fall. -/
 theorem hlFallCount_L_cons (l : List LevelTone) :
     hlFallCount (.L :: l) = hlFallCount l := by
-  cases l with
-  | nil => rfl
-  | cons b rest => cases b <;> rfl
-
-/-- Every fall consumes an L strictly after the first position. -/
-theorem hlFallCount_le_count_tail :
-    ∀ l : List LevelTone, hlFallCount l ≤ l.tail.count .L
-  | [] => Nat.le_refl _
-  | [t] => by cases t <;> simp [hlFallCount]
-  | .H :: .L :: rest => by
-      have ih := hlFallCount_le_count_tail (.L :: rest)
-      rw [show hlFallCount (.H :: .L :: rest) = hlFallCount (.L :: rest) + 1 from rfl,
-        List.tail_cons, List.count_cons_self]
-      rw [List.tail_cons] at ih
-      omega
-  | .H :: .H :: rest => by
-      have ih := hlFallCount_le_count_tail (.H :: rest)
-      rw [show hlFallCount (.H :: .H :: rest) = hlFallCount (.H :: rest) from rfl,
-        List.tail_cons, List.count_cons_of_ne (by decide)]
-      rw [List.tail_cons] at ih
-      exact ih
-  | .L :: b :: rest => by
-      have ih := hlFallCount_le_count_tail (b :: rest)
-      rw [hlFallCount_L_cons, List.tail_cons]
-      exact ih.trans (count_L_tail_le _)
+  cases l <;> simp [hlFallCount]
 
 theorem hlFallCount_cons_cons (t u : LevelTone) (l : List LevelTone) :
     hlFallCount (t :: u :: l) =
       hlFallCount (u :: l) + if t = .H ∧ u = .L then 1 else 0 := by
   cases t <;> cases u <;> simp [hlFallCount]
+
+/-- Every fall consumes an L strictly after the first position. -/
+theorem hlFallCount_le_count_tail :
+    ∀ l : List LevelTone, hlFallCount l ≤ l.tail.count .L
+  | [] => Nat.le_refl _
+  | [_] => by simp [hlFallCount]
+  | t :: u :: rest => by
+      have ih := hlFallCount_le_count_tail (u :: rest)
+      rw [hlFallCount_cons_cons, List.tail_cons]
+      rw [List.tail_cons] at ih
+      cases t <;> cases u <;> simp_all
+      omega
 
 /-- Spreading is fall-invariant, since copying a tone neither creates nor
     destroys an HL fall. -/
@@ -230,7 +211,7 @@ theorem hlFallCount_cons_scanl (spec : List (Option LevelTone)) (x t : LevelTone
     hlFallCount (x :: spec.scanl (fun t o => o.getD t) t) =
       hlFallCount (x :: t :: spec.filterMap id) := by
   induction spec generalizing x t with
-  | nil => cases x <;> cases t <;> rfl
+  | nil => rfl
   | cons o rest ih =>
     cases o with
     | some u =>
