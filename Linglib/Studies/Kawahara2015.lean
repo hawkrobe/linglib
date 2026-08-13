@@ -1,4 +1,5 @@
 import Linglib.Phonology.Prosody.Syllable
+import Mathlib.Data.List.ReduceOption
 import Mathlib.Data.Nat.PSub
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Fragments.Japanese.Prosody
@@ -205,26 +206,26 @@ theorem hlFallCount_le_count_tail :
       cases t <;> cases u <;> simp_all
       omega
 
+/-- Stuttering a tone creates no fall. -/
+theorem hlFallCount_cons_self (t : LevelTone) (l : List LevelTone) :
+    hlFallCount (t :: t :: l) = hlFallCount (t :: l) := by
+  cases t <;> simp [hlFallCount]
+
 /-- Spreading is fall-invariant, since copying a tone neither creates nor
     destroys an HL fall. -/
 theorem hlFallCount_cons_scanl (spec : List (Option LevelTone)) (x t : LevelTone) :
     hlFallCount (x :: spec.scanl (fun t o => o.getD t) t) =
-      hlFallCount (x :: t :: spec.filterMap id) := by
+      hlFallCount (x :: t :: spec.reduceOption) := by
   induction spec generalizing x t with
   | nil => rfl
   | cons o rest ih =>
     cases o with
     | some u =>
-      simp only [List.scanl_cons, Option.getD_some,
-        show (some u :: rest).filterMap id = u :: rest.filterMap id from rfl]
+      simp only [List.scanl_cons, Option.getD_some, List.reduceOption_cons_of_some]
       rw [hlFallCount_cons_cons, hlFallCount_cons_cons, ih t u]
     | none =>
-      have hδ : (if t = LevelTone.H ∧ t = LevelTone.L then 1 else 0) = 0 := by
-        cases t <;> simp
-      simp only [List.scanl_cons, Option.getD_none,
-        show (none :: rest).filterMap id = rest.filterMap id from rfl]
-      rw [hlFallCount_cons_cons, hlFallCount_cons_cons, ih t t,
-        hlFallCount_cons_cons, hδ, Nat.add_zero]
+      simp only [List.scanl_cons, Option.getD_none, List.reduceOption_cons_of_none]
+      rw [hlFallCount_cons_cons, hlFallCount_cons_cons, ih t t, hlFallCount_cons_self]
 
 /-- Mora 0 is always specified, as H under initial accent and otherwise as
     the initial-rise L. -/
@@ -277,7 +278,9 @@ theorem accentToTones_culminative (a : Option ℕ) (n : ℕ) :
         List.scanl_cons, List.tail_cons, Option.getD_some]
     rw [hpeel, ← hlFallCount_L_cons, hlFallCount_cons_scanl, hlFallCount_L_cons]
     refine (hlFallCount_le_count_tail _).trans ?_
-    rw [List.tail_cons, List.filterMap_map, Function.id_comp]
+    rw [List.tail_cons]
+    simp only [List.reduceOption]
+    rw [List.filterMap_map, Function.id_comp]
     exact count_L_toneSpec_dense a _
       (List.nodup_range.map Nat.succ_injective)
       (fun j hj => by
