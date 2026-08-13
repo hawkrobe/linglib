@@ -253,7 +253,18 @@ Recursive enumeration of cut summands. For a leaf, the only cut is the
 empty cut. For a node, sum over all per-child decisions: each child can
 either be extracted whole (contributes to cut forest, drops from
 remainder) OR recurse with a smaller cut (contributes whatever its cut
-extracts, leaves its deletion-remainder in the remainder list). -/
+extracts, leaves its deletion-remainder in the remainder list).
+
+This bespoke block is the deletion (Δ^ρ) sibling of the
+extraction-policy-parameterized `cutSummandsG`. It is deliberately NOT
+re-expressed as `cutSummandsG (fun _ => some [])`: the Δ^ρ consumers are
+written against the `Option` remainder encoding used here — deletion is
+`Option.none`, a surviving child is `Option.some r` — whereas
+`cutSummandsG` carries `List` remainders (deletion `[]`, survival `[r]`).
+Folding onto `cutSummandsG` would change the public return type of
+`augActionP` and the shapes of `augActionP_eq`/`cutListSummandsP_cons`,
+so the two enumerations coexist. (Δ^c *does* derive from `cutSummandsG`,
+being written against the `List` encoding.) -/
 
 mutual
 /-- Multiset of (cut forest, deletion remainder) pairs for a tree.
@@ -695,6 +706,173 @@ noncomputable def countSingleCutsRho [DecidableEq α] (T T₁ T₂ : Nonplanar �
 
 variable {β : Type*}
 
+/-! ### `augActionN` and `cutForestSummandsN` substrate
+
+`cutForestSummandsN F` is the Nonplanar-level multiset of
+`(cut_forest, remainder_forest)` pairs ranging over per-tree decisions
+on the forest `F`. Each per-tree decision (`augActionN T`) is either
+"extract `T` whole" (pair `({T}, none)`) or "recurse with a cut summand
+of `T`" (pair `(s.1, some s.2)` for `s ∈ cutSummandsN T`).
+
+Defined recursively at the Nonplanar level via `Multiset.foldr`, with
+the `LeftCommutative` obligation discharged by `swap_double_combinerProj`
+(the per-tree-decision swap symmetry, established for the tree-level
+projection in §3 above and reused here verbatim). -/
+
+/-- Per-tree decision multiset at the Nonplanar level: extract this tree
+    whole (`({T}, none)`), or recurse into a cut summand. -/
+noncomputable def augActionN (T : Nonplanar α) :
+    Multiset (Multiset (Nonplanar α) × Option (Nonplanar α)) :=
+  (({T} : Multiset (Nonplanar α)), Option.none) ::ₘ
+    (cutSummandsN T).map (fun s => (s.1, Option.some s.2))
+
+/-- Bridge to the tree-level `augActionP`: at a tree-level lift, `augActionN`
+    agrees with `(augActionP T).map projAugAction`. -/
+theorem augActionN_mk (T : RoseTree α) :
+    augActionN (Nonplanar.mk T) = (augActionP T).map projAugAction := by
+  unfold augActionN
+  simp only [cutSummandsN_mk, augActionP_eq, Multiset.map_cons, Multiset.map_map]
+  rfl
+
+/-- Multiset.foldr combiner for `cutForestSummandsN`: combine a per-tree
+    decision with the accumulated cuts of the remaining trees via the
+    cartesian product and `innerCombinerProj`. -/
+private noncomputable def cutForestCombinerN (T : Nonplanar α)
+    (acc : Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α))) :
+    Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α)) :=
+  (augActionN T ×ˢ acc).map innerCombinerProj
+
+/-- The combiner is left-commutative — discharged by `swap_double_combinerProj`,
+    the per-tree-decision swap symmetry of `innerCombinerProj`. -/
+private instance : LeftCommutative (cutForestCombinerN (α := α)) where
+  left_comm _ _ _ := swap_double_combinerProj _ _ _
+
+/-- The **forest cut summand multiset**: every per-tree decision tuple on
+    `F : Multiset (Nonplanar α)` produces a pair `(cut_forest, remainder_forest)`,
+    and `cutForestSummandsN F` enumerates them all (as a multiset). The
+    public Nonplanar-level analog of `(cutListSummandsP ps).map projForest`,
+    independent of the tree-level list representation. -/
+noncomputable def cutForestSummandsN (F : Multiset (Nonplanar α)) :
+    Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α)) :=
+  Multiset.foldr cutForestCombinerN
+    ({((0 : Multiset (Nonplanar α)), (0 : Multiset (Nonplanar α)))} : Multiset _) F
+
+@[simp] theorem cutForestSummandsN_zero :
+    cutForestSummandsN (0 : Multiset (Nonplanar α)) =
+      ({((0 : Multiset (Nonplanar α)), (0 : Multiset (Nonplanar α)))} : Multiset _) := rfl
+
+@[simp] theorem cutForestSummandsN_cons (T : Nonplanar α) (F : Multiset (Nonplanar α)) :
+    cutForestSummandsN (T ::ₘ F) =
+      (augActionN T ×ˢ cutForestSummandsN F).map innerCombinerProj := by
+  show Multiset.foldr cutForestCombinerN _ (T ::ₘ F) = _
+  rw [Multiset.foldr_cons]
+  rfl
+
+/-! ### Bridges to the tree-level list representation
+
+The tree-level substrate `cutListSummandsP` (defined on `List (RoseTree α)`)
+is reused to evaluate `cutForestSummandsN` on a tree-level list rep, and
+to characterize cuts of a Nonplanar node. These bridges are private —
+the public `cutSummandsN_node` and `comulForestN_eq_sum` are stated
+purely at the Nonplanar level. -/
+
+/-- Witness: every `F : Multiset (Nonplanar α)` has a tree-level list
+    representative. Used internally to lift tree-level-side characterizations
+    to the Nonplanar level. -/
+theorem exists_planar_list_rep (F : Multiset (Nonplanar α)) :
+    ∃ ps : List (RoseTree α), F = Multiset.ofList (ps.map Nonplanar.mk) := by
+  refine ⟨F.toList.map Quotient.out, ?_⟩
+  conv_lhs => rw [← Multiset.coe_toList F]
+  congr 1
+  rw [List.map_map]
+  conv_lhs => rw [show F.toList = F.toList.map id from (List.map_id _).symm]
+  apply List.map_congr_left
+  intro x _
+  exact (Quotient.out_eq x).symm
+
+/-- `cutForestSummandsN` evaluated on a tree-level list rep agrees with the
+    tree-level `cutListSummandsP` projected through `projForest`. By
+    induction on `ps` using `cutListSummandsP_cons_proj` and
+    `augActionN_mk`. -/
+theorem cutForestSummandsN_via_planar_list (ps : List (RoseTree α)) :
+    cutForestSummandsN (Multiset.ofList (ps.map Nonplanar.mk)) =
+      (cutListSummandsP ps).map projForest := by
+  induction ps with
+  | nil =>
+    show cutForestSummandsN (0 : Multiset (Nonplanar α)) = _
+    rw [cutForestSummandsN_zero, cutListSummandsP_nil, Multiset.map_singleton]
+    rfl
+  | cons p ps' ih =>
+    show cutForestSummandsN (Nonplanar.mk p ::ₘ Multiset.ofList (ps'.map Nonplanar.mk)) = _
+    rw [cutForestSummandsN_cons, ih, augActionN_mk]
+    exact (cutListSummandsP_cons_proj p ps').symm
+
+/-- Cuts of a node decompose via the tree-level `cutListSummandsP` projected
+    through `projForest` — the tree-level-list-rep form of `cutSummandsN_node`.
+    The map `(p ↦ (p.1, Nonplanar.node a p.2))` re-grafts the remainder
+    children onto a fresh root with label `a`. -/
+theorem cutSummandsN_node_planar_list (a : α) (ps : List (RoseTree α)) :
+    cutSummandsN (Nonplanar.node a (Multiset.ofList (ps.map Nonplanar.mk))) =
+      ((cutListSummandsP ps).map projForest).map
+        (fun pf => (pf.1, Nonplanar.node a pf.2)) := by
+  rw [Nonplanar.node_mk_tree_list]
+  show (cutSummandsP (RoseTree.node a ps)).map (projSummand (α := α)) = _
+  rw [cutSummandsP_node, Multiset.map_map, Multiset.map_map]
+  apply Multiset.map_congr rfl
+  intro p _
+  show (p.1.map Nonplanar.mk, Nonplanar.mk (.node a p.2)) =
+       ((projForest p).1, Nonplanar.node a (projForest p).2)
+  rw [← Nonplanar.node_mk_tree_list]
+  rfl
+
+/-! ### Empty cut existence (substrate for counit laws)
+
+The empty cut `(0, T)` is always a cut summand of `T`. The tree-level
+substrate `cutSummandsP T` always contains `(0, T)`, by mutual structural
+induction with `cutListSummandsP`; the nonplanar `cutForestSummandsN F`
+contains `(0, F)` by descent. These witnesses split the `(counit ⊗ id)`
+sum into a single non-vanishing summand `1 ⊗ of' F`. -/
+
+mutual
+
+/-- The empty cut `(0, T)` is a cut summand of every tree-level tree `T`. -/
+theorem mem_cutSummandsP_zero : ∀ (T : RoseTree α),
+    ((0 : Multiset (RoseTree α)), T) ∈ cutSummandsP T
+  | .node a cs => by
+    rw [cutSummandsP_node, Multiset.mem_map]
+    exact ⟨(0, cs), mem_cutListSummandsP_zero cs, rfl⟩
+
+/-- The empty cut `(0, ps)` is a list cut summand of every tree-level list `ps`. -/
+theorem mem_cutListSummandsP_zero : ∀ (ps : List (RoseTree α)),
+    ((0 : Multiset (RoseTree α)), ps) ∈ cutListSummandsP ps
+  | [] => by
+    rw [cutListSummandsP_nil]; exact Multiset.mem_singleton.mpr rfl
+  | t :: ts => by
+    rw [cutListSummandsP_cons, Multiset.mem_map]
+    refine ⟨((0, Option.some t), (0, ts)), ?_, ?_⟩
+    · rw [Multiset.mem_product, augActionP_eq, Multiset.mem_cons]
+      refine ⟨Or.inr ?_, mem_cutListSummandsP_zero ts⟩
+      rw [Multiset.mem_map]
+      exact ⟨(0, t), mem_cutSummandsP_zero t, rfl⟩
+    · -- The cons combiner with `(0, some t)` and `(0, ts)` gives `(0, t :: ts)`
+      -- via `0 + 0 = 0`.
+      show (((0 : Multiset (RoseTree α)) + (0 : Multiset (RoseTree α))), t :: ts) =
+           ((0 : Multiset (RoseTree α)), t :: ts)
+      rw [zero_add]
+
+end
+
+/-- The empty cut `(0, F)` is a forest cut summand of every nonplanar forest `F`. -/
+theorem cutForestSummandsN_zero_mem (F : Multiset (Nonplanar α)) :
+    ((0 : Multiset (Nonplanar α)), F) ∈ cutForestSummandsN F := by
+  obtain ⟨ps, rfl⟩ := exists_planar_list_rep F
+  rw [cutForestSummandsN_via_planar_list, Multiset.mem_map]
+  refine ⟨(0, ps), mem_cutListSummandsP_zero ps, ?_⟩
+  show ((0 : Multiset (RoseTree α)).map Nonplanar.mk,
+        Multiset.ofList (ps.map Nonplanar.mk)) =
+       ((0 : Multiset (Nonplanar α)), Multiset.ofList (ps.map Nonplanar.mk))
+  rw [Multiset.map_zero]
+
 /-! ### `traceLeaf` — placeholder for a cut subtree -/
 
 /-- The trace-marker placeholder leaf carrying the encoded label `b : β`. -/
@@ -705,7 +883,13 @@ def traceLeaf (b : β) : RoseTree (α ⊕ β) := .node (Sum.inr b) []
 /-- The Δ^c extraction policy: for `Sum.inl`-rooted (non-trace)
     subtrees, extract whole leaving a single `traceLeaf (τ t)` in the
     parent's child slot. For `Sum.inr`-rooted (trace) subtrees, decline
-    to extract. -/
+    to extract.
+
+    Declining at trace subtrees is required for coassociativity —
+    without it, iterated Δ^c produces "trace of trace" right-channel
+    terms that break the double-cut bijection — and matches
+    [marcolli-chomsky-berwick-2025] Definition 1.2.2's restriction of
+    cuts to accessible terms, which excludes trace placeholders. -/
 def extractC (τ : RoseTree (α ⊕ β) → β) :
     RoseTree (α ⊕ β) → Option (List (RoseTree (α ⊕ β)))
   | t@(.node (Sum.inl _) _) => some [traceLeaf (τ t)]
@@ -740,6 +924,44 @@ theorem cutSummandsCP_def (τ : RoseTree (α ⊕ β) → β) (T : RoseTree (α �
     cutSummandsCP τ (RoseTree.node a cs) =
       (cutListSummandsG (extractC τ) cs).map (fun p => (p.1, .node a p.2)) := by
   rw [cutSummandsCP_def, cutSummandsG_node]
+/-! ### Sanity: the trace policy on leaves -/
+
+section Tests
+
+/-- A leaf has exactly one cut summand: the empty cut `(0, leaf)`. -/
+example (τ : RoseTree (Unit ⊕ Unit) → Unit) :
+    cutSummandsCP τ (RoseTree.leaf (Sum.inl ()) : RoseTree (Unit ⊕ Unit))
+      = {((0 : Multiset (RoseTree (Unit ⊕ Unit))),
+          (RoseTree.leaf (Sum.inl ()) : RoseTree (Unit ⊕ Unit)))} := by
+  rw [RoseTree.leaf, cutSummandsCP_node, cutListSummandsG_nil]
+  rfl
+
+/-- The trace-extract branch sits in the augmented per-child action for
+    a `Sum.inl`-rooted subtree. Witness that Δ^c (placeholder leaf)
+    differs from Δ^ρ (admissible-cut pruning). -/
+example (τ : RoseTree (Unit ⊕ Unit) → Unit) :
+    (({RoseTree.leaf (Sum.inl ())} : Multiset (RoseTree (Unit ⊕ Unit))),
+      [traceLeaf (τ (RoseTree.leaf (Sum.inl ())))]) ∈
+        augActionG (extractC τ)
+          (RoseTree.leaf (Sum.inl ()) : RoseTree (Unit ⊕ Unit)) := by
+  rw [RoseTree.leaf, augActionG_eq_some _ _ _ (extractC_inl τ () [])]
+  exact Multiset.mem_cons_self _ _
+
+/-- Trace-marker leaves are NOT extracted: `extractC τ` returns `none`,
+    so the per-child action only inherits cuts from `cutSummandsG`. -/
+example (b : Unit) (τ : RoseTree (Unit ⊕ Unit) → Unit) :
+    augActionG (extractC τ) (traceLeaf b : RoseTree (Unit ⊕ Unit))
+      = (cutSummandsG (extractC τ) (RoseTree.node (Sum.inr b) [])).map
+          (fun p => (p.1, [p.2])) :=
+  augActionG_eq_none _ _ (extractC_inr τ b [])
+
+/-- The `traceLeaf` placeholder is a `Sum.inr`-labeled leaf. -/
+example (b : β) : (traceLeaf b : RoseTree (α ⊕ β)).arity = 0 := rfl
+
+example (b : β) :
+    (traceLeaf b : RoseTree (α ⊕ β)).value = Sum.inr b := rfl
+
+end Tests
 
 /-! ## Descent of cut-summand enumeration
 

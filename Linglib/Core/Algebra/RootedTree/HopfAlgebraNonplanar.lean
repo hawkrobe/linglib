@@ -668,7 +668,7 @@ private theorem antipodeAlgHomN_axiom_tree (T : Nonplanar α) :
       (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
       (fun _ _ => Commute.all _ _)) (comulTreeN T) = 0 := by
   -- Step 1: unfold comulTreeN and distribute the lift over the addition.
-  unfold comulTreeN
+  unfold comulTreeN comulTreeNG
   rw [map_add, Algebra.TensorProduct.lift_tmul, AlgHom.id_apply, mul_one,
       antipodeAlgHomN_apply_ofTree]
   -- Goal: antipodeTreeN T + (lift _ _ _)(Σ of' cf ⊗ ofTree rem) = 0.
@@ -696,7 +696,7 @@ private theorem antipodeRightAlgHomN_axiom_tree (T : Nonplanar α) :
       (antipodeRightAlgHomN (R := R))
       (fun _ _ => Commute.all _ _)) (comulTreeN T) = 0 := by
   -- Step 1: unfold comulTreeN and distribute the lift over the addition.
-  unfold comulTreeN
+  unfold comulTreeN comulTreeNG
   rw [map_add, Algebra.TensorProduct.lift_tmul, AlgHom.id_apply, map_one, mul_one]
   -- Goal: ofTree T + (lift id R)(Σ of' cf ⊗ ofTree rem) = 0.
   -- Step 2: distribute the lift through the multiset sum.

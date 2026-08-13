@@ -108,7 +108,7 @@ theorem convMul_lcoeff_singleton_apply_ofTree :
         (ofTree T) =
       countSingleCutsRho T T₁ T₂ := by
   classical
-  rw [LinearMap.convMul_apply, coalgebra_comul_apply, comulAlgHomN_apply_ofTree, comulTreeN]
+  rw [LinearMap.convMul_apply, coalgebra_comul_apply, comulAlgHomN_apply_ofTree, comulTreeN, comulTreeNG]
   simp only [map_add, map_multiset_sum, Multiset.map_map, Function.comp_apply,
     TensorProduct.map_tmul, LinearMap.mul'_apply, ofTree, lcoeff_apply, ← of'_zero,
     coeff_of', Multiset.singleton_inj, ite_zero_mul_ite_zero, one_mul,
