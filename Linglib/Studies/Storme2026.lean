@@ -5,51 +5,24 @@ import Linglib.Core.Probability.LogitChoice
 import Mathlib.Data.Fin.VecNotation
 
 /-!
-# [storme-2026]: Systemic Constraints in Probabilistic Grammars
+# Storme (2026) [storme-2026]
 
-[storme-2026] shows how to evaluate **systemic constraints** — constraints such
-as \*Homophony that score several input–output mappings jointly — in
-probabilistic constraint-based grammars: take the MaxEnt distribution over
-joint output tuples and recover each individual mapping's probability by
-marginalization (`HarmonicGrammar.marginalProb`).
-
-The case study is variable vowel hiatus in spoken Persian
-([ariyaee-jurgec-2021]): a vowel-initial suffix after a vowel-final stem
-(/hutʃɑ-e/ with the definite suffix, /hutʃɑ-emun/ with the 1PL possessive) is
-realized faithfully ([hutʃɑe]), with glottal-stop epenthesis ([hutʃɑʔe]), or
-with suffix-vowel deletion ([hutʃɑ]). Deletion is the majority outcome for the
-polysegmental suffix but rare for the monosegmental one, where it would leave
-the suffixed form homophonous with the bare stem. Storme's Table 4 evaluates
-\*Homophony jointly over the paradigm with weights fitted to Ariyaee &
-Jurgec's frequencies; marginalization (his Table 5) recovers the per-suffix
-realization probabilities.
-
-Forms are strings of `Fragments/Farsi/Phonology.lean` segments and the three
-resolutions are operations at the stem–suffix juncture, so the paradigm's
-structure is derived rather than stipulated: homophony is string identity,
-\*Hiatus counts vowel–vowel adjacencies via `Segment.IsVowel`, and Max and Dep
-count deleted and inserted segments.
-
-## Main results
-
-* `resolve_deletion_eq_stem_iff`: deleting the suffix vowel merges the
-  suffixed form with the bare stem exactly when the suffix is monosegmental —
-  the suffix-length conditioning is string algebra.
-* `starHiatus_eq` &c.: the string-computed constraints reproduce the binary
-  violation profile of [storme-2026]'s Table 4.
-* `starHomophony_eq_sum`: over this paradigm \*Homophony decomposes into
-  per-input collision counts against the fixed base — the formal content of
-  [storme-2026]'s observation (his fn. 1) that [ariyaee-jurgec-2021]'s own
-  per-mapping analysis needs no joint evaluation on these data.
-* `persianMarginal_eq_softmax`: closed form for the marginalized mapping
-  probabilities, via `CoupledSoftmax.marginal_congr` plus the factorization
-  theorem.
-* `mono_epenthesis_lt_hiatus` &c.: the fitted weights predict the observed
-  preference order among the three realizations of each suffix.
-* `classical_no_length_effect` and `homophony_length_effect`: without
-  \*Homophony the model assigns both suffixes identical distributions whatever
-  the weights; with it, deletion is strictly less probable for the
-  monosegmental suffix.
+*A method to evaluate systemic constraints in probabilistic grammars*:
+systemic constraints — \*Homophony and others that score several
+input–output mappings jointly — become compatible with probabilistic
+grammars by evaluating a MaxEnt distribution over joint output tuples and
+marginalizing to recover individual mapping probabilities. The case study is
+variable hiatus in spoken Persian ([ariyaee-jurgec-2021]): the suffix vowel
+deletes freely in /hutʃɑ-emun/ (1PL possessive) but rarely in /hutʃɑ-e/
+(definite), where deletion would leave the suffixed form homophonous with
+the bare stem. This file builds the paradigm from Persian segment strings
+with the resolutions as juncture operations — homophony is string identity,
+and the suffix-length conditioning is string algebra
+(`resolve_deletion_eq_stem_iff`) — and derives the closed form of the
+marginalized model (`persianMarginal_eq_softmax`), its fitted-weight
+preference orders (Table 5), and the suffix-length effect that \*Homophony
+creates (`homophony_length_effect`) and classical constraints cannot
+(`classical_no_length_effect`).
 -/
 
 namespace Storme2026
