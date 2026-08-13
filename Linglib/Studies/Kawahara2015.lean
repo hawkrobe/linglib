@@ -414,15 +414,4 @@ theorem longN2_nonfinal (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ)
     · simp only [Option.getD_none] at hp
       omega
 
-/-! ### Weight sensitivity (§2.3)
-
-Japanese moraic structure: coda nasals, geminate first halves, long vowels,
-and diphthongs are moraic, so closed syllables are heavy — the weight
-sensitivity the LSR analysis rests on. -/
-
-/-- With Weight-by-Position active, a CVC syllable is heavy regardless of
-    its segments, e.g. /tan/ = 2μ (§2.3). -/
-theorem japanese_wbp_active (o n c : Phonology.Segment) :
-    (Syllable.ofCV [o] [n] [c] true).weight = .heavy := rfl
-
 end Kawahara2015
