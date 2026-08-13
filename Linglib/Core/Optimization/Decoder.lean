@@ -91,7 +91,7 @@ open scoped Classical in
     `decode cands score c = exp(α · score(c)) / Σ_{c' ∈ cands} exp(α · score(c'))`
     when `c ∈ cands`, and `0` otherwise.
 
-    Equivalent to `Core.softmax` from `RationalAction.lean` but generalised
+    Equivalent to `softmax` from `LogitChoice.lean` but generalised
     from `Fintype` to a finite subset `cands` of a possibly-infinite type. -/
 noncomputable def softmaxDecoder {Cand : Type*} (α : ℝ) : Decoder Cand ℝ where
   decode cands score := fun c =>

@@ -172,7 +172,7 @@ theorem tendsto_softmax_neg_infty_unique_min [Nonempty ι] (s : ι → ℝ)
   have hconv : ∀ (α : ℝ), softmax (α • s) = softmax ((-α) • (λ j => -s j)) := by
     intro α
     funext j
-    unfold Core.softmax
+    unfold softmax
     congr 1
     · simp only [Pi.smul_apply, smul_eq_mul]; ring
     · apply Finset.sum_congr rfl; intro k _; simp only [Pi.smul_apply, smul_eq_mul]; ring

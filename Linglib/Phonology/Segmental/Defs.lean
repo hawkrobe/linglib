@@ -147,6 +147,28 @@ def ofSpecs (specs : List (Feature × Bool)) : Segment :=
     | some (_, v) => some v
     | none => none
 
+/-- Vowel height — the (±high, ±low) tongue-body axis, with the contradictory
+[+high, +low] combination unrepresentable. -/
+inductive Height where
+  | high | mid | low
+  deriving DecidableEq, Repr
+
+/-- Vowel backness — the (±front, ±back) axis, with [+front, +back]
+unrepresentable. -/
+inductive Backness where
+  | front | central | back
+  deriving DecidableEq, Repr
+
+/-- The vowel of the given height and backness: the class features
+[+syll, −cons, +son, +cont, +voice, +dor] plus the decoded tongue-body
+position. Rounding and tenseness are left unspecified; refine with
+`setFeature`, e.g. `(Segment.vowel .high .back).setFeature .round true` = /u/. -/
+def vowel (ht : Height) (bk : Backness) : Segment :=
+  ofSpecs [(.syllabic, true), (.consonantal, false), (.sonorant, true),
+    (.continuant, true), (.voice, true), (.dorsal, true),
+    (.high, ht == .high), (.low, ht == .low),
+    (.front, bk == .front), (.back, bk == .back)]
+
 /-! ### Natural-class predicates
 
 Language-neutral natural-class membership predicates, by the SPE feature

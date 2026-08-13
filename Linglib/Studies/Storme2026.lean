@@ -1,295 +1,304 @@
-import Linglib.Core.Optimization.System
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
-import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Tableau
+import Linglib.Phonology.Segmental.Defs
+import Linglib.Phonology.Hiatus
 import Linglib.Fragments.Farsi.Phonology
+import Linglib.Core.Probability.LogitChoice
 import Mathlib.Data.Fin.VecNotation
 
 /-!
-# [storme-2026]: Systemic Constraints in MaxEnt Grammars
-[storme-2026]
+# Storme (2026) [storme-2026]
 
-Replication of [storme-2026] "A Method to Evaluate Systemic Constraints
-in Probabilistic Grammars" (Linguistic Inquiry 57(1)).
-
-## Key idea
-
-Standard MaxEnt grammars evaluate each input→output mapping independently.
-Storme shows how to incorporate **systemic constraints** — constraints that
-evaluate *sets* of mappings jointly. The running example is \*HOMOPHONY:
-a constraint penalizing output tuples where distinct inputs receive identical
-surface forms.
-
-## Persian hiatus resolution
-
-The case study is Persian vowel hiatus between /æ/ and /ɑ/. Classical
-faithfulness (MAX, IDENT) and markedness (\*VV, DEP) constraints predict
-symmetric treatment of /æ.ɑ/ vs. /ɑ.æ/ — deletion of V1 vs. V2 should
-be equally probable in both. But Storme argues that \*HOMOPHONY breaks this
-symmetry: the grammar prefers output tuples where distinct inputs produce
-distinct surface forms.
-
-## Formalization
-
-We instantiate the MaxEnt machinery — a classical constraint vector
-`classicalCon` with weight vector `classicalW`, plus the systemic
-\*HOMOPHONY constraint — over the Persian hiatus domain from
-`Farsi.Phonology`, and verify the key prediction: homophony avoidance
-breaks the symmetry.
-
-## Constraints
-
-Following standard OT/MaxEnt constraint families:
-- **MAX** (faithfulness): penalizes deletion (1 violation per deleted segment)
-- **DEP** (faithfulness): penalizes epenthesis (1 violation per inserted segment)
-- **\*VV** (markedness): penalizes vowel hiatus in the output
-- **IDENT** (faithfulness): penalizes feature change (coalescence)
-- **\*HOMOPHONY** (systemic): penalizes identical outputs for distinct inputs
+*A method to evaluate systemic constraints in probabilistic grammars*:
+systemic constraints — \*Homophony and others that score several
+input–output mappings jointly — become compatible with probabilistic
+grammars by evaluating a MaxEnt distribution over joint output tuples and
+marginalizing to recover individual mapping probabilities. The case study is
+variable hiatus in spoken Persian ([ariyaee-jurgec-2021]): the suffix vowel
+deletes freely in /hutʃɑ-emun/ (1PL possessive) but rarely in /hutʃɑ-e/
+(definite), where deletion would leave the suffixed form homophonous with
+the bare stem. This file builds the paradigm from two `Hiatus.Juncture`s
+over Persian segments — homophony is string identity, and the suffix-length
+conditioning is string algebra (`baseCollisions_eq`) — and derives the
+closed form of the marginalized model (`persianMarginal_eq_softmax`), its
+fitted-weight preference orders (Table 5), and the suffix-length effect that
+\*Homophony creates (`homophony_length_effect`) and classical constraints
+cannot (`classical_no_length_effect`).
 -/
 
 namespace Storme2026
 
-open Core.Optimization Constraints HarmonicGrammar OptimalityTheory
-open Farsi.Phonology
-open Core.Optimization Constraints OptimalityTheory
+open Constraints HarmonicGrammar Phonology Farsi.Phonology
 
--- Fintype instances for HiatusInput/Output (Fintype requires Mathlib,
--- which is available here via MaxEnt → RationalAction)
+/-! ### The paradigm: two junctures, three candidate resolutions -/
 
-instance : Fintype HiatusInput where
-  elems := {.ae_ae, .ae_ah, .ah_ae, .ah_ah}
-  complete := fun x => by cases x <;> simp
+/-- The three candidate resolutions [ariyaee-jurgec-2021] consider for a
+suffixed input — the paper's restriction of the hiatus-resolution typology
+([casali-2011]). -/
+inductive Resolution where
+  /-- Faithful vowel hiatus, e.g. [hutʃɑe]. -/
+  | hiatus
+  /-- Glottal-stop epenthesis, e.g. [hutʃɑʔe]. -/
+  | epenthesis
+  /-- Suffix-vowel deletion, e.g. [hutʃɑ], [hutʃɑmun]. -/
+  | deletion
+  deriving DecidableEq, Fintype, Inhabited, Repr
 
-instance : Fintype HiatusOutput where
-  elems := {.deleteV1, .deleteV2, .epenthesis, .coalescence, .faithful}
-  complete := fun x => by cases x <;> simp
+instance : Nontrivial Resolution := ⟨.hiatus, .deletion, by decide⟩
 
--- ============================================================================
--- § 1: Classical Constraints
--- ============================================================================
+/-- The definite-suffix juncture /hutʃɑ-e/: monosegmental suffix. -/
+def definite : Hiatus.Juncture :=
+  ⟨[h, u, ch], aa, e, [], by decide, by decide⟩
 
-/-- MAX: penalizes deletion. 1 violation for deleteV1 or deleteV2, 0 otherwise. -/
-def maxConstraint : Constraint HiatusCandidate :=
-  Constraint.binary (fun (_, o) => o == .deleteV1 || o == .deleteV2)
+/-- The possessive-suffix juncture /hutʃɑ-emun/: polysegmental suffix. -/
+def possessive : Hiatus.Juncture :=
+  ⟨[h, u, ch], aa, e, [m, u, n], by decide, by decide⟩
 
-/-- DEP: penalizes epenthesis. 1 violation for epenthesis, 0 otherwise. -/
-def depConstraint : Constraint HiatusCandidate :=
-  Constraint.binary (fun (_, o) => o == .epenthesis)
+/-- The joint tableau's inputs, indexed for `marginalProb`. -/
+def inputs : Fin 2 → Hiatus.Juncture := ![definite, possessive]
 
-/-- \*VV: markedness constraint penalizing vowel hiatus.
-    1 violation for faithful (hiatus preserved), 0 for all repairs. -/
-def starVV : Constraint HiatusCandidate :=
-  Constraint.binary (fun (_, o) => o == .faithful)
+/-- The bare stem [hutʃɑ]. -/
+def stem : List Segment := definite.stem
 
-/-- IDENT: penalizes coalescence (feature change).
-    1 violation for coalescence, 0 otherwise. -/
-def identConstraint : Constraint HiatusCandidate :=
-  Constraint.binary (fun (_, o) => o == .coalescence)
+/-- Each candidate as a `Hiatus.Juncture` repair: faithful hiatus,
+glottal-stop epenthesis, V2 elision. -/
+def resolve : Resolution → Hiatus.Juncture → List Segment
+  | .hiatus => Hiatus.Juncture.input
+  | .epenthesis => (Hiatus.Juncture.epenthesize · glottal)
+  | .deletion => Hiatus.Juncture.elideV2
 
-/-- The classical constraint set for Persian hiatus, as a `CON` (constraint
-    vector). Index order: 0 = MAX, 1 = DEP, 2 = \*VV, 3 = IDENT. -/
-def classicalCon : CON HiatusCandidate 4 :=
-  ![maxConstraint, depConstraint, starVV, identConstraint]
+/-- [hutʃɑ]: deletion at the monosegmental juncture *is* the bare stem — the
+concrete instance of `Hiatus.Juncture.elideV2_eq_stem_iff`. -/
+theorem resolve_deletion_definite : resolve .deletion definite = stem := rfl
 
-/-- MaxEnt weights for `classicalCon` (MAX = 2, DEP = 1, \*VV = 3, IDENT = 2).
+/-- [hutʃɑmun]: deletion at the polysegmental juncture keeps a residue
+distinct from the stem. -/
+theorem resolve_deletion_possessive_ne_stem :
+    resolve .deletion possessive ≠ stem := by decide
 
-    **Note**: weights are illustrative (chosen to make epenthesis the
-    classical winner), not fitted to Storme's experimental data.
-    The qualitative predictions (symmetry, symmetry-breaking) hold
-    for any positive weights since they depend on constraint structure,
-    not specific weight values. -/
-def classicalW : Fin 4 → ℝ :=
-  ![2, 1, 3, 2]
+/-! ### Constraints computed on strings, and the fitted weights -/
 
--- ============================================================================
--- § 2: Classical Harmony Scores
--- ============================================================================
+/-- \*Hiatus: vowel–vowel adjacencies surviving in the surface form. -/
+def starHiatus : Constraint (Hiatus.Juncture × Resolution) := fun c =>
+  Hiatus.count (resolve c.2 c.1)
 
-/-- Harmony scores are symmetric across mirror-image inputs:
-    H(ae.ah, deleteV1) = H(ah.ae, deleteV1) under classical constraints alone,
-    because classical constraints only look at output structure. -/
-theorem classical_symmetry_deleteV1 :
-    harmonyScore classicalCon classicalW (.ae_ah, .deleteV1) =
-    harmonyScore classicalCon classicalW (.ah_ae, .deleteV1) := rfl
+/-- Dep: inserted segments — the surface form's length excess over the
+input. Length-based counting is exact for this candidate set, since every
+candidate differs from the input by pure insertion or pure deletion. -/
+def depConstraint : Constraint (Hiatus.Juncture × Resolution) := fun c =>
+  (resolve c.2 c.1).length - c.1.input.length
 
-theorem classical_symmetry_deleteV2 :
-    harmonyScore classicalCon classicalW (.ae_ah, .deleteV2) =
-    harmonyScore classicalCon classicalW (.ah_ae, .deleteV2) := rfl
+/-- Max: deleted segments — the input's length excess over the surface
+form. -/
+def maxConstraint : Constraint (Hiatus.Juncture × Resolution) := fun c =>
+  c.1.input.length - (resolve c.2 c.1).length
 
-/-- The classical grammar ranks the repairs epenthesis ≻ {deletion, coalescence}
-    ≻ faithful (weights chosen so epenthesis is the classical winner). The
-    harmony *magnitudes* are weight artifacts; the *ranking* is the prediction. -/
-theorem epenthesis_beats_deletion :
-    harmonyScore classicalCon classicalW (.ae_ah, .deleteV1) <
-    harmonyScore classicalCon classicalW (.ae_ah, .epenthesis) := by
-  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
-  simp +decide only [classicalCon, classicalW, maxConstraint, depConstraint, starVV,
-    identConstraint, Constraint.binary, Fin.sum_univ_four, Matrix.cons_val_zero,
-    Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val_two, Matrix.cons_val_three,
-    Matrix.tail_cons]
-  norm_num
+/-- Dep's string count reproduces its binary Table 4 column — for any
+juncture. -/
+theorem depConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
+    depConstraint (j, o) = if o = .epenthesis then 1 else 0 := by
+  cases o <;>
+    (simp [depConstraint, resolve, Hiatus.Juncture.input, Hiatus.Juncture.stem,
+      Hiatus.Juncture.epenthesize, Hiatus.Juncture.elideV2]; all_goals omega)
 
-theorem coalescence_beats_faithful :
-    harmonyScore classicalCon classicalW (.ae_ah, .faithful) <
-    harmonyScore classicalCon classicalW (.ae_ah, .coalescence) := by
-  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
-  simp +decide only [classicalCon, classicalW, maxConstraint, depConstraint, starVV,
-    identConstraint, Constraint.binary, Fin.sum_univ_four, Matrix.cons_val_zero,
-    Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val_two, Matrix.cons_val_three,
-    Matrix.tail_cons]
-  norm_num
+/-- Max's string count reproduces its binary Table 4 column — for any
+juncture. -/
+theorem maxConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
+    maxConstraint (j, o) = if o = .deletion then 1 else 0 := by
+  cases o <;>
+    (simp [maxConstraint, resolve, Hiatus.Juncture.input, Hiatus.Juncture.stem,
+      Hiatus.Juncture.epenthesize, Hiatus.Juncture.elideV2]; all_goals omega)
 
-theorem epenthesis_beats_faithful :
-    harmonyScore classicalCon classicalW (.ae_ah, .faithful) <
-    harmonyScore classicalCon classicalW (.ae_ah, .epenthesis) := by
-  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, neg_lt_neg_iff]
-  simp +decide only [classicalCon, classicalW, maxConstraint, depConstraint, starVV,
-    identConstraint, Constraint.binary, Fin.sum_univ_four, Matrix.cons_val_zero,
-    Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val_two, Matrix.cons_val_three,
-    Matrix.tail_cons]
-  norm_num
+/-- \*Hiatus's string count reproduces its binary Table 4 column on the
+paradigm's junctures. Unlike Dep and Max this depends on their segmental
+content: hiatus must survive nowhere but the juncture itself. -/
+theorem starHiatus_eq (k : Fin 2) (o : Resolution) :
+    starHiatus (inputs k, o) = if o = .hiatus then 1 else 0 := by
+  revert k o; decide
 
--- ============================================================================
--- § 3: Systemic Constraint — *HOMOPHONY
--- ============================================================================
+/-- The classical (per-mapping) constraint vector: Dep, \*Hiatus, Max. -/
+def classicalCon : CON (Hiatus.Juncture × Resolution) 3 :=
+  ![depConstraint, starHiatus, maxConstraint]
 
-/-- The four hiatus inputs indexed by Fin 4. -/
-def inputsIndexed : Fin 4 → HiatusInput
-  | ⟨0, _⟩ => .ae_ae
-  | ⟨1, _⟩ => .ae_ah
-  | ⟨2, _⟩ => .ah_ae
-  | ⟨3, _⟩ => .ah_ah
+/-- Fitted weights (posterior means) from [storme-2026]'s Table 4:
+Dep = 2.47, \*Hiatus = 1.89, Max = 1 (fixed rather than estimated). -/
+noncomputable def classicalW : Fin 3 → ℝ := ![2.47, 1.89, 1]
 
-/-- \*HOMOPHONY for the Persian hiatus paradigm:
-    penalizes output tuples where distinct inputs produce identical outputs. -/
-def starHomophony : SystemicConstraint 4 HiatusOutput :=
-  homophonyAvoidance
+/-- Fitted weight (posterior mean) of \*Homophony: 2.27. -/
+noncomputable def homophonyWeight : ℝ := 2.27
 
--- ============================================================================
--- § 4: Joint Distribution
--- ============================================================================
+/-- \*Homophony over the paradigm: collisions among the surface forms of the
+fixed base (the bare stem) and the two suffixed inputs, via the generic
+`homophonyAvoidance`. Homophony is string identity — nothing is stipulated
+about which outputs collide. -/
+def starHomophony : SystemicConstraint 2 Resolution := fun f =>
+  homophonyAvoidance (Matrix.vecCons stem fun k => resolve (f k) (inputs k))
 
-/-- Joint harmony score for a complete output tuple, combining classical
-    per-mapping scores with the systemic \*HOMOPHONY penalty. -/
-noncomputable def persianJointScore (f : Fin 4 → HiatusOutput) : ℝ :=
-  jointHarmonyScore inputsIndexed classicalCon classicalW ![1] ![starHomophony] f
+/-! ### \*Homophony decomposes over this paradigm -/
 
--- ============================================================================
--- § 5: Symmetry-Breaking Prediction
--- ============================================================================
+/-- Collisions between one realized output and its juncture's own bare
+stem. -/
+def baseCollisions (j : Hiatus.Juncture) (o : Resolution) : ℕ :=
+  homophonyAvoidance ![j.stem, resolve o j]
 
-/-- An output tuple where the mirror-image inputs /æ.ɑ/ and /ɑ.æ/ use
-    different repair strategies (deleteV1 vs deleteV2). Both still surface
-    as [ɑ], so homophony remains at those positions — but the tuple has
-    fewer *HOMOPHONY violations overall than the uniform-strategy tuple. -/
-def diverseTuple : Fin 4 → HiatusOutput
-  | ⟨0, _⟩ => .deleteV1  -- /æ.æ/ → delete V1
-  | ⟨1, _⟩ => .deleteV1  -- /æ.ɑ/ → delete V1 (surfaces as [ɑ])
-  | ⟨2, _⟩ => .deleteV2  -- /ɑ.æ/ → delete V2 (surfaces as [ɑ])
-  | ⟨3, _⟩ => .deleteV1  -- /ɑ.ɑ/ → delete V1
+/-- Only deletion at a monosegmental juncture collides with the base — for
+any juncture, by the string algebra (`Hiatus.Juncture.elideV2_eq_stem_iff`
+and the length facts). -/
+theorem baseCollisions_eq (j : Hiatus.Juncture) (o : Resolution) :
+    baseCollisions j o = if o = .deletion ∧ j.suffixBody = [] then 1 else 0 := by
+  cases o with
+  | hiatus =>
+      simp [baseCollisions, resolve, homophonyAvoidance_pair,
+        Ne.symm j.input_ne_stem]
+  | epenthesis =>
+      simp [baseCollisions, resolve, homophonyAvoidance_pair,
+        Ne.symm (j.epenthesize_ne_stem glottal)]
+  | deletion =>
+      simp [baseCollisions, resolve, homophonyAvoidance_pair, eq_comm]
 
-/-- A homophonous tuple: both mirror-image inputs use the same strategy. -/
-def homophonousTuple : Fin 4 → HiatusOutput
-  | ⟨0, _⟩ => .deleteV1  -- /æ.æ/ → delete V1
-  | ⟨1, _⟩ => .deleteV1  -- /æ.ɑ/ → delete V1 (surfaces as [ɑ])
-  | ⟨2, _⟩ => .deleteV1  -- /ɑ.æ/ → delete V1 (surfaces as [æ])
-  | ⟨3, _⟩ => .deleteV1  -- /ɑ.ɑ/ → delete V1
+/-- Suffixed outputs never collide with one another, so \*Homophony reduces
+to the per-input base collisions. This is the formal content of
+[storme-2026]'s fn. 1: on these data, an analysis with a per-mapping
+constraint against null suffix realization — [ariyaee-jurgec-2021]'s —
+coincides with the systemic one. -/
+theorem starHomophony_eq_sum (f : Fin 2 → Resolution) :
+    starHomophony f = ∑ k, baseCollisions (inputs k) (f k) := by
+  revert f; decide
 
-/-- Concrete violation counts:
-    - homophonousTuple: all 4 positions use deleteV1 → C(4,2) = 6 collisions
-    - diverseTuple: 3 positions use deleteV1, 1 uses deleteV2 → 3 collisions -/
-theorem homophony_violation_counts :
-    starHomophony homophonousTuple = 6 ∧
-    starHomophony diverseTuple = 3 := by decide
+/-! ### Marginalized mapping probabilities -/
 
-/-- \*HOMOPHONY incurs more violations on the homophonous tuple than
-    on the diverse tuple. This is the core mechanism by which systemic
-    constraints break symmetry. -/
-theorem homophony_penalizes_uniform :
-    starHomophony homophonousTuple ≥
-    starHomophony diverseTuple := by decide
+/-- Marginal probability that input `k` is realized as `o` — [storme-2026]'s
+key marginalization equation instantiated to the Persian paradigm. -/
+noncomputable def persianMarginal (k : Fin 2) (o : Resolution) : ℝ :=
+  marginalProb inputs classicalCon classicalW ![homophonyWeight] ![starHomophony] k o
 
-/-- The diverse tuple has at least as high joint harmony as the
-    homophonous tuple, because it incurs fewer \*HOMOPHONY violations
-    while having the same classical constraint violations. -/
-theorem diverse_higher_joint_score :
-    persianJointScore diverseTuple ≥
-    persianJointScore homophonousTuple := by
-  -- TODO: same `jointHarmonyScore_eq_cast` bridge as `joint_not_separable`.
-  sorry
+/-- Per-input harmony with the base-collision penalty folded in. -/
+noncomputable def foldedScore (j : Hiatus.Juncture) (o : Resolution) : ℝ :=
+  harmonyScore classicalCon classicalW (j, o) - homophonyWeight * baseCollisions j o
 
--- ============================================================================
--- § 6: Core Prediction — Systemic Constraints Break Symmetry
--- ============================================================================
+/-- Closed form of the folded scores: each candidate's fitted cost, with the
+\*Homophony penalty (2.27, on top of Max's 1) landing exactly on deletion at
+the monosegmental juncture. -/
+theorem foldedScore_eq (k : Fin 2) (o : Resolution) :
+    foldedScore (inputs k) o = -(match o with
+      | .hiatus => 1.89
+      | .epenthesis => 2.47
+      | .deletion => if k = 0 then 3.27 else 1) := by
+  fin_cases k <;> cases o <;>
+    simp only [foldedScore, harmonyScore_eq_neg_sum, Fin.sum_univ_three,
+      classicalCon, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
+      Matrix.cons_val_two, Matrix.tail_cons, depConstraint_eq, starHiatus_eq,
+      maxConstraint_eq, baseCollisions_eq] <;>
+    norm_num [classicalW, homophonyWeight, inputs, definite, possessive,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
+      Matrix.cons_val_two, Matrix.tail_cons]
 
-/-- Classical constraints alone assign the same score to deleteV1 for
-    /æ.ɑ/ and /ɑ.æ/ — the grammar cannot distinguish mirror-image inputs
-    at the individual mapping level. (Restated from §2 for contrast with
-    the non-separability result below.) -/
-theorem classical_cannot_distinguish :
-    harmonyScore classicalCon classicalW (.ae_ah, .deleteV1) =
-    harmonyScore classicalCon classicalW (.ah_ae, .deleteV1) :=
-  classical_symmetry_deleteV1
+/-- The uncoupled equivalent of the Persian model: by `starHomophony_eq_sum`
+the coupling folds into the per-input scores. -/
+noncomputable def persianUncoupled : CoupledSoftmax (Fin 2) Resolution where
+  componentScore k o := foldedScore (inputs k) o
+  couplingScore _ := 0
 
-/-- Under \*HOMOPHONY, the joint distribution over all four mappings is
-    *not* a product of independent per-mapping distributions. The marginal
-    probability of a specific output for /æ.ɑ/ depends on what outputs are
-    chosen for the other inputs — this is the core mechanism by which
-    systemic constraints influence individual mapping probabilities.
+/-- The joint score of the Persian model agrees with its uncoupled
+equivalent's on every output tuple. -/
+theorem totalScore_eq (f : Fin 2 → Resolution) :
+    (maxEntCoupled inputs classicalCon classicalW ![homophonyWeight]
+        ![starHomophony]).totalScore f = persianUncoupled.totalScore f := by
+  simp only [CoupledSoftmax.totalScore, maxEntCoupled, coupledSoftmaxOfMaxEnt,
+    persianUncoupled, foldedScore, systemicScore, starHomophony_eq_sum,
+    Fin.sum_univ_two, Fin.sum_univ_one, Matrix.cons_val_zero]
+  push_cast
+  ring
 
-    This theorem verifies that the joint score is not additively separable
-    (i.e., there exist tuples f, g agreeing on position 1 but differing
-    in joint score minus the classical score at position 1). -/
-theorem joint_not_separable :
-    ∃ (f g : Fin 4 → HiatusOutput),
-      f ⟨1, by omega⟩ = g ⟨1, by omega⟩ ∧
-      persianJointScore f - harmonyScore classicalCon classicalW (inputsIndexed ⟨1, by omega⟩, f ⟨1, by omega⟩) ≠
-      persianJointScore g - harmonyScore classicalCon classicalW (inputsIndexed ⟨1, by omega⟩, g ⟨1, by omega⟩) := by
-  refine ⟨diverseTuple, homophonousTuple, ?_, ?_⟩
-  · rfl
-  · -- TODO: needs a `jointHarmonyScore_eq_cast` bridge (∑↑classical + ↑systemic =
-    -- ↑(∑ qSum + systemicScore)) to push `persianJointScore` to ℚ, then `norm_num`
-    -- on the differing *HOMOPHONY counts. Replaces the old `native_decide`.
-    sorry
+/-- Closed form for the marginals: the coupling decomposes across positions
+(`starHomophony_eq_sum`), so the joint factorizes and each marginal is the
+softmax of its folded score. -/
+theorem persianMarginal_eq_softmax (k : Fin 2) (o : Resolution) :
+    persianMarginal k o = softmax (foldedScore (inputs k)) o :=
+  calc persianMarginal k o
+      = persianUncoupled.marginal k o :=
+        CoupledSoftmax.marginal_congr totalScore_eq k o
+    _ = softmax (foldedScore (inputs k)) o :=
+        persianUncoupled.marginal_eq_independent_when_uncoupled ⟨0, fun _ => rfl⟩ k o
 
--- ============================================================================
--- § 7: Generic ConstraintSystem Predictions (per-input MaxEnt)
--- ============================================================================
+/-- The marginals form a probability distribution over the three
+resolutions. -/
+theorem persianMarginal_sum_eq_one (k : Fin 2) :
+    ∑ o : Resolution, persianMarginal k o = 1 :=
+  CoupledSoftmax.marginal_sum_eq_one _ k
 
-/-! At each input, the classical MaxEnt model is a `ConstraintSystem
-HiatusOutput ℝ`: candidates = `Finset.univ`, score = harmony, decoder =
-`softmaxDecoder 1`. This is the same `ConstraintSystem` API used by
-`HayesWilson2008.onsetSystem` — different domain, identical scaffolding.
+/-! ### Predictions with the fitted weights
 
-The systemic-constraint (\*HOMOPHONY) story in §§3–6 sits *above* this
-per-input view: it couples the per-input distributions into a joint
-distribution on `Fin 4 → HiatusOutput`. With zero systemic weight, the
-joint factorises and each marginal equals the per-input
-`predict`. -/
+Table 5's preference orders: hiatus .55 ≻ epenthesis .31 ≻ deletion .14 under
+the monosegmental suffix, deletion .61 ≻ hiatus .25 ≻ epenthesis .14 under
+the polysegmental one. -/
 
-/-- The classical MaxEnt distribution at input `i`, packaged as a generic
-    `ConstraintSystem`. Score = `harmonyScore classicalCon classicalW (i, ·)`,
-    decoder = `softmaxDecoder 1`. -/
-noncomputable def stormeSystem (i : HiatusInput) : ConstraintSystem HiatusOutput ℝ where
-  candidates := Finset.univ
-  score := fun o => harmonyScore classicalCon classicalW (i, o)
-  decoder := softmaxDecoder 1
+/-- A marginal comparison reduces to comparing folded scores. -/
+theorem persianMarginal_lt_of_foldedScore_lt {k : Fin 2} {o o' : Resolution}
+    (h : foldedScore (inputs k) o < foldedScore (inputs k) o') :
+    persianMarginal k o < persianMarginal k o' := by
+  rw [persianMarginal_eq_softmax, persianMarginal_eq_softmax]
+  exact softmax_strict_mono _ _ _ h
 
-/-- For input /æ.ɑ/, the system predicts a higher MaxEnt probability for
-    epenthesis (cost −1) than for deleteV1 (cost −2). This is a comparison
-    of *actual* softmax probabilities (numerator / partition function over
-    all 5 outputs), not just exponentiated harmonies. -/
-theorem stormeSystem_epenthesis_gt_deleteV1 :
-    (stormeSystem .ae_ah).predict HiatusOutput.deleteV1 <
-    (stormeSystem .ae_ah).predict HiatusOutput.epenthesis :=
-  ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
-    (Finset.mem_univ _) (Finset.mem_univ _) epenthesis_beats_deletion
+/-- Monosegmental suffix: deletion — which would merge the suffixed form with
+the bare stem — is the least likely realization (.14). -/
+theorem mono_deletion_lt_epenthesis :
+    persianMarginal 0 .deletion < persianMarginal 0 .epenthesis :=
+  persianMarginal_lt_of_foldedScore_lt (by norm_num [foldedScore_eq])
 
-/-- The classical Persian system at /æ.ɑ/ is a probability distribution
-    over `HiatusOutput`. Follows from the generic `softmaxDecoder_isProb`. -/
-theorem stormeSystem_isProb (i : HiatusInput) :
-    ∑ o : HiatusOutput, (stormeSystem i).predict o = 1 :=
-  ConstraintSystem.predict_softmax_isProb _ rfl
-    ⟨.faithful, Finset.mem_univ _⟩
+/-- Monosegmental suffix: faithful hiatus is the preferred realization
+(.55). -/
+theorem mono_epenthesis_lt_hiatus :
+    persianMarginal 0 .epenthesis < persianMarginal 0 .hiatus :=
+  persianMarginal_lt_of_foldedScore_lt (by norm_num [foldedScore_eq])
+
+/-- Polysegmental suffix: epenthesis is less likely than faithful hiatus
+(.14 vs .25). -/
+theorem poly_epenthesis_lt_hiatus :
+    persianMarginal 1 .epenthesis < persianMarginal 1 .hiatus :=
+  persianMarginal_lt_of_foldedScore_lt (by norm_num [foldedScore_eq])
+
+/-- Polysegmental suffix: deletion is the preferred realization (.61) —
+[hutʃɑmun] keeps the suffix recoverable, so \*Homophony is silent. -/
+theorem poly_hiatus_lt_deletion :
+    persianMarginal 1 .hiatus < persianMarginal 1 .deletion :=
+  persianMarginal_lt_of_foldedScore_lt (by norm_num [foldedScore_eq])
+
+/-! ### The suffix-length effect -/
+
+/-- The two junctures have identical classical constraint profiles: the
+classical grammar cannot see the suffix-length difference. -/
+theorem harmonyScore_inputs_eq (w : Fin 3 → ℝ) (k k' : Fin 2) (o : Resolution) :
+    harmonyScore classicalCon w (inputs k, o) =
+      harmonyScore classicalCon w (inputs k', o) := by
+  simp only [harmonyScore_eq_neg_sum]
+  congr 1
+  refine Finset.sum_congr rfl fun c _ => ?_
+  fin_cases c <;>
+    simp [classicalCon, depConstraint_eq, starHiatus_eq, maxConstraint_eq]
+
+/-- Without \*Homophony the model cannot express a suffix-length effect: for
+any classical weights the two suffixes receive identical distributions. The
+qualitative core of [storme-2026]'s model comparison — the fit without
+\*Homophony is worse because classical constraints cannot separate the
+suffixes at all. -/
+theorem classical_no_length_effect (w : Fin 3 → ℝ) (k k' : Fin 2) (o : Resolution) :
+    marginalProb inputs classicalCon w ![0] ![starHomophony] k o =
+      marginalProb inputs classicalCon w ![0] ![starHomophony] k' o := by
+  rw [marginal_eq_classical_when_no_systemic inputs classicalCon w ![0] ![starHomophony]
+      (fun c => by fin_cases c; rfl) k o,
+    marginal_eq_classical_when_no_systemic inputs classicalCon w ![0] ![starHomophony]
+      (fun c => by fin_cases c; rfl) k' o]
+  exact congrFun (congrArg softmax (funext fun o' =>
+    harmonyScore_inputs_eq w k k' o')) o
+
+/-- With \*Homophony at its fitted weight, deletion is strictly less probable
+for the monosegmental suffix (predicted frequency .14) than for the
+polysegmental one (.61): the suffix-length effect of [ariyaee-jurgec-2021]. -/
+theorem homophony_length_effect :
+    persianMarginal 0 .deletion < persianMarginal 1 .deletion := by
+  rw [persianMarginal_eq_softmax, persianMarginal_eq_softmax]
+  refine softmax_lt_softmax_of_single_score_lt ?_ fun o ho => ?_
+  · norm_num [foldedScore_eq]
+  · cases o <;> simp_all [foldedScore_eq]
 
 end Storme2026

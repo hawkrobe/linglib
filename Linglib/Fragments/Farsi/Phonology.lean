@@ -1,152 +1,95 @@
-import Linglib.Phonology.Segmental.Basic
+import Linglib.Data.PHOIBLE.Inventories.Persian
+import Linglib.Phonology.Segmental.Defs
 
 /-!
-# Persian (Farsi) Vowel Hiatus Data [storme-2026]
+# Persian (Farsi) phonology
 
-Empirical data for Persian vowel hiatus resolution, the case study in
-[storme-2026]'s MaxEnt systemic constraints analysis.
+Modern Persian distinguishes six vowels — front unrounded /i e æ/ against
+back /u o ɑ/, the back series rounded except for the variably rounded low
+vowel — and some two dozen consonants, among them the glottal stop /ʔ/ that
+breaks vowel hiatus. This file provides the PHOIBLE phoneme inventory and
+distinctive-feature specifications for the vowels and for /h tʃ m n ʔ/.
 
-Persian has three low vowels — /æ/, /ɑ/, and (in some analyses) /ɒ/ — that
-undergo various resolution strategies when they occur in hiatus (V.V across
-a morpheme boundary). The key empirical observation is that hiatus resolution
-is asymmetric: the pattern of deletion differs depending on which vowels are
-involved, even when classical faithfulness/markedness constraints predict
-symmetric behavior. Storme argues this asymmetry arises from \*HOMOPHONY
-avoidance — the grammar prefers mappings that maintain output distinctness
-across the paradigm.
+## References
 
-## Segments
-
-We define the two low vowels using the phonological feature system from
-`Phonology.Features`. These are the segments relevant to hiatus
-resolution; the full Persian consonant inventory is not needed.
-
-## Hiatus domain
-
-- `HiatusInput`: the four underlying V₁.V₂ combinations
-- `HiatusOutput`: resolution strategies (V1-deletion, V2-deletion, etc.)
-- `HiatusCandidate`: input–output pairs for MaxEnt evaluation
+* [M.-R. Majidi and E. Ternes, *Persian (Farsi)*][majidi-ternes-1991]
+* [S. Moran and D. McCloy, *PHOIBLE 2.0*][moran-mccloy-2019]
+* [B. Hayes, *Introductory Phonology*][hayes-2009]
+* [K. Ariyaee and P. Jurgec, *Variable hiatus in Persian is affected by
+  suffix length*][ariyaee-jurgec-2021]
 -/
 
 open Phonology
 
 namespace Farsi.Phonology
 
--- ============================================================================
--- § 1: Persian Vowel Segments
--- ============================================================================
+/-- Canonical Persian phoneme inventory: first PHOIBLE inventory for ISO
+`pes` (the Stanford Phonology Archive doculect). -/
+def phonemeInventory : Data.PHOIBLE.Inventory :=
+  Data.PHOIBLE.Inventories.Persian.pes
 
-/-- Persian /æ/ — low front unrounded vowel.
-    [+syll, −cons, +son, +approx, +cont, −nasal, −lat, +dor, +low, +front, −back, −tense] -/
-def vowelAe : Segment :=
-  fun
-    | .syllabic => some true
-    | .consonantal => some false
-    | .sonorant => some true
-    | .approximant => some true
-    | .continuant => some true
-    | .nasal => some false
-    | .lateral => some false
-    | .dorsal => some true
-    | .low => some true
-    | .front => some true
-    | .back => some false
-    | .tense => some false
-    | _ => none
+/-! ### Vowels
 
-/-- Persian /ɑ/ — low back unrounded vowel.
-    [+syll, −cons, +son, +approx, +cont, −nasal, −lat, +dor, +low, −front, +back, −tense] -/
-def vowelAh : Segment :=
-  fun
-    | .syllabic => some true
-    | .consonantal => some false
-    | .sonorant => some true
-    | .approximant => some true
-    | .continuant => some true
-    | .nasal => some false
-    | .lateral => some false
-    | .dorsal => some true
-    | .low => some true
-    | .front => some false
-    | .back => some true
-    | .tense => some false
-    | _ => none
+The six-vowel system of modern Persian ([majidi-ternes-1991]). -/
 
--- ============================================================================
--- § 2: Hiatus Domain
--- ============================================================================
+/-- /i/ — high front unrounded vowel. -/
+def i : Segment := .vowel .high .front
 
-/-- Underlying hiatus contexts: V₁.V₂ sequences across a morpheme boundary.
-    We model the four pairwise combinations of /æ/ and /ɑ/.
+/-- /e/ — mid front unrounded vowel. -/
+def e : Segment := .vowel .mid .front
 
-    Naming: `ae` = /æ/ (low front), `ah` = /ɑ/ (low back). -/
-inductive HiatusInput where
-  | ae_ae   -- /æ.æ/
-  | ae_ah   -- /æ.ɑ/
-  | ah_ae   -- /ɑ.æ/
-  | ah_ah   -- /ɑ.ɑ/
-  deriving DecidableEq, Repr
+/-- /æ/ — low front unrounded vowel. -/
+def ae : Segment := .vowel .low .front
 
-/-- Resolution strategies for vowel hiatus. -/
-inductive HiatusOutput where
-  /-- Delete V₁ (first vowel). -/
-  | deleteV1
-  /-- Delete V₂ (second vowel). -/
-  | deleteV2
-  /-- Glide epenthesis (insert [j] or [w] between vowels). -/
-  | epenthesis
-  /-- Coalescence (merge V₁ and V₂ into a single vowel). -/
-  | coalescence
-  /-- Faithful (no repair — hiatus surfaces). -/
-  | faithful
-  deriving DecidableEq, Repr
+/-- /u/ — high back rounded vowel. -/
+def u : Segment := (Segment.vowel .high .back).setFeature .round true
 
-instance : Inhabited HiatusOutput := ⟨.faithful⟩
+/-- /o/ — mid back rounded vowel. -/
+def o : Segment := (Segment.vowel .mid .back).setFeature .round true
 
-/-- A hiatus candidate: an input–output pair for constraint evaluation. -/
-abbrev HiatusCandidate := HiatusInput × HiatusOutput
+/-- /ɑ/ — low back vowel, variably rounded [ɑ ~ ɒ]. -/
+def aa : Segment := .vowel .low .back
 
-/-- The candidate set for each input: all five resolution strategies. -/
-def candidates (_i : HiatusInput) : List HiatusOutput :=
-  [.deleteV1, .deleteV2, .epenthesis, .coalescence, .faithful]
+/-! ### Consonants -/
 
--- ============================================================================
--- § 3: Surface Form Descriptions
--- ============================================================================
+/-- /h/ — voiceless glottal fricative. -/
+def h : Segment := Segment.ofSpecs
+  [(.syllabic, false), (.consonantal, false), (.sonorant, false),
+   (.continuant, true), (.voice, false), (.spreadGlottis, true)]
 
-/-- Surface form description for each input–output pair.
-    These are descriptive labels, not phonetic transcriptions. -/
-def surfaceDescription : HiatusCandidate → String
-  | (.ae_ae, .deleteV1)    => "[æ] (V1 deleted)"
-  | (.ae_ae, .deleteV2)    => "[æ] (V2 deleted)"
-  | (.ae_ae, .epenthesis)  => "[æjæ] (glide epenthesis)"
-  | (.ae_ae, .coalescence) => "[æ] (coalescence)"
-  | (.ae_ae, .faithful)    => "[æ.æ] (faithful)"
-  | (.ae_ah, .deleteV1)    => "[ɑ] (V1 deleted)"
-  | (.ae_ah, .deleteV2)    => "[æ] (V2 deleted)"
-  | (.ae_ah, .epenthesis)  => "[æjɑ] (glide epenthesis)"
-  | (.ae_ah, .coalescence) => "[ɑ] (coalescence)"
-  | (.ae_ah, .faithful)    => "[æ.ɑ] (faithful)"
-  | (.ah_ae, .deleteV1)    => "[æ] (V1 deleted)"
-  | (.ah_ae, .deleteV2)    => "[ɑ] (V2 deleted)"
-  | (.ah_ae, .epenthesis)  => "[ɑjæ] (glide epenthesis)"
-  | (.ah_ae, .coalescence) => "[ɑ] (coalescence)"
-  | (.ah_ae, .faithful)    => "[ɑ.æ] (faithful)"
-  | (.ah_ah, .deleteV1)    => "[ɑ] (V1 deleted)"
-  | (.ah_ah, .deleteV2)    => "[ɑ] (V2 deleted)"
-  | (.ah_ah, .epenthesis)  => "[ɑjɑ] (glide epenthesis)"
-  | (.ah_ah, .coalescence) => "[ɑ] (coalescence)"
-  | (.ah_ah, .faithful)    => "[ɑ.ɑ] (faithful)"
+/-- /tʃ/ — voiceless postalveolar affricate. -/
+def ch : Segment := Segment.ofSpecs
+  [(.syllabic, false), (.consonantal, true), (.sonorant, false),
+   (.continuant, false), (.delayedRelease, true), (.voice, false),
+   (.coronal, true), (.anterior, false), (.strident, true)]
 
--- ============================================================================
--- § 4: Verification
--- ============================================================================
+/-- /m/ — bilabial nasal. -/
+def m : Segment := Segment.ofSpecs
+  [(.syllabic, false), (.consonantal, true), (.sonorant, true),
+   (.nasal, true), (.voice, true), (.labial, true)]
 
-/-- Each input has exactly 5 candidates. -/
-theorem candidates_length (i : HiatusInput) : (candidates i).length = 5 := by
-  cases i <;> rfl
+/-- /n/ — alveolar nasal. -/
+def n : Segment := Segment.ofSpecs
+  [(.syllabic, false), (.consonantal, true), (.sonorant, true),
+   (.nasal, true), (.voice, true), (.coronal, true), (.anterior, true)]
 
-/-- The two vowels are featurally distinct (differ in [±front] and [±back]). -/
-theorem vowels_distinct : ¬(vowelAe == vowelAh) = true := by decide
+/-- /ʔ/ — glottal stop, the epenthetic hiatus-breaker. -/
+def glottal : Segment := Segment.ofSpecs
+  [(.syllabic, false), (.consonantal, false), (.sonorant, false),
+   (.continuant, false), (.voice, false), (.constrGlottis, true)]
+
+/-! ### Consistency with the substrate and with PHOIBLE -/
+
+/-- The six vowels are pairwise distinct feature bundles. -/
+example : ([i, e, ae, u, o, aa] : List Segment).Pairwise (· ≠ ·) := by decide
+
+/-- All six vowels are vowels; none of the consonants is. -/
+example : (∀ v ∈ ([i, e, ae, u, o, aa] : List Segment), v.IsVowel) ∧
+    ∀ c ∈ ([h, ch, m, n, glottal] : List Segment), ¬c.IsVowel := by decide
+
+/-- Every segment named here has its glyph in the canonical PHOIBLE doculect
+(whose SPA transcription writes /æ/ as `a̟` and /tʃ/ as `t̠ʃ`). -/
+example : ∀ g ∈ ["i", "e", "a̟", "u", "o", "ɑ", "h", "t̠ʃ", "m", "n", "ʔ"],
+    g ∈ phonemeInventory.phonemes.map (·.glyph) := by decide
 
 end Farsi.Phonology
