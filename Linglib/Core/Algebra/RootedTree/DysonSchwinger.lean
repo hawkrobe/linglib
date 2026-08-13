@@ -33,13 +33,13 @@ Eq 1.17.3 (interpreted as a type-level recursion on `SyntacticObject`)
 belongs in `Syntax/Minimalist/` — those Studies files
 consume this substrate.
 
-## §1.17.1: B+ as Hochschild 1-cocycle for Δ^ρ
+## B+ as Hochschild 1-cocycle for Δ^ρ (MCB Eq 1.17.1)
 
 Already proven as `comulTreeN_node_cocycle` /
-`comulAlgHomN_bPlusLin_cocycle` in `Coproduct/PruningNonplanar.lean`.
-Surfaced here with an MCB-citation alias for citation discovery.
+`comulAlgHomN_bPlusLin_cocycle` in `Coproduct/PruningNonplanar.lean`;
+this file consumes those theorems directly.
 
-## §1.17.2: The Dyson-Schwinger map and equation
+## The Dyson-Schwinger map and equation (MCB Eq 1.17.2)
 
 For `P : H →ₗ[R] H` a linear self-map and `a : α` a root label, the
 **Dyson-Schwinger map** is
@@ -51,7 +51,7 @@ equivalently `X = B+_a(P(X))`. The classical existence theorem
 (Foissy 2008) requires the degree-completion of `H` (formal power series
 in the grading variable) and is out of scope for this substrate file.
 
-## §1.17.3 algebraic analog
+## Algebraic analog of MCB Eq 1.17.3
 
 The quadratic case `X = B+_a(X * X)` is the direct algebraic analog of
 MCB Eq 1.17.3. It is not literally `X = M(X, X)` (which is a type-level
@@ -72,36 +72,7 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommSemiring R] {α : Type*}
 
-/-! ## §1: B+ as Hochschild 1-cocycle (MCB Eq 1.17.1)
-
-Re-export of `comulTreeN_node_cocycle` and `comulAlgHomN_bPlusLin_cocycle`
-under MCB-anchored names. The substantive content was proven in
-`Coproduct/PruningNonplanar.lean` (Phase A.7-γ). -/
-
-/-- **MCB Eq 1.17.1** (Hochschild 1-cocycle property of `B+_a` for `Δ^ρ`,
-    basis-level form). For every forest `F : Forest (Nonplanar α)`,
-    applying `Δ^ρ` after `B+_a` (i.e., `comulTreeN ∘ Nonplanar.node a`)
-    decomposes as the explicit primitive term plus the right-channel
-    application of `B+_a` to `comulForestN F`.
-
-    This is the central algebraic property of `B+_a`; it makes
-    `(ConnesKreimer R (Nonplanar α), Δ^ρ, ε)` a graded connected
-    Hopf algebra (Foissy clean coassoc + antipode by induction). -/
-theorem mcb_1_17_1_hochschild_cocycle_basis (a : α) (F : Forest (Nonplanar α)) :
-    comulTreeN (R := R) (Nonplanar.node a F) =
-      ofTree (Nonplanar.node a F) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)) +
-      (LinearMap.lTensor _ (bPlusLin (R := R) a)) (comulForestN F) :=
-  comulTreeN_node_cocycle a F
-
-/-- **MCB Eq 1.17.1** lifted to the algebra-hom level on tree basis
-    elements. Re-export of `comulAlgHomN_bPlusLin_cocycle`. -/
-theorem mcb_1_17_1_hochschild_cocycle_algHom (a : α) (F : Forest (Nonplanar α)) :
-    comulAlgHomN (R := R) (bPlusLin (R := R) a (of' F)) =
-      bPlusLin (R := R) a (of' F) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)) +
-      (LinearMap.lTensor _ (bPlusLin (R := R) a)) (comulAlgHomN (of' F)) :=
-  comulAlgHomN_bPlusLin_cocycle a F
-
-/-! ## §2: The Dyson-Schwinger map and equation (MCB Eq 1.17.2)
+/-! ### The Dyson-Schwinger map and equation
 
 For a linear endomorphism `P : H →ₗ[R] H` and a root label `a : α`,
 `dsMap P a := bPlusLin a ∘ₗ P` is the DS self-map. -/
@@ -167,7 +138,7 @@ theorem isDSSolution_zero_iff_zero (a : α) (X : ConnesKreimer R (Nonplanar α))
   unfold IsDSSolution
   rw [dsMap_zero, LinearMap.zero_apply]
 
-/-! ## §3: Quadratic Dyson-Schwinger (algebraic analog of MCB Eq 1.17.3)
+/-! ### Quadratic Dyson-Schwinger
 
 The equation `X = B+_a(X * X)` is the direct algebraic analog of
 MCB Eq 1.17.3 (`X = M(X, X)`). Not a `dsMap` instance — multiplication
@@ -190,7 +161,7 @@ theorem zero_isQuadDSSolution (a : α) :
   unfold IsQuadDSSolution
   rw [mul_zero, map_zero]
 
-/-! ## §4: Sanity tests -/
+/-! ### Sanity tests -/
 
 /-- Sanity: for `P = id`, the DS map is exactly `B+_a`. -/
 example (a : α) :
