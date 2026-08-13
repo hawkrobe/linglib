@@ -2,24 +2,34 @@ import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # Hausa Definiteness Fragment
-[schwarz-2013]
 
-Hausa (Chadic, ISO `ha`). Two definite forms differentiating two types of
-definiteness: a weak suffixal *-n* (situational uniqueness) and a strong *ɗîn*
-(anaphoric) — a *bipartite* article system ([schwarz-2013] §4.2).
+Hausa (Chadic, ISO `ha`) has two definite articles: the weak suffix *-n*
+(*-r̃* after feminine nouns), used for uniquely identifiable referents
+including inferable first mentions, and the strong *ɗîn*, used for referents
+already in the discourse. The two-article classification is tentative, since
+bare nominals can also be definite and consonant-final loanwords take *ɗîn*
+for both uses. Covarying (donkey) uses are unreported for both articles. The
+marked indefinite is *wani*.
+
+## References
+
+* [schwarz-2013], §4.2.2
+* [buba-1997]
+* [jaggar-2001], §12.3 for *wani*
 -/
 
-namespace Hausa
+namespace Hausa.Determiners
 
-/-- Hausa: weak suffixal *-n* (uniqueness) and strong *ɗîn* (anaphoric) —
-    two morphologically distinct definite forms. -/
-def _root_.Hausa.Determiners.inventory : Determiner.Inventory :=
+/-- The Hausa determiners are the weak definite *-n*, the strong definite
+    *ɗîn*, and the marked indefinite *wani* (feminine *wata*, plural *wasu*). -/
+def inventory : Determiner.Inventory :=
   [ .article { form := "-n", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := [.immediateSituation, .largerSituation] },
+               uses := [.largerSituation] },
     .article { form := "ɗîn", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := [.anaphoric, .donkey] } ]
+               uses := [.anaphoric] },
+    .article { form := "wani", definiteness := .indefinite, exponent := .dedicatedMorpheme } ]
 
 /-- Hausa derives the `.bipartite` Moroney cell. -/
-theorem marking : Determiners.inventory.markingStrategy = .bipartite := by decide
+theorem marking : inventory.markingStrategy = .bipartite := by decide
 
-end Hausa
+end Hausa.Determiners
