@@ -101,6 +101,19 @@ namespace Language
 def IsTierStrictlyLocal (k : ℕ) (L : Language α) : Prop :=
   ∃ G : Subregular.TSLGrammar k α, G.lang = L
 
+end Language
+
+namespace Subregular
+
+/-- The language of a `TSLGrammar` is tier-based strictly local: the
+introduction rule for `Language.IsTierStrictlyLocal`. -/
+theorem TSLGrammar.isTierStrictlyLocal_lang {k : ℕ} (G : TSLGrammar k α) :
+    Language.IsTierStrictlyLocal k G.lang := ⟨G, rfl⟩
+
+end Subregular
+
+namespace Language
+
 /-! ## Inclusions -/
 
 /-- **SL_k ⊆ TSL_k**: take the universal tier (every symbol on tier), so
