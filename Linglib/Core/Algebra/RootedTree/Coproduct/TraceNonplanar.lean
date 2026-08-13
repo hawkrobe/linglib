@@ -61,7 +61,7 @@ work (B+ is not a Hochschild 1-cocycle for Δ^c; see CHANGELOG entry
 ## Status
 
 `[UPSTREAM]` candidate. Sorry-free. MCB Lemma 1.2.10 is fully proved: both
-its grading content (`mcb_lemma_1_2_10`) and Δ^c coassociativity
+its grading content (`comulCAlgHomN_of'_mem_gradedSpan`) and Δ^c coassociativity
 (`comulCN_coassoc`), the latter under the `TraceCoherent` hypothesis. The
 coassoc proof is the direct double-cut bijection `doubleCut_eq`, descended
 from the tree-level `DoubleCut.coassT` (`Coproduct/TraceCoassoc.lean`) through
@@ -1795,9 +1795,9 @@ theorem counit_lTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
 
 end BialgebraInst
 
-/-! ## MCB Lemma 1.2.10 — graded bialgebra structure
+/-! ### Edge-count grading
 
-Per `marcolli-chomsky-berwick-2025` p. 37, Lemma 1.2.10:
+Per [marcolli-chomsky-berwick-2025] p. 37, Lemma 1.2.10:
 
 > Let V^c(𝔉_{SO_0}) denote the vector space (over ℚ) spanned by the
 > workspaces F ∈ 𝔉_{SO_0}, endowed with the product given by the
@@ -1805,14 +1805,13 @@ Per `marcolli-chomsky-berwick-2025` p. 37, Lemma 1.2.10:
 > V(𝔉_{SO_0}) is graded by the number of edges. Then
 > (V^c(𝔉_{SO_0}), ⊔, Δ^c) is a graded bialgebra.
 
-This section formalizes the statement: defines edge-count grading on
-forests, sets up the graded subspaces, and packages MCB Lemma 1.2.10
-as a theorem combining the Δ^c bialgebra structure (`bialgebraC`, for
-trace-coherent encoders) with grading compatibility. Both grading
-halves are fully proved (edge conservation through the trace cut
-machinery: `cutSummandsCN_numNodes`). -/
+This section defines the edge-count grading on forests and its graded
+subspaces, and proves the coproduct half of the grading compatibility
+(`comulCAlgHomN_of'_mem_gradedSpan`); the product half is edge-count
+additivity over disjoint union, and edge conservation through the trace
+cut machinery is `cutSummandsCN_numNodes`. -/
 
-section MCBLemma1_2_10
+section EdgeGrading
 variable {R'' : Type*} [CommRing R''] {α'' β'' : Type*}
 
 /-- **Edge count of a forest**: total edges across all trees.
@@ -1994,62 +1993,33 @@ private theorem comulCForestN_mem (τ : Nonplanar (α'' ⊕ β'') → β'')
         rfl]
     exact gradedTensorSpan_mul (comulCTreeN_mem τ T) ih
 
-/-- **MCB Lemma 1.2.10** — the graded bialgebra structure.
+/-- **Δ^c preserves the edge-count grading** ([marcolli-chomsky-berwick-2025]
+    Lemma 1.2.10, p. 37): the coproduct of a basis forest lies in the span of
+    homogeneous tensors `xi ⊗ yi` with degrees summing to the forest's edge
+    count. With edge-count additivity over the product (disjoint union) and
+    `comulCN_coassoc`, this gives the lemma's graded bialgebra structure on
+    `V^c(𝔉_{SO_0})`. -/
+theorem comulCAlgHomN_of'_mem_gradedSpan
+    (τ : Nonplanar (α'' ⊕ β'') → β'') (F : Forest (Nonplanar (α'' ⊕ β''))) :
+    comulCAlgHomN (R := R'') τ (ConnesKreimer.of' F) ∈
+      Submodule.span R'' {y | ∃ (i j : ℕ) (_hi : i + j = Forest.edgeCount F)
+        (xi yi : ConnesKreimer R'' (Nonplanar (α'' ⊕ β''))),
+        xi ∈ gradedPiece (α'' ⊕ β'') i ∧
+        yi ∈ gradedPiece (α'' ⊕ β'') j ∧
+        y = xi ⊗ₜ[R''] yi} := by
+  -- Each cut summand splits the edges (the trace marker replaces the cut
+  -- subtree by a unit-weight leaf, `cutSummandsCN_numNodes`), and the
+  -- homogeneous tensor spans multiply additively (`gradedTensorSpan_mul`).
+  rw [comulCAlgHomN_apply_of']
+  refine SetLike.le_def.mp (Submodule.span_le.mpr ?_)
+    (comulCForestN_mem (R'' := R'') τ F)
+  rintro y ⟨F₁, F₂, hsum, rfl⟩
+  exact Submodule.subset_span
+    ⟨Forest.edgeCount F₁, Forest.edgeCount F₂, hsum,
+      ConnesKreimer.of' F₁, ConnesKreimer.of' F₂,
+      Submodule.subset_span ⟨F₁, rfl, rfl⟩,
+      Submodule.subset_span ⟨F₂, rfl, rfl⟩, rfl⟩
 
-    States that:
-    1. The bialgebra structure `bialgebraC` (from `comulCAlgHomN`, for
-       trace-coherent encoders).
-    2. The space `V^c(𝔉_{SO_0})` is graded by `edgeCount`.
-    3. The product (⊔ = disjoint union) preserves grading additively:
-       `V_n ⊗ V_m → V_{n+m}` (because `edgeCount(F + G) = edgeCount(F) + edgeCount(G)`).
-    4. The coproduct (Δ^c) preserves grading: for `x ∈ V_n`,
-       `Δ^c(x) ∈ Σ_{i+j=n} V_i ⊗ V_j`.
-
-    **Status**: statement packaged. The grading-compatibility proofs are
-    sorry'd (substrate work).
-
-    **Hopf structure** (corollary, deferred):
-    > induces a Hopf algebra structure on the complement in V^c(𝔉_{SO_0})
-    > of the span of the lexical items and features.
-
-    Antipode emerges via the graded connected bialgebra construction
-    (inductive formula `S(x) = -x - Σ S(x_(1)) · x_(2)`) after quotienting
-    by the (1 - α) ideal for α a lexical-item generator. Deferred to
-    sibling file. -/
-theorem mcb_lemma_1_2_10
-    (τ : Nonplanar (α'' ⊕ β'') → β'') :
-    -- (1) Bialgebra structure: `bialgebraC` (for trace-coherent τ).
-    -- (2) Edge-count grading: each gradedPiece is a Submodule.
-    -- (3) Product preserves grading: of'(F+G).edgeCount = F.edgeCount + G.edgeCount.
-    (∀ F G : Forest (Nonplanar (α'' ⊕ β'')),
-      Forest.edgeCount (F + G) = Forest.edgeCount F + Forest.edgeCount G) ∧
-    -- (4) Coproduct preserves grading: for basis x = of' F with edge count n,
-    -- comulCAlgHomN τ x ∈ ⊕_{i+j=n} V_i ⊗ V_j.
-    (∀ (n : ℕ) (F : Forest (Nonplanar (α'' ⊕ β''))),
-      Forest.edgeCount F = n →
-      comulCAlgHomN (R := R'') τ (ConnesKreimer.of' F) ∈
-        Submodule.span R'' {y | ∃ (i j : ℕ) (_hi : i + j = n)
-          (xi yi : ConnesKreimer R'' (Nonplanar (α'' ⊕ β''))),
-          xi ∈ gradedPiece (α'' ⊕ β'') i ∧
-          yi ∈ gradedPiece (α'' ⊕ β'') j ∧
-          y = xi ⊗ₜ[R''] yi}) := by
-  refine ⟨edgeCount_add, ?_⟩
-  · -- Δ^c preserves grading exactly: each cut summand splits the edges
-    -- (the trace marker replaces the cut subtree by a unit-weight leaf,
-    -- `cutSummandsCN_numNodes`), and the homogeneous tensor spans multiply
-    -- additively (`gradedTensorSpan_mul`).
-    intro n F hF
-    rw [comulCAlgHomN_apply_of']
-    have hmem := comulCForestN_mem (R'' := R'') τ F
-    rw [hF] at hmem
-    refine SetLike.le_def.mp (Submodule.span_le.mpr ?_) hmem
-    rintro y ⟨F₁, F₂, hsum, rfl⟩
-    exact Submodule.subset_span
-      ⟨Forest.edgeCount F₁, Forest.edgeCount F₂, hsum,
-        ConnesKreimer.of' F₁, ConnesKreimer.of' F₂,
-        Submodule.subset_span ⟨F₁, rfl, rfl⟩,
-        Submodule.subset_span ⟨F₂, rfl, rfl⟩, rfl⟩
-
-end MCBLemma1_2_10
+end EdgeGrading
 
 end RootedTree
