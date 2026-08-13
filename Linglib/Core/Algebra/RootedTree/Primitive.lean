@@ -19,12 +19,8 @@ dual-primitives side on the Connes-Kreimer bialgebra with the Δ^ρ
 (deletion-remainder) coproduct, specializing the general
 `Bialgebra.dualPrimitives` theory of `Core/RingTheory/Bialgebra/Primitive`.
 
-## Main definitions
-
-* `ConnesKreimer.countSingleCutsRho`: number of Δ^ρ cut summands of
-  `T` with cut forest `{T₁}` and remainder `T₂`.
-
-The paper's dual-basis functional `δ_T` is `lcoeff R {T}`.
+The paper's dual-basis functional `δ_T` is `lcoeff R {T}`; the cut count
+`countSingleCutsRho` lives with `cutSummandsN` in `Coproduct/PruningNonplanar`.
 
 ## Main results
 
@@ -49,18 +45,9 @@ open Coalgebra Bialgebra WithConv
 
 variable {R : Type*} [CommRing R] {α : Type*} (T T₁ T₂ : Nonplanar α)
 
-/-! ### Cut counting -/
+/-! ### Single-tree deltas are dual primitives -/
 
 variable [DecidableEq α]
-
-open scoped Classical in
-/-- Number of Δ^ρ cut summands of `T` whose cut forest is `{T₁}` and whose
-remainder tree is `T₂` — the Δ^ρ analog of the count `c^T_{T₁,T₂}` of
-[marcolli-chomsky-berwick-2025]. -/
-noncomputable def countSingleCutsRho : ℕ :=
-  (cutSummandsN T).countP fun p => p.1 = ({T₁} : Forest (Nonplanar α)) ∧ p.2 = T₂
-
-/-! ### Single-tree deltas are dual primitives -/
 
 variable [CharZero R] [NoZeroDivisors R]
 
