@@ -7,8 +7,6 @@ import Linglib.Core.Data.RoseTree.Nonplanar
 
 open RoseTree
 
-set_option autoImplicit false
-
 /-!
 # Trace-stripping and `Sum.inl` embedding on rose trees
 
@@ -16,7 +14,7 @@ Removal of `Sum.inr`-rooted (trace-placeholder) subtrees from
 `Sum`-labeled rose trees, and the `Sum.inl` embedding it inverts — the
 tree-level substrate of the deletion coproduct Δ^d of
 [marcolli-chomsky-berwick-2025], packaged as algebra homs in
-`Core/Algebra/RootedTree/Coproduct/DeletionNonplanar.lean`.
+`Core/Algebra/RootedTree/Coproduct/Deletion.lean`.
 
 ## Main definitions
 

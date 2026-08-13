@@ -6,8 +6,6 @@ Authors: Robert Hawkins
 import Mathlib.Algebra.BigOperators.Ring.Multiset
 import Mathlib.Data.Multiset.Bind
 
-set_option autoImplicit false
-
 /-!
 # Sums over multiset cartesian products
 

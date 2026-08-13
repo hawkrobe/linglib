@@ -4,13 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.BigOperators.Multiset
+import Linglib.Core.Data.Multiset.FilterMap
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
 import Linglib.Core.Data.RoseTree.StripTrace
 
 open RoseTree RoseTree.Nonplanar
-
-set_option autoImplicit false
 
 /-!
 # The deletion coproduct Δ^d
@@ -69,31 +68,16 @@ variable {R : Type*} [CommSemiring R] {α β : Type*}
 
 
 
-/-! ## Forest-level strip
+/-! ## The trace-strip algebra hom Π_{d,c} -/
 
-Map `Nonplanar.stripTrace` over each tree in the forest, dropping the
-`none` results via `Multiset.filterMap`. The result is a forest in
-`Nonplanar α`. -/
-
-/-- The additive monoid hom from forests in `Nonplanar (α ⊕ β)` to
-    forests in `Nonplanar α`, given by stripping each tree componentwise
-    and dropping the trace-rooted ones. -/
-noncomputable def stripTraceForestAddHom :
-    Forest (Nonplanar (α ⊕ β)) →+ Forest (Nonplanar α) where
-  toFun F := F.filterMap Nonplanar.stripTrace
-  map_zero' := Multiset.filterMap_zero _
-  map_add' F G := Multiset.filterMap_add _ F G
-
-/-! ## AlgHom lift — Π_{d,c}
-
-The trace-strip algebra hom `Π_{d,c}` in MCB's notation. -/
-
-/-- The **trace-strip algebra hom** `Π_{d,c}` —
-    `ConnesKreimer R (Nonplanar (α ⊕ β)) →ₐ[R] ConnesKreimer R (Nonplanar α)`
-    induced by `stripTraceForestAddHom` via `ConnesKreimer.mapDomainAlgHom`. -/
+/-- The **trace-strip algebra hom** `Π_{d,c}`: strip each tree of a basis
+    forest componentwise, dropping the trace-rooted ones
+    (`Multiset.filterMapAddMonoidHom Nonplanar.stripTrace`), lifted
+    through `ConnesKreimer.mapDomainAlgHom`. -/
 noncomputable def stripTraceAlgHom :
     ConnesKreimer R (Nonplanar (α ⊕ β)) →ₐ[R] ConnesKreimer R (Nonplanar α) :=
-  ConnesKreimer.mapDomainAlgHom (stripTraceForestAddHom (α := α) (β := β))
+  ConnesKreimer.mapDomainAlgHom
+    (Multiset.filterMapAddMonoidHom Nonplanar.stripTrace)
 
 @[simp] theorem stripTraceAlgHom_of' (F : Forest (Nonplanar (α ⊕ β))) :
     stripTraceAlgHom (R := R) (of' F) =
@@ -119,18 +103,12 @@ noncomputable def stripTraceAlgHom :
 The embedding `α → α ⊕ β` lifts componentwise to trees and forests via
 `RoseTree.map` / `Nonplanar.map` / `Multiset.map`. -/
 
-/-- Embed a forest of `Nonplanar α` trees into a forest of
-    `Nonplanar (α ⊕ β)` trees, componentwise. -/
-noncomputable def embedInlForestAddHom :
-    Forest (Nonplanar α) →+ Forest (Nonplanar (α ⊕ β)) :=
-  Multiset.mapAddMonoidHom Nonplanar.embedInl
-
 /-- The **Sum.inl embedding algebra hom**
     `ConnesKreimer R (Nonplanar α) →ₐ[R] ConnesKreimer R (Nonplanar (α ⊕ β))`
     induced by `Nonplanar.embedInl` via `ConnesKreimer.mapDomainAlgHom`. -/
 noncomputable def embedInlAlgHom :
     ConnesKreimer R (Nonplanar α) →ₐ[R] ConnesKreimer R (Nonplanar (α ⊕ β)) :=
-  ConnesKreimer.mapDomainAlgHom (embedInlForestAddHom (α := α) (β := β))
+  ConnesKreimer.mapDomainAlgHom (Multiset.mapAddMonoidHom Nonplanar.embedInl)
 
 @[simp] theorem embedInlAlgHom_of' (F : Forest (Nonplanar α)) :
     embedInlAlgHom (R := R) (β := β) (of' F) =

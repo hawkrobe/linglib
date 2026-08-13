@@ -30,7 +30,7 @@ The paper's dual-basis functional `δ_T` is `lcoeff R {T}`; the cut count
   count form `⁅δ_{T₁}, δ_{T₂}⁆ (ofTree T) = countSingleCutsRho T T₁ T₂ −
   countSingleCutsRho T T₂ T₁`, the Δ^ρ analog of the book's
   `c^T_{T₁,T₂} − c^T_{T₂,T₁}`. The Δ^c (trace-leaf) version follows via the
-  strip machinery in `Coproduct/DeletionNonplanar.lean`.
+  strip machinery in `Coproduct/Deletion.lean`.
 
 Not yet stated: the Lie algebra isomorphism with the insertion Lie algebra
 (`InsertionAlgebra`); this file proves the dual-primitives side

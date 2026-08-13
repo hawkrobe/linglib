@@ -6,8 +6,6 @@ import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # Admissible-cut enumeration on rose trees
 [marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
