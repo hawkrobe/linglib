@@ -27,42 +27,22 @@ def phonemeInventory : Data.PHOIBLE.Inventory :=
 The six-vowel system of modern Persian ([majidi-ternes-1991]). -/
 
 /-- /i/ — high front unrounded vowel. -/
-def i : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.consonantal, false), (.sonorant, true),
-   (.continuant, true), (.voice, true), (.dorsal, true),
-   (.high, true), (.low, false), (.front, true), (.back, false)]
+def i : Segment := .vowel .high .front
 
 /-- /e/ — mid front unrounded vowel. -/
-def e : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.consonantal, false), (.sonorant, true),
-   (.continuant, true), (.voice, true), (.dorsal, true),
-   (.high, false), (.low, false), (.front, true), (.back, false)]
+def e : Segment := .vowel .mid .front
 
 /-- /æ/ — low front unrounded vowel. -/
-def ae : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.consonantal, false), (.sonorant, true),
-   (.continuant, true), (.voice, true), (.dorsal, true),
-   (.high, false), (.low, true), (.front, true), (.back, false)]
+def ae : Segment := .vowel .low .front
 
 /-- /u/ — high back rounded vowel. -/
-def u : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.consonantal, false), (.sonorant, true),
-   (.continuant, true), (.voice, true), (.dorsal, true),
-   (.high, true), (.low, false), (.front, false), (.back, true),
-   (.round, true)]
+def u : Segment := (Segment.vowel .high .back).setFeature .round true
 
 /-- /o/ — mid back rounded vowel. -/
-def o : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.consonantal, false), (.sonorant, true),
-   (.continuant, true), (.voice, true), (.dorsal, true),
-   (.high, false), (.low, false), (.front, false), (.back, true),
-   (.round, true)]
+def o : Segment := (Segment.vowel .mid .back).setFeature .round true
 
 /-- /ɑ/ — low back vowel, variably rounded [ɑ ~ ɒ]. -/
-def aa : Segment := Segment.ofSpecs
-  [(.syllabic, true), (.consonantal, false), (.sonorant, true),
-   (.continuant, true), (.voice, true), (.dorsal, true),
-   (.high, false), (.low, true), (.front, false), (.back, true)]
+def aa : Segment := .vowel .low .back
 
 /-! ### Consonants -/
 
