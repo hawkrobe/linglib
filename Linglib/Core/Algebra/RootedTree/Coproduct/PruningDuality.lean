@@ -1,4 +1,5 @@
 import Linglib.Core.Algebra.RootedTree.BMinus
+import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonSplit
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
@@ -33,17 +34,11 @@ The tensor slots are **crossed**: linglib's GL product `x ⋆ y` grafts
 `bMinusLin_gl_mul` placing `B⁻` on `x`), while `Δ^ρ` puts the pruned
 crown in the first tensor slot and the root trunk in the second
 (`comulTreeN`). Hence `y` pairs against crowns and `x` against trunks.
-An earlier sorry-fenced statement of this theorem used the uncrossed
-orientation `pairing₂ (x ⊗ y) (Δ^ρ z)`, which is **false** (e.g.
+The uncrossed orientation `pairing₂ (x ⊗ y) (Δ^ρ z)` is **false** (e.g.
 `x = {•_p}`, `y = {•_q}`, `z` the 2-chain `p–q`: LHS `1`, RHS `0`).
-Both orientations were checked against the exhaustive planar simulation
-battery in `scratch/validate_duality.lean` (V1): the crossed form holds
-on all weight-matched triples of forests of weight ≤ 3 and on targeted
-weight-4 duplicate-tree traps; the uncrossed form fails on 72 of them.
 
 This file lives downstream of `BMinus.lean` (whose `B⁻` calculus drives
-the single-tree induction step), so the duality theorem and its
-consumers were moved here from `Coproduct/PruningNonplanar.lean`.
+the single-tree induction step).
 
 ## Proof architecture (weight induction on `z`)
 

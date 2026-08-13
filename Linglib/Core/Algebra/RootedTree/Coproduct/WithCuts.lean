@@ -1,4 +1,5 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
+import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
 
 open RoseTree RoseTree.Nonplanar
 

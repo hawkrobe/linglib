@@ -1,6 +1,5 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Combinatorics.RootedTree.Cut
-import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
 import Linglib.Core.Data.RoseTree.Nonplanar
 import Mathlib.LinearAlgebra.Finsupp.LSum
 import Mathlib.LinearAlgebra.TensorProduct.Basic
