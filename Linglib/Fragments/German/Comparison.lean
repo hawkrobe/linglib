@@ -2,14 +2,15 @@ import Linglib.Syntax.Comparative
 
 /-!
 # German comparative profile
-[stassen-2013] [wals-2013]
 
-`ComparativeProfile` bundle for German (ISO `deu`) per the project's
-"per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Typology/Comparison.lean`. Cross-linguistic theorems consuming
-this profile live in `Studies/Stassen2013Comparison.lean`. The
-[stassen-1985] 6-way classification (where applicable) lives in
-`Studies/Stassen1985.lean`.
+German marks the standard of comparison with the particle *als*, degree with the
+bound affix *-er* (*größer*, never periphrastic for adjectives), and the superlative
+morphologically (*am größten*). German is absent from the 167-language WALS Ch 121A
+sample; the particle classification applies [stassen-2013]'s criteria (the chapter
+cites German for the comparative affix) and matches [haspelmath-2001]'s Standard
+Average European comparative-particle feature. No `basicOrder` is coded: WALS
+Ch 81A classifies German as lacking a dominant word order (V2 main clauses,
+verb-final subordinate clauses).
 -/
 
 set_option autoImplicit false
@@ -27,7 +28,6 @@ def comparison : ComparativeProfile :=
   , superlative := .morphological
   , comparativeForm := "X ist größer als Y"
   , standardMarker := "als"
-  , degreeMarker := "-er (suffix)"
-  , basicOrder := "SVO/V2" }
+  , degreeMarker := "-er (suffix)" }
 
 end German.Comparison

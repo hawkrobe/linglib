@@ -34,7 +34,7 @@ Per-language Fragment-vs-WALS data-equality theorems are deliberately absent
 — see `feedback_no_per_lang_wals_grounding_in_studies` for the rationale.
 
 WALS aggregate distribution theorems live in the substrate
-(`Linglib/Typology/Comparison.lean`). Stassen's 1985 fine-grained 6-way
+(`Linglib/Syntax/Comparative.lean`). Stassen's 1985 fine-grained 6-way
 typology and the chaining-based universals live in
 `Studies/Stassen1985.lean`.
 -/
@@ -131,17 +131,17 @@ theorem sample_no_superlative :
 -- §3. Generalisation 1: Particle concentrates in Europe (SAE)
 -- ============================================================================
 
-/-- All particle languages in the sample (English, German, Russian, French)
-    are SVO (or V2). This reflects [haspelmath-2001]'s identification of
-    the comparative particle as a Standard Average European feature. -/
+/-- Particle-comparative languages in the sample. [stassen-2013] finds the
+    particle type "has its base in the modern languages of Europe";
+    [haspelmath-2001] lists the comparative particle as a Standard Average
+    European feature. -/
 def particleLanguages : List ComparativeProfile :=
   allLanguages.filter (·.hasType .particle)
 
-theorem particle_languages_count :
-    particleLanguages.length = 4 := by native_decide
-
-theorem particle_implies_svo_in_sample :
-    particleLanguages.all (·.isSVO) = true := by native_decide
+/-- The sample's particle languages are exactly its four European languages. -/
+theorem particle_languages_european :
+    particleLanguages.map (·.language) =
+    ["English", "German", "Russian", "French"] := by native_decide
 
 -- ============================================================================
 -- §4. Generalisation 2: Exceed concentrates in W Africa and SE Asia
@@ -205,7 +205,7 @@ def svoLanguages : List ComparativeProfile :=
   allLanguages.filter (·.isSVO)
 
 theorem svo_languages_count :
-    svoLanguages.length = 9 := by native_decide
+    svoLanguages.length = 8 := by native_decide
 
 /-- Among SVO languages, exceed and particle types are both attested. -/
 theorem svo_exceed_particle_split :
