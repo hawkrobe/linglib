@@ -3,14 +3,19 @@ import Linglib.Phonology.Segmental.Defs
 
 /-!
 # Persian (Farsi) phonology
-[majidi-ternes-1991]
 
-Persian segmental inventory data. `phonemeInventory` passes through the
-canonical PHOIBLE 2.0 doculect ([moran-mccloy-2019]); the named segments are
-[hayes-2009] feature bundles for the six-vowel system /i e æ u o ɑ/ of
-[majidi-ternes-1991] and the consonants consumed by current studies (the
-/hutʃɑ/ hiatus paradigm of [ariyaee-jurgec-2021], formalized in
-`Studies/Storme2026.lean`).
+The Persian segment inventory. `phonemeInventory` passes through the canonical
+PHOIBLE doculect; the named segments are feature bundles for the six-vowel
+system /i e æ u o ɑ/ and the consonants of the /hutʃɑ/ hiatus paradigm of
+`Studies/Storme2026.lean`.
+
+## References
+
+* [M.-R. Majidi and E. Ternes, *Persian (Farsi)*][majidi-ternes-1991]
+* [S. Moran and D. McCloy, *PHOIBLE 2.0*][moran-mccloy-2019]
+* [B. Hayes, *Introductory Phonology*][hayes-2009]
+* [K. Ariyaee and P. Jurgec, *Variable hiatus in Persian is affected by
+  suffix length*][ariyaee-jurgec-2021]
 -/
 
 open Phonology
