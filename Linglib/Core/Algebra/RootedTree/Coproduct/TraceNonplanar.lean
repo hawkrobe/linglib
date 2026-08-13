@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
+import Linglib.Core.Algebra.BigOperators.Multiset
 import Linglib.Core.Combinatorics.RootedTree.DoubleCut
 import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
@@ -196,22 +197,6 @@ private noncomputable def tripleTensor
   ConnesKreimer.of' (R := R) q.1 ⊗ₜ[R]
     (ConnesKreimer.of' q.2.1 ⊗ₜ[R] ConnesKreimer.of' q.2.2)
 
-/-- Product of two multiset-sums equals the sum over their cartesian
-    product. The combinatorial backbone of `comulCForestN_eq_sum`. -/
-private theorem sum_product_map_mul {A B M : Type*} [NonUnitalNonAssocSemiring M]
-    (s : Multiset A) (t : Multiset B) (f : A → M) (g : B → M) :
-    ((s ×ˢ t).map (fun p => f p.1 * g p.2)).sum =
-      (s.map f).sum * (t.map g).sum := by
-  induction s using Multiset.induction with
-  | empty => simp
-  | cons a s ih =>
-    rw [Multiset.cons_product, Multiset.map_add, Multiset.sum_add, ih,
-        Multiset.map_cons, Multiset.sum_cons, add_mul]
-    congr 1
-    rw [Multiset.map_map,
-        show (fun p => f p.1 * g p.2) ∘ (Prod.mk a) = (fun b => f a * g b) from rfl,
-        ← Multiset.sum_map_mul_left]
-
 /-- Convolution-of-cuts is left-commutative (it is the symmetric
     `combinerProjG` of the descent layer); needed for `Multiset.foldr`. -/
 instance instLeftCommConvCut : LeftCommutative
@@ -276,7 +261,7 @@ private theorem comulCForestN_eq_sum (τ : Nonplanar (α ⊕ β) → β)
           (Multiset.singleton_add T F), forestCutsN_cons, Multiset.map_map]
     rw [show (cutTensor (R := R) ∘ ConnesKreimer.combinerProjG) =
           (fun p => cutTensor (R := R) p.1 * cutTensor p.2) from ?_]
-    · rw [sum_product_map_mul]
+    · rw [Multiset.sum_map_product_mul]
     · funext p
       obtain ⟨⟨F1, m1⟩, ⟨F2, m2⟩⟩ := p
       show cutTensor (R := R) (F1 + F2, m1 + m2) =

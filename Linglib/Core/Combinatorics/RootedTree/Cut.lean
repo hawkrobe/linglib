@@ -309,6 +309,21 @@ end
                    (cutSummandsP t).map (fun p => (p.1, Option.some p.2)) := by
   conv_lhs => unfold augActionP
 
+/-- Named version of the combine_P function (extracted to avoid Lean's
+    "inline match generates fresh matchers" issue when this is reused
+    across proofs via rewrite). -/
+def combineP_fn :
+    (Multiset (RoseTree α) × Option (RoseTree α)) ×
+        (Multiset (RoseTree α) × List (RoseTree α)) →
+      Multiset (RoseTree α) × List (RoseTree α) :=
+  fun p => match p.1.2 with
+    | none => (p.1.1 + p.2.1, p.2.2)
+    | some r => (p.1.1 + p.2.1, r :: p.2.2)
+
+theorem cutListSummandsP_cons' (t : RoseTree α) (ts : List (RoseTree α)) :
+    cutListSummandsP (t :: ts) =
+      (augActionP t ×ˢ cutListSummandsP ts).map combineP_fn := by
+  rw [cutListSummandsP_cons]; rfl
 /-! ## Projection of cut summands and descent to `Nonplanar`
 
 To descend Δ^ρ from `RoseTree` to `Nonplanar`, we need a Nonplanar-side

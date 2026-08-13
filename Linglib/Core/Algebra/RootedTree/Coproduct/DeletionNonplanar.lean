@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Algebra.BigOperators.Multiset
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
+import Linglib.Core.Data.RoseTree.StripTrace
 
 open RoseTree RoseTree.Nonplanar
 
@@ -80,152 +82,7 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommSemiring R] {α β : Type*}
 
-/-! ## Tree-level trace-strip projection
 
-Strip trace-placeholder subtrees (`Sum.inr`-rooted subtrees) from a
-`RoseTree (α ⊕ β)` tree, yielding `Option (RoseTree α)` — the result is
-`none` only if the root itself is a trace placeholder.
-
-The strip recurses into children via `filterMap`: each child is
-stripped, and `none` results are dropped. -/
-
-/-- The children-list functor action `mapList f = List.map (RoseTree.map f)`,
-    named so the node-expansion of `RoseTree.map` reads structurally below. -/
-def RoseTree.mapList (f : α → β) (cs : List (RoseTree α)) : List (RoseTree β) :=
-  cs.map (RoseTree.map f)
-
-/-- `RoseTree.map` on a node, expressed through `RoseTree.mapList`. -/
-theorem RoseTree.map_node_mapList (f : α → β) (a : α) (cs : List (RoseTree α)) :
-    RoseTree.map f (RoseTree.node a cs) = RoseTree.node (f a) (RoseTree.mapList f cs) :=
-  RoseTree.map_node f a cs
-
-mutual
-
-/-- Strip trace-placeholder subtrees from a tree-level tree. Returns `none`
-    if the root is a trace placeholder (`Sum.inr`-labeled). -/
-def RoseTree.stripTrace : RoseTree (α ⊕ β) → Option (RoseTree α)
-  | .node (Sum.inr _) _ => none
-  | .node (Sum.inl a) cs => some (.node a (RoseTree.stripTraceList cs))
-
-/-- Auxiliary: strip each tree in a children list, dropping `none`s. -/
-def RoseTree.stripTraceList : List (RoseTree (α ⊕ β)) → List (RoseTree α)
-  | [] => []
-  | c :: cs =>
-    match RoseTree.stripTrace c with
-    | none => RoseTree.stripTraceList cs
-    | some t => t :: RoseTree.stripTraceList cs
-
-end
-
-@[simp] theorem RoseTree.stripTrace_inr (b : β) (cs : List (RoseTree (α ⊕ β))) :
-    RoseTree.stripTrace (RoseTree.node (Sum.inr b) cs) = none := rfl
-
-@[simp] theorem RoseTree.stripTrace_inl (a : α) (cs : List (RoseTree (α ⊕ β))) :
-    RoseTree.stripTrace (RoseTree.node (Sum.inl a) cs) =
-      some (.node a (RoseTree.stripTraceList cs)) := rfl
-
-@[simp] theorem RoseTree.stripTraceList_nil :
-    RoseTree.stripTraceList ([] : List (RoseTree (α ⊕ β))) = [] := rfl
-
-/-! ## Descent to `Nonplanar`
-
-Lift `RoseTree.stripTrace` through the quotient. The lift requires that
-`stripTrace ∘ Nonplanar.mk` be well-defined modulo `Perm`, which
-holds because:
-* `Perm` permutes children; `stripTraceList` commutes with
-  permutations up to `List.Perm` on the resulting list.
-* At the `Nonplanar.mk` level, child-list order collapses, so
-  Perm-related stripped trees become equal.
--/
-
-/-- The Perm-invariant strip-then-mk composition. Used to lift
-    `RoseTree.stripTrace` through the Nonplanar quotient. -/
-private def stripTraceQuotient (t : RoseTree (α ⊕ β)) : Option (Nonplanar α) :=
-  (RoseTree.stripTrace t).map Nonplanar.mk
-
-/-- `RoseTree.stripTraceList` agrees with `List.filterMap RoseTree.stripTrace`
-    (by structural induction on the list — both pattern-match the same
-    way on the optional strip result). -/
-private theorem stripTraceList_eq_filterMap (cs : List (RoseTree (α ⊕ β))) :
-    RoseTree.stripTraceList cs = cs.filterMap RoseTree.stripTrace := by
-  induction cs with
-  | nil => rfl
-  | cons head tail ih =>
-    show (match RoseTree.stripTrace head with
-            | none => RoseTree.stripTraceList tail
-            | some t => t :: RoseTree.stripTraceList tail) =
-         (head :: tail).filterMap RoseTree.stripTrace
-    cases h : RoseTree.stripTrace head with
-    | none => simp [List.filterMap_cons_none h, ih]
-    | some t => simp [List.filterMap_cons_some h, ih]
-
-mutual
-/-- **Perm invariance** of the strip-then-mk composition. The `node` case is
-    by root-label: an `inr` root strips to `none` on both sides, an `inl` root
-    lifts the companion's `PermList` on the stripped children through `mk`. -/
-private theorem stripTraceQuotient_perm :
-    ∀ {t t' : RoseTree (α ⊕ β)}, RoseTree.Perm t t' →
-      stripTraceQuotient t = stripTraceQuotient t'
-  | _, _, @RoseTree.Perm.node _ a cs ds h => by
-    cases a with
-    | inl a' =>
-      show ((RoseTree.stripTrace (RoseTree.node (Sum.inl a') cs)).map Nonplanar.mk) =
-           ((RoseTree.stripTrace (RoseTree.node (Sum.inl a') ds)).map Nonplanar.mk)
-      simp only [RoseTree.stripTrace_inl, Option.map_some]
-      congr 1
-      exact Nonplanar.mk_eq_mk_iff.mpr (RoseTree.Perm.node (stripTraceList_permList h))
-    | inr b =>
-      show ((RoseTree.stripTrace (RoseTree.node (Sum.inr b) cs)).map Nonplanar.mk) =
-           ((RoseTree.stripTrace (RoseTree.node (Sum.inr b) ds)).map Nonplanar.mk)
-      simp only [RoseTree.stripTrace_inr, Option.map_none]
-  | _, _, .trans h₁ h₂ => (stripTraceQuotient_perm h₁).trans (stripTraceQuotient_perm h₂)
-
-/-- Companion: `stripTraceList` sends `PermList`-related children to
-    `PermList`-related stripped lists. `cons` case-splits on whether the
-    `Perm`-related heads survive the strip (both drop, or both survive with
-    `Perm`-related results via the sibling); `swap` filters through the plain
-    `List.Perm`. -/
-private theorem stripTraceList_permList :
-    ∀ {cs ds : List (RoseTree (α ⊕ β))}, RoseTree.PermList cs ds →
-      RoseTree.PermList (RoseTree.stripTraceList cs) (RoseTree.stripTraceList ds)
-  | _, _, .nil => .nil
-  | _, _, @RoseTree.PermList.cons _ c d cs' ds' hcd hs => by
-    have hq : (RoseTree.stripTrace c).map Nonplanar.mk =
-              (RoseTree.stripTrace d).map Nonplanar.mk :=
-      stripTraceQuotient_perm hcd
-    rw [stripTraceList_eq_filterMap, stripTraceList_eq_filterMap]
-    cases hc : RoseTree.stripTrace c with
-    | none =>
-      have hd : RoseTree.stripTrace d = none := by
-        have h2 := hq.symm; rw [hc] at h2; simpa using h2
-      rw [List.filterMap_cons_none hc, List.filterMap_cons_none hd,
-          ← stripTraceList_eq_filterMap, ← stripTraceList_eq_filterMap]
-      exact stripTraceList_permList hs
-    | some t_c =>
-      cases hd : RoseTree.stripTrace d with
-      | none => rw [hc, hd] at hq; simp at hq
-      | some t_d =>
-        rw [hc, hd] at hq
-        simp only [Option.map_some, Option.some.injEq] at hq
-        rw [List.filterMap_cons_some hc, List.filterMap_cons_some hd,
-            ← stripTraceList_eq_filterMap, ← stripTraceList_eq_filterMap]
-        exact RoseTree.PermList.cons (Nonplanar.mk_eq_mk_iff.mp hq)
-          (stripTraceList_permList hs)
-  | _, _, .swap c d cs => by
-    rw [stripTraceList_eq_filterMap, stripTraceList_eq_filterMap]
-    exact RoseTree.PermList.of_perm
-      (List.Perm.filterMap RoseTree.stripTrace (List.Perm.swap c d cs))
-  | _, _, .trans h₁ h₂ =>
-    (stripTraceList_permList h₁).trans (stripTraceList_permList h₂)
-end
-
-/-- Strip trace-placeholder subtrees from a `Nonplanar` tree. -/
-noncomputable def _root_.RoseTree.Nonplanar.stripTrace : Nonplanar (α ⊕ β) → Option (Nonplanar α) :=
-  Quotient.lift stripTraceQuotient (fun _ _ h => stripTraceQuotient_perm h)
-
-@[simp] theorem _root_.RoseTree.Nonplanar.stripTrace_mk (t : RoseTree (α ⊕ β)) :
-    Nonplanar.stripTrace (Nonplanar.mk t) =
-      (RoseTree.stripTrace t).map Nonplanar.mk := rfl
 
 /-! ## Forest-level strip
 
@@ -259,14 +116,23 @@ noncomputable def stripTraceAlgHom :
   rw [stripTraceAlgHom, ConnesKreimer.mapDomainAlgHom_of']
   rfl
 
+/-- `stripTraceAlgHom` on a single tree: the stripped tree if the root
+    survives, `1` if the root is a trace placeholder. -/
+@[simp] theorem stripTraceAlgHom_ofTree (T : Nonplanar (α ⊕ β)) :
+    stripTraceAlgHom (R := R) (ofTree T) =
+      (Nonplanar.stripTrace T).elim 1 ofTree := by
+  rw [show (ofTree T : ConnesKreimer R (Nonplanar (α ⊕ β))) = of' {T} from rfl,
+      stripTraceAlgHom_of',
+      show ({T} : Forest (Nonplanar (α ⊕ β))) = T ::ₘ 0 from rfl,
+      Multiset.filterMap_cons, Multiset.filterMap_zero, add_zero]
+  cases Nonplanar.stripTrace T with
+  | none => simp [of'_zero]
+  | some t' => simp [of'_singleton]
+
 /-! ## Sum.inl embedding
 
 The embedding `α → α ⊕ β` lifts componentwise to trees and forests via
 `RoseTree.map` / `Nonplanar.map` / `Multiset.map`. -/
-
-/-- Embed a `Nonplanar α` tree into `Nonplanar (α ⊕ β)` via `Sum.inl`. -/
-def _root_.RoseTree.Nonplanar.embedInl : Nonplanar α → Nonplanar (α ⊕ β) :=
-  Nonplanar.map (Sum.inl : α → α ⊕ β)
 
 /-- Embed a forest of `Nonplanar α` trees into a forest of
     `Nonplanar (α ⊕ β)` trees, componentwise. -/
@@ -287,60 +153,8 @@ noncomputable def embedInlAlgHom :
   rw [embedInlAlgHom, ConnesKreimer.mapDomainAlgHom_of']
   rfl
 
-/-! ### Strip inverts embed
 
-`RoseTree.stripTrace (RoseTree.map Sum.inl p) = some p` — embedding via
-`Sum.inl` then stripping recovers the original. Proven by mutual
-structural induction on the tree-level tree / its child list. Descends to
-the Nonplanar level via `Quotient.inductionOn`, and lifts to the
-algebra-hom level: `stripTraceAlgHom ∘ embedInlAlgHom = id`. -/
-
-mutual
-
-private theorem RoseTree.stripTrace_map_inl :
-    ∀ (p : RoseTree α), RoseTree.stripTrace (RoseTree.map (Sum.inl : α → α ⊕ β) p) = some p
-  | .node a cs => by
-    rw [RoseTree.map_node_mapList]
-    show RoseTree.stripTrace (.node (Sum.inl a) (RoseTree.mapList Sum.inl cs)) = _
-    rw [RoseTree.stripTrace_inl]
-    congr 1
-    show RoseTree.node a (RoseTree.stripTraceList (RoseTree.mapList Sum.inl cs)) =
-         RoseTree.node a cs
-    rw [RoseTree.stripTraceList_mapList_inl]
-
-private theorem RoseTree.stripTraceList_mapList_inl :
-    ∀ (cs : List (RoseTree α)),
-      RoseTree.stripTraceList (RoseTree.mapList (Sum.inl : α → α ⊕ β) cs) = cs
-  | [] => rfl
-  | c :: cs => by
-    show (match RoseTree.stripTrace (RoseTree.map Sum.inl c) with
-           | none => RoseTree.stripTraceList (RoseTree.mapList Sum.inl cs)
-           | some t => t :: RoseTree.stripTraceList (RoseTree.mapList Sum.inl cs)) =
-         c :: cs
-    rw [RoseTree.stripTrace_map_inl c, RoseTree.stripTraceList_mapList_inl cs]
-
-end
-
-theorem _root_.RoseTree.Nonplanar.stripTrace_embedInl (T : Nonplanar α) :
-    Nonplanar.stripTrace (Nonplanar.embedInl (β := β) T) = some T := by
-  refine Quotient.inductionOn T ?_
-  intro p
-  show Nonplanar.stripTrace (Nonplanar.map Sum.inl (Nonplanar.mk p)) = some (Nonplanar.mk p)
-  rw [Nonplanar.map_mk]
-  show ((RoseTree.stripTrace (RoseTree.map Sum.inl p)).map Nonplanar.mk : Option (Nonplanar α)) =
-       some (Nonplanar.mk p)
-  rw [RoseTree.stripTrace_map_inl]
-  rfl
-
-/-- `stripTrace ∘ embedInl = some` (as forest-level filterMap = identity).
-    This is the multiset-level version of `Nonplanar.stripTrace_embedInl`. -/
-theorem stripTrace_embedInl_filterMap (F : Forest (Nonplanar α)) :
-    (F.map (Nonplanar.embedInl (β := β))).filterMap Nonplanar.stripTrace = F := by
-  rw [Multiset.filterMap_map]
-  have h : (Nonplanar.stripTrace ∘ (Nonplanar.embedInl (α := α) (β := β))) = some := by
-    funext T
-    exact Nonplanar.stripTrace_embedInl T
-  rw [h, Multiset.filterMap_some]
+/-! ### Strip inverts embed -/
 
 /-- `stripTraceAlgHom ∘ embedInlAlgHom = id`. The strip inverts the
     Sum.inl embedding at the AlgHom level: trace-free trees survive a
@@ -348,26 +162,10 @@ theorem stripTrace_embedInl_filterMap (F : Forest (Nonplanar α)) :
 theorem stripTraceAlgHom_comp_embedInlAlgHom :
     (stripTraceAlgHom (R := R) (α := α) (β := β)).comp embedInlAlgHom =
       AlgHom.id R (ConnesKreimer R (Nonplanar α)) := by
-  apply AlgHom.ext
-  intro x
-  show stripTraceAlgHom (embedInlAlgHom x) = x
-  refine ConnesKreimer.induction_linear x ?_ ?_ ?_
-  · show stripTraceAlgHom (embedInlAlgHom (0 : ConnesKreimer R (Nonplanar α))) = 0
-    rw [map_zero, map_zero]
-  · intro a b ha hb
-    let a' : ConnesKreimer R (Nonplanar α) := a
-    let b' : ConnesKreimer R (Nonplanar α) := b
-    have ha' : stripTraceAlgHom (embedInlAlgHom a') = a' := ha
-    have hb' : stripTraceAlgHom (embedInlAlgHom b') = b' := hb
-    show stripTraceAlgHom (embedInlAlgHom (a' + b')) = a' + b'
-    rw [map_add, map_add, ha', hb']
-  · intro F r
-    show stripTraceAlgHom (embedInlAlgHom (ConnesKreimer.single F r)) = ConnesKreimer.single F r
-    have hsingle : (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α)) =
-        r • (of' (R := R) F : ConnesKreimer R (Nonplanar α)) :=
-      ConnesKreimer.smul_single_one F r
-    rw [hsingle, map_smul, map_smul, embedInlAlgHom_of', stripTraceAlgHom_of',
-        stripTrace_embedInl_filterMap]
+  apply ConnesKreimer.algHom_ext
+  intro F
+  show stripTraceAlgHom (embedInlAlgHom (of' F)) = of' F
+  rw [embedInlAlgHom_of', stripTraceAlgHom_of', stripTrace_embedInl_filterMap]
 
 /-! ## Δ^d definition
 
@@ -382,13 +180,6 @@ noncomputable def comulDN (τ : Nonplanar (α ⊕ β) → β) :
       ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
   (Algebra.TensorProduct.map (stripTraceAlgHom (R := R) (α := α) (β := β))
     stripTraceAlgHom).comp (comulCAlgHomN τ)
-
-/-- **MCB Lemma 1.3.10** (definitional in our construction):
-    `Δ^d = (Π_{d,c} ⊗ Π_{d,c}) ∘ Δ^c`. -/
-theorem comulDN_eq_strip_comp_comulCAlgHomN (τ : Nonplanar (α ⊕ β) → β) :
-    comulDN (R := R) τ =
-      (Algebra.TensorProduct.map (stripTraceAlgHom (R := R) (α := α) (β := β))
-        stripTraceAlgHom).comp (comulCAlgHomN τ) := rfl
 
 /-! ## Equivalence with Δ^ρ via embedding
 
@@ -408,23 +199,9 @@ private theorem stripTraceAlgHom_ofTree_embedInl
     stripTraceAlgHom (R := R) (β := β)
         (ofTree (Nonplanar.embedInl T)) =
       ofTree T := by
-  show stripTraceAlgHom (of' ({Nonplanar.embedInl T} : Forest (Nonplanar (α ⊕ β)))) =
-       of' ({T} : Forest (Nonplanar α))
-  rw [stripTraceAlgHom_of']
-  congr 1
-  rw [show ({Nonplanar.embedInl T} : Forest (Nonplanar (α ⊕ β))) =
-        ({T} : Forest (Nonplanar α)).map Nonplanar.embedInl from
-      (Multiset.map_singleton _ _).symm]
-  exact stripTrace_embedInl_filterMap _
+  rw [stripTraceAlgHom_ofTree, Nonplanar.stripTrace_embedInl]
+  rfl
 
-/-- `RoseTree.stripTraceList` distributes over list concatenation.
-    Follows from `stripTraceList_eq_filterMap` + `List.filterMap_append`. -/
-private theorem stripTraceList_append
-    (l1 l2 : List (RoseTree (α ⊕ β))) :
-    RoseTree.stripTraceList (l1 ++ l2) =
-      RoseTree.stripTraceList l1 ++ RoseTree.stripTraceList l2 := by
-  rw [stripTraceList_eq_filterMap, stripTraceList_eq_filterMap,
-      stripTraceList_eq_filterMap, List.filterMap_append]
 
 /-! ### RoseTree-level cut-tensor builders
 
@@ -509,21 +286,6 @@ private theorem cutTensorC_planar_unwrap_combine_G
         (Multiset.coe_add _ _).symm]
   rw [of'_add]
 
-/-- Named version of the combine_P function (extracted to avoid Lean's
-    "inline match generates fresh matchers" issue when this is reused
-    across proofs via rewrite). -/
-private def combineP_fn :
-    (Forest (RoseTree α) × Option (RoseTree α)) ×
-        (Forest (RoseTree α) × List (RoseTree α)) →
-      Forest (RoseTree α) × List (RoseTree α) :=
-  fun p => match p.1.2 with
-    | none => (p.1.1 + p.2.1, p.2.2)
-    | some r => (p.1.1 + p.2.1, r :: p.2.2)
-
-theorem cutListSummandsP_cons' (t : RoseTree α) (ts : List (RoseTree α)) :
-    cutListSummandsP (t :: ts) =
-      (augActionP t ×ˢ cutListSummandsP ts).map combineP_fn := by
-  rw [cutListSummandsP_cons]; rfl
 
 /-- `cutTensorP_planar_unwrap` factors via `cutTensorP_augAction` and
     `cutTensorP_planar_unwrap` under `combineP_fn`. -/
@@ -571,34 +333,6 @@ private theorem cutTensorP_planar_unwrap_combine_P
           (Multiset.cons_coe _ _).symm,
         ← Multiset.singleton_add, of'_add, of'_singleton]
 
-/-! ### Sum-of-product over cartesian product
-
-Standard distributivity: when the integrand factors as `f a * g b` over
-`s ×ˢ t`, the sum equals `(s.map f).sum * (t.map g).sum`. -/
-
-/-- Sum of `f a * g b` over `s ×ˢ t` factors as a product of sums. -/
-private theorem sum_map_product_mul
-    {A : Type*} [NonUnitalNonAssocSemiring A]
-    {γ δ : Type*} (s : Multiset γ) (t : Multiset δ)
-    (f : γ → A) (g : δ → A) :
-    ((s ×ˢ t).map (fun p => f p.1 * g p.2)).sum =
-      ((s.map f).sum) * ((t.map g).sum) := by
-  rw [show ((s ×ˢ t).map (fun p => f p.1 * g p.2)) =
-        s.bind (fun a => t.map (fun b => f a * g b)) from by
-    show (s.bind (fun a => t.map (Prod.mk a))).map _ = _
-    rw [Multiset.map_bind]
-    apply Multiset.bind_congr
-    intro a _
-    rw [Multiset.map_map]
-    rfl]
-  rw [Multiset.sum_bind]
-  -- Goal: (s.map (fun a => (t.map (fun b => f a * g b)).sum)).sum =
-  --       (s.map f).sum * (t.map g).sum
-  rw [show (s.map (fun a => (t.map (fun b => f a * g b)).sum)) =
-        s.map (fun a => f a * (t.map g).sum) from
-      Multiset.map_congr rfl (fun a _ => Multiset.sum_map_mul_left)]
-  exact Multiset.sum_map_mul_right
-
 /-! ### Universal identity: unwrapped tensor for singleton-remainder
 
 For any `t_c : RoseTree (α ⊕ β)` (regardless of root), the unwrapped
@@ -613,68 +347,11 @@ private theorem cutTensorC_planar_unwrap_singleton
       cutTensorC_planar (R := R) (F, t_c) := by
   unfold cutTensorC_planar_unwrap cutTensorC_planar
   congr 1
-  -- Right channel: of'(Multiset.ofList (stripTraceList [t_c] .map mk)) = S(ofTree (mk t_c))
-  show (of' (Multiset.ofList ((RoseTree.stripTraceList [t_c]).map Nonplanar.mk))
-          : ConnesKreimer R (Nonplanar α))
-       = stripTraceAlgHom (ofTree (Nonplanar.mk t_c))
-  show (of' (Multiset.ofList ((RoseTree.stripTraceList [t_c]).map Nonplanar.mk))
-          : ConnesKreimer R (Nonplanar α))
-       = stripTraceAlgHom (of' ({Nonplanar.mk t_c} : Forest (Nonplanar (α ⊕ β))))
-  rw [stripTraceAlgHom_of']
-  -- Case-split on RoseTree.stripTrace t_c.
+  rw [stripTraceAlgHom_ofTree, Nonplanar.stripTrace_mk,
+      RoseTree.stripTraceList_eq_filterMap]
   cases h : RoseTree.stripTrace t_c with
-  | none =>
-    show (of' (Multiset.ofList ((RoseTree.stripTraceList [t_c]).map Nonplanar.mk))
-          : ConnesKreimer R (Nonplanar α))
-         = of' (({Nonplanar.mk t_c} : Forest (Nonplanar (α ⊕ β))).filterMap
-            Nonplanar.stripTrace)
-    rw [show RoseTree.stripTraceList [t_c] = [] from by
-      show (match RoseTree.stripTrace t_c with
-              | none => RoseTree.stripTraceList []
-              | some t => t :: RoseTree.stripTraceList []) = []
-      rw [h]; rfl]
-    rw [show ({Nonplanar.mk t_c} : Forest (Nonplanar (α ⊕ β))).filterMap
-              Nonplanar.stripTrace = 0 from by
-      rw [show ({Nonplanar.mk t_c} : Forest (Nonplanar (α ⊕ β))) =
-            Nonplanar.mk t_c ::ₘ 0 from rfl,
-          Multiset.filterMap_cons]
-      show ((Nonplanar.stripTrace (Nonplanar.mk t_c)).map (fun x => ({x} : Multiset
-              (Nonplanar α)))).getD 0 + (0 : Multiset (Nonplanar (α ⊕ β))).filterMap
-              Nonplanar.stripTrace = 0
-      rw [Multiset.filterMap_zero]
-      show ((Nonplanar.stripTrace (Nonplanar.mk t_c)).map (fun x => ({x} : Multiset
-              (Nonplanar α)))).getD 0 + 0 = 0
-      rw [add_zero]
-      show ((Nonplanar.stripTrace (Nonplanar.mk t_c)).map (fun x => ({x} : Multiset
-              (Nonplanar α)))).getD 0 = 0
-      show (((RoseTree.stripTrace t_c).map Nonplanar.mk).map (fun x => ({x} : Multiset
-              (Nonplanar α)))).getD 0 = 0
-      rw [h]
-      rfl]
-    rfl
-  | some t' =>
-    show (of' (Multiset.ofList ((RoseTree.stripTraceList [t_c]).map Nonplanar.mk))
-          : ConnesKreimer R (Nonplanar α))
-         = of' (({Nonplanar.mk t_c} : Forest (Nonplanar (α ⊕ β))).filterMap
-            Nonplanar.stripTrace)
-    rw [show RoseTree.stripTraceList [t_c] = [t'] from by
-      show (match RoseTree.stripTrace t_c with
-              | none => RoseTree.stripTraceList []
-              | some t => t :: RoseTree.stripTraceList []) = [t']
-      rw [h]; rfl]
-    rw [show ({Nonplanar.mk t_c} : Forest (Nonplanar (α ⊕ β))).filterMap
-              Nonplanar.stripTrace = ({Nonplanar.mk t'} : Multiset (Nonplanar α)) from by
-      rw [show ({Nonplanar.mk t_c} : Forest (Nonplanar (α ⊕ β))) =
-            Nonplanar.mk t_c ::ₘ 0 from rfl,
-          Multiset.filterMap_cons, Multiset.filterMap_zero]
-      show ((Nonplanar.stripTrace (Nonplanar.mk t_c)).map (fun x => ({x} : Multiset
-              (Nonplanar α)))).getD 0 + 0 = {Nonplanar.mk t'}
-      rw [add_zero]
-      show (((RoseTree.stripTrace t_c).map Nonplanar.mk).map (fun x => ({x} : Multiset
-              (Nonplanar α)))).getD 0 = {Nonplanar.mk t'}
-      rw [h]
-      rfl]
-    rfl
+  | none => simp [h, of'_zero]
+  | some t' => simp [h, of'_singleton]
 
 /-! ### Mutual tree-level lemmas
 
@@ -714,29 +391,8 @@ private theorem strip_cutSummandsCP_sum_eq
       unfold cutTensorC_planar cutTensorC_planar_unwrap
       rw [LinearMap.lTensor_tmul, bPlusLin_of']
       congr 1
-      show stripTraceAlgHom (ofTree (Nonplanar.mk (RoseTree.node (Sum.inl a) p.2))) =
-            ofTree (Nonplanar.node a (Multiset.ofList ((RoseTree.stripTraceList p.2).map
-              Nonplanar.mk)))
-      show stripTraceAlgHom (of' ({Nonplanar.mk (RoseTree.node (Sum.inl a) p.2)}
-            : Forest (Nonplanar (α ⊕ β)))) = _
-      rw [stripTraceAlgHom_of']
-      rw [show ({Nonplanar.mk (RoseTree.node (Sum.inl a) p.2)}
-                : Forest (Nonplanar (α ⊕ β))).filterMap Nonplanar.stripTrace =
-                ({Nonplanar.mk (RoseTree.node a (RoseTree.stripTraceList p.2))}
-                : Forest (Nonplanar α)) from by
-        rw [show ({Nonplanar.mk (RoseTree.node (Sum.inl a) p.2)} : Forest
-              (Nonplanar (α ⊕ β))) = Nonplanar.mk (RoseTree.node (Sum.inl a) p.2) ::ₘ 0
-              from rfl,
-            Multiset.filterMap_cons, Multiset.filterMap_zero, add_zero]
-        show ((Nonplanar.stripTrace (Nonplanar.mk (RoseTree.node (Sum.inl a) p.2))).map
-                (fun x => ({x} : Multiset (Nonplanar α)))).getD 0 =
-              {Nonplanar.mk (RoseTree.node a (RoseTree.stripTraceList p.2))}
-        show (((RoseTree.stripTrace (RoseTree.node (Sum.inl a) p.2)).map Nonplanar.mk).map
-                (fun x => ({x} : Multiset (Nonplanar α)))).getD 0 =
-              {Nonplanar.mk (RoseTree.node a (RoseTree.stripTraceList p.2))}
-        rw [RoseTree.stripTrace_inl]
-        rfl]
-      rw [of'_singleton]
+      rw [stripTraceAlgHom_ofTree, Nonplanar.stripTrace_mk, RoseTree.stripTrace_inl]
+      show ofTree (Nonplanar.mk (RoseTree.node a (RoseTree.stripTraceList p.2))) = _
       congr 1
       exact (Nonplanar.node_mk_tree_list a _).symm
     have hRHS_factor :
@@ -839,7 +495,7 @@ private theorem strip_cutListSummandsG_unwrap_sum_eq
       apply Multiset.map_congr rfl
       intro p _
       exact cutTensorC_planar_unwrap_combine_G p]
-    rw [sum_map_product_mul]
+    rw [Multiset.sum_map_product_mul]
     -- RHS: simplify by composing maps and using cutTensorP_planar_unwrap_combine_P.
     simp only [Multiset.map_map]
     rw [show ((cutTensorP_planar_unwrap (R := R)) ∘ (combineP_fn : _ → _)) =
@@ -847,7 +503,7 @@ private theorem strip_cutListSummandsG_unwrap_sum_eq
                       cutTensorP_planar_unwrap (R := R) p.2) from by
       funext p
       exact cutTensorP_planar_unwrap_combine_P p]
-    rw [sum_map_product_mul]
+    rw [Multiset.sum_map_product_mul]
     -- Now both sides are products of sums.
     -- Tail equality via mutual IH.
     have ih_tail :
@@ -893,20 +549,11 @@ private theorem strip_cutListSummandsG_unwrap_sum_eq
           = ofTree (Nonplanar.mk c) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α))
       rw [show RoseTree.stripTraceList
             [traceLeaf ((τ ∘ Nonplanar.mk) (RoseTree.map Sum.inl c))] =
-            ([] : List (RoseTree α)) from by
-        show RoseTree.stripTraceList
-              [RoseTree.node (Sum.inr ((τ ∘ Nonplanar.mk) (RoseTree.map Sum.inl c)))
-                ([] : List (RoseTree (α ⊕ β)))] =
-              ([] : List (RoseTree α))
-        rfl]
+            ([] : List (RoseTree α)) from rfl]
       simp only [List.map_nil, Multiset.coe_nil, of'_zero,
                  Multiset.map_singleton]
       congr 1
-      show stripTraceAlgHom (ofTree (Nonplanar.mk (RoseTree.map Sum.inl c))) =
-            ofTree (Nonplanar.mk c)
-      show stripTraceAlgHom (ofTree (Nonplanar.embedInl (Nonplanar.mk c))) =
-            ofTree (Nonplanar.mk c)
-      exact stripTraceAlgHom_ofTree_embedInl _]
+      exact stripTraceAlgHom_ofTree_embedInl (Nonplanar.mk c)]
     rw [show ((cutTensorC_planar_unwrap (R := R)) ∘
               (fun p : Forest (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β) =>
                 (p.1, [p.2]))) = (cutTensorC_planar (R := R)) from by
@@ -1027,47 +674,22 @@ private theorem strip_comulCForestN_embedInl
 
     `comulDN ∘ embed_{Sum.inl} = comulAlgHomN`
 
-    Closed via: (a) AlgHom extensionality + `ConnesKreimer.induction_linear` reduces
-    to per-basis `of' F`; (b) Multiset multiplicativity of `comulCForestN`,
-    `comulForestN`, and `(stripTraceAlgHom ⊗ stripTraceAlgHom)` reduces to
-    per-tree; (c) `Quotient.inductionOn` reduces per-tree to tree-level; (d)
-    tree-level mutual structural induction on tree / children-list closes the
+    Closed via: (a) `ConnesKreimer.algHom_ext` reduces to per-basis `of' F`;
+    (b) Multiset multiplicativity of `comulCForestN`, `comulForestN`, and
+    `(stripTraceAlgHom ⊗ stripTraceAlgHom)` reduces to per-tree; (c)
+    `Quotient.inductionOn` reduces per-tree to tree-level; (d) tree-level
+    mutual structural induction on tree / children-list closes the
     cut-summand bijection via `strip_cutSummandsCP_sum_eq`. -/
 theorem comulDN_embedInl_eq_comulAlgHomN (τ : Nonplanar (α ⊕ β) → β) :
     (comulDN (R := R) τ).comp (embedInlAlgHom (R := R) (β := β)) =
       comulAlgHomN := by
-  apply AlgHom.ext
-  intro x
+  apply ConnesKreimer.algHom_ext
+  intro F
   show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R))
-          stripTraceAlgHom) (comulCAlgHomN τ (embedInlAlgHom x)) =
-       comulAlgHomN x
-  refine ConnesKreimer.induction_linear x ?_ ?_ ?_
-  · show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
-          (comulCAlgHomN τ (embedInlAlgHom
-              (0 : ConnesKreimer R (Nonplanar α)))) =
-         comulAlgHomN (0 : ConnesKreimer R (Nonplanar α))
-    rw [map_zero, map_zero, map_zero, map_zero]
-  · intro a b ha hb
-    let a' : ConnesKreimer R (Nonplanar α) := a
-    let b' : ConnesKreimer R (Nonplanar α) := b
-    have ha' : (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
-          (comulCAlgHomN τ (embedInlAlgHom a')) = comulAlgHomN a' := ha
-    have hb' : (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
-          (comulCAlgHomN τ (embedInlAlgHom b')) = comulAlgHomN b' := hb
-    show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
-          (comulCAlgHomN τ (embedInlAlgHom (a' + b'))) = comulAlgHomN (a' + b')
-    rw [map_add, map_add, map_add, map_add, ha', hb']
-  · intro F r
-    show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
-          (comulCAlgHomN τ (embedInlAlgHom (ConnesKreimer.single F r))) =
-         comulAlgHomN (ConnesKreimer.single F r)
-    have hsingle : (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α)) =
-        r • (of' (R := R) F : ConnesKreimer R (Nonplanar α)) :=
-      ConnesKreimer.smul_single_one F r
-    rw [hsingle, map_smul, map_smul, map_smul, map_smul, embedInlAlgHom_of',
-        comulCAlgHomN_apply_of', comulAlgHomN_apply_of']
-    congr 1
-    exact strip_comulCForestN_embedInl τ F
+          stripTraceAlgHom) (comulCAlgHomN τ (embedInlAlgHom (of' F))) =
+       comulAlgHomN (of' F)
+  rw [embedInlAlgHom_of', comulCAlgHomN_apply_of', comulAlgHomN_apply_of']
+  exact strip_comulCForestN_embedInl τ F
 
 end ConnesKreimer
 
