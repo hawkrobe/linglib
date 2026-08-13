@@ -1,6 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
 import Linglib.Fragments.Arabic.ModernStandard.Phonology
+import Linglib.Studies.Broe1993
 import Linglib.Phonology.Subregular.ForbiddenPairs
 import Linglib.Phonology.Subregular.Multitier
 
@@ -38,9 +39,10 @@ def labialClasses_fm : List (Finset Consonant) :=
    {.b, .f}, {.f, .w}, {.f}, {.b, .m, .w}, {.b, .m}, {.m, .w}, {.m}]
 
 /-- Labial natural classes for the /b, f/ computation (p. 199): the 3
-shared classes, then the 5 non-shared — verbatim from the paper, which
-omits `{f}` here ([broe-1993]'s inventory-fixed class set would include
-it, giving 3/9 rather than the reported 3/8). -/
+shared classes, then the 5 non-shared, verbatim from the paper. The
+`{b, w}` entry is a substitution typo for `{f}` — matrix (8) generates
+`{f}` and cannot generate `{b, w}` (`derived_bf_classes`) — leaving the
+count, and the reported 3/8, correct. -/
 def labialClasses_bf : List (Finset Consonant) :=
   [{.b, .f, .m, .w}, {.b, .f, .m}, {.b, .f},
    {.f, .w}, {.b, .m, .w}, {.b, .m}, {.b, .w}, {.b}]
@@ -50,6 +52,52 @@ theorem similarity_f_m : similarity labialClasses_fm .f .m = 2/9 := by decide +k
 
 /-- Worked example, p. 199. -/
 theorem similarity_b_f : similarity labialClasses_bf .b .f = 3/8 := by decide +kernel
+
+/-! ### Deriving the classes from feature matrix (8)
+
+`labialContext` records the labial columns of matrix (8), p. 201: [cons],
+[son], [cont], [voice] on all four labials, [nasal] on the stops only
+(trivial underspecification). [broe-1993]'s construction over this context
+regenerates the /f, m/ enumeration exactly and vindicates the reported
+3/8 for /b, f/ despite the printed list's typo. -/
+
+/-- The labial columns of feature matrix (8) (p. 201): the extents on
+`{b, f, m, w}` of the feature values the matrix specifies. -/
+def labialContext : List (Finset Consonant) :=
+  [{.b, .f, .m}, {.w},   -- [±cons]
+   {.m, .w}, {.b, .f},   -- [±son]
+   {.f, .w}, {.b, .m},   -- [±cont]
+   {.m}, {.b},           -- [±nasal], specified for stops only
+   {.b, .m, .w}, {.f}]   -- [±voice]
+
+/-- The natural classes matrix (8) generates for the labial subinventory. -/
+def derivedLabialClasses : List (Finset Consonant) :=
+  Broe1993.naturalClasses {.b, .f, .m, .w} labialContext
+
+/-- The derived classes relevant to /f, m/ are exactly the paper's
+enumeration. -/
+theorem derived_fm_classes :
+    (derivedLabialClasses.filter
+      (λ s => decide (Consonant.f ∈ s ∨ Consonant.m ∈ s))).toFinset =
+      labialClasses_fm.toFinset := by decide +kernel
+
+/-- The derived classes relevant to /b, f/ are the paper's enumeration with
+`{f}` in place of `{b, w}`: no description over matrix (8) has extent
+`{b, w}`. -/
+theorem derived_bf_classes :
+    (derivedLabialClasses.filter
+      (λ s => decide (Consonant.b ∈ s ∨ Consonant.f ∈ s))).toFinset =
+      insert {.f} (labialClasses_bf.toFinset.erase {.b, .w}) := by decide +kernel
+
+/-- similarity(/f, m/) = 2/9, derived from matrix (8) rather than the
+printed enumeration. -/
+theorem similarity_derived_f_m : similarity derivedLabialClasses .f .m = 2/9 := by
+  decide +kernel
+
+/-- similarity(/b, f/) = 3/8, derived from matrix (8): the paper's reported
+value is correct despite its list typo. -/
+theorem similarity_derived_b_f : similarity derivedLabialClasses .b .f = 3/8 := by
+  decide +kernel
 
 /-! ### Table IV (p. 203): O/E by similarity, adjacent pairs -/
 
