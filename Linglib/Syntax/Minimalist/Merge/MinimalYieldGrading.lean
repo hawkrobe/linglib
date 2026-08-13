@@ -41,7 +41,7 @@ negative. Minimal-Yield-respecting steps (External/Internal Merge) have `δ ≥ 
 
 namespace Minimalist.Merge
 
-open RootedTree LaurentSeries
+open RoseTree RoseTree.Nonplanar LaurentSeries
 
 variable {α β : Type*}
 

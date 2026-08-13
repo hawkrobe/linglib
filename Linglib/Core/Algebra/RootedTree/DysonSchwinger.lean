@@ -5,6 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -64,7 +66,6 @@ shape in the CK algebra.
 `PruningNonplanar.lean` (B+ + Δ^ρ).
 -/
 
-namespace RootedTree
 
 namespace ConnesKreimer
 
@@ -192,4 +193,3 @@ example (a : α) :
 
 end ConnesKreimer
 
-end RootedTree

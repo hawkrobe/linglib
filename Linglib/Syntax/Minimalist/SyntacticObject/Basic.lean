@@ -45,7 +45,7 @@ existing `comul{D,C}N`; P1 continued), the structural ops (`contains`/`subtrees`
 
 namespace Minimalist
 
-open RootedTree
+open RoseTree RoseTree.Nonplanar
 
 /-- The SyntacticObject label alphabet, in the algebra's `α ⊕ β` form (`α = LIToken` lexical,
     `β = Unit` bare). Each **role is fixed by arity**, not by a third label:

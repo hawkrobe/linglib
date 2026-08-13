@@ -5,6 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -67,7 +69,6 @@ Lemma 1.16.5 (Δ^ω extends to extended workspaces F̃^R) deferred — needs
 a new "extended forest" type.
 -/
 
-namespace RootedTree
 
 namespace ConnesKreimer
 
@@ -244,4 +245,3 @@ example (a : α) (T : Nonplanar α) :
 
 end ConnesKreimer
 
-end RootedTree

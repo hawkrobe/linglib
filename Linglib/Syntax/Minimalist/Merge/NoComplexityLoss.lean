@@ -41,7 +41,7 @@ leaf-count port.
 namespace Minimalist.Merge
 
 open scoped TensorProduct
-open RootedTree RootedTree.ConnesKreimer
+open RoseTree RoseTree.Nonplanar ConnesKreimer
 
 /-- **M-C-B Definition 1.6.2 (book p. 64), existential form.** A workspace
     transformation `F → F'` satisfies No Complexity Loss if some component

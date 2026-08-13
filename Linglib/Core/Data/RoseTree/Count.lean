@@ -7,6 +7,8 @@ import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 import Mathlib.Algebra.Order.BigOperators.Group.List
 import Linglib.Core.Data.RoseTree.Leaves
 
+open RoseTree RoseTree.Nonplanar
+
 /-!
 # Size measures on rooted nonplanar trees and their forests
 
@@ -16,12 +18,12 @@ import Linglib.Core.Data.RoseTree.Leaves
   `Nonplanar` descents): leaf statistics by predicate over the leaf projection — the
   count is `Multiset.countP`, and the depth statistics are the card and sum of the
   depth multiset (`card_leafDepthsP`).
-* `RootedTree.Nonplanar.numEdges`: the edge count `numNodes - 1` of a rooted tree.
-* `RootedTree.Forest.numNodes` / `RootedTree.Forest.numEdges`: the forest totals.
+* `Nonplanar.numEdges`: the edge count `numNodes - 1` of a rooted tree.
+* `Nonplanar.Forest.numNodes` / `Nonplanar.Forest.numEdges`: the forest totals.
 
 ## Main results
 
-* `RootedTree.Forest.numNodes_eq_card_add_numEdges`: Euler's relation `#V = b₀ + #E`
+* `Nonplanar.Forest.numNodes_eq_card_add_numEdges`: Euler's relation `#V = b₀ + #E`
   for forests, with `Multiset.card` the component count.
 * `RoseTree.leafCountP_le_numNodes`: a counted leaf is a vertex; strict when the root
   is uncounted (`leafCountP_lt_numNodes_of_not`).
@@ -197,9 +199,8 @@ theorem leafCountP_le_leafDepthSumP_of_not (a : α)
 
 end RoseTree
 
-namespace RootedTree
 
-namespace Nonplanar
+namespace RoseTree.Nonplanar
 
 variable {α : Type*} (p : α → Prop) [DecidablePred p]
 
@@ -305,7 +306,7 @@ theorem leafCountP_le_numEdges (t : Nonplanar α)
     (h : t.leafCountP p < t.numNodes) : t.leafCountP p ≤ t.numEdges :=
   Nat.le_sub_one_of_lt h
 
-end Nonplanar
+end RoseTree.Nonplanar
 
 /-! ### Forest measures -/
 
@@ -354,4 +355,3 @@ theorem numNodes_eq_card_add_numEdges (F : Multiset (Nonplanar α)) :
 
 end Forest
 
-end RootedTree

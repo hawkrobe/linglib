@@ -7,6 +7,8 @@ import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridge
 import Mathlib.Tactic.Ring
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -50,7 +52,6 @@ for `z = 1`.
 Skeleton only. Sub-proofs sorry-fenced for incremental closure.
 -/
 
-namespace RootedTree
 
 open ConnesKreimer
 open PreLie.OudomGuinCirc
@@ -494,4 +495,3 @@ theorem gl_product_eq_oudomGuinStar_via_pairing
 
 end GrossmanLarson
 
-end RootedTree

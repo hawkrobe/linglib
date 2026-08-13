@@ -76,7 +76,7 @@ DP arguments, not the position of V.
 namespace Larson1988
 
 open Minimalist SyntacticObject
-open RootedTree
+open RoseTree RoseTree.Nonplanar
 
 -- ============================================================================
 -- § 1: Lexical Items

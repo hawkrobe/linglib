@@ -25,7 +25,7 @@ variants.
 
 namespace Minimalist
 
-open RootedTree SyntacticObject
+open RoseTree RoseTree.Nonplanar SyntacticObject
 
 /-! ### Immediate containment (via `Nonplanar.rootChildren`) -/
 

@@ -6,6 +6,8 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
 import Linglib.Core.RingTheory.Bialgebra.Primitive
 
+open RoseTree RoseTree.Nonplanar
+
 /-!
 # Dual-primitive functionals on the Connes-Kreimer bialgebra
 [marcolli-chomsky-berwick-2025]
@@ -19,27 +21,26 @@ dual-primitives side on the Connes-Kreimer bialgebra with the Δ^ρ
 
 ## Main definitions
 
-* `RootedTree.ConnesKreimer.deltaSingleton`: the dual-basis functional `δ_T`
+* `ConnesKreimer.deltaSingleton`: the dual-basis functional `δ_T`
   extracting the coefficient of the singleton forest `{T}`.
-* `RootedTree.ConnesKreimer.countSingleCutsRho`: number of Δ^ρ cut summands of
+* `ConnesKreimer.countSingleCutsRho`: number of Δ^ρ cut summands of
   `T` with cut forest `{T₁}` and remainder `T₂`.
 
 ## Main results
 
-* `RootedTree.ConnesKreimer.deltaSingleton_isDualPrimitive`: each single-tree
+* `ConnesKreimer.deltaSingleton_isDualPrimitive`: each single-tree
   delta `δ_T` is a dual primitive.
-* `RootedTree.ConnesKreimer.lie_deltaSingleton_apply_singleton`: the explicit
+* `ConnesKreimer.lie_deltaSingleton_apply_singleton`: the explicit
   count form `⁅δ_{T₁}, δ_{T₂}⁆ (of' {T}) = countSingleCutsRho T T₁ T₂ −
   countSingleCutsRho T T₂ T₁`, the Δ^ρ analog of the book's
   `c^T_{T₁,T₂} − c^T_{T₂,T₁}`. The Δ^c (trace-leaf) version follows via the
   strip machinery in `Coproduct/DeletionNonplanar.lean`.
 
 Not yet stated: the Lie algebra isomorphism with the insertion Lie algebra
-(`RootedTree.InsertionAlgebra`); this file proves the dual-primitives side
+(`InsertionAlgebra`); this file proves the dual-primitives side
 only.
 -/
 
-namespace RootedTree
 
 namespace ConnesKreimer
 
@@ -209,4 +210,3 @@ theorem lie_deltaSingleton_apply_singleton (T T₁ T₂ : Nonplanar α) :
 
 end ConnesKreimer
 
-end RootedTree

@@ -8,6 +8,8 @@ import Mathlib.Algebra.Order.Group.Multiset
 import Mathlib.Algebra.Order.BigOperators.Group.List
 import Mathlib.Algebra.Order.Group.Nat
 
+open RoseTree RoseTree.Nonplanar
+
 /-!
 # Leaf projections of a rose tree
 
@@ -19,7 +21,7 @@ import Mathlib.Algebra.Order.Group.Nat
 ## Main definitions
 
 * `RoseTree.leavesWithDepth`, `RoseTree.leaves`: the projections, with descents
-  `RootedTree.Nonplanar.leavesWithDepth` and `RootedTree.Nonplanar.leaves`.
+  `Nonplanar.leavesWithDepth` and `Nonplanar.leaves`.
 
 ## Main results
 
@@ -131,7 +133,7 @@ end RoseTree
 
 /-! ### Descent to `Nonplanar` -/
 
-namespace RootedTree.Nonplanar
+namespace RoseTree.Nonplanar
 
 variable {α : Type*} (a : α)
 
@@ -165,4 +167,4 @@ theorem card_leaves (t : Nonplanar α) : Multiset.card t.leaves = t.numLeaves :=
 theorem numLeaves_le_numNodes (t : Nonplanar α) : t.numLeaves ≤ t.numNodes :=
   Quotient.inductionOn t fun p => RoseTree.numLeaves_le_numNodes p
 
-end RootedTree.Nonplanar
+end RoseTree.Nonplanar

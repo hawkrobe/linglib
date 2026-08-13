@@ -870,7 +870,7 @@ theorem tseltalan_case_locus :
 section AttractClosest
 
 open Minimalist SyntacticObject
-open RootedTree
+open RoseTree RoseTree.Nonplanar
 
 /-! ### Attract Closest on Concrete Trees
 

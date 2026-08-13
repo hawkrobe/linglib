@@ -39,7 +39,7 @@ Core's `List.isPerm_iff` proves the greedy matcher correct only under `LawfulBEq
 forces `p` to coincide with equality. The lemmas here assume instead that `p` is
 symmetric and transitive *on a predicate `P` covering the lists' members* — the form a
 consumer needs when `p` is defined by recursion and its equivalence properties are only
-available beneath a termination bound (see `RootedTree/DecEq.lean`). The unconditional
+available beneath a termination bound (see `Nonplanar/DecEq.lean`). The unconditional
 `Std.Symm`/`IsTrans` version is a corollary.
 
 `[UPSTREAM]` candidate.

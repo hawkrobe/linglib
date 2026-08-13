@@ -30,7 +30,7 @@ are related by the reduction lemmas (`replace_lexLeaf`/`_traceLeaf`/`_node`), no
 
 namespace Minimalist
 
-open RootedTree SyntacticObject
+open RoseTree RoseTree.Nonplanar SyntacticObject
 
 /-! ### Substitution on the planar carrier -/
 

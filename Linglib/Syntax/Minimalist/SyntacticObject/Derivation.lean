@@ -37,7 +37,7 @@ ordered planar accumulator, since `final` (a `Nonplanar` quotient) is unordered.
 
 namespace Minimalist
 
-open RootedTree SyntacticObject
+open RoseTree RoseTree.Nonplanar SyntacticObject
 
 namespace SyntacticObject
 

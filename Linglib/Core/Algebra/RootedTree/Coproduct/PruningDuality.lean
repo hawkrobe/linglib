@@ -2,6 +2,8 @@ import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonSplit
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 -- Nested tensor squares `CK ⊗ (CK ⊗ CK)` need one extra pending step during
 -- instance synthesis: the chain `Semiring (CK ⊗ (CK ⊗ CK)) → Algebra R (CK ⊗ CK)
@@ -61,7 +63,6 @@ total weight of `C`:
   hypothesis at `ofTree T` and `of' C'`.
 -/
 
-namespace RootedTree
 
 namespace ConnesKreimer
 
@@ -698,4 +699,3 @@ noncomputable instance instBialgebraRho
 
 end ConnesKreimer
 
-end RootedTree

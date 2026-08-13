@@ -2,6 +2,8 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.Defs
 import Mathlib.RingTheory.TensorProduct.Basic
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -84,10 +86,9 @@ policy `extractC τ`:
 ## Status
 
 `[UPSTREAM]` candidate; future home something like
-`Mathlib.Combinatorics.RootedTree.CoproductDecorated`. Sorry-free.
+`Mathlib.Combinatorics.Nonplanar.CoproductDecorated`. Sorry-free.
 -/
 
-namespace RootedTree
 
 namespace ConnesKreimer
 
@@ -249,4 +250,3 @@ end Tests
 
 end ConnesKreimer
 
-end RootedTree

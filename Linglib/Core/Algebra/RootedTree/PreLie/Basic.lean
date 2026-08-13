@@ -8,6 +8,8 @@ import Mathlib.Data.Finsupp.SMul
 import Mathlib.LinearAlgebra.Finsupp.LSum
 import Mathlib.Tactic.Abel
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -97,7 +99,6 @@ evaluation isn't the point."
 - `instRightPreLieRing` / `instRightPreLieAlgebra` — typeclass instances.
 -/
 
-namespace RootedTree
 
 /-! ### Carrier + module instances -/
 
@@ -1044,4 +1045,3 @@ noncomputable instance instRightPreLieAlgebra :
 
 end InsertionAlgebra
 
-end RootedTree

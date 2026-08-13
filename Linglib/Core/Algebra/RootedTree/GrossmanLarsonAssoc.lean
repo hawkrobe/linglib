@@ -8,6 +8,8 @@ import Linglib.Core.Algebra.RootedTree.PreLie.InsertionAddHost
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionCompose
 import Linglib.Core.Data.Multiset.Antidiagonal
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -44,7 +46,6 @@ closed; see `GrossmanLarsonMonoid.lean`.
 `[UPSTREAM]` candidate (jointly with the OudomGuinCirc layer).
 -/
 
-namespace RootedTree
 
 namespace GrossmanLarson
 
@@ -70,7 +71,7 @@ separately and prove by descent from the `RoseTree`-level `insertionForest`.
     bridge `RoseTree.Pathed.listChoices_bridge_powerset_paired`, plus
     `insertionForest_msform_invariance_guests` to bridge `RoseTree`-level guests with
     canonical `Quotient.out` representatives. -/
-theorem _root_.RootedTree.Nonplanar.insertionMultiset_add_host
+theorem _root_.RoseTree.Nonplanar.insertionMultiset_add_host
     (A B C : Forest (Nonplanar α)) :
     Nonplanar.insertionMultiset (A + B) C =
       (C.powerset.bind fun C₁ =>
@@ -424,7 +425,7 @@ private theorem forall2_perm_symm :
     This is the workhorse for descents that need to swap canonical reps for
     a convenient `RoseTree`-level list (e.g. `Q.out v :: B.toList.map Q.out` standing
     in for `(B + {v}).toList.map Q.out`). -/
-theorem _root_.RootedTree.Nonplanar.insertionMultiset_eq_of_reps
+theorem _root_.RoseTree.Nonplanar.insertionMultiset_eq_of_reps
     (F G : Forest (Nonplanar α)) (hosts guests : List (RoseTree α))
     (h_hosts : (Multiset.ofList (hosts.map Nonplanar.mk) :
       Multiset (Nonplanar α)) = F)
@@ -535,7 +536,7 @@ theorem _root_.RootedTree.Nonplanar.insertionMultiset_eq_of_reps
     representative-invariance lemma
     `Nonplanar.insertionMultiset_eq_of_reps` per-output to swap NIM applied
     to a `RoseTree`-level output `msform L` for the `RoseTree`-level engine applied to `L`. -/
-theorem _root_.RootedTree.Nonplanar.insertionMultiset_singleton_assoc
+theorem _root_.RoseTree.Nonplanar.insertionMultiset_singleton_assoc
     (A B : Forest (Nonplanar α)) (v : Nonplanar α) :
     (Nonplanar.insertionMultiset A B).bind
         (fun X => Nonplanar.insertionMultiset X {v}) =
@@ -1256,4 +1257,3 @@ theorem rhs_quintuple_form (F₁ F₂ F₃ : Forest (Nonplanar α)) :
 
 end GrossmanLarson
 
-end RootedTree

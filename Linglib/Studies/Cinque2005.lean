@@ -52,7 +52,7 @@ needs four distinct categories.
 namespace Cinque2005
 
 open Minimalist SyntacticObject
-open RootedTree
+open RoseTree RoseTree.Nonplanar
 
 /-! ### The four elements (head-initial leaves) -/
 

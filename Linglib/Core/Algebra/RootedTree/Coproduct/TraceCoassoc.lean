@@ -31,7 +31,7 @@ exhaustive small-tree computation (canonical-form multiset comparison) before
 the structural proof, including the failure for marker-sensitive `τ`.
 -/
 
-open RootedTree RootedTree.ConnesKreimer
+open RoseTree RoseTree.Nonplanar ConnesKreimer
 
 namespace DoubleCut
 

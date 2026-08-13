@@ -54,7 +54,7 @@ trace leaf gets the canonical saturated value `.of (mkTraceToken 0) []`;
 
 namespace Minimalist
 
-open RootedTree SyntacticObject
+open RoseTree RoseTree.Nonplanar SyntacticObject
 
 /-! ### The selection state -/
 

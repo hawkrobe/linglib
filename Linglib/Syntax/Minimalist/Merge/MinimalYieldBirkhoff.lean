@@ -35,7 +35,7 @@ derivation pairs `(F, F')`) is left to future work.
 
 namespace Minimalist.Merge
 
-open RootedTree RootedTree.ConnesKreimer LaurentSeries
+open RoseTree RoseTree.Nonplanar ConnesKreimer LaurentSeries
 
 variable {α : Type*} {R : Type*} [CommRing R]
 

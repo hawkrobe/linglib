@@ -29,7 +29,7 @@ linearization (`Linearization/Cyclic.lean`).
 
 namespace Minimalist
 
-open RootedTree SyntacticObject
+open RoseTree RoseTree.Nonplanar SyntacticObject
 
 /-! ## Derivation-grounded externalization (computable PF order)
 

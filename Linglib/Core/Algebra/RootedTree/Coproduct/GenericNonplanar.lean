@@ -1,5 +1,7 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -28,7 +30,7 @@ serves every coproduct instead of one bespoke copy per Δ.
   `comulCAlgHomN_eq_G` — the Δ^ρ / Δ^c instance bridges.
 -/
 
-namespace RootedTree.ConnesKreimer
+namespace ConnesKreimer
 
 open scoped TensorProduct
 
@@ -121,4 +123,4 @@ theorem comulAlgHomN_eq_G :
 theorem comulCAlgHomN_eq_G {β : Type*} (τ : Nonplanar (α ⊕ β) → β) :
     comulCAlgHomN (R := R) τ = comulAlgHomNG (R := R) (cutSummandsCN τ) := rfl
 
-end RootedTree.ConnesKreimer
+end ConnesKreimer

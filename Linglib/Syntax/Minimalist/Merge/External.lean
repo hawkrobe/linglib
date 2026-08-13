@@ -54,7 +54,7 @@ leaf). This is the coupling point that validates the carrier bridge's design.
 namespace Minimalist.Merge
 
 open scoped TensorProduct
-open RootedTree RootedTree.ConnesKreimer
+open RoseTree RoseTree.Nonplanar ConnesKreimer
 
 /-- **Algebraic Merge on a 2-tree workspace** (M-C-B Lemma 1.4.1, F̂ = ∅
     subcase). For any pair `(S, S') : Nonplanar α` and root label `lbl`,

@@ -38,7 +38,7 @@ which the Birkhoff factorization then renormalizes away (`Core/Algebra/RootedTre
 
 namespace Minimalist.Merge
 
-open RootedTree LaurentSeries
+open RoseTree RoseTree.Nonplanar LaurentSeries
 
 variable {α β : Type*} {R : Type*} [CommRing R]
 

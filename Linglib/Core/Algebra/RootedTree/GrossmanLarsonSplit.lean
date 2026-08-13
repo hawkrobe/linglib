@@ -1,6 +1,8 @@
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonAssoc
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -27,7 +29,6 @@ simulation harness (`scratch/validate_duality.lean`, V3/V3b batteries,
 exhaustive over forests of weight ≤ 3 plus duplicate-tree traps).
 -/
 
-namespace RootedTree
 
 namespace GrossmanLarson
 
@@ -222,7 +223,7 @@ private theorem antidiagonal_singleton_add {β : Type*} [DecidableEq β] (T' : �
     Proved by induction on `A` from `insertionMultiset_add_host`
     (peeling one host tree; `NIM({T}, G)` outputs are singleton
     forests, whose antidiagonal is the trivial two-way split). -/
-theorem _root_.RootedTree.Nonplanar.insertionMultiset_antidiagonal
+theorem _root_.RoseTree.Nonplanar.insertionMultiset_antidiagonal
     (A G : Forest (Nonplanar α)) :
     (Nonplanar.insertionMultiset A G).bind Multiset.antidiagonal =
       (Multiset.antidiagonal A).bind (fun pa =>
@@ -1033,4 +1034,3 @@ theorem pairing_product_of'_mul_of' (A B C₁ C₂ : Forest (Nonplanar α)) :
 
 end GrossmanLarson
 
-end RootedTree

@@ -45,7 +45,7 @@ substrate.
 namespace Minimalist.Merge
 
 open scoped TensorProduct
-open RootedTree RootedTree.ConnesKreimer
+open RoseTree RoseTree.Nonplanar ConnesKreimer
 
 variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq (Nonplanar α)]
 

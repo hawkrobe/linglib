@@ -1,5 +1,7 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 
+open RoseTree RoseTree.Nonplanar
+
 /-!
 # Cut-avoiding trees in the nonplanar Connes–Kreimer coproduct
 [marcolli-chomsky-berwick-2025] [foissy-2002]
@@ -28,7 +30,7 @@ Consumed by `Minimalist.Merge.mergeOp_factor_out_singleton` /
 `mergeOp_pair_residual` (MCB Lemma 1.4.1 Case 1).
 -/
 
-namespace RootedTree.ConnesKreimer
+namespace ConnesKreimer
 
 variable {α : Type*}
 
@@ -98,4 +100,4 @@ lemma not_mem_pair {S S' : Nonplanar α} {W : Forest (Nonplanar α)}
 
 end CutAvoidingForestN
 
-end RootedTree.ConnesKreimer
+end ConnesKreimer

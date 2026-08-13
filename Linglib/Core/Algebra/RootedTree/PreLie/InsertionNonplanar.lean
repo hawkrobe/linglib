@@ -7,6 +7,8 @@ import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Data.RoseTree.Nonplanar
 import Mathlib.Data.Multiset.Basic
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -38,9 +40,8 @@ the Algebra leg; were it to graduate to `Combinatorics/`, the imports
 would become strictly hierarchical.
 -/
 
-namespace RootedTree
 
-namespace Nonplanar
+namespace RoseTree.Nonplanar
 
 variable {α : Type*}
 
@@ -244,6 +245,5 @@ theorem insertionMultiset_singleton_rootValue
         = (Nonplanar.mk (Quotient.out T)).rootValue := (Nonplanar.rootValue_mk _).symm
       _ = T.rootValue := by rw [h_eq]
 
-end Nonplanar
+end RoseTree.Nonplanar
 
-end RootedTree

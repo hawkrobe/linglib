@@ -23,7 +23,7 @@ This file instantiates that map for **feature consistency** in the Boolean (pars
 (a `Nonplanar SOLabel` subtree, `SOLabel = LIToken ⊕ Unit`) embeds into the Hopf algebra via
 `ofTree S.val` (no head decoration — the single MCB carrier, `FreeCommMagma`/`toNonplanar`
 retired). A local feature character `φ` is renormalized by the weight-`+1` semiring Birkhoff
-factorization (`RootedTree.ConnesKreimer.SemiringRenorm`) into the consistency map `φ₊`.
+factorization (`ConnesKreimer.SemiringRenorm`) into the consistency map `φ₊`.
 
 The Birkhoff machinery is noncomputable (the coproduct goes through `Quotient.out`), so `φ₊` is a
 *specification* of consistency, not an executable checker; concrete verdicts are established by
@@ -41,7 +41,7 @@ structural proof.
 
 namespace Minimalist
 
-open RootedTree RootedTree.ConnesKreimer
+open RoseTree RoseTree.Nonplanar ConnesKreimer
 
 /-! ### The Boolean consistency semiring -/
 

@@ -6,6 +6,8 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 import Linglib.Core.Algebra.RotaBaxterLaurent
 
+open RoseTree RoseTree.Nonplanar
+
 /-!
 # Birkhoff renormalization of Laurent-series characters  `[UPSTREAM]`
 
@@ -33,7 +35,7 @@ lives downstream in `Syntax/Minimalist/Merge/`.
 [marcolli-chomsky-berwick-2025] (§3.5.2, Prop. 3.1.7, Prop. 3.5.6)
 -/
 
-namespace RootedTree.ConnesKreimer
+namespace ConnesKreimer
 
 open LaurentSeries
 
@@ -87,4 +89,4 @@ theorem polarHahn_birkhoffPlus_of' (F : Forest (Nonplanar α)) :
     rw [Multiset.map_cons, Multiset.prod_cons]
     exact polarHahn_mul _ _ (polarHahn_birkhoffPlusTree φ T) ih
 
-end RootedTree.ConnesKreimer
+end ConnesKreimer

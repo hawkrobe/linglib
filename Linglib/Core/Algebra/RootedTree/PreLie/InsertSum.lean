@@ -10,6 +10,8 @@ import Mathlib.Data.Multiset.MapFold
 import Mathlib.Data.Multiset.ZeroCons
 import Mathlib.Tactic.Abel
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -253,9 +255,8 @@ The descent layer: lift `RoseTree.insertSum` to `Nonplanar α` via
 `Quotient.lift₂`, requiring invariance under `Perm` on both
 arguments. -/
 
-namespace RootedTree
 
-namespace Nonplanar
+namespace RoseTree.Nonplanar
 
 variable {α : Type*}
 
@@ -651,6 +652,5 @@ example : Multiset.card
 
 end Tests
 
-end Nonplanar
+end RoseTree.Nonplanar
 
-end RootedTree
