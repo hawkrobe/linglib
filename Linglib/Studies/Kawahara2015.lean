@@ -167,16 +167,11 @@ def toneSpec (accentMora : Option ℕ) (i : ℕ) : Option LevelTone :=
   else none
 
 /-- The surface tones of an `nMorae`-word from its accent position, by
-    specification (`toneSpec`) followed by spreading ((7)–(9)). -/
+    specification (`toneSpec`) followed by spreading — a left scan copying
+    the most recent specified tone rightward ((7)–(9)). The seed is never
+    consulted, since mora 0 is always specified. -/
 def accentToTones (accentMora : Option ℕ) (nMorae : ℕ) : List LevelTone :=
-  spread ((List.range nMorae).map (toneSpec accentMora)) .H
-where
-  /-- Rightward spreading into unspecified positions. The seed is never
-      consulted on well-formed input, since mora 0 is always specified. -/
-  spread : List (Option LevelTone) → LevelTone → List LevelTone
-    | [], _ => []
-    | some t :: rest, _ => t :: spread rest t
-    | none :: rest, last => last :: spread rest last
+  ((((List.range nMorae).map (toneSpec accentMora)).scanl (fun t o => o.getD t)) .H).tail
 
 /-- Unaccented *ame(+ga)* 'candy' surfaces LHH by initial rise and
     spreading ((6b)). -/
@@ -215,6 +210,13 @@ theorem count_L_tail_le : ∀ l : List LevelTone, l.tail.count .L ≤ l.count .L
   | .H :: _ => by rw [List.tail_cons, List.count_cons_of_ne (by decide)]
   | .L :: _ => by rw [List.tail_cons, List.count_cons_self]; exact Nat.le_succ _
 
+/-- An L head opens no fall. -/
+theorem hlFallCount_L_cons (l : List LevelTone) :
+    hlFallCount (.L :: l) = hlFallCount l := by
+  cases l with
+  | nil => rfl
+  | cons b rest => cases b <;> rfl
+
 /-- Every fall consumes an L strictly after the first position. -/
 theorem hlFallCount_le_count_tail :
     ∀ l : List LevelTone, hlFallCount l ≤ l.tail.count .L
@@ -234,9 +236,7 @@ theorem hlFallCount_le_count_tail :
       exact ih
   | .L :: b :: rest => by
       have ih := hlFallCount_le_count_tail (b :: rest)
-      have e : hlFallCount (.L :: b :: rest) = hlFallCount (b :: rest) := by
-        cases b <;> rfl
-      rw [e, List.tail_cons]
+      rw [hlFallCount_L_cons, List.tail_cons]
       exact ih.trans (count_L_tail_le _)
 
 theorem hlFallCount_cons_cons (t u : LevelTone) (l : List LevelTone) :
@@ -246,25 +246,24 @@ theorem hlFallCount_cons_cons (t u : LevelTone) (l : List LevelTone) :
 
 /-- Spreading is fall-invariant, since copying a tone neither creates nor
     destroys an HL fall. -/
-theorem hlFallCount_spread (spec : List (Option LevelTone)) (t : LevelTone) :
-    hlFallCount (t :: accentToTones.spread spec t) =
-      hlFallCount (t :: spec.filterMap id) := by
-  induction spec generalizing t with
-  | nil => rfl
+theorem hlFallCount_cons_scanl (spec : List (Option LevelTone)) (x t : LevelTone) :
+    hlFallCount (x :: spec.scanl (fun t o => o.getD t) t) =
+      hlFallCount (x :: t :: spec.filterMap id) := by
+  induction spec generalizing x t with
+  | nil => cases x <;> cases t <;> rfl
   | cons o rest ih =>
     cases o with
     | some u =>
-      rw [show accentToTones.spread (some u :: rest) t =
-            u :: accentToTones.spread rest u from rfl,
-        show (some u :: rest).filterMap id = u :: rest.filterMap id from rfl,
-        hlFallCount_cons_cons, hlFallCount_cons_cons, ih u]
+      simp only [List.scanl_cons, Option.getD_some,
+        show (some u :: rest).filterMap id = u :: rest.filterMap id from rfl]
+      rw [hlFallCount_cons_cons, hlFallCount_cons_cons, ih t u]
     | none =>
-      rw [show accentToTones.spread (none :: rest) t =
-            t :: accentToTones.spread rest t from rfl,
-        show (none :: rest).filterMap id = rest.filterMap id from rfl,
-        hlFallCount_cons_cons, ih t]
-      have hδ : (if t = .H ∧ t = .L then 1 else 0) = 0 := by cases t <;> simp
-      rw [hδ, Nat.add_zero]
+      have hδ : (if t = LevelTone.H ∧ t = LevelTone.L then 1 else 0) = 0 := by
+        cases t <;> simp
+      simp only [List.scanl_cons, Option.getD_none,
+        show (none :: rest).filterMap id = rest.filterMap id from rfl]
+      rw [hlFallCount_cons_cons, hlFallCount_cons_cons, ih t t,
+        hlFallCount_cons_cons, hδ, Nat.add_zero]
 
 /-- Mora 0 is always specified, as H under initial accent and otherwise as
     the initial-rise L. -/
@@ -317,12 +316,11 @@ theorem accentToTones_culminative (a : Option ℕ) (n : ℕ) :
   obtain _ | m := n
   · exact Nat.zero_le _
   · have hpeel : accentToTones a (m + 1) =
-        (if a = some 0 then LevelTone.H else .L) ::
-          accentToTones.spread (((List.range m).map Nat.succ).map (toneSpec a))
-            (if a = some 0 then LevelTone.H else .L) := by
-      rw [accentToTones, List.range_succ_eq_map, List.map_cons, toneSpec_zero]
-      rfl
-    rw [hpeel, hlFallCount_spread]
+        (((List.range m).map Nat.succ).map (toneSpec a)).scanl (fun t o => o.getD t)
+          (if a = some 0 then LevelTone.H else .L) := by
+      simp only [accentToTones, List.range_succ_eq_map, List.map_cons, toneSpec_zero,
+        List.scanl_cons, List.tail_cons, Option.getD_some]
+    rw [hpeel, ← hlFallCount_L_cons, hlFallCount_cons_scanl, hlFallCount_L_cons]
     refine (hlFallCount_le_count_tail _).trans ?_
     rw [List.tail_cons, List.filterMap_map, Function.id_comp]
     exact count_L_toneSpec_dense a _
@@ -365,7 +363,9 @@ light-syllable data of (22)–(24) formalized below. -/
 def shortN2CompoundAccent (n1Morae : ℕ) (n2Accent : Option ℕ)
     (preAccenting : Bool) : Option ℕ :=
   if preAccenting then
-    if n1Morae > 0 then some (n1Morae - 1) else none
+    match n1Morae with
+    | 0 => none
+    | n + 1 => some n
   else
     n2Accent.map (· + n1Morae)
 
@@ -374,11 +374,7 @@ def shortN2CompoundAccent (n1Morae : ℕ) (n2Accent : Option ℕ)
     own accent (§4.2). -/
 def longN2CompoundAccent (n1Morae : ℕ) (n2Accent : Option ℕ)
     (n2Morae : ℕ) : Option ℕ :=
-  match n2Accent with
-  | none => some n1Morae
-  | some pos =>
-    if pos + 1 = n2Morae then some n1Morae
-    else some (pos + n1Morae)
+  some (n1Morae + (n2Accent.filter (· + 1 != n2Morae)).getD 0)
 
 /-- The NonFinality constraint over an (accent, mora count) pair, violated
     once when the accent sits on the final mora ([prince-smolensky-1993];
@@ -419,11 +415,11 @@ theorem shortN2_preaccent_nonfinal (n1Morae n2Morae : ℕ) (n2Accent : Option �
     (h : 1 ≤ n2Morae) :
     nonFinality (shortN2CompoundAccent n1Morae n2Accent true, n1Morae + n2Morae) = 0 := by
   refine nonFinality_eq_zero fun p hp => ?_
-  have hp' : p ∈ (if n1Morae > 0 then some (n1Morae - 1) else none) := hp
-  split_ifs at hp' with h1
-  · rw [Option.mem_some_iff] at hp'
+  rcases n1Morae with _ | k
+  · exact absurd (show p ∈ (none : Option ℕ) from hp) (by simp)
+  · have hp' : p ∈ (some k : Option ℕ) := hp
+    rw [Option.mem_some_iff] at hp'
     omega
-  · exact absurd hp' (by simp)
 
 /-- Long-N2 compound accent never yields final accent, since unaccented and
     finally-accented N2s take N2-initial accent and retained accents are
@@ -432,13 +428,19 @@ theorem longN2_nonfinal (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ)
     (h2 : 3 ≤ n2Morae) (hacc : ∀ p ∈ n2Accent, p < n2Morae) :
     nonFinality (longN2CompoundAccent n1Morae n2Accent n2Morae, n1Morae + n2Morae) = 0 := by
   refine nonFinality_eq_zero fun p hp => ?_
+  unfold longN2CompoundAccent at hp
+  rw [Option.mem_some_iff] at hp
   rcases n2Accent with _ | pos
-  · have hp' : p ∈ (some n1Morae : Option ℕ) := hp
-    rw [Option.mem_some_iff] at hp'
+  · simp only [Option.filter_none, Option.getD_none] at hp
     omega
   · have hlt := hacc pos rfl
-    have hp' : p ∈ (if pos + 1 = n2Morae then some n1Morae else some (pos + n1Morae)) := hp
-    split_ifs at hp' with hfin <;> rw [Option.mem_some_iff] at hp' <;> omega
+    simp only [Option.filter_some] at hp
+    split_ifs at hp with hfin
+    · rw [bne_iff_ne] at hfin
+      simp only [Option.getD_some] at hp
+      omega
+    · simp only [Option.getD_none] at hp
+      omega
 
 /-! ### Weight sensitivity (§2.3)
 
