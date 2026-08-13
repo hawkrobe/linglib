@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 import Linglib.Core.Combinatorics.RootedTree.DoubleCut
 import Linglib.Core.Combinatorics.RootedTree.Cut
+import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Mathlib.RingTheory.Bialgebra.Basic
 
 open RoseTree RoseTree.Nonplanar
@@ -43,7 +44,10 @@ structure of `(V(F_{SO_0}), ⊔, Δ^c)`.
    through `Nonplanar.mk`.
 3. **Counit laws** from the empty-cut uniqueness of the enumeration
    (`cutSummandsCN_filter_empty`, `Core/Combinatorics/RootedTree/Cut.lean`).
-4. **`bialgebraC`** — the `Bialgebra` structure, via `Bialgebra.ofAlgHom`.
+4. **`instIsAdmissibleCutsCN`** — the laws packaged as `IsAdmissibleCuts
+   (cutSummandsCN τ)`, gated on `Fact (TraceCoherent τ)`, so
+   `WithCuts R (cutSummandsCN τ)` carries the Δ^c `Bialgebra` instance
+   (`Coproduct/WithCuts.lean`).
 
 ## No GL/Δ^c duality
 
@@ -65,64 +69,59 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommSemiring R] {α β : Type*}
 
-/-! ### Nonplanar tree- and forest-level Δ^c -/
+/-! ### Nonplanar tree- and forest-level Δ^c
 
-/-- The Nonplanar tree-level Δ^c coproduct. -/
-noncomputable def comulCTreeN (τ : Nonplanar (α ⊕ β) → β)
-    (T : Nonplanar (α ⊕ β)) :
-    ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R] ConnesKreimer R (Nonplanar (α ⊕ β)) :=
-  ConnesKreimer.ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar (α ⊕ β)))
-  + ((cutSummandsCN τ T).map
-      (fun p => ConnesKreimer.of' (R := R) p.1 ⊗ₜ[R] ConnesKreimer.ofTree p.2)).sum
+Definitional instantiations of the generic admissible-cut coproduct
+(`Coproduct/WithCuts.lean`) at the Δ^c enumeration `cutSummandsCN τ`. -/
+
+/-- The Nonplanar tree-level Δ^c coproduct: `comulTreeNG` at
+    `cuts := cutSummandsCN τ`. -/
+noncomputable def comulCTreeN (τ : Nonplanar (α ⊕ β) → β) :
+    Nonplanar (α ⊕ β) →
+      ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R] ConnesKreimer R (Nonplanar (α ⊕ β)) :=
+  comulTreeNG (cutSummandsCN τ)
 
 /-- The Nonplanar forest-level Δ^c (multiplicative extension). -/
-noncomputable def comulCForestN (τ : Nonplanar (α ⊕ β) → β)
-    (F : Forest (Nonplanar (α ⊕ β))) :
-    ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R] ConnesKreimer R (Nonplanar (α ⊕ β)) :=
-  (F.map (comulCTreeN (R := R) τ)).prod
+noncomputable def comulCForestN (τ : Nonplanar (α ⊕ β) → β) :
+    Forest (Nonplanar (α ⊕ β)) →
+      ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R] ConnesKreimer R (Nonplanar (α ⊕ β)) :=
+  comulForestNG (cutSummandsCN τ)
 
 @[simp] theorem comulCForestN_zero (τ : Nonplanar (α ⊕ β) → β) :
-    comulCForestN (R := R) τ (0 : Forest (Nonplanar (α ⊕ β))) = 1 := by
-  simp only [comulCForestN, Multiset.map_zero, Multiset.prod_zero]
+    comulCForestN (R := R) τ (0 : Forest (Nonplanar (α ⊕ β))) = 1 :=
+  comulForestNG_zero _
 
 @[simp] theorem comulCForestN_add (τ : Nonplanar (α ⊕ β) → β)
     (F G : Forest (Nonplanar (α ⊕ β))) :
     comulCForestN (R := R) τ (F + G) =
-      comulCForestN (R := R) τ F * comulCForestN (R := R) τ G := by
-  unfold comulCForestN
-  rw [Multiset.map_add, Multiset.prod_add]
+      comulCForestN (R := R) τ F * comulCForestN (R := R) τ G :=
+  comulForestNG_add _ F G
 
 /-- Forest-level Δ^c as a `MonoidHom` from `Multiplicative (Forest ...)`. -/
 noncomputable def comulCMonoidHomN (τ : Nonplanar (α ⊕ β) → β) :
     Multiplicative (Forest (Nonplanar (α ⊕ β))) →*
       (ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
-        ConnesKreimer R (Nonplanar (α ⊕ β))) where
-  toFun F := comulCForestN (R := R) τ F.toAdd
-  map_one' := comulCForestN_zero τ
-  map_mul' F G := comulCForestN_add τ F.toAdd G.toAdd
+        ConnesKreimer R (Nonplanar (α ⊕ β))) :=
+  comulMonoidHomNG (cutSummandsCN τ)
 
 /-- The **Δ^c coproduct on `ConnesKreimer R (Nonplanar (α ⊕ β))`** as
-    an algebra hom, parameterized by the trace encoder `τ`. -/
+    an algebra hom: `comulAlgHomNG` at `cuts := cutSummandsCN τ`,
+    parameterized by the trace encoder `τ`. -/
 noncomputable def comulCAlgHomN (τ : Nonplanar (α ⊕ β) → β) :
     ConnesKreimer R (Nonplanar (α ⊕ β)) →ₐ[R]
       ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
         ConnesKreimer R (Nonplanar (α ⊕ β)) :=
-  ConnesKreimer.lift (comulCMonoidHomN τ)
+  comulAlgHomNG (cutSummandsCN τ)
 
 @[simp] theorem comulCAlgHomN_apply_of' (τ : Nonplanar (α ⊕ β) → β)
     (F : Forest (Nonplanar (α ⊕ β))) :
-    comulCAlgHomN (R := R) τ (ConnesKreimer.of' F) = comulCForestN τ F := by
-  rw [comulCAlgHomN, ConnesKreimer.lift_of']
-  rfl
+    comulCAlgHomN (R := R) τ (ConnesKreimer.of' F) = comulCForestN τ F :=
+  comulAlgHomNG_apply_of' _ F
 
 @[simp] theorem comulCAlgHomN_apply_ofTree (τ : Nonplanar (α ⊕ β) → β)
     (T : Nonplanar (α ⊕ β)) :
-    comulCAlgHomN (R := R) τ (ConnesKreimer.ofTree T) = comulCTreeN τ T := by
-  rw [show (ConnesKreimer.ofTree T : ConnesKreimer R (Nonplanar (α ⊕ β)))
-        = ConnesKreimer.of' {T} from rfl, comulCAlgHomN_apply_of']
-  show comulCForestN τ {T} = _
-  unfold comulCForestN
-  rw [Multiset.map_singleton, Multiset.prod_singleton]
+    comulCAlgHomN (R := R) τ (ConnesKreimer.ofTree T) = comulCTreeN τ T :=
+  comulAlgHomNG_apply_ofTree _ T
 
 /-! ### Trace coherence
 
@@ -233,7 +232,7 @@ private noncomputable def treeCutsN (τ : Nonplanar (α ⊕ β) → β)
 private theorem comulCTreeN_eq_sum (τ : Nonplanar (α ⊕ β) → β)
     (T : Nonplanar (α ⊕ β)) :
     comulCTreeN (R := R) τ T = ((treeCutsN τ T).map (cutTensor (R := R))).sum := by
-  unfold comulCTreeN treeCutsN
+  unfold comulCTreeN comulTreeNG treeCutsN
   rw [Multiset.map_cons, Multiset.sum_cons, Multiset.map_map]
   congr 1
 
@@ -270,7 +269,8 @@ private theorem comulCForestN_eq_sum (τ : Nonplanar (α ⊕ β) → β)
     rw [show (T ::ₘ F : Forest (Nonplanar (α ⊕ β))) = {T} + F from
           (Multiset.singleton_add T F).symm, comulCForestN_add]
     rw [show comulCForestN (R := R) τ {T} = comulCTreeN τ T from by
-          unfold comulCForestN; rw [Multiset.map_singleton, Multiset.prod_singleton],
+          unfold comulCForestN comulForestNG
+          rw [Multiset.map_singleton, Multiset.prod_singleton]; rfl,
         comulCTreeN_eq_sum, ih]
     rw [show ({T} + F : Forest (Nonplanar (α ⊕ β))) = T ::ₘ F from
           (Multiset.singleton_add T F), forestCutsN_cons, Multiset.map_map]
@@ -629,11 +629,18 @@ theorem comulCAlgHomN_coassoc_algHom
   -- LinearMap composition. `comulCN_coassoc` gives the equality.
   exact comulCN_coassoc τ hτ
 
+end BialgebraInst
+
 /-! ### Counit laws — factored via per-tree + forest helpers
 
 Mirrors the Δ^ρ proof structure in `Coproduct/PruningNonplanar.lean`:
 per-tree laws from empty-cut uniqueness, lifted to forests by
-multiplicativity. -/
+multiplicativity. Stated over `CommSemiring` (unlike the coassoc, which
+needs a ring) so they can feed the ring-uniform `IsAdmissibleCuts`
+counit fields directly. -/
+
+section CounitLaws
+variable {R' : Type*} [CommSemiring R'] {α' β' : Type*}
 
 /-- **Per-tree right counit law**: under `(counit ⊗ id)`, only the `(0, T)`
     cut summand of `cutSummandsCN τ T` survives, contributing `1 ⊗ ofTree T`.
@@ -650,7 +657,7 @@ private theorem counit_rTensor_comulCTreeN (τ : Nonplanar (α' ⊕ β') → β'
         (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β')))))
       (comulCTreeN τ T) = (1 : R') ⊗ₜ ConnesKreimer.ofTree T := by
   -- Expand comulCTreeN τ T.
-  unfold comulCTreeN
+  unfold comulCTreeN comulTreeNG
   rw [map_add]
   -- First summand: (counit ⊗ id)(ofTree T ⊗ 1) = counit(ofTree T) ⊗ 1 = 0 ⊗ 1 = 0.
   rw [show (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
@@ -709,7 +716,7 @@ private theorem counit_lTensor_comulCTreeN (τ : Nonplanar (α' ⊕ β') → β'
         ((ConnesKreimer.counit (R := R')) :
           ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R'))
       (comulCTreeN τ T) = ConnesKreimer.ofTree T ⊗ₜ (1 : R') := by
-  unfold comulCTreeN
+  unfold comulCTreeN comulTreeNG
   rw [map_add]
   -- First summand: (id ⊗ counit)(ofTree T ⊗ 1) = ofTree T ⊗ counit(1) = ofTree T ⊗ 1.
   rw [show (Algebra.TensorProduct.map
@@ -777,9 +784,8 @@ private theorem counit_rTensor_comulCForestN (τ : Nonplanar (α' ⊕ β') → �
           ConnesKreimer.of'_add, ConnesKreimer.of'_singleton]
     -- comulCForestN (T ::ₘ F') = comulCTreeN τ T * comulCForestN τ F'
     have hCons : comulCForestN (R := R') τ (T ::ₘ F') =
-        comulCTreeN (R := R') τ T * comulCForestN (R := R') τ F' := by
-      unfold comulCForestN
-      rw [Multiset.map_cons, Multiset.prod_cons]
+        comulCTreeN (R := R') τ T * comulCForestN (R := R') τ F' :=
+      comulForestNG_cons _ T F'
     rw [hCons, map_mul, hT, ih',
         Algebra.TensorProduct.tmul_mul_tmul, _root_.mul_one, hForest]
 
@@ -808,9 +814,8 @@ private theorem counit_lTensor_comulCForestN (τ : Nonplanar (α' ⊕ β') → �
             (Multiset.singleton_add T F').symm,
           ConnesKreimer.of'_add, ConnesKreimer.of'_singleton]
     have hCons : comulCForestN (R := R') τ (T ::ₘ F') =
-        comulCTreeN (R := R') τ T * comulCForestN (R := R') τ F' := by
-      unfold comulCForestN
-      rw [Multiset.map_cons, Multiset.prod_cons]
+        comulCTreeN (R := R') τ T * comulCForestN (R := R') τ F' :=
+      comulForestNG_cons _ T F'
     rw [hCons, map_mul, hT, ih',
         Algebra.TensorProduct.tmul_mul_tmul, _root_.one_mul, hForest]
 
@@ -850,24 +855,39 @@ theorem counit_lTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
   rw [comulCAlgHomN_apply_of', Algebra.TensorProduct.rid_symm_apply]
   exact counit_lTensor_comulCForestN τ F (fun T _ => counit_lTensor_comulCTreeN τ T)
 
-/-- **`Bialgebra` structure** on `ConnesKreimer R' (Nonplanar (α' ⊕ β'))`
-    with Δ^c as the coproduct, for a trace-coherent encoder.
+/-- Δ^c is the generic coproduct at `cuts := cutSummandsCN τ` — definitional. -/
+theorem comulCAlgHomN_eq_G {R : Type*} [CommSemiring R] (τ : Nonplanar (α' ⊕ β') → β') :
+    comulCAlgHomN (R := R) τ = comulAlgHomNG (R := R) (cutSummandsCN τ) := rfl
 
-    The graded bialgebra structure of MCB Lemma 1.2.10. Built via
-    `Bialgebra.ofAlgHom` with `comulCAlgHomN τ` as the coproduct and the
-    inherited `counit` from CK. A `def`, not an `instance`: coassociativity
-    needs `TraceCoherent τ` (it is false for arbitrary `τ` — see
-    `comulCN_coassoc`), which instance resolution cannot synthesize. -/
-@[reducible] noncomputable def bialgebraC
-    (τ : Nonplanar (α' ⊕ β') → β')
-    (hτ : TraceCoherent τ) :
-    Bialgebra R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))) :=
-  Bialgebra.ofAlgHom (comulCAlgHomN (R := R') τ) ((ConnesKreimer.counit (R := R')) :
-          ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')
-    (comulCAlgHomN_coassoc_algHom τ hτ)
-    (counit_rTensor_comulCAlgHomN τ)
-    (counit_lTensor_comulCAlgHomN τ)
+/-- **Δ^c is an admissible cut policy** for a trace-coherent encoder:
+    `comulCAlgHomN_coassoc_algHom` and the counit laws packaged as the
+    `IsAdmissibleCuts` mixin, so `WithCuts R (cutSummandsCN τ)` receives its
+    `Bialgebra` instance — the bialgebra structure of MCB Lemma 1.2.10.
+    Gated on `Fact (TraceCoherent τ)`: coassociativity is false for
+    arbitrary `τ` (see `comulCN_coassoc`), and instance resolution cannot
+    synthesize the coherence hypothesis without the `Fact` wrapper. -/
+instance instIsAdmissibleCutsCN (τ : Nonplanar (α' ⊕ β') → β')
+    [Fact (TraceCoherent τ)] :
+    IsAdmissibleCuts (cutSummandsCN τ) where
+  coassoc := by
+    intro R _ _ _
+    rw [← comulCAlgHomN_eq_G]
+    exact comulCAlgHomN_coassoc_algHom τ Fact.out
+  counit_rTensor := by
+    intro R _
+    exact counit_rTensor_comulCAlgHomN τ
+  counit_lTensor := by
+    intro R _
+    exact counit_lTensor_comulCAlgHomN τ
 
-end BialgebraInst
+/-- Resolution check: a trace-coherent encoder yields the Δ^c `Bialgebra`
+    on the marked carrier through the gated instance chain. -/
+noncomputable example {R : Type*} [CommRing R] [CharZero R] [NoZeroDivisors R]
+    (τ : Nonplanar (α' ⊕ β') → β') (hτ : TraceCoherent τ) :
+    Bialgebra R (WithCuts R (cutSummandsCN τ)) :=
+  haveI : Fact (TraceCoherent τ) := ⟨hτ⟩
+  inferInstance
+
+end CounitLaws
 
 end ConnesKreimer

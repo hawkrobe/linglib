@@ -1,5 +1,6 @@
-import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
-import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
+import Linglib.Core.Algebra.RootedTree.ConnesKreimer
+import Linglib.Core.Data.RoseTree.Nonplanar
+import Mathlib.RingTheory.Bialgebra.Basic
 
 open RoseTree RoseTree.Nonplanar
 
@@ -13,10 +14,10 @@ The three MCB coproducts — Δ^ρ (pruning), Δ^c (contraction/trace), Δ^d
 (deletion) — share one shape: a primitive `ofTree T ⊗ 1` plus a sum over *cut
 summands* `(crown, trunk)` of `of' crown ⊗ ofTree trunk`. They differ **only**
 in the cut enumeration `cuts T`. This file factors that shape into a single
-`cuts`-parameterized algebra hom `comulAlgHomNG`, recovering the existing
-`comulTreeN`/`comulAlgHomN` (Δ^ρ, `cuts := cutSummandsN`) and
-`comulCTreeN`/`comulCAlgHomN τ` (Δ^c, `cuts := cutSummandsCN τ`) as instances —
-the bridges are definitional (`rfl`).
+`cuts`-parameterized algebra hom `comulAlgHomNG`; the concrete coproducts are
+its instantiations — Δ^ρ at `cuts := cutSummandsN`
+(`Coproduct/PruningNonplanar.lean`) and Δ^c at `cuts := cutSummandsCN τ`
+(`Coproduct/TraceNonplanar.lean`, definitionally).
 
 The cut-*enumeration* layer was already generic (`ConnesKreimer.cutSummandsG`,
 over an extraction policy); this lifts that genericity to the coproduct
@@ -27,8 +28,8 @@ serves every coproduct instead of one bespoke copy per Δ.
 
 * `comulTreeNG cuts` / `comulForestNG cuts` — the generic coproduct.
 * `comulAlgHomNG cuts` — packaged as an `AlgHom`.
-* `comulTreeN_eq_G`, `comulCTreeN_eq_G`, `comulAlgHomN_eq_G`,
-  `comulCAlgHomN_eq_G` — the Δ^ρ / Δ^c instance bridges.
+* `WithCuts R cuts` — the policy-indexed carrier, with `Bialgebra` gated
+  on `IsAdmissibleCuts cuts`.
 -/
 
 namespace ConnesKreimer
@@ -107,22 +108,6 @@ noncomputable def comulAlgHomNG
         from rfl, comulAlgHomNG_apply_of',
       show ({T} : Forest (Nonplanar α)) = T ::ₘ (0 : Forest (Nonplanar α)) from rfl,
       comulForestNG_cons, comulForestNG_zero, mul_one]
-
-/-! ### Instance bridges (Δ^ρ, Δ^c) — definitional -/
-
-/-- Δ^ρ is the generic coproduct at `cuts := cutSummandsN`. -/
-theorem comulTreeN_eq_G (T : Nonplanar α) :
-    comulTreeN (R := R) T = comulTreeNG (R := R) cutSummandsN T := rfl
-
-/-- Δ^c is the generic coproduct at `cuts := cutSummandsCN τ`. -/
-theorem comulCTreeN_eq_G {β : Type*} (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β)) :
-    comulCTreeN (R := R) τ T = comulTreeNG (R := R) (cutSummandsCN τ) T := rfl
-
-theorem comulAlgHomN_eq_G :
-    comulAlgHomN (R := R) (α := α) = comulAlgHomNG (R := R) cutSummandsN := rfl
-
-theorem comulCAlgHomN_eq_G {β : Type*} (τ : Nonplanar (α ⊕ β) → β) :
-    comulCAlgHomN (R := R) τ = comulAlgHomNG (R := R) (cutSummandsCN τ) := rfl
 
 /-! ### The policy-indexed carrier `WithCuts`
 
