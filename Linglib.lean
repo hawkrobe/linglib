@@ -70,6 +70,7 @@ import Linglib.Core.Combinatorics.RootedTree.Aut
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Combinatorics.RootedTree.CutAvoiding
+import Linglib.Core.Combinatorics.RootedTree.CutFilterMap
 import Linglib.Core.Combinatorics.RootedTree.DoubleCut
 import Linglib.Core.Computability.Bimachine
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
@@ -129,7 +130,7 @@ import Linglib.Core.Data.RoseTree.Get
 import Linglib.Core.Data.RoseTree.Leaves
 import Linglib.Core.Data.RoseTree.Nonplanar
 import Linglib.Core.Data.RoseTree.Perm
-import Linglib.Core.Data.RoseTree.StripTrace
+import Linglib.Core.Data.RoseTree.FilterMap
 import Linglib.Core.Data.RoseTree.Traversable
 import Linglib.Core.Data.Setoid.Basic
 import Linglib.Core.GroupTheory.Congruence.Hom
