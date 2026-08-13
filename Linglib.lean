@@ -42,7 +42,6 @@ import Linglib.Core.Algebra.RootedTree.GrossmanLarsonMonoid
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonSplit
 import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
-import Linglib.Core.Algebra.RootedTree.InsertionLieDuality
 import Linglib.Core.Algebra.RootedTree.PreLie.Basic
 import Linglib.Core.Algebra.RootedTree.PreLie.Graft
 import Linglib.Core.Algebra.RootedTree.PreLie.Insert
@@ -55,6 +54,7 @@ import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNonplanar
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridge
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
+import Linglib.Core.Algebra.RootedTree.Primitive
 import Linglib.Core.Algebra.RotaBaxter
 import Linglib.Core.Algebra.RotaBaxterLaurent
 import Linglib.Core.Algebra.Semigroup.IdempotentPower
