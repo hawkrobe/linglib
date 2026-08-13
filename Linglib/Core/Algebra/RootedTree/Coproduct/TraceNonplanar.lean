@@ -12,7 +12,6 @@ import Mathlib.RingTheory.Bialgebra.Basic
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
 -- Nested tensor squares `CK ⊗ (CK ⊗ CK)` need one extra pending step during
 -- instance synthesis: the chain `Semiring (CK ⊗ (CK ⊗ CK)) → Algebra R (CK ⊗ CK)
 -- → Semiring (CK ⊗ CK) → …` nests pending subgoals past the default limit
