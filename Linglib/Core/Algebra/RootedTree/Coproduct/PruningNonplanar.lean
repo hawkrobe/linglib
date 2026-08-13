@@ -467,6 +467,12 @@ noncomputable def cutSummandsN :
 @[simp] theorem cutSummandsN_mk (T : RoseTree α) :
     cutSummandsN (Nonplanar.mk T) = (cutSummandsP T).map projSummand := rfl
 
+/-- Number of Δ^ρ cut summands of `T` whose cut forest is `{T₁}` and whose
+    remainder tree is `T₂` — the Δ^ρ analog of the count `c^T_{T₁,T₂}` of
+    [marcolli-chomsky-berwick-2025]. -/
+noncomputable def countSingleCutsRho [DecidableEq α] (T T₁ T₂ : Nonplanar α) : ℕ :=
+  (cutSummandsN T).countP fun p => p.1 = ({T₁} : Forest (Nonplanar α)) ∧ p.2 = T₂
+
 /-- The **nonplanar tree-level Δ^ρ**: explicit `T ⊗ 1` term plus the
     sum of cut-summand tensors at the Nonplanar level. -/
 noncomputable def comulTreeN (T : Nonplanar α) :
