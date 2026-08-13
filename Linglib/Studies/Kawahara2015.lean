@@ -5,26 +5,15 @@ import Linglib.Fragments.Japanese.Prosody
 /-!
 # Kawahara (2015) [kawahara-2015]
 
-The phonology of Japanese accent. In Haruo Kubozono (ed.),
-*The handbook of Japanese phonetics and phonology*, 445–492.
-Berlin: De Gruyter Mouton.
-
-Survey of Tokyo Japanese pitch accent. Formalized here:
-
-1. **AAR vs LSR** (§2, Table 1): the antepenultimate accent rule
-   ([mccawley-1968]) and the Latin Stress Rule ([hayes-1995]) agree on six
-   of the eight trisyllabic weight conditions and diverge exactly on HLH
-   and LLH — `aar_lsr_mismatches`.
-2. **Accent-to-tone derivation** (§1.4, (7)–(9)): accentual HL, initial
-   rise, and tonal spreading determine surface tones from accent location —
-   `accentToTones`.
-3. **Culminativity** (§1.4): at most one HL fall per word, for every accent
-   location and word length — `accentToTones_culminative`.
-4. **Affix accent typology** (§6): the eight affix types and their
-   projection to the coarse dominant/recessive split.
-5. **Compound accent** (§4): the short-N2 and long-N2 rules; both satisfy
-   NonFinality ([prince-smolensky-1993]) — `shortN2_preaccent_nonfinal`,
-   `longN2_nonfinal`.
+Tokyo Japanese pitch accent, after the survey *The phonology of Japanese
+accent*. The antepenultimate accent rule ([mccawley-1968]) and the Latin
+Stress Rule ([hayes-1995]) agree on six of Table 1's eight trisyllabic
+weight conditions and diverge exactly on HLH and LLH; the accent-to-tone
+derivation (accentual HL, initial rise, spreading) determines surface tones
+and is culminative — at most one HL fall per word, for every accent
+location and length (`accentToTones_culminative`); the eight-way affix
+accent typology projects onto the coarse dominant/recessive split; and both
+compound-accent rules satisfy NonFinality ([prince-smolensky-1993]).
 -/
 
 namespace Kawahara2015
@@ -34,10 +23,8 @@ open Prosody Japanese.Prosody Constraints
 /-! ### Default accent: the AAR vs the Latin Stress Rule
 
 Language-neutral accent-placement rules over a syllable-weight profile,
-compared on loanword default accentuation ([kawahara-2015] §2). -/
+compared on loanword default accentuation (§2). -/
 
-/-- The 0-indexed syllable containing mora `targetMora` (0-indexed), or `none`
-    if it exceeds the total mora count. -/
 private def findSyllable (weights : List Syllable.Weight) (targetMora : ℕ) : Option ℕ :=
   go weights targetMora 0
 where
@@ -45,9 +32,9 @@ where
     | [], _, _ => none
     | w :: ws, target, idx => if target < w then some idx else go ws (target - w) (idx + 1)
 
-/-- The antepenultimate accent rule ([mccawley-1968]): accent the syllable
-    containing the antepenultimate mora; words with fewer than three morae
-    accent the initial syllable. Returns the 0-indexed syllable. -/
+/-- The antepenultimate accent rule, which accents the syllable containing
+    the antepenultimate mora and the initial syllable of shorter words
+    ([mccawley-1968]). Returns the 0-indexed syllable. -/
 def defaultAccentAAR (weights : List Syllable.Weight) : Option ℕ :=
   match weights with
   | [] => none
@@ -56,11 +43,11 @@ def defaultAccentAAR (weights : List Syllable.Weight) : Option ℕ :=
     let targetMora := if totalMorae ≥ 3 then totalMorae - 3 else 0
     findSyllable weights targetMora
 
-/-- The Latin Stress Rule ([hayes-1995]): accent the penult if heavy (≥ 2μ),
-    else the antepenult; monosyllables and disyllables accent the initial
-    syllable. [kawahara-2015] §2.3 reviews arguments that LSR-conforming
-    variants occur even where the two rules diverge, making the LSR arguably
-    the better characterization of the Japanese default. -/
+/-- The Latin Stress Rule, which accents a heavy (≥ 2μ) penult and the
+    antepenult otherwise, with mono- and disyllables accented initially
+    ([hayes-1995]). §2.3 reviews arguments that LSR-conforming variants
+    occur even where the two rules diverge, making the LSR arguably the
+    better characterization of the Japanese default. -/
 def latinStressRule (weights : List Syllable.Weight) : Option ℕ :=
   match weights with
   | [] => none
@@ -70,28 +57,28 @@ def latinStressRule (weights : List Syllable.Weight) : Option ℕ :=
       some (weights.length - 2)
     else some (weights.length - 3)
 
-/-- The eight trisyllabic weight conditions of [kawahara-2015] Table 1. -/
+/-- The eight trisyllabic weight conditions of Table 1. -/
 def trisyllabicConditions : List (List Syllable.Weight) :=
   [[.heavy, .heavy, .heavy], [.heavy, .heavy, .light],
    [.heavy, .light, .heavy], [.heavy, .light, .light],
    [.light, .heavy, .heavy], [.light, .heavy, .light],
    [.light, .light, .heavy], [.light, .light, .light]]
 
-/-- [kawahara-2015] Table 1: the AAR and the LSR agree on six of the eight
-    trisyllabic weight conditions and diverge exactly on HLH and LLH. -/
+/-- The AAR and the LSR agree on six of the eight trisyllabic weight
+    conditions and diverge exactly on HLH and LLH (Table 1). -/
 theorem aar_lsr_mismatches :
     trisyllabicConditions.filter (fun w => defaultAccentAAR w != latinStressRule w) =
       [[.heavy, .light, .heavy], [.light, .light, .heavy]] := by decide
 
-/-- On HLH the AAR accents σ₂ (the syllable containing the antepenultimate
-    mora), the LSR σ₁ (the antepenult, since the penult is light): `HL'H` vs
-    `H'LH` ([kawahara-2015] Table 1c). -/
+/-- On HLH the AAR accents σ₂, the syllable containing the antepenultimate
+    mora, while the LSR accents the antepenult σ₁ since the penult is light
+    (Table 1c: `HL'H` vs `H'LH`). -/
 theorem aar_lsr_mismatch_hlh :
     defaultAccentAAR [.heavy, .light, .heavy] = some 1 ∧
       latinStressRule [.heavy, .light, .heavy] = some 0 := by decide
 
-/-- On LLH the AAR accents σ₂, the LSR σ₁: `LL'H` vs `L'LH`
-    ([kawahara-2015] Table 1g). -/
+/-- On LLH the AAR accents σ₂ and the LSR σ₁ (Table 1g: `LL'H` vs
+    `L'LH`). -/
 theorem aar_lsr_mismatch_llh :
     defaultAccentAAR [.light, .light, .heavy] = some 1 ∧
       latinStressRule [.light, .light, .heavy] = some 0 := by decide
@@ -99,81 +86,79 @@ theorem aar_lsr_mismatch_llh :
 /-! ### Loanword accent (§2)
 
 Loanwords lack lexical accent specifications, so their accentuation reveals
-the default pattern ([kawahara-2015] §2.1; [kubozono-2006]). -/
+the default pattern (§2.1; [kubozono-2006]). -/
 
-/-- A loanword entry with its syllable-weight profile, for testing the
-    default accent rules against the attested accent. -/
+/-- A loanword entry paired with its syllable-weight profile. -/
 structure LoanwordEntry where
   entry : ProsodicEntry
   /-- Syllable weight profile (left to right) -/
   weights : List Syllable.Weight
   deriving Repr
 
-/-- *ku-ri-su'-ma-su* 'Christmas' — antepenultimate-mora accent
-    ([kawahara-2015] (10a)). -/
+/-- *ku-ri-su'-ma-su* 'Christmas', accented on the antepenultimate mora
+    ((10a)). -/
 def kurisumasu : LoanwordEntry :=
   { entry := { form := "kurisumasu", gloss := "Christmas"
                accentMora := some 2, nMorae := 5 }
     weights := [.light, .light, .light, .light, .light] }
 
-/-- *a-su-fa'-ru-to* 'asphalt' — antepenultimate-mora accent
-    ([kawahara-2015] (10g)). -/
+/-- *a-su-fa'-ru-to* 'asphalt', accented on the antepenultimate mora
+    ((10g)). -/
 def asufaruto : LoanwordEntry :=
   { entry := { form := "asufaruto", gloss := "asphalt"
                accentMora := some 2, nMorae := 5 }
     weights := [.light, .light, .light, .light, .light] }
 
-/-- *ma-ku-do-na'-ru-do* 'McDonald' — antepenultimate-mora accent
-    ([kawahara-2015] (10h)). -/
+/-- *ma-ku-do-na'-ru-do* 'McDonald', accented on the antepenultimate mora
+    ((10h)). -/
 def makudonarudo : LoanwordEntry :=
   { entry := { form := "makudonarudo", gloss := "McDonald's"
                accentMora := some 3, nMorae := 6 }
     weights := [.light, .light, .light, .light, .light, .light] }
 
-/-- *a.me.ri.ka* 'America' — unaccented: four morae with two final light
-    non-epenthetic syllables ([kawahara-2015] (16a)). -/
+/-- *a.me.ri.ka* 'America', unaccented as a four-mora word with two final
+    light non-epenthetic syllables ((16a)). -/
 def amerika : LoanwordEntry :=
   { entry := { form := "amerika", gloss := "America"
                accentMora := none, nMorae := 4 }
     weights := [.light, .light, .light, .light] }
 
-/-- The accented loanwords of [kawahara-2015] (10) carry the accent the AAR
-    assigns. -/
+/-- The accented loanwords of (10) carry the accent the AAR assigns. -/
 theorem loanwords_match_aar :
     defaultAccentAAR kurisumasu.weights = kurisumasu.entry.accentMora ∧
       defaultAccentAAR asufaruto.weights = asufaruto.entry.accentMora ∧
       defaultAccentAAR makudonarudo.weights = makudonarudo.entry.accentMora := by decide
 
-/-- On all-light profiles the LSR agrees with the AAR, so the (10) loanwords
-    match it as well ([kawahara-2015] §2.3). -/
+/-- On all-light profiles the LSR agrees with the AAR, so the (10)
+    loanwords match it as well (§2.3). -/
 theorem loanwords_match_lsr :
     latinStressRule kurisumasu.weights = kurisumasu.entry.accentMora ∧
       latinStressRule asufaruto.weights = asufaruto.entry.accentMora ∧
       latinStressRule makudonarudo.weights = makudonarudo.entry.accentMora := by decide
 
-/-- *amerika*'s unaccentedness is beyond both default rules — neither
-    produces unaccented outputs ([kawahara-2015] §2.3 n. 10); four-mora
-    light-final unaccentedness is §2.4's separate generalization. -/
+/-- Neither default rule derives *amerika*'s unaccentedness, as neither
+    produces unaccented outputs (§2.3 n. 10). Four-mora light-final
+    unaccentedness is §2.4's separate generalization. -/
 theorem amerika_beyond_default_rules :
     defaultAccentAAR amerika.weights ≠ amerika.entry.accentMora ∧
       latinStressRule amerika.weights ≠ amerika.entry.accentMora := by decide
 
 /-! ### From accent to surface tones (§1.4)
 
-The derivation of [kawahara-2015] (7)–(9): tones are specified by the
-accentual HL and the initial rise, then spread rightward. -/
+Tones are specified by the accentual HL and the initial rise, then spread
+rightward ((7)–(9)). -/
 
-/-- A level tone: Japanese uses only H and L at the lexical level
-    ([kawahara-2015] §1.3). -/
+/-- A level tone. Japanese distinguishes only H and L at the lexical level
+    (§1.3). -/
 inductive LevelTone where
   | H
   | L
   deriving DecidableEq, Repr
 
 /-- The tonal specification of mora `i` (0-indexed) before spreading
-    ([kawahara-2015] (4)–(5)): the accented mora is H and its successor L
-    (accentual HL); mora 0 is L and mora 1 H (initial rise), except where
-    the accentual tones win. Other moras are unspecified. -/
+    ((4)–(5)). The accented mora is H and its successor L (accentual HL),
+    while mora 0 is L and mora 1 H (initial rise) unless the accentual
+    tones win, and other moras are unspecified. -/
 def toneSpec (accentMora : Option ℕ) (i : ℕ) : Option LevelTone :=
   if accentMora = some i then some .H
   else if 1 ≤ i ∧ accentMora = some (i - 1) then some .L
@@ -181,35 +166,32 @@ def toneSpec (accentMora : Option ℕ) (i : ℕ) : Option LevelTone :=
   else if i = 1 then some .H
   else none
 
-/-- Surface tones from accent position ([kawahara-2015] (7)–(9)): specify
-    tones by accent and initial rise (`toneSpec`), then spread — each
-    unspecified mora copies the nearest specified tone to its left. -/
+/-- The surface tones of an `nMorae`-word from its accent position, by
+    specification (`toneSpec`) followed by spreading ((7)–(9)). -/
 def accentToTones (accentMora : Option ℕ) (nMorae : ℕ) : List LevelTone :=
   spread ((List.range nMorae).map (toneSpec accentMora)) .H
 where
-  /-- Fill unspecified positions from the most recent specified tone. The
-      seed is never consulted on well-formed input: mora 0 is always
-      specified. -/
+  /-- Rightward spreading into unspecified positions. The seed is never
+      consulted on well-formed input, since mora 0 is always specified. -/
   spread : List (Option LevelTone) → LevelTone → List LevelTone
     | [], _ => []
     | some t :: rest, _ => t :: spread rest t
     | none :: rest, last => last :: spread rest last
 
-/-- Unaccented *ame(+ga)* 'candy' surfaces LHH: initial rise, then spreading
-    ([kawahara-2015] (6b)). -/
+/-- Unaccented *ame(+ga)* 'candy' surfaces LHH by initial rise and
+    spreading ((6b)). -/
 theorem ameCandy_ga_tones : accentToTones ameCandy.accentMora 3 = [.L, .H, .H] := by
   decide
 
-/-- Initially-accented *a'me(+ga)* 'rain' surfaces HLL: the accentual HL
-    blocks the initial rise ([kawahara-2015] (5b), (8)). -/
+/-- Initially-accented *a'me(+ga)* 'rain' surfaces HLL, since the accentual
+    HL blocks the initial rise ((5b), (8)). -/
 theorem ameRain_ga_tones : accentToTones ameRain.accentMora 3 = [.H, .L, .L] := by
   decide
 
-/-- The n+1 accent patterns of a trisyllable ([kawahara-2015] (3)): the
-    unaccented, initial, and medial patterns are pairwise distinct, while
-    final accent and unaccentedness neutralize word-internally — the
-    post-accent L falls off the word edge, which is why examples carry the
-    nominative particle *+ga* ([kawahara-2015] §1.4). -/
+/-- Of the n+1 accent patterns of a trisyllable ((3)), the unaccented,
+    initial, and medial ones are pairwise distinct, while final accent
+    neutralizes with unaccentedness word-internally because the post-accent
+    L falls off the word edge (§1.4). -/
 theorem trisyllabic_tone_patterns :
     accentToTones none 3 ≠ accentToTones (some 0) 3 ∧
       accentToTones none 3 ≠ accentToTones (some 1) 3 ∧
@@ -218,11 +200,9 @@ theorem trisyllabic_tone_patterns :
 
 /-! ### Culminativity
 
-[kawahara-2015] §1.4: "Japanese allows only one HL pitch fall within a
-word." `accentToTones_culminative` derives this for every accent location
-and word length from the derivation's shape: the single lexical accent is
-the only source of a specified post-initial L, spreading only copies tones,
-and a fall needs a following L. -/
+"Japanese allows only one HL pitch fall within a word" (§1.4) —
+`accentToTones_culminative` derives this for every accent location and word
+length. -/
 
 /-- The number of H-to-L falls in a tone string. -/
 def hlFallCount : List LevelTone → ℕ
@@ -230,7 +210,6 @@ def hlFallCount : List LevelTone → ℕ
   | _ :: rest => hlFallCount rest
   | [] => 0
 
-/-- Dropping the head can only lose L's. -/
 theorem count_L_tail_le : ∀ l : List LevelTone, l.tail.count .L ≤ l.count .L
   | [] => Nat.le_refl _
   | .H :: _ => by rw [List.tail_cons, List.count_cons_of_ne (by decide)]
@@ -260,16 +239,13 @@ theorem hlFallCount_le_count_tail :
       rw [e, List.tail_cons]
       exact ih.trans (count_L_tail_le _)
 
-/-- Unfolding: a two-element prefix contributes a fall exactly when it is
-    H-then-L. -/
 theorem hlFallCount_cons_cons (t u : LevelTone) (l : List LevelTone) :
     hlFallCount (t :: u :: l) =
       hlFallCount (u :: l) + if t = .H ∧ u = .L then 1 else 0 := by
   cases t <;> cases u <;> simp [hlFallCount]
 
-/-- Spreading is fall-invariant: copying a tone never creates or destroys an
-    HL fall, so the spread output has exactly the falls of the specified
-    subsequence. -/
+/-- Spreading is fall-invariant, since copying a tone neither creates nor
+    destroys an HL fall. -/
 theorem hlFallCount_spread (spec : List (Option LevelTone)) (t : LevelTone) :
     hlFallCount (t :: accentToTones.spread spec t) =
       hlFallCount (t :: spec.filterMap id) := by
@@ -290,8 +266,8 @@ theorem hlFallCount_spread (spec : List (Option LevelTone)) (t : LevelTone) :
       have hδ : (if t = .H ∧ t = .L then 1 else 0) = 0 := by cases t <;> simp
       rw [hδ, Nat.add_zero]
 
-/-- Mora 0 is always specified: H under initial accent, else the
-    initial-rise L. -/
+/-- Mora 0 is always specified, as H under initial accent and otherwise as
+    the initial-rise L. -/
 theorem toneSpec_zero (a : Option ℕ) :
     toneSpec a 0 = some (if a = some 0 then .H else .L) := by
   by_cases h : a = some 0 <;> simp [toneSpec, h]
@@ -304,8 +280,8 @@ theorem toneSpec_eq_L {a : Option ℕ} {j : ℕ} (hj : 1 ≤ j) :
   split_ifs with h1 h2 <;> simp_all
   omega
 
-/-- The specified tones after mora 0 contain at most one L: the post-accent
-    L pins the accent location, and positions are distinct. -/
+/-- The specified tones after mora 0 contain at most one L, since the
+    post-accent L pins the accent location and positions are distinct. -/
 theorem count_L_toneSpec_dense (a : Option ℕ) :
     ∀ l : List ℕ, l.Nodup → (∀ j ∈ l, 1 ≤ j) →
       (l.filterMap (toneSpec a)).count .L ≤ 1 := by
@@ -334,8 +310,8 @@ theorem count_L_toneSpec_dense (a : Option ℕ) :
         exact (List.nodup_cons.mp hnd).1 (hkj ▸ hk)
       simp [hrest]
 
-/-- **Culminativity** ([kawahara-2015] §1.4): at most one HL fall per word,
-    for every accent location and word length. -/
+/-- A word carries at most one HL fall, whatever its accent location and
+    length (culminativity, §1.4). -/
 theorem accentToTones_culminative (a : Option ℕ) (n : ℕ) :
     hlFallCount (accentToTones a n) ≤ 1 := by
   obtain _ | m := n
@@ -357,13 +333,13 @@ theorem accentToTones_culminative (a : Option ℕ) (n : ℕ) :
 
 /-! ### Affix accent typology (§6)
 
-The eight affix accent types, one canonical affix each (fragment entries),
-and their projection to the coarse dominant/recessive split. -/
+The eight affix accent types and their projection to the coarse
+dominant/recessive split. -/
 
-/-- The eight affix types of [kawahara-2015] §6 project onto the coarse
-    dominant/recessive distinction: three preserve root accent when present
-    (recessive, recessive pre-accenting, accent-shifting), five override
-    it. -/
+/-- The eight affix types project onto the coarse dominant/recessive
+    distinction, with three preserving root accent when present (recessive,
+    recessive pre-accenting, accent-shifting) and five overriding it
+    (§6). -/
 theorem affix_typology_coarse_partition :
     taraSuffix.accentType.toProsodicDominance = .recessive ∧
       siSuffix.accentType.toProsodicDominance = .recessive ∧
@@ -383,10 +359,9 @@ accent unless their own accent is nonfinal. Both rules are stated over mora
 counts; the paper's rules target syllables, and the two coincide on the
 light-syllable data of (22)–(24) formalized below. -/
 
-/-- Short-N2 compound accent ([kawahara-2015] §4.1): a pre-accenting short
-    N2 puts the compound accent on the final position of N1 (its own accent,
-    if any, is lost to NonFinality); otherwise N2 retains its accent,
-    shifted by N1's length. -/
+/-- The compound accent under a short (≤ 2μ) N2, which either pre-accents
+    the N1-final position, its own accent lost to NonFinality, or retains
+    its accent shifted by N1's length (§4.1). -/
 def shortN2CompoundAccent (n1Morae : ℕ) (n2Accent : Option ℕ)
     (preAccenting : Bool) : Option ℕ :=
   if preAccenting then
@@ -394,9 +369,9 @@ def shortN2CompoundAccent (n1Morae : ℕ) (n2Accent : Option ℕ)
   else
     n2Accent.map (· + n1Morae)
 
-/-- Long-N2 compound accent ([kawahara-2015] §4.2): an unaccented or
-    finally-accented N2 receives N2-initial accent; otherwise N2's own
-    accent is retained. -/
+/-- The compound accent under a long (≥ 3μ) N2, which receives N2-initial
+    accent when unaccented or finally-accented and otherwise retains its
+    own accent (§4.2). -/
 def longN2CompoundAccent (n1Morae : ℕ) (n2Accent : Option ℕ)
     (n2Morae : ℕ) : Option ℕ :=
   match n2Accent with
@@ -405,25 +380,24 @@ def longN2CompoundAccent (n1Morae : ℕ) (n2Accent : Option ℕ)
     if pos + 1 = n2Morae then some n1Morae
     else some (pos + n1Morae)
 
-/-- NonFinality over an (accent, mora count) pair: one violation iff the
-    accent sits on the final mora ([prince-smolensky-1993]; [kawahara-2015]
-    §4.1 invokes it for the loss of final accent in compounds). Mora-level
-    rendering of NonFinality(σ) — the two coincide on light-final words. -/
+/-- The NonFinality constraint over an (accent, mora count) pair, violated
+    once when the accent sits on the final mora ([prince-smolensky-1993];
+    §4.1 invokes it for the loss of final accent in compounds). -/
 def nonFinality : Constraint (Option ℕ × ℕ) :=
   Constraint.binary fun an => an.1 = some (an.2 - 1) ∧ 1 ≤ an.2
 
-/-- *ka'buto+musi → kabuto'+musi* 'beetle': the pre-accenting short N2 puts
-    accent on N1-final *to* ([kawahara-2015] (22a)). -/
+/-- In *ka'buto+musi → kabuto'+musi* 'beetle', the pre-accenting short N2
+    puts the accent on N1-final *to* ((22a)). -/
 theorem kabuto_musi_compound :
     shortN2CompoundAccent 3 (some 0) true = some 2 := by decide
 
-/-- *si'n+yokohama → sin+yo'kohama* 'Shin-Yokohama': unaccented long N2
-    receives N2-initial accent ([kawahara-2015] (23a)). -/
+/-- In *si'n+yokohama → sin+yo'kohama* 'Shin-Yokohama', the unaccented long
+    N2 receives N2-initial accent ((23a)). -/
 theorem sin_yokohama_compound :
     longN2CompoundAccent 2 none 4 = some 2 := by decide
 
-/-- *si'n+tamane'gi → sin+tamane'gi* 'new onion': a long N2 with nonfinal
-    accent retains it ([kawahara-2015] (24a)). -/
+/-- In *si'n+tamane'gi → sin+tamane'gi* 'new onion', the long N2 retains
+    its nonfinal accent ((24a)). -/
 theorem sin_tamanegi_compound :
     longN2CompoundAccent 2 (some 2) 4 = some 4 := by decide
 
@@ -439,9 +413,8 @@ theorem nonFinality_eq_zero {acc : Option ℕ} {n : ℕ} (h : ∀ p ∈ acc, p +
     simp only [Option.some.injEq] at h1
     omega
 
-/-- Short-N2 pre-accenting never yields final accent: the new accent lands
-    on N1-final position and N2 intervenes, satisfying NonFinality
-    ([kawahara-2015] §4.1). -/
+/-- Short-N2 pre-accenting never yields final accent, since the new accent
+    lands on the N1-final position and N2 intervenes (§4.1). -/
 theorem shortN2_preaccent_nonfinal (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ)
     (h : 1 ≤ n2Morae) :
     nonFinality (shortN2CompoundAccent n1Morae n2Accent true, n1Morae + n2Morae) = 0 := by
@@ -452,9 +425,9 @@ theorem shortN2_preaccent_nonfinal (n1Morae n2Morae : ℕ) (n2Accent : Option �
     omega
   · exact absurd hp' (by simp)
 
-/-- Long-N2 compound accent never yields final accent: unaccented and
-    finally-accented N2s get N2-initial accent (nonfinal since N2 ≥ 3μ), and
-    retained accents are nonfinal in N2 ([kawahara-2015] §4.2). -/
+/-- Long-N2 compound accent never yields final accent, since unaccented and
+    finally-accented N2s take N2-initial accent and retained accents are
+    nonfinal within N2 (§4.2). -/
 theorem longN2_nonfinal (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ)
     (h2 : 3 ≤ n2Morae) (hacc : ∀ p ∈ n2Accent, p < n2Morae) :
     nonFinality (longN2CompoundAccent n1Morae n2Accent n2Morae, n1Morae + n2Morae) = 0 := by
@@ -473,8 +446,8 @@ Japanese moraic structure: coda nasals, geminate first halves, long vowels,
 and diphthongs are moraic, so closed syllables are heavy — the weight
 sensitivity the LSR analysis rests on. -/
 
-/-- With Weight-by-Position active, any CVC syllable is heavy (e.g. /tan/ =
-    2μ), for arbitrary segments ([kawahara-2015] §2.3). -/
+/-- With Weight-by-Position active, a CVC syllable is heavy regardless of
+    its segments, e.g. /tan/ = 2μ (§2.3). -/
 theorem japanese_wbp_active (o n c : Phonology.Segment) :
     (Syllable.ofCV [o] [n] [c] true).weight = .heavy := rfl
 
