@@ -24,23 +24,13 @@ open Prosody Japanese.Prosody Constraints
 Language-neutral accent-placement rules over a syllable-weight profile,
 compared on loanword default accentuation (§2). -/
 
-private def findSyllable (weights : List Syllable.Weight) (targetMora : ℕ) : Option ℕ :=
-  go weights targetMora 0
-where
-  go : List Syllable.Weight → ℕ → ℕ → Option ℕ
-    | [], _, _ => none
-    | w :: ws, target, idx => if target < w then some idx else go ws (target - w) (idx + 1)
-
 /-- The antepenultimate accent rule, which accents the syllable containing
     the antepenultimate mora and the initial syllable of shorter words
     ([mccawley-1968]). Returns the 0-indexed syllable. -/
 def defaultAccentAAR (weights : List Syllable.Weight) : Option ℕ :=
   match weights with
   | [] => none
-  | _ =>
-    let totalMorae := weights.foldl (· + ·) 0
-    let targetMora := if totalMorae ≥ 3 then totalMorae - 3 else 0
-    findSyllable weights targetMora
+  | _ => some ((weights.scanl (· + ·) 0).tail.findIdx (weights.sum - 3 < ·))
 
 /-- The Latin Stress Rule, which accents a heavy (≥ 2μ) penult and the
     antepenult otherwise, with mono- and disyllables accented initially
