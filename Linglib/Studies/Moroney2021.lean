@@ -11,7 +11,7 @@ import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.German.Determiners
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Thai.Determiners
-import Linglib.Fragments.Shan.Definiteness
+import Linglib.Fragments.Shan.Nouns
 import Linglib.Fragments.Shan.Determiners
 import Linglib.Studies.Jenks2018
 
@@ -251,20 +251,6 @@ theorem high_existential_universally_blocked :
 
 open Semantics.Kinds
 
-/-- Shan has no overt determiners: all type-shifts are unblocked.
-
-Contrast with English (`MeaningPreservation.englishBlocking`): the presence of
-*the* blocks covert ι, and *a*/*some* block covert ∃. In Shan, the
-absence of articles means the blocking principle imposes no constraints
-on covert type-shifting. Crucially, both ι AND ι^x are unblocked —
-this is what allows Shan bare nouns to express both unique and anaphoric
-definiteness ([moroney-2021] §4.3).
-
-Derived from `Shan.Definiteness.blocking` — the single source
-of truth for Shan's article inventory. -/
-def shanBlocking : NMP.BlockingPrinciple :=
-  Shan.Definiteness.blocking
-
 /-- When a Shan bare noun is used in a context requiring unique definiteness,
 the preferred type-shift is ι (definite), by Meaning Preservation
 ({∩, ι, ι^x} > ∃). Number-neutral nouns allow both ι and ∩, but ∩
@@ -400,9 +386,9 @@ theorem marking_ne_availability :
     -- Zero morphologically distinguished types
     (articleTypeToDistinguishedPresup .none_).length = 0 ∧
     -- But all type-shifts are semantically available (ι, ι^x, and ∩)
-    shanBlocking.iotaBlocked = false ∧
-    shanBlocking.downBlocked = false ∧
-    shanBlocking.existsBlocked = false := ⟨rfl, rfl, rfl, rfl⟩
+    Shan.Nouns.blocking.iotaBlocked = false ∧
+    Shan.Nouns.blocking.downBlocked = false ∧
+    Shan.Nouns.blocking.existsBlocked = false := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- §6: Moroney's Revised Typology — Uniqueness Status
@@ -594,44 +580,45 @@ theorem blocking_strategy_correspondence :
     (Shan.Determiners.inventory.markingStrategy = .unmarked ∧
      ¬ Shan.Determiners.inventory.MarksPresup .uniqueness ∧
      ¬ Shan.Determiners.inventory.MarksPresup .familiarity ∧
-     shanBlocking.iotaBlocked = false ∧
-     shanBlocking.existsBlocked = false ∧
-     shanBlocking.downBlocked = false) := by decide
+     Shan.Nouns.blocking.iotaBlocked = false ∧
+     Shan.Nouns.blocking.existsBlocked = false ∧
+     Shan.Nouns.blocking.downBlocked = false) := by decide
 
 -- ============================================================================
--- §12: Demonstrative–Bare Noun Contrast (§2.1.3)
+-- §12: Demonstrative–Bare Noun Contrast (§2.4.3)
 -- ============================================================================
 
-/-- Shan demonstratives refine the bare definite by adding a spatial
-    filter to the referent selector:
+/-- The demonstrative denotation of [moroney-2021] (147)–(148), a referent
+    selector with the demonstrative's spatial content added to the
+    restrictor: `⟦DEM⟧(P) = ιx[P(x) ∧ SPATIAL(x)]`, where `russellIotaList`
+    carries the uniqueness presupposition. -/
+def demDenotation {E : Type} (domain : List E) (d : DemonstrativeDeterminer)
+    (restrictor : E → Bool) (spatialPred : Feature → E → Bool) : Option E :=
+  russellIotaList domain (fun e => restrictor e && spatialPred d.deictic e)
 
-    - Bare noun: `russellIotaList domain restrictor` — any unique satisfier
-    - *nâj*: `russellIotaList domain (restrictor && spatialPred .proximal)`
-    - *nân*: `russellIotaList domain (restrictor && spatialPred .distal)`
+/-- The bare definite description is the unfiltered referent selector, the
+    uniqueness-based reading available to Shan bare nouns. -/
+def bareDefinite {E : Type} (domain : List E) (restrictor : E → Bool) :
+    Option E :=
+  russellIotaList domain restrictor
 
-    The demonstrative is always optional in Shan because the bare noun
-    already provides a definite reading via unblocked ι. The demonstrative
-    adds information (spatial restriction) but never replaces an unavailable
-    reading (unlike Thai/Mandarin where demonstratives are required for
-    anaphoric definiteness).
-
-    When the bare definite already selects a referent that satisfies the
-    demonstrative's spatial predicate, the demonstrative agrees with the
-    bare form (handled by `Shan.Definiteness.dem_refines_bare`). -/
-theorem demonstrative_adds_spatial_info {E : Type}
-    (domain : List E) (restrictor : E → Bool)
-    (spatialPred : Feature → E → Bool) :
-    Shan.Definiteness.demDenotation domain
-      Shan.Definiteness.naj restrictor spatialPred =
-      Semantics.Definiteness.russellIotaList domain
-        (fun e => restrictor e && spatialPred .proximal e) ∧
-    Shan.Definiteness.demDenotation domain
-      Shan.Definiteness.nan restrictor spatialPred =
-      Semantics.Definiteness.russellIotaList domain
-        (fun e => restrictor e && spatialPred .distal e) ∧
-    Shan.Definiteness.bareDefinite domain restrictor =
-      Semantics.Definiteness.russellIotaList domain restrictor :=
-  ⟨rfl, rfl, rfl⟩
+/-- When the bare description selects a referent that satisfies the
+    demonstrative's spatial predicate, the demonstrative selects the same
+    referent, so *nâj*/*nân* are optional in such contexts — the bare noun
+    already provides the definite reading via unblocked ι. -/
+theorem dem_refines_bare {E : Type} (domain : List E)
+    (restrictor : E → Bool) (spatialPred : Feature → E → Bool)
+    (d : DemonstrativeDeterminer) (e : E)
+    (hBare : bareDefinite domain restrictor = some e)
+    (hSpatial : spatialPred d.deictic e = true) :
+    demDenotation domain d restrictor spatialPred = some e := by
+  rw [bareDefinite, Semantics.Definiteness.russellIotaList_eq_some_iff] at hBare
+  rw [demDenotation, Semantics.Definiteness.russellIotaList_eq_some_iff]
+  have : domain.filter (fun e' => restrictor e' && spatialPred d.deictic e') =
+         (domain.filter restrictor).filter (fun e' => spatialPred d.deictic e') := by
+    rw [List.filter_filter]
+    congr 1; funext e'; exact Bool.and_comm _ _
+  rw [this, hBare]; simp [hSpatial]
 
 -- ============================================================================
 -- §13: Bridge to Classifier Semantics (Ch. 3)
