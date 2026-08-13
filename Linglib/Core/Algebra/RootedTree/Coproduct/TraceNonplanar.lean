@@ -3,7 +3,6 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 import Linglib.Core.Algebra.BigOperators.Multiset
 import Linglib.Core.Combinatorics.RootedTree.DoubleCut
 import Linglib.Core.Combinatorics.RootedTree.Cut
@@ -24,8 +23,8 @@ set_option maxSynthPendingDepth 2
 [foissy-typed-decorated-rooted-trees-2018]
 
 The decorated coproduct Δ^c (contraction-extraction with trace
-placeholders), descended from the tree-level `comulCAlgHomP` in
-`Coproduct/Trace.lean` to `Nonplanar` trees, with its coassociativity,
+placeholders), built on the descended cut enumeration `cutSummandsCN`
+(`Core/Combinatorics/RootedTree/Cut.lean`), with its coassociativity,
 counit laws, and `Bialgebra` packaging. Together with the edge grading
 in `Coproduct/TraceGrading.lean` this closes
 [marcolli-chomsky-berwick-2025] Lemma 1.2.10, the graded bialgebra

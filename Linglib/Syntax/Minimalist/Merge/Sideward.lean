@@ -159,7 +159,7 @@ theorem mergeOp_sideward_2b_general_pair {R : Type*} [CommSemiring R]
               from rfl, comulForestN_cons,
             show ({T_j} : Forest (Nonplanar α)) = T_j ::ₘ (0 : Forest (Nonplanar α))
               from rfl, comulForestN_cons, comulForestN_zero, mul_one]]
-  unfold comulTreeN
+  unfold comulTreeN comulTreeNG
   rw [add_mul, mul_add, mul_add]
   simp only [map_add]
   -- Term 1 (prim T_i × prim T_j): vanishes (T_j ≠ β).
@@ -321,7 +321,7 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
               from rfl, comulForestN_cons,
             show ({T_j} : Forest (Nonplanar α)) = T_j ::ₘ (0 : Forest (Nonplanar α))
               from rfl, comulForestN_cons, comulForestN_zero, mul_one]]
-  unfold comulTreeN
+  unfold comulTreeN comulTreeNG
   rw [add_mul, mul_add, mul_add]
   simp only [map_add]
   -- Term 1 (prim × prim): vanishes (T_i ∉ {α_t, β}).
@@ -549,7 +549,7 @@ theorem mergeOp_sideward_3a_general_pair {R : Type*} [CommSemiring R]
   rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply,
       show comulAlgHomN (R := R) (α := α) (of' ({T_i} : Forest (Nonplanar α)))
           = comulTreeN (R := R) T_i from comulAlgHomN_apply_ofTree T_i]
-  unfold comulTreeN
+  unfold comulTreeN comulTreeNG
   rw [map_add]
   -- Prim term vanishes (T_i ∉ {α_t, β}).
   rw [show mergePost (R := R) (α := α) lbl α_t β

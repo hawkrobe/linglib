@@ -137,7 +137,7 @@ theorem birkhoffFactorization_ofTree (hφ : φ 1 = 1) (T : Nonplanar α) :
     LinearMap.mul' R ℛ
         ((TensorProduct.map (birkhoffMinus φ RB).toLinearMap φ) (comulAlgHomN (ofTree T)))
       = birkhoffPlusTree φ RB T := by
-  rw [comulAlgHomN_apply_ofTree, comulTreeN]
+  rw [comulAlgHomN_apply_ofTree, comulTreeN, comulTreeNG]
   simp only [map_add, map_multiset_sum, Multiset.map_map, Function.comp_def,
     TensorProduct.map_tmul, LinearMap.mul'_apply, AlgHom.toLinearMap_apply,
     birkhoffMinus_apply_ofTree, birkhoffMinus_apply_of', hφ, mul_one]

@@ -28,10 +28,8 @@ import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.Coproduct.Deletion
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pairing
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
-import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
-import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceGrading
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
 import Linglib.Core.Algebra.RootedTree.DysonSchwinger
