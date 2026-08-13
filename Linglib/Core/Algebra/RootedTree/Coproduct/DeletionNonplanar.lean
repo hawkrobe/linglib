@@ -23,7 +23,7 @@ trace-placeholder leaves from the right channel — MCB Lemma 1.3.10
 
   Δ^d = (id ⊗ Π_{d,c}) ∘ Δ^c = (id ⊗ Π_{d,p}) ∘ Δ^ρ
 
-where Π_{c,p} deletes trace-placeholder leaves and Π_{d,p} is the
+where Π_{d,c} deletes trace-placeholder leaves and Π_{d,p} is the
 binary-rebinarize step.
 
 ## In our n-ary substrate
@@ -33,22 +33,28 @@ step) contracts degree-1 vertices to recover binary structure. In our
 `Nonplanar α` substrate trees can be arbitrary n-ary, so **Π_{d,p} is
 the identity**: no degree-1 smoothing needed, no rebinarization step.
 
-Δ^d in our setting therefore reduces to just the trace-strip projection
-from Δ^c:
+Δ^d in our setting therefore reduces to the trace-strip projection from
+Δ^c, applied to **both** tensor channels so that the target carrier is
+uniformly `Nonplanar α`:
 
   Δ^d := (Π_{d,c} ⊗ Π_{d,c}) ∘ Δ^c
 
-This file constructs Π_{d,c} as an algebra hom `stripTraceAlgHom :
+(On the inputs where Δ^d is compared with Δ^ρ — embedded trace-free
+trees — the crown channel carries no markers and its strip is the
+identity, recovering MCB's one-channel form.)
+
+The strip and the `Sum.inl` embedding are tree-level operations
+(`Core/Data/RoseTree/StripTrace.lean`); this file packages them as
+algebra homs — `stripTraceAlgHom :
 ConnesKreimer R (Nonplanar (α ⊕ β)) →ₐ[R] ConnesKreimer R (Nonplanar α)`
+(Π_{d,c}) and `embedInlAlgHom` — via `ConnesKreimer.mapDomainAlgHom`,
 and defines `comulDN` as the composition above.
 
 ## Relationship to Δ^ρ
 
-The Sum.inl embedding `embedInlAlgHom : ConnesKreimer R (Nonplanar α) →ₐ
-ConnesKreimer R (Nonplanar (α ⊕ β))` (induced by `Sum.inl : α → α ⊕ β`)
-lets us compare:
+The Sum.inl embedding lets us compare the two:
 
-  `comulDN ∘ embedInlAlgHom = comulAlgHomN`  (the equivalence theorem)
+  `comulDN ∘ embedInlAlgHom = comulAlgHomN`  (`comulDN_embedInl_eq_comulAlgHomN`)
 
 i.e., starting from a trace-free tree, applying Δ^c then stripping
 gives the same result as Δ^ρ directly. This is the n-ary specialization
@@ -58,21 +64,15 @@ of MCB's `Δ^d = (id ⊗ Π_{d,p}) ∘ Δ^ρ` (since Π_{d,p} is identity here).
 
 Δ^d does **not** have a separate Bialgebra structure in this file. By
 the equivalence theorem, consumers wanting a Bialgebra should compose
-through `embedInlAlgHom` and use the Δ^ρ structure
-(`PruningDuality.instBialgebraRho`). MCB's Lemma 1.2.12 (Δ^d weak
+through `embedInlAlgHom` and use the Δ^ρ structure (`instBialgebraRho`,
+`Coproduct/PruningDuality.lean`). MCB's Lemma 1.2.12 (Δ^d weak
 coassoc with distance-≤-1 multiplicity discrepancy) is specific to the
 binary `Π_{d,p}` step which is identity in our setting; in our n-ary
 substrate Δ^d ≡ Δ^ρ (modulo the embedding) has strict coassoc.
 
 ## Status
 
-`[UPSTREAM]` candidate. `comulDN_embedInl_eq_comulAlgHomN` is proven via tree-level mutual
-structural induction on tree / children-list, factoring the wrapper
-`bPlusLin a` out of the per-summand tensors so the head and tail
-induction hypotheses apply cleanly. The left-channel half uses
-`stripTraceAlgHom_comp_embedInlAlgHom` (strip inverts the Sum.inl
-embedding); the right-channel trace-removal uses
-`strip_cutSummandsCP_sum_eq` + `strip_cutListSummandsG_unwrap_sum_eq`.
+`[UPSTREAM]` candidate.
 -/
 
 
