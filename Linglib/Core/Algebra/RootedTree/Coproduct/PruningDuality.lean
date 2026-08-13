@@ -697,5 +697,16 @@ noncomputable instance instBialgebraRho
     counit_rTensor_comulAlgHomN
     counit_lTensor_comulAlgHomN
 
+variable {R' : Type*} [CommRing R'] [CharZero R'] [NoZeroDivisors R'] {α' : Type*}
+  [DecidableEq α']
+
+/-- The coproduct of `instBialgebraRho` is `comulAlgHomN`. -/
+theorem coalgebra_comul_apply (x : ConnesKreimer R' (Nonplanar α')) :
+    Coalgebra.comul (R := R') x = comulAlgHomN x := rfl
+
+/-- The counit of `instBialgebraRho` is `ConnesKreimer.counit`. -/
+theorem coalgebraCounit_apply (x : ConnesKreimer R' (Nonplanar α')) :
+    CoalgebraStruct.counit (R := R') x = counit x := rfl
+
 end ConnesKreimer
 
