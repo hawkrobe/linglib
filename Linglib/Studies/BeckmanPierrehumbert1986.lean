@@ -2,6 +2,7 @@ import Linglib.Features.Prosody
 import Linglib.Phonology.Tone.Basic
 import Linglib.Syntax.CCG.Intonation
 import Linglib.Studies.KratzerSelkirk2020
+import Linglib.Fragments.Japanese.Prosody
 
 /-!
 # Beckman & Pierrehumbert (1986) [beckman-pierrehumbert-1986]
@@ -473,5 +474,41 @@ theorem japanese_catathesis_timing :
 /-- English catathesis timing: catathesis applies after the accent. -/
 theorem english_catathesis_timing :
     english.catathesisTiming = .afterAccent := rfl
+
+/-! ### Japanese accentual phrases from the lexicon
+
+Grouping Japanese word entries into a single AP: the AP is accented iff
+some word is lexically accented (its accent shape is always H*+L), and
+grouping deletes all but one accent — Fig. 6's contrast between accented
+*uma'i mame'* and the unaccented *amai ame* materials, built from the
+`Fragments.Japanese.Prosody` word entries. -/
+
+section JapaneseAP
+open Japanese.Prosody
+
+/-- The accentual phrase over grouped word entries: accented — always H*+L
+    in Japanese — iff some word is lexically accented (§2.2). -/
+def AccentualPhrase.ofWords (ws : List ProsodicEntry) : AccentualPhrase :=
+  { accent := if ws.any (·.isAccented) then .H_star_plus_L else .null
+    nWords := ws.length }
+
+/-- An AP of words triggers catathesis iff some word is accented: the H*+L
+    accent is bitonal, and bitonal accents trigger catathesis (§3). -/
+theorem ofWords_isBitonal (ws : List ProsodicEntry) :
+    (AccentualPhrase.ofWords ws).accent.isBitonal = ws.any (·.isAccented) := by
+  unfold AccentualPhrase.ofWords
+  split <;> simp_all [PitchAccent.isBitonal]
+
+/-- *uma'i mame'* 'delicious beans' (Figs. 6, 9) — an accented AP, so it
+    triggers catathesis on the following phrase. -/
+theorem umai_mame_bitonal :
+    (AccentualPhrase.ofWords [umai, mame]).accent.isBitonal = true := rfl
+
+/-- *amai ame* 'sweet candy' (Figs. 8, 10–13) — an unaccented AP: no
+    catathesis. -/
+theorem amai_ame_not_bitonal :
+    (AccentualPhrase.ofWords [amai, ameCandy]).accent.isBitonal = false := rfl
+
+end JapaneseAP
 
 end BeckmanPierrehumbert1986
