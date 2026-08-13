@@ -6,35 +6,48 @@ import Linglib.Phonology.Subregular.Multitier
 /-!
 # Frisch, Pierrehumbert & Broe (2004) [frisch-pierrehumbert-broe-2004]
 
-*Similarity avoidance and the OCP* argues that the OCP-Place constraint on
-Arabic verbal roots is gradient: its strength is a quantitative function of
-the similarity of the homorganic pair, where similarity is the
-natural-classes metric of eq. (7) — shared natural classes over shared plus
-non-shared, restricted to classes defined by a place feature. Because a
-larger, more contrastive region of the inventory generates more natural
-classes, any coronal pair is automatically less similar than a comparable
-labial pair, deriving the strong coronal vs weak dorsal/guttural OCP
-asymmetry that categorical class-based analyses ([mccarthy-1986],
-[mccarthy-1994], [padgett-1995]) must stipulate.
+*Similarity avoidance and the OCP* argues that OCP-Place in Arabic verbal
+roots is gradient: constraint strength is a quantitative function of the
+similarity of the homorganic pair, where similarity is the natural-classes
+metric of eq. (7) — shared natural classes over shared plus non-shared,
+restricted to classes defined by a place feature. A larger, more
+contrastive region of the inventory generates more natural classes, so any
+coronal pair is automatically less similar than a comparable labial pair,
+deriving the strong-coronal vs weak-dorsal/guttural asymmetry that
+categorical class-based analyses ([mccarthy-1986], [mccarthy-1994],
+[padgett-1995]) must stipulate.
 
-This file defines the metric (`similarity`), checks the paper's two worked
-examples over its 28-consonant inventory (`similarity_f_m`,
-`similarity_b_f`, p. 199), records the adjacent-pair O/E data of Table IV
-(p. 203) as `adjacentPairOE`, and proves the corpus-free core of the
-paper's model comparison: `thresholdedTSL` turns the metric into a TSL₂
-grammar via `Subregular.TSLGrammar.ofForbiddenPairs`, its decision on a
-labial pair is the two-valued step function `similarity < t`
-(`thresholdedTSL_pair_iff`), and no two-valued threshold model reproduces
-Table IV, which has at least three distinct O/E levels
-(`categorical_cannot_fit_adjacentPairOE`). FPB's full comparison is an R²
-fit across the nine bins (Table V, p. 207: categorical 0.70 vs natural
-classes 0.75); it and the paper's converging §4 evidence — the
-[frisch-zawaydeh-2001] wordlikeness experiments, Maltese borrowings from
-Italian ([mifsud-1995]), cross-linguistic attestations (Tigrinya
-[buckley-1997-ocp], English [berkley-1994], Thai [frisch-2000a]), and the
-processing-difficulty origin ([berg-1998], [boersma-1998], [frisch-1996];
-misordering errors in [abd-el-jawad-abu-salim-1987]) — require the
-2,674-root [cowan-1979] corpus or experimental data and are out of scope.
+## Main definitions
+
+* `similarity`: the natural-classes metric of eq. (7) (p. 198), relative
+  to a list of relevant classes.
+* `Arabic`: the paper's 28-consonant inventory (feature matrix (8), p. 201).
+* `adjacentPairOE`: the adjacent-pair O/E data of Table IV (p. 203).
+* `thresholdedTSL`: the TSL₂ grammar forbidding tier-adjacent labial pairs
+  of similarity at least `t`, via `Subregular.TSLGrammar.ofForbiddenPairs`.
+
+## Main results
+
+* `similarity_f_m`, `similarity_b_f`: the paper's worked examples,
+  similarity(/f, m/) = 2/9 and similarity(/b, f/) = 3/8 (p. 199).
+* `thresholdedTSL_pair_iff`: the threshold grammar accepts a labial pair
+  iff its similarity is strictly below the threshold, so its decision is a
+  two-valued step function of similarity.
+* `categorical_cannot_fit_adjacentPairOE`: no two-valued threshold model
+  reproduces Table IV, which has at least three distinct O/E levels — the
+  corpus-free core of FPB's model comparison.
+
+## Implementation notes
+
+The paper's own model comparison is an R² fit across the nine Table IV
+bins (Table V, p. 207: categorical 0.70 vs natural classes 0.75). It and
+the converging §4 evidence — the [frisch-zawaydeh-2001] wordlikeness
+experiments, Maltese borrowings from Italian ([mifsud-1995]),
+cross-linguistic attestations (Tigrinya [buckley-1997-ocp], English
+[berkley-1994], Thai [frisch-2000a]), and the processing-difficulty origin
+([berg-1998], [boersma-1998], [frisch-1996]; misordering errors in
+[abd-el-jawad-abu-salim-1987]) — require the 2,674-root [cowan-1979]
+corpus or experimental data, and are out of scope.
 -/
 
 namespace FrischPierrehumbertBroe2004
