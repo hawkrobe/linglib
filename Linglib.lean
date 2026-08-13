@@ -412,6 +412,7 @@ import Linglib.Data.Examples.Wurmbrand2014
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Data.Generalizations.HomogeneityProjection
 import Linglib.Data.Generalizations.Projectivity
+import Linglib.Data.PHOIBLE.Inventories.Arabic
 import Linglib.Data.PHOIBLE.Inventories.English
 import Linglib.Data.PHOIBLE.Inventories.Finnish
 import Linglib.Data.PHOIBLE.Inventories.French
@@ -722,6 +723,7 @@ import Linglib.Fragments.Arabic.ModernStandard.Adposition
 import Linglib.Fragments.Arabic.ModernStandard.Case
 import Linglib.Fragments.Arabic.ModernStandard.Comparison
 import Linglib.Fragments.Arabic.ModernStandard.Negation
+import Linglib.Fragments.Arabic.ModernStandard.Phonology
 import Linglib.Fragments.Arabic.ModernStandard.Possession
 import Linglib.Fragments.Arabic.ModernStandard.Relativization
 import Linglib.Fragments.Arabic.ModernStandard.WordOrder
@@ -2003,6 +2005,7 @@ import Linglib.Studies.BreissKatsudaKawahara2026
 import Linglib.Studies.Bresnan1973
 import Linglib.Studies.BresnanEtAl1982
 import Linglib.Studies.BringGunlogson2000
+import Linglib.Studies.Broe1993
 import Linglib.Studies.BroekhuisCorver2026
 import Linglib.Studies.Bruening2001
 import Linglib.Studies.Bruening2021
