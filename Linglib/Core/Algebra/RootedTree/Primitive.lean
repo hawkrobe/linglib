@@ -30,8 +30,8 @@ dual-primitives side on the Connes-Kreimer bialgebra with the Δ^ρ
 
 * `ConnesKreimer.deltaSingleton_isDualPrimitive`: each single-tree
   delta `δ_T` is a dual primitive.
-* `ConnesKreimer.lie_deltaSingleton_apply_singleton`: the explicit
-  count form `⁅δ_{T₁}, δ_{T₂}⁆ (of' {T}) = countSingleCutsRho T T₁ T₂ −
+* `ConnesKreimer.lie_deltaSingleton_apply_ofTree`: the explicit
+  count form `⁅δ_{T₁}, δ_{T₂}⁆ (ofTree T) = countSingleCutsRho T T₁ T₂ −
   countSingleCutsRho T T₂ T₁`, the Δ^ρ analog of the book's
   `c^T_{T₁,T₂} − c^T_{T₂,T₁}`. The Δ^c (trace-leaf) version follows via the
   strip machinery in `Coproduct/DeletionNonplanar.lean`.
@@ -162,8 +162,8 @@ theorem toConv_deltaSingleton_mem_dualPrimitives (T : Nonplanar α) :
 
 /-! ### The explicit count formula -/
 
-private theorem comul_of'_singleton (T : Nonplanar α) :
-    (Coalgebra.comul (R := R) (of' ({T} : Forest (Nonplanar α))) :
+private theorem comul_ofTree (T : Nonplanar α) :
+    (Coalgebra.comul (R := R) (ofTree T) :
         ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) =
       comulTreeN T := by
   show comulAlgHomN (R := R) (of' ({T} : Forest (Nonplanar α))) = _
@@ -175,13 +175,11 @@ private theorem comul_of'_singleton (T : Nonplanar α) :
 /-- The convolution product of two single-tree deltas evaluated on a
 single-tree basis vector counts the Δ^ρ cut summands of `T` extracting `{T₁}`
 and leaving `T₂`. -/
-theorem convMul_deltaSingleton_apply_singleton (T T₁ T₂ : Nonplanar α) :
-    (toConv (deltaSingleton R T₁) * toConv (deltaSingleton R T₂) :
-        WithConv (ConnesKreimer R (Nonplanar α) →ₗ[R] R))
-        (of' ({T} : Forest (Nonplanar α))) =
+theorem convMul_deltaSingleton_apply_ofTree (T T₁ T₂ : Nonplanar α) :
+    (toConv (deltaSingleton R T₁) * toConv (deltaSingleton R T₂)) (ofTree T) =
       countSingleCutsRho T T₁ T₂ := by
   classical
-  rw [LinearMap.convMul_apply, comul_of'_singleton]
+  rw [LinearMap.convMul_apply, comul_ofTree]
   unfold comulTreeN
   rw [map_add, map_add, map_multiset_sum, map_multiset_sum]
   simp only [Multiset.map_map, Function.comp_apply, TensorProduct.map_tmul,
@@ -194,19 +192,11 @@ commutator bracket of two single-tree deltas evaluated on a single-tree basis
 vector is the antisymmetrized single-cut count, the Δ^ρ analog of the book's
 `c^T_{T₁,T₂} − c^T_{T₂,T₁}`. The Δ^c (trace-leaf) version follows via the
 strip bijection in `Coproduct/DeletionNonplanar.lean`. -/
-theorem lie_deltaSingleton_apply_singleton (T T₁ T₂ : Nonplanar α) :
-    (⁅toConv (deltaSingleton R T₁), toConv (deltaSingleton R T₂)⁆ :
-        WithConv (ConnesKreimer R (Nonplanar α) →ₗ[R] R))
-        (of' ({T} : Forest (Nonplanar α))) =
+theorem lie_deltaSingleton_apply_ofTree (T T₁ T₂ : Nonplanar α) :
+    ⁅toConv (deltaSingleton R T₁), toConv (deltaSingleton R T₂)⁆ (ofTree T) =
       (countSingleCutsRho T T₁ T₂ : R) - countSingleCutsRho T T₂ T₁ := by
-  rw [Ring.lie_def]
-  show (toConv (deltaSingleton R T₁) * toConv (deltaSingleton R T₂) :
-        WithConv (ConnesKreimer R (Nonplanar α) →ₗ[R] R))
-        (of' ({T} : Forest (Nonplanar α))) -
-      (toConv (deltaSingleton R T₂) * toConv (deltaSingleton R T₁) :
-        WithConv (ConnesKreimer R (Nonplanar α) →ₗ[R] R))
-        (of' ({T} : Forest (Nonplanar α))) = _
-  rw [convMul_deltaSingleton_apply_singleton, convMul_deltaSingleton_apply_singleton]
+  simp only [Ring.lie_def, ofConv_sub, LinearMap.sub_apply,
+    convMul_deltaSingleton_apply_ofTree]
 
 end ConnesKreimer
 
