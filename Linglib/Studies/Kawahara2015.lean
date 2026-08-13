@@ -131,23 +131,27 @@ inductive LevelTone where
   | L
   deriving DecidableEq, Repr
 
-/-- The tonal specification of mora `i` (0-indexed) before spreading
-    ((4)–(5)). The accented mora is H and its successor L (accentual HL),
-    while mora 0 is L and mora 1 H (initial rise) unless the accentual
-    tones win, and other moras are unspecified. -/
-def toneSpec (accentMora : Option ℕ) (i : ℕ) : Option LevelTone :=
+/-- The accentual HL — H on the accented mora, L on its successor ((4)). -/
+def accentualHL (accentMora : Option ℕ) (i : ℕ) : Option LevelTone :=
   if accentMora = some i then some .H
-  else if 1 ≤ i ∧ accentMora = some (i - 1) then some .L
-  else if i = 0 then some .L
-  else if i = 1 then some .H
+  else if accentMora.map (· + 1) = some i then some .L
   else none
+
+/-- The initial rise — L on mora 0, H on mora 1 ((5)). -/
+def initialRise (i : ℕ) : Option LevelTone :=
+  if i = 0 then some .L else if i = 1 then some .H else none
+
+/-- The tonal specification of mora `i` before spreading, with the
+    accentual HL taking precedence over the initial rise ((5b)). -/
+def toneSpec (accentMora : Option ℕ) (i : ℕ) : Option LevelTone :=
+  (accentualHL accentMora i).or (initialRise i)
 
 /-- The surface tones of an `nMorae`-word from its accent position, by
     specification (`toneSpec`) followed by spreading — a left scan copying
     the most recent specified tone rightward ((7)–(9)). The seed is never
     consulted, since mora 0 is always specified. -/
 def accentToTones (accentMora : Option ℕ) (nMorae : ℕ) : List LevelTone :=
-  ((((List.range nMorae).map (toneSpec accentMora)).scanl (fun t o => o.getD t)) .H).tail
+  (((List.range nMorae).map (toneSpec accentMora)).scanl (fun t o => o.getD t) .H).tail
 
 /-- Unaccented *ame(+ga)* 'candy' surfaces LHH by initial rise and
     spreading ((6b)). -/
@@ -160,13 +164,11 @@ theorem ameRain_ga_tones : accentToTones ameRain.accentMora 3 = [.H, .L, .L] := 
   decide
 
 /-- Of the n+1 accent patterns of a trisyllable ((3)), the unaccented,
-    initial, and medial ones are pairwise distinct, while final accent
+    initial, and medial contours are distinct, while final accent
     neutralizes with unaccentedness word-internally because the post-accent
     L falls off the word edge (§1.4). -/
 theorem trisyllabic_tone_patterns :
-    accentToTones none 3 ≠ accentToTones (some 0) 3 ∧
-      accentToTones none 3 ≠ accentToTones (some 1) 3 ∧
-      accentToTones (some 0) 3 ≠ accentToTones (some 1) 3 ∧
+    [accentToTones none 3, accentToTones (some 0) 3, accentToTones (some 1) 3].Nodup ∧
       accentToTones none 3 = accentToTones (some 2) 3 := by decide
 
 /-! ### Culminativity
@@ -245,15 +247,14 @@ theorem hlFallCount_cons_scanl (spec : List (Option LevelTone)) (x t : LevelTone
     the initial-rise L. -/
 theorem toneSpec_zero (a : Option ℕ) :
     toneSpec a 0 = some (if a = some 0 then .H else .L) := by
-  by_cases h : a = some 0 <;> simp [toneSpec, h]
+  by_cases h : a = some 0 <;> simp [toneSpec, accentualHL, initialRise, h]
 
 /-- After mora 0, the only source of a specified L is the post-accent L,
     which pins the accent location. -/
 theorem toneSpec_eq_L {a : Option ℕ} {j : ℕ} (hj : 1 ≤ j) :
-    toneSpec a j = some .L ↔ a = some (j - 1) := by
-  unfold toneSpec
-  split_ifs with h1 h2 <;> simp_all
-  omega
+    toneSpec a j = some .L ↔ a.map (· + 1) = some j := by
+  unfold toneSpec accentualHL initialRise
+  split_ifs with h1 h2 <;> simp_all [Option.or]
 
 /-- The specified tones after mora 0 contain at most one L, since the
     post-accent L pins the accent location and positions are distinct. -/
@@ -270,19 +271,14 @@ theorem count_L_toneSpec_dense (a : Option ℕ) :
     · exact ih hnd.of_cons fun k hk => hpos k (.tail _ hk)
     rcases t with _ | _
     · simpa [List.count_cons] using ih hnd.of_cons fun k hk => hpos k (.tail _ hk)
-    · have ha : a = some (j - 1) := (toneSpec_eq_L (hpos j (.head _))).mp hj
+    · have ha : a.map (· + 1) = some j := (toneSpec_eq_L (hpos j (.head _))).mp hj
       have hrest : (rest.filterMap (toneSpec a)).count .L = 0 := by
         rw [List.count_eq_zero]
         intro hmem
         obtain ⟨k, hk, hspec⟩ := List.mem_filterMap.mp hmem
-        have hk1 := hpos k (.tail _ hk)
-        have hak : a = some (k - 1) := (toneSpec_eq_L hk1).mp hspec
-        have hj1 := hpos j (.head _)
-        have hkj : k = j := by
-          rw [ha] at hak
-          simp only [Option.some.injEq] at hak
-          omega
-        exact (List.nodup_cons.mp hnd).1 (hkj ▸ hk)
+        have hak : a.map (· + 1) = some k := (toneSpec_eq_L (hpos k (.tail _ hk))).mp hspec
+        rw [ha] at hak
+        exact (List.nodup_cons.mp hnd).1 ((Option.some_inj.mp hak) ▸ hk)
       simp [hrest]
 
 /-- A word carries at most one HL fall, whatever its accent location and
