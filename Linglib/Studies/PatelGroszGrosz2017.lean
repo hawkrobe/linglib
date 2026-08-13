@@ -1,6 +1,6 @@
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Fragments.German.Definiteness
+import Linglib.Fragments.German.Determiners
 import Linglib.Studies.Schwarz2009
 import Linglib.Semantics.Presupposition.PhiFeatures
 
@@ -137,7 +137,7 @@ theorem schwarz_pgg_german_consistent :
     German.Determiners.inventory.markingStrategy = .bipartite ∧
     german.LexicalizesStrong ∧
     german.determiners.articleType = .weakAndStrong :=
-  ⟨German.Definiteness.marking, german_lexicalizes_strong, german_weakAndStrong⟩
+  ⟨German.Determiners.marking, german_lexicalizes_strong, german_weakAndStrong⟩
 
 /-! ### The empirical payoff: the two series can diverge -/
 

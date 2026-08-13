@@ -1,6 +1,5 @@
 import Linglib.Semantics.Definiteness.Defs
 import Linglib.Features.Deixis
-import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Genericity.NominalMappingParameter
@@ -8,30 +7,18 @@ import Linglib.Semantics.Genericity.MeaningPreservation
 
 /-!
 # Shan Definiteness Fragment
-[moroney-2021]
 
 Language-specific parameters for definiteness in Shan (Southwestern Tai,
-Kra-Dai). Shan has no overt definite or indefinite articles — bare nouns
-express both unique and anaphoric definiteness via unblocked covert
-type-shifting.
+Kra-Dai). Shan has no overt articles, so bare nouns express both unique and
+anaphoric definiteness via unblocked covert type-shifting; the demonstratives
+*nâj* (proximal) and *nân* (distal) are optional in anaphoric contexts and
+denote referent selectors carrying a uniqueness presupposition plus spatial
+content ([moroney-2021] §2.1.3). The declared determiner inventory is
+`Shan.Determiners.inventory`.
 
-## Key Properties
+## References
 
-1. **No articles**: `hasUniqueForm = false`, `hasAnaphoricForm = false`
-2. **Unmarked strategy**: `DefMarkingStrategy.unmarked` — bare nouns
-   cover all [schwarz-2009] use types
-3. **Unblocked type-shifts**: ι, ι^x, ∩, and ∃ are all available
-4. **Demonstratives**: *nâj* (proximal) and *nân* (distal) are optional
-   in anaphoric contexts, required in no context
-
-## Demonstrative Semantics
-
-[moroney-2021] §2.1.3:
-- ⟦nâj⟧ = λP : |P_s| = 1. ιx[P_s(x) ∧ CLOSE.TO.SPEAKER(x)]
-- ⟦nân⟧ = λP : |P_s| = 1. ιx[P_s(x) ∧ FAR.FROM.SPEAKER(x)]
-
-Both carry a cardinality presupposition (unique satisfier in the
-situation) and add spatial content to the presupposition filter.
+* [moroney-2021]
 -/
 
 namespace Shan.Definiteness
@@ -40,9 +27,7 @@ open Semantics.Definiteness
 open Semantics.Presupposition (PartialProp)
 open Semantics.Kinds
 
--- ============================================================================
--- §1: Article Inventory and Blocking
--- ============================================================================
+/-! ### Blocking -/
 
 /-- Shan blocking principle: no overt determiners block any type-shift. -/
 def blocking : NMP.BlockingPrinciple :=
@@ -51,25 +36,7 @@ def blocking : NMP.BlockingPrinciple :=
   , existsBlocked := false
   , downBlocked := false }
 
-/-- Shan [moroney-2021]: no overt definite or indefinite article — no
-    `.article` entries. Demonstratives *nâj/nân* are *optional* in anaphoric
-    contexts (their `definiteUses` are empty: they obligatorily expone nothing),
-    so bare nouns can express both unique and anaphoric definiteness. The
-    declared determiner set is the canonical upstream object from which both
-    `DefMarkingStrategy` (Moroney cell) and `ArticleType` (Schwarz cell) are
-    derived — see `Determiner.Inventory.markingStrategy` / `Determiner.Inventory.articleType`. -/
-def _root_.Shan.Determiners.inventory : Determiner.Inventory :=
-  [ .demonstrative { form := "nâj", deictic := .proximal, definiteUses := [] },
-    .demonstrative { form := "nân", deictic := .distal, definiteUses := [] },
-    .possessive { form := "POSS" } ]
-
-/-- Shan's determiner set projects to the `.unmarked` Moroney cell. -/
-theorem marking :
-    Determiners.inventory.markingStrategy = .unmarked := by decide
-
--- ============================================================================
--- §2: Type-Shift Contexts
--- ============================================================================
+/-! ### Type-shift contexts -/
 
 /-- Type-shift context for Shan number-neutral bare nouns with a
     non-kind-compatible predicate (e.g., *mǎa* 'dog' in episodic context).
@@ -109,9 +76,7 @@ theorem all_shifts_available :
     .exists ∈ MeaningPreservation.availableShifts neutralKindCtx := by
   simp [MeaningPreservation.availableShifts, neutralKindCtx]
 
--- ============================================================================
--- §3: Demonstrative Semantics ([moroney-2021] §2.1.3)
--- ============================================================================
+/-! ### Demonstrative semantics -/
 
 /-- Shan demonstrative entry: form, gloss, and deictic content.
     Demonstratives in Shan appear in the structure [N Clf Dem].

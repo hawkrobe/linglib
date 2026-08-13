@@ -6,8 +6,8 @@ import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Semantics.Classifier
 import Linglib.Studies.Schwarz2009
 import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Fragments.Mandarin.Definiteness
-import Linglib.Fragments.Cantonese.Definiteness
+import Linglib.Fragments.Mandarin.Determiners
+import Linglib.Fragments.Cantonese.Determiners
 
 /-!
 # Jenks (2018): Articulated Definiteness without Articles
@@ -76,7 +76,7 @@ theorem jenks_attested_distinct :
     Jenks (2018) Table 2 cell. -/
 theorem mandarin_jenks_cell :
     Mandarin.Determiners.inventory.markingStrategy = .markedAnaphoric :=
-  Mandarin.Definiteness.marking
+  Mandarin.Determiners.marking
 
 /-- Mandarin's strategy is in the Jenks-attested set. -/
 theorem mandarin_attested :
@@ -88,7 +88,7 @@ theorem mandarin_attested :
     covering both unique and anaphoric environments. -/
 theorem cantonese_jenks_cell :
     Cantonese.Determiners.inventory.markingStrategy = .generallyMarked :=
-  Cantonese.Definiteness.marking
+  Cantonese.Determiners.marking
 
 /-- Mandarin and Cantonese instantiate distinct Jenks cells — the
     central typological contrast of paper §6. -/

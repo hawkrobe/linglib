@@ -16,7 +16,7 @@ checks their consequences on a small concrete model.
 
 ## Main declarations
 
-* `Hausa.UniversalQuantifier.z2008Denot` —
+* `Hausa.Determiners.UniversalQuantifier.z2008Denot` —
   the predicted denotation each Hausa universal entry receives under
   Zimmermann 2008's GQ analysis, reframed via the
   [haslinger-etal-2025-nllt] Q_∀ + ONE decomposition.
@@ -59,7 +59,7 @@ exhibited here (see Todo).
 open Quantification.UnifiedUniversal
 open Quantification.ONEModifiers
 
-namespace Hausa.UniversalQuantifier
+namespace Hausa.Determiners.UniversalQuantifier
 
 /-- [zimmermann-2008]'s predicted denotation for each Hausa
 universal entry, reframed via the [haslinger-etal-2025-nllt]
@@ -71,11 +71,11 @@ def z2008Denot {α : Type*} [PartialOrder α] :
   | .kowWh => everyPresup
   | .duk   => QForall
 
-end Hausa.UniversalQuantifier
+end Hausa.Determiners.UniversalQuantifier
 
 namespace Zimmermann2008
 
-open Hausa
+open Hausa.Determiners
 open Quantification (some_sem)
 
 /-! ### A 3-passenger SG-count Hausa domain
