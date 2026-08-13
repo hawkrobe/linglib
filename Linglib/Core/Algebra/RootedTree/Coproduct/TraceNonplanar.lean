@@ -93,11 +93,6 @@ from `Perm.value_eq`. -/
 
 /-! ### Pointwise projection for the G-form -/
 
-/-- Project a tree-level cut summand to a nonplanar one. -/
-private def projSummand : Forest (RoseTree α) × RoseTree α →
-    Forest (Nonplanar α) × Nonplanar α :=
-  fun p => (p.1.map Nonplanar.mk, Nonplanar.mk p.2)
-
 /-- Project a `cutListSummandsG` summand to nonplanar level, discarding
     the list-order of the remainder by sending to `Multiset`. -/
 private def projForestG : Forest (RoseTree α) × List (RoseTree α) →
@@ -109,7 +104,7 @@ private def projForestG : Forest (RoseTree α) × List (RoseTree α) →
 /-- Applying the `cutSummandsG_node` wrapper `(p.1, .node a p.2)` then
     `projSummand` factors through `projForestG` followed by the
     `Nonplanar.node a` smart constructor. -/
-private theorem projSummand_node_factors (a : α)
+private theorem projSummandG_node_factors (a : α)
     (p : Forest (RoseTree α) × List (RoseTree α)) :
     projSummand (α := α) (p.1, .node a p.2) =
       ((projForestG p).1, Nonplanar.node a (projForestG p).2) := by
@@ -405,7 +400,7 @@ theorem cutSummandsG_proj_perm
         (fun (pf : Forest (Nonplanar α) × Multiset (Nonplanar α)) =>
           (pf.1, Nonplanar.node a pf.2)) ∘ (projForestG (α := α)) := by
       funext p
-      exact projSummand_node_factors a p
+      exact projSummandG_node_factors a p
     rw [eq_fn, ← Multiset.map_map, ← Multiset.map_map, hL]
   | _, _, .trans h₁ h₂ =>
     (cutSummandsG_proj_perm hExt h₁).trans (cutSummandsG_proj_perm hExt h₂)
