@@ -7,7 +7,7 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
 import Linglib.Core.RingTheory.Bialgebra.Primitive
 
 /-!
-# Single-tree delta functionals are the dual primitives
+# Dual-primitive functionals on the Connes-Kreimer bialgebra
 [marcolli-chomsky-berwick-2025]
 
 Substrate for [marcolli-chomsky-berwick-2025]'s Lemma 1.7.3 (book pp. 78-79):
