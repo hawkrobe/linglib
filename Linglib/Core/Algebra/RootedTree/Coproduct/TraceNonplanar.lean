@@ -329,8 +329,8 @@ private theorem rhs_per_pair (τ : Nonplanar (α ⊕ β) → β)
   intro p _
   rfl
 
-/-- **LHS expansion**: `assoc ∘ (Δ^c ⊗ id) ∘ Δ^c` on a tree enumerates
-    `dcLHS`. -/
+/-- The composite `assoc ∘ (Δ^c ⊗ id) ∘ Δ^c` on a tree sums the `dcLHS`
+    enumeration. -/
 private theorem lhsExpand (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β)) :
     (TensorProduct.assoc R (ConnesKreimer R (Nonplanar (α ⊕ β)))
         (ConnesKreimer R (Nonplanar (α ⊕ β))) (ConnesKreimer R (Nonplanar (α ⊕ β))))
@@ -360,7 +360,7 @@ private theorem lhsExpand (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α
       lhs_per_pair]
   rfl
 
-/-- **RHS expansion**: `(id ⊗ Δ^c) ∘ Δ^c` on a tree enumerates `dcRHS`. -/
+/-- The composite `(id ⊗ Δ^c) ∘ Δ^c` on a tree sums the `dcRHS` enumeration. -/
 private theorem rhsExpand (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β)) :
     (comulCAlgHomN (R := R) τ).toLinearMap.lTensor _ (comulCTreeN τ T) =
       ((dcRHS τ T).map (tripleTensor (R := R))).sum := by
@@ -456,10 +456,10 @@ private theorem traceCoherentP_of_coherent (τ : Nonplanar (α ⊕ β) → β)
     rw [cutSummandsCN_mk]; exact Multiset.mem_map.mpr ⟨p, hp, rfl⟩
   exact hτ (Nonplanar.mk t) (ConnesKreimer.projSummand p) hmem
 
-/-- **The double-cut bijection** (MCB Lemma 1.2.10's combinatorial core):
-    the LHS and RHS double-cut enumerators of a tree agree as Nonplanar
-    multisets, under trace coherence. Proved by descending through
-    `Nonplanar.mk` to the tree-level `DoubleCut.coassT`. -/
+/-- The LHS and RHS double-cut enumerators of a tree agree as Nonplanar
+    multisets under trace coherence — [marcolli-chomsky-berwick-2025]
+    Lemma 1.2.10's combinatorial core, descended from the planar
+    `DoubleCut.coassT`. -/
 private theorem doubleCut_eq (τ : Nonplanar (α ⊕ β) → β)
     (hτ : TraceCoherent τ) (T : Nonplanar (α ⊕ β)) :
     dcLHS τ T = dcRHS τ T := by
@@ -480,15 +480,9 @@ uniformity with the `Bialgebra` consumers; the double-cut proof itself is
 section CoassocCommRing
 variable {R' : Type*} [CommRing R'] {α' β' : Type*}
 
-/-- **Per-tree Δ^c coassociativity** (LinearMap-applied form on a single
-    tree's coproduct `comulCTreeN τ T`). The combinatorial heart of
-    coassociativity: both sides enumerate ordered pairs of nested
-    admissible cuts of `T`, and `TraceCoherent τ` makes the trunk-marker
-    labels written by the two cut orders agree.
-
-    Reduced by the two expansion lemmas (`lhsExpand`, `rhsExpand`) to the
-    double-cut bijection `doubleCut_eq`. The headline `comulCN_coassoc`
-    reduces to this by multiplicativity (forest = product of trees). -/
+/-- Per-tree Δ^c coassociativity: both composites enumerate ordered pairs
+    of nested admissible cuts of `T`, and `TraceCoherent τ` makes the
+    trunk-marker labels written by the two cut orders agree. -/
 theorem comulCN_coassoc_tree
     (τ : Nonplanar (α' ⊕ β') → β') (hτ : TraceCoherent τ)
     (T : Nonplanar (α' ⊕ β')) :
@@ -500,8 +494,7 @@ theorem comulCN_coassoc_tree
       (comulCAlgHomN (R := R') τ).toLinearMap.lTensor _ (comulCTreeN τ T) := by
   rw [lhsExpand, rhsExpand, doubleCut_eq τ hτ T]
 
-/-- **Coassociativity of `comulCAlgHomN` (Δ^c on Nonplanar)**, under
-    trace coherence.
+/-- Coassociativity of Δ^c under trace coherence.
 
     NOT τ-generic: without `TraceCoherent τ`, iterating Δ^c writes
     second-stage markers computed on marked trunks, and the two cut
@@ -596,8 +589,7 @@ the enumeration (`cutSummandsCN_filter_empty`,
 section BialgebraInst
 variable {R' : Type*} [CommRing R'] {α' β' : Type*}
 
-/-- **AlgHom-form coassoc** of `comulCAlgHomN` under trace coherence.
-    Follows from `comulCN_coassoc` by AlgHom extensionality. -/
+/-- The AlgHom form of Δ^c coassociativity under trace coherence. -/
 theorem comulCAlgHomN_coassoc_algHom
     (τ : Nonplanar (α' ⊕ β') → β') (hτ : TraceCoherent τ) :
     (Algebra.TensorProduct.assoc R' R' R'
@@ -626,14 +618,9 @@ counit fields directly. -/
 section CounitLaws
 variable {R' : Type*} [CommSemiring R'] {α' β' : Type*}
 
-/-- **Per-tree right counit law**: under `(counit ⊗ id)`, only the `(0, T)`
-    cut summand of `cutSummandsCN τ T` survives, contributing `1 ⊗ ofTree T`.
-
-    Proof: expand `comulCTreeN τ T = ofTree T ⊗ 1 + Σ (of' p₁ ⊗ ofTree p₂)`.
-    Apply `(counit ⊗ id)`: the first summand vanishes via `counit_ofTree`;
-    each cut-summand contribution becomes `(if p₁.card = 0 then 1 else 0) ⊗
-    ofTree p₂`. Extract the filtered sum via `sum_map_ite_zero`, then use
-    `cutSummandsCN_filter_empty` to show the filter yields exactly `{(0, T)}`. -/
+/-- Per-tree right counit law: under `(counit ⊗ id)` only the empty-cut
+    summand of `cutSummandsCN τ T` survives, contributing `1 ⊗ ofTree T` —
+    the empty-cut uniqueness `cutSummandsCN_filter_empty` in tensor form. -/
 private theorem counit_rTensor_comulCTreeN (τ : Nonplanar (α' ⊕ β') → β')
     (T : Nonplanar (α' ⊕ β')) :
     (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
@@ -692,8 +679,8 @@ private theorem counit_rTensor_comulCTreeN (τ : Nonplanar (α' ⊕ β') → β'
   rw [ConnesKreimer.cutSummandsCN_filter_empty τ T,
       Multiset.map_singleton, Multiset.sum_singleton]
 
-/-- **Per-tree left counit law**: mirror of the right counit. Same
-    `cutSummandsCN` substrate, with `counit` on the right factor. -/
+/-- Per-tree left counit law: mirror of `counit_rTensor_comulCTreeN` with
+    `counit` on the right factor. -/
 private theorem counit_lTensor_comulCTreeN (τ : Nonplanar (α' ⊕ β') → β')
     (T : Nonplanar (α' ⊕ β')) :
     (Algebra.TensorProduct.map (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))
@@ -741,9 +728,8 @@ private theorem counit_lTensor_comulCTreeN (τ : Nonplanar (α' ⊕ β') → β'
     | cons _ _ ih => rw [Multiset.map_cons, Multiset.sum_cons, ih, add_zero]]
   rw [add_zero]
 
-/-- **Forest right counit law**: lift per-tree to forest via `Multiset.induction`
-    + multiplicativity of `comulCForestN` and `(counit ⊗ id)` as AlgHom.
-    Mirrors `PruningNonplanar.comulForestN_counit_rTensor`. -/
+/-- Forest right counit law, lifted from the per-tree law by
+    multiplicativity. -/
 private theorem counit_rTensor_comulCForestN (τ : Nonplanar (α' ⊕ β') → β')
     (F : Forest (Nonplanar (α' ⊕ β')))
     (hF : ∀ T ∈ F, (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
@@ -773,7 +759,7 @@ private theorem counit_rTensor_comulCForestN (τ : Nonplanar (α' ⊕ β') → �
     rw [hCons, map_mul, hT, ih',
         Algebra.TensorProduct.tmul_mul_tmul, _root_.mul_one, hForest]
 
-/-- **Forest left counit law**: mirror. -/
+/-- Forest left counit law: mirror of `counit_rTensor_comulCForestN`. -/
 private theorem counit_lTensor_comulCForestN (τ : Nonplanar (α' ⊕ β') → β')
     (F : Forest (Nonplanar (α' ⊕ β')))
     (hF : ∀ T ∈ F, (Algebra.TensorProduct.map
@@ -803,7 +789,7 @@ private theorem counit_lTensor_comulCForestN (τ : Nonplanar (α' ⊕ β') → �
     rw [hCons, map_mul, hT, ih',
         Algebra.TensorProduct.tmul_mul_tmul, _root_.one_mul, hForest]
 
-/-- **Right counit law** (CLOSED via per-tree + forest helpers): `(counit ⊗ id) ∘ Δ^c = lid⁻¹`. -/
+/-- The right counit law for Δ^c. -/
 theorem counit_rTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
     (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
           ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R'] R')
@@ -821,7 +807,7 @@ theorem counit_rTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
   rw [comulCAlgHomN_apply_of', Algebra.TensorProduct.lid_symm_apply]
   exact counit_rTensor_comulCForestN τ F (fun T _ => counit_rTensor_comulCTreeN τ T)
 
-/-- **Left counit law** (CLOSED via per-tree + forest helpers): `(id ⊗ counit) ∘ Δ^c = rid⁻¹`. -/
+/-- The left counit law for Δ^c. -/
 theorem counit_lTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
     (Algebra.TensorProduct.map (AlgHom.id R' _)
         ((ConnesKreimer.counit (R := R')) :
@@ -843,7 +829,7 @@ theorem counit_lTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
 theorem comulCAlgHomN_eq_G {R : Type*} [CommSemiring R] (τ : Nonplanar (α' ⊕ β') → β') :
     comulCAlgHomN (R := R) τ = comulAlgHomNG (R := R) (cutSummandsCN τ) := rfl
 
-/-- **Δ^c is an admissible cut policy** for a trace-coherent encoder:
+/-- Δ^c is an admissible cut policy for a trace-coherent encoder:
     `comulCAlgHomN_coassoc_algHom` and the counit laws packaged as the
     `IsAdmissibleCuts` mixin, so `WithCuts R (cutSummandsCN τ)` receives its
     `Bialgebra` instance — the bialgebra structure of MCB Lemma 1.2.10.

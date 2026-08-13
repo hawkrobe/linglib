@@ -195,15 +195,9 @@ private theorem pairing₃_of'_tmul_of'_tmul [DecidableEq α] (F G : Forest (Non
     rw [TensorProduct.tmul_add, map_add, LinearMap.add_apply, ih₁, ih₂,
         map_add, LinearMap.add_apply, mul_add]
 
-/-- **Nondegeneracy of `pairing₂`** (lifted from binary): if
-    `U ∈ CK ⊗ CK` pairs to zero against every pure tensor `x ⊗ y`,
-    then `U = 0`.
-
-    Proof: decompose `U` via the natural basis of `CK = (Forest T) →₀ R`
-    as `U = c.sum (fun F U_F => of' F ⊗ U_F)`. Pairing against
-    `of' F ⊗ y` extracts `autF · pairing y (c F)`. Over `CharZero`
-    (so `autF ≠ 0`), each `c F = 0` by `pairing_nondegenerate` +
-    `pairing_symm`, hence `c = 0` and `U = 0`. -/
+/-- Nondegeneracy of `pairing₂`, lifted from the binary
+    `pairing_nondegenerate` along the natural basis of
+    `CK = (Forest T) →₀ R`. -/
 private theorem pairing₂_nondegenerate [DecidableEq α]
     [CharZero R] [NoZeroDivisors R]
     (U : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))
@@ -239,15 +233,8 @@ private theorem pairing₂_nondegenerate [DecidableEq α]
   have hc_zero' : c = 0 := Finsupp.ext hc_zero
   rw [← hc, hc_zero', Finsupp.sum_zero_index]
 
-/-- **Nondegeneracy of `pairing₃`**: if `U ∈ CK ⊗ (CK ⊗ CK)` pairs to
-    zero against every test triple tensor, then `U = 0`.
-
-    Proof: decompose `U` via the basis on the outer factor as
-    `U = c.sum (fun F U_F => of' F ⊗ U_F)` where `U_F ∈ CK ⊗ CK`.
-    Pairing against `of' F ⊗ (x ⊗ y)` extracts `autF · pairing₂ (x ⊗ y)
-    (c F)` via `pairing₃_of'_tmul_of'_tmul`. Over `CharZero` (so
-    `autF ≠ 0`), each `pairing₂ (x ⊗ y) (c F) = 0` for all `x, y`; by
-    `pairing₂_nondegenerate`, `c F = 0`. Hence `c = 0` and `U = 0`. -/
+/-- Nondegeneracy of `pairing₃`, lifted from `pairing₂_nondegenerate`
+    along the basis of the outer tensor factor. -/
 theorem pairing₃_nondegenerate [DecidableEq α]
     [CharZero R] [NoZeroDivisors R]
     (U : ConnesKreimer R (Nonplanar α) ⊗[R]

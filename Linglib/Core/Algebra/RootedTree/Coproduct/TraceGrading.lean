@@ -88,7 +88,7 @@ private theorem sum_map_numNodes_sub_one_add_card {γ : Type*}
         Multiset.sum_cons, Multiset.card_cons]
     omega
 
-/-- **Edge conservation for Δ^c cut summands**: the trace marker replaces
+/-- Edge conservation for Δ^c cut summands: the trace marker replaces
     the cut subtree by a unit-weight leaf, so crown edges plus trunk
     weight recover the tree weight exactly. Descends
     `cutSummandsG_numNodes` (`Core/Combinatorics/RootedTree/Cut.lean`)
@@ -222,7 +222,7 @@ private theorem comulCForestN_mem (τ : Nonplanar (α'' ⊕ β'') → β'')
         rfl]
     exact gradedTensorSpan_mul (comulCTreeN_mem τ T) ih
 
-/-- **Δ^c preserves the edge-count grading** ([marcolli-chomsky-berwick-2025]
+/-- Δ^c preserves the edge-count grading ([marcolli-chomsky-berwick-2025]
     Lemma 1.2.10, p. 37): the coproduct of a basis forest lies in the span of
     homogeneous tensors `xi ⊗ yi` with degrees summing to the forest's edge
     count. With edge-count additivity over the product (disjoint union) and

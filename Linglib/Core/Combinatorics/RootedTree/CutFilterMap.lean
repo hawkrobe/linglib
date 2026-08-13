@@ -39,8 +39,8 @@ variable {α β : Type*}
 
 mutual
 
-/-- **Per-tree**: filtering the Δ^c cut summands of an embedded tree
-    yields the `some`-embedded Δ^ρ cut summands. -/
+/-- Filtering the Δ^c cut summands of an embedded tree yields the
+    `some`-embedded Δ^ρ cut summands. -/
 theorem cutSummandsCP_map_inl_filterMap (τ : RoseTree (α ⊕ β) → β) :
     ∀ (t : RoseTree α),
       (cutSummandsCP τ (RoseTree.map Sum.inl t)).map
@@ -71,8 +71,8 @@ theorem cutSummandsCP_map_inl_filterMap (τ : RoseTree (α ⊕ β) → β) :
     rw [← Multiset.map_map, ← Multiset.map_map,
         cutListSummandsG_map_inl_filterMap τ cs]
 
-/-- **Children-list**: companion of `cutSummandsCP_map_inl_filterMap` at
-    the list level, with `RoseTree.filterMapList` on the remainder. -/
+/-- Children-list companion of `cutSummandsCP_map_inl_filterMap`, with
+    `RoseTree.filterMapList` on the remainder. -/
 theorem cutListSummandsG_map_inl_filterMap (τ : RoseTree (α ⊕ β) → β) :
     ∀ (cs : List (RoseTree α)),
       (cutListSummandsG (extractC τ) (List.map (RoseTree.map Sum.inl) cs)).map
@@ -130,9 +130,9 @@ theorem cutListSummandsG_map_inl_filterMap (τ : RoseTree (α ⊕ β) → β) :
         augActionG_map_inl_filterMap τ c,
         cutListSummandsG_map_inl_filterMap τ cs']
 
-/-- **Per-child**: companion of `cutSummandsCP_map_inl_filterMap` for
-    the augmented action, with the Δ^ρ `Option` remainder listed via
-    `Option.toList`. The extract-whole branch filters to `({some c}, [])`,
+/-- Per-child companion of `cutSummandsCP_map_inl_filterMap` for the
+    augmented action, with the Δ^ρ `Option` remainder listed via
+    `Option.toList`: the extract-whole branch filters to `({some c}, [])`,
     matching Δ^ρ's delete branch `({c}, none)`. -/
 theorem augActionG_map_inl_filterMap (τ : RoseTree (α ⊕ β) → β) :
     ∀ (c : RoseTree α),
