@@ -128,7 +128,7 @@ theorem demonstrative_realized :
     same restrictor pick the same referent — the bare-N route to
     unique definiteness (paper §4.1: ι via Chierchia type-shift) is
     extensionally the `Description.unique` denotation at the API
-    layer. Parallels `Moroney2021.shan_bare_unique_agreement`. -/
+    layer. -/
 theorem bare_unique_agreement
     (R : DenotGS E W .et) (sIdx : Nat)
     (g : Assignment E)
@@ -138,8 +138,7 @@ theorem bare_unique_agreement
 /-- A Mandarin demonstrative-marked anaphoric and the bare anaphoric
     over the same restrictor and discourse index pick the same entity:
     the deictic feature is a presupposition filter, not a referent
-    selector (paper §4.2 cited Hanink/Schwarz analysis). Parallels
-    `Moroney2021.shan_demonstrative_anaphoric_agreement`. -/
+    selector (paper §4.2 cited Hanink/Schwarz analysis). -/
 theorem demonstrative_anaphoric_agreement
     (R : DenotGS E W .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat)
     (g : Assignment E)
@@ -214,8 +213,8 @@ do covertly what you can do overtly"), inherited from
 article means ι is unblocked — bare N can route to a unique-definite
 reading via the type-shift hierarchy of [dayal-2004].
 
-The substrate has Dayal's hierarchy (`Semantics/Genericity/MeaningPreservation.lean`),
-already used by `Moroney2021.lean`. The Mandarin parallel theorem is
+The substrate has Dayal's hierarchy (`Semantics/Genericity/MeaningPreservation.lean`).
+The Mandarin theorem is
 the same `selectShift` instance: when no shift is blocked, ι is
 selected first (Meaning Preservation). -/
 
@@ -236,8 +235,7 @@ theorem iota_is_last_resort :
     `NMP.mandarinStrategy`,
     Mandarin's classifier denotation atomizes the noun (CLF-for-N).
     This is the Trinh 2011 / Krifka 1995 / Chierchia 1998 denotation
-    Jenks adopts in §4.1 (eq. 21). Parallels
-    `Moroney2021.shan_clf_is_atomization`. -/
+    Jenks adopts in §4.1 (eq. 21). -/
 theorem clf_is_atomization {α : Type*} [PartialOrder α]
     (P : α → Prop) :
     Semantics.Classifier.classifierDenot

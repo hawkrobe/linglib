@@ -1,216 +1,71 @@
 import Linglib.Semantics.Definiteness.Defs
+import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Mereology
 import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Definiteness.Description
-import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Genericity.MeaningPreservation
-import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Semantics.Definiteness.Basic
-import Linglib.Semantics.Classifier
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.German.Determiners
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Thai.Determiners
-import Linglib.Fragments.Shan.Nouns
 import Linglib.Fragments.Shan.Determiners
+import Linglib.Fragments.Shan.Nouns
 import Linglib.Studies.Jenks2018
 
 /-!
 # Moroney (2021): Definiteness and Quantification — Evidence from Shan
-[moroney-2021]
 
-Shan (Southwestern Tai, Kra-Dai) bare nouns can be interpreted as indefinite,
-definite, generic, or kind-denoting. The key finding is that bare nouns in
-Shan express BOTH unique and anaphoric definiteness — contra [jenks-2018]'s
-prediction that languages without overt definite articles mark at most one
-type of definiteness.
+[moroney-2021] shows that Shan (Southwestern Tai, Kra-Dai) bare nouns express
+both unique and anaphoric definiteness, instantiating an unmarked cell that
+[jenks-2018]'s definiteness typology had no slot for. Because Shan has no
+articles, no covert type-shift is blocked — ι, ι^x, and ∩ are all available
+to bare nouns — while the optional demonstratives *nâj/nân* merely add
+spatial content. The cell is derived from `Shan.Determiners.inventory`, the
+bare-noun reading distribution from `MeaningPreservation.selectShift` over
+`Shan.Nouns.blocking`, and the refutation is stated against
+`Jenks2018.jenksAttestedStrategies`.
 
-## Core contributions formalized here
+## References
 
-1. **Revised definiteness marking typology** (Table 4.1/4.4): adds an "unmarked"
-   category where bare nouns express both unique and anaphoric definiteness.
-   Languages: Shan, Serbian, Kannada.
-
-2. **Bare noun interpretation distribution** (Table 2.3): Shan and English bare
-   nouns agree on low ∃, kind, and generic readings. They differ ONLY on
-   definite readings — Shan bare nouns can be definite, English cannot.
-
-3. **Type-shifting analysis**: all bare nouns are base type ⟨s,⟨e,t⟩⟩.
-   Definite readings arise via unblocked ι type-shift (no overt "the" to
-   block it). Kind readings via ∩. Existential via DPP (Derived Predicate
-   Predication, `NMP.DPP`), which yields obligatory low scope.
-
-4. **Cross-linguistic definiteness data** (Table 4.4): Shan uses bare nouns
-   in ALL [schwarz-2009] definite use types. Demonstrative-noun phrases
-   (N Clf Dem) are optional in anaphoric/relational-bridging/donkey contexts
-   where German requires the strong article and Mandarin/Thai require
-   demonstratives.
+* [moroney-2021]
 -/
 
 namespace Moroney2021
 
-open Semantics.Definiteness
+open Semantics.Definiteness (russellIotaList)
+open Semantics.Kinds
 open Features.Deixis (Feature)
 
--- ============================================================================
--- §1: Definiteness Marking Typology (Table 4.1, extended)
--- ============================================================================
+/-! ### Bare-noun readings (Table 2.3) -/
 
--- `DefMarkingStrategy` and `strategyToArticleType` live in
--- `Semantics.Definiteness`. Per-language strategy assignments are derived from
--- each language's `Determiner.Inventory.markingStrategy` over its declared
--- `{Lang}.Determiners.inventory` (see §7 / §14) — the declared
--- determiner set is the single source of truth for definiteness data.
-
--- ============================================================================
--- §2: Cross-Linguistic Definiteness Expression Data (Table 4.4)
--- ============================================================================
-
-/-- What form a language uses to express definiteness in a given context. -/
-inductive DefForm where
-  | weakArticle    -- German weak article (contracted: vom, im)
-  | strongArticle  -- German strong article (full: von dem, in dem)
-  | bare           -- Bare noun
-  | dem            -- Demonstrative(-classifier-noun) phrase
-  | bareOrDem      -- Either acceptable
-  deriving DecidableEq, Repr
-
-/-- Cross-linguistic datum: what form does language L use for definite use
-type U? Connects [hawkins-1978]'s use types (already in
-`Semantics.Definiteness.DefiniteUseType`) to actual morphological expression. -/
-structure DefExpressionDatum where
-  language : String
-  useType : DefiniteUseType
-  bridgingSubtype : Option BridgingSubtype := none
-  form : DefForm
-  deriving Repr, DecidableEq
-
-/-- German data ([schwarz-2009]): weak article for situational uniqueness
-and part-whole bridging; strong article for anaphora, producer-product
-bridging, and donkey anaphora. -/
-def germanData : List DefExpressionDatum :=
-  [ { language := "German", useType := .immediateSituation
-    , form := .weakArticle }
-  , { language := "German", useType := .largerSituation
-    , form := .weakArticle }
-  , { language := "German", useType := .anaphoric
-    , form := .strongArticle }
-  , { language := "German", useType := .bridging
-    , bridgingSubtype := some .partWhole
-    , form := .weakArticle }
-  , { language := "German", useType := .bridging
-    , bridgingSubtype := some .relational
-    , form := .strongArticle }
-  , { language := "German", useType := .donkey
-    , form := .strongArticle } ]
-
-/-- Thai data ([jenks-2015]): bare nouns for uniqueness contexts,
-demonstrative-noun phrases for anaphoric/relational contexts. -/
-def thaiData : List DefExpressionDatum :=
-  [ { language := "Thai", useType := .immediateSituation
-    , form := .bare }
-  , { language := "Thai", useType := .largerSituation
-    , form := .bare }
-  , { language := "Thai", useType := .anaphoric
-    , form := .dem }
-  , { language := "Thai", useType := .bridging
-    , bridgingSubtype := some .partWhole
-    , form := .bare }
-  , { language := "Thai", useType := .bridging
-    , bridgingSubtype := some .relational
-    , form := .dem }
-  , { language := "Thai", useType := .donkey
-    , form := .dem } ]
-
-/-- Mandarin data ([jenks-2018]): bare nouns for uniqueness contexts,
-demonstrative-noun phrases for anaphoric/relational/donkey contexts.
-Same pattern as Thai — Mandarin is classified as `.markedAnaphoric`
-in [jenks-2018]'s typology. -/
-def mandarinData : List DefExpressionDatum :=
-  [ { language := "Mandarin", useType := .immediateSituation
-    , form := .bare }
-  , { language := "Mandarin", useType := .largerSituation
-    , form := .bare }
-  , { language := "Mandarin", useType := .anaphoric
-    , form := .dem }
-  , { language := "Mandarin", useType := .bridging
-    , bridgingSubtype := some .partWhole
-    , form := .bare }
-  , { language := "Mandarin", useType := .bridging
-    , bridgingSubtype := some .relational
-    , form := .dem }
-  , { language := "Mandarin", useType := .donkey
-    , form := .dem } ]
-
-/-- Mandarin and Thai have the same definiteness expression pattern:
-bare for uniqueness, demonstrative for anaphoric/relational/donkey. -/
-theorem mandarin_thai_same_pattern :
-    mandarinData.map (·.form) = thaiData.map (·.form) := by decide
-
-/-- Shan data ([moroney-2021] Table 4.4): bare nouns in ALL contexts.
-Demonstratives optional in anaphoric and relational-bridging contexts.
-This is the key empirical finding — Shan bare nouns cover ALL of Schwarz's
-definite use types, unlike Mandarin/Thai (anaphoric requires dem) or
-German (weak/strong articles). -/
-def shanData : List DefExpressionDatum :=
-  [ -- ex. 487: unique in immediate situation, bare noun required (#dem)
-    { language := "Shan", useType := .immediateSituation
-    , form := .bare }
-    -- ex. 488: unique in larger situation (kǎaŋwán 'sun'), bare noun required
-  , { language := "Shan", useType := .largerSituation
-    , form := .bare }
-    -- ex. 489: narrative sequence anaphora, bare noun OR dem acceptable
-  , { language := "Shan", useType := .anaphoric
-    , form := .bareOrDem }
-    -- part-whole bridging: bare noun
-  , { language := "Shan", useType := .bridging
-    , bridgingSubtype := some .partWhole
-    , form := .bare }
-    -- producer-product bridging: bare noun OR dem
-  , { language := "Shan", useType := .bridging
-    , bridgingSubtype := some .relational
-    , form := .bareOrDem }
-    -- donkey anaphora: bare noun OR dem (Table 4.4)
-  , { language := "Shan", useType := .donkey
-    , form := .bareOrDem } ]
-
-/-- Shan bare nouns are acceptable in every definite use type. -/
-theorem shan_bare_in_all_contexts :
-    shanData.all (fun d => d.form == .bare || d.form == .bareOrDem) = true := by
-  decide
-
-/-- German requires a distinct article form for every context — no bare nouns. -/
-theorem german_no_bare :
-    germanData.all (fun d => d.form == .weakArticle || d.form == .strongArticle)
-      = true := by decide
-
--- ============================================================================
--- §3: Shan Bare Noun Interpretation Distribution (Table 2.3)
--- ============================================================================
-
-/-- The five possible interpretations of bare nouns. -/
+/-- The five candidate readings of a bare noun. -/
 inductive BareNounInterp where
-  | lowExistential   -- Low scope ∃ (via DPP, below negation)
-  | highExistential  -- Wide scope ∃ (above negation; unavailable for bare nouns)
-  | definite         -- Via ι type-shift
-  | kind             -- Via ∩ type-shift
-  | generic          -- Via GEN over situations
+  /-- Low-scope ∃, introduced by Derived Predicate Predication at vP
+      ([moroney-2021] (85)), hence below negation. -/
+  | lowExistential
+  /-- Wide-scope ∃ above negation — unavailable to bare nouns, since DPP
+      applies no higher than vP. -/
+  | highExistential
+  /-- Definite, via the ι type-shift. -/
+  | definite
+  /-- Kind, via the ∩ type-shift. -/
+  | kind
+  /-- Generic, via GEN over situations. -/
+  | generic
   deriving DecidableEq, Repr
 
-/-- Availability of a bare noun interpretation in Shan vs English. -/
+/-- One Table 2.3 row: whether a reading is available to Shan and English
+    count and mass bare nouns. -/
 structure InterpAvailability where
   interp : BareNounInterp
-  shanCount : Bool       -- Shan count nouns
-  shanMass : Bool        -- Shan mass nouns
-  englishCount : Bool    -- English bare count nouns (plurals)
-  englishMass : Bool     -- English bare mass nouns
+  shanCount : Bool
+  shanMass : Bool
+  englishCount : Bool
+  englishMass : Bool
   deriving Repr, DecidableEq
 
-/-- Table 2.3: bare noun interpretation distribution in Shan and English.
-
-Shan and English agree on four of five readings. The sole difference
-is the definite reading: Shan ✓ (via unblocked ι), English ✗ (ι
-blocked by overt *the*). -/
+/-- Table 2.3: Shan and English bare nouns share the low-∃, kind, and
+    generic readings, both lack the high-∃ reading, and part ways only on
+    the definite reading. -/
 def interpretationTable : List InterpAvailability :=
   [ { interp := .lowExistential
     , shanCount := true, shanMass := true
@@ -228,187 +83,67 @@ def interpretationTable : List InterpAvailability :=
     , shanCount := true, shanMass := true
     , englishCount := true, englishMass := true } ]
 
-/-- The definite interpretation is the ONLY point where Shan and English
-bare nouns differ (Table 2.3). -/
+/-- The definite reading is the sole point where Shan and English bare
+    nouns differ. -/
 theorem definite_is_sole_difference :
     (interpretationTable.filter
       (fun d => d.shanCount != d.englishCount || d.shanMass != d.englishMass)
     ).map (·.interp) = [.definite] := by decide
 
-/-- High scope existential is universally unavailable for bare nouns —
-a consequence of DPP/DKP locality ([chierchia-1998]). The
-existential introduced by DPP applies at the point of composition
-(vP level), so it cannot scope above negation. -/
-theorem high_existential_universally_blocked :
-    (interpretationTable.filter (·.interp == .highExistential)
-    ).all (fun d => !d.shanCount && !d.shanMass &&
-                     !d.englishCount && !d.englishMass) = true := by
-  decide
+/-! ### Type-shift selection -/
 
--- ============================================================================
--- §4: Type-Shifting Analysis
--- ============================================================================
+/-- The type-shift context of a Shan number-neutral bare noun: nothing is
+    blocked (`Shan.Nouns.blocking`), and only the predicate's
+    kind-compatibility varies. -/
+def shanCtx (downDefined : Bool) : MeaningPreservation.TypeShiftContext :=
+  { number := .neutral
+  , downDefined := downDefined
+  , iotaBlocked := Shan.Nouns.blocking.iotaBlocked
+  , iotaAnaphoricBlocked := false
+  , existsBlocked := Shan.Nouns.blocking.existsBlocked
+  , instantiationAccessible := true }
 
-open Semantics.Kinds
-
-/-- When a Shan bare noun is used in a context requiring unique definiteness,
-the preferred type-shift is ι (definite), by Meaning Preservation
-({∩, ι, ι^x} > ∃). Number-neutral nouns allow both ι and ∩, but ∩
-requires a kind-compatible predicate (`downDefined`).
-
-Compare: English singular nouns get `none` (`MeaningPreservation.dayal_consistent_english_bare_singular_out`). -/
-theorem shan_neutral_prefers_iota :
-    let ctx : MeaningPreservation.TypeShiftContext := {
-      number := .neutral
-      downDefined := false  -- Predicate is not kind-compatible
-      iotaBlocked := false
-      iotaAnaphoricBlocked := false
-      existsBlocked := false
-      instantiationAccessible := true
-    }
-    MeaningPreservation.selectShift ctx = some .iota := rfl
-
-/-- When a Shan bare noun is used with a kind-compatible predicate,
-∩ is selected (it appears first in `availableShifts` for number-neutral
-nouns with `downDefined`). -/
-theorem shan_neutral_kind_prefers_down :
-    let ctx : MeaningPreservation.TypeShiftContext := {
-      number := .neutral
-      downDefined := true
-      iotaBlocked := false
-      iotaAnaphoricBlocked := false
-      existsBlocked := false
-      instantiationAccessible := true
-    }
-    MeaningPreservation.selectShift ctx = some .down := rfl
-
-/-- Number-neutral nouns in Shan make BOTH ∩ and ι available simultaneously
-when the predicate is kind-compatible. This correctly predicts the
-ambiguity between definite and kind readings for Shan bare nouns. -/
-theorem shan_neutral_both_available :
-    let ctx : MeaningPreservation.TypeShiftContext := {
-      number := .neutral
-      downDefined := true
-      iotaBlocked := false
-      iotaAnaphoricBlocked := false
-      existsBlocked := false
-      instantiationAccessible := true
-    }
-    .down ∈ MeaningPreservation.availableShifts ctx ∧
-    .iota ∈ MeaningPreservation.availableShifts ctx ∧
-    .iotaAnaphoric ∈ MeaningPreservation.availableShifts ctx := by
-  simp [MeaningPreservation.availableShifts]
-
-/-- The Shan–English definiteness contrast derived from blocking.
-
-Same base noun type (⟨s,⟨e,t⟩⟩), same type-shifting operations,
-different article inventories. Shan has no "the" → ι unblocked →
-bare nouns can be definite. English has "the" → ι blocked → bare
-nouns cannot be definite (must use overt determiner). -/
-theorem shan_english_definiteness_contrast :
-    -- Shan: number-neutral bare noun gets definite reading
-    MeaningPreservation.selectShift {
-      number := .neutral, downDefined := false
-      iotaBlocked := false, iotaAnaphoricBlocked := false
-      existsBlocked := false, instantiationAccessible := true
-    } = some .iota ∧
-    -- English: bare singular gets no reading
-    MeaningPreservation.selectShift {
-      number := .sg, downDefined := false
-      iotaBlocked := true, iotaAnaphoricBlocked := true
-      existsBlocked := true, instantiationAccessible := true
-    } = none :=
+/-- With a non-kind predicate a Shan bare noun type-shifts by ι — the
+    definite reading — while an English bare singular gets no shift at all,
+    since *the* and *a* block ι and ∃. -/
+theorem shan_iota_english_none :
+    MeaningPreservation.selectShift (shanCtx false) = some .iota ∧
+    MeaningPreservation.selectShift
+      { number := .sg, downDefined := false
+      , iotaBlocked := true, iotaAnaphoricBlocked := true
+      , existsBlocked := true, instantiationAccessible := true } = none :=
   ⟨rfl, rfl⟩
 
-/-- The Shan–Thai anaphoric definiteness contrast derived from blocking.
+/-- With a kind-compatible predicate ∩ is selected while ι and ι^x remain
+    available — the definite/kind ambiguity of Shan bare nouns. -/
+theorem shan_kind_ambiguity :
+    MeaningPreservation.selectShift (shanCtx true) = some .down ∧
+    .iota ∈ MeaningPreservation.availableShifts (shanCtx true) ∧
+    .iotaAnaphoric ∈ MeaningPreservation.availableShifts (shanCtx true) := by
+  refine ⟨rfl, ?_, ?_⟩ <;> decide
 
-Shan: ι^x is unblocked → bare nouns can be anaphorically definite.
-Thai: ι^x is blocked by demonstrative → demonstrative required for
-anaphoric definiteness. Both languages have unblocked ι (unique
-definiteness via bare nouns). -/
+/-- Shan's ι^x is unblocked, so bare nouns reach anaphoric definiteness;
+    blocking ι^x — Thai's demonstrative — removes exactly that reading. -/
 theorem shan_thai_anaphoric_contrast :
-    -- Shan: ι^x available for anaphoric definiteness
-    .iotaAnaphoric ∈ MeaningPreservation.availableShifts {
-      number := .neutral, downDefined := false
-      iotaBlocked := false, iotaAnaphoricBlocked := false
-      existsBlocked := false, instantiationAccessible := true
-    } ∧
-    -- Thai: ι^x blocked, only ι available
-    .iotaAnaphoric ∉ MeaningPreservation.availableShifts {
-      number := .neutral, downDefined := false
-      iotaBlocked := false, iotaAnaphoricBlocked := true
-      existsBlocked := false, instantiationAccessible := true
-    } := by
-  simp [MeaningPreservation.availableShifts]
+    .iotaAnaphoric ∈ MeaningPreservation.availableShifts (shanCtx false) ∧
+    .iotaAnaphoric ∉ MeaningPreservation.availableShifts
+      { shanCtx false with iotaAnaphoricBlocked := true } := by
+  constructor <;> decide
 
-/-- ∃ is available as a last resort in Shan (when ∩ and ι are
-inapplicable), but by Meaning Preservation it is always dispreferred.
-This means bare nouns default to definite/kind, not existential —
-the existential reading arises only via DPP at vP. -/
+/-- ι outranks ∃ under Meaning Preservation: ∃ is available but never
+    selected when ι is, so Shan bare nouns default to definite or kind
+    readings, and the existential reading arises only through DPP at vP —
+    whence the missing high-∃ row of Table 2.3. -/
 theorem shan_exists_is_last_resort :
-    -- ∃ is available but not selected when ι is available
-    (MeaningPreservation.availableShifts {
-      number := .neutral, downDefined := false
-      iotaBlocked := false, iotaAnaphoricBlocked := false
-      existsBlocked := false, instantiationAccessible := true
-    }).head? = some .iota ∧
-    -- ∃ appears in the list but after ι
-    .exists ∈ (MeaningPreservation.availableShifts {
-      number := .neutral, downDefined := false
-      iotaBlocked := false, iotaAnaphoricBlocked := false
-      existsBlocked := false, instantiationAccessible := true
-    }) := by
-  constructor
-  · rfl
-  · simp [MeaningPreservation.availableShifts]
+    (MeaningPreservation.availableShifts (shanCtx false)).head? = some .iota ∧
+    .exists ∈ MeaningPreservation.availableShifts (shanCtx false) :=
+  ⟨rfl, by decide⟩
 
--- ============================================================================
--- §5: Marking Strategy ↔ Core/Definiteness Bridge
--- ============================================================================
+/-! ### The typology, derived per language (Tables 4.1 and 4.4) -/
 
-/-- Shan's unmarked strategy correctly maps to `ArticleType.none_`. -/
-theorem shan_article_type :
-    strategyToArticleType .unmarked = .none_ := rfl
-
-/-- `Semantics.Definiteness.articleTypeToDistinguishedPresup` correctly returns
-zero morphologically distinguished presupposition types for Shan. -/
-theorem shan_no_morphological_distinction :
-    (articleTypeToDistinguishedPresup .none_).length = 0 := rfl
-
-/-- The central Moroney insight: morphological marking ≠ semantic availability.
-
-Shan morphologically distinguishes zero presupposition types (no articles)
-but semantically expresses both unique and anaphoric definiteness (via
-covert type-shifting). The bridge between article inventory and semantic
-availability is the blocking principle: no articles → no blocking →
-all type-shifts (ι, ι^x, ∩) available. -/
-theorem marking_ne_availability :
-    -- Zero morphologically distinguished types
-    (articleTypeToDistinguishedPresup .none_).length = 0 ∧
-    -- But all type-shifts are semantically available (ι, ι^x, and ∩)
-    Shan.Nouns.blocking.iotaBlocked = false ∧
-    Shan.Nouns.blocking.downBlocked = false ∧
-    Shan.Nouns.blocking.existsBlocked = false := ⟨rfl, rfl, rfl, rfl⟩
-
--- ============================================================================
--- §6: Moroney's Revised Typology — Uniqueness Status
--- ============================================================================
-
-/-- Moroney's new category is genuinely distinct from the three existing ones. -/
-theorem unmarked_distinct_from_existing :
-    DefMarkingStrategy.unmarked ≠ .generallyMarked ∧
-    DefMarkingStrategy.unmarked ≠ .bipartite ∧
-    DefMarkingStrategy.unmarked ≠ .markedAnaphoric := by decide
-
--- ============================================================================
--- §7: Language-Specific Strategy Derivation
--- ============================================================================
-
-/-- The four Table 4.4 languages classify into the four strategy cells
-    when the strategy is *computed* from each language's
-    `{Lang}.Determiners.inventory`. The classification is
-    not stipulated — it is derived by `Determiner.Inventory.markingStrategy` from the
-    declared determiner set. -/
+/-- Each Table 4.4 language's marking strategy, computed by
+    `Determiner.Inventory.markingStrategy` from its declared inventory: the
+    four languages fill all four cells of the revised typology. -/
 theorem derive_all_languages :
     English.Determiners.inventory.markingStrategy = .generallyMarked ∧
     German.Determiners.inventory.markingStrategy = .bipartite ∧
@@ -417,87 +152,30 @@ theorem derive_all_languages :
   ⟨English.Determiners.marking, German.Determiners.marking,
    Thai.Determiners.marking, Shan.Determiners.marking⟩
 
-/-- The inventory-derived `ArticleType` agrees with Schwarz's stipulated
-    typology for the four Table 4.4 languages. The classification is
-    derived rather than assigned by fiat — `Determiner.Inventory.articleType` composes
-    `markingStrategy` with the strategy → articleType collapse. -/
-theorem derive_consistent_with_stipulated :
+/-- The [schwarz-2013]-style article-type projection of the same
+    inventories. -/
+theorem derive_article_types :
     English.Determiners.inventory.articleType = .weakOnly ∧
     German.Determiners.inventory.articleType = .weakAndStrong ∧
     Thai.Determiners.inventory.articleType = .weakOnly ∧
     Shan.Determiners.inventory.articleType = .none_ := by decide
 
--- ============================================================================
--- §8: Bridge to the canonical referent selector
--- ============================================================================
+/-- `ArticleType` is lossy where `DefMarkingStrategy` is not: English and
+    Mandarin differ in strategy yet collapse to the same article type. -/
+theorem articleType_lossy :
+    English.Determiners.inventory.markingStrategy ≠
+      Mandarin.Determiners.inventory.markingStrategy ∧
+    English.Determiners.inventory.articleType =
+      Mandarin.Determiners.inventory.articleType := by decide
 
-open Semantics.Definiteness (russellIotaList)
+/-! ### Shan count nouns are fake-mass nouns (§2.3.1) -/
 
-/-- The type-shift system and the canonical referent selector agree:
+/-- A four-element mereology: dogs `a`, `b`, their sum `ab`, and a leg `c`
+    below the sum that is not a dog. -/
+inductive FakeMassEntity where
+  | a | b | c | ab
+  deriving DecidableEq, Fintype, Repr
 
-- ι (unique definiteness) corresponds to `russellIotaList domain R` —
-  the Russellian iota over the bare restrictor
-- ι^x (anaphoric definiteness) corresponds to
-  `russellIotaList domain (R ∧ Q)` — the Russellian iota over the
-  intersection of restrictor and anaphoric filter
-
-When Q is vacuously true, the intersected predicate `R ∧ true` equals `R`,
-so ι^x reduces to ι at the referent-selector layer. The denotational
-counterpart (`presupOfReferent` of these selectors) inherits this collapse
-by congruence. -/
-theorem type_shift_referent_agreement :
-    ∀ (E : Type) (domain : List E) (restrictor : E → Bool),
-      russellIotaList domain (fun e => restrictor e && true) =
-      russellIotaList domain restrictor := by
-  intro _ domain restrictor
-  congr 1
-  funext e
-  exact Bool.and_true _
-
--- ============================================================================
--- §9: DPP Obligatory Low Scope (Table 2.3 derived)
--- ============================================================================
-
-/-- DPP yields obligatory low scope existential: the existential
-    introduced by DPP applies at the vP level, so it cannot scope above
-    negation. This is why `highExistential` is universally unavailable for
-    bare nouns ([chierchia-1998]; [moroney-2021] §2.3).
-
-    The theorem derives the universal blocking from the data table rather
-    than stipulating it. -/
-theorem dpp_scope_below_neg :
-    ∀ interp ∈ interpretationTable,
-      interp.interp = .highExistential →
-        interp.shanCount = false ∧ interp.shanMass = false ∧
-        interp.englishCount = false ∧ interp.englishMass = false := by
-  intro interp hmem heq
-  simp only [interpretationTable, List.mem_cons, List.mem_nil_iff, or_false] at hmem
-  rcases hmem with rfl | rfl | rfl | rfl | rfl <;> simp_all
-
--- ============================================================================
--- §10: FakeMass Witness — Shan Count Nouns (§2.4)
--- ============================================================================
-
-/-- Concrete witness of `FakeMass` behavior: Shan bare count nouns like
-    *mǎa* 'dog' are CUM (the sum of two dogs is dogs) but not g-homogeneous
-    (a dog's leg is part of a dog but is not itself a dog).
-
-    We construct a three-element partial order: two atoms `a`, `b` and their
-    join `ab = a ⊔ b`. The predicate `isDog` holds of `a`, `b`, and `ab`
-    (CUM), but fails g-homogeneity at `ab` because its proper parts `a` and
-    `b` could have sub-parts (in a richer model) that are not dogs. Here we
-    use the atoms directly: `ab` has proper parts `a` and `b` which ARE dogs,
-    so g-homogeneity holds vacuously on this small model. The genuine failure
-    requires non-atomic non-P parts, which we model by adding a non-dog atom
-    `c` with `c ≤ ab` (representing a dog-leg). -/
-inductive FakeMassEntity : Type where
-  | a   -- first dog
-  | b   -- second dog
-  | c   -- a leg (not a dog)
-  | ab  -- sum of two dogs (includes the leg)
-  deriving DecidableEq, Repr
-
-/-- Partial order: a, b, c ≤ ab (atoms below their join); reflexive. -/
 private def fmLe : FakeMassEntity → FakeMassEntity → Bool
   | _, .ab => true
   | .a, .a => true
@@ -505,88 +183,48 @@ private def fmLe : FakeMassEntity → FakeMassEntity → Bool
   | .c, .c => true
   | _, _ => false
 
-private theorem fmLe_refl (x : FakeMassEntity) : fmLe x x = true := by
-  cases x <;> rfl
+private def fmSup : FakeMassEntity → FakeMassEntity → FakeMassEntity
+  | .a, .a => .a
+  | .b, .b => .b
+  | .c, .c => .c
+  | _, _ => .ab
 
-private theorem fmLe_antisymm (x y : FakeMassEntity)
-    (hxy : fmLe x y = true) (hyx : fmLe y x = true) : x = y := by
-  cases x <;> cases y <;> simp_all [fmLe]
-
-private theorem fmLe_trans (x y z : FakeMassEntity)
-    (hxy : fmLe x y = true) (hyz : fmLe y z = true) : fmLe x z = true := by
-  cases x <;> cases y <;> cases z <;> simp_all [fmLe]
-
-instance : PartialOrder FakeMassEntity where
+instance : SemilatticeSup FakeMassEntity where
   le x y := fmLe x y = true
-  le_refl := fmLe_refl
-  le_antisymm x y hxy hyx := fmLe_antisymm x y hxy hyx
-  le_trans x y z hxy hyz := fmLe_trans x y z hxy hyz
+  le_refl := by decide
+  le_antisymm := by decide
+  le_trans := by decide
+  sup := fmSup
+  le_sup_left := by decide
+  le_sup_right := by decide
+  sup_le := by decide
 
-/-- Dog-predicate: `a`, `b`, and `ab` are dogs; `c` (the leg) is not. -/
+/-- Dogs: the atoms `a`, `b` and their sum `ab`; the leg `c` is not a dog. -/
 def isDog : FakeMassEntity → Prop
-  | .a => True
-  | .b => True
   | .c => False
-  | .ab => True
+  | _ => True
 
-/-- `isDog` is not g-homogeneous: `ab` is a dog, `c < ab`, but no dog
-    `z ≤ c` exists (since `c` is an atom and `isDog c = False`). -/
-theorem isDog_not_gHomogeneous : ¬ Mereology.gHomogeneous isDog := by
-  intro h
-  have hlt : (FakeMassEntity.c : FakeMassEntity) < .ab :=
-    ⟨show fmLe .c .ab = true from rfl,
-     fun heq => by cases heq⟩
-  obtain ⟨z, hzc, hPz⟩ := h .ab .c trivial hlt
-  -- z ≤ c means fmLe z c = true; by cases on z, only z = c works
-  cases z with
-  | a => exact absurd hzc (show ¬(fmLe .a .c = true) from by decide)
-  | b => exact absurd hzc (show ¬(fmLe .b .c = true) from by decide)
-  | c => exact hPz  -- isDog c = False
-  | ab => exact absurd hzc (show ¬(fmLe .ab .c = true) from by decide)
+instance : DecidablePred isDog := fun x => by
+  cases x <;> unfold isDog <;> infer_instance
 
--- ============================================================================
--- §11: Blocking ↔ Marking Strategy Correspondence
--- ============================================================================
+/-- Shan bare count nouns pattern with English furniture-type nouns
+    ([moroney-2021] §2.3.1): cumulative — the sum of dogs is dogs — but not
+    g-homogeneous, since the leg below the sum has no dog part. -/
+theorem isDog_fakeMass : Mereology.FakeMass isDog := by
+  constructor
+  · intro x hx y hy
+    cases x <;> cases y <;> first | exact trivial | exact hx.elim
+  · intro h
+    have hlt : (FakeMassEntity.c : FakeMassEntity) < .ab :=
+      lt_of_le_of_ne (show fmLe .c .ab = true from rfl) (by decide)
+    obtain ⟨z, hzc, hPz⟩ := h .ab .c trivial hlt
+    cases z with
+    | a => exact absurd hzc (show ¬(fmLe .a .c = true) by decide)
+    | b => exact absurd hzc (show ¬(fmLe .b .c = true) by decide)
+    | c => exact hPz
+    | ab => exact absurd hzc (show ¬(fmLe .ab .c = true) by decide)
 
-/-- The blocking principle connects the determiner set to available type-shifts,
-    and `Determiner.Inventory.markingStrategy` connects it to the marking strategy. This
-    theorem shows the full correspondence for the four Table 4.4 languages: the
-    same declared determiners that determine the marking strategy also determine
-    which type-shifts are blocked.
-
-    This is the structural core of Moroney's analysis: the determiner set is the
-    single parameter from which both the typological classification AND the
-    available interpretations of bare nouns are derived. -/
-theorem blocking_strategy_correspondence :
-    let English.Determiners.inventory := English.Determiners.inventory
-    let German.Determiners.inventory  := German.Determiners.inventory
-    let Thai.Determiners.inventory    := Thai.Determiners.inventory
-    let Shan.Determiners.inventory    := Shan.Determiners.inventory
-    -- English: both forms, syncretic → generallyMarked
-    (English.Determiners.inventory.markingStrategy = .generallyMarked ∧
-     English.Determiners.inventory.MarksPresup .uniqueness ∧
-     English.Determiners.inventory.MarksPresup .familiarity ∧
-     English.Determiners.inventory.IsSyncretic) ∧
-    -- German: two different forms → bipartite (weak/strong split)
-    (German.Determiners.inventory.markingStrategy = .bipartite ∧
-     German.Determiners.inventory.MarksPresup .uniqueness ∧
-     German.Determiners.inventory.MarksPresup .familiarity ∧
-     ¬ German.Determiners.inventory.IsSyncretic) ∧
-    -- Thai: only dem → markedAnaphoric, ι^x blocked (dem), ι unblocked (bare)
-    (Thai.Determiners.inventory.markingStrategy = .markedAnaphoric ∧
-     ¬ Thai.Determiners.inventory.MarksPresup .uniqueness ∧
-     Thai.Determiners.inventory.MarksPresup .familiarity) ∧
-    -- Shan: no forms → unmarked, nothing blocked, all shifts available
-    (Shan.Determiners.inventory.markingStrategy = .unmarked ∧
-     ¬ Shan.Determiners.inventory.MarksPresup .uniqueness ∧
-     ¬ Shan.Determiners.inventory.MarksPresup .familiarity ∧
-     Shan.Nouns.blocking.iotaBlocked = false ∧
-     Shan.Nouns.blocking.existsBlocked = false ∧
-     Shan.Nouns.blocking.downBlocked = false) := by decide
-
--- ============================================================================
--- §12: Demonstrative–Bare Noun Contrast (§2.4.3)
--- ============================================================================
+/-! ### Demonstratives add spatial content (§2.4.3) -/
 
 /-- The demonstrative denotation of [moroney-2021] (147)–(148), a referent
     selector with the demonstrative's spatial content added to the
@@ -620,153 +258,32 @@ theorem dem_refines_bare {E : Type} (domain : List E)
     congr 1; funext e'; exact Bool.and_comm _ _
   rw [this, hBare]; simp [hSpatial]
 
--- ============================================================================
--- §13: Bridge to Classifier Semantics (Ch. 3)
--- ============================================================================
+/-! ### Realization: anaphoric definiteness without an anaphoric article -/
 
-/-- Shan is a CLF-for-N language: the classifier atomizes the noun
-    denotation ([little-moroney-royer-2022]; [moroney-2021] Ch. 3).
-
-    The classifier semantics module provides `clfForNoun` as a thin wrapper
-    around `Mereology.atomize`. This bridge confirms that Shan classifiers
-    use the atomization strategy (CLF-for-N), connecting the Shan fragment's
-    `ClassifierStrategy.forNoun` to the denotation function. -/
-theorem shan_clf_is_atomization {α : Type*} [PartialOrder α]
-    (P : α → Prop) :
-    Semantics.Classifier.classifierDenot
-      NounCategorization.ClassifierStrategy.forNoun P
-      (fun _ => 0) 0   -- μ and n are unused for CLF-for-N
-    = Semantics.Classifier.clfForNoun P := rfl
-
--- ============================================================================
--- §14: Integration with the Semantics.Definiteness API
--- ============================================================================
-
-/-! The declared `{Lang}.Determiners.inventory` is the canonical upstream
-object — §7's `derive_all_languages` computes each language's Moroney cell
-from it. This section connects the realization predicate
-`Determiner.Inventory.Realizes` to Moroney's central empirical finding: Shan
-expresses anaphoric definiteness without any anaphoric article. -/
-
-open Intensional
-open Intensional.Variables
-open Semantics.Definiteness (Description)
-
-/-- Mandarin is in `.markedAnaphoric` — same cell as Thai. (Not part of
-    Moroney's Table 4.4 but anchors the Jenks 2018 typological backdrop.) -/
-theorem mandarin_in_markedAnaphoric :
-    Mandarin.Determiners.inventory.markingStrategy = .markedAnaphoric :=
-  Mandarin.Determiners.marking
-
-/-- Moroney's central observation, stated against the determiner set:
-    Shan has *no* determiner realizing the anaphoric kind, yet
-    expresses anaphoric definiteness through bare nouns and optional
-    demonstratives. The realization predicate makes this morphologically
-    visible — `.anaphoric` has no realizing form (no determiner expones a
-    familiarity use). -/
+/-- Shan has no determiner realizing anaphoric definiteness, yet expresses
+    it — through bare nouns (unblocked ι^x) and the optional
+    demonstratives. -/
 theorem shan_anaphoric_not_realized_via_article :
-    ¬ Shan.Determiners.inventory.Realizes .anaphoric := by
-  decide
+    ¬ Shan.Determiners.inventory.Realizes .anaphoric := by decide
 
-/-- Bare nominals need no determiner (realized in Shan and every language) —
-    this is the morphological substrate for Moroney's analysis: Shan's
-    anaphoric definites surface as bare nouns. -/
-theorem shan_bare_realized : Shan.Determiners.inventory.Realizes .bare := trivial
-
-/-- Shan realizes the demonstrative kind (the *nâj*/*nân* paradigm).
-    Combined with `shan_bare_realized`, this gives the morphological
-    inventory of strategies Shan deploys for definite reference. -/
+/-- Shan does realize the demonstrative kind — the *nâj*/*nân* paradigm. -/
 theorem shan_demonstrative_realized :
-    Shan.Determiners.inventory.Realizes .demonstrative := by
-  decide
+    Shan.Determiners.inventory.Realizes .demonstrative := by decide
 
-/-- English realizes `.anaphoric` via the syncretic *the* (which expones a
-    familiarity use), *without* an independent strong article. Contrasts with
-    Shan (no realizing form at all) and German (independent strong form). -/
-theorem english_anaphoric_realized_via_syncretism :
-    English.Determiners.inventory.Realizes .anaphoric := by
-  decide
+/-- English realizes anaphoric definiteness through syncretic *the* and
+    German through its dedicated strong article, while Shan has no realizing
+    form at all. -/
+theorem english_german_anaphoric_realized :
+    English.Determiners.inventory.Realizes .anaphoric ∧
+    German.Determiners.inventory.Realizes .anaphoric := by decide
 
-/-- German realizes `.anaphoric` via its independent strong article (no
-    syncretism). The unique vs anaphoric distinction is morphologically
-    marked. -/
-theorem german_anaphoric_realized_via_strong_article :
-    German.Determiners.inventory.Realizes .anaphoric := by
-  decide
+/-! ### Refuting Jenks's attested-cell prediction -/
 
-/-- The English and Mandarin determiner sets both collapse to
-    `ArticleType.weakOnly`, witnessing the lossiness of `ArticleType` relative
-    to `DefMarkingStrategy`: the inventories differ (English has a definite
-    article, Mandarin does not), and the strategies differ (`.generallyMarked`
-    vs `.markedAnaphoric`), yet `articleType` collapses both to `.weakOnly`. -/
-theorem english_mandarin_articleType_collapse :
-    English.Determiners.inventory.articleType = Mandarin.Determiners.inventory.articleType := by decide
-
-/-- The English and Mandarin determiner sets themselves are distinct, even
-    though their `ArticleType` classifications collide: English has a definite
-    article, Mandarin has none. -/
-theorem english_mandarin_inventory_distinct :
-    English.Determiners.inventory ≠ Mandarin.Determiners.inventory := by decide
-
-/-- Shan-specific consequence of `Semantics.Definiteness.interpret_bare_eq_unique`:
-    a bare definite description and a uniqueness definite over the same
-    restrictor select the same referent. This is the Core-API analogue of
-    Moroney's claim that bare nouns in Shan express weak/uniqueness
-    definiteness via unblocked ι. -/
-theorem shan_bare_unique_agreement {E W : Type}
-    (R : DenotGS E W .et) (sIdx : Nat)
-    (g : Assignment E)
-    (gs : SitAssignment W) :
-    Semantics.Definiteness.interpret (.bare R) g gs =
-      Semantics.Definiteness.interpret (.unique R sIdx) g gs := rfl
-
-/-- Shan-specific consequence of `Semantics.Definiteness.interpret_demonstrative_eq_anaphoric`:
-    the demonstrative's deictic feature is a presupposition filter, not a
-    referent selector. Demonstrative- and anaphoric-marked descriptions
-    over the same restrictor and discourse index pick the same entity.
-    This is the type-theoretic correlate of Moroney's claim that *nâj*/*nân*
-    *add* spatial content rather than substituting a different selector. -/
-theorem shan_demonstrative_anaphoric_agreement {E W : Type}
-    (R : DenotGS E W .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat)
-    (g : Assignment E)
-    (gs : SitAssignment W) :
-    Semantics.Definiteness.interpret (.demonstrative R deictic sIdx d) g gs =
-      Semantics.Definiteness.interpret (.anaphoric R d) g gs := rfl
-
--- ============================================================================
--- §15: Refutation of [jenks-2018]'s Typological Prediction
--- ============================================================================
-
-/-! [jenks-2018] §7 proposed a typology of definiteness marking with
-three attested cells (`.generallyMarked`, `.bipartite`, `.markedAnaphoric`)
-and one unattested cell (a language overtly marking only unique definites).
-The empirical core of [moroney-2021] is the discovery that *Shan*
-instantiates a fourth attested cell — `.unmarked` — that Jenks's
-three-cell space had no slot for: bare nouns express both unique and
-anaphoric definiteness without any obligatory morphological marking.
-
-The theorems below state the refutation against the substrate. Shan
-derives `.unmarked` (already proved in §7 / §14); `.unmarked` is
-distinct from each of Jenks's three cells (already proved in §6); the
-new content is the joint statement that Shan instantiates a strategy
-*not in* the Jenks-attested set. -/
-
-/-- Shan's morphologically-derived strategy is not in the
-    [jenks-2018]-attested set (imported from
-    `Jenks2018.jenksAttestedStrategies`). -/
-theorem shan_strategy_not_jenks_attested :
+/-- Shan's derived strategy falls outside [jenks-2018]'s attested set — the
+    discovery of the fourth, unmarked cell. -/
+theorem shan_refutes_jenks_typology :
     Shan.Determiners.inventory.markingStrategy
       ∉ Jenks2018.jenksAttestedStrategies := by
-  rw [Shan.Determiners.marking]
-  decide
-
-/-- The Moroney refutation in one statement: Shan instantiates a marking
-    strategy that [jenks-2018]'s typology predicted to be unattested.
-    This is the formal content of the prose claim "contra
-    [jenks-2018]'s prediction" in this file's module docstring. -/
-theorem moroney_shan_refutes_jenks_typology :
-    Shan.Determiners.inventory.markingStrategy = .unmarked ∧
-    .unmarked ∉ Jenks2018.jenksAttestedStrategies :=
-  ⟨Shan.Determiners.marking, by decide⟩
+  rw [Shan.Determiners.marking]; decide
 
 end Moroney2021
