@@ -6,8 +6,7 @@ import Linglib.Syntax.Question
 
 `QuestionProfile` bundle for Hindi-Urdu (ISO `hin`) per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Typology/Question.lean`. Cross-linguistic theorems consuming
-this profile live in `Studies/Dryer2013Question.lean`. The
+`Linglib/Syntax/Question.lean`. The
 PerspP analysis of *kya:* lives in
 `Studies/BhattDayal2020.lean`; clause-typing typology
 in `Studies/Dayal2025.lean`.

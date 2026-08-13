@@ -9,8 +9,7 @@ Authors: Robert Hawkins
 
 Theory-neutral classification enums for possession, following the WALS
 possession chapters ([wals-2013]). Per-language values are bare `def`s in
-`Fragments/<Lang>/Possession.lean`, consumed by `Studies/NicholsBickel2013`,
-`Studies/Heine1997`, and `Studies/KampanarouAlexiadou2026`. Bare-root
+`Fragments/<Lang>/Possession.lean`, consumed by `Studies/Heine1997` and `Studies/KampanarouAlexiadou2026`. Bare-root
 `Possession` namespace under `Features/`, like `Features/Case`.
 
 ## Main definitions
@@ -20,8 +19,6 @@ possession chapters ([wals-2013]). Per-language values are bare `def`s in
 [stassen-2013b] adds Genitive), `AdnominalMarking` ([nichols-1986]; WALS 24A,
 [nichols-bickel-2013c]), `Notion` and `Source` ([heine-1997], [heine-2009]),
 `InalienabilityRank` ([aikhenvald-2012]), and the neutral `Alienability` cut.
-Cross-linguistic aggregation uses a study-local row in
-`Studies/NicholsBickel2013.lean`.
 
 ## Notes
 

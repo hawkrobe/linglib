@@ -47,9 +47,7 @@ WordOrder).
 
 WALS chapter aggregate distributions (`ch92Total`, `ch93Total`, etc.)
 live in this file at the substrate layer per the project's "WALS goes to
-`Linglib/Typology/`" rule. Cross-linguistic theorems consuming Fragment
-per-language data live in
-`Studies/Dryer2013Question.lean`.
+`Linglib/Typology/`" rule.
 -/
 
 set_option autoImplicit false

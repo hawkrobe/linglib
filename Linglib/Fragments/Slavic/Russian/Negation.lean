@@ -34,8 +34,7 @@ def ne : NegMarkerEntry :=
   , morphemeType := .particle
   , position := .preverbal }
 
-/-- The Russian negation system: a single preverbal particle.
-    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
+/-- The Russian negation system: a single preverbal particle. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "rus" [ne]
 

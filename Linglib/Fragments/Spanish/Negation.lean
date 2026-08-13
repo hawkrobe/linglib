@@ -46,8 +46,7 @@ def no : NegMarkerEntry :=
   , morphemeType := .particle
   , position := .preverbal }
 
-/-- The Spanish negation system: a single preverbal particle.
-    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
+/-- The Spanish negation system: a single preverbal particle. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "spa" [no]
 

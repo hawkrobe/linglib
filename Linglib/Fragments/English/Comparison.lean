@@ -1,15 +1,11 @@
 import Linglib.Syntax.Comparative
 
 /-!
-# English comparative profile
-[stassen-2013] [wals-2013]
+# English comparative data
 
-`ComparativeProfile` bundle for English (ISO `eng`) per the project's
-"per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Typology/Comparison.lean`. Cross-linguistic theorems consuming
-this profile live in `Studies/Stassen2013Comparison.lean`. The
-[stassen-1985] 6-way classification (where applicable) lives in
-`Studies/Stassen1985.lean`.
+English marks the standard of comparison with the particle *than* (WALS Ch 121A:
+particle, [stassen-2013]), degree with the free word *more* or the bound affix
+*-er*, and the superlative morphologically (*-est*).
 -/
 
 set_option autoImplicit false
@@ -18,16 +14,19 @@ namespace English.Comparison
 
 open Comparative
 
-/-- English comparative profile. -/
-def comparison : ComparativeProfile :=
-  { language := "English"
-  , iso := "eng"
-  , comparativeType := .particle
-  , degreeWord := .hasDegreeWord
-  , superlative := .morphological
-  , comparativeForm := "X is taller/more Adj than Y"
-  , standardMarker := "than"
-  , degreeMarker := "more / -er"
-  , basicOrder := "SVO" }
+/-- Free degree word *more* alongside the affix *-er*. -/
+def degreeWord : DegreeWordType := .hasDegreeWord
+
+/-- Morphological superlative (*-est*). -/
+def superlative : SuperlativeStrategy := .morphological
+
+/-- Illustrative comparative. -/
+def comparativeForm : String := "X is taller/more Adj than Y"
+
+/-- The comparative particle marking the standard. -/
+def standardMarker : String := "than"
+
+/-- Degree markers: free word and bound affix. -/
+def degreeMarker : String := "more / -er"
 
 end English.Comparison

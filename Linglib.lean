@@ -2137,8 +2137,6 @@ import Linglib.Studies.Dolatian2020
 import Linglib.Studies.DongEtAl2026PMF
 import Linglib.Studies.Downing1996
 import Linglib.Studies.Dowty1991
-import Linglib.Studies.Dryer2013Negation
-import Linglib.Studies.Dryer2013Question
 import Linglib.Studies.Dunn2025
 import Linglib.Studies.Eckert2008
 import Linglib.Studies.EgreEtAl2023
@@ -2454,7 +2452,6 @@ import Linglib.Studies.Luce1959
 import Linglib.Studies.LuckingGinzburg2022
 import Linglib.Studies.Lucy1994
 import Linglib.Studies.MacuchSilvaEtAl2024
-import Linglib.Studies.Maddieson2013
 import Linglib.Studies.Magri2009
 import Linglib.Studies.Magri2014
 import Linglib.Studies.Magri2025
@@ -2509,7 +2506,6 @@ import Linglib.Studies.Narrog2010
 import Linglib.Studies.Narrog2012
 import Linglib.Studies.Newman2024
 import Linglib.Studies.Ney2026
-import Linglib.Studies.NicholsBickel2013
 import Linglib.Studies.Nickel2009
 import Linglib.Studies.Noonan2007
 import Linglib.Studies.Nordlinger2023
@@ -2664,7 +2660,6 @@ import Linglib.Studies.StanojevicSteedman2021
 import Linglib.Studies.StapsRooryck2024
 import Linglib.Studies.Stassen1985
 import Linglib.Studies.Stassen2000
-import Linglib.Studies.Stassen2013Comparison
 import Linglib.Studies.Steedman2000
 import Linglib.Studies.Steriade1997
 import Linglib.Studies.Sternefeld1998

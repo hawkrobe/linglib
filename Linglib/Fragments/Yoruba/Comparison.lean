@@ -1,15 +1,11 @@
 import Linglib.Syntax.Comparative
 
 /-!
-# Yoruba comparative profile
-[stassen-2013] [wals-2013]
+# Yoruba comparative data
 
-`ComparativeProfile` bundle for Yoruba (ISO `yor`) per the project's
-"per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Typology/Comparison.lean`. Cross-linguistic theorems consuming
-this profile live in `Studies/Stassen2013Comparison.lean`. The
-[stassen-1985] 6-way classification (where applicable) lives in
-`Studies/Stassen1985.lean`.
+Yoruba encodes comparison with the exceed verb *ju … lọ* (WALS Ch 121A: exceed,
+[stassen-2013]); the adjective carries no degree marking. Superlative via
+exceeding a universal standard.
 -/
 
 set_option autoImplicit false
@@ -18,16 +14,16 @@ namespace Yoruba.Comparison
 
 open Comparative
 
-/-- Yoruba comparative profile. -/
-def comparison : ComparativeProfile :=
-  { language := "Yoruba"
-  , iso := "yor"
-  , comparativeType := .exceed
-  , degreeWord := .noDegreeMarking
-  , superlative := .exceedAll
-  , comparativeForm := "X Adj ju Y lo"
-  , standardMarker := "ju...lo"
-  , degreeMarker := ""
-  , basicOrder := "SVO" }
+/-- No degree marking on the adjective. -/
+def degreeWord : DegreeWordType := .noDegreeMarking
+
+/-- Superlative by exceeding a universal standard. -/
+def superlative : SuperlativeStrategy := .exceedAll
+
+/-- Illustrative comparative. -/
+def comparativeForm : String := "X Adj ju Y lo"
+
+/-- The exceed-verb standard marker. -/
+def standardMarker : String := "ju...lo"
 
 end Yoruba.Comparison

@@ -9,8 +9,7 @@ import Linglib.Features.Possession
 Per-language possession data for Standard Modern Greek (SMG; Indo-European;
 ISO `ell`), per the project's per-language data flows through Fragments
 rule, as bare field-by-field `def`s. Substrate types live in
-`Linglib/Features/Possession.lean`. Cross-linguistic theorems consume these
-values from `Studies/NicholsBickel2013.lean`.
+`Linglib/Features/Possession.lean`.
 
 Examples: *to vivlio tu Jani* 'John's book' (inflectional GEN), *to pomolo
 apo tin porta* 'the door's handle' (apo-PP, part-whole), *to nero apo tin

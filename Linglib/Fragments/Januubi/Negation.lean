@@ -61,8 +61,7 @@ def standardNeg : String := maa.form
 
 /-- The Januubi negation system: a single particle.
     No WALS datapoint for Januubi-specific dialect; the lookup returns
-    `none` and the WALS fields stay unset. The Fragment-side joint
-    consumed by `Studies/Dryer2013Negation.lean`. -/
+    `none` and the WALS fields stay unset. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "" [maa]
 

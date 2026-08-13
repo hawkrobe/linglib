@@ -32,8 +32,7 @@ def hira : NegMarkerEntry :=
   , morphemeType := .affix
   , position := .morphological }
 
-/-- The Hixkaryana negation system: a single deverbalizing suffix.
-    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
+/-- The Hixkaryana negation system: a single deverbalizing suffix. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "hix" [hira]
 

@@ -9,8 +9,6 @@ Per-language possession values for Hindi-Urdu (Indo-European, ISO `hin`): forms
 predicative possession, and the agreeing genitive postposition kaa ~ ke ~ kii
 for adnominal possession. Substrate types (`PredicativeStrategy`,
 `AdnominalMarking`, …) live in `Linglib/Features/Possession.lean`.
-Cross-linguistic theorems consuming these values live in
-`Studies/NicholsBickel2013.lean`.
 -/
 
 namespace HindiUrdu.Possession

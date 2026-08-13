@@ -1,23 +1,9 @@
 import Linglib.Syntax.Comparative
 import Linglib.Studies.SarvasyAikhenvald2025
 import Linglib.Features.Case.Basic
-import Linglib.Fragments.English.Comparison
-import Linglib.Fragments.German.Comparison
 import Linglib.Fragments.Japanese.Comparison
 import Linglib.Fragments.Korean.Comparison
 import Linglib.Fragments.Turkish.Comparison
-import Linglib.Fragments.Mandarin.Comparison
-import Linglib.Fragments.Yoruba.Comparison
-import Linglib.Fragments.HindiUrdu.Comparison
-import Linglib.Fragments.Slavic.Russian.Comparison
-import Linglib.Fragments.Finnish.Comparison
-import Linglib.Fragments.Swahili.Comparison
-import Linglib.Fragments.Latin.Comparison
-import Linglib.Fragments.Thai.Comparison
-import Linglib.Fragments.Tagalog.Comparison
-import Linglib.Fragments.Arabic.ModernStandard.Comparison
-import Linglib.Fragments.Navajo.Comparison
-import Linglib.Fragments.Romance.French.Comparison
 
 /-!
 # Stassen 1985: Comparison and Universal Grammar
@@ -35,7 +21,7 @@ The 1985 book (110-language sample) classifies comparatives into six types:
 **separative**, **allative**, **locative** (the three adverbial subtypes
 collectively making up the "locational" category in WALS 2013), plus
 **exceed**, **conjoined**, and **particle**. The WALS 2013 typology
-([stassen-2013], in the substrate `Linglib/Typology/Comparison.lean`)
+([stassen-2013], in the substrate `Linglib/Syntax/Comparative.lean`)
 collapses the spatial triad into single `locational`, dropping the spatial-
 relation distinction that drives Stassen's explanatory universals connecting
 comparison to temporal chaining.
@@ -290,18 +276,18 @@ theorem u2b_arabic    : universal2B arabic1985    arabicCT    := by intro _; rfl
 /-- Universal 1A and 1B partition the case-assignment space. -/
 theorem case_assignment_exhaustive (t : ComparativeType1985) :
     t.caseAssignment = .derived ∨ t.caseAssignment = .fixed := by
-  cases t <;> simp [ComparativeType1985.caseAssignment] <;> decide
+  cases t <;> simp [ComparativeType1985.caseAssignment]
 
 /-- Particle and conjoined are the only derived-case types. -/
 theorem derived_iff_particle_or_conjoined (t : ComparativeType1985) :
     t.caseAssignment = .derived ↔ (t = .particle ∨ t = .conjoined) := by
-  cases t <;> simp [ComparativeType1985.caseAssignment] <;> decide
+  cases t <;> simp [ComparativeType1985.caseAssignment]
 
 /-- Adverbial types are exactly the spatial triad. -/
 theorem adverbial_iff_spatial (t : ComparativeType1985) :
     t.fixedEncoding = some .adverbial ↔
     (t = .separative ∨ t = .allative ∨ t = .locative) := by
-  cases t <;> simp [ComparativeType1985.fixedEncoding] <;> decide
+  cases t <;> simp [ComparativeType1985.fixedEncoding]
 
 /-- The three adverbial types all collapse to locational under WALS. -/
 theorem adverbial_collapse :
@@ -365,21 +351,6 @@ theorem turkish_fragment_case :
     some Turkish.Comparison.entry.standardCase =
     turkish1985.spatialCase := rfl
 
-/-- Japanese Fragment standard marker matches the Fragment profile. -/
-theorem japanese_marker_match :
-    Japanese.Comparison.entry.standardMarker =
-    Japanese.Comparison.comparison.standardMarker := rfl
-
-/-- Korean Fragment standard marker matches the Fragment profile. -/
-theorem korean_marker_match :
-    Korean.Comparison.entry.standardMarker =
-    Korean.Comparison.comparison.standardMarker := rfl
-
-/-- Turkish Fragment standard marker matches the Fragment profile. -/
-theorem turkish_marker_match :
-    Turkish.Comparison.entry.standardMarker =
-    Turkish.Comparison.comparison.standardMarker := rfl
-
 /-- All three separative Fragment entries use fixed case assignment. -/
 theorem all_separative_fixed_case :
     Japanese.Comparison.entry.caseAssignment = .fixed ∧
@@ -410,31 +381,25 @@ theorem separative_no_degree_morphology :
 theorem japanese_three_layer :
     some Japanese.Comparison.entry.standardCase =
       japanese1985.spatialCase ∧
-    japanese1985.toWALS =
-      Japanese.Comparison.comparison.comparativeType ∧
     japaneseCT = .absoluteDeranking ∧
     universal2B japanese1985 japaneseCT :=
-  ⟨rfl, rfl, rfl, by intro _; rfl⟩
+  ⟨rfl, rfl, by intro _; rfl⟩
 
 /-- Korean: three-layer consistency. -/
 theorem korean_three_layer :
     some Korean.Comparison.entry.standardCase =
       korean1985.spatialCase ∧
-    korean1985.toWALS =
-      Korean.Comparison.comparison.comparativeType ∧
     koreanCT = .absoluteDeranking ∧
     universal2B korean1985 koreanCT :=
-  ⟨rfl, rfl, rfl, by intro _; rfl⟩
+  ⟨rfl, rfl, by intro _; rfl⟩
 
 /-- Turkish: three-layer consistency. -/
 theorem turkish_three_layer :
     some Turkish.Comparison.entry.standardCase =
       turkish1985.spatialCase ∧
-    turkish1985.toWALS =
-      Turkish.Comparison.comparison.comparativeType ∧
     turkishCT = .absoluteDeranking ∧
     universal2B turkish1985 turkishCT :=
-  ⟨rfl, rfl, rfl, by intro _; rfl⟩
+  ⟨rfl, rfl, by intro _; rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 10. Bridge to ClauseChaining/Data
@@ -454,21 +419,22 @@ theorem turkish_deranking_consistent :
   ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 11. 1985 ↔ WALS discrepancies
+-- § 11. 1985 ↔ WALS 2013
 -- ════════════════════════════════════════════════════
 
--- Three languages show classification differences between the 1985 book
--- and the current WALS-based profiles:
---
--- 1. Finnish: particle in 1985 (p. 47 list), locational in WALS 2013.
---    Stassen may have reclassified Finnish between editions, or the WALS
---    classification emphasizes the partitive-case standard marker.
---
--- 2. Latin: particle-primary in 1985 (p. 47, with quam), mixed in WALS
---    2013 (because ablative comparative is also productive). The 1985
---    system distinguished primary vs secondary options; WALS uses "mixed".
---
--- 3. Navajo: locative in 1985 (p. 42 "Navaho"), conjoined in WALS 2013.
---    Genuine reclassification between the two works.
+/-- Where WALS Ch 121A ([stassen-2013]) codes a language classified in the
+    1985 sample, the 2013 value is the 1985 type under the adverbial collapse
+    `toWALS` — including Navaho (locative → locational) and Finnish (particle
+    in both, the 1985 secondary separative option dropped). Latin is uncoded
+    in Ch 121A; its Fragment carries a grammar-based `mixed` coding,
+    reflecting the 1985 finding that the quam-particle and ablative
+    strategies are both productive. -/
+theorem wals_preserves_1985 :
+    ∀ p ∈ [("jpn", japanese1985), ("kor", korean1985), ("tur", turkish1985),
+           ("hin", hindiUrdu1985), ("arb", arabic1985), ("nav", navajo1985),
+           ("cmn", mandarin1985), ("yor", yoruba1985), ("swh", swahili1985),
+           ("tha", thai1985), ("eng", english1985), ("rus", russian1985),
+           ("fin", finnish1985), ("fra", french1985)],
+      ComparativeType.ofWALS p.1 = some p.2.toWALS := by native_decide
 
 end Stassen1985

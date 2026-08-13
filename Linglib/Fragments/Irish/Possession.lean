@@ -8,8 +8,7 @@ Per-language possession values for Irish (Indo-European, ISO `gle`): forms
 `ta leabhar agam`, `teach an fhir`; Celtic at-possession (ta X ag-PRON) with
 genitive case on the possessor in adnominal possession. Substrate types
 (`PredicativeStrategy`, `AdnominalMarking`, …) live in
-`Linglib/Features/Possession.lean`. Cross-linguistic theorems consuming these
-values live in `Studies/NicholsBickel2013.lean`.
+`Linglib/Features/Possession.lean`.
 -/
 
 namespace Irish.Possession

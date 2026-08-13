@@ -16,8 +16,7 @@ through Fragments" rule ([stassen-2009]; [nichols-1986]; [heine-1997];
 ## Implementation notes
 
 The substrate types (`PredicativeStrategy`, `AdnominalMarking`, …) live in
-`Linglib/Features/Possession.lean`; the cross-linguistic theorems consuming
-these values live in `Studies/NicholsBickel2013.lean`.
+`Linglib/Features/Possession.lean`.
 
 Examples: *ay chenek' ta oxom* 'EXIS bean P pot', *s-be-lal te j-na=e*
 'A3-road-NCLS DET A1-house=ENC'. Existential *ay* + possessive pivot for

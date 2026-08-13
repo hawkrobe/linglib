@@ -42,8 +42,7 @@ def not : NegMarkerEntry :=
     treat *not* as the canonical entry. -/
 def negContracted : String := "n't"
 
-/-- The English negation system: a single preverbal particle.
-    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
+/-- The English negation system: a single preverbal particle. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "eng" [not]
 

@@ -8,8 +8,7 @@ Per-language possession values for Korean (Koreanic, ISO `kor`): forms
 `na-ege chaek-i iss-da`, `Yeonghui-ui chaek`; dative possessor plus existential
 `iss-da`, with genitive -ui for adnominal possession. Substrate types
 (`PredicativeStrategy`, `AdnominalMarking`, …) live in
-`Linglib/Features/Possession.lean`. Cross-linguistic theorems consuming these
-values live in `Studies/NicholsBickel2013.lean`.
+`Linglib/Features/Possession.lean`.
 -/
 
 namespace Korean.Possession

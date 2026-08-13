@@ -46,8 +46,7 @@ def nicht : NegMarkerEntry :=
     non-NC languages is a separate axis from the operator. -/
 def negDeterminer : String := "kein"
 
-/-- The German negation system: a single particle.
-    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
+/-- The German negation system: a single particle. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "deu" [nicht]
 

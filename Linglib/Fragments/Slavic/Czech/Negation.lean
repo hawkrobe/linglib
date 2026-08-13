@@ -35,8 +35,7 @@ def ne : NegMarkerEntry :=
   , morphemeType := .affix
   , position := .preverbal }
 
-/-- The Czech negation system: a single verbal prefix.
-    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
+/-- The Czech negation system: a single verbal prefix. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "ces" [ne]
 

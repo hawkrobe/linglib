@@ -47,8 +47,7 @@ def negSuffix : NegMarkerEntry :=
 /-- Turkish standard (verbal) negation: a single verbal affix.
     Nonverbal predication negates with copular *değil* and the
     existential with suppletive *yok* (for *var*), both outside
-    standard negation in [miestamo-2005]'s sense.
-    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
+    standard negation in [miestamo-2005]'s sense. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "tur" [negSuffix]
 

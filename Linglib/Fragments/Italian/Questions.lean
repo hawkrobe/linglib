@@ -6,8 +6,7 @@ import Linglib.Syntax.Question
 
 `QuestionProfile` bundle for Italian (ISO `ita`) per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Typology/Question.lean`. Cross-linguistic theorems consuming
-this profile live in `Studies/Dryer2013Question.lean`. The
+`Linglib/Syntax/Question.lean`. The
 forced-clause-typing analysis lives in
 `Studies/Dayal2025.lean`.
 

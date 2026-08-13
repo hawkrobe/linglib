@@ -1,6 +1,6 @@
 import Linglib.Features.Case.Basic
 import Linglib.Syntax.Comparative
-import Linglib.Syntax.Comparative
+
 /-!
 # Korean Comparative Construction [stassen-1985]
 
@@ -19,14 +19,21 @@ places Korean firmly in the separative class in [stassen-1985]'s
 typology.
 -/
 
+set_option autoImplicit false
+
 namespace Korean.Comparison
 
+open Comparative
+
+/-- The separative standard marker. -/
+def standardMarker : String := "-boda"
+
 /-- Korean comparative: separative standard marker *-boda*. -/
-def entry : Comparative.ComparativeEntry :=
+def entry : ComparativeEntry :=
   { standardCase := .abl
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial
-  , standardMarker := "-boda"
+  , standardMarker := standardMarker
   , hasDegreeMorphology := false }
 
 -- Per-datum verification
@@ -35,20 +42,15 @@ theorem case_is_fixed : entry.caseAssignment = .fixed := rfl
 theorem encoding_is_adverbial : entry.fixedEncoding = some .adverbial := rfl
 theorem no_degree_morphology : entry.hasDegreeMorphology = false := rfl
 
--- ============================================================================
--- ComparativeProfile bundle (consumed by Studies/Stassen2013.lean)
--- ============================================================================
+/-! ### WALS Ch 121 classification data -/
 
-/-- Korean comparative profile (WALS Ch 121 + degree-word + superlative). -/
-def comparison : Comparative.ComparativeProfile :=
-  { language := "Korean"
-  , iso := "kor"
-  , comparativeType := .locational
-  , degreeWord := .noDegreeMarking
-  , superlative := .comparativeUniversal
-  , comparativeForm := "Y-boda X-ga Adj"
-  , standardMarker := "-boda"
-  , degreeMarker := ""
-  , basicOrder := "SOV" }
+/-- No overt degree marking; the adverb *deo* is an optional intensifier. -/
+def degreeWord : DegreeWordType := .noDegreeMarking
+
+/-- Superlative as comparative with universal standard. -/
+def superlative : SuperlativeStrategy := .comparativeUniversal
+
+/-- Illustrative comparative. -/
+def comparativeForm : String := "Y-boda X-ga Adj"
 
 end Korean.Comparison

@@ -50,8 +50,7 @@ def negSuffix : NegMarkerEntry :=
   , position := .morphological }
 
 /-- The Japanese negation system: a single verbal affix with rich
-    morphological redistribution (see `japaneseNegDistribution`).
-    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
+    morphological redistribution (see `japaneseNegDistribution`). -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "jpn" [negSuffix]
 
