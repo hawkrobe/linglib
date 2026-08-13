@@ -196,7 +196,7 @@ def emit_module(iso: str, rows_by_inv: dict, module_name: str) -> str:
 
 /-!
 # PHOIBLE inventory: {lang_name} ({iso}, ID {first_inv_id})
-@cite{{moran-mccloy-2019}}
+[moran-mccloy-2019]
 
 Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_phoible.py {iso}`.

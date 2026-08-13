@@ -752,7 +752,7 @@ theorem κz_unique_rank_zero :
     the Tweety scenario: an RSA listener with infinite rationality
     assigns probability 1 to the most normal world. -/
 theorem κz_softmax_concentrates :
-    ∀ w, Tendsto (fun (α : ℝ) => Core.softmax (α • rankToScore κ_z) w)
+    ∀ w, Tendsto (fun (α : ℝ) => softmax (α • rankToScore κ_z) w)
       atTop (nhds (if w = .birdFlies then 1 else 0)) :=
   softmax_concentrates_unique κ_z .birdFlies κz_birdFlies κz_unique_rank_zero
 

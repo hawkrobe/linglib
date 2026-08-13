@@ -109,7 +109,7 @@ theorem gumbel_eq_softmaxDecoder {Cand : Type*} (α : ℝ) :
     (NoiseKernel.gumbel α).toDecoder = (softmaxDecoder α : Decoder Cand ℝ) := rfl
 
 /-- For a `Fintype` candidate type, the Gumbel-induced softmax decoder
-    agrees with `Core.softmax` (the McFadden-integral form) on every
+    agrees with `softmax` (the McFadden-integral form) on every
     candidate, when the candidate set is the full type. -/
 theorem gumbel_decoder_eq_softmax {ι : Type*} [Fintype ι] [Nonempty ι]
     (α : ℝ) (s : ι → ℝ) (i : ι) :

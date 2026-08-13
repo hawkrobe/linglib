@@ -422,6 +422,7 @@ import Linglib.Data.PHOIBLE.Inventories.Hungarian
 import Linglib.Data.PHOIBLE.Inventories.Japanese
 import Linglib.Data.PHOIBLE.Inventories.MandarinChinese
 import Linglib.Data.PHOIBLE.Inventories.Maori
+import Linglib.Data.PHOIBLE.Inventories.Persian
 import Linglib.Data.PHOIBLE.Inventories.Russian
 import Linglib.Data.PHOIBLE.Inventories.Spanish
 import Linglib.Data.PHOIBLE.Inventories.Swahili
@@ -1319,6 +1320,7 @@ import Linglib.Phonology.HarmonicGrammar.Cumulativity
 import Linglib.Phonology.HarmonicGrammar.Deformation
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Phonology.HarmonicGrammar.NoisyHG
+import Linglib.Phonology.Hiatus
 import Linglib.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
 import Linglib.Phonology.HarmonicGrammar.Score

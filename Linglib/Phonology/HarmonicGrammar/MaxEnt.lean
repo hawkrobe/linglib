@@ -41,7 +41,7 @@ equals its factor.
 
 namespace HarmonicGrammar
 
-open Constraints Core
+open Constraints
 
 /-! ### Classical MaxEnt -/
 
@@ -68,6 +68,24 @@ def homophonyAvoidance {n : Nat} {O : Type*} [DecidableEq O] :
     SystemicConstraint n O :=
   fun f =>
     (Finset.univ.filter fun p : Fin n × Fin n => p.1 < p.2 ∧ f p.1 = f p.2).card
+
+/-- On a two-item paradigm, \*HOMOPHONY is the collision indicator. -/
+theorem homophonyAvoidance_pair {O : Type*} [DecidableEq O] (a b : O) :
+    homophonyAvoidance (n := 2) ![a, b] = if a = b then 1 else 0 := by
+  by_cases h : a = b
+  · subst h
+    have : (Finset.univ.filter
+        fun p : Fin 2 × Fin 2 => p.1 < p.2 ∧ ![a, a] p.1 = ![a, a] p.2)
+        = {(0, 1)} := by
+      ext ⟨i, j⟩
+      fin_cases i <;> fin_cases j <;> simp +decide
+    simp [homophonyAvoidance, this]
+  · have : (Finset.univ.filter
+        fun p : Fin 2 × Fin 2 => p.1 < p.2 ∧ ![a, b] p.1 = ![a, b] p.2)
+        = ∅ := by
+      ext ⟨i, j⟩
+      fin_cases i <;> fin_cases j <;> simp +decide [h]
+    simp [homophonyAvoidance, this, h]
 
 /-! ### Joint Distribution with Systemic Constraints -/
 
@@ -100,8 +118,8 @@ noncomputable def maxEntCoupled {n m k : Nat} {I O : Type*} [Fintype O] [Decidab
     (inputs : Fin n → I)
     (classicalCon : CON (I × O) m) (classicalW : Fin m → ℝ)
     (sw : Fin k → ℝ) (scon : Fin k → SystemicConstraint n O) :
-    Core.CoupledSoftmax (Fin n) O :=
-  Core.coupledSoftmaxOfMaxEnt inputs
+    CoupledSoftmax (Fin n) O :=
+  coupledSoftmaxOfMaxEnt inputs
     (fun p => harmonyScore classicalCon classicalW p)
     (fun f => systemicScore sw scon f)
 
