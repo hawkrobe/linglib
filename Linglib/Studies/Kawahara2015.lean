@@ -242,28 +242,19 @@ theorem toneSpec_eq_L {a : Option ℕ} {j : ℕ} (hj : 1 ≤ j) :
 
 /-- The specified tones after mora 0 contain at most one L, since the
     post-accent L pins the accent location and positions are distinct. -/
-theorem count_L_toneSpec_dense (a : Option ℕ) :
-    ∀ l : List ℕ, l.Nodup → (∀ j ∈ l, 1 ≤ j) →
-      (l.filterMap (toneSpec a)).count .L ≤ 1 := by
-  intro l
-  induction l with
-  | nil => simp
-  | cons j rest ih =>
-    intro hnd hpos
-    rw [List.filterMap_cons]
-    rcases hj : toneSpec a j with _ | t
-    · exact ih hnd.of_cons fun k hk => hpos k (.tail _ hk)
-    rcases t with _ | _
-    · simpa [List.count_cons] using ih hnd.of_cons fun k hk => hpos k (.tail _ hk)
-    · have ha : a.map (· + 1) = some j := (toneSpec_eq_L (hpos j (.head _))).mp hj
-      have hrest : (rest.filterMap (toneSpec a)).count .L = 0 := by
-        rw [List.count_eq_zero]
-        intro hmem
-        obtain ⟨k, hk, hspec⟩ := List.mem_filterMap.mp hmem
-        have hak : a.map (· + 1) = some k := (toneSpec_eq_L (hpos k (.tail _ hk))).mp hspec
-        rw [ha] at hak
-        exact (List.nodup_cons.mp hnd).1 ((Option.some_inj.mp hak) ▸ hk)
-      simp [hrest]
+theorem count_L_toneSpec_dense (a : Option ℕ) (l : List ℕ) (hnd : l.Nodup)
+    (hpos : ∀ j ∈ l, 1 ≤ j) :
+    (l.filterMap (toneSpec a)).count .L ≤ 1 := by
+  rw [List.count_filterMap]
+  rcases a with _ | p
+  · rw [List.countP_eq_zero.mpr fun j hj => by simp [toneSpec_eq_L (hpos j hj)]]
+    exact Nat.zero_le _
+  · rw [List.countP_congr (q := (· == p + 1)) fun j hj => by
+        simp only [beq_iff_eq, toneSpec_eq_L (hpos j hj), Option.map_some,
+          Option.some.injEq]
+        omega,
+      ← List.count_eq_countP]
+    exact List.nodup_iff_count_le_one.mp hnd _
 
 /-- A word carries at most one HL fall, whatever its accent location and
     length (culminativity, §1.4). -/
@@ -271,21 +262,18 @@ theorem accentToTones_culminative (a : Option ℕ) (n : ℕ) :
     hlFallCount (accentToTones a n) ≤ 1 := by
   obtain _ | m := n
   · exact Nat.zero_le _
-  · have hpeel : accentToTones a (m + 1) =
-        (((List.range m).map Nat.succ).map (toneSpec a)).scanl (fun t o => o.getD t)
-          (if a = some 0 then LevelTone.H else .L) := by
-      simp only [accentToTones, List.range_succ_eq_map, List.map_cons, toneSpec_zero,
+  · obtain ⟨t₀, ht₀⟩ : ∃ t, toneSpec a 0 = some t := ⟨_, toneSpec_zero a⟩
+    have hpeel : accentToTones a (m + 1) =
+        (((List.range m).map Nat.succ).map (toneSpec a)).scanl (fun t o => o.getD t) t₀ := by
+      simp only [accentToTones, List.range_succ_eq_map, List.map_cons, ht₀,
         List.scanl_cons, List.tail_cons, Option.getD_some]
     rw [hpeel, ← hlFallCount_L_cons, hlFallCount_cons_scanl, hlFallCount_L_cons]
     refine (hlFallCount_le_count_tail _).trans ?_
     rw [List.tail_cons]
     simp only [List.reduceOption]
     rw [List.filterMap_map, Function.id_comp]
-    exact count_L_toneSpec_dense a _
-      (List.nodup_range.map Nat.succ_injective)
-      (fun j hj => by
-        obtain ⟨k, -, rfl⟩ := List.mem_map.mp hj
-        exact Nat.succ_le_succ k.zero_le)
+    exact count_L_toneSpec_dense a _ (List.nodup_range.map Nat.succ_injective)
+      fun j hj => by simp only [List.mem_map] at hj; omega
 
 /-! ### Compound accent (§4)
 
