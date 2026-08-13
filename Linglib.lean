@@ -3,6 +3,7 @@
 /-
 A Lean 4 library for formal linguistics, covering semantics, pragmatics,
 and their interfaces. See README.md for documentation links.
+import Linglib.Core.Algebra.BigOperators.Multiset
 import Linglib.Core.Algebra.FreeMonoid.Destutter
 import Linglib.Core.Algebra.FreeMonoid.FreeSemigroup
 import Linglib.Core.Algebra.Group.Aperiodic
@@ -24,7 +25,7 @@ import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 import Linglib.Core.Algebra.RootedTree.BirkhoffLaurent
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
-import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionNonplanar
+import Linglib.Core.Algebra.RootedTree.Coproduct.Deletion
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pairing
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
@@ -116,6 +117,7 @@ import Linglib.Core.Data.List.Perm
 import Linglib.Core.Data.List.Sublist
 import Linglib.Core.Data.List.TakeDrop
 import Linglib.Core.Data.Multiset.Antidiagonal
+import Linglib.Core.Data.Multiset.FilterMap
 import Linglib.Core.Data.Multiset.Powerset
 import Linglib.Core.Data.Multiset.Rel
 import Linglib.Core.Data.Option.Compatible
@@ -127,6 +129,7 @@ import Linglib.Core.Data.RoseTree.Get
 import Linglib.Core.Data.RoseTree.Leaves
 import Linglib.Core.Data.RoseTree.Nonplanar
 import Linglib.Core.Data.RoseTree.Perm
+import Linglib.Core.Data.RoseTree.StripTrace
 import Linglib.Core.Data.RoseTree.Traversable
 import Linglib.Core.Data.Setoid.Basic
 import Linglib.Core.GroupTheory.Congruence.Hom
