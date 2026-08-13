@@ -1320,6 +1320,7 @@ import Linglib.Phonology.HarmonicGrammar.Cumulativity
 import Linglib.Phonology.HarmonicGrammar.Deformation
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Phonology.HarmonicGrammar.NoisyHG
+import Linglib.Phonology.Hiatus
 import Linglib.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
 import Linglib.Phonology.HarmonicGrammar.Score

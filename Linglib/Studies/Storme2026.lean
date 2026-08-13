@@ -1,5 +1,6 @@
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Phonology.Segmental.Defs
+import Linglib.Phonology.Hiatus
 import Linglib.Fragments.Farsi.Phonology
 import Linglib.Core.Probability.LogitChoice
 import Mathlib.Data.Fin.VecNotation
@@ -18,7 +19,7 @@ deletes freely in /hutʃɑ-emun/ (1PL possessive) but rarely in /hutʃɑ-e/
 the bare stem. This file builds the paradigm from Persian segment strings
 with the resolutions as juncture operations — homophony is string identity,
 and the suffix-length conditioning is string algebra
-(`resolve_deletion_eq_stem_iff`) — and derives the closed form of the
+(`Hiatus.elideV2_eq_left_iff`) — and derives the closed form of the
 marginalized model (`persianMarginal_eq_softmax`), its fitted-weight
 preference orders (Table 5), and the suffix-length effect that \*Homophony
 creates (`homophony_length_effect`) and classical constraints cannot
@@ -64,28 +65,19 @@ def suffix : HiatusInput → List Segment
 /-- The underlying form: stem plus suffix. -/
 def underlying (i : HiatusInput) : List Segment := stem ++ suffix i
 
-/-- The three hiatus resolutions as operations at the stem–suffix juncture:
-concatenate faithfully, insert the glottal stop, or delete the suffix-initial
-vowel. -/
+/-- The three hiatus resolutions as `Hiatus` repairs at the stem–suffix
+juncture: faithful concatenation, glottal-stop epenthesis, V2 elision. -/
 def resolve : HiatusOutput → List Segment → List Segment → List Segment
-  | .hiatus, st, suf => st ++ suf
-  | .epenthesis, st, suf => st ++ glottal :: suf
-  | .deletion, st, suf => st ++ suf.tail
+  | .hiatus => (· ++ ·)
+  | .epenthesis => Hiatus.epenthesize glottal
+  | .deletion => Hiatus.elideV2
 
 /-- The surface form of each mapping, computed from the string operations. -/
 def realize (i : HiatusInput) (o : HiatusOutput) : List Segment :=
   resolve o stem (suffix i)
 
-/-- Deleting the suffix vowel of a nonempty suffix merges the suffixed form
-with the bare stem exactly when the suffix is monosegmental: suffix-length
-conditioning is string algebra, not stipulation. -/
-theorem resolve_deletion_eq_stem_iff (st suf : List Segment) (hsuf : suf ≠ []) :
-    resolve .deletion st suf = st ↔ suf.length = 1 := by
-  cases suf with
-  | nil => exact absurd rfl hsuf
-  | cons a l => simp [resolve, List.length_eq_zero_iff]
-
-/-- [hutʃɑ]: deletion under the monosegmental suffix *is* the bare stem. -/
+/-- [hutʃɑ]: deletion under the monosegmental suffix *is* the bare stem — the
+concrete instance of `Hiatus.elideV2_eq_left_iff`. -/
 theorem realize_mono_deletion : realize .mono .deletion = stem := rfl
 
 /-- [hutʃɑmun]: deletion under the polysegmental suffix keeps a residue
@@ -95,13 +87,9 @@ theorem realize_poly_deletion_ne_stem : realize .poly .deletion ≠ stem := by
 
 /-! ### Constraints computed on strings, and the fitted weights -/
 
-/-- Count of vowel–vowel adjacencies (hiatus configurations) in a form. -/
-def hiatusCount (fm : List Segment) : ℕ :=
-  (fm.zip fm.tail).countP fun p => decide (p.1.IsVowel ∧ p.2.IsVowel)
-
 /-- \*Hiatus: vowel–vowel adjacencies surviving in the surface form. -/
 def starHiatus : Constraint (HiatusInput × HiatusOutput) := fun c =>
-  hiatusCount (realize c.1 c.2)
+  Hiatus.count (realize c.1 c.2)
 
 /-- Dep: inserted segments — the surface form's length excess over the
 underlying form. Length-based counting is exact for this candidate set, since
@@ -183,6 +171,22 @@ noncomputable def persianMarginal (i : Fin 2) (o : HiatusOutput) : ℝ :=
 noncomputable def foldedScore (i : HiatusInput) (o : HiatusOutput) : ℝ :=
   harmonyScore classicalCon classicalW (i, o) - homophonyWeight * baseCollisions i o
 
+/-- Closed form of the folded scores: each repair's fitted cost, with the
+\*Homophony penalty (2.27, on top of Max's 1) landing exactly on
+monosegmental deletion. -/
+theorem foldedScore_eq (i : HiatusInput) (o : HiatusOutput) :
+    foldedScore i o = -(match i, o with
+      | _, .hiatus => 1.89
+      | _, .epenthesis => 2.47
+      | .mono, .deletion => 3.27
+      | .poly, .deletion => 1) := by
+  cases i <;> cases o <;>
+    norm_num [foldedScore, baseCollisions_eq, harmonyScore_eq_neg_sum,
+      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight,
+      depConstraint_eq, starHiatus_eq, maxConstraint_eq,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
+      Matrix.cons_val_two, Matrix.tail_cons]
+
 /-- The uncoupled equivalent of the Persian model: by `starHomophony_eq_sum`
 the coupling folds into the per-input scores. -/
 noncomputable def persianUncoupled : CoupledSoftmax (Fin 2) HiatusOutput where
@@ -218,60 +222,39 @@ theorem persianMarginal_sum_eq_one (i : Fin 2) :
 
 /-! ### Predictions with the fitted weights
 
-The marginalized model reproduces [ariyaee-jurgec-2021]'s frequencies
-([storme-2026] Table 5: hiatus .55 ≻ epenthesis .31 ≻ deletion .14 for the
-monosegmental suffix; deletion .61 ≻ hiatus .25 ≻ epenthesis .14 for the
-polysegmental one). The theorems verify the predicted preference orders; the
-exact fitted frequencies live in the paper's tables. -/
+Table 5's preference orders: hiatus .55 ≻ epenthesis .31 ≻ deletion .14 under
+the monosegmental suffix, deletion .61 ≻ hiatus .25 ≻ epenthesis .14 under
+the polysegmental one. -/
 
-/-- Monosegmental suffix: deletion is the least likely realization (predicted
-frequency .14) — it would merge the suffixed form with the bare stem. -/
+/-- A marginal comparison reduces to comparing folded scores. -/
+theorem persianMarginal_lt_of_foldedScore_lt {i : Fin 2} {o o' : HiatusOutput}
+    (h : foldedScore (inputs i) o < foldedScore (inputs i) o') :
+    persianMarginal i o < persianMarginal i o' := by
+  rw [persianMarginal_eq_softmax, persianMarginal_eq_softmax]
+  exact softmax_strict_mono _ _ _ h
+
+/-- Monosegmental suffix: deletion — which would merge the suffixed form with
+the bare stem — is the least likely realization (.14). -/
 theorem mono_deletion_lt_epenthesis :
-    persianMarginal 0 .deletion < persianMarginal 0 .epenthesis := by
-  rw [persianMarginal_eq_softmax, persianMarginal_eq_softmax]
-  exact softmax_strict_mono _ _ _ (by
-    norm_num [foldedScore, baseCollisions_eq, harmonyScore_eq_neg_sum,
-      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight,
-      depConstraint_eq, starHiatus_eq, maxConstraint_eq, inputs,
-      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
-      Matrix.cons_val_two, Matrix.tail_cons])
+    persianMarginal 0 .deletion < persianMarginal 0 .epenthesis :=
+  persianMarginal_lt_of_foldedScore_lt (by norm_num [foldedScore_eq, inputs])
 
-/-- Monosegmental suffix: faithful hiatus is the preferred realization
-(predicted frequency .55). -/
+/-- Monosegmental suffix: faithful hiatus is the preferred realization (.55). -/
 theorem mono_epenthesis_lt_hiatus :
-    persianMarginal 0 .epenthesis < persianMarginal 0 .hiatus := by
-  rw [persianMarginal_eq_softmax, persianMarginal_eq_softmax]
-  exact softmax_strict_mono _ _ _ (by
-    norm_num [foldedScore, baseCollisions_eq, harmonyScore_eq_neg_sum,
-      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight,
-      depConstraint_eq, starHiatus_eq, maxConstraint_eq, inputs,
-      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
-      Matrix.cons_val_two, Matrix.tail_cons])
+    persianMarginal 0 .epenthesis < persianMarginal 0 .hiatus :=
+  persianMarginal_lt_of_foldedScore_lt (by norm_num [foldedScore_eq, inputs])
 
 /-- Polysegmental suffix: epenthesis is less likely than faithful hiatus
-(predicted frequencies .14 vs .25). -/
+(.14 vs .25). -/
 theorem poly_epenthesis_lt_hiatus :
-    persianMarginal 1 .epenthesis < persianMarginal 1 .hiatus := by
-  rw [persianMarginal_eq_softmax, persianMarginal_eq_softmax]
-  exact softmax_strict_mono _ _ _ (by
-    norm_num [foldedScore, baseCollisions_eq, harmonyScore_eq_neg_sum,
-      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight,
-      depConstraint_eq, starHiatus_eq, maxConstraint_eq, inputs,
-      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
-      Matrix.cons_val_two, Matrix.tail_cons])
+    persianMarginal 1 .epenthesis < persianMarginal 1 .hiatus :=
+  persianMarginal_lt_of_foldedScore_lt (by norm_num [foldedScore_eq, inputs])
 
-/-- Polysegmental suffix: deletion is the preferred realization (predicted
-frequency .61) — [hutʃɑmun] keeps the suffix recoverable, so \*Homophony is
-silent. -/
+/-- Polysegmental suffix: deletion is the preferred realization (.61) —
+[hutʃɑmun] keeps the suffix recoverable, so \*Homophony is silent. -/
 theorem poly_hiatus_lt_deletion :
-    persianMarginal 1 .hiatus < persianMarginal 1 .deletion := by
-  rw [persianMarginal_eq_softmax, persianMarginal_eq_softmax]
-  exact softmax_strict_mono _ _ _ (by
-    norm_num [foldedScore, baseCollisions_eq, harmonyScore_eq_neg_sum,
-      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight,
-      depConstraint_eq, starHiatus_eq, maxConstraint_eq, inputs,
-      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
-      Matrix.cons_val_two, Matrix.tail_cons])
+    persianMarginal 1 .hiatus < persianMarginal 1 .deletion :=
+  persianMarginal_lt_of_foldedScore_lt (by norm_num [foldedScore_eq, inputs])
 
 /-! ### The suffix-length effect -/
 
@@ -308,18 +291,7 @@ theorem homophony_length_effect :
     persianMarginal 0 .deletion < persianMarginal 1 .deletion := by
   rw [persianMarginal_eq_softmax, persianMarginal_eq_softmax]
   refine softmax_lt_softmax_of_single_score_lt ?_ fun o ho => ?_
-  · norm_num [foldedScore, baseCollisions_eq, harmonyScore_eq_neg_sum,
-      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight,
-      depConstraint_eq, starHiatus_eq, maxConstraint_eq, inputs,
-      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
-      Matrix.cons_val_two, Matrix.tail_cons]
-  · cases o with
-    | hiatus =>
-        simp [foldedScore, baseCollisions_eq, inputs,
-          harmonyScore_input_blind classicalW .poly .mono]
-    | epenthesis =>
-        simp [foldedScore, baseCollisions_eq, inputs,
-          harmonyScore_input_blind classicalW .poly .mono]
-    | deletion => exact absurd rfl ho
+  · norm_num [foldedScore_eq, inputs]
+  · cases o <;> simp_all [foldedScore_eq, inputs]
 
 end Storme2026
