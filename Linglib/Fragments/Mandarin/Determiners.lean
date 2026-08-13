@@ -4,11 +4,15 @@ import Linglib.Features.NounCategorization.Basic
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.Mandarin.Classifiers
 
-/-! # Mandarin Chinese Quantifier Fragment
+/-! # Mandarin determiner inventory
 [kuo-yu-2012] [tsai-2015]
 
 Quantifier phrases in Mandarin, following [kuo-yu-2012]'s GQ-theoretic
-inventory (§12.1) and [tsai-2015]'s strong/weak classification (§5.3).
+inventory (§12.1) and [tsai-2015]'s strong/weak classification (§5.3),
+plus the definiteness-marking inventory: Mandarin has no overt articles —
+bare nouns serve unique definites, the demonstrative *nà* 'that'
+obligatorily expones anaphoric definites, and possession is marked with
+*de* ([jenks-2018], [moroney-2021]).
 
 Existential (intersective) quantifiers — weak ([kuo-yu-2012] §12.1.1):
 - hěnduō 很多 (many)
@@ -150,5 +154,17 @@ theorem requires_cl_has_typical :
 theorem typical_classifier_is_default :
     (allQuantifiers.filterMap (·.typicalClassifier)).all
       (·.isDefault) = true := by decide
+
+/-! ### Definiteness marking -/
+
+/-- The Mandarin definiteness-relevant determiners are the demonstrative
+    *nà*, the obligatory exponent of anaphoric definites, and the possessive
+    *de*. -/
+def inventory : Determiner.Inventory :=
+  [ .demonstrative { form := "na", deictic := .distal, definiteUses := [.anaphoric] },
+    .possessive { form := "de" } ]
+
+/-- Mandarin derives the `.markedAnaphoric` Moroney cell. -/
+theorem marking : inventory.markingStrategy = .markedAnaphoric := by decide
 
 end Mandarin.Determiners

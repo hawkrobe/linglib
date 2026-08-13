@@ -715,7 +715,6 @@ import Linglib.Fragments.ASL.Classifiers
 import Linglib.Fragments.ASL.Height
 import Linglib.Fragments.Abkhaz.Evidentiality
 import Linglib.Fragments.Adyghe.Clause
-import Linglib.Fragments.Akan.Definiteness
 import Linglib.Fragments.Akan.Determiners
 import Linglib.Fragments.Akan.Phonology
 import Linglib.Fragments.Amharic.ConsonantalRoots
@@ -739,7 +738,7 @@ import Linglib.Fragments.Bulgarian.Clause
 import Linglib.Fragments.Burmese.Negation
 import Linglib.Fragments.Buryat.Complementizers
 import Linglib.Fragments.Cantonese.Aspect
-import Linglib.Fragments.Cantonese.Definiteness
+import Linglib.Fragments.Cantonese.Determiners
 import Linglib.Fragments.Cantonese.Particles
 import Linglib.Fragments.Cantonese.Predicates
 import Linglib.Fragments.Cantonese.ResultativeComplements
@@ -801,7 +800,7 @@ import Linglib.Fragments.English.WordOrder
 import Linglib.Fragments.Farsi.Coordination
 import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.Farsi.Phonology
-import Linglib.Fragments.Fering.Definiteness
+import Linglib.Fragments.Fering.Determiners
 import Linglib.Fragments.Fijian.Possession
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.Finnish.Comparison
@@ -831,7 +830,7 @@ import Linglib.Fragments.German.ClauseTypes
 import Linglib.Fragments.German.Comparison
 import Linglib.Fragments.German.Conditionals
 import Linglib.Fragments.German.Coordination
-import Linglib.Fragments.German.Definiteness
+import Linglib.Fragments.German.Determiners
 import Linglib.Fragments.German.Distributives
 import Linglib.Fragments.German.Evidentiality
 import Linglib.Fragments.German.Gender
@@ -866,9 +865,8 @@ import Linglib.Fragments.Greek.StandardModern.Reciprocals
 import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 import Linglib.Fragments.Greek.StandardModern.TemporalDeictic
 import Linglib.Fragments.Guebie.ParticleVerbs
-import Linglib.Fragments.HaitianCreole.Definiteness
+import Linglib.Fragments.HaitianCreole.Determiners
 import Linglib.Fragments.Hausa.Coordination
-import Linglib.Fragments.Hausa.Definiteness
 import Linglib.Fragments.Hausa.Determiners
 import Linglib.Fragments.Hausa.Focus
 import Linglib.Fragments.Hausa.Gender
@@ -984,7 +982,7 @@ import Linglib.Fragments.Korean.Relativization
 import Linglib.Fragments.Korean.WordOrder
 import Linglib.Fragments.Koryak.Modals
 import Linglib.Fragments.Laal.Prosody
-import Linglib.Fragments.Lakhota.Definiteness
+import Linglib.Fragments.Lakhota.Determiners
 import Linglib.Fragments.Lango.Coordination
 import Linglib.Fragments.Latin.Adjectives
 import Linglib.Fragments.Latin.Case
@@ -1004,7 +1002,6 @@ import Linglib.Fragments.Mandarin.ClassifierSystem
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Comparison
 import Linglib.Fragments.Mandarin.Conditionals
-import Linglib.Fragments.Mandarin.Definiteness
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Mandarin.Evidentiality
 import Linglib.Fragments.Mandarin.Modals
@@ -1024,7 +1021,7 @@ import Linglib.Fragments.Mandarin.WordOrder
 import Linglib.Fragments.Maori.Negation
 import Linglib.Fragments.Maori.Phonology
 import Linglib.Fragments.Marathi.Particles
-import Linglib.Fragments.MauritianCreole.Definiteness
+import Linglib.Fragments.MauritianCreole.Determiners
 import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Chol.ClassifierSystem
 import Linglib.Fragments.Mayan.Chol.Classifiers
@@ -1106,6 +1103,7 @@ import Linglib.Fragments.Sesotho.Morph
 import Linglib.Fragments.Shan.ClassifierSystem
 import Linglib.Fragments.Shan.Classifiers
 import Linglib.Fragments.Shan.Definiteness
+import Linglib.Fragments.Shan.Determiners
 import Linglib.Fragments.Shona.Basic
 import Linglib.Fragments.Shona.ClassifierSystem
 import Linglib.Fragments.Singlish.Questions
@@ -1194,7 +1192,7 @@ import Linglib.Fragments.Tarifit.Inventory
 import Linglib.Fragments.Telugu.Case
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Thai.Comparison
-import Linglib.Fragments.Thai.Definiteness
+import Linglib.Fragments.Thai.Determiners
 import Linglib.Fragments.Tibetan.Coordination
 import Linglib.Fragments.Tibetan.Evidentiality
 import Linglib.Fragments.Tigre.Phonology

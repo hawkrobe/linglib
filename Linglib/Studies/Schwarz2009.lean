@@ -3,10 +3,10 @@ import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.German.Definiteness
-import Linglib.Fragments.Thai.Definiteness
-import Linglib.Fragments.Mandarin.Definiteness
-import Linglib.Fragments.Shan.Definiteness
+import Linglib.Fragments.German.Determiners
+import Linglib.Fragments.Thai.Determiners
+import Linglib.Fragments.Mandarin.Determiners
+import Linglib.Fragments.Shan.Determiners
 
 /-!
 # Schwarz (2009): Two Types of Definites in Natural Language
@@ -179,7 +179,7 @@ theorem english_syncretic_articles :
 theorem strategy_split :
     German.Determiners.inventory.markingStrategy = .bipartite ∧
     English.Determiners.inventory.markingStrategy = .generallyMarked :=
-  ⟨German.Definiteness.marking, English.Determiners.marking⟩
+  ⟨German.Determiners.marking, English.Determiners.marking⟩
 
 /-- The number of morphologically distinguished presupposition types
     differs across the two languages, even though the underlying

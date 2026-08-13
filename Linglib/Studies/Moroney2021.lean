@@ -8,10 +8,11 @@ import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Definiteness.Basic
 import Linglib.Semantics.Classifier
 import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.German.Definiteness
-import Linglib.Fragments.Mandarin.Definiteness
-import Linglib.Fragments.Thai.Definiteness
+import Linglib.Fragments.German.Determiners
+import Linglib.Fragments.Mandarin.Determiners
+import Linglib.Fragments.Thai.Determiners
 import Linglib.Fragments.Shan.Definiteness
+import Linglib.Fragments.Shan.Determiners
 import Linglib.Studies.Jenks2018
 
 /-!
@@ -427,8 +428,8 @@ theorem derive_all_languages :
     German.Determiners.inventory.markingStrategy = .bipartite ∧
     Thai.Determiners.inventory.markingStrategy = .markedAnaphoric ∧
     Shan.Determiners.inventory.markingStrategy = .unmarked :=
-  ⟨English.Determiners.marking, German.Definiteness.marking,
-   Thai.Definiteness.marking, Shan.Definiteness.marking⟩
+  ⟨English.Determiners.marking, German.Determiners.marking,
+   Thai.Determiners.marking, Shan.Determiners.marking⟩
 
 /-- The inventory-derived `ArticleType` agrees with Schwarz's stipulated
     typology for the four Table 4.4 languages. The classification is
@@ -668,7 +669,7 @@ open Semantics.Definiteness (Description)
     Moroney's Table 4.4 but anchors the Jenks 2018 typological backdrop.) -/
 theorem mandarin_in_markedAnaphoric :
     Mandarin.Determiners.inventory.markingStrategy = .markedAnaphoric :=
-  Mandarin.Definiteness.marking
+  Mandarin.Determiners.marking
 
 /-- Moroney's central observation, stated against the determiner set:
     Shan has *no* determiner realizing the anaphoric kind, yet
@@ -769,7 +770,7 @@ new content is the joint statement that Shan instantiates a strategy
 theorem shan_strategy_not_jenks_attested :
     Shan.Determiners.inventory.markingStrategy
       ∉ Jenks2018.jenksAttestedStrategies := by
-  rw [Shan.Definiteness.marking]
+  rw [Shan.Determiners.marking]
   decide
 
 /-- The Moroney refutation in one statement: Shan instantiates a marking
@@ -779,6 +780,6 @@ theorem shan_strategy_not_jenks_attested :
 theorem moroney_shan_refutes_jenks_typology :
     Shan.Determiners.inventory.markingStrategy = .unmarked ∧
     .unmarked ∉ Jenks2018.jenksAttestedStrategies :=
-  ⟨Shan.Definiteness.marking, by decide⟩
+  ⟨Shan.Determiners.marking, by decide⟩
 
 end Moroney2021
