@@ -5,15 +5,14 @@ import Linglib.Fragments.Japanese.Prosody
 /-!
 # Kawahara (2015) [kawahara-2015]
 
-Tokyo Japanese pitch accent, after the survey *The phonology of Japanese
-accent*. The antepenultimate accent rule ([mccawley-1968]) and the Latin
-Stress Rule ([hayes-1995]) agree on six of Table 1's eight trisyllabic
-weight conditions and diverge exactly on HLH and LLH; the accent-to-tone
-derivation (accentual HL, initial rise, spreading) determines surface tones
-and is culminative — at most one HL fall per word, for every accent
-location and length (`accentToTones_culminative`); the eight-way affix
-accent typology projects onto the coarse dominant/recessive split; and both
-compound-accent rules satisfy NonFinality ([prince-smolensky-1993]).
+*The phonology of Japanese accent* surveys Tokyo Japanese pitch accent: a
+single lexical accent per word determines the surface tone contour, and its
+location is predictable in loanwords, compounds, and affixed words. This
+file formalizes the survey's core generalizations — the Table 1 comparison
+of the antepenultimate accent rule ([mccawley-1968]) with the Latin Stress
+Rule ([hayes-1995]), the accent-to-tone derivation and its culminativity
+(`accentToTones_culminative`), the eight-way affix accent typology, and
+NonFinality ([prince-smolensky-1993]) in compound accent.
 -/
 
 namespace Kawahara2015
