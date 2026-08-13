@@ -97,52 +97,6 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommSemiring R] {α β : Type*}
 
-/-! ### `traceLeaf` — placeholder for a cut subtree -/
-
-/-- The trace-marker placeholder leaf carrying the encoded label `b : β`. -/
-def traceLeaf (b : β) : RoseTree (α ⊕ β) := .node (Sum.inr b) []
-
-/-! ### Δ^c extraction policy -/
-
-/-- The Δ^c extraction policy: for `Sum.inl`-rooted (non-trace)
-    subtrees, extract whole leaving a single `traceLeaf (τ t)` in the
-    parent's child slot. For `Sum.inr`-rooted (trace) subtrees, decline
-    to extract. -/
-def extractC (τ : RoseTree (α ⊕ β) → β) :
-    RoseTree (α ⊕ β) → Option (List (RoseTree (α ⊕ β)))
-  | t@(.node (Sum.inl _) _) => some [traceLeaf (τ t)]
-  | .node (Sum.inr _) _ => none
-
-@[simp] theorem extractC_inl (τ : RoseTree (α ⊕ β) → β)
-    (a : α) (cs : List (RoseTree (α ⊕ β))) :
-    extractC τ (RoseTree.node (Sum.inl a) cs) =
-      some [traceLeaf (τ (RoseTree.node (Sum.inl a) cs))] := rfl
-
-@[simp] theorem extractC_inr (τ : RoseTree (α ⊕ β) → β)
-    (b : β) (cs : List (RoseTree (α ⊕ β))) :
-    extractC τ (RoseTree.node (Sum.inr b) cs) = none := rfl
-
-/-! ### `cutSummandsCP` — Δ^c cut enumeration via the generic `cutSummandsG`
-
-Defined as `cutSummandsG (extractC τ)`. The generic-side simp lemmas
-(`cutSummandsG_node`, `cutListSummandsG_*`, `augActionG_*`) compose with
-`extractC_inl`/`extractC_inr` to give the Δ^c-specific reductions. -/
-
-/-- The Δ^c cut summands: cuts at non-trace subtrees with trace
-    placeholders, skipping cuts at trace leaves. -/
-def cutSummandsCP (τ : RoseTree (α ⊕ β) → β) :
-    RoseTree (α ⊕ β) → Multiset (Forest (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β)) :=
-  cutSummandsG (extractC τ)
-
-theorem cutSummandsCP_def (τ : RoseTree (α ⊕ β) → β) (T : RoseTree (α ⊕ β)) :
-    cutSummandsCP τ T = cutSummandsG (extractC τ) T := rfl
-
-@[simp] theorem cutSummandsCP_node (τ : RoseTree (α ⊕ β) → β)
-    (a : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
-    cutSummandsCP τ (RoseTree.node a cs) =
-      (cutListSummandsG (extractC τ) cs).map (fun p => (p.1, .node a p.2)) := by
-  rw [cutSummandsCP_def, cutSummandsG_node]
-
 /-! ### comulCTreePlanar — tree-level Δ^c
 
 Sum the cut summands as tensors, plus the explicit `T ⊗ 1` term. -/
