@@ -384,23 +384,17 @@ theorem shortN2_preaccent_nonfinal (n1Morae n2Morae : ℕ) (h : 1 ≤ n2Morae) :
   · simp [shortN2PreAccent, Nat.ppred_succ]
     omega
 
-/-- Long-N2 compound accent never yields final accent, since unaccented and
-    finally-accented N2s take N2-initial accent and retained accents are
-    nonfinal within N2 (§4.2). -/
-theorem longN2_nonfinal (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ)
-    (h2 : 3 ≤ n2Morae) (hacc : ∀ p ∈ n2Accent, p < n2Morae) :
+/-- Long-N2 compound accent never yields final accent, since retention is
+    filtered to N2-nonfinal accents and the N2-initial default is nonfinal
+    in a trimoraic-or-longer N2 (§4.2). -/
+theorem longN2_nonfinal (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ) (h2 : 3 ≤ n2Morae) :
     nonFinality (longN2CompoundAccent n1Morae n2Morae n2Accent, n1Morae + n2Morae) = 0 := by
-  rcases n2Accent with _ | pos
-  · simp [longN2CompoundAccent, Option.filter_none]
+  rcases hX : n2Accent.filter (· + 1 != n2Morae) with _ | pos
+  · simp [longN2CompoundAccent, hX]
     omega
-  · have hlt := hacc pos rfl
-    simp only [longN2CompoundAccent, nonFinality_eq_zero, Option.filter_some,
-      Option.map_some, ne_eq, Option.some.injEq]
-    split_ifs with hfin
-    · rw [bne_iff_ne] at hfin
-      simp only [Option.getD_some]
-      omega
-    · simp only [Option.getD_none]
-      omega
+  · have hpos := (Option.filter_eq_some_iff.mp hX).2
+    rw [bne_iff_ne] at hpos
+    simp [longN2CompoundAccent, hX]
+    omega
 
 end Kawahara2015
