@@ -13,8 +13,8 @@ Kra-Dai). Shan has no overt articles, so bare nouns express both unique and
 anaphoric definiteness via unblocked covert type-shifting; the demonstratives
 *nâj* (proximal) and *nân* (distal) are optional in anaphoric contexts and
 denote referent selectors carrying a uniqueness presupposition plus spatial
-content ([moroney-2021] §2.1.3). The declared determiner inventory is
-`Shan.Determiners.inventory`.
+content, physical or abstract ([moroney-2021] §2.4.3, (147)–(148)). The
+declared determiner inventory is `Shan.Determiners.inventory`.
 
 ## References
 

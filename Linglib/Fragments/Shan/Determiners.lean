@@ -15,11 +15,10 @@ contexts, so bare nouns express both unique and anaphoric definiteness.
 namespace Shan.Determiners
 
 /-- The Shan determiners are the optional demonstratives *nâj/nân*, which
-    obligatorily expone no definite use, and a possessive form. -/
+    obligatorily expone no definite use. -/
 def inventory : Determiner.Inventory :=
   [ .demonstrative { form := "nâj", deictic := .proximal, definiteUses := [] },
-    .demonstrative { form := "nân", deictic := .distal, definiteUses := [] },
-    .possessive { form := "POSS" } ]
+    .demonstrative { form := "nân", deictic := .distal, definiteUses := [] } ]
 
 /-- Shan derives the `.unmarked` Moroney cell. -/
 theorem marking : inventory.markingStrategy = .unmarked := by decide
