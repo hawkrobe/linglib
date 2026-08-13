@@ -31,45 +31,24 @@ def similarity {α : Type*} [DecidableEq α] (xs : List (Finset α)) (x y : α) 
 
 /-! ### Labial natural classes (p. 199) -/
 
-/-- Labial natural classes for the /f, m/ computation (p. 199): 2 shared
-followed by 7 non-shared, with the paper's glosses. -/
+/-- Labial natural classes for the /f, m/ computation (p. 199): the 2
+shared classes, then the 7 non-shared. -/
 def labialClasses_fm : List (Finset Consonant) :=
-  [ -- shared between f and m:
-    {.b, .f, .m, .w},  -- the labials
-    {.b, .f, .m},      -- labial consonants
-    -- non-shared (contains f, not m):
-    {.b, .f},          -- obstruents
-    {.f, .w},          -- continuants
-    {.f},              -- voiceless continuants
-    -- non-shared (contains m, not f):
-    {.b, .m, .w},      -- voiced
-    {.b, .m},          -- voiced stops
-    {.m, .w},          -- voiced sonorants
-    {.m}]              -- nasals
+  [{.b, .f, .m, .w}, {.b, .f, .m},
+   {.b, .f}, {.f, .w}, {.f}, {.b, .m, .w}, {.b, .m}, {.m, .w}, {.m}]
 
-/-- Labial natural classes for the /b, f/ computation (p. 199): 3 shared
-followed by 5 non-shared, verbatim from the paper — including its omission
-of `{f}`, which [broe-1993]'s inventory-fixed class set would count,
-giving 3/9 rather than the reported 3/8. -/
+/-- Labial natural classes for the /b, f/ computation (p. 199): the 3
+shared classes, then the 5 non-shared — verbatim from the paper, which
+omits `{f}` here ([broe-1993]'s inventory-fixed class set would include
+it, giving 3/9 rather than the reported 3/8). -/
 def labialClasses_bf : List (Finset Consonant) :=
-  [ -- shared between b and f:
-    {.b, .f, .m, .w},  -- the labials
-    {.b, .f, .m},      -- labial consonants
-    {.b, .f},          -- obstruents
-    -- non-shared (contains f, not b):
-    {.f, .w},          -- continuants
-    -- non-shared (contains b, not f):
-    {.b, .m, .w},      -- voiced
-    {.b, .m},          -- voiced stops
-    {.b, .w},          -- voiced non-nasals
-    {.b}]              -- voiced obstruents
+  [{.b, .f, .m, .w}, {.b, .f, .m}, {.b, .f},
+   {.f, .w}, {.b, .m, .w}, {.b, .m}, {.b, .w}, {.b}]
 
-/-- Worked example (p. 199): 2 shared classes, 7 non-shared, so
-similarity(/f, m/) = 2/9. -/
+/-- Worked example, p. 199. -/
 theorem similarity_f_m : similarity labialClasses_fm .f .m = 2/9 := by decide +kernel
 
-/-- Worked example (p. 199): 3 shared classes, 5 non-shared, so
-similarity(/b, f/) = 3/8. -/
+/-- Worked example, p. 199. -/
 theorem similarity_b_f : similarity labialClasses_bf .b .f = 3/8 := by decide +kernel
 
 /-! ### Table IV (p. 203): O/E by similarity, adjacent pairs -/
