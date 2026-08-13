@@ -1,4 +1,5 @@
 import Linglib.Phonology.Prosody.Syllable
+import Mathlib.Data.Nat.PSub
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Fragments.Japanese.Prosody
 
@@ -327,70 +328,60 @@ The traditional dichotomy by N2 length: short N2s (≤ 2μ) either retain
 accent or pre-accent the N1-final position; long N2s (≥ 3μ) take N2-initial
 accent unless their own accent is nonfinal. Both rules are stated over mora
 counts; the paper's rules target syllables, and the two coincide on the
-light-syllable data of (22)–(24) formalized below. -/
+light-syllable data of (21)–(24) formalized below. -/
 
-/-- The compound accent under a short (≤ 2μ) N2, which either pre-accents
-    the N1-final position, its own accent lost to NonFinality, or retains
-    its accent shifted by N1's length (§4.1). -/
-def shortN2CompoundAccent (n1Morae : ℕ) (n2Accent : Option ℕ)
-    (preAccenting : Bool) : Option ℕ :=
-  if preAccenting then
-    match n1Morae with
-    | 0 => none
-    | n + 1 => some n
-  else
-    n2Accent.map (· + n1Morae)
+/-- A retaining short N2 keeps its own accent, shifted into the compound
+    (§4.1, (21)). -/
+def shortN2Retain (n1Morae : ℕ) (n2Accent : Option ℕ) : Option ℕ :=
+  n2Accent.map (n1Morae + ·)
+
+/-- A pre-accenting short N2 accents the N1-final mora — the partial
+    predecessor of N1's length — its own accent lost to NonFinality
+    (§4.1, (22)). -/
+def shortN2PreAccent (n1Morae : ℕ) : Option ℕ :=
+  n1Morae.ppred
 
 /-- The compound accent under a long (≥ 3μ) N2, which receives N2-initial
     accent when unaccented or finally-accented and otherwise retains its
     own accent (§4.2). -/
-def longN2CompoundAccent (n1Morae : ℕ) (n2Accent : Option ℕ)
-    (n2Morae : ℕ) : Option ℕ :=
+def longN2CompoundAccent (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ) : Option ℕ :=
   some (n1Morae + (n2Accent.filter (· + 1 != n2Morae)).getD 0)
 
 /-- The NonFinality constraint over an (accent, mora count) pair, violated
     once when the accent sits on the final mora ([prince-smolensky-1993];
     §4.1 invokes it for the loss of final accent in compounds). -/
 def nonFinality : Constraint (Option ℕ × ℕ) :=
-  Constraint.binary fun an => an.1 = some (an.2 - 1) ∧ 1 ≤ an.2
+  Constraint.binary fun an => an.1.map (· + 1) = some an.2
+
+/-- In *fa'asuto+ki'su → faasuto+ki'su* 'first kiss', the short N2 retains
+    its accent on *ki* ((21a)). -/
+theorem faasuto_kisu_compound : shortN2Retain 4 (some 0) = some 4 := rfl
 
 /-- In *ka'buto+musi → kabuto'+musi* 'beetle', the pre-accenting short N2
     puts the accent on N1-final *to* ((22a)). -/
-theorem kabuto_musi_compound :
-    shortN2CompoundAccent 3 (some 0) true = some 2 := by decide
+theorem kabuto_musi_compound : shortN2PreAccent 3 = some 2 := rfl
 
 /-- In *si'n+yokohama → sin+yo'kohama* 'Shin-Yokohama', the unaccented long
     N2 receives N2-initial accent ((23a)). -/
-theorem sin_yokohama_compound :
-    longN2CompoundAccent 2 none 4 = some 2 := by decide
+theorem sin_yokohama_compound : longN2CompoundAccent 2 4 none = some 2 := rfl
 
 /-- In *si'n+tamane'gi → sin+tamane'gi* 'new onion', the long N2 retains
     its nonfinal accent ((24a)). -/
-theorem sin_tamanegi_compound :
-    longN2CompoundAccent 2 (some 2) 4 = some 4 := by decide
+theorem sin_tamanegi_compound : longN2CompoundAccent 2 4 (some 2) = some 4 := rfl
 
-/-- A nonfinal (or absent) accent satisfies `nonFinality`. -/
-theorem nonFinality_eq_zero {acc : Option ℕ} {n : ℕ} (h : ∀ p ∈ acc, p + 1 ≠ n) :
-    nonFinality (acc, n) = 0 := by
-  rcases acc with _ | p
-  · simp [nonFinality, Constraint.binary]
-  · have hp := h p rfl
-    simp only [nonFinality, Constraint.binary_apply]
-    rw [if_neg]
-    rintro ⟨h1, h2⟩
-    simp only [Option.some.injEq] at h1
-    omega
+/-- `nonFinality` is satisfied exactly when the accent's successor is not
+    the mora count. -/
+@[simp] theorem nonFinality_eq_zero {acc : Option ℕ} {n : ℕ} :
+    nonFinality (acc, n) = 0 ↔ acc.map (· + 1) ≠ some n := by
+  simp [nonFinality, Constraint.binary]
 
 /-- Short-N2 pre-accenting never yields final accent, since the new accent
     lands on the N1-final position and N2 intervenes (§4.1). -/
-theorem shortN2_preaccent_nonfinal (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ)
-    (h : 1 ≤ n2Morae) :
-    nonFinality (shortN2CompoundAccent n1Morae n2Accent true, n1Morae + n2Morae) = 0 := by
-  refine nonFinality_eq_zero fun p hp => ?_
+theorem shortN2_preaccent_nonfinal (n1Morae n2Morae : ℕ) (h : 1 ≤ n2Morae) :
+    nonFinality (shortN2PreAccent n1Morae, n1Morae + n2Morae) = 0 := by
   rcases n1Morae with _ | k
-  · exact absurd (show p ∈ (none : Option ℕ) from hp) (by simp)
-  · have hp' : p ∈ (some k : Option ℕ) := hp
-    rw [Option.mem_some_iff] at hp'
+  · simp [shortN2PreAccent, Nat.ppred_zero]
+  · simp [shortN2PreAccent, Nat.ppred_succ]
     omega
 
 /-- Long-N2 compound accent never yields final accent, since unaccented and
@@ -398,20 +389,18 @@ theorem shortN2_preaccent_nonfinal (n1Morae n2Morae : ℕ) (n2Accent : Option �
     nonfinal within N2 (§4.2). -/
 theorem longN2_nonfinal (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ)
     (h2 : 3 ≤ n2Morae) (hacc : ∀ p ∈ n2Accent, p < n2Morae) :
-    nonFinality (longN2CompoundAccent n1Morae n2Accent n2Morae, n1Morae + n2Morae) = 0 := by
-  refine nonFinality_eq_zero fun p hp => ?_
-  unfold longN2CompoundAccent at hp
-  rw [Option.mem_some_iff] at hp
+    nonFinality (longN2CompoundAccent n1Morae n2Morae n2Accent, n1Morae + n2Morae) = 0 := by
   rcases n2Accent with _ | pos
-  · simp only [Option.filter_none, Option.getD_none] at hp
+  · simp [longN2CompoundAccent, Option.filter_none]
     omega
   · have hlt := hacc pos rfl
-    simp only [Option.filter_some] at hp
-    split_ifs at hp with hfin
+    simp only [longN2CompoundAccent, nonFinality_eq_zero, Option.filter_some,
+      Option.map_some, ne_eq, Option.some.injEq]
+    split_ifs with hfin
     · rw [bne_iff_ne] at hfin
-      simp only [Option.getD_some] at hp
+      simp only [Option.getD_some]
       omega
-    · simp only [Option.getD_none] at hp
+    · simp only [Option.getD_none]
       omega
 
 end Kawahara2015
