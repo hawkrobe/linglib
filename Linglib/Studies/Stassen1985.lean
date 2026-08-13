@@ -66,7 +66,6 @@ namespace Stassen1985
 
 open Comparative
 open Features (CaseAssignment FixedCaseEncoding)
-open Comparative (ComparativeEntry)
 
 -- ════════════════════════════════════════════════════
 -- § 0. The Stassen 1985 six-way typology
@@ -333,73 +332,71 @@ theorem particle_no_spatial :
     ComparativeType1985.particle.spatialCase = none := rfl
 
 -- ════════════════════════════════════════════════════
--- § 8. Fragment bridge: ComparativeEntry ↔ Typology
+-- § 8. Fragment bridge: `Comparative` objects ↔ Typology
 -- ════════════════════════════════════════════════════
 
 /-- Japanese Fragment standard case matches 1985 spatial case prediction. -/
 theorem japanese_fragment_case :
-    some Japanese.Comparison.entry.standardCase =
-    japanese1985.spatialCase := rfl
+    Japanese.Comparison.yori.standardCase = japanese1985.spatialCase := rfl
 
 /-- Korean Fragment standard case matches 1985 spatial case prediction. -/
 theorem korean_fragment_case :
-    some Korean.Comparison.entry.standardCase =
-    korean1985.spatialCase := rfl
+    Korean.Comparison.boda.standardCase = korean1985.spatialCase := rfl
 
 /-- Turkish Fragment standard case matches 1985 spatial case prediction. -/
 theorem turkish_fragment_case :
-    some Turkish.Comparison.entry.standardCase =
-    turkish1985.spatialCase := rfl
+    Turkish.Comparison.dan.standardCase = turkish1985.spatialCase := rfl
 
-/-- All three separative Fragment entries use fixed case assignment. -/
+/-- All three separative Fragment constructions use fixed case assignment. -/
 theorem all_separative_fixed_case :
-    Japanese.Comparison.entry.caseAssignment = .fixed ∧
-    Korean.Comparison.entry.caseAssignment = .fixed ∧
-    Turkish.Comparison.entry.caseAssignment = .fixed :=
+    Japanese.Comparison.yori.caseAssignment = .fixed ∧
+    Korean.Comparison.boda.caseAssignment = .fixed ∧
+    Turkish.Comparison.dan.caseAssignment = .fixed :=
   ⟨rfl, rfl, rfl⟩
 
-/-- All three separative Fragment entries use adverbial encoding. -/
+/-- All three separative Fragment constructions use adverbial encoding. -/
 theorem all_separative_adverbial :
-    Japanese.Comparison.entry.fixedEncoding = some .adverbial ∧
-    Korean.Comparison.entry.fixedEncoding = some .adverbial ∧
-    Turkish.Comparison.entry.fixedEncoding = some .adverbial :=
+    Japanese.Comparison.yori.fixedEncoding = some .adverbial ∧
+    Korean.Comparison.boda.fixedEncoding = some .adverbial ∧
+    Turkish.Comparison.dan.fixedEncoding = some .adverbial :=
   ⟨rfl, rfl, rfl⟩
 
 /-- Separative languages lack degree morphology (p. 28). -/
 theorem separative_no_degree_morphology :
-    Japanese.Comparison.entry.hasDegreeMorphology = false ∧
-    Korean.Comparison.entry.hasDegreeMorphology = false ∧
-    Turkish.Comparison.entry.hasDegreeMorphology = false :=
+    Japanese.Comparison.yori.degreeMorphology = false ∧
+    Korean.Comparison.boda.degreeMorphology = false ∧
+    Turkish.Comparison.dan.degreeMorphology = false :=
   ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 9. Three-Layer Consistency
 -- ════════════════════════════════════════════════════
 
-/-- Japanese: Fragment (ablative) ↔ 1985 type (separative) ↔ chaining type
-    (absolute deranking). All three layers agree. -/
+/-- Japanese: Fragment anatomy (ablative standard, whose derived WALS type
+    matches the 1985 classification under `toWALS`) ↔ 1985 type (separative)
+    ↔ chaining type (absolute deranking). All three layers agree. -/
 theorem japanese_three_layer :
-    some Japanese.Comparison.entry.standardCase =
-      japanese1985.spatialCase ∧
+    Japanese.Comparison.yori.standardCase = japanese1985.spatialCase ∧
+    Japanese.Comparison.yori.type = japanese1985.toWALS ∧
     japaneseCT = .absoluteDeranking ∧
     universal2B japanese1985 japaneseCT :=
-  ⟨rfl, rfl, by intro _; rfl⟩
+  ⟨rfl, rfl, rfl, by intro _; rfl⟩
 
 /-- Korean: three-layer consistency. -/
 theorem korean_three_layer :
-    some Korean.Comparison.entry.standardCase =
-      korean1985.spatialCase ∧
+    Korean.Comparison.boda.standardCase = korean1985.spatialCase ∧
+    Korean.Comparison.boda.type = korean1985.toWALS ∧
     koreanCT = .absoluteDeranking ∧
     universal2B korean1985 koreanCT :=
-  ⟨rfl, rfl, by intro _; rfl⟩
+  ⟨rfl, rfl, rfl, by intro _; rfl⟩
 
 /-- Turkish: three-layer consistency. -/
 theorem turkish_three_layer :
-    some Turkish.Comparison.entry.standardCase =
-      turkish1985.spatialCase ∧
+    Turkish.Comparison.dan.standardCase = turkish1985.spatialCase ∧
+    Turkish.Comparison.dan.type = turkish1985.toWALS ∧
     turkishCT = .absoluteDeranking ∧
     universal2B turkish1985 turkishCT :=
-  ⟨rfl, rfl, by intro _; rfl⟩
+  ⟨rfl, rfl, rfl, by intro _; rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 10. Bridge to ClauseChaining/Data

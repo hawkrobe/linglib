@@ -1,4 +1,3 @@
-import Linglib.Features.Case.Basic
 import Linglib.Syntax.Comparative
 
 /-!
@@ -25,32 +24,18 @@ namespace Japanese.Comparison
 
 open Comparative
 
-/-- The separative (ablative) standard marker. -/
-def standardMarker : String := "yori"
-
-/-- Japanese comparative: separative (ablative) standard marker *yori*. -/
-def entry : ComparativeEntry :=
-  { standardCase := .abl
+/-- The *yori*-comparative: separative (ablative) postposition-marked
+    standard, no degree morphology. -/
+def yori : Comparative :=
+  { standardMarker := some "yori"
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial
-  , standardMarker := standardMarker
-  , hasDegreeMorphology := false }
-
--- Per-datum verification
-theorem standard_is_ablative : entry.standardCase = .abl := rfl
-theorem case_is_fixed : entry.caseAssignment = .fixed := rfl
-theorem encoding_is_adverbial : entry.fixedEncoding = some .adverbial := rfl
-theorem no_degree_morphology : entry.hasDegreeMorphology = false := rfl
-
-/-! ### WALS Ch 121 classification data -/
+  , standardCase := some .abl }
 
 /-- No overt degree marking. -/
 def degreeWord : DegreeWordType := .noDegreeMarking
 
 /-- Superlative as comparative with universal standard (*dare yori mo*). -/
 def superlative : SuperlativeStrategy := .comparativeUniversal
-
-/-- Illustrative comparative. -/
-def comparativeForm : String := "Y yori X ga Adj"
 
 end Japanese.Comparison

@@ -1,4 +1,3 @@
-import Linglib.Features.Case.Basic
 import Linglib.Syntax.Comparative
 
 /-!
@@ -26,33 +25,17 @@ namespace Turkish.Comparison
 
 open Comparative
 
-/-- The separative (ablative) standard marker, subject to vowel harmony. -/
-def standardMarker : String := "-dan/-den"
-
-/-- Turkish comparative: separative (ablative) standard marker `-dan`/`-den`. -/
-def entry : ComparativeEntry :=
-  { standardCase := .abl
+/-- The ablative comparative: `-dan`/`-den`-marked standard, optional free
+    *daha*, no degree morphology. -/
+def dan : Comparative :=
+  { standardMarker := some "-dan/-den"
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial
-  , standardMarker := standardMarker
-  , hasDegreeMorphology := false }
-
--- Per-datum verification
-theorem standard_is_ablative : entry.standardCase = .abl := rfl
-theorem case_is_fixed : entry.caseAssignment = .fixed := rfl
-theorem encoding_is_adverbial : entry.fixedEncoding = some .adverbial := rfl
-theorem no_degree_morphology : entry.hasDegreeMorphology = false := rfl
-
-/-! ### WALS Ch 121 classification data -/
+  , standardCase := some .abl
+  , degreeMarker := some "daha" }
 
 /-- Optional free degree word *daha*; the adjective itself carries no
-    comparative morphology (`entry.hasDegreeMorphology = false`). -/
+    comparative morphology. -/
 def degreeWord : DegreeWordType := .hasDegreeWord
-
-/-- Illustrative comparative. -/
-def comparativeForm : String := "X Y-den daha Adj"
-
-/-- The optional free degree word. -/
-def degreeMarker : String := "daha"
 
 end Turkish.Comparison

@@ -4,50 +4,59 @@ import Linglib.Features.Case.Basic
 /-!
 # Comparison: comparative-construction typology
 
-Per-language typological substrate for comparative-construction typology:
-[stassen-2013]'s WALS Ch 121 framework ([wals-2013]), the [beck-2009]
-degree-word typology, and superlative strategies. Fragment-importable.
+The `Comparative` object — a comparative construction's anatomy in
+[stassen-1985]'s parameters, with its WALS Ch 121 type ([stassen-2013],
+[wals-2013]) derived from that anatomy — plus the [beck-2009] degree-word
+typology, superlative strategies, and the WALS Ch 121A lookup and aggregates.
 
 ## Main definitions
 
-- `ComparativeType` (5-way Stassen 2013 / WALS Ch 121A:
-  `locational | exceed | conjoined | particle | mixed`).
-- `DegreeWordType` ([beck-2009] 3-way:
-  `hasDegreeWord | morphological | noDegreeMarking`).
-- `SuperlativeStrategy` (6-way: morphological, definiteComparative, elative,
-  exceedAll, comparativeUniversal, none).
-- `ComparativeType.ofWALS` : WALS Ch 121A comparative type by ISO 639-3 lookup
-  (via the `ofWALS121A` converter); `none` for languages the chapter leaves
-  uncoded.
+- `Comparative` : the construction object (standard marker, case assignment,
+  encoding role, spatial case, degree slot). Fragments instantiate one def per
+  construction (`German.Comparison.als`; Latin has `quam` *and* `ablative`).
+- `Comparative.type` : the WALS Ch 121 type, derived from the anatomy —
+  derived-case constructions split on marker presence (particle vs conjoined),
+  fixed-case constructions on encoding role (exceed vs locational).
+- `DegreeWordType` ([beck-2009] 3-way), `SuperlativeStrategy` (6-way).
+- `ComparativeType.ofWALS` : WALS Ch 121A comparative type by ISO 639-3
+  lookup; `none` for languages the chapter leaves uncoded.
 - WALS Ch 121A aggregate generalisations (`locational_most_common`,
   `particle_rarest`, `locational_and_particle_dominant`).
-- `ComparativeEntry` : [stassen-1985]'s construction parameters.
 
-There is no per-language bundle: Fragments export bare defs typed by these
-enums (`{Lang}.Comparison.degreeWord`, `superlative`, `standardMarker`, …, plus
-`comparativeType` only for languages uncoded in WALS Ch 121A); studies join
-them with the WALS lookups.
-
-## Theory-laden caveats
-
-- **`ComparativeType` is the WALS 2013 5-way typology.** Stassen's original
-  1985 6-way typology (`separative | allative | locative | exceed |
-  conjoined | particle`) lives in `Studies/Stassen1985.lean`
-  because the 3-way adverbial split is paper-distinctive — the WALS update
-  collapses it into a single `locational` for cross-linguistic indexing.
-- **`DegreeWordType` is Beck et al. 2009's three-way classification.** Other
-  approaches (Kennedy 1999, Beck 2011, Bochnak 2013) refine the typology with
-  scale-structure and degree-argument parameters; those live in
-  `Semantics/Degree/`.
-
-## Out of scope
-
-Stassen's 1985 fine-grained adverbial typology (`ComparativeType1985`,
-`caseAssignment`, `fixedEncoding`, `spatialCase`) and the 1985-↔-2013
-consistency theorems live in `Studies/Stassen1985.lean` (paper-anchored).
+Stassen's 1985 fine-grained adverbial typology (`ComparativeType1985`, the
+chaining universals) lives in `Studies/Stassen1985.lean` (paper-anchored).
 -/
 
 set_option autoImplicit false
+
+open Features (CaseAssignment FixedCaseEncoding)
+
+/-- A comparative construction: how it encodes the standard of comparison in
+    "X is more Adj than Y" — [stassen-1985]'s construction parameters. A
+    language may have more than one (Latin *quam* and the bare ablative).
+    Coexists with `namespace Comparative` (a type and a namespace may share a
+    name, cf. `Pronoun`). -/
+structure Comparative where
+  /-- Surface form of the standard marker (*than*, *als*, *yori*, *bǐ*);
+      `none` when no segmental marker flags the standard (conjoined
+      constructions, bare case-marked standards like the Latin ablative). -/
+  standardMarker : Option String := none
+  /-- Case assignment to the standard NP: derived from the comparee's case vs
+      fixed by the construction ([stassen-1985]). -/
+  caseAssignment : CaseAssignment
+  /-- For fixed-case constructions: the standard's syntactic role — direct
+      object of an exceed verb, or adverbial. -/
+  fixedEncoding : Option FixedCaseEncoding := none
+  /-- Case on an adverbially encoded standard (ablative for separatives,
+      partitive for the Finnish secondary option). Adpositions with the
+      corresponding semantics count (Japanese *yori*, Arabic *min* → `abl`). -/
+  standardCase : Option Case := none
+  /-- The construction's degree-slot filler (*more*, *-er*, *daha*), if any. -/
+  degreeMarker : Option String := none
+  /-- Dedicated bound degree morphology on the parameter (English *-er*,
+      Latin *-ior*) — [stassen-1985]'s binary parameter. -/
+  degreeMorphology : Bool := false
+  deriving Repr, BEq, DecidableEq
 
 namespace Comparative
 
@@ -55,12 +64,10 @@ private abbrev ch121 := Data.WALS.F121A.allData
 
 /-! ### Classifications -/
 
-/-- WALS Ch 121: how a language expresses comparison of inequality.
-
-    Stassen's classification is based on how the **standard of comparison**
-    (the Y in "X is more Adj than Y") is encoded. Five types are
-    cross-cutting; a single language may use more than one productively
-    (classified as "mixed"). -/
+/-- WALS Ch 121: how a comparative construction encodes the **standard of
+    comparison** (the Y in "X is more Adj than Y"). A language with more than
+    one productive construction has one `Comparative` object per construction,
+    each with its own type. -/
 inductive ComparativeType where
   /-- Locational: the standard is marked with a locational/ablative case
       or adposition. Example: Japanese `Y yori X tall` 'Y from/than X tall'.
@@ -75,8 +82,6 @@ inductive ComparativeType where
   /-- Particle: a dedicated comparative particle marks the standard
       (e.g. English `than`, German `als`). Standard Average European pattern. -/
   | particle
-  /-- Mixed: more than one type is productive without a clear dominant. -/
-  | mixed
   deriving DecidableEq, BEq, Repr
 
 /-- [beck-2009]: presence of degree words in comparison constructions. -/
@@ -107,11 +112,21 @@ inductive SuperlativeStrategy where
   | none
   deriving DecidableEq, BEq, Repr
 
+/-! ### The derived type -/
+
+/-- The WALS Ch 121 type of a construction, derived from its anatomy:
+    derived-case constructions split on marker presence (particle vs
+    conjoined); fixed-case constructions on encoding role (exceed vs
+    locational, with adverbial the default). -/
+def type (c : Comparative) : ComparativeType :=
+  match c.caseAssignment, c.fixedEncoding with
+  | .derived, _ => if c.standardMarker.isSome then .particle else .conjoined
+  | .fixed, some .directObject => .exceed
+  | .fixed, _ => .locational
+
 /-! ### WALS lookups -/
 
-/-- WALS Ch 121A → `ComparativeType`. The generated WALS data uses four
-    categories; `mixed` is not a separate WALS value (languages are assigned
-    to whichever single type best characterises them). -/
+/-- WALS Ch 121A → `ComparativeType`. -/
 def ofWALS121A : Data.WALS.F121A.ComparativeType → ComparativeType
   | .locational => .locational
   | .exceed     => .exceed
@@ -154,23 +169,5 @@ theorem locational_and_particle_dominant :
     let loc := (ch121.filter (·.value == .locational)).length
     let par := (ch121.filter (·.value == .particle)).length
     loc + par > ch121.length / 2 := by native_decide
-
-/-! ### Stassen 1985 — Comparative Entry [stassen-1985]
-
-A typed record for the parameters of a comparative construction in a
-particular language: standard case, how that case is assigned, optional
-fixed-encoding role, the standard marker (e.g., *than*, *より*), and
-whether the construction has dedicated degree morphology. -/
-
-open Features (CaseAssignment FixedCaseEncoding)
-
-/-- A language's comparative construction entry ([stassen-1985]). -/
-structure ComparativeEntry where
-  standardCase : Case
-  caseAssignment : CaseAssignment
-  fixedEncoding : Option FixedCaseEncoding
-  standardMarker : String
-  hasDegreeMorphology : Bool
-  deriving Repr, BEq
 
 end Comparative

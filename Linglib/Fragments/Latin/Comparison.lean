@@ -3,11 +3,12 @@ import Linglib.Syntax.Comparative
 /-!
 # Latin comparative data
 
-Latin has two productive comparative strategies: the particle *quam* and the
-bare ablative standard. Latin is uncoded in WALS Ch 121A, so `comparativeType`
-is coded here as `mixed`; [stassen-1985] classifies Latin as particle-primary
-with a secondary separative option. Degree is marked by the bound affix *-ior*,
-and the superlative is morphological.
+Latin has two productive comparative constructions: *X Adj-ior quam Y* with
+the particle *quam*, and *X Adj-ior Y-ABL* with a bare ablative standard —
+[stassen-1985] classifies Latin as particle-primary, separative-secondary.
+Latin is uncoded in WALS Ch 121A; each construction's type is derived from
+its anatomy (`quam.type`, `ablative.type`). Degree is marked by the bound
+affix *-ior*; the superlative is morphological.
 -/
 
 set_option autoImplicit false
@@ -16,23 +17,25 @@ namespace Latin.Comparison
 
 open Comparative
 
-/-- Mixed comparative (particle *quam* + ablative standard) — grammar-based
-    coding; Latin is uncoded in WALS Ch 121A. -/
-def comparativeType : ComparativeType := .mixed
+/-- The *quam*-comparative: the primary, particle-marked construction. -/
+def quam : Comparative :=
+  { standardMarker := some "quam"
+  , caseAssignment := .derived
+  , degreeMarker := some "-ior"
+  , degreeMorphology := true }
+
+/-- The bare-ablative comparative: no segmental marker, ablative standard. -/
+def ablative : Comparative :=
+  { caseAssignment := .fixed
+  , fixedEncoding := some .adverbial
+  , standardCase := some .abl
+  , degreeMarker := some "-ior"
+  , degreeMorphology := true }
 
 /-- Bound comparative affix *-ior*. -/
 def degreeWord : DegreeWordType := .morphological
 
 /-- Morphological superlative. -/
 def superlative : SuperlativeStrategy := .morphological
-
-/-- Illustrative comparatives (ablative and particle strategies). -/
-def comparativeForm : String := "X Adj-ior Y-ABL / X Adj-ior quam Y"
-
-/-- The two standard-marking strategies. -/
-def standardMarker : String := "ablative case / quam"
-
-/-- The bound comparative affix. -/
-def degreeMarker : String := "-ior"
 
 end Latin.Comparison
