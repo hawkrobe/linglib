@@ -1,4 +1,5 @@
 import Linglib.Core.Algebra.RootedTree.BMinus
+import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonSplit
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 
@@ -696,6 +697,22 @@ noncomputable instance instBialgebraRho
     comulAlgHomN_coassoc_algHom
     counit_rTensor_comulAlgHomN
     counit_lTensor_comulAlgHomN
+
+/-- Δ^ρ is admissible: the GL/CK-duality coassociativity and the counit laws,
+transported through the `rfl` bridge `comulAlgHomN_eq_G`. -/
+instance {α : Type*} [DecidableEq α] : IsAdmissibleCuts (cutSummandsN (α := α)) where
+  coassoc := by
+    intro R _ _ _
+    rw [← comulAlgHomN_eq_G]
+    exact comulAlgHomN_coassoc_algHom
+  counit_rTensor := by
+    intro R _
+    rw [← comulAlgHomN_eq_G]
+    exact counit_rTensor_comulAlgHomN
+  counit_lTensor := by
+    intro R _
+    rw [← comulAlgHomN_eq_G]
+    exact counit_lTensor_comulAlgHomN
 
 variable {R' : Type*} [CommRing R'] [CharZero R'] [NoZeroDivisors R'] {α' : Type*}
   [DecidableEq α']

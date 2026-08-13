@@ -26,7 +26,7 @@ import Linglib.Core.Algebra.RootedTree.BirkhoffLaurent
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.Coproduct.CutAvoidingNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionNonplanar
-import Linglib.Core.Algebra.RootedTree.Coproduct.GenericNonplanar
+import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar

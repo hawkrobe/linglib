@@ -123,4 +123,59 @@ theorem comulAlgHomN_eq_G :
 theorem comulCAlgHomN_eq_G {β : Type*} (τ : Nonplanar (α ⊕ β) → β) :
     comulCAlgHomN (R := R) τ = comulAlgHomNG (R := R) (cutSummandsCN τ) := rfl
 
+/-! ### The policy-indexed carrier `WithCuts`
+
+The `WithLp` pattern: a type synonym indexed by the cut policy, whose
+`Bialgebra` instance is gated on an admissibility mixin. Δ^ρ keeps the plain
+carrier (`instBialgebraRho`, the Hopf algebra of
+[marcolli-chomsky-berwick-2025] Lemma 1.2.11); the marked variants live here. -/
+
+variable (R) in
+/-- Type synonym for `ConnesKreimer R (Nonplanar α)` carrying the generic
+admissible-cut coproduct at the fixed policy `cuts`. -/
+def WithCuts (cuts : Nonplanar α → Multiset (Multiset (Nonplanar α) × Nonplanar α)) :
+    Type _ :=
+  ConnesKreimer R (Nonplanar α)
+
+variable (cuts : Nonplanar α → Multiset (Multiset (Nonplanar α) × Nonplanar α))
+
+noncomputable instance : CommSemiring (WithCuts R cuts) :=
+  inferInstanceAs (CommSemiring (ConnesKreimer R (Nonplanar α)))
+
+noncomputable instance : Algebra R (WithCuts R cuts) :=
+  inferInstanceAs (Algebra R (ConnesKreimer R (Nonplanar α)))
+
+/-- Admissibility of a cut policy: the generic coproduct `comulAlgHomNG cuts` is
+coassociative and counital, uniformly in the coefficient ring. Gates the
+`Bialgebra` instance on `WithCuts` (the `Fact`-style mixin of the `WithLp`
+pattern). -/
+class IsAdmissibleCuts : Prop where
+  coassoc : ∀ (R : Type*) [CommRing R] [CharZero R] [NoZeroDivisors R],
+    (Algebra.TensorProduct.assoc R R R
+        (ConnesKreimer R (Nonplanar α)) (ConnesKreimer R (Nonplanar α))
+        (ConnesKreimer R (Nonplanar α))).toAlgHom.comp
+      ((Algebra.TensorProduct.map (comulAlgHomNG (R := R) cuts)
+        (AlgHom.id R (ConnesKreimer R (Nonplanar α)))).comp (comulAlgHomNG cuts)) =
+    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+      (comulAlgHomNG (R := R) cuts)).comp (comulAlgHomNG cuts)
+  counit_rTensor : ∀ (R : Type*) [CommSemiring R],
+    (Algebra.TensorProduct.map (counit (R := R))
+        (AlgHom.id R (ConnesKreimer R (Nonplanar α)))).comp (comulAlgHomNG cuts) =
+      (Algebra.TensorProduct.lid R (ConnesKreimer R (Nonplanar α))).symm.toAlgHom
+  counit_lTensor : ∀ (R : Type*) [CommSemiring R],
+    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
+        (counit (R := R))).comp (comulAlgHomNG cuts) =
+      (Algebra.TensorProduct.rid R R (ConnesKreimer R (Nonplanar α))).symm.toAlgHom
+
+/-- The generic admissible-cut bialgebra on the marked carrier: any admissible
+policy yields `Bialgebra R (WithCuts R cuts)`. Δ^c is recovered at
+`cuts := cutSummandsCN τ`. -/
+noncomputable instance WithCuts.instBialgebra
+    {R : Type*} [CommRing R] [CharZero R] [NoZeroDivisors R] [IsAdmissibleCuts cuts] :
+    Bialgebra R (WithCuts R cuts) :=
+  Bialgebra.ofAlgHom (A := WithCuts R cuts) (comulAlgHomNG cuts) counit
+    (IsAdmissibleCuts.coassoc (cuts := cuts) R)
+    (IsAdmissibleCuts.counit_rTensor (cuts := cuts) R)
+    (IsAdmissibleCuts.counit_lTensor (cuts := cuts) R)
+
 end ConnesKreimer
