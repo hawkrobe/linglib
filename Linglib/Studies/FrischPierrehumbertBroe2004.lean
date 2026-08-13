@@ -17,27 +17,6 @@ coronal pair is automatically less similar than a comparable labial pair,
 deriving the strong-coronal vs weak-dorsal/guttural asymmetry that
 categorical class-based analyses ([mccarthy-1986], [mccarthy-1994],
 [padgett-1995]) must stipulate.
-
-This file defines the metric (`similarity`) over the MSA consonant
-fragment (`Arabic.ModernStandard.Consonant`; FPB's feature matrix (8),
-p. 201, transcribes ج as g and ظ as zˤ after the Wehr romanization of
-[cowan-1979]), checks the worked examples similarity(/f, m/) = 2/9 and
-similarity(/b, f/) = 3/8 (p. 199), and proves the corpus-free core of the
-paper's model comparison: a TSL₂ grammar forbidding labial pairs with
-`similarity ≥ t` (`thresholdedTSL`) decides each pair by a two-valued step
-function (`thresholdedTSL_pair_iff`), and no two-valued threshold model
-reproduces the Table IV O/E data, which has at least three distinct levels
-(`categorical_cannot_fit_adjacentPairOE`).
-
-The paper's own comparison is an R² fit across the nine Table IV bins
-(Table V, p. 207: categorical 0.70 vs natural classes 0.75); it and the
-converging §4 evidence — the [frisch-zawaydeh-2001] wordlikeness
-experiments, Maltese borrowings ([mifsud-1995]), cross-linguistic
-attestations (Tigrinya [buckley-1997-ocp], English [berkley-1994], Thai
-[frisch-2000a]), and the processing-difficulty origin ([berg-1998],
-[boersma-1998], [frisch-1996]; misordering errors in
-[abd-el-jawad-abu-salim-1987]) — require the 2,674-root [cowan-1979]
-corpus or experimental data and are out of scope.
 -/
 
 namespace FrischPierrehumbertBroe2004
@@ -66,18 +45,7 @@ get similarity 1, segments sharing no relevant class get 0 (`0 / 0 = 0` in
 def similarity (xs : List (Finset α)) (x y : α) : ℚ :=
   (sharedClasses xs x y : ℚ) / totalRelevantClasses xs x y
 
-/-! ### Labial natural classes (p. 199)
-
-FPB enumerate the labial natural classes separately for their two worked
-examples: for /f, m/, 2 shared + 7 non-shared = 9 classes, the non-shared
-including the singleton `{f}`; for /b, f/, 3 shared + 5 non-shared = 8, the
-non-shared omitting `{f}` even though `{f}` contains /f/ and not /b/. Under
-[broe-1993]'s structured specification the class set is fixed by the
-inventory, so `{f}` should count in both enumerations, giving 3/9 rather
-than the paper's 3/8 for /b, f/ — most likely an enumeration slip in the
-paper. Both lists are reproduced verbatim so the worked-example values
-match the paper's exact numbers; deriving the classes from feature
-matrix (8) is deferred. -/
+/-! ### Labial natural classes (p. 199) -/
 
 /-- Labial natural classes for the /f, m/ computation (p. 199): 2 shared
 followed by 7 non-shared, with the paper's glosses. -/
@@ -96,7 +64,9 @@ def labialClasses_fm : List (Finset Consonant) :=
     {.m}]              -- nasals
 
 /-- Labial natural classes for the /b, f/ computation (p. 199): 3 shared
-followed by 5 non-shared. -/
+followed by 5 non-shared, verbatim from the paper — including its omission
+of `{f}`, which [broe-1993]'s inventory-fixed class set would count,
+giving 3/9 rather than the reported 3/8. -/
 def labialClasses_bf : List (Finset Consonant) :=
   [ -- shared between b and f:
     {.b, .f, .m, .w},  -- the labials
