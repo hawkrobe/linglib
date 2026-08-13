@@ -1,4 +1,5 @@
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
+import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Data.RoseTree.Basic
 import Mathlib.RingTheory.TensorProduct.Basic
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
@@ -87,66 +88,6 @@ open scoped TensorProduct
 open Finsupp
 
 variable {R : Type*} [CommSemiring R] {α : Type*}
-
-/-! ### cutSummandsP — multiset of (cut forest, deletion remainder) pairs
-
-Recursive enumeration of cut summands. For a leaf, the only cut is the
-empty cut. For a node, sum over all per-child decisions: each child can
-either be extracted whole (contributes to cut forest, drops from
-remainder) OR recurse with a smaller cut (contributes whatever its cut
-extracts, leaves its deletion-remainder in the remainder list). -/
-
-mutual
-/-- Multiset of (cut forest, deletion remainder) pairs for a tree.
-    Each summand corresponds to one admissible cut on T under the
-    deletion semantics. -/
-def cutSummandsP : RoseTree α →
-    Multiset (Forest (RoseTree α) × RoseTree α)
-  | .node a cs => (cutListSummandsP cs).map (fun p => (p.1, .node a p.2))
-/-- Auxiliary: cut summands for a list of children. The remainder is a
-    list (children of the parent that survived the cut). -/
-def cutListSummandsP : List (RoseTree α) →
-    Multiset (Forest (RoseTree α) × List (RoseTree α))
-  | [] => {((0 : Forest (RoseTree α)), ([] : List (RoseTree α)))}
-  | t :: ts =>
-      ((augActionP t ×ˢ cutListSummandsP ts) : Multiset _).map
-        (fun p => match p.1.2 with
-          | Option.none => (p.1.1 + p.2.1, p.2.2)
-          | Option.some r => (p.1.1 + p.2.1, r :: p.2.2))
-/-- Auxiliary: per-child action — either extract whole (`none` remainder)
-    or recurse with a cut (`some remainder`). -/
-def augActionP : RoseTree α →
-    Multiset (Forest (RoseTree α) × Option (RoseTree α))
-  | t => (({t} : Forest (RoseTree α)), Option.none) ::ₘ
-         (cutSummandsP t).map (fun p => (p.1, Option.some p.2))
-end
-
-/-- Recursive formula on a node: cutSummandsP unfolds via cutListSummandsP. -/
-@[simp] theorem cutSummandsP_node (a : α) (cs : List (RoseTree α)) :
-    cutSummandsP (RoseTree.node a cs) =
-      (cutListSummandsP cs).map (fun p => (p.1, .node a p.2)) := by
-  unfold cutSummandsP; rfl
-
-/-- Recursive formula for cutListSummandsP on empty list. -/
-@[simp] theorem cutListSummandsP_nil :
-    cutListSummandsP ([] : List (RoseTree α)) =
-      {((0 : Forest (RoseTree α)), ([] : List (RoseTree α)))} := by
-  unfold cutListSummandsP; rfl
-
-/-- Recursive formula for cutListSummandsP on a cons list. -/
-@[simp] theorem cutListSummandsP_cons (t : RoseTree α) (ts : List (RoseTree α)) :
-    cutListSummandsP (t :: ts) =
-      ((augActionP t ×ˢ cutListSummandsP ts) : Multiset _).map
-        (fun p => match p.1.2 with
-          | Option.none => (p.1.1 + p.2.1, p.2.2)
-          | Option.some r => (p.1.1 + p.2.1, r :: p.2.2)) := by
-  conv_lhs => unfold cutListSummandsP
-
-/-- Recursive formula for augActionP. -/
-@[simp] theorem augActionP_eq (t : RoseTree α) :
-    augActionP t = (({t} : Forest (RoseTree α)), Option.none) ::ₘ
-                   (cutSummandsP t).map (fun p => (p.1, Option.some p.2)) := by
-  conv_lhs => unfold augActionP
 
 /-! ### comulTreeP — tree-level Δ^ρ
 
