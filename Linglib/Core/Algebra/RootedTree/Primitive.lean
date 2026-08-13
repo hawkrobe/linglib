@@ -21,16 +21,16 @@ dual-primitives side on the Connes-Kreimer bialgebra with the Δ^ρ
 
 ## Main definitions
 
-* `ConnesKreimer.deltaSingleton`: the dual-basis functional `δ_T`
-  extracting the coefficient of the singleton forest `{T}`.
 * `ConnesKreimer.countSingleCutsRho`: number of Δ^ρ cut summands of
   `T` with cut forest `{T₁}` and remainder `T₂`.
 
+The paper's dual-basis functional `δ_T` is `lcoeff R {T}`.
+
 ## Main results
 
-* `ConnesKreimer.deltaSingleton_isDualPrimitive`: each single-tree
+* `ConnesKreimer.lcoeff_singleton_isDualPrimitive`: each single-tree
   delta `δ_T` is a dual primitive.
-* `ConnesKreimer.lie_deltaSingleton_apply_ofTree`: the explicit
+* `ConnesKreimer.lie_lcoeff_singleton_apply_ofTree`: the explicit
   count form `⁅δ_{T₁}, δ_{T₂}⁆ (ofTree T) = countSingleCutsRho T T₁ T₂ −
   countSingleCutsRho T T₂ T₁`, the Δ^ρ analog of the book's
   `c^T_{T₁,T₂} − c^T_{T₂,T₁}`. The Δ^c (trace-leaf) version follows via the
@@ -49,39 +49,6 @@ open Coalgebra Bialgebra WithConv
 
 variable {R : Type*} [CommRing R] {α : Type*} (T T₁ T₂ : Nonplanar α)
 
-variable (R) in
-/-- The dual-basis functional `δ_T` on a singleton forest: extracts the
-coefficient of `{T}` from a Connes-Kreimer element. -/
-noncomputable def deltaSingleton :
-    ConnesKreimer R (Nonplanar α) →ₗ[R] R :=
-  lcoeff ({T} : Forest (Nonplanar α))
-
-theorem deltaSingleton_of' (F : Forest (Nonplanar α))
-    [Decidable (F = ({T} : Forest (Nonplanar α)))] :
-    deltaSingleton R T (of' F) = if F = ({T} : Forest (Nonplanar α)) then 1 else 0 := by
-  rw [deltaSingleton, lcoeff_apply, coeff_of']
-
-@[simp] theorem deltaSingleton_of'_self :
-    deltaSingleton R T (of' ({T} : Forest (Nonplanar α))) = 1 := by
-  classical rw [deltaSingleton_of', if_pos rfl]
-
-theorem deltaSingleton_ofTree (T' : Nonplanar α) [Decidable (T' = T)] :
-    deltaSingleton R T (ofTree T') = if T' = T then 1 else 0 := by
-  classical
-  rw [show (ofTree T' : ConnesKreimer R (Nonplanar α)) =
-    of' ({T'} : Forest (Nonplanar α)) from rfl, deltaSingleton_of']
-  simp [Multiset.singleton_inj]
-
-@[simp] theorem deltaSingleton_ofTree_self :
-    deltaSingleton R T (ofTree T) = 1 := by
-  classical rw [deltaSingleton_ofTree, if_pos rfl]
-
-@[simp] theorem deltaSingleton_one :
-    deltaSingleton R T (1 : ConnesKreimer R (Nonplanar α)) = 0 := by
-  classical
-  rw [← of'_zero, deltaSingleton_of', if_neg]
-  exact fun h => by simpa using congrArg Multiset.card h
-
 /-! ### Cut counting -/
 
 variable [DecidableEq α]
@@ -97,21 +64,22 @@ noncomputable def countSingleCutsRho : ℕ :=
 
 variable [CharZero R] [NoZeroDivisors R]
 
-/-- `δ_T` is a dual primitive: the bialgebraic content of
-[marcolli-chomsky-berwick-2025]'s observation (book p. 79) that primitives in
-the dual are exactly the single-tree deltas. -/
-theorem deltaSingleton_isDualPrimitive :
-    IsDualPrimitive R (deltaSingleton R T) := by
+/-- The single-tree delta `δ_T = lcoeff R {T}` is a dual primitive: the
+bialgebraic content of [marcolli-chomsky-berwick-2025]'s observation (book
+p. 79) that primitives in the dual are exactly the single-tree deltas. -/
+theorem lcoeff_singleton_isDualPrimitive :
+    IsDualPrimitive R (lcoeff R ({T} : Forest (Nonplanar α))) := by
   classical
-  refine ⟨deltaSingleton_one T, ?_⟩
-  have key : (LinearMap.mul R (ConnesKreimer R (Nonplanar α))).compr₂ (deltaSingleton R T) =
-      (deltaSingleton R T).smulRight CoalgebraStruct.counit +
-        (CoalgebraStruct.counit).smulRight (deltaSingleton R T) := by
+  refine ⟨by rw [← of'_zero, lcoeff_apply, coeff_of',
+    if_neg (Multiset.zero_ne_singleton T)], ?_⟩
+  have key : (LinearMap.mul R (ConnesKreimer R (Nonplanar α))).compr₂ (lcoeff R {T}) =
+      (lcoeff R ({T} : Forest (Nonplanar α))).smulRight CoalgebraStruct.counit +
+        (CoalgebraStruct.counit).smulRight (lcoeff R {T}) := by
     refine lhom_ext' fun F => lhom_ext' fun G => ?_
     simp only [LinearMap.compr₂_apply, LinearMap.mul_apply', LinearMap.add_apply,
       LinearMap.smulRight_apply, LinearMap.smul_apply, smul_eq_mul, coalgebraCounit_apply]
     rw [← of'_add]
-    simp only [deltaSingleton_of', counit_of', ite_zero_mul_ite_zero, one_mul]
+    simp only [lcoeff_apply, coeff_of', counit_of', ite_zero_mul_ite_zero, one_mul]
     have hiff : F + G = ({T} : Forest (Nonplanar α)) ↔
         (F = ({T} : Forest (Nonplanar α)) ∧ G.card = 0) ∨
           (F.card = 0 ∧ G = ({T} : Forest (Nonplanar α))) := by
@@ -138,24 +106,26 @@ theorem deltaSingleton_isDualPrimitive :
 /-- [marcolli-chomsky-berwick-2025] Lemma 1.7.3, membership form: single-tree
 deltas lie in the Lie subalgebra of dual primitives (so their brackets do too,
 by `LieSubalgebra.lie_mem`). -/
-theorem toConv_deltaSingleton_mem_dualPrimitives :
-    toConv (deltaSingleton R T) ∈
+theorem toConv_lcoeff_singleton_mem_dualPrimitives :
+    toConv (lcoeff R ({T} : Forest (Nonplanar α))) ∈
       dualPrimitives R (ConnesKreimer R (Nonplanar α)) :=
-  deltaSingleton_isDualPrimitive T
+  lcoeff_singleton_isDualPrimitive T
 
 /-! ### The explicit count formula -/
 
 /-- The convolution product of two single-tree deltas evaluated on a
 single-tree basis vector counts the Δ^ρ cut summands of `T` extracting `{T₁}`
 and leaving `T₂`. -/
-theorem convMul_deltaSingleton_apply_ofTree :
-    (toConv (deltaSingleton R T₁) * toConv (deltaSingleton R T₂)) (ofTree T) =
+theorem convMul_lcoeff_singleton_apply_ofTree :
+    (toConv (lcoeff R {T₁}) * toConv (lcoeff R ({T₂} : Forest (Nonplanar α))))
+        (ofTree T) =
       countSingleCutsRho T T₁ T₂ := by
   classical
   rw [LinearMap.convMul_apply, coalgebra_comul_apply, comulAlgHomN_apply_ofTree, comulTreeN]
   simp only [map_add, map_multiset_sum, Multiset.map_map, Function.comp_apply,
-    TensorProduct.map_tmul, LinearMap.mul'_apply, deltaSingleton_one, mul_zero, zero_add,
-    deltaSingleton_of', deltaSingleton_ofTree, ite_zero_mul_ite_zero, one_mul]
+    TensorProduct.map_tmul, LinearMap.mul'_apply, ofTree, lcoeff_apply, ← of'_zero,
+    coeff_of', Multiset.singleton_inj, ite_zero_mul_ite_zero, one_mul,
+    Multiset.zero_ne_singleton, if_false, mul_zero, zero_add]
   unfold countSingleCutsRho
   rw [Multiset.countP_eq_card_filter]
   induction cutSummandsN T using Multiset.induction with
@@ -170,11 +140,12 @@ theorem convMul_deltaSingleton_apply_ofTree :
 [marcolli-chomsky-berwick-2025] in Δ^ρ form; the book's
 `c^T_{T₁,T₂} − c^T_{T₂,T₁}` is stated for the trace-leaf coproduct `Δ^c`,
 which agrees under the trace-strip bijection (`stripTraceAlgHom`). -/
-theorem lie_deltaSingleton_apply_ofTree :
-    ⁅toConv (deltaSingleton R T₁), toConv (deltaSingleton R T₂)⁆ (ofTree T) =
+theorem lie_lcoeff_singleton_apply_ofTree :
+    ⁅toConv (lcoeff R {T₁}), toConv (lcoeff R ({T₂} : Forest (Nonplanar α)))⁆
+        (ofTree T) =
       (countSingleCutsRho T T₁ T₂ : R) - countSingleCutsRho T T₂ T₁ := by
   simp only [Ring.lie_def, ofConv_sub, LinearMap.sub_apply,
-    convMul_deltaSingleton_apply_ofTree]
+    convMul_lcoeff_singleton_apply_ofTree]
 
 end ConnesKreimer
 

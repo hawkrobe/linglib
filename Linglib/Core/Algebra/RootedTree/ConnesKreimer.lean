@@ -328,6 +328,7 @@ theorem coeff_of' (F G : Forest T) [Decidable (F = G)] :
 theorem ext_coeff (h : ∀ F, p.coeff F = q.coeff F) : p = q :=
   ext (AddMonoidAlgebra.coeff_inj.mp (Finsupp.ext h))
 
+variable (R) in
 /-- `coeff` bundled as a linear functional (`Polynomial.lcoeff` analogue). -/
 def lcoeff (F : Forest T) : ConnesKreimer R T →ₗ[R] R where
   toFun p := p.coeff F
@@ -335,7 +336,7 @@ def lcoeff (F : Forest T) : ConnesKreimer R T →ₗ[R] R where
   map_smul' s p := coeff_smul s p F
 
 @[simp] theorem lcoeff_apply (F : Forest T) (p : ConnesKreimer R T) :
-    lcoeff F p = p.coeff F := rfl
+    lcoeff R F p = p.coeff F := rfl
 
 /-! ## Lifts and hom extensionality
 
