@@ -694,6 +694,10 @@ noncomputable instance instBialgebraRho
     counit_rTensor_comulAlgHomN
     counit_lTensor_comulAlgHomN
 
+/-- Δ^ρ is the generic coproduct at `cuts := cutSummandsN` — definitional. -/
+theorem comulAlgHomN_eq_G {R : Type*} [CommSemiring R] {α : Type*} :
+    comulAlgHomN (R := R) (α := α) = comulAlgHomNG (R := R) cutSummandsN := rfl
+
 /-- Δ^ρ is admissible: the GL/CK-duality coassociativity and the counit laws,
 transported through the `rfl` bridge `comulAlgHomN_eq_G`. -/
 instance {α : Type*} [DecidableEq α] : IsAdmissibleCuts (cutSummandsN (α := α)) where

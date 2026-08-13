@@ -949,7 +949,7 @@ private theorem strip_comulCTreeN_embedInl
   show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
         (comulCTreeN τ (Nonplanar.mk (RoseTree.map Sum.inl t))) =
        comulTreeN (Nonplanar.mk t)
-  unfold comulCTreeN
+  unfold comulCTreeN comulTreeNG
   rw [map_add]
   -- First summand: (S ⊗ S) (ofTree (mk (embed t)) ⊗ 1) = ofTree (mk t) ⊗ 1.
   rw [show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
@@ -1018,9 +1018,8 @@ private theorem strip_comulCForestN_embedInl
     have hcons : comulCForestN (R := R) τ
         (Nonplanar.embedInl T ::ₘ F'.map Nonplanar.embedInl) =
         comulCTreeN τ (Nonplanar.embedInl T) *
-          comulCForestN (R := R) τ (F'.map Nonplanar.embedInl) := by
-      unfold comulCForestN
-      rw [Multiset.map_cons, Multiset.prod_cons]
+          comulCForestN (R := R) τ (F'.map Nonplanar.embedInl) :=
+      comulForestNG_cons _ _ _
     rw [hcons, map_mul, strip_comulCTreeN_embedInl, ih]
 
 /-- **MCB equivalence** (n-ary specialization): the Δ^d-via-Δ^c

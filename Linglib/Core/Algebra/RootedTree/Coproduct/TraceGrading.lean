@@ -173,7 +173,7 @@ private theorem comulCTreeN_mem (τ : Nonplanar (α'' ⊕ β'') → β'')
     (T : Nonplanar (α'' ⊕ β'')) :
     comulCTreeN (R := R'') τ T ∈
       gradedTensorSpan (R'' := R'') (α'' := α'') (β'' := β'') (T.numNodes - 1) := by
-  unfold comulCTreeN
+  unfold comulCTreeN comulTreeNG
   refine Submodule.add_mem _ ?_ ?_
   · refine Submodule.subset_span ⟨{T}, 0, ?_, ?_⟩
     · rw [edgeCount_singleton]
