@@ -2,7 +2,6 @@ import Linglib.Syntax.Comparative
 import Linglib.Studies.SarvasyAikhenvald2025
 import Linglib.Features.Case.Basic
 import Linglib.Fragments.English.Comparison
-import Linglib.Fragments.German.Comparison
 import Linglib.Fragments.Japanese.Comparison
 import Linglib.Fragments.Korean.Comparison
 import Linglib.Fragments.Turkish.Comparison
@@ -35,7 +34,7 @@ The 1985 book (110-language sample) classifies comparatives into six types:
 **separative**, **allative**, **locative** (the three adverbial subtypes
 collectively making up the "locational" category in WALS 2013), plus
 **exceed**, **conjoined**, and **particle**. The WALS 2013 typology
-([stassen-2013], in the substrate `Linglib/Typology/Comparison.lean`)
+([stassen-2013], in the substrate `Linglib/Syntax/Comparative.lean`)
 collapses the spatial triad into single `locational`, dropping the spatial-
 relation distinction that drives Stassen's explanatory universals connecting
 comparison to temporal chaining.

@@ -6,7 +6,7 @@ import Linglib.Syntax.Comparative
 
 `ComparativeProfile` bundle for Tagalog (ISO `tgl`) per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Typology/Comparison.lean`. Cross-linguistic theorems consuming
+`Linglib/Syntax/Comparative.lean`. Cross-linguistic theorems consuming
 this profile live in `Studies/Stassen2013Comparison.lean`. The
 [stassen-1985] 6-way classification (where applicable) lives in
 `Studies/Stassen1985.lean`.

@@ -7,8 +7,7 @@ import Linglib.Features.Case.Basic
 
 Per-language typological substrate for comparative-construction typology
 (Stassen's WALS Ch 121 framework + Beck-Crisma-Krasikova degree-word
-typology + superlative strategies). Fragment-importable; mirrors the
-`Linglib/Typology/{Possession,Negation,Question}.lean` pattern.
+typology + superlative strategies). Fragment-importable.
 
 ## What lives here
 
@@ -44,7 +43,7 @@ Stassen's 1985 fine-grained adverbial typology (`ComparativeType1985`,
 `caseAssignment`, `fixedEncoding`, `spatialCase`) and the 1985-↔-2013
 consistency theorems live in `Studies/Stassen1985.lean` (paper-anchored).
 Cross-linguistic theorems consuming Fragment per-language data live in
-`Studies/Stassen2013.lean`.
+`Studies/Stassen2013Comparison.lean`.
 -/
 
 set_option autoImplicit false
@@ -180,7 +179,7 @@ def ComparativeProfile.isSOV (p : ComparativeProfile) : Bool :=
 
 /-- Is this an SVO language? -/
 def ComparativeProfile.isSVO (p : ComparativeProfile) : Bool :=
-  p.basicOrder == "SVO" || p.basicOrder == "SVO/V2"
+  p.basicOrder == "SVO"
 
 /-- Count of languages in a sample with a given comparative type. -/
 def countByType (langs : List ComparativeProfile) (t : ComparativeType) : Nat :=
