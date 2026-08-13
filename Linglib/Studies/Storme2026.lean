@@ -1,4 +1,5 @@
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
+import Linglib.Phonology.Segmental.Defs
 import Linglib.Core.Probability.LogitChoice
 import Mathlib.Data.Fin.VecNotation
 
@@ -22,8 +23,19 @@ the suffixed form homophonous with the bare stem. Storme's Table 4 evaluates
 Jurgec's frequencies; marginalization (his Table 5) recovers the per-suffix
 realization probabilities.
 
+Forms are segment strings over the `Phonology.Segment` substrate and the three
+resolutions are operations at the stem–suffix juncture, so the paradigm's
+structure is derived rather than stipulated: homophony is string identity,
+\*Hiatus counts vowel–vowel adjacencies via `Segment.IsVowel`, and Max and Dep
+count deleted and inserted segments.
+
 ## Main results
 
+* `resolve_deletion_eq_stem_iff`: deleting the suffix vowel merges the
+  suffixed form with the bare stem exactly when the suffix is monosegmental —
+  the suffix-length conditioning is string algebra.
+* `starHiatus_eq` &c.: the string-computed constraints reproduce the binary
+  violation profile of [storme-2026]'s Table 4.
 * `starHomophony_eq_sum`: over this paradigm \*Homophony decomposes into
   per-input collision counts against the fixed base — the formal content of
   [storme-2026]'s observation (his fn. 1) that [ariyaee-jurgec-2021]'s own
@@ -41,9 +53,58 @@ realization probabilities.
 
 namespace Storme2026
 
-open Constraints HarmonicGrammar
+open Constraints HarmonicGrammar Phonology
 
-/-! ### The Persian hiatus paradigm -/
+/-! ### The Persian segments
+
+The segments of the /hutʃɑ/ paradigm, specified with [hayes-2009]'s feature
+values over the shared `Phonology.Segment` substrate. -/
+
+/-- /h/ — voiceless glottal fricative. -/
+def h : Segment := Segment.ofSpecs
+  [(.syllabic, false), (.consonantal, false), (.sonorant, false),
+   (.continuant, true), (.voice, false), (.spreadGlottis, true)]
+
+/-- /u/ — high back rounded vowel. -/
+def u : Segment := Segment.ofSpecs
+  [(.syllabic, true), (.consonantal, false), (.sonorant, true),
+   (.continuant, true), (.voice, true), (.dorsal, true),
+   (.high, true), (.low, false), (.back, true), (.round, true)]
+
+/-- /tʃ/ — voiceless postalveolar affricate. -/
+def ch : Segment := Segment.ofSpecs
+  [(.syllabic, false), (.consonantal, true), (.sonorant, false),
+   (.continuant, false), (.delayedRelease, true), (.voice, false),
+   (.coronal, true), (.anterior, false), (.strident, true)]
+
+/-- /ɑ/ — low back unrounded vowel. -/
+def aa : Segment := Segment.ofSpecs
+  [(.syllabic, true), (.consonantal, false), (.sonorant, true),
+   (.continuant, true), (.voice, true), (.dorsal, true),
+   (.high, false), (.low, true), (.back, true), (.front, false)]
+
+/-- /e/ — mid front unrounded vowel. -/
+def e : Segment := Segment.ofSpecs
+  [(.syllabic, true), (.consonantal, false), (.sonorant, true),
+   (.continuant, true), (.voice, true), (.dorsal, true),
+   (.high, false), (.low, false), (.front, true), (.back, false)]
+
+/-- /m/ — bilabial nasal. -/
+def m : Segment := Segment.ofSpecs
+  [(.syllabic, false), (.consonantal, true), (.sonorant, true),
+   (.nasal, true), (.voice, true), (.labial, true)]
+
+/-- /n/ — alveolar nasal. -/
+def n : Segment := Segment.ofSpecs
+  [(.syllabic, false), (.consonantal, true), (.sonorant, true),
+   (.nasal, true), (.voice, true), (.coronal, true), (.anterior, true)]
+
+/-- /ʔ/ — glottal stop, the epenthetic hiatus-breaker. -/
+def glottal : Segment := Segment.ofSpecs
+  [(.syllabic, false), (.consonantal, false), (.sonorant, false),
+   (.continuant, false), (.voice, false), (.constrGlottis, true)]
+
+/-! ### The paradigm as segment strings -/
 
 /-- The two suffixed inputs of [ariyaee-jurgec-2021]'s paradigm: a vowel-final
 stem plus a vowel-initial suffix, distinguished by suffix length. -/
@@ -66,51 +127,86 @@ inductive HiatusOutput where
 
 instance : Nontrivial HiatusOutput := ⟨.hiatus, .deletion, by decide⟩
 
-/-- The distinct surface forms of the paradigm. Suffix-vowel deletion realizes
-/hutʃɑ-e/ as `bare` — the homophony with the unsuffixed stem that
-[ariyaee-jurgec-2021] show speakers avoid — whereas /hutʃɑ-emun/ keeps the
-residue [hutʃɑmun], distinct from the stem. -/
-inductive Surface where
-  /-- [hutʃɑ] — the bare stem, and the deletion output of /hutʃɑ-e/. -/
-  | bare
-  /-- [hutʃɑe] — faithful realization of /hutʃɑ-e/. -/
-  | hiatusMono
-  /-- [hutʃɑʔe] — epenthesized realization of /hutʃɑ-e/. -/
-  | glottalMono
-  /-- [hutʃɑemun] — faithful realization of /hutʃɑ-emun/. -/
-  | hiatusPoly
-  /-- [hutʃɑʔemun] — epenthesized realization of /hutʃɑ-emun/. -/
-  | glottalPoly
-  /-- [hutʃɑmun] — deletion output of /hutʃɑ-emun/. -/
-  | clippedPoly
-  deriving DecidableEq, Repr
+/-- The stem /hutʃɑ/. -/
+def stem : List Segment := [h, u, ch, aa]
 
-/-- Surface realization of each mapping. The only clause landing on an
-already-occupied form is deletion for `mono`: [hutʃɑ] is the bare stem. -/
-def realize : HiatusInput → HiatusOutput → Surface
-  | .mono, .hiatus => .hiatusMono
-  | .mono, .epenthesis => .glottalMono
-  | .mono, .deletion => .bare
-  | .poly, .hiatus => .hiatusPoly
-  | .poly, .epenthesis => .glottalPoly
-  | .poly, .deletion => .clippedPoly
+/-- The segmental content of each suffix: the definite suffix -e against the
+1PL possessive -emun. -/
+def suffix : HiatusInput → List Segment
+  | .mono => [e]
+  | .poly => [e, m, u, n]
+
+/-- The underlying form: stem plus suffix. -/
+def underlying (i : HiatusInput) : List Segment := stem ++ suffix i
+
+/-- The three hiatus resolutions as operations at the stem–suffix juncture:
+concatenate faithfully, insert the glottal stop, or delete the suffix-initial
+vowel. -/
+def resolve : HiatusOutput → List Segment → List Segment → List Segment
+  | .hiatus, st, suf => st ++ suf
+  | .epenthesis, st, suf => st ++ glottal :: suf
+  | .deletion, st, suf => st ++ suf.tail
+
+/-- The surface form of each mapping, computed from the string operations. -/
+def realize (i : HiatusInput) (o : HiatusOutput) : List Segment :=
+  resolve o stem (suffix i)
+
+/-- Deleting the suffix vowel of a nonempty suffix merges the suffixed form
+with the bare stem exactly when the suffix is monosegmental: suffix-length
+conditioning is string algebra, not stipulation. -/
+theorem resolve_deletion_eq_stem_iff (st suf : List Segment) (hsuf : suf ≠ []) :
+    resolve .deletion st suf = st ↔ suf.length = 1 := by
+  cases suf with
+  | nil => exact absurd rfl hsuf
+  | cons a l => simp [resolve, List.length_eq_zero_iff]
+
+/-- [hutʃɑ]: deletion under the monosegmental suffix *is* the bare stem. -/
+theorem realize_mono_deletion : realize .mono .deletion = stem := rfl
+
+/-- [hutʃɑmun]: deletion under the polysegmental suffix keeps a residue
+distinct from the stem. -/
+theorem realize_poly_deletion_ne_stem : realize .poly .deletion ≠ stem := by
+  decide
+
+/-! ### Constraints computed on strings, and the fitted weights -/
+
+/-- Count of vowel–vowel adjacencies (hiatus configurations) in a form. -/
+def hiatusCount (fm : List Segment) : ℕ :=
+  (fm.zip fm.tail).countP fun p => decide (p.1.IsVowel ∧ p.2.IsVowel)
+
+/-- \*Hiatus: vowel–vowel adjacencies surviving in the surface form. -/
+def starHiatus : Constraint (HiatusInput × HiatusOutput) := fun c =>
+  hiatusCount (realize c.1 c.2)
+
+/-- Dep: inserted segments — the surface form's length excess over the
+underlying form. Length-based counting is exact for this candidate set, since
+every candidate differs from the underlying form by pure insertion or pure
+deletion. -/
+def depConstraint : Constraint (HiatusInput × HiatusOutput) := fun c =>
+  (realize c.1 c.2).length - (underlying c.1).length
+
+/-- Max: deleted segments — the underlying form's length excess over the
+surface form. -/
+def maxConstraint : Constraint (HiatusInput × HiatusOutput) := fun c =>
+  (underlying c.1).length - (realize c.1 c.2).length
+
+/-- The string-computed \*Hiatus reproduces its binary Table 4 column. -/
+theorem starHiatus_eq (i : HiatusInput) (o : HiatusOutput) :
+    starHiatus (i, o) = if o = .hiatus then 1 else 0 := by
+  revert i o; decide
+
+/-- The string-computed Dep reproduces its binary Table 4 column. -/
+theorem depConstraint_eq (i : HiatusInput) (o : HiatusOutput) :
+    depConstraint (i, o) = if o = .epenthesis then 1 else 0 := by
+  revert i o; decide
+
+/-- The string-computed Max reproduces its binary Table 4 column. -/
+theorem maxConstraint_eq (i : HiatusInput) (o : HiatusOutput) :
+    maxConstraint (i, o) = if o = .deletion then 1 else 0 := by
+  revert i o; decide
 
 /-- The joint tableau's inputs, indexed for `marginalProb`. -/
 def inputs : Fin 2 → HiatusInput := ![.mono, .poly]
-
-/-! ### Constraints and fitted weights -/
-
-/-- Dep: penalizes glottal-stop epenthesis. -/
-def depConstraint : Constraint (HiatusInput × HiatusOutput) :=
-  Constraint.binary fun c => c.2 = .epenthesis
-
-/-- \*Hiatus: penalizes a surfacing vowel–vowel sequence. -/
-def starHiatus : Constraint (HiatusInput × HiatusOutput) :=
-  Constraint.binary fun c => c.2 = .hiatus
-
-/-- Max: penalizes suffix-vowel deletion. -/
-def maxConstraint : Constraint (HiatusInput × HiatusOutput) :=
-  Constraint.binary fun c => c.2 = .deletion
 
 /-- The classical (per-mapping) constraint vector: Dep, \*Hiatus, Max. -/
 def classicalCon : CON (HiatusInput × HiatusOutput) 3 :=
@@ -123,19 +219,21 @@ noncomputable def classicalW : Fin 3 → ℝ := ![2.47, 1.89, 1]
 /-- Fitted weight (posterior mean) of \*Homophony: 2.27. -/
 noncomputable def homophonyWeight : ℝ := 2.27
 
-/-- \*Homophony over the paradigm: collisions among the realized surface forms
-of the fixed base and the two suffixed inputs, via the generic
-`homophonyAvoidance`. -/
+/-- \*Homophony over the paradigm: collisions among the surface forms of the
+fixed base (the bare stem) and the two suffixed inputs, via the generic
+`homophonyAvoidance`. Homophony is string identity — nothing is stipulated
+about which outputs collide. -/
 def starHomophony : SystemicConstraint 2 HiatusOutput := fun f =>
-  homophonyAvoidance (Matrix.vecCons Surface.bare fun i => realize (inputs i) (f i))
+  homophonyAvoidance (Matrix.vecCons stem fun i => realize (inputs i) (f i))
 
 /-! ### \*Homophony decomposes over this paradigm -/
 
-/-- Collisions between one realized output and the fixed base. -/
+/-- Collisions between one realized output and the bare stem. -/
 def baseCollisions (i : HiatusInput) (o : HiatusOutput) : ℕ :=
-  homophonyAvoidance ![Surface.bare, realize i o]
+  homophonyAvoidance ![stem, realize i o]
 
-/-- Only deletion of the monosegmental suffix collides with the base. -/
+/-- Only deletion of the monosegmental suffix collides with the base — the
+concrete instance of `resolve_deletion_eq_stem_iff`. -/
 theorem baseCollisions_eq (i : HiatusInput) (o : HiatusOutput) :
     baseCollisions i o = if i = .mono ∧ o = .deletion then 1 else 0 := by
   revert i o; decide
@@ -208,9 +306,10 @@ theorem mono_deletion_lt_epenthesis :
   rw [persianMarginal_eq_softmax, persianMarginal_eq_softmax]
   exact softmax_strict_mono _ _ _ (by
     norm_num [foldedScore, baseCollisions_eq, harmonyScore_eq_neg_sum,
-      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight, depConstraint,
-      starHiatus, maxConstraint, inputs, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons])
+      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight,
+      depConstraint_eq, starHiatus_eq, maxConstraint_eq, inputs,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
+      Matrix.cons_val_two, Matrix.tail_cons])
 
 /-- Monosegmental suffix: faithful hiatus is the preferred realization
 (predicted frequency .55). -/
@@ -219,9 +318,10 @@ theorem mono_epenthesis_lt_hiatus :
   rw [persianMarginal_eq_softmax, persianMarginal_eq_softmax]
   exact softmax_strict_mono _ _ _ (by
     norm_num [foldedScore, baseCollisions_eq, harmonyScore_eq_neg_sum,
-      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight, depConstraint,
-      starHiatus, maxConstraint, inputs, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons])
+      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight,
+      depConstraint_eq, starHiatus_eq, maxConstraint_eq, inputs,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
+      Matrix.cons_val_two, Matrix.tail_cons])
 
 /-- Polysegmental suffix: epenthesis is less likely than faithful hiatus
 (predicted frequencies .14 vs .25). -/
@@ -230,9 +330,10 @@ theorem poly_epenthesis_lt_hiatus :
   rw [persianMarginal_eq_softmax, persianMarginal_eq_softmax]
   exact softmax_strict_mono _ _ _ (by
     norm_num [foldedScore, baseCollisions_eq, harmonyScore_eq_neg_sum,
-      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight, depConstraint,
-      starHiatus, maxConstraint, inputs, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons])
+      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight,
+      depConstraint_eq, starHiatus_eq, maxConstraint_eq, inputs,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
+      Matrix.cons_val_two, Matrix.tail_cons])
 
 /-- Polysegmental suffix: deletion is the preferred realization (predicted
 frequency .61) — [hutʃɑmun] keeps the suffix recoverable, so \*Homophony is
@@ -242,17 +343,23 @@ theorem poly_hiatus_lt_deletion :
   rw [persianMarginal_eq_softmax, persianMarginal_eq_softmax]
   exact softmax_strict_mono _ _ _ (by
     norm_num [foldedScore, baseCollisions_eq, harmonyScore_eq_neg_sum,
-      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight, depConstraint,
-      starHiatus, maxConstraint, inputs, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons])
+      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight,
+      depConstraint_eq, starHiatus_eq, maxConstraint_eq, inputs,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
+      Matrix.cons_val_two, Matrix.tail_cons])
 
 /-! ### The suffix-length effect -/
 
-/-- The classical constraints assess only the output, so harmony is
-input-blind (definitionally: every constraint projects the output component). -/
+/-- The classical constraints assess only the repair, so harmony is
+input-blind. -/
 theorem harmonyScore_input_blind (w : Fin 3 → ℝ) (i i' : HiatusInput)
     (o : HiatusOutput) :
-    harmonyScore classicalCon w (i, o) = harmonyScore classicalCon w (i', o) := rfl
+    harmonyScore classicalCon w (i, o) = harmonyScore classicalCon w (i', o) := by
+  simp only [harmonyScore_eq_neg_sum]
+  congr 1
+  refine Finset.sum_congr rfl fun j _ => ?_
+  fin_cases j <;>
+    simp [classicalCon, depConstraint_eq, starHiatus_eq, maxConstraint_eq]
 
 /-- Without \*Homophony the model cannot express a suffix-length effect: for
 any classical weights the two suffixes receive identical distributions. The
@@ -277,12 +384,17 @@ theorem homophony_length_effect :
   rw [persianMarginal_eq_softmax, persianMarginal_eq_softmax]
   refine softmax_lt_softmax_of_single_score_lt ?_ fun o ho => ?_
   · norm_num [foldedScore, baseCollisions_eq, harmonyScore_eq_neg_sum,
-      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight, depConstraint,
-      starHiatus, maxConstraint, inputs, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons]
+      Fin.sum_univ_three, classicalCon, classicalW, homophonyWeight,
+      depConstraint_eq, starHiatus_eq, maxConstraint_eq, inputs,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
+      Matrix.cons_val_two, Matrix.tail_cons]
   · cases o with
-    | hiatus => rfl
-    | epenthesis => rfl
+    | hiatus =>
+        simp [foldedScore, baseCollisions_eq, inputs,
+          harmonyScore_input_blind classicalW .poly .mono]
+    | epenthesis =>
+        simp [foldedScore, baseCollisions_eq, inputs,
+          harmonyScore_input_blind classicalW .poly .mono]
     | deletion => exact absurd rfl ho
 
 end Storme2026
