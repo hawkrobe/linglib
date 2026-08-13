@@ -4,10 +4,11 @@ import Linglib.Phonology.Segmental.Defs
 /-!
 # Persian (Farsi) phonology
 
-The Persian segment inventory. `phonemeInventory` passes through the canonical
-PHOIBLE doculect; the named segments are feature bundles for the six-vowel
-system /i e æ u o ɑ/ and the consonants of the /hutʃɑ/ hiatus paradigm of
-`Studies/Storme2026.lean`.
+Modern Persian distinguishes six vowels — front unrounded /i e æ/ against
+back /u o ɑ/, the back series rounded except for the variably rounded low
+vowel — and some two dozen consonants, among them the glottal stop /ʔ/ that
+breaks vowel hiatus. This file provides the PHOIBLE phoneme inventory and
+distinctive-feature specifications for the vowels and for /h tʃ m n ʔ/.
 
 ## References
 
