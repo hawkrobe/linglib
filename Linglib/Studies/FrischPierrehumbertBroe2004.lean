@@ -23,27 +23,11 @@ namespace FrischPierrehumbertBroe2004
 
 open Arabic.ModernStandard
 
-/-! ### The natural-classes similarity metric (eq. (7), p. 198) -/
-
-variable {α : Type*} [DecidableEq α]
-
-/-- Number of natural classes in `xs` containing both `x` and `y` — the
-numerator of eq. (7). -/
-def sharedClasses (xs : List (Finset α)) (x y : α) : ℕ :=
-  xs.countP (λ s => decide (x ∈ s ∧ y ∈ s))
-
-/-- Number of natural classes in `xs` containing `x` or `y` — shared plus
-non-shared, the denominator of eq. (7). -/
-def totalRelevantClasses (xs : List (Finset α)) (x y : α) : ℕ :=
-  xs.countP (λ s => decide (x ∈ s ∨ y ∈ s))
-
-/-- **Eq. (7)**: similarity as shared over shared-plus-non-shared natural
-classes, relative to a list `xs` of relevant classes (for OCP-Place, those
-defined by a place feature, per p. 198). Identical segments sharing a class
-get similarity 1, segments sharing no relevant class get 0 (`0 / 0 = 0` in
-`ℚ` covers pairs contained in no relevant class at all). -/
-def similarity (xs : List (Finset α)) (x y : α) : ℚ :=
-  (sharedClasses xs x y : ℚ) / totalRelevantClasses xs x y
+/-- The natural-classes similarity metric of eq. (7) (p. 198): shared
+natural classes over shared plus non-shared. -/
+def similarity {α : Type*} [DecidableEq α] (xs : List (Finset α)) (x y : α) : ℚ :=
+  (xs.countP (λ s => decide (x ∈ s ∧ y ∈ s)) : ℚ) /
+    xs.countP (λ s => decide (x ∈ s ∨ y ∈ s))
 
 /-! ### Labial natural classes (p. 199) -/
 
@@ -80,29 +64,13 @@ def labialClasses_bf : List (Finset Consonant) :=
     {.b, .w},          -- voiced non-nasals
     {.b}]              -- voiced obstruents
 
-/-! ### Worked examples (p. 199) -/
+/-- Worked example (p. 199): 2 shared classes, 7 non-shared, so
+similarity(/f, m/) = 2/9. -/
+theorem similarity_f_m : similarity labialClasses_fm .f .m = 2/9 := by decide +kernel
 
-/-- /f, m/ share 2 labial natural classes: the labials `{b, f, m, w}` and
-the labial consonants `{b, f, m}`. -/
-theorem fm_shared : sharedClasses labialClasses_fm .f .m = 2 := by decide
-
-/-- /f, m/ have 9 relevant classes in total: 2 shared + 7 non-shared. -/
-theorem fm_total : totalRelevantClasses labialClasses_fm .f .m = 9 := by decide
-
-/-- /b, f/ share 3 labial natural classes: `{b, f, m, w}`, `{b, f, m}`,
-and `{b, f}`. -/
-theorem bf_shared : sharedClasses labialClasses_bf .b .f = 3 := by decide
-
-/-- /b, f/ have 8 relevant classes in total: 3 shared + 5 non-shared. -/
-theorem bf_total : totalRelevantClasses labialClasses_bf .b .f = 8 := by decide
-
-/-- Worked example: similarity(/f, m/) = 2/9 ≈ 0.22 (p. 199). -/
-theorem similarity_f_m : similarity labialClasses_fm .f .m = 2/9 := by
-  norm_num [similarity, fm_shared, fm_total]
-
-/-- Worked example: similarity(/b, f/) = 3/8 ≈ 0.38 (p. 199). -/
-theorem similarity_b_f : similarity labialClasses_bf .b .f = 3/8 := by
-  norm_num [similarity, bf_shared, bf_total]
+/-- Worked example (p. 199): 3 shared classes, 5 non-shared, so
+similarity(/b, f/) = 3/8. -/
+theorem similarity_b_f : similarity labialClasses_bf .b .f = 3/8 := by decide +kernel
 
 /-! ### Table IV (p. 203): O/E by similarity, adjacent pairs -/
 
