@@ -5,6 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Data.RoseTree.Nonplanar
 
+open RoseTree RoseTree.Nonplanar
+
 /-!
 # Contracting unary vertices of a rose tree
 
@@ -149,7 +151,7 @@ end RoseTree
 
 /-! ### Descent to `Nonplanar` -/
 
-namespace RootedTree.Nonplanar
+namespace RoseTree.Nonplanar
 
 variable {α : Type*}
 
@@ -180,4 +182,4 @@ theorem numNodes_contractUnary_add_numUnary (t : Nonplanar α) :
     contractUnary (contractUnary t) = contractUnary t :=
   Quotient.inductionOn t fun p => congrArg mk (RoseTree.contractUnary_idem p)
 
-end RootedTree.Nonplanar
+end RoseTree.Nonplanar

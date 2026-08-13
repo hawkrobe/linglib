@@ -44,7 +44,7 @@ behind that substrate and omitted here.
 namespace Minimalist.Merge
 
 open scoped TensorProduct
-open RootedTree RootedTree.ConnesKreimer
+open RoseTree RoseTree.Nonplanar ConnesKreimer
 
 /-! ### Matching-cut multisets -/
 

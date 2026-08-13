@@ -19,9 +19,9 @@ sibling `Coproduct/` files and `HopfAlgebraNonplanar.lean`.
 
 ## Main declarations
 
-* `RootedTree.Forest`: forests as multisets of trees; multiset addition is
+* `Nonplanar.Forest`: forests as multisets of trees; multiset addition is
   disjoint union.
-* `RootedTree.ConnesKreimer`: one-field wrapper around
+* `ConnesKreimer`: one-field wrapper around
   `AddMonoidAlgebra R (Forest T)`.
 * `ConnesKreimer.single`, `ConnesKreimer.of'`, `ConnesKreimer.ofTree`,
   `ConnesKreimer.coeff`: basis embeddings and coefficient extraction.
@@ -46,7 +46,6 @@ transport.
 
 noncomputable section
 
-namespace RootedTree
 
 /-! ## Forests
 
@@ -54,7 +53,9 @@ A **forest** is a multiset of trees. Multiset addition is the disjoint
 union (forest concatenation). -/
 
 /-- A forest of T-shaped trees: finite multiset. -/
-abbrev Forest (T : Type*) : Type _ := Multiset T
+abbrev RoseTree.Nonplanar.Forest (T : Type*) : Type _ := Multiset T
+
+open RoseTree RoseTree.Nonplanar
 
 /-! ## The carrier -/
 
@@ -473,6 +474,5 @@ def counit : ConnesKreimer R T →ₐ[R] R :=
 
 end ConnesKreimer
 
-end RootedTree
 
 end

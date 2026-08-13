@@ -3,6 +3,8 @@ import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 import Mathlib.RingTheory.Coalgebra.Convolution
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -68,7 +70,6 @@ file is a candidate factoring of Foissy's specific recursion.
 
 -/
 
-namespace RootedTree
 
 namespace ConnesKreimer
 
@@ -92,20 +93,20 @@ mutual
 private theorem cutSummandsP_subtree_depth_le :
     ∀ (T : RoseTree α) (cf : Forest (RoseTree α)) (rem : RoseTree α),
       (cf, rem) ∈ cutSummandsP T → ∀ T_i ∈ cf, T_i.depth ≤ T.depth
-  | .node a children, cf, rem, h_mem, T_i, h_T_i => by
+  | .node a cs₀, cf, rem, h_mem, T_i, h_T_i => by
     rw [cutSummandsP_node, Multiset.mem_map] at h_mem
     obtain ⟨⟨cf', rem'⟩, h_mem', h_eq⟩ := h_mem
     -- h_eq : (cf', .node a rem') = (cf, rem). Extract first component via congrArg.
     have h_cf : cf' = cf := congrArg Prod.fst h_eq
     rw [← h_cf] at h_T_i
-    -- (cf', rem') ∈ cutListSummandsP children, T_i ∈ cf'.
-    have hbd : T_i.depth ≤ (children.map RoseTree.depth).foldr max 0 :=
-      cutListSummandsP_subtree_depth_le children cf' rem' h_mem' T_i h_T_i
+    -- (cf', rem') ∈ cutListSummandsP cs₀, T_i ∈ cf'.
+    have hbd : T_i.depth ≤ (cs₀.map RoseTree.depth).foldr max 0 :=
+      cutListSummandsP_subtree_depth_le cs₀ cf' rem' h_mem' T_i h_T_i
     rw [RoseTree.depth_node]
     omega
 
 /-- For any `(cf, rem_list) ∈ cutListSummandsP cs`, every tree `T_i ∈ cf`
-    has depth bounded by the children's max depth. Mutual with
+    has depth bounded by the cs₀'s max depth. Mutual with
     `cutSummandsP_subtree_depth_le`. -/
 private theorem cutListSummandsP_subtree_depth_le :
     ∀ (cs : List (RoseTree α)) (cf : Forest (RoseTree α)) (rem_list : List (RoseTree α)),
@@ -159,7 +160,7 @@ end
 
 /-- For any `(cf, rem) ∈ cutSummandsN T` (any tree `T : Nonplanar α`), every
     tree `T_i ∈ cf` has strictly smaller depth than `T`. The strict bound
-    comes from the fact that `cf`'s trees are subtrees of children of `T`
+    comes from the fact that `cf`'s trees are subtrees of cs₀ of `T`
     (whose depth is `T.depth - 1`), and via the empty-cut term `(0, T)`'s
     `cf = 0` (no `T_i` to consider). -/
 theorem cutSummandsN_subtree_depth_lt (T : Nonplanar α)
@@ -181,17 +182,17 @@ theorem cutSummandsN_subtree_depth_lt (T : Nonplanar α)
   show (Nonplanar.mk T_i_p).depth < T₀.depth
   rw [Nonplanar.depth_mk]
   -- Use tree-level lemma: T_i_p.depth ≤ T₀.depth - 1.
-  -- Strategy: T₀ = .node a children for some a, children. cf_p ∈ cutListSummandsP children.
-  -- T_i_p ∈ cf_p means T_i_p.depth ≤ (children's max depth) = T₀.depth - 1.
+  -- Strategy: T₀ = .node a cs₀ for some a, cs₀. cf_p ∈ cutListSummandsP cs₀.
+  -- T_i_p ∈ cf_p means T_i_p.depth ≤ (cs₀'s max depth) = T₀.depth - 1.
   match T₀, h_mem_p with
-  | .node a children, h_mem_p =>
+  | .node a cs₀, h_mem_p =>
     rw [cutSummandsP_node, Multiset.mem_map] at h_mem_p
     obtain ⟨⟨cf_p', rem_p'⟩, h_mem_p', h_eq⟩ := h_mem_p
     have h_cf_eq : cf_p' = cf_p := congrArg Prod.fst h_eq
     rw [← h_cf_eq] at h_T_i_p_mem
-    have hbd : T_i_p.depth ≤ (children.map RoseTree.depth).foldr max 0 :=
-      cutListSummandsP_subtree_depth_le children cf_p' rem_p' h_mem_p' T_i_p h_T_i_p_mem
-    show T_i_p.depth < (RoseTree.node a children).depth
+    have hbd : T_i_p.depth ≤ (cs₀.map RoseTree.depth).foldr max 0 :=
+      cutListSummandsP_subtree_depth_le cs₀ cf_p' rem_p' h_mem_p' T_i_p h_T_i_p_mem
+    show T_i_p.depth < (RoseTree.node a cs₀).depth
     rw [RoseTree.depth_node]
     omega
 
@@ -210,14 +211,14 @@ mutual
 private theorem cutSummandsP_numNodes_eq :
     ∀ (T : RoseTree α) (cf : Forest (RoseTree α)) (rem : RoseTree α),
       (cf, rem) ∈ cutSummandsP T → (cf.map RoseTree.numNodes).sum + rem.numNodes = T.numNodes
-  | .node a children, cf, rem, h_mem => by
+  | .node a cs₀, cf, rem, h_mem => by
     rw [cutSummandsP_node, Multiset.mem_map] at h_mem
     obtain ⟨⟨cf', rem'⟩, h_mem', h_eq⟩ := h_mem
     have h_cf : cf' = cf := congrArg Prod.fst h_eq
     have h_rem : (RoseTree.node a rem' : RoseTree α) = rem := congrArg Prod.snd h_eq
     rw [← h_cf, ← h_rem]
-    -- (cf', rem') ∈ cutListSummandsP children, weight conservation by IH.
-    have hc := cutListSummandsP_numNodes_eq children cf' rem' h_mem'
+    -- (cf', rem') ∈ cutListSummandsP cs₀, weight conservation by IH.
+    have hc := cutListSummandsP_numNodes_eq cs₀ cf' rem' h_mem'
     rw [RoseTree.numNodes_node, RoseTree.numNodes_node]
     omega
 
@@ -368,11 +369,11 @@ mutual
 private lemma cutSummandsP_filter_card_zero :
     ∀ (T : RoseTree α),
       (cutSummandsP T).filter (fun pf => pf.1.card = 0) = {(0, T)}
-  | .node a children => by
+  | .node a cs₀ => by
     rw [cutSummandsP_node, Multiset.filter_map]
     -- Beta-reduce the composed predicate to (fun p => p.1.card = 0).
     simp only [Function.comp_def]
-    rw [cutListSummandsP_filter_card_zero children, Multiset.map_singleton]
+    rw [cutListSummandsP_filter_card_zero cs₀, Multiset.map_singleton]
 
 /-- The empty cut `(0, [])` appears with multiplicity exactly 1 in
     `cutListSummandsP cs`. Mutual with `cutSummandsP_filter_card_zero`. -/
@@ -908,4 +909,3 @@ noncomputable instance [DecidableEq α] [CharZero R] [NoZeroDivisors R] :
 
 end ConnesKreimer
 
-end RootedTree

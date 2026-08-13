@@ -3,6 +3,8 @@ import Linglib.Core.Data.RoseTree.Basic
 import Mathlib.RingTheory.TensorProduct.Basic
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -66,7 +68,7 @@ The B+ operator only well-defines on `Multiset (Nonplanar α) → Nonplanar α`
 (unordered children of a new root). On `RoseTree α` with `Multiset`
 forests, B+ would need a canonical ordering. Hence the sorry-free
 coassoc proof for Δ^ρ lives in `Coproduct/PruningNonplanar.lean` on
-`RootedTree.Nonplanar α`. (Note: this Foissy clean coassoc strategy
+`Nonplanar α`. (Note: this Foissy clean coassoc strategy
 does NOT generalize to Δ^c — B+ is not a Hochschild 1-cocycle for the
 trace variant. Δ^c coassoc uses Grossman-Larson duality instead; see
 the GL substrate when it lands.)
@@ -78,7 +80,6 @@ Bialgebra structure (descent + coassoc + counit + Hopf antipode) lives
 in `Coproduct/PruningNonplanar.lean` and `HopfAlgebraNonplanar.lean`.
 -/
 
-namespace RootedTree
 
 namespace ConnesKreimer
 
@@ -212,4 +213,3 @@ noncomputable def comulAlgHomP :
 
 end ConnesKreimer
 
-end RootedTree

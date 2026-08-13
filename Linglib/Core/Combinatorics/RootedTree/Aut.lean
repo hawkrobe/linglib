@@ -12,6 +12,8 @@ import Mathlib.Data.Nat.Choose.Basic
 import Mathlib.Data.Nat.Factorial.Basic
 import Mathlib.Tactic.Ring
 
+open RoseTree RoseTree.Nonplanar
+
 /-!
 # Automorphism cardinality for rooted nonplanar trees
 
@@ -22,21 +24,20 @@ automorphisms of a forest.
 
 ## Main definitions
 
-* `RootedTree.Nonplanar.autCard`: the automorphism count `|Aut(t)|` of a rooted nonplanar tree.
-* `RootedTree.Nonplanar.forestAutCard`: the automorphism count of a forest (multiset of rooted
+* `Nonplanar.autCard`: the automorphism count `|Aut(t)|` of a rooted nonplanar tree.
+* `Nonplanar.forestAutCard`: the automorphism count of a forest (multiset of rooted
   nonplanar trees).
 
 ## Main results
 
-* `RootedTree.Nonplanar.autCard_node`: the recursion `autCard (node a M) = forestAutCard M`.
-* `RootedTree.Nonplanar.forestAutCard_add`: the multinomial split identity
+* `Nonplanar.autCard_node`: the recursion `autCard (node a M) = forestAutCard M`.
+* `Nonplanar.forestAutCard_add`: the multinomial split identity
   `forestAutCard (F + G) = (antidiagonal (F + G)).count (F, G) * (forestAutCard F *
   forestAutCard G)`, the combinatorial core of the pairing's product-coproduct adjunction.
 -/
 
-namespace RootedTree
 
-namespace Nonplanar
+namespace RoseTree.Nonplanar
 
 variable {α : Type*} [DecidableEq α]
 
@@ -211,6 +212,5 @@ theorem forestAutCard_add (F G : Multiset (Nonplanar α)) :
       ← Nat.add_choose_mul_factorial_mul_factorial (F.count t) (G.count t)]
   ring
 
-end Nonplanar
+end RoseTree.Nonplanar
 
-end RootedTree

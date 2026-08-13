@@ -11,6 +11,8 @@ import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
 import Mathlib.RingTheory.Bialgebra.Basic
 import Mathlib.LinearAlgebra.TensorProduct.Basis
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 -- Nested tensor squares `CK ⊗ (CK ⊗ CK)` need one extra pending step during
 -- instance synthesis: the chain `Semiring (CK ⊗ (CK ⊗ CK)) → Algebra R (CK ⊗ CK)
@@ -72,7 +74,7 @@ counterexamples in `scratch/validate_duality.lean` V4). The duality route
 works for the deletion variant Δ^ρ — see `Coproduct/PruningDuality.lean`.
 -/
 
-namespace RootedTree
+namespace ConnesKreimer
 
 open scoped TensorProduct
 open GrossmanLarson
@@ -88,7 +90,6 @@ remainder rather than `Option`). The descent applies whenever the
 `Nonplanar.mk`. For Δ^c (`extractC (τ ∘ Nonplanar.mk)`) this follows
 from `Perm.value_eq`. -/
 
-namespace ConnesKreimer
 
 /-! ### Pointwise projection for the G-form -/
 
@@ -482,7 +483,6 @@ theorem cutSummandsCP_proj_perm (τ : Nonplanar (α ⊕ β) → β)
       (cutSummandsCP (τ ∘ Nonplanar.mk) s).map projSummand :=
   cutSummandsG_proj_perm (extractC_mkComp_invariant τ) h
 
-end ConnesKreimer
 
 /-! ### Descent of `cutSummandsCP` through `Nonplanar.mk` -/
 
@@ -1323,7 +1323,6 @@ per-child cases. This is the substrate for the Δ^c per-tree counit law:
 under `(counit ⊗ id)`, only this summand survives, contributing
 `1 ⊗ ofTree T`. -/
 
-namespace ConnesKreimer
 
 /-- Helper: filter of `(s ×ˢ t)` by a conjunction predicate distributes
     into a product of filters. Used to factor the cardinality-zero
@@ -1501,7 +1500,6 @@ private theorem cutSummandsCN_filter_empty {α β : Type*}
   rw [Multiset.map_zero]
   rfl
 
-end ConnesKreimer
 
 /-- Sum-of-conditional helper: sum of a multiset map where each entry is
     conditionally zero equals the sum over the filtered subset. -/
@@ -1824,7 +1822,7 @@ variable {R'' : Type*} [CommRing R''] {α'' β'' : Type*}
     immediate from `Multiset.map_add` + `Multiset.sum_add`.
 
     Per MCB Lemma 1.2.10, this is the grading on V^c(𝔉_{SO_0}). -/
-def Forest.edgeCount {X : Type*} (F : Forest (Nonplanar X)) : ℕ :=
+def _root_.RoseTree.Nonplanar.Forest.edgeCount {X : Type*} (F : Forest (Nonplanar X)) : ℕ :=
   (F.map (fun T => T.numNodes - 1)).sum
 
 /-- **Graded piece V_n**: the subspace of `ConnesKreimer R'' (Nonplanar X)`
@@ -2022,4 +2020,4 @@ theorem comulCAlgHomN_of'_mem_gradedSpan
 
 end EdgeGrading
 
-end RootedTree
+end ConnesKreimer

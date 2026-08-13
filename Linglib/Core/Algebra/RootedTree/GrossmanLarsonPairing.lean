@@ -7,6 +7,8 @@ import Linglib.Core.Algebra.RootedTree.GrossmanLarson
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Mathlib.Tactic.Ring
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -64,7 +66,6 @@ The aut-cardinality substrate `Nonplanar.autCard` /
 `treeAutCard` / `forestAutCard`), also sorry-free.
 -/
 
-namespace RootedTree
 
 namespace GrossmanLarson
 
@@ -454,4 +455,3 @@ theorem pairing_of'_mul (W : Forest (Nonplanar α))
 
 end GrossmanLarson
 
-end RootedTree

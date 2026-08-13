@@ -48,7 +48,7 @@ on this carrier (the P1 spike, now as carrier tests).
 
 namespace Minimalist
 
-open RootedTree RootedTree.ConnesKreimer SyntacticObject
+open RoseTree RoseTree.Nonplanar ConnesKreimer SyntacticObject
 
 /-! ### Workspaces (MCB Def 1.2.1)
 

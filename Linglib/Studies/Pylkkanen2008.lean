@@ -66,7 +66,7 @@ in the "Applicative diagnostics" section below.
 namespace Pylkkanen2008
 
 open Minimalist Minimalist.Voice SyntacticObject
-open RootedTree
+open RoseTree RoseTree.Nonplanar
 
 /-! ### Voice projection (relocated from Minimalist/VoiceProjection.lean)
 

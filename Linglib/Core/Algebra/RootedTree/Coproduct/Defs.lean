@@ -2,6 +2,8 @@ import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Data.RoseTree.Basic
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -43,7 +45,6 @@ but the cut enumeration F_v is the same. This file factors the cut
 enumeration out of the remainder choice.
 -/
 
-namespace RootedTree
 
 namespace ConnesKreimer
 
@@ -243,4 +244,3 @@ end Tests
 
 end ConnesKreimer
 
-end RootedTree

@@ -36,7 +36,7 @@ lexical-leaf value and a trace value, and inherit `Perm`-invariance from
 
 namespace Minimalist.SyntacticObject
 
-open RootedTree
+open RoseTree RoseTree.Nonplanar
 
 variable {β : Type*}
 

@@ -34,7 +34,7 @@ factorization (Prop. 3.5.6) are needed to separate Internal/External from Sidewa
 
 namespace Minimalist.Merge
 
-open RootedTree RootedTree.ConnesKreimer LaurentSeries
+open RoseTree RoseTree.Nonplanar ConnesKreimer LaurentSeries
 
 variable {α : Type*} {R : Type*} [CommRing R]
 

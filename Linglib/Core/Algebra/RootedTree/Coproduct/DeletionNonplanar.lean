@@ -6,6 +6,8 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -72,7 +74,6 @@ embedding); the right-channel trace-removal uses
 `strip_cutSummandsCP_sum_eq` + `strip_cutListSummandsG_unwrap_sum_eq`.
 -/
 
-namespace RootedTree
 
 namespace ConnesKreimer
 
@@ -220,10 +221,10 @@ private theorem stripTraceList_permList :
 end
 
 /-- Strip trace-placeholder subtrees from a `Nonplanar` tree. -/
-noncomputable def Nonplanar.stripTrace : Nonplanar (α ⊕ β) → Option (Nonplanar α) :=
+noncomputable def _root_.RoseTree.Nonplanar.stripTrace : Nonplanar (α ⊕ β) → Option (Nonplanar α) :=
   Quotient.lift stripTraceQuotient (fun _ _ h => stripTraceQuotient_perm h)
 
-@[simp] theorem Nonplanar.stripTrace_mk (t : RoseTree (α ⊕ β)) :
+@[simp] theorem _root_.RoseTree.Nonplanar.stripTrace_mk (t : RoseTree (α ⊕ β)) :
     Nonplanar.stripTrace (Nonplanar.mk t) =
       (RoseTree.stripTrace t).map Nonplanar.mk := rfl
 
@@ -265,7 +266,7 @@ The embedding `α → α ⊕ β` lifts componentwise to trees and forests via
 `RoseTree.map` / `Nonplanar.map` / `Multiset.map`. -/
 
 /-- Embed a `Nonplanar α` tree into `Nonplanar (α ⊕ β)` via `Sum.inl`. -/
-def Nonplanar.embedInl : Nonplanar α → Nonplanar (α ⊕ β) :=
+def _root_.RoseTree.Nonplanar.embedInl : Nonplanar α → Nonplanar (α ⊕ β) :=
   Nonplanar.map (Sum.inl : α → α ⊕ β)
 
 /-- Embed a forest of `Nonplanar α` trees into a forest of
@@ -321,7 +322,7 @@ private theorem RoseTree.stripTraceList_mapList_inl :
 
 end
 
-theorem Nonplanar.stripTrace_embedInl (T : Nonplanar α) :
+theorem _root_.RoseTree.Nonplanar.stripTrace_embedInl (T : Nonplanar α) :
     Nonplanar.stripTrace (Nonplanar.embedInl (β := β) T) = some T := by
   refine Quotient.inductionOn T ?_
   intro p
@@ -1072,4 +1073,3 @@ theorem comulDN_embedInl_eq_comulAlgHomN (τ : Nonplanar (α ⊕ β) → β) :
 
 end ConnesKreimer
 
-end RootedTree

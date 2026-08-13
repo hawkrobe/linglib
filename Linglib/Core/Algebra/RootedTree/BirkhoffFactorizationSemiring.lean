@@ -6,6 +6,8 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
 import Linglib.Core.Algebra.RotaBaxter
 
+open RoseTree RoseTree.Nonplanar
+
 /-!
 # Semiring Birkhoff factorization on the Connes–Kreimer Hopf algebra  `[UPSTREAM]`
 
@@ -43,7 +45,7 @@ ring case `φ₋ = −R(φ̃)`, `φ₊ = (1−R)(φ̃)`). Because a semiring has
 [marcolli-chomsky-berwick-2025] (Def. 3.1.2, Def. 3.1.6, Prop. 3.1.9, Rem. 3.1.10)
 -/
 
-namespace RootedTree.ConnesKreimer.SemiringRenorm
+namespace ConnesKreimer.SemiringRenorm
 
 open scoped TensorProduct
 
@@ -142,4 +144,4 @@ theorem birkhoffFactorization_ofTree (hφ : φ 1 = 1) (T : Nonplanar α) :
   rw [← birkhoffPrepTree_unfold, birkhoffPlusTree]
   exact add_comm _ _
 
-end RootedTree.ConnesKreimer.SemiringRenorm
+end ConnesKreimer.SemiringRenorm

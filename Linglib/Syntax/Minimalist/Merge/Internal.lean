@@ -41,7 +41,7 @@ IM, not the unit stage on its own.
 namespace Minimalist.Merge
 
 open scoped TensorProduct
-open RootedTree RootedTree.ConnesKreimer
+open RoseTree RoseTree.Nonplanar ConnesKreimer
 
 /-- **Per-cut reduction of `mergeOpUnit β (of' {T})`.** Unfolds the operator chain
     through `comulTreeN`'s primitive-plus-cut-sum decomposition; each cut's

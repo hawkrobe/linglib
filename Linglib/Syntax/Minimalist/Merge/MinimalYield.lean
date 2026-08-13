@@ -5,6 +5,8 @@ import Linglib.Syntax.Minimalist.Workspace.DeletionConservation
 import Linglib.Core.Order.PullbackPreorder
 import Mathlib.Order.OrderDual
 
+open ConnesKreimer
+
 /-!
 # Minimal Yield (MCB Definition 1.6.1)
 [marcolli-chomsky-berwick-2025] §1.6.1, Def 1.6.1 on book p. 63
@@ -38,7 +40,7 @@ Sideward 3(a)/3(b) are ruled out by both forms via Δb₀ > 0.
 
 namespace Minimalist.Merge
 
-open RootedTree
+open RoseTree RoseTree.Nonplanar
 
 variable {α β : Type*}
 

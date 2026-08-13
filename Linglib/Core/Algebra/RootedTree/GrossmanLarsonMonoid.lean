@@ -7,6 +7,8 @@ import Linglib.Core.Algebra.RootedTree.GrossmanLarson
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonAssoc
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridge
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -15,7 +17,7 @@ set_option autoImplicit false
 
 Completes the multiplicative structure of `GrossmanLarson R α` (defined in
 `GrossmanLarson.lean`) by lifting the integer-case associativity
-`GrossmanLarson.mul_assoc_basis_via_oudom_guin_pbw` (proved sorry-free in
+`ConnesKreimer.mul_assoc_basis_via_oudom_guin_pbw` (proved sorry-free in
 `OudomGuinBridge.lean` via Oudom-Guin + PBW) to arbitrary
 `CommSemiring R`, then registering `Semigroup`/`Monoid` instances.
 
@@ -42,7 +44,6 @@ injectivity), and that R-free equality re-applies for any R.
 `[UPSTREAM]` candidate. All results sorry-free.
 -/
 
-namespace RootedTree
 
 namespace GrossmanLarson
 
@@ -181,7 +182,7 @@ private theorem lhsMultiset_eq_rhsMultiset
   apply multiset_eq_of_sum_eq_int
   -- Reduce to associativity equation at ℤ.
   rw [← lhs_eq_sum_of' (R := ℤ), ← rhs_eq_sum_of' (R := ℤ)]
-  exact mul_assoc_basis_via_oudom_guin_pbw F₁ F₂ F₃
+  exact ConnesKreimer.mul_assoc_basis_via_oudom_guin_pbw F₁ F₂ F₃
 
 /-- **Basis-level associativity** (R-generic, `α : Type*`). Lifts the
     integer case `mul_assoc_basis_via_oudom_guin_pbw` (Q6, proved
@@ -371,4 +372,3 @@ noncomputable instance (priority := 50) instMonoid {R : Type*} [CommSemiring R] 
 
 end GrossmanLarson
 
-end RootedTree

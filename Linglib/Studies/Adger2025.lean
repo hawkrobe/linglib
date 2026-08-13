@@ -3,6 +3,8 @@ import Linglib.Syntax.SynGraph
 import Linglib.Syntax.Minimalist.Merge.MinimalYield
 import Linglib.Syntax.Minimalist.Defs
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -206,11 +208,11 @@ no such bridge is in scope here. -/
     parameters `T_i Tnode T_iq`; the MCB conjunct does not reference the
     AL graph. The bundling is documentation, not a reduction. -/
 theorem adger_and_mcb_both_reject_sideward
-    (T_i Tnode T_iq : RootedTree.Nonplanar (Minimalist.LIToken ⊕ Unit)) :
+    (T_i Tnode T_iq : Nonplanar (Minimalist.LIToken ⊕ Unit)) :
     -- MCB: Sideward 3(a)-shape transformation violates MinimalYieldWeak
     (¬ Minimalist.Merge.MinimalYieldWeak
-        ({T_i} : RootedTree.Forest (RootedTree.Nonplanar (Minimalist.LIToken ⊕ Unit)))
-        ({Tnode, T_iq} : RootedTree.Forest (RootedTree.Nonplanar (Minimalist.LIToken ⊕ Unit))))
+        ({T_i} : Nonplanar.Forest (Nonplanar (Minimalist.LIToken ⊕ Unit)))
+        ({Tnode, T_iq} : Nonplanar.Forest (Nonplanar (Minimalist.LIToken ⊕ Unit))))
     ∧
     -- Adger: the canonical Sideward subjunction configuration fails AL
     (g_sideward.satisfiesAL ⟨2, by decide⟩ ⟨1, by decide⟩ = false) :=

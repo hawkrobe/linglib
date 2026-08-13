@@ -55,13 +55,12 @@ arity.
 
 /-! ## Nonplanar — the quotient type -/
 
-namespace RootedTree
 
 /-- A nonplanar n-ary rooted tree with α-labeled vertices: the quotient
     of `RoseTree α` by `RoseTree.Perm`. -/
-def Nonplanar (α : Type*) : Type _ := Quotient (RoseTree.isSetoid : Setoid (RoseTree α))
+def RoseTree.Nonplanar (α : Type*) : Type _ := Quotient (RoseTree.isSetoid : Setoid (RoseTree α))
 
-namespace Nonplanar
+namespace RoseTree.Nonplanar
 
 variable {α : Type*}
 
@@ -337,11 +336,10 @@ theorem numNodes_pos (t : Nonplanar α) : 0 < t.numNodes := by
   show (mk (Quotient.out t)).numNodes = numNodes t
   exact congrArg numNodes (Quotient.out_eq t)
 
-end Nonplanar
+end RoseTree.Nonplanar
 
-end RootedTree
 
-namespace RootedTree.Nonplanar
+namespace RoseTree.Nonplanar
 
 variable {α β γ : Type*}
 
@@ -417,4 +415,4 @@ theorem map_map (f : α → β) (g : β → γ) (t : Nonplanar α) :
   show (map f (mk p)).numLeaves = (mk p).numLeaves
   rw [map_mk, numLeaves_mk, numLeaves_mk, RoseTree.numLeaves_map]
 
-end RootedTree.Nonplanar
+end RoseTree.Nonplanar

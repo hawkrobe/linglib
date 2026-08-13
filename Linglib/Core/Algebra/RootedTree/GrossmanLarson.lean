@@ -17,6 +17,8 @@ import Mathlib.Data.Multiset.ZeroCons
 import Mathlib.LinearAlgebra.BilinearMap
 import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -100,7 +102,6 @@ bridge in `OudomGuinBridge.lean`
 and `Monoid` typeclass instances are registered there.
 -/
 
-namespace RootedTree
 
 /-! ### The Grossman-Larson Hopf algebra carrier -/
 
@@ -361,7 +362,7 @@ combinatorial formula at the `RoseTree` level (`PreLie/Insertion.lean`'s
 `Finsupp.linearCombination`. The substrate invariance theorems
 (Perm on host/guest, Perm on multiset arguments) are proved
 sorry-free in `PreLie/Insertion.lean` and
-`Algebra/RootedTree/PreLie/InsertionNonplanar.lean`. -/
+`Algebra/Nonplanar/PreLie/InsertionNonplanar.lean`. -/
 
 /-- Basis-level multi-graft on Multiset forests: each pair `(F_basis,
     G_basis)` produces a multiset of grafted forests, summed as basis
@@ -745,4 +746,3 @@ proved sorry-free in `GrossmanLarsonMonoid.lean` via the Oudom-Guin
 
 end GrossmanLarson
 
-end RootedTree

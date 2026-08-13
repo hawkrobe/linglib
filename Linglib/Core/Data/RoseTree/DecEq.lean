@@ -23,7 +23,7 @@ so concrete `Nonplanar` equalities close by `decide`.
 
 - `RoseTree.eqv_iff_perm`: `eqv` decides `Perm`.
 - `RoseTree.instDecidableRelPerm`: the resulting `DecidableRel Perm`.
-- `RootedTree.Nonplanar.instDecidableEq`: decidable equality on the quotient, via
+- `Nonplanar.instDecidableEq`: decidable equality on the quotient, via
   `Quotient.decidableEq`.
 
 ## Implementation notes
@@ -38,7 +38,7 @@ correctness from `Core/Data/Multiset/Rel.lean`.
 
 namespace RoseTree
 
-open RootedTree
+open RoseTree RoseTree.Nonplanar
 
 variable {α : Type*} [DecidableEq α] {cs ds : List (RoseTree α)} {t s : RoseTree α}
 
@@ -145,7 +145,7 @@ instance : DecidableRel ((· ≈ ·) : RoseTree α → RoseTree α → Prop) :=
 
 end RoseTree
 
-namespace RootedTree.Nonplanar
+namespace RoseTree.Nonplanar
 
 variable {α : Type*} [DecidableEq α]
 
@@ -155,4 +155,4 @@ variable {α : Type*} [DecidableEq α]
 instance instDecidableEq : DecidableEq (Nonplanar α) :=
   inferInstanceAs (DecidableEq (Quotient (RoseTree.isSetoid (α := α))))
 
-end RootedTree.Nonplanar
+end RoseTree.Nonplanar

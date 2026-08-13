@@ -30,7 +30,7 @@ is workspace-level), so there is exactly **one** trace leaf — `SyntacticObject
 
 namespace Minimalist
 
-open RootedTree SyntacticObject
+open RoseTree RoseTree.Nonplanar SyntacticObject
 
 namespace SyntacticObject
 

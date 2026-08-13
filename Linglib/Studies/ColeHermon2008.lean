@@ -96,7 +96,7 @@ end Minimalist
 namespace ColeHermon2008
 
 open Minimalist SyntacticObject
-open RootedTree
+open RoseTree RoseTree.Nonplanar
 
 -- ============================================================================
 -- § 1: Toba Batak Lexical Items

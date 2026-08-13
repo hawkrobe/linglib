@@ -18,7 +18,7 @@ already-generic cut layer (`cutSummandsG`).
 
 The Δ^c instance is the home of the **Minimal-Search ε arc** (MCB §1.5,
 Prop 1.5.1): the trace coproduct is where extraction depth is recoverable
-(`RootedTree.Cut.depthC`), so the ε-weighted graft and the ε → 0
+(`Nonplanar.Cut.depthC`), so the ε-weighted graft and the ε → 0
 Sideward-elimination belong on `mergeOpC`, not the Δ^ρ `mergeOp`.
 
 ## Main definitions
@@ -37,7 +37,7 @@ Sideward-elimination belong on `mergeOpC`, not the Δ^ρ `mergeOp`.
 namespace Minimalist.Merge
 
 open scoped TensorProduct
-open RootedTree RootedTree.ConnesKreimer
+open RoseTree RoseTree.Nonplanar ConnesKreimer
 
 variable {R : Type*} [CommSemiring R] {α : Type*}
 
@@ -75,7 +75,7 @@ The ε-weighted Merge `M^ε = ⊔ ∘ (Bᵉ ⊗ id) ∘ δ ∘ Δ` (eq 1.5.1) sc
 Since `mergePost` is linear and the graft is its only creation, scaling the
 graft by `ε^c` equals scaling the whole operator: `mergeOpCEps = ε^c • mergeOpC`.
 The net cost `c` is the sum of the two operands' signed depth-costs (MCB rules
-1–2, `RootedTree.Cut.extractionCost`/`quotientCost`):
+1–2, `Nonplanar.Cut.extractionCost`/`quotientCost`):
 
 * **EM** `𝔐(T_i, T_j)`: both whole, `c = 0`.
 * **IM** `𝔐(T_v, T_i/T_v)`: extracted crown `+d` and its own quotient `−d`
@@ -101,7 +101,7 @@ end Minimalist.Merge
 namespace Minimalist.Merge
 
 open scoped TensorProduct
-open RootedTree RootedTree.ConnesKreimer
+open RoseTree RoseTree.Nonplanar ConnesKreimer
 
 variable {R : Type*} [CommSemiring R] {α β : Type*}
 

@@ -4,6 +4,8 @@ import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Data.RoseTree.Count
 import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
 
+open RoseTree RoseTree.Nonplanar
+
 /-!
 # Vertex conservation for the Δ^ρ / Δᵈ (deletion) cut enumeration
 [marcolli-chomsky-berwick-2025]
@@ -19,7 +21,6 @@ contracted unary node drops one vertex, giving the `+2`-per-cut accessible-term
 extraction (eq. 1.6.7) downstream.
 -/
 
-namespace RootedTree
 
 namespace ConnesKreimer
 
@@ -176,4 +177,3 @@ theorem cutSummandsN_accCount_single_deletion (T : Nonplanar α)
 
 end ConnesKreimer
 
-end RootedTree

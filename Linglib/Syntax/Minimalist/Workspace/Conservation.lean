@@ -1,6 +1,8 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
 import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -43,9 +45,8 @@ and `cut_leafCount_conservation`.
   modulo truncated-ℕ positivity bookkeeping.
 -/
 
-namespace RootedTree
-
 namespace ConnesKreimer
+
 
 variable {α β : Type*}
 
@@ -255,7 +256,6 @@ private theorem extractC_numNodes_sum_one (τ : RoseTree (α ⊕ β) → β) :
     | inl a => rw [extractC_inl] at h; obtain rfl := Option.some.inj h; simp [traceLeaf]
     | inr b => rw [extractC_inr] at h; exact absurd h (by simp)
 
-end ConnesKreimer
 
 /-! ### Nonplanar descent -/
 
@@ -381,11 +381,10 @@ vertex, so that `accCountC = #V − 1 − #trace` does not truncate. Crown
 components are always `Sum.inl`-rooted (the Δ^c policy declines to cut trace
 nodes), and the trunk keeps the tree's root. -/
 
-end RootedTree
-
-namespace RootedTree
+end ConnesKreimer
 
 namespace ConnesKreimer
+
 
 variable {α β : Type*}
 
@@ -445,7 +444,6 @@ theorem extractC_ne_none_imp_inl (τ : RoseTree (α ⊕ β) → β) (t : RoseTre
     | inl a => exact ⟨a, cs, rfl⟩
     | inr b => rw [extractC_inr] at h; exact absurd rfl h
 
-end ConnesKreimer
 
 /-! ### α extraction identity (MCB eq. 1.6.8) -/
 
@@ -611,4 +609,4 @@ theorem Cut.extractionCost_pos (τ : Nonplanar (α ⊕ β) → β) (T : Nonplana
   simp only [Cut.extractionCost]
   exact_mod_cast h
 
-end RootedTree
+end ConnesKreimer

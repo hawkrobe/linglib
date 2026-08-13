@@ -20,7 +20,7 @@ holds its concrete examples, kernel-checked against that substrate.
 
 namespace MarcolliChomskyBerwick2025
 
-open RootedTree Minimalist SyntacticObject
+open RoseTree RoseTree.Nonplanar Minimalist SyntacticObject
 
 /-- A determiner over a noun: `D` selects `N`, so `D` projects. -/
 private def theDog : SyntacticObject :=

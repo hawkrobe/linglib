@@ -7,6 +7,8 @@ import Linglib.Core.Algebra.RootedTree.PreLie.Graft
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionAddHost
 
+open RoseTree RoseTree.Nonplanar
+
 /-!
 # Singleton-guest composition of the multi-graft insertion
 

@@ -9,6 +9,8 @@ import Mathlib.RingTheory.Coalgebra.Convolution
 import Mathlib.RingTheory.Bialgebra.Convolution
 import Mathlib.RingTheory.HopfAlgebra.Convolution
 
+open RoseTree RoseTree.Nonplanar
+
 /-!
 # Birkhoff factorization on the Connes–Kreimer Hopf algebra  `[UPSTREAM]`
 
@@ -52,7 +54,7 @@ convolution inverse `φ₋ ∘ S` of the character `φ₋` is read off directly 
 Prop. 3.1.7, Rem. 3.1.8)
 -/
 
-namespace RootedTree.ConnesKreimer
+namespace ConnesKreimer
 
 open scoped TensorProduct
 
@@ -342,4 +344,4 @@ theorem birkhoffFactorization (φ : ConnesKreimer R (Nonplanar α) →ₐ[R] ℛ
 
 end Factorization
 
-end RootedTree.ConnesKreimer
+end ConnesKreimer

@@ -6,6 +6,8 @@ import Mathlib.LinearAlgebra.TensorProduct.Basic
 import Mathlib.RingTheory.Bialgebra.Basic
 import Mathlib.RingTheory.TensorProduct.Maps
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -50,7 +52,6 @@ calculus of `BMinus.lean`, which imports this file). The full
   `List.Forall₂` lift for the componentwise version.
 -/
 
-namespace RootedTree
 
 namespace ConnesKreimer
 
@@ -908,9 +909,9 @@ mutual
 /-- The empty cut `(0, T)` is a cut summand of every tree-level tree `T`. -/
 private theorem mem_cutSummandsP_zero : ∀ (T : RoseTree α),
     ((0 : Forest (RoseTree α)), T) ∈ cutSummandsP T
-  | .node a children => by
+  | .node a cs => by
     rw [cutSummandsP_node, Multiset.mem_map]
-    exact ⟨(0, children), mem_cutListSummandsP_zero children, rfl⟩
+    exact ⟨(0, cs), mem_cutListSummandsP_zero cs, rfl⟩
 
 /-- The empty cut `(0, ps)` is a list cut summand of every tree-level list `ps`. -/
 private theorem mem_cutListSummandsP_zero : ∀ (ps : List (RoseTree α)),
@@ -947,7 +948,7 @@ private theorem cutForestSummandsN_zero_mem (F : Forest (Nonplanar α)) :
 
 /-- A tree's depth is strictly less than the depth of any node containing
     it as a child. -/
-theorem Nonplanar.depth_lt_of_mem (T : Nonplanar α) (F : Forest (Nonplanar α))
+theorem _root_.RoseTree.Nonplanar.depth_lt_of_mem (T : Nonplanar α) (F : Forest (Nonplanar α))
     (hT : T ∈ F) (a : α) : T.depth < (Nonplanar.node a F).depth := by
   obtain ⟨ps, hps⟩ := exists_planar_list_rep F
   subst hps
@@ -1221,4 +1222,3 @@ calculus drives the duality proof). -/
 
 end ConnesKreimer
 
-end RootedTree

@@ -131,8 +131,8 @@ study files need — a binary node has the summed leaf count of its children
 and exactly one more internal node — by quotient induction, mirroring
 `Nonplanar.numNodes_node`. -/
 
-open RootedTree in
-private theorem Nonplanar.numLeaves_node_pair {α : Type*} (a : α)
+open RoseTree RoseTree.Nonplanar in
+private theorem _root_.RoseTree.Nonplanar.numLeaves_node_pair {α : Type*} (a : α)
     (c d : Nonplanar α) :
     (Nonplanar.node a {c, d}).numLeaves = c.numLeaves + d.numLeaves := by
   refine Quotient.inductionOn₂ c d fun pc pd => ?_
@@ -148,7 +148,7 @@ private theorem Nonplanar.numLeaves_node_pair {α : Type*} (a : α)
 /-- Leaf count of a binary Merge node is the sum of its children's. -/
 theorem SyntacticObject.leafCount_node (l r : SyntacticObject) :
     (node l r).leafCount = l.leafCount + r.leafCount := by
-  rw [leafCount, node_val, Nonplanar.numLeaves_node_pair]; rfl
+  rw [leafCount, node_val, RoseTree.Nonplanar.numLeaves_node_pair]; rfl
 
 /-- Leaf count of a Merge is the sum of its children's (`SyntacticObject.merge =
 SyntacticObject.node`). -/

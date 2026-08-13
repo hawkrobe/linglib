@@ -9,6 +9,8 @@ import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
 import Linglib.Core.Data.Multiset.Antidiagonal
 import Mathlib.Tactic.Ring
 
+open RoseTree RoseTree.Nonplanar
+
 set_option autoImplicit false
 
 /-!
@@ -46,7 +48,6 @@ route in Prop 3.2 uses B+/B- duality with Δ^ρ instead. This file
 provides the B+/B- adjoint property — the foundation of that route.
 -/
 
-namespace RootedTree
 
 namespace GrossmanLarson
 
@@ -1535,4 +1536,3 @@ theorem bMinusLin_gl_mul (a : α)
 
 end GrossmanLarson
 
-end RootedTree

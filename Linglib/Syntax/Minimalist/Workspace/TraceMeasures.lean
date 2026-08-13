@@ -5,6 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Data.RoseTree.Count
 
+open RoseTree RoseTree.Nonplanar
+
 /-!
 # Trace vocabulary for the leaf statistics
 [marcolli-chomsky-berwick-2025]
@@ -91,9 +93,8 @@ theorem traceLeafCount_le_traceDepthSum_of_inl (a : α) (cs : List (RoseTree (α
 
 end RoseTree
 
-namespace RootedTree
 
-namespace Nonplanar
+namespace RoseTree.Nonplanar
 
 variable {α β : Type*} (p : α → Prop) [DecidablePred p]
 
@@ -210,7 +211,7 @@ theorem accCountC_merge (a : α) (l r : Nonplanar (α ⊕ β))
     (Nonplanar.node (Sum.inl a) {l, r}).accCountC = l.accCountC + r.accCountC + 2 :=
   accCountP_node_pair _ _ l r (by simp) hl hr
 
-end Nonplanar
+end RoseTree.Nonplanar
 
 namespace Forest
 
@@ -331,4 +332,3 @@ theorem sigmaC_eq (F : Multiset (Nonplanar (α ⊕ β))) : sigmaC F = b₀ F + a
 
 end Forest
 
-end RootedTree
