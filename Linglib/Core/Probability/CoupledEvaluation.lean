@@ -50,8 +50,6 @@ independent per-item distributions. This is the mathematical basis for:
   coupled MaxEnt → uncoupled MaxEnt when coupling vanishes
 -/
 
-namespace Core
-
 open Real BigOperators Finset
 
 -- ============================================================================
@@ -126,6 +124,14 @@ theorem CoupledSoftmax.marginal_nonneg [Nonempty V]
     split
     · exact le_of_lt (softmax_pos cs.totalScore f)
     · exact le_refl 0
+
+/-- Coupled evaluations with pointwise-equal total scores have equal marginals —
+e.g. a coupling score that decomposes additively across positions may be folded
+into the component scores without changing any marginal. -/
+theorem CoupledSoftmax.marginal_congr [Nonempty V] {cs cs' : CoupledSoftmax I V}
+    (h : ∀ f, cs.totalScore f = cs'.totalScore f) (i : I) (v : V) :
+    cs.marginal i v = cs'.marginal i v := by
+  simp only [marginal, jointProb, funext h]
 
 -- ============================================================================
 -- § 3: Independent (Uncoupled) Evaluation
@@ -260,5 +266,3 @@ noncomputable def coupledSoftmaxOfMaxEnt
     CoupledSoftmax (Fin n) O where
   componentScore i v := classicalScore (inputs i, v)
   couplingScore f := systemicScore f
-
-end Core

@@ -41,7 +41,7 @@ equals its factor.
 
 namespace HarmonicGrammar
 
-open Constraints Core
+open Constraints
 
 /-! ### Classical MaxEnt -/
 
@@ -100,8 +100,8 @@ noncomputable def maxEntCoupled {n m k : Nat} {I O : Type*} [Fintype O] [Decidab
     (inputs : Fin n → I)
     (classicalCon : CON (I × O) m) (classicalW : Fin m → ℝ)
     (sw : Fin k → ℝ) (scon : Fin k → SystemicConstraint n O) :
-    Core.CoupledSoftmax (Fin n) O :=
-  Core.coupledSoftmaxOfMaxEnt inputs
+    CoupledSoftmax (Fin n) O :=
+  coupledSoftmaxOfMaxEnt inputs
     (fun p => harmonyScore classicalCon classicalW p)
     (fun f => systemicScore sw scon f)
 

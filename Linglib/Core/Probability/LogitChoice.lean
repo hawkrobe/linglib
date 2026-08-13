@@ -38,8 +38,6 @@ log-sum-exp layer. Quality-and-role marker: pure-math foundation, no linguistics
 * `rpow_luce_eq_softmax` — Luce's `f^α` power rule is softmax of log-scores.
 -/
 
-namespace Core
-
 open Real Finset
 
 /-! ### The softmax function
@@ -198,6 +196,21 @@ theorem softmax_strict_mono [Nonempty ι] (s : ι → ℝ) (i j : ι) (hij : s i
   apply div_lt_div_of_pos_right _ (partitionFn_pos s)
   exact exp_lt_exp.mpr hij
 
+/-- Raising one coordinate's score, holding all others fixed, strictly raises its
+softmax probability. -/
+theorem softmax_lt_softmax_of_single_score_lt [DecidableEq ι] [Nontrivial ι]
+    {s s' : ι → ℝ} {i : ι} (hlt : s i < s' i) (heq : ∀ j ≠ i, s' j = s j) :
+    softmax s i < softmax s' i := by
+  obtain ⟨j, hj⟩ := exists_ne i
+  have hR : 0 < ∑ k ∈ Finset.univ.erase i, exp (s k) :=
+    Finset.sum_pos (fun k _ => exp_pos _) ⟨j, Finset.mem_erase.2 ⟨hj, Finset.mem_univ j⟩⟩
+  have hR' : ∑ k ∈ Finset.univ.erase i, exp (s' k) =
+      ∑ k ∈ Finset.univ.erase i, exp (s k) :=
+    Finset.sum_congr rfl fun k hk => by rw [heq k (Finset.mem_erase.1 hk).1]
+  simp only [softmax, ← Finset.add_sum_erase _ _ (Finset.mem_univ i), hR']
+  rw [div_lt_div_iff₀ (by positivity) (by positivity)]
+  nlinarith [mul_lt_mul_of_pos_right (exp_lt_exp.mpr hlt) hR]
+
 /-- Constant scores give the uniform distribution (the `α = 0` case of
 `softmax (α • s)`). -/
 theorem softmax_zero : softmax (0 : ι → ℝ) = λ _ => 1 / (Fintype.card ι : ℝ) := by
@@ -234,5 +247,3 @@ theorem rpow_luce_eq_softmax [Nonempty ι] (f : ι → ℝ) (α : ℝ)
     rw [rpow_def_of_pos (hf j), mul_comm]
 
 end SoftmaxBasic
-
-end Core
