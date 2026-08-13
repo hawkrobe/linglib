@@ -1,4 +1,3 @@
-import Linglib.Features.Case.Basic
 import Linglib.Syntax.Comparative
 
 /-!
@@ -25,32 +24,18 @@ namespace Korean.Comparison
 
 open Comparative
 
-/-- The separative standard marker. -/
-def standardMarker : String := "-boda"
-
-/-- Korean comparative: separative standard marker *-boda*. -/
-def entry : ComparativeEntry :=
-  { standardCase := .abl
+/-- The *-boda* comparative: separative postposition-marked standard, no
+    degree morphology. -/
+def boda : Comparative :=
+  { standardMarker := some "-boda"
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial
-  , standardMarker := standardMarker
-  , hasDegreeMorphology := false }
-
--- Per-datum verification
-theorem standard_is_ablative : entry.standardCase = .abl := rfl
-theorem case_is_fixed : entry.caseAssignment = .fixed := rfl
-theorem encoding_is_adverbial : entry.fixedEncoding = some .adverbial := rfl
-theorem no_degree_morphology : entry.hasDegreeMorphology = false := rfl
-
-/-! ### WALS Ch 121 classification data -/
+  , standardCase := some .abl }
 
 /-- No overt degree marking; the adverb *deo* is an optional intensifier. -/
 def degreeWord : DegreeWordType := .noDegreeMarking
 
 /-- Superlative as comparative with universal standard. -/
 def superlative : SuperlativeStrategy := .comparativeUniversal
-
-/-- Illustrative comparative. -/
-def comparativeForm : String := "Y-boda X-ga Adj"
 
 end Korean.Comparison
