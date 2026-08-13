@@ -3,365 +3,167 @@ import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Semantics.Genericity.MeaningPreservation
-import Linglib.Semantics.Classifier
-import Linglib.Studies.Schwarz2009
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Cantonese.Determiners
 
 /-!
 # Jenks (2018): Articulated Definiteness without Articles
-[jenks-2018]
 
-Mandarin distinguishes **unique** definites (bare N) from **anaphoric**
-definites (Dem-Clf-N), with a documented exception for matrix subjects
-(§5.3). A Chierchia-style ι type-shift handles the bare-N route
-([chierchia-1998], [yang-2001], [dayal-2004],
-[jiang-2012]); demonstratives carry an indexical argument supplying
-ι^x (a Schwarz-style strong article); an `Index!` principle (Heim 1990
-Maximize Presupposition + [schlenker-2012] Gricean reduction)
-selects between them.
+[jenks-2018] argues that Mandarin distinguishes unique definites, realized
+as bare nouns via an unblocked Chierchia-style ι type-shift, from anaphoric
+definites, realized as Dem-Clf-N with the demonstrative supplying a
+Schwarz-style ι^x; an Index! principle, an instance of Maximize
+Presupposition, forces the indexed form whenever an index is available,
+except for matrix subjects marking continuing topics. The typology (Table 2)
+leaves the marked-unique cell unattested. Cells are derived from each
+language's `Determiners.inventory`, Index! is built with
+`MaximizePresupposition.mpConstraintOf`, and the type-shift claims run
+through `MeaningPreservation.selectShift`. Jenks types the ι^x index as a
+property (his §4.4 composition with proper names), while the substrate's
+`Description.anaphoric` carries a Schwarz-style individual index, so §4.4
+is not formalized here. The post-Jenks Shan refutation lives in
+`Moroney2021.lean` per chronology discipline.
 
-The substrate already operationalizes the inventory layer:
-`Semantics.Definiteness.Description.{unique,anaphoric}` are ι and ι^x;
-`Semantics.Definiteness.Determiner.Inventory.markingStrategy` derives the four-cell
-typology directly named after Jenks 2018 in `Semantics.Definiteness`.
-The Mandarin Fragment commits `marking := .markedAnaphoric`.
-This file focuses on what is distinctly Jenks: the typological
-prediction (§3 + §6), the bare/Dem competition (§5 paper), the
-covarying-readings argument for index binding (§4.3 paper), and the
-subject-as-topic exception (§5.3 paper). The post-Jenks Shan refutation
-lives in `Moroney2021.lean` per chronology discipline.
+## References
+
+* [jenks-2018]
 -/
 
 namespace Jenks2018
 
 open Semantics.Definiteness
+open Semantics.Kinds
 open Intensional
 open Intensional.Variables
 
+/-! ### The typology and its attested cells (Table 2) -/
 
--- ════════════════════════════════════════════════════════════════
--- §1: The Jenks Four-Cell Typology and Mandarin's Cell
--- ════════════════════════════════════════════════════════════════
-
-/-! Jenks 2018 §6.2 (Table 2) lays out a four-cell typology of
-definiteness marking. The cells in linglib substrate vocabulary:
-
-| Inventory                       | Strategy            | Languages            |
-|---------------------------------|---------------------|----------------------|
-| both forms, distinct            | `.bipartite`        | German, Lakhota      |
-| only anaphoric form             | `.markedAnaphoric`  | Mandarin, Akan, Wu   |
-| both forms, syncretic           | `.generallyMarked`  | Cantonese, English   |
-| only unique form                | (unattested)        | —                    |
-
-Jenks proposes the unattested fourth cell as a typological gap and
-gives it a historical explanation (Greenberg 1978: definite articles
-typically grammaticalize from demonstratives and so first appear in
-anaphoric contexts). -/
-
-/-- The three Jenks-attested marking strategies (Table 2). Lifted to
-    the substrate level here so consumers (e.g. Moroney's refutation)
-    can `import` the prediction without reciting the list. -/
+/-- The three [jenks-2018] Table 2 attested marking strategies. The fourth
+    cell — marked unique — is predicted unattested, with Greenberg's
+    grammaticalization path (articles arise from demonstratives, hence in
+    anaphoric uses first) as the diachronic explanation. -/
 def jenksAttestedStrategies : List DefMarkingStrategy :=
   [.bipartite, .markedAnaphoric, .generallyMarked]
 
-/-- Jenks's three attested cells are pairwise distinct. -/
-theorem jenks_attested_distinct :
-    DefMarkingStrategy.bipartite ≠ .markedAnaphoric ∧
-    DefMarkingStrategy.bipartite ≠ .generallyMarked ∧
-    DefMarkingStrategy.markedAnaphoric ≠ .generallyMarked := by decide
-
-/-- Mandarin's determiner set derives `.markedAnaphoric` — its
-    Jenks (2018) Table 2 cell. -/
-theorem mandarin_jenks_cell :
-    Mandarin.Determiners.inventory.markingStrategy = .markedAnaphoric :=
-  Mandarin.Determiners.marking
-
-/-- Mandarin's strategy is in the Jenks-attested set. -/
+/-- Mandarin's derived strategy is in the attested set. -/
 theorem mandarin_attested :
     Mandarin.Determiners.inventory.markingStrategy ∈ jenksAttestedStrategies := by
-  rw [mandarin_jenks_cell]; decide
+  rw [Mandarin.Determiners.marking]; decide
 
-/-- Cantonese's determiner set derives `.generallyMarked` — paper §6
-    (Table 1, Table 2): [Clf-N] is an ambiguous definite like English *the*,
-    covering both unique and anaphoric environments. -/
-theorem cantonese_jenks_cell :
-    Cantonese.Determiners.inventory.markingStrategy = .generallyMarked :=
-  Cantonese.Determiners.marking
-
-/-- Mandarin and Cantonese instantiate distinct Jenks cells — the
-    central typological contrast of paper §6. -/
+/-- Mandarin and Cantonese derive distinct cells — the paper's §6 contrast:
+    Cantonese [Clf-N] is a syncretic definite like English *the*, while
+    Mandarin marks only anaphoric definites. -/
 theorem mandarin_cantonese_distinct_cells :
-    Mandarin.Determiners.inventory.markingStrategy ≠ Cantonese.Determiners.inventory.markingStrategy := by
-  rw [mandarin_jenks_cell, cantonese_jenks_cell]; decide
+    Mandarin.Determiners.inventory.markingStrategy ≠
+      Cantonese.Determiners.inventory.markingStrategy := by
+  rw [Mandarin.Determiners.marking, Cantonese.Determiners.marking]; decide
 
--- ════════════════════════════════════════════════════════════════
--- §2: Inventory-Realization Predictions (paper §3)
--- ════════════════════════════════════════════════════════════════
+/-! ### Realization in the Mandarin inventory (§3) -/
 
-variable {E W : Type}
+/-- Mandarin realizes anaphoric definiteness — the demonstrative
+    obligatorily expones familiarity uses as Dem-Clf-N. -/
+theorem anaphoric_realized :
+    Mandarin.Determiners.inventory.Realizes .anaphoric := by decide
 
-/-- Bare N needs no determiner, so every inventory realizes it; in
-    Mandarin it serves unique definites (paper §3.1 examples 10–11:
-    `yueliang sheng shang lai le` 'the moon has risen';
-    `Hufei he-wan-le tang` 'Hufei finished the soup';
-    `Gou yao guo malu` 'the dog wants to cross the road'). -/
-theorem bare_realized : Mandarin.Determiners.inventory.Realizes .bare := trivial
-
-/-- The anaphoric kind is realized in Mandarin via the demonstrative
-    paradigm (paper §3.2: anaphoric definites surface as Dem-Clf-N
-    constructions). The realization holds because the demonstrative
-    obligatorily expones a familiarity (anaphoric) use, so
-    `Mandarin.Determiners.inventory.MarksPresup .familiarity`. -/
-theorem anaphoric_realized : Mandarin.Determiners.inventory.Realizes .anaphoric := by
-  decide
-
-/-- Mandarin realizes the demonstrative kind (the *na*/*zhe* paradigm —
-    paper fn. 8: speakers prefer *na* 'that' to *zhe* 'this' in most
-    simple anaphoric environments). -/
+/-- Mandarin realizes the demonstrative kind, the *nà*/*zhè* paradigm, with
+    *nà* preferred in simple anaphoric environments. -/
 theorem demonstrative_realized :
-    Mandarin.Determiners.inventory.Realizes .demonstrative := by
-  decide
+    Mandarin.Determiners.inventory.Realizes .demonstrative := by decide
 
-/-- A Mandarin bare definite and its `.unique` counterpart over the
-    same restrictor pick the same referent — the bare-N route to
-    unique definiteness (paper §4.1: ι via Chierchia type-shift) is
-    extensionally the `Description.unique` denotation at the API
-    layer. -/
-theorem bare_unique_agreement
-    (R : DenotGS E W .et) (sIdx : Nat)
-    (g : Assignment E)
-    (gs : SitAssignment W) :
-    interpret (.bare R) g gs = interpret (.unique R sIdx) g gs := rfl
+/-! ### Bridging and donkey definites (§3.1, §3.3) -/
 
-/-- A Mandarin demonstrative-marked anaphoric and the bare anaphoric
-    over the same restrictor and discourse index pick the same entity:
-    the deictic feature is a presupposition filter, not a referent
-    selector (paper §4.2 cited Hanink/Schwarz analysis). -/
-theorem demonstrative_anaphoric_agreement
-    (R : DenotGS E W .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat)
-    (g : Assignment E)
-    (gs : SitAssignment W) :
-    interpret (.demonstrative R deictic sIdx d) g gs =
-      interpret (.anaphoric R d) g gs := rfl
+/-- The bridging split: part-whole bridging projects uniqueness — bare N in
+    Mandarin (*chezi … paizhao* 'car … license plate') — while
+    producer-product bridging projects familiarity, which only the
+    demonstrative expones (*shi … #(na wei) shiren* 'poem … #(that)
+    poet'). -/
+theorem bridging_split :
+    bridgingPresupType .partWhole = .uniqueness ∧
+    bridgingPresupType .relational = .familiarity ∧
+    ¬ Mandarin.Determiners.inventory.MarksPresup .uniqueness ∧
+    Mandarin.Determiners.inventory.MarksPresup .familiarity :=
+  ⟨rfl, rfl, by decide, by decide⟩
 
--- ════════════════════════════════════════════════════════════════
--- §3: Bridging and Donkey (paper §3.1, §3.3)
--- ════════════════════════════════════════════════════════════════
+/-- Donkey definites pattern with discourse anaphora: the donkey use
+    projects familiarity, so Mandarin requires Dem-Clf-N in *ruguo*- and
+    *dou*-conditionals and in relative-clause donkey configurations
+    ((18)–(20); bare conditionals use indeterminate pronouns and involve
+    no definite). -/
+theorem donkey_requires_demonstrative :
+    useTypeToPresupType .donkey = useTypeToPresupType .anaphoric ∧
+    Mandarin.Determiners.inventory.MarksPresup .familiarity :=
+  ⟨rfl, by decide⟩
 
-/-! Paper §3.1 (Mandarin): part-whole bridging takes bare N
-(`chezi … paizhao` 'car … license plate'); producer-product bridging
-takes Dem-Clf-N (`shi … #(na wei) shiren` 'poem … #(that) poet').
-Paper §3.3 (Mandarin donkey): demonstratives required in both
-*ruguo*/*dou*-conditionals (example 18) and relative-clause donkey
-configurations (example 20: `Mei ge … #(na zhi) shuiniu`); bare N is
-infelicitous (example 19). The substrate's
-`Semantics.Definiteness.bridgingPresupType` and `useTypeToPresupType`
-encode these splits at the use-type level — proved here for Mandarin
-by re-using `Schwarz2009.lean` lemmas. -/
+/-! ### ι unblocked, ι^x blocked (Blocking Principle (23)) -/
 
-open Schwarz2009
+/-- The type-shift context of a Mandarin bare noun: no article blocks ι or
+    ∃ ("Don't do covertly what you can do overtly", (23)), while the
+    demonstrative paradigm preempts covert ι^x. -/
+def mandarinCtx : MeaningPreservation.TypeShiftContext :=
+  { number := .neutral
+  , downDefined := false
+  , iotaBlocked := false
+  , iotaAnaphoricBlocked := true
+  , existsBlocked := false
+  , instantiationAccessible := true }
 
-/-- Part-whole bridging projects uniqueness (paper §3.1 example 14a:
-    `chezi … paizhao` — bare-N realization). -/
-theorem partWhole_is_uniqueness :
-    bridgingPresupType .partWhole = .uniqueness := rfl
+/-- ι is selected for Mandarin bare nouns while ι^x is unavailable: bare N
+    covers unique but not anaphoric definiteness — the `.markedAnaphoric`
+    profile at the type-shift layer. -/
+theorem iota_unblocked_anaphoric_blocked :
+    MeaningPreservation.selectShift mandarinCtx = some .iota ∧
+    .iotaAnaphoric ∉ MeaningPreservation.availableShifts mandarinCtx :=
+  ⟨rfl, by decide⟩
 
-/-- Producer-product bridging projects familiarity (paper §3.1
-    example 14b: `shi … #(na wei) shiren` — Dem-Clf-N realization). -/
-theorem relational_is_familiarity :
-    bridgingPresupType .relational = .familiarity := rfl
+/-! ### Index! as a Maximize Presupposition instance ((50), §5.2) -/
 
-/-- The two bridging realizations diverge — same `.uniqueness ≠
-    .familiarity` fault Schwarz argues for German articles. -/
-theorem bridging_split_distinct :
-    bridgingPresupType .partWhole ≠ bridgingPresupType .relational :=
-  bridging_subtypes_realize_both_presup_types
-
-/-- Donkey anaphora projects familiarity at the use-type layer (paper
-    §3.3; [schwarz-2009] §3). For Mandarin's `.markedAnaphoric`
-    strategy this predicts demonstrative use in both donkey
-    sub-configurations.
-
-    Paper §3.3 distinguishes two donkey environments: bare conditionals
-    (use indeterminate pronouns only — no def expression) and
-    *ruguo*/*dou*-conditionals plus relative-clause donkey
-    (definite expression required, instantiated as Dem-Clf-N).
-    [cheng-huang-1996] originally observed the contrast. The
-    use-type collapse to `.familiarity` covers the second environment
-    (the one where definite expressions are licensed); bare conditionals
-    are out of the scope of `useTypeToPresupType` because they involve
-    no definite at all. -/
-theorem donkey_is_familiarity :
-    useTypeToPresupType .donkey = .familiarity :=
-  donkey_use_is_familiarity
-
-/-- Donkey patterns with discourse anaphora at the use-type level —
-    both require Mandarin's anaphoric form (Dem-Clf-N). -/
-theorem donkey_patterns_with_anaphoric :
-    useTypeToPresupType .donkey = useTypeToPresupType .anaphoric :=
-  Schwarz2009.donkey_patterns_with_anaphoric
-
--- ════════════════════════════════════════════════════════════════
--- §4: ι as Last-Resort Type-Shift; Blocking Principle
--- ════════════════════════════════════════════════════════════════
-
-/-! Paper p. 514 introduces the **Blocking Principle** (eq. 23: "Don't
-do covertly what you can do overtly"), inherited from
-[chierchia-1998]. In Mandarin, the absence of an overt unique
-article means ι is unblocked — bare N can route to a unique-definite
-reading via the type-shift hierarchy of [dayal-2004].
-
-The substrate has Dayal's hierarchy (`Semantics/Genericity/MeaningPreservation.lean`).
-The Mandarin theorem is
-the same `selectShift` instance: when no shift is blocked, ι is
-selected first (Meaning Preservation). -/
-
-open Semantics.Kinds
-
-/-- Mandarin's number-neutral nouns under no blocking select ι as the
-    preferred type-shift — paper p. 514's "ι is the type-shifter
-    relevant for definite type-shifting", lifted to the Dayal substrate
-    Moroney2021 already consumes. -/
-theorem iota_is_last_resort :
-    MeaningPreservation.selectShift {
-      number := .neutral, downDefined := false
-      iotaBlocked := false, iotaAnaphoricBlocked := false
-      existsBlocked := false, instantiationAccessible := true
-    } = some .iota := rfl
-
-/-- Bridge to Mandarin's classifier strategy: per
-    `NMP.mandarinStrategy`,
-    Mandarin's classifier denotation atomizes the noun (CLF-for-N).
-    This is the Trinh 2011 / Krifka 1995 / Chierchia 1998 denotation
-    Jenks adopts in §4.1 (eq. 21). -/
-theorem clf_is_atomization {α : Type*} [PartialOrder α]
-    (P : α → Prop) :
-    Semantics.Classifier.classifierDenot
-      NounCategorization.ClassifierStrategy.forNoun P
-      (fun _ => 0) 0
-    = Semantics.Classifier.clfForNoun P := rfl
-
--- ════════════════════════════════════════════════════════════════
--- §5: Type Discipline — ι^x as Property-Indexed (paper p. 513)
--- ════════════════════════════════════════════════════════════════
-
-/-! Jenks (2018, p. 513) is explicit that his anaphoric article ι^x
-takes an index argument of type ⟨e,t⟩ (a property), departing from
-[schwarz-2009]/[schwarz-2013]'s type ⟨e⟩ (an individual).
-The substrate's `Description.anaphoric R d` carries `d : Nat` — a
-discourse-index slot resolved through the entity assignment, which
-matches Schwarz's individual-typed index, not Jenks's property-typed
-one. For Schwarz-style and ordinary demonstrative cases this divergence
-is inert (the assignment returns an entity), but the property-typed
-index is load-bearing in paper §4.4 (Pred type-shift, examples 32–38:
-proper names + demonstratives composing as `Pred(Zhangsan) +
-Dem-Clf-N`).
-
-Faithfully formalizing §4.4 requires a property-typed-index variant
-on `Description.anaphoric`. This is recorded as a TODO at the substrate
-level (`Semantics/Definiteness/Description.lean`) rather than encoded as a
-placeholder theorem. -/
-
--- ════════════════════════════════════════════════════════════════
--- §6: Index! as Maximize Presupposition Instance (paper §5.2)
--- ════════════════════════════════════════════════════════════════
-
-/-! Paper p. 524 (eq. 50): **Index! = "Represent and bind all possible
-indices"**. Jenks derives this from Heim 1990 Maximize Presupposition
-via Schlenker 2012's Gricean reduction. The substrate provides
-`Semantics.Presupposition.MaximizePresupposition.mpConstraintOf`,
-parametric over an arbitrary candidate type and strength function —
-the natural slot for any MP-instance.
-
-The `IndexCandidate` carrier below is a minimal 2-bit witness type
-sufficient to demonstrate the principle's qualitative behavior
-(prefer indexed when index is available; neutral otherwise). A
-fuller instantiation would parameterize over `Description E W` and the
-discourse-context predicate licensing the index — that refactor
-belongs in a substrate file (`Semantics/Presupposition/Index.lean`)
-when a second consumer needs it. -/
-
-/-- Index! candidate: an indexed alternative is in the running only
-    when an index can be supplied (paper p. 523-524: "an index is
-    required to be licensed by explicit prior mention in discourse"). -/
+/-- An Index! candidate: an indexed alternative competes only when an
+    index can be supplied by prior mention in discourse. -/
 structure IndexCandidate where
   isIndexed : Bool
   indexAvailable : Bool
   deriving DecidableEq, Repr
 
-/-- Index! strength function: an indexed candidate gets strength 1
-    only when an index can actually be supplied (paper's prior-mention
-    condition). Bare candidates always get strength 0. -/
+/-- Index! strength: an indexed candidate gets strength 1 exactly when an
+    index can actually be supplied, and bare candidates get 0. -/
 def indexStrength (c : IndexCandidate) : Nat :=
   if c.isIndexed && c.indexAvailable then 1 else 0
 
-/-- **Index! as MP**: the principle is `mpConstraintOf 1 indexStrength`
-    — the substrate's general MP construction at strength 1, applied
-    to the binary indexed/non-indexed competition. Per paper p. 524,
-    "Index! is a specific instance of Maximize Presupposition!
-    (Heim 1990)". -/
+/-- Index! — "Represent and bind all possible indices" (50) — as the
+    substrate's general Maximize Presupposition construction at
+    strength 1. -/
 def indexConstraint : Constraints.Constraint IndexCandidate :=
   Semantics.Presupposition.MaximizePresupposition.mpConstraintOf
     1 indexStrength
 
-/-- When both candidates are available and an index can be supplied
-    (a discourse antecedent exists), the indexed candidate has fewer
-    Index! violations than the bare candidate. -/
+/-- With a discourse antecedent available, the indexed candidate incurs
+    strictly fewer Index! violations than the bare one. -/
 theorem index_prefers_indexed_when_available :
     indexConstraint { isIndexed := true,  indexAvailable := true } <
     indexConstraint { isIndexed := false, indexAvailable := true } := by
   decide
 
-/-- When no index can be supplied (no discourse antecedent), Index! is
-    neutral — both candidates incur the same number of violations,
-    correctly leaving bare N as the only option in unique-definite
-    contexts (paper §3.1; explains why ι^x is unavailable there). -/
+/-- Without a discourse antecedent Index! is neutral, leaving bare N the
+    only option in unique-definite contexts. -/
 theorem index_neutral_when_unavailable :
     indexConstraint { isIndexed := true,  indexAvailable := false } =
     indexConstraint { isIndexed := false, indexAvailable := false } := by
   decide
 
--- ════════════════════════════════════════════════════════════════
--- §7: Subject-Position Exception (paper §5.3)
--- ════════════════════════════════════════════════════════════════
+/-! ### The subject-position exception (§5.3) -/
 
-/-! Paper §5.3 documents the exception to Index!'s prediction: in
-matrix subject position, bare N is licensed for *anaphoric* reference
-(not just unique). Examples 51–53 establish that the exception is
-pragmatic — bare N in subject position marks the noun as a *continuing
-topic* (in the sense of [roberts-2003] QUD-relativized topics),
-which short-circuits Index! because the topic-marking pragmatic
-function takes precedence.
-
-Two empirical points the paper makes (p. 524-526):
-- Example 52a/b: the demonstrative is preferred for left-dislocated
-  topics (which are *new* topics, not continuing).
-- Example 53: bare N is licensed under the contrastive-topic marker
-  *ne* (continuing topic + alternative-set).
-
-The substrate has `Roberts2012` QUD machinery in
-`Discourse/QUD/Basic.lean`. A faithful formalization of paper §5.3
-would need a topic predicate over `Description` configurations
-co-occurring with QUD-stack state — substrate the linglib has but
-that this study file does not yet plug into.
-
-Stated below as a sorry'd theorem to mark the analytical commitment
-without forcing the discharge. -/
-
-/-- A topic-aware Index! candidate carries the additional `isTopic`
-    flag (continuing-topic status under Roberts QUD). -/
+/-- A topic-aware Index! candidate: bare anaphoric subjects mark
+    continuing topics, while new (left-dislocated) topics prefer the
+    demonstrative. -/
 structure TopicCandidate where
   isIndexed : Bool
   indexAvailable : Bool
   isTopic : Bool
   deriving DecidableEq, Repr
 
-/-- Topic-overridden Index! strength: the topic-marking pragmatic
-    function (paper §5.3) neutralizes Index!'s preference. A bare
-    candidate marked as a continuing topic gets the same strength as
-    an indexed candidate when an index is available. -/
+/-- Topic-overridden Index! strength: continuing-topic marking gives a
+    bare candidate the same strength as an indexed one. -/
 def topicAwareIndexStrength (c : TopicCandidate) : Nat :=
   if c.isTopic then 1
   else if c.isIndexed && c.indexAvailable then 1
@@ -373,14 +175,8 @@ def topicAwareIndexConstraint :
   Semantics.Presupposition.MaximizePresupposition.mpConstraintOf
     1 topicAwareIndexStrength
 
-/-- **Subject-position exception (paper §5.3)**: when a bare-N candidate
-    is marked as a continuing topic, Index!'s preference for the
-    indexed alternative is neutralized. Both candidates incur the
-    same number of violations, restoring the apparent free variation
-    paper §3.2 documents for matrix subjects.
-
-    Decision-procedure proof over the four relevant `TopicCandidate`
-    configurations. -/
+/-- A bare candidate marked as a continuing topic ties with the indexed
+    alternative, restoring the free variation of matrix subjects. -/
 theorem subject_topic_overrides_index :
     topicAwareIndexConstraint
       { isIndexed := false, indexAvailable := true, isTopic := true } =
@@ -388,9 +184,7 @@ theorem subject_topic_overrides_index :
       { isIndexed := true,  indexAvailable := true, isTopic := true } := by
   decide
 
-/-- Without topic marking, the original Index! preference holds (paper
-    §5.2): the indexed candidate has strictly fewer violations than the
-    bare candidate when an index is available. -/
+/-- Without topic marking the Index! preference stands. -/
 theorem non_topic_keeps_index_preference :
     topicAwareIndexConstraint
       { isIndexed := true,  indexAvailable := true, isTopic := false } <
@@ -398,50 +192,22 @@ theorem non_topic_keeps_index_preference :
       { isIndexed := false, indexAvailable := true, isTopic := false } := by
   decide
 
--- ════════════════════════════════════════════════════════════════
--- §8: Covarying Readings (paper §4.3)
--- ════════════════════════════════════════════════════════════════
+/-! ### The strict demonstrative under situation variation (§4.3) -/
 
-/-! Paper §4.3 (examples 27–30) is the empirical anchor for treating
-ι^x's index as a *bound* variable: bare N can covary with a
-quantificational topic, demonstratives in the same configuration
-cannot. The covarying part-whole bridging (example 30: `Mei ge mai le
-fangzi de ren dou xuyao xiuli #(na ge) wuding` 'every house-buyer
-needed to fix the/#that roof') is the load-bearing case — the bare
-restrictor's resource situation can vary with the topic adverb's
-binding, while the demonstrative's index forces a strict reading.
-
-The substrate has Hanink-style resource-situation binding in
-`Hanink2021.lean` (`tableAtSit0` over a `Room` index, with `gsKitchen`
-/`gsLiving` as situation assignments). A Mandarin parallel theorem
-would instantiate that pattern with a Mandarin restrictor and a
-quantificational topic situation; left as a sorry pending the
-property-typed-index substrate gap (the demonstrative side of the
-contrast requires the §5 ⟨e,t⟩-typed index to forbid covariation
-properly). -/
-
-/-- **Strict reading of demonstratives across situation variation**:
-    a `.demonstrative`/`.anaphoric` description's referent is fixed
-    by the entity assignment `g` at index `d`, independent of the
-    situation assignment `gs`. Concretely: if the predicate `R` is
-    *itself* invariant across two situation assignments at the indexed
-    entity, then both demonstratives return the same referent — the
-    demonstrative cannot covary through the situation slot.
-
-    This is one half of paper §4.3's covariation contrast (the
-    *strict* half). The other half — bare N covarying via situation
-    binding — requires the property-typed index variant on
-    `Description.anaphoric` flagged in §5 to express cleanly, and is
-    deferred. -/
-theorem demonstrative_strict_under_situation_variation
+/-- A demonstrative description's referent is fixed by the entity
+    assignment at its index, so when the restrictor is situation-invariant
+    at that entity the demonstrative cannot covary through the situation
+    slot — the strict half of §4.3's contrast ((27)–(30): bare N covaries
+    with a quantificational topic, the demonstrative forces the strict
+    reading). The covarying half needs the property-typed index noted in
+    the module docstring. -/
+theorem demonstrative_strict_under_situation_variation {E W : Type}
     (R : DenotGS E W .et) (deictic : Features.Deixis.Feature)
-    (sIdx d : Nat)
-    (g : Assignment E)
-    (gs₁ gs₂ : SitAssignment W)
+    (sIdx d : Nat) (g : Assignment E) (gs₁ gs₂ : SitAssignment W)
     (hR : R g gs₁ (g d) = R g gs₂ (g d)) :
     interpret (.demonstrative R deictic sIdx d) g gs₁ =
       interpret (.demonstrative R deictic sIdx d) g gs₂ := by
-  rw [demonstrative_anaphoric_agreement, demonstrative_anaphoric_agreement,
+  rw [interpret_demonstrative_eq_anaphoric, interpret_demonstrative_eq_anaphoric,
       interpret_anaphoric, interpret_anaphoric, hR]
 
 end Jenks2018
