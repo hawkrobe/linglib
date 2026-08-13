@@ -41,10 +41,7 @@ def latinStressRule (weights : List Syllable.Weight) : Option ℕ :=
   match weights with
   | [] => none
   | _ =>
-    if weights.length ≤ 2 then some 0
-    else if Syllable.Weight.heavy ≤ weights.getD (weights.length - 2) 0 then
-      some (weights.length - 2)
-    else some (weights.length - 3)
+    some (weights.length - if Syllable.Weight.heavy ≤ weights.reverse.getD 1 0 then 2 else 3)
 
 /-- The eight trisyllabic weight conditions of Table 1. -/
 def trisyllabicConditions : List (List Syllable.Weight) :=
