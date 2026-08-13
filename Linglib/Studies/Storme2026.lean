@@ -19,7 +19,7 @@ deletes freely in /hutʃɑ-emun/ (1PL possessive) but rarely in /hutʃɑ-e/
 the bare stem. This file builds the paradigm from Persian segment strings
 with the resolutions as juncture operations — homophony is string identity,
 and the suffix-length conditioning is string algebra
-(`Hiatus.elideV2_eq_left_iff`) — and derives the closed form of the
+(`Hiatus.Juncture.elideV2_eq_stem_iff`) — and derives the closed form of the
 marginalized model (`persianMarginal_eq_softmax`), its fitted-weight
 preference orders (Table 5), and the suffix-length effect that \*Homophony
 creates (`homophony_length_effect`) and classical constraints cannot
@@ -53,31 +53,31 @@ inductive HiatusOutput where
 
 instance : Nontrivial HiatusOutput := ⟨.hiatus, .deletion, by decide⟩
 
-/-- The stem /hutʃɑ/. -/
-def stem : List Segment := [h, u, ch, aa]
+/-- The two hiatus junctures of the paradigm: the stem /hutʃɑ/ meets the
+definite suffix -e and the 1PL possessive -emun. -/
+def juncture : HiatusInput → Hiatus.Juncture
+  | .mono => ⟨[h, u, ch], aa, e, [], by decide, by decide⟩
+  | .poly => ⟨[h, u, ch], aa, e, [m, u, n], by decide, by decide⟩
 
-/-- The segmental content of each suffix: the definite suffix -e against the
-1PL possessive -emun. -/
-def suffix : HiatusInput → List Segment
-  | .mono => [e]
-  | .poly => [e, m, u, n]
+/-- The bare stem [hutʃɑ]. -/
+def stem : List Segment := (juncture .mono).stem
 
 /-- The underlying form: stem plus suffix. -/
-def underlying (i : HiatusInput) : List Segment := stem ++ suffix i
+def underlying (i : HiatusInput) : List Segment := (juncture i).input
 
-/-- The three hiatus resolutions as `Hiatus` repairs at the stem–suffix
-juncture: faithful concatenation, glottal-stop epenthesis, V2 elision. -/
-def resolve : HiatusOutput → List Segment → List Segment → List Segment
-  | .hiatus => (· ++ ·)
-  | .epenthesis => Hiatus.epenthesize glottal
-  | .deletion => Hiatus.elideV2
+/-- The three attested resolutions of a juncture: faithful hiatus,
+glottal-stop epenthesis, V2 elision. -/
+def resolve : HiatusOutput → Hiatus.Juncture → List Segment
+  | .hiatus => Hiatus.Juncture.input
+  | .epenthesis => (Hiatus.Juncture.epenthesize · glottal)
+  | .deletion => Hiatus.Juncture.elideV2
 
-/-- The surface form of each mapping, computed from the string operations. -/
+/-- The surface form of each mapping. -/
 def realize (i : HiatusInput) (o : HiatusOutput) : List Segment :=
-  resolve o stem (suffix i)
+  resolve o (juncture i)
 
 /-- [hutʃɑ]: deletion under the monosegmental suffix *is* the bare stem — the
-concrete instance of `Hiatus.elideV2_eq_left_iff`. -/
+concrete instance of `Hiatus.Juncture.elideV2_eq_stem_iff`. -/
 theorem realize_mono_deletion : realize .mono .deletion = stem := rfl
 
 /-- [hutʃɑmun]: deletion under the polysegmental suffix keeps a residue
