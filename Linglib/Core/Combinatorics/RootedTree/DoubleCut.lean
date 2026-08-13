@@ -1,5 +1,6 @@
-import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
+import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Data.RoseTree.Nonplanar
+import Mathlib.Tactic.Abel
 
 set_option autoImplicit false
 
@@ -11,8 +12,8 @@ The combinatorial heart of Δ^c coassociativity: both `(Δ^c ⊗ id) ∘ Δ^c` a
 `(id ⊗ Δ^c) ∘ Δ^c` enumerate ordered pairs of nested admissible cuts of a
 tree, and under trace coherence the two enumerations agree as Nonplanar
 multisets. This file proves that agreement at the **planar** level (where
-`cutSummandsCP` recurses structurally); `TraceNonplanar.lean` descends it
-through `Nonplanar.mk` to close the Nonplanar `doubleCut_eq`.
+`cutSummandsCP` recurses structurally); `Coproduct/TraceNonplanar.lean`
+descends it through `Nonplanar.mk` to close the Nonplanar `doubleCut_eq`.
 
 ## Main results
 
@@ -26,9 +27,7 @@ through `Nonplanar.mk` to close the Nonplanar `doubleCut_eq`.
 
 ## Status
 
-`[UPSTREAM]` candidate. Sorry-free. The bijection statement was validated by
-exhaustive small-tree computation (canonical-form multiset comparison) before
-the structural proof, including the failure for marker-sensitive `τ`.
+`[UPSTREAM]` candidate.
 -/
 
 open RoseTree RoseTree.Nonplanar ConnesKreimer
@@ -37,7 +36,7 @@ namespace DoubleCut
 
 variable {α β : Type*}
 
-abbrev FP (α : Type*) := Forest (RoseTree α)
+abbrev FP (α : Type*) := Multiset (RoseTree α)
 abbrev Pair (α : Type*) := FP α × FP α
 
 /-! ### Generic multiset convolution over an additive monoid

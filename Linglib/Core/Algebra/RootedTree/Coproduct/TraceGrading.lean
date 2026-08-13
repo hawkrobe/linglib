@@ -91,7 +91,8 @@ private theorem sum_map_numNodes_sub_one_add_card {γ : Type*}
 /-- **Edge conservation for Δ^c cut summands**: the trace marker replaces
     the cut subtree by a unit-weight leaf, so crown edges plus trunk
     weight recover the tree weight exactly. Descends
-    `cutSummandsG_numNodes` (`Coproduct/Defs.lean`) through `Nonplanar.mk`. -/
+    `cutSummandsG_numNodes` (`Core/Combinatorics/RootedTree/Cut.lean`)
+    through `Nonplanar.mk`. -/
 private theorem cutSummandsCN_numNodes (τ : Nonplanar (α'' ⊕ β'') → β'')
     (T : Nonplanar (α'' ⊕ β'')) :
     ∀ p ∈ cutSummandsCN τ T,
