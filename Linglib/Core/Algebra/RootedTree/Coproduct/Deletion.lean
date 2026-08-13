@@ -104,9 +104,9 @@ noncomputable def eraseTracesAlgHom :
 The embedding `α → α ⊕ β` lifts componentwise to trees and forests via
 `RoseTree.map` / `Nonplanar.map` / `Multiset.map`. -/
 
-/-- The **Sum.inl embedding algebra hom**
-    `ConnesKreimer R (Nonplanar α) →ₐ[R] ConnesKreimer R (Nonplanar (α ⊕ β))`
-    induced by `Nonplanar.map Sum.inl` via `ConnesKreimer.mapDomainAlgHom`. -/
+/-- The **`Sum.inl` embedding algebra hom**: relabel every basis forest
+    componentwise along `Sum.inl`, embedding trace-free trees into the
+    marked alphabet. -/
 noncomputable def embedInlAlgHom :
     ConnesKreimer R (Nonplanar α) →ₐ[R] ConnesKreimer R (Nonplanar (α ⊕ β)) :=
   ConnesKreimer.mapDomainAlgHom (Multiset.mapAddMonoidHom (Nonplanar.map Sum.inl))
@@ -120,9 +120,8 @@ noncomputable def embedInlAlgHom :
 
 /-! ### Erasure inverts embed -/
 
-/-- `eraseTracesAlgHom ∘ embedInlAlgHom = id`. Erasure inverts the
-    Sum.inl embedding at the AlgHom level: trace-free trees survive a
-    round-trip through embedding + erasure. -/
+/-- Erasure inverts the `Sum.inl` embedding: trace-free trees survive
+    the round trip. -/
 theorem eraseTracesAlgHom_comp_embedInlAlgHom :
     (eraseTracesAlgHom (R := R) (α := α) (β := β)).comp embedInlAlgHom =
       AlgHom.id R (ConnesKreimer R (Nonplanar α)) := by
@@ -217,8 +216,8 @@ private theorem cutTensor_some (p : Multiset (RoseTree α) × RoseTree α) :
 
 /-! ### Lift from tree-level to Nonplanar -/
 
-/-- **Per-tree**: `(Π ⊗ Π) (comulCTreeN τ (map inl T)) = comulTreeN T`.
-    Descent of `cutSummandsCP_map_inl_filterMap` through `Quotient.inductionOn`. -/
+/-- Per-tree form of the Δ^ρ comparison, descended from the cut-summand
+    identity `cutSummandsCP_map_inl_filterMap` through the quotient. -/
 private theorem eraseTraces_comulCTreeN_map_inl
     (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar α) :
     (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R) (α := α) (β := β))
@@ -280,9 +279,8 @@ private theorem eraseTraces_comulCTreeN_map_inl
     exact (cutTensor_some p).symm]
   rw [← Multiset.map_map, ← Multiset.map_map, cutSummandsCP_map_inl_filterMap]
 
-/-- **Per-forest**: `(Π ⊗ Π) (comulCForestN τ (F.map (map inl))) = comulForestN F`.
-    Lift per-tree via `Multiset.induction` + multiplicativity of forest coproducts
-    and the AlgHom `(S ⊗ S)`. -/
+/-- Forest-level form of the Δ^ρ comparison: the per-tree form lifted
+    multiplicatively. -/
 private theorem eraseTraces_comulCForestN_map_inl
     (τ : Nonplanar (α ⊕ β) → β) (F : Forest (Nonplanar α)) :
     (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R) (α := α) (β := β))
@@ -301,17 +299,11 @@ private theorem eraseTraces_comulCForestN_map_inl
       comulForestNG_cons _ _ _
     rw [hcons, map_mul, eraseTraces_comulCTreeN_map_inl, ih]
 
-/-- **MCB equivalence** (n-ary specialization): the Δ^d-via-Δ^c
-    construction agrees with Δ^ρ on trace-free trees.
-
-    `comulDN ∘ embed_{Sum.inl} = comulAlgHomN`
-
-    Closed via: (a) `ConnesKreimer.algHom_ext` reduces to per-basis `of' F`;
-    (b) Multiset multiplicativity of `comulCForestN`, `comulForestN`, and
-    `(eraseTracesAlgHom ⊗ eraseTracesAlgHom)` reduces to per-tree; (c)
-    `Quotient.inductionOn` reduces per-tree to tree-level; (d) tree-level
-    mutual structural induction on tree / children-list closes the
-    cut-summand bijection via `cutSummandsCP_map_inl_filterMap`. -/
+/-- On embedded trace-free trees the deletion coproduct agrees with the
+    pruning coproduct Δ^ρ: the n-ary form of the
+    [marcolli-chomsky-berwick-2025] comparison
+    `Δ^d = (id ⊗ Π_{d,p}) ∘ Δ^ρ`, exact here because the rebinarize step
+    `Π_{d,p}` is the identity. -/
 theorem comulDN_embedInl_eq_comulAlgHomN (τ : Nonplanar (α ⊕ β) → β) :
     (comulDN (R := R) τ).comp (embedInlAlgHom (R := R) (β := β)) =
       comulAlgHomN := by
