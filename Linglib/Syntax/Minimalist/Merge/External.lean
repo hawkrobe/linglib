@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.Merge.Basic
 import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Workspace.DeletionConservation
-import Linglib.Core.Algebra.RootedTree.Coproduct.CutAvoidingNonplanar
+import Linglib.Core.Combinatorics.RootedTree.CutAvoiding
 import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
 import Linglib.Core.Data.RoseTree.DecEq
 
@@ -26,8 +26,8 @@ three vanish because no proper cut extracts a whole tree as its crown
 (`cutSummandsN_numNodes`) forbids two crowns from reassembling `{S, S'}`.
 
 **Lemma 1.4.1 with residual workspace F̂** (`mergeOp_factor_out_singleton`,
-`mergeOp_pair_residual`, MCB "Case 1"). Under `CutAvoidingForestN ({S, S'}) F̂`
-(the `cutSummandsN`-based disjointness predicate of `CutAvoidingNonplanar`: each
+`mergeOp_pair_residual`, MCB "Case 1"). Under `CutAvoidingForest ({S, S'}) F̂`
+(the `cutSummandsN`-based disjointness predicate: each
 `T ∈ F̂` differs from `S, S'` and no Δ^ρ cut of `T` extracts either as a crown),
 Merge factors through multiplication by the spectator components `of' {T}`; an
 induction on F̂ assembles the full Case-1 result. `mergeOp_factor_out_singleton`
@@ -180,7 +180,7 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*}
   simp only [add_zero]
 
 /-- **Factor-out lemma** (MCB Lemma 1.4.1 Case 1, inductive step). Under
-    `CutAvoidingN S T` and `CutAvoidingN S' T` (`T ≠ S, S'` and no Δ^ρ cut of `T`
+    `CutAvoiding S T` and `CutAvoiding S' T` (`T ≠ S, S'` and no Δ^ρ cut of `T`
     extracts `S` or `S'` as a crown), `mergeOp lbl S S'` commutes with left
     multiplication by the spectator `of' {T}`:
 
@@ -194,7 +194,7 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*}
     a crown `≤ {S, S'}` containing neither `S` nor `S'` must be empty. -/
 theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R] {α : Type*}
     [DecidableEq (Nonplanar α)] (lbl : α) {S S' T : Nonplanar α}
-    (hT_S : CutAvoidingN S T) (hT_S' : CutAvoidingN S' T)
+    (hT_S : CutAvoiding S T) (hT_S' : CutAvoiding S' T)
     (w : ConnesKreimer R (Nonplanar α)) :
     mergeOp (R := R) lbl S S' (of' ({T} : Forest (Nonplanar α)) * w)
       = of' ({T} : Forest (Nonplanar α)) * mergeOp (R := R) lbl S S' w := by
@@ -266,7 +266,7 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R] {α : Type*}
 
 /-- **Algebraic Merge with residual workspace** (M-C-B Lemma 1.4.1, Case 1). For
     any pair `(S, S')` and residual workspace `Fhat` with
-    `CutAvoidingForestN ({S, S'}) Fhat` (S, S' ∉ Fhat as components, no cut on any
+    `CutAvoidingForest ({S, S'}) Fhat` (S, S' ∉ Fhat as components, no cut on any
     `T ∈ Fhat` extracts S or S' — excludes the non-primitive matchings of the full
     coproduct, restricting to External Merge's member-level contribution per MCB
     Remark 1.3.8), Merge factors the spectator workspace through:
@@ -280,7 +280,7 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R] {α : Type*}
 theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*}
     [DecidableEq (Nonplanar α)] (lbl : α) {S S' : Nonplanar α}
     {Fhat : Forest (Nonplanar α)}
-    (hF : CutAvoidingForestN ({S, S'} : Forest (Nonplanar α)) Fhat) :
+    (hF : CutAvoidingForest ({S, S'} : Forest (Nonplanar α)) Fhat) :
     mergeOp (R := R) lbl S S' (of' (({S, S'} : Forest (Nonplanar α)) + Fhat))
       = of' (({Nonplanar.node lbl {S, S'}} : Forest (Nonplanar α)) + Fhat) := by
   induction Fhat using Multiset.induction with
@@ -288,7 +288,8 @@ theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*}
     rw [add_zero, add_zero]
     exact mergeOp_pair lbl S S'
   | cons T Fhat' ih =>
-    obtain ⟨hT_S, hT_S'⟩ := CutAvoidingForestN.head_pair hF
+    have hT_S := hF.head S (by simp)
+    have hT_S' := hF.head S' (by simp)
     have ih' : mergeOp (R := R) lbl S S'
                   (of' (({S, S'} : Forest (Nonplanar α)) + Fhat'))
               = of' (({Nonplanar.node lbl {S, S'}} : Forest (Nonplanar α)) + Fhat') :=
