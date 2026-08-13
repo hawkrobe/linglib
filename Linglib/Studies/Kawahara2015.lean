@@ -74,60 +74,50 @@ theorem aar_lsr_mismatch_llh :
 Loanwords lack lexical accent specifications, so their accentuation reveals
 the default pattern (§2.1; [kubozono-2006]). -/
 
-/-- A loanword entry paired with its syllable-weight profile. -/
-structure LoanwordEntry where
-  entry : ProsodicEntry
-  /-- Syllable weight profile (left to right) -/
-  weights : List Syllable.Weight
-  deriving Repr
+/-- The weight profile of an all-light loanword — one light syllable per
+    mora. -/
+def lightProfile (e : ProsodicEntry) : List Syllable.Weight :=
+  List.replicate e.nMorae .light
 
 /-- *ku-ri-su'-ma-su* 'Christmas', accented on the antepenultimate mora
     ((10a)). -/
-def kurisumasu : LoanwordEntry :=
-  { entry := { form := "kurisumasu", gloss := "Christmas"
-               accentMora := some 2, nMorae := 5 }
-    weights := [.light, .light, .light, .light, .light] }
+def kurisumasu : ProsodicEntry :=
+  { form := "kurisumasu", gloss := "Christmas", accentMora := some 2, nMorae := 5 }
 
 /-- *a-su-fa'-ru-to* 'asphalt', accented on the antepenultimate mora
     ((10g)). -/
-def asufaruto : LoanwordEntry :=
-  { entry := { form := "asufaruto", gloss := "asphalt"
-               accentMora := some 2, nMorae := 5 }
-    weights := [.light, .light, .light, .light, .light] }
+def asufaruto : ProsodicEntry :=
+  { form := "asufaruto", gloss := "asphalt", accentMora := some 2, nMorae := 5 }
 
 /-- *ma-ku-do-na'-ru-do* 'McDonald', accented on the antepenultimate mora
     ((10h)). -/
-def makudonarudo : LoanwordEntry :=
-  { entry := { form := "makudonarudo", gloss := "McDonald's"
-               accentMora := some 3, nMorae := 6 }
-    weights := [.light, .light, .light, .light, .light, .light] }
+def makudonarudo : ProsodicEntry :=
+  { form := "makudonarudo", gloss := "McDonald's", accentMora := some 3, nMorae := 6 }
 
 /-- *a.me.ri.ka* 'America', unaccented as a four-mora word with two final
     light non-epenthetic syllables ((16a)). -/
-def amerika : LoanwordEntry :=
-  { entry := { form := "amerika", gloss := "America"
-               accentMora := none, nMorae := 4 }
-    weights := [.light, .light, .light, .light] }
+def amerika : ProsodicEntry :=
+  { form := "amerika", gloss := "America", accentMora := none, nMorae := 4 }
 
 /-- The accented loanwords of (10) carry the accent the AAR assigns. -/
 theorem loanwords_match_aar :
-    defaultAccentAAR kurisumasu.weights = kurisumasu.entry.accentMora ∧
-      defaultAccentAAR asufaruto.weights = asufaruto.entry.accentMora ∧
-      defaultAccentAAR makudonarudo.weights = makudonarudo.entry.accentMora := by decide
+    defaultAccentAAR (lightProfile kurisumasu) = kurisumasu.accentMora ∧
+      defaultAccentAAR (lightProfile asufaruto) = asufaruto.accentMora ∧
+      defaultAccentAAR (lightProfile makudonarudo) = makudonarudo.accentMora := by decide
 
 /-- On all-light profiles the LSR agrees with the AAR, so the (10)
     loanwords match it as well (§2.3). -/
 theorem loanwords_match_lsr :
-    latinStressRule kurisumasu.weights = kurisumasu.entry.accentMora ∧
-      latinStressRule asufaruto.weights = asufaruto.entry.accentMora ∧
-      latinStressRule makudonarudo.weights = makudonarudo.entry.accentMora := by decide
+    latinStressRule (lightProfile kurisumasu) = kurisumasu.accentMora ∧
+      latinStressRule (lightProfile asufaruto) = asufaruto.accentMora ∧
+      latinStressRule (lightProfile makudonarudo) = makudonarudo.accentMora := by decide
 
 /-- Neither default rule derives *amerika*'s unaccentedness, as neither
     produces unaccented outputs (§2.3 n. 10). Four-mora light-final
     unaccentedness is §2.4's separate generalization. -/
 theorem amerika_beyond_default_rules :
-    defaultAccentAAR amerika.weights ≠ amerika.entry.accentMora ∧
-      latinStressRule amerika.weights ≠ amerika.entry.accentMora := by decide
+    defaultAccentAAR (lightProfile amerika) ≠ amerika.accentMora ∧
+      latinStressRule (lightProfile amerika) ≠ amerika.accentMora := by decide
 
 /-! ### From accent to surface tones (§1.4)
 
