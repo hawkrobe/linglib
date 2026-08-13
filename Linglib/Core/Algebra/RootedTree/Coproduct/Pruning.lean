@@ -46,7 +46,8 @@ interface for FormCopy.
 
 The bespoke `cutSummandsP`/`cutListSummandsP`/`augActionP` block below is
 the deletion (Δ^ρ) sibling of the extraction-policy-parameterized
-`cutSummandsG` in `Coproduct/Defs.lean`. It is NOT re-expressed as
+`cutSummandsG` in `Core/Combinatorics/RootedTree/Cut.lean`. It is NOT
+re-expressed as
 `cutSummandsG (fun _ => some [])` because the downstream coassoc proof
 (`Coproduct/PruningNonplanar.lean`) is written against the `Option`
 remainder encoding used here — deletion is `Option.none`, a surviving
@@ -67,12 +68,13 @@ new root):
 
 The B+ operator only well-defines on `Multiset (Nonplanar α) → Nonplanar α`
 (unordered children of a new root). On `RoseTree α` with `Multiset`
-forests, B+ would need a canonical ordering. Hence the sorry-free
-coassoc proof for Δ^ρ lives in `Coproduct/PruningNonplanar.lean` on
-`Nonplanar α`. (Note: this Foissy clean coassoc strategy
-does NOT generalize to Δ^c — B+ is not a Hochschild 1-cocycle for the
-trace variant. Δ^c coassoc uses Grossman-Larson duality instead; see
-the GL substrate when it lands.)
+forests, B+ would need a canonical ordering. Hence the cocycle and the
+Δ^ρ coassoc proof live at the `Nonplanar` level
+(`Coproduct/PruningNonplanar.lean` and `Coproduct/PruningDuality.lean`).
+(This Foissy clean-coassoc strategy does NOT generalize to Δ^c — B+ is
+not a Hochschild 1-cocycle for the trace variant; Δ^c coassociativity
+is instead proved by the direct double-cut bijection in
+`Coproduct/TraceNonplanar.lean`.)
 
 ## Status
 

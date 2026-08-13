@@ -30,7 +30,7 @@ For each case 2b, 3a, 3b:
   matching multiset to a singleton `{p0}`.
 - `mergeOp_sideward_X` (residual): induction over residual workspace
   `Fhat` via `mergeOp_factor_out_singleton` (from `Merge.External`),
-  under `CutAvoidingForestN`.
+  under `CutAvoidingForest`.
 
 ## Deferred (substrate gap)
 
@@ -267,7 +267,7 @@ theorem mergeOp_sideward_2b {R : Type*} [CommSemiring R]
     (h_T_j_no_T_i : ∀ p ∈ cutSummandsN T_j, T_i ∉ p.1)
     (h_distinct : T_i ≠ T_j)
     (h_β_ne_Tj : β ≠ T_j)
-    (h_F_disjoint : CutAvoidingForestN ({T_i, β} : Forest (Nonplanar α)) Fhat) :
+    (h_F_disjoint : CutAvoidingForest ({T_i, β} : Forest (Nonplanar α)) Fhat) :
     mergeOp (R := R) lbl T_i β (of' (({T_i, T_j} : Forest (Nonplanar α)) + Fhat))
       = of' (({Nonplanar.node lbl {T_i, β}, T_j_q} : Forest (Nonplanar α)) + Fhat) := by
   induction Fhat using Multiset.induction with
@@ -276,7 +276,8 @@ theorem mergeOp_sideward_2b {R : Type*} [CommSemiring R]
     exact mergeOp_sideward_2b_pair lbl T_i T_j β T_j_q p0 h_filter h_remainder
       h_T_j_no_T_i h_distinct h_β_ne_Tj
   | cons T Fhat' ih =>
-    obtain ⟨hT_S, hT_S'⟩ := CutAvoidingForestN.head_pair h_F_disjoint
+    have hT_S := h_F_disjoint.head T_i (by simp)
+    have hT_S' := h_F_disjoint.head β (by simp)
     have ih' := ih h_F_disjoint.of_cons
     have h_lhs_eq : ({T_i, T_j} : Forest (Nonplanar α)) + T ::ₘ Fhat'
                   = ({T} : Forest (Nonplanar α))
@@ -504,7 +505,7 @@ theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R]
     (h_α_ne_Ti : α_t ≠ T_i) (h_α_ne_Tj : α_t ≠ T_j)
     (h_β_ne_Ti : β ≠ T_i) (h_β_ne_Tj : β ≠ T_j)
     (h_α_ne_β : α_t ≠ β)
-    (h_F_disjoint : CutAvoidingForestN ({α_t, β} : Forest (Nonplanar α)) Fhat) :
+    (h_F_disjoint : CutAvoidingForest ({α_t, β} : Forest (Nonplanar α)) Fhat) :
     mergeOp (R := R) lbl α_t β (of' (({T_i, T_j} : Forest (Nonplanar α)) + Fhat))
       = of' (({Nonplanar.node lbl {α_t, β}, T_i_q, T_j_q} : Forest (Nonplanar α)) + Fhat) := by
   induction Fhat using Multiset.induction with
@@ -514,7 +515,8 @@ theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R]
       h_remainder_α h_remainder_β h_T_i_no_β h_T_j_no_α h_α_ne_Ti h_α_ne_Tj h_β_ne_Ti
       h_β_ne_Tj h_α_ne_β
   | cons T Fhat' ih =>
-    obtain ⟨hT_S, hT_S'⟩ := CutAvoidingForestN.head_pair h_F_disjoint
+    have hT_S := h_F_disjoint.head α_t (by simp)
+    have hT_S' := h_F_disjoint.head β (by simp)
     have ih' := ih h_F_disjoint.of_cons
     have h_lhs_eq : ({T_i, T_j} : Forest (Nonplanar α)) + T ::ₘ Fhat'
                   = ({T} : Forest (Nonplanar α))
@@ -597,7 +599,7 @@ theorem mergeOp_sideward_3a {R : Type*} [CommSemiring R]
     (h_filter : matchingTwoEdgeCutsN T_i α_t β = {p0})
     (h_remainder : p0.2 = T_i_q)
     (h_α_ne_Ti : α_t ≠ T_i) (h_β_ne_Ti : β ≠ T_i)
-    (h_F_disjoint : CutAvoidingForestN ({α_t, β} : Forest (Nonplanar α)) Fhat) :
+    (h_F_disjoint : CutAvoidingForest ({α_t, β} : Forest (Nonplanar α)) Fhat) :
     mergeOp (R := R) lbl α_t β (of' (({T_i} : Forest (Nonplanar α)) + Fhat))
       = of' (({Nonplanar.node lbl {α_t, β}, T_i_q} : Forest (Nonplanar α)) + Fhat) := by
   induction Fhat using Multiset.induction with
@@ -606,7 +608,8 @@ theorem mergeOp_sideward_3a {R : Type*} [CommSemiring R]
     exact mergeOp_sideward_3a_pair lbl T_i α_t β T_i_q p0 h_filter h_remainder
       h_α_ne_Ti h_β_ne_Ti
   | cons T Fhat' ih =>
-    obtain ⟨hT_S, hT_S'⟩ := CutAvoidingForestN.head_pair h_F_disjoint
+    have hT_S := h_F_disjoint.head α_t (by simp)
+    have hT_S' := h_F_disjoint.head β (by simp)
     have ih' := ih h_F_disjoint.of_cons
     have h_lhs_eq : ({T_i} : Forest (Nonplanar α)) + T ::ₘ Fhat'
                   = ({T} : Forest (Nonplanar α))

@@ -25,7 +25,7 @@ established, `Nonplanar.lift` produces `cutSummandsN`, which extends to
 
 ## Status
 
-`[UPSTREAM]` candidate. Sorry-free. Covers: the descent
+`[UPSTREAM]` candidate. Covers: the descent
 (`comulAlgHomN`), the Hochschild 1-cocycle (`comulTreeN_node_cocycle`,
 `comulAlgHomN_bPlusLin_cocycle`), and the counit laws
 (`counit_rTensor_comulAlgHomN`, `counit_lTensor_comulAlgHomN`).
@@ -37,7 +37,7 @@ classical result of [foissy-2002]), coassociativity
 `Coproduct/PruningDuality.lean` (the duality proof needs the B⁻
 calculus of `BMinus.lean`, which imports this file). The full
 `HopfAlgebra` instance (with antipode) lives in the sibling
-`HopfAlgebraNonplanar.lean` (Phase A.8).
+`HopfAlgebraNonplanar.lean`.
 
 ## Architecture
 
@@ -186,7 +186,7 @@ noncomputable def comulAlgHomN :
   unfold comulForestN
   simp only [Multiset.map_singleton, Multiset.prod_singleton]
 
-/-! ## Phase A.7-γ — Hochschild 1-cocycle for `B+_a`
+/-! ## Hochschild 1-cocycle for `B+_a`
 
 `B+_a : Forest (Nonplanar α) → Nonplanar α` is the smart constructor
 `Nonplanar.node a`. Linearly extended to `bPlusLin a : H →ₗ[R] H` (sending
@@ -517,20 +517,16 @@ theorem comulAlgHomN_bPlusLin_cocycle (a : α) (F : Forest (Nonplanar α)) :
   rw [bPlusLin_of', comulAlgHomN_apply_ofTree, comulAlgHomN_apply_of']
   exact comulTreeN_node_cocycle a F
 
-/-! ## Phase A.7-δ — Counit laws + coassoc via GL/CK duality + `Bialgebra`
+/-! ## Counit laws
 
 Counit laws follow by reducing to the tree case via
 `ConnesKreimer.algHom_ext` + multiplicativity (the empty-cut summand
 contributes `1 ⊗ of' F`; all others are killed by `counit`).
 
-Coassociativity uses GL/CK duality: `comulRhoN_coassoc` (LinearMap form)
-is derived from `pairing_gl_eq_pairing_coproduct_Rho` (Foissy axiom) +
-`GrossmanLarson.mul_assoc` via `pairing₃_unique`; the AlgHom form
-`comulAlgHomN_coassoc_algHom` is a one-line lift. This replaces the
-earlier direct Foissy-clean proof (≈ 350 LOC, deleted in R.8 Phase 2):
-both Δ^ρ and Δ^c coassoc now use a single GL-duality framework.
-
-The final `Bialgebra` instance is assembled via `Bialgebra.ofAlgHom`. -/
+Coassociativity (`comulRhoN_coassoc`, from the GL/CK duality
+`pairing_gl_eq_pairing_coproduct_Rho` + `GrossmanLarson.mul_assoc` via
+`pairing₃_unique`) and the `Bialgebra` instance live downstream in
+`Coproduct/PruningDuality.lean`. -/
 
 /-! ### Empty cut existence (substrate for counit laws)
 

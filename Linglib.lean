@@ -24,14 +24,12 @@ import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 import Linglib.Core.Algebra.RootedTree.BirkhoffLaurent
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
-import Linglib.Core.Algebra.RootedTree.Coproduct.CutAvoidingNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.DeletionNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
-import Linglib.Core.Algebra.RootedTree.Coproduct.TraceCoassoc
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceGrading
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
 import Linglib.Core.Algebra.RootedTree.DysonSchwinger
@@ -69,6 +67,8 @@ import Linglib.Core.Combinatorics.Antimatroid
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Combinatorics.RootedTree.Cut
+import Linglib.Core.Combinatorics.RootedTree.CutAvoiding
+import Linglib.Core.Combinatorics.RootedTree.DoubleCut
 import Linglib.Core.Computability.Bimachine
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
 import Linglib.Core.Computability.ContextFreeGrammar.InterRegular

@@ -15,8 +15,9 @@ set_option autoImplicit false
 The combinatorics of admissible cuts, independent of the Hopf-algebra
 structures built on it in `Core/Algebra/RootedTree/Coproduct/`: the
 policy-parameterized enumeration (`cutSummandsG`), its Δ^ρ instance
-(`cutSummandsP`), the projection to `RoseTree.Nonplanar` with its
-`Perm`-invariance (`cutSummandsN`), and the single-cut count
+(`cutSummandsP`) and Δ^c instance (`extractC`, `cutSummandsCP`), the
+projections to `RoseTree.Nonplanar` with their `Perm`-invariance
+(`cutSummandsN`, `cutSummandsCN`), and the single-cut count
 (`countSingleCutsRho`).
 
 The **admissible-cut enumeration** parameterized by an extraction policy
@@ -39,11 +40,9 @@ semantics varies.
 
 ## Status
 
-`[UPSTREAM]` candidate. Sorry-free. Substrate for the GL-duality
-coassoc proof of Δ^c (Foissy 2018, hal-01924416, §4.2 + Cor 4.10):
-once a single cut enumeration is in place, the per-cut remainder
-function (deletion vs trace vs other) is just a parameter to the same
-combinatorial bookkeeping.
+`[UPSTREAM]` candidate. Once a single cut enumeration is in place, the
+per-cut remainder function (deletion vs trace vs other) is just a
+parameter to the same combinatorial bookkeeping.
 
 ## MCB anchor
 
@@ -53,7 +52,6 @@ for ω ∈ {c, d, ρ}. The three remainder semantics differ in T/^ω F_v
 but the cut enumeration F_v is the same. This file factors the cut
 enumeration out of the remainder choice.
 -/
-
 
 namespace ConnesKreimer
 
@@ -681,5 +679,649 @@ noncomputable def cutSummandsN :
     [marcolli-chomsky-berwick-2025]. -/
 noncomputable def countSingleCutsRho [DecidableEq α] (T T₁ T₂ : Nonplanar α) : ℕ :=
   (cutSummandsN T).countP fun p => p.1 = ({T₁} : Multiset (Nonplanar α)) ∧ p.2 = T₂
+
+variable {β : Type*}
+
+/-! ### `traceLeaf` — placeholder for a cut subtree -/
+
+/-- The trace-marker placeholder leaf carrying the encoded label `b : β`. -/
+def traceLeaf (b : β) : RoseTree (α ⊕ β) := .node (Sum.inr b) []
+
+/-! ### Δ^c extraction policy -/
+
+/-- The Δ^c extraction policy: for `Sum.inl`-rooted (non-trace)
+    subtrees, extract whole leaving a single `traceLeaf (τ t)` in the
+    parent's child slot. For `Sum.inr`-rooted (trace) subtrees, decline
+    to extract. -/
+def extractC (τ : RoseTree (α ⊕ β) → β) :
+    RoseTree (α ⊕ β) → Option (List (RoseTree (α ⊕ β)))
+  | t@(.node (Sum.inl _) _) => some [traceLeaf (τ t)]
+  | .node (Sum.inr _) _ => none
+
+@[simp] theorem extractC_inl (τ : RoseTree (α ⊕ β) → β)
+    (a : α) (cs : List (RoseTree (α ⊕ β))) :
+    extractC τ (RoseTree.node (Sum.inl a) cs) =
+      some [traceLeaf (τ (RoseTree.node (Sum.inl a) cs))] := rfl
+
+@[simp] theorem extractC_inr (τ : RoseTree (α ⊕ β) → β)
+    (b : β) (cs : List (RoseTree (α ⊕ β))) :
+    extractC τ (RoseTree.node (Sum.inr b) cs) = none := rfl
+
+/-! ### `cutSummandsCP` — Δ^c cut enumeration via the generic `cutSummandsG`
+
+Defined as `cutSummandsG (extractC τ)`. The generic-side simp lemmas
+(`cutSummandsG_node`, `cutListSummandsG_*`, `augActionG_*`) compose with
+`extractC_inl`/`extractC_inr` to give the Δ^c-specific reductions. -/
+
+/-- The Δ^c cut summands: cuts at non-trace subtrees with trace
+    placeholders, skipping cuts at trace leaves. -/
+def cutSummandsCP (τ : RoseTree (α ⊕ β) → β) :
+    RoseTree (α ⊕ β) → Multiset (Multiset (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β)) :=
+  cutSummandsG (extractC τ)
+
+theorem cutSummandsCP_def (τ : RoseTree (α ⊕ β) → β) (T : RoseTree (α ⊕ β)) :
+    cutSummandsCP τ T = cutSummandsG (extractC τ) T := rfl
+
+@[simp] theorem cutSummandsCP_node (τ : RoseTree (α ⊕ β) → β)
+    (a : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
+    cutSummandsCP τ (RoseTree.node a cs) =
+      (cutListSummandsG (extractC τ) cs).map (fun p => (p.1, .node a p.2)) := by
+  rw [cutSummandsCP_def, cutSummandsG_node]
+
+/-! ## Descent of cut-summand enumeration
+
+Mirrors `Coproduct/PruningNonplanar.lean`'s descent of `cutSummandsP`,
+but for the generic `cutSummandsG` (which uses a `List`-shaped per-cut
+remainder rather than `Option`). The descent applies whenever the
+`extract` policy is invariant under `RoseTree.Perm` modulo
+`Nonplanar.mk`. For Δ^c (`extractC (τ ∘ Nonplanar.mk)`) this follows
+from `Perm.value_eq`. -/
+
+/-! ### Pointwise projection for the G-form -/
+
+/-- Project a `cutListSummandsG` summand to nonplanar level, discarding
+    the list-order of the remainder by sending to `Multiset`. -/
+private def projForestG : Multiset (RoseTree α) × List (RoseTree α) →
+    Multiset (Nonplanar α) × Multiset (Nonplanar α) :=
+  fun p => (p.1.map Nonplanar.mk, Multiset.ofList (p.2.map Nonplanar.mk))
+
+/-! ### Bridge: `projSummand` factors through `projForestG` + `node` -/
+
+/-- Applying the `cutSummandsG_node` wrapper `(p.1, .node a p.2)` then
+    `projSummand` factors through `projForestG` followed by the
+    `Nonplanar.node a` smart constructor. -/
+private theorem projSummandG_node_factors (a : α)
+    (p : Multiset (RoseTree α) × List (RoseTree α)) :
+    projSummand (α := α) (p.1, .node a p.2) =
+      ((projForestG p).1, Nonplanar.node a (projForestG p).2) := by
+  show (p.1.map Nonplanar.mk, Nonplanar.mk (.node a p.2)) =
+       (p.1.map Nonplanar.mk,
+        Nonplanar.node a (Multiset.ofList (p.2.map Nonplanar.mk)))
+  congr 1
+  exact (Nonplanar.node_mk_tree_list a p.2).symm
+
+/-! ### Combiner factoring
+
+The cons case of `cutListSummandsG` adds the cut forest and concatenates
+the remainder lists. At the Nonplanar level (via `projForestG`), the
+remainder concatenation becomes multiset addition. -/
+
+/-- The Nonplanar-level combiner: clean addition on both components. -/
+def combinerProjG :
+    (Multiset (Nonplanar α) × Multiset (Nonplanar α)) ×
+    (Multiset (Nonplanar α) × Multiset (Nonplanar α)) →
+    Multiset (Nonplanar α) × Multiset (Nonplanar α)
+  | ((F1, m1), (F2, m2)) => (F1 + F2, m1 + m2)
+
+/-- Pointwise: `projForestG` of an applied tree-level combiner equals
+    `combinerProjG` applied to the projected pair-of-pairs. -/
+private theorem projForestG_combine_apply
+    (p : (Multiset (RoseTree α) × List (RoseTree α)) ×
+         (Multiset (RoseTree α) × List (RoseTree α))) :
+    projForestG (p.1.1 + p.2.1, p.1.2 ++ p.2.2) =
+      combinerProjG (projForestG p.1, projForestG p.2) := by
+  obtain ⟨⟨F1, l1⟩, ⟨F2, l2⟩⟩ := p
+  show ((F1 + F2).map Nonplanar.mk,
+        Multiset.ofList ((l1 ++ l2).map Nonplanar.mk)) =
+       (F1.map Nonplanar.mk + F2.map Nonplanar.mk,
+        Multiset.ofList (l1.map Nonplanar.mk) +
+        Multiset.ofList (l2.map Nonplanar.mk))
+  rw [Multiset.map_add]
+  congr 1
+  show Multiset.ofList ((l1 ++ l2).map Nonplanar.mk) = _
+  rw [List.map_append]
+  rfl
+
+/-! ### Cartesian-product distributivity (G-form copy) -/
+
+theorem map_prodMap_product_G {α' β' γ δ : Type*}
+    (f : α' → γ) (g : β' → δ)
+    (s : Multiset α') (t : Multiset β') :
+    (s ×ˢ t).map (Prod.map f g) = s.map f ×ˢ t.map g := by
+  induction s using Multiset.induction with
+  | empty => simp
+  | cons a s ih =>
+    simp only [Multiset.cons_product, Multiset.map_add, Multiset.map_map,
+               Multiset.map_cons, ih]
+    rfl
+
+/-! ### Headline factoring: cons case of projected `cutListSummandsG` -/
+
+/-- The projected `cutListSummandsG` on a cons list factors as a clean
+    cartesian product at the Nonplanar level via `combinerProjG`. -/
+private theorem cutListSummandsG_cons_proj
+    (extract : RoseTree α → Option (List (RoseTree α)))
+    (t : RoseTree α) (ts : List (RoseTree α)) :
+    (cutListSummandsG extract (t :: ts)).map projForestG =
+      ((augActionG extract t).map projForestG ×ˢ
+       (cutListSummandsG extract ts).map projForestG).map combinerProjG := by
+  rw [cutListSummandsG_cons, Multiset.map_map, ← map_prodMap_product_G,
+      Multiset.map_map]
+  apply Multiset.map_congr rfl
+  intro p _
+  exact projForestG_combine_apply p
+
+/-! ### Extract-policy invariance
+
+The hypothesis on the `extract` policy: its return value, projected
+component-wise through `Nonplanar.mk`, is the same on `Perm`-equal
+inputs. For Δ^c (`extractC (τ ∘ Nonplanar.mk)`) this holds because the
+root label and the τ value are both `Perm`-invariant. -/
+
+/-- An extract policy is **`Nonplanar.mk`-invariant** if its return
+    value, projected componentwise through `Nonplanar.mk`, depends on
+    its input only through `Nonplanar.mk`. -/
+def ExtractInvariant (extract : RoseTree α → Option (List (RoseTree α))) : Prop :=
+  ∀ t s : RoseTree α, Nonplanar.mk t = Nonplanar.mk s →
+    (extract t).map (List.map (Nonplanar.mk (α := α))) =
+      (extract s).map (List.map (Nonplanar.mk (α := α)))
+
+/-- `augActionG`-projection invariance under the descent hypothesis. -/
+private theorem augActionG_proj_eq_of_step_data
+    {extract : RoseTree α → Option (List (RoseTree α))}
+    (hExt : ExtractInvariant extract)
+    {old new : RoseTree α}
+    (h_mk : Nonplanar.mk old = Nonplanar.mk new)
+    (h_proj : (cutSummandsG extract old).map projSummand =
+              (cutSummandsG extract new).map projSummand) :
+    (augActionG extract old).map projForestG =
+      (augActionG extract new).map projForestG := by
+  rw [augActionG_eq, augActionG_eq, Multiset.map_add, Multiset.map_add]
+  congr 1
+  · -- Extract-whole sentinel branch: invariance from hExt + h_mk.
+    have hExtEq := hExt old new h_mk
+    -- Branch on extract old / extract new; rewrite into goal directly.
+    rcases hOld : extract old with _ | rOld
+    · -- extract old = none
+      rw [hOld] at hExtEq
+      simp only [Option.map_none] at hExtEq
+      rcases hNew : extract new with _ | rNew
+      · -- both none: both sentinel branches reduce to 0
+        show Multiset.map projForestG
+              (match (none : Option (List (RoseTree α))) with
+               | none => 0
+               | some r => {((({old} : Multiset (RoseTree α))), r)}) =
+             Multiset.map projForestG
+              (match (none : Option (List (RoseTree α))) with
+               | none => 0
+               | some r => {((({new} : Multiset (RoseTree α))), r)})
+        simp
+      · -- new is some, but old is none — contradiction with hExtEq.
+        rw [hNew] at hExtEq
+        simp at hExtEq
+    · -- extract old = some rOld
+      rw [hOld] at hExtEq
+      simp only [Option.map_some] at hExtEq
+      rcases hNew : extract new with _ | rNew
+      · -- old is some, new is none — contradiction.
+        rw [hNew] at hExtEq
+        simp at hExtEq
+      · -- both some: pure equality on the singleton sentinel.
+        rw [hNew] at hExtEq
+        simp only [Option.map_some, Option.some.injEq] at hExtEq
+        -- hExtEq : rOld.map mk = rNew.map mk
+        show Multiset.map projForestG
+              (match (some rOld : Option (List (RoseTree α))) with
+               | none => 0
+               | some r => {((({old} : Multiset (RoseTree α))), r)}) =
+             Multiset.map projForestG
+              (match (some rNew : Option (List (RoseTree α))) with
+               | none => 0
+               | some r => {((({new} : Multiset (RoseTree α))), r)})
+        show Multiset.map projForestG
+                ({(({old} : Multiset (RoseTree α)), rOld)} : Multiset _) =
+             Multiset.map projForestG
+                ({(({new} : Multiset (RoseTree α)), rNew)} : Multiset _)
+        rw [Multiset.map_singleton, Multiset.map_singleton]
+        show ({(({old} : Multiset (RoseTree α)).map Nonplanar.mk,
+                Multiset.ofList (rOld.map Nonplanar.mk))} :
+              Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α))) =
+             {(({new} : Multiset (RoseTree α)).map Nonplanar.mk,
+                Multiset.ofList (rNew.map Nonplanar.mk))}
+        rw [Multiset.map_singleton, Multiset.map_singleton, h_mk, hExtEq]
+  · -- Inherited branch: projForestG of (p.1, [p.2]) = ((projSummand p).1, ↑[(projSummand p).2])
+    rw [Multiset.map_map, Multiset.map_map]
+    have eq_fn :
+        (projForestG (α := α)) ∘
+          (fun (p : Multiset (RoseTree α) × RoseTree α) => (p.1, [p.2])) =
+        (fun (s : Multiset (Nonplanar α) × Nonplanar α) =>
+          (s.1, (Multiset.ofList [s.2] : Multiset (Nonplanar α)))) ∘
+        (projSummand (α := α)) := by
+      funext p
+      rfl
+    rw [eq_fn, ← Multiset.map_map, ← Multiset.map_map, h_proj]
+
+/-! ### List-side projection invariants
+
+Three theorems parallel to `cutListSummandsP_proj_at_via_augAction`,
+`cutListSummandsP_proj_tail_lift`, and `cutListSummandsP_proj_perm`. -/
+
+/-- Substituting `old` with `new` in `cutListSummandsG` is invariant
+    under `projForestG` if the `augActionG`-projections agree. -/
+private theorem cutListSummandsG_proj_at_via_augAction
+    (extract : RoseTree α → Option (List (RoseTree α)))
+    {pre post : List (RoseTree α)} {old new : RoseTree α}
+    (h : (augActionG extract old).map projForestG =
+         (augActionG extract new).map projForestG) :
+    (cutListSummandsG extract (pre ++ old :: post)).map projForestG =
+    (cutListSummandsG extract (pre ++ new :: post)).map projForestG := by
+  induction pre with
+  | nil =>
+    show (cutListSummandsG extract (old :: post)).map projForestG =
+         (cutListSummandsG extract (new :: post)).map projForestG
+    rw [cutListSummandsG_cons_proj, cutListSummandsG_cons_proj, h]
+  | cons p pre' ih =>
+    show (cutListSummandsG extract (p :: (pre' ++ old :: post))).map projForestG =
+         (cutListSummandsG extract (p :: (pre' ++ new :: post))).map projForestG
+    rw [cutListSummandsG_cons_proj, cutListSummandsG_cons_proj, ih]
+
+/-- Tail lift: `cutListSummandsG` is invariant under `projForestG`-equal
+    tails when consed with a fixed head. -/
+private theorem cutListSummandsG_proj_tail_lift
+    (extract : RoseTree α → Option (List (RoseTree α)))
+    (d : RoseTree α) {cs ds : List (RoseTree α)}
+    (h : (cutListSummandsG extract cs).map projForestG =
+         (cutListSummandsG extract ds).map projForestG) :
+    (cutListSummandsG extract (d :: cs)).map projForestG =
+      (cutListSummandsG extract (d :: ds)).map projForestG := by
+  rw [cutListSummandsG_cons_proj, cutListSummandsG_cons_proj, h]
+
+/-! ### Swap symmetry for `combinerProjG` -/
+
+/-- Triple-combiner symmetry: combining three projected pieces at the
+    Nonplanar level is symmetric in the first two factors. -/
+theorem combinerProjG_swap_args
+    (a b : Multiset (Nonplanar α) × Multiset (Nonplanar α))
+    (c : Multiset (Nonplanar α) × Multiset (Nonplanar α)) :
+    combinerProjG (a, combinerProjG (b, c)) =
+    combinerProjG (b, combinerProjG (a, c)) := by
+  obtain ⟨Fa, ma⟩ := a
+  obtain ⟨Fb, mb⟩ := b
+  obtain ⟨Fc, mc⟩ := c
+  show (Fa + (Fb + Fc), ma + (mb + mc)) = (Fb + (Fa + Fc), mb + (ma + mc))
+  rw [← add_assoc, ← add_assoc, add_comm Fa Fb,
+      ← add_assoc, ← add_assoc, add_comm ma mb]
+
+/-- Doubly-applied `combinerProjG` over a triple cartesian product is
+    symmetric in the first two factors. The substantive content of
+    `cutListSummandsG_proj_perm`'s `swap` case. -/
+theorem swap_double_combinerProjG
+    (A B : Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α)))
+    (C : Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α))) :
+    (A ×ˢ (B ×ˢ C).map combinerProjG).map combinerProjG =
+    (B ×ˢ (A ×ˢ C).map combinerProjG).map combinerProjG := by
+  have lhs :
+      (A ×ˢ (B ×ˢ C).map combinerProjG).map combinerProjG =
+        A.bind (fun a => B.bind (fun b => C.map (fun c =>
+          combinerProjG (a, combinerProjG (b, c))))) := by
+    show ((A.bind fun a => ((B ×ˢ C).map combinerProjG).map (Prod.mk a))
+          ).map combinerProjG = _
+    rw [Multiset.map_bind]
+    apply Multiset.bind_congr; intro a _
+    show ((((B.bind fun b => C.map (Prod.mk b)) : Multiset _).map combinerProjG).map
+            (Prod.mk a)).map combinerProjG = _
+    rw [Multiset.map_bind, Multiset.map_bind, Multiset.map_bind]
+    apply Multiset.bind_congr; intro b _
+    rw [Multiset.map_map, Multiset.map_map, Multiset.map_map]
+    rfl
+  have rhs :
+      (B ×ˢ (A ×ˢ C).map combinerProjG).map combinerProjG =
+        B.bind (fun b => A.bind (fun a => C.map (fun c =>
+          combinerProjG (b, combinerProjG (a, c))))) := by
+    show ((B.bind fun b => ((A ×ˢ C).map combinerProjG).map (Prod.mk b))
+          ).map combinerProjG = _
+    rw [Multiset.map_bind]
+    apply Multiset.bind_congr; intro b _
+    show ((((A.bind fun a => C.map (Prod.mk a)) : Multiset _).map combinerProjG).map
+            (Prod.mk b)).map combinerProjG = _
+    rw [Multiset.map_bind, Multiset.map_bind, Multiset.map_bind]
+    apply Multiset.bind_congr; intro a _
+    rw [Multiset.map_map, Multiset.map_map, Multiset.map_map]
+    rfl
+  rw [lhs, rhs, Multiset.bind_bind]
+  apply Multiset.bind_congr; intro b _
+  apply Multiset.bind_congr; intro a _
+  apply Multiset.map_congr rfl; intro c _
+  exact combinerProjG_swap_args a b c
+
+/-- The projected `cutListSummandsG` is `List.Perm`-invariant. -/
+private theorem cutListSummandsG_proj_perm
+    (extract : RoseTree α → Option (List (RoseTree α)))
+    {cs ds : List (RoseTree α)} (h : cs.Perm ds) :
+    (cutListSummandsG extract cs).map projForestG =
+      (cutListSummandsG extract ds).map projForestG := by
+  induction h with
+  | nil => rfl
+  | cons c _ ih => exact cutListSummandsG_proj_tail_lift extract c ih
+  | swap c d cs =>
+    rw [cutListSummandsG_cons_proj, cutListSummandsG_cons_proj,
+        cutListSummandsG_cons_proj, cutListSummandsG_cons_proj]
+    exact (swap_double_combinerProjG _ _ _).symm
+  | trans _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-! ### Headline: `Perm` + `PermList` recursion
+
+Structural recursion over the mutual `Perm`/`PermList`. The `node` case lifts
+the companion's list-level equality through the `Nonplanar.node a` wrapper; the
+`PermList.cons` case changes the head child (via `cutSummandsG_proj_perm` and
+`augActionG_proj_eq_of_step_data`) then the tail; the `PermList.swap` case is
+the identical-siblings reorder (`cutListSummandsG_proj_perm`). -/
+
+mutual
+/-- Projection invariance of `cutSummandsG` under `Perm`. -/
+theorem cutSummandsG_proj_perm
+    {extract : RoseTree α → Option (List (RoseTree α))}
+    (hExt : ExtractInvariant extract) :
+    ∀ {t s : RoseTree α}, RoseTree.Perm t s →
+      (cutSummandsG extract t).map projSummand =
+        (cutSummandsG extract s).map projSummand
+  | _, _, @RoseTree.Perm.node _ a cs ds h => by
+    rw [cutSummandsG_node, cutSummandsG_node, Multiset.map_map, Multiset.map_map]
+    have hL : (cutListSummandsG extract cs).map projForestG =
+              (cutListSummandsG extract ds).map projForestG :=
+      cutListSummandsG_proj_permList hExt h
+    have eq_fn :
+        (projSummand (α := α)) ∘
+          (fun (p : Multiset (RoseTree α) × List (RoseTree α)) => (p.1, .node a p.2)) =
+        (fun (pf : Multiset (Nonplanar α) × Multiset (Nonplanar α)) =>
+          (pf.1, Nonplanar.node a pf.2)) ∘ (projForestG (α := α)) := by
+      funext p
+      exact projSummandG_node_factors a p
+    rw [eq_fn, ← Multiset.map_map, ← Multiset.map_map, hL]
+  | _, _, .trans h₁ h₂ =>
+    (cutSummandsG_proj_perm hExt h₁).trans (cutSummandsG_proj_perm hExt h₂)
+
+/-- Companion: projection invariance of `cutListSummandsG` under `PermList`. -/
+private theorem cutListSummandsG_proj_permList
+    {extract : RoseTree α → Option (List (RoseTree α))}
+    (hExt : ExtractInvariant extract) :
+    ∀ {cs ds : List (RoseTree α)}, RoseTree.PermList cs ds →
+      (cutListSummandsG extract cs).map projForestG =
+        (cutListSummandsG extract ds).map projForestG
+  | _, _, .nil => rfl
+  | _, _, @RoseTree.PermList.cons _ c d cs' ds' hcd hs => by
+    have h_mk : Nonplanar.mk c = Nonplanar.mk d := Nonplanar.mk_eq_mk_iff.mpr hcd
+    have h_aug : (augActionG extract c).map projForestG =
+                 (augActionG extract d).map projForestG :=
+      augActionG_proj_eq_of_step_data hExt h_mk (cutSummandsG_proj_perm hExt hcd)
+    have step1 : (cutListSummandsG extract (c :: cs')).map projForestG =
+                 (cutListSummandsG extract (d :: cs')).map projForestG :=
+      cutListSummandsG_proj_at_via_augAction extract (pre := []) (post := cs') h_aug
+    have step2 : (cutListSummandsG extract (d :: cs')).map projForestG =
+                 (cutListSummandsG extract (d :: ds')).map projForestG :=
+      cutListSummandsG_proj_tail_lift extract d (cutListSummandsG_proj_permList hExt hs)
+    exact step1.trans step2
+  | _, _, .swap c d cs =>
+    cutListSummandsG_proj_perm extract (List.Perm.swap c d cs)
+  | _, _, .trans h₁ h₂ =>
+    (cutListSummandsG_proj_permList hExt h₁).trans (cutListSummandsG_proj_permList hExt h₂)
+end
+
+/-! ### Trace specialization
+
+The Δ^c policy `extractC (τ ∘ Nonplanar.mk)` is `ExtractInvariant`:
+- For `Sum.inl _`-rooted inputs, `extractC` returns `some [traceLeaf (τ (mk t))]`.
+- For `Sum.inr _`-rooted inputs, `extractC` returns `none`.
+
+Both cases are determined by the root label and the τ value, both of
+which are `Perm`-invariant. -/
+
+/-- The Δ^c extract policy is `ExtractInvariant`. -/
+theorem extractC_mkComp_invariant (τ : Nonplanar (α ⊕ β) → β) :
+    ExtractInvariant (extractC (τ ∘ Nonplanar.mk)) := by
+  intro t s hmk
+  -- Root labels match (perm-invariant), so the extractC branches match.
+  have hlabel : t.value = s.value := by
+    have heq : RoseTree.Perm t s := Nonplanar.mk_eq_mk_iff.mp hmk
+    exact RoseTree.Perm.value_eq heq
+  -- Destructure both trees as nodes; rewrite root labels via hlabel.
+  obtain ⟨at_, cs_t⟩ := t
+  obtain ⟨as, cs_s⟩ := s
+  simp only [RoseTree.value] at hlabel
+  subst hlabel
+  -- Now both have root label at_. Case-split on at_.
+  cases at_ with
+  | inl a =>
+    show (extractC (τ ∘ Nonplanar.mk) (RoseTree.node (Sum.inl a) cs_t)).map _ =
+         (extractC (τ ∘ Nonplanar.mk) (RoseTree.node (Sum.inl a) cs_s)).map _
+    simp only [extractC_inl, Option.map_some]
+    -- Goal: some [mk (traceLeaf (τ (mk t)))] = some [mk (traceLeaf (τ (mk s)))]
+    -- Reduces to: τ (mk t) = τ (mk s), which is congrArg τ hmk.
+    have : (τ ∘ Nonplanar.mk) (RoseTree.node (Sum.inl a) cs_t) =
+           (τ ∘ Nonplanar.mk) (RoseTree.node (Sum.inl a) cs_s) := by
+      show τ (Nonplanar.mk _) = τ (Nonplanar.mk _)
+      exact congrArg τ hmk
+    rw [this]
+  | inr b =>
+    show (extractC (τ ∘ Nonplanar.mk) (RoseTree.node (Sum.inr b) cs_t)).map _ =
+         (extractC (τ ∘ Nonplanar.mk) (RoseTree.node (Sum.inr b) cs_s)).map _
+    simp only [extractC_inr, Option.map_none]
+
+/-- Δ^c cut-summand-projection invariance under `Perm`. -/
+theorem cutSummandsCP_proj_perm (τ : Nonplanar (α ⊕ β) → β)
+    {t s : RoseTree (α ⊕ β)} (h : RoseTree.Perm t s) :
+    (cutSummandsCP (τ ∘ Nonplanar.mk) t).map projSummand =
+      (cutSummandsCP (τ ∘ Nonplanar.mk) s).map projSummand :=
+  cutSummandsG_proj_perm (extractC_mkComp_invariant τ) h
+
+/-! ### Descent of `cutSummandsCP` through `Nonplanar.mk` -/
+
+/-- The Nonplanar Δ^c cut summands, descended from `cutSummandsCP` via
+    `Nonplanar.lift` using the descent invariance
+    `cutSummandsCP_proj_perm`. -/
+noncomputable def cutSummandsCN (τ : Nonplanar (α ⊕ β) → β) :
+    Nonplanar (α ⊕ β) → Multiset (Multiset (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) :=
+  Nonplanar.lift
+    (fun T => (ConnesKreimer.cutSummandsCP (τ ∘ Nonplanar.mk) T).map
+      ConnesKreimer.projSummand)
+    (fun _ _ h => ConnesKreimer.cutSummandsCP_proj_perm τ h)
+
+@[simp] theorem cutSummandsCN_mk (τ : Nonplanar (α ⊕ β) → β) (T : RoseTree (α ⊕ β)) :
+    cutSummandsCN τ (Nonplanar.mk T) =
+      (ConnesKreimer.cutSummandsCP (τ ∘ Nonplanar.mk) T).map
+        ConnesKreimer.projSummand := rfl
+
+/-! ### Empty-cut uniqueness — combinatorial substrate for the per-tree counit law
+
+For any extract policy and tree `T`, the unique cut summand of
+`cutSummandsG extract T` with empty cut forest (`p.1.card = 0`) is the
+empty cut `(0, T)`. By mutual structural induction with the list and
+per-child cases. This is the substrate for the Δ^c per-tree counit law:
+under `(counit ⊗ id)`, only this summand survives, contributing
+`1 ⊗ ofTree T`. -/
+
+/-- Helper: filter of `(s ×ˢ t)` by a conjunction predicate distributes
+    into a product of filters. Used to factor the cardinality-zero
+    condition on `(p.1.1 + p.2.1)` into independent conditions on each
+    factor of the cartesian product. -/
+private lemma filter_product_split {α₁ β₁ : Type*}
+    (s : Multiset α₁) (t : Multiset β₁)
+    (p : α₁ → Prop) [DecidablePred p] (q : β₁ → Prop) [DecidablePred q] :
+    (s ×ˢ t).filter (fun pr => p pr.1 ∧ q pr.2) = (s.filter p) ×ˢ (t.filter q) := by
+  show ((s.bind fun a => t.map (Prod.mk a)).filter (fun pr => p pr.1 ∧ q pr.2)) =
+       (s.filter p).bind (fun a => (t.filter q).map (Prod.mk a))
+  rw [Multiset.filter_bind, Multiset.bind_filter]
+  apply Multiset.bind_congr
+  intro a _
+  rw [Multiset.filter_map]
+  by_cases h : p a
+  · rw [if_pos h]
+    apply congrArg
+    apply Multiset.filter_congr
+    intro b _
+    show (p a ∧ q b) ↔ q b
+    simp [h]
+  · rw [if_neg h]
+    apply Multiset.eq_zero_of_forall_notMem
+    intro pr hpr
+    rw [Multiset.mem_map] at hpr
+    obtain ⟨b, hb_mem, _hb_eq⟩ := hpr
+    rw [Multiset.mem_filter] at hb_mem
+    -- hb_mem.2 : ((fun pr => p pr.1 ∧ q pr.2) ∘ Prod.mk a) b = (p a ∧ q b) after β
+    have hpa : p a := hb_mem.2.1
+    exact h hpa
+
+mutual
+
+/-- The unique cut summand of `cutSummandsG extract T` with empty cut
+    forest is the empty cut `(0, T)`. -/
+theorem cutSummandsG_filter_empty
+    (extract : RoseTree α → Option (List (RoseTree α))) :
+    ∀ (T : RoseTree α),
+      (cutSummandsG extract T).filter (fun p => p.1.card = 0) =
+        ({((0 : Multiset (RoseTree α)), T)} : Multiset _)
+  | .node a cs => by
+    rw [cutSummandsG_node, Multiset.filter_map]
+    -- After filter_map the inner predicate is `(·.1.card = 0) ∘ (fun p => (p.1, .node a p.2))`,
+    -- which is definitionally `fun p => p.1.card = 0`. Use Multiset.filter_congr to
+    -- rewrite the predicate to the form the IH expects.
+    have hcongr :
+        Multiset.filter
+            ((fun p : Multiset (RoseTree α) × RoseTree α => p.1.card = 0) ∘
+              fun p : Multiset (RoseTree α) × List (RoseTree α) => (p.1, RoseTree.node a p.2))
+            (cutListSummandsG extract cs) =
+        Multiset.filter (fun p => p.1.card = 0) (cutListSummandsG extract cs) := by
+      apply Multiset.filter_congr
+      intro p _
+      rfl
+    rw [hcongr, cutListSummandsG_filter_empty extract cs, Multiset.map_singleton]
+
+/-- The unique list-cut summand of `cutListSummandsG extract cs` with
+    empty cut forest is `(0, cs)`. -/
+theorem cutListSummandsG_filter_empty
+    (extract : RoseTree α → Option (List (RoseTree α))) :
+    ∀ (cs : List (RoseTree α)),
+      (cutListSummandsG extract cs).filter (fun p => p.1.card = 0) =
+        ({((0 : Multiset (RoseTree α)), cs)} : Multiset _)
+  | [] => by
+    rw [cutListSummandsG_nil, Multiset.filter_singleton]
+    rw [if_pos (show (0 : Multiset (RoseTree α)).card = 0 from Multiset.card_zero)]
+  | t :: ts => by
+    rw [cutListSummandsG_cons, Multiset.filter_map]
+    -- Convert composed predicate to a conjunction form using card_add.
+    have hcongr :
+        Multiset.filter
+            ((fun p : Multiset (RoseTree α) × List (RoseTree α) => p.1.card = 0) ∘
+              fun p : (Multiset (RoseTree α) × List (RoseTree α)) ×
+                       (Multiset (RoseTree α) × List (RoseTree α)) =>
+                (p.1.1 + p.2.1, p.1.2 ++ p.2.2))
+            (augActionG extract t ×ˢ cutListSummandsG extract ts) =
+        Multiset.filter
+            (fun p : (Multiset (RoseTree α) × List (RoseTree α)) ×
+                     (Multiset (RoseTree α) × List (RoseTree α)) =>
+              (fun q : Multiset (RoseTree α) × List (RoseTree α) => q.1.card = 0) p.1 ∧
+              (fun q : Multiset (RoseTree α) × List (RoseTree α) => q.1.card = 0) p.2)
+            (augActionG extract t ×ˢ cutListSummandsG extract ts) := by
+      apply Multiset.filter_congr
+      intro p _
+      show (p.1.1 + p.2.1).card = 0 ↔ p.1.1.card = 0 ∧ p.2.1.card = 0
+      rw [Multiset.card_add, Nat.add_eq_zero_iff]
+    rw [hcongr,
+        filter_product_split (augActionG extract t) (cutListSummandsG extract ts)
+          (fun q : Multiset (RoseTree α) × List (RoseTree α) => q.1.card = 0)
+          (fun q : Multiset (RoseTree α) × List (RoseTree α) => q.1.card = 0),
+        augActionG_filter_empty extract t,
+        cutListSummandsG_filter_empty extract ts,
+        Multiset.product_singleton, Multiset.map_singleton]
+    show ({((0 : Multiset (RoseTree α)) + (0 : Multiset (RoseTree α)),
+            ([t] : List (RoseTree α)) ++ ts)} : Multiset _) = _
+    rw [zero_add]
+    rfl
+
+/-- The unique per-child decision of `augActionG extract t` with empty
+    cut forest is `(0, [t])` (the "recurse with empty cut" branch). -/
+theorem augActionG_filter_empty
+    (extract : RoseTree α → Option (List (RoseTree α))) :
+    ∀ (t : RoseTree α),
+      (augActionG extract t).filter (fun p => p.1.card = 0) =
+        ({((0 : Multiset (RoseTree α)), [t])} : Multiset _)
+  | t => by
+    -- Case-split on extract t up-front using the specialized augActionG_eq_*
+    -- lemmas (which avoid the inline match expression).
+    cases h_ext : extract t with
+    | none =>
+      rw [augActionG_eq_none extract t h_ext, Multiset.filter_map]
+      have hcongr :
+          Multiset.filter
+              ((fun p : Multiset (RoseTree α) × List (RoseTree α) => p.1.card = 0) ∘
+                fun p : Multiset (RoseTree α) × RoseTree α => (p.1, [p.2]))
+              (cutSummandsG extract t) =
+          Multiset.filter (fun p => p.1.card = 0) (cutSummandsG extract t) := by
+        apply Multiset.filter_congr
+        intro p _
+        rfl
+      rw [hcongr, cutSummandsG_filter_empty extract t, Multiset.map_singleton]
+    | some r =>
+      rw [augActionG_eq_some extract t r h_ext, Multiset.filter_cons]
+      -- filter cons: if pred (({t}, r)) then {({t},r)} else 0, plus filter of the tail
+      rw [if_neg (by
+        show ¬ ({t} : Multiset (RoseTree α)).card = 0
+        rw [Multiset.card_singleton]
+        decide)]
+      rw [Multiset.zero_add, Multiset.filter_map]
+      have hcongr :
+          Multiset.filter
+              ((fun p : Multiset (RoseTree α) × List (RoseTree α) => p.1.card = 0) ∘
+                fun p : Multiset (RoseTree α) × RoseTree α => (p.1, [p.2]))
+              (cutSummandsG extract t) =
+          Multiset.filter (fun p => p.1.card = 0) (cutSummandsG extract t) := by
+        apply Multiset.filter_congr
+        intro p _
+        rfl
+      rw [hcongr, cutSummandsG_filter_empty extract t, Multiset.map_singleton]
+
+end
+
+/-- Nonplanar-level descent: the unique cut summand of `cutSummandsCN τ T`
+    with empty cut forest is `(0, T)`. -/
+theorem cutSummandsCN_filter_empty
+    (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β)) :
+    (cutSummandsCN τ T).filter (fun p => p.1.card = 0) =
+      ({((0 : Multiset (Nonplanar (α ⊕ β))), T)} : Multiset _) := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = Nonplanar.mk T₀ :=
+    ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
+  rw [cutSummandsCN_mk, Multiset.filter_map]
+  -- `(projSummand p).1.card = (p.1.map Nonplanar.mk).card = p.1.card`; use filter_congr.
+  have hcongr :
+      Multiset.filter
+          ((fun p : Multiset (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β) => p.1.card = 0) ∘
+            projSummand (α := α ⊕ β))
+          (cutSummandsCP (τ ∘ Nonplanar.mk) T₀) =
+      Multiset.filter (fun p : Multiset (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β) => p.1.card = 0)
+          (cutSummandsCP (τ ∘ Nonplanar.mk) T₀) := by
+    apply Multiset.filter_congr
+    intro p _
+    show (p.1.map Nonplanar.mk).card = 0 ↔ p.1.card = 0
+    rw [Multiset.card_map]
+  rw [hcongr]
+  show Multiset.map projSummand
+        (Multiset.filter (fun p : Multiset (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β) => p.1.card = 0)
+          (cutSummandsG (extractC (τ ∘ Nonplanar.mk)) T₀)) = _
+  rw [cutSummandsG_filter_empty (extractC (τ ∘ Nonplanar.mk)) T₀,
+      Multiset.map_singleton]
+  show ((((0 : Multiset (RoseTree (α ⊕ β))).map Nonplanar.mk : Multiset (Nonplanar (α ⊕ β))),
+         Nonplanar.mk T₀) : Multiset (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) ::ₘ 0 = _
+  rw [Multiset.map_zero]
+  rfl
 
 end ConnesKreimer
