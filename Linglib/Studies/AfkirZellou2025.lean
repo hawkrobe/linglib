@@ -421,8 +421,7 @@ theorem faithful_disjoint (c : TarifitCandidate) (h : c.surface = .faithful) :
 /-! [afkir-zellou-2025]'s MaxEnt grammar realised through the
 generic `ConstraintSystem` API in `Core.Optimization.System`. The same
 softmax decoder used for English onset phonotactics
-(`HayesWilson2008.onsetSystem`), French hiatus resolution
-(`Storme2026.stormeSystem`), and AAVE t/d-deletion
+(`HayesWilson2008.onsetSystem`) and AAVE t/d-deletion
 (`CoetzeePater2011.aaveSystem`) scores Tarifit surface forms here. -/
 
 section PredictAPI
