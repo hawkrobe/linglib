@@ -1,6 +1,6 @@
 import Linglib.Features.Case.Basic
 import Linglib.Syntax.Comparative
-import Linglib.Syntax.Comparative
+
 /-!
 # Japanese Comparative Construction [stassen-1985]
 
@@ -19,14 +19,21 @@ postposition, also used in spatial 'from' contexts. This exemplifies
 from spatial case morphology.
 -/
 
+set_option autoImplicit false
+
 namespace Japanese.Comparison
 
+open Comparative
+
+/-- The separative (ablative) standard marker. -/
+def standardMarker : String := "yori"
+
 /-- Japanese comparative: separative (ablative) standard marker *yori*. -/
-def entry : Comparative.ComparativeEntry :=
+def entry : ComparativeEntry :=
   { standardCase := .abl
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial
-  , standardMarker := "yori"
+  , standardMarker := standardMarker
   , hasDegreeMorphology := false }
 
 -- Per-datum verification
@@ -35,20 +42,15 @@ theorem case_is_fixed : entry.caseAssignment = .fixed := rfl
 theorem encoding_is_adverbial : entry.fixedEncoding = some .adverbial := rfl
 theorem no_degree_morphology : entry.hasDegreeMorphology = false := rfl
 
--- ============================================================================
--- ComparativeProfile bundle (consumed by Studies/Stassen2013.lean)
--- ============================================================================
+/-! ### WALS Ch 121 classification data -/
 
-/-- Japanese comparative profile (WALS Ch 121 + degree-word + superlative). -/
-def comparison : Comparative.ComparativeProfile :=
-  { language := "Japanese"
-  , iso := "jpn"
-  , comparativeType := .locational
-  , degreeWord := .noDegreeMarking
-  , superlative := .comparativeUniversal
-  , comparativeForm := "Y yori X ga Adj"
-  , standardMarker := "yori"
-  , degreeMarker := ""
-  , basicOrder := "SOV" }
+/-- No overt degree marking. -/
+def degreeWord : DegreeWordType := .noDegreeMarking
+
+/-- Superlative as comparative with universal standard (*dare yori mo*). -/
+def superlative : SuperlativeStrategy := .comparativeUniversal
+
+/-- Illustrative comparative. -/
+def comparativeForm : String := "Y yori X ga Adj"
 
 end Japanese.Comparison

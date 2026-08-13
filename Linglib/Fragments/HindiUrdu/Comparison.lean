@@ -1,15 +1,12 @@
 import Linglib.Syntax.Comparative
 
 /-!
-# Hindi-Urdu comparative profile
-[stassen-2013] [wals-2013]
+# Hindi-Urdu comparative data
 
-`ComparativeProfile` bundle for Hindi-Urdu (ISO `hin`) per the project's
-"per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Syntax/Comparative.lean`. Cross-linguistic theorems consuming
-this profile live in `Studies/Stassen2013Comparison.lean`. The
-[stassen-1985] 6-way classification (where applicable) lives in
-`Studies/Stassen1985.lean`.
+Hindi-Urdu marks the standard of comparison with the ablative postposition *se*
+'from' (WALS Ch 121A: locational, [stassen-2013]); the free degree word
+*zyaadaa* 'more' is optional. Superlative via comparative with a universal
+standard (*sab se* 'than all').
 -/
 
 set_option autoImplicit false
@@ -18,16 +15,19 @@ namespace HindiUrdu.Comparison
 
 open Comparative
 
-/-- Hindi-Urdu comparative profile. -/
-def comparison : ComparativeProfile :=
-  { language := "Hindi-Urdu"
-  , iso := "hin"
-  , comparativeType := .locational
-  , degreeWord := .hasDegreeWord
-  , superlative := .comparativeUniversal
-  , comparativeForm := "X Y se (zyaadaa) Adj hai"
-  , standardMarker := "se"
-  , degreeMarker := "zyaadaa"
-  , basicOrder := "SOV" }
+/-- Optional free degree word *zyaadaa*. -/
+def degreeWord : DegreeWordType := .hasDegreeWord
+
+/-- Superlative as comparative with universal standard (*sab se*). -/
+def superlative : SuperlativeStrategy := .comparativeUniversal
+
+/-- Illustrative comparative. -/
+def comparativeForm : String := "X Y se (zyaadaa) Adj hai"
+
+/-- The ablative standard marker. -/
+def standardMarker : String := "se"
+
+/-- The free degree word. -/
+def degreeMarker : String := "zyaadaa"
 
 end HindiUrdu.Comparison

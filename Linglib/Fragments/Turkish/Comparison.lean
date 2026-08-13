@@ -1,6 +1,6 @@
 import Linglib.Features.Case.Basic
 import Linglib.Syntax.Comparative
-import Linglib.Syntax.Comparative
+
 /-!
 # Turkish Comparative Construction [stassen-1985]
 
@@ -15,17 +15,26 @@ Example: *Ali Veli-den (daha) uzun*
 The ablative case suffix `-dan`/`-den` is the same morpheme used for spatial
 'from' (*İstanbul'dan* 'from Istanbul'), exemplifying [stassen-1985]'s
 localistic hypothesis: comparative markers derive from spatial case morphology.
-The optional adverb *daha* ('more') may intensify but is not required.
+The optional adverb *daha* ('more') may intensify but is not required. No
+superlative strategy is recorded: the free superlative word *en* fits none of
+`SuperlativeStrategy`'s cases.
 -/
+
+set_option autoImplicit false
 
 namespace Turkish.Comparison
 
+open Comparative
+
+/-- The separative (ablative) standard marker, subject to vowel harmony. -/
+def standardMarker : String := "-dan/-den"
+
 /-- Turkish comparative: separative (ablative) standard marker `-dan`/`-den`. -/
-def entry : Comparative.ComparativeEntry :=
+def entry : ComparativeEntry :=
   { standardCase := .abl
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial
-  , standardMarker := "-dan/-den"
+  , standardMarker := standardMarker
   , hasDegreeMorphology := false }
 
 -- Per-datum verification
@@ -34,20 +43,16 @@ theorem case_is_fixed : entry.caseAssignment = .fixed := rfl
 theorem encoding_is_adverbial : entry.fixedEncoding = some .adverbial := rfl
 theorem no_degree_morphology : entry.hasDegreeMorphology = false := rfl
 
--- ============================================================================
--- ComparativeProfile bundle (consumed by Studies/Stassen2013.lean)
--- ============================================================================
+/-! ### WALS Ch 121 classification data -/
 
-/-- Turkish comparative profile (WALS Ch 121 + degree-word + superlative). -/
-def comparison : Comparative.ComparativeProfile :=
-  { language := "Turkish"
-  , iso := "tur"
-  , comparativeType := .locational
-  , degreeWord := .morphological
-  , superlative := .morphological
-  , comparativeForm := "X Y-den daha Adj"
-  , standardMarker := "-dan/-den"
-  , degreeMarker := "daha"
-  , basicOrder := "SOV" }
+/-- Optional free degree word *daha*; the adjective itself carries no
+    comparative morphology (`entry.hasDegreeMorphology = false`). -/
+def degreeWord : DegreeWordType := .hasDegreeWord
+
+/-- Illustrative comparative. -/
+def comparativeForm : String := "X Y-den daha Adj"
+
+/-- The optional free degree word. -/
+def degreeMarker : String := "daha"
 
 end Turkish.Comparison

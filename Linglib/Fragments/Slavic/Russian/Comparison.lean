@@ -1,15 +1,11 @@
 import Linglib.Syntax.Comparative
 
 /-!
-# Russian comparative profile
-[stassen-2013] [wals-2013]
+# Russian comparative data
 
-`ComparativeProfile` bundle for Russian (ISO `rus`) per the project's
-"per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Syntax/Comparative.lean`. Cross-linguistic theorems consuming
-this profile live in `Studies/Stassen2013Comparison.lean`. The
-[stassen-1985] 6-way classification (where applicable) lives in
-`Studies/Stassen1985.lean`.
+Russian marks the standard of comparison with the particle *chem* or the bare
+genitive (WALS Ch 121A: particle, [stassen-2013]); degree is marked by the
+bound affix *-ee* ~ *-ej*, and the superlative is morphological.
 -/
 
 set_option autoImplicit false
@@ -18,16 +14,19 @@ namespace Russian.Comparison
 
 open Comparative
 
-/-- Russian comparative profile. -/
-def comparison : ComparativeProfile :=
-  { language := "Russian"
-  , iso := "rus"
-  , comparativeType := .particle
-  , degreeWord := .morphological
-  , superlative := .morphological
-  , comparativeForm := "X Adj-ee, chem Y / X Adj-ee Y-GEN"
-  , standardMarker := "chem / genitive case"
-  , degreeMarker := "-ee/-ej (suffix)"
-  , basicOrder := "SVO" }
+/-- Bound comparative affix *-ee* ~ *-ej*. -/
+def degreeWord : DegreeWordType := .morphological
+
+/-- Morphological superlative. -/
+def superlative : SuperlativeStrategy := .morphological
+
+/-- Illustrative comparatives (particle and genitive strategies). -/
+def comparativeForm : String := "X Adj-ee, chem Y / X Adj-ee Y-GEN"
+
+/-- The standard markers. -/
+def standardMarker : String := "chem / genitive case"
+
+/-- The bound comparative affix. -/
+def degreeMarker : String := "-ee/-ej"
 
 end Russian.Comparison

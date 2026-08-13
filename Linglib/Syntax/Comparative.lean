@@ -3,13 +3,12 @@ import Linglib.Features.Case.Basic
 
 /-!
 # Comparison: comparative-construction typology
-[stassen-2013] [wals-2013] [beck-2009] [haspelmath-2001]
 
-Per-language typological substrate for comparative-construction typology
-(Stassen's WALS Ch 121 framework + Beck-Crisma-Krasikova degree-word
-typology + superlative strategies). Fragment-importable.
+Per-language typological substrate for comparative-construction typology:
+[stassen-2013]'s WALS Ch 121 framework ([wals-2013]), the [beck-2009]
+degree-word typology, and superlative strategies. Fragment-importable.
 
-## What lives here
+## Main definitions
 
 - `ComparativeType` (5-way Stassen 2013 / WALS Ch 121A:
   `locational | exceed | conjoined | particle | mixed`).
@@ -17,13 +16,17 @@ typology + superlative strategies). Fragment-importable.
   `hasDegreeWord | morphological | noDegreeMarking`).
 - `SuperlativeStrategy` (6-way: morphological, definiteComparative, elative,
   exceedAll, comparativeUniversal, none).
-- `ComparativeProfile` — Fragment-side joint with comparative type, degree
-  word type, superlative strategy, and optional standardMarker / degreeMarker /
-  basicOrder / illustrative form.
-- `ofWALS121A` converter from WALS Ch 121A.
-- WALS Ch 121A aggregate sample-size + corpus-only generalisations
-  (`locational_most_common`, `particle_rarest`, `locational_and_particle_dominant`).
-- Helper predicates (`hasType`, `hasDegWord`, `noDegree`, `isSOV`, `isSVO`).
+- `ComparativeType.ofWALS` : WALS Ch 121A comparative type by ISO 639-3 lookup
+  (via the `ofWALS121A` converter); `none` for languages the chapter leaves
+  uncoded.
+- WALS Ch 121A aggregate generalisations (`locational_most_common`,
+  `particle_rarest`, `locational_and_particle_dominant`).
+- `ComparativeEntry` : [stassen-1985]'s construction parameters.
+
+There is no per-language bundle: Fragments export bare defs typed by these
+enums (`{Lang}.Comparison.degreeWord`, `superlative`, `standardMarker`, …, plus
+`comparativeType` only for languages uncoded in WALS Ch 121A); studies join
+them with the WALS lookups.
 
 ## Theory-laden caveats
 
@@ -42,8 +45,6 @@ typology + superlative strategies). Fragment-importable.
 Stassen's 1985 fine-grained adverbial typology (`ComparativeType1985`,
 `caseAssignment`, `fixedEncoding`, `spatialCase`) and the 1985-↔-2013
 consistency theorems live in `Studies/Stassen1985.lean` (paper-anchored).
-Cross-linguistic theorems consuming Fragment per-language data live in
-`Studies/Stassen2013Comparison.lean`.
 -/
 
 set_option autoImplicit false
@@ -52,9 +53,7 @@ namespace Comparative
 
 private abbrev ch121 := Data.WALS.F121A.allData
 
--- ============================================================================
--- §1. Substrate enums
--- ============================================================================
+/-! ### Classifications -/
 
 /-- WALS Ch 121: how a language expresses comparison of inequality.
 
@@ -108,37 +107,7 @@ inductive SuperlativeStrategy where
   | none
   deriving DecidableEq, BEq, Repr
 
--- ============================================================================
--- §2. ComparativeProfile (Fragment-side joint)
--- ============================================================================
-
-/-- A language's comparative construction profile. Fragment-side joint:
-    every `Fragments/{Lang}/Comparison.lean` exposes
-    `def comparison : ComparativeProfile`. -/
-structure ComparativeProfile where
-  /-- Language name. -/
-  language : String
-  /-- ISO 639-3 code. -/
-  iso : String
-  /-- WALS Ch 121 comparative type. -/
-  comparativeType : ComparativeType
-  /-- Degree word typology. -/
-  degreeWord : DegreeWordType
-  /-- Primary superlative strategy. -/
-  superlative : SuperlativeStrategy
-  /-- Illustrative comparative form. -/
-  comparativeForm : String := ""
-  /-- Standard marker (the "than" equivalent), if applicable. -/
-  standardMarker : String := ""
-  /-- Degree marker ("more" equivalent), if applicable. -/
-  degreeMarker : String := ""
-  /-- Dominant basic word order (for word-order correlations). -/
-  basicOrder : String := ""
-  deriving Repr
-
--- ============================================================================
--- §3. WALS converter
--- ============================================================================
+/-! ### WALS lookups -/
 
 /-- WALS Ch 121A → `ComparativeType`. The generated WALS data uses four
     categories; `mixed` is not a separate WALS value (languages are assigned
@@ -149,50 +118,12 @@ def ofWALS121A : Data.WALS.F121A.ComparativeType → ComparativeType
   | .conjoined  => .conjoined
   | .particle   => .particle
 
--- ============================================================================
--- §4. Helper predicates
--- ============================================================================
+/-- WALS Ch 121A comparative type for an ISO 639-3 code; `none` when the
+    language is uncoded in the chapter. -/
+def ComparativeType.ofWALS (iso : String) : Option ComparativeType :=
+  (Data.WALS.Datapoint.lookupISO ch121 iso).map (ofWALS121A ·.value)
 
-/-- Does a language have a given comparative type? -/
-def ComparativeProfile.hasType (p : ComparativeProfile) (t : ComparativeType) : Bool :=
-  p.comparativeType == t
-
-/-- Does a language have a free degree word? -/
-def ComparativeProfile.hasDegWord (p : ComparativeProfile) : Bool :=
-  p.degreeWord == .hasDegreeWord
-
-/-- Does a language have bound comparative morphology? -/
-def ComparativeProfile.hasMorphComp (p : ComparativeProfile) : Bool :=
-  p.degreeWord == .morphological
-
-/-- Does a language lack overt degree marking entirely? -/
-def ComparativeProfile.noDegree (p : ComparativeProfile) : Bool :=
-  p.degreeWord == .noDegreeMarking
-
-/-- Does a language have a morphological superlative? -/
-def ComparativeProfile.hasMorphSuperlative (p : ComparativeProfile) : Bool :=
-  p.superlative == .morphological
-
-/-- Is this an SOV language? -/
-def ComparativeProfile.isSOV (p : ComparativeProfile) : Bool :=
-  p.basicOrder == "SOV"
-
-/-- Is this an SVO language? -/
-def ComparativeProfile.isSVO (p : ComparativeProfile) : Bool :=
-  p.basicOrder == "SVO"
-
-/-- Count of languages in a sample with a given comparative type. -/
-def countByType (langs : List ComparativeProfile) (t : ComparativeType) : Nat :=
-  (langs.filter (·.hasType t)).length
-
-/-- Count of languages in a sample by degree word type. -/
-def countByDegree (langs : List ComparativeProfile) (d : DegreeWordType) : Nat :=
-  (langs.filter (λ p => p.degreeWord == d)).length
-
-/-- Count of languages in a sample by superlative strategy. -/
-def countBySuperlative (langs : List ComparativeProfile)
-    (s : SuperlativeStrategy) : Nat :=
-  (langs.filter (λ p => p.superlative == s)).length
+/-! ### WALS Ch 121A aggregate generalisations -/
 
 /-- Per-type counts sum to sample total. -/
 theorem ch121_counts_sum :
@@ -201,10 +132,6 @@ theorem ch121_counts_sum :
     (ch121.filter (·.value == .conjoined)).length +
     (ch121.filter (·.value == .particle)).length =
     ch121.length := by native_decide
-
--- ============================================================================
--- §6. Theory-neutral WALS distribution facts
--- ============================================================================
 
 /-- Locational comparatives are the most common single type in WALS Ch 121. -/
 theorem locational_most_common :

@@ -2664,7 +2664,6 @@ import Linglib.Studies.StanojevicSteedman2021
 import Linglib.Studies.StapsRooryck2024
 import Linglib.Studies.Stassen1985
 import Linglib.Studies.Stassen2000
-import Linglib.Studies.Stassen2013Comparison
 import Linglib.Studies.Steedman2000
 import Linglib.Studies.Steriade1997
 import Linglib.Studies.Sternefeld1998

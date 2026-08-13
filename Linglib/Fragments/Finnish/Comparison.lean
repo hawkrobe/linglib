@@ -1,15 +1,12 @@
 import Linglib.Syntax.Comparative
 
 /-!
-# Finnish comparative profile
-[stassen-2013] [wals-2013]
+# Finnish comparative data
 
-`ComparativeProfile` bundle for Finnish (ISO `fin`) per the project's
-"per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Syntax/Comparative.lean`. Cross-linguistic theorems consuming
-this profile live in `Studies/Stassen2013Comparison.lean`. The
-[stassen-1985] 6-way classification (where applicable) lives in
-`Studies/Stassen1985.lean`.
+Finnish marks the standard of comparison with the particle *kuin* (WALS Ch 121A:
+particle, [stassen-2013]); [stassen-1985] classifies Finnish as particle-primary
+with a secondary separative option (partitive-marked standard). Degree is marked
+by the bound affix *-mpi*, and the superlative is morphological.
 -/
 
 set_option autoImplicit false
@@ -18,16 +15,21 @@ namespace Finnish.Comparison
 
 open Comparative
 
-/-- Finnish comparative profile. -/
-def comparison : ComparativeProfile :=
-  { language := "Finnish"
-  , iso := "fin"
-  , comparativeType := .locational
-  , degreeWord := .morphological
-  , superlative := .morphological
-  , comparativeForm := "X on Y-tä Adj-mpi"
-  , standardMarker := "partitive case"
-  , degreeMarker := "-mpi (suffix)"
-  , basicOrder := "SVO" }
+/-- Bound comparative affix *-mpi*. -/
+def degreeWord : DegreeWordType := .morphological
+
+/-- Morphological superlative. -/
+def superlative : SuperlativeStrategy := .morphological
+
+/-- Illustrative comparative (particle strategy; the secondary separative
+    option marks the standard with the partitive instead). -/
+def comparativeForm : String := "X on Adj-mpi kuin Y"
+
+/-- The comparative particle; the partitive-marked standard is the secondary
+    separative option. -/
+def standardMarker : String := "kuin"
+
+/-- The bound comparative affix. -/
+def degreeMarker : String := "-mpi"
 
 end Finnish.Comparison

@@ -1,15 +1,12 @@
 import Linglib.Syntax.Comparative
 
 /-!
-# Mandarin comparative profile
-[stassen-2013] [wals-2013]
+# Mandarin comparative data
 
-`ComparativeProfile` bundle for Mandarin (ISO `cmn`) per the project's
-"per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Syntax/Comparative.lean`. Cross-linguistic theorems consuming
-this profile live in `Studies/Stassen2013Comparison.lean`. The
-[stassen-1985] 6-way classification (where applicable) lives in
-`Studies/Stassen1985.lean`.
+Mandarin encodes comparison with the *bǐ* construction (WALS Ch 121A: exceed,
+[stassen-2013]); the free degree word *gèng* 'even more' is available. No
+superlative strategy is recorded: the free superlative word *zuì* fits none of
+`SuperlativeStrategy`'s cases.
 -/
 
 set_option autoImplicit false
@@ -18,16 +15,16 @@ namespace Mandarin.Comparison
 
 open Comparative
 
-/-- Mandarin comparative profile. -/
-def comparison : ComparativeProfile :=
-  { language := "Mandarin"
-  , iso := "cmn"
-  , comparativeType := .exceed
-  , degreeWord := .hasDegreeWord
-  , superlative := .definiteComparative
-  , comparativeForm := "X bi Y Adj"
-  , standardMarker := "bi"
-  , degreeMarker := "geng"
-  , basicOrder := "SVO" }
+/-- Free degree word *gèng*. -/
+def degreeWord : DegreeWordType := .hasDegreeWord
+
+/-- Illustrative comparative. -/
+def comparativeForm : String := "X bi Y Adj"
+
+/-- The standard marker of the *bǐ* construction. -/
+def standardMarker : String := "bi"
+
+/-- The free degree word. -/
+def degreeMarker : String := "geng"
 
 end Mandarin.Comparison

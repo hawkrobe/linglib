@@ -1,15 +1,11 @@
 import Linglib.Syntax.Comparative
 
 /-!
-# Thai comparative profile
-[stassen-2013] [wals-2013]
+# Thai comparative data
 
-`ComparativeProfile` bundle for Thai (ISO `tha`) per the project's
-"per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Syntax/Comparative.lean`. Cross-linguistic theorems consuming
-this profile live in `Studies/Stassen2013Comparison.lean`. The
-[stassen-1985] 6-way classification (where applicable) lives in
-`Studies/Stassen1985.lean`.
+Thai encodes comparison with *kwàa* 'exceed' after the predicate
+(WALS Ch 121A: exceed, [stassen-2013]); the adjective carries no degree
+marking. Superlative via exceeding a universal standard.
 -/
 
 set_option autoImplicit false
@@ -18,16 +14,16 @@ namespace Thai.Comparison
 
 open Comparative
 
-/-- Thai comparative profile. -/
-def comparison : ComparativeProfile :=
-  { language := "Thai"
-  , iso := "tha"
-  , comparativeType := .exceed
-  , degreeWord := .noDegreeMarking
-  , superlative := .exceedAll
-  , comparativeForm := "X Adj kwaa Y"
-  , standardMarker := "kwaa"
-  , degreeMarker := ""
-  , basicOrder := "SVO" }
+/-- No degree marking on the adjective. -/
+def degreeWord : DegreeWordType := .noDegreeMarking
+
+/-- Superlative by exceeding a universal standard. -/
+def superlative : SuperlativeStrategy := .exceedAll
+
+/-- Illustrative comparative. -/
+def comparativeForm : String := "X Adj kwaa Y"
+
+/-- The exceed marker. -/
+def standardMarker : String := "kwaa"
 
 end Thai.Comparison

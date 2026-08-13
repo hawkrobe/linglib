@@ -1,15 +1,12 @@
 import Linglib.Syntax.Comparative
 
 /-!
-# Navajo comparative profile
-[stassen-2013] [wals-2013]
+# Navajo comparative data
 
-`ComparativeProfile` bundle for Navajo (ISO `nav`) per the project's
-"per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Syntax/Comparative.lean`. Cross-linguistic theorems consuming
-this profile live in `Studies/Stassen2013Comparison.lean`. The
-[stassen-1985] 6-way classification (where applicable) lives in
-`Studies/Stassen1985.lean`.
+WALS Ch 121A codes Navajo as a locational comparative ([stassen-2013]);
+[stassen-1985] classifies "Navaho" in the locative subtype. Adjectival
+predicates carry no comparative degree morphology. The standard-marking
+postposition is not recorded here.
 -/
 
 set_option autoImplicit false
@@ -18,16 +15,7 @@ namespace Navajo.Comparison
 
 open Comparative
 
-/-- Navajo comparative profile. -/
-def comparison : ComparativeProfile :=
-  { language := "Navajo"
-  , iso := "nav"
-  , comparativeType := .conjoined
-  , degreeWord := .noDegreeMarking
-  , superlative := .none
-  , comparativeForm := "X nineez, Y altso"
-  , standardMarker := ""
-  , degreeMarker := ""
-  , basicOrder := "SOV" }
+/-- No comparative degree morphology. -/
+def degreeWord : DegreeWordType := .noDegreeMarking
 
 end Navajo.Comparison
