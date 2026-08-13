@@ -1,5 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
+import Linglib.Fragments.Arabic.ModernStandard.Phonology
 import Linglib.Phonology.Subregular.ForbiddenPairs
 import Linglib.Phonology.Subregular.Multitier
 
@@ -17,8 +18,10 @@ deriving the strong-coronal vs weak-dorsal/guttural asymmetry that
 categorical class-based analyses ([mccarthy-1986], [mccarthy-1994],
 [padgett-1995]) must stipulate.
 
-This file defines the metric (`similarity`) over the paper's 28-consonant
-inventory, checks the worked examples similarity(/f, m/) = 2/9 and
+This file defines the metric (`similarity`) over the MSA consonant
+fragment (`Arabic.ModernStandard.Consonant`; FPB's feature matrix (8),
+p. 201, transcribes ج as g and ظ as zˤ after the Wehr romanization of
+[cowan-1979]), checks the worked examples similarity(/f, m/) = 2/9 and
 similarity(/b, f/) = 3/8 (p. 199), and proves the corpus-free core of the
 paper's model comparison: a TSL₂ grammar forbidding labial pairs with
 `similarity ≥ t` (`thresholdedTSL`) decides each pair by a two-valued step
@@ -38,6 +41,8 @@ corpus or experimental data and are out of scope.
 -/
 
 namespace FrischPierrehumbertBroe2004
+
+open Arabic.ModernStandard
 
 /-! ### The natural-classes similarity metric (eq. (7), p. 198) -/
 
@@ -61,78 +66,6 @@ get similarity 1, segments sharing no relevant class get 0 (`0 / 0 = 0` in
 def similarity (xs : List (Finset α)) (x y : α) : ℚ :=
   (sharedClasses xs x y : ℚ) / totalRelevantClasses xs x y
 
-/-! ### The Arabic consonant inventory (feature matrix (8), p. 201) -/
-
-/-- The 28-consonant Arabic inventory of [frisch-pierrehumbert-broe-2004]'s
-feature matrix (8), IPA with `Emph` for the emphatic (superscript ˁ)
-series. The worked examples and the thresholded grammars below use only the
-labial subinventory `{b, f, m, w}`. -/
-inductive Arabic where
-  /-- /b/ — voiced labial stop. -/
-  | b
-  /-- /f/ — voiceless labial fricative. -/
-  | f
-  /-- /m/ — labial nasal. -/
-  | m
-  /-- /t/ — voiceless coronal stop. -/
-  | t
-  /-- /d/ — voiced coronal stop. -/
-  | d
-  /-- /tˁ/ — emphatic voiceless coronal stop. -/
-  | tEmph
-  /-- /dˁ/ — emphatic voiced coronal stop. -/
-  | dEmph
-  /-- /θ/ — voiceless coronal fricative. -/
-  | theta
-  /-- /ð/ — voiced coronal fricative. -/
-  | edh
-  /-- /s/ — voiceless coronal sibilant. -/
-  | s
-  /-- /z/ — voiced coronal sibilant. -/
-  | z
-  /-- /sˁ/ — emphatic voiceless coronal sibilant. -/
-  | sEmph
-  /-- /zˁ/ — emphatic voiced coronal sibilant. -/
-  | zEmph
-  /-- /ʃ/ — voiceless palatoalveolar sibilant. -/
-  | esh
-  /-- /k/ — voiceless dorsal stop. -/
-  | k
-  /-- /g/ — voiced dorsal stop. -/
-  | g
-  /-- /q/ — uvular stop (dorsal+pharyngeal in FPB's analysis). -/
-  | q
-  /-- /χ/ — voiceless uvular fricative. -/
-  | chi
-  /-- /ʁ/ — voiced uvular fricative. -/
-  | gamma
-  /-- /ħ/ — voiceless pharyngeal fricative. -/
-  | hbar
-  /-- /ʕ/ — voiced pharyngeal fricative. -/
-  | ayin
-  /-- /h/ — voiceless laryngeal fricative. -/
-  | h
-  /-- /ʔ/ — laryngeal stop. -/
-  | glottal
-  /-- /l/ — coronal lateral. -/
-  | l
-  /-- /r/ — coronal rhotic. -/
-  | r
-  /-- /n/ — coronal nasal. -/
-  | n
-  /-- /w/ — labial-velar glide. -/
-  | w
-  /-- /j/ — palatal glide. -/
-  | j
-  deriving DecidableEq
-
-/-- Membership in the labial class `{b, f, m, w}` — the tier predicate for
-the thresholded TSL₂ grammars below. -/
-def Arabic.IsLabial (x : Arabic) : Prop := x ∈ ({.b, .f, .m, .w} : Finset Arabic)
-
-instance : DecidablePred Arabic.IsLabial :=
-  λ x => inferInstanceAs (Decidable (x ∈ ({.b, .f, .m, .w} : Finset Arabic)))
-
 /-! ### Labial natural classes (p. 199)
 
 FPB enumerate the labial natural classes separately for their two worked
@@ -148,7 +81,7 @@ matrix (8) is deferred. -/
 
 /-- Labial natural classes for the /f, m/ computation (p. 199): 2 shared
 followed by 7 non-shared, with the paper's glosses. -/
-def labialClasses_fm : List (Finset Arabic) :=
+def labialClasses_fm : List (Finset Consonant) :=
   [ -- shared between f and m:
     {.b, .f, .m, .w},  -- the labials
     {.b, .f, .m},      -- labial consonants
@@ -164,7 +97,7 @@ def labialClasses_fm : List (Finset Arabic) :=
 
 /-- Labial natural classes for the /b, f/ computation (p. 199): 3 shared
 followed by 5 non-shared. -/
-def labialClasses_bf : List (Finset Arabic) :=
+def labialClasses_bf : List (Finset Consonant) :=
   [ -- shared between b and f:
     {.b, .f, .m, .w},  -- the labials
     {.b, .f, .m},      -- labial consonants
@@ -227,19 +160,19 @@ the threshold. Table IV has more than two distinct O/E levels, so no such
 model fits it exactly. This is the corpus-free core of FPB's quantitative
 argument; their own comparison is the R² fit of Table V. -/
 
-variable (xs : List (Finset Arabic)) (t c₁ c₂ : ℚ)
+variable (xs : List (Finset Consonant)) (t c₁ c₂ : ℚ)
 
 /-- Step-function O/E prediction of a threshold model: `c₁` strictly below
 the threshold `t`, `c₂` at or above it. -/
 def categoricalAtThreshold (sim : ℚ) : ℚ :=
   if sim < t then c₁ else c₂
 
-/-- The TSL₂ grammar over `Arabic` forbidding tier-adjacent labial pairs of
+/-- The TSL₂ grammar over `Consonant` forbidding tier-adjacent labial pairs of
 similarity at least `t` — [heinz-rawal-tanner-2011]'s forbidden-pair schema
 instantiated with FPB's metric. -/
-def thresholdedTSL : Subregular.TSLGrammar 2 Arabic :=
+def thresholdedTSL : Subregular.TSLGrammar 2 Consonant :=
   Subregular.TSLGrammar.ofForbiddenPairs
-    (λ x y => similarity xs x y ≥ t) Arabic.IsLabial
+    (λ x y => similarity xs x y ≥ t) Consonant.IsLabial
 
 /-- **TSL₂ witness**: the threshold grammar's stringset is tier-based
 strictly 2-local. -/
@@ -258,7 +191,7 @@ theorem thresholdedTSL_lang_isBTSL2 :
 strictly below the threshold — the precise sense in which any
 similarity-threshold TSL₂ grammar collapses to the two-valued
 `categoricalAtThreshold` prediction. -/
-theorem thresholdedTSL_pair_iff {x y : Arabic} (hx : x.IsLabial) (hy : y.IsLabial) :
+theorem thresholdedTSL_pair_iff {x y : Consonant} (hx : x.IsLabial) (hy : y.IsLabial) :
     [x, y] ∈ (thresholdedTSL xs t).lang ↔ similarity xs x y < t := by
   unfold thresholdedTSL
   rw [Subregular.mem_ofForbiddenPairs_lang_iff_filter_isChain]
