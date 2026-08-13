@@ -7,8 +7,7 @@ import Linglib.Features.Possession
 Bare per-language possession `def`s for Yoruba (Niger-Congo, ISO `yor`),
 per the project's "per-language data flows through Fragments" rule.
 Substrate types (`PredicativeStrategy`, `AdnominalMarking`, …) live in
-`Linglib/Features/Possession.lean`. Cross-linguistic theorems consuming
-these values live in `Studies/NicholsBickel2013.lean`.
+`Linglib/Features/Possession.lean`.
 
 Examples: mo ni iwe; iwe mi. Have-verb ni; juxtaposition for adnominal
 (possessum-possessor).

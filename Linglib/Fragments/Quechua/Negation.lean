@@ -47,8 +47,7 @@ def mana : NegMarkerEntry :=
     ([miestamo-2005] p. 158). -/
 def chuSuffix : String := "-chu"
 
-/-- The Imbabura Quechua negation system: a single preverbal particle.
-    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
+/-- The Imbabura Quechua negation system: a single preverbal particle. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "qvi" [mana]
 

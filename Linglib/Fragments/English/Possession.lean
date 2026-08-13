@@ -8,8 +8,6 @@ Per-language possession values for English (Indo-European, ISO `eng`): forms
 `I have a book`, `John's book`, `the book of John`; genitive clitic -'s on the
 possessor, with an of-phrase alternative. Substrate types (`PredicativeStrategy`,
 `AdnominalMarking`, …) live in `Linglib/Features/Possession.lean`.
-Cross-linguistic theorems consuming these values live in
-`Studies/NicholsBickel2013.lean`.
 -/
 
 namespace English.Possession

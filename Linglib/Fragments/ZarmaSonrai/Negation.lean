@@ -66,8 +66,7 @@ def batu : NegMarkerEntry :=
 
 /-- The Zarma-Sonrai negation system: three aspect-conditioned markers.
     *si* (imperfective) listed first per ordering convention; the two
-    perfective variants follow. The Fragment-side joint consumed by
-    `Studies/Dryer2013Negation.lean`. -/
+    perfective variants follow. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "dje" [si, mana, batu]
 

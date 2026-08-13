@@ -39,8 +39,7 @@ def kahore : NegMarkerEntry :=
   , morphemeType := .wordUnclear
   , position := .preverbal }
 
-/-- The Maori negation system: a single quasi-auxiliary word.
-    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
+/-- The Maori negation system: a single quasi-auxiliary word. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "mri" [kahore]
 

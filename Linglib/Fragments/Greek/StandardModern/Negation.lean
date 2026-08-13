@@ -92,8 +92,7 @@ def minMarker : Syntax.Negation.NegMarkerEntry :=
 
 /-- The Greek negation system: two mood-conditioned preverbal particles.
     *dhen* (indicative, default-context) listed first, *min* (subjunctive/
-    modal) second. The Fragment-side joint consumed by
-    `Studies/Dryer2013Negation.lean`. -/
+    modal) second. -/
 def negationSystem : Syntax.Negation.NegationSystem :=
   Syntax.Negation.NegationSystem.ofISO "ell" [dhenMarker, minMarker]
 

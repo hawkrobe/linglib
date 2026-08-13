@@ -22,9 +22,7 @@ chapters 1–19 for inventory facts: ~3000 inventories vs. WALS's ~563
 languages, with the original transcribed inventory preserved (rather than
 collapsed into Maddieson's 5-bin partition). The two are complementary:
 WALS gives partition-based typology; PHOIBLE gives the underlying
-inventories. Bridge theorems WALS↔PHOIBLE (e.g. WALS Ch 1 inventory-size
-bin matches PHOIBLE inventory cardinality) live in
-`Studies/Maddieson2013.lean` (when written).
+inventories.
 
 ## Citation
 

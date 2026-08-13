@@ -48,7 +48,6 @@ def non : NegMarkerEntry :=
   , position := .preverbal }
 
 /-- The Italian negation system: a single preverbal particle.
-    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`.
     WALS classifications are pulled from `Data/WALS/Features/F112A.lean`
     et al. via `NegationSystem.ofISO` — never hand-encoded. -/
 def negationSystem : NegationSystem :=

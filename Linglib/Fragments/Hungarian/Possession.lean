@@ -9,8 +9,6 @@ Per-language possession data for Hungarian (Uralic; ISO `hun`), per the
 project's "per-language data flows through Fragments" rule, as bare
 field-by-field `def`s. Substrate types (`PredicativeStrategy`,
 `AdnominalMarking`, …) live in `Linglib/Features/Possession.lean`.
-Cross-linguistic theorems consuming these values live in
-`Studies/NicholsBickel2013.lean`.
 
 Examples: *nekem van konyvem*, *Janos kalap-ja*. Dative possessor + *van*
 'exists' + head-marked possessum; possessive suffixes obligatory on

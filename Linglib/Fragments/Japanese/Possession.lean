@@ -8,8 +8,7 @@ Per-language possession values for Japanese (Japonic, ISO `jpn`): forms
 `watashi-ni-wa hon-ga aru`, `Tanaka-no hon`; topic-comment predication
 (possessor-DAT-TOP possessum-NOM aru/iru) with genitive `no` for adnominal
 possession. Substrate types (`PredicativeStrategy`, `AdnominalMarking`, …) live
-in `Linglib/Features/Possession.lean`. Cross-linguistic theorems consuming these
-values live in `Studies/NicholsBickel2013.lean`.
+in `Linglib/Features/Possession.lean`.
 -/
 
 namespace Japanese.Possession

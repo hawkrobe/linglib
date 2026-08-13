@@ -48,8 +48,7 @@ def circumfix : NegMarkerEntry :=
   , morphemeType := .doubleNeg
   , position := .discontinuous }
 
-/-- The Burmese negation system: a single bipartite circumfix.
-    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
+/-- The Burmese negation system: a single bipartite circumfix. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "mya" [circumfix]
 

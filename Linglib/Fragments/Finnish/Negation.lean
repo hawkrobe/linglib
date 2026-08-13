@@ -53,8 +53,7 @@ def ei : NegMarkerEntry :=
     person/number paradigm. Multiple paradigm-form *surface* realizations
     (`negParadigm`) are not multiple *markers* — they're inflectional
     variants of one auxiliary, captured cross-linguistically by the single
-    `NegMarkerEntry`. The Fragment-side joint consumed by
-    `Studies/Dryer2013Negation.lean`. -/
+    `NegMarkerEntry`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "fin" [ei]
 
