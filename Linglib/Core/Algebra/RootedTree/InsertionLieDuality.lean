@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
-import Linglib.Core.RingTheory.Bialgebra.DualPrimitives
+import Linglib.Core.RingTheory.Bialgebra.Primitive
 
 /-!
 # Single-tree delta functionals are the dual primitives
@@ -15,7 +15,7 @@ the insertion Lie algebra is the Lie algebra of primitive elements in the dual
 Hopf algebra of the Hopf algebra of workspaces. This file proves the
 dual-primitives side on the Connes-Kreimer bialgebra with the Δ^ρ
 (deletion-remainder) coproduct, specializing the general
-`Bialgebra.dualPrimitives` theory of `Core/RingTheory/Bialgebra/DualPrimitives`.
+`Bialgebra.dualPrimitives` theory of `Core/RingTheory/Bialgebra/Primitive`.
 
 ## Main definitions
 
@@ -119,6 +119,7 @@ the dual are exactly the single-tree deltas. -/
 theorem deltaSingleton_isDualPrimitive (T : Nonplanar α) :
     IsDualPrimitive R (deltaSingleton R T) := by
   classical
+  refine ⟨deltaSingleton_one T, ?_⟩
   have key : (LinearMap.mul R (ConnesKreimer R (Nonplanar α))).compr₂ (deltaSingleton R T) =
       (deltaSingleton R T).smulRight CoalgebraStruct.counit +
         (CoalgebraStruct.counit).smulRight (deltaSingleton R T) := by
