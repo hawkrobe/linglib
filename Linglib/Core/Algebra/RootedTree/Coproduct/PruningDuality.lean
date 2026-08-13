@@ -281,7 +281,7 @@ private lemma pairing_product_smul_right (r : R)
 
 /-! ### The duality theorem -/
 
-/-- **GL/CK duality for Δ^ρ** ([foissy-2002]): the GL `⋆` product and
+/-- The GL/CK duality for Δ^ρ ([foissy-2002]): the GL `⋆` product and
     the pruning coproduct Δ^ρ are adjoint under the symmetry-weighted
     pairing, with crossed tensor slots (see module docstring):
 
@@ -579,7 +579,7 @@ private lemma pairing₃_lTensor_comul_rho
   | add W₁ W₂ ih₁ ih₂ =>
     rw [map_add, map_add, ih₁, ih₂, map_add]
 
-/-- **LHS chain via the duality (twice)**: pairing the LHS coassoc
+/-- LHS chain: pairing the LHS coassoc
     expression against a pure triple tensor reduces to pairing the
     GL product `z' ⋆ (y ⋆ x)` against `z`. -/
 theorem pairing₃_coassocLHSLinRho
@@ -595,7 +595,7 @@ theorem pairing₃_coassocLHSLinRho
   exact (pairing_gl_eq_pairing_coproduct_Rho z'
           (product y x) z).symm
 
-/-- **RHS chain via the duality (twice)**: pairing the RHS coassoc
+/-- RHS chain: pairing the RHS coassoc
     expression against a pure triple tensor reduces to pairing the
     GL product `(z' ⋆ y) ⋆ x` against `z`. -/
 theorem pairing₃_coassocRHSLinRho
@@ -619,18 +619,9 @@ requires `R` to be a Ring (so `CK R T` has `AddCommGroup`). -/
 section CoassocCommRingRho
 variable {R' : Type*} [CommRing R'] {α' : Type*} [DecidableEq α']
 
-/-- **Coassociativity of `comulAlgHomN`** (LinearMap form), via GL/CK
-    duality. Parallel to `TraceNonplanar.comulCN_coassoc` for Δ^c.
-
-    Derived via the chain:
-    1. `ext z`: reduce to pointwise `LHS z = RHS z`.
-    2. `pairing₃_unique`: reduce to `∀ t, pairing₃ t (LHS z) = pairing₃ t (RHS z)`.
-    3. `TensorProduct.induction_on` thrice: reduce `t` to pure triple
-       tensors `x ⊗ (y ⊗ z')`.
-    4. `pairing₃_coassocLHSLinRho` / `pairing₃_coassocRHSLinRho`: reduce
-       both sides to GL products against `z` (two duality applications
-       each).
-    5. `mul_assoc z' y x` closes. -/
+/-- Coassociativity of Δ^ρ (LinearMap form): transported from
+    `GrossmanLarson.mul_assoc` through the duality and the nondegeneracy
+    of `pairing₃`. -/
 theorem comulRhoN_coassoc [CharZero R'] [NoZeroDivisors R'] :
     (TensorProduct.assoc R'
         (ConnesKreimer R' (Nonplanar α'))
@@ -661,9 +652,7 @@ theorem comulRhoN_coassoc [CharZero R'] [NoZeroDivisors R'] :
   | add a b iha ihb =>
     simp only [map_add, LinearMap.add_apply, iha, ihb]
 
-/-- **AlgHom-form coassociativity** of `comulAlgHomN`. Follows from
-    `comulRhoN_coassoc` (LinearMap form) by AlgHom extensionality, the
-    same one-liner pattern as `TraceNonplanar.comulCAlgHomN_coassoc_algHom`. -/
+/-- The AlgHom form of Δ^ρ coassociativity. -/
 theorem comulAlgHomN_coassoc_algHom [CharZero R'] [NoZeroDivisors R'] :
     (Algebra.TensorProduct.assoc R' R' R'
         (ConnesKreimer R' (Nonplanar α'))

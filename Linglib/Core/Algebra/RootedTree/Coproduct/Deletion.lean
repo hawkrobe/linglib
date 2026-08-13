@@ -60,14 +60,11 @@ recovering MCB's one-channel form `(id ⊗ Π_{d,c}) ∘ Δ^c`.
 `[UPSTREAM]` candidate.
 -/
 
-
 namespace ConnesKreimer
 
 open scoped TensorProduct
 
 variable {R : Type*} [CommSemiring R] {α β : Type*}
-
-
 
 /-! ## The trace-erasure algebra hom Π_{d,c} -/
 
@@ -116,7 +113,6 @@ noncomputable def embedInlAlgHom :
       of' (R := R) (F.map (Nonplanar.map Sum.inl)) := by
   rw [embedInlAlgHom, ConnesKreimer.mapDomainAlgHom_of']
   rfl
-
 
 /-! ### Erasure inverts embed -/
 
@@ -169,7 +165,6 @@ private theorem eraseTracesAlgHom_ofTree_map_inl
   rw [eraseTracesAlgHom_ofTree, Nonplanar.filterMap_getLeft?_map_inl]
   rfl
 
-
 /-! ### The cut-summand tensor builder
 
 `Option`-tolerant on both channels: a filtered-out crown entry (`none`)
@@ -213,8 +208,33 @@ private theorem cutTensor_some (p : Multiset (RoseTree α) × RoseTree α) :
           = (some ∘ (Nonplanar.mk : RoseTree α → Nonplanar α)) from rfl,
         Multiset.filterMap_eq_map]
 
-
 /-! ### Lift from tree-level to Nonplanar -/
+
+/-- The `(Π ⊗ Π)`-image of a projected Δ^c summand tensor, as a composed
+    map: `cutTensor` after the summand filter. -/
+private theorem cutTensor_filterMap_comp :
+    (((Algebra.TensorProduct.map (eraseTracesAlgHom (R := R) (α := α) (β := β))
+        eraseTracesAlgHom) ∘
+      (fun p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β) =>
+        of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)) ∘ projSummand) =
+    (cutTensor (R := R)) ∘
+      (Prod.map (Multiset.map (RoseTree.filterMap Sum.getLeft?))
+        (RoseTree.filterMap Sum.getLeft?)) := by
+  funext p
+  show (Algebra.TensorProduct.map eraseTracesAlgHom eraseTracesAlgHom)
+      (of' (p.1.map Nonplanar.mk) ⊗ₜ[R] ofTree (Nonplanar.mk p.2)) = _
+  rw [Algebra.TensorProduct.map_tmul]
+  exact cutTensor_filterMap p
+
+/-- The plain Δ^ρ summand tensor, as a composed map: `cutTensor` after
+    the `some` embedding. -/
+private theorem cutTensor_some_comp :
+    ((fun p : Forest (Nonplanar α) × Nonplanar α =>
+        (of' (R := R) p.1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R] ofTree p.2) ∘
+      projSummand) =
+    (cutTensor (R := R)) ∘ (Prod.map (Multiset.map some) some) := by
+  funext p
+  exact (cutTensor_some p).symm
 
 /-- Per-tree form of the Δ^ρ comparison, descended from the cut-summand
     identity `cutSummandsCP_map_inl_filterMap` through the quotient. -/
@@ -223,61 +243,22 @@ private theorem eraseTraces_comulCTreeN_map_inl
     (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R) (α := α) (β := β))
         eraseTracesAlgHom) (comulCTreeN τ (Nonplanar.map Sum.inl T)) =
       comulTreeN T := by
-  refine Quotient.inductionOn T ?_
-  intro t
-  -- Unfold both sides via comulCTreeN definition.
+  refine Quotient.inductionOn T fun t => ?_
   show (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R)) eraseTracesAlgHom)
         (comulCTreeN τ (Nonplanar.mk (RoseTree.map Sum.inl t))) =
-       comulTreeN (Nonplanar.mk t)
-  unfold comulCTreeN comulTreeNG
+      comulTreeN (Nonplanar.mk t)
+  unfold comulCTreeN comulTreeNG comulTreeN
   rw [map_add]
-  -- First summand: (S ⊗ S) (ofTree (mk (embed t)) ⊗ 1) = ofTree (mk t) ⊗ 1.
-  rw [show (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R)) eraseTracesAlgHom)
-            (ofTree (Nonplanar.mk (RoseTree.map Sum.inl t)) ⊗ₜ[R]
-              (1 : ConnesKreimer R (Nonplanar (α ⊕ β)))) =
-          ofTree (Nonplanar.mk t) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)) from by
-    rw [Algebra.TensorProduct.map_tmul, map_one]
-    congr 1
-    -- mk (RoseTree.map Sum.inl t) = embedInl (mk t)
-    exact eraseTracesAlgHom_ofTree_map_inl (Nonplanar.mk t)]
   congr 1
-  -- Second summand: (S ⊗ S) (sum over cuts) = sum over Δ^ρ cuts.
-  rw [map_multiset_sum
-        (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R)) eraseTracesAlgHom)]
-  simp only [Multiset.map_map]
-  -- Reduce sum-of-(S⊗S)-applied to sum of per-summand tensors.
-  rw [show ((Algebra.TensorProduct.map (eraseTracesAlgHom (R := R)) eraseTracesAlgHom) ∘
-            (fun p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β) =>
-              of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)) =
-          (fun p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β) =>
-            eraseTracesAlgHom (of' (R := R) p.1) ⊗ₜ[R]
-              eraseTracesAlgHom (ofTree p.2)) from by
-    funext p
-    rw [Function.comp_apply, Algebra.TensorProduct.map_tmul]]
-  -- Cuts descend to tree-level: cutSummandsCN τ (mk t') = (cutSummandsCP (τ ∘ mk) t').map projSummand.
-  rw [show cutSummandsCN τ (Nonplanar.mk (RoseTree.map Sum.inl t)) =
-        (cutSummandsCP (τ ∘ Nonplanar.mk) (RoseTree.map Sum.inl t)).map projSummand from
-      cutSummandsCN_mk _ _]
-  rw [show cutSummandsN (Nonplanar.mk t) =
-        (cutSummandsP t).map projSummand from
-      cutSummandsN_mk _]
-  rw [Multiset.map_map, Multiset.map_map]
-  -- Both integrands factor through the Option-tolerant tensor builder.
-  rw [show ((fun p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β) =>
-              eraseTracesAlgHom (of' (R := R) p.1) ⊗ₜ[R]
-                eraseTracesAlgHom (ofTree p.2)) ∘ projSummand) =
-          (cutTensor (R := R)) ∘
-            (Prod.map (Multiset.map (RoseTree.filterMap Sum.getLeft?))
-              (RoseTree.filterMap Sum.getLeft?)) from by
-    funext p
-    exact cutTensor_filterMap p]
-  rw [show ((fun p : Forest (Nonplanar α) × Nonplanar α =>
-              (of' (R := R) p.1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
-                ofTree p.2) ∘ projSummand) =
-          (cutTensor (R := R)) ∘ (Prod.map (Multiset.map some) some) from by
-    funext p
-    exact (cutTensor_some p).symm]
-  rw [← Multiset.map_map, ← Multiset.map_map, cutSummandsCP_map_inl_filterMap]
+  · rw [Algebra.TensorProduct.map_tmul, map_one]
+    congr 1
+    exact eraseTracesAlgHom_ofTree_map_inl (Nonplanar.mk t)
+  · rw [map_multiset_sum
+          (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R)) eraseTracesAlgHom),
+        cutSummandsCN_mk, cutSummandsN_mk,
+        Multiset.map_map, Multiset.map_map, Multiset.map_map,
+        cutTensor_filterMap_comp, cutTensor_some_comp,
+        ← Multiset.map_map, ← Multiset.map_map, cutSummandsCP_map_inl_filterMap]
 
 /-- Forest-level form of the Δ^ρ comparison: the per-tree form lifted
     multiplicatively. -/
