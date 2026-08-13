@@ -126,7 +126,7 @@ theorem convMul_lcoeff_singleton_apply_ofTree :
 `{T₁}` and remainder `T₂`. This is Lemma 1.7.3 of
 [marcolli-chomsky-berwick-2025] in Δ^ρ form; the book's
 `c^T_{T₁,T₂} − c^T_{T₂,T₁}` is stated for the trace-leaf coproduct `Δ^c`,
-which agrees under the trace-strip bijection (`stripTraceAlgHom`). -/
+which agrees under the trace-erasure projection (`eraseTracesAlgHom`). -/
 theorem lie_lcoeff_singleton_apply_ofTree :
     ⁅toConv (lcoeff R {T₁}), toConv (lcoeff R ({T₂} : Forest (Nonplanar α)))⁆
         (ofTree T) =
