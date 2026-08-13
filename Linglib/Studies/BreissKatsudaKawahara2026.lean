@@ -130,7 +130,7 @@ open Constraints
 -- ============================================================================
 
 /-- *hai* 'lung' (肺) — N1 of /haigan/ "lung cancer", example (1a). -/
-def n1_hai : JLexicalEntry :=
+def n1_hai : LexicalEntry :=
   { form := "hai", gloss := "lung",
     accentMora := some 0, nMorae := 2,
     tokenLogFreq := 5, canStandAlone := true }
@@ -138,33 +138,33 @@ def n1_hai : JLexicalEntry :=
 /-- *gan* 'cancer' (癌) — high-token-frequency free N2.
     Free-form [g] is well-attested; PU pressure should be strong,
     suppressing nasalisation. Example (1a). -/
-def n2_gan : JLexicalEntry :=
+def n2_gan : LexicalEntry :=
   { form := "gan", gloss := "cancer",
     accentMora := some 0, nMorae := 2,
     tokenLogFreq := 9, canStandAlone := true }
 
 /-- *noo* 'brain' (脳) — N1 of /noogeka/ "brain surgery", example (1b). -/
-def n1_noo : JLexicalEntry :=
+def n1_noo : LexicalEntry :=
   { form := "noo", gloss := "brain",
     accentMora := some 0, nMorae := 2,
     tokenLogFreq := 5, canStandAlone := true }
 
 /-- *geka* 'surgery' (外科) — free N2, mid-frequency. Example (1b). -/
-def n2_geka : JLexicalEntry :=
+def n2_geka : LexicalEntry :=
   { form := "geka", gloss := "surgery",
     accentMora := some 0, nMorae := 3,
     tokenLogFreq := 6, canStandAlone := true }
 
 /-- *doku* 'poison' (毒) — N1 of both /dokuga/ "poison moth" and
     /dokuŋa/ "poison fang" — the minimal pair (2a)/(2b). -/
-def n1_doku : JLexicalEntry :=
+def n1_doku : LexicalEntry :=
   { form := "doku", gloss := "poison",
     accentMora := some 0, nMorae := 2,
     tokenLogFreq := 5, canStandAlone := true }
 
 /-- *ga* 'moth' (蛾) — low-frequency *free* N2. The free /ga/ standalone
     supplies the PU anchor. Example (2a). -/
-def n2_ga_moth : JLexicalEntry :=
+def n2_ga_moth : LexicalEntry :=
   { form := "ga", gloss := "moth",
     accentMora := some 0, nMorae := 1,
     tokenLogFreq := 1, canStandAlone := true }
@@ -172,7 +172,7 @@ def n2_ga_moth : JLexicalEntry :=
 /-- *ga* 'fang' (牙) — *bound* N2; never appears as a free wordform.
     With no /ga/ anchor, PU pressure is null and nasalisation is
     categorical. The minimal-pair partner of `n2_ga_moth`. Example (2b). -/
-def n2_ga_fang : JLexicalEntry :=
+def n2_ga_fang : LexicalEntry :=
   { form := "ga", gloss := "fang",
     accentMora := some 0, nMorae := 1,
     tokenLogFreq := 0, canStandAlone := false }
@@ -182,31 +182,31 @@ def n2_ga_fang : JLexicalEntry :=
 -- ============================================================================
 
 /-- /haigan/ "lung cancer" — example (1a). High-frequency free N2. -/
-def cpd_haigan : JCompound :=
+def cpd_haigan : NominalCompound :=
   { n1 := n1_hai, n2 := n2_gan, compoundLogFreq := 4 }
 
 /-- /noogeka/ "brain surgery" — example (1b). Mid-frequency free N2. -/
-def cpd_noogeka : JCompound :=
+def cpd_noogeka : NominalCompound :=
   { n1 := n1_noo, n2 := n2_geka, compoundLogFreq := 3 }
 
 /-- /dokuga/ "poison moth" — example (2a). Low-frequency free N2;
     optional nasalisation. -/
-def cpd_dokuga : JCompound :=
+def cpd_dokuga : NominalCompound :=
   { n1 := n1_doku, n2 := n2_ga_moth, compoundLogFreq := 2 }
 
 /-- /dokuŋa/ "poison fang" — example (2b). Bound N2 → categorical [ŋ]. -/
-def cpd_dokunga : JCompound :=
+def cpd_dokunga : NominalCompound :=
   { n1 := n1_doku, n2 := n2_ga_fang, compoundLogFreq := 2 }
 
 -- ============================================================================
 -- § 3: Bound vs. free split — the categorical/gradient boundary
 -- ============================================================================
 
-/-- The bound case: `JCompound.nasalisationObligatory` returns `true`. -/
+/-- The bound case: `NominalCompound.nasalisationObligatory` returns `true`. -/
 theorem dokunga_obligatory :
     cpd_dokunga.nasalisationObligatory = true := rfl
 
-/-- The free cases: `JCompound.nasalisationObligatory` returns `false`
+/-- The free cases: `NominalCompound.nasalisationObligatory` returns `false`
     — the compound is in the gradient/optional zone. -/
 theorem dokuga_optional :
     cpd_dokuga.nasalisationObligatory = false := rfl
@@ -243,7 +243,7 @@ theorem free_zone_freq_independent :
     primitive. The anchor-presence channel is exactly what
     [steriade-1997] introduced, and BKK's bound/free split is the
     same architectural channel applied to a new domain. -/
-def n2Paradigm (c : JCompound) : List String :=
+def n2Paradigm (c : NominalCompound) : List String :=
   lcParadigm c.form (if c.n2.canStandAlone then some c.n2.form else none)
 
 /-- Surface mismatch between two strings: 0 on the diagonal, 1
@@ -270,7 +270,7 @@ def puFaith : Constraint (List String) :=
   mkLCFaith "PU-N2-FAITH" stringMismatch
 
 /-- Number of PU-FAITH violations on a compound's paradigm. -/
-def cpdPuViolations (c : JCompound) : Nat :=
+def cpdPuViolations (c : NominalCompound) : Nat :=
   puFaith (n2Paradigm c)
 
 /-- **Bound case is structurally zero.** A bound N2 produces a singleton
@@ -278,7 +278,7 @@ def cpdPuViolations (c : JCompound) : Nat :=
     whose mismatch is 0 by definition. The categorical nasalisation in
     bound compounds is the structural consequence of the PU channel
     contributing nothing. -/
-theorem bound_cpdPuViolations_zero (c : JCompound)
+theorem bound_cpdPuViolations_zero (c : NominalCompound)
     (hbound : c.n2.canStandAlone = false) :
     cpdPuViolations c = 0 := by
   have hpar : n2Paradigm c = lcParadigm c.form none := by
@@ -291,7 +291,7 @@ theorem bound_cpdPuViolations_zero (c : JCompound)
     exactly two off-diagonal pairs, each contributing 1, for a total
     of 2 violations. The compound and N2 forms differ whenever N1 is
     non-empty — an empirically generic precondition. -/
-theorem free_cpdPuViolations_eq_two (c : JCompound)
+theorem free_cpdPuViolations_eq_two (c : NominalCompound)
     (hfree : c.n2.canStandAlone = true)
     (hdiff : c.form ≠ c.n2.form) :
     cpdPuViolations c = 2 := by
@@ -332,8 +332,8 @@ def scaledWeight (baseWeight slope x : ℝ) : ℝ := baseWeight + slope * x
     preservation of [g] → less nasalisation. This is the
     *negative-on-nasalisation* channel (negative regression coefficient
     on N2 token frequency in [breiss-katsuda-kawahara-2026]). -/
-noncomputable def puPressure (slope : ℝ) (c : JCompound) : ℝ :=
-  (cpdPuViolations c : ℝ) * scaledWeight (baseWeight := 0) (slope := slope) (jTokenFreq c.n2)
+noncomputable def puPressure (slope : ℝ) (c : NominalCompound) : ℝ :=
+  (cpdPuViolations c : ℝ) * scaledWeight (baseWeight := 0) (slope := slope) (c.n2.tokenFreq)
 
 /-- The **compound-frequency-weighted markedness pressure** *for*
     nasalisation: linear in compound log-frequency. Higher compound
@@ -345,7 +345,7 @@ noncomputable def puPressure (slope : ℝ) (c : JCompound) : ℝ :=
     Modelled as a one-parameter linear function of the compound's own
     log-frequency, parallel to `Scaled.scaledWeight` but on the
     compound (not lexical-entry) channel. -/
-noncomputable def cpdMarkednessPressure (slope : ℝ) (c : JCompound) : ℝ :=
+noncomputable def cpdMarkednessPressure (slope : ℝ) (c : NominalCompound) : ℝ :=
   slope * (c.compoundLogFreq : ℝ)
 
 /-- The predicted **nasalisation log-odds** of a compound: markedness
@@ -353,7 +353,7 @@ noncomputable def cpdMarkednessPressure (slope : ℝ) (c : JCompound) : ℝ :=
     (negative sign on nasalisation). The sign-inversion of the PU
     channel is *built into the difference* — increasing PU
     monotonically decreases the log-odds. -/
-noncomputable def nasLogOdds (n2Slope cpdSlope : ℝ) (c : JCompound) : ℝ :=
+noncomputable def nasLogOdds (n2Slope cpdSlope : ℝ) (c : NominalCompound) : ℝ :=
   cpdMarkednessPressure cpdSlope c - puPressure n2Slope c
 
 -- ============================================================================
@@ -366,7 +366,7 @@ noncomputable def nasLogOdds (n2Slope cpdSlope : ℝ) (c : JCompound) : ℝ :=
     source of the *negative* regression coefficient on N2 token
     frequency reported in [breiss-katsuda-kawahara-2026]. -/
 theorem nasLogOdds_antitone_in_puPressure (n2Slope cpdSlope : ℝ)
-    (c1 c2 : JCompound) (hcpd : c1.compoundLogFreq = c2.compoundLogFreq)
+    (c1 c2 : NominalCompound) (hcpd : c1.compoundLogFreq = c2.compoundLogFreq)
     (hpu : puPressure n2Slope c1 ≤ puPressure n2Slope c2) :
     nasLogOdds n2Slope cpdSlope c2 ≤ nasLogOdds n2Slope cpdSlope c1 := by
   unfold nasLogOdds cpdMarkednessPressure
@@ -378,8 +378,8 @@ theorem nasLogOdds_antitone_in_puPressure (n2Slope cpdSlope : ℝ)
     matched PU-violation counts, a higher N2 token log-frequency
     yields strictly *higher* PU pressure (when slope is positive). -/
 theorem puPressure_monotone_in_n2_freq (slope : ℝ) (hSlope : 0 ≤ slope)
-    (c1 c2 : JCompound) (hviol : cpdPuViolations c1 = cpdPuViolations c2)
-    (hfreq : jTokenFreq c1.n2 ≤ jTokenFreq c2.n2) :
+    (c1 c2 : NominalCompound) (hviol : cpdPuViolations c1 = cpdPuViolations c2)
+    (hfreq : c1.n2.tokenFreq ≤ c2.n2.tokenFreq) :
     puPressure slope c1 ≤ puPressure slope c2 := by
   unfold puPressure scaledWeight
   rw [hviol]
@@ -392,7 +392,7 @@ theorem puPressure_monotone_in_n2_freq (slope : ℝ) (hSlope : 0 ≤ slope)
     compound has strictly higher nasalisation log-odds (when slope is
     positive). -/
 theorem nasLogOdds_monotone_in_cpd_freq (n2Slope cpdSlope : ℝ)
-    (hSlope : 0 ≤ cpdSlope) (c1 c2 : JCompound)
+    (hSlope : 0 ≤ cpdSlope) (c1 c2 : NominalCompound)
     (hpu : puPressure n2Slope c1 = puPressure n2Slope c2)
     (hfreq : c1.compoundLogFreq ≤ c2.compoundLogFreq) :
     nasLogOdds n2Slope cpdSlope c1 ≤ nasLogOdds n2Slope cpdSlope c2 := by
@@ -407,7 +407,7 @@ theorem nasLogOdds_monotone_in_cpd_freq (n2Slope cpdSlope : ℝ)
     bound-case prediction depends only on the compound-frequency
     channel — i.e. the bound case has **one** frequency channel, not
     two. This is the architectural collapse the paper highlights. -/
-theorem bound_nasLogOdds_eq_markedness (n2Slope cpdSlope : ℝ) (c : JCompound)
+theorem bound_nasLogOdds_eq_markedness (n2Slope cpdSlope : ℝ) (c : NominalCompound)
     (hbound : c.n2.canStandAlone = false) :
     nasLogOdds n2Slope cpdSlope c = cpdMarkednessPressure cpdSlope c := by
   unfold nasLogOdds puPressure
@@ -431,9 +431,9 @@ theorem bound_nasLogOdds_eq_markedness (n2Slope cpdSlope : ℝ) (c : JCompound)
     different `puPressure` values when their N2 token frequencies
     differ and the slope is strictly positive. -/
 theorem novel_compounds_show_n2_gradient (slope : ℝ) (hSlope : 0 < slope)
-    (c1 c2 : JCompound) (hviol : cpdPuViolations c1 = cpdPuViolations c2)
+    (c1 c2 : NominalCompound) (hviol : cpdPuViolations c1 = cpdPuViolations c2)
     (hviol_pos : 0 < cpdPuViolations c1)
-    (hfreq : jTokenFreq c1.n2 < jTokenFreq c2.n2) :
+    (hfreq : c1.n2.tokenFreq < c2.n2.tokenFreq) :
     puPressure slope c1 < puPressure slope c2 := by
   unfold puPressure scaledWeight
   have hpos2 : (0 : ℝ) < (cpdPuViolations c2 : ℝ) := by
@@ -472,7 +472,7 @@ hypotheses. Concretely: for every `WugBKKCell`, we *prove* (not
 assume) that PU violations equal 2. -/
 
 structure WugBKKCell where
-  compound : JCompound
+  compound : NominalCompound
   freeN2 : compound.n2.canStandAlone = true
   formDistinct : compound.form ≠ compound.n2.form
   attestation : Attestation
@@ -621,7 +621,7 @@ paradigm membership alone. -/
 /-- The OP paradigm of a compound: symmetric over all members, no
     distinguished anchor. Because OP does not condition on
     attestation, both bound and free N2 contribute to the paradigm. -/
-def n2OpParadigm (c : JCompound) : List String :=
+def n2OpParadigm (c : NominalCompound) : List String :=
   [c.form, c.n2.form]
 
 /-- The OP-flavoured PU constraint, built from the same `liftPairwise`
@@ -631,7 +631,7 @@ def opPuFaith : Constraint (List String) :=
   liftPairwise stringMismatch
 
 /-- OP-flavoured violation count on a compound. -/
-def cpdOpPuViolations (c : JCompound) : Nat :=
+def cpdOpPuViolations (c : NominalCompound) : Nat :=
   opPuFaith (n2OpParadigm c)
 
 /-- **OP gives identical violation counts on bound and free
@@ -639,7 +639,7 @@ def cpdOpPuViolations (c : JCompound) : Nat :=
     `[c.form, c.n2.form]` has two off-diagonal pairs each contributing
     1, regardless of N2 attestation. This is the structural
     consequence of OP's anchor-blindness. -/
-theorem op_paradigm_uniform_in_bound_free (c : JCompound)
+theorem op_paradigm_uniform_in_bound_free (c : NominalCompound)
     (hdiff : c.form ≠ c.n2.form) :
     cpdOpPuViolations c = 2 := by
   show opPuFaith (n2OpParadigm c) = 2
@@ -664,7 +664,7 @@ theorem op_paradigm_uniform_in_bound_free (c : JCompound)
     with an *extended-OP* that applies the symmetric-paradigm
     architecture to N1+N2 compounds, which BKK take to be the natural
     OP-style competitor in this domain. -/
-theorem op_lc_disagree_on_bound (c : JCompound)
+theorem op_lc_disagree_on_bound (c : NominalCompound)
     (hbound : c.n2.canStandAlone = false)
     (hdiff : c.form ≠ c.n2.form) :
     cpdOpPuViolations c ≠ cpdPuViolations c := by
