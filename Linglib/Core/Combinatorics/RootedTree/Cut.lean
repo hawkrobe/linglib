@@ -40,11 +40,9 @@ semantics varies.
 
 ## Status
 
-`[UPSTREAM]` candidate. Sorry-free. Substrate for the GL-duality
-coassoc proof of Δ^c (Foissy 2018, hal-01924416, §4.2 + Cor 4.10):
-once a single cut enumeration is in place, the per-cut remainder
-function (deletion vs trace vs other) is just a parameter to the same
-combinatorial bookkeeping.
+`[UPSTREAM]` candidate. Once a single cut enumeration is in place, the
+per-cut remainder function (deletion vs trace vs other) is just a
+parameter to the same combinatorial bookkeeping.
 
 ## MCB anchor
 
@@ -54,7 +52,6 @@ for ω ∈ {c, d, ρ}. The three remainder semantics differ in T/^ω F_v
 but the cut enumeration F_v is the same. This file factors the cut
 enumeration out of the remainder choice.
 -/
-
 
 namespace ConnesKreimer
 
@@ -740,7 +737,6 @@ remainder rather than `Option`). The descent applies whenever the
 `Nonplanar.mk`. For Δ^c (`extractC (τ ∘ Nonplanar.mk)`) this follows
 from `Perm.value_eq`. -/
 
-
 /-! ### Pointwise projection for the G-form -/
 
 /-- Project a `cutListSummandsG` summand to nonplanar level, discarding
@@ -1128,7 +1124,6 @@ theorem cutSummandsCP_proj_perm (τ : Nonplanar (α ⊕ β) → β)
       (cutSummandsCP (τ ∘ Nonplanar.mk) s).map projSummand :=
   cutSummandsG_proj_perm (extractC_mkComp_invariant τ) h
 
-
 /-! ### Descent of `cutSummandsCP` through `Nonplanar.mk` -/
 
 /-- The Nonplanar Δ^c cut summands, descended from `cutSummandsCP` via
@@ -1145,5 +1140,188 @@ noncomputable def cutSummandsCN (τ : Nonplanar (α ⊕ β) → β) :
     cutSummandsCN τ (Nonplanar.mk T) =
       (ConnesKreimer.cutSummandsCP (τ ∘ Nonplanar.mk) T).map
         ConnesKreimer.projSummand := rfl
+
+/-! ### Empty-cut uniqueness — combinatorial substrate for the per-tree counit law
+
+For any extract policy and tree `T`, the unique cut summand of
+`cutSummandsG extract T` with empty cut forest (`p.1.card = 0`) is the
+empty cut `(0, T)`. By mutual structural induction with the list and
+per-child cases. This is the substrate for the Δ^c per-tree counit law:
+under `(counit ⊗ id)`, only this summand survives, contributing
+`1 ⊗ ofTree T`. -/
+
+/-- Helper: filter of `(s ×ˢ t)` by a conjunction predicate distributes
+    into a product of filters. Used to factor the cardinality-zero
+    condition on `(p.1.1 + p.2.1)` into independent conditions on each
+    factor of the cartesian product. -/
+private lemma filter_product_split {α₁ β₁ : Type*}
+    (s : Multiset α₁) (t : Multiset β₁)
+    (p : α₁ → Prop) [DecidablePred p] (q : β₁ → Prop) [DecidablePred q] :
+    (s ×ˢ t).filter (fun pr => p pr.1 ∧ q pr.2) = (s.filter p) ×ˢ (t.filter q) := by
+  show ((s.bind fun a => t.map (Prod.mk a)).filter (fun pr => p pr.1 ∧ q pr.2)) =
+       (s.filter p).bind (fun a => (t.filter q).map (Prod.mk a))
+  rw [Multiset.filter_bind, Multiset.bind_filter]
+  apply Multiset.bind_congr
+  intro a _
+  rw [Multiset.filter_map]
+  by_cases h : p a
+  · rw [if_pos h]
+    apply congrArg
+    apply Multiset.filter_congr
+    intro b _
+    show (p a ∧ q b) ↔ q b
+    simp [h]
+  · rw [if_neg h]
+    apply Multiset.eq_zero_of_forall_notMem
+    intro pr hpr
+    rw [Multiset.mem_map] at hpr
+    obtain ⟨b, hb_mem, _hb_eq⟩ := hpr
+    rw [Multiset.mem_filter] at hb_mem
+    -- hb_mem.2 : ((fun pr => p pr.1 ∧ q pr.2) ∘ Prod.mk a) b = (p a ∧ q b) after β
+    have hpa : p a := hb_mem.2.1
+    exact h hpa
+
+mutual
+
+/-- The unique cut summand of `cutSummandsG extract T` with empty cut
+    forest is the empty cut `(0, T)`. -/
+theorem cutSummandsG_filter_empty
+    (extract : RoseTree α → Option (List (RoseTree α))) :
+    ∀ (T : RoseTree α),
+      (cutSummandsG extract T).filter (fun p => p.1.card = 0) =
+        ({((0 : Multiset (RoseTree α)), T)} : Multiset _)
+  | .node a cs => by
+    rw [cutSummandsG_node, Multiset.filter_map]
+    -- After filter_map the inner predicate is `(·.1.card = 0) ∘ (fun p => (p.1, .node a p.2))`,
+    -- which is definitionally `fun p => p.1.card = 0`. Use Multiset.filter_congr to
+    -- rewrite the predicate to the form the IH expects.
+    have hcongr :
+        Multiset.filter
+            ((fun p : Multiset (RoseTree α) × RoseTree α => p.1.card = 0) ∘
+              fun p : Multiset (RoseTree α) × List (RoseTree α) => (p.1, RoseTree.node a p.2))
+            (cutListSummandsG extract cs) =
+        Multiset.filter (fun p => p.1.card = 0) (cutListSummandsG extract cs) := by
+      apply Multiset.filter_congr
+      intro p _
+      rfl
+    rw [hcongr, cutListSummandsG_filter_empty extract cs, Multiset.map_singleton]
+
+/-- The unique list-cut summand of `cutListSummandsG extract cs` with
+    empty cut forest is `(0, cs)`. -/
+theorem cutListSummandsG_filter_empty
+    (extract : RoseTree α → Option (List (RoseTree α))) :
+    ∀ (cs : List (RoseTree α)),
+      (cutListSummandsG extract cs).filter (fun p => p.1.card = 0) =
+        ({((0 : Multiset (RoseTree α)), cs)} : Multiset _)
+  | [] => by
+    rw [cutListSummandsG_nil, Multiset.filter_singleton]
+    rw [if_pos (show (0 : Multiset (RoseTree α)).card = 0 from Multiset.card_zero)]
+  | t :: ts => by
+    rw [cutListSummandsG_cons, Multiset.filter_map]
+    -- Convert composed predicate to a conjunction form using card_add.
+    have hcongr :
+        Multiset.filter
+            ((fun p : Multiset (RoseTree α) × List (RoseTree α) => p.1.card = 0) ∘
+              fun p : (Multiset (RoseTree α) × List (RoseTree α)) ×
+                       (Multiset (RoseTree α) × List (RoseTree α)) =>
+                (p.1.1 + p.2.1, p.1.2 ++ p.2.2))
+            (augActionG extract t ×ˢ cutListSummandsG extract ts) =
+        Multiset.filter
+            (fun p : (Multiset (RoseTree α) × List (RoseTree α)) ×
+                     (Multiset (RoseTree α) × List (RoseTree α)) =>
+              (fun q : Multiset (RoseTree α) × List (RoseTree α) => q.1.card = 0) p.1 ∧
+              (fun q : Multiset (RoseTree α) × List (RoseTree α) => q.1.card = 0) p.2)
+            (augActionG extract t ×ˢ cutListSummandsG extract ts) := by
+      apply Multiset.filter_congr
+      intro p _
+      show (p.1.1 + p.2.1).card = 0 ↔ p.1.1.card = 0 ∧ p.2.1.card = 0
+      rw [Multiset.card_add, Nat.add_eq_zero_iff]
+    rw [hcongr,
+        filter_product_split (augActionG extract t) (cutListSummandsG extract ts)
+          (fun q : Multiset (RoseTree α) × List (RoseTree α) => q.1.card = 0)
+          (fun q : Multiset (RoseTree α) × List (RoseTree α) => q.1.card = 0),
+        augActionG_filter_empty extract t,
+        cutListSummandsG_filter_empty extract ts,
+        Multiset.product_singleton, Multiset.map_singleton]
+    show ({((0 : Multiset (RoseTree α)) + (0 : Multiset (RoseTree α)),
+            ([t] : List (RoseTree α)) ++ ts)} : Multiset _) = _
+    rw [zero_add]
+    rfl
+
+/-- The unique per-child decision of `augActionG extract t` with empty
+    cut forest is `(0, [t])` (the "recurse with empty cut" branch). -/
+theorem augActionG_filter_empty
+    (extract : RoseTree α → Option (List (RoseTree α))) :
+    ∀ (t : RoseTree α),
+      (augActionG extract t).filter (fun p => p.1.card = 0) =
+        ({((0 : Multiset (RoseTree α)), [t])} : Multiset _)
+  | t => by
+    -- Case-split on extract t up-front using the specialized augActionG_eq_*
+    -- lemmas (which avoid the inline match expression).
+    cases h_ext : extract t with
+    | none =>
+      rw [augActionG_eq_none extract t h_ext, Multiset.filter_map]
+      have hcongr :
+          Multiset.filter
+              ((fun p : Multiset (RoseTree α) × List (RoseTree α) => p.1.card = 0) ∘
+                fun p : Multiset (RoseTree α) × RoseTree α => (p.1, [p.2]))
+              (cutSummandsG extract t) =
+          Multiset.filter (fun p => p.1.card = 0) (cutSummandsG extract t) := by
+        apply Multiset.filter_congr
+        intro p _
+        rfl
+      rw [hcongr, cutSummandsG_filter_empty extract t, Multiset.map_singleton]
+    | some r =>
+      rw [augActionG_eq_some extract t r h_ext, Multiset.filter_cons]
+      -- filter cons: if pred (({t}, r)) then {({t},r)} else 0, plus filter of the tail
+      rw [if_neg (by
+        show ¬ ({t} : Multiset (RoseTree α)).card = 0
+        rw [Multiset.card_singleton]
+        decide)]
+      rw [Multiset.zero_add, Multiset.filter_map]
+      have hcongr :
+          Multiset.filter
+              ((fun p : Multiset (RoseTree α) × List (RoseTree α) => p.1.card = 0) ∘
+                fun p : Multiset (RoseTree α) × RoseTree α => (p.1, [p.2]))
+              (cutSummandsG extract t) =
+          Multiset.filter (fun p => p.1.card = 0) (cutSummandsG extract t) := by
+        apply Multiset.filter_congr
+        intro p _
+        rfl
+      rw [hcongr, cutSummandsG_filter_empty extract t, Multiset.map_singleton]
+
+end
+
+/-- Nonplanar-level descent: the unique cut summand of `cutSummandsCN τ T`
+    with empty cut forest is `(0, T)`. -/
+theorem cutSummandsCN_filter_empty
+    (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β)) :
+    (cutSummandsCN τ T).filter (fun p => p.1.card = 0) =
+      ({((0 : Multiset (Nonplanar (α ⊕ β))), T)} : Multiset _) := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = Nonplanar.mk T₀ :=
+    ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
+  rw [cutSummandsCN_mk, Multiset.filter_map]
+  -- `(projSummand p).1.card = (p.1.map Nonplanar.mk).card = p.1.card`; use filter_congr.
+  have hcongr :
+      Multiset.filter
+          ((fun p : Multiset (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β) => p.1.card = 0) ∘
+            projSummand (α := α ⊕ β))
+          (cutSummandsCP (τ ∘ Nonplanar.mk) T₀) =
+      Multiset.filter (fun p : Multiset (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β) => p.1.card = 0)
+          (cutSummandsCP (τ ∘ Nonplanar.mk) T₀) := by
+    apply Multiset.filter_congr
+    intro p _
+    show (p.1.map Nonplanar.mk).card = 0 ↔ p.1.card = 0
+    rw [Multiset.card_map]
+  rw [hcongr]
+  show Multiset.map projSummand
+        (Multiset.filter (fun p : Multiset (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β) => p.1.card = 0)
+          (cutSummandsG (extractC (τ ∘ Nonplanar.mk)) T₀)) = _
+  rw [cutSummandsG_filter_empty (extractC (τ ∘ Nonplanar.mk)) T₀,
+      Multiset.map_singleton]
+  show ((((0 : Multiset (RoseTree (α ⊕ β))).map Nonplanar.mk : Multiset (Nonplanar (α ⊕ β))),
+         Nonplanar.mk T₀) : Multiset (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) ::ₘ 0 = _
+  rw [Multiset.map_zero]
+  rfl
 
 end ConnesKreimer

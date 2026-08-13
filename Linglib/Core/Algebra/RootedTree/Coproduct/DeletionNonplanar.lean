@@ -64,8 +64,7 @@ substrate Δ^d ≡ Δ^ρ (modulo the embedding) has strict coassoc.
 
 ## Status
 
-`[UPSTREAM]` candidate. **Sorry-free** as of MCB Phase F.1 R.9 closure:
-`comulDN_embedInl_eq_comulAlgHomN` is now proven via tree-level mutual
+`[UPSTREAM]` candidate. `comulDN_embedInl_eq_comulAlgHomN` is proven via tree-level mutual
 structural induction on tree / children-list, factoring the wrapper
 `bPlusLin a` out of the per-summand tensors so the head and tail
 induction hypotheses apply cleanly. The left-channel half uses

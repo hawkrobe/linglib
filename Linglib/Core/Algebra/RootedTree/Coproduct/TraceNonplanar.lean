@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
-import Linglib.Core.Algebra.RootedTree.Coproduct.TraceCoassoc
+import Linglib.Core.Combinatorics.RootedTree.DoubleCut
 import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonMonoid
@@ -22,57 +22,46 @@ set_option autoImplicit false
 set_option maxSynthPendingDepth 2
 
 /-!
-# Δ^c on `ConnesKreimer R (Nonplanar (α ⊕ β))` via descent + duality
+# Δ^c on `ConnesKreimer R (Nonplanar (α ⊕ β))` via descent
 [marcolli-chomsky-berwick-2025]
 [foissy-typed-decorated-rooted-trees-2018]
 
 The decorated coproduct Δ^c (contraction-extraction with trace
-placeholders) descended from the tree-level version `comulCAlgHomP` in
-`Coproduct/Trace.lean` to `Nonplanar` trees. Coassociativity is
-proved via Foissy 2018 §4.2 GL-CK duality: GL associativity (`product`
-in `GrossmanLarson.lean`) ⇔ Δ^c coassociativity, transported through
-the symmetry-weighted pairing in `GrossmanLarsonPairing.lean`.
-
-## MCB target: Lemma 1.2.10
-
-`comulCN_coassoc` + `Bialgebra` instance closes MCB Lemma 1.2.10 (the
-graded bialgebra structure of `(V(F_{SO_0}), ⊔, Δ^c)`). The GL/duality
-route is the **unification approach** that also enables Δ^d (Def 1.2.5,
-via different extraction policy + projection) and Δ^ρ (Lemma 1.2.11,
-currently parallel — to be unified at R.8). See
-`memory/project_mcb_unification_rationale.md` for why this matters
-architecturally (avoids ~thousands of LOC of duplication).
-
-The descent layer mirrors `Coproduct/PruningNonplanar.lean`'s descent
-of Δ^ρ. The duality-based coassoc proof is the *new* technique that
-handles Δ^c — for which Foissy clean coassoc (used for Δ^ρ) does NOT
-work (B+ is not a Hochschild 1-cocycle for Δ^c; see CHANGELOG entry
-0.230.944 R.0 patch and `project_phase_e3_db_plan.md`).
+placeholders), descended from the tree-level `comulCAlgHomP` in
+`Coproduct/Trace.lean` to `Nonplanar` trees, with its coassociativity,
+counit laws, and `Bialgebra` packaging. Together with the edge grading
+in `Coproduct/TraceGrading.lean` this closes
+[marcolli-chomsky-berwick-2025] Lemma 1.2.10, the graded bialgebra
+structure of `(V(F_{SO_0}), ⊔, Δ^c)`.
 
 ## Construction
 
-1. **Descent of `cutSummandsCP`** through `Nonplanar.mk`. Mirrors the
-   `Pruning` descent but threads the trace-encoder `τ`.
-2. **`comulCTreeN`, `comulCForestN`, `comulCAlgHomN`** — Nonplanar
-   tree/forest-level Δ^c, packaged as algebra hom.
-3. **Coassoc via duality** (Foissy 2018 §4.2): the duality theorem
-   `pairing (gl x y) z = pairing x (Δ^c z) (after suitable
-   ⊗-evaluation)` lets us transport `gl_assoc` (R.5.5) to Δ^c coassoc.
-4. **Bialgebra instance**: counit + counit-multiplicativity from CK,
-   coassoc from duality.
+1. **`comulCTreeN`, `comulCForestN`, `comulCAlgHomN`** — Nonplanar
+   tree/forest-level Δ^c, packaged as algebra hom. The descent layer
+   mirrors `Coproduct/PruningNonplanar.lean`'s descent of Δ^ρ.
+2. **Coassociativity** (`comulCN_coassoc`, under `TraceCoherent`) by
+   the direct double-cut bijection: both composites expand to sums
+   over double-cut enumerators (`lhsExpand`/`rhsExpand`), which agree
+   under trace coherence (`doubleCut_eq`), descended from the planar
+   `DoubleCut.coassT` (`Core/Combinatorics/RootedTree/DoubleCut.lean`)
+   through `Nonplanar.mk`.
+3. **Counit laws** from the empty-cut uniqueness of the enumeration
+   (`cutSummandsCN_filter_empty`, `Core/Combinatorics/RootedTree/Cut.lean`).
+4. **`bialgebraC`** — the `Bialgebra` structure, via `Bialgebra.ofAlgHom`.
+
+## No GL/Δ^c duality
+
+The GL/CK pairing duality that proves Δ^ρ coassociativity in
+`Coproduct/PruningDuality.lean` is **false** for Δ^c: GL grafting never
+removes trace markers, so no orientation of
+`⟨x ⋆ y, z⟩ = pairing₂ (…) (Δ^c z)` can hold, and B+ is not a Hochschild
+1-cocycle for Δ^c either (see the Trace-coherence section below). The
+pairings `pairing₂`/`pairing₃` defined here are the nondegeneracy
+instruments that duality proof uses for Δ^ρ.
 
 ## Status
 
-`[UPSTREAM]` candidate. Sorry-free. MCB Lemma 1.2.10 is fully proved: both
-its grading content (`comulCAlgHomN_of'_mem_gradedSpan`) and Δ^c coassociativity
-(`comulCN_coassoc`), the latter under the `TraceCoherent` hypothesis. The
-coassoc proof is the direct double-cut bijection `doubleCut_eq`, descended
-from the tree-level `DoubleCut.coassT` (`Coproduct/TraceCoassoc.lean`) through
-`Nonplanar.mk`. The earlier plan to derive it from a GL/Δ^c pairing duality
-was abandoned: that duality is **false** (GL grafting never removes trace
-markers, so no orientation of `⟨x ⋆ y, z⟩ = pairing₂ (… ) (Δ^c z)` can hold;
-counterexamples in `scratch/validate_duality.lean` V4). The duality route
-works for the deletion variant Δ^ρ — see `Coproduct/PruningDuality.lean`.
+`[UPSTREAM]` candidate.
 -/
 
 namespace ConnesKreimer
@@ -232,19 +221,17 @@ proper admissible cut, the trunk side of `Δ^c z` carries trace-marker
 leaves, while every forest in the support of a GL product `x ⋆ y` has at
 least as many markers as `x` and `y` combined (grafting never removes
 vertices) — so `⟨x ⋆ y, z⟩ = 0` against any cut summand that would make
-the right side nonzero, in either slot orientation. Checked
-computationally in `scratch/validate_duality.lean` (V4). An earlier
-sorry-fenced duality statement here was false and has been removed; the
-duality (with crossed slots) is true for the deletion variant Δ^ρ and is
-proved in `Coproduct/PruningDuality.lean`.
+the right side nonzero, in either slot orientation. The duality (with
+crossed slots) is true for the deletion variant Δ^ρ and is proved in
+`Coproduct/PruningDuality.lean`.
 
 Δ^c coassociativity itself is **not τ-generic** either: iterating Δ^c
 re-encodes already-cut subtrees, so the marker written by a second-stage
 cut is `τ` of a tree *containing markers*, while the opposite cut order
 writes `τ` of the original subtree. For `τ` sensitive to that difference
 coassociativity fails (counterexample: `τ` = count of `Sum.inl`
-vertices, `z` an inl-labeled 3-chain; `scratch/validate_duality.lean`
-V5). [marcolli-chomsky-berwick-2025]'s proof of Lemma 1.2.10 (book
+vertices, `z` an inl-labeled 3-chain).
+[marcolli-chomsky-berwick-2025]'s proof of Lemma 1.2.10 (book
 p. 37–38) silently uses that their trace labels compose under
 contraction ("the accessible terms of accessible terms … are themselves
 accessible terms"); `TraceCoherent` is that hypothesis made explicit. -/
@@ -483,7 +470,7 @@ terms"). Both `(Δ^c ⊗ id) ∘ Δ^c` and `(id ⊗ Δ^c) ∘ Δ^c` enumerate
 ordered pairs of nested admissible cuts of a tree; the two enumerations
 biject under `TraceCoherent`.
 
-The plan (validated computationally, `scratch/validate_duality.lean` V7):
+The proof structure:
 1. `comulCTreeN`/`comulCForestN` as multiset sums over cut enumerators
    `treeCutsN`/`forestCutsN` (this section).
 2. Each composite expands to a sum over a double-cut enumerator
@@ -834,8 +821,8 @@ theorem comulCN_coassoc_tree
     NOT τ-generic: without `TraceCoherent τ`, iterating Δ^c writes
     second-stage markers computed on marked trunks, and the two cut
     orders disagree (counterexample: `τ` = inl-vertex count on an
-    inl-labeled 3-chain; validated in `scratch/validate_duality.lean`
-    V5). Under coherence the double-cut enumerations agree — this is
+    inl-labeled 3-chain). Under coherence the double-cut enumerations
+    agree — this is
     [marcolli-chomsky-berwick-2025] Lemma 1.2.10's coassociativity
     (book p. 37–38, the quotient-composition argument "the accessible
     terms of accessible terms … are themselves accessible terms").
@@ -895,193 +882,6 @@ theorem comulCN_coassoc
 
 end CoassocCommRing
 
-/-! ### Empty-cut uniqueness — combinatorial substrate for the per-tree counit law
-
-For any extract policy and tree `T`, the unique cut summand of
-`cutSummandsG extract T` with empty cut forest (`p.1.card = 0`) is the
-empty cut `(0, T)`. By mutual structural induction with the list and
-per-child cases. This is the substrate for the Δ^c per-tree counit law:
-under `(counit ⊗ id)`, only this summand survives, contributing
-`1 ⊗ ofTree T`. -/
-
-
-/-- Helper: filter of `(s ×ˢ t)` by a conjunction predicate distributes
-    into a product of filters. Used to factor the cardinality-zero
-    condition on `(p.1.1 + p.2.1)` into independent conditions on each
-    factor of the cartesian product. -/
-private lemma filter_product_split {α₁ β₁ : Type*}
-    (s : Multiset α₁) (t : Multiset β₁)
-    (p : α₁ → Prop) [DecidablePred p] (q : β₁ → Prop) [DecidablePred q] :
-    (s ×ˢ t).filter (fun pr => p pr.1 ∧ q pr.2) = (s.filter p) ×ˢ (t.filter q) := by
-  show ((s.bind fun a => t.map (Prod.mk a)).filter (fun pr => p pr.1 ∧ q pr.2)) =
-       (s.filter p).bind (fun a => (t.filter q).map (Prod.mk a))
-  rw [Multiset.filter_bind, Multiset.bind_filter]
-  apply Multiset.bind_congr
-  intro a _
-  rw [Multiset.filter_map]
-  by_cases h : p a
-  · rw [if_pos h]
-    apply congrArg
-    apply Multiset.filter_congr
-    intro b _
-    show (p a ∧ q b) ↔ q b
-    simp [h]
-  · rw [if_neg h]
-    apply Multiset.eq_zero_of_forall_notMem
-    intro pr hpr
-    rw [Multiset.mem_map] at hpr
-    obtain ⟨b, hb_mem, _hb_eq⟩ := hpr
-    rw [Multiset.mem_filter] at hb_mem
-    -- hb_mem.2 : ((fun pr => p pr.1 ∧ q pr.2) ∘ Prod.mk a) b = (p a ∧ q b) after β
-    have hpa : p a := hb_mem.2.1
-    exact h hpa
-
-variable {α : Type*}
-
-mutual
-
-/-- The unique cut summand of `cutSummandsG extract T` with empty cut
-    forest is the empty cut `(0, T)`. -/
-private theorem cutSummandsG_filter_empty
-    (extract : RoseTree α → Option (List (RoseTree α))) :
-    ∀ (T : RoseTree α),
-      (cutSummandsG extract T).filter (fun p => p.1.card = 0) =
-        ({((0 : Forest (RoseTree α)), T)} : Multiset _)
-  | .node a cs => by
-    rw [cutSummandsG_node, Multiset.filter_map]
-    -- After filter_map the inner predicate is `(·.1.card = 0) ∘ (fun p => (p.1, .node a p.2))`,
-    -- which is definitionally `fun p => p.1.card = 0`. Use Multiset.filter_congr to
-    -- rewrite the predicate to the form the IH expects.
-    have hcongr :
-        Multiset.filter
-            ((fun p : Forest (RoseTree α) × RoseTree α => p.1.card = 0) ∘
-              fun p : Forest (RoseTree α) × List (RoseTree α) => (p.1, RoseTree.node a p.2))
-            (cutListSummandsG extract cs) =
-        Multiset.filter (fun p => p.1.card = 0) (cutListSummandsG extract cs) := by
-      apply Multiset.filter_congr
-      intro p _
-      rfl
-    rw [hcongr, cutListSummandsG_filter_empty extract cs, Multiset.map_singleton]
-
-/-- The unique list-cut summand of `cutListSummandsG extract cs` with
-    empty cut forest is `(0, cs)`. -/
-private theorem cutListSummandsG_filter_empty
-    (extract : RoseTree α → Option (List (RoseTree α))) :
-    ∀ (cs : List (RoseTree α)),
-      (cutListSummandsG extract cs).filter (fun p => p.1.card = 0) =
-        ({((0 : Forest (RoseTree α)), cs)} : Multiset _)
-  | [] => by
-    rw [cutListSummandsG_nil, Multiset.filter_singleton]
-    rw [if_pos (show (0 : Forest (RoseTree α)).card = 0 from Multiset.card_zero)]
-  | t :: ts => by
-    rw [cutListSummandsG_cons, Multiset.filter_map]
-    -- Convert composed predicate to a conjunction form using card_add.
-    have hcongr :
-        Multiset.filter
-            ((fun p : Forest (RoseTree α) × List (RoseTree α) => p.1.card = 0) ∘
-              fun p : (Forest (RoseTree α) × List (RoseTree α)) ×
-                       (Forest (RoseTree α) × List (RoseTree α)) =>
-                (p.1.1 + p.2.1, p.1.2 ++ p.2.2))
-            (augActionG extract t ×ˢ cutListSummandsG extract ts) =
-        Multiset.filter
-            (fun p : (Forest (RoseTree α) × List (RoseTree α)) ×
-                     (Forest (RoseTree α) × List (RoseTree α)) =>
-              (fun q : Forest (RoseTree α) × List (RoseTree α) => q.1.card = 0) p.1 ∧
-              (fun q : Forest (RoseTree α) × List (RoseTree α) => q.1.card = 0) p.2)
-            (augActionG extract t ×ˢ cutListSummandsG extract ts) := by
-      apply Multiset.filter_congr
-      intro p _
-      show (p.1.1 + p.2.1).card = 0 ↔ p.1.1.card = 0 ∧ p.2.1.card = 0
-      rw [Multiset.card_add, Nat.add_eq_zero_iff]
-    rw [hcongr,
-        filter_product_split (augActionG extract t) (cutListSummandsG extract ts)
-          (fun q : Forest (RoseTree α) × List (RoseTree α) => q.1.card = 0)
-          (fun q : Forest (RoseTree α) × List (RoseTree α) => q.1.card = 0),
-        augActionG_filter_empty extract t,
-        cutListSummandsG_filter_empty extract ts,
-        Multiset.product_singleton, Multiset.map_singleton]
-    show ({((0 : Forest (RoseTree α)) + (0 : Forest (RoseTree α)),
-            ([t] : List (RoseTree α)) ++ ts)} : Multiset _) = _
-    rw [zero_add]
-    rfl
-
-/-- The unique per-child decision of `augActionG extract t` with empty
-    cut forest is `(0, [t])` (the "recurse with empty cut" branch). -/
-private theorem augActionG_filter_empty
-    (extract : RoseTree α → Option (List (RoseTree α))) :
-    ∀ (t : RoseTree α),
-      (augActionG extract t).filter (fun p => p.1.card = 0) =
-        ({((0 : Forest (RoseTree α)), [t])} : Multiset _)
-  | t => by
-    -- Case-split on extract t up-front using the specialized augActionG_eq_*
-    -- lemmas (which avoid the inline match expression).
-    cases h_ext : extract t with
-    | none =>
-      rw [augActionG_eq_none extract t h_ext, Multiset.filter_map]
-      have hcongr :
-          Multiset.filter
-              ((fun p : Forest (RoseTree α) × List (RoseTree α) => p.1.card = 0) ∘
-                fun p : Forest (RoseTree α) × RoseTree α => (p.1, [p.2]))
-              (cutSummandsG extract t) =
-          Multiset.filter (fun p => p.1.card = 0) (cutSummandsG extract t) := by
-        apply Multiset.filter_congr
-        intro p _
-        rfl
-      rw [hcongr, cutSummandsG_filter_empty extract t, Multiset.map_singleton]
-    | some r =>
-      rw [augActionG_eq_some extract t r h_ext, Multiset.filter_cons]
-      -- filter cons: if pred (({t}, r)) then {({t},r)} else 0, plus filter of the tail
-      rw [if_neg (by
-        show ¬ ({t} : Forest (RoseTree α)).card = 0
-        rw [Multiset.card_singleton]
-        decide)]
-      rw [Multiset.zero_add, Multiset.filter_map]
-      have hcongr :
-          Multiset.filter
-              ((fun p : Forest (RoseTree α) × List (RoseTree α) => p.1.card = 0) ∘
-                fun p : Forest (RoseTree α) × RoseTree α => (p.1, [p.2]))
-              (cutSummandsG extract t) =
-          Multiset.filter (fun p => p.1.card = 0) (cutSummandsG extract t) := by
-        apply Multiset.filter_congr
-        intro p _
-        rfl
-      rw [hcongr, cutSummandsG_filter_empty extract t, Multiset.map_singleton]
-
-end
-
-/-- Nonplanar-level descent: the unique cut summand of `cutSummandsCN τ T`
-    with empty cut forest is `(0, T)`. -/
-private theorem cutSummandsCN_filter_empty {α β : Type*}
-    (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β)) :
-    (cutSummandsCN τ T).filter (fun p => p.1.card = 0) =
-      ({((0 : Forest (Nonplanar (α ⊕ β))), T)} : Multiset _) := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = Nonplanar.mk T₀ :=
-    ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
-  rw [cutSummandsCN_mk, Multiset.filter_map]
-  -- `(projSummand p).1.card = (p.1.map Nonplanar.mk).card = p.1.card`; use filter_congr.
-  have hcongr :
-      Multiset.filter
-          ((fun p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β) => p.1.card = 0) ∘
-            projSummand (α := α ⊕ β))
-          (cutSummandsCP (τ ∘ Nonplanar.mk) T₀) =
-      Multiset.filter (fun p : Forest (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β) => p.1.card = 0)
-          (cutSummandsCP (τ ∘ Nonplanar.mk) T₀) := by
-    apply Multiset.filter_congr
-    intro p _
-    show (p.1.map Nonplanar.mk).card = 0 ↔ p.1.card = 0
-    rw [Multiset.card_map]
-  rw [hcongr]
-  show Multiset.map projSummand
-        (Multiset.filter (fun p : Forest (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β) => p.1.card = 0)
-          (cutSummandsG (extractC (τ ∘ Nonplanar.mk)) T₀)) = _
-  rw [cutSummandsG_filter_empty (extractC (τ ∘ Nonplanar.mk)) T₀,
-      Multiset.map_singleton]
-  show ((((0 : Forest (RoseTree (α ⊕ β))).map Nonplanar.mk : Forest (Nonplanar (α ⊕ β))),
-         Nonplanar.mk T₀) : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) ::ₘ 0 = _
-  rw [Multiset.map_zero]
-  rfl
-
-
 /-- Sum-of-conditional helper: sum of a multiset map where each entry is
     conditionally zero equals the sum over the filtered subset. -/
 private lemma sum_map_ite_zero {ι M : Type*} [AddCommMonoid M]
@@ -1099,14 +899,14 @@ private lemma sum_map_ite_zero {ι M : Type*} [AddCommMonoid M]
 
 /-! ### Counit laws + Bialgebra instance
 
-With `comulCN_coassoc` structurally closed (modulo 4 deferred substrate
-sorries), the remaining inputs to `Bialgebra.ofAlgHom` are:
+The three inputs to `Bialgebra.ofAlgHom`:
 1. The AlgHom-form coassoc (`comulCAlgHomN_coassoc_algHom`).
 2. The right counit law (`counit_rTensor_comulCAlgHomN`).
 3. The left counit law (`counit_lTensor_comulCAlgHomN`).
 
-Each lands here. The per-tree counit laws are derived from the empty-cut
-uniqueness substrate (`cutSummandsCN_filter_empty`) above. -/
+The per-tree counit laws are derived from the empty-cut uniqueness of
+the enumeration (`cutSummandsCN_filter_empty`,
+`Core/Combinatorics/RootedTree/Cut.lean`). -/
 
 section BialgebraInst
 variable {R' : Type*} [CommRing R'] {α' β' : Type*}
@@ -1130,10 +930,9 @@ theorem comulCAlgHomN_coassoc_algHom
 
 /-! ### Counit laws — factored via per-tree + forest helpers
 
-Mirrors the Δ^ρ proof structure in `PruningNonplanar.lean` (lines
-1049-1598). The headline theorems are CLOSED structurally from two
-per-tree sorries that capture the `cutSummandsCN` substrate work
-(the (0, T) summand + non-zero-p₁ killing under `counit ⊗ id`). -/
+Mirrors the Δ^ρ proof structure in `Coproduct/PruningNonplanar.lean`:
+per-tree laws from empty-cut uniqueness, lifted to forests by
+multiplicativity. -/
 
 /-- **Per-tree right counit law**: under `(counit ⊗ id)`, only the `(0, T)`
     cut summand of `cutSummandsCN τ T` survives, contributing `1 ⊗ ofTree T`.
@@ -1357,11 +1156,7 @@ theorem counit_lTensor_comulCAlgHomN (τ : Nonplanar (α' ⊕ β') → β') :
     `Bialgebra.ofAlgHom` with `comulCAlgHomN τ` as the coproduct and the
     inherited `counit` from CK. A `def`, not an `instance`: coassociativity
     needs `TraceCoherent τ` (it is false for arbitrary `τ` — see
-    `comulCN_coassoc`), which instance resolution cannot synthesize.
-    Depends on:
-    * `comulCAlgHomN_coassoc_algHom` (sorried, under trace coherence).
-    * `counit_rTensor_comulCAlgHomN` (proved).
-    * `counit_lTensor_comulCAlgHomN` (proved). -/
+    `comulCN_coassoc`), which instance resolution cannot synthesize. -/
 @[reducible] noncomputable def bialgebraC
     (τ : Nonplanar (α' ⊕ β') → β')
     (hτ : TraceCoherent τ) :

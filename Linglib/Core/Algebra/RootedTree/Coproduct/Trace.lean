@@ -72,9 +72,9 @@ in *at-most-n-ary* trees), see `Pruning.lean`.
 
 ## Architecture
 
-The cut enumeration is delegated to `Defs.lean`'s `cutSummandsG (extract)`,
-parameterized by an extraction policy. Δ^c specializes via the extraction
-policy `extractC τ`:
+The cut enumeration is delegated to `cutSummandsG (extract)`
+(`Core/Combinatorics/RootedTree/Cut.lean`), parameterized by an
+extraction policy. Δ^c specializes via the extraction policy `extractC τ`:
 
 - For `Sum.inl`-rooted (non-trace) subtrees: extract whole, leaving
   `[traceLeaf (τ t)]` as a single replacement leaf.
@@ -86,8 +86,7 @@ policy `extractC τ`:
 
 ## Status
 
-`[UPSTREAM]` candidate; future home something like
-`Mathlib.Combinatorics.Nonplanar.CoproductDecorated`. Sorry-free.
+`[UPSTREAM]` candidate.
 -/
 
 
