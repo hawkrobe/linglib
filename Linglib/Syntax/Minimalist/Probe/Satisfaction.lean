@@ -49,12 +49,12 @@ namespace Minimalist
     This turns the Mam bridge's prose account into a computable derivation:
     ```
     def mamInflSatisfaction : SatisfactionCond :=
-.disjunctive [.featureMatch (.phi (.person.third)),.headEncounter.v]
+.disjunctive [.featureMatch .person, .headEncounter .v]
     ```
 -/
 inductive SatisfactionCond where
   /-- Standard: probe is satisfied by finding a matching valued feature. -/
-  | featureMatch : FeatureVal → SatisfactionCond
+  | featureMatch : FeatureType → SatisfactionCond
   /-- Disjunctive: probe is satisfied by ANY of these conditions.
       Models [deal-2024]'s interaction-based probes. -/
   | disjunctive : List SatisfactionCond → SatisfactionCond
@@ -68,7 +68,7 @@ inductive SatisfactionCond where
 private def atomicSatisfied (cond : SatisfactionCond) (fb : FeatureBundle)
     (ctx : Option Cat) : Bool :=
   match cond with
-  | .featureMatch ft => hasValuedFeature fb ft
+  | .featureMatch ft => fb.hasValuedFeature ft
   | .headEncounter cat => ctx == some cat
   | .disjunctive _ => false  -- nested disjunctions handled at top level
 
@@ -80,7 +80,7 @@ private def atomicSatisfied (cond : SatisfactionCond) (fb : FeatureBundle)
 def SatisfactionCond.isSatisfied (cond : SatisfactionCond) (fb : FeatureBundle)
     (ctx : Option Cat) : Bool :=
   match cond with
-  | .featureMatch ft => hasValuedFeature fb ft
+  | .featureMatch ft => fb.hasValuedFeature ft
   | .disjunctive conds => conds.any (atomicSatisfied · fb ctx)
   | .headEncounter cat => ctx == some cat
 
@@ -93,10 +93,10 @@ def SatisfactionCond.isSatisfied (cond : SatisfactionCond) (fb : FeatureBundle)
 def SatisfactionCond.copiedFeatures (cond : SatisfactionCond) (fb : FeatureBundle)
     (ctx : Option Cat) : Bool :=
   match cond with
-  | .featureMatch ft => hasValuedFeature fb ft
+  | .featureMatch ft => fb.hasValuedFeature ft
   | .disjunctive conds =>
     match conds.find? (atomicSatisfied · fb ctx) with
-    | some (.featureMatch ft) => hasValuedFeature fb ft
+    | some (.featureMatch ft) => fb.hasValuedFeature ft
     | _ => false  -- head encounter or nested → no features copied
   | .headEncounter _ => false
 
@@ -111,7 +111,7 @@ def SatisfactionCond.toProbe {α : Type*} (cond : SatisfactionCond)
 /-- Mam's Infl probe satisfaction condition:
     satisfied by EITHER matching φ-features OR encountering transitive Voice. -/
 def mamInflSatisfaction : SatisfactionCond :=
-  .disjunctive [.featureMatch (.phi (.person .third)), .headEncounter .v]
+  .disjunctive [.featureMatch .person, .headEncounter .v]
 
 /-- Intransitive environment: the probe encounters a DP with φ-features
     (no Voice_TR in the way). Feature match is satisfied → real agreement. -/
@@ -138,15 +138,15 @@ theorem mam_intransitive_copies :
 /-- Infl's satisfaction condition, unfolded: φ-match or Voice_TR encounter. -/
 theorem mamInflSatisfaction_isSatisfied (fb : FeatureBundle) (ctx : Option Cat) :
     mamInflSatisfaction.isSatisfied fb ctx
-      = (hasValuedFeature fb (.phi (.person .third)) || ctx == some Cat.v) := by
+      = (fb.hasValuedFeature .person || ctx == some Cat.v) := by
   simp [mamInflSatisfaction, SatisfactionCond.isSatisfied, atomicSatisfied]
 
 /-- Head-encounter satisfaction never copies: Infl copies features iff
     they are there to copy, whatever the context. -/
 theorem mamInflSatisfaction_copiedFeatures (fb : FeatureBundle) (ctx : Option Cat) :
     mamInflSatisfaction.copiedFeatures fb ctx
-      = hasValuedFeature fb (.phi (.person .third)) := by
-  cases hv : hasValuedFeature fb (.phi (.person .third)) <;>
+      = fb.hasValuedFeature .person := by
+  cases hv : fb.hasValuedFeature .person <;>
     cases hc : ctx == some Cat.v <;>
       simp [mamInflSatisfaction, SatisfactionCond.copiedFeatures, atomicSatisfied,
         List.find?, hv, hc]

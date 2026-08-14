@@ -235,7 +235,7 @@ def dp3sg : FeatureBundle :=
 
 /-- Voice's [uPerson] is valued as [Person:3] from a 3SG agent. -/
 theorem voice_agrees_person :
-    applyAgree voiceProbe dp3sg (.phi (.person .third)) =
+    applyAgree voiceProbe dp3sg .person =
     some (.ofGramFeatures
       [.valued (.phi (.person .third)), .unvalued (.phi (.number .singular))]) := by
   native_decide
@@ -245,7 +245,7 @@ theorem voice_agrees_person :
 theorem voice_agrees_number :
     let afterPerson : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .third)), .unvalued (.phi (.number .singular))]
-    applyAgree afterPerson dp3sg (.phi (.number .singular)) =
+    applyAgree afterPerson dp3sg .number =
     some (.ofGramFeatures
       [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]) := by
   native_decide
@@ -256,8 +256,8 @@ def voiceFullyAgreed : FeatureBundle :=
 
 /-- The two-step Agree pipeline produces a fully valued bundle. -/
 theorem voice_agree_pipeline :
-    (applyAgree voiceProbe dp3sg (.phi (.person .third))).bind
-      (λ fb => applyAgree fb dp3sg (.phi (.number .singular))) =
+    (applyAgree voiceProbe dp3sg .person).bind
+      (λ fb => applyAgree fb dp3sg .number) =
     some voiceFullyAgreed := by
   native_decide
 
@@ -378,11 +378,11 @@ theorem intransitive_pipeline_1sg :
     (applyAgree inflProbe
       (.ofGramFeatures
         [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
-      (.phi (.person .third))).bind
+      .person).bind
       (λ fb => applyAgree fb
         (.ofGramFeatures
           [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
-        (.phi (.number .singular))) =
+        .number) =
     some (.ofGramFeatures
       [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]) ∧
     -- Spells out as "chin" (not default "tz'=")
@@ -405,8 +405,8 @@ theorem intransitive_pipeline_1sg :
     5. Patient is not φ-Agreed-with → overt pronoun required -/
 theorem full_pipeline_3sg_transitive :
     -- Step 1-2: Voice Agrees and spells out as Set A
-    (applyAgree voiceProbe dp3sg (.phi (.person .third))).bind
-      (λ fb => applyAgree fb dp3sg (.phi (.number .singular))) = some voiceFullyAgreed ∧
+    (applyAgree voiceProbe dp3sg .person).bind
+      (λ fb => applyAgree fb dp3sg .number) = some voiceFullyAgreed ∧
     spellout setAVocab voiceFullyAgreed (some .v) = some "t-" ∧
     -- Step 3-4: Infl probe blocked → default Set B
     spellout setBVocab (⊥ : FeatureBundle) (some .T) = some "tz'=" ∧
@@ -491,13 +491,13 @@ theorem different_probe_heads :
     unvalued (empty) bundle spells out as the Elsewhere entry — the Set B "tz'="
     observed in Mam transitives. -/
 theorem transitive_is_probe_failure :
-    (phiProbe (.phi (.person .third))).outcome [⊥] = .unvalued := by
+    (phiProbe .person).outcome [⊥] = .unvalued := by
   native_decide
 
 /-- The intransitive case is real agreement: Infl's φ-probe finds S, so its
     outcome is `valued`. -/
 theorem intransitive_is_real_agreement :
-    (phiProbe (.phi (.person .third))).outcome
+    (phiProbe .person).outcome
       [.ofGramFeatures
         [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]]
       = .valued := by
@@ -599,7 +599,7 @@ def voiceTR : Encounter := ⟨none, ⊥, some .v⟩
 def dpGoal (p : ArgPosition) (φ : FeatureBundle) : Encounter := ⟨some p, φ, none⟩
 
 /-- Voice's probe: standard φ feature-match (no head-encounter disjunct). -/
-def voiceSat : SatisfactionCond := .featureMatch (.phi (.person .third))
+def voiceSat : SatisfactionCond := .featureMatch .person
 
 /-- A probe over an empty search space agrees with nothing. -/
 theorem agreesWith_nil (cond : SatisfactionCond) :
@@ -632,7 +632,7 @@ theorem infl_truncated_at_voiceTR (rest : List Encounter) :
 /-- In an intransitive, Infl's search finds S and copies its features,
     provided S bears person. -/
 theorem infl_finds_S (φS : FeatureBundle)
-    (hS : hasValuedFeature φS (.phi (.person .third)) = true) :
+    (hS : φS.hasValuedFeature .person = true) :
     agreesWith mamInflSatisfaction [dpGoal .S φS] = some .S := by
   simp [agreesWith, satProbe, SatisfactionCond.toProbe, Probe.agree, Probe.search,
     Option.filter_some, dpGoal, mamInflSatisfaction_isSatisfied,
@@ -641,7 +641,7 @@ theorem infl_finds_S (φS : FeatureBundle)
 /-- Voice's search finds the agent (closest goal), provided A bears
     person. -/
 theorem voice_finds_A (φA φP : FeatureBundle)
-    (hA : hasValuedFeature φA (.phi (.person .third)) = true) :
+    (hA : φA.hasValuedFeature .person = true) :
     agreesWith voiceSat [dpGoal .A φA, dpGoal .P φP] = some .A := by
   simp [agreesWith, satProbe, SatisfactionCond.toProbe, Probe.agree, Probe.search,
     Option.filter_some, dpGoal, voiceSat, SatisfactionCond.isSatisfied,
@@ -660,8 +660,8 @@ def derivedAgreeProbe (φA φP φS : FeatureBundle) (p : ArgPosition) :
 /-- The stipulated table coincides with the derivation, for any clause
     whose A and S bear person features. -/
 theorem agreeProbe_eq_derived (φA φP φS : FeatureBundle)
-    (hA : hasValuedFeature φA (.phi (.person .third)) = true)
-    (hS : hasValuedFeature φS (.phi (.person .third)) = true) :
+    (hA : φA.hasValuedFeature .person = true)
+    (hS : φS.hasValuedFeature .person = true) :
     ∀ p, agreeProbe p = derivedAgreeProbe φA φP φS p := by
   intro p
   cases p with
