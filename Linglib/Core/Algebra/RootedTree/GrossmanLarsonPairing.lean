@@ -175,6 +175,27 @@ theorem pairing_symm (x y : ConnesKreimer R (Nonplanar α)) :
     pairing (R := R) x 0 = 0 :=
   LinearMap.map_zero _
 
+/-- Pairing against the unit extracts the counit (the coefficient of the
+    empty forest): `⟨w, 1⟩ = ε w`. -/
+theorem pairing_one_right (w : ConnesKreimer R (Nonplanar α)) :
+    pairing (R := R) w (1 : ConnesKreimer R (Nonplanar α)) =
+      (ConnesKreimer.counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R) w := by
+  have h : (pairing (R := R)).flip (1 : ConnesKreimer R (Nonplanar α)) =
+      (ConnesKreimer.counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R).toLinearMap :=
+    ConnesKreimer.lhom_ext' fun F => by
+      show pairing (R := R) (ConnesKreimer.of' F)
+          (ConnesKreimer.of' (0 : Forest (Nonplanar α))) =
+        (ConnesKreimer.counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
+          (ConnesKreimer.of' F)
+      rw [pairing_of'_of', ConnesKreimer.counit_of']
+      by_cases h : F = (0 : Forest (Nonplanar α))
+      · subst h
+        rw [if_pos rfl, if_pos Multiset.card_zero]
+        show ((Nonplanar.forestAutCard (0 : Forest (Nonplanar α)) : ℕ) : R) = 1
+        rw [Nonplanar.forestAutCard_zero, Nat.cast_one]
+      · rw [if_neg h, if_neg (by simpa [Multiset.card_eq_zero] using h)]
+  exact LinearMap.congr_fun h w
+
 /-- Each pairing against a basis element `of' G` extracts the coefficient
     of `G` in `x`, weighted by `forestAutCard G`. Proof: reduce to basis
     via `Finsupp.induction_linear` on `x`, then `pairing_of'_of'`. -/

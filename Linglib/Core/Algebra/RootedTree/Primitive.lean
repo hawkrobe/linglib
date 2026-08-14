@@ -64,7 +64,7 @@ theorem lcoeff_singleton_isDualPrimitive :
         (CoalgebraStruct.counit).smulRight (lcoeff R {T}) := by
     refine lhom_ext' fun F => lhom_ext' fun G => ?_
     simp only [LinearMap.compr₂_apply, LinearMap.mul_apply', LinearMap.add_apply,
-      LinearMap.smulRight_apply, LinearMap.smul_apply, smul_eq_mul, coalgebraCounit_apply]
+      LinearMap.smulRight_apply, LinearMap.smul_apply, smul_eq_mul, coalgebra_counit_apply]
     rw [← of'_add]
     simp only [lcoeff_apply, coeff_of', counit_of', ite_zero_mul_ite_zero, one_mul]
     have hiff : F + G = ({T} : Forest (Nonplanar α)) ↔
