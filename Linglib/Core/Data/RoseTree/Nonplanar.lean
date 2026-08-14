@@ -243,6 +243,10 @@ theorem node_pair_mk (a : α) (p q : RoseTree α) :
     node a {mk p, mk q} = mk (.node a [p, q]) :=
   node_mk_tree_list a [p, q]
 
+/-- The empty-forest node is the leaf. -/
+@[simp] theorem node_zero (a : α) :
+    node a (0 : Multiset (Nonplanar α)) = leaf a := rfl
+
 /-- Choose planar representatives for a whole forest at once: every
     `Multiset (Nonplanar α)` is the `mk`-image of a list of planar trees. Descent
     proofs that use this eliminator meet `node_mk_tree_list` on the nose, with no
@@ -335,6 +339,27 @@ theorem numNodes_pos (t : Nonplanar α) : 0 < t.numNodes := by
   refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
   show (mk (Quotient.out t)).numNodes = numNodes t
   exact congrArg numNodes (Quotient.out_eq t)
+
+/-! ### Depth of a `node` -/
+
+/-- A tree's depth is strictly less than the depth of any node containing
+    it as a child. -/
+theorem depth_lt_of_mem (T : Nonplanar α) (F : Multiset (Nonplanar α))
+    (hT : T ∈ F) (a : α) : T.depth < (node a F).depth := by
+  revert hT
+  induction F using forest_inductionOn with
+  | h ps =>
+    intro hT
+    rw [node_mk_tree_list]
+    show T.depth < (RoseTree.node a ps).depth
+    rw [RoseTree.depth_node]
+    rw [show (Multiset.ofList (ps.map mk) : Multiset (Nonplanar α)) =
+          ((ps.map mk : List (Nonplanar α)) : Multiset _) from rfl,
+        Multiset.mem_coe, List.mem_map] at hT
+    obtain ⟨c, hc, rfl⟩ := hT
+    show (mk c).depth < 1 + (ps.map RoseTree.depth).foldr max 0
+    rw [depth_mk, Nat.add_comm]
+    exact Nat.lt_succ_of_le (RoseTree.depth_le_foldr_max hc)
 
 end RoseTree.Nonplanar
 

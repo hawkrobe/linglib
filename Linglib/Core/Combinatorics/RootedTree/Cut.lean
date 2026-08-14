@@ -698,6 +698,15 @@ noncomputable def cutSummandsN :
 @[simp] theorem cutSummandsN_mk (T : RoseTree α) :
     cutSummandsN (Nonplanar.mk T) = (cutSummandsP T).map projSummand := rfl
 
+/-- The cut summands of a leaf: only the empty cut `(0, leaf a)`. -/
+theorem cutSummandsN_leaf (a : α) :
+    cutSummandsN (Nonplanar.leaf a : Nonplanar α) =
+      ({((0 : Multiset (Nonplanar α)), Nonplanar.leaf a)} : Multiset _) := by
+  show (cutSummandsP (RoseTree.leaf a)).map (projSummand (α := α)) = _
+  rw [show RoseTree.leaf a = RoseTree.node a [] from rfl, cutSummandsP_node,
+      cutListSummandsP_nil, Multiset.map_singleton, Multiset.map_singleton]
+  rfl
+
 /-- Number of Δ^ρ cut summands of `T` whose cut forest is `{T₁}` and whose
     remainder tree is `T₂` — the Δ^ρ analog of the count `c^T_{T₁,T₂}` of
     [marcolli-chomsky-berwick-2025]. -/
@@ -771,24 +780,8 @@ noncomputable def cutForestSummandsN (F : Multiset (Nonplanar α)) :
 /-! ### Bridges to the tree-level list representation
 
 The tree-level substrate `cutListSummandsP` (defined on `List (RoseTree α)`)
-is reused to evaluate `cutForestSummandsN` on a tree-level list rep, and
-to characterize cuts of a Nonplanar node. These bridges are private —
-the public `cutSummandsN_node` and `comulForestN_eq_sum` are stated
-purely at the Nonplanar level. -/
-
-/-- Witness: every `F : Multiset (Nonplanar α)` has a tree-level list
-    representative. Used internally to lift tree-level-side characterizations
-    to the Nonplanar level. -/
-theorem exists_planar_list_rep (F : Multiset (Nonplanar α)) :
-    ∃ ps : List (RoseTree α), F = Multiset.ofList (ps.map Nonplanar.mk) := by
-  refine ⟨F.toList.map Quotient.out, ?_⟩
-  conv_lhs => rw [← Multiset.coe_toList F]
-  congr 1
-  rw [List.map_map]
-  conv_lhs => rw [show F.toList = F.toList.map id from (List.map_id _).symm]
-  apply List.map_congr_left
-  intro x _
-  exact (Quotient.out_eq x).symm
+evaluates `cutForestSummandsN` on a tree-level list rep and characterizes
+cuts of a Nonplanar node (`cutSummandsN_node`). -/
 
 /-- `cutForestSummandsN` evaluated on a tree-level list rep agrees with the
     tree-level `cutListSummandsP` projected through `projForest`. By
@@ -825,53 +818,14 @@ theorem cutSummandsN_node_planar_list (a : α) (ps : List (RoseTree α)) :
   rw [← Nonplanar.node_mk_tree_list]
   rfl
 
-/-! ### Empty cut existence (substrate for counit laws)
-
-The empty cut `(0, T)` is always a cut summand of `T`. The tree-level
-substrate `cutSummandsP T` always contains `(0, T)`, by mutual structural
-induction with `cutListSummandsP`; the nonplanar `cutForestSummandsN F`
-contains `(0, F)` by descent. These witnesses split the `(counit ⊗ id)`
-sum into a single non-vanishing summand `1 ⊗ of' F`. -/
-
-mutual
-
-/-- The empty cut `(0, T)` is a cut summand of every tree-level tree `T`. -/
-theorem mem_cutSummandsP_zero : ∀ (T : RoseTree α),
-    ((0 : Multiset (RoseTree α)), T) ∈ cutSummandsP T
-  | .node a cs => by
-    rw [cutSummandsP_node, Multiset.mem_map]
-    exact ⟨(0, cs), mem_cutListSummandsP_zero cs, rfl⟩
-
-/-- The empty cut `(0, ps)` is a list cut summand of every tree-level list `ps`. -/
-theorem mem_cutListSummandsP_zero : ∀ (ps : List (RoseTree α)),
-    ((0 : Multiset (RoseTree α)), ps) ∈ cutListSummandsP ps
-  | [] => by
-    rw [cutListSummandsP_nil]; exact Multiset.mem_singleton.mpr rfl
-  | t :: ts => by
-    rw [cutListSummandsP_cons, Multiset.mem_map]
-    refine ⟨((0, Option.some t), (0, ts)), ?_, ?_⟩
-    · rw [Multiset.mem_product, augActionP_eq, Multiset.mem_cons]
-      refine ⟨Or.inr ?_, mem_cutListSummandsP_zero ts⟩
-      rw [Multiset.mem_map]
-      exact ⟨(0, t), mem_cutSummandsP_zero t, rfl⟩
-    · -- The cons combiner with `(0, some t)` and `(0, ts)` gives `(0, t :: ts)`
-      -- via `0 + 0 = 0`.
-      show (((0 : Multiset (RoseTree α)) + (0 : Multiset (RoseTree α))), t :: ts) =
-           ((0 : Multiset (RoseTree α)), t :: ts)
-      rw [zero_add]
-
-end
-
-/-- The empty cut `(0, F)` is a forest cut summand of every nonplanar forest `F`. -/
-theorem cutForestSummandsN_zero_mem (F : Multiset (Nonplanar α)) :
-    ((0 : Multiset (Nonplanar α)), F) ∈ cutForestSummandsN F := by
-  obtain ⟨ps, rfl⟩ := exists_planar_list_rep F
-  rw [cutForestSummandsN_via_planar_list, Multiset.mem_map]
-  refine ⟨(0, ps), mem_cutListSummandsP_zero ps, ?_⟩
-  show ((0 : Multiset (RoseTree α)).map Nonplanar.mk,
-        Multiset.ofList (ps.map Nonplanar.mk)) =
-       ((0 : Multiset (Nonplanar α)), Multiset.ofList (ps.map Nonplanar.mk))
-  rw [Multiset.map_zero]
+/-- Cuts of `Nonplanar.node a F` decompose along the per-tree decisions
+    of `F`: each pair `(cf, rem) ∈ cutForestSummandsN F` gives a cut
+    summand `(cf, Nonplanar.node a rem)`. The Nonplanar-level form. -/
+@[simp] theorem cutSummandsN_node (a : α) (F : Multiset (Nonplanar α)) :
+    cutSummandsN (Nonplanar.node a F) =
+      (cutForestSummandsN F).map (fun pf => (pf.1, Nonplanar.node a pf.2)) := by
+  induction F using Nonplanar.forest_inductionOn with
+  | h ps => rw [cutSummandsN_node_planar_list, ← cutForestSummandsN_via_planar_list]
 
 /-! ### `traceLeaf` — placeholder for a cut subtree -/
 
