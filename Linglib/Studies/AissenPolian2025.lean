@@ -89,8 +89,9 @@ alongside Tz'utujil, Chickasaw, Sinitic double-unaccusative).
 - `JudgmentType` — [kuroda-1972]'s categorical/thetic distinction, defined in §9
 - `GramFunction`, `absPosition` from `Fragments/Mayan/Tseltalan.lean`
 - `ABSPosition` from `Fragments/Mayan/Params.lean`
-- `Probe.Profile`, `closestGoalB`, `behindHorizonB` from
-  `Syntax/Minimalist/Agree.lean`; `SyntacticObject` construction DSL (`SyntacticObject.ofPlanar`,
+- `Probe.Profile` from `Syntax/Minimalist/Probe/Profile.lean`;
+  `isClosestGoalIn`, `behindHorizonIn` from `Syntax/Minimalist/Agree/Basic.lean`;
+  `SyntacticObject` construction DSL (`SyntacticObject.ofPlanar`,
   `SyntacticObject.leafP`, `SyntacticObject.nodeP`, `SyntacticObject.lexLeaf`) from
   `Syntax/Minimalist/SyntacticObject/Build.lean`
 -/
@@ -878,8 +879,8 @@ The boolean functions `dLayerShields`, `hasIntervener`, and
 `canExtractPossessor` above capture the paper's predictions but
 **stipulate** them directly. Here we **derive** them from Attract
 Closest applied to concrete `SyntacticObject` trees
-([aissen-polian-2025] (9a-c)), using `closestGoalB` from
-`Minimalist.Agree`.
+([aissen-polian-2025] (9a-c)), using `isClosestGoalIn` from
+`Syntax/Minimalist/Agree/Basic.lean`.
 
 **Key derivation**: T°'s [EPP:D] probe searches its c-command domain
 for the closest D-bearing element. The result depends only on tree
@@ -910,7 +911,7 @@ private def hasDFeatures (s : SyntacticObject) : Bool :=
 
 Concrete trees are built **planar-first**
 (`SyntacticObject.ofPlanar`/`SyntacticObject.nodeP`/`SyntacticObject.leafP`)
-because Merge (`SyntacticObject.node`) is noncomputable; `closestGoalB`/`behindHorizonB` then
+because Merge (`SyntacticObject.node`) is noncomputable; `isClosestGoalIn`/`behindHorizonIn` then
 reduce under `decide`. Each leaf `SyntacticObject` is `SyntacticObject.lexLeaf` of its token, and
 the trees
 reference the same tokens via `SyntacticObject.leafP` so the two match definitionally. -/
@@ -973,41 +974,41 @@ private def treeTransDP : SyntacticObject :=
 
 /-! ### Core Predictions
 
-Each theorem shows that `closestGoalB` computes the correct
+Each theorem shows that `isClosestGoalIn` computes the correct
 result for T°'s [EPP:D] probe searching for the possessor. -/
 
 /-- **Unaccusative + PossP**: possessor IS the closest D-bearer to T°.
     No D-layer, no agent → T°'s probe reaches possessor directly.
     This is why stranding is available. -/
 theorem unacc_possP_psr_closest :
-    closestGoalB treeUnaccPossP T₀ Psr hasDFeatures = true := by decide
+    isClosestGoalIn treeUnaccPossP T₀ Psr hasDFeatures := by decide
 
 /-- **Unaccusative + DP**: possessor is NOT the closest D-bearer.
     D° is closer to T° than the possessor inside Spec,PossP.
     This is D-layer shielding — stranding is blocked. -/
 theorem unacc_dp_psr_blocked :
-    closestGoalB treeUnaccDP T₀ Psr hasDFeatures = false := by decide
+    ¬ isClosestGoalIn treeUnaccDP T₀ Psr hasDFeatures := by decide
 
 /-- **Unaccusative + DP**: D° IS the closest D-bearer to T°.
     The whole DP is what T°'s probe attracts — basis for pied-piping. -/
 theorem unacc_dp_dHead_closest :
-    closestGoalB treeUnaccDP T₀ D₀ hasDFeatures = true := by decide
+    isClosestGoalIn treeUnaccDP T₀ D₀ hasDFeatures := by decide
 
 /-- **Transitive + PossP**: possessor is NOT the closest D-bearer.
     Agent in Spec,vP is closer — the agent intervenes.
     This is why stranding is blocked in transitives. -/
 theorem trans_possP_psr_blocked :
-    closestGoalB treeTransPossP T₀ Psr hasDFeatures = false := by decide
+    ¬ isClosestGoalIn treeTransPossP T₀ Psr hasDFeatures := by decide
 
 /-- **Transitive + PossP**: agent IS the closest D-bearer to T°.
     T°'s probe attracts the agent, not the possessor. -/
 theorem trans_possP_agt_closest :
-    closestGoalB treeTransPossP T₀ Agt hasDFeatures = true := by decide
+    isClosestGoalIn treeTransPossP T₀ Agt hasDFeatures := by decide
 
 /-- **Transitive + DP**: double blocking — both agent AND D° shield
     the possessor from T°'s probe. -/
 theorem trans_dp_psr_blocked :
-    closestGoalB treeTransDP T₀ Psr hasDFeatures = false := by decide
+    ¬ isClosestGoalIn treeTransDP T₀ Psr hasDFeatures := by decide
 
 /-! ### Bridge Theorems
 
@@ -1017,23 +1018,23 @@ corresponding boolean function, showing they make identical claims. -/
 
 /-- D-layer shielding: tree geometry matches `DLayerShields .dp`. -/
 theorem bridge_dLayer_dp :
-    closestGoalB treeUnaccDP T₀ Psr hasDFeatures = false ∧
+    ¬ isClosestGoalIn treeUnaccDP T₀ Psr hasDFeatures ∧
     DLayerShields .dp := ⟨by decide, trivial⟩
 
 /-- No D-layer for PossP: tree geometry matches `DLayerShields .possP`. -/
 theorem bridge_no_dLayer_possP :
-    closestGoalB treeUnaccPossP T₀ Psr hasDFeatures = true ∧
+    isClosestGoalIn treeUnaccPossP T₀ Psr hasDFeatures ∧
     ¬ DLayerShields .possP := ⟨by decide, id⟩
 
 /-- Agent intervention: tree geometry matches `HasIntervener .t .transitive`. -/
 theorem bridge_intervention_trans :
-    closestGoalB treeTransPossP T₀ Psr hasDFeatures = false ∧
+    ¬ isClosestGoalIn treeTransPossP T₀ Psr hasDFeatures ∧
     HasIntervener .t .transitive false := ⟨by decide, trivial⟩
 
 /-- No intervention in unaccusative: tree geometry matches
     `HasIntervener .t .unaccusative`. -/
 theorem bridge_no_intervention_unacc :
-    closestGoalB treeUnaccPossP T₀ Psr hasDFeatures = true ∧
+    isClosestGoalIn treeUnaccPossP T₀ Psr hasDFeatures ∧
     ¬ HasIntervener .t .unaccusative false := ⟨by decide, id⟩
 
 -- ============================================================================
@@ -1045,7 +1046,7 @@ theorem bridge_no_intervention_unacc :
 Selective opacity ([keine-2019], [aissen-polian-2025] (33))
 states that N° is a horizon for wh-probes: C°'s [EPP:WH] probe
 cannot see elements c-commanded by N° (= inside the nominal's
-lexical projection). Here we derive this from `behindHorizonB`
+lexical projection). Here we derive this from `behindHorizonIn`
 applied to concrete trees.
 
 The key geometric fact: in `[PossP Psr N°]`, N° and Psr are sisters,
@@ -1055,8 +1056,8 @@ N°) remains visible — which is why pied-piping works.
 
 Together with § 15 (Attract Closest), both pillars of A&P's analysis
 are now derived from tree geometry:
-- **D-layer shielding / intervention** → `closestGoalB` (§ 15)
-- **Selective opacity** → `behindHorizonB` (§ 16)
+- **D-layer shielding / intervention** → `isClosestGoalIn` (§ 15)
+- **Selective opacity** → `behindHorizonIn` (§ 16)
 -/
 
 private def tC₀ : LIToken := ⟨.simple .C [], 8⟩
@@ -1084,20 +1085,20 @@ private def treeCPUnaccPossP : SyntacticObject :=
     subextract the possessor from inside the DP. N° (Psm) c-commands
     Psr (they are sisters in PossP), so Psr is in N°'s opaque domain. -/
 theorem psr_behind_horizon_dp :
-    behindHorizonB treeCPUnaccDP C₀ Psr .N = true := by decide
+    behindHorizonIn treeCPUnaccDP C₀ Psr .N := by decide
 
 /-- Psr is behind the N-horizon in the PossP tree: selective opacity
     applies regardless of nominal size. Even without a D layer, N°
     c-commands Psr. -/
 theorem psr_behind_horizon_possP :
-    behindHorizonB treeCPUnaccPossP C₀ Psr .N = true := by decide
+    behindHorizonIn treeCPUnaccPossP C₀ Psr .N := by decide
 
 /-- D° is NOT behind the N-horizon: N° (Psm) does not c-command D°.
     D° is a sister of PossP, not inside N°'s c-command domain. This
     is why pied-piping (whole DP movement to Spec,CP) is available:
     the wh-probe can see D° even though it cannot see inside PossP. -/
 theorem dHead_not_behind_horizon :
-    behindHorizonB treeCPUnaccDP C₀ D₀ .N = false := by decide
+    ¬ behindHorizonIn treeCPUnaccDP C₀ D₀ .N := by decide
 
 /-- The N-horizon is geometrically present even for D-probes — N°
     c-commands Psr regardless of probe type. The difference is that
@@ -1105,7 +1106,7 @@ theorem dHead_not_behind_horizon :
     This is the "selective" in selective opacity: the same tree
     geometry produces different results for different probe types. -/
 theorem horizon_present_but_dprobe_ignores :
-    behindHorizonB treeUnaccPossP T₀ Psr .N = true ∧
+    behindHorizonIn treeUnaccPossP T₀ Psr .N ∧
     ¬ SelectivelyOpaque .dProbe := ⟨by decide, id⟩
 
 /-! ### Bridge Theorems -/
@@ -1114,8 +1115,8 @@ theorem horizon_present_but_dprobe_ignores :
     wh-subextraction of Psr from both DP and PossP nominals,
     agreeing with `CanĀSubextract` (which is size-independent). -/
 theorem bridge_selective_opacity :
-    behindHorizonB treeCPUnaccDP C₀ Psr .N = true ∧
-    behindHorizonB treeCPUnaccPossP C₀ Psr .N = true ∧
+    behindHorizonIn treeCPUnaccDP C₀ Psr .N ∧
+    behindHorizonIn treeCPUnaccPossP C₀ Psr .N ∧
     ¬ CanĀSubextract :=
   ⟨by decide, by decide, subextraction_impossible⟩
 
@@ -1123,7 +1124,7 @@ theorem bridge_selective_opacity :
     D° is outside N°'s c-command domain. Agrees with
     `ExtractionAvailable .piedPiping .dp`. -/
 theorem bridge_piedpiping_ok :
-    behindHorizonB treeCPUnaccDP C₀ D₀ .N = false ∧
+    ¬ behindHorizonIn treeCPUnaccDP C₀ D₀ .N ∧
     ExtractionAvailable .piedPiping .dp := ⟨by decide, trivial⟩
 
 /-! ### Unified Derivation -/
@@ -1132,16 +1133,16 @@ theorem bridge_piedpiping_ok :
     intervention, selective opacity, and pied-piping availability
     all follow from Attract Closest + N-horizons on concrete trees.
 
-    (a) D-layer shielding: D° closer to T° than Psr (`closestGoalB`)
-    (b) Agent intervention: Agt closer to T° than Psr (`closestGoalB`)
-    (c) Selective opacity: N° c-commands Psr (`behindHorizonB`)
-    (d) Pied-piping: D° NOT c-commanded by N° (`behindHorizonB`) -/
+    (a) D-layer shielding: D° closer to T° than Psr (`isClosestGoalIn`)
+    (b) Agent intervention: Agt closer to T° than Psr (`isClosestGoalIn`)
+    (c) Selective opacity: N° c-commands Psr (`behindHorizonIn`)
+    (d) Pied-piping: D° NOT c-commanded by N° (`behindHorizonIn`) -/
 theorem unified_tree_derivation :
-    closestGoalB treeUnaccDP T₀ Psr hasDFeatures = false ∧
-    closestGoalB treeTransPossP T₀ Psr hasDFeatures = false ∧
-    behindHorizonB treeCPUnaccDP C₀ Psr .N = true ∧
-    behindHorizonB treeCPUnaccPossP C₀ Psr .N = true ∧
-    behindHorizonB treeCPUnaccDP C₀ D₀ .N = false :=
+    ¬ isClosestGoalIn treeUnaccDP T₀ Psr hasDFeatures ∧
+    ¬ isClosestGoalIn treeTransPossP T₀ Psr hasDFeatures ∧
+    behindHorizonIn treeCPUnaccDP C₀ Psr .N ∧
+    behindHorizonIn treeCPUnaccPossP C₀ Psr .N ∧
+    ¬ behindHorizonIn treeCPUnaccDP C₀ D₀ .N :=
   ⟨by decide, by decide, by decide, by decide, by decide⟩
 
 end AttractClosest

@@ -119,15 +119,20 @@ abbrev MValue := FeatureBundle
 /-- The Generalized Head Movement relation.
 
     GenHM relates two terminal nodes X (probe) and Y (goal) in a local
-    syntactic configuration, sharing an M-value between them. This is an
-    instance of Agree specialized for head displacement. -/
+    syntactic configuration. This is an instance of Agree specialized for
+    head displacement: the record captures the pre-Agree configuration
+    (probe's M-slot unvalued, goal's valued); the *shared* M-value A&P's
+    structure-sharing establishes is the transmission outcome
+    `applyAgree probeM goalM feature`. -/
 structure GenHMRelation where
   /-- The higher terminal (e.g., T or C) — the probe -/
   probe : SyntacticObject
   /-- The lower terminal (e.g., V or Aux) — the goal -/
   goal : SyntacticObject
-  /-- The shared morphological features -/
-  mValue : MValue
+  /-- The probe's M-features before sharing -/
+  probeM : MValue
+  /-- The goal's M-features before sharing -/
+  goalM : MValue
   /-- The feature type being shared (tense, phi, etc.) -/
   feature : FeatureVal
   /-- The containing tree -/
@@ -135,9 +140,9 @@ structure GenHMRelation where
   /-- Structural condition: probe c-commands goal -/
   probe_commands_goal : SyntacticObject.cCommandsIn root probe goal
   /-- The goal bears valued M-features -/
-  goal_has_mvalue : hasValuedFeature mValue feature = true
+  goal_has_mvalue : hasValuedFeature goalM feature = true
   /-- The probe bears unvalued M-features -/
-  probe_needs_mvalue : hasUnvaluedFeature mValue feature = true
+  probe_needs_mvalue : hasUnvaluedFeature probeM feature = true
 
 /-- GenHM is an instance of Agree: it relates a probe with unvalued features
     to a goal with valued features under c-command. -/
@@ -145,16 +150,28 @@ def genHM_to_agree (g : GenHMRelation) : AgreeRelation :=
   { probe := g.probe
     goal := g.goal
     feature := g.feature
-    probeFeatures := g.mValue
-    goalFeatures := g.mValue }
+    probeFeatures := g.probeM
+    goalFeatures := g.goalM }
 
 /-- A valid GenHM relation satisfies the conditions for valid Agree. -/
 theorem genHM_is_agree (g : GenHMRelation) :
-    validAgree (genHM_to_agree g) g.root := by
-  refine ⟨?_, ?_, ?_⟩
-  · exact g.probe_commands_goal
-  · exact g.probe_needs_mvalue
-  · exact g.goal_has_mvalue
+    validAgree (genHM_to_agree g) g.root :=
+  ⟨g.probe_commands_goal, g.probe_needs_mvalue, g.goal_has_mvalue⟩
+
+/-- The GenHM configuration is realizable: in `[TP T° V°]`, T° with
+    unvalued tense probes V° with valued tense. -/
+example : GenHMRelation where
+  probe := SyntacticObject.lexLeaf ⟨.simple .T [], 1⟩
+  goal := SyntacticObject.lexLeaf ⟨.simple .V [], 2⟩
+  probeM := .ofGramFeatures [.unvalued (.tense true)]
+  goalM := .ofGramFeatures [.valued (.tense true)]
+  feature := .tense true
+  root := SyntacticObject.ofPlanar
+    (SyntacticObject.nodeP (SyntacticObject.leafP ⟨.simple .T [], 1⟩)
+      (SyntacticObject.leafP ⟨.simple .V [], 2⟩))
+  probe_commands_goal := by decide
+  goal_has_mvalue := by decide
+  probe_needs_mvalue := by decide
 
 -- ============================================================================
 -- § GenHM.3  Chain-Splitting and Chain Structure
