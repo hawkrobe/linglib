@@ -182,224 +182,6 @@ The hard case reduces to the substrate lemma:
 product). This is `singleton_node_a_insertion_eq_bPlus_gl_mul` below.
 -/
 
-/-- `Multiset.bind` as a mapped sum (`join` is definitionally `sum`). -/
-private theorem bind_eq_map_sum {γ δ : Type*} (s : Multiset γ)
-    (f : γ → Multiset δ) : s.bind f = (s.map f).sum := rfl
-
-omit [DecidableEq α] in
-/-- The `true`-bucket of a zip over `Quotient.out` representatives has
-    the nonplanar `true`-bucket as its `mk`-image. -/
-private theorem filterMap_zip_out_mk_t (l : List (Nonplanar α)) (assn : List Bool) :
-    (((l.map Quotient.out).zip assn).filterMap
-        (fun p => if p.2 then some p.1 else none)).map Nonplanar.mk =
-      (l.zip assn).filterMap (fun p => if p.2 then some p.1 else none) := by
-  induction l generalizing assn with
-  | nil => rfl
-  | cons x l ih =>
-    cases assn with
-    | nil => rfl
-    | cons b assn =>
-      cases b with
-      | true =>
-        show Nonplanar.mk (Quotient.out x) ::
-            ((((l.map Quotient.out).zip assn).filterMap _).map Nonplanar.mk) = _
-        have hx : Nonplanar.mk (Quotient.out x) = x := Quotient.out_eq x
-        rw [hx, ih]
-        rfl
-      | false => exact ih assn
-
-omit [DecidableEq α] in
-/-- The `false`-bucket analog of `filterMap_zip_out_mk_t`. -/
-private theorem filterMap_zip_out_mk_f (l : List (Nonplanar α)) (assn : List Bool) :
-    (((l.map Quotient.out).zip assn).filterMap
-        (fun p => if p.2 then none else some p.1)).map Nonplanar.mk =
-      (l.zip assn).filterMap (fun p => if p.2 then none else some p.1) := by
-  induction l generalizing assn with
-  | nil => rfl
-  | cons x l ih =>
-    cases assn with
-    | nil => rfl
-    | cons b assn =>
-      cases b with
-      | true => exact ih assn
-      | false =>
-        show Nonplanar.mk (Quotient.out x) ::
-            ((((l.map Quotient.out).zip assn).filterMap _).map Nonplanar.mk) = _
-        have hx : Nonplanar.mk (Quotient.out x) = x := Quotient.out_eq x
-        rw [hx, ih]
-        rfl
-
-/-- **NIM-level keystone**: at the Nonplanar multi-insertion level, grafting
-    `B` into the singleton host `{node a A'}` decomposes by partitioning
-    B's grafting positions into "at the root vertex" (becomes new
-    children) vs "in A's subtrees" (recursive NIM).
-
-    Descent through the quotient: the singleton host's canonical planar
-    representative is `Perm`-swapped for a visible planar node,
-    `RoseTree.Pathed.insertion_node_split` provides the root-vs-subtree
-    mask decomposition, and the mask enumeration is converted to the
-    powerset bind via `listChoices_bridge_powerset_paired` plus the
-    powerset partition involution (the mask convention has `true` =
-    root guests, while the powerset bind runs over the subtree bucket). -/
-private theorem nim_singleton_node_a_decomp
-    (a : α) (A' B : Forest (Nonplanar α)) :
-    Nonplanar.insertionMultiset
-        ({Nonplanar.node a A'} : Forest (Nonplanar α)) B =
-      (B.powerset.bind fun B₁ =>
-         (Nonplanar.insertionMultiset A' B₁).map fun F' =>
-           ({Nonplanar.node a (F' + (B - B₁))} : Forest (Nonplanar α))) := by
-  -- §1: the canonical planar representative of the host is equivalent to
-  -- the visible node on A''s canonical children list.
-  have h_mk2 : Nonplanar.mk (RoseTree.node a (A'.toList.map Quotient.out)) =
-      Nonplanar.node a A' := by
-    rw [← Nonplanar.node_mk_tree_list]
-    congr 1
-    rw [List.map_map,
-        show A'.toList.map (Nonplanar.mk ∘ Quotient.out) = A'.toList from
-          (List.map_congr_left fun x _ => Quotient.out_eq x).trans
-            (List.map_id _)]
-    exact A'.coe_toList
-  have h_equiv : RoseTree.Perm
-      (Quotient.out (Nonplanar.node a A'))
-      (RoseTree.node a (A'.toList.map Quotient.out)) :=
-    Nonplanar.mk_eq_mk_iff.mp
-      (((Nonplanar.node a A').out_eq).trans h_mk2.symm)
-  -- §2: unfold NIM; the host list is the singleton of the canonical rep.
-  unfold Nonplanar.insertionMultiset
-  rw [show (({Nonplanar.node a A'} : Forest (Nonplanar α)).toList.map
-        Quotient.out : List (RoseTree α))
-      = [Quotient.out (Nonplanar.node a A')] from by
-    rw [Multiset.toList_singleton]
-    rfl]
-  -- §3: swap the host representative under the msform map.
-  have h_host := RoseTree.Pathed.insertionForest_perm_host
-    (B.toList.map Quotient.out) (List.Forall₂.cons h_equiv List.Forall₂.nil)
-  have h_host' :
-      (RoseTree.Pathed.insertionForest [Quotient.out (Nonplanar.node a A')]
-          (B.toList.map Quotient.out)).map
-        (fun L => (Multiset.ofList (L.map Nonplanar.mk) :
-          Multiset (Nonplanar α))) =
-      (RoseTree.Pathed.insertionForest
-          [RoseTree.node a (A'.toList.map Quotient.out)]
-          (B.toList.map Quotient.out)).map
-        (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
-    have h2 := congrArg
-      (Multiset.map (fun l : List (Nonplanar α) =>
-        (Multiset.ofList l : Multiset (Nonplanar α)))) h_host
-    rw [Multiset.map_map, Multiset.map_map] at h2
-    exact h2
-  rw [h_host']
-  -- §4: singleton-forest reduction + the node-split engine.
-  rw [RoseTree.Pathed.insertionForest_singleton, Multiset.map_map,
-      RoseTree.Pathed.insertion_node_split, Multiset.map_bind]
-  -- §5: convert the RHS powerset bind to the mask enumeration. The mask
-  -- convention has `true` = root guests, so the powerset bind (over the
-  -- subtree bucket B₁) is first flipped by the partition involution.
-  have h_rhs : (B.powerset.bind fun B₁ =>
-        (Nonplanar.insertionMultiset A' B₁).map fun F' =>
-          ({Nonplanar.node a (F' + (B - B₁))} : Forest (Nonplanar α))) =
-      (Multiset.ofList
-          (RoseTree.Pathed.listChoices [true, false] B.toList.length)).bind
-        (fun assn =>
-          (Nonplanar.insertionMultiset A'
-              (((B.toList.zip assn).filterMap
-                fun p => if p.2 then none else some p.1 : List (Nonplanar α)) :
-                Multiset (Nonplanar α))).map
-            fun F' => ({Nonplanar.node a (F' +
-              (((B.toList.zip assn).filterMap
-                fun p => if p.2 then some p.1 else none : List (Nonplanar α)) :
-                Multiset (Nonplanar α)))} : Forest (Nonplanar α))) := by
-    -- Step A: flip the partition so the bind variable is the root bucket.
-    rw [bind_eq_map_sum]
-    rw [Multiset.powerset_partition_swap B
-      (fun B₁ rest => (Nonplanar.insertionMultiset A' B₁).map fun F' =>
-        ({Nonplanar.node a (F' + rest)} : Forest (Nonplanar α)))]
-    -- Step B: pair form + the powerset↔mask bridge.
-    rw [show (B.powerset.map fun s =>
-          (Nonplanar.insertionMultiset A' (B - s)).map fun F' =>
-            ({Nonplanar.node a (F' + s)} : Forest (Nonplanar α))) =
-        ((B.powerset.map fun s => (s, B - s)).map
-          fun pr => (Nonplanar.insertionMultiset A' pr.2).map fun F' =>
-            ({Nonplanar.node a (F' + pr.1)} : Forest (Nonplanar α))) from by
-      rw [Multiset.map_map]
-      rfl]
-    rw [show (B.powerset.map fun s => (s, B - s)) =
-        (Multiset.ofList
-            (RoseTree.Pathed.listChoices [true, false] B.toList.length)).map
-          (fun assn =>
-            ((((B.toList.zip assn).filterMap
-                fun p => if p.2 then some p.1 else none : List (Nonplanar α)) :
-                Multiset (Nonplanar α)),
-             (((B.toList.zip assn).filterMap
-                fun p => if p.2 then none else some p.1 : List (Nonplanar α)) :
-                Multiset (Nonplanar α)))) from by
-      conv_lhs => rw [show B = (↑(B.toList) : Multiset (Nonplanar α)) from
-        B.coe_toList.symm]
-      rw [← RoseTree.Pathed.listChoices_bridge_powerset_paired (l := B.toList)]]
-    rw [Multiset.map_map, ← bind_eq_map_sum]
-    rfl
-  refine Eq.trans ?_ h_rhs.symm
-  -- §6: per-mask congruence. Align mask lengths, then reduce each mask.
-  rw [List.length_map]
-  refine Multiset.bind_congr fun assn h_assn => ?_
-  -- Named buckets: planar (out-rep) and nonplanar (canonical) per side.
-  set gs_t : List (RoseTree α) := ((B.toList.map Quotient.out).zip assn).filterMap
-    (fun p => if p.2 then some p.1 else none) with hgs_t
-  set gs_f : List (RoseTree α) := ((B.toList.map Quotient.out).zip assn).filterMap
-    (fun p => if p.2 then none else some p.1) with hgs_f
-  set s_t : Multiset (Nonplanar α) := Multiset.ofList
-    ((B.toList.zip assn).filterMap
-      (fun p => if p.2 then some p.1 else none)) with hs_t
-  set s_f : Multiset (Nonplanar α) := Multiset.ofList
-    ((B.toList.zip assn).filterMap
-      (fun p => if p.2 then none else some p.1)) with hs_f
-  -- mk-image facts for the two planar buckets.
-  have h_t_mk : Multiset.ofList (gs_t.map Nonplanar.mk) = s_t := by
-    rw [hgs_t, filterMap_zip_out_mk_t, hs_t]
-  have h_f_perm : (gs_f.map Nonplanar.mk).Perm
-      ((s_f.toList.map Quotient.out).map Nonplanar.mk) := by
-    apply Multiset.coe_eq_coe.mp
-    rw [hgs_f, filterMap_zip_out_mk_f, List.map_map,
-        show s_f.toList.map (Nonplanar.mk ∘ Quotient.out) = s_f.toList from
-          (List.map_congr_left fun x _ => Quotient.out_eq x).trans
-            (List.map_id _),
-        Multiset.coe_toList, hs_f]
-  have h_guests := RoseTree.Pathed.insertionForest_msform_invariance_guests
-    (A'.toList.map Quotient.out) h_f_perm
-  -- Assemble: fuse post-maps, factor through msform, swap guests, recombine.
-  rw [Multiset.map_map]
-  calc (RoseTree.Pathed.insertionForest (A'.toList.map Quotient.out) gs_f).map
-        ((((fun L => (Multiset.ofList (L.map Nonplanar.mk) :
-            Multiset (Nonplanar α))) ∘ fun T' => [T']))
-          ∘ (fun cs' => RoseTree.node a (gs_t ++ cs')))
-      = ((RoseTree.Pathed.insertionForest (A'.toList.map Quotient.out) gs_f).map
-          (fun L => (Multiset.ofList (L.map Nonplanar.mk) :
-            Multiset (Nonplanar α)))).map
-        (fun M => ({Nonplanar.node a (s_t + M)} : Forest (Nonplanar α))) := by
-        rw [Multiset.map_map]
-        refine Multiset.map_congr rfl fun cs' _ => ?_
-        show ({Nonplanar.mk (RoseTree.node a (gs_t ++ cs'))} :
-          Forest (Nonplanar α)) = _
-        congr 1
-        rw [← Nonplanar.node_mk_tree_list]
-        congr 1
-        rw [List.map_append, ← Multiset.coe_add, h_t_mk]
-    _ = ((RoseTree.Pathed.insertionForest (A'.toList.map Quotient.out)
-            (s_f.toList.map Quotient.out)).map
-          (fun L => (Multiset.ofList (L.map Nonplanar.mk) :
-            Multiset (Nonplanar α)))).map
-        (fun M => ({Nonplanar.node a (s_t + M)} : Forest (Nonplanar α))) := by
-        rw [h_guests]
-    _ = (Nonplanar.insertionMultiset A' s_f).map
-        (fun F' => ({Nonplanar.node a (F' + s_t)} : Forest (Nonplanar α))) := by
-        unfold Nonplanar.insertionMultiset
-        rw [Multiset.map_map, Multiset.map_map]
-        refine Multiset.map_congr rfl fun L _ => ?_
-        show ({Nonplanar.node a (s_t + Multiset.ofList (L.map Nonplanar.mk))} :
-          Forest (Nonplanar α)) = _
-        rw [add_comm]
-        rfl
-
 /-- **Key combinatorial substrate**: grafting `of' B` into the
     singleton-a-rooted host `{node a A'}` equals the a-rooting (via
     `bPlusLin a`) of the **GL product** `of' A' *_GL of' B`.
@@ -413,8 +195,10 @@ private theorem nim_singleton_node_a_decomp
     the GL sum, a-rooted via `bPlusLin a`, yields a corresponding tree
     in the NIM enumeration.
 
-        proved from the NIM-level decomposition `nim_singleton_node_a_decomp`. -/
-private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
+    Proved from the NIM-level decomposition
+    `Nonplanar.insertionMultiset_singleton_node`
+    (`PreLie/InsertionNonplanar.lean`). -/
+theorem singleton_node_a_insertion_eq_bPlus_gl_mul
     (a : α) (A' B : Forest (Nonplanar α)) :
     insertion (R := R)
         (GrossmanLarson.of' ({Nonplanar.node a A'} : Forest (Nonplanar α)))
@@ -437,7 +221,7 @@ private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
       (GrossmanLarson.of' B) : GrossmanLarson R α) = common := by
     rw [insertion_of'_of']
     unfold insertionBasis
-    rw [nim_singleton_node_a_decomp a A' B]
+    rw [Nonplanar.insertionMultiset_singleton_node a A' B]
     rw [Multiset.map_bind, Multiset.sum_bind, h_common]
     congr 1
     apply Multiset.map_congr rfl
