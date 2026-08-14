@@ -157,7 +157,7 @@ total (Δ^c's single trace leaf, `extractC`), every cut summand conserves
 vertices up to one replacement vertex per crown component: crown node
 count plus remainder node count equals the original node count plus the
 crown's component count. At the edge level this is exact conservation —
-the grading of MCB Lemma 1.2.10 (`TraceNonplanar.lean`).
+the grading of MCB Lemma 1.2.10 (`Trace.lean`).
 
 A child list's total node count is `(l.map RoseTree.numNodes).sum`, so
 `List.map_append`/`List.sum_append` discharge the append step directly
@@ -919,7 +919,7 @@ end Tests
 
 /-! ## Descent of cut-summand enumeration
 
-Mirrors `Coproduct/PruningNonplanar.lean`'s descent of `cutSummandsP`,
+Mirrors `Coproduct/Pruning.lean`'s descent of `cutSummandsP`,
 but for the generic `cutSummandsG` (which uses a `List`-shaped per-cut
 remainder rather than `Option`). The descent applies whenever the
 `extract` policy is invariant under `RoseTree.Perm` modulo

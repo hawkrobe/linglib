@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Merge.Basic
 import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Workspace.DeletionConservation
 import Linglib.Core.Combinatorics.RootedTree.CutAvoiding
-import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
+import Linglib.Core.Algebra.RootedTree.HopfAlgebra
 import Linglib.Core.Data.RoseTree.DecEq
 
 /-!

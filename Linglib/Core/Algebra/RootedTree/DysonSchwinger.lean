@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
+import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 
 open RoseTree RoseTree.Nonplanar
 
@@ -38,7 +38,7 @@ consume this substrate.
 ## B+ as Hochschild 1-cocycle for Δ^ρ (MCB Eq 1.17.1)
 
 Already proven as `comulTreeN_node_cocycle` /
-`comulAlgHomN_bPlusLin_cocycle` in `Coproduct/PruningNonplanar.lean`;
+`comulAlgHomN_bPlusLin_cocycle` in `Coproduct/Pruning.lean`;
 this file consumes those theorems directly.
 
 ## The Dyson-Schwinger map and equation (MCB Eq 1.17.2)
@@ -63,7 +63,7 @@ shape in the CK algebra.
 ## Status
 
 `[UPSTREAM]` candidate. Sorry-free. Pure substrate built on
-`PruningNonplanar.lean` (B+ + Δ^ρ).
+`Pruning.lean` (B+ + Δ^ρ).
 -/
 
 

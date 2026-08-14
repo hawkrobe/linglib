@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
-import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
+import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
 import Linglib.Core.Data.Multiset.Antidiagonal
 import Mathlib.Tactic.Ring
@@ -18,7 +18,7 @@ set_option autoImplicit false
 [oudom-guin-2008] [foissy-typed-decorated-rooted-trees-2018]
 
 The `B-_a` operator is the transpose of `B+_a` (defined in
-`Coproduct/PruningNonplanar.lean`) under the symmetry-weighted pairing
+`Coproduct/Pruning.lean`) under the symmetry-weighted pairing
 (defined in `GrossmanLarsonPairing.lean`). On basis elements:
 
 ```

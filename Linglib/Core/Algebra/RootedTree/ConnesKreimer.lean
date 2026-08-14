@@ -15,7 +15,7 @@ the formal `R`-linear span of forests (multisets of trees), with product =
 forest disjoint union and coproduct = sum over admissible cuts. This file
 provides the carrier, its algebra structure, and the counit, generic over
 `T`; the coproducts and the `Bialgebra`/`HopfAlgebra` instances are in the
-sibling `Coproduct/` files and `HopfAlgebraNonplanar.lean`.
+sibling `Coproduct/` files and `HopfAlgebra.lean`.
 
 ## Main declarations
 
