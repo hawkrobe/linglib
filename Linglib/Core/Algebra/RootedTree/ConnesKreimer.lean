@@ -428,6 +428,74 @@ def mapDomainAlgHom {T' : Type*} (f : Forest T →+ Forest T') :
   show AddMonoidAlgebra.mapDomain f (.single F 1) = AddMonoidAlgebra.single (f F) 1
   rw [AddMonoidAlgebra.mapDomain_single]
 
+/-! ### Base change
+
+Coefficient-wise base change along a ring hom (`Polynomial.map`
+analogue), wrapper-native over `AddMonoidAlgebra.map`. -/
+
+section Map
+variable {S : Type*} [CommSemiring S] (f : R →+* S)
+
+/-- Base change along `f : R →+* S`: apply `f` to each coefficient
+    (`Polynomial.map` analogue). -/
+def map (p : ConnesKreimer R T) : ConnesKreimer S T :=
+  ⟨AddMonoidAlgebra.map f p.toFinsupp⟩
+
+@[simp] theorem toFinsupp_map (p : ConnesKreimer R T) :
+    (map f p).toFinsupp = AddMonoidAlgebra.map f p.toFinsupp := rfl
+
+@[simp] theorem coeff_map (p : ConnesKreimer R T) (F : Forest T) :
+    (map f p).coeff F = f (p.coeff F) := by
+  simp [coeff_def, AddMonoidAlgebra.coeff_map]
+
+@[simp] theorem map_single (F : Forest T) (r : R) :
+    map f (single F r) = single F (f r) :=
+  ext (AddMonoidAlgebra.map_single _ _ _)
+
+@[simp] theorem map_of' (F : Forest T) :
+    map f (of' (R := R) F) = of' F := by
+  rw [of', of', map_single, map_one]
+
+protected theorem map_zero : map f (0 : ConnesKreimer R T) = 0 :=
+  ext (by simp)
+
+protected theorem map_one : map f (1 : ConnesKreimer R T) = 1 :=
+  ext (AddMonoidAlgebra.map_one f)
+
+protected theorem map_add (p q : ConnesKreimer R T) :
+    map f (p + q) = map f p + map f q :=
+  ext (AddMonoidAlgebra.map_add _ p.toFinsupp q.toFinsupp)
+
+protected theorem map_smul (r : R) (p : ConnesKreimer R T) :
+    map f (r • p) = f r • map f p :=
+  ext_coeff fun F => by simp [smul_eq_mul]
+
+protected theorem map_mul (p q : ConnesKreimer R T) :
+    map f (p * q) = map f p * map f q :=
+  ext (map_mul (AddMonoidAlgebra.mapRingHom (Forest T) f) p.toFinsupp q.toFinsupp)
+
+theorem map_injective (hf : Function.Injective f) :
+    Function.Injective (map (T := T) f) := fun _ _ h =>
+  toFinsupp_injective (AddMonoidAlgebra.map_injective _ hf (congrArg toFinsupp h))
+
+variable (T) in
+/-- `map` bundled as a ring hom (`Polynomial.mapRingHom` analogue); the
+    ring structure is the disjoint-union product. -/
+def mapRingHom : ConnesKreimer R T →+* ConnesKreimer S T where
+  toFun := map f
+  map_zero' := ConnesKreimer.map_zero f
+  map_one' := ConnesKreimer.map_one f
+  map_add' := ConnesKreimer.map_add f
+  map_mul' := ConnesKreimer.map_mul f
+
+@[simp] theorem coe_mapRingHom : ⇑(mapRingHom T f) = map f := rfl
+
+protected theorem map_multiset_sum (s : Multiset (ConnesKreimer R T)) :
+    map f s.sum = (s.map (map f)).sum := by
+  simpa using map_multiset_sum (mapRingHom T f) s
+
+end Map
+
 /-! ### The forest basis -/
 
 /-- The forests, via `of'`, as an `R`-basis of the Connes-Kreimer algebra

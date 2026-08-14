@@ -558,15 +558,20 @@ theorem mul_smul_gl (s : R) (a b : GrossmanLarson R α) :
     a * (s • b) = s • (a * b) :=
   LinearMap.map_smul (product a) s b
 
-/-- **Basis form** of the GL product: `(of' F) * (of' G) = productForest (of' F) G`.
-    Reduces the `linearCombination`-extended product to the explicit
+/-- The GL product against a basis second factor is `productForest`:
+    the `linearCombination`-extended product reduces to the explicit
     powerset-sum formula. -/
-theorem of'_mul_of' (F G : Forest (Nonplanar α)) :
-    (of' F : GrossmanLarson R α) * of' G = productForest (of' F) G := by
-  show (basisLift (productForestLin (R := R) (α := α))).flip (of' F) (of' G)
-      = productForest (of' F) G
+theorem product_of' (x : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
+    product x (of' (R := R) G) = productForest x G := by
+  show (basisLift (productForestLin (R := R) (α := α))).flip x (of' G)
+      = productForest x G
   rw [LinearMap.flip_apply, basisLift_of']
   rfl
+
+/-- **Basis form** of the GL product: `(of' F) * (of' G) = productForest (of' F) G`. -/
+theorem of'_mul_of' (F G : Forest (Nonplanar α)) :
+    (of' F : GrossmanLarson R α) * of' G = productForest (of' F) G :=
+  product_of' (of' F) G
 
 /-! ### Unit lemmas
 
@@ -743,6 +748,74 @@ proved sorry-free in `GrossmanLarsonMonoid.lean` via the Oudom-Guin
 `mul_assoc_basis_via_oudom_guin_pbw` (Q6 for `R = ℤ`), lifted to arbitrary
 `CommSemiring R` via multiset-coefficient extraction. The
 `Semigroup`/`Monoid` instances are registered there. -/
+
+/-! ### Base change
+
+`ConnesKreimer.map` respects the Grossman-Larson product: the product's
+structure constants (iterated-grafting multiplicities) are ℕ-valued,
+independent of the coefficient ring. -/
+
+section Map
+variable {S : Type*} [CommSemiring S] (f : R →+* S)
+
+omit [DecidableEq α] in
+@[simp] theorem map_of' (F : Forest (Nonplanar α)) :
+    ConnesKreimer.map f (of' (R := R) F : GrossmanLarson R α) = of' F :=
+  ConnesKreimer.map_of' f F
+
+theorem map_insertionBasis (F G : Forest (Nonplanar α)) :
+    ConnesKreimer.map f (insertionBasis (R := R) F G) = insertionBasis F G := by
+  unfold insertionBasis
+  rw [ConnesKreimer.map_multiset_sum, Multiset.map_map]
+  exact congrArg Multiset.sum (Multiset.map_congr rfl fun F' _ => map_of' f F')
+
+theorem map_insertion (x : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
+    ConnesKreimer.map f (insertion x (of' (R := R) G)) =
+      insertion (ConnesKreimer.map f x) (of' G) := by
+  induction x using ConnesKreimer.induction_linear with
+  | zero =>
+    rw [LinearMap.map_zero₂, ConnesKreimer.map_zero, LinearMap.map_zero₂]
+  | add x₁ x₂ ih₁ ih₂ =>
+    rw [LinearMap.map_add₂, ConnesKreimer.map_add, ih₁, ih₂,
+        ConnesKreimer.map_add, LinearMap.map_add₂]
+  | single F r =>
+    rw [ConnesKreimer.smul_single_one, LinearMap.map_smul₂,
+        ConnesKreimer.map_smul, ConnesKreimer.map_smul,
+        ConnesKreimer.map_single, map_one, LinearMap.map_smul₂]
+    exact congrArg (f r • ·)
+      (show ConnesKreimer.map f (insertion (of' (R := R) F) (of' G))
+          = insertion (of' (R := S) F) (of' G) from by
+        rw [insertion_of'_of', insertion_of'_of', map_insertionBasis])
+
+theorem map_productForest (x : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
+    ConnesKreimer.map f (productForest x G) =
+      productForest (ConnesKreimer.map f x) G := by
+  unfold productForest
+  rw [ConnesKreimer.map_multiset_sum, Multiset.map_map]
+  refine congrArg Multiset.sum (Multiset.map_congr rfl fun G₁ _ => ?_)
+  show ConnesKreimer.map f
+      (unop (insertion x (of' G₁)) * unop (of' (R := R) (G - G₁))) = _
+  rw [ConnesKreimer.map_mul]
+  exact congrArg₂ (· * ·) (map_insertion f x G₁) (map_of' f (G - G₁))
+
+/-- `ConnesKreimer.map` respects the Grossman-Larson product. -/
+theorem map_product (x y : GrossmanLarson R α) :
+    ConnesKreimer.map f (product x y) =
+      product (ConnesKreimer.map f x) (ConnesKreimer.map f y) := by
+  induction y using ConnesKreimer.induction_linear with
+  | zero =>
+    rw [map_zero, ConnesKreimer.map_zero, map_zero]
+  | add y₁ y₂ ih₁ ih₂ =>
+    rw [map_add, ConnesKreimer.map_add, ih₁, ih₂, ConnesKreimer.map_add, map_add]
+  | single G r =>
+    rw [ConnesKreimer.smul_single_one, map_smul, ConnesKreimer.map_smul,
+        ConnesKreimer.map_smul, ConnesKreimer.map_single, map_one, map_smul]
+    exact congrArg (f r • ·)
+      (show ConnesKreimer.map f (product x (of' (R := R) G))
+          = product (ConnesKreimer.map f x) (of' G) from by
+        rw [product_of', product_of', map_productForest])
+
+end Map
 
 end GrossmanLarson
 
