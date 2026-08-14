@@ -65,6 +65,7 @@ import Linglib.Core.Categorical.PartitionCat
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Combinatorics.Antimatroid
 import Linglib.Core.Combinatorics.RootedTree.Aut
+import Linglib.Core.Combinatorics.RootedTree.Conservation
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Combinatorics.RootedTree.CutAvoiding

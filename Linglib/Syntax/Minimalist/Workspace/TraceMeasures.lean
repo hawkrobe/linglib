@@ -3,96 +3,24 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.RoseTree.Count
+import Linglib.Core.Combinatorics.RootedTree.Conservation
 
 open RoseTree RoseTree.Nonplanar
 
 /-!
-# Trace vocabulary for the leaf statistics
+# MCB's letter vocabulary for the workspace measures
 [marcolli-chomsky-berwick-2025]
 
-MCB's vocabulary over the generic measures of `Counting.lean`: the letter names
-(`accCount` for `numEdges`; `b₀`, `alpha`, `sigma` for the forest measures), the
-`p`-discounted measures (`accCountP`, `alphaP`, `sigmaP`), and their instantiations at
-the trace-marker color class `Sum.isRight` (`traceLeafCount`, `traceDepthSum`,
-`accCountC`, `alphaC`, `sigmaC`).
+MCB's letter names over the generic measures of `Core/Data/RoseTree/Count.lean`
+and the trace measures of `Core/Combinatorics/RootedTree/Conservation.lean`:
+`accCount` for `numEdges`; `b₀`, `alpha`, `sigma` for the forest measures; the
+`p`-discounted variants (`accCountP`, `alphaP`, `sigmaP`); and their
+instantiations at the trace-marker color class `Sum.isRight` (`accCountC`,
+`alphaC`, `sigmaC`).
 
-Domain vocabulary over the generic substrate of `Core/Data/RoseTree/Count.lean`;
-consumed by the workspace conservation laws (`Workspace/Conservation.lean`) and the
-Merge economy files.
+Domain vocabulary over Core substrate; consumed by the workspace conservation
+laws (`Workspace/Conservation.lean`) and the Merge economy files.
 -/
-
-namespace RoseTree
-
-variable {α β : Type*}
-
-/-- The number of `Sum.inr`-labeled (trace-marker) leaves in a tree. -/
-def traceLeafCount (t : RoseTree (α ⊕ β)) : ℕ := leafCountP (·.isRight = true) t
-
-/-- Sum of root-distances of the `Sum.inr`-labeled (trace-marker) leaves. -/
-def traceDepthSum (t : RoseTree (α ⊕ β)) : ℕ := leafDepthSumP (·.isRight = true) t
-
-@[simp] theorem traceLeafCount_leaf_inr (b : β) :
-    traceLeafCount (.node (Sum.inr b) [] : RoseTree (α ⊕ β)) = 1 := by
-  simp [traceLeafCount]
-
-@[simp] theorem traceLeafCount_leaf_inl (a : α) :
-    traceLeafCount (.node (Sum.inl a) [] : RoseTree (α ⊕ β)) = 0 := by
-  simp [traceLeafCount]
-
-theorem traceLeafCount_node_of_ne_nil (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β)))
-    (h : cs ≠ []) : traceLeafCount (.node v cs) = (cs.map traceLeafCount).sum :=
-  leafCountP_node_of_ne_nil _ v cs h
-
-@[simp] theorem traceLeafCount_node_cons (v : α ⊕ β) (c : RoseTree (α ⊕ β))
-    (cs : List (RoseTree (α ⊕ β))) :
-    traceLeafCount (.node v (c :: cs)) = ((c :: cs).map traceLeafCount).sum :=
-  leafCountP_node_cons _ v c cs
-
-@[simp] theorem traceLeafCount_node_inl (a : α) (cs : List (RoseTree (α ⊕ β))) :
-    traceLeafCount (.node (Sum.inl a) cs) = (cs.map traceLeafCount).sum :=
-  leafCountP_node_of_not _ _ cs (by simp)
-
-@[simp] theorem traceDepthSum_leaf_inl (a : α) :
-    traceDepthSum (.node (Sum.inl a) [] : RoseTree (α ⊕ β)) = 0 :=
-  leafDepthSumP_leaf _ _
-
-@[simp] theorem traceDepthSum_leaf_inr (b : β) :
-    traceDepthSum (.node (Sum.inr b) [] : RoseTree (α ⊕ β)) = 0 :=
-  leafDepthSumP_leaf _ _
-
-@[simp] theorem traceDepthSum_node (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
-    traceDepthSum (.node v cs)
-      = (cs.map fun c => traceDepthSum c + traceLeafCount c).sum :=
-  leafDepthSumP_node _ v cs
-
-theorem traceLeafCount_perm {t s : RoseTree (α ⊕ β)} (h : Perm t s) :
-    t.traceLeafCount = s.traceLeafCount :=
-  leafCountP_perm _ h
-
-theorem traceDepthSum_perm {t s : RoseTree (α ⊕ β)} (h : Perm t s) :
-    t.traceDepthSum = s.traceDepthSum :=
-  leafDepthSumP_perm _ h
-
-theorem traceLeafCount_le_node (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
-    (cs.map traceLeafCount).sum ≤ traceLeafCount (.node v cs) :=
-  sum_map_leafCountP_le_node _ v cs
-
-theorem traceLeafCount_le_numNodes (t : RoseTree (α ⊕ β)) :
-    t.traceLeafCount ≤ t.numNodes :=
-  leafCountP_le_numNodes _ t
-
-theorem traceLeafCount_lt_numNodes_of_inl (a : α) (cs : List (RoseTree (α ⊕ β))) :
-    traceLeafCount (RoseTree.node (Sum.inl a) cs) <
-      numNodes (RoseTree.node (Sum.inl a) cs) :=
-  leafCountP_lt_numNodes_of_not _ _ cs (by simp)
-
-theorem traceLeafCount_le_traceDepthSum_of_inl (a : α) (cs : List (RoseTree (α ⊕ β))) :
-    traceLeafCount (.node (Sum.inl a) cs) ≤ traceDepthSum (.node (Sum.inl a) cs) :=
-  leafCountP_le_leafDepthSumP_of_not _ _ cs (by simp)
-
-end RoseTree
-
 
 namespace RoseTree.Nonplanar
 
@@ -141,52 +69,6 @@ theorem accCountP_node_pair (a : α)
   have hbr := leafCountP_le_numEdges p r hr
   simp only [accCountP, htl, hw]
   omega
-
-/-- The number of `Sum.inr`-labeled (trace-marker) leaves of a nonplanar tree. -/
-def traceLeafCount : Nonplanar (α ⊕ β) → ℕ := leafCountP (·.isRight = true)
-
-@[simp] theorem traceLeafCount_mk (t : RoseTree (α ⊕ β)) :
-    (mk t).traceLeafCount = t.traceLeafCount := rfl
-
-@[simp] theorem traceLeafCount_leaf_inl (a : α) :
-    (leaf (Sum.inl a) : Nonplanar (α ⊕ β)).traceLeafCount = 0 := by
-  simp [traceLeafCount]
-
-@[simp] theorem traceLeafCount_leaf_inr (b : β) :
-    (leaf (Sum.inr b) : Nonplanar (α ⊕ β)).traceLeafCount = 1 := by
-  simp [traceLeafCount]
-
-@[simp] theorem traceLeafCount_node_inl (a : α) (F : Multiset (Nonplanar (α ⊕ β))) :
-    (Nonplanar.node (Sum.inl a) F).traceLeafCount
-      = (F.map Nonplanar.traceLeafCount).sum :=
-  leafCountP_node_of_not _ _ F (by simp)
-
-/-- The depth-weighted trace-marker count of a nonplanar tree. -/
-def traceDepthSum : Nonplanar (α ⊕ β) → ℕ := leafDepthSumP (·.isRight = true)
-
-@[simp] theorem traceDepthSum_mk (t : RoseTree (α ⊕ β)) :
-    (mk t).traceDepthSum = t.traceDepthSum := rfl
-
-@[simp] theorem traceDepthSum_leaf_inl (a : α) :
-    (leaf (Sum.inl a) : Nonplanar (α ⊕ β)).traceDepthSum = 0 := by
-  simp [traceDepthSum]
-
-@[simp] theorem traceDepthSum_leaf_inr (b : β) :
-    (leaf (Sum.inr b) : Nonplanar (α ⊕ β)).traceDepthSum = 0 := by
-  simp [traceDepthSum]
-
-@[simp] theorem traceDepthSum_node_inl (a : α) (F : Multiset (Nonplanar (α ⊕ β))) :
-    (Nonplanar.node (Sum.inl a) F).traceDepthSum
-      = (F.map (fun c => c.traceDepthSum + c.traceLeafCount)).sum :=
-  leafDepthSumP_node _ _ F
-
-theorem traceLeafCount_lt_numNodes_of_rootInl (t : Nonplanar (α ⊕ β)) (x : α)
-    (h : t.rootValue = Sum.inl x) : t.traceLeafCount < t.numNodes :=
-  leafCountP_lt_numNodes_of_not_root _ t (by rw [h]; simp)
-
-theorem traceLeafCount_le_traceDepthSum_of_rootInl (t : Nonplanar (α ⊕ β)) (x : α)
-    (h : t.rootValue = Sum.inl x) : t.traceLeafCount ≤ t.traceDepthSum :=
-  leafCountP_le_leafDepthSumP_of_not_root _ t (by rw [h]; simp)
 
 /-- The trace-excluding accessible-term count `αᶜ(T) = α(T) − #traceLeaves(T)`. -/
 def accCountC : Nonplanar (α ⊕ β) → ℕ := accCountP (·.isRight = true)
