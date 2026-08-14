@@ -116,56 +116,49 @@ abbrev MValue := FeatureBundle
 -- § GenHM.2  GenHM Relation
 -- ============================================================================
 
-/-- The Generalized Head Movement relation.
+/-- A&P's **Generalized Head Movement** (GenHM) relation.
 
     GenHM relates two terminal nodes X (probe) and Y (goal) in a local
     syntactic configuration. This is an instance of Agree specialized for
     head displacement: the record captures the pre-Agree configuration
-    (probe's M-slot unvalued, goal's valued); the *shared* M-value A&P's
-    structure-sharing establishes is the transmission outcome
-    `applyAgree probeM goalM feature`. -/
-structure GenHMRelation where
+    under an M-value assignment (probe's M-slot unvalued, goal's valued);
+    the *shared* M-value A&P's structure-sharing establishes is the
+    transmission outcome of valuing the probe's slot from the goal's
+    (`applyAgree`). -/
+structure HeadMovement where
   /-- The higher terminal (e.g., T or C) — the probe -/
-  probe : SyntacticObject
+  probe : LIToken
   /-- The lower terminal (e.g., V or Aux) — the goal -/
-  goal : SyntacticObject
-  /-- The probe's M-features before sharing -/
-  probeM : MValue
-  /-- The goal's M-features before sharing -/
-  goalM : MValue
-  /-- The feature type being shared (tense, phi, etc.) -/
-  feature : FeatureVal
+  goal : LIToken
+  /-- The M-value assignment for the tree's terminals -/
+  feats : LIToken → MValue
+  /-- The feature dimension being shared (tense, phi, etc.) -/
+  feature : FeatureType
   /-- The containing tree -/
   root : SyntacticObject
   /-- Structural condition: probe c-commands goal -/
-  probe_commands_goal : SyntacticObject.cCommandsIn root probe goal
+  probe_commands_goal :
+    SyntacticObject.cCommandsIn root (.lexLeaf probe) (.lexLeaf goal)
   /-- The goal bears valued M-features -/
-  goal_has_mvalue : hasValuedFeature goalM feature = true
+  goal_has_mvalue : (feats goal).hasValuedFeature feature = true
   /-- The probe bears unvalued M-features -/
-  probe_needs_mvalue : hasUnvaluedFeature probeM feature = true
+  probe_needs_mvalue : (feats probe).hasUnvaluedFeature feature = true
 
-/-- GenHM is an instance of Agree: it relates a probe with unvalued features
-    to a goal with valued features under c-command. -/
-def genHM_to_agree (g : GenHMRelation) : AgreeRelation :=
-  { probe := g.probe
-    goal := g.goal
-    feature := g.feature
-    probeFeatures := g.probeM
-    goalFeatures := g.goalM }
-
-/-- A valid GenHM relation satisfies the conditions for valid Agree. -/
-theorem genHM_is_agree (g : GenHMRelation) :
-    validAgree (genHM_to_agree g) g.root :=
+/-- GenHM is an instance of Agree: a valid GenHM relation is a valid Agree
+    relation over the same tree and M-value assignment. -/
+theorem headMovement_is_agree (g : HeadMovement) :
+    validAgree g.feats g.root (.lexLeaf g.probe) (.lexLeaf g.goal) g.feature :=
   ⟨g.probe_commands_goal, g.probe_needs_mvalue, g.goal_has_mvalue⟩
 
 /-- The GenHM configuration is realizable: in `[TP T° V°]`, T° with
     unvalued tense probes V° with valued tense. -/
-example : GenHMRelation where
-  probe := SyntacticObject.lexLeaf ⟨.simple .T [], 1⟩
-  goal := SyntacticObject.lexLeaf ⟨.simple .V [], 2⟩
-  probeM := .ofGramFeatures [.unvalued (.tense true)]
-  goalM := .ofGramFeatures [.valued (.tense true)]
-  feature := .tense true
+example : HeadMovement where
+  probe := ⟨.simple .T [], 1⟩
+  goal := ⟨.simple .V [], 2⟩
+  feats := λ tok =>
+    if tok.item.outerCat = .T then .ofGramFeatures [.unvalued (.tense true)]
+    else .ofGramFeatures [.valued (.tense true)]
+  feature := .tense
   root := SyntacticObject.ofPlanar
     (SyntacticObject.nodeP (SyntacticObject.leafP ⟨.simple .T [], 1⟩)
       (SyntacticObject.leafP ⟨.simple .V [], 2⟩))
@@ -370,7 +363,7 @@ theorem lexical_verb_needs_doSupport_when_split (chain : GenHMChain)
 inductive HeadDisplacementExt where
   | syntactic : HeadDisplacementExt
   | amalgam : Amalgamation → HeadDisplacementExt
-  | genHM : GenHMRelation → HeadDisplacementExt
+  | headMovement : HeadMovement → HeadDisplacementExt
 
 /-- GenHM subsumes both "raising" and "lowering" as surface realizations
     of a single operation. -/
