@@ -15,32 +15,35 @@ open RoseTree RoseTree.Nonplanar
 set_option autoImplicit false
 
 /-!
-# B- operator on `ConnesKreimer R (Nonplanar α)` and the B+/B- pairing adjoint
-[oudom-guin-2008] [foissy-typed-decorated-rooted-trees-2018]
+# The B- operator and the B+/B- pairing adjoint
 
-The `B-_a` operator is the transpose of `B+_a` (defined in
-`Coproduct/Pruning.lean`) under the symmetry-weighted pairing
-(defined in `GrossmanLarsonPairing.lean`). On basis elements:
+The `B-_a` operator on `ConnesKreimer R (Nonplanar α)`
+([foissy-typed-decorated-rooted-trees-2018]'s B⁻ on decorated trees) is the
+transpose of the grafting operator `B+_a` (`Coproduct/Pruning.lean`) under
+the symmetry-weighted pairing (`GrossmanLarsonPairing.lean`). On basis
+elements:
 
 ```
 B-_a (of' F) = if F = {Nonplanar.node a F'} for some F' then of' F' else 0
 ```
 
-i.e., `B-_a` projects a singleton-forest containing an `a`-labeled root
-tree to the children-forest of that tree, and gives `0` otherwise (on
-multi-tree forests, empty forest, or singletons with a different root
-label).
+i.e., `B-_a` projects a singleton forest with an `a`-labeled root tree to
+that tree's children forest, and vanishes otherwise.
 
-## Headline result
+## Main definitions
 
-* `bMinusLin_pairing_adjoint`:
-  `⟨B-_a x, y⟩ = ⟨x, B+_a y⟩`
-  for all `a : α`, `x y : ConnesKreimer R (Nonplanar α)`.
+* `GrossmanLarson.bMinusTree`, `GrossmanLarson.bMinusBasis`,
+  `GrossmanLarson.bMinusLin` — B-_a per tree, per basis forest, and as a
+  linear endomorphism.
 
-This is the OG Prop 3.2 substrate: the transpose property anchors
-the duality argument for the derivation identity
-`B-(A ∗ B) = ε(A) B-(B) + B-(A) ∗ B` ([oudom-guin-2008] §3.2), proved
-here as `bMinusLin_gl_mul`.
+## Main results
+
+* `GrossmanLarson.isAdjointPair_bMinusLin_bPlusLin`,
+  `GrossmanLarson.bMinusLin_pairing_adjoint` — the transpose property
+  `⟨B-_a x, y⟩ = ⟨x, B+_a y⟩` ([oudom-guin-2008] Prop 3.2 substrate).
+* `GrossmanLarson.bMinusLin_gl_mul` — the derivation identity
+  `B-(A ∗ B) = ε(A) B-(B) + B-(A) ∗ B` ([oudom-guin-2008] §3.2), whose
+  duality argument the transpose property anchors.
 -/
 
 
@@ -108,73 +111,34 @@ noncomputable def bMinusLin (a : α) :
 
 /-! ### B+/B- pairing adjoint -/
 
-/-- **Adjoint** of `bPlusLin a` w.r.t. the symmetry-weighted pairing.
-    On basis: `⟨B-_a (of' F), of' G⟩ = ⟨of' F, B+_a (of' G)⟩`. -/
+/-- **Adjoint** of `bPlusLin a` w.r.t. the symmetry-weighted pairing, on
+    basis elements: both sides are `[F = {node a G}] · forestAutCard F`. -/
 theorem bMinusLin_pairing_adjoint_basis (a : α)
     (F G : Forest (Nonplanar α)) :
     pairing (R := R) (bMinusLin (R := R) a (of' F)) (of' G) =
     pairing (R := R) (of' F) (bPlusLin (R := R) a (of' G)) := by
-  -- RHS: bPlusLin a (of' G) = ofTree (node a G) = of' {node a G}.
-  -- pairing (of' F) (of' {node a G}) = if F = {node a G} then forestAutCard F else 0.
-  have hBplus : ConnesKreimer.bPlusLin (R := R) a (of' G) =
-      ofTree (Nonplanar.node a G) :=
-    ConnesKreimer.bPlusLin_of' a G
-  rw [hBplus]
-  -- ofTree T = of' {T}.
-  have hRHS : pairing (R := R) (of' F)
-      (ofTree (Nonplanar.node a G) : ConnesKreimer R (Nonplanar α)) =
-    (if F = ({Nonplanar.node a G} : Forest (Nonplanar α)) then
-        (forestAutCard F : R) else 0) := by
-    show pairing (R := R) (of' F)
-        (of' ({Nonplanar.node a G} : Forest (Nonplanar α))) = _
-    exact pairing_of'_of' F _
-  rw [hRHS]
-  -- LHS: bMinusLin a (of' F) = bMinusBasis a F.
-  rw [bMinusLin_of']
-  -- Case on whether F is a singleton-{node a-rooted} forest.
-  -- F = {node a G'} for some G'? Or other?
-  -- The basis pairing of bMinusBasis F with of' G:
-  --   - If F = {node a G''}: bMinusBasis = of' G''; pair with of' G = [G'' = G] · forestAutCard G''.
-  --   - Else: bMinusBasis = 0; pair = 0.
-  -- RHS = [F = {node a G}] · forestAutCard F.
-  -- Match: F = {node a G''} = {node a G} ↔ G'' = G; forestAutCard {node a G} = forestAutCard {node a G''}.
-  -- So both sides are: [F = {node a G}] · forestAutCard F.
+  rw [bMinusLin_of',
+      show bPlusLin (R := R) a (of' G) =
+        of' ({Nonplanar.node a G} : Forest (Nonplanar α)) from
+        ConnesKreimer.bPlusLin_of' a G,
+      show pairing (R := R) (of' F)
+          (of' ({Nonplanar.node a G} : Forest (Nonplanar α))) =
+        (if F = ({Nonplanar.node a G} : Forest (Nonplanar α)) then
+          (forestAutCard F : R) else 0) from pairing_of'_of' F _]
   by_cases hF : ∃ G' : Forest (Nonplanar α), F = {Nonplanar.node a G'}
-  · obtain ⟨G', hFG'⟩ := hF
-    subst hFG'
-    rw [bMinusBasis_singleton_node]
-    have hLHS : pairing (R := R) (of' G') (of' G) =
-        (if G' = G then (forestAutCard G' : R) else 0) :=
-      pairing_of'_of' G' G
-    rw [hLHS]
+  · obtain ⟨G', rfl⟩ := hF
+    rw [bMinusBasis_singleton_node,
+        show pairing (R := R) (of' G') (of' G) =
+          (if G' = G then (forestAutCard G' : R) else 0) from
+          pairing_of'_of' G' G]
     by_cases hG : G' = G
     · subst hG
-      rw [if_pos rfl, if_pos rfl]
-      show ((Nonplanar.forestAutCard G' : R)) =
-          ((Nonplanar.forestAutCard ({Nonplanar.node a G'} : Forest _) : R))
-      congr 1
-      -- forestAutCard {node a G'} = autCard (node a G') = forestAutCard G'.
-      show Nonplanar.forestAutCard G' =
-        Nonplanar.forestAutCard ({Nonplanar.node a G'} : Forest _)
-      conv_rhs => unfold Nonplanar.forestAutCard
-      rw [show ({Nonplanar.node a G'} : Multiset (Nonplanar α)).toFinset =
-            {Nonplanar.node a G'} from Multiset.toFinset_singleton _]
-      rw [Finset.prod_singleton]
-      simp [Nonplanar.autCard_node]
-    · have hne : ({Nonplanar.node a G'} : Forest (Nonplanar α)) ≠
-                 ({Nonplanar.node a G} : Forest (Nonplanar α)) := by
-        intro heq; apply hG
-        have := Multiset.singleton_inj.mp heq
-        have := congrArg Nonplanar.rootChildren this
-        rwa [Nonplanar.rootChildren_node, Nonplanar.rootChildren_node] at this
-      rw [if_neg hG, if_neg hne]
-  · -- F is not of form {node a G'}; bMinusBasis F = 0; RHS pairing also 0.
-    have hF_ne : F ≠ {Nonplanar.node a G} :=
-      fun h => hF ⟨G, h⟩
-    rw [if_neg hF_ne]
-    rw [bMinusBasis_eq_zero_of_not_singleton_a a F hF]
-    show pairing (R := R) (0 : ConnesKreimer R (Nonplanar α)) (of' G) = 0
-    rw [LinearMap.map_zero, LinearMap.zero_apply]
+      rw [if_pos rfl, if_pos rfl, Nonplanar.forestAutCard_singleton,
+          Nonplanar.autCard_node]
+    · rw [if_neg hG, if_neg fun h => hG (by
+        simpa using congrArg Nonplanar.rootChildren (Multiset.singleton_inj.mp h))]
+  · rw [bMinusBasis_eq_zero_of_not_singleton_a a F hF,
+        if_neg fun h => hF ⟨G, h⟩, pairing_zero_left]
 
 /-- **B+/B- adjointness** under the symmetry-weighted pairing, in mathlib's
     `LinearMap.IsAdjointPair` packaging. -/
