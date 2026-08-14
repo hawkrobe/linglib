@@ -50,78 +50,49 @@ open ConnesKreimer
 
 variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
-/-! ### `bMinusBasis` via per-list branching with perm-invariance -/
+/-! ### `bMinusTree` and `bMinusBasis` -/
 
-/-- Per-list branching for `bMinusBasis`. Reads the list as a planar
-    representative of the basis forest, returns `of' (rootChildren T)`
-    when the list is `[T]` and `T` has root label `a`. -/
-private noncomputable def bMinusList (a : α) :
-    List (Nonplanar α) → ConnesKreimer R (Nonplanar α)
-  | [T] =>
-      if Nonplanar.rootValue T = a then
-        of' (R := R) (Nonplanar.rootChildren T)
-      else 0
-  | _ => 0
+/-- Per-tree B-_a: the children forest when the root is labeled `a`,
+    else `0` — Foissy's B⁻ on trees
+    ([foissy-typed-decorated-rooted-trees-2018]). -/
+noncomputable def bMinusTree (a : α) (T : Nonplanar α) :
+    ConnesKreimer R (Nonplanar α) :=
+  if T.rootValue = a then of' (R := R) T.rootChildren else 0
 
-/-- `bMinusList` is `List.Perm`-invariant: lists differing by a
-    permutation give the same `bMinusList` output. Case analysis on
-    list length (Perm preserves length): length 1 lists are equal
-    pointwise; other lengths both give `0`. -/
-private theorem bMinusList_perm (a : α) :
-    ∀ {lst₁ lst₂ : List (Nonplanar α)}, lst₁.Perm lst₂ →
-    bMinusList (R := R) a lst₁ = bMinusList (R := R) a lst₂ := by
-  intro lst₁ lst₂ hperm
-  rcases lst₁ with _ | ⟨T₁, _ | ⟨T₁', rest⟩⟩
-  · -- lst₁ = []
-    have hlen : lst₂.length = 0 := by rw [← hperm.length_eq]; rfl
-    rcases lst₂ with _ | _
-    · rfl
-    · simp at hlen
-  · -- lst₁ = [T₁]
-    have hlen : lst₂.length = 1 := by rw [← hperm.length_eq]; rfl
-    rcases lst₂ with _ | ⟨T₂, _ | ⟨_, _⟩⟩
-    · simp at hlen
-    · have hT : T₁ = T₂ := by
-        have := hperm.mem_iff (a := T₁)
-        simp at this
-        exact this
-      show bMinusList a [T₁] = bMinusList a [T₂]
-      rw [hT]
-    · simp at hlen
-  · -- lst₁ = T₁ :: T₁' :: rest, length ≥ 2
-    have hlen : lst₂.length = rest.length + 2 := by
-      rw [← hperm.length_eq]; rfl
-    rcases lst₂ with _ | ⟨T₂, _ | ⟨T₂', rest₂⟩⟩
-    · simp at hlen
-    · simp at hlen
-    · rfl
+@[simp] theorem bMinusTree_node (a : α) (F : Forest (Nonplanar α)) :
+    bMinusTree (R := R) a (Nonplanar.node a F) = of' F := by
+  rw [bMinusTree, Nonplanar.rootValue_node, if_pos rfl,
+      Nonplanar.rootChildren_node]
 
-/-- The B-_a operator on basis-key forests. Defined via `Quotient.liftOn`
-    from `bMinusList`, using `bMinusList_perm` for well-definedness. -/
+/-- The B-_a operator on basis forests: `bMinusTree` on singletons, `0`
+    otherwise. Stated via `card`/`map`/`sum`, which carry the descent to
+    the `Multiset` quotient. -/
 noncomputable def bMinusBasis (a : α) (F : Forest (Nonplanar α)) :
     ConnesKreimer R (Nonplanar α) :=
-  Quotient.liftOn F (bMinusList (R := R) a)
-    (fun _ _ hperm => bMinusList_perm a hperm)
+  if F.card = 1 then (F.map (bMinusTree (R := R) a)).sum else 0
 
 @[simp] theorem bMinusBasis_zero (a : α) :
     bMinusBasis (R := R) a (0 : Forest (Nonplanar α)) = 0 := by
-  unfold bMinusBasis
-  show Quotient.liftOn (↑([] : List (Nonplanar α)) : Multiset (Nonplanar α))
-      (bMinusList (R := R) a) _ = 0
-  show bMinusList (R := R) a [] = 0
-  rfl
+  simp [bMinusBasis]
 
 @[simp] theorem bMinusBasis_singleton_node (a : α) (F : Forest (Nonplanar α)) :
     bMinusBasis (R := R) a ({Nonplanar.node a F} : Forest (Nonplanar α)) =
       of' F := by
-  unfold bMinusBasis
-  show Quotient.liftOn (↑[Nonplanar.node a F] : Multiset (Nonplanar α))
-      (bMinusList (R := R) a) _ = of' F
-  show bMinusList (R := R) a [Nonplanar.node a F] = of' F
-  show (if Nonplanar.rootValue (Nonplanar.node a F) = a then
-          of' (R := R) (Nonplanar.rootChildren (Nonplanar.node a F))
-        else 0) = of' F
-  rw [Nonplanar.rootValue_node, if_pos rfl, Nonplanar.rootChildren_node]
+  simp [bMinusBasis]
+
+/-- `bMinusBasis a` vanishes on basis forests that are not
+    singleton-`a`-rooted. -/
+theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
+    (F : Forest (Nonplanar α))
+    (h : ¬ ∃ G' : Forest (Nonplanar α), F = ({Nonplanar.node a G'} : Forest _)) :
+    bMinusBasis (R := R) a F = 0 := by
+  rw [bMinusBasis]
+  split_ifs with hcard
+  · obtain ⟨T, rfl⟩ := Multiset.card_eq_one.mp hcard
+    rw [Multiset.map_singleton, Multiset.sum_singleton, bMinusTree, if_neg]
+    intro hlab
+    exact h ⟨T.rootChildren, by rw [← hlab, Nonplanar.node_eta]⟩
+  · rfl
 
 /-! ### `bMinusLin a` — linear extension -/
 
@@ -201,33 +172,7 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
     have hF_ne : F ≠ {Nonplanar.node a G} :=
       fun h => hF ⟨G, h⟩
     rw [if_neg hF_ne]
-    -- Show bMinusBasis a F = 0.
-    have h_zero : bMinusBasis (R := R) a F = 0 := by
-      -- Take list representative; case-analyze its length / head label.
-      obtain ⟨lst, hlst⟩ : ∃ lst : List (Nonplanar α), F = ↑lst :=
-        ⟨F.toList, F.coe_toList.symm⟩
-      subst hlst
-      unfold bMinusBasis
-      show Quotient.liftOn (↑lst : Multiset (Nonplanar α))
-          (bMinusList (R := R) a) _ = 0
-      show bMinusList (R := R) a lst = 0
-      rcases lst with _ | ⟨T, _ | ⟨T', rest⟩⟩
-      · rfl
-      · -- lst = [T]; F = ↑[T] = {T}. Need: T ≠ Nonplanar.node a (anything).
-        show (if Nonplanar.rootValue T = a then
-                of' (R := R) (Nonplanar.rootChildren T)
-              else 0) = 0
-        rw [if_neg]
-        intro hlab
-        apply hF
-        refine ⟨Nonplanar.rootChildren T, ?_⟩
-        show (↑[T] : Multiset (Nonplanar α)) =
-              {Nonplanar.node a (Nonplanar.rootChildren T)}
-        congr 1
-        -- T = node a (rootChildren T) when rootValue T = a (by eta).
-        rw [← hlab, Nonplanar.node_eta]
-      · rfl
-    rw [h_zero]
+    rw [bMinusBasis_eq_zero_of_not_singleton_a a F hF]
     show pairing (R := R) (0 : ConnesKreimer R (Nonplanar α)) (of' G) = 0
     rw [LinearMap.map_zero, LinearMap.zero_apply]
 
@@ -664,34 +609,6 @@ private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
   rw [hLHS, hRHS]
 
 /-! ### The derivation identity -/
-
-/-- `bMinusLin a` is the constant function `0` on basis forests that are
-    not singleton-a-rooted. Helper for the easy cases of the derivation identity. -/
-theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
-    (F : Forest (Nonplanar α))
-    (h : ¬ ∃ G' : Forest (Nonplanar α), F = ({Nonplanar.node a G'} : Forest _)) :
-    bMinusBasis (R := R) a F = 0 := by
-  obtain ⟨lst, hlst⟩ : ∃ lst : List (Nonplanar α), F = ↑lst :=
-    ⟨F.toList, F.coe_toList.symm⟩
-  subst hlst
-  unfold bMinusBasis
-  show Quotient.liftOn (↑lst : Multiset (Nonplanar α))
-      (bMinusList (R := R) a) _ = 0
-  show bMinusList (R := R) a lst = 0
-  rcases lst with _ | ⟨T, _ | ⟨T', rest⟩⟩
-  · rfl
-  · -- lst = [T]; F = ↑[T] = {T}. Need: T's root label ≠ a.
-    show (if Nonplanar.rootValue T = a then
-            of' (R := R) (Nonplanar.rootChildren T) else 0) = 0
-    rw [if_neg]
-    intro hlab
-    apply h
-    refine ⟨Nonplanar.rootChildren T, ?_⟩
-    show (↑[T] : Multiset (Nonplanar α)) =
-          {Nonplanar.node a (Nonplanar.rootChildren T)}
-    congr 1
-    rw [← hlab, Nonplanar.node_eta]
-  · rfl
 
 /-- Counit of `of' F`: `1` if `F = 0`, else `0`. Re-expressed via `Decidable`. -/
 private theorem counit_of'_eq (F : Forest (Nonplanar α)) :
