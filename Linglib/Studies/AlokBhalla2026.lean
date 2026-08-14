@@ -24,7 +24,8 @@ where honorification surfaces (`HonDomain`).
 
 ## Connections
 
-- **Agree.lean**: AA validity reduces to `validAgree`
+- **Agree/Basic.lean**: allocutive [uHON] valuation is `applyAgree`
+  (`hon_agree_values`) — AA is ordinary phi-style agreement
 - **Phase.lean**: `isPhaseHeadOf .SA` — SAP as the highest phase
 - **Studies/Dayal2025.lean**: `particle_layer_predicts_embedding`
   — SAP unembeddability parallels allocutive root-only restriction
@@ -244,12 +245,6 @@ def HonP.level (hp : HonP) : HonLevel :=
 -- ============================================================================
 -- Section D: Bridge Theorems
 -- ============================================================================
-
-/-- AA validity reduces to `validAgree`: allocutive agreement is not special
-    machinery — it IS phi-agreement between a functional head and a null
-    addressee DP. -/
-theorem aa_is_agree (rel : AgreeRelation) (root : SyntacticObject)
-    (hValid : validAgree rel root) : validAgree rel root := hValid
 
 /-- SA-based allocutive agreement is root-only.
     Follows directly from SAP being the highest phase. -/

@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.Agree.Basic
+import Linglib.Syntax.Minimalist.Defs
 
 /-!
 # Host-dependent interpretability and ordered feature activation

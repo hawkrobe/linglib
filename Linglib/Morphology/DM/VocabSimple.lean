@@ -1,4 +1,5 @@
-import Linglib.Syntax.Minimalist.Agree.Basic
+import Linglib.Syntax.Minimalist.Defs
+import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.DM.VocabularyInsertion
