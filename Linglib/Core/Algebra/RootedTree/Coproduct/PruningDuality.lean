@@ -11,23 +11,18 @@ open RoseTree RoseTree.Nonplanar
 set_option autoImplicit false
 
 /-!
-# GL/CK duality and coassociativity of the pruning coproduct
+# GL/CK duality for the pruning coproduct
 
 The Grossman-Larson product and the pruning coproduct Δ^ρ are adjoint
 under the symmetry-weighted pairing ([foissy-2002]; the grafting
-calculus of [oudom-guin-2008]), and Δ^ρ coassociativity plus the
-`Bialgebra` instance of [marcolli-chomsky-berwick-2025] Lemma 1.2.11
-transport from `mul_assoc` through that duality.
+calculus of [oudom-guin-2008]).
 
 ## Main results
 
 * `ConnesKreimer.pairing_gl_eq_pairing_coproduct_Rho` — the duality
   `⟨x ⋆ y, z⟩ = pairing₂ (y ⊗ x) (Δ^ρ z)`.
-* `ConnesKreimer.comulRhoN_coassoc`,
-  `ConnesKreimer.comulAlgHomN_coassoc_algHom` — Δ^ρ coassociativity.
-* `ConnesKreimer.instBialgebraRho` — the Δ^ρ `Bialgebra` on the plain
-  Connes-Kreimer carrier, and the `IsAdmissibleCuts cutSummandsN` model
-  instance for the `WithCuts` carrier.
+* The `IsAdmissibleCuts cutSummandsN` model instance for the `WithCuts`
+  carrier (coassociativity and counit laws from `Coproduct/Pruning.lean`).
 
 ## Implementation notes
 
@@ -293,175 +288,13 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
                 IH _ hC'lt C' rfl
                   (ConnesKreimer.of' pq.1.2) (ConnesKreimer.of' pq.2.2)]
 
-/-! ### Coassoc LinearMaps + chain lemmas via the duality -/
-
-/-- The LHS LinearMap of Δ^ρ coassoc:
-    `assoc ∘ (Δ^ρ ⊗ id) ∘ Δ^ρ : CK →ₗ CK ⊗ (CK ⊗ CK)`. -/
-private noncomputable def coassocLHSLinRho :
-    ConnesKreimer R (Nonplanar α) →ₗ[R]
-      ConnesKreimer R (Nonplanar α) ⊗[R]
-        (ConnesKreimer R (Nonplanar α) ⊗[R]
-          ConnesKreimer R (Nonplanar α)) :=
-  (TensorProduct.assoc R _ _ _).toLinearMap ∘ₗ
-    (comulAlgHomN (R := R)).toLinearMap.rTensor _ ∘ₗ
-    (comulAlgHomN (R := R)).toLinearMap
-
-/-- The RHS LinearMap of Δ^ρ coassoc:
-    `(id ⊗ Δ^ρ) ∘ Δ^ρ : CK →ₗ CK ⊗ (CK ⊗ CK)`. -/
-private noncomputable def coassocRHSLinRho :
-    ConnesKreimer R (Nonplanar α) →ₗ[R]
-      ConnesKreimer R (Nonplanar α) ⊗[R]
-        (ConnesKreimer R (Nonplanar α) ⊗[R]
-          ConnesKreimer R (Nonplanar α)) :=
-  (comulAlgHomN (R := R)).toLinearMap.lTensor _ ∘ₗ
-    (comulAlgHomN (R := R)).toLinearMap
-
-/-- Intermediate: `assoc + rTensor (Δ^ρ) + pairing₃` via one application
-    of the duality. Note the crossed orientation: the inner coproduct
-    expansion produces the GL product `y ⋆ x`. -/
-private lemma pairing₃_assoc_rTensor_comul_rho
-    (x y z' : ConnesKreimer R (Nonplanar α))
-    (V : ConnesKreimer R (Nonplanar α) ⊗[R]
-          ConnesKreimer R (Nonplanar α)) :
-    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
-        ((TensorProduct.assoc R _ _ _)
-          ((comulAlgHomN (R := R)).toLinearMap.rTensor _ V)) =
-      pairing₂ (R := R) (product y x ⊗ₜ[R] z') V := by
-  induction V using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a b =>
-    rw [LinearMap.rTensor_tmul, AlgHom.toLinearMap_apply, pairing₃_assoc_tmul,
-        ← pairing_gl_eq_pairing_coproduct_Rho y x a, pairing₂_tmul_tmul]
-  | add V₁ V₂ ih₁ ih₂ =>
-    rw [map_add, map_add, map_add, ih₁, ih₂, map_add]
-
-/-- Intermediate: `lTensor (Δ^ρ) + pairing₃` via one application of the
-    duality (crossed orientation: produces `z' ⋆ y`). -/
-private lemma pairing₃_lTensor_comul_rho
-    (x y z' : ConnesKreimer R (Nonplanar α))
-    (W : ConnesKreimer R (Nonplanar α) ⊗[R]
-          ConnesKreimer R (Nonplanar α)) :
-    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
-        ((comulAlgHomN (R := R)).toLinearMap.lTensor _ W) =
-      pairing₂ (R := R) (x ⊗ₜ[R] product z' y) W := by
-  induction W using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a b =>
-    rw [LinearMap.lTensor_tmul, AlgHom.toLinearMap_apply, pairing₃_tmul_apply,
-        ← pairing_gl_eq_pairing_coproduct_Rho z' y b, pairing₂_tmul_tmul]
-  | add W₁ W₂ ih₁ ih₂ =>
-    rw [map_add, map_add, ih₁, ih₂, map_add]
-
-/-- LHS chain: pairing the LHS coassoc
-    expression against a pure triple tensor reduces to pairing the
-    GL product `z' ⋆ (y ⋆ x)` against `z`. -/
-private theorem pairing₃_coassocLHSLinRho
-    (x y z' z : ConnesKreimer R (Nonplanar α)) :
-    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z')) (coassocLHSLinRho (R := R) z) =
-      pairing
-        (product z' (product y x)) z := by
-  show pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
-        ((TensorProduct.assoc R _ _ _)
-          ((comulAlgHomN (R := R)).toLinearMap.rTensor _
-            ((comulAlgHomN (R := R)).toLinearMap z))) = _
-  rw [AlgHom.toLinearMap_apply, pairing₃_assoc_rTensor_comul_rho]
-  exact (pairing_gl_eq_pairing_coproduct_Rho z'
-          (product y x) z).symm
-
-/-- RHS chain: pairing the RHS coassoc
-    expression against a pure triple tensor reduces to pairing the
-    GL product `(z' ⋆ y) ⋆ x` against `z`. -/
-private theorem pairing₃_coassocRHSLinRho
-    (x y z' z : ConnesKreimer R (Nonplanar α)) :
-    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z')) (coassocRHSLinRho (R := R) z) =
-      pairing
-        (product (product z' y) x) z := by
-  show pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
-        ((comulAlgHomN (R := R)).toLinearMap.lTensor _
-          ((comulAlgHomN (R := R)).toLinearMap z)) = _
-  rw [AlgHom.toLinearMap_apply, pairing₃_lTensor_comul_rho]
-  exact (pairing_gl_eq_pairing_coproduct_Rho
-          (product z' y) x z).symm
-
-/-! ### Coassociativity of Δ^ρ via GL/CK duality (LinearMap form)
-
-Specialized to `[CommRing R]` (rather than `[CommSemiring R]`) since the
-proof uses subtraction (via `sub_eq_zero` in `pairing₃_unique`), which
-requires `R` to be a Ring (so `CK R T` has `AddCommGroup`). -/
-
-section CoassocCommRingRho
-variable {R' : Type*} [CommRing R'] {α' : Type*} [DecidableEq α']
-
-/-- Coassociativity of Δ^ρ (LinearMap form): transported from
-    `GrossmanLarson.mul_assoc` through the duality and the nondegeneracy
-    of `pairing₃`. -/
-theorem comulRhoN_coassoc [CharZero R'] [NoZeroDivisors R'] :
-    (TensorProduct.assoc R'
-        (ConnesKreimer R' (Nonplanar α'))
-        (ConnesKreimer R' (Nonplanar α'))
-        (ConnesKreimer R' (Nonplanar α'))).toLinearMap ∘ₗ
-      (comulAlgHomN (R := R')).toLinearMap.rTensor _ ∘ₗ
-      (comulAlgHomN (R := R')).toLinearMap =
-    (comulAlgHomN (R := R')).toLinearMap.lTensor _ ∘ₗ
-      (comulAlgHomN (R := R')).toLinearMap := by
-  ext z
-  apply pairing₃_unique
-  intro t
-  induction t using TensorProduct.induction_on with
-  | zero => simp
-  | tmul x rest =>
-    induction rest using TensorProduct.induction_on with
-    | zero => simp
-    | tmul y z' =>
-      show pairing₃ (x ⊗ₜ[R'] (y ⊗ₜ[R'] z')) (coassocLHSLinRho z) =
-           pairing₃ (x ⊗ₜ[R'] (y ⊗ₜ[R'] z')) (coassocRHSLinRho z)
-      rw [pairing₃_coassocLHSLinRho, pairing₃_coassocRHSLinRho,
-          ← mul_def, ← mul_def,
-          ← mul_def, ← mul_def,
-          GrossmanLarson.mul_assoc]
-    | add a b iha ihb =>
-      simp only [TensorProduct.tmul_add, map_add, LinearMap.add_apply,
-                 iha, ihb]
-  | add a b iha ihb =>
-    simp only [map_add, LinearMap.add_apply, iha, ihb]
-
-/-- The AlgHom form of Δ^ρ coassociativity. -/
-theorem comulAlgHomN_coassoc_algHom [CharZero R'] [NoZeroDivisors R'] :
-    (Algebra.TensorProduct.assoc R' R' R'
-        (ConnesKreimer R' (Nonplanar α'))
-        (ConnesKreimer R' (Nonplanar α'))
-        (ConnesKreimer R' (Nonplanar α'))).toAlgHom.comp
-      ((Algebra.TensorProduct.map (comulAlgHomN (R := R') (α := α'))
-        (AlgHom.id R' (ConnesKreimer R' (Nonplanar α')))).comp comulAlgHomN) =
-    (Algebra.TensorProduct.map (AlgHom.id R' (ConnesKreimer R' (Nonplanar α')))
-      (comulAlgHomN (R := R') (α := α'))).comp comulAlgHomN := by
-  apply AlgHom.toLinearMap_injective
-  exact comulRhoN_coassoc
-
-end CoassocCommRingRho
-
-/-! ### `Bialgebra` instance
-
-Built via `Bialgebra.ofAlgHom` from `comulAlgHomN_coassoc_algHom` (GL/CK
-duality) and the two counit AlgHom laws. The duality-based coassoc proof
-forces `[CommRing R] [CharZero R] [NoZeroDivisors R]`; the counit laws
-hold over `[CommSemiring R]` and are automatically satisfied. -/
-
-noncomputable instance instBialgebraRho
-    {R' : Type*} [CommRing R'] [CharZero R'] [NoZeroDivisors R'] {α' : Type*}
-    [DecidableEq α'] :
-    Bialgebra R' (ConnesKreimer R' (Nonplanar α')) :=
-  Bialgebra.ofAlgHom comulAlgHomN counit
-    comulAlgHomN_coassoc_algHom
-    counit_rTensor_comulAlgHomN
-    counit_lTensor_comulAlgHomN
-
 /-- Δ^ρ is the generic coproduct at `cuts := cutSummandsN` — definitional. -/
 theorem comulAlgHomN_eq_G {R : Type*} [CommSemiring R] {α : Type*} :
     comulAlgHomN (R := R) (α := α) = comulAlgHomNG (R := R) cutSummandsN := rfl
 
-/-- Δ^ρ is admissible: the GL/CK-duality coassociativity and the counit laws,
-transported through the `rfl` bridge `comulAlgHomN_eq_G`. -/
+/-- Δ^ρ is admissible: Foissy coassociativity and the counit laws
+(`Coproduct/Pruning.lean`), transported through the `rfl` bridge
+`comulAlgHomN_eq_G`. -/
 instance {α : Type*} [DecidableEq α] : IsAdmissibleCuts (cutSummandsN (α := α)) where
   coassoc := by
     intro R _ _ _
@@ -476,16 +309,6 @@ instance {α : Type*} [DecidableEq α] : IsAdmissibleCuts (cutSummandsN (α := �
     rw [← comulAlgHomN_eq_G]
     exact counit_lTensor_comulAlgHomN
 
-variable {R' : Type*} [CommRing R'] [CharZero R'] [NoZeroDivisors R'] {α' : Type*}
-  [DecidableEq α']
-
-/-- The coproduct of `instBialgebraRho` is `comulAlgHomN`. -/
-theorem coalgebra_comul_apply (x : ConnesKreimer R' (Nonplanar α')) :
-    Coalgebra.comul (R := R') x = comulAlgHomN x := rfl
-
-/-- The counit of `instBialgebraRho` is `ConnesKreimer.counit`. -/
-theorem coalgebra_counit_apply (x : ConnesKreimer R' (Nonplanar α')) :
-    CoalgebraStruct.counit (R := R') x = counit x := rfl
 
 end ConnesKreimer
 
