@@ -8,11 +8,6 @@ import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 open RoseTree RoseTree.Nonplanar
 
 set_option autoImplicit false
--- Nested tensor squares `CK ⊗ (CK ⊗ CK)` need one extra pending step during
--- instance synthesis: the chain `Semiring (CK ⊗ (CK ⊗ CK)) → Algebra R (CK ⊗ CK)
--- → Semiring (CK ⊗ CK) → …` nests pending subgoals past the default limit
--- (verified still required with the full granular instance set on the wrapper).
-set_option maxSynthPendingDepth 2
 
 /-!
 # GL/CK duality and coassociativity of the pruning coproduct

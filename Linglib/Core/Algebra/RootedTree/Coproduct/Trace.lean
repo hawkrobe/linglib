@@ -11,12 +11,6 @@ import Mathlib.RingTheory.Bialgebra.Basic
 
 open RoseTree RoseTree.Nonplanar
 
--- Nested tensor squares `CK ⊗ (CK ⊗ CK)` need one extra pending step during
--- instance synthesis: the chain `Semiring (CK ⊗ (CK ⊗ CK)) → Algebra R (CK ⊗ CK)
--- → Semiring (CK ⊗ CK) → …` nests pending subgoals past the default limit
--- (verified still required with the full granular instance set on the wrapper).
-set_option maxSynthPendingDepth 2
-
 /-!
 # Δ^c on `ConnesKreimer R (Nonplanar (α ⊕ β))` via descent
 [marcolli-chomsky-berwick-2025]
@@ -453,6 +447,25 @@ theorem comulCN_coassoc_tree
       (comulCAlgHomN (R := R') τ).toLinearMap.lTensor _ (comulCTreeN τ T) := by
   rw [lhsExpand, rhsExpand, doubleCut_eq τ hτ T]
 
+/-- The LHS AlgHom of Δ^c coassoc: `assoc ∘ (Δ^c ⊗ id) ∘ Δ^c`. -/
+private noncomputable def coassocLHSAlgC (τ : Nonplanar (α' ⊕ β') → β') :
+    ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R']
+      ConnesKreimer R' (Nonplanar (α' ⊕ β')) ⊗[R']
+        (ConnesKreimer R' (Nonplanar (α' ⊕ β')) ⊗[R']
+          ConnesKreimer R' (Nonplanar (α' ⊕ β'))) :=
+  (Algebra.TensorProduct.assoc R' R' R' _ _ _).toAlgHom.comp
+    ((Algebra.TensorProduct.map (comulCAlgHomN (R := R') τ)
+      (AlgHom.id R' _)).comp (comulCAlgHomN τ))
+
+/-- The RHS AlgHom of Δ^c coassoc: `(id ⊗ Δ^c) ∘ Δ^c`. -/
+private noncomputable def coassocRHSAlgC (τ : Nonplanar (α' ⊕ β') → β') :
+    ConnesKreimer R' (Nonplanar (α' ⊕ β')) →ₐ[R']
+      ConnesKreimer R' (Nonplanar (α' ⊕ β')) ⊗[R']
+        (ConnesKreimer R' (Nonplanar (α' ⊕ β')) ⊗[R']
+          ConnesKreimer R' (Nonplanar (α' ⊕ β'))) :=
+  (Algebra.TensorProduct.map (AlgHom.id R' _) (comulCAlgHomN (R := R') τ)).comp
+    (comulCAlgHomN τ)
+
 /-- Coassociativity of Δ^c under trace coherence.
 
     NOT τ-generic: without `TraceCoherent τ`, iterating Δ^c writes
@@ -482,40 +495,27 @@ theorem comulCN_coassoc
       (comulCAlgHomN (R := R') τ).toLinearMap =
     (comulCAlgHomN (R := R') τ).toLinearMap.lTensor _ ∘ₗ
       (comulCAlgHomN (R := R') τ).toLinearMap := by
-  -- Package both composites as algebra homs (defeq to the LinearMap
-  -- composites in the statement) and prove the AlgHom equality.
-  let CK := ConnesKreimer R' (Nonplanar (α' ⊕ β'))
-  let Δ := comulCAlgHomN (R := R') τ
-  let L : CK →ₐ[R'] CK ⊗[R'] (CK ⊗[R'] CK) :=
-    (Algebra.TensorProduct.assoc R' R' R' CK CK CK).toAlgHom.comp
-      ((Algebra.TensorProduct.map Δ (AlgHom.id R' CK)).comp Δ)
-  let Rr : CK →ₐ[R'] CK ⊗[R'] (CK ⊗[R'] CK) :=
-    (Algebra.TensorProduct.map (AlgHom.id R' CK) Δ).comp Δ
-  suffices hLR : L = Rr by
-    -- L.toLinearMap and Rr.toLinearMap are defeq to the two composites.
-    exact congrArg AlgHom.toLinearMap hLR
+  suffices hLR : coassocLHSAlgC (R' := R') τ = coassocRHSAlgC τ from
+    congrArg AlgHom.toLinearMap hLR
   -- Both AlgHoms agree on every basis forest `of' G`, by induction on
   -- `G` using multiplicativity and the per-tree statement.
-  have key : ∀ G : Forest (Nonplanar (α' ⊕ β')),
-      L (ConnesKreimer.of' G) = Rr (ConnesKreimer.of' G) := by
-    intro G
-    induction G using Multiset.induction with
-    | empty => rw [ConnesKreimer.of'_zero, map_one, map_one]
-    | cons T G ihG =>
-      rw [show (T ::ₘ G : Forest (Nonplanar (α' ⊕ β'))) = {T} + G from
-            (Multiset.singleton_add T G).symm,
-          ConnesKreimer.of'_add, map_mul, map_mul, ihG, ConnesKreimer.of'_singleton]
-      congr 1
-      -- L (ofTree T) = Rr (ofTree T): the per-tree statement (the AlgHom
-      -- applications are defeq to the LinearMap-applied per-tree form).
-      show TensorProduct.assoc R' CK CK CK
-          ((comulCAlgHomN (R := R') τ).toLinearMap.rTensor _
-            (comulCAlgHomN (R := R') τ (ConnesKreimer.ofTree T))) =
-        (comulCAlgHomN (R := R') τ).toLinearMap.lTensor _
-          (comulCAlgHomN (R := R') τ (ConnesKreimer.ofTree T))
-      rw [comulCAlgHomN_apply_ofTree]
-      exact comulCN_coassoc_tree τ hτ T
-  exact ConnesKreimer.algHom_ext (fun F => key F)
+  refine ConnesKreimer.algHom_ext fun G => ?_
+  induction G using Multiset.induction with
+  | empty => rw [ConnesKreimer.of'_zero, map_one, map_one]
+  | cons T G ihG =>
+    rw [show (T ::ₘ G : Forest (Nonplanar (α' ⊕ β'))) = {T} + G from
+          (Multiset.singleton_add T G).symm,
+        ConnesKreimer.of'_add, map_mul, map_mul, ihG, ConnesKreimer.of'_singleton]
+    congr 1
+    -- The AlgHom applications are defeq to the LinearMap-applied
+    -- per-tree form.
+    show TensorProduct.assoc R' _ _ _
+        ((comulCAlgHomN (R := R') τ).toLinearMap.rTensor _
+          (comulCAlgHomN (R := R') τ (ConnesKreimer.ofTree T))) =
+      (comulCAlgHomN (R := R') τ).toLinearMap.lTensor _
+        (comulCAlgHomN (R := R') τ (ConnesKreimer.ofTree T))
+    rw [comulCAlgHomN_apply_ofTree]
+    exact comulCN_coassoc_tree τ hτ T
 
 end CoassocCommRing
 
