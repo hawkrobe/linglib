@@ -1,3 +1,4 @@
+import Linglib.Core.Algebra.BigOperators.Multiset
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonAssoc
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
 
@@ -665,20 +666,6 @@ theorem _root_.RoseTree.Nonplanar.insertionMultiset_antidiagonal
 
 /-! ### Generic sum/product plumbing -/
 
-/-- Sum of a product-indexed multiset of products factors. -/
-theorem sum_map_product_mul {β γ : Type*} (s : Multiset β) (t : Multiset γ)
-    (f : β → R) (g : γ → R) :
-    ((s ×ˢ t).map (fun p => f p.1 * g p.2)).sum = (s.map f).sum * (t.map g).sum := by
-  induction s using Multiset.induction_on with
-  | empty => simp only [Multiset.zero_product, Multiset.map_zero, Multiset.sum_zero,
-      zero_mul]
-  | cons a s ih =>
-    rw [Multiset.cons_product, Multiset.map_add, Multiset.sum_add, ih,
-        Multiset.map_map, Multiset.map_cons, Multiset.sum_cons, add_mul]
-    congr 1
-    rw [show ((fun p : β × γ => f p.1 * g p.2) ∘ Prod.mk a) = fun b => f a * g b from rfl,
-        Multiset.sum_map_mul_left]
-
 /-- `(s ×ˢ t).bind F = s.bind (a ↦ t.bind (b ↦ F (a, b)))`. -/
 private theorem product_bind {β γ δ : Type*} (s : Multiset β) (t : Multiset γ)
     (F : β × γ → Multiset δ) :
@@ -1027,7 +1014,7 @@ theorem pairing_product_of'_mul_of' (A B C₁ C₂ : Forest (Nonplanar α)) :
   refine Multiset.map_congr rfl fun pq _ => ?_
   show ((productIdx pq.1.1 pq.2.1 ×ˢ productIdx pq.1.2 pq.2.2).map φ).sum = _
   rw [hφ]
-  rw [sum_map_product_mul (productIdx pq.1.1 pq.2.1) (productIdx pq.1.2 pq.2.2)
+  rw [Multiset.sum_map_product_mul (productIdx pq.1.1 pq.2.1) (productIdx pq.1.2 pq.2.2)
       (fun W => pairing (R := R) (ConnesKreimer.of' W) (ConnesKreimer.of' C₁))
       (fun W => pairing (R := R) (ConnesKreimer.of' W) (ConnesKreimer.of' C₂))]
   rw [← pairing_product_of'_expand, ← pairing_product_of'_expand]

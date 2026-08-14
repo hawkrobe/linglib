@@ -61,31 +61,14 @@ torsion subtleties when |Aut(F)| = 0 or non-invertible).
 
 `[UPSTREAM]` candidate. Sorry-free, including `pairing_nondegenerate`.
 The aut-cardinality substrate `Nonplanar.autCard` /
-`Nonplanar.forestAutCard` lives in
-`Linglib/Core/Combinatorics/RootedTree/Aut.lean` (re-exported here as
-`treeAutCard` / `forestAutCard`), also sorry-free.
+`Nonplanar.forestAutCard` (the symmetry weight in the pairing) lives in
+`Linglib/Core/Combinatorics/RootedTree/Aut.lean`, also sorry-free.
 -/
 
 
 namespace GrossmanLarson
 
 variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
-
-/-! ### Automorphism count
-
-The cardinality of the automorphism group of a rooted nonplanar tree
-(or forest) is the symmetry weight in the pairing. The actual
-substrate for these is in
-`Linglib/Core/Combinatorics/RootedTree/Aut.lean` — re-exported here
-under the `GrossmanLarson` namespace for use in the pairing. -/
-
-/-- Re-export `Nonplanar.autCard` for use in the pairing. -/
-noncomputable def treeAutCard (t : Nonplanar α) : ℕ :=
-  Nonplanar.autCard t
-
-/-- Re-export `Nonplanar.forestAutCard` for use in the pairing. -/
-noncomputable def forestAutCard (F : Forest (Nonplanar α)) : ℕ :=
-  Nonplanar.forestAutCard F
 
 /-! ### The bilinear pairing -/
 
