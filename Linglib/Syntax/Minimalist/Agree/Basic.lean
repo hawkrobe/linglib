@@ -15,48 +15,60 @@ Agree is the mechanism by which features are checked/valued:
 
 This file states Agree's structural conditions over `SyntacticObject`
 trees (c-command locality, horizons, phase-boundedness) and the valuation
-step over `FeatureBundle`s. The feature *types* live in `Features.lean`;
-the search kernel and failure model ([preminger-2014] Ch. 5) in
-`Probe/Basic.lean`; richer satisfaction conditions ([deal-2024],
-[keine-2019]) in `Probe/Satisfaction.lean`; the Case Filter in
-`Syntax/Case/Filter.lean`.
+step over `FeatureBundle`s. Bundles live in a *feature assignment*
+`LIToken → FeatureBundle` rather than in the carrier — the free-Merge core
+keeps `SO₀` features atomic (`Features/Slot.lean`) — and a constituent
+exposes its projecting head's bundle through selection-driven labeling
+(`headBundle`). The feature *types* live in `Features.lean`; the search
+kernel and failure model ([preminger-2014] Ch. 5) in `Probe/Basic.lean`;
+richer satisfaction conditions ([deal-2024], [keine-2019]) in
+`Probe/Satisfaction.lean`; the Case Filter in `Syntax/Case/Filter.lean`.
 -/
 
 namespace Minimalist
 
 open SyntacticObject
 
-/-! ### Agree relations -/
+/-! ### Agree relations
 
-/-- A probe-goal pair for Agree. The feature bundles are supplied with the
-    relation — `SyntacticObject` leaves do not carry bundles — so `validAgree`
-    checks a stipulated configuration for well-formedness rather than deriving
-    the bundles from the tree. -/
-structure AgreeRelation where
-  probe : SyntacticObject
-  goal : SyntacticObject
-  /-- The feature being checked; only its dimension matters. -/
-  feature : FeatureVal
-  probeFeatures : FeatureBundle
-  goalFeatures : FeatureBundle
+Feature bundles live in a *feature assignment* `LIToken → FeatureBundle`,
+not in the carrier (`Features/Slot.lean`). A constituent exposes its
+projecting head's bundle through selection-driven labeling
+(`SyntacticObject.selHead`), so an Agree relation's feature conditions and
+its structural conditions are read off one tree and one assignment. -/
 
-/-- The probe c-commands the goal within a given tree. -/
-def AgreeRelation.probeCommands (a : AgreeRelation) (root : SyntacticObject) : Prop :=
-  cCommandsIn root a.probe a.goal
+/-- The feature bundle `s` exposes to Agree under the assignment `feats`:
+    its projecting head's bundle. An unlabelable constituent exposes no
+    features (`⊥`), so it can neither probe nor serve as a goal. -/
+def headBundle (feats : LIToken → FeatureBundle) (s : SyntacticObject) : FeatureBundle :=
+  (s.selHead.map feats).getD ⊥
 
-/-- The goal has the relevant valued feature. -/
-def AgreeRelation.goalHasFeature (a : AgreeRelation) : Bool :=
-  hasValuedFeature a.goalFeatures a.feature
+@[simp] theorem headBundle_lexLeaf (feats : LIToken → FeatureBundle) (tok : LIToken) :
+    headBundle feats (lexLeaf tok) = feats tok := rfl
 
-/-- The probe has the relevant unvalued feature. -/
-def AgreeRelation.probeNeedsFeature (a : AgreeRelation) : Bool :=
-  hasUnvaluedFeature a.probeFeatures a.feature
+/-- Valid Agree under a feature assignment: `probe` c-commands `goal` in
+    `root`, the probe's head bears an unvalued `t`-slot, and the goal's head
+    bears a valued one. -/
+def validAgree (feats : LIToken → FeatureBundle) (root probe goal : SyntacticObject)
+    (t : FeatureType) : Prop :=
+  cCommandsIn root probe goal ∧
+  (headBundle feats probe).hasUnvaluedFeature t = true ∧
+  (headBundle feats goal).hasValuedFeature t = true
 
-/-- Valid Agree: probe c-commands goal (in tree), probe has unvalued, goal has valued. -/
-def validAgree (a : AgreeRelation) (root : SyntacticObject) : Prop :=
-  a.probeCommands root ∧
-  a.probeNeedsFeature = true ∧
-  a.goalHasFeature = true
+instance (feats : LIToken → FeatureBundle) (root probe goal : SyntacticObject)
+    (t : FeatureType) : Decidable (validAgree feats root probe goal t) := by
+  unfold validAgree; infer_instance
+
+/-- Nothing Agrees with itself: one slot cannot be both unvalued and valued.
+    Irreflexivity is a fact about the assignment being a single source of
+    feature truth, not about c-command (a multiply-occurring subterm can
+    c-command itself). -/
+theorem validAgree_irrefl (feats : LIToken → FeatureBundle) (root s : SyntacticObject)
+    (t : FeatureType) : ¬ validAgree feats root s s t := by
+  rintro ⟨-, hu, hv⟩
+  cases h : headBundle feats s t <;>
+    simp [FeatureBundle.hasUnvaluedFeature, FeatureBundle.hasValuedFeature,
+      Features.FeatureSlot.isUnvalued, Features.FeatureSlot.isValued, h] at hu hv
 
 /-! ### Locality: closest goal
 
@@ -140,8 +152,15 @@ def applyAgree (probeFeats goalFeats : FeatureBundle) (ftype : FeatureVal) :
     `linearizationBound` ([sande-clem-dabkowski-2026]) the phasehood layer is
     transparent and locality falls to Cyclic Linearization. -/
 def validAgreeWithPIC (strength : PICStrength) (phases : List Phase)
-    (rel : AgreeRelation) (root : SyntacticObject) : Prop :=
-  validAgree rel root ∧ ∀ ph ∈ phases, admitsExtraction strength ph rel.goal
+    (feats : LIToken → FeatureBundle) (root probe goal : SyntacticObject)
+    (t : FeatureType) : Prop :=
+  validAgree feats root probe goal t ∧ ∀ ph ∈ phases, admitsExtraction strength ph goal
+
+instance (strength : PICStrength) (phases : List Phase)
+    (feats : LIToken → FeatureBundle) (root probe goal : SyntacticObject)
+    (t : FeatureType) :
+    Decidable (validAgreeWithPIC strength phases feats root probe goal t) := by
+  unfold validAgreeWithPIC; infer_instance
 
 /-! ### `applyAgree` as a `Probe` transmission -/
 
