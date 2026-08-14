@@ -1,3 +1,4 @@
+import Linglib.Core.Algebra.BigOperators.Multiset
 import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pairing
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
@@ -130,7 +131,7 @@ private lemma pairing₂_of'_of'_mul (A B : Forest (Nonplanar α))
                 (ConnesKreimer.of' pq.2.2) v₁))) from
         Multiset.map_congr rfl fun pq _ => by
           rw [pairing₂_tmul_tmul, pairing₂_tmul_tmul]; ring]
-      rw [sum_map_product_mul (Multiset.antidiagonal A)
+      rw [Multiset.sum_map_product_mul (Multiset.antidiagonal A)
           (Multiset.antidiagonal B)
           (fun pa => pairing (R := R)
               (ConnesKreimer.of' pa.1) u₂ *

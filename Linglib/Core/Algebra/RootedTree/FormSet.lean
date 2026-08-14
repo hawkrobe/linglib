@@ -76,32 +76,7 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommSemiring R] {α : Type*}
 
-/-! ## §1: The grafting operator `B` (MCB Def 1.3.2)
-
-In our typed `Nonplanar α` substrate, `B` needs a root label parameter.
-This is exactly the existing `bPlusLin a` (Hochschild 1-cocycle for
-Δ^ρ; reused here as the FormSet grafting operator). -/
-
-/-- The **grafting operator** `B` (MCB Def 1.3.2): create a new tree
-    with a fresh root labeled `a` and the forest `F` as children.
-
-    Identical to the smart constructor `Nonplanar.node a F`; this name
-    highlights the FormSet usage. -/
-noncomputable def graft (a : α) (F : Forest (Nonplanar α)) : Nonplanar α :=
-  Nonplanar.node a F
-
-/-- The **grafting operator linearly extended**: re-export `bPlusLin`
-    from `Pruning.lean` under the FormSet-flavored name. -/
-noncomputable def graftLin (a : α) :
-    ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
-  bPlusLin (R := R) a
-
-@[simp] theorem graftLin_of' (a : α) (F : Forest (Nonplanar α)) :
-    graftLin (R := R) a (of' F) = ofTree (graft a F) := by
-  show bPlusLin (R := R) a (of' F) = ofTree (Nonplanar.node a F)
-  exact bPlusLin_of' a F
-
-/-! ## §2: The primitive coproduct `Δ_P` (MCB Remark 1.16.2)
+/-! ### The primitive coproduct `Δ_P` (MCB Remark 1.16.2)
 
 `Δ_P` treats every basis tree as primitive: `Δ_P(T) = T ⊗ 1 + 1 ⊗ T`.
 Extended multiplicatively to forests by `Δ_P(F + G) = Δ_P(F) · Δ_P(G)`,
@@ -161,7 +136,7 @@ noncomputable def comulPrim :
   rw [Multiset.map_singleton, Multiset.prod_singleton]
   rfl
 
-/-! ## §3: The k-component projection `Π_(k)` (MCB book p. 142)
+/-! ### The k-component projection `Π_(k)` (MCB book p. 142)
 
 `γ_(k)(F) = F` if F has exactly `k` components, else 0. Linearly
 extended to `ConnesKreimer R (Nonplanar α)`. Then `Π_(k) = γ_(k) ⊗ id`
@@ -184,10 +159,11 @@ noncomputable def projectKComponent (k : ℕ) :
     projectKComponent (R := R) k (of' F) = 0 := by
   rw [projectKComponent, ConnesKreimer.linearLift_of', if_neg h]
 
-/-! ## §4: The FormSet operator `FS^(k)` (MCB Def 1.16.1)
+/-! ### The FormSet operator `FS^(k)` (MCB Def 1.16.1)
 
 `FS^(k) = ⊔ ∘ (B ⊗ id) ∘ Π_(k) ∘ Δ_P` where `⊔` is CK multiplication
-(lifted to a LinearMap from the tensor product). -/
+(lifted to a LinearMap from the tensor product) and the grafting
+operator `B` (MCB Def 1.3.2) is `bPlusLin` (`Coproduct/Pruning.lean`). -/
 
 /-- The CK multiplication as a LinearMap from `H ⊗ H → H`. -/
 noncomputable def mulLin :
@@ -206,25 +182,26 @@ noncomputable def mulLin :
 noncomputable def formSet (a : α) (k : ℕ) :
     ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
   mulLin (R := R) (α := α) ∘ₗ
-    ((graftLin (R := R) a).rTensor _) ∘ₗ
+    ((bPlusLin (R := R) a).rTensor _) ∘ₗ
     ((projectKComponent (R := R) k).rTensor _) ∘ₗ
     (comulPrim (R := R) (α := α)).toLinearMap
 
-/-! ## §5: Basic API + sanity tests -/
+/-! ### Basic API + sanity tests -/
 
 @[simp] theorem formSet_apply (a : α) (k : ℕ) (x : ConnesKreimer R (Nonplanar α)) :
     formSet (R := R) a k x =
-      mulLin (((graftLin (R := R) a).rTensor _)
+      mulLin (((bPlusLin (R := R) a).rTensor _)
         (((projectKComponent (R := R) k).rTensor _) (comulPrim x))) := rfl
 
 /-- On a singleton tree `T`, `Δ_P(T) = T ⊗ 1 + 1 ⊗ T`. The left channel
     has cardinality 1 (`{T}.card`) and cardinality 0 (empty forest).
     For `k = 1`, only the `T ⊗ 1` summand survives Π_(1); grafting gives
-    `ofTree (graft a {T}) ⊗ 1`, and `⊔` produces `ofTree (graft a {T})`. -/
+    `ofTree (Nonplanar.node a {T}) ⊗ 1`, and `⊔` produces
+    `ofTree (Nonplanar.node a {T})`. -/
 example (a : α) (T : Nonplanar α) :
     formSet (R := R) a 1 (ofTree T) =
-      ofTree (graft a ({T} : Forest (Nonplanar α))) := by
-  show mulLin (((graftLin (R := R) a).rTensor _)
+      ofTree (Nonplanar.node a ({T} : Forest (Nonplanar α))) := by
+  show mulLin (((bPlusLin (R := R) a).rTensor _)
         (((projectKComponent (R := R) 1).rTensor _) (comulPrim (ofTree T)))) = _
   rw [comulPrim_apply_ofTree]
   -- Distribute rTensor / mulLin over the sum and reduce.
@@ -239,8 +216,8 @@ example (a : α) (T : Nonplanar α) :
   simp only [map_add, LinearMap.rTensor_tmul, h1, h0,
              TensorProduct.zero_tmul, add_zero, mulLin,
              LinearMap.mul'_apply, mul_one]
-  -- Bridge `graftLin a (ofTree T) = ofTree (graft a {T})` via `ofTree T = of' {T}`.
-  show graftLin (R := R) a (of' ({T} : Forest (Nonplanar α))) = _
+  -- Bridge via `ofTree T = of' {T}`.
+  show bPlusLin (R := R) a (of' ({T} : Forest (Nonplanar α))) = _
   exact bPlusLin_of' a ({T} : Forest (Nonplanar α))
 
 end ConnesKreimer
