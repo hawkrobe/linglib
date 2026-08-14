@@ -1432,7 +1432,7 @@ private theorem sum_map_numNodes_sub_one_add_card {γ : Type*}
     the cut subtree by a unit-weight leaf, so crown edges plus trunk
     weight recover the tree weight exactly. Descends
     `cutSummandsG_numNodes` through `Nonplanar.mk`. -/
-theorem cutSummandsCN_numNodes (τ : Nonplanar (α ⊕ β) → β)
+theorem cutSummandsCN_edgeCount (τ : Nonplanar (α ⊕ β) → β)
     (T : Nonplanar (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T,
       Forest.edgeCount p.1 + p.2.numNodes = T.numNodes := by

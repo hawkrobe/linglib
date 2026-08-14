@@ -44,7 +44,7 @@ This file defines the graded subspaces and proves the coproduct half of
 the grading compatibility (`comulCAlgHomN_of'_mem_gradedSpan`); the
 product half is edge-count additivity over disjoint union
 (`Forest.edgeCount_add`), and edge conservation through the trace cut
-machinery is `cutSummandsCN_numNodes`
+machinery is `cutSummandsCN_edgeCount`
 (`Core/Combinatorics/RootedTree/Cut.lean`). -/
 
 /-- **Graded piece V_n**: the subspace of `ConnesKreimer R (Nonplanar X)`
@@ -109,7 +109,7 @@ private theorem comulCTreeN_mem (τ : Nonplanar (α ⊕ β) → β)
   · refine multiset_sum_mem _ ?_
     intro c hc
     obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hc
-    have hcons := cutSummandsCN_numNodes τ T p hp
+    have hcons := cutSummandsCN_edgeCount τ T p hp
     have hpos := Nonplanar.numNodes_pos p.2
     refine Submodule.subset_span ⟨p.1, {p.2}, ?_, rfl⟩
     rw [Forest.edgeCount_singleton]
@@ -148,7 +148,7 @@ theorem comulCAlgHomN_of'_mem_gradedSpan
         yi ∈ gradedPiece (α ⊕ β) j ∧
         y = xi ⊗ₜ[R] yi} := by
   -- Each cut summand splits the edges (the trace marker replaces the cut
-  -- subtree by a unit-weight leaf, `cutSummandsCN_numNodes`), and the
+  -- subtree by a unit-weight leaf, `cutSummandsCN_edgeCount`), and the
   -- homogeneous tensor spans multiply additively (`gradedTensorSpan_mul`).
   rw [comulCAlgHomN_apply_of']
   refine SetLike.le_def.mp (Submodule.span_le.mpr ?_)
