@@ -20,7 +20,7 @@ dual-primitives side on the Connes-Kreimer bialgebra with the Δ^ρ
 `Bialgebra.dualPrimitives` theory of `Core/RingTheory/Bialgebra/Primitive`.
 
 The paper's dual-basis functional `δ_T` is `lcoeff R {T}`; the cut count
-`countSingleCutsRho` lives with `cutSummandsN` in `Coproduct/PruningNonplanar`.
+`countSingleCutsRho` lives with `cutSummandsN` in `Coproduct/Pruning`.
 
 ## Main results
 

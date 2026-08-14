@@ -26,7 +26,7 @@ coassociativity (`Coproduct/PruningDuality.lean`): the duality theorem
 pairs the GL product against Δ^ρ through `pairing₂`, and
 `pairing₃_unique` transports `GrossmanLarson.mul_assoc` to
 coassociativity. No analogous duality holds for the trace coproduct Δ^c
-(see the Trace-coherence section of `Coproduct/TraceNonplanar.lean`).
+(see the Trace-coherence section of `Coproduct/Trace.lean`).
 -/
 
 namespace ConnesKreimer
@@ -44,7 +44,7 @@ duality for the deletion coproduct Δ^ρ (`Coproduct/PruningDuality.lean`:
 `⟨x ⋆ y, z⟩ = pairing₂ (y ⊗ x) (Δ^ρ z)`). For the trace variant Δ^c no
 such duality holds — the trunk of a proper cut contains trace-marker
 leaves that GL grafting can never produce — so Δ^c coassociativity
-(`comulCN_coassoc`, `Coproduct/TraceNonplanar.lean`) is a separate
+(`comulCN_coassoc`, `Coproduct/Trace.lean`) is a separate
 combinatorial statement. -/
 
 /-- The **tensor-extended pairing** `H ⊗ H →ₗ H ⊗ H →ₗ R`, defined by

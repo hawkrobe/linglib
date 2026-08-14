@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.BigOperators.Multiset
 import Linglib.Core.Data.Multiset.FilterMap
-import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
-import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
+import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
+import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 import Linglib.Core.Combinatorics.RootedTree.CutFilterMap
 import Linglib.Core.Data.RoseTree.FilterMap
 
@@ -17,7 +17,7 @@ open RoseTree RoseTree.Nonplanar
 
 The deletion variant of the Connes-Kreimer admissible-cut coproduct
 ([marcolli-chomsky-berwick-2025] Lemma 1.3.10, p. 44), obtained from the
-trace coproduct Δ^c (`Coproduct/TraceNonplanar.lean`) by erasing
+trace coproduct Δ^c (`Coproduct/Trace.lean`) by erasing
 trace-placeholder leaves from both tensor channels:
 `Δ^d = (Π_{d,c} ⊗ Π_{d,c}) ∘ Δ^c`, where `Π_{d,c}` erases
 trace-placeholder leaves.

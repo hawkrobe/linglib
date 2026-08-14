@@ -18,8 +18,8 @@ summands* `(crown, trunk)` of `of' crown ⊗ ofTree trunk`. They differ **only**
 in the cut enumeration `cuts T`. This file factors that shape into a single
 `cuts`-parameterized algebra hom `comulAlgHomNG`; the concrete coproducts are
 its instantiations — Δ^ρ at `cuts := cutSummandsN`
-(`Coproduct/PruningNonplanar.lean`) and Δ^c at `cuts := cutSummandsCN τ`
-(`Coproduct/TraceNonplanar.lean`, definitionally).
+(`Coproduct/Pruning.lean`) and Δ^c at `cuts := cutSummandsCN τ`
+(`Coproduct/Trace.lean`, definitionally).
 
 The cut-*enumeration* layer was already generic (`ConnesKreimer.cutSummandsG`,
 over an extraction policy); this lifts that genericity to the coproduct
@@ -120,8 +120,8 @@ noncomputable def comulAlgHomNG
 the (crown, trunk-forest) pairs of a tree and their convolution over a
 forest; `cutTensor` sends a pair to `of' crown ⊗ of' trunk`. These
 single-sum expansions serve the Δ^ρ cocycle substrate
-(`Coproduct/PruningNonplanar.lean`) and the Δ^c double-cut coassoc proof
-(`Coproduct/TraceNonplanar.lean`). -/
+(`Coproduct/Pruning.lean`) and the Δ^c double-cut coassoc proof
+(`Coproduct/Trace.lean`). -/
 
 /-- Tensor-product factor of a (crown, trunk) cut pair. -/
 noncomputable def cutTensor (p : Forest (Nonplanar α) × Forest (Nonplanar α)) :

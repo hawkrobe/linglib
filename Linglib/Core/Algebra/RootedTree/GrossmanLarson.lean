@@ -40,9 +40,9 @@ The GL framework is **the unification** that lets MCB's three coproducts
 
 * **Lemma 1.2.10** (Δ^c bialgebra on `V(F_{SO_0})`): closed via the
   GL-CK duality once R.5/R.6/R.7 sorries land. See
-  `Coproduct/TraceNonplanar.lean`.
+  `Coproduct/Trace.lean`.
 * **Lemma 1.2.11** (Δ^ρ Hopf algebra on `V(\tilde F_{SO_0})`):
-  currently has a parallel proof in `Coproduct/PruningNonplanar.lean`
+  currently has a parallel proof in `Coproduct/Pruning.lean`
   (Foissy clean coassoc); R.8 will redo via GL duality and delete the
   parallel.
 * **Lemma 1.7.3** (Insertion Lie Algebra of §1.7 = Lie algebra of

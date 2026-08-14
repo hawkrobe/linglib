@@ -17,7 +17,7 @@ trees ([marcolli-chomsky-berwick-2025] Definition 1.2.6 and Lemma
 coproduct of [foissy-introduction-hopf-algebras-trees]), with the
 Hochschild 1-cocycle property of grafting and the counit laws. Δ^ρ
 deletes cut subtrees outright, unlike the trace variant Δ^c
-(`Coproduct/TraceNonplanar.lean`), which leaves marker leaves.
+(`Coproduct/Trace.lean`), which leaves marker leaves.
 
 ## Main definitions
 
@@ -46,7 +46,7 @@ variant, which instead uses the direct double-cut bijection).
 Coassociativity and the `Bialgebra` instance live downstream in
 `Coproduct/PruningDuality.lean` (the GL/CK duality proof needs the B⁻
 calculus of `BMinus.lean`, which imports this file); the full
-`HopfAlgebra` instance is in `HopfAlgebraNonplanar.lean`.
+`HopfAlgebra` instance is in `HopfAlgebra.lean`.
 
 ## Status
 

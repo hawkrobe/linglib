@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Minimalist.Merge.MinimalYieldGrading
-import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
+import Linglib.Core.Algebra.RootedTree.HopfAlgebra
 
 /-!
 # The Minimal-Yield character ϕt : H → Laurent series (MCB Prop. 3.5.3, Lemma 3.5.5)

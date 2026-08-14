@@ -34,7 +34,7 @@ structure of `(V(F_{SO_0}), ⊔, Δ^c)`.
 
 1. **`comulCTreeN`, `comulCForestN`, `comulCAlgHomN`** — Nonplanar
    tree/forest-level Δ^c, packaged as algebra hom. The descent layer
-   mirrors `Coproduct/PruningNonplanar.lean`'s descent of Δ^ρ.
+   mirrors `Coproduct/Pruning.lean`'s descent of Δ^ρ.
 2. **Coassociativity** (`comulCN_coassoc`, under `TraceCoherent`) by
    the direct double-cut bijection: both composites expand to sums
    over double-cut enumerators (`lhsExpand`/`rhsExpand`), which agree
@@ -568,7 +568,7 @@ end BialgebraInst
 
 /-! ### Counit laws — factored via per-tree + forest helpers
 
-Mirrors the Δ^ρ proof structure in `Coproduct/PruningNonplanar.lean`:
+Mirrors the Δ^ρ proof structure in `Coproduct/Pruning.lean`:
 per-tree laws from empty-cut uniqueness, lifted to forests by
 multiplicativity. Stated over `CommSemiring` (unlike the coassoc, which
 needs a ring) so they can feed the ring-uniform `IsAdmissibleCuts`

@@ -1,5 +1,5 @@
 import Linglib.Core.Combinatorics.RootedTree.Cut
-import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
+import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Data.RoseTree.Count
 import Linglib.Syntax.Minimalist.Workspace.TraceMeasures

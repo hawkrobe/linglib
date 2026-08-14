@@ -12,7 +12,7 @@ The combinatorial heart of Δ^c coassociativity: both `(Δ^c ⊗ id) ∘ Δ^c` a
 `(id ⊗ Δ^c) ∘ Δ^c` enumerate ordered pairs of nested admissible cuts of a
 tree, and under trace coherence the two enumerations agree as Nonplanar
 multisets. This file proves that agreement at the **planar** level (where
-`cutSummandsCP` recurses structurally); `Coproduct/TraceNonplanar.lean`
+`cutSummandsCP` recurses structurally); `Coproduct/Trace.lean`
 descends it through `Nonplanar.mk` to close the Nonplanar `doubleCut_eq`.
 
 ## Main results

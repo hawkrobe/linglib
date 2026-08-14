@@ -1,4 +1,4 @@
-import Linglib.Core.Algebra.RootedTree.Coproduct.TraceNonplanar
+import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
 
 open RoseTree RoseTree.Nonplanar

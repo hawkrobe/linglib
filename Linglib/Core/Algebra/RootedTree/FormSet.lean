@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
+import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 
 open RoseTree RoseTree.Nonplanar
 
@@ -33,7 +33,7 @@ where:
   components, else 0.
 - `B` (MCB Def 1.3.2): the grafting operator F ↦ tree with fresh root.
   In our typed substrate this is exactly `bPlusLin a` from
-  `PruningNonplanar.lean` (parameterized by a root label `a`).
+  `Pruning.lean` (parameterized by a root label `a`).
 - `⊔` is the workspace product (CK multiplication on forests).
 
 ## What FS^(k) does
@@ -91,7 +91,7 @@ noncomputable def graft (a : α) (F : Forest (Nonplanar α)) : Nonplanar α :=
   Nonplanar.node a F
 
 /-- The **grafting operator linearly extended**: re-export `bPlusLin`
-    from `PruningNonplanar.lean` under the FormSet-flavored name. -/
+    from `Pruning.lean` under the FormSet-flavored name. -/
 noncomputable def graftLin (a : α) :
     ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
   bPlusLin (R := R) a
