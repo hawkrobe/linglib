@@ -1415,6 +1415,62 @@ noncomputable def cutSummandsCN (τ : Nonplanar (α ⊕ β) → β) :
       (ConnesKreimer.cutSummandsCP (τ ∘ Nonplanar.mk) T).map
         ConnesKreimer.projSummand := rfl
 
+/-- `Σ (wᵢ − 1) + card = Σ wᵢ` for tree-level forests (each `wᵢ ≥ 1`). -/
+private theorem sum_map_numNodes_sub_one_add_card {γ : Type*}
+    (F : Multiset (RoseTree γ)) :
+    ((F.map (fun t => RoseTree.numNodes t - 1)).sum + Multiset.card F =
+      (F.map RoseTree.numNodes).sum) := by
+  induction F using Multiset.induction_on with
+  | empty => rfl
+  | cons a F ih =>
+    have h1 : 1 ≤ RoseTree.numNodes a := RoseTree.numNodes_pos a
+    rw [Multiset.map_cons, Multiset.map_cons, Multiset.sum_cons,
+        Multiset.sum_cons, Multiset.card_cons]
+    omega
+
+/-- Edge conservation for Δ^c cut summands: the trace marker replaces
+    the cut subtree by a unit-weight leaf, so crown edges plus trunk
+    weight recover the tree weight exactly. Descends
+    `cutSummandsG_numNodes` through `Nonplanar.mk`. -/
+theorem cutSummandsCN_edgeCount (τ : Nonplanar (α ⊕ β) → β)
+    (T : Nonplanar (α ⊕ β)) :
+    ∀ p ∈ cutSummandsCN τ T,
+      Forest.edgeCount p.1 + p.2.numNodes = T.numNodes := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = Nonplanar.mk T₀ :=
+    ⟨T.out, (Quotient.out_eq T).symm⟩
+  intro p hp
+  rw [cutSummandsCN_mk] at hp
+  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
+  rw [cutSummandsCP_def] at hq
+  have hext : ∀ (t : RoseTree (α ⊕ β)) r,
+      extractC (τ ∘ Nonplanar.mk) t = some r →
+      (r.map RoseTree.numNodes).sum = 1 := by
+    intro t r h
+    cases t with
+    | node x cs =>
+      cases x with
+      | inl a =>
+        rw [extractC_inl] at h
+        obtain rfl := (Option.some.injEq _ _ ▸ h :
+          [traceLeaf ((τ ∘ Nonplanar.mk)
+            (RoseTree.node (Sum.inl a) cs))] = r)
+        simp [traceLeaf]
+      | inr b =>
+        rw [extractC_inr] at h
+        exact absurd h (by simp)
+  have h := cutSummandsG_numNodes _ hext T₀ q hq
+  have hsub := sum_map_numNodes_sub_one_add_card q.1
+  show Forest.edgeCount (q.1.map Nonplanar.mk) +
+      (Nonplanar.mk q.2).numNodes = (Nonplanar.mk T₀).numNodes
+  rw [Nonplanar.numNodes_mk, Nonplanar.numNodes_mk]
+  rw [show Forest.edgeCount (q.1.map Nonplanar.mk) =
+      ((q.1.map (fun t => RoseTree.numNodes t - 1)).sum) from by
+    show ((q.1.map Nonplanar.mk).map
+        (fun T => Nonplanar.numNodes T - 1)).sum = _
+    rw [Multiset.map_map]
+    rfl]
+  omega
+
 /-! ### Empty-cut uniqueness — combinatorial substrate for the per-tree counit law
 
 For any extract policy and tree `T`, the unique cut summand of
