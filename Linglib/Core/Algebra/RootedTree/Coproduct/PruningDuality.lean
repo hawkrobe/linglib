@@ -187,13 +187,7 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
             Algebra.TensorProduct.one_def,
           pairing₂_tmul_tmul, pairing_one_right, pairing_one_right,
           pairing_one_right]
-      rw [show (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
-            (product x y) =
-          (counit : ConnesKreimer R (Nonplanar α) →ₐ[R] R)
-            (unop
-              ((op x : GrossmanLarson R α) *
-                op y)) from rfl,
-          counit_gl_mul]
+      rw [counit_gl_mul]
       exact mul_comm _ _
     · obtain ⟨C', rfl⟩ := Multiset.exists_cons_of_mem hT
       rcases Multiset.empty_or_exists_mem C' with hC'0 | ⟨T₂, hT₂⟩
@@ -221,14 +215,6 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
           rfl
         rw [hofT]
         -- LHS: the B⁺/B⁻ recurrence.
-        rw [show pairing (R := R)
-              (product x y)
-              (bPlusLin (R := R) (Nonplanar.rootValue T)
-                (ConnesKreimer.of' (Nonplanar.rootChildren T))) =
-            pairing (R := R) (unop
-              ((op x : GrossmanLarson R α) * op y))
-              (bPlusLin (R := R) (Nonplanar.rootValue T)
-                (ConnesKreimer.of' (Nonplanar.rootChildren T))) from rfl]
         rw [pairing_apply_bPlus_gl_mul]
         -- RHS: the Hochschild cocycle + adjoint.
         rw [show comulAlgHomN (R := R)
@@ -255,15 +241,6 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
               (ConnesKreimer.of' (Nonplanar.rootChildren T)) from
           (bPlusLin_of' _ _).symm]
         rw [← bMinusLin_pairing_adjoint, pairing_one_right]
-        rw [show pairing (R := R)
-              (product
-                (bMinusLin (R := R) (Nonplanar.rootValue T) x) y)
-              (ConnesKreimer.of' (Nonplanar.rootChildren T)) =
-            pairing (R := R) (unop
-              ((op (bMinusLin (R := R)
-                  (Nonplanar.rootValue T) x) : GrossmanLarson R α) *
-                op y))
-              (ConnesKreimer.of' (Nonplanar.rootChildren T)) from rfl]
         ring
       · -- Multi-tree: C = T ::ₘ C' with C' ≠ 0; split and use both
         -- product rules + the induction hypothesis at both factors.
