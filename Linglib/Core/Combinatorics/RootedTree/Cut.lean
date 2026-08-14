@@ -1266,6 +1266,91 @@ private theorem cutListSummandsG_proj_permList
     (cutListSummandsG_proj_permList hExt h₁).trans (cutListSummandsG_proj_permList hExt h₂)
 end
 
+/-! ### Generic cut convolution: `treeCutsG` and `forestCutsG`
+
+All cut summands of a tree as (crown forest, trunk forest) pairs — the
+full cut `({T}, 0)` plus each `cuts`-summand with a singleton trunk —
+and their `combinerProjG`-convolution over the trees of a forest. The
+generic coproduct expands as a single sum over these
+(`comulTreeNG_eq_sum`/`comulForestNG_eq_sum`, `Coproduct/WithCuts.lean`). -/
+
+/-- All cut summands of a tree as (crown, trunk-forest) pairs: the full
+    cut `({T}, 0)` plus each summand of `cuts T` with a singleton trunk. -/
+noncomputable def treeCutsG
+    (cuts : Nonplanar α → Multiset (Multiset (Nonplanar α) × Nonplanar α))
+    (T : Nonplanar α) :
+    Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α)) :=
+  ({T}, 0) ::ₘ (cuts T).map (fun p => (p.1, {p.2}))
+
+/-- Convolution-of-cuts is left-commutative (it is the symmetric
+    `combinerProjG`); needed for `Multiset.foldr`. -/
+instance instLeftCommConvCut : LeftCommutative
+    (fun (s acc : Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α))) =>
+      (s ×ˢ acc).map combinerProjG) :=
+  ⟨fun a b c => swap_double_combinerProjG a b c⟩
+
+/-- Forest-level cut enumeration: `combinerProjG`-convolution of
+    `treeCutsG` over the component trees. -/
+noncomputable def forestCutsG
+    (cuts : Nonplanar α → Multiset (Multiset (Nonplanar α) × Nonplanar α))
+    (F : Multiset (Nonplanar α)) :
+    Multiset (Multiset (Nonplanar α) × Multiset (Nonplanar α)) :=
+  (F.map (treeCutsG cuts)).foldr
+    (fun s acc => (s ×ˢ acc).map combinerProjG) {(0, 0)}
+
+theorem forestCutsG_zero
+    (cuts : Nonplanar α → Multiset (Multiset (Nonplanar α) × Nonplanar α)) :
+    forestCutsG cuts (0 : Multiset (Nonplanar α)) = {(0, 0)} := by
+  unfold forestCutsG; simp
+
+theorem forestCutsG_cons
+    (cuts : Nonplanar α → Multiset (Multiset (Nonplanar α) × Nonplanar α))
+    (T : Nonplanar α) (F : Multiset (Nonplanar α)) :
+    forestCutsG cuts (T ::ₘ F) =
+      (treeCutsG cuts T ×ˢ forestCutsG cuts F).map combinerProjG := by
+  unfold forestCutsG
+  rw [Multiset.map_cons, Multiset.foldr_cons]
+
+/-- Mapping the head factor through the cartesian product commutes with a
+    final map. -/
+private theorem map_map_product_left {α' β' γ δ : Type*}
+    (f : α' → γ) (g : γ × β' → δ) (s : Multiset α') (t : Multiset β') :
+    ((s.map f) ×ˢ t).map g = (s ×ˢ t).map (fun p => g (f p.1, p.2)) := by
+  conv_lhs => rw [show s.map f ×ˢ t = (s ×ˢ t).map (Prod.map f id) from by
+    rw [map_prodMap_product_G, Multiset.map_id]]
+  rw [Multiset.map_map]
+  rfl
+
+/-- The Option-encoded per-tree decisions `augActionN` map onto the
+    forest-encoded `treeCutsG cutSummandsN` (`none` ↦ empty trunk,
+    `some` ↦ singleton trunk). -/
+private theorem treeCutsG_cutSummandsN (T : Nonplanar α) :
+    treeCutsG cutSummandsN T =
+      (augActionN T).map
+        (fun d => (d.1, d.2.elim 0 (fun r => ({r} : Multiset (Nonplanar α))))) := by
+  unfold treeCutsG augActionN
+  simp only [Multiset.map_cons, Multiset.map_map]
+  rfl
+
+/-- The Δ^ρ forest cut enumeration is the generic convolution at
+    `cuts := cutSummandsN`: `augActionN` (Option-encoded) and
+    `treeCutsG cutSummandsN` (forest-encoded) enumerate the same
+    per-tree decisions, and `innerCombinerProj` matches `combinerProjG`
+    across the encoding. -/
+theorem cutForestSummandsN_eq_forestCutsG (F : Multiset (Nonplanar α)) :
+    cutForestSummandsN F = forestCutsG cutSummandsN F := by
+  induction F using Multiset.induction with
+  | empty => rw [cutForestSummandsN_zero, forestCutsG_zero]
+  | cons T F ih =>
+    rw [cutForestSummandsN_cons, forestCutsG_cons, ← ih, treeCutsG_cutSummandsN,
+        map_map_product_left]
+    refine Multiset.map_congr rfl (fun p _ => ?_)
+    obtain ⟨⟨G, _ | r⟩, q1, q2⟩ := p
+    · show (G + q1, q2) = (G + q1, 0 + q2)
+      rw [zero_add]
+    · show (G + q1, r ::ₘ q2) = (G + q1, {r} + q2)
+      rw [Multiset.singleton_add]
+
 /-! ### Trace specialization
 
 The Δ^c policy `extractC (τ ∘ Nonplanar.mk)` is `ExtractInvariant`:

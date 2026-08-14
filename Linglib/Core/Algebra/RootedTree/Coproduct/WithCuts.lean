@@ -1,4 +1,6 @@
+import Linglib.Core.Algebra.BigOperators.Multiset
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
+import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Data.RoseTree.Nonplanar
 import Mathlib.RingTheory.Bialgebra.Basic
 
@@ -28,6 +30,9 @@ serves every coproduct instead of one bespoke copy per Δ.
 
 * `comulTreeNG cuts` / `comulForestNG cuts` — the generic coproduct.
 * `comulAlgHomNG cuts` — packaged as an `AlgHom`.
+* `comulTreeNG_eq_sum` / `comulForestNG_eq_sum` — the coproduct as a single
+  sum over the cut convolutions `treeCutsG`/`forestCutsG`
+  (`Combinatorics/RootedTree/Cut.lean`).
 * `WithCuts R cuts` — the policy-indexed carrier, with `Bialgebra` gated
   on `IsAdmissibleCuts cuts`.
 -/
@@ -109,6 +114,61 @@ noncomputable def comulAlgHomNG
       show ({T} : Forest (Nonplanar α)) = T ::ₘ (0 : Forest (Nonplanar α)) from rfl,
       comulForestNG_cons, comulForestNG_zero, mul_one]
 
+/-! ### The generic coproduct as a sum over cut convolutions
+
+`treeCutsG`/`forestCutsG` (`Combinatorics/RootedTree/Cut.lean`) enumerate
+the (crown, trunk-forest) pairs of a tree and their convolution over a
+forest; `cutTensor` sends a pair to `of' crown ⊗ of' trunk`. These
+single-sum expansions serve the Δ^ρ cocycle substrate
+(`Coproduct/PruningNonplanar.lean`) and the Δ^c double-cut coassoc proof
+(`Coproduct/TraceNonplanar.lean`). -/
+
+/-- Tensor-product factor of a (crown, trunk) cut pair. -/
+noncomputable def cutTensor (p : Forest (Nonplanar α) × Forest (Nonplanar α)) :
+    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+  of' (R := R) p.1 ⊗ₜ[R] of' p.2
+
+/-- `cutTensor` is multiplicative over the cut convolution `combinerProjG`. -/
+theorem cutTensor_combinerProjG (p q : Forest (Nonplanar α) × Forest (Nonplanar α)) :
+    cutTensor (R := R) (combinerProjG (p, q)) = cutTensor p * cutTensor q := by
+  obtain ⟨F1, m1⟩ := p
+  obtain ⟨F2, m2⟩ := q
+  show cutTensor (R := R) (F1 + F2, m1 + m2) = _
+  unfold cutTensor
+  simp only [of'_add, Algebra.TensorProduct.tmul_mul_tmul]
+
+/-- `comulTreeNG` as a single multiset sum over `treeCutsG`. -/
+theorem comulTreeNG_eq_sum
+    (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α))
+    (T : Nonplanar α) :
+    comulTreeNG (R := R) cuts T =
+      ((treeCutsG cuts T).map (cutTensor (R := R))).sum := by
+  unfold comulTreeNG treeCutsG
+  rw [Multiset.map_cons, Multiset.sum_cons, Multiset.map_map]
+  congr 1
+
+/-- `comulForestNG` as a single multiset sum over `forestCutsG`. -/
+theorem comulForestNG_eq_sum
+    (cuts : Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α))
+    (F : Forest (Nonplanar α)) :
+    comulForestNG (R := R) cuts F =
+      ((forestCutsG cuts F).map (cutTensor (R := R))).sum := by
+  induction F using Multiset.induction with
+  | empty =>
+    rw [comulForestNG_zero, forestCutsG_zero, Multiset.map_singleton,
+        Multiset.sum_singleton]
+    show (1 : _) = of' (R := R) (0 : Forest (Nonplanar α)) ⊗ₜ[R] of' 0
+    rw [of'_zero, Algebra.TensorProduct.one_def]
+  | cons T F ih =>
+    rw [comulForestNG_cons, comulTreeNG_eq_sum, ih, forestCutsG_cons,
+        Multiset.map_map,
+        show (cutTensor (R := R) ∘ combinerProjG) =
+            (fun p => cutTensor (R := R) p.1 * cutTensor p.2) from by
+          funext p
+          obtain ⟨p₁, p₂⟩ := p
+          exact cutTensor_combinerProjG p₁ p₂,
+        Multiset.sum_map_product_mul]
+
 /-! ### The policy-indexed carrier `WithCuts`
 
 The `WithLp` pattern: a type synonym indexed by the cut policy, whose
@@ -116,6 +176,7 @@ The `WithLp` pattern: a type synonym indexed by the cut policy, whose
 carrier (`instBialgebraRho`, the Hopf algebra of
 [marcolli-chomsky-berwick-2025] Lemma 1.2.11); the marked variants live here. -/
 
+set_option linter.unusedVariables false in
 variable (R) in
 /-- Type synonym for `ConnesKreimer R (Nonplanar α)` carrying the generic
 admissible-cut coproduct at the fixed policy `cuts`. -/

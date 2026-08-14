@@ -173,35 +173,35 @@ summands and the `some`-embedded Δ^ρ summands of
 `Core/Combinatorics/RootedTree/CutFilterMap.lean` both land in its
 domain. -/
 
-private noncomputable def cutTensor
+private noncomputable def optionCutTensor
     (q : Multiset (Option (RoseTree α)) × Option (RoseTree α)) :
     ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
   (of' (q.1.filterMap (Option.map Nonplanar.mk)) : ConnesKreimer R (Nonplanar α))
     ⊗ₜ[R] (q.2.map Nonplanar.mk).elim 1 ofTree
 
-/-- The `(Π ⊗ Π)`-image of a projected Δ^c summand is `cutTensor` of its
+/-- The `(Π ⊗ Π)`-image of a projected Δ^c summand is `optionCutTensor` of its
     filtered form. -/
-private theorem cutTensor_filterMap
+private theorem optionCutTensor_filterMap
     (p : Multiset (RoseTree (α ⊕ β)) × RoseTree (α ⊕ β)) :
     eraseTracesAlgHom (R := R) (of' (p.1.map Nonplanar.mk)) ⊗ₜ[R]
         eraseTracesAlgHom (ofTree (Nonplanar.mk p.2)) =
-      cutTensor (R := R)
+      optionCutTensor (R := R)
         (Prod.map (Multiset.map (RoseTree.filterMap Sum.getLeft?))
           (RoseTree.filterMap Sum.getLeft?) p) := by
-  unfold cutTensor
+  unfold optionCutTensor
   congr 1
   · rw [eraseTracesAlgHom_of', Prod.map_fst, Multiset.filterMap_map,
         Multiset.filterMap_map]
     rfl
   · rw [eraseTracesAlgHom_ofTree, Nonplanar.filterMap_mk, Prod.map_snd]
 
-/-- On `some`-embedded Δ^ρ summands, `cutTensor` is the plain summand
+/-- On `some`-embedded Δ^ρ summands, `optionCutTensor` is the plain summand
     tensor. -/
-private theorem cutTensor_some (p : Multiset (RoseTree α) × RoseTree α) :
-    cutTensor (R := R) (Prod.map (Multiset.map some) some p) =
+private theorem optionCutTensor_some (p : Multiset (RoseTree α) × RoseTree α) :
+    optionCutTensor (R := R) (Prod.map (Multiset.map some) some p) =
       (of' (p.1.map Nonplanar.mk) : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
         ofTree (Nonplanar.mk p.2) := by
-  unfold cutTensor
+  unfold optionCutTensor
   congr 1
   · rw [Prod.map_fst, Multiset.filterMap_map,
         show (Option.map Nonplanar.mk ∘ (some : RoseTree α → Option (RoseTree α)))
@@ -211,30 +211,30 @@ private theorem cutTensor_some (p : Multiset (RoseTree α) × RoseTree α) :
 /-! ### Lift from tree-level to Nonplanar -/
 
 /-- The `(Π ⊗ Π)`-image of a projected Δ^c summand tensor, as a composed
-    map: `cutTensor` after the summand filter. -/
-private theorem cutTensor_filterMap_comp :
+    map: `optionCutTensor` after the summand filter. -/
+private theorem optionCutTensor_filterMap_comp :
     (((Algebra.TensorProduct.map (eraseTracesAlgHom (R := R) (α := α) (β := β))
         eraseTracesAlgHom) ∘
       (fun p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β) =>
         of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)) ∘ projSummand) =
-    (cutTensor (R := R)) ∘
+    (optionCutTensor (R := R)) ∘
       (Prod.map (Multiset.map (RoseTree.filterMap Sum.getLeft?))
         (RoseTree.filterMap Sum.getLeft?)) := by
   funext p
   show (Algebra.TensorProduct.map eraseTracesAlgHom eraseTracesAlgHom)
       (of' (p.1.map Nonplanar.mk) ⊗ₜ[R] ofTree (Nonplanar.mk p.2)) = _
   rw [Algebra.TensorProduct.map_tmul]
-  exact cutTensor_filterMap p
+  exact optionCutTensor_filterMap p
 
-/-- The plain Δ^ρ summand tensor, as a composed map: `cutTensor` after
+/-- The plain Δ^ρ summand tensor, as a composed map: `optionCutTensor` after
     the `some` embedding. -/
-private theorem cutTensor_some_comp :
+private theorem optionCutTensor_some_comp :
     ((fun p : Forest (Nonplanar α) × Nonplanar α =>
         (of' (R := R) p.1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R] ofTree p.2) ∘
       projSummand) =
-    (cutTensor (R := R)) ∘ (Prod.map (Multiset.map some) some) := by
+    (optionCutTensor (R := R)) ∘ (Prod.map (Multiset.map some) some) := by
   funext p
-  exact (cutTensor_some p).symm
+  exact (optionCutTensor_some p).symm
 
 /-- Per-tree form of the Δ^ρ comparison, descended from the cut-summand
     identity `cutSummandsCP_map_inl_filterMap` through the quotient. -/
@@ -257,7 +257,7 @@ private theorem eraseTraces_comulCTreeN_map_inl
           (Algebra.TensorProduct.map (eraseTracesAlgHom (R := R)) eraseTracesAlgHom),
         cutSummandsCN_mk, cutSummandsN_mk,
         Multiset.map_map, Multiset.map_map, Multiset.map_map,
-        cutTensor_filterMap_comp, cutTensor_some_comp,
+        optionCutTensor_filterMap_comp, optionCutTensor_some_comp,
         ← Multiset.map_map, ← Multiset.map_map, cutSummandsCP_map_inl_filterMap]
 
 /-- Forest-level form of the Δ^ρ comparison: the per-tree form lifted

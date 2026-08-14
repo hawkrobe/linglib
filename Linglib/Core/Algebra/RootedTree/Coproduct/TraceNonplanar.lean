@@ -180,12 +180,6 @@ The proof structure:
 section DoubleCut
 variable {R : Type*} [CommSemiring R] {α β : Type*}
 
-/-- Tensor-product factor of a (crown, trunk) cut pair. -/
-private noncomputable def cutTensor
-    (p : Forest (Nonplanar (α ⊕ β)) × Forest (Nonplanar (α ⊕ β))) :
-    ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R] ConnesKreimer R (Nonplanar (α ⊕ β)) :=
-  ConnesKreimer.of' (R := R) p.1 ⊗ₜ[R] ConnesKreimer.of' p.2
-
 /-- Triple-tensor factor for the coassoc target `CK ⊗ (CK ⊗ CK)`. -/
 private noncomputable def tripleTensor
     (q : Forest (Nonplanar (α ⊕ β)) × Forest (Nonplanar (α ⊕ β)) ×
@@ -195,77 +189,43 @@ private noncomputable def tripleTensor
   ConnesKreimer.of' (R := R) q.1 ⊗ₜ[R]
     (ConnesKreimer.of' q.2.1 ⊗ₜ[R] ConnesKreimer.of' q.2.2)
 
-/-- Convolution-of-cuts is left-commutative (it is the symmetric
-    `combinerProjG` of the descent layer); needed for `Multiset.foldr`. -/
-instance instLeftCommConvCut : LeftCommutative
-    (fun (s acc : Multiset (Forest (Nonplanar (α ⊕ β)) × Forest (Nonplanar (α ⊕ β)))) =>
-      (s ×ˢ acc).map ConnesKreimer.combinerProjG) :=
-  ⟨fun a b c => ConnesKreimer.swap_double_combinerProjG a b c⟩
-
 /-- All cut summands of a tree as (crown forest, trunk forest) pairs:
-    full cut `({T}, ∅)`, plus `cutSummandsCN` (which already includes the
-    empty cut `(∅, {T})` and all proper cuts, each with a single-tree
-    trunk). -/
+    `treeCutsG` at the Δ^c enumeration `cutSummandsCN τ` (full cut
+    `({T}, ∅)`, plus each proper/empty cut with a single-tree trunk). -/
 private noncomputable def treeCutsN (τ : Nonplanar (α ⊕ β) → β)
     (T : Nonplanar (α ⊕ β)) :
     Multiset (Forest (Nonplanar (α ⊕ β)) × Forest (Nonplanar (α ⊕ β))) :=
-  ({T}, 0) ::ₘ (cutSummandsCN τ T).map (fun p => (p.1, {p.2}))
+  treeCutsG (cutSummandsCN τ) T
 
-/-- `comulCTreeN` as a single multiset sum over `treeCutsN`. -/
+/-- `comulCTreeN` as a single multiset sum over `treeCutsN`:
+    `comulTreeNG_eq_sum` at the Δ^c enumeration. -/
 private theorem comulCTreeN_eq_sum (τ : Nonplanar (α ⊕ β) → β)
     (T : Nonplanar (α ⊕ β)) :
-    comulCTreeN (R := R) τ T = ((treeCutsN τ T).map (cutTensor (R := R))).sum := by
-  unfold comulCTreeN comulTreeNG treeCutsN
-  rw [Multiset.map_cons, Multiset.sum_cons, Multiset.map_map]
-  congr 1
+    comulCTreeN (R := R) τ T = ((treeCutsN τ T).map (cutTensor (R := R))).sum :=
+  comulTreeNG_eq_sum _ T
 
-/-- Forest-level cut enumeration via convolution over the component trees. -/
+/-- Forest-level cut enumeration: `forestCutsG` at the Δ^c enumeration. -/
 private noncomputable def forestCutsN (τ : Nonplanar (α ⊕ β) → β)
     (F : Forest (Nonplanar (α ⊕ β))) :
     Multiset (Forest (Nonplanar (α ⊕ β)) × Forest (Nonplanar (α ⊕ β))) :=
-  (F.map (treeCutsN τ)).foldr
-    (fun s acc => (s ×ˢ acc).map ConnesKreimer.combinerProjG) {(0, 0)}
+  forestCutsG (cutSummandsCN τ) F
 
 private theorem forestCutsN_zero (τ : Nonplanar (α ⊕ β) → β) :
-    forestCutsN τ (0 : Forest (Nonplanar (α ⊕ β))) = {(0, 0)} := by
-  unfold forestCutsN; simp
+    forestCutsN τ (0 : Forest (Nonplanar (α ⊕ β))) = {(0, 0)} :=
+  forestCutsG_zero _
 
 private theorem forestCutsN_cons (τ : Nonplanar (α ⊕ β) → β)
     (T : Nonplanar (α ⊕ β)) (F : Forest (Nonplanar (α ⊕ β))) :
     forestCutsN τ (T ::ₘ F) =
-      (treeCutsN τ T ×ˢ forestCutsN τ F).map ConnesKreimer.combinerProjG := by
-  unfold forestCutsN
-  rw [Multiset.map_cons, Multiset.foldr_cons]
+      (treeCutsN τ T ×ˢ forestCutsN τ F).map ConnesKreimer.combinerProjG :=
+  forestCutsG_cons _ T F
 
-/-- `comulCForestN` as a single multiset sum over `forestCutsN`. -/
+/-- `comulCForestN` as a single multiset sum over `forestCutsN`:
+    `comulForestNG_eq_sum` at the Δ^c enumeration. -/
 private theorem comulCForestN_eq_sum (τ : Nonplanar (α ⊕ β) → β)
     (F : Forest (Nonplanar (α ⊕ β))) :
-    comulCForestN (R := R) τ F = ((forestCutsN τ F).map (cutTensor (R := R))).sum := by
-  induction F using Multiset.induction with
-  | empty =>
-    rw [comulCForestN_zero, forestCutsN_zero, Multiset.map_singleton,
-        Multiset.sum_singleton]
-    show (1 : _) = ConnesKreimer.of' (R := R) (0 : Forest (Nonplanar (α ⊕ β))) ⊗ₜ[R]
-      ConnesKreimer.of' 0
-    rw [ConnesKreimer.of'_zero, Algebra.TensorProduct.one_def]
-  | cons T F ih =>
-    rw [show (T ::ₘ F : Forest (Nonplanar (α ⊕ β))) = {T} + F from
-          (Multiset.singleton_add T F).symm, comulCForestN_add]
-    rw [show comulCForestN (R := R) τ {T} = comulCTreeN τ T from by
-          unfold comulCForestN comulForestNG
-          rw [Multiset.map_singleton, Multiset.prod_singleton]; rfl,
-        comulCTreeN_eq_sum, ih]
-    rw [show ({T} + F : Forest (Nonplanar (α ⊕ β))) = T ::ₘ F from
-          (Multiset.singleton_add T F), forestCutsN_cons, Multiset.map_map]
-    rw [show (cutTensor (R := R) ∘ ConnesKreimer.combinerProjG) =
-          (fun p => cutTensor (R := R) p.1 * cutTensor p.2) from ?_]
-    · rw [Multiset.sum_map_product_mul]
-    · funext p
-      obtain ⟨⟨F1, m1⟩, ⟨F2, m2⟩⟩ := p
-      show cutTensor (R := R) (F1 + F2, m1 + m2) =
-        cutTensor (R := R) (F1, m1) * cutTensor (F2, m2)
-      unfold cutTensor
-      simp only [ConnesKreimer.of'_add, Algebra.TensorProduct.tmul_mul_tmul]
+    comulCForestN (R := R) τ F = ((forestCutsN τ F).map (cutTensor (R := R))).sum :=
+  comulForestNG_eq_sum _ F
 
 /-- LHS double-cut enumerator: outer cut of `T`, then re-cut its crown. -/
 private noncomputable def dcLHS (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β)) :
@@ -395,7 +355,7 @@ private def projPair (p : Forest (RoseTree (α ⊕ β)) × Forest (RoseTree (α 
 private theorem treeCutsN_mk (τ : Nonplanar (α ⊕ β) → β) (t : RoseTree (α ⊕ β)) :
     treeCutsN τ (Nonplanar.mk t)
       = (DoubleCut.treeCutsP (τ ∘ Nonplanar.mk) t).map projPair := by
-  unfold treeCutsN DoubleCut.treeCutsP
+  unfold treeCutsN treeCutsG DoubleCut.treeCutsP
   rw [cutSummandsCN_mk, Multiset.map_cons, Multiset.map_map, Multiset.map_map]
   congr 1
 
