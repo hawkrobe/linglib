@@ -137,6 +137,11 @@ def forestAutCard (F : Multiset (Nonplanar α)) : ℕ :=
     forestAutCard (0 : Multiset (Nonplanar α)) = 1 := by
   simp [forestAutCard]
 
+/-- A singleton forest has the aut group of its tree. -/
+@[simp] theorem forestAutCard_singleton (T : Nonplanar α) :
+    forestAutCard ({T} : Multiset (Nonplanar α)) = autCard T := by
+  simp [forestAutCard]
+
 /-- `forestAutCard` is positive. -/
 theorem forestAutCard_pos (F : Multiset (Nonplanar α)) : 0 < forestAutCard F := by
   unfold forestAutCard
