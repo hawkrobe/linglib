@@ -459,8 +459,7 @@ theorem pconstraint_allows_imposter :
    predict the probe treats LEI like any 3rd person argument — no PCC
    effect. This is wrong.
 
-   We demonstrate this using the library's own `hasValuedFeature` from
-   `Agree.lean`: a probe seeking [participant] via φ-features will not
+   We demonstrate this using the library's own `FeatureBundle.hasValuedFeature`: a probe seeking [participant] via φ-features will not
    find it on a DP whose valued person is 3rd. -/
 
 /-- A feature bundle for a 3rd person DP (LEI's agreement features).
@@ -476,8 +475,8 @@ private def lei_interpretable_bundle : Minimalist.FeatureBundle :=
 /-- A probe seeking person features finds them on both bundles — the
     probe can Agree with either. The issue is WHICH person value it sees. -/
 theorem probe_finds_person_on_both :
-    Minimalist.hasValuedFeature lei_agreement_bundle (.phi (.person .third)) = true ∧
-    Minimalist.hasValuedFeature lei_interpretable_bundle (.phi (.person .second)) = true :=
+    lei_agreement_bundle.hasValuedFeature .person = true ∧
+    lei_interpretable_bundle.hasValuedFeature .person = true :=
   ⟨rfl, rfl⟩
 
 /-- Under morphosyntactic accounts, the probe sees LEI's agreement bundle

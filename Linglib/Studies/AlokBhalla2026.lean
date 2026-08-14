@@ -276,7 +276,7 @@ theorem hon_features_match (level : HonLevel) :
 /-- Honorific valuation via Agree: applying Agree to an allocutive probe
     with [uHON] against an addressee with [iHON] values the probe. -/
 theorem hon_agree_values (level : HonLevel) :
-    applyAgree (allocProbeFeatures level) (addresseeDPFeatures level) (.hon level)
+    applyAgree (allocProbeFeatures level) (addresseeDPFeatures level) .hon
       = some (.ofGramFeatures [.valued (.hon level)]) := by
   cases level <;> native_decide
 

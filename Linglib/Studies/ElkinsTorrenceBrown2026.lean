@@ -219,7 +219,7 @@ def mamAntipassiveVoice : Voice.Head :=
 
 /-- Mam Voice head carries [uOblique]. -/
 theorem mamVoice_has_uOblique :
-    hasUnvaluedFeature mamVoice.features (.oblique false) = true := by decide
+    mamVoice.features.hasUnvaluedFeature .oblique = true := by decide
 
 /-- Mam Voice is a phase head. -/
 theorem mamVoice_is_phase : mamVoice.IsPhasal := by decide
@@ -469,13 +469,13 @@ private def cp : SyntacticObject :=
 theorem derivation_tree_size : cp.nodeCount = 6 := by decide
 
 theorem voice_has_uOblique :
-    hasUnvaluedFeature mamVoice.features (.oblique false) = true := by decide
+    mamVoice.features.hasUnvaluedFeature .oblique = true := by decide
 
 private def oblique_goal_features : FeatureBundle := .ofGramFeatures [.valued (.oblique true)]
 
 /-- Agree at Voice: [uOblique] valued by oblique DP's [+oblique]. -/
 theorem voice_agree_values_oblique :
-    applyAgree mamVoice.features oblique_goal_features (.oblique false) =
+    applyAgree mamVoice.features oblique_goal_features .oblique =
     some (.ofGramFeatures [.valued (.oblique true)]) := by
   decide
 
@@ -487,7 +487,7 @@ theorem voice_spellout_eqya :
 
 /-- Full derivation pipeline: Agree then Spellout → "=(y)a'". -/
 theorem full_derivation_pipeline :
-    (applyAgree mamVoice.features oblique_goal_features (.oblique false)).bind
+    (applyAgree mamVoice.features oblique_goal_features .oblique).bind
       (λ fb => spellout mamVoiceVocab fb (some .Voice)) = some "=(y)a'" := by
   decide
 
@@ -530,11 +530,11 @@ theorem both_probes_unvalued :
     are probed and which vocabulary entries match. -/
 theorem phi_and_oblique_agree_parallel :
     -- φ-Agree pipeline: value person, then number, then spellout
-    (applyAgree voiceProbe dp3sg (.phi (.person .third))).bind
-      (λ fb => applyAgree fb dp3sg (.phi (.number .singular))) = some voiceFullyAgreed ∧
+    (applyAgree voiceProbe dp3sg .person).bind
+      (λ fb => applyAgree fb dp3sg .number) = some voiceFullyAgreed ∧
     spellout setAVocab voiceFullyAgreed (some .v) = some "t-" ∧
     -- Oblique-Agree pipeline: value oblique, then spellout
-    applyAgree voiceOblProbe (.ofGramFeatures [.valued (.oblique true)]) (.oblique false) =
+    applyAgree voiceOblProbe (.ofGramFeatures [.valued (.oblique true)]) .oblique =
       some (.ofGramFeatures [.valued (.oblique true)]) ∧
     spellout [eqYaVocab] (.ofGramFeatures [.valued (.oblique true)]) (some .Voice) = some "=(y)a'" := by
   exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩

@@ -130,18 +130,17 @@ instance (root probe target : SyntacticObject) (horizonCat : Cat) :
 
 /-! ### Feature valuation -/
 
-/-- Apply Agree: value the probe's feature from the goal.
-    Matching is by *dimension* (`ftype.dimension`), so a probe with
-    `[uPerson:_]` is valued by a goal with `[Person:3rd]` — the placeholder
-    value is irrelevant. If the goal has a valued feature at the dimension and
-    the probe's slot there is unvalued, the probe's slot is set to that value. -/
-def applyAgree (probeFeats goalFeats : FeatureBundle) (ftype : FeatureVal) :
+/-- Apply Agree: value the probe's feature from the goal. If the goal has a
+    valued feature at dimension `t` and the probe's `t`-slot is unvalued, the
+    probe's slot is set to that value; `none` when the goal has nothing to
+    transmit. -/
+def applyAgree (probeFeats goalFeats : FeatureBundle) (t : FeatureType) :
     Option FeatureBundle :=
-  match getValuedFeature goalFeats ftype with
+  match goalFeats.getValuedFeature t with
   | none => none
   | some v =>
-    some <| if (probeFeats ftype.dimension).isUnvalued
-            then Function.update probeFeats ftype.dimension (.valued v)
+    some <| if (probeFeats t).isUnvalued
+            then Function.update probeFeats t (.valued v)
             else probeFeats
 
 /-! ### Phase-bounded Agree -/
@@ -165,24 +164,24 @@ instance (strength : PICStrength) (phases : List Phase)
 /-! ### `applyAgree` as a `Probe` transmission -/
 
 /-- The φ-probe: relativized search ([bejar-rezac-2003]/[preminger-2014]) for a
-    goal bearing a valued `ftype` feature. -/
-def phiProbe (ftype : FeatureVal) : Probe FeatureBundle :=
-  Probe.ofVis (fun gf => (getValuedFeature gf ftype).isSome)
+    goal bearing a valued feature at dimension `t`. -/
+def phiProbe (t : FeatureType) : Probe FeatureBundle :=
+  Probe.ofVis (fun gf => (gf.getValuedFeature t).isSome)
 
 /-- **`applyAgree` is the φ goal→probe transmission.** A φ-Agree is
     `Probe.transmit` of the φ-probe with the valuation `applyAgree`: search the
-    goal sequence for a `ftype`-bearing goal, then value the probe's features
+    goal sequence for a `t`-bearing goal, then value the probe's features
     from it. This recognizes the standalone `applyAgree` as the transmission
     step of the unified Agree operation (`Probe/Transmission.lean`), rather than
     a parallel mechanism. (The probe→goal direction — dependent case — and a
     full clause's worth of valuations are *folds* of `transmit`s: the
     composition axis, not a single transmit.) -/
-theorem applyAgree_is_phi_transmit (probeFeats : FeatureBundle) (ftype : FeatureVal)
+theorem applyAgree_is_phi_transmit (probeFeats : FeatureBundle) (t : FeatureType)
     {goals : List FeatureBundle} {gf : FeatureBundle}
-    (h : (phiProbe ftype).search goals = some gf) :
-    (phiProbe ftype).transmit (fun g pf => (applyAgree pf g ftype).getD pf)
+    (h : (phiProbe t).search goals = some gf) :
+    (phiProbe t).transmit (fun g pf => (applyAgree pf g t).getD pf)
         probeFeats goals
-      = (applyAgree probeFeats gf ftype).getD probeFeats := by
+      = (applyAgree probeFeats gf t).getD probeFeats := by
   unfold phiProbe at h ⊢
   exact Probe.transmit_ofVis_eq_of_search h
 

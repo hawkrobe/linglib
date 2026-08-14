@@ -414,25 +414,6 @@ def FeatureBundle.toGramFeatures (fb : FeatureBundle) : List GramFeature :=
     | .unvalued => some (.unvalued (t.toFeatureVal t.placeholderValue))
     | .valued v => some (.valued (t.toFeatureVal v))
 
-/-! ### `FeatureVal`-keyed query wrappers
-
-Convenience over the `FeatureType`-keyed methods: pass a sample `FeatureVal`
-(its carried value is ignored, only the dimension matters — the old
-`sameType` semantics). These keep probe-spec call sites that pass a
-placeholder feature (`.phi (.person .third)`) unchanged. -/
-
-/-- The bundle has a valued feature of `fv`'s dimension. -/
-def hasValuedFeature (fb : FeatureBundle) (fv : FeatureVal) : Bool :=
-  FeatureBundle.hasValuedFeature fb fv.dimension
-
-/-- The bundle has an unvalued (probe) feature of `fv`'s dimension. -/
-def hasUnvaluedFeature (fb : FeatureBundle) (fv : FeatureVal) : Bool :=
-  FeatureBundle.hasUnvaluedFeature fb fv.dimension
-
-/-- The value at `fv`'s dimension, when valued. -/
-def getValuedFeature (fb : FeatureBundle) (fv : FeatureVal) : Option fv.dimension.ValueOf :=
-  FeatureBundle.getValuedFeature fb fv.dimension
-
 -- ============================================================================
 -- § 6: ±Interpretable Features
 -- ============================================================================
