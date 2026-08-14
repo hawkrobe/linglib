@@ -7,6 +7,7 @@ import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
 import Linglib.Core.Data.Multiset.Antidiagonal
+import Mathlib.LinearAlgebra.SesquilinearForm.Basic
 import Mathlib.Tactic.Ring
 
 open RoseTree RoseTree.Nonplanar
@@ -37,15 +38,9 @@ label).
   for all `a : α`, `x y : ConnesKreimer R (Nonplanar α)`.
 
 This is the OG Prop 3.2 substrate: the transpose property anchors
-the duality argument for `B-(A ∗ B) = ε(A) B-(B) + B-(A) ∗ B`
-([oudom-guin-2008] §3.2; deferred to a sibling file).
-
-## Why this file (OG-faithful Q5c route)
-
-Per `[[feedback-substrate2-not-og]]`, Q5c's substrate 2 was a
-linglib-invented identity that embeds A3.3 difficulty. OG's actual
-route in Prop 3.2 uses B+/B- duality with Δ^ρ instead. This file
-provides the B+/B- adjoint property — the foundation of that route.
+the duality argument for the derivation identity
+`B-(A ∗ B) = ε(A) B-(B) + B-(A) ∗ B` ([oudom-guin-2008] §3.2), proved
+here as `bMinusLin_gl_mul`.
 -/
 
 
@@ -236,109 +231,25 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
     show pairing (R := R) (0 : ConnesKreimer R (Nonplanar α)) (of' G) = 0
     rw [LinearMap.map_zero, LinearMap.zero_apply]
 
-/-- **B+/B- adjoint** under the symmetry-weighted pairing:
-    `⟨B-_a x, y⟩ = ⟨x, B+_a y⟩` for all `a, x, y`.
-    Reduces to `bMinusLin_pairing_adjoint_basis` via bilinearity. -/
+/-- **B+/B- adjointness** under the symmetry-weighted pairing, in mathlib's
+    `LinearMap.IsAdjointPair` packaging. -/
+theorem isAdjointPair_bMinusLin_bPlusLin (a : α) :
+    LinearMap.IsAdjointPair (pairing (R := R)) (pairing (R := R))
+      (bMinusLin (R := R) a) (ConnesKreimer.bPlusLin (R := R) a) := by
+  rw [LinearMap.isAdjointPair_iff_comp_eq_compl₂]
+  refine ConnesKreimer.lhom_ext' fun F => ?_
+  refine ConnesKreimer.lhom_ext' fun G => ?_
+  exact bMinusLin_pairing_adjoint_basis a F G
+
+/-- **B+/B- adjoint** under the symmetry-weighted pairing, pointwise:
+    `⟨B-_a x, y⟩ = ⟨x, B+_a y⟩` for all `a, x, y`. -/
 theorem bMinusLin_pairing_adjoint (a : α)
     (x y : ConnesKreimer R (Nonplanar α)) :
     pairing (R := R) (bMinusLin (R := R) a x) y =
-    pairing (R := R) x (bPlusLin (R := R) a y) := by
-  refine ConnesKreimer.induction_linear x ?_ ?_ ?_
-  · -- x = 0
-    show pairing (R := R) (bMinusLin (R := R) a
-          (0 : ConnesKreimer R (Nonplanar α))) y =
-        pairing (R := R) (0 : ConnesKreimer R (Nonplanar α))
-          (bPlusLin (R := R) a y)
-    rw [LinearMap.map_zero, LinearMap.map_zero,
-        LinearMap.zero_apply, LinearMap.zero_apply]
-  · -- x = x₁ + x₂
-    intro x₁ x₂ ih₁ ih₂
-    let x₁' : ConnesKreimer R (Nonplanar α) := x₁
-    let x₂' : ConnesKreimer R (Nonplanar α) := x₂
-    show pairing (R := R) (bMinusLin (R := R) a (x₁' + x₂')) y =
-        pairing (R := R) (x₁' + x₂') (bPlusLin (R := R) a y)
-    rw [LinearMap.map_add, LinearMap.map_add, LinearMap.add_apply, ih₁, ih₂]
-    rw [show pairing (R := R) (x₁' + x₂') = pairing x₁' + pairing x₂' from
-          pairing.map_add x₁' x₂']
-    rfl
-  · -- x = single F r
-    intro F r
-    refine ConnesKreimer.induction_linear y ?_ ?_ ?_
-    · -- y = 0
-      let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
-      show pairing (R := R) (bMinusLin (R := R) a x_single)
-            (0 : ConnesKreimer R (Nonplanar α)) =
-          pairing (R := R) x_single (bPlusLin (R := R) a
-            (0 : ConnesKreimer R (Nonplanar α)))
-      rw [pairing_zero_right]
-      rw [show ConnesKreimer.bPlusLin (R := R) a
-              (0 : ConnesKreimer R (Nonplanar α)) = 0 from
-          LinearMap.map_zero _]
-      rw [pairing_zero_right]
-    · -- y = y₁ + y₂
-      intro y₁ y₂ ih₁ ih₂
-      let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
-      let y₁' : ConnesKreimer R (Nonplanar α) := y₁
-      let y₂' : ConnesKreimer R (Nonplanar α) := y₂
-      show pairing (R := R) (bMinusLin (R := R) a x_single) (y₁' + y₂') =
-          pairing (R := R) x_single (bPlusLin (R := R) a (y₁' + y₂'))
-      rw [LinearMap.map_add, LinearMap.map_add, LinearMap.map_add, ih₁, ih₂]
-    · -- y = single G s
-      intro G s
-      let x_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single F r
-      let y_single : ConnesKreimer R (Nonplanar α) := ConnesKreimer.single G s
-      show pairing (R := R) (bMinusLin (R := R) a x_single) y_single =
-          pairing (R := R) x_single (bPlusLin (R := R) a y_single)
-      have hx : x_single = r • (of' (R := R) F) := by
-        show (ConnesKreimer.single F r : ConnesKreimer R (Nonplanar α)) =
-              r • (ConnesKreimer.single F 1 : ConnesKreimer R (Nonplanar α))
-        exact ConnesKreimer.smul_single_one F r
-      have hy : y_single = s • (of' (R := R) G) := by
-        show (ConnesKreimer.single G s : ConnesKreimer R (Nonplanar α)) =
-              s • (ConnesKreimer.single G 1 : ConnesKreimer R (Nonplanar α))
-        exact ConnesKreimer.smul_single_one G s
-      rw [hx, hy]
-      -- Goal: pairing (bMinusLin a (r • of' F)) (s • of' G) =
-      --       pairing (r • of' F) (bPlusLin a (s • of' G))
-      -- Pull scalars out via bilinearity helper, then apply basis adjoint.
-      have h_factor : ∀ (u v : ConnesKreimer R (Nonplanar α)),
-          pairing (R := R) (r • u) (s • v) = r * s * pairing (R := R) u v := by
-        intro u v
-        have step1 : pairing (R := R) (r • u) = r • pairing (R := R) u :=
-          LinearMap.map_smul (pairing : ConnesKreimer R _ →ₗ[R] _) r u
-        have step3 : (pairing (R := R) u) (s • v) =
-            s • (pairing (R := R) u) v :=
-          LinearMap.map_smul (pairing (R := R) u) s v
-        calc pairing (R := R) (r • u) (s • v)
-            = (r • pairing (R := R) u) (s • v) := by rw [step1]
-          _ = r • (pairing (R := R) u) (s • v) := LinearMap.smul_apply _ _ _
-          _ = r • s • (pairing (R := R) u) v := by rw [step3]
-          _ = r * s * (pairing (R := R) u) v := by
-                rw [smul_eq_mul, smul_eq_mul]; ring
-      -- Apply h_bmin/h_bplus to pull scalars from the bMinusLin/bPlusLin LinearMaps.
-      have h_bmin : bMinusLin (R := R) a (r • (of' (R := R) F)) =
-          r • bMinusLin (R := R) a (of' F) :=
-        LinearMap.map_smul (bMinusLin (R := R) a) r (of' F)
-      have h_bplus : ConnesKreimer.bPlusLin (R := R) a (s • (of' (R := R) G)) =
-          s • ConnesKreimer.bPlusLin (R := R) a (of' G) :=
-        LinearMap.map_smul (ConnesKreimer.bPlusLin (R := R) a) s (of' G)
-      -- Direct calc chain.
-      calc pairing (R := R) (bMinusLin a (r • (of' F))) (s • (of' G))
-          = pairing (R := R) (r • bMinusLin a (of' F)) (s • (of' G)) := by
-              congr 2
-        _ = r * s * pairing (R := R) (bMinusLin a (of' F)) (of' G) :=
-              h_factor _ _
-        _ = r * s * pairing (R := R) (of' F)
-              (ConnesKreimer.bPlusLin a (of' G)) := by
-              rw [bMinusLin_pairing_adjoint_basis]
-        _ = pairing (R := R) (r • (of' F))
-              (s • ConnesKreimer.bPlusLin a (of' G)) := (h_factor _ _).symm
-        _ = pairing (R := R) (r • (of' F))
-              (ConnesKreimer.bPlusLin a (s • (of' G))) := by
-              congr 1
-              exact h_bplus.symm
+    pairing (R := R) x (bPlusLin (R := R) a y) :=
+  isAdjointPair_bMinusLin_bPlusLin a x y
 
-/-! ## Phase C: OG-style identity `B-_a(x *_GL y) = ε(x) • B-_a y + B-_a x *_GL y`
+/-! ## The OG derivation identity `B-_a(x *_GL y) = ε(x) • B-_a y + B-_a x *_GL y`
 
 OG paper [oudom-guin-2008] §3.2 proves this identity on the S(L)
 side. On the CK side (under the algebra iso ckIso), this becomes the
@@ -593,8 +504,7 @@ private theorem nim_singleton_node_a_decomp
     the GL sum, a-rooted via `bPlusLin a`, yields a corresponding tree
     in the NIM enumeration.
 
-    This is the singleton-a-rooted-host case of A3.3 keystone reasoning,
-    proved from the NIM-level decomposition `nim_singleton_node_a_decomp`. -/
+        proved from the NIM-level decomposition `nim_singleton_node_a_decomp`. -/
 private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
     (a : α) (A' B : Forest (Nonplanar α)) :
     insertion (R := R)
@@ -753,10 +663,10 @@ private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
     exact h_summand B₁
   rw [hLHS, hRHS]
 
-/-! ### Phase C main theorem -/
+/-! ### The derivation identity -/
 
 /-- `bMinusLin a` is the constant function `0` on basis forests that are
-    not singleton-a-rooted. Helper for the easy cases of Phase C. -/
+    not singleton-a-rooted. Helper for the easy cases of the derivation identity. -/
 theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
     (F : Forest (Nonplanar α))
     (h : ¬ ∃ G' : Forest (Nonplanar α), F = ({Nonplanar.node a G'} : Forest _)) :
@@ -819,7 +729,7 @@ private theorem bMinusBasis_singleton_node_add (a : α)
     have hGcard : G.card = 0 := by omega
     exact hG (Multiset.card_eq_zero.mp hGcard)
 
-/-- **Phase C helper**: `bMinusLin a (bPlusLin a Y * of' G)` equals `Y`
+/-- **Helper**: `bMinusLin a (bPlusLin a Y * of' G)` equals `Y`
     if `G = 0` (the `bMinusLin ∘ bPlusLin = id` identity on basis elements
     extends linearly to all `Y`), and `0` otherwise (the product has each
     basis summand of cardinality `≥ 2`, so `bMinusLin` kills it).
@@ -995,7 +905,7 @@ private theorem bMinusBasis_nim_add_eq_zero (a : α)
   rw [hT'_lab_a] at hT'_lab
   exact hT_A_lab hT'_lab.symm
 
-/-- **Phase C basis case**: for basis `x = of' A, y = of' B`, the OG
+/-- **Basis case of the derivation identity**: for basis `x = of' A, y = of' B`, the OG
     identity holds. Case-analyzes on `A`:
     * `A = 0`: counit = 1, both sides equal `bMinusLin a (of' B)`.
     * `|A| ≥ 2`: both sides 0 (B-_a vanishes on non-singletons).
@@ -1284,7 +1194,7 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (Nonplanar α)) :
         exact bMinusBasis_nim_add_eq_zero a A B₁ (B - B₁) F' hA0 hA hF'_mem
       exact h_step
 
-/-- **Phase C main theorem (OG-style)**: `bMinusLin a` is a 1-cocycle
+/-- **The OG derivation identity**: `bMinusLin a` is a 1-cocycle
     with respect to the GL product:
     `B-_a (x *_GL y) = ε(x) • B-_a y + B-_a x *_GL y`.
 
