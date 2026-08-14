@@ -85,8 +85,8 @@ This is exactly the existing `bPlusLin a` (Hochschild 1-cocycle for
 /-- The **grafting operator** `B` (MCB Def 1.3.2): create a new tree
     with a fresh root labeled `a` and the forest `F` as children.
 
-    Identical to `bPlus a F = Nonplanar.node a F`; this name highlights
-    the FormSet usage. -/
+    Identical to the smart constructor `Nonplanar.node a F`; this name
+    highlights the FormSet usage. -/
 noncomputable def graft (a : α) (F : Forest (Nonplanar α)) : Nonplanar α :=
   Nonplanar.node a F
 
