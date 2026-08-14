@@ -146,25 +146,6 @@ noncomputable def bPlusLin (a : α) :
   show ofTree (Nonplanar.node a 0) = ofTree (Nonplanar.leaf a)
   rfl
 
-/-! ### Tensor-algebra and multiset distributivity helpers -/
-
-/-- The fundamental distributivity in `H ⊗ H` for basis-vector tensors:
-    `(of' a ⊗ of' b) * (of' c ⊗ of' d) = of' (a + c) ⊗ of' (b + d)`.
-    Combines `Algebra.TensorProduct.tmul_mul_tmul` with `of'_add` on
-    both channels. -/
-private theorem of'_tmul_mul_of'_tmul (a b c d : Forest (Nonplanar α)) :
-    (of' (R := R) a ⊗ₜ[R] of' (R := R) b) * (of' (R := R) c ⊗ₜ[R] of' (R := R) d) =
-      of' (R := R) (a + c) ⊗ₜ[R] of' (R := R) (b + d) := by
-  rw [Algebra.TensorProduct.tmul_mul_tmul, ← of'_add, ← of'_add]
-
-/-- Cartesian product distributes the head map: `(s.map f) ×ˢ t = s.bind (a ↦ t.map (Prod.mk (f a)))`.
-    Pure `Multiset.product`/`Multiset.bind_map` algebra; included locally because mathlib
-    doesn't ship this exact form. -/
-private theorem map_first_product {β γ δ : Type*}
-    (f : β → γ) (s : Multiset β) (t : Multiset δ) :
-    (s.map f) ×ˢ t = s.bind (fun a => t.map (Prod.mk (f a))) :=
-  Multiset.bind_map s _ f
-
 /-! ### `comulForestN` as a sum over forest cuts
 
 Together with `cutSummandsN_node` (`Combinatorics/RootedTree/Cut.lean`),
@@ -172,74 +153,15 @@ the expansion `comulForestN_eq_sum` drives the cocycle: cuts of a node
 decompose along the per-tree decisions of `cutForestSummandsN`, and
 `comulForestN` expands as the matching multiset sum. -/
 
-/-- Extract-branch of the `comulForestN_eq_sum` cons step: `(ofTree T ⊗ 1)`
-    times the forest-cuts sum collapses into the "extract T whole"
-    summand of `cutForestSummandsN_cons` (the `({T}, none)` decision). -/
-private theorem comulForestN_cons_extract_branch (T : Nonplanar α)
-    (P : Multiset (Forest (Nonplanar α) × Forest (Nonplanar α))) :
-    (ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α))) *
-        (P.map (fun p => of' (R := R) p.1 ⊗ₜ[R] of' (R := R) p.2)).sum =
-      (((P.map (Prod.mk
-          (({T}, Option.none) : Forest (Nonplanar α) × Option (Nonplanar α)))).map
-        innerCombinerProj).map
-        (fun p => of' (R := R) p.1 ⊗ₜ[R] of' (R := R) p.2)).sum := by
-  rw [← of'_singleton, ← of'_zero (R := R) (T := Nonplanar α),
-      ← Multiset.sum_map_mul_left]
-  simp only [Multiset.map_map]
-  refine congr_arg Multiset.sum (Multiset.map_congr rfl (fun p _ => ?_))
-  show (of' (R := R) ({T} : Forest (Nonplanar α)) ⊗ₜ[R] of' (R := R) 0) *
-        (of' (R := R) p.1 ⊗ₜ[R] of' (R := R) p.2) =
-       ((fun p => of' (R := R) p.1 ⊗ₜ[R] of' (R := R) p.2) ∘ innerCombinerProj ∘
-          Prod.mk (({T}, Option.none) :
-            Forest (Nonplanar α) × Option (Nonplanar α))) p
-  rw [of'_tmul_mul_of'_tmul, zero_add]
-  rfl
-
-/-- Recurse-branch of the `comulForestN_eq_sum` cons step: the
-    `cutSummandsN T`-indexed sum part of `comulTreeN T` times the
-    forest-cuts sum collapses into the cartesian product of
-    "recurse-with-cut" decisions on `T` against the rest. -/
-private theorem comulForestN_cons_recurse_branch (T : Nonplanar α)
-    (P : Multiset (Forest (Nonplanar α) × Forest (Nonplanar α))) :
-    (((cutSummandsN T).map (fun s => of' (R := R) s.1 ⊗ₜ[R] ofTree s.2)).sum) *
-        (P.map (fun p => of' (R := R) p.1 ⊗ₜ[R] of' (R := R) p.2)).sum =
-      (((((cutSummandsN T).map (fun s => (s.1, Option.some s.2))) ×ˢ P).map
-        innerCombinerProj).map
-        (fun p => of' (R := R) p.1 ⊗ₜ[R] of' (R := R) p.2)).sum := by
-  rw [← Multiset.sum_map_mul_right,
-      show (cutSummandsN T).map (fun s =>
-        (of' (R := R) s.1 ⊗ₜ[R] ofTree s.2) *
-        (P.map (fun p => of' (R := R) p.1 ⊗ₜ[R] of' (R := R) p.2)).sum) =
-      (cutSummandsN T).map (fun s =>
-        (P.map (fun p => of' (R := R) (s.1 + p.1) ⊗ₜ[R]
-          of' (R := R) (s.2 ::ₘ p.2))).sum) from
-        Multiset.map_congr rfl (fun s _ => by
-          rw [← of'_singleton (R := R) s.2, ← Multiset.sum_map_mul_left]
-          refine congr_arg Multiset.sum
-            (Multiset.map_congr rfl (fun p _ => ?_))
-          rw [of'_tmul_mul_of'_tmul, Multiset.singleton_add]),
-      ← Multiset.sum_bind, map_first_product]
-  simp only [Multiset.map_bind, Multiset.map_map]
-  refine congr_arg Multiset.sum (Multiset.bind_congr (fun s _ => ?_))
-  apply Multiset.map_congr rfl
-  intro p _
-  rfl
-
 /-- The forest coproduct `comulForestN F` expands as a multiset sum of
-    `of' cf ⊗ of' rem` over `(cf, rem) ∈ cutForestSummandsN F`. -/
+    `of' cf ⊗ of' rem` over `(cf, rem) ∈ cutForestSummandsN F`: the generic
+    `comulForestNG_eq_sum` at `cuts := cutSummandsN`, transported along
+    `cutForestSummandsN_eq_forestCutsG`. -/
 theorem comulForestN_eq_sum (F : Forest (Nonplanar α)) :
     comulForestN (R := R) F = ((cutForestSummandsN F).map
       (fun pf => of' (R := R) pf.1 ⊗ₜ[R] of' (R := R) pf.2)).sum := by
-  induction F using Multiset.induction with
-  | empty =>
-    rw [comulForestN_zero, cutForestSummandsN_zero,
-        Multiset.map_singleton, Multiset.sum_singleton, of'_zero]
-    rfl
-  | cons T F' ih =>
-    rw [comulForestN_cons, ih, cutForestSummandsN_cons]
-    unfold comulTreeN comulTreeNG augActionN
-    rw [add_mul, Multiset.cons_product, Multiset.map_add, Multiset.map_add, Multiset.sum_add,
-        comulForestN_cons_extract_branch, comulForestN_cons_recurse_branch]
+  rw [cutForestSummandsN_eq_forestCutsG]
+  exact comulForestNG_eq_sum cutSummandsN F
 
 /-! ### The cocycle theorem (basis-level) -/
 
