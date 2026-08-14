@@ -3,7 +3,7 @@ import Linglib.Core.Data.Multiset.Rel
 import Linglib.Core.Data.RoseTree.Perm
 import Mathlib.Data.List.Perm.Basic
 import Mathlib.Data.List.Forall2
-import Mathlib.Algebra.BigOperators.Group.Multiset.Defs
+import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 import Mathlib.Algebra.Group.Nat.Defs
 import Mathlib.Data.Multiset.Basic
 import Mathlib.Data.Multiset.MapFold
@@ -360,6 +360,34 @@ theorem depth_lt_of_mem (T : Nonplanar α) (F : Multiset (Nonplanar α))
     show (mk c).depth < 1 + (ps.map RoseTree.depth).foldr max 0
     rw [depth_mk, Nat.add_comm]
     exact Nat.lt_succ_of_le (RoseTree.depth_le_foldr_max hc)
+
+/-! ### Edge count of a forest -/
+
+/-- Total edge count of a forest of nonplanar trees: each tree with `n`
+    vertices contributes `n - 1` edges. Defined as a per-tree sum (no
+    global subtraction) so additivity is immediate. -/
+def Forest.edgeCount (F : Multiset (Nonplanar α)) : ℕ :=
+  (F.map (fun T => T.numNodes - 1)).sum
+
+@[simp] theorem Forest.edgeCount_zero :
+    Forest.edgeCount (0 : Multiset (Nonplanar α)) = 0 := rfl
+
+@[simp] theorem Forest.edgeCount_singleton (T : Nonplanar α) :
+    Forest.edgeCount ({T} : Multiset (Nonplanar α)) = T.numNodes - 1 := by
+  show (({T} : Multiset (Nonplanar α)).map (fun T => T.numNodes - 1)).sum = _
+  rw [Multiset.map_singleton, Multiset.sum_singleton]
+
+@[simp] theorem Forest.edgeCount_cons (T : Nonplanar α) (F : Multiset (Nonplanar α)) :
+    Forest.edgeCount (T ::ₘ F) = (T.numNodes - 1) + Forest.edgeCount F := by
+  show ((T ::ₘ F).map (fun T => T.numNodes - 1)).sum = _
+  rw [Multiset.map_cons, Multiset.sum_cons]
+  rfl
+
+@[simp] theorem Forest.edgeCount_add (F G : Multiset (Nonplanar α)) :
+    Forest.edgeCount (F + G) = Forest.edgeCount F + Forest.edgeCount G := by
+  show ((F + G).map (fun T => T.numNodes - 1)).sum = _
+  rw [Multiset.map_add, Multiset.sum_add]
+  rfl
 
 end RoseTree.Nonplanar
 
