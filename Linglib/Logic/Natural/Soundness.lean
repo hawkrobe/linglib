@@ -34,12 +34,12 @@ the enum become corollaries of facts about actual context functions.
 
 ## Order soundness
 
-With the `Refines` orders carrying their [icard-2012] readings (`.all` =
+With the implication orders carrying their [icard-2012] readings (`.all` =
 •, the no-property top; `≡` not below the exclusion relations), both
-orders are certified here: `NLRelation.Holds.of_refines` (relation-level
-implication) and `EntailmentSig.SoundFor.of_refines` (a more specific
+orders are certified here: `NLRelation.Holds.of_le` (relation-level
+implication) and `EntailmentSig.SoundFor.of_le` (a more specific
 signature's soundness implies a less specific one's), via the projection
-monotonicity `EntailmentSig.project_refines`. `soundFor_all` holds
+monotonicity `EntailmentSig.project_mono`. `soundFor_all` holds
 unconditionally — every function realizes the no-property row.
 -/
 
@@ -231,10 +231,10 @@ signature, projecting every relation to `#`. -/
 theorem soundFor_all (f : α → β) : EntailmentSig.SoundFor .all f :=
   fun _ _ _ _ => trivial
 
-/-- Relation-level order soundness: `Refines` is the implication order on
+/-- Relation-level order soundness: `≤` is the implication order on
 the lattice content ([icard-2012] §1). -/
-theorem _root_.NaturalLogic.NLRelation.Holds.of_refines
-    {R R' : NLRelation} {u v : β} (h : R.Holds u v) (href : R.Refines R') :
+theorem _root_.NaturalLogic.NLRelation.Holds.of_le
+    {R R' : NLRelation} {u v : β} (h : R.Holds u v) (href : R ≤ R') :
     R'.Holds u v := by
   cases R <;> cases R' <;>
     first
@@ -247,17 +247,17 @@ theorem _root_.NaturalLogic.NLRelation.Holds.of_refines
 
 /-- Projection is monotone in the signature order: a more specific
 signature projects every relation at least as informatively. -/
-theorem EntailmentSig.project_refines {σ τ : EntailmentSig}
-    (h : σ.Refines τ) (R : NLRelation) :
-    (EntailmentSig.project R σ).Refines (EntailmentSig.project R τ) := by
+theorem EntailmentSig.project_mono (R : NLRelation) :
+    Monotone (EntailmentSig.project R) := by
+  intro σ τ h
   revert h; cases σ <;> cases τ <;> cases R <;> decide
 
 /-- Signature-order soundness: if σ refines τ (every σ-function is a
 τ-function), σ-soundness implies τ-soundness. This is the theorem that
-makes the `Refines` order mean class inclusion. -/
-theorem EntailmentSig.SoundFor.of_refines {σ τ : EntailmentSig} {f : α → β}
-    (h : σ.SoundFor f) (hστ : σ.Refines τ) : τ.SoundFor f :=
-  fun R x y hR => (h R x y hR).of_refines (EntailmentSig.project_refines hστ R)
+makes the refinement order mean class inclusion. -/
+theorem EntailmentSig.SoundFor.of_le {σ τ : EntailmentSig} {f : α → β}
+    (h : σ.SoundFor f) (hστ : σ ≤ τ) : τ.SoundFor f :=
+  fun R x y hR => (h R x y hR).of_le (EntailmentSig.project_mono R hστ)
 
 /-! ### Composition and paths -/
 
