@@ -3,38 +3,37 @@ import Mathlib.Algebra.BigOperators.Group.List.Defs
 import Mathlib.Data.Nat.Basic
 
 /-!
-# Natural Logic Relations and Entailment Signatures
+# The natural-logic relation algebra
 [icard-2012] [maccartney-manning-2009]
 
-Framework-agnostic infrastructure for the natural logic relation algebra and
-entailment signatures, following [icard-2012] "Inclusion and Exclusion in
-Natural Language."
+The seven natural-logic relations (≡ ⊑ ⊒ ^ | ⌣ #) and the nine
+entailment signatures of [icard-2012], with the operations that run the
+calculus: `join` chains relations, `project` pushes a relation through a
+function of known signature, and `compose` — derived from `project` by
+probing, so `projection_composition` holds by construction — makes the
+signatures a monoid (identity `addMult`, `all` absorbing). Both
+`Refines` orders are partial orders with `#` (resp. `•`) at top; there
+is no bottom (`≡` does not refine the exclusion relations). Semantic
+certification lives in `Logic/Natural/Soundness.lean`:
+`NLRelation.Holds.join` for the join table, the `soundFor_*` row
+theorems for projection.
 
-## Contents
+## Main declarations
 
-1. **NLRelation** — 7 natural logic relations (≡, ⊑, ⊒, ^, |, ⌣, #)
-2. **EntailmentSig** — 9 entailment signatures unifying monotonicity/additivity
-
-## Key operations
-
-- `NLRelation.join` (⋈): determines resultant relation from chained inferences
-- `EntailmentSig.compose` (∘): composes entailment signatures
-- `EntailmentSig.project` ([]^φ): projects a relation through a function of signature φ
-
-## Algebraic structure
-
-- `NLRelation` carries a `PartialOrder` + `OrderTop` (# = ⊤); the
-  implication order has no bottom (≡ does not entail the exclusion relations)
-- `EntailmentSig` carries a `PartialOrder` + `OrderTop` (all = ⊤, the
-  no-property signature •) + `Monoid` (compose; identity `addMult`, • absorbing)
-
+* `NLRelation`, `NLRelation.join`, `NLRelation.Refines` — the relation
+  algebra.
+* `EntailmentSig`, `EntailmentSig.project`, `EntailmentSig.compose` —
+  signatures, projection, and the composition monoid.
+* `EntailmentSig.contextProjectivity` — a position's signature as the
+  monoid product along its path.
+* `ContextPolarity`, `EntailmentSig.toContextPolarity` — the coarse
+  UE/DE quotient, a monoid homomorphism target
+  (`toContextPolarity_compose`).
 -/
 
 namespace NaturalLogic
 
--- ============================================================================
--- §1 — NLRelation: Seven Natural Logic Relations
--- ============================================================================
+/-! ### The seven relations -/
 
 /--
 The seven basic set-theoretic relations between denotations ([maccartney-manning-2009], [icard-2012] §1).
@@ -138,10 +137,11 @@ instance : OrderTop NLRelation where
   le_top a := show Refines a .independent by cases a <;> trivial
 
 /--
-Join operation ⋈ ([icard-2012], Lemma 1.5).
-
-Given xRy and yR'z, determines the strongest relation x(R⋈R')z.
-This is the "join" in the relation algebra sense (not lattice join).
+Join operation ⋈ ([icard-2012], Lemma 1.5): given `xRy` and `yR'z`, the
+strongest relation guaranteed between `x` and `z` — relation-algebra
+join, not lattice join. The table is derived from the non-strict
+`Holds` reading and certified cell-by-cell by `NLRelation.Holds.join`
+in `Logic/Natural/Soundness.lean`.
 -/
 def join : NLRelation → NLRelation → NLRelation
   -- ≡ is the identity
@@ -150,34 +150,34 @@ def join : NLRelation → NLRelation → NLRelation
   -- ⊑ column
   | .forward, .forward => .forward
   | .forward, .reverse => .independent
-  | .forward, .negation => .cover
-  | .forward, .alternation => .independent
-  | .forward, .cover => .cover
+  | .forward, .negation => .alternation
+  | .forward, .alternation => .alternation
+  | .forward, .cover => .independent
   | .forward, .independent => .independent
   -- ⊒ column
   | .reverse, .forward => .independent
   | .reverse, .reverse => .reverse
-  | .reverse, .negation => .alternation
-  | .reverse, .alternation => .alternation
-  | .reverse, .cover => .independent
+  | .reverse, .negation => .cover
+  | .reverse, .alternation => .independent
+  | .reverse, .cover => .cover
   | .reverse, .independent => .independent
   -- ^ column
-  | .negation, .forward => .alternation
-  | .negation, .reverse => .cover
+  | .negation, .forward => .cover
+  | .negation, .reverse => .alternation
   | .negation, .negation => .equiv
   | .negation, .alternation => .reverse
   | .negation, .cover => .forward
   | .negation, .independent => .independent
   -- | column
-  | .alternation, .forward => .alternation
-  | .alternation, .reverse => .independent
+  | .alternation, .forward => .independent
+  | .alternation, .reverse => .alternation
   | .alternation, .negation => .forward
   | .alternation, .alternation => .independent
   | .alternation, .cover => .forward
   | .alternation, .independent => .independent
   -- ⌣ column
-  | .cover, .forward => .independent
-  | .cover, .reverse => .cover
+  | .cover, .forward => .cover
+  | .cover, .reverse => .independent
   | .cover, .negation => .reverse
   | .cover, .alternation => .reverse
   | .cover, .cover => .independent
@@ -186,11 +186,11 @@ def join : NLRelation → NLRelation → NLRelation
   | .independent, _ => .independent
 
 -- Spot-checks from Lemma 1.5 table
-#guard join .forward .forward == .forward       -- ⊑ ⋈ ⊑ = ⊑
-#guard join .negation .negation == .equiv       -- ^ ⋈ ^ = ≡
-#guard join .alternation .negation == .forward  -- | ⋈ ^ = ⊑
-#guard join .negation .forward == .alternation  -- ^ ⋈ ⊑ = |
-#guard join .cover .negation == .reverse        -- ⌣ ⋈ ^ = ⊒
+example : join .forward .forward = .forward := rfl       -- ⊑ ⋈ ⊑ = ⊑
+example : join .negation .negation = .equiv := rfl       -- ^ ⋈ ^ = ≡
+example : join .alternation .negation = .forward := rfl  -- | ⋈ ^ = ⊑
+example : join .negation .forward = .cover := rfl        -- ^ ⋈ ⊑ = ⌣
+example : join .cover .negation = .reverse := rfl        -- ⌣ ⋈ ^ = ⊒
 
 /-- ≡ is the identity for join. -/
 theorem join_identity_left (r : NLRelation) : join .equiv r = r := by
@@ -205,9 +205,7 @@ theorem join_identity_right (r : NLRelation) : join r .equiv = r := by
 end NLRelation
 
 
--- ============================================================================
--- §2 — EntailmentSig: Entailment Signatures
--- ============================================================================
+/-! ### Entailment signatures -/
 
 /--
 Entailment signature.
@@ -416,21 +414,21 @@ def project : NLRelation → EntailmentSig → NLRelation
   | .independent, .antiMult => .independent
 
 -- Spot-checks from Lemma 2.4 tables (p.715)
-#guard project .forward .mono == .forward            -- [⊑]^+ = ⊑
-#guard project .forward .anti == .reverse            -- [⊑]^− = ⊒
-#guard project .negation .mono == .independent       -- [^]^+ = #
-#guard project .negation .anti == .independent       -- [^]^− = #
-#guard project .negation .additive == .cover         -- [^]^⊕ = ∼
-#guard project .negation .mult == .alternation       -- [^]^⊞ = |
-#guard project .negation .antiAddMult == .negation   -- [^]^◇⊟ = ^
-#guard project .alternation .mult == .alternation    -- [|]^⊞ = |
-#guard project .alternation .additive == .independent -- [|]^⊕ = #
-#guard project .cover .additive == .cover            -- [∼]^⊕ = ∼
-#guard project .cover .mult == .independent          -- [∼]^⊞ = #
-#guard project .cover .antiAdd == .alternation       -- [∼]^◇ = |
-#guard project .alternation .antiMult == .cover      -- [|]^⊟ = ∼
-#guard project .alternation .antiAddMult == .cover   -- [|]^◇⊟ = ∼
-#guard project .cover .antiAddMult == .alternation   -- [∼]^◇⊟ = |
+example : project .forward .mono = .forward := rfl            -- [⊑]^+ = ⊑
+example : project .forward .anti = .reverse := rfl            -- [⊑]^− = ⊒
+example : project .negation .mono = .independent := rfl       -- [^]^+ = #
+example : project .negation .anti = .independent := rfl       -- [^]^− = #
+example : project .negation .additive = .cover := rfl         -- [^]^⊕ = ∼
+example : project .negation .mult = .alternation := rfl       -- [^]^⊞ = |
+example : project .negation .antiAddMult = .negation := rfl   -- [^]^◇⊟ = ^
+example : project .alternation .mult = .alternation := rfl    -- [|]^⊞ = |
+example : project .alternation .additive = .independent := rfl -- [|]^⊕ = #
+example : project .cover .additive = .cover := rfl            -- [∼]^⊕ = ∼
+example : project .cover .mult = .independent := rfl          -- [∼]^⊞ = #
+example : project .cover .antiAdd = .alternation := rfl       -- [∼]^◇ = |
+example : project .alternation .antiMult = .cover := rfl      -- [|]^⊟ = ∼
+example : project .alternation .antiAddMult = .cover := rfl   -- [|]^◇⊟ = ∼
+example : project .cover .antiAddMult = .alternation := rfl   -- [∼]^◇⊟ = |
 
 /-- Every signature except • preserves equiv (• is the class of arbitrary
 functions, which need not respect equivalence). -/
@@ -477,18 +475,18 @@ def compose (ψ φ : EntailmentSig) : EntailmentSig :=
     (project (project .negation φ) ψ)
 
 -- Spot-checks (Lemma 2.7 table, p.716)
-#guard compose .anti .anti == .mono                   -- − ∘ − = +
-#guard compose .antiAddMult .antiAddMult == .addMult  -- ◇⊟ ∘ ◇⊟ = ⊕⊞
-#guard compose .additive .additive == .additive       -- ⊕ ∘ ⊕ = ⊕
-#guard compose .antiAdd .additive == .antiAdd         -- ◇ ∘ ⊕ = ◇
-#guard compose .addMult .anti == .anti                -- ⊕⊞ ∘ − = −
-#guard compose .mult .antiAdd == .antiAdd             -- ⊞ ∘ ◇ = ◇
-#guard compose .additive .antiMult == .antiMult       -- ⊕ ∘ ⊟ = ⊟
-#guard compose .antiMult .antiAdd == .additive        -- ⊟ ∘ ◇ = ⊕
-#guard compose .mult .mult == .mult                   -- ⊞ ∘ ⊞ = ⊞
-#guard compose .additive .antiAdd == .anti            -- ⊕ ∘ ◇ = −
-#guard compose .all .mono == .all                     -- • ∘ + = • (absorbing)
-#guard compose .anti .all == .all                     -- − ∘ • = • (absorbing)
+example : compose .anti .anti = .mono := rfl                   -- − ∘ − = +
+example : compose .antiAddMult .antiAddMult = .addMult := rfl  -- ◇⊟ ∘ ◇⊟ = ⊕⊞
+example : compose .additive .additive = .additive := rfl       -- ⊕ ∘ ⊕ = ⊕
+example : compose .antiAdd .additive = .antiAdd := rfl         -- ◇ ∘ ⊕ = ◇
+example : compose .addMult .anti = .anti := rfl                -- ⊕⊞ ∘ − = −
+example : compose .mult .antiAdd = .antiAdd := rfl             -- ⊞ ∘ ◇ = ◇
+example : compose .additive .antiMult = .antiMult := rfl       -- ⊕ ∘ ⊟ = ⊟
+example : compose .antiMult .antiAdd = .additive := rfl        -- ⊟ ∘ ◇ = ⊕
+example : compose .mult .mult = .mult := rfl                   -- ⊞ ∘ ⊞ = ⊞
+example : compose .additive .antiAdd = .anti := rfl            -- ⊕ ∘ ◇ = −
+example : compose .all .mono = .all := rfl                     -- • ∘ + = • (absorbing)
+example : compose .anti .all = .all := rfl                     -- − ∘ • = • (absorbing)
 
 /-- `addMult` (⊕⊞, the morphism class) is the identity for composition
 ([icard-2012] Lemma 2.7). -/
@@ -522,9 +520,7 @@ instance : Monoid EntailmentSig where
 end EntailmentSig
 
 
--- ============================================================================
--- §5 — Context Polarity
--- ============================================================================
+/-! ### Context polarity -/
 
 /--
 Whether a context preserves or reverses entailment direction.
@@ -560,9 +556,9 @@ def compose : ContextPolarity → ContextPolarity → ContextPolarity
   | .nonMonotonic, _ => .nonMonotonic
   | _, .nonMonotonic => .nonMonotonic
 
-#guard compose .upward .downward == .downward
-#guard compose .downward .downward == .upward
-#guard compose .downward .upward == .downward
+example : compose .upward .downward = .downward := rfl
+example : compose .downward .downward = .upward := rfl
+example : compose .downward .upward = .downward := rfl
 
 end ContextPolarity
 
@@ -581,15 +577,15 @@ def toContextPolarity (φ : EntailmentSig) : ContextPolarity :=
   else .nonMonotonic
 
 -- Exhaustive verification
-#guard toContextPolarity .all == .nonMonotonic
-#guard toContextPolarity .mono == .upward
-#guard toContextPolarity .additive == .upward
-#guard toContextPolarity .mult == .upward
-#guard toContextPolarity .addMult == .upward
-#guard toContextPolarity .anti == .downward
-#guard toContextPolarity .antiAdd == .downward
-#guard toContextPolarity .antiMult == .downward
-#guard toContextPolarity .antiAddMult == .downward
+example : toContextPolarity .all = .nonMonotonic := rfl
+example : toContextPolarity .mono = .upward := rfl
+example : toContextPolarity .additive = .upward := rfl
+example : toContextPolarity .mult = .upward := rfl
+example : toContextPolarity .addMult = .upward := rfl
+example : toContextPolarity .anti = .downward := rfl
+example : toContextPolarity .antiAdd = .downward := rfl
+example : toContextPolarity .antiMult = .downward := rfl
+example : toContextPolarity .antiAddMult = .downward := rfl
 
 /--
 `toContextPolarity` is a monoid homomorphism: composing signatures then
@@ -631,32 +627,30 @@ def projectThrough (R : NLRelation) (path : List EntailmentSig) : NLRelation :=
 -- List.prod applies them right-to-left: the last element is applied first.
 
 -- "animal" in "Every animal runs": path = [◇] (every_restrictor = anti-additive)
-#guard contextProjectivity [.antiAdd] == .antiAdd
+example : contextProjectivity [.antiAdd] = .antiAdd := rfl
 
 -- "runs" in "Every animal runs": path = [⊞] (every_scope = multiplicative)
-#guard contextProjectivity [.mult] == .mult
+example : contextProjectivity [.mult] = .mult := rfl
 
 -- "cat" in "No big cat runs": path = [◇, ⊕⊞] (no_restrictor = ◇, big = ⊕⊞)
 -- ◇ ∘ ⊕⊞ = ◇ (anti-additive composed with morphism stays anti-additive)
-#guard contextProjectivity [.antiAdd, .addMult] == .antiAdd
+example : contextProjectivity [.antiAdd, .addMult] = .antiAdd := rfl
 
 -- "runs" in "It's not the case that every animal runs":
 -- path = [◇⊟, ⊞] (negation = ◇⊟, every_scope = ⊞)
 -- ◇⊟ ∘ ⊞ = ⊟ (anti-multiplicative)
-#guard contextProjectivity [.antiAddMult, .mult] == .antiMult
+example : contextProjectivity [.antiAddMult, .mult] = .antiMult := rfl
 
 -- Double negation: ◇⊟ ∘ ◇⊟ = ⊕⊞ (morphism = preserves everything)
-#guard contextProjectivity [.antiAddMult, .antiAddMult] == .addMult
+example : contextProjectivity [.antiAddMult, .antiAddMult] = .addMult := rfl
 
 -- And its polarity: morphism → upward
-#guard toContextPolarity (contextProjectivity [.antiAddMult, .antiAddMult]) == .upward
+example : toContextPolarity (contextProjectivity [.antiAddMult, .antiAddMult]) = .upward := rfl
 
 end EntailmentSig
 
 
--- ============================================================================
--- §6 — Inference Rules
--- ============================================================================
+/-! ### Projection composition -/
 
 /--
 Projection composition ([icard-2012], Corollary 2.12).
@@ -675,46 +669,44 @@ theorem projection_composition (R : NLRelation) (φ ψ : EntailmentSig) :
   cases R <;> cases φ <;> cases ψ <;> rfl
 
 
--- ============================================================================
--- §8 — Negation Signature & Projection Examples
--- ============================================================================
+/-! ### The negation signature and worked projections -/
 
 /-- Negation has the anti-morphism signature ◇⊟ (strongest DE signature). -/
 def negationSig : EntailmentSig := .antiAddMult
 
-#guard EntailmentSig.toContextPolarity negationSig == .downward
+example : EntailmentSig.toContextPolarity negationSig = .downward := rfl
 
 -- Monoid notation: negationSig * negationSig = double negation = morphism
-#guard negationSig * negationSig == .addMult
+example : negationSig * negationSig = .addMult := rfl
 
 -- negationSig ^ 2 = ⊕⊞ (via Monoid.npow)
-#guard negationSig ^ 2 == .addMult
+example : negationSig ^ 2 = .addMult := rfl
 
 -- Negation is its own inverse (up to •/⊕⊞ equivalence):
 -- ◇⊟ * ◇⊟ = ⊕⊞ (the monoid identity on non-• signatures)
-#guard negationSig * negationSig * negationSig == negationSig
+example : negationSig * negationSig * negationSig = negationSig := rfl
 
 -- Composing negation with "every" scope: ◇⊟ * ⊞ = ⊟ (anti-multiplicative)
-#guard negationSig * .mult == .antiMult
+example : negationSig * .mult = .antiMult := rfl
 
 -- Chain composition: not(not(every ... )) scope = ⊟ * ◇⊟ * ◇⊟ = ⊟ * ⊕⊞ = ⊟
-#guard .antiMult * negationSig * negationSig == .antiMult
+example : .antiMult * negationSig * negationSig = .antiMult := rfl
 
 -- Forward entailment (dog ⊑ animal) projected through various signatures:
-#guard EntailmentSig.project .forward .mono == .forward           -- + : dog ⊑ animal ⟹ f(dog) ⊑ f(animal)
-#guard EntailmentSig.project .forward .anti == .reverse           -- − : dog ⊑ animal ⟹ f(dog) ⊒ f(animal)
-#guard EntailmentSig.project .forward .additive == .forward       -- ⊕ : same as mono for ⊑
-#guard EntailmentSig.project .forward .antiAddMult == .reverse    -- ◇⊟ : same as anti for ⊑
+example : EntailmentSig.project .forward .mono = .forward := rfl           -- + : dog ⊑ animal ⟹ f(dog) ⊑ f(animal)
+example : EntailmentSig.project .forward .anti = .reverse := rfl           -- − : dog ⊑ animal ⟹ f(dog) ⊒ f(animal)
+example : EntailmentSig.project .forward .additive = .forward := rfl       -- ⊕ : same as mono for ⊑
+example : EntailmentSig.project .forward .antiAddMult = .reverse := rfl    -- ◇⊟ : same as anti for ⊑
 
 -- Alternation (cat | dog) projected through various signatures:
-#guard EntailmentSig.project .alternation .mono == .independent     -- + : mono alone can't track disjointness
-#guard EntailmentSig.project .alternation .mult == .alternation     -- ⊞ : mult preserves ∧, so preserves |
-#guard EntailmentSig.project .alternation .antiMult == .cover       -- ⊟ : anti-mult flips | to ∼
+example : EntailmentSig.project .alternation .mono = .independent := rfl     -- + : mono alone can't track disjointness
+example : EntailmentSig.project .alternation .mult = .alternation := rfl     -- ⊞ : mult preserves ∧, so preserves |
+example : EntailmentSig.project .alternation .antiMult = .cover := rfl       -- ⊟ : anti-mult flips | to ∼
 
 -- Cover (animal ∼ nondog) projected through various signatures:
-#guard EntailmentSig.project .cover .additive == .cover             -- ⊕ : additive preserves ∨, so preserves ∼
-#guard EntailmentSig.project .cover .mult == .independent           -- ⊞ : mult can't track ∨-structure
-#guard EntailmentSig.project .cover .antiAdd == .alternation        -- ◇ : anti-additive flips ∼ to |
-#guard EntailmentSig.project .cover .antiAddMult == .alternation    -- ◇⊟ : anti-morph swaps | ↔ ∼
+example : EntailmentSig.project .cover .additive = .cover := rfl             -- ⊕ : additive preserves ∨, so preserves ∼
+example : EntailmentSig.project .cover .mult = .independent := rfl           -- ⊞ : mult can't track ∨-structure
+example : EntailmentSig.project .cover .antiAdd = .alternation := rfl        -- ◇ : anti-additive flips ∼ to |
+example : EntailmentSig.project .cover .antiAddMult = .alternation := rfl    -- ◇⊟ : anti-morph swaps | ↔ ∼
 
 end NaturalLogic

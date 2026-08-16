@@ -64,6 +64,35 @@ def NLRelation.Holds {α : Type*} [Lattice α] [BoundedOrder α] :
   | .cover => Codisjoint
   | .independent => fun _ _ => True
 
+/-! ### Join soundness -/
+
+/-- The join table is sound: chained relations compose as `join` says.
+Distributivity is needed for the cells that reason through a complement
+(`negation ⋈ negation = equiv` is uniqueness of complements). -/
+theorem NLRelation.Holds.join {β : Type*} [DistribLattice β] [BoundedOrder β]
+    {R S : NLRelation} {x y z : β} (hR : R.Holds x y) (hS : S.Holds y z) :
+    (R.join S).Holds x z := by
+  cases R <;> cases S <;>
+    first
+      | trivial
+      | exact hR.symm ▸ hS
+      | exact hS ▸ hR
+      | exact hR.trans hS
+      | exact hS.trans hR
+      | exact hS.disjoint.mono_left hR
+      | exact hS.mono_left hR
+      | exact hS.codisjoint.mono_left hR
+      | exact hR.codisjoint.mono_right hS
+      | exact hR.disjoint.mono_right hS
+      | exact hR.symm.right_unique hS
+      | exact hS.symm.le_of_codisjoint hR.codisjoint.symm
+      | exact hR.disjoint.le_of_codisjoint hS
+      | exact hR.le_of_codisjoint hS.codisjoint
+      | exact hR.mono_right hS
+      | exact hR.le_of_codisjoint hS
+      | exact hS.symm.le_of_codisjoint hR.symm
+      | exact hS.disjoint.symm.le_of_codisjoint hR.symm
+
 /-! ### Soundness of a signature for a function -/
 
 section SoundFor
