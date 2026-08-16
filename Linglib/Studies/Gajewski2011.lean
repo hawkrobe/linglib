@@ -628,7 +628,7 @@ Fragment registry encodes this through:
   `budgeAnInch`, `inYears`, `until_`, `either_npi`) all list
   `licensingContexts := [.negation, .nobody]` — i.e., classical-AA
   contexts only.
-- `Semantics/Polarity/Licensing.lean::IsStrawsonOnly`: the four
+- `Polarity.LicensingContext.IsStrawsonOnly`: the four
   Strawson-only contexts (`.onlyFocus`, `.adversative`,
   `.sinceTemporal`, `.superlative`) carry `classicalSignature := none`.
 
@@ -636,8 +636,8 @@ Gajewski's prediction: no strong NPI lists any Strawson-only
 context. The substrate makes this `decide`-checkable.
 -/
 
-open Semantics.Polarity (LicensingContext)
-open Semantics.Polarity.Licensing (contextProperties IsStrawsonOnly)
+open Polarity (LicensingContext)
+open Polarity (LicensingContext)
 open English.PolarityItems
   (any ever yet anymore atAll inTheLeast aSingle whatsoever
    liftAFinger budgeAnInch inYears until_ either_npi)
@@ -649,15 +649,15 @@ open English.PolarityItems
     `.withoutClause`), excluding `.onlyFocus`, `.adversative`,
     `.sinceTemporal`, `.superlative`. -/
 theorem gaj2011_strongNPIs_excluded_from_strawson_only_contexts :
-    ∀ ctx : LicensingContext, IsStrawsonOnly ctx →
+    ∀ ctx : LicensingContext, ctx.IsStrawsonOnly →
       ctx ∉ liftAFinger.licensingContexts ∧
       ctx ∉ budgeAnInch.licensingContexts ∧
       ctx ∉ inYears.licensingContexts ∧
       ctx ∉ until_.licensingContexts ∧
       ctx ∉ either_npi.licensingContexts := by
   intro ctx hStrawson
-  cases ctx <;> simp_all [IsStrawsonOnly, liftAFinger, budgeAnInch, inYears,
-    until_, either_npi, contextProperties]
+  cases ctx <;> simp_all [LicensingContext.IsStrawsonOnly, liftAFinger, budgeAnInch, inYears,
+    until_, either_npi, LicensingContext.properties]
 
 /-- The registry agrees with keystone licensing on the strong NPIs: every
 context a strong NPI lists supplies anti-additive strength. -/
@@ -675,8 +675,8 @@ theorem gaj2011_weak_npis_licensed :
 -- The strength cut as a derived prediction (Gajewski's few-contrast):
 -- *few* (weak DE) licenses *any* but not *in years*; *nobody*
 -- (anti-additive) licenses both.
-example : Features.LicensingContext.few.licenses any := by decide
-example : ¬ Features.LicensingContext.few.licenses inYears := by decide
-example : Features.LicensingContext.nobody.licenses inYears := by decide
+example : Polarity.LicensingContext.few.licenses any := by decide
+example : ¬ Polarity.LicensingContext.few.licenses inYears := by decide
+example : Polarity.LicensingContext.nobody.licenses inYears := by decide
 
 end Gajewski2011

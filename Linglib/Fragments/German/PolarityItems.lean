@@ -14,7 +14,7 @@ neither has an entry here.
 
 namespace German.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-- *irgendein/irgendwer* — [chierchia-2006]'s EFCI class: existential FCI
     with NPI uses (questions, conditionals) and FCI uses (modals,

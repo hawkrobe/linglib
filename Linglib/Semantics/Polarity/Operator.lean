@@ -2,7 +2,7 @@
 # Polarity Operators
 
 (A separate system from the `Polarity.Item` licensing API — the two share
-only the `Semantics.Polarity` namespace.)
+only the `Polarity` namespace.)
 [laka-1990] [turk-hirsch-2026]
 
 The two semantic operators that polarity heads spell out, as bare functions
@@ -20,7 +20,7 @@ Equational simp lemmas (`affirm_eq_id`, `neg_apply`, `neg_neg`) make the
 operators transparent to downstream reasoning.
 -/
 
-namespace Semantics.Polarity
+namespace Polarity
 
 universe u
 
@@ -46,4 +46,4 @@ theorem neg_neg {W : Type u} (p : W → Prop) (w : W) :
   unfold neg
   exact ⟨fun h => Classical.byContradiction h, fun h hn => hn h⟩
 
-end Semantics.Polarity
+end Polarity

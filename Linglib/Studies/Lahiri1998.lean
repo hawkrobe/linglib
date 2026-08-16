@@ -29,7 +29,7 @@ namespace Lahiri1998
 
 open Focus.Particles (evenPresup LikelihoodMonotone)
 open Entailment (World entails pnot)
-open Semantics.Polarity
+open Polarity
 open Data.Examples (LinguisticExample)
 
 /-! ### Morphological decomposition (paper (1), p. 58)
@@ -230,12 +230,12 @@ def allHindiNPIData : List HindiNPIDatum :=
   , ⟨Examples.ex34a, some .question⟩
   , ⟨Examples.ex41a, some .negation⟩ ]
 
-/-- A DE-or-question licenser, derived from `contextProperties`: the
+/-- A DE-or-question licenser, derived from `LicensingContext.properties`: the
 context's Strawson row supplies Zwarts strength, or it licenses by
 entropy (questions license via negative bias rather than pure DE). -/
 abbrev isDEOrQuestion (c : LicensingContext) : Prop :=
-  ((Semantics.Polarity.Licensing.contextProperties c).strawsonSignature.toDEStrength).isSome ∨
-    (Semantics.Polarity.Licensing.contextProperties c).mechanism = .byEntropy
+  (c.properties.strawsonSignature.toDEStrength).isSome ∨
+    c.properties.mechanism = .byEntropy
 
 /-- The datum's context is some DE-or-question licenser. -/
 def hasDELicenser (d : HindiNPIDatum) : Prop :=

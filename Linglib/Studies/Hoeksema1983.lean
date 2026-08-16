@@ -92,13 +92,13 @@ registry's classification, by `rfl`.
 
 namespace Hoeksema1983
 
-open Semantics.Polarity.Licensing
+open Polarity
 
 open Entailment
 open Core.Order (Comparison)
 open Degree (gtOverSet_isAntiAdditive gtOverSet_atomic_eq_comparativeSem)
-open Semantics.Polarity (LicensingContext)
-open Semantics.Polarity.Licensing (contextProperties)
+open Polarity (LicensingContext)
+open Polarity (LicensingContext)
 
 variable {Entity : Type*} {D : Type*} [Preorder D]
 
@@ -332,18 +332,18 @@ theorem npComparativeGQ_principal_eq_gtOverSet_singleton
     Hoeksema's central asymmetry: the NP-comparative is monotone
     *increasing* and therefore not an NPI environment. -/
 theorem comparativeNP_signature_monotone :
-    (contextProperties .comparativeNP).strawsonSignature = .mono := rfl
+    LicensingContext.comparativeNP.properties.strawsonSignature = .mono := rfl
 
 /-- The `.comparativeS` registry slot is anti-additive, matching
     `gtOverSet_isAntiAdditive`. -/
 theorem comparativeS_signature_anti_additive :
-    (contextProperties .comparativeS).strawsonSignature = .antiAdd := rfl
+    LicensingContext.comparativeS.properties.strawsonSignature = .antiAdd := rfl
 
 /-- Both registry slots cite Hoeksema 1983, anchoring the registry's
     classification to this study file. -/
 theorem both_comparatives_cite_hoeksema :
-    "hoeksema-1983" ∈ (contextProperties .comparativeNP).citations ∧
-    "hoeksema-1983" ∈ (contextProperties .comparativeS).citations := by
+    "hoeksema-1983" ∈ LicensingContext.comparativeNP.properties.citations ∧
+    "hoeksema-1983" ∈ LicensingContext.comparativeS.properties.citations := by
   refine ⟨?_, ?_⟩ <;> decide
 
 end Hoeksema1983

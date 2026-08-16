@@ -34,7 +34,7 @@ namespace English.TemporalExpressions
 
 open Features
 open Tense.TemporalAdverbials (AdverbialType)
-open Semantics.Polarity
+open Polarity
 
 -- ============================================================================
 -- § 1: Shared Types

@@ -27,7 +27,7 @@ not sufficient: *each* and comparative *more often than* are DE yet resist
   `C` creates a stronger statement;
 - `de_satisfies_strengthening`: antitone (DE) contexts satisfy strengthening;
 - `GuaranteesStrengthening`, `klExplanation`: per-context classification,
-  projected from `Semantics.Polarity.Licensing.contextProperties`;
+  projected from `Polarity.LicensingContext.properties`;
 - `ladusaw_de_is_kl_strengthening`: Ladusaw-DE contexts are strengthening
   contexts;
 - `sorry_licenses_any`, `glad_does_not_license`: the adversative asymmetry
@@ -46,8 +46,8 @@ not sufficient: *each* and comparative *more often than* are DE yet resist
 namespace KadmonLandman1993
 
 open NaturalLogic
-open Semantics.Polarity (LicensingContext)
-open Semantics.Polarity.Licensing (LicensingMechanism)
+open Polarity (LicensingContext)
+open Polarity (LicensingMechanism)
 open Entailment
 open Exhaustification.FreeChoice (Ctx existsInDomain
   widening_strengthens_in_de widening_weakens_in_ue)
@@ -90,14 +90,14 @@ theorem ue_widening_weakens {World Entity : Type*} {C : Ctx World}
 /-! ### Licensing contexts and entailment signatures
 
 Each context's entailment signature and licensing mechanism are projected
-from the canonical `Semantics.Polarity.Licensing.contextProperties` table, so
+from the canonical `Polarity.LicensingContext.properties` table, so
 this file's classification cannot drift from the substrate's. -/
 
 /-- A licensing context's entailment signature in [icard-2012]'s lattice —
 the Strawson-operative row, matching K&L's own convention of checking the
 DE pattern modulo factive presuppositions. -/
 abbrev contextEntailmentSig (c : LicensingContext) : EntailmentSig :=
-  (Semantics.Polarity.Licensing.contextProperties c).strawsonSignature
+  c.properties.strawsonSignature
 
 /-- A context guarantees K&L strengthening iff its entailment signature is on
 the DE side. Contexts with `.mono` or higher signatures are licensed by other
@@ -116,10 +116,10 @@ example : ∀ c ∈ [LicensingContext.negation, .nobody, .withoutClause, .few,
 example : ∀ c ∈ [LicensingContext.question, .modalPossibility, .generic],
     ¬ GuaranteesStrengthening c := by decide
 
-/-- A licensing context's K&L mechanism, projected from `contextProperties`:
+/-- A licensing context's K&L mechanism, projected from `LicensingContext.properties`:
 *why* the context licenses, not merely *that* it does. -/
 abbrev klExplanation (c : LicensingContext) : LicensingMechanism :=
-  (Semantics.Polarity.Licensing.contextProperties c).mechanism
+  c.properties.mechanism
 
 /-- Drift sentry: every context classified `byStrengthening` has a DE
 entailment signature. -/

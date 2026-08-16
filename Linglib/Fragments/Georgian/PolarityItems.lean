@@ -5,7 +5,7 @@ import Linglib.Semantics.Polarity.Licensing
 [haspelmath-1997]
 
 Georgian indefinite pronoun polarity items, typed by the categories from
-`Semantics.Polarity`.
+`Polarity`.
 
 - **aravin** (არავინ): Negative indefinite (ara- NEG prefix + vin 'who')
 - **nebismieri** (ნებისმიერი): Free choice item
@@ -20,7 +20,7 @@ preverbal neg-words). Mood-conditioned variants: vera-vin (modal), nura-vin
 
 namespace Georgian.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-! ### NPI -/
 

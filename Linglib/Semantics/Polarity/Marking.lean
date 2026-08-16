@@ -4,7 +4,7 @@ import Mathlib.Tactic.DeriveFintype
 # Polarity marking: strategy typology
 
 (A separate system from the `Polarity.Item` licensing API — the two share
-only the `Semantics.Polarity` namespace.)
+only the `Polarity` namespace.)
 [turco-braun-dimroth-2014] [bluhdorn-lohnstein-2012] [sudhoff-2012]
 [hohle-1992] [holmberg-2016]
 
@@ -66,7 +66,7 @@ with the form-class encoding for different reasons; the
 incompatibilities are recorded, not silently resolved.
 -/
 
-namespace Semantics.Polarity.Marking
+namespace Polarity.Marking
 
 /-- How a language marks polarity switches (neg → affirm). See module
     docstring for the framework-commitment note. -/
@@ -131,4 +131,4 @@ structure Entry where
   /-- The polarity-marking strategy category -/
   strategy : Strategy
 
-end Semantics.Polarity.Marking
+end Polarity.Marking

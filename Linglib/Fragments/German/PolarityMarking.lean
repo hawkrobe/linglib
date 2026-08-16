@@ -26,7 +26,7 @@ German's strategy is non-particulate.
 
 namespace German.PolarityMarking
 
-open Semantics.Polarity.Marking (Entry Strategy Env)
+open Polarity.Marking (Entry Strategy Env)
 
 /-- Verum focus — pitch accent on the finite verb.
     Dominant strategy in German for neg→affirm switches in both contexts.

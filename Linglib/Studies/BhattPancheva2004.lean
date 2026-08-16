@@ -76,8 +76,8 @@ open Minimalist.DegreeMovement
    williams_scope_correlation williams_exempt_when_no_binding)
 open Core.Order (Comparison)
 open Degree (gtOverSet_eq_singleton_of_isGreatest)
-open Semantics.Polarity (LicensingContext)
-open Semantics.Polarity.Licensing (contextProperties)
+open Polarity (LicensingContext)
+open Polarity (LicensingContext)
 
 variable {Entity : Type*}
 
@@ -180,8 +180,8 @@ theorem npGQ_principal_eq_sComp_thanClause
     Hoeksema's two registry theorems so that any future change to
     either signature surfaces here as a recompile failure. -/
 theorem reduction_preserves_polarity_signatures :
-    (contextProperties .comparativeNP).strawsonSignature = .mono ∧
-    (contextProperties .comparativeS).strawsonSignature = .antiAdd :=
+    LicensingContext.comparativeNP.properties.strawsonSignature = .mono ∧
+    LicensingContext.comparativeS.properties.strawsonSignature = .antiAdd :=
   ⟨comparativeNP_signature_monotone, comparativeS_signature_anti_additive⟩
 
 /- ## Note on the Bresnan 1973 contrast (B&P §1.1.1 fn. 4)

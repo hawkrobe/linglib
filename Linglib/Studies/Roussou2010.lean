@@ -175,7 +175,7 @@ whether supplied lexically by a rogative (ex. 10) or structurally
 *ksexnó* 'forget', ex. 14). True/False predicates (ex. 7) are
 veridical embedders: no licensing row corresponds to them, which is
 the account's rendering of their blocking effect. -/
-def anItem : Semantics.Polarity.Item where
+def anItem : Polarity.Item where
   form := "an"
   baseForce := .existential
   licensor := some .weak

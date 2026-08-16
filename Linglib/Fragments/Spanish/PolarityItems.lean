@@ -5,7 +5,7 @@ import Linglib.Semantics.Polarity.Item
 [haspelmath-1997] [zanuttini-1997]
 
 Lexical entries for Spanish polarity-sensitive items (n-word series),
-typed by the theory-neutral categories from `Semantics.Polarity`.
+typed by the theory-neutral categories from `Polarity`.
 Standard sentential negation (the *no* marker) lives in the sibling
 `Fragments/Spanish/Negation.lean`; this file holds only the lexical
 reactives (operator/lexical-reactive split documented in
@@ -24,7 +24,7 @@ lexical-feature distinction across n-words.
 
 namespace Spanish.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-- *nadie* — N-word for human ('nobody').
     Preverbal alone: *Nadie vino*. Postverbal with *no*: *No vino nadie*. -/

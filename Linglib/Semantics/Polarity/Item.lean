@@ -40,9 +40,7 @@ items that have one.
 * `NPIMorphology`, `AlternativeType` — composition typology.
 -/
 
-namespace Semantics.Polarity
-
-open Features (LicensingContext)
+namespace Polarity
 
 /-! ### Scalar direction -/
 
@@ -137,10 +135,4 @@ abbrev Item.isFCI (e : Item) : Prop := e.freeChoice = true
 /-- A positive polarity item. -/
 abbrev Item.isPPI (e : Item) : Prop := e.ppi = true
 
-end Semantics.Polarity
-
--- Re-export `LicensingContext` from `Features/` into `Semantics.Polarity` so
--- consumers doing `open Semantics.Polarity` see its constructors in scope.
-namespace Semantics.Polarity
-export Features (LicensingContext)
-end Semantics.Polarity
+end Polarity

@@ -5,7 +5,7 @@ import Linglib.Semantics.Polarity.Licensing
 [haspelmath-1997]
 
 Lexical entries for Czech n-words (the *ni-* series), typed by the
-theory-neutral categories from `Semantics.Polarity`. Standard
+theory-neutral categories from `Polarity`. Standard
 sentential negation (the *ne-* prefix) lives in the sibling
 `Fragments/Czech/Negation.lean`; this file holds only the lexical
 reactives (operator/lexical-reactive split documented in
@@ -22,7 +22,7 @@ Spanish position-dependent NC.
 
 namespace Czech.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-- *nikdo* — N-word for human ('nobody').
     Strict NC: requires the *ne-* prefix on the verb regardless of

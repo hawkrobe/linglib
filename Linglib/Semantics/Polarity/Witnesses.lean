@@ -9,7 +9,7 @@ import Linglib.Semantics.Quantification.Counting
 /-!
 # Model witnesses for the licensing-context table
 
-Each witnessed row of `contextProperties` carries a model operator
+Each witnessed row of `LicensingContext.properties` carries a model operator
 realizing its signatures: the classical row via `EntailmentSig.SoundFor`,
 the Strawson row via `EntailmentSig.StrawsonSoundFor`. This converts the
 table's `strawsonSignature`/`classicalSignature` annotations into derived
@@ -31,9 +31,8 @@ table at the polarity quotient but retains external consumers; its
 retirement is deferred.
 -/
 
-namespace Semantics.Polarity.Licensing
+namespace Polarity
 
-open Features (LicensingContext)
 open NaturalLogic
 open Quantification
 open Entailment (World pnot)
@@ -54,11 +53,11 @@ structure ContextWitness (c : LicensingContext) where
   [boundedβ : BoundedOrder β]
   /-- The Strawson row is Strawson-sound for `f`. -/
   strawson :
-    EntailmentSig.StrawsonSoundFor (contextProperties c).strawsonSignature
+    EntailmentSig.StrawsonSoundFor c.properties.strawsonSignature
       f defined
   /-- The classical row, when present, is classically sound for `f`. -/
   classical :
-    ∀ σ ∈ (contextProperties c).classicalSignature, EntailmentSig.SoundFor σ f
+    ∀ σ ∈ c.properties.classicalSignature, EntailmentSig.SoundFor σ f
 
 private theorem soundFor_of_mem_some {W : Type*} {β : Type*} [Lattice β]
     [BoundedOrder β] {f : Set W → β} {σ₀ : EntailmentSig}
@@ -228,4 +227,4 @@ example : (contextWitness? .superlative).isSome = true := rfl
 example : (contextWitness? .atMost).isSome = true := rfl
 example : (contextWitness? .withoutClause).isSome = false := rfl
 
-end Semantics.Polarity.Licensing
+end Polarity

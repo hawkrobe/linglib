@@ -121,8 +121,8 @@ def HaspelmathFunction.isFC : HaspelmathFunction → Bool
     irrealis uses of non-polarity indefinites; both comparative rows realize
     the standard-of-comparison function regardless of NPI-licensability
     (`comparativeNP` licenses no NPIs, [hoeksema-1983]). -/
-def _root_.Features.LicensingContext.haspelmathFunction :
-    Features.LicensingContext → Option HaspelmathFunction
+def _root_.Polarity.LicensingContext.haspelmathFunction :
+    Polarity.LicensingContext → Option HaspelmathFunction
   | .negation => some .directNeg
   | .withoutClause | .doubtVerb | .denyVerb => some .indirectNeg
   | .question => some .question
@@ -133,13 +133,13 @@ def _root_.Features.LicensingContext.haspelmathFunction :
   | _ => none
 
 /-- The licensing environments realizing a map function — the preimage of
-    `Features.LicensingContext.haspelmathFunction`. Empty for the specificity
+    `Polarity.LicensingContext.haspelmathFunction`. Empty for the specificity
     triangle (`specificKnown`, `specificUnknown`, `irrealis`), whose
     realizations are positive or irrealis clauses outside the
     licensing-context inventory (matching the Fragment convention that an
     empty `licensingContexts` list means the item needs positive contexts). -/
 def HaspelmathFunction.contexts (f : HaspelmathFunction) :
-    Finset Features.LicensingContext :=
+    Finset Polarity.LicensingContext :=
   Finset.univ.filter (·.haspelmathFunction = some f)
 
 /-- BFS on the implicational map restricted to a given set of functions.

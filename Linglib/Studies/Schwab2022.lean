@@ -36,7 +36,7 @@ illusion arises.
 
 namespace Schwab2022
 
-open Semantics.Polarity (ScalarDirection)
+open Polarity (ScalarDirection)
 
 -- ============================================================================
 -- Experimental Data

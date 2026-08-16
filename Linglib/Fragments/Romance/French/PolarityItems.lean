@@ -6,7 +6,7 @@ import Linglib.Semantics.Polarity.Licensing
 
 Lexical entries for French polarity-sensitive items (n-word series and
 related), typed by the theory-neutral categories from
-`Semantics.Polarity`. Standard sentential negation lives in the
+`Polarity`. Standard sentential negation lives in the
 sibling `Fragments/French/Negation.lean`; this file holds only the
 lexical reactives (operator/lexical-reactive split documented in
 `Core/Lexical/NegMarker.lean`).
@@ -31,7 +31,7 @@ bipartite *ne* dependency would live in the substrate, not per-Fragment.
 
 namespace French.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-- *personne* — N-word for human ('nobody').
     Grammaticalized from the noun 'person'. Co-occurs with *ne* in

@@ -38,7 +38,7 @@ clause-initial and targets polarity directly via a dedicated particle.
 
 namespace Spanish.PolarityMarking
 
-open Semantics.Polarity.Marking (Entry Strategy Env)
+open Polarity.Marking (Entry Strategy Env)
 
 /-- *sí (que)* — Spanish emphatic polarity affirmation particle.
     Clause-initial EPPA. [batllori-hernanz-2013]: merges with

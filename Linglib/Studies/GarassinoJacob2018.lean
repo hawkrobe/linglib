@@ -20,7 +20,7 @@ as Romance polarity-focus (PF) realization strategies.
 
 1. **A typology of PF-marking strategies** in Italian, French and Spanish
    that carves the inventory differently from the
-   `Semantics.Polarity.Marking.Strategy` enum: G&J split
+   `Polarity.Marking.Strategy` enum: G&J split
    lexical means (adverbs, affirmative particles, embedded-clause
    structures) from syntactic means (non-focal fronting, cleft family,
    clitic dislocation, *sì che* / *sí que* clefts) — see §1 below for
@@ -55,7 +55,7 @@ as Romance polarity-focus (PF) realization strategies.
 
 namespace GarassinoJacob2018
 
-open Semantics.Polarity.Marking (Entry Strategy
+open Polarity.Marking (Entry Strategy
   Env)
 open Italian.PolarityMarking (siChe)
 open Spanish.PolarityMarking (siQue)

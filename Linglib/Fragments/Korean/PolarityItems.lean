@@ -5,7 +5,7 @@ import Linglib.Semantics.Polarity.Licensing
 [haspelmath-1997]
 
 Korean indefinite pronoun polarity items, typed by the categories from
-`Semantics.Polarity`.
+`Polarity`.
 
 Korean, like Japanese, builds polarity items from wh-words + particles:
 - **nwukwu** (bare): Weak NPI in non-interrogative uses
@@ -15,7 +15,7 @@ Korean, like Japanese, builds polarity items from wh-words + particles:
 
 namespace Korean.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-! ### NPIs -/
 
