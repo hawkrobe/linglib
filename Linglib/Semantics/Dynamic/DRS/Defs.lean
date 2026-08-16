@@ -3,53 +3,46 @@ import Mathlib.Logic.Relation
 import Mathlib.ModelTheory.Basic
 
 /-!
-# Discourse Representation Structures (faithful, model-theoretic core)
+# Discourse representation structures
 
-A faithful Lean model of the canonical DRS data type, built on mathlib's
-`FirstOrder.Language` so its semantics can be given model-theoretically (via
-`FirstOrder.Language.Structure` / `Realize`), exactly as [kamp-reyle-1993]
-define it (verifying embeddings into a model, Def. 1.4.4–1.4.5).
+This file defines discourse representation structures (DRSs) over a mathlib
+`FirstOrder.Language`, following [kamp-reyle-1993]. A DRS is a pair of a finite
+set of *discourse referents* (the textbook's universe `U`) and a list of
+*conditions* (Def. 1.4.1); a condition is atomic (`rel`, `eq`) or complex
+(`neg`, with `imp`/`dis` from the Chapter 2 extension), and sub-DRSs occur only
+inside complex conditions. In the literature a DRS is also drawn as a *box*,
+[muskens-1996]'s `[u₁ … uₙ | γ₁ … γₘ]`.
 
-A DRS is a pair `⟨referents, conditions⟩` (Def. 1.4.1): `referents` is the
-*universe* `U` — a finite set of discourse referents — and `conditions` a
-collection of DRS-conditions. Conditions are **atomic** (`rel`, `eq`) or
-**complex**; sub-DRSs occur *only* inside complex conditions. Def. 1.4.1's only
-complex condition is `neg`; `imp` and `dis` are its Chapter 2 extension
-(conditionals and disjunction). Relation symbols come arity-indexed from a
-`FirstOrder.Language`.
-
-"Box" and "DRS" name the same object in the literature — the two-compartment
-diagram, [muskens-1996]'s linear `[u₁ … uₙ | γ₁ … γₘ]` — in diagrammatic vs.
-official register. `Box` (`DRS/Box.lean`) is the generic container; `DRS` is
-its instantiation at `Condition L V`.
+Verification and truth are model-theoretic and live in `DRS/Verification.lean`;
+the structural theory is in `DRS/Basic.lean`.
 
 ## Main declarations
 
-* `Box`, `Condition L V`, `DRS L V` — the data type over a language `L`
-  (relation signature) and discourse-referent type `V`: a DRS is a `Box` of
-  `Condition`s.
-* `DRS.merge` — the `⊕` operation (set-union referents, concatenate
-  conditions); [muskens-1996]'s compositional operation.
-* `DirectlySubordinate`, `Subordinate`, `WeakSubordinate` — immediate
-  subordination (Def. 1.4.10(i), extended to `⇒`/`∨` by Def. 2.1.2) and its
-  `Relation.TransGen` / `ReflTransGen` closures (Def. 1.4.10(ii)); weak
-  subordination is a partial order (`WeakSubordinate.antisymm`). Accessibility is
-  host-relative and lives in `DRS/Basic.lean` (`AccessibleTo`, `accessibleFrom`).
+* `Condition`, `DRS`: conditions and DRSs over a language `L` and referent type
+  `V`; `DRS L V` is the generic container `Box` (`DRS/Box.lean`) instantiated at
+  `Condition L V`.
+* `DRS.merge`: the merge `⊕` — union the referents, append the conditions
+  ([muskens-1996]).
+* `DirectlySubordinate`, `Subordinate`, `WeakSubordinate`: immediate
+  subordination and its transitive and reflexive-transitive closures
+  (Def. 1.4.10, Def. 2.1.2). Accessibility is host-relative and lives in
+  `DRS/Basic.lean` (`AccessibleTo`, `accessibleFrom`).
+
+## Main statements
+
+* `WeakSubordinate.antisymm`: weak subordination is a partial order.
 
 ## Implementation notes
 
-* `referents` is the textbook "universe `U`"; named for its contents because
-  `universe` is a Lean keyword and `univ` collides with `Finset.univ`.
-* No mutual block: `Box` is a parameterized container structure the condition
-  syntax nests through, and `DRS` its instantiation at `Condition L V` — the
-  simultaneous Def. 1.4.1 rendered as nesting, with the structure API
-  (projections, `ext`, eta) for free.
-* The recursive `conditions` field is a `List`: Lean forbids nesting an inductive
-  through `Finset`/`Multiset`. Set semantics are imposed by the interpretation
+* `referents` is the textbook `U`; `universe` is a Lean keyword and `univ`
+  collides with `Finset.univ`.
+* `Box` is a container structure the condition syntax nests through, and `DRS`
+  its instantiation at `Condition L V` — Def. 1.4.1's simultaneous recursion
+  without a mutual block, keeping the structure API.
+* `conditions` is a `List`, since an inductive cannot nest through
+  `Finset`/`Multiset`; set semantics is recovered by the interpretation
   (`Embedding.verifies_perm`, `DRS/Verification.lean`).
-* `DRT` is the owning namespace (mathlib's `FirstOrder.Language` pattern):
-  `DRS`, `Condition`, and `Ctx` are DRT's objects, keeping generic names
-  owner-relative rather than claiming them at the root.
+* `DRT` is the owning namespace, on the `FirstOrder.Language` pattern.
 -/
 
 open FirstOrder
