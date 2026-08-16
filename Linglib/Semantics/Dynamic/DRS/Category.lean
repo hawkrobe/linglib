@@ -12,38 +12,35 @@ the context or introduced by the DRS itself — and whose introductions
 are fresh for the context, growing `X` to `Y`. Composition is `merge`;
 identity is the empty DRS.
 
-The visibility invariant is what makes composition unconditional: it
-*derives* the Merging Lemma's capture-freshness side condition, so
-`merge` needs no hypotheses here. Interpretation (`Ctx.sem`) is then an
-identity-on-objects functor into the semantic category of contexts
-`DynamicSemantics.Ctx`, and its functoriality on composition *is* the
+The visibility invariant derives the Merging Lemma's capture-freshness
+side condition, so composition needs no hypotheses. Interpretation
+(`Ctx.sem`) is an identity-on-objects functor into the semantic category
+of contexts `DynamicSemantics.Ctx`, functorial on composition by the
 Merging Lemma (`DRS.transition_merge`).
-
-"Category of contexts" is the field's name for this structure: it is a
-syntactic category in the sense of categorical logic (objects are
-contexts — declarations of variables, type theory's *bases*, cf.
-[visser-1998] — and arrows are syntax), and the diachronic information
-ordering of [visser-vermeulen-1996]'s bracketing approach, in which
-contexts under merge form a category
-([muskens-van-benthem-visser-2011]'s m-categories). `DRT.Ctx` and
-`DynamicSemantics.Ctx` name the two levels of DRT's architecture, not
-rival theories: DRT's distinctive *representation* level, where contexts
-compose by merging boxes, and the framework-neutral semantic level,
-where they compose transitions relationally — the level other dynamic
-frameworks interpret into as well.
 
 ## Main definitions
 
-- `DRT.Ctx L V`: contexts, with well-formed DRSs as morphisms and
+* `DRT.Ctx L V`: contexts, with well-formed DRSs as morphisms and
   `merge` as composition.
-- `DRT.Ctx.sem`: interpretation as a functor into
+* `DRT.Ctx.sem`: interpretation as a functor into
   `DynamicSemantics.Ctx W M V`, given a model of the language.
+
+## Implementation notes
+
+This is a syntactic category in the sense of categorical logic (objects
+are declarations of variables, type theory's bases, cf. [visser-1998]),
+and the context-under-merge category of [visser-vermeulen-1996]'s
+bracketing approach ([muskens-van-benthem-visser-2011]'s m-categories).
+`DRT.Ctx` and `DynamicSemantics.Ctx` name the two levels of DRT's
+architecture, not rival theories: contexts compose by merging boxes at
+the representation level and by relational composition of transitions at
+the semantic level.
 
 ## References
 
-- [visser-vermeulen-1996], [visser-1998], [muskens-1996] (the merge
+* [visser-vermeulen-1996], [visser-1998], [muskens-1996] (the merge
   algebra and context typing)
-- [kamp-vangenabith-reyle-2011], [kamp-reyle-1993]
+* [kamp-vangenabith-reyle-2011], [kamp-reyle-1993]
 -/
 
 namespace DRT

@@ -5,37 +5,33 @@ import Linglib.Semantics.Dynamic.Transition
 /-!
 # Indexed relational semantics of DRSs
 
-The base-threaded verification semantics: `toRelAt X K f g` holds when the
-output `g` agrees with the input `f` *on the context base* `X` and verifies
-`K`'s conditions, sub-boxes entered at the grown base. This is the
-total-assignment rendering of [kamp-vangenabith-reyle-2011]'s
+This file defines the base-threaded verification semantics: `toRelAt X K f g`
+holds when the output `g` agrees with the input `f` on the context base `X`
+and verifies `K`'s conditions, sub-boxes entered at the grown base. This is
+the total-assignment rendering of [kamp-vangenabith-reyle-2011]'s
 partial-embedding semantics (Defs. 19, 22, 24): values at established
-referents *persist*, as in [kamp-reyle-1993]'s original embeddings — contrast
-the flat `DRS.toRel` (`DRS/Dynamics.lean`), whose agree-off-universe clause
-freely reassigns re-declared referents ([muskens-1996]'s fn. 4 divergence).
+referents persist, as in [kamp-reyle-1993]'s original embeddings — in contrast
+to the flat `DRS.toRel` (`DRS/Dynamics.lean`), which freely reassigns
+re-declared referents ([muskens-1996]'s fn. 4 divergence).
 
-Persistence is what makes the indexed semantics well-typed: `toRelAt X K` is
-read only at `X` (`toRelAt_congr_left` — one line, no witness surgery) and
-written only at `X ∪ U` (`toRelAt_congr_right`, given the *referential
-presupposition* `K.freeVarFinset ⊆ X`), so a well-formed DRS denotes a spine
-`Transition X (X ∪ U)` (`DRS.transition`), and a proper DRS expresses an
-information state by acting on `⊥` (`DRS.state`, Def. 22).
-
-The Merging Lemma for this semantics (`toRelAt_merge`) needs strictly less
-than the flat freshness hypothesis — only *capture* by sub-box universes is
-fatal, re-declaration is harmless — and lifts to the spine
-(`transition_merge`), where the action equation (`state_merge`) becomes an
-instance of functoriality (`Transition.apply_comp`).
+Persistence types the semantics: `toRelAt X K` is read only at `X` and, given
+the referential presupposition `K.freeVarFinset ⊆ X`, written only at `X ∪ U`,
+so a well-formed DRS denotes a spine transition `Transition X (X ∪ U)` and a
+proper DRS expresses an information state by acting on `⊥` (Def. 22). The
+Merging Lemma here needs less than the flat freshness hypothesis — only
+capture by sub-box universes is fatal, re-declaration is harmless — and lifts
+to the spine, where the action equation is an instance of functoriality
+(`Transition.apply_comp`).
 
 ## Main declarations
 
-* `DRS.toRelAt` / `Condition.holdsAt` — the base-threaded semantics.
-* `DRS.toRelAt_congr_left` / `toRelAt_congr_right` — read/write support.
-* `DRS.transition` — a DRS as a spine transition `X ⟶ X ∪ U`.
-* `DRS.state` — the information state a proper DRS expresses.
-* `DRS.transition_merge` / `DRS.state_merge` — the Merging Lemma on the
-  spine and the action equation.
-* `DRS.trueRel_iff_toRelAt` — on reuse-free DRSs the flat and indexed
+* `DRS.toRelAt`, `Condition.holdsAt`: the base-threaded semantics.
+* `DRS.toRelAt_congr_left`, `DRS.toRelAt_congr_right`: read/write support.
+* `DRS.transition`: a DRS as a spine transition `X ⟶ X ∪ U`.
+* `DRS.state`: the information state a proper DRS expresses.
+* `DRS.transition_merge`, `DRS.state_merge`: the Merging Lemma on the spine
+  and the action equation.
+* `DRS.trueRel_iff_toRelAt`: on reuse-free DRSs the flat and indexed
   semantics have the same truth conditions.
 -/
 
