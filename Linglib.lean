@@ -1736,7 +1736,7 @@ import Linglib.Semantics.Plurality.Reciprocal
 import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Semantics.Polarity.CzechNegation
 import Linglib.Semantics.Polarity.ExpletiveNegation
-import Linglib.Semantics.Polarity.Israel
+import Linglib.Semantics.Polarity.ScalarModel
 import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Polarity.Marking

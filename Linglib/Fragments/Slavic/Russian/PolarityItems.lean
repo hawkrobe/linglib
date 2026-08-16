@@ -40,7 +40,7 @@ def ktoLibo : Item :=
   , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.question, .conditionalAntecedent, .negation, .comparativeS]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-! ### Strict-NC *ни-* words (the direct-negation series) -/
 
@@ -51,7 +51,7 @@ def nikto : Item :=
   , licensor := some .antiMorphic
   , baseForce := .existential
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg }
 
 /-- *ничего* (nichego) — non-human strict-NC n-word ('nothing').
@@ -61,7 +61,7 @@ def nichego : Item :=
   , licensor := some .antiMorphic
   , baseForce := .existential
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg }
 
 /-- *никогда* (nikogda) — temporal strict-NC n-word ('never').
@@ -71,7 +71,7 @@ def nikogda : Item :=
   , licensor := some .antiMorphic
   , baseForce := .temporal
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg }
 
 /-! ### Free choice item -/
@@ -107,7 +107,7 @@ theorem russian_licensing_sound :
     `kto ugodno` is correctly excluded by the substrate `isNPI` guard rather
     than dropped from a hand-listed sublist. -/
 theorem npis_strengthening :
-    ∀ e ∈ items, e.isNPI → e.scalarDirection = .strengthening := by
+    ∀ e ∈ items, e.isNPI → e.scalarDirection = some .strengthening := by
   decide
 
 end Russian.PolarityItems

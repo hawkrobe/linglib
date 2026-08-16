@@ -40,7 +40,7 @@ strengthening chain — is the planned next step.
 
 The table's signatures are Ladusaw/Zwarts/von-Fintel canonical — one row
 per context regardless of item; [israel-2001]'s scalar model rejects
-exactly this framing (predictions in `Semantics/Polarity/Israel.lean`).
+exactly this framing (predictions in `Semantics/Polarity/ScalarModel.lean`).
 The NP-comparative row licenses nothing ([hoeksema-1983]); surface NPIs
 in "than NP" route through the clausal row ([bhatt-pancheva-2004],
 [heim-2006]). The every-restrictor-as-LAA signature is standard but of

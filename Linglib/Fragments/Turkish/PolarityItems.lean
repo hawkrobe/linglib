@@ -26,7 +26,7 @@ def kimse : Item :=
   , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.question, .conditionalAntecedent, .negation]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *hiç kimse* — Emphatic negative indefinite.
     *hiç* intensifier + *kimse*; direct negation only. -/
@@ -35,7 +35,7 @@ def hicKimse : Item :=
   , licensor := some .antiMorphic
   , baseForce := .existential
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-! ### FCI -/
 
@@ -51,7 +51,7 @@ def herhangiBiri : Item :=
 
 theorem turkish_npis_strengthening :
     [kimse, hicKimse].all
-      (λ e => e.scalarDirection == .strengthening) = true := by decide
+      (λ e => e.scalarDirection == some .strengthening) = true := by decide
 
 /-- *hiç kimse* characterized exactly: obligatory co-occurrence with verbal
     negation ([haspelmath-1997] A179). -/

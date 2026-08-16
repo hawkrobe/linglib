@@ -144,7 +144,6 @@ def predictsIllusion (npi : NPIType) : Bool :=
   | .strengthening => true   -- ScalAssert condition superficially met
   | .attenuating => false    -- Attenuation condition NOT met
   | .nonScalar => false
-  | .unknown => false
 
 /-- The theoretical prediction matches the observed data. -/
 theorem prediction_matches_data :

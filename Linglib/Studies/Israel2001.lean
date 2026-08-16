@@ -1,35 +1,30 @@
-import Linglib.Semantics.Polarity.Item
-import Linglib.Semantics.Polarity.Israel
+import Linglib.Semantics.Polarity.ScalarModel
+import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Fragments.English.PolarityItems
 
 /-!
 # [israel-2001]: Minimizers, Maximizers, and the Rhetoric of Scalar Reasoning
 
-Formalizes the core contributions of Israel's Scalar Model of Polarity:
+Israel's Scalar Model classifies polarity items by scalar value ×
+rhetorical force (Figure 1) and explains the *inverted* items — maximizer
+NPIs (*wild horses*) and minimizer PPIs (*for peanuts*) — by
+propositional role (§4): facilitating roles produce inverted items,
+impeding roles canonical ones. The pecuniary paradox dissolves: *a red
+cent* (resource, impeding) and *for peanuts* (reward, facilitating)
+share a low monetary value but occupy different roles, hence opposite
+canonicity. The paper's items are `ScalarItem`s
+(`Semantics/Polarity/ScalarModel.lean`); the classifications of the
+`Fragments/English/PolarityItems.lean` entries live here in
+`classifiedLexicon`, with the theory that consumes them.
 
-1. **The 2×2 taxonomy** (Figure 1): polarity items classified by scalar value
-   (high/low) × rhetorical force (emphatic/attenuating)
-2. **Inverted polarity items** (§3, Figure 3): maximizer NPIs (*wild horses*,
-   *all the tea in China*) and minimizer PPIs (*at the drop of a hat*,
-   *for a pittance*) — items whose scalar value is opposite to what the
-   basic Scalar Model predicts
-3. **The thematic resolution** (§4): inversion tracks propositional role —
-   facilitating roles (stimulus, instrument, reward) produce inverted items,
-   impeding roles (patient, theme, resource) produce canonical items
-4. **The pecuniary paradox**: *a red cent* (NPI, resource = impeding) vs
-   *for peanuts* (PPI, reward = facilitating) — same monetary domain,
-   different propositional roles
+## Main results
 
-## Connection to linglib infrastructure
-
-- `ScalarValue`, `Canonicity`, `LikelihoodEffect` defined in
-  `Core/Lexical/PolarityItem.lean`
-- Inverted items added to `Fragments/English/PolarityItems.lean`
-- `LikelihoodEffect` is a propositional-role concept, not a theta-role
-  function. It connects to proto-role entailments (Dowty 1991) via
-  bridge theorems below, but is independently defined: the relevant
-  distinction is how a participant affects event likelihood, which
-  cross-cuts traditional theta labels.
+* `pecuniary_paradox` — same value and direction, different roles,
+  opposite canonicity.
+* `paperItems`/`classifiedLexicon` consistency — every classification
+  agrees with `predictCanonicity`.
+* `suggestedLikelihoodEffect` — the §4 fn. 6 bridge from [dowty-1991]
+  proto-role entailments to likelihood effect.
 -/
 
 namespace Israel2001
@@ -37,310 +32,232 @@ namespace Israel2001
 open Semantics.Polarity
 open English.PolarityItems
 
--- ════════════════════════════════════════════════════
--- § 1. The Scalar Model (Figure 1)
--- ════════════════════════════════════════════════════
+/-! ### Canonical items (Figure 1)
 
-/-! The basic Scalar Model predicts four cells:
+The basic Scalar Model predicts four cells:
 
 | | **Emphatic** | **Attenuating** |
 |---------|----------------------|----------------------|
 | **NPI** | low: *a wink, inch* | high: *much, long* |
 | **PPI** | high: *tons, utterly*| low: *sorta, rather* |
 
-Emphatic items license maximally informative interpretations;
-attenuating items license minimally informative interpretations.
-NPI contexts are scale-reversing (DE); PPI contexts are scale-preserving (UE). -/
+Emphatic items license maximally informative interpretations,
+attenuating items minimally informative ones; NPI contexts are
+scale-reversing (DE), PPI contexts scale-preserving (UE). -/
 
-/-- A polarity item datum with its Israel 2001 classification. -/
-structure IsraelDatum where
-  item : Item
-  /-- Example sentence -/
-  sentence : String
-  /-- Is the item grammatical in this sentence? -/
-  grammatical : Bool
-  deriving Repr
+/-- *a wink* — canonical emphatic NPI (low, impeding): *I didn't sleep a
+    wink.* -/
+def aWink : ScalarItem :=
+  { form := "a wink"
+  , licensor := some .weak, baseForce := .degree
+  , licensingContexts := [.negation]
+  , scalarDirection := some .strengthening
+  , scalarValue := .low, canonicity := .canonical
+  , likelihoodEffect := some .impeding
+  , morphology := .idiomatic }
 
--- ════════════════════════════════════════════════════
--- § 2. Canonical items (Figure 1)
--- ════════════════════════════════════════════════════
+/-- *insanely* — canonical emphatic PPI (high): *She is insanely
+    good-looking.* -/
+def insanely : ScalarItem :=
+  { form := "insanely"
+  , ppi := true, baseForce := .degree
+  , licensingContexts := []
+  , scalarDirection := some .strengthening
+  , scalarValue := .high, canonicity := .canonical }
 
-/-- "I didn't sleep a wink." — canonical emphatic NPI (low, impeding) -/
-def sleepAWink : IsraelDatum :=
-  { item := { form := "a wink"
-            , licensor := some .weak, baseForce := .degree
-            , licensingContexts := [.negation]
-            , scalarDirection := .strengthening
-            , scalarValue := .low, canonicity := .canonical
-            , likelihoodEffect := .impeding
-            , morphology := .idiomatic }
-  , sentence := "I didn't sleep a wink."
-  , grammatical := true }
+/-- *sorta* — canonical attenuating PPI (low): *She's sorta clever.* -/
+def sorta : ScalarItem :=
+  { form := "sorta"
+  , ppi := true, baseForce := .degree
+  , licensingContexts := []
+  , scalarDirection := some .attenuating
+  , scalarValue := .low, canonicity := .canonical }
 
-/-- "She didn't budge an inch." — canonical emphatic NPI (low, impeding) -/
-def didntBudge : IsraelDatum :=
-  { item := budgeAnInch
-  , sentence := "She didn't budge an inch."
-  , grammatical := true }
+/-- *all that* — canonical attenuating NPI (high): *He's not all that
+    clever.* -/
+def allThat : ScalarItem :=
+  { form := "all that"
+  , licensor := some .weak, baseForce := .degree
+  , licensingContexts := [.negation]
+  , scalarDirection := some .attenuating
+  , scalarValue := .high, canonicity := .canonical
+  , likelihoodEffect := some .impeding }
 
-/-- "She is insanely good-looking." — canonical emphatic PPI (high) -/
-def insanely : IsraelDatum :=
-  { item := { form := "insanely"
-            , ppi := true, baseForce := .degree
-            , licensingContexts := []
-            , scalarDirection := .strengthening
-            , scalarValue := .high, canonicity := .canonical }
-  , sentence := "She is insanely good-looking."
-  , grammatical := true }
+/-! ### Inverted items (Figure 3)
 
-/-- "She's sorta clever." — canonical attenuating PPI (low) -/
-def sorta : IsraelDatum :=
-  { item := { form := "sorta"
-            , ppi := true, baseForce := .degree
-            , licensingContexts := []
-            , scalarDirection := .attenuating
-            , scalarValue := .low, canonicity := .canonical }
-  , sentence := "She's sorta clever."
-  , grammatical := true }
+Inverted items break the simple correlation between scalar value and
+polarity type; propositional role (§4) explains them. -/
 
-/-- "He's not all that clever." — canonical attenuating NPI (high) -/
-def allThat : IsraelDatum :=
-  { item := { form := "all that"
-            , licensor := some .weak, baseForce := .degree
-            , licensingContexts := [.negation]
-            , scalarDirection := .attenuating
-            , scalarValue := .high, canonicity := .canonical
-            , likelihoodEffect := .impeding }
-  , sentence := "He's not all that clever."
-  , grammatical := true }
+/-- *his own shadow* — inverted emphatic PPI (low, facilitating):
+    *Godfrey is scared of his own shadow.* -/
+def ownShadow : ScalarItem :=
+  { form := "his own shadow"
+  , ppi := true, baseForce := .degree
+  , licensingContexts := []
+  , scalarDirection := some .strengthening
+  , scalarValue := .low, canonicity := .inverted
+  , likelihoodEffect := some .facilitating
+  , morphology := .idiomatic }
 
--- ════════════════════════════════════════════════════
--- § 3. Inverted items (Figure 3)
--- ════════════════════════════════════════════════════
+/-- *with a feather* — inverted emphatic PPI (low, facilitating): *You
+    could have knocked me over with a feather.* -/
+def withAFeather : ScalarItem :=
+  { form := "with a feather"
+  , ppi := true, baseForce := .degree
+  , licensingContexts := []
+  , scalarDirection := some .strengthening
+  , scalarValue := .low, canonicity := .inverted
+  , likelihoodEffect := some .facilitating
+  , morphology := .idiomatic }
 
-/-! Inverted items break the simple correlation between scalar value and
-polarity type. They are explained by propositional role (§4). -/
+/-! ### The pecuniary paradox
 
-/-- "Wild horses couldn't keep me away." — inverted emphatic NPI (high, facilitating) -/
-def wildHorsesDatum : IsraelDatum :=
-  { item := wildHorses
-  , sentence := "Wild horses couldn't keep me away."
-  , grammatical := true }
+Both *a red cent* and *for peanuts* denote small monetary values (§3,
+examples 15–16), but the first is an NPI and the second a PPI: they
+occupy different propositional roles — resource (what you spend,
+impeding) vs reward (what you gain, facilitating). -/
 
-/-- "I wouldn't do it for all the tea in China." — inverted emphatic NPI (high, facilitating) -/
-def teaInChinaDatum : IsraelDatum :=
-  { item := allTheTeaInChina
-  , sentence := "I wouldn't do it for all the tea in China."
-  , grammatical := true }
+/-- *a red cent* — canonical NPI, resource role: *He won't spend a red
+    cent on your wedding.* -/
+def redCent : ScalarItem :=
+  { form := "a red cent"
+  , licensor := some .weak, baseForce := .degree
+  , licensingContexts := [.negation]
+  , scalarDirection := some .strengthening
+  , scalarValue := .low, canonicity := .canonical
+  , likelihoodEffect := some .impeding
+  , morphology := .idiomatic }
 
-/-- "I wouldn't touch it with a ten-foot pole." — inverted emphatic NPI (high, facilitating) -/
-def tenFootPoleDatum : IsraelDatum :=
-  { item := aTenFootPole
-  , sentence := "I wouldn't touch it with a ten-foot pole."
-  , grammatical := true }
+/-- *for peanuts* — inverted PPI, reward role: *He got Madonna to play
+    for peanuts.* -/
+def forPeanuts : ScalarItem :=
+  { form := "for peanuts"
+  , ppi := true, baseForce := .degree
+  , licensingContexts := []
+  , scalarDirection := some .strengthening
+  , scalarValue := .low, canonicity := .inverted
+  , likelihoodEffect := some .facilitating
+  , morphology := .idiomatic }
 
-/-- "Godfrey is scared of his own shadow." — inverted emphatic PPI (low, facilitating) -/
-def ownShadowDatum : IsraelDatum :=
-  { item := { form := "his own shadow"
-            , ppi := true, baseForce := .degree
-            , licensingContexts := []
-            , scalarDirection := .strengthening
-            , scalarValue := .low, canonicity := .inverted
-            , likelihoodEffect := .facilitating
-            , morphology := .idiomatic }
-  , sentence := "Godfrey is scared of his own shadow."
-  , grammatical := true }
+/-- The paradox dissolved: the same low value and emphatic direction,
+    but different propositional roles and hence opposite canonicity. -/
+theorem pecuniary_paradox :
+    redCent.scalarValue = forPeanuts.scalarValue ∧
+    redCent.scalarDirection = forPeanuts.scalarDirection ∧
+    redCent.likelihoodEffect ≠ forPeanuts.likelihoodEffect ∧
+    redCent.canonicity ≠ forPeanuts.canonicity := by decide
 
-/-- "You could have knocked me over with a feather." — inverted emphatic PPI (low, facilitating) -/
-def withAFeatherDatum : IsraelDatum :=
-  { item := { form := "with a feather"
-            , ppi := true, baseForce := .degree
-            , licensingContexts := []
-            , scalarDirection := .strengthening
-            , scalarValue := .low, canonicity := .inverted
-            , likelihoodEffect := .facilitating
-            , morphology := .idiomatic }
-  , sentence := "You could have knocked me over with a feather."
-  , grammatical := true }
+/-! ### The classified lexicon -/
 
-/-- "We'll be back in a jiffy." — inverted emphatic PPI (low, facilitating) -/
-def jiffyDatum : IsraelDatum :=
-  { item := inAJiffy
-  , sentence := "We'll be back in a jiffy."
-  , grammatical := true }
+/-- The paper's own example items. -/
+def paperItems : List ScalarItem :=
+  [aWink, insanely, sorta, allThat, ownShadow, withAFeather,
+   redCent, forPeanuts]
 
-/-- "He got Madonna to play for peanuts." — inverted emphatic PPI (low, facilitating) -/
-def peanutsDatum : IsraelDatum :=
-  { item := forAPittance  -- same class as "for peanuts"
-  , sentence := "He got Madonna to play for peanuts."
-  , grammatical := true }
+/-- The paper's classifications of the
+    `Fragments/English/PolarityItems.lean` entries (Figure 1 cells; §3
+    inverted items; §4 roles where the paper gives them). -/
+def classifiedLexicon : List ScalarItem :=
+  [ { toItem := any, scalarValue := .low, canonicity := .canonical
+    , likelihoodEffect := some .impeding }
+  , { toItem := ever, scalarValue := .low, canonicity := .canonical }
+  , { toItem := atAll, scalarValue := .low, canonicity := .canonical }
+  , { toItem := liftAFinger, scalarValue := .low, canonicity := .canonical
+    , likelihoodEffect := some .impeding }
+  , { toItem := budgeAnInch, scalarValue := .low, canonicity := .canonical
+    , likelihoodEffect := some .impeding }
+  , { toItem := wildHorses, scalarValue := .high, canonicity := .inverted
+    , likelihoodEffect := some .facilitating }
+  , { toItem := allTheTeaInChina, scalarValue := .high, canonicity := .inverted
+    , likelihoodEffect := some .facilitating }
+  , { toItem := aTenFootPole, scalarValue := .high, canonicity := .inverted
+    , likelihoodEffect := some .facilitating }
+  , { toItem := inAMillionYears, scalarValue := .high, canonicity := .inverted
+    , likelihoodEffect := some .facilitating }
+  , { toItem := atTheDropOfAHat, scalarValue := .low, canonicity := .inverted
+    , likelihoodEffect := some .facilitating }
+  , { toItem := inAJiffy, scalarValue := .low, canonicity := .inverted
+    , likelihoodEffect := some .facilitating }
+  , { toItem := forAPittance, scalarValue := .low, canonicity := .inverted
+    , likelihoodEffect := some .facilitating }
+  , { toItem := forASong, scalarValue := .low, canonicity := .inverted
+    , likelihoodEffect := some .facilitating }
+  , { toItem := some_ppi, scalarValue := .low, canonicity := .canonical }
+  , { toItem := somewhat, scalarValue := .low, canonicity := .canonical }
+  , { toItem := rather, scalarValue := .low, canonicity := .canonical }
+  , { toItem := tonsOf, scalarValue := .high, canonicity := .canonical }
+  , { toItem := utterly, scalarValue := .high, canonicity := .canonical } ]
 
--- ════════════════════════════════════════════════════
--- § 4. The Pecuniary Paradox
--- ════════════════════════════════════════════════════
+/-- Every classification agrees with the role-likelihood prediction. -/
+example : ∀ p ∈ paperItems ++ classifiedLexicon, p.canonicityConsistent := by
+  decide
 
-/-! The pecuniary paradox (§3, examples 15–16): both *a red cent* and
-*for peanuts* denote small monetary values, but *a red cent* is an NPI
-and *for peanuts* is a PPI. The resolution: they occupy different
-propositional roles.
+/-! ### The proto-role bridge (§4, fn. 6) -/
 
-- *a red cent* = Resource (what you spend) → impeding → canonical NPI
-- *for peanuts* = Reward (what you gain) → facilitating → inverted PPI -/
+/-- The suggestion of [dowty-1991] proto-role entailments for likelihood
+    effect: Proto-Agent dominance suggests a facilitating role,
+    Proto-Patient dominance an impeding one, and a tie suggests nothing —
+    a heuristic, not a theorem: the pecuniary paradox shows propositional
+    role can diverge from proto-role counts, which is why
+    `LikelihoodEffect` is an independent concept rather than a function
+    of theta labels. -/
+def suggestedLikelihoodEffect (p : ArgumentStructure.EntailmentProfile) :
+    Option LikelihoodEffect :=
+  if p.pPatientScore < p.pAgentScore then some .facilitating
+  else if p.pAgentScore < p.pPatientScore then some .impeding
+  else none
 
-/-- "He won't spend a red cent on your wedding." — canonical NPI, resource/expense -/
-def redCentDatum : IsraelDatum :=
-  { item := { form := "a red cent"
-            , licensor := some .weak, baseForce := .degree
-            , licensingContexts := [.negation]
-            , scalarDirection := .strengthening
-            , scalarValue := .low, canonicity := .canonical
-            , likelihoodEffect := .impeding  -- resource: bigger cost → less likely
-            , morphology := .idiomatic }
-  , sentence := "He won't spend a red cent on your wedding."
-  , grammatical := true }
+-- A pure agent facilitates; a pure patient impedes; a balanced
+-- experiencer profile requires propositional analysis.
+example : suggestedLikelihoodEffect
+    { volition := true, sentience := true, causation := true
+    , movement := true, independentExistence := true } =
+      some .facilitating := rfl
+example : suggestedLikelihoodEffect
+    { changeOfState := true, incrementalTheme := true
+    , causallyAffected := true, stationary := true
+    , dependentExistence := true } = some .impeding := rfl
+example : suggestedLikelihoodEffect
+    { sentience := true, causallyAffected := true } = none := rfl
 
-/-- "He got Madonna to play for peanuts." — inverted PPI, reward -/
-def forPeanutsDatum : IsraelDatum :=
-  { item := { form := "for peanuts"
-            , ppi := true, baseForce := .degree
-            , licensingContexts := []
-            , scalarDirection := .strengthening
-            , scalarValue := .low, canonicity := .inverted
-            , likelihoodEffect := .facilitating  -- reward: small ask → exchange more likely
-            , morphology := .idiomatic }
-  , sentence := "He got Madonna to play for peanuts."
-  , grammatical := true }
+/-! ### Ambiguous superlatives (§6)
 
--- The paradox dissolves: same monetary domain, different propositional roles
-#guard redCentDatum.item.likelihoodEffect == .impeding
-#guard forPeanutsDatum.item.likelihoodEffect == .facilitating
-#guard redCentDatum.item.canonicity == .canonical
-#guard forPeanutsDatum.item.canonicity == .inverted
+Perception verbs allow dual scalar readings (Fauconnier 1975b): *Eve
+didn't hear even the faintest noise* ranks stimuli by likely existence,
+*… even the loudest noise* ranks experiencers by acuity. Perception is
+bicausal — it depends on the stimulus's salience and the perceiver's
+acuity — and the scale type fixes the role. -/
 
--- ════════════════════════════════════════════════════
--- § 5. Verification: predictCanonicity agrees with data
--- ════════════════════════════════════════════════════
-
-/-- All items from this paper with full classification. -/
-def allData : List IsraelDatum :=
-  [ sleepAWink, didntBudge, insanely, sorta, allThat
-  , wildHorsesDatum, teaInChinaDatum, tenFootPoleDatum
-  , ownShadowDatum, withAFeatherDatum, jiffyDatum, peanutsDatum
-  , redCentDatum, forPeanutsDatum ]
-
--- Every fully-classified item has consistent canonicity
-example : ∀ d ∈ allData, d.item.canonicityConsistent := by decide
-
--- ════════════════════════════════════════════════════
--- § 6. Bridge to Entailment Profiles
--- ════════════════════════════════════════════════════
-
-/-! [israel-2001] §4 discusses Dowty's proto-roles (fn. 6) as a
-possible basis for the canonical/inverted distinction. The connection
-to `EntailmentProfile` is:
-
-- **Proto-Agent entailments** (causation, volition, movement,
-  independent existence) → participant *facilitates* event realization
-- **Proto-Patient entailments** (change of state, incremental theme,
-  causally affected, stationary) → participant *impedes* event realization
-  (bigger obstacle → less likely)
-
-This is NOT a function on `ThetaRole` (which is a derived convenience
-label in linglib). Instead, `LikelihoodEffect` is an independent
-propositional-role concept that *correlates* with proto-role entailments
-but cross-cuts theta labels in cases like the pecuniary paradox
-(where both arguments may be "themes" in a traditional analysis). -/
-
-/-- Proto-Agent dominance predicts facilitating role.
-
-    If an argument position has more P-Agent entailments than P-Patient
-    entailments, the participant tends to facilitate event realization.
-    This is a heuristic, not a theorem — the pecuniary paradox shows
-    that propositional role can diverge from proto-role counts. -/
-def pAgentDominant_suggests_facilitating (pAg pPat : Nat) : LikelihoodEffect :=
-  if pAg > pPat then .facilitating
-  else if pPat > pAg then .impeding
-  else .unknown
-
--- Canonical cases: agent (pAg=5,pPat=0) → facilitating
-#guard pAgentDominant_suggests_facilitating 5 0 == .facilitating
--- Canonical cases: patient (pAg=0,pPat=5) → impeding
-#guard pAgentDominant_suggests_facilitating 0 5 == .impeding
--- Experiencer (pAg=2,pPat=2) → unknown (requires propositional analysis)
-#guard pAgentDominant_suggests_facilitating 2 2 == .unknown
-
--- ════════════════════════════════════════════════════
--- § 7. Ambiguous Superlatives (§6)
--- ════════════════════════════════════════════════════
-
-/-! Fauconnier (1975b) noted that perception verbs allow dual scalar
-readings. "Eve didn't hear even the faintest noise" and "Eve didn't
-hear even the loudest noise" are both emphatic, but use different scales:
-
-- *faintest*: existential scale (ranking stimuli by likely existence)
-  → canonical impeding role
-- *loudest*: perceptual-ability scale (ranking experiencers by acuity)
-  → inverted facilitating role
-
-The dual reading arises because perception is bicausal: it depends
-both on the stimulus's salience AND the perceiver's acuity. -/
-
-/-- Scale type for the ambiguous-superlative phenomenon -/
+/-- The two scales a negated perception superlative can invoke. -/
 inductive PerceptionScaleType where
-  | existential       -- scale of stimuli ranked by likely existence
-  | perceptualAbility -- scale of experiencers ranked by perceptual acuity
+  /-- Stimuli ranked by likely existence (*faintest*). -/
+  | existential
+  /-- Experiencers ranked by perceptual acuity (*loudest*). -/
+  | perceptualAbility
   deriving DecidableEq, Repr
 
-structure AmbiguousSuperlativeDatum where
-  sentence : String
-  superlative : String
-  scaleType : PerceptionScaleType
-  likelihoodEffect : LikelihoodEffect
-  notes : String
-  deriving Repr
+/-- The scale type fixes the propositional role: existential scales
+    impede (if larger things exist, smaller ones do too), ability scales
+    facilitate (missing the most perceptible means missing
+    everything). -/
+def PerceptionScaleType.role : PerceptionScaleType → LikelihoodEffect
+  | .existential => .impeding
+  | .perceptualAbility => .facilitating
 
-def faintestNoise : AmbiguousSuperlativeDatum :=
-  { sentence := "Eve didn't hear even the faintest noise."
-  , superlative := "faintest"
-  , scaleType := .existential
-  , likelihoodEffect := .impeding
-  , notes := "Existential scale: if larger things exist, smaller ones do too" }
+/-! ### Scale-reversing = DE, scale-preserving = UE
 
-def loudestNoise : AmbiguousSuperlativeDatum :=
-  { sentence := "Eve didn't hear even the loudest noise."
-  , superlative := "loudest"
-  , scaleType := .perceptualAbility
-  , likelihoodEffect := .facilitating
-  , notes := "Ability scale: if you can't hear the most perceptible, you can't hear anything" }
+§2 connects the Scalar Model to the Fauconnier–Ladusaw tradition:
+scale-reversing contexts are the downward-entailing ones, and
+scale-preserving contexts the upward-entailing ones, except that the
+relevant inferences may be pragmatic entailments within a scalar model
+rather than strictly logical — which is why the Scalar Model handles
+cases pure monotonicity misses. -/
 
--- Both are emphatic in DE contexts, but via different scales
-#guard faintestNoise.likelihoodEffect == .impeding
-#guard loudestNoise.likelihoodEffect == .facilitating
-
--- ════════════════════════════════════════════════════
--- § 8. Bridge: Scale-Reversing = DE, Scale-Preserving = UE
--- ════════════════════════════════════════════════════
-
-/-! [israel-2001] §2 connects the Scalar Model to the Fauconnier-Ladusaw
-tradition of monotonicity-based licensing:
-
-- **Scale-reversing** contexts (NPI-licensing): inferences run from high to
-  low values. In formal terms, these are **downward entailing** (DE) contexts
-  — Mathlib's `Antitone`, linglib's `IsDE`.
-- **Scale-preserving** contexts (PPI-licensing): inferences run from low to
-  high values. In formal terms, these are **upward entailing** (UE) contexts
-  — Mathlib's `Monotone`, linglib's `IsUE`.
-
-Israel's key departure from Ladusaw: the relevant inferences need not be
-strictly logical — they can be *pragmatic* entailments within a scalar model.
-This is why the Scalar Model can handle cases that pure monotonicity misses. -/
-
-/-- Israel's "scale-reversing" corresponds to formal DE (= Antitone).
-    This is the bridge between the Scalar Model (pragmatic) and the
-    Fauconnier-Ladusaw tradition (logical). -/
+/-- Israel's scale directions: reversing (= DE, NPI-licensing) and
+    preserving (= UE, PPI-licensing). -/
 inductive ScaleDirection where
-  | reversing   -- NPI-licensing: high → low (= DE)
-  | preserving  -- PPI-licensing: low → high (= UE)
+  | reversing
+  | preserving
   deriving DecidableEq, Repr
 
 /-- Expected scale direction in licensing contexts, from the item's
@@ -351,7 +268,7 @@ def expectedScaleDirection (e : Item) : Option ScaleDirection :=
   else if e.licensor.isSome then some .reversing
   else none
 
--- NPIs need scale-reversing (= DE) contexts, PPIs scale-preserving (= UE)
+/-- Non-PPI NPIs need scale-reversing contexts. -/
 example : ∀ e : Item, e.isNPI → expectedScaleDirection e = some .reversing ∨
     e.ppi = true := by
   intro e h

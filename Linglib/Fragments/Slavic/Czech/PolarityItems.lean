@@ -32,7 +32,7 @@ def nikdo : Item :=
   , licensor := some .antiMorphic
   , baseForce := .existential
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg }
 
 /-- *nic* — N-word for non-human ('nothing'). -/
@@ -41,7 +41,7 @@ def nic : Item :=
   , licensor := some .antiMorphic
   , baseForce := .existential
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg }
 
 /-- *nikdy* — Temporal n-word ('never'). -/
@@ -50,7 +50,7 @@ def nikdy : Item :=
   , licensor := some .antiMorphic
   , baseForce := .temporal
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg }
 
 /-- *nikam* — Locative n-word ('nowhere'). -/
@@ -59,7 +59,7 @@ def nikam : Item :=
   , licensor := some .antiMorphic
   , baseForce := .existential
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg }
 
 /-- *žádný* — Determiner n-word ('no/none'). -/
@@ -68,7 +68,7 @@ def zadny : Item :=
   , licensor := some .antiMorphic
   , baseForce := .existential
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-! ### Joint -/
 

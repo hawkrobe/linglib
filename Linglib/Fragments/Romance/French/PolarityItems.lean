@@ -41,7 +41,7 @@ def personne : Item :=
   , licensor := some .antiAdditive
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *rien* — N-word for non-human ('nothing').
     Grammaticalized from a Latin noun 'thing'. Same distribution as
@@ -51,7 +51,7 @@ def rien : Item :=
   , licensor := some .antiAdditive
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *jamais* — Temporal n-word ('never').
     Grammaticalized from 'ever'. Pre-Jespersen *jamais* was a positive
@@ -62,7 +62,7 @@ def jamais : Item :=
   , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts := [.negation, .nobody, .withoutClause, .question]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *plus* — Temporal/quantitative n-word ('no more', 'no longer').
     Same lexeme as positive *plus* 'more'; the negative reading requires
@@ -73,7 +73,7 @@ def plus : Item :=
   , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-! ### Joint -/
 

@@ -333,9 +333,9 @@ theorem tested_ppi_is_ppi : some_ppi.isPPI := rfl
     but have heterogeneous semantic bases — the mechanism isn't
     purely about domain widening (§10.2). -/
 theorem tested_npis_all_strengthening :
-    any.scalarDirection = .strengthening ∧
-    ever.scalarDirection = .strengthening ∧
-    atAll.scalarDirection = .strengthening :=
+    any.scalarDirection = some .strengthening ∧
+    ever.scalarDirection = some .strengthening ∧
+    atAll.scalarDirection = some .strengthening :=
   ⟨rfl, rfl, rfl⟩
 
 /-- Mechanism constraints: effect persists across semantically

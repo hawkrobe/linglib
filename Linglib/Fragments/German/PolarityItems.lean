@@ -26,7 +26,7 @@ def irgendein : Item :=
   , baseForce := .existential
   , licensingContexts :=
       [.question, .conditionalAntecedent, .modalPossibility, .modalNecessity, .imperative]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-! ### Verification -/
 

@@ -40,7 +40,7 @@ def kukaan : Item :=
   , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.question, .conditionalAntecedent, .negation]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , morphology := .indefPlusEven
   , alternativeType := .domain }
 
@@ -58,7 +58,7 @@ def kukaTahansa : Item :=
   , freeChoice := true
   , baseForce := .existential
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-! ### Joint -/
 

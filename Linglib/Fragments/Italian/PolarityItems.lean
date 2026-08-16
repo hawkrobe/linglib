@@ -30,7 +30,7 @@ def nessuno : Item :=
   , baseForce := .existential
   , licensingContexts :=
       [.negation, .nobody, .withoutClause, .conditionalAntecedent, .question]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , alternativeType := .domain }
 
 /-- *niente/nulla* — N-word for non-human, pure NPI. -/
@@ -39,7 +39,7 @@ def niente : Item :=
   , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *mai* — Temporal pure NPI (= English *ever*).
     Disallows FC use (contrast with English *any*). -/
@@ -49,7 +49,7 @@ def mai : Item :=
   , baseForce := .temporal
   , licensingContexts :=
       [.negation, .nobody, .withoutClause, .question, .conditionalAntecedent]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , alternativeType := .domain }
 
 /-- *alcuno* — Pure NPI (formal register).
@@ -60,7 +60,7 @@ def alcuno : Item :=
   , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *neanche/nemmeno/neppure* — Additive focus NPI (*not even*).
     Three near-synonymous register variants. -/
@@ -69,7 +69,7 @@ def neanche : Item :=
   , licensor := some .weak
   , baseForce := .degree
   , licensingContexts := [.negation, .nobody]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *mica* — Emphatic negation reinforcer / colloquial NPI.
     Co-occurs with *non* postverbally to add emphasis: *Non mi piace mica*
@@ -85,7 +85,7 @@ def mica : Item :=
   , licensor := some .weak
   , baseForce := .degree
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *pur* (in *con tutta la fantasia che pur si possa avere*, "with all the
     fantasy in the world that one could have") — weak NPI licensed in
@@ -101,7 +101,7 @@ def pur : Item :=
   , licensor := some .weak
   , baseForce := .degree
   , licensingContexts := [.negation, .comparativeS]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *affatto* ("at all", "completely") — weak NPI requiring *precise*
     knowledge of the listener's belief; blocked in N&N's comparative *non₂*
@@ -119,7 +119,7 @@ def affatto : Item :=
   , licensor := some .weak
   , baseForce := .degree
   , licensingContexts := [.negation]  -- not .comparativeS: blocked by precision
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- N&N's central diagnostic: *pur* is licensed in comparative-clause
     contexts (which encode bias-conditioned negation in Italian), *affatto*
@@ -192,6 +192,6 @@ theorem italian_licensing_sound :
 /-- All Italian NPIs have strengthening scalar direction. -/
 theorem italian_npis_strengthening :
     [nessuno, niente, mai, alcuno, neanche].all
-      (λ e => e.scalarDirection == .strengthening) = true := by decide
+      (λ e => e.scalarDirection == some .strengthening) = true := by decide
 
 end Italian.PolarityItems
