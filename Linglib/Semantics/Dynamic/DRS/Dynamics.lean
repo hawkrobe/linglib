@@ -5,41 +5,37 @@ import Linglib.Semantics.Dynamic.Update
 /-!
 # The box relation: dynamic face of DRS verification
 
-The relational (input–output) face of the unified verification semantics
-(`DRS/Verification.lean`): the *box relation* `K.toRel a a'` holds when the
-output `a'` extends the input `a` across `K` and verifies `K`, and a DRS is
-*true* under an input iff some output is related to it (the spine's anaphoric
-`closure`). This is [muskens-1996]'s SEM3 format (input → output, the format
-of [groenendijk-stokhof-1991]), definable in one line from verification —
-Muskens's remark that his relational interpretation "is in fact equivalent"
-to the standard one (his fn. 3–4 scope it: constant-free constructs, and both
-sides in the total-assignment rendering; see the deviation note in
-`DRS/Verification.lean`). His SEM1/2 clauses — complex conditions as the
-spine connectives `neg`/`impl`/`disj` on box relations — are derived
-characterizations (`verifies_neg_toRel`, …), connecting DRS verification to
-the connective algebra shared across the dynamic-semantics spine.
+This file gives DRS verification (`DRS/Verification.lean`) its relational,
+input–output face. The *box relation* `K.toRel a a'` holds when the output `a'`
+extends the input `a` across `K` and verifies `K`; a DRS is *true* under an
+input iff some output is related to it (the spine's anaphoric `closure`). This
+is [muskens-1996]'s SEM3 format, in the style of [groenendijk-stokhof-1991];
+his SEM1/2 clauses — complex conditions as the spine connectives on box
+relations — are derived characterizations, connecting DRS verification to the
+connective algebra shared across the dynamic-semantics spine.
 
 ## Main declarations
 
-* `DRS.toRel` — the box relation; `DRS.trueRel` — relational truth, its
+* `DRS.toRel`: the box relation; `DRS.trueRel`: relational truth, its
   `closure`.
-* `Embedding.verifies_neg_toRel` (`_imp_`, `_dis_`) — complex conditions are
+* `Embedding.verifies_neg_toRel` (`_imp_`, `_dis_`): complex conditions are
   the spine connectives on box relations (SEM1/2).
-* `DRS.trueRel_iff_realize_toFormula` — dynamic truth equals the first-order
+* `DRS.trueRel_iff_realize_toFormula`: dynamic truth equals the first-order
   translation's `Realize` (`DRS/Reduction.lean`).
-* `DRS.trueRel_congr` — coincidence: truth reads the input only at the
-  occurring referents.
-* `DRS.toRel_merge` — the Merging Lemma: under freshness, `merge` denotes the
+* `DRS.trueRel_congr`: truth reads the input only at the occurring referents.
+* `DRS.toRel_merge`: the Merging Lemma — under freshness, `merge` denotes the
   spine sequencing `Update.seq` of the two box relations.
-* `DRS.trueRel_map` — alphabetic variants have the same truth conditions.
+* `DRS.trueRel_map`: alphabetic variants have the same truth conditions.
 
 ## Implementation notes
 
-Naming: the relational face (`toRel`, `trueRel`) follows the spine's
-lowerCamel operation names (`neg`, `seq`, `closure`); verification
-(`Embedding.Verifies`, `DRS/Verification.lean`) uses the field's own verb, and
-the first-order reduction (`DRS/Reduction.lean`) speaks mathlib's
-`Formula.Realize`.
+* Muskens scopes the equivalence of the relational and standard
+  interpretations to constant-free constructs, both sides in the
+  total-assignment rendering (fn. 3–4; see the deviation note in
+  `DRS/Verification.lean`).
+* The relational face (`toRel`, `trueRel`) follows the spine's lowerCamel
+  operation names (`neg`, `seq`, `closure`); verification uses the field's own
+  verb, and the first-order reduction speaks mathlib's `Formula.Realize`.
 -/
 
 open FirstOrder FirstOrder.Language
@@ -54,8 +50,8 @@ variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M]
 
 /-! ### The box relation -/
 
-/-- The box relation (SEM3): the output `a'` extends the input `a` across `K`
-and verifies `K`. -/
+/-- The box relation (SEM3), relating an input `a` to the outputs that extend
+it across `K` and verify `K`. -/
 def DRS.toRel (K : DRS L V) : Update (V → M) :=
   fun a a' => K.Extends a a' ∧ Embedding.Verifies a' K
 

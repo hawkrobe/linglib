@@ -4,14 +4,26 @@ import Linglib.Semantics.Dynamic.DRS.Defs
 # Structural operations on DRSs
 
 This file develops the structural theory of the `DRS` type of `DRS/Defs.lean`:
-functorial renaming of discourse referents (`DRS.map`), the merge algebra,
-transport of the extension relation along renaming, the referent predicates
-`varFinset`, `freeVarFinset` and `IsProper`, `ReuseFreeAt`, and accessibility —
-computed as [vaneijck-2006]'s left-and-up walk (`accessibleFrom`, `Accessible`)
-and as [geurts-beaver-maier-2024]'s smallest preorder (`AccessibleTo`,
-`accessibleDomain`), connected by
-`DRS.Accessible.exists_mem_accessibleDomain`. Renaming along a bijection is
-[kamp-reyle-1993]'s *alphabetic variant* (the prose preceding Def. 1.4.8).
+renaming of discourse referents, the merge algebra, transport of the extension
+relation along renaming, occurrence and freeness predicates, and accessibility.
+Renaming along a bijection is [kamp-reyle-1993]'s *alphabetic variant* (the
+prose preceding Def. 1.4.8).
+
+## Main declarations
+
+* `DRS.map`: renaming along `f : V → W`, functorial.
+* `DRS.varFinset`, `DRS.freeVarFinset`: occurring and free referents.
+* `DRS.IsProper`: no free referent (Def. 1.4.2–1.4.3); decidable.
+* `DRS.ReuseFreeAt`: no referent declared twice along a nesting path.
+* `DRS.accessibleFrom`, `DRS.Accessible`: accessible referents, computed by
+  [vaneijck-2006]'s left-and-up walk; decidable.
+* `AccessibleTo`, `accessibleDomain`: [geurts-beaver-maier-2024]'s accessibility
+  preorder over the sub-DRSs of a host, and its accessible domain `A_K`.
+
+## Main statements
+
+* `DRS.Accessible.exists_mem_accessibleDomain`: every computed accessibility
+  verdict is realized by genuine accessibility edges.
 -/
 
 open FirstOrder
@@ -189,16 +201,15 @@ def ReuseFreeAllAt (X : Finset V) (cs : List (Condition L V)) : Prop :=
 
 /-! ### Accessibility threading
 
-Accessibility (Def. 1.4.11) is intrinsically *relative to a host DRS*: "`u`
-accessible at box `B`" means `u` lies in the universe of `B` or of a box on the
-path from the host down to `B`. A host-free `∃ D, WeakSubordinate K D ∧
-u ∈ D.referents` is **vacuous** — a superordinate `D` introducing any referent can
-always be manufactured. `accScope` computes accessibility *top-down* — the walk of
-[vaneijck-2006] "in the directions *left*, i.e. from the consequent of a pair
-`R ⇒ R'` to the antecedent, and *up*" — threading the in-scope referents along the
-first path to the box declaring the target; the declarative counterpart is the
-host-anchored preorder `AccessibleTo` at the end of this file, with soundness
-`DRS.Accessible.exists_mem_accessibleDomain`. -/
+Accessibility (Def. 1.4.11) is relative to a host DRS: "`u` accessible at box
+`B`" means `u` lies in the universe of `B` or of a box on the path from the host
+down to `B`. A host-free `∃ D, WeakSubordinate K D ∧ u ∈ D.referents` is
+vacuous, since a superordinate `D` introducing any referent can be manufactured.
+`accScope` computes accessibility top-down, by [vaneijck-2006]'s walk in the
+directions *left* (from the consequent of a `⇒` to its antecedent) and *up*,
+threading the in-scope referents along the first path to the box declaring the
+target; the declarative counterpart is the host-anchored preorder `AccessibleTo`
+at the end of this file. -/
 
 /-- Accessibility threading through a condition. -/
 def accScope (s : Finset V) : Condition L V → V → Option (Finset V)
@@ -484,13 +495,13 @@ theorem Condition.accScope_dis (s : Finset V) (l r : DRS L V) (x : V) :
 
 /-! ## Accessibility as the smallest preorder
 
-[geurts-beaver-maier-2024]'s §4.2 presentation: accessibility is the smallest
-preorder on the sub-DRSs of a host such that a box is accessible to the sub-boxes
-of its complex conditions and a conditional's antecedent is accessible to its
-consequent. Each generating edge anchors its containing box below the host — the
-anchor is what keeps the relation non-vacuous. `accScope` above computes accessible
-referents top-down; `DRS.Accessible.exists_mem_accessibleDomain` shows every
-computed verdict is realized by genuine edges. -/
+Following [geurts-beaver-maier-2024] §4.2, accessibility is the smallest
+preorder on the sub-DRSs of a host such that a box is accessible to the
+sub-boxes of its complex conditions and a conditional's antecedent is accessible
+to its consequent. Each generating edge anchors its containing box below the
+host, which keeps the relation non-vacuous.
+`DRS.Accessible.exists_mem_accessibleDomain` shows every verdict of the computed
+`accScope` is realized by genuine edges. -/
 
 /-- A generating edge of the accessibility preorder over the sub-DRSs of `host`
 (§4.2): a box is accessible to the sub-boxes of its complex conditions, and the
@@ -512,8 +523,8 @@ inductive AccessibleEdge (host : DRS L V) : DRS L V → DRS L V → Prop where
   | disRight {K K' K'' : DRS L V} : WeakSubordinate K host →
       Condition.dis K' K'' ∈ K.conditions → AccessibleEdge host K K''
 
-/-- `AccessibleTo host K K'`: `K` is accessible to `K'` among the sub-DRSs of
-`host` — the smallest preorder containing the generating edges (§4.2). -/
+/-- `AccessibleTo host K K'` says `K` is accessible to `K'` among the sub-DRSs
+of `host` — the smallest preorder containing the generating edges (§4.2). -/
 abbrev AccessibleTo (host : DRS L V) : DRS L V → DRS L V → Prop :=
   Relation.ReflTransGen (AccessibleEdge host)
 
@@ -528,8 +539,8 @@ theorem AccessibleEdge.weakSubordinate_right {host K K' : DRS L V}
   | disLeft hK hc => exact .head (.disL hc) hK
   | disRight hK hc => exact .head (.disR hc) hK
 
-/-- The accessible domain `A_K` of `K` in `host` (§4.2): the referents declared in
-some box accessible to `K`. -/
+/-- The accessible domain `A_K` of `K` in `host` — the set of referents declared
+in some box accessible to `K` (§4.2). -/
 def accessibleDomain (host K : DRS L V) : Set V :=
   {x | ∃ K', AccessibleTo host K' K ∧ x ∈ K'.referents}
 

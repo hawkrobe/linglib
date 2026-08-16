@@ -87,10 +87,10 @@ def empty : DRS L V := .mk ∅ []
 
 instance : Inhabited (DRS L V) := ⟨empty⟩
 
-/-- Merge `⊕`: set-union the referents, concatenate the conditions. The binary
-DRS merge is Muskens's compositional operation — Kamp & Reyle themselves
-combine DRSs incrementally via the construction algorithm, not a symmetric
-binary `⊕`. An operation, not a syntactic constructor. -/
+/-- The merge `K₁ ⊕ K₂` unions the referents and appends the conditions —
+[muskens-1996]'s compositional operation (Kamp & Reyle combine DRSs
+incrementally via the construction algorithm instead). An operation, not a
+syntactic constructor. -/
 def merge [DecidableEq V] (K₁ K₂ : DRS L V) : DRS L V :=
   .mk (K₁.referents ∪ K₂.referents) (K₁.conditions ++ K₂.conditions)
 
@@ -123,15 +123,14 @@ of its sub-boxes. -/
 
 /-! ### Subordination -/
 
-/-- One-step subordination: `DirectlySubordinate K' K` says `K'` is a sub-box of one
-of `K`'s conditions — the `neg` case per Def. 1.4.10(i), the `⇒`/`∨` cases per its
-Chapter 2 extension (Def. 2.1.2, which subordinates *both* components of a
-conditional to the containing DRS). A relation on DRS values, where the textbook's
-is on box occurrences. Every clause pins the containing box in its conclusion: an
-unpinned clause (such as consequent-below-antecedent) would hold of *every* pair of
-DRSs via a manufactured container, collapsing the relation. The `⇒` visibility
-asymmetry is not subordination but accessibility (`AccessibleTo`,
-`DRS/Basic.lean`). -/
+/-- `DirectlySubordinate K' K` says `K'` is a sub-box of one of `K`'s conditions —
+the `neg` case per Def. 1.4.10(i), the `⇒`/`∨` cases per its Chapter 2 extension
+(Def. 2.1.2, which subordinates *both* components of a conditional to the
+containing DRS). A relation on DRS values, where the textbook's is on box
+occurrences. Every clause pins the containing box in its conclusion: an unpinned
+clause (such as consequent-below-antecedent) would hold of every pair of DRSs via
+a manufactured container, collapsing the relation. The `⇒` visibility asymmetry
+is not subordination but accessibility (`AccessibleTo`, `DRS/Basic.lean`). -/
 inductive DirectlySubordinate : DRS L V → DRS L V → Prop where
   /-- The body of a `¬` is directly subordinate to the containing DRS. -/
   | neg {D K : DRS L V} : Condition.neg K ∈ D.conditions → DirectlySubordinate K D

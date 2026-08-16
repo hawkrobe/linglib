@@ -2,25 +2,21 @@ import Linglib.Semantics.Dynamic.DRS.Verification
 import Mathlib.ModelTheory.Semantics
 
 /-!
-# From DRT to predicate logic: the DRS → first-order reduction
+# From DRT to predicate logic
 
-The bespoke DRS box language is *equivalent to ordinary first-order
-logic*. We translate each DRS into a mathlib
-`FirstOrder.Language.Formula` and prove its `Realize` coincides with the
-bespoke `Embedding.Verifies` — [kamp-reyle-1993]'s §1.5 ("From DRT to Predicate
-Logic") and [muskens-1996]'s "DRSs are already present in classical logic",
-now a Lean theorem (`DRS.realize_toFormula`) rather than an assertion.
-
-The universe of a (sub-)DRS is *existentially closed* (`closeExists`, via
-mathlib's `Formula.iExs`); the antecedent of a `⇒` is *universally closed*
-(`closeForall`, via `Formula.iAlls`).
+This file translates each DRS into a mathlib `FirstOrder.Language.Formula` and
+proves that the translation's `Realize` coincides with `Embedding.Verifies` —
+[kamp-reyle-1993]'s §1.5 reduction of the DRS language to first-order logic
+(cf. [muskens-1996]). The universe of a sub-DRS is existentially closed
+(`closeExists`, via `Formula.iExs`); the antecedent of a `⇒` is universally
+closed (`closeForall`, via `Formula.iAlls`).
 
 ## Main declarations
 
-* `DRS.toFormula` / `Condition.toFormula` — the translation into `L.Formula V`.
-* `DRS.realize_toFormula` — the agreement theorem: a DRS's bespoke truth matches
-  its first-order translation's `Realize`.
-* `realize_closeExists` / `realize_closeForall` — the universe-closure operators
+* `DRS.toFormula`, `Condition.toFormula`: the translation into `L.Formula V`.
+* `DRS.realize_toFormula`: truth of a DRS matches its first-order
+  translation's `Realize`.
+* `realize_closeExists`, `realize_closeForall`: the universe-closure operators
   realize as `∃`/`∀` over embeddings extending `v` on the closed referents.
 -/
 
