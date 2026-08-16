@@ -25,19 +25,18 @@ coherent architecture with three layers:
   PolarityClass, PolarityLicensing) with Mathlib lattice instances
 - `Mathlib.Data.Set.Basic` — set complement (`pᶜ`) is the canonical
   propositional negation (no custom `pnot` wrapper)
-- `NaturalLogic` — `DEStrength` (weak/antiAdditive/antiMorphic),
-  `strengthSufficient`
+- `NaturalLogic` — `DEStrength` (weak/antiAdditive/antiMorphic)
 - `Entailment` — `IsDE = Antitone`,
   `IsUE = Monotone`, `pnot_isDownwardEntailing`
 - `Entailment` — `IsAntiAdditive`,
-  `IsAntiMorphic`, `pnot_isAntiMorphic`, `licensesWeakNPI`, `licensesStrongNPI`
+  `IsAntiMorphic`, `pnot_isAntiMorphic`
 -/
 
 namespace Negation
 
 open Negation (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile standardNegProfile)
-open NaturalLogic (DEStrength strengthSufficient)
+open NaturalLogic (DEStrength)
 open Entailment (World)
 open Entailment (IsDE IsUE pnot_isDownwardEntailing)
 open Entailment (IsAntiAdditive IsAntiMorphic
@@ -151,10 +150,10 @@ def deToPolarityLicensing : DEStrength → PolarityLicensing
 
 /-- The bridge is monotone: stronger DE → more licensing in the lattice. -/
 theorem de_licensing_monotone :
-    ∀ d₁ d₂ : DEStrength, strengthSufficient d₂ d₁ = true →
+    ∀ d₁ d₂ : DEStrength, d₁ ≤ d₂ →
     deToPolarityLicensing d₁ ≤ deToPolarityLicensing d₂ := by
   intro d₁ d₂
-  cases d₁ <;> cases d₂ <;> simp [deToPolarityLicensing, strengthSufficient] <;> decide
+  cases d₁ <;> cases d₂ <;> decide
 
 /-- Weak DE licenses exactly weak NPIs and N-words. -/
 theorem weak_de_licensing :

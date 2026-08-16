@@ -29,15 +29,14 @@ domains, his §1.1).
 - `IsCompletely*`: Icard's "completely P" refinements (unit conditions);
 - `isAntiAdditive_iff_mem`, `isAntiAdditive_iff_gq`: pointwise bridges for
   the `Set`- and GQ-typed instances;
-- `licensesWeakNPI`, `licensesStrongNPI`, `licensesSuperstrongNPI`: the
-  Zwarts licensing thresholds ([icard-2012] §4);
+- the Zwarts licensing thresholds live semantically graded as
+  `DEStrength.HoldsFor` in `Semantics/Polarity/Witnesses.lean`;
 - toy-`World` witnesses: `pnot` (anti-morphic), `no_student` (anti-additive),
   `atMost1_student` (DE but not anti-additive — the strictness witness).
 -/
 
 namespace Entailment
 
-open NaturalLogic (DEStrength UEStrength strengthSufficient)
 open Entailment
 open List (Sublist)
 
@@ -227,7 +226,7 @@ theorem isAntiAdditive_iff_gq {f : Set γ → Prop} :
 
 end Bridges
 
-/-! ### Toy-`World` witnesses and NPI licensing thresholds -/
+/-! ### Toy-`World` witnesses -/
 
 section ToyWitnesses
 
@@ -376,35 +375,6 @@ theorem atMost_not_antiAdditive :
           exact ⟨Or.inr rfl, by right; rfl⟩
     simp at this
   exact hcontr (key.mpr ⟨hp, hq⟩)
-
-/-- Weak NPI licensing: requires DE. -/
-def licensesWeakNPI (f : Set World → Set World) : Prop := IsDownwardEntailing f
-
-/-- Strong NPI licensing: requires anti-additivity. -/
-def licensesStrongNPI (f : Set World → Set World) : Prop := IsAntiAdditive f
-
-/-- Superstrong NPI licensing ([icard-2012] §4, after Zwarts): requires
-anti-morphicity — *a tad bit* under *not* but not under *no*. -/
-def licensesSuperstrongNPI (f : Set World → Set World) : Prop := IsAntiMorphic f
-
-example : licensesWeakNPI pnot := pnot_isDownwardEntailing
-example : licensesStrongNPI pnot := pnot_isAntiAdditive
-example : licensesSuperstrongNPI pnot := pnot_isAntiMorphic
-
-example : licensesWeakNPI no_student := no_isDE_scope
-example : licensesStrongNPI no_student := no_isAntiAdditive_scope
-
-example : licensesWeakNPI atMost2_student := atMost_isDE_scope
-
-/-!
-### `DEStrength` ↔ proof hierarchy ([icard-2012] §4)
-
-| `DEStrength` | Proof predicate | Example licensor |
-|--------------|-----------------|------------------|
-| `.weak` | `IsDE` | few, at most n |
-| `.antiAdditive` | `IsAntiAdditive` | no, nobody, without |
-| `.antiMorphic` | `IsAntiMorphic` | not, never |
--/
 
 end ToyWitnesses
 
