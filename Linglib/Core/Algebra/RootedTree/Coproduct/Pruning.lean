@@ -219,10 +219,8 @@ theorem comulAlgHomN_bPlusLin_cocycle (a : α) (F : Forest (Nonplanar α)) :
 via `ConnesKreimer.algHom_ext`, then close the tree case by strong induction
 on depth through the cocycle `comulTreeN_node_cocycle`.
 
-Coassociativity (`comulRhoN_coassoc`, from the GL/CK duality
-`pairing_gl_eq_pairing_coproduct_Rho` + `GrossmanLarson.mul_assoc` via
-`pairing₃_unique`) and the `Bialgebra` instance live downstream in
-`Coproduct/PruningDuality.lean`. -/
+Coassociativity (`comulRhoN_coassoc`, Foissy's subalgebra argument) and
+the `Bialgebra` instance follow below. -/
 
 /-! ### Counit ⊗ id commutation with `lTensor (bPlusLin a)`
 
