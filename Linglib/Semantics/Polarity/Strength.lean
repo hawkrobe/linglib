@@ -14,7 +14,7 @@ import Linglib.Logic.Natural.World
 The polarity-facing quotient of the natural-logic signature system: the
 DE hierarchy `weak < antiAdditive < antiMorphic` and its UE dual as
 linear orders, the bridge maps reading strength off an
-`EntailmentSig`'s projection behavior, and `DEStrength.HoldsFor`, the
+`Signature`'s projection behavior, and `DEStrength.HoldsFor`, the
 semantic content of each level (weak = `Antitone`, antiAdditive =
 `IsAntiAdditive`, antiMorphic = `IsAntiMorphic`), downward closed along
 the chain (`HoldsFor.of_le`).
@@ -23,7 +23,7 @@ the chain (`HoldsFor.of_le`).
 
 * `DEStrength`, `UEStrength` — the Zwarts hierarchies.
 * `DEStrength.HoldsFor` — the semantic content of a strength level.
-* `EntailmentSig.toDEStrength`, `EntailmentSig.toUEStrength` — the
+* `Signature.toDEStrength`, `Signature.toUEStrength` — the
   signature → strength bridge maps.
 * `NaturalLogic.de_signature_licenses_weak_npi`,
   `NaturalLogic.strong_npi_requires_antiadditive` — the Ladusaw/Zwarts
@@ -106,7 +106,7 @@ end Polarity
 
 /-! ### Signature → strength bridge maps -/
 
-namespace NaturalLogic.EntailmentSig
+namespace NaturalLogic.Signature
 
 open Polarity
 
@@ -115,7 +115,7 @@ open Polarity
     side, anti-additivity is detected by the ∨→∧ swap on `cover` and
     anti-morphism additionally by the ∧→∨ swap on `alternation`.
     `none` for UE-side signatures. -/
-def toDEStrength (φ : EntailmentSig) : Option DEStrength :=
+def toDEStrength (φ : Signature) : Option DEStrength :=
   if project .forward φ != .reverse then none
   else if project .cover φ == .alternation then
     if project .alternation φ == .cover then some .antiMorphic
@@ -126,7 +126,7 @@ def toDEStrength (φ : EntailmentSig) : Option DEStrength :=
     signature is UE iff it preserves forward entailment; additivity is
     ∨-preservation on `cover`, multiplicativity ∧-preservation on
     `alternation`. `none` for DE-side signatures. -/
-def toUEStrength (φ : EntailmentSig) : Option UEStrength :=
+def toUEStrength (φ : Signature) : Option UEStrength :=
   if project .forward φ != .forward then none
   else if project .cover φ == .cover then some .additive
   else if project .alternation φ == .alternation then some .multiplicative
@@ -142,7 +142,7 @@ example : toUEStrength .mono = some .weak := rfl
 example : toUEStrength .addMult = some .additive := rfl
 example : toUEStrength .anti = none := rfl
 
-end NaturalLogic.EntailmentSig
+end NaturalLogic.Signature
 
 namespace NaturalLogic
 
@@ -151,22 +151,22 @@ open Polarity
 /-- Any DE-side signature licenses weak NPIs ([ladusaw-1980]): a
     signature whose context polarity is downward carries a DE
     strength. -/
-theorem de_signature_licenses_weak_npi (σ : EntailmentSig) :
-    EntailmentSig.toContextPolarity σ = .downward →
-    (EntailmentSig.toDEStrength σ).isSome = true := by
+theorem de_signature_licenses_weak_npi (σ : Signature) :
+    Signature.toContextPolarity σ = .downward →
+    (Signature.toDEStrength σ).isSome = true := by
   cases σ <;> decide
 
 /-- Anti-additive or stronger signatures sit on the DE side: the strong
     NPI licensors (antiAdd, antiAddMult) are downward contexts — but
     plain anti and antiMult only reach `weak`. -/
-theorem strong_npi_requires_antiadditive (σ : EntailmentSig) :
-    EntailmentSig.toDEStrength σ = some DEStrength.antiAdditive ∨
-    EntailmentSig.toDEStrength σ = some DEStrength.antiMorphic →
-    EntailmentSig.toContextPolarity σ = ContextPolarity.downward := by
+theorem strong_npi_requires_antiadditive (σ : Signature) :
+    Signature.toDEStrength σ = some DEStrength.antiAdditive ∨
+    Signature.toDEStrength σ = some DEStrength.antiMorphic →
+    Signature.toContextPolarity σ = ContextPolarity.downward := by
   cases σ <;> decide
 
-example : EntailmentSig.toDEStrength .antiMult = some .weak := rfl
-example : EntailmentSig.toDEStrength negationSig =
+example : Signature.toDEStrength .antiMult = some .weak := rfl
+example : Signature.toDEStrength negationSignature =
     some DEStrength.antiMorphic := rfl
 
 end NaturalLogic

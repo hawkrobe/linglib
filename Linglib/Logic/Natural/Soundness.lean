@@ -5,10 +5,10 @@ import Linglib.Logic.Natural.World
 /-!
 # Soundness of the projectivity calculus
 
-Semantic grounding for [icard-2012]'s projectivity machinery: `NLRelation`
+Semantic grounding for [icard-2012]'s projectivity machinery: `Relation`
 gets its lattice content (`Holds`, his Definition 1.2 — non-exclusive
 equations, so `⊑` is plain `≤`), and a signature is *sound* for a function
-(`EntailmentSig.SoundFor`) when the function projects every relation as the
+(`Signature.SoundFor`) when the function projects every relation as the
 signature's `project` row says (his Lemma 2.5). The characterization
 theorems discharge each row from the property family in
 `Entailment` — the additive-family rows need the
@@ -17,29 +17,29 @@ soundness proofs go through over bounded lattices, not just his Boolean
 lattices.
 
 `SoundFor.comp` and `soundFor_contextProjectivity` certify
-`EntailmentSig.compose` and path projection against function composition
+`Signature.compose` and path projection against function composition
 (his Lemma 2.7 and Proposition 2.10): study-file locality computations over
 the enum become corollaries of facts about actual context functions.
 
 ## Main declarations
 
-- `NLRelation.Holds`: lattice content of the seven relations;
-- `EntailmentSig.SoundFor`: σ's projection row is sound for `f`;
+- `Relation.Holds`: lattice content of the seven relations;
+- `Signature.SoundFor`: σ's projection row is sound for `f`;
 - `soundFor_mono_iff`, `soundFor_anti_iff`: the monotone rows, as iffs;
 - `soundFor_additive` … `soundFor_antiAddMult`: the algebraic rows, from
   `IsCompletely*` hypotheses (sound direction; the converses fail —
   projection rows are class-maximal, not function-characterizing);
-- `SoundFor.comp`: soundness composes along `EntailmentSig.compose`;
+- `SoundFor.comp`: soundness composes along `Signature.compose`;
 - `soundFor_contextProjectivity`: soundness folds along a signature path.
 
 ## Order soundness
 
 With the implication orders carrying their [icard-2012] readings (`.all` =
 •, the no-property top; `≡` not below the exclusion relations), both
-orders are certified here: `NLRelation.Holds.of_le` (relation-level
-implication) and `EntailmentSig.SoundFor.of_le` (a more specific
+orders are certified here: `Relation.Holds.of_le` (relation-level
+implication) and `Signature.SoundFor.of_le` (a more specific
 signature's soundness implies a less specific one's), via the projection
-monotonicity `EntailmentSig.project_mono`. `soundFor_all` holds
+monotonicity `Signature.project_mono`. `soundFor_all` holds
 unconditionally — every function realizes the no-property row.
 -/
 
@@ -54,8 +54,8 @@ Definition 1.2), in mathlib's complementation vocabulary: `negation` is
 `IsCompl`, `alternation` is `Disjoint`, `cover` is `Codisjoint`; `forward`
 is non-strict `≤` (the enum comments' `⊂` follows MacCartney's exclusive
 reading, which the projectivity tables do not need). -/
-def NLRelation.Holds {α : Type*} [Lattice α] [BoundedOrder α] :
-    NLRelation → α → α → Prop
+def Relation.Holds {α : Type*} [Lattice α] [BoundedOrder α] :
+    Relation → α → α → Prop
   | .equiv => (· = ·)
   | .forward => (· ≤ ·)
   | .reverse => (· ≥ ·)
@@ -69,8 +69,8 @@ def NLRelation.Holds {α : Type*} [Lattice α] [BoundedOrder α] :
 /-- The join table is sound: chained relations compose as `join` says.
 Distributivity is needed for the cells that reason through a complement
 (`negation ⋈ negation = equiv` is uniqueness of complements). -/
-theorem NLRelation.Holds.join {β : Type*} [DistribLattice β] [BoundedOrder β]
-    {R S : NLRelation} {x y z : β} (hR : R.Holds x y) (hS : S.Holds y z) :
+theorem Relation.Holds.join {β : Type*} [DistribLattice β] [BoundedOrder β]
+    {R S : Relation} {x y z : β} (hR : R.Holds x y) (hS : S.Holds y z) :
     (R.join S).Holds x z := by
   cases R <;> cases S <;>
     first
@@ -103,13 +103,13 @@ variable {α β γ : Type*} [Lattice α] [BoundedOrder α] [Lattice β]
 /-- A signature σ is **sound for** `f` when `f` projects every relation as
 σ's row of the projection table says ([icard-2012] Lemma 2.5: every
 φ-function projects `R` to `[R]^φ`). -/
-def EntailmentSig.SoundFor (σ : EntailmentSig) (f : α → β) : Prop :=
-  ∀ (R : NLRelation) (x y : α), R.Holds x y →
-    (EntailmentSig.project R σ).Holds (f x) (f y)
+def Signature.SoundFor (σ : Signature) (f : α → β) : Prop :=
+  ∀ (R : Relation) (x y : α), R.Holds x y →
+    (Signature.project R σ).Holds (f x) (f y)
 
 /-- The `.mono` row is sound for exactly the monotone functions. -/
 theorem soundFor_mono_iff {f : α → β} :
-    EntailmentSig.SoundFor .mono f ↔ Monotone f := by
+    Signature.SoundFor .mono f ↔ Monotone f := by
   constructor
   · intro h x y hxy
     exact h .forward x y hxy
@@ -122,7 +122,7 @@ theorem soundFor_mono_iff {f : α → β} :
 
 /-- The `.anti` row is sound for exactly the antitone functions. -/
 theorem soundFor_anti_iff {f : α → β} :
-    EntailmentSig.SoundFor .anti f ↔ Antitone f := by
+    Signature.SoundFor .anti f ↔ Antitone f := by
   constructor
   · intro h x y hxy
     exact h .forward x y hxy
@@ -135,7 +135,7 @@ theorem soundFor_anti_iff {f : α → β} :
 
 /-- The `.additive` row is sound for completely additive functions. -/
 theorem soundFor_additive {f : α → β} (h : IsCompletelyAdditive f) :
-    EntailmentSig.SoundFor .additive f := by
+    Signature.SoundFor .additive f := by
   obtain ⟨hadd, htop⟩ := h
   intro R x y hR
   cases R with
@@ -149,7 +149,7 @@ theorem soundFor_additive {f : α → β} (h : IsCompletelyAdditive f) :
 
 /-- The `.mult` row is sound for completely multiplicative functions. -/
 theorem soundFor_mult {f : α → β} (h : IsCompletelyMultiplicative f) :
-    EntailmentSig.SoundFor .mult f := by
+    Signature.SoundFor .mult f := by
   obtain ⟨hmult, hbot⟩ := h
   intro R x y hR
   cases R with
@@ -163,7 +163,7 @@ theorem soundFor_mult {f : α → β} (h : IsCompletelyMultiplicative f) :
 
 /-- The `.antiAdd` row is sound for completely anti-additive functions. -/
 theorem soundFor_antiAdd {f : α → β} (h : IsCompletelyAntiAdditive f) :
-    EntailmentSig.SoundFor .antiAdd f := by
+    Signature.SoundFor .antiAdd f := by
   obtain ⟨haa, htop⟩ := h
   intro R x y hR
   cases R with
@@ -178,7 +178,7 @@ theorem soundFor_antiAdd {f : α → β} (h : IsCompletelyAntiAdditive f) :
 /-- The `.antiMult` row is sound for completely anti-multiplicative
 functions. -/
 theorem soundFor_antiMult {f : α → β} (h : IsCompletelyAntiMultiplicative f) :
-    EntailmentSig.SoundFor .antiMult f := by
+    Signature.SoundFor .antiMult f := by
   obtain ⟨ham, hbot⟩ := h
   intro R x y hR
   cases R with
@@ -194,7 +194,7 @@ theorem soundFor_antiMult {f : α → β} (h : IsCompletelyAntiMultiplicative f)
 completely additive and completely multiplicative functions. -/
 theorem soundFor_addMult {f : α → β} (hadd : IsCompletelyAdditive f)
     (hmult : IsCompletelyMultiplicative f) :
-    EntailmentSig.SoundFor .addMult f := by
+    Signature.SoundFor .addMult f := by
   intro R x y hR
   cases R with
   | equiv => exact congrArg f hR
@@ -213,7 +213,7 @@ sentential-negation row — the semantic content of "double negation is a
 morphism". -/
 theorem soundFor_antiAddMult {f : α → β} (haa : IsCompletelyAntiAdditive f)
     (ham : IsCompletelyAntiMultiplicative f) :
-    EntailmentSig.SoundFor .antiAddMult f := by
+    Signature.SoundFor .antiAddMult f := by
   intro R x y hR
   cases R with
   | equiv => exact congrArg f hR
@@ -228,13 +228,13 @@ theorem soundFor_antiAddMult {f : α → β} (haa : IsCompletelyAntiAdditive f)
 
 /-- Every function realizes the • row: `.all` is the no-property
 signature, projecting every relation to `#`. -/
-theorem soundFor_all (f : α → β) : EntailmentSig.SoundFor .all f :=
+theorem soundFor_all (f : α → β) : Signature.SoundFor .all f :=
   fun _ _ _ _ => trivial
 
 /-- Relation-level order soundness: `≤` is the implication order on
 the lattice content ([icard-2012] §1). -/
-theorem _root_.NaturalLogic.NLRelation.Holds.of_le
-    {R R' : NLRelation} {u v : β} (h : R.Holds u v) (href : R ≤ R') :
+theorem _root_.NaturalLogic.Relation.Holds.of_le
+    {R R' : Relation} {u v : β} (h : R.Holds u v) (href : R ≤ R') :
     R'.Holds u v := by
   cases R <;> cases R' <;>
     first
@@ -247,34 +247,34 @@ theorem _root_.NaturalLogic.NLRelation.Holds.of_le
 
 /-- Projection is monotone in the signature order: a more specific
 signature projects every relation at least as informatively. -/
-theorem EntailmentSig.project_mono (R : NLRelation) :
-    Monotone (EntailmentSig.project R) := by
+theorem Signature.project_mono (R : Relation) :
+    Monotone (Signature.project R) := by
   intro σ τ h
   revert h; cases σ <;> cases τ <;> cases R <;> decide
 
 /-- Signature-order soundness: if σ refines τ (every σ-function is a
 τ-function), σ-soundness implies τ-soundness. This is the theorem that
 makes the refinement order mean class inclusion. -/
-theorem EntailmentSig.SoundFor.of_le {σ τ : EntailmentSig} {f : α → β}
+theorem Signature.SoundFor.of_le {σ τ : Signature} {f : α → β}
     (h : σ.SoundFor f) (hστ : σ ≤ τ) : τ.SoundFor f :=
-  fun R x y hR => (h R x y hR).of_le (EntailmentSig.project_mono R hστ)
+  fun R x y hR => (h R x y hR).of_le (Signature.project_mono R hστ)
 
 /-! ### Composition and paths -/
 
-/-- **Soundness composes along `EntailmentSig.compose`** ([icard-2012]
+/-- **Soundness composes along `Signature.compose`** ([icard-2012]
 Lemma 2.7 + Proposition 2.10): if ψ is sound for the outer function and φ
 for the inner one, `ψ * φ` is sound for the composite. This is the theorem
 that certifies the enum-level `compose` table against actual context
 functions. -/
-theorem EntailmentSig.SoundFor.comp {ψ φ : EntailmentSig} {f : β → γ}
+theorem Signature.SoundFor.comp {ψ φ : Signature} {f : β → γ}
     {g : α → β} (hf : ψ.SoundFor f) (hg : φ.SoundFor g) :
     (ψ * φ).SoundFor (f ∘ g) := by
   intro R x y hR
-  have h := hf (EntailmentSig.project R φ) (g x) (g y) (hg R x y hR)
+  have h := hf (Signature.project R φ) (g x) (g y) (hg R x y hR)
   rwa [projection_composition] at h
 
 /-- The identity context is sound for the identity signature `.addMult`. -/
-theorem soundFor_addMult_id : EntailmentSig.SoundFor .addMult (id : α → α) :=
+theorem soundFor_addMult_id : Signature.SoundFor .addMult (id : α → α) :=
   soundFor_addMult ⟨fun _ _ => rfl, rfl⟩ ⟨fun _ _ => rfl, rfl⟩
 
 /-- **Path soundness**: a path of (signature, context) pairs, each sound,
@@ -283,16 +283,16 @@ the semantic counterpart of [icard-2012] Definition 2.9's marking
 algorithm. Signatures are listed outermost-first, matching
 `contextProjectivity`. -/
 theorem soundFor_contextProjectivity :
-    ∀ (l : List (EntailmentSig × (α → α))),
+    ∀ (l : List (Signature × (α → α))),
       (∀ p ∈ l, p.1.SoundFor p.2) →
-      (EntailmentSig.contextProjectivity (l.map Prod.fst)).SoundFor
+      (Signature.contextProjectivity (l.map Prod.fst)).SoundFor
         ((l.map Prod.snd).foldr (· ∘ ·) id)
   | [], _ => soundFor_addMult_id
   | p :: l, h => by
       have hhead : p.1.SoundFor p.2 := h p (List.mem_cons_self ..)
       have htail := soundFor_contextProjectivity l
         (fun q hq => h q (List.mem_cons_of_mem _ hq))
-      simpa [EntailmentSig.contextProjectivity, List.prod_cons, List.map_cons,
+      simpa [Signature.contextProjectivity, List.prod_cons, List.map_cons,
         List.foldr_cons] using
         hhead.comp htail
 
@@ -317,19 +317,19 @@ theorem pnot_isCompletelyAntiMultiplicative :
 
 /-- Negation realizes the anti-morphism row. -/
 theorem pnot_soundFor_antiAddMult :
-    EntailmentSig.SoundFor .antiAddMult pnot :=
+    Signature.SoundFor .antiAddMult pnot :=
   soundFor_antiAddMult pnot_isCompletelyAntiAdditive
     pnot_isCompletelyAntiMultiplicative
 
 /-- Double negation realizes the morphism row — the composed-signature
 fact `◇⊟ ∘ ◇⊟ = ⊕⊞`, certified semantically rather than by enum table
 lookup. -/
-example : EntailmentSig.SoundFor .addMult (pnot ∘ pnot) :=
+example : Signature.SoundFor .addMult (pnot ∘ pnot) :=
   pnot_soundFor_antiAddMult.comp pnot_soundFor_antiAddMult
 
 /-- Propositional negation realizes the anti-morphism row at the `Prop`
 instance. -/
-theorem not_soundFor_antiAddMult : EntailmentSig.SoundFor .antiAddMult Not :=
+theorem not_soundFor_antiAddMult : Signature.SoundFor .antiAddMult Not :=
   soundFor_antiAddMult
     ⟨fun p q => propext not_or, by show (¬True) = False; simp⟩
     ⟨fun p q => propext not_and_or, by show (¬False) = True; simp⟩
@@ -340,21 +340,21 @@ end PnotInstance
 
 Two-place operators carry one signature per argument position — a
 determiner is one signature in its restrictor and another in its scope.
-`Sig₂` records the pair, `Sig₂.SoundFor` says each component is sound
+`Signature₂` records the pair, `Signature₂.SoundFor` says each component is sound
 for the corresponding section (the other argument held constant), and
-`EntailmentSig.SoundFor.comp₂` composes an outer context into both
+`Signature.SoundFor.comp₂` composes an outer context into both
 positions at once. Certified instances for generalized quantifiers live
 in `Semantics/Quantification/Signatures.lean`. -/
 
 /-- A per-position signature profile for a two-place operator. For
 determiners the positions are restrictor and scope; under the restrictor
 analysis of conditionals, antecedent and consequent. -/
-structure Sig₂ where
-  restrictor : EntailmentSig
-  scope : EntailmentSig
+structure Signature₂ where
+  restrictor : Signature
+  scope : Signature
   deriving DecidableEq, Repr
 
-section Sig₂
+section Signature₂
 
 variable {α β γ δ : Type*} [Lattice α] [BoundedOrder α] [Lattice β]
   [BoundedOrder β] [Lattice γ] [BoundedOrder γ] [Lattice δ] [BoundedOrder δ]
@@ -362,18 +362,18 @@ variable {α β γ δ : Type*} [Lattice α] [BoundedOrder α] [Lattice β]
 /-- A profile is sound for a two-place operator when each component
 signature is sound for the corresponding section (the other argument held
 constant). -/
-def Sig₂.SoundFor (σ : Sig₂) (f : α → β → γ) : Prop :=
+def Signature₂.SoundFor (σ : Signature₂) (f : α → β → γ) : Prop :=
   (∀ y, σ.restrictor.SoundFor (fun x => f x y)) ∧
   (∀ x, σ.scope.SoundFor (f x))
 
 /-- Composing a sound outer context into a sound two-place operator
 composes the profile componentwise — the two-place form of
-`EntailmentSig.SoundFor.comp`. -/
-theorem EntailmentSig.SoundFor.comp₂ {ψ : EntailmentSig} {g : γ → δ}
-    {σ : Sig₂} {f : α → β → γ} (hg : ψ.SoundFor g) (hf : σ.SoundFor f) :
-    Sig₂.SoundFor ⟨ψ * σ.restrictor, ψ * σ.scope⟩ (fun x y => g (f x y)) :=
+`Signature.SoundFor.comp`. -/
+theorem Signature.SoundFor.comp₂ {ψ : Signature} {g : γ → δ}
+    {σ : Signature₂} {f : α → β → γ} (hg : ψ.SoundFor g) (hf : σ.SoundFor f) :
+    Signature₂.SoundFor ⟨ψ * σ.restrictor, ψ * σ.scope⟩ (fun x y => g (f x y)) :=
   ⟨fun y => hg.comp (hf.1 y), fun x => hg.comp (hf.2 x)⟩
 
-end Sig₂
+end Signature₂
 
 end NaturalLogic

@@ -95,7 +95,7 @@ this file's classification cannot drift from the substrate's. -/
 /-- A licensing context's entailment signature in [icard-2012]'s lattice —
 the Strawson-operative row, matching K&L's own convention of checking the
 DE pattern modulo factive presuppositions. -/
-abbrev contextEntailmentSig (c : LicensingContext) : EntailmentSig :=
+abbrev contextSignature (c : LicensingContext) : Signature :=
   c.properties.strawsonSignature
 
 /-- A context guarantees K&L strengthening iff its entailment signature is on
@@ -104,7 +104,7 @@ routes: K&L defer questions to [kadmon-landman-1990] and never discuss
 superlatives — the Strawson-DE route for the latter is later literature
 ([von-fintel-1999]). -/
 abbrev GuaranteesStrengthening (c : LicensingContext) : Prop :=
-  (contextEntailmentSig c).toDEStrength.isSome = true
+  (contextSignature c).toDEStrength.isSome = true
 
 -- Standard DE contexts guarantee strengthening.
 example : ∀ c ∈ [LicensingContext.negation, .nobody, .withoutClause, .few,
@@ -677,9 +677,9 @@ structure KLDatum where
   /-- K&L's licensing mechanism for the judgment. -/
   explanation : LicensingMechanism
   /-- Signature at the narrowest operator scoping over *any*. -/
-  localSig : EntailmentSig
+  localSig : Signature
   /-- Sentence-level signature; defaults to `localSig`. -/
-  globalSig : EntailmentSig := localSig
+  globalSig : Signature := localSig
   wideningDimension : Option String := none
   deriving Repr
 
@@ -729,7 +729,7 @@ def ex56 : KLDatum :=
   , grammatical := false
   , explanation := .strengtheningFails
   , localSig := .mult
-  , globalSig := EntailmentSig.compose .antiAddMult .mult }
+  , globalSig := Signature.compose .antiAddMult .mult }
 
 /-- K&L (72): adversatives license (DE on a constant perspective). -/
 def ex72 : KLDatum :=

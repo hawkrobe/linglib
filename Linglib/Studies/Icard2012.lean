@@ -11,7 +11,7 @@ import Linglib.Logic.Natural.Basic
 Table verifications for [icard-2012]'s relation algebra against the
 substrate implementations in `Logic/Natural/Basic.lean`: the join table
 (Lemma 1.5, p. 710 — the printed cells, independently certified against
-the non-strict `Holds` reading by `NLRelation.Holds.join`), the
+the non-strict `Holds` reading by `Relation.Holds.join`), the
 projectivity tables (Lemma 2.4, p. 715), the composition table
 (Lemma 2.7, p. 716) with its signature order (§2.2), the polarity
 coarsening, the classification of *not* as the anti-morphism (p. 713),
@@ -23,7 +23,7 @@ cell-by-cell against the paper's printed entries.
 
 namespace Icard2012
 
-open NaturalLogic NaturalLogic.NLRelation NaturalLogic.EntailmentSig
+open NaturalLogic NaturalLogic.Relation NaturalLogic.Signature
 
 /-! ### The join table (Lemma 1.5, p. 710) -/
 
@@ -36,13 +36,13 @@ example : join .cover .negation = .reverse := rfl        -- ⌣ ⋈ ^ = ⊒
 
 /-! ### The refinement order (§2.2) -/
 
-example : ¬ ((EntailmentSig.all : EntailmentSig) ≤ .mono) := by decide
-example : (EntailmentSig.mono : EntailmentSig) ≤ .all := by decide
-example : (EntailmentSig.anti : EntailmentSig) ≤ .all := by decide
-example : (EntailmentSig.addMult : EntailmentSig) ≤ .additive := by decide
-example : (EntailmentSig.antiAddMult : EntailmentSig) ≤ .anti := by decide
-example : ¬ ((EntailmentSig.mono : EntailmentSig) ≤ .additive) := by decide
-example : ¬ ((EntailmentSig.additive : EntailmentSig) ≤ .mult) := by decide
+example : ¬ ((Signature.all : Signature) ≤ .mono) := by decide
+example : (Signature.mono : Signature) ≤ .all := by decide
+example : (Signature.anti : Signature) ≤ .all := by decide
+example : (Signature.addMult : Signature) ≤ .additive := by decide
+example : (Signature.antiAddMult : Signature) ≤ .anti := by decide
+example : ¬ ((Signature.mono : Signature) ≤ .additive) := by decide
+example : ¬ ((Signature.additive : Signature) ≤ .mult) := by decide
 
 /-! ### The projectivity tables (Lemma 2.4, p. 715)
 
@@ -125,13 +125,13 @@ example : toContextPolarity (contextProjectivity [.antiAddMult, .antiAddMult]) =
 *Not* is anti-additive and anti-multiplicative (p. 713); ⊖ is its own
 inverse — the only non-identity signature with one (p. 716). -/
 
-example : toContextPolarity negationSig = .downward := rfl
-example : negationSig * negationSig = .addMult := rfl
-example : negationSig ^ 2 = .addMult := rfl
+example : toContextPolarity negationSignature = .downward := rfl
+example : negationSignature * negationSignature = .addMult := rfl
+example : negationSignature ^ 2 = .addMult := rfl
 -- ◇⊟ is its own inverse up to the monoid identity on non-• signatures
-example : negationSig * negationSig * negationSig = negationSig := rfl
-example : negationSig * .mult = .antiMult := rfl
+example : negationSignature * negationSignature * negationSignature = negationSignature := rfl
+example : negationSignature * .mult = .antiMult := rfl
 -- not(not(every …))-scope: ⊟ ∘ ◇⊟ ∘ ◇⊟ = ⊟
-example : .antiMult * negationSig * negationSig = .antiMult := rfl
+example : .antiMult * negationSignature * negationSignature = .antiMult := rfl
 
 end Icard2012

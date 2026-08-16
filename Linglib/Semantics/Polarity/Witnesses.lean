@@ -12,8 +12,8 @@ import Linglib.Semantics.Quantification.Counting
 # Model witnesses for the licensing-context table
 
 Each witnessed row of `LicensingContext.properties` carries a model operator
-realizing its signatures: the classical row via `EntailmentSig.SoundFor`,
-the Strawson row via `EntailmentSig.StrawsonSoundFor`. This converts the
+realizing its signatures: the classical row via `Signature.SoundFor`,
+the Strawson row via `Signature.StrawsonSoundFor`. This converts the
 table's `strawsonSignature`/`classicalSignature` annotations into derived
 facts about denotations — the licensing analogue of the
 derive-don't-stipulate rule.
@@ -57,11 +57,11 @@ structure ContextWitness (c : LicensingContext) where
   [boundedβ : BoundedOrder β]
   /-- The Strawson row is Strawson-sound for `f`. -/
   strawson :
-    EntailmentSig.StrawsonSoundFor c.properties.strawsonSignature
+    Signature.StrawsonSoundFor c.properties.strawsonSignature
       f defined
   /-- The classical row, when present, is classically sound for `f`. -/
   classical :
-    ∀ σ ∈ c.properties.classicalSignature, EntailmentSig.SoundFor σ f
+    ∀ σ ∈ c.properties.classicalSignature, Signature.SoundFor σ f
   /-- The classical row's Zwarts strength holds semantically of `f`
       (vacuous at Strawson-only rows). -/
   strength :
@@ -69,9 +69,9 @@ structure ContextWitness (c : LicensingContext) where
       s.HoldsFor f
 
 private theorem soundFor_of_mem_some {W : Type*} {β : Type*} [Lattice β]
-    [BoundedOrder β] {f : Set W → β} {σ₀ : EntailmentSig}
-    (hf : EntailmentSig.SoundFor σ₀ f) :
-    ∀ σ ∈ (some σ₀ : Option EntailmentSig), EntailmentSig.SoundFor σ f := by
+    [BoundedOrder β] {f : Set W → β} {σ₀ : Signature}
+    (hf : Signature.SoundFor σ₀ f) :
+    ∀ σ ∈ (some σ₀ : Option Signature), Signature.SoundFor σ f := by
   intro σ hσ
   rw [Option.mem_def] at hσ
   injection hσ with h
@@ -79,15 +79,15 @@ private theorem soundFor_of_mem_some {W : Type*} {β : Type*} [Lattice β]
 
 private theorem soundFor_of_mem_none {W : Type*} {β : Type*} [Lattice β]
     [BoundedOrder β] {f : Set W → β} :
-    ∀ σ ∈ (none : Option EntailmentSig), EntailmentSig.SoundFor σ f := by
+    ∀ σ ∈ (none : Option Signature), Signature.SoundFor σ f := by
   intro σ hσ
   rw [Option.mem_def] at hσ
   exact absurd hσ (by simp)
 
 private theorem strength_of_mem_some {W : Type*} {β : Type*} [Lattice β]
-    {f : Set W → β} {σ₀ : EntailmentSig} {s₀ : DEStrength}
+    {f : Set W → β} {σ₀ : Signature} {s₀ : DEStrength}
     (hσ : σ₀.toDEStrength = some s₀) (hf : s₀.HoldsFor f) :
-    ∀ σ ∈ (some σ₀ : Option EntailmentSig), ∀ s ∈ σ.toDEStrength,
+    ∀ σ ∈ (some σ₀ : Option Signature), ∀ s ∈ σ.toDEStrength,
       s.HoldsFor f := by
   intro σ hσ' s hs
   rw [Option.mem_def] at hσ'
@@ -99,7 +99,7 @@ private theorem strength_of_mem_some {W : Type*} {β : Type*} [Lattice β]
 
 private theorem strength_of_mem_none {W : Type*} {β : Type*} [Lattice β]
     {f : Set W → β} :
-    ∀ σ ∈ (none : Option EntailmentSig), ∀ s ∈ σ.toDEStrength,
+    ∀ σ ∈ (none : Option Signature), ∀ s ∈ σ.toDEStrength,
       s.HoldsFor f := by
   intro σ hσ
   rw [Option.mem_def] at hσ
@@ -117,7 +117,7 @@ def negationWitness : ContextWitness .negation where
     pnot_isAntiMorphic
 
 private theorem everyRestrictor_soundFor :
-    EntailmentSig.SoundFor .antiAdd
+    Signature.SoundFor .antiAdd
       (fun R => every_sem (α := Bool) R (fun _ => False)) :=
   soundFor_antiAdd
     ⟨(leftAntiAdditive_iff_isAntiAdditive _).mp every_laa _,
@@ -136,7 +136,7 @@ noncomputable def universalRestrictorWitness :
     ((leftAntiAdditive_iff_isAntiAdditive _).mp every_laa _)
 
 private theorem noScope_soundFor :
-    EntailmentSig.SoundFor .antiAdd
+    Signature.SoundFor .antiAdd
       (fun S => no_sem (α := Bool) (fun _ => True) S) :=
   soundFor_antiAdd
     ⟨(rightAntiAdditive_iff_isAntiAdditive _).mp no_raa _,
@@ -154,7 +154,7 @@ noncomputable def nobodyWitness : ContextWitness .nobody where
 private noncomputable def fewScope : Set Bool → Prop :=
   few_sem (α := Bool) (fun _ => True)
 
-private theorem fewScope_soundFor : EntailmentSig.SoundFor .anti fewScope :=
+private theorem fewScope_soundFor : Signature.SoundFor .anti fewScope :=
   soundFor_anti_iff.mpr ((scopeDownMono_iff_antitone _).mp few_scope_down _)
 
 /-- *Few*: the scope section of `few_sem` is antitone (weak DE — and not
@@ -168,7 +168,7 @@ noncomputable def fewWitness : ContextWitness .few where
     (soundFor_anti_iff.mp fewScope_soundFor)
 
 private theorem atMost_soundFor :
-    EntailmentSig.SoundFor .anti atMost2_student :=
+    Signature.SoundFor .anti atMost2_student :=
   soundFor_anti_iff.mpr atMost_antitone_scope
 
 /-- *At most n*: `atMost2_student` is antitone; the strictness witness
@@ -182,7 +182,7 @@ def atMostWitness : ContextWitness .atMost where
     atMost_antitone_scope
 
 private theorem condAntecedent_soundFor :
-    EntailmentSig.SoundFor .anti
+    Signature.SoundFor .anti
       (fun α => condNecessity (W := World) (fun _ => Set.univ) α ∅) :=
   soundFor_anti_iff.mpr (conditional_antecedent_antitone _ _)
 
