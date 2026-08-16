@@ -1,459 +1,198 @@
-import Linglib.Morphology.Morphotactics.RelevanceHierarchy
+import Linglib.Morphology.Morphotactics.MirrorPrinciple
 
 /-!
-# [baker-1985]: The Mirror Principle and Morphosyntactic Explanation
-[baker-1985]
+# The Mirror Principle and Morphosyntactic Explanation
 
-This study file verifies the Mirror Principle's predictions against
-data from Chamorro, Quechua, and Bantu languages, as presented in
-[baker-1985].
+Formalization of [baker-1985] (*Linguistic Inquiry* 16(3), 373–415): the Mirror
+Principle's predictions verified against the paper's data — Chamorro *fan-* agreement
+interacting with passive and causative (§§1, 3.1), the Agreement Restriction (§3.2),
+causative-reciprocal ordering in Quechua and Bemba (§4.1), and passive-applicative
+ordering in Huichol, Chi-Mwi:ni, and Kinyarwanda (§4.2).
 
-## Structure
+## Main declarations
 
-- **§0**: Mirror-Principle substrate (was `Morphology/Core/
-  MirrorPrinciple.lean`; relocated 0.230.455 — Baker is the founding
-  paper, anchor lives here per CLAUDE.md "every file is anchored").
-- **§1**: Chamorro — passive, causative, and number agreement
-  interactions (§§1, 3.1 of the paper)
-- **§2**: Quechua — causative-reciprocal ordering determines
-  interpretation (§4.1)
-- **§3**: Bantu and Huichol — passive-applicative affix ordering (§4.2)
-- **§4**: Cross-linguistic verification of the Agreement
-  Restriction (§3.2)
+* `IsAttested`: the Agreement Restriction as empirical data — of Baker's (27) table,
+  only inner+semantic (27a) and outer+surface (27d) occur.
+* `isAttested_iff_deriveReference`: the Mirror Principle derives the restriction — a
+  pattern is attested exactly when its reference is the one derivational timing
+  dictates for its position.
+* `chamorroPassiveAgreement`, `chamorroCausativeAgreement`, `chamorroCausativePassive`:
+  the *fan-* data instantiating both attested patterns and the intermediate-subject
+  prediction.
+* `quechuaRecipInsideCaus` … `bembaCausInsideRecip`: the §4.1 ordering pairs.
+* `huichol`, `chiMwini`, `kinyarwanda`: the applied affix universally inner to the
+  passive affix (§4.2).
 -/
-
--- ============================================================================
--- §0: Mirror Principle Substrate (Baker 1985)
--- ============================================================================
-
-/-! "Morphological derivations must directly reflect syntactic derivations
-(and vice versa)." ([baker-1985] (4)) Each grammatical function
-changing rule (GF-rule) — passive, causative, applicative, reflexive/
-reciprocal — simultaneously adds an affix to the verb and changes the
-grammatical functions of arguments. The Mirror Principle requires the
-morphological ordering (affix layering) to match the syntactic ordering
-(rule application sequence).
-
-[baker-1985] §6 argues the Mirror Principle should not be a
-stipulation but follow from the architecture: in a framework where
-GF-rules are a single process with both effects, mirroring is by
-construction. Formalized below via `DerivationStep`. -/
-
-namespace Morphology.MirrorPrinciple
-
-open Morphology (MorphCategory)
-
-/-- Grammatical function changing rules (GF-rules). [baker-1985] §§2-4. -/
-inductive GFRuleType where
-  | passive
-  | causative
-  | applicative
-  | reflexReciprocal
-  deriving DecidableEq, Repr, BEq
-
-/-- Map GF-rules to [bybee-1985]'s morphological categories. -/
-def GFRuleType.toMorphCategory : GFRuleType → MorphCategory
-  | .passive => .voice
-  | .causative => .valence
-  | .applicative => .valence
-  | .reflexReciprocal => .valence
-
-/-- A single step bundling morphological + syntactic effects. By
-    bundling, the Mirror Principle holds by construction. -/
-structure DerivationStep where
-  rule : GFRuleType
-  affix : String
-  isPrefix : Bool := false
-  deriving DecidableEq, Repr, BEq
-
-/-- Steps ordered first-applied (innermost) to last-applied (outermost). -/
-abbrev Derivation := List DerivationStep
-
-def ruleOrder (d : Derivation) : List GFRuleType := d.map (·.rule)
-def affixOrder (d : Derivation) : List String := d.map (·.affix)
-
-/-- The orderings are isomorphic by construction — the Mirror Principle. -/
-theorem mirror_by_construction (d : Derivation) :
-    (ruleOrder d).length = (affixOrder d).length := by
-  simp [ruleOrder, affixOrder]
-
-inductive AgreementPosition where
-  | inner | outer
-  deriving DecidableEq, Repr, BEq
-
-inductive GFReference where
-  | semantic | surface
-  deriving DecidableEq, Repr, BEq
-
-structure AgreementPattern where
-  position : AgreementPosition
-  reference : GFReference
-  deriving DecidableEq, Repr, BEq
-
-/-- Inner position → pre-rule (semantic) GFs; outer → post-rule (surface). -/
-def deriveReference : AgreementPosition → GFReference
-  | .inner => .semantic
-  | .outer => .surface
-
-def AgreementPattern.isAttested (p : AgreementPattern) : Bool :=
-  p.reference == deriveReference p.position
-
-theorem inner_semantic_attested :
-    (AgreementPattern.mk .inner .semantic).isAttested = true := rfl
-theorem outer_surface_attested :
-    (AgreementPattern.mk .outer .surface).isAttested = true := rfl
-theorem outer_semantic_unattested :
-    (AgreementPattern.mk .outer .semantic).isAttested = false := rfl
-theorem inner_surface_unattested :
-    (AgreementPattern.mk .inner .surface).isAttested = false := rfl
-
-/-- Exactly two of four patterns are attested (Baker (27)). -/
-theorem agreement_restriction_count :
-    (([⟨.inner, .semantic⟩, ⟨.outer, .semantic⟩,
-       ⟨.inner, .surface⟩, ⟨.outer, .surface⟩] :
-       List AgreementPattern).filter (·.isAttested)).length
-    = 2 := by
-  decide
-
-theorem attested_are_27a_and_27d :
-    ([⟨.inner, .semantic⟩, ⟨.outer, .semantic⟩,
-      ⟨.inner, .surface⟩, ⟨.outer, .surface⟩] :
-      List AgreementPattern).filter (·.isAttested)
-    = [⟨.inner, .semantic⟩, ⟨.outer, .surface⟩] := by
-  decide
-
-theorem derived_reference_attested (pos : AgreementPosition) :
-    (AgreementPattern.mk pos (deriveReference pos)).isAttested = true := by
-  cases pos <;> rfl
-
-/-- Applicative feeds passive: appl creates the DO that passive promotes. -/
-def GFRuleType.Feeds (r1 r2 : GFRuleType) : Prop :=
-  r1 = .applicative ∧ r2 = .passive
-
-instance : DecidableRel GFRuleType.Feeds := fun _ _ => by
-  unfold GFRuleType.Feeds; exact inferInstance
-
-def feedingOrder (feeder fed : GFRuleType) : List GFRuleType := [feeder, fed]
-
-theorem appl_feeds_passive :
-    GFRuleType.Feeds .applicative .passive := ⟨rfl, rfl⟩
-
-theorem appl_pass_predicted :
-    feedingOrder .applicative .passive = [.applicative, .passive] := rfl
-
-/-- The morphological domain of the Mirror Principle. [baker-1985] §5. -/
-inductive MorphDomain where
-  | concatenative | cliticization | nonconcatenative
-  deriving DecidableEq, Repr
-
-def MorphDomain.InScope (d : MorphDomain) : Prop := d = .concatenative
-
-instance : DecidablePred MorphDomain.InScope := fun d => by
-  unfold MorphDomain.InScope; exact inferInstance
-
-/-- GF-rule morphemes are inside agreement per Bybee's hierarchy. -/
-theorem gfRule_inside_agreement (r : GFRuleType) :
-    r.toMorphCategory.RelevanceLT (.agreement .subj) := by
-  cases r <;> decide
-
-end Morphology.MirrorPrinciple
 
 namespace Baker1985
 
 open Morphology.MirrorPrinciple
 
--- ============================================================================
--- §1: Chamorro (Baker §§1, 3.1)
--- ============================================================================
+/-! ### The Agreement Restriction ([baker-1985] §3.2)
 
--- ### Chamorro GF-rules and fan- agreement
---
--- Chamorro (Austronesian) has three relevant verbal processes:
--- Number Agreement (man- or fan-) is a prefix registering plurality
--- of the subject; Passive (-in-) is an infix promoting object to
--- subject; Causative (na'-) is a prefix adding a causer as subject.
---
--- The apparent idiosyncrasies of fan- agreement — agreeing with the
--- surface subject in passives but the underlying subject in causatives —
--- are explained by the Mirror Principle: fan-'s position relative to
--- the GF-rule morpheme determines which GFs it references.
---
--- [baker-1985] §§1, 3.1.
+Of the four combinations of agreement position and GF reference, Baker's (27) records
+only two as attested: inner agreement referencing semantic GFs (27a: Chamorro
+causative *fan-*, Turkish, Sanskrit, Quechua) and outer agreement referencing surface
+GFs (27d: by far the most common pattern cross-linguistically). No clear cases of
+(27b) or (27c) are found.
 
-section Chamorro
+Achenese ((31)) is a defused near-falsifier, not an instance of (27a): its verbal
+agreement references semantic subjects under passivization, which would instantiate
+the starred (27b) if the passive were marked by a morpheme inner to agreement — but
+Achenese has no overt passive morphology, so no morpheme position exists and the
+restriction is vacuously satisfied. -/
 
-/-- Passive sentence: *fan-in-saolak* 'be spanked (pl)'.
+/-- The attested agreement patterns: exactly inner+semantic (27a) and outer+surface
+(27d) of [baker-1985]'s (27). -/
+def IsAttested (p : AgreementPattern) : Prop :=
+  p = ⟨.inner, .semantic⟩ ∨ p = ⟨.outer, .surface⟩
 
-    Morphological structure: [fan [in [saolak]]]
-    *fan-* (agreement) is OUTSIDE *-in-* (passive).
+instance : DecidablePred IsAttested := fun p =>
+  inferInstanceAs (Decidable (p = ⟨.inner, .semantic⟩ ∨ p = ⟨.outer, .surface⟩))
 
-    By the Mirror Principle, *fan-* was added after passive,
-    so it references the post-passive (surface) subject —
-    'the children', the derived subject.
+/-- The Mirror Principle derives the Agreement Restriction: a pattern is attested
+exactly when its GF reference is the one derivational timing dictates for its
+position ([baker-1985] (27)). -/
+theorem isAttested_iff_deriveReference {p : AgreementPattern} :
+    IsAttested p ↔ p.reference = deriveReference p.position := by
+  obtain ⟨pos, ref⟩ := p
+  cases pos <;> cases ref <;> decide
 
-    [baker-1985] (15b), (21). -/
-def chamorroPassiveAgreement : AgreementPattern :=
-  ⟨.outer, .surface⟩
+/-- Every pattern the Mirror Principle derives is attested; no per-position
+stipulation is needed. -/
+theorem isAttested_derived (pos : AgreementPosition) :
+    IsAttested ⟨pos, deriveReference pos⟩ :=
+  isAttested_iff_deriveReference.mpr rfl
 
-/-- Causative sentence: *na'-fan-otchu* 'make eat (pl)'.
+/-! ### Chamorro ([baker-1985] §§1, 3.1)
 
-    Morphological structure: [na' [fan [otchu]]]
-    *fan-* (agreement) is INSIDE *na'-* (causative).
+Chamorro number agreement *man-* ~ *fan-* registers plurality of the subject; passive
+*-in-* promotes the object to subject; causative *na'-* adds a causer as subject.
+Which "subject" *fan-* registers tracks its morphological position: outside the
+passive marker it references the surface subject, inside the causative marker the
+semantic subject. -/
 
-    By the Mirror Principle, *fan-* was added before causative,
-    so it references the pre-causative (semantic) subject —
-    the underlying subject of 'eat'.
+/-- Passive *Para#u#fan-s-in-aolak* 'The children are going to be spanked by their
+father': *fan-* outside *-in-* ([fan [in [saolak]]]), so *fan-* was added after
+passive and references the derived (surface) subject ([baker-1985] (15b), (21)). -/
+def chamorroPassiveAgreement : AgreementPattern := ⟨.outer, .surface⟩
 
-    [baker-1985] (15c), (23). -/
-def chamorroCausativeAgreement : AgreementPattern :=
-  ⟨.inner, .semantic⟩
+/-- Causative *Hu#na'-fan-otchu* 'I made them eat': *fan-* inside *na'-*
+([na' [fan [otchu]]]), so *fan-* was added before causative and references the
+semantic subject of 'eat' ([baker-1985] (15c), (23)). -/
+def chamorroCausativeAgreement : AgreementPattern := ⟨.inner, .semantic⟩
 
-/-- Both Chamorro agreement patterns are attested. -/
-theorem chamorro_passive_attested :
-    chamorroPassiveAgreement.isAttested = true := rfl
+/-- The Chamorro passive pattern is the derived — hence attested — pattern for outer
+agreement. -/
+theorem chamorroPassiveAgreement_isAttested : IsAttested chamorroPassiveAgreement :=
+  isAttested_iff_deriveReference.mpr rfl
 
-theorem chamorro_causative_attested :
-    chamorroCausativeAgreement.isAttested = true := rfl
+/-- The Chamorro causative pattern is the derived — hence attested — pattern for
+inner agreement. Together with `chamorroPassiveAgreement_isAttested`, a single
+language exhibits both attested patterns, so the Agreement Restriction is a property
+of UG, not a language-particular parameter ([baker-1985] §3.1). -/
+theorem chamorroCausativeAgreement_isAttested : IsAttested chamorroCausativeAgreement :=
+  isAttested_iff_deriveReference.mpr rfl
 
-/-- Chamorro exhibits both attested patterns in a single language,
-    confirming the Agreement Restriction is a property of UG, not a
-    language-specific parameter. [baker-1985] §3.1. -/
-theorem chamorro_shows_both_attested :
-    chamorroPassiveAgreement.isAttested = true ∧
-    chamorroCausativeAgreement.isAttested = true :=
-  ⟨rfl, rfl⟩
-
-/-- Causative of passive: *na'-fan-s-in-aolak*
-    'I had the children spanked by their father.'
-
-    Morphological structure: [na' [fan [in [saolak]]]]
-    Derivation order: passive first, then causative.
-    *fan-* is between them — added after passive, before causative.
-    → References the intermediate subject (post-passive, pre-causative)
-    = 'the children' (the derived subject of the passive).
-
-    [baker-1985] (25), (26). -/
+/-- Causative of passive *Hu#na'-fan-s-in-aolak i famagu'un gi as tata-n-niha* 'I had
+the children spanked by their father': passive applies first, then causative; *fan-*
+sits between the two GF-rule morphemes and registers the intermediate subject —
+post-passive, pre-causative ([baker-1985] (25), (26)). -/
 def chamorroCausativePassive : Derivation :=
-  [{ rule := .passive, affix := "-in-", isPrefix := true },
-   { rule := .causative, affix := "na'-", isPrefix := true }]
+  [⟨.passive, "-in-"⟩, ⟨.causative, "na'-"⟩]
 
-theorem chamorro_passive_before_causative :
+theorem chamorroCausativePassive_ruleOrder :
     ruleOrder chamorroCausativePassive = [.passive, .causative] := rfl
 
-end Chamorro
+/-! ### Causative-reciprocal ordering: Quechua and Bemba ([baker-1985] §4.1)
 
--- ============================================================================
--- §2: Quechua (Baker §4.1)
--- ============================================================================
+Causative and reciprocal can attach in either order, and the morpheme order
+determines the interpretation: whichever rule applies first is computed on the
+pre-change grammatical functions. Quechua and Bemba show the same two orders; the
+caus-recip order is interpreted differently in the two languages — Quechua links the
+causer to the initial patient ((39b)), Bemba to the initial agent ((49b)) — because
+Bemba's causative is Chamorro-type: the initial agent, not the patient, occupies the
+object position Reciprocal Formation binds ((50)–(52)). -/
 
-/-! ### Quechua causative-reciprocal interactions
-
-Quechua shows that causative *-chi* and reciprocal *-naku* can
-appear in either order on the verb, with different interpretations
-that the Mirror Principle correctly predicts. The difference in
-morpheme ordering corresponds to a difference in which arguments
-are bound by the reciprocal, which follows from the different
-syntactic derivation orders.
-
-[baker-1985] §4.1. -/
-
-section Quechua
-
-/-- Reciprocal inside causative: *maqa-naku-ya-chi-n*
-    'He is causing them to beat each other.'
-
-    Morpheme order (inner→outer): root, *-naku* (recip), *-chi* (caus)
-    Mirror Principle: reciprocal applied first, then causative.
-    → Reciprocal binds agent and patient of root verb
-    → Causative adds a new causer
-    → Causer causes [reciprocal beating]
-
-    [baker-1985] (39a), (45)–(46). -/
+/-- *Maqa-naku-ya-chi-n* 'He is causing them to beat each other': reciprocal *-naku*
+inside causative *-chi*, so Reciprocal applies first, linking agent and patient of
+the root; Causative then adds the causer ([baker-1985] (39a), (45)–(46)). -/
 def quechuaRecipInsideCaus : Derivation :=
-  [{ rule := .reflexReciprocal, affix := "-naku" },
-   { rule := .causative, affix := "-chi" }]
+  [⟨.reflexReciprocal, "-naku"⟩, ⟨.causative, "-chi"⟩]
 
-/-- Causative inside reciprocal: *maqa-chi-naku-rka-n*
-    'They let someone beat each other.'
-
-    Morpheme order (inner→outer): root, *-chi* (caus), *-naku* (recip)
-    Mirror Principle: causative applied first, then reciprocal.
-    → Causative adds a causer first
-    → Reciprocal then binds the causer and the patient
-    → The causers reciprocally [let someone beat them]
-
-    [baker-1985] (39b), (47)–(48). -/
+/-- *Maqa-chi-naku-rka-n* 'They let someone beat each other': causative *-chi* inside
+reciprocal *-naku*, so Causative applies first; Reciprocal then links the causers to
+the initial patients ([baker-1985] (39b), (47)–(48)). -/
 def quechuaCausInsideRecip : Derivation :=
-  [{ rule := .causative, affix := "-chi" },
-   { rule := .reflexReciprocal, affix := "-naku" }]
+  [⟨.causative, "-chi"⟩, ⟨.reflexReciprocal, "-naku"⟩]
 
-/-- Reciprocal-inside-causative: reciprocal applies first. -/
-theorem quechua_recip_caus_order :
+theorem quechuaRecipInsideCaus_ruleOrder :
     ruleOrder quechuaRecipInsideCaus = [.reflexReciprocal, .causative] := rfl
 
-/-- Causative-inside-reciprocal: causative applies first. -/
-theorem quechua_caus_recip_order :
+theorem quechuaCausInsideRecip_ruleOrder :
     ruleOrder quechuaCausInsideRecip = [.causative, .reflexReciprocal] := rfl
 
-/-- Different morpheme orderings produce different syntactic orderings
-    and hence different interpretations. The Mirror Principle links
-    all three: morpheme order ↔ syntactic order ↔ interpretation. -/
-theorem quechua_orderings_differ :
+/-- The two Quechua verb forms differ in rule order: the Mirror Principle ties the
+morphological contrast to the interpretive one. -/
+theorem quechua_ruleOrders_differ :
     ruleOrder quechuaRecipInsideCaus ≠ ruleOrder quechuaCausInsideRecip := by
-  native_decide
+  decide
 
-end Quechua
+/-- *Naa-mon-an-ya Mwape na Mutumba* 'I made Mwape and Mutumba see each other':
+reciprocal *-an* inside causative *-ya* — the same order and interpretation as
+Quechua (39a) ([baker-1985] (49a)). -/
+def bembaRecipInsideCaus : Derivation :=
+  [⟨.reflexReciprocal, "-an"⟩, ⟨.causative, "-ya"⟩]
 
--- ============================================================================
--- §3: Bantu and Huichol passive-applicative ordering (Baker §4.2)
--- ============================================================================
+/-- *Mwape na Chilufya baa-mon-eshy-ana Mutumba* 'Mwape and Chilufya made each other
+see Mutumba': causative *-eshy* inside reciprocal *-ana*. Causative applies first
+and — being Chamorro-type — puts the initial agent in object position, so Reciprocal
+links causer and initial agent, unlike Quechua (39b) ([baker-1985] (49b), (52)). -/
+def bembaCausInsideRecip : Derivation :=
+  [⟨.causative, "-eshy"⟩, ⟨.reflexReciprocal, "-ana"⟩]
 
-/-! ### Passive-applicative interactions
+theorem bembaRecipInsideCaus_ruleOrder :
+    ruleOrder bembaRecipInsideCaus = [.reflexReciprocal, .causative] := rfl
 
-When both passive and applicative appear on the same verb, the
-applicative morpheme is universally closer to the root. The Mirror
-Principle predicts this: applicative creates a new direct object
-that passive can then promote to subject, so applicative must
-apply first (its affix is inner).
+theorem bembaCausInsideRecip_ruleOrder :
+    ruleOrder bembaCausInsideRecip = [.causative, .reflexReciprocal] := rfl
 
-Attested: V-appl-pass
-Not attested: *V-pass-appl (for oblique-to-subject promotion)
+/-- Bemba shows the same two rule orders as Quechua: the cross-linguistic difference
+lies in the interpretation of the caus-recip order, not in the available orders
+([baker-1985] §4.1). -/
+theorem bemba_ruleOrders_match_quechua :
+    ruleOrder bembaRecipInsideCaus = ruleOrder quechuaRecipInsideCaus ∧
+    ruleOrder bembaCausInsideRecip = ruleOrder quechuaCausInsideRecip :=
+  ⟨rfl, rfl⟩
 
-[baker-1985] §4.2. -/
+/-! ### Passive-applicative ordering ([baker-1985] §4.2)
 
-section PassiveApplicative
+Applicative creates a new direct object ((53)); passive promotes a direct object to
+subject ((12)). When an applicative feeds a passive — the applied object becomes the
+surface subject — Applicative must apply first, so the Mirror Principle predicts the
+applied affix universally closer to the root than the passive affix. Attested:
+verb-appl-pass. Unattested: verb-pass-appl with oblique-to-subject promotion. -/
 
-/-- Chi-Mwi:ni: *tet-el-el-a* 'bring-appl-asp-pass'
-    Applicative *-el* closer to root than passive.
-    [baker-1985] (56c). -/
-def chiMwini : Derivation :=
-  [{ rule := .applicative, affix := "-el" },
-   { rule := .passive, affix := "-a" }]
+/-- Huichol *Tiiri yi-nauka-ti nawazi me-puutinanai-ri-yeri* 'Four children were
+bought a knife': benefactive *-ri* inside passive *-yeri* ([baker-1985] (55)). -/
+def huichol : Derivation := [⟨.applicative, "-ri"⟩, ⟨.passive, "-yeri"⟩]
 
-/-- Kinyarwanda: *andik-iish-w-a* 'write-instr-pass-asp'
-    Applicative *-iish* closer to root than passive *-w*.
-    [baker-1985] (57c). -/
-def kinyarwanda : Derivation :=
-  [{ rule := .applicative, affix := "-iish" },
-   { rule := .passive, affix := "-w" }]
+/-- Chi-Mwi:ni *Mwa:limu tet-el-el-a chibu:ku na Nu:ru* 'The teacher was brought the
+book by Nuru': applied *-el* inside passive *-a*, with aspect between them
+([baker-1985] (56c)). -/
+def chiMwini : Derivation := [⟨.applicative, "-el"⟩, ⟨.passive, "-a"⟩]
 
-/-- Huichol: *puutinanai-ri-yeri* 'buy-ben-pass'
-    Benefactive-applicative *-ri* closer to root than passive *-yeri*.
-    [baker-1985] (55). -/
-def huichol : Derivation :=
-  [{ rule := .applicative, affix := "-ri" },
-   { rule := .passive, affix := "-yeri" }]
+/-- Kinyarwanda *Ikaramu i-ra-andik-iish-w-a ibaruwa n'umugabo* 'The pen was
+written-with the letter by the man': instrumental applicative *-iish* inside passive
+*-w* ([baker-1985] (57c)). -/
+def kinyarwanda : Derivation := [⟨.applicative, "-iish"⟩, ⟨.passive, "-w"⟩]
 
-/-- All three languages show applicative before passive,
-    as predicted by the Mirror Principle. -/
-theorem all_appl_before_pass :
+/-- All three languages place the applied affix before the passive affix, as the
+feeding order requires. -/
+theorem appl_before_pass :
+    ruleOrder huichol = [.applicative, .passive] ∧
     ruleOrder chiMwini = [.applicative, .passive] ∧
-    ruleOrder kinyarwanda = [.applicative, .passive] ∧
-    ruleOrder huichol = [.applicative, .passive] :=
+    ruleOrder kinyarwanda = [.applicative, .passive] :=
   ⟨rfl, rfl, rfl⟩
-
-/-- All three languages show the order predicted by the feeding
-    relationship: applicative feeds passive, so applicative is
-    universally inner. -/
-theorem all_match_feeding_prediction :
-    GFRuleType.Feeds .applicative .passive ∧
-    ruleOrder chiMwini = [.applicative, .passive] ∧
-    ruleOrder kinyarwanda = [.applicative, .passive] ∧
-    ruleOrder huichol = [.applicative, .passive] :=
-  ⟨⟨rfl, rfl⟩, rfl, rfl, rfl⟩
-
-/-- Bemba (Bantu) causative-reciprocal: *Naa-mon-eshy-ana*
-    'I made Mwape and Mutumba see each other.'
-
-    Bemba uses the Chamorro-type causative (underlying subject
-    becomes oblique), unlike Quechua (underlying subject stays
-    as object). This leads to different morpheme ordering for
-    the same interpretation compared to Quechua — but the Mirror
-    Principle still holds: the morpheme ordering reflects the
-    syntactic derivation order.
-
-    In Bemba: causative precedes reciprocal morphologically,
-    because Bemba's causative changes GFs differently: the
-    new causer occupies the object position, so reciprocal
-    must apply after causative to bind it.
-
-    [baker-1985] (49), (52). -/
-def bembaCausRecip : Derivation :=
-  [{ rule := .causative, affix := "-eshy" },
-   { rule := .reflexReciprocal, affix := "-ana" }]
-
-theorem bemba_caus_before_recip :
-    ruleOrder bembaCausRecip = [.causative, .reflexReciprocal] := rfl
-
-end PassiveApplicative
-
--- ============================================================================
--- §4: Cross-linguistic Agreement Restriction (Baker §3.2)
--- ============================================================================
-
-/-! ### The Agreement Restriction across languages
-
-[baker-1985] (27) predicts that of four logical possibilities
-for combining agreement position and GF reference, only two are
-attested cross-linguistically:
-
-| | Semantic GFs | Surface GFs |
-|-------|-------------|-------------|
-| Inner | ✓ (27a) | ✗ (27c) |
-| Outer | ✗ (27b) | ✓ (27d) |
-
-Evidence:
-- **(27a)** inner + semantic: Chamorro causative *fan-*, Turkish,
-  Sanskrit, Quechua (agreement closer to V, references underlying GFs)
-- **(27d)** outer + surface: most agglutinative languages; Chamorro
-  passive *fan-* (agreement farther from V, references surface GFs)
-
-No clear cases of (27b) or (27c) have been found.
-
-The Mirror Principle derives this restriction: morphological position
-determines derivational timing, and derivational timing determines
-which GFs are visible for agreement. -/
-
-section AgreementRestriction
-
-/-- The Mirror Principle correctly derives the attested reference
-    for each morphological position. -/
-theorem mirror_derives_reference_inner :
-    deriveReference .inner = .semantic := rfl
-
-theorem mirror_derives_reference_outer :
-    deriveReference .outer = .surface := rfl
-
-/-- Every derived pattern is attested; no stipulation is needed. -/
-theorem derived_always_attested (pos : AgreementPosition) :
-    (AgreementPattern.mk pos (deriveReference pos)).isAttested = true := by
-  cases pos <;> rfl
-
-/-- The Chamorro passive pattern is exactly the derived pattern
-    for outer agreement. -/
-theorem chamorro_passive_is_derived :
-    chamorroPassiveAgreement
-    = AgreementPattern.mk .outer (deriveReference .outer) := rfl
-
-/-- The Chamorro causative pattern is exactly the derived pattern
-    for inner agreement. -/
-theorem chamorro_causative_is_derived :
-    chamorroCausativeAgreement
-    = AgreementPattern.mk .inner (deriveReference .inner) := rfl
-
-/-- Achenese (Austronesian) provides a test case: verbal agreement
-    references the underlying (semantic) subject in both active and
-    passive sentences, and Achenese has no overt passive morpheme.
-    Since there is no GF-rule morpheme on the verb, the agreement
-    morpheme is trivially "inner" (there is nothing for it to be
-    outer to), and it references semantic GFs — consistent with
-    pattern (27a). [baker-1985] (31). -/
-def acheneseAgreement : AgreementPattern :=
-  ⟨.inner, .semantic⟩
-
-theorem achenese_attested :
-    acheneseAgreement.isAttested = true := rfl
-
-end AgreementRestriction
 
 end Baker1985

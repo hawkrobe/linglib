@@ -1276,6 +1276,7 @@ import Linglib.Morphology.FragmentGrammars.FragmentLambda
 import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
 import Linglib.Morphology.Morph
 import Linglib.Morphology.Morphotactics.CVTemplate
+import Linglib.Morphology.Morphotactics.MirrorPrinciple
 import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 import Linglib.Morphology.Morphotactics.Template
 import Linglib.Morphology.Nanosyntax.TreeSpellout
