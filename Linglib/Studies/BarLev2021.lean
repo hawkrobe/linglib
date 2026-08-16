@@ -64,8 +64,9 @@ A key prediction: the positive and negative cases are *not symmetric*.
 
 This asymmetry is derived in `negative_universal` below.
 
-TODO: derive a `Generalizations.HomogeneityGap.GapPredict` implementation
-from the exhaustification account and prove divergence theorems vs rivals.
+TODO: state the exhaustification account's polarity × scenario
+predictions, run them against the pooled `Generalizations.HomogeneityGap`
+data, and prove divergence theorems vs rivals.
 -/
 
 namespace BarLev2021
@@ -707,32 +708,36 @@ theorem partial_pruning_not_universal :
 -- SECTION 8: Bridges to Empirical Data
 -- ============================================================
 
-open Generalizations.HomogeneityGap (allData)
+open Generalizations.HomogeneityGap (GapDatum allData)
 
-/-- The account against the pooled unembedded homogeneity-gap data
-    ([kriz-chemla-2015], [kriz-2015], [agha-jeretic-2022]): `.indet` is
-    observed in gap cells of both polarities — the non-complementarity
-    derived in `gap_both_false` — and only there (baseline cells are
-    bivalent, as `universality` and `negative_universal` require). -/
+/-- The pooled rows from the plural-definite papers available to
+    [bar-lev-2021]: [kriz-2015] and [kriz-chemla-2015]. Quantifying over
+    this slice rather than all of `allData` keeps the claims fixed as
+    later papers' rows join the pool. -/
+def pluralDefiniteRows : List GapDatum :=
+  allData.filter fun d =>
+    d.source.bibkey == "kriz-2015" || d.source.bibkey == "kriz-chemla-2015"
+
+/-- The account against the pooled unembedded homogeneity-gap rows of
+    [kriz-2015] and [kriz-chemla-2015]: `.indet` is observed in gap cells
+    of both polarities — the non-complementarity derived in
+    `gap_both_false` — and only there (baseline cells are bivalent, as
+    `universality` and `negative_universal` require). -/
 theorem matches_pooled_gap_data :
-    ((allData.any fun d =>
+    ((pluralDefiniteRows.any fun d =>
         d.polarity == .positive && d.scenario == .gap && d.observed == .indet) = true) ∧
-    ((allData.any fun d =>
+    ((pluralDefiniteRows.any fun d =>
         d.polarity == .negative && d.scenario == .gap && d.observed == .indet) = true) ∧
-    ((allData.filter (fun d => d.scenario != .gap)).all
+    ((pluralDefiniteRows.filter (fun d => d.scenario != .gap)).all
         (fun d => d.observed != .indet) = true) :=
   ⟨by decide, by decide, by decide⟩
 
-/-- For plural-definite rows ([kriz-2015], [kriz-chemla-2015]), no gap
-    cell observes clear falsity: those cells resolve to `.indet` (the
-    gap, `gap_both_false`) or `.true` (a non-maximal reading, derived
-    by pruning — `pruned_existential`), never `.false`. The restriction
-    matters: [agha-jeretic-2022]'s strong-necessity rows (*have to*)
-    observe `.false` in the positive gap cell — strong modals are
-    gap-free, outside this account's plural-definite scope. -/
+/-- No plural-definite gap cell observes clear falsity: those cells
+    resolve to `.indet` (the gap, `gap_both_false`) or `.true` (a
+    non-maximal reading, derived by pruning — `pruned_existential`),
+    never `.false`. -/
 theorem plural_definite_gap_cells_never_false :
-    (allData.filter (fun d =>
-        d.scenario == .gap && d.source.bibkey != "agha-jeretic-2022")).all
+    (pluralDefiniteRows.filter (fun d => d.scenario == .gap)).all
       (fun d => d.observed != .false) = true := by decide
 
 

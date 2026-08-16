@@ -69,7 +69,8 @@ semantics), and extends it to explain the neg-raising asymmetry between
 
 namespace AghaJeretic2022
 
-open Generalizations.HomogeneityGap (GapDatum GapScenario GapPredict fromExample)
+open Features (Polarity)
+open Generalizations.HomogeneityGap (GapDatum GapScenario fromExample)
 open Semantics.Homogeneity (negRaising_iff_subsingleton)
 
 -- ============================================================================
@@ -282,10 +283,10 @@ def scenarioDomain : GapScenario → List Bool
   | .none => [false, false]
   | .gap  => [true, false]
 
-/-- The trivalent semantics as a `GapPredict`: negative polarity predicates
-    the negated prejacent of the same plurality (homogeneity = symmetric
-    negation, §3.1). -/
-def gapPredict : GapPredict := fun pol s =>
+/-- The trivalent semantics' prediction for each polarity × scenario cell:
+    negative polarity predicates the negated prejacent of the same plurality
+    (homogeneity = symmetric negation, §3.1). -/
+def gapPredict (pol : Polarity) (s : GapScenario) : Trivalent :=
   match pol with
   | .positive => shouldEval (scenarioDomain s) id
   | .negative => shouldEval (scenarioDomain s) (fun w => !w)
@@ -574,10 +575,10 @@ theorem shouldEval_can_gap :
     ∃ (D : List Bool) (p : Bool → Bool), shouldEval D p = Trivalent.indet :=
   ⟨[true, false], id, by native_decide⟩
 
-/-- Domain restriction as a `GapPredict`: *should* = ∀ over the refined
-    domain, with negation as Strong Kleene `Trivalent.neg`. Bivalent on every
-    cell. -/
-def domainRestrictionPredict : GapPredict := fun pol s =>
+/-- Domain restriction's prediction for each polarity × scenario cell:
+    *should* = ∀ over the refined domain, with negation as Strong Kleene
+    `Trivalent.neg`. Bivalent on every cell. -/
+def domainRestrictionPredict (pol : Polarity) (s : GapScenario) : Trivalent :=
   match pol with
   | .positive => mustEval (scenarioDomain s) id
   | .negative => (mustEval (scenarioDomain s) id).neg

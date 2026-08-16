@@ -22,8 +22,8 @@ correlation with item-level variance, not this identity (cf. the dependency's
 ## Main definitions
 * `gppProjection` — the GPP map, the complement of at-issueness (`Rat01.compl`).
 * `pottsProjection` — [potts-2005]'s rival: CI projects maximally, at-issueness-blind.
-* both are `Generalizations.Projectivity.ProjectionAccount`s, run against the
-  pooled per-expression data (`allData`) in that hub.
+* both are run against the pooled per-expression data
+  (`Generalizations.Projectivity.allData`).
 
 ## Main results
 * `gppProjection_antitone` — the GPP as order-reversal.
@@ -167,9 +167,10 @@ theorem appositive_not_maximally_projective
 
 /-! ### Predicting against the data
 
-`gppProjection` and `pottsProjection` are `Generalizations.Projectivity`
-`ProjectionAccount`s; the paper's per-expression means are pooled in that hub's
-`allData` (artifact-sourced rows in `Data.Examples.TonhauserBeaverDegen2018`). The
+`gppProjection` and `pottsProjection` map at-issueness to predicted
+projectivity; the paper's per-expression means are pooled in
+`Generalizations.Projectivity.allData` (artifact-sourced rows in
+`Data.Examples.TonhauserBeaverDegen2018`). The
 means are continuous, so per-row predictions are *computed* over `allData` (string
 `paperFeatures` and `ℚ` do not reduce in the kernel); the *provable* content is
 each account's systematic error. -/

@@ -6,7 +6,7 @@ import Linglib.Data.Examples.AghaJeretic2022
 import Linglib.Data.Examples.Kriz2015
 
 /-!
-# Generalizations.HomogeneityGap — cross-paper prediction target
+# Generalizations.HomogeneityGap — cross-paper data pool
 
 The homogeneity gap of unembedded plural definites (and their modal
 analogues): a positive sentence is true in the ALL scenario, its negation
@@ -19,14 +19,12 @@ supervaluation ([kriz-2016]).
 
 Sibling of `Generalizations.HomogeneityProjection`, which covers the
 *embedded* cells (operator × scenario); this file covers the unembedded
-polarity × scenario grid. The `Predict` signatures differ (`Polarity` vs
-`EmbeddingOperator` first argument), so the two pools stay separate.
+polarity × scenario grid. The datum types differ (`Polarity` vs
+`EmbeddingOperator` first component), so the two pools stay separate.
 
 ## Main declarations
 
 * `GapScenario` — ALL / NONE / GAP scenario triad.
-* `GapPredict` — signature a rival account must implement:
-  `Polarity → GapScenario → Trivalent`.
 * `GapDatum` — typed empirical datum lifted from `LinguisticExample`
   rows by `fromExample` (paperFeatures keys `polarity`, `condition`,
   `gap_detected`; rows with an `embedding` key other than `unembedded`
@@ -35,8 +33,11 @@ polarity × scenario grid. The `Predict` signatures differ (`Polarity` vs
   baselines), [kriz-2015] (switches items), and [agha-jeretic-2022]
   (weak-necessity modal items).
 
-Divergence theorems between rival accounts live in the comparing
-paper's study file, not here.
+Rival accounts state their predictions in their own study files, at the
+granularity their paper supports, and are run against this pool there —
+restricted by `source.bibkey` to the papers available at each study's
+publication date. Divergence theorems between rival accounts likewise
+live in the comparing paper's study file, not here.
 -/
 
 namespace Generalizations.HomogeneityGap
@@ -56,14 +57,7 @@ inductive GapScenario where
   | gap   -- some but not all do (homogeneity violated)
   deriving Repr, DecidableEq
 
-/-! ### Test-suite schema -/
-
-/--
-Prediction signature for accounts of the unembedded homogeneity gap:
-given the sentence polarity and the scenario, the trivalent value the
-account assigns.
--/
-abbrev GapPredict := Polarity → GapScenario → Trivalent
+/-! ### Datum schema -/
 
 /--
 Empirical datum lifted from a paper-anchored `LinguisticExample`:
@@ -142,9 +136,9 @@ def fromExample (e : LinguisticExample) : Option GapDatum := do
 /-! ### Pool -/
 
 /--
-Cross-paper pool of unembedded homogeneity-gap data. Rival accounts
-pass their `GapPredict` implementations against this pool; per-datum
-and divergence theorems live in the comparing papers' study files.
+Cross-paper pool of unembedded homogeneity-gap data. Rival accounts are
+run against this pool in the study files; per-datum and divergence
+theorems live there too.
 -/
 def allData : List GapDatum :=
   (KrizChemla2015.Examples.all ++ AghaJeretic2022.Examples.all
