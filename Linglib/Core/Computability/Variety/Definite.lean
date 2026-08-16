@@ -207,11 +207,6 @@ class of the empty word, and idempotents correspond to omega-powers of classes o
 Transporting across it turns the pseudovariety statements into Pin's equations, and so yields the
 `langs` characterisations from the omega-power theorems. -/
 
-private theorem omegaPow_eq_self {M : Type*} [Monoid M] [Finite M] {m : M}
-    (hm : IsIdempotentElem m) : Monoid.omegaPow m = m := by
-  obtain ⟨n, hn⟩ := Nat.exists_eq_succ_of_ne_zero (Monoid.omegaPowExponent_pos m).ne'
-  rw [Monoid.omegaPow_eq_pow, hn, hm.pow_succ_eq]
-
 /-- The range of the embedding is a subsemigroup, hence closed under positive powers. -/
 private theorem pow_succ_mem_range {m : L.SyntacticMonoid}
     (hm : m ∈ Set.range L.syntacticSemigroupToMonoid) (n : ℕ) :
@@ -267,7 +262,7 @@ theorem isDefinite_syntacticSemigroup_iff_omegaDefiniteEquation :
     rw [map_mul, syntacticSemigroupToMonoid_apply, syntacticSemigroupToMonoid_apply]
     have hpin := h (L.syntacticClass t.toFreeMonoid.toList) u.toFreeMonoid.toList
       (toList_toFreeMonoid_ne_nil u)
-    rwa [omegaPow_eq_self hidem] at hpin
+    rwa [hidem.omegaPow_eq] at hpin
 
 /-- **The two algebraizations of K agree** — the mirror of
 `isDefinite_syntacticSemigroup_iff_omegaDefiniteEquation`. -/
@@ -289,7 +284,7 @@ theorem isReverseDefinite_syntacticSemigroup_iff_omegaReverseDefiniteEquation :
     rw [map_mul, syntacticSemigroupToMonoid_apply, syntacticSemigroupToMonoid_apply]
     have hpin := h (L.syntacticClass t.toFreeMonoid.toList) u.toFreeMonoid.toList
       (toList_toFreeMonoid_ne_nil u)
-    rwa [omegaPow_eq_self hidem] at hpin
+    rwa [hidem.omegaPow_eq] at hpin
 
 end OmegaEquations
 
