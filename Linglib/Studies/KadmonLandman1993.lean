@@ -1,7 +1,6 @@
 import Linglib.Semantics.Entailment.NaturalLogic
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Polarity.Item
-import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Entailment.StrawsonEntailment
 import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Semantics.Supervaluation
@@ -169,7 +168,7 @@ theorem sorry_licenses_any (dox bestOf : World → Set World) :
 blocks it. K&L adopt Ladusaw's convention that the DE pattern need only hold
 of the sentence minus its factive presupposition. -/
 theorem sorry_not_classically_de :
-    ¬IsDownwardEntailing
+    ¬Antitone
       (sorryFull (fun (w : World) => ({w} : Set World))
                  (fun (_ : World) => ({World.w1} : Set World))) :=
   sorryFull_not_de
@@ -228,7 +227,7 @@ subscribes to any newspaper, he gets well informed" — widening *newspaper* to
 include unimportant newspapers strengthens the conditional. -/
 theorem conditional_satisfies_strengthening {W : Type*}
     (domain : W → Set W) (β : Set W) :
-    IsDownwardEntailing (λ α => condNecessity domain α β) :=
+    Antitone (λ α => condNecessity domain α β) :=
   conditional_antecedent_antitone domain β
 
 /-- A conditional with an implicit restriction (K&L's (147)): true iff every

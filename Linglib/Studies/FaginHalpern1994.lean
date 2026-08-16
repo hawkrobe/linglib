@@ -176,7 +176,7 @@ def Nonnegative {W E : Type*} (kp : KripkeKP W E) : Prop :=
     By reducing to Mathlib's `Monotone`, this connects to the same
     abstract notion used throughout linglib:
 
-    - `IsUpwardEntailing = Monotone` (`Entailment/Polarity.lean`)
+    - `Monotone`
     - `ScopeUpwardMono ↔ ∀ R, Monotone (q R)` (`Core/Quantification.lean`)
     - `IsSumHom.monotone : Monotone f` (`Semantics/Mereology.lean`)
     - `MeasureMonotone ↔ ∀ i w, Monotone (wcr i w)` (this definition)

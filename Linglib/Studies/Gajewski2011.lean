@@ -311,8 +311,7 @@ theorem all_conditions_reduce_to_DE_when_trivial {W : Type*}
 The paper's §2 establishes:
 - `IsAntiAdditive f := ∀ p q, f (p ∪ q) ↔ f p ∧ f q`
   (eq. 10; in linglib: `Semantics/Entailment/AntiAdditivity.lean`).
-- `IsDownwardEntailing f := Antitone f` (eq. 4; in linglib:
-  `Semantics/Entailment/Polarity.lean`).
+- `Antitone f` (eq. 4; mathlib's own predicate).
 - AA ⇒ DE (eq. 11): standard textbook proof — already in linglib as
   `IsAntiAdditive.antitone`.
 - Zwarts: strong NPIs (`either`, `in weeks`, until) need AA licensers (eq. 8).

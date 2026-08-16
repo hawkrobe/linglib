@@ -1,5 +1,5 @@
 import Linglib.Semantics.Exhaustification.Operators.Basic
-import Linglib.Semantics.Entailment.Polarity
+import Linglib.Semantics.Entailment.NaturalLogic
 
 /-!
 # Spector (2016): Worked examples of exhaustivity operators
@@ -34,7 +34,7 @@ table of `MaximizeStrengthExample` records.
 namespace Spector2016
 
 open Exhaustification
-open Entailment (ContextPolarity)
+open NaturalLogic (ContextPolarity)
 
 -- ----------------------------------------------------------------------------
 -- 1: SOME/ALL SCALE

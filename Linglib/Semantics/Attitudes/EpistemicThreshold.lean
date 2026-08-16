@@ -360,8 +360,8 @@ The witness that the two diverge is `confidence_not_probabilistic` below.
     `(W → Bool)` (a `SemilatticeInf`), since `a ≤ b ↔ a ⊓ b = a`.
 
     By using Mathlib's `Monotone`, this connects to the same abstract
-    notion used throughout linglib: `IsUpwardEntailing = Monotone`
-    (`Entailment/Polarity.lean`), `MeasureMonotone = ∀ i w, Monotone`
+    notion used throughout linglib: `Monotone`,
+    `MeasureMonotone = ∀ i w, Monotone`
     (`KnowledgeProbability.lean`), etc. -/
 def isProbabilistic (cr : AgentCredence E W) : Prop :=
   ∀ (a : E), Monotone (cr a)

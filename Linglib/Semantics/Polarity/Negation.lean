@@ -26,8 +26,6 @@ coherent architecture with three layers:
 - `Mathlib.Data.Set.Basic` — set complement (`pᶜ`) is the canonical
   propositional negation (no custom `pnot` wrapper)
 - `NaturalLogic` — `DEStrength` (weak/antiAdditive/antiMorphic)
-- `Entailment` — `IsDE = Antitone`,
-  `IsUE = Monotone`, `pnot_isDownwardEntailing`
 - `Entailment` — `IsAntiAdditive`,
   `IsAntiMorphic`, `pnot_isAntiMorphic`
 -/
@@ -36,9 +34,8 @@ namespace Negation
 
 open Negation (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile standardNegProfile)
-open NaturalLogic (DEStrength)
+open Polarity (DEStrength)
 open Entailment (World)
-open Entailment (IsDE IsUE pnot_isDownwardEntailing)
 open Entailment (IsAntiAdditive IsAntiMorphic
   pnot_isAntiAdditive pnot_isAntiMorphic)
 

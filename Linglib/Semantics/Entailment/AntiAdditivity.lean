@@ -6,7 +6,6 @@ import Mathlib.Data.Finset.Card
 import Mathlib.Data.Fintype.Basic
 import Linglib.Semantics.Entailment.NaturalLogic
 import Linglib.Semantics.Entailment.Basic
-import Linglib.Semantics.Entailment.Polarity
 
 /-!
 # The DE < anti-additive < anti-morphic hierarchy
@@ -255,6 +254,10 @@ theorem pnot_isAntiMultiplicative : IsAntiMultiplicative pnot := fun p q => by
 theorem pnot_isAntiMorphic : IsAntiMorphic pnot :=
   ⟨pnot_isAntiAdditive, pnot_isAntiMultiplicative⟩
 
+/-- Negation is antitone (downward entailing). -/
+theorem pnot_antitone : Antitone pnot :=
+  pnot_isAntiAdditive.antitone
+
 /-- "No A is B" = ∀x. A(x) → ¬B(x). -/
 def no' (restr : Set World) (scope : Set World) : Set World :=
   λ _ => ∀ x ∈ allWorlds, ¬ (restr x ∧ scope x)
@@ -278,8 +281,8 @@ theorem no_isAntiAdditive_scope : IsAntiAdditive no_student := by
     | inl hp => exact h1 x hx ⟨hr, hp⟩
     | inr hq => exact h2 x hx ⟨hr, hq⟩
 
-/-- "No" is DE in scope. -/
-theorem no_isDE_scope : IsDE no_student :=
+/-- "No" is antitone in scope. -/
+theorem no_antitone_scope : Antitone no_student :=
   no_isAntiAdditive_scope.antitone
 
 /-- "At most n A's are B" - true if at most n worlds satisfy both.
@@ -304,8 +307,8 @@ theorem atMost_mono (n : Nat) (restr p q : Set World)
 def atMost2_student : Set World → Set World :=
   λ scope => λ _ => atMost 2 p01 scope
 
-/-- "At most n" is DE in scope. -/
-theorem atMost_isDE_scope : IsDE atMost2_student := by
+/-- "At most n" is antitone in scope. -/
+theorem atMost_antitone_scope : Antitone atMost2_student := by
   intro p q hpq _w h
   exact atMost_mono 2 p01 p q (fun _ hp => hpq hp) h
 
@@ -313,8 +316,8 @@ theorem atMost_isDE_scope : IsDE atMost2_student := by
 def atMost1_student : Set World → Set World :=
   λ scope => λ _ => atMost 1 p01 scope
 
-/-- "At most 1" is still DE. -/
-theorem atMost1_isDE_scope : IsDE atMost1_student := by
+/-- "At most 1" is still antitone. -/
+theorem atMost1_antitone_scope : Antitone atMost1_student := by
   intro p q hpq _w h
   exact atMost_mono 1 p01 p q (fun _ hp => hpq hp) h
 

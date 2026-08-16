@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Features.LicensingContext
-import Linglib.Semantics.Entailment.NaturalLogic
+import Linglib.Semantics.Polarity.Strength
 
 /-!
 # Polarity items
@@ -107,7 +107,7 @@ structure Item where
   baseForce : BaseForce
   /-- Minimum Zwarts strength of a licensing environment
       (`none` = not strength-licensed). -/
-  licensor : Option NaturalLogic.DEStrength := none
+  licensor : Option DEStrength := none
   /-- Licensed by the generic-indefinite mechanism
       (modals, generics, imperatives, free relatives). -/
   freeChoice : Bool := false
