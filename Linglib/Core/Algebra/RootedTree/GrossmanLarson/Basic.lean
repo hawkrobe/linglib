@@ -95,7 +95,7 @@ insertion, multi-tree `insertion`, GL product, `Mul` instance), with
 `mul_one` and `one_mul` proved in-file.
 
 `mul_assoc_basis` and `mul_assoc` (R-generic, `α : Type*`) live in
-`GrossmanLarsonMonoid.lean`: Foissy coassociativity of Δ^ρ transports
+`GrossmanLarson/Monoid.lean`: Foissy coassociativity of Δ^ρ transports
 back through the GL/CK duality, with base change (`map_product` below)
 descending the basis case to any `CommSemiring R`. The `Semigroup`
 and `Monoid` typeclass instances are registered there.
@@ -504,7 +504,7 @@ noncomputable def product :
 /-! ### Multiplicative structure
 
 The `Mul` instance is registered here; `Semigroup`/`Monoid` are
-registered in `GrossmanLarsonMonoid.lean` once associativity is in
+registered in `GrossmanLarson/Monoid.lean` once associativity is in
 hand. -/
 
 noncomputable instance instMul : Mul (GrossmanLarson R α) where
@@ -792,7 +792,7 @@ theorem of'_mul_of'_nim_form (F₁ F₂ : Forest (Nonplanar α)) :
 /-! ### Associativity
 
 `mul_assoc_basis` and `mul_assoc` (both R-generic, `α : Type*`) are
-proved in `GrossmanLarsonMonoid.lean` from Foissy coassociativity of
+proved in `GrossmanLarson/Monoid.lean` from Foissy coassociativity of
 Δ^ρ through the GL/CK duality, descended to arbitrary `CommSemiring R`
 by base change. The `Semigroup`/`Monoid` instances are registered
 there. -/
