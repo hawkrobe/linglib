@@ -1,9 +1,8 @@
 import Linglib.Core.Algebra.BigOperators.Multiset
 import Linglib.Core.Algebra.RootedTree.BMinus
-import Linglib.Core.Algebra.RootedTree.Coproduct.Pairing
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
-import Linglib.Core.Algebra.RootedTree.GrossmanLarson
-import Linglib.Core.Algebra.RootedTree.GrossmanLarsonSplit
+import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
+import Linglib.Core.Algebra.RootedTree.GrossmanLarson.PairingMul
 
 open RoseTree RoseTree.Nonplanar
 
@@ -23,7 +22,7 @@ calculus of [oudom-guin-2008]).
 * `ConnesKreimer.pairing_product_assoc` — Foissy coassociativity of Δ^ρ
   pushed back through the duality: the two GL triple products pair
   equally against everything (associativity up to separation, closed in
-  `GrossmanLarsonMonoid.lean`).
+  `GrossmanLarson/Monoid.lean`).
 * The `IsAdmissibleCuts cutSummandsN` model instance for the `WithCuts`
   carrier (coassociativity and counit laws from `Coproduct/Pruning.lean`).
 
@@ -297,7 +296,7 @@ Foissy coassociativity of Δ^ρ (`Coproduct/Pruning.lean`) transports back
 through the duality: pairing the two GL triple products against an
 arbitrary element yields the two sides of coassociativity. Separation
 over a characteristic-zero domain and the descent to any `CommSemiring`
-live in `GrossmanLarsonMonoid.lean`. -/
+live in `GrossmanLarson/Monoid.lean`. -/
 
 /-- One duality application under `assoc ∘ rTensor Δ^ρ` (crossed
     orientation: the inner coproduct expansion produces `y ⋆ x`). -/

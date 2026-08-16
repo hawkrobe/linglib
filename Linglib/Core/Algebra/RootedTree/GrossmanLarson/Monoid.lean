@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
-import Linglib.Core.Algebra.RootedTree.GrossmanLarson
-import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
+import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
+import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
 
 open RoseTree RoseTree.Nonplanar
 
@@ -79,9 +79,9 @@ theorem mul_assoc {R : Type*} [CommSemiring R]
 /-! ### `Semigroup` and `Monoid` instances
 
 With associativity proved, register the typeclass instances. The
-underlying `Mul` is the existing `instMul` from `GrossmanLarson.lean`
+underlying `Mul` is the existing `instMul` from `Basic.lean`
 (so no `Semigroup.mul`-vs-`instMul` diamond). `One` is forwarded from
-`ConnesKreimer` via `instOne` (also in `GrossmanLarson.lean`). -/
+`ConnesKreimer` via `instOne` (also in `Basic.lean`). -/
 
 /- Low priority: `GrossmanLarson` is a semireducible alias of `ConnesKreimer`,
 so these instances can capture `ConnesKreimer`-goals carrying metavariables
