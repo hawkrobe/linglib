@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Algebra.Group.Semigroup.Pseudovariety`.
 -/
-import Linglib.Core.Algebra.Semigroup.IdempotentPower
+import Linglib.Core.Algebra.Group.IdempotentPower
 import Mathlib.Algebra.Group.Prod
 import Mathlib.Algebra.Group.PUnit
 
