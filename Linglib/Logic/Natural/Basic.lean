@@ -1,4 +1,6 @@
+import Mathlib.Data.Finset.Basic
 import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Tactic.DeriveFintype
 import Mathlib.Algebra.BigOperators.Group.List.Defs
 import Mathlib.Data.Nat.Basic
 
@@ -12,16 +14,17 @@ calculus: `join` chains relations, `project` pushes a relation through a
 function of known signature, and `compose` — derived from `project` by
 probing, so `projection_composition` holds by construction — makes the
 signatures a monoid (identity `addMult`, `all` absorbing). Both
-`Refines` orders are partial orders with `#` (resp. `•`) at top; there
-is no bottom (`≡` does not refine the exclusion relations). Semantic
+implication orders arise as reverse inclusion of constraint sets via
+`PartialOrder.lift`, with `#` (resp. `•`) at top and no bottom (`≡`
+does not entail the exclusion relations). Semantic
 certification lives in `Logic/Natural/Soundness.lean`:
 `NLRelation.Holds.join` for the join table, the `soundFor_*` row
 theorems for projection.
 
 ## Main declarations
 
-* `NLRelation`, `NLRelation.join`, `NLRelation.Refines` — the relation
-  algebra.
+* `NLRelation`, `NLRelation.join`, `NLRelation.constraints` — the
+  relation algebra, ordered by reverse constraint inclusion.
 * `EntailmentSig`, `EntailmentSig.project`, `EntailmentSig.compose` —
   signatures, projection, and the composition monoid.
 * `EntailmentSig.contextProjectivity` — a position's signature as the
@@ -56,85 +59,52 @@ inductive NLRelation where
   | alternation -- | : disjoint (A ∩ B = ∅)
   | cover       -- ⌣ : exhaustive (A ∪ B = U)
   | independent -- # : none of the above
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 namespace NLRelation
 
-/--
-Informativity ordering on NL relations.
+/-- The atomic lattice constraints a relation can impose
+([icard-2012] Definition 1.2). -/
+inductive Atom where
+  | le
+  | ge
+  | disjoint
+  | codisjoint
+  deriving DecidableEq, Fintype, Repr
 
-R ≤ R' means R is at least as informative as R'. The lattice has ≡ at
-# at the top (least informative); there is no bottom — the two diamonds
-(≡ over ⊑/⊒, ^ over |/⌣) meet only at #.
+/-- The constraint set of a relation: each relation is the conjunction
+of its atoms (`≡` = `{le, ge}`, `^` = `{disjoint, codisjoint}`, `#` =
+`∅`), `≤` is reverse inclusion of constraint sets, and `Holds` (in
+`Logic/Natural/Soundness.lean`) is their conjunction. -/
+def constraints : NLRelation → Finset Atom
+  | .equiv => {.le, .ge}
+  | .forward => {.le}
+  | .reverse => {.ge}
+  | .negation => {.disjoint, .codisjoint}
+  | .alternation => {.disjoint}
+  | .cover => {.codisjoint}
+  | .independent => ∅
 
-`Refines R R'` is the implication ordering ([icard-2012] §1): `xRy`
-entails `xR'y` (certified semantically by `NLRelation.Holds.of_refines`
-in `Logic/Natural/Soundness.lean`). ≡ refines the inclusion
-relations but not the exclusion relations (`x = y` does not make `x`,`y`
-disjoint or exhaustive); ^ refines both | and ⌣.
--/
-def Refines : NLRelation → NLRelation → Prop
-  | .equiv, .equiv | .equiv, .forward
-  | .equiv, .reverse | .equiv, .independent => True
-  | .forward, .forward | .forward, .independent => True
-  | .reverse, .reverse | .reverse, .independent => True
-  | .negation, .negation | .negation, .alternation
-  | .negation, .cover | .negation, .independent => True
-  | .alternation, .alternation | .alternation, .independent => True
-  | .cover, .cover | .cover, .independent => True
-  | .independent, .independent => True
-  | _, _ => False
+theorem constraints_injective : Function.Injective constraints := by decide
 
-instance : DecidableRel (α := NLRelation) Refines := fun a b =>
-  match a, b with
-  | .equiv, .equiv | .equiv, .forward | .equiv, .reverse
-  | .equiv, .independent => isTrue trivial
-  | .forward, .forward | .forward, .independent => isTrue trivial
-  | .reverse, .reverse | .reverse, .independent => isTrue trivial
-  | .negation, .negation | .negation, .alternation
-  | .negation, .cover | .negation, .independent => isTrue trivial
-  | .alternation, .alternation | .alternation, .independent => isTrue trivial
-  | .cover, .cover | .cover, .independent => isTrue trivial
-  | .independent, .independent => isTrue trivial
-  | .equiv, .negation | .equiv, .alternation | .equiv, .cover
-  | .forward, .equiv | .forward, .reverse | .forward, .negation
-  | .forward, .alternation | .forward, .cover
-  | .reverse, .equiv | .reverse, .forward | .reverse, .negation
-  | .reverse, .alternation | .reverse, .cover
-  | .negation, .equiv | .negation, .forward | .negation, .reverse
-  | .alternation, .equiv | .alternation, .forward | .alternation, .reverse
-  | .alternation, .negation | .alternation, .cover
-  | .cover, .equiv | .cover, .forward | .cover, .reverse
-  | .cover, .negation | .cover, .alternation
-  | .independent, .equiv | .independent, .forward | .independent, .reverse
-  | .independent, .negation | .independent, .alternation | .independent, .cover
-    => isFalse not_false
+/-- The implication order ([icard-2012]'s ≪): `R ≤ R'` iff `xRy` entails
+`xR'y` — reverse inclusion of constraint sets, certified semantically by
+`NLRelation.Holds.of_le`. `#` is the top; there is no bottom: the two
+diamonds (`≡` over `⊑`/`⊒`, `^` over `|`/`⌣`) meet only at `#`, since
+`x = y` makes `x`,`y` neither disjoint nor exhaustive. -/
+instance : PartialOrder NLRelation :=
+  .lift (fun R => OrderDual.toDual (constraints R))
+    (OrderDual.toDual.injective.comp constraints_injective)
 
-instance : LE NLRelation := ⟨Refines⟩
+theorem le_iff {R R' : NLRelation} :
+    R ≤ R' ↔ constraints R' ⊆ constraints R := Iff.rfl
 
-instance decidableLE (a b : NLRelation) : Decidable (a ≤ b) :=
-  inferInstanceAs (Decidable (Refines a b))
+instance : DecidableLE NLRelation := fun _ _ =>
+  decidable_of_iff _ le_iff.symm
 
-private theorem Refines_refl (a : NLRelation) : Refines a a := by
-  cases a <;> decide
-
-private theorem Refines_trans (a b c : NLRelation) :
-    Refines a b → Refines b c → Refines a c := by
-  cases a <;> cases b <;> cases c <;> decide
-
-private theorem Refines_antisymm (a b : NLRelation) :
-    Refines a b → Refines b a → a = b := by
-  cases a <;> cases b <;> decide
-
-instance : Preorder NLRelation where
-  le := Refines
-  le_refl := Refines_refl
-  le_trans := Refines_trans
-instance : PartialOrder NLRelation where
-  le_antisymm := Refines_antisymm
-instance : Top NLRelation := ⟨.independent⟩
 instance : OrderTop NLRelation where
-  le_top a := show Refines a .independent by cases a <;> trivial
+  top := .independent
+  le_top _ := le_iff.mpr (Finset.empty_subset _)
 
 /--
 Join operation ⋈ ([icard-2012], Lemma 1.5): given `xRy` and `yR'z`, the
@@ -228,97 +198,55 @@ inductive EntailmentSig where
   | antiMult      -- ⊟ : anti-multiplicative
   | addMult       -- ⊕⊞ : additive + multiplicative (morphism)
   | antiAddMult   -- ◇⊟ : anti-additive + anti-multiplicative (anti-morphism)
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 namespace EntailmentSig
 
-/--
-Refinement ordering on entailment signatures: `σ.Refines τ` iff every
-σ-function is a τ-function ([icard-2012]'s ≼, §2.2). `addMult`/`antiAddMult`
-are the most specific elements of their halves; `all` (•, any function) is
-the top — every class is contained in it. Certified semantically by
-`EntailmentSig.SoundFor.of_refines` in `Logic/Natural/Soundness.lean`.
--/
-def Refines : EntailmentSig → EntailmentSig → Prop
-  | _, .all => True
-  | .addMult, .addMult | .addMult, .additive
-  | .addMult, .mult | .addMult, .mono => True
-  | .antiAddMult, .antiAddMult | .antiAddMult, .antiAdd
-  | .antiAddMult, .antiMult | .antiAddMult, .anti => True
-  | .additive, .additive | .additive, .mono => True
-  | .mult, .mult | .mult, .mono => True
-  | .antiAdd, .antiAdd | .antiAdd, .anti => True
-  | .antiMult, .antiMult | .antiMult, .anti => True
-  | .mono, .mono => True
-  | .anti, .anti => True
-  | _, _ => False
+/-- The function properties a signature can assert, closed under
+implication (an additive function is monotone, so `⊕`'s set contains
+`monotone`). -/
+inductive Property where
+  | monotone
+  | antitone
+  | additive
+  | multiplicative
+  | antiAdditive
+  | antiMultiplicative
+  deriving DecidableEq, Fintype, Repr
 
-instance : DecidableRel (α := EntailmentSig) Refines := fun a b =>
-  match a, b with
-  | .all, .all | .mono, .all | .anti, .all | .additive, .all
-  | .antiAdd, .all | .mult, .all | .antiMult, .all
-  | .addMult, .all | .antiAddMult, .all => isTrue trivial
-  | .addMult, .addMult | .addMult, .additive
-  | .addMult, .mult | .addMult, .mono => isTrue trivial
-  | .antiAddMult, .antiAddMult | .antiAddMult, .antiAdd
-  | .antiAddMult, .antiMult | .antiAddMult, .anti => isTrue trivial
-  | .additive, .additive | .additive, .mono => isTrue trivial
-  | .mult, .mult | .mult, .mono => isTrue trivial
-  | .antiAdd, .antiAdd | .antiAdd, .anti => isTrue trivial
-  | .antiMult, .antiMult | .antiMult, .anti => isTrue trivial
-  | .mono, .mono => isTrue trivial
-  | .anti, .anti => isTrue trivial
-  | .all, .mono | .all, .anti | .all, .additive
-  | .all, .antiAdd | .all, .mult | .all, .antiMult
-  | .all, .addMult | .all, .antiAddMult => isFalse not_false
-  | .mono, .anti | .mono, .additive
-  | .mono, .antiAdd | .mono, .mult | .mono, .antiMult
-  | .mono, .addMult | .mono, .antiAddMult => isFalse not_false
-  | .anti, .mono | .anti, .additive
-  | .anti, .antiAdd | .anti, .mult | .anti, .antiMult
-  | .anti, .addMult | .anti, .antiAddMult => isFalse not_false
-  | .additive, .anti | .additive, .antiAdd
-  | .additive, .mult | .additive, .antiMult
-  | .additive, .addMult | .additive, .antiAddMult => isFalse not_false
-  | .antiAdd, .mono | .antiAdd, .additive
-  | .antiAdd, .mult | .antiAdd, .antiMult
-  | .antiAdd, .addMult | .antiAdd, .antiAddMult => isFalse not_false
-  | .mult, .anti | .mult, .additive
-  | .mult, .antiAdd | .mult, .antiMult
-  | .mult, .addMult | .mult, .antiAddMult => isFalse not_false
-  | .antiMult, .mono | .antiMult, .additive
-  | .antiMult, .antiAdd | .antiMult, .mult
-  | .antiMult, .addMult | .antiMult, .antiAddMult => isFalse not_false
-  | .addMult, .anti | .addMult, .antiAdd
-  | .addMult, .antiMult | .addMult, .antiAddMult => isFalse not_false
-  | .antiAddMult, .mono | .antiAddMult, .additive
-  | .antiAddMult, .mult | .antiAddMult, .addMult => isFalse not_false
+/-- The property set of a signature: `≤` is reverse inclusion, so
+`addMult`/`antiAddMult` are the most specific elements of their halves
+and `all` (`•`, no property) is the top. -/
+def properties : EntailmentSig → Finset Property
+  | .all => ∅
+  | .mono => {.monotone}
+  | .anti => {.antitone}
+  | .additive => {.monotone, .additive}
+  | .mult => {.monotone, .multiplicative}
+  | .antiAdd => {.antitone, .antiAdditive}
+  | .antiMult => {.antitone, .antiMultiplicative}
+  | .addMult => {.monotone, .additive, .multiplicative}
+  | .antiAddMult => {.antitone, .antiAdditive, .antiMultiplicative}
 
-instance : LE EntailmentSig := ⟨Refines⟩
+theorem properties_injective : Function.Injective properties := by decide
 
-instance decidableLE (a b : EntailmentSig) : Decidable (a ≤ b) :=
-  inferInstanceAs (Decidable (Refines a b))
+/-- The refinement order ([icard-2012]'s ≼, §2.2): `σ ≤ τ` iff every
+σ-function is a τ-function — reverse inclusion of property sets,
+certified semantically by `EntailmentSig.SoundFor.of_le` in
+`Logic/Natural/Soundness.lean`. -/
+instance : PartialOrder EntailmentSig :=
+  .lift (fun σ => OrderDual.toDual (properties σ))
+    (OrderDual.toDual.injective.comp properties_injective)
 
-private theorem Refines_refl (a : EntailmentSig) : Refines a a := by
-  cases a <;> decide
+theorem le_iff {σ τ : EntailmentSig} :
+    σ ≤ τ ↔ properties τ ⊆ properties σ := Iff.rfl
 
-private theorem Refines_trans (a b c : EntailmentSig) :
-    Refines a b → Refines b c → Refines a c := by
-  cases a <;> cases b <;> cases c <;> decide
+instance : DecidableLE EntailmentSig := fun _ _ =>
+  decidable_of_iff _ le_iff.symm
 
-private theorem Refines_antisymm (a b : EntailmentSig) :
-    Refines a b → Refines b a → a = b := by
-  cases a <;> cases b <;> decide
-
-instance : Preorder EntailmentSig where
-  le := Refines
-  le_refl := Refines_refl
-  le_trans := Refines_trans
-instance : PartialOrder EntailmentSig where
-  le_antisymm := Refines_antisymm
-instance : Top EntailmentSig := ⟨.all⟩
 instance : OrderTop EntailmentSig where
-  le_top a := show Refines a .all by cases a <;> trivial
+  top := .all
+  le_top _ := le_iff.mpr (Finset.empty_subset _)
 
 /--
 Projection of a NL relation through a function of given signature
