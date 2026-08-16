@@ -222,6 +222,18 @@ theorem pairing_nondegenerate
   · exact hx
   · exact absurd hx hauts_ne
 
+section Ring
+variable {R : Type*} [CommRing R] [CharZero R] [NoZeroDivisors R]
+
+/-- Separation form of `pairing_nondegenerate`: elements pairing equally
+    against everything are equal. -/
+theorem ext_pairing_right {x y : ConnesKreimer R (Nonplanar α)}
+    (h : ∀ z, pairing (R := R) x z = pairing y z) : x = y :=
+  sub_eq_zero.mp <| pairing_nondegenerate _ fun z => by
+    rw [map_sub, LinearMap.sub_apply, h, sub_self]
+
+end Ring
+
 /-! ### Product rule
 
 Pairing against a CK product decomposes over the two-sided sub-multiset

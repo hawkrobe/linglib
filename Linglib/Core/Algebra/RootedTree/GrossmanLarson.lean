@@ -95,10 +95,9 @@ insertion, multi-tree `insertion`, GL product, `Mul` instance), with
 `mul_one` and `one_mul` proved in-file.
 
 `mul_assoc_basis` and `mul_assoc` (R-generic, `α : Type*`) live in
-`GrossmanLarsonMonoid.lean`, proved sorry-free via the OudomGuin / PBW
-bridge in `OudomGuinBridge.lean`
-(`mul_assoc_basis_via_oudom_guin_pbw`) lifted to arbitrary
-`CommSemiring R` by multiset-coefficient extraction. The `Semigroup`
+`GrossmanLarsonMonoid.lean`: Foissy coassociativity of Δ^ρ transports
+back through the GL/CK duality, with base change (`map_product` below)
+descending the basis case to any `CommSemiring R`. The `Semigroup`
 and `Monoid` typeclass instances are registered there.
 -/
 
@@ -743,11 +742,10 @@ theorem one_mul (F : GrossmanLarson R α) : (1 : GrossmanLarson R α) * F = F :=
 /-! ### Associativity
 
 `mul_assoc_basis` and `mul_assoc` (both R-generic, `α : Type*`) are
-proved sorry-free in `GrossmanLarsonMonoid.lean` via the Oudom-Guin
-/ PBW route — see `OudomGuinBridge.lean`'s
-`mul_assoc_basis_via_oudom_guin_pbw` (Q6 for `R = ℤ`), lifted to arbitrary
-`CommSemiring R` via multiset-coefficient extraction. The
-`Semigroup`/`Monoid` instances are registered there. -/
+proved in `GrossmanLarsonMonoid.lean` from Foissy coassociativity of
+Δ^ρ through the GL/CK duality, descended to arbitrary `CommSemiring R`
+by base change. The `Semigroup`/`Monoid` instances are registered
+there. -/
 
 /-! ### Base change
 
@@ -763,12 +761,14 @@ omit [DecidableEq α] in
     ConnesKreimer.map f (of' (R := R) F : GrossmanLarson R α) = of' F :=
   ConnesKreimer.map_of' f F
 
+omit [DecidableEq α] in
 theorem map_insertionBasis (F G : Forest (Nonplanar α)) :
     ConnesKreimer.map f (insertionBasis (R := R) F G) = insertionBasis F G := by
   unfold insertionBasis
   rw [ConnesKreimer.map_multiset_sum, Multiset.map_map]
   exact congrArg Multiset.sum (Multiset.map_congr rfl fun F' _ => map_of' f F')
 
+omit [DecidableEq α] in
 theorem map_insertion (x : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
     ConnesKreimer.map f (insertion x (of' (R := R) G)) =
       insertion (ConnesKreimer.map f x) (of' G) := by

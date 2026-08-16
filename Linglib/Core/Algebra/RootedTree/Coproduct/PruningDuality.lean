@@ -2,7 +2,7 @@ import Linglib.Core.Algebra.BigOperators.Multiset
 import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pairing
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
-import Linglib.Core.Algebra.RootedTree.GrossmanLarsonMonoid
+import Linglib.Core.Algebra.RootedTree.GrossmanLarson
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonSplit
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 
@@ -21,6 +21,10 @@ calculus of [oudom-guin-2008]).
 
 * `ConnesKreimer.pairing_gl_eq_pairing_coproduct_Rho` — the duality
   `⟨x ⋆ y, z⟩ = pairing₂ (y ⊗ x) (Δ^ρ z)`.
+* `ConnesKreimer.pairing_product_assoc` — Foissy coassociativity of Δ^ρ
+  pushed back through the duality: the two GL triple products pair
+  equally against everything (associativity up to separation, closed in
+  `GrossmanLarsonMonoid.lean`).
 * The `IsAdmissibleCuts cutSummandsN` model instance for the `WithCuts`
   carrier (coassociativity and counit laws from `Coproduct/Pruning.lean`).
 
@@ -287,6 +291,70 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
                   (ConnesKreimer.of' pq.1.1) (ConnesKreimer.of' pq.2.1),
                 IH _ hC'lt C' rfl
                   (ConnesKreimer.of' pq.1.2) (ConnesKreimer.of' pq.2.2)]
+
+/-! ### Associativity of the GL product, pairing form
+
+Foissy coassociativity of Δ^ρ (`Coproduct/Pruning.lean`) transports back
+through the duality: pairing the two GL triple products against an
+arbitrary element yields the two sides of coassociativity. Separation
+over a characteristic-zero domain and the descent to any `CommSemiring`
+live in `GrossmanLarsonMonoid.lean`. -/
+
+/-- One duality application under `assoc ∘ rTensor Δ^ρ` (crossed
+    orientation: the inner coproduct expansion produces `y ⋆ x`). -/
+private lemma pairing₃_assoc_rTensor_comul_rho
+    (x y z' : ConnesKreimer R (Nonplanar α))
+    (V : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
+        ((TensorProduct.assoc R _ _ _)
+          ((comulAlgHomN (R := R)).toLinearMap.rTensor _ V)) =
+      pairing₂ (R := R) (product y x ⊗ₜ[R] z') V := by
+  induction V using TensorProduct.induction_on with
+  | zero => simp
+  | tmul a b =>
+    rw [LinearMap.rTensor_tmul, AlgHom.toLinearMap_apply, pairing₃_assoc_tmul,
+        ← pairing_gl_eq_pairing_coproduct_Rho y x a, pairing₂_tmul_tmul]
+  | add V₁ V₂ ih₁ ih₂ =>
+    rw [map_add, map_add, map_add, ih₁, ih₂, map_add]
+
+/-- One duality application under `lTensor Δ^ρ` (crossed orientation:
+    produces `z' ⋆ y`). -/
+private lemma pairing₃_lTensor_comul_rho
+    (x y z' : ConnesKreimer R (Nonplanar α))
+    (W : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
+        ((comulAlgHomN (R := R)).toLinearMap.lTensor _ W) =
+      pairing₂ (R := R) (x ⊗ₜ[R] product z' y) W := by
+  induction W using TensorProduct.induction_on with
+  | zero => simp
+  | tmul a b =>
+    rw [LinearMap.lTensor_tmul, AlgHom.toLinearMap_apply, pairing₃_tmul_apply,
+        ← pairing_gl_eq_pairing_coproduct_Rho z' y b, pairing₂_tmul_tmul]
+  | add W₁ W₂ ih₁ ih₂ =>
+    rw [map_add, map_add, ih₁, ih₂, map_add]
+
+/-- **Associativity of the GL product, pairing form**: the two triple
+    products pair equally against everything — Δ^ρ coassociativity
+    (`comulRhoN_coassoc`) pushed through the duality twice on each side. -/
+theorem pairing_product_assoc (x y z w : ConnesKreimer R (Nonplanar α)) :
+    pairing (product x (product y z)) w =
+      pairing (product (product x y) z) w :=
+  calc pairing (product x (product y z)) w
+      = pairing₂ (R := R) (product y z ⊗ₜ[R] x) (comulAlgHomN (R := R) w) :=
+        pairing_gl_eq_pairing_coproduct_Rho x (product y z) w
+    _ = pairing₃ (R := R) (z ⊗ₜ[R] (y ⊗ₜ[R] x))
+          ((TensorProduct.assoc R _ _ _)
+            ((comulAlgHomN (R := R)).toLinearMap.rTensor _
+              ((comulAlgHomN (R := R)).toLinearMap w))) :=
+        (pairing₃_assoc_rTensor_comul_rho z y x _).symm
+    _ = pairing₃ (R := R) (z ⊗ₜ[R] (y ⊗ₜ[R] x))
+          ((comulAlgHomN (R := R)).toLinearMap.lTensor _
+            ((comulAlgHomN (R := R)).toLinearMap w)) :=
+        congrArg _ (LinearMap.congr_fun (comulRhoN_coassoc (R := R) (α := α)) w)
+    _ = pairing₂ (R := R) (z ⊗ₜ[R] product x y) (comulAlgHomN (R := R) w) :=
+        pairing₃_lTensor_comul_rho z y x _
+    _ = pairing (product (product x y) z) w :=
+        (pairing_gl_eq_pairing_coproduct_Rho (product x y) z w).symm
 
 /-- Δ^ρ is the generic coproduct at `cuts := cutSummandsN` — definitional. -/
 theorem comulAlgHomN_eq_G {R : Type*} [CommSemiring R] {α : Type*} :
