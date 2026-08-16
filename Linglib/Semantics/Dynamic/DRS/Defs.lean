@@ -31,9 +31,10 @@ its instantiation at `Condition L V`.
 * `DRS.merge` — the `⊕` operation (set-union referents, concatenate
   conditions); [muskens-1996]'s compositional operation.
 * `DirectlySubordinate`, `Subordinate`, `WeakSubordinate` — immediate
-  subordination (Def. 1.4.10(i), extended to `⇒`/`∨` in Ch. 2) and its
-  `Relation.TransGen` / `ReflTransGen` closures (Def. 1.4.10(ii)). Accessibility
-  (Def. 1.4.11) is host-relative and lives in `DRS/Basic.lean` (`accessibleFrom`).
+  subordination (Def. 1.4.10(i), extended to `⇒`/`∨` by Def. 2.1.2; see the
+  deviation note on `DirectlySubordinate`) and its `Relation.TransGen` /
+  `ReflTransGen` closures (Def. 1.4.10(ii)). Accessibility (Def. 1.4.11) is
+  host-relative and lives in `DRS/Basic.lean` (`accessibleFrom`).
 
 ## Implementation notes
 
@@ -131,8 +132,13 @@ of its sub-boxes. -/
 
 /-- One-step subordination: `DirectlySubordinate K' K` says `K'` is *directly
 subordinate* to `K` — the `neg` case per Def. 1.4.10(i), the `⇒`/`∨` cases per
-its Chapter 2 extension. A relation on DRS values, where the textbook's is on
-box occurrences: on a degenerate `imp a a` the consequent edge makes `a`
+its Chapter 2 extension (Def. 2.1.2). Deviation: Def. 2.1.2 subordinates *both*
+components of an implicative condition to the DRS containing it; here `impCons`
+subordinates the consequent to the *antecedent* instead, folding the `⇒` clause
+of the accessibility definition (Def. 2.1.3(ii)(b)) into the geometry — the
+closure below the host is unchanged, and antecedent referents lie weakly above
+the consequent. A relation on DRS values, where the textbook's is on box
+occurrences: on a degenerate `imp a a` the consequent edge makes `a`
 subordinate to itself. -/
 inductive DirectlySubordinate : DRS L V → DRS L V → Prop where
   /-- The body of a `¬` is directly subordinate to the containing DRS. -/
@@ -140,7 +146,9 @@ inductive DirectlySubordinate : DRS L V → DRS L V → Prop where
   /-- The antecedent of a `⇒` is directly subordinate to the containing DRS. -/
   | impAnte {D a c : DRS L V} : Condition.imp a c ∈ D.conditions → DirectlySubordinate a D
   /-- The consequent of a `⇒` is directly subordinate to its *antecedent* — the
-  asymmetry that makes antecedent referents accessible in the consequent. -/
+  asymmetry that makes antecedent referents accessible in the consequent
+  (Def. 2.1.3(ii)(b), folded into the geometry; Def. 2.1.2 itself subordinates
+  the consequent to `D`). -/
   | impCons {D a c : DRS L V} : Condition.imp a c ∈ D.conditions → DirectlySubordinate c a
   /-- The left disjunct of a `∨` is directly subordinate to the containing DRS. -/
   | disL {D l r : DRS L V} : Condition.dis l r ∈ D.conditions → DirectlySubordinate l D

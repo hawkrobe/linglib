@@ -2,49 +2,39 @@ import Linglib.Semantics.Dynamic.DRS.Dynamics
 import Mathlib.Data.Fin.VecNotation
 
 /-!
-# Kamp & Reyle (1993): From Discourse to Logic
-[kamp-reyle-1993]
+# Kamp & Reyle (1993) [kamp-reyle-1993]
 
-The book's worked examples, evaluated through the faithful model-theoretic DRS core
-(`Semantics/Dynamic/DRS/`). Each truth-condition is a theorem about the substrate
-denotation `DRS.trueRel` (Muskens's relational truth, equivalently `Embedding.Verifies`),
-not a local re-implementation.
+*From Discourse to Logic* interprets discourse by DRS construction and verifies DRSs by
+embeddings into a model. This file evaluates the book's worked examples through the
+substrate denotation `DRS.trueRel` (`Semantics/Dynamic/DRS/`; [muskens-1996]'s
+relational truth, the existential closure of Def. 1.4.5): "Jones owns Ulysses. It
+fascinates him." (1.1) is true of a single owning pair, its pronoun equations adding no
+quantificational force (`ulysses_tc`); "Jones does not own a Porsche." (1.56) is the
+non-existence of a verifying extension (`porsche_tc`), the referent under `¬` being
+inaccessible from the top level while the outer referent stays visible inside
+(`porsche_referent_inaccessible`, `outer_referent_accessible`); and "If a farmer owns a
+donkey he beats it." (2.47) receives the universal reading through the `⇒` verification
+clause of (2.31)/Def. 2.1.4 (`donkey_universal_reading`), the pronoun-completed
+(2.45)-style variant having the same truth conditions (`donkeyPronoun_agree`).
 
-## Examples
-
-1. **Existential persistence**: "A man walked in. He sat down." The indefinite's
-   discourse referent persists across sentences — `∃ e, man e ∧ walked-in e ∧
-   sat-down e` (`persistence_tc`).
-2. **Donkey anaphora**: "If a farmer owns a donkey, he beats it." The `⇒`
-   verification clause (the Chapter 2 conditional semantics) yields the
-   **universal** reading — `∀ farmer-donkey owning pairs, beats`
-   (`donkey_universal_reading`). The antecedent's referents are universally
-   bound and remain accessible in the consequent.
-3. **Negation blocks anaphora**: "A man didn't walk in. *He…" — a referent
-   introduced under negation is inaccessible (`negation_tc`).
-4. **Subordination/accessibility** (Def. 1.4.10/1.4.11): the antecedent and
-   consequent boxes are subordinate to the donkey DRS, the consequent to the
-   antecedent — the geometry licensing donkey anaphora.
-
-## Notes
-
-`decide` handles the *structural* facts (subordination, the concrete model); the
-truth-conditions are *semantic* claims over arbitrary models, hence proved by
-unfolding the verifying-embedding/relational semantics. The merging lemma the
-original tested per-example (`reduce_sound`) is now the single substrate theorem
-`DRS.toRel_merge`; there is no `.seq` syntax (sequencing *is* `DRS.merge`), so the
-compositional-vs-merged equalities are definitional and not re-stated here.
+The structural facts — subordination of the donkey boxes (Def. 1.4.10/2.1.2),
+accessibility (Def. 2.1.3), properness, truth in concrete models — are proved by
+evaluation; the truth-conditions are claims over arbitrary models, proved by unfolding
+the verifying-embedding semantics. Sequencing a discourse is `DRS.merge`, whose
+dynamics is the substrate Merging Lemma `DRS.toRel_merge`, so merged-vs-compositional
+equalities are definitional.
 -/
 
 open FirstOrder FirstOrder.Language
 
 namespace KampReyle1993
 
-/-- The relation symbols of the worked examples. -/
+/-- The relation symbols of the worked examples; names (`jones`, `ulysses`, `porsche`)
+enter as the unary conditions the construction algorithm writes for them (`Jones(x)`). -/
 inductive KRRel : ℕ → Type
-  | man : KRRel 1 | walkedIn : KRRel 1 | satDown : KRRel 1
-  | farmer : KRRel 1 | donkey : KRRel 1 | woman : KRRel 1
-  | owns : KRRel 2 | beats : KRRel 2 | adores : KRRel 2
+  | jones : KRRel 1 | ulysses : KRRel 1 | porsche : KRRel 1
+  | farmer : KRRel 1 | donkey : KRRel 1
+  | owns : KRRel 2 | fascinates : KRRel 2 | beats : KRRel 2
 
 /-- The first-order language of the examples (no functions). -/
 def krLang : Language := ⟨fun _ => Empty, KRRel⟩
@@ -73,42 +63,100 @@ private theorem comp_vecEmpty {α β : Type*} (v : α → β) :
   funext i
   exact i.elim0
 
-/-! ### Existential persistence -/
+/-! ### Names and pronouns: "Jones owns Ulysses. It fascinates him." (1.1) -/
 
-/-- "A¹ man walked in. He₁ sat down." — `[u₁ | man u₁, walked-in u₁, sat-down u₁]`. -/
-def persistence : DRS krLang ℕ :=
-  .mk {1} [.rel .man (![1]), .rel .walkedIn (![1]), .rel .satDown (![1])]
+/-- The completed §1.1 DRS of (1.1) —
+`[u₁ u₂ u₃ u₄ | Jones u₁, Ulysses u₂, u₁ owns u₂, u₃ = u₂, u₄ = u₁, u₃ fascinates u₄]`:
+each name and pronoun introduces a referent; the pronouns *it* and *him* are resolved by
+the (1.17)-style equations to the first sentence's referents. -/
+def ulyssesDiscourse : DRS krLang ℕ :=
+  .mk {1, 2, 3, 4} [.rel .jones (![1]), .rel .ulysses (![2]), .rel .owns (![1, 2]),
+    .eq 3 2, .eq 4 1, .rel .fascinates (![3, 4])]
 
-/-- The indefinite's referent persists: truth is existential over a single entity
-that is a man, walked in, and sat down. -/
-theorem persistence_tc (a : ℕ → M) :
-    DRS.trueRel persistence a ↔ ∃ e : M, rm .man ![e] ∧ rm .walkedIn ![e] ∧ rm .satDown ![e] := by
-  simp only [DRS.trueRel_iff, persistence, DRS.toRel_iff, Box.Extends,
+/-- The (1.1) discourse is true iff a single pair verifies both sentences: the
+pronouns' referents and equations add no quantificational force, and the first
+sentence's referents persist into the second. -/
+theorem ulysses_tc (a : ℕ → M) :
+    DRS.trueRel ulyssesDiscourse a ↔
+      ∃ x y : M, rm .jones ![x] ∧ rm .ulysses ![y] ∧ rm .owns ![x, y] ∧
+        rm .fascinates ![y, x] := by
+  simp only [DRS.trueRel_iff, ulyssesDiscourse, DRS.toRel_iff, Box.Extends,
     Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil, false_implies,
-    implies_true, Embedding.verifies_rel, comp_vecCons, comp_vecEmpty, and_true]
+    implies_true, Embedding.verifies_rel, Embedding.verifies_eq, comp_vecCons,
+    comp_vecEmpty, and_true]
   constructor
-  · rintro ⟨a', _, hm, hw, hs⟩; exact ⟨a' 1, hm, hw, hs⟩
-  · rintro ⟨e, hm, hw, hs⟩
-    refine ⟨Function.update a 1 e, fun x hx => ?_, ?_, ?_, ?_⟩
-    · simp only [Finset.mem_singleton] at hx; exact Function.update_of_ne hx _ _
-    · simpa [Function.update_self] using hm
-    · simpa [Function.update_self] using hw
-    · simpa [Function.update_self] using hs
+  · rintro ⟨a', -, hj, hu, ho, h32, h41, hf⟩
+    rw [h32, h41] at hf
+    exact ⟨a' 1, a' 2, hj, hu, ho, hf⟩
+  · rintro ⟨x, y, hj, hu, ho, hf⟩
+    exact ⟨fun n => match n with | 1 => x | 2 => y | 3 => y | 4 => x | n => a n,
+      fun z hz => by dsimp only; split <;> simp_all, hj, hu, ho, rfl, rfl, hf⟩
 
-/-! ### Donkey anaphora (universal reading) -/
+/-- The completed (1.1) DRS is proper (Def. 1.4.2–1.4.3): every referent the conditions
+use is introduced by the discourse itself. -/
+theorem ulysses_proper : ulyssesDiscourse.IsProper := by
+  simp [DRS.IsProper, ulyssesDiscourse]; decide
+
+/-! ### Negation blocks anaphora: "Jones does not own a Porsche." (1.56) -/
+
+/-- The box under `¬` in (1.57): `[u₂ | Porsche u₂, u₁ owns u₂]`. -/
+def porscheNeg : DRS krLang ℕ := .mk {2} [.rel .porsche (![2]), .rel .owns (![1, 2])]
+
+/-- The DRS (1.57) of (1.56) — `[u₁ | Jones u₁, ¬[u₂ | Porsche u₂, u₁ owns u₂]]`: the
+indefinite's referent is introduced *inside* the negation. -/
+def porscheDiscourse : DRS krLang ℕ := .mk {1} [.rel .jones (![1]), .neg porscheNeg]
+
+/-- Truth of (1.57): there is *no* Porsche that Jones owns — the negated box is
+verified by the non-existence of a verifying extension. -/
+theorem porsche_tc (a : ℕ → M) :
+    DRS.trueRel porscheDiscourse a ↔
+      ∃ x : M, rm .jones ![x] ∧ ¬ ∃ y : M, rm .porsche ![y] ∧ rm .owns ![x, y] := by
+  simp only [DRS.trueRel_iff, porscheDiscourse, porscheNeg, DRS.toRel_iff, Box.Extends,
+    Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil, false_implies,
+    implies_true, Embedding.verifies_neg, Embedding.verifies_rel, comp_vecCons,
+    comp_vecEmpty, and_true]
+  constructor
+  · rintro ⟨a', -, hj, hneg⟩
+    exact ⟨a' 1, hj, fun ⟨y, hp, ho⟩ => hneg
+      ⟨fun n => match n with | 2 => y | n => a' n,
+        fun z hz => by dsimp only; split <;> simp_all, hp, ho⟩⟩
+  · rintro ⟨x, hj, hn⟩
+    refine ⟨fun n => match n with | 1 => x | n => a n,
+      fun z hz => by dsimp only; split <;> simp_all, hj, fun ⟨g, hag, hp, ho⟩ => hn ⟨g 2, hp, ?_⟩⟩
+    rw [hag 1 (by simp)] at ho
+    exact ho
+
+/-- From the top-level position, the referent trapped under `¬` is not accessible
+(Def. 2.1.3) — the reason a continuation "*It fascinates him." cannot resolve *it*. -/
+theorem porsche_referent_inaccessible : ¬ DRS.Accessible porscheDiscourse 1 2 := by
+  simp [DRS.Accessible, DRS.accessibleFrom, DRS.accScope, porscheDiscourse]
+
+/-- Accessibility looks "left and up": from inside the negation, the outer referent
+*is* accessible — the asymmetry of Def. 2.1.3. -/
+theorem outer_referent_accessible : DRS.Accessible porscheDiscourse 2 1 := by
+  simp [DRS.Accessible, DRS.accessibleFrom, DRS.accScope, porscheDiscourse, porscheNeg,
+    Condition.accScopeL, Condition.accScope, Option.orElse]
+
+/-- A continuation resolved to the trapped referent anyway is improper
+(Def. 1.4.2–1.4.3): merging "It fascinates him." with *it* forced to `u₂` leaves `u₂`
+free. -/
+theorem continuation_improper :
+    ¬ (porscheDiscourse.merge (.mk ∅ [.rel .fascinates (![2, 1])])).IsProper := by
+  simp [DRS.IsProper, DRS.merge, porscheDiscourse, porscheNeg]; decide
+
+/-! ### Donkey anaphora: "If a farmer owns a donkey he beats it." (2.47) -/
 
 /-- The antecedent box `[u₁ u₂ | farmer u₁, donkey u₂, owns u₁ u₂]`. -/
 def donkeyAnte : DRS krLang ℕ :=
   .mk {1, 2} [.rel .farmer (![1]), .rel .donkey (![2]), .rel .owns (![1, 2])]
-/-- The consequent box `[ | beats u₁ u₂]` (introduces no referents). -/
+/-- The consequent box `[ | beats u₁ u₂]` (pronouns resolved directly, (2.44)-style). -/
 def donkeyCons : DRS krLang ℕ := .mk ∅ [.rel .beats (![1, 2])]
-/-- "If a¹ farmer owns a² donkey, he₁ beats it₂." — `[ | donkeyAnte ⇒ donkeyCons]`. -/
+/-- (2.47) as `[ | donkeyAnte ⇒ donkeyCons]`. -/
 def donkey : DRS krLang ℕ := .mk ∅ [.imp donkeyAnte donkeyCons]
 
-/-- The donkey universal reading: the `⇒` verification clause (the Chapter 2
-conditional semantics) makes the antecedent's existentials universal — every
-owning farmer-donkey pair satisfies `beats`. The empty-universe consequent
-reuses the antecedent's values (the anaphora). -/
+/-- The donkey universal reading: the `⇒` verification clause ((2.31)/Def. 2.1.4) makes
+the antecedent's existentials universal — every owning farmer-donkey pair satisfies
+`beats`. The empty-universe consequent reuses the antecedent's values (the anaphora). -/
 theorem donkey_universal_reading (a : ℕ → M) :
     DRS.trueRel donkey a ↔
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
@@ -118,56 +166,76 @@ theorem donkey_universal_reading (a : ℕ → M) :
     false_implies, implies_true, Embedding.verifies_imp, Embedding.verifies_rel,
     comp_vecCons, comp_vecEmpty, and_true]
   constructor
-  · rintro ⟨a', _, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
-    set v' := Function.update (Function.update a' 1 e₁) 2 e₂ with hv'
-    have h1 : v' 1 = e₁ := by simp [hv', Function.update_of_ne, Function.update_self]
-    have h2 : v' 2 = e₂ := by simp [hv', Function.update_self]
-    obtain ⟨v'', hag, hb⟩ := himp v' (fun x hx => by
-        simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hx
-        simp [hv', Function.update_of_ne hx.1, Function.update_of_ne hx.2])
-      ⟨by rw [h1]; exact hf, by rw [h2]; exact hd, by rw [h1, h2]; exact ho⟩
-    simpa [hag 1 (by simp), hag 2 (by simp), h1, h2] using hb
+  · rintro ⟨a', -, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
+    obtain ⟨v'', hag, hb⟩ := himp (fun n => match n with | 1 => e₁ | 2 => e₂ | n => a' n)
+      (fun z hz => by split <;> simp_all) ⟨hf, hd, ho⟩
+    simpa [hag 1 (by simp), hag 2 (by simp)] using hb
   · intro hall
     exact ⟨a, fun _ _ => rfl, fun v' _ ⟨hf, hd, ho⟩ =>
       ⟨v', fun _ _ => rfl, hall (v' 1) (v' 2) ⟨hf, hd, ho⟩⟩⟩
 
-/-! ### Negation blocks anaphora -/
+/-- The donkey DRS is proper: the consequent's referents are supplied by the
+antecedent — the `⇒`-accessibility in the free-variable computation. -/
+theorem donkey_proper : donkey.IsProper := by
+  simp [DRS.IsProper, donkey, donkeyAnte, donkeyCons]; decide
 
-/-- "A¹ man didn't walk in." — `[ | ¬[u₁ | man u₁, walked-in u₁]]`. -/
-def negInner : DRS krLang ℕ := .mk {1} [.rel .man (![1]), .rel .walkedIn (![1])]
-def negation : DRS krLang ℕ := .mk ∅ [.neg negInner]
+/-- The (2.45)-style consequent `[u₃ | u₃ = u₂, beats u₁ u₃]`: the pronoun *it*
+introduces its own referent, resolved to the donkey by an equation. -/
+def donkeyPronounCons : DRS krLang ℕ := .mk {3} [.eq 3 2, .rel .beats (![1, 3])]
+/-- (2.47) with the pronoun completed by referent-plus-equation. -/
+def donkeyPronoun : DRS krLang ℕ := .mk ∅ [.imp donkeyAnte donkeyPronounCons]
 
-/-- Under negation, truth is the *non-existence* of a verifying man — the referent
-is bound inside the negation and inaccessible to any continuation. -/
-theorem negation_tc (a : ℕ → M) :
-    DRS.trueRel negation a ↔ ¬ ∃ e : M, rm .man ![e] ∧ rm .walkedIn ![e] := by
-  simp only [DRS.trueRel_iff, negation, negInner, DRS.toRel_iff, Box.Extends,
-    Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil,
-    false_implies, implies_true, Embedding.verifies_neg, Embedding.verifies_rel,
-    comp_vecCons, comp_vecEmpty, and_true]
+/-- The pronoun-completed conditional has the same universal truth conditions: the
+equation forces the new referent to the donkey's value. -/
+theorem donkeyPronoun_tc (a : ℕ → M) :
+    DRS.trueRel donkeyPronoun a ↔
+    ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
+      rm .beats ![e₁, e₂] := by
+  simp only [DRS.trueRel_iff, donkeyPronoun, donkeyAnte, donkeyPronounCons, DRS.toRel_iff,
+    Box.Extends, Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil,
+    false_implies, implies_true, Embedding.verifies_imp, Embedding.verifies_rel,
+    Embedding.verifies_eq, comp_vecCons, comp_vecEmpty, and_true]
   constructor
-  · rintro ⟨a', _, hneg⟩ ⟨e, hm, hw⟩
-    exact hneg ⟨Function.update a' 1 e, fun x hx => by
-        simp only [Finset.mem_singleton] at hx; exact Function.update_of_ne hx _ _,
-      by simpa [Function.update_self] using hm, by simpa [Function.update_self] using hw⟩
-  · intro hneg
-    exact ⟨a, fun _ _ => rfl, fun ⟨a'', _, hm, hw⟩ => hneg ⟨a'' 1, hm, hw⟩⟩
+  · rintro ⟨a', -, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
+    obtain ⟨v'', hag, h32, hb⟩ := himp (fun n => match n with | 1 => e₁ | 2 => e₂ | n => a' n)
+      (fun z hz => by split <;> simp_all) ⟨hf, hd, ho⟩
+    rw [h32] at hb
+    simpa [hag 1 (by simp), hag 2 (by simp)] using hb
+  · intro hall
+    exact ⟨a, fun _ _ => rfl, fun v' _ ⟨hf, hd, ho⟩ =>
+      ⟨fun n => match n with | 3 => v' 2 | n => v' n,
+        fun z hz => by dsimp only; split <;> simp_all, rfl, hall (v' 1) (v' 2) ⟨hf, hd, ho⟩⟩⟩
 
-/-! ### Subordination geometry (Def. 1.4.10/1.4.11) -/
+/-- (2.44) vs (2.45), for the donkey conditional: completing the pronoun directly or by
+referent-plus-equation gives the same truth conditions — the book's "clearly identical
+truth conditions" (p. 167). -/
+theorem donkeyPronoun_agree (a : ℕ → M) :
+    DRS.trueRel donkeyPronoun a ↔ DRS.trueRel donkey a :=
+  (donkeyPronoun_tc a).trans (donkey_universal_reading a).symm
 
-/-- The antecedent box is directly subordinate to the donkey DRS. -/
+/-! ### Subordination geometry -/
+
+/-- The antecedent box is directly subordinate to the donkey DRS (Def. 1.4.10 as
+extended by Def. 2.1.2). -/
 theorem donkey_antecedent_subordinate : DirectlySubordinate donkeyAnte donkey :=
   .impAnte (c := donkeyCons) (by simp [donkey])
 
-/-- The consequent box is directly subordinate to the *antecedent* — the `⇒`
-asymmetry that makes the antecedent's referents accessible in the consequent. -/
+/-- The consequent box is directly subordinate to the *antecedent* — the substrate's
+rendering of the `⇒` accessibility asymmetry (Def. 2.1.3(ii)(b)); Def. 2.1.2 itself
+subordinates the consequent to the containing DRS, recovered here by closure
+(`donkey_consequent_subordinate_host`). -/
 theorem donkey_consequent_subordinate : DirectlySubordinate donkeyCons donkeyAnte :=
   .impCons (show Condition.imp donkeyAnte donkeyCons ∈ donkey.conditions by
     simp [donkey])
 
-/-! ### Model evaluation: donkey true in a concrete model
+/-- Def. 2.1.2's own claim: the consequent box sits below the donkey DRS. -/
+theorem donkey_consequent_subordinate_host : Subordinate donkeyCons donkey :=
+  .head donkey_consequent_subordinate (.single donkey_antecedent_subordinate)
 
-A two-element domain where farmer `0` owns and beats donkey `1`. -/
+/-! ### Model evaluation: the donkey conditional in concrete models
+
+Positive: a two-element domain where farmer `0` owns and beats donkey `1`. Negative: a
+domain where the owning pair goes unbeaten falsifies the conditional. -/
 
 instance : krLang.Structure (Fin 2) where
   funMap {_} f _ := f.elim
@@ -182,7 +250,21 @@ instance : krLang.Structure (Fin 2) where
 which `beats` holds of. -/
 theorem donkey_true_in_model (a : ℕ → Fin 2) : DRS.trueRel donkey a := by
   rw [donkey_universal_reading]
-  rintro e₁ e₂ ⟨hf, hd, _⟩
+  rintro e₁ e₂ ⟨hf, hd, -⟩
   exact ⟨hf, hd⟩
+
+instance : krLang.Structure Bool where
+  funMap {_} f _ := f.elim
+  RelMap {n} R := match n, R with
+    | 1, .farmer => fun args => args 0 = false
+    | 1, .donkey => fun args => args 0 = true
+    | 2, .owns => fun args => args 0 = false ∧ args 1 = true
+    | _, _ => fun _ => False
+
+/-- The donkey conditional is false when the owning pair goes unbeaten: farmer `false`
+owns donkey `true` but `beats` is empty. -/
+theorem donkey_false_in_model (a : ℕ → Bool) : ¬ DRS.trueRel donkey a := by
+  rw [donkey_universal_reading]
+  exact fun h => h false true ⟨rfl, rfl, rfl, rfl⟩
 
 end KampReyle1993
