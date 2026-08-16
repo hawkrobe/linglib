@@ -2927,3 +2927,4 @@ import Linglib.Data.Examples.Lahiri1998
 import Linglib.Data.Examples.VonStechow1984
 import Linglib.Data.Examples.Hacquard2006
 import Linglib.Data.Examples.StankovaSimik2025
+import Linglib.Data.Examples.Baker1985
