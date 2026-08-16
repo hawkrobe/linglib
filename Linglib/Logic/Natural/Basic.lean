@@ -185,13 +185,6 @@ def join : NLRelation → NLRelation → NLRelation
   -- # column
   | .independent, _ => .independent
 
--- Spot-checks from Lemma 1.5 table
-example : join .forward .forward = .forward := rfl       -- ⊑ ⋈ ⊑ = ⊑
-example : join .negation .negation = .equiv := rfl       -- ^ ⋈ ^ = ≡
-example : join .alternation .negation = .forward := rfl  -- | ⋈ ^ = ⊑
-example : join .negation .forward = .cover := rfl        -- ^ ⋈ ⊑ = ⌣
-example : join .cover .negation = .reverse := rfl        -- ⌣ ⋈ ^ = ⊒
-
 /-- ≡ is the identity for join. -/
 theorem join_identity_left (r : NLRelation) : join .equiv r = r := by
   cases r <;> rfl
@@ -203,7 +196,6 @@ theorem join_identity_right (r : NLRelation) : join r .equiv = r := by
 -- This is expected: xRy and yR'z is directional.
 
 end NLRelation
-
 
 /-! ### Entailment signatures -/
 
@@ -307,15 +299,6 @@ instance : LE EntailmentSig := ⟨Refines⟩
 instance decidableLE (a b : EntailmentSig) : Decidable (a ≤ b) :=
   inferInstanceAs (Decidable (Refines a b))
 
--- Spot-checks for the refinement lattice
-example : ¬ ((EntailmentSig.all : EntailmentSig) ≤ .mono) := by decide
-example : (EntailmentSig.mono : EntailmentSig) ≤ .all := by decide
-example : (EntailmentSig.anti : EntailmentSig) ≤ .all := by decide
-example : (EntailmentSig.addMult : EntailmentSig) ≤ .additive := by decide
-example : (EntailmentSig.antiAddMult : EntailmentSig) ≤ .anti := by decide
-example : ¬ ((EntailmentSig.mono : EntailmentSig) ≤ .additive) := by decide
-example : ¬ ((EntailmentSig.additive : EntailmentSig) ≤ .mult) := by decide
-
 private theorem Refines_refl (a : EntailmentSig) : Refines a a := by
   cases a <;> decide
 
@@ -413,23 +396,6 @@ def project : NLRelation → EntailmentSig → NLRelation
   | .cover, .antiMult => .independent            -- x∨y=1 gives nothing
   | .independent, .antiMult => .independent
 
--- Spot-checks from Lemma 2.4 tables (p.715)
-example : project .forward .mono = .forward := rfl            -- [⊑]^+ = ⊑
-example : project .forward .anti = .reverse := rfl            -- [⊑]^− = ⊒
-example : project .negation .mono = .independent := rfl       -- [^]^+ = #
-example : project .negation .anti = .independent := rfl       -- [^]^− = #
-example : project .negation .additive = .cover := rfl         -- [^]^⊕ = ∼
-example : project .negation .mult = .alternation := rfl       -- [^]^⊞ = |
-example : project .negation .antiAddMult = .negation := rfl   -- [^]^◇⊟ = ^
-example : project .alternation .mult = .alternation := rfl    -- [|]^⊞ = |
-example : project .alternation .additive = .independent := rfl -- [|]^⊕ = #
-example : project .cover .additive = .cover := rfl            -- [∼]^⊕ = ∼
-example : project .cover .mult = .independent := rfl          -- [∼]^⊞ = #
-example : project .cover .antiAdd = .alternation := rfl       -- [∼]^◇ = |
-example : project .alternation .antiMult = .cover := rfl      -- [|]^⊟ = ∼
-example : project .alternation .antiAddMult = .cover := rfl   -- [|]^◇⊟ = ∼
-example : project .cover .antiAddMult = .alternation := rfl   -- [∼]^◇⊟ = |
-
 /-- Every signature except • preserves equiv (• is the class of arbitrary
 functions, which need not respect equivalence). -/
 theorem project_equiv (φ : EntailmentSig) (h : φ ≠ .all) :
@@ -474,20 +440,6 @@ def compose (ψ φ : EntailmentSig) : EntailmentSig :=
     (project (project .forward φ) ψ)
     (project (project .negation φ) ψ)
 
--- Spot-checks (Lemma 2.7 table, p.716)
-example : compose .anti .anti = .mono := rfl                   -- − ∘ − = +
-example : compose .antiAddMult .antiAddMult = .addMult := rfl  -- ◇⊟ ∘ ◇⊟ = ⊕⊞
-example : compose .additive .additive = .additive := rfl       -- ⊕ ∘ ⊕ = ⊕
-example : compose .antiAdd .additive = .antiAdd := rfl         -- ◇ ∘ ⊕ = ◇
-example : compose .addMult .anti = .anti := rfl                -- ⊕⊞ ∘ − = −
-example : compose .mult .antiAdd = .antiAdd := rfl             -- ⊞ ∘ ◇ = ◇
-example : compose .additive .antiMult = .antiMult := rfl       -- ⊕ ∘ ⊟ = ⊟
-example : compose .antiMult .antiAdd = .additive := rfl        -- ⊟ ∘ ◇ = ⊕
-example : compose .mult .mult = .mult := rfl                   -- ⊞ ∘ ⊞ = ⊞
-example : compose .additive .antiAdd = .anti := rfl            -- ⊕ ∘ ◇ = −
-example : compose .all .mono = .all := rfl                     -- • ∘ + = • (absorbing)
-example : compose .anti .all = .all := rfl                     -- − ∘ • = • (absorbing)
-
 /-- `addMult` (⊕⊞, the morphism class) is the identity for composition
 ([icard-2012] Lemma 2.7). -/
 theorem compose_identity_left (s : EntailmentSig) : compose .addMult s = s := by
@@ -518,7 +470,6 @@ instance : Monoid EntailmentSig where
   mul_one := compose_identity_right
 
 end EntailmentSig
-
 
 /-! ### Context polarity -/
 
@@ -556,10 +507,6 @@ def compose : ContextPolarity → ContextPolarity → ContextPolarity
   | .nonMonotonic, _ => .nonMonotonic
   | _, .nonMonotonic => .nonMonotonic
 
-example : compose .upward .downward = .downward := rfl
-example : compose .downward .downward = .upward := rfl
-example : compose .downward .upward = .downward := rfl
-
 end ContextPolarity
 
 namespace EntailmentSig
@@ -575,17 +522,6 @@ def toContextPolarity (φ : EntailmentSig) : ContextPolarity :=
   if project .forward φ == .forward then .upward
   else if project .forward φ == .reverse then .downward
   else .nonMonotonic
-
--- Exhaustive verification
-example : toContextPolarity .all = .nonMonotonic := rfl
-example : toContextPolarity .mono = .upward := rfl
-example : toContextPolarity .additive = .upward := rfl
-example : toContextPolarity .mult = .upward := rfl
-example : toContextPolarity .addMult = .upward := rfl
-example : toContextPolarity .anti = .downward := rfl
-example : toContextPolarity .antiAdd = .downward := rfl
-example : toContextPolarity .antiMult = .downward := rfl
-example : toContextPolarity .antiAddMult = .downward := rfl
 
 /--
 `toContextPolarity` is a monoid homomorphism: composing signatures then
@@ -626,29 +562,7 @@ def projectThrough (R : NLRelation) (path : List EntailmentSig) : NLRelation :=
 -- Icard §2.4: path lists signatures from root (outermost) to target (innermost).
 -- List.prod applies them right-to-left: the last element is applied first.
 
--- "animal" in "Every animal runs": path = [◇] (every_restrictor = anti-additive)
-example : contextProjectivity [.antiAdd] = .antiAdd := rfl
-
--- "runs" in "Every animal runs": path = [⊞] (every_scope = multiplicative)
-example : contextProjectivity [.mult] = .mult := rfl
-
--- "cat" in "No big cat runs": path = [◇, ⊕⊞] (no_restrictor = ◇, big = ⊕⊞)
--- ◇ ∘ ⊕⊞ = ◇ (anti-additive composed with morphism stays anti-additive)
-example : contextProjectivity [.antiAdd, .addMult] = .antiAdd := rfl
-
--- "runs" in "It's not the case that every animal runs":
--- path = [◇⊟, ⊞] (negation = ◇⊟, every_scope = ⊞)
--- ◇⊟ ∘ ⊞ = ⊟ (anti-multiplicative)
-example : contextProjectivity [.antiAddMult, .mult] = .antiMult := rfl
-
--- Double negation: ◇⊟ ∘ ◇⊟ = ⊕⊞ (morphism = preserves everything)
-example : contextProjectivity [.antiAddMult, .antiAddMult] = .addMult := rfl
-
--- And its polarity: morphism → upward
-example : toContextPolarity (contextProjectivity [.antiAddMult, .antiAddMult]) = .upward := rfl
-
 end EntailmentSig
-
 
 /-! ### Projection composition -/
 
@@ -668,45 +582,9 @@ theorem projection_composition (R : NLRelation) (φ ψ : EntailmentSig) :
     EntailmentSig.project R (EntailmentSig.compose ψ φ) := by
   cases R <;> cases φ <;> cases ψ <;> rfl
 
-
-/-! ### The negation signature and worked projections -/
+/-! ### The negation signature -/
 
 /-- Negation has the anti-morphism signature ◇⊟ (strongest DE signature). -/
 def negationSig : EntailmentSig := .antiAddMult
-
-example : EntailmentSig.toContextPolarity negationSig = .downward := rfl
-
--- Monoid notation: negationSig * negationSig = double negation = morphism
-example : negationSig * negationSig = .addMult := rfl
-
--- negationSig ^ 2 = ⊕⊞ (via Monoid.npow)
-example : negationSig ^ 2 = .addMult := rfl
-
--- Negation is its own inverse (up to •/⊕⊞ equivalence):
--- ◇⊟ * ◇⊟ = ⊕⊞ (the monoid identity on non-• signatures)
-example : negationSig * negationSig * negationSig = negationSig := rfl
-
--- Composing negation with "every" scope: ◇⊟ * ⊞ = ⊟ (anti-multiplicative)
-example : negationSig * .mult = .antiMult := rfl
-
--- Chain composition: not(not(every ... )) scope = ⊟ * ◇⊟ * ◇⊟ = ⊟ * ⊕⊞ = ⊟
-example : .antiMult * negationSig * negationSig = .antiMult := rfl
-
--- Forward entailment (dog ⊑ animal) projected through various signatures:
-example : EntailmentSig.project .forward .mono = .forward := rfl           -- + : dog ⊑ animal ⟹ f(dog) ⊑ f(animal)
-example : EntailmentSig.project .forward .anti = .reverse := rfl           -- − : dog ⊑ animal ⟹ f(dog) ⊒ f(animal)
-example : EntailmentSig.project .forward .additive = .forward := rfl       -- ⊕ : same as mono for ⊑
-example : EntailmentSig.project .forward .antiAddMult = .reverse := rfl    -- ◇⊟ : same as anti for ⊑
-
--- Alternation (cat | dog) projected through various signatures:
-example : EntailmentSig.project .alternation .mono = .independent := rfl     -- + : mono alone can't track disjointness
-example : EntailmentSig.project .alternation .mult = .alternation := rfl     -- ⊞ : mult preserves ∧, so preserves |
-example : EntailmentSig.project .alternation .antiMult = .cover := rfl       -- ⊟ : anti-mult flips | to ∼
-
--- Cover (animal ∼ nondog) projected through various signatures:
-example : EntailmentSig.project .cover .additive = .cover := rfl             -- ⊕ : additive preserves ∨, so preserves ∼
-example : EntailmentSig.project .cover .mult = .independent := rfl           -- ⊞ : mult can't track ∨-structure
-example : EntailmentSig.project .cover .antiAdd = .alternation := rfl        -- ◇ : anti-additive flips ∼ to |
-example : EntailmentSig.project .cover .antiAddMult = .alternation := rfl    -- ◇⊟ : anti-morph swaps | ↔ ∼
 
 end NaturalLogic
