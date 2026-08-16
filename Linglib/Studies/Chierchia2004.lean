@@ -1,4 +1,4 @@
-import Linglib.Semantics.Entailment.Polarity
+import Linglib.Semantics.Entailment.Basic
 import Mathlib.Data.Set.Lattice
 
 /-!
@@ -35,7 +35,6 @@ admissible strengthening, the path the paper's own computations follow.
 
 namespace Chierchia2004
 
-open Entailment (IsDE IsUE)
 
 variable {World : Type*}
 
@@ -157,13 +156,13 @@ theorem IsScaleSelection.strengthen_ssubset {lex chosen : Set (Set World)} {utt 
 a *weaker* matrix value, so keeping a direct implicature under DE embedding
 would violate the Strength Condition — implicatures are suspended in exactly
 the *any*-licensing environments. -/
-theorem si_npi_generalization {f : Set World → Set World} (hDE : IsDE f)
+theorem si_npi_generalization {f : Set World → Set World} (hDE : Antitone f)
     (hsc : sm.StrengthCondition) :
     f sm.plain ⊆ f sm.strong :=
   hDE hsc
 
 /-- Instantiation of (53) at strengthened arguments. -/
-theorem de_blocks_direct_si {f : Set World → Set World} (hDE : IsDE f)
+theorem de_blocks_direct_si {f : Set World → Set World} (hDE : Antitone f)
     (hsc : sm.StrengthCondition) :
     f sm.plain ⊆ f sm.strengthen.strong :=
   si_npi_generalization hDE hsc.strengthen
@@ -209,7 +208,7 @@ theorem strongApplyDE_strong_eq_of_isGreatest {ψ₀ : Set World}
 
 /-- The non-DE clause of (84) preserves the Strength Condition when `f` is UE
 and its strengthening entails it. -/
-theorem Meaning.map_strengthCondition (hf : IsUE f) (hfS : fS ≤ f)
+theorem Meaning.map_strengthCondition (hf : Monotone f) (hfS : fS ≤ f)
     (hg : g.StrengthCondition) :
     (g.map f fS).StrengthCondition :=
   λ _ hw => hf hg (hfS _ hw)

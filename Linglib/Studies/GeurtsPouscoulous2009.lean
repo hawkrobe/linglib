@@ -3,7 +3,7 @@ import Mathlib.Tactic.NormNum
 import Linglib.Pragmatics.NeoGricean.Basic
 import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Pragmatics.Implicature.Diagnostics
-import Linglib.Semantics.Entailment.Polarity
+import Linglib.Semantics.Entailment.NaturalLogic
 
 /-!
 # [geurts-pouscoulous-2009] — Embedded Implicatures?!?
@@ -98,7 +98,7 @@ chronological-dependency rule.
 
 namespace GeurtsPouscoulous2009
 
-open Entailment (ContextPolarity)
+open NaturalLogic (ContextPolarity)
 
 -- ============================================================================
 -- Shared types (paper-internal vocabulary)
@@ -115,7 +115,7 @@ inductive QuantifierContext where
   deriving DecidableEq, Repr
 
 /-- Map a quantifier context to its monotonicity using the canonical
-`Entailment.ContextPolarity` enum. -/
+`NaturalLogic.ContextPolarity` enum. -/
 def quantifierMonotonicity : QuantifierContext → ContextPolarity
   | .all              => .upward
   | .moreThanOne      => .upward

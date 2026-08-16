@@ -448,7 +448,7 @@ open German.PolarityItems (irgendein)
 /-- The licensor strength a PSI profile predicts (`none` = not
     strength-licensed). -/
 def PSIProfile.predictedLicensor (p : PSIProfile) :
-    Option NaturalLogic.DEStrength :=
+    Option Polarity.DEStrength :=
   if !p.obligatoryDomainAlts then none
   else match p.grain, p.requiresProperStrengthening with
     | .max, false => some .weak         -- D-MAX, weak σ → pure NPI

@@ -1630,7 +1630,6 @@ import Linglib.Semantics.Entailment.AsymStronger
 import Linglib.Semantics.Entailment.Basic
 import Linglib.Semantics.Entailment.Extremum
 import Linglib.Semantics.Entailment.NaturalLogic
-import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Entailment.PositionProfile
 import Linglib.Semantics.Entailment.Soundness
 import Linglib.Semantics.Entailment.StrawsonEntailment
@@ -1737,6 +1736,7 @@ import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Semantics.Polarity.CzechNegation
 import Linglib.Semantics.Polarity.ExpletiveNegation
 import Linglib.Semantics.Polarity.ScalarModel
+import Linglib.Semantics.Polarity.Strength
 import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Polarity.Marking

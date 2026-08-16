@@ -615,7 +615,7 @@ theorem bridges_question :
     Fragments: weak-strength licensor plus free-choice licensing. -/
 theorem bridges_npiFci :
     ∀ e ∈ [German.PolarityItems.irgendein, Mandarin.PolarityItems.shei],
-      e.licensor = some NaturalLogic.DEStrength.weak ∧ e.freeChoice = true := by
+      e.licensor = some Polarity.DEStrength.weak ∧ e.freeChoice = true := by
   decide
 
 end Haspelmath1997

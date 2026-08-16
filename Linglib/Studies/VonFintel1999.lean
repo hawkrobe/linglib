@@ -63,7 +63,7 @@ def onlyJohnDefined (scope : Set World) (_w : World) : Prop :=
   ∃ w', w' = World.w0 ∧ scope w'
 
 /-- Ex. 11 (p. 101): *only* is not classically downward entailing. -/
-theorem ex11_only_not_DE : ¬ IsDownwardEntailing onlyJohn :=
+theorem ex11_only_not_DE : ¬ Antitone onlyJohn :=
   onlyFull_not_de
 
 /-- Ex. 18 (p. 104): *only* is Strawson-DE relative to its existence presupposition. -/
@@ -104,7 +104,7 @@ def sorryFrame : Set World → Set World :=
   sorryFull (fun w => ({w} : Set World)) (fun _ => ({World.w1} : Set World))
 
 /-- Ex. 30 (p. 111): *sorry* is not classically DE in its complement. -/
-theorem ex30_sorry_not_DE : ¬ IsDownwardEntailing sorryFrame :=
+theorem ex30_sorry_not_DE : ¬ Antitone sorryFrame :=
   sorryFull_not_de
 
 /-- Ex. 28b (p. 111): *sorry* is Strawson-DE relative to doxastic factivity. -/
@@ -154,7 +154,7 @@ datum is `Examples.ex70a`. -/
 classically DE in its antecedent. -/
 theorem ex72_conditional_antecedent_DE
     (domain : World → Set World) (β : Set World) :
-    IsDownwardEntailing (fun α => condNecessity domain α β) :=
+    Antitone (fun α => condNecessity domain α β) :=
   conditional_antecedent_antitone domain β
 
 /-- Restrictor-style conditional antecedents are a fortiori Strawson-DE. -/

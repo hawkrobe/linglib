@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Linglib.Discourse.Commitment.Table
-import Linglib.Semantics.Entailment.Polarity
+import Linglib.Semantics.Entailment.NaturalLogic
 import Linglib.Semantics.Conditionals.Basic
 
 /-!
@@ -32,8 +32,6 @@ This explains why PCs block NPIs despite being semantically DE!
 -/
 
 namespace Semantics.Conditionals
-
-open Entailment
 open Discourse.Commitment.Table
 
 -- Conditional Type: HC vs PC
@@ -166,7 +164,7 @@ PPI licensing requires: established status (monotonicity irrelevant)
 -/
 structure ConditionalPolarityContext where
   /-- Semantic monotonicity (conditional antecedents are always DE) -/
-  monotonicity : ContextPolarity := .downward
+  monotonicity : NaturalLogic.ContextPolarity := .downward
   /-- Discourse-level epistemic status -/
   epistemicStatus : AntecedentStatus
   deriving DecidableEq, Repr

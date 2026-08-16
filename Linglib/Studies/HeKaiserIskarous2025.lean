@@ -1,5 +1,5 @@
 import Linglib.Semantics.Intensional.Defs
-import Linglib.Semantics.Entailment.Polarity
+import Linglib.Semantics.Entailment.AntiAdditivity
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.FinEnum
@@ -343,7 +343,7 @@ theorem neg_interpretation_constant :
   rfl
 
 /-- Map He et al.'s sentence polarity to compositional context polarity. -/
-def toContextPolarity : Polarity → Entailment.ContextPolarity
+def toContextPolarity : Polarity → NaturalLogic.ContextPolarity
   | .positive => .upward
   | .negative => .downward
   | .null => .upward
@@ -403,16 +403,13 @@ theorem pnot_reverses_entailment_HKI (p q : (HKIState → Bool))
   · rfl
   · exact absurd (h w hp) (by simpa using hq)
 
-/-- The grounded polarity from Entailment.Polarity (uses `pnot`). -/
-def negSentencePolarity : GroundedPolarity := negationPolarity
+/-- Negative sentences are downward-entailing: `pnot` is antitone. -/
+theorem neg_sentence_is_de : Antitone (pnot : Set World → Set World) :=
+  pnot_antitone
 
-/-- Negative sentences have DE polarity (from Montague's proof). -/
-theorem neg_sentence_is_de :
-    negSentencePolarity.toContextPolarity = .downward := rfl
-
-/-- Positive sentences have UE polarity (identity = no negation). -/
-theorem pos_sentence_is_ue :
-    identityPolarity.toContextPolarity = .upward := rfl
+/-- Positive sentences are upward-entailing: the identity context. -/
+theorem pos_sentence_is_ue : Monotone (id : Set World → Set World) :=
+  monotone_id
 
 /-- Structural complexity: count of functional heads in the derivation. -/
 def structuralComplexity : HKIUtterance → ℕ

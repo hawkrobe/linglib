@@ -1,4 +1,4 @@
-import Linglib.Semantics.Entailment.NaturalLogic
+import Linglib.Semantics.Polarity.Strength
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Core.Order.Interval
@@ -114,7 +114,7 @@ structure BoundaryAdverbial where
   /-- Minimum Zwarts strength of a licensing environment, in the shared
       `Polarity.Item` vocabulary (`none` = not an NPI); strong NPIs
       require anti-additivity ([zwarts-1998], [gajewski-2011]). -/
-  licensor : Option NaturalLogic.DEStrength := none
+  licensor : Option Polarity.DEStrength := none
   /-- Is the adverbial always contrastively focused?
       [chierchia-2013]: domain widening requires contrastive focus
       under negation. *In years* is always contrastively focused;

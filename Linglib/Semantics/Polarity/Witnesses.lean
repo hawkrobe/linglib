@@ -1,4 +1,5 @@
 import Linglib.Semantics.Polarity.Licensing
+import Linglib.Semantics.Polarity.Strength
 import Linglib.Semantics.Entailment.Soundness
 import Linglib.Semantics.Entailment.StrawsonSoundness
 import Linglib.Semantics.Entailment.AntiAdditivity
@@ -26,18 +27,11 @@ four Strawson-only rows (`onlyFull`, `sorryFull`, `superlativeAssert`,
 content is the licensing mechanism rather than the signature (the
 FC/`mono` rows, questions).
 
-`DEStrength.HoldsFor` gives the Zwarts strength levels their semantic
-content (weak = `Antitone`, antiAdditive = `IsAntiAdditive`, antiMorphic
-= `IsAntiMorphic`), downward closed along the chain
-(`HoldsFor.of_le`); each witness carries a `strength` certificate for
-its classical row, and `ContextWitness.holdsFor_of_licenses` grounds
-the keystone: at a witnessed presupposition-free row, strength-matched
-licensing means the operator really holds the strength the item
-requires.
-
-`GroundedPolarity` (in `Entailment/Polarity.lean`) is subsumed by this
-table at the polarity quotient but retains external consumers; its
-retirement is deferred.
+Each witness carries a `strength` certificate for its classical row
+(`DEStrength.HoldsFor`, from `Semantics/Polarity/Strength.lean`), and
+`ContextWitness.holdsFor_of_licenses` grounds the keystone: at a
+witnessed presupposition-free row, strength-matched licensing means the
+operator really holds the strength the item requires.
 -/
 
 namespace Polarity
@@ -45,39 +39,8 @@ namespace Polarity
 open NaturalLogic
 open Quantification
 open Entailment (World pnot)
-open Entailment (atMost2_student atMost_isDE_scope)
+open Entailment (atMost2_student atMost_antitone_scope)
 open Entailment
-
-/-! ### The Zwarts hierarchy semantically -/
-
-/-- The semantic content of a `DEStrength` level for a context function
-([icard-2012] §4, after Zwarts): `weak` is antitonicity, `antiAdditive`
-the anti-additivity equation, `antiMorphic` the full anti-morphism —
-*few* is weak-only, *no* anti-additive, *not* anti-morphic. -/
-def _root_.NaturalLogic.DEStrength.HoldsFor {α β : Type*} [Lattice α]
-    [Lattice β] (s : DEStrength) (f : α → β) : Prop :=
-  match s with
-  | .weak => Antitone f
-  | .antiAdditive => IsAntiAdditive f
-  | .antiMorphic => IsAntiMorphic f
-
-/-- Strength facts are downward closed along the Zwarts chain
-`weak < antiAdditive < antiMorphic`: a function holding a level holds
-every weaker one. -/
-theorem _root_.NaturalLogic.DEStrength.HoldsFor.of_le {α β : Type*}
-    [Lattice α] [Lattice β] {f : α → β} {s₁ s₂ : DEStrength}
-    (h : s₁ ≤ s₂) (hf : s₂.HoldsFor f) : s₁.HoldsFor f := by
-  cases s₁ <;> cases s₂ <;>
-    first
-      | exact hf
-      | exact hf.antitone
-      | exact hf.antiAdditive
-      | exact absurd h (by decide)
-
-example : DEStrength.antiMorphic.HoldsFor pnot := pnot_isAntiMorphic
-example : DEStrength.weak.HoldsFor pnot :=
-  DEStrength.HoldsFor.of_le (s₂ := .antiMorphic) (by decide)
-    pnot_isAntiMorphic
 
 /-- A model-theoretic witness for a licensing-context row: an operator
 (with its definedness/presupposition function) realizing the row's
@@ -205,7 +168,7 @@ noncomputable def fewWitness : ContextWitness .few where
 
 private theorem atMost_soundFor :
     EntailmentSig.SoundFor .anti atMost2_student :=
-  soundFor_anti_iff.mpr atMost_isDE_scope
+  soundFor_anti_iff.mpr atMost_antitone_scope
 
 /-- *At most n*: `atMost2_student` is antitone; the strictness witness
 `atMost_not_antiAdditive` is why this row is `.anti`, not `.antiAdd`. -/
@@ -215,7 +178,7 @@ def atMostWitness : ContextWitness .atMost where
   strawson := atMost_soundFor.strawsonSoundFor _
   classical := soundFor_of_mem_some atMost_soundFor
   strength := strength_of_mem_some (s₀ := .weak) (by decide)
-    atMost_isDE_scope
+    atMost_antitone_scope
 
 private theorem condAntecedent_soundFor :
     EntailmentSig.SoundFor .anti

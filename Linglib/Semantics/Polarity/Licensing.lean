@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Entailment.NaturalLogic
+import Linglib.Semantics.Polarity.Strength
 import Linglib.Features.LicensingContext
 import Linglib.Features.Indefinite
 import Linglib.Semantics.Polarity.Item
@@ -254,7 +255,7 @@ instance {α β S : Type*} [Preorder S]
 [gajewski-2011]): carrier `DEStrength`, item strength from `Item.licensor`,
 context strength from the row's Strawson signature. -/
 def zwartsScale :
-    StrengthScale Item LicensingContext NaturalLogic.DEStrength where
+    StrengthScale Item LicensingContext DEStrength where
   required e := e.licensor
   supplied c := c.properties.strawsonSignature.toDEStrength
 

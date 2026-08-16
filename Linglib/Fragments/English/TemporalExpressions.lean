@@ -528,7 +528,7 @@ structure DurationExprEntry where
   /-- Polarity-item type if `polaritySensitive` (Zwarts 1998 strong/weak).
       Strong NPIs (*in years*) require anti-additive licensors; weak NPIs
       require any DE licensor. -/
-  npiLicensor : Option NaturalLogic.DEStrength := none
+  npiLicensor : Option Polarity.DEStrength := none
   /-- Distributional licensing flags (theory-neutral surface facts). -/
   requiresPerfect : Prop := False
   requiresNegation : Prop := False

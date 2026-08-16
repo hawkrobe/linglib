@@ -60,7 +60,7 @@ Scope-upward-monotone: if B ⊆ B' and Q(A,B), then Q(A,B').
 
 Under the Pi-of-Prop ordering this is exactly `∀ R, Monotone (q R)`
 (see `scopeUpMono_iff_monotone`). This connects to
-`Entailment.IsUpwardEntailing = Monotone`.
+mathlib's `Monotone`.
 -/
 def ScopeUpwardMono (q : GQ α) : Prop :=
   ∀ (R S S' : α → Prop), (∀ x, S x → S' x) → q R S → q R S'
@@ -387,7 +387,7 @@ def individual (a : α) : Quantifier α := fun P => P a
     ordering (where `S ≤ S'` is `∀ x, S x → S' x` and `Prop`-valued
     `≤` is implication). This bridges GQ-level monotonicity to Mathlib's
     `Monotone`, which is what `Polarity.lean` uses
-    (`IsUpwardEntailing = Monotone`). -/
+    (`Monotone`). -/
 theorem scopeUpMono_iff_monotone (q : GQ α) :
     ScopeUpwardMono q ↔ ∀ R, Monotone (q R) := by
   unfold ScopeUpwardMono Monotone

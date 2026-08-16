@@ -1,7 +1,6 @@
 import Mathlib.Order.Monotone.Defs
 import Linglib.Semantics.Entailment.Basic
 import Linglib.Semantics.Entailment.AntiAdditivity
-import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -81,9 +80,9 @@ theorem antitone_implies_strawsonDE {α β : Type*} (f : Set α → Set β)
     IsStrawsonDE f defined :=
   fun _p _q hpq _w _hdef hfqw => hAnti hpq hfqw
 
-/-- Convenience: `IsDownwardEntailing` (the toy-`World` abbrev) implies
+/-- Convenience: `Antitone` (the toy-`World` abbrev) implies
     Strawson-DE. -/
-theorem de_implies_strawsonDE (f : Set World → Set World) (hDE : IsDownwardEntailing f)
+theorem de_implies_strawsonDE (f : Set World → Set World) (hDE : Antitone f)
     (defined : Set World → World → Prop) : IsStrawsonDE f defined :=
   antitone_implies_strawsonDE f hDE defined
 
@@ -156,7 +155,7 @@ structure FullHierarchy (f : Set World → Set World)
     (defined : Set World → World → Prop) where
   am : IsAntiMorphic f
   aa : IsAntiAdditive f := am.1
-  de : IsDownwardEntailing f := aa.antitone
+  de : Antitone f := aa.antitone
   strawsonDE : IsStrawsonDE f defined := de_implies_strawsonDE f de defined
 
 /-- Negation satisfies the full hierarchy. -/
@@ -278,7 +277,7 @@ Concrete counterexample over the toy 4-element `World`: take
 (· = w0) p w0` fails (the existence presup that someone satisfies p is
 unmet). Classical DE would require the conclusion to hold.
 -/
-theorem onlyFull_not_de : ¬ IsDownwardEntailing (onlyFull (· = World.w0)) := by
+theorem onlyFull_not_de : ¬ Antitone (onlyFull (· = World.w0)) := by
   intro hDE
   let p : Set World := fun _ => False
   let q : Set World := fun w => w = .w0
@@ -397,7 +396,7 @@ theorem sorryFull_isStrawsonAA {W : Type*} (dox bestOf : W → Set W) :
     `bestOf w := {w1}`, `p = ∅`, `q = {w0}`. Then `sorry q w0` holds but
     `sorry p w0` fails (doxastic factivity of empty p fails). -/
 theorem sorryFull_not_de :
-    ¬ IsDownwardEntailing
+    ¬ Antitone
       (sorryFull (fun (w : World) => ({w} : Set World))
                  (fun (_ : World) => ({World.w1} : Set World))) := by
   intro hDE
@@ -420,7 +419,7 @@ theorem sorryFull_strictly_strawsonDE :
       (sorryFull (fun (w : World) => ({w} : Set World))
                  (fun (_ : World) => ({World.w1} : Set World)))
       (fun p w => ∀ w' ∈ ({w} : Set World), p w') ∧
-    ¬ IsDownwardEntailing
+    ¬ Antitone
       (sorryFull (fun (w : World) => ({w} : Set World))
                  (fun (_ : World) => ({World.w1} : Set World))) :=
   ⟨sorryFull_isStrawsonDE _ _, sorryFull_not_de⟩
@@ -601,23 +600,23 @@ theorem wouldFull_isStrawsonAA {W : Type*} (domain : W → Set W) (q : Set W) :
 /-- Negation is Strawson-DE. -/
 theorem pnot_isStrawsonDE (defined : Set World → World → Prop) :
     IsStrawsonDE pnot defined :=
-  de_implies_strawsonDE pnot pnot_isDownwardEntailing defined
+  de_implies_strawsonDE pnot pnot_antitone defined
 
 /-- "No student" is Strawson-DE. -/
 theorem no_student_isStrawsonDE (defined : Set World → World → Prop) :
     IsStrawsonDE no_student defined :=
-  de_implies_strawsonDE no_student no_isDE_scope defined
+  de_implies_strawsonDE no_student no_antitone_scope defined
 
 /-- "At most 2 students" is Strawson-DE. -/
 theorem atMost2_isStrawsonDE (defined : Set World → World → Prop) :
     IsStrawsonDE atMost2_student defined :=
-  de_implies_strawsonDE atMost2_student atMost_isDE_scope defined
+  de_implies_strawsonDE atMost2_student atMost_antitone_scope defined
 
 /-- Strawson-DE is *strictly* weaker than DE: `onlyFull` is the canonical
     witness — Strawson-DE without classical DE. -/
 theorem strawsonDE_strictly_weaker_than_DE :
     ∃ (f : Set World → Set World) (defined : Set World → World → Prop),
-      IsStrawsonDE f defined ∧ ¬ IsDownwardEntailing f :=
+      IsStrawsonDE f defined ∧ ¬ Antitone f :=
   ⟨onlyFull (· = World.w0),
    fun scope _w => ∃ w', (w' = World.w0) ∧ scope w',
    onlyFull_isStrawsonDE _,
