@@ -4,7 +4,6 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.Pairing
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonSplit
-import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 
 open RoseTree RoseTree.Nonplanar
 

@@ -36,10 +36,7 @@ of `multiGraft T pairs` into three classes paralleling `vertices_insertAt_decomp
   convention).
 
 This decomposition is the vertex-multiset substrate for multi-graft
-analysis. The deprecated A3.3 basis-level approach to Oudom-Guin
-Prop 2.7.v has been superseded by the abstract pre-Lie route — see
-`Linglib/Core/Algebra/PreLie/OudomGuinCirc.lean` and
-`scratch/pivot_to_prelie_pbw.md`.
+analysis.
 
 ## Specialization to single-pair
 

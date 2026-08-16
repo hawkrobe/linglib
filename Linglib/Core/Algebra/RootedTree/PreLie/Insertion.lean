@@ -386,8 +386,7 @@ Every element of a `listChoices`-enumerated choice is a member of the
 alphabet (`mem_of_mem_listChoices`), so a pair list of the canonical
 shape `choice.zip Ts` automatically satisfies the validity hypothesis
 that graft operations require (`forall_zip_isValidPath_of_listChoices`).
-These utilities are consumed by `InsertionNodeDecomp` and
-`InsertionCompose`. -/
+These utilities are consumed by `InsertionNodeDecomp`. -/
 
 /-- Every element of a `choice ∈ listChoices xs n` is a member of `xs`.
     Lifts membership-in-an-enumerated-choice to membership-in-the-alphabet. -/
