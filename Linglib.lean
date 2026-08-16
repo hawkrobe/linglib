@@ -1630,6 +1630,7 @@ import Linglib.Logic.Natural.World
 import Linglib.Semantics.Alternatives.AsymStronger
 import Linglib.Semantics.Exhaustification.Extremum
 import Linglib.Logic.Natural.Basic
+import Linglib.Logic.Natural.MarkedType
 import Linglib.Semantics.Quantification.Signatures
 import Linglib.Logic.Natural.Soundness
 import Linglib.Logic.Natural.StrawsonEntailment
