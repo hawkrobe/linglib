@@ -1,7 +1,7 @@
-import Linglib.Semantics.Entailment.NaturalLogic
+import Linglib.Logic.Natural.Basic
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Polarity.Item
-import Linglib.Semantics.Entailment.StrawsonEntailment
+import Linglib.Logic.Natural.StrawsonEntailment
 import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Semantics.Supervaluation
 import Linglib.Studies.Ladusaw1979

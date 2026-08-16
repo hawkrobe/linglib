@@ -1,5 +1,6 @@
-import Linglib.Semantics.Entailment.NaturalLogic
-import Linglib.Semantics.Entailment.AntiAdditivity
+import Linglib.Logic.Natural.Basic
+import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.World
 
 /-!
 # Soundness of the projectivity calculus

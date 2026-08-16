@@ -1,6 +1,7 @@
 import Mathlib.Order.Monotone.Defs
-import Linglib.Semantics.Entailment.Basic
-import Linglib.Semantics.Entailment.AntiAdditivity
+import Linglib.Logic.Natural.World
+import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.World
 import Linglib.Semantics.Presupposition.Basic
 
 /-!

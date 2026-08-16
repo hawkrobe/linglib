@@ -16,7 +16,7 @@ of world predicates uses this rather than reinventing it.
 
 ## Why a polymorphic version
 
-`Semantics/Entailment/Basic.lean` defines `entails` over a
+`Logic/Natural/World.lean` defines `entails` over a
 concrete `World` enum (w0–w3) for testbed purposes. That file is not the
 right home for a polymorphic primitive. This file is.
 

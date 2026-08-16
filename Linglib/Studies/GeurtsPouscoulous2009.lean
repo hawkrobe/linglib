@@ -3,7 +3,7 @@ import Mathlib.Tactic.NormNum
 import Linglib.Pragmatics.NeoGricean.Basic
 import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Pragmatics.Implicature.Diagnostics
-import Linglib.Semantics.Entailment.NaturalLogic
+import Linglib.Logic.Natural.Basic
 
 /-!
 # [geurts-pouscoulous-2009] — Embedded Implicatures?!?

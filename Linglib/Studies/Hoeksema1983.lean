@@ -3,7 +3,8 @@ import Linglib.Semantics.Polarity.Licensing
 import Mathlib.Order.Hom.CompleteLattice
 import Mathlib.Order.Heyting.Hom
 import Linglib.Core.Order.SetPreimage
-import Linglib.Semantics.Entailment.AntiAdditivity
+import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.World
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Polarity.Item
 

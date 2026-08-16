@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
-import Linglib.Semantics.Entailment.AsymStronger
+import Linglib.Semantics.Alternatives.AsymStronger
 import Linglib.Logic.Modal.Defs
 
 /-!
@@ -29,7 +29,7 @@ multi-alternative blocking case is exercised in
 `Studies/Sauerland2004.lean`.
 
 The asymmetric-entailment primitive characterizing primary-implicature
-alternatives is `asymStrongerOn` in `Semantics/Entailment/AsymStronger.lean`;
+alternatives is `asymStrongerOn` in `Semantics/Alternatives/AsymStronger.lean`;
 a consumer writes `alts.filter (asymStrongerOn e.possible · φ)` directly.
 For the graded counterpart of competence (the RSA knowledgeability
 parameter) see `Pragmatics/RSA/`; `Studies/Franke2011/RSABridge.lean`

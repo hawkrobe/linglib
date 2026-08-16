@@ -42,8 +42,9 @@ The shared mathematical structure — extracting the extremal element of an
 indexed family under an evaluation map — also appears outside semantics
 (notably as `argmax_u (ln P_L0(s | u))` in RSA-style pragmatics; both pick
 the most informative alternative under their respective evaluation map).
-The file lives in `Semantics/Entailment/` because the cross-world
-quantifier is the entailment relation between propositions.
+The file lives with exhaustification because maximal informativity is
+the [fox-2007] exhaustivity primitive, though the cross-world quantifier
+is just the entailment relation between propositions.
 
 ## Beck-Rullmann attribution
 

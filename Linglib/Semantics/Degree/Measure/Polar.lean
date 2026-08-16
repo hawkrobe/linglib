@@ -17,7 +17,7 @@ degree-domain constructors and epistemic threshold semantics.
 - `PolarMeasure.IsLicensed`: endpoint-based licensing via `Boundedness.IsLicensed`.
 - `PolarMeasure.degreeProperty`: the degree property derived from
   `direction` (`Comparison.ge.over` positive, `Comparison.le.over` negative); its
-  maximal informativity is characterized in `Semantics/Entailment/Extremum.lean`.
+  maximal informativity is characterized in `Semantics/Exhaustification/Extremum.lean`.
 - `PolarMeasure.numeral`, `PolarMeasure.adjective`: Kennedy-style
   numeral and gradable-adjective domains.
 
@@ -92,7 +92,7 @@ Constructors for [kennedy-2015]'s numeral domains (de-Fregean type-shift
 over cardinality) and [kennedy-2007]'s gradable-adjective domains. The
 licensing theorems below only pin the `Boundedness → licensed` map; the
 substantive maximal-informativity results (exactness of the maximally
-informative degree) live in `Semantics/Entailment/Extremum.lean`
+informative degree) live in `Semantics/Exhaustification/Extremum.lean`
 (`isMaxInf_atLeast_iff_eq`, `isMaxInf_atMost_iff_eq`) and are discharged
 over real numeral meanings in `Studies/FoxHackl2006Numerals.lean`. -/
 

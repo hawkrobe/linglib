@@ -1,4 +1,4 @@
-import Linglib.Semantics.Entailment.NaturalLogic
+import Linglib.Logic.Natural.Basic
 import Linglib.Semantics.Polarity.Item
 import Linglib.Fragments.English.PolarityItems
 

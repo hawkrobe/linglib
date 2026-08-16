@@ -1,4 +1,4 @@
-import Linglib.Semantics.Entailment.StrawsonEntailment
+import Linglib.Logic.Natural.StrawsonEntailment
 import Linglib.Semantics.Focus.Control
 import Linglib.Data.Examples.VonFintel1999
 import Linglib.Studies.KadmonLandman1993
@@ -14,7 +14,7 @@ classically downward entailing — *only*, adversative attitudes,
 superlatives, and conditional antecedents — are all Strawson-DE (his
 Definition 14). Each theorem is named after the paper's example number
 and discharged by specializing the corresponding substrate theorem from
-`Semantics/Entailment/StrawsonEntailment.lean`. The NPI stimuli are typed
+`Logic/Natural/StrawsonEntailment.lean`. The NPI stimuli are typed
 rows in `Data/Examples/VonFintel1999.json` (`Examples.ex10`, …).
 
 ## Main results
