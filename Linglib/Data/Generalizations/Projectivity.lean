@@ -3,7 +3,7 @@ import Linglib.Data.Examples.TonhauserBeaverDegen2018
 import Linglib.Data.Examples.SolstadBott2024
 
 /-!
-# Generalizations.Projectivity — cross-paper prediction target
+# Generalizations.Projectivity — cross-paper data pool
 
 The Gradient Projection Principle of [tonhauser-beaver-degen-2018] — content
 projects to the extent that it is *not* at-issue — predicts a per-expression
@@ -15,13 +15,11 @@ not-at-issueness across triggers) predates any one formal account and spans
 ≥ 2 papers contributing generated `Data.Examples` rows
 ([tonhauser-beaver-degen-2018]: 9 + 12 English expressions;
 [solstad-bott-2024]: occasion + psychological verbs in German), with ≥ 2 rival
-accounts consuming the `ProjectionAccount` signature in their study files
-(`gppProjection` and `pottsProjection` in `Studies/TonhauserBeaverDegen2018`).
+accounts run against the pool in their study files (`gppProjection` and
+`pottsProjection` in `Studies/TonhauserBeaverDegen2018`).
 
 ## Main declarations
 
-* `ProjectionAccount` — the prediction signature any account implements: given a
-  content's at-issueness, predict its projectivity (`Rat01 → Rat01`).
 * `ProjectionDatum` — a typed observed datum (`projectivity`, `atIssueness`),
   lifted from a paper-anchored `LinguisticExample` by `fromExample`.
 * `allData` — the pooled test set: every projectivity row from the contributing
@@ -43,13 +41,6 @@ namespace Generalizations.Projectivity
 
 open Core.Order (Rat01)
 open Data.Examples (LinguisticExample SourceRef)
-
-/-! ### Prediction signature -/
-
-/-- A theory of projection: predict a content's projectivity from its
-    at-issueness. Rival accounts (`gppProjection`, `pottsProjection`) live in the
-    study files and are run against `allData`. -/
-abbrev ProjectionAccount := Rat01 → Rat01
 
 /-- An observed datum: mean projectivity and at-issueness for one expression,
     with its originating `SourceRef`. -/
@@ -99,7 +90,8 @@ def fromExample (e : LinguisticExample) : Option ProjectionDatum :=
 
 /-! ### Pool -/
 
-/-- The pooled cross-paper projection data. Each rival `ProjectionAccount` is run
+/-- The pooled cross-paper projection data. Each rival account — a map
+    `Rat01 → Rat01` from at-issueness to predicted projectivity — is run
     against this list in the study files. -/
 def allData : List ProjectionDatum :=
   (TonhauserBeaverDegen2018.Examples.all ++ SolstadBott2024.Examples.all).filterMap fromExample
@@ -108,14 +100,14 @@ def allData : List ProjectionDatum :=
 
 /-- An account's absolute error on an observation: the gap between its predicted
     projectivity (from the observed at-issueness) and the observed projectivity. -/
-def predictionError (acc : ProjectionAccount) (d : ProjectionDatum) : ℚ :=
+def predictionError (acc : Rat01 → Rat01) (d : ProjectionDatum) : ℚ :=
   |(acc d.atIssueness).val - d.projectivity.val|
 
 /-- An account predicts an observation within tolerance `ε`. -/
-def predictsWithin (ε : ℚ) (acc : ProjectionAccount) (d : ProjectionDatum) : Prop :=
+def predictsWithin (ε : ℚ) (acc : Rat01 → Rat01) (d : ProjectionDatum) : Prop :=
   predictionError acc d ≤ ε
 
-instance (ε : ℚ) (acc : ProjectionAccount) (d : ProjectionDatum) :
+instance (ε : ℚ) (acc : Rat01 → Rat01) (d : ProjectionDatum) :
     Decidable (predictsWithin ε acc d) :=
   inferInstanceAs (Decidable (_ ≤ _))
 

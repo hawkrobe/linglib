@@ -4,7 +4,7 @@ import Linglib.Data.Examples.KrizChemla2015
 import Linglib.Data.Generalizations.HomogeneityGap
 
 /-!
-# Generalizations.HomogeneityProjection — cross-paper prediction target
+# Generalizations.HomogeneityProjection — cross-paper data pool
 
 Cross-paper test substrate for how the homogeneity gap of plural definites
 projects under embedding quantifiers and operators. The pattern's empirical
@@ -20,9 +20,6 @@ generalisation predates any one formal account, justifying a theory-neutral
 * `EmbeddingOperator` — operator labels recurring across the literature.
 * `GapScenario` — scenario classification used by the C-series experiments
   (TRUE / FALSE / GAP / GAP? / GAP??).
-* `ProjectionPredict` — the shared signature any account of homogeneity
-  projection must satisfy; given an `(operator, scenario)` pair, predict a
-  `Trivalent` value.
 * `ProjectionDatum` — typed empirical datum; lifted from the raw
   `LinguisticExample` rows by `fromExample`.
 * `Examples` (generator-managed) — pooled stimulus rows from each paper
@@ -34,11 +31,13 @@ generalisation predates any one formal account, justifying a theory-neutral
 
 ## Implementation notes
 
-This file is the entry point for cross-account testing of homogeneity
-projection. The shape is: a `ProjectionPredict` signature each account
-implements; a `ProjectionDatum` carrying observed outcomes; decidable
-theorems comparing each account's prediction to each datum, including
-*divergence* theorems where two accounts disagree.
+This file is the data side of cross-account testing of homogeneity
+projection: a `ProjectionDatum` per observed outcome, pooled in `allData`.
+Accounts state their predictions in their own study files, at the
+granularity their paper supports, and are run against the pool there —
+restricted by `source.bibkey` to papers available at each study's
+publication date. Decidable per-datum and divergence theorems live in
+those study files too.
 
 The substrate is restricted to the smallest set of operator cases that
 closes the current ≥2-consumer graduation criterion: `every` / `no`
@@ -56,15 +55,16 @@ mapping would be wrong for at least one consumer.
 
 ## Todo
 
-* Wire total `ProjectionPredict` implementations from the rival accounts
-  postdating [kriz-chemla-2015]: the exhaustification account
-  ([bar-lev-2021]) and the mature supervaluation/trivalence accounts
-  ([kriz-2016], [kriz-spector-2021]). The account variants the paper
-  itself assesses — [magri-2014]-style implicature construals,
-  [spector-2013] supervaluation, and [schwarzschild-1994] /
-  [lobner-2000] / [gajewski-2005] presupposition with universal
-  projection — are implemented against this pool in
+* Run the rival accounts postdating [kriz-chemla-2015] against this
+  pool: the exhaustification account ([bar-lev-2021]) and the mature
+  supervaluation/trivalence accounts ([kriz-2016], [kriz-spector-2021]).
+  The account variants the paper itself assesses — [magri-2014]-style
+  implicature construals, [spector-2013] supervaluation, and
+  [schwarzschild-1994] / [lobner-2000] / [gajewski-2005] presupposition
+  with universal projection — are already run against it in
   `Studies/KrizChemla2015.lean`, restricted to the paper's tested cells.
+* Pool a second paper's rows (JSON-ify the [augurzky-etal-2023]
+  acceptance data) to close the ≥ 2-papers admission prong.
 * Add a denotation hook `EmbeddingOperator → ∀ α, Quantification.GQ α`
   once accounts derive predictions structurally rather than dispatch on
   label (per [peters-westerstahl-2006] discipline).
@@ -103,14 +103,7 @@ inductive GapScenario where
   | gapQQ          -- some-variant false, all-variant true (exactly-only)
   deriving Repr, DecidableEq
 
-/-! ### Test-suite schema -/
-
-/--
-Theoretical-prediction signature any account of homogeneity projection
-must satisfy: given an embedder label and a scenario, predict the
-trivalent `Trivalent` value the account commits to.
--/
-abbrev ProjectionPredict := EmbeddingOperator → GapScenario → Trivalent
+/-! ### Datum schema -/
 
 /--
 Empirical datum derived from a paper-anchored `LinguisticExample`.
@@ -174,8 +167,8 @@ def fromExample (e : LinguisticExample) : Option ProjectionDatum := do
 /--
 Cross-paper pool of projection-relevant data, derived from the imported
 per-paper `Examples.all` lists by `fromExample`. Each entry carries its
-originating `SourceRef` for provenance. Rival theories of projection
-should pass their `ProjectionPredict` implementations against this pool.
+originating `SourceRef` for provenance. Rival theories of projection are
+run against this pool in the study files.
 -/
 def allData : List ProjectionDatum :=
   KrizChemla2015.Examples.all.filterMap fromExample

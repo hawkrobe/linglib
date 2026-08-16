@@ -69,6 +69,7 @@ against those pools.
 
 namespace KrizChemla2015
 
+open Features (Polarity)
 open Generalizations Generalizations.HomogeneityProjection
 
 /-! ### Displays -/
@@ -192,8 +193,8 @@ def display : EmbeddingOperator → GapScenario → Option Display
   | .exactlyTwo, .gapQQ         => some [.full, .mixed, .empty, .full]   -- 9209
   | _, _ => none
 
-/-- Restrict a display-level account to the paper's tested grid — the
-scenario-partial analogue of the hub's `ProjectionPredict`. -/
+/-- Restrict a display-level account to the paper's tested grid, `none`
+marking cells the paper did not test. -/
 def predictOn (account : EmbeddingOperator → Display → Trivalent)
     (op : EmbeddingOperator) (sc : GapScenario) : Option Trivalent :=
   (display op sc).map (account op)
@@ -271,7 +272,7 @@ def scenarioCell : HomogeneityGap.GapScenario → Cell
 
 /-- Supervaluation over the unembedded grid: resolve the definite
 existentially and universally, under negation for negative polarity. -/
-def supervaluationGap : HomogeneityGap.GapPredict := fun pol sc =>
+def supervaluationGap (pol : Polarity) (sc : HomogeneityGap.GapScenario) : Trivalent :=
   match pol with
   | .positive => gapValue (scenarioCell sc ≠ .empty) (scenarioCell sc = .full)
   | .negative => gapValue (scenarioCell sc = .empty) (scenarioCell sc ≠ .full)
