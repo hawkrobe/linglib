@@ -300,7 +300,7 @@ theorem categoryMatch_fixes_applyFoC :
     reusable across syntactic theories. -/
 
 open Turkish.QuestionParticles
-open Semantics.Polarity
+open Polarity
 
 /-- Polarity-head labels assumed by this study (Laka-style ΣP/NEGP).
     Lean reserves `Σ` for sigma types, so the affirmative head's
@@ -315,8 +315,8 @@ inductive Head where
 
 /-- The bare semantic operator each head spells out. -/
 def Head.toOp : Head → ((PolarWorld → Prop) → (PolarWorld → Prop))
-  | .affirm => Semantics.Polarity.affirm _
-  | .neg    => Semantics.Polarity.neg _
+  | .affirm => Polarity.affirm _
+  | .neg    => Polarity.neg _
 
 /-- This study's commitments about Turkish *mI*. -/
 structure MiAnalysis where

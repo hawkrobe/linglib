@@ -439,7 +439,7 @@ free-choice licensing), and each Fragment entry's instantiated parameters
 should match its profile's prediction.
 -/
 
-open Semantics.Polarity
+open Polarity
 open English.PolarityItems (any ever)
 open Italian.PolarityItems
   (mai qualsiasi nessuno qualunque uno_qualsiasi alcuno)

@@ -236,9 +236,9 @@ inductive LetAloneNPITrigger where
   | anyoneWhod            -- ex. 70: "Anyone who'd been to HIGH SCHOOL, let alone GRADUATE students in MATH, should be able to solve that problem"
   deriving DecidableEq, Repr
 
-open Semantics.Polarity in
+open Polarity in
 /-- Map the *let alone* licensing environments to the licensing contexts
-catalogued in `Semantics.Polarity`. -/
+catalogued in `Polarity`. -/
 def npiTriggerToContext : LetAloneNPITrigger → LicensingContext
   | .simpleNegation         => .negation
   | .tooComplementation     => .tooTo

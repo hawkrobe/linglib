@@ -5,7 +5,7 @@ import Linglib.Semantics.Polarity.Licensing
 [haspelmath-1997] [zeijlstra-2004] [giannakidou-1998]
 
 Russian indefinite-pronoun polarity items, typed by the theory-neutral
-categories from `Semantics.Polarity`. The classification follows
+categories from `Polarity`. The classification follows
 [haspelmath-1997]'s implicational map for the Russian series: the
 *-либо* series spans the weak-NPI functions (irrealis non-specific,
 question, conditional, comparative, indirect negation), while the *ни-*
@@ -27,7 +27,7 @@ characterized exactly by the licensing keystone
 
 namespace Russian.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-! ### Weak NPI (the *-либо* series) -/
 

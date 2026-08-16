@@ -13,7 +13,7 @@ study files that actually adopt the relevant theory (e.g.,
 [fox-katzir-2011]-style category match needs a UPOS tagging;
 [laka-1990]-style PolP needs a head label).
 
-The semantic operator is `Semantics.Polarity.affirm` (identity), reflecting
+The semantic operator is `Polarity.affirm` (identity), reflecting
 the consensus that *mI* is propositionally vacuous and contributes only
 question force / focus marking — a claim that is theory-neutral up to the
 choice of denotation type for propositions.
@@ -21,7 +21,7 @@ choice of denotation type for propositions.
 
 namespace Turkish.QuestionParticles
 
-open Semantics.Polarity
+open Polarity
 
 /-- A Turkish question particle: form, vowel-harmony allomorphs, and the
     bare semantic operator it contributes. No syntactic categorization. -/

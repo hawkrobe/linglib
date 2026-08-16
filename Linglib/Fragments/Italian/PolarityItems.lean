@@ -5,7 +5,7 @@ import Linglib.Semantics.Polarity.Licensing
 [chierchia-2006] [chierchia-2013]
 
 Lexical entries for Italian PSIs, typed by the theory-neutral categories
-from `Semantics.Polarity`.
+from `Polarity`.
 
 ## The Italian PSI system
 
@@ -17,7 +17,7 @@ Italian lexicalizes the NPI/FCI distinction that English *any* collapses:
 
 namespace Italian.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-! ### Pure NPIs -/
 

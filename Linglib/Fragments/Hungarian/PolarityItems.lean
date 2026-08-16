@@ -5,7 +5,7 @@ import Linglib.Semantics.Polarity.Licensing
 [haspelmath-1997]
 
 Hungarian indefinite pronoun polarity items, typed by the categories from
-`Semantics.Polarity`.
+`Polarity`.
 
 - **senki**: N-word, negative concord (with *sem* in direct negation)
 - **akárki / bárki**: Free choice items
@@ -13,7 +13,7 @@ Hungarian indefinite pronoun polarity items, typed by the categories from
 
 namespace Hungarian.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-! ### NPI -/
 

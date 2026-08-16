@@ -1,7 +1,7 @@
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Features.LicensingContext
+# Licensing contexts
 [ladusaw-1979] [kadmon-landman-1993]
 
 The 22-case enum of licensing contexts for polarity-sensitive items.
@@ -15,7 +15,7 @@ to talk about these context labels.
 Extracted from `Semantics/Polarity/Licensing.lean` after
 audit consensus that `LicensingContext` is data, not theory: the
 22 cases are observational labels for syntactic environments, while
-only the *signatures* assigned to them in `contextProperties`
+only the *signatures* assigned to them in `LicensingContext.properties`
 (in the Theories file) carry theoretical commitment. Co-locating the
 enum here makes it Fragment-importable substrate without dragging in
 the Ladusaw/K&L theoretical apparatus.
@@ -35,7 +35,7 @@ specific traditions' classification of contexts), but the cases
 themselves enumerate empirically-attested licensing environments any
 framework needs to talk about. The DE/anti-additive/anti-morphic
 *labelling* of these contexts is theory-laden and lives in
-`Semantics/Polarity/Licensing.lean::contextProperties`
+`LicensingContext.properties` (in `Semantics/Polarity/Licensing.lean`)
 (Ladusaw/Zwarts canonical) — not here.
 
 UNVERIFIED: The 22-case carve-up is English-anchored and may need
@@ -45,7 +45,7 @@ per Giannakidou 1998, rather than by surface construction); see the
 for the documented gap.
 -/
 
-namespace Features
+namespace Polarity
 
 /-- Contexts that can license polarity-sensitive items.
 
@@ -56,7 +56,7 @@ namespace Features
 
     Per-context theoretical classifications (DE strength, K&L mechanism,
     Strawson-DE flagging) live in
-    `Semantics/Polarity/Licensing.lean::contextProperties`. -/
+    `LicensingContext.properties` (in `Semantics/Polarity/Licensing.lean`). -/
 inductive LicensingContext where
   | negation          -- "not", "never", "without"
   | nobody            -- "nobody", "nothing" (negative quantifiers)
@@ -88,4 +88,4 @@ inductive LicensingContext where
   | denyVerb          -- Anti-additive attitude verbs: "She denied seeing anyone"
   deriving DecidableEq, Fintype, Repr
 
-end Features
+end Polarity

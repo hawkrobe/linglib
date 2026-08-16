@@ -16,7 +16,7 @@ indefinite + negation route. Attested contexts follow [lahiri-1998]
 
 namespace Hindi.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-- *koii nahiiN* — negative indefinite, koii + negation:
 'koii nahiiN aayaa' (nobody came). -/

@@ -14,7 +14,7 @@ choice (A278). A dual NPI/FCI on the indefinite-plus-even pattern of
 
 namespace Quechua.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-- *pi-pis* — wh + 'also/even': dual NPI/FCI covering the map's whole
     non-specific span (A.37). -/

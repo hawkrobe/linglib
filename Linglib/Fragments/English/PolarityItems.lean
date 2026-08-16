@@ -3,7 +3,7 @@ import Linglib.Semantics.Polarity.Licensing
 /-!
 # English Polarity-Sensitive Items
 
-English polarity items, typed by `Semantics.Polarity.Item`: weak NPIs
+English polarity items, typed by `Polarity.Item`: weak NPIs
 (*any*, *ever*, *at all*), strong NPIs (*lift a finger*, *in years*,
 *either*), free-relative FCIs (*whatever*, *whoever*), maximizer NPIs
 (*wild horses*, *all the tea in China*), and PPIs both plain (*some*,
@@ -22,7 +22,7 @@ in `Studies/Israel2001.lean` as `ScalarItem`s over these entries.
 
 namespace English.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-! ### Weak NPIs -/
 

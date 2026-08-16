@@ -29,7 +29,7 @@ canonicity. The paper's items are `ScalarItem`s
 
 namespace Israel2001
 
-open Semantics.Polarity
+open Polarity
 open English.PolarityItems
 
 /-! ### Canonical items (Figure 1)

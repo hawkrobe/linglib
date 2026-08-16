@@ -67,7 +67,7 @@ the strategy taxonomy, and the explicit endorsement of Matić & Nikolaeva's
 
 namespace Italian.PolarityMarking
 
-open Semantics.Polarity.Marking (Entry Strategy Env)
+open Polarity.Marking (Entry Strategy Env)
 
 /-- *sì che* — Italian polarity-reversing affirmative construction.
     Cleft-like or left-peripheral PolP structure (analyses contested):

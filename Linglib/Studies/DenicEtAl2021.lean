@@ -233,7 +233,7 @@ def ppiItemTested : String := "some"
 -- ============================================================================
 
 open NaturalLogic
-open Semantics.Polarity
+open Polarity
 open English.PolarityItems
 
 /-- Map the paper's environments to canonical entailment signatures. -/

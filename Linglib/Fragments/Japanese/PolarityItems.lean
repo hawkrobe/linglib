@@ -5,7 +5,7 @@ import Linglib.Semantics.Polarity.Licensing
 [haspelmath-1997] [kratzer-shimoyama-2002] [shimoyama-2011] [watanabe-2004]
 
 Japanese indefinite pronoun polarity items, typed by the categories from
-`Semantics.Polarity`.
+`Polarity`.
 
 Japanese builds polarity items from wh-indeterminates + particles
 ([kratzer-shimoyama-2002]):
@@ -15,7 +15,7 @@ Japanese builds polarity items from wh-indeterminates + particles
 
 namespace Japanese.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-! ### NPI -/
 

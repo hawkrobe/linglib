@@ -14,7 +14,7 @@ NPI licensing to downward entailingness (DE). The core claim:
 
 This file bridges the GQ monotonicity proofs from `Quantification` and
 `Quantification.Quantifier` to the NPI licensing classification
-indexed by `Semantics.Polarity.LicensingContext`, making the DE ↔ NPI
+indexed by `Polarity.LicensingContext`, making the DE ↔ NPI
 connection formally explicit.
 
 ## Key connections
@@ -31,7 +31,7 @@ connection formally explicit.
 namespace Ladusaw1979
 
 open Quantification
-open Semantics.Polarity (LicensingContext)
+open Polarity (LicensingContext)
 open Intensional
 open Semantics.Montague (ToyEntity)
 
@@ -59,11 +59,11 @@ def LicensingStrength.ofDEStrength : Option NaturalLogic.DEStrength → Licensin
   | none                                    => .nonDE
 
 /-- Classify NPI licensing contexts by their monotonicity-based strength,
-    derived from `Semantics.Polarity.Licensing.contextProperties`. The Ladusaw
+    derived from `Polarity.LicensingContext.properties`. The Ladusaw
     classification is a coarsening of the Icard signature lattice. -/
 def licensingStrength (c : LicensingContext) : LicensingStrength :=
   LicensingStrength.ofDEStrength
-    (Semantics.Polarity.Licensing.contextProperties c).strawsonSignature.toDEStrength
+    c.properties.strawsonSignature.toDEStrength
 
 -- ============================================================================
 -- §2. GQ monotonicity → NPI licensing (the Ladusaw bridge)

@@ -17,7 +17,7 @@ definedness (`EntailmentSig.SoundFor.strawsonSoundFor`).
 
 The operator instances are the semantic content of the
 `classicalSignature = none` rows of
-`Semantics.Polarity.Licensing.contextProperties`: `onlyFull`,
+`Polarity.LicensingContext.properties`: `onlyFull`,
 `sorryFull`, `superlativeAssert`, and `sinceFull` realize the `.anti` row
 Strawson-ly while failing it classically.
 

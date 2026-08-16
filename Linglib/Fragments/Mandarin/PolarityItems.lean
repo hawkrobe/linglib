@@ -3,7 +3,7 @@ import Linglib.Semantics.Polarity.Licensing
 /-!
 # Mandarin Polarity-Sensitive Items
 
-Mandarin indefinite polarity items, typed by `Semantics.Polarity.Item`.
+Mandarin indefinite polarity items, typed by `Polarity.Item`.
 The system has three layers: the bare interrogatives (*shéi* 谁 'who',
 *shénme* 什么 'what') serve as indefinites in all non-specific
 non-emphatic functions — seven of the nine implicational-map functions,
@@ -26,7 +26,7 @@ entry lists those contexts.
 
 namespace Mandarin.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-! ### Bare interrogatives -/
 
@@ -86,7 +86,7 @@ def sheiDou : Item :=
     *dōu*: free choice under modals (*Rènhé shíhou nǐ dōu kěyǐ lái* 'You
     can come anytime', A270), comparatives (A271, a *bǐ* NP-comparative,
     listed under `comparativeS` per the covert-clausal routing convention
-    of `Features.LicensingContext`), and direct negation (A272); the
+    of `Polarity.LicensingContext`), and direct negation (A272); the
     superordinate-negation use (A273) has no matching context row.
     Etymologically *rèn* 'allow; appoint' + old interrogative *hé* 'what'
     ([haspelmath-1997] A.36.2). -/

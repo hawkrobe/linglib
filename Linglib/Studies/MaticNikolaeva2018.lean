@@ -55,7 +55,7 @@ docstring) with a back-pointer here.
 
 namespace MaticNikolaeva2018
 
-open Semantics.Polarity.Marking (Strategy Entry)
+open Polarity.Marking (Strategy Entry)
 open English.PolarityMarking (emphaticDo)
 open German.PolarityMarking (verumFocus dochPreUtterance)
 

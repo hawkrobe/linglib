@@ -32,7 +32,7 @@ remains deferred to `Studies/Israel2001.lean`.
   the English lexicon and `Studies/Israel2001.lean`).
 -/
 
-namespace Semantics.Polarity
+namespace Polarity
 
 /-! ### The scalar-model axes -/
 
@@ -111,4 +111,4 @@ abbrev ScalarItem.canonicityConsistent (p : ScalarItem) : Prop :=
     ∀ c ∈ predictCanonicity le (p.freeChoice && p.licensor.isNone),
       p.canonicity = c
 
-end Semantics.Polarity
+end Polarity

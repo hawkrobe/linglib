@@ -5,7 +5,7 @@ import Linglib.Semantics.Polarity.Licensing
 [haspelmath-1997], [karlsson-2017]
 
 Finnish indefinite pronoun polarity items, typed by the categories from
-`Semantics.Polarity`.
+`Polarity`.
 
 Unlike Russian *nikto*, Italian *nessuno*, German *niemand*, or Hungarian
 *senki* — all single-word negative quantifiers ("n-words") that have their own
@@ -23,7 +23,7 @@ combination, not a single lexical entry.
 
 namespace Finnish.PolarityItems
 
-open Semantics.Polarity
+open Polarity
 
 /-! ### NPI -/
 

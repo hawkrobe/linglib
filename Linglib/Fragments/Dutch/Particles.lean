@@ -15,7 +15,7 @@ finite verb.
 
 namespace Dutch.Particles
 
-open Semantics.Polarity.Marking (Entry Strategy Env)
+open Polarity.Marking (Entry Strategy Env)
 
 /-- *wel* — Dutch affirmative polarity particle.
     Sentence-internal, accented, available in both contrast and correction.

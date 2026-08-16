@@ -35,7 +35,7 @@ German Verum focus.
 
 namespace English.PolarityMarking
 
-open Semantics.Polarity.Marking (Entry Strategy Env)
+open Polarity.Marking (Entry Strategy Env)
 
 /-- Emphatic *do* (Verum-focus use) — English polarity-marking strategy.
     Pitch accent on auxiliary *do* in an affirmative sentence contradicting

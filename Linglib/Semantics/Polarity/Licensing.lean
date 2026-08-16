@@ -15,7 +15,7 @@ import Linglib.Semantics.Polarity.Item
 [iatridou-2000] [dayal-1996] [horn-1996] [vanderwouden-1997]
 
 The monotonicity-based licensing theory for `Polarity.Item`:
-`contextProperties` assigns every `LicensingContext` its Strawson and
+`LicensingContext.properties` assigns every `LicensingContext` its Strawson and
 classical entailment signatures, its [kadmon-landman-1993] licensing
 mechanism, and its citation lineage; `StrengthScale` is the polymorphic
 item↔context strength pattern with `zwartsScale` as its canonical
@@ -23,18 +23,19 @@ instance; and the keystone `LicensingContext.licenses` dispatches on the
 row's mechanism — Zwarts strength on signature rows, free choice on
 generic-indefinite rows ([dayal-1996]), entropy on questions
 ([van-rooy-2003-npi]). Per-paper classifiers (`Ladusaw1979`,
-`KadmonLandman1993`) project from `contextProperties` rather than
+`KadmonLandman1993`) project from `LicensingContext.properties` rather than
 parallel-stipulating; the grounded grade — deriving the signatures from
 the model witnesses of `Witnesses.lean` via the Kadmon–Landman
 strengthening chain — is the planned next step.
 
 ## Main declarations
 
-* `LicensingMechanism`, `ContextProperties`, `contextProperties` — the
+* `LicensingMechanism`, `ContextProperties`, `LicensingContext.properties` — the
   per-context theory table.
 * `StrengthScale`, `zwartsScale` — polymorphic strength licensing.
 * `LicensingContext.licenses` — the item↔context licensing keystone.
-* `IsStrawsonOnly` and the Haspelmath-map grounding theorems.
+* `LicensingContext.IsStrawsonOnly` and the Haspelmath-map grounding
+  theorems.
 
 ## Implementation notes
 
@@ -48,9 +49,7 @@ contested attribution (Zwarts 1981 / van Benthem 1986 / Sánchez Valencia
 1991; none in `references.bib`).
 -/
 
-namespace Semantics.Polarity.Licensing
-
-open Features (LicensingContext)
+namespace Polarity
 
 /-! ### Licensing Mechanism (refined 5-way) -/
 
@@ -87,7 +86,7 @@ inductive LicensingMechanism where
     Every classification of `LicensingContext` (DE strength, K&L mechanism,
     canonical example, citation lineage) projects out of this single record.
     Per-paper classifiers (`Ladusaw1979.licensingStrength`,
-    `KadmonLandman1993.klExplanation`) are derivations from `contextProperties`,
+    `KadmonLandman1993.klExplanation`) are derivations from `LicensingContext.properties`,
     not parallel stipulations. -/
 structure ContextProperties where
   /-- Icard signature modulo presuppositions ([von-fintel-1999]'s
@@ -118,7 +117,7 @@ structure ContextProperties where
     none currently in `references.bib`. The substrate uses the standard
     `.antiAdd` signature for `.universalRestrictor` without committing
     to a specific source. -/
-def contextProperties : LicensingContext → ContextProperties
+def LicensingContext.properties : LicensingContext → ContextProperties
   | .negation =>
       { strawsonSignature := .antiAddMult, mechanism := .byStrengthening
       , prototype := "Mary didn't see anyone."
@@ -234,31 +233,30 @@ instantiate different carriers. -/
 /-- A **strength scale** for NPI licensing: how items and contexts project onto
 an ordered strength carrier `S`. `none` on either side = "no strength here" (the
 item licenses via another mechanism, or the context supplies none). -/
-structure StrengthScale (Item Context S : Type*) [Preorder S] where
+structure StrengthScale (α β S : Type*) [Preorder S] where
   /-- The strength an item requires (`none` = not strength-licensed). -/
-  required : Item → Option S
+  required : α → Option S
   /-- The strength a context supplies (`none` = supplies no strength). -/
-  supplied : Context → Option S
+  supplied : β → Option S
 
 /-- Licensing on a scale: the context supplies at least the strength the item
 requires (both sides present). -/
-def StrengthScale.licenses {Item Context S : Type*} [Preorder S]
-    (L : StrengthScale Item Context S) (i : Item) (c : Context) : Prop :=
+def StrengthScale.licenses {α β S : Type*} [Preorder S]
+    (L : StrengthScale α β S) (i : α) (c : β) : Prop :=
   ∃ r ∈ L.required i, ∃ s ∈ L.supplied c, r ≤ s
 
-instance {Item Context S : Type*} [Preorder S]
-    [DecidableRel (α := S) (· ≤ ·)] (L : StrengthScale Item Context S)
-    (i : Item) (c : Context) : Decidable (L.licenses i c) := by
+instance {α β S : Type*} [Preorder S]
+    [DecidableRel (α := S) (· ≤ ·)] (L : StrengthScale α β S)
+    (i : α) (c : β) : Decidable (L.licenses i c) := by
   unfold StrengthScale.licenses; infer_instance
 
 /-- The canonical Zwarts scale ([ladusaw-1979], [zwarts-1998],
 [gajewski-2011]): carrier `DEStrength`, item strength from `Item.licensor`,
 context strength from the row's Strawson signature. -/
 def zwartsScale :
-    StrengthScale Semantics.Polarity.Item LicensingContext
-      NaturalLogic.DEStrength where
+    StrengthScale Item LicensingContext NaturalLogic.DEStrength where
   required e := e.licensor
-  supplied c := (contextProperties c).strawsonSignature.toDEStrength
+  supplied c := c.properties.strawsonSignature.toDEStrength
 
 /-! ### The licensing keystone -/
 
@@ -277,24 +275,23 @@ Dispatched on the row's `LicensingMechanism`:
 The grounded grade — deriving the signature side from the context
 witnesses of `Witnesses.lean` via the Kadmon–Landman strengthening
 chain — is planned (N1 of the NPI-API sweep). -/
-def _root_.Features.LicensingContext.licenses (c : LicensingContext)
-    (e : Semantics.Polarity.Item) : Prop :=
-  match (contextProperties c).mechanism with
+def LicensingContext.licenses (c : LicensingContext) (e : Item) : Prop :=
+  match c.properties.mechanism with
   | .byStrengthening | .byStrawsonDE => zwartsScale.licenses e c
   | .byGenericIndefinite => e.isFCI
   | .byEntropy => e.licensor = some .weak
   | .strengtheningFails => False
 
-instance (c : LicensingContext) (e : Semantics.Polarity.Item) :
+instance (c : LicensingContext) (e : Item) :
     Decidable (c.licenses e) := by
-  unfold Features.LicensingContext.licenses; split <;> infer_instance
+  unfold LicensingContext.licenses; split <;> infer_instance
 
 /-! ### The Haspelmath map meets the licensing table
 
-`Features.LicensingContext.haspelmathFunction` (in `Features/Indefinite.lean`)
+`Polarity.LicensingContext.haspelmathFunction` (in `Features/Indefinite.lean`)
 classifies each licensing environment by the [haspelmath-1997] map function it
 realizes. The theorems here ground the map's stipulated polarity-side
-classifiers (`HaspelmathFunction.isDE`/`isFC`) in `contextProperties`. -/
+classifiers (`HaspelmathFunction.isDE`/`isFC`) in `LicensingContext.properties`. -/
 
 /-- [haspelmath-1997]'s free-choice region coincides exactly with the
 [kadmon-landman-1993] generic-indefinite mechanism class: a context realizes
@@ -303,7 +300,7 @@ the `freeChoice` function iff its licensing mechanism is
 theorem haspelmathFunction_freeChoice_iff_genericIndefinite
     (c : LicensingContext) :
     c.haspelmathFunction = some .freeChoice ↔
-      (contextProperties c).mechanism = .byGenericIndefinite := by
+      c.properties.mechanism = .byGenericIndefinite := by
   cases c <;> decide
 
 /-- Every context realizing an NPI-region function (`HaspelmathFunction.isDE`:
@@ -313,22 +310,22 @@ not uniformly DE (questions license by entropy, [van-rooy-2003-npi]). -/
 theorem haspelmathFunction_npi_region_licensable (c : LicensingContext)
     (f : Indefinite.HaspelmathFunction) (hf : c.haspelmathFunction = some f)
     (hDE : f.isDE = true) :
-    (contextProperties c).strawsonSignature.toDEStrength.isSome ∨
-      (contextProperties c).mechanism = .byEntropy := by
+    c.properties.strawsonSignature.toDEStrength.isSome ∨
+      c.properties.mechanism = .byEntropy := by
   revert hf hDE; cases c <;> cases f <;> decide
 
 /-- A context is **Strawson-only** when no classical signature row holds
 ([von-fintel-1999]): only-focus, adversatives, temporal *since*,
 superlatives. -/
-def IsStrawsonOnly (c : LicensingContext) : Prop :=
-  (contextProperties c).classicalSignature = none
+def LicensingContext.IsStrawsonOnly (c : LicensingContext) : Prop :=
+  c.properties.classicalSignature = none
 
 /-- When a classical row exists it coincides with the Strawson row:
 presupposition-free contexts carry a single signature. -/
 theorem classicalSignature_eq_strawson (c : LicensingContext) :
-    (contextProperties c).classicalSignature = none ∨
-    (contextProperties c).classicalSignature =
-      some (contextProperties c).strawsonSignature := by
+    c.properties.classicalSignature = none ∨
+    c.properties.classicalSignature =
+      some c.properties.strawsonSignature := by
   cases c <;> decide
 
-end Semantics.Polarity.Licensing
+end Polarity

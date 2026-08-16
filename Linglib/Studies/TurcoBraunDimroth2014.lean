@@ -54,7 +54,7 @@ Note: Production percentages are approximate (read from bar charts).
 
 namespace TurcoBraunDimroth2014
 
-open Semantics.Polarity.Marking (Strategy Entry Env)
+open Polarity.Marking (Strategy Entry Env)
 open Discourse.Coherence (CoherenceRelation)
 open Dutch.Particles (wel)
 open German.PolarityMarking (verumFocus dochPreUtterance)

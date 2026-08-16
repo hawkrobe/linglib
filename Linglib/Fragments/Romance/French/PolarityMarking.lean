@@ -33,7 +33,7 @@ affirmative particles like Dutch *wel* and from Verum focus.
 
 namespace French.PolarityMarking
 
-open Semantics.Polarity.Marking (Entry Strategy Env)
+open Polarity.Marking (Entry Strategy Env)
 
 /-- *si* — French polarity-reversing affirmative particle.
     Assigns [+Pol] while contradicting a negative assertion or question.

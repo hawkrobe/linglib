@@ -27,7 +27,7 @@ Swedish also allows verb-echo answers alongside particles (mixed strategy).
 namespace Swedish.AnswerParticles
 
 open Features.Polarity
-open Semantics.Polarity.Marking (Entry Strategy Env)
+open Polarity.Marking (Entry Strategy Env)
 open Features (AnsweringSystem AnswerStrategy PolarAnswerProfile)
 
 /-- *ja* — standard affirmative. Assigns [+Pol]. Responds only to
