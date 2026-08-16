@@ -1,6 +1,7 @@
 import Linglib.Core.Data.Trivalent
 import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.KrizChemla2015
+import Linglib.Data.Generalizations.HomogeneityGap
 
 /-!
 # Generalizations.HomogeneityProjection — cross-paper prediction target
@@ -21,7 +22,7 @@ generalisation predates any one formal account, justifying a theory-neutral
   (TRUE / FALSE / GAP / GAP? / GAP??).
 * `ProjectionPredict` — the shared signature any account of homogeneity
   projection must satisfy; given an `(operator, scenario)` pair, predict a
-  trivalent `Trivalent` value.
+  `Trivalent` value.
 * `ProjectionDatum` — typed empirical datum; lifted from the raw
   `LinguisticExample` rows by `fromExample`.
 * `Examples` (generator-managed) — pooled stimulus rows from each paper
@@ -30,10 +31,6 @@ generalisation predates any one formal account, justifying a theory-neutral
   generated `Data.Examples.<Paper>` module (see `scripts/gen_examples.py`).
 * `allData` — the test pool: every `LinguisticExample` whose
   `paperFeatures` carry the keys this hub recognises.
-
-Studies files (e.g. [[KrizChemla2015]], [[AugurzkyEtAl2023]]) retrieve their
-paper-specific slice from their own `<Paper>.Examples.all` (option-B
-per-paper accessor pattern).
 
 ## Implementation notes
 
@@ -59,14 +56,15 @@ mapping would be wrong for at least one consumer.
 
 ## Todo
 
-* Wire `ProjectionPredict` implementations from each rival account: the
-  scalar-implicature/exhaustification accounts ([magri-2014],
-  [bar-lev-2021]), the supervaluation/trivalence accounts
-  ([spector-2013], [kriz-2016], [kriz-spector-2021]), and
-  the presupposition account ([gajewski-2005] + Schwarzschild 1994 —
-  no linglib study file yet).
-* Prove decidable per-datum predictions and cross-account divergence
-  theorems once those implementations land.
+* Wire total `ProjectionPredict` implementations from the rival accounts
+  postdating [kriz-chemla-2015]: the exhaustification account
+  ([bar-lev-2021]) and the mature supervaluation/trivalence accounts
+  ([kriz-2016], [kriz-spector-2021]). The account variants the paper
+  itself assesses — [magri-2014]-style implicature construals,
+  [spector-2013] supervaluation, and [schwarzschild-1994] /
+  [lobner-2000] / [gajewski-2005] presupposition with universal
+  projection — are implemented against this pool in
+  `Studies/KrizChemla2015.lean`, restricted to the paper's tested cells.
 * Add a denotation hook `EmbeddingOperator → ∀ α, Quantification.GQ α`
   once accounts derive predictions structurally rather than dispatch on
   label (per [peters-westerstahl-2006] discipline).
@@ -93,15 +91,16 @@ inductive EmbeddingOperator where
 /--
 Scenario classification used by the trivalent-judgment paradigm
 ([kriz-chemla-2015]). The first three are the canonical TRUE / FALSE
-/ GAP triad; `gapQ` and `gapQQ` are the `exactly N` refinements that
-isolate the at-least-reading from genuine homogeneity projection.
+/ GAP triad; `gapQ` and `gapQQ` are the `exactly N` refinements probing
+the two ways the some-substituted and all-substituted variants of the
+sentence can pattern in a candidate gap situation (Table 12's s5/s6).
 -/
 inductive GapScenario where
-  | trueScenario   -- all-positive baseline
-  | falseScenario  -- all-negative baseline
-  | gap            -- standard mixed scenario (homogeneity violated)
-  | gapQ           -- at-least reading possible (exactly-only)
-  | gapQQ          -- at-least reading ruled out (exactly-only)
+  | trueScenario   -- clear-truth baseline
+  | falseScenario  -- clear-falsity baseline
+  | gap            -- some-variant true, all-variant false (homogeneity violated)
+  | gapQ           -- some-variant and all-variant both false (exactly-only)
+  | gapQQ          -- some-variant false, all-variant true (exactly-only)
   deriving Repr, DecidableEq
 
 /-! ### Test-suite schema -/
@@ -151,38 +150,24 @@ def parseScenario : String → Option GapScenario
   | _       => none
 
 /--
-Compute the observed `Trivalent` value for a `(scenario, gapDetected)` cell.
-
-Baseline conditions are unambiguous: `TRUE → .true`, `FALSE → .false`.
-For gap-bearing scenarios, gap detection means the empirical distribution
-peaks on the trivalent middle (`.indet`); a non-detection on a
-gap-bearing scenario means an alternative reading (typically an at-least
-reading for non-monotonic embedders) rendered the sentence non-gappy.
--/
-def observedTruth (scenario : GapScenario) (gapDetected : Bool) : Trivalent :=
-  match scenario, gapDetected with
-  | .trueScenario,  _    => .true
-  | .falseScenario, _    => .false
-  | _,              true => .indet
-  | _,              false => .true
-
-/--
 Lift a `LinguisticExample` to a `ProjectionDatum`, reading the
-`operator`, `condition`, and `gap_detected` keys from `paperFeatures`.
-Returns `none` for rows whose `paperFeatures` lack the recognised tags —
-those rows are not part of this hub's pool.
+`operator`, `condition`, `gap_detected`, and `classical_value` keys from
+`paperFeatures`. Baseline conditions are unambiguous (`TRUE → .true`,
+`FALSE → .false`); gap-family rows resolve via
+`HomogeneityGap.gapTruth`: `.indet` when the paper detected the gap,
+otherwise the bivalent value the row asserts through `classical_value`
+(e.g. the gap? cells of [kriz-chemla-2015] Exp. C3, judged completely
+false). Rows lacking the recognised tags are not part of this hub's pool.
 -/
-def fromExample (e : LinguisticExample) : Option ProjectionDatum :=
-  match e.paperFeatures.lookup "operator", e.paperFeatures.lookup "condition" with
-  | some opStr, some condStr =>
-    match parseOperator opStr, parseScenario condStr with
-    | some op, some sc =>
-      let gapDetected := (e.paperFeatures.lookup "gap_detected").getD "false" == "true"
-      some { operator := op, scenario := sc,
-             observed := observedTruth sc gapDetected,
-             source := e.source }
-    | _, _ => none
-  | _, _ => none
+def fromExample (e : LinguisticExample) : Option ProjectionDatum := do
+  let op ← parseOperator (← e.paperFeatures.lookup "operator")
+  let sc ← parseScenario (← e.paperFeatures.lookup "condition")
+  let observed ← match sc with
+    | .trueScenario  => some .true
+    | .falseScenario => some .false
+    | _              => HomogeneityGap.gapTruth e.paperFeatures
+  some { operator := op, scenario := sc, observed := observed,
+         source := e.source }
 
 /-! ### Pool -/
 
