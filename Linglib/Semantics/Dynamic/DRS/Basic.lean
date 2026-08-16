@@ -7,8 +7,9 @@ This file develops the structural theory of the `DRS` type of `DRS/Defs.lean`:
 functorial renaming of discourse referents (`DRS.map`), the merge algebra,
 transport of the extension relation along renaming, the referent predicates
 `varFinset`, `freeVarFinset` and `IsProper`, `ReuseFreeAt`, and accessibility —
-computed (`accessibleFrom`, `Accessible`) and as [geurts-beaver-maier-2024]'s
-smallest preorder (`AccessibleTo`, `accessibleDomain`), connected by
+computed as [vaneijck-2006]'s left-and-up walk (`accessibleFrom`, `Accessible`)
+and as [geurts-beaver-maier-2024]'s smallest preorder (`AccessibleTo`,
+`accessibleDomain`), connected by
 `DRS.Accessible.exists_mem_accessibleDomain`. Renaming along a bijection is
 [kamp-reyle-1993]'s *alphabetic variant* (the prose preceding Def. 1.4.8).
 -/
@@ -192,10 +193,12 @@ Accessibility (Def. 1.4.11) is intrinsically *relative to a host DRS*: "`u`
 accessible at box `B`" means `u` lies in the universe of `B` or of a box on the
 path from the host down to `B`. A host-free `∃ D, WeakSubordinate K D ∧
 u ∈ D.referents` is **vacuous** — a superordinate `D` introducing any referent can
-always be manufactured. `accScope` computes accessibility *top-down*, threading
-the in-scope referents along the first path to the box declaring the target; the
-declarative counterpart is the host-anchored preorder `AccessibleTo` at the end of
-this file, with soundness `DRS.Accessible.exists_mem_accessibleDomain`. -/
+always be manufactured. `accScope` computes accessibility *top-down* — the walk of
+[vaneijck-2006] "in the directions *left*, i.e. from the consequent of a pair
+`R ⇒ R'` to the antecedent, and *up*" — threading the in-scope referents along the
+first path to the box declaring the target; the declarative counterpart is the
+host-anchored preorder `AccessibleTo` at the end of this file, with soundness
+`DRS.Accessible.exists_mem_accessibleDomain`. -/
 
 /-- Accessibility threading through a condition. -/
 def accScope (s : Finset V) : Condition L V → V → Option (Finset V)
@@ -374,9 +377,9 @@ def ReuseFreeAt (X : Finset V) (K : DRS L V) : Prop :=
 
 /-! ### Accessibility -/
 
-/-- Descend `K`, accumulating in-scope referents `s` ("left and up"); on reaching
-the box introducing `x`, return that box's in-scope set `s ∪ U`. The `⇒`-consequent
-additionally sees the antecedent's universe. -/
+/-- Descend `K`, accumulating in-scope referents `s` ([vaneijck-2006]'s "left and
+up" walk); on reaching the box introducing `x`, return that box's in-scope set
+`s ∪ U`. The `⇒`-consequent additionally sees the antecedent's universe. -/
 def accScope (s : Finset V) (K : DRS L V) (x : V) : Option (Finset V) :=
   if x ∈ K.referents then some (s ∪ K.referents)
   else Condition.accScopeL (s ∪ K.referents) K.conditions x
