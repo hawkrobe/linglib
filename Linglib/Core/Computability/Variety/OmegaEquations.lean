@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.Semigroup.IdempotentPower
+import Linglib.Core.Algebra.Group.IdempotentPower
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.Variety.Equations
 import Linglib.Core.Computability.Definite
@@ -28,7 +28,7 @@ idempotent as an omega power `[w]^ω` turns each into an equation on `L.Syntacti
 
 Where `[w]^ω = Monoid.omegaPow (L.syntacticClass w)`
 is the unique idempotent in the cyclic submonoid of `[w]` (see
-`Linglib/Core/Algebra/Semigroup/IdempotentPower.lean`). The variables `s` range
+`Linglib/Core/Algebra/Group/IdempotentPower.lean`). The variables `s` range
 over `L.SyntacticMonoid` and `w` over non-empty `List α`
 (alphabet-relativized form — see `Equations.lean` for the trivial-letter
 counterexample motivating the non-empty-`w` restriction).

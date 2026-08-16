@@ -35,7 +35,7 @@ syntactic monoid satisfies `s · x^ω = x^ω`, reverse-definite ones
   `Monoid.omegaPow_pow`.
 * `Semigroup.exists_isIdempotentElem`,
   `Semigroup.exists_isIdempotentElem_map_eq` — the semigroup
-  transfers consumed by `Pseudovariety.lean`.
+  transfers consumed by `Semigroup/Pseudovariety.lean`.
 
 `omegaPow` is defined by `Classical.choose`, hence `noncomputable`;
 `omegaPow_unique` makes it independent of the choice.

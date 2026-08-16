@@ -45,7 +45,7 @@ import Linglib.Core.Algebra.RootedTree.PreLie.Path
 import Linglib.Core.Algebra.RootedTree.Primitive
 import Linglib.Core.Algebra.RotaBaxter
 import Linglib.Core.Algebra.RotaBaxterLaurent
-import Linglib.Core.Algebra.Semigroup.IdempotentPower
+import Linglib.Core.Algebra.Group.IdempotentPower
 import Linglib.Core.Algebra.Semigroup.Pseudovariety
 import Linglib.Core.Analysis.Convex.Function
 import Linglib.Core.Analysis.LeastSquares
