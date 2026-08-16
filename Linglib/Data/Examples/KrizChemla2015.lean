@@ -22,12 +22,12 @@ def every_C2_gap : LinguisticExample :=
     discourseSegments := []
     glossedTokens := [("Every", "every"), ("boy", "boy"), ("found", "find.PST"), ("his", "3SG.M.POSS"), ("presents", "present.PL")]
     translation := "Every boy found his presents."
-    context := "Four boys, each with nine presents to find; every boy found some but not all of his."
+    context := "Four boys, each with nine presents to find; three boys found all their presents, one boy found some but not all (Table 13 gap displays, e.g. 9929)."
     judgment := .acceptable
     alternatives := []
-    readings := [("strong/maximal", .acceptable), ("weak/non-maximal", .marginal)]
+    readings := []
     paperFeatures := [("operator", "every"), ("embedding", "E-every"), ("condition", "GAP"), ("experiment", "C2"), ("gap_detected", "true")]
-    comment := "C2 target condition. All three gap diagnostics significant (Table 9): Diag.1 β=6.7 χ²=26.7 p<10⁻⁶; Diag.2 β=7.7 χ²=35.1 p<10⁻⁸; Diag.3 β=4.9 χ²=4.0 p=.046. The 'weak/non-maximal' reading would interpret the sentence as 'every boy found some of his presents'; the paper finds this reading is marginal-to-rare in target-stimulus presentation, motivating the gap finding."
+    comment := "C2 target condition. All three gap diagnostics significant (Table 9): Diag.1 β=6.7 χ²=26.7 p<10⁻⁶; Diag.2 β=7.7 χ²=35.1 p<10⁻⁸; Diag.3 β=4.9 χ²=4.0 p=.046. The dominant neither-response shows participants did not fall back on the weak/non-maximal reading ('every boy found some of his presents'), which would have made the sentence true here."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -40,12 +40,84 @@ def no_C2_gap : LinguisticExample :=
     discourseSegments := []
     glossedTokens := [("No", "no"), ("boy", "boy"), ("found", "find.PST"), ("his", "3SG.M.POSS"), ("presents", "present.PL")]
     translation := "No boy found his presents."
-    context := "Four boys, each with nine presents; some boys found some of their presents, but no boy found all of his."
+    context := "Four boys, each with nine presents; one boy found some but not all of his presents, the others found none (Table 13 gap displays, e.g. 0070)."
     judgment := .acceptable
     alternatives := []
-    readings := [("strong/no-any", .acceptable), ("weak/no-all", .marginal)]
+    readings := []
     paperFeatures := [("operator", "no"), ("embedding", "E-no"), ("condition", "GAP"), ("experiment", "C2"), ("gap_detected", "true"), ("gap_size", "small_but_robust")]
-    comment := "C2 corrects the apparent null result from A2/B2 (which used the accidentally-ungrammatical 'In none of the cells...' stimulus, per fn. 10 and fn. 14). C2's grammatical 'No boy found his presents.' yields a small-but-robust gap on all three diagnostics (Table 9): Diag.1 β=1.3 χ²=8.2 p=.004; Diag.2 β=1.1 χ²=5.2 p=.022; Diag.3 β=1.6 χ²=7.8 p=.005. Quoting §5.2.3: 'this time, E-no does show a gap, which, albeit small, is robust.' This is the empirical finding the file records — not the pre-C2 null."
+    comment := "C2 corrects the apparent null result from A2/B2, whose E-no stimuli ('In none of the cells, ...') were accidentally ungrammatical for lack of negative inversion (fn. 10) and plausibly parsed with an unbound definite (fn. 14). C2's grammatical 'No boy found his presents.' yields a small-but-robust gap on all three diagnostics (Table 9): Diag.1 β=1.3 χ²=8.2 p=.004; Diag.2 β=1.1 χ²=5.2 p=.022; Diag.3 β=1.6 χ²=7.8 p=.005. Quoting §5.2.3: 'this time, E-no does show a gap, which, albeit small, is robust.'"
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def every_C2_true : LinguisticExample :=
+  { id := "krizchemla2015_every_C2_true"
+    source := ⟨"kriz-chemla-2015", "Exp. C2, (19) E-every+true condition"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Every boy found his presents."
+    discourseSegments := []
+    glossedTokens := [("Every", "every"), ("boy", "boy"), ("found", "find.PST"), ("his", "3SG.M.POSS"), ("presents", "present.PL")]
+    translation := "Every boy found his presents."
+    context := "Four boys, each with nine presents; every boy found all nine of his (Table 13 display 9999)."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("operator", "every"), ("embedding", "E-every"), ("condition", "TRUE"), ("experiment", "C2")]
+    comment := "Judged completely true (Fig. 16)."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def every_C2_false : LinguisticExample :=
+  { id := "krizchemla2015_every_C2_false"
+    source := ⟨"kriz-chemla-2015", "Exp. C2, (19) E-every+false condition"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Every boy found his presents."
+    discourseSegments := []
+    glossedTokens := [("Every", "every"), ("boy", "boy"), ("found", "find.PST"), ("his", "3SG.M.POSS"), ("presents", "present.PL")]
+    translation := "Every boy found his presents."
+    context := "Four boys; one boy found none of his presents, and two others found some but not all (Table 13 false displays, e.g. 9770)."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("operator", "every"), ("embedding", "E-every"), ("condition", "FALSE"), ("experiment", "C2")]
+    comment := "Judged completely false although some boys' present-sets are non-homogeneous — the basis of §6.3's argument (42) that a homogeneity presupposition cannot project universally from the scope of every/all."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def no_C2_true : LinguisticExample :=
+  { id := "krizchemla2015_no_C2_true"
+    source := ⟨"kriz-chemla-2015", "Exp. C2, (20) E-no+true condition"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "No boy found his presents."
+    discourseSegments := []
+    glossedTokens := [("No", "no"), ("boy", "boy"), ("found", "find.PST"), ("his", "3SG.M.POSS"), ("presents", "present.PL")]
+    translation := "No boy found his presents."
+    context := "Four boys; no boy found any of his presents (Table 13 display 0000)."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("operator", "no"), ("embedding", "E-no"), ("condition", "TRUE"), ("experiment", "C2")]
+    comment := "Judged completely true (Fig. 16)."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def no_C2_false : LinguisticExample :=
+  { id := "krizchemla2015_no_C2_false"
+    source := ⟨"kriz-chemla-2015", "Exp. C2, (20) E-no+false condition"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "No boy found his presents."
+    discourseSegments := []
+    glossedTokens := [("No", "no"), ("boy", "boy"), ("found", "find.PST"), ("his", "3SG.M.POSS"), ("presents", "present.PL")]
+    translation := "No boy found his presents."
+    context := "Four boys; one boy found all nine of his presents, another found five (Table 13 replacement displays, e.g. 5009)."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("operator", "no"), ("embedding", "E-no"), ("condition", "FALSE"), ("experiment", "C2")]
+    comment := "Judged completely false although the five-presents boy's set is non-homogeneous; like the E-every false condition, this excludes universal projection of a homogeneity presupposition (§6.3). C2's false-condition items replace the ungrammatical A2/B2 ones (Table 13 note)."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -58,12 +130,12 @@ def exactlyTwo_C3_gap : LinguisticExample :=
     discourseSegments := []
     glossedTokens := [("Exactly", "exactly"), ("2", "two"), ("of", "of"), ("the", "DEF"), ("4", "four"), ("boys", "boy.PL"), ("found", "find.PST"), ("their", "3PL.POSS"), ("presents", "present.PL")]
     translation := "Exactly 2 of the 4 boys found their presents."
-    context := "Four boys; exactly two of them found at least some of their presents, but in at most one of those two cells did the boy find all of his presents."
+    context := "Four boys; exactly two of them found some of their presents (in at most one case all of them), the other two found none (Table 13 gap displays, e.g. 9200, 3300)."
     judgment := .acceptable
     alternatives := []
-    readings := [("exactly/maximal", .acceptable), ("exactly/non-maximal", .marginal)]
+    readings := []
     paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "GAP"), ("experiment", "C3"), ("gap_detected", "true")]
-    comment := "C3 proper-GAP condition: target stimulus designed so that the literal exactly-2-found-all reading and the exactly-2-found-some reading yield different truth values, isolating homogeneity projection in the non-monotonic embedded scope. All three gap diagnostics significant (Table 10): Diag.1 β=3.9 χ²=21.0 p<10⁻⁵; Diag.2 β=7.7 χ²=38.8 p<10⁻⁹; Diag.3 β=6.6 χ²=13.5 p=.0002."
+    comment := "C3 proper-gap condition: exactly 2 boys found some, but it is not the case that exactly 2 found all, so the some-substituted and all-substituted variants of the sentence differ in truth value. All three gap diagnostics significant (Table 10): Diag.1 β=3.9 χ²=21.0 p<10⁻⁵; Diag.2 β=7.7 χ²=38.8 p<10⁻⁹; Diag.3 β=6.6 χ²=13.5 p=.0002."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -76,12 +148,12 @@ def exactlyTwo_C3_gap_q : LinguisticExample :=
     discourseSegments := []
     glossedTokens := [("Exactly", "exactly"), ("2", "two"), ("of", "of"), ("the", "DEF"), ("4", "four"), ("boys", "boy.PL"), ("found", "find.PST"), ("their", "3PL.POSS"), ("presents", "present.PL")]
     translation := "Exactly 2 of the 4 boys found their presents."
-    context := "Four boys; one boy found all his presents; two boys each found some (not all) of theirs; one boy found none."
+    context := "Four boys; one boy found all his presents; two boys each found some (not all) of theirs; one boy found none (Table 13 gap? displays, e.g. 9202)."
     judgment := .acceptable
     alternatives := []
-    readings := [("exactly/maximal", .questionable), ("at-least-2/some", .acceptable)]
-    paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "GAP?"), ("experiment", "C3"), ("gap_detected", "false"), ("interpretation", "at_least_reading_emerges")]
-    comment := "C3 GAP? condition does NOT yield a gap (Diag.1 p=.23, Diag.2 p=.15, Diag.3 p=.88 — Table 10). Theoretically load-bearing null: per §3.4 the result follows if 'exactly N' admits an at-least reading in this configuration (Marty, Chemla & Spector 2014 for parallel modified-numeral evidence), so what looks like a missing homogeneity gap is actually the at-least-reading rendering the sentence true. This null distinguishes supervaluation accounts (which would predict a gap) from exhaustification accounts (which allow the at-least reading)."
+    readings := []
+    paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "GAP?"), ("experiment", "C3"), ("gap_detected", "false"), ("classical_value", "false")]
+    comment := "No gap (Table 10: Diag.1 p=.23, Diag.2 p=.15, Diag.3 p=.88), replicating A3/B3. A predicted null: both the some-substituted ('exactly 2 found some': three did) and the all-substituted ('exactly 2 found all': one did) variants are false here, so every implicature construal and the two-candidate supervaluation account predict plain falsity (Table 12, s5); the observed value is recorded as classical_value=false accordingly ('the at least-reading, discussed in Sect. 3.4, seems to have disappeared in this experiment', §5.3). The null instead disfavors richer-candidate supervaluation variants (fn. 19) and universal projection of a homogeneity presupposition, which predict a gap here. §3.4's at-least reading of 'exactly 2' (Marty, Chemla & Spector 2014 on modified numerals) explains only the residual true/gap tendencies in A3."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -94,123 +166,159 @@ def exactlyTwo_C4_gap_qq : LinguisticExample :=
     discourseSegments := []
     glossedTokens := [("Exactly", "exactly"), ("2", "two"), ("of", "of"), ("the", "DEF"), ("4", "four"), ("boys", "boy.PL"), ("found", "find.PST"), ("their", "3PL.POSS"), ("presents", "present.PL")]
     translation := "Exactly 2 of the 4 boys found their presents."
-    context := "Four boys; exactly two boys each found all their presents; a third boy found some (not all) of his; the fourth found none. The at-least-reading is false here (since three boys found some), so the only way to judge 'true' is via the homogeneity-bridged exactly-reading."
+    context := "Four boys; exactly two boys each found all their presents; a third boy found some (not all) of his; the fourth found none (Table 13 gap?? displays, e.g. 9209)."
     judgment := .acceptable
     alternatives := []
-    readings := [("exactly/maximal", .marginal), ("at-least-2/some", .unacceptable)]
+    readings := []
     paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "GAP??"), ("experiment", "C4"), ("gap_detected", "true")]
-    comment := "C4 extends the C3 GAP? configuration to one where the at-least reading is false, ruling out the explanation that nulled GAP?. All three gap diagnostics significant (Table 11): Diag.1 β=4.4 χ²=13.4 p=.0002; Diag.2 β=7.6 χ²=49.4 p<10⁻¹¹; Diag.3 β=7.0 χ²=11.5 p=.0007. Combined with the GAP? null, this confirms that homogeneity *does* project from under 'exactly N', but only in configurations the at-least reading cannot rescue."
+    comment := "C4's new condition: the some-substituted variant ('exactly 2 found some') is false — three boys found some — while the all-substituted variant ('exactly 2 found all') is true, the mirror image of the gap condition. All three diagnostics significant (Table 11): Diag.1 β=4.4 χ²=13.4 p=.0002; Diag.2 β=7.6 χ²=49.4 p<10⁻¹¹; Diag.3 β=7.0 χ²=11.5 p=.0007. Table 12 (s6): construals that equate the gap with a literal-vs-global-exhaustification conflict predict plain falsity here, so the observed gap requires the implicature to be singled out as a meaning component or local exhaustification (§6.1.3)."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def books_pos_all : LinguisticExample :=
-  { id := "krizchemla2015_books_pos_all"
-    source := ⟨"kriz-chemla-2015", "unembedded plural-definite baseline (books)"⟩
+def exactlyTwo_C3_true : LinguisticExample :=
+  { id := "krizchemla2015_exactlyTwo_C3_true"
+    source := ⟨"kriz-chemla-2015", "Exp. C3, (24) E-exactly+true condition"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Ann liked the books."
+    primaryText := "Exactly 2 of the 4 boys found their presents."
     discourseSegments := []
-    glossedTokens := [("Ann", "Ann"), ("liked", "like.PST"), ("the", "DEF"), ("books", "book.PL")]
-    translation := "Ann liked the books."
-    context := "Six shortlisted books; Ann liked all 6 shortlisted books."
+    glossedTokens := [("Exactly", "exactly"), ("2", "two"), ("of", "of"), ("the", "DEF"), ("4", "four"), ("boys", "boy.PL"), ("found", "find.PST"), ("their", "3PL.POSS"), ("presents", "present.PL")]
+    translation := "Exactly 2 of the 4 boys found their presents."
+    context := "Four boys; exactly two boys found all nine of their presents, the other two found none (Table 13 displays, e.g. 9900)."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "TRUE"), ("experiment", "C3")]
+    comment := "Judged completely true (Fig. 17)."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def exactlyTwo_C3_false : LinguisticExample :=
+  { id := "krizchemla2015_exactlyTwo_C3_false"
+    source := ⟨"kriz-chemla-2015", "Exp. C3, (24) E-exactly+false condition"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Exactly 2 of the 4 boys found their presents."
+    discourseSegments := []
+    glossedTokens := [("Exactly", "exactly"), ("2", "two"), ("of", "of"), ("the", "DEF"), ("4", "four"), ("boys", "boy.PL"), ("found", "find.PST"), ("their", "3PL.POSS"), ("presents", "present.PL")]
+    translation := "Exactly 2 of the 4 boys found their presents."
+    context := "Four boys; one boy found some but not all of his presents, the others found none (Table 13 false displays, e.g. 4000)."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("operator", "exactlyTwo"), ("embedding", "E-exactly"), ("condition", "FALSE"), ("experiment", "C3")]
+    comment := "Judged completely false (Fig. 17). §3.4 notes elevated true-responses on false displays where more than 2 boys' cells contain target objects (9990-type items), evidence of a non-salient at-least reading of 'exactly 2' (Marty, Chemla & Spector 2014)."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def pos_A1_all : LinguisticExample :=
+  { id := "krizchemla2015_pos_A1_all"
+    source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-∅, 9/9 target-color display"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The triangles are blue."
+    discourseSegments := []
+    glossedTokens := [("The", "DEF"), ("triangles", "triangle.PL"), ("are", "COP.PL"), ("blue", "blue")]
+    translation := "The triangles are blue."
+    context := "Nine triangles in the display; all nine are blue."
     judgment := .acceptable
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "ALL"), ("embedding", "unembedded")]
-    comment := "Migrated from Phenomena/Plurals/Homogeneity.lean booksExample (positiveInAll = clearlyTrue): sentence judged clearly true in the ALL scenario."
+    comment := "Judged completely true. Exp. A1 target sentences had the form 'The [shapes] are [color]' (schema (6a)/(8a)), judged against displays of nine shapes with 0, 2, 4, 6, 8, or 9 in the target color. All three gap diagnostics significant for E-∅ (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def books_pos_none : LinguisticExample :=
-  { id := "krizchemla2015_books_pos_none"
-    source := ⟨"kriz-chemla-2015", "unembedded plural-definite baseline (books)"⟩
+def pos_A1_none : LinguisticExample :=
+  { id := "krizchemla2015_pos_A1_none"
+    source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-∅, 0/9 target-color display"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Ann liked the books."
+    primaryText := "The triangles are blue."
     discourseSegments := []
-    glossedTokens := [("Ann", "Ann"), ("liked", "like.PST"), ("the", "DEF"), ("books", "book.PL")]
-    translation := "Ann liked the books."
-    context := "Six shortlisted books; Ann liked none of the 6 shortlisted books."
+    glossedTokens := [("The", "DEF"), ("triangles", "triangle.PL"), ("are", "COP.PL"), ("blue", "blue")]
+    translation := "The triangles are blue."
+    context := "Nine triangles in the display; none is blue."
     judgment := .acceptable
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "NONE"), ("embedding", "unembedded")]
-    comment := "Migrated from Phenomena/Plurals/Homogeneity.lean booksExample (positiveInNone = clearlyFalse): sentence is grammatical and felicitous but judged clearly FALSE in the NONE scenario; the 5-level scale has no truth-value slot, so falsity is recorded here."
+    comment := "Judged completely false. Exp. A1 target sentences had the form 'The [shapes] are [color]' (schema (6a)/(8a)), judged against displays of nine shapes with 0, 2, 4, 6, 8, or 9 in the target color. All three gap diagnostics significant for E-∅ (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def books_pos_gap : LinguisticExample :=
-  { id := "krizchemla2015_books_pos_gap"
-    source := ⟨"kriz-chemla-2015", "unembedded plural-definite baseline (books)"⟩
+def pos_A1_gap : LinguisticExample :=
+  { id := "krizchemla2015_pos_A1_gap"
+    source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-∅, mixed display"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Ann liked the books."
+    primaryText := "The triangles are blue."
     discourseSegments := []
-    glossedTokens := [("Ann", "Ann"), ("liked", "like.PST"), ("the", "DEF"), ("books", "book.PL")]
-    translation := "Ann liked the books."
-    context := "Six shortlisted books; Ann liked 3 of the 6 shortlisted books."
-    judgment := .questionable
+    glossedTokens := [("The", "DEF"), ("triangles", "triangle.PL"), ("are", "COP.PL"), ("blue", "blue")]
+    translation := "The triangles are blue."
+    context := "Nine triangles in the display; four are blue, five are another color."
+    judgment := .acceptable
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "GAP"), ("embedding", "unembedded"), ("gap_detected", "true")]
-    comment := "Migrated from Phenomena/Plurals/Homogeneity.lean booksExample (positiveInGap = neitherTrueNorFalse): homogeneity gap — neither clearly true nor clearly false in the some-but-not-all scenario."
+    comment := "Judged neither completely true nor completely false: the unembedded homogeneity gap. Exp. A1 target sentences had the form 'The [shapes] are [color]' (schema (6a)/(8a)), judged against displays of nine shapes with 0, 2, 4, 6, 8, or 9 in the target color. All three gap diagnostics significant for E-∅ (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def books_neg_all : LinguisticExample :=
-  { id := "krizchemla2015_books_neg_all"
-    source := ⟨"kriz-chemla-2015", "unembedded plural-definite baseline (books, negated)"⟩
+def neg_A1_all : LinguisticExample :=
+  { id := "krizchemla2015_neg_A1_all"
+    source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-neg, 9/9 target-color display"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Ann didn't like the books."
+    primaryText := "The triangles aren't blue."
     discourseSegments := []
-    glossedTokens := [("Ann", "Ann"), ("didn't", "do.PST.NEG"), ("like", "like"), ("the", "DEF"), ("books", "book.PL")]
-    translation := "Ann didn't like the books."
-    context := "Six shortlisted books; Ann liked all 6 shortlisted books."
+    glossedTokens := [("The", "DEF"), ("triangles", "triangle.PL"), ("aren't", "COP.PL.NEG"), ("blue", "blue")]
+    translation := "The triangles aren't blue."
+    context := "Nine triangles in the display; all nine are blue."
     judgment := .acceptable
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "ALL"), ("embedding", "unembedded")]
-    comment := "Migrated from Phenomena/Plurals/Homogeneity.lean booksExample (negativeInAll = clearlyFalse): sentence is grammatical and felicitous but judged clearly FALSE in the ALL scenario."
+    comment := "Judged completely false. Exp. A1 negated targets had the form 'The [shapes] aren't [color]' (schema (8b)); homogeneity projects through sentential negation. All three gap diagnostics significant for E-neg (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def books_neg_none : LinguisticExample :=
-  { id := "krizchemla2015_books_neg_none"
-    source := ⟨"kriz-chemla-2015", "unembedded plural-definite baseline (books, negated)"⟩
+def neg_A1_none : LinguisticExample :=
+  { id := "krizchemla2015_neg_A1_none"
+    source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-neg, 0/9 target-color display"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Ann didn't like the books."
+    primaryText := "The triangles aren't blue."
     discourseSegments := []
-    glossedTokens := [("Ann", "Ann"), ("didn't", "do.PST.NEG"), ("like", "like"), ("the", "DEF"), ("books", "book.PL")]
-    translation := "Ann didn't like the books."
-    context := "Six shortlisted books; Ann liked none of the 6 shortlisted books."
+    glossedTokens := [("The", "DEF"), ("triangles", "triangle.PL"), ("aren't", "COP.PL.NEG"), ("blue", "blue")]
+    translation := "The triangles aren't blue."
+    context := "Nine triangles in the display; none is blue."
     judgment := .acceptable
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "NONE"), ("embedding", "unembedded")]
-    comment := "Migrated from Phenomena/Plurals/Homogeneity.lean booksExample (negativeInNone = clearlyTrue): sentence judged clearly true in the NONE scenario — negation requires existential denial (none liked)."
+    comment := "Judged completely true: the negated sentence requires total absence, not mere non-totality. Exp. A1 negated targets had the form 'The [shapes] aren't [color]' (schema (8b)); homogeneity projects through sentential negation. All three gap diagnostics significant for E-neg (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def books_neg_gap : LinguisticExample :=
-  { id := "krizchemla2015_books_neg_gap"
-    source := ⟨"kriz-chemla-2015", "unembedded plural-definite baseline (books, negated)"⟩
+def neg_A1_gap : LinguisticExample :=
+  { id := "krizchemla2015_neg_A1_gap"
+    source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-neg, mixed display"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "Ann didn't like the books."
+    primaryText := "The triangles aren't blue."
     discourseSegments := []
-    glossedTokens := [("Ann", "Ann"), ("didn't", "do.PST.NEG"), ("like", "like"), ("the", "DEF"), ("books", "book.PL")]
-    translation := "Ann didn't like the books."
-    context := "Six shortlisted books; Ann liked 3 of the 6 shortlisted books."
-    judgment := .questionable
+    glossedTokens := [("The", "DEF"), ("triangles", "triangle.PL"), ("aren't", "COP.PL.NEG"), ("blue", "blue")]
+    translation := "The triangles aren't blue."
+    context := "Nine triangles in the display; four are blue, five are another color."
+    judgment := .acceptable
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "GAP"), ("embedding", "unembedded"), ("gap_detected", "true")]
-    comment := "Migrated from Phenomena/Plurals/Homogeneity.lean booksExample (negativeInGap = neitherTrueNorFalse): homogeneity gap — neither clearly true nor clearly false in the some-but-not-all scenario."
+    comment := "Judged neither completely true nor completely false: the gap projects through negation. Exp. A1 negated targets had the form 'The [shapes] aren't [color]' (schema (8b)); homogeneity projects through sentential negation. All three gap diagnostics significant for E-neg (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def all : List LinguisticExample := [every_C2_gap, no_C2_gap, exactlyTwo_C3_gap, exactlyTwo_C3_gap_q, exactlyTwo_C4_gap_qq, books_pos_all, books_pos_none, books_pos_gap, books_neg_all, books_neg_none, books_neg_gap]
+def all : List LinguisticExample := [every_C2_gap, no_C2_gap, every_C2_true, every_C2_false, no_C2_true, no_C2_false, exactlyTwo_C3_gap, exactlyTwo_C3_gap_q, exactlyTwo_C4_gap_qq, exactlyTwo_C3_true, exactlyTwo_C3_false, pos_A1_all, pos_A1_none, pos_A1_gap, neg_A1_all, neg_A1_none, neg_A1_gap]
 
 end KrizChemla2015.Examples
