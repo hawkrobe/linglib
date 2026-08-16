@@ -1,5 +1,5 @@
 import Linglib.Morphology.DM.VocabularyInsertion
-import Linglib.Studies.Baker1985
+import Linglib.Morphology.Morphotactics.MirrorPrinciple
 
 /-!
 # [halle-marantz-1993]: Distributed Morphology and the Pieces of Inflection

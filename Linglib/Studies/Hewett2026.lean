@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Syntax.Minimalist.Agree.Checking
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Verbal.Decomposition
-import Linglib.Studies.Baker1985
+import Linglib.Morphology.Morphotactics.MirrorPrinciple
 import Linglib.Studies.Kratzer1996
 import Linglib.Studies.Wood2015
 
