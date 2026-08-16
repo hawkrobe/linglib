@@ -1,5 +1,5 @@
 import Linglib.Core.Algebra.BigOperators.Multiset
-import Linglib.Core.Algebra.RootedTree.GrossmanLarsonAssoc
+import Linglib.Core.Algebra.RootedTree.GrossmanLarson
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
 
 open RoseTree RoseTree.Nonplanar

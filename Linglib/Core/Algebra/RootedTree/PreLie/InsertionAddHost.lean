@@ -32,7 +32,7 @@ from the general identity via `hostBucketSum_eq_kBucketSum`. The bridge
 `hostBucketSum_eq_insertionForest` is proved by induction on `host_A`.
 
 This is the `RoseTree`-level companion to the `Nonplanar.insertionMultiset_add_host`
-combinatorial identity used in `GrossmanLarsonAssoc.lean`'s
+combinatorial identity (`InsertionNonplanar.lean`) behind the
 Oudom-Guin Prop 2.7.iii proof.
 
 ## Status
