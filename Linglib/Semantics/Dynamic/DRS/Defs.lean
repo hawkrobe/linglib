@@ -31,10 +31,10 @@ its instantiation at `Condition L V`.
 * `DRS.merge` — the `⊕` operation (set-union referents, concatenate
   conditions); [muskens-1996]'s compositional operation.
 * `DirectlySubordinate`, `Subordinate`, `WeakSubordinate` — immediate
-  subordination (Def. 1.4.10(i), extended to `⇒`/`∨` by Def. 2.1.2; see the
-  deviation note on `DirectlySubordinate`) and its `Relation.TransGen` /
-  `ReflTransGen` closures (Def. 1.4.10(ii)). Accessibility (Def. 1.4.11) is
-  host-relative and lives in `DRS/Basic.lean` (`accessibleFrom`).
+  subordination (Def. 1.4.10(i), extended to `⇒`/`∨` by Def. 2.1.2) and its
+  `Relation.TransGen` / `ReflTransGen` closures (Def. 1.4.10(ii)); weak
+  subordination is a partial order (`WeakSubordinate.antisymm`). Accessibility is
+  host-relative and lives in `DRS/Basic.lean` (`AccessibleTo`, `accessibleFrom`).
 
 ## Implementation notes
 
@@ -130,34 +130,28 @@ of its sub-boxes. -/
 
 /-! ### Subordination -/
 
-/-- One-step subordination: `DirectlySubordinate K' K` says `K'` is *directly
-subordinate* to `K` — the `neg` case per Def. 1.4.10(i), the `⇒`/`∨` cases per
-its Chapter 2 extension (Def. 2.1.2). Deviation: Def. 2.1.2 subordinates *both*
-components of an implicative condition to the DRS containing it; here `impCons`
-subordinates the consequent to the *antecedent* instead, folding the `⇒` clause
-of the accessibility definition (Def. 2.1.3(ii)(b)) into the geometry — the
-closure below the host is unchanged, and antecedent referents lie weakly above
-the consequent. A relation on DRS values, where the textbook's is on box
-occurrences: on a degenerate `imp a a` the consequent edge makes `a`
-subordinate to itself. -/
+/-- One-step subordination: `DirectlySubordinate K' K` says `K'` is a sub-box of one
+of `K`'s conditions — the `neg` case per Def. 1.4.10(i), the `⇒`/`∨` cases per its
+Chapter 2 extension (Def. 2.1.2, which subordinates *both* components of a
+conditional to the containing DRS). A relation on DRS values, where the textbook's
+is on box occurrences. Every clause pins the containing box in its conclusion: an
+unpinned clause (such as consequent-below-antecedent) would hold of *every* pair of
+DRSs via a manufactured container, collapsing the relation. The `⇒` visibility
+asymmetry is not subordination but accessibility (`AccessibleTo`,
+`DRS/Basic.lean`). -/
 inductive DirectlySubordinate : DRS L V → DRS L V → Prop where
   /-- The body of a `¬` is directly subordinate to the containing DRS. -/
   | neg {D K : DRS L V} : Condition.neg K ∈ D.conditions → DirectlySubordinate K D
   /-- The antecedent of a `⇒` is directly subordinate to the containing DRS. -/
   | impAnte {D a c : DRS L V} : Condition.imp a c ∈ D.conditions → DirectlySubordinate a D
-  /-- The consequent of a `⇒` is directly subordinate to its *antecedent* — the
-  asymmetry that makes antecedent referents accessible in the consequent
-  (Def. 2.1.3(ii)(b), folded into the geometry; Def. 2.1.2 itself subordinates
-  the consequent to `D`). -/
-  | impCons {D a c : DRS L V} : Condition.imp a c ∈ D.conditions → DirectlySubordinate c a
+  /-- The consequent of a `⇒` is directly subordinate to the containing DRS. -/
+  | impCons {D a c : DRS L V} : Condition.imp a c ∈ D.conditions → DirectlySubordinate c D
   /-- The left disjunct of a `∨` is directly subordinate to the containing DRS. -/
   | disL {D l r : DRS L V} : Condition.dis l r ∈ D.conditions → DirectlySubordinate l D
   /-- The right disjunct of a `∨` is directly subordinate to the containing DRS. -/
   | disR {D l r : DRS L V} : Condition.dis l r ∈ D.conditions → DirectlySubordinate r D
 
-/-- The `<` of Def. 1.4.10(ii): the transitive closure of `DirectlySubordinate`.
-Accessibility (`accessibleFrom`, `DRS/Basic.lean`) is host-relative and does
-not build on this closure. -/
+/-- The `<` of Def. 1.4.10(ii): the transitive closure of `DirectlySubordinate`. -/
 abbrev Subordinate : DRS L V → DRS L V → Prop :=
   Relation.TransGen DirectlySubordinate
 
@@ -165,5 +159,34 @@ abbrev Subordinate : DRS L V → DRS L V → Prop :=
 `DirectlySubordinate`. -/
 abbrev WeakSubordinate : DRS L V → DRS L V → Prop :=
   Relation.ReflTransGen DirectlySubordinate
+
+/-- A directly subordinate DRS is a structurally smaller value. -/
+theorem DirectlySubordinate.sizeOf_lt {K' K : DRS L V} (h : DirectlySubordinate K' K) :
+    sizeOf K' < sizeOf K := by
+  obtain ⟨U, conds⟩ := K
+  cases h with
+  | neg h | impAnte h | impCons h | disL h | disR h =>
+    have := List.sizeOf_lt_of_mem h
+    simp_all
+    omega
+
+/-- Subordinate DRSs are structurally smaller; subordination chains terminate. -/
+theorem Subordinate.sizeOf_lt {K' K : DRS L V} (h : Subordinate K' K) :
+    sizeOf K' < sizeOf K := by
+  induction h with
+  | single h => exact h.sizeOf_lt
+  | tail _ h ih => exact ih.trans h.sizeOf_lt
+
+theorem Subordinate.irrefl (K : DRS L V) : ¬ Subordinate K K :=
+  fun h => absurd h.sizeOf_lt (lt_irrefl _)
+
+/-- Weak subordination is a partial order on DRS values. -/
+theorem WeakSubordinate.antisymm {K' K : DRS L V} (h : WeakSubordinate K' K)
+    (h' : WeakSubordinate K K') : K' = K := by
+  rcases Relation.reflTransGen_iff_eq_or_transGen.mp h with rfl | h₁
+  · rfl
+  rcases Relation.reflTransGen_iff_eq_or_transGen.mp h' with rfl | h₂
+  · rfl
+  exact absurd ((Subordinate.sizeOf_lt h₁).trans (Subordinate.sizeOf_lt h₂)) (lt_irrefl _)
 
 end DRT
