@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.PreLie.OudomGuinCirc
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson
-import Linglib.Core.Algebra.RootedTree.GrossmanLarsonAssoc
+import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNonplanar
 import Linglib.Core.Algebra.RootedTree.PreLie.Basic
 import Mathlib.LinearAlgebra.SymmetricAlgebra.Basis
 import Mathlib.LinearAlgebra.Finsupp.VectorSpace
@@ -53,6 +53,74 @@ yields `[propext, Classical.choice, Quot.sound]` (no sorryAx).
 -/
 
 open PreLie.OudomGuinCirc
+
+namespace GrossmanLarson
+
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
+
+/-- **Prop 2.7.iii** (Oudom-Guin 2004): for basis forests A, B, C, the
+    multi-graft of `(A · B)` (disjoint-union product) into `C` distributes
+    as a sum over partitions of C, with each part inserted into A vs B
+    independently.
+
+    `(A · B) ∘ C = Σ_{C₁ ⊆ C} (A ∘ C₁) · (B ∘ (C - C₁))`
+
+    Proved from `insertionMultiset_add_host` + bilinearity of CK's
+    disjoint-union product `·`. -/
+theorem insertion_mul_distrib (A B C : Forest (Nonplanar α)) :
+    insertion (R := R) (of' (A + B)) (of' C) =
+      (C.powerset.map fun C₁ =>
+        op (unop (insertion (of' A) (of' C₁)) *
+            unop (insertion (of' B) (of' (C - C₁))))).sum := by
+  -- Unfold `insertion (of' F) (of' G)` to `insertionBasis F G = (NIM F G).map of' |>.sum`.
+  simp_rw [insertion_of'_of']
+  unfold insertionBasis
+  -- LHS: `((NIM (A+B) C).map of').sum`. RHS: nested product/sum.
+  rw [Nonplanar.insertionMultiset_add_host A B C]
+  -- LHS: ((powerset.bind ...).map of').sum
+  rw [Multiset.map_bind, Multiset.sum_bind]
+  -- Inside the bind:
+  -- ((NIM A C₁) ×ˢ (NIM B (C - C₁))).map (uncurry +)).map of' |>.sum
+  --   = (NIM A C₁).bind (fun X_A => (NIM B (C - C₁)).map (fun X_B => of' (X_A + X_B)))).sum
+  --   = ... (op/unop = id, of' (X + Y) = of' X · of' Y)
+  --   = op (unop ((NIM A C₁).map of').sum * unop ((NIM B (C - C₁)).map of').sum)
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intros C₁ _
+  -- Inner equality: prove for fixed C₁.
+  -- LHS_inner: (((NIM A C₁) ×ˢ (NIM B (C-C₁))).map (fun p => p.1 + p.2)).map of' |>.sum
+  -- RHS_inner: op (unop ((NIM A C₁).map of' |>.sum) * unop ((NIM B (C-C₁)).map of' |>.sum))
+  rw [Multiset.map_map]
+  -- Reduce to a CK-level identity.
+  set M_A := Nonplanar.insertionMultiset A C₁ with hM_A
+  set M_B := Nonplanar.insertionMultiset B (C - C₁) with hM_B
+  -- Retype LHS to CK using definitional equality `GrossmanLarson R α = CK R (Nonplanar α)`:
+  show (((M_A ×ˢ M_B).map (fun p =>
+        (ConnesKreimer.of' (R := R) (p.1 + p.2) :
+          ConnesKreimer R (Nonplanar α))))).sum =
+      ((M_A.map (fun F' => ConnesKreimer.of' (R := R) F')).sum) *
+      ((M_B.map (fun F' => ConnesKreimer.of' (R := R) F')).sum)
+  -- Distribute of' (X + Y) = of' X * of' Y in CK.
+  simp_rw [ConnesKreimer.of'_add]
+  -- Helper: bilinearity of `Σ (·) · Σ (·)` over Multiset.product, by induction on M_A.
+  clear hM_A
+  induction M_A using Multiset.induction with
+  | empty =>
+    simp only [Multiset.zero_product, Multiset.map_zero, Multiset.sum_zero, zero_mul]
+  | cons a s ih =>
+    simp only [Multiset.cons_product, Multiset.map_add, Multiset.sum_add,
+               Multiset.map_map, Function.comp_def, Multiset.map_cons,
+               Multiset.sum_cons]
+    -- Inner: ((M_B.map (Prod.mk a)).map (fun p => of' p.1 * of' p.2)).sum
+    --      = (M_B.map (fun b => of' a * of' b)).sum = of' a * S_B
+    rw [Multiset.sum_map_mul_left]
+    -- Apply IH to the second summand.
+    rw [ih]
+    -- Goal: of' a * S_B + (s.map of').sum * S_B = (of' a + (s.map of').sum) * S_B
+    rw [add_mul]
+
+
+end GrossmanLarson
 
 namespace ConnesKreimer
 
@@ -383,8 +451,8 @@ private theorem GL_insertion_leibniz_basis_form [DecidableEq α]
 
 /-- **Helper for 1.3**: Leibniz rule with right argument forced to be a
     Forest-basis element. Bilinear-in-A extension of the basis form via
-    `ConnesKreimer.induction_linear` on A (following `insertion_mul_distrib_gen`'s
-    pattern of explicit `show` casts to navigate type-alias unfolding). -/
+    `ConnesKreimer.induction_linear` on A (explicit `show` casts navigate
+    the type-alias unfolding). -/
 private theorem GL_insertion_leibniz_basis_right
     (A : ConnesKreimer ℤ (Nonplanar α)) (F_B : Forest (Nonplanar α))
     (v : Nonplanar α) :
@@ -1566,7 +1634,7 @@ private theorem GL_product_split_mul_ι
   -- Step 1: linearize G to basis. Use the underlying ℤ-linearity of
   -- both sides in G (each of T1, T2, T3, T4 is a ℤ-linear function of G).
   -- This standard ConnesKreimer.induction_linear pattern follows
-  -- `insertion_mul_distrib_gen`/`GL_insertion_leibniz_basis_right`.
+  -- `GL_insertion_leibniz_basis_right`.
   refine ConnesKreimer.induction_linear G ?_ ?_ ?_
   · -- G = 0 case: T1=T2=T3=T4=0.
     show F * op

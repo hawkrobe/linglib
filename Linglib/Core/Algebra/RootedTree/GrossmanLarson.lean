@@ -739,6 +739,56 @@ theorem one_mul (F : GrossmanLarson R α) : (1 : GrossmanLarson R α) * F = F :=
   rw [productForest_one_left]
   exact (ConnesKreimer.smul_single_one G r).symm
 
+/-! ### Closed powerset-sum forms -/
+
+/-- The GL product against a basis second factor, in explicit
+    powerset-sum form (`productForest` unfolded). -/
+theorem mul_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
+    X * of' G =
+      (G.powerset.map fun G₁ =>
+        op (unop (insertion X (of' G₁)) *
+            unop (of' (G - G₁)))).sum :=
+  product_of' X G
+
+omit [DecidableEq α] in
+/-- `insertion` distributes over a `Multiset.sum` in its first argument. -/
+theorem insertion_sum_left (s : Multiset (GrossmanLarson R α))
+    (G : GrossmanLarson R α) :
+    insertion (R := R) s.sum G = (s.map (fun X => insertion X G)).sum :=
+  map_multiset_sum ((insertion (R := R) (α := α)).flip G) s
+
+/-- **Basis form over `insertionMultiset`**: the GL product of basis
+    forests as a powerset-of-guests bind over the nonplanar insertion
+    multiset. -/
+theorem of'_mul_of'_nim_form (F₁ F₂ : Forest (Nonplanar α)) :
+    (of' F₁ : GrossmanLarson R α) * of' F₂ =
+      (F₂.powerset.bind fun B₁ =>
+        (Nonplanar.insertionMultiset F₁ B₁).map
+          fun X => (of' (R := R) (X + (F₂ - B₁)) : GrossmanLarson R α)).sum := by
+  rw [mul_of'_sum_form, Multiset.sum_bind]
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intro B₁ _
+  rw [insertion_of'_of']
+  unfold insertionBasis
+  show ((((Nonplanar.insertionMultiset F₁ B₁).map
+            (fun F' => (ConnesKreimer.of' (R := R) F' :
+              ConnesKreimer R (Nonplanar α)))).sum *
+          (ConnesKreimer.of' (R := R) (F₂ - B₁) :
+            ConnesKreimer R (Nonplanar α))) :
+            ConnesKreimer R (Nonplanar α)) =
+      ((Nonplanar.insertionMultiset F₁ B₁).map
+        (fun X => (ConnesKreimer.of' (R := R) (X + (F₂ - B₁)) :
+          ConnesKreimer R (Nonplanar α)))).sum
+  rw [← Multiset.sum_map_mul_right]
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intro X _
+  show (ConnesKreimer.of' (R := R) X : ConnesKreimer R (Nonplanar α)) *
+        ConnesKreimer.of' (R := R) (F₂ - B₁) =
+      ConnesKreimer.of' (R := R) (X + (F₂ - B₁))
+  rw [ConnesKreimer.of'_add]
+
 /-! ### Associativity
 
 `mul_assoc_basis` and `mul_assoc` (both R-generic, `α : Type*`) are

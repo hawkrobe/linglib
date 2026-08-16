@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
+import Linglib.Core.Algebra.RootedTree.PreLie.InsertionAddHost
+import Linglib.Core.Algebra.RootedTree.PreLie.InsertionCompose
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
 import Linglib.Core.Data.Multiset.Antidiagonal
 import Linglib.Core.Data.RoseTree.DecEq
@@ -23,6 +25,16 @@ Given two multisets of nonplanar trees `F` (host forest) and `G` (guest
 forest), `Nonplanar.insertionMultiset F G` produces the multiset of all
 forests obtained by inserting `G`'s trees at vertices of `F`'s trees,
 summing over all assignments (Foissy 2021 Theorem 5.1).
+
+## Main results
+
+* `Nonplanar.insertionMultiset_add_host`: multi-graft into a
+  disjoint-union host decomposes over guest partitions
+  ([oudom-guin-2008] Prop 2.7.iii substrate).
+* `Nonplanar.insertionMultiset_eq_of_reps`: `insertionMultiset` computes
+  on any `RoseTree`-level representatives.
+* `Nonplanar.insertionMultiset_singleton_assoc`: iterated single-guest
+  grafting equals simultaneous grafting plus guest-nested grafting.
 
 ## Implementation note
 
@@ -467,5 +479,610 @@ theorem insertionMultiset_singleton_node [DecidableEq α]
         rw [add_comm]
         rfl
 
+
+/-! ### Disjoint-union hosts, representatives, and iterated grafting
+
+Multi-graft into a disjoint-union host decomposes over guest partitions
+(the combinatorial heart of [oudom-guin-2008] Prop 2.7.iii);
+`insertionMultiset` computes on arbitrary `RoseTree`-level
+representatives; and iterated single-guest grafting equals simultaneous
+grafting plus guest-nested grafting. Proved by descent from the
+`RoseTree.Pathed` substrate (`InsertionAddHost.lean`,
+`InsertionCompose.lean`). -/
+
+section
+variable [DecidableEq α]
+
+theorem insertionMultiset_add_host
+    (A B C : Multiset (Nonplanar α)) :
+    Nonplanar.insertionMultiset (A + B) C =
+      (C.powerset.bind fun C₁ =>
+        ((Nonplanar.insertionMultiset A C₁) ×ˢ
+          (Nonplanar.insertionMultiset B (C - C₁))).map
+          (fun p => p.1 + p.2)) := by
+  -- Steps 1-5: Unfold NIM, apply host-Perm bridge, hostBucketSum bridge, assignment
+  -- rewrite, and push msform through the outer bind.
+  unfold Nonplanar.insertionMultiset
+  rw [RoseTree.Pathed.insertionForest_perm_host_msform
+        (Nonplanar.toList_map_quotientOut_add_perm A B) (C.toList.map Quotient.out)]
+  rw [← RoseTree.Pathed.hostBucketSum_eq_insertionForest]
+  rw [RoseTree.Pathed.hostBucketSum_assignment_rewrite]
+  rw [Multiset.map_bind, List.length_map]
+  simp only [List.nil_append]
+  -- Step 6: Define `msform : List (RoseTree α) → Multiset (Nonplanar α)` as a local
+  -- abbreviation matching `Nonplanar.insertionMultiset`'s post-processing.
+  set msform : List (RoseTree α) → Multiset (Nonplanar α) :=
+    fun L => (Multiset.ofList (L.map Nonplanar.mk)) with hmsform
+  -- Step 7: Strategy — define `F : Multiset × Multiset → Multiset Multiset` so:
+  --   LHS_inner(assn) = F (↑filter_t (C.toList zip assn), ↑filter_f (...))
+  --   RHS_inner(C₁)   = F (C₁, C - C₁)
+  -- Then RHS = (C.powerset.map (s ↦ (s, C - s))).bind F = (↑lc).bind (F ∘ ...) by
+  -- the powerset bridge. The remaining work is per-assn equality.
+  set F : Multiset (Nonplanar α) × Multiset (Nonplanar α) →
+            Multiset (Multiset (Nonplanar α)) :=
+    fun pair =>
+      Multiset.map (fun p : Multiset (Nonplanar α) × Multiset (Nonplanar α) => p.1 + p.2)
+        (Multiset.map msform
+            (RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList A))
+              (List.map Quotient.out pair.1.toList)) ×ˢ
+          Multiset.map msform
+            (RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList B))
+              (List.map Quotient.out (Multiset.toList pair.2)))) with hF
+  -- Step 7a: RHS = (C.powerset.map (s ↦ (s, C - s))).bind F via `← Multiset.bind_map`.
+  have h_rhs_step1 :
+      ((Multiset.powerset C).bind fun C₁ => F (C₁, C - C₁)) =
+      ((Multiset.powerset C).map (fun s : Multiset (Nonplanar α) => (s, C - s))).bind F := by
+    rw [Multiset.bind_map]
+  -- Step 7b: Apply the powerset bridge to convert
+  -- `(C.powerset.map (s, C-s))` to `(↑lc).map (filter_t, filter_f)`.
+  have h_rhs_step2 :
+      ((Multiset.powerset C).map (fun s : Multiset (Nonplanar α) => (s, C - s))) =
+      (Multiset.ofList (RoseTree.Pathed.listChoices [true, false] C.toList.length)).map
+        (fun assn : List Bool =>
+          let s_t : Multiset (Nonplanar α) :=
+            (C.toList.zip assn).filterMap (fun p => if p.snd then some p.fst else none)
+          let s_f : Multiset (Nonplanar α) :=
+            (C.toList.zip assn).filterMap (fun p => if p.snd then none else some p.fst)
+          (s_t, s_f)) := by
+    rw [show C = (↑(C.toList) : Multiset (Nonplanar α)) from C.coe_toList.symm]
+    rw [← RoseTree.Pathed.listChoices_bridge_powerset_paired (l := C.toList)]
+    simp only [Multiset.coe_toList]
+  -- Step 7c: Reshape RHS to (↑lc).bind (F ∘ ...) so we can match per-assn.
+  show ((↑(RoseTree.Pathed.listChoices [true, false] C.toList.length) :
+          Multiset (List Bool)).bind fun a =>
+        Multiset.map msform
+          (RoseTree.Pathed.hostBucketSum (List.map Quotient.out (Multiset.toList A))
+            (List.map Quotient.out (Multiset.toList B))
+            (List.filterMap (fun p => if p.snd = true then some p.fst else none)
+              ((List.map Quotient.out (Multiset.toList C)).zip a))
+            (List.filterMap (fun p => if p.snd = true then none else some p.fst)
+              ((List.map Quotient.out (Multiset.toList C)).zip a))
+            [])) =
+      (Multiset.powerset C).bind fun C₁ => F (C₁, C - C₁)
+  rw [h_rhs_step1, h_rhs_step2, Multiset.bind_map]
+  -- Step 8: Per-assn reduction via Multiset.bind_congr.
+  refine Multiset.bind_congr fun assn h_assn => ?_
+  have hlen : assn.length = C.toList.length := by
+    have : assn ∈ RoseTree.Pathed.listChoices [true, false] C.toList.length :=
+      Multiset.mem_coe.mp h_assn
+    exact RoseTree.Pathed.mem_listChoices_bool_length C.toList.length assn this
+  -- Step 8a: Apply hostBucketSum_nil_remaining and combine the two `.map`s.
+  rw [RoseTree.Pathed.hostBucketSum_nil_remaining, Multiset.map_map]
+  -- Step 8b: Unfold F on the RHS and abbreviate the filter results at multiset level.
+  rw [hF]
+  set s_t : Multiset (Nonplanar α) :=
+    (List.filterMap (fun p => if p.snd = true then some p.fst else none)
+      ((Multiset.toList C).zip assn) : Multiset (Nonplanar α)) with hs_t
+  set s_f : Multiset (Nonplanar α) :=
+    (List.filterMap (fun p => if p.snd = true then none else some p.fst)
+      ((Multiset.toList C).zip assn) : Multiset (Nonplanar α)) with hs_f
+  -- Beta-reduce the let binding on the RHS via `show`.
+  show ((RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList A))
+            (List.filterMap (fun p => if p.snd = true then some p.fst else none)
+              ((List.map Quotient.out (Multiset.toList C)).zip assn))) ×ˢ
+        RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList B))
+            (List.filterMap (fun p => if p.snd = true then none else some p.fst)
+              ((List.map Quotient.out (Multiset.toList C)).zip assn))).map
+        (msform ∘ fun p => p.fst ++ p.snd) =
+      (Multiset.map msform
+          (RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList A))
+            (List.map Quotient.out s_t.toList)) ×ˢ
+        Multiset.map msform
+          (RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList B))
+            (List.map Quotient.out s_f.toList))).map (fun p => p.fst + p.snd)
+  -- Step 8c: Set up `RoseTree`-level/canonical guest lists and bridge them via Perm.
+  -- LHS uses `((C.toList.map Q.out).zip assn).filterMap_t` (`RoseTree` level).
+  -- RHS uses `s_t.toList.map Q.out` (canonical Q.out of multiset). Both have multiset
+  -- image `s_t = ↑((C.toList.zip assn).filterMap_t)` after `.map mk`.
+  set ft_tree : List (RoseTree α) :=
+    List.filterMap (fun p => if p.snd = true then some p.fst else none)
+      ((List.map Quotient.out (Multiset.toList C)).zip assn) with hft_tree
+  set ff_tree : List (RoseTree α) :=
+    List.filterMap (fun p => if p.snd = true then none else some p.fst)
+      ((List.map Quotient.out (Multiset.toList C)).zip assn) with hff_tree
+  set ft_canon : List (RoseTree α) := s_t.toList.map Quotient.out with hft_canon
+  set ff_canon : List (RoseTree α) := s_f.toList.map Quotient.out with hff_canon
+  -- Step 8c.1: List-level: `((l.map Q.out).zip a).filterMap_t.map mk = (l.zip a).filterMap_t`.
+  have h_ft_mk_eq : ft_tree.map Nonplanar.mk =
+      (((Multiset.toList C).zip assn).filterMap
+        (fun p => if p.snd then some p.fst else none) : List (Nonplanar α)) := by
+    have h_aux : ∀ (l : List (Nonplanar α)) (a : List Bool),
+        (((l.map Quotient.out).zip a).filterMap (fun p => if p.snd = true then some p.fst else none)).map
+          Nonplanar.mk = (l.zip a).filterMap (fun p => if p.snd = true then some p.fst else none) := by
+      intro l a
+      induction l generalizing a with
+      | nil =>
+        show (((([] : List (Nonplanar α)).map Quotient.out).zip a).filterMap _).map Nonplanar.mk = _
+        rw [show ([] : List (Nonplanar α)).map Quotient.out = [] from rfl]
+        rfl
+      | cons x rest ih =>
+        cases a with
+        | nil =>
+          rw [show ((x :: rest).map Quotient.out).zip ([] : List Bool) = [] from by
+            cases (x :: rest).map Quotient.out <;> rfl]
+          rfl
+        | cons b a_rest =>
+          rw [show (x :: rest).map Quotient.out =
+                Quotient.out x :: rest.map Quotient.out from rfl]
+          rw [show (Quotient.out x :: rest.map Quotient.out).zip (b :: a_rest) =
+                (Quotient.out x, b) :: (rest.map Quotient.out).zip a_rest from rfl]
+          rw [show (x :: rest).zip (b :: a_rest) = (x, b) :: rest.zip a_rest from rfl]
+          rw [List.filterMap_cons, List.filterMap_cons]
+          cases b with
+          | true =>
+            -- if true then some Q.out x else none = some (Q.out x); on RHS some x.
+            show (Quotient.out x ::
+                ((rest.map Quotient.out).zip a_rest).filterMap
+                  (fun p => if p.snd = true then some p.fst else none)).map Nonplanar.mk =
+                x ::
+                (rest.zip a_rest).filterMap
+                  (fun p => if p.snd = true then some p.fst else none)
+            rw [show ((Quotient.out x ::
+                ((rest.map Quotient.out).zip a_rest).filterMap
+                  (fun p => if p.snd = true then some p.fst else none)).map Nonplanar.mk) =
+                Nonplanar.mk (Quotient.out x) ::
+                  (((rest.map Quotient.out).zip a_rest).filterMap
+                    (fun p => if p.snd = true then some p.fst else none)).map Nonplanar.mk from rfl]
+            rw [ih a_rest]
+            congr 1
+            exact x.out_eq
+          | false =>
+            -- if false then some else none = none; both sides skip.
+            show (((rest.map Quotient.out).zip a_rest).filterMap
+                  (fun p => if p.snd = true then some p.fst else none)).map Nonplanar.mk =
+                (rest.zip a_rest).filterMap
+                  (fun p => if p.snd = true then some p.fst else none)
+            exact ih a_rest
+    show (ft_tree.map Nonplanar.mk : List (Nonplanar α)) =
+        ((Multiset.toList C).zip assn).filterMap (fun p => if p.snd = true then some p.fst else none)
+    exact h_aux C.toList assn
+  -- Step 8c.2: Same identity for filter_f.
+  have h_ff_mk_eq : ff_tree.map Nonplanar.mk =
+      (((Multiset.toList C).zip assn).filterMap
+        (fun p => if p.snd then none else some p.fst) : List (Nonplanar α)) := by
+    have h_aux : ∀ (l : List (Nonplanar α)) (a : List Bool),
+        (((l.map Quotient.out).zip a).filterMap
+          (fun p => if p.snd = true then none else some p.fst)).map Nonplanar.mk =
+        (l.zip a).filterMap (fun p => if p.snd = true then none else some p.fst) := by
+      intro l a
+      induction l generalizing a with
+      | nil =>
+        show (((([] : List (Nonplanar α)).map Quotient.out).zip a).filterMap _).map Nonplanar.mk = _
+        rw [show ([] : List (Nonplanar α)).map Quotient.out = [] from rfl]
+        rfl
+      | cons x rest ih =>
+        cases a with
+        | nil =>
+          rw [show ((x :: rest).map Quotient.out).zip ([] : List Bool) = [] from by
+            cases (x :: rest).map Quotient.out <;> rfl]
+          rfl
+        | cons b a_rest =>
+          rw [show (x :: rest).map Quotient.out =
+                Quotient.out x :: rest.map Quotient.out from rfl]
+          rw [show (Quotient.out x :: rest.map Quotient.out).zip (b :: a_rest) =
+                (Quotient.out x, b) :: (rest.map Quotient.out).zip a_rest from rfl]
+          rw [show (x :: rest).zip (b :: a_rest) = (x, b) :: rest.zip a_rest from rfl]
+          rw [List.filterMap_cons, List.filterMap_cons]
+          cases b with
+          | true =>
+            -- if true then none else some = none; both sides skip.
+            show (((rest.map Quotient.out).zip a_rest).filterMap
+                  (fun p => if p.snd = true then none else some p.fst)).map Nonplanar.mk =
+                (rest.zip a_rest).filterMap
+                  (fun p => if p.snd = true then none else some p.fst)
+            exact ih a_rest
+          | false =>
+            -- if false then none else some Q.out x = some Q.out x; on RHS some x.
+            show (Quotient.out x ::
+                ((rest.map Quotient.out).zip a_rest).filterMap
+                  (fun p => if p.snd = true then none else some p.fst)).map Nonplanar.mk =
+                x ::
+                (rest.zip a_rest).filterMap
+                  (fun p => if p.snd = true then none else some p.fst)
+            rw [show ((Quotient.out x ::
+                ((rest.map Quotient.out).zip a_rest).filterMap
+                  (fun p => if p.snd = true then none else some p.fst)).map Nonplanar.mk) =
+                Nonplanar.mk (Quotient.out x) ::
+                  (((rest.map Quotient.out).zip a_rest).filterMap
+                    (fun p => if p.snd = true then none else some p.fst)).map Nonplanar.mk from rfl]
+            rw [ih a_rest]
+            congr 1
+            exact x.out_eq
+    show (ff_tree.map Nonplanar.mk : List (Nonplanar α)) =
+        ((Multiset.toList C).zip assn).filterMap (fun p => if p.snd = true then none else some p.fst)
+    exact h_aux C.toList assn
+  -- Step 8c.3: `(s.toList.map Q.out).map mk = s.toList` (Quotient.out_eq componentwise).
+  have h_ft_canon_mk : ft_canon.map Nonplanar.mk = s_t.toList := by
+    show (s_t.toList.map Quotient.out).map Nonplanar.mk = s_t.toList
+    induction s_t.toList with
+    | nil => rfl
+    | cons hd tl ih =>
+      show Nonplanar.mk (Quotient.out hd) :: ((tl.map Quotient.out).map Nonplanar.mk) =
+           hd :: tl
+      rw [ih]
+      congr 1
+      exact hd.out_eq
+  have h_ff_canon_mk : ff_canon.map Nonplanar.mk = s_f.toList := by
+    show (s_f.toList.map Quotient.out).map Nonplanar.mk = s_f.toList
+    induction s_f.toList with
+    | nil => rfl
+    | cons hd tl ih =>
+      show Nonplanar.mk (Quotient.out hd) :: ((tl.map Quotient.out).map Nonplanar.mk) =
+           hd :: tl
+      rw [ih]
+      congr 1
+      exact hd.out_eq
+  -- Step 8c.4: Both `(ft_tree.map mk)` and `(ft_canon.map mk)` have multiset image `s_t`,
+  -- hence are `Perm`-equivalent (via `Multiset.coe_eq_coe`).
+  have h_ft_eq_coe : (↑(ft_tree.map Nonplanar.mk) : Multiset (Nonplanar α)) = s_t := by
+    rw [h_ft_mk_eq, hs_t]
+  have h_ff_eq_coe : (↑(ff_tree.map Nonplanar.mk) : Multiset (Nonplanar α)) = s_f := by
+    rw [h_ff_mk_eq, hs_f]
+  have h_ft_canon_eq_coe : (↑(ft_canon.map Nonplanar.mk) : Multiset (Nonplanar α)) = s_t := by
+    rw [h_ft_canon_mk]; exact s_t.coe_toList
+  have h_ff_canon_eq_coe : (↑(ff_canon.map Nonplanar.mk) : Multiset (Nonplanar α)) = s_f := by
+    rw [h_ff_canon_mk]; exact s_f.coe_toList
+  have h_ft_perm : (ft_tree.map Nonplanar.mk).Perm (ft_canon.map Nonplanar.mk) := by
+    rw [← Multiset.coe_eq_coe, h_ft_eq_coe, h_ft_canon_eq_coe]
+  have h_ff_perm : (ff_tree.map Nonplanar.mk).Perm (ff_canon.map Nonplanar.mk) := by
+    rw [← Multiset.coe_eq_coe, h_ff_eq_coe, h_ff_canon_eq_coe]
+  -- Step 8c.5: Apply guest-msform invariance to swap `RoseTree`-level guests for canonical.
+  have h_iF_A : (RoseTree.Pathed.insertionForest
+        (List.map Quotient.out (Multiset.toList A)) ft_tree).map msform =
+      (RoseTree.Pathed.insertionForest
+        (List.map Quotient.out (Multiset.toList A)) ft_canon).map msform :=
+    RoseTree.Pathed.insertionForest_msform_invariance_guests _ h_ft_perm
+  have h_iF_B : (RoseTree.Pathed.insertionForest
+        (List.map Quotient.out (Multiset.toList B)) ff_tree).map msform =
+      (RoseTree.Pathed.insertionForest
+        (List.map Quotient.out (Multiset.toList B)) ff_canon).map msform :=
+    RoseTree.Pathed.insertionForest_msform_invariance_guests _ h_ff_perm
+  -- Step 8d: Use guest-msform invariance to align the canonical-guest form on the
+  -- RHS back to the `RoseTree`-level guest form. Then both sides share `M_A` and `M_B` below.
+  rw [← h_iF_A, ← h_iF_B]
+  set M_A : Multiset (List (RoseTree α)) :=
+    RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList A)) ft_tree with hM_A
+  set M_B : Multiset (List (RoseTree α)) :=
+    RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList B)) ff_tree with hM_B
+  -- Step 8e: Push msform through `(M_A ×ˢ M_B)`. Both sides expand via
+  -- `Multiset.product = bind` and `msform (a ++ b) = msform a + msform b`.
+  show (M_A.bind (fun a => M_B.map (Prod.mk a))).map (msform ∘ fun p => p.fst ++ p.snd) =
+      ((M_A.map msform).bind (fun ma => (M_B.map msform).map (Prod.mk ma))).map
+        (fun p => p.fst + p.snd)
+  rw [Multiset.map_bind, Multiset.map_bind, Multiset.bind_map]
+  refine Multiset.bind_congr fun a _ => ?_
+  rw [Multiset.map_map, Multiset.map_map, Multiset.map_map]
+  apply Multiset.map_congr rfl
+  intros b _
+  show msform (a ++ b) = msform a + msform b
+  rw [hmsform]
+  show (↑((a ++ b).map Nonplanar.mk) : Multiset (Nonplanar α)) =
+       ↑(a.map Nonplanar.mk) + ↑(b.map Nonplanar.mk)
+  rw [List.map_append, Multiset.coe_add]
+
+/-- Generic lift of a `mk`-image `Perm` to a `RoseTree`-level `Perm` plus a list with
+    matching `mk`-image. Inline copy of `RoseTree.Pathed.perm_lift_through_map`
+    (private there) — pure list/Perm lemma, no rooted-tree content. -/
+private theorem perm_lift_mk {l₂ l₁ : List (RoseTree α)}
+    (h : (l₁.map Nonplanar.mk).Perm (l₂.map Nonplanar.mk)) :
+    ∃ l_mid : List (RoseTree α),
+      l₁.Perm l_mid ∧ l_mid.map Nonplanar.mk = l₂.map Nonplanar.mk := by
+  induction l₂ generalizing l₁ with
+  | nil =>
+    rw [List.map_nil] at h
+    have h_eq : l₁.map Nonplanar.mk = [] := h.eq_nil
+    have hl₁ : l₁ = [] := List.map_eq_nil_iff.mp h_eq
+    exact ⟨[], hl₁ ▸ List.Perm.refl _, by simp⟩
+  | cons b l₂_rest ih =>
+    have hfb_mem : Nonplanar.mk b ∈ l₁.map Nonplanar.mk := by
+      apply h.symm.subset
+      rw [List.map_cons]
+      exact List.mem_cons_self
+    obtain ⟨a, ha_mem, hfa_eq⟩ := List.mem_map.mp hfb_mem
+    have hperm_l₁ : l₁.Perm (a :: l₁.erase a) := List.perm_cons_erase ha_mem
+    have h' : ((a :: l₁.erase a).map Nonplanar.mk).Perm
+        ((b :: l₂_rest).map Nonplanar.mk) :=
+      (hperm_l₁.map Nonplanar.mk).symm.trans h
+    rw [List.map_cons, List.map_cons] at h'
+    rw [hfa_eq] at h'
+    have h_inner : ((l₁.erase a).map Nonplanar.mk).Perm
+        (l₂_rest.map Nonplanar.mk) := h'.cons_inv
+    obtain ⟨l_mid_rest, hperm_rest, hmap_rest⟩ := ih h_inner
+    refine ⟨a :: l_mid_rest, ?_, ?_⟩
+    · exact hperm_l₁.trans (hperm_rest.cons a)
+    · rw [List.map_cons, List.map_cons, hfa_eq, hmap_rest]
+
+omit [DecidableEq α] in
+/-- A `mk`-equality on lists `l₁.map mk = l₂.map mk` lifts to componentwise
+    `Forall₂ Perm l₁ l₂`. -/
+private theorem forall2_perm_of_map_mk_eq :
+    ∀ {l₁ l₂ : List (RoseTree α)},
+      l₁.map Nonplanar.mk = l₂.map Nonplanar.mk →
+      List.Forall₂ RoseTree.Perm l₁ l₂
+  | [], [], _ => List.Forall₂.nil
+  | [], _ :: _, h => by simp at h
+  | _ :: _, [], h => by simp at h
+  | x :: xs, y :: ys, h => by
+    rw [List.map_cons, List.map_cons, List.cons.injEq] at h
+    exact List.Forall₂.cons
+      (Nonplanar.mk_eq_mk_iff.mp h.1)
+      (forall2_perm_of_map_mk_eq h.2)
+
+omit [DecidableEq α] in
+/-- `Forall₂ Perm` is symmetric (componentwise symmetry of `Perm`). -/
+private theorem forall2_perm_symm :
+    ∀ {l₁ l₂ : List (RoseTree α)},
+      List.Forall₂ RoseTree.Perm l₁ l₂ →
+      List.Forall₂ RoseTree.Perm l₂ l₁
+  | [], [], _ => List.Forall₂.nil
+  | x :: xs, y :: ys, h => by
+    cases h with
+    | cons hd tl => exact List.Forall₂.cons hd.symm (forall2_perm_symm tl)
+
+/-- **Representative invariance for NIM**: `Nonplanar.insertionMultiset F G`
+    can be computed on ANY `RoseTree`-level representative lists `hosts`, `guests`
+    whose `mk`-image multisets are `F` and `G` respectively — not just the
+    canonical `toList.map Quotient.out` reps.
+
+    This is the workhorse for descents that need to swap canonical reps for
+    a convenient `RoseTree`-level list (e.g. `Q.out v :: B.toList.map Q.out` standing
+    in for `(B + {v}).toList.map Q.out`). -/
+theorem insertionMultiset_eq_of_reps
+    (F G : Multiset (Nonplanar α)) (hosts guests : List (RoseTree α))
+    (h_hosts : (Multiset.ofList (hosts.map Nonplanar.mk) :
+      Multiset (Nonplanar α)) = F)
+    (h_guests : (Multiset.ofList (guests.map Nonplanar.mk) :
+      Multiset (Nonplanar α)) = G) :
+    Nonplanar.insertionMultiset F G =
+      (RoseTree.Pathed.insertionForest hosts guests).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  -- §1: Canonical reps' mk-images recover the multiset's toList.
+  have h_canon_hosts_mk :
+      (F.toList.map Quotient.out).map Nonplanar.mk = F.toList := by
+    induction F.toList with
+    | nil => rfl
+    | cons hd tl ih =>
+      show Nonplanar.mk (Quotient.out hd) ::
+          ((tl.map Quotient.out).map Nonplanar.mk) = hd :: tl
+      rw [ih]
+      congr 1
+      exact hd.out_eq
+  have h_canon_guests_mk :
+      (G.toList.map Quotient.out).map Nonplanar.mk = G.toList := by
+    induction G.toList with
+    | nil => rfl
+    | cons hd tl ih =>
+      show Nonplanar.mk (Quotient.out hd) ::
+          ((tl.map Quotient.out).map Nonplanar.mk) = hd :: tl
+      rw [ih]
+      congr 1
+      exact hd.out_eq
+  -- §2: Perm of mk-images at the host and guest level.
+  have h_hosts_perm :
+      (hosts.map Nonplanar.mk).Perm
+        ((F.toList.map Quotient.out).map Nonplanar.mk) := by
+    apply Multiset.coe_eq_coe.mp
+    rw [h_hosts, h_canon_hosts_mk]
+    exact F.coe_toList.symm
+  -- §3: Lift the host mk-Perm to a `RoseTree`-level Perm + Forall₂ Perm bridge.
+  obtain ⟨hosts_mid, h_hosts_tree_perm, h_hosts_map_eq⟩ :=
+    perm_lift_mk h_hosts_perm
+  have h_hosts_forall :
+      List.Forall₂ RoseTree.Perm hosts_mid (F.toList.map Quotient.out) :=
+    forall2_perm_of_map_mk_eq h_hosts_map_eq
+  -- §4: Unfold NIM (canonical reps) and bridge via host-Perm + host-Perm.
+  unfold Nonplanar.insertionMultiset
+  -- Bridge from `(canon_hosts) gs_canon` back to `(hosts) guests`:
+  --   canon_hosts ←(Forall₂ Perm, symm)← hosts_mid ←(Perm, symm)← hosts
+  -- For guests, use `insertionForest_msform_invariance_guests` directly.
+  have h_guests_perm_mk :
+      (guests.map Nonplanar.mk).Perm
+        ((G.toList.map Quotient.out).map Nonplanar.mk) := by
+    apply Multiset.coe_eq_coe.mp
+    rw [h_guests, h_canon_guests_mk]
+    exact G.coe_toList.symm
+  -- Swap canonical hosts for `hosts_mid` (Perm host invariance).
+  have h_step1 :
+      (RoseTree.Pathed.insertionForest (F.toList.map Quotient.out)
+          (G.toList.map Quotient.out)).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+      (RoseTree.Pathed.insertionForest hosts_mid
+          (G.toList.map Quotient.out)).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+    have h2 := congrArg
+      (Multiset.map (fun l : List (Nonplanar α) =>
+        (Multiset.ofList l : Multiset (Nonplanar α))))
+      (RoseTree.Pathed.insertionForest_perm_host
+        (G.toList.map Quotient.out) (forall2_perm_symm h_hosts_forall))
+    -- h2 : map (ofList) (iF mid gs .map (List.map mk)) = map (ofList) (iF canon gs .map (List.map mk))
+    -- Collapse the inner map composition.
+    rw [Multiset.map_map, Multiset.map_map] at h2
+    -- h2 : map (ofList ∘ List.map mk) (iF mid gs) = map (ofList ∘ List.map mk) (iF canon gs)
+    -- Goal uses `fun L => ofList (L.map mk)`. These are eta-equal; use `show`.
+    show (RoseTree.Pathed.insertionForest (F.toList.map Quotient.out)
+          (G.toList.map Quotient.out)).map
+        ((fun l : List (Nonplanar α) => (Multiset.ofList l : Multiset (Nonplanar α)))
+          ∘ List.map Nonplanar.mk) =
+      (RoseTree.Pathed.insertionForest hosts_mid
+          (G.toList.map Quotient.out)).map
+        ((fun l : List (Nonplanar α) => (Multiset.ofList l : Multiset (Nonplanar α)))
+          ∘ List.map Nonplanar.mk)
+    exact h2
+  -- Swap `hosts_mid` for `hosts` (`RoseTree`-level Perm of hosts).
+  have h_step2 :
+      (RoseTree.Pathed.insertionForest hosts_mid
+          (G.toList.map Quotient.out)).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+      (RoseTree.Pathed.insertionForest hosts
+          (G.toList.map Quotient.out)).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk)) :=
+    RoseTree.Pathed.insertionForest_perm_host_msform
+      h_hosts_tree_perm.symm (G.toList.map Quotient.out)
+  -- Swap canonical guests for `guests` (mk-Perm of guests via the guest lemma).
+  have h_step3 :
+      (RoseTree.Pathed.insertionForest hosts
+          (G.toList.map Quotient.out)).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+      (RoseTree.Pathed.insertionForest hosts guests).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk)) :=
+    (RoseTree.Pathed.insertionForest_msform_invariance_guests hosts
+      h_guests_perm_mk).symm
+  exact h_step1.trans (h_step2.trans h_step3)
+
+/-- **Deep substrate**: NIM-level singleton-guest associativity.
+
+    `(NIM A B).bind (X ↦ NIM X {v}) = NIM A (B + {v}) + (NIM B {v}).bind (X' ↦ NIM A X')`
+
+    Proved by descent from the raw `RoseTree`-level identity
+    `RoseTree.Pathed.insertionForest_bind_singleton`. The descent uses the
+    representative-invariance lemma
+    `Nonplanar.insertionMultiset_eq_of_reps` per-output to swap NIM applied
+    to a `RoseTree`-level output `msform L` for the `RoseTree`-level engine applied to `L`. -/
+theorem insertionMultiset_singleton_assoc
+    (A B : Multiset (Nonplanar α)) (v : Nonplanar α) :
+    (Nonplanar.insertionMultiset A B).bind
+        (fun X => Nonplanar.insertionMultiset X {v}) =
+      Nonplanar.insertionMultiset A (B + {v}) +
+      (Nonplanar.insertionMultiset B {v}).bind
+        (fun X' => Nonplanar.insertionMultiset A X') := by
+  -- Canonical `RoseTree`-level reps.
+  set A_pl : List (RoseTree α) := A.toList.map Quotient.out with hA_pl
+  set B_pl : List (RoseTree α) := B.toList.map Quotient.out with hB_pl
+  set ov : RoseTree α := Quotient.out v with hov
+  -- Abbreviation for the msform post-map (`List (RoseTree α) → Multiset (Nonplanar α)`).
+  set msform : List (RoseTree α) → Multiset (Nonplanar α) :=
+    fun L => Multiset.ofList (L.map Nonplanar.mk) with hmsform
+  -- Key fact: for any `RoseTree`-level list `L`, `(L.map mk : Multiset _) = msform L`.
+  -- (Used to discharge rep-lemma hypotheses for inner NIMs.)
+  have h_msform_eq : ∀ L : List (RoseTree α),
+      (Multiset.ofList (L.map Nonplanar.mk) : Multiset (Nonplanar α)) = msform L :=
+    fun L => rfl
+  -- §1: LHS = ((iF A_pl B_pl).bind (fun L => iF L [ov])).map msform.
+  -- Step 1a: unfold the outer NIM, then push bind through the outer .map msform.
+  have h_lhs_outer : Nonplanar.insertionMultiset A B =
+      (RoseTree.Pathed.insertionForest A_pl B_pl).map msform := rfl
+  -- Step 1b: per `RoseTree`-level host output L, NIM (msform L) {v} = (iF L [ov]).map msform.
+  have h_inner_NIM : ∀ L : List (RoseTree α),
+      Nonplanar.insertionMultiset (msform L) {v} =
+        (RoseTree.Pathed.insertionForest L [ov]).map msform := by
+    intro L
+    apply Nonplanar.insertionMultiset_eq_of_reps
+    · -- hosts hyp: ofList (L.map mk) = msform L
+      rfl
+    · -- guests hyp: ofList ([ov].map mk) = {v}.
+      show (Multiset.ofList ([Nonplanar.mk ov]) : Multiset (Nonplanar α)) = ({v} : Multiset _)
+      rw [hov, show Nonplanar.mk (Quotient.out v) = v from Quotient.out_eq v]
+      rfl
+  -- Step 1c: collapse the LHS.
+  have h_lhs :
+      (Nonplanar.insertionMultiset A B).bind
+        (fun X => Nonplanar.insertionMultiset X {v}) =
+      ((RoseTree.Pathed.insertionForest A_pl B_pl).bind
+        (fun L => RoseTree.Pathed.insertionForest L [ov])).map msform := by
+    rw [h_lhs_outer, Multiset.bind_map]
+    -- Goal: (iF A_pl B_pl).bind (fun L => NIM (msform L) {v})
+    --     = ((iF A_pl B_pl).bind (fun L => iF L [ov])).map msform
+    rw [Multiset.map_bind]
+    refine Multiset.bind_congr fun L _ => ?_
+    exact h_inner_NIM L
+  -- §2: Apply the `RoseTree`-level engine and split via Multiset.map_add.
+  rw [h_lhs, RoseTree.Pathed.insertionForest_bind_singleton, Multiset.map_add]
+  -- Now the goal has two summands matching the RHS shape. Prove each.
+  congr 1
+  · -- Summand 1: (iF A_pl (ov :: B_pl)).map msform = NIM A (B + {v}).
+    symm
+    apply Nonplanar.insertionMultiset_eq_of_reps
+    · -- hosts hyp: ofList (A_pl.map mk) = A.
+      show (Multiset.ofList ((A.toList.map Quotient.out).map Nonplanar.mk) :
+            Multiset (Nonplanar α)) = A
+      rw [List.map_map]
+      have h_id : A.toList.map (Nonplanar.mk ∘ Quotient.out) = A.toList :=
+        (List.map_congr_left fun x _ => Quotient.out_eq x).trans (List.map_id _)
+      rw [h_id]
+      exact A.coe_toList
+    · -- guests hyp: ofList ((ov :: B_pl).map mk) = B + {v}.
+      show (Multiset.ofList ((Quotient.out v :: B.toList.map Quotient.out).map Nonplanar.mk) :
+            Multiset (Nonplanar α)) = B + {v}
+      rw [List.map_cons, List.map_map]
+      have h_id_B : B.toList.map (Nonplanar.mk ∘ Quotient.out) = B.toList :=
+        (List.map_congr_left fun x _ => Quotient.out_eq x).trans (List.map_id _)
+      rw [h_id_B]
+      show ((Nonplanar.mk (Quotient.out v) :: B.toList : List (Nonplanar α)) :
+            Multiset (Nonplanar α)) = B + {v}
+      rw [show Nonplanar.mk (Quotient.out v) = v from Quotient.out_eq v]
+      -- (↑(v :: B.toList) : Multiset _) = v ::ₘ ↑B.toList = v ::ₘ B
+      rw [show ((v :: B.toList : List (Nonplanar α)) : Multiset (Nonplanar α)) =
+          v ::ₘ (↑B.toList : Multiset (Nonplanar α)) from rfl, B.coe_toList]
+      -- Goal: v ::ₘ B = B + {v}.
+      rw [add_comm B, Multiset.singleton_add]
+  · -- Summand 2: ((iF B_pl [ov]).bind (fun B' => iF A_pl B')).map msform
+    --          = (NIM B {v}).bind (NIM A ·)
+    -- Push msform through the outer bind, then apply rep lemma per B'.
+    rw [Multiset.map_bind]
+    -- Goal: (iF B_pl [ov]).bind (fun B' => (iF A_pl B').map msform) = ...
+    -- Per B', (iF A_pl B').map msform = NIM A (msform B') by rep lemma.
+    have h_inner_NIM_A : ∀ B' : List (RoseTree α),
+        (RoseTree.Pathed.insertionForest A_pl B').map msform =
+          Nonplanar.insertionMultiset A (msform B') := by
+      intro B'
+      symm
+      apply Nonplanar.insertionMultiset_eq_of_reps
+      · -- hosts hyp: ofList (A_pl.map mk) = A.
+        show (Multiset.ofList ((A.toList.map Quotient.out).map Nonplanar.mk) :
+              Multiset (Nonplanar α)) = A
+        rw [List.map_map]
+        have h_id : A.toList.map (Nonplanar.mk ∘ Quotient.out) = A.toList :=
+          (List.map_congr_left fun x _ => Quotient.out_eq x).trans (List.map_id _)
+        rw [h_id]
+        exact A.coe_toList
+      · -- guests hyp: ofList (B'.map mk) = msform B'.
+        rfl
+    -- RHS: (NIM B {v}).bind (NIM A ·). Outer NIM B {v} unfolds to (iF B_pl [ov]).map msform
+    -- via the rep lemma at the canonical reps for B (canonical) and [ov] for {v}.
+    have h_outer_NIM_B :
+        Nonplanar.insertionMultiset B {v} =
+          (RoseTree.Pathed.insertionForest B_pl [ov]).map msform := by
+      apply Nonplanar.insertionMultiset_eq_of_reps
+      · -- hosts hyp: ofList (B_pl.map mk) = B.
+        show (Multiset.ofList ((B.toList.map Quotient.out).map Nonplanar.mk) :
+              Multiset (Nonplanar α)) = B
+        rw [List.map_map]
+        have h_id : B.toList.map (Nonplanar.mk ∘ Quotient.out) = B.toList :=
+          (List.map_congr_left fun x _ => Quotient.out_eq x).trans (List.map_id _)
+        rw [h_id]
+        exact B.coe_toList
+      · -- guests hyp: ofList ([ov].map mk) = {v}.
+        show (Multiset.ofList ([Nonplanar.mk (Quotient.out v)]) :
+              Multiset (Nonplanar α)) = ({v} : Multiset _)
+        rw [show Nonplanar.mk (Quotient.out v) = v from Quotient.out_eq v]
+        rfl
+    rw [h_outer_NIM_B, Multiset.bind_map]
+    -- Now both sides are (iF B_pl [ov]).bind (something). Use bind_congr.
+    refine Multiset.bind_congr fun B' _ => ?_
+    exact h_inner_NIM_A B'
+
+
+
+end
 
 end RoseTree.Nonplanar
