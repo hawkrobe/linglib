@@ -569,23 +569,6 @@ inductive UEStrength where
   | additive       -- UE + ∨-distributive (strongest)
   deriving DecidableEq, Repr
 
-/--
-Check if a context's DE strength is sufficient for an NPI.
-
-`strengthSufficient contextStrength requiredStrength` returns true
-when `requiredStrength ≤ contextStrength` in the Zwarts hierarchy (`LinearOrder DEStrength`).
--/
-def strengthSufficient (contextStrength requiredStrength : DEStrength) : Bool :=
-  decide (requiredStrength ≤ contextStrength)
-
-#guard strengthSufficient .antiMorphic .weak          -- negation licenses weak NPIs
-#guard strengthSufficient .antiMorphic .antiAdditive   -- negation licenses strong NPIs
-#guard strengthSufficient .antiAdditive .weak          -- "no" licenses weak NPIs
-#guard strengthSufficient .antiAdditive .antiAdditive   -- "no" licenses strong NPIs
-#guard strengthSufficient .weak .weak                  -- "few" licenses weak NPIs
-#guard !strengthSufficient .weak .antiAdditive          -- "few" does NOT license strong NPIs
-
-
 -- ============================================================================
 -- §4 — Signature ↔ Strength Bridge Maps
 -- ============================================================================
