@@ -1,9 +1,10 @@
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Polarity.Strength
-import Linglib.Semantics.Entailment.Soundness
-import Linglib.Semantics.Entailment.StrawsonSoundness
-import Linglib.Semantics.Entailment.AntiAdditivity
-import Linglib.Semantics.Entailment.PositionProfile
+import Linglib.Logic.Natural.Soundness
+import Linglib.Logic.Natural.StrawsonSoundness
+import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.World
+import Linglib.Logic.Natural.PositionProfile
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Counting
 

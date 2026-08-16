@@ -1,5 +1,5 @@
-import Linglib.Semantics.Entailment.Soundness
-import Linglib.Semantics.Entailment.StrawsonEntailment
+import Linglib.Logic.Natural.Soundness
+import Linglib.Logic.Natural.StrawsonEntailment
 
 /-!
 # Strawson-relativized soundness

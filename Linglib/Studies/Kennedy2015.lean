@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.Numerals.Basic
-import Linglib.Semantics.Entailment.AsymStronger
+import Linglib.Semantics.Alternatives.AsymStronger
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.DeriveFintype
 
@@ -38,7 +38,7 @@ We formalize both routes:
 
 - §2 derives the predictions **symbolically** via `asymStrongerOn`
   (the polymorphic primitive from
-  `Semantics/Entailment/AsymStronger.lean`).
+  `Semantics/Alternatives/AsymStronger.lean`).
 - §3 derives the same direction probabilistically through RSA L1.
 
 §3 is our own integration contribution, not Kennedy's — Kennedy's paper

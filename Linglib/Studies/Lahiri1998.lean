@@ -1,5 +1,5 @@
 import Linglib.Semantics.Focus.Particles
-import Linglib.Semantics.Entailment.Basic
+import Linglib.Logic.Natural.World
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Fragments.Hindi.PolarityItems
 import Linglib.Data.Examples.Lahiri1998

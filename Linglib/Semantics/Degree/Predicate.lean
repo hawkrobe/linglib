@@ -85,7 +85,7 @@ theorem bimonotone_no_optimum {W : Type*} (P : α → W → Prop)
 /-! The cross-world entailment-based `IsMaxInf` (Fox 2007 / vFFI 2014 /
     Beck-Rullmann 1999 / Rouillard 2026) is linguistic substrate, not
     pure order theory — it lives in
-    `Semantics/Entailment/Extremum.lean`. The per-world
+    `Semantics/Exhaustification/Extremum.lean`. The per-world
     specialization is just `IsLeast {y | P y w} x` from mathlib
     (`Mathlib.Order.Bounds.Defs`); the per-world↔cross-world bridge under
     monotonicity is mathlib's `MonotoneOn.map_isLeast` family
@@ -127,7 +127,7 @@ theorem gtOver_eq_geOver_succ {W : Type*} (μ : W → ℕ) (m : ℕ) (w : W) :
 /-! IsMaxInf-flavored consequences of these degree predicates
     (`atLeast_hasMaxInf`, `moreThan_noMaxInf`, `isMaxInf_atLeast_iff_eq`,
     `moreThan_nat_hasMaxInf`) live in
-    `Semantics/Entailment/Extremum.lean` since they depend on
+    `Semantics/Exhaustification/Extremum.lean` since they depend on
     the linguistic-substrate `IsMaxInf` predicate. -/
 
 /-! ### Existential Lowering (Type-Shifting) -/
@@ -256,6 +256,6 @@ theorem distinct_no_universal_witness {α : Type*} (k₁ k₂ : α) (hne : k₁ 
 
 /-! IsMaxInf-flavored consequences of "at most" (`atMost_hasMaxInf`,
     `isMaxInf_atMost_iff_eq`) live in
-    `Semantics/Entailment/Extremum.lean`. -/
+    `Semantics/Exhaustification/Extremum.lean`. -/
 
 end Degree

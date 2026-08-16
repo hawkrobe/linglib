@@ -1,4 +1,4 @@
-import Linglib.Semantics.Entailment.StrawsonEntailment
+import Linglib.Logic.Natural.StrawsonEntailment
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Polarity.Licensing
@@ -47,7 +47,7 @@ with "DE + scalar endpoint" (Conjecture 48).
   re-exported as `gaj2011_appendix2_AA_implies_intolerant`.
 - `wouldFull_isStrawsonAA` — Gajewski Appendix 1's actual `would`-with-
   non-vacuity-presupposition SAA result (in
-  `Semantics/Entailment/StrawsonEntailment.lean`).
+  `Logic/Natural/StrawsonEntailment.lean`).
 - Strong-NPI registry consistency theorem
   (`gaj2011_strongNPIs_excluded_from_strawson_only_contexts`) —
   Gajewski's headline empirical claim made `decide`-checkable over the
@@ -310,13 +310,13 @@ theorem all_conditions_reduce_to_DE_when_trivial {W : Type*}
 
 The paper's §2 establishes:
 - `IsAntiAdditive f := ∀ p q, f (p ∪ q) ↔ f p ∧ f q`
-  (eq. 10; in linglib: `Semantics/Entailment/AntiAdditivity.lean`).
+  (eq. 10; in linglib: `Core/Order/AntiAdditive.lean`).
 - `Antitone f` (eq. 4; mathlib's own predicate).
 - AA ⇒ DE (eq. 11): standard textbook proof — already in linglib as
   `IsAntiAdditive.antitone`.
 - Zwarts: strong NPIs (`either`, `in weeks`, until) need AA licensers (eq. 8).
 - vF: presuppositions are factored out by replacing DE with **Strawson-DE**
-  (eq. 22; in linglib: `Semantics/Entailment/StrawsonEntailment.lean`).
+  (eq. 22; in linglib: `Logic/Natural/StrawsonEntailment.lean`).
 -/
 
 /-! ## §3.3 The puzzle — Strawson-AA is too weak
@@ -367,7 +367,7 @@ non-truth-conditional meaning.
 
 /-! ### Substrate index
 
-The four SAA proofs live in `Semantics/Entailment/StrawsonEntailment.lean`:
+The four SAA proofs live in `Logic/Natural/StrawsonEntailment.lean`:
 
 - `onlyFull_isStrawsonAA` — Gajewski body §3.3 eqs. 37-38 (p. 120).
   (Appendix 1 sketches `sorry` and `would`; the `only` case is body text.)
@@ -431,7 +431,7 @@ Gajewski but not proved; would need a witness function. Open.
 /-- Re-export the substrate Appendix 2 result for paper-citation indexing. -/
 theorem gaj2011_appendix2_AA_implies_intolerant {α : Type*}
     (f : Set α → Prop)
-    (hAA : Entailment.IsAntiAdditive f) :
+    (hAA : IsAntiAdditive f) :
     IsIntolerant f :=
   antiAdditive_implies_intolerant f hAA
 

@@ -1,5 +1,6 @@
 import Linglib.Semantics.Degree.Basic
-import Linglib.Semantics.Entailment.AntiAdditivity
+import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.World
 
 /-!
 # Clausal comparatives: set and max standards
@@ -42,8 +43,8 @@ theorem mem_gtOverSet_iff_subset_Iio (μ : Entity → D) (Δ : Set D) (y : Entit
 anti-additive in its set-of-degrees argument — the algebraic source of NPI licensing
 in clausal *than*-comparatives. -/
 theorem gtOverSet_isAntiAdditive (μ : Entity → D) :
-    Entailment.IsAntiAdditive (Comparison.gt.overSet μ) :=
-  Entailment.isAntiAdditive_forall_mem (fun d y => d < μ y)
+    IsAntiAdditive (Comparison.gt.overSet μ) :=
+  isAntiAdditive_forall_mem (fun d y => d < μ y)
 
 /-- **Reduction lemma** ([bhatt-pancheva-2004] §3, order-theoretic form): the
 S-comparative `Comparison.gt.overSet μ` is determined by the *greatest* element of its

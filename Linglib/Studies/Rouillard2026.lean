@@ -6,7 +6,7 @@ import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.IntervalContent
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Core.Order.Interval
-import Linglib.Semantics.Entailment.Extremum
+import Linglib.Semantics.Exhaustification.Extremum
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Features.Aktionsart
@@ -325,7 +325,7 @@ theorem gTIAPropertyOpenNeg_downwardMonotone {μ : NonemptyInterval Time → α}
 /-! ### The MIP licensing predicate
 
 `MIP_Licensed` and `MIP_LicensedDown` are defined in
-    `Semantics/Entailment/Extremum.lean` and reused here. They
+    `Semantics/Exhaustification/Extremum.lean` and reused here. They
     combine `Degree.AdmitsOptimum P` (non-constancy: the *atelic*
     failure mode) with the per-world existence of a `Set.IsLeast` /
     `Set.IsGreatest` (mathlib): a most-informative numeral exists at some

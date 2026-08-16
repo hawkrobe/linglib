@@ -1,5 +1,6 @@
 import Linglib.Semantics.Polarity.ExpletiveNegation
-import Linglib.Semantics.Entailment.AntiAdditivity
+import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.World
 import Mathlib.Order.Monotone.Basic
 
 /-!
@@ -36,8 +37,7 @@ open Negation (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile standardNegProfile)
 open Polarity (DEStrength)
 open Entailment (World)
-open Entailment (IsAntiAdditive IsAntiMorphic
-  pnot_isAntiAdditive pnot_isAntiMorphic)
+open Entailment (pnot_isAntiAdditive pnot_isAntiMorphic)
 
 /-- Pointwise Bool negation on `W → Bool`. -/
 private def boolPnot (W : Type*) : (W → Bool) → (W → Bool) := fun p w => !p w

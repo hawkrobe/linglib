@@ -1,5 +1,7 @@
 import Linglib.Semantics.Intensional.Defs
-import Linglib.Semantics.Entailment.AntiAdditivity
+import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.Basic
+import Linglib.Logic.Natural.World
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.FinEnum

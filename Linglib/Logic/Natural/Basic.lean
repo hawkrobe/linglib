@@ -70,7 +70,7 @@ R ≤ R' means R is at least as informative as R'. The lattice has ≡ at
 
 `Refines R R'` is the implication ordering ([icard-2012] §1): `xRy`
 entails `xR'y` (certified semantically by `NLRelation.Holds.of_refines`
-in `Semantics/Entailment/Soundness.lean`). ≡ refines the inclusion
+in `Logic/Natural/Soundness.lean`). ≡ refines the inclusion
 relations but not the exclusion relations (`x = y` does not make `x`,`y`
 disjoint or exhaustive); ^ refines both | and ⌣.
 -/
@@ -247,7 +247,7 @@ Refinement ordering on entailment signatures: `σ.Refines τ` iff every
 σ-function is a τ-function ([icard-2012]'s ≼, §2.2). `addMult`/`antiAddMult`
 are the most specific elements of their halves; `all` (•, any function) is
 the top — every class is contained in it. Certified semantically by
-`EntailmentSig.SoundFor.of_refines` in `Semantics/Entailment/Soundness.lean`.
+`EntailmentSig.SoundFor.of_refines` in `Logic/Natural/Soundness.lean`.
 -/
 def Refines : EntailmentSig → EntailmentSig → Prop
   | _, .all => True

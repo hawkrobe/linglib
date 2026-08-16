@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.Basic
-import Linglib.Semantics.Entailment.Soundness
+import Linglib.Logic.Natural.Soundness
 
 /-!
 # Per-position signature profiles for two-place operators

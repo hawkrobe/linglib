@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Degree.Measure.Polar
 import Linglib.Semantics.Degree.Predicate
-import Linglib.Semantics.Entailment.Extremum
+import Linglib.Semantics.Exhaustification.Extremum
 import Linglib.Semantics.Quantification.Numerals.Basic
 import Linglib.Semantics.Exhaustification.Chain
 import Mathlib.Tactic.Linarith
@@ -15,7 +15,7 @@ import Mathlib.Tactic.Linarith
 [fox-hackl-2006] [kennedy-2015]
 
 Surfaces the maximal informativity theorems from
-`Semantics/Entailment/Extremum.lean` at the Studies level,
+`Semantics/Exhaustification/Extremum.lean` at the Studies level,
 connecting numeral semantics (the named `*Meaning` functions) to the
 `HasMaxInf` / `IsMaxInf` infrastructure and the [fox-hackl-2006]
 density predictions.

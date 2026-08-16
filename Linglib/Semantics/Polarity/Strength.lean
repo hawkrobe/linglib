@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Entailment.AntiAdditivity
+import Linglib.Core.Order.AntiAdditive
+import Linglib.Logic.Natural.Basic
+import Linglib.Logic.Natural.World
 
 /-!
 # The Zwarts strength hierarchies
@@ -30,7 +32,7 @@ the chain (`HoldsFor.of_le`).
 
 namespace Polarity
 
-open Entailment (IsAntiAdditive IsAntiMorphic pnot pnot_isAntiMorphic)
+open Entailment (pnot pnot_isAntiMorphic)
 
 /-! ### The hierarchies -/
 

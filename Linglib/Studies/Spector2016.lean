@@ -1,5 +1,5 @@
 import Linglib.Semantics.Exhaustification.Operators.Basic
-import Linglib.Semantics.Entailment.NaturalLogic
+import Linglib.Logic.Natural.Basic
 
 /-!
 # Spector (2016): Worked examples of exhaustivity operators
