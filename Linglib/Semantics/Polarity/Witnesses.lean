@@ -4,7 +4,7 @@ import Linglib.Logic.Natural.Soundness
 import Linglib.Logic.Natural.StrawsonSoundness
 import Linglib.Core.Order.AntiAdditive
 import Linglib.Logic.Natural.World
-import Linglib.Logic.Natural.PositionProfile
+import Linglib.Semantics.Quantification.Signatures
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Counting
 

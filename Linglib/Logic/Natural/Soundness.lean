@@ -215,7 +215,6 @@ theorem _root_.NaturalLogic.NLRelation.Holds.of_refines
     | exact h.2
     | exact le_of_eq h
     | exact le_of_eq (Eq.symm h)
-    | exact absurd href (by decide)
 
 /-- Projection is monotone in the signature order: a more specific
 signature projects every relation at least as informatively. -/
@@ -299,6 +298,53 @@ lookup. -/
 example : EntailmentSig.SoundFor .addMult (pnot ∘ pnot) :=
   pnot_soundFor_antiAddMult.comp pnot_soundFor_antiAddMult
 
+/-- Propositional negation realizes the anti-morphism row at the `Prop`
+instance. -/
+theorem not_soundFor_antiAddMult : EntailmentSig.SoundFor .antiAddMult Not :=
+  soundFor_antiAddMult
+    ⟨fun p q => propext not_or, by show (¬True) = False; simp⟩
+    ⟨fun p q => propext not_and_or, by show (¬False) = True; simp⟩
+
 end PnotInstance
+
+/-! ### Per-position profiles
+
+Two-place operators carry one signature per argument position — a
+determiner is one signature in its restrictor and another in its scope.
+`Sig₂` records the pair, `Sig₂.SoundFor` says each component is sound
+for the corresponding section (the other argument held constant), and
+`EntailmentSig.SoundFor.comp₂` composes an outer context into both
+positions at once. Certified instances for generalized quantifiers live
+in `Semantics/Quantification/Signatures.lean`. -/
+
+/-- A per-position signature profile for a two-place operator. For
+determiners the positions are restrictor and scope; under the restrictor
+analysis of conditionals, antecedent and consequent. -/
+structure Sig₂ where
+  restrictor : EntailmentSig
+  scope : EntailmentSig
+  deriving DecidableEq, Repr
+
+section Sig₂
+
+variable {α β γ δ : Type*} [Lattice α] [BoundedOrder α] [Lattice β]
+  [BoundedOrder β] [Lattice γ] [BoundedOrder γ] [Lattice δ] [BoundedOrder δ]
+
+/-- A profile is sound for a two-place operator when each component
+signature is sound for the corresponding section (the other argument held
+constant). -/
+def Sig₂.SoundFor (σ : Sig₂) (f : α → β → γ) : Prop :=
+  (∀ y, σ.restrictor.SoundFor (fun x => f x y)) ∧
+  (∀ x, σ.scope.SoundFor (f x))
+
+/-- Composing a sound outer context into a sound two-place operator
+composes the profile componentwise — the two-place form of
+`EntailmentSig.SoundFor.comp`. -/
+theorem EntailmentSig.SoundFor.comp₂ {ψ : EntailmentSig} {g : γ → δ}
+    {σ : Sig₂} {f : α → β → γ} (hg : ψ.SoundFor g) (hf : σ.SoundFor f) :
+    Sig₂.SoundFor ⟨ψ * σ.restrictor, ψ * σ.scope⟩ (fun x y => g (f x y)) :=
+  ⟨fun y => hg.comp (hf.1 y), fun x => hg.comp (hf.2 x)⟩
+
+end Sig₂
 
 end NaturalLogic
