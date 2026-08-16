@@ -2309,6 +2309,7 @@ import Linglib.Studies.Hyman2006
 import Linglib.Studies.Iatridou2000
 import Linglib.Studies.IatridouEtAl2001
 import Linglib.Studies.IatridouZeijlstra2021
+import Linglib.Studies.Icard2012
 import Linglib.Studies.Imanishi2014
 import Linglib.Studies.Imanishi2020
 import Linglib.Studies.ImelGuoST2026
