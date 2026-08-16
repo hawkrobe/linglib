@@ -41,9 +41,9 @@ geometry of `Indefinite.HaspelmathFunction.adjacent`). Two samples:
   with contiguity, coverage, and overlap theorems, and decide-checks
   connecting the paradigms to `Fragments/{Lang}/PolarityItems.lean`.
 
-The German, Hungarian, Japanese, Korean, and Quechua (Ancash) paradigms
-are verified against the book (appendix A.1, A.26, A.37–A.39; Table 4.1);
-the rest are hand-stipulated pending the same pass. English in particular
+The German, Hungarian, Japanese, Korean, Mandarin, and Quechua (Ancash)
+paradigms are verified against the book (appendix A.1, A.26, A.36–A.39;
+Table 4.1); the rest are hand-stipulated pending the same pass. English in particular
 follows a narrower polarity-view allocation than both the book's coding
 (Table 4.1: *some-* 12345, *any-* 456789) and the
 [degano-aloni-2025]-shaped `Fragments/English/Indefinites.lean`; the
@@ -53,12 +53,13 @@ competition).
 
 ## Main results
 
-* `english_matches_wals_F46A` … `kannada_matches_wals_F46A` —
-  Fragment-derived F46A classifications agree with WALS.
+* `english_matches_wals_F46A` … `kannada_matches_wals_F46A`,
+  `mandarin_matches_wals_F46A` — F46A classifications (Fragment-derived,
+  plus the stipulated Mandarin paradigm) agree with WALS.
 * `all_languages_contiguous`, `all_languages_cover_all_functions` — the
   map hypothesis and full coverage on the 17-language sample.
-* `russian_not_disjoint`, `german_not_disjoint`, `hungarian_not_disjoint`
-  — series overlap is attested and normal (p. 76).
+* `russian_not_disjoint`, `german_not_disjoint`, `hungarian_not_disjoint`,
+  `mandarin_not_disjoint` — series overlap is attested and normal (p. 76).
 * `freeChoice_multifunction_implies_comparative`,
   `japanese_comparative_patterns_with_negation` — free choice's only map
   neighbour is the comparative, which may instead pattern with negation.
@@ -238,21 +239,38 @@ def japanese : IndefiniteParadigm :=
         basis := .interrogative,
         functions := {.freeChoice} } ] }
 
-/-- Mandarin: 2 series, mixed bases (*yǒu rén* existential, *shéi*
-    interrogative). -/
+/-- Mandarin: the four regions of Fig. A.36 (A.36.1): generic nouns
+    (*rén* 'person', typically in the existential frame *yǒu rén*) for
+    the specific functions, bare interrogatives "in all non-specific
+    non-emphatic functions", the emphatic *dōu*~*yě* series on direct
+    negation, and the free-choice determiner *rènhé*. -/
 def mandarin : IndefiniteParadigm :=
   { language := "Mandarin Chinese"
   , isoCode := "cmn"
   , forms :=
-    [ { form := "yǒu rén (有人)",
+    [ { form := "rén (人, generic noun: yǒu rén)",
         ontology := .person,
-        basis := .existentialConstruction,
+        basis := .genericNoun,
         functions := {.specificKnown, .specificUnknown} }
     , { form := "shéi (谁, non-interrog.)",
         ontology := .person,
         basis := .interrogative,
         functions := {.irrealis, .question, .conditional, .indirectNeg,
-                      .directNeg, .comparative, .freeChoice} } ] }
+                      .directNeg, .comparative, .freeChoice} }
+    , { form := "shéi dōu/yě (谁都/谁也)",
+        ontology := .person,
+        basis := .interrogative,
+        functions := {.directNeg} }
+    , { form := "rènhé (任何)",
+        ontology := .determiner,
+        basis := .special,
+        functions := {.comparative, .freeChoice} } ] }
+
+/-- Mandarin's generic-noun, interrogative, and special bases derive
+    `.mixed`, matching WALS for iso "cmn". -/
+theorem mandarin_matches_wals_F46A :
+    mandarin.toWALS46A =
+      (Datapoint.lookupISO F46A.allData "cmn").map (·.value) := by decide
 
 /-- Turkish: 5 generic-noun-based series (*bir-* 'one'). -/
 def turkish : IndefiniteParadigm :=
@@ -528,6 +546,10 @@ theorem german_not_disjoint : ¬ german.FormsDisjoint := by decide
     question and conditional (A.26). -/
 theorem hungarian_not_disjoint : ¬ hungarian.FormsDisjoint := by decide
 
+/-- Mandarin fails `FormsDisjoint` maximally: the bare-interrogative span
+    contains both emphatic series' regions outright (Fig. A.36). -/
+theorem mandarin_not_disjoint : ¬ mandarin.FormsDisjoint := by decide
+
 /-! ### Typological generalizations -/
 
 /-- A form covering free choice plus anything else covers the comparative —
@@ -579,7 +601,7 @@ theorem bridges_negation :
     ∀ e ∈ [Italian.PolarityItems.nessuno, Russian.PolarityItems.nikto,
            Japanese.PolarityItems.dareMo, Korean.PolarityItems.nwukwuTo,
            Hungarian.PolarityItems.senki, Georgian.PolarityItems.aravin,
-           Quechua.PolarityItems.piPis],
+           Quechua.PolarityItems.piPis, Mandarin.PolarityItems.sheiDou],
       .negation ∈ e.licensingContexts := by decide
 
 /-- Every question-span form's Fragment counterpart is licensed in
