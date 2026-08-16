@@ -73,8 +73,9 @@ just plain meanings) determine outer-level excludability. Spector's
 single-EXH result `Max(P) = {Exhaust(P)}` is formalized in
 `ScalarImplicatures/Studies/Spector2007.lean`.
 
-TODO: derive a `Generalizations.HomogeneityGap.GapPredict` implementation
-from the double-strengthening account and prove divergence theorems vs rivals.
+TODO: state the double-strengthening account's polarity × scenario
+predictions, run them against the pooled `Generalizations.HomogeneityGap`
+data, and prove divergence theorems vs rivals.
 -/
 
 namespace Magri2014
