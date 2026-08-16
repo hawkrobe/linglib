@@ -37,7 +37,7 @@ def dareMo : Item :=
   , licensor := some .antiMorphic
   , baseForce := .universal
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , morphology := .indefPlusEven
   , alternativeType := .domain }
 

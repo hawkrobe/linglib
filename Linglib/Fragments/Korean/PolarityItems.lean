@@ -27,7 +27,7 @@ def nwukwu : Item :=
   , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.question, .conditionalAntecedent]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *nwukwu-to* (누구도, with clausemate negation) — n-word: *nwukwu-to an
     wass-ta* 'nobody came'. wh + the additive/'even' particle *-to*, requiring
@@ -38,7 +38,7 @@ def nwukwuTo : Item :=
   , licensor := some .antiMorphic
   , baseForce := .existential
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , morphology := .indefPlusEven }
 
 /-! ### FCI -/
@@ -70,6 +70,6 @@ theorem korean_licensing_sound :
 
 theorem korean_npis_strengthening :
     [nwukwu, nwukwuTo].all
-      (λ e => e.scalarDirection == .strengthening) = true := by decide
+      (λ e => e.scalarDirection == some .strengthening) = true := by decide
 
 end Korean.PolarityItems

@@ -25,7 +25,7 @@ def koiiNahiin : Item :=
   , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg
   , alternativeType := .contextualProperty }
 

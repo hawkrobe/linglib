@@ -26,17 +26,17 @@ requirement as an English strong NPI; the concord phenomenology itself is
 relation `LicensingContext.licenses` lives in
 `Semantics/Polarity/Licensing.lean`.
 
-The record also carries the [israel-2001] scalar-model annotations
-(`ScalarValue` × `ScalarDirection` × `Canonicity` × `LikelihoodEffect`;
-predictions in `Semantics/Polarity/Israel.lean`) and the
-[lahiri-1998]-style morphological-composition typology.
+The record also carries the [israel-1996] scalar direction and the
+[lahiri-1998]-style morphological-composition typology. The full
+[israel-2001] scalar-model classification is the extension bundle
+`ScalarItem` in `Semantics/Polarity/ScalarModel.lean`, built only for
+items that have one.
 
 ## Main declarations
 
 * `Item` — the polarity-item record.
 * `Item.isNPI`, `Item.isFCI`, `Item.isPPI` — derived class labels.
-* `ScalarValue`, `ScalarDirection`, `Canonicity`, `LikelihoodEffect` —
-  the Israel scalar-model axes.
+* `ScalarDirection` — strengthening vs attenuating rhetorical force.
 * `NPIMorphology`, `AlternativeType` — composition typology.
 -/
 
@@ -44,47 +44,18 @@ namespace Semantics.Polarity
 
 open Features (LicensingContext)
 
-/-! ### The Israel scalar-model axes -/
-
-/-- Where the item sits on its scale relative to the norm: emphatic NPIs
-    typically denote low values (*a wink*), emphatic PPIs high ones
-    (*tons*); inverted items reverse the pattern ([israel-2001]). -/
-inductive ScalarValue where
-  | high
-  | low
-  | unknown
-  deriving DecidableEq, Repr
+/-! ### Scalar direction -/
 
 /-- Rhetorical force: strengthening items (*ever*, *any*) make the
     assertion stronger than its scalar alternatives, attenuating ones
     (*all that*, *long*) weaker ([israel-1996], [israel-2011]).
     `nonScalar` is an editorial slot — Israel classifies most minimizers,
-    including *lift a finger*, as scalar; prefer `unknown` if unsure. -/
+    including *lift a finger*, as scalar; leave the item's field `none`
+    if unsure. -/
 inductive ScalarDirection where
   | strengthening
   | attenuating
   | nonScalar
-  | unknown
-  deriving DecidableEq, Repr
-
-/-- Whether scalar value tracks polarity in the default way (canonical
-    emphatic NPIs low, PPIs high) or inversely (*wild horses*, *at the
-    drop of a hat*); inversion tracks propositional role
-    ([israel-2001]). -/
-inductive Canonicity where
-  | canonical
-  | inverted
-  | unknown
-  deriving DecidableEq, Repr
-
-/-- How increasing the referent's scalar value affects event likelihood:
-    facilitating roles (agent, stimulus, reward) invert the scale,
-    impeding roles (patient, increment, expense) keep it canonical —
-    [israel-2001]'s resolution of the maximizer/minimizer puzzle. -/
-inductive LikelihoodEffect where
-  | facilitating
-  | impeding
-  | unknown
   deriving DecidableEq, Repr
 
 /-! ### Force and composition typology -/
@@ -146,14 +117,8 @@ structure Item where
   ppi : Bool := false
   /-- Attested licensing environments (empty = needs positive contexts). -/
   licensingContexts : List LicensingContext
-  /-- Scalar direction ([israel-1996]) -/
-  scalarDirection : ScalarDirection := .unknown
-  /-- Scalar value ([israel-2001]) -/
-  scalarValue : ScalarValue := .unknown
-  /-- Canonical or inverted ([israel-2001]) -/
-  canonicity : Canonicity := .unknown
-  /-- Propositional role's likelihood effect ([israel-2001]) -/
-  likelihoodEffect : LikelihoodEffect := .unknown
+  /-- Scalar direction ([israel-1996]); `none` = unclassified. -/
+  scalarDirection : Option ScalarDirection := none
   /-- Morphological composition ([lahiri-1998]) -/
   morphology : NPIMorphology := .plain
   /-- Type of alternatives introduced -/

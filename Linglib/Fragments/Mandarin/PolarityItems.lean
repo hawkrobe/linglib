@@ -44,7 +44,7 @@ def shei : Item :=
   , licensingContexts :=
       [ .question, .conditionalAntecedent, .comparativeS
       , .modalPossibility, .modalNecessity, .imperative, .generic ]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *shénme* (什么 'what', non-interrogative) — NPI/FCI, the same
     seven-function span plus perfect direct negation: *Tā bù xǐhuan
@@ -59,7 +59,7 @@ def shenme : Item :=
   , licensingContexts :=
       [ .negation, .question, .conditionalAntecedent, .comparativeS
       , .modalPossibility, .modalNecessity, .imperative, .generic ]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-! ### The emphatic dōu~yě series -/
 
@@ -77,7 +77,7 @@ def sheiDou : Item :=
   , licensor := some .antiMorphic
   , baseForce := .universal
   , licensingContexts := [.negation]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , morphology := .indefPlusEven }
 
 /-! ### The free-choice determiner -/
@@ -96,7 +96,7 @@ def renhe : Item :=
   , freeChoice := true
   , baseForce := .existential
   , licensingContexts := [.negation, .modalPossibility, .comparativeS]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-! ### Verification -/
 

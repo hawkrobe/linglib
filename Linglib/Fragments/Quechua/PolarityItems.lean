@@ -26,7 +26,7 @@ def piPis : Item :=
   , licensingContexts :=
       [.negation, .question, .conditionalAntecedent, .comparativeS,
        .modalPossibility, .imperative, .generic]
-  , scalarDirection := .strengthening
+  , scalarDirection := some .strengthening
   , morphology := .indefPlusEven }
 
 /-! ### Verification -/

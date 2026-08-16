@@ -33,7 +33,7 @@ def nadie : Item :=
   , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *nada* — N-word for non-human ('nothing'). Same distribution as *nadie*. -/
 def nada : Item :=
@@ -41,7 +41,7 @@ def nada : Item :=
   , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *nunca* — Temporal N-word ('never'). -/
 def nunca : Item :=
@@ -49,7 +49,7 @@ def nunca : Item :=
   , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *ninguno* — N-word adjective/pronoun ('none / no'). -/
 def ninguno : Item :=
@@ -57,7 +57,7 @@ def ninguno : Item :=
   , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 /-- *jamás* — Temporal N-word ('never', emphatic register).
     Functional variant of *nunca*; both can co-occur (*nunca jamás*) for
@@ -67,7 +67,7 @@ def jamas : Item :=
   , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := .strengthening }
+  , scalarDirection := some .strengthening }
 
 -- ============================================================================
 -- Joint
