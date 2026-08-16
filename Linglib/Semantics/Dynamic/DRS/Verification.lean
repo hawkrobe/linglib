@@ -3,49 +3,39 @@ import Linglib.Semantics.Dynamic.DRS.Basic
 /-!
 # Verifying embeddings for DRSs
 
-[kamp-reyle-1993]'s Def. 1.4.4 in the *total-assignment* rendering, over a
-mathlib `FirstOrder.Language.Structure`. An *embedding function*
-`f : Embedding V M` assigns discourse referents to individuals in the model;
-`Box.Extends K f g` is the extension relation `f [K] g` (both in
-`DRS/Box.lean`); `f.Verifies K` says the embedding `f` *verifies* the DRS
-`K` — it verifies every condition of `K` — and `f.VerifiesCondition c` that it
-verifies the DRS-condition `c`. A sub-DRS is entered by existentially
-(re)assigning along its extension relation. For `imp`, the consequent witness
-extends the *antecedent* embedding, not the host one — antecedent referents
-stay visible in the consequent, the `⇒` accessibility asymmetry. The atomic
-and `¬` clauses are Def. 1.4.4(ii); the `⇒`/`∨` clauses are the Chapter 2
-conditional and disjunction semantics. Truth (Def. 1.4.5) is the existential
-closure of verification over the outer universe; it is delivered downstream
-as `DRS.trueRel` (`DRS/Dynamics.lean`) and as the first-order translation's
-realization (`DRS/Reduction.lean`).
-
-**Deviation** ([muskens-1996], fn. 4): the book's embeddings are *partial*
-functions that sub-DRSs strictly *extend*, so a re-declared referent keeps its
-value; here embeddings are total and a re-declared referent is freely
-reassigned. The two agree on DRSs that declare each referent once — the
-construction algorithm never re-declares — but diverge on re-declaration:
-`[ | [x | man x] ⇒ [x | mortal x]]` says "every man is mortal" there, "if
-there is a man there is a mortal" here.
+This file defines verification of DRSs by embeddings into a model, following
+[kamp-reyle-1993]'s Def. 1.4.4 over a mathlib `FirstOrder.Language.Structure`.
+An embedding `f : Embedding V M` assigns discourse referents to individuals;
+`f.Verifies K` says `f` verifies every condition of `K`, and a sub-DRS is
+entered by existentially (re)assigning along its extension relation
+`Box.Extends`. For `imp`, the consequent witness extends the *antecedent*
+embedding, so antecedent referents stay visible in the consequent (the `⇒`
+clause is Def. 2.1.4; the `∨` clause is the Chapter 2 disjunction semantics).
+Truth (Def. 1.4.5) is the existential closure of verification over the outer
+universe, delivered downstream as `DRS.trueRel` (`DRS/Dynamics.lean`) and as
+the first-order translation's realization (`DRS/Reduction.lean`).
 
 ## Main declarations
 
-* `Embedding.Verifies` / `Embedding.VerifiesCondition` — `f.Verifies K` is the
-  field's "`f` verifies `K`": `f` verifies every condition of `K`
-  (`∀ c ∈ K.conditions`, the `Theory.Model` idiom — no mutual recursion, no
-  list helper).
-* `Embedding.verifies_perm` — verification reads the condition list as a set,
-  cashing the `List`-representation note in `DRS/Defs.lean`.
-* `Embedding.verifies_map` — renaming along a bijection transports
-  verification: alphabetic variants (Def. 1.4.8, via `DRS.map` in
-  `DRS/Basic.lean`) have the same semantics.
+* `Embedding.Verifies`, `Embedding.VerifiesCondition`: `f` verifies the DRS
+  `K`, resp. a single DRS-condition.
+* `Embedding.verifies_perm`: verification reads the condition list as a set.
+* `Embedding.verifies_map`: renaming along a bijection transports
+  verification, so alphabetic variants (Def. 1.4.8) have the same semantics.
 
 ## Implementation notes
 
-`VerifiesCondition` descends into sub-DRSs through the nested
-`List (Condition L V)` by well-founded recursion on `sizeOf`, so its clause
-characterizations (`verifies_neg`, …) are equation-lemma rewrites rather than
-`Iff.rfl`; they restate the clauses with `Verifies` of the sub-DRS, as the
-textbook states them.
+* Embeddings here are total, and a re-declared referent is freely reassigned;
+  the book's are partial functions that sub-DRSs strictly *extend*, so a
+  re-declared referent keeps its value ([muskens-1996], fn. 4). The two agree
+  on DRSs that declare each referent once — the construction algorithm never
+  re-declares — but diverge on re-declaration: `[ | [x | man x] ⇒ [x | mortal x]]`
+  says "every man is mortal" there, "if there is a man there is a mortal" here.
+* `Verifies` quantifies over the condition list (`∀ c ∈ K.conditions`, the
+  `Theory.Model` idiom), avoiding mutual recursion. `VerifiesCondition`
+  descends into sub-DRSs by well-founded recursion on `sizeOf`, so its clause
+  characterizations (`verifies_neg`, …) are equation-lemma rewrites rather
+  than `Iff.rfl`.
 -/
 
 open FirstOrder FirstOrder.Language
@@ -58,8 +48,8 @@ variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M]
 
 namespace Embedding
 
-/-- `f.VerifiesCondition c`: the embedding `f` *verifies* the DRS-condition `c`
-(Def. 1.4.4(ii)); a sub-DRS is entered by existentially (re)assigning along
+/-- `f.VerifiesCondition c` says the embedding `f` *verifies* the DRS-condition
+`c` (Def. 1.4.4(ii)); a sub-DRS is entered by existentially (re)assigning along
 its extension relation and verifying each of its conditions. -/
 def VerifiesCondition : Embedding V M → Condition L V → Prop
   | f, .rel R args => Structure.RelMap R (fun i => f (args i))
@@ -72,7 +62,7 @@ def VerifiesCondition : Embedding V M → Condition L V → Prop
       (∃ g, l.Extends f g ∧ ∀ c ∈ l.conditions, g.VerifiesCondition c) ∨
       (∃ g, r.Extends f g ∧ ∀ c ∈ r.conditions, g.VerifiesCondition c)
 
-/-- `f.Verifies K`: the embedding `f` *verifies* the DRS `K` — `f` verifies
+/-- `f.Verifies K` says the embedding `f` *verifies* the DRS `K` — `f` verifies
 every condition of `K` (Def. 1.4.4). -/
 def Verifies (f : Embedding V M) (K : DRS L V) : Prop :=
   ∀ c ∈ K.conditions, f.VerifiesCondition c
