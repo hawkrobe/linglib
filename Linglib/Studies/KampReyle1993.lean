@@ -17,10 +17,11 @@ donkey he beats it." (2.47) receives the universal reading through the `⇒` ver
 clause of (2.31)/Def. 2.1.4 (`donkey_universal_reading`), the pronoun-completed
 (2.45)-style variant having the same truth conditions (`donkeyPronoun_agree`).
 
-The structural facts — subordination of the donkey boxes (Def. 1.4.10/2.1.2),
-accessibility (Def. 2.1.3), properness, truth in concrete models — are proved by
-evaluation; the truth-conditions are claims over arbitrary models, proved by unfolding
-the verifying-embedding semantics. Sequencing a discourse is `DRS.merge`, whose
+The structural facts — subordination of the donkey boxes (Def. 1.4.10/2.1.2), the
+accessibility asymmetry ([geurts-beaver-maier-2024] §4.2: the antecedent is accessible
+to the consequent, not conversely), properness, truth in concrete models — are proved
+by evaluation or by cases on the geometry; the truth-conditions are claims over
+arbitrary models, proved by unfolding the verifying-embedding semantics. Sequencing a discourse is `DRS.merge`, whose
 dynamics is the substrate Merging Lemma `DRS.toRel_merge`, so merged-vs-compositional
 equalities are definitional.
 -/
@@ -213,24 +214,55 @@ theorem donkeyPronoun_agree (a : ℕ → M) :
     DRS.trueRel donkeyPronoun a ↔ DRS.trueRel donkey a :=
   (donkeyPronoun_tc a).trans (donkey_universal_reading a).symm
 
-/-! ### Subordination geometry -/
+/-! ### Subordination and accessibility geometry -/
 
 /-- The antecedent box is directly subordinate to the donkey DRS (Def. 1.4.10 as
 extended by Def. 2.1.2). -/
 theorem donkey_antecedent_subordinate : DirectlySubordinate donkeyAnte donkey :=
   .impAnte (c := donkeyCons) (by simp [donkey])
 
-/-- The consequent box is directly subordinate to the *antecedent* — the substrate's
-rendering of the `⇒` accessibility asymmetry (Def. 2.1.3(ii)(b)); Def. 2.1.2 itself
-subordinates the consequent to the containing DRS, recovered here by closure
-(`donkey_consequent_subordinate_host`). -/
-theorem donkey_consequent_subordinate : DirectlySubordinate donkeyCons donkeyAnte :=
-  .impCons (show Condition.imp donkeyAnte donkeyCons ∈ donkey.conditions by
-    simp [donkey])
+/-- The consequent box is likewise directly subordinate to the donkey DRS. -/
+theorem donkey_consequent_subordinate : DirectlySubordinate donkeyCons donkey :=
+  .impCons (a := donkeyAnte) (by simp [donkey])
 
-/-- Def. 2.1.2's own claim: the consequent box sits below the donkey DRS. -/
-theorem donkey_consequent_subordinate_host : Subordinate donkeyCons donkey :=
-  .head donkey_consequent_subordinate (.single donkey_antecedent_subordinate)
+/-- The antecedent is accessible to the consequent ([geurts-beaver-maier-2024]
+§4.2) — the geometry that licenses the donkey anaphora. -/
+theorem donkey_antecedent_accessible : AccessibleTo donkey donkeyAnte donkeyCons :=
+  .single (.impCons .refl (by simp [donkey]))
+
+private theorem weakSubordinate_donkey {K : DRS krLang ℕ} (h : WeakSubordinate K donkey) :
+    K = donkey ∨ K = donkeyAnte ∨ K = donkeyCons := by
+  induction h using Relation.ReflTransGen.head_induction_on with
+  | refl => exact .inl rfl
+  | head hstep hrest ih =>
+    rcases ih with rfl | rfl | rfl
+    · cases hstep with
+      | neg hc => simp [donkey] at hc
+      | impAnte hc => simp [donkey] at hc; exact .inr (.inl hc.1)
+      | impCons hc => simp [donkey] at hc; exact .inr (.inr hc.2)
+      | disL hc => simp [donkey] at hc
+      | disR hc => simp [donkey] at hc
+    · cases hstep with
+      | neg hc | impAnte hc | impCons hc | disL hc | disR hc => simp [donkeyAnte] at hc
+    · cases hstep with
+      | neg hc | impAnte hc | impCons hc | disL hc | disR hc => simp [donkeyCons] at hc
+
+/-- Not conversely: the consequent has no outgoing accessibility edge, so its
+(empty) universe contributes nothing to the antecedent — the `⇒` asymmetry. -/
+theorem donkey_not_consequent_accessible : ¬ AccessibleTo donkey donkeyCons donkeyAnte := by
+  intro h
+  rcases h.cases_head with heq | ⟨X, hedge, -⟩
+  · exact absurd (congrArg Box.referents heq) (by decide)
+  · cases hedge with
+    | neg hK hc => simp [donkeyCons] at hc
+    | impAnte hK hc => simp [donkeyCons] at hc
+    | disLeft hK hc => simp [donkeyCons] at hc
+    | disRight hK hc => simp [donkeyCons] at hc
+    | impCons hK hc =>
+      rcases weakSubordinate_donkey hK with rfl | rfl | rfl
+      · simp [donkey, donkeyAnte, donkeyCons] at hc
+      · simp [donkeyAnte] at hc
+      · simp [donkeyCons] at hc
 
 /-! ### Model evaluation: the donkey conditional in concrete models
 
