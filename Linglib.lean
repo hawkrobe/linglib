@@ -22,7 +22,6 @@ import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 import Linglib.Core.Algebra.RootedTree.BirkhoffLaurent
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.Coproduct.Deletion
-import Linglib.Core.Algebra.RootedTree.Coproduct.Pairing
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
@@ -30,10 +29,10 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 import Linglib.Core.Algebra.RootedTree.Coproduct.TraceGrading
 import Linglib.Core.Algebra.RootedTree.DysonSchwinger
 import Linglib.Core.Algebra.RootedTree.FormSet
-import Linglib.Core.Algebra.RootedTree.GrossmanLarson
-import Linglib.Core.Algebra.RootedTree.GrossmanLarsonMonoid
-import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
-import Linglib.Core.Algebra.RootedTree.GrossmanLarsonSplit
+import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
+import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Monoid
+import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
+import Linglib.Core.Algebra.RootedTree.GrossmanLarson.PairingMul
 import Linglib.Core.Algebra.RootedTree.HopfAlgebra
 import Linglib.Core.Algebra.RootedTree.PreLie.Graft
 import Linglib.Core.Algebra.RootedTree.PreLie.Insert

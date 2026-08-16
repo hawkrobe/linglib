@@ -193,7 +193,7 @@ theorem forestAutCard_eq_prod_mul_multinomialFactor (F : Multiset (Nonplanar α)
 `Multiset.count_antidiagonal_eq_count_powerset` and `Multiset.count_powerset_of_le`
 compute the split multiplicity; `Nat.add_choose_mul_factorial_mul_factorial` recombines
 it with the factorials per distinct tree. This identity is the combinatorial core of the
-pairing's product-coproduct adjunction (`GrossmanLarsonPairing.pairing_of'_mul_of'`). -/
+pairing's product-coproduct adjunction (`GrossmanLarson.pairing_of'_mul_of'`). -/
 
 /-- **Multinomial split identity** for `forestAutCard`:
     `|Aut (F+G)| = count (F,G) (antidiagonal (F+G)) · |Aut F| · |Aut G|`. -/

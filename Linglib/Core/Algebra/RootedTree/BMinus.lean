@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
+import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
 import Linglib.Core.Data.Multiset.Antidiagonal
@@ -20,7 +20,7 @@ set_option autoImplicit false
 The `B-_a` operator on `ConnesKreimer R (Nonplanar α)`
 ([foissy-typed-decorated-rooted-trees-2018]'s B⁻ on decorated trees) is the
 transpose of the grafting operator `B+_a` (`Coproduct/Pruning.lean`) under
-the symmetry-weighted pairing (`GrossmanLarsonPairing.lean`). On basis
+the symmetry-weighted pairing (`GrossmanLarson/Pairing.lean`). On basis
 elements:
 
 ```

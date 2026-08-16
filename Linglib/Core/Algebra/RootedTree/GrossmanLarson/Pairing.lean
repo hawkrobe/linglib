@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.GrossmanLarson
+import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
+import Mathlib.LinearAlgebra.TensorProduct.Basis
+import Mathlib.RingTheory.TensorProduct.Basic
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Mathlib.Tactic.Ring
 
@@ -12,57 +14,34 @@ open RoseTree RoseTree.Nonplanar
 set_option autoImplicit false
 
 /-!
-# Symmetry-weighted pairing for GL ↔ CK duality
+# The symmetry-weighted GL/CK pairing
 [foissy-typed-decorated-rooted-trees-2018]
 [grossman-larson-1989]
-[marcolli-chomsky-berwick-2025]
 
-The pairing `⟨·, ·⟩ : H × H → R` (where `H = ConnesKreimer R (Nonplanar α)`)
-realizes the duality between the Connes-Kreimer (CK) and
-Grossman-Larson (GL) Hopf algebras on the shared carrier. By
-Foissy 2018 (hal-01924416, §4.2), GL associativity ⇔ Δ^c
-coassociativity via the pairing — the Δ^c proof in R.7 transports the
-GL proof from `GrossmanLarson.lean` (R.5) through this duality.
+The pairing `⟨·, ·⟩ : H →ₗ H →ₗ R` on `H = ConnesKreimer R (Nonplanar α)`
+(Foissy 2018 §4.2), *symmetry-weighted* on the forest basis:
 
-## MCB targets
-
-The pairing is the **bridge** that makes the GL framework
-(`GrossmanLarson.lean`) usable to prove MCB's coassociativity claims:
-
-* **Lemma 1.2.10** (Δ^c bialgebra): coassoc transported via this
-  pairing from `GrossmanLarson.product_assoc`.
-* **Lemma 1.7.3** (Insertion Lie ↔ primitives in `H^∨`): the dual Lie
-  bracket on `H^∨` is induced by this pairing; MCB's binary `◁_e`
-  (Def 1.7.1) is its binary specialization after `1 − α` quotient.
-* **Δ^d** (MCB Def 1.2.5) and Δ^ρ (Lemma 1.2.11): same pairing
-  framework, different extraction policies. See
-  `memory/project_mcb_unification_rationale.md`.
-
-## The pairing (Foissy 2018 §4.2)
-
-For nonplanar rooted trees, the pairing on basis elements is
-*symmetry-weighted*:
 ```
 ⟨of' F, of' G⟩ = if F = G then |Aut(F)| else 0
 ```
-where `Aut(F)` is the automorphism group of `F` as a multiset of trees
-(i.e., the product `∏_T |Aut(T)|^{m_T(F)} · m_T(F)!` over distinct
-trees `T` with multiplicities `m_T(F)`, where `Aut(T)` is the rooted-
-tree automorphism group of `T`).
 
-Bilinearly extended to `H →ₗ[R] H →ₗ[R] R`. The pairing is
-**symmetric** (because the underlying ⟨·,·⟩ on basis is symmetric in
-F, G) and **non-degenerate** (the basis vectors are mutually orthogonal
-with non-zero diagonal, so no non-zero element pairs to 0 with all
-others — at least when `R` is characteristic-0; over `ℤ` there are
-torsion subtleties when |Aut(F)| = 0 or non-invertible).
+with the automorphism count `Nonplanar.forestAutCard`
+(`Core/Combinatorics/RootedTree/Aut.lean`) as the weight. This is the
+pairing under which the GL product and the pruning coproduct Δ^ρ are
+adjoint (`Coproduct/PruningDuality.lean`).
 
-## Status
+## Main results
 
-`[UPSTREAM]` candidate. Sorry-free, including `pairing_nondegenerate`.
-The aut-cardinality substrate `Nonplanar.autCard` /
-`Nonplanar.forestAutCard` (the symmetry weight in the pairing) lives in
-`Linglib/Core/Combinatorics/RootedTree/Aut.lean`, also sorry-free.
+* `pairing_symm` — symmetry.
+* `pairing_nondegenerate`, `ext_pairing_right` — nondegeneracy and its
+  separation form, over `[CharZero R] [NoZeroDivisors R]`.
+* `pairing_of'_mul_of'`, `pairing_of'_mul` — the product rule: pairing
+  against a CK product decomposes over `antidiagonal` splits.
+* `pairing₂`, `pairing₃` — the tensor-square and -cube extensions, with
+  nondegeneracy lifted along the forest basis; the instruments through
+  which the Δ^ρ duality is stated and transported.
+
+`[UPSTREAM]` candidate. Sorry-free.
 -/
 
 
@@ -468,6 +447,246 @@ theorem pairing_of'_mul (W : Forest (Nonplanar α))
            pairing (R := R) (ConnesKreimer.of' p.2) z₂))) from
       Multiset.map_congr rfl fun p _ => by rw [map_smul, smul_eq_mul]; ring]
     rw [Multiset.sum_map_mul_left]
+
+open scoped TensorProduct
+
+/-! ### Tensor-extended pairings
+
+The pairing `⟨·, ·⟩` above extends to the
+tensor square (`pairing₂`) and cube (`pairing₃`). These power the GL/CK
+duality for the deletion coproduct Δ^ρ (`Coproduct/PruningDuality.lean`:
+`⟨x ⋆ y, z⟩ = pairing₂ (y ⊗ x) (Δ^ρ z)`). For the trace variant Δ^c no
+such duality holds — the trunk of a proper cut contains trace-marker
+leaves that GL grafting can never produce — so Δ^c coassociativity
+(`comulCN_coassoc`, `Coproduct/Trace.lean`) is a separate
+combinatorial statement. -/
+
+/-- The **tensor-extended pairing** `H ⊗ H →ₗ H ⊗ H →ₗ R`, defined by
+    `pairing₂ (x ⊗ y) (w ⊗ z) = pairing x w * pairing y z` and extended
+    bilinearly.
+
+    Implementation: reshuffle `(x⊗y)⊗(w⊗z)` to `(x⊗w)⊗(y⊗z)` via
+    `tensorTensorTensorComm`; apply `TP.map pair pair` where
+    `pair = TP.lift pairing : H ⊗ H →ₗ R`; contract via `mul' R R`;
+    curry the result.
+
+    Decoration-free: works on `ConnesKreimer R (Nonplanar α)` for any
+    `α`. Consumed by the Δ^ρ duality (`Coproduct/PruningDuality.lean`). -/
+noncomputable def pairing₂ :
+    (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) →ₗ[R]
+    (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) →ₗ[R] R :=
+  let pair : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)
+                →ₗ[R] R :=
+    TensorProduct.lift pairing
+  TensorProduct.curry <|
+    LinearMap.mul' R R ∘ₗ
+      TensorProduct.map pair pair ∘ₗ
+      (TensorProduct.tensorTensorTensorComm R
+        (ConnesKreimer R (Nonplanar α))
+        (ConnesKreimer R (Nonplanar α))
+        (ConnesKreimer R (Nonplanar α))
+        (ConnesKreimer R (Nonplanar α))).toLinearMap
+
+/-- Evaluation of `pairing₂` on pure tensors: `pairing₂ (x ⊗ y) (w ⊗ z) =
+    pairing x w * pairing y z`. -/
+@[simp] theorem pairing₂_tmul_tmul
+    (x y w z : ConnesKreimer R (Nonplanar α)) :
+    pairing₂ (R := R) (x ⊗ₜ y) (w ⊗ₜ z) =
+      pairing x w * pairing y z := by
+  rfl
+
+/-- The **triple-tensor pairing** `H ⊗ (H ⊗ H) →ₗ H ⊗ (H ⊗ H) →ₗ R`,
+    defined on pure tensors by
+    `pairing₃ (a ⊗ (b ⊗ c)) (x ⊗ (y ⊗ z)) = pairing a x · pairing b y · pairing c z`.
+
+    Consumed by the Δ^ρ duality chain (`Coproduct/PruningDuality.lean`):
+    coassociativity is transported through `pairing₃_unique` by pairing
+    against arbitrary `x ⊗ (y ⊗ z)` triple tensors.
+
+    Implementation: pairing on the first factor times `pairing₂` on the
+    second factor; both extended bilinearly. -/
+noncomputable def pairing₃ :
+    (ConnesKreimer R (Nonplanar α) ⊗[R]
+      (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))) →ₗ[R]
+    (ConnesKreimer R (Nonplanar α) ⊗[R]
+      (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))) →ₗ[R] R :=
+  let pair1 : ConnesKreimer R (Nonplanar α) ⊗[R]
+                ConnesKreimer R (Nonplanar α) →ₗ[R] R :=
+    TensorProduct.lift pairing
+  let pair2 : (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))
+                ⊗[R] (ConnesKreimer R (Nonplanar α) ⊗[R]
+                      ConnesKreimer R (Nonplanar α)) →ₗ[R] R :=
+    TensorProduct.lift pairing₂
+  TensorProduct.curry <|
+    LinearMap.mul' R R ∘ₗ
+      TensorProduct.map pair1 pair2 ∘ₗ
+      (TensorProduct.tensorTensorTensorComm R
+        (ConnesKreimer R (Nonplanar α))
+        (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))
+        (ConnesKreimer R (Nonplanar α))
+        (ConnesKreimer R (Nonplanar α) ⊗[R]
+          ConnesKreimer R (Nonplanar α))).toLinearMap
+
+/-- Evaluation of `pairing₃` on pure tensors. -/
+@[simp] theorem pairing₃_tmul_tmul_tmul
+    (a b c x y z : ConnesKreimer R (Nonplanar α)) :
+    pairing₃ (R := R) (a ⊗ₜ (b ⊗ₜ c)) (x ⊗ₜ (y ⊗ₜ z)) =
+      pairing a x *
+        (pairing b y * pairing c z) := by
+  rfl
+
+/-! ### Reduction helpers: `pairing₃` on shifted-tensor forms
+
+Two reduction lemmas that express `pairing₃ (x ⊗ (y ⊗ z'))` evaluated on
+shifted tensor forms in terms of `pairing₂` and binary `pairing`,
+consumed by the Δ^ρ duality chain in `Coproduct/PruningDuality.lean`.
+Both are proved by `TensorProduct.induction_on`, reducing to the
+pure-tensor case where `pairing₃_tmul_tmul_tmul` and
+`pairing₂_tmul_tmul` agree. -/
+
+/-- `pairing₃ (x ⊗ (y ⊗ z')) ∘ assoc` on a `(U ⊗ c)`-shape tensor:
+    factors as `pairing₂ (x ⊗ y) U * pairing z' c`. Generic in `α`
+    (the trace decoration is irrelevant). -/
+lemma pairing₃_assoc_tmul
+    (x y z' : ConnesKreimer R (Nonplanar α))
+    (U : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))
+    (c : ConnesKreimer R (Nonplanar α)) :
+    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
+        ((TensorProduct.assoc R _ _ _) (U ⊗ₜ[R] c)) =
+      pairing₂ (R := R) (x ⊗ₜ[R] y) U * pairing z' c := by
+  induction U using TensorProduct.induction_on with
+  | zero => simp
+  | tmul a b =>
+    simp only [TensorProduct.assoc_tmul, pairing₃_tmul_tmul_tmul,
+               pairing₂_tmul_tmul, _root_.mul_assoc]
+  | add U₁ U₂ ih₁ ih₂ =>
+    rw [TensorProduct.add_tmul, map_add, map_add, ih₁, ih₂, map_add, add_mul]
+
+/-- `pairing₃ (x ⊗ (y ⊗ z'))` on a `(a ⊗ S)`-shape tensor: factors as
+    `pairing x a * pairing₂ (y ⊗ z') S`. Generic in `α`. -/
+lemma pairing₃_tmul_apply
+    (x y z' a : ConnesKreimer R (Nonplanar α))
+    (S : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z')) (a ⊗ₜ[R] S) =
+      pairing x a * pairing₂ (R := R) (y ⊗ₜ[R] z') S := by
+  induction S using TensorProduct.induction_on with
+  | zero => simp
+  | tmul b c =>
+    simp only [pairing₃_tmul_tmul_tmul, pairing₂_tmul_tmul]
+  | add S₁ S₂ ih₁ ih₂ =>
+    rw [TensorProduct.tmul_add, map_add, ih₁, ih₂, map_add, mul_add]
+
+/-! ### Nondegeneracy of `pairing₂` and `pairing₃` (lifted from binary)
+
+`pairing₂` and `pairing₃` are nondegenerate over `[CharZero R]
+[NoZeroDivisors R]`, lifted from binary `pairing_nondegenerate` via the
+natural basis of `CK = (Forest T) →₀ R`. -/
+
+/-- Bilinear extension: `pairing₃ (of' F ⊗ s) (of' G ⊗ t) = pairing (of' F)
+    (of' G) * pairing₂ s t` for arbitrary `s, t ∈ CK ⊗ CK`. Proven via
+    `TensorProduct.induction_on` on `s` and `t`, reducing to the pure-tensor
+    case where `pairing₃_tmul_tmul_tmul` and `pairing₂_tmul_tmul` agree. -/
+private theorem pairing₃_of'_tmul_of'_tmul (F G : Forest (Nonplanar α))
+    (s t : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+    pairing₃ (R := R)
+        (ConnesKreimer.of' F ⊗ₜ[R] s)
+        (ConnesKreimer.of' G ⊗ₜ[R] t) =
+      pairing (ConnesKreimer.of' (R := R) F)
+                              (ConnesKreimer.of' G) *
+        pairing₂ (R := R) s t := by
+  induction s using TensorProduct.induction_on with
+  | zero => simp
+  | tmul b c =>
+    induction t using TensorProduct.induction_on with
+    | zero => simp
+    | tmul y z =>
+      simp only [pairing₃_tmul_tmul_tmul, pairing₂_tmul_tmul]
+    | add t₁ t₂ ih₁ ih₂ =>
+      -- pairing₃ is linear in 2nd arg (map_add); also `of' G ⊗ ·` distributes.
+      rw [TensorProduct.tmul_add, map_add, ih₁, ih₂, map_add, mul_add]
+  | add s₁ s₂ ih₁ ih₂ =>
+    -- pairing₃ is linear in 1st arg, via map_add at the outer; same for pairing₂.
+    rw [TensorProduct.tmul_add, map_add, LinearMap.add_apply, ih₁, ih₂,
+        map_add, LinearMap.add_apply, mul_add]
+
+/-- Nondegeneracy of `pairing₂`, lifted from the binary
+    `pairing_nondegenerate` along the natural basis of
+    `CK = (Forest T) →₀ R`. -/
+private theorem pairing₂_nondegenerate
+    [CharZero R] [NoZeroDivisors R]
+    (U : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))
+    (h : ∀ x y : ConnesKreimer R (Nonplanar α),
+      pairing₂ (R := R) (x ⊗ₜ[R] y) U = 0) : U = 0 := by
+  classical
+  let ℬ : Module.Basis (Forest (Nonplanar α)) R (ConnesKreimer R (Nonplanar α)) :=
+    ConnesKreimer.basisSingleOne
+  obtain ⟨c, hc⟩ : ∃ c : Forest (Nonplanar α) →₀ ConnesKreimer R (Nonplanar α),
+      c.sum (fun F U_F => ℬ F ⊗ₜ[R] U_F) = U :=
+    TensorProduct.eq_repr_basis_left ℬ U
+  have hℬ : ∀ G : Forest (Nonplanar α),
+      (ℬ G : ConnesKreimer R (Nonplanar α)) = ConnesKreimer.of' G := fun _ =>
+    ConnesKreimer.basisSingleOne_apply _
+  have hc_zero : ∀ F, c F = 0 := by
+    intro F
+    apply pairing_nondegenerate (c F)
+    intro y
+    rw [pairing_symm]
+    have h_aut_ne : (Nonplanar.forestAutCard F : R) ≠ 0 :=
+      Nat.cast_ne_zero.mpr (Nonplanar.forestAutCard_pos F).ne'
+    have h_eval := h (ConnesKreimer.of' F) y
+    rw [← hc] at h_eval
+    rw [map_finsuppSum (pairing₂ (R := R) (ConnesKreimer.of' F ⊗ₜ[R] y))] at h_eval
+    simp only [hℬ, pairing₂_tmul_tmul, pairing_of'_of'] at h_eval
+    rw [Finsupp.sum_eq_single F
+          (fun G _ hGF => by rw [if_neg (fun heq => hGF heq.symm), zero_mul])
+          (fun _ => by rw [LinearMap.map_zero, mul_zero])] at h_eval
+    rw [if_pos rfl] at h_eval
+    rcases mul_eq_zero.mp h_eval with h' | h'
+    · exact absurd h' h_aut_ne
+    · exact h'
+  have hc_zero' : c = 0 := Finsupp.ext hc_zero
+  rw [← hc, hc_zero', Finsupp.sum_zero_index]
+
+/-- Nondegeneracy of `pairing₃`, lifted from `pairing₂_nondegenerate`
+    along the basis of the outer tensor factor. -/
+theorem pairing₃_nondegenerate
+    [CharZero R] [NoZeroDivisors R]
+    (U : ConnesKreimer R (Nonplanar α) ⊗[R]
+          (ConnesKreimer R (Nonplanar α) ⊗[R]
+            ConnesKreimer R (Nonplanar α)))
+    (h : ∀ t, pairing₃ (R := R) t U = 0) : U = 0 := by
+  classical
+  let ℬ : Module.Basis (Forest (Nonplanar α)) R
+        (ConnesKreimer R (Nonplanar α)) :=
+    ConnesKreimer.basisSingleOne
+  obtain ⟨c, hc⟩ : ∃ c : Forest (Nonplanar α) →₀
+        (ConnesKreimer R (Nonplanar α) ⊗[R]
+          ConnesKreimer R (Nonplanar α)),
+      c.sum (fun F U_F => ℬ F ⊗ₜ[R] U_F) = U :=
+    TensorProduct.eq_repr_basis_left ℬ U
+  have hℬ : ∀ G : Forest (Nonplanar α),
+      (ℬ G : ConnesKreimer R (Nonplanar α)) = ConnesKreimer.of' G :=
+    fun _ => ConnesKreimer.basisSingleOne_apply _
+  have hc_zero : ∀ F, c F = 0 := by
+    intro F
+    apply pairing₂_nondegenerate (c F)
+    intro x y
+    have h_aut_ne : (Nonplanar.forestAutCard F : R) ≠ 0 :=
+      Nat.cast_ne_zero.mpr (Nonplanar.forestAutCard_pos F).ne'
+    have h_eval := h (ConnesKreimer.of' F ⊗ₜ[R] (x ⊗ₜ[R] y))
+    rw [← hc] at h_eval
+    rw [map_finsuppSum
+          (pairing₃ (R := R) (ConnesKreimer.of' F ⊗ₜ[R] (x ⊗ₜ[R] y)))] at h_eval
+    simp only [hℬ, pairing₃_of'_tmul_of'_tmul, pairing_of'_of'] at h_eval
+    rw [Finsupp.sum_eq_single F
+          (fun G _ hGF => by rw [if_neg (fun heq => hGF heq.symm), zero_mul])
+          (fun _ => by rw [LinearMap.map_zero, mul_zero])] at h_eval
+    rw [if_pos rfl] at h_eval
+    rcases mul_eq_zero.mp h_eval with h' | h'
+    · exact absurd h' h_aut_ne
+    · exact h'
+  have hc_zero' : c = 0 := Finsupp.ext hc_zero
+  rw [← hc, hc_zero', Finsupp.sum_zero_index]
 
 end GrossmanLarson
 

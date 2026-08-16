@@ -49,7 +49,7 @@ The GL/CK pairing duality that proves Δ^ρ coassociativity in
 removes trace markers, so no orientation of
 `⟨x ⋆ y, z⟩ = pairing₂ (…) (Δ^c z)` can hold, and B+ is not a Hochschild
 1-cocycle for Δ^c either (see the Trace-coherence section below). The
-pairings themselves live in `Coproduct/Pairing.lean`.
+pairings themselves live in `GrossmanLarson/Pairing.lean`.
 
 ## Status
 
