@@ -15,7 +15,7 @@ The type system of the [icard-moss-tune-2017] monotonicity calculus:
 simple types over a set of base types, with each arrow *marked* as
 monotone (`+`), antitone (`−`), or unmarked (`·`). `Marking` is a
 commutative monoid (valence composition, `+` the identity, `·`
-absorbing) and a join-semilattice with `·` on top; `MarkedType` carries
+absorbing) and a join-semilattice with `·` on top; `Ty` carries
 the subtyping preorder `≤` — contravariant in domains, covariant in
 codomains and markings — under which a term of a smaller type can be
 coerced to any larger one (their Definition 3.2), together with the
@@ -25,11 +25,11 @@ Definition 3.3).
 ## Main declarations
 
 * `Marking` — the three markings with their monoid and order.
-* `MarkedType` — marked simple types.
-* `MarkedType.instPartialOrder` — the subtyping order, decidable over a
+* `Ty` — marked simple types.
+* `Ty.instPartialOrder` — the subtyping order, decidable over a
   `DecidableEq` base.
-* `MarkedType.sup?` — the partial join of compatible types.
-* `MarkedType.unmark` — erase the markings along the codomain spine.
+* `Ty.sup?` — the partial join of compatible types.
+* `Ty.unmark` — erase the markings along the codomain spine.
 -/
 
 namespace NaturalLogic
@@ -99,12 +99,12 @@ end Marking
 /-- Simple types over base types `B`, with marked arrows
     ([icard-moss-tune-2017] Definition 3.1): `arr σ m τ` is the type of
     `m`-behaved functions from `σ` to `τ`. -/
-inductive MarkedType (B : Type*) where
-  | base : B → MarkedType B
-  | arr : MarkedType B → Marking → MarkedType B → MarkedType B
+inductive Ty (B : Type*) where
+  | base : B → Ty B
+  | arr : Ty B → Marking → Ty B → Ty B
   deriving DecidableEq
 
-namespace MarkedType
+namespace Ty
 
 variable {B : Type*}
 
@@ -112,39 +112,39 @@ variable {B : Type*}
     contravariant in domains, covariant in codomains and markings, so
     that every `+`- or `−`-typed function can also be considered
     `·`-typed. -/
-protected inductive LE : MarkedType B → MarkedType B → Prop
-  | base (b : B) : MarkedType.LE (.base b) (.base b)
-  | arr {σ σ' τ τ' : MarkedType B} {m m' : Marking} :
-      MarkedType.LE σ' σ → MarkedType.LE τ τ' → m ≤ m' →
-      MarkedType.LE (.arr σ m τ) (.arr σ' m' τ')
+protected inductive LE : Ty B → Ty B → Prop
+  | base (b : B) : Ty.LE (.base b) (.base b)
+  | arr {σ σ' τ τ' : Ty B} {m m' : Marking} :
+      Ty.LE σ' σ → Ty.LE τ τ' → m ≤ m' →
+      Ty.LE (.arr σ m τ) (.arr σ' m' τ')
 
-instance : LE (MarkedType B) := ⟨MarkedType.LE⟩
+instance : LE (Ty B) := ⟨Ty.LE⟩
 
-protected theorem LE.refl : ∀ σ : MarkedType B, MarkedType.LE σ σ
+protected theorem LE.refl : ∀ σ : Ty B, Ty.LE σ σ
   | .base b => .base b
-  | .arr σ _ τ => .arr (MarkedType.LE.refl σ) (MarkedType.LE.refl τ) le_rfl
+  | .arr σ _ τ => .arr (Ty.LE.refl σ) (Ty.LE.refl τ) le_rfl
 
 protected theorem LE.trans :
-    ∀ {σ τ μ : MarkedType B}, MarkedType.LE σ τ → MarkedType.LE τ μ →
-      MarkedType.LE σ μ
+    ∀ {σ τ μ : Ty B}, Ty.LE σ τ → Ty.LE τ μ →
+      Ty.LE σ μ
   | _, _, _, .base b, .base _ => .base b
   | _, _, _, .arr h₁ h₂ hm, .arr h₁' h₂' hm' =>
       .arr (h₁'.trans h₁) (h₂.trans h₂') (hm.trans hm')
 
 protected theorem LE.antisymm :
-    ∀ {σ τ : MarkedType B}, MarkedType.LE σ τ → MarkedType.LE τ σ → σ = τ
+    ∀ {σ τ : Ty B}, Ty.LE σ τ → Ty.LE τ σ → σ = τ
   | _, _, .base _, .base _ => rfl
   | _, _, .arr h₁ h₂ hm, .arr h₁' h₂' hm' => by
       rw [(h₁.antisymm h₁' : _ = _), h₂.antisymm h₂', hm.antisymm hm']
 
-instance : PartialOrder (MarkedType B) where
-  le_refl := MarkedType.LE.refl
-  le_trans _ _ _ := MarkedType.LE.trans
-  le_antisymm _ _ := MarkedType.LE.antisymm
+instance : PartialOrder (Ty B) where
+  le_refl := Ty.LE.refl
+  le_trans _ _ _ := Ty.LE.trans
+  le_antisymm _ _ := Ty.LE.antisymm
 
 set_option warn.classDefReducibility false in
 instance decidableLE [DecidableEq B] :
-    ∀ σ τ : MarkedType B, Decidable (σ ≤ τ)
+    ∀ σ τ : Ty B, Decidable (σ ≤ τ)
   | .base b, .base b' =>
       if h : b = b' then .isTrue (h ▸ .base b)
       else .isFalse fun hle => by cases hle; exact h rfl
@@ -164,20 +164,20 @@ instance decidableLE [DecidableEq B] :
     Definition 3.3): defined when the two types share their unmarked
     skeleton and their domains exactly, joining the markings along the
     codomain spine. -/
-def sup? [DecidableEq B] : MarkedType B → MarkedType B → Option (MarkedType B)
+def sup? [DecidableEq B] : Ty B → Ty B → Option (Ty B)
   | .base b, .base b' => if b = b' then some (.base b) else none
   | .arr σ m τ, .arr σ' m' τ' =>
       if σ = σ' then (sup? τ τ').map (.arr σ (m ⊔ m')) else none
   | _, _ => none
 
 @[simp] theorem sup?_self [DecidableEq B] :
-    ∀ σ : MarkedType B, sup? σ σ = some σ
+    ∀ σ : Ty B, sup? σ σ = some σ
   | .base b => by simp [sup?]
   | .arr σ m τ => by simp [sup?, sup?_self τ]
 
 /-- Both compatible types lie below their join. -/
 theorem le_of_mem_sup?_left [DecidableEq B] :
-    ∀ {σ τ μ : MarkedType B}, sup? σ τ = some μ → σ ≤ μ
+    ∀ {σ τ μ : Ty B}, sup? σ τ = some μ → σ ≤ μ
   | .base b, .base b', _, h => by
       rw [sup?] at h
       split at h
@@ -187,20 +187,20 @@ theorem le_of_mem_sup?_left [DecidableEq B] :
       rw [sup?] at h
       split at h
       · rcases Option.map_eq_some_iff.mp h with ⟨κ, hκ, rfl⟩
-        exact .arr (MarkedType.LE.refl σ) (le_of_mem_sup?_left hκ) le_sup_left
+        exact .arr (Ty.LE.refl σ) (le_of_mem_sup?_left hκ) le_sup_left
       · exact absurd h (by simp)
 
 /-- Erase the markings along the codomain spine ([icard-moss-tune-2017]
     Definition 3.3, their `σ̂`). -/
-def unmark : MarkedType B → MarkedType B
+def unmark : Ty B → Ty B
   | .base b => .base b
   | .arr σ _ τ => .arr σ .unmarked (unmark τ)
 
 /-- Every type embeds into its marking erasure. -/
-theorem le_unmark : ∀ σ : MarkedType B, σ ≤ unmark σ
+theorem le_unmark : ∀ σ : Ty B, σ ≤ unmark σ
   | .base b => .base b
-  | .arr σ _ τ => .arr (MarkedType.LE.refl σ) (le_unmark τ) le_top
+  | .arr σ _ τ => .arr (Ty.LE.refl σ) (le_unmark τ) le_top
 
-end MarkedType
+end Ty
 
 end NaturalLogic
