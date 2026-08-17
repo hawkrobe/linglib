@@ -1,31 +1,32 @@
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.Comparison
-import Linglib.Core.Order.Rat01
+import Mathlib.Algebra.Order.Interval.Set.Instances
+import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Linarith
 /-!
 # Gradient At-Issueness and Projectivity
 [roberts-2012] [tonhauser-beaver-degen-2018]
 Tonhauser-Beaver-Degen 2018's gradient at-issueness model: degrees
-and thresholds in `Rat01`, with at-issueness anti-correlated with
-projectivity. Mirrors the gradable-adjective pattern (degree > θ →
+and thresholds in `Set.Icc (0 : ℚ) 1`, with at-issueness anti-correlated
+with projectivity. Mirrors the gradable-adjective pattern (degree > θ →
 positive meaning).
 -/
 namespace Discourse.AtIssueness
-open Core.Order (Boundedness Rat01)
+open Core.Order (Boundedness)
 /-! ### Degree Types -/
 /-- A degree of at-issueness ∈ [0, 1].
     0 = fully backgrounded (not at-issue), 1 = fully at-issue. -/
-abbrev AtIssuenessDegree := Rat01
+abbrev AtIssuenessDegree := ↥(Set.Icc (0 : ℚ) 1)
 /-- A degree of projectivity ∈ [0, 1].
     0 = no projection, 1 = obligatory projection. -/
-abbrev ProjectivityDegree := Rat01
+abbrev ProjectivityDegree := ↥(Set.Icc (0 : ℚ) 1)
 /-- Contextual threshold for at-issueness classification.
     Content with degree above this threshold counts as at-issue. -/
-abbrev AtIssuenessThreshold := Rat01
+abbrev AtIssuenessThreshold := ↥(Set.Icc (0 : ℚ) 1)
 /-- Contextual threshold for projectivity classification. -/
-abbrev ProjectivityThreshold := Rat01
+abbrev ProjectivityThreshold := ↥(Set.Icc (0 : ℚ) 1)
 /-! ### Threshold Semantics -/
 /-- Content is at-issue when its degree exceeds the threshold — the
     `Core.Order.Comparison.gt.over` face of the scale. -/
@@ -90,6 +91,6 @@ def atIssuenessBoundedness : Boundedness := .closed
 def projectivityBoundedness : Boundedness := .closed
 /-! ### Smart Constructors -/
 /-- Construct a degree from [0, 100], normalizing to [0, 1]. -/
-def ofPercent (n : ℚ) (h0 : 0 ≤ n) (h1 : n ≤ 100) : Rat01 :=
+def ofPercent (n : ℚ) (h0 : 0 ≤ n) (h1 : n ≤ 100) : Set.Icc (0 : ℚ) 1 :=
   ⟨n / 100, div_nonneg h0 (by norm_num), by linarith⟩
 end Discourse.AtIssueness

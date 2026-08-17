@@ -34,15 +34,14 @@ correlation with item-level variance, not this identity (cf. the dependency's
 * `gpp_beats_potts_below_diagonal` — on low-projectivity items the GPP beats Potts.
 
 ## Implementation notes
-Degrees and thresholds are the `Rat01` types from `Discourse.AtIssueness`; the GPP
-map is the `Rat01` complement. Potts's maximal projection is grounded in
+Degrees and thresholds are the `Discourse.AtIssueness` scales on `Set.Icc (0 : ℚ) 1`; the GPP
+map is `Set.Icc.symm`. Potts's maximal projection is grounded in
 `Pragmatics.Expressives.TwoDimProp.ci_projects_through_neg`.
 -/
 
 namespace TonhauserBeaverDegen2018
 
 open Discourse.AtIssueness
-open Core.Order (Rat01)
 open Pragmatics.Expressives
 open Generalizations.Projectivity
 
@@ -67,7 +66,7 @@ The binary principle ([simons-tonhauser-beaver-roberts-2010]) — projects iff n
 at-issue — is the threshold collapse of the gradient GPP. -/
 
 /-- The GPP projects past `θ` iff at-issueness is below the complementary threshold. -/
-theorem gpp_projects_iff (ai θ : Rat01) :
+theorem gpp_projects_iff (ai : AtIssuenessDegree) (θ : ProjectivityThreshold) :
     isProjective (gppProjection ai) θ ↔ ai.val < (Set.Icc.symm θ).val := by
   simp only [isProjective, Core.Order.Comparison.mem_over,
     Core.Order.Comparison.rel, gppProjection, Set.Icc.coe_symm_eq]
@@ -75,7 +74,7 @@ theorem gpp_projects_iff (ai θ : Rat01) :
 
 /-- The binary Projection Principle: never both at-issue and projecting at
     complementary thresholds. -/
-theorem gpp_excludes_atIssue (ai θ : Rat01) :
+theorem gpp_excludes_atIssue (ai : AtIssuenessDegree) (θ : ProjectivityThreshold) :
     ¬ (isAtIssue ai (Set.Icc.symm θ) ∧ isProjective (gppProjection ai) θ) := by
   rintro ⟨ha, hp⟩
   simp only [isAtIssue, Core.Order.Comparison.mem_over,

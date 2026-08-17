@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Copular
-import Linglib.Core.Order.Rat01
+import Linglib.Core.Algebra.Order.Interval.Set.Instances
 import Mathlib.Order.Monotone.Basic
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.NormNum
@@ -45,8 +45,6 @@ N = 266). The main-clause control projected at floor (mean certainty 0.21).
 
 namespace DegenTonhauser2021
 
-open Core.Order
-
 /-! ### The 20 clause-embedding predicates -/
 
 /-- The 20 clause-embedding predicates of [degen-tonhauser-2021], listed
@@ -62,27 +60,27 @@ inductive Predicate where
 /-! ### Projection as a function of prior credence -/
 
 /-- A predictor of projection strength from prior credence in the complement. -/
-abbrev PriorAccount := Rat01 → Rat01
+abbrev PriorAccount := Set.Icc (0 : ℚ) 1 → Set.Icc (0 : ℚ) 1
 
 /-- The prior-insensitive null account: projection is constant in prior credence. -/
-def priorInsensitive (c : Rat01) : PriorAccount := fun _ => c
+def priorInsensitive (c : Set.Icc (0 : ℚ) 1) : PriorAccount := fun _ => c
 
 /-- An account is prior-sensitive when projection is strictly monotone in prior
     credence. -/
 def PriorSensitive (acc : PriorAccount) : Prop := StrictMono acc
 
 /-- The null account predicts identical projection for any two priors. -/
-theorem priorInsensitive_no_modulation (c p q : Rat01) :
+theorem priorInsensitive_no_modulation (c p q : Set.Icc (0 : ℚ) 1) :
     priorInsensitive c p = priorInsensitive c q := rfl
 
 /-- The null account is not prior-sensitive. -/
-theorem priorInsensitive_not_sensitive (c : Rat01) :
+theorem priorInsensitive_not_sensitive (c : Set.Icc (0 : ℚ) 1) :
     ¬ PriorSensitive (priorInsensitive c) :=
   fun h => lt_irrefl c (h zero_lt_one)
 
 /-- A prior-sensitive account predicts stronger projection for higher-prior content. -/
 theorem sensitive_predicts_modulation {acc : PriorAccount} (h : PriorSensitive acc)
-    {p q : Rat01} (hpq : p < q) : acc p < acc q := h hpq
+    {p q : Set.Icc (0 : ℚ) 1} (hpq : p < q) : acc p < acc q := h hpq
 
 /-! ### Data: prior modulates projection for every predicate
 

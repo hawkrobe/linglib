@@ -2,7 +2,7 @@ import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Probabilistic.ParamPred
 import Linglib.Studies.DegenTonhauser2022
 import Linglib.Studies.ScontrasTonhauser2025
-import Linglib.Core.Order.Rat01
+import Linglib.Core.Algebra.Order.Interval.Set.Instances
 import Linglib.Core.Probability.Constructions
 
 /-!
@@ -38,7 +38,7 @@ The discrete-factivity model is a `ParamPred` over `FactivityReading`:
 
 - `clauseEmbeddingSem .factive`     = `factivePos` (`BEL ∧ C`)
 - `clauseEmbeddingSem .nonfactive`  = `nonFactivePos` (`BEL`)
-- prior over readings: `⟨τ, 1 − τ⟩` for `τ : Rat01`
+- prior over readings: `⟨τ, 1 − τ⟩` for `τ : Set.Icc (0 : ℚ) 1`
 
 The graded truth value of a predicate at a world `w` then unfolds to
 `τ · 1[BEL∧C] + (1−τ) · 1[BEL]` (`discreteFactivity_gradedTruth`).
@@ -93,7 +93,6 @@ open Semantics.Attitudes.Factivity
 open Semantics.Probabilistic
 open DegenTonhauser2021
 open DegenTonhauser2022
-open Core.Order (Rat01)
 open scoped ENNReal NNReal
 
 /-! ## §1. Clause-embedding semantics -/
@@ -140,39 +139,36 @@ section Prior
 
 variable {W : Type*}
 
-/-- `τ.val : ℚ` lifted to `ℝ≥0` via the canonical `ℝ`-coercion. Lives
-    outside the `Rat01` namespace because `Rat01` is an `abbrev` for
-    a `Subtype`, so dot notation on `τ : Rat01` resolves through the
-    underlying `Subtype` rather than the `Rat01` namespace. -/
-noncomputable def Rat01.toNNReal (τ : Rat01) : ℝ≥0 :=
+/-- `τ.val : ℚ` lifted to `ℝ≥0` via the canonical `ℝ`-coercion. -/
+noncomputable def toNNReal (τ : Set.Icc (0 : ℚ) 1) : ℝ≥0 :=
   Real.toNNReal τ.val
 
-theorem Rat01.toNNReal_le_one (τ : Rat01) : Rat01.toNNReal τ ≤ 1 :=
+theorem toNNReal_le_one (τ : Set.Icc (0 : ℚ) 1) : toNNReal τ ≤ 1 :=
   Real.toNNReal_le_one.mpr (by exact_mod_cast τ.prop.2)
 
-theorem Rat01.toNNReal_val (τ : Rat01) : ((Rat01.toNNReal τ : ℝ≥0) : ℝ) = τ.val :=
+theorem toNNReal_val (τ : Set.Icc (0 : ℚ) 1) : ((toNNReal τ : ℝ≥0) : ℝ) = τ.val :=
   Real.coe_toNNReal _ (by exact_mod_cast τ.prop.1)
 
 /-- The Bernoulli prior over `FactivityReading`: factive with probability
     `τ.val`, nonfactive with probability `1 − τ.val`. The τ parameter is
-    bundled as `Rat01` (`↥(Set.Icc (0:ℚ) 1)`), so the [0,1] constraint is
+    bundled as `Set.Icc (0 : ℚ) 1`, so the [0,1] constraint is
     intrinsic to the type rather than threaded as side hypotheses. This is
     the τ-vertex of the discrete-factivity DAG (definition (13), p. 20).
 
     A `PMF.mix` of point masses at the two readings. -/
-noncomputable def factivityPrior (τ : Rat01) : PMF FactivityReading :=
-  PMF.mix (Rat01.toNNReal τ) (Rat01.toNNReal_le_one τ)
+noncomputable def factivityPrior (τ : Set.Icc (0 : ℚ) 1) : PMF FactivityReading :=
+  PMF.mix (toNNReal τ) (toNNReal_le_one τ)
     (PMF.pure .nonfactive) (PMF.pure .factive)
 
-@[simp] theorem factivityPrior_apply_factive (τ : Rat01) :
+@[simp] theorem factivityPrior_apply_factive (τ : Set.Icc (0 : ℚ) 1) :
     (factivityPrior τ) FactivityReading.factive
-      = ((Rat01.toNNReal τ : ℝ≥0) : ℝ≥0∞) := by
+      = ((toNNReal τ : ℝ≥0) : ℝ≥0∞) := by
   unfold factivityPrior
   simp
 
-@[simp] theorem factivityPrior_apply_nonfactive (τ : Rat01) :
+@[simp] theorem factivityPrior_apply_nonfactive (τ : Set.Icc (0 : ℚ) 1) :
     (factivityPrior τ) FactivityReading.nonfactive
-      = (((1 : ℝ≥0) - Rat01.toNNReal τ : ℝ≥0) : ℝ≥0∞) := by
+      = (((1 : ℝ≥0) - toNNReal τ : ℝ≥0) : ℝ≥0∞) := by
   unfold factivityPrior
   simp
 
@@ -189,7 +185,7 @@ variable {W : Type*} [HasBelief W] [HasComplement W]
     that reading. The graded truth value `gradedTruth` is then the
     `ℝ≥0∞`-valued probability mass on the satisfied-readings set —
     `PMF.probOfSet` of the "predicate satisfied at this world" event. -/
-noncomputable def discreteFactivityPred (τ : Rat01) :
+noncomputable def discreteFactivityPred (τ : Set.Icc (0 : ℚ) 1) :
     ParamPred W FactivityReading where
   semantics := clauseEmbeddingSem
   prior     := factivityPrior τ
@@ -198,11 +194,11 @@ noncomputable def discreteFactivityPred (τ : Rat01) :
     This is the substantive content of the τ-parameterised model — graded
     inference values arise from a τ-weighted mixture of two crisp Boolean
     readings. -/
-theorem discreteFactivity_gradedTruth (τ : Rat01) (w : W) :
+theorem discreteFactivity_gradedTruth (τ : Set.Icc (0 : ℚ) 1) (w : W) :
     (discreteFactivityPred τ).gradedTruth w =
-    (if factivePos w then ((Rat01.toNNReal τ : ℝ≥0) : ℝ≥0∞) else 0) +
+    (if factivePos w then ((toNNReal τ : ℝ≥0) : ℝ≥0∞) else 0) +
     (if nonFactivePos (W := W) w
-      then (((1 : ℝ≥0) - Rat01.toNNReal τ : ℝ≥0) : ℝ≥0∞) else 0) := by
+      then (((1 : ℝ≥0) - toNNReal τ : ℝ≥0) : ℝ≥0∞) else 0) := by
   classical
   show (factivityPrior τ).probOfSet
       {θ | clauseEmbeddingSem (W := W) θ w = true} = _
@@ -215,7 +211,7 @@ theorem discreteFactivity_certain_factive (w : W) :
     (discreteFactivityPred (W := W) 1).gradedTruth w =
     if factivePos w then 1 else 0 := by
   rw [discreteFactivity_gradedTruth]
-  have hτ : Rat01.toNNReal 1 = 1 := by
+  have hτ : toNNReal 1 = 1 := by
     show Real.toNNReal ((1 : ℚ) : ℝ) = 1
     simp
   rw [hτ]
@@ -226,7 +222,7 @@ theorem discreteFactivity_certain_nonfactive (w : W) :
     (discreteFactivityPred (W := W) 0).gradedTruth w =
     if nonFactivePos (W := W) w then 1 else 0 := by
   rw [discreteFactivity_gradedTruth]
-  have hτ : Rat01.toNNReal 0 = 0 := by
+  have hτ : toNNReal 0 = 0 := by
     show Real.toNNReal ((0 : ℚ) : ℝ) = 0
     simp
   rw [hτ]
@@ -240,7 +236,7 @@ theorem discreteFactivity_certain_nonfactive (w : W) :
     case is the *contrapositive* one supplied by `discreteFactivity_gradedTruth`
     plus monotonicity of the Bernoulli mixture. -/
 theorem higher_tau_higher_gradedTruth
-    (τ₁ τ₂ : Rat01) (w : W)
+    (τ₁ τ₂ : Set.Icc (0 : ℚ) 1) (w : W)
     (h_tau : τ₁.val > τ₂.val)
     (h_factive : factivePos w = true)
     (h_nonfactive : nonFactivePos (W := W) w = false) :
@@ -248,9 +244,9 @@ theorem higher_tau_higher_gradedTruth
     (discreteFactivityPred τ₂).gradedTruth w := by
   rw [discreteFactivity_gradedTruth, discreteFactivity_gradedTruth]
   simp only [h_factive, h_nonfactive, Bool.false_eq_true, ↓reduceIte, add_zero]
-  have hlt : Rat01.toNNReal τ₂ < Rat01.toNNReal τ₁ := by
-    have : ((Rat01.toNNReal τ₂ : ℝ≥0) : ℝ) < ((Rat01.toNNReal τ₁ : ℝ≥0) : ℝ) := by
-      rw [Rat01.toNNReal_val, Rat01.toNNReal_val]
+  have hlt : toNNReal τ₂ < toNNReal τ₁ := by
+    have : ((toNNReal τ₂ : ℝ≥0) : ℝ) < ((toNNReal τ₁ : ℝ≥0) : ℝ) := by
+      rw [toNNReal_val, toNNReal_val]
       exact_mod_cast h_tau
     exact_mod_cast this
   exact_mod_cast hlt
@@ -402,7 +398,7 @@ theorem empirical_ordering_consistent_with_tau :
     projection (`DegenTonhauser2021.sensitive_predicts_modulation`), which their
     data confirm for all 20 predicates. -/
 theorem prior_effect_consistent {acc : PriorAccount} (h : PriorSensitive acc)
-    {p q : Rat01} (hpq : p < q) : acc p < acc q :=
+    {p q : Set.Icc (0 : ℚ) 1} (hpq : p < q) : acc p < acc q :=
   sensitive_predicts_modulation h hpq
 
 end EmpiricalAnchor

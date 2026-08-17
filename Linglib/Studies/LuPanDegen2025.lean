@@ -1024,7 +1024,7 @@ say+adverb (53), which is more degraded than say (73–80), even under identical
 prosodic conditions. The binary model predicts MoS = say+adverb (both `.given`)
 and cannot express this gradient.
 
-We lift the model to **gradient at-issueness** using `Rat01` from
+We lift the model to **gradient at-issueness** using the degree scales of
 `Discourse/AtIssueness.lean`. `MannerWeightSource` determines not just
 whether the complement is backgrounded, but *how* backgrounded. Lexical manner
 (inherent to verb root) produces stronger backgroundedness than compositional

@@ -64,7 +64,6 @@ open German.Predicates
 open Semantics.Presupposition
 open Semantics.Presupposition.Context
 open CommonGround
-open Core.Order (Rat01)
 open Generalizations.Projectivity
 
 /-! ### Filtering direction and context resolution -/

@@ -14,6 +14,7 @@ import Linglib.Core.Algebra.Group.Submonoid.Operations
 import Linglib.Core.Algebra.Group.Subquotient
 import Linglib.Core.Algebra.Group.WithOne
 import Linglib.Core.Algebra.Opposites
+import Linglib.Core.Algebra.Order.Interval.Set.Instances
 import Linglib.Core.Algebra.Order.ToIntervalMod
 import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
@@ -253,7 +254,6 @@ import Linglib.Core.Order.PreferenceStructure.EffectivePreference
 import Linglib.Core.Order.PreferenceStructure.MaxInducedOrdering
 import Linglib.Core.Order.PreorderLattice
 import Linglib.Core.Order.PullbackPreorder
-import Linglib.Core.Order.Rat01
 import Linglib.Core.Order.Relation
 import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Order.SetPreimage

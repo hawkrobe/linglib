@@ -1,4 +1,4 @@
-import Linglib.Core.Order.Rat01
+import Linglib.Core.Algebra.Order.Interval.Set.Instances
 import Linglib.Data.Examples.TonhauserBeaverDegen2018
 import Linglib.Data.Examples.SolstadBott2024
 import Mathlib.Tactic.Linarith
@@ -40,27 +40,26 @@ only): accounts and divergence theorems live in the consuming study files.
 
 namespace Generalizations.Projectivity
 
-open Core.Order (Rat01)
 open Data.Examples (LinguisticExample SourceRef)
 
 /-- An observed datum: mean projectivity and at-issueness for one expression,
     with its originating `SourceRef`. -/
 structure ProjectionDatum where
   expression   : String
-  projectivity : Rat01
-  atIssueness  : Rat01
+  projectivity : Set.Icc (0 : ℚ) 1
+  atIssueness  : Set.Icc (0 : ℚ) 1
   source       : SourceRef
 
 /-- Not-at-issueness is the complement of at-issueness — the quantity the GPP
     equates with projectivity. -/
-def ProjectionDatum.notAtIssueness (d : ProjectionDatum) : Rat01 :=
+def ProjectionDatum.notAtIssueness (d : ProjectionDatum) : Set.Icc (0 : ℚ) 1 :=
   Set.Icc.symm d.atIssueness
 
 /-! ### `LinguisticExample` adapter -/
 
-/-- Parse a percent-integer string (e.g. `"96"`) into a `Rat01`; `none` if
+/-- Parse a percent-integer string (e.g. `"96"`) into `Set.Icc (0 : ℚ) 1`; `none` if
     non-numeric or out of range. -/
-def parsePercent (s : String) : Option Rat01 :=
+def parsePercent (s : String) : Option (Set.Icc (0 : ℚ) 1) :=
   match s.toNat? with
   | some n =>
       if h : n ≤ 100 then
@@ -72,7 +71,7 @@ def parsePercent (s : String) : Option Rat01 :=
 
 /-- Read at-issueness from `paperFeatures`: directly from the `atIssueness` key,
     or as the complement of `notAtIssueness`. -/
-def readAtIssueness (pf : List (String × String)) : Option Rat01 :=
+def readAtIssueness (pf : List (String × String)) : Option (Set.Icc (0 : ℚ) 1) :=
   match pf.lookup "atIssueness" with
   | some s => parsePercent s
   | none => ((pf.lookup "notAtIssueness").bind parsePercent).map Set.Icc.symm
@@ -90,8 +89,8 @@ def fromExample (e : LinguisticExample) : Option ProjectionDatum :=
 
 /-! ### Pool -/
 
-/-- The pooled cross-paper projection data. Each rival account — a map
-    `Rat01 → Rat01` from at-issueness to predicted projectivity — is run
+/-- The pooled cross-paper projection data. Each rival account — a map from
+    at-issueness to predicted projectivity on `Set.Icc (0 : ℚ) 1` — is run
     against this list in the study files. -/
 def allData : List ProjectionDatum :=
   (TonhauserBeaverDegen2018.Examples.all ++ SolstadBott2024.Examples.all).filterMap fromExample
@@ -100,14 +99,16 @@ def allData : List ProjectionDatum :=
 
 /-- An account's absolute error on an observation: the gap between its predicted
     projectivity (from the observed at-issueness) and the observed projectivity. -/
-def predictionError (acc : Rat01 → Rat01) (d : ProjectionDatum) : ℚ :=
+def predictionError (acc : Set.Icc (0 : ℚ) 1 → Set.Icc (0 : ℚ) 1)
+    (d : ProjectionDatum) : ℚ :=
   |(acc d.atIssueness).val - d.projectivity.val|
 
 /-- An account predicts an observation within tolerance `ε`. -/
-def predictsWithin (ε : ℚ) (acc : Rat01 → Rat01) (d : ProjectionDatum) : Prop :=
+def predictsWithin (ε : ℚ) (acc : Set.Icc (0 : ℚ) 1 → Set.Icc (0 : ℚ) 1)
+    (d : ProjectionDatum) : Prop :=
   predictionError acc d ≤ ε
 
-instance (ε : ℚ) (acc : Rat01 → Rat01) (d : ProjectionDatum) :
+instance (ε : ℚ) (acc : Set.Icc (0 : ℚ) 1 → Set.Icc (0 : ℚ) 1) (d : ProjectionDatum) :
     Decidable (predictsWithin ε acc d) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
