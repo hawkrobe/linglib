@@ -388,11 +388,9 @@ end ScontrasTonhauserBridge
 
 section EmpiricalAnchor
 
-/-- Under the discrete-factivity model with `τ_know > τ_think`, the model
-    predicts a `know > think` projection ordering. The empirical ordering
-    from [degen-tonhauser-2022] (exp 1a, gradient slider) confirms this
-    direction: mean certainty ratings for *know* exceed those for *think*
-    (0.86 vs 0.20). -/
+/-- With `τ_know > τ_think` the discrete-factivity model predicts a `know > think`
+    projection ordering; [degen-tonhauser-2022]'s exp 1a ratings confirm the
+    direction (0.86 vs 0.20). -/
 theorem empirical_ordering_consistent_with_tau :
     certainty1a .know > certainty1a .think := by
   norm_num [certainty1a]

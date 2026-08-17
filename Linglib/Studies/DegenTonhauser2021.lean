@@ -15,28 +15,20 @@ under an entailment-canceling operator? The prior literature conflicted:
 priori more plausible, while [lorson-2018] found no effect of world knowledge on
 the projection of the prestate of *stop*. [degen-tonhauser-2021] resolve the
 conflict in favor of modulation: across 20 clause-embedding predicates and 20
-contents, higher-prior content projects more, at the group **and** the individual
+contents, higher-prior content projects more, at the group and the individual
 level.
 
-The deep claim is structural: projection tracks prior credence *monotonically*.
-An account is **prior-sensitive** when it is monotone in prior credence
-(`PriorSensitive`); such an account predicts the observed per-content modulation
-by its very shape (`sensitive_predicts_modulation`), whereas the
-prior-*insensitive* null account predicts no modulation at all
-(`priorInsensitive_not_sensitive`). This is the account family the paper argues
-for — projection as a posterior credence in a Bayesian / RSA listener
-([qing-goodman-lassiter-2016], [goodman-frank-2016]) — and the prior analogue of
-the at-issueness predictor of projection in [tonhauser-beaver-degen-2018]: both
-are gradient `Rat01 → Rat01` maps into the same projection space. The experiment
-1 by-predicate means (`certaintyHigh`, `certaintyLow`, `priorHigh`, `priorLow`,
-computed from `results/9-prior-projection/data/cd.csv` at
-github.com/judith-tonhauser/projective-probability, n = 286) realize the
-modulation for every predicate (`prior_modulates_projection`), refuting the null
-account (`certaintyLow_ne_certaintyHigh`); the predicates are bridged to their
-Fragment lexical entries (`toVerbEntry`, `toPredicateCore`,
-`all_predicates_take_clause_complement`).
+A *prior-sensitive* account is one monotone in prior credence (`PriorSensitive`);
+it predicts the modulation by its shape (`sensitive_predicts_modulation`), while
+the prior-*insensitive* null account predicts none (`priorInsensitive_not_sensitive`).
+This is the account family the paper argues for — projection as a posterior
+credence in a Bayesian / RSA listener ([qing-goodman-lassiter-2016],
+[goodman-frank-2016]) — and the prior analogue of the at-issueness predictor of
+[tonhauser-beaver-degen-2018]. The experiment 1 by-predicate means realize the
+modulation for every predicate (`prior_modulates_projection`), and the predicates
+are bridged to their Fragment entries (`all_predicates_take_clause_complement`).
 
-Regression detail, documented as prose rather than theorems. Experiment 1
+The regression coefficients are recorded as prose, not theorems. Experiment 1
 (within-participant, N = 286): the prior manipulation was successful (β = 0.45,
 SE = 0.01, t = 31.12), and prior probability predicted projection at every level —
 categorical high/low fact (β = 0.14, t = 12.24), group-level continuous prior
@@ -57,10 +49,8 @@ open Core.Order
 
 /-! ### The 20 clause-embedding predicates -/
 
-/-- The 20 clause-embedding predicates investigated in [degen-tonhauser-2021],
-    listed alphabetically as in Figure 1C. The set spans cognitive (`know`),
-    emotive (`beAnnoyed`), communication (`announce`), and inferential (`prove`)
-    predicates. For the traditional factive/nonfactive classification see
+/-- The 20 clause-embedding predicates of [degen-tonhauser-2021], listed
+    alphabetically as in Figure 1C. For the traditional classification see
     `DegenTonhauser2022.traditionalClass`. -/
 inductive Predicate where
   | acknowledge | admit | announce | beAnnoyed | beRight
@@ -69,51 +59,39 @@ inductive Predicate where
   | reveal | say | see | suggest | think
   deriving DecidableEq, Fintype, Repr
 
-/-! ### Projection as a function of prior credence
+/-! ### Projection as a function of prior credence -/
 
-The account family the paper argues for: projection strength is a function of the
-listener's prior credence in the content. A *prior-sensitive* account is monotone
-in that credence; the null account is constant (prior-insensitive). The monotone
-shape alone predicts the modulation; the constant one cannot. -/
-
-/-- A predictor of projection strength from prior credence in the complement —
-    the same gradient shape as the at-issueness predictor of
-    [tonhauser-beaver-degen-2018]. -/
+/-- A predictor of projection strength from prior credence in the complement. -/
 abbrev PriorAccount := Rat01 → Rat01
 
 /-- The prior-insensitive null account: projection is constant in prior credence. -/
 def priorInsensitive (c : Rat01) : PriorAccount := fun _ => c
 
 /-- An account is prior-sensitive when projection is strictly monotone in prior
-    credence — the structural form of the paper's positive prior coefficient. -/
+    credence. -/
 def PriorSensitive (acc : PriorAccount) : Prop := StrictMono acc
 
 /-- The null account predicts identical projection for any two priors. -/
 theorem priorInsensitive_no_modulation (c p q : Rat01) :
     priorInsensitive c p = priorInsensitive c q := rfl
 
-/-- The null account is not prior-sensitive: it cannot produce the observed gap. -/
+/-- The null account is not prior-sensitive. -/
 theorem priorInsensitive_not_sensitive (c : Rat01) :
     ¬ PriorSensitive (priorInsensitive c) :=
   fun h => lt_irrefl c (h Rat01.zero_lt_one)
 
-/-- A prior-sensitive account predicts stronger projection for higher-prior
-    content — the modulation, derived from the account's shape, not stipulated. -/
+/-- A prior-sensitive account predicts stronger projection for higher-prior content. -/
 theorem sensitive_predicts_modulation {acc : PriorAccount} (h : PriorSensitive acc)
     {p q : Rat01} (hpq : p < q) : acc p < acc q := h hpq
 
 /-! ### Data: prior modulates projection for every predicate
 
-By-predicate means from experiment 1, computed from
-`results/9-prior-projection/data/cd.csv` at
-github.com/judith-tonhauser/projective-probability (n = 286 participants) and
-rounded to two decimals. Contents were paired with predicates at random per
-participant, so the prior means average over the contents each predicate
-appeared with. -/
+Experiment 1 by-predicate means from `results/9-prior-projection/data/cd.csv` at
+github.com/judith-tonhauser/projective-probability (n = 286), rounded to two decimals;
+prior means average over the contents each predicate was randomly paired with. -/
 
-/-- Mean certainty rating (projection) by predicate under the higher-probability
-    fact (experiment 1 projection block, Figure 3; nonprojective main-clause
-    control mean 0.21). -/
+/-- Mean certainty rating (projection) under the higher-probability fact
+    (Figure 3; nonprojective main-clause control mean 0.21). -/
 def certaintyHigh : Predicate → ℚ
   | .acknowledge => 0.65
   | .admit => 0.60
@@ -136,7 +114,7 @@ def certaintyHigh : Predicate → ℚ
   | .suggest => 0.32
   | .think => 0.40
 
-/-- Mean certainty rating by predicate under the lower-probability fact. -/
+/-- Mean certainty rating under the lower-probability fact. -/
 def certaintyLow : Predicate → ℚ
   | .acknowledge => 0.49
   | .admit => 0.43
@@ -160,7 +138,7 @@ def certaintyLow : Predicate → ℚ
   | .think => 0.20
 
 /-- Mean prior probability rating of the complement content given the
-    higher-probability fact (experiment 1 prior block). -/
+    higher-probability fact. -/
 def priorHigh : Predicate → ℚ
   | .acknowledge => 0.67
   | .admit => 0.68
@@ -206,18 +184,16 @@ def priorLow : Predicate → ℚ
   | .suggest => 0.22
   | .think => 0.19
 
-/-- Prior credence and projection are both higher under the higher-probability
-    fact for every predicate (Figure 3): the manipulation held and projection
-    tracked it — the joint pattern a prior-sensitive account predicts
-    (`sensitive_predicts_modulation`) and the null account rules out. -/
+/-- Prior credence and certainty are both higher under the higher-probability fact
+    for every predicate (Figure 3) — the pattern a prior-sensitive account predicts
+    and the null account rules out. -/
 theorem prior_modulates_projection (p : Predicate) :
     priorLow p < priorHigh p ∧ certaintyLow p < certaintyHigh p := by
   cases p <;> exact ⟨by norm_num [priorLow, priorHigh],
     by norm_num [certaintyLow, certaintyHigh]⟩
 
-/-- The null account predicts equal certainty across the prior manipulation
-    (`priorInsensitive_no_modulation`); the observed certainties differ for
-    every predicate. -/
+/-- The observed certainties differ across the manipulation, contra the null
+    account (`priorInsensitive_no_modulation`). -/
 theorem certaintyLow_ne_certaintyHigh (p : Predicate) :
     certaintyLow p ≠ certaintyHigh p :=
   (prior_modulates_projection p).2.ne

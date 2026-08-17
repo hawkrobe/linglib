@@ -14,28 +14,24 @@ those of all other predicates — `Separates`, which over a finite domain holds 
 some threshold puts exactly the factive class on top (`separates_iff_exists_threshold`).
 
 The data refute that expectation in both response tasks: the optionally factive
-*inform* rates as projective as the canonically factive *reveal* or *discover*
-(0.81 vs 0.70 and 0.78 in experiment 1a; 0.90 vs 0.69 and 0.84 in 1b), so the
-ratings do not separate the class (`certainty1a_not_separated`) and no nonarbitrary
-line can be drawn (`certainty1a_no_threshold`; likewise `certainty1b_*`). The
-entailment experiments undermine definition 3b in turn: in experiment 2a only
-*be right* and *prove* rated with the entailed controls, yet both project below
-every canonically factive predicate (`entailment_projection_dissociation`);
-experiment 2b adds *know*, *see*, *discover*, and *confirm* — a heterogeneous
-class — and the contradictoriness experiments 3a/3b identify no entailed CCs at
-all. Degen & Tonhauser conclude that the experiments support no coherent class of
-factive predicates, while cautioning (their objection 3) that gradient ratings
-alone cannot rule out a binary factivity category combined with lexical ambiguity
-and interpreter uncertainty. The results bear on projection analyses ([heim-1983],
+*inform* outrates the canonically factive *reveal* (0.81 vs 0.70 in experiment 1a,
+0.90 vs 0.69 in 1b), so the ratings do not separate the class and no nonarbitrary
+line can be drawn (`certainty1a_not_separated`, `certainty1a_no_threshold`;
+likewise for 1b). The entailment experiments undermine definition 3b: in
+experiment 2a only *be right* and *prove* rated with the entailed controls, yet
+both project below every canonically factive predicate
+(`entailment_projection_dissociation`); experiment 2b adds *know*, *see*,
+*discover*, and *confirm* — a heterogeneous class — and the contradictoriness
+experiments 3a/3b identify no entailed CCs at all. The paper concludes that no
+coherent class of factive predicates is supported, while cautioning (objection 3)
+that gradient ratings alone cannot rule out a binary category plus lexical
+ambiguity. The results bear on projection analyses ([heim-1983],
 [van-der-sandt-1992]) whose explanandum is delimited by exactly this class.
 
 Per-predicate mean ratings (`certainty1a`, `certainty1b`, `inference2a`) are
-computed from the authors' data at github.com/judith-tonhauser/projective-probability
-(results 5-projectivity-no-fact, 8-projectivity-no-fact-binary, 4-veridicality3),
-rounded to two decimal places, and stored as `ℚ` so comparisons close by `norm_num`.
-The predicates are bridged to their Fragment lexical entries via
-`DegenTonhauser2021.toVerbEntry`; the traditional classification agrees with the
-Fragment's factivity flags (`traditionalClass_consistent_with_fragment`).
+stored as `ℚ`, so comparisons close by `norm_num`; the traditional classification
+agrees with the Fragment's factivity flags
+(`traditionalClass_consistent_with_fragment`).
 -/
 
 namespace DegenTonhauser2022
@@ -66,11 +62,7 @@ def traditionalClass : Predicate → TraditionalClass
   | .acknowledge | .admit | .announce | .confess | .confirm
   | .establish | .hear | .inform | .prove => .optionallyFactive
 
-/-! ### Categorical distinction as separation
-
-Definition 3a expects factive certainty ratings "categorically higher" than the
-rest. For a class and a rating over a finite domain this is the same demand as a
-separating threshold, so a single interleaved pair refutes both readings. -/
+/-! ### Categorical distinction as separation -/
 
 section Separation
 
@@ -110,9 +102,8 @@ end Separation
 Computed from the authors' data at github.com/judith-tonhauser/projective-probability,
 rounded to two decimals and listed in descending order as in the paper's figures. -/
 
-/-- Mean certainty rating by predicate, experiment 1a ('certain that' diagnostic,
-    gradient slider; Figure 2). From results/5-projectivity-no-fact (n = 266 per
-    predicate; nonprojective main-clause control mean 0.11). -/
+/-- Mean certainty rating, experiment 1a ('certain that', gradient slider; Figure 2).
+    From results/5-projectivity-no-fact (n = 266; main-clause control mean 0.11). -/
 def certainty1a : Predicate → ℚ
   | .beAnnoyed => 0.88
   | .know => 0.86
@@ -135,9 +126,9 @@ def certainty1a : Predicate → ℚ
   | .beRight => 0.18
   | .pretend => 0.15
 
-/-- Proportion of 'yes' responses by predicate, experiment 1b ('certain that'
-    diagnostic, forced choice; Figure 4). From results/8-projectivity-no-fact-binary
-    (n = 436 per predicate; main-clause control mean 0.00). -/
+/-- Proportion of 'yes' responses, experiment 1b ('certain that', forced choice;
+    Figure 4). From results/8-projectivity-no-fact-binary (n = 436; main-clause
+    control mean 0.00). -/
 def certainty1b : Predicate → ℚ
   | .know => 0.93
   | .beAnnoyed => 0.92
@@ -160,9 +151,9 @@ def certainty1b : Predicate → ℚ
   | .think => 0.04
   | .beRight => 0.03
 
-/-- Mean inference rating by predicate, experiment 2a ('does it follow' diagnostic,
-    gradient slider; Figure 9). From results/4-veridicality3 (n = 259 per predicate;
-    entailing control mean 0.96, non-entailing control mean 0.03). -/
+/-- Mean inference rating, experiment 2a ('does it follow', gradient slider;
+    Figure 9). From results/4-veridicality3 (n = 259; entailing control mean 0.96,
+    non-entailing 0.03). -/
 def inference2a : Predicate → ℚ
   | .prove => 0.96
   | .beRight => 0.96
@@ -193,9 +184,8 @@ theorem certainty1a_not_separated :
     ¬ Separates (traditionalClass · = .factive) certainty1a :=
   not_separates (p := .reveal) (q := .inform) rfl (by decide) (by norm_num [certainty1a])
 
-/-- Hence no threshold recovers the classification from the exp 1a ratings — the
-    paper's "a nonarbitrary line between canonically factive and optionally factive
-    predicates cannot be drawn". -/
+/-- No threshold recovers the classification from the exp 1a ratings — the paper's
+    "nonarbitrary line" argument. -/
 theorem certainty1a_no_threshold :
     ¬ ∃ t, ∀ p, traditionalClass p = .factive ↔ t < certainty1a p :=
   fun h => certainty1a_not_separated
@@ -215,10 +205,9 @@ theorem certainty1b_no_threshold :
 
 /-! ### Entailment vs projection (definition 3b) -/
 
-/-- Exp 2a's best contenders for factivity under definition 3b are the least
-    projective: *be right* and *prove* carry the top inference ratings (0.96 each,
-    level with the entailed controls) yet project below every canonically factive
-    predicate (0.18 and 0.30 vs 0.70 at the bottom of the factive class). -/
+/-- Definition 3b's best contenders are the least projective: *be right* and *prove*
+    carry the top exp 2a inference ratings yet project below every canonically
+    factive predicate. -/
 theorem entailment_projection_dissociation :
     (∀ p, inference2a p ≤ inference2a .beRight ∧ inference2a p ≤ inference2a .prove) ∧
     (∀ p, traditionalClass p = .factive →
@@ -235,10 +224,9 @@ section FragmentBridge
 
 open English.Predicates.Verbal English.Predicates.Copular
 
-/-- Canonically factive verbs have `factivePresup = true` in the Fragment,
-    matching the classification in (13). "be annoyed" is copular and emotive —
-    its presupposition derives from emotive semantics, not doxastic veridicality —
-    and is covered by `copular_presup_matches_classification`. -/
+/-- Canonically factive verbs have `factivePresup = true` in the Fragment, matching
+    (13); the copular "be annoyed" is covered by
+    `copular_presup_matches_classification`. -/
 theorem factive_entries_have_factivePresup :
     know.factivePresup = true ∧ discover.factivePresup = true ∧
     see.factivePresup = true ∧ reveal.factivePresup = true :=
@@ -250,9 +238,8 @@ theorem nonfactive_entries_lack_factivePresup :
     say.factivePresup = false ∧ think.factivePresup = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-/-- The traditional classification is consistent with Fragment factivity for
-    verbal entries: factive verbs have `factivePresup = true`, nonveridical
-    nonfactives `false`. -/
+/-- The traditional classification matches Fragment factivity: factive verbs have
+    `factivePresup = true`, nonveridical nonfactives `false`. -/
 theorem traditionalClass_consistent_with_fragment (p : Predicate)
     (v : VerbEntry) (h : toVerbEntry p = some v) :
     (traditionalClass p = .factive → v.factivePresup = true) ∧
@@ -260,9 +247,7 @@ theorem traditionalClass_consistent_with_fragment (p : Predicate)
   cases p <;> (unfold toVerbEntry at h; cases h) <;>
     refine ⟨fun hc => ?_, fun hc => ?_⟩ <;> first | rfl | simp [traditionalClass] at hc
 
-/-- "be annoyed" is a presupposition trigger (emotive factive) while "be right"
-    is not, matching (13): factives trigger presuppositions, veridical
-    nonfactives do not. -/
+/-- "be annoyed" is a presupposition trigger while "be right" is not, matching (13). -/
 theorem copular_presup_matches_classification :
     (toPredicateCore .beAnnoyed).isPresupTrigger = true ∧
     (toPredicateCore .beRight).isPresupTrigger = false :=
