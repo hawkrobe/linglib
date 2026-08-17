@@ -43,9 +43,9 @@ An `Article`'s admissible [schwarz-2009] strengths are `Article.presupTypes`
 (Frame-free, read off `uses`); its denotation is `Article.toDescriptions`
 (`Semantics/Definiteness/DeterminerDenotation.lean`, Frame-aware) — the set of `Description`s
 those strengths admit via `Description.ofPresupType`, so a syncretic article like
-English *the* denotes *both* the weak and the strong description.
-(`Semantics/Quantification`), and the `Possessive` possession relation remain
-deferred; `Quantifier`/`Possessive` are declared but not fleshed out beyond `form`.
+English *the* denotes *both* the weak and the strong description. The possessive
+denotation is `Possessive.denote` (same file); the `Quantifier` generalized-quantifier
+denotation (`Semantics/Quantification`) is supplied externally by its consumers.
 This file stays the Frame-free lexical/typological layer.
 -/
 
@@ -130,7 +130,8 @@ structure Quantifier extends Determiner where
   deriving DecidableEq, Repr
 
 /-- A possessive determiner (my/your/the boy's). Its denotation is definiteness
-via a possession relation; deferred. -/
+via a possession relation — `Possessive.denote` in
+`Semantics/Definiteness/DeterminerDenotation.lean`. -/
 structure Possessive extends Determiner
   deriving DecidableEq, Repr
 
@@ -145,9 +146,10 @@ inductive Entry where
   | possessive (p : Possessive)
   deriving DecidableEq, Repr
 
-/-- The definite use-types a determiner occurrence obligatorily expones. Only
-definite articles and (obligatory) demonstratives contribute; indefinite
-articles, quantifiers, and possessives expone none. -/
+/-- The definite use-types a determiner occurrence obligatorily expones — the
+declared `uses`/`definiteUses` field for articles and demonstratives; quantifiers
+and possessives expone none. (That indefinite articles declare empty `uses` is a
+data convention of `Article.uses`, not enforced here.) -/
 def Entry.definiteUses : Entry → List DefiniteUseType
   | .article a      => a.uses
   | .demonstrative d => d.definiteUses
@@ -192,7 +194,8 @@ instance (ds : Inventory) : Decidable ds.IsSyncretic := by
 /-- Derive the [moroney-2021] four-cell definiteness-marking typology from a
 declared determiner inventory. Stored nowhere — a language's cell is a theorem
 about its `Determiner.Inventory`. Reproduces the decision table of the former
-boolean article inventory:
+boolean article inventory (each cell characterized by
+`markingStrategy_eq_*_iff`):
 
 - uniqueness marked, familiarity marked, by one form → `.generallyMarked`
 - uniqueness marked, familiarity marked, by distinct forms → `.bipartite`
@@ -206,6 +209,28 @@ def markingStrategy (ds : Inventory) : DefMarkingStrategy :=
       if IsSyncretic ds then .generallyMarked else .bipartite
     else .generallyMarked
   else if MarksPresup ds .familiarity then .markedAnaphoric else .unmarked
+
+/-! Each cell of the derivation, characterized by its row of the decision table. -/
+
+theorem markingStrategy_eq_generallyMarked_iff {ds : Inventory} :
+    ds.markingStrategy = .generallyMarked ↔
+      ds.MarksPresup .uniqueness ∧ (ds.IsSyncretic ∨ ¬ds.MarksPresup .familiarity) := by
+  unfold markingStrategy; split_ifs <;> simp_all
+
+theorem markingStrategy_eq_bipartite_iff {ds : Inventory} :
+    ds.markingStrategy = .bipartite ↔
+      ds.MarksPresup .uniqueness ∧ ds.MarksPresup .familiarity ∧ ¬ds.IsSyncretic := by
+  unfold markingStrategy; split_ifs <;> simp_all
+
+theorem markingStrategy_eq_markedAnaphoric_iff {ds : Inventory} :
+    ds.markingStrategy = .markedAnaphoric ↔
+      ¬ds.MarksPresup .uniqueness ∧ ds.MarksPresup .familiarity := by
+  unfold markingStrategy; split_ifs <;> simp_all
+
+theorem markingStrategy_eq_unmarked_iff {ds : Inventory} :
+    ds.markingStrategy = .unmarked ↔
+      ¬ds.MarksPresup .uniqueness ∧ ¬ds.MarksPresup .familiarity := by
+  unfold markingStrategy; split_ifs <;> simp_all
 
 /-- Derived Schwarz/Patel-Grosz–Grosz 3-cell `ArticleType` classification. Lossy:
 `.generallyMarked` and `.markedAnaphoric` both collapse to `.weakOnly`, as
@@ -341,9 +366,5 @@ theorem Article.mem_presupTypes_iff_marksPresup (a : Article) (p : DefPresupType
     p ∈ a.presupTypes ↔ Determiner.Inventory.MarksPresup [.article a] p := by
   unfold Article.presupTypes Determiner.Inventory.MarksPresup
   rw [List.mem_map]
-  constructor
-  · rintro ⟨u, hu, rfl⟩
-    exact ⟨.article a, List.mem_singleton_self _, u, hu, rfl⟩
-  · rintro ⟨e, he, u, hu, rfl⟩
-    obtain rfl := List.mem_singleton.mp he
-    exact ⟨u, hu, rfl⟩
+  exact ⟨fun ⟨u, hu, h⟩ => ⟨_, List.mem_singleton_self _, u, hu, h⟩,
+    fun ⟨e, he, u, hu, h⟩ => by obtain rfl := List.mem_singleton.mp he; exact ⟨u, hu, h⟩⟩
