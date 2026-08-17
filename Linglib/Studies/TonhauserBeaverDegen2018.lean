@@ -21,7 +21,7 @@ correlation with item-level variance, not this identity (cf. the dependency's
 `MonotoneAntiCorrelation` docstring).
 
 ## Main definitions
-* `gppProjection` — the GPP map, the complement of at-issueness (`Rat01.symm`).
+* `gppProjection` — the GPP map, the complement of at-issueness (`Set.Icc.symm`).
 * `pottsProjection` — [potts-2005]'s rival: CI projects maximally, at-issueness-blind.
 * both are run against the pooled per-expression data
   (`Generalizations.Projectivity.allData`).
@@ -50,16 +50,16 @@ open Generalizations.Projectivity
 
 /-- The GPP map: projection degree is the complement of at-issueness — content
     projects to the extent it is not at-issue ([tonhauser-beaver-degen-2018]). -/
-def gppProjection (ai : AtIssuenessDegree) : ProjectivityDegree := Rat01.symm ai
+def gppProjection (ai : AtIssuenessDegree) : ProjectivityDegree := Set.Icc.symm ai
 
 /-- The GPP as order-reversal: more at-issue content is no more projective. -/
-theorem gppProjection_antitone : Antitone gppProjection := Rat01.symm_antitone
+theorem gppProjection_antitone : Antitone gppProjection := Set.Icc.symm_antitone
 
 /-- Fully not-at-issue content (at-issueness `0`) projects maximally. -/
-theorem gppProjection_zero : gppProjection 0 = 1 := Rat01.symm_zero
+theorem gppProjection_zero : gppProjection 0 = 1 := Set.Icc.symm_zero
 
 /-- Fully at-issue content (at-issueness `1`) does not project. -/
-theorem gppProjection_one : gppProjection 1 = 0 := Rat01.symm_one
+theorem gppProjection_one : gppProjection 1 = 0 := Set.Icc.symm_one
 
 /-! ### Recovering the binary Projection Principle
 
@@ -68,19 +68,19 @@ at-issue — is the threshold collapse of the gradient GPP. -/
 
 /-- The GPP projects past `θ` iff at-issueness is below the complementary threshold. -/
 theorem gpp_projects_iff (ai θ : Rat01) :
-    isProjective (gppProjection ai) θ ↔ ai.val < (Rat01.symm θ).val := by
-  simp only [isProjective, Rat01.exceeds, Core.Order.Comparison.mem_over,
-    Core.Order.Comparison.rel, gppProjection, Rat01.coe_symm_eq]
+    isProjective (gppProjection ai) θ ↔ ai.val < (Set.Icc.symm θ).val := by
+  simp only [isProjective, Core.Order.Comparison.mem_over,
+    Core.Order.Comparison.rel, gppProjection, Set.Icc.coe_symm_eq]
   constructor <;> intro h <;> linarith
 
 /-- The binary Projection Principle: never both at-issue and projecting at
     complementary thresholds. -/
 theorem gpp_excludes_atIssue (ai θ : Rat01) :
-    ¬ (isAtIssue ai (Rat01.symm θ) ∧ isProjective (gppProjection ai) θ) := by
+    ¬ (isAtIssue ai (Set.Icc.symm θ) ∧ isProjective (gppProjection ai) θ) := by
   rintro ⟨ha, hp⟩
-  simp only [isAtIssue, Rat01.exceeds, Core.Order.Comparison.mem_over,
-    Core.Order.Comparison.rel, Rat01.coe_symm_eq] at ha
-  rw [gpp_projects_iff, Rat01.coe_symm_eq] at hp
+  simp only [isAtIssue, Core.Order.Comparison.mem_over,
+    Core.Order.Comparison.rel, Set.Icc.coe_symm_eq] at ha
+  rw [gpp_projects_iff, Set.Icc.coe_symm_eq] at hp
   linarith
 
 /-! ### Contra Potts
@@ -113,12 +113,12 @@ theorem potts_ci_invariant_under_neg {W : Type*} (p : TwoDimProp W) :
     maximally projective". -/
 theorem gpp_below_potts_of_atIssue {ai : AtIssuenessDegree} (h : 0 < ai.val) :
     (gppProjection ai).val < (pottsProjection ai).val := by
-  simp only [gppProjection, Rat01.coe_symm_eq, pottsProjection_val]; linarith
+  simp only [gppProjection, Set.Icc.coe_symm_eq, pottsProjection_val]; linarith
 
 /-- The GPP and Potts agree iff the content is fully backgrounded (at-issueness `0`). -/
 theorem gpp_eq_potts_iff_backgrounded (ai : AtIssuenessDegree) :
     gppProjection ai = pottsProjection ai ↔ ai = 0 :=
-  Rat01.symm_eq_one
+  Set.Icc.symm_eq_one
 
 /-- Potts files appositives in the independent CI dimension — the source of the
     maximal-projection prediction the GPP refines. -/
@@ -177,7 +177,7 @@ theorem gpp_errs_off_diagonal (d : ProjectionDatum)
     0 < predictionError gppProjection d := by
   rw [predictionError, gppProjection, abs_pos]
   intro hc; apply h
-  simp only [ProjectionDatum.notAtIssueness, Rat01.coe_symm_eq] at *
+  simp only [ProjectionDatum.notAtIssueness, Set.Icc.coe_symm_eq] at *
   linarith [sub_eq_zero.mp hc]
 
 /-- Potts over-predicts every content below the ceiling (projectivity `< 1`). -/
@@ -194,7 +194,7 @@ theorem gpp_beats_potts_below_diagonal (d : ProjectionDatum)
     (h1 : d.projectivity.val < d.notAtIssueness.val) (h2 : d.notAtIssueness.val < 1) :
     predictionError gppProjection d < predictionError pottsProjection d := by
   rw [predictionError, predictionError, gppProjection]
-  simp only [pottsProjection_val, ProjectionDatum.notAtIssueness, Rat01.coe_symm_eq] at *
+  simp only [pottsProjection_val, ProjectionDatum.notAtIssueness, Set.Icc.coe_symm_eq] at *
   rw [abs_of_pos (by linarith), abs_of_pos (by linarith)]
   linarith
 
