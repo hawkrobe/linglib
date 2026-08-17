@@ -476,31 +476,15 @@ theorem toContextPolarity_compose (φ ψ : Signature) :
     (toContextPolarity φ).compose (toContextPolarity ψ) := by
   cases φ <;> cases ψ <;> rfl
 
-/--
-Compute the projectivity signature of a context from the signatures along
-the path from the target position to the root ([icard-2012], Definition 2.9).
-
-Given a parse tree and a target position (e.g., "dangerous" in
-"Every job that involves a giant squid is dangerous"), the path collects
-the `top` signature of each node from the target up to the root.
-The composed signature is `List.prod`, using the `Monoid` instance.
-
-Example from Icard §3.2:
-  path = [⊞, ⊕, ◇] (top(is) ∘ top(involves) ∘ top(every_restrictor))
-  contextProjectivity path = ◇ (anti-additive)
--/
+/-- The projectivity signature of a position, as the monoid product of
+the signatures along its path, listed root-first (outermost context
+first): [icard-2012]'s marking recursion `pro(s(u)) = top(s) ∘ pro(u)`
+(Definition 2.9). Under the projection action, `mul_smul` applies the
+innermost — last — signature to the relation first. For example,
+`contextProjectivity [.antiAdd, .addMult] = .antiAdd`: an intersective
+modifier inside a *no*-restrictor leaves the position anti-additive. -/
 def contextProjectivity (path : List Signature) : Signature :=
   path.prod
-
-/--
-Project a NL relation through a context given by its signature path.
-Combines `contextProjectivity` with `project`.
--/
-def projectThrough (R : Relation) (path : List Signature) : Relation :=
-  project R (contextProjectivity path)
-
--- Icard §2.4: path lists signatures from root (outermost) to target (innermost).
--- List.prod applies them right-to-left: the last element is applied first.
 
 end Signature
 
