@@ -160,7 +160,7 @@ factive presupposition means the DE pattern is Strawson, not classical. -/
 (`bestOf`) held constant. Imported from
 `StrawsonEntailment.sorryFull_isStrawsonDE`; consumed by `VonFintel1999`'s
 cross-framework bridge. -/
-theorem sorry_licenses_any (dox bestOf : World → Set World) :
+theorem sorry_licenses_any (dox bestOf : Fin 4 → Set (Fin 4)) :
     IsStrawsonDE (sorryFull dox bestOf) (λ p w => ∀ w' ∈ dox w, p w') :=
   sorryFull_isStrawsonDE dox bestOf
 
@@ -169,14 +169,14 @@ blocks it. K&L adopt Ladusaw's convention that the DE pattern need only hold
 of the sentence minus its factive presupposition. -/
 theorem sorry_not_classically_de :
     ¬Antitone
-      (sorryFull (fun (w : World) => ({w} : Set World))
-                 (fun (_ : World) => ({World.w1} : Set World))) :=
+      (sorryFull (fun (w : Fin 4) => ({w} : Set (Fin 4)))
+                 (fun (_ : Fin 4) => ({1} : Set (Fin 4)))) :=
   sorryFull_not_de
 
 /-- *Glad* does not freely license NPIs: it is UE, so widening weakens.
 K&L: wanting a set to have members does not entail wanting each particular
 subset to have members. -/
-theorem glad_does_not_license (dox bestOf : World → Set World) :
+theorem glad_does_not_license (dox bestOf : Fin 4 → Set (Fin 4)) :
     Monotone (gladFull dox bestOf) :=
   gladFull_isUE dox bestOf
 

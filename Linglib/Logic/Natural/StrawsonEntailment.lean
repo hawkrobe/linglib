@@ -1,6 +1,5 @@
 import Mathlib.Order.Monotone.Defs
 import Linglib.Core.Order.AntiAdditive
-import Linglib.Logic.Natural.World
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -21,8 +20,7 @@ The substrate is polymorphic over `{W : Type*}`. The operators
 take a polymorphic world type and the corresponding presupposition /
 ordering / modal-base parameters in their natural mathlib types
 (`Set W`, `W → Set W`, `W → Prop`). Concrete counterexamples (proofs of
-the form "X is *not* classically DE") are specialized to the 4-element
-`World` enum from `Logic/Natural/World.lean` as a witness type, since
+the form "X is *not* classically DE") are specialized to `Fin 4` as a witness type, since
 non-DE-ness is an *existence* claim about some inhabited domain.
 
 ## Hierarchy
@@ -234,24 +232,24 @@ theorem onlyFull_isStrawsonAA {W : Type*} (x : W → Prop) :
 /--
 Ex. 11 (p. 101): `onlyFull` is NOT classically DE.
 
-Concrete counterexample over the toy 4-element `World`: take
+Concrete counterexample over the toy 4-element `Fin 4`: take
 `p = ∅` and `q = {w0}` with focus on `w0`. Then `p ⊆ q` and `onlyFull
 (· = w0) q w0` holds (w0 satisfies q and is the only such), but `onlyFull
 (· = w0) p w0` fails (the existence presup that someone satisfies p is
 unmet). Classical DE would require the conclusion to hold.
 -/
-theorem onlyFull_not_de : ¬ Antitone (onlyFull (· = World.w0)) := by
+theorem onlyFull_not_de : ¬ Antitone (onlyFull (· = (0 : Fin 4))) := by
   intro hDE
-  let p : Set World := fun _ => False
-  let q : Set World := fun w => w = .w0
+  let p : Set (Fin 4) := fun _ => False
+  let q : Set (Fin 4) := fun w => w = (0 : Fin 4)
   have hle : p ≤ q := fun _ h => h.elim
-  have hq_only : onlyFull (· = World.w0) q World.w0 := by
-    refine ⟨⟨World.w0, rfl, rfl⟩, ?_⟩
+  have hq_only : onlyFull (· = (0 : Fin 4)) q (0 : Fin 4) := by
+    refine ⟨⟨(0 : Fin 4), rfl, rfl⟩, ?_⟩
     intro y
-    by_cases h : y = World.w0
+    by_cases h : y = (0 : Fin 4)
     · left; exact h
     · right; intro hy; cases h hy
-  have h : onlyFull (· = World.w0) p World.w0 := @hDE p q hle World.w0 hq_only
+  have h : onlyFull (· = (0 : Fin 4)) p (0 : Fin 4) := @hDE p q hle (0 : Fin 4) hq_only
   rcases h with ⟨⟨_, _, hp_y⟩, _⟩
   exact hp_y
 
@@ -337,36 +335,36 @@ theorem sorryFull_isStrawsonAA {W : Type*} (dox bestOf : W → Set W) :
       · exact h_all_not_q w' hw' hq
 
 /-- Ex. 30 (p. 111): `sorry` is NOT classically DE. Concrete witness over
-    toy `World`: `dox w := {w}` (agent believes only actual world),
+    toy `Fin 4`: `dox w := {w}` (agent believes only actual world),
     `bestOf w := {w1}`, `p = ∅`, `q = {w0}`. Then `sorry q w0` holds but
     `sorry p w0` fails (doxastic factivity of empty p fails). -/
 theorem sorryFull_not_de :
     ¬ Antitone
-      (sorryFull (fun (w : World) => ({w} : Set World))
-                 (fun (_ : World) => ({World.w1} : Set World))) := by
+      (sorryFull (fun (w : Fin 4) => ({w} : Set (Fin 4)))
+                 (fun (_ : Fin 4) => (({1} : Set (Fin 4)) : Set (Fin 4)))) := by
   intro hDE
-  let p : Set World := fun _ => False
-  let q : Set World := fun w => w = .w0
+  let p : Set (Fin 4) := fun _ => False
+  let q : Set (Fin 4) := fun w => w = (0 : Fin 4)
   have hle : p ≤ q := fun _ h => h.elim
-  have hq_sorry : sorryFull (fun (w : World) => ({w} : Set World))
-      (fun (_ : World) => ({World.w1} : Set World)) q World.w0 := by
+  have hq_sorry : sorryFull (fun (w : Fin 4) => ({w} : Set (Fin 4)))
+      (fun (_ : Fin 4) => (({1} : Set (Fin 4)) : Set (Fin 4))) q (0 : Fin 4) := by
     refine ⟨?_, ?_⟩
     · intro w' hw'; rcases hw' with rfl; rfl
     · intro w' hw'; rcases hw' with rfl; intro h; cases h
-  have h : sorryFull (fun (w : World) => ({w} : Set World))
-      (fun (_ : World) => ({World.w1} : Set World)) p World.w0 :=
-    @hDE p q hle World.w0 hq_sorry
-  exact h.1 World.w0 rfl
+  have h : sorryFull (fun (w : Fin 4) => ({w} : Set (Fin 4)))
+      (fun (_ : Fin 4) => (({1} : Set (Fin 4)) : Set (Fin 4))) p (0 : Fin 4) :=
+    @hDE p q hle (0 : Fin 4) hq_sorry
+  exact h.1 (0 : Fin 4) rfl
 
 /-- `sorry` is Strawson-DE but NOT classically DE — the canonical adversative example. -/
 theorem sorryFull_strictly_strawsonDE :
     IsStrawsonDE
-      (sorryFull (fun (w : World) => ({w} : Set World))
-                 (fun (_ : World) => ({World.w1} : Set World)))
-      (fun p w => ∀ w' ∈ ({w} : Set World), p w') ∧
+      (sorryFull (fun (w : Fin 4) => ({w} : Set (Fin 4)))
+                 (fun (_ : Fin 4) => (({1} : Set (Fin 4)) : Set (Fin 4))))
+      (fun p w => ∀ w' ∈ ({w} : Set (Fin 4)), p w') ∧
     ¬ Antitone
-      (sorryFull (fun (w : World) => ({w} : Set World))
-                 (fun (_ : World) => ({World.w1} : Set World))) :=
+      (sorryFull (fun (w : Fin 4) => ({w} : Set (Fin 4)))
+                 (fun (_ : Fin 4) => (({1} : Set (Fin 4)) : Set (Fin 4)))) :=
   ⟨sorryFull_isStrawsonDE _ _, sorryFull_not_de⟩
 
 /-- `glad` (K&L eq. 50) is UE in its complement. -/
@@ -532,10 +530,10 @@ theorem wouldFull_isStrawsonAA {W : Type*} (domain : W → Set W) (q : Set W) :
 /-- Strawson-DE is *strictly* weaker than DE: `onlyFull` is the canonical
     witness — Strawson-DE without classical DE. -/
 theorem strawsonDE_strictly_weaker_than_DE :
-    ∃ (f : Set World → Set World) (defined : Set World → World → Prop),
+    ∃ (f : Set (Fin 4) → Set (Fin 4)) (defined : Set (Fin 4) → Fin 4 → Prop),
       IsStrawsonDE f defined ∧ ¬ Antitone f :=
-  ⟨onlyFull (· = World.w0),
-   fun scope _w => ∃ w', (w' = World.w0) ∧ scope w',
+  ⟨onlyFull (· = (0 : Fin 4)),
+   fun scope _w => ∃ w', (w' = (0 : Fin 4)) ∧ scope w',
    onlyFull_isStrawsonDE _,
    onlyFull_not_de⟩
 

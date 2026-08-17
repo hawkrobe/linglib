@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Order.AntiAdditive
 import Linglib.Logic.Natural.Basic
-import Linglib.Logic.Natural.World
 
 /-!
 # The Zwarts strength hierarchies

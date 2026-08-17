@@ -131,12 +131,12 @@ The licensing datum is `Examples.ex10`; the separation fails classically
 because the conclusion's existence presupposition is not guaranteed by
 the premise. -/
 
-/-- *Only John*, with the focus individual modeled as `· = World.w0`. -/
-def onlyJohn : Set World → Set World := onlyFull (· = World.w0)
+/-- *Only John*, with the focus individual modeled as `· = (0 : Fin 4)`. -/
+def onlyJohn : Set (Fin 4) → Set (Fin 4) := onlyFull (· = (0 : Fin 4))
 
 /-- *Only John*'s existence presupposition. -/
-def onlyJohnDefined (scope : Set World) (_w : World) : Prop :=
-  ∃ w', w' = World.w0 ∧ scope w'
+def onlyJohnDefined (scope : Set (Fin 4)) (_w : Fin 4) : Prop :=
+  ∃ w', w' = (0 : Fin 4) ∧ scope w'
 
 /-- Ex. 11 (p. 101): *only* is not classically downward entailing. -/
 theorem ex11_only_not_DE : ¬ Antitone onlyJohn :=
@@ -152,7 +152,7 @@ Iatridou's examples; the licensing datum is `Examples.ex21`. -/
 
 /-- Ex. 22 (p. 107): *since* is Strawson-DE in its complement, relative
 to the past-event presupposition. -/
-theorem ex22_since_strawsonDE (pastEvent sinceWindow : World → Set World) :
+theorem ex22_since_strawsonDE (pastEvent sinceWindow : Fin 4 → Set (Fin 4)) :
     IsStrawsonDE (sinceFull pastEvent sinceWindow)
       (fun p w => ∃ w' ∈ pastEvent w, p w') :=
   sinceFull_isStrawsonDE pastEvent sinceWindow
@@ -173,11 +173,11 @@ shift. -/
 
 section Adversatives
 
-variable (dox bestOf : World → Set World)
+variable (dox bestOf : Fin 4 → Set (Fin 4))
 
 /-- The substrate's DE-counterexample frame for `sorryFull`. -/
-def sorryFrame : Set World → Set World :=
-  sorryFull (fun w => ({w} : Set World)) (fun _ => ({World.w1} : Set World))
+def sorryFrame : Set (Fin 4) → Set (Fin 4) :=
+  sorryFull (fun w => ({w} : Set (Fin 4))) (fun _ => ({(1 : Fin 4)} : Set (Fin 4)))
 
 /-- Ex. 30 (p. 111): *sorry* is not classically DE in its complement. -/
 theorem ex30_sorry_not_DE : ¬ Antitone sorryFrame :=
@@ -204,8 +204,8 @@ theorem ex50_gladKL_isUE : Monotone (gladFull dox bestOf) :=
   gladFull_isUE dox bestOf
 
 /-- Ex. 52 (p. 124): *glad* on vF's replacement semantics is likewise upward entailing. -/
-theorem ex52_gladVF_isUE (dox relevant : World → Set World)
-    (lt : World → World → World → Prop) :
+theorem ex52_gladVF_isUE (dox relevant : Fin 4 → Set (Fin 4))
+    (lt : Fin 4 → Fin 4 → Fin 4 → Prop) :
     Monotone (gladFullVF dox relevant lt) :=
   gladFullVF_isUE dox relevant lt
 
@@ -229,14 +229,14 @@ datum is `Examples.ex70a`. -/
 /-- Ex. 72 (p. 137): with an idle ordering source, `condNecessity` is
 classically DE in its antecedent. -/
 theorem ex72_conditional_antecedent_DE
-    (domain : World → Set World) (β : Set World) :
+    (domain : (Fin 4) → Set (Fin 4)) (β : Set (Fin 4)) :
     Antitone (fun α => condNecessity domain α β) :=
   conditional_antecedent_antitone domain β
 
 /-- Restrictor-style conditional antecedents are a fortiori Strawson-DE. -/
 theorem conditional_antecedent_strawsonDE_under_restrictor
-    (domain : World → Set World) (β : Set World)
-    (defined : Set World → World → Prop) :
+    (domain : (Fin 4) → Set (Fin 4)) (β : Set (Fin 4))
+    (defined : Set (Fin 4) → (Fin 4) → Prop) :
     IsStrawsonDE (fun α => condNecessity domain α β) defined :=
   conditional_antecedent_strawsonDE domain β defined
 
@@ -247,7 +247,7 @@ position is not classically DE; predicative use only (`Examples.ex75`),
 the definite-description use (ex. 80) lacking local Strawson-DE. -/
 
 /-- Ex. 77 (p. 139): the superlative is Strawson-DE in its restriction position. -/
-theorem ex77_superlative_strawsonDE (α : World) :
+theorem ex77_superlative_strawsonDE (α : (Fin 4)) :
     IsStrawsonDE (superlativeAssert α) (superlativePresup α) :=
   superlative_isStrawsonDE α
 
@@ -259,11 +259,11 @@ asymmetry from the same substrate theorems under different prose; the
 `example`s check the statement identity by discharging this file's
 statements with K&L's proof terms. -/
 
-example (dox bestOf : World → Set World) :
+example (dox bestOf : Fin 4 → Set (Fin 4)) :
     IsStrawsonDE (sorryFull dox bestOf) (fun p w => ∀ w' ∈ dox w, p w') :=
   KadmonLandman1993.sorry_licenses_any dox bestOf
 
-example (dox bestOf : World → Set World) :
+example (dox bestOf : Fin 4 → Set (Fin 4)) :
     Monotone (gladFull dox bestOf) :=
   KadmonLandman1993.glad_does_not_license dox bestOf
 
@@ -289,7 +289,7 @@ theorem bridge_hoeksema_gtOverSet_strawsonDE
 
 (15) (p. 104) excludes by individual identity, `onlyVia` by proposition
 identity; they coincide over an injective individual-generated family.
-World-constant propositions (the extensional `onlyFull`) fail
+(Fin 4)-constant propositions (the extensional `onlyFull`) fail
 injectivity wholesale, so the bridge is stated intensionally. -/
 
 section OnlyViaBridge
