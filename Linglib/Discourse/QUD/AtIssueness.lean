@@ -1,5 +1,6 @@
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Core.Order.Boundedness
+import Linglib.Core.Order.Comparison
 import Linglib.Core.Order.Rat01
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Linarith
@@ -26,18 +27,19 @@ abbrev AtIssuenessThreshold := Rat01
 /-- Contextual threshold for projectivity classification. -/
 abbrev ProjectivityThreshold := Rat01
 /-! ### Threshold Semantics -/
-/-- Content is at-issue when its degree exceeds the threshold. -/
+/-- Content is at-issue when its degree exceeds the threshold — the
+    `Core.Order.Comparison.gt.over` face of the scale. -/
 def isAtIssue (d : AtIssuenessDegree) (θ : AtIssuenessThreshold) : Prop :=
-  Rat01.exceeds d θ
+  d ∈ Core.Order.Comparison.gt.over Subtype.val θ.val
 instance (d : AtIssuenessDegree) (θ : AtIssuenessThreshold) :
     Decidable (isAtIssue d θ) :=
-  inferInstanceAs (Decidable (Rat01.exceeds d θ))
+  inferInstanceAs (Decidable (θ.val < d.val))
 /-- Content is projective when its projectivity degree exceeds the threshold. -/
 def isProjective (d : ProjectivityDegree) (θ : ProjectivityThreshold) : Prop :=
-  Rat01.exceeds d θ
+  d ∈ Core.Order.Comparison.gt.over Subtype.val θ.val
 instance (d : ProjectivityDegree) (θ : ProjectivityThreshold) :
     Decidable (isProjective d θ) :=
-  inferInstanceAs (Decidable (Rat01.exceeds d θ))
+  inferInstanceAs (Decidable (θ.val < d.val))
 /-! ### Classical Recovery -/
 /-- Binary at-issueness, recoverable from gradient degree + threshold. -/
 inductive AtIssuenessClassical where
@@ -48,9 +50,9 @@ inductive AtIssuenessClassical where
 def toClassical (d : AtIssuenessDegree) (θ : AtIssuenessThreshold) : AtIssuenessClassical :=
   if isAtIssue d θ then .atIssue else .notAtIssue
 /-- Default threshold at 0.5, matching the midpoint of the [0, 1] scale. -/
-def defaultThreshold : AtIssuenessThreshold := Rat01.half
+def defaultThreshold : AtIssuenessThreshold := ⟨1/2, by norm_num, by norm_num⟩
 /-- Default projectivity threshold at 0.5. -/
-def defaultProjectivityThreshold : ProjectivityThreshold := Rat01.half
+def defaultProjectivityThreshold : ProjectivityThreshold := ⟨1/2, by norm_num, by norm_num⟩
 /-! ### Anti-Correlation -/
 /-- A pair of at-issueness and projectivity ratings for a single expression. -/
 structure GradientPair where

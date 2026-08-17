@@ -50,12 +50,11 @@ structure ProjectionDatum where
   projectivity : Rat01
   atIssueness  : Rat01
   source       : SourceRef
-  deriving Repr
 
 /-- Not-at-issueness is the complement of at-issueness — the quantity the GPP
     equates with projectivity. -/
 def ProjectionDatum.notAtIssueness (d : ProjectionDatum) : Rat01 :=
-  Rat01.symm d.atIssueness
+  Set.Icc.symm d.atIssueness
 
 /-! ### `LinguisticExample` adapter -/
 
@@ -76,7 +75,7 @@ def parsePercent (s : String) : Option Rat01 :=
 def readAtIssueness (pf : List (String × String)) : Option Rat01 :=
   match pf.lookup "atIssueness" with
   | some s => parsePercent s
-  | none => ((pf.lookup "notAtIssueness").bind parsePercent).map Rat01.symm
+  | none => ((pf.lookup "notAtIssueness").bind parsePercent).map Set.Icc.symm
 
 /-- Lift a `LinguisticExample` to a `ProjectionDatum` via its `expression`,
     `projectivity`, and (`atIssueness` or `notAtIssueness`) keys; `none` if any

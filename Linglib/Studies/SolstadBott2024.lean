@@ -259,7 +259,7 @@ theorem gpp_underpredicts_above_diagonal (d : ProjectionDatum)
     (h : d.notAtIssueness.val < d.projectivity.val) :
     (TonhauserBeaverDegen2018.gppProjection d.atIssueness).val < d.projectivity.val := by
   simp only [TonhauserBeaverDegen2018.gppProjection,
-    ProjectionDatum.notAtIssueness, Rat01.coe_symm_eq] at *
+    ProjectionDatum.notAtIssueness, Set.Icc.coe_symm_eq] at *
   linarith
 
 end SolstadBott2024
