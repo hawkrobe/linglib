@@ -53,6 +53,10 @@ def zero : Rat01 := ⟨0, by norm_num, by norm_num⟩
 /-- The endpoint 1. -/
 def one : Rat01 := ⟨1, by norm_num, by norm_num⟩
 
+/-- The endpoints are distinct: `zero < one`. -/
+theorem zero_lt_one : zero < one := by
+  rw [zero, one, Subtype.mk_lt_mk]; norm_num
+
 /-- The midpoint ½, the standard default threshold. -/
 def half : Rat01 := ⟨1/2, by norm_num, by norm_num⟩
 

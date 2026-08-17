@@ -1,7 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Copular
 import Linglib.Core.Order.Rat01
-import Linglib.Data.Examples.DegenTonhauser2021
 import Mathlib.Order.Monotone.Basic
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.NormNum
@@ -20,34 +19,24 @@ contents, higher-prior content projects more, at the group **and** the individua
 level.
 
 The deep claim is structural: projection tracks prior credence *monotonically*.
-We make that the pivot. An account is **prior-sensitive** when it is monotone in
-prior credence (`PriorSensitive`); such an account predicts the observed
-per-content modulation by its very shape (`sensitive_predicts_modulation`),
-whereas the prior-*insensitive* null account predicts no modulation at all
+An account is **prior-sensitive** when it is monotone in prior credence
+(`PriorSensitive`); such an account predicts the observed per-content modulation
+by its very shape (`sensitive_predicts_modulation`), whereas the
+prior-*insensitive* null account predicts no modulation at all
 (`priorInsensitive_not_sensitive`). This is the account family the paper argues
 for — projection as a posterior credence in a Bayesian / RSA listener
-([qing-goodman-lassiter-2016], [goodman-frank-2016]). It is the *prior* analogue
-of the at-issueness predictor of projection in [tonhauser-beaver-degen-2018]:
-both are gradient `Rat01 → Rat01` maps into the same projection space.
+([qing-goodman-lassiter-2016], [goodman-frank-2016]) — and the prior analogue of
+the at-issueness predictor of projection in [tonhauser-beaver-degen-2018]: both
+are gradient `Rat01 → Rat01` maps into the same projection space. The experiment
+1 by-predicate means (`certaintyHigh`, `certaintyLow`, `priorHigh`, `priorLow`,
+computed from `results/9-prior-projection/data/cd.csv` at
+github.com/judith-tonhauser/projective-probability, n = 286) realize the
+modulation for every predicate (`prior_modulates_projection`), refuting the null
+account (`certaintyLow_ne_certaintyHigh`); the predicates are bridged to their
+Fragment lexical entries (`toVerbEntry`, `toPredicateCore`,
+`all_predicates_take_clause_complement`).
 
-## Main definitions
-* `Predicate` — the 20 clause-embedding predicates (Figure 1C).
-* `PriorAccount := Rat01 → Rat01` — predict projection strength from prior credence.
-* `PriorSensitive` / `priorInsensitive` — the monotone account family vs. the
-  constant null.
-* `ProjectionByPrior` — a per-predicate datum (high/low-prior mean certainty and
-  prior credence), lifted from `Data.Examples.DegenTonhauser2021`.
-
-## Main results
-* `sensitive_predicts_modulation`, `priorInsensitive_not_sensitive`,
-  `priorInsensitive_no_modulation` — the modulation is derived from account shape.
-* `#guard`s over `Examples.all` build-check that every predicate shows higher
-  prior **and** higher projection in the high condition (the core finding).
-* `all_predicates_take_clause_complement` and the coverage lemmas — every
-  predicate is realized by a Fragment entry taking a finite clause.
-
-## Empirical findings (prose, per [degen-tonhauser-2021])
-Regression coefficients are documented here, not encoded as theorems. Experiment 1
+Regression detail, documented as prose rather than theorems. Experiment 1
 (within-participant, N = 286): the prior manipulation was successful (β = 0.45,
 SE = 0.01, t = 31.12), and prior probability predicted projection at every level —
 categorical high/low fact (β = 0.14, t = 12.24), group-level continuous prior
@@ -60,21 +49,11 @@ Experiment 2 (between-participant) replicated the effect: prior manipulation
 β = 0.54 (t = 15.07; Exp 2a, N = 75; prior ratings r = .977 with Exp 1) and
 projection β = 0.18 categorical / β = 0.34 group-level (t = 12.81 / 13.27; Exp 2b,
 N = 266). The main-clause control projected at floor (mean certainty 0.21).
-
-## Implementation notes
-Per-predicate mean certainty (projection) and prior credence are computed from the
-authors' data (`results/9-prior-projection/data/cd.csv` at
-github.com/judith-tonhauser/projective-probability, n = 286) and stored in
-`Data.Examples.DegenTonhauser2021`; degrees use the shared `Core.Order.Rat01`
-projection space. The continuous data is checked by `#guard` (string-keyed
-`paperFeatures` do not kernel-reduce); the provable content is the account-shape
-theorems. Predicates are bridged to their Fragment lexical entries.
 -/
 
 namespace DegenTonhauser2021
 
 open Core.Order
-open Data.Examples (LinguisticExample)
 
 /-! ### The 20 clause-embedding predicates -/
 
@@ -109,11 +88,6 @@ def priorInsensitive (c : Rat01) : PriorAccount := fun _ => c
     credence — the structural form of the paper's positive prior coefficient. -/
 def PriorSensitive (acc : PriorAccount) : Prop := StrictMono acc
 
-/-- The endpoints of the prior scale are distinct, so a constant account is
-    detectably non-modulating. -/
-theorem rat01_zero_lt_one : (Rat01.zero : Rat01) < Rat01.one := by
-  rw [Rat01.zero, Rat01.one, Subtype.mk_lt_mk]; norm_num
-
 /-- The null account predicts identical projection for any two priors. -/
 theorem priorInsensitive_no_modulation (c p q : Rat01) :
     priorInsensitive c p = priorInsensitive c q := rfl
@@ -121,7 +95,7 @@ theorem priorInsensitive_no_modulation (c p q : Rat01) :
 /-- The null account is not prior-sensitive: it cannot produce the observed gap. -/
 theorem priorInsensitive_not_sensitive (c : Rat01) :
     ¬ PriorSensitive (priorInsensitive c) :=
-  fun h => lt_irrefl c (h rat01_zero_lt_one)
+  fun h => lt_irrefl c (h Rat01.zero_lt_one)
 
 /-- A prior-sensitive account predicts stronger projection for higher-prior
     content — the modulation, derived from the account's shape, not stipulated. -/
@@ -130,57 +104,123 @@ theorem sensitive_predicts_modulation {acc : PriorAccount} (h : PriorSensitive a
 
 /-! ### Data: prior modulates projection for every predicate
 
-The per-predicate means (`Data.Examples.DegenTonhauser2021`) show, for all 20
-predicates, both a higher prior credence and a higher projection in the high
-condition — the joint pattern a prior-sensitive account predicts and the null
-account rules out. -/
+By-predicate means from experiment 1, computed from
+`results/9-prior-projection/data/cd.csv` at
+github.com/judith-tonhauser/projective-probability (n = 286 participants) and
+rounded to two decimals. Contents were paired with predicates at random per
+participant, so the prior means average over the contents each predicate
+appeared with. -/
 
-/-- Parse a percent-integer string (e.g. `"69"`) into a `Rat01`. -/
-private def parsePct (s : String) : Option Rat01 :=
-  match s.toNat? with
-  | some n =>
-      if h : n ≤ 100 then
-        some ⟨(n : ℚ) / 100, by positivity,
-          by rw [div_le_one (by norm_num)]; exact_mod_cast h⟩
-      else none
-  | none => none
+/-- Mean certainty rating (projection) by predicate under the higher-probability
+    fact (experiment 1 projection block, Figure 3; nonprojective main-clause
+    control mean 0.21). -/
+def certaintyHigh : Predicate → ℚ
+  | .acknowledge => 0.65
+  | .admit => 0.60
+  | .announce => 0.53
+  | .beAnnoyed => 0.80
+  | .beRight => 0.34
+  | .confess => 0.58
+  | .confirm => 0.37
+  | .demonstrate => 0.48
+  | .discover => 0.69
+  | .establish => 0.43
+  | .hear => 0.72
+  | .inform => 0.76
+  | .know => 0.74
+  | .pretend => 0.31
+  | .prove => 0.41
+  | .reveal => 0.62
+  | .say => 0.38
+  | .see => 0.69
+  | .suggest => 0.32
+  | .think => 0.40
 
-/-- A per-predicate projection datum: mean certainty (projection) and prior
-    credence in the higher- vs. lower-probability conditions. -/
-structure ProjectionByPrior where
-  predicate     : String
-  certaintyHigh : Rat01
-  certaintyLow  : Rat01
-  priorHigh     : Rat01
-  priorLow      : Rat01
-  deriving Repr
+/-- Mean certainty rating by predicate under the lower-probability fact. -/
+def certaintyLow : Predicate → ℚ
+  | .acknowledge => 0.49
+  | .admit => 0.43
+  | .announce => 0.41
+  | .beAnnoyed => 0.68
+  | .beRight => 0.20
+  | .confess => 0.45
+  | .confirm => 0.28
+  | .demonstrate => 0.33
+  | .discover => 0.55
+  | .establish => 0.27
+  | .hear => 0.57
+  | .inform => 0.57
+  | .know => 0.68
+  | .pretend => 0.21
+  | .prove => 0.25
+  | .reveal => 0.47
+  | .say => 0.22
+  | .see => 0.60
+  | .suggest => 0.24
+  | .think => 0.20
 
-/-- Lift a `LinguisticExample` row to a `ProjectionByPrior`. -/
-def fromExample (e : LinguisticExample) : Option ProjectionByPrior :=
-  match e.paperFeatures.lookup "predicate",
-        (e.paperFeatures.lookup "certaintyHigh").bind parsePct,
-        (e.paperFeatures.lookup "certaintyLow").bind parsePct,
-        (e.paperFeatures.lookup "priorHigh").bind parsePct,
-        (e.paperFeatures.lookup "priorLow").bind parsePct with
-  | some p, some ch, some cl, some ph, some pl =>
-      some { predicate := p, certaintyHigh := ch, certaintyLow := cl,
-             priorHigh := ph, priorLow := pl }
-  | _, _, _, _, _ => none
+/-- Mean prior probability rating of the complement content given the
+    higher-probability fact (experiment 1 prior block). -/
+def priorHigh : Predicate → ℚ
+  | .acknowledge => 0.67
+  | .admit => 0.68
+  | .announce => 0.72
+  | .beAnnoyed => 0.71
+  | .beRight => 0.69
+  | .confess => 0.69
+  | .confirm => 0.68
+  | .demonstrate => 0.62
+  | .discover => 0.72
+  | .establish => 0.69
+  | .hear => 0.69
+  | .inform => 0.72
+  | .know => 0.68
+  | .pretend => 0.70
+  | .prove => 0.67
+  | .reveal => 0.69
+  | .say => 0.69
+  | .see => 0.67
+  | .suggest => 0.69
+  | .think => 0.66
 
-/-- The pooled per-predicate data. -/
-def allData : List ProjectionByPrior := Examples.all.filterMap fromExample
+/-- Mean prior probability rating given the lower-probability fact. -/
+def priorLow : Predicate → ℚ
+  | .acknowledge => 0.24
+  | .admit => 0.24
+  | .announce => 0.26
+  | .beAnnoyed => 0.23
+  | .beRight => 0.26
+  | .confess => 0.20
+  | .confirm => 0.21
+  | .demonstrate => 0.26
+  | .discover => 0.26
+  | .establish => 0.23
+  | .hear => 0.24
+  | .inform => 0.25
+  | .know => 0.25
+  | .pretend => 0.20
+  | .prove => 0.24
+  | .reveal => 0.25
+  | .say => 0.22
+  | .see => 0.21
+  | .suggest => 0.22
+  | .think => 0.19
 
-/-- Higher prior credence in the high condition (the manipulation held). -/
-def priorIsHigher (d : ProjectionByPrior) : Bool := decide (d.priorLow.val < d.priorHigh.val)
+/-- Prior credence and projection are both higher under the higher-probability
+    fact for every predicate (Figure 3): the manipulation held and projection
+    tracked it — the joint pattern a prior-sensitive account predicts
+    (`sensitive_predicts_modulation`) and the null account rules out. -/
+theorem prior_modulates_projection (p : Predicate) :
+    priorLow p < priorHigh p ∧ certaintyLow p < certaintyHigh p := by
+  cases p <;> exact ⟨by norm_num [priorLow, priorHigh],
+    by norm_num [certaintyLow, certaintyHigh]⟩
 
-/-- Higher projection in the high condition (the modulation). -/
-def priorModulates (d : ProjectionByPrior) : Bool :=
-  decide (d.certaintyLow.val < d.certaintyHigh.val)
-
--- Build-checked: all 20 predicates parse, and each shows both a higher prior
--- credence and a higher projection in the high-probability condition.
-#guard allData.length = 20
-#guard allData.all (fun d => priorIsHigher d && priorModulates d)
+/-- The null account predicts equal certainty across the prior manipulation
+    (`priorInsensitive_no_modulation`); the observed certainties differ for
+    every predicate. -/
+theorem certaintyLow_ne_certaintyHigh (p : Predicate) :
+    certaintyLow p ≠ certaintyHigh p :=
+  (prior_modulates_projection p).2.ne
 
 /-! ### Fragment bridge -/
 
@@ -213,6 +253,11 @@ def toVerbEntry : Predicate → Option VerbEntry
   | .beAnnoyed => none
   | .beRight => none
 
+/-- The two copular predicates are exactly the ones without a `VerbEntry`. -/
+theorem toVerbEntry_eq_none_iff (p : Predicate) :
+    toVerbEntry p = none ↔ p = .beAnnoyed ∨ p = .beRight := by
+  cases p <;> simp [toVerbEntry]
+
 /-- Map each predicate to its `Verb` — the semantic spine shared by verbal and
     copular entries. Covers all 20; copular entries go through
     `ClauseEmbeddingAdj.toVerb`. -/
@@ -237,22 +282,6 @@ def toPredicateCore : Predicate → Verb
   | .prove => prove.toVerb
   | .beAnnoyed => beAnnoyed.toVerb
   | .beRight => beRight.toVerb
-
-/-- All 20 predicates (alphabetical). -/
-def allPredicates : List Predicate :=
-  [.acknowledge, .admit, .announce, .beAnnoyed, .beRight,
-   .confess, .confirm, .demonstrate, .discover, .establish,
-   .hear, .inform, .know, .pretend, .prove,
-   .reveal, .say, .see, .suggest, .think]
-
-/-- All 20 predicates are listed. -/
-theorem full_coverage : allPredicates.length = 20 := rfl
-
-/-- 18 of 20 predicates have `VerbEntry` entries (all except copular
-    `beAnnoyed` and `beRight`). -/
-theorem verbEntry_coverage :
-    (allPredicates.filter (fun p => (toVerbEntry p).isSome)).length = 18 := by
-  decide
 
 /-- Every predicate takes a finite clause complement (as primary or alternate
     frame), matching the experimental design. -/
