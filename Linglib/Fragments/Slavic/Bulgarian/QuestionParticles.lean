@@ -25,10 +25,11 @@ def li : Particle where
   form := "li"
   script := some "ли"
   position := some .secondPosition
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
 /-- нима nima — mirative/dubitative particle (RAZVE family, [simik-2024]
 §4.2.4). Expresses incredulity: speaker encounters evidence conflicting
@@ -38,10 +39,11 @@ def nima : Particle where
   form := "nima"
   script := some "нима"
   position := some .clauseInitial
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
 def allQuestionParticles : List Particle := [li, nima]
 

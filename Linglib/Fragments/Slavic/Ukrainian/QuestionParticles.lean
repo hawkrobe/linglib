@@ -24,10 +24,11 @@ def cy : Particle where
   form := "čy"
   script := some "чи"
   position := some .clauseInitial
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .obligatory
-      constituentInterrogative := some .optional }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .obligatory
+    | .constituent, .matrix => some .optional
+    | _, _ => none
 
 /-- хіба xiba — mirative/dubitative particle (RAZVE family, [simik-2024]
 §4.2.4). Ukrainian cognate of Russian razve: indicates conflict between
@@ -37,10 +38,11 @@ def xiba : Particle where
   form := "xiba"
   script := some "хіба"
   position := some .clauseInitial
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
 def allQuestionParticles : List Particle := [cy, xiba]
 

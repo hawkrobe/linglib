@@ -17,11 +17,14 @@ only ([dayal-2025] pp. 670-671, the MQP class), ungrammatical embedded
 def quick : Particle where
   form := "quick"
   position := some .clauseInitial
-  embedding :=
-    { matrix := some .optional
-      subordinated := some .excluded
-      quasiSubordinated := some .excluded
-      quotation := some .optional }
+  distribution := fun c e => match c with
+    | .polar | .alternative | .constituent =>
+      match e with
+      | .matrix => some .optional
+      | .subordinated => some .excluded
+      | .quasiSubordinated => some .excluded
+      | .quotation => some .optional
+    | _ => none
 
 def allQuestionParticles : List Particle := [quick]
 

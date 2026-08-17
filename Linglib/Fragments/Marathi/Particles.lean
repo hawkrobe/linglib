@@ -21,11 +21,12 @@ and the preferential-vs-doxastic classification live in
 def bara : Particle where
   form := "bərə"
   position := some .clauseFinal
-  distribution :=
-    { declarative := some .optional
-      polarInterrogative := some .excluded
-      constituentInterrogative := some .optional
-      imperative := some .optional }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .optional
+    | .polar, .matrix => some .excluded
+    | .constituent, .matrix => some .optional
+    | .imperative, .matrix => some .optional
+    | _, _ => none
 
 /-- *na* — utterance-final particle analyzed in [deo-2023] as
 signalling preference for *independent* shared commitment (the doxastic
@@ -35,8 +36,9 @@ mirror of *bərə*). Only the imperative-augmenting use is attested in
 def na : Particle where
   form := "na"
   position := some .clauseFinal
-  distribution :=
-    { imperative := some .optional }
+  distribution := fun c e => match c, e with
+    | .imperative, .matrix => some .optional
+    | _, _ => none
 
 /-- All Marathi utterance-final particles indexed in this file. -/
 def allParticles : List Particle := [bara, na]

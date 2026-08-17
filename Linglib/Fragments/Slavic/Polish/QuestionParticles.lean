@@ -22,10 +22,11 @@ Verb-initial PQs possible but unacceptable in quiz scenarios. -/
 def czy : Particle where
   form := "czy"
   position := some .clauseInitial
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .obligatory
-      constituentInterrogative := some .optional }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .obligatory
+    | .constituent, .matrix => some .optional
+    | _, _ => none
 
 /-- czyżby — mirative/dubitative particle (RAZVE family, [simik-2024]
 §4.2.4). Polish member of the cross-Slavic razve family. Evidential
@@ -33,10 +34,11 @@ classification in `Simik2024`. -/
 def czyzby : Particle where
   form := "czyżby"
   position := some .clauseInitial
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
 def allQuestionParticles : List Particle := [czy, czyzby]
 
