@@ -19,10 +19,11 @@ default PQs; incompatible with DeclPQs. -/
 def ali : Particle where
   form := "ali"
   position := some .clauseInitial
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
 def allQuestionParticles : List Particle := [ali]
 

@@ -24,10 +24,11 @@ def li : Particle where
   form := "li"
   script := some "ли"
   position := some .secondPosition
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
 /-- разве razve — mirative/dubitative question particle ([simik-2024]
 §4.2.4). Indicates conflict between speaker's prior epistemic state and
@@ -37,10 +38,11 @@ def razve_ : Particle where
   form := "razve"
   script := some "разве"
   position := some .clauseInitial
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
 def allQuestionParticles : List Particle := [li, razve_]
 

@@ -33,10 +33,11 @@ signal and evidential bias live in `SeeligerRepp2018`. -/
 def val : Particle where
   form := "väl"
   position := some .clauseMedial
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
 def allQuestionParticles : List Particle := [val]
 

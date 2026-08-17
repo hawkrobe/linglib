@@ -12,8 +12,8 @@ questions and occupies a projection above CP (Bhatt and Dayal's ForceP,
 Dayal's later PerspP); it embeds only in quasi-subordination. Since
 nothing clause-types a bare embedded polar clause, subordinated polar
 questions require the overt alternative *ya: nahii:* "or not". This file
-provides the three particles as `Particle` values with clause-type and
-embedding facets.
+provides the three particles as `Particle` values with recorded
+licensing distributions.
 
 ## Main declarations
 
@@ -35,35 +35,37 @@ disjunction *ki* of alternative questions. -/
 def ki : Particle where
   form := "ki"
   position := some .clauseInitial
-  embedding :=
-    { matrix := some .excluded
-      subordinated := some .optional
-      quasiSubordinated := some .optional }
+  distribution := fun c e => match c with
+    | .declarative | .polar | .alternative | .constituent =>
+      match e with
+      | .matrix => some .excluded
+      | .subordinated => some .optional
+      | .quasiSubordinated => some .optional
+      | .quotation => none
+    | _ => none
 
 /-- *kya:* is a polar question particle. -/
 def kya : Particle where
   form := "kya:"
   position := some .free
-  distribution :=
-    { polarInterrogative := some .optional
-      alternativeInterrogative := some .optional
-      constituentInterrogative := some .excluded }
-  embedding :=
-    { matrix := some .optional
-      subordinated := some .excluded
-      quasiSubordinated := some .optional }
+  distribution := fun c e => match c, e with
+    | .polar, .matrix => some .optional
+    | .polar, .subordinated => some .excluded
+    | .polar, .quasiSubordinated => some .optional
+    | .alternative, .matrix => some .optional
+    | .constituent, _ => some .excluded
+    | _, _ => none
 
 /-- *ya: nahii:* "or not" is the overt disjunct forming a polar
 alternative question. -/
 def ya_nahi : Particle where
   form := "ya: nahii:"
   position := some .clauseFinal
-  distribution :=
-    { alternativeInterrogative := some .optional }
-  embedding :=
-    { matrix := some .optional
-      subordinated := some .obligatory
-      quasiSubordinated := some .optional }
+  distribution := fun c e => match c, e with
+    | .polar, .matrix => some .optional
+    | .polar, .subordinated => some .obligatory
+    | .polar, .quasiSubordinated => some .optional
+    | _, _ => none
 
 /-- All Hindi-Urdu question-formation particles indexed in this file. -/
 def allParticles : List Particle := [ki, kya, ya_nahi]

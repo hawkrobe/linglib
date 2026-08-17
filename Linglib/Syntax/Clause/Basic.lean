@@ -1,6 +1,7 @@
 import Linglib.Semantics.Mood.Defs
 import Linglib.Syntax.Clause.Complementation
 import Linglib.Features.Case.Basic
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The clause interface
@@ -88,6 +89,6 @@ inductive EmbeddingContext where
   /-- Embedded root-like interrogatives (Hindi-Urdu *kya:*). -/
   | quasiSubordinated
   | quotation
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 end Clause

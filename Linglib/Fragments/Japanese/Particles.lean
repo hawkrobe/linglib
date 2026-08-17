@@ -32,21 +32,28 @@ def ka : Particle where
   form := "ka"
   script := some "か"
   position := some .clauseFinal
-  embedding :=
-    { matrix := some .optional
-      subordinated := some .obligatory
-      quasiSubordinated := some .optional
-      quotation := some .optional }
+  distribution := fun c e => match c with
+    | .polar | .alternative | .constituent =>
+      match e with
+      | .matrix => some .optional
+      | .subordinated => some .obligatory
+      | .quasiSubordinated => some .optional
+      | .quotation => some .optional
+    | _ => none
 
 /-- *no* — clause-typing particle for questions (informal). -/
 def no_ : Particle where
   form := "no"
   script := some "の"
   position := some .clauseFinal
-  embedding :=
-    { matrix := some .optional
-      subordinated := some .optional
-      quasiSubordinated := some .optional }
+  distribution := fun c e => match c with
+    | .polar | .alternative | .constituent =>
+      match e with
+      | .matrix => some .optional
+      | .subordinated => some .optional
+      | .quasiSubordinated => some .optional
+      | .quotation => none
+    | _ => none
 
 /-- *koto* — complementizer for declarative clauses. Contrast with *ka*:
 having *ka* in the embedded clause suffices for interrogative
@@ -56,10 +63,11 @@ def koto : Particle where
   form := "koto"
   script := some "こと"
   position := some .clauseFinal
-  embedding :=
-    { matrix := some .excluded
-      subordinated := some .optional
-      quasiSubordinated := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .declarative, .subordinated => some .optional
+    | .declarative, .quasiSubordinated => some .excluded
+    | _, _ => none
 
 /-- *kke* — meta question particle (MQP). Only in matrix questions and
 quotations ([sauerland-yatsushiro-2017]). Has a "remind-me"
@@ -69,11 +77,14 @@ def kke : Particle where
   form := "kke"
   script := some "っけ"
   position := some .clauseFinal
-  embedding :=
-    { matrix := some .optional
-      subordinated := some .excluded
-      quasiSubordinated := some .excluded
-      quotation := some .optional }
+  distribution := fun c e => match c with
+    | .polar | .alternative | .constituent =>
+      match e with
+      | .matrix => some .optional
+      | .subordinated => some .excluded
+      | .quasiSubordinated => some .excluded
+      | .quotation => some .optional
+    | _ => none
 
 /-- *daroo* (だろう) — conjectural/epistemic copula.
 With declarative complement: "x thinks p" (⟦daroo⟧({p})(x) = INQ_x ⊆ {p}↓).
@@ -86,10 +97,14 @@ def daroo : Particle where
   form := "daroo"
   script := some "だろう"
   position := some .clauseFinal
-  embedding :=
-    { matrix := some .optional
-      subordinated := some .excluded
-      quasiSubordinated := some .optional }
+  distribution := fun c e => match c with
+    | .declarative | .polar =>
+      match e with
+      | .matrix => some .optional
+      | .subordinated => some .excluded
+      | .quasiSubordinated => some .optional
+      | .quotation => none
+    | _ => none
 
 def allParticles : List Particle := [ka, no_, koto, kke, daroo]
 

@@ -31,10 +31,11 @@ def ma : Particle where
   form := "ma"
   script := some "吗"
   position := some .clauseFinal
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .optional }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .optional
+    | _, _ => none
 
 /-- 吧 ba — confirmation-seeking particle. Speaker expects a positive
 answer and seeks confirmation, comparable to English tag questions
@@ -44,10 +45,11 @@ def ba : Particle where
   form := "ba"
   script := some "吧"
   position := some .clauseFinal
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
 /-- 难道 nándào — evidential question particle: marks that the speaker has
 encountered unexpected contextual evidence supporting the prejacent;
@@ -59,10 +61,11 @@ def nandao : Particle where
   form := "nándào"
   script := some "难道"
   position := some .clauseInitial
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
 def allQuestionParticles : List Particle := [ma, ba, nandao]
 
