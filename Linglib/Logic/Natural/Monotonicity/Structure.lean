@@ -10,20 +10,20 @@ import Mathlib.Order.Hom.Basic
 /-!
 # Domains for the monotonicity calculus
 
-The functional structures of the [icard-moss-tune-2017] monotonicity
-calculus: each marked type is interpreted as a preordered domain — base
-types by a given assignment, `+`-arrows as the monotone maps (`→o`),
-`−`-arrows as the antitone maps (`·ᵒᵈ →o ·`), unmarked arrows as all
-maps, each with the pointwise order — and each subtyping `σ ≤ τ` as an
-order-preserving coercion `castLE : Dom Db σ →o Dom Db τ`, functorial
-in `≤` (their Definition 3.5's coherence conditions, here theorems).
+This file interprets the marked types of the [icard-moss-tune-2017]
+monotonicity calculus as preordered domains: base types by a given
+assignment, `+`-arrows as the monotone maps (`→o`), `−`-arrows as the
+antitone maps (`·ᵒᵈ →o ·`), unmarked arrows as all maps, each with the
+pointwise order. Each subtyping `σ ≤ τ` is interpreted as an
+order-preserving coercion, functorial in `≤`.
 
 ## Main declarations
 
-* `Ty.Dom` — the domain interpretation of a marked type.
-* `Ty.castLE` — the coercion along subtyping: the identity on base
+* `Ty.Dom`: the domain interpretation of a marked type.
+* `Ty.castLE`: the coercion along subtyping — the identity on base
   types, conjugation by the inner coercions on arrows.
-* `Ty.castLE_rfl`, `Ty.castLE_castLE` — the functor laws.
+* `Ty.castLE_rfl`, `Ty.castLE_castLE`: the functor laws
+  ([icard-moss-tune-2017] Definition 3.5's coherence conditions).
 
 ## References
 

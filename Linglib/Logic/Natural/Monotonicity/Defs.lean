@@ -10,25 +10,21 @@ import Mathlib.Order.Lattice
 /-!
 # Marked types for the monotonicity calculus
 
-The type system of the [icard-moss-tune-2017] monotonicity calculus:
-simple types over a set of base types, with each arrow *marked* as
-monotone (`+`), antitone (`−`), or unmarked (`·`). `Marking` is a
-commutative monoid (valence composition, `+` the identity, `·`
-absorbing) and a join-semilattice with `·` on top; `Ty` carries
-the subtyping preorder `≤` — contravariant in domains, covariant in
-codomains and markings — under which a term of a smaller type can be
-coerced to any larger one (their Definition 3.2), together with the
-compatibility join `sup?` and the marking-erasure `unmark` (their
-Definition 3.3).
+This file defines the type system of the [icard-moss-tune-2017]
+monotonicity calculus: simple types over a set of base types, with
+each arrow marked as monotone (`+`), antitone (`−`), or unmarked
+(`·`).
 
 ## Main declarations
 
-* `Marking` — the three markings with their monoid and order.
-* `Ty` — marked simple types.
-* `Ty.instPartialOrder` — the subtyping order, decidable over a
+* `Marking`: the three markings — a commutative monoid under valence
+  composition (`+` the identity, `·` absorbing), and a
+  join-semilattice with `·` on top.
+* `Ty`: marked simple types, with the subtyping order — contravariant
+  in domains, covariant in codomains and markings — decidable over a
   `DecidableEq` base.
-* `Ty.sup?` — the partial join of compatible types.
-* `Ty.unmark` — erase the markings along the codomain spine.
+* `Ty.sup?`: the partial join of compatible types.
+* `Ty.unmark`: erasure of the markings along the codomain spine.
 
 ## References
 

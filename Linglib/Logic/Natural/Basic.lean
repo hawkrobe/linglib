@@ -8,48 +8,52 @@ import Mathlib.Data.Nat.Basic
 /-!
 # The natural-logic relation algebra
 
-The seven natural-logic relations (≡ ⊑ ⊒ ^ | ⌣ #) and the nine
-entailment signatures of [icard-2012], with the operations that run the
-calculus: `join` chains relations, `project` pushes a relation through
-a function of known signature, and `compose` — derived from `project`
-by probing, so `projection_composition` holds by construction — makes
-the signatures a monoid (identity `addMult`, `all` absorbing). `join`
-makes the relations one (identity `equiv`, `independent` absorbing;
-associativity is printed in neither source), and projection is an
-action of the signature monoid on the relations.
+This file defines the seven natural-logic relations between
+denotations (≡, ⊑, ⊒, ^, |, ⌣, #) and the nine entailment signatures
+of [icard-2012], with the operations of the projectivity calculus:
+chaining two relations, projecting a relation through a function of
+known signature, and composing signatures.
 
-Relations are read non-strictly: each is the conjunction of its
-`constraints` atoms, so distinct relations overlap and `≤` compares
-strength; [maccartney-manning-2009]'s seven mutually exclusive
-relations are the strict refinements. Both implication orders arise as
-reverse inclusion of constraint sets via `PartialOrder.lift`, with `#`
-(resp. `•`) at top and no bottom (`≡` does not entail the exclusion
-relations). Semantic certification lives in
-`Logic/Natural/Soundness.lean` (`Relation.Holds.join`, the `soundFor_*`
-rows) and `Logic/Natural/Completeness.lean` (tightness and the
-classification of the seven).
+A relation is read non-strictly, as the conjunction of its constraint
+atoms: distinct relations overlap, and `R ≤ R'` iff `R` entails `R'`,
+by reverse inclusion of constraint sets. The mutually exclusive seven
+of [maccartney-manning-2009] are the strict refinements. Signatures
+are ordered likewise by reverse inclusion of property sets; `#` and
+`•` are the tops, and there is no bottom.
 
 ## Main declarations
 
-* `Relation`, `Relation.join`, `Relation.constraints` — the relation
-  algebra: a monoid under `join`, ordered by reverse constraint
-  inclusion.
-* `Signature`, `Signature.project`, `Signature.compose` — signatures,
-  projection, and the composition monoid; projection is a
-  `MulAction Signature Relation`.
-* `Signature.contextProjectivity` — a position's signature as the
+* `Relation`: the seven relations, a monoid under `Relation.join` with
+  identity `equiv` and absorbing element `independent`.
+* `Relation.constraints`: a relation as a conjunction of atomic
+  lattice constraints; the source of the implication order.
+* `Signature`: the nine signatures, a monoid under `Signature.compose`
+  with identity `addMult` and absorbing element `all`.
+* `Signature.project`: projection of a relation through a signature —
+  an action of the signature monoid on the relations
+  (`MulAction Signature Relation`).
+* `Signature.contextProjectivity`: the signature of a position, as the
   monoid product along its path.
-* `ContextPolarity`, `Signature.toContextPolarity` — the coarse UE/DE
-  quotient, a monoid homomorphism target
-  (`toContextPolarity_compose`).
+* `ContextPolarity`: the coarse upward/downward quotient, a monoid
+  homomorphism target (`toContextPolarity_compose`).
+
+## Implementation notes
+
+`compose` is derived from `project` by probing at the relations
+`forward` and `negation`, so `projection_composition` holds by
+construction. Associativity of `join` is printed in neither source and
+is verified by `decide`. The tables are certified semantically in
+`Logic/Natural/Soundness.lean` (`Relation.Holds.join`, the
+`soundFor_*` rows) and shown tight in
+`Logic/Natural/Completeness.lean`, which also derives the seven
+relations as the nondegenerately realizable constraint conjunctions.
 
 ## References
 
 * [icard-2012] — the projectivity calculus: the relations, signatures,
   and tables this file implements.
-* [maccartney-manning-2009] — the extended natural-logic model; its
-  §3 join is exact relation composition, union-valued outside the
-  seven.
+* [maccartney-manning-2009] — the extended natural-logic model; its §3
+  join is exact relation composition, union-valued outside the seven.
 -/
 
 namespace NaturalLogic
