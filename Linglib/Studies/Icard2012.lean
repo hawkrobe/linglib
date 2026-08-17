@@ -20,6 +20,12 @@ and path computations illustrating the §2.4 context-projectivity
 mechanism. The tables' semantic soundness is certified once and for all
 in `Logic/Natural/Soundness.lean`; this file checks the implementations
 cell-by-cell against the paper's printed entries.
+
+The final sections formalize the ground fragment of the paper's
+projectivity calculus 𝒞 (§3.1) with its soundness theorem
+(Theorem 3.1), and the §3.2 worked fragment: the assumption set Γ, the
+derivation that *no* ⊑ *not every* is not an extra postulate, and a
+concrete model witnessing Γ's satisfiability.
 -/
 
 namespace Icard2012
@@ -143,5 +149,106 @@ example : negationSignature * negationSignature * negationSignature = negationSi
 example : negationSignature * .mult = .antiMult := rfl
 -- not(not(every …))-scope: ⊟ ∘ ◇⊟ ∘ ◇⊟ = ⊟
 example : .antiMult * negationSignature * negationSignature = .antiMult := rfl
+
+/-! ### The calculus 𝒞 of relations (§3.1)
+
+The ground fragment of the projectivity calculus: Reflexivity, the
+four Symmetry rules, Absurdity, and Composition, over an assumption
+set of relational statements. The Substitution rule needs the
+signature-typed term language and is not yet formalized; neither is
+the paper's closing observation that 𝒞 is incomplete (terms of
+additive and anti-additive type always alternate, underivably from
+`∅`) — completeness is left open there. -/
+
+section Calculus
+
+variable {ι : Type*}
+
+/-- The ground fragment of the projectivity calculus 𝒞
+([icard-2012] §3.1, p. 719), deriving relational statements between
+terms `ι` from an assumption set `Γ`. -/
+inductive Derives (Γ : ι → Relation → ι → Prop) : ι → Relation → ι → Prop
+  | ax {t R t'} : Γ t R t' → Derives Γ t R t'
+  | refl (t : ι) : Derives Γ t .forward t
+  | symm_forward {t t'} : Derives Γ t .forward t' → Derives Γ t' .reverse t
+  | symm_reverse {t t'} : Derives Γ t .reverse t' → Derives Γ t' .forward t
+  | symm_alternation {t t'} :
+      Derives Γ t .alternation t' → Derives Γ t' .alternation t
+  | symm_cover {t t'} : Derives Γ t .cover t' → Derives Γ t' .cover t
+  | absurd {t s s'} (R : Relation) :
+      Derives Γ t .alternation t → Derives Γ s R s'
+  | comp {t u v R S} :
+      Derives Γ t R u → Derives Γ u S v → Derives Γ t (R * S) v
+
+/-- [icard-2012]'s Theorem 3.1 for the ground fragment: a derivable
+statement holds in every `⊥`-free model of the assumptions.
+Composition is sound by `Relation.Holds.join`; Absurdity is the one
+rule needing nonvacuity, since `t | t` forces `⟦t⟧ = ⊥`. -/
+theorem Derives.sound {β : Type*} [DistribLattice β] [BoundedOrder β]
+    {Γ : ι → Relation → ι → Prop} {v : ι → β}
+    (hΓ : ∀ {t R t'}, Γ t R t' → R.Holds (v t) (v t'))
+    (hv : ∀ i, v i ≠ ⊥) {t R t'} (h : Derives Γ t R t') :
+    R.Holds (v t) (v t') := by
+  induction h with
+  | ax h => exact hΓ h
+  | refl t => exact le_refl _
+  | symm_forward _ ih => exact ih
+  | symm_reverse _ ih => exact ih
+  | symm_alternation _ ih => exact ih.symm
+  | symm_cover _ ih => exact ih.symm
+  | absurd _ _ ih => exact (hv _ (disjoint_self.mp ih)).elim
+  | comp _ _ ih₁ ih₂ => exact ih₁.join ih₂
+
+end Calculus
+
+/-! ### The worked fragment (§3.2)
+
+The paper's mini-lexicon and its assumption set Γ; the derivation that
+*no* ⊑ *not every* needs no extra postulate; and a concrete model over
+the three-atom Boolean algebra witnessing that Γ is satisfiable. -/
+
+/-- The constants of the §3.2 fragment that Γ relates. -/
+inductive Item where
+  | every | some | no | notEvery | safe | dangerous | giantSquid | cephalopod
+  deriving DecidableEq, Fintype, Repr
+
+/-- The §3.2 assumption set Γ: *every* ^ *not every*, *some* ^ *no*,
+*no* | *every*, *safe* | *dangerous*, *giant squid* ⊑ *cephalopod*. -/
+inductive Assumption : Item → Relation → Item → Prop
+  | everyNegNotEvery : Assumption .every .negation .notEvery
+  | someNegNo : Assumption .some .negation .no
+  | noAltEvery : Assumption .no .alternation .every
+  | safeAltDangerous : Assumption .safe .alternation .dangerous
+  | squidLeCephalopod : Assumption .giantSquid .forward .cephalopod
+
+/-- §3.2: *no* ⊑ *not every* is derivable, not postulated —
+Composition on *no* | *every* and *every* ^ *not every*, with
+`| ⋈ ^ = ⊑`. -/
+theorem derives_no_forward_notEvery :
+    Derives Assumption .no .forward .notEvery :=
+  .comp (.ax Assumption.noAltEvery) (.ax Assumption.everyNegNotEvery)
+
+/-- A model of the §3.2 assumptions over the three-atom Boolean
+algebra. -/
+def squidModel : Item → Finset (Fin 3)
+  | .every => {0}
+  | .notEvery => {1, 2}
+  | .some => {0, 2}
+  | .no => {1}
+  | .safe => {2}
+  | .dangerous => {0, 1}
+  | .giantSquid => {0}
+  | .cephalopod => {0, 1}
+
+theorem squidModel_models {t R t'} (h : Assumption t R t') :
+    R.Holds (squidModel t) (squidModel t') := by
+  cases h <;> decide
+
+theorem squidModel_ne_bot : ∀ i, squidModel i ≠ ⊥ := by decide
+
+-- Soundness applied: the derived statement holds in the model.
+example : squidModel .no ≤ squidModel .notEvery :=
+  derives_no_forward_notEvery.sound (λ h => squidModel_models h)
+    squidModel_ne_bot
 
 end Icard2012
