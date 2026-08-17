@@ -285,34 +285,21 @@ instance : OrderTop Signature where
   top := .all
   le_top _ := le_iff.mpr (Finset.empty_subset _)
 
-/--
-Projection of a NL relation through a function of given signature
-([icard-2012], Lemma 2.4).
-
-If xRy and f has signature φ, then f(x) [R]^φ f(y).
-Returns the ≪-maximal relation guaranteed to hold between f(x) and f(y).
-
-The table follows from the algebraic definitions:
-- Additive: f(x∨y) = f(x)∨f(y), f(1)=1 → preserves ∨ → [∧]^⊕ = ∼ (cover from x∨y=1)
-- Multiplicative: f(x∧y) = f(x)∧f(y), f(0)=0 → preserves ∧ → [|]^⊞ = | (disjoint from x∧y=0)
-- Anti-additive: f(x∨y) = f(x)∧f(y), f(1)=0 → [∼]^◇ = | (from x∨y=1 ⟹ f(x)∧f(y)=0)
-- Anti-multiplicative: f(x∧y) = f(x)∨f(y), f(0)=1 → [|]^⊟ = ∼ (from x∧y=0 ⟹ f(x)∨f(y)=1)
-- Mono/anti alone: only preserves ⊑/⊒; ^, |, ∼ all weaken to #
--/
+/-- The projection of a relation through a function of the given
+signature ([icard-2012] Definition 2.3, computed by his Lemma 2.4):
+the strongest relation guaranteed between `f x` and `f y` when `x R y`
+and `f` has signature `σ`. The rows are certified sound against the
+function classes in `Logic/Natural/Soundness.lean` (`soundFor_*`). -/
 def project : Relation → Signature → Relation
-  -- all (•): any function — projects everything to # ([icard-2012] Lemma 2.4)
   | _, .all => .independent
-  -- addMult (⊕⊞): full morphism, preserves all 7 relations
   | r, .addMult => r
-  -- antiAddMult (◇⊟): full anti-morphism — swaps | ↔ ∼, preserves ^
   | .equiv, .antiAddMult => .equiv
   | .forward, .antiAddMult => .reverse
   | .reverse, .antiAddMult => .forward
   | .negation, .antiAddMult => .negation
-  | .alternation, .antiAddMult => .cover        -- x∧y=0 ⟹ f(x)∨f(y)=1
-  | .cover, .antiAddMult => .alternation         -- x∨y=1 ⟹ f(x)∧f(y)=0
+  | .alternation, .antiAddMult => .cover
+  | .cover, .antiAddMult => .alternation
   | .independent, .antiAddMult => .independent
-  -- mono (+): preserves ⊑/⊒ only; ^, |, ∼ all weaken to #
   | .equiv, .mono => .equiv
   | .forward, .mono => .forward
   | .reverse, .mono => .reverse
@@ -320,7 +307,6 @@ def project : Relation → Signature → Relation
   | .alternation, .mono => .independent
   | .cover, .mono => .independent
   | .independent, .mono => .independent
-  -- anti (−): reverses ⊑↔⊒; ^, |, ∼ all weaken to #
   | .equiv, .anti => .equiv
   | .forward, .anti => .reverse
   | .reverse, .anti => .forward
@@ -328,37 +314,33 @@ def project : Relation → Signature → Relation
   | .alternation, .anti => .independent
   | .cover, .anti => .independent
   | .independent, .anti => .independent
-  -- additive (⊕): ∨-preserving → x∨y=1 ⟹ f(x)∨f(y)=1 (cover preserved)
   | .equiv, .additive => .equiv
   | .forward, .additive => .forward
   | .reverse, .additive => .reverse
-  | .negation, .additive => .cover              -- x∨y=1 ⟹ f(x)∨f(y)=1
-  | .alternation, .additive => .independent     -- x∧y=0 gives nothing
-  | .cover, .additive => .cover                  -- x∨y=1 ⟹ f(x)∨f(y)=1
+  | .negation, .additive => .cover
+  | .alternation, .additive => .independent
+  | .cover, .additive => .cover
   | .independent, .additive => .independent
-  -- antiAdd (◇): ∨→∧ — x∨y=1 ⟹ f(x)∧f(y)=0 (disjoint)
   | .equiv, .antiAdd => .equiv
   | .forward, .antiAdd => .reverse
   | .reverse, .antiAdd => .forward
-  | .negation, .antiAdd => .alternation          -- x∨y=1 ⟹ f(x)∧f(y)=0
-  | .alternation, .antiAdd => .independent       -- x∧y=0 gives nothing
-  | .cover, .antiAdd => .alternation             -- x∨y=1 ⟹ f(x)∧f(y)=0
+  | .negation, .antiAdd => .alternation
+  | .alternation, .antiAdd => .independent
+  | .cover, .antiAdd => .alternation
   | .independent, .antiAdd => .independent
-  -- mult (⊞): ∧-preserving → x∧y=0 ⟹ f(x)∧f(y)=0 (disjointness preserved)
   | .equiv, .mult => .equiv
   | .forward, .mult => .forward
   | .reverse, .mult => .reverse
-  | .negation, .mult => .alternation             -- x∧y=0 ⟹ f(x)∧f(y)=0
-  | .alternation, .mult => .alternation          -- x∧y=0 ⟹ f(x)∧f(y)=0
-  | .cover, .mult => .independent                -- x∨y=1 gives nothing
+  | .negation, .mult => .alternation
+  | .alternation, .mult => .alternation
+  | .cover, .mult => .independent
   | .independent, .mult => .independent
-  -- antiMult (⊟): ∧→∨ — x∧y=0 ⟹ f(x)∨f(y)=1 (cover)
   | .equiv, .antiMult => .equiv
   | .forward, .antiMult => .reverse
   | .reverse, .antiMult => .forward
-  | .negation, .antiMult => .cover               -- x∧y=0 ⟹ f(x)∨f(y)=1
-  | .alternation, .antiMult => .cover            -- x∧y=0 ⟹ f(x)∨f(y)=1
-  | .cover, .antiMult => .independent            -- x∨y=1 gives nothing
+  | .negation, .antiMult => .cover
+  | .alternation, .antiMult => .cover
+  | .cover, .antiMult => .independent
   | .independent, .antiMult => .independent
 
 /-- Every signature except • preserves equiv (• is the class of arbitrary
@@ -524,17 +506,11 @@ end Signature
 
 /-! ### Projection composition -/
 
-/--
-Projection composition ([icard-2012], Corollary 2.12).
-
-Projecting through f then g is the same as projecting through g∘f.
-This is the compositionality principle: nested function application
-corresponds to signature composition.
-
-Since `compose` is derived from `project` (via `fromProjectionPair`),
-the only content of this theorem is that the two probe relations
-(forward, negation) suffice to determine the full projection table.
--/
+/-- Projecting through `φ` and then `ψ` projects through the composite
+signature ([icard-2012] Definition 2.6 and Lemma 2.7) — the `mul_smul`
+law of `MulAction Signature Relation`. Since `compose` is derived from
+`project` by probing at `forward` and `negation`, the content is that
+the two probes determine the whole table. -/
 theorem projection_composition (R : Relation) (φ ψ : Signature) :
     Signature.project (Signature.project R φ) ψ =
     Signature.project R (Signature.compose ψ φ) := by
