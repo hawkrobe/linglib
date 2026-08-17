@@ -1,7 +1,7 @@
 import Linglib.Logic.Natural.Basic
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Polarity.Item
-import Linglib.Logic.Natural.StrawsonEntailment
+import Linglib.Logic.Natural.Strawson.Basic
 import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Semantics.Supervaluation
 import Linglib.Studies.Ladusaw1979
@@ -47,7 +47,6 @@ namespace KadmonLandman1993
 open NaturalLogic
 open Polarity (LicensingContext)
 open Polarity (LicensingMechanism)
-open Entailment
 open Exhaustification.FreeChoice (Ctx existsInDomain
   widening_strengthens_in_de widening_weakens_in_ue)
 open Ladusaw1979 (licensingStrength)
@@ -158,7 +157,7 @@ factive presupposition means the DE pattern is Strawson, not classical. -/
 
 /-- *Sorry* licenses NPIs: it is Strawson-DE — DE with the perspective
 (`bestOf`) held constant. Imported from
-`StrawsonEntailment.sorryFull_isStrawsonDE`; consumed by `VonFintel1999`'s
+`sorryFull_isStrawsonDE`; consumed by `VonFintel1999`'s
 cross-framework bridge. -/
 theorem sorry_licenses_any (dox bestOf : Fin 4 → Set (Fin 4)) :
     IsStrawsonDE (sorryFull dox bestOf) (λ p w => ∀ w' ∈ dox w, p w') :=

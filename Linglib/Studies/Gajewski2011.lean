@@ -1,4 +1,4 @@
-import Linglib.Logic.Natural.StrawsonEntailment
+import Linglib.Logic.Natural.Strawson.Basic
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Polarity.Licensing
@@ -33,11 +33,11 @@ with "DE + scalar endpoint" (Conjecture 48).
 - §3.3 puzzle (eqs. 39-41): strong NPIs ungrammatical under SAA
   operators (`only`, conditionals, emotive factives). Documented in
   the section docstrings; the formal SAA results live in
-  `StrawsonEntailment.lean`.
+  `Strawson/Basic.lean`.
 - Appendix 1 SAA proofs for vF's recalcitrants — formalized:
   `onlyFull_isStrawsonAA`, `sorryFull_isStrawsonAA`,
   `condNecessity_isStrawsonAA`, `superlative_isStrawsonAA` (all in
-  `StrawsonEntailment.lean`). This file just cites them as
+  `Strawson/Basic.lean`). This file just cites them as
   `gaj2011_appendix1_*` for paper-citation indexing.
 - Conjecture (eq. 48): a DE scalar item is AA iff it is the endpoint
   of its scale. Documented in §3.3 docstring; the conjecture is
@@ -47,7 +47,7 @@ with "DE + scalar endpoint" (Conjecture 48).
   re-exported as `gaj2011_appendix2_AA_implies_intolerant`.
 - `wouldFull_isStrawsonAA` — Gajewski Appendix 1's actual `would`-with-
   non-vacuity-presupposition SAA result (in
-  `Logic/Natural/StrawsonEntailment.lean`).
+  `Logic/Natural/Strawson/Basic.lean`).
 - Strong-NPI registry consistency theorem
   (`gaj2011_strongNPIs_excluded_from_strawson_only_contexts`) —
   Gajewski's headline empirical claim made `decide`-checkable over the
@@ -87,7 +87,7 @@ with "DE + scalar endpoint" (Conjecture 48).
 
 namespace Gajewski2011
 
-open Entailment
+open NaturalLogic
 /-! ## Demoted substrate — Intolerance + Karttunen-Peters Conditions
 
 Folded in from the former `Entailment/Intolerance` and
@@ -316,7 +316,7 @@ The paper's §2 establishes:
   `IsAntiAdditive.antitone`.
 - Zwarts: strong NPIs (`either`, `in weeks`, until) need AA licensers (eq. 8).
 - vF: presuppositions are factored out by replacing DE with **Strawson-DE**
-  (eq. 22; in linglib: `Logic/Natural/StrawsonEntailment.lean`).
+  (eq. 22; in linglib: `Logic/Natural/Strawson/Basic.lean`).
 -/
 
 /-! ## §3.3 The puzzle — Strawson-AA is too weak
@@ -325,7 +325,7 @@ The paper's §2 establishes:
 [gajewski-2005]) observes that *all* of vF's Strawson-DE
 recalcitrants are also
 **Strawson-AA**. The Appendix 1 proofs are formalized in
-`StrawsonEntailment.lean`; we cite them here as paper-anchored theorems.
+`Strawson/Basic.lean`; we cite them here as paper-anchored theorems.
 
 > (37) Only-Bill (A ∨ B) ⇒_S Only-Bill A ∧ Only-Bill B.
 > (38) Only-Bill A ∧ Only-Bill B ⇒_S Only-Bill (A ∨ B).
@@ -367,7 +367,7 @@ non-truth-conditional meaning.
 
 /-! ### Substrate index
 
-The four SAA proofs live in `Logic/Natural/StrawsonEntailment.lean`:
+The four SAA proofs live in `Logic/Natural/Strawson/Basic.lean`:
 
 - `onlyFull_isStrawsonAA` — Gajewski body §3.3 eqs. 37-38 (p. 120).
   (Appendix 1 sketches `sorry` and `would`; the `only` case is body text.)
@@ -492,12 +492,12 @@ them to `only` and verify the empirical match: weak NPIs licensed
 (Condition 3 ✓), strong NPIs blocked (Condition 4 ✗).
 -/
 
-open Entailment
+open NaturalLogic
 open Semantics.Presupposition (PartialProp)
 
 /-- The K&P operator for `only x`: assertion = "no y ≠ x has scope",
     presupposition = "some y has x and scope" (Horn 1996). Built directly
-    from `onlyPartialProp` in StrawsonEntailment. -/
+    from `onlyPartialProp` in `Strawson/Basic.lean`. -/
 def onlyKP (x : Fin 4 → Prop) : KPOperator (Fin 4) :=
   fun scope => onlyPartialProp x scope
 

@@ -29,9 +29,7 @@ AM ⊂ AA ⊂ DE ⊂ Strawson-DE (each strict — see
 `strawsonDE_strictly_weaker_than_DE`).
 -/
 
-namespace Entailment
-
-open Entailment
+namespace NaturalLogic
 
 /-! ### Strawson entailment -/
 
@@ -596,4 +594,4 @@ abbrev amazedFull {W : Type*} := @sorryFull W
 /-- `surprised`: expectation-based adversative attitude. -/
 abbrev surprisedFull {W : Type*} := @sorryFull W
 
-end Entailment
+end NaturalLogic
