@@ -1,3 +1,4 @@
+import Mathlib.Order.BooleanAlgebra.Basic
 import Mathlib.Order.Monotone.Defs
 import Mathlib.Order.Hom.BoundedLattice
 import Mathlib.Data.Set.Basic
@@ -157,6 +158,34 @@ theorem isAntiAdditive_iff_isAdditive_toDual [SemilatticeSup α]
   Iff.rfl
 
 end HomBridges
+
+/-! ### Complementation -/
+
+section BooleanAlgebra
+
+variable {α : Type*} [BooleanAlgebra α]
+
+theorem isAntiAdditive_compl : IsAntiAdditive (compl : α → α) :=
+  fun _ _ => compl_sup
+
+theorem isAntiMultiplicative_compl : IsAntiMultiplicative (compl : α → α) :=
+  fun _ _ => compl_inf
+
+theorem isAntiMorphic_compl : IsAntiMorphic (compl : α → α) :=
+  ⟨isAntiAdditive_compl, isAntiMultiplicative_compl⟩
+
+theorem antitone_compl : Antitone (compl : α → α) :=
+  isAntiAdditive_compl.antitone
+
+theorem isCompletelyAntiAdditive_compl :
+    IsCompletelyAntiAdditive (compl : α → α) :=
+  ⟨isAntiAdditive_compl, compl_top⟩
+
+theorem isCompletelyAntiMultiplicative_compl :
+    IsCompletelyAntiMultiplicative (compl : α → α) :=
+  ⟨isAntiMultiplicative_compl, compl_bot⟩
+
+end BooleanAlgebra
 
 /-! ### Pointwise bridges
 

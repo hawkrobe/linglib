@@ -1,5 +1,4 @@
 import Mathlib.Order.Monotone.Defs
-import Linglib.Logic.Natural.World
 import Linglib.Core.Order.AntiAdditive
 import Linglib.Logic.Natural.World
 import Linglib.Semantics.Presupposition.Basic
@@ -23,7 +22,7 @@ take a polymorphic world type and the corresponding presupposition /
 ordering / modal-base parameters in their natural mathlib types
 (`Set W`, `W → Set W`, `W → Prop`). Concrete counterexamples (proofs of
 the form "X is *not* classically DE") are specialized to the 4-element
-`World` enum from `Entailment/Basic.lean` as a witness type, since
+`World` enum from `Logic/Natural/World.lean` as a witness type, since
 non-DE-ness is an *existence* claim about some inhabited domain.
 
 ## Hierarchy
@@ -36,9 +35,7 @@ namespace Entailment
 
 open Entailment
 
--- ============================================================================
--- §1 Core definitions (polymorphic)
--- ============================================================================
+/-! ### Strawson entailment -/
 
 /--
 **Strawson-DE** ([von-fintel-1999], Definition 14, p. 104).
@@ -69,9 +66,7 @@ def StrawsonValid {W : Type*} (premises : List (Set W)) (conclusion : Set W)
   presupSatisfied →
     (∀ w, (∀ p ∈ premises, p w) → conclusion w)
 
--- ============================================================================
--- §2 Hierarchy: classical → Strawson
--- ============================================================================
+/-! ### The classical-to-Strawson hierarchy -/
 
 /-- Classical DE implies Strawson-DE (for any definedness predicate).
     The `defined p w` hypothesis is simply ignored. Polymorphic over
@@ -80,24 +75,6 @@ theorem antitone_implies_strawsonDE {α β : Type*} (f : Set α → Set β)
     (hAnti : Antitone f) (defined : Set α → β → Prop) :
     IsStrawsonDE f defined :=
   fun _p _q hpq _w _hdef hfqw => hAnti hpq hfqw
-
-/-- Convenience: `Antitone` (the toy-`World` abbrev) implies
-    Strawson-DE. -/
-theorem de_implies_strawsonDE (f : Set World → Set World) (hDE : Antitone f)
-    (defined : Set World → World → Prop) : IsStrawsonDE f defined :=
-  antitone_implies_strawsonDE f hDE defined
-
-/-- Anti-additive ⇒ Strawson-DE. -/
-theorem antiAdditive_implies_strawsonDE (f : Set World → Set World)
-    (hAA : IsAntiAdditive f) (defined : Set World → World → Prop) :
-    IsStrawsonDE f defined :=
-  de_implies_strawsonDE f hAA.antitone defined
-
-/-- Anti-morphic ⇒ Strawson-DE. -/
-theorem antiMorphic_implies_strawsonDE (f : Set World → Set World)
-    (hAM : IsAntiMorphic f) (defined : Set World → World → Prop) :
-    IsStrawsonDE f defined :=
-  de_implies_strawsonDE f hAM.antitone defined
 
 /--
 **Strawson anti-additive** — the Strawson-relativized version of
@@ -151,22 +128,7 @@ theorem strawsonAA_implies_strawsonDE {W : Type*} (f : Set W → Set W)
   have hfunion : f (p ∪ q) w := by rw [hUnion]; exact hfqw
   exact (hAA p q w hdefp hdefq |>.mp hfunion).1
 
-/-- The full hierarchy: AM → AA → DE → Strawson-DE. -/
-structure FullHierarchy (f : Set World → Set World)
-    (defined : Set World → World → Prop) where
-  am : IsAntiMorphic f
-  aa : IsAntiAdditive f := am.1
-  de : Antitone f := aa.antitone
-  strawsonDE : IsStrawsonDE f defined := de_implies_strawsonDE f de defined
-
-/-- Negation satisfies the full hierarchy. -/
-def pnot_fullHierarchy (defined : Set World → World → Prop) :
-    FullHierarchy pnot defined :=
-  { am := pnot_isAntiMorphic }
-
--- ============================================================================
--- §3 `only` (Horn's asymmetric analysis; [horn-1996])
--- ============================================================================
+/-! ### `only` (Horn's asymmetric analysis; [horn-1996]) -/
 
 /-!
 ### `only`
@@ -293,9 +255,7 @@ theorem onlyFull_not_de : ¬ Antitone (onlyFull (· = World.w0)) := by
   rcases h with ⟨⟨_, _, hp_y⟩, _⟩
   exact hp_y
 
--- ============================================================================
--- §4 Adversative attitudes (vF §3, [heim-1992], [kadmon-landman-1993])
--- ============================================================================
+/-! ### Adversative attitudes ([heim-1992], [kadmon-landman-1993]) -/
 
 /-!
 ### Adversative/Factive Attitudes
@@ -337,22 +297,6 @@ def sorryFull {W : Type*} (dox : W → Set W) (bestOf : W → Set W)
 def gladFull {W : Type*} (dox : W → Set W) (bestOf : W → Set W)
     (p : Set W) : Set W :=
   fun w => (∀ w' ∈ dox w, p w') ∧ ∀ w' ∈ bestOf w, p w'
-
-/-- `glad` (von Fintel eq. 52, the replacement vF prefers over K&L eq. 50).
-    `α is glad that p` at `w` iff every belief world is strictly preferred
-    (under `lt` from the perspective of `w`) to every relevant non-`p`
-    world: i.e., `DOX(α, w) <_g (relevant w − p)`.
-
-    Both `gladFull` and `gladFullVF` are UE in `p`. They differ on cases
-    like vF's Honda-Civic example (p. 124): when the agent buys a Honda
-    Civic and discovers it's a lemon, the K&L version makes "I'm glad I
-    bought a Honda Civic" automatic from "I wanted a Honda Civic and got
-    one"; the vF version permits the reasonable "I wanted to but I'm not
-    glad I did" because the actual world is now worse than the belief
-    worlds at the time of evaluation. -/
-def gladFullVF {W : Type*} (dox : W → Set W) (relevant : W → Set W)
-    (lt : W → W → W → Prop) (p : Set W) : Set W :=
-  fun w => ∀ w₁ ∈ dox w, ∀ w₂ ∈ relevant w, ¬ p w₂ → lt w w₂ w₁
 
 /-- Ex. 28b (p. 111): `sorry` IS Strawson-DE in its complement.
     Definedness is doxastic factivity (`dox w ⊆ p`). Given doxastic
@@ -432,16 +376,7 @@ theorem gladFull_isUE {W : Type*} (dox bestOf : W → Set W) :
   obtain ⟨hdef, hAll⟩ := h
   exact ⟨fun w' hw' => hpq (hdef w' hw'), fun w' hw' => hpq (hAll w' hw')⟩
 
-/-- `glad` (vF eq. 52) is UE in its complement. -/
-theorem gladFullVF_isUE {W : Type*} (dox relevant : W → Set W)
-    (lt : W → W → W → Prop) : Monotone (gladFullVF dox relevant lt) := by
-  intro p q hpq w h w₁ hw₁ w₂ hw₂ hnq
-  -- ¬ q w₂ → ¬ p w₂ (contraposition of p ⊆ q)
-  exact h w₁ hw₁ w₂ hw₂ (fun hp => hnq (hpq hp))
-
--- ============================================================================
--- §5 Superlatives (vF §4.2)
--- ============================================================================
+/-! ### Superlatives -/
 
 /-!
 ### Superlatives
@@ -517,9 +452,7 @@ theorem superlative_isStrawsonAA {W : Type*} (α : W) :
         · exact hnp hp
         · exact hnq hq
 
--- ============================================================================
--- §6 Conditional antecedents (vF §4.1)
--- ============================================================================
+/-! ### Conditional antecedents -/
 
 /-!
 ### Conditional Antecedents
@@ -594,24 +527,7 @@ theorem wouldFull_isStrawsonAA {W : Type*} (domain : W → Set W) (q : Set W) :
       (fun p w => ∃ w' ∈ domain w, p w') :=
   antiAdditive_implies_strawsonAA _ (condNecessity_isAntiAdditive domain q) _
 
--- ============================================================================
--- §7 Bridge theorems (toy-`World` instantiations)
--- ============================================================================
-
-/-- Negation is Strawson-DE. -/
-theorem pnot_isStrawsonDE (defined : Set World → World → Prop) :
-    IsStrawsonDE pnot defined :=
-  de_implies_strawsonDE pnot pnot_antitone defined
-
-/-- "No student" is Strawson-DE. -/
-theorem no_student_isStrawsonDE (defined : Set World → World → Prop) :
-    IsStrawsonDE no_student defined :=
-  de_implies_strawsonDE no_student no_antitone_scope defined
-
-/-- "At most 2 students" is Strawson-DE. -/
-theorem atMost2_isStrawsonDE (defined : Set World → World → Prop) :
-    IsStrawsonDE atMost2_student defined :=
-  de_implies_strawsonDE atMost2_student atMost_antitone_scope defined
+/-! ### Strictness -/
 
 /-- Strawson-DE is *strictly* weaker than DE: `onlyFull` is the canonical
     witness — Strawson-DE without classical DE. -/
@@ -623,9 +539,7 @@ theorem strawsonDE_strictly_weaker_than_DE :
    onlyFull_isStrawsonDE _,
    onlyFull_not_de⟩
 
--- ============================================================================
--- §8 Additional operators (vF coverage gaps)
--- ============================================================================
+/-! ### Additional operators -/
 
 /-!
 ### `since` (Iatridou, vF §2.2 exs. 20-22)
@@ -683,75 +597,5 @@ abbrev amazedFull {W : Type*} := @sorryFull W
 
 /-- `surprised`: expectation-based adversative attitude. -/
 abbrev surprisedFull {W : Type*} := @sorryFull W
-
-/-!
-### `want` (vF §3.2 eq. 45, pp. 116-118)
-
-`α wants p` iff in `α`'s preferred worlds (drawn from a doxastic modal
-base `dox`), `p` holds. This is UE — the headline result vF defends in
-§3.2 against Asher (1987) / Heim (1992) non-monotonicity puzzles
-(Concorde, couch).
--/
-
-/-- `want(p)` denotation: in α's preferred worlds among `dox w`, `p` holds. -/
-def wantFull {W : Type*} (bestOf : W → Set W) (p : Set W) : Set W :=
-  fun w => ∀ w' ∈ bestOf w, p w'
-
-/-- `want` is upward entailing in its complement (vF §3.2 headline). -/
-theorem wantFull_isUE {W : Type*} (bestOf : W → Set W) :
-    Monotone (wantFull bestOf) := by
-  intro p q hpq w h w' hw'
-  exact hpq (h w' hw')
-
-/-!
-### `wish` (Iatridou; vF Curveball #1, pp. 127-129)
-
-`α wishes p` ≈ `α thinks: if p were the case, α would be glad that p`.
-Iatridou's analysis (eq. 59) embeds a counterfactual conditional inside
-the attitude, making `wish` non-monotonic in p. We do not formalize
-this analysis — its non-monotonicity is itself the puzzle vF flags as a
-threat to the K&L claim that `wish that p` ≡ `sorry that ¬p`.
-
-A simpler "wish ≡ sorry-of-negation" placeholder is recoverable as
-`fun p => sorryFull dox bestOf (compl p)`, which preserves DE-ness on
-the K&L side; this is what `wishFull_simple` below offers.
--/
-
-/-- A simplified `wish(p) ≡ sorry(¬p)` denotation (the K&L analysis vF
-    discusses on p. 126; Iatridou's counterfactual analysis is more
-    complex and breaks monotonicity — see module docstring). -/
-def wishFull_simple {W : Type*} (dox bestOf : W → Set W) (p : Set W) : Set W :=
-  sorryFull dox bestOf (fun w => ¬ p w)
-
-/-!
-### `IsWDE` — Asher 1987 Weakened Downward Entailment
-[asher-1987]
-
-vF p. 112 (footnote 8) cites Asher's WDE as a sibling of Strawson-DE.
-Asher's schema:
-
-  α regrets that φ
-  ⟦φ⟧ ⇒ ⟦ψ⟧
-  α believes that ψ
-  ⊢ α regrets that ψ
-
-This is the *upward* direction (φ → ψ) with a doxastic side condition
-on the conclusion's complement (`believes ψ`). Compare Strawson-DE,
-which is the *downward* direction with a presupposition side condition
-on the conclusion. The two schemas are not equivalent; vF (p. 112,
-footnote 8) writes "the intent of defining something like Strawson
-Entailment is clear" but the formal apparatus differs.
--/
-
-/-- Asher's WDE: f(p) plus belief in q implies f(q), when p ⊆ q. -/
-def IsWDE {W : Type*} (f : Set W → Set W) (believes : Set W → W → Prop) : Prop :=
-  ∀ p q : Set W, p ⊆ q → ∀ w, believes q w → f p w → f q w
-
-/-- Classical UE (Monotone) implies WDE: the doxastic side condition is
-    redundant when monotonicity already holds. -/
-theorem monotone_implies_WDE {W : Type*} (f : Set W → Set W)
-    (hMono : Monotone f) (believes : Set W → W → Prop) :
-    IsWDE f believes :=
-  fun _p _q hpq _w _hbel hfp => hMono hpq hfp
 
 end Entailment

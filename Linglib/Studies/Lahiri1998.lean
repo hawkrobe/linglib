@@ -28,7 +28,7 @@ judged stimuli live in `Data/Examples/Lahiri1998.json`
 namespace Lahiri1998
 
 open Focus.Particles (evenPresup LikelihoodMonotone)
-open Entailment (World entails pnot)
+open Entailment (World entails)
 open Polarity
 open Data.Examples (LinguisticExample)
 
@@ -134,8 +134,8 @@ theorem ue_alt_entails_assertion :
 /-- DE pattern: the assertion entails all alternatives — EVEN is
 satisfiable. -/
 theorem de_assertion_entails_alt :
-    entails (pnot atLeastOne) (pnot atLeastTwo) ∧
-    entails (pnot atLeastOne) (pnot atLeastThree) := by
+    entails (atLeastOneᶜ) (atLeastTwoᶜ) ∧
+    entails (atLeastOneᶜ) (atLeastThreeᶜ) := by
   refine ⟨?_, ?_⟩
   · intro w hw hw'
     exact hw (two_entails_one hw')
@@ -150,19 +150,19 @@ theorem ue_not_reverse :
 
 /-- In DE the alternatives do NOT entail the assertion. -/
 theorem de_not_reverse :
-    ¬ entails (pnot atLeastTwo) (pnot atLeastOne) ∧
-    ¬ entails (pnot atLeastThree) (pnot atLeastOne) := by
+    ¬ entails (atLeastTwoᶜ) (atLeastOneᶜ) ∧
+    ¬ entails (atLeastThreeᶜ) (atLeastOneᶜ) := by
   refine ⟨?_, ?_⟩
   · intro h
-    have h1 : (.w2 : World) ∈ pnot atLeastTwo := by
-      simp [pnot, atLeastTwo, atLeastTwoB, Set.mem_compl_iff]
+    have h1 : (.w2 : World) ∈ atLeastTwoᶜ := by
+      simp [atLeastTwo, atLeastTwoB, Set.mem_compl_iff]
     have h2 := h h1
-    simp [pnot, atLeastOne, atLeastOneB] at h2
+    simp [atLeastOne, atLeastOneB] at h2
   · intro h
-    have h1 : (.w1 : World) ∈ pnot atLeastThree := by
-      simp [pnot, atLeastThree, atLeastThreeB, Set.mem_compl_iff]
+    have h1 : (.w1 : World) ∈ atLeastThreeᶜ := by
+      simp [atLeastThree, atLeastThreeB, Set.mem_compl_iff]
     have h2 := h h1
-    simp [pnot, atLeastOne, atLeastOneB] at h2
+    simp [atLeastOne, atLeastOneB] at h2
 
 end ImplicatureClash
 
@@ -196,8 +196,8 @@ theorem ekBhii_even_clash_UE
 the negated assertion entails each negated alternative (§7.4,
 eqs. 76–79). -/
 theorem ekBhii_even_ok_DE :
-    entails (pnot atLeastOne) (pnot atLeastTwo) ∧
-    entails (pnot atLeastOne) (pnot atLeastThree) :=
+    entails (atLeastOneᶜ) (atLeastTwoᶜ) ∧
+    entails (atLeastOneᶜ) (atLeastThreeᶜ) :=
   de_assertion_entails_alt
 
 /-! ### NPI data (§4, §6)

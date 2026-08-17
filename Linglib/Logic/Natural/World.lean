@@ -40,25 +40,17 @@ instance (p q : Set World) [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)]
     Decidable (entails p q) :=
   Fintype.decidableForallFintype
 
-/-- Negation: thin alias for set complement. -/
-def pnot : Set World → Set World := compl
-
-/-- Conjunction: thin alias for set intersection. -/
-def pand : Set World → Set World → Set World := (· ∩ ·)
-
-/-- Disjunction: thin alias for set union. -/
-def por : Set World → Set World → Set World := (· ∪ ·)
-
-instance (p : Set World) [DecidablePred (· ∈ p)] : DecidablePred (· ∈ pnot p) :=
-  fun w => inferInstanceAs (Decidable (¬ w ∈ p))
+instance (p : Set World) [DecidablePred (· ∈ p)] :
+    DecidablePred (· ∈ pᶜ) :=
+  fun w => inferInstanceAs (Decidable ¬(w ∈ p))
 
 instance (p q : Set World) [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] :
-    DecidablePred (· ∈ pand p q) :=
-  fun w => inferInstanceAs (Decidable (w ∈ p ∧ w ∈ q))
-
-instance (p q : Set World) [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] :
-    DecidablePred (· ∈ por p q) :=
+    DecidablePred (· ∈ p ∪ q) :=
   fun w => inferInstanceAs (Decidable (w ∈ p ∨ w ∈ q))
+
+instance (p q : Set World) [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] :
+    DecidablePred (· ∈ p ∩ q) :=
+  fun w => inferInstanceAs (Decidable (w ∈ p ∧ w ∈ q))
 
 /-- Proposition true only in w0. -/
 def p0 : Set World := {.w0}
@@ -87,24 +79,6 @@ theorem p01_entails_p012 : entails p01 p012 := by decide
 /-! ### Toy-`World` witnesses -/
 
 section ToyWitnesses
-
-/-- Negation is anti-additive. -/
-theorem pnot_isAntiAdditive : IsAntiAdditive pnot := fun p q => by
-  show (p ∪ q)ᶜ = pᶜ ∩ qᶜ
-  exact Set.compl_union p q
-
-/-- Negation is anti-multiplicative. -/
-theorem pnot_isAntiMultiplicative : IsAntiMultiplicative pnot := fun p q => by
-  show (p ∩ q)ᶜ = pᶜ ∪ qᶜ
-  exact Set.compl_inter p q
-
-/-- Negation is anti-morphic. -/
-theorem pnot_isAntiMorphic : IsAntiMorphic pnot :=
-  ⟨pnot_isAntiAdditive, pnot_isAntiMultiplicative⟩
-
-/-- Negation is antitone (downward entailing). -/
-theorem pnot_antitone : Antitone pnot :=
-  pnot_isAntiAdditive.antitone
 
 /-- "No A is B" = ∀x. A(x) → ¬B(x). -/
 def no' (restr : Set World) (scope : Set World) : Set World :=
@@ -176,7 +150,7 @@ theorem atMost_not_antiAdditive :
   intro hAA
   have h := isAntiAdditive_iff_mem.mp hAA
   let qProp : Set World := λ w => w = .w1
-  have key : atMost1_student (por p0 qProp) .w0 ↔
+  have key : atMost1_student (p0 ∪ qProp) .w0 ↔
              atMost1_student p0 .w0 ∧ atMost1_student qProp .w0 :=
     h p0 qProp World.w0
   -- p0 has just w0 as a witness; ≤ 1 ✓
@@ -213,8 +187,8 @@ theorem atMost_not_antiAdditive :
         have hb : b = .w1 := hall_w1 b (List.mem_cons_of_mem _ (List.mem_cons_self ..))
         have : a ≠ b := List.ne_of_not_mem_cons (List.Nodup.notMem hnd)
         exact this (ha.trans hb.symm)
-  -- por p0 qProp has both w0 and w1 as witnesses; not ≤ 1
-  have hcontr : ¬ atMost1_student (por p0 qProp) .w0 := by
+  -- p0 ∪ qProp has both w0 and w1 as witnesses; not ≤ 1
+  have hcontr : ¬ atMost1_student (p0 ∪ qProp) .w0 := by
     intro hle
     have : ([World.w0, World.w1]).length ≤ 1 := by
       apply hle [.w0, .w1]

@@ -397,7 +397,7 @@ def negMeaningW : (HKIState → Bool) :=
   fun w => !(liftToWorlds .pos) w
 
 /-- Negation reverses entailment (DE property). -/
-theorem pnot_reverses_entailment_HKI (p q : (HKIState → Bool))
+theorem not_reverses_entailment_HKI (p q : (HKIState → Bool))
     (h : ∀ w, p w = true → q w = true) :
     ∀ w, (!q w) = true → (!p w) = true := by
   intro w hq
@@ -405,9 +405,10 @@ theorem pnot_reverses_entailment_HKI (p q : (HKIState → Bool))
   · rfl
   · exact absurd (h w hp) (by simpa using hq)
 
-/-- Negative sentences are downward-entailing: `pnot` is antitone. -/
-theorem neg_sentence_is_de : Antitone (pnot : Set World → Set World) :=
-  pnot_antitone
+/-- Negative sentences are downward-entailing: complementation is
+    antitone. -/
+theorem neg_sentence_is_de : Antitone (compl : Set World → Set World) :=
+  antitone_compl
 
 /-- Positive sentences are upward-entailing: the identity context. -/
 theorem pos_sentence_is_ue : Monotone (id : Set World → Set World) :=
