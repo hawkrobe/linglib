@@ -10,7 +10,6 @@ import Mathlib.Order.Bounds.Basic
 
 /-!
 # Completeness of the relation algebra
-[icard-2012] [maccartney-manning-2009]
 
 The converse halves that upgrade `Logic/Natural/Soundness.lean` from
 sound to complete. The join table is *tight* (`Relation.isLeast_join`,
@@ -36,6 +35,12 @@ nondegenerate pairs stand in a strongest relation.
   against realizability on `Finset (Fin 3)`.
 - `Relation.exists_isLeast_holds`: Icard's Lemma 1.3, on any bounded
   lattice.
+
+## References
+
+* [icard-2012] — Definition 1.4, Lemmas 1.3 and 1.5.
+* [maccartney-manning-2009] — §2's sixteen-class partition, following
+  Sánchez Valencia.
 -/
 
 namespace NaturalLogic

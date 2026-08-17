@@ -42,6 +42,10 @@ implication) and `Signature.SoundFor.of_le` (a more specific
 signature's soundness implies a less specific one's), via the projection
 monotonicity `Signature.project_mono`. `soundFor_all` holds
 unconditionally — every function realizes the no-property row.
+
+## References
+
+* [icard-2012] — Definitions 1.2 and 2.3, Lemmas 1.6 and 2.5.
 -/
 
 namespace NaturalLogic
