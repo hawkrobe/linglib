@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Logic.Natural.Basic
+import Linglib.Logic.Natural.Completeness
 
 /-!
 # [icard-2012]: Inclusion and Exclusion in Natural Language
@@ -11,7 +11,8 @@ import Linglib.Logic.Natural.Basic
 Table verifications for [icard-2012]'s relation algebra against the
 substrate implementations in `Logic/Natural/Basic.lean`: the join table
 (Lemma 1.5, p. 710 — the printed cells, independently certified against
-the non-strict `Holds` reading by `Relation.Holds.join`), the
+the non-strict `Holds` reading by `Relation.Holds.join` and tight by
+`Relation.isLeast_join`), the
 projectivity tables (Lemma 2.4, p. 715), the composition table
 (Lemma 2.7, p. 716) with its signature order (§2.2), the polarity
 coarsening, the classification of *not* as the anti-morphism (p. 713),
@@ -33,6 +34,11 @@ example : join .alternation .negation = .forward := rfl  -- | ⋈ ^ = ⊑
 example : join .negation .forward = .cover := rfl        -- ^ ⋈ ⊑ = ⌣
 example : join .forward .negation = .alternation := rfl  -- ⊑ ⋈ ^ = |
 example : join .cover .negation = .reverse := rfl        -- ⌣ ⋈ ^ = ⊒
+
+-- Lemma 1.5 is an equality: each printed cell is the *least* sound relation.
+example : IsLeast {T : Relation | ∀ x y z : Finset (Fin 3),
+    Relation.Holds .forward x y → Relation.Holds .negation y z → T.Holds x z}
+    .alternation := Relation.isLeast_join .forward .negation
 
 /-! ### The refinement order (§2.2) -/
 
