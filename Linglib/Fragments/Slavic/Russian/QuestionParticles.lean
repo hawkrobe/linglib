@@ -1,25 +1,20 @@
 import Linglib.Syntax.Category.Particle.Basic
 
 /-!
-# Russian Question Particles
+# Russian question particles
 [esipova-romero-2023] [simik-2024]
 
-Lexical entries for Russian interrogative particles as `Particle`
-values. Bias classifications (razve's evidential requirement) and layer
-assignments live in `Simik2024`.
-
-## Cross-Module Connections
-
-- `Simik2024.russian` (`Studies/Simik2024`): PQ strategy profile
-  (intonation default, li formal) and the neutral/evidential contrast
+Russian marks formal polar questions with the second-position enclitic
+*li*, obligatory in subordinated polar questions, while colloquial
+matrix polar questions are marked by intonation alone (and can be used
+rhetorically, [esipova-romero-2023]). The clause-initial mirative
+*razve* is restricted to matrix polar questions ([simik-2024] §4.2.4).
 -/
 
 namespace Russian.QuestionParticles
 
-/-- ли li — neutral polar question particle (formal register).
-Second-position (Wackernagel) enclitic, cliticizes onto the focused
-constituent. Rare in spoken Russian (only 6/500 PQs in Onoeva &
-Staňková corpus). -/
+/-- ли li is the neutral polar question particle (formal register), a
+second-position enclitic on the focused constituent. -/
 def li : Particle where
   form := "li"
   script := some "ли"
@@ -27,13 +22,13 @@ def li : Particle where
   distribution := fun c e => match c, e with
     | .declarative, .matrix => some .excluded
     | .polar, .matrix => some .optional
+    | .polar, .subordinated => some .obligatory
     | .constituent, .matrix => some .excluded
     | _, _ => none
 
-/-- разве razve — mirative/dubitative question particle ([simik-2024]
-§4.2.4). Indicates conflict between speaker's prior epistemic state and
-current contextual evidence. Compatible with both outer and inner
-negation. Evidential classification in `Simik2024`. -/
+/-- разве razve is the mirative/dubitative question particle, signalling
+conflict between the speaker's prior epistemic state and current
+contextual evidence. -/
 def razve_ : Particle where
   form := "razve"
   script := some "разве"
@@ -41,9 +36,11 @@ def razve_ : Particle where
   distribution := fun c e => match c, e with
     | .declarative, .matrix => some .excluded
     | .polar, .matrix => some .optional
+    | .polar, .subordinated => some .excluded
     | .constituent, .matrix => some .excluded
     | _, _ => none
 
+/-- All Russian question particles indexed in this file. -/
 def allQuestionParticles : List Particle := [li, razve_]
 
 end Russian.QuestionParticles
