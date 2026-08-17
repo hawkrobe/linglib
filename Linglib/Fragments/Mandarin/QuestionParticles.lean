@@ -1,69 +1,69 @@
 import Linglib.Syntax.Category.Particle.Basic
 
 /-!
-# Mandarin Question Particles
-[zheng-2025]
+# Mandarin question particles
 
-Lexical entries for Mandarin interrogative particles as `Particle` values.
-Bias profiles (ba's speaker-bias requirement, nandao's evidential
-requirement) are analytical classifications and live with the analysis
-that assigns them, in `Zheng2025` — alongside the left-peripheral layer
-assignments.
+Mandarin marks polar questions with the neutral sentence-final particle
+*ma* 吗 and the confirmation-seeking *ba* 吧; both attach to declarative
+word order, and neither forms constituent questions — *wh*-words stay in
+situ, and under *ma* a *wh*-word takes only its indefinite reading, so
+the string remains a polar question. The clause-initial evidential
+adverb *nándào* 难道 forms surprise polar questions and is incompatible
+with declaratives and *wh*-questions. This file provides the three as
+`Particle` values with recorded licensing distributions; *nandao*'s
+evidential felicity conditions live with their analysis.
 
-## Particles
+## Main declarations
 
-| Particle | Gloss | Restriction |
-|----------|-------|-------------|
-| 吗 ma | PQ marker | polar + wh |
-| 吧 ba | TAG/confirm | polar only |
-| 难道 nándào | NANDAO | polar only |
+* `Mandarin.QuestionParticles.ma` — the neutral polar question particle.
+* `Mandarin.QuestionParticles.ba` — the confirmation-seeking particle.
+* `Mandarin.QuestionParticles.nandao` — the evidential question adverb.
 
-## Cross-Module Connections
+## References
 
-- `Zheng2025`: bias profiles, layer assignments, `Kernel.nandaoFelicitous`
+* [li-thompson-1981]
+* [xu-2012]
+* [zheng-2025]
 -/
 
 namespace Mandarin.QuestionParticles
 
-/-- 吗 ma — unmarked polar question particle. Sentence-final; turns a
-declarative into a yes/no question. Bias-neutral (see `Zheng2025`). -/
+/-- *ma* 吗 is the neutral sentence-final polar question particle. -/
 def ma : Particle where
   form := "ma"
   script := some "吗"
   position := some .clauseFinal
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .optional }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
-/-- 吧 ba — confirmation-seeking particle. Speaker expects a positive
-answer and seeks confirmation, comparable to English tag questions
-("It's raining, isn't it?"). Its speaker-bias requirement lives in
-`Zheng2025`. -/
+/-- *ba* 吧 is the confirmation-seeking question particle, distinct from
+the homophonous suggestion-softening *ba* of imperatives. -/
 def ba : Particle where
   form := "ba"
   script := some "吧"
   position := some .clauseFinal
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
-/-- 难道 nándào — evidential question particle: marks that the speaker has
-encountered unexpected contextual evidence supporting the prejacent;
-compatible with a neutral epistemic state (pure inquiry use, [zheng-2025]
-ex. 3). Canonically clause-initial (post-subject placement possible).
-Polar-only — the contrast with wh-compatible *denn* lives in `Theiler2021`.
-Its evidential requirement lives in `Zheng2025`. -/
+/-- *nándào* 难道 is a clause-initial evidential adverb forming surprise
+polar questions. -/
 def nandao : Particle where
   form := "nándào"
   script := some "难道"
   position := some .clauseInitial
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
+/-- All Mandarin question particles indexed in this file. -/
 def allQuestionParticles : List Particle := [ma, ba, nandao]
 
 end Mandarin.QuestionParticles

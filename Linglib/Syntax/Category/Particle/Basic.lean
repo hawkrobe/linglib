@@ -1,5 +1,6 @@
 import Linglib.Syntax.Clause.Basic
 import Linglib.Morphology.Word.Basic
+import Mathlib.Data.Fintype.Basic
 
 open Morphology (Word)
 
@@ -7,25 +8,21 @@ open Morphology (Word)
 # Particle
 
 This file defines `Particle`, the lexical core for uninflectable
-function words ([zwicky-1985-clitics]): form, position, and
-three-valued distribution facets over the [sadock-zwicky-1985]
-sentence-type cells and `Clause.EmbeddingContext`. Facets record
+function words ([zwicky-1985-clitics]): form, position, and a recorded
+distribution over licensing cells — pairs of a [sadock-zwicky-1985]
+sentence type (interrogatives subtyped by the `Semantics/Questions`
+constructions) and a `Clause.EmbeddingContext`. The distribution records
 distributional felicity, not licensing mechanism (analytical,
 study-side); a `none` cell means the source records nothing, not
-exclusion, and an unrecorded facet is the empty record `{}`. The two
-facets are marginals of a joint table: embedding cells are read
-relative to the particle's clause-type restriction (a polar-question
-particle's `matrix` cell concerns matrix polar questions). The cells are record fields, not a taxonomy: force is
-`Mood.Illocutionary`, and the interrogative subtypes are the question
-constructions of `Semantics/Questions` — a lookup is keyed by field
-projection (`p.LicensedIn (·.declarative)`).
+exclusion. Sentence-type and embedding-context profiles are marginals of
+the table, derived by existential projection (`LicensedIn`,
+`LicensedInEmbed`), never stored separately.
 
 ## Main declarations
 
-* `Particle`, `Particle.Position`
-* `ParticleStatus`, `ClauseDistribution`, `EmbedDistribution`
-* `Particle.LicensedIn`, `Particle.LicensedInEmbed` — derived,
-  decidable
+* `Particle`, `Particle.ClauseType`, `Particle.Position`, `ParticleStatus`
+* `Particle.Licensed`, `Particle.LicensedIn`, `Particle.LicensedInEmbed`
+  — derived, decidable
 * `Particle.toWord` — projection to `Word` (UD `PART`)
 -/
 
@@ -58,38 +55,19 @@ inductive ParticleStatus where
   | excluded
   deriving DecidableEq, Repr
 
-/-- Per-clause-context distribution record over the
-[sadock-zwicky-1985] sentence-type cells (interrogatives subtyped:
-polar, alternative, constituent — the `Semantics/Questions`
-constructions). Each cell is `Option`-valued: `none` means the
-anchoring source records nothing for that context — distinct from
-`some .excluded`, which is a positive claim. Cells are addressed by
-field projection; there is no index enum (force is
-`Mood.Illocutionary`, not a parallel type here). -/
-structure ClauseDistribution where
-  declarative : Option ParticleStatus := none
-  polarInterrogative : Option ParticleStatus := none
-  alternativeInterrogative : Option ParticleStatus := none
-  constituentInterrogative : Option ParticleStatus := none
-  imperative : Option ParticleStatus := none
-  exclamative : Option ParticleStatus := none
-  deriving DecidableEq, Repr
-
-/-- Per-embedding-context distribution record ([bhatt-dayal-2020]
-axis). Same `Option`-valued honesty convention as `ClauseDistribution`. -/
-structure EmbedDistribution where
-  matrix : Option ParticleStatus := none
-  subordinated : Option ParticleStatus := none
-  quasiSubordinated : Option ParticleStatus := none
-  quotation : Option ParticleStatus := none
-  deriving DecidableEq, Repr
-
-/-- Recorded status in embedding context `c`, if any. -/
-def EmbedDistribution.status? (d : EmbedDistribution) : Clause.EmbeddingContext → Option ParticleStatus
-  | .matrix => d.matrix
-  | .subordinated => d.subordinated
-  | .quasiSubordinated => d.quasiSubordinated
-  | .quotation => d.quotation
+/-- Sentence-type cells of the particle licensing space: the
+[sadock-zwicky-1985] types, interrogatives subtyped. -/
+inductive Particle.ClauseType where
+  | declarative
+  /-- Polar (yes/no) interrogative. -/
+  | polar
+  /-- Alternative interrogative (*p or q?*). -/
+  | alternative
+  /-- Constituent (wh) interrogative. -/
+  | constituent
+  | imperative
+  | exclamative
+  deriving DecidableEq, Repr, Fintype
 
 /-- An uninflectable function word associated with a host constituent
 ([zwicky-1985-clitics]). -/
@@ -100,65 +78,51 @@ structure Particle where
   script : Option String := none
   /-- Host/position class; `none` when the source records no placement. -/
   position : Option Particle.Position := none
-  /-- Clause-type distribution facet; `{}` when the source records no
-      clause-type data. -/
-  distribution : ClauseDistribution := {}
-  /-- Interrogative-embedding distribution facet ([bhatt-dayal-2020]
-      axis); `{}` when the source records no embedding data. -/
-  embedding : EmbedDistribution := {}
-  deriving DecidableEq, Repr
+  /-- Recorded status per licensing cell (sentence type × embedding
+      context); `none` when the source records nothing for that cell. -/
+  distribution : Particle.ClauseType → EmbeddingContext → Option ParticleStatus :=
+    fun _ _ => none
+  deriving DecidableEq
 
 namespace Particle
 
-
-/-- Recorded clause-type distribution status in the cell picked out by
-projection `c` (e.g. `(·.declarative)`), if any. -/
-def status? (p : Particle) (c : ClauseDistribution → Option ParticleStatus) :
-    Option ParticleStatus :=
-  c p.distribution
+variable (p : Particle) (c : ClauseType) (e : EmbeddingContext)
 
 /-- The particle is positively recorded as available (obligatorily or
-optionally) in the cell picked out by projection `c`. -/
-def LicensedIn (p : Particle) (c : ClauseDistribution → Option ParticleStatus) : Prop :=
-  match p.status? c with
+optionally) in the sentence-type × embedding cell `(c, e)`. -/
+def Licensed : Prop :=
+  match p.distribution c e with
   | some .obligatory | some .optional => True
   | _ => False
 
-instance (p : Particle) (c : ClauseDistribution → Option ParticleStatus) :
-    Decidable (p.LicensedIn c) := by
-  unfold LicensedIn; exact match p.status? c with
+instance : Decidable (p.Licensed c e) := by
+  unfold Licensed; exact match p.distribution c e with
     | some .obligatory => .isTrue trivial
     | some .optional => .isTrue trivial
     | some .excluded => .isFalse nofun
     | none => .isFalse nofun
 
-/-- Recorded embedding-distribution status in context `c`, if any. -/
-def embedStatus? (p : Particle) (c : Clause.EmbeddingContext) : Option ParticleStatus :=
-  p.embedding.status? c
+/-- Positively recorded in sentence type `c`, in some embedding context. -/
+def LicensedIn : Prop := ∃ e, p.Licensed c e
 
-/-- The particle is positively recorded as available in embedding
-context `c`. -/
-def LicensedInEmbed (p : Particle) (c : Clause.EmbeddingContext) : Prop :=
-  match p.embedStatus? c with
-  | some .obligatory | some .optional => True
-  | _ => False
+instance : Decidable (p.LicensedIn c) :=
+  inferInstanceAs (Decidable (∃ e, p.Licensed c e))
 
-instance (p : Particle) (c : Clause.EmbeddingContext) : Decidable (p.LicensedInEmbed c) := by
-  unfold LicensedInEmbed; exact match p.embedStatus? c with
-    | some .obligatory => .isTrue trivial
-    | some .optional => .isTrue trivial
-    | some .excluded => .isFalse nofun
-    | none => .isFalse nofun
+/-- Positively recorded in embedding context `e`, for some sentence type. -/
+def LicensedInEmbed : Prop := ∃ c, p.Licensed c e
 
-/-- Carries a clause-type distribution (the sentential/illocutionary
-particle family: question, modal, sentence-final particles). -/
-def IsSentential (p : Particle) : Prop := p.distribution ≠ {}
+instance : Decidable (p.LicensedInEmbed e) :=
+  inferInstanceAs (Decidable (∃ c, p.Licensed c e))
 
-instance (p : Particle) : Decidable p.IsSentential :=
-  inferInstanceAs (Decidable (_ ≠ _))
+/-- Some cell is recorded (the sentential/illocutionary particle family:
+question, modal, sentence-final particles). -/
+def IsSentential : Prop := ∃ c e, (p.distribution c e).isSome
+
+instance : Decidable p.IsSentential :=
+  inferInstanceAs (Decidable (∃ c e, (p.distribution c e).isSome = true))
 
 /-- Projection to `Word` (UD `PART`). -/
-def toWord (p : Particle) : Word :=
+def toWord : Word :=
   { form := p.form, cat := .PART, features := {} }
 
 end Particle

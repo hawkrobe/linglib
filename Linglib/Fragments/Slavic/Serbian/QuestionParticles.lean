@@ -21,10 +21,11 @@ clause-initial particle + verb movement. Neutral baseline. -/
 def daLi : Particle where
   form := "da li"
   position := some .clauseInitial
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
 /-- zar — mirative/dubitative particle (RAZVE family, [simik-2024]
 §4.2.4). Compatible with both outer and inner negation (like Russian
@@ -32,10 +33,11 @@ razve). Evidential classification in `Simik2024`. -/
 def zar_ : Particle where
   form := "zar"
   position := some .clauseInitial
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
 def allQuestionParticles : List Particle := [daLi, zar_]
 

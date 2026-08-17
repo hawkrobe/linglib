@@ -28,14 +28,16 @@ particle *ja* (`PolarityMarking.lean`). -/
 def ja : Particle where
   form := "ja"
   position := some .clauseMedial
-  distribution :=
-    { declarative := some .optional
-      polarInterrogative := some .excluded
-      constituentInterrogative := some .excluded
-      imperative := some .excluded }
-  embedding :=
-    { matrix := some .optional
-      subordinated := some .excluded }
+  distribution := fun c e => match e with
+    | .matrix =>
+      match c with
+      | .declarative => some .optional
+      | .polar => some .excluded
+      | .constituent => some .excluded
+      | .imperative => some .excluded
+      | _ => none
+    | .subordinated => some .excluded
+    | _ => none
 
 /-- *denn* — interrogative-only particle, one lexeme under two analyses:
 [gutzmann-2015]'s question-prompting UCI (the interrogative counterpart
@@ -46,14 +48,16 @@ from declaratives and imperatives. -/
 def denn : Particle where
   form := "denn"
   position := some .clauseMedial
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .optional
-      imperative := some .excluded }
-  embedding :=
-    { matrix := some .optional
-      subordinated := some .excluded }
+  distribution := fun c e => match e with
+    | .matrix =>
+      match c with
+      | .declarative => some .excluded
+      | .polar => some .optional
+      | .constituent => some .optional
+      | .imperative => some .excluded
+      | _ => none
+    | .subordinated => some .excluded
+    | _ => none
 
 /-- *wohl* — epistemic hedging particle: declaratives and interrogatives
 (which involve EPIS), never imperatives (which lack it); see
@@ -61,28 +65,32 @@ def denn : Particle where
 def wohl : Particle where
   form := "wohl"
   position := some .clauseMedial
-  distribution :=
-    { declarative := some .optional
-      polarInterrogative := some .optional
-      constituentInterrogative := some .optional
-      imperative := some .excluded }
-  embedding :=
-    { matrix := some .optional
-      subordinated := some .excluded }
+  distribution := fun c e => match e with
+    | .matrix =>
+      match c with
+      | .declarative => some .optional
+      | .polar => some .optional
+      | .constituent => some .optional
+      | .imperative => some .excluded
+      | _ => none
+    | .subordinated => some .excluded
+    | _ => none
 
 /-- *halt* — resignation/acceptance particle ("that's just the way it
 is"). Declaratives only. -/
 def halt : Particle where
   form := "halt"
   position := some .clauseMedial
-  distribution :=
-    { declarative := some .optional
-      polarInterrogative := some .excluded
-      constituentInterrogative := some .excluded
-      imperative := some .excluded }
-  embedding :=
-    { matrix := some .optional
-      subordinated := some .excluded }
+  distribution := fun c e => match e with
+    | .matrix =>
+      match c with
+      | .declarative => some .optional
+      | .polar => some .excluded
+      | .constituent => some .excluded
+      | .imperative => some .excluded
+      | _ => none
+    | .subordinated => some .excluded
+    | _ => none
 
 /-- *doch* — contradiction/insistence particle. Uniquely among common
 MPs, licensed in both declaratives and imperatives. Distinct from the
@@ -91,14 +99,16 @@ is formalized in `SeeligerRepp2018.doch_dual_role`). -/
 def doch : Particle where
   form := "doch"
   position := some .clauseMedial
-  distribution :=
-    { declarative := some .optional
-      polarInterrogative := some .excluded
-      constituentInterrogative := some .excluded
-      imperative := some .optional }
-  embedding :=
-    { matrix := some .optional
-      subordinated := some .excluded }
+  distribution := fun c e => match e with
+    | .matrix =>
+      match c with
+      | .declarative => some .optional
+      | .polar => some .excluded
+      | .constituent => some .excluded
+      | .imperative => some .optional
+      | _ => none
+    | .subordinated => some .excluded
+    | _ => none
 
 /-- *doch wohl* — non-compositional marker of rejecting questions
 ([seeliger-repp-2018]): declarative-syntax polar questions (recorded
@@ -108,10 +118,11 @@ PRQ/NRQ bias profile lives in `SeeligerRepp2018`. -/
 def dochWohl : Particle where
   form := "doch wohl"
   position := some .clauseMedial
-  distribution :=
-    { declarative := some .excluded
-      polarInterrogative := some .optional
-      constituentInterrogative := some .excluded }
+  distribution := fun c e => match c, e with
+    | .declarative, .matrix => some .excluded
+    | .polar, .matrix => some .optional
+    | .constituent, .matrix => some .excluded
+    | _, _ => none
 
 /-- The modal-particle inventory ([gutzmann-2015] Table 6.1). -/
 def modalParticles : List Particle := [ja, denn, wohl, halt, doch]
@@ -124,10 +135,10 @@ def questionParticles : List Particle := [denn, dochWohl]
 the clause-type facet (dass-VL clauses exclude modal particles). -/
 def licensedInClause (p : Particle) : GermanClauseType → Bool
   | .dassVL          => false
-  | .v2Declarative   => decide (p.LicensedIn (·.declarative))
-  | .v2Interrogative => decide (p.LicensedIn (·.polarInterrogative))
-  | .vlInterrogative => decide (p.LicensedIn (·.constituentInterrogative))
-  | .imperative      => decide (p.LicensedIn (·.imperative))
+  | .v2Declarative   => decide (p.LicensedIn .declarative)
+  | .v2Interrogative => decide (p.LicensedIn .polar)
+  | .vlInterrogative => decide (p.LicensedIn .constituent)
+  | .imperative      => decide (p.LicensedIn .imperative)
 
 /-- Every MP is excluded from dass-VL clauses. -/
 theorem all_excluded_from_dassVL :
