@@ -7,16 +7,16 @@ Substrate types for typed linguistic example data, aligned with the CLDF
 Examples component (Cross-Linguistic Data Formats; Forkel, List, Greenhill,
 Bank, et al. — DLCE/MPI-EVA).
 
-Per-paper example data lives in `Linglib/Studies/{Phenom}/{AuthorYear}.lean`,
-inside a `namespace Examples ... end` block delimited by marker comments and
-auto-generated from `Data/Examples/{AuthorYear}.json` by
-`scripts/gen_examples.py`. Each `LinguisticExample` carries a stable ID
-mirroring the source paper's example numbering, plus Leipzig-style gloss and
-provenance via `SourceRef`.
+Per-paper example data lives in `Linglib/Data/Examples/{AuthorYear}.json` and
+is compiled by `scripts/gen_examples.py` into a standalone auto-generated
+module `Linglib/Data/Examples/{AuthorYear}.lean` declaring
+`namespace {AuthorYear}.Examples`. Each `LinguisticExample` carries a stable
+ID mirroring the source paper's example numbering, plus Leipzig-style gloss
+and provenance via `SourceRef`.
 
-This schema is the substrate; it does not import anything from `Linglib/`.
-Consumers (Phenomena/, Studies/) import it. Per CLAUDE.md, `Data/` is
-substrate alongside `Core/`, `Features/`, etc.
+This schema is substrate: consumers (Studies/, `Data/Generalizations/`)
+import it. Per CLAUDE.md, `Data/` is substrate alongside `Core/`,
+`Features/`, etc.
 
 ## Leipzig glossing conventions
 
