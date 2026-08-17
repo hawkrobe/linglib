@@ -1,148 +1,144 @@
 import Linglib.Studies.DegenTonhauser2021
+import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # [degen-tonhauser-2022]: Are There Factive Predicates?
-[heim-1983] [schlenker-2009] [van-der-sandt-1992]
 
-Empirical data from "Are there factive predicates? An empirical investigation"
-by Judith Degen and Judith Tonhauser (Language 98(3):552–591, 2022).
+Six experiments testing whether the twenty clause-embedding predicates of
+[degen-tonhauser-2021] contain a coherent class of factive predicates under either
+standard definition: the clausal complement's content (CC) is presupposed (3a,
+[kiparsky-kiparsky-1970]), or presupposed and entailed (3b). The paper's traditional
+four-way classification (13) is `traditionalClass`. Definition 3a expects the
+certainty ratings of canonically factive predicates to be categorically higher than
+those of all other predicates — `Separates`, which over a finite domain holds iff
+some threshold puts exactly the factive class on top (`separates_iff_exists_threshold`).
 
-## Finding
+The data refute that expectation in both response tasks: the optionally factive
+*inform* rates as projective as the canonically factive *reveal* or *discover*
+(0.81 vs 0.70 and 0.78 in experiment 1a; 0.90 vs 0.69 and 0.84 in 1b), so the
+ratings do not separate the class (`certainty1a_not_separated`) and no nonarbitrary
+line can be drawn (`certainty1a_no_threshold`; likewise `certainty1b_*`). The
+entailment experiments undermine definition 3b in turn: in experiment 2a only
+*be right* and *prove* rated with the entailed controls, yet both project below
+every canonically factive predicate (`entailment_projection_dissociation`);
+experiment 2b adds *know*, *see*, *discover*, and *confirm* — a heterogeneous
+class — and the contradictoriness experiments 3a/3b identify no entailed CCs at
+all. Degen & Tonhauser conclude that the experiments support no coherent class of
+factive predicates, while cautioning (their objection 3) that gradient ratings
+alone cannot rule out a binary factivity category combined with lexical ambiguity
+and interpreter uncertainty. The results bear on projection analyses ([heim-1983],
+[van-der-sandt-1992]) whose explanandum is delimited by exactly this class.
 
-**Projection is gradient across predicates, with no categorical gap between
-traditional factive and nonfactive classes.**
-
-The gradient patterns observed in inference judgments do not, on their own,
-settle whether factivity is fundamentally discrete or gradient. As Degen &
-Tonhauser note, "the observed gradience in projection [is] compatible
-with a binary factivity category" under the assumption that predicates are
-ambiguous between factive and nonfactive readings. [grove-white-2025]
-subsequently show that models implementing discrete factivity fit these data
-better than models implementing gradient factivity.
-
-## Predicates
-
-This paper reuses the 20 clause-embedding predicates from
-[degen-tonhauser-2021] and adds a four-way traditional classification.
-
-## Experiments
-
-### Experiment 1: Projection (Certain That Diagnostic)
-- Presented polar questions with clause-embedding predicates
-- Asked: "Is [speaker] certain that [CC]?"
-- Found gradient projection, no categorical distinction
-
-### Experiments 2-3: Entailment
-- Inference diagnostic: "Does it follow that [CC]?"
-- Contradictoriness diagnostic: "[Matrix] but [not CC]" contradictory?
-- Found only prove/be right pattern with entailed controls
-
-## Theoretical Implications
-
-1. Definition 3a (CC is presupposed) not supported:
-   - Canonically factive CCs not categorically more projective
-
-2. Definition 3b (CC is presupposed AND entailed) not supported:
-   - Set of "factive" predicates is either empty or heterogeneous
-
-3. For projection analyses:
-   - Unclear which predicates the analyses apply to
-   - Need to account for gradient projection
-
-## Connection to [tonhauser-beaver-roberts-simons-2013]
-
-This paper extends and empirically tests the Tonhauser taxonomy:
-- SCF (Strong Contextual Felicity) relates to whether content must be established
-- OLE (Obligatory Local Effect) relates to attribution under embedding
-- The gradient projection patterns challenge simple binary classification
+Per-predicate mean ratings (`certainty1a`, `certainty1b`, `inference2a`) are
+computed from the authors' data at github.com/judith-tonhauser/projective-probability
+(results 5-projectivity-no-fact, 8-projectivity-no-fact-binary, 4-veridicality3),
+rounded to two decimal places, and stored as `ℚ` so comparisons close by `norm_num`.
+The predicates are bridged to their Fragment lexical entries via
+`DegenTonhauser2021.toVerbEntry`; the traditional classification agrees with the
+Fragment's factivity flags (`traditionalClass_consistent_with_fragment`).
 -/
 
 namespace DegenTonhauser2022
 
 open DegenTonhauser2021
 
-/-- Traditional classification of clause-embedding predicates.
-    This classification is challenged by the experimental results. -/
+/-! ### The traditional classification -/
+
+/-- The traditional four-way classification of the twenty clause-embedding
+    predicates ((13) of [degen-tonhauser-2022]), by whether the complement content
+    is taken to be presupposed and entailed. -/
 inductive TraditionalClass where
-  /-- Canonically factive: CC traditionally assumed presupposed + entailed -/
+  /-- CC presupposed (and, on definition 3b, entailed): *know*, *discover*, ... -/
   | factive
-  /-- Nonveridical nonfactive: CC neither presupposed nor entailed -/
+  /-- CC neither presupposed nor entailed: *think*, *say*, ... -/
   | nonveridicalNonfactive
-  /-- Veridical nonfactive: CC entailed but not presupposed -/
+  /-- CC entailed but not presupposed: *be right*, *demonstrate*. -/
   | veridicalNonfactive
-  /-- Optionally factive: CC may or may not be presupposed -/
+  /-- CC only sometimes presupposed: *acknowledge*, *admit*, ... -/
   | optionallyFactive
   deriving DecidableEq, Repr
 
-/-- Traditional classification of each predicate. -/
+/-- The classification in (13). -/
 def traditionalClass : Predicate → TraditionalClass
-  | .beAnnoyed => .factive
-  | .discover => .factive
-  | .know => .factive
-  | .reveal => .factive
-  | .see => .factive
-  | .pretend => .nonveridicalNonfactive
-  | .suggest => .nonveridicalNonfactive
-  | .say => .nonveridicalNonfactive
-  | .think => .nonveridicalNonfactive
-  | .beRight => .veridicalNonfactive
-  | .demonstrate => .veridicalNonfactive
-  | .acknowledge => .optionallyFactive
-  | .admit => .optionallyFactive
-  | .announce => .optionallyFactive
-  | .confess => .optionallyFactive
-  | .confirm => .optionallyFactive
-  | .establish => .optionallyFactive
-  | .hear => .optionallyFactive
-  | .inform => .optionallyFactive
-  | .prove => .optionallyFactive
+  | .beAnnoyed | .discover | .know | .reveal | .see => .factive
+  | .pretend | .say | .suggest | .think => .nonveridicalNonfactive
+  | .beRight | .demonstrate => .veridicalNonfactive
+  | .acknowledge | .admit | .announce | .confess | .confirm
+  | .establish | .hear | .inform | .prove => .optionallyFactive
 
+/-! ### Categorical distinction as separation
 
-/--
-Mean certainty ratings from Experiment 1a (gradient scale 0-1).
-Higher = more projective (speaker more certain of CC).
+Definition 3a expects factive certainty ratings "categorically higher" than the
+rest. For a class and a rating over a finite domain this is the same demand as a
+separating threshold, so a single interleaved pair refutes both readings. -/
 
-Values computed from the data at
-github.com/judith-tonhauser/projective-probability (results/5-projectivity-no-fact),
-rounded to 2 decimal places. The gradient nature and ordering show no
-categorical factive/nonfactive gap. Stored as `ℚ` so finite-arithmetic
-inequalities between predicates close by `decide` rather than `native_decide`
-on `Float`.
--/
-def projectionRating_Exp1a : Predicate → ℚ
-  -- Canonically factive - not clustered at top
+section Separation
+
+variable {α β : Type*} [LinearOrder β] {cls : α → Prop} {rating : α → β} {p q : α}
+
+/-- Every in-class element outrates every out-of-class element. -/
+def Separates (cls : α → Prop) (rating : α → β) : Prop :=
+  ∀ ⦃p q⦄, cls p → ¬cls q → rating q < rating p
+
+/-- An out-of-class element rating at least as high as an in-class one defeats
+    separation. -/
+theorem not_separates (hp : cls p) (hq : ¬cls q) (hpq : rating p ≤ rating q) :
+    ¬ Separates cls rating :=
+  fun h => absurd (h hp hq) (not_lt.mpr hpq)
+
+/-- A class is separated by a rating iff some threshold puts exactly the class
+    above it; the separating threshold is the top out-of-class rating. -/
+theorem separates_iff_exists_threshold [Fintype α] [DecidablePred cls]
+    (h : ∃ q, ¬cls q) :
+    Separates cls rating ↔ ∃ t, ∀ p, cls p ↔ t < rating p := by
+  obtain ⟨q₀, hq₀⟩ := h
+  have hs : (Finset.univ.filter fun q => ¬cls q).Nonempty := ⟨q₀, by simp [hq₀]⟩
+  constructor
+  · intro hsep
+    refine ⟨(Finset.univ.filter fun q => ¬cls q).sup' hs rating,
+      fun p => ⟨fun hp => ?_, fun hlt => ?_⟩⟩
+    · exact (Finset.sup'_lt_iff hs).mpr fun b hb => hsep hp (by simpa using hb)
+    · by_contra hp
+      exact absurd hlt (not_lt.mpr (Finset.le_sup' rating (by simpa using hp)))
+  · rintro ⟨t, ht⟩ p q hp hq
+    exact (not_lt.mp fun hlt => hq ((ht q).mpr hlt)).trans_lt ((ht p).mp hp)
+
+end Separation
+
+/-! ### Data: certainty and inference ratings
+
+Computed from the authors' data at github.com/judith-tonhauser/projective-probability,
+rounded to two decimals and listed in descending order as in the paper's figures. -/
+
+/-- Mean certainty rating by predicate, experiment 1a ('certain that' diagnostic,
+    gradient slider; Figure 2). From results/5-projectivity-no-fact (n = 266 per
+    predicate; nonprojective main-clause control mean 0.11). -/
+def certainty1a : Predicate → ℚ
   | .beAnnoyed => 0.88
   | .know => 0.86
   | .see => 0.81
-  | .reveal => 0.70
-  | .discover => 0.78
-  -- Nonveridical nonfactive
-  | .pretend => 0.15
-  | .think => 0.20
-  | .suggest => 0.22
-  | .say => 0.24
-  -- Veridical nonfactive
-  | .beRight => 0.18
-  | .demonstrate => 0.49
-  -- Optionally factive - spans wide range
   | .inform => 0.81
+  | .discover => 0.78
   | .hear => 0.75
   | .acknowledge => 0.72
+  | .reveal => 0.70
   | .admit => 0.66
   | .confess => 0.64
   | .announce => 0.58
+  | .demonstrate => 0.49
   | .establish => 0.36
   | .confirm => 0.34
   | .prove => 0.30
+  | .say => 0.24
+  | .suggest => 0.22
+  | .think => 0.20
+  | .beRight => 0.18
+  | .pretend => 0.15
 
-/--
-Proportion of 'yes' responses from Experiment 1b (binary choice).
-
-Values computed from the data at
-github.com/judith-tonhauser/projective-probability (results/8-projectivity-no-fact-binary),
-rounded to 2 decimal places.
--/
-def projectionRating_Exp1b : Predicate → ℚ
+/-- Proportion of 'yes' responses by predicate, experiment 1b ('certain that'
+    diagnostic, forced choice; Figure 4). From results/8-projectivity-no-fact-binary
+    (n = 436 per predicate; main-clause control mean 0.00). -/
+def certainty1b : Predicate → ℚ
   | .know => 0.93
   | .beAnnoyed => 0.92
   | .inform => 0.90
@@ -150,7 +146,7 @@ def projectionRating_Exp1b : Predicate → ℚ
   | .discover => 0.84
   | .hear => 0.81
   | .acknowledge => 0.78
-  | .reveal => 0.70
+  | .reveal => 0.69
   | .admit => 0.67
   | .confess => 0.58
   | .announce => 0.57
@@ -164,16 +160,10 @@ def projectionRating_Exp1b : Predicate → ℚ
   | .think => 0.04
   | .beRight => 0.03
 
-
-/--
-Mean inference ratings from Experiment 2a (gradient scale 0-1).
-Higher = inference to CC more strongly supported.
-
-Values computed from the data at
-github.com/judith-tonhauser/projective-probability (results/4-veridicality3),
-rounded to 2 decimal places.
--/
-def inferenceRating_Exp2a : Predicate → ℚ
+/-- Mean inference rating by predicate, experiment 2a ('does it follow' diagnostic,
+    gradient slider; Figure 9). From results/4-veridicality3 (n = 259 per predicate;
+    entailing control mean 0.96, non-entailing control mean 0.03). -/
+def inference2a : Predicate → ℚ
   | .prove => 0.96
   | .beRight => 0.96
   | .see => 0.95
@@ -195,112 +185,74 @@ def inferenceRating_Exp2a : Predicate → ℚ
   | .think => 0.32
   | .pretend => 0.12
 
+/-! ### No categorical projection distinction (definition 3a) -/
 
-/--
-Optionally factive predicates can be as projective as canonically factive ones.
+/-- The exp 1a certainty ratings do not separate the canonically factive class:
+    the optionally factive *inform* (0.81) outrates the factive *reveal* (0.70). -/
+theorem certainty1a_not_separated :
+    ¬ Separates (traditionalClass · = .factive) certainty1a :=
+  not_separates (p := .reveal) (q := .inform) rfl (by decide) (by norm_num [certainty1a])
 
-Inform projects more strongly than reveal (a canonical factive):
-inform=0.81 vs reveal=0.70 (Exp 1a).
--/
-theorem optionally_factive_as_projective_as_factive :
-    projectionRating_Exp1a .inform > projectionRating_Exp1a .reveal ∧
-    projectionRating_Exp1a .acknowledge > projectionRating_Exp1a .reveal := by
-  refine ⟨?_, ?_⟩ <;> simp only [projectionRating_Exp1a] <;> norm_num
+/-- Hence no threshold recovers the classification from the exp 1a ratings — the
+    paper's "a nonarbitrary line between canonically factive and optionally factive
+    predicates cannot be drawn". -/
+theorem certainty1a_no_threshold :
+    ¬ ∃ t, ∀ p, traditionalClass p = .factive ↔ t < certainty1a p :=
+  fun h => certainty1a_not_separated
+    ((separates_iff_exists_threshold ⟨.inform, by decide⟩).mpr h)
 
-/--
-There is no categorical gap between factive and optionally factive
-predicates in projection.
+/-- The forced-choice replication (exp 1b) does not separate the class either:
+    *inform* at 0.90 vs *reveal* at 0.69. -/
+theorem certainty1b_not_separated :
+    ¬ Separates (traditionalClass · = .factive) certainty1b :=
+  not_separates (p := .reveal) (q := .inform) rfl (by decide) (by norm_num [certainty1b])
 
-The mean projection rating of the least projective factive (reveal: 0.70)
-is lower than the most projective optionally factive (inform: 0.81).
--/
-theorem no_categorical_projection_gap :
-    projectionRating_Exp1a .inform > projectionRating_Exp1a .reveal := by
-  simp only [projectionRating_Exp1a]; norm_num
+/-- No threshold recovers the classification from the exp 1b ratings. -/
+theorem certainty1b_no_threshold :
+    ¬ ∃ t, ∀ p, traditionalClass p = .factive ↔ t < certainty1b p :=
+  fun h => certainty1b_not_separated
+    ((separates_iff_exists_threshold ⟨.inform, by decide⟩).mpr h)
 
-/--
-Predicates with highest entailment have lowest projection.
+/-! ### Entailment vs projection (definition 3b) -/
 
-be_right: inference=0.96, projection=0.18
-know: inference=0.93, projection=0.86
-
-This dissociation between inference (entailment) strength and projection
-strength is one of the key empirical observations of the paper,
-undermining Definition 3b. -/
+/-- Exp 2a's best contenders for factivity under definition 3b are the least
+    projective: *be right* and *prove* carry the top inference ratings (0.96 each,
+    level with the entailed controls) yet project below every canonically factive
+    predicate (0.18 and 0.30 vs 0.70 at the bottom of the factive class). -/
 theorem entailment_projection_dissociation :
-    inferenceRating_Exp2a .beRight > inferenceRating_Exp2a .know ∧
-    projectionRating_Exp1a .know > projectionRating_Exp1a .beRight := by
-  refine ⟨?_, ?_⟩ <;>
-    simp only [inferenceRating_Exp2a, projectionRating_Exp1a] <;> norm_num
+    (∀ p, inference2a p ≤ inference2a .beRight ∧ inference2a p ≤ inference2a .prove) ∧
+    (∀ p, traditionalClass p = .factive →
+      certainty1a .beRight < certainty1a p ∧ certainty1a .prove < certainty1a p) := by
+  refine ⟨fun p => ?_, fun p hp => ?_⟩
+  · cases p <;> norm_num [inference2a]
+  · cases p <;> first
+      | exact absurd hp (by decide)
+      | norm_num [certainty1a]
 
--- ============================================================================
--- §5. Cross-Diagnostic Consistency
--- ============================================================================
+/-! ### Fragment bridge -/
 
-/-- The two projection diagnostics (Exp 1a continuous, Exp 1b binary) agree
-    on the two most projective predicates: be_annoyed and know. -/
-theorem top_two_agree :
-    projectionRating_Exp1a .beAnnoyed > projectionRating_Exp1a .know ∧
-    projectionRating_Exp1b .beAnnoyed < projectionRating_Exp1b .know ∧
-    (∀ p : Predicate, p ≠ .beAnnoyed → p ≠ .know →
-      projectionRating_Exp1a p < projectionRating_Exp1a .know) ∧
-    (∀ p : Predicate, p ≠ .beAnnoyed → p ≠ .know →
-      projectionRating_Exp1b p < projectionRating_Exp1b .know) := by
-  refine ⟨?_, ?_, fun p h1 h2 => ?_, fun p h1 h2 => ?_⟩
-  · simp only [projectionRating_Exp1a]; norm_num
-  · simp only [projectionRating_Exp1b]; norm_num
-  · cases p <;> first | (exact absurd rfl h1) | (exact absurd rfl h2) |
-      (simp only [projectionRating_Exp1a]; norm_num)
-  · cases p <;> first | (exact absurd rfl h1) | (exact absurd rfl h2) |
-      (simp only [projectionRating_Exp1b]; norm_num)
+section FragmentBridge
 
-/-- The binary diagnostic produces sharper separation: nonfactive predicates
-    cluster near 0 in binary (< 0.10) but are above 0.15 in continuous. -/
-theorem binary_sharper_separation :
-    projectionRating_Exp1b .pretend < 0.10 ∧
-    projectionRating_Exp1b .think < 0.10 ∧
-    projectionRating_Exp1b .say < 0.10 ∧
-    projectionRating_Exp1b .suggest < 0.10 ∧
-    projectionRating_Exp1b .beRight < 0.10 ∧
-    projectionRating_Exp1a .pretend > 0.10 ∧
-    projectionRating_Exp1a .think > 0.10 ∧
-    projectionRating_Exp1a .say > 0.10 ∧
-    projectionRating_Exp1a .suggest > 0.10 ∧
-    projectionRating_Exp1a .beRight > 0.10 := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-    simp only [projectionRating_Exp1a, projectionRating_Exp1b] <;> norm_num
+open English.Predicates.Verbal English.Predicates.Copular
 
--- ============================================================================
--- §6. Fragment Factivity Bridge
--- ============================================================================
-
-open English.Predicates.Verbal in
-/-- Canonically factive *verbs* have `factivePresup = true` in the
-    Fragment, matching D&T 2022's traditional classification. "be annoyed"
-    is copular and emotive — its presupposition derives from emotive
-    semantics, not doxastic veridicality, so `factivePresup = false`. -/
+/-- Canonically factive verbs have `factivePresup = true` in the Fragment,
+    matching the classification in (13). "be annoyed" is copular and emotive —
+    its presupposition derives from emotive semantics, not doxastic veridicality —
+    and is covered by `copular_presup_matches_classification`. -/
 theorem factive_entries_have_factivePresup :
-    know.factivePresup = true ∧
-    discover.factivePresup = true ∧
-    see.factivePresup = true ∧
-    reveal.factivePresup = true := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
+    know.factivePresup = true ∧ discover.factivePresup = true ∧
+    see.factivePresup = true ∧ reveal.factivePresup = true :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
-open English.Predicates.Verbal in
-/-- Nonveridical nonfactive predicates have `factivePresup = false` in the
-    Fragment, matching D&T 2022's traditional classification. -/
+/-- Nonveridical nonfactive verbs have `factivePresup = false` in the Fragment. -/
 theorem nonfactive_entries_lack_factivePresup :
-    pretend.factivePresup = false ∧
-    suggest.factivePresup = false ∧
-    say.factivePresup = false ∧
-    think.factivePresup = false := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
+    pretend.factivePresup = false ∧ suggest.factivePresup = false ∧
+    say.factivePresup = false ∧ think.factivePresup = false :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
-open DegenTonhauser2021 in
-open English.Predicates.Verbal in
-/-- The traditional classification is consistent with Fragment factivity
-    for verbal entries: every verb classified as factive has
-    `factivePresup = true`, every nonfactive has `false`. -/
+/-- The traditional classification is consistent with Fragment factivity for
+    verbal entries: factive verbs have `factivePresup = true`, nonveridical
+    nonfactives `false`. -/
 theorem traditionalClass_consistent_with_fragment (p : Predicate)
     (v : VerbEntry) (h : toVerbEntry p = some v) :
     (traditionalClass p = .factive → v.factivePresup = true) ∧
@@ -308,14 +260,14 @@ theorem traditionalClass_consistent_with_fragment (p : Predicate)
   cases p <;> (unfold toVerbEntry at h; cases h) <;>
     refine ⟨fun hc => ?_, fun hc => ?_⟩ <;> first | rfl | simp [traditionalClass] at hc
 
-open DegenTonhauser2021 in
-open English.Predicates.Copular in
-/-- "be annoyed" is a presupposition trigger (emotive factive), while
-    "be right" is not. This matches D&T 2022's traditional classification:
-    factive predicates trigger presuppositions, veridical nonfactives do not. -/
+/-- "be annoyed" is a presupposition trigger (emotive factive) while "be right"
+    is not, matching (13): factives trigger presuppositions, veridical
+    nonfactives do not. -/
 theorem copular_presup_matches_classification :
     (toPredicateCore .beAnnoyed).isPresupTrigger = true ∧
-    (toPredicateCore .beRight).isPresupTrigger = false := by
-  exact ⟨rfl, rfl⟩
+    (toPredicateCore .beRight).isPresupTrigger = false :=
+  ⟨rfl, rfl⟩
+
+end FragmentBridge
 
 end DegenTonhauser2022

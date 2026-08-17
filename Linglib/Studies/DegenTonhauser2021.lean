@@ -3,6 +3,7 @@ import Linglib.Fragments.English.Predicates.Copular
 import Linglib.Core.Order.Rat01
 import Linglib.Data.Examples.DegenTonhauser2021
 import Mathlib.Order.Monotone.Basic
+import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -87,7 +88,7 @@ inductive Predicate where
   | confess | confirm | demonstrate | discover | establish
   | hear | inform | know | pretend | prove
   | reveal | say | see | suggest | think
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 /-! ### Projection as a function of prior credence
 
