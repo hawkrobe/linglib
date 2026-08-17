@@ -78,7 +78,7 @@ theorem priorInsensitive_no_modulation (c p q : Rat01) :
 /-- The null account is not prior-sensitive. -/
 theorem priorInsensitive_not_sensitive (c : Rat01) :
     ¬ PriorSensitive (priorInsensitive c) :=
-  fun h => lt_irrefl c (h Rat01.zero_lt_one)
+  fun h => lt_irrefl c (h zero_lt_one)
 
 /-- A prior-sensitive account predicts stronger projection for higher-prior content. -/
 theorem sensitive_predicts_modulation {acc : PriorAccount} (h : PriorSensitive acc)
