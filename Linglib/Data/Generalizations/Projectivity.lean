@@ -1,6 +1,7 @@
 import Linglib.Core.Order.Rat01
 import Linglib.Data.Examples.TonhauserBeaverDegen2018
 import Linglib.Data.Examples.SolstadBott2024
+import Mathlib.Tactic.Linarith
 
 /-!
 # Generalizations.Projectivity — cross-paper data pool
@@ -54,7 +55,7 @@ structure ProjectionDatum where
 /-- Not-at-issueness is the complement of at-issueness — the quantity the GPP
     equates with projectivity. -/
 def ProjectionDatum.notAtIssueness (d : ProjectionDatum) : Rat01 :=
-  Rat01.compl d.atIssueness
+  Rat01.symm d.atIssueness
 
 /-! ### `LinguisticExample` adapter -/
 
@@ -75,7 +76,7 @@ def parsePercent (s : String) : Option Rat01 :=
 def readAtIssueness (pf : List (String × String)) : Option Rat01 :=
   match pf.lookup "atIssueness" with
   | some s => parsePercent s
-  | none => ((pf.lookup "notAtIssueness").bind parsePercent).map Rat01.compl
+  | none => ((pf.lookup "notAtIssueness").bind parsePercent).map Rat01.symm
 
 /-- Lift a `LinguisticExample` to a `ProjectionDatum` via its `expression`,
     `projectivity`, and (`atIssueness` or `notAtIssueness`) keys; `none` if any

@@ -1,6 +1,7 @@
 import Linglib.Discourse.QUD.AtIssueness
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Data.Generalizations.Projectivity
+import Mathlib.Tactic.Linarith
 
 /-!
 # [tonhauser-beaver-degen-2018]: How Projective Is Projective Content?
@@ -20,7 +21,7 @@ correlation with item-level variance, not this identity (cf. the dependency's
 `MonotoneAntiCorrelation` docstring).
 
 ## Main definitions
-* `gppProjection` — the GPP map, the complement of at-issueness (`Rat01.compl`).
+* `gppProjection` — the GPP map, the complement of at-issueness (`Rat01.symm`).
 * `pottsProjection` — [potts-2005]'s rival: CI projects maximally, at-issueness-blind.
 * both are run against the pooled per-expression data
   (`Generalizations.Projectivity.allData`).
@@ -49,18 +50,16 @@ open Generalizations.Projectivity
 
 /-- The GPP map: projection degree is the complement of at-issueness — content
     projects to the extent it is not at-issue ([tonhauser-beaver-degen-2018]). -/
-def gppProjection (ai : AtIssuenessDegree) : ProjectivityDegree := Rat01.compl ai
+def gppProjection (ai : AtIssuenessDegree) : ProjectivityDegree := Rat01.symm ai
 
 /-- The GPP as order-reversal: more at-issue content is no more projective. -/
-theorem gppProjection_antitone : Antitone gppProjection := Rat01.compl_antitone
+theorem gppProjection_antitone : Antitone gppProjection := Rat01.symm_antitone
 
 /-- Fully not-at-issue content (at-issueness `0`) projects maximally. -/
-theorem gppProjection_zero : gppProjection Rat01.zero = Rat01.one := by
-  apply Subtype.ext; simp [gppProjection, Rat01.zero, Rat01.one]
+theorem gppProjection_zero : gppProjection 0 = 1 := Rat01.symm_zero
 
 /-- Fully at-issue content (at-issueness `1`) does not project. -/
-theorem gppProjection_one : gppProjection Rat01.one = Rat01.zero := by
-  apply Subtype.ext; simp [gppProjection, Rat01.zero, Rat01.one]
+theorem gppProjection_one : gppProjection 1 = 0 := Rat01.symm_one
 
 /-! ### Recovering the binary Projection Principle
 
@@ -69,17 +68,19 @@ at-issue — is the threshold collapse of the gradient GPP. -/
 
 /-- The GPP projects past `θ` iff at-issueness is below the complementary threshold. -/
 theorem gpp_projects_iff (ai θ : Rat01) :
-    isProjective (gppProjection ai) θ ↔ ai.val < (Rat01.compl θ).val := by
-  simp only [isProjective, Rat01.exceeds, Core.Order.Comparison.mem_over, Core.Order.Comparison.rel, gppProjection, Rat01.compl_val]
+    isProjective (gppProjection ai) θ ↔ ai.val < (Rat01.symm θ).val := by
+  simp only [isProjective, Rat01.exceeds, Core.Order.Comparison.mem_over,
+    Core.Order.Comparison.rel, gppProjection, Rat01.coe_symm_eq]
   constructor <;> intro h <;> linarith
 
 /-- The binary Projection Principle: never both at-issue and projecting at
     complementary thresholds. -/
 theorem gpp_excludes_atIssue (ai θ : Rat01) :
-    ¬ (isAtIssue ai (Rat01.compl θ) ∧ isProjective (gppProjection ai) θ) := by
+    ¬ (isAtIssue ai (Rat01.symm θ) ∧ isProjective (gppProjection ai) θ) := by
   rintro ⟨ha, hp⟩
-  simp only [isAtIssue, Rat01.exceeds, Core.Order.Comparison.mem_over, Core.Order.Comparison.rel, Rat01.compl_val] at ha
-  rw [gpp_projects_iff, Rat01.compl_val] at hp
+  simp only [isAtIssue, Rat01.exceeds, Core.Order.Comparison.mem_over,
+    Core.Order.Comparison.rel, Rat01.coe_symm_eq] at ha
+  rw [gpp_projects_iff, Rat01.coe_symm_eq] at hp
   linarith
 
 /-! ### Contra Potts
@@ -92,7 +93,7 @@ fully-backgrounded content. -/
 
 /-- [potts-2005]'s prediction: CI content projects maximally (degree `1`),
     regardless of at-issueness. -/
-def pottsProjection (_ : AtIssuenessDegree) : ProjectivityDegree := Rat01.one
+def pottsProjection (_ : AtIssuenessDegree) : ProjectivityDegree := 1
 
 @[simp] theorem pottsProjection_val (ai : AtIssuenessDegree) :
     (pottsProjection ai).val = 1 := rfl
@@ -112,19 +113,12 @@ theorem potts_ci_invariant_under_neg {W : Type*} (p : TwoDimProp W) :
     maximally projective". -/
 theorem gpp_below_potts_of_atIssue {ai : AtIssuenessDegree} (h : 0 < ai.val) :
     (gppProjection ai).val < (pottsProjection ai).val := by
-  simp only [gppProjection, pottsProjection, Rat01.compl_val, Rat01.one]; linarith
+  simp only [gppProjection, Rat01.coe_symm_eq, pottsProjection_val]; linarith
 
 /-- The GPP and Potts agree iff the content is fully backgrounded (at-issueness `0`). -/
 theorem gpp_eq_potts_iff_backgrounded (ai : AtIssuenessDegree) :
-    gppProjection ai = pottsProjection ai ↔ ai = Rat01.zero := by
-  constructor
-  · intro h
-    apply Subtype.ext
-    have hv : (gppProjection ai).val = (pottsProjection ai).val := by rw [h]
-    simp only [gppProjection, pottsProjection, Rat01.compl_val, Rat01.one] at hv
-    simp only [Rat01.zero]; linarith
-  · intro h; subst h; apply Subtype.ext
-    simp [gppProjection, pottsProjection, Rat01.zero, Rat01.one]
+    gppProjection ai = pottsProjection ai ↔ ai = 0 :=
+  Rat01.symm_eq_one
 
 /-- Potts files appositives in the independent CI dimension — the source of the
     maximal-projection prediction the GPP refines. -/
@@ -163,7 +157,7 @@ theorem appositive_not_maximally_projective
     {apposAI : AtIssuenessDegree} (h : 0 < apposAI.val) :
     (gppProjection apposAI).val < 1 := by
   have := gpp_below_potts_of_atIssue h
-  simpa [pottsProjection, Rat01.one] using this
+  simpa using this
 
 /-! ### Predicting against the data
 
@@ -183,7 +177,7 @@ theorem gpp_errs_off_diagonal (d : ProjectionDatum)
     0 < predictionError gppProjection d := by
   rw [predictionError, gppProjection, abs_pos]
   intro hc; apply h
-  simp only [ProjectionDatum.notAtIssueness, Rat01.compl_val] at *
+  simp only [ProjectionDatum.notAtIssueness, Rat01.coe_symm_eq] at *
   linarith [sub_eq_zero.mp hc]
 
 /-- Potts over-predicts every content below the ceiling (projectivity `< 1`). -/
@@ -200,7 +194,7 @@ theorem gpp_beats_potts_below_diagonal (d : ProjectionDatum)
     (h1 : d.projectivity.val < d.notAtIssueness.val) (h2 : d.notAtIssueness.val < 1) :
     predictionError gppProjection d < predictionError pottsProjection d := by
   rw [predictionError, predictionError, gppProjection]
-  simp only [pottsProjection_val, ProjectionDatum.notAtIssueness, Rat01.compl_val] at *
+  simp only [pottsProjection_val, ProjectionDatum.notAtIssueness, Rat01.coe_symm_eq] at *
   rw [abs_of_pos (by linarith), abs_of_pos (by linarith)]
   linarith
 

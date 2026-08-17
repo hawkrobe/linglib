@@ -212,10 +212,10 @@ theorem discreteFactivity_gradedTruth (τ : Rat01) (w : W) :
 
 /-- With τ = 1 (certainly factive), graded truth reduces to `factivePos`. -/
 theorem discreteFactivity_certain_factive (w : W) :
-    (discreteFactivityPred (W := W) Rat01.one).gradedTruth w =
+    (discreteFactivityPred (W := W) 1).gradedTruth w =
     if factivePos w then 1 else 0 := by
   rw [discreteFactivity_gradedTruth]
-  have hτ : Rat01.toNNReal Rat01.one = 1 := by
+  have hτ : Rat01.toNNReal 1 = 1 := by
     show Real.toNNReal ((1 : ℚ) : ℝ) = 1
     simp
   rw [hτ]
@@ -223,10 +223,10 @@ theorem discreteFactivity_certain_factive (w : W) :
 
 /-- With τ = 0 (certainly nonfactive), graded truth reduces to `nonFactivePos`. -/
 theorem discreteFactivity_certain_nonfactive (w : W) :
-    (discreteFactivityPred (W := W) Rat01.zero).gradedTruth w =
+    (discreteFactivityPred (W := W) 0).gradedTruth w =
     if nonFactivePos (W := W) w then 1 else 0 := by
   rw [discreteFactivity_gradedTruth]
-  have hτ : Rat01.toNNReal Rat01.zero = 0 := by
+  have hτ : Rat01.toNNReal 0 = 0 := by
     show Real.toNNReal ((0 : ℚ) : ℝ) = 0
     simp
   rw [hτ]
@@ -375,10 +375,10 @@ theorem clauseEmbedding_nonfactive_eq_st_think :
     the same predicate across occasions of use. -/
 theorem st_is_limiting_case :
     (∀ w : ScontrasTonhauser2025.WorldState,
-      (discreteFactivityPred Rat01.one).gradedTruth w =
+      (discreteFactivityPred 1).gradedTruth w =
       if ScontrasTonhauser2025.literalMeaning .knowPos w then 1 else 0) ∧
     (∀ w : ScontrasTonhauser2025.WorldState,
-      (discreteFactivityPred Rat01.zero).gradedTruth w =
+      (discreteFactivityPred 0).gradedTruth w =
       if ScontrasTonhauser2025.literalMeaning .thinkPos w then 1 else 0) :=
   ⟨discreteFactivity_certain_factive, discreteFactivity_certain_nonfactive⟩
 
