@@ -1,7 +1,7 @@
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Polarity.Strength
 import Linglib.Logic.Natural.Soundness
-import Linglib.Logic.Natural.StrawsonSoundness
+import Linglib.Logic.Natural.Strawson.Soundness
 import Linglib.Core.Order.AntiAdditive
 import Linglib.Semantics.Quantification.Signatures
 import Linglib.Semantics.Quantification.Basic
@@ -38,7 +38,6 @@ namespace Polarity
 
 open NaturalLogic
 open Quantification
-open Entailment
 
 /-- A model-theoretic witness for a licensing-context row: an operator
 (with its definedness/presupposition function) realizing the row's

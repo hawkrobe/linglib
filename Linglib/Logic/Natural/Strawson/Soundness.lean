@@ -1,5 +1,5 @@
 import Linglib.Logic.Natural.Soundness
-import Linglib.Logic.Natural.StrawsonEntailment
+import Linglib.Logic.Natural.Strawson.Basic
 
 /-!
 # Strawson-relativized soundness
@@ -35,8 +35,6 @@ deliberately not attempted here — its home is a bridge to
 -/
 
 namespace NaturalLogic
-
-open Entailment
 
 /-- The lattice content of a relation, relativized to a region `D` (the
 worlds where the relevant presuppositions are satisfied). At `D = ⊤` this
