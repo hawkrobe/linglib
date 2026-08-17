@@ -49,6 +49,82 @@ namespace VonFintel1999
 
 open Entailment
 
+/-! ### `glad`, `want`, and Asher's weakened DE (single-consumer substrate) -/
+
+/-- `glad` (von Fintel eq. 52, the replacement vF prefers over K&L eq. 50).
+    `α is glad that p` at `w` iff every belief world is strictly preferred
+    (under `lt` from the perspective of `w`) to every relevant non-`p`
+    world: i.e., `DOX(α, w) <_g (relevant w − p)`.
+
+    Both `gladFull` and `gladFullVF` are UE in `p`. They differ on cases
+    like vF's Honda-Civic example (p. 124): when the agent buys a Honda
+    Civic and discovers it's a lemon, the K&L version makes "I'm glad I
+    bought a Honda Civic" automatic from "I wanted a Honda Civic and got
+    one"; the vF version permits the reasonable "I wanted to but I'm not
+    glad I did" because the actual world is now worse than the belief
+    worlds at the time of evaluation. -/
+def gladFullVF {W : Type*} (dox : W → Set W) (relevant : W → Set W)
+    (lt : W → W → W → Prop) (p : Set W) : Set W :=
+  fun w => ∀ w₁ ∈ dox w, ∀ w₂ ∈ relevant w, ¬ p w₂ → lt w w₂ w₁
+
+/-- `glad` (vF eq. 52) is UE in its complement. -/
+theorem gladFullVF_isUE {W : Type*} (dox relevant : W → Set W)
+    (lt : W → W → W → Prop) : Monotone (gladFullVF dox relevant lt) := by
+  intro p q hpq w h w₁ hw₁ w₂ hw₂ hnq
+  -- ¬ q w₂ → ¬ p w₂ (contraposition of p ⊆ q)
+  exact h w₁ hw₁ w₂ hw₂ (fun hp => hnq (hpq hp))
+
+/-!
+### `want` (vF §3.2 eq. 45, pp. 116-118)
+
+`α wants p` iff in `α`'s preferred worlds (drawn from a doxastic modal
+base `dox`), `p` holds. This is UE — the headline result vF defends in
+§3.2 against Asher (1987) / Heim (1992) non-monotonicity puzzles
+(Concorde, couch).
+-/
+
+/-- `want(p)` denotation: in α's preferred worlds among `dox w`, `p` holds. -/
+def wantFull {W : Type*} (bestOf : W → Set W) (p : Set W) : Set W :=
+  fun w => ∀ w' ∈ bestOf w, p w'
+
+/-- `want` is upward entailing in its complement (vF §3.2 headline). -/
+theorem wantFull_isUE {W : Type*} (bestOf : W → Set W) :
+    Monotone (wantFull bestOf) := by
+  intro p q hpq w h w' hw'
+  exact hpq (h w' hw')
+
+/-!
+### `IsWDE` — Asher 1987 Weakened Downward Entailment
+[asher-1987]
+
+vF p. 112 (footnote 8) cites Asher's WDE as a sibling of Strawson-DE.
+Asher's schema:
+
+  α regrets that φ
+  ⟦φ⟧ ⇒ ⟦ψ⟧
+  α believes that ψ
+  ⊢ α regrets that ψ
+
+This is the *upward* direction (φ → ψ) with a doxastic side condition
+on the conclusion's complement (`believes ψ`). Compare Strawson-DE,
+which is the *downward* direction with a presupposition side condition
+on the conclusion. The two schemas are not equivalent; vF (p. 112,
+footnote 8) writes "the intent of defining something like Strawson
+Entailment is clear" but the formal apparatus differs.
+-/
+
+/-- Asher's WDE: f(p) plus belief in q implies f(q), when p ⊆ q. -/
+def IsWDE {W : Type*} (f : Set W → Set W) (believes : Set W → W → Prop) : Prop :=
+  ∀ p q : Set W, p ⊆ q → ∀ w, believes q w → f p w → f q w
+
+/-- Classical UE (Monotone) implies WDE: the doxastic side condition is
+    redundant when monotonicity already holds. -/
+theorem monotone_implies_WDE {W : Type*} (f : Set W → Set W)
+    (hMono : Monotone f) (believes : Set W → W → Prop) :
+    IsWDE f believes :=
+  fun _p _q hpq _w _hbel hfp => hMono hpq hfp
+
+
 /-! ### *only* is Strawson-DE but not DE (§2)
 
 The licensing datum is `Examples.ex10`; the separation fails classically

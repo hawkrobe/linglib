@@ -10,7 +10,7 @@ This module unifies the scattered negation semantics in linglib into a
 coherent architecture with three layers:
 
 1. **NegOp** — a semantic negation operator bundling involution + antitonicity,
-   with `standardNeg` (`pnot`) as the canonical instance
+   with `standardNeg` (set complement) as the canonical instance
 2. **DEStrength ↔ PolarityLicensing bridge** — the entailment hierarchy
    (weak DE / anti-additive / anti-morphic) determines the polarity licensing
    profile, connecting the `Prop`-based semantic properties in
@@ -28,7 +28,7 @@ coherent architecture with three layers:
   propositional negation (no custom `pnot` wrapper)
 - `NaturalLogic` — `DEStrength` (weak/antiAdditive/antiMorphic)
 - `Entailment` — `IsAntiAdditive`,
-  `IsAntiMorphic`, `pnot_isAntiMorphic`
+  `IsAntiMorphic`, `isAntiMorphic_compl`
 -/
 
 namespace Negation
@@ -37,7 +37,6 @@ open Negation (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile standardNegProfile)
 open Polarity (DEStrength)
 open Entailment (World)
-open Entailment (pnot_isAntiAdditive pnot_isAntiMorphic)
 
 /-- Pointwise Bool negation on `W → Bool`. -/
 private def boolPnot (W : Type*) : (W → Bool) → (W → Bool) := fun p w => !p w
@@ -52,7 +51,7 @@ private def boolPnot (W : Type*) : (W → Bool) → (W → Bool) := fun p w => !
     - **Involution**: `¬¬p = p` (double negation elimination)
     - **Antitonicity**: `p ≤ q → ¬q ≤ ¬p` (downward entailment)
 
-    Standard sentential negation (`pnot`) satisfies both. Expletive
+    Standard sentential negation (set complement) satisfies both. Expletive
     negation that has lost its scope may fail antitonicity — it is
     then no longer a `NegOp` in this sense.
 
@@ -68,7 +67,7 @@ structure NegOp (W : Type*) where
   /-- Antitone: reverses the entailment ordering (= DE). -/
   antitone : Antitone op
 
-/-- Standard sentential negation (`pnot`) is the canonical `NegOp`.
+/-- Standard sentential negation (set complement) is the canonical `NegOp`.
 
     It satisfies involution (`pnot_pnot`), antitonicity
     (`pnot_antitone`), and additionally anti-morphism (De Morgan). -/

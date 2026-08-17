@@ -32,7 +32,7 @@ the chain (`HoldsFor.of_le`).
 
 namespace Polarity
 
-open Entailment (pnot pnot_isAntiMorphic)
+
 
 /-! ### The hierarchies -/
 
@@ -97,10 +97,11 @@ theorem DEStrength.HoldsFor.of_le {α β : Type*}
       | exact hf.antiAdditive
       | exact absurd h (by decide)
 
-example : DEStrength.antiMorphic.HoldsFor pnot := pnot_isAntiMorphic
-example : DEStrength.weak.HoldsFor pnot :=
+example : DEStrength.antiMorphic.HoldsFor (compl : Set Bool → Set Bool) :=
+  isAntiMorphic_compl
+example : DEStrength.weak.HoldsFor (compl : Set Bool → Set Bool) :=
   DEStrength.HoldsFor.of_le (s₂ := .antiMorphic) (by decide)
-    pnot_isAntiMorphic
+    isAntiMorphic_compl
 
 end Polarity
 

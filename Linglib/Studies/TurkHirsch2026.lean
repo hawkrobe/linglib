@@ -28,7 +28,7 @@ predicting □p is a felicitous answer.
 ## The fix
 
 Category match restricts alternatives to items sharing *mI*'s UPOS tag
-`PART`. Polarity operators (Σ = `id`, NEG = `pnot`) are `PART`; "must"
+`PART`. Polarity operators (Σ = `id`, NEG = set complement) are `PART`; "must"
 is `AUX`. Category match yields {p, ¬p} — the correct polar question.
 
 ## Scenario

@@ -300,41 +300,35 @@ end SoundFor
 
 /-! ### Worked instance: double negation is a morphism, semantically
 
-`pnot` is completely anti-additive and completely anti-multiplicative, so
-the `.antiAddMult` row is sound for it; composing it with itself certifies
-the enum fact `◇⊟ ∘ ◇⊟ = ⊕⊞` against the actual function `pnot ∘ pnot`. -/
+Complementation in a Boolean algebra is completely anti-additive and
+anti-multiplicative, so the `.antiAddMult` row is sound for it;
+composing it with itself certifies the enum fact `◇⊟ ∘ ◇⊟ = ⊕⊞` against
+the actual function `compl ∘ compl`. -/
 
-section PnotInstance
+section ComplInstance
 
 open Entailment
 
-theorem pnot_isCompletelyAntiAdditive : IsCompletelyAntiAdditive pnot :=
-  ⟨pnot_isAntiAdditive, by show (Set.univ : Set World)ᶜ = ∅; exact Set.compl_univ⟩
+variable {α : Type*} [BooleanAlgebra α]
 
-theorem pnot_isCompletelyAntiMultiplicative :
-    IsCompletelyAntiMultiplicative pnot :=
-  ⟨pnot_isAntiMultiplicative, by show (∅ : Set World)ᶜ = Set.univ; exact Set.compl_empty⟩
-
-/-- Negation realizes the anti-morphism row. -/
-theorem pnot_soundFor_antiAddMult :
-    Signature.SoundFor .antiAddMult pnot :=
-  soundFor_antiAddMult pnot_isCompletelyAntiAdditive
-    pnot_isCompletelyAntiMultiplicative
+/-- Complementation realizes the anti-morphism row. -/
+theorem compl_soundFor_antiAddMult :
+    Signature.SoundFor .antiAddMult (compl : α → α) :=
+  soundFor_antiAddMult isCompletelyAntiAdditive_compl
+    isCompletelyAntiMultiplicative_compl
 
 /-- Double negation realizes the morphism row — the composed-signature
 fact `◇⊟ ∘ ◇⊟ = ⊕⊞`, certified semantically rather than by enum table
 lookup. -/
-example : Signature.SoundFor .addMult (pnot ∘ pnot) :=
-  pnot_soundFor_antiAddMult.comp pnot_soundFor_antiAddMult
+example : Signature.SoundFor .addMult ((compl : α → α) ∘ compl) :=
+  compl_soundFor_antiAddMult.comp compl_soundFor_antiAddMult
 
 /-- Propositional negation realizes the anti-morphism row at the `Prop`
 instance. -/
 theorem not_soundFor_antiAddMult : Signature.SoundFor .antiAddMult Not :=
-  soundFor_antiAddMult
-    ⟨fun p q => propext not_or, by show (¬True) = False; simp⟩
-    ⟨fun p q => propext not_and_or, by show (¬False) = True; simp⟩
+  compl_soundFor_antiAddMult
 
-end PnotInstance
+end ComplInstance
 
 /-! ### Per-position profiles
 

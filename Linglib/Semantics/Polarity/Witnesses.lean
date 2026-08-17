@@ -20,7 +20,7 @@ derive-don't-stipulate rule.
 
 Coverage is incremental (`contextWitness?` is `Option`-valued): the
 witnessed rows are those whose operators exist in the zoo — negation
-(`pnot`), the quantifier rows (`every_sem`/`no_sem`/`few_sem` sections,
+(complementation), the quantifier rows (`every_sem`/`no_sem`/`few_sem` sections,
 `atMost2_student`), conditional antecedents (`condNecessity`), and the
 four Strawson-only rows (`onlyFull`, `sorryFull`, `superlativeAssert`,
 `sinceFull`). The `none` rows await operators (*without*, *deny*,
@@ -39,7 +39,7 @@ namespace Polarity
 
 open NaturalLogic
 open Quantification
-open Entailment (World pnot)
+open Entailment (World)
 open Entailment (atMost2_student atMost_antitone_scope)
 open Entailment
 
@@ -107,14 +107,14 @@ private theorem strength_of_mem_none {W : Type*} {β : Type*} [Lattice β]
 
 /-! ### Classical rows -/
 
-/-- Negation: `pnot` realizes the anti-morphism row. -/
+/-- Negation: complementation realizes the anti-morphism row. -/
 def negationWitness : ContextWitness .negation where
-  f := pnot
+  f := (compl : Set World → Set World)
   defined := fun _ => ⊤
-  strawson := pnot_soundFor_antiAddMult.strawsonSoundFor _
-  classical := soundFor_of_mem_some pnot_soundFor_antiAddMult
+  strawson := compl_soundFor_antiAddMult.strawsonSoundFor _
+  classical := soundFor_of_mem_some compl_soundFor_antiAddMult
   strength := strength_of_mem_some (s₀ := .antiMorphic) (by decide)
-    pnot_isAntiMorphic
+    isAntiMorphic_compl
 
 private theorem everyRestrictor_soundFor :
     Signature.SoundFor .antiAdd
