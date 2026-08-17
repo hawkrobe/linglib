@@ -13,7 +13,11 @@ entailment signatures of [icard-2012], with the operations that run the
 calculus: `join` chains relations, `project` pushes a relation through a
 function of known signature, and `compose` — derived from `project` by
 probing, so `projection_composition` holds by construction — makes the
-signatures a monoid (identity `addMult`, `all` absorbing). Both
+signatures a monoid (identity `addMult`, `all` absorbing). Relations
+are read non-strictly: each is the conjunction of its `constraints`
+atoms, so distinct relations overlap and `≤` compares strength;
+[maccartney-manning-2009]'s seven mutually exclusive relations are the
+strict refinements. Both
 implication orders arise as reverse inclusion of constraint sets via
 `PartialOrder.lift`, with `#` (resp. `•`) at top and no bottom (`≡`
 does not entail the exclusion relations). Semantic
@@ -38,27 +42,23 @@ namespace NaturalLogic
 
 /-! ### The seven relations -/
 
-/--
-The seven basic set-theoretic relations between denotations ([maccartney-manning-2009], [icard-2012] §1).
-
-| Symbol | Name         | Set relation     | Example            |
-|--------|------------- |------------------|--------------------|
-| ≡      | equivalence  | A = B            | couch / sofa       |
-| ⊑      | forward      | A ⊂ B            | dog / animal       |
-| ⊒      | reverse      | A ⊃ B            | animal / dog       |
-| ^      | negation     | A ∩ B = ∅, A ∪ B = U | happy / unhappy |
-| \|     | alternation  | A ∩ B = ∅         | cat / dog          |
-| ⌣      | cover        | A ∪ B = U         | animal / nondog    |
-| #      | independent  | all other cases   | hungry / tall      |
--/
+/-- The seven natural-logic relations between denotations. -/
 inductive Relation where
-  | equiv       -- ≡ : A = B
-  | forward     -- ⊑ : A ⊂ B (forward entailment)
-  | reverse     -- ⊒ : A ⊃ B (reverse entailment)
-  | negation    -- ^ : complement (A ∩ B = ∅, A ∪ B = U)
-  | alternation -- | : disjoint (A ∩ B = ∅)
-  | cover       -- ⌣ : exhaustive (A ∪ B = U)
-  | independent -- # : none of the above
+  /-- Equivalence `≡` holds when the denotations coincide (*couch* / *sofa*). -/
+  | equiv
+  /-- Forward entailment `⊑` holds when `A ⊆ B` (*dog* / *animal*). -/
+  | forward
+  /-- Reverse entailment `⊒` holds when `A ⊇ B` (*animal* / *dog*). -/
+  | reverse
+  /-- Negation `^` holds when the denotations are disjoint and exhaustive
+      (*happy* / *unhappy*). -/
+  | negation
+  /-- Alternation `|` holds when the denotations are disjoint (*cat* / *dog*). -/
+  | alternation
+  /-- Cover `⌣` holds when the denotations are exhaustive (*animal* / *nondog*). -/
+  | cover
+  /-- Independence `#` imposes no constraint (*hungry* / *tall*). -/
+  | independent
   deriving DecidableEq, Fintype, Repr
 
 namespace Relation
@@ -66,9 +66,13 @@ namespace Relation
 /-- The atomic lattice constraints a relation can impose
 ([icard-2012] Definition 1.2). -/
 inductive Atom where
+  /-- `x ≤ y`. -/
   | le
+  /-- `y ≤ x`. -/
   | ge
+  /-- `x ⊓ y = ⊥`. -/
   | disjoint
+  /-- `x ⊔ y = ⊤`. -/
   | codisjoint
   deriving DecidableEq, Fintype, Repr
 
@@ -169,35 +173,27 @@ end Relation
 
 /-! ### Entailment signatures -/
 
-/--
-Entailment signature.
-
-An entailment signature classifies a function by its algebraic properties
-with respect to ∨ and ∧. This unifies the separate monotonicity and
-additivity hierarchies into one 9-element lattice.
-
-| Symbol | Name              | Properties                    |
-|--------|-------------------|-------------------------------|
-| •      | all               | Any function (no property)    |
-| +      | mono              | Monotone (= UE)               |
-| −      | anti              | Antitone (= DE)               |
-| ⊕      | additive          | f(A∨B)=f(A)∨f(B), f(⊤)=⊤    |
-| ◇      | antiAdd           | f(A∨B)=f(A)∧f(B)             |
-| ⊞      | mult              | f(A∧B)=f(A)∧f(B), f(⊥)=⊥    |
-| ⊟      | antiMult          | f(A∧B)=f(A)∨f(B), f(⊥)=⊤    |
-| ⊕⊞     | addMult           | Additive + Multiplicative     |
-| ◇⊟     | antiAddMult       | Anti-additive + Anti-mult     |
--/
+/-- The function classes a relation can be projected through, from
+arbitrary (`•`) to anti-morphism (`◇⊟`). -/
 inductive Signature where
-  | all           -- • : any function (no property; projects everything to #)
-  | mono          -- + : monotone (UE)
-  | anti          -- − : antitone (DE)
-  | additive      -- ⊕ : additive
-  | antiAdd       -- ◇ : anti-additive
-  | mult          -- ⊞ : multiplicative
-  | antiMult      -- ⊟ : anti-multiplicative
-  | addMult       -- ⊕⊞ : additive + multiplicative (morphism)
-  | antiAddMult   -- ◇⊟ : anti-additive + anti-multiplicative (anti-morphism)
+  /-- An arbitrary function (`•`), projecting every relation to `#`. -/
+  | all
+  /-- A monotone function (`+`, upward entailing). -/
+  | mono
+  /-- An antitone function (`−`, downward entailing). -/
+  | anti
+  /-- An additive function (`⊕`), preserving joins. -/
+  | additive
+  /-- An anti-additive function (`◇`), turning joins into meets. -/
+  | antiAdd
+  /-- A multiplicative function (`⊞`), preserving meets. -/
+  | mult
+  /-- An anti-multiplicative function (`⊟`), turning meets into joins. -/
+  | antiMult
+  /-- A morphism (`⊕⊞`), additive and multiplicative. -/
+  | addMult
+  /-- An anti-morphism (`◇⊟`), anti-additive and anti-multiplicative. -/
+  | antiAddMult
   deriving DecidableEq, Fintype, Repr
 
 namespace Signature
@@ -206,11 +202,17 @@ namespace Signature
 implication (an additive function is monotone, so `⊕`'s set contains
 `monotone`). -/
 inductive Property where
+  /-- Preserves `≤`. -/
   | monotone
+  /-- Reverses `≤`. -/
   | antitone
+  /-- Preserves `⊔`. -/
   | additive
+  /-- Preserves `⊓`. -/
   | multiplicative
+  /-- Sends `⊔` to `⊓`. -/
   | antiAdditive
+  /-- Sends `⊓` to `⊔`. -/
   | antiMultiplicative
   deriving DecidableEq, Fintype, Repr
 
@@ -401,22 +403,15 @@ end Signature
 
 /-! ### Context polarity -/
 
-/--
-Whether a context preserves or reverses entailment direction.
-
-This is a coarsening of `Signature`: all UE-side signatures collapse to
-`.upward`, all DE-side signatures collapse to `.downward`. Contexts that are
-neither monotone nor antitone (e.g., "exactly n") are `.nonMonotonic`.
-
-Used by:
-- NeoGricean: determines which alternatives count as "stronger"
-- RSA: polarity-sensitive inference
-- Any theory computing scalar implicatures
--/
+/-- Whether a context preserves or reverses entailment — the coarse
+UE/DE quotient of `Signature` (`toContextPolarity`). -/
 inductive ContextPolarity where
-  | upward       -- Preserves entailment (stronger alternatives)
-  | downward     -- Reverses entailment (weaker alternatives become stronger)
-  | nonMonotonic -- Neither (e.g., "exactly n")
+  /-- The context preserves entailment (upward entailing). -/
+  | upward
+  /-- The context reverses entailment (downward entailing). -/
+  | downward
+  /-- The context is neither monotone nor antitone (*exactly n*). -/
+  | nonMonotonic
   deriving DecidableEq, Repr
 
 namespace ContextPolarity
