@@ -2,6 +2,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Algebra.BigOperators.Group.List.Defs
+import Mathlib.Algebra.Group.Action.Defs
 import Mathlib.Data.Nat.Basic
 
 /-!
@@ -28,7 +29,8 @@ theorems for projection.
 ## Main declarations
 
 * `Relation`, `Relation.join`, `Relation.constraints` — the
-  relation algebra, ordered by reverse constraint inclusion.
+  relation algebra: a monoid under `join`, ordered by reverse
+  constraint inclusion.
 * `Signature`, `Signature.project`, `Signature.compose` —
   signatures, projection, and the composition monoid.
 * `Signature.contextProjectivity` — a position's signature as the
@@ -120,7 +122,10 @@ join, not lattice join. The table is derived from the non-strict
 `Holds` reading, certified sound cell-by-cell by `Relation.Holds.join`
 in `Logic/Natural/Soundness.lean`, and tight by `Relation.isLeast_join`
 in `Logic/Natural/Completeness.lean`: each cell is the least relation
-sound for the chaining.
+sound for the chaining ([icard-2012]'s Definition 1.4;
+[maccartney-manning-2009]'s §3 join is instead exact relation
+composition, valued in *union relations* outside the seven on 17 of
+the 49 cells — this table is its best single-relation weakening).
 -/
 def join : Relation → Relation → Relation
   -- ≡ is the identity
@@ -164,15 +169,24 @@ def join : Relation → Relation → Relation
   -- # column
   | .independent, _ => .independent
 
-/-- ≡ is the identity for join. -/
-theorem join_identity_left (r : Relation) : join .equiv r = r := by
-  cases r <;> rfl
+instance : Mul Relation := ⟨join⟩
+instance : One Relation := ⟨.equiv⟩
 
-theorem join_identity_right (r : Relation) : join r .equiv = r := by
-  cases r <;> rfl
+/-- The relations form a monoid under ⋈ with identity `≡`. The identity
+and absorption laws are printed in [icard-2012] (p. 710); associativity
+appears in neither [icard-2012] nor [maccartney-manning-2009] and is
+verified here by kernel `decide`. Not commutative: `^ ⋈ ⌣ = ⊑` but
+`⌣ ⋈ ^ = ⊒` (chaining is directional). -/
+instance : Monoid Relation where
+  mul_assoc := by decide
+  one_mul r := by cases r <;> rfl
+  mul_one r := by cases r <;> rfl
 
--- Note: join is NOT commutative. E.g., ^⋈⌣ = ⊑ but ⌣⋈^ = ⊒.
--- This is expected: xRy and yR'z is directional.
+/-- `#` absorbs on the left ([icard-2012] p. 710). -/
+@[simp] theorem top_mul (r : Relation) : ⊤ * r = ⊤ := by cases r <;> rfl
+
+/-- `#` absorbs on the right ([icard-2012] p. 710). -/
+@[simp] theorem mul_top (r : Relation) : r * ⊤ = ⊤ := by cases r <;> rfl
 
 end Relation
 
@@ -509,6 +523,17 @@ theorem projection_composition (R : Relation) (φ ψ : Signature) :
     Signature.project (Signature.project R φ) ψ =
     Signature.project R (Signature.compose ψ φ) := by
   cases R <;> cases φ <;> cases ψ <;> rfl
+
+instance : SMul Signature Relation := ⟨λ σ R => Signature.project R σ⟩
+
+@[simp] theorem Signature.smul_def (σ : Signature) (R : Relation) :
+    σ • R = Signature.project R σ := rfl
+
+/-- Projection is an action of the signature monoid on the relations:
+`projection_composition` is the `mul_smul` law. -/
+instance : MulAction Signature Relation where
+  one_smul := by decide
+  mul_smul ψ φ R := (projection_composition R φ ψ).symm
 
 /-! ### The negation signature -/
 

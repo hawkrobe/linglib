@@ -21,16 +21,21 @@ relations *classify* the nondegenerately realizable constraint
 conjunctions (`Relation.mem_range_constraints_iff`): of the sixteen
 subsets of `Relation.Atom`, the nine outside the range of `constraints`
 force an argument to `⊥` or `⊤` in every bounded lattice —
-[maccartney-manning-2009]'s nontrivial-denotation proviso, as a
-theorem.
+[maccartney-manning-2009] §2's sixteen-class partition, following
+Sánchez Valencia, with its nine degenerate classes, as a theorem. Its
+corollary `Relation.exists_isLeast_holds` is [icard-2012]'s Lemma 1.3:
+nondegenerate pairs stand in a strongest relation.
 
 ## Main declarations
 
-- `Relation.isLeast_join`: each join cell is the least sound chaining.
+- `Relation.isLeast_join`, `Relation.join_le_iff`: each join cell is
+  the least sound chaining ([icard-2012] Definition 1.4).
 - `Relation.mem_range_constraints_of_holds`: a constraint set realized
   by a nondegenerate pair is one of the seven.
 - `Relation.mem_range_constraints_iff`: the classification, as an iff
   against realizability on `Finset (Fin 3)`.
+- `Relation.exists_isLeast_holds`: Icard's Lemma 1.3, on any bounded
+  lattice.
 -/
 
 namespace NaturalLogic
@@ -89,5 +94,33 @@ theorem Relation.mem_range_constraints_iff {s : Finset Relation.Atom} :
     revert R; decide
   · rintro ⟨x, y, hx, hx', hy, hy', h⟩
     exact Relation.mem_range_constraints_of_holds h hx hx' hy hy'
+
+/-! ### The join characterization and the strongest relation -/
+
+/-- [icard-2012]'s Definition 1.4 as a characterization: `R.join S ≤ T`
+exactly when chaining `R`'s content with `S`'s lands inside `T`'s —
+soundness and tightness in one iff, the `sup_le_iff` idiom. -/
+theorem Relation.join_le_iff {R S T : Relation} :
+    R.join S ≤ T ↔
+      ∀ x y z : Finset (Fin 3), R.Holds x y → S.Holds y z → T.Holds x z :=
+  ⟨λ h _ _ _ hR hS => (hR.join hS).of_le h, λ h => (Relation.isLeast_join R S).2 h⟩
+
+/-- [icard-2012]'s Lemma 1.3: any two elements distinct from `⊥` and `⊤`
+stand in a strongest natural-logic relation — stated there for Boolean
+lattices, proved here for any bounded lattice. It fails at `⊥`/`⊤`:
+`x ⌣ ⊤` and `x ⊑ ⊤` hold with no common strengthening. -/
+theorem Relation.exists_isLeast_holds {α : Type*} [Lattice α] [BoundedOrder α]
+    {x y : α} (hx : x ≠ ⊥) (hx' : x ≠ ⊤) (hy : y ≠ ⊥) (hy' : y ≠ ⊤) :
+    ∃ R : Relation, IsLeast {S : Relation | S.Holds x y} R := by
+  classical
+  obtain ⟨R, hR⟩ := Relation.mem_range_constraints_of_holds
+    (s := Finset.univ.filter (λ a => a.Holds x y))
+    (λ a ha => (Finset.mem_filter.mp ha).2) hx hx' hy hy'
+  refine ⟨R, Relation.holds_iff.mpr (λ a ha => ?_),
+    λ S hS => Relation.le_iff.mpr (λ a ha => ?_)⟩
+  · rw [hR] at ha
+    exact (Finset.mem_filter.mp ha).2
+  · rw [hR]
+    exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, Relation.holds_iff.mp hS a ha⟩
 
 end NaturalLogic
