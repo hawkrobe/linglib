@@ -8,8 +8,7 @@ import Linglib.Features.Expressive
 ## Part 1: Interrogative Particles
 
 Q-morphemes and related particles in Japanese, as `Particle` values with
-embedding-distribution facets. The left-peripheral layer assignments are
-derived from those facets in `BhattDayal2020`.
+embedding-distribution facets.
 
 1. *ka/no*: Clause-typing Q-morphemes — appear in subordinated interrogatives
 2. *koto*: Declarative complementizer (contrast with *ka* in interrogatives)

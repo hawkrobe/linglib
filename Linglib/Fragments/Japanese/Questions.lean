@@ -2,13 +2,11 @@ import Linglib.Syntax.Question
 
 /-!
 # Japanese question profile
-[wals-2013] [bhatt-dayal-2020] [sauerland-yatsushiro-2017]
+[wals-2013] [bhatt-dayal-2020] [dayal-2025] [sauerland-yatsushiro-2017]
 
 `QuestionProfile` bundle for Japanese (ISO `jpn`) per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Syntax/Question.lean`. The
-CP-layer *ka* and SAP-layer *kke* analyses live in
-`Studies/BhattDayal2020.lean`.
+`Linglib/Syntax/Question.lean`.
 
 Japanese: final polar Q particle *ka*, wh-in-situ, polar formed by particle.
 -/
