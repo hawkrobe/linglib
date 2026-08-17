@@ -1,4 +1,3 @@
-import Linglib.Features.QParticleLayer
 import Linglib.Semantics.Questions.Bias
 import Linglib.Fragments.Slavic.Russian.QuestionParticles
 import Linglib.Fragments.Slavic.Bulgarian.QuestionParticles
@@ -7,133 +6,76 @@ import Linglib.Fragments.Slavic.Polish.QuestionParticles
 import Linglib.Fragments.Slavic.Slovenian.QuestionParticles
 import Linglib.Fragments.Slavic.Serbian.QuestionParticles
 import Linglib.Fragments.Slavic.Macedonian.QuestionParticles
+import Linglib.Fragments.Slavic.Czech.Particles
 
 /-!
 # Šimík (2024): Polar Question Semantics and Bias in Slavic
-[simik-2024] [bhatt-dayal-2020] [dayal-2025] [esipova-romero-2023]
+[simik-2024] [esipova-romero-2023]
 
-Šimík's cross-Slavic survey of polar-question particles classifies each
-particle by its left-peripheral layer in the [bhatt-dayal-2020] /
-[dayal-2025] cartography `[SAP [PerspP [CP ...]]]`.
+Šimík's survey of polar-question semantics and bias across Slavic. §4.1
+diagnoses each language's default (unbiased) PQ strategy by felicity in
+a quiz scenario (ex. 24) — a TV moderator's question conveying no clue
+about the answer — for ten languages (exx. 25–34). §4.2.4 surveys the
+Russian mirative/dubitative particle *razve*, a conflict-resolving
+particle presupposing contextual evidence for the prejacent against a
+prior epistemic bias for its negation, and lists its kin across Slavic,
+whose formal properties the chapter leaves open.
 
-The fragments in `Fragments/{Russian,Bulgarian,Ukrainian,Polish,
-Slovenian,Serbian,Macedonian}/QuestionParticles.lean` carry only
-theory-neutral lexical primitives (form, position, distribution). This
-study file overlays [simik-2024]'s layer assignments and bias
-classification (`evidentialRequirement`) and proves the Slavic
-generalization that the *neutral* PQ-particle of each surveyed language
-sits at CP, while the *biased mirative* particles (the cross-Slavic
-RAZVE family) sit at PerspP.
+## Main declarations
 
-## Particle layer assignments
-
-| Language    | Particle  | Layer   |
-|-------------|-----------|---------|
-| Russian     | li        | CP      |
-| Russian     | razve     | PerspP  |
-| Bulgarian   | li        | CP      |
-| Bulgarian   | nima      | PerspP  |
-| Ukrainian   | čy        | CP      |
-| Ukrainian   | xiba      | PerspP  |
-| Polish      | czy       | CP      |
-| Polish      | czyżby    | PerspP  |
-| Slovenian   | ali       | CP      |
-| Serbian     | da li     | CP      |
-| Serbian     | zar       | PerspP  |
-| Macedonian  | dali      | CP      |
-
-The Slavic data is the empirical anchor for the cross-linguistic claim
-that the cartography in [dayal-2025] extends beyond Hindi-Urdu and
-Japanese to a much wider typological range.
-
-The file also records [simik-2024] §4.1's typology of default (unbiased)
-PQ strategies across ten Slavic languages (`PQProfile`).
+* `PQProfile`, `allProfiles` — the §4.1 quiz-diagnosed strategy
+  profiles of the ten surveyed languages.
+* `razveFamily`, `evidentialRequirement`, `razveOriginalBias` — the
+  §4.2.4 kin list and razve's bias profile.
+* `razve_root_li_embedded`, `verbMovement_implies_declPQ`,
+  `particle_NPQs_unbiased` — cross-Slavic generalizations over the
+  fragments and profiles.
 -/
 
 namespace Simik2024
 
-open Features (QParticleLayer)
+open Russian.QuestionParticles (li razve_)
 
-/-! ## Layer assignment for each Slavic Q-particle.
+/-! ### The razve family (§4.2.4)
 
-Each `def` records Šimík's classification of a Fragment particle. The
-`_` argument is unused because the layer assignment is a theoretical
-overlay on the particle, not a computed property of its lexical fields. -/
+Russian *razve* marks a conflict-resolving polar question: contextual
+evidence supports the prejacent while the speaker's prior epistemic
+state favored its negation ('Do you (really) speak Russian? [I thought
+that you didn't.]', ex. 39). The chapter reports kin of similar meaning
+across Slavic — Ukrainian *xiba*, Polish *czyż(by)*, Bulgarian *nima*,
+Macedonian and Serbian *zar*, Czech *co(ž)pak* — while leaving their
+precise semantics open. -/
 
-def russianLi_layer        (_ : Particle) : QParticleLayer := .cp
-def russianRazve_layer     (_ : Particle) : QParticleLayer := .perspP
-def bulgarianLi_layer      (_ : Particle) : QParticleLayer := .cp
-def bulgarianNima_layer    (_ : Particle) : QParticleLayer := .perspP
-def ukrainianCy_layer      (_ : Particle) : QParticleLayer := .cp
-def ukrainianXiba_layer    (_ : Particle) : QParticleLayer := .perspP
-def polishCzy_layer        (_ : Particle) : QParticleLayer := .cp
-def polishCzyzby_layer     (_ : Particle) : QParticleLayer := .perspP
-def slovenianAli_layer     (_ : Particle) : QParticleLayer := .cp
-def serbianDaLi_layer      (_ : Particle) : QParticleLayer := .cp
-def serbianZar_layer       (_ : Particle) : QParticleLayer := .perspP
-def macedonianDali_layer   (_ : Particle) : QParticleLayer := .cp
-
-/-! ## Cross-Slavic generalizations -/
-
-open Russian.QuestionParticles    in
-open Bulgarian.QuestionParticles  in
-open Ukrainian.QuestionParticles  in
-open Polish.QuestionParticles     in
-open Slovenian.QuestionParticles  in
-open Serbian.QuestionParticles    in
-open Macedonian.QuestionParticles in
-/-- The neutral polar-question particle of every surveyed Slavic language
-    sits at CP. Which particle counts as *neutral* is Šimík's
-    classification, recorded below as `evidentialRequirement`. -/
-theorem neutral_PQ_particles_are_CP :
-    russianLi_layer Russian.QuestionParticles.li = .cp ∧
-    bulgarianLi_layer Bulgarian.QuestionParticles.li = .cp ∧
-    ukrainianCy_layer Ukrainian.QuestionParticles.cy = .cp ∧
-    polishCzy_layer Polish.QuestionParticles.czy = .cp ∧
-    slovenianAli_layer Slovenian.QuestionParticles.ali = .cp ∧
-    serbianDaLi_layer Serbian.QuestionParticles.daLi = .cp ∧
-    macedonianDali_layer Macedonian.QuestionParticles.dali = .cp :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-open Russian.QuestionParticles    in
-open Bulgarian.QuestionParticles  in
-open Ukrainian.QuestionParticles  in
-open Polish.QuestionParticles     in
-open Serbian.QuestionParticles    in
-/-- The cross-Slavic *RAZVE* family — the mirative/dubitative particles
-    that signal conflict between speaker's prior epistemic state and
-    incoming contextual evidence — uniformly sits at PerspP. -/
-theorem razve_family_is_PerspP :
-    russianRazve_layer Russian.QuestionParticles.razve_ = .perspP ∧
-    bulgarianNima_layer Bulgarian.QuestionParticles.nima = .perspP ∧
-    ukrainianXiba_layer Ukrainian.QuestionParticles.xiba = .perspP ∧
-    polishCzyzby_layer Polish.QuestionParticles.czyzby = .perspP ∧
-    serbianZar_layer Serbian.QuestionParticles.zar_ = .perspP :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-/-- The cross-Slavic *RAZVE* family as a list. Šimík's bias
-    classification (§4.2): these require contextual evidence for p
-    (`evidentialRequirement`), while the neutral PQ particles impose no
-    bias requirement. The layer assignments above correlate — RAZVE =
-    PerspP, neutral = CP — which is Šimík's analysis, not a lexical
-    fact, so both classifications live here rather than on the fragment
-    entries. -/
+/-- The §4.2.4 kin list: the cross-Slavic mirative/dubitative family. -/
 def razveFamily : List Particle :=
-  [Russian.QuestionParticles.razve_, Bulgarian.QuestionParticles.nima,
-   Ukrainian.QuestionParticles.xiba, Polish.QuestionParticles.czyzby,
-   Serbian.QuestionParticles.zar_]
+  [razve_, Ukrainian.QuestionParticles.xiba, Polish.QuestionParticles.czyzby,
+   Bulgarian.QuestionParticles.nima, Macedonian.QuestionParticles.zar,
+   Serbian.QuestionParticles.zar_, Czech.Particles.copak]
 
-/-- Evidential requirement per Šimík: `.forP` for the RAZVE family,
-    none for the neutral particles. -/
+/-- Contextual-evidence requirement: *razve* presupposes evidential bias
+for the prejacent (§4.2.4), extended here to the kin the chapter reports
+as similar in meaning. -/
 def evidentialRequirement (p : Particle) :
     Option Semantics.Questions.Bias.ContextualEvidence :=
   if p ∈ razveFamily then some .forP else none
 
-/-! ### Default PQ strategies
+/-- *Razve*'s prior epistemic bias runs against the prejacent — the
+'I thought that ¬p' component of exx. 39 and 42. -/
+def razveOriginalBias : Option Semantics.Questions.Bias.OriginalBias :=
+  some .againstP
 
-[simik-2024] §4.1's typology of default (unbiased) polar-question
-strategies across ten Slavic languages. `particle` fields are derived
-from Fragment entries. -/
+/-- *Razve* is a root phenomenon while *li* is obligatory in subordinated
+polar questions (§4.2.4) — read off the fragment cells. -/
+theorem razve_root_li_embedded :
+    ¬ razve_.LicensedInEmbed .subordinated ∧
+      li.Licensed .polar .subordinated := by decide
+
+/-! ### Default PQ strategies (§4.1)
+
+The quiz scenario (ex. 24) diagnoses the default (unbiased) PQ strategy
+of each language; strategies conveying epistemic or evidential bias are
+infelicitous in it. `particle` fields are derived from Fragment
+entries. -/
 
 /-- How a language formally encodes its default (unbiased) polar question. -/
 inductive PQStrategy where
@@ -143,7 +85,8 @@ inductive PQStrategy where
   | clauseInitialParticle
   /-- Particle attached to the verb (or focused constituent). -/
   | verbAttachedParticle
-  /-- Combination of particle + verb movement. -/
+  /-- Combination of particle + verb movement (the Macedonian V+*li*
+      alternative, ex. 32b). -/
   | particlePlusMovement
   /-- Intonation only (no overt morphosyntactic marking). -/
   | intonationOnly
@@ -172,71 +115,65 @@ structure PQProfile where
   particle : Option String := none
   /-- Whether DeclPQs are available. -/
   declPQ : DeclPQAvailability := .unavailable
-  /-- Whether adding negation triggers epistemic bias. -/
+  /-- Whether adding negation to the default strategy triggers epistemic bias. -/
   negationTriggersBias : Bool := true
   deriving Repr, BEq
 
-/-- Czech: verb-initial (VSO) with rising/falling intonation.
-No overt PQ particle; the default is InterPPQ. -/
--- UNVERIFIED: ex. 25
+/-- Czech: obligatory verb movement (ex. 25); negation triggers positive
+epistemic bias; DeclPQs convey evidential bias. -/
 def czech : PQProfile :=
   { language := "Czech", code := "cs"
   , defaultStrategy := .verbMovement
   , declPQ := .available }
 
-/-- Slovak: verb-initial, parallel to Czech. -/
--- UNVERIFIED: ex. 26
+/-- Slovak: verb movement, parallel to Czech (ex. 26). -/
 def slovak : PQProfile :=
   { language := "Slovak", code := "sk"
   , defaultStrategy := .verbMovement
   , declPQ := .available }
 
-/-- Upper Sorbian: verb-initial. -/
--- UNVERIFIED: ex. 27
+/-- Upper Sorbian: verb movement, fronting the auxiliary (ex. 27). -/
 def upperSorbian : PQProfile :=
   { language := "Upper Sorbian", code := "hsb"
   , defaultStrategy := .verbMovement
   , declPQ := .available }
 
-/-- Slovenian: clause-initial *ali* (optionally) + verb movement.
-*ali* is reported as incompatible with DeclPQs. -/
--- UNVERIFIED: ex. 28
+/-- Slovenian: verb movement with optional clause-initial *ali*
+(ex. 28); *ali* is incompatible with DeclPQs. -/
 def slovenian : PQProfile :=
   { language := "Slovenian", code := "sl"
-  , defaultStrategy := .clauseInitialParticle
+  , defaultStrategy := .verbMovement
   , particle := some Slovenian.QuestionParticles.ali.form
-  , declPQ := .unavailable }
+  , declPQ := .available }
 
-/-- Ukrainian: clause-initial *čy* (obligatory). -/
--- UNVERIFIED: ex. 29
+/-- Ukrainian: obligatory clause-initial *čy* (ex. 29); DeclPQs convey
+evidential bias. -/
 def ukrainian : PQProfile :=
   { language := "Ukrainian", code := "uk"
   , defaultStrategy := .clauseInitialParticle
   , particle := some Ukrainian.QuestionParticles.cy.form
   , declPQ := .available }
 
-/-- Polish: clause-initial *czy* (obligatory in default PQ).
-Verb-initial PQs are possible but unacceptable in quiz scenarios. -/
--- UNVERIFIED: ex. 30
+/-- Polish: obligatory clause-initial *czy* (ex. 30); czy-NPQs remain
+quiz-felicitous (ex. 30b), so negation does not trigger bias; DeclPQs
+convey evidential bias. -/
 def polish : PQProfile :=
   { language := "Polish", code := "pl"
   , defaultStrategy := .clauseInitialParticle
   , particle := some Polish.QuestionParticles.czy.form
-  , declPQ := .marginal }
+  , declPQ := .available
+  , negationTriggersBias := false }
 
-/-- Serbian: *da* (+ *li*) is the default strategy. Serbian has the
-richest PQ repertoire among Slavic languages (see [simik-2024]). -/
--- UNVERIFIED: ex. 31
+/-- Serbian: clause-initial *da* + clitic *li* (ex. 31a); negative and
+declarative PQs convey biases. -/
 def serbian : PQProfile :=
   { language := "Serbian", code := "sr"
-  , defaultStrategy := .particlePlusMovement
+  , defaultStrategy := .clauseInitialParticle
   , particle := some Serbian.QuestionParticles.daLi.form
-  , declPQ := .unavailable }
+  , declPQ := .available }
 
-/-- Macedonian: *dali* (clause-initial) for default PQs.
-*dali* can introduce negative PQs without triggering bias, unlike
-Bulgarian *li*. -/
--- UNVERIFIED: ex. 32
+/-- Macedonian: clause-initial *dali* (ex. 32a), which admits negation
+without triggering bias, unlike Bulgarian *li*. -/
 def macedonian : PQProfile :=
   { language := "Macedonian", code := "mk"
   , defaultStrategy := .clauseInitialParticle
@@ -244,24 +181,23 @@ def macedonian : PQProfile :=
   , declPQ := .unavailable
   , negationTriggersBias := false }
 
-/-- Bulgarian: verb-attached *li*, encliticizing onto the focused
-constituent. DeclPQs are colloquial only. -/
--- UNVERIFIED: ex. 33
+/-- Bulgarian: *li* encliticized onto the focused constituent (ex. 33);
+DeclPQs convey evidential bias. -/
 def bulgarian : PQProfile :=
   { language := "Bulgarian", code := "bg"
   , defaultStrategy := .verbAttachedParticle
   , particle := some Bulgarian.QuestionParticles.li.form
-  , declPQ := .marginal }
+  , declPQ := .available }
 
-/-- Russian: verb-attached *li* (formal) or IntonPQ (default).
-*li*-PQs are rare in spoken Russian — IntonPQs dominate and are
-arguably unbiased (see [simik-2024]). -/
--- UNVERIFIED: ex. 34
+/-- Russian: quiz PQs use verb-attached *li* (ex. 34); colloquially
+IntonPQs dominate and are arguably unbiased, though they can also be
+used rhetorically ([esipova-romero-2023]); DeclPQs are hard to
+distinguish from IntonPQs. -/
 def russian : PQProfile :=
   { language := "Russian", code := "ru"
-  , defaultStrategy := .intonationOnly
+  , defaultStrategy := .verbAttachedParticle
   , particle := some Russian.QuestionParticles.li.form
-  , declPQ := .unavailable }
+  , declPQ := .available }
 
 /-- All ten surveyed Slavic PQ profiles. -/
 def allProfiles : List PQProfile :=
@@ -269,7 +205,7 @@ def allProfiles : List PQProfile :=
   , serbian, macedonian, bulgarian, russian ]
 
 /-- Languages using verb movement as default PQ strategy — the languages
-without an overt question particle in default PQs. -/
+without an obligatory question particle in default PQs. -/
 def verbMovementLanguages : List PQProfile :=
   allProfiles.filter (·.defaultStrategy == .verbMovement)
 
@@ -281,10 +217,12 @@ def particleLanguages : List PQProfile :=
 theorem verbMovement_implies_declPQ :
     verbMovementLanguages.all (·.declPQ == .available) = true := by decide
 
-/-- Macedonian *dali* introduces negative PQs without triggering epistemic
-bias, unlike Bulgarian *li*. -/
-theorem dali_negation_unbiased :
-    bulgarian.negationTriggersBias = true ∧
-    macedonian.negationTriggersBias = false := ⟨rfl, rfl⟩
+/-- Under their clause-initial particles, Polish and Macedonian negative
+PQs stay quiz-felicitous (exx. 30b, 32a), unlike Bulgarian li-NPQs
+(ex. 33b). -/
+theorem particle_NPQs_unbiased :
+    polish.negationTriggersBias = false ∧
+    macedonian.negationTriggersBias = false ∧
+    bulgarian.negationTriggersBias = true := ⟨rfl, rfl, rfl⟩
 
 end Simik2024
