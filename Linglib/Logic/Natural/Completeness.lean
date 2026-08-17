@@ -11,29 +11,28 @@ import Mathlib.Order.Bounds.Basic
 /-!
 # Completeness of the relation algebra
 
-The converse halves that upgrade `Logic/Natural/Soundness.lean` from
-sound to complete. The join table is *tight* (`Relation.isLeast_join`,
-making [icard-2012]'s Lemma 1.5 an equality): `R.join S` is the least
-relation sound for chaining `R` then `S`, with countermodels already on
-the three-atom Boolean algebra `Finset (Fin 3)`. And the seven
-relations *classify* the nondegenerately realizable constraint
-conjunctions (`Relation.mem_range_constraints_iff`): of the sixteen
-subsets of `Relation.Atom`, the nine outside the range of `constraints`
-force an argument to `⊥` or `⊤` in every bounded lattice —
-[maccartney-manning-2009] §2's sixteen-class partition, following
-Sánchez Valencia, with its nine degenerate classes, as a theorem. Its
-corollary `Relation.exists_isLeast_holds` is [icard-2012]'s Lemma 1.3:
-nondegenerate pairs stand in a strongest relation.
+This file proves the converses to `Logic/Natural/Soundness.lean` for
+the relation algebra: the join table is tight, and the seven relations
+are exactly the nondegenerately realizable conjunctions of constraint
+atoms.
+
+Tightness ([icard-2012]'s Lemma 1.5, as an equality) has countermodels
+already on the three-atom Boolean algebra `Finset (Fin 3)`. The
+classification is [maccartney-manning-2009] §2's sixteen-class
+partition, following Sánchez Valencia: the nine subsets outside the
+range of `Relation.constraints` force an argument to `⊥` or `⊤` in
+every bounded lattice.
 
 ## Main declarations
 
-- `Relation.isLeast_join`, `Relation.join_le_iff`: each join cell is
+* `Relation.isLeast_join`, `Relation.join_le_iff`: each join cell is
   the least sound chaining ([icard-2012] Definition 1.4).
-- `Relation.mem_range_constraints_of_holds`: a constraint set realized
+* `Relation.mem_range_constraints_of_holds`: a constraint set realized
   by a nondegenerate pair is one of the seven.
-- `Relation.mem_range_constraints_iff`: the classification, as an iff
+* `Relation.mem_range_constraints_iff`: the classification, as an iff
   against realizability on `Finset (Fin 3)`.
-- `Relation.exists_isLeast_holds`: Icard's Lemma 1.3, on any bounded
+* `Relation.exists_isLeast_holds`: [icard-2012]'s Lemma 1.3 — any
+  nondegenerate pair stands in a strongest relation — on any bounded
   lattice.
 
 ## References

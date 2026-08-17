@@ -4,44 +4,40 @@ import Linglib.Core.Order.AntiAdditive
 /-!
 # Soundness of the projectivity calculus
 
-Semantic grounding for [icard-2012]'s projectivity machinery: `Relation`
-gets its lattice content (`Holds`, his Definition 1.2 — non-exclusive
-equations, so `⊑` is plain `≤`), and a signature is *sound* for a function
-(`Signature.SoundFor`) when the function projects every relation as the
-signature's `project` row says (his Lemma 2.5). The characterization
-theorems discharge each row from the property family in
-`Entailment` — the additive-family rows need the
-`IsCompletely*` unit conditions, exactly as Icard's tables assume; the
-soundness proofs go through over bounded lattices, not just his Boolean
-lattices.
-
-`SoundFor.comp` and `soundFor_contextProjectivity` certify
-`Signature.compose` and path projection against function composition
-(his Lemma 2.7 and Proposition 2.10): study-file locality computations over
-the enum become corollaries of facts about actual context functions.
+This file gives the seven relations their lattice content and proves
+the tables of `Logic/Natural/Basic.lean` sound for it, over bounded
+lattices: chained relations compose as the join table says, and each
+signature's projection row holds of every function in the signature's
+class.
 
 ## Main declarations
 
-- `Relation.Holds`: lattice content of the seven relations;
-- `Relation.holds_iff`: `Holds` is the conjunction of the `constraints`
-  atoms (`Relation.Atom.Holds`);
-- `Signature.SoundFor`: σ's projection row is sound for `f`;
-- `soundFor_mono_iff`, `soundFor_anti_iff`: the monotone rows, as iffs;
-- `soundFor_additive` … `soundFor_antiAddMult`: the algebraic rows, from
-  `IsCompletely*` hypotheses (sound direction; the converses fail —
-  projection rows are class-maximal, not function-characterizing);
-- `SoundFor.comp`: soundness composes along `Signature.compose`;
-- `soundFor_contextProjectivity`: soundness folds along a signature path.
+* `Relation.Holds`: the lattice content of a relation; `equiv` is
+  equality, `forward` is `≤`, `negation` is `IsCompl`, `alternation`
+  is `Disjoint`, `cover` is `Codisjoint`.
+* `Relation.holds_iff`: `Holds` is the conjunction of the
+  `Relation.constraints` atoms (`Relation.Atom.Holds`).
+* `Relation.Holds.join`: soundness of the join table.
+* `Signature.SoundFor`: a signature's projection row is sound for a
+  function.
+* `soundFor_mono_iff`, `soundFor_anti_iff`: the monotone rows
+  characterize the monotone and antitone functions.
+* `soundFor_additive` … `soundFor_antiAddMult`: the algebraic rows,
+  from `IsCompletely*` hypotheses.
+* `SoundFor.comp`, `soundFor_contextProjectivity`: soundness composes
+  along `Signature.compose` and folds along a signature path.
+* `Relation.Holds.of_le`, `Signature.SoundFor.of_le`: both implication
+  orders are semantically sound.
 
-## Order soundness
+## Implementation notes
 
-With the implication orders carrying their [icard-2012] readings (`.all` =
-•, the no-property top; `≡` not below the exclusion relations), both
-orders are certified here: `Relation.Holds.of_le` (relation-level
-implication) and `Signature.SoundFor.of_le` (a more specific
-signature's soundness implies a less specific one's), via the projection
-monotonicity `Signature.project_mono`. `soundFor_all` holds
-unconditionally — every function realizes the no-property row.
+The algebraic rows hold in the sound direction only — projection rows
+are class-maximal, not function-characterizing; tightness is proved in
+`Logic/Natural/Completeness.lean` for the join table. The
+additive-family rows need the `IsCompletely*` unit conditions, exactly
+as [icard-2012]'s tables assume, and the proofs go through over
+bounded lattices rather than his Boolean lattices. `soundFor_all`
+holds unconditionally: every function realizes the no-property row.
 
 ## References
 

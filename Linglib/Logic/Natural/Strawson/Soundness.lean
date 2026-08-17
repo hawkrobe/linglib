@@ -4,34 +4,34 @@ import Linglib.Logic.Natural.Strawson.Basic
 /-!
 # Strawson-relativized soundness
 
-[von-fintel-1999]'s Strawson move, at signature level: a projection row
-holds *modulo presuppositions* when the projected relation holds on the
-region where the arguments' presuppositions are satisfied.
-`Relation.HoldsOn D` relativizes the lattice content of a relation to a
-region `D`; `Signature.StrawsonSoundFor σ f defined` is `SoundFor`
-with every projected relation read on `defined x ⊓ defined y` — the
-symmetric definedness gate of [gajewski-2011]'s Strawson
-anti-additivity. Classical soundness is the trivial-definedness case
-(`strawsonSoundFor_top_iff`) and implies the Strawson form at any
-definedness (`Signature.SoundFor.strawsonSoundFor`).
-
-The operator instances are the semantic content of the
-`classicalSignature = none` rows of
-`Polarity.LicensingContext.properties`: `onlyFull`,
-`sorryFull`, `superlativeAssert`, and `sinceFull` realize the `.anti` row
-Strawson-ly while failing it classically.
+This file relativizes the soundness layer of
+`Logic/Natural/Soundness.lean` to presuppositions ([von-fintel-1999]'s
+Strawson move, at signature level): a projection row holds modulo
+presuppositions when the projected relation holds on the region where
+the arguments' presuppositions are satisfied.
 
 ## Main declarations
 
-- `Relation.HoldsOn`: relation content relativized to a region;
-- `Signature.StrawsonSoundFor`: row soundness modulo presupposition;
-- `strawsonSoundFor_top_iff`, `Signature.SoundFor.strawsonSoundFor`:
-  the classical ↔ Strawson bridges;
-- `strawsonSoundFor_anti_of_isStrawsonDE` and the four operator instances.
+* `Relation.HoldsOn`: the lattice content of a relation, relativized
+  to a region; at `⊤` it is `Relation.Holds`.
+* `Signature.StrawsonSoundFor`: `Signature.SoundFor` with every
+  projected relation read on the symmetric definedness region
+  `defined x ⊓ defined y` of [gajewski-2011]'s Strawson
+  anti-additivity.
+* `strawsonSoundFor_top_iff`, `Signature.SoundFor.strawsonSoundFor`:
+  classical soundness is the trivial-definedness case, and implies the
+  Strawson form at any definedness.
+* `strawsonSoundFor_anti_of_isStrawsonDE` and the operator instances:
+  `onlyFull`, `sorryFull`, `superlativeAssert`, and `sinceFull`
+  realize the `.anti` row Strawson-ly while failing it classically.
 
-Composing definedness along a path is presupposition projection and is
-deliberately not attempted here — its home is a bridge to
-`Semantics/Presupposition/`, not an ad-hoc operator.
+## Implementation notes
+
+The operator instances are the semantic content of the
+`classicalSignature = none` rows of
+`Polarity.LicensingContext.properties`. Composing definedness along a
+path is presupposition projection and is deliberately not attempted
+here; its home is a bridge to `Semantics/Presupposition/`.
 
 ## References
 
