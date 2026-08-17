@@ -21,7 +21,7 @@ clause-initial particle + verb movement. Neutral baseline. -/
 def daLi : Particle where
   form := "da li"
   position := some .clauseInitial
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .excluded }
@@ -32,7 +32,7 @@ razve). Evidential classification in `Simik2024`. -/
 def zar_ : Particle where
   form := "zar"
   position := some .clauseInitial
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .excluded }

@@ -19,7 +19,7 @@ default PQs; incompatible with DeclPQs. -/
 def ali : Particle where
   form := "ali"
   position := some .clauseInitial
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .excluded }

@@ -25,7 +25,7 @@ def li : Particle where
   form := "li"
   script := some "ли"
   position := some .secondPosition
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .excluded }
@@ -38,7 +38,7 @@ def nima : Particle where
   form := "nima"
   script := some "нима"
   position := some .clauseInitial
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .excluded }

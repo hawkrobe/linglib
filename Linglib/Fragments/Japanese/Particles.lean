@@ -32,7 +32,7 @@ def ka : Particle where
   form := "ka"
   script := some "か"
   position := some .clauseFinal
-  embedding := some
+  embedding :=
     { matrix := some .optional
       subordinated := some .obligatory
       quasiSubordinated := some .optional
@@ -43,7 +43,7 @@ def no_ : Particle where
   form := "no"
   script := some "の"
   position := some .clauseFinal
-  embedding := some
+  embedding :=
     { matrix := some .optional
       subordinated := some .optional
       quasiSubordinated := some .optional }
@@ -56,7 +56,7 @@ def koto : Particle where
   form := "koto"
   script := some "こと"
   position := some .clauseFinal
-  embedding := some
+  embedding :=
     { matrix := some .excluded
       subordinated := some .optional
       quasiSubordinated := some .excluded }
@@ -69,7 +69,7 @@ def kke : Particle where
   form := "kke"
   script := some "っけ"
   position := some .clauseFinal
-  embedding := some
+  embedding :=
     { matrix := some .optional
       subordinated := some .excluded
       quasiSubordinated := some .excluded
@@ -86,7 +86,7 @@ def daroo : Particle where
   form := "daroo"
   script := some "だろう"
   position := some .clauseFinal
-  embedding := some
+  embedding :=
     { matrix := some .optional
       subordinated := some .excluded
       quasiSubordinated := some .optional }

@@ -24,7 +24,7 @@ def li : Particle where
   form := "li"
   script := some "ли"
   position := some .secondPosition
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .excluded }
@@ -37,7 +37,7 @@ def razve_ : Particle where
   form := "razve"
   script := some "разве"
   position := some .clauseInitial
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .excluded }

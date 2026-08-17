@@ -35,7 +35,7 @@ disjunction *ki* of alternative questions. -/
 def ki : Particle where
   form := "ki"
   position := some .clauseInitial
-  embedding := some
+  embedding :=
     { matrix := some .excluded
       subordinated := some .optional
       quasiSubordinated := some .optional }
@@ -44,11 +44,11 @@ def ki : Particle where
 def kya : Particle where
   form := "kya:"
   position := some .free
-  distribution := some
+  distribution :=
     { polarInterrogative := some .optional
       alternativeInterrogative := some .optional
       constituentInterrogative := some .excluded }
-  embedding := some
+  embedding :=
     { matrix := some .optional
       subordinated := some .excluded
       quasiSubordinated := some .optional }
@@ -58,9 +58,9 @@ alternative question. -/
 def ya_nahi : Particle where
   form := "ya: nahii:"
   position := some .clauseFinal
-  distribution := some
+  distribution :=
     { alternativeInterrogative := some .optional }
-  embedding := some
+  embedding :=
     { matrix := some .optional
       subordinated := some .obligatory
       quasiSubordinated := some .optional }

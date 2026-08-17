@@ -31,7 +31,7 @@ def ma : Particle where
   form := "ma"
   script := some "吗"
   position := some .clauseFinal
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .optional }
@@ -44,7 +44,7 @@ def ba : Particle where
   form := "ba"
   script := some "吧"
   position := some .clauseFinal
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .excluded }
@@ -59,7 +59,7 @@ def nandao : Particle where
   form := "nándào"
   script := some "难道"
   position := some .clauseInitial
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .excluded }

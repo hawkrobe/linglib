@@ -28,12 +28,12 @@ particle *ja* (`PolarityMarking.lean`). -/
 def ja : Particle where
   form := "ja"
   position := some .clauseMedial
-  distribution := some
+  distribution :=
     { declarative := some .optional
       polarInterrogative := some .excluded
       constituentInterrogative := some .excluded
       imperative := some .excluded }
-  embedding := some
+  embedding :=
     { matrix := some .optional
       subordinated := some .excluded }
 
@@ -46,12 +46,12 @@ from declaratives and imperatives. -/
 def denn : Particle where
   form := "denn"
   position := some .clauseMedial
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .optional
       imperative := some .excluded }
-  embedding := some
+  embedding :=
     { matrix := some .optional
       subordinated := some .excluded }
 
@@ -61,12 +61,12 @@ def denn : Particle where
 def wohl : Particle where
   form := "wohl"
   position := some .clauseMedial
-  distribution := some
+  distribution :=
     { declarative := some .optional
       polarInterrogative := some .optional
       constituentInterrogative := some .optional
       imperative := some .excluded }
-  embedding := some
+  embedding :=
     { matrix := some .optional
       subordinated := some .excluded }
 
@@ -75,12 +75,12 @@ is"). Declaratives only. -/
 def halt : Particle where
   form := "halt"
   position := some .clauseMedial
-  distribution := some
+  distribution :=
     { declarative := some .optional
       polarInterrogative := some .excluded
       constituentInterrogative := some .excluded
       imperative := some .excluded }
-  embedding := some
+  embedding :=
     { matrix := some .optional
       subordinated := some .excluded }
 
@@ -91,12 +91,12 @@ is formalized in `SeeligerRepp2018.doch_dual_role`). -/
 def doch : Particle where
   form := "doch"
   position := some .clauseMedial
-  distribution := some
+  distribution :=
     { declarative := some .optional
       polarInterrogative := some .excluded
       constituentInterrogative := some .excluded
       imperative := some .optional }
-  embedding := some
+  embedding :=
     { matrix := some .optional
       subordinated := some .excluded }
 
@@ -108,7 +108,7 @@ PRQ/NRQ bias profile lives in `SeeligerRepp2018`. -/
 def dochWohl : Particle where
   form := "doch wohl"
   position := some .clauseMedial
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .excluded }
