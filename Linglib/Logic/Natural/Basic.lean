@@ -74,8 +74,11 @@ inductive Atom where
 
 /-- The constraint set of a relation: each relation is the conjunction
 of its atoms (`≡` = `{le, ge}`, `^` = `{disjoint, codisjoint}`, `#` =
-`∅`), `≤` is reverse inclusion of constraint sets, and `Holds` (in
-`Logic/Natural/Soundness.lean`) is their conjunction. -/
+`∅`), `≤` is reverse inclusion of constraint sets, and `Holds` is their
+conjunction (`Relation.holds_iff` in `Logic/Natural/Soundness.lean`).
+Exactly the seven images are nondegenerately realizable among the
+sixteen subsets (`Relation.mem_range_constraints_iff` in
+`Logic/Natural/Completeness.lean`). -/
 def constraints : Relation → Finset Atom
   | .equiv => {.le, .ge}
   | .forward => {.le}
@@ -110,8 +113,10 @@ instance : OrderTop Relation where
 Join operation ⋈ ([icard-2012], Lemma 1.5): given `xRy` and `yR'z`, the
 strongest relation guaranteed between `x` and `z` — relation-algebra
 join, not lattice join. The table is derived from the non-strict
-`Holds` reading and certified cell-by-cell by `Relation.Holds.join`
-in `Logic/Natural/Soundness.lean`.
+`Holds` reading, certified sound cell-by-cell by `Relation.Holds.join`
+in `Logic/Natural/Soundness.lean`, and tight by `Relation.isLeast_join`
+in `Logic/Natural/Completeness.lean`: each cell is the least relation
+sound for the chaining.
 -/
 def join : Relation → Relation → Relation
   -- ≡ is the identity

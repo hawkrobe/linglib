@@ -1629,6 +1629,7 @@ import Linglib.Core.Order.AntiAdditive
 import Linglib.Semantics.Alternatives.AsymStronger
 import Linglib.Semantics.Exhaustification.Extremum
 import Linglib.Logic.Natural.Basic
+import Linglib.Logic.Natural.Completeness
 import Linglib.Logic.Natural.Monotonicity.Defs
 import Linglib.Logic.Natural.Monotonicity.Structure
 import Linglib.Semantics.Quantification.Signatures

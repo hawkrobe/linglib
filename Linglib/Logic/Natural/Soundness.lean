@@ -23,6 +23,8 @@ the enum become corollaries of facts about actual context functions.
 ## Main declarations
 
 - `Relation.Holds`: lattice content of the seven relations;
+- `Relation.holds_iff`: `Holds` is the conjunction of the `constraints`
+  atoms (`Relation.Atom.Holds`);
 - `Signature.SoundFor`: σ's projection row is sound for `f`;
 - `soundFor_mono_iff`, `soundFor_anti_iff`: the monotone rows, as iffs;
 - `soundFor_additive` … `soundFor_antiAddMult`: the algebraic rows, from
@@ -50,8 +52,8 @@ namespace NaturalLogic
 /-- The lattice content of a natural-logic relation ([icard-2012]
 Definition 1.2), in mathlib's complementation vocabulary: `negation` is
 `IsCompl`, `alternation` is `Disjoint`, `cover` is `Codisjoint`; `forward`
-is non-strict `≤` (the enum comments' `⊂` follows MacCartney's exclusive
-reading, which the projectivity tables do not need). -/
+is non-strict `≤` (MacCartney's exclusive reading takes it proper, which
+the projectivity tables do not need). -/
 def Relation.Holds {α : Type*} [Lattice α] [BoundedOrder α] :
     Relation → α → α → Prop
   | .equiv => (· = ·)
@@ -61,6 +63,45 @@ def Relation.Holds {α : Type*} [Lattice α] [BoundedOrder α] :
   | .alternation => Disjoint
   | .cover => Codisjoint
   | .independent => fun _ _ => True
+
+/-- The lattice content of an atomic constraint ([icard-2012]
+Definition 1.2). -/
+def Relation.Atom.Holds {α : Type*} [Lattice α] [BoundedOrder α] :
+    Relation.Atom → α → α → Prop
+  | .le => (· ≤ ·)
+  | .ge => (· ≥ ·)
+  | .disjoint => Disjoint
+  | .codisjoint => Codisjoint
+
+/-- A relation's content is the conjunction of its constraint atoms:
+`constraints` is the single source of truth for `Holds`. -/
+theorem Relation.holds_iff {α : Type*} [Lattice α] [BoundedOrder α]
+    {R : Relation} {x y : α} :
+    R.Holds x y ↔ ∀ a ∈ R.constraints, a.Holds x y := by
+  cases R <;>
+    simp [Relation.Holds, Relation.Atom.Holds, Relation.constraints,
+      isCompl_iff, le_antisymm_iff]
+
+instance Relation.Atom.decidableHolds {α : Type*} [Lattice α] [BoundedOrder α]
+    [DecidableEq α] [DecidableLE α] :
+    ∀ (a : Relation.Atom) (x y : α), Decidable (a.Holds x y)
+  | .le, x, y => inferInstanceAs (Decidable (x ≤ y))
+  | .ge, x, y => inferInstanceAs (Decidable (y ≤ x))
+  | .disjoint, x, y => decidable_of_iff (x ⊓ y = ⊥) disjoint_iff.symm
+  | .codisjoint, x, y => decidable_of_iff (x ⊔ y = ⊤) codisjoint_iff.symm
+
+instance Relation.decidableHolds {α : Type*} [Lattice α] [BoundedOrder α]
+    [DecidableEq α] [DecidableLE α] :
+    ∀ (R : Relation) (x y : α), Decidable (R.Holds x y)
+  | .equiv, x, y => inferInstanceAs (Decidable (x = y))
+  | .forward, x, y => inferInstanceAs (Decidable (x ≤ y))
+  | .reverse, x, y => inferInstanceAs (Decidable (y ≤ x))
+  | .negation, x, y =>
+      decidable_of_iff (x ⊓ y = ⊥ ∧ x ⊔ y = ⊤)
+        (by rw [← disjoint_iff, ← codisjoint_iff]; exact isCompl_iff.symm)
+  | .alternation, x, y => decidable_of_iff (x ⊓ y = ⊥) disjoint_iff.symm
+  | .cover, x, y => decidable_of_iff (x ⊔ y = ⊤) codisjoint_iff.symm
+  | .independent, _, _ => .isTrue trivial
 
 /-! ### Join soundness -/
 
