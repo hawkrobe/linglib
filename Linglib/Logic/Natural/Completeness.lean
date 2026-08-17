@@ -6,15 +6,17 @@ Authors: Robert Hawkins
 import Linglib.Logic.Natural.Soundness
 import Mathlib.Data.Finset.BooleanAlgebra
 import Mathlib.Data.Fintype.Powerset
+import Mathlib.Data.Fintype.Pi
 import Mathlib.Order.Bounds.Basic
 
 /-!
-# Completeness of the relation algebra
+# Completeness of the projectivity calculus
 
-This file proves the converses to `Logic/Natural/Soundness.lean` for
-the relation algebra: the join table is tight, and the seven relations
-are exactly the nondegenerately realizable conjunctions of constraint
-atoms.
+This file proves the converses to `Logic/Natural/Soundness.lean`: the
+join and projection tables are tight, the seven relations are exactly
+the nondegenerately realizable conjunctions of constraint atoms, and
+the refinement order on signatures coincides with inclusion of
+function classes.
 
 Tightness ([icard-2012]'s Lemma 1.5, as an equality) has countermodels
 already on the three-atom Boolean algebra `Finset (Fin 3)`. The
@@ -34,10 +36,30 @@ every bounded lattice.
 * `Relation.exists_isLeast_holds`: [icard-2012]'s Lemma 1.3 — any
   nondegenerate pair stands in a strongest relation — on any bounded
   lattice.
+* `Signature.isLeast_project`: each projection cell is the least
+  relation sound for the signature's function class ([icard-2012]
+  Definition 2.3), with countermodels on the two-element Boolean
+  algebra.
+* `Signature.le_iff_holdsFor`: the refinement order is inclusion of
+  function classes — [icard-2012]'s semantic definition of ≼,
+  recovered.
+* `Signature.isLeast_compose`, `Signature.holdsFor_comp`: composition
+  is the least signature covering composites ([icard-2012]
+  Definition 2.6).
+
+## Implementation notes
+
+The nine signatures are not an exhaustive classification of realizable
+property profiles: the constant-`⊤` function is simultaneously
+monotone, antitone, completely additive, and completely
+anti-multiplicative, and `{+, −, ⊕, ⊟}` is no signature's property
+set. The signatures are the downward-closed profiles [icard-2012]
+names, each tight for its own row.
 
 ## References
 
-* [icard-2012] — Definition 1.4, Lemmas 1.3 and 1.5.
+* [icard-2012] — Definitions 1.4, 2.3, and 2.6, Lemmas 1.3, 1.5,
+  and 2.4.
 * [maccartney-manning-2009] — §2's sixteen-class partition, following
   Sánchez Valencia.
 -/
@@ -126,5 +148,67 @@ theorem Relation.exists_isLeast_holds {α : Type*} [Lattice α] [BoundedOrder α
     exact (Finset.mem_filter.mp ha).2
   · rw [hR]
     exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, Relation.holds_iff.mp hS a ha⟩
+
+
+/-! ### Tightness of the projection tables -/
+
+set_option synthInstance.maxSize 400 in
+/-- **Tightness of the projection tables** ([icard-2012] Definition 2.3;
+his Lemma 2.4 as an equality): `project R σ` is the least relation `T`
+such that every σ-function sends `R`-pairs to `T`-pairs, already over
+the two-element Boolean algebra. -/
+theorem Signature.isLeast_project (R : Relation) (σ : Signature) :
+    IsLeast {T : Relation | ∀ f : Finset (Fin 1) → Finset (Fin 1),
+      σ.HoldsFor f → ∀ x y, R.Holds x y → T.Holds (f x) (f y)}
+      (Signature.project R σ) := by
+  refine ⟨λ f hf x y hR => σ.soundFor_of_holdsFor hf R x y hR, λ T hT => ?_⟩
+  by_contra hle
+  have counter : ∀ (R : Relation) (σ : Signature) (T : Relation),
+      ¬ Signature.project R σ ≤ T →
+      ∃ f : Finset (Fin 1) → Finset (Fin 1), σ.HoldsFor f ∧
+        ∃ x y, R.Holds x y ∧ ¬ T.Holds (f x) (f y) := by decide
+  obtain ⟨f, hf, x, y, hR, hT'⟩ := counter R σ T hle
+  exact hT' (hT f hf x y hR)
+
+set_option synthInstance.maxSize 400 in
+/-- The refinement order on signatures is inclusion of function classes —
+[icard-2012]'s semantic definition of ≼ (§2.2) recovered as a
+characterization of the property-set order, with countermodels on the
+two-element Boolean algebra. -/
+theorem Signature.le_iff_holdsFor {σ τ : Signature} :
+    σ ≤ τ ↔
+      ∀ f : Finset (Fin 1) → Finset (Fin 1), σ.HoldsFor f → τ.HoldsFor f := by
+  refine ⟨λ h f hf => hf.of_le h, λ h => ?_⟩
+  by_contra hle
+  have counter : ∀ σ τ : Signature, ¬ σ ≤ τ →
+      ∃ f : Finset (Fin 1) → Finset (Fin 1), σ.HoldsFor f ∧ ¬ τ.HoldsFor f := by
+    decide
+  obtain ⟨f, hσ, hτ⟩ := counter σ τ hle
+  exact hτ (h f hσ)
+
+/-! ### Tightness of signature composition -/
+
+set_option synthInstance.maxSize 400 in
+/-- Function classes compose along `Signature.compose`: a ψ-function
+after a φ-function is a `ψ * φ`-function, on the two-element Boolean
+algebra. -/
+theorem Signature.holdsFor_comp :
+    ∀ (ψ φ : Signature) (f g : Finset (Fin 1) → Finset (Fin 1)),
+      ψ.HoldsFor f → φ.HoldsFor g → (ψ * φ).HoldsFor (f ∘ g) := by decide
+
+set_option synthInstance.maxSize 400 in
+/-- **Tightness of signature composition** ([icard-2012]
+Definition 2.6): `ψ * φ` is the least signature whose class contains
+every composite of a ψ-function after a φ-function. -/
+theorem Signature.isLeast_compose (ψ φ : Signature) :
+    IsLeast {χ : Signature | ∀ f g : Finset (Fin 1) → Finset (Fin 1),
+      ψ.HoldsFor f → φ.HoldsFor g → χ.HoldsFor (f ∘ g)} (ψ * φ) := by
+  refine ⟨λ f g hf hg => Signature.holdsFor_comp ψ φ f g hf hg, λ χ hχ => ?_⟩
+  by_contra hle
+  have counter : ∀ ψ φ χ : Signature, ¬ ψ * φ ≤ χ →
+      ∃ f g : Finset (Fin 1) → Finset (Fin 1),
+        ψ.HoldsFor f ∧ φ.HoldsFor g ∧ ¬ χ.HoldsFor (f ∘ g) := by decide
+  obtain ⟨f, g, hf, hg, hχ'⟩ := counter ψ φ χ hle
+  exact hχ' (hχ f g hf hg)
 
 end NaturalLogic

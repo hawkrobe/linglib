@@ -289,8 +289,14 @@ instance : OrderTop Signature where
 signature ([icard-2012] Definition 2.3, computed by his Lemma 2.4):
 the strongest relation guaranteed between `f x` and `f y` when `x R y`
 and `f` has signature `σ`. The rows are certified sound against the
-function classes in `Logic/Natural/Soundness.lean` (`soundFor_*`). -/
+function classes in `Logic/Natural/Soundness.lean` (`soundFor_*`) and
+tight by `Signature.isLeast_project` in
+`Logic/Natural/Completeness.lean`. One cell deviates from the printed
+table: [icard-2012] prints `[R]^• = #` for all `R` (p. 715), but every
+function preserves equality, so his Definition 2.3 forces
+`[≡]^• = ≡`. -/
 def project : Relation → Signature → Relation
+  | .equiv, .all => .equiv
   | _, .all => .independent
   | r, .addMult => r
   | .equiv, .antiAddMult => .equiv
@@ -345,9 +351,8 @@ def project : Relation → Signature → Relation
 
 /-- Every signature except • preserves equiv (• is the class of arbitrary
 functions, which need not respect equivalence). -/
-theorem project_equiv (φ : Signature) (h : φ ≠ .all) :
-    project .equiv φ = .equiv := by
-  cases φ <;> simp_all <;> rfl
+theorem project_equiv (φ : Signature) : project .equiv φ = .equiv := by
+  cases φ <;> rfl
 
 /-- Projection preserves independent for all signatures. -/
 theorem project_independent (φ : Signature) : project .independent φ = .independent := by
