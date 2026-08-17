@@ -30,10 +30,8 @@ embedding facets.
 
 namespace HindiUrdu.Particles
 
-/-- *ki* — the general subordinator: introduces finite complements of
-any clause type, under responsive and rogative predicates alike, and
-does no clause-typing. Distinct from the homophonous disjunction *ki*,
-which is restricted to alternative questions. -/
+/-- *ki* is the general subordinator, distinct from the homophonous
+disjunction *ki* of alternative questions. -/
 def ki : Particle where
   form := "ki"
   position := some .clauseInitial
@@ -42,12 +40,7 @@ def ki : Particle where
       subordinated := some .optional
       quasiSubordinated := some .optional }
 
-/-- *kya:* — the polar question particle: optional in matrix polar
-questions, excluded from constituent questions, acceptable in
-alternative questions (parsed as *kya:* on a disjoined polar question),
-with no fixed clause-internal position. It embeds only in
-quasi-subordination: under rogatives like *pu:ch-na:* "ask", not under
-responsives or CP-only rogatives like *nirbhar kar-na:* "depend on". -/
+/-- *kya:* is a polar question particle. -/
 def kya : Particle where
   form := "kya:"
   position := some .free
@@ -60,10 +53,8 @@ def kya : Particle where
       subordinated := some .excluded
       quasiSubordinated := some .optional }
 
-/-- *ya: nahii:* — "or not", the overt disjunct that turns a polar
-question into a polar alternative question: optional in matrix and
-quasi-subordinated positions, obligatory under subordination, where a
-simplex polar cannot be clause-typed. -/
+/-- *ya: nahii:* "or not" is the overt disjunct forming a polar
+alternative question. -/
 def ya_nahi : Particle where
   form := "ya: nahii:"
   position := some .clauseFinal
