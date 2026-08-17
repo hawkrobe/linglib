@@ -3,7 +3,6 @@ import Linglib.Semantics.Polarity.Strength
 import Linglib.Logic.Natural.Soundness
 import Linglib.Logic.Natural.StrawsonSoundness
 import Linglib.Core.Order.AntiAdditive
-import Linglib.Logic.Natural.World
 import Linglib.Semantics.Quantification.Signatures
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Counting
@@ -39,8 +38,6 @@ namespace Polarity
 
 open NaturalLogic
 open Quantification
-open Entailment (World)
-open Entailment (atMost2_student atMost_antitone_scope)
 open Entailment
 
 /-- A model-theoretic witness for a licensing-context row: an operator
@@ -105,11 +102,112 @@ private theorem strength_of_mem_none {W : Type*} {β : Type*} [Lattice β]
   rw [Option.mem_def] at hσ
   exact absurd hσ (by simp)
 
+/-! ### The at-most operator
+
+The model operator for the `.atMost` row: antitone in scope but not
+anti-additive — the strictness witness separating weak DE from
+anti-additivity. -/
+
+/-- "At most n A's are B" - true if at most n worlds satisfy both.
+    Uses an existential over a sublist witness so the def is decidable
+    only when the predicates are decidable, but stays in `Prop`. -/
+def atMost (n : Nat) (restr scope : Set (Fin 4)) : Prop :=
+  ∀ ws : List (Fin 4), ws.Nodup →
+    (∀ w ∈ ws, restr w ∧ scope w) →
+    ws.length ≤ n
+
+/-- Monotonicity: if `p ⊆ q` (entailment) and `q` has at most `n` witnesses,
+    so does `p`. -/
+theorem atMost_mono (n : Nat) (restr p q : Set (Fin 4))
+    (hpq : ∀ w, p w → q w) (h : atMost n restr q) :
+    atMost n restr p := by
+  intro ws hnd hall
+  apply h ws hnd
+  intro w hw
+  exact ⟨(hall w hw).1, hpq w (hall w hw).2⟩
+
+/-- "At most 2 students ___" with fixed restrictor. -/
+def atMost2_student : Set (Fin 4) → Set (Fin 4) :=
+  λ scope => λ _ => atMost 2 {0, 1} scope
+
+/-- "At most n" is antitone in scope. -/
+theorem atMost_antitone_scope : Antitone atMost2_student := by
+  intro p q hpq _w h
+  exact atMost_mono 2 {0, 1} p q (fun _ hp => hpq hp) h
+
+/-- "At most 1 student ___" with fixed restrictor. -/
+def atMost1_student : Set (Fin 4) → Set (Fin 4) :=
+  λ scope => λ _ => atMost 1 {0, 1} scope
+
+/-- "At most 1" is still antitone. -/
+theorem atMost1_antitone_scope : Antitone atMost1_student := by
+  intro p q hpq _w h
+  exact atMost_mono 1 {0, 1} p q (fun _ hp => hpq hp) h
+
+/-- "At most n" is not anti-additive (counterexample): the strictness
+witness for DE ⊊ anti-additive. -/
+theorem atMost_not_antiAdditive :
+    ¬IsAntiAdditive atMost1_student := by
+  intro hAA
+  have h := isAntiAdditive_iff_mem.mp hAA
+  let qProp : Set (Fin 4) := λ w => w = 1
+  let p0 : Set (Fin 4) := {0}
+  have key : atMost1_student (p0 ∪ qProp) 0 ↔
+             atMost1_student p0 0 ∧ atMost1_student qProp 0 :=
+    h p0 qProp 0
+  -- p0 has just w0 as a witness; ≤ 1 ✓
+  have hp : atMost1_student p0 0 := by
+    intro ws hnd hall
+    -- Every element of ws satisfies p01 ∧ p0, hence equals w0
+    have hall_w0 : ∀ w ∈ ws, w = 0 := by
+      intro w hw
+      have := (hall w hw).2
+      exact this
+    -- A nodup list whose every element is w0 has length ≤ 1
+    rcases ws with _ | ⟨a, t⟩
+    · simp
+    · rcases t with _ | ⟨b, t'⟩
+      · simp
+      · exfalso
+        have ha : a = 0 := hall_w0 a (List.mem_cons_self ..)
+        have hb : b = 0 := hall_w0 b (List.mem_cons_of_mem _ (List.mem_cons_self ..))
+        have : a ≠ b := List.ne_of_not_mem_cons (List.Nodup.notMem hnd)
+        exact this (ha.trans hb.symm)
+  -- qProp has just w1 as a witness; ≤ 1 ✓
+  have hq : atMost1_student qProp 0 := by
+    intro ws hnd hall
+    have hall_w1 : ∀ w ∈ ws, w = 1 := by
+      intro w hw
+      have := (hall w hw).2
+      simpa [qProp] using this
+    rcases ws with _ | ⟨a, t⟩
+    · simp
+    · rcases t with _ | ⟨b, t'⟩
+      · simp
+      · exfalso
+        have ha : a = 1 := hall_w1 a (List.mem_cons_self ..)
+        have hb : b = 1 := hall_w1 b (List.mem_cons_of_mem _ (List.mem_cons_self ..))
+        have : a ≠ b := List.ne_of_not_mem_cons (List.Nodup.notMem hnd)
+        exact this (ha.trans hb.symm)
+  -- p0 ∪ qProp has both w0 and w1 as witnesses; not ≤ 1
+  have hcontr : ¬ atMost1_student (p0 ∪ qProp) 0 := by
+    intro hle
+    have : ([(0 : Fin 4), 1]).length ≤ 1 := by
+      apply hle [0, 1]
+      · decide
+      · intro w hw
+        rcases List.mem_cons.mp hw with rfl | hw'
+        · exact ⟨Or.inl rfl, by left; rfl⟩
+        · rcases List.mem_singleton.mp hw' with rfl
+          exact ⟨Or.inr rfl, by right; rfl⟩
+    simp at this
+  exact hcontr (key.mpr ⟨hp, hq⟩)
+
 /-! ### Classical rows -/
 
 /-- Negation: complementation realizes the anti-morphism row. -/
 def negationWitness : ContextWitness .negation where
-  f := (compl : Set World → Set World)
+  f := (compl : Set (Fin 4) → Set (Fin 4))
   defined := fun _ => ⊤
   strawson := compl_soundFor_antiAddMult.strawsonSoundFor _
   classical := soundFor_of_mem_some compl_soundFor_antiAddMult
@@ -183,13 +281,13 @@ def atMostWitness : ContextWitness .atMost where
 
 private theorem condAntecedent_soundFor :
     Signature.SoundFor .anti
-      (fun α => condNecessity (W := World) (fun _ => Set.univ) α ∅) :=
+      (fun α => condNecessity (W := Fin 4) (fun _ => Set.univ) α ∅) :=
   soundFor_anti_iff.mpr (conditional_antecedent_antitone _ _)
 
 /-- Conditional antecedents: the antecedent section of `condNecessity` is
 classically antitone with the modal base held constant. -/
 def conditionalAntecedentWitness : ContextWitness .conditionalAntecedent where
-  f := fun α => condNecessity (W := World) (fun _ => Set.univ) α ∅
+  f := fun α => condNecessity (W := Fin 4) (fun _ => Set.univ) α ∅
   defined := fun _ => ⊤
   strawson := condAntecedent_soundFor.strawsonSoundFor _
   classical := soundFor_of_mem_some condAntecedent_soundFor
@@ -201,8 +299,8 @@ def conditionalAntecedentWitness : ContextWitness .conditionalAntecedent where
 /-- *Only*: Strawson-`.anti` with its existence presupposition;
 classically nothing (`onlyFull_not_de`). -/
 def onlyFocusWitness : ContextWitness .onlyFocus where
-  f := onlyFull (W := World) (· = World.w0)
-  defined := fun scope => {w | ∃ w', w' = World.w0 ∧ scope w'}
+  f := onlyFull (W := Fin 4) (· = (0 : Fin 4))
+  defined := fun scope => {w | ∃ w', w' = (0 : Fin 4) ∧ scope w'}
   strawson := onlyFull_strawsonSoundFor_anti _
   classical := soundFor_of_mem_none
   strength := strength_of_mem_none
@@ -210,8 +308,8 @@ def onlyFocusWitness : ContextWitness .onlyFocus where
 /-- Adversatives: Strawson-`.anti` with doxastic factivity; classically
 nothing (`sorryFull_not_de`). -/
 def adversativeWitness : ContextWitness .adversative where
-  f := sorryFull (W := World) (fun w => {w}) (fun _ => {World.w1})
-  defined := fun p => {w | ∀ w' ∈ ({w} : Set World), p w'}
+  f := sorryFull (W := Fin 4) (fun w => {w}) (fun _ => ({1} : Set (Fin 4)))
+  defined := fun p => {w | ∀ w' ∈ ({w} : Set (Fin 4)), p w'}
   strawson := sorryFull_strawsonSoundFor_anti _ _
   classical := soundFor_of_mem_none
   strength := strength_of_mem_none
@@ -219,8 +317,8 @@ def adversativeWitness : ContextWitness .adversative where
 /-- Temporal *since*: Strawson-`.anti` with the past-event
 presupposition. -/
 def sinceTemporalWitness : ContextWitness .sinceTemporal where
-  f := sinceFull (W := World) (fun _ => {World.w0}) (fun _ => ∅)
-  defined := fun p => {w | ∃ w' ∈ ({World.w0} : Set World), p w'}
+  f := sinceFull (W := Fin 4) (fun _ => ({0} : Set (Fin 4))) (fun _ => ∅)
+  defined := fun p => {w | ∃ w' ∈ (({0} : Set (Fin 4)) : Set (Fin 4)), p w'}
   strawson := sinceFull_strawsonSoundFor_anti _ _
   classical := soundFor_of_mem_none
   strength := strength_of_mem_none
@@ -228,8 +326,8 @@ def sinceTemporalWitness : ContextWitness .sinceTemporal where
 /-- Superlatives: Strawson-`.anti` in the restriction with the
 designated-subject presupposition. -/
 def superlativeWitness : ContextWitness .superlative where
-  f := superlativeAssert (W := World) World.w0
-  defined := fun restriction => {w | superlativePresup World.w0 restriction w}
+  f := superlativeAssert (W := Fin 4) (0 : Fin 4)
+  defined := fun restriction => {w | superlativePresup (0 : Fin 4) restriction w}
   strawson := superlativeAssert_strawsonSoundFor_anti _
   classical := soundFor_of_mem_none
   strength := strength_of_mem_none

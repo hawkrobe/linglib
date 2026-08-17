@@ -1626,7 +1626,6 @@ import Linglib.Semantics.Dynamic.UpdateSemantics.Bilateral
 import Linglib.Semantics.Dynamic.UpdateSemantics.Default
 import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
 import Linglib.Core.Order.AntiAdditive
-import Linglib.Logic.Natural.World
 import Linglib.Semantics.Alternatives.AsymStronger
 import Linglib.Semantics.Exhaustification.Extremum
 import Linglib.Logic.Natural.Basic

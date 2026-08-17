@@ -1,7 +1,6 @@
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Core.Order.AntiAdditive
 import Linglib.Logic.Natural.Basic
-import Linglib.Logic.Natural.World
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.FinEnum
@@ -385,7 +384,6 @@ theorem house_has_bathroom : posMeaning .house .bathroom := trivial
 theorem house_doesnt_have_bathroom : ¬ negMeaning .house .bathroom := fun h => h trivial
 theorem classroom_doesnt_have_stove : negMeaning .classroom .stove := id
 
-open Entailment
 
 /-- Lift He et al. sentences to world-indexed propositions. -/
 def liftToWorlds (s : HKIState) : (HKIState → Bool) :=
@@ -407,11 +405,11 @@ theorem not_reverses_entailment_HKI (p q : (HKIState → Bool))
 
 /-- Negative sentences are downward-entailing: complementation is
     antitone. -/
-theorem neg_sentence_is_de : Antitone (compl : Set World → Set World) :=
+theorem neg_sentence_is_de : Antitone (compl : Set (Fin 4) → Set (Fin 4)) :=
   antitone_compl
 
 /-- Positive sentences are upward-entailing: the identity context. -/
-theorem pos_sentence_is_ue : Monotone (id : Set World → Set World) :=
+theorem pos_sentence_is_ue : Monotone (id : Set (Fin 4) → Set (Fin 4)) :=
   monotone_id
 
 /-- Structural complexity: count of functional heads in the derivation. -/

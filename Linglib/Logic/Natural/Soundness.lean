@@ -1,6 +1,5 @@
 import Linglib.Logic.Natural.Basic
 import Linglib.Core.Order.AntiAdditive
-import Linglib.Logic.Natural.World
 
 /-!
 # Soundness of the projectivity calculus
@@ -45,7 +44,6 @@ unconditionally — every function realizes the no-property row.
 
 namespace NaturalLogic
 
-open Entailment
 
 /-! ### Lattice content of the relations -/
 
@@ -307,7 +305,6 @@ the actual function `compl ∘ compl`. -/
 
 section ComplInstance
 
-open Entailment
 
 variable {α : Type*} [BooleanAlgebra α]
 

@@ -1,4 +1,3 @@
-import Linglib.Logic.Natural.World
 import Mathlib.Data.Set.Lattice
 
 /-!

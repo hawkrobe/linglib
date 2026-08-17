@@ -4,7 +4,6 @@ import Mathlib.Order.Hom.CompleteLattice
 import Mathlib.Order.Heyting.Hom
 import Linglib.Core.Order.SetPreimage
 import Linglib.Core.Order.AntiAdditive
-import Linglib.Logic.Natural.World
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Polarity.Item
 
@@ -95,7 +94,6 @@ namespace Hoeksema1983
 
 open Polarity
 
-open Entailment
 open Core.Order (Comparison)
 open Degree (gtOverSet_isAntiAdditive gtOverSet_atomic_eq_comparativeSem)
 open Polarity (LicensingContext)

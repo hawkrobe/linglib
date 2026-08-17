@@ -14,12 +14,6 @@ fragment of various exhaustification operators. The intent is that any
 study or theory file needing asymmetric entailment over a finite domain
 of world predicates uses this rather than reinventing it.
 
-## Why a polymorphic version
-
-`Logic/Natural/World.lean` defines `entails` over a
-concrete `World` enum (w0–w3) for testbed purposes. That file is not the
-right home for a polymorphic primitive. This file is.
-
 ## What this does NOT subsume
 
 - **`Franke2011.strongestAt`** (`Studies/Franke2011/ScalarGames.lean`) —

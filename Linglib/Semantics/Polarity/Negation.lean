@@ -1,6 +1,5 @@
 import Linglib.Semantics.Polarity.ExpletiveNegation
 import Linglib.Core.Order.AntiAdditive
-import Linglib.Logic.Natural.World
 import Mathlib.Order.Monotone.Basic
 
 /-!
@@ -36,7 +35,6 @@ namespace Negation
 open Negation (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile standardNegProfile)
 open Polarity (DEStrength)
-open Entailment (World)
 
 /-- Pointwise Bool negation on `W → Bool`. -/
 private def boolPnot (W : Type*) : (W → Bool) → (W → Bool) := fun p w => !p w
@@ -88,28 +86,28 @@ def standardNeg (W : Type*) : NegOp W where
 /-- A NegOp is anti-additive if it distributes ∨ to ∧:
     `¬(A ∨ B) = ¬A ∧ ¬B` (De Morgan, part 1).
     Stated directly on the `W → Bool`-typed operator. -/
-def NegOp.isAntiAdditive (n : NegOp World) : Prop :=
-  ∀ p q : (World → Bool), ∀ w, n.op (fun w => p w || q w) w =
+def NegOp.isAntiAdditive (n : NegOp (Fin 4)) : Prop :=
+  ∀ p q : ((Fin 4) → Bool), ∀ w, n.op (fun w => p w || q w) w =
     (n.op p w && n.op q w)
 
 /-- A NegOp is anti-morphic if it is anti-additive AND distributes ∧ to ∨:
     `¬(A ∧ B) = ¬A ∨ ¬B` (De Morgan, part 2).
     This is the full De Morgan property — the characteristic signature
     of negation in the entailment hierarchy. -/
-def NegOp.isAntiMorphic (n : NegOp World) : Prop :=
+def NegOp.isAntiMorphic (n : NegOp (Fin 4)) : Prop :=
   n.isAntiAdditive ∧
-  ∀ p q : (World → Bool), ∀ w, n.op (fun w => p w && q w) w =
+  ∀ p q : ((Fin 4) → Bool), ∀ w, n.op (fun w => p w && q w) w =
     (n.op p w || n.op q w)
 
 /-- Standard negation is anti-additive (De Morgan part 1). -/
 theorem standardNeg_isAntiAdditive :
-    (standardNeg World).isAntiAdditive := by
+    (standardNeg (Fin 4)).isAntiAdditive := by
   intro p q w
   simp [standardNeg, boolPnot, Bool.not_or]
 
 /-- Standard negation is anti-morphic (full De Morgan). -/
 theorem standardNeg_isAntiMorphic :
-    (standardNeg World).isAntiMorphic := by
+    (standardNeg (Fin 4)).isAntiMorphic := by
   refine ⟨standardNeg_isAntiAdditive, ?_⟩
   intro p q w
   simp [standardNeg, boolPnot, Bool.not_and]

@@ -1,5 +1,4 @@
 import Linglib.Semantics.Focus.Particles
-import Linglib.Logic.Natural.World
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Fragments.Hindi.PolarityItems
 import Linglib.Data.Examples.Lahiri1998
@@ -28,7 +27,6 @@ judged stimuli live in `Data/Examples/Lahiri1998.json`
 namespace Lahiri1998
 
 open Focus.Particles (evenPresup LikelihoodMonotone)
-open Entailment (World entails)
 open Polarity
 open Data.Examples (LinguisticExample)
 
@@ -64,61 +62,61 @@ theorem npiForm_eq_base_bhii :
 
 /-! ### The cardinality model
 
-The scale `∃x[n(x) ∧ VP(x)]` over the 4-world semantics of
-`Entailment.Basic`: w0 = at least three entities satisfy the VP,
-w1 = exactly two, w2 = exactly one, w3 = none. -/
+The scale `∃x[n(x) ∧ VP(x)]` over a four-world model (`Fin 4`):
+world 0 = at least three entities satisfy the VP, 1 = exactly two,
+2 = exactly one, 3 = none. -/
 
 /-- At least one entity satisfies the VP (Bool form). -/
-def atLeastOneB : (World → Bool) := λ w => w != .w3
+def atLeastOneB : (Fin 4 → Bool) := λ w => w != 3
 
 /-- At least two entities satisfy the VP (Bool form). -/
-def atLeastTwoB : (World → Bool) := λ w => w == .w0 || w == .w1
+def atLeastTwoB : (Fin 4 → Bool) := λ w => w == 0 || w == 1
 
 /-- At least three entities satisfy the VP (Bool form). -/
-def atLeastThreeB : (World → Bool) := λ w => w == .w0
+def atLeastThreeB : (Fin 4 → Bool) := λ w => w == 0
 
-/-- At least one entity satisfies the VP. True at w0, w1, w2. -/
-def atLeastOne : Set World := {w | atLeastOneB w = true}
+/-- At least one entity satisfies the VP. True at 0, 1, 2. -/
+def atLeastOne : Set (Fin 4) := {w | atLeastOneB w = true}
 
-/-- At least two entities satisfy the VP. True at w0, w1. -/
-def atLeastTwo : Set World := {w | atLeastTwoB w = true}
+/-- At least two entities satisfy the VP. True at 0, 1. -/
+def atLeastTwo : Set (Fin 4) := {w | atLeastTwoB w = true}
 
-/-- At least three entities satisfy the VP. True at w0 only. -/
-def atLeastThree : Set World := {w | atLeastThreeB w = true}
+/-- At least three entities satisfy the VP. True at 0 only. -/
+def atLeastThree : Set (Fin 4) := {w | atLeastThreeB w = true}
 
 /-! ### Weakness of `one` (§7.4, eq. 70)
 
 `one` is the weakest cardinality predicate: every `atLeastN`
 proposition entails `atLeastOne`, and not conversely. -/
 
-theorem two_entails_one : entails atLeastTwo atLeastOne := by
+theorem two_entails_one : atLeastTwo ⊆ atLeastOne := by
   intro w hw
   simp [atLeastOne, atLeastOneB, atLeastTwo, atLeastTwoB] at *
   rcases hw with h | h <;> simp [h]
-theorem three_entails_one : entails atLeastThree atLeastOne := by
+theorem three_entails_one : atLeastThree ⊆ atLeastOne := by
   intro w hw
   simp [atLeastOne, atLeastOneB, atLeastThree, atLeastThreeB] at *
   simp [hw]
-theorem three_entails_two : entails atLeastThree atLeastTwo := by
+theorem three_entails_two : atLeastThree ⊆ atLeastTwo := by
   intro w hw
   simp [atLeastThree, atLeastThreeB, atLeastTwo, atLeastTwoB] at *
   left; exact hw
 
 /-- The entailment is strict: `atLeastOne` does not entail stronger predicates. -/
-theorem one_not_entails_two : ¬ entails atLeastOne atLeastTwo := by
+theorem one_not_entails_two : ¬ (atLeastOne ⊆ atLeastTwo) := by
   intro h
-  have hw : (.w2 : World) ∈ atLeastOne := by simp [atLeastOne, atLeastOneB]
+  have hw : (2 : Fin 4) ∈ atLeastOne := by simp [atLeastOne, atLeastOneB]
   have := h hw
   simp [atLeastTwo, atLeastTwoB] at this
-theorem one_not_entails_three : ¬ entails atLeastOne atLeastThree := by
+theorem one_not_entails_three : ¬ (atLeastOne ⊆ atLeastThree) := by
   intro h
-  have hw : (.w2 : World) ∈ atLeastOne := by simp [atLeastOne, atLeastOneB]
+  have hw : (2 : Fin 4) ∈ atLeastOne := by simp [atLeastOne, atLeastOneB]
   have := h hw
   simp [atLeastThree, atLeastThreeB] at this
 
 /-! ### The implicature clash (§7.4, eqs. 66–79)
 
-In UE, each alternative entails the assertion, so a monotone
+In UE, each alternative the ⊆ assertion, so a monotone
 likelihood ordering makes the assertion most likely — but EVEN demands
 it be least likely. Under negation the entailments reverse and EVEN is
 satisfiable. -/
@@ -127,15 +125,15 @@ section ImplicatureClash
 
 /-- UE pattern: all alternatives entail the assertion — fatal for EVEN. -/
 theorem ue_alt_entails_assertion :
-    entails atLeastTwo atLeastOne ∧
-    entails atLeastThree atLeastOne :=
+    atLeastTwo ⊆ atLeastOne ∧
+    atLeastThree ⊆ atLeastOne :=
   ⟨two_entails_one, three_entails_one⟩
 
-/-- DE pattern: the assertion entails all alternatives — EVEN is
+/-- DE pattern: the assertion all ⊆ alternatives — EVEN is
 satisfiable. -/
 theorem de_assertion_entails_alt :
-    entails (atLeastOneᶜ) (atLeastTwoᶜ) ∧
-    entails (atLeastOneᶜ) (atLeastThreeᶜ) := by
+    atLeastOneᶜ ⊆ atLeastTwoᶜ ∧
+    atLeastOneᶜ ⊆ atLeastThreeᶜ := by
   refine ⟨?_, ?_⟩
   · intro w hw hw'
     exact hw (two_entails_one hw')
@@ -144,22 +142,22 @@ theorem de_assertion_entails_alt :
 
 /-- In UE the assertion does NOT entail the alternatives. -/
 theorem ue_not_reverse :
-    ¬ entails atLeastOne atLeastTwo ∧
-    ¬ entails atLeastOne atLeastThree :=
+    ¬ (atLeastOne ⊆ atLeastTwo) ∧
+    ¬ (atLeastOne ⊆ atLeastThree) :=
   ⟨one_not_entails_two, one_not_entails_three⟩
 
 /-- In DE the alternatives do NOT entail the assertion. -/
 theorem de_not_reverse :
-    ¬ entails (atLeastTwoᶜ) (atLeastOneᶜ) ∧
-    ¬ entails (atLeastThreeᶜ) (atLeastOneᶜ) := by
+    ¬ (atLeastTwoᶜ ⊆ atLeastOneᶜ) ∧
+    ¬ (atLeastThreeᶜ ⊆ atLeastOneᶜ) := by
   refine ⟨?_, ?_⟩
   · intro h
-    have h1 : (.w2 : World) ∈ atLeastTwoᶜ := by
+    have h1 : (2 : Fin 4) ∈ atLeastTwoᶜ := by
       simp [atLeastTwo, atLeastTwoB, Set.mem_compl_iff]
     have h2 := h h1
     simp [atLeastOne, atLeastOneB] at h2
   · intro h
-    have h1 : (.w1 : World) ∈ atLeastThreeᶜ := by
+    have h1 : (1 : Fin 4) ∈ atLeastThreeᶜ := by
       simp [atLeastThree, atLeastThreeB, Set.mem_compl_iff]
     have h2 := h h1
     simp [atLeastOne, atLeastOneB] at h2
@@ -184,7 +182,7 @@ theorem even_clash_abstract {W : Type*}
 /-- In UE, the EVEN presupposition for *ek bhii* is contradicted
 (§7.4, eqs. 68–71). -/
 theorem ekBhii_even_clash_UE
-    (lt le : Set World → Set World → Prop)
+    (lt le : Set (Fin 4) → Set (Fin 4) → Prop)
     (hMono : LikelihoodMonotone le)
     (hCompat : ∀ a b, lt a b → le b a → False)
     (hEven : evenPresup lt atLeastOne [atLeastTwo, atLeastThree]) :
@@ -193,11 +191,11 @@ theorem ekBhii_even_clash_UE
     (hEven atLeastTwo (by simp))
 
 /-- In DE, the EVEN presupposition for *ek bhii nahiiN* is satisfiable:
-the negated assertion entails each negated alternative (§7.4,
+the negated assertion each ⊆ negated alternative (§7.4,
 eqs. 76–79). -/
 theorem ekBhii_even_ok_DE :
-    entails (atLeastOneᶜ) (atLeastTwoᶜ) ∧
-    entails (atLeastOneᶜ) (atLeastThreeᶜ) :=
+    atLeastOneᶜ ⊆ atLeastTwoᶜ ∧
+    atLeastOneᶜ ⊆ atLeastThreeᶜ :=
   de_assertion_entails_alt
 
 /-! ### NPI data (§4, §6)

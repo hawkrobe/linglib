@@ -388,21 +388,21 @@ The four SAA proofs live in `Logic/Natural/StrawsonEntailment.lean`:
     licensing predicate Gajewski's full theory builds compositionally). -/
 theorem gaj2011_recalcitrants_all_strawsonAA :
     -- §2 only
-    IsStrawsonAntiAdditive (onlyFull (· = World.w0))
-        (fun scope _w => ∃ w', w' = World.w0 ∧ scope w') ∧
+    IsStrawsonAntiAdditive (onlyFull (· = (0 : Fin 4)))
+        (fun scope _w => ∃ w', w' = (0 : Fin 4) ∧ scope w') ∧
     -- §3 sorry
     IsStrawsonAntiAdditive
-        (sorryFull (fun (w : World) => ({w} : Set World))
-                   (fun (_ : World) => ({World.w1} : Set World)))
-        (fun p w => ∀ w' ∈ ({w} : Set World), p w') ∧
+        (sorryFull (fun (w : Fin 4) => ({w} : Set (Fin 4)))
+                   (fun (_ : Fin 4) => ({(1 : Fin 4)} : Set (Fin 4))))
+        (fun p w => ∀ w' ∈ ({w} : Set (Fin 4)), p w') ∧
     -- §4.1 conditional
     IsStrawsonAntiAdditive
-        (fun α => condNecessity (fun (_ : World) =>
-            ({World.w0, World.w1} : Set World)) α (fun _ => True))
+        (fun α => condNecessity (fun (_ : Fin 4) =>
+            ({(0 : Fin 4), (1 : Fin 4)} : Set (Fin 4))) α (fun _ => True))
         (fun _ _ => True) ∧
     -- §4.2 superlative
-    IsStrawsonAntiAdditive (superlativeAssert World.w0)
-        (superlativePresup World.w0) :=
+    IsStrawsonAntiAdditive (superlativeAssert (0 : Fin 4))
+        (superlativePresup (0 : Fin 4)) :=
   ⟨onlyFull_isStrawsonAA _,
    sorryFull_isStrawsonAA _ _,
    condNecessity_isStrawsonAA _ _,
@@ -498,7 +498,7 @@ open Semantics.Presupposition (PartialProp)
 /-- The K&P operator for `only x`: assertion = "no y ≠ x has scope",
     presupposition = "some y has x and scope" (Horn 1996). Built directly
     from `onlyPartialProp` in StrawsonEntailment. -/
-def onlyKP (x : World → Prop) : KPOperator World :=
+def onlyKP (x : Fin 4 → Prop) : KPOperator (Fin 4) :=
   fun scope => onlyPartialProp x scope
 
 /-- Ex. 19a (p. 115) confirmed: `only` satisfies Condition 3 — its
@@ -506,7 +506,7 @@ def onlyKP (x : World → Prop) : KPOperator World :=
 
     Proof: `(∀ y, x y ∨ ¬ q y) → (∀ y, x y ∨ ¬ p y)` for any `p ⊆ q` —
     if `q y` fails, so does `p y` (contrapositive of `p ⊆ q`). -/
-theorem only_satisfies_condition3 (x : World → Prop) :
+theorem only_satisfies_condition3 (x : Fin 4 → Prop) :
     Condition3 (onlyKP x) := by
   intro p q hpq w h y
   rcases h y with hxy | hnq
@@ -525,18 +525,18 @@ theorem only_satisfies_condition3 (x : World → Prop) :
       requires `p w0`, which is false (p = ∅).
     - DE would require: q ⊇ p ∧ full q w0 → full p w0. Fails. -/
 theorem only_violates_condition4 :
-    ¬ Condition4 (onlyKP (· = World.w0)) := by
+    ¬ Condition4 (onlyKP (· = (0 : Fin 4))) := by
   intro hCond4
-  let p : Set World := fun _ => False
-  let q : Set World := fun w => w = .w0
+  let p : Set (Fin 4) := fun _ => False
+  let q : Set (Fin 4) := fun w => w = (0 : Fin 4)
   have hle : p ≤ q := fun _ h => h.elim
-  have hfull_q : (onlyKP (· = World.w0)).full q World.w0 := by
+  have hfull_q : (onlyKP (· = (0 : Fin 4))).full q (0 : Fin 4) := by
     refine ⟨?_, ?_⟩
-    · intro y; by_cases h : y = World.w0
+    · intro y; by_cases h : y = (0 : Fin 4)
       · left; exact h
       · right; intro hy; cases h hy
-    · exact ⟨World.w0, rfl, rfl⟩
-  have hfull_p : (onlyKP (· = World.w0)).full p World.w0 := hCond4 hle hfull_q
+    · exact ⟨(0 : Fin 4), rfl, rfl⟩
+  have hfull_p : (onlyKP (· = (0 : Fin 4))).full p (0 : Fin 4) := hCond4 hle hfull_q
   obtain ⟨_, _, hp_w0⟩ := hfull_p.2
   exact hp_w0
 
@@ -546,8 +546,8 @@ theorem only_violates_condition4 :
     `in weeks`, `until`), because its existence presupposition is UE
     in the scope and destroys DE-ness of the conjunction. -/
 theorem gaj2011_only_condition3_yes_condition4_no :
-    Condition3 (onlyKP (· = World.w0)) ∧
-    ¬ Condition4 (onlyKP (· = World.w0)) :=
+    Condition3 (onlyKP (· = (0 : Fin 4))) ∧
+    ¬ Condition4 (onlyKP (· = (0 : Fin 4))) :=
   ⟨only_satisfies_condition3 _, only_violates_condition4⟩
 
 /-! ## §4.1 Conditions 1, 2 — the implicature side (Chierchia line)
@@ -577,7 +577,7 @@ non-trivial ALTs are deferred until that infrastructure is wired in.
     (which reduces to classical DE — and we proved
     `only_satisfies_condition3` ≡ classical DE on the assertion). This
     is the implicature-side parallel of `only_satisfies_condition3`. -/
-theorem only_satisfies_condition1_no_alts (x : World → Prop) :
+theorem only_satisfies_condition1_no_alts (x : Fin 4 → Prop) :
     Condition1 (onlyKP x).truth (fun _ => ∅) :=
   (condition1_with_no_alts_iff_de _).mpr (only_satisfies_condition3 x)
 
@@ -596,7 +596,7 @@ theorem only_satisfies_condition1_no_alts (x : World → Prop) :
     deferred to a follow-up study file (likely an extension of
     `Chierchia2006.lean` or a new `Chierchia2013.lean` since the
     relevant framework is Chierchia 2013 ch. 3). -/
-theorem only_satisfies_condition2_no_alts (x : World → Prop) :
+theorem only_satisfies_condition2_no_alts (x : Fin 4 → Prop) :
     Condition2 (onlyKP x).truth (fun _ => ∅) (fun _ => ∅) :=
   (condition2_with_no_alts_iff_de _).mpr (only_satisfies_condition3 x)
 
