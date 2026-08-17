@@ -5,9 +5,7 @@ import Linglib.Syntax.Category.Particle.Basic
 [dayal-2025] [bhatt-dayal-2020]
 
 Lexical entry for the English MQP-like adverb *quick/quickly* as a
-`Particle` value with an embedding-distribution facet. The
-left-peripheral layer assignment is derived from that facet in
-`BhattDayal2020`.
+`Particle` value with an embedding-distribution facet.
 -/
 
 namespace English.QuestionParticles
