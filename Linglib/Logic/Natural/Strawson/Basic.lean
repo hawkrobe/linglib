@@ -5,31 +5,35 @@ import Linglib.Semantics.Presupposition.Basic
 /-!
 # Strawson entailment
 
-Strawson-DE: a weakened downward entailingness that checks DE inferences
-only when presuppositions of the conclusion are satisfied. This rescues
-the Fauconnier-Ladusaw analysis for four "recalcitrant" NPI licensors:
-`only` (§2), adversative attitude verbs (§3), superlatives (§4.2), and
-conditional antecedents (§4.1). These are not classically DE but do
-license NPIs; Strawson-DE explains why.
+This file defines Strawson-DE — downward entailingness checked only
+where the conclusion's presuppositions are satisfied
+([von-fintel-1999]) — and the presuppositional operators that motivate
+it: `only`, adversative attitude verbs, superlatives, and conditional
+antecedents license NPIs without being classically DE.
 
-## Polymorphism
+## Main declarations
 
-The substrate is polymorphic over `{W : Type*}`. The operators
-(`onlyFull`, `sorryFull`, `gladFull`, `superlativeAssert`, `condNecessity`)
-take a polymorphic world type and the corresponding presupposition /
-ordering / modal-base parameters in their natural mathlib types
-(`Set W`, `W → Set W`, `W → Prop`). Concrete counterexamples (proofs of
-the form "X is *not* classically DE") are specialized to `Fin 4` as a witness type, since
-non-DE-ness is an *existence* claim about some inhabited domain.
+* `IsStrawsonDE`, `IsStrawsonAntiAdditive`, `StrawsonValid`: the DE
+  notions and validity, relativized to a definedness predicate.
+* `antitone_implies_strawsonDE`, `antiAdditive_implies_strawsonAA`:
+  the classical notions imply their Strawson forms.
+* `onlyFull`, `sorryFull`, `gladFull`, `superlativeAssert`,
+  `condNecessity`, `sinceFull`: the operators, each Strawson-DE (or
+  Strawson-anti-additive) but not classically DE.
+* `strawsonDE_strictly_weaker_than_DE`: each step of
+  AM ⊂ AA ⊂ DE ⊂ Strawson-DE is strict.
 
-## Hierarchy
+## Implementation notes
 
-AM ⊂ AA ⊂ DE ⊂ Strawson-DE (each strict — see
-`strawsonDE_strictly_weaker_than_DE`).
+The operators are polymorphic over a world type, taking their
+presupposition, ordering, and modal-base parameters at mathlib types
+(`Set W`, `W → Set W`, `W → Prop`). The concrete counterexamples
+("not classically DE") are specialized to `Fin 4`: non-DE-ness is an
+existence claim about some inhabited domain.
 
 ## References
 
-* [von-fintel-1999] — Strawson entailment and the four licensor case
+* [von-fintel-1999] — Strawson entailment and the licensor case
   studies.
 * [strawson-1952] — the presuppositional notion of entailment.
 -/
