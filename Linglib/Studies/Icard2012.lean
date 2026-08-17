@@ -35,6 +35,10 @@ example : join .negation .forward = .cover := rfl        -- ^ ⋈ ⊑ = ⌣
 example : join .forward .negation = .alternation := rfl  -- ⊑ ⋈ ^ = |
 example : join .cover .negation = .reverse := rfl        -- ⌣ ⋈ ^ = ⊒
 
+-- Printed below the table: ≡ ⋈ R = R = R ⋈ ≡ and # ⋈ R = # = R ⋈ #.
+example : ∀ R : Relation, 1 * R = R ∧ R * 1 = R := by decide
+example : ∀ R : Relation, ⊤ * R = ⊤ ∧ R * ⊤ = ⊤ := by decide
+
 -- Lemma 1.5 is an equality: each printed cell is the *least* sound relation.
 example : IsLeast {T : Relation | ∀ x y z : Finset (Fin 3),
     Relation.Holds .forward x y → Relation.Holds .negation y z → T.Holds x z}
