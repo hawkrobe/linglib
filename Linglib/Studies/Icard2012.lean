@@ -85,6 +85,18 @@ example : project .cover .mult = .independent := rfl        -- ⊞ : ∼ lost
 example : project .cover .antiAdd = .alternation := rfl     -- ◇ : ∼ flips to |
 example : project .cover .antiAddMult = .alternation := rfl -- ◇⊟ : ∼ flips to |
 
+-- Deviation from the printed remark "[R]^• = #, for all R ∈ ℛ" (p. 715):
+-- every function preserves equality, so Definition 2.3 forces [≡]^• = ≡ —
+-- the blanket remark overshoots at ≡ by the paper's own definition.
+example : project .equiv .all = .equiv := rfl
+example : project .forward .all = .independent := rfl  -- • elsewhere as printed
+
+-- Lemma 2.4 as an equality: each cell is the least relation sound for the
+-- signature's function class.
+example : IsLeast {T : Relation | ∀ f : Finset (Fin 1) → Finset (Fin 1),
+    Signature.HoldsFor .antiAdd f → ∀ x y, Relation.Holds .cover x y →
+      T.Holds (f x) (f y)} .alternation := Signature.isLeast_project .cover .antiAdd
+
 /-! ### The composition table (Lemma 2.7, p. 716) -/
 
 example : compose .anti .anti = .mono := rfl                   -- − ∘ − = +

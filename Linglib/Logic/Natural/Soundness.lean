@@ -267,8 +267,11 @@ theorem soundFor_antiAddMult {f : α → β} (haa : IsCompletelyAntiAdditive f)
 
 /-- Every function realizes the • row: `.all` is the no-property
 signature, projecting every relation to `#`. -/
-theorem soundFor_all (f : α → β) : Signature.SoundFor .all f :=
-  fun _ _ _ _ => trivial
+theorem soundFor_all (f : α → β) : Signature.SoundFor .all f := by
+  intro R x y hR
+  cases R
+  case equiv => exact congrArg f hR
+  all_goals trivial
 
 /-- Relation-level order soundness: `≤` is the implication order on
 the lattice content ([icard-2012] §1). -/
@@ -407,5 +410,101 @@ theorem Signature.SoundFor.comp₂ {ψ : Signature} {g : γ → δ}
   ⟨fun y => hg.comp (hf.1 y), fun x => hg.comp (hf.2 x)⟩
 
 end Signature₂
+
+
+/-! ### The function class of a signature -/
+
+section HoldsFor
+
+variable {α β : Type*} [Lattice α] [BoundedOrder α] [Lattice β] [BoundedOrder β]
+
+/-- The function class a property asserts. -/
+def Signature.Property.HoldsFor : Signature.Property → (α → β) → Prop
+  | .monotone => Monotone
+  | .antitone => Antitone
+  | .additive => IsCompletelyAdditive
+  | .multiplicative => IsCompletelyMultiplicative
+  | .antiAdditive => IsCompletelyAntiAdditive
+  | .antiMultiplicative => IsCompletelyAntiMultiplicative
+
+/-- A function has signature σ — is a "σ-function" — when it has every
+property σ asserts. -/
+def Signature.HoldsFor (σ : Signature) (f : α → β) : Prop :=
+  ∀ p ∈ σ.properties, p.HoldsFor f
+
+/-- σ's projection row is sound for every σ-function ([icard-2012]
+Lemma 2.5), aggregating the per-row theorems. -/
+theorem Signature.soundFor_of_holdsFor {σ : Signature} {f : α → β}
+    (h : σ.HoldsFor f) : σ.SoundFor f := by
+  cases σ with
+  | all => exact soundFor_all f
+  | mono => exact soundFor_mono_iff.mpr (h .monotone (by decide))
+  | anti => exact soundFor_anti_iff.mpr (h .antitone (by decide))
+  | additive => exact soundFor_additive (h .additive (by decide))
+  | antiAdd => exact soundFor_antiAdd (h .antiAdditive (by decide))
+  | mult => exact soundFor_mult (h .multiplicative (by decide))
+  | antiMult => exact soundFor_antiMult (h .antiMultiplicative (by decide))
+  | addMult =>
+      exact soundFor_addMult (h .additive (by decide)) (h .multiplicative (by decide))
+  | antiAddMult =>
+      exact soundFor_antiAddMult (h .antiAdditive (by decide))
+        (h .antiMultiplicative (by decide))
+
+/-- The class of a more specific signature is included in the class of a
+less specific one — the sound direction of the refinement order, with the
+converse in `Logic/Natural/Completeness.lean` (`le_iff_holdsFor`). -/
+theorem Signature.HoldsFor.of_le {σ τ : Signature} {f : α → β}
+    (h : σ.HoldsFor f) (hστ : σ ≤ τ) : τ.HoldsFor f :=
+  λ p hp => h p (Signature.le_iff.mp hστ hp)
+
+/-- A map with adjoints on both sides is in the morphism class ⊕⊞ — the
+Lawvere reading of the signature: bi-adjoints preserve everything. -/
+theorem Signature.holdsFor_addMult_of_galoisConnection {f u l : α → α}
+    (gc₁ : GaloisConnection f u) (gc₂ : GaloisConnection l f) :
+    Signature.HoldsFor .addMult f := by
+  intro p hp
+  cases p with
+  | monotone => exact gc₁.monotone_l
+  | additive => exact ⟨λ _ _ => gc₁.l_sup, gc₂.u_top⟩
+  | multiplicative => exact ⟨λ _ _ => gc₂.u_inf, gc₁.l_bot⟩
+  | antitone | antiAdditive | antiMultiplicative => exact absurd hp (by decide)
+
+/-- Complementation, the self-dual adjoint pair, is in the anti-morphism
+class ◇⊟. -/
+theorem Signature.holdsFor_antiAddMult_compl {γ : Type*} [BooleanAlgebra γ] :
+    Signature.HoldsFor .antiAddMult (compl : γ → γ) := by
+  intro p hp
+  cases p with
+  | antitone => exact antitone_compl
+  | antiAdditive => exact isCompletelyAntiAdditive_compl
+  | antiMultiplicative => exact isCompletelyAntiMultiplicative_compl
+  | monotone | additive | multiplicative => exact absurd hp (by decide)
+
+end HoldsFor
+
+section DecidableHoldsFor
+
+variable {α β : Type*} [Lattice α] [BoundedOrder α] [Lattice β] [BoundedOrder β]
+  [Fintype α] [DecidableLE α] [DecidableEq β] [DecidableLE β]
+
+instance Signature.Property.decidableHoldsFor :
+    ∀ (p : Signature.Property) (f : α → β), Decidable (p.HoldsFor f)
+  | .monotone, f => decidable_of_iff (∀ a b, a ≤ b → f a ≤ f b) Iff.rfl
+  | .antitone, f => decidable_of_iff (∀ a b, a ≤ b → f b ≤ f a) Iff.rfl
+  | .additive, f =>
+      decidable_of_iff ((∀ p q, f (p ⊔ q) = f p ⊔ f q) ∧ f ⊤ = ⊤) Iff.rfl
+  | .multiplicative, f =>
+      decidable_of_iff ((∀ p q, f (p ⊓ q) = f p ⊓ f q) ∧ f ⊥ = ⊥) Iff.rfl
+  | .antiAdditive, f =>
+      decidable_of_iff ((∀ p q, f (p ⊔ q) = f p ⊓ f q) ∧ f ⊤ = ⊥) Iff.rfl
+  | .antiMultiplicative, f =>
+      decidable_of_iff ((∀ p q, f (p ⊓ q) = f p ⊔ f q) ∧ f ⊥ = ⊤) Iff.rfl
+
+instance Signature.decidableHoldsFor (σ : Signature) (f : α → β) :
+    Decidable (σ.HoldsFor f) :=
+  inferInstanceAs (Decidable (∀ p ∈ σ.properties, p.HoldsFor f))
+
+end DecidableHoldsFor
+
 
 end NaturalLogic
