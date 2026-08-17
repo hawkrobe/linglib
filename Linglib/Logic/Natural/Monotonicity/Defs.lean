@@ -142,6 +142,19 @@ instance : PartialOrder (Ty B) where
   le_trans _ _ _ := Ty.LE.trans
   le_antisymm _ _ := Ty.LE.antisymm
 
+@[simp] theorem base_le_base {b b' : B} : (Ty.base b : Ty B) ≤ .base b' ↔ b = b' :=
+  ⟨fun h => by cases h; rfl, fun h => h ▸ .base b⟩
+
+@[simp] theorem not_base_le_arr {b : B} {σ τ : Ty B} {m : Marking} :
+    ¬ (Ty.base b : Ty B) ≤ .arr σ m τ := fun h => by cases h
+
+@[simp] theorem not_arr_le_base {b : B} {σ τ : Ty B} {m : Marking} :
+    ¬ (Ty.arr σ m τ : Ty B) ≤ .base b := fun h => by cases h
+
+@[simp] theorem arr_le_arr {σ σ' τ τ' : Ty B} {m m' : Marking} :
+    (Ty.arr σ m τ : Ty B) ≤ .arr σ' m' τ' ↔ σ' ≤ σ ∧ τ ≤ τ' ∧ m ≤ m' :=
+  ⟨fun h => by cases h; exact ⟨‹_›, ‹_›, ‹_›⟩, fun ⟨h₁, h₂, hm⟩ => .arr h₁ h₂ hm⟩
+
 set_option warn.classDefReducibility false in
 instance decidableLE [DecidableEq B] :
     ∀ σ τ : Ty B, Decidable (σ ≤ τ)
