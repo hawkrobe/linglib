@@ -37,9 +37,9 @@ gives a single bipolar measure.
 ## Significance for linglib
 
 The finding that PIs distinguish DN from UE challenges `ContextPolarity`,
-which maps both to `.upward`. The full `EntailmentSig` preserves the
+which maps both to `.upward`. The full `Signature` preserves the
 distinction (DN = `addMult`, simple UE = `mono`), suggesting PI-sensitive
-code should use `EntailmentSig` paths rather than `ContextPolarity`.
+code should use `Signature` paths rather than `ContextPolarity`.
 -/
 
 namespace DenicEtAl2021
@@ -237,7 +237,7 @@ open Polarity
 open English.PolarityItems
 
 /-- Map the paper's environments to canonical entailment signatures. -/
-def envSignature : MonotonicityEnv → Option EntailmentSig
+def envSignature : MonotonicityEnv → Option Signature
   | .UE => some .mono
   | .DE => some .antiAdd
   | .DN => some .addMult
@@ -245,59 +245,59 @@ def envSignature : MonotonicityEnv → Option EntailmentSig
 
 /-- The DE environment maps to a DE-side signature. -/
 theorem de_env_is_de :
-    EntailmentSig.toContextPolarity .antiAdd = .downward := by
+    Signature.toContextPolarity .antiAdd = .downward := by
   decide
 
 /-- `isGloballyUE` is *derived* from the signature map, not stipulated. -/
 theorem isGloballyUE_from_signature (env : MonotonicityEnv) :
     env.isGloballyUE = match envSignature env with
-      | some sig => EntailmentSig.toContextPolarity sig == ContextPolarity.upward
+      | some sig => Signature.toContextPolarity sig == ContextPolarity.upward
       | none => false := by
   cases env <;> decide
 
 /-- Any composition of two DE-side signatures is UE under `ContextPolarity`. -/
-theorem de_composed_is_ue (φ ψ : EntailmentSig)
-    (hφ : EntailmentSig.toContextPolarity φ = .downward)
-    (hψ : EntailmentSig.toContextPolarity ψ = .downward) :
-    EntailmentSig.toContextPolarity (φ * ψ) = .upward := by
-  rw [EntailmentSig.toContextPolarity_compose, hφ, hψ]
+theorem de_composed_is_ue (φ ψ : Signature)
+    (hφ : Signature.toContextPolarity φ = .downward)
+    (hψ : Signature.toContextPolarity ψ = .downward) :
+    Signature.toContextPolarity (φ * ψ) = .upward := by
+  rw [Signature.toContextPolarity_compose, hφ, hψ]
   rfl
 
 /-- `ContextPolarity` cannot distinguish ANY doubly-negative environment
 from simple UE. -/
-theorem contextPolarity_blind_to_dn (φ ψ : EntailmentSig)
-    (hφ : EntailmentSig.toContextPolarity φ = .downward)
-    (hψ : EntailmentSig.toContextPolarity ψ = .downward) :
-    EntailmentSig.toContextPolarity (φ * ψ) =
-    EntailmentSig.toContextPolarity .mono := by
+theorem contextPolarity_blind_to_dn (φ ψ : Signature)
+    (hφ : Signature.toContextPolarity φ = .downward)
+    (hψ : Signature.toContextPolarity ψ = .downward) :
+    Signature.toContextPolarity (φ * ψ) =
+    Signature.toContextPolarity .mono := by
   rw [de_composed_is_ue φ ψ hφ hψ]
   decide
 
-/-- `EntailmentSig` preserves DN–UE distinctions that `ContextPolarity` erases. -/
+/-- `Signature` preserves DN–UE distinctions that `ContextPolarity` erases. -/
 theorem dn_signatures_vary :
-    EntailmentSig.compose .antiAddMult .antiAddMult ≠
-    EntailmentSig.compose .antiAdd .antiMult := by decide
+    Signature.compose .antiAddMult .antiAddMult ≠
+    Signature.compose .antiAdd .antiMult := by decide
 
 /-- UE strength distinguishes DN from UE. -/
 theorem ue_strength_distinguishes_dn_ue :
-    EntailmentSig.toUEStrength .addMult = some .additive ∧
-    EntailmentSig.toUEStrength .mono = some .weak :=
+    Signature.toUEStrength .addMult = some .additive ∧
+    Signature.toUEStrength .mono = some .weak :=
   ⟨by decide, by decide⟩
 
 /-- DN has no DE strength. -/
 theorem dn_has_no_de_strength :
-    EntailmentSig.toDEStrength .addMult = none := by
+    Signature.toDEStrength .addMult = none := by
   decide
 
 /-- Central theorem: PPI effect reveals a distinction that
 `ContextPolarity` provably cannot make. -/
 theorem ppi_reveals_coarsening_failure :
-    (∀ φ ψ : EntailmentSig,
-      EntailmentSig.toContextPolarity φ = .downward →
-      EntailmentSig.toContextPolarity ψ = .downward →
-      EntailmentSig.toContextPolarity (φ * ψ) =
-        EntailmentSig.toContextPolarity .mono) ∧
-    (EntailmentSig.toUEStrength .addMult ≠ EntailmentSig.toUEStrength .mono) ∧
+    (∀ φ ψ : Signature,
+      Signature.toContextPolarity φ = .downward →
+      Signature.toContextPolarity ψ = .downward →
+      Signature.toContextPolarity (φ * ψ) =
+        Signature.toContextPolarity .mono) ∧
+    (Signature.toUEStrength .addMult ≠ Signature.toUEStrength .mono) ∧
     exp1_ppi_DN.significant = true ∧
     exp1_ppi_UE.significant = false :=
   ⟨contextPolarity_blind_to_dn, by decide, rfl, rfl⟩
@@ -313,9 +313,9 @@ theorem npi_targets_signatureless_env :
 
 /-- PPI effects target environments with composite UE signatures. -/
 theorem ppi_targets_composite_ue_env :
-    envSignature .DN = some EntailmentSig.addMult ∧
-    EntailmentSig.addMult ≠ .mono ∧
-    EntailmentSig.toUEStrength .addMult ≠ EntailmentSig.toUEStrength .mono ∧
+    envSignature .DN = some Signature.addMult ∧
+    Signature.addMult ≠ .mono ∧
+    Signature.toUEStrength .addMult ≠ Signature.toUEStrength .mono ∧
     exp1_ppi_DN.significant = true ∧
     exp1_ppi_UE.significant = false ∧
     exp1_ppi_DE.significant = false ∧
@@ -362,7 +362,7 @@ instance (env : MonotonicityEnv) : Decidable (PredictsNPIEffect env) := by
     environment's signature has a non-weak UE strength. -/
 def PredictsPPIEffect (env : MonotonicityEnv) : Prop :=
   match envSignature env with
-  | some sig => match EntailmentSig.toUEStrength sig with
+  | some sig => match Signature.toUEStrength sig with
     | some .weak => False
     | some _ => True
     | none => False

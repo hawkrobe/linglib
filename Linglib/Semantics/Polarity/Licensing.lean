@@ -92,9 +92,9 @@ inductive LicensingMechanism where
 structure ContextProperties where
   /-- Icard signature modulo presuppositions ([von-fintel-1999]'s
       Strawson reading): the row a Strawson-relativized soundness
-      statement (`EntailmentSig.StrawsonSoundFor`) realizes. Coincides
+      statement (`Signature.StrawsonSoundFor`) realizes. Coincides
       with the classical row for presupposition-free contexts. -/
-  strawsonSignature : NaturalLogic.EntailmentSig
+  strawsonSignature : NaturalLogic.Signature
   /-- K&L mechanism: how this context licenses NPIs. -/
   mechanism : LicensingMechanism
   /-- A canonical English example. -/
@@ -104,10 +104,10 @@ structure ContextProperties where
   /-- Classical (presupposition-free) signature row, when one holds.
       `none` for the contexts [von-fintel-1999] showed to be only
       Strawson-DE — only-focus, adversatives, temporal *since*,
-      superlatives: no `EntailmentSig` row is classically sound for
+      superlatives: no `Signature` row is classically sound for
       them. Defaults to the Strawson row (the presupposition-free
       case). -/
-  classicalSignature : Option NaturalLogic.EntailmentSig :=
+  classicalSignature : Option NaturalLogic.Signature :=
     some strawsonSignature
   deriving Repr
 

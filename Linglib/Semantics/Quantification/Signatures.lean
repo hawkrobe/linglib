@@ -12,7 +12,7 @@ import Linglib.Logic.Natural.Soundness
 
 The natural-logic signature calculus instantiated at determiner
 denotations: each [van-benthem-1984] double-monotonicity cell realizes a
-`Sig₂` profile (`DoubleMono.toSig₂`, certified by the four cell
+`Signature₂` profile (`DoubleMono.toSignature₂`, certified by the four cell
 theorems), `LeftAntiAdditive`/`RightAntiAdditive`
 ([peters-westerstahl-2006] §5.9) are sectionwise `IsAntiAdditive` at the
 `Prop` instance, and *every* and *no* get certified profiles — with
@@ -20,8 +20,8 @@ theorems), `LeftAntiAdditive`/`RightAntiAdditive`
 
 ## Main declarations
 
-* `DoubleMono.toSig₂` — the profile of each double-monotonicity cell.
-* `sig₂_soundFor_upUp` … `sig₂_soundFor_downDown` — the cells realize
+* `DoubleMono.toSignature₂` — the profile of each double-monotonicity cell.
+* `signature₂_soundFor_upUp` … `signature₂_soundFor_downDown` — the cells realize
   their profiles.
 * `leftAntiAdditive_iff_isAntiAdditive`,
   `rightAntiAdditive_iff_isAntiAdditive` — sectionwise anti-additivity.
@@ -39,33 +39,33 @@ variable {α : Type*}
 
 /-- The signature profile of each [van-benthem-1984] double-monotonicity
 class, at mono/anti granularity. -/
-def DoubleMono.toSig₂ : DoubleMono → Sig₂
+def DoubleMono.toSignature₂ : DoubleMono → Signature₂
   | .upUp => ⟨.mono, .mono⟩
   | .downUp => ⟨.anti, .mono⟩
   | .upDown => ⟨.mono, .anti⟩
   | .downDown => ⟨.anti, .anti⟩
 
 /-- ↑MON↑ (e.g. *some*): both positions monotone. -/
-theorem sig₂_soundFor_upUp {q : GQ α} (hr : RestrictorUpwardMono q)
-    (hs : ScopeUpwardMono q) : DoubleMono.upUp.toSig₂.SoundFor q :=
+theorem signature₂_soundFor_upUp {q : GQ α} (hr : RestrictorUpwardMono q)
+    (hs : ScopeUpwardMono q) : DoubleMono.upUp.toSignature₂.SoundFor q :=
   ⟨fun S => soundFor_mono_iff.mpr ((restrictorUpMono_iff_monotone q).mp hr S),
    fun R => soundFor_mono_iff.mpr ((scopeUpMono_iff_monotone q).mp hs R)⟩
 
 /-- ↓MON↑ (e.g. *every*): restrictor antitone, scope monotone. -/
-theorem sig₂_soundFor_downUp {q : GQ α} (hr : RestrictorDownwardMono q)
-    (hs : ScopeUpwardMono q) : DoubleMono.downUp.toSig₂.SoundFor q :=
+theorem signature₂_soundFor_downUp {q : GQ α} (hr : RestrictorDownwardMono q)
+    (hs : ScopeUpwardMono q) : DoubleMono.downUp.toSignature₂.SoundFor q :=
   ⟨fun S => soundFor_anti_iff.mpr ((restrictorDownMono_iff_antitone q).mp hr S),
    fun R => soundFor_mono_iff.mpr ((scopeUpMono_iff_monotone q).mp hs R)⟩
 
 /-- ↑MON↓ (e.g. *not all*): restrictor monotone, scope antitone. -/
-theorem sig₂_soundFor_upDown {q : GQ α} (hr : RestrictorUpwardMono q)
-    (hs : ScopeDownwardMono q) : DoubleMono.upDown.toSig₂.SoundFor q :=
+theorem signature₂_soundFor_upDown {q : GQ α} (hr : RestrictorUpwardMono q)
+    (hs : ScopeDownwardMono q) : DoubleMono.upDown.toSignature₂.SoundFor q :=
   ⟨fun S => soundFor_mono_iff.mpr ((restrictorUpMono_iff_monotone q).mp hr S),
    fun R => soundFor_anti_iff.mpr ((scopeDownMono_iff_antitone q).mp hs R)⟩
 
 /-- ↓MON↓ (e.g. *no*): both positions antitone. -/
-theorem sig₂_soundFor_downDown {q : GQ α} (hr : RestrictorDownwardMono q)
-    (hs : ScopeDownwardMono q) : DoubleMono.downDown.toSig₂.SoundFor q :=
+theorem signature₂_soundFor_downDown {q : GQ α} (hr : RestrictorDownwardMono q)
+    (hs : ScopeDownwardMono q) : DoubleMono.downDown.toSignature₂.SoundFor q :=
   ⟨fun S => soundFor_anti_iff.mpr ((restrictorDownMono_iff_antitone q).mp hr S),
    fun R => soundFor_anti_iff.mpr ((scopeDownMono_iff_antitone q).mp hs R)⟩
 
@@ -87,7 +87,7 @@ theorem rightAntiAdditive_iff_isAntiAdditive (q : GQ α) :
 /-- *Every* realizes ↓MON↑ as a certified profile, the restrictor side
 derived from left anti-additivity (`every_laa`). -/
 theorem every_sem_soundFor :
-    Sig₂.SoundFor ⟨.anti, .mono⟩ (every_sem (α := α)) :=
+    Signature₂.SoundFor ⟨.anti, .mono⟩ (every_sem (α := α)) :=
   ⟨fun S => soundFor_anti_iff.mpr
       (((leftAntiAdditive_iff_isAntiAdditive _).mp every_laa S).antitone),
    fun R => soundFor_mono_iff.mpr
@@ -96,7 +96,7 @@ theorem every_sem_soundFor :
 /-- *No* realizes ↓MON↓, both positions via anti-additivity (`no_laa`,
 `no_raa`). -/
 theorem no_sem_soundFor :
-    Sig₂.SoundFor ⟨.anti, .anti⟩ (no_sem (α := α)) :=
+    Signature₂.SoundFor ⟨.anti, .anti⟩ (no_sem (α := α)) :=
   ⟨fun S => soundFor_anti_iff.mpr
       (((leftAntiAdditive_iff_isAntiAdditive _).mp no_laa S).antitone),
    fun R => soundFor_anti_iff.mpr
@@ -106,7 +106,7 @@ theorem no_sem_soundFor :
 anti-morphism row into both positions of *every*'s profile. The scope
 component `.antiAddMult * .mono = .anti` records that *any* is licensed
 in *not every*'s scope. -/
-example : Sig₂.SoundFor ⟨.antiAddMult * .anti, .antiAddMult * .mono⟩
+example : Signature₂.SoundFor ⟨.antiAddMult * .anti, .antiAddMult * .mono⟩
     (fun R S => ¬ every_sem (α := α) R S) :=
   not_soundFor_antiAddMult.comp₂ every_sem_soundFor
 

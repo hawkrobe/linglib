@@ -889,7 +889,7 @@ theorem vanBenthem_symm_quasiUniv_is_disjointness [Fintype α] [DecidableEq α] 
 
 /-! ### Entailment Signature Bridge ([icard-2012]) -/
 
-open NaturalLogic (EntailmentSig ContextPolarity)
+open NaturalLogic (Signature ContextPolarity)
 
 /--
 Map a pair of entailment signatures (restrictor, scope) to `DoubleMono`,
@@ -898,43 +898,43 @@ the [van-benthem-1984] double monotonicity classification.
 Returns `none` for signature pairs that don't correspond to a standard
 generalized quantifier pattern.
 -/
-def EntailmentSig.pairToDoubleMono : EntailmentSig → EntailmentSig → Option DoubleMono
+def Signature.pairToDoubleMono : Signature → Signature → Option DoubleMono
   | .additive, .additive => some .upUp
   | .antiAdd, .mult => some .downUp
   | .additive, .antiMult => some .upDown
   | .antiAdd, .antiAdd => some .downDown
   | _, _ => none
 
-#guard EntailmentSig.pairToDoubleMono .additive .additive == some .upUp
-#guard EntailmentSig.pairToDoubleMono .antiAdd .mult == some .downUp
-#guard EntailmentSig.pairToDoubleMono .additive .antiMult == some .upDown
-#guard EntailmentSig.pairToDoubleMono .antiAdd .antiAdd == some .downDown
+#guard Signature.pairToDoubleMono .additive .additive == some .upUp
+#guard Signature.pairToDoubleMono .antiAdd .mult == some .downUp
+#guard Signature.pairToDoubleMono .additive .antiMult == some .upDown
+#guard Signature.pairToDoubleMono .antiAdd .antiAdd == some .downDown
 
 /-- "every" has signature (◇, ⊞) = (antiAdd in restrictor, mult in scope). -/
-def everyEntailmentSig : EntailmentSig × EntailmentSig := (.antiAdd, .mult)
+def everySignature : Signature × Signature := (.antiAdd, .mult)
 
 /-- "some" has signature (⊕, ⊕) = (additive in both arguments). -/
-def someEntailmentSig : EntailmentSig × EntailmentSig := (.additive, .additive)
+def someSignature : Signature × Signature := (.additive, .additive)
 
 /-- "no" has signature (◇, ◇) = (antiAdd in both arguments). -/
-def noEntailmentSig : EntailmentSig × EntailmentSig := (.antiAdd, .antiAdd)
+def noSignature : Signature × Signature := (.antiAdd, .antiAdd)
 
 /-- "not every" has signature (⊕, ⊟) = (additive in restrictor, antiMult in scope). -/
-def notEveryEntailmentSig : EntailmentSig × EntailmentSig := (.additive, .antiMult)
+def notEverySignature : Signature × Signature := (.additive, .antiMult)
 
-#guard EntailmentSig.pairToDoubleMono everyEntailmentSig.1 everyEntailmentSig.2 == some .downUp
-#guard EntailmentSig.pairToDoubleMono someEntailmentSig.1 someEntailmentSig.2 == some .upUp
-#guard EntailmentSig.pairToDoubleMono noEntailmentSig.1 noEntailmentSig.2 == some .downDown
-#guard EntailmentSig.pairToDoubleMono notEveryEntailmentSig.1 notEveryEntailmentSig.2 == some .upDown
+#guard Signature.pairToDoubleMono everySignature.1 everySignature.2 == some .downUp
+#guard Signature.pairToDoubleMono someSignature.1 someSignature.2 == some .upUp
+#guard Signature.pairToDoubleMono noSignature.1 noSignature.2 == some .downDown
+#guard Signature.pairToDoubleMono notEverySignature.1 notEverySignature.2 == some .upDown
 
-#guard EntailmentSig.toContextPolarity everyEntailmentSig.2 == .upward
-#guard EntailmentSig.toContextPolarity someEntailmentSig.2 == .upward
-#guard EntailmentSig.toContextPolarity noEntailmentSig.2 == .downward
-#guard EntailmentSig.toContextPolarity notEveryEntailmentSig.2 == .downward
+#guard Signature.toContextPolarity everySignature.2 == .upward
+#guard Signature.toContextPolarity someSignature.2 == .upward
+#guard Signature.toContextPolarity noSignature.2 == .downward
+#guard Signature.toContextPolarity notEverySignature.2 == .downward
 
-#guard EntailmentSig.toContextPolarity everyEntailmentSig.1 == .downward
-#guard EntailmentSig.toContextPolarity someEntailmentSig.1 == .upward
-#guard EntailmentSig.toContextPolarity noEntailmentSig.1 == .downward
-#guard EntailmentSig.toContextPolarity notEveryEntailmentSig.1 == .upward
+#guard Signature.toContextPolarity everySignature.1 == .downward
+#guard Signature.toContextPolarity someSignature.1 == .upward
+#guard Signature.toContextPolarity noSignature.1 == .downward
+#guard Signature.toContextPolarity notEverySignature.1 == .upward
 
 end Quantification

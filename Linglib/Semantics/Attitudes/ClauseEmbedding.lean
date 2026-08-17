@@ -19,7 +19,7 @@ copula and its syntax belong in the Theory/Syntax layer, not here.
 namespace Semantics.Attitudes
 
 open Features (Attitude)
-open NaturalLogic (EntailmentSig)
+open NaturalLogic (Signature)
 
 /-- A clause-embedding adjective: an adjective that takes a propositional
     complement. Carries the semantic spine shared with clause-embedding verbs
@@ -37,7 +37,7 @@ structure ClauseEmbeddingAdj where
   /-- Does the adjective create an opaque context? -/
   opaqueContext : Bool := false
   /-- Entailment signature of the complement position -/
-  complementSig : Option EntailmentSig := none
+  complementSig : Option Signature := none
   deriving Repr, BEq
 
 end Semantics.Attitudes
