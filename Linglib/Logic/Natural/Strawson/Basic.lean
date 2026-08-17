@@ -3,8 +3,7 @@ import Linglib.Core.Order.AntiAdditive
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
-# Strawson Entailment
-[von-fintel-1999] [strawson-1952]
+# Strawson entailment
 
 Strawson-DE: a weakened downward entailingness that checks DE inferences
 only when presuppositions of the conclusion are satisfied. This rescues
@@ -27,6 +26,12 @@ non-DE-ness is an *existence* claim about some inhabited domain.
 
 AM ⊂ AA ⊂ DE ⊂ Strawson-DE (each strict — see
 `strawsonDE_strictly_weaker_than_DE`).
+
+## References
+
+* [von-fintel-1999] — Strawson entailment and the four licensor case
+  studies.
+* [strawson-1952] — the presuppositional notion of entailment.
 -/
 
 namespace NaturalLogic

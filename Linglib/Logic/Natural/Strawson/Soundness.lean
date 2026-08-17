@@ -32,6 +32,11 @@ Strawson-ly while failing it classically.
 Composing definedness along a path is presupposition projection and is
 deliberately not attempted here — its home is a bridge to
 `Semantics/Presupposition/`, not an ad-hoc operator.
+
+## References
+
+* [von-fintel-1999] — the Strawson move.
+* [gajewski-2011] — the symmetric definedness gate.
 -/
 
 namespace NaturalLogic

@@ -9,7 +9,6 @@ import Mathlib.Order.Hom.Basic
 
 /-!
 # Domains for the monotonicity calculus
-[icard-moss-tune-2017]
 
 The functional structures of the [icard-moss-tune-2017] monotonicity
 calculus: each marked type is interpreted as a preordered domain — base
@@ -25,6 +24,10 @@ in `≤` (their Definition 3.5's coherence conditions, here theorems).
 * `Ty.castLE` — the coercion along subtyping: the identity on base
   types, conjugation by the inner coercions on arrows.
 * `Ty.castLE_rfl`, `Ty.castLE_castLE` — the functor laws.
+
+## References
+
+* [icard-moss-tune-2017] — Definitions 3.5–3.6.
 -/
 
 namespace NaturalLogic

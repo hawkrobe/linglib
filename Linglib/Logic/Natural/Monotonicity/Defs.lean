@@ -9,7 +9,6 @@ import Mathlib.Order.Lattice
 
 /-!
 # Marked types for the monotonicity calculus
-[icard-moss-tune-2017]
 
 The type system of the [icard-moss-tune-2017] monotonicity calculus:
 simple types over a set of base types, with each arrow *marked* as
@@ -30,6 +29,10 @@ Definition 3.3).
   `DecidableEq` base.
 * `Ty.sup?` — the partial join of compatible types.
 * `Ty.unmark` — erase the markings along the codomain spine.
+
+## References
+
+* [icard-moss-tune-2017] — Definitions 3.1–3.3.
 -/
 
 namespace NaturalLogic

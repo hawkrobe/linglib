@@ -7,37 +7,49 @@ import Mathlib.Data.Nat.Basic
 
 /-!
 # The natural-logic relation algebra
-[icard-2012] [maccartney-manning-2009]
 
 The seven natural-logic relations (≡ ⊑ ⊒ ^ | ⌣ #) and the nine
 entailment signatures of [icard-2012], with the operations that run the
-calculus: `join` chains relations, `project` pushes a relation through a
-function of known signature, and `compose` — derived from `project` by
-probing, so `projection_composition` holds by construction — makes the
-signatures a monoid (identity `addMult`, `all` absorbing). Relations
-are read non-strictly: each is the conjunction of its `constraints`
-atoms, so distinct relations overlap and `≤` compares strength;
-[maccartney-manning-2009]'s seven mutually exclusive relations are the
-strict refinements. Both
-implication orders arise as reverse inclusion of constraint sets via
-`PartialOrder.lift`, with `#` (resp. `•`) at top and no bottom (`≡`
-does not entail the exclusion relations). Semantic
-certification lives in `Logic/Natural/Soundness.lean`:
-`Relation.Holds.join` for the join table, the `soundFor_*` row
-theorems for projection.
+calculus: `join` chains relations, `project` pushes a relation through
+a function of known signature, and `compose` — derived from `project`
+by probing, so `projection_composition` holds by construction — makes
+the signatures a monoid (identity `addMult`, `all` absorbing). `join`
+makes the relations one (identity `equiv`, `independent` absorbing;
+associativity is printed in neither source), and projection is an
+action of the signature monoid on the relations.
+
+Relations are read non-strictly: each is the conjunction of its
+`constraints` atoms, so distinct relations overlap and `≤` compares
+strength; [maccartney-manning-2009]'s seven mutually exclusive
+relations are the strict refinements. Both implication orders arise as
+reverse inclusion of constraint sets via `PartialOrder.lift`, with `#`
+(resp. `•`) at top and no bottom (`≡` does not entail the exclusion
+relations). Semantic certification lives in
+`Logic/Natural/Soundness.lean` (`Relation.Holds.join`, the `soundFor_*`
+rows) and `Logic/Natural/Completeness.lean` (tightness and the
+classification of the seven).
 
 ## Main declarations
 
-* `Relation`, `Relation.join`, `Relation.constraints` — the
-  relation algebra: a monoid under `join`, ordered by reverse
-  constraint inclusion.
-* `Signature`, `Signature.project`, `Signature.compose` —
-  signatures, projection, and the composition monoid.
+* `Relation`, `Relation.join`, `Relation.constraints` — the relation
+  algebra: a monoid under `join`, ordered by reverse constraint
+  inclusion.
+* `Signature`, `Signature.project`, `Signature.compose` — signatures,
+  projection, and the composition monoid; projection is a
+  `MulAction Signature Relation`.
 * `Signature.contextProjectivity` — a position's signature as the
   monoid product along its path.
-* `ContextPolarity`, `Signature.toContextPolarity` — the coarse
-  UE/DE quotient, a monoid homomorphism target
+* `ContextPolarity`, `Signature.toContextPolarity` — the coarse UE/DE
+  quotient, a monoid homomorphism target
   (`toContextPolarity_compose`).
+
+## References
+
+* [icard-2012] — the projectivity calculus: the relations, signatures,
+  and tables this file implements.
+* [maccartney-manning-2009] — the extended natural-logic model; its
+  §3 join is exact relation composition, union-valued outside the
+  seven.
 -/
 
 namespace NaturalLogic
