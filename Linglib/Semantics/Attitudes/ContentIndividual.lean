@@ -1,152 +1,84 @@
-import Mathlib.Logic.Basic
+import Linglib.Semantics.Attitudes.Anchor
 
 /-!
-# Content Individuals ([kratzer-2006]; [liefke-2024] §4.3) [kratzer-2006]
-[baker-jara-ettinger-saxe-tenenbaum-2017] [liefke-2024] [moulton-2015] [hintikka-1962] [hintikka-1962]
+# Content individuals
 
 A content individual is a first-class mental state carrying propositional
-content — the denotation of content DPs like *John's belief that p*,
-*the claim*, *every rumor*, *her wish*.
+content — [kratzer-2006]'s denotation for content DPs like *John's belief
+that p*, *the claim*, *every rumor*, *her wish*. Content individuals are
+the shared ontological sort underlying beliefs, desires, and percepts
+([liefke-2024]); what distinguishes a belief from a desire or a percept
+is not the sort but the attitude relation that embeds it. In Bayesian
+theory-of-mind models ([baker-jara-ettinger-saxe-tenenbaum-2017],
+`Pragmatics/BToM.lean`) they correspond to the type parameters over which
+the observer's posterior is defined.
 
-## Ontological Status
-
-Content individuals are the shared sort underlying beliefs, desires, and
-percepts ([liefke-2024] §4.3). What distinguishes a belief from a desire or
-a percept is not the ontological sort — it is the attitude relation (the
-verb) that embeds it.
-
-In BToM, these correspond to the type parameters over
-which the observer's posterior is defined. In memo,
-they are the *frames* created by `thinks[...]`.
-
-## Identity vs. Entailment
+Content individuals are the content-mode instance of the `Anchor` class:
+the projection is CONT, so `Anchor.comp` is the *that*-complementizer of
+[kratzer-2006] and [moulton-2015] and `Anchor.existsClosure` composes
+attitude reports. `cont_surjective` — every proposition is the content
+of some individual — makes `Anchor.existsClosure_ofAccessibility`
+applicable, recovering the classical doxastic semantics of
+[hintikka-1962].
 
 Two ways to relate a content individual x_c to a proposition p:
-
-| Relation    | Definition           | Gloss                  | Source              |
-|-------------|----------------------|------------------------|---------------------|
-| Identity    | CONT(x_c) = p       | p IS the content       | [kratzer-2006]        |
-| Entailment  | CONT(x_c) ⊆ p       | p FOLLOWS from content | [hintikka-1962]       |
-
-Identity is strictly stronger (§3 below).
-
+*identity*, CONT(x_c) = p, the notion of [kratzer-2006] and
+[moulton-2015] (p **is** the content, `Anchor.comp`); and *entailment*,
+CONT(x_c) ⊆ p, the notion of [hintikka-1962] (p **follows from** the
+content, `entails`). Identity is strictly stronger:
+`eq_implies_entails` and the counterexample `entails_not_implies_eq`.
 -/
 
 namespace Semantics.Attitudes
 
--- ════════════════════════════════════════════════════
--- § 1. The Content Individual Sort
--- ════════════════════════════════════════════════════
-
 /-- A content individual: a first-class mental state carrying propositional
-    content.
+    content. The `cont` field is [kratzer-2006]'s CONT function.
 
-    This is [kratzer-2006]'s *content individual* — the denotation of content
-    DPs like *John's belief that p*, *the claim*, *every rumor*, *her wish*.
-    It is the shared ontological sort underlying beliefs, desires, and percepts
-    ([liefke-2024] §4.3), and the *frame* created by `thinks[...]` in memo.
-
-    The `cont` field is Kratzer's CONT function: the propositional content
-    this mental state carries. Caveat: because `cont` is the only field,
-    this formalization identifies individuals with their contents
-    (`xc₁ = xc₂ ↔` equal `cont`) — the intuition "my belief that p ≠ your
-    belief that p" is NOT captured; a Kratzerian atom-plus-model shape
-    (`cont : E → W → (W → Prop)`) would capture it, deferred until a
-    study states an identity-vs-content theorem. -/
+    Caveat: because `cont` is the only field, this formalization identifies
+    individuals with their contents — the intuition "my belief that p ≠ your
+    belief that p" is NOT captured. A Kratzerian atom-plus-model shape
+    (`cont : E → W → (W → Prop)`) would capture it, deferred until a study
+    states an identity-vs-content theorem. -/
 structure ContentIndividual (W : Type*) where
   /-- Propositional content: CONT(c) -/
   cont : W → Prop
 
--- ════════════════════════════════════════════════════
--- § 2. Basic Operations
--- ════════════════════════════════════════════════════
+/-- An attitude verb relates an agent to a content individual at a world. -/
+abbrev AttitudeVerb (W E : Type*) := E → ContentIndividual W → W → Prop
 
-/-- Construct a content individual from a Hintikka-style accessibility relation.
-    Given agent `a` at world `w`, the content is the set of accessible worlds.
+namespace ContentIndividual
 
-    This shows that the classical doxastic semantics is a
-    special case: a single deterministic content individual whose CONT is
-    λw'. R(a, w, w'). Works for doxastic (believe), bouletic (want), and
-    perceptual (see) accessibility alike — the sort is the same. -/
-def ContentIndividual.fromAccessibility {W E : Type*}
-    (R : E → W → W → Prop) (agent : E) (w : W) : ContentIndividual W :=
-  ⟨R agent w⟩
+variable {W : Type*}
 
-/-- A content individual is true at a world iff its content holds there. -/
-def ContentIndividual.trueAt {W : Type*} (c : ContentIndividual W) (w : W) : Prop :=
-  c.cont w
+instance : Anchor (ContentIndividual W) W :=
+  ⟨cont⟩
 
-/-- Two content individuals have the same content. -/
-def ContentIndividual.sameContent {W : Type*} (c₁ c₂ : ContentIndividual W) : Prop :=
-  c₁.cont = c₂.cont
+/-- Every proposition is the content of some individual — the belief that
+    `p` — so the content-mode projection is surjective. -/
+theorem cont_surjective :
+    Function.Surjective (cont : ContentIndividual W → W → Prop) :=
+  fun p => ⟨⟨p⟩, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 3. Content Entailment
--- ════════════════════════════════════════════════════
-
-/-- Content entailment: the content of x_c entails proposition p (CONT ⊆ p).
-
-    Every world where the content holds, p also holds:
-      ∀w. CONT(x_c)(w) → p(w)
-
-    This is the Hintikka reading of attitude reports: "x believes that p"
-    means p follows from x's belief content. [kratzer-2006] and [moulton-2015] use the stronger notion of content *identity* (CONT = p). -/
-def ContentIndividual.entails {W : Type*}
-    (xc : ContentIndividual W) (p : W → Prop) : Prop :=
+/-- Content entailment: `xc.entails p` iff every content world of `xc` is a
+    `p`-world (CONT ⊆ p) — the reading of attitude reports in
+    [hintikka-1962], where [kratzer-2006] and [moulton-2015] use content
+    *identity*. -/
+def entails (xc : ContentIndividual W) (p : W → Prop) : Prop :=
   ∀ w, xc.cont w → p w
 
-/-- Content identity implies content entailment: CONT(x_c) = p → CONT(x_c) ⊆ p. -/
-theorem ContentIndividual.eq_implies_entails {W : Type*}
-    (xc : ContentIndividual W) (p : W → Prop) :
-    xc.cont = p → xc.entails p := by
-  intro h w
-  rw [h]
-  exact id
+/-- Content identity implies content entailment. -/
+theorem eq_implies_entails (xc : ContentIndividual W) (p : W → Prop) :
+    xc.cont = p → xc.entails p :=
+  fun h _w hw => h ▸ hw
 
-/-- Content entailment does not imply content identity.
-
-    Counterexample: empty content (λ_ => False) entails any proposition p,
-    but CONT ≠ p when p is nonempty.
-
-    This is the key semantic distinction:
-    - Hintikka: "John believes that p" ⟺ p follows from John's beliefs
-    - Kratzer/Moulton: "John believes that p" ⟺ p IS John's belief content -/
-theorem ContentIndividual.entails_not_implies_eq :
+/-- Content entailment does not imply content identity: empty content
+    entails every proposition. -/
+theorem entails_not_implies_eq :
     ¬ ∀ (p : Bool → Prop) (xc : ContentIndividual Bool),
-      xc.entails p → xc.cont = p := by
-  intro h
-  -- The empty content (λ_ => False) entails everything
-  have heq := h (fun _ => True) ⟨fun _ => False⟩
-    (by simp [ContentIndividual.entails])
-  -- But identity would require (λ_ => False) = (λ_ => True)
-  exact (iff_of_eq (congr_fun heq true)).mpr trivial
+      xc.entails p → xc.cont = p := fun h =>
+  (iff_of_eq (congrFun (h (fun _ => True) ⟨fun _ => False⟩ fun _ hw => hw.elim)
+    true)).mpr trivial
 
-/-! ### World-indexed content ([moulton-2015]; [bondarenko-2022])
-
-A rigid `ContentIndividual` carries its content absolutely; an *indexed*
-content individual assigns content at each evaluation index — the shape
-needed for de re/de dicto contrasts and DP substitution. It is a family
-of rigid individuals, so the rigid API applies pointwise (`(x w).cont`,
-`compC p (x w)`): no parallel indexed API exists or should. -/
-
-/-- World-indexed content individual: a family of rigid ones. -/
-abbrev ContentIndividual.Indexed (W : Type*) := W → ContentIndividual W
-
-/-- A rigid individual as the constant family — the specialization the
-    rest of this file works with. -/
-def ContentIndividual.toIndexed {W : Type*} (c : ContentIndividual W) :
-    ContentIndividual.Indexed W := fun _ => c
-
-/-- Rigidity: the family is constant across indices. -/
-def ContentIndividual.Indexed.IsRigid {W : Type*}
-    (x : ContentIndividual.Indexed W) : Prop := ∀ w w', x w = x w'
-
-theorem ContentIndividual.toIndexed_isRigid {W : Type*}
-    (c : ContentIndividual W) : c.toIndexed.IsRigid := fun _ _ => rfl
-
-/-- At every index, the constant family is the rigid individual — the
-    lemma that transports any rigid theorem pointwise. -/
-theorem ContentIndividual.toIndexed_apply {W : Type*}
-    (c : ContentIndividual W) (w : W) : c.toIndexed w = c := rfl
+end ContentIndividual
 
 end Semantics.Attitudes

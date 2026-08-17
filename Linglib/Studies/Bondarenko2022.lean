@@ -1,5 +1,5 @@
-import Linglib.Semantics.Attitudes.ClauseDenotation.Content
-import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
+import Linglib.Semantics.Attitudes.ContentIndividual
+import Linglib.Semantics.Attitudes.SituationIndividual
 import Linglib.Fragments.Buryat.Complementizers
 import Linglib.Fragments.Korean.Complementizers
 import Linglib.Syntax.Category.Verb.Complement.Takes
@@ -29,7 +29,7 @@ arguments — later attacked by [angelopoulos-2026] (comparison in
 
 - `ExistentialContent` — the rejected existential semantics (eq. 15)
 - `cont_function_blocks_conjunction` — equality forces CONT-functionality
-- `ReferentiallyTransparentAt`, `compC_not_transparentAt` — the weak
+- `ReferentiallyTransparentAt`, `comp_not_transparentAt` — the weak
   transparency contrast
 - `saturatesTheta`, `bareCP_satisfies_no_theta` — the ch. 4 type-mismatch
   mechanism behind the Causer/Theme/About bans
@@ -63,15 +63,14 @@ in `Bondarenko2022.Examples`, generated from `Data/Examples/Bondarenko2022.json`
 namespace Bondarenko2022
 
 open Semantics.Attitudes (ContentIndividual)
-open Semantics.Attitudes.ClauseDenotation.Content (compC ContentNoun)
-open Semantics.Attitudes.ClauseDenotation.Situation
-  (SituationIndividual SituationNoun compPu)
+open Semantics.Attitudes (SituationIndividual)
+open Semantics.Attitudes.Anchor (comp)
 
 /-! ### Nominal sorts -/
 
 /-- The dissertation's typology of nouns combining with embedded CPs (§2.2).
 Studies-local: the substrate (`ContentIndividual`, `SituationIndividual`)
-lives in `Semantics/Attitudes/ClauseDenotation/`. -/
+lives in `Semantics/Attitudes/`. -/
 inductive NominalSort where
   /-- Content nouns (§2.2): *idea*, *rumor*, *hypothesis*, *claim*, *fact*,
       *lie*. -/
@@ -83,11 +82,11 @@ inductive NominalSort where
 
 /-! ### Equality vs. subset vs. existential semantics
 
-§1.1.1.2. The substrate exposes equality as `compC` and subset as
+§1.1.1.2. The substrate exposes equality as `comp` and subset as
 `ContentIndividual.entails`; only the existential candidate is new here. -/
 
 /-- Existential semantics for a Cont-CP (eq. 15): `CONT(x) ∩ p ≠ ∅`. Rejected
-by the thesis in favor of equality (`compC`, eq. 7); subset is eq. 10. -/
+by the thesis in favor of equality (`comp`, eq. 7); subset is eq. 10. -/
 def ExistentialContent {W : Type*} (xc : ContentIndividual W)
     (p : W → Prop) : Prop :=
   ∃ w : W, xc.cont w ∧ p w
@@ -95,7 +94,7 @@ def ExistentialContent {W : Type*} (xc : ContentIndividual W)
 /-- Equality is stronger than subset (§1.1.1.2); re-export of
 `ContentIndividual.eq_implies_entails`. -/
 theorem equality_implies_subset {W : Type*} (xc : ContentIndividual W)
-    (p : W → Prop) : compC p xc → xc.entails p :=
+    (p : W → Prop) : comp p xc → xc.entails p :=
   ContentIndividual.eq_implies_entails xc p
 
 /-- Equality implies existential for nonempty content; the empty-content
@@ -103,7 +102,7 @@ witness in `ContentIndividual` shows the proviso is real. -/
 theorem equality_implies_existential {W : Type*}
     (xc : ContentIndividual W) (p : W → Prop)
     (hne : ∃ w, xc.cont w) :
-    compC p xc → ExistentialContent xc p := by
+    comp p xc → ExistentialContent xc p := by
   intro heq
   obtain ⟨w, hw⟩ := hne
   exact ⟨w, hw, heq ▸ hw⟩
@@ -117,7 +116,7 @@ Equality semantics makes CONT a function, so true CP conjunction is impossible
 individual coincide. -/
 theorem cont_function_blocks_conjunction {W : Type*}
     (xc : ContentIndividual W) (p1 p2 : W → Prop) :
-    compC p1 xc → compC p2 xc → p1 = p2 := by
+    comp p1 xc → comp p2 xc → p1 = p2 := by
   intro h1 h2
   exact h1.symm.trans h2
 
@@ -157,13 +156,13 @@ theorem sit_cp_transparentAt {S : Type*} (s : S) :
   intro p q hpq
   exact hpq
 
-/-- `compC` is not weak-transparent (witness over `Bool`). This is the
+/-- `comp` is not weak-transparent (witness over `Bool`). This is the
 propositional-operator shadow of the §2.2.3 ex. 120 DP-level de dicto claim,
 whose binding-theoretic encoding ([elliott-2020-embedding]'s
 CONT-as-content-restrictor) is not yet substrate. -/
-theorem compC_not_transparentAt :
+theorem comp_not_transparentAt :
     ¬ ∀ (xc : ContentIndividual Bool) (w : Bool),
-      ReferentiallyTransparentAt (fun p _ => compC p xc) w := by
+      ReferentiallyTransparentAt (fun p _ => comp p xc) w := by
   intro h
   let xc : ContentIndividual Bool := ⟨fun b => b = false⟩
   let p : Bool → Prop := fun b => b = false
@@ -172,9 +171,9 @@ theorem compC_not_transparentAt :
     constructor
     · intro _; trivial
     · intro _; rfl
-  have h_eq : compC p xc ↔ compC q xc := h xc false p q h_at
-  have hp : compC p xc := rfl
-  have hq : ¬ compC q xc := by
+  have h_eq : comp p xc ↔ comp q xc := h xc false p q h_at
+  have hp : comp p xc := rfl
+  have hq : ¬ comp q xc := by
     intro heq
     -- xc.cont and q differ at `b = true`.
     have h_true : (fun b : Bool => b = false) true = (fun _ : Bool => True) true :=
@@ -259,7 +258,7 @@ equality semantics `CONT(x) = ⟦S⟧` defended here; the cross-file bridge awai
 a stable BE2026 lemma (this file does not import BE2026). -/
 theorem be2026_inherits_equality_substrate {W : Type*}
     (xc : ContentIndividual W) (p : W → Prop) :
-    compC p xc ↔ xc.cont = p := Iff.rfl
+    comp p xc ↔ xc.cont = p := Iff.rfl
 
 /-! ### Type-theoretic apparatus (§4.2)
 
@@ -534,19 +533,19 @@ instance : DecidablePred NominalSort.occurrenceCompatible
 
 /-! ### Cont and Comp head denotations (§2.3)
 
-Ex. 150: ⟦Cont⟧ = λp.λx. CONT(x) = p — exactly the substrate `compC`.
+Ex. 150: ⟦Cont⟧ = λp.λx. CONT(x) = p — exactly the substrate `comp`.
 Ex. 151: ⟦Comp⟧ = λp.λx. x ⊑ s ∧ x ⊩ p — parthood plus exact exemplification.
 The dissertation's own abbreviation of ex. 151 drops the anchoring conjunct;
 its footnote 37 notes the anchoring matters in §5.2.3 (clauses as restrictors
 of existential quantifiers). `compHead` keeps it. -/
 
-/-- Ex. 150 is the existing `compC` — the ch. 2 proposal introduces no new
+/-- Ex. 150 is the existing `comp` — the ch. 2 proposal introduces no new
 machinery. The equality shape is further defended in §2.4 (no-stacking,
 ex. 171; *the fact* definiteness, ex. 177-178; the complex-claim argument,
 ex. 183-184), unformalized. -/
-theorem cont_head_denotation_is_compC {W : Type*}
+theorem cont_head_denotation_is_comp {W : Type*}
     (p : W → Prop) (xc : ContentIndividual W) :
-    compC p xc ↔ (xc.cont = p) := Iff.rfl
+    comp p xc ↔ (xc.cont = p) := Iff.rfl
 
 /-- Ex. 151: `x` is part of the evaluation situation and exactly verifies `p`
 (verifier-membership, vs the part-existential `inexactVer` of
