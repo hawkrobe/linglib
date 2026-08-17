@@ -2,8 +2,6 @@
 title: "Roadmap"
 ---
 
-See the full [roadmap on GitHub](https://github.com/hawkrobe/linglib/blob/main/docs/ROADMAP.md).
-
 ## North Stars
 
 > **For phenomenon P with behavioral data D, prove that theory T₁ predicts D and theory T₂ doesn't (or both do, via different assumptions).**
