@@ -6,10 +6,7 @@ import Linglib.Syntax.Question
 
 `QuestionProfile` bundle for Hindi-Urdu (ISO `hin`) per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
-`Linglib/Syntax/Question.lean`. The
-PerspP analysis of *kya:* lives in
-`Studies/BhattDayal2020.lean`; clause-typing typology
-in `Studies/Dayal2025.lean`.
+`Linglib/Syntax/Question.lean`.
 
 Hindi-Urdu: initial polar Q particle *kya:*, wh-in-situ, polar formed by
 particle.
