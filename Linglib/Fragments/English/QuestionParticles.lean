@@ -17,7 +17,7 @@ only ([dayal-2025] pp. 670-671, the MQP class), ungrammatical embedded
 def quick : Particle where
   form := "quick"
   position := some .clauseInitial
-  embedding := some
+  embedding :=
     { matrix := some .optional
       subordinated := some .excluded
       quasiSubordinated := some .excluded

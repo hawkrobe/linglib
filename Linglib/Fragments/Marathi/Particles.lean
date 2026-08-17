@@ -21,7 +21,7 @@ and the preferential-vs-doxastic classification live in
 def bara : Particle where
   form := "bərə"
   position := some .clauseFinal
-  distribution := some
+  distribution :=
     { declarative := some .optional
       polarInterrogative := some .excluded
       constituentInterrogative := some .optional
@@ -35,7 +35,7 @@ mirror of *bərə*). Only the imperative-augmenting use is attested in
 def na : Particle where
   form := "na"
   position := some .clauseFinal
-  distribution := some
+  distribution :=
     { imperative := some .optional }
 
 /-- All Marathi utterance-final particles indexed in this file. -/

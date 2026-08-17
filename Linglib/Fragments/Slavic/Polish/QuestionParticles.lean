@@ -22,7 +22,7 @@ Verb-initial PQs possible but unacceptable in quiz scenarios. -/
 def czy : Particle where
   form := "czy"
   position := some .clauseInitial
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .obligatory
       constituentInterrogative := some .optional }
@@ -33,7 +33,7 @@ classification in `Simik2024`. -/
 def czyzby : Particle where
   form := "czyżby"
   position := some .clauseInitial
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .excluded }

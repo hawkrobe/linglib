@@ -24,7 +24,7 @@ def dali : Particle where
   form := "dali"
   script := some "дали"
   position := some .clauseInitial
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .excluded }

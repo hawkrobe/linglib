@@ -7,12 +7,15 @@ open Morphology (Word)
 # Particle
 
 This file defines `Particle`, the lexical core for uninflectable
-function words ([zwicky-1985-clitics]): form, position, and optional
+function words ([zwicky-1985-clitics]): form, position, and
 three-valued distribution facets over the [sadock-zwicky-1985]
 sentence-type cells and `Clause.EmbeddingContext`. Facets record
 distributional felicity, not licensing mechanism (analytical,
 study-side); a `none` cell means the source records nothing, not
-exclusion. The cells are record fields, not a taxonomy: force is
+exclusion, and an unrecorded facet is the empty record `{}`. The two
+facets are marginals of a joint table: embedding cells are read
+relative to the particle's clause-type restriction (a polar-question
+particle's `matrix` cell concerns matrix polar questions). The cells are record fields, not a taxonomy: force is
 `Mood.Illocutionary`, and the interrogative subtypes are the question
 constructions of `Semantics/Questions` — a lookup is keyed by field
 projection (`p.LicensedIn (·.declarative)`).
@@ -97,12 +100,12 @@ structure Particle where
   script : Option String := none
   /-- Host/position class; `none` when the source records no placement. -/
   position : Option Particle.Position := none
-  /-- Clause-type distribution facet; `none` for particles with no
-      clause-type restriction (focus particles, case particles). -/
-  distribution : Option ClauseDistribution := none
+  /-- Clause-type distribution facet; `{}` when the source records no
+      clause-type data. -/
+  distribution : ClauseDistribution := {}
   /-- Interrogative-embedding distribution facet ([bhatt-dayal-2020]
-      axis); `none` when the source records no embedding data. -/
-  embedding : Option EmbedDistribution := none
+      axis); `{}` when the source records no embedding data. -/
+  embedding : EmbedDistribution := {}
   deriving DecidableEq, Repr
 
 namespace Particle
@@ -112,7 +115,7 @@ namespace Particle
 projection `c` (e.g. `(·.declarative)`), if any. -/
 def status? (p : Particle) (c : ClauseDistribution → Option ParticleStatus) :
     Option ParticleStatus :=
-  p.distribution.bind c
+  c p.distribution
 
 /-- The particle is positively recorded as available (obligatorily or
 optionally) in the cell picked out by projection `c`. -/
@@ -131,7 +134,7 @@ instance (p : Particle) (c : ClauseDistribution → Option ParticleStatus) :
 
 /-- Recorded embedding-distribution status in context `c`, if any. -/
 def embedStatus? (p : Particle) (c : Clause.EmbeddingContext) : Option ParticleStatus :=
-  p.embedding.bind (·.status? c)
+  p.embedding.status? c
 
 /-- The particle is positively recorded as available in embedding
 context `c`. -/
@@ -149,10 +152,10 @@ instance (p : Particle) (c : Clause.EmbeddingContext) : Decidable (p.LicensedInE
 
 /-- Carries a clause-type distribution (the sentential/illocutionary
 particle family: question, modal, sentence-final particles). -/
-def IsSentential (p : Particle) : Prop := p.distribution.isSome
+def IsSentential (p : Particle) : Prop := p.distribution ≠ {}
 
 instance (p : Particle) : Decidable p.IsSentential :=
-  inferInstanceAs (Decidable (_ = true))
+  inferInstanceAs (Decidable (_ ≠ _))
 
 /-- Projection to `Word` (UD `PART`). -/
 def toWord (p : Particle) : Word :=

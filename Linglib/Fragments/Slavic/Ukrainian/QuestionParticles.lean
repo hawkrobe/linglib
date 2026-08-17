@@ -24,7 +24,7 @@ def cy : Particle where
   form := "čy"
   script := some "чи"
   position := some .clauseInitial
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .obligatory
       constituentInterrogative := some .optional }
@@ -37,7 +37,7 @@ def xiba : Particle where
   form := "xiba"
   script := some "хіба"
   position := some .clauseInitial
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .excluded }

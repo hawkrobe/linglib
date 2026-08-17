@@ -17,7 +17,7 @@ negative polar questions ([stankova-2026] §2.2.1; the adverbial reading
 (`Stankova2026`); FALSUM experiments in `StankovaSimik2025`. -/
 def nahodou : Particle where
   form := "náhodou"
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional }
 
@@ -26,7 +26,7 @@ questions ([stankova-2026] (13)-(14)); inner-negation diagnostic in
 `Stankova2026`. -/
 def jeste : Particle where
   form := "ještě"
-  distribution := some
+  distribution :=
     { declarative := some .optional
       polarInterrogative := some .optional }
 
@@ -35,7 +35,7 @@ questions ([stankova-2026] (15)); inner/medial-negation diagnostic in
 `Stankova2026`. -/
 def fakt : Particle where
   form := "fakt"
-  distribution := some
+  distribution :=
     { declarative := some .optional
       polarInterrogative := some .optional }
 
@@ -43,7 +43,7 @@ def fakt : Particle where
 ([stankova-2026] (9)); parallels English *at all*. -/
 def vubec : Particle where
   form := "vůbec"
-  distribution := some
+  distribution :=
     { declarative := some .optional
       polarInterrogative := some .optional }
 
@@ -52,14 +52,14 @@ the cross-Slavic RAZVE family ([simik-2024] §4.2.4, [nekula-1996],
 [stankova-2023]). -/
 def snad : Particle where
   form := "snad"
-  distribution := some { polarInterrogative := some .optional }
+  distribution := { polarInterrogative := some .optional }
 
 /-- *copak* 'what then' — RAZVE-family particle of positive and
 negative polar questions ([stankova-2025] exs. 19a-b, [nekula-1996]);
 evidential-bias experiments in `StankovaSimik2025`. -/
 def copak : Particle where
   form := "copak"
-  distribution := some { polarInterrogative := some .optional }
+  distribution := { polarInterrogative := some .optional }
 
 /-- All Czech PQ particles indexed in this file. -/
 def allParticles : List Particle :=

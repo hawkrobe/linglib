@@ -33,7 +33,7 @@ signal and evidential bias live in `SeeligerRepp2018`. -/
 def val : Particle where
   form := "väl"
   position := some .clauseMedial
-  distribution := some
+  distribution :=
     { declarative := some .excluded
       polarInterrogative := some .optional
       constituentInterrogative := some .excluded }
