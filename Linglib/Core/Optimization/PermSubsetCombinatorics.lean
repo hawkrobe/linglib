@@ -114,9 +114,22 @@ theorem apply_of_ofFn_eq_append_cons (σ : Equiv.Perm (Fin n))
     (List.append_inj h_combined h_lhs_pre_len).2
   exact (List.cons.inj h_suf_eq).1
 
+/-- In a decomposition `List.ofFn ⇑σ = pre ++ x :: suf`, the prefix is the
+    σ-image of the first `pre.length` positions. -/
+theorem take_map_eq_of_ofFn_eq_append_cons (σ : Equiv.Perm (Fin n))
+    {pre suf : List (Fin n)} {x : Fin n}
+    (h_split : List.ofFn ⇑σ = pre ++ x :: suf) (h_pre_lt : pre.length < n) :
+    ((List.finRange n).take pre.length).map ⇑σ = pre := by
+  have h_lhs_pre_len : (((List.finRange n).take pre.length).map σ).length = pre.length := by
+    rw [List.length_map, List.length_take, List.length_finRange]; omega
+  have h_combined : ((List.finRange n).take pre.length).map σ ++
+      σ ⟨pre.length, h_pre_lt⟩ ::
+      ((List.finRange n).drop (pre.length + 1)).map σ = pre ++ x :: suf := by
+    rw [← ofFn_split_at σ ⟨pre.length, h_pre_lt⟩]; exact h_split
+  exact (List.append_inj h_combined h_lhs_pre_len).1
+
 /-- Elements of the prefix of a `List.ofFn ⇑σ` decomposition occupy strictly
-    earlier positions than the distinguished element: if
-    `List.ofFn ⇑σ = pre ++ x :: suf` and `y ∈ pre` then `σ.symm y < σ.symm x`. -/
+    earlier positions than the distinguished element. -/
 theorem symm_lt_of_ofFn_eq_append_cons (σ : Equiv.Perm (Fin n))
     {pre suf : List (Fin n)} {x y : Fin n}
     (h_split : List.ofFn ⇑σ = pre ++ x :: suf) (hy : y ∈ pre) :
@@ -124,31 +137,37 @@ theorem symm_lt_of_ofFn_eq_append_cons (σ : Equiv.Perm (Fin n))
   have h_len : (List.ofFn ⇑σ).length = n := List.length_ofFn
   rw [h_split, List.length_append, List.length_cons] at h_len
   have h_pre_lt : pre.length < n := by omega
-  have hx_eq : σ ⟨pre.length, h_pre_lt⟩ = x :=
-    apply_of_ofFn_eq_append_cons σ pre suf x h_split h_pre_lt
-  -- `pre` is the σ-image of the first `pre.length` positions
-  have h_split_pre := ofFn_split_at σ ⟨pre.length, h_pre_lt⟩
-  have h_lhs_pre_len : (((List.finRange n).take pre.length).map σ).length = pre.length := by
-    rw [List.length_map, List.length_take, List.length_finRange]; omega
-  have h_combined : ((List.finRange n).take pre.length).map σ ++
-      σ ⟨pre.length, h_pre_lt⟩ ::
-      ((List.finRange n).drop (pre.length + 1)).map σ = pre ++ x :: suf := by
-    rw [← h_split_pre]; exact h_split
-  have h_pre_eq : ((List.finRange n).take pre.length).map σ = pre :=
-    (List.append_inj h_combined h_lhs_pre_len).1
-  rw [← h_pre_eq] at hy
-  obtain ⟨j, h_j_take, h_σj⟩ := List.mem_map.mp hy
+  rw [← take_map_eq_of_ofFn_eq_append_cons σ h_split h_pre_lt] at hy
+  obtain ⟨j, h_j_take, rfl⟩ := List.mem_map.mp hy
   rw [List.mem_take_iff_getElem] at h_j_take
   obtain ⟨idx, h_idx_lt, h_idx_eq⟩ := h_j_take
   simp only [List.getElem_finRange] at h_idx_eq
   have h_idx_lt_pre : idx < pre.length := by
     simp only [List.length_finRange, lt_min_iff] at h_idx_lt
     omega
-  have hy_symm : σ.symm y = j := by rw [← h_σj, Equiv.symm_apply_apply]
   have hx_symm : σ.symm x = ⟨pre.length, h_pre_lt⟩ := by
-    rw [← hx_eq, Equiv.symm_apply_apply]
-  rw [hy_symm, hx_symm, Fin.lt_def, ← h_idx_eq]
+    rw [← apply_of_ofFn_eq_append_cons σ pre suf x h_split h_pre_lt, Equiv.symm_apply_apply]
+  rw [Equiv.symm_apply_apply, hx_symm, Fin.lt_def, ← h_idx_eq]
   exact h_idx_lt_pre
+
+/-- Converse of `symm_lt_of_ofFn_eq_append_cons`: a value positioned strictly
+    before `x` lies in the prefix. -/
+theorem mem_pre_of_symm_lt (σ : Equiv.Perm (Fin n))
+    {pre suf : List (Fin n)} {x y : Fin n}
+    (h_split : List.ofFn ⇑σ = pre ++ x :: suf)
+    (hy : σ.symm y < σ.symm x) : y ∈ pre := by
+  have h_len : (List.ofFn ⇑σ).length = n := List.length_ofFn
+  rw [h_split, List.length_append, List.length_cons] at h_len
+  have h_pre_lt : pre.length < n := by omega
+  have hx_symm : σ.symm x = ⟨pre.length, h_pre_lt⟩ := by
+    rw [← apply_of_ofFn_eq_append_cons σ pre suf x h_split h_pre_lt, Equiv.symm_apply_apply]
+  rw [← take_map_eq_of_ofFn_eq_append_cons σ h_split h_pre_lt]
+  refine List.mem_map.mpr ⟨σ.symm y, ?_, σ.apply_symm_apply y⟩
+  rw [List.mem_take_iff_getElem]
+  refine ⟨(σ.symm y).val, ?_, by simp [List.getElem_finRange]⟩
+  rw [hx_symm, Fin.lt_def] at hy
+  simp only [List.length_finRange, lt_min_iff]
+  exact ⟨hy, (σ.symm y).isLt⟩
 
 /-- The head of `permDList σ D` characterized via mathlib's
     `List.find?_eq_some_iff_append`: `head = some x` iff `x ∈ D` and
@@ -170,6 +189,57 @@ theorem permDList_head_eq_some_iff (σ : Equiv.Perm (Fin n)) (D : Finset (Fin n)
     refine ⟨by simpa using h_x, pre, suf, h_split, fun y hy => ?_⟩
     have := h_pre y hy
     simpa using this
+
+/-- If `(permDList σ D).head? = some x` then `x ∈ D` (the head of a
+    filtered list lies in the filter set). -/
+theorem mem_of_permDList_head?_eq_some {D : Finset (Fin n)}
+    {σ : Equiv.Perm (Fin n)} {x : Fin n}
+    (h : (permDList σ D).head? = some x) : x ∈ D := by
+  cases h_eq : permDList σ D with
+  | nil => rw [h_eq] at h; exact absurd h (by simp)
+  | cons z _ =>
+    rw [h_eq] at h
+    simp only [List.head?_cons, Option.some.injEq] at h
+    subst h
+    have h_mem : z ∈ permDList σ D := by rw [h_eq]; exact List.mem_cons_self
+    rw [mem_permDList] at h_mem; exact h_mem
+
+/-- For nonempty `D`, the head of `permDList σ D` is always defined and
+    lies in `D`. -/
+theorem exists_permDList_head?_eq_some {D : Finset (Fin n)} (h_nonempty : D.Nonempty)
+    (σ : Equiv.Perm (Fin n)) :
+    ∃ y ∈ D, (permDList σ D).head? = some y := by
+  cases h_eq : permDList σ D with
+  | nil =>
+    have h_card : (permDList σ D).length = D.card := permDList_length σ D
+    rw [h_eq] at h_card
+    have : D.card = 0 := by simpa using h_card.symm
+    rw [Finset.card_eq_zero] at this
+    rw [this] at h_nonempty
+    exact absurd h_nonempty Finset.not_nonempty_empty
+  | cons z _ =>
+    refine ⟨z, ?_, by simp⟩
+    have h_head : (permDList σ D).head? = some z := by rw [h_eq]; rfl
+    exact mem_of_permDList_head?_eq_some h_head
+
+/-- **The head of `permDList σ D` is the σ-earliest element of `D`**: `head? =
+    some x` iff `x` lies in `D` and no `D`-element occupies an earlier
+    position. The position-minimum characterization, complementing the
+    decomposition form `permDList_head_eq_some_iff`. -/
+theorem permDList_head?_eq_some_iff_min (σ : Equiv.Perm (Fin n)) (D : Finset (Fin n))
+    (x : Fin n) :
+    (permDList σ D).head? = some x ↔ x ∈ D ∧ ∀ y ∈ D, σ.symm x ≤ σ.symm y := by
+  have fwd : ∀ w, (permDList σ D).head? = some w → w ∈ D ∧ ∀ y ∈ D, σ.symm w ≤ σ.symm y := by
+    intro w h
+    obtain ⟨hwD, pre, suf, h_split, h_pre⟩ := (permDList_head_eq_some_iff σ D w).mp h
+    refine ⟨hwD, fun y hyD => ?_⟩
+    by_contra hlt
+    exact h_pre y (mem_pre_of_symm_lt σ h_split (not_le.mp hlt)) hyD
+  refine ⟨fwd x, ?_⟩
+  rintro ⟨hxD, hmin⟩
+  obtain ⟨z, hzD, hz⟩ := exists_permDList_head?_eq_some ⟨x, hxD⟩ σ
+  obtain ⟨-, hzmin⟩ := fwd z hz
+  rwa [show x = z from σ.symm.injective (le_antisymm (hmin z hzD) (hzmin x hxD))]
 
 -- ============================================================================
 -- § 2: Multiplicative lemma
@@ -210,20 +280,6 @@ private lemma swap_preserves_finset {D : Finset (Fin n)} {y y' : Fin n}
 -- ============================================================================
 -- § 4: Equinumerosity of head-fibers via swap bijection
 -- ============================================================================
-
-/-- If `(permDList σ D).head? = some x` then `x ∈ D` (the head of a
-    filtered list lies in the filter set). -/
-theorem mem_of_permDList_head?_eq_some {D : Finset (Fin n)}
-    {σ : Equiv.Perm (Fin n)} {x : Fin n}
-    (h : (permDList σ D).head? = some x) : x ∈ D := by
-  cases h_eq : permDList σ D with
-  | nil => rw [h_eq] at h; exact absurd h (by simp)
-  | cons z _ =>
-    rw [h_eq] at h
-    simp only [List.head?_cons, Option.some.injEq] at h
-    subst h
-    have h_mem : z ∈ permDList σ D := by rw [h_eq]; exact List.mem_cons_self
-    rw [mem_permDList] at h_mem; exact h_mem
 
 /-- For `y, y' ∈ D` and a family `S` closed under `σ ↦ swap y y' * σ`, the
     fibers `{σ ∈ S : head of permDList σ D = y}` and
@@ -272,24 +328,6 @@ private theorem card_filter_head_fibers_eq {D : Finset (Fin n)}
 -- ============================================================================
 -- § 5: Partition by head over a nonempty D
 -- ============================================================================
-
-/-- For nonempty `D`, the head of `permDList σ D` is always defined and
-    lies in `D`. -/
-theorem exists_permDList_head?_eq_some {D : Finset (Fin n)} (h_nonempty : D.Nonempty)
-    (σ : Equiv.Perm (Fin n)) :
-    ∃ y ∈ D, (permDList σ D).head? = some y := by
-  cases h_eq : permDList σ D with
-  | nil =>
-    have h_card : (permDList σ D).length = D.card := permDList_length σ D
-    rw [h_eq] at h_card
-    have : D.card = 0 := by simpa using h_card.symm
-    rw [Finset.card_eq_zero] at this
-    rw [this] at h_nonempty
-    exact absurd h_nonempty Finset.not_nonempty_empty
-  | cons z _ =>
-    refine ⟨z, ?_, by simp⟩
-    have h_head : (permDList σ D).head? = some z := by rw [h_eq]; rfl
-    exact mem_of_permDList_head?_eq_some h_head
 
 /-- For nonempty `D`, summing head-fiber cardinalities over `y ∈ D` recovers
     the cardinality of any family `S`, since every σ has its head in `D`. -/

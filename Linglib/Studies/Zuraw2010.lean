@@ -29,9 +29,8 @@ Constraints) substrate. For each stem-initial consonant `c`:
   applied to the discrete partial order on `Fin 6` — i.e. uniform sampling
   over all 720 total orders.
 - The closed-form rate `|Y_c ∩ D_c| / |D_c|` follows by a single
-  application of `picksAt_rate_eq` (which combines the binary-PicksAt
-  bridge with `perm_filter_head_in_card`'s rational form), with
-  no enumeration of 6! = 720 rankings.
+  application of `pocPredict_discrete_binary_rate`, with no enumeration of
+  6! = 720 rankings.
 
 The structural implication theorems in §7 reuse
 `Core.Optimization.PermSubsetCombinatorics.head_filter_subset_extends`
@@ -300,9 +299,6 @@ private theorem subProb_eq_rate (c : StemC) :
     subProb c = ((yesFav c ∩ relevant c).card : ℚ) / (relevant c).card :=
   pocPredict_discrete_binary_rate nsCands vp c .yes .no
     (nsCands_two c) (fun heq => SubSt.noConfusion heq)
-    (relevant c) (yesFav c)
-    (fun k => by simp [relevant])
-    (fun k => by simp [yesFav])
 
 /-- Substitution rate for voiceless labial p: 50% of 720 rankings. -/
 theorem subProb_p : subProb .p = 1/2 := by
@@ -349,7 +345,7 @@ theorem subProb_g : subProb .g = 1/5 := by
 /-- All six factorial percentages, matching [zuraw-2010] §4.2
     footnote 17 (page 446)'s free-ranking summary (50%, 40%, 33⅓%,
     33⅓%, 25%, 20% for p, t, k, b, d, g respectively). Each derived in
-    closed form from the substrate's `picksAt_rate_eq` — no 6!
+    closed form from the substrate's `pocPredict_discrete_binary_rate` — no 6!
     enumeration. -/
 theorem factorial_rates :
     subProb .p = 1/2 ∧ subProb .t = 2/5 ∧ subProb .k = 1/3 ∧
@@ -411,10 +407,10 @@ theorem PicksAt_extends_smaller_D
     (h_extra : ∀ x ∈ relevant c, x ∉ relevant c' → x ∈ yesFav c)
     (h_c' : PicksAt nsCands vp σ c' .yes) :
     PicksAt nsCands vp σ c .yes := by
-  rw [picksAt_binary_iff_permDList_head_lt
+  rw [picksAt_binary_iff_head_mem_favoring
         nsCands vp c' .yes .no (nsCands_two c')
         (fun heq => SubSt.noConfusion heq)] at h_c'
-  rw [picksAt_binary_iff_permDList_head_lt
+  rw [picksAt_binary_iff_head_mem_favoring
         nsCands vp c .yes .no (nsCands_two c)
         (fun heq => SubSt.noConfusion heq)]
   exact head_filter_subset_extends h_D h_Y h_extra _ h_c'
@@ -430,10 +426,10 @@ theorem PicksAt_extends_larger_D
     (h_subset : yesFav c' ⊆ relevant c)
     (h_c' : PicksAt nsCands vp σ c' .yes) :
     PicksAt nsCands vp σ c .yes := by
-  rw [picksAt_binary_iff_permDList_head_lt
+  rw [picksAt_binary_iff_head_mem_favoring
         nsCands vp c' .yes .no (nsCands_two c')
         (fun heq => SubSt.noConfusion heq)] at h_c'
-  rw [picksAt_binary_iff_permDList_head_lt
+  rw [picksAt_binary_iff_head_mem_favoring
         nsCands vp c .yes .no (nsCands_two c)
         (fun heq => SubSt.noConfusion heq)]
   exact head_filter_smaller_inherits h_D h_Y h_subset _ h_c'

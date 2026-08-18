@@ -38,7 +38,7 @@ Each motif's probability is `pocPredict` over `finnishGrammar` — uniform
 sampling of the total rankings consistent with the whole grammar, not a
 per-stratum sub-grammar. The substrate's deciding-stratum theorem
 (`pocPredict_stratified_binary_rate`) reduces each competition to the closed
-form `|Y ∩ D| / |D|` over the deciding stratum's distinguishing set — the
+form `|favoring ∩ Dₖ| / |Dₖ|` over the deciding stratum's active set — the
 paper's own shortcut ("Drawing the tableaux was in fact unnecessary … knowing
 that the weak variant violates one constraint (\*L.L) while the strong variant
 violates two (\*H/I, \*Í) gives us the result directly", page 22) — with the
@@ -179,18 +179,18 @@ total rankings consistent with `finnishGrammar`. -/
 def winProb (m : Motif) (v : Variant) : ℚ :=
   pocPredict (fun _ => Finset.univ) vp finnishGrammar m v
 
-/-- Bridge to the deciding-stratum closed form `|Y ∩ D| / |D|`, shared by all
-twelve rate theorems. -/
+/-- Bridge to the deciding-stratum closed form, shared by all twelve rate
+theorems. -/
 private theorem winProb_eq_rate (m : Motif) (v : Variant) (k : Fin 5)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → setFiveInner.rel a b → a = b)
-    (h_above : ∀ c, stratumOf c < k → vp m v c = vp m v.other c)
-    (D Y : Finset (Fin 20))
-    (h_D : ∀ c, c ∈ D ↔ stratumOf c = k ∧ vp m v c ≠ vp m v.other c)
-    (h_Y : ∀ c, c ∈ Y ↔ stratumOf c = k ∧ vp m v c < vp m v.other c)
-    (h_dec : D.Nonempty) :
-    winProb m v = ((Y ∩ D).card : ℚ) / (D.card : ℚ) :=
+    (h_tie : ∀ c, stratumOf c < k → vp m v c = vp m v.other c)
+    (h_dec : ((active vp m v v.other).filter (stratumOf · = k)).Nonempty) :
+    winProb m v =
+      ((favoring vp m v v.other ∩
+          (active vp m v v.other).filter (stratumOf · = k)).card : ℚ) /
+        (((active vp m v v.other).filter (stratumOf · = k)).card : ℚ) :=
   pocPredict_stratified_binary_rate _ vp stratumOf setFiveInner m v v.other
-    (Variant.univ_eq_pair v) v.ne_other k h_triv h_above D Y h_D h_Y h_dec
+    (Variant.univ_eq_pair v) v.ne_other k h_triv h_tie h_dec
 
 /-! ### Rate theorems — table (52), all six motifs -/
 
@@ -198,89 +198,77 @@ private theorem winProb_eq_rate (m : Motif) (v : Variant) (k : Fin 5)
 violates a deciding-stratum constraint (`*L.L`), so `D = Y = {5}` and the rate
 is `1`: the categorical limiting case. -/
 theorem strongProb_1ab : winProb .one .strong = 1 := by
-  rw [winProb_eq_rate .one .strong 2 (by decide) (by decide) {5} {5}
-    (by decide) (by decide) ⟨5, by decide⟩]
+  rw [winProb_eq_rate .one .strong 2 (by decide) (by decide) (by decide)]
   decide +kernel
 
 /-- **Motif 1ab weak `L.TA` loses in all rankings** ([anttila-1997]
 table (53): observed 0.6%, an artefact of the spelling of /kollega/). -/
 theorem weakProb_1ab : winProb .one .weak = 0 := by
-  rw [winProb_eq_rate .one .weak 2 (by decide) (by decide) {5} ∅
-    (by decide) (by decide) ⟨5, by decide⟩]
+  rw [winProb_eq_rate .one .weak 2 (by decide) (by decide) (by decide)]
   decide +kernel
 
 /-- **Motif 2ab strong `L.TÓO` wins in all rankings** — same Set-3 profile as
 motif 1ab. -/
 theorem strongProb_2ab : winProb .two .strong = 1 := by
-  rw [winProb_eq_rate .two .strong 2 (by decide) (by decide) {5} {5}
-    (by decide) (by decide) ⟨5, by decide⟩]
+  rw [winProb_eq_rate .two .strong 2 (by decide) (by decide) (by decide)]
   decide +kernel
 
 /-- **Motif 2ab weak `L.TO` loses in all rankings**. -/
 theorem weakProb_2ab : winProb .two .weak = 0 := by
-  rw [winProb_eq_rate .two .weak 2 (by decide) (by decide) {5} ∅
-    (by decide) (by decide) ⟨5, by decide⟩]
+  rw [winProb_eq_rate .two .weak 2 (by decide) (by decide) (by decide)]
   decide +kernel
 
 /-- **Motif 3ab strong `L.TÍI` wins 1/3 of rankings**: decided in Set 3 with
 `D = {*H/I, *Í, *L.L}`, `Y = {*L.L}` (violated by weak alone). Observed 36.9%
 for `náa.pu.rèi.den` ([anttila-1997] table (53), row 3a). -/
 theorem strongProb_3ab : winProb .three .strong = 1/3 := by
-  rw [winProb_eq_rate .three .strong 2 (by decide) (by decide) {3, 4, 5} {5}
-    (by decide) (by decide) ⟨5, by decide⟩]
+  rw [winProb_eq_rate .three .strong 2 (by decide) (by decide) (by decide)]
   decide +kernel
 
 /-- **Motif 3ab weak `L.TI` wins 2/3 of rankings**: `Y = {*H/I, *Í}` (violated
 by strong alone). Observed 63.1% for `náa.pu.ri.en` ([anttila-1997]
 table (53), row 3b). -/
 theorem weakProb_3ab : winProb .three .weak = 2/3 := by
-  rw [winProb_eq_rate .three .weak 2 (by decide) (by decide) {3, 4, 5} {3, 4}
-    (by decide) (by decide) ⟨5, by decide⟩]
+  rw [winProb_eq_rate .three .weak 2 (by decide) (by decide) (by decide)]
   decide +kernel
 
 /-- **Motif 4ab strong `H.TÁA` wins 1/2 of rankings**: decided in Set 4 with
 `D = {*L/A, *H.H, *H́, *X.X}`, `Y = {*L/A, *X.X}` (violated by weak alone).
 Observed 50.5% for `máa.il.mòi.den` ([anttila-1997] table (53), row 4a). -/
 theorem strongProb_4ab : winProb .four .strong = 1/2 := by
-  rw [winProb_eq_rate .four .strong 3 (by decide) (by decide) {8, 9, 10, 11} {8, 11}
-    (by decide) (by decide) ⟨8, by decide⟩]
+  rw [winProb_eq_rate .four .strong 3 (by decide) (by decide) (by decide)]
   decide +kernel
 
 /-- **Motif 4ab weak `H.TA` wins 1/2 of rankings**: `Y = {*H.H, *H́}`.
 Observed 49.5% for `máa.il.mo.jen` ([anttila-1997] table (53), row 4b). -/
 theorem weakProb_4ab : winProb .four .weak = 1/2 := by
-  rw [winProb_eq_rate .four .weak 3 (by decide) (by decide) {8, 9, 10, 11} {9, 10}
-    (by decide) (by decide) ⟨8, by decide⟩]
+  rw [winProb_eq_rate .four .weak 3 (by decide) (by decide) (by decide)]
   decide +kernel
 
 /-- **Motif 5ab strong `H.TÓO` wins 1/5 of rankings**: decided in Set 4 with
 `D = {*H/O, *Ó, *H.H, *H́, *X.X}`, `Y = {*X.X}` (violated by weak alone).
 Observed 17.8% for `kór.jaa.mòi.den` ([anttila-1997] table (53), row 5a). -/
 theorem strongProb_5ab : winProb .five .strong = 1/5 := by
-  rw [winProb_eq_rate .five .strong 3 (by decide) (by decide)
-    {6, 7, 9, 10, 11} {11} (by decide) (by decide) ⟨6, by decide⟩]
+  rw [winProb_eq_rate .five .strong 3 (by decide) (by decide) (by decide)]
   decide +kernel
 
 /-- **Motif 5ab weak `H.TO` wins 4/5 of rankings**: `Y = {*H/O, *Ó, *H.H,
 *H́}`. Observed 82.2% for `kór.jaa.mo.jen` ([anttila-1997] table (53),
 row 5b). -/
 theorem weakProb_5ab : winProb .five .weak = 4/5 := by
-  rw [winProb_eq_rate .five .weak 3 (by decide) (by decide)
-    {6, 7, 9, 10, 11} {6, 7, 9, 10} (by decide) (by decide) ⟨6, by decide⟩]
+  rw [winProb_eq_rate .five .weak 3 (by decide) (by decide) (by decide)]
   decide +kernel
 
 /-- **Motif 6ab strong `H.TÍI` loses in all rankings** — only the strong
 variant violates deciding-stratum constraints (`*H/I`, `*Í`), so `Y = ∅`. -/
 theorem strongProb_6ab : winProb .six .strong = 0 := by
-  rw [winProb_eq_rate .six .strong 2 (by decide) (by decide) {3, 4} ∅
-    (by decide) (by decide) ⟨3, by decide⟩]
+  rw [winProb_eq_rate .six .strong 2 (by decide) (by decide) (by decide)]
   decide +kernel
 
 /-- **Motif 6ab weak `H.TI` wins in all rankings** ([anttila-1997]
 table (53): observed 98.4%). -/
 theorem weakProb_6ab : winProb .six .weak = 1 := by
-  rw [winProb_eq_rate .six .weak 2 (by decide) (by decide) {3, 4} {3, 4}
-    (by decide) (by decide) ⟨3, by decide⟩]
+  rw [winProb_eq_rate .six .weak 2 (by decide) (by decide) (by decide)]
   decide +kernel
 
 /-! ### Completeness -/
