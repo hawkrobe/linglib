@@ -2,15 +2,15 @@ import Linglib.Semantics.Degree.Measure.Basic
 import Linglib.Semantics.Degree.Quantifier
 
 /-!
-# Confidence and Certainty as Gradable Attitudes
-
-[cariani-santorio-wellwood-2024]
+# Confidence and certainty as gradable attitudes
 
 Gradable attitude adjectives like `confident`, `certain`, `sure`, and
-`doubtful` denote properties of confidence states. Unlike accessibility-based
-attitudes (`Doxastic.lean`: believe, know) and preference-based attitudes
-(`Preferential.lean`: hope, fear), these are **gradable properties of states
-with propositional themes** — a third kind of attitude semantics.
+`doubtful` denote properties of confidence states, following Cariani,
+Santorio & Wellwood ([cariani-santorio-wellwood-2024]; henceforth CSW).
+Unlike accessibility-based attitudes (`Doxastic.lean`: believe, know)
+and preference-based attitudes (`Preferential.lean`: hope, fear), these
+are **gradable properties of states with propositional themes** — a
+third kind of attitude semantics.
 
 ## Core Structure
 
@@ -21,7 +21,10 @@ given holder are ordered by a `ConfidenceOrdering`, which extends
 
 Key features:
 - **Per-holder ordering**: Ann's confidence ordering differs from Bob's
-  (CSW §4.1)
+  (CSW §4.1). CSW's ordering is domain-restricted to the holder's own
+  states; on the total-type preorder this is rendered by
+  `holder_consistent` — *distinct* comparable states belong to the
+  holder, foreign states sit as isolated reflexive points.
 - **Not per-theme**: the ordering ranks states across themes, not within
   one theme
 - **Not probabilistic**: the ordering need not respect conjunction — there is
@@ -49,7 +52,7 @@ It does NOT validate:
 namespace Semantics.Attitudes.Confidence
 
 open Degree
-/-! ## §1. Confidence States -/
+/-! ### Confidence states -/
 
 /-- A confidence state: a state with a holder and a propositional theme.
 
@@ -67,12 +70,16 @@ structure ConfidenceState (E W : Type*) where
   /-- The proposition the holder is confident about -/
   theme : W → Prop
 
-/-! ## §2. Holder-Relativized Confidence Ordering -/
+/-! ### Holder-relativized confidence ordering -/
 
 /-- A holder-relativized confidence ordering (CSW §4.1).
 
     Extends mathlib's `Preorder` with a `holder` field and a consistency
-    constraint that all states in the ordering belong to that holder.
+    constraint that distinct comparable states belong to that holder —
+    the total-type rendering of CSW's domain-restricted ⟨D^ho, ≿⟩, with
+    other holders' states as isolated reflexive points. (Reflexivity
+    forces `le s s` for every state, so constraining *all* related pairs
+    would make the structure uninhabited as soon as two holders exist.)
     The preorder is at least reflexive and transitive; CSW §4.6 are
     explicitly agnostic about connectedness (totality), which is why
     `Preorder` (not `LinearOrder` or `PartialOrder`) is the right base —
@@ -85,11 +92,27 @@ structure ConfidenceOrdering (E W : Type*)
     extends Preorder (ConfidenceState E W) where
   /-- The attitude bearer whose ordering this is -/
   holder : E
-  /-- All states in this ordering belong to this holder -/
-  holder_consistent : ∀ s₁ s₂ : ConfidenceState E W, le s₁ s₂ →
+  /-- Distinct comparable states belong to this holder -/
+  holder_consistent : ∀ s₁ s₂ : ConfidenceState E W, le s₁ s₂ → s₁ ≠ s₂ →
     s₁.holder = holder ∧ s₂.holder = holder
 
-/-! ## §3. Confident, certain, and doubts as contrast points
+/-- `ConfidenceOrdering` is inhabited for multi-holder domains: rank all
+    of one holder's states together and leave the other holder's states
+    isolated. Guards against the vacuity that the unguarded constraint
+    (every related state belongs to the holder) would reintroduce. -/
+example : ConfidenceOrdering Bool Unit where
+  le s t := s = t ∨ (s.holder = true ∧ t.holder = true)
+  le_refl _ := Or.inl rfl
+  le_trans s t u h₁ h₂ := by
+    rcases h₁ with rfl | h₁
+    · exact h₂
+    · rcases h₂ with rfl | h₂
+      · exact Or.inr h₁
+      · exact Or.inr ⟨h₁.1, h₂.2⟩
+  holder := true
+  holder_consistent _ _ h hne := h.resolve_left hne
+
+/-! ### Confident, certain, and doubts as contrast points
 
 `confident`, `certain`, and `doubts` share a `ConfidenceOrdering` and
 differ only in a **contrast point** on it (CSW Figures 2–3: same
@@ -130,7 +153,7 @@ theorem confident_not_entails_certain {E W : Type*}
     ∃ s : ConfidenceState E W, co.le confPt s ∧ ¬ co.le maxPt s :=
   ⟨confPt, co.le_refl confPt, h_strict⟩
 
-/-! ## §4. Logic of Confidence Reports (CSW §4.6) -/
+/-! ### Logic of confidence reports -/
 
 /-- Comparative confidence is transitive (CSW (54)/(57)):
     "more confident of p than q" ∧ "more confident of q than r"
@@ -210,7 +233,7 @@ refutation is `CarianiSantorioWellwood2024.states_vs_threshold_on_conjunction_fa
 (Earlier a vacuous `conjunction_fallacy_compatible : ∃ a b c : ℕ, a ≤ b ∧ ¬ a ≤ c`
 stood here; it encoded nothing about confidence or conjunction and was removed.) -/
 
-/-! ## §5. Bridge to Neo-Davidsonian Event Semantics
+/-! ### Bridge to Neo-Davidsonian event semantics
 
 CSW (44) and (47) are the compositional logical forms for positive
 and comparative confidence reports respectively. The substrate exposes
