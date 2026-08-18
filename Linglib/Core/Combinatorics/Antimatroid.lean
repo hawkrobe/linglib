@@ -1,4 +1,5 @@
 import Mathlib.Data.Set.Basic
+import Mathlib.Data.Set.Card
 import Mathlib.Data.Set.Finite.Basic
 
 /-!
@@ -232,3 +233,125 @@ structure Antimatroid.RootedCircuit (A : Antimatroid α) where
   proper_free : ∀ T : Set α, ∀ hT : T ⊂ carrier,
     ∀ x ∈ T,
       (A.trace T (hT.subset.trans carrier_sub)).IsFeasible {x}
+
+/-! ### Rooted-circuit extraction ([dietrich-1987]) -/
+
+/-- Inside a finite feasible set, every element has a *first appearance*: a
+    feasible subset not containing it whose one-element extension by it is
+    feasible and stays inside. Repeated `removal` finds the step. -/
+theorem Antimatroid.exists_insert_step (A : Antimatroid α) {G : Set α}
+    (hfin : G.Finite) (hG : A.IsFeasible G) {x : α} (hx : x ∈ G) :
+    ∃ H, A.IsFeasible H ∧ H ⊆ G ∧ x ∉ H ∧ A.IsFeasible (insert x H) := by
+  induction hcard : G.ncard using Nat.strong_induction_on generalizing G with
+  | _ m ih =>
+    obtain ⟨z, hz, hz_feas⟩ := A.removal G hG ⟨x, hx⟩
+    rcases eq_or_ne z x with rfl | hzx
+    · refine ⟨G \ {z}, hz_feas, Set.sdiff_subset, by simp, ?_⟩
+      rwa [Set.insert_sdiff_singleton, Set.insert_eq_self.mpr hz]
+    · obtain ⟨H, h1, h2, h3, h4⟩ := ih _
+        (hcard ▸ Set.ncard_sdiff_singleton_lt_of_mem hz hfin)
+        (hfin.subset Set.sdiff_subset) hz_feas ⟨hx, hzx.symm⟩ rfl
+      exact ⟨H, h1, h2.trans Set.sdiff_subset, h3, h4⟩
+
+/-- **Rooted-circuit extraction** ([dietrich-1987]; [merchant-riggle-2016]
+    Lemmas 7, 9): if no feasible set meets `W` exactly in `{x}`, some rooted
+    circuit rooted at `x` has its carrier inside `W`. The carrier is a
+    cardinality-minimal critical subset; minimality forces every proper trace
+    free, via the two-point sets `F ∩ C = {x, w}` that near-critical
+    subsets provide. -/
+theorem Antimatroid.exists_rootedCircuit_of_critical (A : Antimatroid α)
+    (hfin : A.E.Finite) {W : Set α} (hWE : W ⊆ A.E) {x : α} (hxW : x ∈ W)
+    (hcrit : ¬∃ F, A.IsFeasible F ∧ F ∩ W = {x}) :
+    ∃ rc : A.RootedCircuit, rc.root = x ∧ rc.carrier ⊆ W := by
+  classical
+  set crit : Set α → Prop :=
+    fun D => x ∈ D ∧ D ⊆ W ∧ ¬∃ F, A.IsFeasible F ∧ F ∩ D = {x} with hcrit_def
+  have hW : crit W := ⟨hxW, le_refl _, hcrit⟩
+  -- a cardinality-minimal critical set
+  have hex : ∃ m : ℕ, ∃ D, crit D ∧ D.ncard = m := ⟨W.ncard, W, hW, rfl⟩
+  obtain ⟨C, hC, hCcard⟩ := Nat.find_spec hex
+  have hmin : ∀ D, crit D → C.ncard ≤ D.ncard := fun D hD =>
+    hCcard ▸ Nat.find_min' hex ⟨D, hD, rfl⟩
+  obtain ⟨hxC, hCW, hCcrit⟩ := hC
+  have hCfin : C.Finite := (hfin.subset hWE).subset hCW
+  -- near-critical subsets provide two-point intersections
+  have hpair : ∀ w ∈ C, w ≠ x → ∃ F, A.IsFeasible F ∧ F ∩ C = {x, w} := by
+    intro w hw hwx
+    have hnotcrit : ¬crit (C \ {w}) := fun h =>
+      absurd (hmin _ h) (Nat.not_le.mpr (Set.ncard_sdiff_singleton_lt_of_mem hw hCfin))
+    simp only [hcrit_def, not_and, not_not] at hnotcrit
+    obtain ⟨F, hF, hFC⟩ := hnotcrit ⟨hxC, hwx.symm⟩ (Set.sdiff_subset.trans hCW)
+    have hxF : x ∈ F := (hFC.symm.subset rfl).1
+    have hwF : w ∈ F := by
+      by_contra hwF
+      refine hCcrit ⟨F, hF, ?_⟩
+      rw [← hFC]
+      ext y
+      simp only [Set.mem_inter_iff, Set.mem_sdiff, Set.mem_singleton_iff]
+      exact ⟨fun ⟨h1, h2⟩ => ⟨h1, h2, fun hy => hwF (hy ▸ h1)⟩, fun ⟨h1, h2, _⟩ => ⟨h1, h2⟩⟩
+    refine ⟨F, hF, ?_⟩
+    ext y
+    simp only [Set.mem_inter_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
+    constructor
+    · intro ⟨hyF, hyC⟩
+      by_contra hy
+      push Not at hy
+      have hmem : y ∈ F ∩ (C \ {w}) := ⟨hyF, hyC, hy.2⟩
+      rw [hFC] at hmem
+      exact hy.1 hmem
+    · rintro (rfl | rfl)
+      exacts [⟨hxF, hxC⟩, ⟨hwF, hw⟩]
+  -- assemble the rooted circuit
+  refine ⟨⟨C, hCW.trans hWE, x, hxC, ?_, ?_⟩, rfl, hCW⟩
+  · rintro ⟨F, hF, hFC⟩
+    exact hCcrit ⟨F, hF, hFC.symm⟩
+  · intro T hT y hy
+    have hTC : T ⊆ C := hT.subset
+    rcases eq_or_ne y x with rfl | hyx
+    · have hnotcrit : ¬crit T := fun h =>
+        absurd (hmin _ h) (Nat.not_le.mpr (Set.ncard_lt_ncard hT hCfin))
+      simp only [hcrit_def, not_and, not_not] at hnotcrit
+      obtain ⟨F, hF, hFT⟩ := hnotcrit hy (hTC.trans hCW)
+      exact ⟨F, hF, hFT.symm⟩
+    · obtain ⟨G, hG, hGC⟩ := hpair y (hTC hy) hyx
+      have hyG : y ∈ G := (hGC.symm.subset (Or.inr rfl)).1
+      by_cases hxT : x ∈ T
+      · -- split G at the first appearance of x
+        obtain ⟨H, hH, hHG, hxH, hxHfeas⟩ :=
+          A.exists_insert_step (hfin.subset (A.feasible_sub G hG)) hG
+            ((hGC.symm.subset (Or.inl rfl)).1)
+        by_cases hyH : y ∈ H
+        · refine ⟨H, hH, ?_⟩
+          ext z
+          simp only [Set.mem_singleton_iff, Set.mem_inter_iff]
+          constructor
+          · rintro rfl; exact ⟨hyH, hy⟩
+          · intro ⟨hzH, hzT⟩
+            have : z ∈ G ∩ C := ⟨hHG hzH, hTC hzT⟩
+            rw [hGC] at this
+            rcases this with rfl | rfl
+            · exact absurd hzH hxH
+            · rfl
+        · exfalso
+          refine hCcrit ⟨insert x H, hxHfeas, ?_⟩
+          ext z
+          simp only [Set.mem_inter_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
+          constructor
+          · intro ⟨hz, hzC⟩
+            rcases hz with rfl | hzH
+            · rfl
+            · have : z ∈ G ∩ C := ⟨hHG hzH, hzC⟩
+              rw [hGC] at this
+              rcases this with rfl | rfl
+              exacts [rfl, absurd hzH hyH]
+          · rintro rfl; exact ⟨Or.inl rfl, hxC⟩
+      · refine ⟨G, hG, ?_⟩
+        ext z
+        simp only [Set.mem_singleton_iff, Set.mem_inter_iff]
+        constructor
+        · rintro rfl; exact ⟨hyG, hy⟩
+        · intro ⟨hzG, hzT⟩
+          have : z ∈ G ∩ C := ⟨hzG, hTC hzT⟩
+          rw [hGC] at this
+          rcases this with rfl | rfl
+          exacts [absurd hzT hxT, rfl]

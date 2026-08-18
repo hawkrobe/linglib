@@ -18,11 +18,10 @@ sets present the *same* grammar exactly when they have the same linear extension
 [merchant-riggle-2016] Theorem 2 to be stated up to logical equivalence becomes
 literal `Grammar` equality here.
 
-The antimatroid face (`Grammar.toAntimatroid`) is a one-directional view: every
-grammar is an antimatroid, but the converse — that every antimatroid is some
-grammar's — rests on [dietrich-1987]'s rooted-circuit characterization and is
-carried as honest `sorry`s in `OptimalityTheory.Antimatroid` (`Antimat_RCErc_inv`,
-`RCErc_Antimat_inv`). The feasible family is read directly off the legs and is
+The antimatroid face (`Grammar.toAntimatroid`) has a converse — every
+full-support antimatroid is some grammar's — by [dietrich-1987]'s rooted-circuit
+characterization (`Antimat_RCErc_inv`, `RCErc_Antimat_inv` in
+`OptimalityTheory.Antimatroid`). The feasible family is read directly off the legs and is
 independent of the presenting ERC set, since `MChain` depends only on the
 satisfying rankings.
 
