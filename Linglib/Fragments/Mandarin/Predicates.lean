@@ -1,4 +1,3 @@
-import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Syntax.Category.Verb.Basic
 
 /-!
@@ -12,7 +11,6 @@ C-distributivity and NVP class are DERIVED from the `attitude` field.
 namespace Mandarin.Predicates
 
 open ArgumentStructure
-open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
 
 /-- Mandarin verb entry: extends Verb with no inflectional morphology
     (Mandarin is an isolating language). -/

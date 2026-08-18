@@ -57,7 +57,7 @@ computed from BToM marginals.
 namespace AnandHacquard2013
 
 open Semantics.Attitudes.Representationality
-open Semantics.Attitudes.Preferential
+open Preferential
 open Doxastic
 
 -- ════════════════════════════════════════════════════════════════
@@ -156,7 +156,7 @@ For representational attitudes: S' = DOX(x,w) (non-trivial)
 For non-representational attitudes: S' = ∅ (trivial → tautology/contradiction)
 -/
 
-variable {W : Type*} [DecidableEq W]
+variable {W : Type*}
 
 /-- Information state: a set of worlds (represented as a list). -/
 abbrev InfoState (W : Type*) := List W
@@ -183,7 +183,7 @@ instance {S : InfoState W} {φ : W → Prop} [DecidablePred φ] :
     epistemics presuppose their modal base is non-trivial. -/
 def nonTrivial (S : InfoState W) : Prop := S ≠ []
 
-instance {S : InfoState W} : Decidable (nonTrivial S) := by
+instance [DecidableEq W] {S : InfoState W} : Decidable (nonTrivial S) := by
   unfold nonTrivial; infer_instance
 
 /-- Epistemic possibility is defined (non-trivial) whenever S ≠ ∅. -/
@@ -263,6 +263,61 @@ theorem want_must_trivial (p : W → Prop) :
 theorem want_might_trivial (p : W → Prop) :
     ¬ mightS (nonRepresentationalS : InfoState W) p := by
   simp [mightS, nonRepresentationalS]
+
+/-! ### The emotive doxastic lexical entry (56)
+
+⟦a hopes_C that p⟧: *defined* iff both p-verifiers and p-falsifiers
+exist among the doxastic alternatives (the uncertainty condition);
+where defined, *true* iff some doxastic alternative verifies p (the
+doxastic assertion) and the p-verifiers are preferred to the
+p-falsifiers above the contextual threshold (the preference
+assertion). φ-verifiers in S are the subsets of S certain about φ —
+for unmodalized p, pow(S ∩ p) — so verifier/falsifier non-emptiness
+is `mightS S p ∧ mightS S ¬p`. The doxastic component is what lets
+*hope* answer a question ([scheffler-2008]'s dialogue, attributed to
+Truckenbrodt: "Kommt Peter heute?" — "Ich hoffe/*will, dass er heute
+kommt") and distinguishes *hope* from pure-preferential *want*. -/
+
+open Semantics.Presupposition (PartialProp) in
+/-- The (56) entry over the study's information-state semantics:
+    presupposition = uncertainty, assertion = doxastic possibility
+    plus preference. The doxastic conjunct is entailed by the first
+    presupposition conjunct; the paper states it separately as the
+    component embedded epistemics are anaphoric to. -/
+def hopeAt {E : Type*} (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')]
+    (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ)
+    (agent : E) (p : Finset W) (w : W) (worlds : List W)
+    (C : List (Finset W)) : PartialProp W where
+  presup _ := mightS (representationalS R agent w worlds) (· ∈ p) ∧
+              mightS (representationalS R agent w worlds) (· ∉ p)
+  assertion _ := mightS (representationalS R agent w worlds) (· ∈ p) ∧
+                 μ agent p > θ C
+
+/-- Embedded *must p* contradicts the uncertainty presupposition
+    ((48) against (47c)): if p holds throughout the doxastic state,
+    there are no falsifiers — epistemic necessity is blocked under
+    *hope* and *fear*. -/
+theorem must_contradicts_uncertainty {E : Type*} (R : E → W → W → Prop)
+    [∀ a w w', Decidable (R a w w')]
+    (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ)
+    (agent : E) (p : Finset W) (w : W) (worlds : List W)
+    (C : List (Finset W))
+    (h_must : mustS (representationalS R agent w worlds) (· ∈ p)) :
+    ¬ (hopeAt R μ θ agent p w worlds C).presup w := by
+  rintro ⟨-, w', hw', hnp⟩
+  exact hnp (h_must w' hw')
+
+/-- Embedded *might p* contributes the same doxastic content as bare
+    p ((58), modal concord): a modalized complement is settled by the
+    shared information state, so its verifiers are the p-verifiers —
+    epistemic possibility is licensed. -/
+theorem might_concord {E : Type*} (R : E → W → W → Prop)
+    [∀ a w w', Decidable (R a w w')]
+    (agent : E) (p : W → Prop) (w : W) (worlds : List W)
+    (h : mightS (representationalS R agent w worlds) p) :
+    mightS (representationalS R agent w worlds)
+      (fun _ => mightS (representationalS R agent w worlds) p) :=
+  let ⟨w', hw', _⟩ := h; ⟨w', hw', h⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 6. Emotive Doxastic Finite Model
