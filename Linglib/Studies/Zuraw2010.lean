@@ -25,7 +25,7 @@ Constraints) substrate. For each stem-initial consonant `c`:
   computed from `vp` (`{i : vp c .yes i ≠ vp c .no i}` and
   `{i : vp c .yes i < vp c .no i}` respectively), with concrete
   `decide`-discharged values.
-- `subProb c : ℚ` is `HarmonicGrammar.PartialOrderConstraints.pocPredict`
+- `subProb c : ℚ` is `HarmonicGrammar.pocPredict`
   applied to the discrete partial order on `Fin 6` — i.e. uniform sampling
   over all 720 total orders.
 - The closed-form rate `|Y_c ∩ D_c| / |D_c|` follows by a single
@@ -94,7 +94,7 @@ those definitions must remain stable.
 namespace Zuraw2010
 
 open Constraints Core.Optimization Constraints OptimalityTheory OptimalityTheory
-open Core.Optimization HarmonicGrammar.PartialOrderConstraints
+open Core.Optimization HarmonicGrammar
 open Core.Optimization Core.Optimization.PermSubsetCombinatorics
 
 /-! ## § 0: Stems, Substitution Decisions, Dictionary Counts -/
@@ -235,7 +235,7 @@ theorem assoc_eq_initAll (c : StemC) (s : SubSt) :
 
 /-- Violation profile derived from the constraint definitions, in the
     `Input → Output → Fin n → ℕ` shape required by
-    `PartialOrderConstraints.PicksAt` and `pocPredict`. -/
+    `PicksAt` and `pocPredict`. -/
 def vp (c : StemC) (s : SubSt) (i : Fin 6) : ℕ :=
   (constraint i) (c, s)
 
@@ -286,7 +286,7 @@ private theorem nsCands_two (c : StemC) : nsCands c = {SubSt.yes, SubSt.no} := b
     order: the fraction of all `6! = 720` total orders that pick YES as
     the OT optimum for stem `c`. -/
 def subProb (c : StemC) : ℚ :=
-  pocPredict nsCands vp (discrete 6) c .yes
+  pocPredict nsCands vp (· = ·) c .yes
 
 -- ============================================================================
 -- § 5: Closed-Form Rates via the Substrate

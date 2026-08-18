@@ -88,7 +88,7 @@ mass for every motif (`sum_pocPredict_eq_one` substrate instance).
 
 namespace Anttila1997
 
-open HarmonicGrammar HarmonicGrammar.PartialOrderConstraints
+open HarmonicGrammar
 
 /-! ### Variants and motifs -/
 
@@ -139,18 +139,28 @@ def stratumOf : Fin 20 → Fin 5 :=
 
 /-- The Set-5-internal rankings of [anttila-1997] eq. (50): \*L/O ≫ \*L/I
 (`14 ≫ 15`) and \*A ≫ \*O ≫ \*I (`16 ≫ 17 ≫ 18`), transitively closed. -/
-def setFiveInner : PartialOrderConstraints 20 where
-  rel a b := a = b ∨
+def setFiveInner : Fin 20 → Fin 20 → Prop :=
+  fun a b => a = b ∨
     (a, b) ∈ ([(14, 15), (16, 17), (17, 18), (16, 18)] : List (Fin 20 × Fin 20))
-  isPartialOrder :=
-    { refl := fun _ => Or.inl rfl
-      trans := by decide
-      antisymm := by decide }
+
+instance : DecidableRel setFiveInner := by
+  unfold setFiveInner; infer_instance
+
+instance : IsPartialOrder (Fin 20) setFiveInner where
+  refl _ := Or.inl rfl
+  trans := by decide
+  antisymm := by decide
 
 /-- **The grammar for Finnish, final version** ([anttila-1997] eq. (50),
 page 21): five mutually-ranked strata, internally free except for
 `setFiveInner`'s Set-5 rankings. -/
-def finnishGrammar : PartialOrderConstraints 20 := stratified stratumOf setFiveInner
+def finnishGrammar : Fin 20 → Fin 20 → Prop := stratified stratumOf setFiveInner
+
+instance : IsPartialOrder (Fin 20) finnishGrammar :=
+  inferInstanceAs (IsPartialOrder (Fin 20) (stratified stratumOf setFiveInner))
+
+instance : DecidableRel finnishGrammar :=
+  inferInstanceAs (DecidableRel (stratified stratumOf setFiveInner))
 
 /-- Violation profile over the full constraint roster, from [anttila-1997]
 table (52). Sets 1–2 tie on every motif and Set-5 cells are 0 (provably
@@ -182,7 +192,7 @@ def winProb (m : Motif) (v : Variant) : ℚ :=
 /-- Bridge to the deciding-stratum closed form, shared by all twelve rate
 theorems. -/
 private theorem winProb_eq_rate (m : Motif) (v : Variant) (k : Fin 5)
-    (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → setFiveInner.rel a b → a = b)
+    (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → setFiveInner a b → a = b)
     (h_tie : ∀ c, stratumOf c < k → vp m v c = vp m v.other c)
     (h_dec : ((active vp m v v.other).filter (stratumOf · = k)).Nonempty) :
     winProb m v =
