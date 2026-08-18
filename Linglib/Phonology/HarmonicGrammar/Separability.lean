@@ -1,4 +1,4 @@
-import Linglib.Phonology.HarmonicGrammar.NoisyHG
+import Linglib.Phonology.HarmonicGrammar.Noise
 
 /-!
 # Separable Harmonies and HZ's Generalization [magri-2025]
@@ -37,7 +37,7 @@ a single constraint.
 
 ## Connection to existing infrastructure
 
-The forward direction leverages `logit_uniformity` (in `NoisyHG.lean`)
+The forward direction leverages `logit_uniformity` (in `Noise.lean`)
 and `maxent_logit_harmony`, which already prove that MaxEnt log-odds
 equal harmony score differences. [magri-2025]'s contribution is
 showing this is *the only* mode of constraint interaction with this

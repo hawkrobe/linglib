@@ -1,4 +1,4 @@
-import Linglib.Phonology.HarmonicGrammar.NoisyHG
+import Linglib.Phonology.HarmonicGrammar.Noise
 import Linglib.Phonology.HarmonicGrammar.Separability
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Core.Probability.Choice.GumbelLuce
@@ -222,7 +222,7 @@ theorem clash_increases_schwa (pair : Fin 4) :
 /-- Sum of squared violation differences for a context.
 
     This is the study-local analogue of `violationDiffSqSumQ` from
-    `NoisyHG.lean`: both compute `Σⱼ (cⱼ(ə) − cⱼ(∅))²`, but `schwaSqSum`
+    `Noise.lean`: both compute `Σⱼ (cⱼ(ə) − cⱼ(∅))²`, but `schwaSqSum`
     operates on the pre-computed difference matrix `schwaDiff` (Table (35))
     rather than a `CON` constraint set. -/
 def schwaSqSum (ctx : Fin 8) : Nat :=

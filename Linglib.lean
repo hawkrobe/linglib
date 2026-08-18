@@ -1312,7 +1312,7 @@ import Linglib.Phonology.Constraints.Directional
 import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.HarmonicGrammar.Expressivity
-import Linglib.Phonology.HarmonicGrammar.NoisyHG
+import Linglib.Phonology.HarmonicGrammar.Noise
 import Linglib.Phonology.Hiatus
 import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 import Linglib.Phonology.Constraints.Harmony
