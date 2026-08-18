@@ -3,8 +3,7 @@ import Linglib.Studies.Roussou2010
 import Linglib.Fragments.Greek.StandardModern.Complementizers
 import Linglib.Syntax.Category.Verb.Complement.Takes
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Semantics.Attitudes.ContentIndividual
-import Linglib.Semantics.Attitudes.SituationIndividual
+import Linglib.Semantics.Attitudes.Anchor
 import Linglib.Data.Examples.Angelopoulos2026
 
 /-!
