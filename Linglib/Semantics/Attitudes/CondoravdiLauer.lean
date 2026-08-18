@@ -3,16 +3,18 @@ import Linglib.Core.Order.PreferenceStructure.EffectivePreference
 import Linglib.Core.Order.PreferenceStructure.MaxInducedOrdering
 
 /-!
-# Condoravdi & Lauer: The Effective Preference Theory of *want*
-[condoravdi-lauer-2012] [lauer-2013] [condoravdi-lauer-2016]
-[condoravdi-lauer-2011] [lauer-condoravdi-2014]
+# The effective-preference theory of *want*
 
-The C&L analysis treats `want` as parameterized by a *preferential
-background* — analogous to Kratzer's modal base/ordering source. The
-distinguished background is the agent's effective preference function `EP`
-(`Core.Order.EffectivePreference`).
+Condoravdi & Lauer's analysis of `want`, developed across
+[condoravdi-lauer-2011], [condoravdi-lauer-2012], [lauer-2013],
+[lauer-condoravdi-2014], and [condoravdi-lauer-2016]: the verb is
+parameterized by a *preferential background* — analogous to Kratzer's
+modal base/ordering source — whose distinguished value is the agent's
+effective preference function `EP` (`Core.Order.EffectivePreference`).
+Declarations live in the `Semantics.Attitudes.Desire` namespace,
+alongside the rival want-semantics of `Desire.lean`.
 
-## Layout
+## Main declarations
 
 * `PreferentialBackground`, `EffectivePreferentialBackground` — types.
 * `wantP{Exact, Success, QH}` — the three readings from
@@ -23,14 +25,14 @@ distinguished background is the agent's effective preference function `EP`
   ordering source consumed by the inner modal in the double-modal
   anankastic analysis.
 
-Anankastic-conditional analyses live in `Studies/`;
-imperative analyses (C&L 2012, contra [roberts-2023]'s
-modal-in-LF account) in `Studies/`;
-discourse-particle uses ([deo-2025-bara]) in
-`Studies/`.
+The anankastic-conditional analysis is prosecuted in
+`Studies/CondoravdiLauer2016.lean`, the imperative analysis (contra
+[roberts-2023]'s modal-in-LF account) in
+`Studies/CondoravdiLauer2012.lean`, and discourse-particle uses
+([deo-2025-bara]) in `Studies/Deo2025.lean`.
 -/
 
-namespace Semantics.Attitudes.CondoravdiLauer
+namespace Semantics.Attitudes.Desire
 
 open Core.Order
 
@@ -149,4 +151,4 @@ def maxOrderingSource {B : Agent → W → Set W}
     W → Set (Set W) :=
   fun w => (EP Ad w).toPreferenceStructure.maxElts
 
-end Semantics.Attitudes.CondoravdiLauer
+end Semantics.Attitudes.Desire
