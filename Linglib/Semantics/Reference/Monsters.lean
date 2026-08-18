@@ -26,7 +26,7 @@ are languages where attitude verbs push non-identity shifts (e.g.,
 - `kaplansThesisAsTower`: English embedding verbs push identity shifts
 
 Schlenker's context-quantifying attitude operator lives in
-`Attitudes/ContextQuantification.lean` as `ContextBox`; this file is about the
+`Studies/Schlenker2003.lean` as `ContextBox`; this file is about the
 monster *predicate* and Kaplan's thesis, not the operator.
 
 -/

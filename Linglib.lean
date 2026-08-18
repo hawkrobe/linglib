@@ -1494,7 +1494,6 @@ import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Semantics.Attitudes.Anchor
 import Linglib.Semantics.Attitudes.Confidence
 import Linglib.Semantics.Attitudes.ContentIndividual
-import Linglib.Semantics.Attitudes.ContextQuantification
 import Linglib.Semantics.Attitudes.Desire
 import Linglib.Semantics.Attitudes.Distributivity
 import Linglib.Semantics.Attitudes.Doxastic
