@@ -677,7 +677,7 @@ This is consistent with the empirical observation that DOUBT and
 DENY triggers in French often require the matrix clause to be negated
 or questioned for EN to occur (§6.1.3). -/
 
-open Semantics.Attitudes.NegRaising (negRaisingAvailable)
+open NegRaising (negRaisingAvailable)
 open Doxastic (Veridicality)
 
 /-- DENY triggers license EN through the doxastic square:
@@ -1137,7 +1137,7 @@ theorem zarma_en_determined_by_aspect :
 | Licensing condition     | Theory module               | Bridge theorem               |
 |-------------------------|-----------------------------|------------------------------|
 | propositionalAttitude   | Attitudes.Preferential      | fear_has_dual_inference      |
-|                         | Attitudes.NegRaising        | deny_EN_via_negRaising       |
+|                         | NegRaising                  | deny_EN_via_negRaising       |
 | temporalOperator        | Tense.TemporalConnectives   | before_temporal_separation   |
 | logicalOperator         | Modality.Kratzer             | not_impossible_activates_p   |
 |                         | Conditionals.Basic           | unless_modus_ponens          |

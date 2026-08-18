@@ -31,7 +31,8 @@ open Core in
         Pr_obs(Agent, φ | a) = Σ_b P(b | a) · eval(b, φ)
 
     This is `BToMModel.beliefExpectation` applied to `fun b => eval b φ`,
-    grounding the abstract `AgentCredence` in concrete BToM inference.
+    grounding abstract threshold credence (`EpistemicThreshold`) in
+    concrete BToM inference.
 
     When `B = W` and `eval b φ = if φ b then 1 else 0` (the RSA-BToM
     bridge's perfect-knowledge assumption), this reduces to the L1
