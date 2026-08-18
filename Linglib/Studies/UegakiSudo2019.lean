@@ -1,4 +1,4 @@
-import Linglib.Semantics.Attitudes.Preferential
+import Linglib.Semantics.Attitudes.Preference
 import Mathlib.Tactic.NormNum
 
 /-!

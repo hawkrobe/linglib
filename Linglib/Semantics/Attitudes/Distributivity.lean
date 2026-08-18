@@ -11,7 +11,7 @@ semantics: ⟦x V Q⟧ ↔ ∃p ∈ Q. ⟦x V p⟧ ([uegaki-sudo-2019];
 propositional and question semantics, so it is proved from a
 predicate's semantic structure rather than stipulated per predicate.
 
-The degree-comparison preferentials of `Preferential.lean` are
+The degree-comparison preferentials of `Preference.lean` are
 distributive by construction
 (`Preferential.mkDegreeComparison_isDistributive`); predicates whose
 question semantics outruns the existential — global uncertainty for

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Attitudes.Preferential
+import Linglib.Semantics.Attitudes.Preference
 
 /-!
 # Qing, Özyıldız, Roelofsen, Romero & Uegaki 2025: question-taking preferentials

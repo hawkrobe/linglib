@@ -1,4 +1,4 @@
-import Linglib.Semantics.Attitudes.PreferenceStructure
+import Linglib.Semantics.Attitudes.Preference
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Presupposition.Basic

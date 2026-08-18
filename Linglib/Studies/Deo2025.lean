@@ -47,7 +47,7 @@ The secondary felicity condition (eq. 21): addressee uptake of *p* must
 be a precondition for fulfilling a contextually salient
 addressee-benefiting goal `g_c ∈ EP(s, w)`
 (a preferential background pointwise consistent with the belief
-state — `Semantics/Attitudes/PreferenceStructure.lean`).
+state — `Semantics/Attitudes/Preference.lean`).
 
 ## Out of scope
 
