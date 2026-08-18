@@ -78,9 +78,6 @@ def Verb.isPreferential (v : Verb) : Bool :=
 def Verb.preferentialValence (v : Verb) : Option AttitudeValence :=
   v.attitude.bind (·.valence)
 
--- Note: Verb.cDistributive, Verb.nvpClass, and Verb.takesQuestion
--- are derived properties defined in Semantics.Intensional/Attitude/BuilderProperties.lean
-
 /-- Does this verb presuppose its complement via factivity?
     DERIVED from attitude: true iff the verb is doxastic veridical. -/
 def Verb.factivePresup (v : Verb) : Bool :=

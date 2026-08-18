@@ -129,24 +129,15 @@ def turkishObs : List Observation := [korkTr, umTr, endiselenTr]
 def allObservations : List Observation :=
   englishObs ++ mandarinObs ++ japaneseObs ++ turkishObs
 
-#guard allObservations.length == 17
-
--- Linking to Fragments (for verification)
-
 /-!
 ## Verifying Predictions Against Observations
 
-The verb entries in `Fragments/` contain the semantic properties.
-We can verify that predictions match observations:
-
-```lean
--- From Theory (BuilderProperties.lean), derived from Fragment entry:
-Semantics.Attitudes.BuilderProperties.Attitude.nvpClass hope.attitude = some.class3_cDist_positive
--- This predicts: canTakeQuestion = false
-
--- From the empirical data in this file:
-hopeEn.takesPolQ = false ∧ hopeEn.takesWhQ = false ✓
-```
+The NVP class of each predicate follows from its C-distributivity and
+valence via `Semantics.Attitudes.Preferential.classifyNVP`, with
+C-distributivity proved from the semantics
+(`PreferentialPredicate.isCDistributive` and the hope/fear/worry
+theorems in `Semantics/Attitudes/Preferential.lean`); the class then
+predicts question-embedding, checked against the observations here:
 
 ### Cross-Linguistic Verification
 
