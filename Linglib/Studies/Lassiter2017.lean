@@ -20,7 +20,7 @@ This study file:
   `wantEffectivePreference_jointly_belief_consistent` forbids the witness; the
   Lassiter bare apparatus exhibits it. **Different mechanisms.**
 * §4 cross-paper bridge to [heim-1992]: same configuration is
-  `wantHeimDefined`-OK, but `wantHeim_no_conflict`
+  `WantHeimDefined`-OK, but `wantHeim_no_conflict`
   rules out joint truth. **Heim's (40) amendment is the structural
   analog of Lassiter's Sloman.**
 * §5 **Sloman's Principle blocks the witness** for Lassiter's *full*
@@ -85,27 +85,27 @@ instance : DecidablePred targetProp := fun w => by unfold targetProp; infer_inst
 `E_V(¬p | belS) = (1/4 · 4 + 1/4 · 0) / (1/4 + 1/4) = 1 / (1/2) = 2`
 With θ = 3/2, both are above threshold → both are wanted. -/
 
-theorem want_p : Lassiter.want belTotal prior value threshold targetProp := by
-  unfold Lassiter.want Lassiter.expectedValue targetProp belTotal prior value threshold
+theorem want_p : Lassiter.Want belTotal prior value threshold targetProp := by
+  unfold Lassiter.Want Lassiter.expectedValue targetProp belTotal prior value threshold
   simp [Fin.sum_univ_succ]
   norm_num
 
 theorem want_negp :
-    Lassiter.want belTotal prior value threshold (fun w => ¬ targetProp w) := by
-  unfold Lassiter.want Lassiter.expectedValue targetProp belTotal prior value threshold
+    Lassiter.Want belTotal prior value threshold (fun w => ¬ targetProp w) := by
+  unfold Lassiter.Want Lassiter.expectedValue targetProp belTotal prior value threshold
   simp [Fin.sum_univ_succ]
   norm_num
 
 theorem conflict_concrete :
-    Lassiter.want belTotal prior value threshold targetProp ∧
-    Lassiter.want belTotal prior value threshold (fun w => ¬ targetProp w) :=
+    Lassiter.Want belTotal prior value threshold targetProp ∧
+    Lassiter.Want belTotal prior value threshold (fun w => ¬ targetProp w) :=
   ⟨want_p, want_negp⟩
 
 /-! ## §3. Cross-paper bridge: [condoravdi-lauer-2016]
 
 C&L's `wantEffectivePreference_jointly_belief_consistent` says that for any
 effective-preference background `EP` and any agent `a`, world `w`,
-`wantEffectivePreference EP a φ w ∧ wantEffectivePreference EP a ψ w`
+`WantEffectivePreference EP a φ w ∧ WantEffectivePreference EP a ψ w`
 implies `(φ ∩ ψ) ∩ B(a, w) ≠ ∅`.
 Specialized to `ψ = φᶜ`: the intersection is empty, so simultaneous
 truth is impossible.
@@ -115,14 +115,14 @@ configuration. The two frameworks make orthogonal predictions on the
 4-world model. -/
 
 /-- C&L blocks any pair
-    `wantEffectivePreference φ ∧ wantEffectivePreference ¬φ` —
+    `WantEffectivePreference φ ∧ WantEffectivePreference ¬φ` —
     C&L cannot reproduce Lassiter's witness. -/
 theorem condoravdiLauer_blocks_lassiter_witness
     {Agent : Type} {B : Agent → W → Set W}
     (EP : ∀ a w, EffectivePreference W (B a w))
     (a : Agent) (w : W) (φ : Set W)
-    (hφ : Desire.wantEffectivePreference EP a φ w)
-    (hnegφ : Desire.wantEffectivePreference EP a (fun w => ¬ φ w) w) :
+    (hφ : Desire.WantEffectivePreference EP a φ w)
+    (hnegφ : Desire.WantEffectivePreference EP a (fun w => ¬ φ w) w) :
     False := by
   have h := Desire.wantEffectivePreference_jointly_belief_consistent
               EP hφ hnegφ
@@ -134,9 +134,9 @@ theorem condoravdiLauer_blocks_lassiter_witness
 /-! ## §4. Cross-paper bridge: [heim-1992]
 
 Heim's (40) amendment + comparative-belief semantics block simultaneous
-`wantHeim p ∧ wantHeim ¬p` (substrate's
+`WantHeim p ∧ WantHeim ¬p` (substrate's
 `wantHeim_no_conflict`). The 4-world conflict witness
-configuration is `wantHeimDefined`-OK on `targetProp` (both p-worlds
+configuration is `WantHeimDefined`-OK on `targetProp` (both p-worlds
 and ¬p-worlds are in `belTotal`), so Heim's no-go applies — and Heim's
 prediction differs from Lassiter's.
 
@@ -145,18 +145,18 @@ that Sloman plays for Lassiter — both block single-V/single-context
 conflict. -/
 
 theorem wantHeimDefined_on_witness :
-    wantHeimDefined belTotal targetProp := by
+    WantHeimDefined belTotal targetProp := by
   refine ⟨⟨0, ?_, ?_⟩, ⟨2, ?_, ?_⟩⟩ <;> decide
 
 /-- On the witness configuration, Heim's no-go theorem applies — for
     any Heim parameters with strictly asymmetric desirability,
-    `wantHeim` cannot make both `targetProp` and its negation true.
+    `WantHeim` cannot make both `targetProp` and its negation true.
     Direct application of the substrate theorem. -/
 theorem heim_blocks_witness
     (params : HeimDesireParams W) (w_eval : W)
     (hAsym : ∀ x y, params.pref w_eval x y → params.pref w_eval y x → x = y) :
-    ¬ (wantHeim belTotal params w_eval targetProp ∧
-       wantHeim belTotal params w_eval (fun w => ¬ targetProp w)) :=
+    ¬ (WantHeim belTotal params w_eval targetProp ∧
+       WantHeim belTotal params w_eval (fun w => ¬ targetProp w)) :=
   wantHeim_no_conflict belTotal params w_eval targetProp
     hAsym wantHeimDefined_on_witness
 
@@ -173,7 +173,7 @@ On the witness model with `alts = [targetProp, ¬targetProp]`:
 - Sloman for `targetProp`: requires `7 > 2` ✓.
 - Sloman for `¬targetProp`: requires `2 > 7` ✗.
 
-So `wantWithSloman` blocks the conflict on this configuration —
+So `WantWithSloman` blocks the conflict on this configuration —
 matching Lassiter's actual stated position. The bare-threshold witness
 is exhibited by `conflict_concrete` *only because* it ignores Sloman;
 Lassiter himself would say this is the wrong way to formalize his
@@ -195,8 +195,8 @@ theorem targetProp_ne_negTargetProp : (targetProp : Set W) ≠ (fun w => ¬ targ
     Principle. Direct instance of the substrate theorem
     `wantWithSloman_blocks_conflict`. -/
 theorem wantWithSloman_blocks_conflict_on_witness :
-    ¬ (Lassiter.wantWithSloman belTotal prior value threshold witnessAlts targetProp ∧
-       Lassiter.wantWithSloman belTotal prior value threshold witnessAlts
+    ¬ (Lassiter.WantWithSloman belTotal prior value threshold witnessAlts targetProp ∧
+       Lassiter.WantWithSloman belTotal prior value threshold witnessAlts
          (fun w => ¬ targetProp w)) :=
   Lassiter.wantWithSloman_blocks_conflict belTotal prior value threshold targetProp
     witnessAlts (by simp [witnessAlts]) (by simp [witnessAlts])

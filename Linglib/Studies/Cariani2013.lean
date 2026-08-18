@@ -72,10 +72,10 @@ Our `ought_negation_via_coarse_falsemaking` makes this precise.
 ## Cross-framework: structural agreement with Phillips-Brown
 
 Cariani's `visible` is **definitionally identical** to Phillips-Brown's
-`isConsidered` (`Semantics/Attitudes/Desire.lean`,
+`IsConsidered` (`Semantics/Attitudes/Desire.lean`,
 [phillips-brown-2025] §3.6) — so much so that we don't redefine
-it: `Cariani2013.isVisible` is an `abbrev` for `isConsidered` over the
-options list. The bridge theorem `isVisible_iff_isConsidered` is
+it: `Cariani2013.isVisible` is an `abbrev` for `IsConsidered` over the
+options list. The bridge theorem `isVisible_iff_IsConsidered` is
 `Iff.rfl`.
 
 This is **parallel discovery, not chain-of-influence**: Cariani 2013's
@@ -98,7 +98,7 @@ INHERITANCE." See `cariani_duality_right_to_left_failure`.
 
 namespace Cariani2013
 
-open Desire (DecProp mkDec isConsidered)
+open Desire (DecProp mkDec IsConsidered)
 
 /-! ## §1. Resolution Semantics primitives
 
@@ -148,7 +148,7 @@ instance (rc : ResolutionContext W) (o : DecProp W) :
 * `isWayOf`: option `o` is a way-of-`p` iff every world in `o` is a
   `p`-world (the option *entails* `p`).
 * `isVisible`: `p` is visible iff every option is a way-of-`p` or a
-  way-of-`¬p`. **Definitionally identical** to PB's `isConsidered` —
+  way-of-`¬p`. **Definitionally identical** to PB's `IsConsidered` —
   we use it as an alias.
 * `isPermissible`: some way-of-`p` option meets benchmark.
 * `isStronglyPermissible`: every way-of-`p` option meets benchmark.
@@ -165,12 +165,12 @@ instance (o : DecProp W) (p : Set W) [DecidablePred p] :
 
 /-- `p` is **visible** in Cariani's options iff every option settles `p`.
 
-    **Definitionally identical to Phillips-Brown's `isConsidered`** —
+    **Definitionally identical to Phillips-Brown's `IsConsidered`** —
     aliased rather than restipulated, per CLAUDE.md "import don't
     restipulate" discipline. The bridge theorem
-    `isVisible_iff_isConsidered` is `Iff.rfl`. -/
+    `isVisible_iff_IsConsidered` is `Iff.rfl`. -/
 abbrev isVisible (rc : ResolutionContext W) (p : Set W) [DecidablePred p] : Prop :=
-  isConsidered rc.options p
+  IsConsidered rc.options p
 
 /-- `p` is **permissible** iff some option that's a way-of-`p` meets
     benchmark. (Not used in Cariani's `ought` definition — used to
@@ -248,9 +248,9 @@ instance (rc : ResolutionContext W) (p : Set W) [DecidablePred p] :
     Decidable (permitted rc p) :=
   inferInstanceAs (Decidable (isPermissible rc p))
 
-/-! ## §4. Bridge to Phillips-Brown's `isConsidered`
+/-! ## §4. Bridge to Phillips-Brown's `IsConsidered`
 
-[phillips-brown-2025]'s `isConsidered`
+[phillips-brown-2025]'s `IsConsidered`
 (`Desire`) is *definitionally* the same
 predicate as Cariani's `isVisible`. Since `isVisible` is now an
 `abbrev` (§2 above), the bridge theorem is `Iff.rfl`.
@@ -261,12 +261,12 @@ agreement is independent reinvention. Linglib's "make agreements
 visible" thesis surfaces the structural identity. -/
 
 omit [Fintype W] [DecidableEq W] in
-/-- Cariani's `isVisible` and Phillips-Brown's `isConsidered` are the
+/-- Cariani's `isVisible` and Phillips-Brown's `IsConsidered` are the
     same predicate. Since `isVisible` is an `abbrev` over
-    `isConsidered`, the proof is `Iff.rfl`. -/
-theorem isVisible_iff_isConsidered
+    `IsConsidered`, the proof is `Iff.rfl`. -/
+theorem isVisible_iff_IsConsidered
     (rc : ResolutionContext W) (p : Set W) [DecidablePred p] :
-    isVisible rc p ↔ isConsidered rc.options p := Iff.rfl
+    isVisible rc p ↔ IsConsidered rc.options p := Iff.rfl
 
 /-! ## §5. INHERITANCE failure on Ross's Puzzle (paper §I)
 
@@ -683,13 +683,13 @@ theorem ross_ought_stay_home_false :
 
 /-! ## §11. Cross-framework summary
 
-* Cariani's `isVisible` ≡ Phillips-Brown's `isConsidered`
-  (`isVisible_iff_isConsidered` is `Iff.rfl` since `isVisible` is an
+* Cariani's `isVisible` ≡ Phillips-Brown's `IsConsidered`
+  (`isVisible_iff_IsConsidered` is `Iff.rfl` since `isVisible` is an
   abbrev). Parallel discovery (Cariani via Lewis/Yalcin; PB via Crnič
   2011), not chain-of-influence.
 * Cariani's account is *anti-INHERITANCE by design* (proved in §5
-  Ross, §6 Procrastinate, §9 DUALITY-concern). vF (`wantVonFintel`) and Heim
-  (`wantHeim`) are *pro-INHERITANCE* (their universal-over-best-worlds
+  Ross, §6 Procrastinate, §9 DUALITY-concern). vF (`WantVonFintel`) and Heim
+  (`WantHeim`) are *pro-INHERITANCE* (their universal-over-best-worlds
   shape entails it). Lassiter is anti-INHERITANCE via *intermediacy
   of E_V* (a different mechanism — see Lassiter2017.lean).
 * `Cariani.ought` satisfies COARSENESS (paper §1 p.534) and is
