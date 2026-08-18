@@ -424,7 +424,7 @@ theorem atomsIn_star_of_disjoint {X₀ : Set B}
     obtain ⟨Y, hY, rfl⟩ := hzstar
     obtain ⟨y, hyY, hybot⟩ : ∃ y ∈ Y, y ≠ ⊥ := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       exact hzbot (Set.mem_singleton_iff.mpr (sSup_eq_bot.mpr hcon))
     have heq : y = sSup Y :=
       hmin y ⟨subset_star (hY hyY),
@@ -438,7 +438,7 @@ theorem atomsIn_star_of_disjoint {X₀ : Set B}
     obtain ⟨Y, hY, rfl⟩ := hystar
     obtain ⟨x', hx'Y, hx'bot⟩ : ∃ x' ∈ Y, x' ≠ ⊥ := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       exact hybot (Set.mem_singleton_iff.mpr (sSup_eq_bot.mpr hcon))
     have hx'le : x' ≤ z := le_trans (le_sSup hx'Y) hle
     have hx'z : x' = z := by

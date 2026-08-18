@@ -600,7 +600,7 @@ private theorem icrR_zero : game.icrR 0 = {fun _ _ => 0} := by
       rw [Fin.sum_univ_two, Fin.sum_univ_two]
       fin_cases b <;> simp only [game] <;> norm_num
   ext r
-  simp only [SemanticGame.icrR, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  simp only [SemanticGame.icrR, Set.mem_ofPred_eq, Set.mem_singleton_iff]
   constructor
   · intro h
     funext c f
@@ -706,7 +706,7 @@ private theorem pair_eq :
     {h : Unit → Fin 2 → Fin 2 | h () 0 = 0} =
       {(fun _ _ => 0), (fun _ x => x)} := by
   ext h
-  simp only [Set.mem_setOf_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
+  simp only [Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
   constructor
   · intro h0
     rcases (by omega : h () 1 = 0 ∨ h () 1 = 1) with h1 | h1
@@ -718,7 +718,7 @@ private theorem pair_eq :
 private theorem singleton_eq :
     {h : Unit → Fin 2 → Fin 2 | h () 0 = 0 ∧ h () 1 = 1} = {fun _ x => x} := by
   ext h
-  simp only [Set.mem_setOf_eq, Set.mem_singleton_iff]
+  simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
   constructor
   · rintro ⟨h0, h1⟩; funext c x; cases c; fin_cases x <;> assumption
   · rintro rfl; exact ⟨rfl, rfl⟩
@@ -753,7 +753,7 @@ private theorem icrS_zero : game.icrS 0 = {fun _ _ => 0} := by
   show game.senderCR (game.icrR 0) = _
   rw [icrR_zero]
   ext s
-  simp only [SemanticGame.senderCR, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  simp only [SemanticGame.senderCR, Set.mem_ofPred_eq, Set.mem_singleton_iff]
   constructor
   · rintro ⟨ρ, q, hρ, hq, hBR⟩
     rw [game.mem_senderBR_iff] at hBR
@@ -808,7 +808,7 @@ private theorem icrR_one : game.icrR 1 = {r | r () 0 = 0} := by
     rfl
   rw [hunfold, hS0]
   ext r
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   constructor
   · rintro ⟨⟨σ, q, hσ, hq, hBR⟩, -⟩
     rw [game.mem_receiverBR_iff] at hBR
@@ -891,7 +891,7 @@ private theorem icrS_one : game.icrS 1 = {s | s () 0 = 0} := by
   rw [icrR_one]
   conv_lhs => rw [pair_eq]
   ext s
-  simp only [SemanticGame.senderCR, Set.mem_setOf_eq]
+  simp only [SemanticGame.senderCR, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨ρ, q, hρ, hq, hBR⟩
     rw [game.mem_senderBR_iff] at hBR
@@ -991,7 +991,7 @@ private theorem icrR_two : game.icrR 2 = {fun _ f => f} := by
   rw [hunfold, hS1]
   conv_rhs => rw [← singleton_eq]
   ext r
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   constructor
   · rintro ⟨⟨σ, q, hσ, hq, hBR⟩, -⟩
     rw [game.mem_receiverBR_iff] at hBR
@@ -1015,7 +1015,7 @@ private theorem icrS_two : game.icrS 2 = {fun _ w => w} := by
   show game.senderCR (game.icrR 2) = _
   rw [icrR_two]
   ext s
-  simp only [SemanticGame.senderCR, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  simp only [SemanticGame.senderCR, Set.mem_ofPred_eq, Set.mem_singleton_iff]
   constructor
   · rintro ⟨ρ, q, hρ, hq, hBR⟩
     rw [game.mem_senderBR_iff] at hBR
@@ -1065,7 +1065,7 @@ private theorem icrR_fixed : game.icrR 3 = game.icrR 2 := by
   rw [hunfold, hS2]
   conv_rhs => rw [← singleton_eq]
   ext r
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   constructor
   · rintro ⟨⟨σ, q, hσ, hq, hBR⟩, -⟩
     rw [game.mem_receiverBR_iff] at hBR

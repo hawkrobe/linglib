@@ -203,7 +203,7 @@ def toPlausibilityOrder (κ : RankingFunction W) : PlausibilityOrder W where
     -- huv : κ(u) ≤ κ(v), need: κ(v) ≤ κ(u)
     -- If κ(u) < κ(v) = minRank, that contradicts minimality of minRank
     by_contra h
-    push_neg at h
+    push Not at h
     -- h : κ(v) > κ(u), i.e., κ(u) < κ(v)
     have hlt : κ.rank u < minRank := by omega
     have huw : κ.rank u ≤ κ.rank w := Nat.le_trans (Nat.le_of_lt_succ (by omega)) hvw
@@ -302,7 +302,7 @@ theorem ranking_rationalMonotonicity (κ : RankingFunction W) :
     -- u is φ-minimal; show rank u ≤ rank v using ℕ totality
     have huv : κ.rank u ≤ κ.rank v := by
       by_contra h
-      push_neg at h
+      push Not at h
       -- h : κ.rank v < κ.rank u, so κ.rank v ≤ κ.rank u
       have hmv := hminu v hφv (show κ.rank v ≤ κ.rank u from Nat.le_of_lt h)
       change κ.rank u ≤ κ.rank v at hmv
@@ -524,7 +524,7 @@ theorem ranking_satisfies_C3 [Fintype W] [DecidableEq W]
     (κ : RankingFunction W) : κ.satisfies_C3 := by
   intro φ ψ _ _ hφ hNφ hψ hNψ hbel
   unfold beliefSet at hbel ⊢
-  simp only [Set.mem_setOf_eq] at hbel ⊢
+  simp only [Set.mem_ofPred_eq] at hbel ⊢
   intro w hw
   by_contra hψw
   -- Step 1: w must satisfy φ (¬φ-worlds have rank ≥ 1 in any revise)
@@ -580,8 +580,8 @@ theorem ranking_satisfies_C4 [Fintype W] [DecidableEq W]
     (κ : RankingFunction W) : κ.satisfies_C4 := by
   intro φ ψ _ _ hφ hNφ hψ hNψ hNbel
   unfold beliefSet at hNbel ⊢
-  simp only [Set.mem_setOf_eq] at hNbel ⊢
-  push_neg at hNbel ⊢
+  simp only [Set.mem_ofPred_eq] at hNbel ⊢
+  push Not at hNbel ⊢
   -- hNbel : ∃ w, (κ.revise φ).rank w = 0 ∧ ψ w
   obtain ⟨v₀, hv₀_rank, hψv₀⟩ := hNbel
   -- Step 1: φ v₀

@@ -214,7 +214,7 @@ theorem temporal_shift_parasitic_on_modal {W Time : Type*} [Preorder Time]
   -- 2. τ(s₁) ≥ τ(s₀) from historicalBase definition
   · rw [h_sit]
     unfold historicalBase at h_hist
-    simp only [Set.mem_setOf_eq] at h_hist
+    simp only [Set.mem_ofPred_eq] at h_hist
     exact h_hist.2
   -- 3. The FUT constraint gives us the strict ordering
   · exact h_gt
@@ -380,11 +380,11 @@ theorem derivation_in_historical_base
           (gs.assignment sfVar) ∈ historicalBase history s₀ := by
   unfold deriveFullSentence seqUpdate at h
   unfold deriveConsequent lexAnswer at h
-  simp only [Set.mem_setOf_eq] at h
+  simp only [Set.mem_ofPred_eq] at h
   obtain ⟨h_ind, _⟩ := h
   obtain ⟨h_ant, _⟩ := DynamicSemantics.mem_lift_test.mp h_ind
   unfold deriveAntecedent lexAtHome at h_ant
-  simp only [Set.mem_setOf_eq] at h_ant
+  simp only [Set.mem_ofPred_eq] at h_ant
   obtain ⟨h_sf, _⟩ := h_ant
   unfold lexSF subordinateFuture at h_sf
   obtain ⟨h_subj, _⟩ := DynamicSemantics.mem_lift_test.mp h_sf
@@ -411,11 +411,11 @@ theorem derivation_future_ordering
     (gs.assignment sfVar).time > (gs.assignment speechVar).time := by
   unfold deriveFullSentence seqUpdate at h
   unfold deriveConsequent lexAnswer at h
-  simp only [Set.mem_setOf_eq] at h
+  simp only [Set.mem_ofPred_eq] at h
   obtain ⟨h_ind, _⟩ := h
   obtain ⟨h_ant, _⟩ := DynamicSemantics.mem_lift_test.mp h_ind
   unfold deriveAntecedent lexAtHome at h_ant
-  simp only [Set.mem_setOf_eq] at h_ant
+  simp only [Set.mem_ofPred_eq] at h_ant
   obtain ⟨h_sf, _⟩ := h_ant
   unfold lexSF subordinateFuture at h_sf
   exact (DynamicSemantics.mem_lift_test.mp h_sf).2
@@ -434,7 +434,7 @@ theorem derivation_conditional_holds
   intro _
   unfold deriveFullSentence seqUpdate at h
   unfold deriveConsequent lexAnswer at h
-  simp only [Set.mem_setOf_eq] at h
+  simp only [Set.mem_ofPred_eq] at h
   exact h.2
 
 
@@ -728,7 +728,7 @@ theorem unselective_universal_force {W Time : Type*} [LE Time]
       antecedent gs.world → consequent gs.world := by
   intro gs h_mem _
   unfold subjIndChain at h_mem
-  simp only [Set.mem_setOf_eq] at h_mem
+  simp only [Set.mem_ofPred_eq] at h_mem
   exact h_mem.2
 
 /-!

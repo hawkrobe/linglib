@@ -66,7 +66,7 @@ def commandRelation {Node : Type} [PartialOrder Node] (T : TreeOrder Node) (P : 
 theorem intersection_theorem {Node : Type} [PartialOrder Node] (T : TreeOrder Node) (P Q : Set Node) :
     commandRelation T P ∩ commandRelation T Q = commandRelation T (P ∪ Q) := by
   ext ⟨a, b⟩
-  simp only [Set.mem_inter_iff, commandRelation, upperBounds, Set.mem_setOf_eq]
+  simp only [Set.mem_inter_iff, commandRelation, upperBounds, Set.mem_ofPred_eq]
   constructor
   · intro ⟨hP, hQ⟩ x ⟨hdom, hPQ⟩
     cases hPQ with
@@ -153,7 +153,7 @@ theorem configurational_equivalence {Node : Type} [PartialOrder Node] (T : TreeO
     (a : Node) (hub : upperBounds T a P = upperBounds T a Q) :
     ∀ b, (a, b) ∈ commandRelation T P ↔ (a, b) ∈ commandRelation T Q := by
   intro b
-  simp only [commandRelation, mem_setOf_eq]
+  simp only [commandRelation, mem_ofPred_eq]
   constructor
   · intro hP x hxQ
     rw [← hub] at hxQ
@@ -183,7 +183,7 @@ theorem unique_upper_bound_equivalence {Node : Type} [PartialOrder Node] (T : Tr
     ∀ b, (s, b) ∈ commandRelation T P ↔ (s, b) ∈ commandRelation T Q := by
   have hub : upperBounds T s P = upperBounds T s Q := by
     ext y
-    simp only [upperBounds, mem_setOf_eq]
+    simp only [upperBounds, mem_ofPred_eq]
     constructor
     · intro ⟨hdom, hyP⟩
       have := (h_unique y).mp hdom
@@ -211,7 +211,7 @@ theorem command_converts_sup_to_inf {Node : Type} [PartialOrder Node] (T : TreeO
 theorem command_sInter {Node : Type} [PartialOrder Node] (T : TreeOrder Node) (S : Set (Set Node)) :
     commandRelation T (⋃₀ S) = ⋂₀ {C | ∃ P ∈ S, C = commandRelation T P} := by
   ext ⟨a, b⟩
-  simp only [commandRelation, upperBounds, mem_setOf_eq, mem_sUnion, mem_sInter]
+  simp only [commandRelation, upperBounds, mem_ofPred_eq, mem_sUnion, mem_sInter]
   constructor
   · intro h C ⟨P, hPS, hCP⟩
     subst hCP
@@ -243,7 +243,7 @@ theorem command_ambidextrous {Node : Type} [PartialOrder Node] (T : TreeOrder No
   · left; exact h
   · right
     intro b x hx
-    push_neg at h
+    push Not at h
     exact absurd hx (h x)
 
 /-- **Boundedness** ([barker-pullum-1990] Theorem 4): Adding a root node to the
@@ -284,8 +284,8 @@ theorem command_bounded_witness {Node : Type} [PartialOrder Node] (T : TreeOrder
 theorem command_noncommand_witness {Node : Type} [PartialOrder Node] (T : TreeOrder Node) (P : Set Node)
     (a c : Node) (hnac : (a, c) ∉ commandRelation T P) :
     ∃ x ∈ upperBounds T a P, ¬x ≤ c := by
-  simp only [commandRelation, mem_setOf_eq] at hnac
-  push_neg at hnac
+  simp only [commandRelation, mem_ofPred_eq] at hnac
+  push Not at hnac
   exact hnac
 
 /-- **Fairness** ([barker-pullum-1990] Theorem 6):
@@ -327,7 +327,7 @@ theorem mate_reflexive {Node : Type} [PartialOrder Node] (T : TreeOrder Node) (P
 theorem mate_intersection {Node : Type} [PartialOrder Node] (T : TreeOrder Node) (P Q : Set Node) :
     mateRelation T P ∩ mateRelation T Q = mateRelation T (P ∪ Q) := by
   simp only [mateRelation, ← intersection_theorem T P Q, Set.ext_iff,
-             mem_inter_iff, mem_setOf_eq]
+             mem_inter_iff, mem_ofPred_eq]
   tauto
 
 /-- **Descent** ([barker-pullum-1990] Theorem 5) restated:
@@ -400,7 +400,7 @@ def commandByRelation {Node : Type} [PartialOrder Node] (T : TreeOrder Node) (R 
 theorem command_as_relation {Node : Type} [PartialOrder Node] (T : TreeOrder Node) (P : Set Node) :
     commandRelation T P = commandByRelation T (λ a x => T.properDom x a ∧ x ∈ P) := by
   ext ⟨a, b⟩
-  simp only [commandRelation, commandByRelation, upperBounds, mem_setOf_eq]
+  simp only [commandRelation, commandByRelation, upperBounds, mem_ofPred_eq]
 
 /-- **Command equivalence** ([barker-pullum-1990] Definition 20):
     `R ~ S` iff `C_R = C_S`. -/
@@ -437,7 +437,7 @@ theorem nonminimal_in_maximalGenerator {Node : Type} [PartialOrder Node] (T : Tr
   refine ⟨λ _ _ hR => Or.inl hR, ?_, Or.inr ⟨rfl, rfl⟩⟩
   unfold commandEquivalent
   ext ⟨a', b'⟩
-  simp only [commandByRelation, mem_setOf_eq]
+  simp only [commandByRelation, mem_ofPred_eq]
   constructor
   · intro hCR x' hSx'
     cases hSx' with
@@ -457,7 +457,7 @@ theorem maximalGenerator_equivalent {Node : Type} [PartialOrder Node] (T : TreeO
     commandEquivalent T R (maximalGenerator T R) := by
   unfold commandEquivalent
   ext ⟨a, b⟩
-  simp only [commandByRelation, maximalGenerator, mem_setOf_eq]
+  simp only [commandByRelation, maximalGenerator, mem_ofPred_eq]
   constructor
   · intro hR x ⟨S, _hSR, hSeq, hSax⟩
     have : (a, b) ∈ commandByRelation T S := by
@@ -474,7 +474,7 @@ theorem relation_intersection_theorem {Node : Type} [PartialOrder Node] (T : Tre
     commandByRelation T R ∩ commandByRelation T S =
       commandByRelation T (λ a x => R a x ∨ S a x) := by
   ext ⟨a, b⟩
-  simp only [commandByRelation, mem_inter_iff, mem_setOf_eq]
+  simp only [commandByRelation, mem_inter_iff, mem_ofPred_eq]
   constructor
   · intro ⟨hR, hS⟩ x hRS
     cases hRS with
@@ -509,10 +509,10 @@ theorem relation_union_theorem_reverse {Node : Type} [PartialOrder Node] (T : Tr
   intro ⟨a, b⟩ hInt
   by_contra hnotUnion
   simp only [mem_union] at hnotUnion
-  push_neg at hnotUnion
+  push Not at hnotUnion
   obtain ⟨hnotCR, hnotCS⟩ := hnotUnion
-  simp only [commandByRelation, mem_setOf_eq] at hnotCR hnotCS
-  push_neg at hnotCR hnotCS
+  simp only [commandByRelation, mem_ofPred_eq] at hnotCR hnotCS
+  push Not at hnotCR hnotCS
   obtain ⟨c, hRac, hcnb⟩ := hnotCR
   obtain ⟨d, hSad, hdnb⟩ := hnotCS
   have hcpropa := hR_proper a c hRac
@@ -523,13 +523,13 @@ theorem relation_union_theorem_reverse {Node : Type} [PartialOrder Node] (T : Tr
     have hcInRhat : maximalGenerator T R a c := maximalGenerator_contains T R a c hRac
     have hcInShat : maximalGenerator T S a c :=
       nonminimal_in_maximalGenerator T S a c d hSad hcd hcpropa hS_proper
-    simp only [commandByRelation, mem_setOf_eq] at hInt
+    simp only [commandByRelation, mem_ofPred_eq] at hInt
     exact hcnb (hInt c ⟨hcInRhat, hcInShat⟩)
   | inr hdc =>
     have hdInShat : maximalGenerator T S a d := maximalGenerator_contains T S a d hSad
     have hdInRhat : maximalGenerator T R a d :=
       nonminimal_in_maximalGenerator T R a d c hRac hdc hdpropa hR_proper
-    simp only [commandByRelation, mem_setOf_eq] at hInt
+    simp only [commandByRelation, mem_ofPred_eq] at hInt
     exact hdnb (hInt d ⟨hdInRhat, hdInShat⟩)
 
 /-- The image of the command map: all command relations on `T`. -/
@@ -545,7 +545,7 @@ theorem commandImage_closed_under_sInter {Node : Type} [PartialOrder Node] (T : 
   rw [command_sInter]
   congr 1
   ext C'
-  simp only [mem_setOf_eq]
+  simp only [mem_ofPred_eq]
   constructor
   · intro ⟨P, hPS, hC'⟩
     subst hC'
@@ -553,7 +553,7 @@ theorem commandImage_closed_under_sInter {Node : Type} [PartialOrder Node] (T : 
   · intro hC'S
     obtain ⟨P', hP'⟩ := hS hC'S
     refine ⟨P', ?_, hP'.symm⟩
-    simp only [mem_setOf_eq, Props]
+    simp only [mem_ofPred_eq, Props]
     rw [hP']
     exact hC'S
 

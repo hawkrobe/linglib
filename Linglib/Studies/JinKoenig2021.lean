@@ -935,7 +935,7 @@ theorem not_impossible_activates_p (f : ModalBase World) (g : OrderingSource Wor
   rw [necessity_iff_all, possibility_iff_any]
   intro h
   by_contra hne
-  push_neg at hne
+  push Not at hne
   exact h fun w' hw' => hne w' hw'
 
 -- ════════════════════════════════════════════════════

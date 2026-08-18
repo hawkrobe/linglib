@@ -489,7 +489,7 @@ theorem CardTest_u_distributive [PartialOrder E] [Fintype E]
     IsDistributive (CardTest_u (W := W) (E := E) v n) := by
   intro s
   ext p
-  simp only [CardTest_u, Set.mem_setOf_eq]
+  simp only [CardTest_u, Set.mem_ofPred_eq]
   constructor
   · intro ⟨hp, hcard⟩
     exact ⟨p, hp, ⟨Set.mem_singleton p, hcard⟩⟩
@@ -504,7 +504,7 @@ theorem CardTest_u_distributive [PartialOrder E] [Fintype E]
 `Function.update (Function.update g v x) v y = Function.update g v y`. -/
 private theorem evar_u_idempotent (v : ℕ) (P : E → Prop) (s : State W E) :
     Evar_u v P (Evar_u v P s) = Evar_u v P s := by
-  ext ⟨w, g⟩; simp only [Evar_u, Set.mem_setOf_eq]; constructor
+  ext ⟨w, g⟩; simp only [Evar_u, Set.mem_ofPred_eq]; constructor
   · intro ⟨q₁, hq₁, hw₁, y, hPy, hg₁⟩
     obtain ⟨q₂, hq₂s, hw₂, x, _, hg₂⟩ := hq₁
     exact ⟨q₂, hq₂s, hw₂ ▸ hw₁, y, hPy, by rw [hg₁, hg₂, Function.update_idem]⟩
@@ -525,7 +525,7 @@ nonempty input). -/
 private theorem evar_u_vvals (v : ℕ) (P : E → Prop) (s : State W E) (y : E)
     (hs : s.Nonempty) :
     (∃ q ∈ Evar_u v P s, q.2 v = y) ↔ P y := by
-  simp only [Evar_u, Set.mem_setOf_eq]
+  simp only [Evar_u, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨⟨_, _⟩, ⟨_, _, _, x, hPx, hg⟩, hv⟩
     rw [hg, Function.update_self] at hv; rwa [← hv]
@@ -538,7 +538,7 @@ private theorem evar_u_vvals (v : ℕ) (P : E → Prop) (s : State W E) (y : E)
 private theorem evar_u_vvals_single (v : ℕ) (P : E → Prop)
     (i : W × Assignment E) (y : E) :
     (∃ q ∈ Evar_u v P ({i} : Set _), q.2 v = y) ↔ P y := by
-  simp only [Evar_u, Set.mem_setOf_eq]
+  simp only [Evar_u, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨⟨_, _⟩, ⟨_, _, _, x, hPx, hg⟩, hv⟩
     rw [hg, Function.update_self] at hv; rwa [← hv]

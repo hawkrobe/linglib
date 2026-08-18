@@ -280,7 +280,7 @@ theorem whetherCause_eq_indicator_of_deterministic
         then 0 else 1 := by
   unfold whetherCause
   rw [counterfactualSimulate_eq_pure_of_deterministic]
-  simp only [PMF.probOfSet, PMF.toOuterMeasure_pure_apply, Set.mem_setOf_eq]
+  simp only [PMF.probOfSet, PMF.toOuterMeasure_pure_apply, Set.mem_ofPred_eq]
   by_cases h : (M.developDet (cfSeed M observed antecedent xAnt_alt)).hasValue effect xEff_actual <;>
     simp [h]
 
@@ -296,7 +296,7 @@ theorem probSufficiency_eq_indicator_of_deterministic
       if (M.developDet (cfSeed M observed cause xC)).hasValue effect xE then 1 else 0 := by
   unfold probSufficiency probOfValue
   rw [counterfactualSimulate_eq_pure_of_deterministic]
-  simp only [PMF.probOfSet, PMF.toOuterMeasure_pure_apply, Set.mem_setOf_eq]
+  simp only [PMF.probOfSet, PMF.toOuterMeasure_pure_apply, Set.mem_ofPred_eq]
 
 end Causation.SEM
 

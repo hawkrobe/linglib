@@ -135,7 +135,7 @@ theorem Comparison.bounds_singleton {α : Type*} [Preorder α] (c : Comparison) 
     c.bounds {n} = c.interval n := by
   cases c
   case eq =>
-    ext x; simp only [Comparison.bounds, Comparison.interval, Set.mem_setOf_eq,
+    ext x; simp only [Comparison.bounds, Comparison.interval, Set.mem_ofPred_eq,
       Set.mem_singleton_iff, forall_eq]
   case ge => simp only [Comparison.bounds, Comparison.interval]; exact upperBounds_singleton
   case gt => simp only [Comparison.bounds, Comparison.interval, strictUpperBounds_singleton]
@@ -235,7 +235,7 @@ def maxOnScale {α : Type*} [Preorder α] (c : Comparison) (X : Set α) : Set α
 theorem maxOnScale_singleton {α : Type*} [Preorder α] (c : Comparison) (x : α) :
     maxOnScale c {x} = {x} := by
   ext y
-  simp only [maxOnScale, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  simp only [maxOnScale, Set.mem_ofPred_eq, Set.mem_singleton_iff]
   constructor
   · rintro ⟨rfl, _⟩; rfl
   · rintro rfl
@@ -248,7 +248,7 @@ theorem maxOnScale_lt_closedInterval {α : Type*} [LinearOrder α]
     (s f : α) (hsf : s ≤ f) :
     maxOnScale .lt { x : α | s ≤ x ∧ x ≤ f } = {s} := by
   ext x
-  simp only [maxOnScale, Comparison.rel, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  simp only [maxOnScale, Comparison.rel, Set.mem_ofPred_eq, Set.mem_singleton_iff]
   constructor
   · rintro ⟨⟨hxs, _⟩, hdom⟩
     by_contra hne
@@ -265,7 +265,7 @@ theorem maxOnScale_gt_closedInterval {α : Type*} [LinearOrder α]
     (s f : α) (hsf : s ≤ f) :
     maxOnScale .gt { x : α | s ≤ x ∧ x ≤ f } = {f} := by
   ext x
-  simp only [maxOnScale, Comparison.rel, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  simp only [maxOnScale, Comparison.rel, Set.mem_ofPred_eq, Set.mem_singleton_iff]
   constructor
   · rintro ⟨⟨_, hxf⟩, hdom⟩
     by_contra hne
@@ -295,7 +295,7 @@ def isAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
 theorem maxOnScale_atLeast_singleton {W α : Type*} [LinearOrder α] (μ : W → α) (w : W) :
     maxOnScale .ge { d : α | d ≤ μ w } = { μ w } := by
   ext x
-  simp only [maxOnScale, Comparison.rel, Set.mem_setOf_eq, Set.mem_singleton_iff, ge_iff_le]
+  simp only [maxOnScale, Comparison.rel, Set.mem_ofPred_eq, Set.mem_singleton_iff, ge_iff_le]
   constructor
   · rintro ⟨hx, hdom⟩
     by_contra hne
@@ -316,7 +316,7 @@ theorem maxOnScale_ge_atMost {α : Type*} [LinearOrder α] (b : α) :
 theorem maxOnScale_ge_eq {α : Type*} [Preorder α] (X : Set α) :
     maxOnScale .ge X = {x | IsGreatest X x} := by
   ext x
-  simp only [maxOnScale, Comparison.rel, Set.mem_setOf_eq, IsGreatest,
+  simp only [maxOnScale, Comparison.rel, Set.mem_ofPred_eq, IsGreatest,
     upperBounds, ge_iff_le]
   refine ⟨fun ⟨hx, hdom⟩ => ⟨hx, fun y hy => ?_⟩,
     fun ⟨hx, hub⟩ => ⟨hx, fun y hy _ => hub hy⟩⟩

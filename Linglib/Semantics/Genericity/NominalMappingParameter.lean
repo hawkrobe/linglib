@@ -242,7 +242,7 @@ and `up` reconstructs.
 theorem up_down_id (P : Property World Atom) (hMass : IsMass World Atom P) :
     up World Atom (down World Atom P) = P := by
   funext w; ext x
-  simp only [up, down, Set.mem_setOf_eq]
+  simp only [up, down, Set.mem_ofPred_eq]
   constructor
   · intro h; exact (hMass w x).mpr fun a ha => h ha
   · intro h a ha; exact (hMass w x).mp h a ha
@@ -254,7 +254,7 @@ Going up and then down returns the original kind.
 -/
 theorem down_up_id (k : Kind World Atom) :
     down World Atom (up World Atom k) = k := by
-  simp only [down, up, Set.mem_setOf_eq, Individual.atom,
+  simp only [down, up, Set.mem_ofPred_eq, Individual.atom,
              Set.singleton_subset_iff, Set.setOf_mem_eq]
 
 -- Derived Kind Predication (DKP)

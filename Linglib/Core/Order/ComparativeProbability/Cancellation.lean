@@ -166,7 +166,7 @@ theorem representable_implies_cancellation {n : ℕ}
       (sub_nonneg.mpr ((hm _ _).mp (hValid wc' hwc'_mem)))
   -- The strict term is strictly positive
   have hlt : m.mu ↑wc.left > m.mu ↑wc.right := by
-    by_contra h; push_neg at h
+    by_contra h; push Not at h
     exact hwc_strict ((hm _ _).mpr h)
   have hp : ∃ x ∈ P.map f, (0 : ℚ) < x :=
     ⟨f wc, List.mem_map.mpr ⟨wc, hwc_mem, rfl⟩,
@@ -279,7 +279,7 @@ private lemma ge_empty_of_all_null {n : ℕ} (sys : EpistemicSystemFA (Fin n))
     FA induction gives sys.ge ∅ Set.univ, contradicting nonTrivial. -/
 theorem not_all_null {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
     ∃ i : Fin n, ¬sys.ge ∅ {i} := by
-  by_contra hall; push_neg at hall
+  by_contra hall; push Not at hall
   exact sys.nonTrivial (by rw [← Finset.coe_univ]; exact ge_empty_of_all_null sys hall _)
 
 -- ── Step 4b. Farkas alternative (→ version) ─────
@@ -562,7 +562,7 @@ private theorem cancellation_nonempty {n : ℕ} (sys : EpistemicSystemFA (Fin n)
     -- ── Find s₀ with positive strict weight ──
     obtain ⟨s₀, _, hs₀⟩ : ∃ s ∈ (Finset.univ : Finset (Fin K)),
         0 < ws ⟨(n + k) + s.val, by omega⟩ := by
-      by_contra hall; push_neg at hall
+      by_contra hall; push Not at hall
       have : ∑ s : Fin K, ws ⟨(n + k) + s.val, by omega⟩ = 0 :=
         Finset.sum_eq_zero fun s hs => le_antisymm (hall s hs)
           (ws_nn ⟨(n + k) + s.val, by omega⟩)

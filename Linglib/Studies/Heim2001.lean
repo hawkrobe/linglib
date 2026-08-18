@@ -229,7 +229,7 @@ theorem negation_high_DegP_undefined {Entity D : Type*} [LinearOrder D]
     ¬ ∃ m, IsGreatest {d | negatedDegreePredicate μ a d} m := by
   have h : {d | negatedDegreePredicate μ a d} = Ioi (μ a) := by
     ext d
-    rw [mem_setOf_eq, negatedDegreePredicate_eq]
+    rw [mem_ofPred_eq, negatedDegreePredicate_eq]
     rfl
   rw [h]; exact no_isGreatest_Ioi_of_noMaxOrder (μ a)
 

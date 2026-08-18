@@ -743,7 +743,7 @@ theorem exists_negative_characterization
     p ∈ (exists_ x φ).negative s ↔
     p ∈ s ∧ p.world ∉ Possibility.world '' φ.positive (randomAssign s x) ∧
       p.world ∈ Possibility.world '' φ.negative (randomAssign s x) := by
-  simp only [exists_, Set.mem_setOf_eq]
+  simp only [exists_, Set.mem_ofPred_eq]
 
 /-- Negating an existential: the positive update of `¬∃x.φ` collects
     exactly those input possibilities whose world hosts no witness.

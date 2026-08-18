@@ -145,7 +145,7 @@ theorem innerNeg_every_eq_no :
 theorem dualQ_every_eq_some :
     (dualQ ⟦every⟧ : GQ α) = ⟦some⟧ := by
   funext R S; simp only [dualQ, outerNeg_apply, innerNeg, every_sem, some_sem]
-  exact propext ⟨fun h => by push_neg at h; exact h,
+  exact propext ⟨fun h => by push Not at h; exact h,
                  fun ⟨x, hR, hS⟩ h => h x hR hS⟩
 
 /-- `outerNeg ⟦some⟧ = ⟦no⟧`: negating existence gives universal negation. -/
@@ -258,7 +258,7 @@ theorem every_contradicts_notEvery (R S : α → Prop) :
 /-- Contradiction (E vs I): the E-form and I-form are contradictories. -/
 theorem no_contradicts_some (R S : α → Prop) :
     ⟦no⟧ R S ↔ ¬ (⟦some⟧ R S) := by
-  simp only [no_sem, some_sem]; push_neg; rfl
+  simp only [no_sem, some_sem]; push Not; rfl
 
 /-- Contrariety (A ∧ E): the A-form and E-form can't both hold unless the
     restrictor is empty. -/

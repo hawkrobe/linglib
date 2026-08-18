@@ -52,7 +52,7 @@ theorem support_setOf_eq_extent (F : Orthoframe S) (V : Var → F.Regular) (φ :
   | var p => rfl
   | neg φ ih =>
     ext s
-    simp only [Support, Set.mem_setOf_eq]
+    simp only [Support, Set.mem_ofPred_eq]
     rw [show Formula.eval V φ.neg = (Formula.eval V φ)ᶜ from rfl, Concept.extent_compl,
         ← Concept.upperPolar_extent, ← ih, mem_upperPolar_iff]
     constructor

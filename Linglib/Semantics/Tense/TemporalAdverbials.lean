@@ -134,7 +134,7 @@ theorem perf_adv_eq_perf_xn (p : IntervalPred W Time) (adv : PTSConstraint Time)
 theorem everSince_specifies_lb (t₀ tc : Time) (h : t₀ ≤ tc) :
     (everSince t₀ : PTSConstraint Time).toLBDomain tc = {t₀} := by
   ext x
-  simp only [PTSConstraint.toLBDomain, everSince, Set.mem_setOf_eq]
+  simp only [PTSConstraint.toLBDomain, everSince, Set.mem_ofPred_eq]
   constructor
   · intro ⟨hle, hx⟩
     exact hx hle
@@ -148,7 +148,7 @@ theorem everSince_specifies_lb (t₀ tc : Time) (h : t₀ ≤ tc) :
 theorem before_no_lb_constraint (tc : Time) :
     (before : PTSConstraint Time).toLBDomain tc = {tLB | tLB ≤ tc} := by
   ext x
-  simp only [PTSConstraint.toLBDomain, before, Set.mem_setOf_eq]
+  simp only [PTSConstraint.toLBDomain, before, Set.mem_ofPred_eq]
   exact ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, fun _ => trivial⟩⟩
 
 /-- Durative adverbials (specified LB) license U-perf → simple present.

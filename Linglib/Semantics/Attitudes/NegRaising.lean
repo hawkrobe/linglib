@@ -131,7 +131,7 @@ def accessibleSet {W E : Type*} (R : E → W → W → Prop) (agent : E) (worlds
 theorem boxAt_iff_forall_accessibleSet {W E : Type*} (R : E → W → W → Prop) (agent : E)
     (worlds : List W) (p : W → Prop) (w : W) :
     BoxAt R agent w worlds p ↔ ∀ w' ∈ accessibleSet R agent worlds w, p w' := by
-  simp only [BoxAt, accessibleSet, Set.mem_setOf_eq, and_imp]
+  simp only [BoxAt, accessibleSet, Set.mem_ofPred_eq, and_imp]
 
 /-- **Validity ⟺ decided state.** The agent is opinionated about *every* prejacent
 (neg-raising then holds as a validity) iff the accessible state is decided — a

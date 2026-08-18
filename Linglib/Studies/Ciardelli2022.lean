@@ -59,7 +59,7 @@ def ofInqML (M : KripkeModel W Atom) (φ : Formula Atom) : Question W :=
     `Question` iff some supporting team `t : Finset W` coerces to `s`. -/
 @[simp] theorem mem_ofInqML (M : KripkeModel W Atom) (φ : Formula Atom) (s : Set W) :
     s ∈ ofInqML M φ ↔ ∃ t : Finset W, ↑t = s ∧ support M φ t := by
-  simp only [ofInqML, mem_ofLowerSet, Set.mem_image, Set.mem_setOf_eq, and_comm]
+  simp only [ofInqML, mem_ofLowerSet, Set.mem_image, Set.mem_ofPred_eq, and_comm]
 
 /-- `ofInqML` carries InqML conjunction to the lattice meet `⊓`.
     `support (.conj φ ψ)` is the pointwise `And`, so the supporting-team

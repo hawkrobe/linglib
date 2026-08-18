@@ -282,7 +282,7 @@ private theorem sum_encode_eq [Fintype Θ] (Q : Kernel Θ 𝓧') [IsMarkovKernel
 /-- The encoded stochastic matrix of a Markov kernel lies in the product of standard simplices. -/
 private theorem encodeMatrix_mem (η : Kernel 𝓧 𝓧') [IsMarkovKernel η] :
     encodeMatrix η ∈ stochasticMatrices := by
-  simp only [stochasticMatrices, Set.mem_univ_pi, stdSimplex, Set.mem_setOf_eq, encodeMatrix]
+  simp only [stochasticMatrices, Set.mem_univ_pi, stdSimplex, Set.mem_ofPred_eq, encodeMatrix]
   refine fun x => ⟨fun x' => ENNReal.toReal_nonneg, ?_⟩
   rw [← ENNReal.toReal_sum fun x' _ => measure_ne_top _ _, sum_measure_singleton,
     Finset.coe_univ, measure_univ, ENNReal.toReal_one]

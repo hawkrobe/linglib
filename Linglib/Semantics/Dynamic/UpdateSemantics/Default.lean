@@ -193,7 +193,7 @@ theorem mem_foldl_assert_info (ps : List (W → Prop)) (σ : ExpState W) (v : W)
   | nil => simp
   | cons p ps ih =>
     rw [List.foldl_cons, ih]
-    simp only [assert_info, Set.mem_setOf_eq, List.mem_cons]
+    simp only [assert_info, Set.mem_ofPred_eq, List.mem_cons]
     constructor
     · rintro ⟨⟨hv, hp⟩, hps⟩
       exact ⟨hv, fun q hq => hq.elim (fun h => h ▸ hp) (hps q)⟩

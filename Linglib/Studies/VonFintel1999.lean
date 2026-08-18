@@ -307,7 +307,7 @@ theorem onlyIndiv_eq_onlyVia (P : ι → Set W) (x : ι)
     (hP : Function.Injective P) :
     onlyIndiv P x = onlyVia (Set.range P) (P x) := by
   ext w
-  simp only [onlyIndiv, Set.mem_setOf_eq, mem_onlyVia]
+  simp only [onlyIndiv, Set.mem_ofPred_eq, mem_onlyVia]
   constructor
   · rintro h q ⟨y, rfl⟩ hw
     by_cases hyx : y = x
