@@ -61,7 +61,7 @@ namespace Mirrazi2024
 
 open Quantification.ChoiceFunction
 open Doxastic (BoxAt)
-open Semantics.Attitudes.NegRaising (negRaisesAt)
+open NegRaising (NegRaisesAt)
 open Farsi.Determiners (ye candTa doTa PlainIndefiniteEntry)
 
 -- ============================================================================
@@ -126,12 +126,12 @@ theorem nonNegRaiser_suffices :
     negRaisingFails.nonNegRaiser_also_works = true := rfl
 
 /-- Structural verification: *think* supports neg-raising via the
-    doxastic infrastructure. This connects to the library's `negRaisesAt`
+    doxastic infrastructure. This connects to the library's `NegRaisesAt`
     without claiming neg-raising explains the scope paradox. -/
 theorem think_does_neg_raise {W E : Type*} (R : E → W → W → Prop)
     (agent : E) (worlds : List W) (p : W → Prop) (w : W)
     (hNeg : ¬ BoxAt R agent w worlds p)
-    (hExclMiddle : negRaisesAt R agent worlds p w) :
+    (hExclMiddle : NegRaisesAt R agent worlds p w) :
     BoxAt R agent w worlds (λ w' => ¬ p w') :=
   hExclMiddle hNeg
 
