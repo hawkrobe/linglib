@@ -1,15 +1,18 @@
 import Mathlib.GroupTheory.Perm.Basic
 import Mathlib.Order.Fin.Basic
 import Mathlib.Order.PiLex
+import Mathlib.Order.Preorder.Finite
 
 /-!
 # Constraint rankings
 
 A constraint ranking is a permutation of `Fin n` ([prince-2002]'s total domination
 order `≫`): `r i` is the constraint at rank position `i`, position `0` most dominant.
-`Ranking.Dominates` is the induced dominance relation between constraints; the
-`Tableau` machinery evaluates under a ranking, and the elementary-ranking-condition
-layer (`ElementaryRankingCondition.lean`) infers rankings from winner–loser pairs.
+`Ranking.Dominates` is the induced strict dominance relation between constraints and
+`Ranking.toRel` its reflexive closure — the ranking as a total order, from which the
+ranking is recoverable (`toRel_le_toRel_iff`). The `Tableau` machinery evaluates
+under a ranking, and the elementary-ranking-condition layer
+(`ElementaryRankingCondition.lean`) infers rankings from winner–loser pairs.
 -/
 
 namespace OptimalityTheory
@@ -22,6 +25,16 @@ dominant); `r.symm k` is the rank position of `k`. -/
 abbrev Ranking (n : ℕ) := Equiv.Perm (Fin n)
 
 variable {n : ℕ}
+
+/-- A total relation is maximal among antisymmetric relations: anything above
+it in the pointwise lattice collapses back onto it. -/
+theorem total_eq_of_le {α : Type*} {r s : α → α → Prop}
+    [ht : Std.Total r] [ha : Std.Antisymm s] (h : r ≤ s) : r = s := by
+  refine le_antisymm h fun a b hs => ?_
+  rcases ht.total a b with hr | hr
+  · exact hr
+  · obtain rfl := ha.antisymm _ _ hs (h b a hr)
+    exact (ht.total a a).elim id id
 
 namespace Ranking
 
@@ -62,6 +75,54 @@ theorem exists_dominates {i j : Fin n} (hij : i ≠ j) : ∃ r : Ranking n, r.Do
   rcases lt_or_gt_of_ne hij with h | h
   · exact ⟨Ranking.id n, id_dominates_iff.mpr h⟩
   · exact ⟨Equiv.swap i j, by simpa [Dominates] using h⟩
+
+/-! ### The ranking as a total order -/
+
+/-- The ranking as its dominance-or-equal relation: `r.toRel i j` iff `i` is
+ranked at least as high as `j` — the reflexive closure of `Dominates`
+(`toRel_iff`), and a total order on constraints. -/
+def toRel : Fin n → Fin n → Prop := fun i j => r.symm i ≤ r.symm j
+
+instance (i j : Fin n) : Decidable (r.toRel i j) :=
+  inferInstanceAs (Decidable (r.symm i ≤ r.symm j))
+
+instance : IsPartialOrder (Fin n) r.toRel where
+  refl _ := le_refl _
+  trans _ _ _ := le_trans
+  antisymm _ _ h₁ h₂ := r.symm.injective (le_antisymm h₁ h₂)
+
+instance : Std.Total r.toRel := ⟨fun _ _ => le_total _ _⟩
+
+/-- `toRel` is the reflexive closure of `Dominates`. -/
+theorem toRel_iff {i j : Fin n} : r.toRel i j ↔ i = j ∨ r.Dominates i j := by
+  unfold toRel Dominates
+  rw [le_iff_lt_or_eq, or_comm, r.symm.injective.eq_iff]
+
+/-- On distinct constraints, `toRel` is `Dominates`. -/
+theorem toRel_iff_dominates {i j : Fin n} (hij : i ≠ j) :
+    r.toRel i j ↔ r.Dominates i j := by
+  rw [toRel_iff]
+  simp [hij]
+
+variable {r} {σ τ : Ranking n}
+
+/-- A ranking is recoverable from its induced total order. -/
+theorem toRel_injective : Function.Injective (toRel (n := n)) := by
+  intro σ τ h
+  have hmono : Monotone (⇑τ.symm ∘ ⇑σ) := by
+    intro a b hab
+    have hrel : σ.toRel (σ a) (σ b) := by
+      show σ.symm (σ a) ≤ σ.symm (σ b)
+      simpa using hab
+    rw [h] at hrel
+    exact hrel
+  have hcomp := (hmono.strictMono_of_injective (τ.symm.injective.comp σ.injective)).eq_id
+  exact Equiv.ext fun k => (Equiv.symm_apply_eq τ).mp (congr_fun hcomp k)
+
+/-- Total orders comparable in the relation lattice coincide, so `toRel` is
+rigid: nothing sits strictly between two ranking-induced orders. -/
+theorem toRel_le_toRel_iff : σ.toRel ≤ τ.toRel ↔ σ = τ :=
+  ⟨fun h => toRel_injective (total_eq_of_le h), fun h => h ▸ le_refl _⟩
 
 end Ranking
 end OptimalityTheory

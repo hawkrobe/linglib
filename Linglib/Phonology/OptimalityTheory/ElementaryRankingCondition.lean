@@ -270,6 +270,17 @@ theorem simpleERC_satisfiedBy_iff (hij : i ≠ j) (r : Ranking n) :
     rw [(simpleERC_eq_L_iff hij l).mp hl]
     exact ⟨i, simpleERC_apply_W, hdom⟩
 
+/-- Side-condition-free form: `simpleERC i j` is satisfied by `r` iff `i` is
+ranked at least as high as `j` (`Ranking.toRel`). On the diagonal the ERC is
+trivial and the relation reflexive, so no `i ≠ j` guard is needed. -/
+theorem simpleERC_satisfiedBy_toRel_iff (i j : Fin n) (r : Ranking n) :
+    (simpleERC i j).SatisfiedBy r ↔ r.toRel i j := by
+  rcases eq_or_ne i j with rfl | hij
+  · refine iff_of_true (ERC.trivial_satisfiedBy (fun k => ?_) r) (le_refl _)
+    simp only [simpleERC]
+    split_ifs <;> decide
+  · rw [simpleERC_satisfiedBy_iff hij, r.toRel_iff_dominates hij]
+
 /-- A simple ERC `i ≫ j` (with `i ≠ j`) is consistent. -/
 theorem simpleERC_consistent (hij : i ≠ j) :
     ERCSet.Consistent [simpleERC i j] :=
