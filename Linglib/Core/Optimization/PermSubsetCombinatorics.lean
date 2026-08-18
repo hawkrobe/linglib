@@ -30,7 +30,7 @@ left-multiplication by swaps of elements of `D`:
 `Studies/Zuraw2010.lean` and `Studies/CoetzeePater2011.lean`. The
 swap-closed generality serves partially-ordered constraint grammars,
 whose consistent-linear-extension sets are swap-closed within a freely
-ranked stratum (`pocPredict_stratified_binary_rate` in
+ranked stratum (`winProb_stratified_binary_rate` in
 `Phonology/HarmonicGrammar/PartiallyOrderedConstraints.lean`).
 
 ## Proof technique
@@ -473,7 +473,7 @@ theorem perm_filter_head_in_card (D Y : Finset (Fin n)) :
 /-- **Rational variation rate**: the fraction of permutations with
     `permDList`-head in `Y` is `|Y ∩ D| / |D|` (both as ℚ). `S = Finset.univ`
     specialization of `filter_head_in_rate_of_swaps`, intended for consumers
-    stating per-context probabilities (e.g. `pocPredict … = 1/3`). -/
+    stating per-context probabilities (e.g. `winProb … = 1/3`). -/
 theorem perm_filter_head_in_rate (D Y : Finset (Fin n)) :
     ((Finset.univ.filter (fun σ : Equiv.Perm (Fin n) =>
       ∃ x ∈ Y, (permDList σ D).head? = some x)).card : ℚ) / n.factorial =

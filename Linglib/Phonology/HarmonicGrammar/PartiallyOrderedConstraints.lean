@@ -19,7 +19,7 @@ linear extension — and the OT optimum under that ranking is the output, so a
 single grammar induces a distribution over outputs, uniform over consistent
 linear extensions. The load-bearing identities are division-free cardinality
 equations (`sum_card_filter_picksAt` here, the head-fiber counting in
-`Core.Optimization.PermSubsetCombinatorics`); `pocPredict` and its rate
+`Core.Optimization.PermSubsetCombinatorics`); `winProb` and its rate
 theorems are a ℚ veneer over them.
 
 ## Main definitions
@@ -33,9 +33,9 @@ theorems are a ℚ veneer over them.
 - `IsConsistent r σ`: σ is a linear extension of `r`, defined as containment
   `r ≤ σ.toRel` in the pointwise lattice of relations.
   `consistentTotalOrders r` is the (nonempty, by Szpilrajn) `Finset` of them.
-- `pocPredict cands vp r i o`: the probability that sampling under `r` selects
-  output `o` for input `i` — a genuine distribution (`pocPredict_nonneg`,
-  `pocPredict_le_one`, `sum_pocPredict_eq_one`).
+- `winProb cands vp r i o`: the probability that sampling under `r` selects
+  output `o` for input `i` — a genuine distribution (`winProb_nonneg`,
+  `winProb_le_one`, `sum_winProb_eq_one`).
 - `active vp i o o'` / `favoring vp i o o'`: the constraints distinguishing a
   candidate pair, and those preferring `o`.
 
@@ -45,13 +45,13 @@ theorems are a ℚ veneer over them.
   ERC ones — the simple-ERC (Hasse-edge) encoding `toERCs` identifies
   `consistentTotalOrders` with `ERC.linearExtensions`
   ([merchant-riggle-2016]; [prince-2002]). `toGrammar` routes POC through the
-  `Grammar` hub, and `pocAntimatroid` realizes the Birkhoff correspondence
+  `Grammar` hub, and `orderIdealAntimatroid` realizes the Birkhoff correspondence
   with order-ideal antimatroids ([dilworth-1940]).
 - `isOTRealizable_iff_isPOCRealizable`: categorically, POC adds nothing over
-  OT. Its advantage is probabilistic — `pocPredict` produces intermediate
+  OT. Its advantage is probabilistic — `winProb` produces intermediate
   frequencies (e.g. [coetzee-pater-2011]'s 8/24 vs 12/24 t/d-deletion rates)
   that no single ranking reproduces.
-- `pocPredict_discrete_binary_rate` / `pocPredict_stratified_binary_rate`:
+- `winProb_discrete_binary_rate` / `winProb_stratified_binary_rate`:
   closed-form win rates for binary competitions. A ranking is decided by its
   earliest active constraint (`picksAt_binary_iff_head_mem_favoring`), so
   `chosen` wins at rate `|favoring ∩ active| / |active|` — restricted to the
@@ -316,8 +316,8 @@ theorem toERCs_consistent : (ERC.linearExtensions (toERCs r)).Nonempty := by
 /-- The **order-ideal antimatroid** of a grammar — the simple-ERC Birkhoff
 antimatroid (`Antimat.ofSimple`) of its Hasse-edge encoding, whose feasible
 sets are exactly the order ideals of `r`
-(`pocAntimatroid_isFeasible_iff`). -/
-def pocAntimatroid : Antimatroid (Fin n) :=
+(`orderIdealAntimatroid_isFeasible_iff`). -/
+def orderIdealAntimatroid : Antimatroid (Fin n) :=
   Antimat.ofSimple (toERCs r) (toERCs_consistent r) (toERCs_isSimple_or_isTrivial r)
 
 omit [IsPartialOrder (Fin n) r] in
@@ -340,12 +340,12 @@ theorem feasible_toERCs_iff {S : Finset (Fin n)} :
     rw [(simpleERC_eq_L_iff hab l).mp hlL] at hlS
     exact ⟨a, simpleERC_apply_W, h a b hrel hlS⟩
 
-/-- The feasible sets of `pocAntimatroid` are the order ideals of `r` — the
+/-- The feasible sets of `orderIdealAntimatroid` are the order ideals of `r` — the
 Birkhoff correspondence, made concrete and decidable. -/
-@[simp] theorem pocAntimatroid_isFeasible_iff {S : Finset (Fin n)} :
-    (pocAntimatroid r).IsFeasible (↑S : Set (Fin n)) ↔
+@[simp] theorem orderIdealAntimatroid_isFeasible_iff {S : Finset (Fin n)} :
+    (orderIdealAntimatroid r).IsFeasible (↑S : Set (Fin n)) ↔
       ∀ a b, r a b → b ∈ S → a ∈ S := by
-  simp only [pocAntimatroid, ofSimple_isFeasible_coe, feasible_toERCs_iff]
+  simp only [orderIdealAntimatroid, ofSimple_isFeasible_coe, feasible_toERCs_iff]
 
 variable {r}
 
@@ -409,13 +409,13 @@ theorem ot_realizable_imp_poc_realizable (P : SystemicProblem Input Output n) :
 
 /-- Under categorical realizability, OT-realizable and POC-realizable
     coincide. POC's advantage over OT is probabilistic, captured by
-    `pocPredict`. -/
+    `winProb`. -/
 theorem isOTRealizable_iff_isPOCRealizable (P : SystemicProblem Input Output n) :
     P.IsOTRealizable ↔ P.IsPOCRealizable :=
   ⟨ot_realizable_imp_poc_realizable P,
    poc_realizable_imp_ot_realizable P⟩
 
-/-! ### Probabilistic POC — pocPredict -/
+/-! ### Probabilistic POC — winProb -/
 
 variable {cands : Input → Finset Output} {vp : Input → Output → Fin n → ℕ}
   {r : Fin n → Fin n → Prop} {σ : Ranking n} {i : Input} {o o' chosen other : Output}
@@ -486,47 +486,47 @@ instance (cands : Input → Finset Output) (vp : Input → Output → Fin n → 
     input i — the fraction of consistent extensions picking o. The denominator
     is positive (`consistentTotalOrders_card_pos`), so this is a genuine
     probability. -/
-def pocPredict (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
+def winProb (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
     (r : Fin n → Fin n → Prop) [DecidableRel r] (i : Input) (o : Output) : ℚ :=
   (((consistentTotalOrders r).filter
     (fun σ => PicksAt cands vp σ i o)).card : ℚ) /
   ((consistentTotalOrders r).card : ℚ)
 
-/-- For the σ-induced total order, `pocPredict` collapses to a point mass —
+/-- For the σ-induced total order, `winProb` collapses to a point mass —
     probability 1 if σ picks o and 0 otherwise. -/
-theorem pocPredict_toRel :
-    pocPredict cands vp σ.toRel i o =
+theorem winProb_toRel :
+    winProb cands vp σ.toRel i o =
     if PicksAt cands vp σ i o then 1 else 0 := by
-  simp only [pocPredict,
+  simp only [winProb,
     consistentTotalOrders_toRel,
     Finset.card_singleton, Nat.cast_one, div_one, Finset.filter_singleton]
   by_cases h : PicksAt cands vp σ i o
   · simp [if_pos h]
   · simp [if_neg h]
 
-/-- Under the discrete grammar, `pocPredict` is the fraction of all `n!`
+/-- Under the discrete grammar, `winProb` is the fraction of all `n!`
     rankings picking o. -/
-theorem pocPredict_discrete :
-    pocPredict cands vp (· = ·) i o =
+theorem winProb_discrete :
+    winProb cands vp (· = ·) i o =
     ((Finset.univ.filter
       (fun σ : Ranking n => PicksAt cands vp σ i o)).card : ℚ) /
     (Finset.univ : Finset (Ranking n)).card := by
-  simp only [pocPredict, consistentTotalOrders_discrete]
+  simp only [winProb, consistentTotalOrders_discrete]
 
-/-! #### `pocPredict` is a probability distribution -/
+/-! #### `winProb` is a probability distribution -/
 
-theorem pocPredict_nonneg [DecidableRel r] : 0 ≤ pocPredict cands vp r i o :=
+theorem winProb_nonneg [DecidableRel r] : 0 ≤ winProb cands vp r i o :=
   div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
 
-theorem pocPredict_le_one [IsPartialOrder (Fin n) r] [DecidableRel r] :
-    pocPredict cands vp r i o ≤ 1 := by
-  unfold pocPredict
+theorem winProb_le_one [IsPartialOrder (Fin n) r] [DecidableRel r] :
+    winProb cands vp r i o ≤ 1 := by
+  unfold winProb
   rw [div_le_one (by exact_mod_cast consistentTotalOrders_card_pos r)]
   exact_mod_cast Finset.card_filter_le _ _
 
 /-- With pairwise-distinct violation profiles the picks-fibers over the
     candidate set partition the consistent extensions — the division-free core
-    of `sum_pocPredict_eq_one`. -/
+    of `sum_winProb_eq_one`. -/
 theorem sum_card_filter_picksAt [DecidableRel r]
     (h_ne : (cands i).Nonempty) (h_inj : Set.InjOn (vp i) (cands i)) :
     ∑ o ∈ cands i, ((consistentTotalOrders r).filter
@@ -557,19 +557,19 @@ theorem sum_card_filter_picksAt [DecidableRel r]
 /-- Over a candidate set with pairwise-distinct violation profiles the win
     probabilities sum to 1, for any grammar — every consistent ranking picks
     exactly one winner. -/
-theorem sum_pocPredict_eq_one [IsPartialOrder (Fin n) r] [DecidableRel r]
+theorem sum_winProb_eq_one [IsPartialOrder (Fin n) r] [DecidableRel r]
     (h_ne : (cands i).Nonempty) (h_inj : Set.InjOn (vp i) (cands i)) :
-    ∑ o ∈ cands i, pocPredict cands vp r i o = 1 := by
-  unfold pocPredict
+    ∑ o ∈ cands i, winProb cands vp r i o = 1 := by
+  unfold winProb
   rw [← Finset.sum_div, ← Nat.cast_sum, sum_card_filter_picksAt h_ne h_inj]
   exact div_self (by exact_mod_cast (consistentTotalOrders_card_pos r).ne')
 
 /-- Two distinct candidates with distinct violation profiles split the
     probability mass. -/
-theorem pocPredict_binary_add_eq_one [IsPartialOrder (Fin n) r] [DecidableRel r]
+theorem winProb_binary_add_eq_one [IsPartialOrder (Fin n) r] [DecidableRel r]
     {o₁ o₂ : Output} (h_two : cands i = {o₁, o₂}) (h_ne : o₁ ≠ o₂)
     (h_vp : vp i o₁ ≠ vp i o₂) :
-    pocPredict cands vp r i o₁ + pocPredict cands vp r i o₂ = 1 := by
+    winProb cands vp r i o₁ + winProb cands vp r i o₂ = 1 := by
   have h_inj : Set.InjOn (vp i) (cands i) := by
     intro o ho o' ho' hvv
     rw [h_two] at ho ho'
@@ -577,7 +577,7 @@ theorem pocPredict_binary_add_eq_one [IsPartialOrder (Fin n) r] [DecidableRel r]
       Set.mem_singleton_iff] at ho ho'
     rcases ho with rfl | rfl <;> rcases ho' with rfl | rfl <;>
       first | rfl | exact absurd hvv h_vp | exact absurd hvv.symm h_vp
-  have h := sum_pocPredict_eq_one (r := r)
+  have h := sum_winProb_eq_one (r := r)
     (by rw [h_two]; exact Finset.insert_nonempty _ _) h_inj
   rwa [h_two, Finset.sum_pair h_ne] at h
 
@@ -642,12 +642,12 @@ theorem picksAt_binary_iff_head_mem_favoring
     is `|favoring ∩ active| / |active|` — each ranking is decided by its
     σ-earliest active constraint, and every active constraint is equally
     likely to come first. -/
-theorem pocPredict_discrete_binary_rate
+theorem winProb_discrete_binary_rate
     (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) :
-    pocPredict cands vp (· = ·) i chosen =
+    winProb cands vp (· = ·) i chosen =
       ((favoring vp i chosen other ∩ active vp i chosen other).card : ℚ) /
         ((active vp i chosen other).card : ℚ) := by
-  rw [pocPredict_discrete, Finset.card_univ, Fintype.card_perm, Fintype.card_fin,
+  rw [winProb_discrete, Finset.card_univ, Fintype.card_perm, Fintype.card_fin,
     Finset.filter_congr fun σ _ =>
       picksAt_binary_iff_head_mem_favoring h_two h_ne σ]
   exact perm_filter_head_in_rate _ _
@@ -685,19 +685,19 @@ private theorem permDList_head?_active_filter_stratum
     and containing an active constraint (`h_dec`) — is won by `chosen` at rate
     `|favoring ∩ Dₖ| / |Dₖ|`, where `Dₖ` is the active set restricted to
     stratum `k`. Later strata cannot affect the outcome. -/
-theorem pocPredict_stratified_binary_rate
+theorem winProb_stratified_binary_rate
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     [IsPartialOrder (Fin n) inner] [DecidableRel inner] {k : Fin s}
     (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
     (h_tie : ∀ c, stratumOf c < k → vp i chosen c = vp i other c)
     (h_dec : ((active vp i chosen other).filter (stratumOf · = k)).Nonempty) :
-    pocPredict cands vp (stratified stratumOf inner) i chosen =
+    winProb cands vp (stratified stratumOf inner) i chosen =
       ((favoring vp i chosen other ∩
           (active vp i chosen other).filter (stratumOf · = k)).card : ℚ) /
         (((active vp i chosen other).filter (stratumOf · = k)).card : ℚ) := by
   classical
-  unfold pocPredict
+  unfold winProb
   rw [Finset.filter_congr fun σ hσ =>
     (picksAt_binary_iff_head_mem_favoring h_two h_ne σ).trans
       (by rw [permDList_head?_active_filter_stratum

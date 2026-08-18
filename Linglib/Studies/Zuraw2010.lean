@@ -25,11 +25,11 @@ Constraints) substrate. For each stem-initial consonant `c`:
   computed from `vp` (`{i : vp c .yes i ≠ vp c .no i}` and
   `{i : vp c .yes i < vp c .no i}` respectively), with concrete
   `decide`-discharged values.
-- `subProb c : ℚ` is `HarmonicGrammar.pocPredict`
+- `subProb c : ℚ` is `HarmonicGrammar.winProb`
   applied to the discrete partial order on `Fin 6` — i.e. uniform sampling
   over all 720 total orders.
 - The closed-form rate `|Y_c ∩ D_c| / |D_c|` follows by a single
-  application of `pocPredict_discrete_binary_rate`, with no enumeration of
+  application of `winProb_discrete_binary_rate`, with no enumeration of
   6! = 720 rankings.
 
 The structural implication theorems in §7 reuse
@@ -235,7 +235,7 @@ theorem assoc_eq_initAll (c : StemC) (s : SubSt) :
 
 /-- Violation profile derived from the constraint definitions, in the
     `Input → Output → Fin n → ℕ` shape required by
-    `PicksAt` and `pocPredict`. -/
+    `PicksAt` and `winProb`. -/
 def vp (c : StemC) (s : SubSt) (i : Fin 6) : ℕ :=
   (constraint i) (c, s)
 
@@ -286,7 +286,7 @@ private theorem nsCands_two (c : StemC) : nsCands c = {SubSt.yes, SubSt.no} := b
     order: the fraction of all `6! = 720` total orders that pick YES as
     the OT optimum for stem `c`. -/
 def subProb (c : StemC) : ℚ :=
-  pocPredict nsCands vp (· = ·) c .yes
+  winProb nsCands vp (· = ·) c .yes
 
 -- ============================================================================
 -- § 5: Closed-Form Rates via the Substrate
@@ -294,10 +294,10 @@ def subProb (c : StemC) : ℚ :=
 
 /-- The substrate-derived closed-form rate: `subProb c = |Y_c ∩ D_c| / |D_c|`,
     where `Y_c = yesFav c` and `D_c = relevant c`. Direct application of
-    `pocPredict_discrete_binary_rate`. -/
+    `winProb_discrete_binary_rate`. -/
 private theorem subProb_eq_rate (c : StemC) :
     subProb c = ((yesFav c ∩ relevant c).card : ℚ) / (relevant c).card :=
-  pocPredict_discrete_binary_rate (nsCands_two c) (fun heq => SubSt.noConfusion heq)
+  winProb_discrete_binary_rate (nsCands_two c) (fun heq => SubSt.noConfusion heq)
 
 /-- Substitution rate for voiceless labial p: 50% of 720 rankings. -/
 theorem subProb_p : subProb .p = 1/2 := by
@@ -344,7 +344,7 @@ theorem subProb_g : subProb .g = 1/5 := by
 /-- All six factorial percentages, matching [zuraw-2010] §4.2
     footnote 17 (page 446)'s free-ranking summary (50%, 40%, 33⅓%,
     33⅓%, 25%, 20% for p, t, k, b, d, g respectively). Each derived in
-    closed form from the substrate's `pocPredict_discrete_binary_rate` — no 6!
+    closed form from the substrate's `winProb_discrete_binary_rate` — no 6!
     enumeration. -/
 theorem factorial_rates :
     subProb .p = 1/2 ∧ subProb .t = 2/5 ∧ subProb .k = 1/3 ∧

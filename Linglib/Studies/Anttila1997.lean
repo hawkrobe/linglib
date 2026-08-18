@@ -34,10 +34,10 @@ so each evaluation samples a total order.
 
 ## Substrate consumption
 
-Each motif's probability is `pocPredict` over `finnishGrammar` — uniform
+Each motif's probability is `winProb` over `finnishGrammar` — uniform
 sampling of the total rankings consistent with the whole grammar, not a
 per-stratum sub-grammar. The substrate's deciding-stratum theorem
-(`pocPredict_stratified_binary_rate`) reduces each competition to the closed
+(`winProb_stratified_binary_rate`) reduces each competition to the closed
 form `|favoring ∩ Dₖ| / |Dₖ|` over the deciding stratum's active set — the
 paper's own shortcut ("Drawing the tableaux was in fact unnecessary … knowing
 that the weak variant violates one constraint (\*L.L) while the strong variant
@@ -73,7 +73,7 @@ frequencies from table (53) (page 23):
     loses in all rankings. Observed: 1.6% / 98.4% (13 / 806).
 
 `winProb_strong_add_weak` verifies the two variants partition the probability
-mass for every motif (`sum_pocPredict_eq_one` substrate instance).
+mass for every motif (`sum_winProb_eq_one` substrate instance).
 
 ## Out of scope
 
@@ -187,7 +187,7 @@ def vp : Motif → Variant → Fin 20 → ℕ
 /-- Probability that variant `v` wins motif `m` under uniform sampling of the
 total rankings consistent with `finnishGrammar`. -/
 def winProb (m : Motif) (v : Variant) : ℚ :=
-  pocPredict (fun _ => Finset.univ) vp finnishGrammar m v
+  HarmonicGrammar.winProb (fun _ => Finset.univ) vp finnishGrammar m v
 
 /-- Bridge to the deciding-stratum closed form, shared by all twelve rate
 theorems. -/
@@ -199,7 +199,7 @@ private theorem winProb_eq_rate (m : Motif) (v : Variant) (k : Fin 5)
       ((favoring vp m v v.other ∩
           (active vp m v v.other).filter (stratumOf · = k)).card : ℚ) /
         (((active vp m v v.other).filter (stratumOf · = k)).card : ℚ) :=
-  pocPredict_stratified_binary_rate (Variant.univ_eq_pair v) v.ne_other h_triv h_tie h_dec
+  winProb_stratified_binary_rate (Variant.univ_eq_pair v) v.ne_other h_triv h_tie h_dec
 
 /-! ### Rate theorems — table (52), all six motifs -/
 
@@ -283,10 +283,10 @@ theorem weakProb_6ab : winProb .six .weak = 1 := by
 /-! ### Completeness -/
 
 /-- Every ranking of `finnishGrammar` picks a winner for every motif: the two
-variants' probabilities sum to 1 (`sum_pocPredict_eq_one` instance). -/
+variants' probabilities sum to 1 (`sum_winProb_eq_one` instance). -/
 theorem winProb_strong_add_weak (m : Motif) :
     winProb m .strong + winProb m .weak = 1 :=
-  pocPredict_binary_add_eq_one (r := finnishGrammar) (i := m)
+  winProb_binary_add_eq_one (r := finnishGrammar) (i := m)
     (Variant.univ_eq_pair .strong) (Variant.ne_other .strong) (by cases m <;> decide)
 
 end Anttila1997
