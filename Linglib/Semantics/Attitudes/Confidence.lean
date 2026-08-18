@@ -8,7 +8,7 @@ Gradable attitude adjectives like `confident`, `certain`, `sure`, and
 `doubtful` denote properties of confidence states, following Cariani,
 Santorio & Wellwood ([cariani-santorio-wellwood-2024]; henceforth CSW).
 Unlike accessibility-based attitudes (`Doxastic.lean`: believe, know)
-and preference-based attitudes (`Preferential.lean`: hope, fear), these
+and preference-based attitudes (`Preference.lean`: hope, fear), these
 are **gradable properties of states with propositional themes** — a
 third kind of attitude semantics.
 

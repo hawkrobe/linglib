@@ -1,4 +1,4 @@
-import Linglib.Semantics.Attitudes.Preferential
+import Linglib.Semantics.Attitudes.Preference
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Mood.Defs
 import Linglib.Pragmatics.Emotion

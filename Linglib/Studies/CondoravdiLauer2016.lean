@@ -41,12 +41,12 @@ restriction does *not* collapse to vacuous truth. The Hoboken theorem
 doesn't need it (vacuous truth wins), but a richer-information scenario
 or the § 7.2 near-anankastic family would. Substrate work, not
 paper-specific; tracked in
-`Semantics/Attitudes/PreferenceStructure.lean` (`maxInducedLe`).
+`Semantics/Attitudes/Preference.lean` (`maxInducedLe`).
 
 ## Cross-references
 
 * `Semantics/Attitudes/Desire.lean` — `WantExactMatch`;
-  `Semantics/Attitudes/PreferenceStructure.lean` —
+  `Semantics/Attitudes/Preference.lean` —
   `maxElts_pair_belief_compatible` (the load-bearing lemma).
 * `Studies/vonFintelIatridou2005.lean` — vF&I's
   primary-secondary ordering source analysis that C&L 2016 critiques

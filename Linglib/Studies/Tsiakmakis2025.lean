@@ -617,7 +617,7 @@ Rett 2026 can reference Tsiakmakis 2025, not vice versa). -/
 The connection between NEG₂ classification of fear predicates and
 [villalta-2008]'s negative valence, mediated by [jin-koenig-2021]:
 
-1. Fear has negative valence (Preferential.lean)
+1. Fear has negative valence (`Preference.lean`)
 2. Negative valence → dual inference ([jin-koenig-2021] §5.5, §6.1.1)
 3. Propositional attitude licensing condition ([jin-koenig-2021] (13a))
 4. NEG₂ classification with deontic ordering ([tsiakmakis-2025] §5.1, eq. 60)

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Attitudes.Preferential
+import Linglib.Semantics.Attitudes.Preference
 import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Studies.Karttunen1974
 import Linglib.Semantics.Modality.Kratzer.Operators
@@ -1136,7 +1136,7 @@ theorem zarma_en_determined_by_aspect :
 
 | Licensing condition     | Theory module               | Bridge theorem               |
 |-------------------------|-----------------------------|------------------------------|
-| propositionalAttitude   | Attitudes.Preferential      | fear_has_dual_inference      |
+| propositionalAttitude   | Preferential                | fear_has_dual_inference      |
 |                         | NegRaising                  | deny_EN_via_negRaising       |
 | temporalOperator        | Tense.TemporalConnectives   | before_temporal_separation   |
 | logicalOperator         | Modality.Kratzer             | not_impossible_activates_p   |
