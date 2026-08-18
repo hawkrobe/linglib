@@ -47,7 +47,7 @@ def ever : Item :=
   , baseForce := .temporal
   , licensingContexts :=
       [ .negation, .nobody, .conditionalAntecedent, .question
-      , .superlative, .comparativeS, .onlyFocus, .adversative ]
+      , .superlative, .clausalComparative, .onlyFocus, .adversative ]
   , scalarDirection := some .strengthening
   , alternativeType := .domain }
 

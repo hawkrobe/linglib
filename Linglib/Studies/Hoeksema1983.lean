@@ -81,8 +81,8 @@ The §3 algebraic content is formalized in five layers:
 
 The licensing-context registry `Core/Lexical/PolarityItem.lean` records
 this paper's central asymmetry as a structural invariant:
-- `.comparativeNP` has signature `.mono` (Boolean hom is monotone, not DE)
-- `.comparativeS` has signature `.antiAdd`
+- `.phrasalComparative` has signature `.mono` (Boolean hom is monotone, not DE)
+- `.clausalComparative` has signature `.antiAdd`
 
 The `comparativeNP_signature_monotone` and
 `comparativeS_signature_anti_additive` theorems below witness the
@@ -326,23 +326,23 @@ theorem npComparativeGQ_principal_eq_gtOverSet_singleton
 
 /-! ## Connection to the licensing-context registry -/
 
-/-- The `.comparativeNP` registry slot is monotone, matching
+/-- The `.phrasalComparative` registry slot is monotone, matching
     `npComparativeGQ_monotone`. This is the registry-level encoding of
     Hoeksema's central asymmetry: the NP-comparative is monotone
     *increasing* and therefore not an NPI environment. -/
 theorem comparativeNP_signature_monotone :
-    LicensingContext.comparativeNP.properties.strawsonSignature = .mono := rfl
+    LicensingContext.phrasalComparative.properties.strawsonSignature = .mono := rfl
 
-/-- The `.comparativeS` registry slot is anti-additive, matching
+/-- The `.clausalComparative` registry slot is anti-additive, matching
     `gtOverSet_isAntiAdditive`. -/
 theorem comparativeS_signature_anti_additive :
-    LicensingContext.comparativeS.properties.strawsonSignature = .antiAdd := rfl
+    LicensingContext.clausalComparative.properties.strawsonSignature = .antiAdd := rfl
 
 /-- Both registry slots cite Hoeksema 1983, anchoring the registry's
     classification to this study file. -/
 theorem both_comparatives_cite_hoeksema :
-    "hoeksema-1983" ∈ LicensingContext.comparativeNP.properties.citations ∧
-    "hoeksema-1983" ∈ LicensingContext.comparativeS.properties.citations := by
+    "hoeksema-1983" ∈ LicensingContext.phrasalComparative.properties.citations ∧
+    "hoeksema-1983" ∈ LicensingContext.clausalComparative.properties.citations := by
   refine ⟨?_, ?_⟩ <;> decide
 
 end Hoeksema1983

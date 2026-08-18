@@ -164,17 +164,17 @@ def LicensingContext.properties : LicensingContext → ContextProperties
       { strawsonSignature := .anti, mechanism := .byStrengthening
       , prototype := "He was too tired to say anything."
       , citations := ["ladusaw-1979"] }
-  | .comparativeNP =>
+  | .phrasalComparative =>
       -- [hoeksema-1983]: the NP-comparative is a Boolean
       -- homomorphism `Set (Set U) → Set U`, hence monotone increasing — it
       -- does *not* license NPIs. Modern interval-semantic accounts
       -- ([bhatt-pancheva-2004], [heim-2006]) reduce surface
       -- "than NP" with NPI to a covert clausal source — those NPIs are
-      -- licensed by `.comparativeS`, not by this slot.
+      -- licensed by `.clausalComparative`, not by this slot.
       { strawsonSignature := .mono, mechanism := .strengtheningFails
       , prototype := "Surface NP-comparative; no NPI licensing under genuine NP reading."
       , citations := ["hoeksema-1983", "bhatt-pancheva-2004", "heim-2006"] }
-  | .comparativeS =>
+  | .clausalComparative =>
       { strawsonSignature := .antiAdd, mechanism := .byStrengthening
       , prototype := "Mary is taller than anyone is."
       , citations := ["ladusaw-1979", "hoeksema-1983", "bhatt-pancheva-2004"] }

@@ -42,7 +42,7 @@ def shei : Item :=
   , freeChoice := true
   , baseForce := .existential
   , licensingContexts :=
-      [ .question, .conditionalAntecedent, .comparativeS
+      [ .question, .conditionalAntecedent, .clausalComparative
       , .modalPossibility, .modalNecessity, .imperative, .generic ]
   , scalarDirection := some .strengthening }
 
@@ -57,7 +57,7 @@ def shenme : Item :=
   , freeChoice := true
   , baseForce := .existential
   , licensingContexts :=
-      [ .negation, .question, .conditionalAntecedent, .comparativeS
+      [ .negation, .question, .conditionalAntecedent, .clausalComparative
       , .modalPossibility, .modalNecessity, .imperative, .generic ]
   , scalarDirection := some .strengthening }
 
@@ -85,7 +85,7 @@ def sheiDou : Item :=
 /-- *rènhé* (任何 'any') — free-choice determiner, mainly with the adverb
     *dōu*: free choice under modals (*Rènhé shíhou nǐ dōu kěyǐ lái* 'You
     can come anytime', A270), comparatives (A271, a *bǐ* NP-comparative,
-    listed under `comparativeS` per the covert-clausal routing convention
+    listed under `clausalComparative` per the covert-clausal routing convention
     of `Polarity.LicensingContext`), and direct negation (A272); the
     superordinate-negation use (A273) has no matching context row.
     Etymologically *rèn* 'allow; appoint' + old interrogative *hé* 'what'
@@ -95,7 +95,7 @@ def renhe : Item :=
   , licensor := some .weak
   , freeChoice := true
   , baseForce := .existential
-  , licensingContexts := [.negation, .modalPossibility, .comparativeS]
+  , licensingContexts := [.negation, .modalPossibility, .clausalComparative]
   , scalarDirection := some .strengthening }
 
 /-! ### Verification -/

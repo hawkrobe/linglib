@@ -120,14 +120,14 @@ def HaspelmathFunction.isFC : HaspelmathFunction → Bool
     polarity-relevant realization — although the same environments host plain
     irrealis uses of non-polarity indefinites; both comparative rows realize
     the standard-of-comparison function regardless of NPI-licensability
-    (`comparativeNP` licenses no NPIs, [hoeksema-1983]). -/
+    (`phrasalComparative` licenses no NPIs, [hoeksema-1983]). -/
 def _root_.Polarity.LicensingContext.haspelmathFunction :
     Polarity.LicensingContext → Option HaspelmathFunction
   | .negation => some .directNeg
   | .withoutClause | .doubtVerb | .denyVerb => some .indirectNeg
   | .question => some .question
   | .conditionalAntecedent => some .conditional
-  | .comparativeS | .comparativeNP => some .comparative
+  | .clausalComparative | .phrasalComparative => some .comparative
   | .modalPossibility | .modalNecessity | .imperative | .generic
   | .freeRelative => some .freeChoice
   | _ => none

@@ -353,8 +353,8 @@ noncomputable def contextWitness? :
   | .beforeClause => none
   | .withoutClause => none
   | .question => none
-  | .comparativeNP => none
-  | .comparativeS => none
+  | .phrasalComparative => none
+  | .clausalComparative => none
   | .tooTo => none
   | .modalPossibility => none
   | .modalNecessity => none
