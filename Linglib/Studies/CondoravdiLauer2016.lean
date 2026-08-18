@@ -45,8 +45,8 @@ paper-specific; tracked in
 
 ## Cross-references
 
-* `Semantics/Attitudes/CondoravdiLauer.lean` — `wantEP` and
-  `wantEP_jointly_belief_consistent` (the load-bearing lemma).
+* `Semantics/Attitudes/CondoravdiLauer.lean` — `wantEffectivePreference` and
+  `wantEffectivePreference_jointly_belief_consistent` (the load-bearing lemma).
 * `Studies/vonFintelIatridou2005.lean` — vF&I's
   primary-secondary ordering source analysis that C&L 2016 critiques
   (paper § 3.2.2).
@@ -85,7 +85,7 @@ def doubleModalLF {W : Type u} (fOuter : ModalBase W) (gOuter : OrderingSource W
 
 /-- [condoravdi-lauer-2016] eq. (88) at the operator level: the
 Harlem-sentence LF parameterised over its four contextual backgrounds.
-`NEC_{fBelS, gNorm}[wantEP(Ad, Harlem)] [MUST_{fHist, gInner}[ATrain]]`.
+`NEC_{fBelS, gNorm}[wantEffectivePreference(Ad, Harlem)] [MUST_{fHist, gInner}[ATrain]]`.
 
 The four contextual parameters:
 * `fBelS` — modal base of NEC, "speaker's true beliefs" (paper p. 41).
@@ -105,7 +105,7 @@ def harlemLF {Agent W : Type u}
     (fHist : ModalBase W) (gInner : OrderingSource W)
     (Ad : Agent) (Harlem ATrain : Set W) (w : W) : Prop :=
   doubleModalLF fBelS gNorm
-    (fun w' => wantEP EP Ad Harlem w')
+    (fun w' => wantEffectivePreference EP Ad Harlem w')
     (fun w' => necessity fHist gInner (· ∈ ATrain) w')
     w
 
@@ -118,7 +118,7 @@ theorem harlemLF_eq_doubleModalLF {Agent W : Type u}
     (Ad : Agent) (Harlem ATrain : Set W) (w : W) :
     harlemLF fBelS gNorm EP fHist gInner Ad Harlem ATrain w =
       doubleModalLF fBelS gNorm
-        (fun w' => wantEP EP Ad Harlem w')
+        (fun w' => wantEffectivePreference EP Ad Harlem w')
         (fun w' => necessity fHist gInner (· ∈ ATrain) w')
         w :=
   rfl
@@ -206,20 +206,22 @@ noncomputable def EP : EffectivePreferentialBackground Unit World belAd :=
   fun _ w => if w = (0 : World) then epAtW0 else epAtW1
 
 /-- At `wActual = w₀`: Ad effectively prefers Hoboken. -/
-theorem wantEP_hoboken_at_wActual : wantEP EP () Hoboken wActual := by
+theorem wantEffectivePreference_hoboken_at_wActual :
+    wantEffectivePreference EP () Hoboken wActual := by
+  refine (wantExactMatch_iff _ _ _ _).mpr ?_
   show Hoboken ∈ (EP () wActual).toPreferenceStructure.maxElts
   simp only [EP, wActual]
   exact singletonPS_mem_maxElts Hoboken
 
 /-- The crux: at `wActual`, Ad does NOT effectively prefer Harlem.
-By `wantEP_jointly_belief_consistent`, if Ad effectively preferred both
+By `wantEffectivePreference_jointly_belief_consistent`, if Ad effectively preferred both
 Hoboken and Harlem, then `(Hoboken ∩ Harlem) ∩ B Ad wActual ≠ ∅`. But
 Hoboken ∩ Harlem = ∅, contradiction. -/
-theorem not_wantEP_harlem_at_wActual :
-    ¬ wantEP EP () Harlem wActual := by
+theorem not_wantEffectivePreference_harlem_at_wActual :
+    ¬ wantEffectivePreference EP () Harlem wActual := by
   intro hHarlem
-  have hHoboken := wantEP_hoboken_at_wActual
-  have h := wantEP_jointly_belief_consistent EP hHoboken hHarlem
+  have hHoboken := wantEffectivePreference_hoboken_at_wActual
+  have h := wantEffectivePreference_jointly_belief_consistent EP hHoboken hHarlem
   apply h
   rw [show Hoboken ∩ Harlem = ∅ by
     rw [Set.inter_comm]; exact harlem_inter_hoboken_eq_empty]
@@ -252,8 +254,8 @@ conflicting-goals problem § 2.3 raised against Sæbø 2001.
 
 Mechanism: the NEC's modal base is `fBelS = [(· = wActual)]`, so
 `accessibleWorlds fBelS wActual = {wActual}`. Restricting by the
-antecedent `wantEP EP Ad Harlem` removes `wActual` from the accessible
-set (by `not_wantEP_harlem_at_wActual`, derived from the consistency of
+antecedent `wantEffectivePreference EP Ad Harlem` removes `wActual` from the accessible
+set (by `not_wantEffectivePreference_harlem_at_wActual`, derived from the consistency of
 EP and `Harlem ∩ Hoboken = ∅`), leaving the empty set. The NEC
 quantifies over `bestWorlds` of that empty set, which is empty, so the
 NEC is vacuously true.
@@ -268,14 +270,14 @@ theorem harlem_true_in_hoboken_scenario :
   intro w' hw'
   exfalso
   have hAcc : w' ∈ accessibleWorlds (restrictedBase fBelS
-      (fun w'' => wantEP EP () Harlem w'')) wActual := hw'.1
+      (fun w'' => wantEffectivePreference EP () Harlem w'')) wActual := hw'.1
   rw [restricted_accessible_eq] at hAcc
   obtain ⟨hAccBase, hAntec⟩ := hAcc
   have hEq : w' = wActual := by
     unfold accessibleWorlds Intensional.Premise.propIntersection fBelS at hAccBase
     simpa using hAccBase
   rw [hEq] at hAntec
-  exact not_wantEP_harlem_at_wActual hAntec
+  exact not_wantEffectivePreference_harlem_at_wActual hAntec
 
 end HobokenScenario
 

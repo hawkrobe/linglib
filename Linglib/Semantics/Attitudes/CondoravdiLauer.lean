@@ -5,29 +5,33 @@ import Linglib.Core.Order.PreferenceStructure.MaxInducedOrdering
 /-!
 # The effective-preference theory of *want*
 
-Condoravdi & Lauer's analysis of `want`, developed across
+Condoravdi & Lauer's analysis of *want*, developed across
 [condoravdi-lauer-2011], [condoravdi-lauer-2012], [lauer-2013],
 [lauer-condoravdi-2014], and [condoravdi-lauer-2016]: the verb is
 parameterized by a *preferential background* — analogous to Kratzer's
 modal base/ordering source — whose distinguished value is the agent's
 effective preference function `EP` (`Core.Order.EffectivePreference`).
-Declarations live in the `Desire` namespace,
-alongside the rival want-semantics of `Desire.lean`.
 
-## Main declarations
+A want-report holds when some maximal preference in the background
+stands in a designated relation to the complement, and the relation is
+the locus of variation: [condoravdi-lauer-2016] eq. 71 considers
+equality (`wantExactMatch`, the canonical reading, their eq. 69),
+reverse inclusion (`wantSuccessOriented` — a preference satisfied *if*
+the complement is true), and inclusion (`wantQuineHintikka` —
+satisfied *only if* it is true). `wantPreference` is the shared
+schema, and the choice of relation fixes the reading's inferential
+profile: success-oriented want is downward-entailing in the
+complement, Quine-Hintikka want upward-entailing, exact-match want
+neither (counterexample-construction deferred).
+`wantEffectivePreference` is exact-match against the effective
+preferential background, and `maxOrderingSource` extracts the
+`Set`-valued ordering source `max[EP(Ad, w)]` (their eq. 88) consumed
+by the inner modal of the double-modal anankastic analysis.
 
-* `PreferentialBackground`, `EffectivePreferentialBackground` — types.
-* `wantP{Exact, Success, QH}` — the three readings from
-  [condoravdi-lauer-2016] eq. 71. Exact-match is canonical
-  (eq. 69) and implies the other two (`wantPExact_implies_*`).
-* `wantEP` — exact-match against the effective preferential background.
-* `maxOrderingSource` — `Set`-valued `max[EP(Ad, w)]` (eq. 88), the
-  ordering source consumed by the inner modal in the double-modal
-  anankastic analysis.
-
-The anankastic-conditional analysis is prosecuted in
-`Studies/CondoravdiLauer2016.lean`, the imperative analysis (contra
-[roberts-2023]'s modal-in-LF account) in
+Declarations live in the `Desire` namespace, alongside the rival
+want-semantics of `Desire.lean`. The anankastic-conditional analysis
+is prosecuted in `Studies/CondoravdiLauer2016.lean`, the imperative
+analysis (contra [roberts-2023]'s modal-in-LF account) in
 `Studies/CondoravdiLauer2012.lean`, and discourse-particle uses
 ([deo-2025-bara]) in `Studies/Deo2025.lean`.
 -/
@@ -36,116 +40,113 @@ namespace Desire
 
 open Core.Order
 
-universe u
+variable {Agent W : Type*}
 
-variable {Agent W : Type u}
-
-/-- A **preferential background**: a function from agents and worlds to
-    preference structures. The C&L analog of Kratzer's `ConvBackground`. -/
-abbrev PreferentialBackground (Agent W : Type u) :=
+/-- A preferential background assigns each agent and world a
+    preference structure — Condoravdi & Lauer's analog of a Kratzerian
+    conversational background. -/
+abbrev PreferentialBackground (Agent W : Type*) :=
   Agent → W → PreferenceStructure W
 
-/-- An **effective preferential background** returns, at each world, the
-    agent's *effective* preference structure (consistent + realistic).
-    [condoravdi-lauer-2016] (68): `EP(a, w)`. -/
-abbrev EffectivePreferentialBackground (Agent W : Type u)
+/-- An effective preferential background assigns each agent and world
+    the agent's effective preference structure — consistent and
+    realistic with respect to the belief state `B a w`. -/
+abbrev EffectivePreferentialBackground (Agent W : Type*)
     (B : Agent → W → Set W) :=
   ∀ (a : Agent) (w : W), EffectivePreference W (B a w)
 
-/-! ## The semantics of `want` — three readings ([condoravdi-lauer-2016] (71)) -/
+/-! ### The want schema and its three readings -/
 
-/-- Exact-match (eq. 71c, the canonical reading; eq. 69):
-    `wantP(a, φ)` iff `φ ∈ max[P(a, w)]`. -/
-def wantPExact (P : PreferentialBackground Agent W)
-    (a : Agent) (φ : Set W) (w : W) : Prop :=
-  φ ∈ (P a w).maxElts
+/-- `wantPreference P R a φ w` iff some maximal preference in `P(a, w)`
+    stands in `R` to `φ`. The readings of *want* instantiate `R`; the
+    choice determines the operator's inferential profile. -/
+def wantPreference (P : PreferentialBackground Agent W)
+    (R : Set W → Set W → Prop) (a : Agent) (φ : Set W) (w : W) : Prop :=
+  ∃ p ∈ (P a w).maxElts, R φ p
 
-/-- Success-oriented (eq. 71a): "satisfied if `φ` is true."
-    Some maximal preference is entailed by `φ`. -/
-def wantPSuccess (P : PreferentialBackground Agent W)
-    (a : Agent) (φ : Set W) (w : W) : Prop :=
-  ∃ p ∈ (P a w).maxElts, φ ⊆ p
+/-- Exact-match want: some maximal preference is `φ` itself — the
+    canonical reading. -/
+def wantExactMatch (P : PreferentialBackground Agent W) :
+    Agent → Set W → W → Prop :=
+  wantPreference P (· = ·)
 
-/-- Quine-Hintikka (eq. 71b): "satisfied only if `φ` is true."
-    Some maximal preference entails `φ`. -/
-def wantPQH (P : PreferentialBackground Agent W)
-    (a : Agent) (φ : Set W) (w : W) : Prop :=
-  ∃ p ∈ (P a w).maxElts, p ⊆ φ
+/-- Success-oriented want: some maximal preference is entailed by `φ`
+    — a preference satisfied if `φ` is true. -/
+def wantSuccessOriented (P : PreferentialBackground Agent W) :
+    Agent → Set W → W → Prop :=
+  wantPreference P (· ⊆ ·)
 
-theorem wantPExact_implies_success {P : PreferentialBackground Agent W}
-    {a : Agent} {φ : Set W} {w : W} (h : wantPExact P a φ w) :
-    wantPSuccess P a φ w :=
-  ⟨φ, h, subset_rfl⟩
+/-- Quine-Hintikka want: some maximal preference entails `φ` — a
+    preference satisfied only if `φ` is true. -/
+def wantQuineHintikka (P : PreferentialBackground Agent W) :
+    Agent → Set W → W → Prop :=
+  wantPreference P (· ⊇ ·)
 
-theorem wantPExact_implies_QH {P : PreferentialBackground Agent W}
-    {a : Agent} {φ : Set W} {w : W} (h : wantPExact P a φ w) :
-    wantPQH P a φ w :=
-  ⟨φ, h, subset_rfl⟩
+/-- `wantExactMatch P a φ w` iff `φ ∈ max[P(a, w)]`. -/
+theorem wantExactMatch_iff (P : PreferentialBackground Agent W)
+    (a : Agent) (φ : Set W) (w : W) :
+    wantExactMatch P a φ w ↔ φ ∈ (P a w).maxElts :=
+  ⟨fun ⟨_, hp, h⟩ => by rwa [h], fun h => ⟨φ, h, rfl⟩⟩
 
-/-! ## Monotonicity in φ ([condoravdi-lauer-2016] p. 31)
+/-- A pointwise implication between relations transfers between
+    readings. -/
+theorem wantPreference_mono {P : PreferentialBackground Agent W}
+    {R R' : Set W → Set W → Prop} (h : ∀ φ p, R φ p → R' φ p)
+    {a : Agent} {φ : Set W} {w : W} :
+    wantPreference P R a φ w → wantPreference P R' a φ w :=
+  fun ⟨p, hp, hR⟩ => ⟨p, hp, h φ p hR⟩
 
-The three readings differ in their entailment direction in the
-propositional argument:
+/-- Exact match implies the success-oriented reading. -/
+theorem wantSuccessOriented_of_exactMatch {P : PreferentialBackground Agent W}
+    {a : Agent} {φ : Set W} {w : W} :
+    wantExactMatch P a φ w → wantSuccessOriented P a φ w :=
+  wantPreference_mono fun _ _ h => h.subset
 
-* `wantPSuccess` is **downward-entailing** in φ (Zimmermann's note,
-  cited p. 31): if `φ ⊆ ψ` and `wantPSuccess` holds for the *weaker*
-  ψ, it holds for the *stronger* φ.
-* `wantPQH` is **upward-entailing** in φ (explicit on p. 31): if
-  `φ ⊆ ψ` and `wantPQH` holds for the *stronger* φ, it holds for the
-  *weaker* ψ.
-* `wantPExact` is *neither* upward- nor downward-entailing — see C&L's
-  discussion of (62)/(63)/(64) on pp. 27–28. Counterexample-construction
-  deferred. -/
+/-- Exact match implies the Quine-Hintikka reading. -/
+theorem wantQuineHintikka_of_exactMatch {P : PreferentialBackground Agent W}
+    {a : Agent} {φ : Set W} {w : W} :
+    wantExactMatch P a φ w → wantQuineHintikka P a φ w :=
+  wantPreference_mono fun _ _ h => h.superset
 
-theorem wantPSuccess_downward_entailing
+/-- Success-oriented want is downward-entailing in the complement. -/
+theorem wantSuccessOriented_downward_entailing
     {P : PreferentialBackground Agent W} {a : Agent} {φ ψ : Set W} {w : W}
-    (hφψ : φ ⊆ ψ) (h : wantPSuccess P a ψ w) :
-    wantPSuccess P a φ w := by
-  obtain ⟨p, hpmax, hψp⟩ := h
-  exact ⟨p, hpmax, fun _ hx => hψp (hφψ hx)⟩
+    (hφψ : φ ⊆ ψ) :
+    wantSuccessOriented P a ψ w → wantSuccessOriented P a φ w :=
+  fun ⟨p, hp, hψp⟩ => ⟨p, hp, hφψ.trans hψp⟩
 
-theorem wantPQH_upward_entailing
+/-- Quine-Hintikka want is upward-entailing in the complement. -/
+theorem wantQuineHintikka_upward_entailing
     {P : PreferentialBackground Agent W} {a : Agent} {φ ψ : Set W} {w : W}
-    (hφψ : φ ⊆ ψ) (h : wantPQH P a φ w) :
-    wantPQH P a ψ w := by
-  obtain ⟨p, hpmax, hpφ⟩ := h
-  exact ⟨p, hpmax, fun _ hx => hφψ (hpφ hx)⟩
+    (hφψ : φ ⊆ ψ) :
+    wantQuineHintikka P a φ w → wantQuineHintikka P a ψ w :=
+  fun ⟨p, hp, hpφ⟩ => ⟨p, hp, hpφ.trans hφψ⟩
 
-/-- Exact-match `want` against the effective preferential background. -/
-def wantEP {B : Agent → W → Set W}
-    (EP : EffectivePreferentialBackground Agent W B)
-    (a : Agent) (φ : Set W) (w : W) : Prop :=
-  wantPExact (fun a w => (EP a w).toPreferenceStructure) a φ w
+/-! ### The effective preferential background -/
 
-/-- **Joint belief-consistency of EP-want** ([condoravdi-lauer-2016]
-    p. 30, end of § 5.4): "when `want` targets a preference structure
-    `P(a,w)` that must be consistent — in particular, when it targets
-    effective preferences — then `wantP(a, φ)` and `wantP(a, ψ)` are
-    incompatible if `φ` and `ψ` are believed to be incompatible by agent
-    `a` at `w`."
+/-- Exact-match want against the effective preferential background. -/
+def wantEffectivePreference {B : Agent → W → Set W}
+    (EP : EffectivePreferentialBackground Agent W B) :
+    Agent → Set W → W → Prop :=
+  wantExactMatch fun a w => (EP a w).toPreferenceStructure
 
-    Stated contrapositively: if both `wantEP EP a φ w` and
-    `wantEP EP a ψ w` hold, then `φ ∩ ψ` is *not* belief-empty — the
-    agent does not believe that φ and ψ cannot jointly hold.
-
-    Proof: delegates to the abstract
-    `PreferenceStructure.maxElts_pair_belief_compatible` lemma. The
-    abstract version captures the same content at the order-theoretic
-    level: any two maximal elements of a consistent preference structure
-    are jointly belief-compatible. -/
-theorem wantEP_jointly_belief_consistent
+/-- Two effective-preference wants are jointly belief-consistent:
+    wanting propositions the agent believes incompatible is
+    impossible. -/
+theorem wantEffectivePreference_jointly_belief_consistent
     {B : Agent → W → Set W}
     (EP : EffectivePreferentialBackground Agent W B)
     {a : Agent} {φ ψ : Set W} {w : W}
-    (hφ : wantEP EP a φ w) (hψ : wantEP EP a ψ w) :
+    (hφ : wantEffectivePreference EP a φ w)
+    (hψ : wantEffectivePreference EP a ψ w) :
     (φ ∩ ψ) ∩ B a w ≠ ∅ :=
   (EP a w).toPreferenceStructure.maxElts_pair_belief_compatible
-    (EP a w).isConsistent hφ hψ
+    (EP a w).isConsistent
+    ((wantExactMatch_iff _ _ _ _).mp hφ) ((wantExactMatch_iff _ _ _ _).mp hψ)
 
-/-- The **set-valued ordering source** at addressee `Ad` derived from an
-    effective preferential background: at each world, the maximal
-    preferences in `EP(Ad, w)`. [condoravdi-lauer-2016]
-    (88): `g_epA(w) = max[EP(Ad, w)]`. -/
+/-- `maxOrderingSource EP Ad w` is the set of maximal preferences in
+    `EP(Ad, w)` — the ordering source consumed by the inner modal of
+    the double-modal anankastic analysis. -/
 def maxOrderingSource {B : Agent → W → Set W}
     (EP : EffectivePreferentialBackground Agent W B) (Ad : Agent) :
     W → Set (Set W) :=
