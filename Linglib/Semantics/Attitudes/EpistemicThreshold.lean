@@ -15,7 +15,7 @@ credence scale, whose boundedness makes endpoint standards like
 [klein-1980] reduction of the comparative to the positive form holds
 on this scale (`lt_iff_separating_threshold`).
 
-`isProbabilistic` — monotonicity of credence in entailment — is what
+`IsProbabilistic` — monotonicity of credence in entailment — is what
 separates probabilistic credence from ordinal confidence orderings:
 it validates conjunction elimination (`prob_conjunction_elim`),
 which [cariani-santorio-wellwood-2024]'s non-probabilistic confidence
