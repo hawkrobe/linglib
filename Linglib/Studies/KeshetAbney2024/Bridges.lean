@@ -275,7 +275,7 @@ theorem mustBase_agrees_box {W D : Type*}
     mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' } ↔
     box R φ.truth w := by
   simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def,
-    Set.mem_setOf_eq, box]
+    Set.mem_ofPred_eq, box]
 
 
 -- ============================================================

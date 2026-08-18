@@ -27,7 +27,7 @@ theorem WellQuasiOrdered.exists_finset_eq_biUnion {r : α → α → Prop} [IsPa
     Set.wellFoundedOn_univ.mp
       (Set.partiallyWellOrderedOn_of_wellQuasiOrdered hr _).wellFoundedOn
   refine ⟨hfin.toFinset, Set.ext fun x => ?_⟩
-  simp only [Set.mem_iUnion, Set.Finite.mem_toFinset, Set.mem_setOf_eq, exists_prop]
+  simp only [Set.mem_iUnion, Set.Finite.mem_toFinset, Set.mem_ofPred_eq, exists_prop]
   refine ⟨fun hx => ?_, fun ⟨m, ⟨hm, _⟩, hmx⟩ => hs hmx hm⟩
   obtain ⟨m, ⟨hm, hmx⟩, hmin⟩ := hwf.has_min {a | a ∈ s ∧ r a x} ⟨x, hx, refl_of r x⟩
   exact ⟨m, ⟨hm, fun b hb hbm =>

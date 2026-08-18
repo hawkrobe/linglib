@@ -34,8 +34,7 @@ open Greek.StandardModern.Complementizers
 open Bondarenko2022 (NominalSort CompositionPath)
 open Features (VendlerClass)
 open Minimalist (GramFeature featuresMatch)
-open Semantics.Attitudes (AttitudeVerb SituationVerb)
-open Semantics.Attitudes.Anchor (existsClosure)
+open Anchor (existsClosure)
 
 /-! ### Reversed selection: the light noun (§3.1) -/
 

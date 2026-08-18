@@ -102,7 +102,7 @@ def COMPLET (p : SentDenotation Time) : SentDenotation Time :=
 theorem inchoat_bridges_inception (i : NonemptyInterval Time) :
     INCHOAT (stativeDenotation i) = { j | j = NonemptyInterval.pure i.fst } := by
   ext k
-  simp only [INCHOAT, stativeDenotation, Set.mem_setOf_eq, NonemptyInterval.le_def]
+  simp only [INCHOAT, stativeDenotation, Set.mem_ofPred_eq, NonemptyInterval.le_def]
   constructor
   · rintro ⟨onset, h_lb, h_glb, rfl⟩
     have h1 : onset ≤ i.fst := h_lb i ⟨le_refl _, le_refl _⟩
@@ -115,7 +115,7 @@ theorem inchoat_bridges_inception (i : NonemptyInterval Time) :
 theorem complet_bridges_cessation (i : NonemptyInterval Time) :
     COMPLET (accomplishmentDenotation i) = { j | j = NonemptyInterval.pure i.snd } := by
   ext k
-  simp only [COMPLET, accomplishmentDenotation, Set.mem_setOf_eq]
+  simp only [COMPLET, accomplishmentDenotation, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨telos, h_ub, h_lub, rfl⟩
     have h1 : i.snd ≤ telos := h_ub i rfl
@@ -234,7 +234,7 @@ theorem rett_before_closedTrace_eq (A B : SentDenotation Time) (s f : Time) (hsf
 theorem complet_stative (i : NonemptyInterval Time) :
     COMPLET (stativeDenotation i) = { j | j = NonemptyInterval.pure i.snd } := by
   ext k
-  simp only [COMPLET, stativeDenotation, Set.mem_setOf_eq, NonemptyInterval.le_def]
+  simp only [COMPLET, stativeDenotation, Set.mem_ofPred_eq, NonemptyInterval.le_def]
   constructor
   · rintro ⟨telos, h_ub, h_lub, rfl⟩
     have h1 : i.snd ≤ telos := h_ub i ⟨le_refl _, le_refl _⟩
@@ -409,21 +409,21 @@ private theorem mem_tt_telic {t : ℕ} :
 private theorem mem_tt_early {t : ℕ} :
     t ∈ timeTrace A_early ↔ t = 1 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [NonemptyInterval.mem_def, me_early, NonemptyInterval.pure, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, me_early, NonemptyInterval.pure, Set.mem_ofPred_eq]
   omega
 
 /-- Rewriting lemma: membership in timeTrace of late ME. -/
 private theorem mem_tt_late {t : ℕ} :
     t ∈ timeTrace A_late ↔ t = 12 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [NonemptyInterval.mem_def, me_late, NonemptyInterval.pure, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, me_late, NonemptyInterval.pure, Set.mem_ofPred_eq]
   omega
 
 /-- Rewriting lemma: membership in timeTrace of inside ME. -/
 private theorem mem_tt_inside {t : ℕ} :
     t ∈ timeTrace A_inside ↔ t = 7 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [NonemptyInterval.mem_def, me_inside, NonemptyInterval.pure, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, me_inside, NonemptyInterval.pure, Set.mem_ofPred_eq]
   omega
 
 -- ============================================================================
@@ -586,7 +586,7 @@ abbrev B_onset := accomplishmentDenotation ee_onset
 private theorem mem_tt_onset {t : ℕ} :
     t ∈ timeTrace B_onset ↔ t = 5 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [NonemptyInterval.mem_def, ee_onset, NonemptyInterval.pure, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, ee_onset, NonemptyInterval.pure, Set.mem_ofPred_eq]
   omega
 
 /-- ME: punctual event at time 3 — "arrived at 3pm" (for *by* coincidence case). -/
@@ -601,14 +601,14 @@ abbrev B_deadline := accomplishmentDenotation ee_deadline
 private theorem mem_tt_at_deadline {t : ℕ} :
     t ∈ timeTrace A_at_deadline ↔ t = 3 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [NonemptyInterval.mem_def, me_at_deadline, NonemptyInterval.pure, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, me_at_deadline, NonemptyInterval.pure, Set.mem_ofPred_eq]
   omega
 
 /-- Rewriting lemma: membership in timeTrace of the deadline EE. -/
 private theorem mem_tt_deadline {t : ℕ} :
     t ∈ timeTrace B_deadline ↔ t = 3 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [NonemptyInterval.mem_def, ee_deadline, NonemptyInterval.pure, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, ee_deadline, NonemptyInterval.pure, Set.mem_ofPred_eq]
   omega
 
 /-- "He has been happy₅₋₁₀ since she arrived₅" — True under `Karttunen.since`.
@@ -690,14 +690,14 @@ abbrev B_kiss := accomplishmentDenotation ee_kiss
 private theorem mem_tt_wake {t : ℕ} :
     t ∈ timeTrace A_wake_early ↔ t = 3 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [NonemptyInterval.mem_def, me_wake_early, NonemptyInterval.pure, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, me_wake_early, NonemptyInterval.pure, Set.mem_ofPred_eq]
   omega
 
 /-- Rewriting lemma: membership in timeTrace of kiss event. -/
 private theorem mem_tt_kiss {t : ℕ} :
     t ∈ timeTrace B_kiss ↔ t = 5 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [NonemptyInterval.mem_def, ee_kiss, NonemptyInterval.pure, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, ee_kiss, NonemptyInterval.pure, Set.mem_ofPred_eq]
   omega
 
 /-- Scenario 11: "The princess woke up₃ before the prince kissed her₅" — TRUE.
@@ -719,7 +719,7 @@ abbrev A_wake_at := accomplishmentDenotation me_wake_at_kiss
 private theorem mem_tt_wake_at {t : ℕ} :
     t ∈ timeTrace A_wake_at ↔ t = 5 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [NonemptyInterval.mem_def, me_wake_at_kiss, NonemptyInterval.pure, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, me_wake_at_kiss, NonemptyInterval.pure, Set.mem_ofPred_eq]
   omega
 
 /-- Scenario 12: "The princess didn't wake up₅ until the prince kissed her₅"
@@ -752,7 +752,7 @@ abbrev A_wake_late := accomplishmentDenotation me_wake_late
 private theorem mem_tt_wake_late {t : ℕ} :
     t ∈ timeTrace A_wake_late ↔ t = 7 := by
   rw [timeTrace_accomplishmentDenotation]
-  simp only [NonemptyInterval.mem_def, me_wake_late, NonemptyInterval.pure, Set.mem_setOf_eq]
+  simp only [NonemptyInterval.mem_def, me_wake_late, NonemptyInterval.pure, Set.mem_ofPred_eq]
   omega
 
 /-- Scenario 13: "The princess didn't wake up₇ until the prince kissed her₅"

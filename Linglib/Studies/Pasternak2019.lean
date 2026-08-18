@@ -85,7 +85,7 @@ do not exist. Corrected:
 namespace Pasternak2019
 
 open Degree
-open Semantics.Attitudes.Confidence
+open Confidence
 open ArgumentStructure (ThematicFrame)
 
 /-! ## §1. Monotonicity (Pasternak (4))

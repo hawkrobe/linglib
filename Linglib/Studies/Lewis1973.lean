@@ -302,10 +302,10 @@ def bg : Valuation (fun _ : V => Bool) :=
 /-- Neither overdetermining cause passes the but-for test (B alive when A
     removed; A alive when B removed). -/
 theorem overdetermination_no_butfor_a : ¬ lewisButFor sem varList bg .a .e := by
-  unfold lewisButFor; push_neg; rfl
+  unfold lewisButFor; push Not; rfl
 
 theorem overdetermination_no_butfor_b : ¬ lewisButFor sem varList bg .b .e := by
-  unfold lewisButFor; push_neg; rfl
+  unfold lewisButFor; push Not; rfl
 
 /-- Neither overdetermining cause is a Lewis causal dependent. -/
 theorem overdetermination_no_dependence_a : ¬ lewisDependence sem varList bg .a .e := by

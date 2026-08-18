@@ -168,12 +168,12 @@ theorem not_ordConnected_oblique :
   intro h
   have habs := h.out
     (x := ⟨.mk false false false true, .quPersBeginning⟩)
-    (by simp only [Set.mem_setOf_eq]; decide)
+    (by simp only [Set.mem_ofPred_eq]; decide)
     (y := ⟨.mk false true true true, .quPersBeginning⟩)
-    (by simp only [Set.mem_setOf_eq]; decide)
+    (by simp only [Set.mem_ofPred_eq]; decide)
     (show (⟨.mk false true false true, .quPersBeginning⟩ : ParticipantType)
         ∈ Set.Icc _ _ from ⟨by decide, by decide⟩)
-  simp only [Set.mem_setOf_eq] at habs
+  simp only [Set.mem_ofPred_eq] at habs
   exact absurd habs (by decide)
 
 end ArgumentStructure

@@ -93,7 +93,7 @@ theorem AR.isStarFree_occur_of_link_free
       = ⋂ i, {w : List S | F.tierWord i <:+: AR.tierProj g₀ i (FreeMonoid.ofList w)} := by
     ext w
     haveI := Autosegmental.AR.realize.instFinite g₀ w
-    simp only [Set.mem_setOf_eq, Set.mem_iInter,
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter,
       AR.factorEmbeds_iff_infix_of_link_free hF, AR.tierProj_ofList]
     exact Iff.rfl
   rw [hset]

@@ -350,7 +350,7 @@ Update distributes over intersection: φ.update(s ∩ t) = φ.update(s) ∩ φ.u
 theorem update_inter (φ : Formula) (s t : InfoState E) :
     φ.update M (s ∩ t) = φ.update M s ∩ φ.update M t := by
   ext p
-  simp only [Formula.update, InfoState.restrict, Set.mem_inter_iff, Set.mem_setOf_eq]
+  simp only [Formula.update, InfoState.restrict, Set.mem_inter_iff, Set.mem_ofPred_eq]
   tauto
 
 /--
@@ -454,7 +454,7 @@ theorem obs10_dynamic_eq_classical_entailment (φ ψ : Formula) :
   · -- Dynamic → Classical: use s = Set.univ
     intro hdyn g ê hsat
     have hmem : (g, ê) ∈ φ.update M Set.univ := by
-      simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Set.mem_univ, true_and]
+      simp only [Formula.update, InfoState.restrict, Set.mem_ofPred_eq, Set.mem_univ, true_and]
       exact hsat
     exact hdyn Set.univ hmem
   · -- Classical → Dynamic: unfold update membership
@@ -478,14 +478,14 @@ theorem obs11_deduction_theorem (φ χ ψ : Formula) :
     simp only [Formula.impl, Formula.sat]
     intro ⟨hχ, hnψ⟩
     have hmem : p ∈ (φ ⋀ χ).update M s := by
-      simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Formula.sat]
+      simp only [Formula.update, InfoState.restrict, Set.mem_ofPred_eq, Formula.sat]
       exact ⟨hp.1, hp.2, hχ⟩
     exact hnψ (h s hmem)
   · -- (←) If φ ⊨ χ→ψ, then φ∧χ ⊨ ψ
     intro h s p hp
     simp only [DynamicSemantics.mem_updateFromSat, satisfiesPLA, Formula.sat] at hp
     have hp_φ : p ∈ φ.update M s := by
-      simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq]
+      simp only [Formula.update, InfoState.restrict, Set.mem_ofPred_eq]
       exact ⟨hp.1, hp.2.1⟩
     have himpl := h s hp_φ
     simp only [Formula.impl] at himpl
@@ -505,7 +505,7 @@ theorem exists_update_characterization (x : VarIdx) (φ : Formula) (s : InfoStat
     (Formula.exists_ x φ).update M s =
     { p ∈ s | ∃ e : E, φ.sat M (p.1[x ↦ e]) p.2 } := by
   ext p
-  simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Formula.sat]
+  simp only [Formula.update, InfoState.restrict, Set.mem_ofPred_eq, Formula.sat]
 
 /-- Double negation preserves range. -/
 theorem dne_range_same (φ : Formula) :
@@ -532,7 +532,7 @@ theorem static_conjunction_commutes (φ ψ : Formula) (s : InfoState E) :
     seq (φ.update M) (ψ.update M) s = seq (ψ.update M) (φ.update M) s := by
   rw [seq_update_eq, seq_update_eq]
   ext p
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   tauto
 
 /-- The existential marks its variable in the domain; conjunction unions

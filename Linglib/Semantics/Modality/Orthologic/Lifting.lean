@@ -128,7 +128,7 @@ theorem eB_compl (a : B) : eB aᶜ = (eB a)ᶜ := by
   apply SetLike.coe_injective
   rw [coe_eB, CompatFrame.Regular.coe_compl, coe_eB]
   ext q
-  simp only [eBset, Set.mem_setOf_eq, mem_orthoNeg]
+  simp only [eBset, Set.mem_ofPred_eq, mem_orthoNeg]
   constructor
   · intro hq y hcompat hya
     exact hcompat.1 (le_bot_iff.mp ((inf_le_inf hq hya).trans (compl_inf_self a).le))

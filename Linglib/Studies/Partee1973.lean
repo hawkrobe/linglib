@@ -15,8 +15,8 @@ lookup, lambda abstraction).
 The unifying type for all five views of tense is `TensePronoun`: a variable index + a presupposed temporal constraint + a
 binding mode + an eval time index. The bridges in this file —
 `referential_past_decomposition`, `indexical_tense_matches_opNow`,
-`toSitVarStatus` — are projections of `TensePronoun` onto specific
-theoretical vocabularies.
+`toSitVarStatus_surjective` — are projections of `TensePronoun` onto
+specific theoretical vocabularies.
 
 For per-paper tense theory formalizations, see the sibling
 `Studies/` files (Abusch1997, VonStechow2009, Kratzer1998,
@@ -61,9 +61,9 @@ namespace Partee1973
 
 open Tense (interpTense temporalLambdaAbs updateTemporal situationToTemporal PAST)
 open Semantics.Reference.KaplanLD (opNow)
-open Intensional.SitVarStatus (SitVarStatus)
+open Intensional (SitVarStatus)
 open Intensional (WorldTimeIndex)
-open Intensional.ReferentialMode (ReferentialMode)
+open Intensional (ReferentialMode)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -85,9 +85,7 @@ theorem indexical_tense_matches_opNow {W T : Type*}
     opNow cT φ w t = φ w cT := rfl
 
 
--- ════════════════════════════════════════════════════════════════
--- § 4. Partee → Elbourne: TenseInterpretation → SitVarStatus
--- ════════════════════════════════════════════════════════════════
+/-! ### Partee → Elbourne: referential mode → situation-variable status -/
 
 /-! [elbourne-2013] generalizes Partee from times to situations (world–time
 pairs). His `SitVarStatus` (free/bound) collapses Partee's three-way
@@ -95,15 +93,11 @@ distinction: indexical and anaphoric tenses both have FREE variables,
 differing only in how the free variable is pragmatically resolved
 (utterance context vs. discourse salience). -/
 
-/-- Map Partee's three-way classification to Elbourne's two-way.
-    Indexical and anaphoric → free; bound → bound.
-    Uses `ReferentialMode.isFree` for the coarsening. -/
-def toSitVarStatus : TenseInterpretation → SitVarStatus
-  | t => if t.isFree then .free else .bound
-
-/-- Surjective: Partee's classification is at least as fine as Elbourne's. -/
+/-- Surjective: Partee's classification is at least as fine as
+    Elbourne's. The coarsening is the substrate's
+    `ReferentialMode.toSitVarStatus`. -/
 theorem toSitVarStatus_surjective :
-    ∀ s : SitVarStatus, ∃ t : TenseInterpretation, toSitVarStatus t = s := by
+    ∀ s : SitVarStatus, ∃ m : ReferentialMode, m.toSitVarStatus = s := by
   intro s; cases s
   · exact ⟨.indexical, rfl⟩
   · exact ⟨.bound, rfl⟩
@@ -113,7 +107,8 @@ theorem toSitVarStatus_surjective :
     invisible to Elbourne's structural semantics. -/
 theorem toSitVarStatus_not_injective :
     ReferentialMode.indexical ≠ ReferentialMode.anaphoric ∧
-    toSitVarStatus .indexical = toSitVarStatus .anaphoric :=
+    ReferentialMode.indexical.toSitVarStatus =
+      ReferentialMode.anaphoric.toSitVarStatus :=
   ⟨nofun, rfl⟩
 
 
@@ -269,7 +264,7 @@ theorem zero_tense_parallels_reflexive (n : ℕ) :
     | Resolution| Context/Discourse/Binder | (same)        |
     | Overtness | —                      | overt/zero      |
 
-    The `toSitVarStatus` bridge from §6 collapses the indexical/anaphoric
+    `ReferentialMode.toSitVarStatus` collapses the indexical/anaphoric
     distinction (both → free). Kratzer's `Overtness.fromBinding` collapses
     differently: free → overt, bound + local → zero. Together, they show
     that the three-way classification has TWO natural coarsenings:

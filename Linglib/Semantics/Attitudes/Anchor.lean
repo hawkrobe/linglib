@@ -29,8 +29,6 @@ a special case of the anchor architecture whenever the projection is
 surjective.
 -/
 
-namespace Semantics.Attitudes
-
 /-- An anchor sort: individuals from which a propositional domain is
     projected. `proj x` is the projection of the anchor `x` — CONT for
     content individuals, SIT for situation individuals. -/
@@ -77,4 +75,3 @@ theorem existsClosure_ofAccessibility (R : E → I → I → Prop) (a : E)
 
 end Anchor
 
-end Semantics.Attitudes

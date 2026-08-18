@@ -226,7 +226,7 @@ theorem identity_candidateSet_eq_singleton (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (hne : x.Nonempty) :
     candidateSet P Tolerance.identity x = {candidateProp P x} := by
   ext p
-  simp only [candidateSet, Set.mem_setOf_eq, Set.mem_singleton_iff,
+  simp only [candidateSet, Set.mem_ofPred_eq, Set.mem_singleton_iff,
              Finset.mem_powerset, Tolerance.identity]
   refine ⟨fun ⟨_, _, _, hz_eq, hp⟩ => ?_, fun hp => ?_⟩
   · rw [← hz_eq, hp]
@@ -236,7 +236,7 @@ theorem fullCandidateSet_eq_candidateSet_trivial (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) :
     fullCandidateSet P x = candidateSet P Tolerance.trivial x := by
   ext p
-  simp only [fullCandidateSet, candidateSet, Set.mem_setOf_eq]
+  simp only [fullCandidateSet, candidateSet, Set.mem_ofPred_eq]
   refine ⟨fun ⟨z, hz_mem, hne, hp⟩ => ?_, fun ⟨z, hz_mem, hne, _, hp⟩ => ?_⟩
   · exact ⟨z, hz_mem, hne, Finset.mem_powerset.mp hz_mem, hp⟩
   · exact ⟨z, hz_mem, hne, hp⟩

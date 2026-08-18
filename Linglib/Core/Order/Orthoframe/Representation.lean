@@ -63,7 +63,7 @@ variable {V : Set L}
 theorem upperPolar_Iic (hV : JoinDense V) (x : L) :
     upperPolar (ofOrtholattice V).ortho {c : Point V | c.1 ≤ x} = {d | x ≤ d.1ᶜ} := by
   ext d
-  simp only [mem_upperPolar_iff, Set.mem_setOf_eq, ofOrtholattice_ortho]
+  simp only [mem_upperPolar_iff, Set.mem_ofPred_eq, ofOrtholattice_ortho]
   constructor
   · intro h
     refine (isLUB_le_iff (hV x)).mpr ?_
@@ -82,7 +82,7 @@ theorem isExtent_Iic (hV : JoinDense V) (a : L) :
   rw [isExtent_iff, upperPolar_Iic hV a, key,
       ← upperPolar_eq_lowerPolar (ofOrtholattice V).ortho, upperPolar_Iic hV aᶜ]
   ext e
-  rw [Set.mem_setOf_eq, Set.mem_setOf_eq, LatticeWithInvolution.le_compl_comm,
+  rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq, LatticeWithInvolution.le_compl_comm,
       LatticeWithInvolution.compl_compl]
 
 /-- The representation map's extent is exactly `{b ∈ V\{0} | b ≤ a}` (Thm 4.13). -/
@@ -113,7 +113,7 @@ theorem represent_inf (hV : JoinDense V) (a a' : L) :
   apply Concept.ext
   simp only [Concept.extent_inf, represent_extent hV]
   ext b
-  simp only [Set.mem_setOf_eq, Set.mem_inter_iff, le_inf_iff]
+  simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, le_inf_iff]
 
 /-- `represent` preserves the top. -/
 theorem represent_top (hV : JoinDense V) : represent V (⊤ : L) = ⊤ :=
@@ -163,7 +163,7 @@ theorem represent_surjective (hV : JoinDense V) (c : (ofOrtholattice V).Regular)
   apply Concept.ext
   rw [represent_extent hV]
   ext b
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   constructor
   · intro hb
     rw [← (Concept.isExtent_extent c).eq]

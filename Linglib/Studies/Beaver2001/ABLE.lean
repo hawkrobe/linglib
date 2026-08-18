@@ -245,7 +245,7 @@ The predicational constructor `pred sat` is definitionally equal to
 parameter. -/
 theorem eval_pred_eq_updateFromSat (sat : P → Prop) :
     (Formula.pred sat).eval = updateFromSat (λ p (_ : Unit) => sat p) () := by
-  ext σ p; simp only [eval, updateFromSat, Set.mem_setOf_eq]
+  ext σ p; simp only [eval, updateFromSat, Set.mem_ofPred_eq]
 
 /-- ABLE NOT *is* dynamic negation (`σ \ σ[φ]`), by construction. -/
 theorem eval_not_eq_ccpNeg {P : Type*} (φ : Formula P) :

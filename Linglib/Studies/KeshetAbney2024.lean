@@ -102,7 +102,7 @@ theorem forallAt_iff (n : Nat) (φ : Update (Assignment E)) (g h : Assignment E)
   · rintro ⟨rfl, hneg⟩
     refine ⟨rfl, fun d => ?_⟩
     by_contra hne
-    push_neg at hne
+    push Not at hne
     exact hneg ⟨Function.update g n d,
       ⟨Function.update g n d, ⟨d, rfl⟩, rfl, fun ⟨k, hφ⟩ => hne k hφ⟩⟩
   · rintro ⟨rfl, hall⟩

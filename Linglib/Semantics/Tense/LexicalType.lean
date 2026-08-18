@@ -80,7 +80,7 @@ def TensePronoun.toNominalDenot {Time : Type*} [LinearOrder Time]
     `pronominalLookup` is the presupposition-gated referent of the tense pronoun's
     `NominalDenot` (`TensePronoun.toNominalDenot`), for any binding `mode`. -/
 theorem pronominalLookup_eq_some_iff_tensePronoun {Time : Type*} [LinearOrder Time]
-    (g : TemporalAssignment Time) (j k : ℕ) (t : Time) (mode : TenseInterpretation) :
+    (g : TemporalAssignment Time) (j k : ℕ) (t : Time) (mode : Intensional.ReferentialMode) :
     pronominalLookup g j k = some t ↔
       (TensePronoun.mk k past mode j).toNominalDenot.presup g ⟨⟩ ∧
       (TensePronoun.mk k past mode j).toNominalDenot.selector g ⟨⟩ = some t := by

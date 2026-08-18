@@ -403,7 +403,7 @@ theorem coneStrictLift_iff_strict_dominationLift {le below : W → W → Prop}
       (coneDiff le P Q i) (coneDiff le Q P i) := by
   rw [strict_dominationLift_iff_below hTotal hBelow]
   unfold coneStrictLift coneDiff
-  simp only [Set.mem_setOf_eq, and_imp, and_assoc]
+  simp only [Set.mem_ofPred_eq, and_imp, and_assoc]
 
 /-- The l-lifting satisfies determination by singletons. -/
 theorem dominationLift_axiomDS : DeterminedBySingletons (dominationLift ge_w) :=

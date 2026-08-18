@@ -66,7 +66,7 @@ open Semantics.Presupposition.PartialProp (presupOfReferent presupOfReferent_pre
   presupOfReferent_assertion_some presupOfReferent_assertion_none)
 open Semantics.Definiteness (russellIotaList)
 open Semantics.Definiteness (DefPresupType)
-open Intensional.SitVarStatus (SitVarStatus)
+open Intensional (SitVarStatus)
 open Semantics.Definiteness (qforceToPresupType)
 open Semantics.Reference.Donnellan (UseMode definiteNominal)
 

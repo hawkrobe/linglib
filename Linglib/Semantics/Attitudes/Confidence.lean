@@ -49,7 +49,7 @@ It does NOT validate:
 
 -/
 
-namespace Semantics.Attitudes.Confidence
+namespace Confidence
 
 open Degree
 /-! ### Confidence states -/
@@ -305,8 +305,7 @@ theorem confidence_more_of_ordering {E W D : Type*} [Preorder D]
     (co : ConfidenceOrdering E W) (μ : ConfidenceState E W → D)
     {s_p s_q : ConfidenceState E W} :
     letI := co.toPreorder
-    admissibleMeasure μ → s_q < s_p → comparativeSem μ s_p s_q .positive := by
-  letI := co.toPreorder
-  exact fun h hlt => h hlt
+    admissibleMeasure μ → s_q < s_p → comparativeSem μ s_p s_q .positive :=
+  fun h hlt => h hlt
 
-end Semantics.Attitudes.Confidence
+end Confidence

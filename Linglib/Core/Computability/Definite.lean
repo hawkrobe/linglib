@@ -278,8 +278,8 @@ theorem isFiniteOrCofinite_of_isDefinite_and_isReverseDefinite [Finite α]
   obtain ⟨⟨k, hD⟩, ⟨k', hR⟩⟩ := h
   refine isFiniteOrCofinite_of_eventually_constant (List.finite_length_lt α (k + k')) ?_
   intro w₁ hw₁ w₂ hw₂
-  have hk : k ≤ w₁.length := by rw [Set.mem_compl_iff, Set.mem_setOf_eq, not_lt] at hw₁; omega
-  have hk' : k' ≤ w₂.length := by rw [Set.mem_compl_iff, Set.mem_setOf_eq, not_lt] at hw₂; omega
+  have hk : k ≤ w₁.length := by rw [Set.mem_compl_iff, Set.mem_ofPred_eq, not_lt] at hw₁; omega
+  have hk' : k' ≤ w₂.length := by rw [Set.mem_compl_iff, Set.mem_ofPred_eq, not_lt] at hw₂; omega
   exact (iff_of_eq (hD (takeAt_right_eq_of_bridge hk hk').symm)).trans
     (iff_of_eq (hR (takeAt_left_eq_of_bridge hk hk')))
 

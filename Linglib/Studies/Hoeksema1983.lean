@@ -211,7 +211,7 @@ theorem npComparativeGQ_preserves_ordering (μ : Entity → D) :
   intro a b
   show μ b < μ a ↔ a ∈ (npComparativeGQ μ) (principalUltrafilter b)
   unfold npComparativeGQ principalUltrafilter npThreshold
-  simp only [CompleteLatticeHom.coe_setPreimage, Set.mem_preimage, Set.mem_setOf_eq]
+  simp only [CompleteLatticeHom.coe_setPreimage, Set.mem_preimage, Set.mem_ofPred_eq]
 
 /-! ## Fact 1: any two `>`-preserving functions agree on every atom -/
 
@@ -252,7 +252,7 @@ theorem singleton_eq_iInf_principalUltrafilter (X : Set Entity) :
   ext Y
   simp only [Set.mem_singleton_iff, Set.inf_eq_inter, Set.mem_inter_iff,
              Set.iInf_eq_iInter, Set.mem_iInter,
-             Set.mem_compl_iff, principalUltrafilter, Set.mem_setOf_eq]
+             Set.mem_compl_iff, principalUltrafilter, Set.mem_ofPred_eq]
   refine ⟨?_, ?_⟩
   · rintro rfl; exact ⟨fun _ ha => ha, fun _ ha => ha⟩
   · rintro ⟨h1, h2⟩
@@ -321,7 +321,7 @@ theorem npComparativeGQ_principal_eq_gtOverSet_singleton
     npComparativeGQ μ (principalUltrafilter b) = Comparison.gt.overSet μ {μ b} := by
   ext a
   unfold npComparativeGQ principalUltrafilter npThreshold
-  simp only [CompleteLatticeHom.coe_setPreimage, Set.mem_preimage, Set.mem_setOf_eq,
+  simp only [CompleteLatticeHom.coe_setPreimage, Set.mem_preimage, Set.mem_ofPred_eq,
              Comparison.overSet_singleton, Comparison.mem_over, Comparison.rel, gt_iff_lt]
 
 /-! ## Connection to the licensing-context registry -/

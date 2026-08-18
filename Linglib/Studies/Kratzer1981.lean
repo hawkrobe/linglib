@@ -135,7 +135,7 @@ theorem dominance_best_empty :
       ∀ v ∈ accessibleWorlds circumstances w₀,
         atLeastAsGoodAs (desires w₀) w v} = ∅ := by
   ext w
-  simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and]
+  simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_and]
   intro hacc h
   have h1 := (agag_iff w (true, true)).mp
     (h (true, true) ((mem_acc_iff _).mpr (by decide)))

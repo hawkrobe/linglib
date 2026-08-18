@@ -112,7 +112,7 @@ theorem trueMessages_ssubset_implies_ltALT
     ltALT (toAlternatives G) s' s := by
   constructor
   · intro a ha_mem ha_s'
-    simp only [toAlternatives, Set.mem_setOf_eq] at ha_mem
+    simp only [toAlternatives, Set.mem_ofPred_eq] at ha_mem
     obtain ⟨m', hm'_eq⟩ := ha_mem
     subst hm'_eq
     have hm'_in_s' : m' ∈ G.trueMessages s' := G.mem_trueMessages.mpr ha_s'
@@ -139,13 +139,13 @@ theorem ltALT_implies_trueMessages_ssubset (s' s : T)
     simp only [InterpGame.mem_trueMessages] at hm' ⊢
     have halt : (λ x => G.meaning m' x) s' → (λ x => G.meaning m' x) s := by
       apply hle
-      simp only [toAlternatives, Set.mem_setOf_eq]
+      simp only [toAlternatives, Set.mem_ofPred_eq]
       exact ⟨m', rfl⟩
     exact halt hm'
   · intro heq
     apply hne
     intro a ha_mem ha_s
-    simp only [toAlternatives, Set.mem_setOf_eq] at ha_mem
+    simp only [toAlternatives, Set.mem_ofPred_eq] at ha_mem
     obtain ⟨m', hm'_eq⟩ := ha_mem
     subst hm'_eq
     have hm'_in : m' ∈ G.trueMessages s := G.mem_trueMessages.mpr ha_s
