@@ -1,3 +1,4 @@
+import Linglib.Semantics.Attitudes.PreferenceStructure
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Presupposition.Basic
@@ -33,14 +34,29 @@ together with ⌜S wants ¬p⌝ against one belief state — can be compared:
    `IsDiverse`, `IsAntiDeckstacking`, `IsBelSensitive`) and its §3.4
    simulation result: on the finest question the semantics is von
    Fintel's (`wantQuestionBased_finestPartition_iff_WantVonFintel`).
-4. **Lassiter** ([lassiter-2017] apparatus; [lassiter-2011] want
+4. **Condoravdi & Lauer** ([condoravdi-lauer-2011],
+   [condoravdi-lauer-2012], [lauer-2013], [lauer-condoravdi-2014],
+   [condoravdi-lauer-2016]) — *want* over a *preferential background*
+   `P : Agent → W → PreferenceStructure W`, their analog of a Kratzerian
+   conversational background: some maximal preference stands in a
+   designated relation to the complement. The relation is the locus of
+   variation among the three readings of their eq. 71: equality
+   (`WantExactMatch`, the canonical reading, eq. 69), reverse inclusion
+   (`WantSuccessOriented` — satisfied *if* the complement is true), and
+   inclusion (`WantQuineHintikka` — satisfied *only if*).
+5. **Lassiter** ([lassiter-2017] apparatus; [lassiter-2011] want
    application) — `Lassiter.Want`: conditional expected value above a
    threshold, with Sloman's Principle added in the full account
    (`Lassiter.WantWithSloman`).
 
 On conflicting desires: the belief-based semantics block simultaneous
 `want(p)` and `want(¬p)` (`wantVonFintel_no_conflict`,
-`wantHeim_no_conflict`); Phillips-Brown evades the blockage by varying
+`wantHeim_no_conflict`); Condoravdi & Lauer's exact-match want over a
+consistent background blocks it too
+(`PreferenceStructure.maxElts_pair_belief_compatible` applied to
+`WantExactMatch` facts — the agent's designated *effective* preference
+function, their (68), is a background pointwise `consistent` with the
+belief state); Phillips-Brown evades the blockage by varying
 Q_c; Lassiter's bare threshold admits it outright
 (`Lassiter.threshold_admits_conflict_witness`) while his full account
 does not (`Lassiter.wantWithSloman_blocks_conflict`). The
@@ -718,6 +734,65 @@ theorem isConsidered_iff_polar_partial_answer
     · exact Or.inr (fun w hw hpw => hnp hw hpw)
 
 end Generic
+
+/-! ### Effective-preference readings ([condoravdi-lauer-2016])
+
+The inferential profile is fixed by the choice of relation:
+success-oriented want is downward-entailing in the complement,
+Quine-Hintikka want upward-entailing, exact-match want neither
+(counterexample-construction deferred). The conflicting-desires
+blockage for exact-match want over a consistent background is
+`PreferenceStructure.maxElts_pair_belief_compatible` directly,
+prosecuted in `Studies/CondoravdiLauer2016.lean`; the anankastic
+ordering source `max[EP(Ad, w)]` (their eq. 88) is
+`fun w => (P Ad w).maxElts`. -/
+
+section EffectivePreferenceReadings
+
+variable {Agent W : Type*} (P : Agent → W → PreferenceStructure W)
+
+/-- Exact-match want: some maximal preference in the preferential
+    background `P` is `φ` itself: `φ ∈ max[P(a, w)]`. The canonical
+    reading. -/
+def WantExactMatch (a : Agent) (φ : Set W) (w : W) : Prop :=
+  φ ∈ (P a w).maxElts
+
+/-- Success-oriented want: some maximal preference is entailed by `φ`
+    — a preference satisfied if `φ` is true. -/
+def WantSuccessOriented (a : Agent) (φ : Set W) (w : W) : Prop :=
+  ∃ p ∈ (P a w).maxElts, φ ⊆ p
+
+/-- Quine-Hintikka want: some maximal preference entails `φ` — a
+    preference satisfied only if `φ` is true. -/
+def WantQuineHintikka (a : Agent) (φ : Set W) (w : W) : Prop :=
+  ∃ p ∈ (P a w).maxElts, p ⊆ φ
+
+variable {P}
+
+/-- Exact match implies the success-oriented reading. -/
+theorem wantSuccessOriented_of_exactMatch {a : Agent} {φ : Set W} {w : W}
+    (h : WantExactMatch P a φ w) : WantSuccessOriented P a φ w :=
+  ⟨φ, h, subset_rfl⟩
+
+/-- Exact match implies the Quine-Hintikka reading. -/
+theorem wantQuineHintikka_of_exactMatch {a : Agent} {φ : Set W} {w : W}
+    (h : WantExactMatch P a φ w) : WantQuineHintikka P a φ w :=
+  ⟨φ, h, subset_rfl⟩
+
+/-- Success-oriented want is downward-entailing in the complement. -/
+theorem wantSuccessOriented_downward_entailing
+    {a : Agent} {φ ψ : Set W} {w : W} (hφψ : φ ⊆ ψ) :
+    WantSuccessOriented P a ψ w → WantSuccessOriented P a φ w :=
+  fun ⟨p, hp, hψp⟩ => ⟨p, hp, hφψ.trans hψp⟩
+
+/-- Quine-Hintikka want is upward-entailing in the complement. -/
+theorem wantQuineHintikka_upward_entailing
+    {a : Agent} {φ ψ : Set W} {w : W} (hφψ : φ ⊆ ψ) :
+    WantQuineHintikka P a φ w → WantQuineHintikka P a ψ w :=
+  fun ⟨p, hp, hpφ⟩ => ⟨p, hp, hpφ.trans hφψ⟩
+
+end EffectivePreferenceReadings
+
 
 /-! ### Expected-value semantics ([lassiter-2017]; [lassiter-2011])
 

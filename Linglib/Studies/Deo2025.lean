@@ -2,7 +2,6 @@ import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Roles
 import Linglib.Discourse.SpeechAct
 import Linglib.Discourse.Commitment.SourceMarked
-import Linglib.Semantics.Attitudes.CondoravdiLauer
 import Linglib.Fragments.Marathi.Particles
 
 /-!
@@ -47,7 +46,8 @@ makes this a higher-order operation that *uses* the 2×2, not a single
 The secondary felicity condition (eq. 21): addressee uptake of *p* must
 be a precondition for fulfilling a contextually salient
 addressee-benefiting goal `g_c ∈ EP(s, w)`
-(a background of `Core.Order.EffectivePreference` structures).
+(a preferential background pointwise consistent with the belief
+state — `Semantics/Attitudes/PreferenceStructure.lean`).
 
 ## Out of scope
 
