@@ -1312,13 +1312,12 @@ import Linglib.Phonology.Constraints.Directional
 import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.HarmonicGrammar.Expressivity
-import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Phonology.HarmonicGrammar.NoisyHG
 import Linglib.Phonology.Hiatus
 import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
-import Linglib.Phonology.HarmonicGrammar.Score
+import Linglib.Phonology.Constraints.Harmony
 import Linglib.Phonology.HarmonicGrammar.Separability
-import Linglib.Phonology.HarmonicGrammar.ViolationSemiring
+import Linglib.Studies.Riggle2009
 import Linglib.Phonology.Harmony.Basic
 import Linglib.Phonology.Harmony.TongueRoot
 import Linglib.Phonology.OCP
