@@ -3,7 +3,6 @@ import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Phonology.OptimalityTheory.Grammar
 import Linglib.Core.Optimization.PermSubsetCombinatorics
-import Mathlib.Data.List.ProdSigma
 import Mathlib.Data.Sigma.Lex
 import Mathlib.Order.Extension.Linear
 import Mathlib.Order.Preorder.Finite
@@ -115,12 +114,12 @@ consistent total orders are exactly `ERCSet.linearExtensions` ([prince-2002]). -
 entailed by the covering pairs, so the encoding has the same linear extensions
 as the Hasse-edge one. -/
 def toERCSet (r : Fin n → Fin n → Prop) [DecidableRel r] : ERCSet n :=
-  ((List.finRange n ×ˢ List.finRange n).filter
-    fun p => decide (p.1 ≠ p.2 ∧ r p.1 p.2)).map fun p => simpleERC p.1 p.2
+  (Finset.univ.filter fun p : Fin n × Fin n => p.1 ≠ p.2 ∧ r p.1 p.2).image
+    fun p => simpleERC p.1 p.2
 
 theorem mem_toERCSet {r : Fin n → Fin n → Prop} [DecidableRel r] {α : ERC n} :
     α ∈ toERCSet r ↔ ∃ a b, a ≠ b ∧ r a b ∧ simpleERC a b = α := by
-  simp [toERCSet, List.mem_filter, List.mem_product, Prod.exists, and_assoc]
+  simp [toERCSet, Finset.mem_filter, Prod.exists, and_assoc]
 
 /-- A ranking satisfies `toERCSet r` exactly when it is a linear extension of
 `r`: the `a ≫ b` ERCs are the strict dominance requirements, and reflexive
