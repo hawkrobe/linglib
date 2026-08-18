@@ -29,7 +29,7 @@ Key features:
   one theme
 - **Not probabilistic**: the ordering need not respect conjunction — there is
   no conjunction-monotonicity axiom; the divergence witness is
-  `EpistemicThreshold.confidence_not_probabilistic` (CSW (52))
+  `CarianiSantorioWellwood2024.conjunction_fallacy_predicted` (CSW (52))
 - **Bounded above (for ordinary holders)**: `certain` picks out the
   maximal elements (CSW §5.2). The maximality assumption is supplied
   per-theorem via `h_top`, not baked into the structure — CSW p.19 hedges
@@ -228,8 +228,9 @@ conjunction-monotonicity axiom, unlike a probability measure.
 The genuine witness that this diverges from a probabilistic account — a
 non-monotone credence ranking a *consistent* conjunction above a conjunct, which
 no probability measure can do — is
-`EpistemicThreshold.confidence_not_probabilistic`; the packaged cross-framework
-refutation is `CarianiSantorioWellwood2024.states_vs_threshold_on_conjunction_fallacy`.
+`CarianiSantorioWellwood2024.conjunction_fallacy_predicted`; the packaged
+cross-framework refutation is
+`CarianiSantorioWellwood2024.states_vs_threshold_on_conjunction_fallacy`.
 (Earlier a vacuous `conjunction_fallacy_compatible : ∃ a b c : ℕ, a ≤ b ∧ ¬ a ≤ c`
 stood here; it encoded nothing about confidence or conjunction and was removed.) -/
 
