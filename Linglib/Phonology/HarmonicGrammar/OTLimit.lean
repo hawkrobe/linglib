@@ -1,6 +1,8 @@
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Core.Optimization.Evaluation
 import Linglib.Core.Probability.SoftmaxTheory
+import Linglib.Core.Optimization.Semiring
+import Linglib.Core.Optimization.Dequantization.LogSumExp.Softmax
 
 /-!
 # MaxEnt → OT Limit
@@ -309,5 +311,35 @@ theorem maxent_ot_limit {C : Type*} [Fintype C] [Nonempty C] [DecidableEq C]
   exact ot_lex_imp_higher_harmony ranking M hM c_opt c
     (fun con hcon => ⟨hbound c_opt con hcon, hbound c con hcon⟩)
     (hlex c hc)
+
+/-! ### The warped-semiring view of the limit -/
+
+open Core.Optimization in
+/-- The `lseFinset α` aggregator on harmony scores converges to the OT
+    winner's harmony as `α → ∞` — the warped-semiring restatement of
+    `maxent_ot_limit` ([litvinov-2005]'s Maslov dequantization applied to
+    the constraint-framework family): where `maxent_ot_limit` concentrates
+    the softmax *probability* on the OT winner, this realises the winner's
+    harmony as the dequantized limit of the warped semiring's additive
+    operator. Composes `ot_lex_imp_higher_harmony` with
+    `argmax_winner_iff_lse_max_limit`. -/
+theorem lse_aggregator_tendsto_winner_harmony {C : Type*} [DecidableEq C]
+    (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M)
+    (cands : Finset C) (c_opt : C) (hc_opt : c_opt ∈ cands)
+    (hbound : ∀ c ∈ cands, ∀ con ∈ ranking, con c ≤ M)
+    (hlex : ∀ c ∈ cands, c ≠ c_opt →
+      toLex (fun i : Fin ranking.length => (ranking.get i) c_opt) <
+      toLex (fun i : Fin ranking.length => (ranking.get i) c)) :
+    Tendsto (fun α : ℝ =>
+        lseFinset α cands (harmonyScore ranking.get (expWeights ranking.length M))) atTop
+      (𝓝 (harmonyScore ranking.get (expWeights ranking.length M) c_opt)) := by
+  have hne : cands.Nonempty := ⟨c_opt, hc_opt⟩
+  apply (argmax_winner_iff_lse_max_limit hne hc_opt).mp
+  intro c' hc'
+  by_cases h : c' = c_opt
+  · subst h; exact le_refl _
+  · exact le_of_lt (ot_lex_imp_higher_harmony ranking M hM c_opt c'
+      (fun con hcon => ⟨hbound c_opt hc_opt con hcon, hbound c' hc' con hcon⟩)
+      (hlex c' hc' h))
 
 end HarmonicGrammar
