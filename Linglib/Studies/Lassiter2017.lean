@@ -17,7 +17,7 @@ This study file:
   uniform prior 1/4, V = (10, 4, 4, 0), θ = 3/2, `p = {w₀, w₁}`).
 * §2 replicates the conflict predictions: `want_p ∧ want_negp`.
 * §3 cross-paper bridge to [condoravdi-lauer-2016]: C&L's
-  `wantEP_jointly_belief_consistent` forbids the witness; the
+  `wantEffectivePreference_jointly_belief_consistent` forbids the witness; the
   Lassiter bare apparatus exhibits it. **Different mechanisms.**
 * §4 cross-paper bridge to [heim-1992]: same configuration is
   `wantHeimDefined`-OK, but `wantHeim_no_conflict`
@@ -102,9 +102,10 @@ theorem conflict_concrete :
 
 /-! ## §3. Cross-paper bridge: [condoravdi-lauer-2016]
 
-C&L's `wantEP_jointly_belief_consistent` says that for any
+C&L's `wantEffectivePreference_jointly_belief_consistent` says that for any
 `EffectivePreferentialBackground EP` and any agent `a`, world `w`,
-`wantEP EP a φ w ∧ wantEP EP a ψ w` implies `(φ ∩ ψ) ∩ B(a, w) ≠ ∅`.
+`wantEffectivePreference EP a φ w ∧ wantEffectivePreference EP a ψ w`
+implies `(φ ∩ ψ) ∩ B(a, w) ≠ ∅`.
 Specialized to `ψ = φᶜ`: the intersection is empty, so simultaneous
 truth is impossible.
 
@@ -112,16 +113,17 @@ Lassiter's bare-threshold apparatus exhibits exactly such a
 configuration. The two frameworks make orthogonal predictions on the
 4-world model. -/
 
-/-- C&L blocks any pair `wantEP φ ∧ wantEP ¬φ`. Specialized form
-    showing C&L cannot reproduce Lassiter's witness. -/
+/-- C&L blocks any pair
+    `wantEffectivePreference φ ∧ wantEffectivePreference ¬φ` —
+    C&L cannot reproduce Lassiter's witness. -/
 theorem condoravdiLauer_blocks_lassiter_witness
     {Agent : Type} {B : Agent → W → Set W}
     (EP : Desire.EffectivePreferentialBackground Agent W B)
     (a : Agent) (w : W) (φ : Set W)
-    (hφ : Desire.wantEP EP a φ w)
-    (hnegφ : Desire.wantEP EP a (fun w => ¬ φ w) w) :
+    (hφ : Desire.wantEffectivePreference EP a φ w)
+    (hnegφ : Desire.wantEffectivePreference EP a (fun w => ¬ φ w) w) :
     False := by
-  have h := Desire.wantEP_jointly_belief_consistent
+  have h := Desire.wantEffectivePreference_jointly_belief_consistent
               EP hφ hnegφ
   apply h
   ext x

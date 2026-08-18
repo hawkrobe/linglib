@@ -448,9 +448,9 @@ theorem modern_wants_avoidNuclearWar :
 
 /-! ## §11. Cross-paper bridge: [condoravdi-lauer-2016]
 
-[condoravdi-lauer-2016]'s effective-preferential `wantEP` carries
-a joint-belief-consistency theorem (`wantEP_jointly_belief_consistent`):
-if both `wantEP EP a φ w` and `wantEP EP a ψ w` hold, then
+[condoravdi-lauer-2016]'s effective-preferential `wantEffectivePreference` carries
+a joint-belief-consistency theorem (`wantEffectivePreference_jointly_belief_consistent`):
+if both `wantEffectivePreference EP a φ w` and `wantEffectivePreference EP a ψ w` hold, then
 `(φ ∩ ψ) ∩ B(a, w) ≠ ∅`. Specialized to `ψ = φᶜ`, the conclusion
 becomes `∅ ∩ B(a, w) ≠ ∅`, which is contradictory. So C&L *forbids*
 simultaneous `want(p)` and `want(¬p)` against a single belief state and
@@ -459,7 +459,7 @@ preference structure.
 [phillips-brown-2025] resolves the conflict by varying the
 contextual question Q_c (and the contextually-relevant `belS`) per
 ascription. C&L resolves it by varying the preference structure (per
-reading: `wantPExact` / `wantPSuccess` / `wantPQH`). The two
+reading: `wantExactMatch` / `wantSuccessOriented` / `wantQuineHintikka`). The two
 resolutions are orthogonal — both can coexist in a unified theory of
 desire, but they make non-overlapping claims. -/
 
@@ -475,10 +475,10 @@ theorem condoravdiLauer_blocks_simultaneous_pq_and_negpq
     {Agent W : Type} {B : Agent → W → Set W}
     (EP : Desire.EffectivePreferentialBackground Agent W B)
     (a : Agent) (φ : Set W) (w : W)
-    (hφ : Desire.wantEP EP a φ w)
-    (hnegφ : Desire.wantEP EP a (fun w => ¬ φ w) w) :
+    (hφ : Desire.wantEffectivePreference EP a φ w)
+    (hnegφ : Desire.wantEffectivePreference EP a (fun w => ¬ φ w) w) :
     False := by
-  have h := Desire.wantEP_jointly_belief_consistent
+  have h := Desire.wantEffectivePreference_jointly_belief_consistent
               EP hφ hnegφ
   apply h
   ext x
