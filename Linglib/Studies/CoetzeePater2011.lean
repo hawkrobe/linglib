@@ -259,8 +259,8 @@ def tdVp : Context → TDOutput → Fin 4 → ℕ
 
     We formalize the §3.2 t/d-deletion analysis (table 10) using POC's
     `pocPredict`, with deletion probabilities derived in closed form via
-    the `picksAt_binary_iff_permDList_head_lt` bridge + the substrate's
-    `perm_filter_head_in_card`.
+    the `picksAt_binary_iff_head_mem_favoring` bridge + the substrate's
+    `perm_filter_head_in_rate`.
 
     The discrete partial order (`PartialOrderConstraints.discrete 4`)
     encodes "no rankings imposed" — uniform sampling over all 4! = 24
@@ -273,40 +273,35 @@ def deletionProb (ctx : Context) : ℚ :=
   PartialOrderConstraints.pocPredict tdCands tdVp
     (PartialOrderConstraints.discrete 4) ctx .delete
 
-/-- Local specialisation of `pocPredict_discrete_binary_rate` to t/d-deletion:
-    bakes in `tdCands ctx = {.delete, .retain}` and `delete ≠ retain`. -/
-private theorem deletionProb_eq (ctx : Context) (D Y : Finset (Fin 4))
-    (h_D : ∀ k, k ∈ D ↔ tdVp ctx .delete k ≠ tdVp ctx .retain k)
-    (h_Y : ∀ k, k ∈ Y ↔ tdVp ctx .delete k < tdVp ctx .retain k) :
-    deletionProb ctx = ((Y ∩ D).card : ℚ) / (D.card : ℚ) :=
+/-- Local specialisation of `pocPredict_discrete_binary_rate` to t/d-deletion,
+    baking in `tdCands ctx = {.delete, .retain}` and `delete ≠ retain`. -/
+private theorem deletionProb_eq (ctx : Context) :
+    deletionProb ctx =
+      ((PartialOrderConstraints.favoring tdVp ctx .delete .retain ∩
+          PartialOrderConstraints.active tdVp ctx .delete .retain).card : ℚ) /
+        ((PartialOrderConstraints.active tdVp ctx .delete .retain).card : ℚ) :=
   PartialOrderConstraints.pocPredict_discrete_binary_rate
     tdCands tdVp ctx .delete .retain
     (by unfold tdCands; ext o; cases o <;> simp)
-    (fun heq => TDOutput.noConfusion heq) D Y h_D h_Y
+    (fun heq => TDOutput.noConfusion heq)
 
 /-- Pre-vocalic deletion probability: `D = {*CT, MAX, MAX-PRE-V}` (3
     distinguishing), `Y ∩ D = {*CT}` (only *CT favors delete) → `1/3`. -/
 theorem deletionProb_preV : deletionProb .preV = 1/3 := by
-  rw [deletionProb_eq .preV {0, 1, 2} {0} (by decide) (by decide),
-      show (({0} : Finset (Fin 4)) ∩ {0, 1, 2}).card = 1 from by decide,
-      show ({0, 1, 2} : Finset (Fin 4)).card = 3 from by decide]
-  norm_num
+  rw [deletionProb_eq .preV]
+  decide +kernel
 
 /-- Phrase-final deletion probability: `D = {*CT, MAX, MAX-FINAL}`,
     `Y ∩ D = {*CT}` → `1/3`. -/
 theorem deletionProb_pause : deletionProb .pause = 1/3 := by
-  rw [deletionProb_eq .pause {0, 1, 3} {0} (by decide) (by decide),
-      show (({0} : Finset (Fin 4)) ∩ {0, 1, 3}).card = 1 from by decide,
-      show ({0, 1, 3} : Finset (Fin 4)).card = 3 from by decide]
-  norm_num
+  rw [deletionProb_eq .pause]
+  decide +kernel
 
 /-- Pre-consonantal deletion probability: `D = {*CT, MAX}`, `Y ∩ D = {*CT}`
     → `1/2` (highest — no positional faithfulness applies). -/
 theorem deletionProb_preC : deletionProb .preC = 1/2 := by
-  rw [deletionProb_eq .preC {0, 1} {0} (by decide) (by decide),
-      show (({0} : Finset (Fin 4)) ∩ {0, 1}).card = 1 from by decide,
-      show ({0, 1} : Finset (Fin 4)).card = 2 from by decide]
-  norm_num
+  rw [deletionProb_eq .preC]
+  decide +kernel
 
 /-- The cross-dialectal generalization: pre-C deletion rate exceeds
     pre-V and pre-pause rates. Direct consequence of the closed-form
