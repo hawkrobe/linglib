@@ -1501,7 +1501,6 @@ import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Semantics.Attitudes.Preference
-import Linglib.Semantics.Attitudes.RationalAttitude
 import Linglib.Semantics.Attitudes.SituationIndividual
 import Linglib.Semantics.Causation.BayesNet
 import Linglib.Semantics.Causation.CCSelection
