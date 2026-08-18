@@ -1,5 +1,5 @@
 import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
-import Mathlib.Tactic.NormNum
+import Mathlib.Data.Fin.VecNotation
 
 /-!
 # [anttila-1997]: Deriving Variation from Grammar
@@ -16,44 +16,43 @@ published chapter [anttila-1997] paginates 35–68.
 
 ## The grammar
 
-Anttila's final grammar (eq. (50), page 21) stratifies 20 constraints into 5
-mutually-ranked sets:
+`finnishGrammar` is "the grammar for Finnish, final version" (eq. (50),
+page 21) in full: 20 constraints in 5 mutually-ranked sets, as a single
+`stratified` partial order on `Fin 20`:
 
   - Set 1: \*X́.X́ (No Clash)
   - Set 2: \*Ĺ (Peak Prominence: no stressed lights), \*H (Weight-to-Stress:
     no unstressed heavies)
   - Set 3: \*H/I, \*Í, \*L.L
   - Set 4: \*H/O, \*Ó, \*L/A, \*H.H, \*H́, \*X.X
-  - Set 5: 8 lower constraints (\*H/A, \*Á, \*L/O, \*L/I, \*A, \*O, \*I, \*L)
+  - Set 5: \*H/A, \*Á, \*L/O, \*L/I, \*A, \*O, \*I, \*L, with internal
+    rankings \*L/O ≫ \*L/I and \*A ≫ \*O ≫ \*I (`setFiveInner`)
 
-Sets 3 and 4 — the two "intermediary constraint sets" of eq. (49) — are
-internally unranked: "While mutually ranked, the sets are internally random"
-(page 21), so each evaluation samples a total order of the deciding stratum.
-(Set 5 carries internal rankings, \*L/O ≫ \*L/I and \*A ≫ \*O ≫ \*I, but never
-decides the motifs modeled here.)
+Sets 3 and 4 — the "intermediary constraint sets" of eq. (49) — are internally
+unranked: "While mutually ranked, the sets are internally random" (page 21),
+so each evaluation samples a total order.
 
 ## Substrate consumption
 
-This file routes through the POC (Partially Ordered Constraints) substrate.
-Per stratum, a violation-profile function `vp : Motif → Variant → Fin n → ℕ`
-feeds `pocPredict` over `discrete n` (uniform sampling over all `n!`
-stratum-internal rankings), and `pocPredict_discrete_binary_rate` reduces each
-probability to the closed form `|Y ∩ D| / |D|`, where `D` is the set of
-constraints distinguishing the two variants and `Y` those favoring the chosen
-one — mirroring the paper's own shortcut ("Drawing the tableaux was in fact
-unnecessary … knowing that the weak variant violates one constraint (\*L.L)
-while the strong variant violates two (\*H/I, \*Í) gives us the result
-directly", page 22).
+Each motif's probability is `pocPredict` over `finnishGrammar` — uniform
+sampling of the total rankings consistent with the whole grammar, not a
+per-stratum sub-grammar. The substrate's deciding-stratum theorem
+(`pocPredict_stratified_binary_rate`) reduces each competition to the closed
+form `|Y ∩ D| / |D|` over the deciding stratum's distinguishing set — the
+paper's own shortcut ("Drawing the tableaux was in fact unnecessary … knowing
+that the weak variant violates one constraint (\*L.L) while the strong variant
+violates two (\*H/I, \*Í) gives us the result directly", page 22) — with the
+irrelevance of the lower strata a theorem rather than an aside.
 
-Two POC instances, one per stratum: Set 3 (n = 3) decides motifs 1ab, 2ab,
-3ab, 6ab; Set 4 (n = 6) decides motifs 4ab, 5ab.
-
-We stipulate violation profiles via `vp` rather than defining `Constraint`
-instances over candidate structures: the paper's quantitative section works
-directly at violation-profile granularity (table (52)). True `Constraint`
-formalisations would need a Finnish syllable substrate (stress / weight /
-sonority features feeding syllable structure) which doesn't yet exist in
-linglib.
+Violation profiles are stipulated from table (52) rather than derived from
+`Constraint` instances: the paper's quantitative section works directly at
+violation-profile granularity. True `Constraint` formalisations would need a
+Finnish syllable substrate (stress / weight / sonority features feeding
+syllable structure) which doesn't yet exist in linglib. Sets 1–2 tie on every
+motif (the stress constraints are inactive on these long-stem competitions,
+witnessed by table (52) carrying only Set 3 and Set 4 columns); Set-5 cells
+are set to 0 — the deciding-stratum theorem makes them provably irrelevant,
+so no Set-5 profile fidelity is claimed.
 
 ## Predictions formalized
 
@@ -73,11 +72,13 @@ frequencies from table (53) (page 23):
   - **6ab** (`H.TÍI` ∼ `H.TI`, `pó.lii.sèi.den` ∼ `pó.lii.si.en`): strong
     loses in all rankings. Observed: 1.6% / 98.4% (13 / 806).
 
+`winProb_strong_add_weak` verifies the two variants partition the probability
+mass for every motif (`sum_pocPredict_eq_one` substrate instance).
+
 ## Out of scope
 
-- **Sets 1, 2, and 5**, and the categorical short-stem patterns that the
-  stress constraints of Sets 1–2 decide (mono- and disyllabic stems, the
-  paper's §2.1 and §5.1–5.2).
+- **The categorical short-stem patterns** decided by the stress constraints of
+  Sets 1–2 (mono- and disyllabic stems, the paper's §2.1 and §5.1–5.2).
 - **Observed-vs-predicted comparison theorems.** Table (53)'s small gap
   between predicted and observed is empirical noise around the discrete
   prediction ("as the quantitative predictions of our model are discrete
@@ -87,9 +88,9 @@ frequencies from table (53) (page 23):
 
 namespace Anttila1997
 
-open HarmonicGrammar.PartialOrderConstraints
+open HarmonicGrammar HarmonicGrammar.PartialOrderConstraints
 
-/-! ### Variants -/
+/-! ### Variants and motifs -/
 
 /-- The two genitive-plural variants: strong (heavy penult, final-syllable
 onset /t/ or /d/) vs weak (light penult, onset /j/ or absent)
@@ -111,175 +112,185 @@ theorem Variant.ne_other (v : Variant) : v ≠ v.other := by cases v <;> decide
 theorem Variant.univ_eq_pair (v : Variant) :
     (Finset.univ : Finset Variant) = {v, v.other} := by cases v <;> decide
 
-/-! ### Set 3 — three constraints, motifs 1ab, 2ab, 3ab, 6ab -/
-
-/-- The four motifs of [anttila-1997] table (52) decided by Set 3: 1ab
-(`L.TÁA` ∼ `L.TA`), 2ab (`L.TÓO` ∼ `L.TO`), 3ab (`L.TÍI` ∼ `L.TI`), 6ab
-(`H.TÍI` ∼ `H.TI`). -/
-inductive Set3Motif
+/-- The six motif competitions of [anttila-1997] table (52): 1ab
+(`L.TÁA` ∼ `L.TA`), 2ab (`L.TÓO` ∼ `L.TO`), 3ab (`L.TÍI` ∼ `L.TI`), 4ab
+(`H.TÁA` ∼ `H.TA`), 5ab (`H.TÓO` ∼ `H.TO`), 6ab (`H.TÍI` ∼ `H.TI`). -/
+inductive Motif
   | one
   | two
   | three
+  | four
+  | five
   | six
   deriving DecidableEq, Repr, Fintype
 
-/-- Set-3 violation profile from [anttila-1997] table (52). Constraint
-indices follow eq. (50): `*H/I = 0`, `*Í = 1`, `*L.L = 2`. -/
-def set3Vp : Set3Motif → Variant → Fin 3 → ℕ
-  | .one,   .weak,   ⟨2, _⟩ => 1   -- L.TA  violates *L.L
-  | .two,   .weak,   ⟨2, _⟩ => 1   -- L.TO  violates *L.L
-  | .three, .strong, ⟨0, _⟩ => 1   -- L.TÍI violates *H/I
-  | .three, .strong, ⟨1, _⟩ => 1   -- L.TÍI violates *Í
-  | .three, .weak,   ⟨2, _⟩ => 1   -- L.TI  violates *L.L
-  | .six,   .strong, ⟨0, _⟩ => 1   -- H.TÍI violates *H/I
-  | .six,   .strong, ⟨1, _⟩ => 1   -- H.TÍI violates *Í
-  | _,      _,       _      => 0
+/-! ### The grammar for Finnish, final version
+
+Constraint roster, in eq. (50)'s column order: `0` = \*X́.X́ (Set 1); `1` =
+\*Ĺ, `2` = \*H (Set 2); `3` = \*H/I, `4` = \*Í, `5` = \*L.L (Set 3); `6` =
+\*H/O, `7` = \*Ó, `8` = \*L/A, `9` = \*H.H, `10` = \*H́, `11` = \*X.X
+(Set 4); `12` = \*H/A, `13` = \*Á, `14` = \*L/O, `15` = \*L/I, `16` = \*A,
+`17` = \*O, `18` = \*I, `19` = \*L (Set 5). -/
+
+/-- Stratum assignment: constraint `c` belongs to Set `stratumOf c + 1` of
+[anttila-1997] eq. (50). -/
+def stratumOf : Fin 20 → Fin 5 :=
+  ![0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4]
+
+/-- The Set-5-internal rankings of [anttila-1997] eq. (50): \*L/O ≫ \*L/I
+(`14 ≫ 15`) and \*A ≫ \*O ≫ \*I (`16 ≫ 17 ≫ 18`), transitively closed. -/
+def setFiveInner : PartialOrderConstraints 20 where
+  rel a b := a = b ∨
+    (a, b) ∈ ([(14, 15), (16, 17), (17, 18), (16, 18)] : List (Fin 20 × Fin 20))
+  isPartialOrder :=
+    { refl := fun _ => Or.inl rfl
+      trans := by decide
+      antisymm := by decide }
+
+/-- **The grammar for Finnish, final version** ([anttila-1997] eq. (50),
+page 21): five mutually-ranked strata, internally free except for
+`setFiveInner`'s Set-5 rankings. -/
+def finnishGrammar : PartialOrderConstraints 20 := stratified stratumOf setFiveInner
+
+/-- Violation profile over the full constraint roster, from [anttila-1997]
+table (52). Sets 1–2 tie on every motif and Set-5 cells are 0 (provably
+irrelevant; see module docstring). -/
+def vp : Motif → Variant → Fin 20 → ℕ
+  | .one,   .weak,   ⟨5, _⟩  => 1   -- L.TA  violates *L.L
+  | .two,   .weak,   ⟨5, _⟩  => 1   -- L.TO  violates *L.L
+  | .three, .strong, ⟨3, _⟩  => 1   -- L.TÍI violates *H/I
+  | .three, .strong, ⟨4, _⟩  => 1   -- L.TÍI violates *Í
+  | .three, .weak,   ⟨5, _⟩  => 1   -- L.TI  violates *L.L
+  | .four,  .strong, ⟨9, _⟩  => 1   -- H.TÁA violates *H.H
+  | .four,  .strong, ⟨10, _⟩ => 1   -- H.TÁA violates *H́
+  | .four,  .weak,   ⟨8, _⟩  => 1   -- H.TA  violates *L/A
+  | .four,  .weak,   ⟨11, _⟩ => 1   -- H.TA  violates *X.X
+  | .five,  .strong, ⟨6, _⟩  => 1   -- H.TÓO violates *H/O
+  | .five,  .strong, ⟨7, _⟩  => 1   -- H.TÓO violates *Ó
+  | .five,  .strong, ⟨9, _⟩  => 1   -- H.TÓO violates *H.H
+  | .five,  .strong, ⟨10, _⟩ => 1   -- H.TÓO violates *H́
+  | .five,  .weak,   ⟨11, _⟩ => 1   -- H.TO  violates *X.X
+  | .six,   .strong, ⟨3, _⟩  => 1   -- H.TÍI violates *H/I
+  | .six,   .strong, ⟨4, _⟩  => 1   -- H.TÍI violates *Í
+  | _,      _,       _       => 0
 
 /-- Probability that variant `v` wins motif `m` under uniform sampling of the
-`3! = 6` Set-3-internal rankings. -/
-def set3Prob (m : Set3Motif) (v : Variant) : ℚ :=
-  pocPredict (fun _ => Finset.univ) set3Vp (discrete 3) m v
+total rankings consistent with `finnishGrammar`. -/
+def winProb (m : Motif) (v : Variant) : ℚ :=
+  pocPredict (fun _ => Finset.univ) vp finnishGrammar m v
 
-/-- Bridge from `pocPredict` to the closed-form rate `|Y ∩ D| / |D|` for
-Set 3, shared by all eight rate theorems. -/
-private theorem set3Prob_eq_rate (m : Set3Motif) (v : Variant)
-    (D Y : Finset (Fin 3))
-    (h_D : ∀ k, k ∈ D ↔ set3Vp m v k ≠ set3Vp m v.other k)
-    (h_Y : ∀ k, k ∈ Y ↔ set3Vp m v k < set3Vp m v.other k) :
-    set3Prob m v = ((Y ∩ D).card : ℚ) / (D.card : ℚ) :=
-  pocPredict_discrete_binary_rate _ set3Vp m v v.other (Variant.univ_eq_pair v)
-    v.ne_other D Y h_D h_Y
+/-- Bridge to the deciding-stratum closed form `|Y ∩ D| / |D|`, shared by all
+twelve rate theorems. -/
+private theorem winProb_eq_rate (m : Motif) (v : Variant) (k : Fin 5)
+    (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → setFiveInner.rel a b → a = b)
+    (h_above : ∀ c, stratumOf c < k → vp m v c = vp m v.other c)
+    (D Y : Finset (Fin 20))
+    (h_D : ∀ c, c ∈ D ↔ stratumOf c = k ∧ vp m v c ≠ vp m v.other c)
+    (h_Y : ∀ c, c ∈ Y ↔ stratumOf c = k ∧ vp m v c < vp m v.other c)
+    (h_dec : D.Nonempty) :
+    winProb m v = ((Y ∩ D).card : ℚ) / (D.card : ℚ) :=
+  pocPredict_stratified_binary_rate _ vp stratumOf setFiveInner m v v.other
+    (Variant.univ_eq_pair v) v.ne_other k h_triv h_above D Y h_D h_Y h_dec
+
+/-! ### Rate theorems — table (52), all six motifs -/
 
 /-- **Motif 1ab strong `L.TÁA` wins in all rankings** — only the weak variant
-violates a Set-3 constraint (`*L.L`), so `D = Y = {2}` and the rate is `1`:
-the categorical limiting case. -/
-theorem strongProb_1ab : set3Prob .one .strong = 1 := by
-  rw [set3Prob_eq_rate .one .strong {2} {2} (by decide) (by decide)]
+violates a deciding-stratum constraint (`*L.L`), so `D = Y = {5}` and the rate
+is `1`: the categorical limiting case. -/
+theorem strongProb_1ab : winProb .one .strong = 1 := by
+  rw [winProb_eq_rate .one .strong 2 (by decide) (by decide) {5} {5}
+    (by decide) (by decide) ⟨5, by decide⟩]
   decide +kernel
 
 /-- **Motif 1ab weak `L.TA` loses in all rankings** ([anttila-1997]
 table (53): observed 0.6%, an artefact of the spelling of /kollega/). -/
-theorem weakProb_1ab : set3Prob .one .weak = 0 := by
-  rw [set3Prob_eq_rate .one .weak {2} ∅ (by decide) (by decide)]
+theorem weakProb_1ab : winProb .one .weak = 0 := by
+  rw [winProb_eq_rate .one .weak 2 (by decide) (by decide) {5} ∅
+    (by decide) (by decide) ⟨5, by decide⟩]
   decide +kernel
 
 /-- **Motif 2ab strong `L.TÓO` wins in all rankings** — same Set-3 profile as
 motif 1ab. -/
-theorem strongProb_2ab : set3Prob .two .strong = 1 := by
-  rw [set3Prob_eq_rate .two .strong {2} {2} (by decide) (by decide)]
+theorem strongProb_2ab : winProb .two .strong = 1 := by
+  rw [winProb_eq_rate .two .strong 2 (by decide) (by decide) {5} {5}
+    (by decide) (by decide) ⟨5, by decide⟩]
   decide +kernel
 
 /-- **Motif 2ab weak `L.TO` loses in all rankings**. -/
-theorem weakProb_2ab : set3Prob .two .weak = 0 := by
-  rw [set3Prob_eq_rate .two .weak {2} ∅ (by decide) (by decide)]
+theorem weakProb_2ab : winProb .two .weak = 0 := by
+  rw [winProb_eq_rate .two .weak 2 (by decide) (by decide) {5} ∅
+    (by decide) (by decide) ⟨5, by decide⟩]
   decide +kernel
 
-/-- **Motif 3ab strong `L.TÍI` wins 1/3 of Set-3 rankings**: `D = {0, 1, 2}`,
-`Y = {2}` (`*L.L`, violated by weak alone). Observed 36.9% for
-`náa.pu.rèi.den` ([anttila-1997] table (53), row 3a). -/
-theorem strongProb_3ab : set3Prob .three .strong = 1/3 := by
-  rw [set3Prob_eq_rate .three .strong {0, 1, 2} {2} (by decide) (by decide)]
+/-- **Motif 3ab strong `L.TÍI` wins 1/3 of rankings**: decided in Set 3 with
+`D = {*H/I, *Í, *L.L}`, `Y = {*L.L}` (violated by weak alone). Observed 36.9%
+for `náa.pu.rèi.den` ([anttila-1997] table (53), row 3a). -/
+theorem strongProb_3ab : winProb .three .strong = 1/3 := by
+  rw [winProb_eq_rate .three .strong 2 (by decide) (by decide) {3, 4, 5} {5}
+    (by decide) (by decide) ⟨5, by decide⟩]
   decide +kernel
 
-/-- **Motif 3ab weak `L.TI` wins 2/3 of Set-3 rankings**: `Y = {0, 1}`
-(`*H/I`, `*Í`, violated by strong alone). Observed 63.1% for `náa.pu.ri.en`
-([anttila-1997] table (53), row 3b). -/
-theorem weakProb_3ab : set3Prob .three .weak = 2/3 := by
-  rw [set3Prob_eq_rate .three .weak {0, 1, 2} {0, 1} (by decide) (by decide)]
+/-- **Motif 3ab weak `L.TI` wins 2/3 of rankings**: `Y = {*H/I, *Í}` (violated
+by strong alone). Observed 63.1% for `náa.pu.ri.en` ([anttila-1997]
+table (53), row 3b). -/
+theorem weakProb_3ab : winProb .three .weak = 2/3 := by
+  rw [winProb_eq_rate .three .weak 2 (by decide) (by decide) {3, 4, 5} {3, 4}
+    (by decide) (by decide) ⟨5, by decide⟩]
+  decide +kernel
+
+/-- **Motif 4ab strong `H.TÁA` wins 1/2 of rankings**: decided in Set 4 with
+`D = {*L/A, *H.H, *H́, *X.X}`, `Y = {*L/A, *X.X}` (violated by weak alone).
+Observed 50.5% for `máa.il.mòi.den` ([anttila-1997] table (53), row 4a). -/
+theorem strongProb_4ab : winProb .four .strong = 1/2 := by
+  rw [winProb_eq_rate .four .strong 3 (by decide) (by decide) {8, 9, 10, 11} {8, 11}
+    (by decide) (by decide) ⟨8, by decide⟩]
+  decide +kernel
+
+/-- **Motif 4ab weak `H.TA` wins 1/2 of rankings**: `Y = {*H.H, *H́}`.
+Observed 49.5% for `máa.il.mo.jen` ([anttila-1997] table (53), row 4b). -/
+theorem weakProb_4ab : winProb .four .weak = 1/2 := by
+  rw [winProb_eq_rate .four .weak 3 (by decide) (by decide) {8, 9, 10, 11} {9, 10}
+    (by decide) (by decide) ⟨8, by decide⟩]
+  decide +kernel
+
+/-- **Motif 5ab strong `H.TÓO` wins 1/5 of rankings**: decided in Set 4 with
+`D = {*H/O, *Ó, *H.H, *H́, *X.X}`, `Y = {*X.X}` (violated by weak alone).
+Observed 17.8% for `kór.jaa.mòi.den` ([anttila-1997] table (53), row 5a). -/
+theorem strongProb_5ab : winProb .five .strong = 1/5 := by
+  rw [winProb_eq_rate .five .strong 3 (by decide) (by decide)
+    {6, 7, 9, 10, 11} {11} (by decide) (by decide) ⟨6, by decide⟩]
+  decide +kernel
+
+/-- **Motif 5ab weak `H.TO` wins 4/5 of rankings**: `Y = {*H/O, *Ó, *H.H,
+*H́}`. Observed 82.2% for `kór.jaa.mo.jen` ([anttila-1997] table (53),
+row 5b). -/
+theorem weakProb_5ab : winProb .five .weak = 4/5 := by
+  rw [winProb_eq_rate .five .weak 3 (by decide) (by decide)
+    {6, 7, 9, 10, 11} {6, 7, 9, 10} (by decide) (by decide) ⟨6, by decide⟩]
   decide +kernel
 
 /-- **Motif 6ab strong `H.TÍI` loses in all rankings** — only the strong
-variant violates Set-3 constraints (`*H/I`, `*Í`), so `Y = ∅`. -/
-theorem strongProb_6ab : set3Prob .six .strong = 0 := by
-  rw [set3Prob_eq_rate .six .strong {0, 1} ∅ (by decide) (by decide)]
+variant violates deciding-stratum constraints (`*H/I`, `*Í`), so `Y = ∅`. -/
+theorem strongProb_6ab : winProb .six .strong = 0 := by
+  rw [winProb_eq_rate .six .strong 2 (by decide) (by decide) {3, 4} ∅
+    (by decide) (by decide) ⟨3, by decide⟩]
   decide +kernel
 
 /-- **Motif 6ab weak `H.TI` wins in all rankings** ([anttila-1997]
 table (53): observed 98.4%). -/
-theorem weakProb_6ab : set3Prob .six .weak = 1 := by
-  rw [set3Prob_eq_rate .six .weak {0, 1} {0, 1} (by decide) (by decide)]
+theorem weakProb_6ab : winProb .six .weak = 1 := by
+  rw [winProb_eq_rate .six .weak 2 (by decide) (by decide) {3, 4} {3, 4}
+    (by decide) (by decide) ⟨3, by decide⟩]
   decide +kernel
 
-/-! ### Set 4 — six constraints, motifs 4ab and 5ab -/
+/-! ### Completeness -/
 
-/-- The two motifs of [anttila-1997] table (52) decided by Set 4: 4ab
-(`H.TÁA` ∼ `H.TA`) and 5ab (`H.TÓO` ∼ `H.TO`). -/
-inductive Set4Motif
-  | four
-  | five
-  deriving DecidableEq, Repr, Fintype
-
-/-- Set-4 violation profile from [anttila-1997] table (52). Constraint
-indices follow eq. (50): `*H/O = 0`, `*Ó = 1`, `*L/A = 2`, `*H.H = 3`,
-`*H́ = 4`, `*X.X = 5`. -/
-def set4Vp : Set4Motif → Variant → Fin 6 → ℕ
-  | .four, .strong, ⟨3, _⟩ => 1   -- H.TÁA violates *H.H
-  | .four, .strong, ⟨4, _⟩ => 1   -- H.TÁA violates *H́
-  | .four, .weak,   ⟨2, _⟩ => 1   -- H.TA  violates *L/A
-  | .four, .weak,   ⟨5, _⟩ => 1   -- H.TA  violates *X.X
-  | .five, .strong, ⟨0, _⟩ => 1   -- H.TÓO violates *H/O
-  | .five, .strong, ⟨1, _⟩ => 1   -- H.TÓO violates *Ó
-  | .five, .strong, ⟨3, _⟩ => 1   -- H.TÓO violates *H.H
-  | .five, .strong, ⟨4, _⟩ => 1   -- H.TÓO violates *H́
-  | .five, .weak,   ⟨5, _⟩ => 1   -- H.TO  violates *X.X
-  | _,     _,       _      => 0
-
-/-- Probability that variant `v` wins motif `m` under uniform sampling of the
-`6! = 720` Set-4-internal rankings. -/
-def set4Prob (m : Set4Motif) (v : Variant) : ℚ :=
-  pocPredict (fun _ => Finset.univ) set4Vp (discrete 6) m v
-
-/-- Bridge from `pocPredict` to the closed-form rate `|Y ∩ D| / |D|` for
-Set 4, shared by all four rate theorems. -/
-private theorem set4Prob_eq_rate (m : Set4Motif) (v : Variant)
-    (D Y : Finset (Fin 6))
-    (h_D : ∀ k, k ∈ D ↔ set4Vp m v k ≠ set4Vp m v.other k)
-    (h_Y : ∀ k, k ∈ Y ↔ set4Vp m v k < set4Vp m v.other k) :
-    set4Prob m v = ((Y ∩ D).card : ℚ) / (D.card : ℚ) :=
-  pocPredict_discrete_binary_rate _ set4Vp m v v.other (Variant.univ_eq_pair v)
-    v.ne_other D Y h_D h_Y
-
-/-- **Motif 4ab strong `H.TÁA` wins 1/2 of Set-4 rankings**: `D = {2, 3, 4, 5}`,
-`Y = {2, 5}` (`*L/A`, `*X.X`, violated by weak alone). Observed 50.5% for
-`máa.il.mòi.den` ([anttila-1997] table (53), row 4a). -/
-theorem strongProb_4ab : set4Prob .four .strong = 1/2 := by
-  rw [set4Prob_eq_rate .four .strong {2, 3, 4, 5} {2, 5} (by decide) (by decide)]
-  decide +kernel
-
-/-- **Motif 4ab weak `H.TA` wins 1/2 of Set-4 rankings**: `Y = {3, 4}`
-(`*H.H`, `*H́`). Observed 49.5% for `máa.il.mo.jen` ([anttila-1997]
-table (53), row 4b). -/
-theorem weakProb_4ab : set4Prob .four .weak = 1/2 := by
-  rw [set4Prob_eq_rate .four .weak {2, 3, 4, 5} {3, 4} (by decide) (by decide)]
-  decide +kernel
-
-/-- **Motif 5ab strong `H.TÓO` wins 1/5 of Set-4 rankings**:
-`D = {0, 1, 3, 4, 5}`, `Y = {5}` (`*X.X`, violated by weak alone). Observed
-17.8% for `kór.jaa.mòi.den` ([anttila-1997] table (53), row 5a). -/
-theorem strongProb_5ab : set4Prob .five .strong = 1/5 := by
-  rw [set4Prob_eq_rate .five .strong {0, 1, 3, 4, 5} {5} (by decide) (by decide)]
-  decide +kernel
-
-/-- **Motif 5ab weak `H.TO` wins 4/5 of Set-4 rankings**: `Y = {0, 1, 3, 4}`
-(`*H/O`, `*Ó`, `*H.H`, `*H́`). Observed 82.2% for `kór.jaa.mo.jen`
-([anttila-1997] table (53), row 5b). -/
-theorem weakProb_5ab : set4Prob .five .weak = 4/5 := by
-  rw [set4Prob_eq_rate .five .weak {0, 1, 3, 4, 5} {0, 1, 3, 4} (by decide) (by decide)]
-  decide +kernel
-
-/-! ### Completeness — each variable motif's two outcomes partition the mass -/
-
-/-- Every Set-3 ranking picks a winner for motif 3ab: the two variants'
-probabilities sum to 1. -/
-theorem complete_3ab : set3Prob .three .strong + set3Prob .three .weak = 1 := by
-  rw [strongProb_3ab, weakProb_3ab]; norm_num
-
-/-- Every Set-4 ranking picks a winner for motif 4ab. -/
-theorem complete_4ab : set4Prob .four .strong + set4Prob .four .weak = 1 := by
-  rw [strongProb_4ab, weakProb_4ab]; norm_num
-
-/-- Every Set-4 ranking picks a winner for motif 5ab. -/
-theorem complete_5ab : set4Prob .five .strong + set4Prob .five .weak = 1 := by
-  rw [strongProb_5ab, weakProb_5ab]; norm_num
+/-- Every ranking of `finnishGrammar` picks a winner for every motif: the two
+variants' probabilities sum to 1 (`sum_pocPredict_eq_one` instance). -/
+theorem winProb_strong_add_weak (m : Motif) :
+    winProb m .strong + winProb m .weak = 1 :=
+  pocPredict_binary_add_eq_one (fun _ => Finset.univ) vp finnishGrammar
+    (i := m) (Variant.univ_eq_pair .strong) (Variant.ne_other .strong)
+    (by cases m <;> decide)
 
 end Anttila1997

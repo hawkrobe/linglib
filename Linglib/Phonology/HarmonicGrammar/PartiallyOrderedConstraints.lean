@@ -35,7 +35,16 @@ new content here is:
   one, not a third re-stipulation ([merchant-riggle-2016]; [prince-2002]).
 - `pocPredict P p i o`: the probability that POC sampling under p selects
   output o for input i, computed as a ratio of consistent extensions
-  realizing o vs. all consistent extensions.
+  realizing o vs. all consistent extensions. It is a genuine probability
+  distribution: `pocPredict_nonneg`, `pocPredict_le_one`, and — for candidate
+  sets with pairwise-distinct violation profiles — `sum_pocPredict_eq_one`.
+- `stratified stratumOf inner`: the ordinal-sum partial order of a stratum
+  assignment (earlier strata dominate wholesale; `inner` refines within
+  strata) — [anttila-1997]'s stratum grammars and [tesar-smolensky-1995]'s
+  Stratified Domination Hierarchies. `pocPredict_stratified_binary_rate`
+  localizes a binary competition to its deciding stratum: the win probability
+  is `|Y ∩ D| / |D|` over the deciding stratum's distinguishing set, with all
+  lower strata provably irrelevant.
 - `IsPOCRealizable P`: some non-trivial partial order has every consistent
   extension realizing the target. This is the categorical realizability
   notion; the probabilistic story is captured by `pocPredict`.
@@ -264,6 +273,83 @@ theorem consistentTotalOrders_fromPermutation (σ : Ranking n) :
   rw [hτ]
   exact isConsistent_fromPermutation σ
 
+/-! ### Stratified partial orders
+
+A stratum assignment `stratumOf : Fin n → Fin s` together with an inner order
+refining each stratum induces the **stratified** partial order: earlier strata
+dominate later ones wholesale, and within a stratum the inner order applies.
+With the discrete inner order this is the freely-ranked stratum grammar of
+[anttila-1997] eq. (50) — the "Stratified (Domination) Hierarchy" format of
+[tesar-smolensky-1995] that constraint-demotion learning produces. -/
+
+variable {s : ℕ}
+
+/-- The stratified partial order induced by `stratumOf` and an inner order
+`inner`: `rel a b` iff a's stratum strictly precedes b's, or they share a
+stratum and `inner.rel a b`. Cross-stratum `inner` edges are ignored. -/
+def stratified (stratumOf : Fin n → Fin s) (inner : PartialOrderConstraints n) :
+    PartialOrderConstraints n where
+  rel a b := stratumOf a < stratumOf b ∨ (stratumOf a = stratumOf b ∧ inner.rel a b)
+  isPartialOrder :=
+    { refl := fun a => Or.inr ⟨rfl, refl_of inner.rel a⟩
+      trans := fun a b c hab hbc => by
+        rcases hab with hab | ⟨hab, hab'⟩ <;> rcases hbc with hbc | ⟨hbc, hbc'⟩
+        · exact Or.inl (hab.trans hbc)
+        · exact Or.inl (lt_of_lt_of_eq hab hbc)
+        · exact Or.inl (lt_of_eq_of_lt hab hbc)
+        · exact Or.inr ⟨hab.trans hbc, trans_of inner.rel hab' hbc'⟩
+      antisymm := fun a b hab hba => by
+        rcases hab with hab | ⟨hab, hab'⟩ <;> rcases hba with hba | ⟨hba, hba'⟩
+        · exact absurd (hab.trans hba) (lt_irrefl _)
+        · exact absurd (lt_of_lt_of_eq hab hba) (lt_irrefl _)
+        · exact absurd (lt_of_lt_of_eq hba hab) (lt_irrefl _)
+        · exact antisymm_of inner.rel hab' hba' }
+
+/-- Under a stratified order, an earlier-stratum constraint occupies a strictly
+    earlier position in every consistent ranking. -/
+theorem IsConsistent.symm_lt_of_stratum_lt {stratumOf : Fin n → Fin s}
+    {inner : PartialOrderConstraints n} {σ : Ranking n}
+    (hσ : (stratified stratumOf inner).IsConsistent σ) {a b : Fin n}
+    (h : stratumOf a < stratumOf b) : σ.symm a < σ.symm b :=
+  lt_of_le_of_ne (hσ a b (Or.inl h))
+    (fun heq => absurd (σ.symm.injective heq ▸ h) (lt_irrefl _))
+
+/-- Consistent rankings of a stratified order are closed under swapping two
+    constraints of a stratum on which the inner order is trivial — the
+    exchangeability that makes the deciding stratum's internal ranking
+    uniform (`pocPredict_stratified_binary_rate`). -/
+theorem isConsistent_swap_mul {stratumOf : Fin n → Fin s}
+    {inner : PartialOrderConstraints n} {k : Fin s}
+    (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner.rel a b → a = b)
+    {d d' : Fin n} (hd : stratumOf d = k) (hd' : stratumOf d' = k)
+    {σ : Ranking n} (hσ : (stratified stratumOf inner).IsConsistent σ) :
+    (stratified stratumOf inner).IsConsistent (Equiv.swap d d' * σ) := by
+  have h_str : ∀ x, stratumOf (Equiv.swap d d' x) = stratumOf x := by
+    intro x
+    rcases eq_or_ne x d with rfl | hxd
+    · rw [Equiv.swap_apply_left, hd', hd]
+    rcases eq_or_ne x d' with rfl | hxd'
+    · rw [Equiv.swap_apply_right, hd, hd']
+    · rw [Equiv.swap_apply_of_ne_of_ne hxd hxd']
+  intro a b hab
+  have h_symm : ∀ x, (Equiv.swap d d' * σ).symm x = σ.symm (Equiv.swap d d' x) := by
+    intro x
+    rw [Equiv.Perm.mul_def, Equiv.symm_trans_apply, Equiv.symm_swap]
+  rw [h_symm a, h_symm b]
+  rcases hab with hlt | ⟨heq, hinner⟩
+  · exact hσ _ _ (Or.inl (by rw [h_str a, h_str b]; exact hlt))
+  · rcases eq_or_ne (stratumOf a) k with hk | hk
+    · obtain rfl : a = b := h_triv a b hk (heq ▸ hk) hinner
+      exact le_refl _
+    · have ha : Equiv.swap d d' a = a :=
+        Equiv.swap_apply_of_ne_of_ne (fun h => hk (by rw [h]; exact hd))
+          (fun h => hk (by rw [h]; exact hd'))
+      have hb : Equiv.swap d d' b = b :=
+        Equiv.swap_apply_of_ne_of_ne (fun h => (heq ▸ hk) (by rw [h]; exact hd))
+          (fun h => (heq ▸ hk) (by rw [h]; exact hd'))
+      rw [ha, hb]
+      exact hσ a b (Or.inr ⟨heq, hinner⟩)
+
 /-- Opaque carrier for the extended linear order. Wrapping `Fin n` in a fresh
     structure lets us equip it with the linear-extension order `s` *without*
     clashing with `Fin n`'s standard order — the diamond that would otherwise
@@ -287,8 +373,8 @@ theorem consistentTotalOrders_nonempty (p : PartialOrderConstraints n) :
   let wEquiv : LinExtCarrier n ≃ Fin n :=
     { toFun := LinExtCarrier.toFin, invFun := LinExtCarrier.ofFin,
       left_inv := fun ⟨_⟩ => rfl, right_inv := fun _ => rfl }
-  letI : Fintype (LinExtCarrier n) := Fintype.ofEquiv (Fin n) wEquiv.symm
-  letI : LinearOrder (LinExtCarrier n) :=
+  let : Fintype (LinExtCarrier n) := Fintype.ofEquiv (Fin n) wEquiv.symm
+  let : LinearOrder (LinExtCarrier n) :=
     { le := fun a b => s a.toFin b.toFin
       le_refl := fun a => hs_lin.refl a.toFin
       le_trans := fun a b c => hs_lin.trans a.toFin b.toFin c.toFin
@@ -490,6 +576,96 @@ theorem pocPredict_discrete
     (Finset.univ : Finset (Ranking n)).card := by
   simp only [pocPredict, consistentTotalOrders_discrete]
 
+/-! #### `pocPredict` is a probability distribution -/
+
+theorem pocPredict_nonneg (cands : Input → Finset Output)
+    (vp : Input → Output → Fin n → ℕ) (p : PartialOrderConstraints n)
+    (i : Input) (o : Output) : 0 ≤ pocPredict cands vp p i o :=
+  div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
+
+theorem pocPredict_le_one (cands : Input → Finset Output)
+    (vp : Input → Output → Fin n → ℕ) (p : PartialOrderConstraints n)
+    (i : Input) (o : Output) : pocPredict cands vp p i o ≤ 1 := by
+  unfold pocPredict
+  rw [div_le_one (by exact_mod_cast p.consistentTotalOrders_card_pos)]
+  exact_mod_cast Finset.card_filter_le _ _
+
+/-- A ranking picks at most one output: strict lex domination is asymmetric. -/
+theorem picksAt_unique {cands : Input → Finset Output}
+    {vp : Input → Output → Fin n → ℕ} {σ : Ranking n} {i : Input} {o o' : Output}
+    (h : PicksAt cands vp σ i o) (h' : PicksAt cands vp σ i o') : o = o' := by
+  by_contra hne
+  exact absurd (h'.2 o h.1 hne) (lt_asymm (h.2 o' h'.1 fun heq => hne heq.symm))
+
+omit [DecidableEq Output] in
+/-- With pairwise-distinct violation profiles, every ranking picks some output:
+    the candidate with the lex-minimal permuted profile wins strictly. -/
+theorem exists_picksAt (cands : Input → Finset Output)
+    (vp : Input → Output → Fin n → ℕ) {i : Input}
+    (h_ne : (cands i).Nonempty)
+    (h_inj : ∀ o ∈ cands i, ∀ o' ∈ cands i, vp i o = vp i o' → o = o')
+    (σ : Ranking n) : ∃ o ∈ cands i, PicksAt cands vp σ i o := by
+  obtain ⟨m, hm, hmin⟩ := Finset.exists_min_image (cands i)
+    (fun o => toLex (fun j : Fin n => vp i o (σ j))) h_ne
+  refine ⟨m, hm, hm, fun o' ho' hne' => lt_of_le_of_ne (hmin o' ho') fun heq => hne' ?_⟩
+  have h_fun : (fun j : Fin n => vp i m (σ j)) = fun j => vp i o' (σ j) := toLex_inj.mp heq
+  refine h_inj o' ho' m hm (funext fun c => ?_)
+  have := congrFun h_fun (σ.symm c)
+  simpa using this.symm
+
+/-- **`pocPredict` sums to 1** over any candidate set with pairwise-distinct
+    violation profiles: every consistent ranking picks exactly one winner
+    (`exists_picksAt`, `picksAt_unique`), so the win probabilities form a
+    genuine distribution — for *any* partial order. -/
+theorem sum_pocPredict_eq_one (cands : Input → Finset Output)
+    (vp : Input → Output → Fin n → ℕ) (p : PartialOrderConstraints n) {i : Input}
+    (h_ne : (cands i).Nonempty)
+    (h_inj : ∀ o ∈ cands i, ∀ o' ∈ cands i, vp i o = vp i o' → o = o') :
+    ∑ o ∈ cands i, pocPredict cands vp p i o = 1 := by
+  classical
+  have h_nat : ∑ o ∈ cands i, (p.consistentTotalOrders.filter
+      (fun σ => PicksAt cands vp σ i o)).card = p.consistentTotalOrders.card := by
+    have h_disjoint : (↑(cands i) : Set Output).PairwiseDisjoint
+        (fun o => p.consistentTotalOrders.filter (fun σ => PicksAt cands vp σ i o)) := by
+      intro o _ o' _ hne'
+      simp only [Function.onFun, Finset.disjoint_left, Finset.mem_filter]
+      rintro σ ⟨_, h₁⟩ ⟨_, h₂⟩
+      exact hne' (picksAt_unique h₁ h₂)
+    have h_union : (cands i).biUnion (fun o => p.consistentTotalOrders.filter
+        (fun σ => PicksAt cands vp σ i o)) = p.consistentTotalOrders := by
+      ext σ
+      simp only [Finset.mem_biUnion, Finset.mem_filter]
+      constructor
+      · rintro ⟨o, _, hσ, _⟩; exact hσ
+      · intro hσ
+        obtain ⟨o, ho, hpick⟩ := exists_picksAt cands vp h_ne h_inj σ
+        exact ⟨o, ho, hσ, hpick⟩
+    calc ∑ o ∈ cands i, (p.consistentTotalOrders.filter
+          (fun σ => PicksAt cands vp σ i o)).card
+        = ((cands i).biUnion (fun o => p.consistentTotalOrders.filter
+            (fun σ => PicksAt cands vp σ i o))).card :=
+          (Finset.card_biUnion h_disjoint).symm
+      _ = p.consistentTotalOrders.card := by rw [h_union]
+  unfold pocPredict
+  rw [← Finset.sum_div, ← Nat.cast_sum, h_nat]
+  exact div_self (by exact_mod_cast p.consistentTotalOrders_card_pos.ne')
+
+/-- Binary form of `sum_pocPredict_eq_one`: two distinct candidates with
+    distinct violation profiles split the probability mass. -/
+theorem pocPredict_binary_add_eq_one (cands : Input → Finset Output)
+    (vp : Input → Output → Fin n → ℕ) (p : PartialOrderConstraints n) {i : Input}
+    {o₁ o₂ : Output} (h_two : cands i = {o₁, o₂}) (h_ne : o₁ ≠ o₂)
+    (h_vp : vp i o₁ ≠ vp i o₂) :
+    pocPredict cands vp p i o₁ + pocPredict cands vp p i o₂ = 1 := by
+  have h_inj : ∀ o ∈ cands i, ∀ o' ∈ cands i, vp i o = vp i o' → o = o' := by
+    intro o ho o' ho' hvv
+    rw [h_two, Finset.mem_insert, Finset.mem_singleton] at ho ho'
+    rcases ho with rfl | rfl <;> rcases ho' with rfl | rfl <;>
+      first | rfl | exact absurd hvv h_vp | exact absurd hvv.symm h_vp
+  have h := sum_pocPredict_eq_one cands vp p
+    (by rw [h_two]; exact Finset.insert_nonempty _ _) h_inj
+  rwa [h_two, Finset.sum_pair h_ne] at h
+
 end PartialOrderConstraints
 
 /-! ### Bridge — PicksAt for binary candidates ↔ head-in-Y on permDList -/
@@ -520,8 +696,8 @@ variable {Input : Type*} {n : ℕ}
     constraints distinguishing `chosen` from `other` and `Y` is the
     favoring subset (`vp chosen < vp other`).
 
-    The bridge uses `permDList_head_eq_some_iff` + `permToList_split_at` +
-    `permToList_eq_append_cons_imp_apply` (substrate) to translate
+    The bridge uses `permDList_head_eq_some_iff` + `ofFn_split_at` +
+    `apply_of_ofFn_eq_append_cons` (substrate) to translate
     between the lex `∃k` form and the head-in-Y characterization. -/
 theorem picksAt_binary_iff_permDList_head_lt {Output : Type*} [DecidableEq Output]
     (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
@@ -569,7 +745,7 @@ theorem picksAt_binary_iff_permDList_head_lt {Output : Type*} [DecidableEq Outpu
     refine ⟨σ k, h_σk_Y, ?_⟩
     rw [permDList_head_eq_some_iff]
     refine ⟨h_σk_D, ((List.finRange n).take k.val).map σ,
-            ((List.finRange n).drop (k.val + 1)).map σ, permToList_split_at σ k, ?_⟩
+            ((List.finRange n).drop (k.val + 1)).map σ, ofFn_split_at σ k, ?_⟩
     intro y hy
     obtain ⟨j, h_j_take, h_σj⟩ := List.mem_map.mp hy
     rw [List.mem_take_iff_getElem] at h_j_take
@@ -587,17 +763,17 @@ theorem picksAt_binary_iff_permDList_head_lt {Output : Type*} [DecidableEq Outpu
     rw [permDList_head_eq_some_iff] at h_head
     obtain ⟨h_x_D, pre, suf, h_split, h_pre⟩ := h_head
     have h_pre_len_lt : pre.length < n := by
-      have h_perm_len : (permToList σ).length = n := permToList_length σ
+      have h_perm_len : (List.ofFn ⇑σ).length = n := List.length_ofFn
       rw [h_split] at h_perm_len
       simp [List.length_append, List.length_cons] at h_perm_len
       omega
-    have h_σk_x := permToList_eq_append_cons_imp_apply σ pre suf x h_split h_pre_len_lt
+    have h_σk_x := apply_of_ofFn_eq_append_cons σ pre suf x h_split h_pre_len_lt
     refine ⟨⟨pre.length, h_pre_len_lt⟩, ?_, ?_⟩
     · -- ∀ j < ⟨pre.length, _⟩, vp chosen (σ j) = vp other (σ j)
       intro j h_j_lt
       rw [Fin.lt_def] at h_j_lt
       -- σ j is the j-th element of `((finRange n).take pre.length).map σ` (= pre)
-      have h_split_pre := permToList_split_at σ ⟨pre.length, h_pre_len_lt⟩
+      have h_split_pre := ofFn_split_at σ ⟨pre.length, h_pre_len_lt⟩
       -- Combined: ((take pre.length).map σ) ++ σ ⟨...⟩ :: ((drop _).map σ) = pre ++ x :: suf
       have h_lhs_pre_len : (((List.finRange n).take pre.length).map σ).length = pre.length := by
         rw [List.length_map, List.length_take, List.length_finRange]; omega
@@ -695,6 +871,93 @@ theorem pocPredict_discrete_binary_rate
     ((Y ∩ D).card : ℚ) / (D.card : ℚ) := by
   rw [pocPredict_discrete, Finset.card_univ, Fintype.card_perm, Fintype.card_fin]
   exact picksAt_rate_eq cands vp i chosen other h_two h_ne D Y h_D h_Y
+
+/-! ### Deciding-stratum rate for stratified grammars
+
+For a stratified grammar, a binary competition decided at stratum `k` — the
+variants tie on every earlier stratum and some stratum-`k` constraint
+distinguishes them — reduces to the within-stratum closed form
+`|Y ∩ D| / |D|` over the deciding stratum's distinguishing set, regardless of
+the profiles (and inner rankings) of later strata. This is [anttila-1997]'s
+tableau-count shortcut stated against the full grammar rather than a
+per-stratum sub-grammar: strata below the deciding one never matter, and the
+deciding stratum's free internal ranking is uniform by exchangeability
+(`isConsistent_swap_mul` + `filter_head_in_rate_of_swaps`). -/
+
+/-- On rankings consistent with a stratified order, the first distinguishing
+    constraint overall is the first distinguishing constraint of the deciding
+    stratum: strata before `k` don't distinguish, and constraints of strata
+    after `k` come later in every consistent ranking. -/
+private theorem permDList_head?_of_stratified {s : ℕ} {stratumOf : Fin n → Fin s}
+    {inner : PartialOrderConstraints n} {σ : Ranking n}
+    (hσ : (stratified stratumOf inner).IsConsistent σ) {k : Fin s}
+    {Dfull Dk : Finset (Fin n)}
+    (h_below : ∀ c ∈ Dfull, ¬ stratumOf c < k)
+    (h_at : ∀ c ∈ Dfull, stratumOf c = k → c ∈ Dk)
+    (h_sub : ∀ c ∈ Dk, c ∈ Dfull ∧ stratumOf c = k)
+    (h_ne : Dk.Nonempty) :
+    (permDList σ Dfull).head? = (permDList σ Dk).head? := by
+  obtain ⟨x, hxDk, hx⟩ := exists_permDList_head?_eq_some h_ne σ
+  rw [hx]
+  obtain ⟨-, pre, suf, h_split, h_pre⟩ := (permDList_head_eq_some_iff σ Dk x).mp hx
+  refine (permDList_head_eq_some_iff σ Dfull x).mpr
+    ⟨(h_sub x hxDk).1, pre, suf, h_split, fun y hy hyD => ?_⟩
+  rcases lt_trichotomy (stratumOf y) k with hlt | heq | hgt
+  · exact h_below y hyD hlt
+  · exact h_pre y hy (h_at y hyD heq)
+  · have h1 : σ.symm x < σ.symm y :=
+      hσ.symm_lt_of_stratum_lt (by rw [(h_sub x hxDk).2]; exact hgt)
+    exact absurd (symm_lt_of_ofFn_eq_append_cons σ h_split hy) (asymm h1)
+
+/-- **Deciding-stratum rate**: for binary candidates under a stratified
+    grammar, if the variants tie on every stratum before `k`, the inner order
+    is trivial on stratum `k`, and some stratum-`k` constraint distinguishes
+    them (`h_dec`), then the win probability is the within-stratum closed form
+    `|Y ∩ D| / |D|` — `D` the stratum-`k` distinguishing set, `Y` its
+    `chosen`-favoring subset. Later strata, including any inner rankings among
+    them, cannot affect the outcome. Consumed by `Studies/Anttila1997.lean`,
+    whose six motif competitions run against the full 20-constraint grammar. -/
+theorem pocPredict_stratified_binary_rate {s : ℕ}
+    (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
+    (stratumOf : Fin n → Fin s) (inner : PartialOrderConstraints n)
+    (i : Input) (chosen other : Output)
+    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) (k : Fin s)
+    (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner.rel a b → a = b)
+    (h_above : ∀ c, stratumOf c < k → vp i chosen c = vp i other c)
+    (D Y : Finset (Fin n))
+    (h_D : ∀ c, c ∈ D ↔ stratumOf c = k ∧ vp i chosen c ≠ vp i other c)
+    (h_Y : ∀ c, c ∈ Y ↔ stratumOf c = k ∧ vp i chosen c < vp i other c)
+    (h_dec : D.Nonempty) :
+    pocPredict cands vp (stratified stratumOf inner) i chosen =
+      ((Y ∩ D).card : ℚ) / (D.card : ℚ) := by
+  classical
+  have h_iff : ∀ σ ∈ (stratified stratumOf inner).consistentTotalOrders,
+      (PicksAt cands vp σ i chosen ↔ ∃ x ∈ Y, (permDList σ D).head? = some x) := by
+    intro σ hσ
+    rw [mem_consistentTotalOrders] at hσ
+    rw [picksAt_binary_iff_permDList_head_lt cands vp i chosen other h_two h_ne σ]
+    have h_head : (permDList σ (Finset.univ.filter
+        (fun c => vp i chosen c ≠ vp i other c))).head? = (permDList σ D).head? := by
+      refine permDList_head?_of_stratified (k := k) (Dk := D) hσ (fun c hc hlt => ?_)
+        (fun c hc hck => ?_) (fun c hc => ?_) h_dec
+      · exact (Finset.mem_filter.mp hc).2 (h_above c hlt)
+      · exact (h_D c).mpr ⟨hck, (Finset.mem_filter.mp hc).2⟩
+      · obtain ⟨hck, hne'⟩ := (h_D c).mp hc
+        exact ⟨Finset.mem_filter.mpr ⟨Finset.mem_univ _, hne'⟩, hck⟩
+    rw [h_head]
+    constructor
+    · rintro ⟨x, hxY, hhead⟩
+      have hxD := mem_of_permDList_head?_eq_some hhead
+      exact ⟨x, (h_Y x).mpr ⟨((h_D x).mp hxD).1, (Finset.mem_filter.mp hxY).2⟩, hhead⟩
+    · rintro ⟨x, hxY, hhead⟩
+      exact ⟨x, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ((h_Y x).mp hxY).2⟩, hhead⟩
+  unfold pocPredict
+  rw [Finset.filter_congr h_iff]
+  exact filter_head_in_rate_of_swaps _ D Y
+    (stratified stratumOf inner).consistentTotalOrders_nonempty
+    (fun y₁ h₁ y₂ h₂ σ hσ => by
+      rw [mem_consistentTotalOrders] at hσ ⊢
+      exact isConsistent_swap_mul h_triv ((h_D y₁).mp h₁).1 ((h_D y₂).mp h₂).1 hσ)
 
 /-! ### Bridge to the `Grammar` hub
 
