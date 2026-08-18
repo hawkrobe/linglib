@@ -103,6 +103,20 @@ theorem mem_consistentTotalOrders {r : Fin n → Fin n → Prop} [DecidableRel r
     σ ∈ consistentTotalOrders r ↔ IsConsistent r σ := by
   simp [consistentTotalOrders]
 
+/-- Consistency transports along constraint relabeling: `g * σ` extends `r` iff
+    `σ` extends the `g`-pullback of `r`. -/
+theorem isConsistent_mul_iff {r : Fin n → Fin n → Prop} {g σ : Ranking n} :
+    IsConsistent r (g * σ) ↔ IsConsistent (fun a b => r (g a) (g b)) σ :=
+  ⟨fun h a b hab => by simpa using h (g a) (g b) hab,
+   fun h a b hab => by simpa using h (g⁻¹ a) (g⁻¹ b) (by simpa using hab)⟩
+
+/-- The linear extensions of a grammar are closed under its symmetries: a
+    relabeling that preserves `r` acts on the consistent rankings. -/
+theorem IsConsistent.mul {r : Fin n → Fin n → Prop} {g σ : Ranking n}
+    (hg : ∀ a b, r (g a) (g b) ↔ r a b) (hσ : IsConsistent r σ) :
+    IsConsistent r (g * σ) :=
+  isConsistent_mul_iff.mpr fun a b hab => hσ a b ((hg a b).mp hab)
+
 /-! ### Grounding in the ERC lex API
 
 A partial order is a set of dominance requirements — each strict related pair
@@ -175,6 +189,8 @@ grammar of [anttila-1997] eq. (50) — the Stratified Domination Hierarchy of
 
 variable {s : ℕ}
 
+section Stratified
+
 /-- The stratified grammar induced by `stratumOf` and an inner order `inner` —
     mathlib's lexicographic order (`Prod.Lex`) pulled back along
     `a ↦ (stratumOf a, a)`: strata compare strictly, ties defer to `inner`.
@@ -184,42 +200,40 @@ def stratified (stratumOf : Fin n → Fin s) (inner : Fin n → Fin n → Prop) 
     Fin n → Fin n → Prop :=
   fun a b => Prod.Lex (· < ·) inner (stratumOf a, a) (stratumOf b, b)
 
+variable {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop} {k : Fin s}
+  {d d' : Fin n} {σ : Ranking n}
+
 /-- Dominance in a stratified grammar holds iff a's stratum strictly precedes
     b's, or they share a stratum and the inner order relates them. -/
-theorem stratified_iff {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
-    {a b : Fin n} :
+theorem stratified_iff {a b : Fin n} :
     stratified stratumOf inner a b ↔
       stratumOf a < stratumOf b ∨ stratumOf a = stratumOf b ∧ inner a b :=
   Prod.lex_iff
 
-instance (stratumOf : Fin n → Fin s) (inner : Fin n → Fin n → Prop)
-    [IsPartialOrder (Fin n) inner] :
+instance [IsPartialOrder (Fin n) inner] :
     IsPartialOrder (Fin n) (stratified stratumOf inner) where
   refl a := Prod.Lex.right _ (refl_of inner a)
   trans _ _ _ := Prod.Lex.trans
   antisymm _ _ hab hba := congrArg Prod.snd (antisymm hab hba)
 
-instance (stratumOf : Fin n → Fin s) (inner : Fin n → Fin n → Prop)
-    [DecidableRel inner] : DecidableRel (stratified stratumOf inner) :=
+instance [DecidableRel inner] : DecidableRel (stratified stratumOf inner) :=
   fun _ _ => decidable_of_iff _ stratified_iff.symm
 
 /-- Under a stratified grammar, an earlier-stratum constraint occupies a
     strictly earlier position in every consistent ranking. -/
-theorem IsConsistent.symm_lt_of_stratum_lt {stratumOf : Fin n → Fin s}
-    {inner : Fin n → Fin n → Prop} {σ : Ranking n}
+theorem IsConsistent.symm_lt_of_stratum_lt
     (hσ : IsConsistent (stratified stratumOf inner) σ) {a b : Fin n}
     (h : stratumOf a < stratumOf b) : σ.symm a < σ.symm b :=
   lt_of_le_of_ne (hσ a b (stratified_iff.mpr (Or.inl h)))
     (fun heq => absurd (σ.symm.injective heq ▸ h) (lt_irrefl _))
 
-/-- Consistent rankings of a stratified grammar are closed under swapping two
-    constraints of a stratum on which the inner order is trivial. -/
-theorem isConsistent_swap_mul {stratumOf : Fin n → Fin s}
-    {inner : Fin n → Fin n → Prop} {k : Fin s}
+/-- Swapping two constraints of a stratum on which the inner order is trivial
+    is a symmetry of the stratified grammar. -/
+theorem stratified_swap_apply_iff [Std.Refl inner]
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
-    {d d' : Fin n} (hd : stratumOf d = k) (hd' : stratumOf d' = k)
-    {σ : Ranking n} (hσ : IsConsistent (stratified stratumOf inner) σ) :
-    IsConsistent (stratified stratumOf inner) (Equiv.swap d d' * σ) := by
+    (hd : stratumOf d = k) (hd' : stratumOf d' = k) (a b : Fin n) :
+    stratified stratumOf inner (Equiv.swap d d' a) (Equiv.swap d d' b) ↔
+      stratified stratumOf inner a b := by
   have h_str : ∀ x, stratumOf (Equiv.swap d d' x) = stratumOf x := by
     intro x
     rcases eq_or_ne x d with rfl | hxd
@@ -227,26 +241,32 @@ theorem isConsistent_swap_mul {stratumOf : Fin n → Fin s}
     rcases eq_or_ne x d' with rfl | hxd'
     · rw [Equiv.swap_apply_right, hd, hd']
     · rw [Equiv.swap_apply_of_ne_of_ne hxd hxd']
-  intro a b hab
-  rw [stratified_iff] at hab
-  have h_symm : ∀ x, (Equiv.swap d d' * σ).symm x = σ.symm (Equiv.swap d d' x) := by
-    intro x
-    rw [Equiv.Perm.mul_def, Equiv.symm_trans_apply, Equiv.symm_swap]
-  show (Equiv.swap d d' * σ).symm a ≤ (Equiv.swap d d' * σ).symm b
-  rw [h_symm a, h_symm b]
-  rcases hab with hlt | ⟨heq, hinner⟩
-  · exact hσ _ _ (stratified_iff.mpr (Or.inl (by rw [h_str a, h_str b]; exact hlt)))
-  · rcases eq_or_ne (stratumOf a) k with hk | hk
-    · obtain rfl : a = b := h_triv a b hk (heq ▸ hk) hinner
-      exact le_refl _
-    · have ha : Equiv.swap d d' a = a :=
-        Equiv.swap_apply_of_ne_of_ne (fun h => hk (by rw [h]; exact hd))
-          (fun h => hk (by rw [h]; exact hd'))
-      have hb : Equiv.swap d d' b = b :=
-        Equiv.swap_apply_of_ne_of_ne (fun h => (heq ▸ hk) (by rw [h]; exact hd))
-          (fun h => (heq ▸ hk) (by rw [h]; exact hd'))
-      rw [ha, hb]
-      exact hσ a b (stratified_iff.mpr (Or.inr ⟨heq, hinner⟩))
+  rw [stratified_iff, stratified_iff, h_str a, h_str b]
+  refine or_congr Iff.rfl (and_congr_right fun heq => ?_)
+  rcases eq_or_ne (stratumOf a) k with hk | hk
+  · constructor
+    · intro h
+      obtain h' : a = b := (Equiv.swap d d').injective
+        (h_triv _ _ ((h_str a).trans hk) ((h_str b).trans (heq ▸ hk)) h)
+      exact h' ▸ refl_of inner a
+    · intro h
+      obtain rfl : a = b := h_triv a b hk (heq ▸ hk) h
+      exact refl_of inner _
+  · rw [Equiv.swap_apply_of_ne_of_ne (fun h => hk (by rw [h]; exact hd))
+        (fun h => hk (by rw [h]; exact hd')),
+      Equiv.swap_apply_of_ne_of_ne (fun h => (heq ▸ hk) (by rw [h]; exact hd))
+        (fun h => (heq ▸ hk) (by rw [h]; exact hd'))]
+
+/-- Consistent rankings of a stratified grammar are closed under swapping two
+    constraints of a stratum on which the inner order is trivial. -/
+theorem isConsistent_swap_mul [Std.Refl inner]
+    (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
+    (hd : stratumOf d = k) (hd' : stratumOf d' = k)
+    (hσ : IsConsistent (stratified stratumOf inner) σ) :
+    IsConsistent (stratified stratumOf inner) (Equiv.swap d d' * σ) :=
+  hσ.mul (stratified_swap_apply_iff h_triv hd hd')
+
+end Stratified
 
 /-! ### Szpilrajn — every grammar has a consistent linear extension -/
 

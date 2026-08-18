@@ -104,6 +104,10 @@ theorem toRel_iff_dominates {i j : Fin n} (hij : i ≠ j) :
   rw [toRel_iff]
   simp [hij]
 
+/-- Relabeling constraints by `g` pulls the induced order back along `g⁻¹`. -/
+@[simp] theorem toRel_mul (g σ : Ranking n) (i j : Fin n) :
+    (g * σ).toRel i j ↔ σ.toRel (g⁻¹ i) (g⁻¹ j) := Iff.rfl
+
 variable {r} {σ τ : Ranking n}
 
 /-- A ranking is recoverable from its induced total order. -/
