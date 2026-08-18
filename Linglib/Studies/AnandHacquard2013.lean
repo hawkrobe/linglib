@@ -1,68 +1,161 @@
-import Linglib.Semantics.Attitudes.Representationality
 import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Semantics.Attitudes.Doxastic
+import Linglib.Semantics.Mood.Defs
 import Linglib.Pragmatics.Emotion
 
 /-!
-# Anand & Hacquard (2013): Epistemics and Attitudes
-[anand-hacquard-2013]
+# Anand & Hacquard 2013: epistemics and attitudes
 
-*Semantics & Pragmatics* 6, Article 8: 1–59.
+[anand-hacquard-2013] (*Semantics & Pragmatics* 6:8) survey the
+distribution of epistemic modals in the complements of attitude verbs
+across French, Italian, and Spanish: epistemics are fully acceptable
+under attitudes of acceptance (doxastics, argumentatives,
+semifactives), degraded under desideratives and directives, and
+emotive doxastics (*hope*, *fear*) and dubitatives (*doubt*) show a
+mixed pattern — possibility but not necessity.
 
-## Summary
+The account combines two proposals. Epistemics quantify over an
+information state parameter obtained by anaphora to the embedding
+attitude ([yalcin-2007], [hacquard-2006]); attitudes split by
+*representationality* ([bolinger-1968]): representational attitudes
+convey a mental picture and so provide an information state
+S = DOX(x,w), non-representational ones combine with their complement
+by comparative preference semantics ([villalta-2008]) and provide
+none, and hybrids have both components — the representational
+component licenses possibility epistemics while the uncertainty
+condition blocks necessity. `Representationality`, `AttitudeClass`,
+and `LicensesEpistemic` render the classification, and
+`theory_matches_data` checks the prediction against the paper's
+pooled acceptability survey.
 
-This paper investigates the distribution of epistemic modals (might, must)
-in the complements of attitude verbs across French, Italian, and Spanish.
-The central finding:
-
-1. Epistemics are fully acceptable under **attitudes of acceptance**
-   (doxastics, argumentatives, semifactives) but degraded under
-   **desideratives** and **directives**.
-
-2. **Emotive doxastics** (hope, fear) and **dubitatives** (doubt) show a
-   mixed pattern: they license epistemic *possibility* (might) but not
-   epistemic *necessity* (must).
-
-## Proposal
-
-Two proposals are combined:
-
-**About epistemics** ([yalcin-2007], [hacquard-2006]): Epistemics
-quantify over an information state parameter S, obtained by anaphora
-to the embedding attitude.
-
-**About attitudes** ([bolinger-1968], [villalta-2008]):
-- Representational attitudes (believe, say, know) provide an information
-  state S = DOX(x,w) — epistemics are licensed.
-- Non-representational attitudes (want, demand) use comparative
-  semantics with S = ∅ — epistemics are trivial/contradictory.
-- Hybrid attitudes (hope, fear, doubt) have both components: the
-  representational component licenses possibility epistemics, but the
-  uncertainty condition blocks necessity epistemics.
-
-## Connection to BToM
-
-The hybrid structure of emotive doxastics maps directly onto BToM
-inference ([baker-jara-ettinger-saxe-tenenbaum-2017]):
-- Doxastic component = belief marginal P(b | a)
-- Preference component = desire marginal P(d | a)
-- Uncertainty condition = non-extreme credence
-
-This bridges [anand-hacquard-2013]'s attitude semantics with
-[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]'s emotion
-appraisal architecture: emotive doxastics ARE prospective emotions
-computed from BToM marginals.
+The final section maps the hybrid structure onto Bayesian
+theory-of-mind inference ([baker-jara-ettinger-saxe-tenenbaum-2017];
+[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]): the doxastic,
+preference, and uncertainty components are the belief marginal, the
+desire marginal, and non-extreme credence of a prospective emotion.
 -/
 
 namespace AnandHacquard2013
 
-open Semantics.Attitudes.Representationality
 open Preferential
 open Doxastic
 
--- ════════════════════════════════════════════════════════════════
--- § 1. Empirical Data: Acceptability Ratings (Table 4)
--- ════════════════════════════════════════════════════════════════
+/-! ### The representationality classification -/
+
+/-- Classification of attitude semantics by representationality: an
+    attitude is representational iff its semantics provides a
+    non-trivial information state that embedded epistemics can be
+    anaphoric to (§3). -/
+inductive Representationality where
+  /-- Provides the information state S = DOX(x,w): doxastics,
+      argumentatives, semifactives. -/
+  | representational
+  /-- No information state: desideratives and directives, whose
+      comparative semantics ([villalta-2008]) supplies S = ∅. -/
+  | nonRepresentational
+  /-- Both components: a representational component providing DOX and
+      a preference component ordering alternatives — emotive
+      doxastics and dubitatives. -/
+  | hybrid
+  deriving DecidableEq, Repr
+
+/-- An attitude with a representational component provides an
+    information state that epistemics can quantify over. -/
+def Representationality.HasInformationState : Representationality → Prop
+  | .representational => True
+  | .nonRepresentational => False
+  | .hybrid => True
+
+instance : DecidablePred Representationality.HasInformationState := fun r => by
+  cases r <;> unfold Representationality.HasInformationState <;> infer_instance
+
+/-- An attitude with a preference component uses comparative
+    semantics. -/
+def Representationality.HasPreferenceComponent : Representationality → Prop
+  | .representational => False
+  | .nonRepresentational => True
+  | .hybrid => True
+
+instance : DecidablePred Representationality.HasPreferenceComponent := fun r => by
+  cases r <;> unfold Representationality.HasPreferenceComponent <;> infer_instance
+
+/-- Epistemic modal force. -/
+inductive EpistemicForce where
+  /-- *might*, *may* (∃ over the information state). -/
+  | possibility
+  /-- *must*, *have to* (∀ over the information state). -/
+  | necessity
+  deriving DecidableEq, Repr
+
+/-- The central prediction: representational attitudes license both
+    forces, non-representational ones neither (the trivial modal base
+    yields tautology or contradiction), and hybrids license
+    possibility only — the uncertainty condition contradicts
+    universal quantification over DOX. -/
+def Representationality.LicensesEpistemic :
+    Representationality → EpistemicForce → Prop
+  | .representational,    _             => True
+  | .nonRepresentational, _             => False
+  | .hybrid,              .possibility  => True
+  | .hybrid,              .necessity    => False
+
+instance : ∀ r f, Decidable (Representationality.LicensesEpistemic r f) := fun r f => by
+  cases r <;> cases f <;> unfold Representationality.LicensesEpistemic <;> infer_instance
+
+/-- Epistemic licensing requires an information state. -/
+theorem licensing_requires_information_state (r : Representationality)
+    (f : EpistemicForce) (h : r.LicensesEpistemic f) :
+    r.HasInformationState := by
+  cases r <;> cases f <;> trivial
+
+/-- The seven attitude classes of the survey. -/
+inductive AttitudeClass where
+  /-- *believe*, *think*, *suppose*. -/
+  | doxastic
+  /-- *say*, *argue*, *conclude*. -/
+  | argumentative
+  /-- *know*, *realize*, *discover*. -/
+  | semifactive
+  /-- *want*, *wish*. -/
+  | desiderative
+  /-- *demand*, *order*, *require*. -/
+  | directive
+  /-- *hope*, *fear*. -/
+  | emotiveDoxastic
+  /-- *doubt*. -/
+  | dubitative
+  deriving DecidableEq, Repr
+
+/-- The representationality of each attitude class. -/
+def AttitudeClass.representationality : AttitudeClass → Representationality
+  | .doxastic        => .representational
+  | .argumentative   => .representational
+  | .semifactive     => .representational
+  | .desiderative    => .nonRepresentational
+  | .directive       => .nonRepresentational
+  | .emotiveDoxastic => .hybrid
+  | .dubitative      => .hybrid
+
+/-- Epistemic licensing for an attitude class, via its
+    representationality. -/
+def AttitudeClass.LicensesEpistemic (c : AttitudeClass)
+    (f : EpistemicForce) : Prop :=
+  c.representationality.LicensesEpistemic f
+
+instance : ∀ c f, Decidable (AttitudeClass.LicensesEpistemic c f) := fun c f => by
+  unfold AttitudeClass.LicensesEpistemic; infer_instance
+
+/-- The mood-selection correlate (§6): subjunctive tracks the
+    preference component and indicative representationality, so the
+    correlation with epistemic licensing is strong but imperfect —
+    hybrids license possibility epistemics and select subjunctive. -/
+def Representationality.fromSelector : Mood.Selector → Representationality
+  | .indicativeSelecting         => .representational
+  | .subjunctiveSelecting        => .nonRepresentational
+  | .crossLinguisticallyVariable => .hybrid
+  | .moodNeutral                 => .representational
+
+/-! ### Empirical Data: Acceptability Ratings (Table 4) -/
 
 /-!
 ## Cross-Romance Survey Data
@@ -84,10 +177,10 @@ The critical contrasts:
 - Des/directive: might ≈ must (both low)
 - Emotive doxastic/dubitative: might >> must
 
-We use `AttitudeClass` from Representationality.lean directly (7 classes)
-rather than defining a study-local enum. The survey collapses some
-classes (doxastics ≈ argumentatives, desideratives ≈ directives), but the
-theory predicts the same licensing for collapsed classes — which we verify.
+The survey collapses some classes (doxastics ≈ argumentatives,
+desideratives ≈ directives), but the theory predicts the same
+licensing for collapsed classes — verified cell by cell in
+`theory_matches_data`.
 -/
 
 /-- Acceptability judgment: acceptable (median ≥ 5) or degraded. -/
@@ -115,16 +208,13 @@ def observedAcceptability : AttitudeClass → EpistemicForce → Acceptability
   | .dubitative,      .possibility  => .acceptable
   | .dubitative,      .necessity    => .degraded
 
-/-- Predicted licensing derived from `AttitudeClass.licensesEpistemic`
-(Representationality.lean). No stipulation — the prediction follows
-from the representationality classification. -/
+/-- Predicted licensing: the prediction follows from the
+representationality classification, not per-cell stipulation. -/
 def predictedAcceptability (att : AttitudeClass) (force : EpistemicForce) :
     Acceptability :=
   if att.LicensesEpistemic force then .acceptable else .degraded
 
--- ════════════════════════════════════════════════════════════════
--- § 2. Theory Matches Data
--- ════════════════════════════════════════════════════════════════
+/-! ### Theory Matches Data -/
 
 /-- The representationality theory correctly predicts all 14 cells
 (7 attitude classes × 2 epistemic forces). -/
@@ -134,9 +224,7 @@ theorem theory_matches_data :
   intro att force
   cases att <;> cases force <;> rfl
 
--- ════════════════════════════════════════════════════════════════
--- § 3. Information State Semantics (Yalcin's S parameter)
--- ════════════════════════════════════════════════════════════════
+/-! ### Information State Semantics (Yalcin's S parameter) -/
 
 /-!
 ## Epistemic Modals as Information-State Quantifiers
@@ -200,9 +288,7 @@ theorem might_empty (φ : W → Prop) : ¬ mightS ([] : InfoState W) φ := by
 theorem must_empty (φ : W → Prop) : mustS ([] : InfoState W) φ := by
   simp [mustS]
 
--- ════════════════════════════════════════════════════════════════
--- § 4. Attitude Embedding: S-Update
--- ════════════════════════════════════════════════════════════════
+/-! ### Attitude Embedding: S-Update -/
 
 /-- Representational attitude embedding: S' = DOX(x,w).
     The doxastic alternatives form the information state that
@@ -235,9 +321,7 @@ theorem nonRepresentational_trivial :
     ¬ nonTrivial (nonRepresentationalS : InfoState W) := by
   simp [nonTrivial, nonRepresentationalS]
 
--- ════════════════════════════════════════════════════════════════
--- § 5. Deriving the Distribution
--- ════════════════════════════════════════════════════════════════
+/-! ### Deriving the Distribution -/
 
 /-- Under a representational attitude, embedded `must p` holds iff
     all doxastic alternatives satisfy p — a non-trivial claim. -/
@@ -319,9 +403,7 @@ theorem might_concord {E : Type*} (R : E → W → W → Prop)
       (fun _ => mightS (representationalS R agent w worlds) p) :=
   let ⟨w', hw', _⟩ := h; ⟨w', hw', h⟩
 
--- ════════════════════════════════════════════════════════════════
--- § 6. Emotive Doxastic Finite Model
--- ════════════════════════════════════════════════════════════════
+/-! ### Emotive Doxastic Finite Model -/
 
 /-!
 ## Concrete Demonstration
@@ -385,9 +467,7 @@ theorem john_uncertain :
     mightS johnS (fun w => ¬ isRaining w) := by
   exact ⟨by decide, by decide⟩
 
--- ════════════════════════════════════════════════════════════════
--- § 7. BToM Connection: Prospective Emotions = Emotive Doxastics
--- ════════════════════════════════════════════════════════════════
+/-! ### BToM Connection: Prospective Emotions = Emotive Doxastics -/
 
 /-!
 ## The BToM–Emotive Doxastic Bridge
