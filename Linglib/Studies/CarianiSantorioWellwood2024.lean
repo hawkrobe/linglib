@@ -57,7 +57,7 @@ witnesses the central cross-framework disagreement against
 namespace CarianiSantorioWellwood2024
 
 open Degree
-open Semantics.Attitudes.Confidence
+open Confidence
 open EpistemicThreshold (IsProbabilistic meetsThreshold prob_conjunction_elim)
 
 /-! ## §1. Felicity Gradient

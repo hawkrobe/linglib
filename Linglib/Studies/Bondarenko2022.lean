@@ -62,9 +62,7 @@ in `Bondarenko2022.Examples`, generated from `Data/Examples/Bondarenko2022.json`
 
 namespace Bondarenko2022
 
-open Semantics.Attitudes (ContentIndividual)
-open Semantics.Attitudes (SituationIndividual)
-open Semantics.Attitudes.Anchor (comp)
+open Anchor (comp)
 
 /-! ### Nominal sorts -/
 

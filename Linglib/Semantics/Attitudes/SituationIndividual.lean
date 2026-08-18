@@ -28,8 +28,6 @@ situation-selecting verbs ([angelopoulos-2026], following
 language-specific and not assumed here.
 -/
 
-namespace Semantics.Attitudes
-
 /-- A situation individual: a first-class entity referring to a situation,
     the situation-sort sibling of `ContentIndividual`. The `sit` field is
     the situation predicate `SIT`: the set of situations the entity refers
@@ -47,4 +45,3 @@ abbrev SituationVerb (S X : Type*) := X → SituationIndividual S → S → Prop
 instance {S : Type*} : Anchor (SituationIndividual S) S :=
   ⟨SituationIndividual.sit⟩
 
-end Semantics.Attitudes

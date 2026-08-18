@@ -29,8 +29,6 @@ content, `entails`). Identity is strictly stronger:
 `eq_implies_entails` and the counterexample `entails_not_implies_eq`.
 -/
 
-namespace Semantics.Attitudes
-
 /-- A content individual: a first-class mental state carrying propositional
     content. The `cont` field is [kratzer-2006]'s CONT function.
 
@@ -81,4 +79,3 @@ theorem entails_not_implies_eq :
 
 end ContentIndividual
 
-end Semantics.Attitudes
