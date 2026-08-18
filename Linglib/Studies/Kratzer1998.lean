@@ -1,4 +1,4 @@
-import Linglib.Semantics.Tense.SOT.Decomposition
+import Linglib.Semantics.Tense.Decomposition
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.German.Tense
 import Linglib.Data.Examples.Schema
@@ -15,7 +15,7 @@ tense–pronoun analogy in three directions: an aspect-based decomposition
 of English simple past, SOT deletion via zero tenses, and zero forms with
 locality constraints. The substrate machinery (deletion mechanism +
 Kratzer-named lexical entries used by Fragments) is at
-`Semantics/Tense/SOT/Decomposition.lean`; this study file
+`Semantics/Tense/Decomposition.lean`; this study file
 collects the paper-anchored cross-references and the empirical chain
 theorems connecting Fragments → Theory → Data → Empirical judgments.
 
@@ -23,7 +23,7 @@ theorems connecting Fragments → Theory → Data → Empirical judgments.
 
 The `kratzerEnglishPast` / `kratzerGermanPreterit` / `kratzerZeroTense`
 lexical entries live at the Theories layer
-(`Tense/SOT/Decomposition.lean`) because
+(`Tense/Decomposition.lean`) because
 `Fragments/{English,German,Italian}/Tense.lean` consume them via the
 `Fragments → Theories` import direction. The "Fragments import
 Theories, never Studies" layering discipline forces the substrate
@@ -55,7 +55,7 @@ open Time
 
 namespace Kratzer1998
 
-open Tense.SOT.Decomposition
+open Tense.Decomposition
 open Tense
 open Data.Examples (LinguisticExample)
 
@@ -127,7 +127,7 @@ theorem german_perfekt_chain :
 /-- **Zero tense surface properties.** Per Kratzer §4 (p. 10–11):
     English has two indexical tenses (present, past) and a zero tense.
     The substrate lemmas `zero_tense_is_present` and `zero_tense_overtness`
-    in `Tense/SOT/Decomposition.lean` carry the underlying claims; this
+    in `Tense/Decomposition.lean` carry the underlying claims; this
     theorem just binds them locally for cross-reference. -/
 theorem zero_tense_chain :
     (kratzerZeroTense 1).constraint = Tense.present ∧
@@ -144,7 +144,7 @@ end KratzerChain
     and that frame is PRESENT relative to the shifted perspective. The two
     accounts provably agree on the core past-under-past simultaneous cell;
     they differ in mechanism (deletion of a genuine PAST vs a bound zero
-    PRESENT — see `Tense.SOT.Ambiguity.PastReading` for the typed
+    PRESENT — see `Ogihara1996.PastReading` for the typed
     mechanism-level divergence). -/
 theorem deletion_agrees_with_zero_tense_binding {Time : Type*}
     (m : ReichenbachFrame Time) :
@@ -157,6 +157,6 @@ theorem deletion_agrees_with_zero_tense_binding {Time : Type*}
 The contrast theorems with Ogihara, Sharvit, von Stechow, Klecha are
 intentionally not yet landed; substrate is ready (`applyDeletion`,
 `sotDeletionApplicable`, the kratzer-named lexical entries are all
-exported from `Tense/SOT/Decomposition.lean`). -/
+exported from `Tense/Decomposition.lean`). -/
 
 end Kratzer1998

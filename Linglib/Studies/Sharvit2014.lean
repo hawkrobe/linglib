@@ -1,6 +1,6 @@
 import Linglib.Semantics.Tense.LexicalType
 import Linglib.Semantics.Tense.TemporalConnectives.Before
-import Linglib.Semantics.Tense.SOT.Decomposition
+import Linglib.Semantics.Tense.Decomposition
 
 /-!
 # [sharvit-2014]: On the universal principles of tense embedding
@@ -38,7 +38,7 @@ namespace Sharvit2014
 
 open Tense (LexicalType)
 open Tense.TemporalConnectives.Before (triggersIPFInBefore)
-open Tense.SOT.Decomposition (sotDeletionApplicable)
+open Tense.Decomposition (sotDeletionApplicable)
 
 /-! ### The parameter space ((98)) -/
 

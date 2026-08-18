@@ -1,4 +1,4 @@
-import Linglib.Semantics.Tense.SOT.Decomposition
+import Linglib.Semantics.Tense.Decomposition
 
 /-!
 # German Tense Fragment
@@ -30,7 +30,7 @@ open Tense
 namespace German.Tense
 
 open _root_.Tense
-open _root_.Tense.SOT.Decomposition
+open _root_.Tense.Decomposition
 
 -- ════════════════════════════════════════════════════
 -- § 1. Kratzer Decomposition Entries

@@ -1,6 +1,5 @@
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Semantics.Tense.Basic
-import Linglib.Semantics.Tense.Sequence.Basic
 import Linglib.Fragments.Hungarian.Predicates
 
 /-!
@@ -48,10 +47,126 @@ the two Hungarian clause types reproduce the two values of the binary
 namespace Egressy2026
 
 open Tense (EmbeddedTenseReading SOTParameter availableReadings)
-open SequenceOfTense
 open Core.Order (notAfter before after unrestricted overlapping)
 open Minimalist
 open Hungarian.Predicates
+
+
+/-! ### The licensing interface
+
+Past-under-past embeddings have a simultaneous and a backward-shifted reading
+(and, with an intervening future, a forward-shifted one). Rival accounts —
+relational/feature ([kauf-zeijlstra-2018]), deletion ([ogihara-2019]),
+res-movement de re, clause-size ([egressy-2026]) — disagree only about *when
+each reading is licensed*, not about what a reading is: a reading is which
+comparison atom (`Core.Order`) the embedded reference time bears to its
+anchor. `Tense.embeddedFrame` puts the anchor at the matrix event time, so the
+three readings are exactly the frame predicates (`isPast_iff_atom` and kin).
+
+A licensing theory is one `LocalLicense` — off an immediately containing
+clause and the clause it contains, which atoms are licensed; `profile` folds a
+license **pairwise** along the c-command chain, so an intervening tense
+re-anchors. -/
+
+/-- A node in an embedding chain: a clause's morphological tense as a relative
+    comparison cell (past = `notAfter`, the ≤ of [kauf-zeijlstra-2018]) and
+    its framework-neutral size grade (a Minimalist clause provides it as
+    `ClauseSpine.fLevel`). -/
+structure Node where
+  /-- The clause's tense as a relative comparison cell to its anchor. -/
+  tense : Finset Ordering
+  /-- The clause's framework-neutral size grade. -/
+  size  : ℕ
+
+/-- A licensing theory: given a containing clause and the clause it
+    immediately contains, which comparison atoms hold between the contained
+    reference time and its anchor. -/
+abbrev LocalLicense := Node → Node → Finset Ordering
+
+/-- Compose a license pairwise along the c-command chain (matrix first): the
+    licensed reading-set at each embedding level. Adjacency-local — not a fold
+    or product — so an intervening tense re-anchors and blocking propagates
+    ([ogihara-1996]'s past-under-*will*-under-past). -/
+def profile (L : LocalLicense) : Node → List Node → List (Finset Ordering)
+  | _, []        => []
+  | a, c :: rest => L a c :: profile L c rest
+
+/-- The simultaneous reading is licensed iff the `eq` atom is. -/
+def Simultaneous   (s : Finset Ordering) : Prop := Ordering.eq ∈ s
+/-- The backward-shifted reading is licensed iff the `lt` atom is. -/
+def Backshifted    (s : Finset Ordering) : Prop := Ordering.lt ∈ s
+/-- The forward-shifted reading is licensed iff the `gt` atom is. -/
+def ForwardShifted (s : Finset Ordering) : Prop := Ordering.gt ∈ s
+
+instance (s : Finset Ordering) : Decidable (Simultaneous s) :=
+  inferInstanceAs (Decidable (Ordering.eq ∈ s))
+instance (s : Finset Ordering) : Decidable (Backshifted s) :=
+  inferInstanceAs (Decidable (Ordering.lt ∈ s))
+instance (s : Finset Ordering) : Decidable (ForwardShifted s) :=
+  inferInstanceAs (Decidable (Ordering.gt ∈ s))
+
+section Realization
+
+/-! For an embedded frame whose perspective time is the matrix event time
+(`Tense.embeddedFrame`), the licensed atom is its `R`-vs-`P` comparison, and
+the three named readings are exactly `ReichenbachFrame.isPast/isPresent/isFuture`. -/
+
+open Core.Order
+
+variable {T : Type*} [LinearOrder T]
+
+theorem isPast_iff_atom (f : Time.ReichenbachFrame T) :
+    f.isPast ↔ compare f.referenceTime f.perspectiveTime = Ordering.lt := by
+  simp [Time.ReichenbachFrame.isPast, holds, Tense.past, before]
+
+theorem isPresent_iff_atom (f : Time.ReichenbachFrame T) :
+    f.isPresent ↔ compare f.referenceTime f.perspectiveTime = Ordering.eq := by
+  simp [Time.ReichenbachFrame.isPresent]
+
+theorem isFuture_iff_atom (f : Time.ReichenbachFrame T) :
+    f.isFuture ↔ compare f.referenceTime f.perspectiveTime = Ordering.gt := by
+  simp [Time.ReichenbachFrame.isFuture, holds, Tense.future, after]
+
+end Realization
+
+/-- Generic *size gate*: an opaque clause (size not below `boundary`) loses
+    the simultaneous (`eq`) atom; a transparent one keeps the full relative
+    tense. This is the size half of a clause-size SOT account; it is **not**
+    by itself the [egressy-2026] license, which also requires an agreeing past
+    (`LocalLicense.gate`, `egressyLicense`). On uniformly past-under-past data
+    the two coincide; they diverge once an intervening future appears. -/
+def sizeGatedLicense (boundary : ℕ) : LocalLicense :=
+  fun _ c => if c.size < boundary then c.tense else c.tense.erase .eq
+
+/-- Refine a license by an extra gate: keep its reading set, but drop the
+    simultaneous atom `.eq` wherever the gate fails. A theory composes its
+    licensing conditions as successive gates — the SOT rule is a size gate
+    refined by an agreeing-past gate, i.e. `(sizeGatedLicense b).gate agreeingPast`. -/
+def LocalLicense.gate (L : LocalLicense) (g : Node → Node → Bool) : LocalLicense :=
+  fun a c => if g a c then L a c else (L a c).erase Ordering.eq
+
+/-! ### Pragmatic narrowing (layer 2: a constraint on the grammatical reading set)
+
+Grammar (a `LocalLicense`) emits the *grammatically available* reading set; a
+pragmatic inference then *narrows* it — direct perception (one cannot perceive
+a past event), a cessation implicature, etc. A narrowing is **intersection
+with a context-conditioned constraint** (a further point-algebra relation), so
+it can only *remove* readings, never license a new one — the grammar/pragmatics
+boundary, free from `Finset.inter_subset_left` rather than a stipulated law.
+The context `C` is whatever the inference consults. -/
+
+/-- A pragmatic narrowing: the point-algebra constraint it imposes, as a
+    function of the context the inference consults. -/
+abbrev Narrowing (C : Type*) := C → Finset Ordering
+
+/-- Narrow a grammatically-licensed reading set: intersect with the constraint. -/
+def Narrowing.apply {C : Type*} (n : Narrowing C) (ctx : C) (s : Finset Ordering) :
+    Finset Ordering := s ∩ n ctx
+
+/-- Pragmatics filters, never licenses: narrowing only removes readings. -/
+theorem Narrowing.apply_subset {C : Type*} (n : Narrowing C) (ctx : C)
+    (s : Finset Ordering) : n.apply ctx s ⊆ s :=
+  Finset.inter_subset_left
 
 
 /-! ### The two clause types and their size -/
@@ -124,10 +239,10 @@ theorem sot_opaque_above_say (cs : ComplementSize)
 
 /-! ### The Egressy license and the predictions
 
-The Sequence-of-Tense rule is a `SequenceOfTense.LocalLicense`: the `Say`-boundary
-size gate, refined by an agreeing-past gate (SOT deletion needs an agreeing
-`PAST`). Built from the shared schemas, so the predictions are the foundation's
-`Simultaneous`/`Backshifted`, not a study-local reading function. -/
+The Sequence-of-Tense rule is a `LocalLicense`: the `Say`-boundary size gate,
+refined by an agreeing-past gate (SOT deletion needs an agreeing `PAST`). The
+predictions are the interface's `Simultaneous`/`Backshifted` over licensed
+atom sets, not a bespoke reading function. -/
 
 /-- The `Say` boundary: the `Say` layer's grade on the clause-size scale. -/
 def sayBoundary : ℕ := ComplementSize.sayP.fLevel
@@ -288,8 +403,8 @@ theorem ex11_verb_from_fragment : ex11_mond.matrixVerb = mond.formPastDef := rfl
 
 For the direct-perception examples (4)–(6) the back-shifted reading is excluded
 for *pragmatic* reasons — one cannot directly perceive a past event — even
-though it is grammatically available (`nonSpeech_both`). This is the layer-2
-`Narrowing` from the foundation: direct perception intersects the grammatical
+though it is grammatically available (`nonSpeech_both`). This is a layer-2
+`Narrowing`: direct perception intersects the grammatical
 reading set with the `overlapping` (=) constraint, leaving simultaneous-only
 (`direct_perception_narrows`). -/
 
@@ -321,8 +436,8 @@ theorem direct_perception_narrows :
 /-! ### Multiple embedding and locality ([egressy-2026], §2.3)
 
 Simultaneity is computed **locally** between structurally adjacent clauses
-([ogihara-1996]): `SequenceOfTense.profile` folds `egressyLicense` pairwise down
-the chain (matrix first). The simultaneity at each level is `Simultaneous` of
+([ogihara-1996]): `profile` folds `egressyLicense` pairwise down the chain
+(matrix first). The simultaneity at each level is `Simultaneous` of
 the licensed atoms. -/
 
 /-- The per-level simultaneity profile of an embedded chain under a past matrix. -/

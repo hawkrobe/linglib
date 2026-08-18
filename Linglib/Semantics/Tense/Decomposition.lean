@@ -42,7 +42,7 @@ and simultaneous readings) but differ on what "past" means:
 
 open Time
 
-namespace Tense.SOT.Decomposition
+namespace Tense.Decomposition
 
 open Tense
 
@@ -292,4 +292,4 @@ theorem english_indexical_always_overt (localDomain : Bool) :
   cases localDomain <;> rfl
 
 
-end Tense.SOT.Decomposition
+end Tense.Decomposition

@@ -1,5 +1,4 @@
 import Linglib.Semantics.Tense.Basic
-import Linglib.Semantics.Tense.SOT.Ambiguity
 import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.Ogihara1996
 
@@ -12,9 +11,7 @@ between a genuine past reading and a zero-tense reading. Zero tense is
 a bound variable that receives the matrix event time, producing the
 simultaneous reading.
 
-The substrate enum `PastReading` lives in
-`Semantics/Tense/SOT/Ambiguity.lean`. This Studies file
-attributes the two-reading commitment to [ogihara-1996], derives
+This file carries the two-reading commitment (`PastReading`), derives
 the two predictions, and records the contrast with [kratzer-1998]
 (deletion, not ambiguity).
 
@@ -48,12 +45,23 @@ open Time
 namespace Ogihara1996
 
 open Tense
-open Tense.SOT.Ambiguity (PastReading)
 open Data.Examples (LinguisticExample)
 
 -- ════════════════════════════════════════════════════════════════
 -- § Ogihara's ambiguity claim (the divergence from Kratzer)
 -- ════════════════════════════════════════════════════════════════
+
+/-- Two readings of past morphology in embedded contexts: the
+    structural commitment that embedded past is **ambiguous**.
+    Rejected by [kratzer-1998] (past is never ambiguous; the
+    simultaneous reading derives from deletion at LF) and finessed by
+    [klecha-2016] (modal-base × tense composition, no ambiguity). -/
+inductive PastReading where
+  /-- Genuine past: temporal precedence (R < eval time). -/
+  | genuinePast
+  /-- Zero tense: bound variable, no independent temporal content. -/
+  | zeroTense
+  deriving DecidableEq, Repr
 
 /-- [ogihara-1996]'s key claim: past IS ambiguous between genuine
     past and zero tense. This is a categorical structural difference
@@ -62,8 +70,7 @@ open Data.Examples (LinguisticExample)
     ambiguity); in Kratzer, it = deletion of past (morphological
     operation, no ambiguity). -/
 theorem ogihara_ambiguity_vs_deletion :
-    PastReading.genuinePast ≠ PastReading.zeroTense :=
-  Tense.SOT.Ambiguity.genuinePast_ne_zeroTense
+    PastReading.genuinePast ≠ PastReading.zeroTense := nofun
 
 
 -- ════════════════════════════════════════════════════════════════

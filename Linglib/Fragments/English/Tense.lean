@@ -1,5 +1,5 @@
 import Linglib.Semantics.Tense.Evidential
-import Linglib.Semantics.Tense.SOT.Decomposition
+import Linglib.Semantics.Tense.Decomposition
 
 /-!
 # English Tense Fragment ([cumming-2026] + [lakoff-1970])
@@ -89,7 +89,7 @@ def nonfutureEntries : List TAMEEntry :=
 -- § 6. Kratzer Decomposition ([kratzer-1998])
 -- ════════════════════════════════════════════════════
 
-open _root_.Tense.SOT.Decomposition
+open _root_.Tense.Decomposition
 open _root_.Tense
 
 /-- English simple past: Kratzer decomposition.

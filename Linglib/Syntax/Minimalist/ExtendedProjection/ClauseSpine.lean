@@ -1,5 +1,4 @@
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Syntax.Clause.Basic
 
 /-!
 # Clause Spine: Fine-Grained Clause Size
@@ -132,19 +131,5 @@ def ClauseSpine.forceP : ClauseSpine :=
     `ClauseSpine.tP.fLevel = 2` (T is F2). -/
 def ClauseSpine.fLevel (spine : ClauseSpine) : Nat :=
   fValue spine.highestHead
-
--- ============================================================================
--- § 5: The Clause Instance
--- ============================================================================
-
-/-- A clause spine is a clause carrier: its size is its F-level, and a
-    spine headed by Nmlz realizes [noonan-2007]'s nominalized coding
-    ([keine-2020]'s nominalizer head). The head inventory determines no
-    other coding (C-headed spines are indicative or subjunctive; the
-    spine does not record finiteness) and no clause form. -/
-instance : Clause ClauseSpine where
-  size := ClauseSpine.fLevel
-  coding? spine :=
-    if spine.highestHead = .Nmlz then some .nominalized else none
 
 end Minimalist
