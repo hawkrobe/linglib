@@ -84,7 +84,7 @@ with a nominalized complement (§4.4.3). The `readings` rows carry the
 think~remember alternation — nonveridical/opaque on the bare CP,
 veridical/transparent on the nominalized frame; the nominalized frame's
 pre-existence presupposition is tracked in
-`Semantics/Attitudes/PreExistence.lean`. -/
+`Studies/Williams2026.lean` (the pre-existence analysis). -/
 def hanaxa : Verb where
   form := "hanaxa"
   frames := [Frame.finiteClause, nominalizedFrame]

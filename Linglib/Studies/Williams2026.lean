@@ -43,9 +43,9 @@ The English Fragment splits *forget* into two `VerbEntry` records:
 `forget` (negative implicative, infinitival) and `forget_rog`
 (factive/rogative, finite). Williams argues these are *one* lexical item
 with uniform factivity and a frame-driven presupposition split (the
-pre-existence analysis is in `Semantics/Attitudes/PreExistence.lean`).
-The Fragment split is a practical separation of entailment patterns;
-`White2014.lean` makes the consistency claim formal.
+pre-existence analysis is formalized below). The Fragment split is a
+practical separation of entailment patterns; `White2014.lean` makes the
+consistency claim formal.
 
 -/
 
@@ -139,6 +139,70 @@ def forget_infinitival : ForgetJudgment where
 /-- The English data points covered in Williams §1 and §3.1. -/
 def allForgetJudgments : List ForgetJudgment :=
   [forget_finiteCP, forget_gerund, forget_infinitival]
+
+
+/-! ## The pre-existence analysis (§4–§5)
+
+Williams' analysis (drawing on Bondarenko 2019/2020 on Buryat *hanaxa*):
+the factive's lower event must have *started before* the attitude
+event — PreEx(Q)(e)(w) ≡ ∃(e'', t). Q(λe'. e'=e'')(t)(w) ∧
+LB(τ(e'')) < LB(τ(e)). Whether a complement inherently satisfies
+pre-existence depends on its temporal profile: finite CPs (tense) and
+PRO-ing gerunds (aspect) locate the embedded event no later than matrix
+time; plain infinitives are forward-oriented. Where pre-existence is
+not inherently satisfied, covert Mod insertion shifts the
+presupposition to the obligation/plan, which does pre-exist — the
+SMINC generalization (§3.1.3, (15)): Mod heads the complement of
+*forget* iff the embedded verb is a plain infinitive. The classifier
+below records the temporal-profile outcome per complement type; the
+event-semantic LB(τ) comparisons are the deferred deep form. -/
+
+/-- The complement type's temporal profile inherently satisfies the
+    pre-existence presupposition: finite CPs (tense) and gerunds
+    (aspect) locate the embedded event no later than matrix time; plain
+    infinitives and the rest are forward-oriented. -/
+def SatisfiesPreExistence : ComplementType → Prop
+  | .finiteClause => True
+  | .gerund => True
+  | _ => False
+
+instance : DecidablePred SatisfiesPreExistence := fun ct => by
+  cases ct <;> simp only [SatisfiesPreExistence] <;> infer_instance
+
+/-- SMINC: covert Mod is inserted iff the complement does not
+    inherently satisfy pre-existence. -/
+def NeedsModalInsertion (ct : ComplementType) : Prop :=
+  ¬ SatisfiesPreExistence ct
+
+instance : DecidablePred NeedsModalInsertion := fun _ =>
+  inferInstanceAs (Decidable ¬ _)
+
+/-- The pre-existence analysis matches every English datum: the
+    presupposition is modal exactly where Mod insertion is predicted. -/
+theorem preExistence_matches_data :
+    ∀ j ∈ allForgetJudgments,
+      j.content = .modal ↔ NeedsModalInsertion j.frame := by decide
+
+/-! ## Against the Modalized Complement Analysis (§3.1.1)
+
+[white-2014] posits a covert root modal in every non-finite complement
+of *forget*. Williams' gerund datum refutes it: non-finite, yet
+non-modal. -/
+
+/-- The MCA's structural prediction ([white-2014], as reconstructed in
+    Williams §3.1.1): modal insertion in every non-finite complement. -/
+def MCAPredictsModal (ct : ComplementType) : Prop :=
+  ct.isFinite = false
+
+instance : DecidablePred MCAPredictsModal := fun _ =>
+  inferInstanceAs (Decidable (_ = _))
+
+/-- The paper's central empirical argument: on the gerund frame the MCA
+    predicts a modal presupposition, pre-existence does not, and the
+    datum is non-modal. -/
+theorem mca_overpredicts_gerund :
+    MCAPredictsModal .gerund ∧ ¬ NeedsModalInsertion .gerund ∧
+    forget_gerund.content = .nonModal := by decide
 
 /-- Williams' modal-presupposition split tracks Karttunen's
     implicative-negative entailment: the plain-infinitive frame is the
