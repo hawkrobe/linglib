@@ -13,10 +13,10 @@ exhibiting the other two faces as views.
 
 Taking the leg set as identity makes grammar equality decidable and dissolves the
 "up to entailment" hedge that the ERC-set presentation carries: two consistent ERC
-sets present the *same* grammar exactly when they are mutually entailing
-(`Grammar.ofERCSet_eq_iff_entails`), because they then have the same legs. The
-transitive-reduction ambiguity that forces [merchant-riggle-2016] Theorem 2 to be
-stated up to logical equivalence becomes literal `Grammar` equality here.
+sets present the *same* grammar exactly when they have the same linear extensions
+(`Grammar.ofERCs_eq_iff`). The transitive-reduction ambiguity that forces
+[merchant-riggle-2016] Theorem 2 to be stated up to logical equivalence becomes
+literal `Grammar` equality here.
 
 The antimatroid face (`Grammar.toAntimatroid`) is a one-directional view: every
 grammar is an antimatroid, but the converse — that every antimatroid is some
@@ -30,15 +30,15 @@ satisfying rankings.
 
 * `Grammar n` — a realizable leg set: a `Finset (Ranking n)` equal to the linear
   extensions of some consistent ERC set.
-* `Grammar.ofERCSet` — the canonical grammar of a consistent ERC set (the ERC face,
+* `Grammar.ofERCs` — the canonical grammar of a consistent ERC set (the ERC face,
   as a constructor).
 * `Grammar.feasible` / `Grammar.toAntimatroid` — the antimatroid face.
 
 ## Main results
 
-* `Grammar.ofERCSet_eq_iff_entails` — two consistent ERC sets present the same
-  grammar iff they are mutually entailing (the entailment quotient dissolves).
-* `Grammar.feasible_ofERCSet` — the antimatroid family of `ofERCSet E` is `MChain E`.
+* `Grammar.ofERCs_eq_iff` — two consistent ERC sets present the same grammar iff
+  they have the same linear extensions (the entailment quotient dissolves).
+* `Grammar.feasible_ofERCs` — the antimatroid family of `ofERCs E` is `MChain E`.
 * `Grammar.toAntimatroid_isFeasible` — the antimatroid face's feasible sets are
   exactly the prefixes of the grammar's legs.
 
@@ -51,8 +51,9 @@ and `models` as a **(dual) adjunction** between them. The induced monad
 `grammarClosure = models ∘ conditions` is the **idempotent closure monad**, and its
 algebras — the closed objects (`IsGrammarClosed`) — are exactly the grammars: a
 **reflective subcategory** of ranking-space with `grammarClosure` as the reflector.
-On `Grammar n` itself this lands as a `PartialOrder` (the specificity = entailment
-order, `ofERCSet_le_iff_entails`) with a **terminal object** (`OrderTop`, the trivial
+On `Grammar n` itself this lands as a `PartialOrder` (the specificity order —
+on the ERC face, definitionally containment of linear-extension sets, i.e.
+entailment) with a **terminal object** (`OrderTop`, the trivial
 grammar) and **binary coproducts** (`superGrammar`, the super-grammar join, with
 universal property `superGrammar_le`). Binary products (meets) may be empty, so the
 full complete lattice lives on the closed sets, not on `Grammar`.
@@ -162,19 +163,11 @@ theorem isGrammarClosed_inter {R R' : Set (Ranking n)}
   · exact (grammarClosure_mono Set.inter_subset_left).trans hR.le
   · exact (grammarClosure_mono Set.inter_subset_right).trans hR'.le
 
-/-- The coerced linear-extension set of an ERC list is the `models` of that list's
-conditions — the bridge from the `ERCSet` presentation to the Galois polarity. -/
-theorem coe_linearExtensions_eq_models (E : ERCSet n) :
-    (↑E.linearExtensions : Set (Ranking n)) = models {α | α ∈ E} := by
-  ext r
-  simp only [Finset.mem_coe, ERCSet.mem_linearExtensions, mem_models, Set.mem_ofPred_eq]
-  rfl
-
-/-- The empty ERC set is satisfied by every ranking: its linear extensions are all
-of `Ord(S.Con)`. This is the trivial grammar (no ranking conditions). -/
-@[simp] theorem ERCSet.linearExtensions_empty :
-    ERCSet.linearExtensions (∅ : ERCSet n) = Finset.univ := by
-  ext r; simp [ERCSet.mem_linearExtensions, ERCSet.SatisfiedBy]
+/-- The `Finset` and `Set` granularities of satisfaction agree: the coerced
+linear-extension set is the `models` of the coerced ERC set. -/
+theorem coe_linearExtensions_eq_models (E : Finset (ERC n)) :
+    (↑(ERC.linearExtensions E) : Set (Ranking n)) = models ↑E := by
+  ext r; simp [mem_models]
 
 /-- An OT **grammar**: a set of rankings realizable as the linear extensions of
 some consistent ERC set ([merchant-riggle-2016]). The leg set is the grammar's
@@ -183,7 +176,8 @@ structure Grammar (n : ℕ) where
   /-- The grammar's legs: the rankings that select its language's optima. -/
   legs : Finset (Ranking n)
   /-- Every grammar is the linear-extension set of some consistent ERC set. -/
-  realizable : ∃ E : ERCSet n, ERCSet.Consistent E ∧ legs = E.linearExtensions
+  realizable : ∃ E : Finset (ERC n),
+    (ERC.linearExtensions E).Nonempty ∧ legs = ERC.linearExtensions E
 
 namespace Grammar
 
@@ -193,12 +187,12 @@ so leg-set equality is grammar equality. -/
   cases G; cases G'; cases h; rfl
 
 /-- The grammar of a consistent ERC set — the ERC face, as a constructor. -/
-def ofERCSet (E : ERCSet n) (hcons : ERCSet.Consistent E) : Grammar n where
-  legs := E.linearExtensions
+def ofERCs (E : Finset (ERC n)) (hcons : (ERC.linearExtensions E).Nonempty) : Grammar n where
+  legs := ERC.linearExtensions E
   realizable := ⟨E, hcons, rfl⟩
 
-@[simp] theorem legs_ofERCSet (E : ERCSet n) (hcons : ERCSet.Consistent E) :
-    (ofERCSet E hcons).legs = E.linearExtensions := rfl
+@[simp] theorem legs_ofERCs (E : Finset (ERC n)) (hcons : (ERC.linearExtensions E).Nonempty) :
+    (ofERCs E hcons).legs = ERC.linearExtensions E := rfl
 
 /-- Membership: `r ∈ G` means `r` is one of `G`'s legs. -/
 instance : Membership (Ranking n) (Grammar n) where
@@ -206,37 +200,29 @@ instance : Membership (Ranking n) (Grammar n) where
 
 @[simp] theorem mem_iff {G : Grammar n} {r : Ranking n} : r ∈ G ↔ r ∈ G.legs := Iff.rfl
 
-@[simp] theorem mem_ofERCSet {E : ERCSet n} {hcons : ERCSet.Consistent E} {r : Ranking n} :
-    r ∈ ofERCSet E hcons ↔ ERCSet.SatisfiedBy r E := by
-  simp [mem_iff, ofERCSet]
+@[simp] theorem mem_ofERCs {E : Finset (ERC n)} {hcons : (ERC.linearExtensions E).Nonempty}
+    {r : Ranking n} :
+    r ∈ ofERCs E hcons ↔ ∀ α ∈ E, ERC.SatisfiedBy r α := by
+  simp [mem_iff, ofERCs]
 
 /-- A grammar has at least one leg: a harmonically-bounded row gives no grammar
 ([prince-2002]). -/
 theorem legs_nonempty (G : Grammar n) : G.legs.Nonempty := by
   obtain ⟨E, hcons, hlegs⟩ := G.realizable
-  obtain ⟨r, hr⟩ := hcons
-  exact ⟨r, by rw [hlegs]; exact ERCSet.mem_linearExtensions.mpr hr⟩
+  exact hlegs ▸ hcons
 
 /-! ### The ERC face: grammar equality is mutual entailment -/
 
 /-- **The entailment quotient dissolves at the grammar level.** Two consistent ERC
-sets present the same grammar iff they are mutually entailing — iff they have the
-same legs. This is why the leg set, not the ERC set, is the grammar's identity:
-the "logically equivalent, not literally equal" hedge of the ERC presentation
-([merchant-riggle-2016] Theorem 2) becomes literal `Grammar` equality. -/
-theorem ofERCSet_eq_iff_entails {E E' : ERCSet n}
-    (h : ERCSet.Consistent E) (h' : ERCSet.Consistent E') :
-    ofERCSet E h = ofERCSet E' h' ↔ ERCSet.Entails E E' ∧ ERCSet.Entails E' E := by
-  constructor
-  · intro he
-    have hl : E.linearExtensions = E'.linearExtensions := congrArg Grammar.legs he
-    rw [Finset.ext_iff] at hl
-    simp only [ERCSet.mem_linearExtensions] at hl
-    exact ⟨fun r => (hl r).mp, fun r => (hl r).mpr⟩
-  · rintro ⟨h12, h21⟩
-    apply ext
-    simp only [legs_ofERCSet, Finset.ext_iff, ERCSet.mem_linearExtensions]
-    exact fun r => ⟨h12 r, h21 r⟩
+sets present the same grammar iff they have the same linear extensions — iff each
+entails the other. This is why the leg set, not the ERC set, is the grammar's
+identity: the "logically equivalent, not literally equal" hedge of the ERC
+presentation ([merchant-riggle-2016] Theorem 2) becomes literal `Grammar`
+equality. -/
+theorem ofERCs_eq_iff {E E' : Finset (ERC n)}
+    (h : (ERC.linearExtensions E).Nonempty) (h' : (ERC.linearExtensions E').Nonempty) :
+    ofERCs E h = ofERCs E' h' ↔ ERC.linearExtensions E = ERC.linearExtensions E' :=
+  ⟨congrArg legs, fun hl => ext hl⟩
 
 /-! ### The antimatroid face -/
 
@@ -246,18 +232,19 @@ presentation. -/
 def feasible (G : Grammar n) (S : Set (Fin n)) : Prop :=
   ∃ r : Ranking n, r ∈ G.legs ∧ ∃ k : Fin (n + 1), maximalChain r k = S
 
-/-- The feasible family of `ofERCSet E` is exactly `MChain E`: the antimatroid face
+/-- The feasible family of `ofERCs E` is exactly `MChain E`: the antimatroid face
 agrees with [merchant-riggle-2016]'s `Antimat E` construction. -/
-theorem feasible_ofERCSet (E : ERCSet n) (hcons : ERCSet.Consistent E) (S : Set (Fin n)) :
-    (ofERCSet E hcons).feasible S ↔ MChain E S := by
-  simp only [feasible, legs_ofERCSet, ERCSet.mem_linearExtensions, MChain]
+theorem feasible_ofERCs (E : Finset (ERC n)) (hcons : (ERC.linearExtensions E).Nonempty)
+    (S : Set (Fin n)) :
+    (ofERCs E hcons).feasible S ↔ MChain E S := by
+  simp only [feasible, legs_ofERCs, ERC.mem_linearExtensions, MChain]
 
 /-- The feasible family is presentation-independent: it depends only on the legs,
 so any consistent ERC set realizing `G` computes it. -/
-theorem feasible_eq_mChain (G : Grammar n) {E : ERCSet n}
-    (hlegs : G.legs = E.linearExtensions) : G.feasible = MChain E := by
+theorem feasible_eq_mChain (G : Grammar n) {E : Finset (ERC n)}
+    (hlegs : G.legs = ERC.linearExtensions E) : G.feasible = MChain E := by
   funext S
-  simp only [feasible, hlegs, ERCSet.mem_linearExtensions, MChain]
+  simp only [feasible, hlegs, ERC.mem_linearExtensions, MChain]
 
 /-- The **antimatroid face** of a grammar ([merchant-riggle-2016]): ground set the
 constraints, feasible sets the prefixes of the legs. Every grammar is an
@@ -287,11 +274,11 @@ def toAntimatroid (G : Grammar n) : Antimatroid (Fin n) where
 @[simp] theorem toAntimatroid_isFeasible (G : Grammar n) (S : Set (Fin n)) :
     G.toAntimatroid.IsFeasible S ↔ G.feasible S := Iff.rfl
 
-/-- The antimatroid face of `ofERCSet E` has the same feasible sets as `Antimat E`. -/
-theorem toAntimatroid_ofERCSet_isFeasible (E : ERCSet n) (hcons : ERCSet.Consistent E)
-    (S : Set (Fin n)) :
-    (ofERCSet E hcons).toAntimatroid.IsFeasible S ↔ (Antimat E hcons).IsFeasible S := by
-  rw [toAntimatroid_isFeasible, feasible_ofERCSet]
+/-- The antimatroid face of `ofERCs E` has the same feasible sets as `Antimat E`. -/
+theorem toAntimatroid_ofERCs_isFeasible (E : Finset (ERC n))
+    (hcons : (ERC.linearExtensions E).Nonempty) (S : Set (Fin n)) :
+    (ofERCs E hcons).toAntimatroid.IsFeasible S ↔ (Antimat E hcons).IsFeasible S := by
+  rw [toAntimatroid_isFeasible, feasible_ofERCs]
   exact Iff.rfl
 
 /-! ### Grammars are exactly the nonempty closed sets -/
@@ -310,24 +297,25 @@ of the grammar–condition Galois connection. -/
 theorem exists_grammar_of_isGrammarClosed {R : Set (Ranking n)}
     (hcl : IsGrammarClosed R) (hne : R.Nonempty) :
     ∃ G : Grammar n, (↑G.legs : Set (Ranking n)) = R := by
-  obtain ⟨E, hAeq⟩ : ∃ E : ERCSet n, {α | α ∈ E} = conditions R := by
+  obtain ⟨E, hAeq⟩ : ∃ E : Finset (ERC n), (↑E : Set (ERC n)) = conditions R := by
     refine ⟨(Set.toFinite (conditions R)).toFinset, ?_⟩
-    ext α; simp [Set.Finite.mem_toFinset]
-  have hReq : (↑E.linearExtensions : Set (Ranking n)) = R := by
+    ext α; simp
+  have hReq : (↑(ERC.linearExtensions E) : Set (Ranking n)) = R := by
     rw [coe_linearExtensions_eq_models, hAeq]; exact hcl
-  have hcons : ERCSet.Consistent E := by
+  have hcons : (ERC.linearExtensions E).Nonempty := by
     obtain ⟨r, hr⟩ := hne
-    have hmem : r ∈ (↑E.linearExtensions : Set (Ranking n)) := hReq ▸ hr
-    rw [Finset.mem_coe, ERCSet.mem_linearExtensions] at hmem
-    exact ⟨r, hmem⟩
-  exact ⟨⟨E.linearExtensions, E, hcons, rfl⟩, hReq⟩
+    rw [← hReq] at hr
+    exact ⟨r, hr⟩
+  exact ⟨⟨ERC.linearExtensions E, E, hcons, rfl⟩, hReq⟩
 
 /-! ### The specificity order: grammars as a thin category
 
 `Grammar n` is a **poset** — a thin category — under leg-set inclusion: `G ≤ G'`
 means `G` is *more specific* (fewer legs, more ranking conditions). On the ERC face
-this is exactly the entailment order (`ofERCSet_le_iff_entails`), the order side of
-the Galois adjunction. `grammarClosure` is the **reflector** onto this subcategory
+`ofERCs E h ≤ ofERCs E' h'` is definitionally
+`ERC.linearExtensions E ⊆ ERC.linearExtensions E'` — the entailment order, the
+order side of the Galois adjunction. `grammarClosure` is the **reflector** onto
+this subcategory
 (grammars are its closed objects — the algebras of the idempotent closure monad).
 The **terminal object** is the trivial grammar (`OrderTop`); the **coproduct** of
 two grammars is their super-grammar — the closure of the union of legs. Binary
@@ -342,24 +330,12 @@ instance : PartialOrder (Grammar n) where
 
 theorem le_iff_legs {G G' : Grammar n} : G ≤ G' ↔ G.legs ⊆ G'.legs := Iff.rfl
 
-/-- The specificity order on grammars **is** the entailment order on their ERC sets
-— the order side of the grammar–condition Galois adjunction. -/
-theorem ofERCSet_le_iff_entails {E E' : ERCSet n}
-    (h : ERCSet.Consistent E) (h' : ERCSet.Consistent E') :
-    ofERCSet E h ≤ ofERCSet E' h' ↔ ERCSet.Entails E E' := by
-  rw [le_iff_legs]
-  constructor
-  · intro hle r hr
-    exact ERCSet.mem_linearExtensions.mp (hle (ERCSet.mem_linearExtensions.mpr hr))
-  · intro hent r hr
-    exact ERCSet.mem_linearExtensions.mpr (hent r (ERCSet.mem_linearExtensions.mp hr))
-
 /-- The **trivial grammar** — the terminal object of the specificity order: all
-rankings, no ranking conditions (`ofERCSet ∅`). -/
-def trivial : Grammar n := ofERCSet ∅ ⟨Ranking.id n, by simp [ERCSet.SatisfiedBy]⟩
+rankings, no ranking conditions (`ofERCs ∅`). -/
+def trivial : Grammar n := ofERCs ∅ ⟨Ranking.id n, by simp⟩
 
 @[simp] theorem legs_trivial : (Grammar.trivial : Grammar n).legs = Finset.univ := by
-  simp only [Grammar.trivial, legs_ofERCSet, ERCSet.linearExtensions_empty]
+  simp only [Grammar.trivial, legs_ofERCs, ERC.linearExtensions_empty]
 
 instance : OrderTop (Grammar n) where
   top := trivial

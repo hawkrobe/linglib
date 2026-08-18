@@ -21,9 +21,9 @@ is lex-nonnegative — equivalently (`ERC.satisfiedBy_iff_dominance`), every
 ## Main declarations
 
 * `ERCVal`, `ERC n` — the sign alphabet and sign vectors `Fin n → ERCVal`.
-* `ERC.SatisfiedBy`, `ERCSet.Consistent`, `ERCSet.Entails` — the
-  satisfaction/consistency/entailment algebra; `ERCSet.linearExtensions` the
-  satisfying rankings as a `Finset`.
+* `ERC.SatisfiedBy` — satisfaction of one ERC; `ERC.linearExtensions` the
+  rankings satisfying a `Finset` of them. Consistency and entailment of ERC
+  sets are `Nonempty` and `⊆` of linear-extension sets — no separate algebra.
 * `ercOfProfiles`, `tableauERC` — ERCs from violation profiles and winner–loser
   pairs; `satisfiedBy_ercOfProfiles_iff_le` bridges to the Core lex order.
 * `simpleERC` — a single-`W`/single-`L` ERC, one Hasse edge `i ≫ j`
@@ -167,65 +167,30 @@ theorem trivial_satisfiedBy {α : ERC n} (htriv : α.IsTrivial) (r : Ranking n) 
 
 end ERC
 
-/-! ### Sets of ERCs -/
+/-! ### Linear extensions
 
-/-- A set of ERCs, carrying the satisfaction/consistency/entailment algebra of
-OT grammars. -/
-abbrev ERCSet (n : ℕ) := Finset (ERC n)
+Satisfaction of a `Finset (ERC n)` needs no vocabulary of its own: a ranking
+satisfies the set iff `∀ α ∈ E, α.SatisfiedBy r`, the set is *consistent*
+([prince-2002]) iff `(ERC.linearExtensions E).Nonempty`, and `E` *entails* `E'`
+iff `ERC.linearExtensions E ⊆ ERC.linearExtensions E'`. -/
 
-namespace ERCSet
+namespace ERC
 
-variable (r : Ranking n) (E E' : ERCSet n)
+/-- The rankings satisfying every member of a set of ERCs, as a `Finset` — its
+*linear extensions* ([merchant-riggle-2016]). -/
+def linearExtensions (E : Finset (ERC n)) : Finset (Ranking n) :=
+  Finset.univ.filter fun r => ∀ α ∈ E, ERC.SatisfiedBy r α
 
-/-- A ranking satisfies an ERC set iff it satisfies every member. -/
-def SatisfiedBy : Prop :=
-  ∀ α ∈ E, ERC.SatisfiedBy r α
-
-instance : Decidable (SatisfiedBy r E) :=
-  inferInstanceAs (Decidable (∀ α ∈ E, ERC.SatisfiedBy r α))
-
-/-- An ERC set is *consistent* iff some ranking satisfies all its members. -/
-def Consistent : Prop := ∃ r : Ranking n, SatisfiedBy r E
-
-instance : Decidable (Consistent E) :=
-  Fintype.decidableExistsFintype
-
-/-- A singleton is consistent iff some ranking satisfies its ERC. -/
-@[simp] theorem consistent_singleton {α : ERC n} :
-    Consistent {α} ↔ ∃ r : Ranking n, α.SatisfiedBy r := by
-  simp [Consistent, SatisfiedBy]
-
-/-- The rankings consistent with an ERC set, as a `Finset` — its *linear extensions*
-([merchant-riggle-2016]). -/
-def linearExtensions : Finset (Ranking n) :=
-  Finset.univ.filter (fun r => SatisfiedBy r E)
-
-@[simp] theorem mem_linearExtensions {E : ERCSet n} {r : Ranking n} :
-    r ∈ E.linearExtensions ↔ SatisfiedBy r E := by
+@[simp] theorem mem_linearExtensions {E : Finset (ERC n)} {r : Ranking n} :
+    r ∈ linearExtensions E ↔ ∀ α ∈ E, ERC.SatisfiedBy r α := by
   simp [linearExtensions]
 
-/-! ### Entailment -/
+/-- The empty set constrains nothing: every ranking is a linear extension. -/
+@[simp] theorem linearExtensions_empty :
+    linearExtensions (∅ : Finset (ERC n)) = Finset.univ := by
+  ext r; simp
 
-/-- `E` *entails* `E'` iff every ranking satisfying `E` also satisfies `E'`. -/
-def Entails : Prop := ∀ r : Ranking n, SatisfiedBy r E → SatisfiedBy r E'
-
-theorem entails_refl : Entails E E := fun _ h => h
-
-theorem entails_trans {E₁ E₂ E₃ : ERCSet n}
-    (h₁₂ : Entails E₁ E₂) (h₂₃ : Entails E₂ E₃) : Entails E₁ E₃ :=
-  fun r hr => h₂₃ r (h₁₂ r hr)
-
-/-- A superset entails: adding ERCs only strengthens the set. -/
-theorem entails_of_superset {E E' : ERCSet n} (h : E ⊆ E') : Entails E' E :=
-  fun _ hr β hβ => hr β (h hβ)
-
-/-- Pointwise characterization: `E` entails `E'` if it entails each member
-singleton. -/
-theorem entails_of_forall_mem {E E' : ERCSet n}
-    (h : ∀ α ∈ E', Entails E {α}) : Entails E E' :=
-  fun r hr α hα => h α hα r hr α (Finset.mem_singleton_self α)
-
-end ERCSet
+end ERC
 
 /-! ### Simple ERCs -/
 
@@ -280,9 +245,9 @@ theorem simpleERC_satisfiedBy_toRel_iff (i j : Fin n) (r : Ranking n) :
 
 /-- A simple ERC `i ≫ j` (with `i ≠ j`) is consistent. -/
 theorem simpleERC_consistent (hij : i ≠ j) :
-    ERCSet.Consistent {simpleERC i j} :=
+    (ERC.linearExtensions {simpleERC i j}).Nonempty :=
   have ⟨r, hr⟩ := Ranking.exists_dominates hij
-  ERCSet.consistent_singleton.mpr ⟨r, (simpleERC_satisfiedBy_iff hij r).mpr hr⟩
+  ⟨r, by simp [(simpleERC_satisfiedBy_iff hij r).mpr hr]⟩
 
 /-- `simpleERC i j` (with `i ≠ j`) is a simple ERC. -/
 theorem simpleERC_isSimple (hij : i ≠ j) : (simpleERC i j).IsSimple :=

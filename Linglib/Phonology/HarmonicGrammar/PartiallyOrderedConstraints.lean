@@ -42,8 +42,8 @@ theorems are a ℚ veneer over them.
 ## Main statements
 
 - `consistentTotalOrders_eq_linearExtensions`: POC's linear extensions are the
-  ERC ones — the simple-ERC (Hasse-edge) encoding `toERCSet` identifies
-  `consistentTotalOrders` with `ERCSet.linearExtensions`
+  ERC ones — the simple-ERC (Hasse-edge) encoding `toERCs` identifies
+  `consistentTotalOrders` with `ERC.linearExtensions`
   ([merchant-riggle-2016]; [prince-2002]). `toGrammar` routes POC through the
   `Grammar` hub, and `pocAntimatroid` realizes the Birkhoff correspondence
   with order-ideal antimatroids ([dilworth-1940]).
@@ -107,41 +107,41 @@ theorem mem_consistentTotalOrders {r : Fin n → Fin n → Prop} [DecidableRel r
 
 A partial order is a set of dominance requirements — each strict related pair
 is a simple ERC `a ≫ b` ([merchant-riggle-2016]), and under this encoding the
-consistent total orders are exactly `ERCSet.linearExtensions` ([prince-2002]). -/
+consistent total orders are exactly `ERC.linearExtensions` ([prince-2002]). -/
 
 /-- The simple-ERC encoding of a grammar, with one ERC `a ≫ b`
 (`simpleERC a b`) for each related pair — diagonal pairs give trivial ERCs,
 matching `toRel`'s reflexivity. Transitively-implied pairs are entailed by the
 covering pairs, so the encoding has the same linear extensions as the
 Hasse-edge one. -/
-def toERCSet (r : Fin n → Fin n → Prop) [DecidableRel r] : ERCSet n :=
+def toERCs (r : Fin n → Fin n → Prop) [DecidableRel r] : Finset (ERC n) :=
   (Finset.univ.filter fun p : Fin n × Fin n => r p.1 p.2).image
     fun p => simpleERC p.1 p.2
 
-theorem mem_toERCSet {r : Fin n → Fin n → Prop} [DecidableRel r] {α : ERC n} :
-    α ∈ toERCSet r ↔ ∃ a b, r a b ∧ simpleERC a b = α := by
-  simp [toERCSet, Prod.exists]
+theorem mem_toERCs {r : Fin n → Fin n → Prop} [DecidableRel r] {α : ERC n} :
+    α ∈ toERCs r ↔ ∃ a b, r a b ∧ simpleERC a b = α := by
+  simp [toERCs, Prod.exists]
 
-/-- A ranking satisfies `toERCSet r` exactly when it is a linear extension of
+/-- A ranking satisfies `toERCs r` exactly when it is a linear extension of
 `r`: per pair, satisfaction of `simpleERC a b` *is* `σ.toRel a b`. -/
-theorem satisfiedBy_toERCSet {r : Fin n → Fin n → Prop} [DecidableRel r]
+theorem satisfiedBy_toERCs {r : Fin n → Fin n → Prop} [DecidableRel r]
     {σ : Ranking n} :
-    ERCSet.SatisfiedBy σ (toERCSet r) ↔ IsConsistent r σ := by
+    (∀ α ∈ toERCs r, ERC.SatisfiedBy σ α) ↔ IsConsistent r σ := by
   constructor
   · intro h a b hrel
     exact (simpleERC_satisfiedBy_toRel_iff a b σ).mp
-      (h _ (mem_toERCSet.mpr ⟨a, b, hrel, rfl⟩))
+      (h _ (mem_toERCs.mpr ⟨a, b, hrel, rfl⟩))
   · intro hcons α hα
-    obtain ⟨a, b, hrel, rfl⟩ := mem_toERCSet.mp hα
+    obtain ⟨a, b, hrel, rfl⟩ := mem_toERCs.mp hα
     exact (simpleERC_satisfiedBy_toRel_iff a b σ).mpr (hcons a b hrel)
 
 /-- The consistent total orders of a grammar are exactly the linear extensions
 of its simple-ERC encoding ([merchant-riggle-2016]; [prince-2002]). -/
 theorem consistentTotalOrders_eq_linearExtensions (r : Fin n → Fin n → Prop)
     [DecidableRel r] :
-    consistentTotalOrders r = (toERCSet r).linearExtensions := by
+    consistentTotalOrders r = ERC.linearExtensions (toERCs r) := by
   ext σ
-  rw [mem_consistentTotalOrders, ERCSet.mem_linearExtensions, satisfiedBy_toERCSet]
+  rw [mem_consistentTotalOrders, ERC.mem_linearExtensions, satisfiedBy_toERCs]
 
 /-- For the discrete grammar, every permutation is a linear extension. -/
 theorem consistentTotalOrders_discrete (n : ℕ) :
@@ -313,40 +313,40 @@ a Birkhoff antimatroid whose feasible sets are exactly the order ideals of `r`
 variable (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r] [DecidableRel r]
 
 omit [IsPartialOrder (Fin n) r] in
-/-- Every member of `toERCSet r` is a simple ERC or (on the diagonal) trivial. -/
-theorem toERCSet_isSimple_or_isTrivial :
-    ∀ α ∈ toERCSet r, α.IsSimple ∨ α.IsTrivial := by
+/-- Every member of `toERCs r` is a simple ERC or (on the diagonal) trivial. -/
+theorem toERCs_isSimple_or_isTrivial :
+    ∀ α ∈ toERCs r, α.IsSimple ∨ α.IsTrivial := by
   intro α hα
-  obtain ⟨a, b, _, rfl⟩ := mem_toERCSet.mp hα
+  obtain ⟨a, b, _, rfl⟩ := mem_toERCs.mp hα
   exact simpleERC_isSimple_or_isTrivial a b
 
-/-- `toERCSet r` is consistent: any linear extension of `r` satisfies it. -/
-theorem toERCSet_consistent : ERCSet.Consistent (toERCSet r) := by
+/-- `toERCs r` is consistent: any linear extension of `r` satisfies it. -/
+theorem toERCs_consistent : (ERC.linearExtensions (toERCs r)).Nonempty := by
   obtain ⟨σ, hσ⟩ := exists_isConsistent r
-  exact ⟨σ, satisfiedBy_toERCSet.mpr hσ⟩
+  exact ⟨σ, ERC.mem_linearExtensions.mpr (satisfiedBy_toERCs.mpr hσ)⟩
 
 /-- The **order-ideal antimatroid** of a grammar — the simple-ERC Birkhoff
 antimatroid (`Antimat.ofSimple`) of its Hasse-edge encoding, whose feasible
 sets are exactly the order ideals of `r`
 (`pocAntimatroid_isFeasible_iff`). -/
 def pocAntimatroid : Antimatroid (Fin n) :=
-  Antimat.ofSimple (toERCSet r) (toERCSet_consistent r) (toERCSet_isSimple_or_isTrivial r)
+  Antimat.ofSimple (toERCs r) (toERCs_consistent r) (toERCs_isSimple_or_isTrivial r)
 
 omit [IsPartialOrder (Fin n) r] in
-/-- Local feasibility against `toERCSet r` is exactly the order-ideal
+/-- Local feasibility against `toERCs r` is exactly the order-ideal
 condition — whenever `b ∈ S` and `a` dominates `b`, also `a ∈ S`. -/
-theorem feasible_toERCSet_iff {S : Finset (Fin n)} :
-    Feasible (toERCSet r) S ↔ ∀ a b, r a b → b ∈ S → a ∈ S := by
+theorem feasible_toERCs_iff {S : Finset (Fin n)} :
+    Feasible (toERCs r) S ↔ ∀ a b, r a b → b ∈ S → a ∈ S := by
   constructor
   · intro h a b hrel hbS
     rcases eq_or_ne a b with rfl | hab
     · exact hbS
     · obtain ⟨w, hwW, hwS⟩ :=
-        h (simpleERC a b) (mem_toERCSet.mpr ⟨a, b, hrel, rfl⟩)
+        h (simpleERC a b) (mem_toERCs.mpr ⟨a, b, hrel, rfl⟩)
           ⟨b, simpleERC_apply_L hab, hbS⟩
       rwa [(simpleERC_eq_W_iff w).mp hwW] at hwS
   · intro h α hα
-    obtain ⟨a, b, hrel, rfl⟩ := mem_toERCSet.mp hα
+    obtain ⟨a, b, hrel, rfl⟩ := mem_toERCs.mp hα
     rintro ⟨l, hlL, hlS⟩
     have hab : a ≠ b := by rintro rfl; exact simpleERC_self_isTrivial a l hlL
     rw [(simpleERC_eq_L_iff hab l).mp hlL] at hlS
@@ -357,7 +357,7 @@ Birkhoff correspondence, made concrete and decidable. -/
 @[simp] theorem pocAntimatroid_isFeasible_iff {S : Finset (Fin n)} :
     (pocAntimatroid r).IsFeasible (↑S : Set (Fin n)) ↔
       ∀ a b, r a b → b ∈ S → a ∈ S := by
-  simp only [pocAntimatroid, ofSimple_isFeasible_coe, feasible_toERCSet_iff]
+  simp only [pocAntimatroid, ofSimple_isFeasible_coe, feasible_toERCs_iff]
 
 variable {r}
 
@@ -733,17 +733,17 @@ theorem pocPredict_stratified_binary_rate
 
 A partial order on constraints is the simple-ERC fragment of an OT grammar —
 its consistent total orders are exactly the legs of
-`Grammar.ofERCSet (toERCSet r)` ([merchant-riggle-2016]). -/
+`Grammar.ofERCs (toERCs r)` ([merchant-riggle-2016]). -/
 
 /-- The `Grammar` whose legs are `r`'s consistent total orders. -/
 def toGrammar (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r]
     [DecidableRel r] : Grammar n :=
-  Grammar.ofERCSet (toERCSet r) (toERCSet_consistent r)
+  Grammar.ofERCs (toERCs r) (toERCs_consistent r)
 
 @[simp] theorem toGrammar_legs (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r]
     [DecidableRel r] :
     (toGrammar r).legs = consistentTotalOrders r := by
-  show (Grammar.ofERCSet (toERCSet r) (toERCSet_consistent r)).legs = consistentTotalOrders r
-  rw [Grammar.legs_ofERCSet, consistentTotalOrders_eq_linearExtensions]
+  show (Grammar.ofERCs (toERCs r) (toERCs_consistent r)).legs = consistentTotalOrders r
+  rw [Grammar.legs_ofERCs, consistentTotalOrders_eq_linearExtensions]
 
 end HarmonicGrammar
