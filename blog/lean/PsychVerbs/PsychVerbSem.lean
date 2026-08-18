@@ -6,7 +6,7 @@ import Linglib.Pragmatics.Emotion
 -- import Linglib.Core.StructuralEquationModel
 -- import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Studies.HartshorneEtAl2016
-import Linglib.Semantics.Attitudes.Preferential
+import Linglib.Semantics.Attitudes.Preference
 
 /-!
 # Psych Verb Denotation via Cognitive Situation Models
