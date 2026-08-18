@@ -96,7 +96,7 @@ child, then recurse. -/
 theorem mem_validPaths_cons {t : T} {i : Nat} {rest : List Nat} :
     (⟨i :: rest⟩ : TreePath) ∈ validPaths t ↔
     ∃ c, (children t)[i]? = some c ∧ (⟨rest⟩ : TreePath) ∈ validPaths c := by
-  simp only [validPaths, Set.mem_setOf_eq, subtreeAt_cons]
+  simp only [validPaths, Set.mem_ofPred_eq, subtreeAt_cons]
   rcases hmem : (children t)[i]? with _ | c <;> simp
 
 /-- Valid paths are closed under prefixes (ancestors of a position are
@@ -105,7 +105,7 @@ the rooted-tree order stack from `TreePath`. -/
 theorem validPaths_prefix_closed {t : T} {p q : TreePath}
     (hq : q ∈ validPaths t) (hpq : p ≤ q) : p ∈ validPaths t := by
   obtain ⟨s, hs⟩ := hpq
-  simp only [validPaths, Set.mem_setOf_eq] at hq ⊢
+  simp only [validPaths, Set.mem_ofPred_eq] at hq ⊢
   rw [← hs, subtreeAt_append] at hq
   exact Option.isSome_of_isSome_bind hq
 
@@ -356,7 +356,7 @@ theorem mem_commandRelation_toTreeOrder_iff
     (t : T) (P : Set TreePath) (a b : TreePath) :
     (a, b) ∈ commandRelation (toTreeOrder t) P ↔
       ∀ x ∈ a.toList.inits.map TreePath.mk, x ≠ a → x ∈ P → x ≤ b := by
-  simp only [commandRelation, upperBounds, TreeOrder.properDom, Set.mem_setOf_eq]
+  simp only [commandRelation, upperBounds, TreeOrder.properDom, Set.mem_ofPred_eq]
   constructor
   · intro h x hx hne hP
     rw [List.mem_map] at hx

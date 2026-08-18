@@ -72,31 +72,31 @@ theorem sigmaEval_conj (φ ψ : D → PIPExprF W D) (w : W) :
     sigmaEval (λ d => PIPExprF.conj (φ d) (ψ d)) w =
     sigmaEval φ w ∩ sigmaEval ψ w := by
   ext d
-  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_inter_iff, PIPExprF.truth]
+  simp only [sigmaEval, Set.mem_ofPred_eq, Set.mem_inter_iff, PIPExprF.truth]
 
 /-- Σx(φ ∨ ψ) = Σxφ ∪ Σxψ. -/
 theorem sigmaEval_disj (φ ψ : D → PIPExprF W D) (w : W) :
     sigmaEval (λ d => PIPExprF.disj (φ d) (ψ d)) w =
     sigmaEval φ w ∪ sigmaEval ψ w := by
   ext d
-  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_union, PIPExprF.truth]
+  simp only [sigmaEval, Set.mem_ofPred_eq, Set.mem_union, PIPExprF.truth]
 
 /-- Σx(¬φ) = (Σxφ)ᶜ. -/
 theorem sigmaEval_neg (φ : D → PIPExprF W D) (w : W) :
     sigmaEval (λ d => PIPExprF.neg (φ d)) w = (sigmaEval φ w)ᶜ := by
   ext d
-  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_compl_iff, PIPExprF.truth]
+  simp only [sigmaEval, Set.mem_ofPred_eq, Set.mem_compl_iff, PIPExprF.truth]
 
 /-- Σx(⊤) = D (everything satisfies a tautology). -/
 theorem sigmaEval_true (w : W) :
     sigmaEval (D := D) (λ _ => PIPExprF.pred (λ _ => True)) w = Set.univ := by
-  ext d; simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_univ, iff_true, PIPExprF.truth]
+  ext d; simp only [sigmaEval, Set.mem_ofPred_eq, Set.mem_univ, iff_true, PIPExprF.truth]
 
 /-- Σx(⊥) = ∅ (nothing satisfies a contradiction). -/
 theorem sigmaEval_false (w : W) :
     sigmaEval (D := D) (λ _ => PIPExprF.pred (λ _ => False)) w = ∅ := by
   ext d
-  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, PIPExprF.truth,
+  simp only [sigmaEval, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, PIPExprF.truth,
     not_false_iff]
 
 /-- Label definitions are truth-transparent for sigma. -/
@@ -246,7 +246,7 @@ theorem must_truth_iff_mustBase {D : Type*}
     (R : W → W → Prop) (φ : PIPExprF W D) (w : W) :
     (PIPExprF.must R φ).truth w ↔
     mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' } := by
-  simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def, Set.mem_setOf_eq,
+  simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def, Set.mem_ofPred_eq,
     PIPExprF.truth, box]
 
 /-- `PIPExprF.might R φ` truth agrees with three-argument `mightBase`. -/
@@ -255,7 +255,7 @@ theorem might_truth_iff_mightBase {D : Type*}
     (PIPExprF.might R φ).truth w ↔
     mightBase (accessRelToBase R w) Set.univ { w' | φ.truth w' } := by
   simp only [mightBase, accessRelToBase, Set.inter_univ, Set.Nonempty,
-    Set.mem_inter_iff, Set.mem_setOf_eq, PIPExprF.truth, diamond]
+    Set.mem_inter_iff, Set.mem_ofPred_eq, PIPExprF.truth, diamond]
 
 end ThreeArgModals
 

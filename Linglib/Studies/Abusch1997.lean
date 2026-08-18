@@ -272,7 +272,7 @@ theorem believe_eliminative (R : DoxAccessibility E) (M : Model E) (a : E) (φ :
     (s : InfoState E) :
     Formula.believe R M a φ s ⊆ s := by
   intro p hp
-  simp only [Formula.believe, Set.mem_setOf_eq] at hp
+  simp only [Formula.believe, Set.mem_ofPred_eq] at hp
   exact hp.1
 
 /--
@@ -283,7 +283,7 @@ theorem believe_closure (R : DoxAccessibility E) (M : Model E) (a : E) (φ ψ : 
     (hent : ∀ g ê, φ.sat M g ê → ψ.sat M g ê)
     (hp : p ∈ Formula.believe R M a φ s) :
     p ∈ Formula.believe R M a ψ s := by
-  simp only [Formula.believe, Set.mem_setOf_eq] at hp ⊢
+  simp only [Formula.believe, Set.mem_ofPred_eq] at hp ⊢
   constructor
   · exact hp.1
   · intro q hq
@@ -296,7 +296,7 @@ theorem believe_conj (R : DoxAccessibility E) (M : Model E) (a : E) (φ ψ : For
     (s : InfoState E) (p : Poss E) :
     p ∈ Formula.believe R M a (φ ⋀ ψ) s ↔
     p ∈ Formula.believe R M a φ s ∧ p ∈ Formula.believe R M a ψ s := by
-  simp only [Formula.believe, Set.mem_setOf_eq, Formula.sat]
+  simp only [Formula.believe, Set.mem_ofPred_eq, Formula.sat]
   constructor
   · intro ⟨hp, hall⟩
     exact ⟨⟨hp, λ q hq => (hall q hq).1⟩, ⟨hp, λ q hq => (hall q hq).2⟩⟩
@@ -381,7 +381,7 @@ theorem deRe_implies_deDicto_rigid (R : DoxAccessibility E) (M : Model E)
     (s : InfoState E) (p : Poss E)
     (hp : p ∈ believeDeRe R M agent individual pred s) :
     p ∈ believeDeDicto R M agent c pred s := by
-  simp only [believeDeRe, believeDeDicto, Set.mem_setOf_eq] at hp ⊢
+  simp only [believeDeRe, believeDeDicto, Set.mem_ofPred_eq] at hp ⊢
   constructor
   · exact hp.1
   · intro q hq
@@ -465,7 +465,7 @@ theorem quine_requires_divergence (R : DoxAccessibility E) (M : Model E)
   obtain ⟨_hc1c2, hpos, hneg⟩ := hquine
   obtain ⟨q, hq⟩ := hdox
   by_contra hall
-  push_neg at hall
+  push Not at hall
   -- If c1 and c2 coincide everywhere, we get contradiction
   have heq : c1 q = c2 q := hall q hq
   have h1 := hpos q hq
@@ -543,7 +543,7 @@ theorem obs20_wide_implies_narrow (R : DoxAccessibility E) (M : Model E)
     (agent : E) (C : Cover E) (pred : String) (s : InfoState E) :
     believeExistsWide R M agent C pred s ⊆ believeExistsNarrow R M agent C pred s := by
   intro p hp
-  simp only [believeExistsWide, believeExistsNarrow, Set.mem_setOf_eq] at hp ⊢
+  simp only [believeExistsWide, believeExistsNarrow, Set.mem_ofPred_eq] at hp ⊢
   obtain ⟨hps, c, hc, hall⟩ := hp
   constructor
   · exact hps
@@ -566,7 +566,7 @@ theorem obs20_equiv_iff_uniform_witness (R : DoxAccessibility E) (M : Model E)
     (hp : p ∈ s) :
     p ∈ believeExistsWide R M agent C pred s ↔
     p ∈ s ∧ ∃ c ∈ C, ∀ q ∈ doxAccessible R agent p, M.interp pred [c q] := by
-  simp only [believeExistsWide, Set.mem_setOf_eq]
+  simp only [believeExistsWide, Set.mem_ofPred_eq]
 
 
 /-! #### Observation 21: knowing who is cover-relative
@@ -694,7 +694,7 @@ theorem believeExists_nameCover_deRe (R : DoxAccessibility E) (M : Model E)
     p ∈ believeExistsWithCover R M agent (nameCover dom) pred s ↔
     p ∈ s ∧ ∃ e ∈ dom, ∀ q ∈ doxAccessible R agent p, M.interp pred [e] := by
   simp only [believeExistsWithCover, nameCover,
-    Semantics.Reference.Acquaintance.nameCover, Set.mem_setOf_eq]
+    Semantics.Reference.Acquaintance.nameCover, Set.mem_ofPred_eq]
   constructor
   · intro ⟨hp, c, ⟨e, he, hc⟩, hall⟩
     refine ⟨hp, e, he, ?_⟩
@@ -753,7 +753,7 @@ theorem know_implies_believe (R : DoxAccessibility E) (M : Model E) (a : E) (φ 
     (s : InfoState E) :
     Formula.know R M a φ s ⊆ Formula.believe R M a φ s := by
   intro p hp
-  simp only [Formula.know, Formula.believe, Set.mem_setOf_eq] at hp ⊢
+  simp only [Formula.know, Formula.believe, Set.mem_ofPred_eq] at hp ⊢
   exact ⟨hp.1, hp.2.2⟩
 
 /--
@@ -762,7 +762,7 @@ Knowledge is factive: K(a, φ) → φ
 theorem know_factive (R : DoxAccessibility E) (M : Model E) (a : E) (φ : Formula)
     (s : InfoState E) (p : Poss E) (hp : p ∈ Formula.know R M a φ s) :
     φ.sat M p.1 p.2 := by
-  simp only [Formula.know, Set.mem_setOf_eq] at hp
+  simp only [Formula.know, Set.mem_ofPred_eq] at hp
   exact hp.2.1
 
 end

@@ -80,7 +80,7 @@ theorem stativeDenotation_self (i : NonemptyInterval Time) :
 theorem timeTrace_stativeDenotation (i : NonemptyInterval Time) :
     timeTrace (stativeDenotation i) = { t | t ∈ i } := by
   ext t
-  simp only [timeTrace, stativeDenotation, Set.mem_Iic, Set.mem_setOf_eq, NonemptyInterval.mem_def, NonemptyInterval.le_def]
+  simp only [timeTrace, stativeDenotation, Set.mem_Iic, Set.mem_ofPred_eq, NonemptyInterval.mem_def, NonemptyInterval.le_def]
   constructor
   · rintro ⟨j, ⟨hjs, hjf⟩, hjt_s, hjt_f⟩
     exact ⟨le_trans hjs hjt_s, le_trans hjt_f hjf⟩
@@ -92,7 +92,7 @@ theorem timeTrace_stativeDenotation (i : NonemptyInterval Time) :
 theorem timeTrace_accomplishmentDenotation (i : NonemptyInterval Time) :
     timeTrace (accomplishmentDenotation i) = { t | t ∈ i } := by
   ext t
-  simp only [timeTrace, accomplishmentDenotation, Set.mem_singleton_iff, Set.mem_setOf_eq, NonemptyInterval.mem_def]
+  simp only [timeTrace, accomplishmentDenotation, Set.mem_singleton_iff, Set.mem_ofPred_eq, NonemptyInterval.mem_def]
   constructor
   · rintro ⟨j, rfl, hs, hf⟩
     exact ⟨hs, hf⟩

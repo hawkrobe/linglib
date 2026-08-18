@@ -366,19 +366,19 @@ private theorem structOp_preserves_no_cat {C W : Type} [DecidableEq C]
   induction h_step with
   | subst _ h_src => exact h_source _ h_src
   | @delete cat cs i =>
-    rw [Tree.containsCat_node_iff] at h_φ ⊢; push_neg at h_φ ⊢
+    rw [Tree.containsCat_node_iff] at h_φ ⊢; push Not at h_φ ⊢
     exact ⟨h_φ.1, fun t ht => h_φ.2 t ((List.eraseIdx_sublist cs i).subset ht)⟩
   | @contract cat cs child h_mem _ =>
-    rw [Tree.containsCat_node_iff] at h_φ; push_neg at h_φ; exact h_φ.2 child h_mem
+    rw [Tree.containsCat_node_iff] at h_φ; push Not at h_φ; exact h_φ.2 child h_mem
   | @inChild cat cs i ψ_child _ ih =>
-    rw [Tree.containsCat_node_iff] at h_φ ⊢; push_neg at h_φ ⊢
+    rw [Tree.containsCat_node_iff] at h_φ ⊢; push Not at h_φ ⊢
     have hih := ih (h_φ.2 (cs.get i) (List.get_mem cs i))
     refine ⟨h_φ.1, fun t ht => ?_⟩
     rcases List.mem_or_eq_of_mem_set ht with ht' | rfl
     · exact h_φ.2 t ht'
     · exact hih
   | @inBind n cat body body' _ ih =>
-    rw [Tree.containsCat_bind_iff] at h_φ ⊢; push_neg at h_φ ⊢
+    rw [Tree.containsCat_bind_iff] at h_φ ⊢; push Not at h_φ ⊢
     exact ⟨h_φ.1, ih h_φ.2⟩
 
 -- ── Main invariant ──────────────────────────────────────────────

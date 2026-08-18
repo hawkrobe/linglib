@@ -327,12 +327,12 @@ noncomputable def ComparativeProbability.RegularCondMeasure.toAGM {W : Type*}
     -- ¬φ ∉ beliefs ↔ μ(φᶜ) ≠ 1 ↔ μ(φ) > 0
     have hmu_phi_pos : 0 < m.mu (fun w => φ w : Set W) := by
       have hcompl := m.toFinAddMeasure.mu_compl (fun w => φ w : Set W)
-      by_contra h; push_neg at h
+      by_contra h; push Not at h
       have h0 := le_antisymm h (m.nonneg _)
       have hone : m.mu (fun w => φ w : Set W)ᶜ = 1 := by linarith
       exact hnot_neg hone
     have hsat : ∃ w, φ w := by
-      by_contra hall; push_neg at hall
+      by_contra hall; push Not at hall
       linarith [mu_eq_zero_of_singletons m.toFinAddMeasure (fun w => φ w : Set W)
         (fun w hw => absurd hw (hall w))]
     -- P(⊤|φ) = 1
@@ -352,7 +352,7 @@ noncomputable def ComparativeProbability.RegularCondMeasure.toAGM {W : Type*}
     have hdiff_zero : m.mu ((fun w => ψ w : Set W)ᶜ ∩ (fun w => φ w : Set W)) = 0 := by
       apply mu_eq_zero_of_singletons m.toFinAddMeasure
       intro w ⟨hnψ, hφ⟩
-      by_contra h_pos; push_neg at h_pos
+      by_contra h_pos; push Not at h_pos
       have h_pos' : 0 < m.mu ({w} : Set W) :=
         lt_of_le_of_ne (m.nonneg _) (Ne.symm h_pos)
       have hbeliefs : ∀ (χ : Set W), m.mu (fun w => χ w : Set W) = 1 → χ w :=
@@ -366,11 +366,11 @@ noncomputable def ComparativeProbability.RegularCondMeasure.toAGM {W : Type*}
     -- Find w ∈ φ with μ({w}) > 0, then w satisfies all of K*φ.
     have hmu_pos := m.muPositive _ hsat
     -- If all singletons in φ had measure 0, μ(φ) = 0, contradiction.
-    by_contra hall; push_neg at hall
+    by_contra hall; push Not at hall
     -- hall : ∀ w, ∃ ψ ∈ revise φ, ¬ψ w
     have hzero : ∀ w, φ w → m.mu ({w} : Set W) = 0 := by
       intro w hw
-      by_contra h_pos; push_neg at h_pos
+      by_contra h_pos; push Not at h_pos
       have h_pos' : 0 < m.mu ({w} : Set W) :=
         lt_of_le_of_ne (m.nonneg _) (Ne.symm h_pos)
       have hbeliefs : ∀ (χ : Set W), m.mu (fun w => χ w : Set W) = 1 → χ w :=
@@ -411,7 +411,7 @@ noncomputable def rankingToAGM {W : Type*} [Fintype W] [DecidableEq W]
     unfold rankingReviseSet; split_ifs with h
     · exact κ.revise_success φ h.1 h.2
     · have hAll : ∀ w, φ w := by
-        by_contra hc; push_neg at hc; exact h ⟨hφ, hc⟩
+        by_contra hc; push Not at hc; exact h ⟨hφ, hc⟩
       exact fun w _ => hAll w
   inclusion φ ψ hrev w hbeliefs hφw := by
     have hw0 : κ.rank w = 0 :=
@@ -436,10 +436,10 @@ noncomputable def rankingToAGM {W : Type*} [Fintype W] [DecidableEq W]
         rw [hrp] at hk; omega
       exact hent w (fun χ hχ => hχ w hw0) hφw
     · have hAll : ∀ w, φ w := by
-        by_contra hc; push_neg at hc
+        by_contra hc; push Not at hc
         by_cases hφ : ∃ w, φ w
         · exact h ⟨hφ, hc⟩
-        · push_neg at hφ; exact hneg (fun w _ => hφ w)
+        · push Not at hφ; exact hneg (fun w _ => hφ w)
       intro w hw0; exact hent w (fun χ hχ => hχ w hw0) (hAll w)
   consistency φ hφ := by
     unfold rankingReviseSet; split_ifs with h

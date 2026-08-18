@@ -216,19 +216,19 @@ exactly the realizations of the Lindström classes above. -/
 /-- `everyDet` realizes `every_sem`: `⟦every⟧ = λR S. ∀x. R x → S x`. -/
 theorem everyDet_toGQ (α : Type u) : everyDet.toGQ α = (every_sem : GQ α) := by
   funext A B
-  simp only [Det.toGQ, everyDet, Set.mem_setOf_eq, structOfAB_relMap_U, structOfAB_relMap_V,
+  simp only [Det.toGQ, everyDet, Set.mem_ofPred_eq, structOfAB_relMap_U, structOfAB_relMap_V,
     Matrix.cons_val_fin_one, every_sem]
 
 /-- `someDet` realizes `some_sem`: `⟦some⟧ = λR S. ∃x. R x ∧ S x`. -/
 theorem someDet_toGQ (α : Type u) : someDet.toGQ α = (some_sem : GQ α) := by
   funext A B
-  simp only [Det.toGQ, someDet, Set.mem_setOf_eq, structOfAB_relMap_U, structOfAB_relMap_V,
+  simp only [Det.toGQ, someDet, Set.mem_ofPred_eq, structOfAB_relMap_U, structOfAB_relMap_V,
     Matrix.cons_val_fin_one, some_sem]
 
 /-- `noDet` realizes `no_sem`: `⟦no⟧ = λR S. ∀x. R x → ¬ S x`. -/
 theorem noDet_toGQ (α : Type u) : noDet.toGQ α = (no_sem : GQ α) := by
   funext A B
-  simp only [Det.toGQ, noDet, Set.mem_setOf_eq, structOfAB_relMap_U, structOfAB_relMap_V,
+  simp only [Det.toGQ, noDet, Set.mem_ofPred_eq, structOfAB_relMap_U, structOfAB_relMap_V,
     Matrix.cons_val_fin_one, no_sem]
 
 /-! ### The square of opposition: `toGQ` realizes it from the model theory
@@ -253,7 +253,7 @@ negation of `∀x. Ux → ¬Vx`. The model-theoretic source of the `no`/`some` c
 diagonal — `toGQ`-image is `Quantification.no_contradicts_some`. -/
 theorem someDet_holds_eq_compl : (someDet.{u}).holds = (noDet.{u}).holdsᶜ := by
   ext M
-  simp only [someDet, noDet, Set.mem_setOf_eq, Set.mem_compl_iff, not_forall, not_not,
+  simp only [someDet, noDet, Set.mem_ofPred_eq, Set.mem_compl_iff, not_forall, not_not,
     exists_prop]
 
 /-- **The Aristotelian morphism (outer negation).** `toGQ` carries the Boolean complement of an

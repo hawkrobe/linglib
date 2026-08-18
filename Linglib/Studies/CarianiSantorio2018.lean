@@ -283,7 +283,7 @@ theorem universal_will_credence_zero :
     cynthiaPMF.probOfSet {w | universalWill warriorsCap histAlt w} = 0 := by
   have hempty : {w | universalWill warriorsCap histAlt w} = (∅ : Set W) := by
     ext w
-    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
     exact universalWill_warriorsCap_const_false w
   rw [hempty, PMF.probOfSet_empty]
 

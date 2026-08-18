@@ -307,7 +307,7 @@ private lemma v1_tailored
       first | exact absurd h h1 | exact absurd h' h2 | (rw [h, h']; norm_num)
   have hvstrict : ∃ i, v i + w i < 0 := by
     by_contra hall
-    push_neg at hall
+    push Not at hall
     have heq : ∀ i, w i = -v i := fun i =>
       le_antisymm (by have := hvle i; linarith) (by have := hall i; linarith)
     refine hSnogm v hvS w hwS hvw ⟨?_, ?_⟩
@@ -401,7 +401,7 @@ private theorem merge_to_single (sys : EpistemicSystemFA (Fin 4))
         (Finset.coe_subset.mpr hc1) (Finset.coe_subset.mpr hc2)
     · -- no mono-dominating member: either a gmerge pair (merge & recurse) or, failing
       -- that, a forced null atom contradicting `hnull`.
-      push_neg at hdom
+      push Not at hdom
       by_cases hgm : ∃ c d rest, L.Perm (c :: d :: rest) ∧ Disjoint c.1 d.1 ∧ Disjoint c.2 d.2
       case neg =>
         rcases v1_tailored L hdisj hvpvn hsum hne hdom hgm with
@@ -792,7 +792,7 @@ theorem fa_cancellation_fin3 (sys : EpistemicSystemFA (Fin 3)) :
   by_cases h : ∃ j, sys.ge ∅ {j}
   · obtain ⟨j, hj⟩ := h
     exact cancellation_of_null_atom sys hj representable_fin2
-  · push_neg at h
+  · push Not at h
     exact cancellation_extendFA sys
       (no_null_cancellation (extendFA sys) (extendFA_no_null sys h))
 
@@ -810,7 +810,7 @@ theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
   by_cases h : ∃ j, sys.ge ∅ {j}
   · obtain ⟨j, hj⟩ := h
     exact cancellation_of_null_atom sys hj representable_fin3
-  · push_neg at h
+  · push Not at h
     exact no_null_cancellation sys h
 
 /-- **Theorem 8a for Fin 4**: every FA system on 4 elements is representable.

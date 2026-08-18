@@ -217,7 +217,7 @@ def relCatToKleisli : RelCat.{u} ⥤ KleisliCat Set where
     ext z
     show (x, z) ∈ SetRel.comp f.rel g.rel ↔ _
     simp only [SetRel.comp, KleisliCat.comp_def,
-      Set.bind_def, Set.mem_iUnion, Set.mem_setOf_eq, exists_prop]
+      Set.bind_def, Set.mem_iUnion, Set.mem_ofPred_eq, exists_prop]
 
 /-- [UPSTREAM] Kleisli arrows of the powerset monad to relations:
 uncurry. -/
@@ -233,7 +233,7 @@ def kleisliToRelCat : KleisliCat Set ⥤ RelCat.{u} where
     apply RelCat.Hom.ext
     ext ⟨x, z⟩
     simp only [KleisliCat.comp_def, Set.bind_def, Set.mem_iUnion,
-      Set.mem_setOf_eq, exists_prop]
+      Set.mem_ofPred_eq, exists_prop]
     rfl
 
 /-- [UPSTREAM] The category of relations is the Kleisli category of the
@@ -259,7 +259,7 @@ def relCatEquivKleisli : RelCat.{u} ≌ KleisliCat Set :=
     ext y
     simp only [relCatToKleisli, kleisliToRelCat, Functor.id_map,
       Functor.comp_map, Iso.refl_hom, KleisliCat.comp_def, KleisliCat.id_def,
-      Set.bind_def, Set.mem_iUnion, Set.mem_setOf_eq, exists_prop]
+      Set.bind_def, Set.mem_iUnion, Set.mem_ofPred_eq, exists_prop]
     constructor
     · rintro ⟨i, hi, rfl⟩
       exact ⟨x, rfl, hi⟩

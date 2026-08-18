@@ -508,7 +508,7 @@ theorem spiff_lands_then_weight_admits :
   constructor
   · -- ∂(has-weight) is satisfied after landing
     simp only [Formula.eval, Formula.pulAdmits]
-    ext w; simp only [Set.mem_setOf_eq]
+    ext w; simp only [Set.mem_ofPred_eq]
     constructor
     · intro ⟨⟨h1, h2⟩, h3⟩; exact ⟨h1, h2⟩
     · intro ⟨h1, h2⟩

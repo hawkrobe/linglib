@@ -316,7 +316,7 @@ theorem softmax_negligible [Nonempty ι] (s : ι → ℝ)
       have habs : |log ε| = -log ε := abs_of_neg hlog_neg
       rw [habs] at h1
       linarith
-    · push_neg at hε1
+    · push Not at hε1
       have hlog_nonneg : 0 ≤ log ε := log_nonneg hε1
       have habs : |log ε| = log ε := abs_of_nonneg hlog_nonneg
       rw [habs] at h1

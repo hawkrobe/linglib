@@ -260,7 +260,7 @@ private theorem farkas_base : (S : System 0) →
           rcases List.mem_cons.mp hc' with rfl | hm
           · exact hc
           · have := hfeas' c' hm; simp only [Ineq.sat, dot_fin_zero] at this; exact this⟩
-      · right; push_neg at hc
+      · right; push Not at hc
         let ws₁ : Fin (c :: S').length → ℚ := Fin.cons 1 (fun _ => 0)
         refine ⟨⟨ws₁,
           fun i => by refine Fin.cases ?_ (fun j => ?_) i <;> simp [ws₁],

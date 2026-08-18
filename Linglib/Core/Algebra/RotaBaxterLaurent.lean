@@ -129,7 +129,7 @@ theorem polarHahn_mul (a b : LaurentSeries A) (ha : polarHahn a = 0) (hb : polar
       Set.mem_add.mp (HahnSeries.support_mul_subset ((HahnSeries.mem_support _ _).mpr hne))
     have hja := support_subset_nonneg a ha hj
     have hlb := support_subset_nonneg b hb hl
-    simp only [Set.mem_setOf_eq] at hja hlb
+    simp only [Set.mem_ofPred_eq] at hja hlb
     omega
 
 /-- The polar part is supported on strictly-negative degrees. -/
@@ -159,7 +159,7 @@ theorem polarMul_coeff_eq_zero_of_nonneg (a b : LaurentSeries A) {i : ℤ} (hi :
     Set.mem_add.mp (HahnSeries.support_mul_subset ((HahnSeries.mem_support _ _).mpr hne))
   have hj' := support_polarHahn_subset a hj
   have hl' := support_polarHahn_subset b hl
-  simp only [Set.mem_setOf_eq] at hj' hl'
+  simp only [Set.mem_ofPred_eq] at hj' hl'
   omega
 
 /-- A product of non-polar parts has no strictly-negative-degree coefficients (the non-polar series
@@ -171,7 +171,7 @@ theorem coPolarMul_coeff_eq_zero_of_neg (a b : LaurentSeries A) {i : ℤ} (hi : 
     Set.mem_add.mp (HahnSeries.support_mul_subset ((HahnSeries.mem_support _ _).mpr hne))
   have hj' := support_sub_polarHahn_subset a hj
   have hl' := support_sub_polarHahn_subset b hl
-  simp only [Set.mem_setOf_eq] at hj' hl'
+  simp only [Set.mem_ofPred_eq] at hj' hl'
   omega
 
 /-! ### The Rota–Baxter operator -/
