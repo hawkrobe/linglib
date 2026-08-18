@@ -98,7 +98,7 @@ INHERITANCE." See `cariani_duality_right_to_left_failure`.
 
 namespace Cariani2013
 
-open Semantics.Attitudes.Desire (DecProp mkDec isConsidered)
+open Desire (DecProp mkDec isConsidered)
 
 /-! ## §1. Resolution Semantics primitives
 
@@ -111,7 +111,7 @@ parameters are options, ordering, benchmark. Per §4 (p.545):
 > logical space.
 
 We model options as a `List (DecProp W)` — finite, with decidable
-membership — matching the substrate's `Semantics.Attitudes.Desire`
+membership — matching the substrate's `Desire`
 representation of partition cells. Mutual exclusivity is a hypothesis
 on consumers, not a structure field. -/
 
@@ -251,7 +251,7 @@ instance (rc : ResolutionContext W) (p : Set W) [DecidablePred p] :
 /-! ## §4. Bridge to Phillips-Brown's `isConsidered`
 
 [phillips-brown-2025]'s `isConsidered`
-(`Semantics.Attitudes.Desire`) is *definitionally* the same
+(`Desire`) is *definitionally* the same
 predicate as Cariani's `isVisible`. Since `isVisible` is now an
 `abbrev` (§2 above), the bridge theorem is `Iff.rfl`.
 
@@ -688,7 +688,7 @@ theorem ross_ought_stay_home_false :
   abbrev). Parallel discovery (Cariani via Lewis/Yalcin; PB via Crnič
   2011), not chain-of-influence.
 * Cariani's account is *anti-INHERITANCE by design* (proved in §5
-  Ross, §6 Procrastinate, §9 DUALITY-concern). vF (`wantVF`) and Heim
+  Ross, §6 Procrastinate, §9 DUALITY-concern). vF (`wantVonFintel`) and Heim
   (`wantHeim`) are *pro-INHERITANCE* (their universal-over-best-worlds
   shape entails it). Lassiter is anti-INHERITANCE via *intermediacy
   of E_V* (a different mechanism — see Lassiter2017.lean).

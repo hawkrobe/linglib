@@ -12,68 +12,44 @@ import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Tactic.NormNum
 
 /-!
-# Desire Semantics — substrate for `want`/`wish`/`hope`
+# Desire semantics
 
-This file collects three formalizations of desire ascriptions:
+Rival semantics for desire ascriptions (*want*, *wish*, *hope*),
+collected so their predictions about conflicting desires — ⌜S wants p⌝
+together with ⌜S wants ¬p⌝ against one belief state — can be compared:
 
-1. **von Fintel [von-fintel-1999]** (`wantVF`): "every undominated
-   belief-world is a p-world", where the world ordering is induced by
-   which desires each world satisfies.
+1. **von Fintel** ([von-fintel-1999]) — `wantVonFintel`: every
+   undominated belief-world is a p-world, the world ordering induced by
+   which desires each world satisfies. The ordering is [kratzer-1981]'s
+   `atLeastAsGoodAs` over the projected desire propositions, called
+   directly by `worldAtLeastAsGood`.
+2. **Heim** ([heim-1992]) — `wantHeimNaive`, her (27), the
+   Hintikka-style baseline she rejects; `wantHeim`, the (37/39)
+   comparative-belief semantics restricted to the doxastic base; and
+   her (40) definedness amendment `wantHeimDefined`.
+3. **Phillips-Brown** ([phillips-brown-2025]) — `wantQuestionBased`:
+   every best answer in Q_c-Bel_S entails p, for a contextual question
+   Q_c, with the paper's metasemantic constraints (`isConsidered`,
+   `isDiverse`, `isAntiDeckstacking`, `isBelSensitive`) and its §3.4
+   simulation result: on the finest question the semantics is von
+   Fintel's (`wantQuestionBased_finestPartition_iff_wantVonFintel`).
+4. **Lassiter** ([lassiter-2017] apparatus; [lassiter-2011] want
+   application) — `Lassiter.want`: conditional expected value above a
+   threshold, with Sloman's Principle added in the full account
+   (`Lassiter.wantWithSloman`).
 
-2. **[heim-1992]** (`wantHeim`): "for every doxastic alternative
-   `w'`, every closest p-world to `w'` is more desirable than every
-   closest ¬p-world to `w'`". Three successive formulations from the
-   paper are exposed: (27) naive Hintikka-style, (31) truth-conditional
-   comparative-belief, and (37/39) the CCP-rephrased version with the
-   (40) amendment as `wantHeimDefined`.
-
-3. **[phillips-brown-2025]** (`wantQuestionBased`): "every best
-   answer in Q_c-Bel_S entails p", parameterized on a contextual
-   question Q_c. Handles conflicting-desire ascriptions ("S wants p" +
-   "S wants ¬p") by varying Q_c.
-
-The first two are **belief-based** and packaged into a common
-`BeliefBasedDesireSemantics` structure with a parametric no-go
-theorem (`bbds_no_simultaneous_want_p_and_negp`): no belief-based
-semantics can predict simultaneous `want(p)` and `want(¬p)` against a
-single belief state. PB's `wantQuestionBased` *evades* the no-go by
-selecting from `Q-Bel_S` rather than directly from `Bel_S`.
-
-## Phillips-Brown 2025 metasemantic constraints
-
-The PB substrate exposes four metasemantic constraints:
-
-* **Considering** (paper §3.6): every cell of Q_c settles p.
-* **Diversity** (paper §3.7, attributed to [condoravdi-2002]):
-  Q_c contains both p-cells and ¬p-cells.
-* **Anti-deckstacking** (paper §3.7): for every "natural" proposition q,
-  if some cell of Q_c entails q, then q is itself considered. The
-  substrate parameterizes the constraint on a `naturalProps` test set
-  rather than quantifying over all of `Set W` (see `isAntiDeckstacking`).
-* **Belief-sensitivity** (paper §4.2, building on [yalcin-2018]'s
-  question-sensitive belief): Bel_S discriminates among the cells of Q_c.
-
-The question-based mechanism is inspired by [crnic-2014] (an idea
-the paper credits as previously unformalized), parallels Yalcin's
-question-sensitive belief on the doxastic side, and was independently
-arrived at via a different route by Dandelet (situations rather than
-questions).
-
-The von Fintel [von-fintel-1999] baseline (`wantVF`) is included as
-a foil. The paper's central metasemantic identity (paper §3.4) is that
-when Q_c is the finest partition (singleton cells), question-based want
-reduces to von Fintel's standard semantics — see
-`wantQuestionBased_finestPartition_iff_wantVF`. Heim 1992
-(comparative-belief) is *not* formalized here; the no-go theorem
-`wantVF_no_simultaneous_pq_and_negpq` covers von Fintel only.
-
-The world ordering used by `wantVF` is [kratzer-1981]'s ordering over
-the projected desire propositions (every desire satisfied at z is also
-satisfied at w) — definitionally, not by bridge: `worldAtLeastAsGood`
-calls `Kratzer.atLeastAsGoodAs` directly.
+On conflicting desires: the belief-based semantics block simultaneous
+`want(p)` and `want(¬p)` (`wantVonFintel_no_conflict`,
+`wantHeim_no_conflict`); Phillips-Brown evades the blockage by varying
+Q_c; Lassiter's bare threshold admits it outright
+(`Lassiter.threshold_admits_conflict_witness`) while his full account
+does not (`Lassiter.wantWithSloman_blocks_conflict`). The
+belief-based-*class* packaging of this argument is
+[phillips-brown-2025]'s own §2 thesis and lives in
+`Studies/PhillipsBrown2025.lean`.
 -/
 
-namespace Semantics.Attitudes.Desire
+namespace Desire
 
 open Semantics.Presupposition (PartialProp)
 open Core.Order (SatisfactionOrdering)
@@ -82,7 +58,7 @@ section Generic
 
 variable {W : Type*} [Fintype W] [DecidableEq W]
 
-/-! ## Decidable propositions
+/-! ### Decidable propositions
 
 A `DecProp W` bundles a `Set W` with its `DecidablePred` witness so it
 can sit as the element type of a partition list while remaining
@@ -102,7 +78,7 @@ structure DecProp (W : Type*) where
 
 instance (a : DecProp W) : DecidablePred a.prop := a.dec
 
-/-! ## Decidable subset / overlap on `Set W`
+/-! ### Decidable subset and overlap on `Set W`
 
 Mathlib's `s ⊆ t` and `(s ∩ t).Nonempty` are not auto-decidable on `Set`
 (the elaborator does not unfold `Set.Subset` to see the underlying `∀`).
@@ -118,7 +94,7 @@ to read as the same operation. -/
     decidability. -/
 @[reducible] def propOverlap (p q : Set W) : Prop := ∃ w, p w ∧ q w
 
-/-! ## Propositional preference (von Fintel 1999, paper §3.5)
+/-! ### Answer preference ([phillips-brown-2025] §3.5)
 
 The paper's preference relation between answers `a, a' ∈ Q_c-Bel_S`:
 
@@ -128,7 +104,7 @@ The paper's preference relation between answers `a, a' ∈ Q_c-Bel_S`:
 weak relation `≤` via `SatisfactionOrdering.ofCriteria` and the strict
 relation via `SatisfactionOrdering.strictlyBetter`; the paper's "best
 answers" are the maxima under the strict relation, i.e. the
-Pareto-undominated elements (see paper §3.5, p. 11:21). -/
+Pareto-undominated elements (see §3.5, p. 11:21). -/
 
 /-- Proposition ordering: `a ≤ a'` iff every desire in `GS` that `a'`
     entails, `a` also entails. The Pareto-undominated elements under
@@ -142,7 +118,7 @@ def propositionOrdering (GS : List (DecProp W)) :
 abbrev undominatedAnswers (GS answers : List (DecProp W)) : List (DecProp W) :=
   (propositionOrdering GS).undominated answers
 
-/-! ## Question-relative belief (paper §3.3)
+/-! ### Question-relative belief ([phillips-brown-2025] §3.3)
 
 Q_c-Bel_S = the cells of Q_c compatible with S's beliefs. -/
 
@@ -151,10 +127,10 @@ def questionRelativeBelief (answers : List (DecProp W))
     (belS : Set W) [DecidablePred belS] : List (DecProp W) :=
   answers.filter fun a => decide (propOverlap a.prop belS)
 
-/-! ## Core semantics -/
+/-! ### Question-based want ([phillips-brown-2025] §3.4) -/
 
 /-- ⟦S wants p⟧^c = every undominated answer in Q_c-Bel_S entails p.
-    The paper's central definition (paper §3.5). -/
+    The paper's central definition (§3.5). -/
 def wantQuestionBased (belS : Set W) [DecidablePred belS]
     (GS answers : List (DecProp W)) (p : Set W) [DecidablePred p] : Prop :=
   ∀ a ∈ undominatedAnswers GS (questionRelativeBelief answers belS),
@@ -165,9 +141,9 @@ instance (belS : Set W) [DecidablePred belS]
     Decidable (wantQuestionBased belS GS answers p) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-! ## von Fintel baseline (paper §2.1)
+/-! ### von Fintel baseline ([von-fintel-1999])
 
-`wantVF` evaluates to "every undominated belief-world is a p-world",
+`wantVonFintel` evaluates to "every undominated belief-world is a p-world",
 where the world ordering is induced by which desires each world
 satisfies — [kratzer-1981]'s `atLeastAsGoodAs` over the projected
 desires, by definition. -/
@@ -194,35 +170,25 @@ instance (GS : List (DecProp W)) (w z : W) :
     Decidable (worldAtLeastAsGood GS w z) :=
   decidable_of_iff _ (worldAtLeastAsGood_iff_decProp GS w z).symm
 
-omit [Fintype W] [DecidableEq W] in
-/-- The desire-induced world ordering coincides with Kratzer's ordering
-    over the projected proposition list — definitional since
-    `worldAtLeastAsGood` calls `atLeastAsGoodAs` directly; kept for
-    discoverability. -/
-theorem worldAtLeastAsGood_iff_kratzer (GS : List (DecProp W)) (w z : W) :
-    worldAtLeastAsGood GS w z ↔
-      Modality.Kratzer.atLeastAsGoodAs (GS.map (·.prop)) w z :=
-  Iff.rfl
-
 /-- Standard von Fintel [von-fintel-1999] semantics: every undominated
     belS-world is a p-world. The `[DecidablePred]` hypotheses are not
     used in the definition body; they live on the `Decidable` instance
     so that abstract reasoning (e.g. instances of
-    `BeliefBasedDesireSemantics`) can use `wantVF` without supplying
+    `BeliefBasedDesireSemantics`) can use `wantVonFintel` without supplying
     them. -/
-def wantVF (belS : Set W) (GS : List (DecProp W)) (p : Set W) : Prop :=
+def wantVonFintel (belS : Set W) (GS : List (DecProp W)) (p : Set W) : Prop :=
   ∀ w, belS w →
     (∀ z, belS z → ¬ (worldAtLeastAsGood GS z w ∧ ¬ worldAtLeastAsGood GS w z)) →
     p w
 
 instance (belS : Set W) [DecidablePred belS]
     (GS : List (DecProp W)) (p : Set W) [DecidablePred p] :
-    Decidable (wantVF belS GS p) :=
+    Decidable (wantVonFintel belS GS p) :=
   inferInstanceAs (Decidable (∀ _, _))
 
-/-! ## Metasemantic constraints (paper §3.6, §3.7, §4.2) -/
+/-! ### Metasemantic constraints ([phillips-brown-2025] §3.6–§4.2) -/
 
-/-- **Considering Constraint** (paper §3.6): every cell of Q_c either
+/-- **Considering Constraint** (§3.6): every cell of Q_c either
     entails p or entails ¬p. Equivalently (over partition cells):
     p is a union of cells. -/
 def isConsidered (answers : List (DecProp W))
@@ -233,7 +199,7 @@ instance (answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
     Decidable (isConsidered answers p) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-- **Diversity Constraint** (paper §3.7, attributed to
+/-- **Diversity Constraint** (§3.7, attributed to
     [condoravdi-2002]): Q_c contains both p-cells and ¬p-cells.
     Without diversity, ⟦want p⟧ would be vacuously true (or false). -/
 def isDiverse (answers : List (DecProp W))
@@ -245,7 +211,7 @@ instance (answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
     Decidable (isDiverse answers p) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-! ### Anti-deckstacking (paper §3.7)
+/-! ### Anti-deckstacking ([phillips-brown-2025] §3.7)
 
 The paper quantifies over "all q": if some cell entails q, then q must
 itself be considered relative to Q_c. The naive `∀ q : Set W` over a
@@ -264,7 +230,7 @@ neither entails `h` nor entails `¬h`). For `qNapRest` and `qRainHappy`
 with the same `naturalProps`, AD passes (those questions cross-cut both
 basic dimensions). -/
 
-/-- **Anti-deckstacking Constraint** (paper §3.7), parameterized on the
+/-- **Anti-deckstacking Constraint** (§3.7), parameterized on the
     test set of natural propositions `naturalProps`: for every
     `q ∈ naturalProps`, if some cell of `answers` entails `q`, then `q`
     must be considered relative to `answers`.
@@ -282,7 +248,7 @@ instance (naturalProps answers : List (DecProp W)) :
     Decidable (isAntiDeckstacking naturalProps answers) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-- **Belief-sensitivity Constraint** (paper §4.2, building on
+/-- **Belief-sensitivity Constraint** (§4.2, building on
     [yalcin-2018]'s question-sensitive belief): Bel_S discriminates
     among the cells of Q_c — at least one answer is compatible with
     S's beliefs and at least one is incompatible. Blocks inferences
@@ -313,7 +279,7 @@ instance (belS : Set W) [DecidablePred belS]
     Decidable (wantDefined belS naturalProps answers p) := by
   unfold wantDefined; infer_instance
 
-/-! ## Partial-proposition wrapper (paper §3.6)
+/-! ### Partial-proposition wrapper
 
 The presupposition is the four-constraint definedness predicate; the
 assertion is the question-based truth condition. Both are
@@ -330,7 +296,7 @@ def wantPartialProp (belS : Set W) [DecidablePred belS]
   presup _ := wantDefined belS naturalProps answers p
   assertion _ := wantQuestionBased belS GS answers p
 
-/-! ## §3.4 metasemantic identity: finest question simulates vF
+/-! ### The finest question simulates von Fintel ([phillips-brown-2025] §3.4)
 
 When Q_c is the finest partition (every cell is a singleton world),
 the question-based semantics reduces to standard vF. The substrate
@@ -342,7 +308,7 @@ the result is computable and `decide`-able for concrete models. -/
 def finestPartition (worlds : List W) : List (DecProp W) :=
   worlds.map fun w => mkDec (· = w)
 
-/-! ### §3.4 supporting lemmas
+/-! ### Supporting lemmas
 
 The §3.4 metasemantic identity is proved via three helper lemmas
 (singleton-cell preference reduces to single-world preference under
@@ -363,7 +329,7 @@ private theorem singleton_le_iff_world (GS : List (DecProp W)) (w z : W) :
   show (∀ q ∈ GS.filter (fun q => decide (propEntails (mkDec (· = z)).prop q.prop)),
           decide (propEntails (mkDec (· = w)).prop q.prop) = true) ↔
        (∀ q ∈ GS, q.prop z → q.prop w)
-  simp only [mkDec, propEntails, decide_eq_true_eq]
+  simp only [propEntails, decide_eq_true_eq]
   constructor
   · intro h q hq hqz
     have hqfilter : q ∈ GS.filter (fun q' => decide (∀ x, x = z → q'.prop x)) := by
@@ -403,12 +369,12 @@ private theorem mem_qRB_finestPartition_iff (belS : Set W) [DecidablePred belS]
   · rintro ⟨hw_mem, hbel⟩
     exact ⟨⟨w, hw_mem, rfl⟩, ⟨w, rfl, hbel⟩⟩
 
-theorem wantQuestionBased_finestPartition_iff_wantVF
+theorem wantQuestionBased_finestPartition_iff_wantVonFintel
     (belS : Set W) [DecidablePred belS] (GS : List (DecProp W))
     (worlds : List W) (hUniv : ∀ w, w ∈ worlds)
     (p : Set W) [DecidablePred p] :
-    wantQuestionBased belS GS (finestPartition worlds) p ↔ wantVF belS GS p := by
-  unfold wantQuestionBased wantVF undominatedAnswers SatisfactionOrdering.undominated
+    wantQuestionBased belS GS (finestPartition worlds) p ↔ wantVonFintel belS GS p := by
+  unfold wantQuestionBased wantVonFintel undominatedAnswers SatisfactionOrdering.undominated
   refine ⟨fun hLHS w hw hUnd => ?_, fun hRHS a ha => ?_⟩
   · -- LHS → RHS: pick the cell `mkDec (· = w)`, show it's undominated, apply
     have hcell_mem : mkDec (· = w) ∈
@@ -469,40 +435,41 @@ theorem wantQuestionBased_finestPartition_iff_wantVF
     have : x = w := hx
     exact this ▸ hpw
 
-/-! ## §2 no-go: vF cannot predict simultaneous `want p` and `want ¬p`
+/-! ### The belief-based no-go for von Fintel ([phillips-brown-2025] §2)
 
 The paper's central argument against belief-based semantics. For any
 non-empty belief state with at least one undominated world, vF cannot
-make both `wantVF belS GS p` and `wantVF belS GS (¬p)` true at the
+make both `wantVonFintel belS GS p` and `wantVonFintel belS GS (¬p)` true at the
 same context. -/
 
 omit [Fintype W] [DecidableEq W] in
-/-- **No-go for vF** (paper §2.1): if some belS-world is undominated,
+/-- **No-go for vF** (§2.1): if some belS-world is undominated,
     then no vF-prediction makes both `want p` and `want ¬p` true. -/
-theorem wantVF_no_simultaneous_pq_and_negpq
+theorem wantVonFintel_no_conflict
     (belS : Set W) [DecidablePred belS]
     (GS : List (DecProp W)) (p : Set W) [DecidablePred p]
     (h : ∃ w, belS w ∧
       ∀ z, belS z → ¬ (worldAtLeastAsGood GS z w ∧ ¬ worldAtLeastAsGood GS w z)) :
-    ¬ (wantVF belS GS p ∧ wantVF belS GS (fun w => ¬ p w)) := by
+    ¬ (wantVonFintel belS GS p ∧ wantVonFintel belS GS (fun w => ¬ p w)) := by
   rintro ⟨hp, hnp⟩
   obtain ⟨w, hw, hund⟩ := h
   exact (hnp w hw hund) (hp w hw hund)
 
-/-! ## Closure properties (paper §4.1, §4.2) -/
+/-! ### Closure properties ([phillips-brown-2025] §4) -/
 
 omit [Fintype W] [DecidableEq W] in
-/-- vF is **upward monotonic**: if `p ⊆ q` and `wantVF belS GS p`,
-    then `wantVF belS GS q`. This is the [villalta-2008]
+/-- vF is **upward monotonic**: if `p ⊆ q` and `wantVonFintel belS GS p`,
+    then `wantVonFintel belS GS q`. This is the [villalta-2008]
     doxastic-closure problem that motivates the question-based
-    approach (paper §4.1). -/
-theorem wantVF_upward_monotonic (belS : Set W) [DecidablePred belS]
+    approach (§4.1). -/
+theorem wantVonFintel_upward_monotonic (belS : Set W) [DecidablePred belS]
     (GS : List (DecProp W)) (p q : Set W) [DecidablePred p] [DecidablePred q]
-    (hpq : ∀ w, p w → q w) (h : wantVF belS GS p) :
-    wantVF belS GS q :=
+    (hpq : ∀ w, p w → q w) (h : wantVonFintel belS GS p) :
+    wantVonFintel belS GS q :=
   fun w hw hund => hpq w (h w hw hund)
 
-/-- Question-based `want` is **Strawson upward monotonic** (paper §4.2):
+omit [DecidableEq W] in
+/-- Question-based `want` is **Strawson upward monotonic** (§4.2):
     `wantQuestionBased belS GS Q p`, `p ⊆ q`, and `q` considered
     relative to `Q` jointly imply `wantQuestionBased belS GS Q q`. The
     Considering presupposition is what blocks naive upward monotonicity
@@ -517,24 +484,24 @@ theorem wantQuestionBased_strawson_upward_monotonic
     wantQuestionBased belS GS answers q :=
   fun a ha w hw => hpq w (h a ha w hw)
 
-/-! ## [heim-1992] comparative-belief desire semantics
+/-! ### Comparative-belief semantics ([heim-1992])
 
 The paper has three successive truth conditions for `want`, each fixing
 a defect of the prior. We expose all three as a feature, not a bug — it
 shows the trajectory and lets future readers reproduce the argument.
 
-(27) The naive Hintikka-style `want` (paper §3, p. 192): "every bouletic
+(27) The naive Hintikka-style `want` (§3, p. 192): "every bouletic
 alternative is a φ-world." Heim immediately rejects it via Asher's
 Concorde counterexample at (32) p. 194. We formalize it as `wantHeimNaive`
 to make the rejection-by-counterexample testable.
 
-(31) Truth-conditional comparative-belief `want` (paper §4.1, p. 193 —
+(31) Truth-conditional comparative-belief `want` (§4.1, p. 193 —
 the canonical "Heim semantics"): "α wants φ is true at w iff for every
 w' ∈ Dox_α(w): every φ-world maximally similar to w' is more desirable
 to α than any non-φ-world maximally similar to w'." This is the textbook
 formulation.
 
-(37/39) CCP-rephrased Heim `want` (paper §4.2.2, p. 197): same content,
+(37/39) CCP-rephrased Heim `want` (§4.2.2, p. 197): same content,
 but the proposition is restricted to Dox first
 (`Sim_w'(Dox_α(w) + φ) <_{α,w} Sim_w'(Dox_α(w) + ¬φ)`). The (40)
 amendment makes this **undefined** when the agent already believes φ
@@ -613,7 +580,7 @@ instance (belS : Set W) [DecidablePred belS]
     Decidable (wantHeim belS params w_eval p) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-- Heim's (40) amendment (paper §4.2.3, p. 198): ⟦α wants φ⟧ is defined
+/-- Heim's (40) amendment (§4.2.3, p. 198): ⟦α wants φ⟧ is defined
     only when the agent does not already believe φ and does not already
     believe ¬φ. Equivalently: both `belS ∩ φ` and `belS ∩ ¬φ` are
     non-empty. -/
@@ -668,7 +635,7 @@ theorem heimSim_nonempty (belS : Set W) [DecidablePred belS]
     says `pref` is a strict (irreflexive) preference, i.e., a world
     cannot be strictly preferred to itself. Standard for any
     well-formed comparative desirability. -/
-theorem wantHeim_no_simultaneous_pq_and_negpq
+theorem wantHeim_no_conflict
     (belS : Set W) [DecidablePred belS]
     (params : HeimDesireParams W) (w_eval : W) (p : Set W) [DecidablePred p]
     (hAsym : ∀ x y, params.pref w_eval x y → params.pref w_eval y x → x = y)
@@ -710,148 +677,7 @@ theorem wantHeim_no_simultaneous_pq_and_negpq
     exact this.2
   exact hynp (hxy_eq ▸ hxp)
 
-/-! ## Belief-based desire semantics: structural typology and parametric no-go
-
-A `BeliefBasedDesireSemantics` packages a desire-semantic device that
-takes (Bel_S, parameters, evaluation world, proposition) and returns a
-truth value, without any contextual question parameter outside this
-shape. Both vF and Heim are instances; PB's `wantQuestionBased` is
-*not* (its question parameter `answers` plays a non-trivial role that
-varies per ascription).
-
-The structure operates on `Set W` to match the substrate's underlying
-predicates and to make the `want(p) ∧ want(¬p)` no-go statement
-notation-clean (using `fun w => ¬ p w` rather than `Finset.univ \ p`,
-which would require an awkward `Finset.mem_sdiff` rewrite chain).
-Decidability inside instances is supplied via `Classical.dec` — the
-structure is for Prop-level reasoning, not for `decide`. The
-substrate-level `wantVF`/`wantHeim` retain their per-instance
-decidability for concrete `decide` proofs in study files. -/
-
-/-- A belief-based desire semantics on world type `W`. `defined`
-    carries the presuppositional definedness condition; `want` is the
-    truth condition. Both range over `Set W` for the doxastic state and
-    proposition. -/
-structure BeliefBasedDesireSemantics (W : Type*) where
-  /-- Type of additional parameters (desire list for vF, similarity +
-      pref for Heim, etc.). -/
-  Param : Type*
-  /-- Definedness condition: the presupposition that ⟦S wants p⟧^c is
-      defined at the configuration. -/
-  defined : Set W → Param → Set W → Prop
-  /-- Truth condition: when defined, the prediction of ⟦S wants p⟧^c. -/
-  want : Set W → Param → W → Set W → Prop
-
-namespace BeliefBasedDesireSemantics
-
-variable {W : Type*}
-
-/-- A semantics is **conflict-blocking** if no parameters/world make
-    `want(p)` and `want(¬p)` both true when both are defined. This is
-    the no-go theorem in slogan form: belief-based semantics cannot
-    handle conflicting desire ascriptions. -/
-def isConflictBlocking (F : BeliefBasedDesireSemantics W) : Prop :=
-  ∀ belS Param w_eval (p : Set W),
-    F.defined belS Param p → F.defined belS Param (fun w => ¬ p w) →
-    ¬ (F.want belS Param w_eval p ∧ F.want belS Param w_eval (fun w => ¬ p w))
-
-end BeliefBasedDesireSemantics
-
-/-- vF as a `BeliefBasedDesireSemantics` instance. The evaluation-world
-    argument is suppressed (vF is world-independent at the `want`
-    level). The `defined` predicate requires both p and ¬p to overlap
-    with belS — strong enough that some belS-world is necessarily
-    undominated, which is what the vF no-go needs. -/
-def vFSemantics {W : Type*} [Fintype W] :
-    BeliefBasedDesireSemantics W where
-  Param := List (DecProp W)
-  defined belS _ p := (∃ w, belS w ∧ p w) ∧ (∃ w, belS w ∧ ¬ p w)
-  want belS GS _ p := wantVF belS GS p
-
-/-- A propositional-equivalent form of `wantHeim` that takes its
-    decidability arguments via `Classical.decPred` rather than from the
-    ambient typeclass context. Used in `heimSemantics.want` to ensure
-    the structure projection has a stable form independent of caller
-    decidability instances. -/
-noncomputable def wantHeimClassical {W : Type*} [Fintype W] [DecidableEq W]
-    (belS : Set W) (params : HeimDesireParams W) (w_eval : W) (p : Set W) : Prop :=
-  letI : DecidablePred belS := Classical.decPred _
-  letI : DecidablePred p := Classical.decPred _
-  wantHeim belS params w_eval p
-
-/-- The classical-decidability variant agrees with `wantHeim` under any
-    ambient decidability instances (via `Subsingleton`). -/
-theorem wantHeimClassical_iff_wantHeim {W : Type*} [Fintype W] [DecidableEq W]
-    (belS : Set W) [DecidablePred belS]
-    (params : HeimDesireParams W) (w_eval : W) (p : Set W) [DecidablePred p] :
-    wantHeimClassical belS params w_eval p ↔ wantHeim belS params w_eval p := by
-  -- LHS uses `Classical.decPred`-derived instances; RHS uses ambient
-  -- typeclass instances. `DecidablePred` is a `Subsingleton`, so the two
-  -- agree propositionally — `congr!` closes the goal directly.
-  unfold wantHeimClassical
-  congr!
-
-/-- Heim as a `BeliefBasedDesireSemantics` instance. Definedness is
-    Heim's (40) amendment; `want` wraps `wantHeimClassical` (which
-    bakes in `Classical.decPred` so the structure projection is stable
-    across ambient decidability instances). Abstract reasoning at the
-    typology level is Prop-only; the `wantHeimClassical_iff_wantHeim`
-    bridge converts to/from the typeclass-decidable form. -/
-noncomputable def heimSemantics {W : Type*} [Fintype W] [DecidableEq W] :
-    BeliefBasedDesireSemantics W where
-  Param := HeimDesireParams W
-  defined belS _ p :=
-    (∃ w, belS w ∧ p w) ∧ (∃ w, belS w ∧ ¬ p w)
-  want belS params w_eval p := wantHeimClassical belS params w_eval p
-
-/-! ## Parametric no-go theorems for the structural typology -/
-
-/-- vF is **conflict-blocking** (parametric no-go). The `defined`
-    predicate requires both p-witnesses and ¬p-witnesses in belS, which
-    is exactly what `wantVF_no_simultaneous_pq_and_negpq` needs after
-    we extract a Pareto-undominated witness via finite-preorder
-    minimal-element existence. -/
-theorem vFSemantics_isConflictBlocking {W : Type*} [Fintype W] :
-    BeliefBasedDesireSemantics.isConflictBlocking (vFSemantics (W := W)) := by
-  classical
-  intro belS GS _w_eval p hDef _hDefNeg ⟨hp, hnp⟩
-  -- vFSemantics.want belS GS _ p reduces to wantVF belS GS p.
-  -- Apply the substrate no-go; need an undominated belS-world, which exists
-  -- by Finite.exists_minimal under the desire-induced preorder.
-  apply wantVF_no_simultaneous_pq_and_negpq belS GS p ?_ ⟨hp, hnp⟩
-  obtain ⟨wp, hwp_bel, _⟩ := hDef.1
-  -- Set up worldAtLeastAsGood as a Preorder and extract a minimal belS-world.
-  letI : Preorder W :=
-    { le := worldAtLeastAsGood GS
-      le_refl := fun _ _ _ hp_w => hp_w
-      le_trans := fun _ _ _ huv hvw q hq hqz => huv q hq (hvw q hq hqz) }
-  have hbelNonempty : (belS : Set W).Nonempty := ⟨wp, hwp_bel⟩
-  obtain ⟨m, hmA, hmin⟩ := (Set.toFinite _).exists_minimal hbelNonempty
-  exact ⟨m, hmA, fun z hz ⟨hzm, hnmz⟩ => hnmz (hmin hz hzm)⟩
-
-/-- Heim is **conflict-blocking** (parametric no-go) at any
-    `(params, w_eval)` with strict preference asymmetry. Delegates to
-    `wantHeim_no_simultaneous_pq_and_negpq`. -/
-theorem heimSemantics_isConflictBlocking {W : Type*} [Fintype W] [DecidableEq W]
-    (params : HeimDesireParams W) (w_eval : W)
-    (hAsym : ∀ x y, params.pref w_eval x y → params.pref w_eval y x → x = y) :
-    ∀ belS (p : Set W),
-      (heimSemantics (W := W)).defined belS params p →
-      (heimSemantics (W := W)).defined belS params (fun w => ¬ p w) →
-      ¬ ((heimSemantics (W := W)).want belS params w_eval p ∧
-         (heimSemantics (W := W)).want belS params w_eval (fun w => ¬ p w)) := by
-  classical
-  intro belS p hDef _hDefNeg ⟨hp, hnp⟩
-  -- `heimSemantics.want` reduces to `wantHeimClassical` after the
-  -- structure projection; the bridge `wantHeimClassical_iff_wantHeim`
-  -- converts to the typeclass-decidable form needed by the substrate.
-  rw [show (heimSemantics (W := W)).want = fun belS params w p =>
-        wantHeimClassical belS params w p from rfl] at hp hnp
-  rw [wantHeimClassical_iff_wantHeim] at hp hnp
-  exact wantHeim_no_simultaneous_pq_and_negpq belS params w_eval p hAsym hDef
-    ⟨hp, hnp⟩
-
-/-! ## Bridge to `Question` infrastructure
+/-! ### Bridge to the `Question` API
 
 PB's `List (DecProp W)` is a finite-presentation view of a partition
 question. The substrate exposes bridge theorems showing each PB
@@ -893,8 +719,7 @@ theorem isConsidered_iff_polar_partial_answer
 
 end Generic
 
-/-! ## [lassiter-2017] (apparatus) / [lassiter-2011] (want application):
-       Expected-value desire semantics
+/-! ### Expected-value semantics ([lassiter-2017]; [lassiter-2011])
 
 [lassiter-2017] ch.7 (titled "Scalar goodness", *not* a desire
 chapter) develops an expected-value semantics for evaluative gradable
@@ -912,8 +737,8 @@ The substrate exposes:
   `p` given the agent's belief state. Convention: returns `0` when
   `p ∩ belS = ∅` (Lassiter notes E_V undefined here, p.187 fn.).
 * `Lassiter.want belS pr V θ p` — Lassiter-style positive-form want:
-  `E_V(p|bel) > θ`. Matches paper §8.14 eq. 8.72a.
-* `Lassiter.slomanPrinciple` (paper §8.6 eq. 8.16, p.216) — a constraint
+  `E_V(p|bel) > θ`. Matches §8.14 eq. 8.72a.
+* `Lassiter.slomanPrinciple` (§8.6 eq. 8.16, p.216) — a constraint
   that the wanted proposition strictly dominates every other relevant
   alternative on the value scale.
 * `Lassiter.wantWithSloman` — Lassiter's *full* account: bare threshold
@@ -948,7 +773,7 @@ namespace Lassiter
 
 variable {W : Type*}
 
-/-! ### §1. Bare expected-value apparatus -/
+/-! ### Expected value -/
 
 /-- Conditional expected value of `p` given belief state `belS` under
     prior `pr` and value function `V`. Lassiter 2017 §7.6 eq. 7.22:
@@ -975,7 +800,7 @@ def expectedValue [Fintype W]
 
 /-- **Lassiter-style positive-form `want`**: ⟦S wants p⟧ iff the
     conditional expected value of `p` given S's beliefs exceeds
-    threshold `θ`. Matches paper §8.14 eq. 8.72a's scalar
+    threshold `θ`. Matches §8.14 eq. 8.72a's scalar
     interpretation `μ_ought(φ) > θ_ought`, extended to *want* per
     §8.13 + Lassiter 2011 ch.6. -/
 def want [Fintype W]
@@ -991,7 +816,7 @@ instance [Fintype W]
     Decidable (want belS pr V θ p) :=
   inferInstanceAs (Decidable (_ > θ))
 
-/-! ### §2. Sloman's Principle (paper §8.6 eq. 8.16, p.216)
+/-! ### Sloman's Principle ([lassiter-2017] §8.6)
 
 `ought(φ) → [∀ψ ∈ ALT(φ) : ψ ≠ φ → φ >_good ψ]`
 
@@ -1023,7 +848,7 @@ def wantWithSloman [Fintype W]
     (p : Set W) [DecidablePred p] : Prop :=
   want belS pr V θ p ∧ slomanPrinciple belS pr V alts p
 
-/-! ### §3. Bridge to `Core.Agent.DecisionTheory`
+/-! ### Bridge to decision theory
 
 `Lassiter.expectedValue` is the proposition-conditional analog of
 `Core.Agent.DecisionTheory.DecisionProblem.condExpectedUtility`. Wrapping the value function
@@ -1036,7 +861,7 @@ def toDecisionProblem (pr : W → ℚ) (V : W → ℚ) :
   utility w _ := V w
   prior := pr
 
-/-! ### §4. Conflict witness for the bare threshold
+/-! ### Conflict witness for the bare threshold
 
 A 4-world model demonstrating that the *bare* `want` operator (without
 Sloman) admits simultaneous `want(p) ∧ want(¬p)`. Uniform prior 1/4 over
@@ -1071,21 +896,7 @@ theorem threshold_admits_conflict_witness :
     simp [Fin.sum_univ_succ]
     norm_num
 
-/-- **Lassiter's bare apparatus is structurally outside the
-    belief-based family.** The `threshold_admits_conflict_witness` model
-    cannot be reproduced by any `BeliefBasedDesireSemantics` instance
-    that satisfies `isConflictBlocking`. Stated as a direct existential
-    — no padding with the `isConflictBlocking` definition unfolding. -/
-theorem outside_belief_based_family :
-    ∃ (W : Type) (_ : Fintype W) (_ : DecidableEq W)
-      (belS : Set W) (_ : DecidablePred belS)
-      (pr : W → ℚ) (V : W → ℚ) (θ : ℚ)
-      (p : Set W) (_ : DecidablePred p),
-      want belS pr V θ p ∧
-      want belS pr V θ (fun w => ¬ p w) :=
-  threshold_admits_conflict_witness
-
-/-! ### §5. Sloman's Principle blocks the witness
+/-! ### Sloman's Principle blocks the witness
 
 Lassiter's *full* account adds Sloman's Principle (eq. 8.16 p.216).
 On the conflict-witness model with `alts = [propP, ¬propP]`, Sloman
@@ -1117,7 +928,7 @@ theorem wantWithSloman_blocks_conflict
     exact hSlomanNegP ⟨p, inferInstance⟩ h_p_in_alts h_p_ne_negp
   exact absurd (lt_trans h1 h2) (lt_irrefl _)
 
-/-! ### §6. Intermediacy of `expectedValue` (paper §7.5, §7.6 p.188)
+/-! ### Intermediacy of expected value ([lassiter-2017] §7.5–§7.6)
 
 Lassiter §7.5 establishes that `S_good` is an *intermediate* scale: the
 goodness of `φ ∨ ψ` is between the goodness of `φ` and the goodness of
@@ -1145,90 +956,91 @@ def hasPositiveBeliefMass [Fintype W]
   (∑ w, (if belS w ∧ p w then pr w else 0)) > 0
 
 /-- **Intermediacy of E_V (disjoint case)**: for disjoint propositions
-    p, q with positive belief mass, `E_V(p ∪ q)` lies between
-    `E_V(p)` and `E_V(q)`.
-
-    The formal claim: when both sides are well-defined and the prior
-    is non-negative on the support, `min(E_V(p), E_V(q)) ≤ E_V(p ∪ q)
-    ≤ max(E_V(p), E_V(q))`.
-
-    Proof is left as `sorry` pending the algebraic manipulation of the
-    indicator-style sum (the inequality is well-known for weighted
-    averages but the bookkeeping over `Finset.sum` of `if`-then-else
-    expressions is non-trivial). The statement is the load-bearing
-    item; consumers (e.g. `want_satisfies_weakening_disjoint`) can use
-    it via the named theorem without waiting for the proof. -/
+    p, q with positive belief mass,
+    `min(E_V(p), E_V(q)) ≤ E_V(p ∪ q) ≤ max(E_V(p), E_V(q))` — the
+    disjoint-union expectation is the mediant
+    `(E(p)·μ(p) + E(q)·μ(q)) / (μ(p) + μ(q))`, a weighted average. -/
 theorem expectedValue_intermediate_disjoint [Fintype W]
     (pr : W → ℚ) (V : W → ℚ)
     (belS : Set W) [DecidablePred belS]
     (p q : Set W) [DecidablePred p] [DecidablePred q]
     (hPosP : hasPositiveBeliefMass pr belS p)
     (hPosQ : hasPositiveBeliefMass pr belS q)
-    (hDisjoint : ∀ w, ¬ (p w ∧ q w))
-    (hNonneg : ∀ w, 0 ≤ pr w) :
+    (hDisjoint : ∀ w, ¬ (p w ∧ q w)) :
     min (expectedValue pr V belS p) (expectedValue pr V belS q)
       ≤ expectedValue pr V belS (fun w => p w ∨ q w) ∧
     expectedValue pr V belS (fun w => p w ∨ q w)
       ≤ max (expectedValue pr V belS p) (expectedValue pr V belS q) := by
-  -- TODO: discharge via algebraic manipulation. The disjoint union
-  -- expectation is `(E(p)·μ(p) + E(q)·μ(q)) / (μ(p) + μ(q))`, a
-  -- weighted average between `E(p)` and `E(q)`. Standard result.
-  sorry
+  unfold hasPositiveBeliefMass at hPosP hPosQ
+  have hsplit : ∀ f : W → ℚ,
+      (∑ w, (if belS w ∧ (p w ∨ q w) then f w else 0)) =
+      (∑ w, (if belS w ∧ p w then f w else 0)) +
+      (∑ w, (if belS w ∧ q w then f w else 0)) := by
+    intro f
+    rw [← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl fun w _ => ?_
+    by_cases hb : belS w
+    · by_cases hp : p w
+      · have hq : ¬ q w := fun hq => hDisjoint w ⟨hp, hq⟩
+        simp [hb, hp, hq]
+      · by_cases hq : q w <;> simp [hb, hp, hq]
+    · simp [hb]
+  have hEp : expectedValue pr V belS p =
+      (∑ w, (if belS w ∧ p w then pr w * V w else 0)) /
+      (∑ w, (if belS w ∧ p w then pr w else 0)) := by
+    unfold expectedValue; rw [if_neg (ne_of_gt hPosP)]
+  have hEq : expectedValue pr V belS q =
+      (∑ w, (if belS w ∧ q w then pr w * V w else 0)) /
+      (∑ w, (if belS w ∧ q w then pr w else 0)) := by
+    unfold expectedValue; rw [if_neg (ne_of_gt hPosQ)]
+  have hSpq : (0 : ℚ) < (∑ w, (if belS w ∧ p w then pr w else 0)) +
+      (∑ w, (if belS w ∧ q w then pr w else 0)) := add_pos hPosP hPosQ
+  have hEpq : expectedValue pr V belS (fun w => p w ∨ q w) =
+      ((∑ w, (if belS w ∧ p w then pr w * V w else 0)) +
+       (∑ w, (if belS w ∧ q w then pr w * V w else 0))) /
+      ((∑ w, (if belS w ∧ p w then pr w else 0)) +
+       (∑ w, (if belS w ∧ q w then pr w else 0))) := by
+    unfold expectedValue
+    rw [hsplit pr, hsplit (fun w => pr w * V w), if_neg (ne_of_gt hSpq)]
+  rw [hEp, hEq, hEpq]
+  constructor
+  · refine (le_div_iff₀ hSpq).mpr ?_
+    have h1 := (le_div_iff₀ hPosP).mp
+      (min_le_left ((∑ w, (if belS w ∧ p w then pr w * V w else 0)) /
+          (∑ w, (if belS w ∧ p w then pr w else 0)))
+        ((∑ w, (if belS w ∧ q w then pr w * V w else 0)) /
+          (∑ w, (if belS w ∧ q w then pr w else 0))))
+    have h2 := (le_div_iff₀ hPosQ).mp
+      (min_le_right ((∑ w, (if belS w ∧ p w then pr w * V w else 0)) /
+          (∑ w, (if belS w ∧ p w then pr w else 0)))
+        ((∑ w, (if belS w ∧ q w then pr w * V w else 0)) /
+          (∑ w, (if belS w ∧ q w then pr w else 0))))
+    nlinarith [h1, h2]
+  · refine (div_le_iff₀ hSpq).mpr ?_
+    have h1 := (div_le_iff₀ hPosP).mp
+      (le_max_left ((∑ w, (if belS w ∧ p w then pr w * V w else 0)) /
+          (∑ w, (if belS w ∧ p w then pr w else 0)))
+        ((∑ w, (if belS w ∧ q w then pr w * V w else 0)) /
+          (∑ w, (if belS w ∧ q w then pr w else 0))))
+    have h2 := (div_le_iff₀ hPosQ).mp
+      (le_max_right ((∑ w, (if belS w ∧ p w then pr w * V w else 0)) /
+          (∑ w, (if belS w ∧ p w then pr w else 0)))
+        ((∑ w, (if belS w ∧ q w then pr w * V w else 0)) /
+          (∑ w, (if belS w ∧ q w then pr w else 0))))
+    nlinarith [h1, h2]
 
-/-! ### §7. Smith Principle and Weakening (paper §8.10, §8.14 eq. 8.54)
+/-! ### Weakening from intermediacy
 
-Lassiter eq. 8.54 collects three constraints on `ought`:
-
-* (a) **Sloman** (Sloman 1970): `ought(φ) → ∀ψ ∈ ALT(φ), ψ ≠ φ → φ >_good ψ`
-  (already formalized as `slomanPrinciple`)
-* (b) **Smith** (Horty 1993, 2003): `[(φ ∨ ψ) = W ∧ ought(φ) ∧ ought(ψ)]
-  → ought(φ ∧ ψ)` — restricted agglomeration
-* (c) **Weakening** ([cariani-2016]): `ought(φ) ∧ ought(ψ) → ought(φ ∨ ψ)`
-
-These are constraints on the `want` operator, not properties of single
-propositions. We formalize each as a `Prop` relating two propositions;
-the universally-quantified "operator satisfies the constraint" is the
-`∀ p q` closure.
-
-**Provenance for Weakening**: [cariani-2016] introduces the name
-and argues the principle is valid within actualist deontic semantics
-(Cariani's own Counterexample to Weakening on p.405 attacks the
-*conjunction* actualism + simple alternatives mapping; he wants to
-preserve Weakening). Lassiter §8.14 derives Weakening from intermediacy
-of E_V — see `want_satisfies_weakening_disjoint`. So in our
-formalization, Weakening is *named* per Cariani 2016, *defined* as an
-operator constraint, and *derived* (in the disjoint case) from the
-intermediacy property of expected value (Lassiter §7.5, §7.6 p.188).
-This honors linglib's "derive don't stipulate" discipline: Weakening
-isn't a brute axiom — it falls out of the underlying scalar property.
-
-Smith is stated as a separate constraint; its derivation requires more
-structure than intermediacy alone (Horty 1993, 2003). -/
-
-/-- **Smith Principle (paper eq. 8.54b)**: if `(p ∨ q) = univ` and
-    both `want(p)` and `want(q)` hold, then `want(p ∧ q)` holds.
-
-    Formalized as a `Prop` parameterized on a specific `(p, q)` pair.
-    The "want operator satisfies Smith" is the `∀ p q` closure. -/
-def smithPrinciple [Fintype W]
-    (belS : Set W) [DecidablePred belS]
-    (pr : W → ℚ) (V : W → ℚ) (θ : ℚ)
-    (p q : Set W) [DecidablePred p] [DecidablePred q] : Prop :=
-  (∀ w, p w ∨ q w) →
-  want belS pr V θ p →
-  want belS pr V θ q →
-  want belS pr V θ (fun w => p w ∧ q w)
-
-/-- **Weakening (paper eq. 8.54c)**: if both `want(p)` and `want(q)`
-    hold, then `want(p ∨ q)` holds. Lassiter argues this is empirically
-    valid (§8.10) and derivable from intermediacy of E_V (§8.14). -/
-def weakeningPrinciple [Fintype W]
-    (belS : Set W) [DecidablePred belS]
-    (pr : W → ℚ) (V : W → ℚ) (θ : ℚ)
-    (p q : Set W) [DecidablePred p] [DecidablePred q] : Prop :=
-  want belS pr V θ p →
-  want belS pr V θ q →
-  want belS pr V θ (fun w => p w ∨ q w)
+[lassiter-2017] eq. 8.54 collects three constraints on *ought*: Sloman
+(formalized above as `slomanPrinciple`), Smith (restricted
+agglomeration, whose derivation requires more structure than
+intermediacy and is not formalized here), and Weakening
+(`ought(φ) ∧ ought(ψ) → ought(φ ∨ ψ)`, the name due to [cariani-2016],
+who defends the principle). Lassiter derives Weakening from the
+intermediacy of expected value (§8.14);
+`want_satisfies_weakening_disjoint` reproduces the derivation in the
+disjoint case, so Weakening is derived from the underlying scalar
+property rather than stipulated. -/
 
 /-- **Weakening from intermediacy** (disjoint case): when `p ⊥ q` and
     both have positive belief mass, the disjoint-union expected value
@@ -1244,46 +1056,13 @@ theorem want_satisfies_weakening_disjoint [Fintype W]
     (hPosP : hasPositiveBeliefMass pr belS p)
     (hPosQ : hasPositiveBeliefMass pr belS q)
     (hDisjoint : ∀ w, ¬ (p w ∧ q w))
-    (hNonneg : ∀ w, 0 ≤ pr w)
     (hp : want belS pr V θ p) (hq : want belS pr V θ q) :
     want belS pr V θ (fun w => p w ∨ q w) := by
   unfold want at hp hq ⊢
   have ⟨hMin, _hMax⟩ :=
-    expectedValue_intermediate_disjoint pr V belS p q hPosP hPosQ hDisjoint hNonneg
+    expectedValue_intermediate_disjoint pr V belS p q hPosP hPosQ hDisjoint
   exact lt_of_lt_of_le (lt_min hp hq) hMin
-
-/-- **The full Lassiter constraint trio (paper eq. 8.54)**: a `want`
-    operator satisfies the trio at `(p, q)` iff Sloman holds for `p`
-    and Smith and Weakening hold pointwise. The `∀ p q alts` closure
-    over this gives Lassiter's full theory. -/
-def fullConstraintsTrio [Fintype W]
-    (belS : Set W) [DecidablePred belS]
-    (pr : W → ℚ) (V : W → ℚ) (θ : ℚ)
-    (alts : List (Σ' (q : Set W), DecidablePred q))
-    (p q : Set W) [DecidablePred p] [DecidablePred q] : Prop :=
-  slomanPrinciple belS pr V alts p ∧
-  smithPrinciple belS pr V θ p q ∧
-  weakeningPrinciple belS pr V θ p q
-
-/-- **The full constraint trio also blocks the conflict witness.**
-    With Sloman as the active blocker (Smith and Weakening don't
-    directly address `(p, ¬p)` since they're closure constraints),
-    the trio inherits the blocking from `wantWithSloman`. -/
-theorem fullConstraintsTrio_blocks_conflict [Fintype W]
-    (belS : Set W) [DecidablePred belS]
-    (pr : W → ℚ) (V : W → ℚ) (θ : ℚ)
-    (p : Set W) [DecidablePred p]
-    (alts : List (Σ' (q : Set W), DecidablePred q))
-    (h_p_in_alts : ⟨p, inferInstance⟩ ∈ alts)
-    (h_negp_in_alts : ⟨fun w => ¬ p w, inferInstance⟩ ∈ alts)
-    (h_p_ne_negp : (p : Set W) ≠ (fun w => ¬ p w))
-    (hP : want belS pr V θ p) (hSlomanP : slomanPrinciple belS pr V alts p)
-    (hNegP : want belS pr V θ (fun w => ¬ p w))
-    (hSlomanNegP : slomanPrinciple belS pr V alts (fun w => ¬ p w)) :
-    False := by
-  exact wantWithSloman_blocks_conflict belS pr V θ p alts
-    h_p_in_alts h_negp_in_alts h_p_ne_negp ⟨⟨hP, hSlomanP⟩, ⟨hNegP, hSlomanNegP⟩⟩
 
 end Lassiter
 
-end Semantics.Attitudes.Desire
+end Desire

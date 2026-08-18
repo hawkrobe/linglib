@@ -20,7 +20,7 @@ This study file:
   `wantEP_jointly_belief_consistent` forbids the witness; the
   Lassiter bare apparatus exhibits it. **Different mechanisms.**
 * §4 cross-paper bridge to [heim-1992]: same configuration is
-  `wantHeimDefined`-OK, but `wantHeim_no_simultaneous_pq_and_negpq`
+  `wantHeimDefined`-OK, but `wantHeim_no_conflict`
   rules out joint truth. **Heim's (40) amendment is the structural
   analog of Lassiter's Sloman.**
 * §5 **Sloman's Principle blocks the witness** for Lassiter's *full*
@@ -34,14 +34,15 @@ This study file:
 
 The chronological-dependency rule applies: this file references
 [phillips-brown-2025] only in docstring prose (PB is later);
-PhillipsBrown2025.lean already cross-references Lassiter via the
-`BeliefBasedDesireSemantics` typology design.
+PhillipsBrown2025.lean already cross-references Lassiter via its
+`BeliefBasedDesireSemantics` typology (the paper's own §2 packaging,
+formalized in that study file).
 -/
 
 namespace Lassiter2017Desire
 
-open Semantics.Attitudes.Desire
-open Semantics.Attitudes.Desire.Lassiter
+open Desire
+open Desire.Lassiter
 
 /-! ## §1. The 4-world conflict-witness model
 
@@ -115,12 +116,12 @@ configuration. The two frameworks make orthogonal predictions on the
     showing C&L cannot reproduce Lassiter's witness. -/
 theorem condoravdiLauer_blocks_lassiter_witness
     {Agent : Type} {B : Agent → W → Set W}
-    (EP : Semantics.Attitudes.Desire.EffectivePreferentialBackground Agent W B)
+    (EP : Desire.EffectivePreferentialBackground Agent W B)
     (a : Agent) (w : W) (φ : Set W)
-    (hφ : Semantics.Attitudes.Desire.wantEP EP a φ w)
-    (hnegφ : Semantics.Attitudes.Desire.wantEP EP a (fun w => ¬ φ w) w) :
+    (hφ : Desire.wantEP EP a φ w)
+    (hnegφ : Desire.wantEP EP a (fun w => ¬ φ w) w) :
     False := by
-  have h := Semantics.Attitudes.Desire.wantEP_jointly_belief_consistent
+  have h := Desire.wantEP_jointly_belief_consistent
               EP hφ hnegφ
   apply h
   ext x
@@ -131,7 +132,7 @@ theorem condoravdiLauer_blocks_lassiter_witness
 
 Heim's (40) amendment + comparative-belief semantics block simultaneous
 `wantHeim p ∧ wantHeim ¬p` (substrate's
-`wantHeim_no_simultaneous_pq_and_negpq`). The 4-world conflict witness
+`wantHeim_no_conflict`). The 4-world conflict witness
 configuration is `wantHeimDefined`-OK on `targetProp` (both p-worlds
 and ¬p-worlds are in `belTotal`), so Heim's no-go applies — and Heim's
 prediction differs from Lassiter's.
@@ -153,7 +154,7 @@ theorem heim_blocks_witness
     (hAsym : ∀ x y, params.pref w_eval x y → params.pref w_eval y x → x = y) :
     ¬ (wantHeim belTotal params w_eval targetProp ∧
        wantHeim belTotal params w_eval (fun w => ¬ targetProp w)) :=
-  wantHeim_no_simultaneous_pq_and_negpq belTotal params w_eval targetProp
+  wantHeim_no_conflict belTotal params w_eval targetProp
     hAsym wantHeimDefined_on_witness
 
 /-! ## §5. Sloman's Principle blocks the witness for Lassiter's full account

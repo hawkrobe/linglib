@@ -71,7 +71,7 @@ do not exist. Corrected:
   `PartialOrder (Event Time)` instance Pasternak's part-whole relation
   consumes). Not a substrate gap; a refinement.
 - §5 `want`/`wish`/`regret`: `Semantics/Attitudes/Desire.lean`
-  already provides `wantVF` (von Fintel-style) and
+  already provides `wantVonFintel` (von Fintel-style) and
   `worldSatisfactionOrdering`. The Pasternak §5 integration is a
   composition with the new `MentalStateHomogeneity` discipline, not
   fresh substrate.
@@ -434,7 +434,7 @@ follow-up. Out of scope here because it is not load-bearing for §1–§6.
 Pasternak §5 integrates Hintikkan world-quantification into the two-
 dimensional ontology via point-states (eq. 67), `WANT_vF` (eq. 73,
 [von-fintel-1999]), `WANT_H` (eq. 91, [heim-1992]), and DOG.
-The substrate has `Attitudes.Desire.wantVF` and
+The substrate has `Attitudes.Desire.wantVonFintel` and
 `Attitudes.Desire.worldAtLeastAsGood` already; the Pasternak §5
 integration is a composition with `MentalStateHomogeneity`, not new
 substrate. A follow-on `Pasternak2019Attitudes.lean` (or extension of
@@ -444,7 +444,7 @@ linglib bib yet.
 
 The chronologically-later [phillips-brown-2025] formalization
 (`Studies/PhillipsBrown2025.lean`) builds on the same
-`Attitudes.Desire` substrate, generalizing `wantVF` to question-based
+`Attitudes.Desire` substrate, generalizing `wantVonFintel` to question-based
 `wantQuestionBased`. That study file's §11 makes the disagreement with
 [condoravdi-lauer-2016] explicit; the analogous Pasternak vs
 question-based contrast (intensity-based vs question-based resolution

@@ -11,7 +11,7 @@ Condoravdi & Lauer's analysis of `want`, developed across
 parameterized by a *preferential background* — analogous to Kratzer's
 modal base/ordering source — whose distinguished value is the agent's
 effective preference function `EP` (`Core.Order.EffectivePreference`).
-Declarations live in the `Semantics.Attitudes.Desire` namespace,
+Declarations live in the `Desire` namespace,
 alongside the rival want-semantics of `Desire.lean`.
 
 ## Main declarations
@@ -32,7 +32,7 @@ The anankastic-conditional analysis is prosecuted in
 ([deo-2025-bara]) in `Studies/Deo2025.lean`.
 -/
 
-namespace Semantics.Attitudes.Desire
+namespace Desire
 
 open Core.Order
 
@@ -151,4 +151,4 @@ def maxOrderingSource {B : Agent → W → Set W}
     W → Set (Set W) :=
   fun w => (EP Ad w).toPreferenceStructure.maxElts
 
-end Semantics.Attitudes.Desire
+end Desire
