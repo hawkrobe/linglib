@@ -13,7 +13,7 @@ End-to-end verification of [schlenker-2003]'s core argument:
 1. Kaplan's thesis (no monsters) holds for English: "I" always refers
    to the actual speaker, even under attitude verbs
 2. Amharic violates the thesis: "I" shifts to the attitude holder
-3. Context quantification (`ctxBox`) captures both patterns:
+3. Context quantification (`ContextBox`) captures both patterns:
    - With world-only meaning → reduces to standard `boxAt` (Fixity holds)
    - With agent-reading meaning → strictly more expressive (Fixity fails)
 4. Person features as presuppositions derive logophoric pronouns
@@ -29,7 +29,7 @@ Semantics.Reference.Kaplan (pronI_access, origin-reading)
     ↓
 Semantics.Reference.ShiftedIndexicals (amharic_pronI, local-reading)
     ↓
-Semantics.Attitudes.ContextQuantification (ctxBox, Fixity)
+ContextQuantification (ContextBox, Fixity)
     ↓
 Semantics.Reference.PersonFeatures (logophoric pronouns)
     ↓
@@ -40,7 +40,7 @@ This file: concrete end-to-end verification
 namespace Schlenker2003
 
 open Semantics.Context
-open Semantics.Attitudes.ContextQuantification
+open ContextQuantification
 open Semantics.Attitudes.Doxastic (boxAt)
 open Semantics.Reference.ShiftedIndexicals (amharic_pronI)
 open Semantics.Reference.Kaplan (pronI_access)
@@ -112,22 +112,22 @@ instance : ∀ p w, Decidable (isHappy p w) := by
     The meaning is world-only (Alice is fixed by origin-reading "I"),
     so context quantification reduces to standard world quantification. -/
 theorem english_reduces_to_boxAt :
-    ctxBox bobBel .bob (fun c => isHappy .alice c.world) rootT .w0 [.w0, .w1] =
+    ContextBox bobBel .bob (fun c => isHappy .alice c.world) rootT .w0 [.w0, .w1] ↔
     boxAt bobBel .bob .w0 [.w0, .w1] (isHappy .alice) :=
-  ctxBox_world_only bobBel .bob (isHappy .alice) rootT .w0 [.w0, .w1]
+  contextBox_world_only bobBel .bob (isHappy .alice) rootT .w0 [.w0, .w1]
 
 /-- English version is false: Alice is NOT happy in all of Bob's
     belief worlds (she's unhappy in w1). -/
 theorem english_result :
-    ¬ ctxBox bobBel .bob (fun c => isHappy .alice c.world)
+    ¬ ContextBox bobBel .bob (fun c => isHappy .alice c.world)
       rootT .w0 [.w0, .w1] := by
   decide
 
 /-- Amharic: "Bob said that I am happy" = "Bob said that Bob is happy."
     The meaning reads the agent from the shifted context (Bob),
-    so ctxBox does NOT reduce to boxAt. -/
+    so ContextBox does NOT reduce to boxAt. -/
 theorem amharic_result :
-    ctxBox bobBel .bob (fun c => isHappy c.agent c.world)
+    ContextBox bobBel .bob (fun c => isHappy c.agent c.world)
       rootT .w0 [.w0, .w1] := by
   decide
 
@@ -136,9 +136,9 @@ theorem amharic_result :
     [schlenker-2003]'s argument that context quantification is
     strictly more expressive than world quantification. -/
 theorem english_amharic_differ :
-    ¬ ctxBox bobBel .bob (fun c => isHappy .alice c.world)
+    ¬ ContextBox bobBel .bob (fun c => isHappy .alice c.world)
       rootT .w0 [.w0, .w1] ∧
-    ctxBox bobBel .bob (fun c => isHappy c.agent c.world)
+    ContextBox bobBel .bob (fun c => isHappy c.agent c.world)
       rootT .w0 [.w0, .w1] :=
   ⟨english_result, amharic_result⟩
 
@@ -146,7 +146,7 @@ theorem english_amharic_differ :
 -- § Fixity Thesis
 -- ════════════════════════════════════════════════════════════════
 
-/-- World-only meanings satisfy Fixity (Claim 2): the truth value of
+/-- World-only meanings satisfy the Fixity Thesis: the truth value of
     "Alice is happy" is tower-independent. -/
 theorem fixity_english :
     SatisfiesFixity (W := World) (E := Person) (P := Unit) (T := Unit)
@@ -157,12 +157,12 @@ theorem fixity_english :
 -- § Context Quantification ↔ Shifted Indexicals Bridge
 -- ════════════════════════════════════════════════════════════════
 
-/-- The agent of the accessible context (from `ctxFromShift`) is exactly
-    what Amharic "I" (`amharic_pronI`) resolves to. -/
-theorem bridge_ctxFromShift_amharic :
-    (ctxFromShift rootT .bob .w1).agent =
+/-- The agent of the reported context is exactly what Amharic "I"
+    (`amharic_pronI`) resolves to. -/
+theorem bridge_reportedContext_amharic :
+    (reportedContext rootT .bob .w1).agent =
     amharic_pronI.resolve shiftedT := by
-  native_decide
+  decide
 
 /-- English "I" gives the same result with or without the shift:
     both return Alice (the origin agent). -/

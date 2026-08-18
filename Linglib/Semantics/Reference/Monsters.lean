@@ -25,8 +25,8 @@ are languages where attitude verbs push non-identity shifts (e.g.,
 - `IsTowerMonster`: a shift where apply c != c for some c
 - `kaplansThesisAsTower`: English embedding verbs push identity shifts
 
-Schlenker's monstrous `Say_m` operator lives in `Attitudes/ContextQuantification.lean`
-as `sayM` (with `ctxBox` its context-meaning specialization); this file is about the
+Schlenker's context-quantifying attitude operator lives in
+`Attitudes/ContextQuantification.lean` as `ContextBox`; this file is about the
 monster *predicate* and Kaplan's thesis, not the operator.
 
 -/
