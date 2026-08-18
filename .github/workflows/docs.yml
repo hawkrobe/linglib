@@ -75,9 +75,9 @@ jobs:
           rm -f "$BUILD/$DB" "$DB"
 
           # Generate doc-gen4's bibliography from the source bib (its BibTeX
-          # parser rejects the '%' LaTeX comments that blog/references.bib uses).
+          # parser rejects the '%' LaTeX comments that references.bib uses).
           mkdir -p docs
-          grep -vE '^[[:space:]]*%' blog/references.bib > docs/references.bib
+          grep -vE '^[[:space:]]*%' references.bib > docs/references.bib
 
           # Bibliography prepass
           if [ -f docs/references.bib ]; then
@@ -112,27 +112,17 @@ jobs:
           # to --build), unlike single/genCore which prepend --build.
           $DOCGEN fromDb --build "$BUILD" "$BUILD/$DB"
 
-      - name: Install Hugo
-        uses: peaceiris/actions-hugo@v3
-        with:
-          hugo-version: 'latest'
-          extended: true
-
-      - name: Generate bibliography
-        run: python3 blog/scripts/gen_bibliography.py
-
-      - name: Build blog
-        working-directory: blog
-        run: hugo --minify
+      - name: Check citations
+        run: python3 scripts/check_citations.py
 
       - name: Compose site
         run: |
-          mkdir -p .lake/build/doc-site
-          # Hugo output → site root
-          cp -r blog/public/* .lake/build/doc-site/
-          # doc-gen4 output → /docs/ subdirectory
+          # doc-gen4 output is the site; keep the /docs/ prefix so
+          # existing deep links survive, with a root redirect into it.
           mkdir -p .lake/build/doc-site/docs
           cp -r .lake/build/doc/* .lake/build/doc-site/docs/
+          printf '<!doctype html><meta http-equiv="refresh" content="0; url=docs/">' \
+            > .lake/build/doc-site/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

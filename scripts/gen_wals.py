@@ -720,10 +720,10 @@ def generate_languages(langs, used_ids):
     return "\n".join(lines)
 
 
-REFERENCES_BIB = ROOT / "blog" / "references.bib"
+REFERENCES_BIB = ROOT / "references.bib"
 
 def load_bib_keys():
-    """Return the set of bibkeys defined in blog/data/references.bib."""
+    """Return the set of bibkeys defined in references.bib."""
     keys = set()
     with open(REFERENCES_BIB, encoding="utf-8") as f:
         for line in f:
