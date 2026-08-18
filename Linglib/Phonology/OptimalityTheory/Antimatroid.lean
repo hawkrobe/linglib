@@ -508,22 +508,24 @@ def Antimat {n : Nat} (E : ERCSet n) (hcons : ERCSet.Consistent E) :
 
 /-! ### Simple-ERC feasibility coincides with the antimatroid family
 
-When every ERC is *simple* (one `W`, one `L` — a Hasse edge `w ≫ l`), the
-constraints carry a genuine partial order and the decidable local condition
-`Feasible` is exact: it agrees with the faithful `FeasiblePrefix`/`MChain` family.
+When every ERC is *simple* (one `W`, one `L` — a Hasse edge `w ≫ l`) or
+*trivial* (no `L`, imposing nothing), the constraints carry a genuine partial
+order and the decidable local condition `Feasible` is exact: it agrees with the
+faithful `FeasiblePrefix`/`MChain` family.
 This is the Birkhoff correspondence between order ideals of a poset and the
 prefixes of its linear extensions ([merchant-riggle-2016]). For non-simple `E`
 the agreement fails (`feasible_not_accessible`). -/
 
-/-- **Birkhoff representation on the simple-ERC fragment.** With every ERC simple,
-local feasibility coincides with the genuine antimatroid family: a set is locally
+/-- **Birkhoff representation on the simple-ERC fragment.** With every ERC simple
+or trivial, local feasibility coincides with the genuine antimatroid family: a set is locally
 feasible iff it is a prefix of some consistent ranking. The forward direction is
 the order-ideal ↔ linear-extension-prefix correspondence — reorder a witnessing
 ranking `r₀` into the block `S` (in `r₀`'s order) followed by `Sᶜ` (in `r₀`'s
 order); winner-uniqueness makes every Hasse edge respected, so the result
 satisfies `E` and has `S` as its length-`|S|` prefix. -/
 theorem feasible_iff_feasiblePrefix_of_simple {n : Nat} {E : ERCSet n}
-    (hcons : ERCSet.Consistent E) (hsimple : ERCSet.IsSimpleSet E) (S : Finset (Fin n)) :
+    (hcons : ERCSet.Consistent E) (hsimple : ∀ α ∈ E, α.IsSimple ∨ α.IsTrivial)
+    (S : Finset (Fin n)) :
     Feasible E S ↔ FeasiblePrefix E S := by
   refine ⟨fun hfeas => ?_, feasible_of_feasiblePrefix⟩
   obtain ⟨r₀, hr₀⟩ := hcons
@@ -560,7 +562,8 @@ theorem feasible_iff_feasiblePrefix_of_simple {n : Nat} {E : ERCSet n}
     intro α hα
     rw [ERC.satisfiedBy_iff_dominance]
     intro l hl_L
-    obtain ⟨⟨wα, hwαW, hwα_uniq⟩, _⟩ := hsimple α hα
+    obtain ⟨⟨wα, hwαW, hwα_uniq⟩, _⟩ :=
+      (hsimple α hα).resolve_right fun htriv => htriv l hl_L
     obtain ⟨w, hwW, hw_dom₀⟩ := (ERC.satisfiedBy_iff_dominance r₀ α).mp (hr₀ α hα) l hl_L
     have hdom₀ : (r₀.symm w : Nat) < (r₀.symm l : Nat) := hw_dom₀
     refine ⟨w, hwW, ?_⟩
@@ -593,7 +596,8 @@ theorem feasible_iff_feasiblePrefix_of_simple {n : Nat} {E : ERCSet n}
 of a locally-feasible `Finset` iff it is `MChain`-feasible. (Bridges the decidable
 `Finset` side to `Antimat`'s `Set`-valued `MChain` family.) -/
 theorem feasible_coe_iff_mChain {n : Nat} {E : ERCSet n}
-    (hcons : ERCSet.Consistent E) (hsimple : ERCSet.IsSimpleSet E) (T : Set (Fin n)) :
+    (hcons : ERCSet.Consistent E) (hsimple : ∀ α ∈ E, α.IsSimple ∨ α.IsTrivial)
+    (T : Set (Fin n)) :
     (∃ S' : Finset (Fin n), (↑S' : Set (Fin n)) = T ∧ Feasible E S') ↔ MChain E T := by
   constructor
   · rintro ⟨S', rfl, hfeas⟩
@@ -602,15 +606,15 @@ theorem feasible_coe_iff_mChain {n : Nat} {E : ERCSet n}
   · rintro ⟨r, hr, k, hk⟩
     exact ⟨prefixFinset r k, (prefixFinset_coe r k).trans hk, feasible_of_satisfiedBy hr k⟩
 
-/-- **The simple-ERC Birkhoff antimatroid.** A consistent set of simple ERCs
-yields an antimatroid on `Fin n` whose feasible sets are the *locally feasible*
+/-- **The simple-ERC Birkhoff antimatroid.** A consistent set of simple (or
+trivial) ERCs yields an antimatroid on `Fin n` whose feasible sets are the *locally feasible*
 `Finset`s — the decidable form. On the simple fragment this family equals
 `Antimat E`'s `MChain` family (`feasible_coe_iff_mChain`), so accessibility and
 union closure transfer from `Antimat`; concrete membership is checked by `decide`
 via `ofSimple_isFeasible_coe`. This is the order-ideal antimatroid of the
 constraint partial order ([merchant-riggle-2016]). -/
 def Antimat.ofSimple {n : Nat} (E : ERCSet n) (hcons : ERCSet.Consistent E)
-    (hsimple : ERCSet.IsSimpleSet E) : Antimatroid (Fin n) where
+    (hsimple : ∀ α ∈ E, α.IsSimple ∨ α.IsTrivial) : Antimatroid (Fin n) where
   E := Set.univ
   IsFeasible := fun T => ∃ S' : Finset (Fin n), (↑S' : Set (Fin n)) = T ∧ Feasible E S'
   empty_feasible := (feasible_coe_iff_mChain hcons hsimple ∅).mpr (Antimat E hcons).empty_feasible
@@ -634,7 +638,8 @@ def Antimat.ofSimple {n : Nat} (E : ERCSet n) (hcons : ERCSet.Consistent E)
 /-- Concrete feasibility of `Antimat.ofSimple` is the decidable `Feasible` — the
 hook that lets `decide` settle membership queries. -/
 @[simp] theorem ofSimple_isFeasible_coe {n : Nat} {E : ERCSet n}
-    (hcons : ERCSet.Consistent E) (hsimple : ERCSet.IsSimpleSet E) (S : Finset (Fin n)) :
+    (hcons : ERCSet.Consistent E) (hsimple : ∀ α ∈ E, α.IsSimple ∨ α.IsTrivial)
+    (S : Finset (Fin n)) :
     (Antimat.ofSimple E hcons hsimple).IsFeasible (↑S : Set (Fin n)) ↔ Feasible E S := by
   constructor
   · rintro ⟨S', hS'eq, hfeas⟩; rwa [Finset.coe_inj.mp hS'eq] at hfeas

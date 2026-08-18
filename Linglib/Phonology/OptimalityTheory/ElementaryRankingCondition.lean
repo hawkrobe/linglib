@@ -225,10 +225,6 @@ theorem entails_of_forall_mem {E E' : ERCSet n}
     (h : ∀ α ∈ E', Entails E {α}) : Entails E E' :=
   fun r hr α hα => h α hα r hr α (Finset.mem_singleton_self α)
 
-/-- An ERC set is *simple* if every member is a simple ERC — a set of Hasse edges
-([merchant-riggle-2016]). -/
-def IsSimpleSet (E : ERCSet n) : Prop := ∀ α ∈ E, α.IsSimple
-
 end ERCSet
 
 /-! ### Simple ERCs -/
@@ -256,6 +252,10 @@ theorem simpleERC_eq_L_iff (hij : i ≠ j) (k : Fin n) :
 theorem simpleERC_apply_L (hij : i ≠ j) : simpleERC i j j = .L :=
   (simpleERC_eq_L_iff hij j).mpr rfl
 
+/-- The diagonal simple ERC `i ≫ i` has no `L`, hence is trivial. -/
+theorem simpleERC_self_isTrivial (i : Fin n) : (simpleERC i i).IsTrivial := fun k => by
+  simp only [simpleERC]; split_ifs <;> decide
+
 /-- A simple ERC `i ≫ j` (with `i ≠ j`) is satisfied by `r` iff `i` dominates
 `j` under `r`. -/
 theorem simpleERC_satisfiedBy_iff (hij : i ≠ j) (r : Ranking n) :
@@ -275,9 +275,7 @@ trivial and the relation reflexive, so no `i ≠ j` guard is needed. -/
 theorem simpleERC_satisfiedBy_toRel_iff (i j : Fin n) (r : Ranking n) :
     (simpleERC i j).SatisfiedBy r ↔ r.toRel i j := by
   rcases eq_or_ne i j with rfl | hij
-  · refine iff_of_true (ERC.trivial_satisfiedBy (fun k => ?_) r) (le_refl _)
-    simp only [simpleERC]
-    split_ifs <;> decide
+  · exact iff_of_true (ERC.trivial_satisfiedBy (simpleERC_self_isTrivial i) r) (le_refl _)
   · rw [simpleERC_satisfiedBy_iff hij, r.toRel_iff_dominates hij]
 
 /-- A simple ERC `i ≫ j` (with `i ≠ j`) is consistent. -/
@@ -290,6 +288,12 @@ theorem simpleERC_consistent (hij : i ≠ j) :
 theorem simpleERC_isSimple (hij : i ≠ j) : (simpleERC i j).IsSimple :=
   ⟨⟨i, simpleERC_apply_W, fun y hy => (simpleERC_eq_W_iff y).mp hy⟩,
    ⟨j, simpleERC_apply_L hij, fun y hy => (simpleERC_eq_L_iff hij y).mp hy⟩⟩
+
+/-- Every `simpleERC` is simple or (on the diagonal) trivial. -/
+theorem simpleERC_isSimple_or_isTrivial (i j : Fin n) :
+    (simpleERC i j).IsSimple ∨ (simpleERC i j).IsTrivial := by
+  rcases eq_or_ne i j with rfl | hij
+  exacts [.inr (simpleERC_self_isTrivial i), .inl (simpleERC_isSimple hij)]
 
 /-! ### Bridges: profiles, tableaux, and the Core lex order -/
 
