@@ -42,6 +42,7 @@ formalized in that study file).
 namespace Lassiter2017Desire
 
 open Desire
+open Core.Order (EffectivePreference)
 open Desire.Lassiter
 
 /-! ## §1. The 4-world conflict-witness model
@@ -103,7 +104,7 @@ theorem conflict_concrete :
 /-! ## §3. Cross-paper bridge: [condoravdi-lauer-2016]
 
 C&L's `wantEffectivePreference_jointly_belief_consistent` says that for any
-`EffectivePreferentialBackground EP` and any agent `a`, world `w`,
+effective-preference background `EP` and any agent `a`, world `w`,
 `wantEffectivePreference EP a φ w ∧ wantEffectivePreference EP a ψ w`
 implies `(φ ∩ ψ) ∩ B(a, w) ≠ ∅`.
 Specialized to `ψ = φᶜ`: the intersection is empty, so simultaneous
@@ -118,7 +119,7 @@ configuration. The two frameworks make orthogonal predictions on the
     C&L cannot reproduce Lassiter's witness. -/
 theorem condoravdiLauer_blocks_lassiter_witness
     {Agent : Type} {B : Agent → W → Set W}
-    (EP : Desire.EffectivePreferentialBackground Agent W B)
+    (EP : ∀ a w, EffectivePreference W (B a w))
     (a : Agent) (w : W) (φ : Set W)
     (hφ : Desire.wantEffectivePreference EP a φ w)
     (hnegφ : Desire.wantEffectivePreference EP a (fun w => ¬ φ w) w) :

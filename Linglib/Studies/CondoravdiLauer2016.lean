@@ -101,7 +101,7 @@ The four contextual parameters:
   module docstring); v1 takes `gInner` as a parameter. -/
 def harlemLF {Agent W : Type u}
     (fBelS : ModalBase W) (gNorm : OrderingSource W)
-    {B : Agent → W → Set W} (EP : EffectivePreferentialBackground Agent W B)
+    {B : Agent → W → Set W} (EP : ∀ a w, EffectivePreference W (B a w))
     (fHist : ModalBase W) (gInner : OrderingSource W)
     (Ad : Agent) (Harlem ATrain : Set W) (w : W) : Prop :=
   doubleModalLF fBelS gNorm
@@ -113,7 +113,7 @@ def harlemLF {Agent W : Type u}
 construction. Documentation theorem (the equality is `rfl`). -/
 theorem harlemLF_eq_doubleModalLF {Agent W : Type u}
     (fBelS : ModalBase W) (gNorm : OrderingSource W)
-    {B : Agent → W → Set W} (EP : EffectivePreferentialBackground Agent W B)
+    {B : Agent → W → Set W} (EP : ∀ a w, EffectivePreference W (B a w))
     (fHist : ModalBase W) (gInner : OrderingSource W)
     (Ad : Agent) (Harlem ATrain : Set W) (w : W) :
     harlemLF fBelS gNorm EP fHist gInner Ad Harlem ATrain w =
@@ -202,13 +202,13 @@ noncomputable def epAtW1 : EffectivePreference World Set.univ :=
 /-- The effective preferential background: at `w₀` Hoboken-preferring,
 at `w₁` Harlem-preferring. Uses `if`-on-decidable equality to keep the
 reduction simple at the use sites. -/
-noncomputable def EP : EffectivePreferentialBackground Unit World belAd :=
+noncomputable def EP : ∀ u w, EffectivePreference World (belAd u w) :=
   fun _ w => if w = (0 : World) then epAtW0 else epAtW1
 
 /-- At `wActual = w₀`: Ad effectively prefers Hoboken. -/
 theorem wantEffectivePreference_hoboken_at_wActual :
     wantEffectivePreference EP () Hoboken wActual := by
-  refine (wantExactMatch_iff _ _ _ _).mpr ?_
+  refine wantExactMatch_iff.mpr ?_
   show Hoboken ∈ (EP () wActual).toPreferenceStructure.maxElts
   simp only [EP, wActual]
   exact singletonPS_mem_maxElts Hoboken
