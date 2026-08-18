@@ -3,6 +3,7 @@ import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Phonology.OptimalityTheory.Grammar
 import Linglib.Core.Optimization.PermSubsetCombinatorics
+import Mathlib.Data.List.ProdSigma
 import Mathlib.Data.Sigma.Lex
 import Mathlib.Order.Extension.Linear
 import Mathlib.Order.Preorder.Finite
@@ -136,19 +137,12 @@ consistent total orders are exactly `ERCSet.linearExtensions` ([prince-2002]). -
 entailed by the covering pairs, so the encoding has the same linear extensions
 as the Hasse-edge one. -/
 def toERCSet (r : Fin n → Fin n → Prop) [DecidableRel r] : ERCSet n :=
-  (List.finRange n).flatMap fun a =>
-    (List.finRange n).filterMap fun b =>
-      if a ≠ b ∧ r a b then some (simpleERC a b) else none
+  ((List.finRange n ×ˢ List.finRange n).filter
+    fun p => decide (p.1 ≠ p.2 ∧ r p.1 p.2)).map fun p => simpleERC p.1 p.2
 
 theorem mem_toERCSet {r : Fin n → Fin n → Prop} [DecidableRel r] {α : ERC n} :
     α ∈ toERCSet r ↔ ∃ a b, a ≠ b ∧ r a b ∧ simpleERC a b = α := by
-  simp only [toERCSet, List.mem_flatMap, List.mem_filterMap, List.mem_finRange, true_and]
-  constructor
-  · rintro ⟨a, b, hif⟩
-    split_ifs at hif with hc
-    exact ⟨a, b, hc.1, hc.2, Option.some.inj hif⟩
-  · rintro ⟨a, b, hab, hrel, rfl⟩
-    exact ⟨a, b, by rw [if_pos ⟨hab, hrel⟩]⟩
+  simp [toERCSet, List.mem_filter, List.mem_product, Prod.exists, and_assoc]
 
 /-- A ranking satisfies `toERCSet r` exactly when it is a linear extension of
 `r`: the `a ≫ b` ERCs are the strict dominance requirements, and reflexive
@@ -177,41 +171,50 @@ theorem consistentTotalOrders_eq_linearExtensions (r : Fin n → Fin n → Prop)
 
 /-- For the discrete grammar, every permutation is a linear extension. -/
 theorem consistentTotalOrders_discrete (n : ℕ) :
-    consistentTotalOrders (· = · : Fin n → Fin n → Prop) = Finset.univ := by
-  ext σ
-  simp only [mem_consistentTotalOrders, Finset.mem_univ, iff_true]
-  rintro a b rfl
-  exact le_refl _
+    consistentTotalOrders (· = · : Fin n → Fin n → Prop) = Finset.univ :=
+  Finset.eq_univ_of_forall fun _ =>
+    mem_consistentTotalOrders.mpr fun _ _ h => h ▸ le_refl _
 
-/-- σ is consistent with the total ranking it induces. -/
+/-- σ is consistent with the total ranking it induces — reflexivity of the
+    relation lattice, via `isConsistent_iff_le`. -/
 theorem isConsistent_fromPermutation (σ : Ranking n) :
-    IsConsistent (fromPermutation σ) σ := by
-  intro a b h
-  exact h
+    IsConsistent (fromPermutation σ) σ :=
+  le_refl (fromPermutation σ)
 
-/-- The σ-induced total ranking has σ as a consistent linear extension. -/
-theorem mem_consistentTotalOrders_fromPermutation (σ : Ranking n) :
-    σ ∈ consistentTotalOrders (fromPermutation σ) :=
-  mem_consistentTotalOrders.mpr (isConsistent_fromPermutation σ)
+instance (σ : Ranking n) : Std.Total (fromPermutation σ) :=
+  ⟨fun _ _ => le_total _ _⟩
 
-/-- The σ-induced total ranking has σ as its *unique* consistent linear
-    extension. -/
-theorem fromPermutation_consistent_unique {σ τ : Ranking n}
-    (hτ : IsConsistent (fromPermutation σ) τ) : τ = σ := by
+/-- A total relation is maximal among antisymmetric relations: anything above
+    it in the pointwise lattice collapses back onto it. -/
+theorem total_eq_of_le {α : Type*} {r s : α → α → Prop} [ht : Std.Total r]
+    [ha : Std.Antisymm s] (h : r ≤ s) : r = s := by
+  refine le_antisymm h fun a b hs => ?_
+  rcases ht.total a b with hr | hr
+  · exact hr
+  · obtain rfl := ha.antisymm _ _ hs (h b a hr)
+    exact (ht.total a a).elim id id
+
+/-- A permutation is recoverable from the total ranking it induces. -/
+theorem fromPermutation_injective :
+    Function.Injective (fromPermutation (n := n)) := by
+  intro σ τ h
   have hmono : Monotone (⇑τ.symm ∘ ⇑σ) := by
     intro a b hab
     have hrel : fromPermutation σ (σ a) (σ b) := by
       show σ.symm (σ a) ≤ σ.symm (σ b)
-      rw [Equiv.symm_apply_apply, Equiv.symm_apply_apply]
-      exact hab
-    exact hτ (σ a) (σ b) hrel
+      simpa using hab
+    rw [h] at hrel
+    exact hrel
   have hcomp : ⇑τ.symm ∘ ⇑σ = id :=
     (hmono.strictMono_of_injective (τ.symm.injective.comp σ.injective)).eq_id
-  apply Equiv.ext
-  intro k
-  have hk : τ.symm (σ k) = k := congr_fun hcomp k
-  calc τ k = τ (τ.symm (σ k)) := by rw [hk]
-    _ = σ k := τ.apply_symm_apply (σ k)
+  exact Equiv.ext fun k => (Equiv.symm_apply_eq τ).mp (congr_fun hcomp k)
+
+/-- The σ-induced total ranking has σ as its *unique* consistent linear
+    extension: consistency puts it above a total order, so they coincide
+    (`total_eq_of_le`) and injectivity recovers the permutation. -/
+theorem fromPermutation_consistent_unique {σ τ : Ranking n}
+    (hτ : IsConsistent (fromPermutation σ) τ) : τ = σ :=
+  (fromPermutation_injective (total_eq_of_le hτ)).symm
 
 @[simp]
 theorem consistentTotalOrders_fromPermutation (σ : Ranking n) :
