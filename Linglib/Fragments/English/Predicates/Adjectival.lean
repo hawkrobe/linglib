@@ -49,8 +49,8 @@ def short : AdjectivalPredicateEntry where
 "happy" — open scale, contrary to "unhappy"
 
 Note: This is the 1-place adjectival predicate "x is happy".
-For the 2-place attitude predicate "x is happy that p", see
-`Semantics/Attitudes/Preferential.lean`.
+For the 2-place veridical-preferential attitude predicate
+"x is happy that p", see `Studies/UegakiSudo2019.lean`.
 -/
 def happy : AdjectivalPredicateEntry where
   form := "happy"

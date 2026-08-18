@@ -37,8 +37,6 @@ This substrate landed alongside [martinez-vera-2026]'s formalisation;
 existing files that use highlighting-shaped notions but have not yet been
 migrated:
 
-* `Semantics/Attitudes/Preferential.lean` — `HighlightingClauseType`
-  + `highlightedValue` for Pruitt-Roelofsen 2011 / Uegaki 2022 hope-whether.
 * `Studies/FarkasRoelofsen2017.lean` — paper-side
   highlighted-alternative prose; F&R 2015 is the substrate's own anchor.
 * `Semantics/Questions/Singleton.lean` — `IsSingleton` documents itself in
