@@ -3,8 +3,12 @@ import Linglib.Core.Probability.RandomUtility
 import Linglib.Core.Probability.LogitChoice
 
 /-!
-# Noisy Harmonic Grammar and Normal MaxEnt
-[boersma-pater-2016] [flemming-2021]
+# Harmony under noise
+
+The stochastic readings of harmonic grammar: injecting noise into harmony
+evaluation turns the argmax into a choice probability. Gaussian noise gives
+the probit models (Noisy HG, Normal MaxEnt); Gumbel noise gives MaxEnt's
+softmax, whose logit identities close the family.
 
 Noisy HG ([boersma-pater-2016]) adds i.i.d. Gaussian noise N(0,σ²) to
 each constraint weight before evaluation. For binary choice between
