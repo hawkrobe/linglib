@@ -16,17 +16,17 @@ world.
 This study file replicates the desire-semantics half of [heim-1992]
 (the presupposition-projection half is at
 `Studies/Heim1992.lean`). Substrate is
-`Semantics/Attitudes/Desire.lean` (`wantHeim`,
-`wantHeimDefined`, `HeimDesireParams`, `wantHeim_no_conflict`).
+`Semantics/Attitudes/Desire.lean` (`WantHeim`,
+`WantHeimDefined`, `HeimDesireParams`, `wantHeim_no_conflict`).
 
 ## §-by-§ map
 
 | Paper | Study file |
 |-------|-----------|
-| §3 naive Hintikka (informally rejected) | §2 (`wantHeimNaive` + Asher-style failure case) |
+| §3 naive Hintikka (informally rejected) | §2 (`WantHeimNaive` + Asher-style failure case) |
 | (32) Asher Concorde example, p. 194 | §2 (analog scenario; see §2 caveat) |
-| §4.2.2 (37/39) CCP-rephrased | §3 / substrate `wantHeim` |
-| §4.2.3 (40) amendment | substrate `wantHeimDefined` |
+| §4.2.2 (37/39) CCP-rephrased | §3 / substrate `WantHeim` |
+| §4.2.3 (40) amendment | substrate `WantHeimDefined` |
 | §4.3 conflicting desires (implicit) | §4 (substrate no-go) |
 | Stalnaker get-well/¬have-been-sick (p. 195) | §5 (deferred — needs richer model) |
 
@@ -61,7 +61,7 @@ Models the Stalnaker [stalnaker-1984]-style example "I want to
 get well [recovered] but I don't want to have been sick" — the agent
 prefers `r ∧ ¬s` worlds (recovered without ever being sick) but believes
 they were sick (so all believed worlds have `s`). The (40) amendment
-makes `wantHeim ¬s` undefined under those beliefs. -/
+makes `WantHeim ¬s` undefined under those beliefs. -/
 
 inductive W where
   | w0 | w1 | w2 | w3
@@ -106,7 +106,7 @@ instance : DecidablePred belSick := inferInstanceAs (DecidablePred sick)
     ascription can be true, so the naive rule is inadequate — this
     motivates the move to a comparative semantics. -/
 theorem naive_predicts_false_for_wants_recover :
-    ¬ wantHeimNaive belSick recovered := by
+    ¬ WantHeimNaive belSick recovered := by
   intro h
   have : recovered .w2 := h .w2 (by decide : belSick .w2)
   exact this
@@ -139,11 +139,11 @@ def heimParams : HeimDesireParams W where
 
 instance : DecidablePred (Set.univ : Set W) := fun _ => isTrue trivial
 
-/-- The (40) amendment: `wantHeim recovered` is defined under
+/-- The (40) amendment: `WantHeim recovered` is defined under
     `Set.univ` (both recovered and ¬recovered worlds are believed
     possible). -/
 theorem wantHeim_recovered_defined :
-    wantHeimDefined (Set.univ : Set W) recovered := by
+    WantHeimDefined (Set.univ : Set W) recovered := by
   refine ⟨⟨.w0, ?_, ?_⟩, ⟨.w2, ?_, ?_⟩⟩ <;> decide
 
 /-! ## §4. Heim (40) does not validate simultaneous `want p ∧ want ¬p`
@@ -152,7 +152,7 @@ A side-effect of (40) — flagged by Heim herself in §4.3 (cf. (41)/(42),
 where she worries that (40) is in fact *too* restrictive and proposes
 shrinking Dox to a "favored" subset F_α) — is that under preference
 asymmetry, no `(belS, w_eval)` configuration validates both
-`wantHeim p` and `wantHeim ¬p`. The substrate theorem
+`WantHeim p` and `WantHeim ¬p`. The substrate theorem
 `wantHeim_no_conflict` discharges this generically.
 
 Whether this side-effect is a virtue (Heim's account *correctly*
@@ -173,11 +173,11 @@ theorem prefRecovered_asymm (w_eval : W) :
   exact absurd hy hny
 
 /-- Witness on this concrete model: under `Set.univ`, no
-    `wantHeim recovered ∧ wantHeim ¬recovered` configuration is
+    `WantHeim recovered ∧ WantHeim ¬recovered` configuration is
     consistent. Delegates to the substrate's general theorem. -/
 theorem heim_no_simultaneous_recovered :
-    ¬ (wantHeim (Set.univ : Set W) heimParams .w0 recovered ∧
-       wantHeim (Set.univ : Set W) heimParams .w0 (fun w => ¬ recovered w)) :=
+    ¬ (WantHeim (Set.univ : Set W) heimParams .w0 recovered ∧
+       WantHeim (Set.univ : Set W) heimParams .w0 (fun w => ¬ recovered w)) :=
   wantHeim_no_conflict (Set.univ : Set W) heimParams .w0
     recovered (prefRecovered_asymm .w0) wantHeim_recovered_defined
 

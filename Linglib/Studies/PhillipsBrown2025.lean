@@ -40,13 +40,13 @@ delegate to the substrate's general theorems
 
 ## Parallel discovery: Cariani 2013 `isVisible`
 
-PB's `isConsidered` (§3.6) is the same predicate as [cariani-2013]'s
+PB's `IsConsidered` (§3.6) is the same predicate as [cariani-2013]'s
 `isVisible` (§4 p.545–546): both require every cell of the
 partition/option-set to settle the prejacent. PB doesn't cite Cariani;
 Cariani doesn't anticipate PB. The identification is exposed in
 `Studies/Cariani2013.lean`, where Cariani's
-`isVisible` is defined as `abbrev isVisible rc p := isConsidered
-rc.options p` and the bridge theorem `isVisible_iff_isConsidered`
+`isVisible` is defined as `abbrev isVisible rc p := IsConsidered
+rc.options p` and the bridge theorem `isVisible_iff_IsConsidered`
 reduces to `Iff.rfl`. The agreement is independent reinvention across
 the desire/deontic-modality boundary, surfaced by the substrate sharing
 a common predicate.
@@ -99,8 +99,8 @@ instance : DecidablePred pass := fun w => by cases w <;> unfold pass <;> infer_i
 instance : DecidablePred fail := fun w => by unfold fail; infer_instance
 
 /-- The natural propositions of the model (basic dimensions), used to
-    feed `isAntiDeckstacking`. AD's quantifier is restricted to this
-    test set — see `Desire.isAntiDeckstacking` docstring. -/
+    feed `IsAntiDeckstacking`. AD's quantifier is restricted to this
+    test set — see `Desire.IsAntiDeckstacking` docstring. -/
 def naturalProps : List (DecProp W) :=
   [mkDec nap, mkDec rested, mkDec pass]
 
@@ -132,21 +132,21 @@ def desRest : List (DecProp W) := [mkDec rested]
 def desPass : List (DecProp W) := [mkDec pass]
 
 /-- **Nap is true** relative to Q' with beliefs nap↔rested, desires [rested]. -/
-theorem nap_true : wantQuestionBased belNapRest desRest qNapRest nap := by decide
+theorem nap_true : WantQuestionBased belNapRest desRest qNapRest nap := by decide
 
 /-- **Not-nap is true** relative to Q'' with beliefs pass↔¬nap, desires [pass]. -/
 theorem not_nap_true :
-    wantQuestionBased belNapPass desPass qNapPass (fun w => ¬ nap w) := by decide
+    WantQuestionBased belNapPass desPass qNapPass (fun w => ¬ nap w) := by decide
 
 /-- Fail is NOT considered relative to Q'. -/
-theorem fail_not_considered : ¬ isConsidered qNapRest fail := by decide
+theorem fail_not_considered : ¬ IsConsidered qNapRest fail := by decide
 
 /-- Fail is also not predicted true. -/
 theorem fail_not_true :
-    ¬ wantQuestionBased belNapRest desRest qNapRest fail := by decide
+    ¬ WantQuestionBased belNapRest desRest qNapRest fail := by decide
 
 /-- Q' is diverse w.r.t. nap. -/
-theorem nap_diverse : isDiverse qNapRest nap := by decide
+theorem nap_diverse : IsDiverse qNapRest nap := by decide
 
 /-! ## §4. Lobster scenario (paper §2.2)
 
@@ -177,21 +177,21 @@ def desNotDie : List (DecProp W) := [mkDec (fun w => ¬ fail w)]
 
 /-- **Lobster is true** in c'' (considering taste, ignoring death). -/
 theorem lobster_true :
-    wantQuestionBased belNapRest desRest qLobGus lobster := nap_true
+    WantQuestionBased belNapRest desRest qLobGus lobster := nap_true
 
 /-- **Die is undefined in the Lobster context c''** (paper §2.2): in
     `qLobGus = qNapRest`, no cell settles `die`, so the Considering
     presupposition fails. -/
 theorem die_not_considered_in_qLobGus :
-    ¬ isConsidered qLobGus die := fail_not_considered
+    ¬ IsConsidered qLobGus die := fail_not_considered
 
 /-- **Not-lobster is true** in c''' (considering death, ignoring taste). -/
 theorem not_lobster_true :
-    wantQuestionBased belLobDie desNotDie qLobDie (fun w => ¬ nap w) := by decide
+    WantQuestionBased belLobDie desNotDie qLobDie (fun w => ¬ nap w) := by decide
 
 /-- **Not-die is also true** in c''' (best answer entails both ¬lobster and ¬die). -/
 theorem not_die_true :
-    wantQuestionBased belLobDie desNotDie qLobDie (fun w => ¬ fail w) := by decide
+    WantQuestionBased belLobDie desNotDie qLobDie (fun w => ¬ fail w) := by decide
 
 /-! ## §5. Von Fintel comparison and the no-go theorem
 
@@ -200,24 +200,24 @@ predict both `want p` and `want ¬p` simultaneously. Specialised here
 for the Nap example, then derived from the substrate's general
 `wantVonFintel_no_conflict`. -/
 
-theorem vf_nap_true : wantVonFintel belNapRest desRest nap := by decide
+theorem vf_nap_true : WantVonFintel belNapRest desRest nap := by decide
 
 theorem vf_not_nap_false :
-    ¬ wantVonFintel belNapRest desRest (fun w => ¬ nap w) := by decide
+    ¬ WantVonFintel belNapRest desRest (fun w => ¬ nap w) := by decide
 
 /-- vF cannot predict both Nap and Not-nap with the same parameter set
     (specific instance). -/
 theorem vf_cannot_predict_both :
-    ¬(wantVonFintel belNapRest desRest nap ∧
-      wantVonFintel belNapRest desRest (fun w => ¬ nap w)) := by
+    ¬(WantVonFintel belNapRest desRest nap ∧
+      WantVonFintel belNapRest desRest (fun w => ¬ nap w)) := by
   intro ⟨_, h⟩; exact vf_not_nap_false h
 
 /-- vF cannot predict both Nap and Not-nap (general no-go, delegates
     to the substrate). The witness is any belS-world that is
     Pareto-undominated under the desire ordering. -/
 theorem vf_no_conflict_nap :
-    ¬ (wantVonFintel belNapRest desRest nap ∧
-       wantVonFintel belNapRest desRest (fun w => ¬ nap w)) :=
+    ¬ (WantVonFintel belNapRest desRest nap ∧
+       WantVonFintel belNapRest desRest (fun w => ¬ nap w)) :=
   wantVonFintel_no_conflict belNapRest desRest nap
     ⟨.w0, by decide,
      by intro z hz ⟨_, hbad⟩; revert hz hbad; cases z <;> decide⟩
@@ -235,10 +235,10 @@ With Q'' (the nap × pass partition), `fail` is settled — and the
 contrast is exactly the paper's point. -/
 
 theorem nap_considered_in_qNapPass :
-    isConsidered qNapPass nap := by decide
+    IsConsidered qNapPass nap := by decide
 
 theorem fail_considered_in_qNapPass :
-    isConsidered qNapPass fail := by decide
+    IsConsidered qNapPass fail := by decide
 
 /-! ## §7. Anti-deckstacking (paper §3.7)
 
@@ -276,7 +276,7 @@ def desHappy : List (DecProp W) := [mkDec happy]
 /-- `happy` is not considered in the deck-stacked Q'''' (the `rain`
     cell contains both happy and unhappy worlds). -/
 theorem happy_not_considered_deckstacked :
-    ¬ isConsidered qDeckstacked happy := by decide
+    ¬ IsConsidered qDeckstacked happy := by decide
 
 /-- A `happy`-answer exists in qDeckstacked (the `¬r∧h` cell entails
     `happy`) — the deck is stacked in favor of ¬rain. -/
@@ -286,7 +286,7 @@ theorem happy_answer_exists_deckstacked :
 /-- Without the constraint, the question-based semantics wrongly
     predicts Not-rain. -/
 theorem not_rain_deckstacked_true :
-    wantQuestionBased belLu desHappy qDeckstacked (fun w => ¬ rain w) := by decide
+    WantQuestionBased belLu desHappy qDeckstacked (fun w => ¬ rain w) := by decide
 
 /-- Q''''' (level playing field): partition by rain × happy. -/
 def qRainHappy : List (DecProp W) :=
@@ -296,29 +296,29 @@ def qRainHappy : List (DecProp W) :=
    mkDec (fun w => ¬ rain w ∧ ¬ happy w)]
 
 theorem happy_considered_fair :
-    isConsidered qRainHappy happy := by decide
+    IsConsidered qRainHappy happy := by decide
 
 /-- With the fair question, Not-rain is correctly predicted false. -/
 theorem not_rain_false_fair :
-    ¬ wantQuestionBased belLu desHappy qRainHappy (fun w => ¬ rain w) := by decide
+    ¬ WantQuestionBased belLu desHappy qRainHappy (fun w => ¬ rain w) := by decide
 
 /-- The deck-stacked question fails Anti-deckstacking on test set
     `[r, h]` (`h` is predetermined by the `¬r∧h` cell but not
     considered by Q''''). -/
 theorem qDeckstacked_fails_antideckstacking :
-    ¬ isAntiDeckstacking naturalPropsLu qDeckstacked := by decide
+    ¬ IsAntiDeckstacking naturalPropsLu qDeckstacked := by decide
 
 /-- The fair (cross-product) question satisfies Anti-deckstacking —
     every basic proposition is settled by every cell. -/
 theorem qRainHappy_satisfies_antideckstacking :
-    isAntiDeckstacking naturalPropsLu qRainHappy := by decide
+    IsAntiDeckstacking naturalPropsLu qRainHappy := by decide
 
 /-- Q' (`qNapRest`) satisfies Anti-deckstacking on the natural-prop
     test set `[nap, rested, pass]` — the cross-product over `nap` and
     `rested` settles `nap` and `rested`; no cell entails `pass`, so
     AD's antecedent is vacuous for `pass`. -/
 theorem qNapRest_satisfies_antideckstacking :
-    isAntiDeckstacking naturalProps qNapRest := by decide
+    IsAntiDeckstacking naturalProps qNapRest := by decide
 
 /-! ## §8. Finest-question simulation (paper §3.4)
 
@@ -332,42 +332,42 @@ def allWorldsW : List W := [.w0, .w1, .w2, .w3, .w4, .w5, .w6, .w7]
 def qFinest : List (DecProp W) := finestPartition allWorldsW
 
 /-- The 8-world list `allWorldsW` covers `W`. Hypothesis required by the
-    substrate's general `wantQuestionBased_finestPartition_iff_wantVonFintel`. -/
+    substrate's general `wantQuestionBased_finestPartition_iff_WantVonFintel`. -/
 theorem allWorldsW_complete : ∀ w : W, w ∈ allWorldsW := by
   intro w; cases w <;> decide
 
 /-- With the finest question, question-based want = standard vF want
     for `nap`. Derived from the substrate's general
-    `wantQuestionBased_finestPartition_iff_wantVonFintel`, not by `decide`. -/
+    `wantQuestionBased_finestPartition_iff_WantVonFintel`, not by `decide`. -/
 theorem finest_simulates_vf_nap :
-    wantQuestionBased belNapRest desRest qFinest nap ↔
-    wantVonFintel belNapRest desRest nap :=
-  wantQuestionBased_finestPartition_iff_wantVonFintel belNapRest desRest
+    WantQuestionBased belNapRest desRest qFinest nap ↔
+    WantVonFintel belNapRest desRest nap :=
+  wantQuestionBased_finestPartition_iff_WantVonFintel belNapRest desRest
     allWorldsW allWorldsW_complete nap
 
 /-- With the finest question, question-based want = standard vF want
     for `¬nap`. -/
 theorem finest_simulates_vf_not_nap :
-    wantQuestionBased belNapRest desRest qFinest (fun w => ¬ nap w) ↔
-    wantVonFintel belNapRest desRest (fun w => ¬ nap w) :=
-  wantQuestionBased_finestPartition_iff_wantVonFintel belNapRest desRest
+    WantQuestionBased belNapRest desRest qFinest (fun w => ¬ nap w) ↔
+    WantVonFintel belNapRest desRest (fun w => ¬ nap w) :=
+  wantQuestionBased_finestPartition_iff_WantVonFintel belNapRest desRest
     allWorldsW allWorldsW_complete (fun w => ¬ nap w)
 
 /-- With the finest question, question-based want = standard vF want
     for `¬lobster` in the Lobster context. -/
 theorem finest_simulates_vf_not_lobster :
-    wantQuestionBased belLobDie desNotDie qFinest (fun w => ¬ nap w) ↔
-    wantVonFintel belLobDie desNotDie (fun w => ¬ nap w) :=
-  wantQuestionBased_finestPartition_iff_wantVonFintel belLobDie desNotDie
+    WantQuestionBased belLobDie desNotDie qFinest (fun w => ¬ nap w) ↔
+    WantVonFintel belLobDie desNotDie (fun w => ¬ nap w) :=
+  wantQuestionBased_finestPartition_iff_WantVonFintel belLobDie desNotDie
     allWorldsW allWorldsW_complete (fun w => ¬ nap w)
 
 /-! ## §9. Definedness via PartialProp (paper §3.6) -/
 
 theorem nap_defined_in_qNapRest :
-    wantDefined belNapRest naturalProps qNapRest nap := by decide
+    WantDefined belNapRest naturalProps qNapRest nap := by decide
 
 theorem fail_not_defined_in_qNapRest :
-    ¬ wantDefined belNapRest naturalProps qNapRest fail := by decide
+    ¬ WantDefined belNapRest naturalProps qNapRest fail := by decide
 
 theorem nap_prprop_holds :
     (wantPartialProp belNapRest desRest naturalProps qNapRest nap).presup .w0 ∧
@@ -386,8 +386,8 @@ he lacked the conceptual resources to grasp nuclear war.
 
 Mechanism: William's beliefs are NOT sensitive to Q_nuc that
 distinguishes nuclear from conventional war. All Q_nuc answers are
-compatible with his beliefs (total uncertainty), so `isBelSensitive`
-returns false and `wantDefined` blocks the inference. A modern person
+compatible with his beliefs (total uncertainty), so `IsBelSensitive`
+returns false and `WantDefined` blocks the inference. A modern person
 whose beliefs rule out nuclear war DOES have belief-sensitive context,
 so the inference goes through.
 
@@ -420,38 +420,38 @@ theorem avoidWar_entails_avoidNuclearWar :
     ∀ w, avoidWar w → avoidNuclearWar w := by decide
 
 theorem avoidNuclearWar_considered :
-    isConsidered qNuclear avoidNuclearWar := by decide
+    IsConsidered qNuclear avoidNuclearWar := by decide
 
 /-- William III: total uncertainty (all worlds compatible). -/
 def belWilliam : Set W := fun _ => True
 instance : DecidablePred belWilliam := fun _ => isTrue trivial
 
 theorem william_insensitive :
-    ¬ isBelSensitive belWilliam qNuclear := by decide
+    ¬ IsBelSensitive belWilliam qNuclear := by decide
 
 theorem avoidNuclearWar_not_defined_william :
-    ¬ wantDefined belWilliam naturalPropsNuclear qNuclear avoidNuclearWar := by decide
+    ¬ WantDefined belWilliam naturalPropsNuclear qNuclear avoidNuclearWar := by decide
 
 /-- Modern person: beliefs rule out nuclear war (peace ∨ conventional). -/
 def belModern : Set W := fun w => nap w ∨ rested w
 instance : DecidablePred belModern := fun w => by unfold belModern; infer_instance
 
 theorem modern_sensitive :
-    isBelSensitive belModern qNuclear := by decide
+    IsBelSensitive belModern qNuclear := by decide
 
 theorem avoidNuclearWar_defined_modern :
-    wantDefined belModern naturalPropsNuclear qNuclear avoidNuclearWar := by decide
+    WantDefined belModern naturalPropsNuclear qNuclear avoidNuclearWar := by decide
 
 def desAvoidWar : List (DecProp W) := [mkDec nap]
 
 theorem modern_wants_avoidNuclearWar :
-    wantQuestionBased belModern desAvoidWar qNuclear avoidNuclearWar := by decide
+    WantQuestionBased belModern desAvoidWar qNuclear avoidNuclearWar := by decide
 
 /-! ## §11. Cross-paper bridge: [condoravdi-lauer-2016]
 
-[condoravdi-lauer-2016]'s effective-preferential `wantEffectivePreference` carries
+[condoravdi-lauer-2016]'s effective-preferential `WantEffectivePreference` carries
 a joint-belief-consistency theorem (`wantEffectivePreference_jointly_belief_consistent`):
-if both `wantEffectivePreference EP a φ w` and `wantEffectivePreference EP a ψ w` hold, then
+if both `WantEffectivePreference EP a φ w` and `WantEffectivePreference EP a ψ w` hold, then
 `(φ ∩ ψ) ∩ B(a, w) ≠ ∅`. Specialized to `ψ = φᶜ`, the conclusion
 becomes `∅ ∩ B(a, w) ≠ ∅`, which is contradictory. So C&L *forbids*
 simultaneous `want(p)` and `want(¬p)` against a single belief state and
@@ -460,7 +460,7 @@ preference structure.
 [phillips-brown-2025] resolves the conflict by varying the
 contextual question Q_c (and the contextually-relevant `belS`) per
 ascription. C&L resolves it by varying the preference structure (per
-reading: `wantExactMatch` / `wantSuccessOriented` / `wantQuineHintikka`). The two
+reading: `WantExactMatch` / `WantSuccessOriented` / `WantQuineHintikka`). The two
 resolutions are orthogonal — both can coexist in a unified theory of
 desire, but they make non-overlapping claims. -/
 
@@ -476,8 +476,8 @@ theorem condoravdiLauer_blocks_simultaneous_pq_and_negpq
     {Agent W : Type} {B : Agent → W → Set W}
     (EP : ∀ a w, EffectivePreference W (B a w))
     (a : Agent) (φ : Set W) (w : W)
-    (hφ : Desire.wantEffectivePreference EP a φ w)
-    (hnegφ : Desire.wantEffectivePreference EP a (fun w => ¬ φ w) w) :
+    (hφ : Desire.WantEffectivePreference EP a φ w)
+    (hnegφ : Desire.WantEffectivePreference EP a (fun w => ¬ φ w) w) :
     False := by
   have h := Desire.wantEffectivePreference_jointly_belief_consistent
               EP hφ hnegφ
@@ -498,7 +498,7 @@ Heim are instances (`vonFintelSemantics`, `heimSemantics`), each proved
 conflict-blocking by delegation to the substrate's per-account no-go
 theorems (`wantVonFintel_no_conflict`, `wantHeim_no_conflict`).
 
-PB's `wantQuestionBased` *evades* the no-go by selecting from
+PB's `WantQuestionBased` *evades* the no-go by selecting from
 `Q-Bel_S` rather than directly from `Bel_S` — it is *not* an
 instance of `BeliefBasedDesireSemantics` (the question parameter
 `answers` plays a non-trivial role outside the shape). -/
@@ -520,7 +520,7 @@ structure BeliefBasedDesireSemantics (W : Type*) where
 /-- A semantics is **conflict-blocking** if no parameters/world make
     `want(p)` and `want(¬p)` both true when both are defined — the
     paper's §2 no-go in slogan form. -/
-def BeliefBasedDesireSemantics.isConflictBlocking
+def BeliefBasedDesireSemantics.IsConflictBlocking
     {W : Type*} (F : BeliefBasedDesireSemantics W) : Prop :=
   ∀ belS Param w_eval (p : Set W),
     F.defined belS Param p → F.defined belS Param (fun w => ¬ p w) →
@@ -533,23 +533,23 @@ def vonFintelSemantics {W : Type*} [Fintype W] :
     BeliefBasedDesireSemantics W where
   Param := List (DecProp W)
   defined belS _ p := (∃ w, belS w ∧ p w) ∧ (∃ w, belS w ∧ ¬ p w)
-  want belS GS _ p := wantVonFintel belS GS p
+  want belS GS _ p := WantVonFintel belS GS p
 
-/-- `wantHeim` with decidability supplied classically, so the structure
+/-- `WantHeim` with decidability supplied classically, so the structure
     projection of `heimSemantics` is stable across ambient instances. -/
-noncomputable def wantHeimClassical {W : Type*} [Fintype W] [DecidableEq W]
+noncomputable def WantHeimClassical {W : Type*} [Fintype W] [DecidableEq W]
     (belS : Set W) (params : HeimDesireParams W) (w_eval : W) (p : Set W) : Prop :=
   letI : DecidablePred belS := Classical.decPred _
   letI : DecidablePred p := Classical.decPred _
-  wantHeim belS params w_eval p
+  WantHeim belS params w_eval p
 
-/-- The classical-decidability variant agrees with `wantHeim` under any
+/-- The classical-decidability variant agrees with `WantHeim` under any
     ambient decidability instances (`DecidablePred` is a subsingleton). -/
-theorem wantHeimClassical_iff_wantHeim {W : Type*} [Fintype W] [DecidableEq W]
+theorem wantHeimClassical_iff_WantHeim {W : Type*} [Fintype W] [DecidableEq W]
     (belS : Set W) [DecidablePred belS]
     (params : HeimDesireParams W) (w_eval : W) (p : Set W) [DecidablePred p] :
-    wantHeimClassical belS params w_eval p ↔ wantHeim belS params w_eval p := by
-  unfold wantHeimClassical
+    WantHeimClassical belS params w_eval p ↔ WantHeim belS params w_eval p := by
+  unfold WantHeimClassical
   congr!
 
 /-- Heim as a `BeliefBasedDesireSemantics` instance: definedness is her
@@ -559,19 +559,19 @@ noncomputable def heimSemantics {W : Type*} [Fintype W] [DecidableEq W] :
   Param := HeimDesireParams W
   defined belS _ p :=
     (∃ w, belS w ∧ p w) ∧ (∃ w, belS w ∧ ¬ p w)
-  want belS params w_eval p := wantHeimClassical belS params w_eval p
+  want belS params w_eval p := WantHeimClassical belS params w_eval p
 
 /-- von Fintel is **conflict-blocking**: delegates to
     `wantVonFintel_no_conflict` after extracting a Pareto-undominated
     belS-world via finite-preorder minimal-element existence. -/
-theorem vonFintelSemantics_isConflictBlocking {W : Type*} [Fintype W] :
-    (vonFintelSemantics (W := W)).isConflictBlocking := by
+theorem vonFintelSemantics_IsConflictBlocking {W : Type*} [Fintype W] :
+    (vonFintelSemantics (W := W)).IsConflictBlocking := by
   classical
   intro belS GS _w_eval p hDef _hDefNeg ⟨hp, hnp⟩
   apply Desire.wantVonFintel_no_conflict belS GS p ?_ ⟨hp, hnp⟩
   obtain ⟨wp, hwp_bel, _⟩ := hDef.1
   let _ : Preorder W :=
-    { le := worldAtLeastAsGood GS
+    { le := WorldAtLeastAsGood GS
       le_refl := fun _ _ _ hp_w => hp_w
       le_trans := fun _ _ _ huv hvw q hq hqz => huv q hq (hvw q hq hqz) }
   have hbelNonempty : (belS : Set W).Nonempty := ⟨wp, hwp_bel⟩
@@ -580,7 +580,7 @@ theorem vonFintelSemantics_isConflictBlocking {W : Type*} [Fintype W] :
 
 /-- Heim is **conflict-blocking** at any `(params, w_eval)` with strict
     preference asymmetry: delegates to `wantHeim_no_conflict`. -/
-theorem heimSemantics_isConflictBlocking {W : Type*} [Fintype W] [DecidableEq W]
+theorem heimSemantics_IsConflictBlocking {W : Type*} [Fintype W] [DecidableEq W]
     (params : HeimDesireParams W) (w_eval : W)
     (hAsym : ∀ x y, params.pref w_eval x y → params.pref w_eval y x → x = y) :
     ∀ belS (p : Set W),
@@ -591,8 +591,8 @@ theorem heimSemantics_isConflictBlocking {W : Type*} [Fintype W] [DecidableEq W]
   classical
   intro belS p hDef _hDefNeg ⟨hp, hnp⟩
   rw [show (heimSemantics (W := W)).want = fun belS params w p =>
-        wantHeimClassical belS params w p from rfl] at hp hnp
-  rw [wantHeimClassical_iff_wantHeim] at hp hnp
+        WantHeimClassical belS params w p from rfl] at hp hnp
+  rw [wantHeimClassical_iff_WantHeim] at hp hnp
   exact Desire.wantHeim_no_conflict belS params w_eval p hAsym hDef
     ⟨hp, hnp⟩
 
@@ -602,9 +602,9 @@ theorem heim_no_go_covers_belief_based_family
     (hAsym : ∀ x y, params.pref w_eval x y → params.pref w_eval y x → x = y)
     (belS : Set W) [DecidablePred belS]
     (p : Set W) [DecidablePred p]
-    (h : Desire.wantHeimDefined belS p) :
-    ¬ (Desire.wantHeim belS params w_eval p ∧
-       Desire.wantHeim belS params w_eval (fun w => ¬ p w)) :=
+    (h : Desire.WantHeimDefined belS p) :
+    ¬ (Desire.WantHeim belS params w_eval p ∧
+       Desire.WantHeim belS params w_eval (fun w => ¬ p w)) :=
   Desire.wantHeim_no_conflict
     belS params w_eval p hAsym h
 
@@ -612,7 +612,7 @@ theorem heim_no_go_covers_belief_based_family
     threshold + graded value rather than question-sensitivity.** The
     Lassiter substrate's `threshold_admits_conflict_witness` exhibits a
     concrete configuration where both `want(p)` and `want(¬p)` fire on
-    a single `(belS, pr, V, θ)` — falsifying `isConflictBlocking`.
+    a single `(belS, pr, V, θ)` — falsifying `IsConflictBlocking`.
 
     Lassiter and PB are now formalized as *two distinct* non-instances
     of `BeliefBasedDesireSemantics`. PB's escape route: question
@@ -625,8 +625,8 @@ theorem lassiter_evades_no_go_via_grading :
       (belS : Set W) (_ : DecidablePred belS)
       (pr : W → ℚ) (V : W → ℚ) (θ : ℚ)
       (p : Set W) (_ : DecidablePred p),
-      Desire.Lassiter.want belS pr V θ p ∧
-      Desire.Lassiter.want belS pr V θ (fun w => ¬ p w) :=
+      Desire.Lassiter.Want belS pr V θ p ∧
+      Desire.Lassiter.Want belS pr V θ (fun w => ¬ p w) :=
   Desire.Lassiter.threshold_admits_conflict_witness
 
 /-! ## Summary
@@ -636,7 +636,7 @@ that fit the 3-binary-dimension encoding (Nap, Lobster-via-isomorphism,
 Lu/deck-stacking, William-III). The substrate carries the *general*
 arguments (no-go for vF, no-go for Heim, Strawson upward monotonicity,
 and the universal finest-question identity
-`wantQuestionBased_finestPartition_iff_wantVonFintel`); the
+`wantQuestionBased_finestPartition_iff_WantVonFintel`); the
 belief-based-class typology — the paper's own §2 packaging — is
 formalized above. The §11 bridge makes the disagreement with C&L explicit;
 the §12 foil shows the no-go covers the whole belief-based family.
