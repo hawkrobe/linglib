@@ -682,7 +682,7 @@ DENY triggers in French often require the matrix clause to be negated
 or questioned for EN to occur (§6.1.3). -/
 
 open Semantics.Attitudes.NegRaising (negRaisingAvailable)
-open Semantics.Attitudes.Doxastic (Veridicality)
+open Doxastic (Veridicality)
 
 /-- DENY triggers license EN through the doxastic square:
 

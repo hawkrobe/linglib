@@ -37,8 +37,8 @@ open Tense
 namespace Semantics.Attitudes.SituationDependent
 
 open Intensional (WorldTimeIndex)
-open Semantics.Attitudes.Doxastic
-  (Veridicality DoxasticPredicate boxAt veridicalityHolds)
+open Doxastic
+  (Veridicality DoxasticPredicate BoxAt VeridicalityHolds)
 
 
 
@@ -64,7 +64,7 @@ abbrev SitAccessRel (W Time E : Type*) := E → WorldTimeIndex W Time → WorldT
 
     ⟦□p⟧(s) = ∀s' ∈ situations. R(agent, s, s') → p(s')
 
-    Generalizes `Doxastic.boxAt` from worlds to situations. -/
+    Generalizes `Doxastic.BoxAt` from worlds to situations. -/
 def sitBoxAt {W Time E : Type*} (R : SitAccessRel W Time E) (agent : E)
     (s : WorldTimeIndex W Time) (situations : List (WorldTimeIndex W Time))
     (p : SitProp W Time) : Prop :=
@@ -74,7 +74,7 @@ def sitBoxAt {W Time E : Type*} (R : SitAccessRel W Time E) (agent : E)
 
     ⟦◇p⟧(s) = ∃s' ∈ situations. R(agent, s, s') ∧ p(s')
 
-    Generalizes `Doxastic.diaAt` from worlds to situations. -/
+    Generalizes `Doxastic.DiamondAt` from worlds to situations. -/
 def sitDiaAt {W Time E : Type*} (R : SitAccessRel W Time E) (agent : E)
     (s : WorldTimeIndex W Time) (situations : List (WorldTimeIndex W Time))
     (p : SitProp W Time) : Prop :=
@@ -123,16 +123,16 @@ def liftAccess {W Time E : Type*} (R : E → W → W → Prop) : SitAccessRel W 
 
     `sitBoxAt (liftAccess R) agent s sits (liftProp p)`
     is equivalent to
-    `boxAt R agent s.world (sits.map (·.world)) p`.
+    `BoxAt R agent s.world (sits.map (·.world)) p`.
 
     This means code using the old world-only operators produces
     identical results when embedded in the situation framework. -/
-theorem sitBoxAt_lift_eq_boxAt {W Time E : Type*}
+theorem sitBoxAt_lift_eq_BoxAt {W Time E : Type*}
     (R : E → W → W → Prop) (agent : E) (s : WorldTimeIndex W Time)
     (sits : List (WorldTimeIndex W Time)) (p : W → Prop) :
     sitBoxAt (liftAccess R) agent s sits (liftProp p) ↔
-    boxAt R agent s.world (sits.map (·.world)) p := by
-  simp only [sitBoxAt, boxAt, liftAccess, liftProp, List.mem_map]
+    BoxAt R agent s.world (sits.map (·.world)) p := by
+  simp only [sitBoxAt, BoxAt, liftAccess, liftProp, List.mem_map]
   constructor
   · intro h w' ⟨s', hs', heq⟩ hR
     exact heq ▸ h s' hs' (heq ▸ hR)
@@ -147,7 +147,7 @@ theorem sitBoxAt_lift_eq_boxAt {W Time E : Type*}
 /-- Veridicality check for situation-dependent propositions.
 
     For veridical predicates (know), requires p(s) at the
-    evaluation situation. Mirrors `Doxastic.veridicalityHolds`. -/
+    evaluation situation. Mirrors `Doxastic.VeridicalityHolds`. -/
 def sitVeridicalityHolds {W Time : Type*} (v : Veridicality)
     (p : SitProp W Time) (s : WorldTimeIndex W Time) : Prop :=
   match v with
@@ -162,8 +162,8 @@ instance sitVeridicalityHolds_decidable {W Time : Type*} (v : Veridicality)
 /-- Lifted veridicality matches world-level veridicality. -/
 theorem sitVeridicalityHolds_lift {W Time : Type*} (v : Veridicality)
     (p : W → Prop) (s : WorldTimeIndex W Time) :
-    sitVeridicalityHolds v (liftProp p) s ↔ veridicalityHolds v p s.world := by
-  cases v <;> simp [sitVeridicalityHolds, veridicalityHolds, liftProp]
+    sitVeridicalityHolds v (liftProp p) s ↔ VeridicalityHolds v p s.world := by
+  cases v <;> simp [sitVeridicalityHolds, VeridicalityHolds, liftProp]
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -187,10 +187,10 @@ structure SitDoxasticPredicate (W Time E : Type*) where
 
 /-- Semantics for a situation-dependent doxastic predicate.
 
-    ⟦x V that p⟧(s) = veridicalityHolds(V, p, s) ∧ ∀s'. R(x,s,s') → p(s')
+    ⟦x V that p⟧(s) = VeridicalityHolds(V, p, s) ∧ ∀s'. R(x,s,s') → p(s')
 
-    Generalizes `DoxasticPredicate.holdsAt` to situations. -/
-def SitDoxasticPredicate.holdsAt {W Time E : Type*}
+    Generalizes `DoxasticPredicate.HoldsAt` to situations. -/
+def SitDoxasticPredicate.HoldsAt {W Time E : Type*}
     (V : SitDoxasticPredicate W Time E) (agent : E) (p : SitProp W Time)
     (s : WorldTimeIndex W Time) (situations : List (WorldTimeIndex W Time)) : Prop :=
   sitVeridicalityHolds V.veridicality p s ∧ sitBoxAt V.access agent s situations p
@@ -214,8 +214,8 @@ def liftDoxastic {W E : Type*} (V : DoxasticPredicate W E)
 
 /-- The lifted predicate matches the original semantics.
 
-    `(liftDoxastic V Time).holdsAt agent (liftProp p) s sits`
-    iff `V.holdsAt agent p s.world (sits.map.world)`.
+    `(liftDoxastic V Time).HoldsAt agent (liftProp p) s sits`
+    iff `V.HoldsAt agent p s.world (sits.map.world)`.
 
     This is the key backward-compatibility theorem: any existing
     analysis using `DoxasticPredicate` can be replayed exactly
@@ -224,10 +224,10 @@ theorem liftDoxastic_holdsAt_eq {W Time E : Type*}
     (V : DoxasticPredicate W E) (agent : E)
     (p : W → Prop) (s : WorldTimeIndex W Time)
     (sits : List (WorldTimeIndex W Time)) :
-    (liftDoxastic V Time).holdsAt agent (liftProp p) s sits ↔
-    V.holdsAt agent p s.world (sits.map (·.world)) := by
-  simp only [SitDoxasticPredicate.holdsAt, DoxasticPredicate.holdsAt,
-    liftDoxastic, sitVeridicalityHolds_lift, sitBoxAt_lift_eq_boxAt]
+    (liftDoxastic V Time).HoldsAt agent (liftProp p) s sits ↔
+    V.HoldsAt agent p s.world (sits.map (·.world)) := by
+  simp only [SitDoxasticPredicate.HoldsAt, DoxasticPredicate.HoldsAt,
+    liftDoxastic, sitVeridicalityHolds_lift, sitBoxAt_lift_eq_BoxAt]
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -241,8 +241,8 @@ theorem sit_veridical_entails_complement {W Time E : Type*}
     (V : SitDoxasticPredicate W Time E) (hV : V.veridicality = .veridical)
     (agent : E) (p : SitProp W Time) (s : WorldTimeIndex W Time)
     (sits : List (WorldTimeIndex W Time))
-    (holds : V.holdsAt agent p s sits) : p s := by
-  unfold SitDoxasticPredicate.holdsAt at holds
+    (holds : V.HoldsAt agent p s sits) : p s := by
+  unfold SitDoxasticPredicate.HoldsAt at holds
   rw [hV] at holds
   exact holds.1
 

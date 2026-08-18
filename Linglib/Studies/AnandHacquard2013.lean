@@ -58,7 +58,7 @@ namespace AnandHacquard2013
 
 open Semantics.Attitudes.Representationality
 open Semantics.Attitudes.Preferential
-open Semantics.Attitudes.Doxastic
+open Doxastic
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Empirical Data: Acceptability Ratings (Table 4)
@@ -245,8 +245,8 @@ theorem believe_must {E : Type*} (R : E → W → W → Prop)
     [∀ a w w', Decidable (R a w w')]
     (agent : E) (w : W) (worlds : List W) (p : W → Prop) [DecidablePred p] :
     mustS (representationalS R agent w worlds) p ↔
-    boxAt R agent w worlds p := by
-  simp only [mustS, representationalS, boxAt,
+    BoxAt R agent w worlds p := by
+  simp only [mustS, representationalS, BoxAt,
     List.mem_filter, decide_eq_true_eq]
   constructor
   · intro h w' hw' hR

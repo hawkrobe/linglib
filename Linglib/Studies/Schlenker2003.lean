@@ -14,7 +14,7 @@ End-to-end verification of [schlenker-2003]'s core argument:
    to the actual speaker, even under attitude verbs
 2. Amharic violates the thesis: "I" shifts to the attitude holder
 3. Context quantification (`ContextBox`) captures both patterns:
-   - With world-only meaning → reduces to standard `boxAt` (Fixity holds)
+   - With world-only meaning → reduces to standard `BoxAt` (Fixity holds)
    - With agent-reading meaning → strictly more expressive (Fixity fails)
 4. Person features as presuppositions derive logophoric pronouns
 
@@ -41,7 +41,7 @@ namespace Schlenker2003
 
 open Semantics.Context
 open ContextQuantification
-open Semantics.Attitudes.Doxastic (boxAt)
+open Doxastic (BoxAt)
 open Semantics.Reference.ShiftedIndexicals (amharic_pronI)
 open Semantics.Reference.Kaplan (pronI_access)
 
@@ -111,9 +111,9 @@ instance : ∀ p w, Decidable (isHappy p w) := by
 /-- English: "Bob said that I am happy" = "Bob said that Alice is happy."
     The meaning is world-only (Alice is fixed by origin-reading "I"),
     so context quantification reduces to standard world quantification. -/
-theorem english_reduces_to_boxAt :
+theorem english_reduces_to_BoxAt :
     ContextBox bobBel .bob (fun c => isHappy .alice c.world) rootT .w0 [.w0, .w1] ↔
-    boxAt bobBel .bob .w0 [.w0, .w1] (isHappy .alice) :=
+    BoxAt bobBel .bob .w0 [.w0, .w1] (isHappy .alice) :=
   contextBox_world_only bobBel .bob (isHappy .alice) rootT .w0 [.w0, .w1]
 
 /-- English version is false: Alice is NOT happy in all of Bob's
@@ -125,7 +125,7 @@ theorem english_result :
 
 /-- Amharic: "Bob said that I am happy" = "Bob said that Bob is happy."
     The meaning reads the agent from the shifted context (Bob),
-    so ContextBox does NOT reduce to boxAt. -/
+    so ContextBox does NOT reduce to BoxAt. -/
 theorem amharic_result :
     ContextBox bobBel .bob (fun c => isHappy c.agent c.world)
       rootT .w0 [.w0, .w1] := by

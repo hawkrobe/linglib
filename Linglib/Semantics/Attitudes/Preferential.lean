@@ -1127,7 +1127,7 @@ For modalized φ (might p, must p), verifiers are still pow(S ∩ p) —
 modalized complements raise the same issue as unmodalized ones.
 -/
 
-open Semantics.Attitudes.Doxastic (diaAt boxAt)
+open Doxastic (DiamondAt BoxAt)
 
 /-- An emotive doxastic predicate: hybrid representational + preferential.
 
@@ -1156,7 +1156,7 @@ case. -/
 def EmotiveDoxasticPredicate.doxasticAssertion {W E : Type*}
     (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Prop)
     (w : W) (worlds : List W) : Prop :=
-  diaAt V.access agent w worlds p
+  DiamondAt V.access agent w worlds p
 
 /-- The uncertainty condition: both φ-verifiers and φ-falsifiers exist
 in DOX. The attitude holder is genuinely uncertain about φ.
@@ -1168,9 +1168,9 @@ def EmotiveDoxasticPredicate.uncertaintyCondition {W E : Type*}
     (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Prop)
     (w : W) (worlds : List W) : Prop :=
   -- ∃w' ∈ DOX: p(w') — verifiers exist
-  diaAt V.access agent w worlds p ∧
+  DiamondAt V.access agent w worlds p ∧
   -- ∃w' ∈ DOX: ¬p(w') — falsifiers exist
-  diaAt V.access agent w worlds (fun w' => ¬ p w')
+  DiamondAt V.access agent w worlds (fun w' => ¬ p w')
 
 /-- The preference assertion: φ-verifying doxastic alternatives are
 preferred to φ-falsifying ones.
@@ -1195,7 +1195,7 @@ Note: condition (ii) is entailed by the first conjunct of (i), so it is
 redundant in the conjunction. We include it explicitly for clarity and
 because it is the component responsible for epistemic licensing — it
 provides the information state that embedded epistemics are anaphoric to. -/
-def EmotiveDoxasticPredicate.holdsAt {W E : Type*}
+def EmotiveDoxasticPredicate.HoldsAt {W E : Type*}
     (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Prop) [DecidablePred p]
     (w : W) (worlds : List W) (C : AlternativeList W) : Prop :=
   V.uncertaintyCondition agent p w worlds ∧
@@ -1228,15 +1228,15 @@ reduces to: ∃w'' ∈ DOX: p(w'').
 Both yield: DOX ∩ p ≠ ∅.
 
 We model this by showing that the doxastic assertion for `p` and for
-the function `λ w. diaAt R x w worlds p` (= "might p" evaluated at
+the function `λ w. DiamondAt R x w worlds p` (= "might p" evaluated at
 the same DOX) are equivalent when the information state is shared. -/
 theorem doxastic_assertion_might_concord {W E : Type*}
     (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Prop)
     (w : W) (worlds : List W)
     (h : V.doxasticAssertion agent p w worlds) :
     V.doxasticAssertion agent
-      (fun _ => diaAt V.access agent w worlds p) w worlds := by
-  simp only [EmotiveDoxasticPredicate.doxasticAssertion, diaAt] at *
+      (fun _ => DiamondAt V.access agent w worlds p) w worlds := by
+  simp only [EmotiveDoxasticPredicate.doxasticAssertion, DiamondAt] at *
   obtain ⟨w', hw'_in, hw'_acc, hw'_p⟩ := h
   exact ⟨w', hw'_in, hw'_acc, ⟨w', hw'_in, hw'_acc, hw'_p⟩⟩
 
@@ -1247,9 +1247,9 @@ violating the uncertainty condition's requirement that
 theorem must_contradicts_uncertainty {W E : Type*}
     (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Prop)
     (w : W) (worlds : List W)
-    (h_must : boxAt V.access agent w worlds p) :
+    (h_must : BoxAt V.access agent w worlds p) :
     ¬ V.uncertaintyCondition agent p w worlds := by
-  simp only [EmotiveDoxasticPredicate.uncertaintyCondition, diaAt, boxAt] at *
+  simp only [EmotiveDoxasticPredicate.uncertaintyCondition, DiamondAt, BoxAt] at *
   rintro ⟨_, ⟨w', hw'_in, hw'_acc, hw'_np⟩⟩
   exact hw'_np (h_must w' hw'_in hw'_acc)
 

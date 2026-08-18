@@ -265,7 +265,7 @@ structural fact about ⟨individual, property⟩ pairs, not an explanation of
 attitude opacity. Per (Ch 2, §2.1), no doctrine regarding
 modal or cognitive matters follows from direct reference theory proper.
 Substitution failure in attitude reports requires an independent theory
-of attitudinal verb semantics (see `Attitudes.Doxastic.substitutionMayFail`
+of attitudinal verb semantics (see `Attitudes.Doxastic.SubstitutionMayFail`
 for the formal framework). -/
 theorem structured_content_distinguishes {W E : Type*} :
     ∀ (a b : E) (P : E → W → Prop), a ≠ b →

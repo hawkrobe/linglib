@@ -60,7 +60,7 @@ descriptive content.
 namespace Mirrazi2024
 
 open Quantification.ChoiceFunction
-open Semantics.Attitudes.Doxastic (boxAt)
+open Doxastic (BoxAt)
 open Semantics.Attitudes.NegRaising (negRaisesAt)
 open Farsi.Determiners (ye candTa doTa PlainIndefiniteEntry)
 
@@ -130,9 +130,9 @@ theorem nonNegRaiser_suffices :
     without claiming neg-raising explains the scope paradox. -/
 theorem think_does_neg_raise {W E : Type*} (R : E → W → W → Prop)
     (agent : E) (worlds : List W) (p : W → Prop) (w : W)
-    (hNeg : ¬ boxAt R agent w worlds p)
+    (hNeg : ¬ BoxAt R agent w worlds p)
     (hExclMiddle : negRaisesAt R agent worlds p w) :
-    boxAt R agent w worlds (λ w' => ¬ p w') :=
+    BoxAt R agent w worlds (λ w' => ¬ p w') :=
   hExclMiddle hNeg
 
 -- ============================================================================
@@ -222,7 +222,7 @@ end TruthConditions
     intensional operator, forcing de re. There is no landing site that
     is simultaneously above NEG and below the intensional operator
     (since NEG is syntactically below the operator). -/
-theorem movement_above_neg_forces_deRe
+theorem movement_above_neg_forces_DeRe
     {W E : Type*} (f : SkolemCF W E)
     (R : E → W → W → Prop) (agent : E) (worlds : List W)
     (nounProp : W → E → Prop) (vp : E → W → Prop) (w₀ : W) :

@@ -34,17 +34,68 @@ Semantics and Pragmatics 18, Article 8: 1-17.
 Belief verb denotations are `PartialProp W` values produced by
 `DoxasticPredicate.toPartialProp`. The presup field captures the factive
 presupposition (or lack thereof). yǐwéi's postsupposition is a
-`Postsupposition` value (§2 below). The `PresupClass` classification and PLC
-validation from `Doxastic.lean` derive the contrafactive gap.
+`Postsupposition` value (§2 below). The `PresupClass` typology and the
+attestation classifier `presupClassIsValid` are defined here; their
+causal derivation via the Predicate Lexicalization Constraint is
+[roberts-ozyildiz-2025]'s account, prosecuted in
+`Studies/RobertsOzyildiz2025.lean`.
 -/
 
 namespace Glass2025
 
-open Semantics.Attitudes.Doxastic
+open Doxastic
 open Semantics.Presupposition
 open ArgumentStructure
 open English.Predicates.Verbal
 open Mandarin.Predicates
+
+
+/-! ### The presuppositional classes
+
+The typology of belief verbs by presuppositional profile: factive
+(*know* — CommonGround must entail p), nonfactive (*think* — no
+requirement), contrafactive (hypothetical *contra* — CommonGround must
+entail ¬p; UNATTESTED), with yǐwéi's ◇¬p requirement a postsupposition
+(§2), not a presupposition. The class of a verb is derived from its
+veridicality, and `presupClassIsValid` records the attestation facts —
+valid iff not contrafactive. -/
+
+/-- Presuppositional profile of a doxastic verb. -/
+inductive PresupClass where
+  /-- Presupposes p (*know*). -/
+  | factive
+  /-- Would presuppose ¬p (hypothetical *contra*; unattested). -/
+  | contrafactive
+  /-- No presupposition (*believe*, *think*). -/
+  | nonfactive
+  /-- None of the above. -/
+  | other
+  deriving DecidableEq, Repr
+
+/-- Classify a doxastic verb by its veridicality. -/
+def classifyVeridicality : Veridicality → PresupClass
+  | .veridical => .factive
+  | .nonVeridical => .nonfactive
+
+/-- The attestation facts: every profile is attested except the
+    contrafactive. The causal derivation of this table is
+    `RobertsOzyildiz2025.presupClassIsValid_eq_via_plc`. -/
+def presupClassIsValid : PresupClass → Bool
+  | .factive       => true
+  | .nonfactive    => true
+  | .contrafactive => false
+  | .other         => true
+
+/-- Factive presuppositions are attested. -/
+theorem factive_presup_valid : presupClassIsValid .factive = true := rfl
+
+/-- Contrafactive presuppositions are unattested. -/
+theorem contrafactive_presup_invalid :
+    presupClassIsValid .contrafactive = false := rfl
+
+/-- Nonfactive profiles are attested (no presupposition to check). -/
+theorem nonfactive_presup_valid :
+    presupClassIsValid .nonfactive = true := rfl
 
 -- ============================================================================
 -- §1. MiniWorld Model
@@ -276,43 +327,43 @@ veridicality in the Fragment entry. These theorems will BREAK if:
 
 theorem know_is_factive :
     know.toVerb.veridicality.map classifyVeridicality = some .factive := by
-  native_decide
+  decide
 
 theorem realize_is_factive :
     realize.toVerb.veridicality.map classifyVeridicality = some .factive := by
-  native_decide
+  decide
 
 theorem discover_is_factive :
     discover.toVerb.veridicality.map classifyVeridicality = some .factive := by
-  native_decide
+  decide
 
 theorem notice_is_factive :
     notice.toVerb.veridicality.map classifyVeridicality = some .factive := by
-  native_decide
+  decide
 
 -- Non-factive verbs → .nonfactive
 
 theorem believe_is_nonfactive :
     believe.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
-  native_decide
+  decide
 
 theorem think_is_nonfactive :
     think.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
-  native_decide
+  decide
 
 theorem hope_is_nonfactive :
     hope.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
-  native_decide
+  decide
 
 theorem fear_is_nonfactive :
     fear.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
-  native_decide
+  decide
 
 -- yǐwéi: classified as nonfactive by veridicality alone
 
 theorem yiwei_veridicality_nonfactive :
     yiwei.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- §6. yǐwéi Exception: Postsupposition Not Derivable from Veridicality
@@ -343,7 +394,7 @@ def yiweiPostsupType : PostsupType := .weakContrafactive
 
 /-- yǐwéi's veridicality gives nonfactive — no presupposition. -/
 theorem yiwei_derived_nonfactive :
-    yiwei.toVerb.veridicality = some .nonVeridical := by native_decide
+    yiwei.toVerb.veridicality = some .nonVeridical := by decide
 
 /-- The postsupposition IS necessary: veridicality alone gives .nonfactive
     (no presupposition), but yǐwéi actually has a weak contrafactive
@@ -353,7 +404,7 @@ theorem yiwei_derived_nonfactive :
 theorem yiwei_postsup_not_from_veridicality :
     yiwei.toVerb.veridicality.map classifyVeridicality = some .nonfactive ∧
     yiweiPostsupType = .weakContrafactive :=
-  ⟨by native_decide, rfl⟩
+  ⟨by decide, rfl⟩
 
 -- ============================================================================
 -- §7. The Contrafactive Gap
@@ -384,7 +435,7 @@ theorem all_english_attitude_verbs_valid :
      expect, wish, fear, dread, worry].all (fun v =>
       v.toVerb.veridicality.map classifyVeridicality |>.map
         presupClassIsValid |>.getD true) = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- §8. End-to-End Derivation
@@ -401,12 +452,12 @@ This section exercises the complete pipeline for representative verbs.
 /-- End-to-end: "know" is factive, and factive presuppositions are valid. -/
 theorem know_endtoend_valid :
     (know.toVerb.veridicality.map classifyVeridicality).map
-      presupClassIsValid = some true := by native_decide
+      presupClassIsValid = some true := by decide
 
 /-- End-to-end: "believe" is nonfactive, and nonfactive is valid. -/
 theorem believe_endtoend_valid :
     (believe.toVerb.veridicality.map classifyVeridicality).map
-      presupClassIsValid = some true := by native_decide
+      presupClassIsValid = some true := by decide
 
 /-- End-to-end: know's presupposition is satisfied in a factive context. -/
 theorem know_presup_satisfied_endtoend :

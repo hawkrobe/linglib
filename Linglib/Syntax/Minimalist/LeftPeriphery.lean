@@ -246,21 +246,21 @@ theorem derived_class_matches_manual :
 
 PerspP introduces a not-at-issue presupposition: the perspectival center
 *possibly doesn't know* the answer to the question. We formalize this using
-`diaAt` (existential modal, ◇) from `Doxastic.lean` and `QUD.ans` from
+`DiamondAt` (existential modal, ◇) from `Doxastic.lean` and `QUD.ans` from
 `Semantics/Questions/Partition/Cells.lean`.
 -/
 
-open Semantics.Attitudes.Doxastic
+open Doxastic
 
 /-- Whether x possibly doesn't know Ans(Q) at world w:
     ◇¬know(x, Ans(Q)) = ∃w' ∈ R(x,w). ¬(Ans(Q,w) holds at w')
 
     This is PerspP's not-at-issue presupposition ([dayal-2025]: §2.3).
-    Uses `diaAt` from Doxastic.lean and `QUD.ans` from
+    Uses `DiamondAt` from Doxastic.lean and `QUD.ans` from
     Semantics/Questions/Partition/Cells.lean. -/
 def possibleIgnorance {W E : Type*} (R : E → W → W → Prop) (center : E)
     (Q : QUD W) (w : W) (worlds : List W) : Prop :=
-  diaAt R center w worlds (fun w' => QUD.ans Q w w' = false)
+  DiamondAt R center w worlds (fun w' => QUD.ans Q w w' = false)
 
 /-- PerspP as a presuppositional question denotation.
     At-issue: the question Q itself.
@@ -291,8 +291,8 @@ in bare (non-negated, non-questioned) contexts.
 theorem box_excludes_dia_neg {W E : Type*}
     (R : E → W → W → Prop) (agent : E) (w : W) (worlds : List W)
     (p : W → Prop)
-    (hBox : boxAt R agent w worlds p) :
-    ¬ diaAt R agent w worlds (fun w' => ¬ p w') := by
+    (hBox : BoxAt R agent w worlds p) :
+    ¬ DiamondAt R agent w worlds (fun w' => ¬ p w') := by
   rintro ⟨w', hw', hR, hNotP⟩
   exact hNotP (hBox w' hw' hR)
 
@@ -300,15 +300,15 @@ theorem box_excludes_dia_neg {W E : Type*}
     "x knows Q" at w means there exists a true answer p that x box-believes.
     In particular, x box-believes Ans(Q,w) (the complete answer at w).
 
-    TODO: Full proof requires showing that holdsAtQuestion with the G&S-derived
-    Hamblin denotation implies boxAt for Ans(Q,w). The key step is:
-    holdsAtQuestion finds *some* true p that x box-believes; since the question
+    TODO: Full proof requires showing that HoldsAtQuestion with the G&S-derived
+    Hamblin denotation implies BoxAt for Ans(Q,w). The key step is:
+    HoldsAtQuestion finds *some* true p that x box-believes; since the question
     is a partition, that p determines the same cell as Ans(Q,w). -/
 theorem veridical_question_entails_box_ans {W E : Type*}
     (V : DoxasticPredicate W E) (_hV : V.veridicality = .veridical)
     (agent : E) (Q : QUD W) (w : W) (worlds : List W)
-    (hHolds : boxAt V.access agent w worlds (fun w' => QUD.ans Q w w' = true)) :
-    ¬ diaAt V.access agent w worlds (fun w' => QUD.ans Q w w' = false) := by
+    (hHolds : BoxAt V.access agent w worlds (fun w' => QUD.ans Q w w' = true)) :
+    ¬ DiamondAt V.access agent w worlds (fun w' => QUD.ans Q w w' = false) := by
   rintro ⟨w', hw', hR, hFalse⟩
   have hTrue : QUD.ans Q w w' = true := hHolds w' hw' hR
   rw [hFalse] at hTrue
@@ -323,7 +323,7 @@ theorem veridical_question_entails_box_ans {W E : Type*}
 theorem veridical_blocks_perspP {W E : Type*}
     (V : DoxasticPredicate W E) (hV : V.veridicality = .veridical)
     (agent : E) (Q : QUD W) (w : W) (worlds : List W)
-    (hBox : boxAt V.access agent w worlds (fun w' => QUD.ans Q w w' = true)) :
+    (hBox : BoxAt V.access agent w worlds (fun w' => QUD.ans Q w w' = true)) :
     ¬ possibleIgnorance V.access agent Q w worlds := by
   simp only [possibleIgnorance]
   exact veridical_question_entails_box_ans V hV agent Q w worlds hBox
@@ -533,19 +533,19 @@ to the abstract epistemic layer used by PerspP. -/
 def doxasticToEpistemicModel {W E : Type*}
     (V : DoxasticPredicate W E) [∀ a w w', Decidable (V.access a w w')]
     (agent : E) (w : W) (worlds : List W) : EpistemicModel W where
-  knows := fun p => decide (V.holdsAt agent (fun w' => p w' = true) w worlds)
+  knows := fun p => decide (V.HoldsAt agent (fun w' => p w' = true) w worlds)
 
 /-- A veridical predicate that box-knows Ans(Q) blocks PerspP through
     the epistemic model bridge.
 
-    TODO: Full proof requires showing holdsAt for veridical predicates
+    TODO: Full proof requires showing HoldsAt for veridical predicates
     at the answer proposition entails the answer is true at the eval world
-    (which follows from veridical_entails_complement + boxAt). -/
+    (which follows from veridical_entails_complement + BoxAt). -/
 theorem veridical_model_blocks_perspP {W E : Type*}
     (V : DoxasticPredicate W E) [∀ a w w', Decidable (V.access a w w')]
     (_hV : V.veridicality = .veridical)
     (agent : E) (Q : QUD W) (w : W) (worlds : List W)
-    (hHolds : V.holdsAt agent (fun w' => QUD.ans Q w w' = true) w worlds) :
+    (hHolds : V.HoldsAt agent (fun w' => QUD.ans Q w w' = true) w worlds) :
     perspPPresupComp (doxasticToEpistemicModel V agent w worlds) Q w = false := by
   simp [perspPPresupComp, doxasticToEpistemicModel, hHolds]
 
