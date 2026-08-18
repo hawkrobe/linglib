@@ -1495,7 +1495,6 @@ import Linglib.Semantics.Aspect.Stratified
 import Linglib.Semantics.Aspect.SubeventStructure
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Semantics.Attitudes.Anchor
-import Linglib.Semantics.Attitudes.BuilderProperties
 import Linglib.Semantics.Attitudes.CDistributivity
 import Linglib.Semantics.Attitudes.ClauseEmbedding
 import Linglib.Semantics.Attitudes.CondoravdiLauer
