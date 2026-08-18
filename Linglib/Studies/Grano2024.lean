@@ -52,7 +52,7 @@ namespace Grano2024
 open ArgumentStructure
 open Mood (Grammatical EventDenotation)
 open Mood
-open Semantics.Attitudes.RationalAttitude
+open RationalAttitude
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Cross-Linguistic Mood Choice Data (Table 1)
@@ -141,20 +141,20 @@ def causativeData : List MoodChoiceDatum :=
 
 /-- 'want' robustly rejects indicative across all 7 languages. -/
 theorem want_robustly_rejects_ind :
-    wantData.all (·.rejectsIndicative) = true := by native_decide
+    wantData.all (·.rejectsIndicative) = true := by decide
 
 /-- 'hope' does NOT robustly reject indicative — it varies
     (IND accepted in French, Portuguese, Italian, Greek, Romanian, English). -/
 theorem hope_does_not_robustly_reject_ind :
-    hopeData.all (·.rejectsIndicative) = false := by native_decide
+    hopeData.all (·.rejectsIndicative) = false := by decide
 
 /-- 'intend' robustly rejects indicative (where testable). -/
 theorem intend_robustly_rejects_ind :
-    intendData.all (·.rejectsIndicative) = true := by native_decide
+    intendData.all (·.rejectsIndicative) = true := by decide
 
 /-- Causatives robustly reject indicative (§2.4). -/
 theorem causatives_robustly_reject_ind :
-    causativeData.all (·.rejectsIndicative) = true := by native_decide
+    causativeData.all (·.rejectsIndicative) = true := by decide
 
 /-- 'intend' patterns with 'want', not 'hope', on indicative rejection.
     This is the central empirical finding ([grano-2024], Table 1). -/
@@ -163,14 +163,14 @@ theorem intend_patterns_with_want :
       wantData.all (·.rejectsIndicative) ∧
     intendData.all (·.rejectsIndicative) ≠
       hopeData.all (·.rejectsIndicative) := by
-  native_decide
+  decide
 
 /-- Causatives pattern with 'intend' and 'want' (not 'hope').
     Independent support for the eventuality abstraction analysis (§2.4). -/
 theorem causatives_pattern_with_intend :
     causativeData.all (·.rejectsIndicative) =
       intendData.all (·.rejectsIndicative) := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Bridge: Empirical Data → Selector
@@ -184,14 +184,50 @@ open English.Predicates.Verbal (want hope)
 theorem want_selector_matches_data :
     deriveSelector want = .subjunctiveSelecting ∧
     wantData.all (·.rejectsIndicative) = true := by
-  native_decide
+  decide
 
 /-- The deriveSelector function correctly classifies 'hope' as
     cross-linguistically variable, matching the data showing variation. -/
 theorem hope_selector_matches_data :
     deriveSelector hope = .crossLinguisticallyVariable ∧
     hopeData.all (·.rejectsIndicative) = false := by
-  native_decide
+  decide
+
+/-! ### Causal self-reference and the two report types
+
+CAUSE*(s, e, w): the attitude state `s` brings about event `e` in `w`
+"in the right way" — via the agent's intention-in-action, not a
+deviant causal chain ([grano-2024] (79); [searle-1983]; on deviance,
+[harman-1976] and [chisholm-1966]: Betty's intention to shoot makes
+her nervous, the nervousness makes her pull the trigger — the
+intention caused the killing, but not in the right way, so she did
+not carry out her intention). -/
+
+/-- Intention reports with causal self-reference ([grano-2024], (79)):
+    some stative intention state held by the agent, each of whose
+    content pairs ⟨w', x⟩ supports an event that the state brings
+    about in the right way and that satisfies the complement. The
+    complement type `E → W → Event Time → Prop` keeps the event
+    argument open — the formal correlate of Premise 3: indicative
+    would existentially close it to `W → Prop`, which cannot compose
+    with the causal self-reference relation. -/
+def intentionHolds {E W Time : Type*} [LinearOrder Time]
+    (isIntention : Event Time → W → Prop)
+    (holder : E → Event Time → W → Prop)
+    (content : Event Time → Set (W × E))
+    (causeStar : Event Time → Event Time → W → Prop)
+    (agent : E) (P : E → W → Event Time → Prop) (w : W) : Prop :=
+  ∃ s : Event Time,
+    s.sort = .stative ∧ isIntention s w ∧ holder agent s w ∧
+    ∀ p ∈ content s, ∃ e : Event Time, causeStar s e p.1 ∧ P p.2 p.1 e
+
+/-- Plain belief reports need no causal self-reference: the complement
+    is a closed proposition evaluated over doxastic alternatives —
+    which is why *believe* is indicative-selecting while *intend*
+    selects subjunctive. -/
+def beliefHolds {E W : Type*} (dox : E → W → Set W)
+    (agent : E) (P : W → Prop) (w : W) : Prop :=
+  ∀ w' ∈ dox agent w, P w'
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Bridge: Event Denotation → Indicative Rejection
@@ -228,7 +264,7 @@ theorem grano_argument_chain :
     intendData.all (·.rejectsIndicative) = true ∧
     -- Empirical confirmation: causatives also reject IND (independent support)
     causativeData.all (·.rejectsIndicative) = true := by
-  refine ⟨fun _ => rfl, fun _ => rfl, ?_, ?_⟩ <;> native_decide
+  refine ⟨fun _ => rfl, fun _ => rfl, ?_, ?_⟩ <;> decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5. Bridge: Unified Theory — Two Kinds of Departure
@@ -352,19 +388,19 @@ open English.Predicates.Verbal (intend try_ persuade promise decide_
     and has no alternate finite complement type. -/
 theorem try_rejects_finite :
     try_.complementType = .infinitival ∧
-    try_.altComplementType = none := by native_decide
+    try_.altComplementType = none := by decide
 
 /-- 'persuade' is a hybrid predicate: nonfinite complement with object
     control → intention reading. This matches [grano-2024] §6.2 (96). -/
 theorem persuade_is_hybrid :
     persuade.complementType = .infinitival ∧
-    persuade.controlType = .objectControl := by native_decide
+    persuade.controlType = .objectControl := by decide
 
 /-- 'promise' is a hybrid predicate: nonfinite complement with subject
     control → intention (commissive). Matches §6.2 (98a). -/
 theorem promise_is_hybrid :
     promise.complementType = .infinitival ∧
-    promise.controlType = .subjectControl := by native_decide
+    promise.controlType = .subjectControl := by decide
 
 /-- Aspectual predicates are phasal (cosType.isSome) and take gerund
     complements in English, consistent with requiring eventuality
@@ -372,19 +408,19 @@ theorem promise_is_hybrid :
     or subjunctive complements ((117)–(119)). -/
 theorem start_is_phasal :
     start.cosType.isSome = true ∧
-    start.complementType = .gerund := by native_decide
+    start.complementType = .gerund := by decide
 
 theorem stop_is_phasal :
     stop.cosType.isSome = true ∧
-    stop.complementType = .gerund := by native_decide
+    stop.complementType = .gerund := by decide
 
 theorem begin_is_phasal :
     begin_.cosType.isSome = true ∧
-    begin_.complementType = .gerund := by native_decide
+    begin_.complementType = .gerund := by decide
 
 theorem continue_is_phasal :
     continue_.cosType.isSome = true ∧
-    continue_.complementType = .gerund := by native_decide
+    continue_.complementType = .gerund := by decide
 
 /-- 'see' takes NP complements primarily (bare perception), with
     factive presupposition. The bare infinitive (eventive, §6.4 (124))
@@ -392,7 +428,7 @@ theorem continue_is_phasal :
     eventuality abstraction. -/
 theorem see_is_factive_perception :
     see.factivePresup = true ∧
-    see.levinClass = some .see := by native_decide
+    see.levinClass = some .see := by decide
 
 /-- 'decide' is a hybrid predicate: nonfinite complement → intention,
     finite complement → belief ([grano-2024] §6.2, (96)–(97)).
@@ -401,14 +437,14 @@ theorem see_is_factive_perception :
 theorem decide_is_hybrid :
     decide_.complementType = .infinitival ∧
     decide_.altComplementType = some .finiteClause ∧
-    decide_.controlType = .subjectControl := by native_decide
+    decide_.controlType = .subjectControl := by decide
 
 /-- 'remember' takes infinitival (implicative/eventive, §6.4 (120)).
     The gerund construal enables event memory; the *that*-clause
     enables propositional memory ((120)–(121)). -/
 theorem remember_is_implicative :
     remember.complementType = .infinitival ∧
-    remember.implicative.isSome = true := by native_decide
+    remember.implicative.isSome = true := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 7. Bridge: Fusco & Sgrizzi 2026 Connection
@@ -478,23 +514,23 @@ theorem cp_to_indicative :
 /-- 'want' involves non-simplifiable comparison (robust SBJV). -/
 theorem want_moodPrediction_agrees :
     DepartureKind.comparisonNonSimplifiable.moodPrediction =
-      deriveSelector want := by native_decide
+      deriveSelector want := by decide
 
 /-- 'hope' involves simplifiable comparison (variable mood). -/
 theorem hope_moodPrediction_agrees :
     DepartureKind.comparisonSimplifiable.moodPrediction =
-      deriveSelector hope := by native_decide
+      deriveSelector hope := by decide
 
 /-- 'intend' involves both comparison and eventuality abstraction
     (robust SBJV). -/
 theorem intend_moodPrediction_agrees :
     DepartureKind.comparisonAndAbstraction.moodPrediction =
-      deriveSelector intend := by native_decide
+      deriveSelector intend := by decide
 
 /-- Causatives involve eventuality abstraction (robust SBJV). -/
 theorem causative_moodPrediction_agrees :
     DepartureKind.eventualityAbstraction.moodPrediction =
-      deriveSelector English.Predicates.Verbal.make := by native_decide
+      deriveSelector English.Predicates.Verbal.make := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 8b. Bridge: deriveSelector → VerbalOp
@@ -514,12 +550,12 @@ ready to feed State-side glosses (`ExpState.boxLe` for subjunctive,
 /-- 'want' lifts to the subjunctive State operator. -/
 theorem want_verbalMood :
     (deriveSelector want).toVerbalOp = some .subjunctive := by
-  native_decide
+  decide
 
 /-- 'hope' is cross-linguistically variable, so it lifts to `none`. -/
 theorem hope_verbalMood :
     (deriveSelector hope).toVerbalOp = none := by
-  native_decide
+  decide
 
 /-- The robust subjunctive predicates (e.g. 'want') project to the
     `preferential` POSW component — they quantify over the best-ranked
@@ -529,7 +565,7 @@ theorem hope_verbalMood :
 theorem want_target :
     Option.map (Mood.HasTarget.target ·) (deriveSelector want).toVerbalOp
       = some .preferential := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 9. Cross-Linguistic Fragment Integration
