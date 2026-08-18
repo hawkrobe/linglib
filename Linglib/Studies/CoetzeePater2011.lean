@@ -281,7 +281,6 @@ private theorem deletionProb_eq (ctx : Context) :
           active tdVp ctx .delete .retain).card : ℚ) /
         ((active tdVp ctx .delete .retain).card : ℚ) :=
   pocPredict_discrete_binary_rate
-    tdCands tdVp ctx .delete .retain
     (by unfold tdCands; ext o; cases o <;> simp)
     (fun heq => TDOutput.noConfusion heq)
 

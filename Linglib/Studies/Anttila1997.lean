@@ -199,8 +199,7 @@ private theorem winProb_eq_rate (m : Motif) (v : Variant) (k : Fin 5)
       ((favoring vp m v v.other ∩
           (active vp m v v.other).filter (stratumOf · = k)).card : ℚ) /
         (((active vp m v v.other).filter (stratumOf · = k)).card : ℚ) :=
-  pocPredict_stratified_binary_rate _ vp stratumOf setFiveInner m v v.other
-    (Variant.univ_eq_pair v) v.ne_other k h_triv h_tie h_dec
+  pocPredict_stratified_binary_rate (Variant.univ_eq_pair v) v.ne_other h_triv h_tie h_dec
 
 /-! ### Rate theorems — table (52), all six motifs -/
 
@@ -287,8 +286,7 @@ theorem weakProb_6ab : winProb .six .weak = 1 := by
 variants' probabilities sum to 1 (`sum_pocPredict_eq_one` instance). -/
 theorem winProb_strong_add_weak (m : Motif) :
     winProb m .strong + winProb m .weak = 1 :=
-  pocPredict_binary_add_eq_one (fun _ => Finset.univ) vp finnishGrammar
-    (i := m) (Variant.univ_eq_pair .strong) (Variant.ne_other .strong)
-    (by cases m <;> decide)
+  pocPredict_binary_add_eq_one (r := finnishGrammar) (i := m)
+    (Variant.univ_eq_pair .strong) (Variant.ne_other .strong) (by cases m <;> decide)
 
 end Anttila1997
