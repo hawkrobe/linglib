@@ -86,44 +86,44 @@ def nonfutureEntries : List TAMEEntry :=
   allEntries.filter (decide ·.IsNonfuture)
 
 -- ════════════════════════════════════════════════════
--- § 6. Kratzer Decomposition ([kratzer-1998])
+-- § 6. Surface Tense ([kratzer-1998])
 -- ════════════════════════════════════════════════════
 
 open _root_.Tense.Decomposition
 open _root_.Tense
 
-/-- English simple past: Kratzer decomposition.
+/-- English simple past: surface-tense decomposition.
     Surface "V-ed" = PRESENT tense + PERFECT aspect.
     The tense head is present (indexical), so the form can be
     used deictically ("out of the blue"). -/
-def kratzerSimplePast : KratzerDecomposition where
-  tensePronoun := kratzerEnglishPast
+def simplePastSurface : SurfaceTense where
+  tensePronoun := indexicalPresent
   hasPerfect := true
 
 /-- English present perfect: no decomposition mismatch.
     Surface "have V-ed" = PRESENT tense + PERFECT aspect.
     Identical underlying structure to simple past — the difference
     is that the present perfect is morphologically transparent. -/
-def kratzerPresentPerfect : KratzerDecomposition where
-  tensePronoun := kratzerEnglishPast
+def presentPerfectSurface : SurfaceTense where
+  tensePronoun := indexicalPresent
   hasPerfect := true
 
 /-- English simple past can be deictic (from decomposition). -/
-theorem kratzerSimplePast_deictic :
-    kratzerSimplePast.canBeDeictic := by decide
+theorem simplePastSurface_deictic :
+    simplePastSurface.canBeDeictic := by decide
 
 /-- The underlying tense head is PRESENT, not PAST.
     Pastness comes from the PERF aspect head, not the tense. -/
-theorem kratzerSimplePast_underlyingPresent :
-    kratzerSimplePast.tensePronoun.constraint = _root_.Tense.present := rfl
+theorem simplePastSurface_underlyingPresent :
+    simplePastSurface.tensePronoun.constraint = _root_.Tense.present := rfl
 
 /-- Simple past and present perfect share the same underlying decomposition:
     both are PRESENT + PERFECT. The difference is that simple past fuses
     the two morphemes while present perfect makes the PERF transparent
     via auxiliary "have". -/
 theorem simplePast_presentPerfect_same_decomposition :
-    kratzerSimplePast.tensePronoun = kratzerPresentPerfect.tensePronoun ∧
-    kratzerSimplePast.hasPerfect = kratzerPresentPerfect.hasPerfect :=
+    simplePastSurface.tensePronoun = presentPerfectSurface.tensePronoun ∧
+    simplePastSurface.hasPerfect = presentPerfectSurface.hasPerfect :=
   ⟨rfl, rfl⟩
 
 end English.Tense

@@ -33,21 +33,21 @@ open _root_.Tense
 open _root_.Tense.Decomposition
 
 -- ════════════════════════════════════════════════════
--- § 1. Kratzer Decomposition Entries
+-- § 1. Surface Tense Entries
 -- ════════════════════════════════════════════════════
 
 /-- German Preterit (Präteritum): genuine PAST pronoun.
     Anaphoric — requires a discourse-established temporal antecedent.
     No PERF aspect head intervenes; the pastness is in the tense itself. -/
-def kratzerPreterit : KratzerDecomposition where
-  tensePronoun := kratzerGermanPreterit 1
+def preteritSurface : SurfaceTense where
+  tensePronoun := anaphoricPast 1
   hasPerfect := false
 
 /-- German Perfekt (present perfect): PRESENT tense + PERFECT aspect.
     Parallel structure to English simple past. Can be used deictically
     because the tense head is present (indexical). -/
-def kratzerPerfekt : KratzerDecomposition where
-  tensePronoun := { varIndex := 0, constraint := Tense.present, mode := .indexical }
+def perfektSurface : SurfaceTense where
+  tensePronoun := indexicalPresent
   hasPerfect := true
 
 -- ════════════════════════════════════════════════════
@@ -56,31 +56,31 @@ def kratzerPerfekt : KratzerDecomposition where
 
 /-- German Preterit cannot be deictic. -/
 theorem preterit_not_deictic :
-    ¬ kratzerPreterit.canBeDeictic := by decide
+    ¬ preteritSurface.canBeDeictic := by decide
 
 /-- German Perfekt CAN be deictic. -/
 theorem perfekt_deictic :
-    kratzerPerfekt.canBeDeictic := by decide
+    perfektSurface.canBeDeictic := by decide
 
 /-- The Preterit–Perfekt contrast: different underlying tense heads.
     Preterit has a PAST head (anaphoric); Perfekt has PRESENT + PERF (indexical).
     Both can refer to past events, but only Perfekt is deictic-compatible.
     This explains why Perfekt has largely replaced Preterit in spoken German. -/
 theorem preterit_perfekt_contrast :
-    kratzerPreterit.tensePronoun.constraint = Tense.past ∧
-    kratzerPerfekt.tensePronoun.constraint = Tense.present ∧
-    ¬ kratzerPreterit.canBeDeictic ∧
-    kratzerPerfekt.canBeDeictic := by
+    preteritSurface.tensePronoun.constraint = Tense.past ∧
+    perfektSurface.tensePronoun.constraint = Tense.present ∧
+    ¬ preteritSurface.canBeDeictic ∧
+    perfektSurface.canBeDeictic := by
   refine ⟨rfl, rfl, ?_, ?_⟩ <;> decide
 
 /-- German Preterit is always overt (anaphoric = free). -/
 theorem preterit_always_overt (localDomain : Bool) :
-    kratzerPreterit.tenseOvertness localDomain = .overt := by
+    preteritSurface.tenseOvertness localDomain = .overt := by
   cases localDomain <;> rfl
 
 /-- German Perfekt tense head is always overt (indexical = free). -/
 theorem perfekt_always_overt (localDomain : Bool) :
-    kratzerPerfekt.tenseOvertness localDomain = .overt := by
+    perfektSurface.tenseOvertness localDomain = .overt := by
   cases localDomain <;> rfl
 
 end German.Tense

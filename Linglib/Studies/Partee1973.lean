@@ -1,5 +1,4 @@
 import Linglib.Semantics.Tense.Compositional
-import Linglib.Semantics.Tense.Decomposition
 import Linglib.Semantics.Reference.KaplanLD
 import Linglib.Semantics.Intensional.Rigidity
 
@@ -220,7 +219,6 @@ This explains why Persian has zero PRONOUNS but NOT zero TENSE
 `Overtness.fromBinding` (Core/Tense.lean) formalizes this as a function
 from `(ReferentialMode × localDomain)` to `Overtness`. -/
 
-open Tense.Decomposition
 
 /-- The four-way classification: all three referential modes produce
     overt forms except bound+local, which produces zero.
@@ -241,19 +239,6 @@ theorem overtness_classification :
     -- Bound, non-local: overt
     Overtness.fromBinding .bound false = .overt :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- The zero tense under SOT is bound + local → zero, just as
-    a reflexive pronoun is bound + local → reduced/zero.
-    This connects Kratzer's zero tense analysis to `Overtness`. -/
-theorem zero_tense_parallels_reflexive (n : ℕ) :
-    -- Zero tense: bound + local = zero
-    (kratzerZeroTense n).isBound ∧
-    Overtness.fromBinding (kratzerZeroTense n).mode true = .zero ∧
-    -- Kratzer's English indexical tense: free = overt
-    Overtness.fromBinding kratzerEnglishPast.mode true = .overt ∧
-    -- German Preterit: free (anaphoric) = overt
-    Overtness.fromBinding (kratzerGermanPreterit n).mode true = .overt :=
-  ⟨rfl, rfl, rfl, rfl⟩
 
 /-- The Partee analogy extended from three to four dimensions:
 
