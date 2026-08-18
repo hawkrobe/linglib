@@ -41,7 +41,7 @@ restriction does *not* collapse to vacuous truth. The Hoboken theorem
 doesn't need it (vacuous truth wins), but a richer-information scenario
 or the § 7.2 near-anankastic family would. Substrate work, not
 paper-specific; tracked in
-`Core/Order/PreferenceStructure/MaxInducedOrdering.lean:12-15`.
+`Semantics/Attitudes/PreferenceStructure.lean` (`maxInducedLe`).
 
 ## Cross-references
 
@@ -60,7 +60,6 @@ namespace CondoravdiLauer2016
 open Desire
 open Modality.Kratzer
 open Semantics.Conditionals.Restrictor
-open Core.Order
 
 universe u
 
@@ -96,7 +95,7 @@ The four contextual parameters:
   takes an arbitrary modal base because the Hoboken theorem doesn't
   constrain it).
 * `gInner` — ordering source of MUST. Paper eq. (88) uses `g_epA`
-  (= `maxOrderingSource EP Ad`), but the bridge from `Set (Set W)` to
+  (= `fun w => (EP Ad w).maxElts`), but the bridge from `Set (Set W)` to
   the `List`-valued `OrderingSource` is deferred (see TODO in the
   module docstring); v1 takes `gInner` as a parameter. -/
 def harlemLF {Agent W : Type u}
@@ -189,15 +188,15 @@ private theorem singletonPS_consistent_of_nonempty
 
 /-- Effective preference at `w₀`: Ad effectively prefers Hoboken. -/
 noncomputable def epAtW0 : EffectivePreference World Set.univ :=
-  EffectivePreference.ofConsistent (singletonPS Hoboken)
-    (singletonPS_consistent_of_nonempty Hoboken Set.univ
-      ⟨0, by simp [Hoboken]⟩)
+  ⟨singletonPS Hoboken,
+    singletonPS_consistent_of_nonempty Hoboken Set.univ
+      ⟨0, by simp [Hoboken]⟩⟩
 
 /-- Effective preference at `w₁`: Ad effectively prefers Harlem. -/
 noncomputable def epAtW1 : EffectivePreference World Set.univ :=
-  EffectivePreference.ofConsistent (singletonPS Harlem)
-    (singletonPS_consistent_of_nonempty Harlem Set.univ
-      ⟨1, by simp [Harlem]⟩)
+  ⟨singletonPS Harlem,
+    singletonPS_consistent_of_nonempty Harlem Set.univ
+      ⟨1, by simp [Harlem]⟩⟩
 
 /-- The effective preferential background: at `w₀` Hoboken-preferring,
 at `w₁` Harlem-preferring. Uses `if`-on-decidable equality to keep the

@@ -42,7 +42,6 @@ formalized in that study file).
 namespace Lassiter2017Desire
 
 open Desire
-open Core.Order (EffectivePreference)
 open Desire.Lassiter
 
 /-! ## §1. The 4-world conflict-witness model

@@ -39,7 +39,7 @@ following [farkas-2003]).
 
 [condoravdi-lauer-2012]'s preference structures order *propositions*,
 one type level above the world ordering here; POSW-style states consume
-`Core.Order.PreferenceStructure.maxInducedLe` rather than instantiating
+`PreferenceStructure.maxInducedLe` rather than instantiating
 them.
 -/
 

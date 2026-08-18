@@ -249,9 +249,6 @@ import Linglib.Core.Order.PartialRank
 import Linglib.Core.Order.PartialUnify
 import Linglib.Core.Order.Plausibility
 import Linglib.Core.Order.Positions
-import Linglib.Core.Order.PreferenceStructure
-import Linglib.Core.Order.PreferenceStructure.EffectivePreference
-import Linglib.Core.Order.PreferenceStructure.MaxInducedOrdering
 import Linglib.Core.Order.PreorderLattice
 import Linglib.Core.Order.PullbackPreorder
 import Linglib.Core.Order.Relation
@@ -1506,6 +1503,7 @@ import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Semantics.Attitudes.PreExistence
+import Linglib.Semantics.Attitudes.PreferenceStructure
 import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Semantics.Attitudes.RationalAttitude
 import Linglib.Semantics.Attitudes.Representationality

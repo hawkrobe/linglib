@@ -1,6 +1,4 @@
-import Linglib.Core.Order.PreferenceStructure
-import Linglib.Core.Order.PreferenceStructure.EffectivePreference
-import Linglib.Core.Order.PreferenceStructure.MaxInducedOrdering
+import Linglib.Semantics.Attitudes.PreferenceStructure
 
 /-!
 # The effective-preference theory of *want*
@@ -11,8 +9,7 @@ Condoravdi & Lauer's analysis of *want*, developed across
 parameterized by a *preferential background*
 `P : Agent → W → PreferenceStructure W` — analogous to Kratzer's modal
 base/ordering source — whose distinguished value is the agent's
-effective preference function `EP : ∀ a w, EffectivePreference W (B a w)`
-(`Core.Order.EffectivePreference`).
+effective preference function `EP : ∀ a w, EffectivePreference W (B a w)`.
 
 A want-report holds when some maximal preference in the background
 stands in a designated relation to the complement, and the relation is
@@ -25,10 +22,10 @@ true). The choice fixes the reading's inferential profile:
 success-oriented want is downward-entailing in the complement,
 Quine-Hintikka want upward-entailing, exact-match want neither
 (counterexample-construction deferred). `WantEffectivePreference` is
-exact-match against the agent's effective preferences, and
-`maxOrderingSource` extracts the `Set`-valued ordering source
-`max[EP(Ad, w)]` (their eq. 88) consumed by the inner modal of the
-double-modal anankastic analysis.
+exact-match against the agent's effective preferences; the ordering
+source `max[EP(Ad, w)]` consumed by the inner modal of the double-modal
+anankastic analysis (their eq. 88) is `fun w => (EP Ad w).maxElts`,
+used in `Studies/CondoravdiLauer2016.lean`.
 
 Declarations live in the `Desire` namespace, alongside the rival
 want-semantics of `Desire.lean`. The anankastic-conditional analysis
@@ -40,7 +37,6 @@ analysis (contra [roberts-2023]'s modal-in-LF account) in
 
 namespace Desire
 
-open Core.Order
 
 variable {Agent W : Type*} (P : Agent → W → PreferenceStructure W)
 
@@ -106,11 +102,5 @@ theorem wantEffectivePreference_jointly_belief_consistent
     (φ ∩ ψ) ∩ B a w ≠ ∅ :=
   (EP a w).toPreferenceStructure.maxElts_pair_belief_compatible
     (EP a w).isConsistent hφ hψ
-
-/-- `maxOrderingSource EP Ad w` is the set of maximal preferences in
-    `EP(Ad, w)` — the ordering source consumed by the inner modal of
-    the double-modal anankastic analysis. -/
-def maxOrderingSource (Ad : Agent) : W → Set (Set W) :=
-  fun w => (EP Ad w).toPreferenceStructure.maxElts
 
 end Desire
