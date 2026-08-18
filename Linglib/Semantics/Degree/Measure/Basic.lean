@@ -39,7 +39,7 @@ namespace Degree
     - [pasternak-2019] (def 4) — `μ_int` monotonicity on the
       part-whole structure of mental states.
     - [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025] —
-      `EpistemicThreshold.isProbabilistic` is a strengthening of this
+      `EpistemicThreshold.IsProbabilistic` is a strengthening of this
       (Monotone, not StrictMono).
 
     The bundled-typeclass form is `MereoDim` in `Semantics/Mereology.lean`
