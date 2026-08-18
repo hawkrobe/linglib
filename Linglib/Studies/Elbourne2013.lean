@@ -66,7 +66,7 @@ open Semantics.Presupposition.PartialProp (presupOfReferent presupOfReferent_pre
   presupOfReferent_assertion_some presupOfReferent_assertion_none)
 open Semantics.Definiteness (russellIotaList)
 open Semantics.Definiteness (DefPresupType)
-open Intensional (SitVarStatus)
+open Intensional (SitVarStatus ReferentialMode)
 open Semantics.Definiteness (qforceToPresupType)
 open Semantics.Reference.Donnellan (UseMode definiteNominal)
 
@@ -696,6 +696,31 @@ def deReVar : SitVar := .free
 def deDictoVar : SitVar := .bound 1
 
 end DeReDeDicto
+
+/-! ### The Partee tense modes under situation-variable status
+
+[elbourne-2013] generalizes [partee-1973]'s tense–pronoun analogy from
+times to situations: his free/bound `SitVarStatus` collapses Partee's
+three-way mode classification — indexical and anaphoric expressions both
+carry free variables, differing only in how the free variable is
+pragmatically resolved (utterance context vs discourse salience). -/
+
+/-- Surjective: Partee's classification is at least as fine as Elbourne's.
+    The coarsening is the substrate's `ReferentialMode.toSitVarStatus`. -/
+theorem toSitVarStatus_surjective :
+    ∀ s : SitVarStatus, ∃ m : ReferentialMode, m.toSitVarStatus = s := by
+  intro s; cases s
+  · exact ⟨.indexical, rfl⟩
+  · exact ⟨.bound, rfl⟩
+
+/-- Not injective: indexical ≠ anaphoric but both map to free — the
+    indexical/anaphoric distinction is a pragmatic refinement invisible
+    to the structural free/bound semantics. -/
+theorem toSitVarStatus_not_injective :
+    ReferentialMode.indexical ≠ ReferentialMode.anaphoric ∧
+    ReferentialMode.indexical.toSitVarStatus =
+      ReferentialMode.anaphoric.toSitVarStatus :=
+  ⟨nofun, rfl⟩
 
 
 -- ════════════════════════════════════════════════════════════════

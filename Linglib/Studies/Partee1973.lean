@@ -1,28 +1,14 @@
 import Linglib.Semantics.Tense.Compositional
-import Linglib.Semantics.Reference.KaplanLD
-import Linglib.Semantics.Intensional.Rigidity
 
 /-!
 # Tenses and Pronouns: Partee's Structural Analogy
-[abusch-1997] [elbourne-2013] [heim-kratzer-1998] [kaplan-1989] [kratzer-1998] [partee-1973] [klecha-2016]
+[partee-1973] [prior-1967]
 
 Formalizes [partee-1973]: tenses in English exhibit the same three-way
-interpretive ambiguity as pronouns — indexical, anaphoric, and bound-variable
-— and share the same formal mechanisms (assignment functions, variable
-lookup, lambda abstraction).
-
-The unifying type for all five views of tense is `TensePronoun`: a variable index + a presupposed temporal constraint + a
-binding mode + an eval time index. The bridges in this file —
-`referential_past_decomposition`, `indexical_tense_matches_opNow`,
-`toSitVarStatus_surjective` — are projections of `TensePronoun` onto
-specific theoretical vocabularies.
-
-For per-paper tense theory formalizations, see the sibling
-`Studies/` files (Abusch1997, VonStechow2009, Kratzer1998,
-Ogihara1996, Klecha2016, Sharvit2003, Wurmbrand2014, etc.) and
-`Semantics/Tense/`.
-
-## The Analogy
+interpretive ambiguity as pronouns — indexical, anaphoric, and
+bound-variable — and share the same formal mechanisms (assignment
+functions, variable lookup, lambda abstraction). The substrate carrier is
+`TensePronoun` (`Semantics/Tense/Pronoun.lean`).
 
 | Mode      | Pronouns                     | Tenses                              |
 |-----------|------------------------------|-------------------------------------|
@@ -30,239 +16,58 @@ Ogihara1996, Klecha2016, Sharvit2003, Wurmbrand2014, etc.) and
 | Anaphoric | "he" → salient individual    | past → salient narrative time       |
 | Bound     | "his" in ∀x...his...         | tense in "whenever...is..."         |
 
-Partee's main argument against Prior's tense-as-operator view: "I didn't
-turn off the stove" with past tense does NOT mean "at SOME past time I
-didn't turn off the stove" (trivially true). It means "at THAT specific
-time (when I left) I didn't turn off the stove." Tenses refer; they
-don't quantify.
+Partee's main argument against [prior-1967]'s tense-as-operator view: "I
+didn't turn off the stove" with past tense does not mean "at SOME past
+time I didn't turn off the stove" (trivially true) but "at THAT specific
+time I didn't turn off the stove" — tenses refer, they don't quantify
+(`stove_refutes_prior`).
 
-## Structural Parallel to Variables.lean
-
-The definitions here are the temporal counterparts of [heim-kratzer-1998] entity
-variable infrastructure in `Semantics.Montague.Variables`. Both are
-instantiations of the generic `Assignment` infrastructure:
-
-| Generic (Assignment)        | Entity (Variables.lean)    | Temporal (this file)      |
-|----------------------------------|---------------------------|---------------------------|
-| `Assignment D` (ℕ → D)           | `Assignment m` (ℕ → Ent)  | `TemporalAssignment Time` |
-| `g n`                            | `interpPronoun n g`       | `interpTense n g`         |
-| `Function.update g n d`          | `Function.update g n x`   | `updateTemporal g n t`    |
-| `λ g d => body (Function.update g n d)`   | `lambdaAbsG n body`       | `temporalLambdaAbs n body`|
-
-The algebraic structure is identical: Partee's insight is that the SAME
+The definitions here are the temporal counterparts of the entity variable
+infrastructure in `Semantics.Montague.Variables`; both instantiate the
+generic `Assignment` infrastructure, which is Partee's point: the same
 referential mechanism operates over different domains.
 
+Later engagements with the analogy live in their own studies:
+`Ogihara1989` (operator–referential reconciliation), `Kratzer1998` (zero
+tense, SOT deletion), `Elbourne2013` (situation-variable coarsening).
 -/
 
 open Tense
 
 namespace Partee1973
 
-open Tense (interpTense temporalLambdaAbs updateTemporal situationToTemporal PAST)
-open Semantics.Reference.KaplanLD (opNow)
-open Intensional (SitVarStatus)
+open Tense (interpTense PAST)
 open Intensional (WorldTimeIndex)
-open Intensional (ReferentialMode)
-
-
--- ════════════════════════════════════════════════════════════════
--- § 3. Indexical Tense = Kaplan's Now
--- ════════════════════════════════════════════════════════════════
-
-/-! Partee: indexical tenses are anchored to utterance time, just as "I"
-is anchored to the speaker. Kaplan's `opNow cT φ` evaluates φ at context
-time cT — this IS the indexical tense interpretation.
-
-    Kaplan `pronI` : character = λc. rigid(c.agent) — "I" → speaker
-    Temporal parallel : character = λc. rigid(c.time) — present → speech time -/
-
-/-- An indexically interpreted tense is equivalent to Kaplan's Now:
-    both fix the temporal coordinate to a context-given value,
-    ignoring the circumstance evaluation time. -/
-theorem indexical_tense_matches_opNow {W T : Type*}
-    (cT : T) (φ : W → T → Prop) (w : W) (t : T) :
-    opNow cT φ w t = φ w cT := rfl
-
-
-/-! ### Partee → Elbourne: referential mode → situation-variable status -/
-
-/-! [elbourne-2013] generalizes Partee from times to situations (world–time
-pairs). His `SitVarStatus` (free/bound) collapses Partee's three-way
-distinction: indexical and anaphoric tenses both have FREE variables,
-differing only in how the free variable is pragmatically resolved
-(utterance context vs. discourse salience). -/
-
-/-- Surjective: Partee's classification is at least as fine as
-    Elbourne's. The coarsening is the substrate's
-    `ReferentialMode.toSitVarStatus`. -/
-theorem toSitVarStatus_surjective :
-    ∀ s : SitVarStatus, ∃ m : ReferentialMode, m.toSitVarStatus = s := by
-  intro s; cases s
-  · exact ⟨.indexical, rfl⟩
-  · exact ⟨.bound, rfl⟩
-
-/-- Not injective: indexical ≠ anaphoric but both map to free.
-    The indexical/anaphoric distinction is a pragmatic refinement
-    invisible to Elbourne's structural semantics. -/
-theorem toSitVarStatus_not_injective :
-    ReferentialMode.indexical ≠ ReferentialMode.anaphoric ∧
-    ReferentialMode.indexical.toSitVarStatus =
-      ReferentialMode.anaphoric.toSitVarStatus :=
-  ⟨nofun, rfl⟩
-
-
--- ════════════════════════════════════════════════════════════════
--- § 6. Partee vs Prior
--- ════════════════════════════════════════════════════════════════
-
-/-! The codebase contains both perspectives on tense:
-
-**[prior-1967]**: `PAST P s s' := s.time < s'.time ∧ P s`. Tense is an
-operator that constrains temporal relations — existential quantification
-over past times.
-
-**[partee-1973]**: `interpTense n g = g n`. Tense is a variable that
-refers to a specific contextual time.
-
-Partee's argument: "I didn't turn off the stove" under Prior's analysis
-gives `∃t < now. ¬turn_off(stove, t)` — trivially true, since there are
-always past times when you weren't turning off the stove. The intended
-reading is `¬turn_off(stove, t_i)` where `t_i` is a specific time (when
-you left the house). Only the referential analysis captures this.
-
-The Priorean operators `PAST`/`PRES`/`FUT` in `Tense/Basic.lean` remain
-useful for modeling tense in isolation. The referential analysis here
-is needed for discourse anaphora and binding. -/
 
 /-- Partee's stove example: "I didn't turn off the stove."
 
     Past tense introduces a temporal variable resolved to a specific
-    contextually salient time. The negation scopes OVER the temporal
-    reference, giving ¬P(t_i) rather than Prior's ∃t.¬P(t). -/
+    contextually salient time. The negation scopes over the temporal
+    reference, giving ¬P(t_i) rather than Prior's ∃t < now. ¬P(t). -/
 def parteeStoveExample {Time : Type*} (turnedOff : Time → Bool)
     (g : TemporalAssignment Time) (n : ℕ) : Bool :=
   !turnedOff (interpTense n g)
 
+/-- [partee-1973]'s argument against [prior-1967], as a countermodel: in a
+    context where the stove WAS turned off at the salient time (−1), the
+    referential reading is false — the utterance is correctly predicted
+    false — while the Priorean existential reading stays true (witnessed
+    by any other past time), so the operator analysis trivializes the
+    sentence. -/
+theorem stove_refutes_prior :
+    parteeStoveExample (· == (-1 : ℤ)) (λ _ => (-1 : ℤ)) 0 = false ∧
+    ∃ s : WorldTimeIndex Unit ℤ,
+      PAST (λ s => (s.time == (-1 : ℤ)) = false) s ⟨(), 0⟩ :=
+  ⟨by decide, ⟨(), -2⟩, by exact (by decide : ((-2 : ℤ) < 0)), by decide⟩
+
 /-- Partee's narrative example: "He turned the corner. He saw a house."
 
-    Both past tenses refer to the same (or closely related) narrative time
-    — temporal anaphora. Under the referential analysis, both clauses
-    evaluate at g(n) for the same discourse-salient temporal variable n.
-    Anaphoric tenses corefer with a previously established temporal
-    referent, just as anaphoric pronouns corefer with a previously
-    established individual. -/
+    Both past tenses refer to the same narrative time — temporal
+    anaphora. Under the referential analysis both clauses evaluate at
+    g(n) for the same discourse-salient temporal variable n, just as
+    anaphoric pronouns corefer with an established individual. -/
 def narrativeAnaphora {Time : Type*} (P Q : Time → Bool)
     (g : TemporalAssignment Time) (n : ℕ) : Bool :=
   P (interpTense n g) && Q (interpTense n g)
-
-
--- ════════════════════════════════════════════════════════════════
--- § 7. Referential ↔ Priorean Bridge ([ogihara-1989])
--- ════════════════════════════════════════════════════════════════
-
-/-! The Priorean operators `PAST`/`PRES`/`FUT` in `Tense/Basic.lean` and the
-referential analysis (`interpTense`, `temporalLambdaAbs`) are not competitors
-but complementary layers. [ogihara-1989] §2.3: tense is a variable (picks a
-time) that must satisfy a temporal presupposition (the picked time is
-past/present/future). The following theorems make this reconciliation formal. -/
-
-/-- The Priorean PAST operator, applied at a referentially-determined time g(n),
-    decomposes into the conjunction of (1) the referential time precedes the
-    speech situation and (2) the predicate holds at the referential time.
-
-    This is the formal reconciliation: the referential analysis (Partee) picks
-    the TIME; the operator analysis (Prior) imposes the CONSTRAINT. They are
-    not competitors but complementary layers.
-
-    [ogihara-1989] §2.3: tense is a variable (picks a time) that must satisfy
-    a temporal presupposition (the picked time is past/present/future). -/
-theorem referential_past_decomposition {W Time : Type*} [LT Time]
-    (P : SitProp W Time) (g : TemporalAssignment Time) (n : ℕ)
-    (w : W) (speechTime : Time) :
-    PAST P ⟨w, interpTense n g⟩ ⟨w, speechTime⟩ ↔
-    (g n < speechTime ∧ P ⟨w, g n⟩) := by rfl
-
-/-- Bound tense under attitude embedding: the binder (attitude verb) fills
-    the temporal variable, yielding the simultaneous reading.
-
-    `temporalLambdaAbs n body g t` = `body (g[n ↦ t])`: the body is
-    evaluated with variable n set to binder time t. The tense variable
-    no longer refers independently — it receives the attitude's event time. -/
-theorem bound_tense_receives_attitude_time {Time α : Type*}
-    (body : TemporalAssignment Time → α) (g : TemporalAssignment Time)
-    (n : ℕ) (attitudeEventTime : Time) :
-    temporalLambdaAbs n body g attitudeEventTime =
-    body (updateTemporal g n attitudeEventTime) := by rfl
-
-
--- ════════════════════════════════════════════════════════════════
--- § 8. Zero Forms and Locality ([heim-kratzer-1998])
--- ════════════════════════════════════════════════════════════════
-
-/-! Kratzer (1998 §3) extends the Partee analogy to a FOURTH parallel:
-the distribution of overt vs. zero (phonologically empty) referential
-expressions. Just as the three-way classification (indexical/anaphoric/bound)
-applies uniformly to entities, times, and situations, the locality
-condition on zero forms applies uniformly across all three domains:
-
-| Mode | Entity | Time | Surface |
-|------|--------|------|---------|
-| Indexical | "I" | PRESENT | overt |
-| Anaphoric | "he" | PAST (German) | overt |
-| Bound, local | reflexive | simultaneous (SOT) | zero |
-| Bound, non-local | "him" in ∀x...him... | embedded tense (Persian) | overt |
-
-The key generalization: bound + local agreement domain → zero.
-This explains why Persian has zero PRONOUNS but NOT zero TENSE
-(tense is in C, outside the local domain of Agr in Infl).
-
-`Overtness.fromBinding` (Core/Tense.lean) formalizes this as a function
-from `(ReferentialMode × localDomain)` to `Overtness`. -/
-
-
-/-- The four-way classification: all three referential modes produce
-    overt forms except bound+local, which produces zero.
-
-    This extends the Partee three-way analogy with a morphophonological
-    dimension: the same `ReferentialMode` that determines how a referential
-    expression gets its reference ALSO determines (via locality) whether
-    it surfaces overtly. -/
-theorem overtness_classification :
-    -- Free (indexical): always overt
-    Overtness.fromBinding .indexical true = .overt ∧
-    Overtness.fromBinding .indexical false = .overt ∧
-    -- Free (anaphoric): always overt
-    Overtness.fromBinding .anaphoric true = .overt ∧
-    Overtness.fromBinding .anaphoric false = .overt ∧
-    -- Bound, local: zero
-    Overtness.fromBinding .bound true = .zero ∧
-    -- Bound, non-local: overt
-    Overtness.fromBinding .bound false = .overt :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- The Partee analogy extended from three to four dimensions:
-
-    | Dimension | Origin[partee-1973] | + [heim-kratzer-1998] |
-    |-----------|----------------------|------------------|
-    | Domain    | Entity ↔ Time         | + Situation       |
-    | Mode      | Indexical/Anaphoric/Bound | (same)       |
-    | Resolution| Context/Discourse/Binder | (same)        |
-    | Overtness | —                      | overt/zero      |
-
-    `ReferentialMode.toSitVarStatus` collapses the indexical/anaphoric
-    distinction (both → free). Kratzer's `Overtness.fromBinding` collapses
-    differently: free → overt, bound + local → zero. Together, they show
-    that the three-way classification has TWO natural coarsenings:
-    - Elbourne's {free, bound} (structural)
-    - Kratzer's {overt, zero} (morphophonological) -/
-theorem two_coarsenings (m : ReferentialMode) :
-    -- Elbourne: indexical and anaphoric both → free
-    (m == .indexical || m == .anaphoric) = m.isFree ∧
-    -- Kratzer: free (either kind) → overt regardless of locality
-    (m.isFree → ∀ (l : Bool), Overtness.fromBinding m l = .overt) := by
-  constructor
-  · cases m <;> rfl
-  · cases m <;> simp [ReferentialMode.isFree, Overtness.fromBinding]
-
 
 end Partee1973
