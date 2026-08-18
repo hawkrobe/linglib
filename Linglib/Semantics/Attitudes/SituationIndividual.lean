@@ -38,10 +38,20 @@ structure SituationIndividual (S : Type*) where
   /-- Situation predicate: SIT(s_i) -/
   sit : S → Prop
 
-/-- A situation-selecting verb relates an agent to a situation individual
-    at a situation. -/
-abbrev SituationVerb (S X : Type*) := X → SituationIndividual S → S → Prop
+/-- A situation-selecting verb (*be happy that*, *regret*) relates an
+    agent to a situation individual at a situation — the situation-sort
+    sibling of `ContentVerb`. -/
+abbrev SituationVerb (S E : Type*) := E → SituationIndividual S → S → Prop
 
 instance {S : Type*} : Anchor (SituationIndividual S) S :=
   ⟨SituationIndividual.sit⟩
+
+/-- Every situation predicate is the SIT of some individual, so the
+    situation-mode projection is surjective — the situation-sort analogue
+    of `ContentIndividual.cont_surjective`, making
+    `Anchor.existsClosure_ofAccessibility` applicable to situation
+    reports. -/
+theorem SituationIndividual.sit_surjective {S : Type*} :
+    Function.Surjective (SituationIndividual.sit : SituationIndividual S → S → Prop) :=
+  fun p => ⟨⟨p⟩, rfl⟩
 

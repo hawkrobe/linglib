@@ -41,8 +41,10 @@ structure ContentIndividual (W : Type*) where
   /-- Propositional content: CONT(c) -/
   cont : W → Prop
 
-/-- An attitude verb relates an agent to a content individual at a world. -/
-abbrev AttitudeVerb (W E : Type*) := E → ContentIndividual W → W → Prop
+/-- A content-selecting verb (*say*, *believe*) relates an agent to a
+    content individual at a world — the content-sort sibling of
+    `SituationVerb`. -/
+abbrev ContentVerb (W E : Type*) := E → ContentIndividual W → W → Prop
 
 namespace ContentIndividual
 
