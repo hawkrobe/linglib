@@ -163,7 +163,7 @@ theorem exists_narrow_scope_under_negation {E : Type*}
 
 /-! ### World Variable and De Re / De Dicto -/
 
-open Intensional.SitVarStatus (SitVarStatus)
+open Intensional (SitVarStatus)
 
 /-- Evaluate a skolemized CF according to the status of its world variable.
     - `SitVarStatus.free`: evaluate at `w₀` (the actual world) → de re
