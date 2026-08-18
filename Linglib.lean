@@ -2495,6 +2495,7 @@ import Linglib.Studies.Nordlinger2023
 import Linglib.Studies.Nouwen2024
 import Linglib.Studies.ODonnell2015
 import Linglib.Studies.Ochs1992
+import Linglib.Studies.Ogihara1989
 import Linglib.Studies.Ogihara1996
 import Linglib.Studies.OgiharaSteinertThrelkeld2024
 import Linglib.Studies.Olivier2026
