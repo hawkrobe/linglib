@@ -1,3 +1,5 @@
+import Mathlib.Data.Finset.Sort
+import Mathlib.Data.List.NodupEquivFin
 import Mathlib.GroupTheory.Perm.Basic
 import Mathlib.Order.Fin.Basic
 import Mathlib.Order.PiLex
@@ -127,6 +129,22 @@ theorem toRel_injective : Function.Injective (toRel (n := n)) := by
 rigid: nothing sits strictly between two ranking-induced orders. -/
 theorem toRel_le_toRel_iff : σ.toRel ≤ τ.toRel ↔ σ = τ :=
   ⟨fun h => toRel_injective (total_eq_of_le h), fun h => h ▸ le_refl _⟩
+
+/-- Every linear order on `Fin n` is the induced order of a ranking — the
+surjectivity companion to `toRel_injective`: enumerate the constraints in
+`s`-order (`Finset.sort`) and read off the ranking. -/
+theorem exists_toRel_eq (s : Fin n → Fin n → Prop) [IsLinearOrder (Fin n) s] :
+    ∃ σ : Ranking n, σ.toRel = s := by
+  classical
+  have hlen : (Finset.univ.sort s).length = n := by simp
+  let e : Fin (Finset.univ.sort s).length ≃ Fin n :=
+    List.Nodup.getEquivOfForallMemList _ (Finset.sort_nodup _ _)
+      fun x => by simp
+  refine ⟨(finCongr hlen).symm.trans e, total_eq_of_le fun a b hab => ?_⟩
+  have h := (Finset.pairwise_sort _ _).rel_get_of_le
+    (show e.symm a ≤ e.symm b from hab)
+  rwa [show (Finset.univ.sort s).get (e.symm a) = a from e.apply_symm_apply a,
+    show (Finset.univ.sort s).get (e.symm b) = b from e.apply_symm_apply b] at h
 
 end Ranking
 end OptimalityTheory

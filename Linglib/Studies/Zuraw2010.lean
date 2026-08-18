@@ -297,8 +297,7 @@ def subProb (c : StemC) : ℚ :=
     `pocPredict_discrete_binary_rate`. -/
 private theorem subProb_eq_rate (c : StemC) :
     subProb c = ((yesFav c ∩ relevant c).card : ℚ) / (relevant c).card :=
-  pocPredict_discrete_binary_rate nsCands vp c .yes .no
-    (nsCands_two c) (fun heq => SubSt.noConfusion heq)
+  pocPredict_discrete_binary_rate (nsCands_two c) (fun heq => SubSt.noConfusion heq)
 
 /-- Substitution rate for voiceless labial p: 50% of 720 rankings. -/
 theorem subProb_p : subProb .p = 1/2 := by
@@ -407,11 +406,9 @@ theorem PicksAt_extends_smaller_D
     (h_extra : ∀ x ∈ relevant c, x ∉ relevant c' → x ∈ yesFav c)
     (h_c' : PicksAt nsCands vp σ c' .yes) :
     PicksAt nsCands vp σ c .yes := by
-  rw [picksAt_binary_iff_head_mem_favoring
-        nsCands vp c' .yes .no (nsCands_two c')
+  rw [picksAt_binary_iff_head_mem_favoring (nsCands_two c')
         (fun heq => SubSt.noConfusion heq)] at h_c'
-  rw [picksAt_binary_iff_head_mem_favoring
-        nsCands vp c .yes .no (nsCands_two c)
+  rw [picksAt_binary_iff_head_mem_favoring (nsCands_two c)
         (fun heq => SubSt.noConfusion heq)]
   exact head_filter_subset_extends h_D h_Y h_extra _ h_c'
 
@@ -426,11 +423,9 @@ theorem PicksAt_extends_larger_D
     (h_subset : yesFav c' ⊆ relevant c)
     (h_c' : PicksAt nsCands vp σ c' .yes) :
     PicksAt nsCands vp σ c .yes := by
-  rw [picksAt_binary_iff_head_mem_favoring
-        nsCands vp c' .yes .no (nsCands_two c')
+  rw [picksAt_binary_iff_head_mem_favoring (nsCands_two c')
         (fun heq => SubSt.noConfusion heq)] at h_c'
-  rw [picksAt_binary_iff_head_mem_favoring
-        nsCands vp c .yes .no (nsCands_two c)
+  rw [picksAt_binary_iff_head_mem_favoring (nsCands_two c)
         (fun heq => SubSt.noConfusion heq)]
   exact head_filter_smaller_inherits h_D h_Y h_subset _ h_c'
 

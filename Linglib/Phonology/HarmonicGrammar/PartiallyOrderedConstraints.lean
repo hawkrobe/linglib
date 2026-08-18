@@ -72,6 +72,8 @@ open Core.Optimization OptimalityTheory Finset
 
 variable {n : ℕ}
 
+/-! ### Grammars and their linear extensions -/
+
 /-- Equality is a partial order — the discrete order, relating nothing beyond
     reflexivity. As a POC grammar it is [anttila-1997]'s "no ranking imposed"
     baseline: every permutation is a consistent linear extension. -/
@@ -79,8 +81,6 @@ instance {α : Type*} : IsPartialOrder α (· = ·) where
   refl _ := rfl
   trans _ _ _ := Eq.trans
   antisymm _ _ h _ := h
-
-/-! ### Grammars from permutations -/
 
 /-- A permutation σ is **consistent** with grammar `r` when `r` is contained
     in the total order σ induces (`Ranking.toRel`) — σ is a linear extension
@@ -117,46 +117,6 @@ theorem IsConsistent.mul {r : Fin n → Fin n → Prop} {g σ : Ranking n}
     IsConsistent r (g * σ) :=
   isConsistent_mul_iff.mpr fun a b hab => hσ a b ((hg a b).mp hab)
 
-/-! ### Grounding in the ERC lex API
-
-A partial order is a set of dominance requirements — each strict related pair
-is a simple ERC `a ≫ b` ([merchant-riggle-2016]), and under this encoding the
-consistent total orders are exactly `ERC.linearExtensions` ([prince-2002]). -/
-
-/-- The simple-ERC encoding of a grammar, with one ERC `a ≫ b`
-(`simpleERC a b`) for each related pair — diagonal pairs give trivial ERCs,
-matching `toRel`'s reflexivity. Transitively-implied pairs are entailed by the
-covering pairs, so the encoding has the same linear extensions as the
-Hasse-edge one. -/
-def toERCs (r : Fin n → Fin n → Prop) [DecidableRel r] : Finset (ERC n) :=
-  (Finset.univ.filter fun p : Fin n × Fin n => r p.1 p.2).image
-    fun p => simpleERC p.1 p.2
-
-theorem mem_toERCs {r : Fin n → Fin n → Prop} [DecidableRel r] {α : ERC n} :
-    α ∈ toERCs r ↔ ∃ a b, r a b ∧ simpleERC a b = α := by
-  simp [toERCs, Prod.exists]
-
-/-- A ranking satisfies `toERCs r` exactly when it is a linear extension of
-`r`: per pair, satisfaction of `simpleERC a b` *is* `σ.toRel a b`. -/
-theorem satisfiedBy_toERCs {r : Fin n → Fin n → Prop} [DecidableRel r]
-    {σ : Ranking n} :
-    (∀ α ∈ toERCs r, ERC.SatisfiedBy σ α) ↔ IsConsistent r σ := by
-  constructor
-  · intro h a b hrel
-    exact (simpleERC_satisfiedBy_toRel_iff a b σ).mp
-      (h _ (mem_toERCs.mpr ⟨a, b, hrel, rfl⟩))
-  · intro hcons α hα
-    obtain ⟨a, b, hrel, rfl⟩ := mem_toERCs.mp hα
-    exact (simpleERC_satisfiedBy_toRel_iff a b σ).mpr (hcons a b hrel)
-
-/-- The consistent total orders of a grammar are exactly the linear extensions
-of its simple-ERC encoding ([merchant-riggle-2016]; [prince-2002]). -/
-theorem consistentTotalOrders_eq_linearExtensions (r : Fin n → Fin n → Prop)
-    [DecidableRel r] :
-    consistentTotalOrders r = ERC.linearExtensions (toERCs r) := by
-  ext σ
-  rw [mem_consistentTotalOrders, ERC.mem_linearExtensions, satisfiedBy_toERCs]
-
 /-- For the discrete grammar, every permutation is a linear extension. -/
 theorem consistentTotalOrders_discrete (n : ℕ) :
     consistentTotalOrders (· = · : Fin n → Fin n → Prop) = Finset.univ :=
@@ -179,6 +139,30 @@ theorem consistentTotalOrders_toRel (σ : Ranking n) :
   refine ⟨fun hτ => (Ranking.toRel_le_toRel_iff.mp hτ).symm, fun hτ => ?_⟩
   rw [hτ]
   exact isConsistent_toRel σ
+
+/-! ### Szpilrajn — every grammar has a consistent linear extension -/
+
+/-- Every grammar has a consistent linear extension: Szpilrajn
+    (`extend_partialOrder`) extends `r` to a linear order, which is some
+    ranking's induced order (`Ranking.exists_toRel_eq`). -/
+theorem exists_isConsistent (r : Fin n → Fin n → Prop)
+    [IsPartialOrder (Fin n) r] :
+    ∃ σ : Ranking n, IsConsistent r σ := by
+  obtain ⟨s, hs, hsub⟩ := extend_partialOrder r
+  have := hs
+  obtain ⟨σ, rfl⟩ := Ranking.exists_toRel_eq s
+  exact ⟨σ, hsub⟩
+
+theorem consistentTotalOrders_nonempty (r : Fin n → Fin n → Prop)
+    [IsPartialOrder (Fin n) r] [DecidableRel r] :
+    (consistentTotalOrders r).Nonempty :=
+  let ⟨σ, hσ⟩ := exists_isConsistent r
+  ⟨σ, mem_consistentTotalOrders.mpr hσ⟩
+
+theorem consistentTotalOrders_card_pos (r : Fin n → Fin n → Prop)
+    [IsPartialOrder (Fin n) r] [DecidableRel r] :
+    0 < (consistentTotalOrders r).card :=
+  (consistentTotalOrders_nonempty r).card_pos
 
 /-! ### Stratified grammars
 
@@ -268,61 +252,45 @@ theorem isConsistent_swap_mul [Std.Refl inner]
 
 end Stratified
 
-/-! ### Szpilrajn — every grammar has a consistent linear extension -/
+/-! ### Grounding in the ERC lex API
 
-/-- Opaque carrier for the extended linear order, so that the extension can be
-    installed as a `LinearOrder` instance without clashing with `Fin n`'s
-    standard order. -/
-private structure LinExtCarrier (n : ℕ) where ofFin ::
-  /-- The underlying index. -/
-  toFin : Fin n
+A partial order is a set of dominance requirements — each related pair is a
+simple ERC `a ≫ b` ([merchant-riggle-2016]), and under this encoding the
+consistent total orders are exactly `ERC.linearExtensions` ([prince-2002]). -/
 
-/-- Every grammar has a consistent linear extension (Szpilrajn, via mathlib's
-    `extend_partialOrder`). -/
-theorem exists_isConsistent (r : Fin n → Fin n → Prop)
-    [IsPartialOrder (Fin n) r] :
-    ∃ σ : Ranking n, IsConsistent r σ := by
-  classical
-  -- Szpilrajn: extend the partial order `r` to a linear order `s`.
-  obtain ⟨s, hs_lin, hsub⟩ := extend_partialOrder r
-  -- Equip the opaque carrier with `s`, then sort it against `Fin n`'s order.
-  let wEquiv : LinExtCarrier n ≃ Fin n :=
-    { toFun := LinExtCarrier.toFin, invFun := LinExtCarrier.ofFin,
-      left_inv := fun ⟨_⟩ => rfl, right_inv := fun _ => rfl }
-  let : Fintype (LinExtCarrier n) := Fintype.ofEquiv (Fin n) wEquiv.symm
-  let : LinearOrder (LinExtCarrier n) :=
-    { le := fun a b => s a.toFin b.toFin
-      le_refl := fun a => hs_lin.refl a.toFin
-      le_trans := fun a b c => hs_lin.trans a.toFin b.toFin c.toFin
-      le_antisymm := fun a b h₁ h₂ => by
-        have := hs_lin.antisymm a.toFin b.toFin h₁ h₂
-        cases a; cases b; simpa using this
-      le_total := fun a b => hs_lin.total a.toFin b.toFin
-      toDecidableLE := Classical.decRel _ }
-  have hcard : Fintype.card (LinExtCarrier n) = n := by
-    rw [Fintype.card_congr wEquiv]; simp
-  -- The order iso `Fin n ≃o LinExtCarrier n` enumerates the carrier in `s`-order;
-  -- composing with `wEquiv` yields the consistent permutation.
-  let e : Fin n ≃o LinExtCarrier n := Fintype.orderIsoFinOfCardEq (LinExtCarrier n) hcard
-  refine ⟨e.toEquiv.trans wEquiv, ?_⟩
-  intro a b hab
-  show ((e.toEquiv.trans wEquiv).symm a : Fin n) ≤ (e.toEquiv.trans wEquiv).symm b
-  have key : ∀ c : Fin n, (e.toEquiv.trans wEquiv).symm c = e.symm (LinExtCarrier.ofFin c) :=
-    fun _ => rfl
-  rw [key a, key b]
-  exact e.symm.monotone (show s (LinExtCarrier.ofFin a).toFin (LinExtCarrier.ofFin b).toFin from
-    hsub a b hab)
+/-- The simple-ERC encoding of a grammar, with one ERC `a ≫ b`
+(`simpleERC a b`) for each related pair — diagonal pairs give trivial ERCs,
+matching `toRel`'s reflexivity. Transitively-implied pairs are entailed by the
+covering pairs, so the encoding has the same linear extensions as the
+Hasse-edge one. -/
+def toERCs (r : Fin n → Fin n → Prop) [DecidableRel r] : Finset (ERC n) :=
+  (Finset.univ.filter fun p : Fin n × Fin n => r p.1 p.2).image
+    fun p => simpleERC p.1 p.2
 
-theorem consistentTotalOrders_nonempty (r : Fin n → Fin n → Prop)
-    [IsPartialOrder (Fin n) r] [DecidableRel r] :
-    (consistentTotalOrders r).Nonempty :=
-  let ⟨σ, hσ⟩ := exists_isConsistent r
-  ⟨σ, mem_consistentTotalOrders.mpr hσ⟩
+theorem mem_toERCs {r : Fin n → Fin n → Prop} [DecidableRel r] {α : ERC n} :
+    α ∈ toERCs r ↔ ∃ a b, r a b ∧ simpleERC a b = α := by
+  simp [toERCs, Prod.exists]
 
-theorem consistentTotalOrders_card_pos (r : Fin n → Fin n → Prop)
-    [IsPartialOrder (Fin n) r] [DecidableRel r] :
-    0 < (consistentTotalOrders r).card :=
-  (consistentTotalOrders_nonempty r).card_pos
+/-- A ranking satisfies `toERCs r` exactly when it is a linear extension of
+`r`: per pair, satisfaction of `simpleERC a b` *is* `σ.toRel a b`. -/
+theorem satisfiedBy_toERCs {r : Fin n → Fin n → Prop} [DecidableRel r]
+    {σ : Ranking n} :
+    (∀ α ∈ toERCs r, ERC.SatisfiedBy σ α) ↔ IsConsistent r σ := by
+  constructor
+  · intro h a b hrel
+    exact (simpleERC_satisfiedBy_toRel_iff a b σ).mp
+      (h _ (mem_toERCs.mpr ⟨a, b, hrel, rfl⟩))
+  · intro hcons α hα
+    obtain ⟨a, b, hrel, rfl⟩ := mem_toERCs.mp hα
+    exact (simpleERC_satisfiedBy_toRel_iff a b σ).mpr (hcons a b hrel)
+
+/-- The consistent total orders of a grammar are exactly the linear extensions
+of its simple-ERC encoding ([merchant-riggle-2016]; [prince-2002]). -/
+theorem consistentTotalOrders_eq_linearExtensions (r : Fin n → Fin n → Prop)
+    [DecidableRel r] :
+    consistentTotalOrders r = ERC.linearExtensions (toERCs r) := by
+  ext σ
+  rw [mem_consistentTotalOrders, ERC.mem_linearExtensions, satisfiedBy_toERCs]
 
 /-! ### The order-ideal antimatroid of a POC
 
@@ -381,6 +349,23 @@ Birkhoff correspondence, made concrete and decidable. -/
 
 variable {r}
 
+/-! ### Bridge to the `Grammar` hub
+
+A partial order on constraints is the simple-ERC fragment of an OT grammar —
+its consistent total orders are exactly the legs of
+`Grammar.ofERCs (toERCs r)` ([merchant-riggle-2016]). -/
+
+/-- The `Grammar` whose legs are `r`'s consistent total orders. -/
+def toGrammar (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r]
+    [DecidableRel r] : Grammar n :=
+  Grammar.ofERCs (toERCs r) (toERCs_consistent r)
+
+@[simp] theorem toGrammar_legs (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r]
+    [DecidableRel r] :
+    (toGrammar r).legs = consistentTotalOrders r := by
+  show (Grammar.ofERCs (toERCs r) (toERCs_consistent r)).legs = consistentTotalOrders r
+  rw [Grammar.legs_ofERCs, consistentTotalOrders_eq_linearExtensions]
+
 /-! ### POC Realizability of SystemicProblem -/
 
 namespace SystemicProblem
@@ -432,6 +417,9 @@ theorem isOTRealizable_iff_isPOCRealizable (P : SystemicProblem Input Output n) 
 
 /-! ### Probabilistic POC — pocPredict -/
 
+variable {cands : Input → Finset Output} {vp : Input → Output → Fin n → ℕ}
+  {r : Fin n → Fin n → Prop} {σ : Ranking n} {i : Input} {o o' chosen other : Output}
+
 /-- The constraints **active** on the candidate pair `o, o'` at input `i` —
     those assigning the two candidates different violation counts
     ([anttila-1997]'s decisive constraints). Inactive constraints cannot
@@ -446,18 +434,15 @@ def favoring (vp : Input → Output → Fin n → ℕ) (i : Input) (o o' : Outpu
     Finset (Fin n) :=
   Finset.univ.filter fun c => vp i o c < vp i o' c
 
-@[simp] theorem mem_active {vp : Input → Output → Fin n → ℕ} {i : Input}
-    {o o' : Output} {c : Fin n} :
+@[simp] theorem mem_active {c : Fin n} :
     c ∈ active vp i o o' ↔ vp i o c ≠ vp i o' c := by
   simp [active]
 
-@[simp] theorem mem_favoring {vp : Input → Output → Fin n → ℕ} {i : Input}
-    {o o' : Output} {c : Fin n} :
+@[simp] theorem mem_favoring {c : Fin n} :
     c ∈ favoring vp i o o' ↔ vp i o c < vp i o' c := by
   simp [favoring]
 
-theorem favoring_subset_active (vp : Input → Output → Fin n → ℕ) (i : Input)
-    (o o' : Output) : favoring vp i o o' ⊆ active vp i o o' :=
+theorem favoring_subset_active : favoring vp i o o' ⊆ active vp i o o' :=
   fun _ hc => mem_active.mpr (Nat.ne_of_lt (mem_favoring.mp hc))
 
 /-- σ **picks** output o for input i if o is the unique strict OT winner —
@@ -471,25 +456,22 @@ def PicksAt (cands : Input → Finset Output) (vp : Input → Output → Fin n �
 
 /-- A ranking picks at most one output, since strict lex domination is
     asymmetric. -/
-theorem picksAt_unique {cands : Input → Finset Output}
-    {vp : Input → Output → Fin n → ℕ} {σ : Ranking n} {i : Input} {o o' : Output}
-    (h : PicksAt cands vp σ i o) (h' : PicksAt cands vp σ i o') : o = o' := by
+theorem picksAt_unique (h : PicksAt cands vp σ i o) (h' : PicksAt cands vp σ i o') :
+    o = o' := by
   by_contra hne
   exact absurd (h'.2 o h.1 hne) (lt_asymm (h.2 o' h'.1 fun heq => hne heq.symm))
 
 /-- With pairwise-distinct violation profiles, every ranking picks some
     output — the candidate with the lex-minimal permuted profile wins
     strictly. -/
-theorem exists_picksAt (cands : Input → Finset Output)
-    (vp : Input → Output → Fin n → ℕ) {i : Input}
-    (h_ne : (cands i).Nonempty)
-    (h_inj : ∀ o ∈ cands i, ∀ o' ∈ cands i, vp i o = vp i o' → o = o')
-    (σ : Ranking n) : ∃ o ∈ cands i, PicksAt cands vp σ i o := by
+theorem exists_picksAt (h_ne : (cands i).Nonempty)
+    (h_inj : Set.InjOn (vp i) (cands i)) (σ : Ranking n) :
+    ∃ o ∈ cands i, PicksAt cands vp σ i o := by
   obtain ⟨m, hm, hmin⟩ := Finset.exists_min_image (cands i)
     (fun o => toLex (fun j : Fin n => vp i o (σ j))) h_ne
   refine ⟨m, hm, hm, fun o' ho' hne' => lt_of_le_of_ne (hmin o' ho') fun heq => hne' ?_⟩
   have h_fun : (fun j : Fin n => vp i m (σ j)) = fun j => vp i o' (σ j) := toLex_inj.mp heq
-  refine h_inj o' ho' m hm (funext fun c => ?_)
+  refine h_inj ho' hm (funext fun c => ?_)
   have := congrFun h_fun (σ.symm c)
   simpa using this.symm
 
@@ -512,9 +494,7 @@ def pocPredict (cands : Input → Finset Output) (vp : Input → Output → Fin 
 
 /-- For the σ-induced total order, `pocPredict` collapses to a point mass —
     probability 1 if σ picks o and 0 otherwise. -/
-theorem pocPredict_toRel
-    (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
-    (σ : Ranking n) (i : Input) (o : Output) :
+theorem pocPredict_toRel :
     pocPredict cands vp σ.toRel i o =
     if PicksAt cands vp σ i o then 1 else 0 := by
   simp only [pocPredict,
@@ -526,9 +506,7 @@ theorem pocPredict_toRel
 
 /-- Under the discrete grammar, `pocPredict` is the fraction of all `n!`
     rankings picking o. -/
-theorem pocPredict_discrete
-    (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
-    (i : Input) (o : Output) :
+theorem pocPredict_discrete :
     pocPredict cands vp (· = ·) i o =
     ((Finset.univ.filter
       (fun σ : Ranking n => PicksAt cands vp σ i o)).card : ℚ) /
@@ -537,15 +515,10 @@ theorem pocPredict_discrete
 
 /-! #### `pocPredict` is a probability distribution -/
 
-theorem pocPredict_nonneg (cands : Input → Finset Output)
-    (vp : Input → Output → Fin n → ℕ) (r : Fin n → Fin n → Prop)
-    [DecidableRel r] (i : Input) (o : Output) :
-    0 ≤ pocPredict cands vp r i o :=
+theorem pocPredict_nonneg [DecidableRel r] : 0 ≤ pocPredict cands vp r i o :=
   div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
 
-theorem pocPredict_le_one (cands : Input → Finset Output)
-    (vp : Input → Output → Fin n → ℕ) (r : Fin n → Fin n → Prop)
-    [IsPartialOrder (Fin n) r] [DecidableRel r] (i : Input) (o : Output) :
+theorem pocPredict_le_one [IsPartialOrder (Fin n) r] [DecidableRel r] :
     pocPredict cands vp r i o ≤ 1 := by
   unfold pocPredict
   rw [div_le_one (by exact_mod_cast consistentTotalOrders_card_pos r)]
@@ -554,11 +527,8 @@ theorem pocPredict_le_one (cands : Input → Finset Output)
 /-- With pairwise-distinct violation profiles the picks-fibers over the
     candidate set partition the consistent extensions — the division-free core
     of `sum_pocPredict_eq_one`. -/
-theorem sum_card_filter_picksAt (cands : Input → Finset Output)
-    (vp : Input → Output → Fin n → ℕ) (r : Fin n → Fin n → Prop)
-    [DecidableRel r] {i : Input}
-    (h_ne : (cands i).Nonempty)
-    (h_inj : ∀ o ∈ cands i, ∀ o' ∈ cands i, vp i o = vp i o' → o = o') :
+theorem sum_card_filter_picksAt [DecidableRel r]
+    (h_ne : (cands i).Nonempty) (h_inj : Set.InjOn (vp i) (cands i)) :
     ∑ o ∈ cands i, ((consistentTotalOrders r).filter
       (fun σ => PicksAt cands vp σ i o)).card = (consistentTotalOrders r).card := by
   classical
@@ -575,7 +545,7 @@ theorem sum_card_filter_picksAt (cands : Input → Finset Output)
     constructor
     · rintro ⟨o, _, hσ, _⟩; exact hσ
     · intro hσ
-      obtain ⟨o, ho, hpick⟩ := exists_picksAt cands vp h_ne h_inj σ
+      obtain ⟨o, ho, hpick⟩ := exists_picksAt h_ne h_inj σ
       exact ⟨o, ho, hσ, hpick⟩
   calc ∑ o ∈ cands i, ((consistentTotalOrders r).filter
         (fun σ => PicksAt cands vp σ i o)).card
@@ -587,30 +557,27 @@ theorem sum_card_filter_picksAt (cands : Input → Finset Output)
 /-- Over a candidate set with pairwise-distinct violation profiles the win
     probabilities sum to 1, for any grammar — every consistent ranking picks
     exactly one winner. -/
-theorem sum_pocPredict_eq_one (cands : Input → Finset Output)
-    (vp : Input → Output → Fin n → ℕ) (r : Fin n → Fin n → Prop)
-    [IsPartialOrder (Fin n) r] [DecidableRel r] {i : Input}
-    (h_ne : (cands i).Nonempty)
-    (h_inj : ∀ o ∈ cands i, ∀ o' ∈ cands i, vp i o = vp i o' → o = o') :
+theorem sum_pocPredict_eq_one [IsPartialOrder (Fin n) r] [DecidableRel r]
+    (h_ne : (cands i).Nonempty) (h_inj : Set.InjOn (vp i) (cands i)) :
     ∑ o ∈ cands i, pocPredict cands vp r i o = 1 := by
   unfold pocPredict
-  rw [← Finset.sum_div, ← Nat.cast_sum, sum_card_filter_picksAt cands vp r h_ne h_inj]
+  rw [← Finset.sum_div, ← Nat.cast_sum, sum_card_filter_picksAt h_ne h_inj]
   exact div_self (by exact_mod_cast (consistentTotalOrders_card_pos r).ne')
 
 /-- Two distinct candidates with distinct violation profiles split the
     probability mass. -/
-theorem pocPredict_binary_add_eq_one (cands : Input → Finset Output)
-    (vp : Input → Output → Fin n → ℕ) (r : Fin n → Fin n → Prop)
-    [IsPartialOrder (Fin n) r] [DecidableRel r] {i : Input}
+theorem pocPredict_binary_add_eq_one [IsPartialOrder (Fin n) r] [DecidableRel r]
     {o₁ o₂ : Output} (h_two : cands i = {o₁, o₂}) (h_ne : o₁ ≠ o₂)
     (h_vp : vp i o₁ ≠ vp i o₂) :
     pocPredict cands vp r i o₁ + pocPredict cands vp r i o₂ = 1 := by
-  have h_inj : ∀ o ∈ cands i, ∀ o' ∈ cands i, vp i o = vp i o' → o = o' := by
+  have h_inj : Set.InjOn (vp i) (cands i) := by
     intro o ho o' ho' hvv
-    rw [h_two, Finset.mem_insert, Finset.mem_singleton] at ho ho'
+    rw [h_two] at ho ho'
+    simp only [Finset.coe_insert, Set.mem_insert_iff, Finset.coe_singleton,
+      Set.mem_singleton_iff] at ho ho'
     rcases ho with rfl | rfl <;> rcases ho' with rfl | rfl <;>
       first | rfl | exact absurd hvv h_vp | exact absurd hvv.symm h_vp
-  have h := sum_pocPredict_eq_one cands vp r
+  have h := sum_pocPredict_eq_one (r := r)
     (by rw [h_two]; exact Finset.insert_nonempty _ _) h_inj
   rwa [h_two, Finset.sum_pair h_ne] at h
 
@@ -629,10 +596,7 @@ open Core.Optimization.PermSubsetCombinatorics
 /-- For binary candidate sets, `PicksAt σ i chosen` holds exactly when the
     σ-earliest active constraint favors `chosen`. -/
 theorem picksAt_binary_iff_head_mem_favoring
-    (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
-    (i : Input) (chosen other : Output)
-    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other)
-    (σ : Ranking n) :
+    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) (σ : Ranking n) :
     PicksAt cands vp σ i chosen ↔
     ∃ x ∈ favoring vp i chosen other,
       (permDList σ (active vp i chosen other)).head? = some x := by
@@ -679,15 +643,13 @@ theorem picksAt_binary_iff_head_mem_favoring
     σ-earliest active constraint, and every active constraint is equally
     likely to come first. -/
 theorem pocPredict_discrete_binary_rate
-    (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
-    (i : Input) (chosen other : Output)
     (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) :
     pocPredict cands vp (· = ·) i chosen =
       ((favoring vp i chosen other ∩ active vp i chosen other).card : ℚ) /
         ((active vp i chosen other).card : ℚ) := by
   rw [pocPredict_discrete, Finset.card_univ, Fintype.card_perm, Fintype.card_fin,
     Finset.filter_congr fun σ _ =>
-      picksAt_binary_iff_head_mem_favoring cands vp i chosen other h_two h_ne σ]
+      picksAt_binary_iff_head_mem_favoring h_two h_ne σ]
   exact perm_filter_head_in_rate _ _
 
 /-! ### Deciding-stratum rate for stratified grammars
@@ -702,8 +664,7 @@ omit [DecidableEq Output] in
     constraint lies in the deciding stratum: earlier strata are inactive
     (`h_tie`), and constraints of later strata come after all of stratum `k`. -/
 private theorem permDList_head?_active_filter_stratum
-    {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop} {σ : Ranking n}
-    (vp : Input → Output → Fin n → ℕ) {i : Input} {chosen other : Output} {k : Fin s}
+    {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop} {k : Fin s}
     (hσ : IsConsistent (stratified stratumOf inner) σ)
     (h_tie : ∀ c, stratumOf c < k → vp i chosen c = vp i other c)
     (h_dec : ((active vp i chosen other).filter (stratumOf · = k)).Nonempty) :
@@ -725,11 +686,9 @@ private theorem permDList_head?_active_filter_stratum
     `|favoring ∩ Dₖ| / |Dₖ|`, where `Dₖ` is the active set restricted to
     stratum `k`. Later strata cannot affect the outcome. -/
 theorem pocPredict_stratified_binary_rate
-    (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
-    (stratumOf : Fin n → Fin s) (inner : Fin n → Fin n → Prop)
-    [IsPartialOrder (Fin n) inner] [DecidableRel inner]
-    (i : Input) (chosen other : Output)
-    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) (k : Fin s)
+    {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
+    [IsPartialOrder (Fin n) inner] [DecidableRel inner] {k : Fin s}
+    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
     (h_tie : ∀ c, stratumOf c < k → vp i chosen c = vp i other c)
     (h_dec : ((active vp i chosen other).filter (stratumOf · = k)).Nonempty) :
@@ -740,30 +699,13 @@ theorem pocPredict_stratified_binary_rate
   classical
   unfold pocPredict
   rw [Finset.filter_congr fun σ hσ =>
-    (picksAt_binary_iff_head_mem_favoring cands vp i chosen other h_two h_ne σ).trans
-      (by rw [permDList_head?_active_filter_stratum vp
+    (picksAt_binary_iff_head_mem_favoring h_two h_ne σ).trans
+      (by rw [permDList_head?_active_filter_stratum
         (mem_consistentTotalOrders.mp hσ) h_tie h_dec])]
   exact filter_head_in_rate_of_swaps _ _ _
     (consistentTotalOrders_nonempty (stratified stratumOf inner))
     fun y₁ h₁ y₂ h₂ σ hσ => mem_consistentTotalOrders.mpr
       (isConsistent_swap_mul h_triv (Finset.mem_filter.mp h₁).2 (Finset.mem_filter.mp h₂).2
         (mem_consistentTotalOrders.mp hσ))
-
-/-! ### Bridge to the `Grammar` hub
-
-A partial order on constraints is the simple-ERC fragment of an OT grammar —
-its consistent total orders are exactly the legs of
-`Grammar.ofERCs (toERCs r)` ([merchant-riggle-2016]). -/
-
-/-- The `Grammar` whose legs are `r`'s consistent total orders. -/
-def toGrammar (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r]
-    [DecidableRel r] : Grammar n :=
-  Grammar.ofERCs (toERCs r) (toERCs_consistent r)
-
-@[simp] theorem toGrammar_legs (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r]
-    [DecidableRel r] :
-    (toGrammar r).legs = consistentTotalOrders r := by
-  show (Grammar.ofERCs (toERCs r) (toERCs_consistent r)).legs = consistentTotalOrders r
-  rw [Grammar.legs_ofERCs, consistentTotalOrders_eq_linearExtensions]
 
 end HarmonicGrammar
