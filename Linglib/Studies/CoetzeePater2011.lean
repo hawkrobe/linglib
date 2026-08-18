@@ -1,5 +1,5 @@
 import Linglib.Core.Optimization.System
-import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
+import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.Constraints.Harmony
@@ -51,7 +51,7 @@ modeling phonological variation, illustrated with English t/d-deletion.
 namespace CoetzeePater2011
 
 open Constraints OptimalityTheory Core.Optimization Core.Optimization.Evaluation
-open Core.Optimization Constraints HarmonicGrammar
+open Core.Optimization Constraints
 open OptimalityTheory
 
 /-! ### Empirical data (tables 7 and 10) -/

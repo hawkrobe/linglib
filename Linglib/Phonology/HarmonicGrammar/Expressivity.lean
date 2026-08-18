@@ -1,4 +1,5 @@
 import Linglib.Phonology.Constraints.Defs
+import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Core.Optimization.Evaluation
@@ -38,6 +39,9 @@ high-weight one, is HG-expressible but not OT-expressible.
   `hg_strictly_contains_ot`: OT ⊆ HG, strictly — the witness is
   [coetzee-pater-2011]'s abstract Lyman's Law instance (eq 18-19, after
   [ito-mester-1986]).
+- `RealizationProblem.isOTRealizable_iff_isPartialOrderRealizable`:
+  categorically, partially ordered grammars add nothing over OT — their
+  advantage is probabilistic (`OptimalityTheory.winProb`).
 -/
 
 namespace HarmonicGrammar
@@ -251,6 +255,16 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
     linarith [Finset.sum_le_sum h_each]
   -- Combine: w_k − M · Σ_{i>k} w_i > 0 from ExponentiallySeparated
   linarith [hw.2 k, hlt_zero]
+
+/-- The algebraic form of the agreement kernel: an exponentially separated
+weighting reads the `M`-bounded fragment of the lex order strictly
+monotonically — [riggle-2009]'s order-preserving weight map from the violation
+semiring to tropical costs, in concrete form. -/
+theorem strictMonoOn_weightedViolations {n : Nat} {w : Fin n → ℝ} {M : Nat}
+    (hw : ExponentiallySeparated w M) :
+    StrictMonoOn (fun v : ViolationProfile n => weightedViolations w (ofLex v))
+      {v | ∀ i, ofLex v i ≤ M} :=
+  fun _ ha _ hb hlex => lex_imp_lower_violations w M _ _ (fun i => ⟨ha i, hb i⟩) hw hlex
 
 /-- HG–OT agreement for a concrete candidate type: if candidate `a`
     lexicographically beats `b` on the violation profile induced by `ranking`,
@@ -535,5 +549,51 @@ theorem hg_strictly_contains_ot :
     · exact absurd hwW (by decide)
     · exact absurd h₁ (not_le.mpr hdom)
     · exact absurd h₂ (not_le.mpr hdom)
+
+/-! ### Realizability by a partial order -/
+
+namespace RealizationProblem
+
+/-- A grammar `r` **POC-realizes** the target if every consistent extension
+    realizes it. Since consistent extensions always exist
+    (`exists_isConsistent`), this is never vacuous. -/
+def realizedByPartialOrder (P : RealizationProblem Input Output n)
+    (r : Fin n → Fin n → Prop) : Prop :=
+  ∀ σ, IsConsistent r σ → P.realizedByRanking σ
+
+/-- A `RealizationProblem` is **POC-realizable** if some partial order
+    categorically realizes the target. -/
+def IsPartialOrderRealizable (P : RealizationProblem Input Output n) : Prop :=
+  ∃ r : Fin n → Fin n → Prop, IsPartialOrder (Fin n) r ∧ P.realizedByPartialOrder r
+
+end RealizationProblem
+
+/-! ### Containments — OT ⊆ POC, POC ⊆ OT (categorical) -/
+
+/-- Every partial-order-realized target is OT-realized, since any single
+    consistent extension realizes it. -/
+theorem RealizationProblem.IsPartialOrderRealizable.isOTRealizable
+    {P : RealizationProblem Input Output n}
+    (h : P.IsPartialOrderRealizable) : P.IsOTRealizable := by
+  obtain ⟨r, hpo, hreal⟩ := h
+  have := hpo
+  obtain ⟨σ, hσ⟩ := exists_isConsistent r
+  exact ⟨σ, hreal σ hσ⟩
+
+/-- Every OT-realized target is partial-order-realized — the witness is the
+    σ-induced total ranking, whose unique consistent extension is σ itself. -/
+theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable
+    {P : RealizationProblem Input Output n}
+    (h : P.IsOTRealizable) : P.IsPartialOrderRealizable := by
+  obtain ⟨σ, hσ⟩ := h
+  exact ⟨σ.toRel, inferInstance,
+    fun τ hτ => Ranking.toRel_le_toRel_iff.mp hτ ▸ hσ⟩
+
+/-- Under categorical realizability, OT and partial orders coincide; the
+    partial order's advantage is probabilistic, captured by `winProb`. -/
+theorem RealizationProblem.isOTRealizable_iff_isPartialOrderRealizable
+    (P : RealizationProblem Input Output n) :
+    P.IsOTRealizable ↔ P.IsPartialOrderRealizable :=
+  ⟨IsOTRealizable.isPartialOrderRealizable, IsPartialOrderRealizable.isOTRealizable⟩
 
 end HarmonicGrammar

@@ -31,7 +31,7 @@ left-multiplication by swaps of elements of `D`:
 swap-closed generality serves partially-ordered constraint grammars,
 whose consistent-linear-extension sets are swap-closed within a freely
 ranked stratum (`winProb_stratified_binary_rate` in
-`Phonology/HarmonicGrammar/PartiallyOrderedConstraints.lean`).
+`Phonology/OptimalityTheory/PartiallyOrderedConstraints.lean`).
 
 ## Proof technique
 
