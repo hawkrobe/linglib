@@ -173,13 +173,14 @@ theorem fid_time_eq_direct :
 -- § Entity-Concept Bridge: Anand-Nevins 2004 in the centered-world substrate
 -- ============================================================================
 
-/-! Bridge from [anand-nevins-2004]'s shifty-operator framework to
-    `Tense.DeRe.EntityConcept` — the substrate's
-    individual-side de re intension. The existing FIDProfile-based
-    formalization above and the substrate's `EntityConcept`-based
-    formalization are two perspectives on the same phenomenon; the
-    substrate's `Intension.IsRigid` predicate distinguishes
-    Kaplan-compliant from shifty indexicals at the type level.
+/-! Bridge from [anand-nevins-2004]'s shifty-operator framework to an
+    `EntityConcept` — the individual-side dual of the substrate's
+    `Tense.DeRe.TimeConcept` at the same centered index (defined here,
+    where it is consumed). The existing FIDProfile-based formalization
+    above and the `EntityConcept`-based formalization are two
+    perspectives on the same phenomenon; the substrate's
+    `Intension.IsRigid` predicate distinguishes Kaplan-compliant from
+    shifty indexicals at the type level.
 
     The architectural payoff: this is **exactly parallel** to how
     `Intension.IsRigid` distinguishes Abusch-style wide-scope rigid
@@ -191,11 +192,18 @@ theorem fid_time_eq_direct :
     `entityConcept_and_timeConcept_share_isRigid_substrate` theorem
     below makes that claim kernel-checked. -/
 
-open Tense.DeRe (EntityConcept TimeConcept)
+open Tense.DeRe (TimeConcept)
+
+/-- An **entity-concept**: an intension from a centered Kaplanian context
+    to an entity — the individual-side dual of `Tense.DeRe.TimeConcept`
+    at the same evaluation index ([lewis-1979-attitudes] centered-world
+    de re, [cresswell-vonstechow-1982]). -/
+abbrev EntityConcept (W E P T : Type*) :=
+  Intensional.Intension (Semantics.Context.KContext W E P T) E
 
 /-- **Kaplan-compliant "I"** as a rigid `EntityConcept`.
 
-    The substrate's `EntityConcept` `Intension (KContext) E` is at
+    An `EntityConcept` `Intension (KContext) E` is at
     Kaplan's *content* level — the result of applying his *character*
     to a context. Kaplan's `I` is technically a character (function
     from context to content) that returns `c.author` for any context;

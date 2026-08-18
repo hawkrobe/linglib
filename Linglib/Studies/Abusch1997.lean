@@ -28,17 +28,16 @@ Two derivation styles coexist in this file:
    `Tense.DeRe.TemporalDeReReading`): `Intension (KContext)
    Time` time-concept + holder-context base anchor + modal-alternative
    quantification over a `Set (WorldTimeIndex W Time)`. The Abusch §3 +
-   def. 13 architecture, faithful to the [lewis-1979-attitudes] /
+   eq. 13 architecture, faithful to the [lewis-1979-attitudes] /
    [cresswell-vonstechow-1982] centered-world reduction of de re.
-   The two styles are bridged by
-   `Tense.DeRe.TemporalDeReReading.isFelicitousWith_iff_tensePronoun_fullPresupposition`.
+   The value-level style checks the same constraint at the same pair
+   (res-time, holder's now), without the modal-rigidity conjunct.
 
 The substrate is modal-base-agnostic and holder-now-honest:
 `holderContext.time` is the holder's now (per §7 ULC), and
 `IsRigidAcrossAlternatives` takes a `Set (WorldTimeIndex)` parameter
 (with `metaphysicalAlternatives` / `doxasticAlternatives` convenience
-constructors). See `Tense/DeRe.lean` docstring for what's deferred
-(LF rewrite operator, etc.).
+constructors).
 
 ## Core Mechanisms
 
@@ -790,7 +789,7 @@ theorem abusch_derives_temporal_de_re_via_acquaintance
     `alternatives : Set (WorldTimeIndex W Time)`. The substrate is
     modal-base-agnostic; this theorem holds for any alternative-set
     the consumer supplies (doxastic, metaphysical, or other). The
-    full `IsAbuschFelicitous` predicate combines the value-level past
+    full `IsFelicitous` predicate combines the value-level past
     constraint with this modal rigidity.
 
     A rigid time-concept (constant intension) discharges the modal
@@ -802,7 +801,7 @@ theorem abusch_derives_temporal_de_re_full
     (hRigid : Intensional.Intension.IsRigid dr.concept)
     (alternatives : Set (Intensional.WorldTimeIndex W Time))
     (hBefore : dr.actualRes < dr.holderContext.time) :
-    dr.IsAbuschFelicitous alternatives Tense.past := by
+    dr.IsFelicitous alternatives Tense.past := by
   refine ⟨(Core.Order.holds_before dr.actualRes dr.holderContext.time).mpr hBefore, ?_⟩
   exact Tense.DeRe.TemporalDeReReading.isRigidAcrossAlternatives_of_isRigid
     dr hRigid alternatives
@@ -818,7 +817,7 @@ theorem abusch_derives_temporal_de_re_full_metaphysical
     (hRigid : Intensional.Intension.IsRigid dr.concept)
     (history : HistoricalAlternatives W Time)
     (hBefore : dr.actualRes < dr.holderContext.time) :
-    dr.IsAbuschFelicitous (dr.metaphysicalAlternatives history) Tense.past :=
+    dr.IsFelicitous (dr.metaphysicalAlternatives history) Tense.past :=
   abusch_derives_temporal_de_re_full dr hRigid _ hBefore
 
 /-- **Individual ↔ temporal de re unification**: the PLA-literature
