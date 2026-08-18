@@ -1,4 +1,4 @@
-import Linglib.Phonology.HarmonicGrammar.Cumulativity
+import Linglib.Phonology.HarmonicGrammar.RealizationProblem
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Phonology.OptimalityTheory.Grammar
@@ -47,7 +47,7 @@ theorems are a ℚ veneer over them.
   ([merchant-riggle-2016]; [prince-2002]). `toGrammar` routes POC through the
   `Grammar` hub, and `orderIdealAntimatroid` realizes the Birkhoff correspondence
   with order-ideal antimatroids ([dilworth-1940]).
-- `isOTRealizable_iff_isPOCRealizable`: categorically, POC adds nothing over
+- `isOTRealizable_iff_isPartialOrderRealizable`: categorically, POC adds nothing over
   OT. Its advantage is probabilistic — `winProb` produces intermediate
   frequencies (e.g. [coetzee-pater-2011]'s 8/24 vs 12/24 t/d-deletion rates)
   that no single ranking reproduces.
@@ -366,54 +366,55 @@ def toGrammar (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r]
   show (Grammar.ofERCs (toERCs r) (toERCs_consistent r)).legs = consistentTotalOrders r
   rw [Grammar.legs_ofERCs, consistentTotalOrders_eq_linearExtensions]
 
-/-! ### POC Realizability of SystemicProblem -/
+/-! ### Realizability by a partial order -/
 
-namespace SystemicProblem
+namespace RealizationProblem
 
 variable {Input Output : Type*}
 
 /-- A grammar `r` **POC-realizes** the target if every consistent extension
     realizes it. Since consistent extensions always exist
     (`exists_isConsistent`), this is never vacuous. -/
-def realizedByPOC (P : SystemicProblem Input Output n)
+def realizedByPartialOrder (P : RealizationProblem Input Output n)
     (r : Fin n → Fin n → Prop) : Prop :=
   ∀ σ, IsConsistent r σ → P.realizedByRanking σ
 
-/-- A `SystemicProblem` is **POC-realizable** if some partial order
+/-- A `RealizationProblem` is **POC-realizable** if some partial order
     categorically realizes the target. -/
-def IsPOCRealizable (P : SystemicProblem Input Output n) : Prop :=
-  ∃ r : Fin n → Fin n → Prop, IsPartialOrder (Fin n) r ∧ P.realizedByPOC r
+def IsPartialOrderRealizable (P : RealizationProblem Input Output n) : Prop :=
+  ∃ r : Fin n → Fin n → Prop, IsPartialOrder (Fin n) r ∧ P.realizedByPartialOrder r
 
-end SystemicProblem
+end RealizationProblem
 
 /-! ### Containments — OT ⊆ POC, POC ⊆ OT (categorical) -/
 
 variable {Input Output : Type*}
 
-/-- Every POC-realized target is OT-realized, since any single consistent
-    extension realizes it. -/
-theorem poc_realizable_imp_ot_realizable (P : SystemicProblem Input Output n) :
-    P.IsPOCRealizable → P.IsOTRealizable := by
-  rintro ⟨r, hpo, hreal⟩
+/-- Every partial-order-realized target is OT-realized, since any single
+    consistent extension realizes it. -/
+theorem RealizationProblem.IsPartialOrderRealizable.isOTRealizable
+    {P : RealizationProblem Input Output n}
+    (h : P.IsPartialOrderRealizable) : P.IsOTRealizable := by
+  obtain ⟨r, hpo, hreal⟩ := h
   have := hpo
   obtain ⟨σ, hσ⟩ := exists_isConsistent r
   exact ⟨σ, hreal σ hσ⟩
 
-/-- Every OT-realized target is POC-realized — the witness is the σ-induced
-    total ranking, whose unique consistent extension is σ itself. -/
-theorem ot_realizable_imp_poc_realizable (P : SystemicProblem Input Output n) :
-    P.IsOTRealizable → P.IsPOCRealizable := by
-  rintro ⟨σ, hσ⟩
+/-- Every OT-realized target is partial-order-realized — the witness is the
+    σ-induced total ranking, whose unique consistent extension is σ itself. -/
+theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable
+    {P : RealizationProblem Input Output n}
+    (h : P.IsOTRealizable) : P.IsPartialOrderRealizable := by
+  obtain ⟨σ, hσ⟩ := h
   exact ⟨σ.toRel, inferInstance,
     fun τ hτ => Ranking.toRel_le_toRel_iff.mp hτ ▸ hσ⟩
 
-/-- Under categorical realizability, OT-realizable and POC-realizable
-    coincide. POC's advantage over OT is probabilistic, captured by
-    `winProb`. -/
-theorem isOTRealizable_iff_isPOCRealizable (P : SystemicProblem Input Output n) :
-    P.IsOTRealizable ↔ P.IsPOCRealizable :=
-  ⟨ot_realizable_imp_poc_realizable P,
-   poc_realizable_imp_ot_realizable P⟩
+/-- Under categorical realizability, OT and partial orders coincide; the
+    partial order's advantage is probabilistic, captured by `winProb`. -/
+theorem RealizationProblem.isOTRealizable_iff_isPartialOrderRealizable
+    (P : RealizationProblem Input Output n) :
+    P.IsOTRealizable ↔ P.IsPartialOrderRealizable :=
+  ⟨IsOTRealizable.isPartialOrderRealizable, IsPartialOrderRealizable.isOTRealizable⟩
 
 /-! ### Probabilistic POC — winProb -/
 
