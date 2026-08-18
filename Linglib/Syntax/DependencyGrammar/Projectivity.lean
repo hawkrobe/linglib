@@ -65,7 +65,7 @@ instance (g : Graph n) : Decidable (IsProjective g) :=
   decidable_of_iff (∀ v x, Dominates g v x → ∀ y, Dominates g v y → x ≤ y →
       ∀ z, x ≤ z → z ≤ y → Dominates g v z) <| by
     simp only [IsProjective, Set.ordConnected_iff, Set.subset_def, Set.mem_Icc,
-      Set.mem_setOf_eq, and_imp]
+      Set.mem_ofPred_eq, and_imp]
 
 instance (g : Graph n) : Decidable (IsPlanar g) :=
   inferInstanceAs (Decidable (∀ _, _))

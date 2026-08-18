@@ -420,7 +420,7 @@ theorem ltALT_iff_X_ssubset (u v : World) (hu : φ u) (hv : φ v) :
     constructor
     · -- X(v) ⊆ X(u)
       intro ψ hψv
-      simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq] at hψv ⊢
+      simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_ofPred_eq] at hψv ⊢
       rcases hψv with rfl | ⟨a, ha, rfl, hav⟩
       · left; rfl
       · right; exact ⟨a, ha, rfl, λ hau => hav (hle a ha hau)⟩
@@ -430,10 +430,10 @@ theorem ltALT_iff_X_ssubset (u v : World) (hu : φ u) (hv : φ v) :
       intro a ha hav
       by_contra hau
       have hna_in_Xu : (aᶜ) ∈ X_of_world ALT φ u := by
-        simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq]
+        simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_ofPred_eq]
         right; exact ⟨a, ha, rfl, hau⟩
       have hna_in_Xv := hsub hna_in_Xu
-      simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq] at hna_in_Xv
+      simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_ofPred_eq] at hna_in_Xv
       rcases hna_in_Xv with heq | ⟨a', ha', heq', hav'⟩
       · -- aᶜ = φ: contradiction since φ v but (aᶜ) v means ¬(a v)
         have : (aᶜ) v := by rw [heq]; exact hv
@@ -447,10 +447,10 @@ theorem ltALT_iff_X_ssubset (u v : World) (hu : φ u) (hv : φ v) :
       intro a ha hau
       by_contra hav
       have hna_in_Xv : (aᶜ) ∈ X_of_world ALT φ v := by
-        simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq]
+        simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_ofPred_eq]
         right; exact ⟨a, ha, rfl, hav⟩
       have hna_in_Xu := hsub hna_in_Xv
-      simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq] at hna_in_Xu
+      simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_ofPred_eq] at hna_in_Xu
       rcases hna_in_Xu with heq | ⟨a', ha', heq', hau'⟩
       · have : (aᶜ) u := by rw [heq]; exact hu
         exact this hau
@@ -459,7 +459,7 @@ theorem ltALT_iff_X_ssubset (u v : World) (hu : φ u) (hv : φ v) :
       intro hvu
       apply hnsub
       intro ψ hψu
-      simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq] at hψu ⊢
+      simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_ofPred_eq] at hψu ⊢
       rcases hψu with rfl | ⟨a, ha, rfl, hau'⟩
       · left; rfl
       · right; exact ⟨a, ha, rfl, λ hav => hau' (hvu a ha hav)⟩
@@ -476,7 +476,7 @@ Every element of X(u) is either φ or the negation of some alternative.
 -/
 theorem X_elements (u : World) (ψ : Set World) (hψ : ψ ∈ X_of_world ALT φ u) :
     ψ = φ ∨ ∃ a ∈ ALT, ψ = aᶜ := by
-  simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq] at hψ
+  simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_ofPred_eq] at hψ
   rcases hψ with rfl | ⟨a, ha, rfl, _⟩
   · left; rfl
   · right; exact ⟨a, ha, rfl⟩
@@ -486,7 +486,7 @@ u satisfies everything in X(u).
 -/
 theorem u_satisfies_X (u : World) (hu : φ u) : ∀ ψ ∈ X_of_world ALT φ u, ψ u := by
   intro ψ hψ
-  simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq] at hψ
+  simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_ofPred_eq] at hψ
   rcases hψ with rfl | ⟨a, ha, rfl, hau⟩
   · exact hu
   · exact hau
@@ -538,7 +538,7 @@ theorem minimal_iff_MCset (u : World) (hu : φ u) :
         have hau : a u := by
           by_contra hau_not
           apply hψ_not_Xu
-          simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq]
+          simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_ofPred_eq]
           right; exact ⟨a, ha, rfl, hau_not⟩
         -- E is consistent, so there exists v satisfying everything in E
         obtain ⟨v, hv_sat⟩ := hE_cons
@@ -553,7 +553,7 @@ theorem minimal_iff_MCset (u : World) (hu : φ u) :
             intro b hb hbv
             by_contra hbu
             have hnb_in_Xu : (bᶜ) ∈ X_of_world ALT φ u := by
-              simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq]
+              simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_ofPred_eq]
               right; exact ⟨b, hb, rfl, hbu⟩
             have hnb_in_E := hXu_sub_E hnb_in_Xu
             have hnb_v : (bᶜ) v := hv_sat (bᶜ) hnb_in_E
@@ -677,7 +677,7 @@ theorem exhMW_iff_satisfies_MCset (u : World) :
       · -- ψ = aᶜ: since u satisfies ψ, we have ¬(a u), so aᶜ ∈ X(u)
         rw [hψ_eq_na]
         have hna_u : (aᶜ) u := hu_sat_E (aᶜ) (hψ_eq_na ▸ hψE)
-        simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq]
+        simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_ofPred_eq]
         right; exact ⟨a, ha, rfl, hna_u⟩
     -- X(u) is compatible
     have hXu_compat : IsCompatible ALT φ (X_of_world ALT φ u) := X_is_compatible ALT φ u hu
@@ -884,7 +884,7 @@ theorem exhMW_eq_exhIE_of_closedUnderConj (hclosed : closedUnderConj ALT) :
     -- Extract v ≤_ALT u and ¬(u ≤_ALT v) from v <_ALT u
     have hv_le_u : v ≤[ALT] u := hv_lt_u.1
     have hnot_u_le_v : ¬(u ≤[ALT] v) := hv_lt_u.2
-    -- Need to unfold leALT before push_neg can work
+    -- Need to unfold leALT before push Not can work
     simp only [leALT] at hnot_u_le_v
     push Not at hnot_u_le_v
     obtain ⟨a₀, ha₀_ALT, ha₀_u, hna₀_v⟩ := hnot_u_le_v
@@ -1085,7 +1085,7 @@ theorem exhIE_disjClosure_eq (hfin : Set.Finite ALT) (ALT' : Set (Set World))
     have heq : {p | ∃ X : Set (Set World), X ⊆ ALT ∧ p = ⋃₀ X}
         = Set.sUnion '' {X | X ⊆ ALT} := by
       ext p
-      simp only [Set.mem_image, Set.mem_setOf_eq]
+      simp only [Set.mem_image, Set.mem_ofPred_eq]
       constructor
       · rintro ⟨X, hX_sub, rfl⟩
         exact ⟨X, hX_sub, rfl⟩

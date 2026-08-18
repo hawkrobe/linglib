@@ -536,7 +536,7 @@ theorem ExpFrame.const_normal_of_connected (no : Preorder W)
     (d : Set W) (hconn : Normality.connected no) :
     (ExpFrame.const no).normal d = Normality.optimal no d := by
   ext w
-  simp only [normal, Set.mem_setOf_eq, Normality.optimal]
+  simp only [normal, Set.mem_ofPred_eq, Normality.optimal]
   constructor
   · -- normal → optimal: weaker condition
     intro ⟨hwd, hsub⟩

@@ -383,7 +383,7 @@ private theorem exists_max_by {α : Type*} (f : α → Nat) (l : List α) (hl : 
           rcases List.mem_cons.mp hb with rfl | hb
           · exact Nat.le_refl _
           · exact Nat.le_trans (hmax b hb) h⟩
-      · push_neg at h
+      · push Not at h
         exact ⟨m, List.mem_cons_of_mem x hm, by
           intro b hb
           rcases List.mem_cons.mp hb with rfl | hb

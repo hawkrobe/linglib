@@ -379,15 +379,15 @@ def R₃ : W4 → Set W4 := fun _ => Vp ∪ Vq
 /-! #### Pivotal world facts -/
 
 private lemma true_true_in_Vp : ((true, true) : W4) ∈ Vp := by
-  simp only [Vp, Set.mem_setOf_eq]
+  simp only [Vp, Set.mem_ofPred_eq]
 private lemma true_false_in_Vp : ((true, false) : W4) ∈ Vp := by
-  simp only [Vp, Set.mem_setOf_eq]
+  simp only [Vp, Set.mem_ofPred_eq]
 private lemma false_true_in_Vq : ((false, true) : W4) ∈ Vq := by
-  simp only [Vq, Set.mem_setOf_eq]
+  simp only [Vq, Set.mem_ofPred_eq]
 private lemma true_false_not_in_Vq : ((true, false) : W4) ∉ Vq := by
-  simp only [Vq, Set.mem_setOf_eq]; decide
+  simp only [Vq, Set.mem_ofPred_eq]; decide
 private lemma false_true_not_in_Vp : ((false, true) : W4) ∉ Vp := by
-  simp only [Vp, Set.mem_setOf_eq]; decide
+  simp only [Vp, Set.mem_ofPred_eq]; decide
 
 private lemma Vp_nsub_Vq : ¬ Vp ⊆ Vq :=
   fun h => true_false_not_in_Vq (h true_false_in_Vp)

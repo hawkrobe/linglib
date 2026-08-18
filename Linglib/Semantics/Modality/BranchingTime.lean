@@ -100,7 +100,7 @@ theorem Iic_subset_of_mem [PartialOrder M] [IsLeftLinear M] {m : M} {h : Flag M}
 theorem exists_mem_gt_of_lt [PartialOrder M] {m x : M} {h : Flag M}
     (hm : m ∈ h) (hx : m < x) : ∃ y ∈ h, m < y := by
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hbx : ∀ b ∈ (h : Set M), b ≤ x := by
     intro b hb
     rcases h.le_or_le hb hm with hbm | hmb

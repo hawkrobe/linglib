@@ -233,7 +233,7 @@ theorem disjoint_earlier_implies_isBefore {Time : Type*} [LinearOrder Time]
   unfold NonemptyInterval.isBefore
   simp only [Event.τ] at *
   by_contra h
-  push_neg at h
+  push Not at h
   exact hd ⟨le_trans hearlier e₂.runtime.fst_le_snd, le_of_lt h⟩
 
 /-- Overlapping runtimes are incompatible with temporal distance. -/
@@ -344,7 +344,7 @@ theorem LearningScenario.triangleTemporalB_iff (s : LearningScenario ℤ) :
     simp only [Bool.not_eq_true', Bool.and_eq_false_iff,
                decide_eq_false_iff_not]
     by_contra hc
-    push_neg at hc
+    push Not at hc
     exact h ⟨hc.1, hc.2⟩
 
 /-- Construct a PartialProp from a learning scenario, making the
@@ -403,7 +403,7 @@ theorem direct_not_disjoint :
     ¬ temporallyDisjoint describedEvent learningEventDirect := by
   unfold temporallyDisjoint NonemptyInterval.overlaps describedEvent learningEventDirect
   simp only [Event.τ]
-  push_neg
+  push Not
   omega
 
 /-- The smoke scenario events temporally overlap — temporal disjointness
@@ -412,7 +412,7 @@ theorem smoke_temporally_overlapping :
     ¬ temporallyDisjoint smokeScenario.described smokeScenario.learning := by
   unfold temporallyDisjoint NonemptyInterval.overlaps smokeScenario describedEvent learningEventSpatial
   simp only [Event.τ]
-  push_neg
+  push Not
   omega
 
 /-- Despite temporal overlap, any location function assigning different

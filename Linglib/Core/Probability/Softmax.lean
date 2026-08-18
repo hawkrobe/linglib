@@ -150,7 +150,7 @@ theorem support_softmax [Fintype α] (score : α → EReal)
     (h_no_top : ∀ a, score a ≠ ⊤) (h_some_finite : ∃ a, score a ≠ ⊥) :
     (softmax score h_no_top h_some_finite).support = {a | score a ≠ ⊥} := by
   ext a
-  rw [PMF.mem_support_iff, Set.mem_setOf_eq, ← pos_iff_ne_zero]
+  rw [PMF.mem_support_iff, Set.mem_ofPred_eq, ← pos_iff_ne_zero]
   exact softmax_pos_iff_score_ne_bot score h_no_top h_some_finite a
 
 /-! ## Comparison decomposition (RSA workhorse) -/

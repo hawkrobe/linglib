@@ -144,7 +144,7 @@ theorem gen_formulations_equiv
     : traditionalGEN situations normal restrictor scope ↔
       traditionalGEN_existential situations normal restrictor scope := by
   unfold traditionalGEN traditionalGEN_existential Quantification.everyOn Quantification.someOn
-  push_neg
+  push Not
   rfl
 
 -- Prevalence-Based Alternative

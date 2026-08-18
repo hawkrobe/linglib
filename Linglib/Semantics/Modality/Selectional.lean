@@ -183,7 +183,7 @@ theorem will_inter_modalParam_eq (s : SelectionFunction W) (A : W → Prop)
     (f : Set W) :
     {w | willSem s A f w} ∩ f = {w | A w} ∩ f := by
   ext w
-  simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+  simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
   constructor
   · exact fun ⟨h1, h2⟩ => ⟨(unembedded_collapse s A f w h2).mp h1, h2⟩
   · exact fun ⟨h1, h2⟩ => ⟨(unembedded_collapse s A f w h2).mpr h1, h2⟩
@@ -199,7 +199,7 @@ theorem will_and_inter_modalParam_eq (s : SelectionFunction W)
     {w | willSem s (fun w' => A w' ∧ B w') f w} ∩ f =
       ({w | willSem s A f w} ∩ {w | willSem s B f w}) ∩ f := by
   ext w
-  simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+  simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
   constructor
   · exact fun ⟨⟨hA, hB⟩, hw⟩ => ⟨⟨hA, hB⟩, hw⟩
   · exact fun ⟨⟨hA, hB⟩, hw⟩ => ⟨⟨hA, hB⟩, hw⟩
@@ -214,7 +214,7 @@ theorem will_or_union_modalParam_eq (s : SelectionFunction W)
     {w | willSem s (fun w' => A w' ∨ B w') f w} ∩ f =
       ({w | willSem s A f w} ∪ {w | willSem s B f w}) ∩ f := by
   ext w
-  simp only [Set.mem_inter_iff, Set.mem_union, Set.mem_setOf_eq]
+  simp only [Set.mem_inter_iff, Set.mem_union, Set.mem_ofPred_eq]
   constructor
   · exact fun ⟨h, hw⟩ => ⟨h, hw⟩
   · exact fun ⟨h, hw⟩ => ⟨h, hw⟩
@@ -368,7 +368,7 @@ theorem cognitive_role (s : SelectionFunction W) (A f : Set W) (μ : PMF W)
     μ.probOfSet {w | s.sel w f ∈ A} = μ.probOfSet A := by
   apply PMF.toOuterMeasure_apply_eq_of_inter_support_eq
   ext w
-  simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+  simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
   exact and_congr_left fun hw => by rw [s.centering w f (h_supp hw)]
 
 /-! ### Multi-premise validity (paper §6)

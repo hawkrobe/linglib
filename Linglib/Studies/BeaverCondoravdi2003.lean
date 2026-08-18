@@ -410,7 +410,7 @@ theorem histAlt_subset_altIE_trivial
     (w : W) (t : T) :
     alt w t ⊆ altIE (fun _ _ _ _ => True) (fun _ _ _ _ _ _ => True) agree w t t := by
   intro w' hw'
-  rw [altIE, Set.mem_setOf_eq, equivIE_trivial_iff_agree]
+  rw [altIE, Set.mem_ofPred_eq, equivIE_trivial_iff_agree]
   exact hIBP w t w' hw'
 
 end Tense.TemporalConnectives.BeaverCondoravdi

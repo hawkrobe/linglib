@@ -318,7 +318,7 @@ theorem overmodification_iff_positive_gap
   rw [gt_iff_lt, gt_iff_lt, div_lt_div_iff₀ hD1 hD2]
   constructor
   · intro h
-    by_contra hle; push_neg at hle
+    by_contra hle; push Not at hle
     have : sM * cM * (sM + 2 * sMM) ≤
            sM * (sMM * cM + sMM * cMM + sM * cM) := by
       nlinarith [mul_pos hsM hsMM]
@@ -399,7 +399,7 @@ theorem overmod_monotone_in_likelihood_ratio
   rw [gt_iff_lt, gt_iff_lt, div_lt_div_iff₀ hD₂ hD₁]
   constructor
   · intro h
-    by_contra hle; push_neg at hle
+    by_contra hle; push Not at hle
     have : sM * cM₁ * (sMM * cM₂ + sMM * cMM₂ + sM * cM₂) ≤
            sM * cM₂ * (sMM * cM₁ + sMM * cMM₁ + sM * cM₁) := by
       nlinarith [mul_pos hsM hsMM]

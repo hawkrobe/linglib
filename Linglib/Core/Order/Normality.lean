@@ -151,7 +151,7 @@ theorem optimal_of_respects_connected (p : Preorder W)
 theorem refine_total_optimal (φ : W → Prop) (d : Set W) (hex : ∃ w ∈ d, φ w) :
     optimal (refine total φ) d = { w ∈ d | φ w } := by
   ext w
-  rw [mem_optimal, Set.mem_setOf_eq]
+  rw [mem_optimal, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨hwd, hopt⟩
     obtain ⟨v, hvd, hφv⟩ := hex

@@ -172,7 +172,7 @@ theorem notUntil_unfold (A B : SentDenotation Time) :
   constructor
   · intro h t ht
     by_contra hall
-    push_neg at hall
+    push Not at hall
     exact h ⟨t, ht, hall⟩
   · intro h ⟨t, ht, hall⟩
     obtain ⟨t', ht', hle⟩ := h t ht

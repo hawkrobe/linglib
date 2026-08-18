@@ -434,7 +434,7 @@ theorem ri_implies_interpretable_exists
     (hNonempty : ∃ gf ∈ features, True) :
     ∃ gf ∈ features, gf.interp = .i := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hAllU : ∀ gf ∈ features, gf.interp = .u := by
     intro gf hgf
     cases hInterp : gf.interp with

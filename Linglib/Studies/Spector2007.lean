@@ -348,7 +348,7 @@ information state that makes P optimal.
 -/
 theorem Exhaust_mem_I (P : Proposition Atom) (hpos : isPositive Atom P) :
     Exhaust Atom P ∈ I Atom P := by
-  simp only [I, Set.mem_setOf_eq]
+  simp only [I, Set.mem_ofPred_eq]
   rw [Pos_Exhaust_eq_Pos, Pos_of_positive Atom P hpos]
 
 /--
@@ -396,7 +396,7 @@ This derives exhaustive interpretation from Gricean reasoning:
 theorem main_theorem (P : Proposition Atom) (hpos : isPositive Atom P) :
     Max Atom P = {Exhaust Atom P} := by
   ext i
-  simp only [Max, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  simp only [Max, Set.mem_ofPred_eq, Set.mem_singleton_iff]
   constructor
   · -- If i ∈ Max(P), then i = Exhaust(P)
     intro ⟨hi_I, hi_max⟩
@@ -459,7 +459,7 @@ The exhaustification of "A or B" yields exclusive disjunction (minimal singleton
 theorem exhaust_or_eq_exclOr (A B : Atom) (_hne : A ≠ B) :
     Exhaust Atom (orProp Atom A B) = exclOrProp Atom A B := by
   ext V
-  simp only [Exhaust, orProp, exclOrProp, Set.mem_setOf_eq]
+  simp only [Exhaust, orProp, exclOrProp, Set.mem_ofPred_eq]
   constructor
   · -- Exhaust(A∨B) ⊆ {{A}, {B}}
     intro ⟨hV_or, hV_min⟩

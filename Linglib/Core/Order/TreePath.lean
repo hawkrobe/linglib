@@ -351,7 +351,7 @@ theorem precedes_iff {p q : TreePath} :
     have hd : cp.length = r.length := by
       refine le_antisymm ?_ hrcp.length_le
       by_contra hlt
-      push_neg at hlt
+      push Not at hlt
       have hpi := getElem?_of_append_singleton_prefix hi
       have hqj := getElem?_of_append_singleton_prefix hj
       have h1 := (List.commonPrefix_prefix_left p.toList q.toList).getElem?_eq_of_lt hlt
@@ -427,7 +427,7 @@ theorem trichotomy (p q : TreePath) :
     left
     have hple : p.toList.length ≤ cp.length := by
       by_contra hlt
-      push_neg at hlt
+      push Not at hlt
       exact absurd hpd (by simp [List.getElem?_eq_some_iff, hlt])
     have : p.toList = cp :=
       (List.commonPrefix_prefix_left p.toList q.toList).eq_of_length
@@ -437,7 +437,7 @@ theorem trichotomy (p q : TreePath) :
     · right; left
       have hqle : q.toList.length ≤ cp.length := by
         by_contra hlt
-        push_neg at hlt
+        push Not at hlt
         exact absurd hqd (by simp [List.getElem?_eq_some_iff, hlt])
       have : q.toList = cp :=
         (List.commonPrefix_prefix_right p.toList q.toList).eq_of_length

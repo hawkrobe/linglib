@@ -137,7 +137,7 @@ theorem very_strictly_stronger :
     ⟨0, Set.mem_univ _, by omega⟩,
     ?_⟩
   intro ⟨y, hy, hlt⟩
-  simp only [Set.mem_setOf_eq] at hy
+  simp only [Set.mem_ofPred_eq] at hy
   obtain ⟨z, _, hlt_z⟩ := hy
   omega
 
@@ -194,7 +194,7 @@ theorem kleinDegree_measureDelineation {E D : Type*} [LinearOrder D]
     (μ : E → D) (cc : ComparisonClass E) (a b : E)
     (ha : a ∈ cc) (hb : b ∈ cc) :
     b ∈ kleinDegree (measureDelineation μ) cc a ↔ μ a = μ b := by
-  simp only [kleinDegree, Set.mem_setOf_eq, nondistinct, measureDelineation]
+  simp only [kleinDegree, Set.mem_ofPred_eq, nondistinct, measureDelineation]
   constructor
   · intro h
     by_contra hne

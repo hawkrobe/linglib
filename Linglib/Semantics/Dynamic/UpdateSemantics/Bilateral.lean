@@ -142,14 +142,14 @@ def assertable (φ : BilateralDen W V E)
 theorem unknownUpdate_neg (φ : BilateralDen W V E) (s) :
     (~φ).unknownUpdate s = φ.unknownUpdate s := by
   ext p
-  simp only [unknownUpdate, neg, Set.mem_setOf_eq,
+  simp only [unknownUpdate, neg, Set.mem_ofPred_eq,
     and_comm (a := p ∉ lowerClosure (φ.negative s))]
 
 /-- Worldly atoms never gap. -/
 theorem unknownUpdate_atom (pred : W → Prop) (s) :
     (atom pred (V := V) (E := E)).unknownUpdate s = ∅ := by
   ext p
-  simp only [unknownUpdate, Set.mem_setOf_eq, Set.mem_empty_iff_false,
+  simp only [unknownUpdate, Set.mem_ofPred_eq, Set.mem_empty_iff_false,
     iff_false, not_and]
   intro hp hpos hneg
   by_cases h : pred p.world
@@ -276,7 +276,7 @@ def entails (φ ψ : BilateralDen W V E) : Prop :=
 theorem atom_complementary (pred : W → Prop) (s : Set (Possibility W V (Part E))) :
     (atom pred (E := E)).positive s ∪ (atom pred).negative s = s := by
   ext p
-  simp only [atom, Set.mem_union, Set.mem_setOf_eq]
+  simp only [atom, Set.mem_union, Set.mem_ofPred_eq]
   constructor
   · rintro (⟨h, _⟩ | ⟨h, _⟩) <;> exact h
   · intro h

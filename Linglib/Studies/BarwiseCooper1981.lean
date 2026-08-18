@@ -605,7 +605,7 @@ private theorem exists_fresh {k ℓ : ℕ} (f : Fin ℓ → Fin k) (lo hi : ℕ)
     (hhi : hi ≤ k) (hroom : ℓ < hi - lo) :
     ∃ y : Fin k, lo ≤ y.val ∧ y.val < hi ∧ ∀ i, f i ≠ y := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hsub : (Finset.Ico lo hi).attachFin
       (fun x hx => lt_of_lt_of_le (Finset.mem_Ico.mp hx).2 hhi)
       ⊆ Finset.image f Finset.univ := by
@@ -682,7 +682,7 @@ private theorem extend₁₂ (m k : ℕ) (hk : 3 * m ≤ k) {ℓ : ℕ} (hℓ : 
   by_cases hx : ∃ i, a i = x
   · obtain ⟨i, rfl⟩ := hx
     exact ⟨b i, regionMatch_snoc_matched m k h i⟩
-  · push_neg at hx
+  · push Not at hx
     by_cases h1 : x.val < m
     · obtain ⟨y, hy1, hy2, hy3⟩ := exists_fresh b 0 (m + 1) (by omega) (by omega)
       exact ⟨y, regionMatch_snoc_fresh m k h hx hy3 (by omega) (by omega)⟩
@@ -700,7 +700,7 @@ private theorem extend₂₁ (m k : ℕ) (hk : 3 * m ≤ k) {ℓ : ℕ} (hℓ : 
   by_cases hy : ∃ i, b i = y
   · obtain ⟨i, rfl⟩ := hy
     exact ⟨a i, regionMatch_snoc_matched m k h i⟩
-  · push_neg at hy
+  · push Not at hy
     by_cases h1 : y.val < m + 1
     · obtain ⟨x, hx1, hx2, hx3⟩ := exists_fresh a 0 m (by omega) (by omega)
       exact ⟨x, regionMatch_snoc_fresh m k h hx3 hy (by omega) (by omega)⟩
@@ -801,12 +801,12 @@ private theorem moreThanHalf_iff {k m c : ℕ} (S : L_UV.Structure (Fin k))
   have hUV : {x : Fin k | S.RelMap uRel ![x] ∧ S.RelMap vRel ![x]}
       = {x : Fin k | x.val < c} := by
     ext x
-    rw [Set.mem_setOf_eq, Set.mem_setOf_eq, hU, hV]
+    rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq, hU, hV]
     omega
   have hVs : {x : Fin k | S.RelMap vRel ![x]}
       = {x : Fin k | x.val < 2 * m} := by
     ext x
-    rw [Set.mem_setOf_eq, Set.mem_setOf_eq, hV]
+    rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq, hV]
   unfold MoreThanHalf MostUV
   rw [hUV, hVs, ncard_val_lt _ _ (by omega), ncard_val_lt _ _ hm]
 
@@ -1204,7 +1204,7 @@ theorem realize_equivMap {E : Type} [Fintype E] {U V : E → Prop} (σ : E ≃ E
       have hset : {a | f.Realize U V (Fin.snoc (σ ∘ xs) a)}
           = σ '' {a | f.Realize U V (Fin.snoc xs a)} := by
         ext a
-        simp only [Set.mem_setOf_eq, Set.mem_image]
+        simp only [Set.mem_ofPred_eq, Set.mem_image]
         constructor
         · intro h
           refine ⟨σ.symm a, ?_, by simp⟩
@@ -1318,7 +1318,7 @@ theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
           · exact Or.inl hv
           · by_cases hex : ∃ i, b = xs i
             · exact Or.inr (Or.inl hex)
-            · push_neg at hex
+            · push Not at hex
               exact Or.inr (Or.inr (h hv hex))
       rw [hstar]
       show _ ↔ 2 * Set.ncard {a | f.Realize U V (Fin.snoc xs a)} > Fintype.card E
@@ -1338,7 +1338,7 @@ theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
         have hsub : ({x : E | V x} ∪ Set.range xs)ᶜ
             ⊆ {a | f.Realize U V (Fin.snoc xs a)} := by
           intro x hx
-          simp only [Set.mem_compl_iff, Set.mem_union, Set.mem_setOf_eq,
+          simp only [Set.mem_compl_iff, Set.mem_union, Set.mem_ofPred_eq,
             Set.mem_range, not_or, not_exists] at hx
           exact hall x hx.1 fun i h => hx.2 i h.symm
         have h3 := Set.ncard_le_ncard hsub (Set.toFinite _)
@@ -1347,7 +1347,7 @@ theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
         have hwit : ∃ b₀, f.Realize U V (Fin.snoc xs b₀) ∧ ¬ V b₀ ∧
             ∀ i, b₀ ≠ xs i := by
           by_contra hno
-          push_neg at hno
+          push Not at hno
           have hsub : {a | f.Realize U V (Fin.snoc xs a)}
               ⊆ {x : E | V x} ∪ Set.range xs := by
             intro a ha
@@ -1402,7 +1402,7 @@ theorem more_than_half_not_Q_definable :
   have hUV₁ : {x : Fin k | x.val < m ∧ x.val < 2 * m}
       = {x : Fin k | x.val < m} := by
     ext x
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     omega
   have hfalse₁ : ¬ QFormula.Realize (fun x : Fin k => x.val < m)
       (fun x => x.val < 2 * m) φ default := fun hr => by
@@ -1414,7 +1414,7 @@ theorem more_than_half_not_Q_definable :
   have hUV₂ : {x : Fin k | x.val < m + 1 ∧ x.val < 2 * m}
       = {x : Fin k | x.val < m + 1} := by
     ext x
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     omega
   have htrue₂ : QFormula.Realize (fun x : Fin k => x.val < m + 1)
       (fun x => x.val < 2 * m) φ default := hcast _ _ (h₂.mpr (by

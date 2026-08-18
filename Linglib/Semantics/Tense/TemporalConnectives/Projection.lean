@@ -80,7 +80,7 @@ variable {Time : Type*} [LinearOrder Time]
 theorem timeTrace_eventDenotation (P : Event Time → Prop) :
     timeTrace (eventDenotation P) = { t | ∃ e, P e ∧ t ∈ e.τ } := by
   ext t
-  simp only [timeTrace, mem_eventDenotation, Set.mem_setOf_eq]
+  simp only [timeTrace, mem_eventDenotation, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨i, ⟨e, he, rfl⟩, hi⟩
     exact ⟨e, he, hi⟩

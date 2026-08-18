@@ -37,7 +37,7 @@ theorem boolProb_add_compl (μ : PMF W) (φ : W → Bool) :
     boolProb μ φ + boolProb μ (fun w => !φ w) = 1 := by
   classical
   have hset : {w | (!φ w) = true} = {w | φ w = true}ᶜ := by
-    ext w; simp only [Set.mem_setOf_eq, Set.mem_compl_iff]; cases φ w <;> simp
+    ext w; simp only [Set.mem_ofPred_eq, Set.mem_compl_iff]; cases φ w <;> simp
   show μ.probOfSet {w | φ w = true} + μ.probOfSet {w | (!φ w) = true} = 1
   rw [hset]; exact μ.probOfSet_compl_add _
 
@@ -68,7 +68,7 @@ theorem ProbContradictory.of_isContradictory {φ ψ : W → Bool}
   obtain ⟨hAnd, hOr⟩ := isContradictory_iff_forall.mp h
   have hset : {w | ψ w = true} = {w | φ w = true}ᶜ := by
     ext w
-    simp only [Set.mem_setOf_eq, Set.mem_compl_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_compl_iff]
     exact ⟨fun hψ hφ => hAnd w ⟨hφ, hψ⟩, fun hφ => (hOr w).resolve_left hφ⟩
   show μ.probOfSet {w | φ w = true} + μ.probOfSet {w | ψ w = true} = 1
   rw [hset]; exact μ.probOfSet_compl_add _
