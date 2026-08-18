@@ -41,7 +41,8 @@ variable {Input Output : Type*} {n : ℕ}
 /-! ### Realization problems -/
 
 /-- A multi-input optimization problem: a target mapping that a single
-    grammar must realize for every input simultaneously. -/
+    grammar must realize for every input simultaneously (for OT, the data of
+    [tesar-smolensky-1995]'s ranking problem). -/
 structure RealizationProblem (Input : Type*) (Output : Type*) (n : ℕ) where
   /-- The set of inputs the grammar handles. -/
   inputs : Finset Input

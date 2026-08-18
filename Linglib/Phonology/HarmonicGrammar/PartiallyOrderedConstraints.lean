@@ -1,4 +1,4 @@
-import Linglib.Phonology.HarmonicGrammar.RealizationProblem
+import Linglib.Phonology.HarmonicGrammar.Realizability
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Phonology.OptimalityTheory.Grammar
