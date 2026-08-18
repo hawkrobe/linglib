@@ -30,7 +30,7 @@ both import from `Features/`, no peer-layer crossings.
 ## Framework commitment
 
 The 22-case enum is theory-laden in its *naming* (constructor names
-like `adversative`, `doubtVerb`, `denyVerb`, `comparativeS` reflect
+like `adversative`, `doubtVerb`, `denyVerb`, `clausalComparative` reflect
 specific traditions' classification of contexts), but the cases
 themselves enumerate empirically-attested licensing environments any
 framework needs to talk about. The DE/anti-additive/anti-morphic
@@ -67,12 +67,12 @@ inductive LicensingContext where
   | withoutClause    -- "without" PPs
   | onlyFocus        -- Focus of "only"
   | question          -- Questions (for some NPIs)
-  | comparativeNP     -- surface "taller than NP" — Boolean homomorphism, monotone increasing,
+  | phrasalComparative     -- surface "taller than NP" — Boolean homomorphism, monotone increasing,
                       -- and per [hoeksema-1983] *not* an NPI environment.
                       -- Surface NPIs in "than NP" arise from a covert clausal source
                       -- (modern: [bhatt-pancheva-2004] interval reduction) — list
-                      -- such NPIs under `.comparativeS`, not here.
-  | comparativeS      -- "taller than S is" — anti-additive ([hoeksema-1983], refined
+                      -- such NPIs under `.clausalComparative`, not here.
+  | clausalComparative      -- "taller than S is" — anti-additive ([hoeksema-1983], refined
                       -- in interval semantics by [bhatt-pancheva-2004], [heim-2006])
   | superlative       -- "the most", "the least"
   | tooTo            -- "too ADJ to VP"

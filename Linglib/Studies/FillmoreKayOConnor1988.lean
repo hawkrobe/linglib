@@ -242,7 +242,7 @@ catalogued in `Polarity`. -/
 def npiTriggerToContext : LetAloneNPITrigger → LicensingContext
   | .simpleNegation         => .negation
   | .tooComplementation     => .tooTo
-  | .comparisonOfInequality => .comparativeS
+  | .comparisonOfInequality => .clausalComparative
   | .onlyDeterminer         => .onlyFocus
   | .minimalAttainment      => .negation              -- "barely" ≈ negation
   | .conditionalSurprise    => .conditionalAntecedent

@@ -93,7 +93,7 @@ example : ¬ deDictoComparative yachtLength false () :=
 /-- (v) (`Examples.exV`; §§VI–VII): a disjunctive standard entails both
 disjuncts — the downward-entailingness of the than-clause that also
 licenses its NPIs (`Degree.comparative_than_DE`;
-`Ladusaw1979.licensingStrength .comparativeS = .antiAdditive`). -/
+`Ladusaw1979.licensingStrength .clausalComparative = .antiAdditive`). -/
 theorem disjunction_to_conjunction_in_than (μa μb μc : D)
     (h : μb ⊔ μc < μa) : μb < μa ∧ μc < μa :=
   sup_lt_iff.mp h

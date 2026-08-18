@@ -100,7 +100,7 @@ def pur : Item :=
   { form := "pur"
   , licensor := some .weak
   , baseForce := .degree
-  , licensingContexts := [.negation, .comparativeS]
+  , licensingContexts := [.negation, .clausalComparative]
   , scalarDirection := some .strengthening }
 
 /-- *affatto* ("at all", "completely") — weak NPI requiring *precise*
@@ -118,25 +118,25 @@ def affatto : Item :=
   { form := "affatto"
   , licensor := some .weak
   , baseForce := .degree
-  , licensingContexts := [.negation]  -- not .comparativeS: blocked by precision
+  , licensingContexts := [.negation]  -- not .clausalComparative: blocked by precision
   , scalarDirection := some .strengthening }
 
 /-- N&N's central diagnostic: *pur* is licensed in comparative-clause
     contexts (which encode bias-conditioned negation in Italian), *affatto*
     is not. The contrast is structural in the registry — *pur*'s
-    `licensingContexts` includes `.comparativeS` while *affatto*'s does
+    `licensingContexts` includes `.clausalComparative` while *affatto*'s does
     not, so the Italian Fragment alone witnesses the distributional
     contrast that motivated the *non₂* analysis.
 
-    `.comparativeS` (clausal-comparative) is the relevant slot:
+    `.clausalComparative` is the relevant slot:
     [hoeksema-1983] establishes that surface NP-comparatives are
     Boolean homomorphisms (monotone) and not NPI environments —
-    `.comparativeNP` therefore licenses nothing. -/
+    `.phrasalComparative` therefore licenses nothing. -/
 theorem pur_licensed_in_comparative :
-    .comparativeS ∈ pur.licensingContexts := by decide
+    .clausalComparative ∈ pur.licensingContexts := by decide
 
 theorem affatto_not_licensed_in_comparative :
-    .comparativeS ∉ affatto.licensingContexts := by decide
+    .clausalComparative ∉ affatto.licensingContexts := by decide
 
 /-! ### Pure Universal FCIs -/
 

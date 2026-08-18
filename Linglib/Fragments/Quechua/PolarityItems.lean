@@ -24,7 +24,7 @@ def piPis : Item :=
   , freeChoice := true
   , baseForce := .existential
   , licensingContexts :=
-      [.negation, .question, .conditionalAntecedent, .comparativeS,
+      [.negation, .question, .conditionalAntecedent, .clausalComparative,
        .modalPossibility, .imperative, .generic]
   , scalarDirection := some .strengthening
   , morphology := .indefPlusEven }

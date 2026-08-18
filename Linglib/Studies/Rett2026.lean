@@ -105,7 +105,7 @@ structure ENDatum where
       with bias-conditioned negation's imprecise condition; noted in a
       footnote of [napoli-nespor-1976], and registered in the Italian
       Fragment's `affatto.licensingContexts`, which excludes
-      `.comparativeS`). -/
+      `.clausalComparative`). -/
   licensedNPIForms : List String
   /-- Manner implicature triggered by EN (if any) -/
   mannerEffect : Option MannerEffect := none

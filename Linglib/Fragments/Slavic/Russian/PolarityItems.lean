@@ -39,7 +39,7 @@ def ktoLibo : Item :=
   { form := "кто-либо (kto-libo)"
   , licensor := some .weak
   , baseForce := .existential
-  , licensingContexts := [.question, .conditionalAntecedent, .negation, .comparativeS]
+  , licensingContexts := [.question, .conditionalAntecedent, .negation, .clausalComparative]
   , scalarDirection := some .strengthening }
 
 /-! ### Strict-NC *ни-* words (the direct-negation series) -/
