@@ -297,6 +297,7 @@ theorem probSufficiency_eq_indicator_of_deterministic
   unfold probSufficiency probOfValue
   rw [counterfactualSimulate_eq_pure_of_deterministic]
   simp only [PMF.probOfSet, PMF.toOuterMeasure_pure_apply, Set.mem_ofPred_eq]
+  congr
 
 end Causation.SEM
 
