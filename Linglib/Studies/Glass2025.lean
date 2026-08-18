@@ -487,7 +487,7 @@ Since `PresupClass.nonfactive` verbs are exactly the non-veridical ones,
 the neg-raising gap aligns with the contrafactive gap.
 -/
 
-open Semantics.Attitudes.NegRaising (negRaisingAvailable)
+open NegRaising (negRaisingAvailable)
 
 /-- Nonfactive verbs (including yǐwéi) support neg-raising. -/
 theorem nonfactive_supports_negRaising :
