@@ -3,7 +3,7 @@ import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Phonology.OptimalityTheory.Grammar
 import Linglib.Core.Optimization.PermSubsetCombinatorics
-import Mathlib.Data.Sigma.Lex
+import Mathlib.Data.Prod.Basic
 import Mathlib.Order.Extension.Linear
 import Mathlib.Order.Preorder.Finite
 
@@ -28,8 +28,8 @@ theorems are a ℚ veneer over them.
   total order a ranking induces), and `stratified stratumOf inner`
   (mutually-ranked strata refined by an inner order —
   [tesar-smolensky-1995]'s Stratified Domination Hierarchies — defined as
-  mathlib's `Sigma.Lex` on the stratum map's fibers, characterized by
-  `stratified_iff`).
+  mathlib's `Prod.Lex` pulled back along `a ↦ (stratumOf a, a)`, characterized
+  by `stratified_iff`).
 - `IsConsistent r σ`: σ is a linear extension of `r`, defined as containment
   `r ≤ σ.toRel` in the pointwise lattice of relations.
   `consistentTotalOrders r` is the (nonempty, by Szpilrajn) `Finset` of them.
@@ -110,31 +110,29 @@ is a simple ERC `a ≫ b` ([merchant-riggle-2016]), and under this encoding the
 consistent total orders are exactly `ERCSet.linearExtensions` ([prince-2002]). -/
 
 /-- The simple-ERC encoding of a grammar, with one ERC `a ≫ b`
-(`simpleERC a b`) for each strict related pair. Transitively-implied pairs are
-entailed by the covering pairs, so the encoding has the same linear extensions
-as the Hasse-edge one. -/
+(`simpleERC a b`) for each related pair — diagonal pairs give trivial ERCs,
+matching `toRel`'s reflexivity. Transitively-implied pairs are entailed by the
+covering pairs, so the encoding has the same linear extensions as the
+Hasse-edge one. -/
 def toERCSet (r : Fin n → Fin n → Prop) [DecidableRel r] : ERCSet n :=
-  (Finset.univ.filter fun p : Fin n × Fin n => p.1 ≠ p.2 ∧ r p.1 p.2).image
+  (Finset.univ.filter fun p : Fin n × Fin n => r p.1 p.2).image
     fun p => simpleERC p.1 p.2
 
 theorem mem_toERCSet {r : Fin n → Fin n → Prop} [DecidableRel r] {α : ERC n} :
-    α ∈ toERCSet r ↔ ∃ a b, a ≠ b ∧ r a b ∧ simpleERC a b = α := by
-  simp [toERCSet, Finset.mem_filter, Prod.exists, and_assoc]
+    α ∈ toERCSet r ↔ ∃ a b, r a b ∧ simpleERC a b = α := by
+  simp [toERCSet, Prod.exists]
 
 /-- A ranking satisfies `toERCSet r` exactly when it is a linear extension of
-`r`: the `a ≫ b` ERCs are the strict dominance requirements, and reflexive
-pairs impose nothing. -/
+`r`: per pair, satisfaction of `simpleERC a b` *is* `σ.toRel a b`. -/
 theorem satisfiedBy_toERCSet {r : Fin n → Fin n → Prop} [DecidableRel r]
     {σ : Ranking n} :
     ERCSet.SatisfiedBy σ (toERCSet r) ↔ IsConsistent r σ := by
   constructor
   · intro h a b hrel
-    rcases eq_or_ne a b with rfl | hab
-    · exact le_refl _
-    · exact (simpleERC_satisfiedBy_toRel_iff a b σ).mp
-        (h _ (mem_toERCSet.mpr ⟨a, b, hab, hrel, rfl⟩))
+    exact (simpleERC_satisfiedBy_toRel_iff a b σ).mp
+      (h _ (mem_toERCSet.mpr ⟨a, b, hrel, rfl⟩))
   · intro hcons α hα
-    obtain ⟨a, b, hab, hrel, rfl⟩ := mem_toERCSet.mp hα
+    obtain ⟨a, b, hrel, rfl⟩ := mem_toERCSet.mp hα
     exact (simpleERC_satisfiedBy_toRel_iff a b σ).mpr (hcons a b hrel)
 
 /-- The consistent total orders of a grammar are exactly the linear extensions
@@ -178,61 +176,28 @@ grammar of [anttila-1997] eq. (50) — the Stratified Domination Hierarchy of
 variable {s : ℕ}
 
 /-- The stratified grammar induced by `stratumOf` and an inner order `inner` —
-    mathlib's lexicographic sigma order (`Sigma.Lex`, underlying
-    `Sigma.Lex.partialOrder`) on the fibers of `stratumOf`, pulled back along
-    the fiber partition. The plain characterization is `stratified_iff`;
-    cross-stratum `inner` edges are ignored. -/
+    mathlib's lexicographic order (`Prod.Lex`) pulled back along
+    `a ↦ (stratumOf a, a)`: strata compare strictly, ties defer to `inner`.
+    The plain characterization is `stratified_iff`; cross-stratum `inner`
+    edges are ignored. -/
 def stratified (stratumOf : Fin n → Fin s) (inner : Fin n → Fin n → Prop) :
     Fin n → Fin n → Prop :=
-  fun a b =>
-    Sigma.Lex (· < ·) (fun k (x y : {c : Fin n // stratumOf c = k}) => inner x.1 y.1)
-      ⟨stratumOf a, a, rfl⟩ ⟨stratumOf b, b, rfl⟩
-
-private theorem sigmaMk_stratum_eq {stratumOf : Fin n → Fin s} {a : Fin n} {k : Fin s}
-    (h : stratumOf a = k) :
-    (⟨stratumOf a, a, rfl⟩ : Σ k, {c : Fin n // stratumOf c = k}) = ⟨k, a, h⟩ := by
-  subst h; rfl
+  fun a b => Prod.Lex (· < ·) inner (stratumOf a, a) (stratumOf b, b)
 
 /-- Dominance in a stratified grammar holds iff a's stratum strictly precedes
     b's, or they share a stratum and the inner order relates them. -/
 theorem stratified_iff {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     {a b : Fin n} :
     stratified stratumOf inner a b ↔
-      stratumOf a < stratumOf b ∨ stratumOf a = stratumOf b ∧ inner a b := by
-  constructor
-  · intro hlex
-    rcases Sigma.lex_iff.mp hlex with hlt | ⟨heq, -⟩
-    · exact Or.inl hlt
-    · refine Or.inr ⟨heq, ?_⟩
-      unfold stratified at hlex
-      rw [sigmaMk_stratum_eq heq] at hlex
-      cases hlex with
-      | left _ _ h => exact absurd h (lt_irrefl _)
-      | right _ _ hr => exact hr
-  · rintro (hlt | ⟨heq, hrel⟩)
-    · exact Sigma.Lex.left _ _ hlt
-    · show Sigma.Lex _ _ _ _
-      rw [sigmaMk_stratum_eq heq]
-      exact Sigma.Lex.right _ _ hrel
+      stratumOf a < stratumOf b ∨ stratumOf a = stratumOf b ∧ inner a b :=
+  Prod.lex_iff
 
 instance (stratumOf : Fin n → Fin s) (inner : Fin n → Fin n → Prop)
     [IsPartialOrder (Fin n) inner] :
     IsPartialOrder (Fin n) (stratified stratumOf inner) where
-  refl a := stratified_iff.mpr (Or.inr ⟨rfl, refl_of inner a⟩)
-  trans a b c hab hbc := by
-    rcases stratified_iff.mp hab with h | ⟨h, h'⟩ <;>
-      rcases stratified_iff.mp hbc with g | ⟨g, g'⟩
-    · exact stratified_iff.mpr (Or.inl (h.trans g))
-    · exact stratified_iff.mpr (Or.inl (lt_of_lt_of_eq h g))
-    · exact stratified_iff.mpr (Or.inl (lt_of_eq_of_lt h g))
-    · exact stratified_iff.mpr (Or.inr ⟨h.trans g, trans_of inner h' g'⟩)
-  antisymm a b hab hba := by
-    rcases stratified_iff.mp hab with h | ⟨h, h'⟩ <;>
-      rcases stratified_iff.mp hba with g | ⟨g, g'⟩
-    · exact absurd (h.trans g) (lt_irrefl _)
-    · exact absurd (lt_of_lt_of_eq h g) (lt_irrefl _)
-    · exact absurd (lt_of_lt_of_eq g h) (lt_irrefl _)
-    · exact antisymm_of inner h' g'
+  refl a := Prod.Lex.right _ (refl_of inner a)
+  trans _ _ _ := Prod.Lex.trans
+  antisymm _ _ hab hba := congrArg Prod.snd (antisymm hab hba)
 
 instance (stratumOf : Fin n → Fin s) (inner : Fin n → Fin n → Prop)
     [DecidableRel inner] : DecidableRel (stratified stratumOf inner) :=
@@ -348,11 +313,12 @@ a Birkhoff antimatroid whose feasible sets are exactly the order ideals of `r`
 variable (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r] [DecidableRel r]
 
 omit [IsPartialOrder (Fin n) r] in
-/-- `toERCSet r` consists of simple ERCs (each is a `simpleERC` of a strict pair). -/
-theorem toERCSet_isSimpleSet : ERCSet.IsSimpleSet (toERCSet r) := by
+/-- Every member of `toERCSet r` is a simple ERC or (on the diagonal) trivial. -/
+theorem toERCSet_isSimple_or_isTrivial :
+    ∀ α ∈ toERCSet r, α.IsSimple ∨ α.IsTrivial := by
   intro α hα
-  obtain ⟨a, b, hab, _, rfl⟩ := mem_toERCSet.mp hα
-  exact simpleERC_isSimple hab
+  obtain ⟨a, b, _, rfl⟩ := mem_toERCSet.mp hα
+  exact simpleERC_isSimple_or_isTrivial a b
 
 /-- `toERCSet r` is consistent: any linear extension of `r` satisfies it. -/
 theorem toERCSet_consistent : ERCSet.Consistent (toERCSet r) := by
@@ -364,7 +330,7 @@ antimatroid (`Antimat.ofSimple`) of its Hasse-edge encoding, whose feasible
 sets are exactly the order ideals of `r`
 (`pocAntimatroid_isFeasible_iff`). -/
 def pocAntimatroid : Antimatroid (Fin n) :=
-  Antimat.ofSimple (toERCSet r) (toERCSet_consistent r) (toERCSet_isSimpleSet r)
+  Antimat.ofSimple (toERCSet r) (toERCSet_consistent r) (toERCSet_isSimple_or_isTrivial r)
 
 omit [IsPartialOrder (Fin n) r] in
 /-- Local feasibility against `toERCSet r` is exactly the order-ideal
@@ -376,12 +342,13 @@ theorem feasible_toERCSet_iff {S : Finset (Fin n)} :
     rcases eq_or_ne a b with rfl | hab
     · exact hbS
     · obtain ⟨w, hwW, hwS⟩ :=
-        h (simpleERC a b) (mem_toERCSet.mpr ⟨a, b, hab, hrel, rfl⟩)
+        h (simpleERC a b) (mem_toERCSet.mpr ⟨a, b, hrel, rfl⟩)
           ⟨b, simpleERC_apply_L hab, hbS⟩
       rwa [(simpleERC_eq_W_iff w).mp hwW] at hwS
   · intro h α hα
-    obtain ⟨a, b, hab, hrel, rfl⟩ := mem_toERCSet.mp hα
+    obtain ⟨a, b, hrel, rfl⟩ := mem_toERCSet.mp hα
     rintro ⟨l, hlL, hlS⟩
+    have hab : a ≠ b := by rintro rfl; exact simpleERC_self_isTrivial a l hlL
     rw [(simpleERC_eq_L_iff hab l).mp hlL] at hlS
     exact ⟨a, simpleERC_apply_W, h a b hrel hlS⟩
 
