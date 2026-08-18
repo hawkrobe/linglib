@@ -80,7 +80,7 @@ theorem subj_current_option [Preorder Time]
 /-- The introduced situation is a temporal anchor at or after the base
 situation's time — the mechanism SF exploits for future reference, and
 the parallel to attitude verbs shifting embedded evaluation to matrix
-event time (`Semantics/Attitudes/SituationDependent.lean`). -/
+event time (`Studies/VonStechow2009.lean`). -/
 theorem subj_temporal_anchor [LE Time]
     (h : SUBJ history P s₀) :
     ∃ s₁, s₁ ∈ historicalBase history s₀ ∧ s₁.time ≥ s₀.time ∧ P s₁ s₀ := by

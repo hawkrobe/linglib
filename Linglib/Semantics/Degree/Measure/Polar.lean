@@ -47,9 +47,8 @@ open Core.Order
     an entity type `E`, a measure function `μ : E → D`, boundedness
     (from `ComparativeScale`), and a direction.
 
-    Common algebraic core of the `numeral`/`adjective` domain constructors and
-    epistemic thresholds (`epistemicAsPolarMeasure`, on
-    `PolarMeasure ℚ (E × (W → Bool))`). The degree property
+    Common algebraic core of the `numeral`/`adjective` domain
+    constructors. The degree property
     (`Comparison.ge.over` for positive, `Comparison.le.over` for negative) is
     derived from `direction`, not stored — per [lassiter-goodman-2017], the
     binary direction choice is the fundamental parameter. -/

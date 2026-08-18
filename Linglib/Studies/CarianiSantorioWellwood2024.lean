@@ -29,12 +29,12 @@ witnesses the central cross-framework disagreement against
 | CSW section | What this file covers                                                |
 |-------------|----------------------------------------------------------------------|
 | §3.3        | POS-free positive form: contrast-point `co.le` on the ordering       |
-| §4.6 (52)   | Conjunction fallacy: `conjunction_fallacy_predicted` (→ `confidence_not_probabilistic`) |
+| §4.6 (52)   | Conjunction fallacy: `conjunction_fallacy_predicted`                 |
 | §4.6 (53)   | Upward monotonicity (`Confidence.confidence_upward_monotone`)        |
 | §4.6 (54)   | Transitivity of comparative confidence                               |
 | §4.6 (55)   | Antisymmetry of equative confidence                                  |
 | §4.6 (56–58)| Connectedness — formalized as agnostic, per CSW p.27                 |
-| §4.6 (52) ↔ Threshold | Cross-framework refutation: `EpistemicThreshold.confidence_not_probabilistic` |
+| §4.6 (52) ↔ Threshold | Cross-framework refutation: `states_vs_threshold_on_conjunction_fallacy` |
 | §5.2 (65–66)| Asymmetric entailment `certain ⊨ confident`                          |
 | §5.2 (63a–c)| Doubts triangle: confident + doubts mutually exclusive               |
 | §5.2 (72)   | Comparative scale-mate equivalence                                   |
@@ -58,8 +58,7 @@ namespace CarianiSantorioWellwood2024
 
 open Degree
 open Semantics.Attitudes.Confidence
-open Semantics.Attitudes.EpistemicThreshold (AgentCredence isProbabilistic
-  meetsThreshold prob_conjunction_elim confidence_not_probabilistic)
+open EpistemicThreshold (IsProbabilistic meetsThreshold prob_conjunction_elim)
 
 /-! ## §1. Felicity Gradient
 
@@ -181,14 +180,20 @@ def connectednessStance : ConnectednessStance := {}
     [tversky-kahneman-1983]).
 
     Genuine witness: a non-monotone credence ranking a *consistent* conjunction
-    strictly above a conjunct (`EpistemicThreshold.confidence_not_probabilistic`),
-    which no probability measure can do. The cross-framework consequence is §6's
-    `states_vs_threshold_on_conjunction_fallacy`. -/
+    strictly above a conjunct, which no probabilistic credence can do
+    (`EpistemicThreshold.prob_conjunction_elim`). The cross-framework
+    consequence is §6's `states_vs_threshold_on_conjunction_fallacy`. -/
 theorem conjunction_fallacy_predicted :
-    ∃ (cr : AgentCredence Unit Bool),
-      ¬ isProbabilistic cr ∧
-      ∃ (φ ψ : Bool → Bool), cr () φ < cr () (fun w => φ w && ψ w) :=
-  confidence_not_probabilistic
+    ∃ (cr : Unit → Set Bool → ℚ),
+      ¬ IsProbabilistic cr ∧
+      ∃ (φ ψ : Set Bool), cr () φ < cr () (φ ∩ ψ) := by
+  classical
+  refine ⟨fun _ p => if false ∈ p then (0 : ℚ) else 1, ?_, Set.univ, {true}, ?_⟩
+  · intro h
+    have h1 := h () (Set.subset_univ ({true} : Set Bool))
+    simp at h1
+    exact absurd h1 (by norm_num)
+  · simp
 
 /-! ### §3.5 Upward Monotonicity (CSW (53)) -/
 
@@ -287,11 +292,11 @@ credence function validates `Pr(p ∧ q) ≤ Pr(p)`.
 
 The two halves of the disagreement are now formal:
 
-- States-based admits the fallacy: `confidence_not_probabilistic` (a non-monotone
-  credence ranking a consistent conjunction above a conjunct; §3.4 above).
-- Probabilistic credence forbids it: `EpistemicThreshold.prob_conjunction_elim`.
-- A credence function realizing the fallacy cannot be probabilistic:
-  `EpistemicThreshold.confidence_not_probabilistic`.
+- States-based admits the fallacy: `conjunction_fallacy_predicted` (a
+  non-monotone credence ranking a consistent conjunction above a
+  conjunct; §3.4 above), and such a credence cannot be probabilistic.
+- Probabilistic credence forbids it:
+  `EpistemicThreshold.prob_conjunction_elim`.
 
 This study file packages the disagreement as the joint statement
 below. -/
@@ -300,8 +305,8 @@ below. -/
     formalized as the conjunction of two opposing predictions:
 
     1. **States-based prediction** (CSW): there is a confidence ordering
-       admitting the fallacy (`confidence_not_probabilistic` provides an
-       `AgentCredence` witness with consistent propositions).
+       admitting the fallacy (`conjunction_fallacy_predicted` provides a
+       credence witness with consistent propositions).
     2. **Threshold-probabilistic prediction**: any probabilistic credence
        blocks the fallacy at every threshold
        (`prob_conjunction_elim`).
@@ -311,41 +316,32 @@ below. -/
     evidence against the threshold approach. -/
 theorem states_vs_threshold_on_conjunction_fallacy :
     -- States-based side: a non-probabilistic credence with a witness
-    (∃ (cr : AgentCredence Unit Bool),
-       ¬ isProbabilistic cr ∧
-       ∃ (φ ψ : Bool → Bool), cr () φ < cr () (fun w => φ w && ψ w))
+    (∃ (cr : Unit → Set Bool → ℚ),
+       ¬ IsProbabilistic cr ∧
+       ∃ (φ ψ : Set Bool), cr () φ < cr () (φ ∩ ψ))
     ∧
     -- Threshold side: probabilistic credence forbids the fallacy
-    (∀ {E W : Type*} (cr : AgentCredence E W),
-       isProbabilistic cr →
-       ∀ (θ : ℚ) (a : E) (φ ψ : (W → Bool)),
-         meetsThreshold cr θ a (fun w => φ w && ψ w) →
-         meetsThreshold cr θ a φ) :=
-  ⟨confidence_not_probabilistic,
-   fun cr h_prob θ a φ ψ => prob_conjunction_elim cr h_prob θ a φ ψ⟩
+    (∀ {E W : Type*} (cr : E → Set W → ℚ),
+       IsProbabilistic cr →
+       ∀ (θ : ℚ) (a : E) (φ ψ : Set W),
+         meetsThreshold cr θ a (φ ∩ ψ) → meetsThreshold cr θ a φ) :=
+  ⟨conjunction_fallacy_predicted,
+   fun _ h_prob θ a φ ψ => prob_conjunction_elim h_prob θ a φ ψ⟩
 
 /-! ## §7. Cross-Framework Agreement on `certain`
 
-Three independent treatments of `certain` agree that it sits at the
-upper bound of an upper-bounded scale:
+Two independent treatments of `certain` agree that it sits at the
+upper bound of an upper-bounded scale: the Fragment
+(`Adjectives.certain.scaleType = .upperBounded`) and the states-based
+account (`Confidence.certainEntry`'s contrast point is the ordering's
+maximum, by `h_top`). The encodings have different mathematical
+structure (enum tag vs preorder maximality), so the agreement is not
+forced by a shared substrate primitive. -/
 
-1. **Fragment** (`Adjectives.certain.scaleType = .upperBounded`)
-2. **Threshold** (`EpistemicThreshold.EpistemicEntry.certain_.θ = 19/20`,
-   close to the scale max of 1)
-3. **States-based** (`Confidence.certainEntry`'s contrast point is the
-   ordering's maximum, by `h_top`)
-
-The three encodings have genuinely different mathematical structure
-(enum tag vs ℚ value vs preorder maximality), so the agreement is not
-forced by a shared substrate primitive — it is a coincidence of
-independent commitments that nevertheless converges. -/
-
-/-- Two-way agreement: the Fragment and the threshold theory both
-    classify `certain` at the top of an upper-bounded scale. -/
-theorem certain_fragment_and_threshold_agree :
-    English.Modifiers.Adjectives.certain.scaleType = .upperBounded ∧
-    Semantics.Attitudes.EpistemicThreshold.EpistemicEntry.certain_.θ = 19/20 :=
-  ⟨rfl, rfl⟩
+/-- The Fragment classifies `certain` as upper-bounded — the scale
+    shape the states-based maximum-contrast-point analysis requires. -/
+theorem certain_fragment_upperBounded :
+    English.Modifiers.Adjectives.certain.scaleType = .upperBounded := rfl
 
 /-- Polarity asymmetry across the Fragment's confidence-scale entries:
     `confident`/`certain`/`sure` pick out the *upper* region (positive
