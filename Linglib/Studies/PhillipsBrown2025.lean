@@ -55,7 +55,6 @@ a common predicate.
 namespace PhillipsBrown2025
 
 open Desire
-open Core.Order (EffectivePreference)
 
 /-! ## §1. Eight-world model
 
