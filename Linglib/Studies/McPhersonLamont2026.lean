@@ -117,7 +117,7 @@ def ercA : ERC numConstraints := ercFor .nanWinner .nanLoser
 def ercB : ERC numConstraints := ercFor .kakWinner .kakLoser
 
 /-- The ranking-paradox support. -/
-def pokoSupport : ERCSet numConstraints := {ercA, ercB}
+def pokoSupport : Finset (ERC numConstraints) := {ercA, ercB}
 
 /-- The derived `ercA` matches eq. 59 row a: `[W, L, L, L]`. -/
 example : ercA maxHIdx = .W ∧ ercA depLinkHIdx = .L ∧
@@ -131,8 +131,9 @@ example : ercB maxHIdx = .L ∧ ercB depLinkHIdx = .W ∧
 
 /-- **Parallel OT cannot model Poko** (eq. 59): the derived support is ERC-inconsistent.
     Structural proof — `Equiv.Perm (Fin n)`'s `Fintype` doesn't kernel-reduce under `decide`. -/
-theorem parallel_OT_inadequate : ¬ ERCSet.Consistent pokoSupport := by
+theorem parallel_OT_inadequate : ¬ (ERC.linearExtensions pokoSupport).Nonempty := by
   rintro ⟨r, hr⟩
+  rw [ERC.mem_linearExtensions] at hr
   have hA := (ERC.satisfiedBy_iff_dominance r ercA).mp (hr ercA (by simp [pokoSupport]))
   have hB := (ERC.satisfiedBy_iff_dominance r ercB).mp (hr ercB (by simp [pokoSupport]))
   -- per-position decide: reduction through `ercOfProfiles` stalls on the quantified form
