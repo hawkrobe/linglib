@@ -332,7 +332,7 @@ theorem pu_report_factive {S X : Type*} {verb : SituationVerb S X}
 
 /-- Content reports carry no such entailment. -/
 theorem content_report_not_factive :
-    ¬ ∀ (verb : AttitudeVerb Bool Unit) (a : Unit) (p : Bool → Prop)
+    ¬ ∀ (verb : ContentVerb Bool Unit) (a : Unit) (p : Bool → Prop)
         (w : Bool), existsClosure verb a p w → p w :=
   fun h => h (fun _ _ _ => True) () (fun _ => False) true
     ⟨⟨fun _ => False⟩, trivial, rfl⟩
