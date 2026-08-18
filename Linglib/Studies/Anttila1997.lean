@@ -1,4 +1,4 @@
-import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
+import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 import Mathlib.Data.Fin.VecNotation
 
 /-!
@@ -88,7 +88,7 @@ mass for every motif (`sum_winProb_eq_one` substrate instance).
 
 namespace Anttila1997
 
-open HarmonicGrammar
+open OptimalityTheory
 
 /-! ### Variants and motifs -/
 
@@ -187,7 +187,7 @@ def vp : Motif → Variant → Fin 20 → ℕ
 /-- Probability that variant `v` wins motif `m` under uniform sampling of the
 total rankings consistent with `finnishGrammar`. -/
 def winProb (m : Motif) (v : Variant) : ℚ :=
-  HarmonicGrammar.winProb (fun _ => Finset.univ) vp finnishGrammar m v
+  OptimalityTheory.winProb (fun _ => Finset.univ) vp finnishGrammar m v
 
 /-- Bridge to the deciding-stratum closed form, shared by all twelve rate
 theorems. -/

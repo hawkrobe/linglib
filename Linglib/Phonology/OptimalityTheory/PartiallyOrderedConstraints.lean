@@ -1,8 +1,8 @@
-import Linglib.Phonology.HarmonicGrammar.Expressivity
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Phonology.OptimalityTheory.Grammar
 import Linglib.Core.Optimization.PermSubsetCombinatorics
+import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Data.Prod.Basic
 import Mathlib.Order.Extension.Linear
 import Mathlib.Order.Preorder.Finite
@@ -47,10 +47,11 @@ theorems are a ℚ veneer over them.
   ([merchant-riggle-2016]; [prince-2002]). `toGrammar` routes POC through the
   `Grammar` hub, and `orderIdealAntimatroid` realizes the Birkhoff correspondence
   with order-ideal antimatroids ([dilworth-1940]).
-- `isOTRealizable_iff_isPartialOrderRealizable`: categorically, POC adds nothing over
-  OT. Its advantage is probabilistic — `winProb` produces intermediate
-  frequencies (e.g. [coetzee-pater-2011]'s 8/24 vs 12/24 t/d-deletion rates)
-  that no single ranking reproduces.
+- `winProb` produces intermediate frequencies (e.g. [coetzee-pater-2011]'s
+  8/24 vs 12/24 t/d-deletion rates) that no single ranking reproduces;
+  categorically, partial orders add nothing over OT
+  (`RealizationProblem.isOTRealizable_iff_isPartialOrderRealizable` in
+  `HarmonicGrammar.Expressivity`).
 - `winProb_discrete_binary_rate` / `winProb_stratified_binary_rate`:
   closed-form win rates for binary competitions. A ranking is decided by its
   earliest active constraint (`picksAt_binary_iff_head_mem_favoring`), so
@@ -66,9 +67,9 @@ mathlib's own idiom for orders treated as data (Szpilrajn's
 `extend_partialOrder`).
 -/
 
-namespace HarmonicGrammar
+namespace OptimalityTheory
 
-open Core.Optimization OptimalityTheory Finset
+open Core.Optimization Finset
 
 variable {n : ℕ}
 
@@ -366,58 +367,9 @@ def toGrammar (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r]
   show (Grammar.ofERCs (toERCs r) (toERCs_consistent r)).legs = consistentTotalOrders r
   rw [Grammar.legs_ofERCs, consistentTotalOrders_eq_linearExtensions]
 
-/-! ### Realizability by a partial order -/
-
-namespace RealizationProblem
-
-variable {Input Output : Type*}
-
-/-- A grammar `r` **POC-realizes** the target if every consistent extension
-    realizes it. Since consistent extensions always exist
-    (`exists_isConsistent`), this is never vacuous. -/
-def realizedByPartialOrder (P : RealizationProblem Input Output n)
-    (r : Fin n → Fin n → Prop) : Prop :=
-  ∀ σ, IsConsistent r σ → P.realizedByRanking σ
-
-/-- A `RealizationProblem` is **POC-realizable** if some partial order
-    categorically realizes the target. -/
-def IsPartialOrderRealizable (P : RealizationProblem Input Output n) : Prop :=
-  ∃ r : Fin n → Fin n → Prop, IsPartialOrder (Fin n) r ∧ P.realizedByPartialOrder r
-
-end RealizationProblem
-
-/-! ### Containments — OT ⊆ POC, POC ⊆ OT (categorical) -/
-
-variable {Input Output : Type*}
-
-/-- Every partial-order-realized target is OT-realized, since any single
-    consistent extension realizes it. -/
-theorem RealizationProblem.IsPartialOrderRealizable.isOTRealizable
-    {P : RealizationProblem Input Output n}
-    (h : P.IsPartialOrderRealizable) : P.IsOTRealizable := by
-  obtain ⟨r, hpo, hreal⟩ := h
-  have := hpo
-  obtain ⟨σ, hσ⟩ := exists_isConsistent r
-  exact ⟨σ, hreal σ hσ⟩
-
-/-- Every OT-realized target is partial-order-realized — the witness is the
-    σ-induced total ranking, whose unique consistent extension is σ itself. -/
-theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable
-    {P : RealizationProblem Input Output n}
-    (h : P.IsOTRealizable) : P.IsPartialOrderRealizable := by
-  obtain ⟨σ, hσ⟩ := h
-  exact ⟨σ.toRel, inferInstance,
-    fun τ hτ => Ranking.toRel_le_toRel_iff.mp hτ ▸ hσ⟩
-
-/-- Under categorical realizability, OT and partial orders coincide; the
-    partial order's advantage is probabilistic, captured by `winProb`. -/
-theorem RealizationProblem.isOTRealizable_iff_isPartialOrderRealizable
-    (P : RealizationProblem Input Output n) :
-    P.IsOTRealizable ↔ P.IsPartialOrderRealizable :=
-  ⟨IsOTRealizable.isPartialOrderRealizable, IsPartialOrderRealizable.isOTRealizable⟩
-
 /-! ### Probabilistic POC — winProb -/
 
+variable {Input Output : Type*}
 variable {cands : Input → Finset Output} {vp : Input → Output → Fin n → ℕ}
   {r : Fin n → Fin n → Prop} {σ : Ranking n} {i : Input} {o o' chosen other : Output}
 
@@ -709,4 +661,4 @@ theorem winProb_stratified_binary_rate
       (isConsistent_swap_mul h_triv (Finset.mem_filter.mp h₁).2 (Finset.mem_filter.mp h₂).2
         (mem_consistentTotalOrders.mp hσ))
 
-end HarmonicGrammar
+end OptimalityTheory

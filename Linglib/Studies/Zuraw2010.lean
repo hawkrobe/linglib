@@ -1,5 +1,5 @@
 import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
+import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 
 /-!
@@ -25,7 +25,7 @@ Constraints) substrate. For each stem-initial consonant `c`:
   computed from `vp` (`{i : vp c .yes i ≠ vp c .no i}` and
   `{i : vp c .yes i < vp c .no i}` respectively), with concrete
   `decide`-discharged values.
-- `subProb c : ℚ` is `HarmonicGrammar.winProb`
+- `subProb c : ℚ` is `OptimalityTheory.winProb`
   applied to the discrete partial order on `Fin 6` — i.e. uniform sampling
   over all 720 total orders.
 - The closed-form rate `|Y_c ∩ D_c| / |D_c|` follows by a single
@@ -94,7 +94,7 @@ those definitions must remain stable.
 namespace Zuraw2010
 
 open Constraints Core.Optimization Constraints OptimalityTheory OptimalityTheory
-open Core.Optimization HarmonicGrammar
+open Core.Optimization
 open Core.Optimization Core.Optimization.PermSubsetCombinatorics
 
 /-! ## § 0: Stems, Substitution Decisions, Dictionary Counts -/

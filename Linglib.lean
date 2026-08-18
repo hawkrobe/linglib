@@ -1314,7 +1314,7 @@ import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.HarmonicGrammar.Expressivity
 import Linglib.Phonology.HarmonicGrammar.NoisyHG
 import Linglib.Phonology.Hiatus
-import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
+import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 import Linglib.Phonology.Constraints.Harmony
 import Linglib.Phonology.HarmonicGrammar.Separability
 import Linglib.Studies.Riggle2009
