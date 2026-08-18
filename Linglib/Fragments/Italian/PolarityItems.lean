@@ -92,10 +92,10 @@ def mica : Item :=
     DE/comparative environments where the speaker presupposes a contradicted
     prior belief.
 
-    [napoli-nespor-1976] §3.11 ex. 46–48: licensed under comparative
-    *non₂* alongside subjunctive co-occurrence and *neanche*-conjunction.
-    Treated by N&N as a diagnostic for underlying negation in the comparative
-    clause: where *pur* surfaces, *non₂* is licensed too. -/
+    [napoli-nespor-1976]: licensed under comparative *non₂* alongside
+    subjunctive co-occurrence and *neanche*-conjunction. Treated by N&N as
+    a diagnostic for underlying negation in the comparative clause: where
+    *pur* surfaces, *non₂* is licensed too. -/
 def pur : Item :=
   { form := "pur"
   , licensor := some .weak
@@ -107,8 +107,8 @@ def pur : Item :=
     knowledge of the listener's belief; blocked in N&N's comparative *non₂*
     on independent precision grounds.
 
-    [napoli-nespor-1976] §3.22 fn (i): *affatto* is *not* licensed by
-    bias-conditioned negation, even though it is a weak NPI elsewhere. The
+    [napoli-nespor-1976] observe in a footnote that *affatto* is *not*
+    licensed by bias-conditioned negation, though it is a weak NPI elsewhere. The
     block is semantic — *affatto* requires the listener's belief to be
     explicit, which fails N&N's "imprecise/inferred" Condition 4. The
     distributional fact is therefore *orthogonal* to NPI licensing.
@@ -133,10 +133,10 @@ def affatto : Item :=
     Boolean homomorphisms (monotone) and not NPI environments —
     `.comparativeNP` therefore licenses nothing. -/
 theorem pur_licensed_in_comparative :
-    pur.licensingContexts.contains .comparativeS = true := by decide
+    .comparativeS ∈ pur.licensingContexts := by decide
 
 theorem affatto_not_licensed_in_comparative :
-    affatto.licensingContexts.contains .comparativeS = false := by decide
+    .comparativeS ∉ affatto.licensingContexts := by decide
 
 /-! ### Pure Universal FCIs -/
 

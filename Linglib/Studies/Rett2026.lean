@@ -102,10 +102,10 @@ structure ENDatum where
       cases like Italian *non₂*-comparatives that license *some* weak
       NPIs (*pur*) but block others (*affatto*) for orthogonal semantic
       reasons (the precision requirement on *affatto* is incompatible
-      with bias-conditioned negation's imprecise condition;
-      [napoli-nespor-1976] §3.22 fn 6, and the Italian Fragment's
-      `affatto.licensingContexts` registry, which excludes
-      `.comparative`). -/
+      with bias-conditioned negation's imprecise condition; noted in a
+      footnote of [napoli-nespor-1976], and registered in the Italian
+      Fragment's `affatto.licensingContexts`, which excludes
+      `.comparativeS`). -/
   licensedNPIForms : List String
   /-- Manner implicature triggered by EN (if any) -/
   mannerEffect : Option MannerEffect := none
@@ -168,11 +168,11 @@ def spanishComparative : ENDatum :=
       §2). The Bool here is the satisfiability of the licensing profile
       across contexts, not free choice in any single context.
     - `licensedNPIForms = [pur.form]`: the weak NPI *pur* is licensed
-      under *non₂*-comparatives ([napoli-nespor-1976] §3.11 ex.
-      46–48), but *affatto* is blocked for orthogonal semantic reasons
-      (precision requirement incompatible with the imprecise/inferred
-      presupposition, §3.22 fn 6). The list encodes the asymmetry that
-      the previous `Bool` field flattened. -/
+      under *non₂*-comparatives ([napoli-nespor-1976]), but *affatto*
+      is blocked for orthogonal semantic reasons (a precision requirement
+      incompatible with the imprecise/inferred presupposition, noted in
+      a footnote of [napoli-nespor-1976]). The list encodes the asymmetry
+      that the previous `Bool` field flattened. -/
 def italianComparative : ENDatum :=
   { language := "Italian", construction := "più ... di quanto"
   , constructionType := .comparative
