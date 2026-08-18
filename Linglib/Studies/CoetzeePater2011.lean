@@ -235,7 +235,7 @@ theorem delete_pause_profile :
 /-! ### POC adapter: `tdCands` and `tdVp` for `pocPredict` consumption -/
 
 /-- Candidate set per context for POC: both retain and delete are available
-    in every context. Required by `PartialOrderConstraints.pocPredict`. -/
+    in every context. Required by `pocPredict`. -/
 def tdCands : Context → Finset TDOutput := fun _ => Finset.univ
 
 /-- Violation profile in POC's `Input → Output → Fin n → ℕ` shape.
@@ -262,7 +262,7 @@ def tdVp : Context → TDOutput → Fin 4 → ℕ
     the `picksAt_binary_iff_head_mem_favoring` bridge + the substrate's
     `perm_filter_head_in_rate`.
 
-    The discrete partial order (`PartialOrderConstraints.discrete 4`)
+    The discrete partial order (`(· = · : Fin 4 → Fin 4 → Prop)`)
     encodes "no rankings imposed" — uniform sampling over all 4! = 24
     total orders. -/
 
@@ -270,17 +270,17 @@ open Core.Optimization Core.Optimization.PermSubsetCombinatorics in
 /-- Probability that POC sampling selects deletion at context `ctx`,
     under the discrete partial order. -/
 def deletionProb (ctx : Context) : ℚ :=
-  PartialOrderConstraints.pocPredict tdCands tdVp
-    (PartialOrderConstraints.discrete 4) ctx .delete
+  pocPredict tdCands tdVp
+    ((· = · : Fin 4 → Fin 4 → Prop)) ctx .delete
 
 /-- Local specialisation of `pocPredict_discrete_binary_rate` to t/d-deletion,
     baking in `tdCands ctx = {.delete, .retain}` and `delete ≠ retain`. -/
 private theorem deletionProb_eq (ctx : Context) :
     deletionProb ctx =
-      ((PartialOrderConstraints.favoring tdVp ctx .delete .retain ∩
-          PartialOrderConstraints.active tdVp ctx .delete .retain).card : ℚ) /
-        ((PartialOrderConstraints.active tdVp ctx .delete .retain).card : ℚ) :=
-  PartialOrderConstraints.pocPredict_discrete_binary_rate
+      ((favoring tdVp ctx .delete .retain ∩
+          active tdVp ctx .delete .retain).card : ℚ) /
+        ((active tdVp ctx .delete .retain).card : ℚ) :=
+  pocPredict_discrete_binary_rate
     tdCands tdVp ctx .delete .retain
     (by unfold tdCands; ext o; cases o <;> simp)
     (fun heq => TDOutput.noConfusion heq)
@@ -327,9 +327,9 @@ theorem deletionProb_preV_eq_pause : deletionProb .preV = deletionProb .pause :=
 
 /-- The deletion pattern (preV?, pause?, preC?) produced by ranking `σ`. -/
 def deletionPattern (σ : Equiv.Perm (Fin 4)) : Bool × Bool × Bool :=
-  ( decide (PartialOrderConstraints.PicksAt tdCands tdVp σ .preV .delete)
-  , decide (PartialOrderConstraints.PicksAt tdCands tdVp σ .pause .delete)
-  , decide (PartialOrderConstraints.PicksAt tdCands tdVp σ .preC .delete) )
+  ( decide (PicksAt tdCands tdVp σ .preV .delete)
+  , decide (PicksAt tdCands tdVp σ .pause .delete)
+  , decide (PicksAt tdCands tdVp σ .preC .delete) )
 
 /-- Distinct categorical dialect types over all 4! = 24 total orders. -/
 def factorialTypes : Finset (Bool × Bool × Bool) :=
@@ -383,15 +383,15 @@ theorem no_preV_only :
     *CT >> MAX, the sole condition for pre-C deletion. -/
 theorem preV_deletion_implies_preC :
     ∀ σ : Equiv.Perm (Fin 4),
-    PartialOrderConstraints.PicksAt tdCands tdVp σ .preV .delete →
-    PartialOrderConstraints.PicksAt tdCands tdVp σ .preC .delete := by decide
+    PicksAt tdCands tdVp σ .preV .delete →
+    PicksAt tdCands tdVp σ .preC .delete := by decide
 
 /-- Similarly, every ranking producing pause deletion also produces
     pre-C deletion: *CT >> MAX ∧ *CT >> MAX-FINAL entails *CT >> MAX. -/
 theorem pause_deletion_implies_preC :
     ∀ σ : Equiv.Perm (Fin 4),
-    PartialOrderConstraints.PicksAt tdCands tdVp σ .pause .delete →
-    PartialOrderConstraints.PicksAt tdCands tdVp σ .preC .delete := by decide
+    PicksAt tdCands tdVp σ .pause .delete →
+    PicksAt tdCands tdVp σ .preC .delete := by decide
 
 /-- No ranking produces pre-V or pause deletion without also producing
     pre-C deletion. The formal basis for the cross-dialectal generalization
