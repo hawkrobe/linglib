@@ -37,13 +37,15 @@ preserving entailment/containment, so any antimatroid result transfers to OT.
 - `MChain.union_closed` — Lemma 3: MChain is union-closed
 - `Antimat_entailment` — Theorem 3: entailment → containment (proved)
 - `RCErc_single_eq_simpleERC` — two-element rooted circuits are simple ERCs (proved)
-- `Antimat_RCErc_inv` — Theorem 1: `Antimat ∘ RCErc = id` (stated; proof `sorry`)
+- `satisfiedBy_RCErc_iff_forall_prefix` — Dietrich's characterization: a ranking
+  satisfies `RCErc A` iff its every prefix is `A`-feasible, via the
+  rooted-circuit extraction `Antimatroid.exists_rootedCircuit_of_critical`
+  ([dietrich-1987])
+- `Antimat_RCErc_inv` — Theorem 1: `Antimat ∘ RCErc = id` on full-support
+  antimatroids (`A.E = univ`; with partial support the right side is vacuously
+  satisfiable and the statement fails)
 - `RCErc_Antimat_inv` — Theorem 2: `RCErc ∘ Antimat = id` up to entailment
-  (stated; proof `sorry`)
-- `RCErc_entailment` — Theorem 4: containment → entailment (stated; proof `sorry`)
-
-The three `sorry`s are the general antimatroid → ERC direction, which rests on
-[dietrich-1987]'s rooted-circuit characterization of feasible sets.
+- `RCErc_entailment` — Theorem 4: containment → entailment
 
 ## References
 
@@ -695,24 +697,320 @@ theorem RCErc_single_eq_simpleERC {n : Nat} (A : Antimatroid (Fin n))
 -- § 14: Isomorphism Theorems
 -- ============================================================================
 
-/-- **Theorem 1** ([merchant-riggle-2016]): `Antimat` is a left inverse of
-    `RCErc`. For any antimatroid `A`, rebuilding from `A`'s rooted-circuit
-    ERCs recovers `A` — stated at the feasible-set level (`Antimat (RCErc A)`
-    and `A` have the same feasible sets), since `Antimat`'s feasible sets are
-    by definition the maximal chains satisfying the ERC set.
+/-! ### Dietrich's characterization
 
-    The general proof rests on the rooted-circuit characterization of an
-    antimatroid's feasible sets ([dietrich-1987]; [merchant-riggle-2016]
-    Lemmas 7, 9), which is why this direction carries an honest `sorry`. -/
-theorem Antimat_RCErc_inv {n : Nat} (A : Antimatroid (Fin n)) (S : Set (Fin n)) :
+Satisfying `RCErc A` is exactly having every prefix `A`-feasible
+(`satisfiedBy_RCErc_iff_forall_prefix`): the easy direction reads a dominating
+winner off `not_free`, and the hard direction extracts a rooted circuit from
+the first infeasible prefix (`Antimatroid.exists_rootedCircuit_of_critical`,
+[dietrich-1987]). The isomorphism theorems are corollaries. -/
+
+theorem RCErc_single_eq_L_iff {n : Nat} (A : Antimatroid (Fin n))
+    (rc : Antimatroid.RootedCircuit A) (k : Fin n) :
+    RCErc_single A rc k = .L ↔ k = rc.root := by
+  simp only [RCErc_single]
+  split_ifs with h1 h2
+  · exact iff_of_false (by decide) h1.2
+  · exact iff_of_true rfl h2
+  · exact iff_of_false (by decide) h2
+
+theorem RCErc_single_eq_W_iff {n : Nat} (A : Antimatroid (Fin n))
+    (rc : Antimatroid.RootedCircuit A) (k : Fin n) :
+    RCErc_single A rc k = .W ↔ k ∈ rc.carrier ∧ k ≠ rc.root := by
+  simp only [RCErc_single]
+  split_ifs with h1 h2
+  · exact iff_of_true rfl h1
+  · exact iff_of_false (by decide) fun h => h.2 h2
+  · exact iff_of_false (by decide) h1
+
+private theorem maximalChain_succ_eq {n : Nat} (r : Ranking n) {m : ℕ} (hm : m < n)
+    {h1 : m + 1 < n + 1} {h0 : m < n + 1} :
+    maximalChain r ⟨m + 1, h1⟩ = insert (r ⟨m, hm⟩) (maximalChain r ⟨m, h0⟩) := by
+  ext i
+  simp only [maximalChain, Set.mem_ofPred_eq, Set.mem_insert_iff]
+  constructor
+  · intro h
+    rcases Nat.lt_succ_iff_lt_or_eq.mp h with h' | h'
+    · exact Or.inr h'
+    · refine Or.inl ?_
+      have : r.symm i = ⟨m, hm⟩ := Fin.ext h'
+      rw [← this, Equiv.apply_symm_apply]
+  · rintro (rfl | h)
+    · rw [Equiv.symm_apply_apply]
+      exact Nat.lt_succ_self m
+    · omega
+
+/-- **Dietrich's characterization** ([dietrich-1987]; [merchant-riggle-2016]
+    Lemmas 7, 9): on a full-support antimatroid, a ranking satisfies the
+    rooted-circuit ERCs iff its every prefix is feasible. -/
+theorem satisfiedBy_RCErc_iff_forall_prefix {n : Nat} (A : Antimatroid (Fin n))
+    (hE : A.E = Set.univ) (r : Ranking n) :
+    (∀ α ∈ RCErc A, ERC.SatisfiedBy r α) ↔
+      ∀ k : Fin (n + 1), A.IsFeasible (maximalChain r k) := by
+  constructor
+  · intro hsat k
+    suffices h : ∀ m (hm : m < n + 1), A.IsFeasible (maximalChain r ⟨m, hm⟩) by
+      simpa using h k.val k.isLt
+    intro m
+    induction m with
+    | zero =>
+      intro hm
+      rw [show (⟨0, hm⟩ : Fin (n + 1)) = ⟨0, Nat.zero_lt_succ n⟩ from rfl,
+        maximalChain_zero]
+      exact A.empty_feasible
+    | succ m ih =>
+      intro hm
+      have hmn : m < n := by omega
+      have hP := ih (by omega)
+      rw [maximalChain_succ_eq r hmn (h0 := by omega)]
+      set P := maximalChain r ⟨m, by omega⟩ with hPdef
+      set x := r ⟨m, hmn⟩ with hxdef
+      by_contra hnotfeas
+      have hxP : x ∉ P := by
+        simp only [hPdef, maximalChain, Set.mem_ofPred_eq, hxdef,
+          Equiv.symm_apply_apply]
+        omega
+      have hcrit : ¬∃ F, A.IsFeasible F ∧ F ∩ (A.E \ P) = {x} := by
+        rintro ⟨F, hF, hFW⟩
+        have hFE := A.feasible_sub F hF
+        have hFP : F \ P = {x} := by
+          rw [← hFW]
+          ext y
+          simp only [Set.mem_sdiff, Set.mem_inter_iff]
+          exact ⟨fun ⟨h1, h2⟩ => ⟨h1, hFE h1, h2⟩, fun ⟨h1, _, h3⟩ => ⟨h1, h3⟩⟩
+        have hxF : x ∈ F := (hFP.symm.subset rfl).1
+        have hins : insert x P = F ∪ P := by
+          ext y
+          simp only [Set.mem_insert_iff, Set.mem_union]
+          constructor
+          · rintro (rfl | h)
+            exacts [Or.inl hxF, Or.inr h]
+          · rintro (h | h)
+            · by_cases hyP : y ∈ P
+              · exact Or.inr hyP
+              · exact Or.inl (show y ∈ ({x} : Set (Fin n)) from hFP ▸ ⟨h, hyP⟩)
+            · exact Or.inr h
+        exact hnotfeas (hins ▸ A.union_closed F P hF hP)
+      obtain ⟨rc, hroot, hcarrier⟩ := A.exists_rootedCircuit_of_critical
+        (hE ▸ Set.finite_univ) Set.sdiff_subset
+        ⟨hE ▸ Set.mem_univ x, hxP⟩ hcrit
+      obtain ⟨w, hwW, hdom⟩ := (ERC.satisfiedBy_iff_dominance r _).mp
+        (hsat _ ⟨rc, rfl⟩) rc.root ((RCErc_single_eq_L_iff A rc rc.root).mpr rfl)
+      obtain ⟨hwc, -⟩ := (RCErc_single_eq_W_iff A rc w).mp hwW
+      have hwP : w ∉ P := (hcarrier hwc).2
+      have hxpos : (r.symm rc.root : ℕ) = m := by
+        rw [hroot, hxdef, Equiv.symm_apply_apply]
+      have hwpos : (r.symm w : ℕ) < m := hxpos ▸ hdom
+      exact hwP (by simp only [hPdef, maximalChain, Set.mem_ofPred_eq]; omega)
+  · rintro hfeas α ⟨rc, rfl⟩
+    rw [ERC.satisfiedBy_iff_dominance]
+    intro l hl
+    obtain rfl := (RCErc_single_eq_L_iff A rc l).mp hl
+    have hplt : ((r.symm rc.root).val) < n := (r.symm rc.root).isLt
+    have hPfeas := hfeas ⟨(r.symm rc.root).val + 1, by omega⟩
+    have hmem : rc.root ∈ maximalChain r ⟨(r.symm rc.root).val + 1, by omega⟩ ∩ rc.carrier :=
+      ⟨by simp only [maximalChain, Set.mem_ofPred_eq]; omega, rc.root_mem⟩
+    obtain ⟨w, hwmem, hwne⟩ :
+        ∃ w ∈ maximalChain r ⟨(r.symm rc.root).val + 1, by omega⟩ ∩ rc.carrier,
+          w ≠ rc.root := by
+      by_contra hall
+      push Not at hall
+      exact rc.not_free ⟨_, hPfeas,
+        Set.Subset.antisymm (Set.singleton_subset_iff.mpr hmem)
+          fun w hw => hall w hw⟩
+    refine ⟨w, (RCErc_single_eq_W_iff A rc w).mpr ⟨hwmem.2, hwne⟩, ?_⟩
+    have hwlt : (r.symm w : ℕ) < (r.symm rc.root).val + 1 := hwmem.1
+    have hne : (r.symm w : ℕ) ≠ (r.symm rc.root).val :=
+      fun h => hwne (r.symm.injective (Fin.ext h))
+    show r.symm w < r.symm rc.root
+    rw [Fin.lt_def]
+    omega
+
+/-! ### Feasible sets as flags of feasible prefixes -/
+
+private theorem exists_feasible_enum_list {n : Nat} (A : Antimatroid (Fin n))
+    {S : Set (Fin n)} (hS : A.IsFeasible S) :
+    ∃ l : List (Fin n), l.Nodup ∧ {x | x ∈ l} = S ∧
+      ∀ i, A.IsFeasible {x | x ∈ l.take i} := by
+  induction hcard : S.ncard using Nat.strong_induction_on generalizing S with
+  | _ m ih =>
+    rcases Set.eq_empty_or_nonempty S with rfl | hne
+    · exact ⟨[], List.nodup_nil, by simp, fun i => by
+        simpa using A.empty_feasible⟩
+    · obtain ⟨z, hz, hz_feas⟩ := A.removal S hS hne
+      obtain ⟨l', hnd', hset', hfeas'⟩ := ih (S \ {z}).ncard
+        (hcard ▸ Set.ncard_sdiff_singleton_lt_of_mem hz (Set.toFinite S))
+        hz_feas rfl
+      have hzl' : z ∉ l' := fun h => (hset'.subset h).2 rfl
+      have hfull : {x | x ∈ l' ++ [z]} = S := by
+        ext y
+        simp only [Set.mem_ofPred_eq, List.mem_append, List.mem_singleton]
+        constructor
+        · rintro (h | rfl)
+          · exact (hset'.subset h).1
+          · exact hz
+        · intro hy
+          rcases eq_or_ne y z with rfl | hyz
+          · exact Or.inr rfl
+          · exact Or.inl (hset'.superset ⟨hy, hyz⟩)
+      refine ⟨l' ++ [z], ?_, hfull, ?_⟩
+      · exact List.Nodup.append hnd' (List.nodup_singleton z)
+          fun a ha hb => (List.mem_singleton.mp hb ▸ hzl') ha
+      · intro i
+        rcases Nat.lt_or_ge l'.length i with h | h
+        · have hlen' : (l' ++ [z]).length ≤ i := by simp; omega
+          rw [List.take_of_length_le hlen', hfull]
+          exact hS
+        · rw [List.take_append, Nat.sub_eq_zero_of_le h]
+          simpa using hfeas' i
+
+private theorem exists_feasible_ext_list {n : Nat} (A : Antimatroid (Fin n))
+    (hE : A.E = Set.univ) {S : Set (Fin n)} (hS : A.IsFeasible S) :
+    ∃ l : List (Fin n), l.Nodup ∧ (∀ x ∈ l, x ∉ S) ∧
+      {x | x ∈ l} = Set.univ \ S ∧
+      ∀ i, A.IsFeasible (S ∪ {x | x ∈ l.take i}) := by
+  induction hcard : (Set.univ \ S).ncard using Nat.strong_induction_on generalizing S with
+  | _ m ih =>
+    rcases eq_or_ne S Set.univ with rfl | hne
+    · exact ⟨[], List.nodup_nil, by simp, by simp, fun i => by simpa using hS⟩
+    · obtain ⟨y, _, hyS, hy_feas⟩ := A.augmentation S hS (hE ▸ hne)
+      have hlt : (Set.univ \ insert y S).ncard < (Set.univ \ S).ncard :=
+        Set.ncard_lt_ncard
+          ⟨Set.sdiff_subset_sdiff_right (Set.subset_insert y S),
+            fun h => (h ⟨Set.mem_univ y, hyS⟩).2 (Set.mem_insert y S)⟩
+          (Set.toFinite _)
+      obtain ⟨l', hnd', hout', hset', hfeas'⟩ := ih _ (hcard ▸ hlt) hy_feas rfl
+      have hyl' : y ∉ l' := fun h => hout' y h (Set.mem_insert y S)
+      refine ⟨y :: l', List.nodup_cons.mpr ⟨hyl', hnd'⟩, ?_, ?_, ?_⟩
+      · intro x hx
+        rcases List.mem_cons.mp hx with rfl | hx
+        · exact hyS
+        · exact fun hxS => hout' x hx (Set.mem_insert_of_mem y hxS)
+      · ext z
+        simp only [Set.mem_ofPred_eq, List.mem_cons, Set.mem_sdiff, Set.mem_univ,
+          true_and]
+        constructor
+        · rintro (rfl | hz)
+          · exact hyS
+          · exact fun hzS =>
+              hout' z hz (Set.mem_insert_of_mem y hzS)
+        · intro hz
+          rcases eq_or_ne z y with rfl | hzy
+          · exact Or.inl rfl
+          · refine Or.inr (hset'.superset ⟨Set.mem_univ z, ?_⟩)
+            intro hmem
+            rcases Set.mem_insert_iff.mp hmem with rfl | h
+            exacts [hzy rfl, hz h]
+      · intro i
+        cases i with
+        | zero => simpa using hS
+        | succ j =>
+          have heq : S ∪ {x | x ∈ (y :: l').take (j + 1)} =
+              insert y S ∪ {x | x ∈ l'.take j} := by
+            ext z
+            simp only [List.take_succ_cons, Set.mem_union, Set.mem_ofPred_eq,
+              List.mem_cons, Set.mem_insert_iff]
+            tauto
+          rw [heq]
+          exact hfeas' j
+
+/-- **Theorem 1** ([merchant-riggle-2016]): `Antimat` is a left inverse of
+    `RCErc`. On a full-support antimatroid, the feasible sets are exactly the
+    maximal-chain prefixes of the rankings satisfying the rooted-circuit ERCs.
+    Forward: extend `S` to a full flag of feasible prefixes (removal below,
+    augmentation above) and read off the ranking. Backward: Dietrich's
+    characterization (`satisfiedBy_RCErc_iff_forall_prefix`). -/
+theorem Antimat_RCErc_inv {n : Nat} (A : Antimatroid (Fin n))
+    (hE : A.E = Set.univ) (S : Set (Fin n)) :
     A.IsFeasible S ↔
       ∃ r : Ranking n, (∀ α ∈ RCErc A, ERC.SatisfiedBy r α) ∧
         ∃ k, maximalChain r k = S := by
-  -- TODO: [merchant-riggle-2016] Theorem 1 (antimatroid → ERC direction of
-  -- the isomorphism). Show A's feasible sets are exactly the maximal chains
-  -- consistent with A's rooted-circuit ERCs. Requires [dietrich-1987]'s
-  -- rooted-circuit characterization (the hard direction via traces).
-  sorry
+  classical
+  constructor
+  · intro hS
+    obtain ⟨l₀, hnd₀, hset₀, hfeas₀⟩ := exists_feasible_enum_list A hS
+    obtain ⟨l₁, hnd₁, hout₁, hset₁, hfeas₁⟩ := exists_feasible_ext_list A hE hS
+    set l := l₀ ++ l₁ with hldef
+    have hnd : l.Nodup := List.Nodup.append hnd₀ hnd₁
+      fun a ha hb => hout₁ a hb (hset₀.subset ha)
+    have hcover : ∀ x, x ∈ l := by
+      intro x
+      by_cases hx : x ∈ S
+      · exact List.mem_append_left _ (hset₀.superset hx)
+      · exact List.mem_append_right _ (hset₁.superset ⟨Set.mem_univ x, hx⟩)
+    set e := List.Nodup.getEquivOfForallMemList l hnd hcover with hedef
+    have hlen : l.length = n := by
+      simpa using (Fintype.card_congr e)
+    have hchain : ∀ (k : ℕ) (hk : k < n + 1),
+        maximalChain ((finCongr hlen).symm.trans e) ⟨k, hk⟩ = {x | x ∈ l.take k} := by
+      intro k hk
+      ext x
+      simp only [maximalChain, Set.mem_ofPred_eq]
+      have hsymm : ((((finCongr hlen).symm.trans e).symm x : Fin n) : ℕ) = l.idxOf x := rfl
+      rw [hsymm]
+      exact (List.mem_take_iff_idxOf_lt (hcover x)).symm
+    refine ⟨(finCongr hlen).symm.trans e, ?_, ?_⟩
+    · rw [satisfiedBy_RCErc_iff_forall_prefix A hE]
+      intro k
+      rw [show k = (⟨(k : ℕ), k.isLt⟩ : Fin (n + 1)) from rfl, hchain]
+      rcases Nat.lt_or_ge l₀.length (k : ℕ) with h | h
+      · rw [hldef, List.take_append,
+          List.take_of_length_le (le_of_lt h)]
+        have hsplit : {x | x ∈ l₀ ++ l₁.take ((k : ℕ) - l₀.length)} =
+            S ∪ {x | x ∈ l₁.take ((k : ℕ) - l₀.length)} := by
+          rw [← hset₀]
+          ext z
+          simp [List.mem_append]
+        rw [hsplit]
+        exact hfeas₁ _
+      · rw [hldef, List.take_append, Nat.sub_eq_zero_of_le h]
+        simpa using hfeas₀ k
+    · have hlen₀ : S.ncard = l₀.length := by
+        rw [← hset₀, show {x | x ∈ l₀} = (↑l₀.toFinset : Set (Fin n)) by
+          simp [List.coe_toFinset], Set.ncard_coe_finset,
+          List.toFinset_card_of_nodup hnd₀]
+      have hcard_le : S.ncard ≤ n := by
+        have h1 : l₀.length ≤ l.length := by simp [hldef]
+        omega
+      refine ⟨⟨S.ncard, by omega⟩, ?_⟩
+      rw [hchain S.ncard (by omega), hlen₀, hldef, List.take_left]
+      exact hset₀
+  · rintro ⟨r, hsat, k, hk⟩
+    exact hk ▸ (satisfiedBy_RCErc_iff_forall_prefix A hE r).mp hsat k
+
+/-- A ranking satisfies `E` iff each of its prefixes is a prefix of *some*
+    ranking satisfying `E`: the witness for the prefix through the loser
+    already contains the dominating winner. -/
+theorem satisfiedBy_iff_forall_prefix_mChain {n : Nat} (E : Finset (ERC n))
+    (r : Ranking n) :
+    (∀ α ∈ E, ERC.SatisfiedBy r α) ↔
+      ∀ k : Fin (n + 1), MChain E (maximalChain r k) := by
+  constructor
+  · intro h k
+    exact ⟨r, h, k, rfl⟩
+  · intro h α hα
+    rw [ERC.satisfiedBy_iff_dominance]
+    intro l hl
+    have hplt : ((r.symm l).val) < n := (r.symm l).isLt
+    obtain ⟨r', hr', k', hk'⟩ := h ⟨(r.symm l).val + 1, by omega⟩
+    have hlP : l ∈ maximalChain r' k' := by
+      rw [hk']
+      simp only [maximalChain, Set.mem_ofPred_eq]
+      omega
+    obtain ⟨w, hwW, hdom⟩ := (ERC.satisfiedBy_iff_dominance r' α).mp (hr' α hα) l hl
+    have hwP : w ∈ maximalChain r' k' := by
+      simp only [maximalChain, Set.mem_ofPred_eq] at hlP ⊢
+      have : (r'.symm w : ℕ) < (r'.symm l : ℕ) := hdom
+      omega
+    rw [hk'] at hwP
+    simp only [maximalChain, Set.mem_ofPred_eq] at hwP
+    have hwl : w ≠ l := fun h => absurd (h ▸ hdom) (lt_irrefl _)
+    have hne : (r.symm w : ℕ) ≠ (r.symm l).val :=
+      fun h => hwl (r.symm.injective (Fin.ext h))
+    refine ⟨w, hwW, ?_⟩
+    show r.symm w < r.symm l
+    rw [Fin.lt_def]
+    omega
 
 /-- **Theorem 2** ([merchant-riggle-2016]): `RCErc` is a left inverse of `Antimat`
     *up to entailment*. For a consistent ERC set `E`, the rooted-circuit ERCs of
@@ -724,17 +1022,16 @@ theorem Antimat_RCErc_inv {n : Nat} (A : Antimatroid (Fin n)) (S : Set (Fin n)) 
     implied edge `a≫c` (a rooted circuit of the chain antimatroid), a strict
     superset of the two-edge input — yet both pick out the single order `a≫b≫c`.
     Hence the statement is mutual entailment (same satisfying rankings), the form
-    [merchant-riggle-2016] actually proves. The general proof rests on
-    [dietrich-1987]'s rooted-circuit characterization (via Lemmas 7, 9), so it
-    carries an honest `sorry`. -/
+    [merchant-riggle-2016] actually proves. -/
 theorem RCErc_Antimat_inv {n : Nat} (E : Finset (ERC n))
     (hcons : (ERC.linearExtensions E).Nonempty) :
     ∀ r : Ranking n,
-      (∀ α ∈ RCErc (Antimat E hcons), ERC.SatisfiedBy r α) ↔ ∀ α ∈ E, ERC.SatisfiedBy r α := by
-  -- TODO: [merchant-riggle-2016] Theorem 2 (logical-equivalence form). Needs the
-  -- rooted-circuit characterization of `Antimat E`'s feasible sets ([dietrich-1987];
-  -- [merchant-riggle-2016] Lemmas 7, 9).
-  sorry
+      (∀ α ∈ RCErc (Antimat E hcons), ERC.SatisfiedBy r α) ↔
+        ∀ α ∈ E, ERC.SatisfiedBy r α := by
+  intro r
+  rw [satisfiedBy_RCErc_iff_forall_prefix _ rfl,
+    satisfiedBy_iff_forall_prefix_mChain]
+  exact Iff.rfl
 
 /-- **Theorem 3** ([merchant-riggle-2016]): `Antimat` preserves
     entailment.
@@ -749,20 +1046,18 @@ theorem Antimat_entailment {n : Nat} (E F : Finset (ERC n))
   intro S ⟨r, hr, k, hk⟩
   exact ⟨r, ERC.mem_linearExtensions.mp (h (ERC.mem_linearExtensions.mpr hr)), k, hk⟩
 
-/-- **Theorem 4** ([merchant-riggle-2016]): `RCErc` preserves
-    containment.
-
-    If antimatroid `A ⊆ B` (every feasible set of `A` is feasible in
-    `B`), then `RCErc(A)` entails `RCErc(B)`. -/
+/-- **Theorem 4** ([merchant-riggle-2016]): `RCErc` preserves containment.
+    If every feasible set of `A` is feasible in `B`, then `RCErc A` entails
+    `RCErc B` — immediate from Dietrich's characterization. -/
 theorem RCErc_entailment {n : Nat} (A B : Antimatroid (Fin n))
+    (hA : A.E = Set.univ) (hB : B.E = Set.univ)
     (h : ∀ S, A.IsFeasible S → B.IsFeasible S) :
     ∀ r : Ranking n, (∀ α ∈ RCErc A, ERC.SatisfiedBy r α) →
       (∀ α ∈ RCErc B, ERC.SatisfiedBy r α) := by
-  -- TODO: [merchant-riggle-2016] Theorem 4 (mirror of `Antimat_entailment`).
-  -- Feasible-set containment A ⊆ B becomes ERC entailment RCErc A ⊨ RCErc B;
-  -- needs the rooted-circuit ↔ feasible-set correspondence of Theorem 1
-  -- ([dietrich-1987]; [merchant-riggle-2016] Lemmas 7, 9).
-  sorry
+  intro r hr
+  rw [satisfiedBy_RCErc_iff_forall_prefix B hB]
+  rw [satisfiedBy_RCErc_iff_forall_prefix A hA] at hr
+  exact fun k => h _ (hr k)
 
 -- ============================================================================
 -- § 15: Rankings as maximal chains
