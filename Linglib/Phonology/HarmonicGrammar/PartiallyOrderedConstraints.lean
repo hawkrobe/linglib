@@ -3,6 +3,7 @@ import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Phonology.OptimalityTheory.Grammar
 import Linglib.Core.Optimization.PermSubsetCombinatorics
+import Mathlib.Data.Sigma.Lex
 import Mathlib.Order.Extension.Linear
 import Mathlib.Order.Preorder.Finite
 
@@ -40,6 +41,10 @@ head-fiber counting in `Core.Optimization.PermSubsetCombinatorics`);
   ([merchant-riggle-2016]; [prince-2002]). `toGrammar` routes POC through the
   `Grammar` hub, and `pocAntimatroid` realizes the Birkhoff correspondence
   with order-ideal antimatroids ([dilworth-1940]).
+- `stratified_rel_iff_lex`: the stratified order is mathlib's lexicographic
+  sigma order (`Sigma.Lex`, underlying `Sigma.Lex.partialOrder`) transported
+  along the fiber partition of the stratum map — strata as an ordinal sum,
+  not a re-stipulation.
 - `isOTRealizable_iff_isPOCRealizable`: categorically, POC adds nothing over
   OT. Its advantage is probabilistic — `pocPredict` produces intermediate
   frequencies (e.g. [coetzee-pater-2011]'s 8/24 vs 12/24 t/d-deletion rates)
@@ -245,6 +250,34 @@ def stratified (stratumOf : Fin n → Fin s) (inner : PartialOrderConstraints n)
         · exact absurd (lt_of_lt_of_eq hab hba) (lt_irrefl _)
         · exact absurd (lt_of_lt_of_eq hba hab) (lt_irrefl _)
         · exact antisymm_of inner.rel hab' hba' }
+
+private theorem sigmaMk_stratum_eq {stratumOf : Fin n → Fin s} {a : Fin n} {k : Fin s}
+    (h : stratumOf a = k) :
+    (⟨stratumOf a, a, rfl⟩ : Σ k, {c : Fin n // stratumOf c = k}) = ⟨k, a, h⟩ := by
+  subst h; rfl
+
+/-- `stratified` is the lexicographic sigma order — the relation underlying
+    mathlib's `Sigma.Lex.partialOrder` — transported along the fiber partition
+    `Equiv.sigmaFiberEquiv stratumOf`: constraints compare by stratum first
+    and by the inner order within a stratum. -/
+theorem stratified_rel_iff_lex {stratumOf : Fin n → Fin s}
+    {inner : PartialOrderConstraints n} {a b : Fin n} :
+    (stratified stratumOf inner).rel a b ↔
+      Sigma.Lex (· < ·) (fun k (x y : {c : Fin n // stratumOf c = k}) => inner.rel x.1 y.1)
+        ⟨stratumOf a, a, rfl⟩ ⟨stratumOf b, b, rfl⟩ := by
+  constructor
+  · rintro (hlt | ⟨heq, hrel⟩)
+    · exact Sigma.Lex.left _ _ hlt
+    · rw [sigmaMk_stratum_eq heq]
+      exact Sigma.Lex.right _ _ hrel
+  · intro hlex
+    rcases Sigma.lex_iff.mp hlex with hlt | ⟨heq, -⟩
+    · exact Or.inl hlt
+    · refine Or.inr ⟨heq, ?_⟩
+      rw [sigmaMk_stratum_eq heq] at hlex
+      cases hlex with
+      | left _ _ h => exact absurd h (lt_irrefl _)
+      | right _ _ hr => exact hr
 
 /-- Under a stratified order, an earlier-stratum constraint occupies a strictly
     earlier position in every consistent ranking. -/
