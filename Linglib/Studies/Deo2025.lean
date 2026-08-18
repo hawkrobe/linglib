@@ -47,7 +47,7 @@ makes this a higher-order operation that *uses* the 2×2, not a single
 The secondary felicity condition (eq. 21): addressee uptake of *p* must
 be a precondition for fulfilling a contextually salient
 addressee-benefiting goal `g_c ∈ EP(s, w)`
-(`Semantics.Attitudes.Desire.EffectivePreferentialBackground`).
+(`Desire.EffectivePreferentialBackground`).
 
 ## Out of scope
 

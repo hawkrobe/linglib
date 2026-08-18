@@ -17,7 +17,7 @@ This study file replicates the desire-semantics half of [heim-1992]
 (the presupposition-projection half is at
 `Studies/Heim1992.lean`). Substrate is
 `Semantics/Attitudes/Desire.lean` (`wantHeim`,
-`wantHeimDefined`, `HeimDesireParams`, `wantHeim_no_simultaneous_pq_and_negpq`).
+`wantHeimDefined`, `HeimDesireParams`, `wantHeim_no_conflict`).
 
 ## §-by-§ map
 
@@ -35,16 +35,16 @@ This study file replicates the desire-semantics half of [heim-1992]
 * `Studies/Heim1992.lean` formalizes the
   know/believe asymmetry — the *other* half of Heim 1992 (and the more
   durably cited half).
-* The substrate's `BeliefBasedDesireSemantics` typology (in `Desire.lean`)
-  packages vF and Heim under one parametric no-go; later study files
-  (PhillipsBrown2025, etc.) instantiate or refute it. Per project
-  chronological-dependency rules, comparisons with later papers live in
-  those later study files, not here.
+* The belief-based-class typology (`BeliefBasedDesireSemantics`, in
+  `Studies/PhillipsBrown2025.lean` — it is [phillips-brown-2025]'s own
+  §2 packaging) instantiates Heim and proves her conflict-blocking. Per
+  project chronological-dependency rules, that comparison lives in the
+  later paper's study file, not here.
 -/
 
 namespace Heim1992
 
-open Semantics.Attitudes.Desire
+open Desire
 
 /-! ## §1. World model
 
@@ -153,7 +153,7 @@ where she worries that (40) is in fact *too* restrictive and proposes
 shrinking Dox to a "favored" subset F_α) — is that under preference
 asymmetry, no `(belS, w_eval)` configuration validates both
 `wantHeim p` and `wantHeim ¬p`. The substrate theorem
-`wantHeim_no_simultaneous_pq_and_negpq` discharges this generically.
+`wantHeim_no_conflict` discharges this generically.
 
 Whether this side-effect is a virtue (Heim's account *correctly*
 rejects co-wanting p and ¬p) or a defect (Heim's account *cannot
@@ -178,7 +178,7 @@ theorem prefRecovered_asymm (w_eval : W) :
 theorem heim_no_simultaneous_recovered :
     ¬ (wantHeim (Set.univ : Set W) heimParams .w0 recovered ∧
        wantHeim (Set.univ : Set W) heimParams .w0 (fun w => ¬ recovered w)) :=
-  wantHeim_no_simultaneous_pq_and_negpq (Set.univ : Set W) heimParams .w0
+  wantHeim_no_conflict (Set.univ : Set W) heimParams .w0
     recovered (prefRecovered_asymm .w0) wantHeim_recovered_defined
 
 /-! ## §5. Stalnaker get-well / ¬have-been-sick — deferred

@@ -21,7 +21,7 @@ The substrate is `Semantics/Attitudes/Desire.lean`. All theorems
 here either compute by `decide` over an 8-world model (3 binary
 dimensions: `nap × rested × pass` = `lobster × gustatory × ¬die`) or
 delegate to the substrate's general theorems
-(`wantVF_no_simultaneous_pq_and_negpq`,
+(`wantVonFintel_no_conflict`,
 `wantQuestionBased_strawson_upward_monotonic`, …).
 
 ## §-by-§ map
@@ -54,7 +54,7 @@ a common predicate.
 
 namespace PhillipsBrown2025
 
-open Semantics.Attitudes.Desire
+open Desire
 
 /-! ## §1. Eight-world model
 
@@ -197,27 +197,27 @@ theorem not_die_true :
 The paper's central argument against belief-based semantics: vF cannot
 predict both `want p` and `want ¬p` simultaneously. Specialised here
 for the Nap example, then derived from the substrate's general
-`wantVF_no_simultaneous_pq_and_negpq`. -/
+`wantVonFintel_no_conflict`. -/
 
-theorem vf_nap_true : wantVF belNapRest desRest nap := by decide
+theorem vf_nap_true : wantVonFintel belNapRest desRest nap := by decide
 
 theorem vf_not_nap_false :
-    ¬ wantVF belNapRest desRest (fun w => ¬ nap w) := by decide
+    ¬ wantVonFintel belNapRest desRest (fun w => ¬ nap w) := by decide
 
 /-- vF cannot predict both Nap and Not-nap with the same parameter set
     (specific instance). -/
 theorem vf_cannot_predict_both :
-    ¬(wantVF belNapRest desRest nap ∧
-      wantVF belNapRest desRest (fun w => ¬ nap w)) := by
+    ¬(wantVonFintel belNapRest desRest nap ∧
+      wantVonFintel belNapRest desRest (fun w => ¬ nap w)) := by
   intro ⟨_, h⟩; exact vf_not_nap_false h
 
 /-- vF cannot predict both Nap and Not-nap (general no-go, delegates
     to the substrate). The witness is any belS-world that is
     Pareto-undominated under the desire ordering. -/
 theorem vf_no_conflict_nap :
-    ¬ (wantVF belNapRest desRest nap ∧
-       wantVF belNapRest desRest (fun w => ¬ nap w)) :=
-  wantVF_no_simultaneous_pq_and_negpq belNapRest desRest nap
+    ¬ (wantVonFintel belNapRest desRest nap ∧
+       wantVonFintel belNapRest desRest (fun w => ¬ nap w)) :=
+  wantVonFintel_no_conflict belNapRest desRest nap
     ⟨.w0, by decide,
      by intro z hz ⟨_, hbad⟩; revert hz hbad; cases z <;> decide⟩
 
@@ -331,33 +331,33 @@ def allWorldsW : List W := [.w0, .w1, .w2, .w3, .w4, .w5, .w6, .w7]
 def qFinest : List (DecProp W) := finestPartition allWorldsW
 
 /-- The 8-world list `allWorldsW` covers `W`. Hypothesis required by the
-    substrate's general `wantQuestionBased_finestPartition_iff_wantVF`. -/
+    substrate's general `wantQuestionBased_finestPartition_iff_wantVonFintel`. -/
 theorem allWorldsW_complete : ∀ w : W, w ∈ allWorldsW := by
   intro w; cases w <;> decide
 
 /-- With the finest question, question-based want = standard vF want
     for `nap`. Derived from the substrate's general
-    `wantQuestionBased_finestPartition_iff_wantVF`, not by `decide`. -/
+    `wantQuestionBased_finestPartition_iff_wantVonFintel`, not by `decide`. -/
 theorem finest_simulates_vf_nap :
     wantQuestionBased belNapRest desRest qFinest nap ↔
-    wantVF belNapRest desRest nap :=
-  wantQuestionBased_finestPartition_iff_wantVF belNapRest desRest
+    wantVonFintel belNapRest desRest nap :=
+  wantQuestionBased_finestPartition_iff_wantVonFintel belNapRest desRest
     allWorldsW allWorldsW_complete nap
 
 /-- With the finest question, question-based want = standard vF want
     for `¬nap`. -/
 theorem finest_simulates_vf_not_nap :
     wantQuestionBased belNapRest desRest qFinest (fun w => ¬ nap w) ↔
-    wantVF belNapRest desRest (fun w => ¬ nap w) :=
-  wantQuestionBased_finestPartition_iff_wantVF belNapRest desRest
+    wantVonFintel belNapRest desRest (fun w => ¬ nap w) :=
+  wantQuestionBased_finestPartition_iff_wantVonFintel belNapRest desRest
     allWorldsW allWorldsW_complete (fun w => ¬ nap w)
 
 /-- With the finest question, question-based want = standard vF want
     for `¬lobster` in the Lobster context. -/
 theorem finest_simulates_vf_not_lobster :
     wantQuestionBased belLobDie desNotDie qFinest (fun w => ¬ nap w) ↔
-    wantVF belLobDie desNotDie (fun w => ¬ nap w) :=
-  wantQuestionBased_finestPartition_iff_wantVF belLobDie desNotDie
+    wantVonFintel belLobDie desNotDie (fun w => ¬ nap w) :=
+  wantQuestionBased_finestPartition_iff_wantVonFintel belLobDie desNotDie
     allWorldsW allWorldsW_complete (fun w => ¬ nap w)
 
 /-! ## §9. Definedness via PartialProp (paper §3.6) -/
@@ -473,55 +473,138 @@ desire, but they make non-overlapping claims. -/
     the contrast. -/
 theorem condoravdiLauer_blocks_simultaneous_pq_and_negpq
     {Agent W : Type} {B : Agent → W → Set W}
-    (EP : Semantics.Attitudes.Desire.EffectivePreferentialBackground Agent W B)
+    (EP : Desire.EffectivePreferentialBackground Agent W B)
     (a : Agent) (φ : Set W) (w : W)
-    (hφ : Semantics.Attitudes.Desire.wantEP EP a φ w)
-    (hnegφ : Semantics.Attitudes.Desire.wantEP EP a (fun w => ¬ φ w) w) :
+    (hφ : Desire.wantEP EP a φ w)
+    (hnegφ : Desire.wantEP EP a (fun w => ¬ φ w) w) :
     False := by
-  have h := Semantics.Attitudes.Desire.wantEP_jointly_belief_consistent
+  have h := Desire.wantEP_jointly_belief_consistent
               EP hφ hnegφ
   apply h
   ext x
   simp only [Set.mem_inter_iff, Set.mem_empty_iff_false, iff_false, not_and]
   exact fun ⟨h1, h2⟩ _ => h2 h1
 
-/-! ## §12. Heim foil and parametric no-go
+/-! ### The belief-based class and its no-go (paper §2)
 
-[heim-1992]'s comparative-belief semantics (`wantHeim`) is the
-*other* canonical belief-based account — formalized at
-`Semantics/Attitudes/Desire.lean` and exercised in
-`Studies/Heim1992Desire.lean`. The substrate's
-`BeliefBasedDesireSemantics` typology packages vF, Heim, and (in
-principle) Levinson 2003 / sufficient-desirability accounts under a
-single structural property `isConflictBlocking`.
-
-PB's argument against belief-based semantics generalizes from
-`vf_no_conflict_nap` (vF only) to:
-
-* Heim 1992: blocked by `wantHeim_no_simultaneous_pq_and_negpq` under
-  preference asymmetry. The (40) amendment makes definedness of
-  `wantHeim p` and `wantHeim ¬p` simultaneously impossible when the
-  agent's beliefs are consistent.
-* vF: blocked by `wantVF_no_simultaneous_pq_and_negpq`.
-* Any future `BeliefBasedDesireSemantics` instance: blocked by the
-  parametric `isConflictBlocking` predicate (currently proved per
-  instance in `Semantics/Attitudes/Desire.lean`).
+The paper's §2 thesis is class-level: conflicting desire ascriptions
+falsify *every* semantics on the orthodox belief-based approach —
+[heim-1992], [von-fintel-1999], Levinson 2003, and their descendants.
+`BeliefBasedDesireSemantics` formalizes the class: a desire-semantic
+device over (Bel_S, parameters, evaluation world, proposition) with no
+contextual question parameter outside that shape. Both von Fintel and
+Heim are instances (`vonFintelSemantics`, `heimSemantics`), each proved
+conflict-blocking by delegation to the substrate's per-account no-go
+theorems (`wantVonFintel_no_conflict`, `wantHeim_no_conflict`).
 
 PB's `wantQuestionBased` *evades* the no-go by selecting from
 `Q-Bel_S` rather than directly from `Bel_S` — it is *not* an
 instance of `BeliefBasedDesireSemantics` (the question parameter
-`answers` plays a non-trivial role outside the typeclass shape). -/
+`answers` plays a non-trivial role outside the shape). -/
+
+/-- A belief-based desire semantics on world type `W`: `defined` is the
+    presuppositional definedness condition, `want` the truth condition.
+    Decidability inside instances is supplied classically — the
+    structure is for Prop-level reasoning, not for `decide`. -/
+structure BeliefBasedDesireSemantics (W : Type*) where
+  /-- Type of additional parameters (desire list for von Fintel,
+      similarity + pref for Heim, etc.). -/
+  Param : Type*
+  /-- Definedness condition: the presupposition that ⟦S wants p⟧^c is
+      defined at the configuration. -/
+  defined : Set W → Param → Set W → Prop
+  /-- Truth condition: when defined, the prediction of ⟦S wants p⟧^c. -/
+  want : Set W → Param → W → Set W → Prop
+
+/-- A semantics is **conflict-blocking** if no parameters/world make
+    `want(p)` and `want(¬p)` both true when both are defined — the
+    paper's §2 no-go in slogan form. -/
+def BeliefBasedDesireSemantics.isConflictBlocking
+    {W : Type*} (F : BeliefBasedDesireSemantics W) : Prop :=
+  ∀ belS Param w_eval (p : Set W),
+    F.defined belS Param p → F.defined belS Param (fun w => ¬ p w) →
+    ¬ (F.want belS Param w_eval p ∧ F.want belS Param w_eval (fun w => ¬ p w))
+
+/-- von Fintel as a `BeliefBasedDesireSemantics` instance. `defined`
+    requires both p- and ¬p-witnesses in belS — strong enough that some
+    belS-world is necessarily undominated, which the no-go needs. -/
+def vonFintelSemantics {W : Type*} [Fintype W] :
+    BeliefBasedDesireSemantics W where
+  Param := List (DecProp W)
+  defined belS _ p := (∃ w, belS w ∧ p w) ∧ (∃ w, belS w ∧ ¬ p w)
+  want belS GS _ p := wantVonFintel belS GS p
+
+/-- `wantHeim` with decidability supplied classically, so the structure
+    projection of `heimSemantics` is stable across ambient instances. -/
+noncomputable def wantHeimClassical {W : Type*} [Fintype W] [DecidableEq W]
+    (belS : Set W) (params : HeimDesireParams W) (w_eval : W) (p : Set W) : Prop :=
+  letI : DecidablePred belS := Classical.decPred _
+  letI : DecidablePred p := Classical.decPred _
+  wantHeim belS params w_eval p
+
+/-- The classical-decidability variant agrees with `wantHeim` under any
+    ambient decidability instances (`DecidablePred` is a subsingleton). -/
+theorem wantHeimClassical_iff_wantHeim {W : Type*} [Fintype W] [DecidableEq W]
+    (belS : Set W) [DecidablePred belS]
+    (params : HeimDesireParams W) (w_eval : W) (p : Set W) [DecidablePred p] :
+    wantHeimClassical belS params w_eval p ↔ wantHeim belS params w_eval p := by
+  unfold wantHeimClassical
+  congr!
+
+/-- Heim as a `BeliefBasedDesireSemantics` instance: definedness is her
+    (40) amendment, `want` the classical-decidability form. -/
+noncomputable def heimSemantics {W : Type*} [Fintype W] [DecidableEq W] :
+    BeliefBasedDesireSemantics W where
+  Param := HeimDesireParams W
+  defined belS _ p :=
+    (∃ w, belS w ∧ p w) ∧ (∃ w, belS w ∧ ¬ p w)
+  want belS params w_eval p := wantHeimClassical belS params w_eval p
+
+/-- von Fintel is **conflict-blocking**: delegates to
+    `wantVonFintel_no_conflict` after extracting a Pareto-undominated
+    belS-world via finite-preorder minimal-element existence. -/
+theorem vonFintelSemantics_isConflictBlocking {W : Type*} [Fintype W] :
+    (vonFintelSemantics (W := W)).isConflictBlocking := by
+  classical
+  intro belS GS _w_eval p hDef _hDefNeg ⟨hp, hnp⟩
+  apply Desire.wantVonFintel_no_conflict belS GS p ?_ ⟨hp, hnp⟩
+  obtain ⟨wp, hwp_bel, _⟩ := hDef.1
+  let _ : Preorder W :=
+    { le := worldAtLeastAsGood GS
+      le_refl := fun _ _ _ hp_w => hp_w
+      le_trans := fun _ _ _ huv hvw q hq hqz => huv q hq (hvw q hq hqz) }
+  have hbelNonempty : (belS : Set W).Nonempty := ⟨wp, hwp_bel⟩
+  obtain ⟨m, hmA, hmin⟩ := (Set.toFinite _).exists_minimal hbelNonempty
+  exact ⟨m, hmA, fun z hz ⟨hzm, hnmz⟩ => hnmz (hmin hz hzm)⟩
+
+/-- Heim is **conflict-blocking** at any `(params, w_eval)` with strict
+    preference asymmetry: delegates to `wantHeim_no_conflict`. -/
+theorem heimSemantics_isConflictBlocking {W : Type*} [Fintype W] [DecidableEq W]
+    (params : HeimDesireParams W) (w_eval : W)
+    (hAsym : ∀ x y, params.pref w_eval x y → params.pref w_eval y x → x = y) :
+    ∀ belS (p : Set W),
+      (heimSemantics (W := W)).defined belS params p →
+      (heimSemantics (W := W)).defined belS params (fun w => ¬ p w) →
+      ¬ ((heimSemantics (W := W)).want belS params w_eval p ∧
+         (heimSemantics (W := W)).want belS params w_eval (fun w => ¬ p w)) := by
+  classical
+  intro belS p hDef _hDefNeg ⟨hp, hnp⟩
+  rw [show (heimSemantics (W := W)).want = fun belS params w p =>
+        wantHeimClassical belS params w p from rfl] at hp hnp
+  rw [wantHeimClassical_iff_wantHeim] at hp hnp
+  exact Desire.wantHeim_no_conflict belS params w_eval p hAsym hDef
+    ⟨hp, hnp⟩
 
 theorem heim_no_go_covers_belief_based_family
     {W : Type} [Fintype W] [DecidableEq W]
-    (params : Semantics.Attitudes.Desire.HeimDesireParams W) (w_eval : W)
+    (params : Desire.HeimDesireParams W) (w_eval : W)
     (hAsym : ∀ x y, params.pref w_eval x y → params.pref w_eval y x → x = y)
     (belS : Set W) [DecidablePred belS]
     (p : Set W) [DecidablePred p]
-    (h : Semantics.Attitudes.Desire.wantHeimDefined belS p) :
-    ¬ (Semantics.Attitudes.Desire.wantHeim belS params w_eval p ∧
-       Semantics.Attitudes.Desire.wantHeim belS params w_eval (fun w => ¬ p w)) :=
-  Semantics.Attitudes.Desire.wantHeim_no_simultaneous_pq_and_negpq
+    (h : Desire.wantHeimDefined belS p) :
+    ¬ (Desire.wantHeim belS params w_eval p ∧
+       Desire.wantHeim belS params w_eval (fun w => ¬ p w)) :=
+  Desire.wantHeim_no_conflict
     belS params w_eval p hAsym h
 
 /-- **[lassiter-2017] also evades the no-go but via numerical
@@ -541,9 +624,9 @@ theorem lassiter_evades_no_go_via_grading :
       (belS : Set W) (_ : DecidablePred belS)
       (pr : W → ℚ) (V : W → ℚ) (θ : ℚ)
       (p : Set W) (_ : DecidablePred p),
-      Semantics.Attitudes.Desire.Lassiter.want belS pr V θ p ∧
-      Semantics.Attitudes.Desire.Lassiter.want belS pr V θ (fun w => ¬ p w) :=
-  Semantics.Attitudes.Desire.Lassiter.threshold_admits_conflict_witness
+      Desire.Lassiter.want belS pr V θ p ∧
+      Desire.Lassiter.want belS pr V θ (fun w => ¬ p w) :=
+  Desire.Lassiter.threshold_admits_conflict_witness
 
 /-! ## Summary
 
@@ -551,17 +634,13 @@ The 8-world model verifies all of the paper's quantitative predictions
 that fit the 3-binary-dimension encoding (Nap, Lobster-via-isomorphism,
 Lu/deck-stacking, William-III). The substrate carries the *general*
 arguments (no-go for vF, no-go for Heim, Strawson upward monotonicity,
-finest=vF direction, parametric `BeliefBasedDesireSemantics`
-typology). The §11 bridge makes the disagreement with C&L explicit;
+and the universal finest-question identity
+`wantQuestionBased_finestPartition_iff_wantVonFintel`); the
+belief-based-class typology — the paper's own §2 packaging — is
+formalized above. The §11 bridge makes the disagreement with C&L explicit;
 the §12 foil shows the no-go covers the whole belief-based family.
 
 What's deferred:
-
-* The general `wantQuestionBased qFinest = wantVF` ↔ identity is
-  verified for the three named propositions in §8 by `decide`; lifting
-  to the substrate as a universal `∀ p, ...` theorem is sketched in
-  `Desire.lean` as future work (the proof requires a structural lemma
-  relating singleton-cell preference to single-world preference).
 
 * The Lobster scenario reuses Nap's dimensions via `abbrev` — a
   4-dimension model would let `qLobGus` and `qLobDie` be genuinely
