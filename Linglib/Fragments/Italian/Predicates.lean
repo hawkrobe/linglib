@@ -27,7 +27,7 @@ namespace Italian.Predicates
 
 open ArgumentStructure
 open Minimalist (ComplementSize)
-open Semantics.Attitudes.RationalAttitude (Reading readingFromSize)
+open RationalAttitude (Reading readingFromSize)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Italian Infinitival Complementizers
