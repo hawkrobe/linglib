@@ -98,7 +98,7 @@ INHERITANCE." See `cariani_duality_right_to_left_failure`.
 
 namespace Cariani2013
 
-open Desire (DecProp mkDec IsConsidered)
+open Desire (IsConsidered)
 
 /-! ## §1. Resolution Semantics primitives
 
@@ -110,9 +110,9 @@ parameters are options, ordering, benchmark. Per §4 (p.545):
 > exclusive propositions—i.e., as a partition of a subset S of
 > logical space.
 
-We model options as a `List (DecProp W)` — finite, with decidable
-membership — matching the substrate's `Desire`
-representation of partition cells. Mutual exclusivity is a hypothesis
+We model options as a `List (Finset W)` — finite, with decidable
+membership — matching the substrate's `Desire` representation of
+partition cells. Mutual exclusivity is a hypothesis
 on consumers, not a structure field. -/
 
 variable {W : Type*} [Fintype W] [DecidableEq W]
@@ -124,23 +124,23 @@ variable {W : Type*} [Fintype W] [DecidableEq W]
     quantitative scales, p.545). -/
 structure ResolutionContext (W : Type*) where
   /-- Mutually exclusive options (a partition of the relevant action
-      space). Stored as a list of `DecProp` for `decide`-friendliness. -/
-  options : List (DecProp W)
+      space). Stored as `Finset` cells for `decide`-friendliness. -/
+  options : List (Finset W)
   /-- Ranking on options: `betterThan o₁ o₂` means `o₁` is at least as
       preferable as `o₂`. -/
-  betterThan : DecProp W → DecProp W → Prop
+  betterThan : Finset W → Finset W → Prop
   /-- Decidability of the ordering. -/
   betterThanDec : ∀ a b, Decidable (betterThan a b)
   /-- Benchmark predicate: an option `meetsBenchmark` if it is at or
       above the threshold. -/
-  meetsBenchmark : DecProp W → Prop
+  meetsBenchmark : Finset W → Prop
   /-- Decidability of the benchmark predicate. -/
   meetsBenchmarkDec : ∀ o, Decidable (meetsBenchmark o)
 
-instance (rc : ResolutionContext W) (a b : DecProp W) :
+instance (rc : ResolutionContext W) (a b : Finset W) :
     Decidable (rc.betterThan a b) := rc.betterThanDec a b
 
-instance (rc : ResolutionContext W) (o : DecProp W) :
+instance (rc : ResolutionContext W) (o : Finset W) :
     Decidable (rc.meetsBenchmark o) := rc.meetsBenchmarkDec o
 
 /-! ## §2. The four derived predicates (Cariani §4 p.545-546)
@@ -156,12 +156,12 @@ instance (rc : ResolutionContext W) (o : DecProp W) :
 -/
 
 /-- Option `o` is a *way of* `p` iff `o` entails `p`. -/
-def isWayOf (o : DecProp W) (p : Set W) [DecidablePred p] : Prop :=
-  ∀ w, o.prop w → p w
+def isWayOf (o : Finset W) (p : Set W) [DecidablePred p] : Prop :=
+  ∀ w ∈ o, p w
 
-instance (o : DecProp W) (p : Set W) [DecidablePred p] :
+instance (o : Finset W) (p : Set W) [DecidablePred p] :
     Decidable (isWayOf o p) :=
-  inferInstanceAs (Decidable (∀ _, _))
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-- `p` is **visible** in Cariani's options iff every option settles `p`.
 
@@ -194,15 +194,13 @@ instance (rc : ResolutionContext W) (p : Set W) [DecidablePred p] :
 
 /-- An option `o` is **best** iff it's at-least-as-good-as every other
     listed option. The `o ∈ rc.options` membership check is the
-    caller's responsibility (it's implicit in the typical
+    caller's responsibility — it's implicit in the typical
     `∀ o ∈ rc.options, isBest rc o → ...` consumption pattern in
-    `isOptimal`); dropping it from the definition avoids requiring
-    `DecidableEq (DecProp W)` (DecProp is a structure with a function
-    field — equality is not generally decidable). -/
-def isBest (rc : ResolutionContext W) (o : DecProp W) : Prop :=
+    `isOptimal`. -/
+def isBest (rc : ResolutionContext W) (o : Finset W) : Prop :=
   ∀ o' ∈ rc.options, rc.betterThan o o'
 
-instance (rc : ResolutionContext W) (o : DecProp W) :
+instance (rc : ResolutionContext W) (o : Finset W) :
     Decidable (isBest rc o) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
@@ -290,11 +288,7 @@ INHERITANCE fails because `attend ⊨ (attend ∨ burn)` but
 
 inductive RossW where
   | attend | stay_home | burn
-  deriving DecidableEq, Repr
-
-instance : Fintype RossW where
-  elems := {.attend, .stay_home, .burn}
-  complete := fun w => by cases w <;> decide
+  deriving DecidableEq, Fintype, Repr
 
 def attendProp : Set RossW | .attend => True | _ => False
 def stayHomeProp : Set RossW | .stay_home => True | _ => False
@@ -307,39 +301,33 @@ instance : DecidablePred stayHomeProp :=
 instance : DecidablePred burnProp :=
   fun w => by cases w <;> unfold burnProp <;> infer_instance
 
-/-- The three options. Each is the singleton extension of its
-    corresponding world-property. -/
-def rossOptions : List (DecProp RossW) :=
-  [mkDec attendProp, mkDec stayHomeProp, mkDec burnProp]
+/-- The three options: singleton courses of action. -/
+def rossOptions : List (Finset RossW) :=
+  [{.attend}, {.stay_home}, {.burn}]
 
-/-- Direct rank function on `RossW` worlds. We define rank on the
-    underlying world (not by introspecting the proposition) and lift
-    to options that entail a unique world. The lift returns 0 (below
-    benchmark) for any option whose extension isn't a singleton
-    matching one of the named worlds — which is the right behavior for
-    the paper's analysis. -/
+/-- Rank on `RossW` worlds: attend > stay_home > burn. -/
 def rossWorldRank : RossW → ℕ
   | .attend => 3
   | .stay_home => 2
   | .burn => 1
 
-/-- Rank of an option: max of `rossWorldRank` over the worlds in the
-    option (or 0 if the option is empty). For our three singleton
-    options, this is just the world's rank. -/
-def rossRank (o : DecProp RossW) : ℕ :=
-  ((Finset.univ : Finset RossW).filter (fun w => o.prop w)).sup rossWorldRank
+/-- Rank of an option: max of `rossWorldRank` over its worlds (0 for
+    the empty option). For the three singleton options, this is just
+    the world's rank. -/
+def rossRank (o : Finset RossW) : ℕ :=
+  o.sup rossWorldRank
 
-def rossBetterThan : DecProp RossW → DecProp RossW → Prop :=
+def rossBetterThan : Finset RossW → Finset RossW → Prop :=
   fun o o' => rossRank o ≥ rossRank o'
 
-instance (o o' : DecProp RossW) : Decidable (rossBetterThan o o') :=
+instance (o o' : Finset RossW) : Decidable (rossBetterThan o o') :=
   inferInstanceAs (Decidable (_ ≥ _))
 
 /-- Benchmark: only attend (rank 3) and stay_home (rank 2) meet
     benchmark. Burn (rank 1) is impermissible. -/
-def rossMeetsBenchmark : DecProp RossW → Prop := fun o => rossRank o ≥ 2
+def rossMeetsBenchmark : Finset RossW → Prop := fun o => rossRank o ≥ 2
 
-instance (o : DecProp RossW) : Decidable (rossMeetsBenchmark o) :=
+instance (o : Finset RossW) : Decidable (rossMeetsBenchmark o) :=
   inferInstanceAs (Decidable (_ ≥ _))
 
 def rossContext : ResolutionContext RossW where
@@ -349,47 +337,28 @@ def rossContext : ResolutionContext RossW where
   meetsBenchmark := rossMeetsBenchmark
   meetsBenchmarkDec := fun o => inferInstanceAs (Decidable (rossMeetsBenchmark o))
 
+/-- `ought(attend)` holds in Ross's context: visible, optimal, and
+    strongly permissible. -/
+theorem ross_ought_attend : ought rossContext attendProp := by decide
+
 /-- `attend` is visible in Ross's context — every option settles it. -/
-theorem ross_attend_visible : isVisible rossContext attendProp := by
-  intro o ho
-  unfold rossContext rossOptions at ho
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at ho
-  rcases ho with rfl | rfl | rfl
-  · left; intro w hw; exact hw
-  · right; intro w hw; cases w <;> simp [stayHomeProp, attendProp] at hw ⊢
-  · right; intro w hw; cases w <;> simp [burnProp, attendProp] at hw ⊢
+theorem ross_attend_visible : isVisible rossContext attendProp := by decide
 
 /-- `attend ∨ burn` is also visible (every option settles it). -/
 theorem ross_attend_or_burn_visible :
-    isVisible rossContext (fun w => attendProp w ∨ burnProp w) := by
-  intro o ho
-  unfold rossContext rossOptions at ho
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at ho
-  rcases ho with rfl | rfl | rfl
-  · left; intro w hw; exact Or.inl hw
-  · right; intro w hw
-    cases w <;> simp [stayHomeProp, attendProp, burnProp] at hw ⊢
-  · left; intro w hw; exact Or.inr hw
+    isVisible rossContext (fun w => attendProp w ∨ burnProp w) := by decide
 
 /-- The disjunction `attend ∨ burn` is NOT strongly permissible — `burn`
     is a way-of-(attend ∨ burn) but doesn't meet the benchmark. -/
 theorem ross_attend_or_burn_not_stronglyPermissible :
     ¬ isStronglyPermissible rossContext (fun w => attendProp w ∨ burnProp w) := by
-  intro hSP
-  have h := hSP (mkDec burnProp)
-              (by show mkDec burnProp ∈ rossOptions; unfold rossOptions; simp)
-              (fun w hw => Or.inr hw)
-  -- h : rossContext.meetsBenchmark (mkDec burnProp) reduces to 2 ≤ 1
-  have h' : rossMeetsBenchmark (mkDec burnProp) := h
-  exact absurd h' (by decide)
+  decide
 
 /-- **Ross's Puzzle, formal**: `ought(attend ∨ burn)` is FALSE in
     Cariani's Resolution Semantics, even though `attend ⊨ attend ∨ burn`
     and `ought(attend)` is true. This is the INHERITANCE failure. -/
 theorem ross_puzzle_inheritance_failure :
-    ¬ ought rossContext (fun w => attendProp w ∨ burnProp w) := by
-  intro ⟨_, _, hSP⟩
-  exact ross_attend_or_burn_not_stronglyPermissible hSP
+    ¬ ought rossContext (fun w => attendProp w ∨ burnProp w) := by decide
 
 /-! ## §6. INHERITANCE failure on Procrastinate (paper §II)
 
@@ -402,11 +371,7 @@ ordered as `accept_and_write > do_not_accept > benchmark > accept_without_writin
 
 inductive ProcW where
   | accept_write | do_not_accept | accept_no_write
-  deriving DecidableEq, Repr
-
-instance : Fintype ProcW where
-  elems := {.accept_write, .do_not_accept, .accept_no_write}
-  complete := fun w => by cases w <;> decide
+  deriving DecidableEq, Fintype, Repr
 
 def acceptWriteProp : Set ProcW | .accept_write => True | _ => False
 def doNotAcceptProp : Set ProcW | .do_not_accept => True | _ => False
@@ -419,26 +384,26 @@ instance : DecidablePred doNotAcceptProp :=
 instance : DecidablePred acceptNoWriteProp :=
   fun w => by cases w <;> unfold acceptNoWriteProp <;> infer_instance
 
-def procOptions : List (DecProp ProcW) :=
-  [mkDec acceptWriteProp, mkDec doNotAcceptProp, mkDec acceptNoWriteProp]
+def procOptions : List (Finset ProcW) :=
+  [{.accept_write}, {.do_not_accept}, {.accept_no_write}]
 
 def procWorldRank : ProcW → ℕ
   | .accept_write => 3
   | .do_not_accept => 2
   | .accept_no_write => 1
 
-def procRank (o : DecProp ProcW) : ℕ :=
-  ((Finset.univ : Finset ProcW).filter (fun w => o.prop w)).sup procWorldRank
+def procRank (o : Finset ProcW) : ℕ :=
+  o.sup procWorldRank
 
-def procBetterThan : DecProp ProcW → DecProp ProcW → Prop :=
+def procBetterThan : Finset ProcW → Finset ProcW → Prop :=
   fun o o' => procRank o ≥ procRank o'
 
-instance (o o' : DecProp ProcW) : Decidable (procBetterThan o o') :=
+instance (o o' : Finset ProcW) : Decidable (procBetterThan o o') :=
   inferInstanceAs (Decidable (_ ≥ _))
 
-def procMeetsBenchmark : DecProp ProcW → Prop := fun o => procRank o ≥ 2
+def procMeetsBenchmark : Finset ProcW → Prop := fun o => procRank o ≥ 2
 
-instance (o : DecProp ProcW) : Decidable (procMeetsBenchmark o) :=
+instance (o : Finset ProcW) : Decidable (procMeetsBenchmark o) :=
   inferInstanceAs (Decidable (_ ≥ _))
 
 def procContext : ResolutionContext ProcW where
@@ -457,21 +422,13 @@ instance : DecidablePred acceptProp := fun w => by unfold acceptProp; infer_inst
 
 /-- `accept_no_write` is a way-of-`accept` but does NOT meet benchmark. -/
 theorem proc_accept_not_stronglyPermissible :
-    ¬ isStronglyPermissible procContext acceptProp := by
-  intro hSP
-  have h := hSP (mkDec acceptNoWriteProp)
-              (by show mkDec acceptNoWriteProp ∈ procOptions; unfold procOptions; simp)
-              (fun w hw => by cases w <;> simp [acceptNoWriteProp, acceptProp] at hw ⊢)
-  have h' : procMeetsBenchmark (mkDec acceptNoWriteProp) := h
-  exact absurd h' (by decide)
+    ¬ isStronglyPermissible procContext acceptProp := by decide
 
 /-- **Procrastinate, formal**: `ought(accept)` is FALSE in Cariani's
     Resolution Semantics, even though `accept_write ⊨ accept` and
     `ought(accept_write)` is true. -/
 theorem procrastinate_inheritance_failure :
-    ¬ ought procContext acceptProp := by
-  intro ⟨_, _, hSP⟩
-  exact proc_accept_not_stronglyPermissible hSP
+    ¬ ought procContext acceptProp := by decide
 
 /-! ## §7. Boxing as a special case (paper p.546)
 
@@ -523,7 +480,7 @@ omit [Fintype W] [DecidableEq W] in
     Ross's puzzle. -/
 theorem ought_negation_via_coarse_falsemaking
     (rc : ResolutionContext W) (p : Set W) [DecidablePred p]
-    (o : DecProp W) (ho : o ∈ rc.options)
+    (o : Finset W) (ho : o ∈ rc.options)
     (hWay : isWayOf o p) (hImp : ¬ rc.meetsBenchmark o) :
     ¬ ought rc p := by
   intro ⟨_, _, hSP⟩
@@ -556,87 +513,22 @@ No: the relevant case is the contrapositive. The actual right-to-left
 DUALITY failure: pick a `q` where `permitted q` is false but
 `ought ¬q` is also false. -/
 
-/-- **DUALITY right-to-left FAILS** on Ross's puzzle. Specifically:
-    `q := burnProp` is *not* permitted in `rossContext` (no way-of-burn
-    option meets benchmark — burn itself doesn't), so `¬ permitted q`
-    holds. But `ought ¬q = ought (¬burn)` is *also* false — it would
-    require every way-of-¬burn option to meet benchmark, but
-    `stay_home ∨ attend` includes options at-or-above benchmark while
-    `attend ∨ stay_home ∨ burn = univ`... let me actually check via
-    the simpler witness: `ought (attend ∨ burn)` is false (Ross's
-    puzzle) but `¬ permitted ¬(attend ∨ burn) = ¬ permitted stay_home`
-    is also false (stay_home itself is permitted, meeting benchmark).
-    So the right-to-left direction `¬ permitted ¬p → ought p` would
-    require `ought (attend ∨ burn)` to be true given `¬ permitted stay_home`
-    — but `permitted stay_home` IS true (stay_home meets benchmark).
-
-    The cleanest witness: pick `p := attend ∨ burn`. Then
-    `permitted ¬p = permitted (¬attend ∧ ¬burn) = permitted stay_home`,
-    which IS true (stay_home is the way-of-stay_home option and meets
-    benchmark). So `¬ permitted ¬p` is FALSE. The right-to-left
-    direction `¬ permitted ¬p → ought p` is vacuously true here.
-
-    For a real DUALITY-failure witness, we need `¬ permitted ¬p` true
-    and `ought p` false simultaneously. This requires a richer model
-    than rossContext. Per Cariani p.547, the failure is real but the
-    witness construction is non-trivial; we document the conceptual
-    point and mark the witness construction as future work. -/
-theorem cariani_ought_inheritance_failure_implies_duality_concern :
+/-- The INHERITANCE failure, existentially packaged: a context and
+    propositions `p ⊨ q` with `ought p` true and `ought q` false
+    (Ross's puzzle: `p = attend`, `q = attend ∨ burn`). This is the
+    failure Cariani p.547 invokes to reject the right-to-left
+    direction of DUALITY (`¬ permitted ¬p → ought p`); `rossContext`
+    itself satisfies that direction vacuously, and a direct
+    DUALITY-failure witness needs a richer model. -/
+theorem inheritance_failure_exists :
     ∃ (W : Type) (_ : Fintype W) (_ : DecidableEq W)
       (rc : ResolutionContext W) (p : Set W) (_ : DecidablePred p)
       (q : Set W) (_ : DecidablePred q),
-      (∀ w, p w → q w) ∧  -- p ⊨ q
-      ought rc p ∧  -- ought p
-      ¬ ought rc q := by
-  -- Use rossContext: p = attend, q = attend ∨ burn.
-  -- attend ⊨ attend ∨ burn ✓
-  -- ought(attend) ✓ (best option, single way-of-attend, meets benchmark)
-  -- ¬ ought(attend ∨ burn) ✓ (Ross's puzzle)
-  -- This is the INHERITANCE failure that Cariani p.547 invokes for the
-  -- DUALITY discussion.
-  refine ⟨RossW, inferInstance, inferInstance,
-          rossContext, attendProp, inferInstance,
-          (fun w => attendProp w ∨ burnProp w), inferInstance,
-          ?_, ?_, ross_puzzle_inheritance_failure⟩
-  · intro w hw; exact Or.inl hw
-  · refine ⟨ross_attend_visible, ?_, ?_⟩
-    · intro o ho _hbest
-      -- Every best option is a way-of-attend. The best option in
-      -- rossOptions is attend (rank 3 > 2 > 1). Other options aren't best.
-      unfold rossContext rossOptions at ho
-      simp only [List.mem_cons, List.not_mem_nil, or_false] at ho
-      rcases ho with rfl | rfl | rfl
-      · intro w hw; exact hw
-      · -- stay_home isn't best: attend > stay_home, so isBest stay_home fails
-        exfalso
-        -- _hbest : isBest rossContext (mkDec stayHomeProp)
-        -- → rossBetterThan (mkDec stayHomeProp) (mkDec attendProp)
-        -- → rossRank (mkDec stayHomeProp) ≥ rossRank (mkDec attendProp)
-        -- → 2 ≥ 3, contradiction
-        have := _hbest (mkDec attendProp) (by
-          show mkDec attendProp ∈ rossOptions; unfold rossOptions; simp)
-        exact absurd this (by decide)
-      · -- burn isn't best: attend > burn
-        exfalso
-        have := _hbest (mkDec attendProp) (by
-          show mkDec attendProp ∈ rossOptions; unfold rossOptions; simp)
-        exact absurd this (by decide)
-    · intro o ho hWay
-      -- Strong permissibility: every way-of-attend option meets benchmark.
-      unfold rossContext rossOptions at ho
-      simp only [List.mem_cons, List.not_mem_nil, or_false] at ho
-      rcases ho with rfl | rfl | rfl
-      · -- attend itself: rank 3 ≥ 2 ✓
-        show rossMeetsBenchmark (mkDec attendProp); decide
-      · -- stay_home is a way-of-attend? Means stay_home ⊆ attend, but
-        -- stay_home ∩ attend = ∅. So hWay vacuously fails.
-        exfalso
-        have := hWay RossW.stay_home (by decide : stayHomeProp RossW.stay_home)
-        cases this
-      · -- burn is a way-of-attend? Same vacuity.
-        exfalso
-        have := hWay RossW.burn (by decide : burnProp RossW.burn)
-        cases this
+      (∀ w, p w → q w) ∧ ought rc p ∧ ¬ ought rc q :=
+  ⟨RossW, inferInstance, inferInstance,
+   rossContext, attendProp, inferInstance,
+   (fun w => attendProp w ∨ burnProp w), inferInstance,
+   fun _ => Or.inl, ross_ought_attend, ross_puzzle_inheritance_failure⟩
 
 /-! ## §10. Weakening failure (paper §III pre-figured; [cariani-2016] core)
 
@@ -648,38 +540,15 @@ Weakening failures, but the explicit Weakening attack
 `ought(attend ∨ stay_home ∨ burn)` is false — because `burn` is a
 way-of-the-disjunction that doesn't meet benchmark.
 
-For the simple disjunction `ought(attend) ∧ ought(stay_home) →
-ought(attend ∨ stay_home)`: `attend ∨ stay_home` is visible
-(every option is settled), optimal (best = attend, which is in
-attend ∨ stay_home), strongly permissible (attend, stay_home both
-meet benchmark; burn is NOT a way-of-(attend ∨ stay_home) so vacuous).
-Hmm, that one *holds*.
-
-The interesting Weakening failure: pick disjuncts whose union has a
-new way-of-disjunction option that's impermissible. -/
+(For the simple disjunction `attend ∨ stay_home`, Weakening holds in
+`rossContext`; the failure needs disjuncts whose union acquires an
+impermissible way-of-disjunction option, as with `burn` above.) -/
 
 /-- `ought(stay_home)` is false in rossContext — stay_home is a
     way-of-stay_home, meets benchmark, but `attend` is the unique best
     option and `attend` is NOT a way-of-stay_home. So `isOptimal` fails. -/
 theorem ross_ought_stay_home_false :
-    ¬ ought rossContext stayHomeProp := by
-  intro ⟨_, hO, _⟩
-  -- best option = attend. isOptimal stay_home means best is way-of-stay_home.
-  -- attend is best, but attend isn't a way-of-stay_home (attend ∩ stay_home = ∅).
-  have hbest_attend : isBest rossContext (mkDec attendProp) := by
-    intro o' ho'
-    unfold rossContext rossOptions at ho'
-    simp only [List.mem_cons, List.not_mem_nil, or_false] at ho'
-    rcases ho' with rfl | rfl | rfl
-    · show rossBetterThan (mkDec attendProp) (mkDec attendProp); decide
-    · show rossBetterThan (mkDec attendProp) (mkDec stayHomeProp); decide
-    · show rossBetterThan (mkDec attendProp) (mkDec burnProp); decide
-  have := hO (mkDec attendProp) (by
-    show mkDec attendProp ∈ rossOptions; unfold rossOptions; simp) hbest_attend
-  -- this : isWayOf (mkDec attendProp) stayHomeProp
-  -- means: ∀ w, attendProp w → stayHomeProp w. But attendProp .attend = True,
-  -- stayHomeProp .attend = False. Contradiction.
-  exact absurd (this RossW.attend (by decide)) (by decide)
+    ¬ ought rossContext stayHomeProp := by decide
 
 /-! ## §11. Cross-framework summary
 

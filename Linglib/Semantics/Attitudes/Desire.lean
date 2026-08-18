@@ -4,7 +4,6 @@ import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Order.SimilarityOrdering
-import Linglib.Semantics.Questions.Hamblin
 import Linglib.Core.Probability.Decision.Basic
 import Mathlib.Order.Basic
 import Mathlib.Data.Set.Basic
@@ -74,42 +73,6 @@ section Generic
 
 variable {W : Type*} [Fintype W] [DecidableEq W]
 
-/-! ### Decidable propositions
-
-A `DecProp W` bundles a `Set W` with its `DecidablePred` witness so it
-can sit as the element type of a partition list while remaining
-`decide`-able. This is a structure (not `Subtype`) because
-`DecidablePred` lives in `Type`, not `Prop`. -/
-
-/-- A `Set W` paired with its `DecidablePred` witness. -/
-structure DecProp (W : Type*) where
-  /-- The underlying `Prop`-valued proposition. -/
-  prop : Set W
-  /-- Decidability witness for the underlying proposition. -/
-  dec : DecidablePred prop
-
-/-- Smart constructor for a `DecProp` from a `Set W` with synthesizable
-    decidability. -/
-@[reducible] def mkDec (p : Set W) [h : DecidablePred p] : DecProp W := ⟨p, h⟩
-
-instance (a : DecProp W) : DecidablePred a.prop := a.dec
-
-/-! ### Decidable subset and overlap on `Set W`
-
-Mathlib's `s ⊆ t` and `(s ∩ t).Nonempty` are not auto-decidable on `Set`
-(the elaborator does not unfold `Set.Subset` to see the underlying `∀`).
-We expose `@[reducible]` aliases that *are* decidable under
-`[Fintype W]` + `DecidablePred` for both arguments. The aliases are
-definitionally equal to their `Set`-API counterparts and are intended
-to read as the same operation. -/
-
-/-- `PropEntails p q ↔ p ⊆ q` (definitionally), with decidability. -/
-@[reducible] def PropEntails (p q : Set W) : Prop := ∀ w, p w → q w
-
-/-- `PropOverlap p q ↔ (p ∩ q).Nonempty` (definitionally), with
-    decidability. -/
-@[reducible] def PropOverlap (p q : Set W) : Prop := ∃ w, p w ∧ q w
-
 /-! ### Answer preference ([phillips-brown-2025] §3.5)
 
 The paper's preference relation between answers `a, a' ∈ Q_c-Bel_S`:
@@ -126,12 +89,12 @@ Pareto-undominated elements (see §3.5, p. 11:21). -/
     entails, `a` also entails. The Pareto-undominated elements under
     this relation are the "best answers" of [phillips-brown-2025]
     §3.5. -/
-def propositionOrdering (GS : List (DecProp W)) :
-    SatisfactionOrdering (DecProp W) (DecProp W) :=
-  SatisfactionOrdering.ofCriteria (fun a p => decide (PropEntails a.prop p.prop)) GS
+def propositionOrdering (GS : List (Finset W)) :
+    SatisfactionOrdering (Finset W) (Finset W) :=
+  SatisfactionOrdering.ofCriteria (fun a p => decide (a ⊆ p)) GS
 
 /-- Best (= Pareto-undominated) answers among a candidate list. -/
-abbrev undominatedAnswers (GS answers : List (DecProp W)) : List (DecProp W) :=
+abbrev undominatedAnswers (GS answers : List (Finset W)) : List (Finset W) :=
   (propositionOrdering GS).undominated answers
 
 /-! ### Question-relative belief ([phillips-brown-2025] §3.3)
@@ -139,21 +102,21 @@ abbrev undominatedAnswers (GS answers : List (DecProp W)) : List (DecProp W) :=
 Q_c-Bel_S = the cells of Q_c compatible with S's beliefs. -/
 
 /-- The cells of `answers` that overlap `belS`. -/
-def questionRelativeBelief (answers : List (DecProp W))
-    (belS : Set W) [DecidablePred belS] : List (DecProp W) :=
-  answers.filter fun a => decide (PropOverlap a.prop belS)
+def questionRelativeBelief (answers : List (Finset W))
+    (belS : Set W) [DecidablePred belS] : List (Finset W) :=
+  answers.filter fun a => decide (∃ w ∈ a, belS w)
 
 /-! ### Question-based want ([phillips-brown-2025] §3.4) -/
 
 /-- ⟦S wants p⟧^c = every undominated answer in Q_c-Bel_S entails p.
     The paper's central definition (§3.5). -/
 def WantQuestionBased (belS : Set W) [DecidablePred belS]
-    (GS answers : List (DecProp W)) (p : Set W) [DecidablePred p] : Prop :=
+    (GS answers : List (Finset W)) (p : Set W) [DecidablePred p] : Prop :=
   ∀ a ∈ undominatedAnswers GS (questionRelativeBelief answers belS),
-    PropEntails a.prop p
+    ∀ w ∈ a, p w
 
 instance (belS : Set W) [DecidablePred belS]
-    (GS answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
+    (GS answers : List (Finset W)) (p : Set W) [DecidablePred p] :
     Decidable (WantQuestionBased belS GS answers p) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
@@ -167,24 +130,27 @@ desires, by definition. -/
 /-- World ordering induced by a desire list: `w ≤ z` iff every desire
     in `GS` satisfied at `z` is also satisfied at `w` — [kratzer-1981]'s
     `atLeastAsGoodAs` over the projected proposition list, by definition.
-    Decidability is transported from the per-`DecProp` witnesses via
-    `worldAtLeastAsGood_iff_decProp`. -/
-def WorldAtLeastAsGood (GS : List (DecProp W)) (w z : W) : Prop :=
-  Modality.Kratzer.atLeastAsGoodAs (GS.map (·.prop)) w z
+    Decidability is transported through the membership form
+    `worldAtLeastAsGood_iff_mem`. -/
+def WorldAtLeastAsGood (GS : List (Finset W)) (w z : W) : Prop :=
+  Modality.Kratzer.atLeastAsGoodAs (GS.map (fun s w => w ∈ s)) w z
 
 omit [Fintype W] [DecidableEq W] in
-/-- The ordering in its `DecProp`-quantified form, where each desire
-    carries its decidability witness. -/
-theorem worldAtLeastAsGood_iff_decProp (GS : List (DecProp W)) (w z : W) :
-    WorldAtLeastAsGood GS w z ↔ ∀ p ∈ GS, p.prop z → p.prop w := by
-  show (∀ p ∈ GS.map (·.prop), p z → p w) ↔ _
-  simp only [List.mem_map]
-  refine ⟨fun h a ha hpz => h a.prop ⟨a, ha, rfl⟩ hpz,
-          fun h _ ⟨a, ha, hap⟩ hpz => hap ▸ h a ha (hap ▸ hpz)⟩
+/-- The ordering in its membership form: every listed desire satisfied
+    at `z` is satisfied at `w`. -/
+theorem worldAtLeastAsGood_iff_mem (GS : List (Finset W)) (w z : W) :
+    WorldAtLeastAsGood GS w z ↔ ∀ s ∈ GS, z ∈ s → w ∈ s := by
+  show (∀ p ∈ GS.map (fun s w => w ∈ s), p z → p w) ↔ _
+  constructor
+  · intro h a ha hz
+    exact h _ (List.mem_map.mpr ⟨a, ha, rfl⟩) hz
+  · intro h q hq hz
+    obtain ⟨a, ha, rfl⟩ := List.mem_map.mp hq
+    exact h a ha hz
 
-instance (GS : List (DecProp W)) (w z : W) :
+instance (GS : List (Finset W)) (w z : W) :
     Decidable (WorldAtLeastAsGood GS w z) :=
-  decidable_of_iff _ (worldAtLeastAsGood_iff_decProp GS w z).symm
+  decidable_of_iff _ (worldAtLeastAsGood_iff_mem GS w z).symm
 
 /-- Standard von Fintel [von-fintel-1999] semantics: every undominated
     belS-world is a p-world. The `[DecidablePred]` hypotheses are not
@@ -192,13 +158,13 @@ instance (GS : List (DecProp W)) (w z : W) :
     so that abstract reasoning (e.g. instances of
     `BeliefBasedDesireSemantics`) can use `WantVonFintel` without supplying
     them. -/
-def WantVonFintel (belS : Set W) (GS : List (DecProp W)) (p : Set W) : Prop :=
+def WantVonFintel (belS : Set W) (GS : List (Finset W)) (p : Set W) : Prop :=
   ∀ w, belS w →
     (∀ z, belS z → ¬ (WorldAtLeastAsGood GS z w ∧ ¬ WorldAtLeastAsGood GS w z)) →
     p w
 
 instance (belS : Set W) [DecidablePred belS]
-    (GS : List (DecProp W)) (p : Set W) [DecidablePred p] :
+    (GS : List (Finset W)) (p : Set W) [DecidablePred p] :
     Decidable (WantVonFintel belS GS p) :=
   inferInstanceAs (Decidable (∀ _, _))
 
@@ -207,23 +173,23 @@ instance (belS : Set W) [DecidablePred belS]
 /-- **Considering Constraint** (§3.6): every cell of Q_c either
     entails p or entails ¬p. Equivalently (over partition cells):
     p is a union of cells. -/
-def IsConsidered (answers : List (DecProp W))
+def IsConsidered (answers : List (Finset W))
     (p : Set W) [DecidablePred p] : Prop :=
-  ∀ a ∈ answers, (∀ w, a.prop w → p w) ∨ (∀ w, a.prop w → ¬ p w)
+  ∀ a ∈ answers, (∀ w ∈ a, p w) ∨ (∀ w ∈ a, ¬ p w)
 
-instance (answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
+instance (answers : List (Finset W)) (p : Set W) [DecidablePred p] :
     Decidable (IsConsidered answers p) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-- **Diversity Constraint** (§3.7, attributed to
     [condoravdi-2002]): Q_c contains both p-cells and ¬p-cells.
     Without diversity, ⟦want p⟧ would be vacuously true (or false). -/
-def IsDiverse (answers : List (DecProp W))
+def IsDiverse (answers : List (Finset W))
     (p : Set W) [DecidablePred p] : Prop :=
-  (∃ a ∈ answers, ∀ w, a.prop w → p w) ∧
-  (∃ a ∈ answers, ∀ w, a.prop w → ¬ p w)
+  (∃ a ∈ answers, ∀ w ∈ a, p w) ∧
+  (∃ a ∈ answers, ∀ w ∈ a, ¬ p w)
 
-instance (answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
+instance (answers : List (Finset W)) (p : Set W) [DecidablePred p] :
     Decidable (IsDiverse answers p) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -255,12 +221,10 @@ basic dimensions). -/
     salient propositions; passing the empty list trivially satisfies the
     constraint, so study files must opt in by listing the basic
     propositions of their model. -/
-def IsAntiDeckstacking (naturalProps answers : List (DecProp W)) : Prop :=
-  ∀ q ∈ naturalProps,
-    (∀ a ∈ answers, ¬ ∀ w, a.prop w → q.prop w) ∨
-    (∀ a ∈ answers, (∀ w, a.prop w → q.prop w) ∨ (∀ w, a.prop w → ¬ q.prop w))
+def IsAntiDeckstacking (naturalProps answers : List (Finset W)) : Prop :=
+  ∀ q ∈ naturalProps, (∃ a ∈ answers, a ⊆ q) → IsConsidered answers (· ∈ q)
 
-instance (naturalProps answers : List (DecProp W)) :
+instance (naturalProps answers : List (Finset W)) :
     Decidable (IsAntiDeckstacking naturalProps answers) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
@@ -271,11 +235,11 @@ instance (naturalProps answers : List (DecProp W)) :
     like William III ⊨ "Avoid nuclear war" when the agent lacks the
     conceptual resources to grasp the question. -/
 def IsBelSensitive (belS : Set W) [DecidablePred belS]
-    (answers : List (DecProp W)) : Prop :=
+    (answers : List (Finset W)) : Prop :=
   let live := questionRelativeBelief answers belS
   live ≠ [] ∧ live.length ≠ answers.length
 
-instance (belS : Set W) [DecidablePred belS] (answers : List (DecProp W)) :
+instance (belS : Set W) [DecidablePred belS] (answers : List (Finset W)) :
     Decidable (IsBelSensitive belS answers) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -284,14 +248,14 @@ instance (belS : Set W) [DecidablePred belS] (answers : List (DecProp W)) :
     Anti-deckstacking §3.7, Belief-sensitivity §4.2). The
     `naturalProps` parameter feeds Anti-deckstacking. -/
 def WantDefined (belS : Set W) [DecidablePred belS]
-    (naturalProps answers : List (DecProp W)) (p : Set W) [DecidablePred p] : Prop :=
+    (naturalProps answers : List (Finset W)) (p : Set W) [DecidablePred p] : Prop :=
   IsConsidered answers p ∧
   IsDiverse answers p ∧
   IsAntiDeckstacking naturalProps answers ∧
   IsBelSensitive belS answers
 
 instance (belS : Set W) [DecidablePred belS]
-    (naturalProps answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
+    (naturalProps answers : List (Finset W)) (p : Set W) [DecidablePred p] :
     Decidable (WantDefined belS naturalProps answers p) := by
   unfold WantDefined; infer_instance
 
@@ -307,7 +271,7 @@ suppressed. -/
 /-- Question-based `want` as a partial proposition (`Core.PartialProp`):
     presupposition = full definedness; assertion = question-based truth. -/
 def wantPartialProp (belS : Set W) [DecidablePred belS]
-    (GS naturalProps answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
+    (GS naturalProps answers : List (Finset W)) (p : Set W) [DecidablePred p] :
     PartialProp W where
   presup _ := WantDefined belS naturalProps answers p
   assertion _ := WantQuestionBased belS GS answers p
@@ -321,8 +285,8 @@ the result is computable and `decide`-able for concrete models. -/
 
 /-- The finest partition over an explicit world list: one singleton
     cell per listed world. -/
-def finestPartition (worlds : List W) : List (DecProp W) :=
-  worlds.map fun w => mkDec (· = w)
+def finestPartition (worlds : List W) : List (Finset W) :=
+  worlds.map ({·})
 
 /-! ### Supporting lemmas
 
@@ -333,70 +297,48 @@ The §3.4 metasemantic identity is proved via three helper lemmas
 undominated singleton cells correspond to Pareto-undominated
 belS-worlds), then a direct two-direction `iff` proof. -/
 
+omit [Fintype W] in
 /-- Singleton-cell preference under `propositionOrdering` reduces to
-    single-world preference under `WorldAtLeastAsGood`: for cells
-    `mkDec (· = w)` and `mkDec (· = z)`, `mkDec (· = w) ≤ mkDec (· = z)`
-    in the proposition ordering iff `WorldAtLeastAsGood GS w z`. -/
-private theorem singleton_le_iff_world (GS : List (DecProp W)) (w z : W) :
-    (propositionOrdering GS).le (mkDec (· = w)) (mkDec (· = z)) ↔
-      WorldAtLeastAsGood GS w z := by
-  rw [worldAtLeastAsGood_iff_decProp]
+    single-world preference under `WorldAtLeastAsGood`: `{w} ≤ {z}` in
+    the proposition ordering iff `WorldAtLeastAsGood GS w z`. -/
+private theorem singleton_le_iff_world (GS : List (Finset W)) (w z : W) :
+    (propositionOrdering GS).le {w} {z} ↔ WorldAtLeastAsGood GS w z := by
+  rw [worldAtLeastAsGood_iff_mem]
   unfold propositionOrdering SatisfactionOrdering.ofCriteria
-  show (∀ q ∈ GS.filter (fun q => decide (PropEntails (mkDec (· = z)).prop q.prop)),
-          decide (PropEntails (mkDec (· = w)).prop q.prop) = true) ↔
-       (∀ q ∈ GS, q.prop z → q.prop w)
-  simp only [PropEntails, decide_eq_true_eq]
+  show (∀ q ∈ GS.filter (fun q => decide (({z} : Finset W) ⊆ q)),
+          decide (({w} : Finset W) ⊆ q) = true) ↔
+       (∀ s ∈ GS, z ∈ s → w ∈ s)
+  simp only [decide_eq_true_eq, Finset.singleton_subset_iff]
   constructor
   · intro h q hq hqz
-    have hqfilter : q ∈ GS.filter (fun q' => decide (∀ x, x = z → q'.prop x)) := by
-      rw [List.mem_filter]
-      refine ⟨hq, ?_⟩
-      simp only [decide_eq_true_eq]
-      intro x hx; exact hx ▸ hqz
-    exact h q hqfilter w rfl
-  · intro h q hq_filter
-    rw [List.mem_filter] at hq_filter
-    obtain ⟨hq, hqz_filter⟩ := hq_filter
-    simp only [decide_eq_true_eq] at hqz_filter
-    have hqz : q.prop z := hqz_filter z rfl
-    intro x hx
-    exact hx ▸ h q hq hqz
+    exact h q (by rw [List.mem_filter]; exact ⟨hq, by simpa using hqz⟩)
+  · intro h q hqf
+    rw [List.mem_filter] at hqf
+    exact h q hqf.1 (by simpa using hqf.2)
 
-/-- A singleton cell `mkDec (· = w)` is in `questionRelativeBelief
+omit [Fintype W] [DecidableEq W] in
+/-- The singleton cell `{w}` is in `questionRelativeBelief
     (finestPartition worlds) belS` iff `w ∈ worlds` and `belS w`. -/
 private theorem mem_qRB_finestPartition_iff (belS : Set W) [DecidablePred belS]
     (worlds : List W) (w : W) :
-    mkDec (· = w) ∈ questionRelativeBelief (finestPartition worlds) belS ↔
+    ({w} : Finset W) ∈ questionRelativeBelief (finestPartition worlds) belS ↔
       w ∈ worlds ∧ belS w := by
-  unfold questionRelativeBelief finestPartition
-  rw [List.mem_filter]
-  simp only [List.mem_map, decide_eq_true_eq, PropOverlap, mkDec]
-  constructor
-  · rintro ⟨⟨v, hv_mem, hv_eq⟩, ⟨x, hxv, hxBel⟩⟩
-    -- mkDec injection on `prop`: (· = v) = (· = w), evaluate at v
-    have hpropEq : (fun x => x = v) = (fun x => x = w) :=
-      congrArg DecProp.prop hv_eq
-    have hvw : v = w := by
-      have := congrFun hpropEq v
-      simpa using this
-    subst hvw
-    subst hxv
-    exact ⟨hv_mem, hxBel⟩
-  · rintro ⟨hw_mem, hbel⟩
-    exact ⟨⟨w, hw_mem, rfl⟩, ⟨w, rfl, hbel⟩⟩
+  simp [questionRelativeBelief, finestPartition, List.mem_filter,
+    Finset.singleton_inj]
 
+omit [Fintype W] in
 theorem wantQuestionBased_finestPartition_iff_WantVonFintel
-    (belS : Set W) [DecidablePred belS] (GS : List (DecProp W))
+    (belS : Set W) [DecidablePred belS] (GS : List (Finset W))
     (worlds : List W) (hUniv : ∀ w, w ∈ worlds)
     (p : Set W) [DecidablePred p] :
     WantQuestionBased belS GS (finestPartition worlds) p ↔ WantVonFintel belS GS p := by
   unfold WantQuestionBased WantVonFintel undominatedAnswers SatisfactionOrdering.undominated
   refine ⟨fun hLHS w hw hUnd => ?_, fun hRHS a ha => ?_⟩
-  · -- LHS → RHS: pick the cell `mkDec (· = w)`, show it's undominated, apply
-    have hcell_mem : mkDec (· = w) ∈
+  · -- LHS → RHS: pick the cell `{w}`, show it's undominated, apply
+    have hcell_mem : ({w} : Finset W) ∈
         questionRelativeBelief (finestPartition worlds) belS :=
       (mem_qRB_finestPartition_iff belS worlds w).mpr ⟨hUniv w, hw⟩
-    have hcell_undom : mkDec (· = w) ∈
+    have hcell_undom : ({w} : Finset W) ∈
         ((propositionOrdering GS).undominated
           (questionRelativeBelief (finestPartition worlds) belS)) := by
       unfold SatisfactionOrdering.undominated
@@ -404,7 +346,7 @@ theorem wantQuestionBased_finestPartition_iff_WantVonFintel
       refine ⟨hcell_mem, ?_⟩
       simp only [decide_eq_true_eq]
       rintro ⟨c, hc_mem, hc_strict⟩
-      -- c is in qRB; via mem_qRB_finestPartition_iff, c = mkDec (· = z) for
+      -- c is in qRB; via mem_qRB_finestPartition_iff, c = {z} for
       -- some z with belS z. Translate hc_strict to wAALG and contradict hUnd.
       have hc_in_fp : c ∈ finestPartition worlds := by
         unfold questionRelativeBelief at hc_mem
@@ -418,38 +360,32 @@ theorem wantQuestionBased_finestPartition_iff_WantVonFintel
       have hnwz : ¬ WorldAtLeastAsGood GS w z := fun h =>
         hc_strict.2 ((singleton_le_iff_world GS w z).mpr h)
       exact hUnd z hz_bel ⟨hzw, hnwz⟩
-    have := hLHS _ hcell_undom
-    exact this w rfl
+    exact hLHS _ hcell_undom w (Finset.mem_singleton_self w)
   · -- RHS → LHS: a is in undominated qRB; extract its world and apply hRHS
     rw [List.mem_filter] at ha
     obtain ⟨ha_mem, ha_min⟩ := ha
-    -- a ∈ qRB; extract w with a = mkDec (· = w), w ∈ worlds, belS w
+    -- a ∈ qRB; extract w with a = {w}, w ∈ worlds, belS w
     have ha_in_fp : a ∈ finestPartition worlds := by
       unfold questionRelativeBelief at ha_mem
       exact (List.mem_filter.mp ha_mem).1
     obtain ⟨w, _hw_mem, hw_eq⟩ := List.mem_map.mp ha_in_fp
-    -- Substitute a := mkDec (· = w) throughout
+    -- Substitute a := {w} throughout
     subst hw_eq
     have hbelw : belS w :=
       ((mem_qRB_finestPartition_iff belS worlds w).mp ha_mem).2
-    -- ha_min: ¬ ∃ c ∈ qRB, c strictly better than mkDec (· = w)
+    -- ha_min: ¬ ∃ c ∈ qRB, c strictly better than {w}
     simp only [decide_eq_true_eq] at ha_min
     have hUnd : ∀ z, belS z → ¬ (WorldAtLeastAsGood GS z w ∧
                                   ¬ WorldAtLeastAsGood GS w z) := by
       intro z hz_bel ⟨hzw, hnwz⟩
       apply ha_min
-      refine ⟨mkDec (· = z), ?_, ?_⟩
+      refine ⟨{z}, ?_, ?_⟩
       · exact (mem_qRB_finestPartition_iff belS worlds z).mpr ⟨hUniv z, hz_bel⟩
       · exact ⟨(singleton_le_iff_world GS z w).mpr hzw,
                fun h => hnwz ((singleton_le_iff_world GS w z).mp h)⟩
-    -- Apply hRHS at w; get p w; convert to PropEntails
     have hpw : p w := hRHS w hbelw hUnd
     intro x hx
-    -- hx : (mkDec (· = w)).prop x = (x = w)
-    -- Goal: p x
-    show p x
-    have : x = w := hx
-    exact this ▸ hpw
+    exact (Finset.mem_singleton.mp hx) ▸ hpw
 
 /-! ### The belief-based no-go for von Fintel ([phillips-brown-2025] §2)
 
@@ -463,7 +399,7 @@ omit [Fintype W] [DecidableEq W] in
     then no vF-prediction makes both `want p` and `want ¬p` true. -/
 theorem wantVonFintel_no_conflict
     (belS : Set W) [DecidablePred belS]
-    (GS : List (DecProp W)) (p : Set W) [DecidablePred p]
+    (GS : List (Finset W)) (p : Set W) [DecidablePred p]
     (h : ∃ w, belS w ∧
       ∀ z, belS z → ¬ (WorldAtLeastAsGood GS z w ∧ ¬ WorldAtLeastAsGood GS w z)) :
     ¬ (WantVonFintel belS GS p ∧ WantVonFintel belS GS (fun w => ¬ p w)) := by
@@ -479,12 +415,12 @@ omit [Fintype W] [DecidableEq W] in
     doxastic-closure problem that motivates the question-based
     approach (§4.1). -/
 theorem wantVonFintel_upward_monotonic (belS : Set W) [DecidablePred belS]
-    (GS : List (DecProp W)) (p q : Set W) [DecidablePred p] [DecidablePred q]
+    (GS : List (Finset W)) (p q : Set W) [DecidablePred p] [DecidablePred q]
     (hpq : ∀ w, p w → q w) (h : WantVonFintel belS GS p) :
     WantVonFintel belS GS q :=
   fun w hw hund => hpq w (h w hw hund)
 
-omit [DecidableEq W] in
+omit [Fintype W] in
 /-- Question-based `want` is **Strawson upward monotonic** (§4.2):
     `WantQuestionBased belS GS Q p`, `p ⊆ q`, and `q` considered
     relative to `Q` jointly imply `WantQuestionBased belS GS Q q`. The
@@ -493,7 +429,7 @@ omit [DecidableEq W] in
     Avoid-war". -/
 theorem wantQuestionBased_strawson_upward_monotonic
     (belS : Set W) [DecidablePred belS]
-    (GS answers : List (DecProp W)) (p q : Set W)
+    (GS answers : List (Finset W)) (p q : Set W)
     [DecidablePred p] [DecidablePred q]
     (hpq : ∀ w, p w → q w) (_hCons : IsConsidered answers q)
     (h : WantQuestionBased belS GS answers p) :
@@ -693,46 +629,6 @@ theorem wantHeim_no_conflict
     exact this.2
   exact hynp (hxy_eq ▸ hxp)
 
-/-! ### Bridge to the `Question` API
-
-PB's `List (DecProp W)` is a finite-presentation view of a partition
-question. The substrate exposes bridge theorems showing each PB
-predicate corresponds to a property of the underlying
-`Question W`:
-
-* `WantQuestionBased` "every undominated answer entails p" relates to
-  the partition property "every undominated cell of `Q` entails `p`"
-  — i.e., `∀ q ∈ alt Q, q ∈ undominated → q ⊆ p`.
-
-* `IsConsidered` corresponds to `partial-answerhood for the polar
-  question of p`: every cell of Q is either a confirming or refuting
-  answer to "p?".
-
-The `toQuestion` constructor lifts a `List (DecProp W)` to
-`Question W` via `Question.ofList`. -/
-
-/-- Lift a list of decidable cells to a `Question W`. -/
-def toQuestion (answers : List (DecProp W)) : Question W :=
-  Question.ofList (answers.map (·.prop))
-
-omit [Fintype W] [DecidableEq W] in
-/-- `IsConsidered Q p` agrees with the polar-answerhood reading of
-    every cell: each cell either entails `p` or entails `pᶜ`, which is
-    exactly "every cell is a partial answer to the polar question of
-    `p`". -/
-theorem isConsidered_iff_polar_partial_answer
-    (answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
-    IsConsidered answers p ↔
-    ∀ a ∈ answers, a.prop ⊆ p ∨ a.prop ⊆ {w | ¬ p w} := by
-  unfold IsConsidered
-  refine ⟨fun h a ha => ?_, fun h a ha => ?_⟩
-  · rcases h a ha with hp | hnp
-    · exact Or.inl (fun w hw => hp w hw)
-    · exact Or.inr (fun w hw hpw => hnp w hw hpw)
-  · rcases h a ha with hp | hnp
-    · exact Or.inl (fun w hw => hp hw)
-    · exact Or.inr (fun w hw hpw => hnp hw hpw)
-
 end Generic
 
 /-! ### Effective-preference readings ([condoravdi-lauer-2016])
@@ -901,27 +797,22 @@ simultaneous truth of `ought(φ) ∧ ought(¬φ)` when both are in the
 alternative set. -/
 
 /-- Sloman's Principle: `p` strictly dominates every other listed
-    alternative on the expected-value scale. Decidable via the
-    underlying `expectedValue` decidability. -/
-def SlomanPrinciple [Fintype W]
+    alternative on the expected-value scale. -/
+def SlomanPrinciple [Fintype W] [DecidableEq W]
     (belS : Set W) [DecidablePred belS]
     (pr : W → ℚ) (V : W → ℚ)
-    (alts : List (Σ' (q : Set W), DecidablePred q))
-    (p : Set W) [DecidablePred p] : Prop :=
-  ∀ entry ∈ alts,
-    let _ : DecidablePred entry.fst := entry.snd
-    entry.fst ≠ p →
-    expectedValue pr V belS p > expectedValue pr V belS entry.fst
+    (alts : List (Finset W)) (p : Finset W) : Prop :=
+  ∀ entry ∈ alts, entry ≠ p →
+    expectedValue pr V belS (· ∈ p) > expectedValue pr V belS (· ∈ entry)
 
 /-- **Lassiter's full account**: the bare threshold AND Sloman's
     Principle. This is the *actual* account Lassiter defends in §8;
     the bare `want` operator alone is the apparatus, not the position. -/
-def WantWithSloman [Fintype W]
+def WantWithSloman [Fintype W] [DecidableEq W]
     (belS : Set W) [DecidablePred belS]
     (pr : W → ℚ) (V : W → ℚ) (θ : ℚ)
-    (alts : List (Σ' (q : Set W), DecidablePred q))
-    (p : Set W) [DecidablePred p] : Prop :=
-  Want belS pr V θ p ∧ SlomanPrinciple belS pr V alts p
+    (alts : List (Finset W)) (p : Finset W) : Prop :=
+  Want belS pr V θ (· ∈ p) ∧ SlomanPrinciple belS pr V alts p
 
 /-! ### Bridge to decision theory
 
@@ -974,34 +865,25 @@ theorem threshold_admits_conflict_witness :
 /-! ### Sloman's Principle blocks the witness
 
 Lassiter's *full* account adds Sloman's Principle (eq. 8.16 p.216).
-On the conflict-witness model with `alts = [propP, ¬propP]`, Sloman
-holds for `propP` (E_V(propP) = 7 > 2 = E_V(¬propP) ✓) but FAILS for
-`¬propP` (E_V(¬propP) = 2 ≯ 7 = E_V(propP) ✗). So
-`WantWithSloman` makes only `propP` wanted, blocking the conflict.
+On the conflict-witness model with `alts = [p, pᶜ]`, Sloman holds for
+`p` (E_V(p) = 7 > 2 = E_V(pᶜ) ✓) but FAILS for `pᶜ`
+(E_V(pᶜ) = 2 ≯ 7 = E_V(p) ✗). So `WantWithSloman` makes only `p`
+wanted, blocking the conflict.
 
 This formalizes Lassiter's §8.11 (p.245) position: single-V conflict
 is blocked by his own constraints; genuine conflicting wants come from
 multi-source aggregation, not from threshold-tuning. -/
 
 theorem wantWithSloman_blocks_conflict
-    [Fintype W] (belS : Set W) [DecidablePred belS]
+    [Fintype W] [DecidableEq W] (belS : Set W) [DecidablePred belS]
     (pr : W → ℚ) (V : W → ℚ) (θ : ℚ)
-    (p : Set W) [DecidablePred p]
-    (alts : List (Σ' (q : Set W), DecidablePred q))
-    (h_p_in_alts : ⟨p, inferInstance⟩ ∈ alts)
-    (h_negp_in_alts : ⟨fun w => ¬ p w, inferInstance⟩ ∈ alts)
-    (h_p_ne_negp : (p : Set W) ≠ (fun w => ¬ p w)) :
+    (alts : List (Finset W)) (p : Finset W)
+    (hp : p ∈ alts) (hpc : pᶜ ∈ alts) (hne : p ≠ pᶜ) :
     ¬ (WantWithSloman belS pr V θ alts p ∧
-       WantWithSloman belS pr V θ alts (fun w => ¬ p w)) := by
-  simp only [WantWithSloman, SlomanPrinciple]
-  rintro ⟨⟨_, hSlomanP⟩, ⟨_, hSlomanNegP⟩⟩
-  -- Sloman for p: E_V(p) > E_V(¬p) (since ¬p is in alts and ≠ p)
-  have h1 : expectedValue pr V belS p > expectedValue pr V belS (fun w => ¬ p w) := by
-    exact hSlomanP ⟨fun w => ¬ p w, inferInstance⟩ h_negp_in_alts h_p_ne_negp.symm
-  -- Sloman for ¬p: E_V(¬p) > E_V(p) (since p is in alts and ≠ ¬p)
-  have h2 : expectedValue pr V belS (fun w => ¬ p w) > expectedValue pr V belS p := by
-    exact hSlomanNegP ⟨p, inferInstance⟩ h_p_in_alts h_p_ne_negp
-  exact absurd (lt_trans h1 h2) (lt_irrefl _)
+       WantWithSloman belS pr V θ alts pᶜ) := by
+  rintro ⟨⟨_, hSlomanP⟩, ⟨_, hSlomanPc⟩⟩
+  exact absurd (lt_trans (hSlomanPc p hp hne) (hSlomanP pᶜ hpc hne.symm))
+    (lt_irrefl _)
 
 /-! ### Intermediacy of expected value ([lassiter-2017] §7.5–§7.6)
 

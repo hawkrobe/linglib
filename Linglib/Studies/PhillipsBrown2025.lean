@@ -66,11 +66,7 @@ below; the structural isomorphism is documented and not coincidental
 
 inductive W where
   | w0 | w1 | w2 | w3 | w4 | w5 | w6 | w7
-  deriving DecidableEq, Repr, Inhabited
-
-instance : Fintype W where
-  elems := {.w0, .w1, .w2, .w3, .w4, .w5, .w6, .w7}
-  complete := λ w => by cases w <;> decide
+  deriving DecidableEq, Fintype, Repr, Inhabited
 
 /-! ## §2. Propositions
 
@@ -99,24 +95,24 @@ instance : DecidablePred fail := fun w => by unfold fail; infer_instance
 /-- The natural propositions of the model (basic dimensions), used to
     feed `IsAntiDeckstacking`. AD's quantifier is restricted to this
     test set — see `Desire.IsAntiDeckstacking` docstring. -/
-def naturalProps : List (DecProp W) :=
-  [mkDec nap, mkDec rested, mkDec pass]
+def naturalProps : List (Finset W) :=
+  [Finset.univ.filter nap, Finset.univ.filter rested, Finset.univ.filter pass]
 
 /-! ## §3. Nap scenario -/
 
 /-- Q' = partition by nap × rested (4 cells). -/
-def qNapRest : List (DecProp W) :=
-  [mkDec (fun w => nap w ∧ rested w),
-   mkDec (fun w => nap w ∧ ¬ rested w),
-   mkDec (fun w => ¬ nap w ∧ rested w),
-   mkDec (fun w => ¬ nap w ∧ ¬ rested w)]
+def qNapRest : List (Finset W) :=
+  [Finset.univ.filter (fun w => nap w ∧ rested w),
+   Finset.univ.filter (fun w => nap w ∧ ¬ rested w),
+   Finset.univ.filter (fun w => ¬ nap w ∧ rested w),
+   Finset.univ.filter (fun w => ¬ nap w ∧ ¬ rested w)]
 
 /-- Q'' = partition by nap × pass (4 cells). -/
-def qNapPass : List (DecProp W) :=
-  [mkDec (fun w => nap w ∧ pass w),
-   mkDec (fun w => nap w ∧ ¬ pass w),
-   mkDec (fun w => ¬ nap w ∧ pass w),
-   mkDec (fun w => ¬ nap w ∧ ¬ pass w)]
+def qNapPass : List (Finset W) :=
+  [Finset.univ.filter (fun w => nap w ∧ pass w),
+   Finset.univ.filter (fun w => nap w ∧ ¬ pass w),
+   Finset.univ.filter (fun w => ¬ nap w ∧ pass w),
+   Finset.univ.filter (fun w => ¬ nap w ∧ ¬ pass w)]
 
 /-- Beliefs for Nap: nap ↔ rested. Bel = {w0, w1, w6, w7}. -/
 def belNapRest : Set W := fun w => if nap w then rested w else ¬ rested w
@@ -126,25 +122,25 @@ instance : DecidablePred belNapRest := fun w => by unfold belNapRest; infer_inst
 def belNapPass : Set W := fun w => if nap w then ¬ pass w else pass w
 instance : DecidablePred belNapPass := fun w => by unfold belNapPass; infer_instance
 
-def desRest : List (DecProp W) := [mkDec rested]
-def desPass : List (DecProp W) := [mkDec pass]
+def desRest : List (Finset W) := [Finset.univ.filter rested]
+def desPass : List (Finset W) := [Finset.univ.filter pass]
 
 /-- **Nap is true** relative to Q' with beliefs nap↔rested, desires [rested]. -/
-theorem nap_true : WantQuestionBased belNapRest desRest qNapRest nap := by decide
+theorem nap_true : WantQuestionBased belNapRest desRest qNapRest nap := by decide +kernel
 
 /-- **Not-nap is true** relative to Q'' with beliefs pass↔¬nap, desires [pass]. -/
 theorem not_nap_true :
-    WantQuestionBased belNapPass desPass qNapPass (fun w => ¬ nap w) := by decide
+    WantQuestionBased belNapPass desPass qNapPass (fun w => ¬ nap w) := by decide +kernel
 
 /-- Fail is NOT considered relative to Q'. -/
-theorem fail_not_considered : ¬ IsConsidered qNapRest fail := by decide
+theorem fail_not_considered : ¬ IsConsidered qNapRest fail := by decide +kernel
 
 /-- Fail is also not predicted true. -/
 theorem fail_not_true :
-    ¬ WantQuestionBased belNapRest desRest qNapRest fail := by decide
+    ¬ WantQuestionBased belNapRest desRest qNapRest fail := by decide +kernel
 
 /-- Q' is diverse w.r.t. nap. -/
-theorem nap_diverse : IsDiverse qNapRest nap := by decide
+theorem nap_diverse : IsDiverse qNapRest nap := by decide +kernel
 
 /-! ## §4. Lobster scenario (paper §2.2)
 
@@ -158,20 +154,20 @@ abbrev gustatory : Set W := rested
 abbrev die : Set W := fail
 
 /-- Q_{c''} = partition by lobster × gustatory (= `qNapRest`). -/
-abbrev qLobGus : List (DecProp W) := qNapRest
+abbrev qLobGus : List (Finset W) := qNapRest
 
 /-- Q_{c'''} = partition by lobster × die. -/
-def qLobDie : List (DecProp W) :=
-  [mkDec (fun w => nap w ∧ fail w),
-   mkDec (fun w => nap w ∧ ¬ fail w),
-   mkDec (fun w => ¬ nap w ∧ fail w),
-   mkDec (fun w => ¬ nap w ∧ ¬ fail w)]
+def qLobDie : List (Finset W) :=
+  [Finset.univ.filter (fun w => nap w ∧ fail w),
+   Finset.univ.filter (fun w => nap w ∧ ¬ fail w),
+   Finset.univ.filter (fun w => ¬ nap w ∧ fail w),
+   Finset.univ.filter (fun w => ¬ nap w ∧ ¬ fail w)]
 
 /-- Beliefs: die ↔ eat lobster. Bel = {w1, w3, w4, w6}. -/
 def belLobDie : Set W := fun w => if nap w then fail w else ¬ fail w
 instance : DecidablePred belLobDie := fun w => by unfold belLobDie; infer_instance
 
-def desNotDie : List (DecProp W) := [mkDec (fun w => ¬ fail w)]
+def desNotDie : List (Finset W) := [Finset.univ.filter (fun w => ¬ fail w)]
 
 /-- **Lobster is true** in c'' (considering taste, ignoring death). -/
 theorem lobster_true :
@@ -185,11 +181,11 @@ theorem die_not_considered_in_qLobGus :
 
 /-- **Not-lobster is true** in c''' (considering death, ignoring taste). -/
 theorem not_lobster_true :
-    WantQuestionBased belLobDie desNotDie qLobDie (fun w => ¬ nap w) := by decide
+    WantQuestionBased belLobDie desNotDie qLobDie (fun w => ¬ nap w) := by decide +kernel
 
 /-- **Not-die is also true** in c''' (best answer entails both ¬lobster and ¬die). -/
 theorem not_die_true :
-    WantQuestionBased belLobDie desNotDie qLobDie (fun w => ¬ fail w) := by decide
+    WantQuestionBased belLobDie desNotDie qLobDie (fun w => ¬ fail w) := by decide +kernel
 
 /-! ## §5. Von Fintel comparison and the no-go theorem
 
@@ -198,10 +194,10 @@ predict both `want p` and `want ¬p` simultaneously. Specialised here
 for the Nap example, then derived from the substrate's general
 `wantVonFintel_no_conflict`. -/
 
-theorem vf_nap_true : WantVonFintel belNapRest desRest nap := by decide
+theorem vf_nap_true : WantVonFintel belNapRest desRest nap := by decide +kernel
 
 theorem vf_not_nap_false :
-    ¬ WantVonFintel belNapRest desRest (fun w => ¬ nap w) := by decide
+    ¬ WantVonFintel belNapRest desRest (fun w => ¬ nap w) := by decide +kernel
 
 /-- vF cannot predict both Nap and Not-nap with the same parameter set
     (specific instance). -/
@@ -217,8 +213,8 @@ theorem vf_no_conflict_nap :
     ¬ (WantVonFintel belNapRest desRest nap ∧
        WantVonFintel belNapRest desRest (fun w => ¬ nap w)) :=
   wantVonFintel_no_conflict belNapRest desRest nap
-    ⟨.w0, by decide,
-     by intro z hz ⟨_, hbad⟩; revert hz hbad; cases z <;> decide⟩
+    ⟨.w0, by decide +kernel,
+     by intro z hz ⟨_, hbad⟩; revert hz hbad; cases z <;> decide +kernel⟩
 
 /-! ## §6. Doxastic closure blocking (paper §4.1)
 
@@ -233,10 +229,10 @@ With Q'' (the nap × pass partition), `fail` is settled — and the
 contrast is exactly the paper's point. -/
 
 theorem nap_considered_in_qNapPass :
-    IsConsidered qNapPass nap := by decide
+    IsConsidered qNapPass nap := by decide +kernel
 
 theorem fail_considered_in_qNapPass :
-    IsConsidered qNapPass fail := by decide
+    IsConsidered qNapPass fail := by decide +kernel
 
 /-! ## §7. Anti-deckstacking (paper §3.7)
 
@@ -257,77 +253,77 @@ instance : DecidablePred happy := fun w => by cases w <;> unfold happy <;> infer
 instance : DecidablePred rain := fun w => by cases w <;> unfold rain <;> infer_instance
 
 /-- Test set of natural propositions for the Lu scenario. -/
-def naturalPropsLu : List (DecProp W) := [mkDec rain, mkDec happy]
+def naturalPropsLu : List (Finset W) := [Finset.univ.filter rain, Finset.univ.filter happy]
 
 /-- Q'''' (deck-stacked): {r, ¬r∧h, ¬r∧¬h}. -/
-def qDeckstacked : List (DecProp W) :=
-  [mkDec rain,
-   mkDec (fun w => ¬ rain w ∧ happy w),
-   mkDec (fun w => ¬ rain w ∧ ¬ happy w)]
+def qDeckstacked : List (Finset W) :=
+  [Finset.univ.filter rain,
+   Finset.univ.filter (fun w => ¬ rain w ∧ happy w),
+   Finset.univ.filter (fun w => ¬ rain w ∧ ¬ happy w)]
 
 /-- Lu's beliefs: happy unconditionally. -/
 def belLu : Set W := happy
 instance : DecidablePred belLu := inferInstanceAs (DecidablePred happy)
 
-def desHappy : List (DecProp W) := [mkDec happy]
+def desHappy : List (Finset W) := [Finset.univ.filter happy]
 
 /-- `happy` is not considered in the deck-stacked Q'''' (the `rain`
     cell contains both happy and unhappy worlds). -/
 theorem happy_not_considered_deckstacked :
-    ¬ IsConsidered qDeckstacked happy := by decide
+    ¬ IsConsidered qDeckstacked happy := by decide +kernel
 
 /-- A `happy`-answer exists in qDeckstacked (the `¬r∧h` cell entails
     `happy`) — the deck is stacked in favor of ¬rain. -/
 theorem happy_answer_exists_deckstacked :
-    ∃ a ∈ qDeckstacked, ∀ w, a.prop w → happy w := by decide
+    ∃ a ∈ qDeckstacked, ∀ w ∈ a, happy w := by decide +kernel
 
 /-- Without the constraint, the question-based semantics wrongly
     predicts Not-rain. -/
 theorem not_rain_deckstacked_true :
-    WantQuestionBased belLu desHappy qDeckstacked (fun w => ¬ rain w) := by decide
+    WantQuestionBased belLu desHappy qDeckstacked (fun w => ¬ rain w) := by decide +kernel
 
 /-- Q''''' (level playing field): partition by rain × happy. -/
-def qRainHappy : List (DecProp W) :=
-  [mkDec (fun w => rain w ∧ happy w),
-   mkDec (fun w => rain w ∧ ¬ happy w),
-   mkDec (fun w => ¬ rain w ∧ happy w),
-   mkDec (fun w => ¬ rain w ∧ ¬ happy w)]
+def qRainHappy : List (Finset W) :=
+  [Finset.univ.filter (fun w => rain w ∧ happy w),
+   Finset.univ.filter (fun w => rain w ∧ ¬ happy w),
+   Finset.univ.filter (fun w => ¬ rain w ∧ happy w),
+   Finset.univ.filter (fun w => ¬ rain w ∧ ¬ happy w)]
 
 theorem happy_considered_fair :
-    IsConsidered qRainHappy happy := by decide
+    IsConsidered qRainHappy happy := by decide +kernel
 
 /-- With the fair question, Not-rain is correctly predicted false. -/
 theorem not_rain_false_fair :
-    ¬ WantQuestionBased belLu desHappy qRainHappy (fun w => ¬ rain w) := by decide
+    ¬ WantQuestionBased belLu desHappy qRainHappy (fun w => ¬ rain w) := by decide +kernel
 
 /-- The deck-stacked question fails Anti-deckstacking on test set
     `[r, h]` (`h` is predetermined by the `¬r∧h` cell but not
     considered by Q''''). -/
 theorem qDeckstacked_fails_antideckstacking :
-    ¬ IsAntiDeckstacking naturalPropsLu qDeckstacked := by decide
+    ¬ IsAntiDeckstacking naturalPropsLu qDeckstacked := by decide +kernel
 
 /-- The fair (cross-product) question satisfies Anti-deckstacking —
     every basic proposition is settled by every cell. -/
 theorem qRainHappy_satisfies_antideckstacking :
-    IsAntiDeckstacking naturalPropsLu qRainHappy := by decide
+    IsAntiDeckstacking naturalPropsLu qRainHappy := by decide +kernel
 
 /-- Q' (`qNapRest`) satisfies Anti-deckstacking on the natural-prop
     test set `[nap, rested, pass]` — the cross-product over `nap` and
     `rested` settles `nap` and `rested`; no cell entails `pass`, so
     AD's antecedent is vacuous for `pass`. -/
 theorem qNapRest_satisfies_antideckstacking :
-    IsAntiDeckstacking naturalProps qNapRest := by decide
+    IsAntiDeckstacking naturalProps qNapRest := by decide +kernel
 
 /-! ## §8. Finest-question simulation (paper §3.4)
 
 When Q_c is the finest partition (singleton cells = individual worlds),
 the question-based semantics reduces to vF. The substrate provides
-`finestPartition : List W → List (DecProp W)`; here we instantiate it
+`finestPartition : List W → List (Finset W)`; here we instantiate it
 on the explicit world list of the model. -/
 
 def allWorldsW : List W := [.w0, .w1, .w2, .w3, .w4, .w5, .w6, .w7]
 
-def qFinest : List (DecProp W) := finestPartition allWorldsW
+def qFinest : List (Finset W) := finestPartition allWorldsW
 
 /-- The 8-world list `allWorldsW` covers `W`. Hypothesis required by the
     substrate's general `wantQuestionBased_finestPartition_iff_WantVonFintel`. -/
@@ -362,19 +358,19 @@ theorem finest_simulates_vf_not_lobster :
 /-! ## §9. Definedness via PartialProp (paper §3.6) -/
 
 theorem nap_defined_in_qNapRest :
-    WantDefined belNapRest naturalProps qNapRest nap := by decide
+    WantDefined belNapRest naturalProps qNapRest nap := by decide +kernel
 
 theorem fail_not_defined_in_qNapRest :
-    ¬ WantDefined belNapRest naturalProps qNapRest fail := by decide
+    ¬ WantDefined belNapRest naturalProps qNapRest fail := by decide +kernel
 
 theorem nap_prprop_holds :
     (wantPartialProp belNapRest desRest naturalProps qNapRest nap).presup .w0 ∧
     (wantPartialProp belNapRest desRest naturalProps qNapRest nap).assertion .w0 := by
-  refine ⟨?_, ?_⟩ <;> simp only [wantPartialProp] <;> decide
+  refine ⟨?_, ?_⟩ <;> simp only [wantPartialProp] <;> decide +kernel
 
 theorem fail_prprop_undefined :
     ¬(wantPartialProp belNapRest desRest naturalProps qNapRest fail).presup .w0 := by
-  simp only [wantPartialProp]; decide
+  simp only [wantPartialProp]; decide +kernel
 
 /-! ## §10. Belief-sensitivity: William III / nuclear war (paper §4.2)
 
@@ -402,48 +398,48 @@ def avoidNuclearWar : Set W := fun w => nap w ∨ rested w
 instance : DecidablePred avoidWar := inferInstanceAs (DecidablePred nap)
 instance : DecidablePred avoidNuclearWar := fun w => by unfold avoidNuclearWar; infer_instance
 
-def qNuclear : List (DecProp W) :=
-  [mkDec nap,
-   mkDec (fun w => ¬ nap w ∧ rested w),
-   mkDec (fun w => ¬ nap w ∧ ¬ rested w)]
+def qNuclear : List (Finset W) :=
+  [Finset.univ.filter nap,
+   Finset.univ.filter (fun w => ¬ nap w ∧ rested w),
+   Finset.univ.filter (fun w => ¬ nap w ∧ ¬ rested w)]
 
 /-- Natural-prop test set for the nuclear-war scenario. The Nap-vs-war
     distinction (`nap`) and the war-of-any-kind distinction
     (`avoidNuclearWar`) are the salient dimensions; `rested` and
     `pass` are not part of this scenario's vocabulary. -/
-def naturalPropsNuclear : List (DecProp W) :=
-  [mkDec nap, mkDec avoidNuclearWar]
+def naturalPropsNuclear : List (Finset W) :=
+  [Finset.univ.filter nap, Finset.univ.filter avoidNuclearWar]
 
 theorem avoidWar_entails_avoidNuclearWar :
-    ∀ w, avoidWar w → avoidNuclearWar w := by decide
+    ∀ w, avoidWar w → avoidNuclearWar w := by decide +kernel
 
 theorem avoidNuclearWar_considered :
-    IsConsidered qNuclear avoidNuclearWar := by decide
+    IsConsidered qNuclear avoidNuclearWar := by decide +kernel
 
 /-- William III: total uncertainty (all worlds compatible). -/
 def belWilliam : Set W := fun _ => True
 instance : DecidablePred belWilliam := fun _ => isTrue trivial
 
 theorem william_insensitive :
-    ¬ IsBelSensitive belWilliam qNuclear := by decide
+    ¬ IsBelSensitive belWilliam qNuclear := by decide +kernel
 
 theorem avoidNuclearWar_not_defined_william :
-    ¬ WantDefined belWilliam naturalPropsNuclear qNuclear avoidNuclearWar := by decide
+    ¬ WantDefined belWilliam naturalPropsNuclear qNuclear avoidNuclearWar := by decide +kernel
 
 /-- Modern person: beliefs rule out nuclear war (peace ∨ conventional). -/
 def belModern : Set W := fun w => nap w ∨ rested w
 instance : DecidablePred belModern := fun w => by unfold belModern; infer_instance
 
 theorem modern_sensitive :
-    IsBelSensitive belModern qNuclear := by decide
+    IsBelSensitive belModern qNuclear := by decide +kernel
 
 theorem avoidNuclearWar_defined_modern :
-    WantDefined belModern naturalPropsNuclear qNuclear avoidNuclearWar := by decide
+    WantDefined belModern naturalPropsNuclear qNuclear avoidNuclearWar := by decide +kernel
 
-def desAvoidWar : List (DecProp W) := [mkDec nap]
+def desAvoidWar : List (Finset W) := [Finset.univ.filter nap]
 
 theorem modern_wants_avoidNuclearWar :
-    WantQuestionBased belModern desAvoidWar qNuclear avoidNuclearWar := by decide
+    WantQuestionBased belModern desAvoidWar qNuclear avoidNuclearWar := by decide +kernel
 
 /-! ## §11. Cross-paper bridge: [condoravdi-lauer-2016]
 
@@ -530,7 +526,7 @@ def BeliefBasedDesireSemantics.IsConflictBlocking
     belS-world is necessarily undominated, which the no-go needs. -/
 def vonFintelSemantics {W : Type*} [Fintype W] :
     BeliefBasedDesireSemantics W where
-  Param := List (DecProp W)
+  Param := List (Finset W)
   defined belS _ p := (∃ w, belS w ∧ p w) ∧ (∃ w, belS w ∧ ¬ p w)
   want belS GS _ p := WantVonFintel belS GS p
 
