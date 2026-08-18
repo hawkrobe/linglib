@@ -1,5 +1,4 @@
-import Linglib.Semantics.Attitudes.ContentIndividual
-import Linglib.Semantics.Attitudes.SituationIndividual
+import Linglib.Semantics.Attitudes.Anchor
 import Linglib.Fragments.Buryat.Complementizers
 import Linglib.Fragments.Korean.Complementizers
 import Linglib.Syntax.Category.Verb.Complement.Takes
