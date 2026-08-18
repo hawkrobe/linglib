@@ -1,4 +1,3 @@
-import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Syntax.Category.Verb.Basic
 
 /-!
@@ -12,7 +11,6 @@ C-distributivity and NVP class are DERIVED from the `attitude` field.
 namespace Turkish.Predicates
 
 open ArgumentStructure
-open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
 
 /-- Turkish verb entry: extends Verb with Turkish inflectional paradigm. -/
 structure TurkishVerbEntry extends Verb where

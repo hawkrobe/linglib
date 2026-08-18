@@ -69,8 +69,8 @@ EN triggers obey one of four semantic licensing conditions:
 
 namespace JinKoenig2021
 
-open Semantics.Attitudes.Preferential (AttitudeValence PreferentialPredicate NVPClass
-                                        classifyNVP fear dread worry)
+open Features (AttitudeValence)
+open Preferential (fear dread worry)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Typological Survey Data (Tables 1–4)
@@ -625,23 +625,20 @@ def negativeValenceEntailsDual (v : AttitudeValence) : Bool :=
 
 /-- Fear has negative valence → satisfies the dual-inference condition. -/
 theorem fear_has_dual_inference {W E : Type*}
-    (μ : Semantics.Attitudes.Preferential.PreferenceFunction W E)
-    (θ : Semantics.Attitudes.Preferential.ThresholdFunction W) :
+    (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
     negativeValenceEntailsDual (fear μ θ).valence = true := rfl
 
 /-- Dread has negative valence → satisfies the dual-inference condition. -/
 theorem dread_has_dual_inference {W E : Type*}
-    (μ : Semantics.Attitudes.Preferential.PreferenceFunction W E)
-    (θ : Semantics.Attitudes.Preferential.ThresholdFunction W) :
+    (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
     negativeValenceEntailsDual (dread μ θ).valence = true := rfl
 
 /-- Worry has negative valence → satisfies the dual-inference condition.
-    (Non-C-distributive, but still negative valence.) -/
+    (Not clausally distributive, but still negative valence.) -/
 theorem worry_has_dual_inference {W E : Type*}
-    (μ : Semantics.Attitudes.Preferential.PreferenceFunction W E)
-    (θ : Semantics.Attitudes.Preferential.ThresholdFunction W)
-    (isUncertain : E → Semantics.Attitudes.Preferential.AlternativeList W → Bool) :
-    negativeValenceEntailsDual (worry μ θ isUncertain).valence = true := rfl
+    (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ)
+    (Uncertain : E → List (Finset W) → Prop) :
+    negativeValenceEntailsDual (worry μ θ Uncertain).valence = true := rfl
 
 /-- Hope has positive valence → does NOT satisfy the dual-inference
     condition → NOT an EN trigger. While 'hope' has been reported as a
@@ -649,14 +646,13 @@ theorem worry_has_dual_inference {W E : Type*}
     exx. 5–6), JK2021 exclude these based on their definition (2): the
     complement negation reflects epistemic uncertainty, not EN. -/
 theorem hope_no_dual_inference {W E : Type*}
-    (μ : Semantics.Attitudes.Preferential.PreferenceFunction W E)
-    (θ : Semantics.Attitudes.Preferential.ThresholdFunction W) :
-    negativeValenceEntailsDual
-      (Semantics.Attitudes.Preferential.hope μ θ).valence = false := rfl
+    (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
+    negativeValenceEntailsDual (Preferential.hope μ θ).valence = false := rfl
 
-/-- NVP Class 2 (C-distributive + negative valence) = the class that
-    licenses EN in complement clauses. This connects the preferential
-    attitude classification to the EN trigger taxonomy. -/
+/-- The distributive negative preferential class ([qing-uegaki-2025])
+    is the class that licenses EN in complement clauses — connecting
+    the preferential attitude classification to the EN trigger
+    taxonomy. -/
 theorem class2_licenses_EN :
     negativeValenceEntailsDual .negative = true ∧
     negativeValenceEntailsDual .positive = false := ⟨rfl, rfl⟩
