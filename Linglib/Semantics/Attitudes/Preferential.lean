@@ -29,7 +29,7 @@ from the structure of its semantics. Each predicate defines:
 - `propSemantics`: how it combines with propositions
 - `questionSemantics`: how it combines with questions
 
-Then `IsCDistributive propSemantics questionSemantics` is a theorem.
+Then `IsDistributive propSemantics questionSemantics` is a theorem.
 
 ## NVP Classification
 
@@ -48,20 +48,20 @@ import Linglib.Features.Attitudes
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
-import Linglib.Semantics.Attitudes.CDistributivity
+import Linglib.Semantics.Attitudes.Distributivity
 import Linglib.Semantics.Attitudes.Doxastic
 
 namespace Semantics.Attitudes.Preferential
 
 open Features (AttitudeValence)
 export Features (AttitudeValence)
-open Semantics.Attitudes.CDistributivity (IsCDistributive degreeComparison_isCDistributive
+open Semantics.Attitudes.Distributivity (IsDistributive degreeComparison_isDistributive
                       degreeComparisonProp degreeComparisonQuestion DegreeFn ThresholdFn)
 
 -- Re-export types under more descriptive names for downstream use
 
-/-- Question denotation: set of possible answers. Re-exported from `CDistributivity`. -/
-abbrev AlternativeList (W : Type*) := Semantics.Attitudes.CDistributivity.AlternativeList W
+/-- Question denotation: set of possible answers. Re-exported from `Distributivity`. -/
+abbrev AlternativeList (W : Type*) := Semantics.Attitudes.Distributivity.AlternativeList W
 
 /-- Preference function: μ(agent, prop) → degree. Alias for `DegreeFn`. -/
 abbrev PreferenceFunction (W E : Type*) := DegreeFn W E
@@ -78,7 +78,7 @@ abbrev ThresholdFunction (W : Type*) := ThresholdFn W
 Questions are **alternative sets**. Our `AlternativeList W` is the
 extensional, list-based representation of question denotations used by
 the C-distributivity machinery (still Bool-shaped pending a follow-up
-migration of `Semantics.Attitudes.CDistributivity` to substrate-aligned
+migration of `Semantics.Attitudes.Distributivity` to substrate-aligned
 Set propositions).
 
 ### Why This Matters for TSP

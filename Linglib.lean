@@ -1495,13 +1495,13 @@ import Linglib.Semantics.Aspect.Stratified
 import Linglib.Semantics.Aspect.SubeventStructure
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Semantics.Attitudes.Anchor
-import Linglib.Semantics.Attitudes.CDistributivity
 import Linglib.Semantics.Attitudes.ClauseEmbedding
 import Linglib.Semantics.Attitudes.CondoravdiLauer
 import Linglib.Semantics.Attitudes.Confidence
 import Linglib.Semantics.Attitudes.ContentIndividual
 import Linglib.Semantics.Attitudes.ContextQuantification
 import Linglib.Semantics.Attitudes.Desire
+import Linglib.Semantics.Attitudes.Distributivity
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Semantics.Attitudes.Factivity
