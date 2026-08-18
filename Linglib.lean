@@ -1494,10 +1494,9 @@ import Linglib.Semantics.Aspect.PrecedenceClosure
 import Linglib.Semantics.Aspect.Stratified
 import Linglib.Semantics.Aspect.SubeventStructure
 import Linglib.Semantics.Aspect.SubintervalProperty
+import Linglib.Semantics.Attitudes.Anchor
 import Linglib.Semantics.Attitudes.BuilderProperties
 import Linglib.Semantics.Attitudes.CDistributivity
-import Linglib.Semantics.Attitudes.ClauseDenotation.Content
-import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
 import Linglib.Semantics.Attitudes.ClauseEmbedding
 import Linglib.Semantics.Attitudes.CondoravdiLauer
 import Linglib.Semantics.Attitudes.Confidence
@@ -1513,6 +1512,7 @@ import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Semantics.Attitudes.RationalAttitude
 import Linglib.Semantics.Attitudes.Representationality
 import Linglib.Semantics.Attitudes.SituationDependent
+import Linglib.Semantics.Attitudes.SituationIndividual
 import Linglib.Semantics.Causation.BayesNet
 import Linglib.Semantics.Causation.CCSelection
 import Linglib.Semantics.Causation.CauserSort

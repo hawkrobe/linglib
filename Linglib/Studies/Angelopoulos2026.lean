@@ -3,8 +3,8 @@ import Linglib.Studies.Roussou2010
 import Linglib.Fragments.Greek.StandardModern.Complementizers
 import Linglib.Syntax.Category.Verb.Complement.Takes
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Semantics.Attitudes.ClauseDenotation.Content
-import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
+import Linglib.Semantics.Attitudes.ContentIndividual
+import Linglib.Semantics.Attitudes.SituationIndividual
 import Linglib.Data.Examples.Angelopoulos2026
 
 /-!
@@ -34,10 +34,8 @@ open Greek.StandardModern.Complementizers
 open Bondarenko2022 (NominalSort CompositionPath)
 open Features (VendlerClass)
 open Minimalist (GramFeature featuresMatch)
-open Semantics.Attitudes.ClauseDenotation.Content
-  (AttitudeVerbCI existsContentClosure)
-open Semantics.Attitudes.ClauseDenotation.Situation
-  (SituationVerb existsSituationClosure)
+open Semantics.Attitudes (AttitudeVerb SituationVerb)
+open Semantics.Attitudes.Anchor (existsClosure)
 
 /-! ### Reversed selection: the light noun (§3.1) -/
 
@@ -328,24 +326,24 @@ presupposition of *pu*-clauses derived from situation semantics
 (§3.2). -/
 theorem pu_report_factive {S X : Type*} {verb : SituationVerb S X}
     (h : Anchored verb) (a : X) (q : S → Prop) (s : S) :
-    existsSituationClosure verb a q s → q s := by
+    existsClosure verb a q s → q s := by
   rintro ⟨xs, hv, hq⟩
   rw [← show xs.sit = q from hq]
   exact h a xs s hv
 
 /-- Content reports carry no such entailment. -/
 theorem content_report_not_factive :
-    ¬ ∀ (verb : AttitudeVerbCI Bool Unit) (a : Unit) (p : Bool → Prop)
-        (w : Bool), existsContentClosure verb a p w → p w :=
+    ¬ ∀ (verb : AttitudeVerb Bool Unit) (a : Unit) (p : Bool → Prop)
+        (w : Bool), existsClosure verb a p w → p w :=
   fun h => h (fun _ _ _ => True) () (fun _ => False) true
     ⟨⟨fun _ => False⟩, trivial, rfl⟩
 
 /-- Anchored regret over two situations. -/
 private def toyRegret : SituationVerb Bool Unit := fun _ xs s => xs.sit s
 
-/-- ex. 1b's *pu*-report composed through `existsSituationClosure`. -/
+/-- ex. 1b's *pu*-report composed through `existsClosure`. -/
 theorem ex_1b_reading :
-    existsSituationClosure toyRegret () (· = true) true :=
+    existsClosure toyRegret () (· = true) true :=
   ⟨⟨(· = true)⟩, rfl, rfl⟩
 
 /-! ### Against the transparent syntax–semantics mapping (§7.3) -/
