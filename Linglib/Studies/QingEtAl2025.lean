@@ -1,36 +1,66 @@
-/-
-# [qing-uegaki-2025] Empirical Data
+import Linglib.Semantics.Attitudes.Preferential
 
-Data from: "When can non-veridical preferential attitude predicates take questions?"
-Authors: Qing, Özyıldız, Roelofsen, Romero, Uegaki
+/-!
+# Qing, Özyıldız, Roelofsen, Romero & Uegaki 2025: question-taking preferentials
 
-## Architecture
-
-This file imports verb entries from `Fragments/` and records empirical observations.
-The lexical properties (valence, C-distributivity, NVP class) come from the fragments;
-only the empirical acceptability judgments are specified here.
-
-## Findings
-
-The paper identifies three classes of NVPs based on:
-1. **C-distributivity**: Does `x V Q` ⟺ `∃p ∈ Q. x V that p`?
-2. **Valence**: Evaluatively positive vs. negative
-3. **TSP**: Threshold Significance Presupposition
-
-| Class | C-dist | Valence | TSP | Takes Q? |
-|-------|--------|---------|-----|----------|
-| 1 | ✗ | any | any | ✓ |
-| 2 | ✓ | negative | ✗ | ✓ |
-| 3 | ✓ | positive | ✓ | ✗ |
-
+[qing-uegaki-2025] classify non-veridical preferential predicates by
+two factors — clausal distributivity and evaluative valence — and
+show that only the distributive positive class (*hope*-type) is
+anti-rogative: non-distributive predicates (*worry*, Mandarin
+*qidai*, Japanese *tanosimi*) and distributive negative ones (*fear*,
+Japanese *osore*, Turkish *kork-*) take questions canonically,
+because the [uegaki-sudo-2019] triviality needs both distributivity
+and the positive-valence Threshold Significance Presupposition
+(`Studies/UegakiSudo2019.lean`). `PredicateClass` and `classify`
+render the classification (their Table 1); the observations record
+the paper's cross-linguistic acceptability judgments over English,
+Mandarin, Japanese, and Turkish. Apparent *hope* + question cases are
+analyzed as non-canonical adjunction-style composition (their §4),
+with the highlighting analysis considered and dispreferred.
 -/
 
-import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Fragments.Mandarin.Predicates
-import Linglib.Fragments.Japanese.Predicates
-import Linglib.Fragments.Turkish.Predicates
-
 namespace QingEtAl2025
+
+open Features (AttitudeValence)
+
+/-! ### The classification (Table 1) -/
+
+/-- The three classes of non-veridical preferential predicates: the
+    two distributivity-by-valence cells that take questions, and the
+    anti-rogative distributive positive class. -/
+inductive PredicateClass where
+  /-- Non-distributive (*worry*, *qidai*, *tanosimi*): the question
+      semantics outruns the existential over answers. -/
+  | nonDistributive
+  /-- Distributive with negative valence (*fear*, *osore*, *kork-*):
+      no Threshold Significance Presupposition. -/
+  | distributiveNegative
+  /-- Distributive with positive valence (*hope*, *wish*, *expect*):
+      anti-rogative via the [uegaki-sudo-2019] triviality. -/
+  | distributivePositive
+  deriving DecidableEq, Repr
+
+/-- The class determined by the two factors. Distributivity facts for
+    the substrate's predicates are
+    `Preferential.mkDegreeComparison_isDistributive` and
+    `Preferential.worry_not_distributive`. -/
+def classify (distributive : Bool) (valence : AttitudeValence) :
+    PredicateClass :=
+  match distributive, valence with
+  | false, _ => .nonDistributive
+  | true, .negative => .distributiveNegative
+  | true, .positive => .distributivePositive
+
+/-- Only the distributive positive class is anti-rogative (Table 1). -/
+def PredicateClass.takesQuestions : PredicateClass → Prop
+  | .nonDistributive => True
+  | .distributiveNegative => True
+  | .distributivePositive => False
+
+example : classify true .positive = .distributivePositive := rfl
+example : classify true .negative = .distributiveNegative := rfl
+example : classify false .negative = .nonDistributive := rfl
+example : classify false .positive = .nonDistributive := rfl
 
 -- Language Type
 
@@ -92,7 +122,7 @@ def qidaiZh : Observation := ⟨"qidai", .mandarin, "look forward to", true, tru
 def danxinZh : Observation := ⟨"danxin", .mandarin, "worry", true, true, ""⟩
 
 def xiwangZh : Observation := ⟨"xiwang", .mandarin, "hope", false, false,
-  "Class 3: anti-rogative like English hope"⟩
+  "distributive positive: anti-rogative like English hope"⟩
 
 def haipaZh : Observation := ⟨"haipa", .mandarin, "fear", true, true, ""⟩
 
@@ -106,7 +136,7 @@ def tanosimiJa : Observation := ⟨"tanosimi", .japanese, "looking forward to", 
 def osoreJa : Observation := ⟨"osore", .japanese, "fear", true, true, ""⟩
 
 def kitaiJa : Observation := ⟨"kitai", .japanese, "expect/hope", false, false,
-  "Class 3: behaves like English hope"⟩
+  "distributive positive: behaves like English hope"⟩
 
 def shinpaiJa : Observation := ⟨"shinpai", .japanese, "worry", true, true, ""⟩
 
@@ -130,16 +160,15 @@ def allObservations : List Observation :=
   englishObs ++ mandarinObs ++ japaneseObs ++ turkishObs
 
 /-!
-## Verifying Predictions Against Observations
+## Verifying predictions against observations
 
-The NVP class of each predicate follows from its C-distributivity and
-valence via `Semantics.Attitudes.Preferential.classifyNVP`, with
-C-distributivity proved from the semantics
-(`PreferentialPredicate.isCDistributive` and the hope/fear/worry
-theorems in `Semantics/Attitudes/Preferential.lean`); the class then
-predicts question-embedding, checked against the observations here:
+Each predicate's class follows from its distributivity and valence
+via `classify` — distributivity proved from the semantics
+(`Preferential.mkDegreeComparison_isDistributive`,
+`Preferential.worry_not_distributive`) — and the class predicts
+question-embedding, checked against the observations:
 
-### Cross-Linguistic Verification
+### Cross-linguistic verification
 
 | Language | Predicate | Class | Predicted | Observed | ✓/✗ |
 |----------|-----------|-------|-----------|----------|-----|
@@ -157,44 +186,25 @@ predicts question-embedding, checked against the observations here:
 -- Key Examples from the Paper
 
 /-!
-## Example: The hope-wh puzzle (Section 1)
+## Key examples
 
-Why can't "hope" embed questions in English?
+*Hope* cannot embed questions in English (*John hopes whether Mary
+will come; *John hopes who will come): *hope* is distributive and
+positive, so with the answers drawn from the comparison class the
+assertion is settled by the Threshold Significance Presupposition —
+the [uegaki-sudo-2019] triviality, `Studies/UegakiSudo2019.lean`.
 
-(1) *John hopes whether Mary will come.
-(2) *John hopes who will come.
+Mandarin *qidai* is positive yet embeds questions (Zhangsan qidai
+shei hui lai, "Zhangsan looks forward to who will come"): its
+question semantics carries an anticipation-of-resolution condition,
+so it is not distributive and the triviality derivation does not go
+through (§3.1).
 
-**Explanation (Qing et al.)**:
-- hope is C-distributive: "hope Q" ≈ "∃p ∈ Q. hope p"
-- hope is positive → has TSP: presupposes ∃p ∈ C. μ(x,p) > θ
-- When Q ⊆ C: assertion ⊆ presupposition → trivial!
-
-## Example: Mandarin qidai (Section 3.1)
-
-Why can positive "qidai" embed questions?
-
-(5) Zhangsan qidai shei hui lai.
-    "Zhangsan looks forward to who will come."
-    ✓ Grammatical (unlike English *"hope who")
-
-**Explanation**:
-- qidai is positive (like hope)
-- BUT qidai is NON-C-distributive!
-- "qidai Q" ≠ "∃p ∈ Q. qidai p"
-- Non-C-distributivity breaks the triviality derivation.
-
-## Example: Turkish kork- (Section 3.2)
-
-Why does "kork-" have symmetric interpretation with questions?
-
-(6) Ali kork-uyor kim gel-ecek diye.
-    "Ali fears who will come."
-    = Ali fears that X will come OR fears that Y will come...
-
-**Explanation**:
-- kork- is negative → no bouletic goal
-- No preferred outcome → symmetric interpretation
-- Contrast with "hopefully" which is asymmetric (positive valence)
+Turkish *kork-* "fear" embeds questions with a symmetric
+interpretation — "John fears whether his neighbor will be home" is
+felicitous whether he fears the neighbor's presence or absence
+(their GoodFriend and NoiseHater contexts, §3.2) — because negative
+predicates do not trigger the Threshold Significance Presupposition.
 -/
 
 end QingEtAl2025

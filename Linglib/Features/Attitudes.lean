@@ -103,12 +103,13 @@ inductive AttitudeValence where
 /-- Which Montague predicate strategy this preferential verb uses.
 
     Links the Fragment entry to the compositional semantics in
-    `Semantics.Attitudes.Preferential`. Properties like C-distributivity
-    are DERIVED from this tag via theorems, not stipulated.
+    `Preferential`; clausal distributivity is derived from the tag's
+    constructor (`Preferential.mkDegreeComparison_isDistributive`,
+    `Preferential.worry_not_distributive`), not stipulated.
 
-    - `degreeComparison`: Uses `mkDegreeComparisonPredicate` → C-distributive
-    - `uncertaintyBased`: Uses `worry` constructor → NOT C-distributive
-    - `relevanceBased`: Uses `qidai` constructor → NOT C-distributive -/
+    - `degreeComparison`: `Preferential.mkDegreeComparison` — distributive
+    - `uncertaintyBased`: `Preferential.worry` — not distributive
+    - `relevanceBased`: `Preferential.qidai` — not distributive -/
 inductive Preferential where
   /-- Degree comparison semantics: ⟦x V Q⟧ = ∃p ∈ Q. μ(x,p) > θ. C-distributive. -/
   | degreeComparison (valence : AttitudeValence)

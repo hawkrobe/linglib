@@ -1,4 +1,3 @@
-import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Syntax.Category.Verb.Basic
 
 /-!
@@ -12,7 +11,6 @@ C-distributivity and NVP class are DERIVED from the `attitude` field.
 namespace Japanese.Predicates
 
 open ArgumentStructure
-open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
 
 /-- Japanese verb entry: extends Verb with Japanese inflectional paradigm. -/
 structure JapaneseVerbEntry extends Verb where
