@@ -1501,7 +1501,6 @@ import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Attitudes.NegRaising
-import Linglib.Semantics.Attitudes.PreExistence
 import Linglib.Semantics.Attitudes.PreferenceStructure
 import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Semantics.Attitudes.RationalAttitude
