@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 import Linglib.Phonology.Constraints.Defs
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Tactic.Ring
 
 /-!
 # Harmony evaluation
@@ -43,15 +42,15 @@ variable {C : Type*} {n : ℕ}
 
 @[simp] theorem harmonyScore_nil (con : CON C 0) (w : Fin 0 → ℝ) (x : C) :
     harmonyScore con w x = 0 := by
-  simp [harmonyScore, weightedViolations]
+  rw [harmonyScore, weightedViolations_nil, neg_zero]
 
 @[simp] theorem harmonyScore_cons (c₀ : Constraint C) (con : CON C n)
     (w₀ : ℝ) (w : Fin n → ℝ) (x : C) :
     harmonyScore (Matrix.vecCons c₀ con) (Matrix.vecCons w₀ w) x =
       -(w₀ * (c₀ x : ℝ)) + harmonyScore con w x := by
-  rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum, Fin.sum_univ_succ]
-  simp only [Matrix.cons_val_zero, Matrix.cons_val_succ]
-  ring
+  have h : (fun j => Matrix.vecCons c₀ con j x) = Matrix.vecCons (c₀ x) fun j => con j x :=
+    funext (Fin.cases rfl fun _ => rfl)
+  rw [harmonyScore, h, weightedViolations_cons, neg_add, harmonyScore]
 
 /-! ### Harmonic bounding (Pareto dominance) -/
 
