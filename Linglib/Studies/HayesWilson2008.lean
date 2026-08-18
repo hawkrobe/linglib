@@ -1,4 +1,4 @@
-import Linglib.Phonology.HarmonicGrammar.OTLimit
+import Linglib.Phonology.HarmonicGrammar.Expressivity
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.OptimalityTheory.Tableau

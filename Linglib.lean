@@ -1311,11 +1311,10 @@ import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.Constraints.Directional
 import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.Constraints.Profile
-import Linglib.Phonology.HarmonicGrammar.Realizability
+import Linglib.Phonology.HarmonicGrammar.Expressivity
 import Linglib.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Phonology.HarmonicGrammar.NoisyHG
 import Linglib.Phonology.Hiatus
-import Linglib.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Phonology.HarmonicGrammar.PartiallyOrderedConstraints
 import Linglib.Phonology.HarmonicGrammar.Score
 import Linglib.Phonology.HarmonicGrammar.Separability

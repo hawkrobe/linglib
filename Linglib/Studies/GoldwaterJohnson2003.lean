@@ -1,4 +1,4 @@
-import Linglib.Phonology.HarmonicGrammar.OTLimit
+import Linglib.Phonology.HarmonicGrammar.Expressivity
 import Linglib.Core.Probability.SoftmaxTheory
 
 /-!
