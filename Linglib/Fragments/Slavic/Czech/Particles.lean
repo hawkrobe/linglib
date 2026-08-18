@@ -51,16 +51,16 @@ def vubec : Particle where
     | .polar, .matrix => some .optional
     | _, _ => none
 
-/-- *snad* 'perhaps, surely not' — adversative/mirative PQ particle of
-the cross-Slavic RAZVE family ([simik-2024] §4.2.4, [nekula-1996],
-[stankova-2023]). -/
+/-- *snad* 'perhaps, surely not' — adversative/mirative PQ particle
+([nekula-1996], [stankova-2023]); optionally supports rhetorical
+readings of polar questions ([simik-2024] ex. 8). -/
 def snad : Particle where
   form := "snad"
   distribution := fun c e => match c, e with
     | .polar, .matrix => some .optional
     | _, _ => none
 
-/-- *copak* 'what then' — RAZVE-family particle of positive and
+/-- *copak* 'what then' — RAZVE-family particle ([simik-2024] §4.2.4) of positive and
 negative polar questions ([stankova-2025] exs. 19a-b, [nekula-1996]);
 evidential-bias experiments in `StankovaSimik2025`. -/
 def copak : Particle where

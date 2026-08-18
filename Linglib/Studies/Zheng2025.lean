@@ -2,7 +2,6 @@ import Linglib.Data.UD.Basic
 import Linglib.Data.Examples.Zheng2025
 import Linglib.Fragments.Mandarin.QuestionParticles
 import Linglib.Semantics.Modality.Kernel
-import Linglib.Features.QParticleLayer
 import Linglib.Semantics.Questions.Bias
 import Linglib.Semantics.Questions.Singleton
 import Mathlib.Data.Set.Card
@@ -191,7 +190,7 @@ theorem expected_evidence_infelicitous :
 
 /-! ### Bias classification -/
 
-open Mandarin.QuestionParticles (nandao ma ba)
+open Mandarin.QuestionParticles (nandao)
 
 /-- *Nandao* requires contextual evidence for p — Zheng's evidential
 classification, the lexical face of `evidential_bias_necessary`. -/
@@ -211,30 +210,18 @@ theorem kernel_requires_evidence (k : Kernel World) (u : List (World → Prop))
     evidenceSupports k φ :=
   h.1
 
-/-! ### Left-peripheral layer assignments ([dayal-2025] cartography)
+/-! ### Selectional profile (§4)
 
-Zheng's layer assignments for the three Mandarin Q-particles in the
-[dayal-2025] cartography `[SAP [PerspP [CP ...]]]`. The layer split mirrors
-the bias split: the unbiased particle *ma* is CP (widest distribution:
-matrix, subordinated, quasi-subordinated); the biased *ba* and *nandao* are
-PerspP (matrix + quasi-subordinated only). The `_` argument is unused: the
-layer is a theoretical overlay on the fragment particle, not a computed
-property of its lexical fields. -/
+Nandao combines only with polar questions — it is incompatible with
+declaratives and wh-questions ([zheng-2025] ex. 12, after [xu-2012]) —
+and §4 derives the restriction from the felicity conditions: only a
+polar prejacent both follows from the contextual evidence and targets
+the source of the incompatibility. -/
 
-open Features (QParticleLayer)
-
-/-- *ma*: the unmarked CP-layer particle. -/
-def ma_layer (_ : Particle) : QParticleLayer := .cp
-
-/-- *ba*: PerspP-layer biased particle. -/
-def ba_layer (_ : Particle) : QParticleLayer := .perspP
-
-/-- *nandao*: PerspP-layer biased particle. -/
-def nandao_layer (_ : Particle) : QParticleLayer := .perspP
-
-/-- *Ba* carries speaker bias (expects a positive answer, seeks confirmation)
-with no evidential requirement; the unbiased *ma* imposes neither. -/
-def baOriginalBias : Option Semantics.Questions.Bias.OriginalBias := some .forP
+/-- The fragment's recorded distribution matches the paper's ex. 12. -/
+theorem nandao_distribution :
+    ¬ nandao.LicensedIn .declarative ∧ nandao.LicensedIn .polar ∧
+      ¬ nandao.LicensedIn .constituent := by decide
 
 /-! ### Singleton-alternative presupposition (parallel to kya:)
 

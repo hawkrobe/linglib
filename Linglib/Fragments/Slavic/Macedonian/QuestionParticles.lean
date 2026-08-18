@@ -1,25 +1,19 @@
 import Linglib.Syntax.Category.Particle.Basic
 
 /-!
-# Macedonian Question Particles
+# Macedonian question particles
 [simik-2024]
 
-Lexical entry for Macedonian *dali* as a `Particle` value. Macedonian
-*dali* can introduce negative PQs without triggering epistemic bias,
-unlike Bulgarian *li* ([simik-2024] ex. 32) — that contrast is an
-analytical classification and lives in `Simik2024`. Mitkovska,
-Bužarovska & Saračević (2024) contrast *dali* with biased particles
-*zar* and *neli*.
-
-## Cross-Module Connections
-
-- `Simik2024.macedonian` (`Studies/Simik2024`): PQ strategy profile
-  (negation does not trigger bias)
+Macedonian default polar questions are introduced by clause-initial
+*dali*, which admits negation without inducing bias ([simik-2024]
+ex. 32); the mirative *zar* of the cross-Slavic RAZVE family conveys
+strong bias and is excluded from neutral questions ([simik-2024] §4.1,
+§4.2.4).
 -/
 
 namespace Macedonian.QuestionParticles
 
-/-- дали dali — clause-initial PQ particle ([simik-2024] ex. 32). -/
+/-- дали dali is the clause-initial polar question particle. -/
 def dali : Particle where
   form := "dali"
   script := some "дали"
@@ -30,6 +24,17 @@ def dali : Particle where
     | .constituent, .matrix => some .excluded
     | _, _ => none
 
-def allQuestionParticles : List Particle := [dali]
+/-- зар zar is a mirative/dubitative particle of the cross-Slavic RAZVE
+family. -/
+def zar : Particle where
+  form := "zar"
+  script := some "зар"
+  position := some .clauseInitial
+  distribution := fun c e => match c, e with
+    | .polar, .matrix => some .optional
+    | _, _ => none
+
+/-- All Macedonian question particles indexed in this file. -/
+def allQuestionParticles : List Particle := [dali, zar]
 
 end Macedonian.QuestionParticles
