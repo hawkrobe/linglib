@@ -1495,7 +1495,6 @@ import Linglib.Semantics.Aspect.Stratified
 import Linglib.Semantics.Aspect.SubeventStructure
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Semantics.Attitudes.Anchor
-import Linglib.Semantics.Attitudes.ClauseEmbedding
 import Linglib.Semantics.Attitudes.CondoravdiLauer
 import Linglib.Semantics.Attitudes.Confidence
 import Linglib.Semantics.Attitudes.ContentIndividual
@@ -2782,6 +2781,7 @@ import Linglib.Syntax.Case.Filter
 import Linglib.Syntax.Case.Licensing
 import Linglib.Syntax.Case.Order
 import Linglib.Syntax.Category.Adjective.Basic
+import Linglib.Syntax.Category.Adjective.ClauseEmbedding
 import Linglib.Syntax.Category.Adposition.Basic
 import Linglib.Syntax.Category.Adposition.Order
 import Linglib.Syntax.Category.Adposition.Spatial

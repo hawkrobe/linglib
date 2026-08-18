@@ -234,7 +234,7 @@ theorem toVerbEntry_eq_none_iff (p : Predicate) :
 
 /-- Map each predicate to its `Verb` — the semantic spine shared by verbal and
     copular entries. Covers all 20; copular entries go through
-    `ClauseEmbeddingAdj.toVerb`. -/
+    `ClauseEmbeddingAdjective.toVerb`. -/
 def toPredicateCore : Predicate → Verb
   | .know => know.toVerb
   | .think => think.toVerb
@@ -263,7 +263,7 @@ theorem all_predicates_take_clause_complement (p : Predicate) :
     (toPredicateCore p).complementType = .finiteClause ∨
     (toPredicateCore p).altComplementType = some .finiteClause := by
   cases p <;>
-    simp [toPredicateCore, Semantics.Attitudes.ClauseEmbeddingAdj.toVerb,
+    simp [toPredicateCore, ClauseEmbeddingAdjective.toVerb,
           beAnnoyed, beRight] <;>
     first | left; rfl | right; rfl
 
