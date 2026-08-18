@@ -68,7 +68,7 @@ Boolean predicate.
 ## Connection to [scontras-tonhauser-2025]
 
 [scontras-tonhauser-2025]'s RSA model uses the same `factivePos` /
-`nonFactivePos` foundation from `Semantics.Attitudes.Factivity`
+`nonFactivePos` foundation from `Factivity`
 for `know` / `think`. The bridges
 `clauseEmbedding_factive_eq_st_know` and
 `clauseEmbedding_nonfactive_eq_st_think` make this explicit. The S&T binary
@@ -89,7 +89,7 @@ set_option autoImplicit false
 
 namespace GroveWhite2025
 
-open Semantics.Attitudes.Factivity
+open Factivity
 open Semantics.Probabilistic
 open DegenTonhauser2021
 open DegenTonhauser2022
@@ -124,7 +124,7 @@ variable {W : Type*} [HasBelief W] [HasComplement W]
 
 /-- The Boolean denotation of a clause-embedding predicate, parameterized by
     the resolved reading. The two readings dispatch directly to
-    `Semantics.Attitudes.Factivity` — `factivePos` and
+    `Factivity` — `factivePos` and
     `nonFactivePos` — so this study shares its foundations with
     [scontras-tonhauser-2025]'s `know` / `think` denotations. -/
 def clauseEmbeddingSem : FactivityReading → W → Bool
@@ -350,7 +350,7 @@ section ScontrasTonhauserBridge
 
 /-- The `factive` reading of `clauseEmbeddingSem` is the same Boolean
     predicate as [scontras-tonhauser-2025]'s `literalMeaning .knowPos`.
-    Both unfold to `factivePos` from `Semantics.Attitudes.Factivity`,
+    Both unfold to `factivePos` from `Factivity`,
     so the equality is true by construction — a *grounding theorem* in the
     sense of `CLAUDE.md`, witnessing that two paper-specific lexical entries
     share their foundation. -/

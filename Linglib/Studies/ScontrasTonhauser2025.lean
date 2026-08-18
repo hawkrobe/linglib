@@ -16,7 +16,7 @@ listener jointly infers the world state and the speaker's private assumptions
 (eq. 5). Projection of the complement C emerges with no lexically-specified
 constraint on the common ground. Domain: 6 utterances × 4 worlds (BEL × C) ×
 15 belief states × 2 QUDs; literal semantics from
-`Semantics.Attitudes.Factivity` (know = `factivePos`, think =
+`Factivity` (know = `factivePos`, think =
 `nonFactivePos`).
 
 ## Main results
@@ -60,7 +60,7 @@ open scoped ENNReal NNReal NNRat
 namespace ScontrasTonhauser2025
 
 open BigOperators
-open Semantics.Attitudes.Factivity
+open Factivity
 
 /-! ### Worlds and utterances -/
 
