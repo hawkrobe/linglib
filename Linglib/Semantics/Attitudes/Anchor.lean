@@ -9,7 +9,7 @@ On the standard analysis a *that*-clause denotes a proposition,
 ⟦that p⟧ = p. On the projection analysis the complementizer instead
 identifies p as the projection of an anchor individual, so a clause
 denotes a predicate of anchors. The `Anchor` class carries the mode of
-projection: CONT for content individuals ([kratzer-2006];
+projection: CONT for content individuals ([kratzer-2006]; [kratzer-2013];
 [moulton-2015]), SIT for situation individuals ([bondarenko-2022];
 [moltmann-2021]). The sorts stay distinct types, so sort-sensitive
 selection — content verbs rejecting situation clauses and vice versa,
