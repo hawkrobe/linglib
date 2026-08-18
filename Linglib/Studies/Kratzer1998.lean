@@ -14,15 +14,15 @@ import Linglib.Data.Examples.Kratzer1998
 tense–pronoun analogy in three directions: an aspect-based decomposition
 of English simple past, SOT deletion via zero tenses, and zero forms with
 locality constraints. The substrate machinery (deletion mechanism +
-Kratzer-named lexical entries used by Fragments) is at
+tense pronouns used by Fragments) is at
 `Semantics/Tense/Decomposition.lean`; this study file
 collects the paper-anchored cross-references and the empirical chain
 theorems connecting Fragments → Theory → Data → Empirical judgments.
 
 ## Architectural note
 
-The `kratzerEnglishPast` / `kratzerGermanPreterit` / `kratzerZeroTense`
-lexical entries live at the Theories layer
+The `indexicalPresent` / `anaphoricPast` / `boundPresent`
+tense pronouns live at the Theories layer
 (`Tense/Decomposition.lean`) because
 `Fragments/{English,German,Italian}/Tense.lean` consume them via the
 `Fragments → Theories` import direction. The "Fragments import
@@ -68,17 +68,17 @@ Reichenbach integers). The empirical anchor is now the
 numbered example, which is verifiable from the paper itself.
 
 Predictions tested:
-- `kratzerSimplePast.canBeDeictic = true` ↔ `Examples.ex40a.judgment = .acceptable`
+- `simplePastSurface.canBeDeictic = true` ↔ `Examples.ex40a.judgment = .acceptable`
   (English simple past, out of the blue).
-- `kratzerPreterit.canBeDeictic = false` ↔ `Examples.ex40b.judgment = .ungrammatical`
+- `preteritSurface.canBeDeictic = false` ↔ `Examples.ex40b.judgment = .ungrammatical`
   (German Präteritum, out of the blue).
-- `kratzerPerfekt.canBeDeictic = true` ↔ `Examples.ex40c.judgment = .acceptable`
+- `perfektSurface.canBeDeictic = true` ↔ `Examples.ex40c.judgment = .acceptable`
   (German Perfekt, out of the blue). -/
 
 section KratzerChain
 
-open English.Tense (kratzerSimplePast)
-open German.Tense (kratzerPreterit kratzerPerfekt)
+open English.Tense (simplePastSurface)
+open German.Tense (preteritSurface perfektSurface)
 open Features (Judgment)
 
 /-- **English simple past = perfect + present.** Per Kratzer §7
@@ -91,20 +91,20 @@ open Features (Judgment)
     out-of-the-blue example (40a) ("Who built this Church?…") is
     `.acceptable`. -/
 theorem english_simple_past_chain :
-    kratzerSimplePast.tensePronoun.constraint = Tense.present ∧
-    kratzerSimplePast.hasPerfect = true ∧
+    simplePastSurface.tensePronoun.constraint = Tense.present ∧
+    simplePastSurface.hasPerfect = true ∧
     Examples.ex40a.judgment = Judgment.acceptable :=
   ⟨rfl, rfl, rfl⟩
 
 /-- **German Preterit = genuine past pronoun.** Per Kratzer §7
     (ex (40b), p. 16): the German Präteritum requires a contextually
     salient past time, behaving like an anaphoric pronoun. The Fragment
-    encodes this as `kratzerPreterit.tensePronoun.constraint = .past`
+    encodes this as `preteritSurface.tensePronoun.constraint = .past`
     + `hasPerfect = false`; the empirical anchor is `Examples.ex40b`
     (deviant out of the blue, star per Kratzer). -/
 theorem german_preterit_chain :
-    kratzerPreterit.tensePronoun.constraint = Tense.past ∧
-    kratzerPreterit.hasPerfect = false ∧
+    preteritSurface.tensePronoun.constraint = Tense.past ∧
+    preteritSurface.hasPerfect = false ∧
     Examples.ex40b.judgment = Judgment.ungrammatical :=
   ⟨rfl, rfl, rfl⟩
 
@@ -113,26 +113,30 @@ theorem german_preterit_chain :
     fills the deictic-past slot that the Preterit cannot. The chain
     asserts BOTH the empirical agreement on (40c) AND the cross-Fragment
     parallelism (Perfekt's tense head + perfect-aspect coincide with
-    `kratzerSimplePast`'s), which is the substantive content of "same
+    `simplePastSurface`'s), which is the substantive content of "same
     decomposition." -/
 theorem german_perfekt_chain :
-    kratzerPerfekt.tensePronoun.constraint = Tense.present ∧
-    kratzerPerfekt.hasPerfect = true ∧
+    perfektSurface.tensePronoun.constraint = Tense.present ∧
+    perfektSurface.hasPerfect = true ∧
     Examples.ex40c.judgment = Judgment.acceptable ∧
-    kratzerPerfekt.tensePronoun.constraint =
-      kratzerSimplePast.tensePronoun.constraint ∧
-    kratzerPerfekt.hasPerfect = kratzerSimplePast.hasPerfect :=
+    perfektSurface.tensePronoun.constraint =
+      simplePastSurface.tensePronoun.constraint ∧
+    perfektSurface.hasPerfect = simplePastSurface.hasPerfect :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-/-- **Zero tense surface properties.** Per Kratzer §4 (p. 10–11):
-    English has two indexical tenses (present, past) and a zero tense.
-    The substrate lemmas `zero_tense_is_present` and `zero_tense_overtness`
-    in `Tense/Decomposition.lean` carry the underlying claims; this
-    theorem just binds them locally for cross-reference. -/
-theorem zero_tense_chain :
-    (kratzerZeroTense 1).constraint = Tense.present ∧
-    Overtness.fromBinding (kratzerZeroTense 1).mode true = .zero :=
-  ⟨zero_tense_is_present 1, zero_tense_overtness 1⟩
+/-- **Zero tense surface properties and the reflexive parallel.** Per
+    [kratzer-1998] §4 (p. 10–11) English has two indexical tenses and a
+    zero tense; per §3 the zero tense is a locally bound PRESENT that
+    surfaces as zero, exactly as a locally bound entity pronoun surfaces
+    as a reflexive, while the free pronouns (indexical present, anaphoric
+    past) stay overt. -/
+theorem zero_tense_chain (n : ℕ) :
+    (boundPresent n).constraint = Tense.present ∧
+    (boundPresent n).isBound ∧
+    Overtness.fromBinding (boundPresent n).mode true = .zero ∧
+    Overtness.fromBinding indexicalPresent.mode true = .overt ∧
+    Overtness.fromBinding (anaphoricPast n).mode true = .overt :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 end KratzerChain
 
@@ -150,13 +154,13 @@ theorem deletion_agrees_with_zero_tense_binding {Time : Type*}
     (m : ReichenbachFrame Time) :
     applyDeletion m = Tense.simultaneousFrame m m.eventTime ∧
     (applyDeletion m).isPresent :=
-  ⟨applyDeletion_eq_simultaneousFrame m, kratzer_derives_simultaneous m⟩
+  ⟨applyDeletion_eq_simultaneousFrame m, applyDeletion_isPresent m⟩
 
 /-! ### Cross-paper bridge theorems (Phase F)
 
 The contrast theorems with Ogihara, Sharvit, von Stechow, Klecha are
 intentionally not yet landed; substrate is ready (`applyDeletion`,
-`sotDeletionApplicable`, the kratzer-named lexical entries are all
-exported from `Tense/Decomposition.lean`). -/
+`sotDeletionApplicable`, and the tense pronouns are exported from
+`Tense/Decomposition.lean`). -/
 
 end Kratzer1998
