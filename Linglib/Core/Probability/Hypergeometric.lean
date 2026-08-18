@@ -95,7 +95,7 @@ theorem hypergeometric_apply_ne_zero_iff (N K n : ℕ) (h_n : n ≤ N) (h_K : K 
     hypergeometric N K n h_n h_K k ≠ 0 ↔
       k.val ≤ K ∧ n - k.val ≤ N - K := by
   rw [hypergeometric_apply, ne_eq, ENNReal.div_eq_zero_iff]
-  push_neg
+  push Not
   constructor
   · rintro ⟨h_num_ne_zero, _⟩
     have h_num_nat_ne_zero : K.choose k.val * (N - K).choose (n - k.val) ≠ 0 := by

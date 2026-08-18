@@ -975,7 +975,7 @@ theorem indeterminacy_bind_is_seq {A B : Type}
     (m : Set A) (f : A → Set B) :
     m >>= f = {b | ∃ a, m a ∧ f a b} := by
   ext b
-  simp only [Set.bind_def, Set.mem_iUnion, Set.mem_setOf_eq, exists_prop]
+  simp only [Set.bind_def, Set.mem_iUnion, Set.mem_ofPred_eq, exists_prop]
   rfl
 
 /-- **Indeterminacy obeys ASSOCIATIVITY** — the property [charlow-2020]

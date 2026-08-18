@@ -269,11 +269,9 @@ end Intension
 end Intensional
 
 
--- ════════════════════════════════════════════════════════════════
--- Referential Mode ([partee-1973])
--- ════════════════════════════════════════════════════════════════
+namespace Intensional
 
-namespace Intensional.ReferentialMode
+/-! ### Referential mode ([partee-1973]) -/
 
 /-- [partee-1973]'s three-way interpretive classification for referential
     expressions. Applies uniformly to pronouns (entity variables) and
@@ -304,14 +302,7 @@ def ReferentialMode.isFree : ReferentialMode → Bool
   | .indexical | .anaphoric => true
   | .bound => false
 
-end Intensional.ReferentialMode
-
-
--- ════════════════════════════════════════════════════════════════
--- Situation Variable Status ([elbourne-2013])
--- ════════════════════════════════════════════════════════════════
-
-namespace Intensional.SitVarStatus
+/-! ### Situation variable status ([elbourne-2013]) -/
 
 /-- [elbourne-2013]'s two-way classification of situation variables.
     Coarsens `ReferentialMode`'s three-way distinction: indexical and
@@ -322,8 +313,6 @@ inductive SitVarStatus where
   /-- Bound: bound by an intensional operator (→ de dicto) -/
   | bound
   deriving DecidableEq, Repr
-
-open Intensional.ReferentialMode (ReferentialMode)
 
 /-- Expand Elbourne's two-way classification to Partee's three-way.
     Free situation variables correspond to either indexical or anaphoric
@@ -344,10 +333,6 @@ theorem sitVarStatus_roundtrip (s : SitVarStatus) :
   intro m hm
   cases s <;> simp [SitVarStatus.toReferentialModes] at hm <;>
     rcases hm with rfl | rfl <;> rfl
-
-end Intensional.SitVarStatus
-
-namespace Intensional
 
 /-! ### Operator extensionality
 

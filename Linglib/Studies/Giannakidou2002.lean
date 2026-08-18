@@ -192,7 +192,7 @@ theorem impfDen_singleton_eq_stativeDenotation
     impfDen (fun () (e : Event Time) => e.τ = i) =
     stativeDenotation i := by
   ext j
-  simp only [UNBOUNDED, stativeDenotation, Set.mem_Iic, Set.mem_setOf_eq, Event.τ]
+  simp only [UNBOUNDED, stativeDenotation, Set.mem_Iic, Set.mem_ofPred_eq, Event.τ]
   constructor
   · rintro ⟨e, hSub, rfl⟩; exact hSub
     -- sort defaults to .action; the proof doesn't reference .sort
@@ -224,7 +224,7 @@ theorem prfvDen_singleton_eq_accomplishmentDenotation
 theorem timeTrace_impf_eq_prfv (P : Unit → Event Time → Prop) :
     timeTrace (impfDen P) = timeTrace (prfvDen P) := by
   ext t
-  simp only [timeTrace, prfvDen, UNBOUNDED, Set.mem_setOf_eq, Event.τ]
+  simp only [timeTrace, prfvDen, UNBOUNDED, Set.mem_ofPred_eq, Event.τ]
   constructor
   · rintro ⟨i, ⟨e, hSub, hP⟩, ht⟩
     exact ⟨e.τ, ⟨e, hP, rfl⟩,

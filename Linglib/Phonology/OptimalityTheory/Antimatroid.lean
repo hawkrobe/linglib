@@ -212,7 +212,7 @@ theorem feasible_not_accessible :
 theorem maximalChain_dominance {n : Nat} (r : Ranking n) (k : Fin (n + 1))
     (w l : Fin n) (hw : r.Dominates w l) (hl : l ∈ maximalChain r k) :
     w ∈ maximalChain r k := by
-  simp only [maximalChain, Set.mem_setOf_eq] at hl ⊢
+  simp only [maximalChain, Set.mem_ofPred_eq] at hl ⊢
   unfold Ranking.Dominates at hw; omega
 
 -- Helpers for the union closure construction
@@ -383,7 +383,7 @@ theorem MChain.union_closed {n : Nat} (E : List (ERC n))
     · intro h; rw [hr₃, hr₃]; exact h
   -- Prefix set = S ∪ T
   have hprefix : maximalChain r₃ k₃ = maximalChain r₁ k₁ ∪ maximalChain r₂ k₂ := by
-    ext i; simp only [maximalChain, Set.mem_setOf_eq, Set.mem_union, k₃]
+    ext i; simp only [maximalChain, Set.mem_ofPred_eq, Set.mem_union, k₃]
     rw [show (r₃.symm i : Nat) = (ff i).val from congrArg Fin.val (hr₃ i)]
     simp only [ff, f]; split_ifs with h1 h2
     · exact ⟨fun _ => .inl h1, fun _ => by omega⟩
@@ -459,13 +459,13 @@ def Antimat {n : Nat} (E : List (ERC n)) (hcons : ERCSet.Consistent E) :
     obtain ⟨r, hr, k, hk⟩ := hS
     have hkn : k.val < n := by
       by_contra hge; push Not at hge; apply hne; rw [← hk]; ext i
-      simp only [maximalChain, Set.mem_setOf_eq, Set.mem_univ, iff_true]
+      simp only [maximalChain, Set.mem_ofPred_eq, Set.mem_univ, iff_true]
       exact Nat.lt_of_lt_of_le (r.symm i).isLt (by omega)
     refine ⟨r ⟨k.val, hkn⟩, Set.mem_univ _, ?_, r, hr, ⟨k.val + 1, by omega⟩, ?_⟩
     · -- r(k) ∉ S: its rank position is k, which is not < k
-      rw [← hk]; simp only [maximalChain, Set.mem_setOf_eq, Equiv.symm_apply_apply]; omega
+      rw [← hk]; simp only [maximalChain, Set.mem_ofPred_eq, Equiv.symm_apply_apply]; omega
     · -- maximalChain r (k+1) = insert r(k) S
-      rw [← hk]; ext i; simp only [maximalChain, Set.mem_insert_iff, Set.mem_setOf_eq]
+      rw [← hk]; ext i; simp only [maximalChain, Set.mem_insert_iff, Set.mem_ofPred_eq]
       constructor
       · intro h
         by_cases heq : (r.symm i).val = k.val
@@ -483,13 +483,13 @@ def Antimat {n : Nat} (E : List (ERC n)) (hcons : ERCSet.Consistent E) :
     have hk0 : 0 < k.val := by
       by_contra h; push Not at h
       rw [← hk] at hne; obtain ⟨x, hx⟩ := hne
-      simp only [maximalChain, Set.mem_setOf_eq] at hx; omega
+      simp only [maximalChain, Set.mem_ofPred_eq] at hx; omega
     have hkn1 : k.val - 1 < n := by omega
     refine ⟨r ⟨k.val - 1, hkn1⟩, ?_, r, hr, ⟨k.val - 1, by omega⟩, ?_⟩
     · -- r(k-1) ∈ S: its rank position is k-1 < k
-      rw [← hk]; simp only [maximalChain, Set.mem_setOf_eq, Equiv.symm_apply_apply]; omega
+      rw [← hk]; simp only [maximalChain, Set.mem_ofPred_eq, Equiv.symm_apply_apply]; omega
     · -- S \ {r(k-1)} = maximalChain r (k-1)
-      rw [← hk]; ext i; simp only [maximalChain, Set.mem_sdiff, Set.mem_setOf_eq, Set.mem_singleton_iff]
+      rw [← hk]; ext i; simp only [maximalChain, Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_singleton_iff]
       constructor
       · intro h
         exact ⟨by omega, fun heq => by rw [heq] at h; simp only [Equiv.symm_apply_apply] at h; omega⟩

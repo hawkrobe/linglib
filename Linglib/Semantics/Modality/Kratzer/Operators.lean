@@ -229,7 +229,7 @@ theorem empty_base_universal_access (w : W) :
     accessibleWorlds (emptyBackground (W := W)) w = Set.univ := by
   ext w'
   simp only [accessibleWorlds, emptyBackground, propIntersection,
-             List.not_mem_nil, false_implies, forall_const, Set.mem_setOf_eq,
+             List.not_mem_nil, false_implies, forall_const, Set.mem_ofPred_eq,
              Set.mem_univ]
 
 /-! ### Modal axioms (from `RestrictedModality`) -/

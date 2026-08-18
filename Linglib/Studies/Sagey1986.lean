@@ -207,7 +207,7 @@ theorem isNonCrossing_of_validRealization (R : TierRealization T)
   rw [isNonCrossing_iff]
   intro l₁ hl₁ l₂ hl₂ hlt
   by_contra hgt
-  push_neg at hgt
+  push Not at hgt
   exact no_crossing (R.assoc l₂.1 l₂.2) (R.assoc l₁.1 l₁.2)
     (hValid l₂ hl₂) (hValid l₁ hl₁) ⟨R.tim_mono hgt, R.mel_mono hlt⟩
 

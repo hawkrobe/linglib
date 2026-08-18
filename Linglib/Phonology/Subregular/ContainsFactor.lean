@@ -170,7 +170,7 @@ theorem isStarFree_containsFactor (c : List α) :
       (FreeMonoid.map (enc c)) (FreeMonoid.ofList w) ∈ ({y | c.map (enc c) <:+: y} : Language _)}
     from by
       ext x
-      simp only [Set.mem_setOf_eq, ← FreeMonoid.ofList_map]
+      simp only [Set.mem_ofPred_eq, ← FreeMonoid.ofList_map]
       exact containsFactor_iff_map c x]
   exact (isStarFree_containsFactor_finite (c.map (enc c))).comap (FreeMonoid.map (enc c))
 
