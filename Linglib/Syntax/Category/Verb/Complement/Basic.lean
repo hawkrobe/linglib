@@ -1,4 +1,6 @@
 import Linglib.Syntax.Clause.Basic
+import Linglib.Syntax.Clause.Complementation
+import Linglib.Semantics.Mood.Defs
 
 /-! # Complement frames — typed complement positions
 

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Tense.Evidential
-import Linglib.Semantics.Tense.SOT.Decomposition
+import Linglib.Semantics.Tense.Decomposition
 
 /-! # Italian Tense Fragment
 
@@ -36,7 +36,7 @@ open Tense
 namespace Italian.Tense
 
 open _root_.Tense.Evidential
-open _root_.Tense.SOT.Decomposition
+open _root_.Tense.Decomposition
 open _root_.Tense
 open _root_.Tense
 

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Tense.Compositional
-import Linglib.Semantics.Tense.SOT.Decomposition
+import Linglib.Semantics.Tense.Decomposition
 import Linglib.Semantics.Reference.KaplanLD
 import Linglib.Semantics.Intensional.Rigidity
 
@@ -220,7 +220,7 @@ This explains why Persian has zero PRONOUNS but NOT zero TENSE
 `Overtness.fromBinding` (Core/Tense.lean) formalizes this as a function
 from `(ReferentialMode × localDomain)` to `Overtness`. -/
 
-open Tense.SOT.Decomposition
+open Tense.Decomposition
 
 /-- The four-way classification: all three referential modes produce
     overt forms except bound+local, which produces zero.
