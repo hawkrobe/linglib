@@ -25,16 +25,15 @@ theorems are a ℚ veneer over them.
 
 ## Main definitions
 
-- Grammars: `Eq` (the discrete grammar — no rankings), `fromPermutation σ`
-  (the total ranking a permutation induces), and `stratified stratumOf inner`
+- Grammars: `Eq` (the discrete grammar — no rankings), `Ranking.toRel σ` (the
+  total order a ranking induces), and `stratified stratumOf inner`
   (mutually-ranked strata refined by an inner order —
   [tesar-smolensky-1995]'s Stratified Domination Hierarchies — defined as
   mathlib's `Sigma.Lex` on the stratum map's fibers, characterized by
   `stratified_iff`).
-- `IsConsistent r σ`: σ is a linear extension of `r` — equivalently
-  (`isConsistent_iff_le`), containment `r ≤ fromPermutation σ` in the
-  pointwise lattice of relations. `consistentTotalOrders r` is the
-  (nonempty, by Szpilrajn) `Finset` of them.
+- `IsConsistent r σ`: σ is a linear extension of `r`, defined as containment
+  `r ≤ σ.toRel` in the pointwise lattice of relations.
+  `consistentTotalOrders r` is the (nonempty, by Szpilrajn) `Finset` of them.
 - `pocPredict cands vp r i o`: the probability that sampling under `r` selects
   output `o` for input `i` — a genuine distribution (`pocPredict_nonneg`,
   `pocPredict_le_one`, `sum_pocPredict_eq_one`).
@@ -84,36 +83,15 @@ instance {α : Type*} : IsPartialOrder α (· = ·) where
 
 /-! ### Grammars from permutations -/
 
-/-- The total ranking induced by a permutation σ: `a` dominates `b` iff σ
-    places `a` at least as early (`σ.symm a ≤ σ.symm b`). Its unique
-    consistent linear extension is σ itself
-    (`fromPermutation_consistent_unique`). -/
-def fromPermutation (σ : Ranking n) : Fin n → Fin n → Prop :=
-  fun a b => σ.symm a ≤ σ.symm b
-
-instance (σ : Ranking n) : IsPartialOrder (Fin n) (fromPermutation σ) where
-  refl _ := le_refl _
-  trans _ _ _ := le_trans
-  antisymm _ _ h₁ h₂ := σ.symm.injective (le_antisymm h₁ h₂)
-
-instance (σ : Ranking n) : DecidableRel (fromPermutation σ) :=
-  fun a b => inferInstanceAs (Decidable (σ.symm a ≤ σ.symm b))
-
-/-- A permutation σ is **consistent** with grammar `r` if whenever `r a b`
-    holds, σ ranks a at least as early as b — that is, σ is a linear
-    extension of `r`. -/
+/-- A permutation σ is **consistent** with grammar `r` when `r` is contained
+    in the total order σ induces (`Ranking.toRel`) — σ is a linear extension
+    of `r`. Unfolds to `∀ a b, r a b → σ.symm a ≤ σ.symm b`. -/
 def IsConsistent (r : Fin n → Fin n → Prop) (σ : Ranking n) : Prop :=
-  ∀ a b, r a b → σ.symm a ≤ σ.symm b
-
-/-- Consistency is containment in the pointwise lattice of relations:
-    `r` lies below the total ranking σ induces. -/
-theorem isConsistent_iff_le {r : Fin n → Fin n → Prop} {σ : Ranking n} :
-    IsConsistent r σ ↔ r ≤ fromPermutation σ :=
-  Iff.rfl
+  r ≤ σ.toRel
 
 instance (r : Fin n → Fin n → Prop) [DecidableRel r] (σ : Ranking n) :
-    Decidable (IsConsistent r σ) := by
-  unfold IsConsistent; infer_instance
+    Decidable (IsConsistent r σ) :=
+  decidable_of_iff (∀ a b, r a b → σ.symm a ≤ σ.symm b) Iff.rfl
 
 /-- The (decidable, finite) set of linear extensions of `r`. -/
 def consistentTotalOrders (r : Fin n → Fin n → Prop) [DecidableRel r] :
@@ -154,12 +132,11 @@ theorem satisfiedBy_toERCSet {r : Fin n → Fin n → Prop} [DecidableRel r]
   · intro h a b hrel
     rcases eq_or_ne a b with rfl | hab
     · exact le_refl _
-    · exact le_of_lt ((simpleERC_satisfiedBy_iff hab σ).mp
-        (h _ (mem_toERCSet.mpr ⟨a, b, hab, hrel, rfl⟩)))
+    · exact (simpleERC_satisfiedBy_toRel_iff a b σ).mp
+        (h _ (mem_toERCSet.mpr ⟨a, b, hab, hrel, rfl⟩))
   · intro hcons α hα
     obtain ⟨a, b, hab, hrel, rfl⟩ := mem_toERCSet.mp hα
-    exact (simpleERC_satisfiedBy_iff hab σ).mpr
-      (lt_of_le_of_ne (hcons a b hrel) (fun heq => hab (σ.symm.injective heq)))
+    exact (simpleERC_satisfiedBy_toRel_iff a b σ).mpr (hcons a b hrel)
 
 /-- The consistent total orders of a grammar are exactly the linear extensions
 of its simple-ERC encoding ([merchant-riggle-2016]; [prince-2002]). -/
@@ -175,55 +152,22 @@ theorem consistentTotalOrders_discrete (n : ℕ) :
   Finset.eq_univ_of_forall fun _ =>
     mem_consistentTotalOrders.mpr fun _ _ h => h ▸ le_refl _
 
-/-- σ is consistent with the total ranking it induces — reflexivity of the
-    relation lattice, via `isConsistent_iff_le`. -/
-theorem isConsistent_fromPermutation (σ : Ranking n) :
-    IsConsistent (fromPermutation σ) σ :=
-  le_refl (fromPermutation σ)
+/-- σ is consistent with the total order it induces — reflexivity of the
+    relation lattice. -/
+theorem isConsistent_toRel (σ : Ranking n) : IsConsistent σ.toRel σ :=
+  le_refl σ.toRel
 
-instance (σ : Ranking n) : Std.Total (fromPermutation σ) :=
-  ⟨fun _ _ => le_total _ _⟩
-
-/-- A total relation is maximal among antisymmetric relations: anything above
-    it in the pointwise lattice collapses back onto it. -/
-theorem total_eq_of_le {α : Type*} {r s : α → α → Prop} [ht : Std.Total r]
-    [ha : Std.Antisymm s] (h : r ≤ s) : r = s := by
-  refine le_antisymm h fun a b hs => ?_
-  rcases ht.total a b with hr | hr
-  · exact hr
-  · obtain rfl := ha.antisymm _ _ hs (h b a hr)
-    exact (ht.total a a).elim id id
-
-/-- A permutation is recoverable from the total ranking it induces. -/
-theorem fromPermutation_injective :
-    Function.Injective (fromPermutation (n := n)) := by
-  intro σ τ h
-  have hmono : Monotone (⇑τ.symm ∘ ⇑σ) := by
-    intro a b hab
-    have hrel : fromPermutation σ (σ a) (σ b) := by
-      show σ.symm (σ a) ≤ σ.symm (σ b)
-      simpa using hab
-    rw [h] at hrel
-    exact hrel
-  have hcomp : ⇑τ.symm ∘ ⇑σ = id :=
-    (hmono.strictMono_of_injective (τ.symm.injective.comp σ.injective)).eq_id
-  exact Equiv.ext fun k => (Equiv.symm_apply_eq τ).mp (congr_fun hcomp k)
-
-/-- The σ-induced total ranking has σ as its *unique* consistent linear
-    extension: consistency puts it above a total order, so they coincide
-    (`total_eq_of_le`) and injectivity recovers the permutation. -/
-theorem fromPermutation_consistent_unique {σ τ : Ranking n}
-    (hτ : IsConsistent (fromPermutation σ) τ) : τ = σ :=
-  (fromPermutation_injective (total_eq_of_le hτ)).symm
-
+/-- A ranking-induced order has its ranking as *unique* consistent linear
+    extension, by the rigidity of `Ranking.toRel`
+    (`Ranking.toRel_le_toRel_iff`). -/
 @[simp]
-theorem consistentTotalOrders_fromPermutation (σ : Ranking n) :
-    consistentTotalOrders (fromPermutation σ) = {σ} := by
+theorem consistentTotalOrders_toRel (σ : Ranking n) :
+    consistentTotalOrders σ.toRel = {σ} := by
   ext τ
   rw [mem_consistentTotalOrders, Finset.mem_singleton]
-  refine ⟨fromPermutation_consistent_unique, fun hτ => ?_⟩
+  refine ⟨fun hτ => (Ranking.toRel_le_toRel_iff.mp hτ).symm, fun hτ => ?_⟩
   rw [hτ]
-  exact isConsistent_fromPermutation σ
+  exact isConsistent_toRel σ
 
 /-! ### Stratified grammars
 
@@ -324,6 +268,7 @@ theorem isConsistent_swap_mul {stratumOf : Fin n → Fin s}
   have h_symm : ∀ x, (Equiv.swap d d' * σ).symm x = σ.symm (Equiv.swap d d' x) := by
     intro x
     rw [Equiv.Perm.mul_def, Equiv.symm_trans_apply, Equiv.symm_swap]
+  show (Equiv.swap d d' * σ).symm a ≤ (Equiv.swap d d' * σ).symm b
   rw [h_symm a, h_symm b]
   rcases hab with hlt | ⟨heq, hinner⟩
   · exact hσ _ _ (stratified_iff.mpr (Or.inl (by rw [h_str a, h_str b]; exact hlt)))
@@ -488,8 +433,8 @@ theorem poc_realizable_imp_ot_realizable (P : SystemicProblem Input Output n) :
 theorem ot_realizable_imp_poc_realizable (P : SystemicProblem Input Output n) :
     P.IsOTRealizable → P.IsPOCRealizable := by
   rintro ⟨σ, hσ⟩
-  exact ⟨fromPermutation σ, inferInstance,
-    fun τ hτ => fromPermutation_consistent_unique hτ ▸ hσ⟩
+  exact ⟨σ.toRel, inferInstance,
+    fun τ hτ => Ranking.toRel_le_toRel_iff.mp hτ ▸ hσ⟩
 
 /-- Under categorical realizability, OT-realizable and POC-realizable
     coincide. POC's advantage over OT is probabilistic, captured by
@@ -579,15 +524,15 @@ def pocPredict (cands : Input → Finset Output) (vp : Input → Output → Fin 
     (fun σ => PicksAt cands vp σ i o)).card : ℚ) /
   ((consistentTotalOrders r).card : ℚ)
 
-/-- For the σ-induced total ranking, `pocPredict` collapses to a point mass —
+/-- For the σ-induced total order, `pocPredict` collapses to a point mass —
     probability 1 if σ picks o and 0 otherwise. -/
-theorem pocPredict_fromPermutation
+theorem pocPredict_toRel
     (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
     (σ : Ranking n) (i : Input) (o : Output) :
-    pocPredict cands vp (fromPermutation σ) i o =
+    pocPredict cands vp σ.toRel i o =
     if PicksAt cands vp σ i o then 1 else 0 := by
   simp only [pocPredict,
-    consistentTotalOrders_fromPermutation,
+    consistentTotalOrders_toRel,
     Finset.card_singleton, Nat.cast_one, div_one, Finset.filter_singleton]
   by_cases h : PicksAt cands vp σ i o
   · simp [if_pos h]
