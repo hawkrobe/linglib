@@ -1,5 +1,4 @@
 import Linglib.Semantics.Attitudes.Desire
-import Linglib.Semantics.Attitudes.CondoravdiLauer
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
@@ -448,9 +447,10 @@ theorem modern_wants_avoidNuclearWar :
 
 /-! ## §11. Cross-paper bridge: [condoravdi-lauer-2016]
 
-[condoravdi-lauer-2016]'s effective-preferential `WantEffectivePreference` carries
-a joint-belief-consistency theorem (`wantEffectivePreference_jointly_belief_consistent`):
-if both `WantEffectivePreference EP a φ w` and `WantEffectivePreference EP a ψ w` hold, then
+[condoravdi-lauer-2016]'s exact-match want over an *effective* —
+pointwise consistent — preferential background is jointly
+belief-consistent (`PreferenceStructure.maxElts_pair_belief_compatible`):
+if both `WantExactMatch P a φ w` and `WantExactMatch P a ψ w` hold, then
 `(φ ∩ ψ) ∩ B(a, w) ≠ ∅`. Specialized to `ψ = φᶜ`, the conclusion
 becomes `∅ ∩ B(a, w) ≠ ∅`, which is contradictory. So C&L *forbids*
 simultaneous `want(p)` and `want(¬p)` against a single belief state and
@@ -464,22 +464,22 @@ resolutions are orthogonal — both can coexist in a unified theory of
 desire, but they make non-overlapping claims. -/
 
 /-- C&L's joint-belief-consistency, specialized to `ψ = φᶜ`: no single
-    EP-want can hold of both `φ` and `¬φ` simultaneously, since their
-    intersection is empty.
+    exact-match want over a consistent background can hold of both `φ`
+    and `¬φ` simultaneously, since their intersection is empty.
 
     This is a *paper-level* contrast with PB §3: PB makes both
     `nap_true` and `not_nap_true` work by varying Q_c and `belS`; the
-    C&L analysis would need different `EP` per ascription to reproduce
-    the contrast. -/
+    C&L analysis would need a different background per ascription to
+    reproduce the contrast. -/
 theorem condoravdiLauer_blocks_simultaneous_pq_and_negpq
     {Agent W : Type} {B : Agent → W → Set W}
-    (EP : ∀ a w, EffectivePreference W (B a w))
+    (P : Agent → W → PreferenceStructure W)
+    (hC : ∀ a w, (P a w).consistent (B a w))
     (a : Agent) (φ : Set W) (w : W)
-    (hφ : Desire.WantEffectivePreference EP a φ w)
-    (hnegφ : Desire.WantEffectivePreference EP a (fun w => ¬ φ w) w) :
+    (hφ : WantExactMatch P a φ w)
+    (hnegφ : WantExactMatch P a (fun w => ¬ φ w) w) :
     False := by
-  have h := Desire.wantEffectivePreference_jointly_belief_consistent
-              EP hφ hnegφ
+  have h := (P a w).maxElts_pair_belief_compatible (hC a w) hφ hnegφ
   apply h
   ext x
   simp only [Set.mem_inter_iff, Set.mem_empty_iff_false, iff_false, not_and]
