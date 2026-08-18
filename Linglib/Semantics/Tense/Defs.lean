@@ -1,11 +1,11 @@
-import Mathlib.Order.Basic
 import Linglib.Core.Order.Relation
 
 /-!
 # Grammatical tense as a comparison category
 
-A grammatical tense is a **comparison category** between a reference time and a perspective time —
-a `Finset Ordering` (`Core.Order`). There is no bespoke tense type: the four traditional labels name
+A grammatical tense is a **comparison category** between a reference time and a perspective time
+([kiparsky-2002]: tense locates R relative to the perspective time P, not speech time S) — a
+`Finset Ordering` (`Core.Order`). There is no bespoke tense type: the four traditional labels name
 four of the comparison cells `Core.Order` already provides, so tense, evidentials, and modal-base
 time all share one Ordering-grounded spine.
 
@@ -17,8 +17,6 @@ time all share one Ordering-grounded spine.
 The constraint a tense imposes is `Core.Order.holds`, grounded in `Ordering` over the order on `T`.
 The frame predicates (`ReichenbachFrame.isPast`/`isFuture`/`isNonpast`) and the compositional tense
 operators are views of `holds` (with `Core.Order.holds_before` etc. reducing them to `<`/`=`/`≥`).
-
-[klecha-2016] (the `nonpast` case) [kiparsky-2002]
 -/
 
 namespace Tense
