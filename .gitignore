@@ -34,9 +34,6 @@ CLAUDE.md
 /scratch/
 
 # Hugo build artifacts
-blog/.hugo_build.lock
-blog/public/
-blog/scripts/__pycache__/
 
 # Playwright MCP artifacts
 .playwright-mcp/
