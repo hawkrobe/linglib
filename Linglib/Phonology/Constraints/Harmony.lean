@@ -9,7 +9,7 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Tactic.Ring
 
 /-!
-# Harmony: evaluation and dominance lemmas
+# Harmony evaluation lemmas
 
 The reusable lemma layer over `harmonyScore`/`weightedViolations`
 (`Constraints.Defs`), shaped so Harmonic-Grammar study files reason about

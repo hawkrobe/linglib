@@ -4,11 +4,10 @@ import Linglib.Phonology.HarmonicGrammar.Expressivity
 import Mathlib.Algebra.Tropical.Basic
 
 /-!
-# Violation Semiring — OT/HG Unification
-[riggle-2009]
+# Riggle (2009): Violation Semirings
 
-OT and HG are instances of a single algebraic framework: evaluation over
-a commutative semiring. Violation profiles form a commutative semiring V
+[riggle-2009]: OT and HG are instances of a single algebraic framework —
+evaluation over a commutative semiring. Violation profiles form a commutative semiring V
 (the **violation semiring**); real-valued costs form the standard tropical
 semiring T. HG weights define a structure-preserving map from V to T.
 
@@ -42,10 +41,9 @@ algorithms applicable to OT optimization. Riggle: "every subpath of
 an optimal input–output mapping is itself an optimal mapping."
 -/
 
-namespace HarmonicGrammar.ViolationSemiring
+namespace Riggle2009
 
-
-open Core.Optimization.Evaluation Constraints
+open Core.Optimization.Evaluation Constraints HarmonicGrammar
 
 /-! ### The Violation Semiring V -/
 
@@ -176,4 +174,4 @@ theorem weightMap_preserves_minimum {n : Nat} (w : Fin n → ℝ) (M : Nat)
   fun b hb => weightMap_mono w M hw a b
     (fun i => ⟨hM a ha i, hM b hb i⟩) (hmin b hb)
 
-end HarmonicGrammar.ViolationSemiring
+end Riggle2009
