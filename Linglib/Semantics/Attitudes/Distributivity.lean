@@ -2,22 +2,24 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Set.Basic
 
 /-!
-# C-distributivity
+# Clausal distributivity
 
-A clause-embedding predicate is *C-distributive* when its question
+A clause-embedding predicate is *clausally distributive* — written
+C(lausal)-distributive in [qing-uegaki-2025] — when its question
 semantics is existential quantification over its propositional
 semantics: ⟦x V Q⟧ ↔ ∃p ∈ Q. ⟦x V p⟧ ([uegaki-sudo-2019];
-[uegaki-2022]). `IsCDistributive` states the property for a pair of
-propositional and question semantics, so it is proved from a predicate's
-semantic structure rather than stipulated per predicate.
+[uegaki-2022]). `IsDistributive` states the property for a pair of
+propositional and question semantics, so it is proved from a
+predicate's semantic structure rather than stipulated per predicate.
 
-`degreeComparison_isCDistributive` proves it for the degree-comparison
+`degreeComparison_isDistributive` proves it for the degree-comparison
 pattern of *hope*, *fear*, *expect*, *wish* ([villalta-2008]):
 ⟦x V p⟧ = μ(x,p) > θ(C) with the question semantics the pointwise
-existential, so C-distributivity holds by construction. Predicates whose
-question semantics outruns the existential — global uncertainty for
-*worry*, decision-relevance for *care* ([elliott-etal-2017]) — are not
-C-distributive; the counterexample with actual worry semantics is
+existential, so clausal distributivity holds by construction.
+Predicates whose question semantics outruns the existential — global
+uncertainty for *worry*, decision-relevance for *care*
+([elliott-etal-2017]) — are not clausally distributive; the
+counterexample with actual worry semantics is
 `Preferential.worry_not_cDistributive`, and the per-predicate
 instantiations live in `Preferential.lean`.
 
@@ -27,7 +29,7 @@ Bool propositions, pending migration of this file and its consumer
 (`Semantics/Questions/`).
 -/
 
-namespace Semantics.Attitudes.CDistributivity
+namespace Semantics.Attitudes.Distributivity
 
 variable {W E : Type*}
 
@@ -42,9 +44,9 @@ abbrev DegreeFn (W E : Type*) := E → (W → Bool) → ℚ
 abbrev ThresholdFn (W : Type*) := AlternativeList W → ℚ
 
 /-- A predicate with propositional semantics `V_prop` and question
-    semantics `V_question` is C-distributive iff
+    semantics `V_question` is clausally distributive iff
     `V_question x Q w ↔ ∃ p ∈ Q, V_prop x p w`. -/
-def IsCDistributive (V_prop : E → (W → Bool) → W → Bool)
+def IsDistributive (V_prop : E → (W → Bool) → W → Bool)
     (V_question : E → AlternativeList W → W → Bool) : Prop :=
   ∀ (x : E) (Q : AlternativeList W) (w : W),
     V_question x Q w = true ↔ ∃ p ∈ Q, V_prop x p w = true
@@ -63,12 +65,13 @@ def degreeComparisonQuestion (μ : DegreeFn W E) (θ : ThresholdFn W)
     (C : AlternativeList W) (x : E) (Q : AlternativeList W) (_w : W) : Bool :=
   Q.any λ p => decide (μ x p > θ C)
 
-/-- Degree-comparison predicates are C-distributive by construction. -/
-theorem degreeComparison_isCDistributive (μ : DegreeFn W E) (θ : ThresholdFn W)
+/-- Degree-comparison predicates are clausally distributive by
+    construction. -/
+theorem degreeComparison_isDistributive (μ : DegreeFn W E) (θ : ThresholdFn W)
     (C : AlternativeList W) :
-    IsCDistributive (degreeComparisonProp μ θ C)
+    IsDistributive (degreeComparisonProp μ θ C)
       (degreeComparisonQuestion μ θ C) := by
   intro x Q w
   simp [degreeComparisonProp, degreeComparisonQuestion]
 
-end Semantics.Attitudes.CDistributivity
+end Semantics.Attitudes.Distributivity
