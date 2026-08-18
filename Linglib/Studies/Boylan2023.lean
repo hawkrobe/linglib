@@ -974,7 +974,7 @@ theorem pairConsistent_iff_isConsistent (p q : (World → Bool)) :
     pairConsistent p q allWorlds = true ↔
       isConsistent [fun w => p w = true, fun w => q w = true] := by
   unfold pairConsistent isConsistent propIntersection
-  simp only [List.any_eq_true, Set.Nonempty, Set.mem_setOf_eq]
+  simp only [List.any_eq_true, Set.Nonempty, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨w, _, hw⟩
     rw [Bool.and_eq_true] at hw

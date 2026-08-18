@@ -565,7 +565,7 @@ def composeRel {Node : Type} (R S : Set (Node × Node)) : Set (Node × Node) :=
 theorem composeRel_assoc {Node : Type} (R S U : Set (Node × Node)) :
     composeRel R (composeRel S U) = composeRel (composeRel R S) U := by
   ext ⟨a, d⟩
-  simp only [composeRel, mem_setOf_eq]
+  simp only [composeRel, mem_ofPred_eq]
   constructor
   · intro ⟨b, hab, c, hbc, hcd⟩
     exact ⟨c, ⟨b, hab, hbc⟩, hcd⟩

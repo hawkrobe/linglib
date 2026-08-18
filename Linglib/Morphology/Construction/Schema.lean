@@ -137,7 +137,7 @@ example : (⟨fun _ => (0 : ℕ), ∅⟩ : Schema Unit ℕ).Relates {fun _ => 0}
 example : ¬ (⟨fun _ => (0 : ℕ), ∅⟩ : Schema Unit ℕ).Generates {fun _ => 0} (fun _ => 1) := by
   rintro ⟨-, hgen⟩
   have h := hgen () (by simp)
-  simp only [attested, Set.mem_setOf_eq, Set.mem_singleton_iff] at h
+  simp only [attested, Set.mem_ofPred_eq, Set.mem_singleton_iff] at h
   obtain ⟨w, rfl, -, hwv⟩ := h
   simp at hwv
 

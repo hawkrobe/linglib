@@ -600,7 +600,7 @@ private lemma prior_probOfSet_expand (S : Set World) [DecidablePred (· ∈ S)] 
     then discharge the residual ENNReal arithmetic with `ennreal_arith`. -/
 private lemma prior_beautiful : prior.probOfSet beautiful = (1 : ℝ≥0∞) / 2 := by
   rw [prior_probOfSet_expand]
-  simp only [beautiful, Set.mem_setOf_eq,
+  simp only [beautiful, Set.mem_ofPred_eq,
              show ((⟨0, by decide⟩ : Fin 8).val < 4) by decide,
              show ((⟨1, by decide⟩ : Fin 8).val < 4) by decide,
              show ((⟨2, by decide⟩ : Fin 8).val < 4) by decide,
@@ -614,7 +614,7 @@ private lemma prior_beautiful : prior.probOfSet beautiful = (1 : ℝ≥0∞) / 2
 
 private lemma prior_expensive : prior.probOfSet expensive = (1 : ℝ≥0∞) / 2 := by
   rw [prior_probOfSet_expand]
-  simp only [expensive, Set.mem_setOf_eq,
+  simp only [expensive, Set.mem_ofPred_eq,
              show ¬ (((⟨0, by decide⟩ : Fin 8).val / 2) % 2 = 1) by decide,
              show ¬ (((⟨1, by decide⟩ : Fin 8).val / 2) % 2 = 1) by decide,
              show (((⟨2, by decide⟩ : Fin 8).val / 2) % 2 = 1) by decide,
@@ -628,7 +628,7 @@ private lemma prior_expensive : prior.probOfSet expensive = (1 : ℝ≥0∞) / 2
 
 private lemma prior_buy : prior.probOfSet buy = (1 : ℝ≥0∞) / 8 := by
   rw [prior_probOfSet_expand]
-  simp only [buy, Set.mem_setOf_eq,
+  simp only [buy, Set.mem_ofPred_eq,
              show ¬ ((⟨1, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨2, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨3, by decide⟩ : Fin 8).val = 0) by decide,
@@ -641,7 +641,7 @@ private lemma prior_buy : prior.probOfSet buy = (1 : ℝ≥0∞) / 8 := by
 
 private lemma prior_buy_compl : prior.probOfSet (buyᶜ) = (7 : ℝ≥0∞) / 8 := by
   rw [prior_probOfSet_expand]
-  simp only [buy, Set.mem_compl_iff, Set.mem_setOf_eq,
+  simp only [buy, Set.mem_compl_iff, Set.mem_ofPred_eq,
              show ¬ ((⟨1, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨2, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨3, by decide⟩ : Fin 8).val = 0) by decide,
@@ -655,7 +655,7 @@ private lemma prior_buy_compl : prior.probOfSet (buyᶜ) = (7 : ℝ≥0∞) / 8 
 private lemma prior_beautiful_inter_buy :
     prior.probOfSet (beautiful ∩ buy) = (1 : ℝ≥0∞) / 8 := by
   rw [prior_probOfSet_expand]
-  simp only [beautiful, buy, Set.mem_inter_iff, Set.mem_setOf_eq,
+  simp only [beautiful, buy, Set.mem_inter_iff, Set.mem_ofPred_eq,
              show ((⟨0, by decide⟩ : Fin 8).val < 4 ∧
                    (⟨0, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ ((⟨1, by decide⟩ : Fin 8).val < 4 ∧
@@ -678,7 +678,7 @@ private lemma prior_beautiful_inter_buy :
 private lemma prior_beautiful_inter_buy_compl :
     prior.probOfSet (beautiful ∩ buyᶜ) = (3 : ℝ≥0∞) / 8 := by
   rw [prior_probOfSet_expand]
-  simp only [beautiful, buy, Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_setOf_eq,
+  simp only [beautiful, buy, Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_ofPred_eq,
              show ((⟨1, by decide⟩ : Fin 8).val < 4 ∧
                    ¬ (⟨1, by decide⟩ : Fin 8).val = 0) by decide,
              show ((⟨2, by decide⟩ : Fin 8).val < 4 ∧
@@ -699,7 +699,7 @@ private lemma prior_beautiful_inter_buy_compl :
 private lemma prior_expensive_inter_buy :
     prior.probOfSet (expensive ∩ buy) = 0 := by
   rw [prior_probOfSet_expand]
-  simp only [expensive, buy, Set.mem_inter_iff, Set.mem_setOf_eq,
+  simp only [expensive, buy, Set.mem_inter_iff, Set.mem_ofPred_eq,
              show ¬ (((⟨1, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
                      (⟨1, by decide⟩ : Fin 8).val = 0) by decide,
              show ¬ (((⟨4, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
@@ -712,7 +712,7 @@ private lemma prior_expensive_inter_buy :
 private lemma prior_expensive_inter_buy_compl :
     prior.probOfSet (expensive ∩ buyᶜ) = (1 : ℝ≥0∞) / 2 := by
   rw [prior_probOfSet_expand]
-  simp only [expensive, buy, Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_setOf_eq,
+  simp only [expensive, buy, Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_ofPred_eq,
              show ¬ (((⟨1, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
                      ¬ (⟨1, by decide⟩ : Fin 8).val = 0) by decide,
              show (((⟨2, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧

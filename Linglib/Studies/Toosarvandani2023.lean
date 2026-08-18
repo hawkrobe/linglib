@@ -583,7 +583,7 @@ theorem third_restricts_elder :
     show _ ∉ (elderPron zd).filter
       (fun s => zd.speaker ∉ s ∧ zd.addressee ∉ s)
     rw [Finset.mem_filter]
-    push_neg
+    push Not
     intro _
     -- speaker = .i, and .i ∈ {.i}
     refine fun h => absurd ?_ h

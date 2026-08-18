@@ -304,7 +304,7 @@ private theorem isStarFree_of_language_succ (L : Language α) [Finite α]
   refine Language.IsStarFree.of_recognizes (isAperiodic_transitionMonoid G n) (scanHom G n)
     {g | (scanDFA G n).evalFrom (g.val.unop (some (startWin n))) (List.replicate n none) ≠ none}
     (fun w => ?_)
-  rw [← hL, Set.mem_setOf_eq, scanHom_unop_apply, ← DFA.evalFrom_of_append, alive_iff_mem_language]
+  rw [← hL, Set.mem_ofPred_eq, scanHom_unop_apply, ← DFA.evalFrom_of_append, alive_iff_mem_language]
 
 end SLGrammar
 
@@ -359,7 +359,7 @@ ones obtained by appending `a` to a (necessarily short enough) subsequence of `x
 private lemma profOf_step (xs : List α) (a : α) :
     profOf n (xs ++ [a]) = profOf n xs ∪ {t | ∃ s ∈ profOf n xs, t.val = s.val ++ [a]} := by
   ext t
-  simp only [profOf, Set.mem_setOf_eq, Set.mem_union]
+  simp only [profOf, Set.mem_ofPred_eq, Set.mem_union]
   constructor
   · intro h
     obtain ⟨l₁, l₂, heq, h₁, h₂⟩ := List.sublist_append_iff.mp h
@@ -377,7 +377,7 @@ private def genProf (P : Profile α n) (ys : List α) : Profile α n :=
   {t | ∃ p ∈ P, ∃ q, q <+ ys ∧ t.val = p.val ++ q}
 
 @[simp] private lemma genProf_nil (P : Profile α n) : genProf n P [] = P := by
-  ext t; simp only [genProf, Set.mem_setOf_eq]
+  ext t; simp only [genProf, Set.mem_ofPred_eq]
   refine ⟨fun ⟨p, hp, q, hq, ht⟩ => ?_, fun h => ⟨t, h, [], List.nil_sublist _, by simp⟩⟩
   rw [List.sublist_nil.mp hq, List.append_nil] at ht
   rwa [show t = p from Subtype.ext ht]
@@ -387,7 +387,7 @@ records every `P`-element extended by `a`. -/
 private lemma genProf_singleton (P : Profile α n) (a : α) :
     genProf n P [a] = P ∪ {t | ∃ s ∈ P, t.val = s.val ++ [a]} := by
   ext t
-  simp only [genProf, Set.mem_setOf_eq, Set.mem_union]
+  simp only [genProf, Set.mem_ofPred_eq, Set.mem_union]
   constructor
   · rintro ⟨p, hp, q, hq, ht⟩
     rcases List.sublist_singleton.mp hq with hq | hq
@@ -401,7 +401,7 @@ private lemma genProf_singleton (P : Profile α n) (a : α) :
 private lemma genProf_append (P : Profile α n) (xs ys : List α) :
     genProf n (genProf n P xs) ys = genProf n P (xs ++ ys) := by
   ext t
-  simp only [genProf, Set.mem_setOf_eq]
+  simp only [genProf, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨s, ⟨p, hp, q, hq, hs⟩, r, hr, ht⟩
     exact ⟨p, hp, q ++ r, hq.append hr, by rw [ht, hs, List.append_assoc]⟩
@@ -509,7 +509,7 @@ copy is redundant. -/
 private lemma genProf_rep_stable (P : Profile α n) (v : List α) {m : ℕ} (hm : n ≤ m) :
     genProf n P (rep v (m + 1)) = genProf n P (rep v m) := by
   ext t
-  simp only [genProf, Set.mem_setOf_eq]
+  simp only [genProf, Set.mem_ofPred_eq]
   refine ⟨fun ⟨p, hp, q, hq, ht⟩ => ⟨p, hp, q, ?_, ht⟩,
     fun ⟨p, hp, q, hq, ht⟩ => ⟨p, hp, q, hq.trans (rep_succ v m ▸ sublist_append_left _ _), ht⟩⟩
   exact sublist_rep_of_length_le v m q (by have := t.2; simp_all; omega) hq
@@ -591,7 +591,7 @@ private theorem isStarFree_of_language_succ (L : Language α) [Finite α]
   by_cases h0 : ([] : List α) ∈ G
   · refine Language.IsStarFree.of_recognizes (isAperiodic_transitionMonoid G n) (scanHom G n)
       {g | (g.val.unop (some (profOf n []))) ≠ none} (fun w => ?_)
-    rw [← hL, Set.mem_setOf_eq, scanHom_unop_apply, alive_iff_mem_language G n h0]
+    rw [← hL, Set.mem_ofPred_eq, scanHom_unop_apply, alive_iff_mem_language G n h0]
   · refine Language.IsStarFree.of_recognizes (M := PUnit.{1}) Monoid.IsAperiodic.of_subsingleton 1
       ∅ (fun w => ?_)
     rw [← hL]

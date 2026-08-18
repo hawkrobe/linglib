@@ -204,7 +204,7 @@ theorem discreteFactivity_gradedTruth (τ : Set.Icc (0 : ℚ) 1) (w : W) :
       {θ | clauseEmbeddingSem (W := W) θ w = true} = _
   rw [PMF.probOfSet_apply, FactivityReading.sum_univ]
   simp [clauseEmbeddingSem, factivityPrior_apply_factive, factivityPrior_apply_nonfactive,
-        Set.mem_setOf_eq]
+        Set.mem_ofPred_eq]
 
 /-- With τ = 1 (certainly factive), graded truth reduces to `factivePos`. -/
 theorem discreteFactivity_certain_factive (w : W) :

@@ -167,7 +167,7 @@ conditions — the bridge from the `ERCSet` presentation to the Galois polarity.
 theorem coe_linearExtensions_eq_models (E : ERCSet n) :
     (↑E.linearExtensions : Set (Ranking n)) = models {α | α ∈ E} := by
   ext r
-  simp only [Finset.mem_coe, ERCSet.mem_linearExtensions, mem_models, Set.mem_setOf_eq]
+  simp only [Finset.mem_coe, ERCSet.mem_linearExtensions, mem_models, Set.mem_ofPred_eq]
   rfl
 
 /-- The empty ERC set is satisfied by every ranking: its linear extensions are all

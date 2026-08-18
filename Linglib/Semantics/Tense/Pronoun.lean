@@ -41,7 +41,7 @@ comparison category (`Core.Order`); the temporal primitives it imports
 open Time
 
 open Core.Order
-open Intensional.ReferentialMode (ReferentialMode)
+open Intensional (ReferentialMode)
 open Intensional (WorldTimeIndex)
 
 namespace Tense
@@ -61,17 +61,6 @@ inductive SOTParameter where
   | absolute  -- Japanese: embedded tense absolute (to utterance time)
   deriving DecidableEq, Repr
 
-
-/-! ### TenseInterpretation -/
-
-/-- Tense interpretation modes.
-    Tenses parallel pronouns: indexical (deictic), anaphoric
-    (discourse-bound), and bound variable (zero tense).
-
-    This is an alias for `Intensional.ReferentialMode.ReferentialMode`,
-    which captures Partee's insight that the same three-way classification
-    applies to both pronouns and tenses. -/
-abbrev TenseInterpretation := Intensional.ReferentialMode.ReferentialMode
 
 /-! ### Temporal Variable Infrastructure ([partee-1973]) -/
 
@@ -159,7 +148,7 @@ abbrev SitProp (W Time : Type*) := WorldTimeIndex W Time → Prop
 structure TensePronoun where
   varIndex : ℕ
   constraint : Finset Ordering
-  mode : TenseInterpretation
+  mode : ReferentialMode
   /-- Index of the evaluation time variable in the temporal assignment.
       Default 0 = speech time slot. Under embedding, attitude verbs update
       this index to point at the matrix event time.

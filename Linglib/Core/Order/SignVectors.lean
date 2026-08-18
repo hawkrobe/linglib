@@ -252,7 +252,7 @@ private lemma at_most_one_zero (S : Finset (Fin 4 → ℚ))
       · rw [Finset.mem_singleton] at hmem; subst hmem; exact hi.2 hz2
     calc supp.card ≤ (Finset.univ \ {i₁, i₂}).card := Finset.card_le_card hsub
       _ = 2 := by
-          rw [Finset.card_univ_diff, Finset.card_pair hne, Fintype.card_fin]
+          rw [Finset.card_univ_sdiff, Finset.card_pair hne, Fintype.card_fin]
   -- `ip v v ≥ 1`
   have hterm_nonneg : ∀ i, 0 ≤ v i * v i := fun i => mul_self_nonneg (v i)
   have hvv : 1 ≤ ip v v := by
@@ -363,7 +363,7 @@ private lemma constraints_of_sp3 (S : Finset (Fin 4 → ℚ))
   have hnx := sneg_pair hpζ hip hiζ hjp hjζ hij hxp hxζ hxn
   constructor
   · by_contra hc
-    push_neg at hc
+    push Not at hc
     obtain ⟨h1, h2, h3⟩ := hc
     refine hnogm x hxS w hwS hxw ⟨?_, ?_⟩
     · rw [hsx, Finset.disjoint_singleton_left]
@@ -375,7 +375,7 @@ private lemma constraints_of_sp3 (S : Finset (Fin 4 → ℚ))
       · exact h2
       · exact h3
   · by_contra hc
-    push_neg at hc
+    push Not at hc
     obtain ⟨h1, h2⟩ := hc
     refine hno x hxS w hwS hxw ?_ ?_
     · rw [hsx, Finset.singleton_subset_iff]
@@ -434,7 +434,7 @@ private lemma s_shape_forcing (S : Finset (Fin 4 → ℚ))
   -- `x`'s term is positive, so some member has `w p + w ζ < 0`
   obtain ⟨y, hyS, hy⟩ : ∃ w ∈ S, w p + w ζ < 0 := by
     by_contra hall
-    push_neg at hall
+    push Not at hall
     have hpos : 0 < ∑ w ∈ S, d w * (w p + w ζ) :=
       Finset.sum_pos' (fun w hw => mul_nonneg (le_of_lt (hd w hw)) (hall w hw))
         ⟨x, hxS, by rw [hxp, hxζ]; simpa using hd x hxS⟩
@@ -629,13 +629,13 @@ private lemma core_card_ge4 (S : Finset (Fin 4 → ℚ))
     (hsum : ∑ v ∈ S, d v • v = 0) (hc45 : S.card = 4 ∨ S.card = 5) :
     ∃ v ∈ S, ∃ w ∈ S, v ≠ w ∧ posSupport v ⊆ negSupport w ∧ posSupport w ⊆ negSupport v := by
   by_contra hno
-  push_neg at hno
+  push Not at hno
   -- Every member has at least two positive coordinates: singleton-positive
   -- members die on balance (weight-4 directly, weight-3 via the s-shape chain).
   have hcard2 : ∀ v ∈ S, 2 ≤ (posSupport v).card := by
     intro v hv
     by_contra hlt
-    push_neg at hlt
+    push Not at hlt
     obtain ⟨k, hk⟩ := hposne v hv
     -- `posSupport v` has one element and contains `k`, so it is `{k}`.
     have hk' : posSupport v = {k} := Finset.eq_singleton_iff_unique_mem.mpr
@@ -655,7 +655,7 @@ private lemma core_card_ge4 (S : Finset (Fin 4 → ℚ))
           exact hlk hl
       exact sp3_kill S hsign hposne hnogm hno d hd hsum hv hmk hk hm hvn
     · -- full-support singleton-positive: balance at `k` kills directly
-      push_neg at hzero
+      push Not at hzero
       have hnok : ∀ w ∈ S, w ≠ v → w k ≠ -1 := by
         intro w hw hwv hwk
         have hsub : posSupport v ⊆ negSupport w := by
@@ -748,7 +748,7 @@ private lemma core_card_ge4 (S : Finset (Fin 4 → ℚ))
       pairClass_eq_disjoint _ _ (hterm0 x hxS) (hterm0 y hyS) hsne hpc
     exact hint x hxS y hyS hxy (Finset.disjoint_iff_inter_eq_empty.mpr hdisj)
   · -- Case B: some member has a zero coordinate
-    push_neg at hall
+    push Not at hall
     obtain ⟨v₀, hv₀S, z, hv₀z⟩ := hall
     have hone := ip_functional S d hsum (fun _ => 1)
     have hposS : 0 < ∑ w ∈ S, d w * ip (fun _ => 1) w := by

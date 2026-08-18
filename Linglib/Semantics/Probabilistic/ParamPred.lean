@@ -60,7 +60,7 @@ theorem gradedTruth_pure (sem : Θ → E → Bool) (θ₀ : Θ) (x : E) :
     if sem θ₀ x then 1 else 0 := by
   show (PMF.pure θ₀).toOuterMeasure {θ | sem θ x = true} = _
   rw [PMF.toOuterMeasure_pure_apply]
-  simp [Set.mem_setOf_eq]
+  simp [Set.mem_ofPred_eq]
 
 end ParamPred
 

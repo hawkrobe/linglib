@@ -1243,7 +1243,7 @@ theorem arigibi_isBTN : IsBTN arigibiLang := by
     have h_eq : ({xs : List LugandaTone | xs = [] ∨ xs = [.high]}) =
                 ({([] : List LugandaTone)} ∪ {[LugandaTone.high]}) := by
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_union, Set.mem_singleton_iff]
+      simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_singleton_iff]
     rw [h_eq]
     exact (Set.finite_singleton _).union (Set.finite_singleton _)
 
@@ -1288,7 +1288,7 @@ theorem chuave_isBTN : IsBTN chuaveLang := by
   · -- chuaveLang = preimage of {xs | xs ≠ []} under tier projection.
     ext w
     show LugandaTone.high ∈ w ↔ w.filter isLugHigh ∈ ({xs | xs ≠ []} : Set _)
-    simp only [Set.mem_setOf_eq, ne_eq]
+    simp only [Set.mem_ofPred_eq, ne_eq]
     rw [List.filter_eq_nil_iff]
     constructor
     · intro hmem hall
@@ -1306,7 +1306,7 @@ theorem chuave_isBTN : IsBTN chuaveLang := by
     show ({xs : List LugandaTone | xs ≠ []}ᶜ).Finite
     have h_compl : ({xs : List LugandaTone | xs ≠ []}ᶜ) = {([] : List LugandaTone)} := by
       ext x
-      simp only [Set.mem_compl_iff, Set.mem_setOf_eq, Set.mem_singleton_iff,
+      simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, Set.mem_singleton_iff,
                  ne_eq, not_not]
     rw [h_compl]
     exact Set.finite_singleton _

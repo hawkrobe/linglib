@@ -297,7 +297,7 @@ theorem Form.tc_of_mem_domainAlt {φ : Form} {D' : Set ℕ}
     (h : D' ∈ φ.domainAlts) {maxD : ℕ} (hm : maxD ∈ D') : φ.tc maxD := by
   obtain ⟨n⟩ | ⟨op, f, n⟩ := φ
   · exact absurd h (Set.notMem_empty _)
-  · simp only [Form.domainAlts, Set.mem_setOf_eq] at h
+  · simp only [Form.domainAlts, Set.mem_ofPred_eq] at h
     exact h.subset hm
 
 /-! ### σA-exhaustification and 'exactly' overgeneration (her Ch. 3)

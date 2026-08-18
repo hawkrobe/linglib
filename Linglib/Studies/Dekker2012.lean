@@ -74,7 +74,7 @@ theorem pla_exists_certifies_witness {E : Type*} [Nonempty E] (M : Model E)
     (x : VarIdx) (φ : Formula) (s : InfoState E) (p : Poss E)
     (hp : p ∈ (Formula.exists_ x φ).update M s) :
     ∃ e : E, φ.sat M (p.1[x ↦ e]) p.2 := by
-  simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Formula.sat] at hp
+  simp only [Formula.update, InfoState.restrict, Set.mem_ofPred_eq, Formula.sat] at hp
   exact hp.2
 
 /-- Surviving a sequenced update `∃x.φ` then `ψ` means surviving the
@@ -90,7 +90,7 @@ theorem pla_seq_certifies_both {E : Type*} [Nonempty E] (M : Model E)
   simp only [DynamicSemantics.CCP.seq] at hp
   constructor
   · exact update_eliminative M ψ _ hp
-  · simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq] at hp
+  · simp only [Formula.update, InfoState.restrict, Set.mem_ofPred_eq] at hp
     exact hp.2
 
 /-- Combining the two: a possibility surviving `∃x.φ` then `ψ` certifies a

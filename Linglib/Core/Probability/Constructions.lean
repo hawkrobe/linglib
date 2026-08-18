@@ -177,7 +177,7 @@ theorem support_ofRealWeightFn [Fintype α]
     (ofRealWeightFn f h_nonneg h_pos).support = {x | 0 < f x} := by
   rw [ofRealWeightFn, PMF.support_normalize]
   ext x
-  rw [Function.mem_support, Set.mem_setOf_eq, ne_eq, ENNReal.ofReal_eq_zero, not_le]
+  rw [Function.mem_support, Set.mem_ofPred_eq, ne_eq, ENNReal.ofReal_eq_zero, not_le]
 
 /-- Already-normalised weights are recovered exactly. -/
 theorem ofRealWeightFn_toRealFn_eq [Fintype α]

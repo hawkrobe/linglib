@@ -140,7 +140,7 @@ def anaphoricallyDistributive {W E : Type*} (φ : State.CCP W E) : Prop :=
 theorem distributive_implies_anaphoric {W E : Type*} (φ : State.CCP W E) :
     IsDistributive φ → anaphoricallyDistributive φ := by
   intro hD s
-  ext p; simp only [Set.mem_setOf_eq]
+  ext p; simp only [Set.mem_ofPred_eq]
   constructor
   · intro hp
     rw [hD s] at hp
@@ -187,12 +187,12 @@ theorem lowerPW_liftPW {W E : Type*} (D : Update (Assignment E)) (w₀ : W) :
   constructor
   · intro hm
     show D g h
-    simp only [lowerPW, liftPW, Set.mem_setOf_eq] at hm
+    simp only [lowerPW, liftPW, Set.mem_ofPred_eq] at hm
     obtain ⟨q, hq, h1, h2⟩ := hm
     cases hq; exact h2
   · intro hD
     show (w₀, h) ∈ liftPW D {(w₀, g)}
-    simp only [liftPW, Set.mem_setOf_eq]
+    simp only [liftPW, Set.mem_ofPred_eq]
     exact ⟨(w₀, g), rfl, rfl, hD⟩
 
 /-- ↑ is injective: distinct DRSs yield distinct state updates.
@@ -219,11 +219,11 @@ theorem liftPW_preserves_distributive {W E : Type*} (D : Update (Assignment E)) 
   intro s; ext p
   constructor
   · intro hp
-    simp only [liftPW, Set.mem_setOf_eq] at hp
+    simp only [liftPW, Set.mem_ofPred_eq] at hp
     obtain ⟨q, hq, h1, h2⟩ := hp
-    exact ⟨q, hq, by simp only [liftPW, Set.mem_setOf_eq]; exact ⟨q, rfl, h1, h2⟩⟩
+    exact ⟨q, hq, by simp only [liftPW, Set.mem_ofPred_eq]; exact ⟨q, rfl, h1, h2⟩⟩
   · rintro ⟨i, hi, hp⟩
-    simp only [liftPW, Set.mem_setOf_eq] at hp ⊢
+    simp only [liftPW, Set.mem_ofPred_eq] at hp ⊢
     obtain ⟨q, hq, h1, h2⟩ := hp
     cases hq; exact ⟨i, hi, h1, h2⟩
 
@@ -243,7 +243,7 @@ theorem liftPW_lowerPW_not_id {W E : Type*} [Nonempty W] [Nonempty E] :
   use K, w₀
   intro heq
   have h₁ : liftPW (lowerPW K w₀) ∅ = (∅ : State W E) := by
-    ext p; simp only [liftPW, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+    ext p; simp only [liftPW, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
     rintro ⟨q, hq, _, _⟩; exact hq
   have h₂ : K ∅ = ({(w₀, g₀)} : State W E) := rfl
   rw [heq] at h₁

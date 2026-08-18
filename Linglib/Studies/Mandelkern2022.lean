@@ -533,7 +533,7 @@ lemma for non-referenced variable updates. -/
 for any `es`, then `g x = some a` for some `a`. The base technical lemma
 that lets atomic-truth-of-`Fx` imply `g(x)` defined.
 
-Proof via `by_contra` + `push_neg` to avoid `cases hgx : g x`-style
+Proof via `by_contra` + `push Not` to avoid `cases hgx : g x`-style
 substitution which Lean does eagerly, breaking the goal structure. -/
 theorem resolveVars_singleton_def {E : Type v} {g : PartialAssign ℕ E} {x : Nat}
     {es : List E} (h : resolveVars g [x] = some es) : ∃ a, g x = some a := by
