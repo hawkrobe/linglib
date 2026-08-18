@@ -232,10 +232,10 @@ theorem delete_preV_profile :
 theorem delete_pause_profile :
     violationProfile ⟨.pause, .delete⟩ = [0, 1, 0, 1] := by decide
 
-/-! ### POC adapter: `tdCands` and `tdVp` for `pocPredict` consumption -/
+/-! ### POC adapter: `tdCands` and `tdVp` for `winProb` consumption -/
 
 /-- Candidate set per context for POC: both retain and delete are available
-    in every context. Required by `pocPredict`. -/
+    in every context. Required by `winProb`. -/
 def tdCands : Context → Finset TDOutput := fun _ => Finset.univ
 
 /-- Violation profile in POC's `Input → Output → Fin n → ℕ` shape.
@@ -258,7 +258,7 @@ def tdVp : Context → TDOutput → Fin 4 → ℕ
     rankings, then this candidate's probability of occurrence is n/t."
 
     We formalize the §3.2 t/d-deletion analysis (table 10) using POC's
-    `pocPredict`, with deletion probabilities derived in closed form via
+    `winProb`, with deletion probabilities derived in closed form via
     the `picksAt_binary_iff_head_mem_favoring` bridge + the substrate's
     `perm_filter_head_in_rate`.
 
@@ -270,17 +270,17 @@ open Core.Optimization Core.Optimization.PermSubsetCombinatorics in
 /-- Probability that POC sampling selects deletion at context `ctx`,
     under the discrete partial order. -/
 def deletionProb (ctx : Context) : ℚ :=
-  pocPredict tdCands tdVp
+  winProb tdCands tdVp
     ((· = · : Fin 4 → Fin 4 → Prop)) ctx .delete
 
-/-- Local specialisation of `pocPredict_discrete_binary_rate` to t/d-deletion,
+/-- Local specialisation of `winProb_discrete_binary_rate` to t/d-deletion,
     baking in `tdCands ctx = {.delete, .retain}` and `delete ≠ retain`. -/
 private theorem deletionProb_eq (ctx : Context) :
     deletionProb ctx =
       ((favoring tdVp ctx .delete .retain ∩
           active tdVp ctx .delete .retain).card : ℚ) /
         ((active tdVp ctx .delete .retain).card : ℚ) :=
-  pocPredict_discrete_binary_rate
+  winProb_discrete_binary_rate
     (by unfold tdCands; ext o; cases o <;> simp)
     (fun heq => TDOutput.noConfusion heq)
 
