@@ -37,7 +37,7 @@ consults only the reported context.
 namespace ContextQuantification
 
 open Semantics.Context
-open Semantics.Attitudes.Doxastic (boxAt)
+open Doxastic (BoxAt)
 
 variable {W E P T : Type*}
 
@@ -82,7 +82,7 @@ def reportedContext (t : ContextTower (KContext W E P T)) (holder : E)
     `w'` the embedded meaning `φ` holds of the context of the reported
     speech act — [schlenker-2003]'s attitude verb quantifying over
     contexts, with the finite `worlds` list as the decidable rendering
-    of the quantification (cf. `boxAt`). -/
+    of the quantification (cf. `BoxAt`). -/
 def ContextBox (R : E → W → W → Prop) (holder : E)
     (φ : KContext W E P T → Prop)
     (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) : Prop :=
@@ -101,21 +101,21 @@ theorem contextBox_world_only
     (R : E → W → W → Prop) (holder : E) (p : W → Prop)
     (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) :
     ContextBox R holder (fun c => p c.world) t w worlds ↔
-    boxAt R holder w worlds p := by
-  simp only [ContextBox, boxAt, reportedContext_world]
+    BoxAt R holder w worlds p := by
+  simp only [ContextBox, BoxAt, reportedContext_world]
 
-/-- `DoxasticPredicate.holdsAt` is a veridicality check plus context
+/-- `DoxasticPredicate.HoldsAt` is a veridicality check plus context
     quantification over a world-only meaning — every doxastic predicate
     of `Doxastic.lean` is a special case of [schlenker-2003]'s context
     quantification. -/
 theorem doxastic_holdsAt_iff_contextBox
-    (V : Semantics.Attitudes.Doxastic.DoxasticPredicate W E) (agent : E)
+    (V : Doxastic.DoxasticPredicate W E) (agent : E)
     (p : W → Prop) (w : W) (worlds : List W)
     (t : ContextTower (KContext W E P T)) :
-    V.holdsAt agent p w worlds ↔
-    (Semantics.Attitudes.Doxastic.veridicalityHolds V.veridicality p w ∧
+    V.HoldsAt agent p w worlds ↔
+    (Doxastic.VeridicalityHolds V.veridicality p w ∧
      ContextBox V.access agent (fun c => p c.world) t w worlds) := by
-  simp only [Semantics.Attitudes.Doxastic.DoxasticPredicate.holdsAt,
+  simp only [Doxastic.DoxasticPredicate.HoldsAt,
     contextBox_world_only]
 
 /-! ### The Fixity Thesis -/

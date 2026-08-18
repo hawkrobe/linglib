@@ -75,7 +75,7 @@ The contrast in (2) follows.
   one-line application.
 - `believes_does_not_always_close_under_intersection` — cross-framework:
   B&E's mereological `Believes` does NOT close under conjunction the way
-  Hintikka's `boxAt` does, witnessed by a non-believings-closed model.
+  Hintikka's `BoxAt` does, witnessed by a non-believings-closed model.
 
 ## Implementation notes
 
@@ -692,13 +692,13 @@ closes under intersection; B&E does **not** always close (witnessed by
 a model where `CONTSum` is violated).
 
 A self-contained `hintikkaBox` is used here rather than importing
-`Semantics/Attitudes/Doxastic.boxAt` directly — same definition,
+`Semantics/Attitudes/Doxastic.BoxAt` directly — same definition,
 no transitive deps. -/
 
 section CrossFramework
 
 /-- Hintikka-style box modality: `p` is believed iff every accessible
-    world makes `p` true. Equivalent to `Doxastic.boxAt`; defined here
+    world makes `p` true. Equivalent to `Doxastic.BoxAt`; defined here
     self-contained to avoid the heavyweight Doxastic import. -/
 def hintikkaBox {W E : Type*} (R : E → W → W → Prop) (x : E) (w : W)
     (worlds : List W) (p : Set W) : Prop :=

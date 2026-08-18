@@ -50,8 +50,8 @@ file is the doxastic (believe / think / know) application layer.
 namespace Semantics.Attitudes.NegRaising
 
 open Aristotelian (Square SquareRelations)
-open Semantics.Attitudes.Doxastic
-  (DoxasticPredicate Veridicality boxAt diaAt)
+open Doxastic
+  (DoxasticPredicate Veridicality BoxAt DiamondAt)
 
 /-! ### The doxastic square -/
 
@@ -65,10 +65,10 @@ corners of the doxastic square of opposition:
 - O = ¬Bel(p): not all doxastic alternatives satisfy p -/
 def doxasticSquare {W E : Type*} (R : E → W → W → Prop) (agent : E)
     (worlds : List W) (p : W → Prop) : Square (W → Prop) where
-  A := λ w => boxAt R agent w worlds p
-  E := λ w => boxAt R agent w worlds (λ w' => ¬ p w')
-  I := λ w => diaAt R agent w worlds p
-  O := λ w => ¬ boxAt R agent w worlds p
+  A := λ w => BoxAt R agent w worlds p
+  E := λ w => BoxAt R agent w worlds (λ w' => ¬ p w')
+  I := λ w => DiamondAt R agent w worlds p
+  O := λ w => ¬ BoxAt R agent w worlds p
 
 /-- The doxastic square satisfies the A–O contradiction diagonal. -/
 theorem doxasticSquare_contradAO {W E : Type*} (R : E → W → W → Prop)
@@ -79,13 +79,13 @@ theorem doxasticSquare_contradAO {W E : Type*} (R : E → W → W → Prop)
 
 /-- The doxastic square satisfies the E–I contradiction diagonal.
 
-This requires that `diaAt` is the dual of `boxAt`: ◇p = ¬□¬p.
+This requires that `DiamondAt` is the dual of `BoxAt`: ◇p = ¬□¬p.
 We prove this from the definitions. -/
 theorem doxasticSquare_contradEI {W E : Type*} (R : E → W → W → Prop)
     (agent : E) (worlds : List W) (p : W → Prop) (w : W) :
     (doxasticSquare R agent worlds p).E w ↔
     ¬ (doxasticSquare R agent worlds p).I w := by
-  simp only [doxasticSquare, boxAt, diaAt]
+  simp only [doxasticSquare, BoxAt, DiamondAt]
   constructor
   · rintro h ⟨w', hw', hR, hp⟩
     exact h w' hw' hR hp
@@ -106,14 +106,14 @@ validity rather than a defeasible move. -/
 /-- Neg-raising: the O→E inference `¬Bel(p) → Bel(¬p)` at a world. -/
 def negRaisesAt {W E : Type*} (R : E → W → W → Prop) (agent : E)
     (worlds : List W) (p : W → Prop) (w : W) : Prop :=
-  ¬ boxAt R agent w worlds p →
-  boxAt R agent w worlds (λ w' => ¬ p w')
+  ¬ BoxAt R agent w worlds p →
+  BoxAt R agent w worlds (λ w' => ¬ p w')
 
 /-- The **excluded-middle premise**: the agent is *opinionated* about `p`,
 believing `p` or believing `¬p`. Gajewski's neg-raising presupposition. -/
 def opinionated {W E : Type*} (R : E → W → W → Prop) (agent : E)
     (worlds : List W) (p : W → Prop) (w : W) : Prop :=
-  boxAt R agent w worlds p ∨ boxAt R agent w worlds (λ w' => ¬ p w')
+  BoxAt R agent w worlds p ∨ BoxAt R agent w worlds (λ w' => ¬ p w')
 
 /-- **The pragmatic mechanism.** Opinionatedness about `p` licenses the O→E
 strengthening — a disjunctive syllogism. Neg-raising is this inference run on the
@@ -123,15 +123,15 @@ theorem negRaisesAt_of_opinionated {W E : Type*} (R : E → W → W → Prop) (a
     opinionated R agent worlds p w → negRaisesAt R agent worlds p w :=
   fun hem hnot => hem.resolve_left hnot
 
-/-- The accessible-worlds set at `w`; `boxAt … p` is `∀ w' ∈ accessibleSet, p w'`. -/
+/-- The accessible-worlds set at `w`; `BoxAt … p` is `∀ w' ∈ accessibleSet, p w'`. -/
 def accessibleSet {W E : Type*} (R : E → W → W → Prop) (agent : E) (worlds : List W)
     (w : W) : Set W :=
   {w' | w' ∈ worlds ∧ R agent w w'}
 
 theorem boxAt_iff_forall_accessibleSet {W E : Type*} (R : E → W → W → Prop) (agent : E)
     (worlds : List W) (p : W → Prop) (w : W) :
-    boxAt R agent w worlds p ↔ ∀ w' ∈ accessibleSet R agent worlds w, p w' := by
-  simp only [boxAt, accessibleSet, Set.mem_setOf_eq, and_imp]
+    BoxAt R agent w worlds p ↔ ∀ w' ∈ accessibleSet R agent worlds w, p w' := by
+  simp only [BoxAt, accessibleSet, Set.mem_setOf_eq, and_imp]
 
 /-- **Validity ⟺ decided state.** The agent is opinionated about *every* prejacent
 (neg-raising then holds as a validity) iff the accessible state is decided — a

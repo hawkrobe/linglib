@@ -39,13 +39,13 @@ mereological parthood are exactly what the world-extensional notion
 drops. This non-equivalence is theorematised in
 `santorio_truthmaker_neq_fine_content_part` in the same study file.
 
-`Semantics/Attitudes/Doxastic.lean`'s Hintikka `boxAt` is
+`Semantics/Attitudes/Doxastic.lean`'s Hintikka `BoxAt` is
 ∀-over-accessible-worlds; truthmaker `attHolds` (`Basic.lean`) is
 ∃-verifier-part-of-info-state. The empirical heart of
 [bondarenko-elliott-2026] is exactly this divergence: `attHolds`
 distinguishes hyperintensional content (witness: the headline theorem
 `subjectMatter_distinguishes_classically_equivalent` in `Basic.lean`),
-which `boxAt` cannot.
+which `BoxAt` cannot.
 
 -/
 
