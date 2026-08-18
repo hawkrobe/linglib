@@ -176,27 +176,19 @@ is exhibited by `conflict_concrete` *only because* it ignores Sloman;
 Lassiter himself would say this is the wrong way to formalize his
 account. -/
 
-/-- The two-element alternative set for the witness model. -/
-def witnessAlts : List (Σ' (q : Set W), DecidablePred q) :=
-  [⟨targetProp, inferInstance⟩,
-   ⟨fun w => ¬ targetProp w, inferInstance⟩]
+/-- The target proposition as a `Finset`, derived from `targetProp`. -/
+def targetFinset : Finset W := Finset.univ.filter targetProp
 
-theorem targetProp_ne_negTargetProp : (targetProp : Set W) ≠ (fun w => ¬ targetProp w) := by
-  intro h
-  have hp : targetProp 0 := by decide
-  have h0 := congrFun h 0
-  change targetProp 0 = ¬ targetProp 0 at h0
-  exact (h0 ▸ hp : ¬ targetProp 0) hp
+/-- The two-element alternative set for the witness model. -/
+def witnessAlts : List (Finset W) := [targetFinset, targetFinsetᶜ]
 
 /-- **Lassiter's full account blocks the witness** via Sloman's
     Principle. Direct instance of the substrate theorem
     `wantWithSloman_blocks_conflict`. -/
 theorem wantWithSloman_blocks_conflict_on_witness :
-    ¬ (Lassiter.WantWithSloman belTotal prior value threshold witnessAlts targetProp ∧
-       Lassiter.WantWithSloman belTotal prior value threshold witnessAlts
-         (fun w => ¬ targetProp w)) :=
-  Lassiter.wantWithSloman_blocks_conflict belTotal prior value threshold targetProp
-    witnessAlts (by simp [witnessAlts]) (by simp [witnessAlts])
-    targetProp_ne_negTargetProp
+    ¬ (Lassiter.WantWithSloman belTotal prior value threshold witnessAlts targetFinset ∧
+       Lassiter.WantWithSloman belTotal prior value threshold witnessAlts targetFinsetᶜ) :=
+  Lassiter.wantWithSloman_blocks_conflict belTotal prior value threshold witnessAlts
+    targetFinset (by simp [witnessAlts]) (by simp [witnessAlts]) (by decide)
 
 end Lassiter2017Desire
