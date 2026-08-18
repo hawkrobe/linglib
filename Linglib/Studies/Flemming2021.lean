@@ -174,7 +174,7 @@ set_option maxHeartbeats 400000 in
     are identical in each pair, their weighted contributions cancel,
     leaving only −w₂ · 1 = −w₂.
 
-    This is a special case of `me_predicts_hz` (Separability.lean):
+    This is a special case of [magri-2025]'s `me_predicts_hz`:
     the \*Clash violation differences are column-insensitive (constant
     across paired contexts), so the weighted sum satisfies the
     constant-difference identity. -/
@@ -377,7 +377,7 @@ theorem table45_nhg_covariance_nonzero :
 -- Each constraint is insensitive to at least one dimension, so the
 -- violation differences satisfy `ViolDiffIndependence`, and
 -- `me_predicts_hz` gives `ConstantLogitDiff` — Flemming's logit
--- uniformity prediction instantiated through Magri's framework.
+-- uniformity prediction in [magri-2025]'s formulation.
 
 /-- The /∅/ square: contexts 0–3 (underlying /∅/, varying onset × stress). -/
 def schwaSquareNull : Square (Fin 8) := ⟨0, 1, 2, 3⟩

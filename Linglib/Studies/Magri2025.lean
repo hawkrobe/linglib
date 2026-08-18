@@ -26,12 +26,13 @@ nasal substitution case study from the paper, verifying:
 
 1. The six constraints satisfy `ConstraintIndependence`
 2. The violation differences inherit independence (`ViolDiffIndependence`)
-3. ME predicts HZ's constant logit-rate difference identity
-4. The identity holds for *any* weight assignment (not just specific values)
+3. The per-cell symbolic logit rates and empirical odds ratios
+4. The separable forward direction at the probability level
 
-The 2×2 square data and constraint inventory come from
-`Studies/ZurawHayes2017.lean` (Magri 2025 inherits
-the sub-square setup from Z&H 2017).
+The 2×2 square data, constraint inventory, and the constant-difference
+identity itself (`maxent_predicts_hz_tagalog`,
+`hz_constant_value_tagalog`) come from `Studies/ZurawHayes2017.lean`
+([magri-2025] inherits the sub-square setup from [zuraw-hayes-2017]).
 -/
 
 namespace Magri2025
@@ -116,26 +117,13 @@ theorem violDiff_consistent (k : Fin 6) (x : NasalSubInput) :
     ((constraints k) (x, .no) : ℤ) - ((constraints k) (x, .yes) : ℤ) := by
   fin_cases k <;> cases x <;> decide
 
-/-! ## § 3: ME Predicts HZ -/
+/-! ## § 3: Concrete Logit-Rate Computations
 
-/-- **ME predicts HZ for Tagalog nasal substitution**:
-    for *any* weight assignment `w : Fin 6 → ℝ`, the MaxEnt logit rates
-    of nasal substitution satisfy the constant-difference identity.
-
-    `LR(/maŋb/) − LR(/maŋk/) = LR(/paŋb/) − LR(/paŋk/)`
-
-    This is a direct instantiation of `me_predicts_hz` with the
-    Tagalog violation differences and their verified independence. -/
-theorem me_predicts_hz_tagalog (w : Fin 6 → ℝ) :
-    ConstantLogitDiff
-      (fun x => ∑ k : Fin 6, w k * deltaR k x)
-      nasalSubSquare :=
-  me_predicts_hz w deltaR nasalSubSquare violDiff_independence
-
-/-! ## § 4: Concrete Logit-Rate Computations
-
-The logit rate is `LR(x) = Σₖ wₖ · Δₖ(x)`. We verify the
-symbolic expressions for each cell.
+The constant-difference identity itself is
+`ZurawHayes2017.maxent_predicts_hz_tagalog` (with closed form
+`ZurawHayes2017.hz_constant_value_tagalog`), stated with that paper's
+data. This section verifies [magri-2025]'s per-cell symbolic logit rates
+`LR(x) = Σₖ wₖ · Δₖ(x)`.
 -/
 
 /-- `LR(maŋb) = w₁ − w₅` -/
@@ -162,34 +150,17 @@ theorem logitRate_pang_k (w : Fin 6 → ℚ) :
     w 0 + w 1 - w 2 - w 3 - w 5 := by
   simp only [Fin.sum_univ_six, violDiffProfile]; ring
 
-/-- The constant logit-rate difference equals `−w₂ + w₃ + w₄`
-    for both rows, regardless of weights. This follows from the
-    insensitivity structure of the six constraints (§ 1).
-
-    Note that `w 2` and `w 3` are not separately identifiable from the
-    b-vs-k square data — only the sum `w 2 + w 3` matters here, since
+/-- Per-cell rates recover `ZurawHayes2017.hz_constant_value_tagalog`'s
+    constant difference `−w₂ + w₃ + w₄`; `w 2` and `w 3` are not separately
+    identifiable from the b-vs-k square — only their sum matters, since
     `*[stemŋ]` and `*[stemŋ]/n` coincide on the b/k restriction. -/
-theorem hz_constant_value (w : Fin 6 → ℚ) :
+theorem logitRate_row_diff (w : Fin 6 → ℚ) :
     (∑ k : Fin 6, w k * violDiffProfile k .mang_b : ℚ) -
     (∑ k : Fin 6, w k * violDiffProfile k .mang_k : ℚ) =
     -w 1 + w 2 + w 3 := by
   rw [logitRate_mang_b, logitRate_mang_k]; ring
 
-theorem hz_constant_value' (w : Fin 6 → ℚ) :
-    (∑ k : Fin 6, w k * violDiffProfile k .pang_b : ℚ) -
-    (∑ k : Fin 6, w k * violDiffProfile k .pang_k : ℚ) =
-    -w 1 + w 2 + w 3 := by
-  rw [logitRate_pang_b, logitRate_pang_k]; ring
-
-/-- The HZ identity verified concretely: both row-differences are equal. -/
-theorem hz_identity_concrete (w : Fin 6 → ℚ) :
-    (∑ k : Fin 6, w k * violDiffProfile k .mang_b : ℚ) -
-    (∑ k : Fin 6, w k * violDiffProfile k .mang_k : ℚ) =
-    (∑ k : Fin 6, w k * violDiffProfile k .pang_b : ℚ) -
-    (∑ k : Fin 6, w k * violDiffProfile k .pang_k : ℚ) := by
-  rw [hz_constant_value, hz_constant_value']
-
-/-! ## § 5: Empirical Rate Verification
+/-! ## § 4: Empirical Rate Verification
 
 The empirical rates satisfy HZ's identity to good approximation.
 The exact identity is `logit(R(tl)) − logit(R(tr)) = logit(R(bl)) − logit(R(br))`.
@@ -242,7 +213,7 @@ theorem odds_ratios_close :
     39494 * 83412 = 3294273528 := by
   constructor <;> norm_num
 
-/-! ## § 6: Separable Forward Direction -/
+/-! ## § 5: Separable Forward Direction -/
 
 set_option linter.unusedSimpArgs false in
 /-- **ME predicts HZ at the probability level**: the log-probability-ratio
