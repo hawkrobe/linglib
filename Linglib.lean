@@ -1504,7 +1504,6 @@ import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Semantics.Attitudes.PreferenceStructure
 import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Semantics.Attitudes.RationalAttitude
-import Linglib.Semantics.Attitudes.Representationality
 import Linglib.Semantics.Attitudes.SituationDependent
 import Linglib.Semantics.Attitudes.SituationIndividual
 import Linglib.Semantics.Causation.BayesNet
