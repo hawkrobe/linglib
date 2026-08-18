@@ -1,6 +1,5 @@
 import Linglib.Semantics.Causation.Implicative
 import Linglib.Semantics.Causation.Interpretation
-import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Copular
 

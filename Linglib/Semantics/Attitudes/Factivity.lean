@@ -1,158 +1,101 @@
+import Mathlib.Tactic.TypeStar
+
 /-!
-# Factive vs Non-Factive Attitude Verb Semantics
-[karttunen-1971] [kiparsky-kiparsky-1970] [scontras-tonhauser-2025]
+# Factive and non-factive attitude semantics
 
-Generic infrastructure for the factive/non-factive distinction in Boolean
-world models: world-dimension typeclasses, lexical semantics for know-type
-(factive) and think-type (non-factive) verbs, entailment properties, QUD
-projection, and conditional embedding.
+The factive/non-factive distinction of [kiparsky-kiparsky-1970] and
+[karttunen-1971] over Boolean world models: a world type carries
+orthogonal dimensions — `HasComplement` (is the complement true?) and
+`HasBelief` (does the agent believe it?) — and the know-type and
+think-type verbs differ in whether the complement dimension enters the
+lexical semantics:
 
-These definitions are parametric in the world type `W` via typeclasses,
-allowing instantiation for any model with belief and complement dimensions
-(e.g., [scontras-tonhauser-2025]'s projection model).
+| Verb form         | Semantics  | Factivity   |
+|-------------------|------------|-------------|
+| "X knows C"       | BEL ∧ C    | factive     |
+| "X doesn't know"  | ¬(BEL ∧ C) | factive     |
+| "X thinks C"      | BEL        | non-factive |
+| "X doesn't think" | ¬BEL       | non-factive |
 
-## World Dimensions
+Factivity is veridicality of the positive form
+(`factivePos_entails_c`), and know is strictly stronger than think
+(`factive_entails_nonfactive`). `QUD` is the two-question space of the
+projection experiments (BEL? and C?), and `assumesComplement` renders
+"the speaker assumes C" as C holding throughout a belief state.
 
-A world type may carry orthogonal Boolean dimensions:
-
-| Dimension | Typeclass       | Gloss                              |
-|-----------|-----------------|-------------------------------------|
-| C         | `HasComplement` | Whether the complement is true      |
-| BEL       | `HasBelief`     | Whether the agent believes C        |
-| A         | `HasAntecedent` | Whether a conditional antecedent holds |
-
-## Lexical Semantics
-
-| Verb form        | Semantics          | Factivity |
-|------------------|--------------------|-----------|
-| "X knows C"      | BEL ∧ C            | factive   |
-| "X doesn't know" | ¬(BEL ∧ C)         | factive   |
-| "X thinks C"     | BEL                | non-factive |
-| "X doesn't think"| ¬BEL               | non-factive |
-
+The semantics is `Bool`-valued deliberately: these meanings feed the
+ℚ-valued RSA tables of [scontras-tonhauser-2025] (`Studies/
+ScontrasTonhauser2025.lean`) and [grove-white-2025]-style models
+(`Studies/GroveWhite2025.lean`) as literal-listener truth tables; the
+Prop migration is coupled to the planned RSA measures migration.
 -/
 
-namespace Semantics.Attitudes.Factivity
+namespace Factivity
 
--- ============================================================================
--- §1. World Dimension Typeclasses
--- ============================================================================
-
-/-- World type has a complement dimension (C: whether the complement is true). -/
-class HasComplement (W : Type _) where
+/-- The world type carries a complement dimension: is the complement
+    true at `w`? -/
+class HasComplement (W : Type*) where
   c : W → Bool
 
-/-- World type has a belief dimension (BEL: whether the agent believes C). -/
-class HasBelief (W : Type _) where
+/-- The world type carries a belief dimension: does the agent believe
+    the complement at `w`? -/
+class HasBelief (W : Type*) where
   bel : W → Bool
 
-/-- World type has an antecedent dimension (A: whether the conditional
-    antecedent holds). Used for conditional embedding of attitude reports. -/
-class HasAntecedent (W : Type _) where
-  a : W → Bool
+variable {W : Type*}
 
--- ============================================================================
--- §2. Lexical Semantics
--- ============================================================================
+/-! ### Lexical semantics -/
 
-variable {W : Type _}
-
-/-- Factive positive: "X knows C" = BEL ∧ C (veridical). -/
+/-- Factive positive: "X knows C" is `BEL ∧ C`. -/
 def factivePos [HasBelief W] [HasComplement W] (w : W) : Bool :=
   HasBelief.bel w && HasComplement.c w
 
-/-- Factive negative: "X doesn't know C" = ¬(BEL ∧ C). -/
+/-- Factive negative: "X doesn't know C" is `¬(BEL ∧ C)`. -/
 def factiveNeg [HasBelief W] [HasComplement W] (w : W) : Bool :=
   !(HasBelief.bel w && HasComplement.c w)
 
-/-- Non-factive positive: "X thinks C" = BEL (non-veridical). -/
+/-- Non-factive positive: "X thinks C" is `BEL`. -/
 def nonFactivePos [HasBelief W] (w : W) : Bool :=
   HasBelief.bel w
 
-/-- Non-factive negative: "X doesn't think C" = ¬BEL. -/
+/-- Non-factive negative: "X doesn't think C" is `¬BEL`. -/
 def nonFactiveNeg [HasBelief W] (w : W) : Bool :=
   !HasBelief.bel w
 
--- ============================================================================
--- §3. Entailment Properties
--- ============================================================================
+/-! ### Entailment -/
 
-/-- Factive positive entails C (the defining property of factivity). -/
-theorem factivePos_entails_c [HasBelief W] [HasComplement W] (w : W) :
-    factivePos w = true → HasComplement.c w = true := by
-  simp only [factivePos, Bool.and_eq_true]
-  intro ⟨_, h⟩; exact h
+/-- Factive positive entails the complement — the defining property of
+    factivity. -/
+theorem factivePos_entails_c [HasBelief W] [HasComplement W] (w : W)
+    (h : factivePos w = true) : HasComplement.c w = true :=
+  (Bool.and_eq_true _ _ |>.mp h).2
 
-/-- Factive positive entails BEL. -/
-theorem factivePos_entails_bel [HasBelief W] [HasComplement W] (w : W) :
-    factivePos w = true → HasBelief.bel w = true := by
-  simp only [factivePos, Bool.and_eq_true]
-  intro ⟨h, _⟩; exact h
+/-- Factive positive entails belief. -/
+theorem factivePos_entails_bel [HasBelief W] [HasComplement W] (w : W)
+    (h : factivePos w = true) : HasBelief.bel w = true :=
+  (Bool.and_eq_true _ _ |>.mp h).1
 
-/-- Non-factive does NOT entail C (given a world where BEL ∧ ¬C is
-    possible). -/
-theorem nonFactivePos_not_entails_c [HasBelief W] [HasComplement W]
-    (h : ∃ w : W, HasBelief.bel w = true ∧ HasComplement.c w = false) :
-    ∃ w, nonFactivePos (W := W) w = true ∧ HasComplement.c w = false := by
-  obtain ⟨w, hb, hc⟩ := h; exact ⟨w, hb, hc⟩
+/-- Know entails think: factivity is strictly stronger than belief. -/
+theorem factive_entails_nonfactive [HasBelief W] [HasComplement W] (w : W)
+    (h : factivePos w = true) : nonFactivePos w = true :=
+  (Bool.and_eq_true _ _ |>.mp h).1
 
-/-- Know entails think (factivity is strictly stronger than belief). -/
-theorem factive_entails_nonfactive [HasBelief W] [HasComplement W] (w : W) :
-    factivePos w = true → nonFactivePos w = true := by
-  simp only [factivePos, nonFactivePos, Bool.and_eq_true]
-  intro ⟨h, _⟩; exact h
+/-! ### Question under discussion -/
 
--- ============================================================================
--- §4. QUD and Projection
--- ============================================================================
-
-/-- QUD for factive/non-factive models: a question about belief or complement
-    truth. These are the two orthogonal dimensions of a world with
-    `HasBelief` and `HasComplement`. -/
+/-- The two-question space of the projection experiments: BEL? and
+    C? — the orthogonal dimensions of a `HasBelief`/`HasComplement`
+    world. -/
 inductive QUD where
-  | bel   -- "Does X believe C?"
-  | c     -- "Is C true?"
+  /-- "Does X believe C?" -/
+  | bel
+  /-- "Is C true?" -/
+  | c
   deriving DecidableEq, Repr, Inhabited
 
-/-- All QUDs. -/
-def allQUDs : List QUD := [.bel, .c]
-
-/-- QUD equivalence: two worlds agree on the relevant dimension. -/
-def qudProject [HasBelief W] [HasComplement W] : QUD → W → W → Bool
-  | .bel, w1, w2 => HasBelief.bel w1 == HasBelief.bel w2
-  | .c, w1, w2 => HasComplement.c w1 == HasComplement.c w2
-
-/-- Whether a belief state (given as membership over worlds) entails C.
-    A speaker "assumes C" iff C holds at every world they consider
-    possible. -/
+/-- The speaker assumes the complement: C holds at every world of the
+    belief state. -/
 def assumesComplement [HasComplement W] (membership : W → Bool)
     (allWorlds : List W) : Bool :=
-  allWorlds.all λ w => !membership w || HasComplement.c w
+  allWorlds.all fun w => !membership w || HasComplement.c w
 
--- ============================================================================
--- §5. Conditional Embedding
--- ============================================================================
-
-/-- Material conditional operator: ⟦if⟧ = λp.λq.λw. ¬p(w) ∨ q(w). -/
-def condOp (antecedent consequent : W → Bool) : W → Bool :=
-  λ w => !antecedent w || consequent w
-
-/-- Composed "if A, X knows C". -/
-def composeCondFactive [HasAntecedent W] [HasBelief W]
-    [HasComplement W] : W → Bool :=
-  condOp (HasAntecedent.a) (factivePos)
-
-/-- Composed "if A, X thinks C". -/
-def composeCondNonFactive [HasAntecedent W] [HasBelief W] : W → Bool :=
-  condOp (HasAntecedent.a) (nonFactivePos)
-
-/-- Composed "if A, X doesn't know C". -/
-def composeCondFactiveNeg [HasAntecedent W] [HasBelief W]
-    [HasComplement W] : W → Bool :=
-  condOp (HasAntecedent.a) (factiveNeg)
-
-/-- Composed "if A, X doesn't think C". -/
-def composeCondNonFactiveNeg [HasAntecedent W] [HasBelief W] : W → Bool :=
-  condOp (HasAntecedent.a) (nonFactiveNeg)
-
-end Semantics.Attitudes.Factivity
+end Factivity
