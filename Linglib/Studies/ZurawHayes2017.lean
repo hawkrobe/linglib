@@ -217,7 +217,7 @@ def deltaR : Fin 6 → NasalSubInput → ℝ :=
       (insensitive to stem = column)
 
     This is a data-level property of the constraint violation profiles,
-    used by both Z&H's family-interaction argument and Magri 2025's
+    used by both Z&H's family-interaction argument and [magri-2025]'s
     MaxEnt-on-square deduction. -/
 theorem violDiff_independence :
     ViolDiffIndependence deltaR nasalSubSquare := by
@@ -353,7 +353,7 @@ theorem french_hg_beats_ranking :
 
     `LR(/maŋb/) − LR(/maŋk/) = LR(/paŋb/) − LR(/paŋk/)`
 
-    The proof instantiates `me_predicts_hz` (Separability.lean) with the
+    The proof instantiates [magri-2025]'s `me_predicts_hz` with the
     Tagalog violation differences and their independence. -/
 theorem maxent_predicts_hz_tagalog (w : Fin 6 → ℝ) :
     ConstantLogitDiff
