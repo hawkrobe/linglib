@@ -55,6 +55,7 @@ a common predicate.
 namespace PhillipsBrown2025
 
 open Desire
+open Core.Order (EffectivePreference)
 
 /-! ## §1. Eight-world model
 
@@ -473,7 +474,7 @@ desire, but they make non-overlapping claims. -/
     the contrast. -/
 theorem condoravdiLauer_blocks_simultaneous_pq_and_negpq
     {Agent W : Type} {B : Agent → W → Set W}
-    (EP : Desire.EffectivePreferentialBackground Agent W B)
+    (EP : ∀ a w, EffectivePreference W (B a w))
     (a : Agent) (φ : Set W) (w : W)
     (hφ : Desire.wantEffectivePreference EP a φ w)
     (hnegφ : Desire.wantEffectivePreference EP a (fun w => ¬ φ w) w) :
