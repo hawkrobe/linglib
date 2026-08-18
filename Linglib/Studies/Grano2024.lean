@@ -1,6 +1,5 @@
 import Linglib.Semantics.Mood.Eventuality
 import Linglib.Semantics.Mood.Verbal
-import Linglib.Semantics.Attitudes.RationalAttitude
 import Linglib.Studies.Noonan2007
 import Linglib.Fragments.Greek.StandardModern.MoodChoice
 import Linglib.Fragments.Romanian.MoodChoice
@@ -52,7 +51,6 @@ namespace Grano2024
 open ArgumentStructure
 open Mood (Grammatical EventDenotation)
 open Mood
-open RationalAttitude
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Cross-Linguistic Mood Choice Data (Table 1)
@@ -445,61 +443,6 @@ theorem decide_is_hybrid :
 theorem remember_is_implicative :
     remember.complementType = .infinitival ∧
     remember.implicative.isSome = true := by decide
-
--- ════════════════════════════════════════════════════════════════
--- § 7. Bridge: Fusco & Sgrizzi 2026 Connection
--- ════════════════════════════════════════════════════════════════
-
-/-! ### Complement Size → Reading → Mood
-
-[grano-2024]'s hybrid predicate analysis (§6.2) and
-[fusco-sgrizzi-2026]'s complement-size analysis make the same
-prediction: the complement's structural size determines whether the
-reading is intentional (requiring eventuality abstraction → SBJV) or
-propositional (existentially closed → IND-compatible).
-
-The connection: Fusco & Sgrizzi's `readingFromSize` maps complement
-sizes to readings; Grano's `DepartureKind` maps readings to mood
-predictions. Together they form an end-to-end chain:
-
-    complement size → reading → departure kind → mood prediction
--/
-
-/-- Map a rational attitude reading to a departure kind.
-
-    Intention readings require eventuality abstraction (CAUSE* binds the
-    event argument). Belief readings involve neither comparison nor
-    eventuality abstraction — they are the default clausal semantics. -/
-def readingToDeparture : Reading → Option DepartureKind
-  | .intention => some .eventualityAbstraction
-  | .belief    => none  -- no departure from default
-
-/-- Intention readings predict robust subjunctive selection. -/
-theorem intention_predicts_subjunctive :
-    (readingToDeparture .intention).map DepartureKind.moodPrediction =
-      some .subjunctiveSelecting := rfl
-
-/-- Belief readings predict no departure (default = indicative). -/
-theorem belief_predicts_no_departure :
-    readingToDeparture .belief = none := rfl
-
-/-- End-to-end: sub-CP complement → intention → eventuality abstraction
-    → robust subjunctive selection. -/
-theorem subcp_to_subjunctive :
-    let reading := readingFromSize .vP                -- sub-CP → intention
-    let departure := readingToDeparture reading       -- intention → ev. abstraction
-    let mood := departure.map DepartureKind.moodPrediction
-    reading = .intention ∧
-    departure = some .eventualityAbstraction ∧
-    mood = some .subjunctiveSelecting := ⟨rfl, rfl, rfl⟩
-
-/-- End-to-end: CP complement → belief → no departure → no SBJV
-    requirement (default = indicative). -/
-theorem cp_to_indicative :
-    let reading := readingFromSize .cP                -- CP → belief
-    let departure := readingToDeparture reading       -- belief → no departure
-    reading = .belief ∧
-    departure = none := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 8. Predicate Classification by Departure Kind

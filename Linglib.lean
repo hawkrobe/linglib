@@ -1493,7 +1493,6 @@ import Linglib.Semantics.Aspect.SubeventStructure
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Semantics.Attitudes.Anchor
 import Linglib.Semantics.Attitudes.Confidence
-import Linglib.Semantics.Attitudes.ContentIndividual
 import Linglib.Semantics.Attitudes.Desire
 import Linglib.Semantics.Attitudes.Distributivity
 import Linglib.Semantics.Attitudes.Doxastic
@@ -1501,8 +1500,6 @@ import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Semantics.Attitudes.Preference
-import Linglib.Semantics.Attitudes.RationalAttitude
-import Linglib.Semantics.Attitudes.SituationIndividual
 import Linglib.Semantics.Causation.BayesNet
 import Linglib.Semantics.Causation.CCSelection
 import Linglib.Semantics.Causation.CauserSort

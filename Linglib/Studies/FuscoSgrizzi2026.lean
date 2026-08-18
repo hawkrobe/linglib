@@ -1,6 +1,7 @@
 import Linglib.Semantics.Modality.Kratzer.Flavor
-import Linglib.Semantics.Attitudes.RationalAttitude
 import Linglib.Semantics.Events.Basic
+import Linglib.Fragments.Italian.Predicates
+import Linglib.Studies.Grano2024
 
 /-!
 # Inertial modality for Italian non-finite belief/action readings
@@ -35,6 +36,80 @@ ordering source whose propositions describe normal continuation.
 namespace FuscoSgrizzi2026
 
 open Modality Modality.Kratzer
+open Minimalist (ComplementSize fValue)
+open Italian.Predicates (InfComplementizer convincere credere)
+
+/-! ## Readings from complement size
+
+The paper's structural hypothesis: a single *rational attitude*
+semantics whose belief or intention construal is fixed by complement
+size. A phase-sized (CP) complement is existentially closed into a
+proposition and evaluated against doxastic content; a smaller
+complement leaves the event variable open and is evaluated against
+inertial continuation. -/
+
+/-- The two construals of a rational attitude verb: propositional
+    belief, evaluated against doxastic content, or sub-propositional
+    intention, evaluated against inertial continuation. -/
+inductive Reading where
+  | belief
+  | intention
+  deriving DecidableEq, Repr
+
+/-- The construal determined by complement size: a phase-sized (CP)
+    complement is read as belief, a smaller one as intention. -/
+def readingFromSize (cs : ComplementSize) : Reading :=
+  if cs.isPhaseSized then .belief else .intention
+
+/-- Complement size determines the construal, with the CP phase
+    boundary as the threshold. -/
+theorem readingFromSize_eq_belief_iff (cs : ComplementSize) :
+    readingFromSize cs = .belief ↔ fValue .C ≤ cs.fLevel := by
+  unfold readingFromSize
+  cases h : cs.isPhaseSized <;>
+    simp_all [ComplementSize.isPhaseSized]
+
+/-! ## The Italian *di*/*a* alternation
+
+The paper's core data: *di*-infinitives are CP-sized (their ex. 22
+places *a*-infinitives at aP, mapped here to the nearest available
+`ComplementSize` below the CP threshold), so the *di*/*a* choice
+deterministically fixes the reading of *convincere*-type verbs. The
+lexical entries live in `Fragments/Italian/Predicates.lean`. -/
+
+/-- The complement size selected by each Italian infinitival
+    complementizer. -/
+def InfComplementizer.complementSize : InfComplementizer → ComplementSize
+  | .di => .cP
+  | .a_ => .vP
+
+/-- The reading derived from each complementizer. -/
+def InfComplementizer.reading : InfComplementizer → Reading :=
+  readingFromSize ∘ InfComplementizer.complementSize
+
+/-- *di*-infinitives yield belief readings. -/
+theorem di_yields_belief : InfComplementizer.reading .di = .belief := by decide
+
+/-- *a*-infinitives yield intention readings. -/
+theorem a_yields_intention : InfComplementizer.reading .a_ = .intention := by decide
+
+/-- *convincere* supports both readings, one per complementizer. -/
+theorem convincere_dual_reading :
+    convincere.infComplements.map InfComplementizer.reading = [.belief, .intention] := by
+  decide
+
+/-- *credere* supports only the belief reading. -/
+theorem credere_belief_only :
+    credere.infComplements.map InfComplementizer.reading = [.belief] := by
+  decide
+
+/-- The *di*/*a* alternation in *convincere* is structurally grounded:
+    the two complementizers select different complement sizes, which
+    deterministically map to different readings. -/
+theorem convincere_alternation_is_structural :
+    InfComplementizer.complementSize .di ≠ InfComplementizer.complementSize .a_ ∧
+    InfComplementizer.reading .di ≠ InfComplementizer.reading .a_ := by
+  decide
 
 variable {W : Type*}
 
@@ -152,8 +227,6 @@ The paper's empirical differentiators of the two construals: belief
 readings are truth-assessable and host modal auxiliaries; intention
 readings are obligatorily future-oriented and object-control. -/
 
-open RationalAttitude (Reading)
-
 /-- "It's true/false" can felicitously evaluate a belief but not an
     intention. -/
 def truthAssessable : Reading → Bool
@@ -177,5 +250,47 @@ def forcedFutureOrientation : Reading → Bool
 def objectControlOnly : Reading → Bool
   | .belief => false
   | .intention => true
+
+/-! ## Connection to Grano 2024: size → reading → mood
+
+[grano-2024]'s hybrid-predicate analysis (his §6.2) and this paper's
+complement-size analysis make the same prediction: the complement's
+structural size determines whether the reading is intentional
+(requiring eventuality abstraction, hence subjunctive) or
+propositional (existentially closed, hence indicative-compatible).
+`readingFromSize` composed with `readingToDeparture` and
+`Grano2024.DepartureKind.moodPrediction` gives the end-to-end chain
+complement size → reading → departure kind → mood prediction. -/
+
+open Grano2024 (DepartureKind)
+
+/-- Map a reading to a [grano-2024] departure kind: intention readings
+    require eventuality abstraction; belief readings are the default
+    clausal semantics, no departure. -/
+def readingToDeparture : Reading → Option DepartureKind
+  | .intention => some .eventualityAbstraction
+  | .belief    => none
+
+/-- Intention readings predict robust subjunctive selection. -/
+theorem intention_predicts_subjunctive :
+    (readingToDeparture .intention).map DepartureKind.moodPrediction =
+      some .subjunctiveSelecting := rfl
+
+/-- Belief readings predict no departure (default indicative). -/
+theorem belief_predicts_no_departure :
+    readingToDeparture .belief = none := rfl
+
+/-- End-to-end: sub-CP complement → intention → eventuality
+    abstraction → robust subjunctive selection. -/
+theorem subcp_to_subjunctive :
+    readingFromSize .vP = .intention ∧
+    readingToDeparture (readingFromSize .vP) = some .eventualityAbstraction ∧
+    (readingToDeparture (readingFromSize .vP)).map DepartureKind.moodPrediction =
+      some .subjunctiveSelecting := ⟨rfl, rfl, rfl⟩
+
+/-- End-to-end: CP complement → belief → no departure. -/
+theorem cp_to_indicative :
+    readingFromSize .cP = .belief ∧
+    readingToDeparture (readingFromSize .cP) = none := ⟨rfl, rfl⟩
 
 end FuscoSgrizzi2026

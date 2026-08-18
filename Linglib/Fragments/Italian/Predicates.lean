@@ -1,5 +1,4 @@
 import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Semantics.Attitudes.RationalAttitude
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
@@ -10,24 +9,20 @@ Italian attitude and causative-attitude verbs, with emphasis on the
 
 ## The *di*/*a* Alternation
 
-Italian *convincere* ('convince') selects two distinct infinitival complements:
-- *di* + infinitive → CP-sized → CLOSURE applies → **belief** reading
-  "Maria ha convinto Paolo di essere in pericolo"
-  ('Maria convinced Paolo that he was in danger')
-- *a* + infinitive → sub-CP (aP) → no CLOSURE → **intention** reading
-  "Maria ha convinto Paolo a partire"
-  ('Maria convinced Paolo to leave')
-
-The complement marker (*di* vs *a*) tracks the complement's structural size,
-which determines the rational attitude reading.
-
+Italian *convincere* ('convince') selects two distinct infinitival
+complements: *di* + infinitive ("Maria ha convinto Paolo di essere in
+pericolo", 'Maria convinced Paolo that he was in danger') and *a* +
+infinitive ("Maria ha convinto Paolo a partire", 'Maria convinced
+Paolo to leave'). The entries record which complementizers each verb
+selects; [fusco-sgrizzi-2026]'s analysis of the alternation —
+complement size determining the belief/intention reading — lives in
+`Studies/FuscoSgrizzi2026.lean`.
 -/
 
 namespace Italian.Predicates
 
 open ArgumentStructure
 open Minimalist (ComplementSize)
-open RationalAttitude (Reading readingFromSize)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Italian Infinitival Complementizers
@@ -42,16 +37,6 @@ inductive InfComplementizer where
   | di   -- CP infinitival (belief): "di essere in pericolo"
   | a_   -- Sub-CP infinitival (intention): "a partire"
   deriving DecidableEq, Repr
-
-/-- The complement size selected by each Italian infinitival complementizer. -/
-def InfComplementizer.complementSize : InfComplementizer → ComplementSize
-  | .di  => .cP   -- di-infinitives are CP-sized (propositional)
-  | .a_  => .vP   -- aP is above vP but below TP (ex. 22); mapped to vP
-                   -- as nearest available ComplementSize (threshold is CP)
-
-/-- The rational attitude reading derived from each complementizer. -/
-def InfComplementizer.reading : InfComplementizer → Reading :=
-  readingFromSize ∘ InfComplementizer.complementSize
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. Italian Verb Entry
@@ -158,34 +143,6 @@ def fare_caus : ItalianVerbEntry :=
     readings := [{ frame := Frame.infinitival, control := some .objectControl }]
     causative := some .make
     infComplements := [.a_] }
-
--- ════════════════════════════════════════════════════════════════
--- § 4. Bridge Theorems: Complementizer → Reading
--- ════════════════════════════════════════════════════════════════
-
-/-- *di*-infinitives yield belief readings. -/
-theorem di_yields_belief : InfComplementizer.reading .di = .belief := by decide
-
-/-- *a*-infinitives yield intention readings. -/
-theorem a_yields_intention : InfComplementizer.reading .a_ = .intention := by decide
-
-/-- *convincere* supports both readings (one per complementizer). -/
-theorem convincere_dual_reading :
-    convincere.infComplements.map InfComplementizer.reading = [.belief, .intention] := by
-  decide
-
-/-- *credere* supports only the belief reading. -/
-theorem credere_belief_only :
-    credere.infComplements.map InfComplementizer.reading = [.belief] := by
-  decide
-
-/-- The *di*/*a* alternation in *convincere* is structurally grounded:
-    the two complementizers select different complement sizes, which
-    deterministically map to different attitude readings. -/
-theorem convincere_alternation_is_structural :
-    InfComplementizer.complementSize .di ≠ InfComplementizer.complementSize .a_ ∧
-    InfComplementizer.reading .di ≠ InfComplementizer.reading .a_ := by
-  decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5. Mood Choice Bridge Theorems ([grano-2024])
