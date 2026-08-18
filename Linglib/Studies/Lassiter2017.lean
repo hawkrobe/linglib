@@ -115,12 +115,12 @@ configuration. The two frameworks make orthogonal predictions on the
     showing C&L cannot reproduce Lassiter's witness. -/
 theorem condoravdiLauer_blocks_lassiter_witness
     {Agent : Type} {B : Agent → W → Set W}
-    (EP : Semantics.Attitudes.CondoravdiLauer.EffectivePreferentialBackground Agent W B)
+    (EP : Semantics.Attitudes.Desire.EffectivePreferentialBackground Agent W B)
     (a : Agent) (w : W) (φ : Set W)
-    (hφ : Semantics.Attitudes.CondoravdiLauer.wantEP EP a φ w)
-    (hnegφ : Semantics.Attitudes.CondoravdiLauer.wantEP EP a (fun w => ¬ φ w) w) :
+    (hφ : Semantics.Attitudes.Desire.wantEP EP a φ w)
+    (hnegφ : Semantics.Attitudes.Desire.wantEP EP a (fun w => ¬ φ w) w) :
     False := by
-  have h := Semantics.Attitudes.CondoravdiLauer.wantEP_jointly_belief_consistent
+  have h := Semantics.Attitudes.Desire.wantEP_jointly_belief_consistent
               EP hφ hnegφ
   apply h
   ext x
