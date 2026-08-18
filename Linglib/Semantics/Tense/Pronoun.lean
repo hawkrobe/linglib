@@ -124,7 +124,7 @@ temporal reasoning).
 
 A temporal predicate takes a situation and returns a truth value.
 This is what tense operators modify. Re-exported by
-`Semantics/Attitudes/SituationDependent.lean` and
+`Studies/VonStechow2009.lean` and
 `Semantics/Tense/Compositional.lean` for downstream use.
 -/
 abbrev SitProp (W Time : Type*) := WorldTimeIndex W Time → Prop

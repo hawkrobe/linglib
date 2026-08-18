@@ -173,30 +173,10 @@ def Nonnegative {W E : Type*} (kp : KripkeKP W E) : Prop :=
     nonnegativity + additivity (W1 + W3 of).
     It is the hypothesis needed for `probCKIter_monotone`.
 
-    By reducing to Mathlib's `Monotone`, this connects to the same
-    abstract notion used throughout linglib:
-
-    - `Monotone`
-    - `ScopeUpwardMono ↔ ∀ R, Monotone (q R)` (`Core/Quantification.lean`)
-    - `IsSumHom.monotone : Monotone f` (`Semantics/Mereology.lean`)
-    - `MeasureMonotone ↔ ∀ i w, Monotone (wcr i w)` (this definition)
-
-    The world-independent special case `isProbabilistic` from
-    `EpistemicThreshold.lean` is identical in structure (`∀ a, Monotone`);
-    `measureMonotone_isProbabilistic` projects to a fixed world. -/
+    The world-independent, `Set`-based analogue is
+    `EpistemicThreshold.IsProbabilistic` (`∀ a, Monotone`). -/
 def MeasureMonotone {W E : Type*} (wcr : WorldCredence E W) : Prop :=
   ∀ (i : E) (w : W), Monotone (wcr i w)
-
-/-- `MeasureMonotone` implies `isProbabilistic` when projected to any
-    fixed world. Both are `Monotone` — this just fixes the world parameter.
-
-    This connects the FH94 probability axioms (world-dependent) to the
-    LaBToM threshold semantics (world-independent via `liftCredence`). -/
-theorem measureMonotone_isProbabilistic {E W : Type*}
-    (wcr : WorldCredence E W) (hMono : MeasureMonotone wcr) (w : W) :
-    Semantics.Attitudes.EpistemicThreshold.isProbabilistic
-      (fun (i : E) (φ : (W → Bool)) => wcr i w φ) :=
-  fun a => hMono a w
 
 /-- Under CONS + normalization, knowledge implies probability 1.
 
