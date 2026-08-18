@@ -499,17 +499,17 @@ theorem lunarisERC_isContradictory : lunarisERC.IsContradictory := by decide
     trivial. -/
 theorem latinERCSet_consistent_without_lunaris :
     ERCSet.Consistent
-      [popularisERC, pluvalisERC, navalisERC, floralisERC, legalisERC] :=
+      {popularisERC, pluvalisERC, navalisERC, floralisERC, legalisERC} :=
   ⟨Ranking.id 2, by decide⟩
 
 /-- Bridge to the dominance characterisation: under any ranking
     satisfying the empirical ERC set (sans lunaris), OCP dominates \*r. -/
 theorem latin_OCP_dominates_starR (r : Ranking 2)
     (hr : ERCSet.SatisfiedBy r
-      [popularisERC, pluvalisERC, navalisERC, floralisERC, legalisERC]) :
+      {popularisERC, pluvalisERC, navalisERC, floralisERC, legalisERC}) :
     r.Dominates 0 1 := by
   have hpop : popularisERC.SatisfiedBy r :=
-    hr popularisERC (List.mem_cons.mpr (Or.inl rfl))
+    hr popularisERC (Finset.mem_insert_self _ _)
   have : (simpleERC (n := 2) 0 1).SatisfiedBy r := by
     rw [← popularisERC_is_simple]; exact hpop
   exact (simpleERC_satisfiedBy_iff (by decide) r).mp this

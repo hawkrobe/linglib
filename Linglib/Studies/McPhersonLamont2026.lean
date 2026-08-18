@@ -117,7 +117,7 @@ def ercA : ERC numConstraints := ercFor .nanWinner .nanLoser
 def ercB : ERC numConstraints := ercFor .kakWinner .kakLoser
 
 /-- The ranking-paradox support. -/
-def pokoSupport : List (ERC numConstraints) := [ercA, ercB]
+def pokoSupport : ERCSet numConstraints := {ercA, ercB}
 
 /-- The derived `ercA` matches eq. 59 row a: `[W, L, L, L]`. -/
 example : ercA maxHIdx = .W ∧ ercA depLinkHIdx = .L ∧

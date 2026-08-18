@@ -48,17 +48,15 @@ variable {C : Type*} [DecidableEq C] {n : ℕ}
 
 /-- The ERC set of a tableau row `w`: `w`'s winner-loser ERCs against every *other*
 candidate. These are the ranking conditions a leg must satisfy for `w` to be the
-optimum ([prince-2002]). (Noncomputable: it enumerates the competitor `Finset` via
-`Finset.toList`; only the *set* of conditions matters, and consistency/membership
-stay decidable.) -/
-noncomputable def rowERCSet (t : Tableau C n) (w : C) : ERCSet n :=
-  (t.candidates.erase w).toList.map (tableauERC t w)
+optimum ([prince-2002]). -/
+def rowERCSet (t : Tableau C n) (w : C) : ERCSet n :=
+  (t.candidates.erase w).image (tableauERC t w)
 
 /-- The **grammar of a tableau row** — the bridge from the Concrete-OT tableau
 engine to the abstract `Grammar` hub ([merchant-prince-2022]; [merchant-riggle-2016]).
 `h` is the consistency of the row's conditions, i.e. that `w` is a genuine,
 non-harmonically-bounded optimum. -/
-noncomputable def rowGrammar (t : Tableau C n) (w : C)
+def rowGrammar (t : Tableau C n) (w : C)
     (h : ERCSet.Consistent (rowERCSet t w)) : Grammar n :=
   Grammar.ofERCSet (rowERCSet t w) h
 
@@ -82,9 +80,9 @@ theorem mem_rowGrammar_legs_iff_lex {t : Tableau C n} {w : C}
   constructor
   · intro hsat l hl
     exact (tableauERC_satisfiedBy_iff t r w l).mp
-      (hsat _ (List.mem_map.mpr ⟨l, Finset.mem_toList.mpr hl, rfl⟩))
+      (hsat _ (Finset.mem_image.mpr ⟨l, hl, rfl⟩))
   · intro hlex α hα
-    obtain ⟨l, hl, rfl⟩ := List.mem_map.mp hα
-    exact (tableauERC_satisfiedBy_iff t r w l).mpr (hlex l (Finset.mem_toList.mp hl))
+    obtain ⟨l, hl, rfl⟩ := Finset.mem_image.mp hα
+    exact (tableauERC_satisfiedBy_iff t r w l).mpr (hlex l hl)
 
 end MerchantPrince2022

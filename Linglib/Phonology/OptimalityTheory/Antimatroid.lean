@@ -91,7 +91,7 @@ theorem maximalChain_last {n : Nat} (r : Ranking n) :
     set of the top-`k` constraints under `r`.
 
     [merchant-riggle-2016] Definition 1. -/
-def MChain {n : Nat} (E : List (ERC n)) : Set (Fin n) → Prop :=
+def MChain {n : Nat} (E : ERCSet n) : Set (Fin n) → Prop :=
   fun S => ∃ r : Ranking n, ERCSet.SatisfiedBy r E ∧
     ∃ k : Fin (n + 1), maximalChain r k = S
 
@@ -109,14 +109,14 @@ inside `S` with no consistent global order realizing it
 (each ERC one `W`/one `L` = a Hasse edge = a partial order,
 `feasible_iff_feasiblePrefix_of_simple`). The faithful, *also decidable* notion
 is `FeasiblePrefix`. -/
-def Feasible {n : Nat} (E : List (ERC n)) (S : Finset (Fin n)) : Prop :=
+def Feasible {n : Nat} (E : ERCSet n) (S : Finset (Fin n)) : Prop :=
   ∀ α ∈ E, (∃ l, α l = .L ∧ l ∈ S) → (∃ w, α w = .W ∧ w ∈ S)
 
-instance {n : Nat} (E : List (ERC n)) : DecidablePred (Feasible E) :=
+instance {n : Nat} (E : ERCSet n) : DecidablePred (Feasible E) :=
   fun S => by unfold Feasible; infer_instance
 
 /-- The empty prefix is locally feasible (no losers present). -/
-@[simp] theorem Feasible.empty {n : Nat} (E : List (ERC n)) :
+@[simp] theorem Feasible.empty {n : Nat} (E : ERCSet n) :
     Feasible E (∅ : Finset (Fin n)) := by
   intro α _ ⟨l, _, hl⟩; exact absurd hl (Finset.notMem_empty l)
 
@@ -124,7 +124,7 @@ instance {n : Nat} (E : List (ERC n)) : DecidablePred (Feasible E) :=
 in one of them, whose winner then lies in `S ∪ T`. (This is union-closure of the
 over-approximation; the faithful family's union-closure is `MChain.union_closed`,
 [merchant-riggle-2016] Lemma 3.) -/
-theorem Feasible.union_closed {n : Nat} (E : List (ERC n)) {S T : Finset (Fin n)}
+theorem Feasible.union_closed {n : Nat} (E : ERCSet n) {S T : Finset (Fin n)}
     (hS : Feasible E S) (hT : Feasible E T) : Feasible E (S ∪ T) := by
   intro α hα ⟨l, hlL, hlST⟩
   rcases Finset.mem_union.mp hlST with hlS | hlT
@@ -145,7 +145,7 @@ def prefixFinset {n : Nat} (r : Ranking n) (k : Fin (n + 1)) : Finset (Fin n) :=
 isomorphism): a prefix of a ranking that satisfies `E` is locally feasible.
 Winners dominate their losers, so a loser inside the prefix drags its winner in
 (`maximalChain_dominance` in `Finset` form). -/
-theorem feasible_of_satisfiedBy {n : Nat} {E : List (ERC n)} {r : Ranking n}
+theorem feasible_of_satisfiedBy {n : Nat} {E : ERCSet n} {r : Ranking n}
     (hr : ERCSet.SatisfiedBy r E) (k : Fin (n + 1)) : Feasible E (prefixFinset r k) := by
   intro α hα ⟨l, hlL, hlmem⟩
   rw [mem_prefixFinset] at hlmem
@@ -158,14 +158,14 @@ theorem feasible_of_satisfiedBy {n : Nat} {E : List (ERC n)} {r : Ranking n}
 satisfying `E` — the `Finset`-valued form of `MChain`. Decidable by finite search
 over `Ranking n` (a `Fintype`) and `Fin (n+1)`, so `decide` reduces — *and*
 unlike `Feasible` it is the genuine antimatroid family, not an over-approximation. -/
-def FeasiblePrefix {n : Nat} (E : List (ERC n)) (S : Finset (Fin n)) : Prop :=
+def FeasiblePrefix {n : Nat} (E : ERCSet n) (S : Finset (Fin n)) : Prop :=
   ∃ r : Ranking n, ERCSet.SatisfiedBy r E ∧ ∃ k : Fin (n + 1), prefixFinset r k = S
 
-instance {n : Nat} (E : List (ERC n)) : DecidablePred (FeasiblePrefix E) :=
+instance {n : Nat} (E : ERCSet n) : DecidablePred (FeasiblePrefix E) :=
   fun _ => Fintype.decidableExistsFintype
 
 /-- The faithful predicate implies the over-approximation (`feasible_of_satisfiedBy`). -/
-theorem feasible_of_feasiblePrefix {n : Nat} {E : List (ERC n)} {S : Finset (Fin n)}
+theorem feasible_of_feasiblePrefix {n : Nat} {E : ERCSet n} {S : Finset (Fin n)}
     (h : FeasiblePrefix E S) : Feasible E S := by
   obtain ⟨r, hr, k, rfl⟩ := h; exact feasible_of_satisfiedBy hr k
 
@@ -176,7 +176,7 @@ theorem feasible_of_feasiblePrefix {n : Nat} {E : List (ERC n)} {S : Finset (Fin
 
 /-- `FeasiblePrefix` is `MChain` over `Finset` — the decidable counterpart of the
 existential, `Set`-valued antimatroid family. -/
-theorem mChain_coe_iff_feasiblePrefix {n : Nat} (E : List (ERC n)) (S : Finset (Fin n)) :
+theorem mChain_coe_iff_feasiblePrefix {n : Nat} (E : ERCSet n) (S : Finset (Fin n)) :
     MChain E (↑S) ↔ FeasiblePrefix E S := by
   constructor
   · rintro ⟨r, hr, k, hk⟩
@@ -191,12 +191,13 @@ antimatroid for general ERC sets. Hence `Antimat.IsFeasible` stays `MChain`
 ([merchant-riggle-2016]'s "beyond partial orders"); the local form is exact only
 on the simple-ERC fragment. -/
 theorem feasible_not_accessible :
-    ∃ (E : List (ERC 4)) (S : Finset (Fin 4)),
+    ∃ (E : ERCSet 4) (S : Finset (Fin 4)),
       ERCSet.Consistent E ∧ Feasible E S ∧ ¬ FeasiblePrefix E S ∧
         S.Nonempty ∧ ¬ ∃ x ∈ S, Feasible E (S \ {x}) :=
-  ⟨[fun i => if i = 0 then .W else if i = 1 then .L else if i = 2 then .W else .e,
-    fun i => if i = 0 then .L else if i = 1 then .W else if i = 2 then .e else .W],
-   {0, 1}, by decide, by decide, by decide, by decide, by decide⟩
+  ⟨{fun i => if i = 0 then .W else if i = 1 then .L else if i = 2 then .W else .e,
+    fun i => if i = 0 then .L else if i = 1 then .W else if i = 2 then .e else .W},
+   {0, 1}, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel,
+   by decide +kernel⟩
 
 -- ============================================================================
 -- § 11: Union Closure (Lemma 3)
@@ -297,7 +298,7 @@ set_option maxHeartbeats 1600000 in
     so `f w < f l`.
 
     [merchant-riggle-2016] Lemma 3. -/
-theorem MChain.union_closed {n : Nat} (E : List (ERC n))
+theorem MChain.union_closed {n : Nat} (E : ERCSet n)
     (_hcons : ERCSet.Consistent E) (S T : Set (Fin n))
     (_hS : MChain E S) (_hT : MChain E T) : MChain E (S ∪ T) := by
   obtain ⟨r₁, hr₁, k₁, hk₁⟩ := _hS
@@ -442,7 +443,7 @@ theorem MChain.union_closed {n : Nat} (E : List (ERC n))
     maximal chains consistent with `E`.
 
     [merchant-riggle-2016] Definition 6, Lemma 4. -/
-def Antimat {n : Nat} (E : List (ERC n)) (hcons : ERCSet.Consistent E) :
+def Antimat {n : Nat} (E : ERCSet n) (hcons : ERCSet.Consistent E) :
     Antimatroid (Fin n) where
   E := Set.univ
   IsFeasible := MChain E
@@ -521,7 +522,7 @@ the order-ideal ↔ linear-extension-prefix correspondence — reorder a witness
 ranking `r₀` into the block `S` (in `r₀`'s order) followed by `Sᶜ` (in `r₀`'s
 order); winner-uniqueness makes every Hasse edge respected, so the result
 satisfies `E` and has `S` as its length-`|S|` prefix. -/
-theorem feasible_iff_feasiblePrefix_of_simple {n : Nat} {E : List (ERC n)}
+theorem feasible_iff_feasiblePrefix_of_simple {n : Nat} {E : ERCSet n}
     (hcons : ERCSet.Consistent E) (hsimple : ERCSet.IsSimpleSet E) (S : Finset (Fin n)) :
     Feasible E S ↔ FeasiblePrefix E S := by
   refine ⟨fun hfeas => ?_, feasible_of_feasiblePrefix⟩
@@ -591,7 +592,7 @@ theorem feasible_iff_feasiblePrefix_of_simple {n : Nat} {E : List (ERC n)}
 /-- The `Set`-level feasible family of the simple fragment: a set is the coercion
 of a locally-feasible `Finset` iff it is `MChain`-feasible. (Bridges the decidable
 `Finset` side to `Antimat`'s `Set`-valued `MChain` family.) -/
-theorem feasible_coe_iff_mChain {n : Nat} {E : List (ERC n)}
+theorem feasible_coe_iff_mChain {n : Nat} {E : ERCSet n}
     (hcons : ERCSet.Consistent E) (hsimple : ERCSet.IsSimpleSet E) (T : Set (Fin n)) :
     (∃ S' : Finset (Fin n), (↑S' : Set (Fin n)) = T ∧ Feasible E S') ↔ MChain E T := by
   constructor
@@ -608,7 +609,7 @@ yields an antimatroid on `Fin n` whose feasible sets are the *locally feasible*
 union closure transfer from `Antimat`; concrete membership is checked by `decide`
 via `ofSimple_isFeasible_coe`. This is the order-ideal antimatroid of the
 constraint partial order ([merchant-riggle-2016]). -/
-def Antimat.ofSimple {n : Nat} (E : List (ERC n)) (hcons : ERCSet.Consistent E)
+def Antimat.ofSimple {n : Nat} (E : ERCSet n) (hcons : ERCSet.Consistent E)
     (hsimple : ERCSet.IsSimpleSet E) : Antimatroid (Fin n) where
   E := Set.univ
   IsFeasible := fun T => ∃ S' : Finset (Fin n), (↑S' : Set (Fin n)) = T ∧ Feasible E S'
@@ -632,7 +633,7 @@ def Antimat.ofSimple {n : Nat} (E : List (ERC n)) (hcons : ERCSet.Consistent E)
 
 /-- Concrete feasibility of `Antimat.ofSimple` is the decidable `Feasible` — the
 hook that lets `decide` settle membership queries. -/
-@[simp] theorem ofSimple_isFeasible_coe {n : Nat} {E : List (ERC n)}
+@[simp] theorem ofSimple_isFeasible_coe {n : Nat} {E : ERCSet n}
     (hcons : ERCSet.Consistent E) (hsimple : ERCSet.IsSimpleSet E) (S : Finset (Fin n)) :
     (Antimat.ofSimple E hcons hsimple).IsFeasible (↑S : Set (Fin n)) ↔ Feasible E S := by
   constructor
@@ -720,7 +721,7 @@ theorem Antimat_RCErc_inv {n : Nat} (A : Antimatroid (Fin n)) (S : Set (Fin n)) 
     [merchant-riggle-2016] actually proves. The general proof rests on
     [dietrich-1987]'s rooted-circuit characterization (via Lemmas 7, 9), so it
     carries an honest `sorry`. -/
-theorem RCErc_Antimat_inv {n : Nat} (E : List (ERC n))
+theorem RCErc_Antimat_inv {n : Nat} (E : ERCSet n)
     (hcons : ERCSet.Consistent E) :
     ∀ r : Ranking n,
       (∀ α ∈ RCErc (Antimat E hcons), ERC.SatisfiedBy r α) ↔ ERCSet.SatisfiedBy r E := by
@@ -735,7 +736,7 @@ theorem RCErc_Antimat_inv {n : Nat} (E : List (ERC n))
     If ERC set `E` entails `F` (every ranking satisfying `E` also
     satisfies `F`), then `Antimat(E) ⊆ Antimat(F)` (every feasible
     set of `Antimat(E)` is also feasible in `Antimat(F)`). -/
-theorem Antimat_entailment {n : Nat} (E F : List (ERC n))
+theorem Antimat_entailment {n : Nat} (E F : ERCSet n)
     (hE : ERCSet.Consistent E) (hF : ERCSet.Consistent F)
     (h : ERCSet.Entails E F) :
     ∀ S, (Antimat E hE).IsFeasible S → (Antimat F hF).IsFeasible S := by

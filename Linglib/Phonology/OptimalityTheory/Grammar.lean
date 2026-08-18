@@ -172,8 +172,8 @@ theorem coe_linearExtensions_eq_models (E : ERCSet n) :
 
 /-- The empty ERC set is satisfied by every ranking: its linear extensions are all
 of `Ord(S.Con)`. This is the trivial grammar (no ranking conditions). -/
-@[simp] theorem ERCSet.linearExtensions_nil :
-    ERCSet.linearExtensions ([] : ERCSet n) = Finset.univ := by
+@[simp] theorem ERCSet.linearExtensions_empty :
+    ERCSet.linearExtensions (∅ : ERCSet n) = Finset.univ := by
   ext r; simp [ERCSet.mem_linearExtensions, ERCSet.SatisfiedBy]
 
 /-- An OT **grammar**: a set of rankings realizable as the linear extensions of
@@ -311,8 +311,8 @@ theorem exists_grammar_of_isGrammarClosed {R : Set (Ranking n)}
     (hcl : IsGrammarClosed R) (hne : R.Nonempty) :
     ∃ G : Grammar n, (↑G.legs : Set (Ranking n)) = R := by
   obtain ⟨E, hAeq⟩ : ∃ E : ERCSet n, {α | α ∈ E} = conditions R := by
-    refine ⟨(Set.toFinite (conditions R)).toFinset.toList, ?_⟩
-    ext α; simp [Set.Finite.mem_toFinset, Finset.mem_toList]
+    refine ⟨(Set.toFinite (conditions R)).toFinset, ?_⟩
+    ext α; simp [Set.Finite.mem_toFinset]
   have hReq : (↑E.linearExtensions : Set (Ranking n)) = R := by
     rw [coe_linearExtensions_eq_models, hAeq]; exact hcl
   have hcons : ERCSet.Consistent E := by
@@ -355,11 +355,11 @@ theorem ofERCSet_le_iff_entails {E E' : ERCSet n}
     exact ERCSet.mem_linearExtensions.mpr (hent r (ERCSet.mem_linearExtensions.mp hr))
 
 /-- The **trivial grammar** — the terminal object of the specificity order: all
-rankings, no ranking conditions (`ofERCSet []`). -/
-def trivial : Grammar n := ofERCSet [] ⟨Ranking.id n, by simp [ERCSet.SatisfiedBy]⟩
+rankings, no ranking conditions (`ofERCSet ∅`). -/
+def trivial : Grammar n := ofERCSet ∅ ⟨Ranking.id n, by simp [ERCSet.SatisfiedBy]⟩
 
 @[simp] theorem legs_trivial : (Grammar.trivial : Grammar n).legs = Finset.univ := by
-  simp only [Grammar.trivial, legs_ofERCSet, ERCSet.linearExtensions_nil]
+  simp only [Grammar.trivial, legs_ofERCSet, ERCSet.linearExtensions_empty]
 
 instance : OrderTop (Grammar n) where
   top := trivial

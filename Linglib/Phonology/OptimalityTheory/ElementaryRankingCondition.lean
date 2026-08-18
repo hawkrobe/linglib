@@ -170,9 +170,8 @@ end ERC
 /-! ### Sets of ERCs -/
 
 /-- A set of ERCs, carrying the satisfaction/consistency/entailment algebra of
-OT grammars. Represented as a `List` so that `decide` can search the finitely
-many rankings; entailment is invariant under reordering and duplication. -/
-abbrev ERCSet (n : ℕ) := List (ERC n)
+OT grammars. -/
+abbrev ERCSet (n : ℕ) := Finset (ERC n)
 
 namespace ERCSet
 
@@ -183,7 +182,7 @@ def SatisfiedBy : Prop :=
   ∀ α ∈ E, ERC.SatisfiedBy r α
 
 instance : Decidable (SatisfiedBy r E) :=
-  List.decidableBAll _ E
+  inferInstanceAs (Decidable (∀ α ∈ E, ERC.SatisfiedBy r α))
 
 /-- An ERC set is *consistent* iff some ranking satisfies all its members. -/
 def Consistent : Prop := ∃ r : Ranking n, SatisfiedBy r E
@@ -193,7 +192,7 @@ instance : Decidable (Consistent E) :=
 
 /-- A singleton is consistent iff some ranking satisfies its ERC. -/
 @[simp] theorem consistent_singleton {α : ERC n} :
-    Consistent [α] ↔ ∃ r : Ranking n, α.SatisfiedBy r := by
+    Consistent {α} ↔ ∃ r : Ranking n, α.SatisfiedBy r := by
   simp [Consistent, SatisfiedBy]
 
 /-- The rankings consistent with an ERC set, as a `Finset` — its *linear extensions*
@@ -216,15 +215,15 @@ theorem entails_trans {E₁ E₂ E₃ : ERCSet n}
     (h₁₂ : Entails E₁ E₂) (h₂₃ : Entails E₂ E₃) : Entails E₁ E₃ :=
   fun r hr => h₂₃ r (h₁₂ r hr)
 
-/-- Adding an ERC strengthens the set: `α :: E` entails `E`. -/
-theorem entails_of_cons (α : ERC n) : Entails (α :: E) E :=
-  fun _ hr β hβ => hr β (List.mem_cons_of_mem α hβ)
+/-- A superset entails: adding ERCs only strengthens the set. -/
+theorem entails_of_superset {E E' : ERCSet n} (h : E ⊆ E') : Entails E' E :=
+  fun _ hr β hβ => hr β (h hβ)
 
 /-- Pointwise characterization: `E` entails `E'` if it entails each member
 singleton. -/
 theorem entails_of_forall_mem {E E' : ERCSet n}
-    (h : ∀ α ∈ E', Entails E [α]) : Entails E E' :=
-  fun r hr α hα => h α hα r hr α (List.mem_cons.mpr (Or.inl rfl))
+    (h : ∀ α ∈ E', Entails E {α}) : Entails E E' :=
+  fun r hr α hα => h α hα r hr α (Finset.mem_singleton_self α)
 
 /-- An ERC set is *simple* if every member is a simple ERC — a set of Hasse edges
 ([merchant-riggle-2016]). -/
@@ -283,7 +282,7 @@ theorem simpleERC_satisfiedBy_toRel_iff (i j : Fin n) (r : Ranking n) :
 
 /-- A simple ERC `i ≫ j` (with `i ≠ j`) is consistent. -/
 theorem simpleERC_consistent (hij : i ≠ j) :
-    ERCSet.Consistent [simpleERC i j] :=
+    ERCSet.Consistent {simpleERC i j} :=
   have ⟨r, hr⟩ := Ranking.exists_dominates hij
   ERCSet.consistent_singleton.mpr ⟨r, (simpleERC_satisfiedBy_iff hij r).mpr hr⟩
 
