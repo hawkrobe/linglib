@@ -1,4 +1,6 @@
 import Linglib.Semantics.Modality.Kratzer.Flavor
+import Linglib.Semantics.Attitudes.RationalAttitude
+import Linglib.Semantics.Events.Basic
 
 /-!
 # Inertial modality for Italian non-finite belief/action readings
@@ -18,6 +20,9 @@ circumstantial-base + inertial-ordering pair.
 * `inertial_duality`: modal duality, delegated to `Kratzer.duality`.
 * `empty_inertia_is_simple`: with an empty ordering source, inertial
   necessity collapses to circumstantial `simpleNecessity`.
+* `CausativeAttitude`: the single denotation of *convincere*-type
+  verbs (their ex. 24), with `beliefReading`/`intentionReading` the
+  two complement-size construals and the reading diagnostics.
 
 ## Implementation notes
 
@@ -79,5 +84,98 @@ theorem empty_inertia_is_simple (circ : ModalBase W) (prop : W → Prop) (w : W)
     and teleological modality concern what happens given the facts — they
     differ only in ordering source, not modal base. -/
 def InertialParams.flavorTag : ModalFlavor := .circumstantial
+
+/-! ## The single denotation of *convincere* (ex. 24)
+
+⟦convincere⟧ = λP.λx.λy.λe. ∃e'. Convince(e) ∧ Agent(e,y) ∧ Patient(e,x)
+∧ CAUSE(e,e') ∧ RATIONAL-ATTITUDE(e') ∧ Experiencer(x,e') ∧ P(e').
+The parameter P is supplied by the complement: a *di*-infinitive (CP)
+is existentially closed, yielding the belief reading; an
+*a*-infinitive (aP) leaves the event variable open, yielding the
+intention reading. The belief/intention split is compositional — one
+verb, two complement sizes. -/
+
+/-- A causative attitude verb: the agent causes the experiencer to
+    enter a rational attitude state whose content is the complement
+    predicate. -/
+structure CausativeAttitude (E Time : Type*) [LinearOrder Time] where
+  /-- The verb's descriptive predicate (Convince). -/
+  verbPred : Event Time → Prop
+  /-- The agent of the matrix event. -/
+  agent : E
+  /-- The patient of the matrix event and experiencer of the attitude. -/
+  experiencer : E
+  /-- Agent thematic role. -/
+  isAgent : Event Time → E → Prop
+  /-- Patient thematic role. -/
+  isPatient : Event Time → E → Prop
+  /-- Experiencer thematic role, on the attitude event. -/
+  isExperiencer : Event Time → E → Prop
+  /-- The matrix event causally brings about the attitude state. -/
+  cause : Event Time → Event Time → Prop
+
+variable {E Time : Type*} [LinearOrder Time]
+
+/-- The verb applied to a complement predicate `P`: some matrix event
+    causes a stative rational-attitude event satisfying `P`. -/
+def CausativeAttitude.denote (v : CausativeAttitude E Time)
+    (P : Event Time → Prop) : Prop :=
+  ∃ e e' : Event Time,
+    v.verbPred e ∧ v.isAgent e v.agent ∧ v.isPatient e v.experiencer ∧
+    v.cause e e' ∧ e'.sort = .stative ∧
+    v.isExperiencer e' v.experiencer ∧ P e'
+
+/-- Belief reading: the CP complement is existentially closed into a
+    proposition, evaluated against doxastic content. -/
+def CausativeAttitude.beliefReading (v : CausativeAttitude E Time)
+    (embeddedVP : Event Time → Prop) : Prop :=
+  v.denote (fun _ => ∃ e : Event Time, embeddedVP e)
+
+/-- Intention reading: the sub-CP complement is applied directly as an
+    event predicate, evaluated against inertial continuation. -/
+def CausativeAttitude.intentionReading (v : CausativeAttitude E Time)
+    (embeddedVP : Event Time → Prop) : Prop :=
+  v.denote embeddedVP
+
+/-- The paper's central claim (ex. 24): both readings are the one
+    `denote` applied to different complement predicates — the
+    belief/intention split is compositional, not lexical. -/
+theorem CausativeAttitude.readings_from_single_denote
+    (v : CausativeAttitude E Time) (VP : Event Time → Prop) :
+    v.beliefReading VP = v.denote (fun _ => ∃ e, VP e) ∧
+    v.intentionReading VP = v.denote VP :=
+  ⟨rfl, rfl⟩
+
+/-! ## Reading diagnostics
+
+The paper's empirical differentiators of the two construals: belief
+readings are truth-assessable and host modal auxiliaries; intention
+readings are obligatorily future-oriented and object-control. -/
+
+open RationalAttitude (Reading)
+
+/-- "It's true/false" can felicitously evaluate a belief but not an
+    intention. -/
+def truthAssessable : Reading → Bool
+  | .belief => true
+  | .intention => false
+
+/-- CP complements host modal auxiliary heads; sub-CP complements
+    lack the structural space. -/
+def allowsModalAux : Reading → Bool
+  | .belief => true
+  | .intention => false
+
+/-- The intended event is projected into inertia worlds, so intention
+    readings are obligatorily future-oriented. -/
+def forcedFutureOrientation : Reading → Bool
+  | .belief => false
+  | .intention => true
+
+/-- The experiencer must be the agent of the intended event, so
+    intention readings are obligatorily object-control. -/
+def objectControlOnly : Reading → Bool
+  | .belief => false
+  | .intention => true
 
 end FuscoSgrizzi2026
