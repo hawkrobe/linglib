@@ -1,84 +1,66 @@
 import Linglib.Syntax.Reciprocal
-import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 
 /-!
-# Siloni (2012): Reciprocal Verbs and Symmetry
-
-[siloni-2012] [siloni-2008]
-
-Natural Language and Linguistic Theory 30(1): 261–320.
+# Siloni (2012): Reciprocal verbs and symmetry
 
 Beyond periphrastic reciprocals (*each other*), languages have reciprocal
 *verbs* — predicates that express reciprocity without an anaphoric object.
-These split into two types based on where reciprocalization applies:
+[siloni-2012] (building on [siloni-2008]) splits them by where
+reciprocalization applies — the `Formation` parameter of
+`Syntax/Reciprocal.lean`, an instance of [reinhart-siloni-2005]'s lex-syn
+parameter. **Lexical** formation (Hebrew *hitnašek*, English intransitive
+*kiss*) bundles θ-roles in the lexicon and yields symmetric verbs whose
+reciprocity is a singular atomic event; **syntactic** formation (French
+*s'embrasser*, Czech *se políbit*) is a productive clitic operation whose
+reciprocity accumulates sub-events. Nine empirical properties cluster along
+this divide (`PropertyCluster`, with the two predicted clusters complementary
+on every property, `properties_complementary`). The paper's sample is
+recorded per-language (`hebrew` … `bulgarian`): lexical in Hebrew, Russian,
+Hungarian, and English; syntactic in French, Italian, Spanish, Romanian,
+Czech, Serbo-Croatian, and Bulgarian (fn. 13 extends the split family-wide:
+East Slavic lexical, West and South Slavic syntactic).
 
-- **Lexical** (Hebrew *hitnašek*, English intransitive *kiss*): formed in
-  the lexicon via θ-role bundling. Produces symmetric verbs whose
-  reciprocity involves a singular atomic event.
-- **Syntactic** (French *s'embrasser*, Czech *se políbit*): formed in
-  the syntax via a clitic (*se*). Reciprocity involves accumulation of
-  sub-events; the operation is productive.
-
-Nine empirical properties cluster along this divide. The paper's sample:
-the lexicon type in Hebrew, Russian, Hungarian, and English; the syntax
-type in Romance (French, Italian, Spanish, Romanian), Serbo-Croatian,
-Czech, and Bulgarian (fn. 13 extends the split family-wide: East Slavic
-lexical, West and South Slavic syntactic). Both types disallow the "I"
-reading of embedded reciprocals — because both associate the subject with
-two θ-roles, blocking the sole-role requirement for distribution under
-embedding.
-
-## Connections
-
-- `Formation` from `Syntax/Reciprocal.lean` — extended with nine
-  predicted properties and per-language verification
-- `EntailmentProfile` — used to define θ-role bundling
-- `Verb.StratifiesOver` (`Studies/Champollion2017.lean`) — the same
-  property: symmetric verbs denote singular events that do not distribute
-  over atomic agents (`¬ meet.StratifiesOver M agentRole`)
+Both verb types disallow the "I" reading of embedded reciprocals
+([higginbotham-1980]) because both associate the subject with two θ-roles,
+while the two types fail different necessary conditions along the way; the
+derivation chain (§3.5 → §4.3) culminates in `no_I_reading_either_formation`.
 -/
 
 namespace Siloni2012
 
 open Reciprocal
-open ArgumentStructure (EntailmentProfile)
 
 /-! ### Three-way reciprocal classification (§2.4) -/
 
-/-- The three classes of reciprocal constructions.
-
-    Class (i): periphrastic — reciprocal anaphor in object position
-    (*each other*, *l'un l'autre*). Subject bears one θ-role.
-
-    Class (ii): lexical reciprocal verb — formed in the lexicon by
-    θ-role bundling. Subject bears a complex [Agent-Theme] role.
-    The verb is symmetric: reciprocity involves a singular atomic event.
-
-    Class (iii): syntactic reciprocal verb — formed in the syntax by
-    a clitic (*se*). Subject bears two θ-roles via parasitic assignment.
-    Reciprocity involves accumulation of sub-events. -/
+/-- The three classes of reciprocal constructions (§2.4). -/
 inductive RecipClass where
+  /-- Reciprocal anaphor in object position (*each other*, *l'un l'autre*);
+      the subject bears one θ-role. -/
   | periphrastic
+  /-- Reciprocal verb formed in the lexicon by θ-role bundling (§4.1); the
+      subject bears a complex [Agent-Theme] role and the verb is symmetric. -/
   | lexicalVerb
+  /-- Reciprocal verb formed in the syntax by a clitic (§4.2); the subject
+      bears two θ-roles via parasitic assignment. -/
   | syntacticVerb
   deriving DecidableEq, Repr
 
-def toRecipClass : Formation → RecipClass
-  | .lexical  => .lexicalVerb
+/-- The reciprocal-verb class determined by formation locus. -/
+def RecipClass.ofFormation : Formation → RecipClass
+  | .lexical   => .lexicalVerb
   | .syntactic => .syntacticVerb
 
-/-- Number of θ-roles associated with the subject.
-    Periphrastic: subject = Agent only (Theme on anaphoric object).
-    Reciprocal verbs: subject = Agent + Theme (bundled or parasitic). -/
+/-- Number of θ-roles associated with the subject: one for periphrastic
+    reciprocals (Theme sits on the anaphoric object), two for both verb
+    types (bundled or parasitic). -/
 def RecipClass.subjectRoleCount : RecipClass → Nat
   | .periphrastic  => 1
   | .lexicalVerb   => 2
   | .syntacticVerb => 2
 
-/-- Whether the sub-event reading is available (§2.2).
-    Periphrastic and syntactic reciprocals build reciprocity from
-    sub-events. Lexical reciprocal verbs (symmetric verbs) denote
-    a singular atomic event — sub-events are inaccessible. -/
+/-- Whether reciprocity is built from sub-events (§2.2): true except for
+    lexical reciprocal verbs, whose singular atomic event has no accessible
+    sub-events. -/
 def RecipClass.allowsSubEventReading : RecipClass → Bool
   | .periphrastic  => true
   | .lexicalVerb   => false
@@ -86,313 +68,221 @@ def RecipClass.allowsSubEventReading : RecipClass → Bool
 
 /-! ### The nine-property cluster (§§2–7) -/
 
-/-- Nine empirical properties that systematically distinguish lexical
-    from syntactic reciprocal verbs. Each `Bool` indicates whether the
-    property holds for that formation type. -/
+/-- The nine empirical properties that distinguish lexical from syntactic
+    reciprocal verbs, in the order of the paper's concluding enumeration.
+    Each `Bool` records whether the property holds for a formation type. -/
 structure PropertyCluster where
-  /-- (i) Reciprocity involves a singular atomic event.
-      Diagnostic: count adverbials (*five times*) yield N mutual
-      events, not 2N directional sub-events (§2.2–2.3). -/
+  /-- (i) Reciprocity involves a singular atomic event: count adverbials
+      (*five times*) yield N mutual events, not 2N directional sub-events
+      (§2.2–2.3). -/
   singularEvent : Bool
-  /-- (ii) The reciprocalization operation is productive — applies
-      freely to transitive verbs (§3.5, §5). -/
+  /-- (ii) The reciprocalization operation applies productively to
+      transitive verbs (§3.5, §5). -/
   productive : Bool
-  /-- (iii) ECM reciprocal verbs are possible — reciprocalization
-      spans a clause boundary (§5.2). -/
+  /-- (iii) ECM reciprocal verbs are possible — reciprocalization spans a
+      clause boundary (§5.2). -/
   ecmReciprocals : Bool
-  /-- (iv) Can be formed from a frozen lexical entry (one without
-      a transitive alternate in the vocabulary) (§5.3). -/
+  /-- (iv) Can be formed from a frozen lexical entry, one without a
+      transitive alternate in the vocabulary (§5.3). -/
   frozenInput : Bool
-  /-- (v) The reciprocal verb can undergo semantic drift — acquire
-      a meaning not shared by the transitive alternate (§5.3). -/
+  /-- (v) Can undergo semantic drift — acquire a meaning not shared by the
+      transitive alternate (§5.3). -/
   semanticDrift : Bool
-  /-- (vi) Can retain accusative case when the dative (not accusative)
-      argument is suppressed by reciprocalization (§5.1). -/
-  retainsAccOnDativeSuppression : Bool
-  /-- (vii) Can derive reciprocal event nominals (§6).
-      Exception: Czech allows reciprocal event nominals despite a
-      syntactic setting, because Czech nominalization is itself a
-      syntactic operation that can access syntactic reciprocal outputs
-      ([hron-2005]). -/
-  eventNominals : Bool
-  /-- (viii) Can head phrasal idioms unavailable for the transitive
+  /-- (vi) Can head phrasal idioms unavailable for the transitive
       alternate (§5.3). -/
   phrasalIdioms : Bool
-  /-- (ix) Allows the discontinuous reciprocal construction —
-      subject + comitative "with"-phrase (§7). Language-level
-      availability; English *kiss*/*hug* resist it despite the lexical
-      setting (fn. 32). -/
+  /-- (vii) Can retain an accusative argument when reciprocalization
+      suppresses the dative rather than the accusative (§5.1). -/
+  retainsAccOnDativeSuppression : Bool
+  /-- (viii) Can derive reciprocal event nominals (§6). Exception: Czech
+      reciprocal event nominals exist despite the syntactic setting —
+      Czech nominalization is a lexical operation ([hron-2005]), and the
+      nominals arise by syntactic reciprocalization of the transitive
+      nominal, available because the Czech clitic, unlike the strictly
+      verbal Romance clitic, attaches to nouns. -/
+  eventNominals : Bool
+  /-- (ix) Allows the discontinuous reciprocal construction — subject plus
+      comitative *with*-phrase (§7). Language-level availability; English
+      *kiss* and *hug* resist it despite the lexical setting (fn. 32). -/
   discontinuous : Bool
   deriving DecidableEq, Repr
 
-/-- Predicted cluster for lexically-formed reciprocal verbs.
-    Symmetric verbs: closed class, singular event, can be frozen or
-    drifted, derive event nominals, head idioms, license discontinuity.
-    Cannot form ECM reciprocals or retain accusative on dative targets.
-    Property (ix) calls the substrate classifier
-    `Formation.allowsDiscontinuous`, so the two agree by
-    construction. -/
-def lexicalProperties : PropertyCluster :=
-  { singularEvent                := true
-  , productive                   := false
-  , ecmReciprocals               := false
-  , frozenInput                  := true
-  , semanticDrift                := true
-  , retainsAccOnDativeSuppression := false
-  , eventNominals                := true
-  , phrasalIdioms                := true
-  , discontinuous                := Formation.lexical.allowsDiscontinuous }
+/-- Pointwise complement of a property cluster. -/
+def PropertyCluster.compl (p : PropertyCluster) : PropertyCluster where
+  singularEvent := !p.singularEvent
+  productive := !p.productive
+  ecmReciprocals := !p.ecmReciprocals
+  frozenInput := !p.frozenInput
+  semanticDrift := !p.semanticDrift
+  phrasalIdioms := !p.phrasalIdioms
+  retainsAccOnDativeSuppression := !p.retainsAccOnDativeSuppression
+  eventNominals := !p.eventNominals
+  discontinuous := !p.discontinuous
 
-/-- Predicted cluster for syntactically-formed reciprocal verbs.
-    Productive, allow ECM and sub-events, can retain accusative on
-    dative targets. Cannot be frozen, drift, head idioms, derive
-    event nominals, or license discontinuity. -/
-def syntacticProperties : PropertyCluster :=
-  { singularEvent                := false
-  , productive                   := true
-  , ecmReciprocals               := true
-  , frozenInput                  := false
-  , semanticDrift                := false
-  , retainsAccOnDativeSuppression := true
-  , eventNominals                := false
-  , phrasalIdioms                := false
-  , discontinuous                := Formation.syntactic.allowsDiscontinuous }
+/-- Predicted cluster for lexically-formed reciprocal verbs: a closed class
+    of symmetric verbs that can be frozen or drifted, head idioms, derive
+    event nominals, and license discontinuity, but form no ECM reciprocals
+    and retain no accusative on dative suppression. Property (ix) calls the
+    substrate classifier `Formation.allowsDiscontinuous`, so the two agree
+    by construction. -/
+def lexicalProperties : PropertyCluster where
+  singularEvent := true
+  productive := false
+  ecmReciprocals := false
+  frozenInput := true
+  semanticDrift := true
+  phrasalIdioms := true
+  retainsAccOnDativeSuppression := false
+  eventNominals := true
+  discontinuous := Formation.lexical.allowsDiscontinuous
 
-/-- Derive the predicted property cluster from formation locus.
-    Cross-paper verification against [nordlinger-2023]'s `RecipProfile`
-    classifications lives in `Studies/Nordlinger2023.lean` (the newer
-    paper checks consistency with the older). -/
+/-- Predicted cluster for syntactically-formed reciprocal verbs: productive,
+    with sub-events, ECM reciprocals, and accusative retention, but no
+    frozen inputs, drift, idioms, event nominals, or discontinuity. -/
+def syntacticProperties : PropertyCluster where
+  singularEvent := false
+  productive := true
+  ecmReciprocals := true
+  frozenInput := false
+  semanticDrift := false
+  phrasalIdioms := false
+  retainsAccOnDativeSuppression := true
+  eventNominals := false
+  discontinuous := Formation.syntactic.allowsDiscontinuous
+
+/-- The predicted property cluster of a formation locus. [nordlinger-2023]'s
+    later per-language profiles check the discontinuity prediction against
+    attested judgments in `Studies/Nordlinger2023.lean`. -/
 def predictedProperties : Formation → PropertyCluster
-  | .lexical  => lexicalProperties
+  | .lexical   => lexicalProperties
   | .syntactic => syntacticProperties
 
-/-- The two clusters are perfectly complementary: every property that
-    holds for lexical reciprocal verbs fails for syntactic ones, and
-    vice versa. This is the central empirical finding of the paper. -/
+/-- The two predicted clusters are complementary on every property. -/
 theorem properties_complementary :
-    lexicalProperties.singularEvent = !syntacticProperties.singularEvent ∧
-    lexicalProperties.productive = !syntacticProperties.productive ∧
-    lexicalProperties.ecmReciprocals = !syntacticProperties.ecmReciprocals ∧
-    lexicalProperties.frozenInput = !syntacticProperties.frozenInput ∧
-    lexicalProperties.semanticDrift = !syntacticProperties.semanticDrift ∧
-    lexicalProperties.retainsAccOnDativeSuppression =
-      !syntacticProperties.retainsAccOnDativeSuppression ∧
-    lexicalProperties.eventNominals = !syntacticProperties.eventNominals ∧
-    lexicalProperties.phrasalIdioms = !syntacticProperties.phrasalIdioms ∧
-    lexicalProperties.discontinuous = !syntacticProperties.discontinuous :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    syntacticProperties = lexicalProperties.compl := rfl
 
 /-! ### Symmetric verbs (§2.3, §4.1) -/
 
-/-- Lexical reciprocal verbs are symmetric verbs: their reciprocity
-    involves a singular atomic event in which both participants are
-    identically involved (§2.3). Intransitive *kiss* and *collide*
-    are symmetric — "John and Mary kissed" denotes one event of
-    mutual kissing, not two directional sub-events.
+/-- Lexically-formed reciprocal verbs are symmetric verbs: both participants
+    are identically involved in a singular atomic event (§2.3), as with
+    intransitive *kiss* and *collide*. -/
+def IsSymmetricVerb (f : Formation) : Prop := f = .lexical
 
-    `Champollion2017.ChampollionPostulates` states the same property via
-    `Verb.StratifiesOver`: *meet* has `¬ meet.StratifiesOver M agentRole`
-    — it does not distribute over atomic agents, because the event is
-    necessarily collective/atomic. -/
-def isSymmetricVerb (f : Formation) : Prop := f = .lexical
-
-instance : DecidablePred isSymmetricVerb :=
+instance : DecidablePred IsSymmetricVerb :=
   fun f => inferInstanceAs (Decidable (f = .lexical))
 
-theorem symmetric_iff_singular :
-    ∀ f : Formation,
-      isSymmetricVerb f ↔ (predictedProperties f).singularEvent = true := by
-  intro f; cases f <;> simp [isSymmetricVerb, predictedProperties,
-    lexicalProperties, syntacticProperties]
+/-- A formation yields symmetric verbs iff it predicts a singular event. -/
+theorem symmetric_iff_singular (f : Formation) :
+    IsSymmetricVerb f ↔ (predictedProperties f).singularEvent := by
+  cases f <;> decide
 
-/-! ### θ-role bundling (§4.1) -/
+/-! ### The "I" reading (§2.1, §4.3)
 
-/-- A bundled θ-role: two entailment profiles merged into a single
-    complex role assigned to one argument ([reinhart-siloni-2005]'s
-    bundling operation). Lexical reciprocalization bundles the external
-    (agent-like) and internal (theme-like) roles of a transitive verb:
+In "John and Paul said they defeated each other in the final"
+([higginbotham-1980]), the "I" reading — John said he defeated Paul, and
+Paul said he defeated John — requires both that the embedded verb allow
+the sub-event reading and that its subject bear exactly one θ-role
+(§4.3, p. 287). -/
 
-      V(ACC) [θ_i] [θ_j]  →  V_SYM [θ_i · θ_j]
-
-    The subject of the resulting symmetric verb bears both the agent
-    and theme entailments of the base transitive (depictive adjective
-    case in Czech §3.1, comparative ellipsis §3.2). -/
-structure BundledRole where
-  /-- The external (agent-like) component -/
-  external : EntailmentProfile
-  /-- The internal (theme-like) component -/
-  internal : EntailmentProfile
-  deriving DecidableEq, Repr
-
-/-- Lexical reciprocalization: bundle a transitive verb's two roles. -/
-def reciprocalBundle (subjectProfile objectProfile : EntailmentProfile) :
-    BundledRole :=
-  ⟨subjectProfile, objectProfile⟩
-
-/-! ### The "I" reading (§2.1, §4.3) -/
-
-/-! The "I" reading of embedded reciprocals ([higginbotham-1980]):
-
-    "John and Paul said they defeated each other in the final."
-
-    (we) John and Paul said: "we defeated each other."
-    (I)  John said he defeated Paul, and Paul said he defeated John.
-
-    The "I" reading requires TWO conditions (§4.3, p. 287):
-    (1) the embedded verb allows the sub-event reading, AND
-    (2) the embedded subject is associated with exactly one θ-role.
-
-    The puzzle: syntactic reciprocal verbs satisfy (1) — they DO have
-    the sub-event reading — yet still lack the "I" reading. Condition
-    (1) is necessary but not sufficient. The resolution: both types of
-    reciprocal verb fail condition (2), because both associate the
-    subject with two θ-roles (bundled or parasitic).
-
-    Only periphrastic reciprocals satisfy both conditions: the sub-event
-    reading is available (via the plural operator on *each other*), and
-    the subject bears exactly one role (Agent). -/
-
-/-- The "I" reading requires both sub-event availability AND a sole
-    θ-role on the subject. -/
+/-- The "I" reading requires both sub-event availability and a sole θ-role
+    on the subject (§4.3). -/
 def RecipClass.allowsIReading (c : RecipClass) : Bool :=
   c.allowsSubEventReading && (c.subjectRoleCount == 1)
 
-/-- The "I" reading is available iff the construction is periphrastic.
-    - Periphrastic: sub-events ✓, sole role ✓ → "I" reading ✓
-    - Lexical verb:  sub-events ✗, sole role ✗ → "I" reading ✗
-    - Syntactic verb: sub-events ✓, sole role ✗ → "I" reading ✗
+/-- The "I" reading is available only in the periphrastic class; syntactic
+    reciprocal verbs have sub-events yet still lack it, because the
+    sole-role requirement fails. -/
+theorem I_reading_iff_periphrastic (c : RecipClass) :
+    c.allowsIReading ↔ c = .periphrastic := by
+  cases c <;> decide
 
-    The syntactic case is the puzzle: sub-events are present (condition 1
-    met) but the sole-role requirement fails (condition 2 unmet). -/
-theorem I_reading_iff_periphrastic :
-    ∀ c : RecipClass, c.allowsIReading = (c == .periphrastic) := by
-  intro c; cases c <;> rfl
+/-! ### Cross-linguistic sample (§2.4, §5, §7) -/
 
-/-! ### Cross-linguistic data (§2.4, §5, §7) -/
-
-/-- Per-language formation locus. The abstract announces "a sample of ten
-    languages"; eleven languages are named with data across the paper, so
-    all are recorded here (fn. 13 additionally extends the split to the
-    rest of Slavic). -/
+/-- The formation locus of a language's reciprocal verbs. -/
 structure LangRecipVerb where
   language : String
   iso : String
   formation : Formation
   deriving DecidableEq, Repr
 
--- Class (ii): lexical reciprocal verbs (symmetric).
--- Note: `formation` here classifies the reciprocal VERB mechanism,
--- not the primary reciprocal strategy. English's primary strategy is
--- periphrastic (*each other*), but its reciprocal verbs (intransitive
--- *kiss*, *meet*, *collide*) are lexical — symmetric verbs formed in
--- the lexicon. This is why `rpEnglish.formation` in
--- `Studies/Nordlinger2023.lean` is `none` (the primary strategy is not
--- verb formation) while we classify English as `.lexical`; fn. 32 notes
--- that English *kiss*/*hug* nonetheless resist the discontinuous
--- construction.
 def hebrew    : LangRecipVerb := ⟨"Hebrew",    "heb", .lexical⟩
 def russian   : LangRecipVerb := ⟨"Russian",   "rus", .lexical⟩
 def hungarian : LangRecipVerb := ⟨"Hungarian", "hun", .lexical⟩
-def english   : LangRecipVerb := ⟨"English",   "eng", .lexical⟩
 
--- Class (iii): syntactic reciprocal verbs (clitic se/si)
+/-- English reciprocal verbs (intransitive *kiss*, *meet*, *collide*) are
+    lexicon-formed symmetric verbs, though the language's primary reciprocal
+    strategy is the periphrastic *each other* (hence the strategy-level
+    classification in `Studies/Nordlinger2023.lean` differs); fn. 32 notes
+    that *kiss* and *hug* nonetheless resist the discontinuous
+    construction. -/
+def english : LangRecipVerb := ⟨"English", "eng", .lexical⟩
+
 def french        : LangRecipVerb := ⟨"French",         "fra", .syntactic⟩
-def italian       : LangRecipVerb := ⟨"Italian",         "ita", .syntactic⟩
-def spanish       : LangRecipVerb := ⟨"Spanish",         "spa", .syntactic⟩
-def czech         : LangRecipVerb := ⟨"Czech",           "ces", .syntactic⟩
-def romanian      : LangRecipVerb := ⟨"Romanian",        "ron", .syntactic⟩
-def serboCroatian : LangRecipVerb := ⟨"Serbo-Croatian",  "hbs", .syntactic⟩
-def bulgarian     : LangRecipVerb := ⟨"Bulgarian",       "bul", .syntactic⟩
+def italian       : LangRecipVerb := ⟨"Italian",        "ita", .syntactic⟩
+def spanish       : LangRecipVerb := ⟨"Spanish",        "spa", .syntactic⟩
+def czech         : LangRecipVerb := ⟨"Czech",          "ces", .syntactic⟩
+def romanian      : LangRecipVerb := ⟨"Romanian",       "ron", .syntactic⟩
+def serboCroatian : LangRecipVerb := ⟨"Serbo-Croatian", "hbs", .syntactic⟩
+def bulgarian     : LangRecipVerb := ⟨"Bulgarian",      "bul", .syntactic⟩
 
-def siloniSample : List LangRecipVerb :=
+/-- The paper's language sample. The abstract announces ten languages;
+    eleven are named with data across the paper, so all are recorded. -/
+def sample : List LangRecipVerb :=
   [hebrew, russian, hungarian, english,
    french, italian, spanish, czech, romanian, serboCroatian, bulgarian]
 
-/-- All lexical-formation languages produce symmetric verbs. -/
-theorem lexical_are_symmetric :
-    ∀ l ∈ siloniSample.filter (·.formation == .lexical),
-      isSymmetricVerb l.formation := by decide
+/-! ### Derivation: formation locus → no "I" reading (§3.5 → §4.3)
 
-/-- All syntactic-formation languages produce non-symmetric verbs. -/
-theorem syntactic_not_symmetric :
-    ∀ l ∈ siloniSample.filter (·.formation == .syntactic),
-      ¬ isSymmetricVerb l.formation := by decide
+Generalization (29): "Plural events are not part of the lexicon's
+inventory." Lexical reciprocalization therefore yields symmetric verbs
+with no sub-events, failing the first condition on the "I" reading;
+syntactic reciprocal verbs have sub-events but fail the sole-role
+condition. Both paths end at `no_I_reading_either_formation`. -/
 
-/-! ### Derivation: formation locus → "I" reading (§3.5 → §4.3) -/
-
-/-! The paper's core argument is a derivation chain, not a conjunction
-    of independent facts. Formation locus determines interpretive
-    possibilities step by step.
-
-    Generalization (29) from §3.5: "Plural events are not part of the
-    lexicon's inventory." Since the lexicon has no access to plural
-    operators, lexical operations cannot produce plural events. This
-    forces lexical reciprocals to be symmetric verbs (singular events),
-    which in turn blocks the sub-event reading.
-
-    Both verb types converge on "no 'I' reading" but via different
-    derivation paths:
-    - Lexical:   singular event → no sub-events → condition 1 fails
-    - Syntactic: sub-events present, BUT dual role → condition 2 fails
-
-    Cross-module connections:
-    - `ChampollionPostulates.meet_not_distributes_agent` in Champollion2017:
-      same insight, via `Verb.StratifiesOver` -/
-
-/-- Step 1: Both reciprocal verb types give the subject two θ-roles
-    (lexical via bundling §4.1, syntactic via parasitic assignment §4.2). -/
+/-- Both reciprocal verb types associate the subject with two θ-roles:
+    bundling in the lexicon (§4.1), parasitic assignment in the syntax
+    (§4.2). -/
 theorem recip_verb_dual_role (f : Formation) :
-    (toRecipClass f).subjectRoleCount = 2 := by
+    (RecipClass.ofFormation f).subjectRoleCount = 2 := by
   cases f <;> rfl
 
-/-- Step 2: Singular-event verbs lack the sub-event reading (§2.2–2.3).
-    Bridges `PropertyCluster.singularEvent` to
-    `RecipClass.allowsSubEventReading`. -/
+/-- Singular-event verbs lack the sub-event reading (§2.2–2.3). -/
 theorem singular_event_no_subevents (f : Formation)
     (h : (predictedProperties f).singularEvent = true) :
-    (toRecipClass f).allowsSubEventReading = false := by
+    (RecipClass.ofFormation f).allowsSubEventReading = false := by
   cases f
   · rfl
-  · exact absurd h (by decide)
+  · exact nomatch h
 
-/-- Step 3a: Sub-event availability is NECESSARY for the "I" reading
-    (condition 1 of §4.3). Blocks via the first conjunct of `&&`. -/
+/-- Sub-event availability is necessary for the "I" reading (§4.3). -/
 theorem subevents_necessary_for_I (c : RecipClass)
     (h : c.allowsSubEventReading = false) :
     c.allowsIReading = false := by
   simp [RecipClass.allowsIReading, h]
 
-/-- Step 3b: A sole θ-role on the subject is NECESSARY for the "I"
-    reading (condition 2 of §4.3). Blocks via the second conjunct. -/
+/-- A sole θ-role on the subject is necessary for the "I" reading (§4.3). -/
 theorem sole_role_necessary_for_I (c : RecipClass)
     (h : c.subjectRoleCount ≠ 1) :
     c.allowsIReading = false := by
-  cases c <;> simp_all [RecipClass.allowsIReading,
-    RecipClass.allowsSubEventReading, RecipClass.subjectRoleCount]
+  cases c
+  exacts [absurd rfl h, rfl, rfl]
 
-/-- Lexical derivation (§3.5 → §2.2 → §4.3):
-    singular event → no sub-events → condition 1 fails → no "I" reading. -/
+/-- Lexical derivation: singular event → no sub-events → no "I" reading
+    (§3.5 → §2.2 → §4.3). -/
 theorem lexical_no_I_reading :
-    (toRecipClass .lexical).allowsIReading = false := by
-  apply subevents_necessary_for_I
-  apply singular_event_no_subevents
-  rfl
+    (RecipClass.ofFormation .lexical).allowsIReading = false :=
+  subevents_necessary_for_I _ (singular_event_no_subevents _ rfl)
 
-/-- Syntactic derivation (§4.2 → §4.3):
-    dual role → condition 2 fails → no "I" reading.
-
-    This resolves the PUZZLE: syntactic reciprocals HAVE sub-events
-    (condition 1 met) but LACK the sole role (condition 2 unmet). -/
+/-- Syntactic derivation: dual role → no "I" reading (§4.2 → §4.3), despite
+    the sub-event reading being available. -/
 theorem syntactic_no_I_reading :
-    (toRecipClass .syntactic).allowsIReading = false := by
-  apply sole_role_necessary_for_I
-  decide
+    (RecipClass.ofFormation .syntactic).allowsIReading = false :=
+  sole_role_necessary_for_I _ (by decide)
 
-/-- Both paths converge: neither verb type allows the "I" reading. -/
+/-- Neither reciprocal verb type allows the "I" reading. -/
 theorem no_I_reading_either_formation (f : Formation) :
-    (toRecipClass f).allowsIReading = false := by
+    (RecipClass.ofFormation f).allowsIReading = false := by
   cases f
-  · exact lexical_no_I_reading
-  · exact syntactic_no_I_reading
+  exacts [lexical_no_I_reading, syntactic_no_I_reading]
 
 end Siloni2012
