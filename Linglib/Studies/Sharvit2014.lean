@@ -1,4 +1,4 @@
-import Linglib.Semantics.Tense.LexicalType
+import Linglib.Semantics.Tense.TenseAspectComposition
 import Linglib.Semantics.Tense.TemporalConnectives.Before
 import Linglib.Semantics.Tense.Decomposition
 
@@ -11,7 +11,7 @@ import Linglib.Semantics.Tense.Decomposition
 [partee-1973] vs Prior 1967) the engine for cross-linguistic variation in *before*-clauses
 (English/Polish vs Japanese) and attitude reports. The IPF mechanism it rests on is the
 [beaver-condoravdi-2003] `before` semantics (`Semantics/Tense/TemporalConnectives/Before.lean`);
-the pronominal/quantificational substrate is `Semantics/Tense/LexicalType.lean`.
+the pronominal/quantificational apparatus ((30)) is defined below.
 
 ## Main definitions
 
@@ -21,7 +21,7 @@ the pronominal/quantificational substrate is `Semantics/Tense/LexicalType.lean`.
   the present's shiftability, and the *past* tense's lexical type (`Option LexicalType`,
   no-mixing structural; `none` = tenseless / out of scope).
 * The derived predicates (`wellFormedPastUnderPastBefore`, …) are grounded in the substrate, not
-  re-stipulated: well-formedness routes through `Before.triggersIPFInBefore`, SOT-deletion through
+  re-stipulated: well-formedness routes through `triggersIPFInBefore`, SOT-deletion through
   `Decomposition.sotDeletionApplicable`.
 * `eq99a`/`eq99b`/`eq99c` — Sharvit's three universal predictions ((99), p. 301).
 
@@ -36,9 +36,72 @@ no-tenseless assumption (§6.1, p. 299).
 
 namespace Sharvit2014
 
-open Tense (LexicalType)
-open Tense.TemporalConnectives.Before (triggersIPFInBefore)
+open Tense.TemporalConnectives.Before (hasEarliest)
 open Tense.Decomposition (sotDeletionApplicable)
+open Tense.TenseAspectComposition (evalPast evalRel)
+open Semantics.Aspect (PointPred)
+
+/-! ### The two lexical types of tense ((30)) -/
+
+/-- [sharvit-2014]'s two semantic types of tense ((30), p. 274): *pronominal*
+    (after [partee-1973]; an element of `D_i`) and *quantificational* (a
+    Priorean operator over time-predicates). -/
+inductive LexicalType
+  /-- Pronominal: an element of `D_i`, two-indexed `past_{j,k}`. -/
+  | pronominal
+  /-- Quantificational: an operator over time-predicates. -/
+  | quantificational
+  deriving DecidableEq, Repr
+
+/-- [sharvit-2014] (30b): quantificational past as the generalized quantifier
+    `some` (`Quantification.some_sem`) over the contextual restrictor `K`, with
+    scope "precedes `t` and satisfies `p`". Definitionally
+    `∃ t' ∈ K, t' < t ∧ p t'`. -/
+def quantificationalPast {Time : Type*} [LT Time]
+    (K : Set Time) (p : Time → Prop) (t : Time) : Prop :=
+  Quantification.some_sem (· ∈ K) (fun t' => t' < t ∧ p t')
+
+/-- The pipeline's existential past is the quantificational past with trivial
+    restrictor: `evalPast` = `quantificationalPast` over `Set.univ`. Together
+    with `pronominalLookup_eq_some_iff_tensePronoun` below, this places both
+    of Sharvit's tense lexical types over operators the rest of the codebase
+    already uses. -/
+theorem evalPast_iff_quantificationalPast {W Time : Type*} [LinearOrder Time]
+    (p : PointPred W Time) (tc : Time) (w : W) :
+    evalPast p tc w ↔ quantificationalPast Set.univ (λ t => p ⟨w, t⟩) tc := by
+  simp [evalPast, evalRel, quantificationalPast, Quantification.some_sem]
+
+/-- IPF ([sharvit-2014] (27), p. 272): when the body of `before^{B&C}` is the
+    quantificational past `[[PAST]]^{K,g}(q)`, and the restrictor `C` is
+    order-dense (interval-like) with `K ⊆ C`, the `EARLIEST` presupposition
+    (`Before.hasEarliest`) fails: a witness `t_q < t_min` with `q t_q` lifts
+    via density to a strictly smaller body-witness. The technical core of the
+    thesis that only languages with pronominal tenses license past-under-past
+    in `before`-clauses. -/
+theorem ipf_quantificationalPast {Time : Type*} [LinearOrder Time]
+    {C K : Set Time}
+    (hK : K ⊆ C)
+    (hC_dense : ∀ a b, a ∈ C → b ∈ C → a < b → ∃ c ∈ C, a < c ∧ c < b)
+    (q : Time → Prop) :
+    ¬ hasEarliest C (quantificationalPast K q) := by
+  rintro ⟨t_min, ⟨ht_min_C, t_q, ht_q_K, ht_q_lt, hq_t_q⟩, hmin⟩
+  obtain ⟨t_mid, ht_mid_C, ht_q_lt_mid, ht_mid_lt_min⟩ :=
+    hC_dense t_q t_min (hK ht_q_K) ht_min_C ht_q_lt
+  exact absurd (hmin ⟨ht_mid_C, t_q, ht_q_K, ht_q_lt_mid, hq_t_q⟩)
+    (not_le.mpr ht_mid_lt_min)
+
+/-- The Bool-valued IPF dispatch on tense lexical type: quantificational
+    tenses trigger IPF in *before*-clauses; pronominal tenses do not. -/
+def triggersIPFInBefore : LexicalType → Bool
+  | .quantificational => true
+  | .pronominal       => false
+
+/-- ((27), p. 272): a language's past tense is well-formed under
+    `before^{B&C}` iff its tense lexical type does not trigger IPF — i.e.,
+    iff it is pronominal. -/
+@[simp] theorem pastUnderBefore_wellFormed_iff (τ : LexicalType) :
+    triggersIPFInBefore τ = false ↔ τ = .pronominal := by
+  cases τ <;> simp [triggersIPFInBefore]
 
 /-! ### The pronominal past ((30a))
 
@@ -137,8 +200,8 @@ def hasFullyShiftablePresent (L : LanguageTenseProfile) : Bool :=
 /-! ### Derived empirical predicates
 
 These are not independent stipulations: the *before*-well-formedness predicate routes through the
-[beaver-condoravdi-2003] IPF dispatch `Before.triggersIPFInBefore`, and the SOT-derived predicates
-through Kratzer's deletion condition `Decomposition.sotDeletionApplicable`. -/
+IPF dispatch `triggersIPFInBefore`, and the SOT-derived predicates through Kratzer's deletion
+condition `Decomposition.sotDeletionApplicable`. -/
 
 /-- SOT-deletion of an agreeing past-under-past applies when the language has the SOT rule, routed
     through `Decomposition.sotDeletionApplicable` (Kratzer's morphological-identity condition, here
@@ -147,9 +210,9 @@ def sotAppliesPastUnderPast (L : LanguageTenseProfile) : Bool :=
   L.hasSOT && sotDeletionApplicable Tense.past Tense.past
 
 /-- PAST-under-PAST in *before* is well-formed iff the past does not trigger IPF — the
-    technical core `Before.ipf_quantificationalPast`. The body calls the IPF dispatch
-    `Before.triggersIPFInBefore`; `wellFormedPastUnderPastBefore_iff_pronominal` records the
-    resulting equivalence to `isPronominal` (= `Before.pastUnderBefore_wellFormed_iff`). -/
+    technical core `ipf_quantificationalPast`. The body calls the IPF dispatch
+    `triggersIPFInBefore`; `wellFormedPastUnderPastBefore_iff_pronominal` records the
+    resulting equivalence to `isPronominal` (= `pastUnderBefore_wellFormed_iff`). -/
 def wellFormedPastUnderPastBefore (L : LanguageTenseProfile) : Bool :=
   match L.pastLexicalType with
   | some τ => !triggersIPFInBefore τ
@@ -192,7 +255,7 @@ theorem isQuantificational_eq_false_of_isPronominal (L : LanguageTenseProfile) :
   simp [isQuantificational, this]
 
 /-- Well-formedness of past-under-past in *before* coincides with a pronominal past — imported
-    from the IPF result (`Before.pastUnderBefore_wellFormed_iff`), not re-stipulated. -/
+    from the IPF result (`pastUnderBefore_wellFormed_iff`), not re-stipulated. -/
 theorem wellFormedPastUnderPastBefore_iff_pronominal (L : LanguageTenseProfile) :
     L.wellFormedPastUnderPastBefore = true ↔ L.isPronominal = true := by
   cases hτ : L.pastLexicalType with
@@ -290,7 +353,7 @@ result formalized in `TemporalConnectives/Before.lean`; the two theorems below c
 grounding via `wellFormedPastUnderPastBefore_iff_pronominal`. -/
 
 /-- Quantificational-past languages (Japanese) fail `wellFormedPastUnderPastBefore`, matching the
-    IPF prediction (`Before.ipf_quantificationalPast`). -/
+    IPF prediction (`ipf_quantificationalPast`). -/
 theorem quant_past_languages_fail_before (L : LanguageTenseProfile) :
     L.isQuantificational = true → L.wellFormedPastUnderPastBefore = false := by
   intro h
@@ -299,7 +362,7 @@ theorem quant_past_languages_fail_before (L : LanguageTenseProfile) :
   simp [LanguageTenseProfile.wellFormedPastUnderPastBefore, this, triggersIPFInBefore]
 
 /-- Pronominal-past languages (English, Polish) satisfy `wellFormedPastUnderPastBefore`, in keeping
-    with `Before.pastUnderBefore_wellFormed_iff`. -/
+    with `pastUnderBefore_wellFormed_iff`. -/
 theorem pronominal_past_languages_pass_before (L : LanguageTenseProfile) :
     L.isPronominal = true → L.wellFormedPastUnderPastBefore = true :=
   fun h => (LanguageTenseProfile.wellFormedPastUnderPastBefore_iff_pronominal L).mpr h

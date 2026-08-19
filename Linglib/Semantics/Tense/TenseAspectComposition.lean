@@ -34,7 +34,6 @@ The eval* operators instantiate the situation (fixing world and time).
 -/
 
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Semantics.Tense.LexicalType
 import Linglib.Semantics.Quantification.Basic
 
 namespace Tense.TenseAspectComposition
@@ -73,15 +72,6 @@ def evalPast (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
 /-- Evaluate a point predicate with existential future (FUTURE): `∃ t > tc, p(w)(t)`. -/
 def evalFut (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
   evalRel (· > ·) p tc w
-
-/-- The pipeline's existential past is [sharvit-2014]'s quantificational
-    past with trivial restrictor: `evalPast` = `quantificationalPast` over
-    `Set.univ`. Together with `pronominalLookup_eq_some_iff_tensePronoun`
-    (in `Studies/Sharvit2014.lean`), this places both of Sharvit's tense lexical
-    types over the operators the rest of the codebase already uses. -/
-theorem evalPast_iff_quantificationalPast (p : PointPred W Time) (tc : Time) (w : W) :
-    evalPast p tc w ↔ quantificationalPast Set.univ (λ t => p ⟨w, t⟩) tc := by
-  simp [evalPast, evalRel, quantificationalPast, Quantification.some_sem]
 
 /-! ### Composed Tense–Aspect Forms -/
 

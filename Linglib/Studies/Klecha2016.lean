@@ -662,7 +662,7 @@ whose data refutes it. -/
 
 /-! [sharvit-2014] derives the simultaneous reading of past-under-past
 in English attitudes via SOT-deletion of a *pronominal* past
-(`LexicalType.pronominal` + `english.hasSOT = true` →
+(`Sharvit2014.LexicalType.pronominal` + `english.hasSOT = true` →
 `english.simultaneousAttitudeReading = true` in
 `Studies/Sharvit2014.lean`). [klecha-2016] derives the same reading
 via DOX + NPST modal-base composition (`dox_npst_iff` below).

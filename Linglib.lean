@@ -1829,7 +1829,6 @@ import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Dynamic
 import Linglib.Semantics.Tense.Embedding
 import Linglib.Semantics.Tense.Evidential
-import Linglib.Semantics.Tense.LexicalType
 import Linglib.Semantics.Tense.Perspective
 import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Tense.Reichenbach

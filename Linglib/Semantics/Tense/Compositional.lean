@@ -17,7 +17,7 @@ cells behind the update spine's test filter.
 namespace Tense
 
 open Core.Order (holds)
-open Intensional (WorldTimeIndex)
+open Intensional (WorldTimeIndex SitProp)
 
 variable {W Time : Type*} [LinearOrder Time]
 

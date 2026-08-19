@@ -57,6 +57,7 @@ namespace Kratzer1998
 
 open Tense.Decomposition
 open Tense
+open Intensional (Overtness)
 open Data.Examples (LinguisticExample)
 
 /-! ### Fragment ↔ Example agreement: deictic-vs-anaphoric tense

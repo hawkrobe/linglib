@@ -39,4 +39,8 @@ world-time indices. Contexts are plain level-0 states
 abbrev WorldTimeIndex.Possibility (W Time : Type*) :=
   DynamicSemantics.Possibility (WorldTimeIndex W Time) ℕ (WorldTimeIndex W Time)
 
+/-- A situation-level proposition: a predicate over world–time indices —
+    what tense operators modify. -/
+abbrev SitProp (W Time : Type*) := WorldTimeIndex W Time → Prop
+
 end Intensional
