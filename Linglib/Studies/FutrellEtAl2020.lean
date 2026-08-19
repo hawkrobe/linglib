@@ -66,8 +66,8 @@ def whMovement : Graph 8 :=
     [(1, 0, .nsubj), (1, 4, .ccomp), (4, 3, .nsubj), (4, 6, .ccomp),
      (6, 5, .nsubj), (6, 2, .obj), (6, 7, .advmod)]
 
-example : ¬ IsProjective extraposition := by decide
-example : ¬ IsProjective whMovement := by decide
+example : ¬ extraposition.IsProjective := by decide
+example : ¬ whMovement.IsProjective := by decide
 
 /-- Displacement stays mildly non-context-free: both trees have gap degree 1. -/
 theorem displacement_gap_degree_one :

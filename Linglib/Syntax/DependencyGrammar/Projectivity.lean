@@ -13,101 +13,112 @@ import Mathlib.Data.List.Sort
 
 [kuhlmann-nivre-2006]'s hierarchy of structural constraints between
 projective and unrestricted dependency structures: projectivity as
-order-convexity of dominance cones (`Set.OrdConnected`; Definition 3),
-planarity (Definition 4 — the Link Grammar notion, traced there to
-[melcuk-1988]), gap degree (Definitions 6–7; gap degree + 1 is
-[kuhlmann-2013]'s block-degree, the LCFRS fan-out), and well-nestedness
-(Definition 8).
+order-convexity of dominance cones (Definition 3), planarity (Definition 4 —
+the Link Grammar notion, traced there to [melcuk-1988]), gap degree
+(Definitions 6–7; gap degree + 1 is [kuhlmann-2013]'s block-degree, the
+LCFRS fan-out), and well-nestedness (Definition 8).
 
-Of the §3.5 hierarchy `projective ⊂ planar ⊂ well-nested`,
-`IsProjective.isPlanar` and `IsProjective.isWellNested` prove the
-inclusions from projectivity on trees; strictness is witnessed by
-`decide` on `planarNotProjective` (a single-rooted adaptation of
-Figure 2a) and on `dutchCrossSerial` (well-nested but not planar),
-[kuhlmann-2013] Figure 1's cross-serial half.
+## Main declarations
+
+* `Graph.yield`, `Alternate` — the positions a node dominates, and the
+  alternation `a < c < b < d` that both binary constraints forbid.
+* `Graph.IsProjective` — the yields are intervals (Definition 3).
+* `Graph.IsPlanar` — no two links cross (Definition 4).
+* `Graph.Interleave`, `Graph.IsWellNested` — Definition 8.
+* `Graph.gapDegree` — Definitions 6–7.
+* `Graph.IsProjective.isPlanar`, `Graph.IsProjective.isWellNested` — the
+  §3.5 inclusions from projectivity, on trees. Strictness is witnessed by
+  `decide` on `planarNotProjective` (a single-rooted adaptation of Figure 2a,
+  whose own witness is a forest) and on `dutchCrossSerial` (well-nested but
+  not planar), [kuhlmann-2013] Figure 1's cross-serial half.
 -/
 
 namespace DependencyGrammar
 
 open Morphology (Word)
 
-section Defs
-
-variable {n : ℕ}
+variable {n : ℕ} (g : Graph n)
 
 /-! ### The binary constraints: projectivity, planarity, well-nestedness -/
 
-/-- **Projectivity**: every dominance cone is order-convex. Equivalent
-    to "the yields of all nodes are intervals"
-    ([kuhlmann-nivre-2006], Definition 3). -/
-def IsProjective (g : Graph n) : Prop :=
-  ∀ v : Fin n, Set.OrdConnected {x | Dominates g v x}
+/-- The yield of `v` is the set of positions `v` dominates. `projection`
+    lists the same positions in ascending order. -/
+def Graph.yield (v : Fin n) : Set (Fin n) := {x | Dominates g v x}
 
-/-- **Planarity**: no two links cross — spans, taken left-to-right, never
-    strictly interleave. ([kuhlmann-nivre-2006], Definition 4; the Link
-    Grammar notion, traced there to [melcuk-1988].) -/
-def IsPlanar (g : Graph n) : Prop :=
-  ∀ ⦃a b c d : Fin n⦄, a < b → c < d → Linked g a b → Linked g c d →
-    ¬ (a < c ∧ c < b ∧ b < d)
+@[simp] theorem Graph.mem_yield {g : Graph n} {v x : Fin n} :
+    x ∈ g.yield v ↔ Dominates g v x := Iff.rfl
 
-/-- The subtrees at `v` and `w` interleave: each contributes two positions
-    arranged strictly alternately. ([kuhlmann-nivre-2006], Definition 8) -/
-def Interleave (g : Graph n) (v w : Fin n) : Prop :=
-  ∃ a b, Dominates g v a ∧ Dominates g v b ∧
-    ∃ c d, Dominates g w c ∧ Dominates g w d ∧ a < c ∧ c < b ∧ b < d
+instance (v : Fin n) : DecidablePred (· ∈ g.yield v) :=
+  λ x => inferInstanceAs (Decidable (Dominates g v x))
 
-/-- **Well-nestedness**: disjoint subtrees (neither root dominating the
-    other) never interleave. ([kuhlmann-nivre-2006], Definition 8) -/
-def IsWellNested (g : Graph n) : Prop :=
-  ∀ v w : Fin n, ¬ Dominates g v w → ¬ Dominates g w v → ¬ Interleave g v w
+/-- A dependency graph is projective if the yield of every position is
+    order-convex. -/
+def Graph.IsProjective : Prop := ∀ v, (g.yield v).OrdConnected
 
-instance (g : Graph n) : Decidable (IsProjective g) :=
-  decidable_of_iff (∀ v x, Dominates g v x → ∀ y, Dominates g v y → x ≤ y →
-      ∀ z, x ≤ z → z ≤ y → Dominates g v z) <| by
-    simp only [IsProjective, Set.ordConnected_iff, Set.subset_def, Set.mem_Icc,
-      Set.mem_ofPred_eq, and_imp]
+/-- Positions `a b c d` alternate if `a < c < b < d`, so that the pairs
+    `{a, b}` and `{c, d}` strictly interleave. -/
+def Alternate (a b c d : Fin n) : Prop := a < c ∧ c < b ∧ b < d
 
-instance (g : Graph n) : Decidable (IsPlanar g) :=
-  inferInstanceAs (Decidable (∀ _, _))
+instance (a b c d : Fin n) : Decidable (Alternate a b c d) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-instance (g : Graph n) (v w : Fin n) : Decidable (Interleave g v w) :=
+/-- A dependency graph is planar if no two links alternate, so that its arcs
+    can be drawn above the sentence without crossing. -/
+def Graph.IsPlanar : Prop :=
+  ∀ ⦃a b c d : Fin n⦄, Linked g a b → Linked g c d → ¬ Alternate a b c d
+
+/-- The subtrees at `v` and `w` interleave if each contributes two positions
+    and the two pairs alternate. -/
+def Graph.Interleave (v w : Fin n) : Prop :=
+  ∃ a ∈ g.yield v, ∃ b ∈ g.yield v, ∃ c ∈ g.yield w, ∃ d ∈ g.yield w,
+    Alternate a b c d
+
+/-- A dependency graph is well-nested if interleaved subtrees are never
+    disjoint, one of the two roots always dominating the other. -/
+def Graph.IsWellNested : Prop :=
+  ∀ v w : Fin n, g.Interleave v w → Dominates g v w ∨ Dominates g w v
+
+theorem Graph.isProjective_iff :
+    g.IsProjective ↔ ∀ v x y, Dominates g v x → Dominates g v y →
+      ∀ z, x ≤ z → z ≤ y → Dominates g v z := by
+  simp only [IsProjective, Set.ordConnected_def, Set.subset_def, Set.mem_Icc,
+    Graph.mem_yield, and_imp]
+  exact ⟨λ h v x y hx hy z h1 h2 => h v hx hy z h1 h2,
+         λ h v x hx y hy z h1 h2 => h v x y hx hy z h1 h2⟩
+
+instance : Decidable g.IsProjective := decidable_of_iff _ g.isProjective_iff.symm
+instance : Decidable g.IsPlanar := inferInstanceAs (Decidable (∀ _, _))
+instance (v w : Fin n) : Decidable (g.Interleave v w) :=
   inferInstanceAs (Decidable (∃ _, _))
-
-instance (g : Graph n) : Decidable (IsWellNested g) :=
-  inferInstanceAs (Decidable (∀ _, _))
+instance : Decidable g.IsWellNested := inferInstanceAs (Decidable (∀ _, _))
 
 /-! ### Gap degree -/
 
 /-- The projection of `v`, as position values. -/
-def projectionVals (g : Graph n) (v : Fin n) : List Nat :=
-  (projection g v).map (·.val)
+def Graph.projectionVals (v : Fin n) : List Nat := (projection g v).map (·.val)
 
-/-- The projection is strictly sorted. -/
-theorem projectionVals_sortedLT (g : Graph n) (v : Fin n) :
-    (projectionVals g v).SortedLT := by
+theorem Graph.projectionVals_sortedLT (v : Fin n) :
+    (g.projectionVals v).SortedLT := by
   refine List.Pairwise.sortedLT (List.Pairwise.map _ (λ _ _ h => h) ?_)
   exact (List.pairwise_lt_finRange n).filter _
 
-/-- **Gap degree** of a position: the discontinuities in its projection —
-    adjacent projection members more than one position apart.
-    ([kuhlmann-nivre-2006], Definition 6) -/
-def gapDegreeAt (g : Graph n) (v : Fin n) : Nat :=
-  ((projectionVals g v).zip (projectionVals g v).tail).countP
+/-- The gap degree of a position counts the discontinuities in its
+    projection, the adjacent members more than one position apart. -/
+def Graph.gapDegreeAt (v : Fin n) : Nat :=
+  ((g.projectionVals v).zip (g.projectionVals v).tail).countP
     (λ p => decide (1 < p.2 - p.1))
 
-/-- **Gap degree** of a graph: the maximum over its positions
-    ([kuhlmann-nivre-2006], Definition 7). -/
-def Graph.gapDegree (g : Graph n) : Nat :=
-  Finset.univ.sup (gapDegreeAt g)
+/-- The gap degree of a graph is the maximum over its positions. -/
+def Graph.gapDegree : Nat := Finset.univ.sup g.gapDegreeAt
 
 /-! ### The hierarchy on trees -/
 
-variable {g : Graph n}
+variable {g}
 
-/-- Every projective tree is planar ([kuhlmann-nivre-2006] §3.5). -/
-theorem IsProjective.isPlanar (hT : g.IsTree) (hP : IsProjective g) :
-    IsPlanar g := by
-  rintro a b c d hab hcd hL1 hL2 ⟨hac, hcb, hbd⟩
+/-- Every projective tree is planar. -/
+theorem Graph.IsProjective.isPlanar (hT : g.IsTree) (hP : g.IsProjective) :
+    g.IsPlanar := by
+  rintro a b c d hL1 hL2 ⟨hac, hcb, hbd⟩
   rcases hL1 with h1 | h1 <;> rcases hL2 with h2 | h2
   · -- heads a and c
     have hac' : Dominates g a c := (hP a).out .refl (.single h1) ⟨hac.le, hcb.le⟩
@@ -129,14 +140,11 @@ theorem IsProjective.isPlanar (hT : g.IsTree) (hP : IsProjective g) :
     exact hbd.ne (Dominates.antisymm hT.acyclic
       (Dominates.to_head hT hbc' hcb.ne' h2) hdb')
 
-/-- Every projective tree is well-nested ([kuhlmann-nivre-2006] §3.5). -/
-theorem IsProjective.isWellNested (hT : g.IsTree) (hP : IsProjective g) :
-    IsWellNested g := by
-  rintro v w hvw hwv ⟨a, b, hva, hvb, c, _, hwc, _, hac, hcb, _⟩
-  exact (Dominates.comparable hT ((hP v).out hva hvb ⟨hac.le, hcb.le⟩) hwc).elim
-    hvw hwv
-
-end Defs
+/-- Every projective tree is well-nested. -/
+theorem Graph.IsProjective.isWellNested (hT : g.IsTree) (hP : g.IsProjective) :
+    g.IsWellNested := by
+  rintro v w ⟨a, hva, b, hvb, c, hwc, -, -, hac, hcb, -⟩
+  exact Dominates.comparable hT ((hP v).out hva hvb ⟨hac.le, hcb.le⟩) hwc
 
 /-! ### Canonical fixtures
 
@@ -175,13 +183,13 @@ def planarNotProjective : Graph 4 :=
 example : dutchCrossSerial.IsTree := by decide
 example : germanNested.IsTree := by decide
 example : planarNotProjective.IsTree := by decide
-example : ¬ IsPlanar dutchCrossSerial := by decide
-example : ¬ IsProjective dutchCrossSerial := by decide
-example : IsWellNested dutchCrossSerial := by decide
-example : IsPlanar germanNested := by decide
-example : IsProjective germanNested := by decide
-example : IsPlanar planarNotProjective := by decide
-example : ¬ IsProjective planarNotProjective := by decide
+example : ¬ dutchCrossSerial.IsPlanar := by decide
+example : ¬ dutchCrossSerial.IsProjective := by decide
+example : dutchCrossSerial.IsWellNested := by decide
+example : germanNested.IsPlanar := by decide
+example : germanNested.IsProjective := by decide
+example : planarNotProjective.IsPlanar := by decide
+example : ¬ planarNotProjective.IsProjective := by decide
 example : dutchCrossSerial.gapDegree = 1 := by decide
 example : germanNested.gapDegree = 0 := by decide
 
