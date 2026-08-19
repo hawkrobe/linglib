@@ -1,5 +1,5 @@
 import Linglib.Semantics.Tense.TenseAspectComposition
-import Linglib.Semantics.Tense.TemporalConnectives.Before
+import Linglib.Studies.BeaverCondoravdi2003
 import Linglib.Semantics.Tense.Decomposition
 
 /-!
@@ -10,7 +10,7 @@ import Linglib.Semantics.Tense.Decomposition
 *J. Semantics* 31(2):263-313) makes the pronominal/quantificational tense distinction (after
 [partee-1973] vs Prior 1967) the engine for cross-linguistic variation in *before*-clauses
 (English/Polish vs Japanese) and attitude reports. The IPF mechanism it rests on is the
-[beaver-condoravdi-2003] `before` semantics (`Semantics/Tense/TemporalConnectives/Before.lean`);
+[beaver-condoravdi-2003] `before` semantics (`Studies/BeaverCondoravdi2003.lean`);
 the pronominal/quantificational apparatus ((30)) is defined below.
 
 ## Main definitions
@@ -36,7 +36,7 @@ no-tenseless assumption (§6.1, p. 299).
 
 namespace Sharvit2014
 
-open Tense.TemporalConnectives.Before (hasEarliest)
+open BeaverCondoravdi2003 (hasEarliest)
 open Tense.Decomposition (sotDeletionApplicable)
 open Tense.TenseAspectComposition (evalPast evalRel)
 open Semantics.Aspect (PointPred)
@@ -74,7 +74,7 @@ theorem evalPast_iff_quantificationalPast {W Time : Type*} [LinearOrder Time]
 /-- IPF ([sharvit-2014] (27), p. 272): when the body of `before^{B&C}` is the
     quantificational past `[[PAST]]^{K,g}(q)`, and the restrictor `C` is
     order-dense (interval-like) with `K ⊆ C`, the `EARLIEST` presupposition
-    (`Before.hasEarliest`) fails: a witness `t_q < t_min` with `q t_q` lifts
+    (`BeaverCondoravdi2003.hasEarliest`) fails: a witness `t_q < t_min` with `q t_q` lifts
     via density to a strictly smaller body-witness. The technical core of the
     thesis that only languages with pronominal tenses license past-under-past
     in `before`-clauses. -/
@@ -349,7 +349,7 @@ theorem eq99c_before_and_no_simultaneous_imply_no_bare_pshift (L : LanguageTense
 /-! ### Substrate connection: IPF and quantificational past
 
 The `wellFormedPastUnderPastBefore` predicate is grounded in the [beaver-condoravdi-2003] IPF
-result formalized in `TemporalConnectives/Before.lean`; the two theorems below consume that
+result formalized via `BeaverCondoravdi2003.hasEarliest`; the two theorems below consume that
 grounding via `wellFormedPastUnderPastBefore_iff_pronominal`. -/
 
 /-- Quantificational-past languages (Japanese) fail `wellFormedPastUnderPastBefore`, matching the

@@ -178,7 +178,7 @@ satisfying `P`, i.e. the image of `P` under the temporal trace τ
 ([krifka-1989], [krifka-1998]). This is neutral event substrate — the upper
 rung of the projection ladder whose tense-specific lower rungs (`timeTrace`,
 the canonical denotation patterns) live in
-`Semantics/Tense/TemporalConnectives/`. It is homed here, upstream of all
+`Semantics/Tense/SentDenotation.lean`. It is homed here, upstream of all
 aspect/tense theories, so that subinterval/homogeneity properties can be
 stated as order-theoretic facts about it (see
 `Semantics/Aspect/SubintervalProperty.lean`). -/

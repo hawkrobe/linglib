@@ -1,30 +1,27 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Core.Order.Interval
+import Linglib.Semantics.Events.Basic
 
 /-!
-# Temporal Connective Infrastructure
-[allen-1983] [krifka-1989]
+# Sentence denotations as run-time interval sets
+[krifka-1989]
 
-Shared types and basic lemmas for temporal connective semantics.
-
-**Sentence denotations** are sets of temporal intervals — the "run-times" of
-a sentence's truth. Two canonical patterns:
-- **Stative**: the maximal interval plus all its subintervals (homogeneity)
-- **Accomplishment**: a singleton interval (quantized)
-
-**Temporal trace** (`timeTrace`) projects from interval sets (Level 2) to point
-sets (Level 1). This is the lower half of the three-level projection chain:
-
-```
-Level 3: Event Time → Prop (event predicates)
-    ↓ eventDenotation (see Projection.lean)
-Level 2: SentDenotation Time (interval sets — this file)
-    ↓ timeTrace
-Level 1: Set Time (point sets)
-```
-
+A sentence denotes the set of its run-time intervals (`SentDenotation`).
+Statives denote a maximal interval with all its subintervals
+(`stativeDenotation`, a principal downset); accomplishments denote a
+singleton (`accomplishmentDenotation`); `timeTrace` projects an interval
+set to the time points it covers, and `eventDenotation`
+(`Semantics/Events/Basic.lean`) realises the patterns from
+neo-Davidsonian event predicates. The temporal-connective analyses that
+consume this carrier live in their studies (Anscombe1964, Karttunen1974,
+BeaverCondoravdi2003, Rett2020, …).
 -/
 
-namespace Tense.TemporalConnectives
+namespace Tense
 
 open NonemptyInterval
 
@@ -103,4 +100,18 @@ theorem timeTrace_accomplishmentDenotation (i : NonemptyInterval Time) :
   · rintro ⟨hs, hf⟩
     exact ⟨i, rfl, hs, hf⟩
 
-end Tense.TemporalConnectives
+
+theorem timeTrace_eventDenotation (P : Event Time → Prop) :
+    timeTrace (eventDenotation P) = { t | ∃ e, P e ∧ t ∈ e.τ } :=
+  timeTrace_image Event.τ { e | P e }
+
+theorem eventDenotation_singleton (e₀ : Event Time) :
+    eventDenotation (fun e => e = e₀) = accomplishmentDenotation e₀.τ := by
+  simp [eventDenotation, accomplishmentDenotation]
+
+theorem eventDenotation_sub_stative (i : NonemptyInterval Time) (P : Event Time → Prop)
+    (hP : ∀ e, P e → e.τ ≤ i) :
+    eventDenotation P ⊆ stativeDenotation i := by
+  rintro j ⟨e, he, rfl⟩; exact hP e he
+
+end Tense

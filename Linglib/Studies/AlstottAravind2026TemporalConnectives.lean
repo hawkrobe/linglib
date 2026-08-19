@@ -36,7 +36,7 @@ Connects three layers:
 namespace AlstottAravind2026TemporalConnectives
 
 open Features
-open Tense.TemporalConnectives
+open Tense Anscombe1964 Karttunen1974 Rett2020
 open English.TemporalExpressions
 open Data.Examples
 open Core.Order

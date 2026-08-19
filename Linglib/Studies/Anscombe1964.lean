@@ -1,4 +1,4 @@
-import Linglib.Semantics.Tense.TemporalConnectives.Projection
+import Linglib.Semantics.Tense.SentDenotation
 import Linglib.Core.Order.AllenRelation
 
 /-!
@@ -22,7 +22,9 @@ of the veridicality contrast.
 
 -/
 
-namespace Tense.TemporalConnectives
+namespace Anscombe1964
+
+open Tense
 
 
 variable {Time : Type*} [LinearOrder Time]
@@ -247,7 +249,7 @@ theorem Anscombe.before_overgenerates (A B : SentDenotation Time)
   rw [hB] at ht'
   exact ht'.elim
 
-end Tense.TemporalConnectives
+end Anscombe1964
 
 /-!
 # Event-Level Temporal Connectives
@@ -285,7 +287,9 @@ while the event-level version requires entire-runtime precedence (`-precedence).
 
 -/
 
-namespace Tense.TemporalConnectives
+namespace Anscombe1964
+
+open Tense
 
 open NonemptyInterval
 
@@ -471,4 +475,4 @@ theorem anscombe_after_not_implies_event :
   obtain ⟨e₁, e₂, rfl, rfl, hprec⟩ := host
   simp [precedes, Event.τ, eP, eQ] at hprec
 
-end Tense.TemporalConnectives
+end Anscombe1964

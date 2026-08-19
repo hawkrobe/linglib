@@ -1,6 +1,6 @@
 import Linglib.Studies.Karttunen1974
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Semantics.Tense.TemporalConnectives.Projection
+import Linglib.Semantics.Tense.SentDenotation
 import Linglib.Data.Examples.Giannakidou2002
 import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 import Linglib.Fragments.Icelandic.TemporalConnectives
@@ -69,7 +69,7 @@ namespace Giannakidou2002
 open Core.Order
 open NonemptyInterval
 open Semantics.Aspect
-open Tense.TemporalConnectives
+open Tense Anscombe1964 Karttunen1974
 
 variable {Time : Type*} [LinearOrder Time]
 
