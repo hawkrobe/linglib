@@ -17,22 +17,25 @@ fact that the two types of verbs are formed in different components of the
 grammar."
 
 Reciprocalization acts on argument structure: `reciprocalize` takes a
-transitive `RoleList` and returns an intransitive one whose subject bears
-the join of the two base profiles — [reinhart-siloni-2005]'s complex
-`[θᵢ · θⱼ]` role, `EntailmentProfile`'s `⊔`. The bundled subject retains
-the base subject's Proto-Agent entailments and inherits the object's
-Proto-Patient entailments (`reciprocalize_dominates` — the depictive and
-comparative-ellipsis diagnostics of §3.1–3.2), so it is a complex role
-(`EntailmentProfile.IsComplexRole`). Event-semantically, a symmetric verb
-denotes a *group* event ([landman-2000]'s `up`, `Plurality.GroupStructure`):
-`SymmetricEvent.down_eq` is the paper's (41) — dissolution recovers the
-directional sub-events — while `SymmetricEvent.not_subEventReading`
-delivers §2.2's observation that the atom itself never decomposes. Since
-the "I" reading of embedded reciprocals ([higginbotham-1980]; the
-LF-decomposed periphrastic arm is `Studies/HeimLasnikMay1991.lean`)
-requires a sub-event reading plus a sole-role subject, both verb types
-lack it for any transitive base with an agentive subject and an affected
-object (`I_reading_iff_periphrastic`), each failing a different condition.
+transitive `RoleList` and returns an intransitive one whose subject
+carries both base profiles' entailments — as [reinhart-siloni-2005]'s
+bundled complex `[θᵢ · θⱼ]` role in the lexicon ((35)–(36)), or as two
+separately assigned roles via last-resort parasitic assignment in the
+syntax ((43), the `Merger` ledger, which also derives the raising/passive
+ban and the ECM derivation (63)). Event-semantically the two loci share
+one mechanism, [landman-2000]'s group operators (`Plurality.GroupStructure`)
+in both domains: a symmetric verb is a set of atomic events whose complex
+role assigns the group atom over an unordered pair, related to its base
+by fn. 17's meaning postulate (`SymmetricVerb`), from which (41) — the
+underlying directional events — is derived (`SymmetricVerb.underlying`);
+the syntactic reciprocal has the accumulation reading ((46b),
+`AccumulationReading`) and the `up`-packed singular reading ((47),
+`GroupEventReading`), whose content provably coincides with the symmetric
+verb's (`GroupEventReading.underlyingReading`). Since the "I" reading of
+embedded reciprocals ([higginbotham-1980]; the LF-decomposed periphrastic
+arm is `Studies/HeimLasnikMay1991.lean`) requires a sub-event reading
+plus a sole-role subject, both verb types lack it
+(`I_reading_iff_periphrastic`).
 
 The nine surface properties derive from four affordances of the locus of
 application (`pluralEventsAvailable` per generalization (29),
@@ -74,9 +77,9 @@ paper's mechanisms; the nine surface properties are computed from them in
 
 /-- Generalization (29): "plural events are not part of the lexicon's
     inventory" (§3.5) — sub-event accumulation is available only in the
-    syntactic derivation, so lexicon-formed reciprocals denote group atoms
-    (`SymmetricEvent`), whose sub-events are recovered only by
-    dissolution. -/
+    syntactic derivation, so lexicon-formed reciprocals denote atomic
+    events (`SymmetricVerb`), whose underlying events are recovered only
+    by dissolution. -/
 def pluralEventsAvailable : Formation → Bool
   | .lexical   => false
   | .syntactic => true
@@ -120,73 +123,130 @@ theorem compositionLocus_ofFormation (f : Formation) :
     (Construction.ofFormation f).compositionLocus = f := by
   cases f <;> rfl
 
-/-! ### Group events and the sub-event reading (§2.2–2.3, §4.1)
+/-! ### Symmetric verbs and reciprocal readings (§2.2, §4.1–4.2)
 
-The event domain is a semilattice of events under sum; a symmetric verb
-denotes a *group* event — [landman-2000]'s `up` applied to the sum of the
-two directional sub-events. Dissolution recovers the sub-events (the
-paper's (41)), but the group atom itself has no proper parts, so counting
-and modification never see them. -/
+Neo-Davidsonian format after [landman-2000]: verbs are sets of events,
+θ-roles are functions from events to individuals, and both the individual
+and the event domain are semilattices carrying the group operators. fn. 17
+gives the lexical format of `V_SYM`: a set of atomic events whose complex
+role assigns the group atom over an unordered pair, related to the base
+verb by a meaning postulate — a constraint between the two entries, not a
+decomposition, which is why the underlying events are invisible to
+counting and modification. -/
 
 section Events
 
-variable {α E : Type*} [SemilatticeSup E] {R : α → α → E → Prop} {x y : α}
-  {e : E}
+variable {D E : Type*} [SemilatticeSup E] {V : Set E} {ag th : E → D}
+  {d₁ d₂ : D} {e : E} {GE : GroupStructure E}
 
-/-- The sub-event reading of a reciprocal event (§2.2): the event
-    decomposes into two proper parts, one realizing each direction. -/
-def SubEventReading (R : α → α → E → Prop) (x y : α) (e : E) : Prop :=
-  ∃ e₁ e₂, e₁ < e ∧ e₂ < e ∧ R x y e₁ ∧ R y x e₂ ∧ e = e₁ ⊔ e₂
+/-- Two base-verb events realizing the two directions between `d₁` and
+    `d₂` — the kernel shared by (41b), (46b), and (47). -/
+def CrossedPair (V : Set E) (ag th : E → D) (d₁ d₂ : D) (e₁ e₂ : E) : Prop :=
+  e₁ ∈ V ∧ e₂ ∈ V ∧ ag e₁ = d₁ ∧ th e₁ = d₂ ∧ ag e₂ = d₂ ∧ th e₂ = d₁
+
+/-- The accumulation reading of a syntactic reciprocal ((46b)): the event
+    is the plain sum of the two directional sub-events. -/
+def AccumulationReading (V : Set E) (ag th : E → D) (d₁ d₂ : D) (e : E) :
+    Prop :=
+  ∃ e₁ e₂, e = e₁ ⊔ e₂ ∧ CrossedPair V ag th d₁ d₂ e₁ e₂
+
+/-- The singular-event reading of a syntactic reciprocal ((47)): `up`
+    packs the sum of the directional sub-events into an atomic group
+    event. -/
+def GroupEventReading (GE : GroupStructure E) (V : Set E) (ag th : E → D)
+    (d₁ d₂ : D) (e : E) : Prop :=
+  ∃ e₁ e₂, e = GE.up (e₁ ⊔ e₂) ∧ CrossedPair V ag th d₁ d₂ e₁ e₂
+
+/-- The content of (41b): the event's dissolution is the sum of two
+    directional base events. -/
+def UnderlyingReading (GE : GroupStructure E) (V : Set E) (ag th : E → D)
+    (d₁ d₂ : D) (e : E) : Prop :=
+  ∃ e₁ e₂, GE.down e = e₁ ⊔ e₂ ∧ CrossedPair V ag th d₁ d₂ e₁ e₂
+
+/-- The sub-event reading (§2.2): the event decomposes into two proper
+    parts realizing the two directions. -/
+def SubEventReading (V : Set E) (ag th : E → D) (d₁ d₂ : D) (e : E) : Prop :=
+  ∃ e₁ e₂, e₁ < e ∧ e₂ < e ∧ e = e₁ ⊔ e₂ ∧ CrossedPair V ag th d₁ d₂ e₁ e₂
 
 /-- An event with the sub-event reading has proper parts, so it is not
-    atomic (§2.2–2.3). -/
+    atomic. -/
 theorem SubEventReading.not_atom :
-    SubEventReading R x y e → ¬ Mereology.Atom e :=
-  fun ⟨_, _, h₁, _, _, _, _⟩ ha => h₁.ne (ha.eq h₁.le)
+    SubEventReading V ag th d₁ d₂ e → ¬ Mereology.Atom e :=
+  fun ⟨_, _, h₁, _, _, _⟩ ha => h₁.ne (ha.eq h₁.le)
 
-/-- The sum of incomparable directional sub-events has the sub-event
-    reading: reciprocity by accumulation (§4.2). -/
-theorem subEventReading_sup {e₁ e₂ : E} (h₁ : ¬ e₂ ≤ e₁) (h₂ : ¬ e₁ ≤ e₂)
-    (hxy : R x y e₁) (hyx : R y x e₂) : SubEventReading R x y (e₁ ⊔ e₂) :=
-  ⟨e₁, e₂, left_lt_sup.2 h₁, right_lt_sup.2 h₂, hxy, hyx, rfl⟩
+/-- Incomparable crossed sub-events yield the sub-event reading — the
+    accumulation reading makes sub-events visible ((46b)). -/
+theorem subEventReading_of_crossedPair {e₁ e₂ : E} (h₁ : ¬ e₂ ≤ e₁)
+    (h₂ : ¬ e₁ ≤ e₂) (hc : CrossedPair V ag th d₁ d₂ e₁ e₂) :
+    SubEventReading V ag th d₁ d₂ (e₁ ⊔ e₂) :=
+  ⟨e₁, e₂, left_lt_sup.2 h₁, right_lt_sup.2 h₂, rfl, hc⟩
 
-/-- The symmetric-verb denotation ((36)'s SYM marking, (41a)): an atomic
-    mutual event packing the two directional sub-events into a group
-    event. "SYM is not a feature": it abbreviates the meaning postulate
-    relating V_SYM to V, `SymmetricEvent.down_eq`. -/
-def SymmetricEvent (G : GroupStructure E) (R : α → α → E → Prop)
-    (x y : α) (e : E) : Prop :=
-  ∃ e₁ e₂, R x y e₁ ∧ R y x e₂ ∧ e = G.up (e₁ ⊔ e₂)
+/-- On the singular-event reading too, counting sees one event: group
+    events are atoms. -/
+theorem GroupEventReading.atom (h : GroupEventReading GE V ag th d₁ d₂ e) :
+    Mereology.Atom e := by
+  obtain ⟨_, _, rfl, -⟩ := h
+  exact GE.atom_up _
 
-/-- The paper's (41): a symmetric reciprocal event dissolves into
-    underlying directional events — "John and Mary kissed" entails a
-    kissing by John of Mary and one by Mary of John. -/
-theorem SymmetricEvent.down_eq {G : GroupStructure E}
-    (h : SymmetricEvent G R x y e) :
-    ∃ e₁ e₂, G.down e = e₁ ⊔ e₂ ∧ R x y e₁ ∧ R y x e₂ := by
-  obtain ⟨e₁, e₂, h₁, h₂, rfl⟩ := h
-  exact ⟨e₁, e₂, G.down_up _, h₁, h₂⟩
+/-- "The interpretation in (47) is identical to that of kiss_SYM (41b)":
+    the group-event reading's dissolution content coincides with what the
+    symmetric verb's postulate delivers. -/
+theorem GroupEventReading.underlyingReading
+    (h : GroupEventReading GE V ag th d₁ d₂ e) :
+    UnderlyingReading GE V ag th d₁ d₂ e := by
+  obtain ⟨e₁, e₂, rfl, hc⟩ := h
+  exact ⟨e₁, e₂, GE.down_up _, hc⟩
 
-/-- The symmetric event itself is atomic: count adverbials count it once,
-    and the sub-event reading is unavailable for any directional relation
-    (§2.2–2.3). -/
-theorem SymmetricEvent.not_subEventReading {G : GroupStructure E}
-    (h : SymmetricEvent G R x y e) {R' : α → α → E → Prop} {x' y' : α} :
-    ¬ SubEventReading R' x' y' e := by
-  obtain ⟨e₁, e₂, -, -, rfl⟩ := h
-  exact fun hs => hs.not_atom (G.atom_up _)
+variable [SemilatticeSup D] {GD : GroupStructure D}
+
+/-- fn. 17: the lexical format of `V_SYM`, (36)'s SYM marking — atomic
+    events whose complex role assigns the group atom of an unordered pair,
+    constrained by the meaning postulate relating `V_SYM` to its
+    transitive base `V`. -/
+structure SymmetricVerb (GD : GroupStructure D) (GE : GroupStructure E)
+    (V : Set E) (ag th : E → D) where
+  /-- The events of `V_SYM`. -/
+  events : Set E
+  /-- The complex role `[Ag-Th]`, valued in group atoms of the individual
+      domain. -/
+  agTh : E → D
+  /-- `V_SYM` denotes singular events: linguistic diagnostics see no parts
+      (§2.2, generalization (29)). -/
+  atomic : ∀ e ∈ events, Mereology.Atom e
+  /-- The complex role assigns the group atom over an unordered pair. -/
+  pairRole : ∀ e ∈ events, ∃ d₁ d₂, d₁ ≠ d₂ ∧ agTh e = GD.up (d₁ ⊔ d₂)
+  /-- The meaning postulate: dissolution yields two base events with
+      crossed Agent and Theme values. -/
+  postulate : ∀ e ∈ events, ∀ d₁ d₂, d₁ ≠ d₂ → agTh e = GD.up (d₁ ⊔ d₂) →
+    UnderlyingReading GE V ag th d₁ d₂ e
+
+/-- (41): `∃e [kiss_SYM(e) ∧ [Ag-Th](e, John and Mary)]` entails two
+    underlying directional kissings — the meaning postulate applied. -/
+theorem SymmetricVerb.underlying (sym : SymmetricVerb GD GE V ag th)
+    (he : e ∈ sym.events) (hne : d₁ ≠ d₂)
+    (hrole : sym.agTh e = GD.up (d₁ ⊔ d₂)) :
+    UnderlyingReading GE V ag th d₁ d₂ e :=
+  sym.postulate e he d₁ d₂ hne hrole
+
+/-- A symmetric verb's events admit no sub-event reading for any predicate
+    and roles whatsoever: the underlying events are invisible to counting
+    and modification (§2.2). -/
+theorem SymmetricVerb.not_subEventReading (sym : SymmetricVerb GD GE V ag th)
+    (he : e ∈ sym.events) {V' : Set E} {ag' th' : E → D} {d₁' d₂' : D} :
+    ¬ SubEventReading V' ag' th' d₁' d₂' e :=
+  fun hs => hs.not_atom (sym.atomic e he)
 
 end Events
 
 /-! ### Reciprocalization on argument structure (§4.1–4.2)
 
-Reciprocalization eliminates the internal argument position and associates
-its θ-role with the subject — bundling in the lexicon, parasitic
-assignment in the syntax; the resulting role state is the same. On the
-Dowty substrate this is `EntailmentProfile`'s join, applied to a
-transitive `RoleList`; realizes [creissels-2025]'s `Voice.reciprocalization`
-coding-frame operation (both core roles cumulated, derived construction
-intransitive). -/
+Reciprocalization eliminates the internal argument position and leaves the
+subject carrying both profiles' entailments — a bundled complex role in
+the lexicon ((35)–(36)), two separately assigned roles in the syntax
+((43)). On the Dowty substrate the profile content is `EntailmentProfile`'s
+join over a transitive `RoleList`; realizes [creissels-2025]'s
+`Voice.reciprocalization` coding-frame operation (both core roles
+cumulated, derived construction intransitive). -/
 
 section Reciprocalize
 
@@ -236,36 +296,69 @@ theorem bundledSubjectProfile_eq_reciprocalize (v : Verb.Reciprocal)
     v.bundledSubjectProfile = some (reciprocalize ⟨ps, some po⟩).subjectProfile := by
   rw [Verb.Reciprocal.bundledSubjectProfile_eq hb hs ho]; rfl
 
-variable {α E : Type*} [SemilatticeSup E] in
-/-- Reciprocal bundling ((36)): `V(ACC) [θᵢ] [θⱼ] → V_SYM [θᵢ - θⱼ]` — one
-    lexical operation, two components. On the grid, the accusative is
-    reduced and the internal role bundled onto the subject
-    (`reciprocalize`; `RoleList` carries no case slot, so the reduction
-    surfaces as the loss of the object position, and its typological trace
-    is `reducesAccusative`). On the denotation, SYM packs the base
-    relation's directional events into group atoms (`SymmetricEvent`). -/
-def reciprocalBundling (G : GroupStructure E) (grid : RoleList)
-    (den : α → α → E → Prop) : RoleList × (α → α → E → Prop) :=
-  (reciprocalize grid, SymmetricEvent G den)
-
-variable {α E : Type*} [SemilatticeSup E] {den : α → α → E → Prop}
-  {grid : RoleList} {x y : α} {e : E} in
-/-- What SYM buys ((36), (41)): each event of the derived verb is a single
-    atom — counting and modification see one event — yet entails a base
-    event in each direction. -/
-theorem reciprocalBundling_symmetric (G : GroupStructure E)
-    (hden : (reciprocalBundling G grid den).2 x y e) :
-    Mereology.Atom e ∧
-      ∃ e₁ e₂, G.down e = e₁ ⊔ e₂ ∧ den x y e₁ ∧ den y x e₂ := by
-  obtain ⟨e₁, e₂, h₁, h₂, rfl⟩ := hden
-  exact ⟨G.atom_up _, e₁, e₂, G.down_up _, h₁, h₂⟩
-
 end Reciprocalize
 
 -- Reciprocalizing the manner-of-contact template (the surface-contact
 -- *kiss*/*hug* family) yields a complex subject role.
 example : ((reciprocalize mannerContact).subjectProfile).IsComplexRole := by
   decide
+
+/-! ### Parasitic assignment (§4.2, (43); the ECM derivation (63))
+
+The syntactic operation forms no complex role: se reduces case (43a), the
+internal role is retained on the verbal projection, and a retained role is
+assigned upon merger of another θ-argument — a last-resort step (43b).
+Raising and passive subjects arrive by internal merge, which assigns no
+role, so a retained role can never discharge on them: derived subjects
+never reciprocalize ((45), §3.4). In the ECM derivation (63), the
+embedded verb's unassigned Agent survives the EPP-deficient TP and rides
+the matrix external merger: *Jean* ends θk+θi. -/
+
+/-- Merger against the verbal projection's retained-role ledger ((43),
+    (63)): canonical θ-merger discharges one role; se-marked parasitic
+    merger discharges the merging role together with every retained role
+    (last resort); internal merge (movement) discharges nothing. -/
+inductive Merger : (seMarked : Bool) → (before : List ThetaRole) →
+    (assigned : List ThetaRole) → (after : List ThetaRole) → Prop
+  | canonical (m : Bool) (θ : ThetaRole) (rest : List ThetaRole) :
+      Merger m (θ :: rest) [θ] rest
+  | parasitic (θ : ThetaRole) (retained : List ThetaRole) :
+      retained ≠ [] → Merger true (θ :: retained) (θ :: retained) []
+  | internalMerge (m : Bool) (pending : List ThetaRole) :
+      Merger m pending [] pending
+
+section Merger
+
+variable {m : Bool} {before assigned after : List ThetaRole}
+
+/-- Without the morphology there is no parasitic assignment: no argument
+    receives two roles — the marking requirement "rules out the sole
+    potential case of overgeneration" (§4.3 end). -/
+theorem Merger.length_le_one (h : Merger false before assigned after) :
+    assigned.length ≤ 1 := by
+  cases h <;> simp
+
+/-- Two θ-roles land on one argument only via the marked last resort —
+    §4.3's sole-role diagnosis, covering (63)'s ECM case, where both roles
+    are agentive and profile mixture would not show. -/
+theorem Merger.marked_of_two_roles (h : Merger m before assigned after)
+    (h2 : 2 ≤ assigned.length) : m = true := by
+  cases h <;> simp_all
+
+/-- A merger that assigns no role is movement and leaves the ledger
+    intact: derived subjects never discharge a retained role ((45),
+    §3.4). -/
+theorem Merger.eq_of_assigned_nil (h : Merger m before [] after) :
+    after = before := by
+  cases h; rfl
+
+-- (63c): at the matrix TP, se-marked merger assigns the matrix external
+-- role (θk, *entendre*) together with the retained embedded Agent (θi,
+-- *chanter*): Jean_{θk+θi}.
+example : Merger true [.experiencer, .agent] [.experiencer, .agent] [] :=
+  .parasitic _ _ (by simp)
+
+end Merger
 
 /-! ### The nine-property cluster (§§2–7) -/
 
@@ -393,9 +486,12 @@ section IReading
 
 variable {r : RoleList} {o : EntailmentProfile} {c : Construction}
 
-/-- The subject's entailment profile over a transitive base: the
-    periphrastic subject bears the base subject role; both verb types bear
-    the bundled complex role (§4.1–4.3). -/
+/-- The subject's entailment profile over a transitive base. The
+    periphrastic subject bears the base subject role; both verb types
+    accumulate both profiles' entailments — as one bundled complex role in
+    the lexicon ((36)), as two separately assigned roles in the syntax
+    ((43), `Merger`) — "via bundling or parasitic assignment respectively"
+    (§4.3). -/
 def Construction.subjectProfile (r : RoleList) : Construction → EntailmentProfile
   | .periphrastic => r.subjectProfile
   | .lexicalVerb | .syntacticVerb => (reciprocalize r).subjectProfile
