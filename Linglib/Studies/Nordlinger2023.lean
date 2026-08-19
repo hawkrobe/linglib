@@ -285,13 +285,14 @@ theorem valency_follows_default_except_wambaya :
 
     Checked against independently recorded judgments: every profile
     carrying both a formation locus and an attested discontinuity
-    judgment ([nordlinger-2023] ex. 36–40) satisfies the prediction —
+    judgment ([nordlinger-2023] ex. 36–40) satisfies the cluster value
+    `Siloni2012.predictedProperties` derives from the formation locus —
     Greek, Swahili, Hungarian (lexical, attested) vs French, Czech
     (syntactic, ungrammatical). -/
 theorem siloni_discontinuity_prediction :
     allRecipProfiles.all fun p =>
       match p.formation, p.discontinuousAttested with
-      | some f, some d => f.allowsDiscontinuous == d
+      | some f, some d => (Siloni2012.predictedProperties f).discontinuous == d
       | _, _ => true := by decide
 
 /-! ### WALS grounding

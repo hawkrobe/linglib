@@ -1715,6 +1715,7 @@ import Linglib.Semantics.Plurality.Basic
 import Linglib.Semantics.Plurality.Cover
 import Linglib.Semantics.Plurality.Cumulativity
 import Linglib.Semantics.Plurality.Distributivity
+import Linglib.Semantics.Plurality.Groups
 import Linglib.Semantics.Plurality.Implicature
 import Linglib.Semantics.Plurality.Reciprocal
 import Linglib.Semantics.Plurality.Trivalent
@@ -2787,6 +2788,7 @@ import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Category.Verb.Complement.Basic
 import Linglib.Syntax.Category.Verb.Complement.Takes
 import Linglib.Syntax.Category.Verb.Defs
+import Linglib.Syntax.Category.Verb.Reciprocal
 import Linglib.Syntax.Category.Verb.Stem
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Clause.Chaining
