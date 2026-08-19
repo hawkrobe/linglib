@@ -1,5 +1,4 @@
 import Linglib.Semantics.Degree.Basic
-import Linglib.Semantics.Tense.TemporalConnectives
 import Linglib.Studies.JinKoenig2021
 import Linglib.Semantics.Polarity.ExpletiveNegation
 import Linglib.Fragments.English.Modifiers.Adjectives
@@ -274,9 +273,9 @@ above (§1); `hasEN` is *derived* from `allENData` (§2) by predicating
 backed by a witness theorem (see `..._isAmbidirectional_witness` below).
 
 The ambidirectionality classification is anchored in:
-- `before_preEvent_ambidirectional` (TemporalConnectives.lean)
-- `after_not_ambidirectional` (TemporalConnectives.lean)
-- `while_not_ambidirectional` (TemporalConnectives.lean)
+- `before_preEvent_ambidirectional` (`Studies/Rett2020.lean`)
+- `after_not_ambidirectional` (`Studies/Rett2020.lean`)
+- `while_not_ambidirectional` (`Studies/Rett2020.lean`)
 - `comparative_boundary` + scale-MAX singletons (Comparative.lean +
   Core/Scales/Scale.lean)
 For *until* the classification follows from the same closed-interval
