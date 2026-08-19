@@ -13,40 +13,53 @@ import Linglib.Morphology.Word.Basic
 /-!
 # Dependency grammar substrate
 
-The dependency structure of a sentence, in the carrier of the formal
-dependency-grammar literature ([kuhlmann-nivre-2006], [kuhlmann-2013];
-the arcs-among-ordered-words presentation goes back to [melcuk-1988]): the
-nodes are the sentence positions `Fin n` with their linear order, and the
-arcs are a labeling of ordered pairs of positions by UD v2 dependency
-relations (`Data/UD/Basic.lean`). A distinguished `root` replaces CoNLL-U's
-artificial root token, following [kuhlmann-nivre-2006].
+This file defines the dependency structure of a sentence, following the
+formal dependency-grammar literature ([kuhlmann-nivre-2006],
+[kuhlmann-2013]; the presentation as arcs among ordered words goes back to
+[melcuk-1988]). The vertices are the sentence positions `Fin n` with their
+linear order, and the arcs are a partial labeling of ordered position
+pairs by UD v2 dependency relations.
 
-## Main declarations
+A distinguished `root` position replaces CoNLL-U's artificial root token,
+following [kuhlmann-nivre-2006]. Well-formedness (`Graph.IsTree`) is
+defined in `Dominance.lean`, beside the dominance relation it is stated
+through.
 
-* `Graph n` — a dependency graph on `n` words: vertex-labeling `words`,
-  arc-labeling `label`, distinguished `root`. `Graph.Adj` is the induced
-  adjacency (decidable), `Graph.Linked` its symmetrization, and
-  `Graph.toDigraph` / `Graph.toSimpleGraph` the projections onto mathlib's
-  graph carriers.
-* `Graph.parents`, `Graph.children` — the head and dependent sets, with
-  membership characterized by `Graph.Adj`.
-* `Graph.ofArcs`, `Graph.enhance` — the CoNLL-U-style constructor, and arc
-  addition for UD's *enhanced* representation ([de-marneffe-nivre-2019]),
-  which adds the predicate-argument relations a single-headed tree cannot
-  encode. Both are characterized by adjacency simp lemmas
-  (`Graph.ofArcs_adj`, `Graph.enhance_adj`); `HasUnrepresentedArg` is the
-  basic-vs-enhanced diagnostic.
-* Well-formedness (`Graph.IsTree`) lives in `Dominance.lean`, beside the
-  dominance relation it is stated through. Feature-level constraints
-  (agreement) are `Syntax/Agreement/`'s domain, not the carrier's.
+## Main definitions
+
+* `Graph n` is a dependency graph on `n` words: a token at every position,
+  an optional UD relation on every ordered pair of positions (head to
+  dependent), and a root position.
+* `Graph.Adj` is the arc relation from heads to dependents.
+* `Graph.Linked` is the symmetrization of `Graph.Adj`.
+* `Graph.toDigraph` and `Graph.toSimpleGraph` are the directed and
+  undirected views of a graph as mathlib's graph carriers.
+* `Graph.parents` and `Graph.children` are the finsets of heads and of
+  dependents of a position.
+* `Graph.ofArcs` builds a graph from a CoNLL-U-style token list and arc
+  list.
+* `Graph.enhance` adds arcs to a graph, as in UD's *enhanced*
+  representation ([de-marneffe-nivre-2019]); `HasUnrepresentedArg` says
+  that an enhanced graph gives a position an argument relation its basic
+  graph lacks.
 
 ## Implementation notes
 
-* Positions are 0-indexed; CoNLL-U is 1-indexed with `0` as an artificial
-  root, so wire-format conversion shifts indices.
-* `label` returns at most one relation per ordered pair: faithful to
-  dependency trees and basic UD. If an enhanced-UD fixture ever needs
-  parallel arcs on one pair, the field generalizes to a list.
+Positions are 0-indexed; CoNLL-U is 1-indexed with `0` as an artificial
+root, so wire-format conversion shifts indices.
+
+`label` returns at most one relation per ordered pair, faithful to
+dependency trees and basic UD. If an enhanced-UD fixture ever needs
+parallel arcs on one pair, the field generalizes to a list. Feature-level
+constraints (agreement) are `Syntax/Agreement/`'s domain, not the
+carrier's.
+
+## References
+
+[kuhlmann-nivre-2006] — Mildly non-projective dependency structures
+[kuhlmann-2013] — Mildly non-projective dependency grammar
+[melcuk-1988] — Dependency syntax: theory and practice
+[de-marneffe-nivre-2019] — Dependency grammar, the UD survey
 -/
 
 open Morphology (Word)
