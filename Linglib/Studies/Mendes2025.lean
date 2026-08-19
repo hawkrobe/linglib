@@ -37,7 +37,7 @@ files: `dynSUBJ`/`dynIND` from `Semantics/Mood/Dynamic.lean`
 
 namespace Mendes2025
 
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 open HistoricalAlternatives
 open DynamicSemantics
 open DynamicSemantics.CCP (IsEliminative)
@@ -69,7 +69,7 @@ def subordinateFuture {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     (newSitVar : ℕ)   -- Fresh variable for introduced situation
     (refSitVar : ℕ)   -- Variable for reference situation
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   -- First apply SUBJ to introduce s₁
   let c' := dynSUBJ history newSitVar c
   -- Then constrain τ(s₁) > τ(s₀)
@@ -88,9 +88,9 @@ def conditionalWithSF {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     (antecedentVar : ℕ)  -- Situation introduced by SF
     (speechVar : ℕ)      -- Speech time situation
-    (antecedent : Set (WorldTimeIndex.Possibility W Time) → Set (WorldTimeIndex.Possibility W Time))  -- "Maria is home"
-    (consequent : Set (WorldTimeIndex.Possibility W Time) → Set (WorldTimeIndex.Possibility W Time))  -- "she answers"
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (antecedent : Set (Index.Possibility W Time) → Set (Index.Possibility W Time))  -- "Maria is home"
+    (consequent : Set (Index.Possibility W Time) → Set (Index.Possibility W Time))  -- "she answers"
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   -- Apply SF to introduce antecedent situation
   let c₁ := subordinateFuture history antecedentVar speechVar c
   -- Filter by antecedent
@@ -113,7 +113,7 @@ def relativeClauseSF {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     (rcVar : ℕ)           -- Situation variable for relative clause
     (speechVar : ℕ)       -- Speech time situation
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   subordinateFuture history rcVar speechVar c
 
 /--
@@ -130,9 +130,9 @@ The SF in the restrictor:
 def everyWithSFRestrictor {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     (rcVar speechVar : ℕ)
-    (restrictor : Set (WorldTimeIndex.Possibility W Time) → Set (WorldTimeIndex.Possibility W Time))  -- "book that M reads"
-    (nuclear : Set (WorldTimeIndex.Possibility W Time) → Set (WorldTimeIndex.Possibility W Time))     -- "is interesting"
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (restrictor : Set (Index.Possibility W Time) → Set (Index.Possibility W Time))  -- "book that M reads"
+    (nuclear : Set (Index.Possibility W Time) → Set (Index.Possibility W Time))     -- "is interesting"
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   -- First: SF introduces situation for restrictor
   let c₁ := subordinateFuture history rcVar speechVar c
   -- Then: Filter by restrictor content
@@ -153,8 +153,8 @@ The subordinate future always introduces a situation with time ≥ current.
 theorem sf_introduces_future {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     (newVar refVar : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time))
-    (gs : WorldTimeIndex.Possibility W Time)
+    (c : Set (Index.Possibility W Time))
+    (gs : Index.Possibility W Time)
     (h : gs ∈ subordinateFuture history newVar refVar c) :
     (gs.assignment newVar).time ≥ (gs.assignment refVar).time := by
   -- The subordinateFuture composes SUBJ and FUT
@@ -181,14 +181,14 @@ why subjunctive mood enables future reference in subordinate clauses.
 theorem temporal_shift_parasitic_on_modal {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     (sfVar speechVar : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time))
+    (c : Set (Index.Possibility W Time))
     -- For any situation in the output of SF application...
-    (gs : WorldTimeIndex.Possibility W Time)
+    (gs : Index.Possibility W Time)
     (h : gs ∈ subordinateFuture history sfVar speechVar c)
     -- ...there exists an original speech situation...
-    : ∃ (g₀ : Assignment (WorldTimeIndex W Time)) (s₀ : WorldTimeIndex W Time),
+    : ∃ (g₀ : Assignment (Index W Time)) (s₀ : Index W Time),
         -- ...that was in the input context...
-        (⟨s₀, g₀⟩ : WorldTimeIndex.Possibility W Time) ∈ c ∧
+        (⟨s₀, g₀⟩ : Index.Possibility W Time) ∈ c ∧
         -- ...and the temporal shift comes from SUBJ's modal component:
         -- 1. The bound situation s₁ is in the historical base of s₀
         (gs.assignment sfVar) ∈ historicalBase history s₀ ∧
@@ -230,9 +230,9 @@ Linguistically, predicates filter contexts without modifying assignments.
 theorem sf_restrictor_future_reference {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     (rcVar speechVar : ℕ)
-    (restrictor nuclear : Set (WorldTimeIndex.Possibility W Time) → Set (WorldTimeIndex.Possibility W Time))
-    (c : Set (WorldTimeIndex.Possibility W Time))
-    (gs : WorldTimeIndex.Possibility W Time)
+    (restrictor nuclear : Set (Index.Possibility W Time) → Set (Index.Possibility W Time))
+    (c : Set (Index.Possibility W Time))
+    (gs : Index.Possibility W Time)
     (h : gs ∈ everyWithSFRestrictor history rcVar speechVar restrictor nuclear c)
     (hR : IsEliminative restrictor) (hN : IsEliminative nuclear) :
     -- The restrictor situation can be future relative to speech time
@@ -258,8 +258,8 @@ Maria — proper name.
 `⟦Maria⟧ = λP.P(maria)`
 -/
 def lexMaria (maria : E)
-    (P : E → Set (WorldTimeIndex.Possibility W Time) → Set (WorldTimeIndex.Possibility W Time))
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (P : E → Set (Index.Possibility W Time) → Set (Index.Possibility W Time))
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   P maria c
 
 /--
@@ -267,10 +267,10 @@ estar em casa — "be at home".
 `⟦estar em casa⟧ = λxλsλc. [| at-home(x)(s)]; c`
 -/
 def lexAtHome
-    (atHomeRel : E → WorldTimeIndex W Time → Prop)
+    (atHomeRel : E → Index W Time → Prop)
     (x : E)
     (sitVar : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   { gs ∈ c | atHomeRel x (gs.assignment sitVar) }
 
 /--
@@ -278,10 +278,10 @@ atender — "answer (the door)".
 `⟦atender⟧ = λxλsλc. [| answer(x)(s)]; c`
 -/
 def lexAnswer
-    (answerRel : E → WorldTimeIndex W Time → Prop)
+    (answerRel : E → Index W Time → Prop)
     (x : E)
     (sitVar : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   { gs ∈ c | answerRel x (gs.assignment sitVar) }
 
 /--
@@ -295,8 +295,8 @@ ela — "she" (pronoun bound to Maria).
 `⟦ela⟧ = λP.P(maria)`
 -/
 def lexShe (maria : E)
-    (P : E → Set (WorldTimeIndex.Possibility W Time) → Set (WorldTimeIndex.Possibility W Time))
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (P : E → Set (Index.Possibility W Time) → Set (Index.Possibility W Time))
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   P maria c
 
 /--
@@ -305,9 +305,9 @@ vai — future auxiliary "will".
 via modal anaphora.
 -/
 def lexWill
-    (VP : ℕ → Set (WorldTimeIndex.Possibility W Time) → Set (WorldTimeIndex.Possibility W Time))
+    (VP : ℕ → Set (Index.Possibility W Time) → Set (Index.Possibility W Time))
     (sitVar : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   VP sitVar c
 
 /--
@@ -321,8 +321,8 @@ force comes from SUBJ's quantification over historical alternatives, not
 from the conditional operator itself.
 -/
 def seqUpdate
-    (antecedent consequent : Set (WorldTimeIndex.Possibility W Time) → Set (WorldTimeIndex.Possibility W Time))
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (antecedent consequent : Set (Index.Possibility W Time) → Set (Index.Possibility W Time))
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   consequent (antecedent c)
 
 
@@ -334,9 +334,9 @@ Introduces s₁ ∈ hist(s₀), constrains τ(s₁) > τ(s₀), asserts Maria at
 -/
 def deriveAntecedent
     (maria : E)
-    (atHomeRel : E → WorldTimeIndex W Time → Prop)
+    (atHomeRel : E → Index W Time → Prop)
     (sfVar speechVar : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   let c₁ := lexSF history sfVar speechVar c
   lexAtHome atHomeRel maria sfVar c₁
 
@@ -346,9 +346,9 @@ Consequent derivation:
 -/
 def deriveConsequent
     (maria : E)
-    (answerRel : E → WorldTimeIndex W Time → Prop)
+    (answerRel : E → Index W Time → Prop)
     (sfVar : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   let c₁ := dynIND sfVar c
   lexAnswer answerRel maria sfVar c₁
 
@@ -358,9 +358,9 @@ Full sentence derivation:
 -/
 def deriveFullSentence
     (maria : E)
-    (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
+    (atHomeRel answerRel : E → Index W Time → Prop)
     (sfVar speechVar : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   let antecedent := deriveAntecedent history maria atHomeRel sfVar speechVar
   let consequent := deriveConsequent maria answerRel sfVar
   seqUpdate antecedent consequent c
@@ -371,12 +371,12 @@ The situation introduced by SF is in the historical alternatives.
 -/
 theorem derivation_in_historical_base
     (maria : E)
-    (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
+    (atHomeRel answerRel : E → Index W Time → Prop)
     (sfVar speechVar : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time))
-    (gs : WorldTimeIndex.Possibility W Time)
+    (c : Set (Index.Possibility W Time))
+    (gs : Index.Possibility W Time)
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
-    ∃ s₀, (∃ g₀, (⟨s₀, g₀⟩ : WorldTimeIndex.Possibility W Time) ∈ c) ∧
+    ∃ s₀, (∃ g₀, (⟨s₀, g₀⟩ : Index.Possibility W Time) ∈ c) ∧
           (gs.assignment sfVar) ∈ historicalBase history s₀ := by
   unfold deriveFullSentence seqUpdate at h
   unfold deriveConsequent lexAnswer at h
@@ -403,10 +403,10 @@ The derivation enforces future ordering: τ(s₁) > τ(s₀).
 -/
 theorem derivation_future_ordering
     (maria : E)
-    (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
+    (atHomeRel answerRel : E → Index W Time → Prop)
     (sfVar speechVar : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time))
-    (gs : WorldTimeIndex.Possibility W Time)
+    (c : Set (Index.Possibility W Time))
+    (gs : Index.Possibility W Time)
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
     (gs.assignment sfVar).time > (gs.assignment speechVar).time := by
   unfold deriveFullSentence seqUpdate at h
@@ -425,10 +425,10 @@ If Maria is at home at s₁, she answers at s₁.
 -/
 theorem derivation_conditional_holds
     (maria : E)
-    (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
+    (atHomeRel answerRel : E → Index W Time → Prop)
     (sfVar speechVar : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time))
-    (gs : WorldTimeIndex.Possibility W Time)
+    (c : Set (Index.Possibility W Time))
+    (gs : Index.Possibility W Time)
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
     atHomeRel maria (gs.assignment sfVar) → answerRel maria (gs.assignment sfVar) := by
   intro _
@@ -445,9 +445,9 @@ Uses SUBJ without FUT — allows past/present alternatives.
 -/
 def deriveCounterfactual
     (maria : E)
-    (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
+    (atHomeRel answerRel : E → Index W Time → Prop)
     (cfVar speechVar : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   let c₁ := dynSUBJ history cfVar c
   let c₂ := lexAtHome atHomeRel maria cfVar c₁
   let c₃ := dynIND cfVar c₂
@@ -460,9 +460,9 @@ theorem sf_vs_counterfactual_temporal {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     {E : Type*}
     (maria : E)
-    (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
+    (atHomeRel answerRel : E → Index W Time → Prop)
     (sitVar speechVar : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time)) :
+    (c : Set (Index.Possibility W Time)) :
     ∀ gs ∈ deriveFullSentence history maria atHomeRel answerRel sitVar speechVar c,
       (gs.assignment sitVar).time > (gs.assignment speechVar).time :=
   derivation_future_ordering history maria atHomeRel answerRel sitVar speechVar c
@@ -496,8 +496,8 @@ Indicative restrictor: evaluates at the actual world.
 "Every book that Maria reads.IND..." → presupposes books exist that Maria reads.
 -/
 def indicativeRestrictor {W Time E : Type*}
-    (restrictor : E → WorldTimeIndex W Time → Prop)
-    (s : WorldTimeIndex W Time) : E → Prop :=
+    (restrictor : E → Index W Time → Prop)
+    (s : Index W Time) : E → Prop :=
   λ x => restrictor x s
 
 /--
@@ -506,15 +506,15 @@ SF restrictor: quantifies over historical alternatives.
 -/
 def sfRestrictor {W Time E : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
-    (restrictor : E → WorldTimeIndex W Time → Prop)
-    (s₀ : WorldTimeIndex W Time) : E → Prop :=
+    (restrictor : E → Index W Time → Prop)
+    (s₀ : Index W Time) : E → Prop :=
   λ x => ∃ s₁ ∈ historicalBase history s₀, restrictor x s₁
 
 
 /-- Indicative preserves existential presupposition. -/
 theorem indicative_preserves_presup {W Time E : Type*}
-    (restrictor : E → WorldTimeIndex W Time → Prop)
-    (s : WorldTimeIndex W Time)
+    (restrictor : E → Index W Time → Prop)
+    (s : Index W Time)
     (h_presup : ∃ x, indicativeRestrictor restrictor s x) :
     ∃ x, restrictor x s := by
   obtain ⟨x, hx⟩ := h_presup
@@ -526,8 +526,8 @@ the SF restrictor can be satisfied in alternative situations.
 -/
 theorem sf_weakens_presup {W Time E : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
-    (restrictor : E → WorldTimeIndex W Time → Prop)
-    (s₀ : WorldTimeIndex W Time)
+    (restrictor : E → Index W Time → Prop)
+    (s₀ : Index W Time)
     (h_no_actual : ¬∃ x, restrictor x s₀)
     (h_possible : ∃ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁) :
     ∃ x, sfRestrictor history restrictor s₀ x := by
@@ -541,8 +541,8 @@ SF makes strong quantifiers felicitous under uncertainty.
 -/
 theorem sf_felicitous_under_uncertainty {W Time E : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
-    (restrictor : E → WorldTimeIndex W Time → Prop)
-    (s₀ : WorldTimeIndex W Time)
+    (restrictor : E → Index W Time → Prop)
+    (s₀ : Index W Time)
     (h_uncertainty : (∃ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁) ∧
                      (∃ s₂ ∈ historicalBase history s₀, ¬∃ x, restrictor x s₂)) :
     (∃ x, sfRestrictor history restrictor s₀ x) ∧
@@ -561,15 +561,15 @@ This is the formal version of the indicative-vs-SF contrast in restrictors.
 -/
 def relClauseSF {W Time E : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
-    (noun : E → WorldTimeIndex W Time → Prop)
-    (relClause : E → WorldTimeIndex W Time → Prop)
-    (s₀ : WorldTimeIndex W Time) : E → Prop :=
+    (noun : E → Index W Time → Prop)
+    (relClause : E → Index W Time → Prop)
+    (s₀ : Index W Time) : E → Prop :=
   λ x => ∃ s₁ ∈ historicalBase history s₀, noun x s₁ ∧ relClause x s₁
 
 theorem relClause_sf_weakens_quantifier {W Time E : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
-    (noun relClause : E → WorldTimeIndex W Time → Prop)
-    (s₀ : WorldTimeIndex W Time)
+    (noun relClause : E → Index W Time → Prop)
+    (s₀ : Index W Time)
     (h_none_actual : ¬∃ x, noun x s₀ ∧ relClause x s₀)
     (h_some_possible : ∃ s₁ ∈ historicalBase history s₀, ∃ x, noun x s₁ ∧ relClause x s₁) :
     ∃ x, relClauseSF history noun relClause s₀ x := by
@@ -584,8 +584,8 @@ Modal displacement: SF introduces quantification over situations,
 -/
 def modalDisplacement {W Time E : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
-    (restrictor nuclear : E → WorldTimeIndex W Time → Prop)
-    (s₀ : WorldTimeIndex W Time) : Prop :=
+    (restrictor nuclear : E → Index W Time → Prop)
+    (s₀ : Index W Time) : Prop :=
   ∀ s₁ ∈ historicalBase history s₀,
     (∃ x, restrictor x s₁) →
     ∀ x, restrictor x s₁ → nuclear x s₁
@@ -595,8 +595,8 @@ SF semantics is equivalent to modal displacement.
 -/
 theorem sf_is_modal_displacement {W Time E : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
-    (restrictor nuclear : E → WorldTimeIndex W Time → Prop)
-    (s₀ : WorldTimeIndex W Time) :
+    (restrictor nuclear : E → Index W Time → Prop)
+    (s₀ : Index W Time) :
     modalDisplacement history restrictor nuclear s₀ ↔
     ∀ s₁ ∈ historicalBase history s₀,
       ∀ x, restrictor x s₁ → nuclear x s₁ := by
@@ -614,8 +614,8 @@ Modal displacement is weaker than global accommodation.
 -/
 theorem modal_displacement_weaker_than_accommodation {W Time E : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
-    (restrictor : E → WorldTimeIndex W Time → Prop)
-    (s₀ : WorldTimeIndex W Time)
+    (restrictor : E → Index W Time → Prop)
+    (s₀ : Index W Time)
     (h_global : ∀ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁)
     (h_nonempty : ∃ s, s ∈ historicalBase history s₀) :
     ∃ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁ := by
@@ -659,7 +659,7 @@ Example:
 def crossClausalBinding {W Time : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
     (antecedentVar _consequentVar : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   dynIND antecedentVar (dynSUBJ history antecedentVar c)
 
 /--
@@ -670,8 +670,8 @@ clauses are evaluated at the same world.
 theorem cross_clausal_same_world {W Time : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
     (v : ℕ)
-    (c : Set (WorldTimeIndex.Possibility W Time))
-    (gs : WorldTimeIndex.Possibility W Time)
+    (c : Set (Index.Possibility W Time))
+    (gs : Index.Possibility W Time)
     (h : gs ∈ crossClausalBinding history v v c) :
     gs.world.world = (gs.assignment v).world := by
   unfold crossClausalBinding at h
@@ -685,9 +685,9 @@ the consequent inherits the temporal anchor from `s₁`.
 def subjIndChain {W Time : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
     (v : ℕ)
-    (antecedentPred : Set (WorldTimeIndex.Possibility W Time) → Set (WorldTimeIndex.Possibility W Time))
-    (consequentPred : Set (WorldTimeIndex.Possibility W Time) → Set (WorldTimeIndex.Possibility W Time))
-    (c : Set (WorldTimeIndex.Possibility W Time)) : Set (WorldTimeIndex.Possibility W Time) :=
+    (antecedentPred : Set (Index.Possibility W Time) → Set (Index.Possibility W Time))
+    (consequentPred : Set (Index.Possibility W Time) → Set (Index.Possibility W Time))
+    (c : Set (Index.Possibility W Time)) : Set (Index.Possibility W Time) :=
   consequentPred (dynIND v (antecedentPred (dynSUBJ history v c)))
 
 /--
@@ -700,9 +700,9 @@ modifying assignments.
 theorem subj_ind_chain_modal_donkey {W Time : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
     (v : ℕ)
-    (P Q : Set (WorldTimeIndex.Possibility W Time) → Set (WorldTimeIndex.Possibility W Time))
-    (c : Set (WorldTimeIndex.Possibility W Time))
-    (gs : WorldTimeIndex.Possibility W Time)
+    (P Q : Set (Index.Possibility W Time) → Set (Index.Possibility W Time))
+    (c : Set (Index.Possibility W Time))
+    (gs : Index.Possibility W Time)
     (h : gs ∈ subjIndChain history v P Q c)
     (hQ : IsEliminative Q) :
     gs.world.world = (gs.assignment v).world := by
@@ -719,8 +719,8 @@ analog of donkey universals.
 theorem unselective_universal_force {W Time : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
     (v : ℕ)
-    (antecedent consequent : WorldTimeIndex W Time → Prop)
-    (c : Set (WorldTimeIndex.Possibility W Time)) :
+    (antecedent consequent : Index W Time → Prop)
+    (c : Set (Index.Possibility W Time)) :
     ∀ gs ∈ subjIndChain history v
       (λ c' => { gs' ∈ c' | antecedent gs'.world })
       (λ c' => { gs' ∈ c' | consequent gs'.world })
@@ -750,13 +750,13 @@ characterizes the static existential conjunction
 theorem subjIndChain_singleton {W Time : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
     (v : ℕ)
-    (g : Assignment (WorldTimeIndex W Time))
-    (s₀ : WorldTimeIndex W Time)
-    (P Q : WorldTimeIndex W Time → Prop) :
+    (g : Assignment (Index W Time))
+    (s₀ : Index W Time)
+    (P Q : Index W Time → Prop) :
     (∃ gs, gs ∈ subjIndChain history v
       (fun c => { gs ∈ c | P gs.world })
       (fun c => { gs ∈ c | Q gs.world })
-      ({⟨s₀, g⟩} : Set (WorldTimeIndex.Possibility W Time))) ↔
+      ({⟨s₀, g⟩} : Set (Index.Possibility W Time))) ↔
     (∃ s₁ ∈ historicalBase history s₀, P s₁ ∧ Q s₁) := by
   unfold subjIndChain
   constructor
@@ -784,14 +784,14 @@ an `s₁` satisfying both `P` and `Q`, then `P(s₁) → Q(s₁)` holds triviall
 theorem subjIndChain_entails_conditionalSF {W Time : Type*} [LE Time]
     (history : HistoricalAlternatives W Time)
     (v : ℕ)
-    (g : Assignment (WorldTimeIndex W Time))
-    (s₀ : WorldTimeIndex W Time)
-    (P : WorldTimeIndex W Time → Prop)
-    (Q : WorldTimeIndex W Time → WorldTimeIndex W Time → Prop)
+    (g : Assignment (Index W Time))
+    (s₀ : Index W Time)
+    (P : Index W Time → Prop)
+    (Q : Index W Time → Index W Time → Prop)
     (h : ∃ gs, gs ∈ subjIndChain history v
       (fun c => { gs ∈ c | P gs.world })
       (fun c => { gs ∈ c | Q gs.world gs.world })
-      ({⟨s₀, g⟩} : Set (WorldTimeIndex.Possibility W Time))) :
+      ({⟨s₀, g⟩} : Set (Index.Possibility W Time))) :
     conditionalSF history P (fun s₁ _ => Q s₁ s₁) s₀ := by
   unfold conditionalSF SUBJ
   obtain ⟨s₁, h_hist, hP, hQ⟩ :=

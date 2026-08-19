@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.Index
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
@@ -494,7 +494,7 @@ end Discourse
 
 namespace Roberts2023
 
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 open Discourse (forceLinkingPrinciple defaultSemanticType Scoreboard)
 open Mood.Illocutionary (sincerityCondition)
 open Mood (State Component Illocutionary HasTarget)
@@ -508,11 +508,11 @@ abbrev World := Fin 4
 
 Roberts's "circumstance" ⟨w, t⟩ (eq. 45), SameHistory (47), and FUT
 (48) all instantiate the canonical world-time substrate in
-`Intensional.WorldTimeIndex` and `HistoricalAlternatives`:
+`Intensional.Index` and `HistoricalAlternatives`:
 
   Roberts                        Linglib substrate
   ────────────────────────────   ────────────────────────────
-  ⟨w, t⟩ circumstance            `WorldTimeIndex W T`
+  ⟨w, t⟩ circumstance            `Index W T`
   SameHistory(w', w, t)          `HistoricalAlternatives W T` predicate
   FUT(⟨w, t⟩)                    `futureHistoryBase history s`
 
@@ -619,7 +619,7 @@ local `FUT` enumeration. -/
     `futureHistoryBase`'s definition. -/
 theorem futurate {W T : Type*} [LT T]
     (history : HistoricalAlternatives W T)
-    (s s' : WorldTimeIndex W T) (h : s' ∈ futureHistoryBase history s) :
+    (s s' : Index W T) (h : s' ∈ futureHistoryBase history s) :
     s.time < s'.time := h.2
 
 /-! ## §2.2 Force Linking — integration tests

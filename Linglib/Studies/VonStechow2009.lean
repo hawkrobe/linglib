@@ -31,7 +31,7 @@ The paper's second contribution is the situation-indexed attitude
 semantics it synthesizes from [lewis-1979-attitudes],
 [heim-kratzer-1998], and [ogihara-1989]: *believe*'s complement type
 shifts from propositions to situation-dependent propositions
-(predicates over `WorldTimeIndex`), and the doxastic alternatives become world–time pairs.
+(predicates over `Index`), and the doxastic alternatives become world–time pairs.
 `sitBoxAt` is the universal modal over situations, with Hintikka
 world-only semantics the time-invariant special case
 (`sitBoxAt_lift_eq_BoxAt`); genuinely temporal accessibility
@@ -120,44 +120,44 @@ theorem feature_checking_is_fullPresupposition {Time : Type*} [LinearOrder Time]
 /-! ### Situation-indexed attitudes
 
 The complement type of *believe* shifts from `W → Prop` to
-predicates over `WorldTimeIndex W Time`, and doxastic alternatives become world–time pairs:
+predicates over `Index W Time`, and doxastic alternatives become world–time pairs:
 ⟦x believes p⟧(w,t) = ∀(w',t') ∈ Dox_x(w,t). p(w',t'). -/
 
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 open Doxastic (Veridicality DoxasticPredicate BoxAt VeridicalityHolds)
 
 variable {W Time E : Type*}
 
 /-- Universal modal over situations: `p` holds at every accessible
     world–time pair. -/
-def sitBoxAt (R : E → WorldTimeIndex W Time → WorldTimeIndex W Time → Prop)
-    (agent : E) (s : WorldTimeIndex W Time)
-    (situations : List (WorldTimeIndex W Time)) (p : (WorldTimeIndex W Time → Prop)) : Prop :=
+def sitBoxAt (R : E → Index W Time → Index W Time → Prop)
+    (agent : E) (s : Index W Time)
+    (situations : List (Index W Time)) (p : (Index W Time → Prop)) : Prop :=
   ∀ s' ∈ situations, R agent s s' → p s'
 
-instance (R : E → WorldTimeIndex W Time → WorldTimeIndex W Time → Prop)
-    [∀ a s s', Decidable (R a s s')] (agent : E) (s : WorldTimeIndex W Time)
-    (situations : List (WorldTimeIndex W Time)) (p : (WorldTimeIndex W Time → Prop))
+instance (R : E → Index W Time → Index W Time → Prop)
+    [∀ a s s', Decidable (R a s s')] (agent : E) (s : Index W Time)
+    (situations : List (Index W Time)) (p : (Index W Time → Prop))
     [DecidablePred p] : Decidable (sitBoxAt R agent s situations p) :=
   inferInstanceAs (Decidable (∀ s' ∈ situations, _))
 
 /-- A world-proposition as a situation-proposition ignoring the
     temporal coordinate. -/
-def liftProp (p : W → Prop) : (WorldTimeIndex W Time → Prop) :=
+def liftProp (p : W → Prop) : (Index W Time → Prop) :=
   fun s => p s.world
 
 /-- A world-accessibility relation as a situation-accessibility
     relation ignoring temporal coordinates — classic Hintikka
     behavior, where doxastic alternatives differ only in world. -/
 def liftAccess (R : E → W → W → Prop) :
-    E → WorldTimeIndex W Time → WorldTimeIndex W Time → Prop :=
+    E → Index W Time → Index W Time → Prop :=
   fun agent s₁ s₂ => R agent s₁.world s₂.world
 
 /-- Hintikka semantics is the time-invariant special case: on lifted
     relations and propositions, the situation modal is `BoxAt` over
     the world projections. -/
 theorem sitBoxAt_lift_eq_BoxAt (R : E → W → W → Prop) (agent : E)
-    (s : WorldTimeIndex W Time) (sits : List (WorldTimeIndex W Time))
+    (s : Index W Time) (sits : List (Index W Time))
     (p : W → Prop) :
     sitBoxAt (liftAccess R) agent s sits (liftProp p) ↔
     BoxAt R agent s.world (sits.map (·.world)) p := by
@@ -170,20 +170,20 @@ theorem sitBoxAt_lift_eq_BoxAt (R : E → W → W → Prop) (agent : E)
 
 /-- The veridicality check at a situation: veridical predicates
     require the complement at the evaluation situation. -/
-def sitVeridicalityHolds (v : Veridicality) (p : (WorldTimeIndex W Time → Prop))
-    (s : WorldTimeIndex W Time) : Prop :=
+def sitVeridicalityHolds (v : Veridicality) (p : (Index W Time → Prop))
+    (s : Index W Time) : Prop :=
   match v with
   | .veridical => p s
   | .nonVeridical => True
 
-instance (v : Veridicality) (p : (WorldTimeIndex W Time → Prop)) [DecidablePred p]
-    (s : WorldTimeIndex W Time) :
+instance (v : Veridicality) (p : (Index W Time → Prop)) [DecidablePred p]
+    (s : Index W Time) :
     Decidable (sitVeridicalityHolds v p s) := by
   cases v <;> simp [sitVeridicalityHolds] <;> infer_instance
 
 /-- Lifted veridicality is world-level veridicality. -/
 theorem sitVeridicalityHolds_lift (v : Veridicality) (p : W → Prop)
-    (s : WorldTimeIndex W Time) :
+    (s : Index W Time) :
     sitVeridicalityHolds v (liftProp p) s ↔ VeridicalityHolds v p s.world := by
   cases v <;> simp [sitVeridicalityHolds, VeridicalityHolds, liftProp]
 
@@ -191,22 +191,22 @@ theorem sitVeridicalityHolds_lift (v : Veridicality) (p : W → Prop)
     `Dox_y(w,t)` is a set of world–time pairs. -/
 structure SitDoxasticPredicate (W Time E : Type*) where
   /-- Situation-indexed accessibility relation. -/
-  access : E → WorldTimeIndex W Time → WorldTimeIndex W Time → Prop
+  access : E → Index W Time → Index W Time → Prop
   /-- Veridicality (veridical or not). -/
   veridicality : Veridicality
 
 /-- ⟦x V that p⟧(s): the veridicality check at `s` plus the universal
     modal over accessible situations. -/
 def SitDoxasticPredicate.HoldsAt (V : SitDoxasticPredicate W Time E)
-    (agent : E) (p : (WorldTimeIndex W Time → Prop)) (s : WorldTimeIndex W Time)
-    (situations : List (WorldTimeIndex W Time)) : Prop :=
+    (agent : E) (p : (Index W Time → Prop)) (s : Index W Time)
+    (situations : List (Index W Time)) : Prop :=
   sitVeridicalityHolds V.veridicality p s ∧ sitBoxAt V.access agent s situations p
 
 /-- Veridical situation-indexed predicates entail their complement at
     the evaluation situation. -/
 theorem sit_veridical_entails_complement (V : SitDoxasticPredicate W Time E)
-    (hV : V.veridicality = .veridical) (agent : E) (p : (WorldTimeIndex W Time → Prop))
-    (s : WorldTimeIndex W Time) (sits : List (WorldTimeIndex W Time))
+    (hV : V.veridicality = .veridical) (agent : E) (p : (Index W Time → Prop))
+    (s : Index W Time) (sits : List (Index W Time))
     (holds : V.HoldsAt agent p s sits) : p s := by
   unfold SitDoxasticPredicate.HoldsAt at holds
   rw [hV] at holds
@@ -223,8 +223,8 @@ def liftDoxastic (V : DoxasticPredicate W E) (Time : Type*) :
     `DoxasticPredicate` analysis replays unchanged in the
     situation-indexed framework. -/
 theorem liftDoxastic_holdsAt_iff (V : DoxasticPredicate W E) (agent : E)
-    (p : W → Prop) (s : WorldTimeIndex W Time)
-    (sits : List (WorldTimeIndex W Time)) :
+    (p : W → Prop) (s : Index W Time)
+    (sits : List (Index W Time)) :
     (liftDoxastic V Time).HoldsAt agent (liftProp p) s sits ↔
     V.HoldsAt agent p s.world (sits.map (·.world)) := by
   simp only [SitDoxasticPredicate.HoldsAt, DoxasticPredicate.HoldsAt,
@@ -239,7 +239,7 @@ clause's temporal interpretation to the matrix event time. -/
 /-- Accessible situations share the evaluation time — the
     simultaneous reading in sequence of tense. -/
 def temporallyBound (R : E → W → W → Prop) :
-    E → WorldTimeIndex W Time → WorldTimeIndex W Time → Prop :=
+    E → Index W Time → Index W Time → Prop :=
   fun agent s₁ s₂ => R agent s₁.world s₂.world ∧ s₂.time = s₁.time
 
 instance [DecidableEq Time] (R : E → W → W → Prop)
@@ -250,7 +250,7 @@ instance [DecidableEq Time] (R : E → W → W → Prop)
 /-- Accessible situations are at or after the evaluation time —
     forward-looking attitudes like *expect* and *intend*. -/
 def futureOriented [LE Time] (R : E → W → W → Prop) :
-    E → WorldTimeIndex W Time → WorldTimeIndex W Time → Prop :=
+    E → Index W Time → Index W Time → Prop :=
   fun agent s₁ s₂ => R agent s₁.world s₂.world ∧ s₁.time ≤ s₂.time
 
 instance [LE Time] [DecidableRel (α := Time) (· ≤ ·)]

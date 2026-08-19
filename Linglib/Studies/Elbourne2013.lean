@@ -59,7 +59,7 @@ Fragments/English/Pronouns.lean
 
 namespace Elbourne2013
 
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 
 open Semantics.Presupposition (PartialProp)
 open Semantics.Presupposition.PartialProp (presupOfReferent presupOfReferent_presup

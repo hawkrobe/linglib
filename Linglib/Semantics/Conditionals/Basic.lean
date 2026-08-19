@@ -72,7 +72,7 @@ theorem contraposition : materialImp p q ⊆ materialImp qᶜ pᶜ :=
 /-- The strict conditional over an accessibility map: the consequent holds
 throughout the accessible antecedent worlds, `access i ∩ p ⊆ q`. The
 evaluation points `I` may differ from the worlds `W` quantified over — e.g. a
-historical modal base `WorldTimeIndex W T → Set W` evaluates at world-time
+historical modal base `Index W T → Set W` evaluates at world-time
 indices ([condoravdi-2002]); the classical case is `I = W`. -/
 def strictImp (access : I → Set W) (p q : Set W) : Set I :=
   {i | access i ∩ p ⊆ q}

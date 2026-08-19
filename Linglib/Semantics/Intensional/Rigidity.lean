@@ -119,7 +119,7 @@ def precomp {W₁ W₂ τ : Type*} (g : W₂ → W₁) (f : Intension W₁ τ) :
 
     Used by `Semantics/Tense/DeRe.lean` to lift a rigid
     `TimeConcept` over `KContext` to a rigid intension over the
-    holder's `WorldTimeIndex` alternative-shift. -/
+    holder's `Index` alternative-shift. -/
 theorem IsRigid.precomp {W₁ W₂ τ : Type*}
     {f : Intension W₁ τ} (h : IsRigid f) (g : W₂ → W₁) :
     IsRigid (Intension.precomp g f) :=

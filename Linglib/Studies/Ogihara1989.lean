@@ -16,7 +16,7 @@ open Tense
 namespace Ogihara1989
 
 open Tense (interpTense PAST)
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 
 /-- The Priorean `PAST` operator, applied at a referentially determined
     time g(n), decomposes into the conjunction of (1) the referential
@@ -24,7 +24,7 @@ open Intensional (WorldTimeIndex)
     referential time: the referential analysis picks the time, the
     operator imposes the constraint. -/
 theorem referential_past_decomposition {W Time : Type*} [LinearOrder Time]
-    (P : (WorldTimeIndex W Time → Prop)) (g : TemporalAssignment Time) (n : ℕ)
+    (P : (Index W Time → Prop)) (g : TemporalAssignment Time) (n : ℕ)
     (w : W) (speechTime : Time) :
     PAST P ⟨w, interpTense n g⟩ ⟨w, speechTime⟩ ↔
     (g n < speechTime ∧ P ⟨w, g n⟩) := by

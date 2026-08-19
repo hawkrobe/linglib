@@ -29,45 +29,45 @@ clause retrieves for temporal anchoring (`conditionalSF`).
 
 namespace Mood
 
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 open HistoricalAlternatives
 
 /-- A situation predicate, relating a described situation to its anchor. -/
-abbrev SitPred (W Time : Type*) := WorldTimeIndex W Time → WorldTimeIndex W Time → Prop
+abbrev SitPred (W Time : Type*) := Index W Time → Index W Time → Prop
 
 /-- The modal kernel: two situations share their world coordinate.
 `abbrev` so `decide`/`rw` see through it. -/
 abbrev sameWorld {W Time : Type*}
-    (s₁ s₂ : WorldTimeIndex W Time) : Prop :=
+    (s₁ s₂ : Index W Time) : Prop :=
   s₁.world = s₂.world
 
 variable {W Time : Type*} (history : HistoricalAlternatives W Time)
-  (P : SitPred W Time) (s₀ : WorldTimeIndex W Time)
+  (P : SitPred W Time) (s₀ : Index W Time)
 
 /-- The subjunctive introduces a new situation dref from the historical
 alternatives of the anchor — an indefinite for situations
 ([mendes-2025], Definition on p.29). -/
 def SUBJ [LE Time] : Prop :=
-  ∃ s₁ : WorldTimeIndex W Time,
+  ∃ s₁ : Index W Time,
     s₁ ∈ historicalBase history s₀ ∧ P s₁ s₀
 
 /-- The indicative retrieves existing situations and tests that they
 share a world — a definite for situations ([mendes-2025], Definition
 on p.29). -/
-def IND (s₁ s₂ : WorldTimeIndex W Time) : Prop :=
+def IND (s₁ s₂ : Index W Time) : Prop :=
   sameWorld s₂ s₁ ∧ P s₂ s₁
 
 /-- A conditional with an SF antecedent: `SUBJ` introduces the *if*
 situation, and the consequent is temporally anchored to it — why SF
 enables future reference ([mendes-2025]). -/
 def conditionalSF [LE Time]
-    (antecedent : WorldTimeIndex W Time → Prop)
-    (consequent : WorldTimeIndex W Time → WorldTimeIndex W Time → Prop)
-    (s₀ : WorldTimeIndex W Time) : Prop :=
+    (antecedent : Index W Time → Prop)
+    (consequent : Index W Time → Index W Time → Prop)
+    (s₀ : Index W Time) : Prop :=
   SUBJ history (λ s₁ s₀' => antecedent s₁ → consequent s₁ s₀') s₀
 
 /-- Surviving `IND` means the two situations share a world. -/
-theorem ind_same_world (s₁ s₂ : WorldTimeIndex W Time)
+theorem ind_same_world (s₁ s₂ : Index W Time)
     (h : IND P s₁ s₂) : s₂.world = s₁.world :=
   h.1
 
@@ -92,14 +92,14 @@ theorem subj_temporal_anchor [LE Time]
 /-- A propositional operator is non-veridical iff `F p` can hold
 without `p` ([giannakidou-1998]). -/
 def nonVeridical
-    (F : (WorldTimeIndex W Time → Prop) → WorldTimeIndex W Time → Prop) : Prop :=
-  ∃ (P : WorldTimeIndex W Time → Prop) (s : WorldTimeIndex W Time),
+    (F : (Index W Time → Prop) → Index W Time → Prop) : Prop :=
+  ∃ (P : Index W Time → Prop) (s : Index W Time),
     F P s ∧ ¬P s
 
 /-- `SUBJ` is non-veridical whenever the history branches: the
 introduced situation may differ from the actual one. -/
 theorem subj_nonveridical [LE Time]
-    (h_branching : ∃ s₀ s₁ : WorldTimeIndex W Time,
+    (h_branching : ∃ s₀ s₁ : Index W Time,
       s₁ ∈ historicalBase history s₀ ∧ s₀ ≠ s₁) :
     nonVeridical (λ P s₀ => SUBJ history (λ s₁ _ => P s₁) s₀) := by
   obtain ⟨s₀, s₁, h₁, hne⟩ := h_branching

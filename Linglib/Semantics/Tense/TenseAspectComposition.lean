@@ -10,7 +10,7 @@ evaluation, following [knick-sharf-2026].
 Event Time → Prop ──[IMPF/PRFV]──▷ IntervalPred ──[PERF]──▷ PointPred ──[eval*]──▷ Prop
 ```
 
-The aspect chain produces `PointPred W Time = WorldTimeIndex W Time → Prop`.
+The aspect chain produces `PointPred W Time = Index W Time → Prop`.
 The eval* operators instantiate the situation (fixing world and time).
 
 ## Composed Forms
@@ -38,7 +38,7 @@ import Linglib.Semantics.Quantification.Basic
 
 namespace Tense.TenseAspectComposition
 
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 
 open Core.Order
 open Semantics.Aspect

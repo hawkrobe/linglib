@@ -40,7 +40,7 @@ in mixed scenarios:
 
 namespace Semantics.Conditionals.Counterfactual
 
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 
 open Semantics.Conditionals
 open Trivalent (ProjectionType dist)

@@ -37,7 +37,7 @@ open Tense
 namespace Partee1973
 
 open Tense (interpTense PAST)
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 
 /-- Partee's stove example: "I didn't turn off the stove."
 
@@ -56,7 +56,7 @@ def parteeStoveExample {Time : Type*} (turnedOff : Time → Bool)
     sentence. -/
 theorem stove_refutes_prior :
     parteeStoveExample (· == (-1 : ℤ)) (λ _ => (-1 : ℤ)) 0 = false ∧
-    ∃ s : WorldTimeIndex Unit ℤ,
+    ∃ s : Index Unit ℤ,
       PAST (λ s => (s.time == (-1 : ℤ)) = false) s ⟨(), 0⟩ :=
   ⟨by decide, ⟨(), -2⟩, by decide, by decide⟩
 

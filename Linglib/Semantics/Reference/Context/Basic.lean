@@ -1,4 +1,4 @@
-import Linglib.Semantics.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.Index
 import Linglib.Semantics.Tense.Reichenbach
 
 /-!
@@ -18,7 +18,7 @@ open Time
 
 namespace Semantics.Context
 
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 
 /-- Full Kaplanian context of utterance: ⟨agent, world, time, position⟩.
 
@@ -52,36 +52,36 @@ def LocatedContext {W E P T : Type*} (c : KContext W E P T)
     (located : E → P → T → W → Prop) : Prop :=
   located c.agent c.position c.time c.world
 
-/-- Project a KContext to a `WorldTimeIndex` (world + time pair). -/
-def KContext.toWorldTimeIndex {W E P T : Type*} (c : KContext W E P T) :
-    WorldTimeIndex W T :=
+/-- Project a KContext to a `Index` (world + time pair). -/
+def KContext.toIndex {W E P T : Type*} (c : KContext W E P T) :
+    Index W T :=
   ⟨c.world, c.time⟩
 
-/-- Replace the world and time of a KContext with those of a `WorldTimeIndex`,
+/-- Replace the world and time of a KContext with those of a `Index`,
     preserving agent / addressee / position. The natural "shift to alternative
     situation" operation: an agent at an evaluation context can hold the same
     centered identity (`agent`) while considering an alternative ⟨world, time⟩.
     Used by centered-world de re semantics to quantify the time-concept across
     a believer's doxastic or metaphysical alternative situations. -/
 def KContext.shiftWorldTime {W E P T : Type*} (c : KContext W E P T)
-    (s : WorldTimeIndex W T) : KContext W E P T :=
+    (s : Index W T) : KContext W E P T :=
   { c with world := s.world, time := s.time }
 
 @[simp] theorem KContext.shiftWorldTime_world {W E P T : Type*}
-    (c : KContext W E P T) (s : WorldTimeIndex W T) :
+    (c : KContext W E P T) (s : Index W T) :
     (c.shiftWorldTime s).world = s.world := rfl
 
 @[simp] theorem KContext.shiftWorldTime_time {W E P T : Type*}
-    (c : KContext W E P T) (s : WorldTimeIndex W T) :
+    (c : KContext W E P T) (s : Index W T) :
     (c.shiftWorldTime s).time = s.time := rfl
 
 @[simp] theorem KContext.shiftWorldTime_agent {W E P T : Type*}
-    (c : KContext W E P T) (s : WorldTimeIndex W T) :
+    (c : KContext W E P T) (s : Index W T) :
     (c.shiftWorldTime s).agent = c.agent := rfl
 
-@[simp] theorem KContext.shiftWorldTime_toWorldTimeIndex {W E P T : Type*}
-    (c : KContext W E P T) (s : WorldTimeIndex W T) :
-    (c.shiftWorldTime s).toWorldTimeIndex = s := rfl
+@[simp] theorem KContext.shiftWorldTime_toIndex {W E P T : Type*}
+    (c : KContext W E P T) (s : Index W T) :
+    (c.shiftWorldTime s).toIndex = s := rfl
 
 /-- Project a KContext into a root-clause ReichenbachFrame.
     Speech time S = context time; perspective time P = S (root clause
