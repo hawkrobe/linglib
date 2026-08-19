@@ -20,6 +20,7 @@ import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 import Linglib.Core.Algebra.RootedTree.BirkhoffLaurent
+import Linglib.Core.Algebra.RootedTree.Bud
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.Coproduct.Deletion
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
@@ -2441,6 +2442,7 @@ import Linglib.Studies.Mandelkern2022
 import Linglib.Studies.Marantz1991
 import Linglib.Studies.MarcoRasin2026
 import Linglib.Studies.MarcolliChomskyBerwick2025
+import Linglib.Studies.MarcolliLarson2025
 import Linglib.Studies.MartinRoseNichols2025
 import Linglib.Studies.MartinSchaeferKastner2025
 import Linglib.Studies.MartinezVera2026
@@ -2876,6 +2878,7 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Lift
 import Linglib.Syntax.Minimalist.SyntacticObject.Replace
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
+import Linglib.Syntax.Minimalist.Theta.Basic
 import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Syntax.Minimalist.Verbal.Aspect
 import Linglib.Syntax.Minimalist.Verbal.Decomposition
