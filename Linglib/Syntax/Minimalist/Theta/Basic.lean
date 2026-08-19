@@ -33,6 +33,9 @@ toward the maximal projection.
 * `rules_emptyTree_out` — a generator with an empty-tree input has a
   non-theta output: movement lands only in non-theta positions, the
   External/Internal Merge dichotomy at generator level.
+* `SatisfiesCriterion`, `comb_satisfiesCriterion` — the theta criterion
+  (a head grid matched bijectively by single receivers at the other
+  positions) and its verification on the bare combs.
 -/
 
 namespace Minimalist.Theta
@@ -61,6 +64,10 @@ def PolarizedRole.down (ρ : ThetaRole) : PolarizedRole := ⟨ρ, .receiver⟩
 def upGrid (g : List ThetaRole) : List PolarizedRole := g.map .up
 
 @[simp] theorem upGrid_nil : upGrid [] = [] := rfl
+
+@[simp] theorem down_notMem_upGrid {ρ : ThetaRole} {g : List ThetaRole} :
+    PolarizedRole.down ρ ∉ upGrid g := by
+  simp [upGrid, PolarizedRole.up, PolarizedRole.down]
 
 @[simp] theorem upGrid_append (g h : List ThetaRole) :
     upGrid (g ++ h) = upGrid g ++ upGrid h := List.map_append ..
@@ -294,6 +301,64 @@ theorem comb_derivable (g₀ : List PolarizedRole) (ρE : ThetaRole)
   have hcomp := hgen.compose (i := 1) (by simp [gen]) (by simp [gen]) hspine
   simpa [comb, gen, Bud.Tree.graft] using hcomp
 
+/-- The inputs of a comb spine: one receiver per internal role, then the
+    head carrying the accumulated grid. -/
+theorem combSpine_inputs (g : List ThetaRole) (rest : List ThetaRole) :
+    (combSpine (L := L) g rest).inputs =
+      rest.map (fun ρ => Color.free [.down ρ]) ++
+        [.free (upGrid (g ++ rest))] := by
+  induction rest generalizing g with
+  | nil => simp [combSpine]
+  | cons ρ rest ih =>
+    simp [combSpine, ih (g ++ [ρ])]
+
+/-- The inputs of a comb: the external receiver, one receiver per internal
+    role, and the head carrying the complete grid. -/
+theorem comb_inputs (g₀ : List PolarizedRole) (ρE : ThetaRole)
+    (ρIs : List ThetaRole) :
+    (comb (L := L) g₀ ρE ρIs).inputs =
+      .free [.down ρE] :: ρIs.map (fun ρ => Color.free [.down ρ]) ++
+        [.free (upGrid (ρE :: ρIs))] := by
+  simp [comb, combSpine_inputs]
+
 end Comb
+
+/-! ### The theta criterion -/
+
+/-- The role a color receives, when it is a single receiver. -/
+def Color.receiver? : Color L → Option ThetaRole := fun c =>
+  match c.grid? with
+  | some [⟨ρ, .receiver⟩] => some ρ
+  | _ => none
+
+@[simp] theorem Color.receiver?_free_down (ρ : ThetaRole) :
+    (Color.free [.down ρ] : Color L).receiver? = some ρ := rfl
+
+/-- The theta criterion on a colored operation: some input (the head)
+    carries an all-giver grid, every other input is a single receiver, and
+    the received roles match the head's grid bijectively — as multisets,
+    since the trees are nonplanar. -/
+def SatisfiesCriterion (x : Bud.Tree (Color L)) : Prop :=
+  ∃ i c g, x.inputs[i]? = some c ∧ c.Matches (upGrid g) ∧
+    (↑((x.inputs.eraseIdx i).map Color.receiver?) : Multiset (Option ThetaRole))
+      = ↑(g.map some)
+
+/-- The bare theta combs satisfy the theta criterion: the head's grid is
+    matched exactly by the receivers at the other positions. -/
+theorem comb_satisfiesCriterion (g₀ : List PolarizedRole) (ρE : ThetaRole)
+    (ρIs : List ThetaRole) :
+    SatisfiesCriterion (comb (L := L) g₀ ρE ρIs) := by
+  refine ⟨ρIs.length + 1, .free (upGrid (ρE :: ρIs)), ρE :: ρIs, ?_, by simp, ?_⟩
+  · rw [comb_inputs, List.getElem?_append_right (by simp)]
+    simp
+  · rw [comb_inputs,
+      show Color.free [PolarizedRole.down ρE] ::
+          ρIs.map (fun ρ => Color.free [.down ρ]) ++
+          [Color.free (upGrid (ρE :: ρIs))] =
+        (Color.free [PolarizedRole.down ρE] ::
+          ρIs.map (fun ρ => Color.free (L := L) [.down ρ])) ++
+          [Color.free (upGrid (ρE :: ρIs))] by simp,
+      List.eraseIdx_append_of_length_le (by simp)]
+    simp [List.map_map, Function.comp_def]
 
 end Minimalist.Theta
