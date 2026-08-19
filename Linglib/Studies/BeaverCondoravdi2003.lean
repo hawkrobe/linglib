@@ -189,7 +189,7 @@ theorem mem_earliestAlt_iff_isLeast (alt : HistAlt W T) (B : Set (W × T))
 /-- B&C's `earliest` is defined (nonempty) exactly when [sharvit-2014]'s
     `EARLIEST` presupposition (`Before.hasEarliest`, with trivial restrictor)
     holds of the instantiation times. This is the definedness condition that
-    `Before.ipf_quantificationalPast` shows to fail for quantificational
+    fails for quantificational
     pasts on a dense time axis. -/
 theorem earliestAlt_nonempty_iff_hasEarliest (alt : HistAlt W T) (B : Set (W × T))
     (w : W) (t : T) :

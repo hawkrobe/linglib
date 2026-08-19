@@ -59,7 +59,7 @@ constructors).
    acquaintance-relation machinery (Lewis 1979 / Cresswell-von Stechow
    1982) is not formalized here.
 4. **Eval-time shift via attitude embedding**: the substrate primitives
-   are `Tense.evalTime_shifts_under_embedding` and
+   are `Tense.TensePronoun.evalTime_shifts_under_embedding` and
    `updateTemporal`. Abusch's "relation transmission" (feature passing
    of relation variables PAST/PRES across embedding) is *not* what this
    file currently captures — we only model the value-level eval-time

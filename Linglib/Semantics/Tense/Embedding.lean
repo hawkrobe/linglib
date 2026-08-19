@@ -53,6 +53,16 @@ theorem simultaneousFrame_isPresent (matrixFrame : ReichenbachFrame Time)
 
 /-! ### Embedded tense readings -/
 
+/-- Sequence-of-tense parameter: whether embedded tense is interpreted
+    relative to the matrix (SOT languages, English) or absolutely, against
+    utterance time (non-SOT languages, Japanese). -/
+inductive SOTParameter where
+  /-- Embedded tense relative to matrix (English). -/
+  | relative
+  /-- Embedded tense absolute, against utterance time (Japanese). -/
+  | absolute
+  deriving DecidableEq, Repr
+
 /-- The two readings of past under a past attitude verb: **shifted**
     (embedded event before the matrix event, R′ < P′) or **simultaneous**
     (embedded event at the matrix event time, R′ = P′, via SOT deletion —
@@ -99,5 +109,38 @@ theorem shifted_satisfies_ulc [Preorder Time] (embeddedR matrixE : Time)
 theorem simultaneous_satisfies_ulc [Preorder Time] (embeddedR matrixE : Time)
     (h : embeddedR = matrixE) : upperLimitConstraint embeddedR matrixE :=
   le_of_eq h
+
+/-! ### Pronoun resolution into frames -/
+
+/-- Assemble the Reichenbach frame a resolved tense pronoun determines:
+    R = the pronoun's referent under `g`, with perspective, speech, and
+    event times supplied by the embedding context. -/
+def TensePronoun.toFrame (tp : TensePronoun)
+    (g : TemporalAssignment Time)
+    (speechTime perspectiveTime eventTime : Time) :
+    ReichenbachFrame Time where
+  speechTime := speechTime
+  perspectiveTime := perspectiveTime
+  referenceTime := tp.resolve g
+  eventTime := eventTime
+
+/-- A present-constraint bound tense under binding gives R = P — the
+    simultaneous reading as pronoun resolution: binding the variable to
+    the perspective time yields a PRESENT frame. -/
+theorem TensePronoun.bound_present_simultaneous
+    (tp : TensePronoun) (g : TemporalAssignment Time)
+    (speechTime perspTime eventTime : Time)
+    (hBind : tp.resolve g = perspTime)
+    (_hPres : tp.constraint = present) :
+    (tp.toFrame g speechTime perspTime eventTime).isPresent := by
+  simp only [TensePronoun.toFrame, ReichenbachFrame.isPresent]
+  exact hBind
+
+/-- Double-access: present-under-past requires the complement to hold at
+    BOTH speech time (indexical rigidity) AND matrix event time (attitude
+    accessibility). -/
+def doubleAccess (p : Time → Prop)
+    (speechTime matrixEventTime : Time) : Prop :=
+  p speechTime ∧ p matrixEventTime
 
 end Tense

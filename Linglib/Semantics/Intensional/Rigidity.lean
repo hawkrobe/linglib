@@ -302,6 +302,42 @@ def ReferentialMode.isFree : ReferentialMode → Bool
   | .indexical | .anaphoric => true
   | .bound => false
 
+/-! ### Overtness ([kratzer-1998]) -/
+
+/-- Phonological overtness of a referential expression ([kratzer-1998] §3).
+    Applies uniformly to pronouns and tenses: English has zero tense under
+    SOT (bound present surfaces as ∅); Japanese has zero pronouns in
+    subject position (locally bound by Agr); Persian has zero pronouns but
+    NOT zero tense (tense is in C, outside the local agreement domain). -/
+inductive Overtness where
+  /-- Phonologically realized (English "he", German Preterit -te). -/
+  | overt
+  /-- Phonologically empty (zero tense under SOT, pro-drop subjects). -/
+  | zero
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Kratzer's locality generalization ([kratzer-1998] formula 26): a
+    referential expression locally bound by an agreeing head surfaces as
+    zero; free (indexical or anaphoric) expressions surface as overt. -/
+def Overtness.fromBinding : ReferentialMode → (localDomain : Bool) → Overtness
+  | .bound, true => .zero
+  | _, _ => .overt
+
+/-- Free (indexical or anaphoric) expressions are always overt. -/
+theorem Overtness.free_always_overt (m : ReferentialMode) (l : Bool)
+    (hFree : m.isFree = true) :
+    Overtness.fromBinding m l = .overt := by
+  cases m <;> simp_all [Overtness.fromBinding, ReferentialMode.isFree]
+
+/-- Bound expressions in a local domain are zero. -/
+theorem Overtness.bound_local_is_zero :
+    Overtness.fromBinding .bound true = .zero := rfl
+
+/-- Bound expressions outside the local domain remain overt — the Persian
+    case: tense is bound but not in a local agreement domain. -/
+theorem Overtness.bound_nonlocal_is_overt :
+    Overtness.fromBinding .bound false = .overt := rfl
+
 /-! ### Situation variable status ([elbourne-2013]) -/
 
 /-- [elbourne-2013]'s two-way classification of situation variables.

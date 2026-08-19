@@ -16,7 +16,7 @@ open Tense
 namespace Ogihara1989
 
 open Tense (interpTense PAST)
-open Intensional (WorldTimeIndex)
+open Intensional (WorldTimeIndex SitProp)
 
 /-- The Priorean `PAST` operator, applied at a referentially determined
     time g(n), decomposes into the conjunction of (1) the referential

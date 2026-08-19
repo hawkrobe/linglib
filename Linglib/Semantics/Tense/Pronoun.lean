@@ -3,41 +3,21 @@ import Linglib.Logic.Assignment
 import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Core.Order.Relation
 import Linglib.Semantics.Tense.Defs
-import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Semantics.Reference.Context.Tower
-import Linglib.Semantics.Reference.Context.Shifts
 
 /-!
-# Unified Tense Pronoun Architecture
-[abusch-1997] [heim-1994-comments] [kratzer-1998] [partee-1973] [von-stechow-2009] [ogihara-1989]
+# Tense pronouns
+[abusch-1997] [heim-1994-comments] [kratzer-1998] [partee-1973]
 
 [partee-1973]'s insight: a tense morpheme is a **temporal pronoun** — a
 variable with a temporal constraint and a binding mode
-(indexical/anaphoric/bound). The constraint-as-presupposition formulation
-follows [heim-1994-comments] (commenting on [abusch-1997]) and
-[kratzer-1998]. This single concept projects onto
-five representations of temporal reference in the codebase:
-
-1. **Priorean operators** (PAST/PRES/FUT): `Core.Order.holds constraint`
-2. **Reichenbach frames** (S, P, R, E): `TensePronoun.toFrame`
-3. **Referential variables**: `TensePronoun.resolve`
-4. **Kaplan indexicals** (rigid to speech time): `mode =.indexical`
-5. **Attitude binding** (zero tense, [ogihara-1989]): `mode =.bound`
-
-Bridge theorems connecting the views (e.g.
-`Ogihara1989.referential_past_decomposition`) become trivial projections
-from this unified type.
-
-## Implementation notes
-
-The shared tense-pronoun substrate (`TensePronoun`, …) the `Tense/`
-and `Attitudes/` theories build on. A tense constraint is a `Finset Ordering`
-comparison category (`Core.Order`); the temporal primitives it imports
-(`Reichenbach`/`Relation`/`WorldTimeIndex`) stay in `Core/`.
-
+(indexical/anaphoric/bound). `TensePronoun` carries the four ingredients
+(variable index, comparison-cell constraint, `ReferentialMode`, evaluation
+index); the constraint-as-presupposition formulation
+(`fullPresupposition`) follows [heim-1994-comments] (commenting on
+[abusch-1997]) and [kratzer-1998]. The assignment infrastructure is the
+temporal instantiation of `Assignment`; all update laws are mathlib's
+`Function.update` lemmas.
 -/
-
-open Time
 
 open Core.Order
 open Intensional (ReferentialMode)
@@ -45,31 +25,11 @@ open Intensional (WorldTimeIndex)
 
 namespace Tense
 
-
-/-! ### SOTParameter -/
-
-/--
-Sequence of Tenses (SOT) parameter.
-
-Languages differ in how embedded tense interacts with matrix tense:
-- **SOT languages** (English): Embedded tense is relative to matrix
-- **Non-SOT languages** (Japanese): Embedded tense is absolute
--/
-inductive SOTParameter where
-  | relative  -- English: embedded tense relative to matrix
-  | absolute  -- Japanese: embedded tense absolute (to utterance time)
-  deriving DecidableEq, Repr
-
-
-/-! ### Temporal Variable Infrastructure ([partee-1973]) -/
-
-/-! Temporal assignment functions are the temporal instantiation of
-`Assignment` (`Assignment Time = ℕ → Time`). All update laws are mathlib's `Function.update` lemmas. -/
+/-! ### Temporal variable infrastructure ([partee-1973]) -/
 
 /-- Temporal assignment function: maps variable indices to times.
     The temporal analogue of H&K's `Assignment` (`ℕ → Entity`). -/
 abbrev TemporalAssignment (Time : Type*) := Assignment Time
-
 
 /-- Modified temporal assignment `g[n ↦ t]`. Specializes `Function.update`. -/
 abbrev updateTemporal {Time : Type*} (g : TemporalAssignment Time)
@@ -90,9 +50,8 @@ abbrev temporalLambdaAbs {Time α : Type*} (n : ℕ)
     TemporalAssignment Time → Time → α :=
   λ g t => body (Function.update g n t)
 
-/-- Project a situation assignment to a temporal assignment.
-    This is the formal bridge between situation semantics and tense semantics:
-    the temporal coordinate of each situation is extracted. -/
+/-- Project a situation assignment to a temporal assignment: the temporal
+    coordinate of each situation is extracted. -/
 def situationToTemporal {W Time : Type*}
     (g : ℕ → WorldTimeIndex W Time) : TemporalAssignment Time :=
   λ n => (g n).time
@@ -112,38 +71,12 @@ theorem zeroTense_receives_binder_time {Time : Type*}
     interpTense n (updateTemporal g n binderTime) = binderTime :=
   Function.update_self n binderTime g
 
-
-
-
-/-! ### SitProp (Prop-valued) -/
-
-/--
-Type of situation-level propositions (Prop-valued, for proof-level
-temporal reasoning).
-
-A temporal predicate takes a situation and returns a truth value.
-This is what tense operators modify. Re-exported by
-`Studies/VonStechow2009.lean` and
-`Semantics/Tense/Compositional.lean` for downstream use.
--/
-abbrev SitProp (W Time : Type*) := WorldTimeIndex W Time → Prop
-
-
 /-! ### TensePronoun ([abusch-1997]) -/
 
-/-- [abusch-1997]'s unified tense denotation.
-
-    A tense morpheme introduces a temporal variable with:
-    - A variable index in the temporal assignment
-    - A presupposed temporal constraint (past/present/future)
-    - A binding mode (indexical, anaphoric, or bound)
-
-    This unifies five views of tense:
-    - **Priorean**: `Core.Order.holds constraint` (temporal ordering)
-    - **Reichenbach**: `resolve g` = R, perspective time = P
-    - **Referential**: `resolve g = interpTense varIndex g`
-    - **Kaplan indexical**: `mode =.indexical` → rigid to speech time
-    - **Attitude binding**: `mode =.bound` → zero tense -/
+/-- [abusch-1997]'s unified tense denotation: a temporal variable with a
+    presupposed comparison-cell constraint and a [partee-1973] binding
+    mode. Indexical mode is rigid to speech time; bound mode is the zero
+    tense of attitude binding ([ogihara-1989]). -/
 structure TensePronoun where
   varIndex : ℕ
   constraint : Finset Ordering
@@ -157,25 +90,30 @@ structure TensePronoun where
 
 namespace TensePronoun
 
+variable {Time : Type*}
+
 /-- Resolve: look up the temporal variable. -/
-def resolve {Time : Type*} (tp : TensePronoun)
-    (g : TemporalAssignment Time) : Time :=
+def resolve (tp : TensePronoun) (g : TemporalAssignment Time) : Time :=
   interpTense tp.varIndex g
 
 /-- Presupposition: the constraint applied to the resolved time. -/
-def presupposition {Time : Type*} [LinearOrder Time]
+def presupposition [LinearOrder Time]
     (tp : TensePronoun) (resolvedTime perspectiveTime : Time) : Prop :=
   Core.Order.holds tp.constraint resolvedTime perspectiveTime
 
-/-- Construct the Reichenbach frame. R = g(varIndex), P = perspectiveTime. -/
-def toFrame {Time : Type*} (tp : TensePronoun)
-    (g : TemporalAssignment Time)
-    (speechTime perspectiveTime eventTime : Time) :
-    ReichenbachFrame Time where
-  speechTime := speechTime
-  perspectiveTime := perspectiveTime
-  referenceTime := tp.resolve g
-  eventTime := eventTime
+/-- Resolve the evaluation time from the assignment.
+    In root clauses (evalTimeIndex = 0, g(0) = speech time), this is speech time.
+    Under embedding, the attitude verb updates the assignment so that
+    g(evalTimeIndex) = matrix event time. -/
+def evalTime (tp : TensePronoun) (g : TemporalAssignment Time) : Time :=
+  interpTense tp.evalTimeIndex g
+
+/-- Full presupposition: the tense constraint checked against the resolved
+    evaluation time (not just a bare perspective time parameter).
+    This makes the eval time compositionally determined rather than stipulated. -/
+def fullPresupposition [LinearOrder Time]
+    (tp : TensePronoun) (g : TemporalAssignment Time) : Prop :=
+  Core.Order.holds tp.constraint (tp.resolve g) (tp.evalTime g)
 
 def isIndexical (tp : TensePronoun) : Prop := tp.mode = .indexical
 instance (tp : TensePronoun) : Decidable tp.isIndexical :=
@@ -185,245 +123,37 @@ def isBound (tp : TensePronoun) : Prop := tp.mode = .bound
 instance (tp : TensePronoun) : Decidable tp.isBound :=
   inferInstanceAs (Decidable (tp.mode = .bound))
 
-end TensePronoun
-
-
-/-! ### TensePronoun Bridge Theorems -/
-
-/-- Resolve the evaluation time from the assignment.
-    In root clauses (evalTimeIndex = 0, g(0) = speech time), this is speech time.
-    Under embedding, the attitude verb updates the assignment so that
-    g(evalTimeIndex) = matrix event time. -/
-def TensePronoun.evalTime {Time : Type*} (tp : TensePronoun)
-    (g : TemporalAssignment Time) : Time :=
-  interpTense tp.evalTimeIndex g
-
-/-- Full presupposition: the tense constraint checked against the resolved
-    evaluation time (not just a bare perspective time parameter).
-    This makes the eval time compositionally determined rather than stipulated. -/
-def TensePronoun.fullPresupposition {Time : Type*} [LinearOrder Time]
-    (tp : TensePronoun) (g : TemporalAssignment Time) : Prop :=
-  Core.Order.holds tp.constraint (tp.resolve g) (tp.evalTime g)
-
-
 /-- When evalTimeIndex = 0 and g(0) = speechTime, the evaluation time is speech time.
     This is the root-clause default: tense is checked against speech time. -/
-theorem evalTime_root_is_speech {Time : Type*}
-    (tp : TensePronoun) (g : TemporalAssignment Time) (speechTime : Time)
+theorem evalTime_root_is_speech (tp : TensePronoun)
+    (g : TemporalAssignment Time) (speechTime : Time)
     (hEval : tp.evalTimeIndex = 0) (hRoot : g 0 = speechTime) :
     tp.evalTime g = speechTime := by
-  simp [TensePronoun.evalTime, interpTense, hEval, hRoot]
+  simp [evalTime, interpTense, hEval, hRoot]
 
 /-- Updating the eval time index gives Von Stechow's perspective shift:
     the embedded tense is now checked against a different time (the matrix
     event time). This is how attitude verbs "transmit" their event time. -/
-theorem evalTime_shifts_under_embedding {Time : Type*}
-    (tp : TensePronoun) (g : TemporalAssignment Time) (matrixEventTime : Time) :
-    tp.evalTime (updateTemporal g tp.evalTimeIndex matrixEventTime) = matrixEventTime := by
-  show interpTense tp.evalTimeIndex
-    (updateTemporal g tp.evalTimeIndex matrixEventTime) = matrixEventTime
-  exact zeroTense_receives_binder_time g tp.evalTimeIndex matrixEventTime
-
+theorem evalTime_shifts_under_embedding (tp : TensePronoun)
+    (g : TemporalAssignment Time) (matrixEventTime : Time) :
+    tp.evalTime (updateTemporal g tp.evalTimeIndex matrixEventTime) = matrixEventTime :=
+  zeroTense_receives_binder_time g tp.evalTimeIndex matrixEventTime
 
 /-- Resolving a bound tense under binding yields the binder time. -/
-theorem TensePronoun.bound_resolve_eq_binder {Time : Type*}
-    (tp : TensePronoun) (g : TemporalAssignment Time) (binderTime : Time) :
+theorem bound_resolve_eq_binder (tp : TensePronoun)
+    (g : TemporalAssignment Time) (binderTime : Time) :
     tp.resolve (updateTemporal g tp.varIndex binderTime) = binderTime :=
   zeroTense_receives_binder_time g tp.varIndex binderTime
 
-/-- A present-constraint bound tense under binding gives R = P (simultaneous).
-    The `hPres` hypothesis constrains the theorem to present tenses; the
-    frame equality follows from `hBind` alone (R = resolve = perspTime). -/
-theorem TensePronoun.bound_present_simultaneous {Time : Type*}
-    (tp : TensePronoun) (g : TemporalAssignment Time)
-    (speechTime perspTime eventTime : Time)
-    (hBind : tp.resolve g = perspTime)
-    (_hPres : tp.constraint = present) :
-    (tp.toFrame g speechTime perspTime eventTime).isPresent := by
-  simp only [TensePronoun.toFrame, ReichenbachFrame.isPresent]
-  exact hBind
-
-
-/-- Double-access: present-under-past requires the complement
-    to hold at BOTH speech time (indexical rigidity) AND matrix event time
-    (attitude accessibility). -/
-def doubleAccess {Time : Type*} (p : Time → Prop)
-    (speechTime matrixEventTime : Time) : Prop :=
-  p speechTime ∧ p matrixEventTime
-
-
 /-- An indexical present tense presupposes resolution to speech time. -/
-theorem TensePronoun.indexical_present_at_speech {Time : Type*} [LinearOrder Time]
+theorem indexical_present_at_speech [LinearOrder Time]
     (tp : TensePronoun) (resolvedTime speechTime : Time)
     (hPres : tp.constraint = present)
     (hPresup : tp.presupposition resolvedTime speechTime) :
     resolvedTime = speechTime := by
-  simp only [TensePronoun.presupposition, hPres, present, Core.Order.holds_overlapping] at hPresup
+  simp only [presupposition, hPres, present, Core.Order.holds_overlapping] at hPresup
   exact hPresup
 
-
-/-! ### Overtness ([kratzer-1998]) -/
-
-/-- Phonological overtness of a referential expression ([kratzer-1998] §3).
-
-    Applies uniformly to pronouns and tenses: English has zero tense
-    under SOT (bound present surfaces as ∅); Japanese has zero pronouns
-    in subject position (locally bound by Agr). Persian has zero pronouns
-    but NOT zero tense (tense is in C, outside the local agreement domain).
-
-    The distribution of overt vs. zero is governed by locality of agreement:
-    a referential expression that is locally bound by an agreeing head
-    surfaces as zero. -/
-inductive Overtness where
-  | overt  -- Phonologically realized (English "he", German Preterit -te)
-  | zero   -- Phonologically empty (zero tense under SOT, pro-drop subjects)
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Kratzer's locality generalization (1998, formula 26):
-
-    A referential expression that is locally bound by an agreeing head
-    surfaces as zero. Free (indexical or anaphoric) expressions surface
-    as overt. This unifies:
-    - Reflexives = locally bound entity pronouns → zero/reduced
-    - Simultaneous tense = locally bound temporal pronoun → zero under SOT
-    - Japanese subject pro = locally bound by Agr → zero
-    - Persian pronouns = locally bound by Agr → zero, but tense is NOT
-      local to Agr (tense is in C) → overt -/
-def Overtness.fromBinding : ReferentialMode → (localDomain : Bool) → Overtness
-  | .bound, true => .zero
-  | _, _ => .overt
-
-/-- Free (indexical or anaphoric) expressions are always overt. -/
-theorem Overtness.free_always_overt (m : ReferentialMode) (l : Bool)
-    (hFree : m.isFree = true) :
-    Overtness.fromBinding m l = .overt := by
-  cases m <;> simp_all [Overtness.fromBinding, ReferentialMode.isFree]
-
-/-- Bound expressions in a local domain are zero. -/
-theorem Overtness.bound_local_is_zero :
-    Overtness.fromBinding .bound true = .zero := rfl
-
-/-- Bound expressions outside the local domain remain overt.
-    This is the Persian case: tense is bound but not in a local
-    agreement domain (tense is in C, Agr is in Infl). -/
-theorem Overtness.bound_nonlocal_is_overt :
-    Overtness.fromBinding .bound false = .overt := rfl
-
-
-/-! ### Temporal Tower Bridge ([abusch-1997] ↔ ContextTower) -/
-
-/-! The key bridge showing that [abusch-1997]'s De Bruijn temporal indexing is already
-tower-style depth access. `TensePronoun.evalTimeIndex` is a depth-relative index
-into the tower: when the temporal assignment encodes tower time coordinates
-(`g k = (tower.contextAt k).time`), `interpTense` agrees with `AccessPattern.resolve`.
-
-- `tensePronounAccessPattern` — converts `TensePronoun.evalTimeIndex` to an
-  `AccessPattern` with `depth :=.relative tp.evalTimeIndex`
-- `tense_tower_bridge` — when `g` encodes tower time coordinates, `interpTense`
-  agrees with `AccessPattern.resolve`
-- `tense_root_bridge` — root clause: `evalTimeIndex = 0` means origin time
-- `von_stechow_tower` — pushing a temporal shift = Von Stechow's perspective shift -/
-
-
-section TemporalBridge
-
-open Semantics.Context (KContext ContextTower ContextShift AccessPattern DepthSpec
-  temporalShift)
-
-variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
-
-/-- Convert a `TensePronoun`'s eval-time index to an `AccessPattern` that reads
-    the time coordinate at the corresponding tower depth.
-
-    `evalTimeIndex = 0` → origin (speech-act context time)
-    `evalTimeIndex = k` → depth k (the k-th embedding's time)
-
-    This makes explicit the observation that Abusch's variable indices ARE
-    tower depth indices for the temporal coordinate. -/
-def tensePronounAccessPattern (tp : TensePronoun) :
-    AccessPattern (KContext W E P T) T where
-  depth := .relative tp.evalTimeIndex
-  project := KContext.time
-
-/-- A temporal assignment that faithfully represents a tower: `g k` returns
-    the time coordinate at tower depth `k`. This is the bridge condition
-    connecting the variable-assignment world to the tower world. -/
-def towerFaithful (g : TemporalAssignment T) (t : ContextTower (KContext W E P T)) : Prop :=
-  ∀ (k : ℕ), g k = (t.contextAt k).time
-
-/-- When the temporal assignment encodes tower time coordinates,
-    `interpTense` at the eval-time index agrees with resolving
-    the `tensePronounAccessPattern` against the tower.
-
-    This is the central result: Abusch's De Bruijn indexing IS
-    tower-depth access for the temporal coordinate. -/
-theorem tense_tower_bridge
-    (tp : TensePronoun) (g : TemporalAssignment T)
-    (t : ContextTower (KContext W E P T))
-    (hFaithful : towerFaithful (W := W) (E := E) (P := P) g t) :
-    tp.evalTime g = (tensePronounAccessPattern (W := W) (E := E) (P := P) tp).resolve t := by
-  simp only [TensePronoun.evalTime, interpTense,
-             tensePronounAccessPattern, AccessPattern.resolve,
-             DepthSpec.relative_resolve]
-  exact hFaithful tp.evalTimeIndex
-
-/-- In a root tower (no shifts), `evalTimeIndex = 0` accesses the origin time.
-    This is the root-clause default: tense is checked against speech time.
-
-    Combined with `evalTime_root_is_speech`, this shows that root-clause
-    temporal evaluation is origin access — exactly Kaplan's thesis for time. -/
-theorem tense_root_bridge
-    (tp : TensePronoun) (c : KContext W E P T)
-    (hEval : tp.evalTimeIndex = 0)
-    (g : TemporalAssignment T)
-    (hFaithful : towerFaithful (W := W) (E := E) (P := P) g (ContextTower.root c)) :
-    tp.evalTime g = c.time := by
-  have h1 := hFaithful 0
-  simp only [ContextTower.root_contextAt] at h1
-  simp only [TensePronoun.evalTime, interpTense, hEval]
-  exact h1
-
-/-- The access pattern for a root-clause tense pronoun (evalTimeIndex = 0)
-    resolves to depth 0, which is the origin. -/
-theorem tensePronounAccessPattern_root_resolves
-    (tp : TensePronoun) (hEval : tp.evalTimeIndex = 0)
-    (c : KContext W E P T) :
-    (tensePronounAccessPattern (W := W) (E := E) (P := P) tp).resolve
-      (ContextTower.root c) = c.time := by
-  simp only [tensePronounAccessPattern, AccessPattern.resolve, hEval,
-             DepthSpec.relative_resolve, ContextTower.root_contextAt]
-
-/-- [von-stechow-2009]'s perspective shift — the attitude verb transmits
-    its event time to the embedded clause — corresponds to pushing a
-    `temporalShift` onto the tower.
-
-    Concretely: the updated assignment at the tower depth yields the new time. -/
-theorem von_stechow_tower
-    (g : TemporalAssignment T) (t : ContextTower (KContext W E P T))
-    (newTime : T) :
-    updateTemporal g t.depth newTime t.depth = newTime :=
-  Function.update_self t.depth newTime g
-
-/-- Under faithful encoding, layers below the push point are preserved. -/
-theorem von_stechow_tower_preserves
-    (g : TemporalAssignment T) (t : ContextTower (KContext W E P T))
-    (newTime : T)
-    (hFaithful : towerFaithful g t)
-    (k : ℕ) (hk : k < t.depth) :
-    updateTemporal g t.depth newTime k = (t.contextAt k).time := by
-  simp only [updateTemporal]
-  rw [Function.update_of_ne (Nat.ne_of_lt hk)]
-  exact hFaithful k
-
-/-- Pushing a temporal shift assigns `newTime` to the new depth in
-    the extended tower, mirroring `von_stechow_tower` on the assignment side. -/
-theorem von_stechow_tower_innermost
-    (t : ContextTower (KContext W E P T)) (newTime : T) :
-    (t.push (temporalShift newTime)).innermost.time = newTime := by
-  rw [ContextTower.push_innermost]
-  simp only [temporalShift]
-
-end TemporalBridge
-
+end TensePronoun
 
 end Tense

@@ -22,6 +22,7 @@ divergence from [ogihara-1996] live in `Studies/Kratzer1998.lean`.
 namespace Tense.Decomposition
 
 open Time Tense
+open Intensional (Overtness)
 
 /-! ### SOT deletion -/
 
