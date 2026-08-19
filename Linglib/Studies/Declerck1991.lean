@@ -3,10 +3,8 @@ import Linglib.Semantics.Aspect.Boundedness
 import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Semantics.Tense.Embedding
-import Linglib.Semantics.Tense.Domain
-import Linglib.Semantics.Tense.Orientation
 import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Semantics.Tense.System
+import Mathlib.Order.Interval.Basic
 import Linglib.Data.Examples.Declerck1991
 
 /-!
@@ -24,8 +22,9 @@ companion volume, [declerck-1991-grammar].
 
 - `TOChain.DeclercianSchema`: a tense as a chain of TOs plus a time-sphere
 - `TOChain.preterit` … `TOChain.conditionalPerfect`: the eight English tenses
-- `TOChain.DeclercianSchema.toFrame`, `toDomain`, `declercianToTower`:
-  projections to the shared Reichenbach, `Domain`, and `ContextTower` substrates
+- `TOChain.DeclercianSchema.toFrame`, `declercianToTower`: projections to
+  the shared Reichenbach and `ContextTower` substrates; `toDomain` exhibits
+  a schema as the book's temporal-domain object (`Domain`)
 - `TOChain.DeclercianSchema.zoneOf`: project-side zone classifier
 - `putiDefault`: Declerck's principle of unmarked temporal interpretation
 -/
@@ -37,9 +36,75 @@ namespace Declerck1991
 open Tense (embeddedFrame)
 open Data.Examples (LinguisticExample)
 
-namespace TOChain
+/-! ### Orientation roles, times of orientation, and domains
 
-open Tense (Domain NamedTO Orientation)
+The role vocabulary and the temporal-domain object of the book, local to
+this study (Declerck is their only consumer): an `Orientation` labels a
+time of orientation (Klein's TU/TT/TSit, Reichenbach's S/R/E,
+[kiparsky-2002]'s P, Declerck's t₀/TO₁/TO₂/…), a `TO` is a
+`NonemptyInterval` (degenerate = point times), and a `Domain` is
+Declerck's temporal domain — a central (binding) TO with its sub-TOs,
+Allen relations computed from the order rather than stored. -/
+
+/-- The four-role vocabulary of orientation times (utterance = TU/S/t₀,
+    topic = TT/R, situation = TSit/E/TS, perspective = [kiparsky-2002]'s
+    P ≈ Declerck's TO₁), plus `sub n` for chained intermediate TOs
+    (Declerck's TO₂ = `sub 0`, TO₃ = `sub 1`, …). -/
+inductive Orientation where
+  /-- Utterance time (TU / S / t₀). -/
+  | utterance
+  /-- Topic time (TT / R). -/
+  | topic
+  /-- Situation time (TSit / E / TS / τ(e)). -/
+  | situation
+  /-- Perspective time (P); Declerck's TO₁, the binding TO of a domain. -/
+  | perspective
+  /-- An intermediate TO in a chain, counting outward from `perspective`. -/
+  | sub (n : Nat)
+  deriving DecidableEq, Repr, Inhabited
+
+/-- A **time of orientation** (TO): a temporal anchor, realized as a
+    `NonemptyInterval` so point times (degenerate intervals) and extended
+    times-of-situation share one type. -/
+abbrev TO (Time : Type*) [LinearOrder Time] := NonemptyInterval Time
+
+/-- Construct a point TO from a single time. -/
+abbrev TO.pure {Time : Type*} [LinearOrder Time] (t : Time) : TO Time :=
+  NonemptyInterval.pure t
+
+/-- A TO with an identifying role label. -/
+structure NamedTO (Time : Type*) [LinearOrder Time] where
+  /-- The role label. -/
+  name : Orientation
+  /-- The TO itself. -/
+  span : TO Time
+
+/-- Build a point NamedTO from a label and a single time. -/
+def NamedTO.ofPoint {Time : Type*} [LinearOrder Time]
+    (name : Orientation) (t : Time) : NamedTO Time where
+  name := name
+  span := TO.pure t
+
+/-- A **temporal domain**: a central (binding) TO together with its
+    sub-TOs. Allen relations between TOs are computed on demand from the
+    `LinearOrder`; no relation table is stored. -/
+structure Domain (Time : Type*) [LinearOrder Time] where
+  /-- The central TO — the binding TO of the domain. -/
+  central : NamedTO Time
+  /-- The other TOs in the domain. -/
+  subTOs : List (NamedTO Time)
+
+/-- All TOs in the domain (central first). -/
+def Domain.all {Time : Type*} [LinearOrder Time] (d : Domain Time) :
+    List (NamedTO Time) :=
+  d.central :: d.subTOs
+
+/-- The role label of every TO in the domain. -/
+def Domain.labels {Time : Type*} [LinearOrder Time] (d : Domain Time) :
+    List Orientation :=
+  d.all.map (·.name)
+
+namespace TOChain
 
 /-! ### Time-spheres -/
 
@@ -60,7 +125,7 @@ inductive TimeSphere where
 
 /-! ### TO-chain architecture -/
 
-/-- A single link in a TO chain: a `Tense.Orientation`-labelled
+/-- A single link in a TO chain: an `Orientation`-labelled
 time of orientation related to the next TO inward by a temporal relation.
 
 Example: in the past perfect schema `TS simul TO_sit before TO₂ before TO₁`,
@@ -424,22 +489,20 @@ theorem conditionalPerfect_tower_depth (t0 to2 to3 toSit : Time) {E P : Type*}
 
 end TowerBridge
 
-/-! ### Domain bridge: TO-chain as `Tense.Domain`
+/-! ### Domain bridge: TO-chain as a temporal domain
 
-Re-express `DeclercianSchema` via the framework-agnostic
-`Tense.Domain` substrate (central TO + list of sub-TOs, with
-Allen relations computed on demand from the underlying linear order).
-Additive: the schema structure and named-tense constructors stay
-unchanged; domain-level tooling can work uniformly with
-`s.toDomain.relatedByName`, while Reichenbach-projecting code continues
-to use `s.toFrame`. -/
+`DeclercianSchema.toDomain` exhibits each schema as the book's
+temporal-domain object: the binding TO (t₀) with TO₁ and the chain links
+as sub-TOs. Additive: the schema structure and named-tense constructors
+stay unchanged; Reichenbach-projecting code continues to use
+`s.toFrame`. -/
 
 section DomainBridge
 
 variable {Time : Type*} [LinearOrder Time]
 
-/-- The schema as a `Tense.Domain` over the universal
-`Orientation` role vocabulary: central = `.utterance` (t₀), sub-TOs =
+/-- The schema as a temporal `Domain` over the `Orientation` role
+vocabulary: central = `.utterance` (t₀), sub-TOs =
 `.perspective` (TO₁) followed by every chain link as a point interval.
 
 The Allen relations between any pair of TOs are **computed** from the
@@ -448,7 +511,7 @@ is stored. The chain's `relation` field encodes the *intended* Declercian
 temporal relation but is not consulted here — its job is to constrain
 admissible time assignments at the call site. -/
 def DeclercianSchema.toDomain (s : DeclercianSchema Time) :
-    Domain Time Orientation where
+    Domain Time where
   central := NamedTO.ofPoint .utterance s.t0
   subTOs := NamedTO.ofPoint .perspective s.to1 ::
             s.chain.map (λ link => NamedTO.ofPoint link.name link.time)
@@ -561,28 +624,6 @@ theorem preterit_presentPerfect_differ_zone (t0 toSit : Time) :
   nofun
 
 end ZoneClassification
-
-/-! ### `TenseSystem` and `AspectSystem` instances
-
-The aspect instance collapses event and reference roles both to
-`.situation` — Declerck's universal TS = TO_sit principle means E = R
-always holds, so "event precedes reference" can never hold and the
-perfect lives in the chain structure instead. Exactly Declerck's claim. -/
-
-instance declercianSchema_tenseSystem {Time : Type*} [LinearOrder Time] :
-    TenseSystem (DeclercianSchema Time) Time Orientation where
-  toDomain := DeclercianSchema.toDomain
-  anchor := .perspective
-  located := .situation
-  anchor_mem := fun s => by
-    rw [DeclercianSchema.toDomain_labels]
-    exact List.mem_cons_of_mem _ List.mem_cons_self
-
-instance declercianSchema_aspectSystem {Time : Type*} [LinearOrder Time] :
-    AspectSystem (DeclercianSchema Time) Time Orientation where
-  toDomain := DeclercianSchema.toDomain
-  event := .situation
-  reference := .situation
 
 end TOChain
 
