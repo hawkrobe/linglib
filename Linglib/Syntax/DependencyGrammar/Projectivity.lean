@@ -24,9 +24,9 @@ distinct: `planarNotProjective` is planar but not projective, and
 
 ## Main declarations
 
-* `Graph.yield`, `Alternate` — the positions a node dominates, and the
+* `Graph.dominated`, `Alternate` — the positions a node dominates, and the
   alternation `a < c < b < d` that both binary constraints forbid.
-* `Graph.IsProjective` — the yields are intervals (Definition 3).
+* `Graph.IsProjective` — those positions form an interval (Definition 3).
 * `Graph.IsPlanar` — no two links cross (Definition 4), the Link Grammar
   notion, traced there to [melcuk-1988].
 * `Graph.Interleave`, `Graph.IsWellNested` — Definition 8.
@@ -53,19 +53,19 @@ variable {n : ℕ} (g : Graph n)
 
 /-! ### The binary constraints: projectivity, planarity, well-nestedness -/
 
-/-- The yield of `v` is the set of positions `v` dominates. `projection`
-    lists the same positions in ascending order. -/
-def Graph.yield (v : Fin n) : Set (Fin n) := {x | Dominates g v x}
+/-- The positions `v` dominates, `v` itself included — the *yield* of `v` in
+    the source terminology. `projection` lists them in ascending order. -/
+def Graph.dominated (v : Fin n) : Set (Fin n) := {x | Dominates g v x}
 
-@[simp] theorem Graph.mem_yield {g : Graph n} {v x : Fin n} :
-    x ∈ g.yield v ↔ Dominates g v x := Iff.rfl
+@[simp] theorem Graph.mem_dominated {g : Graph n} {v x : Fin n} :
+    x ∈ g.dominated v ↔ Dominates g v x := Iff.rfl
 
-instance (v : Fin n) : DecidablePred (· ∈ g.yield v) :=
+instance (v : Fin n) : DecidablePred (· ∈ g.dominated v) :=
   λ x => inferInstanceAs (Decidable (Dominates g v x))
 
-/-- A dependency graph is projective if the yield of every position is
-    order-convex. -/
-def Graph.IsProjective : Prop := ∀ v, (g.yield v).OrdConnected
+/-- A dependency graph is projective if the positions dominated by any one
+    position are order-convex. -/
+def Graph.IsProjective : Prop := ∀ v, (g.dominated v).OrdConnected
 
 /-- Positions `a b c d` alternate if `a < c < b < d`, so that the pairs
     `{a, b}` and `{c, d}` strictly interleave. -/
@@ -82,7 +82,7 @@ def Graph.IsPlanar : Prop :=
 /-- The subtrees at `v` and `w` interleave if each contributes two positions
     and the two pairs alternate. -/
 def Graph.Interleave (v w : Fin n) : Prop :=
-  ∃ a ∈ g.yield v, ∃ b ∈ g.yield v, ∃ c ∈ g.yield w, ∃ d ∈ g.yield w,
+  ∃ a ∈ g.dominated v, ∃ b ∈ g.dominated v, ∃ c ∈ g.dominated w, ∃ d ∈ g.dominated w,
     Alternate a b c d
 
 /-- A dependency graph is well-nested if interleaved subtrees are never
@@ -94,7 +94,7 @@ theorem Graph.isProjective_iff :
     g.IsProjective ↔ ∀ v x y, Dominates g v x → Dominates g v y →
       ∀ z, x ≤ z → z ≤ y → Dominates g v z := by
   simp only [IsProjective, Set.ordConnected_def, Set.subset_def, Set.mem_Icc,
-    Graph.mem_yield, and_imp]
+    Graph.mem_dominated, and_imp]
   exact ⟨λ h v x y hx hy z h1 h2 => h v hx hy z h1 h2,
          λ h v x hx y hy z h1 h2 => h v x y hx hy z h1 h2⟩
 
@@ -127,30 +127,35 @@ def Graph.gapDegree : Nat := Finset.univ.sup g.gapDegreeAt
 
 variable {g}
 
+/-- In a projective graph the head of an arc dominates every position the arc
+    spans, since the head dominates both endpoints and is order-convex. -/
+theorem Graph.IsProjective.dominates_of_mem_uIcc (hP : g.IsProjective)
+    {p t x : Fin n} (h : g.Adj p t) (hx : x ∈ Set.uIcc p t) : Dominates g p x :=
+  (hP p).uIcc_subset .refl (.single h) hx
+
 /-- Every projective tree is planar. -/
 theorem Graph.IsProjective.isPlanar (hT : g.IsTree) (hP : g.IsProjective) :
     g.IsPlanar := by
   rintro a b c d hL1 hL2 ⟨hac, hcb, hbd⟩
+  -- The head of an arc dominates the head of any arc it spans an endpoint of.
+  have step : ∀ {p t q u x : Fin n}, g.Adj p t → g.Adj q u →
+      x ∈ Set.uIcc p t → (x = q ∨ x = u) → p ≠ x → Dominates g p q := by
+    rintro p t q u x h1 h2 hx (rfl | rfl) hne
+    exacts [hP.dominates_of_mem_uIcc h1 hx,
+            Dominates.to_head hT (hP.dominates_of_mem_uIcc h1 hx) hne h2]
+  have hab : c ∈ Set.uIcc a b := Set.mem_uIcc.mpr (.inl ⟨hac.le, hcb.le⟩)
+  have hba : c ∈ Set.uIcc b a := Set.mem_uIcc.mpr (.inr ⟨hac.le, hcb.le⟩)
+  have hcd : b ∈ Set.uIcc c d := Set.mem_uIcc.mpr (.inl ⟨hcb.le, hbd.le⟩)
+  have hdc : b ∈ Set.uIcc d c := Set.mem_uIcc.mpr (.inr ⟨hcb.le, hbd.le⟩)
   rcases hL1 with h1 | h1 <;> rcases hL2 with h2 | h2
-  · -- heads a and c
-    have hac' : Dominates g a c := (hP a).out .refl (.single h1) ⟨hac.le, hcb.le⟩
-    have hcb' : Dominates g c b := (hP c).out .refl (.single h2) ⟨hcb.le, hbd.le⟩
-    exact hac.ne (Dominates.antisymm hT.acyclic hac'
-      (Dominates.to_head hT hcb' hcb.ne h1))
-  · -- heads a and d
-    have hac' : Dominates g a c := (hP a).out .refl (.single h1) ⟨hac.le, hcb.le⟩
-    have hdb' : Dominates g d b := (hP d).out (.single h2) .refl ⟨hcb.le, hbd.le⟩
-    exact ((hac.trans hcb).trans hbd).ne (Dominates.antisymm hT.acyclic
-      (Dominates.to_head hT hac' hac.ne h2) (Dominates.to_head hT hdb' hbd.ne' h1))
-  · -- heads b and c
-    have hbc' : Dominates g b c := (hP b).out (.single h1) .refl ⟨hac.le, hcb.le⟩
-    have hcb' : Dominates g c b := (hP c).out .refl (.single h2) ⟨hcb.le, hbd.le⟩
-    exact hcb.ne (Dominates.antisymm hT.acyclic hcb' hbc')
-  · -- heads b and d
-    have hbc' : Dominates g b c := (hP b).out (.single h1) .refl ⟨hac.le, hcb.le⟩
-    have hdb' : Dominates g d b := (hP d).out (.single h2) .refl ⟨hcb.le, hbd.le⟩
-    exact hbd.ne (Dominates.antisymm hT.acyclic
-      (Dominates.to_head hT hbc' hcb.ne' h2) hdb')
+  · exact hac.ne (Dominates.antisymm hT.acyclic
+      (step h1 h2 hab (.inl rfl) hac.ne) (step h2 h1 hcd (.inr rfl) hcb.ne))
+  · exact ((hac.trans hcb).trans hbd).ne (Dominates.antisymm hT.acyclic
+      (step h1 h2 hab (.inr rfl) hac.ne) (step h2 h1 hdc (.inr rfl) hbd.ne'))
+  · exact hcb.ne' (Dominates.antisymm hT.acyclic
+      (step h1 h2 hba (.inl rfl) hcb.ne') (step h2 h1 hcd (.inl rfl) hcb.ne))
+  · exact hbd.ne (Dominates.antisymm hT.acyclic
+      (step h1 h2 hba (.inr rfl) hcb.ne') (step h2 h1 hdc (.inl rfl) hbd.ne'))
 
 /-- Every projective tree is well-nested. -/
 theorem Graph.IsProjective.isWellNested (hT : g.IsTree) (hP : g.IsProjective) :
@@ -183,9 +188,8 @@ def germanNested : Graph 7 :=
     [(0, 6, .dep), (6, 1, .nsubj), (6, 5, .xcomp),
      (5, 2, .nsubj), (5, 4, .xcomp), (4, 3, .nsubj)]
 
-/-- Planar but **not** projective — no crossing links, yet the yield of
-    position 0 is not an interval. A single-rooted adaptation of
-    [kuhlmann-nivre-2006] Figure 2a (whose witness is a forest). -/
+/-- Planar but not projective: no crossing links, yet the positions
+    dominated by 0 do not form an interval. -/
 def planarNotProjective : Graph 4 :=
   .ofArcs
     [Word.mk' "w0" .X, Word.mk' "w1" .X, Word.mk' "w2" .X, Word.mk' "w3" .X]
