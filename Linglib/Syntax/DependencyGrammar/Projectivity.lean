@@ -11,26 +11,38 @@ import Mathlib.Data.List.Sort
 /-!
 # Projectivity and its relaxations
 
-[kuhlmann-nivre-2006]'s hierarchy of structural constraints between
-projective and unrestricted dependency structures: projectivity as
-order-convexity of dominance cones (Definition 3), planarity (Definition 4 —
-the Link Grammar notion, traced there to [melcuk-1988]), gap degree
-(Definitions 6–7; gap degree + 1 is [kuhlmann-2013]'s block-degree, the
-LCFRS fan-out), and well-nestedness (Definition 8).
+A dependency graph is projective when the positions each node dominates form
+a contiguous stretch of the sentence. Natural language is not always
+projective, so the literature weakens the constraint in several directions.
+Planarity bans crossing arcs, well-nestedness bans interleaved subtrees, and
+gap degree counts the discontinuities a single node may show.
+
+In this file we define those constraints and prove the inclusions among them
+that hold on trees. The fixtures witness that the constraints are genuinely
+distinct: `planarNotProjective` is planar but not projective, and
+`dutchCrossSerial` is well-nested but not planar.
 
 ## Main declarations
 
 * `Graph.yield`, `Alternate` — the positions a node dominates, and the
   alternation `a < c < b < d` that both binary constraints forbid.
 * `Graph.IsProjective` — the yields are intervals (Definition 3).
-* `Graph.IsPlanar` — no two links cross (Definition 4).
+* `Graph.IsPlanar` — no two links cross (Definition 4), the Link Grammar
+  notion, traced there to [melcuk-1988].
 * `Graph.Interleave`, `Graph.IsWellNested` — Definition 8.
-* `Graph.gapDegree` — Definitions 6–7.
+* `Graph.gapDegree` — Definitions 6–7. Gap degree + 1 is the block-degree,
+  the fan-out of the LCFRS rule extracted for that node.
 * `Graph.IsProjective.isPlanar`, `Graph.IsProjective.isWellNested` — the
-  §3.5 inclusions from projectivity, on trees. Strictness is witnessed by
-  `decide` on `planarNotProjective` (a single-rooted adaptation of Figure 2a,
-  whose own witness is a forest) and on `dutchCrossSerial` (well-nested but
-  not planar), [kuhlmann-2013] Figure 1's cross-serial half.
+  inclusions from projectivity.
+
+## References
+
+[kuhlmann-nivre-2006] — Mildly non-projective dependency structures, source
+of the Definition numbers cited above and, in Figure 2a, of the forest that
+`planarNotProjective` adapts to a single root
+[kuhlmann-2013] — Mildly non-projective dependency grammar, whose Figure 1
+is the `dutchCrossSerial`/`germanNested` pair
+[melcuk-1988] — Dependency syntax: theory and practice
 -/
 
 namespace DependencyGrammar
