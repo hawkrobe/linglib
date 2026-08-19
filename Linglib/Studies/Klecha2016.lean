@@ -852,7 +852,7 @@ theorem klecha_covers_hope_future_oriented_reading
 -- ════════════════════════════════════════════════════════════════
 
 /-- **Substrate bridge**: [klecha-2016]'s actual-history base
-    `actualHistoryBase history matrix.toSituation` IS the substrate's
+    `actualHistoryBase history matrix.toWorldTimeIndex` IS the substrate's
     `TemporalDeReReading.metaphysicalAlternatives` (defined in
     `Semantics/Tense/DeRe.lean`) for a `TemporalDeReReading`
     whose holderContext projects to `matrix`. The substrate's
@@ -866,7 +866,7 @@ theorem klecha_actualHistoryBase_eq_substrate_metaphysicalAlternatives
     let dr : Tense.DeRe.TemporalDeReReading W Unit Unit ℤ :=
       ⟨concept, matrix⟩
     dr.metaphysicalAlternatives history =
-    actualHistoryBase history matrix.toSituation := rfl
+    actualHistoryBase history matrix.toWorldTimeIndex := rfl
 
 
 end Klecha2016

@@ -1,4 +1,5 @@
 import Linglib.Core.Data.Part
+import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Core.Order.PartialUnify
 import Mathlib.Data.PFun
 import Mathlib.Logic.Function.Basic
@@ -273,3 +274,13 @@ def assignmentEquiv (V M : Type*) : Possibility Unit V M ≃ (V → M) where
 end Possibility
 
 end DynamicSemantics
+
+/-- The point of index-dref dynamic semantics (`Tense/Dynamic.lean`,
+`Mood/Dynamic.lean`): a `Possibility` whose world coordinate is the
+current evaluation index and whose `ℕ`-registered drefs are also
+world-time indices. Contexts are plain level-0 states
+(`Set (Intensional.WorldTimeIndex.Possibility W Time)`), so the update
+spine of `Semantics/Dynamic/Update.lean` applies directly. -/
+abbrev Intensional.WorldTimeIndex.Possibility (W Time : Type*) :=
+  DynamicSemantics.Possibility (Intensional.WorldTimeIndex W Time) ℕ
+    (Intensional.WorldTimeIndex W Time)
