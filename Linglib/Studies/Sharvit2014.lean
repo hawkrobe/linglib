@@ -40,6 +40,49 @@ open Tense (LexicalType)
 open Tense.TemporalConnectives.Before (triggersIPFInBefore)
 open Tense.Decomposition (sotDeletionApplicable)
 
+/-! ### The pronominal past ((30a))
+
+The pronominal-past lookup and its grounding in the codebase's canonical
+tense pronoun: `pronominalLookup` is the presupposition-gated referent of a
+past-constraint `TensePronoun`, so [sharvit-2014]'s (30a) and
+[partee-1973]'s tense-pronoun carrier coincide
+(`pronominalLookup_eq_some_iff_tensePronoun`). -/
+
+/-- [sharvit-2014] (30a): pronominal-past lookup `[[past_{j,k}]]^g`. Indices `j`
+    (evaluation), `k` (referential); defined iff `g k < g j`, then `g k`. Uses
+    `Option` (not `Part`/`PFun`) as the domain is decidable. -/
+def pronominalLookup {Time : Type*} [LT Time] [DecidableLT Time]
+    (g : ℕ → Time) (j k : ℕ) : Option Time :=
+  if g k < g j then some (g k) else none
+
+/-- The pronominal past denotes the referential index when defined. -/
+@[simp]
+theorem pronominalLookup_eq_some_iff {Time : Type*} [LT Time]
+    [DecidableLT Time] (g : ℕ → Time) (j k : ℕ) (t : Time) :
+    pronominalLookup g j k = some t ↔ g k < g j ∧ g k = t := by
+  unfold pronominalLookup; split <;> simp_all
+
+/-- The pronominal past is undefined exactly when the constraint fails. -/
+@[simp]
+theorem pronominalLookup_eq_none_iff {Time : Type*} [LT Time]
+    [DecidableLT Time] (g : ℕ → Time) (j k : ℕ) :
+    pronominalLookup g j k = none ↔ ¬ g k < g j := by
+  unfold pronominalLookup; split <;> simp_all
+
+/-- (30a) coincides with the codebase's [partee-1973] carrier: the lookup is
+    defined with value `t` iff the past-constraint `TensePronoun` with
+    referential index `k` and evaluation index `j` satisfies its presupposition
+    and resolves to `t` — for any binding `mode`. -/
+theorem pronominalLookup_eq_some_iff_tensePronoun {Time : Type*} [LinearOrder Time]
+    (g : Tense.TemporalAssignment Time) (j k : ℕ) (t : Time)
+    (mode : Intensional.ReferentialMode) :
+    pronominalLookup g j k = some t ↔
+      (Tense.TensePronoun.mk k Tense.past mode j).fullPresupposition g ∧
+      (Tense.TensePronoun.mk k Tense.past mode j).resolve g = t := by
+  simp only [Tense.TensePronoun.fullPresupposition, Tense.TensePronoun.resolve,
+    Tense.TensePronoun.evalTime, Tense.interpTense, Tense.past, Core.Order.holds_before]
+  exact pronominalLookup_eq_some_iff g j k t
+
 /-! ### The parameter space ((98)) -/
 
 /-- The present tense's shiftability, three-valued per [sharvit-2014] (71)/(78), pp. 288-291:
