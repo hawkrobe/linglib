@@ -1,4 +1,5 @@
 import Linglib.Syntax.Minimalist.Theta.Basic
+import Linglib.Syntax.Minimalist.Theta.Realize
 
 /-!
 # Marcolli & Larson (2025): Theta theory, operads, and coloring
@@ -21,7 +22,7 @@ addition is the *se* marking.
 
 namespace MarcolliLarson2025
 
-open Minimalist.Theta
+open Minimalist Minimalist.Theta
 
 /-- The example's internal theta hierarchy: theme outranks goal, per the
     ditransitive grid the paper builds for *give*. -/
@@ -155,5 +156,44 @@ theorem parasiticGen_not_derivable :
   have := derives_soleReceiver h hroot hmove _ hd
     [.down .experiencer, .down .agent] rfl
   simp [receiverCount, PolarizedRole.down] at this
+
+/-! ### Realization: from colored trees to syntactic objects -/
+
+/-- An adjunct attaches to the *give* comb by colored Merge, staying
+    derivable: the closure half of the paper's build-by-coloring
+    equivalence, at the example. -/
+theorem giveComb_adjunct_derivable :
+    (system (L := Unit) giveHier).Derives .nontheta
+      (.node .nontheta giveComb (.leaf .nontheta)) :=
+  derives_node_of_thetaLocal ⟨[], rfl, .inl (.adjunct [])⟩
+    giveComb_derivable (.unit (by simp [system, Color.IsTerminal]))
+
+variable (brian gave theBook toMary : LIToken)
+
+/-- The lexically anchored *give* comb. -/
+def anchoredGiveComb : Bud.Tree (Color LIToken) :=
+  .node .nontheta (.leaf (.lex brian [.down .agent]))
+    (.node (.free (upGrid [.agent])) (.leaf (.lex theBook [.down .theme]))
+      (.node (.free (upGrid [.agent, .theme]))
+        (.leaf (.lex toMary [.down .goal]))
+        (.leaf (.lex gave (upGrid [.agent, .theme, .goal])))))
+
+/-- Pruning the colors realizes the anchored comb as the bare Merge
+    structure of *Brian gave the book to Mary*. -/
+theorem realize_anchoredGiveComb :
+    realize (anchoredGiveComb brian gave theBook toMary) =
+      some ((SyntacticObject.lexLeaf brian).node
+        ((SyntacticObject.lexLeaf theBook).node
+          ((SyntacticObject.lexLeaf toMary).node
+            (SyntacticObject.lexLeaf gave)))) := rfl
+
+/-- A movement landing site above the anchored comb realizes to the same
+    syntactic object: the empty-tree marker exists only for the
+    coloring. -/
+theorem realize_anchored_move_landing :
+    realize (.node .nontheta (anchoredGiveComb brian gave theBook toMary)
+        (.leaf .emptyTree)) =
+      realize (anchoredGiveComb brian gave theBook toMary) :=
+  realize_node_emptyTree_right
 
 end MarcolliLarson2025
