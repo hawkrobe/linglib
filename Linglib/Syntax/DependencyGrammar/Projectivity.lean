@@ -18,9 +18,8 @@ Planarity bans crossing arcs, well-nestedness bans interleaved subtrees, and
 gap degree counts the discontinuities a single node may show.
 
 In this file we define those constraints and prove the inclusions among them
-that hold on trees. The fixtures witness that the constraints are genuinely
-distinct: `planarNotProjective` is planar but not projective, and
-`dutchCrossSerial` is well-nested but not planar.
+that hold on trees. The witnesses separating the constraints are the source
+papers' own figures, and live in their study files.
 
 ## Main declarations
 
@@ -38,16 +37,12 @@ distinct: `planarNotProjective` is planar but not projective, and
 ## References
 
 [kuhlmann-nivre-2006] — Mildly non-projective dependency structures, source
-of the Definition numbers cited above and, in Figure 2a, of the forest that
-`planarNotProjective` adapts to a single root
-[kuhlmann-2013] — Mildly non-projective dependency grammar, whose Figure 1
-is the `dutchCrossSerial`/`germanNested` pair
+of the Definition numbers cited above
+[kuhlmann-2013] — Mildly non-projective dependency grammar
 [melcuk-1988] — Dependency syntax: theory and practice
 -/
 
 namespace DependencyGrammar
-
-open Morphology (Word)
 
 variable {n : ℕ} (g : Graph n)
 
@@ -162,58 +157,5 @@ theorem Graph.IsProjective.isWellNested (hT : g.IsTree) (hP : g.IsProjective) :
     g.IsWellNested := by
   rintro v w ⟨a, hva, b, hvb, c, hwc, -, -, hac, hcb, -⟩
   exact Dominates.comparable hT ((hP v).out hva hvb ⟨hac.le, hcb.le⟩) hwc
-
-/-! ### Canonical fixtures
-
-[kuhlmann-2013] Figure 1: Dutch cross-serial dependencies against German
-nested infinitives — same dependencies, opposite verb-cluster orders. -/
-
-/-- Dutch cross-serial: "dat Jan Piet Marie zag helpen lezen". -/
-def dutchCrossSerial : Graph 7 :=
-  .ofArcs
-    [Word.mk' "dat" .SCONJ, Word.mk' "Jan" .PROPN, Word.mk' "Piet" .PROPN,
-     Word.mk' "Marie" .PROPN, Word.mk' "zag" .VERB, Word.mk' "helpen" .VERB,
-     Word.mk' "lezen" .VERB]
-    0
-    [(0, 4, .dep), (4, 1, .nsubj), (4, 5, .xcomp),
-     (5, 2, .nsubj), (5, 6, .xcomp), (6, 3, .nsubj)]
-
-/-- German nested: "dass Jan Piet Marie lesen helfen sah". -/
-def germanNested : Graph 7 :=
-  .ofArcs
-    [Word.mk' "dass" .SCONJ, Word.mk' "Jan" .PROPN, Word.mk' "Piet" .PROPN,
-     Word.mk' "Marie" .PROPN, Word.mk' "lesen" .VERB, Word.mk' "helfen" .VERB,
-     Word.mk' "sah" .VERB]
-    0
-    [(0, 6, .dep), (6, 1, .nsubj), (6, 5, .xcomp),
-     (5, 2, .nsubj), (5, 4, .xcomp), (4, 3, .nsubj)]
-
-/-- Planar but not projective: no crossing links, yet the positions
-    dominated by 0 do not form an interval. -/
-def planarNotProjective : Graph 4 :=
-  .ofArcs
-    [Word.mk' "w0" .X, Word.mk' "w1" .X, Word.mk' "w2" .X, Word.mk' "w3" .X]
-    2
-    [(2, 0, .dep), (2, 1, .dep), (0, 3, .dep)]
-
-example : dutchCrossSerial.IsTree := by decide
-example : germanNested.IsTree := by decide
-example : planarNotProjective.IsTree := by decide
-example : ¬ dutchCrossSerial.IsPlanar := by decide
-example : ¬ dutchCrossSerial.IsProjective := by decide
-example : dutchCrossSerial.IsWellNested := by decide
-example : germanNested.IsPlanar := by decide
-example : germanNested.IsProjective := by decide
-example : planarNotProjective.IsPlanar := by decide
-example : ¬ planarNotProjective.IsProjective := by decide
-example : dutchCrossSerial.gapDegree = 1 := by decide
-example : germanNested.gapDegree = 0 := by decide
-
-/-- The Dutch fixture as a bundled `Tree`: the dominance-order API
-    applies with no side conditions. -/
-def dutchTree : Tree 7 := .mk' dutchCrossSerial
-
-example : (⊥ : DominanceOrder dutchTree.toGraph) = 0 := by decide
-example : Order.pred (5 : DominanceOrder dutchTree.toGraph) = 4 := by decide
 
 end DependencyGrammar
