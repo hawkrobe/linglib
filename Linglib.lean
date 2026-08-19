@@ -1834,7 +1834,6 @@ import Linglib.Semantics.Tense.Perspective
 import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Tense.TemporalAdverbials
-import Linglib.Semantics.Tense.TemporalConnectives
 import Linglib.Semantics.Tense.TemporalConnectives.Basic
 import Linglib.Semantics.Tense.TemporalConnectives.Before
 import Linglib.Semantics.Tense.TemporalConnectives.Projection
