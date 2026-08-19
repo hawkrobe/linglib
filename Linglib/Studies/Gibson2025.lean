@@ -166,8 +166,8 @@ example : harmonicHI.IsTree ∧ harmonicHF.IsTree ∧
 /-- All four regimes are projective: the disharmonic ones are longer not
     because of non-projectivity — consistent direction is a separate,
     stronger constraint. -/
-example : IsProjective harmonicHI ∧ IsProjective harmonicHF ∧
-    IsProjective disharmonicHF ∧ IsProjective disharmonicFH := by decide
+example : harmonicHI.IsProjective ∧ harmonicHF.IsProjective ∧
+    disharmonicHF.IsProjective ∧ disharmonicFH.IsProjective := by decide
 
 /-- Harmonic order is strictly cheaper in both directions, and the mirror
     pair costs exactly the same. -/

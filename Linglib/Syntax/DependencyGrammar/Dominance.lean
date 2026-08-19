@@ -161,6 +161,48 @@ theorem projection_root (hT : g.IsTree) :
     projection g g.root = List.finRange n :=
   List.filter_eq_self.mpr λ x _ => decide_eq_true (hT.root_dominates x)
 
+/-! ### Paths across a boundary -/
+
+/-- Disjoint subtrees of a tree share no dominated position. -/
+theorem disjoint_dominated (hT : g.IsTree) (hvw : ¬ Dominates g v w)
+    (hwv : ¬ Dominates g w v) {x : Fin n} (hv : Dominates g v x)
+    (hw : Dominates g w x) : False :=
+  (Dominates.comparable hT hv hw).elim hvw hwv
+
+/-- A dominance path leaving `S` crosses the boundary at an arc, both of whose
+    endpoints the source still dominates. -/
+theorem exists_adj_out {S : Set (Fin n)} {x : Fin n} (h : Dominates g v x)
+    (hv : v ∈ S) (hx : x ∉ S) :
+    ∃ p q, g.Adj p q ∧ Dominates g v p ∧ Dominates g v q ∧ p ∈ S ∧ q ∉ S := by
+  induction h with
+  | refl => exact absurd hv hx
+  | @tail b c hvb hbc ih =>
+    by_cases hb : b ∈ S
+    · exact ⟨b, c, hbc, hvb, hvb.tail hbc, hb, hx⟩
+    · exact ih hb
+
+/-- Dually for a path entering `S`. -/
+theorem exists_adj_in {S : Set (Fin n)} {x : Fin n} (h : Dominates g v x)
+    (hv : v ∉ S) (hx : x ∈ S) :
+    ∃ p q, g.Adj p q ∧ Dominates g v p ∧ Dominates g v q ∧ p ∉ S ∧ q ∈ S := by
+  induction h with
+  | refl => exact absurd hx hv
+  | @tail b c hvb hbc ih =>
+    by_cases hb : b ∈ S
+    · exact ih hb
+    · exact ⟨b, c, hbc, hvb, hvb.tail hbc, hb, hx⟩
+
+/-- If `v` dominates a position inside `S` and one outside it, some link below
+    `v` crosses the boundary of `S`. -/
+theorem exists_link_across {S : Set (Fin n)} {x y : Fin n}
+    (hx : Dominates g v x) (hy : Dominates g v y) (hxS : x ∈ S) (hyS : y ∉ S) :
+    ∃ p q, Linked g p q ∧ Dominates g v p ∧ Dominates g v q ∧ p ∈ S ∧ q ∉ S := by
+  by_cases hv : v ∈ S
+  · obtain ⟨p, q, hpq, hp, hq, h1, h2⟩ := exists_adj_out hy hv hyS
+    exact ⟨p, q, Or.inl hpq, hp, hq, h1, h2⟩
+  · obtain ⟨p, q, hpq, hp, hq, h1, h2⟩ := exists_adj_in hx hv hxS
+    exact ⟨q, p, Or.inr hpq, hq, hp, h2, h1⟩
+
 /-! ### The head function -/
 
 /-- The first listed head of `v`, defaulting to `v` when headless —

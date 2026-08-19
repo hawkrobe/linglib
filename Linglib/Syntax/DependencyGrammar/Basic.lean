@@ -159,6 +159,9 @@ def Linked {n : ℕ} (g : Graph n) (a b : Fin n) : Prop := g.Adj a b ∨ g.Adj b
 instance {n : ℕ} (g : Graph n) (a b : Fin n) : Decidable (Linked g a b) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
+theorem Linked.symm {n : ℕ} {g : Graph n} {a b : Fin n} (h : Linked g a b) :
+    Linked g b a := Or.symm h
+
 @[simp] theorem Graph.toSimpleGraph_adj {n : ℕ} (g : Graph n) (v w : Fin n) :
     g.toSimpleGraph.Adj v w ↔ v ≠ w ∧ Linked g v w := Iff.rfl
 
