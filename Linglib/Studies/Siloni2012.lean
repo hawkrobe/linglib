@@ -1,5 +1,6 @@
 import Linglib.Syntax.Reciprocal
 import Linglib.Syntax.Category.Verb.Reciprocal
+import Linglib.Syntax.Category.Verb.Symmetric
 import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.Plurality.Groups
 
@@ -26,8 +27,9 @@ ban and the ECM derivation (63)). Event-semantically the two loci share
 one mechanism, [landman-2000]'s group operators (`Plurality.GroupStructure`)
 in both domains: a symmetric verb is a set of atomic events whose complex
 role assigns the group atom over an unordered pair, related to its base
-by fn. 17's meaning postulate (`SymmetricVerb`), from which (41) — the
-underlying directional events — is derived (`SymmetricVerb.underlying`);
+by fn. 17's meaning postulate (`Verb.SymmetricDenotation`, in
+`Syntax/Category/Verb/Symmetric.lean`), from which (41) — the underlying
+directional events — is derived (`underlying_of_symmetric`);
 the syntactic reciprocal has the accumulation reading ((46b),
 `AccumulationReading`) and the `up`-packed singular reading ((47),
 `GroupEventReading`), whose content provably coincides with the symmetric
@@ -78,8 +80,8 @@ paper's mechanisms; the nine surface properties are computed from them in
 /-- Generalization (29): "plural events are not part of the lexicon's
     inventory" (§3.5) — sub-event accumulation is available only in the
     syntactic derivation, so lexicon-formed reciprocals denote atomic
-    events (`SymmetricVerb`), whose underlying events are recovered only
-    by dissolution. -/
+    events (`Verb.SymmetricDenotation`), whose underlying events are
+    recovered only by dissolution. -/
 def pluralEventsAvailable : Formation → Bool
   | .lexical   => false
   | .syntactic => true
@@ -127,12 +129,10 @@ theorem compositionLocus_ofFormation (f : Formation) :
 
 Neo-Davidsonian format after [landman-2000]: verbs are sets of events,
 θ-roles are functions from events to individuals, and both the individual
-and the event domain are semilattices carrying the group operators. fn. 17
-gives the lexical format of `V_SYM`: a set of atomic events whose complex
-role assigns the group atom over an unordered pair, related to the base
-verb by a meaning postulate — a constraint between the two entries, not a
-decomposition, which is why the underlying events are invisible to
-counting and modification. -/
+and the event domain are semilattices carrying the group operators.
+fn. 17's lexical format of `V_SYM` is the substrate contract
+`Verb.SymmetricDenotation`; here it meets Siloni's numbered readings and
+the derivation of (41). -/
 
 section Events
 
@@ -197,44 +197,28 @@ theorem GroupEventReading.underlyingReading
   obtain ⟨e₁, e₂, rfl, hc⟩ := h
   exact ⟨e₁, e₂, GE.down_up _, hc⟩
 
-variable [SemilatticeSup D] {GD : GroupStructure D}
-
-/-- fn. 17: the lexical format of `V_SYM`, (36)'s SYM marking — atomic
-    events whose complex role assigns the group atom of an unordered pair,
-    constrained by the meaning postulate relating `V_SYM` to its
-    transitive base `V`. -/
-structure SymmetricVerb (GD : GroupStructure D) (GE : GroupStructure E)
-    (V : Set E) (ag th : E → D) where
-  /-- The events of `V_SYM`. -/
-  events : Set E
-  /-- The complex role `[Ag-Th]`, valued in group atoms of the individual
-      domain. -/
-  agTh : E → D
-  /-- `V_SYM` denotes singular events: linguistic diagnostics see no parts
-      (§2.2, generalization (29)). -/
-  atomic : ∀ e ∈ events, Mereology.Atom e
-  /-- The complex role assigns the group atom over an unordered pair. -/
-  pairRole : ∀ e ∈ events, ∃ d₁ d₂, d₁ ≠ d₂ ∧ agTh e = GD.up (d₁ ⊔ d₂)
-  /-- The meaning postulate: dissolution yields two base events with
-      crossed Agent and Theme values. -/
-  postulate : ∀ e ∈ events, ∀ d₁ d₂, d₁ ≠ d₂ → agTh e = GD.up (d₁ ⊔ d₂) →
-    UnderlyingReading GE V ag th d₁ d₂ e
+variable [SemilatticeSup D] {GD : GroupStructure D} {Vsym : Set E}
+  {agTh : E → D}
 
 /-- (41): `∃e [kiss_SYM(e) ∧ [Ag-Th](e, John and Mary)]` entails two
-    underlying directional kissings — the meaning postulate applied. -/
-theorem SymmetricVerb.underlying (sym : SymmetricVerb GD GE V ag th)
-    (he : e ∈ sym.events) (hne : d₁ ≠ d₂)
-    (hrole : sym.agTh e = GD.up (d₁ ⊔ d₂)) :
-    UnderlyingReading GE V ag th d₁ d₂ e :=
-  sym.postulate e he d₁ d₂ hne hrole
+    underlying directional kissings — `Verb.SymmetricDenotation`'s meaning
+    postulate ((36)'s SYM marking, fn. 17) applied. -/
+theorem underlying_of_symmetric
+    [h : Verb.SymmetricDenotation GD GE V ag th Vsym agTh] (he : e ∈ Vsym)
+    (hne : d₁ ≠ d₂) (hrole : agTh e = GD.up (d₁ ⊔ d₂)) :
+    UnderlyingReading GE V ag th d₁ d₂ e := by
+  obtain ⟨e₁, e₂, hd, h₁, h₂, ha₁, ht₁, ha₂, ht₂⟩ :=
+    h.postulate e he d₁ d₂ hne hrole
+  exact ⟨e₁, e₂, hd, h₁, h₂, ha₁, ht₁, ha₂, ht₂⟩
 
 /-- A symmetric verb's events admit no sub-event reading for any predicate
     and roles whatsoever: the underlying events are invisible to counting
     and modification (§2.2). -/
-theorem SymmetricVerb.not_subEventReading (sym : SymmetricVerb GD GE V ag th)
-    (he : e ∈ sym.events) {V' : Set E} {ag' th' : E → D} {d₁' d₂' : D} :
+theorem not_subEventReading_of_symmetric
+    [h : Verb.SymmetricDenotation GD GE V ag th Vsym agTh] (he : e ∈ Vsym)
+    {V' : Set E} {ag' th' : E → D} {d₁' d₂' : D} :
     ¬ SubEventReading V' ag' th' d₁' d₂' e :=
-  fun hs => hs.not_atom (sym.atomic e he)
+  fun hs => hs.not_atom (h.atomic e he)
 
 end Events
 
