@@ -94,7 +94,7 @@ instance : Decidable g.IsWellNested := inferInstanceAs (Decidable (∀ _, _))
 /-! ### Gap degree -/
 
 /-- The projection of `v`, as position values. -/
-def Graph.projectionVals (v : Fin n) : List Nat := (projection g v).map (·.val)
+def Graph.projectionVals (v : Fin n) : List Nat := (g.projection v).map (·.val)
 
 theorem Graph.projectionVals_sortedLT (v : Fin n) :
     (g.projectionVals v).SortedLT := by
