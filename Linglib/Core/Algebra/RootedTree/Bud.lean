@@ -395,6 +395,26 @@ theorem Derives.nodeLocal {P : Ω → Ω → Ω → Prop} (h : B.Derives c x)
   | unit _ => exact Tree.nodeLocal_leaf
   | graft i _ hs hm ih => exact ih.graft (hR _ hs) hm
 
+/-- Bottom-up node formation: when the one-node operation on the parts'
+    output colors is a rule, joining two derivable trees under it is
+    derivable — top-down bud derivation subsumes bottom-up structure
+    building. -/
+theorem Derives.node {a b : Ω} {S S' : Tree Ω}
+    (hr : Tree.node c (.leaf a) (.leaf b) ∈ B.rules) (hc : c ∉ B.Terminal)
+    (ha : B.Derives a S) (hb : B.Derives b S') :
+    B.Derives c (.node c S S') := by
+  have h₀ : B.Derives c (Tree.node c (.leaf a) (.leaf b)) := by
+    have := (Derives.unit (B := B) hc).graft 0 hr (by simp)
+    simpa using this
+  have h₁ : B.Derives c (Tree.node c S (.leaf b)) := by
+    have := h₀.compose (i := 0) (by simp) (by simp) ha
+    simpa [Tree.graft_node, Tree.graft_leaf_zero] using this
+  have h₂ := h₁.compose (i := S.numInputs)
+    (by simp only [Tree.numInputs_node, Tree.numInputs_leaf]; omega)
+    (by rw [Tree.getElem?_inputs_node, if_neg (lt_irrefl _)]; simp)
+    hb
+  simpa [Tree.graft_node, lt_self_iff_false, Nat.sub_self] using h₂
+
 end System
 
 end Bud
