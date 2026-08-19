@@ -1,4 +1,5 @@
 import Linglib.Syntax.Reciprocal
+import Linglib.Semantics.ArgumentStructure.RoleList
 import Mathlib.Order.Irreducible
 
 /-!
@@ -13,30 +14,34 @@ parameter — and derives nine clustering properties from that split alone:
 "the distinctions all follow from the fact that the two types of verbs are
 formed in different components of the grammar."
 
-The file formalizes the reduction, not just its output. A `Component`
-records four architectural facts about a locus of application: whether
-plural events are available (generalization (29) denies them to the
-lexicon), whether the operation works over listed entries, whether it sees
-the θ-roles of two distinct predicates, and whether it must reduce
-accusative case ([reinhart-siloni-2005]). `Component.properties` computes
-the nine-property cluster from these affordances; the paper's concluding
-table is then a theorem (`predictedProperties_lexical`), and the perfect
-complementarity of the two clusters follows from the components differing
-on every affordance (`Component.lexicon_compl`) via a polarity-preserving
-reduction (`Component.properties_compl`). The event-semantic content of
+The reciprocalization operation itself acts on argument structure:
+`reciprocalize` takes a transitive `RoleList` and returns an intransitive
+one whose subject bears the `bundle` of the two base profiles — the
+pointwise join on `EntailmentProfile`, [reinhart-siloni-2005]'s complex
+[θᵢ · θⱼ] role. The bundled subject retains the base subject's Proto-Agent
+entailments and inherits the object's Proto-Patient entailments
+(`pAgentDominates_bundle_left`, `pPatientDominates_bundle_right` — the
+depictive and comparative-ellipsis diagnostics of §3.1–3.2), so it bears
+entailments from both clusters (`reciprocalize_isComplexRole`). Since the
+"I" reading of embedded reciprocals ([higginbotham-1980]) requires a
+sub-event reading plus a sole-role subject, both verb types lack it for
+*any* transitive base with an agentive subject and an affected object
+(`I_reading_iff_periphrastic`), each failing a different condition.
+
+The nine surface properties derive from four affordances of the locus of
+application (`pluralEventsAvailable` per generalization (29),
+`storesOutputs`, `spansPredicates`, `reducesAccusative`): the paper's
+concluding table is a theorem (`predictedProperties_lexical`), as is the
+perfect complementarity of the two clusters. The event-semantic content of
 the singular-event column is order-theoretic: an atomic (sup-irreducible)
 event admits no decomposition into directional sub-events
-(`SubEventReading.not_supIrred`). Both verb types disallow the "I" reading
-of embedded reciprocals ([higginbotham-1980]): reciprocalization cumulates
-both core roles onto the subject (`Voice.reciprocalization`), and the two
-types fail different necessary conditions along the way
-(`no_I_reading_either_formation`). The paper's eleven-language sample is
+(`SubEventReading.not_supIrred`). The paper's eleven-language sample is
 recorded per-language (`hebrew` … `bulgarian`).
 -/
 
 namespace Siloni2012
 
-open Reciprocal
+open Reciprocal ArgumentStructure
 
 /-! ### Three-way reciprocal classification (§2.4) -/
 
@@ -58,79 +63,151 @@ def Construction.ofFormation : Formation → Construction
   | .lexical   => .lexicalVerb
   | .syntactic => .syntacticVerb
 
-/-! ### The lex-syn architecture (§3.5, §§5–6) -/
+/-! ### The lex-syn architecture (§3.5, §§5–6)
 
-/-- What a component of the grammar affords an arity operation applying
-    there: the four architectural facts from which the nine properties of
-    reciprocal verbs derive. -/
-structure Component where
-  /-- Plural events are available. Generalization (29) — "plural events are
-      not part of the lexicon's inventory" — denies them to the lexicon
-      (§3.5), so its outputs denote atomic events. -/
-  pluralEvents : Bool
-  /-- The operation works within the stored inventory: its inputs may be
-      frozen entries, and its outputs are listed — so they can drift, head
-      idioms, and feed lexical nominalization (§5.3, §6); listing also caps
-      productivity. -/
-  listedEntries : Bool
-  /-- The θ-roles of two distinct predicates are visible, as in ECM
-      configurations (§5.2); a lexical operation sees a single entry. -/
-  spansPredicates : Bool
-  /-- An arity operation here must reduce accusative case whichever
-      argument it suppresses ([reinhart-siloni-2005]); the syntactic clitic
-      instead absorbs the suppressed argument's own case (§5.1). -/
-  reducesAccusative : Bool
-  deriving DecidableEq, Repr
+Four affordances of a locus of application, each carrying one of the
+paper's mechanisms; the nine surface properties are computed from them in
+`predictedProperties`. -/
 
-/-- Pointwise complement of a component's affordances. -/
-def Component.compl (c : Component) : Component where
-  pluralEvents := !c.pluralEvents
-  listedEntries := !c.listedEntries
-  spansPredicates := !c.spansPredicates
-  reducesAccusative := !c.reducesAccusative
+/-- Generalization (29): "plural events are not part of the lexicon's
+    inventory" (§3.5) — sub-event accumulation is available only in the
+    syntactic derivation. -/
+def pluralEventsAvailable : Formation → Bool
+  | .lexical   => false
+  | .syntactic => true
 
-/-- The lexicon: listed entries and obligatory accusative reduction, but no
-    plural events and no cross-predicate visibility. -/
-def Component.lexicon : Component where
-  pluralEvents := false
-  listedEntries := true
-  spansPredicates := false
-  reducesAccusative := true
+/-- Whether the operation's outputs are stored entries. Applying within the
+    inventory, the lexical operation may also take frozen entries as input;
+    stored outputs can drift, head idioms, and feed lexical nominalization,
+    and listing caps productivity (§5.3, §6). -/
+def storesOutputs : Formation → Bool
+  | .lexical   => true
+  | .syntactic => false
 
-/-- The syntactic derivation: plural events and cross-predicate visibility,
-    with a case-indiscriminate clitic and nothing listed. -/
-def Component.derivation : Component where
-  pluralEvents := true
-  listedEntries := false
-  spansPredicates := true
-  reducesAccusative := false
+/-- Whether the operation sees the θ-roles of two distinct predicates, as
+    in ECM configurations (§5.2); the lexical operation manipulates a
+    single entry. -/
+def spansPredicates : Formation → Bool
+  | .lexical   => false
+  | .syntactic => true
 
-/-- The two components differ on every affordance. -/
-theorem Component.lexicon_compl :
-    Component.lexicon.compl = Component.derivation := rfl
+/-- Whether the operation must reduce accusative case whichever argument it
+    suppresses ([reinhart-siloni-2005]); the syntactic clitic instead
+    absorbs the suppressed argument's own case (§5.1). -/
+def reducesAccusative : Formation → Bool
+  | .lexical   => true
+  | .syntactic => false
 
-/-- The component where a construction's reciprocity is composed: in the
+/-- The locus where a construction's reciprocity is composed: in the
     lexicon only for lexical reciprocal verbs; periphrastic reciprocity is
     composed by the anaphor's plural operator in the syntax (§2.4). -/
-def Construction.component : Construction → Component
-  | .lexicalVerb => .lexicon
-  | .periphrastic | .syntacticVerb => .derivation
-
-open Voice in
-/-- Number of θ-roles borne by the subject. Both verb types realize
-    [creissels-2025]'s `Voice.reciprocalization`, which cumulates the two
-    core roles onto the derived subject (bundling in the lexicon §4.1,
-    parasitic assignment in the syntax §4.2); the periphrastic subject
-    keeps the transitive frame's single external role. -/
-def Construction.subjectRoleCount : Construction → Nat
-  | .periphrastic => 1
-  | .lexicalVerb | .syntacticVerb =>
-      [reciprocalization.fateOfA, reciprocalization.fateOfP].count .cumulated
+def Construction.compositionLocus : Construction → Formation
+  | .lexicalVerb => .lexical
+  | .periphrastic | .syntacticVerb => .syntactic
 
 /-- Whether reciprocity is built from sub-events: plural events must be
     available where it is composed (§2.2, generalization (29)). -/
-def Construction.allowsSubEventReading (k : Construction) : Bool :=
-  k.component.pluralEvents
+def Construction.allowsSubEventReading (c : Construction) : Bool :=
+  pluralEventsAvailable c.compositionLocus
+
+theorem compositionLocus_ofFormation (f : Formation) :
+    (Construction.ofFormation f).compositionLocus = f := by
+  cases f <;> rfl
+
+/-! ### θ-role bundling on argument structure (§4.1–4.2)
+
+Reciprocalization eliminates the internal argument position and associates
+its θ-role with the subject — bundling in the lexicon, parasitic
+assignment in the syntax; the resulting role state is the same. On the
+Dowty substrate this is the pointwise join of entailment profiles, applied
+to a transitive `RoleList`. -/
+
+section Bundling
+
+variable (p q : EntailmentProfile) {r : RoleList} {o : EntailmentProfile}
+
+/-- [reinhart-siloni-2005]'s bundling `[θᵢ · θⱼ]`: the complex role imposing
+    both components' entailments — the pointwise join on the Boolean cube
+    of proto-role features. -/
+def bundle : EntailmentProfile where
+  volition := p.volition || q.volition
+  sentience := p.sentience || q.sentience
+  causation := p.causation || q.causation
+  movement := p.movement || q.movement
+  independentExistence := p.independentExistence || q.independentExistence
+  changeOfState := p.changeOfState || q.changeOfState
+  incrementalTheme := p.incrementalTheme || q.incrementalTheme
+  causallyAffected := p.causallyAffected || q.causallyAffected
+  stationary := p.stationary || q.stationary
+  dependentExistence := p.dependentExistence || q.dependentExistence
+
+/-- The bundled role retains the first component's Proto-Agent entailments:
+    the reciprocal subject is still agentive. -/
+theorem pAgentDominates_bundle_left : PAgentDominates (bundle p q) p := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> intro h <;> simp [bundle, h]
+
+/-- The bundled role inherits the second component's Proto-Patient
+    entailments: the reciprocal subject bears the base object's theme
+    entailments — Czech depictives (§3.1) and comparative ellipsis (§3.2). -/
+theorem pPatientDominates_bundle_right : PPatientDominates (bundle p q) q := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> intro h <;> simp [bundle, h]
+
+theorem pAgentScore_le_bundle : p.pAgentScore ≤ (bundle p q).pAgentScore := by
+  have H : ∀ a b : Bool, a.toNat ≤ (a || b).toNat := by decide
+  exact Nat.add_le_add (Nat.add_le_add (Nat.add_le_add (Nat.add_le_add
+    (H .. ) (H ..)) (H ..)) (H ..)) (H ..)
+
+theorem pPatientScore_le_bundle : q.pPatientScore ≤ (bundle p q).pPatientScore := by
+  have H : ∀ a b : Bool, b.toNat ≤ (a || b).toNat := by decide
+  exact Nat.add_le_add (Nat.add_le_add (Nat.add_le_add (Nat.add_le_add
+    (H ..) (H ..)) (H ..)) (H ..)) (H ..)
+
+/-- A complex role in [reinhart-siloni-2005]'s sense: entailments from both
+    proto-role clusters. The "sole role requirement" on the "I" reading
+    (§4.3) is the negation of this. -/
+def IsComplexRole (p : EntailmentProfile) : Prop :=
+  0 < p.pAgentScore ∧ 0 < p.pPatientScore
+
+instance : DecidablePred IsComplexRole :=
+  fun p => inferInstanceAs (Decidable (0 < p.pAgentScore ∧ 0 < p.pPatientScore))
+
+/-- Bundling an agentive profile with an affected one yields a complex
+    role. -/
+theorem bundle_isComplexRole (ha : 0 < p.pAgentScore) (hp : 0 < q.pPatientScore) :
+    IsComplexRole (bundle p q) :=
+  ⟨ha.trans_le (pAgentScore_le_bundle p q), hp.trans_le (pPatientScore_le_bundle p q)⟩
+
+/-- Reciprocalization on argument structure: the internal position is
+    eliminated and its profile bundled onto the subject. Realizes
+    [creissels-2025]'s `Voice.reciprocalization` coding-frame operation —
+    both core roles cumulated, derived construction intransitive. -/
+def reciprocalize (r : RoleList) : RoleList where
+  subjectProfile :=
+    match r.objectProfile with
+    | some o => bundle r.subjectProfile o
+    | none   => r.subjectProfile
+
+/-- Reciprocalization denucleativizes: no internal argument survives. -/
+theorem reciprocalize_objectProfile (r : RoleList) :
+    (reciprocalize r).objectProfile = none := rfl
+
+theorem reciprocalize_subjectProfile (ho : r.objectProfile = some o) :
+    (reciprocalize r).subjectProfile = bundle r.subjectProfile o := by
+  simp [reciprocalize, ho]
+
+/-- For any transitive base with an agentive subject and an affected
+    object, the reciprocalized subject bears a complex role (§4.1). -/
+theorem reciprocalize_isComplexRole (ho : r.objectProfile = some o)
+    (ha : 0 < r.subjectProfile.pAgentScore) (hp : 0 < o.pPatientScore) :
+    IsComplexRole (reciprocalize r).subjectProfile := by
+  rw [reciprocalize_subjectProfile ho]
+  exact bundle_isComplexRole _ _ ha hp
+
+end Bundling
+
+-- Reciprocalizing the manner-of-contact template (the surface-contact
+-- *kiss*/*hug* family) yields a complex subject role.
+example : IsComplexRole (reciprocalize mannerContact).subjectProfile := by decide
 
 /-! ### The nine-property cluster (§§2–7) -/
 
@@ -188,30 +265,21 @@ def PropertyCluster.compl (p : PropertyCluster) : PropertyCluster where
   eventNominals := !p.eventNominals
   discontinuous := !p.discontinuous
 
-/-- The property cluster an arity operation's outputs display, computed
-    from the component's affordances: the paper's reduction of the nine
-    properties to the locus of formation. -/
-def Component.properties (c : Component) : PropertyCluster where
-  singularEvent := !c.pluralEvents
-  productive := !c.listedEntries
-  ecmReciprocals := c.spansPredicates
-  frozenInput := c.listedEntries
-  semanticDrift := c.listedEntries
-  phrasalIdioms := c.listedEntries
-  retainsAccOnDativeSuppression := !c.reducesAccusative
-  eventNominals := c.listedEntries
-  discontinuous := !c.pluralEvents
-
-/-- The reduction is polarity-preserving: complementary affordances yield
-    complementary property clusters. -/
-theorem Component.properties_compl (c : Component) :
-    c.compl.properties = c.properties.compl := rfl
-
-/-- The predicted property cluster of a formation locus. [nordlinger-2023]'s
-    later per-language profiles check the discontinuity prediction against
-    attested judgments in `Studies/Nordlinger2023.lean`. -/
-def predictedProperties (f : Formation) : PropertyCluster :=
-  (Construction.ofFormation f).component.properties
+/-- The property cluster of a formation locus, computed from its four
+    affordances: the paper's reduction of the nine properties to the locus
+    of formation. [nordlinger-2023]'s later per-language profiles check the
+    discontinuity prediction against attested judgments in
+    `Studies/Nordlinger2023.lean`. -/
+def predictedProperties (f : Formation) : PropertyCluster where
+  singularEvent := !pluralEventsAvailable f
+  productive := !storesOutputs f
+  ecmReciprocals := spansPredicates f
+  frozenInput := storesOutputs f
+  semanticDrift := storesOutputs f
+  phrasalIdioms := storesOutputs f
+  retainsAccOnDativeSuppression := !reducesAccusative f
+  eventNominals := storesOutputs f
+  discontinuous := !pluralEventsAvailable f
 
 /-- The derived lexical cluster matches the paper's concluding table. -/
 theorem predictedProperties_lexical :
@@ -221,8 +289,9 @@ theorem predictedProperties_lexical :
         retainsAccOnDativeSuppression := false, eventNominals := true,
         discontinuous := true } := rfl
 
-/-- The two predicted clusters are complementary on every property — by
-    `Component.lexicon_compl` and `Component.properties_compl`. -/
+/-- The two predicted clusters are complementary on every property: the two
+    loci differ on every affordance and every property is a literal of one
+    affordance. -/
 theorem properties_complementary :
     predictedProperties .syntactic = (predictedProperties .lexical).compl := rfl
 
@@ -244,13 +313,13 @@ instance : DecidablePred IsSymmetricVerb :=
 
 /-- A formation yields symmetric verbs iff it predicts a singular event. -/
 theorem symmetric_iff_singular (f : Formation) :
-    IsSymmetricVerb f ↔ (predictedProperties f).singularEvent := by
+    IsSymmetricVerb f ↔ (predictedProperties f).singularEvent = true := by
   cases f <;> decide
 
 /-- "The discontinuous construction is a property of symmetric verbs"
     (§7.5). -/
 theorem discontinuous_iff_symmetric (f : Formation) :
-    (predictedProperties f).discontinuous ↔ IsSymmetricVerb f := by
+    (predictedProperties f).discontinuous = true ↔ IsSymmetricVerb f := by
   cases f <;> decide
 
 /-! ### Atomic events and the sub-event reading (§2.2–2.3, §3.5)
@@ -292,68 +361,84 @@ Paul said he defeated John — requires both that the embedded verb allow
 the sub-event reading and that its subject bear exactly one θ-role
 (§4.3, p. 287). -/
 
-/-- The "I" reading requires both sub-event availability and a sole θ-role
-    on the subject (§4.3). -/
-def Construction.allowsIReading (c : Construction) : Bool :=
-  c.allowsSubEventReading && (c.subjectRoleCount == 1)
+section IReading
 
-/-- The "I" reading is available only in the periphrastic class; syntactic
-    reciprocal verbs have sub-events yet still lack it, because the
-    sole-role requirement fails. -/
-theorem I_reading_iff_periphrastic (c : Construction) :
-    c.allowsIReading ↔ c = .periphrastic := by
-  cases c <;> decide
+variable {r : RoleList} {o : EntailmentProfile} {c : Construction}
 
-/-! ### Derivation: formation locus → no "I" reading (§3.5 → §4.3)
+/-- The subject's entailment profile over a transitive base: the
+    periphrastic subject bears the base subject role; both verb types bear
+    the bundled complex role (§4.1–4.3). -/
+def Construction.subjectProfile (r : RoleList) : Construction → EntailmentProfile
+  | .periphrastic => r.subjectProfile
+  | .lexicalVerb | .syntacticVerb => (reciprocalize r).subjectProfile
 
-The lexical path fails the sub-event condition (generalization (29): no
-plural events in the lexicon); the syntactic path fails the sole-role
-condition (cumulation). Both end at `no_I_reading_either_formation`. -/
+/-- The "I" reading over a transitive base (§4.3, p. 287): the sub-event
+    reading must be available and the subject must bear a sole role — a
+    profile that is not complex. -/
+def Construction.allowsIReading (r : RoleList) (c : Construction) : Prop :=
+  c.allowsSubEventReading ∧ ¬ IsComplexRole (c.subjectProfile r)
 
-/-- Both reciprocal verb types associate the subject with two θ-roles:
-    `Voice.reciprocalization` cumulates both core roles (§4.1, §4.2). -/
-theorem recip_verb_dual_role (f : Formation) :
-    (Construction.ofFormation f).subjectRoleCount = 2 := by
-  cases f <;> rfl
+/-- Sub-event availability is necessary for the "I" reading (§4.3). -/
+theorem subevents_necessary_for_I (h : c.allowsSubEventReading = false) :
+    ¬ c.allowsIReading r :=
+  fun hc => absurd hc.1 (by simp [h])
 
-/-- Singular-event verbs lack the sub-event reading: both are projections
-    of the same affordance, `Component.pluralEvents` (§2.2–2.3). -/
+/-- A sole θ-role on the subject is necessary for the "I" reading (§4.3). -/
+theorem complex_role_blocks_I (h : IsComplexRole (c.subjectProfile r)) :
+    ¬ c.allowsIReading r :=
+  fun hc => hc.2 h
+
+/-- A periphrastic reciprocal over a non-complex subject role allows the
+    "I" reading: sub-events from the anaphor's plural operator, sole role
+    on the subject. -/
+theorem periphrastic_allows_I (hs : ¬ IsComplexRole r.subjectProfile) :
+    Construction.periphrastic.allowsIReading r :=
+  ⟨rfl, hs⟩
+
+/-- Lexical derivation: no plural events in the lexicon → no sub-events →
+    no "I" reading (§3.5 → §2.2 → §4.3), for any base. -/
+theorem lexical_no_I_reading (r : RoleList) :
+    ¬ (Construction.ofFormation .lexical).allowsIReading r :=
+  subevents_necessary_for_I rfl
+
+/-- Syntactic derivation: the bundled subject is a complex role → no "I"
+    reading (§4.2 → §4.3), despite the sub-event reading being available. -/
+theorem syntactic_no_I_reading (ho : r.objectProfile = some o)
+    (ha : 0 < r.subjectProfile.pAgentScore) (hp : 0 < o.pPatientScore) :
+    ¬ (Construction.ofFormation .syntactic).allowsIReading r :=
+  complex_role_blocks_I (reciprocalize_isComplexRole ho ha hp)
+
+/-- Neither reciprocal verb type allows the "I" reading, over any
+    transitive base with an agentive subject and an affected object. -/
+theorem no_I_reading_either_formation (f : Formation)
+    (ho : r.objectProfile = some o) (ha : 0 < r.subjectProfile.pAgentScore)
+    (hp : 0 < o.pPatientScore) :
+    ¬ (Construction.ofFormation f).allowsIReading r := by
+  cases f
+  exacts [lexical_no_I_reading r, syntactic_no_I_reading ho ha hp]
+
+/-- Over any transitive base whose subject role is agentive but not
+    complex and whose object is affected, the "I" reading is available in
+    the periphrastic construction and only there. -/
+theorem I_reading_iff_periphrastic (hs : ¬ IsComplexRole r.subjectProfile)
+    (ho : r.objectProfile = some o) (ha : 0 < r.subjectProfile.pAgentScore)
+    (hp : 0 < o.pPatientScore) :
+    c.allowsIReading r ↔ c = .periphrastic := by
+  cases c
+  · exact iff_of_true (periphrastic_allows_I hs) rfl
+  · exact iff_of_false (subevents_necessary_for_I rfl) (by decide)
+  · exact iff_of_false
+      (complex_role_blocks_I (reciprocalize_isComplexRole ho ha hp)) (by decide)
+
+/-- Singular-event verbs lack the sub-event reading: both are the
+    availability of plural events at the composition locus (§2.2–2.3). -/
 theorem singular_event_no_subevents (f : Formation)
     (h : (predictedProperties f).singularEvent = true) :
     (Construction.ofFormation f).allowsSubEventReading = false := by
-  simpa [predictedProperties, Component.properties,
-    Construction.allowsSubEventReading] using h
+  simpa [predictedProperties, Construction.allowsSubEventReading,
+    compositionLocus_ofFormation] using h
 
-/-- Sub-event availability is necessary for the "I" reading (§4.3). -/
-theorem subevents_necessary_for_I (c : Construction)
-    (h : c.allowsSubEventReading = false) :
-    c.allowsIReading = false := by
-  simp [Construction.allowsIReading, h]
-
-/-- A sole θ-role on the subject is necessary for the "I" reading (§4.3). -/
-theorem sole_role_necessary_for_I (c : Construction)
-    (h : c.subjectRoleCount ≠ 1) :
-    c.allowsIReading = false := by
-  cases c
-  exacts [absurd rfl h, rfl, rfl]
-
-/-- Lexical derivation: singular event → no sub-events → no "I" reading
-    (§3.5 → §2.2 → §4.3). -/
-theorem lexical_no_I_reading :
-    (Construction.ofFormation .lexical).allowsIReading = false :=
-  subevents_necessary_for_I _ (singular_event_no_subevents _ rfl)
-
-/-- Syntactic derivation: dual role → no "I" reading (§4.2 → §4.3), despite
-    the sub-event reading being available. -/
-theorem syntactic_no_I_reading :
-    (Construction.ofFormation .syntactic).allowsIReading = false :=
-  sole_role_necessary_for_I _ (by decide)
-
-/-- Neither reciprocal verb type allows the "I" reading. -/
-theorem no_I_reading_either_formation (f : Formation) :
-    (Construction.ofFormation f).allowsIReading = false := by
-  cases f
-  exacts [lexical_no_I_reading, syntactic_no_I_reading]
+end IReading
 
 /-! ### Cross-linguistic sample (§2.4, §5, §7) -/
 
