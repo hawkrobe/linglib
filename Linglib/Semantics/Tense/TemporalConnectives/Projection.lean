@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Tense.TemporalConnectives.Basic
 import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.Aspect.SubintervalProperty
 
 /-!
 # The event→interval projection
@@ -19,7 +18,7 @@ supplies the rung that connects it to the tense-layer denotation patterns and th
 `timeTrace` lower rung in `Basic.lean`:
 
 ```
-Level 3: Event Time → Prop   (event predicates — O&ST, future theories)
+Level 3: Event Time → Prop   (event predicates)
     ↓ eventDenotation (Events/Basic.lean)
 Level 2: SentDenotation Time (interval sets — Anscombe, Rett)
     ↓ timeTrace (Basic.lean)
@@ -37,13 +36,14 @@ all non-temporal event structure — mereology, causation, thematic roles. The
 sum-homomorphism content of τ ([krifka-1998], [champollion-2017]) developed in
 `Semantics/Events/CEM.lean` is likewise not used here; this is the plain set-image.
 
-Two caveats the framing must own:
+Two scope commitments:
 
 - **Sort is dropped by choice, not because connectives ignore aktionsart.** They do
   not: `while` selects atelic eventualities, and `when`'s overlap-vs-sequence reading
   is telicity-driven. The abstraction is appropriate for the interval-level comparison
-  targets (O&ST, Rett, Anscombe), which are stated over run-times; a sort-sensitive
-  connective would retain `e.sort` and fall outside this projection.
+  targets ([anscombe-1964], [rett-2020], [ogihara-steinert-threlkeld-2024]), which are
+  stated over run-times; a sort-sensitive connective would retain `e.sort` and fall
+  outside this projection.
 - **Run-time is identified with the located interval, so the chain is aspect-neutral.**
   τ(e) is the event's own extent; the interval a tense/aspect operator locates is the
   reference time, and the run-time ≠ reference-time gap *is* grammatical aspect
@@ -57,8 +57,8 @@ with `PRFV`/`IMPF`/`PROSP`). These are *different* operators, not duplicates:
 `Aspect`'s `PRFV` keeps intervals that *contain* the run-time (TSit ⊆ TT), whereas
 `eventDenotation` keeps the run-time itself. The shared concept is homogeneity:
 `eventDenotation_sub_stative` is the subinterval bound, the same property `Aspect`'s
-imperfective denotations satisfy (`Studies/Giannakidou2002.lean` realises both sides
-and now routes its perfective denotation through `eventDenotation`).
+imperfective denotations satisfy (`Studies/Giannakidou2002.lean` realises both sides,
+routing its perfective denotation through `eventDenotation`).
 -/
 
 namespace Tense.TemporalConnectives
@@ -68,8 +68,8 @@ variable {Time : Type*} [LinearOrder Time]
 /-! ### Time trace factoring
 
     The `eventDenotation` projection itself (`Event.τ '' {e | P e}`) and its
-    basic membership/emptiness API now live upstream in
-    `Semantics/Events/Basic.lean` — it is neutral event substrate, not
+    basic membership/emptiness API live upstream in
+    `Semantics/Events/Basic.lean` — neutral event substrate, not
     tense-specific. The lemmas below connect it to the *tense-layer*
     denotation patterns (`timeTrace`, `stativeDenotation`,
     `accomplishmentDenotation`) defined in `Basic.lean`. -/
@@ -104,30 +104,14 @@ theorem eventDenotation_singleton (e₀ : Event Time) :
     stative denotation of `i`.
 
     The inclusion is proper in general: `stativeDenotation i` contains every subinterval
-    of `i`, including those that are the run-time of no event. -/
+    of `i`, including those that are the run-time of no event. The closed subinterval
+    property (`Aspect/SubintervalProperty.lean`'s CSUB — defined as `eventDenotation`
+    being a lower set at every world) is exactly what closes the gap, placing a witness
+    event at each subinterval. -/
 theorem eventDenotation_sub_stative (i : NonemptyInterval Time) (P : Event Time → Prop)
     (hP : ∀ e, P e → e.τ ≤ i) :
     eventDenotation P ⊆ stativeDenotation i := by
   rintro j ⟨e, he, rfl⟩
   exact hP e he
-
-/-! ### Homogeneity from the closed subinterval property -/
-
-open Semantics.Aspect.SubintervalProperty in
-/-- If `P` has the **closed** subinterval property (CSUB,
-    `Aspect/SubintervalProperty.lean`) at world `w`, its run-time denotation is a lower
-    set — homogeneous / subinterval-closed in the sense of `IsLowerSet`.
-
-    Since CSUB is now *defined* as "`eventDenotation` is a lower set at every world"
-    (`Aspect/SubintervalProperty.lean`), this Tense-layer accessor is the bare
-    per-world projection `hP w`. It is the complement to `eventDenotation_sub_stative`:
-    that gives only `⊆` (subintervals that are nobody's run-time are absent), and CSUB
-    is exactly what closes the gap — a witness event at every subinterval. The *closed*
-    variant is necessary: plain `HasSubintervalProp` only constrains hypothetical
-    witnesses and cannot place an event at each subinterval. -/
-theorem isLowerSet_eventDenotation_of_csub {W : Type*}
-    (P : W → Event Time → Prop) (w : W) (hP : HasClosedSubintervalProp P) :
-    IsLowerSet (eventDenotation (fun e => P w e)) :=
-  hP w
 
 end Tense.TemporalConnectives
