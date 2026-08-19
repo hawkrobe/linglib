@@ -1,4 +1,5 @@
 import Linglib.Syntax.Reciprocal
+import Linglib.Studies.HeimLasnikMay1991
 import Linglib.Syntax.Category.Verb.Reciprocal
 import Linglib.Syntax.Category.Verb.Symmetric
 import Linglib.Semantics.ArgumentStructure.RoleList
@@ -45,6 +46,18 @@ application (`pluralEventsAvailable` per generalization (29),
 concluding table is a theorem (`predictedProperties_lexical`), as is the
 perfect complementarity of the two clusters. The paper's eleven-language
 sample is recorded per-language (`hebrew` … `bulgarian`).
+
+Three further pieces of the paper's argument are worked out against the
+substrate: the periphrastic sub-event reading is derived from
+[heim-lasnik-may-1991]'s each∘other LF rather than stipulated
+(`accumulation_of_eachOtherLF`); the (15)/(16) count-adverbial contrast is
+modeled — five atomic mutual events with inaccessible parts versus five
+accumulation events with ten accessible directional parts
+(`card_mutualEvent`, `mutualEvent_not_subEventReading`,
+`accumulated_subEventReading`); and the discontinuous construction is the
+dyadic realization of a symmetric entry (§7.5), commutative in its two
+arguments and entailing the crossed directional events
+(`dyadicReading_comm`, `DyadicReading.underlying`).
 -/
 
 namespace Siloni2012
@@ -547,6 +560,244 @@ theorem singular_event_no_subevents (f : Formation)
     compositionLocus_ofFormation] using h
 
 end IReading
+
+/-! ### The periphrastic source of sub-events (§2.1)
+
+The sub-event reading of periphrastic reciprocals comes from the anaphor's
+plural operator: on a two-membered antecedent,
+[heim-lasnik-may-1991]'s each∘other LF delivers exactly the two
+directional relations, which sum to the accumulation reading. -/
+
+section Periphrastic
+
+variable {D E : Type*} [SemilatticeSup E] [DecidableEq D] {V : Set E}
+  {ag th : E → D} {d₁ d₂ : D}
+
+/-- On a pair antecedent, the each∘other LF is the crossed directional
+    pattern: Strong Reciprocity at two members. -/
+theorem eachOtherLF_pair (R : D → D → Prop) (hne : d₁ ≠ d₂) :
+    HeimLasnikMay1991.eachOtherLF {d₁, d₂} R ↔ R d₁ d₂ ∧ R d₂ d₁ := by
+  rw [HeimLasnikMay1991.eachOtherLF_iff_strongReciprocity]
+  constructor
+  · intro h
+    exact ⟨h d₁ (by simp) d₂ (by simp) (Ne.symm hne),
+      h d₂ (by simp) d₁ (by simp) hne⟩
+  · rintro ⟨h₁, h₂⟩ a ha b hb hba
+    simp only [Finset.mem_insert, Finset.mem_singleton] at ha hb
+    rcases ha with rfl | rfl <;> rcases hb with rfl | rfl
+    · exact absurd rfl hba
+    · exact h₁
+    · exact h₂
+    · exact absurd rfl hba
+
+/-- The periphrastic construction has the accumulation reading: the LF's
+    two directional relations, read off the base verb's events, sum to a
+    plural reciprocal event (§2.1–2.2). -/
+theorem accumulation_of_eachOtherLF (hne : d₁ ≠ d₂)
+    (h : HeimLasnikMay1991.eachOtherLF {d₁, d₂}
+      (fun a b => ∃ e ∈ V, ag e = a ∧ th e = b)) :
+    ∃ e, AccumulationReading V ag th d₁ d₂ e := by
+  obtain ⟨⟨e₁, he₁, ha₁, ht₁⟩, e₂, he₂, ha₂, ht₂⟩ :=
+    (eachOtherLF_pair _ hne).mp h
+  exact ⟨e₁ ⊔ e₂, e₁, e₂, rfl, he₁, he₂, ha₁, ht₁, ha₂, ht₂⟩
+
+end Periphrastic
+
+/-! ### Count adverbials: five mutual versus ten directional events (§2.2)
+
+A model of the (15)/(16) contrast. Five rounds of kissing between Dan and
+Rina yield ten directional events. The Hebrew symmetric verb packs each
+round into a group atom: *hitnašku xameš pe'amim* counts five mutual
+events (`card_mutualEvent`), the round's directional events are recovered by
+dissolution (`mutualEvent_down`) yet are not parts of the counted event
+(`mutualEvent_not_subEventReading`) — which is also why *\*hitnašku al
+ha-mecax* 'kissed on the forehead' fails (15d). The French accumulation
+reading instead sums the two directional events: the same five rounds
+(`card_accumulated`) keep both directional events accessible as proper
+parts (`directional_lt_accumulated`), so *s'embrassèrent cinq fois* can
+also count ten (16b). -/
+
+section Counting
+
+/-- The two participants. -/
+inductive Kisser where
+  | dan
+  | rina
+  deriving DecidableEq, Repr
+
+/-- The event domain: nonempty finite sets of atomic event markers, the
+    left summand for directional kissings and the right for group
+    atoms. -/
+abbrev KissEvent : Type := {F : Finset (ℕ ⊕ ℕ) // F.Nonempty}
+
+noncomputable def kissGroups : GroupStructure KissEvent :=
+  GroupStructure.finsetModel ℕ
+
+/-- The `i`-th directional kissing event. -/
+def directional (i : ℕ) : KissEvent :=
+  ⟨{Sum.inl i}, Finset.singleton_nonempty _⟩
+
+theorem directional_injective : Function.Injective directional :=
+  fun _ _ h => Sum.inl.inj (Finset.singleton_injective
+    (congrArg Subtype.val h))
+
+/-- Round `j` kisses in both directions: Dan's is event `2j`, Rina's is
+    event `2j + 1`. -/
+def kiss : Set KissEvent :=
+  {e | ∃ i < 10, e = directional i}
+
+open Classical in
+/-- The agent of a directional kissing: Dan for the even events. -/
+noncomputable def kissAg (e : KissEvent) : Kisser :=
+  if ∃ j < 5, e = directional (2 * j) then .dan else .rina
+
+open Classical in
+/-- The theme of a directional kissing: Rina for the even events. -/
+noncomputable def kissTh (e : KissEvent) : Kisser :=
+  if ∃ j < 5, e = directional (2 * j) then .rina else .dan
+
+/-- Round `j`'s two directional events form a crossed pair. -/
+theorem crossedPair_round {j : ℕ} (hj : j < 5) :
+    CrossedPair kiss kissAg kissTh .dan .rina
+      (directional (2 * j)) (directional (2 * j + 1)) := by
+  have hodd : ¬ ∃ k < 5, directional (2 * j + 1) = directional (2 * k) := by
+    rintro ⟨k, -, hk⟩
+    have := directional_injective hk
+    omega
+  exact ⟨⟨2 * j, by omega, rfl⟩, ⟨2 * j + 1, by omega, rfl⟩,
+    by rw [kissAg, if_pos ⟨j, hj, rfl⟩],
+    by rw [kissTh, if_pos ⟨j, hj, rfl⟩],
+    by rw [kissAg, if_neg hodd],
+    by rw [kissTh, if_neg hodd]⟩
+
+theorem directional_not_le {i k : ℕ} (h : i ≠ k) :
+    ¬ directional i ≤ directional k := fun hle => by
+  have hmem : (Sum.inl i : ℕ ⊕ ℕ) ∈ ({Sum.inl k} : Finset (ℕ ⊕ ℕ)) :=
+    Finset.singleton_subset_iff.mp hle
+  rw [Finset.mem_singleton] at hmem
+  exact h (Sum.inl.inj hmem)
+
+/-- The `j`-th mutual kissing event: the round's two directional events,
+    packed as a group atom — the Hebrew *hitnašku* denotation. -/
+noncomputable def mutualEvent (j : Fin 5) : KissEvent :=
+  kissGroups.up (directional (2 * j) ⊔ directional (2 * j + 1))
+
+theorem mutualEvent_injective : Function.Injective mutualEvent := by
+  intro j j' h
+  have h2 := kissGroups.up_injective h
+  have hv : ({Sum.inl (2 * (j : ℕ))} ∪ {Sum.inl (2 * (j : ℕ) + 1)}
+      : Finset (ℕ ⊕ ℕ)) =
+      {Sum.inl (2 * (j' : ℕ))} ∪ {Sum.inl (2 * (j' : ℕ) + 1)} := by
+    simpa [directional, GroupStructure.coe_sup] using
+      congrArg Subtype.val h2
+  have hmem : (Sum.inl (2 * (j : ℕ)) : ℕ ⊕ ℕ) ∈
+      ({Sum.inl (2 * (j' : ℕ))} ∪ {Sum.inl (2 * (j' : ℕ) + 1)}
+        : Finset (ℕ ⊕ ℕ)) := by
+    rw [← hv]; simp
+  simp only [Finset.mem_union, Finset.mem_singleton, Sum.inl.injEq] at hmem
+  exact Fin.ext (by omega)
+
+/-- (15): five mutual kissing events. -/
+theorem card_mutualEvent : (Finset.univ.image mutualEvent).card = 5 := by
+  rw [Finset.card_image_of_injective _ mutualEvent_injective]
+  simp
+
+/-- Ten directional kissing events underlie them. -/
+theorem card_directional : ((Finset.range 10).image directional).card = 10 := by
+  rw [Finset.card_image_of_injective _ directional_injective]
+  simp
+
+/-- Each mutual event dissolves to its round's directional events. -/
+theorem mutualEvent_down (j : Fin 5) :
+    kissGroups.down (mutualEvent j) =
+      directional (2 * j) ⊔ directional (2 * j + 1) :=
+  kissGroups.down_up _
+
+/-- Yet the mutual event has no accessible parts: the count adverbial and
+    locative modification see one atomic event per round ((15a), (15d)). -/
+theorem mutualEvent_not_subEventReading (j : Fin 5) :
+    ¬ SubEventReading kiss kissAg kissTh .dan .rina (mutualEvent j) :=
+  fun hs => hs.not_atom (kissGroups.atom_up _)
+
+/-- (16): the French accumulation event of round `j` is the plain sum. -/
+def accumulated (j : Fin 5) : KissEvent :=
+  directional (2 * j) ⊔ directional (2 * j + 1)
+
+/-- Five accumulation events — the five-count of (16b). -/
+theorem card_accumulated : (Finset.univ.image accumulated).card = 5 := by
+  have hinj : Function.Injective accumulated := by
+    intro j j' h
+    have hmem : (Sum.inl (2 * (j : ℕ)) : ℕ ⊕ ℕ) ∈
+        ({Sum.inl (2 * (j' : ℕ))} ∪ {Sum.inl (2 * (j' : ℕ) + 1)}
+          : Finset (ℕ ⊕ ℕ)) := by
+      have hv := congrArg Subtype.val h
+      simp only [accumulated, GroupStructure.coe_sup, directional] at hv
+      rw [← hv]; simp
+    simp only [Finset.mem_union, Finset.mem_singleton, Sum.inl.injEq] at hmem
+    exact Fin.ext (by omega)
+  rw [Finset.card_image_of_injective _ hinj]
+  simp
+
+/-- The accumulation event keeps the sub-event reading: both directional
+    events are accessible ((16b)'s ten-count, (16c)'s modification). -/
+theorem accumulated_subEventReading (j : Fin 5) :
+    SubEventReading kiss kissAg kissTh .dan .rina (accumulated j) :=
+  subEventReading_of_crossedPair
+    (directional_not_le (by omega)) (directional_not_le (by omega))
+    (crossedPair_round j.isLt)
+
+/-- Both directional events are proper parts of the accumulation event. -/
+theorem directional_lt_accumulated (j : Fin 5) :
+    directional (2 * j) < accumulated j ∧
+      directional (2 * j + 1) < accumulated j :=
+  ⟨left_lt_sup.mpr (directional_not_le (by omega)),
+    right_lt_sup.mpr (directional_not_le (by omega))⟩
+
+end Counting
+
+/-! ### The discontinuous construction: dyadic symmetric verbs (§7.4–7.5)
+
+The discontinuous phrase is an argument (§7.4), so lexical reciprocal
+verbs have two realizations of one entry: monadic, with the pair-group
+subject, and dyadic, with subject and comitative each contributing one
+member of the pair (§7.5). Syntactic reciprocal verbs have no listed
+symmetric entry to realize dyadically — only listed symmetric entries do,
+which is why drifted *se battre* 'fight' allows discontinuity in
+syntax-set French (§7.2) while English *kiss* and *hug* resist it
+lexically (fn. 32). -/
+
+section Dyadic
+
+variable {D E : Type*} [SemilatticeSup D] {GD : GroupStructure D}
+  {Vsym : Set E} {d₁ d₂ : D} {e : E}
+
+/-- The dyadic realization (§7.5): the verb's events and complex role are
+    those of the monadic symmetric entry, the role taken at the subject
+    and comitative's pair-group. -/
+def DyadicReading (GD : GroupStructure D) (Vsym : Set E) (agTh : E → D)
+    (d₁ d₂ : D) (e : E) : Prop :=
+  e ∈ Vsym ∧ agTh e = GD.up (d₁ ⊔ d₂)
+
+/-- Discontinuity is symmetric: *Dan corresponded with Rina* and *Rina
+    corresponded with Dan* describe the same events — the pair-group is
+    unordered (§7.1). -/
+theorem dyadicReading_comm {agTh : E → D} :
+    DyadicReading GD Vsym agTh d₁ d₂ e ↔
+      DyadicReading GD Vsym agTh d₂ d₁ e := by
+  unfold DyadicReading
+  rw [sup_comm]
+
+/-- The discontinuous construction entails reciprocity between subject and
+    oblique (§7.1): the dyadic reading of a symmetric verb yields the
+    crossed directional events in both directions. -/
+theorem DyadicReading.underlying [SemilatticeSup E]
+    {GE : GroupStructure E} {V : Set E} {ag th agTh : E → D}
+    [h : Verb.SymmetricDenotation GD GE V ag th Vsym agTh] (hne : d₁ ≠ d₂)
+    (hd : DyadicReading GD Vsym agTh d₁ d₂ e) :
+    UnderlyingReading GE V ag th d₁ d₂ e :=
+  underlying_of_symmetric hd.1 hne hd.2
+
+end Dyadic
 
 /-! ### Cross-linguistic sample (§2.4, §5, §7) -/
 
