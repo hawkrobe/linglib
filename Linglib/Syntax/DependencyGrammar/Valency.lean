@@ -105,14 +105,14 @@ section Satisfaction
 variable {n : ℕ}
 
 /-- The dependents of `v` linked by relation `rel`. -/
-def Graph.fillersOf (g : Graph n) (v : Fin n) (rel : UD.DepRel) : List (Fin n) :=
-  (g.children v).filter (g.label v · == some rel)
+def Graph.fillersOf (g : Graph n) (v : Fin n) (rel : UD.DepRel) : Finset (Fin n) :=
+  {w ∈ g.children v | g.label v w = some rel}
 
 /-- The graph satisfies a valency at head `v`: every filler of every slot
     sits on the slot's side of the head, and required slots are filled. -/
 def SatisfiesValency (g : Graph n) (v : Fin n) (val : Valency) : Prop :=
   ∀ slot ∈ val, (∀ w ∈ g.fillersOf v slot.depType, slot.dir.Admits v w) ∧
-    (slot.required → g.fillersOf v slot.depType ≠ [])
+    (slot.required → (g.fillersOf v slot.depType).Nonempty)
 
 instance (g : Graph n) (v : Fin n) (val : Valency) :
     Decidable (SatisfiesValency g v val) :=
@@ -133,7 +133,7 @@ private def CoreArgsLicensed (g : Graph n) (v : Fin n) (val : Valency) : Prop :=
 
 private instance (g : Graph n) (v : Fin n) (val : Valency) :
     Decidable (CoreArgsLicensed g v val) :=
-  List.decidableBAll _ _
+  Finset.decidableDforallFinset
 
 /-- Each verb's dependents satisfy its frame: required slots filled in the
     right direction (`SatisfiesValency`) and no unlicensed core arguments

@@ -68,7 +68,7 @@ abbrev Alternate (a b c d : Fin n) : Prop := a < c ∧ c < b ∧ b < d
 /-- A dependency graph is planar if no two links alternate, so that its arcs
     can be drawn above the sentence without crossing. -/
 def Graph.IsPlanar : Prop :=
-  ∀ ⦃a b c d : Fin n⦄, Linked g a b → Linked g c d → ¬ Alternate a b c d
+  ∀ ⦃a b c d : Fin n⦄, g.Linked a b → g.Linked c d → ¬ Alternate a b c d
 
 /-- The subtrees at `v` and `w` interleave if each contributes two positions
     and the two pairs alternate. -/
@@ -115,7 +115,7 @@ def Graph.gapDegree : Nat := Finset.univ.sup g.gapDegreeAt
     since of the two ways to order the pairs only one alternates. -/
 def Graph.crossings : Nat :=
   (Finset.univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-    Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2 ∧
+    g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2 ∧
       Alternate x.1 x.2.1 x.2.2.1 x.2.2.2)).card
 
 variable {g}
@@ -245,7 +245,7 @@ theorem Graph.IsProjective.isPlanar (hT : g.IsTree) (hP : g.IsProjective) :
 /-- In a planar graph, a link with one endpoint strictly inside the span of
     another link has its other endpoint inside that span too. -/
 theorem Graph.IsPlanar.mem_uIcc_of_linked (hPl : g.IsPlanar) {lo hi p q : Fin n}
-    (hL : Linked g lo hi) (hL' : Linked g p q)
+    (hL : g.Linked lo hi) (hL' : g.Linked p q)
     (hlp : lo < p) (hph : p < hi) : q ∈ Set.uIcc lo hi := by
   by_contra hq
   simp only [Set.mem_uIcc] at hq
@@ -257,7 +257,7 @@ theorem Graph.IsPlanar.mem_uIcc_of_linked (hPl : g.IsPlanar) {lo hi p q : Fin n}
 /-- Planarity forbids a link with one endpoint strictly inside another link's
     span and the other endpoint outside it. -/
 theorem Graph.IsPlanar.no_strict_straddle (hPl : g.IsPlanar) {p q p' q' : Fin n}
-    (hL : Linked g p q) (hL' : Linked g p' q') (hin : p' ∈ Set.uIcc p q)
+    (hL : g.Linked p q) (hL' : g.Linked p' q') (hin : p' ∈ Set.uIcc p q)
     (hne1 : p' ≠ p) (hne2 : p' ≠ q) (hout : q' ∉ Set.uIcc p q) : False := by
   simp only [Set.mem_uIcc] at hin
   rcases lt_trichotomy p q with h | rfl | h

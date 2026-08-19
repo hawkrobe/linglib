@@ -7,6 +7,7 @@ import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Core.Relation.ReflTransGen
 import Mathlib.Logic.Relation
 import Mathlib.Data.Fintype.Card
+import Mathlib.Data.Finset.Max
 import Mathlib.Order.SuccPred.Basic
 import Mathlib.Order.SuccPred.Archimedean
 import Mathlib.Order.SuccPred.Tree
@@ -157,7 +158,7 @@ theorem Dominates.comparable {x : Fin n} (hT : g.IsTree)
     repetition, to the unique headless position. -/
 theorem Graph.IsTree.root_dominates (hT : g.IsTree) (v : Fin n) :
     Dominates g g.root v := by
-  haveI : Std.Irrefl (Relation.TransGen g.Adj) := ⟨hT.acyclic⟩
+  have : Std.Irrefl (Relation.TransGen g.Adj) := ⟨hT.acyclic⟩
   refine (Finite.wellFounded_of_trans_of_irrefl
     (Relation.TransGen g.Adj)).induction (C := (Dominates g g.root ·)) v ?_
   intro v ih
@@ -219,7 +220,7 @@ theorem exists_adj_in_dominating {S : Set (Fin n)} {x : Fin n}
     `v` crosses the boundary of `S`. -/
 theorem exists_link_across {S : Set (Fin n)} {x y : Fin n}
     (hx : Dominates g v x) (hy : Dominates g v y) (hxS : x ∈ S) (hyS : y ∉ S) :
-    ∃ p q, Linked g p q ∧ Dominates g v p ∧ Dominates g v q ∧ p ∈ S ∧ q ∉ S := by
+    ∃ p q, g.Linked p q ∧ Dominates g v p ∧ Dominates g v q ∧ p ∈ S ∧ q ∉ S := by
   by_cases hv : v ∈ S
   · obtain ⟨p, q, hpq, hp, hq, h1, h2⟩ := exists_adj_out hy hv hyS
     exact ⟨p, q, Or.inl hpq, hp, hq, h1, h2⟩
@@ -228,22 +229,18 @@ theorem exists_link_across {S : Set (Fin n)} {x y : Fin n}
 
 /-! ### The head function -/
 
-/-- The first listed head of `v`, defaulting to `v` when headless —
-    under `IsTree`, the unique head of a non-root position and the root
-    at the root. -/
+/-- The least head of `v`, defaulting to `v` when headless — under
+    `IsTree`, the unique head of a non-root position and the root at the
+    root. -/
 def Graph.headOf (g : Graph n) (v : Fin n) : Fin n :=
-  (g.parents v).head?.getD v
+  (g.parents v).min.untopD v
 
 theorem Graph.IsTree.adj_headOf (hT : g.IsTree) {v : Fin n} (hv : v ≠ g.root) :
     g.Adj (g.headOf v) v := by
-  obtain ⟨u, hu, -⟩ := hT.existsUnique_adj v hv
-  have hmem : u ∈ g.parents v := Graph.mem_parents.mpr hu
-  unfold Graph.headOf
-  cases hp : g.parents v with
-  | nil => exact absurd (hp ▸ hmem) List.not_mem_nil
-  | cons h t =>
-    simp only [List.head?_cons, Option.getD_some]
-    exact Graph.mem_parents.mp (hp ▸ List.mem_cons_self)
+  obtain ⟨u, hu, huniq⟩ := hT.existsUnique_adj v hv
+  have hp : g.parents v = {u} := Finset.eq_singleton_iff_unique_mem.mpr
+    ⟨Graph.mem_parents.mpr hu, λ w hw => huniq w (Graph.mem_parents.mp hw)⟩
+  simpa [Graph.headOf, hp] using hu
 
 theorem Graph.IsTree.headOf_eq (hT : g.IsTree) {u v : Fin n} (h : g.Adj u v) :
     g.headOf v = u :=
@@ -251,12 +248,9 @@ theorem Graph.IsTree.headOf_eq (hT : g.IsTree) {u v : Fin n} (h : g.Adj u v) :
     (hT.adj_headOf (λ he => hT.not_adj_root u (he ▸ h))) h
 
 theorem Graph.IsTree.headOf_root (hT : g.IsTree) : g.headOf g.root = g.root := by
-  unfold Graph.headOf
-  cases hp : g.parents g.root with
-  | nil => rfl
-  | cons h t =>
-    exact absurd (Graph.mem_parents.mp (hp ▸ List.mem_cons_self))
-      (hT.not_adj_root h)
+  have hp : g.parents g.root = ∅ := Finset.eq_empty_of_forall_notMem
+    (λ u hu => hT.not_adj_root u (Graph.mem_parents.mp hu))
+  simp [Graph.headOf, hp]
 
 /-! ### The dominance order -/
 
@@ -265,7 +259,7 @@ theorem Graph.IsTree.headOf_root (hT : g.IsTree) : g.headOf g.root = g.root := b
     with the root as bottom, the head as predecessor, and finite
     descent — the order-theoretic reading of a rooted dependency tree
     (cf. mathlib's `RootedTree`). -/
-def DominanceOrder (g : Graph n) := Fin n
+def DominanceOrder (_g : Graph n) := Fin n
 
 namespace DominanceOrder
 

@@ -30,7 +30,7 @@ variable {n : ℕ}
 /-- Total dependency length: the sum of `Nat.dist` over all arcs — the
     quantity dependency-length minimisation is about. -/
 def Graph.totalLength (g : Graph n) : Nat :=
-  ∑ v : Fin n, ∑ w ∈ Finset.univ.filter (g.Adj v ·), Nat.dist v w
+  ∑ v : Fin n, ∑ w ∈ g.children v, Nat.dist v w
 
 /-- Total dependency length reads only the arc structure, never the
     tokens. -/
@@ -68,7 +68,7 @@ theorem Graph.totalLength_relabel (g : Graph n) (σ : Equiv.Perm (Fin n))
     (hσ : ∀ v w : Fin n, Nat.dist (σ v) (σ w) = Nat.dist v w) :
     (g.relabel σ).totalLength = g.totalLength := by
   unfold totalLength
-  simp only [Finset.sum_filter]
+  simp only [Graph.children, Finset.sum_filter]
   refine Fintype.sum_equiv σ.symm _ _ (λ v => ?_)
   refine Fintype.sum_equiv σ.symm _ _ (λ w => ?_)
   simp only [relabel_adj]
