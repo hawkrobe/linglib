@@ -201,6 +201,81 @@ theorem getElem?_inputs_graft_middle (hi : i < x.numInputs)
     hA]
   simp
 
+/-- An input of the grafted tree comes from the host or from the inserted
+    tree. -/
+theorem mem_inputs_graft (h : x.inputs[i]? = some s.out) :
+    ∀ d ∈ (x.graft i s).inputs, d ∈ x.inputs ∨ d ∈ s.inputs := by
+  induction x generalizing i with
+  | leaf c =>
+    cases i with
+    | zero => exact fun d hd => .inr hd
+    | succ n => exact fun d hd => .inl hd
+  | node c l r ihl ihr =>
+    rw [getElem?_inputs_node] at h
+    rw [graft_node]
+    by_cases hi : i < l.numInputs
+    · rw [if_pos hi] at h ⊢
+      intro d hd
+      rcases List.mem_append.mp hd with hd | hd
+      · rcases ihl h d hd with hd | hd
+        · exact .inl (List.mem_append.mpr (.inl hd))
+        · exact .inr hd
+      · exact .inl (List.mem_append.mpr (.inr hd))
+    · rw [if_neg hi] at h ⊢
+      intro d hd
+      rcases List.mem_append.mp hd with hd | hd
+      · exact .inl (List.mem_append.mpr (.inl hd))
+      · rcases ihr h d hd with hd | hd
+        · exact .inl (List.mem_append.mpr (.inr hd))
+        · exact .inr hd
+
+/-- A host input survives grafting, unless it is the matched color. -/
+theorem mem_inputs_graft_of_mem (h : x.inputs[i]? = some s.out) :
+    ∀ d ∈ x.inputs, d ∈ (x.graft i s).inputs ∨ d = s.out := by
+  induction x generalizing i with
+  | leaf c =>
+    cases i with
+    | zero =>
+      intro d hd
+      have hc : c = s.out := by simpa using h
+      exact .inr ((by simpa using hd : d = c).trans hc)
+    | succ n => simp at h
+  | node c l r ihl ihr =>
+    rw [getElem?_inputs_node] at h
+    rw [graft_node]
+    by_cases hi : i < l.numInputs
+    · rw [if_pos hi] at h ⊢
+      intro d hd
+      rcases List.mem_append.mp hd with hd | hd
+      · rcases ihl h d hd with hd | hd
+        · exact .inl (List.mem_append.mpr (.inl hd))
+        · exact .inr hd
+      · exact .inl (List.mem_append.mpr (.inr hd))
+    · rw [if_neg hi] at h ⊢
+      intro d hd
+      rcases List.mem_append.mp hd with hd | hd
+      · exact .inl (List.mem_append.mpr (.inl hd))
+      · rcases ihr h d hd with hd | hd
+        · exact .inl (List.mem_append.mpr (.inr hd))
+        · exact .inr hd
+
+/-- The inserted tree's inputs are inputs of the grafted tree. -/
+theorem mem_inputs_graft_of_mem_right (h : x.inputs[i]? = some s.out) :
+    ∀ d ∈ s.inputs, d ∈ (x.graft i s).inputs := by
+  induction x generalizing i with
+  | leaf c =>
+    cases i with
+    | zero => exact fun d hd => hd
+    | succ n => simp at h
+  | node c l r ihl ihr =>
+    rw [getElem?_inputs_node] at h
+    rw [graft_node]
+    by_cases hi : i < l.numInputs
+    · rw [if_pos hi] at h ⊢
+      exact fun d hd => List.mem_append.mpr (.inl (ihl h d hd))
+    · rw [if_neg hi] at h ⊢
+      exact fun d hd => List.mem_append.mpr (.inr (ihr h d hd))
+
 /-- Nested insertions compose, with the inner index offset by the outer
     insertion point: the nested case of the operadic insertion relations. -/
 theorem graft_graft (hi : i < x.numInputs) (hj : j < s.numInputs) :

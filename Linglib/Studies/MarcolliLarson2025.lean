@@ -137,4 +137,23 @@ theorem parasiticGen_derivable :
   simpa using hunit.graft 0 (Set.mem_insert ..)
     (by simp [parasiticGen, gen])
 
+/-- Without the marking, the dual-role configuration is underivable: the
+    structure is movement-free and its root receives no role, so the
+    sole-role invariant forbids the dual-receiver argument. The sole-role
+    requirement of [siloni-2012]'s "I"-reading account, as an
+    underivability theorem. -/
+theorem parasiticGen_not_derivable :
+    ¬ (system (L := Unit) giveHier).Derives .nontheta parasiticGen := by
+  intro h
+  have hroot : (Color.nontheta : Color Unit).SoleReceiver :=
+    Color.soleReceiver_of_receiverCount_le (g := []) rfl
+      (by simp [receiverCount])
+  have hmove : Color.emptyTree ∉ parasiticGen.inputs := by
+    simp [parasiticGen, gen]
+  have hd : (Color.free [.down .experiencer, .down .agent] : Color Unit)
+      ∈ parasiticGen.inputs := by simp [parasiticGen, gen]
+  have := derives_soleReceiver h hroot hmove _ hd
+    [.down .experiencer, .down .agent] rfl
+  simp [receiverCount, PolarizedRole.down] at this
+
 end MarcolliLarson2025
