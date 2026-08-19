@@ -125,10 +125,10 @@ theorem Graph.IsProjective.isPlanar (hT : g.IsTree) (hP : g.IsProjective) :
     rintro p t q u x h1 h2 hx (rfl | rfl) hne
     exacts [hP.dominates_of_mem_uIcc h1 hx,
             Dominates.to_head hT (hP.dominates_of_mem_uIcc h1 hx) hne h2]
-  have hab : c ∈ Set.uIcc a b := by simp only [Set.mem_uIcc]; omega
-  have hba : c ∈ Set.uIcc b a := by simp only [Set.mem_uIcc]; omega
-  have hcd : b ∈ Set.uIcc c d := by simp only [Set.mem_uIcc]; omega
-  have hdc : b ∈ Set.uIcc d c := by simp only [Set.mem_uIcc]; omega
+  have hab : c ∈ Set.uIcc a b := by simp [Set.mem_uIcc]; omega
+  have hba : c ∈ Set.uIcc b a := by simp [Set.mem_uIcc]; omega
+  have hcd : b ∈ Set.uIcc c d := by simp [Set.mem_uIcc]; omega
+  have hdc : b ∈ Set.uIcc d c := by simp [Set.mem_uIcc]; omega
   rcases hL1 with h1 | h1 <;> rcases hL2 with h2 | h2
   · exact hac.ne (Dominates.antisymm hT.acyclic
       (step h1 h2 hab (.inl rfl) hac.ne) (step h2 h1 hcd (.inr rfl) hcb.ne))
@@ -175,30 +175,26 @@ theorem Graph.IsPlanar.isWellNested (hT : g.IsTree) (hPl : g.IsPlanar) :
     λ h1 h2 => disjoint_dominated hT hvw hwv h1 h2
   have hab : a < b := hac.trans hcb
   -- A link below `w` crosses the boundary of the span of `a` and `b`.
-  have hcS : c ∈ Set.uIcc a b := Set.mem_uIcc.mpr (.inl ⟨hac.le, hcb.le⟩)
-  have hdS : d ∉ Set.uIcc a b := by simp only [Set.mem_uIcc]; push Not; omega
+  have hcS : c ∈ Set.uIcc a b := by simp [Set.mem_uIcc]; omega
+  have hdS : d ∉ Set.uIcc a b := by simp [Set.mem_uIcc]; omega
   obtain ⟨p, q, hLpq, hwp, hwq, hpS, hqS⟩ := exists_link_across hwc hwd hcS hdS
   rw [Set.uIcc_of_le hab.le, Set.mem_Icc] at hpS hqS
   push Not at hqS
   have hap : a < p := lt_of_le_of_ne hpS.1 (λ h => hdis hva (h ▸ hwp))
   have hpb : p < b := lt_of_le_of_ne hpS.2 (λ h => hdis hvb (h ▸ hwp))
-  -- Any link below `v` crossing that link's span contradicts planarity.
-  have hfin : ∀ {p' q' : Fin n}, Linked g p' q' → Dominates g v p' →
-      p' ∈ Set.uIcc p q → q' ∉ Set.uIcc p q → False := by
-    intro p' q' hL' hvp' hin hout
-    exact hPl.no_strict_straddle hLpq hL' hin
-      (λ h => hdis hvp' (h ▸ hwp)) (λ h => hdis hvp' (h ▸ hwq)) hout
-  have hqa0 : q ≠ a := λ h => hdis hva (h ▸ hwq)
-  rcases lt_or_gt_of_ne hqa0 with hqa | hqa
-  · have h1 : a ∈ Set.uIcc p q := Set.mem_uIcc.mpr (.inr ⟨hqa.le, hap.le⟩)
-    have h2 : b ∉ Set.uIcc p q := by simp only [Set.mem_uIcc]; push Not; omega
-    obtain ⟨_, _, hL', hvp', _, hin, hout⟩ := exists_link_across hva hvb h1 h2
-    exact hfin hL' hvp' hin hout
-  · have hbq : b < q := hqS hqa.le
-    have h1 : b ∈ Set.uIcc p q := Set.mem_uIcc.mpr (.inl ⟨hpb.le, hbq.le⟩)
-    have h2 : a ∉ Set.uIcc p q := by simp only [Set.mem_uIcc]; push Not; omega
-    obtain ⟨_, _, hL', hvp', _, hin, hout⟩ := exists_link_across hvb hva h1 h2
-    exact hfin hL' hvp' hin hout
+  -- A link below `v` spanning that link's endpoints contradicts planarity.
+  have main : ∀ {x y : Fin n}, Dominates g v x → Dominates g v y →
+      x ∈ Set.uIcc p q → y ∉ Set.uIcc p q → False := by
+    intro x y hx hy hin hout
+    obtain ⟨_, _, hL', hvp', _, hin', hout'⟩ := exists_link_across hx hy hin hout
+    exact hPl.no_strict_straddle hLpq hL' hin'
+      (λ h => hdis hvp' (h ▸ hwp)) (λ h => hdis hvp' (h ▸ hwq)) hout'
+  -- `q` falls on one side or the other, putting exactly one of `a`, `b` inside.
+  rcases (show q < a ∨ b < q by omega) with hq | hq
+  · exact main hva hvb (by simp [Set.mem_uIcc]; omega)
+      (by simp [Set.mem_uIcc]; omega)
+  · exact main hvb hva (by simp [Set.mem_uIcc]; omega)
+      (by simp [Set.mem_uIcc]; omega)
 
 /-- Every projective tree is well-nested, via planarity. -/
 theorem Graph.IsProjective.isWellNested (hT : g.IsTree) (hP : g.IsProjective) :
