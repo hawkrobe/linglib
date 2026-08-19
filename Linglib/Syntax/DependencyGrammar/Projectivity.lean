@@ -56,10 +56,7 @@ def Graph.IsProjective : Prop := ∀ v, (g.dominated v).OrdConnected
 
 /-- Positions `a b c d` alternate if `a < c < b < d`, so that the pairs
     `{a, b}` and `{c, d}` strictly interleave. -/
-def Alternate (a b c d : Fin n) : Prop := a < c ∧ c < b ∧ b < d
-
-instance (a b c d : Fin n) : Decidable (Alternate a b c d) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+abbrev Alternate (a b c d : Fin n) : Prop := a < c ∧ c < b ∧ b < d
 
 /-- A dependency graph is planar if no two links alternate, so that its arcs
     can be drawn above the sentence without crossing. -/
