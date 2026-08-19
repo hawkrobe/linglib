@@ -32,9 +32,15 @@ papers' own figures, and live in their study files.
 * `Graph.Interleave`, `Graph.IsWellNested` — Definition 8.
 * `Graph.gapDegree` — Definitions 6–7. Gap degree + 1 is the block-degree,
   the fan-out of the LCFRS rule extracted for that node.
+* `Graph.isProjective_iff_gapDegree_eq_zero` — the parametric constraint at
+  its least value is the binary one.
 * `Graph.IsProjective.isPlanar`, `Graph.IsPlanar.isWellNested` — the §3.5
   chain `projective ⊆ planar ⊆ well-nested` on trees, with
   `Graph.IsProjective.isWellNested` its composite.
+* `Graph.IsPlanar.root_mem_gap` — every gap of a planar tree contains the
+  root, so a planar tree rooted at a sentence boundary is already projective
+  (`Graph.IsPlanar.isProjective_of_isBot`). This is why planarity is a weaker
+  constraint than projectivity only by the root's position.
 
 ## References
 
@@ -105,9 +111,83 @@ def Graph.gapDegreeAt (v : Fin n) : Nat :=
 /-- The gap degree of a graph is the maximum over its positions. -/
 def Graph.gapDegree : Nat := Finset.univ.sup g.gapDegreeAt
 
-/-! ### The hierarchy on trees -/
-
 variable {g}
+
+/-! ### Projectivity as gap degree zero -/
+
+/-- A strictly increasing list of naturals has no gaps exactly when its
+    members form an order-convex set. -/
+private theorem gapfree_iff_ordConnected {l : List ℕ} (h : l.IsChain (· < ·)) :
+    (∀ q ∈ l.zip l.tail, q.2 - q.1 ≤ 1) ↔ Set.OrdConnected {x | x ∈ l} := by
+  rw [Set.ordConnected_iff]
+  simp only [Set.subset_def, Set.mem_Icc, Set.mem_ofPred_eq, and_imp]
+  induction h with
+  | nil => simp
+  | singleton a => simp; omega
+  | @cons_cons a b t hab hchain ih =>
+    have hpw : (b :: t).Pairwise (· < ·) := List.isChain_iff_pairwise.mp hchain
+    have hble : ∀ y ∈ b :: t, b ≤ y := by
+      rintro y hy
+      rcases List.mem_cons.mp hy with rfl | hy'
+      exacts [Nat.le_refl _, ((List.pairwise_cons.mp hpw).1 y hy').le]
+    rw [List.tail_cons, List.zip_cons_cons, List.forall_mem_cons]
+    constructor
+    · rintro ⟨hba, hrest⟩ x hx y hy hxy z hxz hzy
+      have hb : b = a + 1 := by omega
+      have hconv := ih.mp hrest
+      rcases List.mem_cons.mp hx with rfl | hx'
+      · rcases Nat.eq_or_lt_of_le hxz with rfl | hlt
+        · exact List.mem_cons_self
+        rcases List.mem_cons.mp hy with rfl | hy'
+        · omega
+        · exact List.mem_cons_of_mem _
+            (hconv b List.mem_cons_self y hy' (hble y hy') z (by omega) hzy)
+      · rcases List.mem_cons.mp hy with rfl | hy'
+        · exact absurd (hble x hx') (by omega)
+        · exact List.mem_cons_of_mem _ (hconv x hx' y hy' hxy z hxz hzy)
+    · intro hconv
+      refine ⟨?_, ih.mpr (λ x hx y hy hxy z hxz hzy => ?_)⟩
+      · by_contra hgap
+        rcases List.mem_cons.mp (hconv a List.mem_cons_self b
+          (List.mem_cons_of_mem _ List.mem_cons_self) hab.le (a + 1) (by omega) (by omega))
+          with heq | hin
+        · omega
+        · exact absurd (hble _ hin) (by omega)
+      · rcases List.mem_cons.mp (hconv x (List.mem_cons_of_mem _ hx)
+          y (List.mem_cons_of_mem _ hy) hxy z hxz hzy) with rfl | hin
+        · exact absurd (hble x hx) (by omega)
+        · exact hin
+
+private theorem mem_projectionVals {v : Fin n} {k : ℕ} :
+    k ∈ g.projectionVals v ↔ ∃ x : Fin n, Dominates g v x ∧ x.val = k := by
+  simp [Graph.projectionVals, List.mem_map]
+
+/-- A position has gap degree zero exactly when what it dominates is
+    order-convex. -/
+theorem Graph.gapDegreeAt_eq_zero_iff {v : Fin n} :
+    g.gapDegreeAt v = 0 ↔ (g.dominated v).OrdConnected := by
+  rw [Graph.gapDegreeAt, List.countP_eq_zero]
+  have hgf := gapfree_iff_ordConnected (l := g.projectionVals v)
+    (List.isChain_iff_pairwise.mpr (g.projectionVals_sortedLT v).pairwise)
+  simp only [decide_eq_true_eq, Nat.not_lt] at *
+  rw [hgf, Set.ordConnected_iff, Set.ordConnected_iff]
+  simp only [Set.subset_def, Set.mem_Icc, Set.mem_ofPred_eq, mem_projectionVals,
+    Graph.mem_dominated, and_imp]
+  constructor
+  · rintro h x hx y hy hxy z hxz hzy
+    obtain ⟨w, hw, hwv⟩ := h x.val ⟨x, hx, rfl⟩ y.val ⟨y, hy, rfl⟩ hxy z.val hxz hzy
+    exact (Fin.val_injective (hwv : w.val = z.val)) ▸ hw
+  · rintro h k ⟨x, hx, rfl⟩ m ⟨y, hy, rfl⟩ hxy z hxz hzy
+    exact ⟨⟨z, lt_of_le_of_lt hzy y.isLt⟩, h x hx y hy hxy ⟨z, _⟩ hxz hzy, rfl⟩
+
+/-- **Projectivity is gap degree zero**: the parametric constraint at its
+    least value is the binary one. -/
+theorem Graph.isProjective_iff_gapDegree_eq_zero :
+    g.IsProjective ↔ g.gapDegree = 0 := by
+  rw [Graph.gapDegree, ← Nat.bot_eq_zero, Finset.sup_eq_bot_iff]
+  simp [Graph.IsProjective, Nat.bot_eq_zero, Graph.gapDegreeAt_eq_zero_iff]
+
+/-! ### The hierarchy on trees -/
 
 /-- In a projective graph the head of an arc dominates every position the arc
     spans, since the head dominates both endpoints and is order-convex. -/
@@ -195,6 +275,58 @@ theorem Graph.IsPlanar.isWellNested (hT : g.IsTree) (hPl : g.IsPlanar) :
       (by simp [Set.mem_uIcc]; omega)
   · exact main hvb hva (by simp [Set.mem_uIcc]; omega)
       (by simp [Set.mem_uIcc]; omega)
+
+/-- In a planar tree every gap contains the root: if `v` dominates `i` and `j`
+    but skips a position between them, the root lies strictly between `i` and
+    `j`. So a planar tree rooted at a sentence boundary is projective, which
+    is why planarity buys nothing once the root is given a boundary
+    position. -/
+theorem Graph.IsPlanar.root_mem_gap (hT : g.IsTree) (hPl : g.IsPlanar)
+    {v i j k : Fin n} (hi : Dominates g v i) (hj : Dominates g v j)
+    (hik : i < k) (hkj : k < j) (hk : ¬ Dominates g v k) :
+    i < g.root ∧ g.root < j := by
+  by_contra hcon
+  push Not at hcon
+  -- `v` is not the root, so the root is not among the positions `v` dominates.
+  have hvr : ¬ Dominates g v g.root := λ h =>
+    hk ((Dominates.antisymm hT.acyclic h (hT.root_dominates v)).symm ▸
+      hT.root_dominates k)
+  have hri : g.root ≠ i := λ h => hvr (h ▸ hi)
+  have hrj : g.root ≠ j := λ h => hvr (h ▸ hj)
+  have hij : i < j := hik.trans hkj
+  have hkS : k ∈ Set.uIcc i j := by simp [Set.mem_uIcc]; omega
+  have hrS : g.root ∉ Set.uIcc i j := by simp [Set.mem_uIcc]; omega
+  -- The root's path to `k` enters the span of `i` and `j` at an arc that
+  -- misses everything `v` dominates.
+  obtain ⟨p, q, hpq, hpS, hqS, hqk⟩ :=
+    exists_adj_in_dominating (hT.root_dominates k) hrS hkS
+  have hqv : ¬ Dominates g v q := λ h => hk (h.trans hqk)
+  have hpv : ¬ Dominates g v p := λ h =>
+    hk (h.trans ((Relation.ReflTransGen.single hpq).trans hqk))
+  rw [Set.uIcc_of_le hij.le, Set.mem_Icc] at hpS hqS
+  push Not at hpS
+  have hiq : i < q := lt_of_le_of_ne hqS.1 (λ h => hqv (h ▸ hi))
+  have hqj : q < j := lt_of_le_of_ne hqS.2 (λ h => hqv (h ▸ hj))
+  have main : ∀ {x y : Fin n}, Dominates g v x → Dominates g v y →
+      x ∈ Set.uIcc p q → y ∉ Set.uIcc p q → False := by
+    intro x y hx hy hin hout
+    obtain ⟨_, _, hL', hvp', _, hin', hout'⟩ := exists_link_across hx hy hin hout
+    exact hPl.no_strict_straddle (Or.inl hpq) hL' hin'
+      (λ h => hpv (h ▸ hvp')) (λ h => hqv (h ▸ hvp')) hout'
+  rcases (show p < i ∨ j < p by omega) with hp | hp
+  · exact main hi hj (by simp [Set.mem_uIcc]; omega) (by simp [Set.mem_uIcc]; omega)
+  · exact main hj hi (by simp [Set.mem_uIcc]; omega) (by simp [Set.mem_uIcc]; omega)
+
+/-- A planar tree whose root precedes every position is projective: a gap
+    would have to contain the root, and nothing lies to its left. -/
+theorem Graph.IsPlanar.isProjective_of_isBot (hT : g.IsTree) (hPl : g.IsPlanar)
+    (hr : IsBot g.root) : g.IsProjective := by
+  rw [g.isProjective_iff]
+  intro v x hx y hy z hxz hzy
+  by_contra hz
+  have hxz' : x < z := lt_of_le_of_ne hxz (λ h => hz (h ▸ hx))
+  have hzy' : z < y := lt_of_le_of_ne hzy (λ h => hz (h ▸ hy))
+  exact absurd (hPl.root_mem_gap hT hx hy hxz' hzy' hz).1 (not_lt.mpr (hr x))
 
 /-- Every projective tree is well-nested, via planarity. -/
 theorem Graph.IsProjective.isWellNested (hT : g.IsTree) (hP : g.IsProjective) :

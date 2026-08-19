@@ -202,6 +202,19 @@ theorem exists_adj_in {S : Set (Fin n)} {x : Fin n} (h : Dominates g v x)
     · exact ih hb
     · exact ⟨b, c, hbc, hvb, hvb.tail hbc, hb, hx⟩
 
+/-- A path from `v` into `S` enters at an arc whose inner endpoint still
+    reaches the target. -/
+theorem exists_adj_in_dominating {S : Set (Fin n)} {x : Fin n}
+    (h : Dominates g v x) (hv : v ∉ S) (hx : x ∈ S) :
+    ∃ p q, g.Adj p q ∧ p ∉ S ∧ q ∈ S ∧ Dominates g q x := by
+  induction h with
+  | refl => exact absurd hx hv
+  | @tail b c _ hbc ih =>
+    by_cases hb : b ∈ S
+    · obtain ⟨p, q, h1, h2, h3, h4⟩ := ih hb
+      exact ⟨p, q, h1, h2, h3, h4.tail hbc⟩
+    · exact ⟨b, c, hbc, hb, hx, .refl⟩
+
 /-- If `v` dominates a position inside `S` and one outside it, some link below
     `v` crosses the boundary of `S`. -/
 theorem exists_link_across {S : Set (Fin n)} {x y : Fin n}
