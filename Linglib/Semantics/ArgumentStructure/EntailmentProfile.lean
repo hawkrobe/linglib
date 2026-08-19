@@ -1,4 +1,5 @@
 import Mathlib.Data.Fintype.Pi
+import Mathlib.Order.BooleanAlgebra.Basic
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -20,6 +21,10 @@ with Proto-Patient dominance breaking ties.
 - `EntailmentProfile.pAgentScore`, `EntailmentProfile.pPatientScore` —
   flat feature counts
 - `PAgentDominates`, `PPatientDominates` — subset ordering on feature sets
+- the pointwise `BooleanAlgebra` instance, `EntailmentProfile.support`, and
+  the cluster sets `ProtoRoleFeature.agentCluster`/`patientCluster` — the
+  Boolean-cube order, with the counting accessors and dominance relations
+  recharacterized as cardinality and cluster-restricted inclusion
 - `OutranksForSubject` — the lattice-based Argument Selection Principle
 - `PredictsUnaccusative`, `PredictsUnergative` — split-intransitivity
   predictions
@@ -318,6 +323,188 @@ themes (*eat*, *build*) add IT per class or per verb — not all accomplishment
 objects measure the event. -/
 def accomplishmentObjectProfile : EntailmentProfile :=
   { changeOfState := true, causallyAffected := true }
+
+/-! ### The Boolean cube order
+
+Pointwise order and Boolean-algebra structure, transported along
+`equivFeatures`: `p ≤ q` is entailment-set inclusion, and `p ⊔ q` imposes
+the union of the two profiles' entailments — [reinhart-siloni-2005]'s role
+bundling. `support` is the imposed entailment set; the counting accessors
+and dominance relations are its cardinality and cluster-restricted
+inclusion (`pAgentScore_eq_card`, `pAgentDominates_iff_subset`). -/
+
+/-- [dowty-1991]'s five Proto-Agent entailments as a feature set. -/
+def ProtoRoleFeature.agentCluster : Finset ProtoRoleFeature :=
+  {.volition, .sentience, .causation, .movement, .independentExistence}
+
+/-- The five Proto-Patient entailments as a feature set. -/
+def ProtoRoleFeature.patientCluster : Finset ProtoRoleFeature :=
+  {.changeOfState, .incrementalTheme, .causallyAffected, .stationary,
+   .dependentExistence}
+
+theorem ProtoRoleFeature.disjoint_agentCluster_patientCluster :
+    Disjoint ProtoRoleFeature.agentCluster ProtoRoleFeature.patientCluster :=
+  Finset.disjoint_left.mpr (by decide)
+
+theorem ProtoRoleFeature.agentCluster_union_patientCluster :
+    ProtoRoleFeature.agentCluster ∪ ProtoRoleFeature.patientCluster =
+      Finset.univ := by decide
+
+namespace EntailmentProfile
+
+instance : BooleanAlgebra EntailmentProfile := equivFeatures.booleanAlgebra
+
+theorem le_def {p q : EntailmentProfile} :
+    p ≤ q ↔ ∀ f, p.feature f ≤ q.feature f := Iff.rfl
+
+instance : DecidableRel (α := EntailmentProfile) (· ≤ ·) := fun _ _ =>
+  decidable_of_iff _ le_def.symm
+
+@[simp] theorem feature_sup (p q : EntailmentProfile) (f : ProtoRoleFeature) :
+    (p ⊔ q).feature f = (p.feature f || q.feature f) := by
+  cases f <;> rfl
+
+/-- The set of entailments a profile imposes. -/
+def support (p : EntailmentProfile) : Finset ProtoRoleFeature :=
+  Finset.univ.filter (fun f => p.feature f)
+
+@[simp] theorem mem_support {p : EntailmentProfile} {f : ProtoRoleFeature} :
+    f ∈ p.support ↔ p.feature f = true := by
+  simp [support]
+
+@[simp] theorem support_sup (p q : EntailmentProfile) :
+    (p ⊔ q).support = p.support ∪ q.support := by
+  ext f; simp
+
+theorem le_iff_support_subset {p q : EntailmentProfile} :
+    p ≤ q ↔ p.support ⊆ q.support := by
+  simp [le_def, Finset.subset_iff, Bool.le_iff_imp]
+
+theorem support_inter_eq_filter (p : EntailmentProfile)
+    (s : Finset ProtoRoleFeature) :
+    p.support ∩ s = s.filter (fun f => p.feature f) := by
+  ext f; simp [and_comm]
+
+/-- The Proto-Agent count is the size of the support's agent-cluster part. -/
+theorem pAgentScore_eq_card (p : EntailmentProfile) :
+    p.pAgentScore = (p.support ∩ ProtoRoleFeature.agentCluster).card := by
+  rw [support_inter_eq_filter]
+  obtain ⟨v, s, c, m, ie, _, _, _, _, _⟩ := p
+  cases v <;> cases s <;> cases c <;> cases m <;> cases ie <;> rfl
+
+/-- The Proto-Patient count is the size of the support's patient-cluster
+    part. -/
+theorem pPatientScore_eq_card (p : EntailmentProfile) :
+    p.pPatientScore = (p.support ∩ ProtoRoleFeature.patientCluster).card := by
+  rw [support_inter_eq_filter]
+  obtain ⟨_, _, _, _, _, cs, it, ca, st, de⟩ := p
+  cases cs <;> cases it <;> cases ca <;> cases st <;> cases de <;> rfl
+
+theorem pAgentScore_mono : Monotone pAgentScore := fun _ _ h => by
+  rw [pAgentScore_eq_card, pAgentScore_eq_card]
+  exact Finset.card_le_card
+    (Finset.inter_subset_inter (le_iff_support_subset.mp h) Finset.Subset.rfl)
+
+theorem pPatientScore_mono : Monotone pPatientScore := fun _ _ h => by
+  rw [pPatientScore_eq_card, pPatientScore_eq_card]
+  exact Finset.card_le_card
+    (Finset.inter_subset_inter (le_iff_support_subset.mp h) Finset.Subset.rfl)
+
+/-- The profile imposes entailments from both proto-role clusters —
+    [reinhart-siloni-2005]'s complex role. -/
+def IsComplexRole (p : EntailmentProfile) : Prop :=
+  0 < p.pAgentScore ∧ 0 < p.pPatientScore
+
+instance : DecidablePred IsComplexRole := fun p =>
+  inferInstanceAs (Decidable (0 < p.pAgentScore ∧ 0 < p.pPatientScore))
+
+/-- Joining an agentive profile with an affected one yields a complex
+    role. -/
+theorem isComplexRole_sup {p q : EntailmentProfile}
+    (ha : 0 < p.pAgentScore) (hp : 0 < q.pPatientScore) :
+    IsComplexRole (p ⊔ q) :=
+  ⟨ha.trans_le (pAgentScore_mono le_sup_left),
+   hp.trans_le (pPatientScore_mono le_sup_right)⟩
+
+end EntailmentProfile
+
+/-- Proto-Agent dominance is inclusion of the supports' agent-cluster
+    parts. -/
+theorem pAgentDominates_iff_subset (p q : EntailmentProfile) :
+    PAgentDominates p q ↔
+      q.support ∩ ProtoRoleFeature.agentCluster ⊆
+        p.support ∩ ProtoRoleFeature.agentCluster := by
+  constructor
+  · rintro ⟨h1, h2, h3, h4, h5⟩ f hf
+    rw [Finset.mem_inter, EntailmentProfile.mem_support] at hf ⊢
+    obtain ⟨hq, hA⟩ := hf
+    refine ⟨?_, hA⟩
+    simp only [ProtoRoleFeature.agentCluster, Finset.mem_insert,
+      Finset.mem_singleton] at hA
+    rcases hA with rfl | rfl | rfl | rfl | rfl
+    exacts [h1 hq, h2 hq, h3 hq, h4 hq, h5 hq]
+  · intro h
+    have H : ∀ f ∈ ProtoRoleFeature.agentCluster,
+        q.feature f = true → p.feature f = true := fun f hA hq =>
+      EntailmentProfile.mem_support.mp
+        (Finset.mem_inter.mp (h (Finset.mem_inter.mpr
+          ⟨EntailmentProfile.mem_support.mpr hq, hA⟩))).1
+    exact ⟨H .volition (by decide), H .sentience (by decide),
+      H .causation (by decide), H .movement (by decide),
+      H .independentExistence (by decide)⟩
+
+/-- Proto-Patient dominance is inclusion of the supports' patient-cluster
+    parts. -/
+theorem pPatientDominates_iff_subset (p q : EntailmentProfile) :
+    PPatientDominates p q ↔
+      q.support ∩ ProtoRoleFeature.patientCluster ⊆
+        p.support ∩ ProtoRoleFeature.patientCluster := by
+  constructor
+  · rintro ⟨h1, h2, h3, h4, h5⟩ f hf
+    rw [Finset.mem_inter, EntailmentProfile.mem_support] at hf ⊢
+    obtain ⟨hq, hA⟩ := hf
+    refine ⟨?_, hA⟩
+    simp only [ProtoRoleFeature.patientCluster, Finset.mem_insert,
+      Finset.mem_singleton] at hA
+    rcases hA with rfl | rfl | rfl | rfl | rfl
+    exacts [h1 hq, h2 hq, h3 hq, h4 hq, h5 hq]
+  · intro h
+    have H : ∀ f ∈ ProtoRoleFeature.patientCluster,
+        q.feature f = true → p.feature f = true := fun f hA hq =>
+      EntailmentProfile.mem_support.mp
+        (Finset.mem_inter.mp (h (Finset.mem_inter.mpr
+          ⟨EntailmentProfile.mem_support.mpr hq, hA⟩))).1
+    exact ⟨H .changeOfState (by decide), H .incrementalTheme (by decide),
+      H .causallyAffected (by decide), H .stationary (by decide),
+      H .dependentExistence (by decide)⟩
+
+/-- The join retains the left component's Proto-Agent entailments. -/
+theorem pAgentDominates_sup_left (p q : EntailmentProfile) :
+    PAgentDominates (p ⊔ q) p :=
+  (pAgentDominates_iff_subset _ _).mpr <| by
+    rw [EntailmentProfile.support_sup]
+    exact Finset.inter_subset_inter Finset.subset_union_left Finset.Subset.rfl
+
+/-- The join retains the right component's Proto-Agent entailments. -/
+theorem pAgentDominates_sup_right (p q : EntailmentProfile) :
+    PAgentDominates (p ⊔ q) q :=
+  (pAgentDominates_iff_subset _ _).mpr <| by
+    rw [EntailmentProfile.support_sup]
+    exact Finset.inter_subset_inter Finset.subset_union_right Finset.Subset.rfl
+
+/-- The join inherits the left component's Proto-Patient entailments. -/
+theorem pPatientDominates_sup_left (p q : EntailmentProfile) :
+    PPatientDominates (p ⊔ q) p :=
+  (pPatientDominates_iff_subset _ _).mpr <| by
+    rw [EntailmentProfile.support_sup]
+    exact Finset.inter_subset_inter Finset.subset_union_left Finset.Subset.rfl
+
+/-- The join inherits the right component's Proto-Patient entailments. -/
+theorem pPatientDominates_sup_right (p q : EntailmentProfile) :
+    PPatientDominates (p ⊔ q) q :=
+  (pPatientDominates_iff_subset _ _).mpr <| by
+    rw [EntailmentProfile.support_sup]
+    exact Finset.inter_subset_inter Finset.subset_union_right Finset.Subset.rfl
 
 end ArgumentStructure
 

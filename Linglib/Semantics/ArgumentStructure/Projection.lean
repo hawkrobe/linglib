@@ -103,10 +103,9 @@ theorem grimm_agentivity_consistent_with_dowty
   obtain ⟨h1, h2, h3, h4⟩ := (Agentivity.le_iff _ _).mp h
   exact ⟨bImpl _ _ h1, bImpl _ _ h2, bImpl _ _ h3, bImpl _ _ h4⟩
 
-/-- The Dowty→Grimm projection is monotone: if one EntailmentProfile
-    dominates another on P-Agent features, the projected agentivity values
-    are ordered. -/
-theorem fromEntailmentProfile_monotone
+/-- If one EntailmentProfile dominates another on the four lattice P-Agent
+    features, the projected agentivity values are ordered. -/
+theorem fromEntailmentProfile_le
     (p q : EntailmentProfile)
     (hv : p.volition = true → q.volition = true)
     (hs : p.sentience = true → q.sentience = true)
@@ -115,6 +114,16 @@ theorem fromEntailmentProfile_monotone
     Agentivity.fromEntailmentProfile p ≤
     Agentivity.fromEntailmentProfile q :=
   (Agentivity.le_iff _ _).mpr ⟨hv, hs, hc, hm⟩
+
+/-- The Dowty→Grimm projection is monotone in the pointwise profile
+    order. -/
+theorem fromEntailmentProfile_monotone :
+    Monotone Agentivity.fromEntailmentProfile := fun p q h =>
+  fromEntailmentProfile_le p q
+    (Bool.le_iff_imp.mp (EntailmentProfile.le_def.mp h .volition))
+    (Bool.le_iff_imp.mp (EntailmentProfile.le_def.mp h .sentience))
+    (Bool.le_iff_imp.mp (EntailmentProfile.le_def.mp h .causation))
+    (Bool.le_iff_imp.mp (EntailmentProfile.le_def.mp h .movement))
 
 /-! ### Dominance is lattice order plus independent existence
 
@@ -145,7 +154,7 @@ theorem pAgentScore_decomposition (p : EntailmentProfile) :
 /-- Dowty's subset dominance is exactly Grimm's lattice order plus an
     independent-existence implication ([grimm-2011] §2.2, Fig. 1): the
     projection loses no dominance information. Derived from
-    `fromEntailmentProfile_monotone` and
+    `fromEntailmentProfile_le` and
     `grimm_agentivity_consistent_with_dowty`. -/
 theorem pAgentDominates_iff (p q : EntailmentProfile) :
     PAgentDominates p q ↔
@@ -154,7 +163,7 @@ theorem pAgentDominates_iff (p q : EntailmentProfile) :
       (q.independentExistence = true → p.independentExistence = true) := by
   constructor
   · rintro ⟨hv, hs, hc, hm, hie⟩
-    exact ⟨fromEntailmentProfile_monotone q p hv hs hc hm, hie⟩
+    exact ⟨fromEntailmentProfile_le q p hv hs hc hm, hie⟩
   · rintro ⟨hle, hie⟩
     obtain ⟨h1, h2, h3, h4⟩ := grimm_agentivity_consistent_with_dowty q p hle
     exact ⟨fun hq => by simpa [hq] using h1, fun hq => by simpa [hq] using h2,

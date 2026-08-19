@@ -1,47 +1,50 @@
 import Linglib.Syntax.Reciprocal
+import Linglib.Syntax.Category.Verb.Reciprocal
 import Linglib.Semantics.ArgumentStructure.RoleList
-import Mathlib.Order.Irreducible
+import Linglib.Semantics.Plurality.Groups
 
 /-!
 # Siloni (2012): Reciprocal verbs and symmetry
 
 Beyond periphrastic reciprocals (*each other*), languages have reciprocal
-*verbs* — predicates that express reciprocity without an anaphoric object.
-[siloni-2012] (building on [siloni-2008]) splits them by where
-reciprocalization applies — the `Formation` parameter of
-`Syntax/Reciprocal.lean`, an instance of [reinhart-siloni-2005]'s lex-syn
-parameter — and derives nine clustering properties from that split alone:
-"the distinctions all follow from the fact that the two types of verbs are
-formed in different components of the grammar."
+*verbs* — predicates that express reciprocity without an anaphoric object,
+carried as `Verb.Reciprocal` entries. [siloni-2012] (building on
+[siloni-2008]) splits them by where reciprocalization applies — the
+`Formation` parameter of `Syntax/Reciprocal.lean`, an instance of
+[reinhart-siloni-2005]'s lex-syn parameter — and derives nine clustering
+properties from that split alone: "the distinctions all follow from the
+fact that the two types of verbs are formed in different components of the
+grammar."
 
-The reciprocalization operation itself acts on argument structure:
-`reciprocalize` takes a transitive `RoleList` and returns an intransitive
-one whose subject bears the `bundle` of the two base profiles — the
-pointwise join on `EntailmentProfile`, [reinhart-siloni-2005]'s complex
-[θᵢ · θⱼ] role. The bundled subject retains the base subject's Proto-Agent
-entailments and inherits the object's Proto-Patient entailments
-(`pAgentDominates_bundle_left`, `pPatientDominates_bundle_right` — the
-depictive and comparative-ellipsis diagnostics of §3.1–3.2), so it bears
-entailments from both clusters (`reciprocalize_isComplexRole`). Since the
-"I" reading of embedded reciprocals ([higginbotham-1980]) requires a
-sub-event reading plus a sole-role subject, both verb types lack it for
-*any* transitive base with an agentive subject and an affected object
-(`I_reading_iff_periphrastic`), each failing a different condition.
+Reciprocalization acts on argument structure: `reciprocalize` takes a
+transitive `RoleList` and returns an intransitive one whose subject bears
+the join of the two base profiles — [reinhart-siloni-2005]'s complex
+`[θᵢ · θⱼ]` role, `EntailmentProfile`'s `⊔`. The bundled subject retains
+the base subject's Proto-Agent entailments and inherits the object's
+Proto-Patient entailments (`reciprocalize_dominates` — the depictive and
+comparative-ellipsis diagnostics of §3.1–3.2), so it is a complex role
+(`EntailmentProfile.IsComplexRole`). Event-semantically, a symmetric verb
+denotes a *group* event ([landman-2000]'s `up`, `Plurality.GroupStructure`):
+`SymmetricEvent.down_eq` is the paper's (41) — dissolution recovers the
+directional sub-events — while `SymmetricEvent.not_subEventReading`
+delivers §2.2's observation that the atom itself never decomposes. Since
+the "I" reading of embedded reciprocals ([higginbotham-1980]; the
+LF-decomposed periphrastic arm is `Studies/HeimLasnikMay1991.lean`)
+requires a sub-event reading plus a sole-role subject, both verb types
+lack it for any transitive base with an agentive subject and an affected
+object (`I_reading_iff_periphrastic`), each failing a different condition.
 
 The nine surface properties derive from four affordances of the locus of
 application (`pluralEventsAvailable` per generalization (29),
 `storesOutputs`, `spansPredicates`, `reducesAccusative`): the paper's
 concluding table is a theorem (`predictedProperties_lexical`), as is the
-perfect complementarity of the two clusters. The event-semantic content of
-the singular-event column is order-theoretic: an atomic (sup-irreducible)
-event admits no decomposition into directional sub-events
-(`SubEventReading.not_supIrred`). The paper's eleven-language sample is
-recorded per-language (`hebrew` … `bulgarian`).
+perfect complementarity of the two clusters. The paper's eleven-language
+sample is recorded per-language (`hebrew` … `bulgarian`).
 -/
 
 namespace Siloni2012
 
-open Reciprocal ArgumentStructure
+open Reciprocal ArgumentStructure Semantics.Plurality
 
 /-! ### Three-way reciprocal classification (§2.4) -/
 
@@ -71,15 +74,18 @@ paper's mechanisms; the nine surface properties are computed from them in
 
 /-- Generalization (29): "plural events are not part of the lexicon's
     inventory" (§3.5) — sub-event accumulation is available only in the
-    syntactic derivation. -/
+    syntactic derivation, so lexicon-formed reciprocals denote group atoms
+    (`SymmetricEvent`), whose sub-events are recovered only by
+    dissolution. -/
 def pluralEventsAvailable : Formation → Bool
   | .lexical   => false
   | .syntactic => true
 
 /-- Whether the operation's outputs are stored entries. Applying within the
-    inventory, the lexical operation may also take frozen entries as input;
-    stored outputs can drift, head idioms, and feed lexical nominalization,
-    and listing caps productivity (§5.3, §6). -/
+    inventory, the lexical operation may also take frozen entries as input
+    (`Verb.Reciprocal.IsFrozen`); stored outputs can drift, head idioms,
+    and feed lexical nominalization, and listing caps productivity
+    (§5.3, §6). -/
 def storesOutputs : Formation → Bool
   | .lexical   => true
   | .syntactic => false
@@ -114,77 +120,85 @@ theorem compositionLocus_ofFormation (f : Formation) :
     (Construction.ofFormation f).compositionLocus = f := by
   cases f <;> rfl
 
-/-! ### θ-role bundling on argument structure (§4.1–4.2)
+/-! ### Group events and the sub-event reading (§2.2–2.3, §4.1)
+
+The event domain is a semilattice of events under sum; a symmetric verb
+denotes a *group* event — [landman-2000]'s `up` applied to the sum of the
+two directional sub-events. Dissolution recovers the sub-events (the
+paper's (41)), but the group atom itself has no proper parts, so counting
+and modification never see them. -/
+
+section Events
+
+variable {α E : Type*} [SemilatticeSup E] {R : α → α → E → Prop} {x y : α}
+  {e : E}
+
+/-- The sub-event reading of a reciprocal event (§2.2): the event
+    decomposes into two proper parts, one realizing each direction. -/
+def SubEventReading (R : α → α → E → Prop) (x y : α) (e : E) : Prop :=
+  ∃ e₁ e₂, e₁ < e ∧ e₂ < e ∧ R x y e₁ ∧ R y x e₂ ∧ e = e₁ ⊔ e₂
+
+/-- An event with the sub-event reading has proper parts, so it is not
+    atomic (§2.2–2.3). -/
+theorem SubEventReading.not_atom :
+    SubEventReading R x y e → ¬ Mereology.Atom e :=
+  fun ⟨_, _, h₁, _, _, _, _⟩ ha => h₁.ne (ha.eq h₁.le)
+
+/-- The sum of incomparable directional sub-events has the sub-event
+    reading: reciprocity by accumulation (§4.2). -/
+theorem subEventReading_sup {e₁ e₂ : E} (h₁ : ¬ e₂ ≤ e₁) (h₂ : ¬ e₁ ≤ e₂)
+    (hxy : R x y e₁) (hyx : R y x e₂) : SubEventReading R x y (e₁ ⊔ e₂) :=
+  ⟨e₁, e₂, left_lt_sup.2 h₁, right_lt_sup.2 h₂, hxy, hyx, rfl⟩
+
+/-- The symmetric-verb denotation ((36)'s SYM marking, (41a)): an atomic
+    mutual event packing the two directional sub-events into a group
+    event. "SYM is not a feature": it abbreviates the meaning postulate
+    relating V_SYM to V, `SymmetricEvent.down_eq`. -/
+def SymmetricEvent (G : GroupStructure E) (R : α → α → E → Prop)
+    (x y : α) (e : E) : Prop :=
+  ∃ e₁ e₂, R x y e₁ ∧ R y x e₂ ∧ e = G.up (e₁ ⊔ e₂)
+
+/-- The paper's (41): a symmetric reciprocal event dissolves into
+    underlying directional events — "John and Mary kissed" entails a
+    kissing by John of Mary and one by Mary of John. -/
+theorem SymmetricEvent.down_eq {G : GroupStructure E}
+    (h : SymmetricEvent G R x y e) :
+    ∃ e₁ e₂, G.down e = e₁ ⊔ e₂ ∧ R x y e₁ ∧ R y x e₂ := by
+  obtain ⟨e₁, e₂, h₁, h₂, rfl⟩ := h
+  exact ⟨e₁, e₂, G.down_up _, h₁, h₂⟩
+
+/-- The symmetric event itself is atomic: count adverbials count it once,
+    and the sub-event reading is unavailable for any directional relation
+    (§2.2–2.3). -/
+theorem SymmetricEvent.not_subEventReading {G : GroupStructure E}
+    (h : SymmetricEvent G R x y e) {R' : α → α → E → Prop} {x' y' : α} :
+    ¬ SubEventReading R' x' y' e := by
+  obtain ⟨e₁, e₂, -, -, rfl⟩ := h
+  exact fun hs => hs.not_atom (G.atom_up _)
+
+end Events
+
+/-! ### Reciprocalization on argument structure (§4.1–4.2)
 
 Reciprocalization eliminates the internal argument position and associates
 its θ-role with the subject — bundling in the lexicon, parasitic
 assignment in the syntax; the resulting role state is the same. On the
-Dowty substrate this is the pointwise join of entailment profiles, applied
-to a transitive `RoleList`. -/
+Dowty substrate this is `EntailmentProfile`'s join, applied to a
+transitive `RoleList`; realizes [creissels-2025]'s `Voice.reciprocalization`
+coding-frame operation (both core roles cumulated, derived construction
+intransitive). -/
 
-section Bundling
+section Reciprocalize
 
-variable (p q : EntailmentProfile) {r : RoleList} {o : EntailmentProfile}
+variable {r : RoleList} {o : EntailmentProfile}
 
-/-- [reinhart-siloni-2005]'s bundling `[θᵢ · θⱼ]`: the complex role imposing
-    both components' entailments — the pointwise join on the Boolean cube
-    of proto-role features. -/
-def bundle : EntailmentProfile where
-  volition := p.volition || q.volition
-  sentience := p.sentience || q.sentience
-  causation := p.causation || q.causation
-  movement := p.movement || q.movement
-  independentExistence := p.independentExistence || q.independentExistence
-  changeOfState := p.changeOfState || q.changeOfState
-  incrementalTheme := p.incrementalTheme || q.incrementalTheme
-  causallyAffected := p.causallyAffected || q.causallyAffected
-  stationary := p.stationary || q.stationary
-  dependentExistence := p.dependentExistence || q.dependentExistence
-
-/-- The bundled role retains the first component's Proto-Agent entailments:
-    the reciprocal subject is still agentive. -/
-theorem pAgentDominates_bundle_left : PAgentDominates (bundle p q) p := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> intro h <;> simp [bundle, h]
-
-/-- The bundled role inherits the second component's Proto-Patient
-    entailments: the reciprocal subject bears the base object's theme
-    entailments — Czech depictives (§3.1) and comparative ellipsis (§3.2). -/
-theorem pPatientDominates_bundle_right : PPatientDominates (bundle p q) q := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> intro h <;> simp [bundle, h]
-
-theorem pAgentScore_le_bundle : p.pAgentScore ≤ (bundle p q).pAgentScore := by
-  have H : ∀ a b : Bool, a.toNat ≤ (a || b).toNat := by decide
-  exact Nat.add_le_add (Nat.add_le_add (Nat.add_le_add (Nat.add_le_add
-    (H .. ) (H ..)) (H ..)) (H ..)) (H ..)
-
-theorem pPatientScore_le_bundle : q.pPatientScore ≤ (bundle p q).pPatientScore := by
-  have H : ∀ a b : Bool, b.toNat ≤ (a || b).toNat := by decide
-  exact Nat.add_le_add (Nat.add_le_add (Nat.add_le_add (Nat.add_le_add
-    (H ..) (H ..)) (H ..)) (H ..)) (H ..)
-
-/-- A complex role in [reinhart-siloni-2005]'s sense: entailments from both
-    proto-role clusters. The "sole role requirement" on the "I" reading
-    (§4.3) is the negation of this. -/
-def IsComplexRole (p : EntailmentProfile) : Prop :=
-  0 < p.pAgentScore ∧ 0 < p.pPatientScore
-
-instance : DecidablePred IsComplexRole :=
-  fun p => inferInstanceAs (Decidable (0 < p.pAgentScore ∧ 0 < p.pPatientScore))
-
-/-- Bundling an agentive profile with an affected one yields a complex
-    role. -/
-theorem bundle_isComplexRole (ha : 0 < p.pAgentScore) (hp : 0 < q.pPatientScore) :
-    IsComplexRole (bundle p q) :=
-  ⟨ha.trans_le (pAgentScore_le_bundle p q), hp.trans_le (pPatientScore_le_bundle p q)⟩
-
-/-- Reciprocalization on argument structure: the internal position is
-    eliminated and its profile bundled onto the subject. Realizes
-    [creissels-2025]'s `Voice.reciprocalization` coding-frame operation —
-    both core roles cumulated, derived construction intransitive. -/
+/-- Reciprocalization ((35)): the internal position is eliminated and its
+    profile bundled onto the subject; "the bundle [θᵢ - θⱼ] retains the
+    thematic properties of [θᵢ] and [θⱼ]" (`reciprocalize_dominates`). -/
 def reciprocalize (r : RoleList) : RoleList where
   subjectProfile :=
     match r.objectProfile with
-    | some o => bundle r.subjectProfile o
+    | some o => r.subjectProfile ⊔ o
     | none   => r.subjectProfile
 
 /-- Reciprocalization denucleativizes: no internal argument survives. -/
@@ -192,22 +206,66 @@ theorem reciprocalize_objectProfile (r : RoleList) :
     (reciprocalize r).objectProfile = none := rfl
 
 theorem reciprocalize_subjectProfile (ho : r.objectProfile = some o) :
-    (reciprocalize r).subjectProfile = bundle r.subjectProfile o := by
+    (reciprocalize r).subjectProfile = r.subjectProfile ⊔ o := by
   simp [reciprocalize, ho]
+
+/-- The reciprocalized subject retains the base subject's Proto-Agent
+    entailments and inherits the object's Proto-Patient entailments — the
+    Czech depictive (§3.1) and comparative-ellipsis (§3.2) diagnostics. -/
+theorem reciprocalize_dominates (ho : r.objectProfile = some o) :
+    PAgentDominates (reciprocalize r).subjectProfile r.subjectProfile ∧
+    PPatientDominates (reciprocalize r).subjectProfile o := by
+  rw [reciprocalize_subjectProfile ho]
+  exact ⟨pAgentDominates_sup_left .., pPatientDominates_sup_right ..⟩
 
 /-- For any transitive base with an agentive subject and an affected
     object, the reciprocalized subject bears a complex role (§4.1). -/
 theorem reciprocalize_isComplexRole (ho : r.objectProfile = some o)
     (ha : 0 < r.subjectProfile.pAgentScore) (hp : 0 < o.pPatientScore) :
-    IsComplexRole (reciprocalize r).subjectProfile := by
+    ((reciprocalize r).subjectProfile).IsComplexRole := by
   rw [reciprocalize_subjectProfile ho]
-  exact bundle_isComplexRole _ _ ha hp
+  exact EntailmentProfile.isComplexRole_sup ha hp
 
-end Bundling
+/-- A reciprocal verb entry's bundled subject role is the subject of its
+    reciprocalized base grid: the entry-level and grid-level operations
+    agree. -/
+theorem bundledSubjectProfile_eq_reciprocalize (v : Verb.Reciprocal)
+    {b : Verb} {ps po : EntailmentProfile} (hb : v.base = some b)
+    (hs : b.subjectEntailments = some ps)
+    (ho : b.objectEntailments = some po) :
+    v.bundledSubjectProfile = some (reciprocalize ⟨ps, some po⟩).subjectProfile := by
+  rw [Verb.Reciprocal.bundledSubjectProfile_eq hb hs ho]; rfl
+
+variable {α E : Type*} [SemilatticeSup E] in
+/-- Reciprocal bundling ((36)): `V(ACC) [θᵢ] [θⱼ] → V_SYM [θᵢ - θⱼ]` — one
+    lexical operation, two components. On the grid, the accusative is
+    reduced and the internal role bundled onto the subject
+    (`reciprocalize`; `RoleList` carries no case slot, so the reduction
+    surfaces as the loss of the object position, and its typological trace
+    is `reducesAccusative`). On the denotation, SYM packs the base
+    relation's directional events into group atoms (`SymmetricEvent`). -/
+def reciprocalBundling (G : GroupStructure E) (grid : RoleList)
+    (den : α → α → E → Prop) : RoleList × (α → α → E → Prop) :=
+  (reciprocalize grid, SymmetricEvent G den)
+
+variable {α E : Type*} [SemilatticeSup E] {den : α → α → E → Prop}
+  {grid : RoleList} {x y : α} {e : E} in
+/-- What SYM buys ((36), (41)): each event of the derived verb is a single
+    atom — counting and modification see one event — yet entails a base
+    event in each direction. -/
+theorem reciprocalBundling_symmetric (G : GroupStructure E)
+    (hden : (reciprocalBundling G grid den).2 x y e) :
+    Mereology.Atom e ∧
+      ∃ e₁ e₂, G.down e = e₁ ⊔ e₂ ∧ den x y e₁ ∧ den y x e₂ := by
+  obtain ⟨e₁, e₂, h₁, h₂, rfl⟩ := hden
+  exact ⟨G.atom_up _, e₁, e₂, G.down_up _, h₁, h₂⟩
+
+end Reciprocalize
 
 -- Reciprocalizing the manner-of-contact template (the surface-contact
 -- *kiss*/*hug* family) yields a complex subject role.
-example : IsComplexRole (reciprocalize mannerContact).subjectProfile := by decide
+example : ((reciprocalize mannerContact).subjectProfile).IsComplexRole := by
+  decide
 
 /-! ### The nine-property cluster (§§2–7) -/
 
@@ -322,44 +380,14 @@ theorem discontinuous_iff_symmetric (f : Formation) :
     (predictedProperties f).discontinuous = true ↔ IsSymmetricVerb f := by
   cases f <;> decide
 
-/-! ### Atomic events and the sub-event reading (§2.2–2.3, §3.5)
-
-The event-semantic content of the singular-event column: generalization
-(29) means lexicon-formed reciprocals denote atomic — sup-irreducible —
-events, and such an event admits no decomposition into directional
-sub-events; reciprocity composed in the syntax sums directional
-sub-events, which license the reading when neither contains the other. -/
-
-section Events
-
-variable {α E : Type*} [SemilatticeSup E] {R : α → α → E → Prop} {x y : α}
-
-/-- The sub-event reading of a reciprocal event (§2.2): the event
-    decomposes into two proper parts, one realizing each direction. -/
-def SubEventReading (R : α → α → E → Prop) (x y : α) (e : E) : Prop :=
-  ∃ e₁ e₂, e₁ < e ∧ e₂ < e ∧ R x y e₁ ∧ R y x e₂ ∧ e = e₁ ⊔ e₂
-
-/-- An event with the sub-event reading is not atomic: symmetric verbs,
-    denoting sup-irreducible events, lack the reading (§2.2–2.3). -/
-theorem SubEventReading.not_supIrred {e : E} :
-    SubEventReading R x y e → ¬ SupIrred e :=
-  fun ⟨_, _, h₁, h₂, _, _, he⟩ hs => (hs.2 he.symm).elim h₁.ne h₂.ne
-
-/-- The sum of incomparable directional sub-events has the sub-event
-    reading: reciprocity by accumulation (§4.2). -/
-theorem subEventReading_sup {e₁ e₂ : E} (h₁ : ¬ e₂ ≤ e₁) (h₂ : ¬ e₁ ≤ e₂)
-    (hxy : R x y e₁) (hyx : R y x e₂) : SubEventReading R x y (e₁ ⊔ e₂) :=
-  ⟨e₁, e₂, left_lt_sup.2 h₁, right_lt_sup.2 h₂, hxy, hyx, rfl⟩
-
-end Events
-
 /-! ### The "I" reading (§2.1, §4.3)
 
 In "John and Paul said they defeated each other in the final"
 ([higginbotham-1980]), the "I" reading — John said he defeated Paul, and
 Paul said he defeated John — requires both that the embedded verb allow
 the sub-event reading and that its subject bear exactly one θ-role
-(§4.3, p. 287). -/
+(§4.3, p. 287). The LF decomposition of the periphrastic side and the
+full grain problem live in `Studies/HeimLasnikMay1991.lean`. -/
 
 section IReading
 
@@ -376,7 +404,7 @@ def Construction.subjectProfile (r : RoleList) : Construction → EntailmentProf
     reading must be available and the subject must bear a sole role — a
     profile that is not complex. -/
 def Construction.allowsIReading (r : RoleList) (c : Construction) : Prop :=
-  c.allowsSubEventReading ∧ ¬ IsComplexRole (c.subjectProfile r)
+  c.allowsSubEventReading ∧ ¬ (c.subjectProfile r).IsComplexRole
 
 /-- Sub-event availability is necessary for the "I" reading (§4.3). -/
 theorem subevents_necessary_for_I (h : c.allowsSubEventReading = false) :
@@ -384,14 +412,14 @@ theorem subevents_necessary_for_I (h : c.allowsSubEventReading = false) :
   fun hc => absurd hc.1 (by simp [h])
 
 /-- A sole θ-role on the subject is necessary for the "I" reading (§4.3). -/
-theorem complex_role_blocks_I (h : IsComplexRole (c.subjectProfile r)) :
+theorem complex_role_blocks_I (h : (c.subjectProfile r).IsComplexRole) :
     ¬ c.allowsIReading r :=
   fun hc => hc.2 h
 
 /-- A periphrastic reciprocal over a non-complex subject role allows the
     "I" reading: sub-events from the anaphor's plural operator, sole role
     on the subject. -/
-theorem periphrastic_allows_I (hs : ¬ IsComplexRole r.subjectProfile) :
+theorem periphrastic_allows_I (hs : ¬ r.subjectProfile.IsComplexRole) :
     Construction.periphrastic.allowsIReading r :=
   ⟨rfl, hs⟩
 
@@ -420,7 +448,7 @@ theorem no_I_reading_either_formation (f : Formation)
 /-- Over any transitive base whose subject role is agentive but not
     complex and whose object is affected, the "I" reading is available in
     the periphrastic construction and only there. -/
-theorem I_reading_iff_periphrastic (hs : ¬ IsComplexRole r.subjectProfile)
+theorem I_reading_iff_periphrastic (hs : ¬ r.subjectProfile.IsComplexRole)
     (ho : r.objectProfile = some o) (ha : 0 < r.subjectProfile.pAgentScore)
     (hp : 0 < o.pPatientScore) :
     c.allowsIReading r ↔ c = .periphrastic := by
