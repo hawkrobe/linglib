@@ -95,19 +95,15 @@ instance : Decidable g.IsWellNested := inferInstanceAs (Decidable (∀ _, _))
 
 /-! ### Gap degree -/
 
-/-- The projection of `v`, as position values. -/
-def Graph.projectionVals (v : Fin n) : List Nat := (g.projection v).map (·.val)
-
-theorem Graph.projectionVals_sortedLT (v : Fin n) :
-    (g.projectionVals v).SortedLT := by
-  refine List.Pairwise.sortedLT (List.Pairwise.map _ (λ _ _ h => h) ?_)
-  exact (List.pairwise_lt_finRange n).filter _
+/-- The projection is strictly increasing. -/
+theorem Graph.projection_pairwise_lt (v : Fin n) :
+    (g.projection v).Pairwise (· < ·) := (List.pairwise_lt_finRange n).filter _
 
 /-- The gap degree of a position counts the discontinuities in its
     projection, the adjacent members more than one position apart. -/
 def Graph.gapDegreeAt (v : Fin n) : Nat :=
-  ((g.projectionVals v).zip (g.projectionVals v).tail).countP
-    (λ p => decide (1 < p.2 - p.1))
+  ((g.projection v).zip (g.projection v).tail).countP
+    (λ p => decide (1 < p.2.val - p.1.val))
 
 /-- The gap degree of a graph is the maximum over its positions. -/
 def Graph.gapDegree : Nat := Finset.univ.sup g.gapDegreeAt
@@ -179,20 +175,26 @@ private theorem gapfree_iff_ordConnected {l : List ℕ} (h : l.IsChain (· < ·)
         · exact absurd (hble x hx) (by omega)
         · exact hin
 
-private theorem mem_projectionVals {v : Fin n} {k : ℕ} :
-    k ∈ g.projectionVals v ↔ ∃ x : Fin n, Dominates g v x ∧ x.val = k := by
-  simp [Graph.projectionVals, List.mem_map]
+private theorem mem_projection_map {v : Fin n} {k : ℕ} :
+    k ∈ (g.projection v).map (·.val) ↔ ∃ x : Fin n, Dominates g v x ∧ x.val = k := by
+  simp [List.mem_map]
 
 /-- A position has gap degree zero exactly when what it dominates is
     order-convex. -/
 theorem Graph.gapDegreeAt_eq_zero_iff {v : Fin n} :
     g.gapDegreeAt v = 0 ↔ (g.dominated v).OrdConnected := by
-  rw [Graph.gapDegreeAt, List.countP_eq_zero]
-  have hgf := gapfree_iff_ordConnected (l := g.projectionVals v)
-    (List.isChain_iff_pairwise.mpr (g.projectionVals_sortedLT v).pairwise)
+  have hmap : g.gapDegreeAt v =
+      (((g.projection v).map (·.val)).zip ((g.projection v).map (·.val)).tail).countP
+        (λ p => decide (1 < p.2 - p.1)) := by
+    simp [Graph.gapDegreeAt, ← List.map_tail, List.zip_map, List.countP_map,
+      Function.comp_def]
+  rw [hmap, List.countP_eq_zero]
+  have hgf := gapfree_iff_ordConnected (l := (g.projection v).map (·.val))
+    (List.isChain_iff_pairwise.mpr
+      (List.Pairwise.map _ (λ _ _ h => h) (g.projection_pairwise_lt v)))
   simp only [decide_eq_true_eq, Nat.not_lt] at *
   rw [hgf, Set.ordConnected_iff, Set.ordConnected_iff]
-  simp only [Set.subset_def, Set.mem_Icc, Set.mem_ofPred_eq, mem_projectionVals,
+  simp only [Set.subset_def, Set.mem_Icc, Set.mem_ofPred_eq, mem_projection_map,
     Graph.mem_dominated, and_imp]
   constructor
   · rintro h x hx y hy hxy z hxz hzy
