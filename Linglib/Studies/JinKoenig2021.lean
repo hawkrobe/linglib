@@ -861,8 +861,8 @@ at t but not at any complement time t'.
 The paper identifies BEFORE as the single most widespread EN trigger
 (50 languages), consistent with its transparent dual-inference structure. -/
 
-open Tense.TemporalConnectives
-  (SentDenotation timeTrace Anscombe.before Karttunen.notUntil)
+open Tense (SentDenotation timeTrace)
+open Anscombe1964 Karttunen1974
 
 /-- BEFORE entails a temporal witness for p (the main clause event
     occurs at some time). This is the positive inference. -/
@@ -1138,7 +1138,7 @@ theorem zarma_en_determined_by_aspect :
 |-------------------------|-----------------------------|------------------------------|
 | propositionalAttitude   | Preferential                | fear_has_dual_inference      |
 |                         | NegRaising                  | deny_EN_via_negRaising       |
-| temporalOperator        | Tense.TemporalConnectives   | before_temporal_separation   |
+| temporalOperator        | Anscombe1964                | before_temporal_separation   |
 | logicalOperator         | Modality.Kratzer             | not_impossible_activates_p   |
 |                         | Conditionals.Basic           | unless_modus_ponens          |
 |                         | (conjunction + negation)     | without_entails_not_p        |

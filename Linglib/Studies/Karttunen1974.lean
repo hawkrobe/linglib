@@ -40,7 +40,9 @@ punctual form is morphologically *before*, confirming Karttunen's analysis.
 
 -/
 
-namespace Tense.TemporalConnectives
+namespace Karttunen1974
+
+open Tense Anscombe1964
 
 open NonemptyInterval
 
@@ -423,4 +425,4 @@ theorem whenever_not_symmetric :
   simp only [Set.mem_singleton_iff] at hi; subst hi
   omega
 
-end Tense.TemporalConnectives
+end Karttunen1974

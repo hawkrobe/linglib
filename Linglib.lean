@@ -1832,10 +1832,8 @@ import Linglib.Semantics.Tense.Evidential
 import Linglib.Semantics.Tense.Perspective
 import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Tense.Reichenbach
+import Linglib.Semantics.Tense.SentDenotation
 import Linglib.Semantics.Tense.TemporalAdverbials
-import Linglib.Semantics.Tense.TemporalConnectives.Basic
-import Linglib.Semantics.Tense.TemporalConnectives.Before
-import Linglib.Semantics.Tense.TemporalConnectives.Projection
 import Linglib.Semantics.Tense.TenseAspectComposition
 import Linglib.Semantics.Truthmaker.Basic
 import Linglib.Semantics.Truthmaker.Closure

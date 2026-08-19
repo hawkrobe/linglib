@@ -41,7 +41,9 @@ linguistically. *after* and *while* are not ambidirectional.
 
 -/
 
-namespace Tense.TemporalConnectives
+namespace Rett2020
+
+open Tense Anscombe1964 Karttunen1974
 
 open Core.Order
 open NonemptyInterval
@@ -324,7 +326,7 @@ theorem while_not_ambidirectional [Inhabited Time] :
   have rhs := this.mp lhs (default : Time) rfl
   exact absurd rfl rhs
 
-end Tense.TemporalConnectives
+end Rett2020
 
 -- ============================================================================
 -- Concrete Scenario Verification (from original study file)
@@ -361,9 +363,11 @@ Scenarios 7–10 verify [heinamaki-1974] Chs. 6, 8, 9 for *since*, *by*, *till*.
 
 namespace Rett2020.Examples
 
+open Tense Anscombe1964 Karttunen1974
+
 open Core.Order
 open NonemptyInterval
-open Tense.TemporalConnectives
+open Tense
 
 -- ============================================================================
 -- § 1: Concrete Intervals

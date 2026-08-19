@@ -31,7 +31,7 @@ This is general event-predicate substrate, not specific to any particular
 analysis — consumed by `Studies/Rouillard2026.lean`,
 `Studies/IatridouZeijlstra2021.lean`,
 `Studies/OgiharaSteinertThrelkeld2024.lean`, and the run-time projection in
-`Semantics/Tense/TemporalConnectives/Projection.lean`.
+`Semantics/Tense/SentDenotation.lean`.
 -/
 
 namespace Semantics.Aspect.SubintervalProperty
@@ -85,7 +85,7 @@ def HasSubintervalProp (P : W → Event Time → Prop) : Prop :=
     holds definitionally. Stating CSUB directly on mathlib's `IsLowerSet`
     collapses three former encodings of the same concept — the bespoke
     ∀∀∃ witness predicate, `Mereology.DIV`, and the lower-set fact proved
-    ad hoc in `Tense/TemporalConnectives/Projection.lean` — onto one carrier.
+    ad hoc in `Tense/SentDenotation.lean` — onto one carrier.
 
     Stronger than `HasSubintervalProp` (SUB): SUB only constrains witnesses
     that already exist and is vacuous under a sparse event ontology; CSUB

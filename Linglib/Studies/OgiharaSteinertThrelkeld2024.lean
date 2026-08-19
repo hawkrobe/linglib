@@ -1,7 +1,7 @@
 import Linglib.Studies.Anscombe1964
 import Linglib.Studies.Karttunen1974
 import Linglib.Studies.BeaverCondoravdi2003
-import Linglib.Semantics.Tense.TemporalConnectives.Projection
+import Linglib.Semantics.Tense.SentDenotation
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.Japanese.TemporalConnectives
@@ -106,7 +106,7 @@ def before_counterfactual_mozart : VeridicalityDatum := ofVeridicality ost2024_b
 -- are formalized as `Anscombe.before_overgenerates` (in `Studies/Anscombe1964.lean`),
 -- not as the fabricated "win before entering" examples this file previously carried.
 
-open Tense.TemporalConnectives.BeaverCondoravdi
+open BeaverCondoravdi2003
 
 -- ════════════════════════════════════════════════════════════════
 -- § 6: Counterexamples to B&C (O&[ogihara-steinert-threlkeld-2024], §5)
@@ -301,7 +301,7 @@ theorem veridicality_asymmetry :
 -- Bridge content (merged from Bridge.lean)
 -- ════════════════════════════════════════════════════════════════
 
-open Tense.TemporalConnectives
+open Tense Anscombe1964 Karttunen1974
 open English.TemporalExpressions
 
 -- ════════════════════════════════════════════════════════════════
@@ -567,7 +567,7 @@ theorem csip_determines_modal_need
     The authors note these truth conditions are "very weak and need to be
     strengthened by some contextual and pragmatic factors." -/
 
-open BeaverCondoravdi
+open BeaverCondoravdi2003
 
 section Def19
 
@@ -745,7 +745,7 @@ namespace OgiharaSteinertThrelkeld2024.VeridicalityBridge
 
 open Core.Order
 open NonemptyInterval
-open Tense.TemporalConnectives
+open Tense Anscombe1964 Karttunen1974
 open English.TemporalExpressions
 open OgiharaSteinertThrelkeld2024
 
@@ -875,7 +875,7 @@ theorem negation_preserves_presup :
 -- § 23: B&C's Three Readings of *Before* and Presupposition
 -- ============================================================================
 
-open Tense.TemporalConnectives.BeaverCondoravdi (BeforeReading)
+open BeaverCondoravdi2003 (BeforeReading)
 
 /-- All three readings are compatible with `complementVeridical = false`. -/
 theorem all_before_readings_nonveridical :

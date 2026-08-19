@@ -1,5 +1,4 @@
-import Linglib.Semantics.Tense.TemporalConnectives.Basic
-import Linglib.Semantics.Tense.TemporalConnectives.Before
+import Linglib.Semantics.Tense.SentDenotation
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Degree.Basic
 
@@ -44,7 +43,15 @@ across historical alternatives.
 
 -/
 
-namespace Tense.TemporalConnectives.BeaverCondoravdi
+namespace BeaverCondoravdi2003
+
+open Tense
+
+/-- The `EARLIEST` definedness presupposition of `before^{B&C}`:
+    `EARLIEST_C` is defined for body `p` iff the set of `C`-times where `p`
+    holds has a least element (mathlib's `IsLeast`). -/
+def hasEarliest {Time : Type*} [LinearOrder Time] (C : Set Time) (p : Time → Prop) : Prop :=
+  ∃ t, IsLeast {t' | t' ∈ C ∧ p t'} t
 
 open Core.Order (maxOnScale)
 variable {W T : Type*} [LinearOrder T]
@@ -187,15 +194,15 @@ theorem mem_earliestAlt_iff_isLeast (alt : HistAlt W T) (B : Set (W × T))
     exact ⟨hmem, λ y hy hne => lt_of_le_of_ne (hlb hy) (Ne.symm hne)⟩
 
 /-- B&C's `earliest` is defined (nonempty) exactly when [sharvit-2014]'s
-    `EARLIEST` presupposition (`Before.hasEarliest`, with trivial restrictor)
+    `EARLIEST` presupposition (`hasEarliest`, with trivial restrictor)
     holds of the instantiation times. This is the definedness condition that
     fails for quantificational
     pasts on a dense time axis. -/
 theorem earliestAlt_nonempty_iff_hasEarliest (alt : HistAlt W T) (B : Set (W × T))
     (w : W) (t : T) :
     (earliestAlt alt B w t).Nonempty ↔
-    Before.hasEarliest Set.univ (· ∈ instTimes (alt w t) B) := by
-  unfold Before.hasEarliest
+    hasEarliest Set.univ (· ∈ instTimes (alt w t) B) := by
+  unfold hasEarliest
   simp only [Set.Nonempty, mem_earliestAlt_iff_isLeast, Set.mem_univ, true_and,
              Set.setOf_mem_eq]
 
@@ -413,4 +420,4 @@ theorem histAlt_subset_altIE_trivial
   rw [altIE, Set.mem_ofPred_eq, equivIE_trivial_iff_agree]
   exact hIBP w t w' hw'
 
-end Tense.TemporalConnectives.BeaverCondoravdi
+end BeaverCondoravdi2003
