@@ -36,6 +36,9 @@ toward the maximal projection.
 * `SatisfiesCriterion`, `comb_satisfiesCriterion` — the theta criterion
   (a head grid matched bijectively by single receivers at the other
   positions) and its verification on the bare combs.
+* `derives_soleReceiver` — the sole-role invariant: in a movement-free
+  derivable structure with a sole-receiver root, every position receives
+  at most one role.
 -/
 
 namespace Minimalist.Theta
@@ -360,5 +363,100 @@ theorem comb_satisfiesCriterion (g₀ : List PolarizedRole) (ρE : ThetaRole)
           [Color.free (upGrid (ρE :: ρIs))] by simp,
       List.eraseIdx_append_of_length_le (by simp)]
     simp [List.map_map, Function.comp_def]
+
+/-! ### The sole-role invariant -/
+
+/-- The number of receiver occurrences in a grid. -/
+def receiverCount (g : List PolarizedRole) : ℕ :=
+  g.countP (fun p => p.polarity == .receiver)
+
+@[simp] theorem receiverCount_upGrid (g : List ThetaRole) :
+    receiverCount (upGrid g) = 0 := by
+  simp [receiverCount, upGrid, List.countP_map, Function.comp_def,
+    PolarizedRole.up]
+
+@[simp] theorem receiverCount_down_singleton (ρ : ThetaRole) :
+    receiverCount [.down ρ] = 1 := rfl
+
+/-- The color receives at most one role: its grid, if any, has at most one
+    receiver occurrence. -/
+def Color.SoleReceiver (c : Color L) : Prop :=
+  ∀ g, c.grid? = some g → receiverCount g ≤ 1
+
+theorem Color.soleReceiver_emptyTree :
+    (Color.emptyTree : Color L).SoleReceiver := by
+  intro g hg
+  simp [Color.grid?] at hg
+
+theorem Color.soleReceiver_of_receiverCount_le {c : Color L}
+    {g : List PolarizedRole} (hc : c.grid? = some g)
+    (hg : receiverCount g ≤ 1) : c.SoleReceiver := by
+  intro g' hg'
+  rw [hc] at hg'
+  exact Option.some_injective _ hg' ▸ hg
+
+section SoleRole
+
+variable {hier : ThetaRole → ThetaRole → Prop} {c : Color L}
+  {x : Bud.Tree (Color L)}
+
+/-- The sole-role invariant: in a movement-free derivable structure whose
+    root color receives at most one role, every argument position receives
+    at most one role. Adding a dual-receiver generator — as *se*-marked
+    parasitic assignment does — is the only way to violate it. -/
+theorem derives_soleReceiver (h : (system (L := L) hier).Derives c x)
+    (hroot : c.SoleReceiver) (hmove : Color.emptyTree ∉ x.inputs) :
+    ∀ d ∈ x.inputs, d.SoleReceiver := by
+  induction h with
+  | unit hc =>
+    intro d hd
+    exact (by simpa using hd : d = c) ▸ hroot
+  | @graft y r i hy hr hm ih =>
+    have hout : ∃ g₀ : List PolarizedRole, r.out = .free g₀ := by
+      obtain ⟨g₀, a, b, -, hor⟩ := hr
+      rcases hor with rfl | rfl <;> exact ⟨g₀, rfl⟩
+    have hmove' : Color.emptyTree ∉ y.inputs := by
+      intro hmem
+      rcases Bud.Tree.mem_inputs_graft_of_mem hm _ hmem with hmem' | hmem'
+      · exact hmove hmem'
+      · obtain ⟨g₀, hg₀⟩ := hout
+        simp [hg₀] at hmem'
+    have ihy := ih hmove'
+    intro d hd
+    rcases Bud.Tree.mem_inputs_graft hm d hd with hd' | hd'
+    · exact ihy d hd'
+    · obtain ⟨g₀, a, b, hg, hor⟩ := hr
+      have hd'' : d = a ∨ d = b := by
+        rcases hor with rfl | rfl <;>
+          simpa [gen, or_comm] using hd'
+      have hroot' : (Color.free g₀ : Color L).SoleReceiver := by
+        have : Color.free g₀ ∈ y.inputs := by
+          have := hm
+          rcases hor with rfl | rfl <;>
+            exact List.mem_of_getElem? (by simpa [gen] using this)
+        exact ihy _ this
+      cases hg with
+      | close g₀' ρE ha hb =>
+        rcases hd'' with rfl | rfl
+        · exact Color.soleReceiver_of_receiverCount_le ha (by simp)
+        · exact Color.soleReceiver_of_receiverCount_le hb
+            (by simp [receiverCount, PolarizedRole.up])
+      | discharge g ρ hg' hchain ha hb =>
+        rcases hd'' with rfl | rfl
+        · exact Color.soleReceiver_of_receiverCount_le ha (by simp)
+        · exact Color.soleReceiver_of_receiverCount_le hb
+            (by rw [receiverCount_upGrid]; exact Nat.zero_le _)
+      | adjunct g₀' =>
+        rcases hd'' with rfl | rfl
+        · exact hroot'
+        · exact Color.soleReceiver_of_receiverCount_le (g := []) rfl
+            (by simp [receiverCount])
+      | move c' hc' =>
+        exfalso
+        apply hmove
+        refine Bud.Tree.mem_inputs_graft_of_mem_right hm Color.emptyTree ?_
+        rcases hor with rfl | rfl <;> simp [gen]
+
+end SoleRole
 
 end Minimalist.Theta
