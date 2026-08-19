@@ -1,4 +1,4 @@
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Embedding
 
 /-!
 # Tense decomposition and SOT deletion

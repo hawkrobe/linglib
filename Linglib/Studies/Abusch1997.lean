@@ -1,4 +1,4 @@
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Embedding
 import Linglib.Semantics.Tense.DeRe
 import Linglib.Semantics.Dynamic.PLA.Epistemic
 import Linglib.Semantics.Reference.Acquaintance
@@ -47,7 +47,7 @@ constructors).
    ("the now of an epistemic alternative is an upper limit for the
    denotation of tenses"); presuppositional construal due to
    [heim-1994-comments], endorsed by Abusch 1997 fn 20. Lives in
-   `Semantics/Tense/Basic.lean` as `upperLimitConstraint`,
+   `Semantics/Tense/Embedding.lean` as `upperLimitConstraint`,
    formalized at the value level as `embeddedR ≤ matrixE`. **Note:**
    this value-level reduction strips the modal-alternative
    quantification the original formulation carries; making the modal
@@ -851,8 +851,8 @@ theorem pla_isAcquaintedWith_unifies_with_polymorphic
     diagnostics: past-under-past (simultaneous + shifted), present-
     under-past (double-access), future-under-past (would), the ULC
     foil (forward-shifted), and temporal de re. Each embedded frame
-    is constructed via the `embeddedFrame` / `simultaneousFrame` /
-    `shiftedFrame` substrate operators (per CLAUDE.md
+    is constructed via the `embeddedFrame` / `simultaneousFrame`
+    substrate operators (per CLAUDE.md
     "Theory-hub denotation as study-file constraint") rather than
     hand-stipulating S/P/R/E records. -/
 
@@ -873,7 +873,7 @@ def embeddedSickSimultaneous : ReichenbachFrame ℤ :=
 /-- "Mary was sick" — SHIFTED reading. R' = -5 < E_matrix: Mary was
     sick before the saying. -/
 def embeddedSickShifted : ReichenbachFrame ℤ :=
-  shiftedFrame matrixSaid (-5) (-5)
+  embeddedFrame matrixSaid (-5) (-5)
 
 /-- "Mary is sick" (present-under-past) — DOUBLE-ACCESS reading.
     Embedded P = matrix E = -2, R' = -2, E = 0 (speech time):
@@ -916,7 +916,7 @@ theorem abusch_derives_embeddedSickSimultaneous :
     Per Abusch: a free past variable below the matrix event time. -/
 theorem abusch_derives_embeddedSickShifted :
     embeddedSickShifted.isPast := by
-  simp only [ReichenbachFrame.isPast_def, embeddedSickShifted, shiftedFrame,
+  simp only [ReichenbachFrame.isPast_def, embeddedSickShifted,
     Tense.embeddedFrame, matrixSaid]; omega
 
 /-- The matrix "said" frame is perfective (E = R). -/

@@ -1,7 +1,7 @@
 import Linglib.Data.Examples.Schema
 import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Tense.Pronoun
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Embedding
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Data.Examples.Wurmbrand2014
 
@@ -194,13 +194,13 @@ theorem propositional_now_anchored :
 theorem restructuring_dependent :
     classOrientation .restructuring = .dependent := rfl
 
-/-- Propositional NOW-anchoring connects to the attitude eval-time shift:
-    `standardShift` sets the embedded eval time to the matrix event time. -/
+/-- Propositional NOW-anchoring connects to attitude embedding: the
+    embedded perspective time is the matrix event time (`embeddedFrame`). -/
 theorem propositional_uses_attitude_eval_time :
     classOrientation .propositional = .simultaneous ∧
-    (standardShift (Time := ℕ)).shiftEvalTime
-      { speechTime := 0, perspectiveTime := 0, referenceTime := 0, eventTime := 5 } = 5 :=
-  ⟨rfl, rfl⟩
+    ∀ (f : Time.ReichenbachFrame ℕ) (embR embE : ℕ),
+      (Tense.embeddedFrame f embR embE).perspectiveTime = f.eventTime :=
+  ⟨rfl, fun _ _ _ => rfl⟩
 
 /-- Restructuring infinitives lack independent tense: `dependent` orientation,
     the smallest complement size (`vP`), and no woll. -/

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Embedding
 import Linglib.Semantics.Modality.ModalBaseKind
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Features.Attitudes
@@ -411,7 +411,7 @@ proposition:
   definition. The doxastic-alternative quantification is carried by
   `HistoricalAlternatives W Time` membership.
 
-- **Abusch route** (in `Semantics/Tense/Basic.lean`): the
+- **Abusch route** (in `Semantics/Tense/Embedding.lean`): the
   predicate is stated directly as `abbrev upperLimitConstraint
   embeddedR matrixE := embeddedR ≤ matrixE`. [abusch-1997] §7
   states ULC informally; [heim-1994-comments] formalizes it as a
