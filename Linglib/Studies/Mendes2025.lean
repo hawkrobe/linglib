@@ -65,7 +65,7 @@ Structure ([mendes-2025] §3.2):
 This is the compositional derivation:
 ⟦SF⟧ = ⟦SUBJ⟧ ∘ ⟦FUT⟧
 -/
-def subordinateFuture {W Time : Type*} [LE Time] [LT Time]
+def subordinateFuture {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     (newSitVar : ℕ)   -- Fresh variable for introduced situation
     (refSitVar : ℕ)   -- Variable for reference situation
@@ -84,7 +84,7 @@ Conditional with SF antecedent (dynamic version).
 2. Antecedent predicate evaluated at s₁
 3. Consequent: temporally anchored to s₁ (future relative to s₀)
 -/
-def conditionalWithSF {W Time : Type*} [LE Time] [LT Time]
+def conditionalWithSF {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     (antecedentVar : ℕ)  -- Situation introduced by SF
     (speechVar : ℕ)      -- Speech time situation
@@ -109,7 +109,7 @@ Structure:
 2. Restrictor (boy ∧ awake) evaluated at s₁
 3. Nuclear scope (get cookie) evaluated with temporal anchor from s₁
 -/
-def relativeClauseSF {W Time : Type*} [LE Time] [LT Time]
+def relativeClauseSF {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     (rcVar : ℕ)           -- Situation variable for relative clause
     (speechVar : ℕ)       -- Speech time situation
@@ -127,7 +127,7 @@ The SF in the restrictor:
 2. Quantification over books is relativized to s₁
 3. Nuclear scope inherits temporal anchor from s₁
 -/
-def everyWithSFRestrictor {W Time : Type*} [LE Time] [LT Time]
+def everyWithSFRestrictor {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     (rcVar speechVar : ℕ)
     (restrictor : Set (WorldTimeIndex.Possibility W Time) → Set (WorldTimeIndex.Possibility W Time))  -- "book that M reads"
@@ -150,7 +150,7 @@ SF introduces a future situation.
 
 The subordinate future always introduces a situation with time ≥ current.
 -/
-theorem sf_introduces_future {W Time : Type*} [Preorder Time]
+theorem sf_introduces_future {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     (newVar refVar : ℕ)
     (c : Set (WorldTimeIndex.Possibility W Time))
@@ -161,7 +161,7 @@ theorem sf_introduces_future {W Time : Type*} [Preorder Time]
   -- FUT requires the new situation to be after the reference
   unfold subordinateFuture at h
   obtain ⟨-, h_gt⟩ := DynamicSemantics.mem_lift_test.mp h
-  exact le_of_lt h_gt
+  exact le_of_lt ((Core.Order.holds_after _ _).mp h_gt)
 
 /--
 Temporal shift is parasitic on modal donkey anaphora.
@@ -178,7 +178,7 @@ The temporal shift is *derived* from the modal semantics, not stipulated.
 Modal donkey anaphora explains
 why subjunctive mood enables future reference in subordinate clauses.
 -/
-theorem temporal_shift_parasitic_on_modal {W Time : Type*} [Preorder Time]
+theorem temporal_shift_parasitic_on_modal {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     (sfVar speechVar : ℕ)
     (c : Set (WorldTimeIndex.Possibility W Time))
@@ -217,7 +217,7 @@ theorem temporal_shift_parasitic_on_modal {W Time : Type*} [Preorder Time]
     simp only [Set.mem_ofPred_eq] at h_hist
     exact h_hist.2
   -- 3. The FUT constraint gives us the strict ordering
-  · exact h_gt
+  · exact (Core.Order.holds_after _ _).mp h_gt
 
 /--
 SF in restrictor enables future reference for strong quantifiers.
@@ -227,7 +227,7 @@ With SF in the relative clause, "every" can quantify over future entities.
 Restrictor and nuclear must be context filters (`IsEliminative`).
 Linguistically, predicates filter contexts without modifying assignments.
 -/
-theorem sf_restrictor_future_reference {W Time : Type*} [Preorder Time]
+theorem sf_restrictor_future_reference {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     (rcVar speechVar : ℕ)
     (restrictor nuclear : Set (WorldTimeIndex.Possibility W Time) → Set (WorldTimeIndex.Possibility W Time))
@@ -243,14 +243,14 @@ theorem sf_restrictor_future_reference {W Time : Type*} [Preorder Time]
     Set.Subset.trans (hN _) (hR _) h
   -- subordinateFuture guarantees the future ordering via dynFUT
   unfold subordinateFuture at h_sf
-  exact (DynamicSemantics.mem_lift_test.mp h_sf).2
+  exact (Core.Order.holds_after _ _).mp (DynamicSemantics.mem_lift_test.mp h_sf).2
 
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Compositional CDRT Derivations (§4.3.1)
 -- ════════════════════════════════════════════════════════════════
 
-variable {W Time E : Type*} [LE Time] [LT Time]
+variable {W Time E : Type*} [LinearOrder Time]
 variable (history : HistoricalAlternatives W Time)
 
 /--
@@ -288,7 +288,7 @@ def lexAnswer
 SF (Subordinate Future).
 `⟦SF⟧ = SUBJ ∘ FUT`
 -/
-def lexSF := @subordinateFuture W Time _ _
+def lexSF := @subordinateFuture W Time _
 
 /--
 ela — "she" (pronoun bound to Maria).
@@ -418,7 +418,7 @@ theorem derivation_future_ordering
   simp only [Set.mem_ofPred_eq] at h_ant
   obtain ⟨h_sf, _⟩ := h_ant
   unfold lexSF subordinateFuture at h_sf
-  exact (DynamicSemantics.mem_lift_test.mp h_sf).2
+  exact (Core.Order.holds_after _ _).mp (DynamicSemantics.mem_lift_test.mp h_sf).2
 
 /--
 If Maria is at home at s₁, she answers at s₁.
@@ -456,7 +456,7 @@ def deriveCounterfactual
 /--
 SF constrains to future; counterfactual allows past/present.
 -/
-theorem sf_vs_counterfactual_temporal {W Time : Type*} [Preorder Time]
+theorem sf_vs_counterfactual_temporal {W Time : Type*} [LinearOrder Time]
     (history : HistoricalAlternatives W Time)
     {E : Type*}
     (maria : E)

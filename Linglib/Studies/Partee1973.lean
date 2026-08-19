@@ -58,7 +58,7 @@ theorem stove_refutes_prior :
     parteeStoveExample (· == (-1 : ℤ)) (λ _ => (-1 : ℤ)) 0 = false ∧
     ∃ s : WorldTimeIndex Unit ℤ,
       PAST (λ s => (s.time == (-1 : ℤ)) = false) s ⟨(), 0⟩ :=
-  ⟨by decide, ⟨(), -2⟩, by exact (by decide : ((-2 : ℤ) < 0)), by decide⟩
+  ⟨by decide, ⟨(), -2⟩, by decide, by decide⟩
 
 /-- Partee's narrative example: "He turned the corner. He saw a house."
 
