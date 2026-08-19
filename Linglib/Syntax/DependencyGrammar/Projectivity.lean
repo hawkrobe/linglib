@@ -125,10 +125,10 @@ theorem Graph.IsProjective.isPlanar (hT : g.IsTree) (hP : g.IsProjective) :
     rintro p t q u x h1 h2 hx (rfl | rfl) hne
     exacts [hP.dominates_of_mem_uIcc h1 hx,
             Dominates.to_head hT (hP.dominates_of_mem_uIcc h1 hx) hne h2]
-  have hab : c ∈ Set.uIcc a b := Set.mem_uIcc.mpr (.inl ⟨hac.le, hcb.le⟩)
-  have hba : c ∈ Set.uIcc b a := Set.mem_uIcc.mpr (.inr ⟨hac.le, hcb.le⟩)
-  have hcd : b ∈ Set.uIcc c d := Set.mem_uIcc.mpr (.inl ⟨hcb.le, hbd.le⟩)
-  have hdc : b ∈ Set.uIcc d c := Set.mem_uIcc.mpr (.inr ⟨hcb.le, hbd.le⟩)
+  have hab : c ∈ Set.uIcc a b := by simp only [Set.mem_uIcc]; omega
+  have hba : c ∈ Set.uIcc b a := by simp only [Set.mem_uIcc]; omega
+  have hcd : b ∈ Set.uIcc c d := by simp only [Set.mem_uIcc]; omega
+  have hdc : b ∈ Set.uIcc d c := by simp only [Set.mem_uIcc]; omega
   rcases hL1 with h1 | h1 <;> rcases hL2 with h2 | h2
   · exact hac.ne (Dominates.antisymm hT.acyclic
       (step h1 h2 hab (.inl rfl) hac.ne) (step h2 h1 hcd (.inr rfl) hcb.ne))
@@ -145,11 +145,9 @@ theorem Graph.IsPlanar.mem_uIcc_of_linked (hPl : g.IsPlanar) {lo hi p q : Fin n}
     (hL : Linked g lo hi) (hL' : Linked g p q)
     (hlp : lo < p) (hph : p < hi) : q ∈ Set.uIcc lo hi := by
   by_contra hq
-  have hout : q < lo ∨ hi < q := by
-    by_contra hc
-    push Not at hc
-    exact hq (Set.mem_uIcc.mpr (Or.inl ⟨hc.1, hc.2⟩))
-  rcases hout with h | h
+  simp only [Set.mem_uIcc] at hq
+  push Not at hq
+  rcases (show q < lo ∨ hi < q by omega) with h | h
   · exact hPl hL'.symm hL ⟨h, hlp, hph⟩
   · exact hPl hL hL' ⟨hlp, hph, h⟩
 
@@ -158,22 +156,12 @@ theorem Graph.IsPlanar.mem_uIcc_of_linked (hPl : g.IsPlanar) {lo hi p q : Fin n}
 theorem Graph.IsPlanar.no_strict_straddle (hPl : g.IsPlanar) {p q p' q' : Fin n}
     (hL : Linked g p q) (hL' : Linked g p' q') (hin : p' ∈ Set.uIcc p q)
     (hne1 : p' ≠ p) (hne2 : p' ≠ q) (hout : q' ∉ Set.uIcc p q) : False := by
-  rw [Set.mem_uIcc] at hin
+  simp only [Set.mem_uIcc] at hin
   rcases lt_trichotomy p q with h | rfl | h
-  · have hb : p ≤ p' ∧ p' ≤ q := by
-      rcases hin with h1 | h2
-      · exact h1
-      · exact absurd (h2.1.trans h2.2) (not_le.mpr h)
-    exact hout (hPl.mem_uIcc_of_linked hL hL'
-      (lt_of_le_of_ne hb.1 (Ne.symm hne1)) (lt_of_le_of_ne hb.2 hne2))
-  · exact hne1 (by rcases hin with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> exact le_antisymm h2 h1)
-  · have hb : q ≤ p' ∧ p' ≤ p := by
-      rcases hin with h1 | h2
-      · exact absurd (h1.1.trans h1.2) (not_le.mpr h)
-      · exact h2
-    rw [Set.uIcc_comm] at hout
-    exact hout (hPl.mem_uIcc_of_linked hL.symm hL'
-      (lt_of_le_of_ne hb.1 (Ne.symm hne2)) (lt_of_le_of_ne hb.2 hne1))
+  · exact hout (hPl.mem_uIcc_of_linked hL hL' (by omega) (by omega))
+  · omega
+  · rw [Set.uIcc_comm] at hout
+    exact hout (hPl.mem_uIcc_of_linked hL.symm hL' (by omega) (by omega))
 
 /-- Every planar tree is well-nested: interleaved subtrees would force a link
     below one of them to straddle a link below the other. -/
@@ -188,9 +176,7 @@ theorem Graph.IsPlanar.isWellNested (hT : g.IsTree) (hPl : g.IsPlanar) :
   have hab : a < b := hac.trans hcb
   -- A link below `w` crosses the boundary of the span of `a` and `b`.
   have hcS : c ∈ Set.uIcc a b := Set.mem_uIcc.mpr (.inl ⟨hac.le, hcb.le⟩)
-  have hdS : d ∉ Set.uIcc a b := by
-    rw [Set.uIcc_of_le hab.le, Set.mem_Icc]
-    exact λ h => absurd h.2 (not_le.mpr hbd)
+  have hdS : d ∉ Set.uIcc a b := by simp only [Set.mem_uIcc]; push Not; omega
   obtain ⟨p, q, hLpq, hwp, hwq, hpS, hqS⟩ := exists_link_across hwc hwd hcS hdS
   rw [Set.uIcc_of_le hab.le, Set.mem_Icc] at hpS hqS
   push Not at hqS
@@ -205,16 +191,12 @@ theorem Graph.IsPlanar.isWellNested (hT : g.IsTree) (hPl : g.IsPlanar) :
   have hqa0 : q ≠ a := λ h => hdis hva (h ▸ hwq)
   rcases lt_or_gt_of_ne hqa0 with hqa | hqa
   · have h1 : a ∈ Set.uIcc p q := Set.mem_uIcc.mpr (.inr ⟨hqa.le, hap.le⟩)
-    have h2 : b ∉ Set.uIcc p q := by
-      rw [Set.uIcc_comm, Set.uIcc_of_le (hqa.trans hap).le, Set.mem_Icc]
-      exact λ h => absurd h.2 (not_le.mpr hpb)
+    have h2 : b ∉ Set.uIcc p q := by simp only [Set.mem_uIcc]; push Not; omega
     obtain ⟨_, _, hL', hvp', _, hin, hout⟩ := exists_link_across hva hvb h1 h2
     exact hfin hL' hvp' hin hout
   · have hbq : b < q := hqS hqa.le
     have h1 : b ∈ Set.uIcc p q := Set.mem_uIcc.mpr (.inl ⟨hpb.le, hbq.le⟩)
-    have h2 : a ∉ Set.uIcc p q := by
-      rw [Set.uIcc_of_le (hpb.trans hbq).le, Set.mem_Icc]
-      exact λ h => absurd h.1 (not_le.mpr hap)
+    have h2 : a ∉ Set.uIcc p q := by simp only [Set.mem_uIcc]; push Not; omega
     obtain ⟨_, _, hL', hvp', _, hin, hout⟩ := exists_link_across hvb hva h1 h2
     exact hfin hL' hvp' hin hout
 
