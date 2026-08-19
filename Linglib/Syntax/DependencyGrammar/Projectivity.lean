@@ -32,8 +32,9 @@ papers' own figures, and live in their study files.
 * `Graph.Interleave`, `Graph.IsWellNested` — Definition 8.
 * `Graph.gapDegree` — Definitions 6–7. Gap degree + 1 is the block-degree,
   the fan-out of the LCFRS rule extracted for that node.
-* `Graph.isProjective_iff_gapDegree_eq_zero` — the parametric constraint at
-  its least value is the binary one.
+* `Graph.isProjective_iff_gapDegree_eq_zero`,
+  `Graph.isPlanar_iff_crossings_eq_zero` — each binary constraint is the
+  least value of a count (`Graph.gapDegree`, `Graph.crossings`).
 * `Graph.IsProjective.isPlanar`, `Graph.IsPlanar.isWellNested` — the §3.5
   chain `projective ⊆ planar ⊆ well-nested` on trees, with
   `Graph.IsProjective.isWellNested` its composite.
@@ -111,9 +112,29 @@ def Graph.gapDegreeAt (v : Fin n) : Nat :=
 /-- The gap degree of a graph is the maximum over its positions. -/
 def Graph.gapDegree : Nat := Finset.univ.sup g.gapDegreeAt
 
+/-! ### Crossings -/
+
+/-- The number of crossing link pairs, counted as quadruples `a < c < b < d`
+    carrying links `{a, b}` and `{c, d}`. Each crossing pair contributes once,
+    since of the two ways to order the pairs only one alternates. -/
+def Graph.crossings : Nat :=
+  (Finset.univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+    Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2 ∧
+      Alternate x.1 x.2.1 x.2.2.1 x.2.2.2)).card
+
 variable {g}
 
 /-! ### Projectivity as gap degree zero -/
+
+/-- Planarity is having no crossings — the binary constraint as the least
+    value of the count. -/
+theorem Graph.isPlanar_iff_crossings_eq_zero : g.IsPlanar ↔ g.crossings = 0 := by
+  rw [Graph.crossings, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+  constructor
+  · rintro h ⟨a, b, c, d⟩ - ⟨h1, h2, h3⟩
+    exact h h1 h2 h3
+  · exact λ h a b c d h1 h2 h3 => h (Finset.mem_univ (a, b, c, d)) ⟨h1, h2, h3⟩
+
 
 /-- A strictly increasing list of naturals has no gaps exactly when its
     members form an order-convex set. -/

@@ -66,6 +66,10 @@ example : dutchCrossSerial.gapDegree = 1 ∧ germanNested.gapDegree = 0 := by de
 /-- Cross-serial dependencies stay well-nested; they are not planar. -/
 example : dutchCrossSerial.IsWellNested ∧ ¬ dutchCrossSerial.IsPlanar := by decide
 
+/-- The nested order has no crossing links; the cross-serial order has five. -/
+example : germanNested.crossings = 0 := by decide +kernel
+example : dutchCrossSerial.crossings = 5 := by decide +kernel
+
 /-- The Dutch fixture as a bundled `Tree`: the dominance-order API applies
     with no side conditions. -/
 def dutchTree : Tree 7 := .mk' dutchCrossSerial
