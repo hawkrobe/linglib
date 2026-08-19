@@ -23,17 +23,25 @@ papers' own figures, and live in their study files.
 
 ## Main declarations
 
-* `Graph.dominated`, `Alternate` — the positions a node dominates, and the
-  alternation `a < c < b < d` that both binary constraints forbid.
-* `Graph.IsProjective` — those positions form an interval (Definition 3).
+* `Alternate` — the alternation `a < c < b < d` that both binary constraints
+  forbid.
+* `Graph.IsProjective` — every `Graph.dominated` set is an interval
+  (Definition 3).
 * `Graph.IsPlanar` — no two links cross (Definition 4), the Link Grammar
   notion, traced there to [melcuk-1988].
 * `Graph.Interleave`, `Graph.IsWellNested` — Definition 8.
 * `Graph.gapDegree` — Definitions 6–7. Gap degree + 1 is the block-degree,
   the fan-out of the LCFRS rule extracted for that node.
+* `Graph.isProjective_iff_gapDegree_eq_zero`,
+  `Graph.isPlanar_iff_crossings_eq_zero` — each binary constraint is the
+  least value of a count (`Graph.gapDegree`, `Graph.crossings`).
 * `Graph.IsProjective.isPlanar`, `Graph.IsPlanar.isWellNested` — the §3.5
   chain `projective ⊆ planar ⊆ well-nested` on trees, with
   `Graph.IsProjective.isWellNested` its composite.
+* `Graph.IsPlanar.root_mem_gap` — every gap of a planar tree contains the
+  root, so a planar tree rooted at a sentence boundary is already projective
+  (`Graph.IsPlanar.isProjective_of_isBot`). This is why planarity is a weaker
+  constraint than projectivity only by the root's position.
 
 ## References
 
@@ -49,26 +57,13 @@ variable {n : ℕ} (g : Graph n)
 
 /-! ### The binary constraints: projectivity, planarity, well-nestedness -/
 
-/-- The positions `v` dominates, `v` itself included — the *yield* of `v` in
-    the source terminology. `projection` lists them in ascending order. -/
-def Graph.dominated (v : Fin n) : Set (Fin n) := {x | Dominates g v x}
-
-@[simp] theorem Graph.mem_dominated {g : Graph n} {v x : Fin n} :
-    x ∈ g.dominated v ↔ Dominates g v x := Iff.rfl
-
-instance (v : Fin n) : DecidablePred (· ∈ g.dominated v) :=
-  λ x => inferInstanceAs (Decidable (Dominates g v x))
-
 /-- A dependency graph is projective if the positions dominated by any one
     position are order-convex. -/
 def Graph.IsProjective : Prop := ∀ v, (g.dominated v).OrdConnected
 
 /-- Positions `a b c d` alternate if `a < c < b < d`, so that the pairs
     `{a, b}` and `{c, d}` strictly interleave. -/
-def Alternate (a b c d : Fin n) : Prop := a < c ∧ c < b ∧ b < d
-
-instance (a b c d : Fin n) : Decidable (Alternate a b c d) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+abbrev Alternate (a b c d : Fin n) : Prop := a < c ∧ c < b ∧ b < d
 
 /-- A dependency graph is planar if no two links alternate, so that its arcs
     can be drawn above the sentence without crossing. -/
@@ -86,13 +81,11 @@ def Graph.Interleave (v w : Fin n) : Prop :=
 def Graph.IsWellNested : Prop :=
   ∀ v w : Fin n, g.Interleave v w → Dominates g v w ∨ Dominates g w v
 
+/-- Projectivity, unfolded: nothing between two dominated positions escapes. -/
 theorem Graph.isProjective_iff :
-    g.IsProjective ↔ ∀ v x y, Dominates g v x → Dominates g v y →
+    g.IsProjective ↔ ∀ v x, Dominates g v x → ∀ y, Dominates g v y →
       ∀ z, x ≤ z → z ≤ y → Dominates g v z := by
-  simp only [IsProjective, Set.ordConnected_def, Set.subset_def, Set.mem_Icc,
-    Graph.mem_dominated, and_imp]
-  exact ⟨λ h v x y hx hy z h1 h2 => h v hx hy z h1 h2,
-         λ h v x hx y hy z h1 h2 => h v x y hx hy z h1 h2⟩
+  simp [Graph.IsProjective, Set.ordConnected_def, Set.subset_def]
 
 instance : Decidable g.IsProjective := decidable_of_iff _ g.isProjective_iff.symm
 instance : Decidable g.IsPlanar := inferInstanceAs (Decidable (∀ _, _))
@@ -102,26 +95,122 @@ instance : Decidable g.IsWellNested := inferInstanceAs (Decidable (∀ _, _))
 
 /-! ### Gap degree -/
 
-/-- The projection of `v`, as position values. -/
-def Graph.projectionVals (v : Fin n) : List Nat := (projection g v).map (·.val)
-
-theorem Graph.projectionVals_sortedLT (v : Fin n) :
-    (g.projectionVals v).SortedLT := by
-  refine List.Pairwise.sortedLT (List.Pairwise.map _ (λ _ _ h => h) ?_)
-  exact (List.pairwise_lt_finRange n).filter _
+/-- The projection is strictly increasing. -/
+theorem Graph.projection_pairwise_lt (v : Fin n) :
+    (g.projection v).Pairwise (· < ·) := (List.pairwise_lt_finRange n).filter _
 
 /-- The gap degree of a position counts the discontinuities in its
     projection, the adjacent members more than one position apart. -/
 def Graph.gapDegreeAt (v : Fin n) : Nat :=
-  ((g.projectionVals v).zip (g.projectionVals v).tail).countP
-    (λ p => decide (1 < p.2 - p.1))
+  ((g.projection v).zip (g.projection v).tail).countP
+    (λ p => decide (1 < p.2.val - p.1.val))
 
 /-- The gap degree of a graph is the maximum over its positions. -/
 def Graph.gapDegree : Nat := Finset.univ.sup g.gapDegreeAt
 
-/-! ### The hierarchy on trees -/
+/-! ### Crossings -/
+
+/-- The number of crossing link pairs, counted as quadruples `a < c < b < d`
+    carrying links `{a, b}` and `{c, d}`. Each crossing pair contributes once,
+    since of the two ways to order the pairs only one alternates. -/
+def Graph.crossings : Nat :=
+  (Finset.univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
+    Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2 ∧
+      Alternate x.1 x.2.1 x.2.2.1 x.2.2.2)).card
 
 variable {g}
+
+/-! ### Projectivity as gap degree zero -/
+
+/-- Planarity is having no crossings — the binary constraint as the least
+    value of the count. -/
+theorem Graph.isPlanar_iff_crossings_eq_zero : g.IsPlanar ↔ g.crossings = 0 := by
+  rw [Graph.crossings, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+  constructor
+  · rintro h ⟨a, b, c, d⟩ - ⟨h1, h2, h3⟩
+    exact h h1 h2 h3
+  · exact λ h a b c d h1 h2 h3 => h (Finset.mem_univ (a, b, c, d)) ⟨h1, h2, h3⟩
+
+
+/-- A strictly increasing list of naturals has no gaps exactly when its
+    members form an order-convex set. -/
+private theorem gapfree_iff_ordConnected {l : List ℕ} (h : l.IsChain (· < ·)) :
+    (∀ q ∈ l.zip l.tail, q.2 - q.1 ≤ 1) ↔ Set.OrdConnected {x | x ∈ l} := by
+  rw [Set.ordConnected_iff]
+  simp only [Set.subset_def, Set.mem_Icc, Set.mem_ofPred_eq, and_imp]
+  induction h with
+  | nil => simp
+  | singleton a => simp; omega
+  | @cons_cons a b t hab hchain ih =>
+    have hpw : (b :: t).Pairwise (· < ·) := List.isChain_iff_pairwise.mp hchain
+    have hble : ∀ y ∈ b :: t, b ≤ y := by
+      rintro y hy
+      rcases List.mem_cons.mp hy with rfl | hy'
+      exacts [Nat.le_refl _, ((List.pairwise_cons.mp hpw).1 y hy').le]
+    rw [List.tail_cons, List.zip_cons_cons, List.forall_mem_cons]
+    constructor
+    · rintro ⟨hba, hrest⟩ x hx y hy hxy z hxz hzy
+      have hb : b = a + 1 := by omega
+      have hconv := ih.mp hrest
+      rcases List.mem_cons.mp hx with rfl | hx'
+      · rcases Nat.eq_or_lt_of_le hxz with rfl | hlt
+        · exact List.mem_cons_self
+        rcases List.mem_cons.mp hy with rfl | hy'
+        · omega
+        · exact List.mem_cons_of_mem _
+            (hconv b List.mem_cons_self y hy' (hble y hy') z (by omega) hzy)
+      · rcases List.mem_cons.mp hy with rfl | hy'
+        · exact absurd (hble x hx') (by omega)
+        · exact List.mem_cons_of_mem _ (hconv x hx' y hy' hxy z hxz hzy)
+    · intro hconv
+      refine ⟨?_, ih.mpr (λ x hx y hy hxy z hxz hzy => ?_)⟩
+      · by_contra hgap
+        rcases List.mem_cons.mp (hconv a List.mem_cons_self b
+          (List.mem_cons_of_mem _ List.mem_cons_self) hab.le (a + 1) (by omega) (by omega))
+          with heq | hin
+        · omega
+        · exact absurd (hble _ hin) (by omega)
+      · rcases List.mem_cons.mp (hconv x (List.mem_cons_of_mem _ hx)
+          y (List.mem_cons_of_mem _ hy) hxy z hxz hzy) with rfl | hin
+        · exact absurd (hble x hx) (by omega)
+        · exact hin
+
+private theorem mem_projection_map {v : Fin n} {k : ℕ} :
+    k ∈ (g.projection v).map (·.val) ↔ ∃ x : Fin n, Dominates g v x ∧ x.val = k := by
+  simp [List.mem_map]
+
+/-- A position has gap degree zero exactly when what it dominates is
+    order-convex. -/
+theorem Graph.gapDegreeAt_eq_zero_iff {v : Fin n} :
+    g.gapDegreeAt v = 0 ↔ (g.dominated v).OrdConnected := by
+  have hmap : g.gapDegreeAt v =
+      (((g.projection v).map (·.val)).zip ((g.projection v).map (·.val)).tail).countP
+        (λ p => decide (1 < p.2 - p.1)) := by
+    simp [Graph.gapDegreeAt, ← List.map_tail, List.zip_map, List.countP_map,
+      Function.comp_def]
+  rw [hmap, List.countP_eq_zero]
+  have hgf := gapfree_iff_ordConnected (l := (g.projection v).map (·.val))
+    (List.isChain_iff_pairwise.mpr
+      (List.Pairwise.map _ (λ _ _ h => h) (g.projection_pairwise_lt v)))
+  simp only [decide_eq_true_eq, Nat.not_lt] at *
+  rw [hgf, Set.ordConnected_iff, Set.ordConnected_iff]
+  simp only [Set.subset_def, Set.mem_Icc, Set.mem_ofPred_eq, mem_projection_map,
+    Graph.mem_dominated, and_imp]
+  constructor
+  · rintro h x hx y hy hxy z hxz hzy
+    obtain ⟨w, hw, hwv⟩ := h x.val ⟨x, hx, rfl⟩ y.val ⟨y, hy, rfl⟩ hxy z.val hxz hzy
+    exact (Fin.val_injective (hwv : w.val = z.val)) ▸ hw
+  · rintro h k ⟨x, hx, rfl⟩ m ⟨y, hy, rfl⟩ hxy z hxz hzy
+    exact ⟨⟨z, lt_of_le_of_lt hzy y.isLt⟩, h x hx y hy hxy ⟨z, _⟩ hxz hzy, rfl⟩
+
+/-- **Projectivity is gap degree zero**: the parametric constraint at its
+    least value is the binary one. -/
+theorem Graph.isProjective_iff_gapDegree_eq_zero :
+    g.IsProjective ↔ g.gapDegree = 0 := by
+  rw [Graph.gapDegree, ← Nat.bot_eq_zero, Finset.sup_eq_bot_iff]
+  simp [Graph.IsProjective, Nat.bot_eq_zero, Graph.gapDegreeAt_eq_zero_iff]
+
+/-! ### The hierarchy on trees -/
 
 /-- In a projective graph the head of an arc dominates every position the arc
     spans, since the head dominates both endpoints and is order-convex. -/
@@ -139,10 +228,10 @@ theorem Graph.IsProjective.isPlanar (hT : g.IsTree) (hP : g.IsProjective) :
     rintro p t q u x h1 h2 hx (rfl | rfl) hne
     exacts [hP.dominates_of_mem_uIcc h1 hx,
             Dominates.to_head hT (hP.dominates_of_mem_uIcc h1 hx) hne h2]
-  have hab : c ∈ Set.uIcc a b := Set.mem_uIcc.mpr (.inl ⟨hac.le, hcb.le⟩)
-  have hba : c ∈ Set.uIcc b a := Set.mem_uIcc.mpr (.inr ⟨hac.le, hcb.le⟩)
-  have hcd : b ∈ Set.uIcc c d := Set.mem_uIcc.mpr (.inl ⟨hcb.le, hbd.le⟩)
-  have hdc : b ∈ Set.uIcc d c := Set.mem_uIcc.mpr (.inr ⟨hcb.le, hbd.le⟩)
+  have hab : c ∈ Set.uIcc a b := by simp [Set.mem_uIcc]; omega
+  have hba : c ∈ Set.uIcc b a := by simp [Set.mem_uIcc]; omega
+  have hcd : b ∈ Set.uIcc c d := by simp [Set.mem_uIcc]; omega
+  have hdc : b ∈ Set.uIcc d c := by simp [Set.mem_uIcc]; omega
   rcases hL1 with h1 | h1 <;> rcases hL2 with h2 | h2
   · exact hac.ne (Dominates.antisymm hT.acyclic
       (step h1 h2 hab (.inl rfl) hac.ne) (step h2 h1 hcd (.inr rfl) hcb.ne))
@@ -159,11 +248,9 @@ theorem Graph.IsPlanar.mem_uIcc_of_linked (hPl : g.IsPlanar) {lo hi p q : Fin n}
     (hL : Linked g lo hi) (hL' : Linked g p q)
     (hlp : lo < p) (hph : p < hi) : q ∈ Set.uIcc lo hi := by
   by_contra hq
-  have hout : q < lo ∨ hi < q := by
-    by_contra hc
-    push Not at hc
-    exact hq (Set.mem_uIcc.mpr (Or.inl ⟨hc.1, hc.2⟩))
-  rcases hout with h | h
+  simp only [Set.mem_uIcc] at hq
+  push Not at hq
+  rcases (show q < lo ∨ hi < q by omega) with h | h
   · exact hPl hL'.symm hL ⟨h, hlp, hph⟩
   · exact hPl hL hL' ⟨hlp, hph, h⟩
 
@@ -172,22 +259,12 @@ theorem Graph.IsPlanar.mem_uIcc_of_linked (hPl : g.IsPlanar) {lo hi p q : Fin n}
 theorem Graph.IsPlanar.no_strict_straddle (hPl : g.IsPlanar) {p q p' q' : Fin n}
     (hL : Linked g p q) (hL' : Linked g p' q') (hin : p' ∈ Set.uIcc p q)
     (hne1 : p' ≠ p) (hne2 : p' ≠ q) (hout : q' ∉ Set.uIcc p q) : False := by
-  rw [Set.mem_uIcc] at hin
+  simp only [Set.mem_uIcc] at hin
   rcases lt_trichotomy p q with h | rfl | h
-  · have hb : p ≤ p' ∧ p' ≤ q := by
-      rcases hin with h1 | h2
-      · exact h1
-      · exact absurd (h2.1.trans h2.2) (not_le.mpr h)
-    exact hout (hPl.mem_uIcc_of_linked hL hL'
-      (lt_of_le_of_ne hb.1 (Ne.symm hne1)) (lt_of_le_of_ne hb.2 hne2))
-  · exact hne1 (by rcases hin with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> exact le_antisymm h2 h1)
-  · have hb : q ≤ p' ∧ p' ≤ p := by
-      rcases hin with h1 | h2
-      · exact absurd (h1.1.trans h1.2) (not_le.mpr h)
-      · exact h2
-    rw [Set.uIcc_comm] at hout
-    exact hout (hPl.mem_uIcc_of_linked hL.symm hL'
-      (lt_of_le_of_ne hb.1 (Ne.symm hne2)) (lt_of_le_of_ne hb.2 hne1))
+  · exact hout (hPl.mem_uIcc_of_linked hL hL' (by omega) (by omega))
+  · omega
+  · rw [Set.uIcc_comm] at hout
+    exact hout (hPl.mem_uIcc_of_linked hL.symm hL' (by omega) (by omega))
 
 /-- Every planar tree is well-nested: interleaved subtrees would force a link
     below one of them to straddle a link below the other. -/
@@ -201,36 +278,78 @@ theorem Graph.IsPlanar.isWellNested (hT : g.IsTree) (hPl : g.IsPlanar) :
     λ h1 h2 => disjoint_dominated hT hvw hwv h1 h2
   have hab : a < b := hac.trans hcb
   -- A link below `w` crosses the boundary of the span of `a` and `b`.
-  have hcS : c ∈ Set.uIcc a b := Set.mem_uIcc.mpr (.inl ⟨hac.le, hcb.le⟩)
-  have hdS : d ∉ Set.uIcc a b := by
-    rw [Set.uIcc_of_le hab.le, Set.mem_Icc]
-    exact λ h => absurd h.2 (not_le.mpr hbd)
+  have hcS : c ∈ Set.uIcc a b := by simp [Set.mem_uIcc]; omega
+  have hdS : d ∉ Set.uIcc a b := by simp [Set.mem_uIcc]; omega
   obtain ⟨p, q, hLpq, hwp, hwq, hpS, hqS⟩ := exists_link_across hwc hwd hcS hdS
   rw [Set.uIcc_of_le hab.le, Set.mem_Icc] at hpS hqS
   push Not at hqS
   have hap : a < p := lt_of_le_of_ne hpS.1 (λ h => hdis hva (h ▸ hwp))
   have hpb : p < b := lt_of_le_of_ne hpS.2 (λ h => hdis hvb (h ▸ hwp))
-  -- Any link below `v` crossing that link's span contradicts planarity.
-  have hfin : ∀ {p' q' : Fin n}, Linked g p' q' → Dominates g v p' →
-      p' ∈ Set.uIcc p q → q' ∉ Set.uIcc p q → False := by
-    intro p' q' hL' hvp' hin hout
-    exact hPl.no_strict_straddle hLpq hL' hin
-      (λ h => hdis hvp' (h ▸ hwp)) (λ h => hdis hvp' (h ▸ hwq)) hout
-  have hqa0 : q ≠ a := λ h => hdis hva (h ▸ hwq)
-  rcases lt_or_gt_of_ne hqa0 with hqa | hqa
-  · have h1 : a ∈ Set.uIcc p q := Set.mem_uIcc.mpr (.inr ⟨hqa.le, hap.le⟩)
-    have h2 : b ∉ Set.uIcc p q := by
-      rw [Set.uIcc_comm, Set.uIcc_of_le (hqa.trans hap).le, Set.mem_Icc]
-      exact λ h => absurd h.2 (not_le.mpr hpb)
-    obtain ⟨_, _, hL', hvp', _, hin, hout⟩ := exists_link_across hva hvb h1 h2
-    exact hfin hL' hvp' hin hout
-  · have hbq : b < q := hqS hqa.le
-    have h1 : b ∈ Set.uIcc p q := Set.mem_uIcc.mpr (.inl ⟨hpb.le, hbq.le⟩)
-    have h2 : a ∉ Set.uIcc p q := by
-      rw [Set.uIcc_of_le (hpb.trans hbq).le, Set.mem_Icc]
-      exact λ h => absurd h.1 (not_le.mpr hap)
-    obtain ⟨_, _, hL', hvp', _, hin, hout⟩ := exists_link_across hvb hva h1 h2
-    exact hfin hL' hvp' hin hout
+  -- A link below `v` spanning that link's endpoints contradicts planarity.
+  have main : ∀ {x y : Fin n}, Dominates g v x → Dominates g v y →
+      x ∈ Set.uIcc p q → y ∉ Set.uIcc p q → False := by
+    intro x y hx hy hin hout
+    obtain ⟨_, _, hL', hvp', _, hin', hout'⟩ := exists_link_across hx hy hin hout
+    exact hPl.no_strict_straddle hLpq hL' hin'
+      (λ h => hdis hvp' (h ▸ hwp)) (λ h => hdis hvp' (h ▸ hwq)) hout'
+  -- `q` falls on one side or the other, putting exactly one of `a`, `b` inside.
+  rcases (show q < a ∨ b < q by omega) with hq | hq
+  · exact main hva hvb (by simp [Set.mem_uIcc]; omega)
+      (by simp [Set.mem_uIcc]; omega)
+  · exact main hvb hva (by simp [Set.mem_uIcc]; omega)
+      (by simp [Set.mem_uIcc]; omega)
+
+/-- In a planar tree every gap contains the root: if `v` dominates `i` and `j`
+    but skips a position between them, the root lies strictly between `i` and
+    `j`. So a planar tree rooted at a sentence boundary is projective, which
+    is why planarity buys nothing once the root is given a boundary
+    position. -/
+theorem Graph.IsPlanar.root_mem_gap (hT : g.IsTree) (hPl : g.IsPlanar)
+    {v i j k : Fin n} (hi : Dominates g v i) (hj : Dominates g v j)
+    (hik : i < k) (hkj : k < j) (hk : ¬ Dominates g v k) :
+    i < g.root ∧ g.root < j := by
+  by_contra hcon
+  push Not at hcon
+  -- `v` is not the root, so the root is not among the positions `v` dominates.
+  have hvr : ¬ Dominates g v g.root := λ h =>
+    hk ((Dominates.antisymm hT.acyclic h (hT.root_dominates v)).symm ▸
+      hT.root_dominates k)
+  have hri : g.root ≠ i := λ h => hvr (h ▸ hi)
+  have hrj : g.root ≠ j := λ h => hvr (h ▸ hj)
+  have hij : i < j := hik.trans hkj
+  have hkS : k ∈ Set.uIcc i j := by simp [Set.mem_uIcc]; omega
+  have hrS : g.root ∉ Set.uIcc i j := by simp [Set.mem_uIcc]; omega
+  -- The root's path to `k` enters the span of `i` and `j` at an arc that
+  -- misses everything `v` dominates.
+  obtain ⟨p, q, hpq, hpS, hqS, hqk⟩ :=
+    exists_adj_in_dominating (hT.root_dominates k) hrS hkS
+  have hqv : ¬ Dominates g v q := λ h => hk (h.trans hqk)
+  have hpv : ¬ Dominates g v p := λ h =>
+    hk (h.trans ((Relation.ReflTransGen.single hpq).trans hqk))
+  rw [Set.uIcc_of_le hij.le, Set.mem_Icc] at hpS hqS
+  push Not at hpS
+  have hiq : i < q := lt_of_le_of_ne hqS.1 (λ h => hqv (h ▸ hi))
+  have hqj : q < j := lt_of_le_of_ne hqS.2 (λ h => hqv (h ▸ hj))
+  have main : ∀ {x y : Fin n}, Dominates g v x → Dominates g v y →
+      x ∈ Set.uIcc p q → y ∉ Set.uIcc p q → False := by
+    intro x y hx hy hin hout
+    obtain ⟨_, _, hL', hvp', _, hin', hout'⟩ := exists_link_across hx hy hin hout
+    exact hPl.no_strict_straddle (Or.inl hpq) hL' hin'
+      (λ h => hpv (h ▸ hvp')) (λ h => hqv (h ▸ hvp')) hout'
+  rcases (show p < i ∨ j < p by omega) with hp | hp
+  · exact main hi hj (by simp [Set.mem_uIcc]; omega) (by simp [Set.mem_uIcc]; omega)
+  · exact main hj hi (by simp [Set.mem_uIcc]; omega) (by simp [Set.mem_uIcc]; omega)
+
+/-- A planar tree whose root precedes every position is projective: a gap
+    would have to contain the root, and nothing lies to its left. -/
+theorem Graph.IsPlanar.isProjective_of_isBot (hT : g.IsTree) (hPl : g.IsPlanar)
+    (hr : IsBot g.root) : g.IsProjective := by
+  rw [g.isProjective_iff]
+  intro v x hx y hy z hxz hzy
+  by_contra hz
+  have hxz' : x < z := lt_of_le_of_ne hxz (λ h => hz (h ▸ hx))
+  have hzy' : z < y := lt_of_le_of_ne hzy (λ h => hz (h ▸ hy))
+  exact absurd (hPl.root_mem_gap hT hx hy hxz' hzy' hz).1 (not_lt.mpr (hr x))
 
 /-- Every projective tree is well-nested, via planarity. -/
 theorem Graph.IsProjective.isWellNested (hT : g.IsTree) (hP : g.IsProjective) :

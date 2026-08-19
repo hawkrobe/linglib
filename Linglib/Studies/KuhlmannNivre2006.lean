@@ -50,6 +50,10 @@ example : planarNotProjective.IsTree := by decide
 example : planarNotProjective.IsPlanar ∧ ¬ planarNotProjective.IsProjective := by
   decide
 
+/-- Planarity is exactly having no crossings, so the count is zero even
+    though the structure is not projective. -/
+example : planarNotProjective.crossings = 0 := by decide
+
 /-- The root lies strictly inside the gap of position 0. -/
 example : (0 : Fin 4) < planarNotProjective.root ∧
     planarNotProjective.root < 3 := by decide

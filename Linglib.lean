@@ -55,6 +55,7 @@ import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.PartitionCat
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Combinatorics.Antimatroid
+import Linglib.Core.Combinatorics.Enumerative.PermutationPattern
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Linglib.Core.Combinatorics.RootedTree.Conservation
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
