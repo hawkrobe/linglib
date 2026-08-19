@@ -3,6 +3,7 @@ import Linglib.Studies.HeimLasnikMay1991
 import Linglib.Syntax.Category.Verb.Reciprocal
 import Linglib.Syntax.Category.Verb.Symmetric
 import Linglib.Semantics.ArgumentStructure.RoleList
+import Linglib.Semantics.ArgumentStructure.CaseRegion
 import Linglib.Semantics.Plurality.Groups
 
 /-!
@@ -46,6 +47,14 @@ application (`pluralEventsAvailable` per generalization (29),
 concluding table is a theorem (`predictedProperties_lexical`), as is the
 perfect complementarity of the two clusters. The paper's eleven-language
 sample is recorded per-language (`hebrew` … `bulgarian`).
+
+The §3 case against an object-clitic analysis of *se* is formalized as
+three diagnostics — functions from the verb's grid to an observable — on
+which the rival transitive grid and the reciprocalized grid diverge and
+the data side with reciprocalization: Czech depictive case agreement
+(`depictive_diagnostic`), comparative-ellipsis remnants
+(`ellipsis_diagnostic`), and [kayne-1975]'s *faire*-causative causee
+marking (`causative_diagnostic`).
 
 Three further pieces of the paper's argument are worked out against the
 substrate: the periphrastic sub-event reading is derived from
@@ -299,6 +308,77 @@ end Reciprocalize
 -- *kiss*/*hug* family) yields a complex subject role.
 example : ((reciprocalize mannerContact).subjectProfile).IsComplexRole := by
   decide
+
+/-! ### Against an object-clitic analysis of se (§3)
+
+The rival analysis keeps the base transitive grid, with *se* realizing the
+internal argument; reciprocalization instead removes the internal position
+and leaves the subject with both roles. Three diagnostics decide, each a
+function from the verb's grid to an observable. Czech depictives agree in
+case with the argument they are predicated of ((17)): with *se*, a
+depictive construing with the Theme is nominative ((18)) — the Theme sits
+on the subject. The comparative-ellipsis remnant construes with a
+case-marked argument position: transitives allow subject and object
+readings ((19a)), *se*-verbs only the subject reading ((19b)), and an
+accusative remnant is ungrammatical ((20)) because no accusative argument
+exists. And [kayne-1975]'s causative generalization introduces the causee
+of a transitive with dative *à* and leaves an intransitive's causee bare
+((25a–b)): *se*-verbs take the bare causee ((25d)), patterning with
+intransitives even though a genuine object clitic patterns transitively
+((25c)). The fourth diagnostic — derived subjects never reciprocalize
+(§3.4, (26)) — is `Merger.eq_of_assigned_nil` below. -/
+
+section SeDiagnostics
+
+variable {base : RoleList} {o : EntailmentProfile}
+
+/-- [kayne-1975]'s causative generalization (§3.3): under *faire*, the
+    causee of an object-taking predicate is introduced by dative *à*; an
+    intransitive's causee stays bare accusative. -/
+def causeeRegion (r : RoleList) : CaseRegion :=
+  if r.objectProfile.isSome then .dative else .accAbs
+
+/-- (25a) vs (25d): keeping the transitive grid predicts the dative
+    *à*-causee; reciprocalization predicts the bare causee. *Pierre a fait
+    s'embrasser Jean et Marie* decides for reciprocalization. -/
+theorem causative_diagnostic (ho : base.objectProfile = some o) :
+    causeeRegion (reciprocalize base) = .accAbs ∧
+      causeeRegion base = .dative :=
+  ⟨rfl, by simp [causeeRegion, ho]⟩
+
+/-- The case of a depictive construing with the Theme (§3.1): accusative
+    if the internal role sits on an object ((17)), nominative if it sits
+    on the subject. -/
+def themeDepictiveRegion (r : RoleList) : CaseRegion :=
+  if r.objectProfile.isSome then .accAbs else .nomErg
+
+/-- (18): with *se*, the theme-oriented depictive is nominative, and
+    licitly so — the reciprocalized subject bears the object's Proto-Patient
+    entailments; the object-clitic grid predicts accusative. -/
+theorem depictive_diagnostic (ho : base.objectProfile = some o)
+    (hp : 0 < o.pPatientScore) :
+    themeDepictiveRegion (reciprocalize base) = .nomErg ∧
+      0 < (reciprocalize base).subjectProfile.pPatientScore ∧
+      themeDepictiveRegion base = .accAbs := by
+  refine ⟨rfl, ?_, by simp [themeDepictiveRegion, ho]⟩
+  rw [reciprocalize_subjectProfile ho]
+  exact hp.trans_le (EntailmentProfile.pPatientScore_mono le_sup_right)
+
+/-- The comparative remnant construes with a grid position (§3.2): the
+    transitive offers two readings ((19a)), the reciprocalized grid one
+    ((19b)); with no object there is no accusative remnant ((20)–(21)). -/
+theorem ellipsis_diagnostic (ho : base.objectProfile = some o) :
+    (reciprocalize base).args.length = 1 ∧ base.args.length = 2 :=
+  ⟨rfl, by simp [RoleList.args, ho]⟩
+
+-- The *kiss* family under the diagnostics: bare causee, nominative
+-- depictive, subject-only remnant.
+example : causeeRegion (reciprocalize mannerContact) = .accAbs := rfl
+example : themeDepictiveRegion (reciprocalize mannerContact) = .nomErg := rfl
+example : (reciprocalize mannerContact).args.length = 1 := rfl
+
+end SeDiagnostics
+
 
 /-! ### Parasitic assignment (§4.2, (43); the ECM derivation (63))
 
