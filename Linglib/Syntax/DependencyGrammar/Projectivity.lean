@@ -31,8 +31,9 @@ papers' own figures, and live in their study files.
 * `Graph.Interleave`, `Graph.IsWellNested` — Definition 8.
 * `Graph.gapDegree` — Definitions 6–7. Gap degree + 1 is the block-degree,
   the fan-out of the LCFRS rule extracted for that node.
-* `Graph.IsProjective.isPlanar`, `Graph.IsProjective.isWellNested` — the
-  inclusions from projectivity.
+* `Graph.IsProjective.isPlanar`, `Graph.IsPlanar.isWellNested` — the §3.5
+  chain `projective ⊆ planar ⊆ well-nested` on trees, with
+  `Graph.IsProjective.isWellNested` its composite.
 
 ## References
 
@@ -152,10 +153,87 @@ theorem Graph.IsProjective.isPlanar (hT : g.IsTree) (hP : g.IsProjective) :
   · exact hbd.ne (Dominates.antisymm hT.acyclic
       (step h1 h2 hba (.inr rfl) hcb.ne') (step h2 h1 hdc (.inl rfl) hbd.ne'))
 
-/-- Every projective tree is well-nested. -/
-theorem Graph.IsProjective.isWellNested (hT : g.IsTree) (hP : g.IsProjective) :
+/-- In a planar graph, a link with one endpoint strictly inside the span of
+    another link has its other endpoint inside that span too. -/
+theorem Graph.IsPlanar.mem_uIcc_of_linked (hPl : g.IsPlanar) {lo hi p q : Fin n}
+    (hL : Linked g lo hi) (hL' : Linked g p q)
+    (hlp : lo < p) (hph : p < hi) : q ∈ Set.uIcc lo hi := by
+  by_contra hq
+  have hout : q < lo ∨ hi < q := by
+    by_contra hc
+    push Not at hc
+    exact hq (Set.mem_uIcc.mpr (Or.inl ⟨hc.1, hc.2⟩))
+  rcases hout with h | h
+  · exact hPl hL'.symm hL ⟨h, hlp, hph⟩
+  · exact hPl hL hL' ⟨hlp, hph, h⟩
+
+/-- Planarity forbids a link with one endpoint strictly inside another link's
+    span and the other endpoint outside it. -/
+theorem Graph.IsPlanar.no_strict_straddle (hPl : g.IsPlanar) {p q p' q' : Fin n}
+    (hL : Linked g p q) (hL' : Linked g p' q') (hin : p' ∈ Set.uIcc p q)
+    (hne1 : p' ≠ p) (hne2 : p' ≠ q) (hout : q' ∉ Set.uIcc p q) : False := by
+  rw [Set.mem_uIcc] at hin
+  rcases lt_trichotomy p q with h | rfl | h
+  · have hb : p ≤ p' ∧ p' ≤ q := by
+      rcases hin with h1 | h2
+      · exact h1
+      · exact absurd (h2.1.trans h2.2) (not_le.mpr h)
+    exact hout (hPl.mem_uIcc_of_linked hL hL'
+      (lt_of_le_of_ne hb.1 (Ne.symm hne1)) (lt_of_le_of_ne hb.2 hne2))
+  · exact hne1 (by rcases hin with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> exact le_antisymm h2 h1)
+  · have hb : q ≤ p' ∧ p' ≤ p := by
+      rcases hin with h1 | h2
+      · exact absurd (h1.1.trans h1.2) (not_le.mpr h)
+      · exact h2
+    rw [Set.uIcc_comm] at hout
+    exact hout (hPl.mem_uIcc_of_linked hL.symm hL'
+      (lt_of_le_of_ne hb.1 (Ne.symm hne2)) (lt_of_le_of_ne hb.2 hne1))
+
+/-- Every planar tree is well-nested: interleaved subtrees would force a link
+    below one of them to straddle a link below the other. -/
+theorem Graph.IsPlanar.isWellNested (hT : g.IsTree) (hPl : g.IsPlanar) :
     g.IsWellNested := by
-  rintro v w ⟨a, hva, b, hvb, c, hwc, -, -, hac, hcb, -⟩
-  exact Dominates.comparable hT ((hP v).out hva hvb ⟨hac.le, hcb.le⟩) hwc
+  rintro v w ⟨a, hva, b, hvb, c, hwc, d, hwd, hac, hcb, hbd⟩
+  by_contra hcon
+  push Not at hcon
+  obtain ⟨hvw, hwv⟩ := hcon
+  have hdis : ∀ {x}, Dominates g v x → Dominates g w x → False :=
+    λ h1 h2 => disjoint_dominated hT hvw hwv h1 h2
+  have hab : a < b := hac.trans hcb
+  -- A link below `w` crosses the boundary of the span of `a` and `b`.
+  have hcS : c ∈ Set.uIcc a b := Set.mem_uIcc.mpr (.inl ⟨hac.le, hcb.le⟩)
+  have hdS : d ∉ Set.uIcc a b := by
+    rw [Set.uIcc_of_le hab.le, Set.mem_Icc]
+    exact λ h => absurd h.2 (not_le.mpr hbd)
+  obtain ⟨p, q, hLpq, hwp, hwq, hpS, hqS⟩ := exists_link_across hwc hwd hcS hdS
+  rw [Set.uIcc_of_le hab.le, Set.mem_Icc] at hpS hqS
+  push Not at hqS
+  have hap : a < p := lt_of_le_of_ne hpS.1 (λ h => hdis hva (h ▸ hwp))
+  have hpb : p < b := lt_of_le_of_ne hpS.2 (λ h => hdis hvb (h ▸ hwp))
+  -- Any link below `v` crossing that link's span contradicts planarity.
+  have hfin : ∀ {p' q' : Fin n}, Linked g p' q' → Dominates g v p' →
+      p' ∈ Set.uIcc p q → q' ∉ Set.uIcc p q → False := by
+    intro p' q' hL' hvp' hin hout
+    exact hPl.no_strict_straddle hLpq hL' hin
+      (λ h => hdis hvp' (h ▸ hwp)) (λ h => hdis hvp' (h ▸ hwq)) hout
+  have hqa0 : q ≠ a := λ h => hdis hva (h ▸ hwq)
+  rcases lt_or_gt_of_ne hqa0 with hqa | hqa
+  · have h1 : a ∈ Set.uIcc p q := Set.mem_uIcc.mpr (.inr ⟨hqa.le, hap.le⟩)
+    have h2 : b ∉ Set.uIcc p q := by
+      rw [Set.uIcc_comm, Set.uIcc_of_le (hqa.trans hap).le, Set.mem_Icc]
+      exact λ h => absurd h.2 (not_le.mpr hpb)
+    obtain ⟨_, _, hL', hvp', _, hin, hout⟩ := exists_link_across hva hvb h1 h2
+    exact hfin hL' hvp' hin hout
+  · have hbq : b < q := hqS hqa.le
+    have h1 : b ∈ Set.uIcc p q := Set.mem_uIcc.mpr (.inl ⟨hpb.le, hbq.le⟩)
+    have h2 : a ∉ Set.uIcc p q := by
+      rw [Set.uIcc_of_le (hpb.trans hbq).le, Set.mem_Icc]
+      exact λ h => absurd h.1 (not_le.mpr hap)
+    obtain ⟨_, _, hL', hvp', _, hin, hout⟩ := exists_link_across hvb hva h1 h2
+    exact hfin hL' hvp' hin hout
+
+/-- Every projective tree is well-nested, via planarity. -/
+theorem Graph.IsProjective.isWellNested (hT : g.IsTree) (hP : g.IsProjective) :
+    g.IsWellNested := (hP.isPlanar hT).isWellNested hT
 
 end DependencyGrammar
