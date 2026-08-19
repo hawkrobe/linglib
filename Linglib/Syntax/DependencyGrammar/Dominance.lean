@@ -21,9 +21,9 @@ theory of dominance on trees ([kuhlmann-nivre-2006] §2).
 
 ## Main declarations
 
-* `Dominates`, `projection`, `mem_projection_iff` — the dominance
-  relation, the yield of a position in ascending order, and the bridge
-  between them.
+* `Dominates`, `Graph.dominated`, `projection`, `mem_projection_iff` — the
+  dominance relation, the positions a node dominates, that set in ascending
+  order, and the bridge between them.
 * `Graph.IsTree` — no arc into the root, unique heads elsewhere,
   acyclicity; decidable. `IsTree.root_dominates`: the root dominates
   every position, so dominance on a tree is a partial order with the
@@ -64,11 +64,21 @@ instance (g : Graph n) : DecidableRel (Dominates g) :=
   Relation.ReflTransGen.decidable_of_finite (List.finRange n)
     (λ _ b _ => List.mem_finRange b)
 
-/-- **Projection** π(v): the yield of position v — all positions it
-    dominates, including itself — in ascending position order
-    ([kuhlmann-nivre-2006] §2). -/
+/-- The positions `v` dominates, `v` itself included — the *yield* of `v` in
+    the source terminology. -/
+def Graph.dominated (g : Graph n) (v : Fin n) : Set (Fin n) :=
+  {x | Dominates g v x}
+
+@[simp] theorem Graph.mem_dominated {g : Graph n} {v x : Fin n} :
+    x ∈ g.dominated v ↔ Dominates g v x := Iff.rfl
+
+instance (g : Graph n) (v : Fin n) : DecidablePred (· ∈ g.dominated v) :=
+  λ _ => inferInstanceAs (Decidable (Dominates g v _))
+
+/-- The yield of `v` in ascending position order, the projection π(v) of
+    [kuhlmann-nivre-2006] §2. -/
 def projection (g : Graph n) (v : Fin n) : List (Fin n) :=
-  (List.finRange n).filter (λ x => decide (Dominates g v x))
+  (List.finRange n).filter (λ x => decide (x ∈ g.dominated v))
 
 @[simp] theorem mem_projection_iff {g : Graph n} {v x : Fin n} :
     x ∈ projection g v ↔ Dominates g v x := by

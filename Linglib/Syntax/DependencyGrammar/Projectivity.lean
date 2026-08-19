@@ -23,9 +23,10 @@ papers' own figures, and live in their study files.
 
 ## Main declarations
 
-* `Graph.dominated`, `Alternate` — the positions a node dominates, and the
-  alternation `a < c < b < d` that both binary constraints forbid.
-* `Graph.IsProjective` — those positions form an interval (Definition 3).
+* `Alternate` — the alternation `a < c < b < d` that both binary constraints
+  forbid.
+* `Graph.IsProjective` — every `Graph.dominated` set is an interval
+  (Definition 3).
 * `Graph.IsPlanar` — no two links cross (Definition 4), the Link Grammar
   notion, traced there to [melcuk-1988].
 * `Graph.Interleave`, `Graph.IsWellNested` — Definition 8.
@@ -48,16 +49,6 @@ namespace DependencyGrammar
 variable {n : ℕ} (g : Graph n)
 
 /-! ### The binary constraints: projectivity, planarity, well-nestedness -/
-
-/-- The positions `v` dominates, `v` itself included — the *yield* of `v` in
-    the source terminology. `projection` lists them in ascending order. -/
-def Graph.dominated (v : Fin n) : Set (Fin n) := {x | Dominates g v x}
-
-@[simp] theorem Graph.mem_dominated {g : Graph n} {v x : Fin n} :
-    x ∈ g.dominated v ↔ Dominates g v x := Iff.rfl
-
-instance (v : Fin n) : DecidablePred (· ∈ g.dominated v) :=
-  λ x => inferInstanceAs (Decidable (Dominates g v x))
 
 /-- A dependency graph is projective if the positions dominated by any one
     position are order-convex. -/
