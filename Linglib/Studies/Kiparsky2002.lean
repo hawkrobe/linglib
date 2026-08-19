@@ -2,7 +2,6 @@ import Linglib.Semantics.Aspect.SubeventStructure
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Core.Order.Interval
 import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Semantics.Tense.Compositional
 
 /-!
 # [kiparsky-2002]: Event structure and the perfect

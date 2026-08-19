@@ -60,6 +60,22 @@ of the relation-algebra homomorphism (the `converse`/`comp` half is below). -/
 @[simp] theorem holds_bot (a b : α) : holds (⊥ : Finset Ordering) a b ↔ False := by
   simp only [holds, Finset.bot_eq_empty, Finset.notMem_empty]
 
+/-- Categories with empty meet never both hold of a pair — pairwise exclusion,
+    e.g. `before ⊓ overlapping = ⊥`. -/
+theorem not_holds_and_holds {s t : Finset Ordering} (h : s ⊓ t = ⊥) (a b : α) :
+    ¬ (holds s a b ∧ holds t a b) :=
+  fun ⟨hs, ht⟩ => (holds_bot a b).mp (h ▸ (holds_inf s t a b).mpr ⟨hs, ht⟩)
+
+/-- Three categories that join to `⊤` cover every comparison — exhaustive case
+    analysis, e.g. `before ⊔ overlapping ⊔ after = ⊤`. -/
+theorem holds_or_holds₃ {s t u : Finset Ordering} (h : s ⊔ t ⊔ u = ⊤) (a b : α) :
+    holds s a b ∨ holds t a b ∨ holds u a b := by
+  have htop := (holds_top a b).mpr trivial
+  rw [← h] at htop
+  rcases (holds_sup _ _ a b).mp htop with h' | h'
+  · exact ((holds_sup _ _ a b).mp h').imp_right Or.inl
+  · exact Or.inr (Or.inr h')
+
 /-- `holds`, bundled. For every `[LinearOrder α]`, the map `s ↦ fun a b => holds s a b` is a
     `BoundedLatticeHom` from the eight-element Boolean algebra `Finset Ordering` (= `𝒫 {lt, eq, gt}`)
     into the relation algebra `α → α → Prop` — the Stone-dual evaluation of the comparison-category

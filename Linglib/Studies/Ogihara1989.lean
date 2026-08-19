@@ -23,10 +23,11 @@ open Intensional (WorldTimeIndex)
     time precedes the speech situation and (2) the predicate holds at the
     referential time: the referential analysis picks the time, the
     operator imposes the constraint. -/
-theorem referential_past_decomposition {W Time : Type*} [LT Time]
+theorem referential_past_decomposition {W Time : Type*} [LinearOrder Time]
     (P : SitProp W Time) (g : TemporalAssignment Time) (n : ℕ)
     (w : W) (speechTime : Time) :
     PAST P ⟨w, interpTense n g⟩ ⟨w, speechTime⟩ ↔
-    (g n < speechTime ∧ P ⟨w, g n⟩) := by rfl
+    (g n < speechTime ∧ P ⟨w, g n⟩) := by
+  simp [Tense.constrain]
 
 end Ogihara1989

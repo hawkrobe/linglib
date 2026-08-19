@@ -34,7 +34,6 @@ The eval* operators instantiate the situation (fixing world and time).
 -/
 
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Semantics.Tense.Compositional
 import Linglib.Semantics.Tense.LexicalType
 import Linglib.Semantics.Quantification.Basic
 

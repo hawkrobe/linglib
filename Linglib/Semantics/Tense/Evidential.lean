@@ -1,4 +1,4 @@
-import Linglib.Semantics.Tense.Compositional
+import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Evidential.Source
 import Linglib.Features.Mirativity
 import Linglib.Semantics.Presupposition.Basic
