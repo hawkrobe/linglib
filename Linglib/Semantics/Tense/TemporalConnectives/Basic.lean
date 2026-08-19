@@ -42,6 +42,10 @@ abbrev SentDenotation (Time : Type*) [LinearOrder Time] := Set (NonemptyInterval
 def timeTrace (p : SentDenotation Time) : Set Time :=
   { t | ∃ i ∈ p, t ∈ i }
 
+theorem timeTrace_image {α : Type*} (f : α → NonemptyInterval Time) (s : Set α) :
+    timeTrace (f '' s) = { t | ∃ a ∈ s, t ∈ f a } := by
+  ext t; simp [timeTrace]
+
 /-- Stative denotation: the maximal interval `i` plus all its subintervals — the
     principal downset `Set.Iic i`. It is therefore an `IsLowerSet` (`isLowerSet_Iic`),
     which *is* the subinterval-closure property.
