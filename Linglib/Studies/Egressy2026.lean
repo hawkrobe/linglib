@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Probe.Profile
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Embedding
 import Linglib.Fragments.Hungarian.Predicates
 
 /-!

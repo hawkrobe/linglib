@@ -24,10 +24,9 @@ five representations of temporal reference in the codebase:
 4. **Kaplan indexicals** (rigid to speech time): `mode =.indexical`
 5. **Attitude binding** (zero tense, [ogihara-1989]): `mode =.bound`
 
-The existing ad-hoc bridge theorems (`referential_past_decomposition`,
-`temporallyBound_gives_simultaneous`, `indexical_tense_matches_opNow`,
-`ogihara_bound_tense_simultaneous`) become trivial projections from this
-unified type.
+Bridge theorems connecting the views (e.g.
+`Ogihara1989.referential_past_decomposition`) become trivial projections
+from this unified type.
 
 ## Implementation notes
 

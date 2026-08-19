@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Schema
 import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Embedding
 import Linglib.Data.Examples.Sharvit2003
 
 /-!

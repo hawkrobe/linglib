@@ -2,7 +2,7 @@ import Linglib.Data.Examples.Schema
 import Linglib.Semantics.Aspect.Boundedness
 import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Semantics.Reference.Context.Tower
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Embedding
 import Linglib.Semantics.Tense.Domain
 import Linglib.Semantics.Tense.Orientation
 import Linglib.Semantics.Tense.Reichenbach
@@ -34,7 +34,7 @@ open Time
 
 namespace Declerck1991
 
-open Tense (shiftedFrame)
+open Tense (embeddedFrame)
 open Data.Examples (LinguisticExample)
 
 namespace TOChain
@@ -607,10 +607,10 @@ def domainLeft : ReichenbachFrame ℤ where
   eventTime := -5
 
 /-- "…and would never come back" — relative tense within the past domain
-established by `left`. Constructed via `shiftedFrame` so the perspective
+established by `left`. Constructed via `embeddedFrame` so the perspective
 is taken from `domainLeft.eventTime`. -/
 def domainSubordWouldReturn : ReichenbachFrame ℤ :=
-  shiftedFrame domainLeft (-3) (-3)
+  embeddedFrame domainLeft (-3) (-3)
 
 /-- "…and never came back" — independent past domain (shift): an absolute
 preterit, perspective reset to S. -/
@@ -660,7 +660,7 @@ good, John will go to the seaside", the matrix is FPS (absolute future)
 and the protasis is PPS (relative present against the pseudo-t₀);
 *will* in a pure-future protasis is the marked FPS option.
 
-Encoded via `shiftedFrame`: PPS = relative present against a shifted
+Encoded via `embeddedFrame`: PPS = relative present against a shifted
 perspective, FPS = absolute frame (P = S). `Examples.whenPresent` is the
 same phenomenon in a when-clause. -/
 
@@ -675,7 +675,7 @@ def fpsSeaside : ReichenbachFrame ℤ where
 /-- "…if the weather is good" — PPS: present tense binding into the
 post-present domain, simultaneous with the pseudo-t₀. -/
 def ppsWeatherGood : ReichenbachFrame ℤ :=
-  shiftedFrame fpsSeaside 3 3
+  embeddedFrame fpsSeaside 3 3
 
 /-- The FPS matrix is an absolute future: P = S and P < R. -/
 theorem fpsSeaside_absolute_future :

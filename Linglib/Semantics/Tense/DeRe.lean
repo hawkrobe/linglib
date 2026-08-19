@@ -1,6 +1,6 @@
 import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Embedding
 
 /-!
 # Centered-world temporal de re

@@ -1822,13 +1822,13 @@ import Linglib.Semantics.Reference.PronounDenotation
 import Linglib.Semantics.Reference.Reciprocals
 import Linglib.Semantics.Reference.ShiftedIndexicals
 import Linglib.Semantics.Supervaluation
-import Linglib.Semantics.Tense.Basic
 import Linglib.Semantics.Tense.Compositional
 import Linglib.Semantics.Tense.Decomposition
 import Linglib.Semantics.Tense.DeRe
 import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Domain
 import Linglib.Semantics.Tense.Dynamic
+import Linglib.Semantics.Tense.Embedding
 import Linglib.Semantics.Tense.Evidential
 import Linglib.Semantics.Tense.LexicalType
 import Linglib.Semantics.Tense.Orientation

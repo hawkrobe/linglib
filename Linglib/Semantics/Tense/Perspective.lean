@@ -1,5 +1,5 @@
 import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Embedding
 
 /-!
 # Perspectival tense: presuppositions anchored to π

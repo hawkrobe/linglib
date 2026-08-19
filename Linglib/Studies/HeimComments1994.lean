@@ -20,7 +20,7 @@ contributions:
 2. **§2 (pp. 148–157)** — Heim's central contribution. Two pieces:
    - **ULC as presupposition** (eq 16, p. 149): "If α_i is a tense,
      then [[α_i]]^g,c is only defined if `g(i)` does-not-follow `g(0)`."
-     The substrate's `Tense.upperLimitConstraint` (in `Tense/Basic.lean`)
+     The substrate's `Tense.upperLimitConstraint` (in `Tense/Embedding.lean`)
      IS this presupposition, already typed at `[LE Time]` and credited
      to [heim-1994-comments] in its docstring; this study file
      proves the felicity-to-ULC bridge through the substrate primitive.

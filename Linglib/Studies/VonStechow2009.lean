@@ -1,4 +1,4 @@
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Embedding
 import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Attitudes.Doxastic
 
@@ -18,7 +18,7 @@ anchor.
    Stechow's; the underlying predicate is the framework-neutral
    `Core.Order.holds feature refTime evalTime`.
 2. **Perspective shift** = `embeddedFrame` (substrate primitive in
-   `Semantics/Tense/Basic.lean`). The attitude verb sets the
+   `Semantics/Tense/Embedding.lean`). The attitude verb sets the
    embedded eval time = matrix E. von Stechow calls this "perspective
    shift"; the operation is the framework-neutral `embeddedFrame
    matrixFrame embeddedR embeddedE`.

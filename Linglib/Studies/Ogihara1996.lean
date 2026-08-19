@@ -1,4 +1,4 @@
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Embedding
 import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.Ogihara1996
 

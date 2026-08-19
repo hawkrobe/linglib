@@ -1,6 +1,6 @@
 import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Tense.Pronoun
-import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Embedding
 import Linglib.Syntax.Minimalist.Features
 
 /-!
@@ -41,8 +41,8 @@ reversing its c-command direction.
   *independent* embedded `[iPAST]` — one source of back-shift, distinct from the
   fn. 9 `[uPAST]`-as-non-future route.
 * Zeijlstra's parameter — whether embedded `T` may carry `[uPAST]` — is the
-  substrate `SOTParameter`; that SOT languages (`relative`) license the
-  simultaneous reading is `Tense.sot_simultaneous_available`.
+  substrate `SOTParameter`; SOT languages (`relative`) license the
+  simultaneous reading (`Tense.availableReadings`).
 
 ## Todo
 
@@ -146,8 +146,8 @@ theorem zeijlstra_derives_simultaneous {Time : Type*}
   · rfl
 
 /-- The back-shifted reading: when embedded `T` bears an independent `[iPAST]`
-    (no Agree), it contributes genuine past semantics, giving `shiftedFrame`
-    (R' < P'). -/
+    (no Agree), it contributes genuine past semantics: the embedded frame
+    is past (R' < P'). -/
 theorem zeijlstra_derives_shifted {Time : Type*} [LinearOrder Time]
     (matrixFrame : ReichenbachFrame Time)
     (embeddedR embeddedE : Time)
@@ -155,9 +155,9 @@ theorem zeijlstra_derives_shifted {Time : Type*} [LinearOrder Time]
     (h_i : embeddedT.status = .interpretable)
     (h_shifted : embeddedR < matrixFrame.eventTime) :
     embeddedT.IsSemanticallyActive ∧
-    (shiftedFrame matrixFrame embeddedR embeddedE).isPast := by
+    (embeddedFrame matrixFrame embeddedR embeddedE).isPast := by
   refine ⟨h_i, ?_⟩
-  simp only [shiftedFrame, ReichenbachFrame.isPast_def]
+  simp only [embeddedFrame, ReichenbachFrame.isPast_def]
   exact h_shifted
 
 /-- Upward Agree fixes the directionality: the goal `[iPAST]` is active and the
