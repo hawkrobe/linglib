@@ -74,13 +74,11 @@ def Graph.Interleave (v w : Fin n) : Prop :=
 def Graph.IsWellNested : Prop :=
   ∀ v w : Fin n, g.Interleave v w → Dominates g v w ∨ Dominates g w v
 
+/-- Projectivity, unfolded: nothing between two dominated positions escapes. -/
 theorem Graph.isProjective_iff :
-    g.IsProjective ↔ ∀ v x y, Dominates g v x → Dominates g v y →
+    g.IsProjective ↔ ∀ v x, Dominates g v x → ∀ y, Dominates g v y →
       ∀ z, x ≤ z → z ≤ y → Dominates g v z := by
-  simp only [IsProjective, Set.ordConnected_def, Set.subset_def, Set.mem_Icc,
-    Graph.mem_dominated, and_imp]
-  exact ⟨λ h v x y hx hy z h1 h2 => h v hx hy z h1 h2,
-         λ h v x hx y hy z h1 h2 => h v x y hx hy z h1 h2⟩
+  simp [Graph.IsProjective, Set.ordConnected_def, Set.subset_def]
 
 instance : Decidable g.IsProjective := decidable_of_iff _ g.isProjective_iff.symm
 instance : Decidable g.IsPlanar := inferInstanceAs (Decidable (∀ _, _))
