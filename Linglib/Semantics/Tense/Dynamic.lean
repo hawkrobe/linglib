@@ -1,5 +1,6 @@
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Semantics.Intensional.WorldTimeIndex
+import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Semantics.Tense.Compositional
 
 /-!

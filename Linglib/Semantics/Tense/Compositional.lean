@@ -17,7 +17,7 @@ cells behind the update spine's test filter.
 namespace Tense
 
 open Core.Order (holds)
-open Intensional (WorldTimeIndex SitProp)
+open Intensional (WorldTimeIndex)
 
 variable {W Time : Type*} [LinearOrder Time]
 
@@ -25,36 +25,36 @@ variable {W Time : Type*} [LinearOrder Time]
     ⟦s⟧ = λP.λsit.λsit'. `holds s τ(sit) τ(sit')` ∧ P(sit) — the cell
     constrains the event–evaluation comparison and the payload is
     evaluated at the event situation. -/
-def constrain (s : Finset Ordering) (P : SitProp W Time)
+def constrain (s : Finset Ordering) (P : (WorldTimeIndex W Time → Prop))
     (sit sit' : WorldTimeIndex W Time) : Prop :=
   holds s sit.time sit'.time ∧ P sit
 
 /-- ⟦PAST⟧ = `constrain past`: the event situation precedes the
     evaluation situation. -/
-abbrev PAST : SitProp W Time → WorldTimeIndex W Time →
+abbrev PAST : (WorldTimeIndex W Time → Prop) → WorldTimeIndex W Time →
     WorldTimeIndex W Time → Prop := constrain past
 
 /-- ⟦PRES⟧ = `constrain present`: the event situation is contemporaneous
     with the evaluation situation. -/
-abbrev PRES : SitProp W Time → WorldTimeIndex W Time →
+abbrev PRES : (WorldTimeIndex W Time → Prop) → WorldTimeIndex W Time →
     WorldTimeIndex W Time → Prop := constrain present
 
 /-- ⟦FUT⟧ = `constrain future`: the event situation follows the
     evaluation situation. -/
-abbrev FUT : SitProp W Time → WorldTimeIndex W Time →
+abbrev FUT : (WorldTimeIndex W Time → Prop) → WorldTimeIndex W Time →
     WorldTimeIndex W Time → Prop := constrain future
 
-@[simp] theorem constrain_past_iff (P : SitProp W Time)
+@[simp] theorem constrain_past_iff (P : (WorldTimeIndex W Time → Prop))
     (sit sit' : WorldTimeIndex W Time) :
     constrain past P sit sit' ↔ sit.time < sit'.time ∧ P sit := by
   simp [constrain]
 
-@[simp] theorem constrain_present_iff (P : SitProp W Time)
+@[simp] theorem constrain_present_iff (P : (WorldTimeIndex W Time → Prop))
     (sit sit' : WorldTimeIndex W Time) :
     constrain present P sit sit' ↔ sit.time = sit'.time ∧ P sit := by
   simp [constrain]
 
-@[simp] theorem constrain_future_iff (P : SitProp W Time)
+@[simp] theorem constrain_future_iff (P : (WorldTimeIndex W Time → Prop))
     (sit sit' : WorldTimeIndex W Time) :
     constrain future P sit sit' ↔ sit'.time < sit.time ∧ P sit := by
   simp [constrain]

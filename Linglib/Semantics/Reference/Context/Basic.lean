@@ -53,7 +53,7 @@ def LocatedContext {W E P T : Type*} (c : KContext W E P T)
   located c.agent c.position c.time c.world
 
 /-- Project a KContext to a `WorldTimeIndex` (world + time pair). -/
-def KContext.toSituation {W E P T : Type*} (c : KContext W E P T) :
+def KContext.toWorldTimeIndex {W E P T : Type*} (c : KContext W E P T) :
     WorldTimeIndex W T :=
   ⟨c.world, c.time⟩
 
@@ -79,9 +79,9 @@ def KContext.shiftWorldTime {W E P T : Type*} (c : KContext W E P T)
     (c : KContext W E P T) (s : WorldTimeIndex W T) :
     (c.shiftWorldTime s).agent = c.agent := rfl
 
-@[simp] theorem KContext.shiftWorldTime_toSituation {W E P T : Type*}
+@[simp] theorem KContext.shiftWorldTime_toWorldTimeIndex {W E P T : Type*}
     (c : KContext W E P T) (s : WorldTimeIndex W T) :
-    (c.shiftWorldTime s).toSituation = s := rfl
+    (c.shiftWorldTime s).toWorldTimeIndex = s := rfl
 
 /-- Project a KContext into a root-clause ReichenbachFrame.
     Speech time S = context time; perspective time P = S (root clause

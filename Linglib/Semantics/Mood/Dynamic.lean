@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Semantics.Intensional.WorldTimeIndex
+import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Mood.Situation
 import Linglib.Semantics.Mood.Defs

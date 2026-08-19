@@ -129,7 +129,7 @@ theorem isRigidAcrossAlternatives_of_isRigid
 def metaphysicalAlternatives [LE T]
     (history : HistoricalAlternatives W T) (dr : TemporalDeReReading W E P T) :
     Set (WorldTimeIndex W T) :=
-  actualHistoryBase history dr.holderContext.toSituation
+  actualHistoryBase history dr.holderContext.toWorldTimeIndex
 
 /-- **Doxastic** alternative set ([abusch-1997] §3, Hintikka belief
     alternatives): the world-time pairs the holder considers possible,
