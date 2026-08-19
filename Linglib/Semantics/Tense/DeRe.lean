@@ -25,7 +25,7 @@ context `Semantics.Context.KContext`
 is a three-field projection of the richer context the rest of linglib
 commits to. Rigidity across alternatives is `Intension.IsRigidOn` after
 `KContext.shiftWorldTime`; the alternative set is a bare
-`Set (WorldTimeIndex W T)`, so doxastic (Hintikka belief alternatives,
+`Set (Index W T)`, so doxastic (Hintikka belief alternatives,
 the Abusch-canonical case) and metaphysical ([klecha-2016] DOX via
 `HistoricalAlternatives.actualHistoryBase`) modal bases are call-site
 instantiations (`doxasticAlternatives`, `metaphysicalAlternatives`).
@@ -33,7 +33,7 @@ instantiations (`doxasticAlternatives`, `metaphysicalAlternatives`).
 
 namespace Tense.DeRe
 
-open Intensional (Intension WorldTimeIndex)
+open Intensional (Intension Index)
 open Semantics.Context (KContext)
 open HistoricalAlternatives (actualHistoryBase)
 
@@ -96,8 +96,8 @@ def IsFelicitousWith [LinearOrder T] (dr : TemporalDeReReading W E P T)
     modal-base-agnostic: doxastic ([abusch-1997]'s Hintikka setup) or
     metaphysical ([klecha-2016] DOX) — see the constructors below. -/
 def IsRigidAcrossAlternatives (dr : TemporalDeReReading W E P T)
-    (alternatives : Set (WorldTimeIndex W T)) : Prop :=
-  Intension.IsRigidOn (fun s : WorldTimeIndex W T =>
+    (alternatives : Set (Index W T)) : Prop :=
+  Intension.IsRigidOn (fun s : Index W T =>
     dr.concept (dr.holderContext.shiftWorldTime s))
     alternatives
 
@@ -106,7 +106,7 @@ def IsRigidAcrossAlternatives (dr : TemporalDeReReading W E P T)
     (`IsFelicitousWith`) together with modal rigidity across the
     supplied alternative set (`IsRigidAcrossAlternatives`). -/
 def IsFelicitous [LinearOrder T] (dr : TemporalDeReReading W E P T)
-    (alternatives : Set (WorldTimeIndex W T)) (constraint : Finset Ordering) : Prop :=
+    (alternatives : Set (Index W T)) (constraint : Finset Ordering) : Prop :=
   dr.IsFelicitousWith constraint ∧ dr.IsRigidAcrossAlternatives alternatives
 
 /-- A rigid time-concept (`Intensional.Intension.IsRigid`) is rigid
@@ -116,7 +116,7 @@ def IsFelicitous [LinearOrder T] (dr : TemporalDeReReading W E P T)
 theorem isRigidAcrossAlternatives_of_isRigid
     (dr : TemporalDeReReading W E P T)
     (h : Intension.IsRigid dr.concept)
-    (alternatives : Set (WorldTimeIndex W T)) :
+    (alternatives : Set (Index W T)) :
     dr.IsRigidAcrossAlternatives alternatives :=
   (h.precomp dr.holderContext.shiftWorldTime).isRigidOn alternatives
 
@@ -128,16 +128,16 @@ theorem isRigidAcrossAlternatives_of_isRigid
     at-or-before her now. -/
 def metaphysicalAlternatives [LE T]
     (history : HistoricalAlternatives W T) (dr : TemporalDeReReading W E P T) :
-    Set (WorldTimeIndex W T) :=
-  actualHistoryBase history dr.holderContext.toWorldTimeIndex
+    Set (Index W T) :=
+  actualHistoryBase history dr.holderContext.toIndex
 
 /-- **Doxastic** alternative set ([abusch-1997] §3, Hintikka belief
     alternatives): the world-time pairs the holder considers possible,
     for a doxastic accessibility relation `dox` over centered
     alternatives. -/
 def doxasticAlternatives
-    (dox : E → W → WorldTimeIndex W T → Prop) (dr : TemporalDeReReading W E P T) :
-    Set (WorldTimeIndex W T) :=
+    (dox : E → W → Index W T → Prop) (dr : TemporalDeReReading W E P T) :
+    Set (Index W T) :=
   { s' | dox dr.holderContext.agent dr.holderContext.world s' }
 
 end TemporalDeReReading

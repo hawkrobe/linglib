@@ -46,7 +46,7 @@ The constraint `t_LB ⊆ t_r` (subset) was previously transcribed as `∈`
 
 -/
 
-import Linglib.Semantics.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.Index
 import Linglib.Core.Order.Interval
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Events.Basic
@@ -57,7 +57,7 @@ import Linglib.Semantics.Events.Basic
 
 namespace Semantics.Aspect
 
-open _root_.Intensional (WorldTimeIndex)
+open _root_.Intensional (Index)
 open Features
 
 -- ════════════════════════════════════════════════════
@@ -74,10 +74,10 @@ open Features
 abbrev IntervalPred (W Time : Type*) [LinearOrder Time] := W → NonemptyInterval Time → Prop
 
 /-- Predicate over time points (output of PERF, input to TENSE).
-    Defined as `WorldTimeIndex W Time → Prop` to make the situation structure
+    Defined as `Index W Time → Prop` to make the situation structure
     explicit in the tense-aspect pipeline, connecting directly to
     situation semantics (Elbourne, Percus, Kratzer). -/
-abbrev PointPred (W Time : Type*) := WorldTimeIndex W Time → Prop
+abbrev PointPred (W Time : Type*) := Index W Time → Prop
 
 -- ════════════════════════════════════════════════════
 -- § Klein's Viewpoint Classification

@@ -48,7 +48,7 @@ Connects:
 
 namespace Tay2024
 
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 
 open Causation.Resultatives
 open Morphology

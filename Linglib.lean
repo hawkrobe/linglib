@@ -1669,12 +1669,12 @@ import Linglib.Semantics.Intensional.Austinian
 import Linglib.Semantics.Intensional.CategoryType
 import Linglib.Semantics.Intensional.Conjunction
 import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Intensional.Index
 import Linglib.Semantics.Intensional.Premise
 import Linglib.Semantics.Intensional.Quantification
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Intensional.Situations
 import Linglib.Semantics.Intensional.Variables
-import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Modality.ActualityEntailments
 import Linglib.Semantics.Modality.BranchingTime

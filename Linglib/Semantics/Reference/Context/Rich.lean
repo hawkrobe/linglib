@@ -76,9 +76,9 @@ def RichContext.addressee (rc : RichContext W E P T) : E := rc.base.addressee
 /-- Position of the rich context. -/
 def RichContext.position (rc : RichContext W E P T) : P := rc.base.position
 
-/-- Project a RichContext to a `WorldTimeIndex` (world + time pair). -/
-def RichContext.toWorldTimeIndex (rc : RichContext W E P T) : Intensional.WorldTimeIndex W T :=
-  rc.base.toWorldTimeIndex
+/-- Project a RichContext to a `Index` (world + time pair). -/
+def RichContext.toIndex (rc : RichContext W E P T) : Intensional.Index W T :=
+  rc.base.toIndex
 
 -- ════════════════════════════════════════════════════════════════
 -- § KContext Lift

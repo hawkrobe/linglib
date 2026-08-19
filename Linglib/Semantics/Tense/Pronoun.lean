@@ -1,6 +1,6 @@
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Logic.Assignment
-import Linglib.Semantics.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.Index
 import Linglib.Core.Order.Relation
 import Linglib.Semantics.Tense.Defs
 
@@ -21,7 +21,7 @@ temporal instantiation of `Assignment`; all update laws are mathlib's
 
 open Core.Order
 open Intensional (ReferentialMode)
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 
 namespace Tense
 
@@ -53,13 +53,13 @@ abbrev temporalLambdaAbs {Time α : Type*} (n : ℕ)
 /-- Project a situation assignment to a temporal assignment: the temporal
     coordinate of each situation is extracted. -/
 def situationToTemporal {W Time : Type*}
-    (g : ℕ → WorldTimeIndex W Time) : TemporalAssignment Time :=
+    (g : ℕ → Index W Time) : TemporalAssignment Time :=
   λ n => (g n).time
 
 /-- Temporal interpretation via situation assignment commutes with
     time projection: `interpTense n (π g) = (g n).time`. -/
 theorem situation_temporal_commutes {W Time : Type*}
-    (g : ℕ → WorldTimeIndex W Time) (n : ℕ) :
+    (g : ℕ → Index W Time) (n : ℕ) :
     interpTense n (situationToTemporal g) = (g n).time := rfl
 
 /-- Zero tense: a bound tense variable contributes no independent

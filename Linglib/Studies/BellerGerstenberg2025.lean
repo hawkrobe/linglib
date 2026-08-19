@@ -68,7 +68,7 @@ set_option autoImplicit false
 
 namespace BellerGerstenberg2025
 
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 open scoped ENNReal
 
 

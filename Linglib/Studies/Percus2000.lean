@@ -25,7 +25,7 @@ bind which variable.
 ## Situation Assignment Infrastructure
 
 Situation assignments specialize `Assignment` from `D = Time`
-(Partee's temporal variables) to `D = WorldTimeIndex W Time` (Percus's
+(Partee's temporal variables) to `D = Index W Time` (Percus's
 situation variables).
 
 ## Empirical Chain
@@ -49,7 +49,7 @@ open Tense
 
 namespace Percus2000
 
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 open Semantics.Context
 open Features (Attitude)
 
@@ -59,22 +59,22 @@ open Features (Attitude)
 -- ════════════════════════════════════════════════════════════════
 
 /-- Situation assignment function: maps variable indices to situations. -/
-abbrev SituationAssignment (W Time : Type*) := Assignment (WorldTimeIndex W Time)
+abbrev SituationAssignment (W Time : Type*) := Assignment (Index W Time)
 
 /-- Situation variable denotation: s_n^g = g(n). -/
 abbrev interpSitVar {W Time : Type*} (n : ℕ) (g : SituationAssignment W Time) :
-    WorldTimeIndex W Time :=
+    Index W Time :=
   g n
 
 /-- Modified situation assignment g[n -> s]. -/
 abbrev updateSitVar {W Time : Type*} (g : SituationAssignment W Time)
-    (n : ℕ) (s : WorldTimeIndex W Time) : SituationAssignment W Time :=
+    (n : ℕ) (s : Index W Time) : SituationAssignment W Time :=
   Function.update g n s
 
 /-- Situation lambda abstraction: bind a situation variable. -/
 abbrev sitLambdaAbs {W Time α : Type*} (n : ℕ)
     (body : SituationAssignment W Time → α) :
-    SituationAssignment W Time → WorldTimeIndex W Time → α :=
+    SituationAssignment W Time → Index W Time → α :=
   λ g s => body (Function.update g n s)
 
 
@@ -126,31 +126,31 @@ theorem genX_bridge_compliant :
 -- § Attitude Semantics with Situation Binding
 -- ════════════════════════════════════════════════════════════════
 
-abbrev DoxSit (W Time E : Type*) := E → WorldTimeIndex W Time → List (WorldTimeIndex W Time)
+abbrev DoxSit (W Time E : Type*) := E → Index W Time → List (Index W Time)
 
 def believeSit {W Time E : Type*}
     (dox : DoxSit W Time E) (agent : E) (n : ℕ)
     (complement : SituationAssignment W Time → Prop)
-    (g : SituationAssignment W Time) (s : WorldTimeIndex W Time) : Prop :=
+    (g : SituationAssignment W Time) (s : Index W Time) : Prop :=
   ∀ s' ∈ dox agent s, complement (updateSitVar g n s')
 
 instance {W Time E : Type*}
     (dox : DoxSit W Time E) (agent : E) (n : ℕ)
     (complement : SituationAssignment W Time → Prop) [DecidablePred complement]
-    (g : SituationAssignment W Time) (s : WorldTimeIndex W Time) :
+    (g : SituationAssignment W Time) (s : Index W Time) :
     Decidable (believeSit dox agent n complement g s) := by
   unfold believeSit; infer_instance
 
 def alwaysAt {W Time : Type*}
-    (domain : WorldTimeIndex W Time → List (WorldTimeIndex W Time))
-    (ssh : WorldTimeIndex W Time) (n : ℕ)
+    (domain : Index W Time → List (Index W Time))
+    (ssh : Index W Time) (n : ℕ)
     (scope : SituationAssignment W Time → Prop)
     (g : SituationAssignment W Time) : Prop :=
   ∀ s' ∈ domain ssh, scope (updateSitVar g n s')
 
 instance {W Time : Type*}
-    (domain : WorldTimeIndex W Time → List (WorldTimeIndex W Time))
-    (ssh : WorldTimeIndex W Time) (n : ℕ)
+    (domain : Index W Time → List (Index W Time))
+    (ssh : Index W Time) (n : ℕ)
     (scope : SituationAssignment W Time → Prop) [DecidablePred scope]
     (g : SituationAssignment W Time) :
     Decidable (alwaysAt domain ssh n scope g) := by
@@ -162,12 +162,12 @@ instance {W Time : Type*}
 -- ════════════════════════════════════════════════════════════════
 
 theorem sitVar_receives_binder_value {W Time : Type*}
-    (g : SituationAssignment W Time) (n : ℕ) (s : WorldTimeIndex W Time) :
+    (g : SituationAssignment W Time) (n : ℕ) (s : Index W Time) :
     interpSitVar n (updateSitVar g n s) = s :=
   Function.update_self n s g
 
 theorem sitVar_other_unaffected {W Time : Type*}
-    (g : SituationAssignment W Time) (n i : ℕ) (s : WorldTimeIndex W Time)
+    (g : SituationAssignment W Time) (n i : ℕ) (s : Index W Time)
     (h : i ≠ n) :
     interpSitVar i (updateSitVar g n s) = interpSitVar i g :=
   Function.update_of_ne h s g
@@ -240,7 +240,7 @@ inductive Person where
   | mary | john | bill | charlie
   deriving DecidableEq, Repr
 
-abbrev Sit := WorldTimeIndex W Unit
+abbrev Sit := Index W Unit
 
 def sit (w : W) : Sit := ⟨w, ()⟩
 def sActual : Sit := sit .actual
@@ -421,7 +421,7 @@ section Example3
 
 inductive Round where | r1 | r2 | r3 deriving DecidableEq, Repr
 
-abbrev RSit := WorldTimeIndex W Round
+abbrev RSit := Index W Round
 private def rSit (w : W) (r : Round) : RSit := ⟨w, r⟩
 
 def wonGame (p : Person) (s : RSit) : Prop :=

@@ -64,7 +64,7 @@ does not directly accommodate. This file formalizes the specific case.
 namespace Levin2026
 
 open Verb
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 
 open ArgumentStructure
 open LevinClass (pushPull hit wipe)

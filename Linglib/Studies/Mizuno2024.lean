@@ -47,7 +47,7 @@ namespace Mizuno2024
 open Modality.Exclusion (MarkingStrategy XMarkingExponent)
 open Semantics.Conditionals (strictImp mem_strictImp_of_subset not_subset_of_mem_strictImp)
 open HistoricalAlternatives (histEquiv_mono)
-open Intensional (WorldTimeIndex)
+open Intensional (Index)
 open Data.Examples (LinguisticExample Glottocode)
 
 /-! ### The per-language strategy record (§2–§4.2) -/
@@ -193,17 +193,17 @@ def historyJones : HistoricalAlternatives Bool ℤ :=
   λ s => { w | w = s.world ∨ s.time ≤ 0 }
 
 @[simp]
-theorem mem_historyJones {w : Bool} {s : WorldTimeIndex Bool ℤ} :
+theorem mem_historyJones {w : Bool} {s : Index Bool ℤ} :
     w ∈ historyJones s ↔ w = s.world ∨ s.time ≤ 0 := Iff.rfl
 
 theorem historyJones_backwardsClosed : historyJones.backwardsClosed :=
   λ _ _ _ _ hle hmem => Or.imp id (le_trans hle) hmem
 
 /-- The utterance index; its domain is the paper's `D`. -/
-def utteranceIdx : WorldTimeIndex Bool ℤ := ⟨true, 1⟩
+def utteranceIdx : Index Bool ℤ := ⟨true, 1⟩
 
 /-- The HP-shifted index (§3.3); its domain is `D⁺` on the O-marking route. -/
-def hpIdx : WorldTimeIndex Bool ℤ := ⟨true, 0⟩
+def hpIdx : Index Bool ℤ := ⟨true, 0⟩
 
 /-- The X-marked base: every world live at every index (§2, fn 6) — `D⁺` on the
     X-marking route. -/

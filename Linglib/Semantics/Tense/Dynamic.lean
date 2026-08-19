@@ -1,5 +1,5 @@
 import Linglib.Semantics.Dynamic.Update
-import Linglib.Semantics.Intensional.WorldTimeIndex
+import Linglib.Semantics.Intensional.Index
 import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Semantics.Tense.Compositional
 
@@ -17,7 +17,7 @@ chaining) is the cells' Boolean algebra (`Core.Order.holds_or_holds₃`,
 `Core.Order.not_holds_and_holds`) through the generic filter algebra of
 `Update.lean` (`lift_test_cover₃`, `lift_test_disjoint`).
 
-Contexts are level-0 states over `WorldTimeIndex.Possibility` — the
+Contexts are level-0 states over `Index.Possibility` — the
 world coordinate is the current evaluation index, drefs are indices.
 
 ## Theoretical anchor
@@ -49,7 +49,7 @@ Sibling of `Tense/Compositional.lean` (the static operators) and
 namespace Tense
 
 open Core.Order (holds)
-open _root_.Intensional (WorldTimeIndex)
+open _root_.Intensional (Index)
 open DynamicSemantics
 open DynamicSemantics.Update (test closure)
 
@@ -59,27 +59,27 @@ variable {W Time : Type*} [LinearOrder Time]
     entry survives iff its event-variable index precedes its
     reference-variable index in time. -/
 def dynPAST (eventVar refVar : ℕ) :
-    Set (WorldTimeIndex.Possibility W Time) →
-      Set (WorldTimeIndex.Possibility W Time) :=
+    Set (Index.Possibility W Time) →
+      Set (Index.Possibility W Time) :=
   lift (test fun p =>
     holds past (p.assignment eventVar).time (p.assignment refVar).time)
 
 /-- Dynamic PRES: the test filter at the `present` cell. -/
 def dynPRES (eventVar refVar : ℕ) :
-    Set (WorldTimeIndex.Possibility W Time) →
-      Set (WorldTimeIndex.Possibility W Time) :=
+    Set (Index.Possibility W Time) →
+      Set (Index.Possibility W Time) :=
   lift (test fun p =>
     holds present (p.assignment eventVar).time (p.assignment refVar).time)
 
 /-- Dynamic FUT: the test filter at the `future` cell. -/
 def dynFUT (eventVar refVar : ℕ) :
-    Set (WorldTimeIndex.Possibility W Time) →
-      Set (WorldTimeIndex.Possibility W Time) :=
+    Set (Index.Possibility W Time) →
+      Set (Index.Possibility W Time) :=
   lift (test fun p =>
     holds future (p.assignment eventVar).time (p.assignment refVar).time)
 
-variable (e r : ℕ) (c : Set (WorldTimeIndex.Possibility W Time))
-  (p : WorldTimeIndex.Possibility W Time)
+variable (e r : ℕ) (c : Set (Index.Possibility W Time))
+  (p : Index.Possibility W Time)
 
 /-! ### Membership characterizations -/
 

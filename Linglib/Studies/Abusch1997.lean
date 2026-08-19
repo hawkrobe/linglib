@@ -27,7 +27,7 @@ Two derivation styles coexist in this file:
    `_full` / `_full_metaphysical` against
    `Tense.DeRe.TemporalDeReReading`): `Intension (KContext)
    Time` time-concept + holder-context base anchor + modal-alternative
-   quantification over a `Set (WorldTimeIndex W Time)`. The Abusch §3 +
+   quantification over a `Set (Index W Time)`. The Abusch §3 +
    eq. 13 architecture, faithful to the [lewis-1979-attitudes] /
    [cresswell-vonstechow-1982] centered-world reduction of de re.
    The value-level style checks the same constraint at the same pair
@@ -35,7 +35,7 @@ Two derivation styles coexist in this file:
 
 The substrate is modal-base-agnostic and holder-now-honest:
 `holderContext.time` is the holder's now (per §7 ULC), and
-`IsRigidAcrossAlternatives` takes a `Set (WorldTimeIndex)` parameter
+`IsRigidAcrossAlternatives` takes a `Set (Index)` parameter
 (with `metaphysicalAlternatives` / `doxasticAlternatives` convenience
 constructors).
 
@@ -786,7 +786,7 @@ theorem abusch_derives_temporal_de_re_via_acquaintance
 /-- [abusch-1997]'s temporal de re with **modal-alternative
     quantification** (substrate-level lift of the §3 p. 9 base-world
     condition): the time-concept identifies the same time across an
-    `alternatives : Set (WorldTimeIndex W Time)`. The substrate is
+    `alternatives : Set (Index W Time)`. The substrate is
     modal-base-agnostic; this theorem holds for any alternative-set
     the consumer supplies (doxastic, metaphysical, or other). The
     full `IsFelicitous` predicate combines the value-level past
@@ -799,7 +799,7 @@ theorem abusch_derives_temporal_de_re_full
     {W E P Time : Type*} [LinearOrder Time]
     (dr : Tense.DeRe.TemporalDeReReading W E P Time)
     (hRigid : Intensional.Intension.IsRigid dr.concept)
-    (alternatives : Set (Intensional.WorldTimeIndex W Time))
+    (alternatives : Set (Intensional.Index W Time))
     (hBefore : dr.actualRes < dr.holderContext.time) :
     dr.IsFelicitous alternatives Tense.past := by
   refine ⟨(Core.Order.holds_before dr.actualRes dr.holderContext.time).mpr hBefore, ?_⟩
