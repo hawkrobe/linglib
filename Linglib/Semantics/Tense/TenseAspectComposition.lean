@@ -77,7 +77,7 @@ def evalFut (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
 /-- The pipeline's existential past is [sharvit-2014]'s quantificational
     past with trivial restrictor: `evalPast` = `quantificationalPast` over
     `Set.univ`. Together with `pronominalLookup_eq_some_iff_tensePronoun`
-    (in `LexicalType.lean`), this places both of Sharvit's tense lexical
+    (in `Studies/Sharvit2014.lean`), this places both of Sharvit's tense lexical
     types over the operators the rest of the codebase already uses. -/
 theorem evalPast_iff_quantificationalPast (p : PointPred W Time) (tc : Time) (w : W) :
     evalPast p tc w ↔ quantificationalPast Set.univ (λ t => p ⟨w, t⟩) tc := by
