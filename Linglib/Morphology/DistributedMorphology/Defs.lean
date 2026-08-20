@@ -98,39 +98,25 @@ def SyntacticContext.specificity (c : SyntacticContext) : Nat :=
   (if c.belowCat.isSome then 1 else 0) + (if c.aboveCat.isSome then 1 else 0)
     + (if c.complementIsEventive then 1 else 0) + (if c.complementIsStative then 1 else 0)
 
-/-- A single alloseme: a labeled meaning available in a particular context. -/
+/-- A single alloseme: a meaning available in a particular context. A
+head's List-3 inventory is its alloseme *vocabulary*, a bare
+`List (AllosemicEntry Sem)` — any functional morpheme can carry one
+(the categorizers, Voice, prefixes), so no head type is baked in. -/
 structure AllosemicEntry (Sem : Type) where
-  /-- Human-readable label for this alloseme. -/
-  label : String
   /-- The semantic contribution. -/
   denotation : Sem
   /-- The conditioning context. -/
   context : SyntacticContext
   deriving BEq, Repr
 
-/-- An allosemic head: a functional morpheme with multiple
-    context-dependent meanings.
-
-    §2.6 of [benz-2025]: "This dissertation is about examining the
-    principal promise of allosemy as a tool in syntactic theory." -/
-structure AllosemicHead (Sem : Type) where
-  /-- Which functional head (n, v, a). -/
-  morpheme : Categorizer
-  /-- The available allosemes in their contexts. -/
-  entries : List (AllosemicEntry Sem)
-  deriving Repr
-
-/-- Number of distinct meanings available for this head. -/
-def AllosemicHead.allosemeCount {Sem : Type} (h : AllosemicHead Sem) : Nat :=
-  h.entries.length
-
-/-- The denotations licensed for the head in context `c` — the entries whose
-conditioning context matches `c`. Alloseme ambiguity in a context is
-non-singleton licensing, and the canonical default among the licensed
-entries is the Elsewhere winner (`selectBy_score_isElsewhereWinner`). -/
-def AllosemicHead.licensed {Sem : Type} (h : AllosemicHead Sem)
+/-- The denotations an alloseme vocabulary licenses in context `c` — the
+entries whose conditioning context matches `c`. Alloseme ambiguity in a
+context is non-singleton licensing, and the canonical default among the
+licensed entries is the Elsewhere winner
+(`selectBy_score_isElsewhereWinner`). -/
+def licensed {Sem : Type} (v : List (AllosemicEntry Sem))
     (c : SyntacticContext) : List Sem :=
-  (h.entries.filter (·.context.matches c)).map (·.denotation)
+  (v.filter (·.context.matches c)).map (·.denotation)
 
 end Allosemy
 

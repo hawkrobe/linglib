@@ -93,11 +93,7 @@ theorem adopted_unique (r : NominalizationReading) (v : Verbalizer.Alloseme)
     (n : Nominalizer.Alloseme) (hr : readingFromAllosemes v n = some r)
     (h : v.introducesEvent = false ∨ n = .zero) :
     (v, n) = adoptedAllosemes r := by
-  cases v <;> cases n <;> cases r <;>
-    first
-    | rfl
-    | exact absurd hr (by decide)
-    | rcases h with h | h <;> exact absurd h (by decide)
+  revert hr h; revert r v n; decide
 
 /-- The reading pins the division of labor (the "mirror image" claim of
 §3.5): an event reading arises only from contentful v with vacuous n, while
@@ -108,11 +104,7 @@ theorem reading_determines_contentful_head (v : Verbalizer.Alloseme) (n : Nomina
       v.introducesEvent = true ∧ n = .zero) ∧
     (readingFromAllosemes v n = some .result → n = .result) ∧
     (readingFromAllosemes v n = some .content → n = .content) := by
-  cases v <;> cases n <;> refine ⟨?_, ?_, ?_⟩ <;> intro h <;>
-    first
-    | exact ⟨rfl, rfl⟩
-    | rfl
-    | exact absurd h (by decide)
+  revert v n; decide
 
 /-! ### Alloseme selection in the nominalization structure
 
@@ -134,15 +126,16 @@ def nContext (eventive : Bool) : SyntacticContext :=
 /-- The readings derivable in the nominalization structure: any licensed v
 alloseme composed with any licensed n alloseme. -/
 def availableReadings (eventive : Bool) : List NominalizationReading :=
-  (Verbalizer.head.licensed (vContext eventive)).flatMap (λ v =>
-    (Nominalizer.head.licensed (nContext eventive)).filterMap (readingFromAllosemes v))
+  (licensed Verbalizer.vocabulary (vContext eventive)).flatMap (λ v =>
+    (licensed Nominalizer.vocabulary (nContext eventive)).filterMap
+      (readingFromAllosemes v))
 
 /-- Over an event-entailing root both v allosemes are licensed — the premise
 of the reading ambiguity — while a non-eventive root licenses only vacuous
 v. -/
 theorem v_allosemes_licensed :
-    Verbalizer.head.licensed (vContext true) = [.eventive, .zero] ∧
-    Verbalizer.head.licensed (vContext false) = [.zero] := ⟨rfl, rfl⟩
+    licensed Verbalizer.vocabulary (vContext true) = [.eventive, .zero] ∧
+    licensed Verbalizer.vocabulary (vContext false) = [.zero] := ⟨rfl, rfl⟩
 
 open Morphology.Exponence in
 /-- The canonical v alloseme of the root typology is the engine's Elsewhere
@@ -150,7 +143,7 @@ winner: the more specified eventive entry beats vacuous v exactly when the
 root entails an event, so `Verbalizer.Alloseme.fromRootType` is derived, not
 stipulated. -/
 theorem fromRootType_is_selectBy_winner (rt : Verb.Root.ChangeType) :
-    (selectBy AllosemicEntry.score Verbalizer.head.entries
+    (selectBy AllosemicEntry.score Verbalizer.vocabulary
         (vContext rt.entailsChange)).map (·.denotation) =
       some (Verbalizer.Alloseme.fromRootType rt) := by
   cases rt <;> rfl

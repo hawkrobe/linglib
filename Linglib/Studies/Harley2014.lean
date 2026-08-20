@@ -62,7 +62,7 @@ number-unspecified).
 namespace Harley2014
 
 open DistributedMorphology.VI
-open DistributedMorphology.Allosemy (SyntacticContext AllosemicEntry AllosemicHead)
+open DistributedMorphology.Allosemy (SyntacticContext AllosemicEntry toInterpreted)
 open Morphology.Exponence (selectBy realize)
 
 /-! ### List 1: roots as abstract indices -/
@@ -216,7 +216,7 @@ licensed context and `none` outside it. -/
 /-- `√548` *cahoot*: a single LF entry, licensed only under `n` (the idiom
 frame), with no Elsewhere alloseme ([harley-2014] (16)). -/
 def cahootLF : List (AllosemicEntry String) :=
-  [ { label := "cahoot", denotation := "a conspiracy", context := { belowCat := some .n } } ]
+  [ { denotation := "a conspiracy", context := { belowCat := some .n } } ]
 
 /-- In its licensing context the cran-morph is interpreted. -/
 theorem cahoot_licensed :
@@ -243,7 +243,7 @@ The two negative flanks (§2.1–2.2 phonological, §2.3 semantic) are the
 constancy pair of `Morphology.Realization` at one index: form varies across
 contexts (`IsProperlySuppletive`), meaning does not vary but *gaps* (an
 empty `interp` fiber outside the cran-morph's frame, via
-`AllosemicHead.toInterpreted`). The vocabulary of §2.1 is the List-2 map,
+`Allosemy.toInterpreted`). The vocabulary of §2.1 is the List-2 map,
 `cahootLF` the List-3 map.
 
 The form side wraps this file's `insert` — the shared Exponence engine
@@ -288,7 +288,9 @@ theorem run_hasSuppletiveCore :
 
 /-- √548 *cahoot* as a List-3 `Realization.Interpreted` view: one head, the
 cran-morph's single alloseme. -/
-def cahootHead : AllosemicHead String := { morpheme := .n, entries := cahootLF }
+def cahootHead : Morphology.Realization.Interpreted Unit
+    DistributedMorphology.Allosemy.SyntacticContext Unit String :=
+  toInterpreted cahootLF
 
 /-- **Semantic individuation fails, on the carrier** ([harley-2014] §2.3):
 the cran-morph is interpreted (`a conspiracy`) inside its licensing frame
@@ -297,8 +299,8 @@ empty realization fiber, a *gap* rather than contextual variation. So this
 is a licensing failure, not an `IsAllosemous` witness: unlike an ordinary
 root (whose meaning would merely vary), a Fodorian atom could not gap. -/
 theorem cahoot_interp_gap :
-    cahootHead.toInterpreted.interp () { belowCat := some .n } = {"a conspiracy"} ∧
-    cahootHead.toInterpreted.interp () { } = ∅ := by
+    cahootHead.interp () { belowCat := some .n } = {"a conspiracy"} ∧
+    cahootHead.interp () { } = ∅ := by
   refine ⟨?_, ?_⟩ <;> decide
 
 end Harley2014
