@@ -13,12 +13,14 @@ licensed; words are licensed lexically.
 Matching is relative to a POS lexicon `String → Option UD.UPOS`. `headed`
 fillers are checked against immediate daughters (a flat approximation of
 headedness), and `semantic` constraints are not checkable at this level
-and match any token.
+and match any token. Slot constraints are enforced where they can be:
+`negMinus` rejects a negated daughter (`SlotConstraint.allows`).
 
 ## Main declarations
 
 - `Token`: utterance tokens (words and constituents)
-- `SlotFiller.matches`, `formMatches`: slot/daughter matching
+- `SlotFiller.matches`, `SlotConstraint.allows`, `formMatches`:
+  slot/daughter matching
 - `Constructicon.Licenses`: the licensing relation, via the recognizer
 -/
 
@@ -87,12 +89,22 @@ def SlotFiller.matches (pos : String → Option UD.UPOS) :
   | .semantic _, _ => true
   | _, _ => false
 
+/-- Does a token respect a slot constraint? `negMinus` forbids a negation
+daughter; `locMinus` and `refEmpty` concern the slot's external syntax
+and semantics and are not checkable against the daughter itself. -/
+def SlotConstraint.allows : SlotConstraint → Token → Bool
+  | .negMinus, .node ts => !ts.contains (.word "not")
+  | .negMinus, .word w => !(w == "not")
+  | .locMinus, _ => true
+  | .refEmpty, _ => true
+
 /-- A daughter sequence instantiates a typed form: same arity, and each
-daughter matches its slot's filler. -/
+daughter matches its slot's filler and respects its slot's constraints. -/
 def formMatches (pos : String → Option UD.UPOS)
     (form : TypedForm String) (ts : List Token) : Bool :=
   form.length == ts.length &&
-  (form.zip ts).all (λ ⟨s, t⟩ => s.filler.matches pos t)
+  (form.zip ts).all (λ ⟨s, t⟩ =>
+    s.filler.matches pos t && s.constraints.all (·.allows t))
 
 mutual
 

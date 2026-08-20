@@ -1,4 +1,5 @@
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
+import Linglib.Syntax.ConstructionGrammar.Idiom
 import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Features.Acceptability
 import Linglib.Features.Polarity
@@ -16,7 +17,9 @@ F ⟨X A Y let alone B⟩ whose semantics requires a presupposed scalar model
 (Appendix, definitions A1–A5) and whose pragmatics resolves a conflict
 between Gricean Quantity (the informative full clause) and Relevance (the
 contextually given reduced clause). The idiom typology of §1 lives in
-`ConstructionGrammar.IdiomTypology`.
+`ConstructionGrammar.Idiom`; §2.1's conclusion that *let alone* is a
+formal idiom is derived from the construction's typed form
+(`let_alone_formal_idiom`).
 
 The paper's scalar models are n-dimensional with n > 1 (definition A1;
 fn. 16: "a scalar model must contain at least two dimensions"). The
@@ -167,6 +170,11 @@ derived from the universal combination schemata (see
 `isFullyCompositional`). -/
 theorem let_alone_irreducible :
     isFullyCompositional letAloneConstruction = false := rfl
+
+/-- *Let alone* "must ... be given treatment as the kind of formal idiom
+or special construction we have been discussing" (§2.1): the paired focus
+slots A and B are open. -/
+theorem let_alone_formal_idiom : letAloneConstruction.IsFormalIdiom := rfl
 
 /-- Felicity conditions on *let alone* sentences (p. 528): (1) the two
 clauses express propositions from the same scalar model; (2) the

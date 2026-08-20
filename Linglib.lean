@@ -2802,7 +2802,7 @@ import Linglib.Syntax.Clause.Construction
 import Linglib.Syntax.Comparative
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Basic
-import Linglib.Syntax.ConstructionGrammar.IdiomTypology
+import Linglib.Syntax.ConstructionGrammar.Idiom
 import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Syntax.ConstructionGrammar.Licensing
 import Linglib.Syntax.ConstructionGrammar.Resultatives
