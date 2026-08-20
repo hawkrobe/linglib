@@ -17,7 +17,7 @@ A lens into the nature of anticausative SE" (*Glossa* 11(1)).
 
 * `Judgment`, `CliticPattern`, `DativeCliticPerson` — empirical data types
 * `spanishFissionRule` — instantiation of the generic
-  `Morphology.DistributedMorphology.FissionRule` with Chilean-Spanish-specific data
+  `DistributedMorphology.FissionRule` with Chilean-Spanish-specific data
 * `voice_semantically_vacuous` — re-export of
   `Minimalist.Voice.nonThematic_no_semantics`
 * `three_way_synonymy_from_vacuity`,
@@ -244,7 +244,7 @@ theorem negative_controls_unacceptable :
 /-! ### Spanish Fission instantiation -/
 
 open Minimalist Minimalist.Voice
-open Morphology.DistributedMorphology
+open DistributedMorphology
 open Spanish.PersonFeatures
 open Spanish.Predicates
 open Spanish.Clitics
@@ -263,7 +263,7 @@ structure FissionOutput where
 /-- The stylistic applicative Fission rule for Chilean Spanish
     ([munoz-perez-2026] rule 55).
 
-    Instantiates the generic `Morphology.DistributedMorphology.FissionRule` with
+    Instantiates the generic `DistributedMorphology.FissionRule` with
     Spanish-specific data:
     - Context: inchoative verbal-head sequence (vGO ⌒ vBE)
     - Bundle: [+PART, +SING] person (1SG or 2SG)

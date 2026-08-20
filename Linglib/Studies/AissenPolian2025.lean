@@ -100,7 +100,7 @@ namespace AissenPolian2025
 
 open Mayan (MarkerSet ABSPosition)
 open Mayan.Tseltalan
-open Morphology.DistributedMorphology
+open DistributedMorphology
 
 -- ============================================================================
 -- § 1: Nominal Size and Specificity

@@ -50,7 +50,7 @@ namespace Hewett2026
 
 open Minimalist (VerbHead Cat FeatureStatus ActivationIndex ApplHead applHigh applLowRecipient isCausative low_licensed_with_any high_licensed_of_assignsTheta)
 open Minimalist.Voice (Flavor Head buildDecomposition agentive causer passive anticausative)
-open Morphology.DistributedMorphology (CategorizedRoot Categorizer)
+open DistributedMorphology (CategorizedRoot Categorizer)
 open Morphology.MirrorPrinciple (MorphDomain)
 open Wood2015 (Construction)
 
@@ -266,7 +266,7 @@ theorem Hkm_not_templateInvariant : ¬ templateInvariant .Hkm :=
     `complement_selection_at_root_level` in `Categorizer.lean`) but l-selection is
     not: the two kinds of selection factor differently in the grammar. -/
 theorem cSelection_vs_lSelection :
-    (∀ (i : Morphology.DistributedMorphology.Root) (r : Verb.Root.Classification)
+    (∀ (i : DistributedMorphology.Root) (r : Verb.Root.Classification)
         (c1 c2 : Categorizer),
       (CategorizedRoot.mk i r c1).root.valency = (CategorizedRoot.mk i r c2).root.valency) ∧
     (∃ r : RootLabel, ¬ templateInvariant r) :=

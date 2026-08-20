@@ -1,3 +1,4 @@
+import Linglib.Morphology.DistributedMorphology.Basic
 import Linglib.Morphology.DistributedMorphology.Categorizer
 import Linglib.Morphology.DistributedMorphology.CategorizerSemantics
 import Linglib.Morphology.Exponence.Select
@@ -31,11 +32,12 @@ linglib already formalizes several cases of allosemy without naming them:
 - `Verb.Root.ChangeType` / `Verb.Root.Classification.changeType`: roots vary in
   whether they entail change, conditioning the semantics of the v that embeds them
 
-This module provides the general abstraction: `AllosemicEntry` and
-`AllosemicHead` capture the pattern that a single morpheme has
-multiple context-dependent meanings. The module then instantiates
-this for v (critical for [benz-2025] Ch. 3 on nominalizations)
-and retroactively classifies existing n and Voice types as allosemy.
+The general abstraction — `AllosemicEntry` and `AllosemicHead`, a single
+morpheme with multiple context-dependent meanings — lives in
+`DistributedMorphology/Defs.lean`, with its selection-engine instances in
+`Basic.lean`. This module instantiates it for v (critical for [benz-2025]
+Ch. 3 on nominalizations) and retroactively classifies existing n and
+Voice types as allosemy.
 
 ## The List-2 / List-3 symmetry, by construction
 
@@ -51,199 +53,14 @@ allosemes (v ⊕ n), not a single-head competition — so it stays a table.
 
 -/
 
-namespace Morphology.DistributedMorphology.Allosemy
+namespace DistributedMorphology.Allosemy
 
-open Morphology.DistributedMorphology (Categorizer CatHead)
-open Morphology.DistributedMorphology.CategorizerSemantics (NSemanticType)
+open DistributedMorphology (Categorizer CatHead)
+open DistributedMorphology.CategorizerSemantics (NSemanticType)
 open Minimalist.Voice (Flavor Head)
 
 -- ════════════════════════════════════════════════════
--- § 1. General Allosemy Framework
--- ════════════════════════════════════════════════════
-
-/-- A syntactic context that conditions alloseme selection.
-
-    §2.4: allosemy is conditioned by the semantics of a
-    previously interpreted domain (below) or the syntactic features of the
-    next higher head (above). Both cyclic locality and linear adjacency
-    play a role, but the exact locality conditions are an open question.
-
-    We represent context minimally as what is structurally below and
-    above the allosemic head. -/
-structure SyntacticContext where
-  /-- Category of the complement (below). `none` = no complement. -/
-  belowCat : Option Categorizer := none
-  /-- Category of the embedding head (above). `none` = root context. -/
-  aboveCat : Option Categorizer := none
-  /-- Does the complement denote an event? -/
-  complementIsEventive : Bool := false
-  /-- Does the complement denote a state? ([kratzer-1996] §2.3: the
-      stative-vs-dynamic split conditions the Voice alloseme.) -/
-  complementIsStative : Bool := false
-  deriving DecidableEq, Repr
-
-/-- A partial context specification `spec` **matches** a fully-specified
-query context `c` when every non-wildcard field of `spec` agrees with
-`c`. A field at its default (`none` / `false`) is a **wildcard**,
-constraining nothing; a set field must agree. More specified contexts
-match strictly fewer queries — the applicability-set inclusion that
-orders exponence rules ([kiparsky-1973]). -/
-def SyntacticContext.matches (spec c : SyntacticContext) : Bool :=
-  (spec.belowCat == none || spec.belowCat == c.belowCat) &&
-  (spec.aboveCat == none || spec.aboveCat == c.aboveCat) &&
-  (!spec.complementIsEventive || c.complementIsEventive) &&
-  (!spec.complementIsStative || c.complementIsStative)
-
-/-- The specificity **score**: the number of non-wildcard fields. Higher
-score = more specified = strictly smaller applicability set, so the score
-reflects the specificity preorder contravariantly
-(`SyntacticContext.specificity_le_of_matches_subset`). -/
-def SyntacticContext.specificity (c : SyntacticContext) : Nat :=
-  (if c.belowCat.isSome then 1 else 0) + (if c.aboveCat.isSome then 1 else 0)
-    + (if c.complementIsEventive then 1 else 0) + (if c.complementIsStative then 1 else 0)
-
-@[simp] theorem SyntacticContext.matches_self (c : SyntacticContext) : c.matches c = true := by
-  simp [SyntacticContext.matches]
-
-/-- A broader specification (matched by every query the narrower one is)
-has no more non-wildcard fields: the score reflects applicability-set
-inclusion contravariantly. -/
-theorem SyntacticContext.specificity_le_of_matches_subset {r s : SyntacticContext}
-    (h : ∀ q, s.matches q = true → r.matches q = true) :
-    r.specificity ≤ s.specificity := by
-  have hrs : r.matches s = true := h s (SyntacticContext.matches_self s)
-  simp only [SyntacticContext.matches, Bool.and_eq_true, Bool.or_eq_true, beq_iff_eq] at hrs
-  obtain ⟨⟨⟨hb, ha⟩, he⟩, hst⟩ := hrs
-  simp only [SyntacticContext.specificity]
-  have b : (if r.belowCat.isSome then 1 else 0) ≤ (if s.belowCat.isSome then (1 : ℕ) else 0) := by
-    rcases hb with hb | hb <;> simp [hb]
-  have a : (if r.aboveCat.isSome then 1 else 0) ≤ (if s.aboveCat.isSome then (1 : ℕ) else 0) := by
-    rcases ha with ha | ha <;> simp [ha]
-  have e : (if r.complementIsEventive then 1 else 0) ≤
-      (if s.complementIsEventive then (1 : ℕ) else 0) := by
-    cases hr : r.complementIsEventive <;> cases hsc : s.complementIsEventive <;> simp_all
-  have t : (if r.complementIsStative then 1 else 0) ≤
-      (if s.complementIsStative then (1 : ℕ) else 0) := by
-    cases hr : r.complementIsStative <;> cases hsc : s.complementIsStative <;> simp_all
-  omega
-
-/-- Equal-score inclusion is equality: if every query matching `s` also
-matches `r` and the two carry the same number of non-wildcard fields, the
-specifications coincide. -/
-theorem SyntacticContext.eq_of_matches_subset_of_specificity_eq {r s : SyntacticContext}
-    (h : ∀ q, s.matches q = true → r.matches q = true)
-    (hs : r.specificity = s.specificity) : r = s := by
-  have hrs : r.matches s = true := h s (SyntacticContext.matches_self s)
-  simp only [SyntacticContext.matches, Bool.and_eq_true, Bool.or_eq_true, beq_iff_eq] at hrs
-  obtain ⟨⟨⟨hb, ha⟩, he⟩, hst⟩ := hrs
-  simp only [SyntacticContext.specificity] at hs
-  have b : (if r.belowCat.isSome then 1 else 0) ≤ (if s.belowCat.isSome then (1 : ℕ) else 0) := by
-    rcases hb with h | h <;> simp [h]
-  have a : (if r.aboveCat.isSome then 1 else 0) ≤ (if s.aboveCat.isSome then (1 : ℕ) else 0) := by
-    rcases ha with h | h <;> simp [h]
-  have e : (if r.complementIsEventive then 1 else 0) ≤
-      (if s.complementIsEventive then (1 : ℕ) else 0) := by
-    cases hr : r.complementIsEventive <;> cases hsc : s.complementIsEventive <;> simp_all
-  have t : (if r.complementIsStative then 1 else 0) ≤
-      (if s.complementIsStative then (1 : ℕ) else 0) := by
-    cases hr : r.complementIsStative <;> cases hsc : s.complementIsStative <;> simp_all
-  obtain ⟨rb, ra, rc, rd⟩ := r
-  obtain ⟨sb, sa, sc, sd⟩ := s
-  have eqb : rb = sb := by cases rb <;> cases sb <;> simp_all; all_goals omega
-  have eqa : ra = sa := by cases ra <;> cases sa <;> simp_all; all_goals omega
-  have eqc : rc = sc := by cases rc <;> cases sc <;> simp_all; all_goals omega
-  have eqd : rd = sd := by cases rd <;> cases sd <;> simp_all
-  subst eqb eqa eqc eqd; rfl
-
-/-- A single alloseme: a labeled meaning available in a particular context. -/
-structure AllosemicEntry (Sem : Type) where
-  /-- Human-readable label for this alloseme. -/
-  label : String
-  /-- The semantic contribution. -/
-  denotation : Sem
-  /-- The conditioning context. -/
-  context : SyntacticContext
-  deriving BEq, Repr
-
-/-- An allosemic head: a functional morpheme with multiple
-    context-dependent meanings.
-
-    §2.6: "This dissertation is about examining the
-    principal promise of allosemy as a tool in syntactic theory." -/
-structure AllosemicHead (Sem : Type) where
-  /-- Which functional head (n, v, a). -/
-  morpheme : Categorizer
-  /-- The available allosemes in their contexts. -/
-  entries : List (AllosemicEntry Sem)
-  deriving Repr
-
-/-- Number of distinct meanings available for this head. -/
-def AllosemicHead.allosemeCount {Sem : Type} (h : AllosemicHead Sem) : Nat :=
-  h.entries.length
-
-/-- The denotations licensed for the head in context `c` — the entries whose
-conditioning context matches `c`. Alloseme ambiguity in a context is
-non-singleton licensing, and the canonical default among the licensed
-entries is the Elsewhere winner (`selectBy_score_isElsewhereWinner`). -/
-def AllosemicHead.licensed {Sem : Type} (h : AllosemicHead Sem)
-    (c : SyntacticContext) : List Sem :=
-  (h.entries.filter (·.context.matches c)).map (·.denotation)
-
-/-! ### Allosemy on the exponence core
-
-An `AllosemicEntry` is a rule of exponence (`Morphology/Exponence/`): its
-denotation is the exponent, its context's `matches` predicate the
-applicability set. So the very engine that resolves DM's List 2
-(`DistributedMorphology/VocabularyInsertion.lean`) resolves List 3 — LF competition among
-allosemes — with no new machinery. `AllosemicEntry.score` is the
-non-wildcard-field count of the entry's context; `score_strictAnti` shows
-it is strictly antitone in specificity, so `selectBy score` is Elsewhere
-selection (`selectBy_score_isElsewhereWinner`). -/
-
-section Exponence
-
-open Morphology.Exponence
-
-variable {Sem : Type}
-
-/-- An `AllosemicEntry` exposes the shared exponence interface: contexts
-are `SyntacticContext`s, applicability is `matches`, the exponent is the
-denotation. -/
-instance : Exponence.Rule (AllosemicEntry Sem) SyntacticContext Sem :=
-  ⟨AllosemicEntry.denotation, fun e c => e.context.matches c = true⟩
-
-instance : Preorder (AllosemicEntry Sem) := Exponence.toPreorder
-
-instance : DecidableRel (Applies : AllosemicEntry Sem → SyntacticContext → Prop) :=
-  fun e c => inferInstanceAs (Decidable (e.context.matches c = true))
-
-/-- The specificity score of an alloseme: the non-wildcard-field count of
-its conditioning context. -/
-def AllosemicEntry.score (e : AllosemicEntry Sem) : Nat := e.context.specificity
-
-/-- The score is strictly antitone in specificity: a strictly broader
-alloseme scores strictly lower. -/
-theorem score_strictAnti : StrictAnti (AllosemicEntry.score (Sem := Sem)) := by
-  intro s r hlt
-  have hsub : ∀ q, s.context.matches q = true → r.context.matches q = true := hlt.le
-  refine lt_of_le_of_ne (SyntacticContext.specificity_le_of_matches_subset hsub)
-    fun heq => not_le_of_gt hlt ?_
-  have hctx : r.context = s.context :=
-    SyntacticContext.eq_of_matches_subset_of_specificity_eq hsub heq
-  show ∀ q, r.context.matches q = true → s.context.matches q = true
-  rw [hctx]; exact fun _ h => h
-
-/-- Score selection over an alloseme vocabulary is Elsewhere selection:
-the winner is `≤`-minimal among the applicable allosemes. -/
-theorem selectBy_score_isElsewhereWinner {v : List (AllosemicEntry Sem)}
-    {c : SyntacticContext} {r : AllosemicEntry Sem}
-    (h : selectBy AllosemicEntry.score v c = some r) : IsElsewhereWinner v c r :=
-  selectBy_isElsewhereWinner (score_strictAnti.strictAntiOn _) h
-
-end Exponence
-
--- ════════════════════════════════════════════════════
--- § 2. v Allosemy (Ch. 3)
+-- § 1. v Allosemy (Ch. 3)
 -- ════════════════════════════════════════════════════
 
 /-- Allosemes of the verbal categorizer v.
@@ -318,7 +135,7 @@ theorem fromRootType_iff_entailsChange (rt : Verb.Root.ChangeType) :
   cases rt <;> rfl
 
 -- ════════════════════════════════════════════════════
--- § 3. n Allosemy (retroactive classification)
+-- § 2. n Allosemy (retroactive classification)
 -- ════════════════════════════════════════════════════
 
 /-- n allosemy: the three semantic types from `CategorizerSemantics`
@@ -405,7 +222,7 @@ def nAllosemic : AllosemicHead NAlloseme where
 theorem n_has_nine_allosemes : nAllosemic.allosemeCount = 9 := rfl
 
 -- ════════════════════════════════════════════════════
--- § 4. Voice Allosemy ([kratzer-1996]; §2.3)
+-- § 3. Voice Allosemy ([kratzer-1996]; §2.3)
 -- ════════════════════════════════════════════════════
 
 /-- Voice allosemy: the thematic interpretation of the external argument
@@ -470,7 +287,7 @@ def VoiceAlloseme.fromComplement
     { belowCat := if complementIsEventiveVoiceP then some .v else none
       complementIsEventive := decide complementIsEventiveVoiceP
       complementIsStative := decide complementIsStative }
-  ((Exponence.selectBy AllosemicEntry.score voiceVocabulary q).map
+  ((Morphology.Exponence.selectBy AllosemicEntry.score voiceVocabulary q).map
     AllosemicEntry.denotation).getD .expletive
 
 /-- Eventive-VoiceP complement selects engineer ([myler-2016]). -/
@@ -505,7 +322,7 @@ theorem voice_alloseme_theta_consistent (a : VoiceAlloseme) :
   cases a <;> decide
 
 -- ════════════════════════════════════════════════════
--- § 5. Nominalization Reading Derivation (Ch. 3)
+-- § 4. Nominalization Reading Derivation (Ch. 3)
 -- ════════════════════════════════════════════════════
 
 /-- Reading types for deverbal nominalizations.
@@ -631,7 +448,7 @@ theorem readings_distinct :
     NominalizationReading.simpleEntity ≠ .content := by decide
 
 -- ════════════════════════════════════════════════════
--- § 6. The Allomorphy Analogy (§2.5)
+-- § 5. The Allomorphy Analogy (§2.5)
 -- ════════════════════════════════════════════════════
 
 /-- Ch. 2 evaluates three positions on the relationship
@@ -655,7 +472,7 @@ inductive AllomorphyAnalogyPosition where
 def benzPosition : AllomorphyAnalogyPosition := .partialAnalogy
 
 -- ════════════════════════════════════════════════════
--- § 7. The `Realization.Interpreted` view (List 3 on the shared carrier)
+-- § 6. The `Realization.Interpreted` view (List 3 on the shared carrier)
 -- ════════════════════════════════════════════════════
 
 /-! An allosemic head is a List-3 object: a single morpheme whose
@@ -673,7 +490,7 @@ head (`Unit`) whose contextual interpretation is the alloseme `selectBy`
 picks (a singleton, `∅` at a semantic gap), with an empty List-2 form
 side. -/
 def AllosemicHead.toInterpreted {Sem : Type} (h : AllosemicHead Sem) :
-    Realization.Interpreted Unit SyntacticContext Unit Sem where
+    Morphology.Realization.Interpreted Unit SyntacticContext Unit Sem where
   realize _ _ := ∅
   interp _ c :=
     match selectBy AllosemicEntry.score h.entries c with
@@ -688,4 +505,4 @@ theorem vAllosemic_isAllosemous : vAllosemic.toInterpreted.IsAllosemous () :=
   ⟨{ complementIsEventive := true }, { complementIsEventive := false },
    .eventive, by decide, .zero, by decide, by decide⟩
 
-end Morphology.DistributedMorphology.Allosemy
+end DistributedMorphology.Allosemy

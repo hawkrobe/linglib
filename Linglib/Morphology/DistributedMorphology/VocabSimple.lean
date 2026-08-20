@@ -12,7 +12,7 @@ A concrete Minimalist specialization of Vocabulary Insertion.
 `VocabEntry` carries `features : FeatureBundle` (the Minimalist
 global) + `exponent : String` + optional context restriction
 `Option Cat`. Sits alongside the more general parametric type
-`Morphology.DistributedMorphology.VI.VocabItem (Ctx Root : Type)` in
+`DistributedMorphology.VI.VocabItem (Ctx Root : Type)` in
 `VocabularyInsertion.lean`: same Distributed Morphology mechanism
 (Halle-Marantz late insertion + Elsewhere Condition), specialized to
 Minimalist's feature-bundle ergonomics so downstream consumers don't
@@ -139,10 +139,10 @@ open Morphology Morphology.Exponence
 /-- A vocabulary entry exposes the shared exponence core interface
 (`Morphology.Exponence.Rule`): contexts are (target bundle,
 syntactic context) pairs, applicability is `Matches`. -/
-instance : Exponence.Rule VocabEntry (FeatureBundle × Option Cat) String :=
+instance : Morphology.Exponence.Rule VocabEntry (FeatureBundle × Option Cat) String :=
   ⟨VocabEntry.exponent, fun e tc => e.Matches tc.1 tc.2⟩
 
-instance : Preorder VocabEntry := Exponence.toPreorder
+instance : Preorder VocabEntry := Morphology.Exponence.toPreorder
 
 /-- Derived specificity, unfolded: `e ≤ e'` iff `e'` matches wherever
 `e` does. -/
@@ -181,7 +181,7 @@ theorem VocabEntry.matchesFeatures_self (e : VocabEntry) :
 `e'`'s features are a subset of `e`'s and `e'`'s context restriction is
 compatible. Upgrades `le_of_superset` to an iff — over feature bundles
 the intensional superset order IS the specificity order, with no
-faithfulness assumption (contrast `Morphology.DistributedMorphology.VI.SpecificityFaithful`,
+faithfulness assumption (contrast `DistributedMorphology.VI.SpecificityFaithful`,
 which the opaque-predicate engine must stipulate). -/
 theorem VocabEntry.le_iff {e e' : VocabEntry} :
     e ≤ e' ↔
@@ -203,11 +203,11 @@ theorem VocabEntry.le_iff {e e' : VocabEntry} :
 /-! #### Bridge to the opaque-predicate engine -/
 
 /-- Embed a vocabulary entry into the opaque-predicate engine
-(`Morphology.DistributedMorphology.VI.VocabItem`): the context check is feature matching,
+(`DistributedMorphology.VI.VocabItem`): the context check is feature matching,
 the root check is the category restriction, and the stipulated rank is
 the feature count. -/
 def VocabEntry.toVocabItem (e : VocabEntry) :
-    Morphology.DistributedMorphology.VI.VocabItem FeatureBundle (Option Cat) where
+    DistributedMorphology.VI.VocabItem FeatureBundle (Option Cat) where
   exponent := e.exponent
   contextMatch := λ t => decide (e.MatchesFeatures t)
   rootMatch := some (λ c => decide (e.context = none ∨ e.context = c))
@@ -218,14 +218,14 @@ agrees with `Matches`. -/
 theorem VocabEntry.toVocabItem_matches (e : VocabEntry)
     (t : FeatureBundle) (c : Option Cat) :
     e.toVocabItem.matches t c = true ↔ e.Matches t c := by
-  simp [Morphology.DistributedMorphology.VI.VocabItem.matches, VocabEntry.toVocabItem,
+  simp [DistributedMorphology.VI.VocabItem.matches, VocabEntry.toVocabItem,
     VocabEntry.Matches]
 
 /-- The two engines' interfaces agree: the embedded item applies exactly
 where the entry does. -/
 theorem VocabEntry.toVocabItem_applies (e : VocabEntry)
     (tc : FeatureBundle × Option Cat) :
-    Exponence.Applies e.toVocabItem tc ↔ Exponence.Applies e tc :=
+    Morphology.Exponence.Applies e.toVocabItem tc ↔ Morphology.Exponence.Applies e tc :=
   e.toVocabItem_matches tc.1 tc.2
 
 /-- Specificity transfers along the embedding — the cross-engine

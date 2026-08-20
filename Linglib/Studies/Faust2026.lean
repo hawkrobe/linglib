@@ -912,14 +912,14 @@ longer a docstring stipulation — it falls out by `rfl` from
 `CatHead` tags, and breaks if either Faust's morphological claim or
 Kramer's `CatHead` taxonomy changes. -/
 
-open Morphology.DistributedMorphology (CatHead)
+open DistributedMorphology (CatHead)
 
 /-! The morphological-licensing predicate `CatHead.licensesIntrusion`
 itself lives in `Morphology/DistributedMorphology/Categorizer.lean` (alongside
 the Kramer taxonomy it ranges over), together with its per-canonical-
 head verification theorems (`n_uFem_licenses_intrusion`,
 `v_plain_blocks_intrusion`, etc.) and the iff characterization
-`Morphology.DistributedMorphology.licensesIntrusion_iff_n_and_gen`. The Faust-specific
+`DistributedMorphology.licensesIntrusion_iff_n_and_gen`. The Faust-specific
 content of §12 is the *per-template `CatHead` tagging* and the
 per-derivation verdicts below. -/
 
@@ -978,11 +978,11 @@ theorem intrusion_wellformed_iff_no_intruder_or_n_with_gen
   rw [intrusionLicensed_iff]
   constructor
   · rintro (hlic | hno)
-    · exact Or.inr ((Morphology.DistributedMorphology.licensesIntrusion_iff_n_and_gen ch).mp hlic)
+    · exact Or.inr ((DistributedMorphology.licensesIntrusion_iff_n_and_gen ch).mp hlic)
     · exact Or.inl hno
   · rintro (hno | hgen)
     · exact Or.inr hno
-    · exact Or.inl ((Morphology.DistributedMorphology.licensesIntrusion_iff_n_and_gen ch).mpr hgen)
+    · exact Or.inl ((DistributedMorphology.licensesIntrusion_iff_n_and_gen ch).mpr hgen)
 
 /-- **Corollary (verbal half).** Under a verbal locus (`v_plain`, with
     no gender feature), licensing reduces to intruder-freeness. This is

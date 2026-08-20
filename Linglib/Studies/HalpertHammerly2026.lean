@@ -411,7 +411,7 @@ theorem om_and_override_share_predicate (stack : NPStack) :
 -- ============================================================================
 
 section KramerBridge
-open Morphology.DistributedMorphology
+open DistributedMorphology
 
 /-- Bridge from H&H's animacy features to [kramer-2015]'s
     `GenderFeature` on the categorizing head n.

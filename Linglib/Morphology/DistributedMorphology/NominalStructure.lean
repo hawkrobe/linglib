@@ -36,7 +36,7 @@ Spec,nP (cf. [kampanarou-alexiadou-2026] p. 24), which the substrate
 does not currently represent.
 -/
 
-namespace Morphology.DistributedMorphology
+namespace DistributedMorphology
 
 -- ============================================================================
 -- § 1: Structural Positions in the Nominal Domain
@@ -225,4 +225,4 @@ theorem both_mechanisms_glh_consistent :
     genderLocalityHypothesis PossessionGenderMechanism.inheritedGender.possessorPosition = true :=
   ⟨rfl, rfl⟩
 
-end Morphology.DistributedMorphology
+end DistributedMorphology

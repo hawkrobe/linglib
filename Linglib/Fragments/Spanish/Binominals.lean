@@ -20,7 +20,7 @@ and thereby the availability of NP-ellipsis.
 namespace Spanish.Binominals
 
 open Quantification.Binominal
-open Morphology.DistributedMorphology
+open DistributedMorphology
 
 /-- A Spanish binominal noun entry, with gender encoded via the DM
     categorizing head on n ([kramer-2015]). -/

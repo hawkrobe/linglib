@@ -68,7 +68,7 @@ The mapping is partial in two ways:
 
 namespace Corbett1991
 
-open Morphology.DistributedMorphology
+open DistributedMorphology
 
 /-- Whether a `SemanticBasis` falls within the semantic core.
 
@@ -106,7 +106,7 @@ def SemanticBasis.toGenderDimension : SemanticBasis → Option GenderDimension
 
 end Corbett1991
 
-namespace Morphology.DistributedMorphology
+namespace DistributedMorphology
 
 open Corbett1991
 
@@ -117,7 +117,7 @@ def GenderDimension.toSemanticBasis : GenderDimension → Corbett1991.SemanticBa
   | .masc => .sex
   | .anim => .animacy
 
-end Morphology.DistributedMorphology
+end DistributedMorphology
 
 -- ============================================================================
 -- Main study namespace
@@ -126,7 +126,7 @@ end Morphology.DistributedMorphology
 namespace Kramer2020
 
 open Corbett1991 hiding russian spanish hausa
-open Morphology.DistributedMorphology
+open DistributedMorphology
 
 /-- Aliases for Kramer's three case-study languages, drawn from the
     [corbett-1991] study sample (WALS-grounded there). -/

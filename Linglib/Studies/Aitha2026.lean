@@ -55,7 +55,7 @@ namespace Aitha2026
 
 
 open Core Constraints OptimalityTheory Core.Optimization Core.Optimization.Evaluation
-open Morphology.DistributedMorphology.VI
+open DistributedMorphology.VI
 open Prosody
 
 -- ============================================================================

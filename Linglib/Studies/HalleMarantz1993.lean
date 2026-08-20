@@ -42,7 +42,7 @@ file is its only consumer.
 
 namespace HalleMarantz1993
 
-open Morphology.DistributedMorphology.VI
+open DistributedMorphology.VI
 open Morphology.MirrorPrinciple
 open Morphology (MorphCategory)
 

@@ -660,7 +660,7 @@ theorem mwaghavul_is_tonal_hyman :
     as a verb through merger with v, whose sole phonological exponent
     is a tonal melody. -/
 
-open Morphology.DistributedMorphology
+open DistributedMorphology
 
 /-- The verbaliser produces verbal category. -/
 def verbalizerCat : CatHead := CatHead.v_plain

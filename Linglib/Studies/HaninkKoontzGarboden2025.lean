@@ -65,7 +65,7 @@ namespace HaninkKoontzGarboden2025
 
 open Verb Verb.Root
 open KoontzGarboden2009.Monotonicity
-open Morphology.DistributedMorphology (Categorizer)
+open DistributedMorphology (Categorizer)
 open ArgumentStructure.Relational (π)
 
 -- ════════════════════════════════════════════════════

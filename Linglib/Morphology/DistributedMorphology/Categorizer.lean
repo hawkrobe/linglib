@@ -1,5 +1,5 @@
 import Linglib.Features.Gender.Interp
-import Linglib.Morphology.DistributedMorphology.Root
+import Linglib.Morphology.DistributedMorphology.Defs
 import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Verbal.Voice
@@ -53,7 +53,7 @@ in `VocabularyInsertion.lean`.
 
 -/
 
-namespace Morphology.DistributedMorphology
+namespace DistributedMorphology
 
 open Minimalist Minimalist.Voice
 open Verb Verb.Root
@@ -61,15 +61,6 @@ open Verb Verb.Root
 -- ============================================================================
 -- § 1: Categorizer Type
 -- ============================================================================
-
-/-- A categorizing head that merges with an acategorial root to project
-    syntactic structure. The three options correspond to the functional
-    heads n, v, a in Distributed Morphology ([marantz-1997], [harley-2014] §2). -/
-inductive Categorizer where
-  | n  -- nominal categorizer
-  | v  -- verbal categorizer
-  | a  -- adjectival categorizer
-  deriving DecidableEq, Repr
 
 /-- Map a categorizer to its syntactic category. -/
 def Categorizer.toCategory : Categorizer → Cat
@@ -912,4 +903,4 @@ theorem catHead_gender_always_known_three (ch : CatHead) :
     ∃ g, ch.toGenderInfoThree = .known g := by
   exact ⟨ch.surfaceGenderThree, rfl⟩
 
-end Morphology.DistributedMorphology
+end DistributedMorphology
