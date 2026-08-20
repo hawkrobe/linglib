@@ -423,6 +423,20 @@ theorem compat_iff [DecidableEq α] :
     · rw [if_neg hab]
       exact iff_of_false nofun (fun h => hab (h a rfl b rfl))
 
+/-- On compatible slots, unification is the priority union: agreeing
+commitments collapse and `⊥` defers, so the biased and unbiased merges
+coincide. -/
+theorem unify_eq_some_or_of_compat [DecidableEq α] {x y : Flat α}
+    (h : Compat x y) : PartialUnify.unify x y = Option.some (x.or y) := by
+  match x, y with
+  | ⊥, y => rfl
+  | (a : α), ⊥ => rfl
+  | (a : α), (b : α) =>
+    obtain rfl : a = b := compat_iff.mp h a rfl b rfl
+    show Flat.unify (↑a : Flat α) ↑a = _
+    rw [unify_coe_coe, if_pos rfl]
+    rfl
+
 /-! ### Non-distributivity
 
 The flat order is not distributive: three distinct atoms (with a top
