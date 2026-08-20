@@ -110,6 +110,43 @@ theorem elsewhere_always_matches {F E : Type*} [BEq F]
     (FeatureVI.mk ([] : List F) e).features.all (target.contains ·) = true := by
   simp [List.all_nil]
 
+private theorem foldl_choice_mem {α : Type*} {pick : Option α → α → Option α}
+    (hpick : ∀ acc x, pick acc x = some x ∨ pick acc x = acc) :
+    ∀ {l : List α} {acc : Option α} {i : α},
+      l.foldl pick acc = some i → i ∈ l ∨ acc = some i := by
+  intro l
+  induction l with
+  | nil => exact fun h => .inr h
+  | cons x xs ih =>
+    intro acc i h
+    rcases ih h with hmem | hacc
+    · exact .inl (List.mem_cons_of_mem _ hmem)
+    · rcases hpick acc x with hx | hkeep
+      · rw [hx] at hacc
+        obtain rfl := Option.some.inj hacc
+        exact .inl (List.mem_cons_self ..)
+      · exact .inr (hkeep ▸ hacc)
+
+/-- The Subset Principle's winner is an item of the vocabulary whose
+features are all present in the target — the selected exponent never
+draws on features the node does not bear. -/
+theorem subsetPrinciple_winner_mem {F E : Type*} [BEq F]
+    {items : List (FeatureVI F E)} {target : List F} {e : E}
+    (h : subsetPrinciple items target = some e) :
+    ∃ i ∈ items, i.exponent = e ∧ i.features.all (target.contains ·) = true := by
+  unfold subsetPrinciple at h
+  obtain ⟨i, hfold, rfl⟩ := Option.map_eq_some_iff.mp h
+  have hmem := foldl_choice_mem (fun acc x => by
+    cases acc with
+    | none => exact .inl rfl
+    | some prev =>
+      by_cases hlen : x.features.length > prev.features.length <;>
+        simp [hlen]) hfold
+  rcases hmem with hmem | hnone
+  · have := List.mem_filter.mp hmem
+    exact ⟨i, this.1, rfl, this.2⟩
+  · exact absurd hnone (by simp)
+
 -- ============================================================================
 -- § 3: The shared exponence core
 -- ============================================================================
