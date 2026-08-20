@@ -4,7 +4,7 @@ import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Syntax.Minimalist.Probe.Satisfaction
-import Linglib.Morphology.DistributedMorphology.VocabSimple
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Minimalist
 import Linglib.Morphology.DistributedMorphology.Impoverishment
 import Linglib.Fragments.Mayan.Mam.Agreement
 import Linglib.Fragments.Mayan.Params

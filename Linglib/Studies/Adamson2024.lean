@@ -1,7 +1,7 @@
 import Linglib.Morphology.DistributedMorphology.NominalSpine
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.DistributedMorphology.Categorizer.Semantics
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Jarawara.PossessedNouns
 import Linglib.Fragments.Italian.NumberGender

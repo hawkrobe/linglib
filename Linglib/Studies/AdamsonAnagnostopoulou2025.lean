@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Features.Gender.Basic
 
 /-!
