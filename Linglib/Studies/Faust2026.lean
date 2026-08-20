@@ -901,7 +901,7 @@ intruder is morphosyntactically available to fill the templatic slot.
 Sections 1–11 verify the prosodic side of the analysis (intrusion
 satisfies the template without violating \*Misalignment). This
 section verifies the *morphological* side by formalizing the Faust
-claim as a predicate on Kramer's `CatHead`:
+claim as a predicate on Kramer's `Categorizer.Head`:
 
 > Intrusion is licensed iff the categorizer is `n` and carries a
 > gender feature.
@@ -909,21 +909,21 @@ claim as a predicate on Kramer's `CatHead`:
 Once that predicate is in place, the verbal/nominal asymmetry is no
 longer a docstring stipulation — it falls out by `rfl` from
 `TemplateMatch.intrusionLicensed` applied to the per-template
-`CatHead` tags, and breaks if either Faust's morphological claim or
-Kramer's `CatHead` taxonomy changes. -/
+`Categorizer.Head` tags, and breaks if either Faust's morphological claim or
+Kramer's `Categorizer.Head` taxonomy changes. -/
 
-open DistributedMorphology (CatHead)
+open DistributedMorphology (Categorizer.Head)
 
-/-! The morphological-licensing predicate `CatHead.licensesIntrusion`
+/-! The morphological-licensing predicate `Categorizer.Head.licensesIntrusion`
 itself lives in `Morphology/DistributedMorphology/Categorizer.lean` (alongside
 the Kramer taxonomy it ranges over), together with its per-canonical-
 head verification theorems (`n_uFem_licenses_intrusion`,
 `v_plain_blocks_intrusion`, etc.) and the iff characterization
 `DistributedMorphology.licensesIntrusion_iff_n_and_gen`. The Faust-specific
-content of §12 is the *per-template `CatHead` tagging* and the
+content of §12 is the *per-template `Categorizer.Head` tagging* and the
 per-derivation verdicts below. -/
 
-/-! #### Per-template `CatHead` tags
+/-! #### Per-template `Categorizer.Head` tags
 
 Faust's analysis assigns each templatic morphology slot to a specific
 categorizer head. These are the morphosyntactic claims; the
@@ -932,31 +932,31 @@ intrusion-licensing predictions follow mechanically. -/
 /-- Hebrew PST.3MSG `CaCaC[+c]` is realized at v (verbal categorizer);
     gender lives on the Agr head outside the template, so v itself
     has no gender-bearing exponent to intrude. -/
-def hebrewPst3msg_locus : CatHead := CatHead.v_plain
+def hebrewPst3msg_locus : Categorizer.Head := Categorizer.Head.v_plain
 
 /-- Hebrew passive participle `CaCuC` is also v-realized. -/
-def hebrewPassPrtcpl_locus : CatHead := CatHead.v_plain
+def hebrewPassPrtcpl_locus : Categorizer.Head := Categorizer.Head.v_plain
 
 /-- Hebrew taQTiL[+c] is a feminine deverbal noun realized at n[+gen]
     (the u[+FEM] head in Kramer's Set 1 taxonomy — the source of the
     intruding /t/). -/
-def hebrewTaQTiL_locus : CatHead := CatHead.n_uFem
+def hebrewTaQTiL_locus : Categorizer.Head := Categorizer.Head.n_uFem
 
 /-- Amharic PFV.3MSG `CäC.CäC[+c]` is v-realized. -/
-def amharicPfv3msg_locus : CatHead := CatHead.v_plain
+def amharicPfv3msg_locus : Categorizer.Head := Categorizer.Head.v_plain
 
 /-- Amharic gerund `CäC.C[+c]-o` is a deverbal nominal at n[+gen]. -/
-def amharicGrnd_locus : CatHead := CatHead.n_uFem
+def amharicGrnd_locus : Categorizer.Head := Categorizer.Head.n_uFem
 
 /-- Amharic infinitive `mä-CVCVC[+c]` is also a deverbal nominal at
     n[+gen] — confirmed by the (13a) [t]-intrusion in [mäsmat].
     [faust-2026]'s analysis treats Amharic infinitives as
     nominalizations whose template is hosted on n. -/
-def amharicInf_locus : CatHead := CatHead.n_uFem
+def amharicInf_locus : Categorizer.Head := Categorizer.Head.n_uFem
 
 /-! #### Universal licensing structure (Faust + Kramer)
 
-The Faust-`CatHead` interaction is governed by a single structural
+The Faust-`Categorizer.Head` interaction is governed by a single structural
 fact, derivable by composing `intrusionLicensed_iff`
 (the template section above) with `licensesIntrusion_iff_n_and_gen`
 (Categorizer.lean). The per-derivation `decide` theorems below and the
@@ -964,7 +964,7 @@ end-of-section `verbal_nominal_asymmetry_from_kramer` bundle are all
 instances of this universal claim. -/
 
 /-- **The Faust+Kramer integration theorem.** A `TemplateMatch`
-    passes intrusion-licensing under a `CatHead` iff either the match
+    passes intrusion-licensing under a `Categorizer.Head` iff either the match
     is intruder-free OR the head is a gender-bearing nominal (n[+gen],
     in [kramer-2020]'s sense).
 
@@ -972,9 +972,9 @@ instances of this universal claim. -/
     every per-derivation verdict in §12 reduces to checking which
     disjunct holds for the specific (match, head) pair. -/
 theorem intrusion_wellformed_iff_no_intruder_or_n_with_gen
-    (m : TemplateMatch String) (ch : CatHead) :
+    (m : TemplateMatch String) (ch : Categorizer.Head) :
     m.intrusionLicensed ch.licensesIntrusion ↔
-      ¬ m.hasIntruder ∨ (ch.cat = .n ∧ ch.phi.gender.isSome = true) := by
+      ¬ m.hasIntruder ∨ (ch.categorizer = .n ∧ ch.phi.gender.isSome = true) := by
   rw [intrusionLicensed_iff]
   constructor
   · rintro (hlic | hno)
@@ -990,7 +990,7 @@ theorem intrusion_wellformed_iff_no_intruder_or_n_with_gen
     to be morphologically licensed — the spreading and empty-slot
     strategies are the only options open to v. -/
 theorem v_plain_licenses_iff_no_intruder (m : TemplateMatch String) :
-    m.intrusionLicensed CatHead.v_plain.licensesIntrusion ↔
+    m.intrusionLicensed Categorizer.Head.v_plain.licensesIntrusion ↔
       ¬ m.hasIntruder := by
   rw [intrusion_wellformed_iff_no_intruder_or_n_with_gen]
   constructor
@@ -1005,14 +1005,14 @@ theorem v_plain_licenses_iff_no_intruder (m : TemplateMatch String) :
     like Hebrew taQTiL and Amharic gerunds/INFs — the Kramer-2020
     structure makes the n[+gen] exponent morphosyntactically present. -/
 theorem n_uFem_licenses_universally (m : TemplateMatch String) :
-    m.intrusionLicensed CatHead.n_uFem.licensesIntrusion := by
+    m.intrusionLicensed Categorizer.Head.n_uFem.licensesIntrusion := by
   rw [intrusion_wellformed_iff_no_intruder_or_n_with_gen]
   exact Or.inr ⟨rfl, rfl⟩
 
 /-! #### Per-derivation licensing theorems
 
 For every match, the predicate `TemplateMatch.intrusionLicensed`
-applied to the corresponding template's `CatHead.licensesIntrusion`
+applied to the corresponding template's `Categorizer.Head.licensesIntrusion`
 gives the well-formedness verdict. The proofs are `decide` — the
 disjunction reduces by `rfl` once the predicates evaluate. -/
 
@@ -1107,7 +1107,7 @@ theorem hebrew_pst3msg_intrusion_morphologically_blocked :
 /-! #### The cross-paper integration theorem -/
 
 /-- The verbal/nominal asymmetry of [faust-2026] (11), derived
-    from [kramer-2020]'s `CatHead` taxonomy:
+    from [kramer-2020]'s `Categorizer.Head` taxonomy:
 
     1. **Intrusion is licensed at n[+gen] (here `n_uFem`).** Both
        Hebrew taQTiL [tadmit] and the hypothetical verbal-template
@@ -1125,7 +1125,7 @@ theorem hebrew_pst3msg_intrusion_morphologically_blocked :
 
     The asymmetry is therefore *derived* — not stipulated — from the
     composition of two independent claims: Faust's licensing
-    predicate (only n with [+gen]) and Kramer's `CatHead` structure
+    predicate (only n with [+gen]) and Kramer's `Categorizer.Head` structure
     (n vs. v). -/
 theorem verbal_nominal_asymmetry_from_kramer :
     -- Nominal locus licenses intrusion candidates

@@ -55,7 +55,7 @@ allosemes (v ⊕ n), not a single-head competition — so it stays a table.
 
 namespace DistributedMorphology.Allosemy
 
-open DistributedMorphology (Categorizer CatHead)
+open DistributedMorphology (Categorizer Categorizer.Head)
 open DistributedMorphology.CategorizerSemantics (NSemanticType)
 open Minimalist.Voice (Flavor Head)
 

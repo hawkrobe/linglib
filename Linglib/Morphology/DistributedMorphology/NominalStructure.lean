@@ -114,7 +114,7 @@ theorem glh_root_and_n_local :
     ([adamson-2024], following [myler-2016]).
 
     - **Inalienable** (iPossession): possessor introduced in Spec,nP.
-      The n head bears a selectional feature {D} (`CatHead.selectsD`).
+      The n head bears a selectional feature {D} (`Categorizer.Head.selectsD`).
       Semantically introduces a body-part-of / part-whole relation.
     - **Alienable** (aPossession): possessor introduced in Spec,PossP,
       mediated by a Poss head. Requires additional morphological marking
