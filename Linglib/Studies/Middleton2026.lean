@@ -186,8 +186,8 @@ block ordering ([middleton-2026] §4.2.5).
     Morphological Concord are abstracted away — their internal ordering
     is not at issue in [middleton-2026]. -/
 structure ModularPostsyntax where
-  paradigmatic : List ImpoverishmentRule
-  syntagmatic  : List ImpoverishmentRule
+  paradigmatic : List (ImpoverishmentRule FeatureBundle FeatureVal)
+  syntagmatic  : List (ImpoverishmentRule FeatureBundle FeatureVal)
   metathesis   : List MetathesisRule
 
 /-- A&N's strict pipeline: para-block, then syn-block, then metathesis. -/
@@ -200,7 +200,7 @@ def runStrict (M : ModularPostsyntax) (n : Neighborhood FeatureBundle) : Feature
     (whose entries may be paradigmatic or syntagmatic in any order),
     then metathesis. -/
 structure InterleavedPostsyntax where
-  impoverishment : List ImpoverishmentRule
+  impoverishment : List (ImpoverishmentRule FeatureBundle FeatureVal)
   metathesis     : List MetathesisRule
 
 def runInterleaved (M : InterleavedPostsyntax) (n : Neighborhood FeatureBundle) :
@@ -227,7 +227,7 @@ theorem runStrict_eq_interleaved_paraSyn
 
 /-- A two-rule strict pipeline (one paradigmatic, one syntagmatic, no
     metathesis) reduces to applying `[p, s]` in order. -/
-@[simp] theorem runStrict_singleton (p s : ImpoverishmentRule)
+@[simp] theorem runStrict_singleton (p s : ImpoverishmentRule FeatureBundle FeatureVal)
     (n : Neighborhood FeatureBundle) :
     runStrict ⟨[p], [s], []⟩ n = applyImpoverishmentChain [p, s] n := by
   simp only [runStrict, applyImpoverishmentChain, runChain,
@@ -235,7 +235,8 @@ theorem runStrict_eq_interleaved_paraSyn
 
 /-- An interleaved pipeline with no metathesis reduces to the
     impoverishment chain. -/
-@[simp] theorem runInterleaved_no_metathesis (rs : List ImpoverishmentRule)
+@[simp] theorem runInterleaved_no_metathesis
+    (rs : List (ImpoverishmentRule FeatureBundle FeatureVal))
     (n : Neighborhood FeatureBundle) :
     runInterleaved ⟨rs, []⟩ n = applyImpoverishmentChain rs n := by
   simp only [runInterleaved, applyMetathesisChain, runChain, List.foldl_nil]
@@ -251,14 +252,14 @@ theorem runStrict_eq_interleaved_paraSyn
     §4.2.1–§4.2.4 require precisely the syn-before-para derivation that
     `runStrict` excludes by construction. -/
 theorem runStrict_forces_paraSyn_order
-    (p s : ImpoverishmentRule) (n : Neighborhood FeatureBundle) :
+    (p s : ImpoverishmentRule FeatureBundle FeatureVal) (n : Neighborhood FeatureBundle) :
     runStrict ⟨[p], [s], []⟩ n = applyImpoverishmentChain [p, s] n :=
   runStrict_singleton p s n
 
 /-- The interleaved pipeline can deliver the syn-first derivation that
     `runStrict` cannot. -/
 theorem runInterleaved_admits_synPara
-    (p s : ImpoverishmentRule) (n : Neighborhood FeatureBundle) :
+    (p s : ImpoverishmentRule FeatureBundle FeatureVal) (n : Neighborhood FeatureBundle) :
     runInterleaved ⟨[s, p], []⟩ n = applyImpoverishmentChain [s, p] n :=
   runInterleaved_no_metathesis _ _
 
@@ -266,7 +267,7 @@ theorem runInterleaved_admits_synPara
     at `n`, then the strict pipeline ⟨[p], [s], []⟩ cannot match the
     interleaved pipeline ⟨[s, p], []⟩ at `n`. -/
 theorem runStrict_neq_runInterleaved_of_diverges
-    (p s : ImpoverishmentRule) (n : Neighborhood FeatureBundle)
+    (p s : ImpoverishmentRule FeatureBundle FeatureVal) (n : Neighborhood FeatureBundle)
     (h : applyImpoverishmentChain [p, s] n ≠ applyImpoverishmentChain [s, p] n) :
     runStrict ⟨[p], [s], []⟩ n ≠ runInterleaved ⟨[s, p], []⟩ n := by
   rw [runStrict_singleton, runInterleaved_no_metathesis]
@@ -274,14 +275,16 @@ theorem runStrict_neq_runInterleaved_of_diverges
 
 /-- A two-step pipeline that runs impoverishment then metathesis at a
     neighborhood (the order both A&N and Middleton endorse). -/
-def runImpovThenMeta (rs : List ImpoverishmentRule) (ms : List MetathesisRule)
+def runImpovThenMeta (rs : List (ImpoverishmentRule FeatureBundle FeatureVal))
+    (ms : List MetathesisRule)
     (n : Neighborhood FeatureBundle) : FeatureBundle :=
   applyMetathesisChain ms { n with focus := applyImpoverishmentChain rs n }
 
 /-- The reversed two-step pipeline: metathesis first, then impoverishment
     (the order both A&N and Middleton reject — supported by Basque in §3.1
     and by Taos in §3.2 of [middleton-2026]). -/
-def runMetaThenImpov (rs : List ImpoverishmentRule) (ms : List MetathesisRule)
+def runMetaThenImpov (rs : List (ImpoverishmentRule FeatureBundle FeatureVal))
+    (ms : List MetathesisRule)
     (n : Neighborhood FeatureBundle) : FeatureBundle :=
   applyImpoverishmentChain rs { n with focus := applyMetathesisChain ms n }
 
@@ -291,7 +294,8 @@ def runMetaThenImpov (rs : List ImpoverishmentRule) (ms : List MetathesisRule)
     and `runMetaThenImpov` differ — i.e., the architectural choice has
     empirical content. -/
 theorem runImpov_neq_runMeta_of_diverges
-    (r : ImpoverishmentRule) (m : MetathesisRule) (n : Neighborhood FeatureBundle)
+    (r : ImpoverishmentRule FeatureBundle FeatureVal) (m : MetathesisRule)
+    (n : Neighborhood FeatureBundle)
     (h : applyMetathesisChain [m] { n with focus := applyImpoverishment r n } ≠
          applyImpoverishment r { n with focus := applyMetathesis m n }) :
     runImpovThenMeta [r] [m] n ≠ runMetaThenImpov [r] [m] n := by
@@ -311,7 +315,7 @@ theorem runImpov_neq_runMeta_of_diverges
     This is a minimal stand-in for the paradigmatic rules involved in
     [middleton-2026] §4.2.1–§4.2.4 — it is not a transcription of
     any specific paper rule. -/
-def paraAtomicRule : ImpoverishmentRule :=
+def paraAtomicRule : ImpoverishmentRule FeatureBundle FeatureVal :=
   paradigmatic
     (λ fb =>
       (FeatureBundle.toGramFeatures fb).any (λ f => f.featureType.sameType (fAuthor true)) &&
@@ -328,9 +332,10 @@ theorem paraAtomicRule_isParadigmatic : Paradigmatic paraAtomicRule :=
     interaction the paper diagnoses). The dependence on `rightCtx`
     is what makes the rule syntagmatic, and `synMinimalRule_isSyntagmatic`
     proves it. -/
-def synMinimalRule : ImpoverishmentRule where
+def synMinimalRule : ImpoverishmentRule FeatureBundle FeatureVal where
   condition n :=
-    ((FeatureBundle.toGramFeatures n.focus).any (λ f => f.featureType.sameType (fAtomic true)) = true)
+    ((FeatureBundle.toGramFeatures n.focus).any
+        (λ f => f.featureType.sameType (fAtomic true)) = true)
     ∧ (n.rightCtx.length > 0)
   decCond _ := inferInstance
   target := fMinimal true
@@ -495,7 +500,7 @@ def applyMetathesisExp (rule : MetathesisRule) (l : List GramFeature) :
 /-- Apply an impoverishment rule to an ordered exponent string in the
     witness context: when the rule fires, drop every exponent of the
     target's dimension, preserving the order of the survivors. -/
-def applyImpovExp (rule : ImpoverishmentRule) (l : List GramFeature) :
+def applyImpovExp (rule : ImpoverishmentRule FeatureBundle FeatureVal) (l : List GramFeature) :
     List GramFeature :=
   if rule.condition { witness with focus := .ofGramFeatures l } then
     l.filter (λ f => ! f.featureType.sameType rule.target)
