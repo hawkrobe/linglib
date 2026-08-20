@@ -31,7 +31,7 @@ which imports this file.
 - `resultativeAspect`, `resultativeVendlerClass` — bounded RP → telic
 - `adjScaleToRPBoundedness` — Kennedy 2007 scale → G&J boundedness
 - `ResultativeSubconstruction.toConstruction` — derived family of
-  `ArgStructureConstruction` instances + `inheritanceLink`
+  derived construction family + `inheritanceLink`
 - `farSatisfied`, `rolesCoherent`, `temporalConstraintSatisfied` —
   the three substantive constraints (Principles 37, 44, §4.2)
 
@@ -526,7 +526,7 @@ theorem noncausative_sc_contribution (sc : ResultativeSubconstruction)
 /-- Causative subconstructions match the parent `resultative`'s semantic contribution. -/
 theorem causative_semantics_match_parent (sc : ResultativeSubconstruction)
     (h : sc.isCausative = true) :
-    sc.semanticContribution = resultative.semanticContribution := by
+    sc.semanticContribution = resultative.meaning := by
   cases sc <;> simp_all [ResultativeSubconstruction.isCausative,
     ResultativeSubconstruction.semanticContribution, resultative]
 
@@ -558,35 +558,25 @@ def ResultativeSubconstruction.nameSuffix : ResultativeSubconstruction → Strin
   | .noncausativeProperty => "NoncausativeProperty"
   | .noncausativePath     => "NoncausativePath"
 
-/-- Derive the ArgStructureConstruction from a subconstruction.
+/-- Derive the construction from a subconstruction, its meaning pole the
+subconstruction's `MeaningComponents` contribution.
 
 Slots are determined by the two dimensions:
 - Causative: [NOUN subj, VERB head, NOUN obj, RP-UPOS rp]
 - Noncausative: [NOUN subj, VERB head, RP-UPOS rp] -/
 def ResultativeSubconstruction.toConstruction (sc : ResultativeSubconstruction) :
-    ArgStructureConstruction :=
-  let rpCat := sc.rpType.toUPOS
-  let rpRole := sc.rpType.roleLabel
-  let subjRole := if sc.isCausative then "agent" else "theme"
-  { construction :=
-      { name := s!"Resultative-{sc.nameSuffix}"
-      , form := if sc.isCausative then
-          [ { filler := .open_ .NOUN, role := some subjRole }
-          , { filler := .open_ .VERB, role := some "predicate", isHead := true }
-          , { filler := .open_ .NOUN
-            , role := some (if sc.rpType == .property then "patient" else "theme") }
-          , { filler := .open_ rpCat, role := some rpRole } ]
-        else
-          [ { filler := .open_ .NOUN, role := some subjRole }
-          , { filler := .open_ .VERB, role := some "predicate", isHead := true }
-          , { filler := .open_ rpCat, role := some rpRole } ]
-      , meaning := match sc with
-          | .causativeProperty    => "X CAUSES Y to BECOME Z-state (via V-ing)"
-          | .causativePath        => "X CAUSES Y to GO to Z-location (via V-ing)"
-          | .noncausativeProperty => "X BECOMES Z-state (via V-ing)"
-          | .noncausativePath     => "X GOES to Z-location (via V-ing)" }
-  , hasHead := by cases sc <;> decide
-  , semanticContribution := sc.semanticContribution }
+    Construction MeaningComponents :=
+  { name := s!"Resultative-{sc.nameSuffix}"
+  , form := if sc.isCausative then
+      [ { filler := .open_ .NOUN }
+      , { filler := .open_ .VERB, isHead := true }
+      , { filler := .open_ .NOUN }
+      , { filler := .open_ sc.rpType.toUPOS } ]
+    else
+      [ { filler := .open_ .NOUN }
+      , { filler := .open_ .VERB, isHead := true }
+      , { filler := .open_ sc.rpType.toUPOS } ]
+  , meaning := sc.semanticContribution }
 
 /-- The composed meaning: verb MC fused with the subconstruction's contribution. -/
 def ResultativeEntry.fusedMC (e : ResultativeEntry) : MeaningComponents :=
@@ -599,7 +589,7 @@ def noncausativePropertyConstruction := ResultativeSubconstruction.noncausativeP
 def noncausativePathConstruction := ResultativeSubconstruction.noncausativePath.toConstruction
 
 /-- The full resultative family, derived from all four subconstructions. -/
-def resultativeFamily : List ArgStructureConstruction :=
+def resultativeFamily : List (Construction MeaningComponents) :=
   [ResultativeSubconstruction.causativeProperty,
    .causativePath, .noncausativeProperty, .noncausativePath].map (·.toConstruction)
 
@@ -625,9 +615,8 @@ def resultativeInheritance : List InheritanceLink :=
 /-- The [goldberg-jackendoff-2004] resultative family as a constructicon:
 the parent construction plus its four derived subconstructions and
 inheritance links. -/
-def resultativeNetwork : Constructicon :=
-  { constructions :=
-      resultative.construction :: resultativeFamily.map (·.construction)
+def resultativeNetwork : Constructicon MeaningComponents :=
+  { constructions := resultative :: resultativeFamily
   , links := resultativeInheritance }
 
 /-- Every derived link resolves to a member construction. -/
@@ -636,8 +625,8 @@ theorem resultativeNetwork_wellFormed : resultativeNetwork.WellFormed := by
 
 /-- The links determine each subconstruction's mother: the resultative. -/
 theorem subconstruction_parent (sc : ResultativeSubconstruction) :
-    resultativeNetwork.parentsOf sc.toConstruction.construction.name =
-      [resultative.construction] := by
+    resultativeNetwork.parentsOf sc.toConstruction.name =
+      [resultative] := by
   cases sc <;> decide
 
 /-- All inheritance links point to the same parent. -/
@@ -647,19 +636,19 @@ theorem all_inherit_from_resultative :
 
 /-- All four subconstructions are fully abstract (decomposable). -/
 theorem all_subconstructions_abstract :
-    resultativeFamily.all (λ c => c.construction.specificity == .fullyAbstract) = true := by
+    resultativeFamily.all (λ c => c.specificity == .fullyAbstract) = true := by
   decide
 
 /-- Causative subconstructions are transitive (4 slots);
     noncausative are intransitive (3 slots). -/
 theorem causative_are_transitive :
-    causativePropertyConstruction.slots.length = 4 ∧
-    causativePathConstruction.slots.length = 4 := by
+    causativePropertyConstruction.form.length = 4 ∧
+    causativePathConstruction.form.length = 4 := by
   constructor <;> decide
 
 theorem noncausative_are_intransitive :
-    noncausativePropertyConstruction.slots.length = 3 ∧
-    noncausativePathConstruction.slots.length = 3 := by
+    noncausativePropertyConstruction.form.length = 3 ∧
+    noncausativePathConstruction.form.length = 3 := by
   constructor <;> decide
 
 /-! Schema-decomposition theorems for the subconstruction family

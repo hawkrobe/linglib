@@ -183,84 +183,92 @@ def allN₁Entries : List BinominalN₁Entry :=
 
 open ConstructionGrammar
 
-/-- The six *of*-binominal constructions as CxG `Construction` entries
-    ([ten-wolde-2023]). -/
-def nPPConstruction : Construction where
+/-- The N+PP construction ([ten-wolde-2023]): N₁ denotes a referent; the
+PP ascribes a property onto the head. The first of the six
+*of*-binominal constructions. -/
+def nPPConstruction : Construction Unit where
   name := "N+PP"
   form :=
     [ { filler := .open_ .DET }
-    , { filler := .open_ .NOUN, role := some "head", isHead := true }
+    , { filler := .open_ .NOUN, isHead := true }
     , { filler := .fixed "of" }
     , { filler := .open_ .DET }
-    , { filler := .open_ .NOUN, role := some "property" } ]
-  meaning := "N₁ denotes a referent, PP ascribes a property onto the head"
+    , { filler := .open_ .NOUN } ]
+  meaning := ()
 
-def headClassifierConstruction : Construction where
+/-- The head-classifier construction: the construction denotes a referent; the PP classifies the head. -/
+def headClassifierConstruction : Construction Unit where
   name := "Head-Classifier"
   form :=
     [ { filler := .open_ .DET }
-    , { filler := .open_ .NOUN, role := some "head", isHead := true }
+    , { filler := .open_ .NOUN, isHead := true }
     , { filler := .fixed "of" }
-    , { filler := .open_ .NOUN, role := some "classifier" } ]
-  meaning := "Construction denotes a referent, PP classifies head"
+    , { filler := .open_ .NOUN } ]
+  meaning := ()
 
-def pseudoPartitiveConstruction : Construction where
+/-- The pseudo-partitive: N₁ quantizes; N₂ denotes the measured substance. -/
+def pseudoPartitiveConstruction : Construction Unit where
   name := "Pseudo-partitive"
   form :=
     [ { filler := .open_ .DET }
-    , { filler := .open_ .NOUN, role := some "quantizer", isHead := true }
+    , { filler := .open_ .NOUN, isHead := true }
     , { filler := .fixed "of" }
-    , { filler := .open_ .NOUN, role := some "substance" } ]
-  meaning := "N₁ quantizes, N₂ denotes measured substance"
+    , { filler := .open_ .NOUN } ]
+  meaning := ()
 
-def ebnpConstruction : Construction where
+/-- The evaluative binominal NP: N₁ ascribes an evaluative property to the N₂ referent. -/
+def ebnpConstruction : Construction Unit where
   name := "Evaluative BNP"
   form :=
     [ { filler := .open_ .DET }
-    , { filler := .open_ .NOUN, role := some "evaluation" }
+    , { filler := .open_ .NOUN }
     , { filler := .fixed "of" }
     , { filler := .fixed "a" }
-    , { filler := .open_ .NOUN, role := some "referent", isHead := true } ]
-  meaning := "N₁ ascribes evaluative property to N₂ referent"
+    , { filler := .open_ .NOUN, isHead := true } ]
+  meaning := ()
 
-def emConstruction : Construction where
+/-- The evaluative modifier construction: [N₁ of a] is a complex modifier, a speaker evaluation of N₂. -/
+def emConstruction : Construction Unit where
   name := "Evaluative Modifier"
   form :=  -- optional "a" elided
     [ { filler := .open_ .DET }
-    , { filler := .open_ .NOUN, role := some "evaluation" }
+    , { filler := .open_ .NOUN }
     , { filler := .fixed "of" }
-    , { filler := .open_ .NOUN, role := some "head", isHead := true } ]
-  meaning := "[N₁ of a] is complex modifier, speaker evaluation of N₂"
+    , { filler := .open_ .NOUN, isHead := true } ]
+  meaning := ()
 
-def biConstruction : Construction where
+/-- The binominal intensifier: [N₁ of a] intensifies the following adjective or quantifier. -/
+def biConstruction : Construction Unit where
   name := "Binominal Intensifier"
   form :=  -- optional "a" elided
-    [ { filler := .open_ .NOUN, role := some "intensifier" }
+    [ { filler := .open_ .NOUN }
     , { filler := .fixed "of" }
-    , { filler := .open_ .ADJ, role := some "intensified" }
-    , { filler := .open_ .NOUN, role := some "head", isHead := true } ]
-  meaning := "[N₁ of a] intensifies following adjective or quantifier"
+    , { filler := .open_ .ADJ }
+    , { filler := .open_ .NOUN, isHead := true } ]
+  meaning := ()
 
 /-- The simple NP construction ([ten-wolde-2023] §8.4).
 
 The simple NP [[Det] (Mod) [N]] plays a key role in the constructional
 network: the head-classifier shares a polysemy link with the classifier
 premodifier in the NP, and the evaluative constructions share polysemy
-links with evaluative/intensifier premodifiers in the NP. -/
-def simpleNPConstruction : Construction where
+links with evaluative/intensifier premodifiers in the NP. It denotes a
+referent; the premodifier ascribes a property onto the head. -/
+def simpleNPConstruction : Construction Unit where
   name := "Simple NP"
   form :=  -- optional premodifier elided
     [ { filler := .open_ .DET }
-    , { filler := .open_ .NOUN, role := some "head", isHead := true } ]
-  meaning := "denotes a referent, premodifier ascribes property to head"
+    , { filler := .open_ .NOUN, isHead := true } ]
+  meaning := ()
 
-/-- The adjective phrase construction, linked to BI ([ten-wolde-2023] Fig 8.13). -/
-def adjPhraseConstruction : Construction where
+/-- The adjective phrase construction, linked to BI ([ten-wolde-2023]
+Fig 8.13): the intensifier emphasizes the following adjective. -/
+def adjPhraseConstruction : Construction Unit where
   name := "AP"
   form :=
-    [ { filler := .open_ .ADV, role := some "intensifier" }
-    , { filler := .open_ .ADJ, role := some "head", isHead := true } ]
-  meaning := "intensifier emphasizes the following adjective"
+    [ { filler := .open_ .ADV }
+    , { filler := .open_ .ADJ, isHead := true } ]
+  meaning := ()
 
 /-- The *of*-binominal constructional network ([ten-wolde-2023]).
 
@@ -269,7 +277,7 @@ micro-construction level (Figs 8.7, 8.9, 8.11, 8.13): each step involves
 a conceptual metaphor that extends the source construction's meaning
 to a new domain. Each construction also has a taxonomic link to the
 schematic N+PP mother node at a higher level (not modeled here). -/
-def ofBinominalNetwork : Constructicon where
+def ofBinominalNetwork : Constructicon Unit where
   constructions :=
     [ nPPConstruction, headClassifierConstruction, pseudoPartitiveConstruction
     , ebnpConstruction, emConstruction, biConstruction

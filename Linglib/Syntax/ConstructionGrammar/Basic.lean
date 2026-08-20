@@ -22,7 +22,8 @@ construction.
 - `SlotFiller`, `Slot`, `TypedForm`: the typed form side
 - `derivedSpecificity`, `HasConstraint`, `refGroupCount`: measures derived
   from forms
-- `Construction`, `Construction.specificity`: form–function pairings
+- `Construction`, `Construction.specificity`, `Construction.map`: typed
+  form–meaning pairings
 - `InheritanceLink`, `Constructicon`: the network
 -/
 
@@ -156,16 +157,13 @@ inductive SlotConstraint where
   | refEmpty   -- [ref ∅]: nonreferential (no variable-binding function)
   deriving DecidableEq, Repr
 
-/-- A slot in a construction's form: filler content, semantic role,
-headedness, and the bar level of the position itself. Fixed slots (like
-"let" in *let alone*) have `role := none` since they carry no independent
-semantic role. `level := none` leaves the position's bar level
-unspecified. -/
+/-- A slot in a construction's form: filler content, headedness, and the
+bar level of the position itself. `level := none` leaves the position's
+bar level unspecified; slots sharing a `refIdx` are co-indexed, the hook
+by which a typed meaning pole refers to slots. -/
 structure Slot (Lex : Type*) where
   /-- What fills this slot -/
   filler : SlotFiller Lex
-  /-- Semantic role label (agent, theme, etc.), if any -/
-  role : Option String := none
   /-- Whether this slot is the head of the construction -/
   isHead : Bool := false
   /-- Bar level of the position (`some .zero` = a word-level slot) -/
@@ -271,19 +269,33 @@ end DerivedSpecificity
 
 /-! ### Constructions and the network -/
 
-/-- A construction: a learned pairing of form and function. The form is a
-`TypedForm`; `name` is a display label; specificity is derived from the
-form (`Construction.specificity`), not stipulated. -/
-structure Construction where
+/-- A construction: a learned pairing of form and meaning. The form is a
+`TypedForm`; the meaning pole is typed by the domain that owns the
+construction — a composition rule, a `MeaningComponents` contribution, a
+presupposition — with `Unit` for a purely formal record or a defective,
+form-only construction. Specificity is derived from the form
+(`Construction.specificity`), not stipulated. -/
+structure Construction (Sem : Type*) where
   name : String
   form : TypedForm String
-  meaning : String           -- semantic/pragmatic function description
-  pragmaticFunction : Option String := none  -- e.g. "presupposes familiarity"
+  /-- The meaning pole. -/
+  meaning : Sem
+  /-- Whether the construction carries a conventional pragmatic point
+      ([fillmore-kay-oconnor-1988] §1.1.4). -/
+  pragmaticPoint : Bool := false
   deriving DecidableEq, Repr
 
+variable {Sem : Type*}
+
 /-- A construction's specificity, derived from its slot structure. -/
-def Construction.specificity (c : Construction) : Specificity :=
+def Construction.specificity (c : Construction Sem) : Specificity :=
   derivedSpecificity c.form
+
+/-- Reinterpret the meaning pole along `f`, keeping the form. -/
+def Construction.map {Sem' : Type*} (f : Sem → Sem') (c : Construction Sem) :
+    Construction Sem' :=
+  { name := c.name, form := c.form, meaning := f c.meaning
+  , pragmaticPoint := c.pragmaticPoint }
 
 /-- An inheritance link between two constructions in the network.
 
@@ -301,8 +313,8 @@ structure InheritanceLink where
   deriving Repr, DecidableEq
 
 /-- A constructicon: a network of constructions connected by inheritance links. -/
-structure Constructicon where
-  constructions : List Construction
+structure Constructicon (Sem : Type*) where
+  constructions : List (Construction Sem)
   links : List InheritanceLink
   deriving Repr
 

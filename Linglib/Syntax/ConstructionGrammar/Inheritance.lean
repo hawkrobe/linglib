@@ -97,47 +97,47 @@ parents its links name. The walk is generic in the specification type:
 record-valued specifications supply their componentwise `inherit` and
 `Resolves` lifts. -/
 
-variable {σ : Type*}
+variable {Sem σ : Type*}
 
 /-- The constructions a network's links name as parents of `name`. -/
-def Constructicon.parentsOf (cx : Constructicon) (name : String) :
-    List Construction :=
+def Constructicon.parentsOf (cx : Constructicon Sem) (name : String) :
+    List (Construction Sem) :=
   (cx.links.filter (·.child == name)).filterMap
     (λ l => cx.constructions.find? (·.name == l.parent))
 
 /-- The constructions a network's links name as children of `name`. -/
-def Constructicon.childrenOf (cx : Constructicon) (name : String) :
-    List Construction :=
+def Constructicon.childrenOf (cx : Constructicon Sem) (name : String) :
+    List (Construction Sem) :=
   (cx.links.filter (·.parent == name)).filterMap
     (λ l => cx.constructions.find? (·.name == l.child))
 
 /-- Every link endpoint resolves to a construction in the network — no
 dangling name-keyed links. -/
-def Constructicon.WellFormed (cx : Constructicon) : Prop :=
+def Constructicon.WellFormed (cx : Constructicon Sem) : Prop :=
   ∀ l ∈ cx.links,
     (∃ c ∈ cx.constructions, c.name = l.parent) ∧
     (∃ c ∈ cx.constructions, c.name = l.child)
 
-instance (cx : Constructicon) : Decidable cx.WellFormed :=
+instance (cx : Constructicon Sem) : Decidable cx.WellFormed :=
   inferInstanceAs (Decidable (∀ l ∈ _, _ ∧ _))
 
 /-- Normal-mode derived specification of `c` in the network: `c`'s own
 specification wins; fields it leaves open are filled from the parents its
 links name ([diessel-2023] Table 2's default mode, computed over the
 links rather than stipulated per node). -/
-def Constructicon.derivedSpec (cx : Constructicon)
-    (inherit : σ → List σ → σ) (own : Construction → σ)
-    (c : Construction) : σ :=
+def Constructicon.derivedSpec (cx : Constructicon Sem)
+    (inherit : σ → List σ → σ) (own : Construction Sem → σ)
+    (c : Construction Sem) : σ :=
   inherit (own c) ((cx.parentsOf c.name).map own)
 
 /-- Normal-mode well-formedness of the whole network: every construction
 legislates every field its parents conflict on. -/
-def Constructicon.ResolvesAll (cx : Constructicon)
-    (resolves : σ → List σ → Prop) (own : Construction → σ) : Prop :=
+def Constructicon.ResolvesAll (cx : Constructicon Sem)
+    (resolves : σ → List σ → Prop) (own : Construction Sem → σ) : Prop :=
   ∀ c ∈ cx.constructions, resolves (own c) ((cx.parentsOf c.name).map own)
 
-instance (cx : Constructicon) (resolves : σ → List σ → Prop)
-    [∀ o ps, Decidable (resolves o ps)] (own : Construction → σ) :
+instance (cx : Constructicon Sem) (resolves : σ → List σ → Prop)
+    [∀ o ps, Decidable (resolves o ps)] (own : Construction Sem → σ) :
     Decidable (cx.ResolvesAll resolves own) :=
   inferInstanceAs (Decidable (∀ c ∈ _, _))
 
@@ -163,8 +163,8 @@ def inheritFieldUnique {α : Type*} (own : Option α)
 /-- Derived value of a denotation-valued field for `c` in the network:
 `c`'s own value wins; otherwise the value of the unique supplying
 parent. -/
-def Constructicon.derivedField {α : Type*} (cx : Constructicon)
-    (own : Construction → Option α) (c : Construction) : Option α :=
+def Constructicon.derivedField {α : Type*} (cx : Constructicon Sem)
+    (own : Construction Sem → Option α) (c : Construction Sem) : Option α :=
   inheritFieldUnique (own c) ((cx.parentsOf c.name).map own)
 
 end ConstructionGrammar

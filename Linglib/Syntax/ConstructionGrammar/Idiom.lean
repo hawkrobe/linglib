@@ -30,7 +30,7 @@ stipulated.
 ## Implementation notes
 
 The paper's fourth contrast — idioms with vs. without pragmatic point
-(§1.1.4) — is carried by `Construction.pragmaticFunction`.
+(§1.1.4) — is the `Construction.pragmaticPoint` field.
 -/
 
 namespace ConstructionGrammar
@@ -85,10 +85,10 @@ theorem IdiomFormality.ofForm_eq_substantive_iff (form : TypedForm Lex) :
 
 /-- A formal idiom in the sense of [fillmore-kay-oconnor-1988] §1.1.3: a
 construction whose form is lexically open. -/
-def Construction.IsFormalIdiom (c : Construction) : Prop :=
+def Construction.IsFormalIdiom {Sem : Type*} (c : Construction Sem) : Prop :=
   IdiomFormality.ofForm c.form = .formal
 
-instance (c : Construction) : Decidable c.IsFormalIdiom :=
+instance {Sem : Type*} (c : Construction Sem) : Decidable c.IsFormalIdiom :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- How familiar are an idiom's pieces, and how familiar is their

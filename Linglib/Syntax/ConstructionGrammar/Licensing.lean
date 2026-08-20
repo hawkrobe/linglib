@@ -106,12 +106,14 @@ def formMatches (pos : String → Option UD.UPOS)
   (form.zip ts).all (λ ⟨s, t⟩ =>
     s.filler.matches pos t && s.constraints.all (·.allows t))
 
+variable {Sem : Type*}
+
 mutual
 
 /-- The licensing recognizer: words are licensed lexically; a constituent
 is licensed iff its daughters instantiate some construction of the network
 and are each licensed themselves. -/
-def Constructicon.licenses (cx : Constructicon)
+def Constructicon.licenses (cx : Constructicon Sem)
     (pos : String → Option UD.UPOS) : Token → Bool
   | .word _ => true
   | .node ts =>
@@ -119,7 +121,7 @@ def Constructicon.licenses (cx : Constructicon)
       cx.licensesList pos ts
 
 /-- All tokens in a list are licensed. -/
-def Constructicon.licensesList (cx : Constructicon)
+def Constructicon.licensesList (cx : Constructicon Sem)
     (pos : String → Option UD.UPOS) : List Token → Bool
   | [] => true
   | t :: ts => cx.licenses pos t && cx.licensesList pos ts
@@ -129,11 +131,11 @@ end
 /-- `cx` licenses token `t` (relative to a POS lexicon): every constituent
 instantiates some construction of the network. Defined via the
 `licenses` recognizer, so concrete cases are kernel-decidable. -/
-def Constructicon.Licenses (cx : Constructicon)
+def Constructicon.Licenses (cx : Constructicon Sem)
     (pos : String → Option UD.UPOS) (t : Token) : Prop :=
   cx.licenses pos t = true
 
-instance (cx : Constructicon) (pos : String → Option UD.UPOS) (t : Token) :
+instance (cx : Constructicon Sem) (pos : String → Option UD.UPOS) (t : Token) :
     Decidable (cx.Licenses pos t) :=
   inferInstanceAs (Decidable (_ = true))
 
