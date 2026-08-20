@@ -11,19 +11,15 @@ import Linglib.Data.UD.Basic
 import Linglib.Morphology.Word.Basic
 
 /-!
-# Dependency grammar substrate
+# Dependency graphs
 
-This file defines the dependency structure of a sentence, following the
-formal dependency-grammar literature ([kuhlmann-nivre-2006],
-[kuhlmann-2013]; the presentation as arcs among ordered words goes back to
-[melcuk-1988]). The vertices are the sentence positions `Fin n` with their
-linear order, and the arcs are a partial labeling of ordered position
-pairs by UD v2 dependency relations.
+This file defines the dependency structure of a sentence: the vertices are
+the sentence positions `Fin n` with their linear order, and the arcs are a
+partial labeling of ordered position pairs by UD v2 dependency relations.
+A distinguished `root` position replaces CoNLL-U's artificial root token.
 
-A distinguished `root` position replaces CoNLL-U's artificial root token,
-following [kuhlmann-nivre-2006]. Well-formedness (`Graph.IsTree`) is
-defined in `Dominance.lean`, beside the dominance relation it is stated
-through.
+Well-formedness (`Graph.IsTree`) is defined in `Dominance.lean`, beside
+the dominance relation it is stated through.
 
 ## Main definitions
 
@@ -39,9 +35,8 @@ through.
 * `Graph.ofArcs` builds a graph from a CoNLL-U-style token list and arc
   list.
 * `Graph.enhance` adds arcs to a graph, as in UD's *enhanced*
-  representation ([de-marneffe-nivre-2019]); `HasUnrepresentedArg` says
-  that an enhanced graph gives a position an argument relation its basic
-  graph lacks.
+  representation; `HasUnrepresentedArg` says that an enhanced graph gives
+  a position an argument relation its basic graph lacks.
 
 ## Implementation notes
 
@@ -56,10 +51,13 @@ carrier's.
 
 ## References
 
-[kuhlmann-nivre-2006] — Mildly non-projective dependency structures
+[melcuk-1988] — Dependency syntax: theory and practice, source of the
+arcs-among-ordered-words presentation
+[kuhlmann-nivre-2006] — Mildly non-projective dependency structures,
+source of the root convention
 [kuhlmann-2013] — Mildly non-projective dependency grammar
-[melcuk-1988] — Dependency syntax: theory and practice
-[de-marneffe-nivre-2019] — Dependency grammar, the UD survey
+[de-marneffe-nivre-2019] — Dependency grammar, on UD's enhanced
+representation
 -/
 
 open Morphology (Word)
