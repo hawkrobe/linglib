@@ -11,54 +11,43 @@ ABA-shaped recurrences are admitted.
 
 ## Motivation
 
-`Morphology.Containment.realize_const_of_terminal_adjacent` (the
-structural-adjacency derivation, [bobaljik-2012]) predicts CMPR-cell =
-SPRL-cell for any generable root pattern. Lifted to case (Wardaman
-3SG: ABS=*narnaj*, ERG=*narnaj-(j)i*, DAT=*gunga*;
-[smith-moskal-xu-kang-bobaljik-2019] §3.6) and number (Yagua 2:
-SG=*jiy*, PL=*jiryéy*, DL=*sááda*;
-[smith-moskal-xu-kang-bobaljik-2019] §4.2 Table 46), the prediction is
-empirically falsified — AAB patterns are attested in both case and
-number suppletion.
-
-[smith-moskal-xu-kang-bobaljik-2019] §3.7 attribute the gap to
-*locality*: structural adjacency ([bobaljik-2012]) and linear
-adjacency ([embick-2010]) are too strict once AAB is admitted (Tamil
-dative suppletion across the plural morpheme is "neither linearly nor
-structurally adjacent to the root"). They adopt the
-[moskal-2015a-dissertation] theory of **accessibility domains (AD)**:
-a category-defining node has a delimiting effect that puts
-more-distant material outside the AD of the root, blocking it from
-conditioning suppletion. Lexical material has such a node (so case
-cannot reach the root); pronouns lack it (so case and number can both
-condition pronominal suppletion).
+Structural adjacency ([bobaljik-2012]) predicts no ABA-shaped
+recurrences anywhere in a containment hierarchy, but AAB patterns
+attested in case and number suppletion falsify the universal form of
+the prediction (Wardaman case, Yagua number;
+[smith-moskal-xu-kang-bobaljik-2019], whose study file carries the
+data). [smith-moskal-xu-kang-bobaljik-2019] attribute the gap to
+locality, adopting [moskal-2015a-dissertation]'s accessibility domains:
+a category-defining node delimits the material that can condition root
+suppletion, so *ABA holds within a domain and ABA shapes across a
+domain boundary are admitted.
 
 ## What this substrate models, and what it doesn't
 
-This file represents the **output** of an AD computation projected
-onto the grades of a hierarchy: a `DomainPartition` saying, for each
-grade, which locality unit it belongs to. The AD theory itself is
-*trigger-relative* — a bound on which heads may condition root
-suppletion, formalized at rule level as
-`SmithMoskalEtAl2019.DomainLocal` on
-`Morphology.Containment.SpanRule` vocabularies. The substrate is
-theory-neutral about how the partition is computed:
-[moskal-2015a-dissertation]'s AD is one source, [embick-2010]'s linear
-adjacency another (every grade its own one-cell domain),
-[bobaljik-2012]'s structural adjacency a third. Consumers state which
-projection they want; the substrate doesn't pick.
+A `DomainPartition` is the **output** of a locality computation
+projected onto the grades: which locality unit each grade belongs to.
+The substrate is theory-neutral about the source —
+[moskal-2015a-dissertation]'s accessibility domains cut the hierarchy
+at a delimiting node (`DomainPartition.threshold`), [embick-2010]'s
+linear adjacency puts every grade in its own one-cell domain,
+[bobaljik-2012]'s structural adjacency uses the trivial partition.
+Consumers state which projection they want. The trigger-relative rule
+side is `SmithMoskalEtAl2019.DomainLocal`.
 
 ## Main declarations
 
-* `DomainPartition n Tag` — domain tag per grade
+* `DomainPartition n Tag` — domain tag per grade;
+  `DomainPartition.IsConvex`, `DomainPartition.threshold` — the
+  interval-shaped partitions locality theories generate
 * `ViolatesABAWithin`, `IsContiguousWithin` — *ABA relativized to
   same-domain triples, over `Morphology.Paradigm`
 * `isContiguousWithin_trivial_iff` — under the trivial partition this
   is exactly `Morphology.IsContiguous`
+* `violatesABAWithin_iff_of_convex` — for convex partitions the check
+  needs only the outer grades to share a domain
 -/
 
-namespace Morphology.DomainLocality
-
+namespace Morphology
 
 variable {n : ℕ} {Tag F : Type*}
 
@@ -78,6 +67,29 @@ instance [DecidableEq Tag] (π : DomainPartition n Tag) (i j : Fin n) :
 /-- The trivial partition: every grade in one domain. -/
 abbrev DomainPartition.trivial (n : ℕ) : DomainPartition n Unit := λ _ => ()
 
+/-- A partition is convex when its domains are intervals of the
+hierarchy: anything between two same-domain grades lies in their
+domain. Locality theories generate convex partitions — an accessibility
+domain is the initial segment below the delimiting node
+([moskal-2015a-dissertation]). -/
+def DomainPartition.IsConvex (π : DomainPartition n Tag) : Prop :=
+  ∀ ⦃i j k : Fin n⦄, i ≤ j → j ≤ k → SameDomain π i k → SameDomain π i j
+
+/-- The threshold partition: grades below `t` inside the root's domain,
+grades from `t` up outside it — the shape of an accessibility-domain
+cut at a category-defining node ([moskal-2015a-dissertation]). -/
+def DomainPartition.threshold (n t : ℕ) : DomainPartition n Bool :=
+  λ i => decide ((i : ℕ) < t)
+
+/-- Threshold partitions are convex. -/
+theorem DomainPartition.threshold_isConvex (n t : ℕ) :
+    (threshold n t).IsConvex := by
+  intro i j k hij hjk h
+  simp only [SameDomain, threshold, decide_eq_decide] at h ⊢
+  have hij' : (i : ℕ) ≤ j := hij
+  have hjk' : (j : ℕ) ≤ k := hjk
+  omega
+
 /-- A pattern violates the domain-relativized *ABA constraint: some
 form recurs across a distinct intervening form, with all three grades
 in the same domain. -/
@@ -96,6 +108,20 @@ def IsContiguousWithin (π : DomainPartition n Tag) (p : Paradigm n F) : Prop :=
 instance [DecidableEq Tag] [DecidableEq F] (π : DomainPartition n Tag)
     (p : Paradigm n F) : Decidable (IsContiguousWithin π p) :=
   inferInstanceAs (Decidable (¬ _))
+
+/-- For a convex partition the within-domain *ABA check needs only the
+outer grades to share a domain: the intervener is trapped between
+them. -/
+theorem violatesABAWithin_iff_of_convex {π : DomainPartition n Tag}
+    (hπ : π.IsConvex) (p : Paradigm n F) :
+    ViolatesABAWithin π p ↔
+      ∃ i j k : Fin n, i < j ∧ j < k ∧ SameDomain π i k
+        ∧ p i = p k ∧ p i ≠ p j := by
+  constructor
+  · rintro ⟨i, j, k, hij, hjk, -, hik, heq, hne⟩
+    exact ⟨i, j, k, hij, hjk, hik, heq, hne⟩
+  · rintro ⟨i, j, k, hij, hjk, hik, heq, hne⟩
+    exact ⟨i, j, k, hij, hjk, hπ hij.le hjk.le hik, hik, heq, hne⟩
 
 /-- Under the trivial partition, domain-relativized contiguity is
 exactly the universal contiguity predicate. -/
@@ -134,4 +160,4 @@ reject this pattern; the domain-relativized one permits it. -/
 example : IsContiguousWithin (![false, false, true] : DomainPartition 3 Bool)
     (![0, 1, 0] : Paradigm 3 ℕ) := by decide
 
-end Morphology.DomainLocality
+end Morphology

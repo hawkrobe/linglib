@@ -1,7 +1,7 @@
 import Linglib.Morphology.Paradigm.Degree
 import Linglib.Syntax.Case.Order
 import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Morphology.DistributedMorphology.DomainLocality
+import Linglib.Morphology.Paradigm.DomainContiguity
 
 /-!
 # Smith, Moskal, Xu, Kang & Bobaljik (2019) — Case and Number Suppletion in Pronouns
@@ -63,12 +63,13 @@ AD-local vocabulary. (3) remains a substrate-addition TODO.
 - Accessibility-domain locality (`§ 4`): `DomainLocal` (rule-level,
   trigger-relative, per the paper's actual formulation), the
   relativized plateau, and the AAB-generability converse; the
-  cell-level projection lives in `Morphology/DistributedMorphology/DomainLocality.lean`.
+  cell-level projection lives in `Morphology/Paradigm/DomainContiguity.lean`.
 -/
 
 namespace SmithMoskalEtAl2019
 
 open Morphology.Degree
+open Morphology (DomainPartition SameDomain IsContiguousWithin ViolatesABAWithin)
 open Morphology.Containment
 
 -- ============================================================================
@@ -401,7 +402,7 @@ theorem wardaman_realize_contiguous :
 -- ============================================================================
 
 /-! The cell-level projection of the AD computation
-(`Morphology/DistributedMorphology/DomainLocality.lean`: `DomainPartition`, `SameDomain`,
+(`Morphology/Paradigm/DomainContiguity.lean`: `DomainPartition`, `SameDomain`,
 `IsContiguousWithin`), instantiated for the case and number domains
 the paper discusses:
 
@@ -419,7 +420,6 @@ the paper discusses:
   substrate (the paper's §4.3.3 markedness-relativized containment)
   is deferred. -/
 
-open Morphology.DomainLocality
 
 /-- The 3-cell ergative case paradigm SMSE 2019 analyses: position 0
     is ABS, position 1 is ERG, position 2 is DAT. -/
