@@ -1,3 +1,4 @@
+import Mathlib.Algebra.Group.WithOne.Defs
 import Linglib.Morphology.DistributedMorphology.Basic
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.DistributedMorphology.Categorizer.Semantics
@@ -86,8 +87,10 @@ with a zero adjoined: `Option`, in the `WithZero` pattern, with `none`
 the zero alloseme. Each head contributes only its `Contentful` type. -/
 
 /-- The alloseme inventory over a head's contentful allosemes `C`: the
-contentful allosemes together with the zero alloseme every head has. -/
-def Alloseme (C : Type*) : Type _ := Option C
+contentful allosemes together with the zero alloseme every head has —
+mathlib's `WithZero C`, with the zero alloseme as its `0` (Benz's Ø).
+`zero` and `of` are the pattern-matchable faces of `none` and `some`. -/
+def Alloseme (C : Type*) : Type _ := WithZero C
 
 namespace Alloseme
 
@@ -110,6 +113,11 @@ instance [Repr C] : Repr (Alloseme C) := inferInstanceAs (Repr (Option C))
 
 instance [Fintype C] : Fintype (Alloseme C) :=
   inferInstanceAs (Fintype (Option C))
+
+instance : Zero (Alloseme C) := inferInstanceAs (Zero (WithZero C))
+
+/-- The zero alloseme is `WithZero`'s zero. -/
+theorem zero_eq_zero : (zero : Alloseme C) = 0 := rfl
 
 /-- The zero alloseme is not contentful. -/
 theorem zero_ne_of (c : C) : (zero : Alloseme C) ≠ of c := nofun
