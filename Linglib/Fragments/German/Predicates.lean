@@ -396,7 +396,7 @@ def rauben : GermanVerbEntry where
 /-! ### Change-of-state verbs
 
 These verbs have inherent result states. Their root type determines the
-canonical v alloseme via `VerbalizerAlloseme.fromRootType`. -/
+canonical v alloseme via `Verbalizer.Alloseme.fromRootType`. -/
 
 /-- *brechen* — "break": achievement with result root. The broken state
     entails prior change (you can't be broken without having been broken).
