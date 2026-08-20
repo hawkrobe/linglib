@@ -39,9 +39,8 @@ open ArgumentStructure.Relational
 
 /-! ### Semantic Denotation Types for n Heads -/
 
-/-- The semantic type contributed by a categorizing head n.
-    This determines how the root's content is composed into the noun's
-    denotation ([adamson-2024] §3.1). -/
+/-- The semantic type a nominal categorizing head contributes
+([adamson-2024] §3.1). -/
 inductive NSemanticType where
   /-- Relational: n introduces a relation (body-part-of, part-of, etc.).
       Result type: ⟨e,⟨e,t⟩⟩. -/
@@ -53,7 +52,7 @@ inductive NSemanticType where
   | alienator
   deriving DecidableEq, Repr
 
-/-- Map n-head features to the semantic type they contribute. -/
+/-- The semantic type read off a head's features. -/
 def catHeadSemanticType (ch : CatHead) (mediatesAPossession : Bool := false)
     : NSemanticType :=
   if ch.selectsD then .relational
@@ -62,60 +61,43 @@ def catHeadSemanticType (ch : CatHead) (mediatesAPossession : Bool := false)
 
 /-! ### Denotation Functions -/
 
-/-- Denotation of n_{body-part{D}}: combines a root predicate with a
-    body-part-of relation to yield a relational noun.
-
-    [adamson-2024] (36): ⟦nP⟧ = λy.λx. spleen(x) ∧ body-part-of(x,y).
-
-    Implemented as [barker-2011]'s π (relationalizer),
-    π(P, R) = λx.λy. P(y) ∧ R(x,y), whose convention this file follows:
-    the relation's first argument is the possessor, so `bodyPartOf` here
-    is possessor-first (the flip of Adamson's possessee-first
-    body-part-of). -/
+/-- The denotation of n_body-part{D} — a root predicate composed with a
+body-part-of relation into a relational noun ([adamson-2024] (36)),
+implemented as [barker-2011]'s relationalizer π. Following π's
+convention, `bodyPartOf` is possessor-first, the flip of Adamson's
+notation. -/
 def nBodyPartDenot {E S : Type}
     (rootPred : E → S → Prop) (bodyPartOf : E → E → S → Prop) : E → E → S → Prop :=
   π rootPred bodyPartOf
 
-/-- Denotation of n_{sortal}: the root predicate, unchanged — the head is
-    the identity λP.λx. P(x) ([adamson-2024] (37)). -/
+/-- The denotation of n_sortal — the identity on the root predicate
+([adamson-2024] (37)). -/
 def nSortalDenot {E S : Type} (rootPred : E → S → Prop) : E → S → Prop :=
   bareSemantics rootPred
 
-/-- Denotation of n_{alienator}: existentially closes the possessor
-    argument of a relational noun.
-
-    [adamson-2024] (43): ⟦n_{alienator}⟧ = λQ.λx. ∃y. Q(y)(x)
-
-    The first argument of the input relation (the possessor) is
-    existentially closed, yielding a one-place property of the
-    possessee. -/
+/-- The denotation of n_alienator — existential closure of a relational
+noun's possessor argument, yielding a one-place property of the possessee
+([adamson-2024] (43): λQ.λx.∃y. Q(y)(x)). -/
 def nAlienatorDenot {E S : Type}
     (relation : E → E → S → Prop) (x : E) (s : S) : Prop :=
   ∃ y, relation y x s
 
 /-! ### Bridge to Barker 2011 -/
 
-/-- n_{body-part{D}} IS Barker's π: the relationalizer. -/
+/-- The body-part head is Barker's relationalizer π. -/
 theorem nBodyPartDenot_eq_pi {E S : Type}
     (rootPred : E → S → Prop) (bodyPartOf : E → E → S → Prop) :
     nBodyPartDenot rootPred bodyPartOf = π rootPred bodyPartOf := rfl
 
-/-- n_{alienator} is the argument-flipped version of Barker's Ex.
-
-    Barker's Ex closes the second argument of R(x,y):
-      Ex(R)(x)(s) = ∃y. R(x,y,s)
-
-    The alienator closes the first argument (the possessor):
-      nAlienatorDenot(R)(x)(s) = ∃y. R(y,x,s)
-
-    Both perform existential closure; the difference is which argument
-    of the relation represents the possessor vs possessee. -/
+/-- The alienator is Barker's detransitivizing Ex applied to the flipped
+relation — Ex closes the relation's second argument, the alienator its
+first (the possessor). -/
 theorem nAlienatorDenot_is_ex_flipped {E S : Type}
     (R : E → E → S → Prop) (x : E) (s : S) :
     nAlienatorDenot R x s ↔ Ex (λ a b t => R b a t) x s := by
   simp only [nAlienatorDenot, Ex]
 
-/-- n with {D} produces a relational denotation; n without {D} does not. -/
+/-- An n head has {D} iff its semantic type is relational. -/
 theorem selectsD_iff_relational (ch : CatHead) :
     ch.selectsD = true ↔
     catHeadSemanticType ch = .relational := by
@@ -130,43 +112,34 @@ variable {E S : Type}
 variable (isSpleen : E → S → Prop)
 variable (bodyPartOf : E → E → S → Prop)
 
-/-- iPossession: √BINA + n_{body-part{D}} → relational noun.
-
-    ⟦bina⟧ = λposs.λx. isSpleen(x) ∧ bodyPartOf(poss, x)
-    'spleen of poss' -/
+/-- The iPossessed reading of Teop *bina* 'spleen' — √BINA under
+n_body-part{D}, a relational noun awaiting its possessor. -/
 def teopSpleenIPossessed : E → E → S → Prop :=
   nBodyPartDenot isSpleen bodyPartOf
 
-/-- aPossession: √BINA + n_{alienator} → existentially closed.
-
-    ⟦bina⟧ = λx. ∃y. isSpleen(x) ∧ bodyPartOf(y, x)
-    'a spleen (of some unspecified possessor)' -/
+/-- The alienated reading of *bina* — the alienator over the body-part
+noun, a spleen of some existentially closed possessor. -/
 def teopSpleenAPossessed (x : E) (s : S) : Prop :=
   nAlienatorDenot (nBodyPartDenot isSpleen bodyPartOf) x s
 
-/-- Sortal noun: √INU 'house' + n_{sortal} → bare predicate
-    ([adamson-2024] (37)).
-
-    ⟦house⟧ = λx. isHouse(x)
-    No possessor slot available. -/
+/-- Teop *inu* 'house' under the sortal n — a bare predicate with no
+possessor slot ([adamson-2024] (37)). -/
 def teopHouseSortal (isHouse : E → S → Prop) : E → S → Prop :=
   nSortalDenot isHouse
 
-/-- With a specific possessor, the iPossessed body part reduces to a
-    property (`Possessive.viaArgument`). -/
+/-- Saturating the possessor reduces the iPossessed body part to a
+property (`Possessive.viaArgument`). -/
 theorem ipossessed_with_possessor (john : E) (x : E) (s : S) :
     teopSpleenIPossessed isSpleen bodyPartOf john x s =
     Possessive.viaArgument john (π isSpleen bodyPartOf) x s := rfl
 
-/-- The sortal noun has no relatum slot — it cannot directly take a
-    possessor without π. -/
+/-- A sortal noun has no relatum slot and cannot take a possessor
+without π. -/
 theorem sortal_is_pred1 (isHouse : E → S → Prop) :
     teopHouseSortal isHouse = isHouse := rfl
 
-/-- Key insight: the SAME root (√BINA) yields different semantic types
-    depending on which n head it combines with. The gender alternation
-    in Teop (gender I vs gender II) corresponds to this semantic type
-    alternation (relational vs sortal/alienated). -/
+/-- One root, two semantic types — the Teop gender I / gender II
+alternation tracks which n √BINA combines with. -/
 theorem same_root_different_types (x y : E) (s : S) :
     -- iPossessed: relational — takes a possessor argument
     teopSpleenIPossessed isSpleen bodyPartOf y x s ↔
@@ -196,22 +169,18 @@ is secondary (determined by whether aPossession is mediated). NB the
 single-head classifier compresses [adamson-2024]'s (43), where the
 alienator is a second n stacked on a {D}-less body-part n. -/
 
-/-- The retraction property: applying the alienator to a π-relational noun
-    recovers the root predicate (up to existential closure).
-
-    nAlienatorDenot(π(P, R), x, s) ↔ ∃y. P(x,s) ∧ R(y,x,s)
-
-    In Teop the alienator bears its own gender II, which as the highest
-    gender is what agreement sees — the body-part noun 'switches' from
-    gender I to II when unpossessed ((38)–(43)). In Jarawara the free use
-    of an iPossessable noun is feminine instead, because there the
-    alienating n is unmarked. -/
+/-- Applying the alienator to a π-relational noun recovers the root
+predicate up to existential closure. In Teop the alienator bears its own
+gender II, which as the highest gender is what agreement sees — the
+body-part noun switches gender when unpossessed ((38)–(43)) — while
+Jarawara's unmarked alienating n leaves the free use feminine. -/
 theorem alienator_retraction {E S : Type}
     (P : E → S → Prop) (R : E → E → S → Prop) (x : E) (s : S) :
     nAlienatorDenot (π P R) x s ↔ ∃ y, P x s ∧ R y x s := by
   simp only [nAlienatorDenot, π]
 
-/-- NominalInterpType from Barker 2011 corresponds to NSemanticType. -/
+/-- The `NominalInterpType` of [barker-2011] induced by a semantic
+type. -/
 def NSemanticType.toBarker : NSemanticType → NominalInterpType
   | .relational => .relational
   | .sortal     => .sortal
