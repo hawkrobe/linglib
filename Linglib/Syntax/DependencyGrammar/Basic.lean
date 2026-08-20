@@ -26,14 +26,8 @@ the dominance relation it is stated through.
 * `Graph n` is a dependency graph on `n` words: a token at every position,
   an optional UD relation on every ordered pair of positions (head to
   dependent), and a root position.
-* `Graph.Adj` is the arc relation from heads to dependents.
-* `Graph.Linked` is the symmetrization of `Graph.Adj`.
 * `Graph.toDigraph` and `Graph.toSimpleGraph` are the directed and
   undirected views of a graph as mathlib's graph carriers.
-* `Graph.parents` and `Graph.children` are the finsets of heads and of
-  dependents of a position.
-* `Graph.ofArcs` builds a graph from a CoNLL-U-style token list and arc
-  list.
 * `Graph.enhance` adds arcs to a graph, as in UD's *enhanced*
   representation; `HasUnrepresentedArg` says that an enhanced graph gives
   a position an argument relation its basic graph lacks.
