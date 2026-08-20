@@ -5,6 +5,7 @@ import Mathlib.Data.List.Perm.Subperm
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Finset.Union
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Fintype.Card
 
 /-!
 # Decidability of `Relation.ReflTransGen` on a finite carrier
@@ -524,6 +525,46 @@ instance [Fintype α] [DecidableEq α] {r : α → α → Prop} [DecidableRel r]
 instance [Fintype α] [DecidableEq α] {r : α → α → Prop} [DecidableRel r] :
     DecidableRel (Relation.TransGen r) :=
   decidable_TransGen_of_fintype
+
+-- ----------------------------------------------------------------------------
+-- The closure of an acyclic relation as an order
+-- ----------------------------------------------------------------------------
+
+/-- The dual of `Relation.ReflTransGen.total_of_right_unique`: over a
+left-unique relation, positions reaching a common target are comparable. -/
+theorem total_of_left_unique {r : α → α → Prop} (U : Relator.LeftUnique r)
+    {a b c : α} (ac : Relation.ReflTransGen r a c)
+    (bc : Relation.ReflTransGen r b c) :
+    Relation.ReflTransGen r a b ∨ Relation.ReflTransGen r b a :=
+  (total_of_right_unique
+      (show Relator.RightUnique (Function.swap r) from λ _ _ _ h h' => U h h')
+      (Relation.reflTransGen_swap.mpr ac)
+      (Relation.reflTransGen_swap.mpr bc)).symm.imp
+    Relation.reflTransGen_swap.mp Relation.reflTransGen_swap.mp
+
+/-- The reflexive-transitive closure of a relation whose transitive closure
+is irreflexive is antisymmetric. -/
+theorem antisymm_of_irrefl_transGen {r : α → α → Prop}
+    (h : ∀ a, ¬ Relation.TransGen r a a) {a b : α}
+    (hab : Relation.ReflTransGen r a b) (hba : Relation.ReflTransGen r b a) :
+    a = b := by
+  rcases cases_head hab with rfl | ⟨c, hac, hcb⟩
+  · rfl
+  · exact absurd (Relation.TransGen.head' hac (hcb.trans hba)) (h a)
+
+/-- On a finite carrier, if the relation is acyclic and every element other
+than `a` has a predecessor, then `a` reaches everything. -/
+theorem of_forall_exists [Finite α] {r : α → α → Prop}
+    (hirr : ∀ v, ¬ Relation.TransGen r v v) {a : α}
+    (h : ∀ v, v ≠ a → ∃ u, r u v) (v : α) : Relation.ReflTransGen r a v := by
+  have : Std.Irrefl (Relation.TransGen r) := ⟨hirr⟩
+  refine (Finite.wellFounded_of_trans_of_irrefl
+    (Relation.TransGen r)).induction (C := (Relation.ReflTransGen r a ·)) v ?_
+  intro v ih
+  by_cases hv : v = a
+  · exact hv ▸ .refl
+  · obtain ⟨u, hu⟩ := h v hv
+    exact (ih u (Relation.TransGen.single hu)).tail hu
 
 -- ----------------------------------------------------------------------------
 -- Crossing a boundary

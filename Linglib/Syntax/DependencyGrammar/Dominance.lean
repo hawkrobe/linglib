@@ -112,9 +112,9 @@ instance (g : Graph n) : Decidable g.IsTree :=
 variable {g : Graph n} {v w : Fin n}
 
 /-- In a tree, a position has at most one head. -/
-theorem Graph.IsTree.rightUnique_flip_adj (hT : g.IsTree) :
-    Relator.RightUnique (flip g.Adj) := by
-  intro y u u' hu hu'
+theorem Graph.IsTree.leftUnique_adj (hT : g.IsTree) :
+    Relator.LeftUnique g.Adj := by
+  intro u u' y hu hu'
   have hy : y ≠ g.root := λ he => hT.not_adj_root u (he ▸ hu)
   obtain ⟨z, _, hz⟩ := hT.existsUnique_adj y hy
   exact (hz u hu).trans (hz u' hu').symm
@@ -126,10 +126,8 @@ theorem not_adj_dominates (hacyc : ∀ v, ¬ TransGen g.Adj v v)
 
 /-- Dominance is antisymmetric on acyclic graphs. -/
 theorem Dominates.antisymm (hacyc : ∀ v, ¬ TransGen g.Adj v v)
-    (hvw : Dominates g v w) (hwv : Dominates g w v) : v = w := by
-  rcases ReflTransGen.cases_head hvw with rfl | ⟨u, hvu, huw⟩
-  · rfl
-  · exact absurd (huw.trans hwv) (λ h => not_adj_dominates hacyc hvu h)
+    (hvw : Dominates g v w) (hwv : Dominates g w v) : v = w :=
+  ReflTransGen.antisymm_of_irrefl_transGen hacyc hvw hwv
 
 /-- A strict dominator of `w` dominates `w`'s head. -/
 theorem Dominates.to_head {u : Fin n} (hT : g.IsTree)
@@ -137,30 +135,21 @@ theorem Dominates.to_head {u : Fin n} (hT : g.IsTree)
     Dominates g v u := by
   rcases ReflTransGen.cases_tail hvw with rfl | ⟨z, hvz, hzw⟩
   · exact absurd rfl hne
-  · exact hT.rightUnique_flip_adj hzw hu ▸ hvz
+  · exact hT.leftUnique_adj hzw hu ▸ hvz
 
 /-- On a tree, positions dominating a common position are comparable:
     the dominators of any position form a chain. -/
 theorem Dominates.comparable {x : Fin n} (hT : g.IsTree)
     (hv : Dominates g v x) (hw : Dominates g w x) :
     Dominates g v w ∨ Dominates g w v :=
-  (ReflTransGen.total_of_right_unique hT.rightUnique_flip_adj
-      (reflTransGen_swap.mpr hv)
-      (reflTransGen_swap.mpr hw)).symm.imp
-    reflTransGen_swap.mp reflTransGen_swap.mp
+  ReflTransGen.total_of_left_unique hT.leftUnique_adj hv hw
 
 /-- The root dominates every position: head chains ascend, without
     repetition, to the unique headless position. -/
 theorem Graph.IsTree.root_dominates (hT : g.IsTree) (v : Fin n) :
-    Dominates g g.root v := by
-  have : Std.Irrefl (TransGen g.Adj) := ⟨hT.acyclic⟩
-  refine (Finite.wellFounded_of_trans_of_irrefl
-    (TransGen g.Adj)).induction (C := (Dominates g g.root ·)) v ?_
-  intro v ih
-  by_cases hv : v = g.root
-  · exact hv ▸ ReflTransGen.refl
-  · obtain ⟨u, hu, -⟩ := hT.existsUnique_adj v hv
-    exact (ih u (TransGen.single hu)).tail hu
+    Dominates g g.root v :=
+  ReflTransGen.of_forall_exists hT.acyclic
+    (λ w hw => (hT.existsUnique_adj w hw).exists) v
 
 /-- The root's projection is the whole sentence. -/
 theorem Graph.IsTree.projection_root (hT : g.IsTree) :
@@ -203,7 +192,7 @@ theorem Graph.IsTree.adj_headOf (hT : g.IsTree) {v : Fin n} (hv : v ≠ g.root) 
 
 theorem Graph.IsTree.headOf_eq (hT : g.IsTree) {u v : Fin n} (h : g.Adj u v) :
     g.headOf v = u :=
-  hT.rightUnique_flip_adj
+  hT.leftUnique_adj
     (hT.adj_headOf (λ he => hT.not_adj_root u (he ▸ h))) h
 
 theorem Graph.IsTree.headOf_root (hT : g.IsTree) : g.headOf g.root = g.root := by
