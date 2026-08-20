@@ -58,83 +58,85 @@ is phrasal modifies a head N, forming an N′ (the paper's structure (7),
 `[N′ PAL⁰ N]`, vs. the NN compound's `[N⁰ N⁰ N⁰]`). The head N's bar level
 is left underspecified since PALs may modify nouns with complements
 ("a 'don't mess with me' type of driver"). -/
-def palConstruction : Construction :=
+def palConstruction : Construction Unit :=
   { name := "PAL"
   , form :=
-      [ { filler := .phrasal, role := some "situation type", level := some .zero }
-      , { filler := .open_ .NOUN, role := some "instance", isHead := true } ]
-  , meaning := "the PAL names a situation type; the head N is an instance of it"
-  , pragmaticFunction := "presumes familiarity with the situation type named by the PAL" }
+      [ { filler := .phrasal, level := some .zero }
+      , { filler := .open_ .NOUN, isHead := true } ]
+  , meaning := ()
+  , pragmaticPoint := true }
 
 /-- The semiproductive must-V subtype, frequently instantiated by
 *must-read*, *must-see*, *must-have*. Study 5 tested only rare tokens
 (≤ 10 COCA hits) against *should-V* foils. -/
-def mustVerbConstruction : Construction :=
+def mustVerbConstruction : Construction Unit :=
   { name := "must-V"
   , form :=
       [ { filler := .fixed "must" }
-      , { filler := .open_ .VERB, role := some "predicate" }
-      , { filler := .open_ .NOUN, role := some "theme", isHead := true } ]
-  , meaning := "N is something one must V"
-  , pragmaticFunction := "presumes familiarity with the situation type named by the PAL" }
+      , { filler := .open_ .VERB }
+      , { filler := .open_ .NOUN, isHead := true } ]
+  , meaning := ()
+  , pragmaticPoint := true }
 
-/-- The *a simple ⟨PAL⟩* subtype: the PAL is itself the head noun
-("Could've tried a simple 'I'm sorry.'"). Study 5's foils used *a short*. -/
-def aSimplePALConstruction : Construction :=
+/-- The *a simple ⟨PAL⟩* subtype: the PAL is itself the head noun, with
+*simple* marking the situation type as routine ("Could've tried a simple
+'I'm sorry.'"). Study 5's foils used *a short*. -/
+def aSimplePALConstruction : Construction Unit :=
   { name := "a simple [PAL⁰]"
   , form :=
       [ { filler := .fixed "a" }
       , { filler := .fixed "simple" }
-      , { filler := .phrasal, role := some "situation type", level := some .zero
+      , { filler := .phrasal, level := some .zero
         , isHead := true } ]
-  , meaning := "a routine instance of the situation type named by the PAL"
-  , pragmaticFunction := "presumes familiarity; 'simple' marks the situation type as routine" }
+  , meaning := ()
+  , pragmaticPoint := true }
 
 /-- The *Don't ⟨PAL⟩ me* subtype: the PAL fills a V slot, must quote the
 immediately preceding discourse, and occurs in an interdiction context
 ("A: you're welcome. B: No, don't 'you're welcome' me."). Study 5's foils
 broke exactly the quote-from-context or interdiction condition. -/
-def dontPALmeConstruction : Construction :=
+def dontPALmeConstruction : Construction Unit :=
   { name := "Don't [PAL⁰ x y z] me"
   , form :=
       [ { filler := .fixed "Don't" }
-      , { filler := .phrasal, role := some "quoted move", level := some .zero
+      , { filler := .phrasal, level := some .zero
         , isHead := true }
       , { filler := .fixed "me" } ]
-  , meaning := "don't direct the just-quoted utterance at me"
-  , pragmaticFunction := "interdicts the quoted conversational move; presumes the quote from the immediately preceding context" }
+  , meaning := ()
+  , pragmaticPoint := true }
 
-/-- The *the old ⟨PAL⟩ (N)* subtype, with optional head N ("my dad pulled
-the old 'I'm going to the store for smokes, be back in five'"). Study 5's
-foils used *the tired*. -/
-def theOldPALConstruction : Construction :=
+/-- The *the old ⟨PAL⟩ (N)* subtype, with optional head N and *old*
+marking the situation type as conventional ("my dad pulled the old 'I'm
+going to the store for smokes, be back in five'"). Study 5's foils used
+*the tired*. -/
+def theOldPALConstruction : Construction Unit :=
   { name := "the old [PAL⁰] (N)"
   , form :=
       [ { filler := .fixed "the" }
       , { filler := .fixed "old" }
-      , { filler := .phrasal, role := some "situation type", level := some .zero
+      , { filler := .phrasal, level := some .zero
         , isHead := true }
-      , { filler := .open_ .NOUN, role := some "instance" } ]
-  , meaning := "a well-worn instance of the situation type named by the PAL"
-  , pragmaticFunction := "presumes familiarity; 'old' marks the situation type as conventional" }
+      , { filler := .open_ .NOUN } ]
+  , meaning := ()
+  , pragmaticPoint := true }
 
 /-- NN compound construction (parent: PAL-internal stress, tight unit). -/
-def nnCompound : Construction :=
+def nnCompound : Construction Unit :=
   { name := "NN compound"
   , form :=
-      [ { filler := .open_ .NOUN, role := some "modifier", level := some .zero }
-      , { filler := .open_ .NOUN, role := some "head", isHead := true
+      [ { filler := .open_ .NOUN, level := some .zero }
+      , { filler := .open_ .NOUN, isHead := true
         , level := some .zero } ]
-  , meaning := "compound nominal: modifier noun narrows head noun denotation" }
+  , meaning := () }
 
 /-- Adjectival modification construction (parent: prenominal slot). -/
-def adjNModification : Construction :=
+def adjNModification : Construction Unit :=
   { name := "Adj+N modification"
   , form :=
-      [ { filler := .open_ .ADJ, role := some "modifier", level := some .zero }
-      , { filler := .open_ .NOUN, role := some "head", isHead := true
+      [ { filler := .open_ .ADJ, level := some .zero }
+      , { filler := .open_ .NOUN, isHead := true
         , level := some .bar } ]
-  , meaning := "adjective restricts noun denotation" }
+  , meaning := () }
 
 /-! ### Degrees of abstraction (Table 8) -/
 
@@ -159,7 +161,7 @@ and adjectival modification constructions; the four conventional subtypes
 confirmed by study 5 inherit from it. The figure's caption labels all
 arrows "motivation and (normal mode) inheritance links", so no
 Goldberg-1995 link type is assigned. -/
-def palConstructicon : Constructicon :=
+def palConstructicon : Constructicon Unit :=
   { constructions :=
       [ palConstruction
       , mustVerbConstruction
@@ -320,7 +322,7 @@ def palOwnSpec : CxnSpec :=
 mothers carry their specifications, PAL legislates exactly its mothers'
 conflicts, and the conventional subtypes add no form-side constraints of
 their own. -/
-def figure5Spec (c : Construction) : CxnSpec :=
+def figure5Spec (c : Construction Unit) : CxnSpec :=
   if c.name == "NN compound" then nnCompoundSpec
   else if c.name == "Adj+N modification" then adjNSpec
   else if c.name == "PAL" then palOwnSpec
@@ -388,15 +390,15 @@ def demoLexicon : String → Option UD.UPOS
 
 /-- The internal syntax of the *must-do* PAL: must-V
 (cf. `mustVerbConstruction`, which is the full prenominal construction). -/
-def mustVCore : Construction :=
+def mustVCore : Construction Unit :=
   { name := "must-V core"
   , form :=
       [ { filler := .fixed "must" }
-      , { filler := .open_ .VERB, role := some "predicate", isHead := true } ]
-  , meaning := "obligatory V-ing" }
+      , { filler := .open_ .VERB, isHead := true } ]
+  , meaning := () }
 
 /-- The Figure 5 network plus the must-V-internal construction. -/
-def demoNetwork : Constructicon :=
+def demoNetwork : Constructicon Unit :=
   { constructions := mustVCore :: palConstructicon.constructions
   , links := palConstructicon.links }
 
@@ -415,7 +417,7 @@ theorem pal_load_bearing :
     ¬ ({ demoNetwork with
          constructions :=
            demoNetwork.constructions.filter (·.name != "PAL") }
-        : Constructicon).Licenses demoLexicon mustDoTask := by decide
+        : Constructicon Unit).Licenses demoLexicon mustDoTask := by decide
 
 /-! ### Lemma-like meaning -/
 
@@ -450,7 +452,7 @@ theorem pal_children :
 /-- Own pragmatic contributions for the Figure 5 network: only PAL itself
 carries one — the familiarity-presupposing meaning. -/
 def figure5Pragmatics (W : Type*) (situationType headNoun : W → Prop) :
-    Construction → Option (PartialProp W) :=
+    Construction Unit → Option (PartialProp W) :=
   λ c => if c.name == "PAL" then some (palMeaning W situationType headNoun)
          else none
 

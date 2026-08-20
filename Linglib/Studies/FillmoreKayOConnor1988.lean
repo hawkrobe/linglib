@@ -154,15 +154,15 @@ p. 512), where F is a negative polarity operator, X and Y are shared
 non-focused material, and the paired foci A and B are points in a
 presupposed scalar model. The typed form is the paired-foci core,
 eliding the shared X/Y material. -/
-def letAloneConstruction : Construction :=
+def letAloneConstruction : Construction Unit :=
   { name := "let alone"
   , form :=
-      [ { filler := .open_ .NOUN, role := some "focusA" }
+      [ { filler := .open_ .NOUN }
       , { filler := .fixed "let" }
       , { filler := .fixed "alone" }
-      , { filler := .open_ .NOUN, role := some "focusB" } ]
-  , meaning := "F'⟨X A Y⟩; a fortiori F'⟨X B Y⟩ (scalar entailment)"
-  , pragmaticFunction := "presupposes scalar model; A clause = informative (Quantity), B clause = relevant (Relevance)" }
+      , { filler := .open_ .NOUN } ]
+  , meaning := ()
+  , pragmaticPoint := true }
 
 /-- *Let alone* is not fully compositional: a formal idiom with paired
 focus, scalar entailment, and NPI licensing requirements that cannot be
@@ -260,13 +260,13 @@ def npiTriggerToContext : LetAloneNPITrigger → LicensingContext
 /-- The garden-variety coordination construction *let alone* is measured
 against (§2.2.1): two like-category conjuncts joined by a coordinating
 conjunction. Present as the parent node of the inheritance link below. -/
-def coordinationConstruction : Construction :=
+def coordinationConstruction : Construction Unit :=
   { name := "Coordinating conjunction"
   , form :=
-      [ { filler := .phrasal, role := some "conjunct₁" }
+      [ { filler := .phrasal }
       , { filler := .open_ .CCONJ }
-      , { filler := .phrasal, role := some "conjunct₂" } ]
-  , meaning := "joins two like-category constituents" }
+      , { filler := .phrasal } ]
+  , meaning := () }
 
 /-- *Let alone* against the coordination diagnostics of §2.2.1 (p. 514–517).
 Shared with coordinating conjunctions: joins like categories, right node
@@ -290,7 +290,7 @@ def letAloneInheritance : InheritanceLink :=
       , "is a negative polarity item" ] }
 
 /-- The §2.2.1 comparison as a two-node network. -/
-def letAloneNetwork : Constructicon :=
+def letAloneNetwork : Constructicon Unit :=
   { constructions := [coordinationConstruction, letAloneConstruction]
   , links := [letAloneInheritance] }
 
@@ -304,30 +304,29 @@ theorem letAloneNetwork_wellFormed : letAloneNetwork.WellFormed := by decide
 far as we can tell, found generally elsewhere in the language" (p. 507;
 fn. 4 notes relatives like "all the more reason" and the Old English
 instrumental demonstrative source). -/
-def comparativeCorrelative : Construction :=
+def comparativeCorrelative : Construction Unit :=
   { name := "the X-er the Y-er"
   , form :=
       [ { filler := .fixed "the" }
-      , { filler := .open_ .ADJ, role := some "comparative₁" }
-      , { filler := .phrasal, role := some "clause₁", level := some .phrase }
+      , { filler := .open_ .ADJ }
+      , { filler := .phrasal, level := some .phrase }
       , { filler := .fixed "the" }
-      , { filler := .open_ .ADJ, role := some "comparative₂" }
-      , { filler := .phrasal, role := some "clause₂", level := some .phrase } ]
-  , meaning := "The degree to which X correlates with the degree to which Y"
-  , pragmaticFunction := none }
+      , { filler := .open_ .ADJ }
+      , { filler := .phrasal, level := some .phrase } ]
+  , meaning := () }
 
 /-- The Incredulity Response construction ("Him be a doctor?", ex. 14h in
 the §2 opening list, pp. 510–511; the type is introduced in §1.1.4): a
 non-nominative subject with a bare-stem predicate, "used to challenge or
 question a proposition just posed by an interlocutor" (p. 511). -/
-def incredulityResponse : Construction :=
+def incredulityResponse : Construction Unit :=
   { name := "Incredulity Response"
   , form :=
-      [ { filler := .open_ .PRON, role := some "subject", gf := some .subj }
-      , { filler := .phrasal, role := some "predicate", level := some .phrase
+      [ { filler := .open_ .PRON, gf := some .subj }
+      , { filler := .phrasal, level := some .phrase
         , gf := some .pred } ]
-  , meaning := "Speaker challenges the just-posed proposition as incredible"
-  , pragmaticFunction := "challenges or questions a proposition just posed by an interlocutor" }
+  , meaning := ()
+  , pragmaticPoint := true }
 
 /-! ### A one-dimensional rank model (ex. 21)
 

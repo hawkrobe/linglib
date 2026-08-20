@@ -68,29 +68,27 @@ abbrev CompositionRule (D : Type*) := List D → Option D
 mutual
 
 /-- All readings of a token: each construction whose typed form the
-daughters instantiate contributes the readings its composition rule
-produces from the daughters' readings; words read from the lexicon. -/
+daughters instantiate contributes the readings its meaning pole — its
+composition rule — produces from the daughters' readings; words read
+from the lexicon. -/
 def _root_.ConstructionGrammar.Constructicon.interps {D : Type*}
-    (cx : Constructicon) (pos : String → Option UD.UPOS)
-    (rules : Construction → Option (CompositionRule D))
+    (cx : Constructicon (CompositionRule D)) (pos : String → Option UD.UPOS)
     (lex : String → Option D) : Token → List D
   | .word w => (lex w).toList
   | .node ts =>
       cx.constructions.flatMap (λ c =>
         if formMatches pos c.form ts then
-          (cx.interpsList pos rules lex ts).filterMap
-            (λ seq => (rules c).bind (· seq))
+          (cx.interpsList pos lex ts).filterMap c.meaning
         else [])
 
 /-- All sequences of daughter readings. -/
 def _root_.ConstructionGrammar.Constructicon.interpsList {D : Type*}
-    (cx : Constructicon) (pos : String → Option UD.UPOS)
-    (rules : Construction → Option (CompositionRule D))
+    (cx : Constructicon (CompositionRule D)) (pos : String → Option UD.UPOS)
     (lex : String → Option D) : List Token → List (List D)
   | [] => [[]]
   | t :: ts =>
-      (cx.interps pos rules lex t).flatMap (λ d =>
-        (cx.interpsList pos rules lex ts).map (d :: ·))
+      (cx.interps pos lex t).flatMap (λ d =>
+        (cx.interpsList pos lex ts).map (d :: ·))
 
 end
 
@@ -121,29 +119,32 @@ def operatorRule (E : Type*) : CompositionRule (Den E)
 
 /-- The shared prenominal-modification form. -/
 def modificationForm : TypedForm String :=
-  [ { filler := .open_ .ADJ, role := some "modifier" }
-  , { filler := .open_ .NOUN, role := some "head", isHead := true } ]
+  [ { filler := .open_ .ADJ }
+  , { filler := .open_ .NOUN, isHead := true } ]
 
-/-- Intersective Adj+N modification. -/
-def intersectiveModification : Construction :=
+/-- Intersective Adj+N modification: its meaning pole is the
+intersective rule. -/
+def intersectiveModification (E : Type*) :
+    Construction (CompositionRule (Den E)) :=
   { name := "Intersective modification"
   , form := modificationForm
-  , meaning := "x is Adj and x is N" }
+  , meaning := intersectiveRule E }
 
-/-- Operator Adj+N modification. -/
-def operatorModification : Construction :=
+/-- Operator Adj+N modification: its meaning pole is the operator rule. -/
+def operatorModification (E : Type*) :
+    Construction (CompositionRule (Den E)) :=
   { name := "Operator modification"
   , form := modificationForm
-  , meaning := "x satisfies Adj applied to N" }
+  , meaning := operatorRule E }
 
 /-- §1's premise: one rule of syntactic formation, two semantic
 specifications — the constructions share their typed form. -/
-theorem same_form :
-    intersectiveModification.form = operatorModification.form := rfl
+theorem same_form (E : Type*) :
+    (intersectiveModification E).form = (operatorModification E).form := rfl
 
 /-- The demo network: both modification constructions. -/
-def demoCx : Constructicon :=
-  { constructions := [intersectiveModification, operatorModification]
+def demoCx (E : Type*) : Constructicon (CompositionRule (Den E)) :=
+  { constructions := [intersectiveModification E, operatorModification E]
   , links := [] }
 
 /-- Toy POS lexicon. -/
@@ -166,25 +167,18 @@ def demoLex : String → Option (Den E)
   | "thief" => some (.pred thief)
   | _ => none
 
-/-- Rule assignment for the demo network. -/
-def demoRules : Construction → Option (CompositionRule (Den E)) :=
-  λ c =>
-    if c = intersectiveModification then some (intersectiveRule E)
-    else if c = operatorModification then some (operatorRule E)
-    else none
-
 /-- *Purple plum* has exactly one reading: the intersection. The operator
 construction matches the form but its rule rejects two predicate
 daughters. -/
 theorem purple_plum_intersective :
-    demoCx.interps demoPos demoRules (demoLex purple plum thief alleged)
+    (demoCx E).interps demoPos (demoLex purple plum thief alleged)
         (.node [.word "purple", .word "plum"])
       = [.pred (λ x => purple x ∧ plum x)] := rfl
 
 /-- *Alleged thief* has exactly one reading: the operator applied to the
 head predicate — not an intersection. -/
 theorem alleged_thief_operator :
-    demoCx.interps demoPos demoRules (demoLex purple plum thief alleged)
+    (demoCx E).interps demoPos (demoLex purple plum thief alleged)
         (.node [.word "alleged", .word "thief"])
       = [.pred (alleged thief)] := rfl
 
@@ -192,8 +186,8 @@ theorem alleged_thief_operator :
 reading at all: the chapter's point that intersection cannot be the
 single rule of adjectival modification. -/
 theorem alleged_thief_needs_operator_construction :
-    ({ constructions := [intersectiveModification], links := [] }
-        : Constructicon).interps demoPos demoRules
+    ({ constructions := [intersectiveModification E], links := [] }
+        : Constructicon (CompositionRule (Den E))).interps demoPos
         (demoLex purple plum thief alleged)
         (.node [.word "alleged", .word "thief"])
       = [] := rfl
@@ -209,8 +203,8 @@ meaning each contributes. -/
 (§5, exx. 19–22, *Frank sneezed the tissue off the table*), *let alone*
 (§6, ex. 32), and the incredulity type (§7, ex. 14, *Him get first
 prize?!*). -/
-def chapterCases : List (Construction × MeaningKind) :=
-  [ (causedMotion.construction, .argumentStructure)
+def chapterCases : List (Construction Unit × MeaningKind) :=
+  [ (causedMotion.map fun _ => (), .argumentStructure)
   , (_root_.FillmoreKayOConnor1988.letAloneConstruction, .conventionalImplicature)
   , (_root_.FillmoreKayOConnor1988.incredulityResponse, .illocutionaryForce) ]
 

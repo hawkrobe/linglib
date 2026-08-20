@@ -47,20 +47,20 @@ Figure 13); WXDY-*what* is left-isolated ([loc -]) and nonreferential
 reports being unable to deduce, §4.6). X is constrained semantically, as
 a referential argument of the predicate Y (§4.7), and Y is a predicate
 phrase of any category. -/
-def wxdyConstruction : Construction :=
+def wxdyConstruction : Construction Unit :=
   { name := "What's X doing Y?"
   , form :=
-      [ { filler := .semantic "referential", role := some "subject"
+      [ { filler := .semantic "referential"
         , gf := some .subj, refIdx := some 2 }
       , { filler := .headed "be" .AUX, isHead := true }
       , { filler := .headed "doing" .VERB, gf := some .comp
         , constraints := [.negMinus] }
       , { filler := .fixed "what", gf := some .obj
         , constraints := [.locMinus, .refEmpty] }
-      , { filler := .phrasal, role := some "predicate", gf := some .pred
+      , { filler := .phrasal, gf := some .pred
         , refIdx := some 2 } ]
-  , meaning := "incongruity of the presupposed situation (incredulity) or genuine activity question (literal)"
-  , pragmaticFunction := "attributes incongruity to the presupposed situation" }
+  , meaning := ()
+  , pragmaticPoint := true }
 
 /-! ### Coreference (Figure 12) -/
 
@@ -171,10 +171,10 @@ and control. It figures twice in every WXDY clause — the flat rendering
 here unifies a predicator's subject with its complement's subject via a
 shared `refIdx`. -/
 def coinstantiationForm : TypedForm String :=
-  [ { filler := .open_ .NOUN, role := some "subject", gf := some .subj
+  [ { filler := .open_ .NOUN, gf := some .subj
     , refIdx := some 1 }
-  , { filler := .open_ .VERB, role := some "predicate", isHead := true }
-  , { filler := .open_ .VERB, role := some "complement", gf := some .comp
+  , { filler := .open_ .VERB, isHead := true }
+  , { filler := .open_ .VERB, gf := some .comp
     , refIdx := some 1 } ]
 
 /-- Coinstantiation is fully abstract: every slot is open. -/

@@ -74,7 +74,7 @@ open English.Predicates.Adjectival (open_ closed_ shut free_ loose flat
 open Causation.Resultatives (resultativeCausativeBuilder)
 open Features.ChangeOfState (CoSType)
 open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
-  ArgStructureConstruction)
+  Construction)
 open GoldbergJackendoff2004 (ResultativeType)
 
 -- ════════════════════════════════════════════════════
@@ -201,7 +201,7 @@ theorem pushPull_is_activity :
     adds [CAUSE [BECOME [STATE]]]). -/
 theorem pushPull_accomplishment_in_resultative :
     (LevinClass.pushPull.meaningComponents.fuse
-      resultative.semanticContribution).predictedTemplate = .accomplishment := by
+      resultative.meaning).predictedTemplate = .accomplishment := by
   exact fuse_cos_caus_yields_accomplishment _ _ rfl rfl
 
 /-- Hit alone is an activity. -/
@@ -211,19 +211,19 @@ theorem hit_is_activity' :
 /-- Hit in the resultative shifts to accomplishment. -/
 theorem hit_accomplishment_in_resultative :
     (LevinClass.hit.meaningComponents.fuse
-      resultative.semanticContribution).predictedTemplate = .accomplishment := by
+      resultative.meaning).predictedTemplate = .accomplishment := by
   exact fuse_cos_caus_yields_accomplishment _ _ rfl rfl
 
 /-- Full dual prediction for pushPull in the resultative: template shift
     AND alternation AND intransitive variant, all from one fusion. -/
 theorem pushPull_dual_in_resultative :
     (LevinClass.pushPull.meaningComponents.fuse
-      resultative.semanticContribution).predictedTemplate = .accomplishment ∧
+      resultative.meaning).predictedTemplate = .accomplishment ∧
     (LevinClass.pushPull.meaningComponents.fuse
-      resultative.semanticContribution).predictedAlternation
+      resultative.meaning).predictedAlternation
         .causativeInchoative = true ∧
     (LevinClass.pushPull.meaningComponents.fuse
-      resultative.semanticContribution).predictedTemplate.intransitiveVariant
+      resultative.meaning).predictedTemplate.intransitiveVariant
         = some .achievement := by
   exact fuse_dual_prediction _ _ rfl rfl rfl rfl
 
@@ -232,7 +232,7 @@ theorem pushPull_dual_in_resultative :
 theorem pushPull_vendler_shift :
     LevinClass.pushPull.eventTemplate.vendlerClass = .activity ∧
     (LevinClass.pushPull.meaningComponents.fuse
-      resultative.semanticContribution).predictedTemplate.vendlerClass
+      resultative.meaning).predictedTemplate.vendlerClass
         = .accomplishment :=
   ⟨rfl, fuse_vendler_class_shift _ _ rfl rfl⟩
 
@@ -811,7 +811,7 @@ structure FilledResultative where
   /-- The result-state adjective (from Fragment) -/
   adjective : AdjectivalPredicateEntry
   /-- The argument structure construction (typically `resultative`) -/
-  construction : ArgStructureConstruction
+  construction : Construction MeaningComponents
   /-- The construction adds what the verb lacks: fusion predicts the
       causative alternation for the composed meaning. -/
   alternationPredicted :

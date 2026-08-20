@@ -10,7 +10,7 @@ import Linglib.Data.UD.Basic
 CxG's argument structure constructions: explicit slot structure, full
 compositionality, polysemy families, and verb–construction fusion.
 
-Fully abstract constructions without pragmatic functions are fully
+Fully abstract constructions without pragmatic point are fully
 compositional (`isFullyCompositional`); constructions with idiosyncratic
 form–meaning pairings (*let alone*, WXDY, PAL) are irreducible phrasal
 patterns that only CxG can capture. The decomposition of fully abstract constructions into
@@ -23,65 +23,38 @@ namespace ConstructionGrammar
 
 open ArgumentStructure
 
-/-! ## Construction slots and argument frames -/
+/-! ## Concrete argument structure constructions
 
-/-- An argument structure construction: a `Construction` whose typed form
-serves as the argument frame, enabling formal analysis of how the
-construction relates to the three universal combination schemata.
-
-The `semanticContribution` field captures which meaning components
-([levin-1993]) the construction adds independently of the verb
-([goldberg-1995]). When a verb fuses with a construction, the
-composed meaning = `verb.meaningComponents.fuse cxn.semanticContribution`.
-This is how constructions can license alternation behavior that verbs
-lack in isolation — e.g., the resultative adds CoS + causation, enabling
-the causative alternation for manner verbs ([levin-2026]). -/
-structure ArgStructureConstruction where
-  /-- The underlying construction -/
-  construction : Construction
-  /-- At least one slot of the form should be the head -/
-  hasHead : construction.form.any (·.isHead) = true
-  /-- What meaning components this construction contributes independently
-      of the verb. Defaults to `.none` (no augmentation). -/
-  semanticContribution : MeaningComponents := .none
-  deriving Repr
-
-/-- The argument frame: the underlying construction's typed form. -/
-def ArgStructureConstruction.slots (asc : ArgStructureConstruction) :
-    TypedForm String :=
-  asc.construction.form
-
-/-! ## Concrete argument structure constructions -/
+An argument structure construction is a `Construction MeaningComponents`:
+its typed form is the argument frame, and its meaning pole records which
+meaning components ([levin-1993]) the construction adds independently of
+the verb ([goldberg-1995]) — `.none` for constructions that do not
+augment. -/
 
 /-- Ditransitive construction: [Subj V Obj1 Obj2].
 "X CAUSES Y to RECEIVE Z" (e.g., "She gave him a book"). -/
-def ditransitive : ArgStructureConstruction :=
-  { construction :=
-      { name := "Ditransitive"
-      , form :=
-          [ { filler := .open_ .NOUN, role := some "agent" }
-          , { filler := .open_ .VERB, role := some "predicate", isHead := true }
-          , { filler := .open_ .NOUN, role := some "recipient" }
-          , { filler := .open_ .NOUN, role := some "theme" } ]
-      , meaning := "X CAUSES Y to RECEIVE Z" }
-  , hasHead := by decide }
+def ditransitive : Construction MeaningComponents :=
+  { name := "Ditransitive"
+  , form :=
+      [ { filler := .open_ .NOUN }                 -- agent
+      , { filler := .open_ .VERB, isHead := true }
+      , { filler := .open_ .NOUN }                 -- recipient
+      , { filler := .open_ .NOUN } ]               -- theme
+  , meaning := .none }
 
 /-- Caused-motion construction: [Subj V Obj Obl].
 "X CAUSES Y to MOVE Z", Z a directional ("Pat sneezed the napkin off the
 table", p. 3). Contributes motion + causation: verbs that lexicalize
 neither (like *sneeze*) acquire both from the construction
 ([goldberg-1995] p. 152–179). -/
-def causedMotion : ArgStructureConstruction :=
-  { construction :=
-      { name := "Caused-motion"
-      , form :=
-          [ { filler := .open_ .NOUN, role := some "agent" }
-          , { filler := .open_ .VERB, role := some "predicate", isHead := true }
-          , { filler := .open_ .NOUN, role := some "theme" }
-          , { filler := .open_ .ADP, role := some "goal" } ]
-      , meaning := "X CAUSES Y to MOVE Z" }
-  , hasHead := by decide
-  , semanticContribution :=
+def causedMotion : Construction MeaningComponents :=
+  { name := "Caused-motion"
+  , form :=
+      [ { filler := .open_ .NOUN }                 -- agent
+      , { filler := .open_ .VERB, isHead := true }
+      , { filler := .open_ .NOUN }                 -- theme
+      , { filler := .open_ .ADP } ]                -- goal
+  , meaning :=
       { changeOfState := false, contact := false, motion := true, causation := true } }
 
 /-- Resultative construction: [Subj V Obj Pred].
@@ -91,50 +64,43 @@ acquire both — [rappaport-hovav-levin-1998]'s Template Augmentation,
 cast lexically there (their appendix maps it onto the constructional
 approach); [levin-2026] §3. This is what enables the causative
 alternation for verbs like *push* that lack it in isolation. -/
-def resultative : ArgStructureConstruction :=
-  { construction :=
-      { name := "Resultative"
-      , form :=
-          [ { filler := .open_ .NOUN, role := some "agent" }
-          , { filler := .open_ .VERB, role := some "predicate", isHead := true }
-          , { filler := .open_ .NOUN, role := some "patient" }
-          , { filler := .open_ .ADJ, role := some "result" } ]
-      , meaning := "X CAUSES Y to BECOME Z" }
-  , hasHead := by decide
-  , semanticContribution :=
+def resultative : Construction MeaningComponents :=
+  { name := "Resultative"
+  , form :=
+      [ { filler := .open_ .NOUN }                 -- agent
+      , { filler := .open_ .VERB, isHead := true }
+      , { filler := .open_ .NOUN }                 -- patient
+      , { filler := .open_ .ADJ } ]                -- result
+  , meaning :=
       { changeOfState := true, contact := false, motion := false, causation := true } }
 
 /-- Intransitive motion construction: [Subj V Obl].
 "X MOVES to Y" (e.g., "The ball rolled down the hill"). -/
-def intransitiveMotion : ArgStructureConstruction :=
-  { construction :=
-      { name := "Intransitive-motion"
-      , form :=
-          [ { filler := .open_ .NOUN, role := some "theme" }
-          , { filler := .open_ .VERB, role := some "predicate", isHead := true }
-          , { filler := .open_ .ADP, role := some "path" } ]
-      , meaning := "X MOVES to Y" }
-  , hasHead := by decide }
+def intransitiveMotion : Construction MeaningComponents :=
+  { name := "Intransitive-motion"
+  , form :=
+      [ { filler := .open_ .NOUN }                 -- theme
+      , { filler := .open_ .VERB, isHead := true }
+      , { filler := .open_ .ADP } ]                -- path
+  , meaning := .none }
 
 /-- Conative construction: [Subj V Obl_at].
 "X DIRECTS ACTION at Y" (e.g., "Sam kicked at Bill").
 The verb designates the intended result of the directed action;
 the at-PP marks the target without entailing contact
 ([goldberg-1995] p. 3–4, 63–64). -/
-def conative : ArgStructureConstruction :=
-  { construction :=
-      { name := "Conative"
-      , form :=
-          [ { filler := .open_ .NOUN, role := some "agent" }
-          , { filler := .open_ .VERB, role := some "predicate", isHead := true }
-          , { filler := .open_ .ADP, role := some "target" } ]
-      , meaning := "X DIRECTS ACTION at Y" }
-  , hasHead := by decide }
+def conative : Construction MeaningComponents :=
+  { name := "Conative"
+  , form :=
+      [ { filler := .open_ .NOUN }                 -- agent
+      , { filler := .open_ .VERB, isHead := true }
+      , { filler := .open_ .ADP } ]                -- target
+  , meaning := .none }
 
 /-! ## Full compositionality -/
 
 /-- A construction is fully compositional if it has specificity `fullyAbstract`
-and no construction-specific pragmatic function.
+and no construction-specific pragmatic point.
 
 This is a proxy for [mueller-2013]'s structural criterion (whether the
 construction can be analyzed as a sequence of headed binary combinations).
@@ -143,15 +109,15 @@ functions have no idiosyncratic form–meaning pairings that would resist
 decomposition into the three universal schemata. The Boolean approximates
 what [kay-michaelis-2019] survey as a continuum of constructional meaning
 contributions. -/
-def isFullyCompositional (c : Construction) : Bool :=
-  c.specificity == .fullyAbstract && c.pragmaticFunction.isNone
+def isFullyCompositional {Sem : Type*} (c : Construction Sem) : Bool :=
+  c.specificity == .fullyAbstract && !c.pragmaticPoint
 
 /-! ## Core theorems -/
 
-/-- Fully abstract constructions without pragmatic functions are fully compositional. -/
-theorem fullyAbstract_isFullyCompositional (c : Construction)
+/-- Fully abstract constructions without pragmatic point are fully compositional. -/
+theorem fullyAbstract_isFullyCompositional {Sem : Type*} (c : Construction Sem)
     (h₁ : c.specificity = .fullyAbstract)
-    (h₂ : c.pragmaticFunction = none) :
+    (h₂ : c.pragmaticPoint = false) :
     isFullyCompositional c = true := by
   unfold isFullyCompositional
   rw [h₁, h₂]
@@ -161,57 +127,49 @@ theorem fullyAbstract_isFullyCompositional (c : Construction)
 
 A polysemy family groups constructions that share one syntactic frame
 but differ in meaning. The shared form is enforced by construction —
-all senses are generated from the same `slots`, making it impossible
+all senses are generated from the same `form`, making it impossible
 for a polysemy extension to silently diverge in syntax. -/
 
 /-- A polysemy family: one argument frame, multiple meanings.
 
-All constructions in a family share the same `slots` definitionally —
+All constructions in a family share the same `form` definitionally —
 there is no way to create an extension with different syntax. The
 polysemy links (I_P) are derived, not manually assembled. -/
-structure PolysemyFamily where
+structure PolysemyFamily (Sem : Type*) where
   /-- Name of the construction family -/
   name : String
   /-- The shared argument frame -/
-  slots : TypedForm String
-  /-- At least one slot is the head -/
-  hasHead : slots.any (·.isHead) = true
+  form : TypedForm String
   /-- Central sense meaning -/
-  centralMeaning : String
+  centralMeaning : Sem
   /-- Extended senses: (extension name, meaning, overridden properties) -/
-  extensions : List (String × String × List String)
+  extensions : List (String × Sem × List String)
 
-/-- The central sense as an `ArgStructureConstruction`. -/
-def PolysemyFamily.centralConstruction (f : PolysemyFamily) :
-    ArgStructureConstruction :=
-  { construction :=
-      { name := f.name
-      , form := f.slots
-      , meaning := f.centralMeaning }
-  , hasHead := f.hasHead }
+variable {Sem : Type*}
 
-/-- Build an extension construction. Uses the family's `slots` — shared
+/-- The central sense as a construction. -/
+def PolysemyFamily.centralConstruction (f : PolysemyFamily Sem) :
+    Construction Sem :=
+  { name := f.name, form := f.form, meaning := f.centralMeaning }
+
+/-- Build an extension construction. Uses the family's `form` — shared
 by construction, not by assertion. -/
-def PolysemyFamily.extensionConstruction (f : PolysemyFamily)
-    (ext : String × String × List String) : ArgStructureConstruction :=
-  { construction :=
-      { name := f.name ++ "-" ++ ext.1
-      , form := f.slots
-      , meaning := ext.2.1 }
-  , hasHead := f.hasHead }
+def PolysemyFamily.extensionConstruction (f : PolysemyFamily Sem)
+    (ext : String × Sem × List String) : Construction Sem :=
+  { name := f.name ++ "-" ++ ext.1, form := f.form, meaning := ext.2.1 }
 
 /-- All extension constructions. -/
-def PolysemyFamily.extensionConstructions (f : PolysemyFamily) :
-    List ArgStructureConstruction :=
+def PolysemyFamily.extensionConstructions (f : PolysemyFamily Sem) :
+    List (Construction Sem) :=
   f.extensions.map f.extensionConstruction
 
 /-- All constructions (central + extensions). -/
-def PolysemyFamily.allConstructions (f : PolysemyFamily) :
-    List ArgStructureConstruction :=
+def PolysemyFamily.allConstructions (f : PolysemyFamily Sem) :
+    List (Construction Sem) :=
   f.centralConstruction :: f.extensionConstructions
 
 /-- Derive polysemy links from the family structure. -/
-def PolysemyFamily.polysemyLinks (f : PolysemyFamily) : List InheritanceLink :=
+def PolysemyFamily.polysemyLinks (f : PolysemyFamily Sem) : List InheritanceLink :=
   f.extensions.map fun ⟨extName, _, overrides⟩ =>
     { parent := f.name
     , child := f.name ++ "-" ++ extName
@@ -220,16 +178,16 @@ def PolysemyFamily.polysemyLinks (f : PolysemyFamily) : List InheritanceLink :=
     , sharedProperties := ["shared argument frame"]
     , overriddenProperties := overrides }
 
-/-- Central construction uses the family's slots (definitionally true). -/
-theorem PolysemyFamily.central_slots (f : PolysemyFamily) :
-    f.centralConstruction.slots = f.slots := rfl
+/-- Central construction uses the family's form (definitionally true). -/
+theorem PolysemyFamily.central_form (f : PolysemyFamily Sem) :
+    f.centralConstruction.form = f.form := rfl
 
-/-- Every extension uses the family's slots (definitionally true).
+/-- Every extension uses the family's form (definitionally true).
 This is the structural enforcement: shared syntax is impossible
 to violate because it follows from the definition, not from a proof. -/
-theorem PolysemyFamily.extension_slots (f : PolysemyFamily)
-    (ext : String × String × List String) :
-    (f.extensionConstruction ext).slots = f.slots := rfl
+theorem PolysemyFamily.extension_form (f : PolysemyFamily Sem)
+    (ext : String × Sem × List String) :
+    (f.extensionConstruction ext).form = f.form := rfl
 
 /-! ## Ditransitive polysemy network ([goldberg-1995] pp. 75–77)
 
@@ -238,6 +196,23 @@ senses connected by polysemy links (I_P). Each sense inherits the
 ditransitive's syntactic form [Subj V Obj Obj₂] but differs in the
 semantic relation between the event participants. -/
 
+/-- The modality of the CAUSE-RECEIVE relation distinguishing the
+ditransitive's senses ([goldberg-1995] pp. 75–77). -/
+inductive TransferModality where
+  /-- Actual transfer: X CAUSES Y TO RECEIVE Z. -/
+  | actual
+  /-- Conditions of satisfaction imply X CAUSES Y TO RECEIVE Z. -/
+  | satisfaction
+  /-- X ENABLES Y TO RECEIVE Z. -/
+  | enablement
+  /-- X CAUSES Y NOT TO RECEIVE Z. -/
+  | negated
+  /-- X INTENDS TO CAUSE Y TO RECEIVE Z. -/
+  | intended
+  /-- X ACTS TO CAUSE Y TO RECEIVE Z at some future point in time. -/
+  | future
+  deriving DecidableEq, Repr
+
 /-- The ditransitive polysemy family: six senses sharing one argument
 frame ([goldberg-1995] pp. 75–77; verb classes per Figure 2.2, p. 38).
 The extension labels are the formalizer's — Goldberg numbers the senses
@@ -245,27 +220,16 @@ and calls the Intended extension "the benefactive construction" (Figure
 3.2). Her warrant for the shared frame is exactly what `PolysemyFamily`
 enforces definitionally: "The syntactic specifications of the central
 sense are inherited by the extensions" (p. 75). -/
-def ditransitiveFamily : PolysemyFamily :=
+def ditransitiveFamily : PolysemyFamily TransferModality :=
   { name := "Ditransitive"
-  , slots := ditransitive.slots
-  , hasHead := by decide
-  , centralMeaning := "X CAUSES Y TO RECEIVE Z"
+  , form := ditransitive.form
+  , centralMeaning := .actual
   , extensions :=
-      [ ("Satisfaction",
-         "Conditions of satisfaction imply X CAUSES Y TO RECEIVE Z",
-         ["transfer is implied, not entailed"])
-      , ("Enablement",
-         "X ENABLES Y TO RECEIVE Z",
-         ["enablement replaces direct causation"])
-      , ("Negated",
-         "X CAUSES Y NOT TO RECEIVE Z",
-         ["transfer is negated"])
-      , ("Intended",
-         "X INTENDS TO CAUSE Y TO RECEIVE Z",
-         ["transfer is intended, not actual"])
-      , ("Future",
-         "X ACTS TO CAUSE Y TO RECEIVE Z at some future point in time",
-         ["transfer deferred to future"]) ] }
+      [ ("Satisfaction", .satisfaction, ["transfer is implied, not entailed"])
+      , ("Enablement", .enablement, ["enablement replaces direct causation"])
+      , ("Negated", .negated, ["transfer is negated"])
+      , ("Intended", .intended, ["transfer is intended, not actual"])
+      , ("Future", .future, ["transfer deferred to future"]) ] }
 
 /-- Derived polysemy links. -/
 def ditransitivePolysemy : List InheritanceLink :=
@@ -310,12 +274,15 @@ the book's construction inventory (p. 4) but participates in no
 inheritance link — it is a node without edges, and linking it would be
 invention. -/
 
-/-- The ch. 2–3 constructional network. -/
-def goldberg1995Network : Constructicon :=
+/-- The ch. 2–3 constructional network, with meaning poles erased: the
+network theorems concern the links and forms only, and the family's
+`TransferModality` meanings and the argument-structure constructions'
+`MeaningComponents` meanings live in different types. -/
+def goldberg1995Network : Constructicon Unit :=
   { constructions :=
-      ditransitiveFamily.allConstructions.map (·.construction) ++
-        [ causedMotion.construction, intransitiveMotion.construction
-        , resultative.construction, conative.construction ]
+      ditransitiveFamily.allConstructions.map (.map fun _ => ()) ++
+        ([causedMotion, intransitiveMotion, resultative, conative].map
+          (.map fun _ => ()))
   , links :=
       ditransitivePolysemy ++ [causedMotionSubpart, causedMotionToResultative] }
 
@@ -326,12 +293,13 @@ theorem goldberg1995Network_wellFormed : goldberg1995Network.WellFormed := by
 /-- The links, not hand-listed parents, determine the resultative's mother:
 the caused-motion construction, via the metaphorical link. -/
 theorem resultative_parent :
-    goldberg1995Network.parentsOf "Resultative" = [causedMotion.construction] := by
+    goldberg1995Network.parentsOf "Resultative"
+      = [causedMotion.map fun _ => ()] := by
   decide
 
 /-- Every link a polysemy family derives is an I_P link — a fact about the
 construction, not about one table. -/
-theorem PolysemyFamily.polysemyLinks_typed (f : PolysemyFamily) :
+theorem PolysemyFamily.polysemyLinks_typed (f : PolysemyFamily Sem) :
     ∀ l ∈ f.polysemyLinks, l.linkType = some .polysemy := by
   intro l hl
   simp only [PolysemyFamily.polysemyLinks, List.mem_map] at hl
@@ -358,21 +326,21 @@ fused result gives the correct prediction without any new alternation logic. -/
 
 /-- The composed meaning of a verb in an argument structure construction.
     Verb root semantics fused with the construction's semantic contribution. -/
-def composedMeaning (verbMC : MeaningComponents) (cxn : ArgStructureConstruction) :
+def composedMeaning (verbMC : MeaningComponents) (cxn : Construction MeaningComponents) :
     MeaningComponents :=
-  verbMC.fuse cxn.semanticContribution
+  verbMC.fuse cxn.meaning
 
 /-- Whether an alternation is predicted for a verb *in a construction*.
     Generalizes `MeaningComponents.predictedAlternation` to construction contexts. -/
 def predictedAlternationInConstruction (verbMC : MeaningComponents)
-    (cxn : ArgStructureConstruction) (alt : DiathesisAlternation) : Bool :=
+    (cxn : Construction MeaningComponents) (alt : DiathesisAlternation) : Bool :=
   (composedMeaning verbMC cxn).predictedAlternation alt
 
 /-! ### Core theorems: constructions that don't augment -/
 
 /-- Ditransitive contributes nothing beyond the verb (`.none`). -/
 theorem ditransitive_no_augmentation :
-    ditransitive.semanticContribution = .none := rfl
+    ditransitive.meaning = .none := rfl
 
 /-- With no augmentation, the composed meaning equals the verb's own. -/
 theorem no_augmentation_identity (mc : MeaningComponents) :
@@ -383,13 +351,13 @@ theorem no_augmentation_identity (mc : MeaningComponents) :
 
 /-- The resultative adds CoS + causation. -/
 theorem resultative_adds_cos_causation :
-    resultative.semanticContribution.changeOfState = true ∧
-    resultative.semanticContribution.causation = true := ⟨rfl, rfl⟩
+    resultative.meaning.changeOfState = true ∧
+    resultative.meaning.causation = true := ⟨rfl, rfl⟩
 
 /-- The caused-motion construction adds motion + causation. -/
 theorem causedMotion_adds_motion_causation :
-    causedMotion.semanticContribution.motion = true ∧
-    causedMotion.semanticContribution.causation = true := ⟨rfl, rfl⟩
+    causedMotion.meaning.motion = true ∧
+    causedMotion.meaning.causation = true := ⟨rfl, rfl⟩
 
 /-! ### Key derivation: construction-dependent alternation
 
