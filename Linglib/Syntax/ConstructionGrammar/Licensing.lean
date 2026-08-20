@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Syntax.ConstructionGrammar.Basic
 
 /-!
-# Construction Grammar: Licensing
+# Constructional licensing
 
 The licensing model of constructional grammar ([sag-2012]; [goldberg-1995]):
 an utterance token is grammatical iff every constituent in it instantiates

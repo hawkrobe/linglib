@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Syntax.ConstructionGrammar.Basic
 
 /-!
-# Construction Grammar: Idioms
+# Idiom classification
 
 An idiomatic expression is something a language user could fail to know
 while knowing everything else in the language ([fillmore-kay-oconnor-1988]
