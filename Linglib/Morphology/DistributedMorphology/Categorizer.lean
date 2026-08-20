@@ -1,3 +1,4 @@
+import Linglib.Features.Gender.Decomposition
 import Linglib.Features.Gender.Interp
 import Linglib.Morphology.DistributedMorphology.Defs
 import Linglib.Semantics.ArgumentStructure.Root.Classification
@@ -60,18 +61,9 @@ def Categorizer.toCategory : Categorizer → Cat
 
 /-! ### Phi-features on categorizing heads
 
-[kramer-2015] locates grammatical gender on n, parameterized by which
-binary dimension a language uses (Table 6.1 and Ch 6; Amharic also Ch 3;
-[adamson-2024] extends the inventory to Teop [±ANIM] and Jarawara
-[±MASC]):
-
-| Language    | Dimension | Four types of n                          |
-|-------------|-----------|------------------------------------------|
-| Amharic     | [±FEM]    | n i[+FEM], n i[−FEM], n, n u[+FEM]      |
-| Spanish     | [±FEM]    | n i[+FEM], n i[−FEM], n, n u[+FEM]      |
-| Maa         | [±FEM]    | n i[+FEM], n i[−FEM], n, n u[−FEM]       |
-| Algonquian  | [±ANIM]   | n i[+ANIM], n i[−ANIM], n, n u[+ANIM]   |
--/
+Grammatical gender lives on n, as an interpretable (natural) or
+uninterpretable (arbitrary) feature over a language-particular dimension
+([kramer-2015]; [adamson-2024] for MASC and Teop). -/
 
 /-- The binary feature dimension a language's gender system distinguishes
 on n. -/
@@ -382,6 +374,76 @@ theorem arbitrary_arbitrary_licensing (gf : GenderFeature) (h : gf.IsArbitrary) 
   cases gf with | mk interp val =>
   cases interp <;> simp_all [GenderFeature.IsArbitrary, GenderFeature.licensingType]
 
+/-! ### The split-feature reading
+
+DM's gender features are the non-hybrid fragment of the split-feature
+architecture of `Features/Gender/Decomposition.lean`: interpretable gender
+values both halves of a `Gender.SplitFeature`, uninterpretable gender only
+the morphological one. The FEM slice of the head inventory is
+[kramer-2015]'s calculus `Gender.KramerN`. -/
+
+/-- A DM gender feature as a split feature ([smith-2015] via
+`Gender.SplitFeature`) — interpretable gender values both halves,
+uninterpretable gender only the morphological one. -/
+def GenderFeature.toSplitFeature (gf : GenderFeature) :
+    Gender.SplitFeature GenderVal :=
+  match gf.interp with
+  | .i => ⟨some gf.val, some gf.val⟩
+  | .u => ⟨some gf.val, none⟩
+
+/-- The gender half of a phi-bundle as a split feature, absent for plain
+heads. -/
+def PhiBundle.genderSplit (phi : PhiBundle) : Gender.SplitFeature GenderVal :=
+  (phi.gender.map GenderFeature.toSplitFeature).getD ⟨none, none⟩
+
+/-- Natural gender in the DM sense is natural gender in the split-feature
+sense. -/
+theorem toSplitFeature_isNatural_iff (gf : GenderFeature) :
+    gf.toSplitFeature.IsNatural ↔ gf.IsNatural := by
+  cases gf with | mk interp val =>
+  cases interp <;>
+    simp [GenderFeature.toSplitFeature, Gender.SplitFeature.IsNatural,
+      GenderFeature.IsNatural]
+
+/-- Arbitrary gender in the DM sense is arbitrary gender in the
+split-feature sense. -/
+theorem toSplitFeature_isArbitrary_iff (gf : GenderFeature) :
+    gf.toSplitFeature.IsArbitrary ↔ gf.IsArbitrary := by
+  cases gf with | mk interp val =>
+  cases interp <;>
+    simp [GenderFeature.toSplitFeature, Gender.SplitFeature.IsArbitrary,
+      GenderFeature.IsArbitrary]
+
+/-- The DM calculus generates no hybrids — the mismatch zoo of
+[smith-2015] lies outside it (cf.
+`Gender.KramerN.toSplitFeature_not_isHybrid` for the FEM slice). -/
+theorem toSplitFeature_not_isHybrid (gf : GenderFeature) :
+    ¬ gf.toSplitFeature.IsHybrid := by
+  cases gf with | mk interp val =>
+  cases interp <;> rintro ⟨u, i, hu, hi, hne⟩ <;>
+    simp_all [GenderFeature.toSplitFeature]
+
+/-- A phi-bundle's split feature is absent exactly when the head is
+plain. -/
+theorem genderSplit_isAbsent_iff (phi : PhiBundle) :
+    phi.genderSplit.IsAbsent ↔ phi.gender = none := by
+  cases h : phi.gender with
+  | none => simp [PhiBundle.genderSplit, h, Gender.SplitFeature.IsAbsent]
+  | some gf =>
+    cases gf with | mk interp val =>
+    cases interp <;>
+      simp [PhiBundle.genderSplit, h, GenderFeature.toSplitFeature,
+        Gender.SplitFeature.IsAbsent]
+
+/-- [kramer-2015]'s FEM-dimension calculus embeds into the head
+inventory. -/
+def CatHead.ofKramerN : Gender.KramerN → CatHead
+  | .plain => .n_plain
+  | .iFem  => .n_iFem
+  | .iMasc => .n_iMasc
+  | .uFem  => .n_uFem
+  | .uMasc => .n_uNegFem
+
 /-! ### DM Gender → Minimalist Feature System -/
 
 /-- The encoding of gender values into the Minimalist
@@ -669,6 +731,14 @@ theorem animacy_verification :
     CatHead.n_iInanim.surfaceGenderAnimacy = .inanimate ∧
     CatHead.n_uAnim.surfaceGenderAnimacy = .animate ∧
     CatHead.n_plain.surfaceGenderAnimacy = .inanimate := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Set 1 surface gender sees only what `Gender.KramerN.exponence` sees —
+interpretability is invisible at PF. -/
+theorem surfaceGenderSet1_ofKramerN (k₁ k₂ : Gender.KramerN)
+    (h : k₁.exponence = k₂.exponence) :
+    (CatHead.ofKramerN k₁).surfaceGenderSet1 =
+      (CatHead.ofKramerN k₂).surfaceGenderSet1 := by
+  cases k₁ <;> cases k₂ <;> first | rfl | exact absurd h (by decide)
 
 /-- Set 1 and Set 2 agree on natural gender but differ on the default
 for plain n ([kramer-2015] Ch 6). -/
