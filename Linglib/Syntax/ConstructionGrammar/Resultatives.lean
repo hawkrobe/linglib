@@ -1,43 +1,32 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!
-# ConstructionGrammar.Resultatives — Theory of the resultative construction family
-[goldberg-jackendoff-2004]
+# The resultative construction family
 
-Theory-side primitives for the four-way resultative construction family
-(causative/noncausative × property/path RP), the dual subevent structure,
-typed verbal/constructional subevent relations, and the compositional
-fusion machinery linking verb meaning to constructional contribution.
+[goldberg-jackendoff-2004]'s four-way resultative family — causative or
+noncausative, with a property or path result phrase — as a dual subevent
+structure: a verbal subevent related to a constructional subevent, with
+fusion linking verb meaning to constructional contribution.
 
-Paper data and per-datum verifications for [goldberg-jackendoff-2004]
-itself live in `Studies/GoldbergJackendoff2004.lean`,
-which imports this file.
+## Main definitions
 
-## Core types
-
-- `SubeventKind`, `SubeventRelation`, `RPType`, `Boundedness`,
-  `ObjectSelection`, `TemporalOrder`
-- `ResultativeSubconstruction` — the 2×2 family
-- `SubeventDesc`, `DualSubevent` — event-structural features
-- `ResultativeEntry` — schema for any resultative datum
-- `ArgSource` — argument-fusion bookkeeping
-
-## Key derivations (no per-paper data)
-
-- `ResultativeSubconstruction.constructionalDesc` — derived hasCause/hasBecome
-- `resultativeAspect`, `resultativeVendlerClass` — bounded RP → telic
-- `adjScaleToRPBoundedness` — Kennedy 2007 scale → G&J boundedness
-- `ResultativeSubconstruction.toConstruction` — derived family of
-  derived construction family + `inheritanceLink`
-- `farSatisfied`, `rolesCoherent`, `temporalConstraintSatisfied` —
-  the three substantive constraints (Principles 37, 44, §4.2)
-
-The fusion theorems (`alternation_chain`, `noncausative_partial_chain`,
-`instrumentSpec_blocks_across_subconstructions`, etc.) are universally
-quantified over arbitrary `MeaningComponents` and `ResultativeSubconstruction`.
+* `ResultativeSubconstruction`: the 2 × 2 family, with its derived
+  subevent structure (`constructionalDesc`) and constructions
+  (`toConstruction`, `resultativeNetwork`)
+* `SubeventDesc`, `DualSubevent`, `SubeventRelation`: dual subevent
+  structure
+* `ResultativeEntry`, `ResultativeEntry.fusedMC`: a verb in a
+  subconstruction, and its fused meaning
+* `farSatisfied`, `rolesCoherent`, `temporalConstraintSatisfied`: the
+  paper's three substantive constraints
 -/
 
 namespace ConstructionGrammar.Resultatives
@@ -56,33 +45,23 @@ inductive SubeventKind where
   | constructional
   deriving Repr, DecidableEq
 
-/-- How the verbal and constructional subevents are related (§3 of
-[goldberg-jackendoff-2004]).
-
-- **means**: The verbal subevent is the means by which the constructional subevent
-  is brought about. This is the default relation for all four core subconstructions
-  (97a–d). E.g., "hammer metal flat" — hammering is the means of causing flatness.
-  Also holds for noncausative cases: "the pond froze solid" — freezing is the
-  means of becoming solid; "the ball rolled down the hill" — rolling is the
-  means of motion along the path.
-- **result**: The verbal subevent is a result of the constructional subevent
-  (reversed directionality from means). Reserved for sound-emission resultatives
-  (schema 20; ex. 17a: "The trolley rumbled through the tunnel" — the sound
-  results from the motion) and disappearance resultatives (ex. 21a: "The witch
-  vanished into the forest").
-- **instance_**: The verbal subevent is an instance of the constructional subevent.
-  For the follow-type cases (§7.1, schema 55; ex. 50a: "Bill followed the thief
-  into the library" — following IS going-after) and *take* under schema 56;
-  the ride/drive cases of 56 (ex. 58a: "Bill rode a train to New York") are
-  instead means of going-by-way-of.
-- **coOccurrence**: The two subevents merely co-occur without causal connection.
-  The *way* construction (ex. 19a: "The car honked its way down the road") uses
-  this relation. Some speakers accept COOCCURRENCE for sound-emission
-  resultatives as well. -/
+/-- How the verbal and constructional subevents are related
+([goldberg-jackendoff-2004] §3). -/
 inductive SubeventRelation where
+  /-- The verbal subevent is the means of the constructional one — the
+  default for all four core subconstructions: in "hammer the metal flat",
+  hammering is the means of causing flatness. -/
   | means
+  /-- The verbal subevent results from the constructional one, as in
+  sound-emission ("the trolley rumbled through the tunnel", ex. 17a) and
+  disappearance resultatives (ex. 21a). -/
   | result
+  /-- The verbal subevent is an instance of the constructional one, as in
+  the *follow*-type cases ("Bill followed the thief into the library",
+  ex. 50a). -/
   | instance_
+  /-- The subevents merely co-occur, as in the *way* construction ("the
+  car honked its way down the road", ex. 19a). -/
   | coOccurrence
   deriving Repr, DecidableEq
 
@@ -94,13 +73,9 @@ inductive RPType where
   | path
   deriving Repr, DecidableEq
 
-/-- The four subconstructions in the resultative family
-([goldberg-jackendoff-2004] §2, summarized as (97)).
-
-|               | Property RP      | Path RP          |
-|---------------|------------------|------------------|
-| **Causative** | causativeProperty | causativePath   |
-| **Noncausative** | noncausativeProperty | noncausativePath | -/
+/-- The four subconstructions of the resultative family: causative or
+noncausative, crossed with a property or path result phrase
+([goldberg-jackendoff-2004] §2, summarized as (97)). -/
 inductive ResultativeSubconstruction where
   | causativeProperty
   | causativePath
@@ -122,7 +97,7 @@ def ResultativeSubconstruction.isPropertyRP : ResultativeSubconstruction → Boo
   | .noncausativeProperty => true
   | .noncausativePath => false
 
-/-- Get the RP type of a subconstruction. -/
+/-- The RP type of a subconstruction. -/
 def ResultativeSubconstruction.rpType : ResultativeSubconstruction → RPType
   | .causativeProperty => .property
   | .causativePath => .path
@@ -164,8 +139,8 @@ noncausative subconstructions have BECOME only. Verbal subevents are always
 bare (no CAUSE, no BECOME) — the manner comes from the verb's lexical
 semantics, not from event-structural operators. -/
 
-/-- Derive the constructional subevent description from the subconstruction.
-    This replaces per-entry stipulation: causative ↔ hasCause, all have hasBecome. -/
+/-- The constructional subevent description a subconstruction
+determines: CAUSE exactly for the causatives, BECOME for all four. -/
 def ResultativeSubconstruction.constructionalDesc : ResultativeSubconstruction → SubeventDesc
   | .causativeProperty    => { hasCause := true,  hasBecome := true }
   | .causativePath        => { hasCause := true,  hasBecome := true }
@@ -264,16 +239,9 @@ def ResultativeSubconstruction.defaultObjectSelection :
 
 /-! ## Resultative entry -/
 
-/-- A resultative entry: verb + subconstruction + aspect.
-
-The dual subevent structure is derived from the subconstruction:
-- verbal desc: always `verbalSubeventDesc` (bare manner/activity)
-- constructional desc: `subconstruction.constructionalDesc`
-The subevent relation defaults to MEANS for all four core subconstructions;
-RESULT is used only for sound-emission and disappearance subtypes.
-
-The Levin class enables compositional fusion: `verbMC.fuse cxn.semanticContribution`
-derives predictions about alternation participation. -/
+/-- A resultative entry: a verb in a subconstruction, with aspectual and
+selectional features. The dual subevent structure is derived from the
+subconstruction, and the Levin class feeds compositional fusion. -/
 structure ResultativeEntry where
   /-- The verb form -/
   verb : String
@@ -291,7 +259,7 @@ structure ResultativeEntry where
   levinClass : LevinClass
   deriving Repr, BEq
 
-/-- Derive the full dual subevent structure from the entry. -/
+/-- The dual subevent structure of an entry. -/
 def ResultativeEntry.dualSubevent (e : ResultativeEntry) : DualSubevent :=
   { verbal := verbalSubeventDesc
   , constructional := e.subconstruction.constructionalDesc
@@ -308,7 +276,7 @@ The resultative's aspect is derived compositionally:
 - Always durative (extends over time)
 - Telic iff the RP denotes a bounded path/property -/
 
-/-- Derive the aspectual profile of a resultative from RP boundedness. -/
+/-- The aspectual profile of a resultative, from RP boundedness. -/
 def resultativeAspect (b : Boundedness) : AspectualProfile :=
   { telicity := match b with
       | .bounded => .telic
@@ -316,7 +284,7 @@ def resultativeAspect (b : Boundedness) : AspectualProfile :=
   , duration := .durative
   , dynamicity := .dynamic }
 
-/-- Derive the Vendler class of a resultative. -/
+/-- The Vendler class of a resultative. -/
 def resultativeVendlerClass (b : Boundedness) : VendlerClass :=
   (resultativeAspect b).toVendlerClass
 
@@ -462,7 +430,7 @@ the parent `resultative` in ArgumentStructure.lean); noncausative ones
 contribute only CoS (BECOME without CAUSE). This is consistent with the
 `constructionalDesc`: `hasCause ↔ causation`, `hasBecome ↔ changeOfState`. -/
 
-/-- Derive the meaning components contributed by a subconstruction.
+/-- The meaning components a subconstruction contributes.
     Causative: CoS + causation (same as parent `resultative`).
     Noncausative: CoS only (BECOME without CAUSE). -/
 def ResultativeSubconstruction.semanticContribution :
@@ -558,7 +526,7 @@ def ResultativeSubconstruction.nameSuffix : ResultativeSubconstruction → Strin
   | .noncausativeProperty => "NoncausativeProperty"
   | .noncausativePath     => "NoncausativePath"
 
-/-- Derive the construction from a subconstruction, its meaning pole the
+/-- The construction a subconstruction determines, its meaning pole the
 subconstruction's `MeaningComponents` contribution.
 
 Slots are determined by the two dimensions:
@@ -582,10 +550,16 @@ def ResultativeSubconstruction.toConstruction (sc : ResultativeSubconstruction) 
 def ResultativeEntry.fusedMC (e : ResultativeEntry) : MeaningComponents :=
   composedMeaning e.verbMC e.subconstruction.toConstruction
 
-/-- Convenience aliases for downstream compatibility. -/
+/-- The causative property resultative as a construction. -/
 def causativePropertyConstruction := ResultativeSubconstruction.causativeProperty.toConstruction
+
+/-- The causative path resultative as a construction. -/
 def causativePathConstruction := ResultativeSubconstruction.causativePath.toConstruction
+
+/-- The noncausative property resultative as a construction. -/
 def noncausativePropertyConstruction := ResultativeSubconstruction.noncausativeProperty.toConstruction
+
+/-- The noncausative path resultative as a construction. -/
 def noncausativePathConstruction := ResultativeSubconstruction.noncausativePath.toConstruction
 
 /-- The full resultative family, derived from all four subconstructions. -/
@@ -593,7 +567,7 @@ def resultativeFamily : List (Construction MeaningComponents) :=
   [ResultativeSubconstruction.causativeProperty,
    .causativePath, .noncausativeProperty, .noncausativePath].map (·.toConstruction)
 
-/-- Derive an inheritance link from a subconstruction to the parent. -/
+/-- The inheritance link from a subconstruction to the parent resultative. -/
 def ResultativeSubconstruction.inheritanceLink (sc : ResultativeSubconstruction) :
     InheritanceLink :=
   let transStr := if sc.isCausative then "transitive" else "intransitive"
