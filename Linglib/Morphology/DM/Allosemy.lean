@@ -376,7 +376,7 @@ def nAllosemic : AllosemicHead NAlloseme where
     , context := { belowCat := none } },
     { label := "n_content"
     , denotation := .content
-    , context := { belowCat := some .v, complementIsEventive := true } },
+    , context := { belowCat := some .v } },
     { label := "n_zero"
     , denotation := .zero
     , context := { belowCat := some .v, complementIsEventive := true } },
@@ -532,28 +532,37 @@ inductive NominalizationReading where
     Integrates [benz-2025] Ch. 3 and [wood-2023] Ch. 5–6:
 
     - v_eventive + n_zero → CEN (n is identity, noun = verb meaning)
-    - v_eventive + n_sortal → CEN ([benz-2025] mapping)
-    - v_eventive + n_result → result/product RN (entity from event)
-    - v_zero + n_simpleEvent → SEN (v absent, n picks out event-entity)
-    - v_zero + n_state → simple state (v absent, n picks out state)
+    - v_zero + n_simpleEvent → SEN (v vacuous, n picks out event-entity)
+    - v_zero + n_state → simple state (v vacuous, n picks out state)
     - v_zero + n_entity → simple entity RN (no event connection)
-    - v_zero + n_sortal → simple entity RN ([benz-2025] mapping)
-    - v_eventive + n_content → CCN (content requires eventive v)
-    - v_zero + n_content → impossible (content requires eventive v) -/
+    - v_zero + n_result → result/product RN
+    - v_zero + n_content → CCN
+
+    For the result and content readings, [benz-2025] §3.5 notes two
+    analytical options (both already noted by [wood-2023]): either v is
+    semantically vacuous on all readings but the CEN — so the event and
+    result readings are "mirror images" (only v vs. only n interpreted),
+    the option the dissertation's denotations adopt — or the eventive
+    component always comes from v, so both heads are interpreted. Both
+    derivations are admitted here (the eventive-v cells alongside the
+    zero-v cells). Content does *not* require an eventive verbal source:
+    simple content nouns (*Gerücht* 'rumor', *fact*, *idea*) have a
+    content reading with no corresponding verb at all ([benz-2025]
+    Table 2, §3.5). Bare categorization (n_sortal) yields a plain noun,
+    not a deverbal reading — its semantics lives in CategorizerSemantics. -/
 def readingFromAllosemes : VAlloseme → NAlloseme → Option NominalizationReading
   | .eventive, .zero        => some .complexEvent
-  | .eventive, .sortal      => some .complexEvent
-  | .eventive, .result      => some .result          -- result/product RN
+  | .eventive, .result      => some .result   -- both-heads-interpreted option
+  | .eventive, .content     => some .content  -- both-heads-interpreted option
   | .zero,     .simpleEvent => some .simpleEvent
   | .zero,     .state       => some .simpleState
   | .zero,     .entity      => some .simpleEntity
-  | .zero,     .sortal      => some .simpleEntity
-  | .eventive, .content     => some .content
-  | .zero,     .content     => none   -- content requires eventive v
+  | .zero,     .result      => some .result   -- v-vacuous option ([benz-2025] §3.5)
+  | .zero,     .content     => some .content  -- v-vacuous option; simple content nouns
+  | _,         .sortal      => none   -- bare categorization: plain noun, not deverbal
   | _,         .relational  => none   -- relational n yields possessive
   | _,         .alienator   => none   -- alienator yields alienated noun
-  | .zero,     .zero        => none   -- both zero is vacuous
-  | .zero,     .result      => none   -- result requires eventive v
+  | .zero,     .zero        => none   -- both vacuous: no reading
   | .eventive, .simpleEvent => none   -- SEN requires v = Ø
   | .eventive, .state       => none   -- state requires v = Ø
   | .eventive, .entity      => none   -- entity-n requires v = Ø
@@ -562,13 +571,15 @@ def readingFromAllosemes : VAlloseme → NAlloseme → Option NominalizationRead
 theorem cen_from_zero_n :
     readingFromAllosemes .eventive .zero = some .complexEvent := rfl
 
-/-- CEN from eventive v + sortal n ([benz-2025]). -/
-theorem cen_from_sortal_n :
-    readingFromAllosemes .eventive .sortal = some .complexEvent := rfl
-
 /-- Result/product RN from eventive v + result n ([wood-2023] Ch. 6 (6.30)). -/
 theorem result_from_eventive_v :
     readingFromAllosemes .eventive .result = some .result := rfl
+
+/-- Result/product RN with vacuous v: on the option the dissertation's
+    denotations adopt, only n is interpreted in the result reading —
+    the event and result readings are "mirror images" ([benz-2025] §3.5). -/
+theorem result_from_zero_v :
+    readingFromAllosemes .zero .result = some .result := rfl
 
 /-- SEN from zero v + simpleEvent n ([wood-2023] Ch. 5). -/
 theorem sen_from_zero_v :
@@ -582,17 +593,16 @@ theorem state_from_zero_v :
 theorem simpleEntity_from_entity_n :
     readingFromAllosemes .zero .entity = some .simpleEntity := rfl
 
-/-- Simple entity from zero v + sortal n ([benz-2025]). -/
-theorem simpleEntity_from_sortal_n :
-    readingFromAllosemes .zero .sortal = some .simpleEntity := rfl
-
-/-- CCN requires eventive v AND content n. -/
-theorem ccn_requires_eventive_content :
+/-- CCN from content n with eventive v (both-heads-interpreted option). -/
+theorem content_from_eventive_v :
     readingFromAllosemes .eventive .content = some .content := rfl
 
-/-- Content reading is impossible with zero v. -/
-theorem no_content_without_event :
-    readingFromAllosemes .zero .content = none := rfl
+/-- CCN from content n with vacuous v: the content interpretation "depends
+    on an alloseme of n, not v", and simple content nouns (*Gerücht*,
+    *rumor*, *idea*) have it with no verbal source at all ([benz-2025]
+    Table 2, §3.5). -/
+theorem content_from_zero_v :
+    readingFromAllosemes .zero .content = some .content := rfl
 
 /-- The six readings are pairwise distinct. -/
 theorem readings_distinct :
