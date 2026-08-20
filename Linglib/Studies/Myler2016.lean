@@ -62,7 +62,9 @@ theorem copulaVI_agrees_vocabItem (v : Head) :
   cases v with | mk flavor hasD _ checksCase features =>
   cases flavor <;> cases hasD <;> cases checksCase <;>
   simp [copulaVI, copulaVIRules, vocabularyInsertSimple, vocabularyInsert,
-    VocabItem.matches, List.mergeSort, List.findSome?]
+    VocabItem.matches, Morphology.Exponence.realize, Morphology.Exponence.selectBy,
+    Morphology.Exponence.applicable, Morphology.Exponence.Applies,
+    Morphology.Exponence.exponent, List.argmax, List.argAux]
 
 /-- HAVE ↔ Voice is transitive (external argument, not PF-only, not passive). -/
 theorem vi_characterization (v : Head) :
@@ -177,7 +179,9 @@ theorem icelandicVI_agrees_vocabItem (dp : IcelandicPossDP) :
     some (if icelandicHaveVI dp = .hafa then "hafa" else "eiga") := by
   cases dp with | mk p pp => cases p <;> cases pp <;>
   simp [icelandicHaveVI, icelandicHaveVIRules, vocabularyInsertSimple,
-    vocabularyInsert, VocabItem.matches, List.mergeSort, List.findSome?]
+    vocabularyInsert, VocabItem.matches, Morphology.Exponence.realize,
+    Morphology.Exponence.selectBy, Morphology.Exponence.applicable,
+    Morphology.Exponence.Applies, Morphology.Exponence.exponent, List.argmax, List.argAux]
 
 -- ════════════════════════════════════════════════════
 -- § 2. The Two Puzzles, Solved

@@ -160,25 +160,25 @@ def teopArticleRules : List (VocabItem Teop.ArticleCtx Unit) :=
   ]
 
 theorem teop_ipossessed_body_part_article :
-    vocabularyInsert teopArticleRules ⟨.gI, false, false⟩ () = some "a" := by native_decide
+    vocabularyInsert teopArticleRules ⟨.gI, false, false⟩ () = some "a" := by decide
 theorem teop_unpossessed_body_part_article :
-    vocabularyInsert teopArticleRules ⟨.gII, false, false⟩ () = some "o" := by native_decide
+    vocabularyInsert teopArticleRules ⟨.gII, false, false⟩ () = some "o" := by decide
 theorem teop_proprial_article :
-    vocabularyInsert teopArticleRules ⟨.gI, false, true⟩ () = some "e" := by native_decide
+    vocabularyInsert teopArticleRules ⟨.gI, false, true⟩ () = some "e" := by decide
 theorem teop_plural_gI_article :
-    vocabularyInsert teopArticleRules ⟨.gI, true, false⟩ () = some "ra" := by native_decide
+    vocabularyInsert teopArticleRules ⟨.gI, true, false⟩ () = some "ra" := by decide
 theorem teop_plural_gII_article :
-    vocabularyInsert teopArticleRules ⟨.gII, true, false⟩ () = some "ro" := by native_decide
+    vocabularyInsert teopArticleRules ⟨.gII, true, false⟩ () = some "ro" := by decide
 
 /-- End-to-end: body-part root + n_{body-part{D}} → gender I → article *a*. -/
 theorem teop_end_to_end_ipossessed :
     vocabularyInsert teopArticleRules
-      ⟨teopGenderFromN teopBodyPartN, false, false⟩ () = some "a" := by native_decide
+      ⟨teopGenderFromN teopBodyPartN, false, false⟩ () = some "a" := by decide
 
 /-- End-to-end: body-part root + n_{alienator} → gender II → article *o*. -/
 theorem teop_end_to_end_unpossessed :
     vocabularyInsert teopArticleRules
-      ⟨teopGenderFromN teopAlienatorN, false, false⟩ () = some "o" := by native_decide
+      ⟨teopGenderFromN teopAlienatorN, false, false⟩ () = some "o" := by decide
 
 /-! ### Bridge to Fragment Data
 
@@ -330,7 +330,7 @@ theorem jarawara_no_impoverishment_when_inactive :
 
 theorem jarawara_fragment_total :
     (Jarawara.allClasses.map (·.memberCount)).foldl (· + ·) 0 = 175 := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 4: Inherited Gender — Yanyuwa & Coastal Marind ([adamson-2024] §4)
@@ -404,7 +404,7 @@ def coastalMarindInheritingNouns : List InheritedGenderNoun :=
     for Probe-Goal agreement with the iPossessor. -/
 theorem coastalMarind_inheriting_prerequisites :
     coastalMarindInheritingNouns.all (λ n => n.selectsD && n.hasUnvaluedGender) = true := by
-  native_decide
+  decide
 
 /-- Inherited gender is consistent with the GLH: the possessor whose
     gender is inherited occupies Spec,nP (nP-internal). -/
@@ -440,18 +440,18 @@ theorem amharic_three_surface_genders :
     let classes :=
       [Head.n_iFem, Head.n_iMasc, Head.n_plain, Head.n_uFem].map
         surfaceGenderClass
-    classes.eraseDups.length = 3 := by native_decide
+    classes.eraseDups.length = 3 := by decide
 
 /-- A two-gender system (e.g., Jarawara [±MASC]) uses only two n types:
     marked (u[+MASC]) and plain. -/
 theorem two_gender_system :
     let classes := [Head.n_uMasc, Head.n_plain].map surfaceGenderClass
-    classes.eraseDups.length = 2 := by native_decide
+    classes.eraseDups.length = 2 := by decide
 
 /-- The Teop two-gender system uses the ANIM dimension. -/
 theorem teop_two_gender_system :
     let classes := [Head.n_uAnim, Head.n_plain].map surfaceGenderClass
-    classes.eraseDups.length = 2 := by native_decide
+    classes.eraseDups.length = 2 := by decide
 
 -- ============================================================================
 -- § 6: Regression: iPossessable n-heads must have selectsD
@@ -514,9 +514,9 @@ def canTakePossessorSem (nh : Head) (mediatesAPoss : Bool := false) : Bool :=
   semType.toBarker.canTakePossessor
 
 -- PF pipeline: body-part n → gender I → article *a*
-theorem pf_body_part : teopPFDerive teopBodyPartN = some "a" := by native_decide
+theorem pf_body_part : teopPFDerive teopBodyPartN = some "a" := by decide
 -- PF pipeline: alienator n → gender II → article *o*
-theorem pf_alienator : teopPFDerive teopAlienatorN = some "o" := by native_decide
+theorem pf_alienator : teopPFDerive teopAlienatorN = some "o" := by decide
 
 -- Semantic pipeline: body-part n (selectsD) → relational → can take possessor
 theorem sem_body_part : canTakePossessorSem teopBodyPartN = true := rfl
@@ -624,7 +624,7 @@ open Italian.NumberGender
 theorem italian_fragment_bridge :
     allNouns.all (fun n =>
       n.genderChanges == n.pluralClass.canAffectGender) = true := by
-  native_decide
+  decide
 
 /-- Cross-linguistic convergence: the -a plural class is dominated by
     body parts (6 of 9). Body parts drive gender interaction in ALL
@@ -636,6 +636,6 @@ theorem italian_fragment_bridge :
 theorem italian_body_part_dominance :
     (aPluralNouns.filter (fun n =>
       ["arm", "finger", "knee", "lip", "bone", "eyebrow"].contains n.gloss)).length = 6 := by
-  native_decide
+  decide
 
 end Adamson2024

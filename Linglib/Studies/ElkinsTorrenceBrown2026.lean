@@ -523,7 +523,7 @@ private def voiceOblProbe : FeatureBundle := mamVoice.features
 theorem both_probes_unvalued :
     (Minimalist.FeatureBundle.toGramFeatures voiceProbe).all GramFeature.isUnvalued = true ∧
     (Minimalist.FeatureBundle.toGramFeatures voiceOblProbe).all GramFeature.isUnvalued = true := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- φ-Agree (Scott 2023) and oblique-Agree (this paper) are parallel
     instances of the same operation, differing only in which features
@@ -537,7 +537,7 @@ theorem phi_and_oblique_agree_parallel :
     applyAgree voiceOblProbe (.ofGramFeatures [.valued (.oblique true)]) .oblique =
       some (.ofGramFeatures [.valued (.oblique true)]) ∧
     spellout [eqYaVocab] (.ofGramFeatures [.valued (.oblique true)]) (some .Voice) = some "=(y)a'" := by
-  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide, by decide, by decide⟩
 
 end UnifiedAgree
 
