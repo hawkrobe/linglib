@@ -181,6 +181,14 @@ structure AllosemicHead (Sem : Type) where
 def AllosemicHead.allosemeCount {Sem : Type} (h : AllosemicHead Sem) : Nat :=
   h.entries.length
 
+/-- The denotations licensed for the head in context `c` — the entries whose
+conditioning context matches `c`. Alloseme ambiguity in a context is
+non-singleton licensing, and the canonical default among the licensed
+entries is the Elsewhere winner (`selectBy_score_isElsewhereWinner`). -/
+def AllosemicHead.licensed {Sem : Type} (h : AllosemicHead Sem)
+    (c : SyntacticContext) : List Sem :=
+  (h.entries.filter (·.context.matches c)).map (·.denotation)
+
 /-! ### Allosemy on the exponence core
 
 An `AllosemicEntry` is a rule of exponence (`Morphology/Exponence/`): its
