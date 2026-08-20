@@ -1,4 +1,4 @@
-import Linglib.Syntax.ConstructionGrammar.Licensing
+import Linglib.Syntax.ConstructionGrammar.Composition
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Studies.FillmoreKayOConnor1988
 
@@ -59,38 +59,9 @@ inductive MeaningKind where
 
 "The construction also specifies how the semantics of the daughters are
 combined to produce the semantics of the mother, and what additional
-semantics, if any, is contributed by the construction itself." -/
-
-/-- A composition rule: from the daughters' denotations to the mother's,
-partial because a rule demands daughter denotations of the right shape. -/
-abbrev CompositionRule (D : Type*) := List D → Option D
-
-mutual
-
-/-- All readings of a token: each construction whose typed form the
-daughters instantiate contributes the readings its meaning pole — its
-composition rule — produces from the daughters' readings; words read
-from the lexicon. -/
-def _root_.ConstructionGrammar.Constructicon.interps {D : Type*}
-    (cx : Constructicon (CompositionRule D)) (pos : String → Option UD.UPOS)
-    (lex : String → Option D) : Token → List D
-  | .word w => (lex w).toList
-  | .node ts =>
-      cx.constructions.flatMap (λ c =>
-        if formMatches pos c.form ts then
-          (cx.interpsList pos lex ts).filterMap c.meaning
-        else [])
-
-/-- All sequences of daughter readings. -/
-def _root_.ConstructionGrammar.Constructicon.interpsList {D : Type*}
-    (cx : Constructicon (CompositionRule D)) (pos : String → Option UD.UPOS)
-    (lex : String → Option D) : List Token → List (List D)
-  | [] => [[]]
-  | t :: ts =>
-      (cx.interps pos lex t).flatMap (λ d =>
-        (cx.interpsList pos lex ts).map (d :: ·))
-
-end
+semantics, if any, is contributed by the construction itself" — the
+`CompositionRule` architecture of
+`ConstructionGrammar.Composition`, instantiated below. -/
 
 /-! ### §1: *purple plum* vs. *alleged thief*
 

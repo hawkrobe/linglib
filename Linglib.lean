@@ -2458,6 +2458,7 @@ import Linglib.Studies.McCollumEtAl2020
 import Linglib.Studies.McKayVanInwagen1977
 import Linglib.Studies.McMullin2016
 import Linglib.Studies.McNallyDeSwart2011
+import Linglib.Studies.Michaelis2004
 import Linglib.Studies.McPhersonLamont2026
 import Linglib.Studies.MeinhardtEtAl2024
 import Linglib.Studies.Mendes2025
@@ -2802,6 +2803,7 @@ import Linglib.Syntax.Clause.Construction
 import Linglib.Syntax.Comparative
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Basic
+import Linglib.Syntax.ConstructionGrammar.Composition
 import Linglib.Syntax.ConstructionGrammar.Idiom
 import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Syntax.ConstructionGrammar.Licensing
