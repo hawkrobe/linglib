@@ -54,9 +54,8 @@ as a request projects to `prepCondition := some .knowledge` — the same
 substrate `Studies/FrancikClark1985.lean` and
 `Studies/RuytenbeekEtAl2017.lean` consume.
 
-The DM bridge in `§I` consumes `DistributedMorphology.Categorizer`'s
-`Recategorization.denominal` for the syntactic operation underlying nonce
-verbs. The LU-RSA bridge in `§H` consumes
+The DM bridge in `§I` consumes `DistributedMorphology.categorize` for
+the word syntax [v [n √]] underlying nonce verbs. The LU-RSA bridge in `§H` consumes
 `RSA.Lexicon`.
 
 The shared mechanism Clark posits in `§K` is operationalized as a typed
@@ -71,8 +70,7 @@ namespace Clark1983
 
 open CommonGround
 open RSA (Lexicon)
-open DistributedMorphology (Categorizer Recategorization CategorizedRoot
-  denominal_requires_n recategorization_changes_category)
+open DistributedMorphology (Categorizer WordStructure ofRoot categorize Headed)
 
 /-! ## §A. Sense and reference: fixed vs shifting (Table 9.1, p. 300) -/
 
@@ -466,9 +464,9 @@ def teapotConvention : DenominalVerbConvention TeapotWorld where
   rolesDistinct := by decide
 
 /-- The full DM + Convention bundle for *to teapot* in this context.
-    The DM-side `recategorized` step (n → v) is satisfied by some
-    underlying `CategorizedRoot`; for downstream studies the `convention`
-    field is the Clark-side substantive content. -/
+    The DM-side derivation (n → v) is the word structure [v [n √]] over
+    any root index; for downstream studies the `convention` field is the
+    Clark-side substantive content. -/
 def teapotDenominalConvention :
     DenominalVerbConvention TeapotWorld := teapotConvention
 
@@ -538,34 +536,39 @@ theorem sense_creation_strictly_generalizes
 
 /-! ## §I. Bridge to DM recategorization
 
-DM's `Recategorization.denominal` captures the syntactic n → v step. The
-hard part — what the resulting verb *means* — is what Clark's convention
-(`§G`) and the goal hierarchy (`§F`) provide. -/
+DM's word syntax captures the n → v step: the denominal verb is the
+configuration [v [n √]]. The hard part — what the resulting verb
+*means* — is what Clark's convention (`§G`) and the goal hierarchy
+(`§F`) provide. -/
 
-/-- A denominal verb has a syntactic component (DM recategorization) and a
-    pragmatic component (Clark's convention). -/
+/-- A denominal verb has a syntactic component (the root, categorized
+    [v [n √]]) and a pragmatic component (Clark's convention). -/
 structure DenominalVerb (W : Type*) where
-  nominalRoot : CategorizedRoot
-  recategorized : CategorizedRoot
-  recatProof : nominalRoot.recategorize .denominal = some recategorized
+  root : DistributedMorphology.Root
   convention : DenominalVerbConvention W
 
+/-- The word syntax of a denominal verb: the layered derivation [v [n √]]. -/
+noncomputable def DenominalVerb.wordStructure {W : Type*} (dv : DenominalVerb W) :
+    WordStructure Categorizer :=
+  categorize .v (categorize .n (ofRoot dv.root))
+
 theorem denominal_verb_is_verbal {W : Type*} (dv : DenominalVerb W) :
-    dv.recategorized.categorizer = .v :=
-  recategorization_changes_category
-    dv.nominalRoot .denominal dv.recategorized dv.recatProof
+    Headed dv.wordStructure .v :=
+  .categorize ..
 
 theorem denominal_verb_source_is_nominal {W : Type*} (dv : DenominalVerb W) :
-    dv.nominalRoot.categorizer = .n :=
-  denominal_requires_n dv.nominalRoot dv.recategorized dv.recatProof
+    Headed (categorize Categorizer.n (ofRoot dv.root)) Categorizer.n :=
+  .categorize ..
 
-/-- DM tells us denominal verbs exist (recategorization succeeds) but says
-    nothing about what they mean. Two denominal verbs from the same root
-    always produce the same syntactic result yet can have arbitrarily
-    different meanings — Clark's convention fills that gap. -/
-theorem dm_underdetermines_meaning {W : Type*} (dv₁ dv₂ : DenominalVerb W) :
-    dv₁.recategorized.categorizer = dv₂.recategorized.categorizer := by
-  rw [denominal_verb_is_verbal dv₁, denominal_verb_is_verbal dv₂]
+/-- DM tells us what denominal verbs are (the layered structure over the
+    root) but nothing about what they mean: the word structure is
+    determined by the root alone, so two denominal verbs from the same
+    root are syntactically identical yet can have arbitrarily different
+    meanings — Clark's convention fills that gap. -/
+theorem dm_underdetermines_meaning {W : Type*} (dv₁ dv₂ : DenominalVerb W)
+    (h : dv₁.root = dv₂.root) :
+    dv₁.wordStructure = dv₂.wordStructure := by
+  rw [DenominalVerb.wordStructure, DenominalVerb.wordStructure, h]
 
 /-! ## §J. The *stereos* example (paper pp. 326–327)
 

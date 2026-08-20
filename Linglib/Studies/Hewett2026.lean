@@ -1,4 +1,5 @@
 import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
+import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Syntax.Minimalist.Agree.Checking
 import Linglib.Syntax.Minimalist.Verbal.Voice
@@ -50,7 +51,7 @@ namespace Hewett2026
 
 open Minimalist (VerbHead Cat FeatureStatus ActivationIndex ApplHead applHigh applLowRecipient isCausative low_licensed_with_any high_licensed_of_assignsTheta)
 open Minimalist.Voice (Flavor Head buildDecomposition agentive causer passive anticausative)
-open DistributedMorphology (CategorizedRoot Categorizer)
+open DistributedMorphology (Categorizer)
 open Morphology.MirrorPrinciple (MorphDomain)
 open Wood2015 (Construction)
 
@@ -263,24 +264,27 @@ theorem Hkm_not_templateInvariant : ¬ templateInvariant .Hkm :=
   fun h => absurd (h .XaYaZ .XaYYaZ) (by decide)
 
 /-- C-selection (valency) is root-level ([harley-2014]; see
-    `complement_selection_at_root_level` in `Categorizer.lean`) but l-selection is
-    not: the two kinds of selection factor differently in the grammar. -/
+    `roots_categorize` in `Categorizer/Basic.lean`) but l-selection is not:
+    categorization leaves the root leaves — and with them all root-level
+    selectional content — untouched, while l-selection varies by template. -/
 theorem cSelection_vs_lSelection :
-    (∀ (i : DistributedMorphology.Root) (r : Verb.Root.Classification)
-        (c1 c2 : Categorizer),
-      (CategorizedRoot.mk i r c1).classification.valency
-        = (CategorizedRoot.mk i r c2).classification.valency) ∧
+    (∀ (x : Categorizer) (T : DistributedMorphology.WordStructure Categorizer),
+      DistributedMorphology.roots (DistributedMorphology.categorize x T)
+        = DistributedMorphology.roots T) ∧
     (∃ r : RootLabel, ¬ templateInvariant r) :=
-  ⟨fun _ _ _ _ => rfl, ⟨.krh, krh_not_templateInvariant⟩⟩
+  ⟨DistributedMorphology.roots_categorize, ⟨.krh, krh_not_templateInvariant⟩⟩
 
 /-! ### Verbalized roots -/
 
 /-- A root that has been categorized as a verb and placed in a template — the
-    structure that jointly determines l-selection. Bridges `CategorizedRoot`
-    (categorizer side) and the template's Voice contribution. -/
+    structure that jointly determines l-selection. The verbalizer is fixed:
+    the word syntax is [v √], and the template contributes the Voice head
+    above it. -/
 structure VerbalizedRoot where
-  /-- The root with its categorizer. -/
-  categorized : CategorizedRoot
+  /-- The acategorial root. -/
+  root : DistributedMorphology.Root
+  /-- The root's c-selection content (arity, change-type). -/
+  classification : Verb.Root.Classification
   /-- The Semitic template (functional head bundle). -/
   template : SemiticTemplate
   /-- The root label for l-selection lookup. -/
@@ -297,10 +301,11 @@ def VerbalizedRoot.voiceFlavor (vr : VerbalizedRoot) : Flavor :=
 
 /-- Valency is template-invariant (root-level), unlike l-selection: c-selection
     and l-selection factor differently in the grammar. -/
-theorem valency_template_invariant (cr : CategorizedRoot) (rl : RootLabel)
+theorem valency_template_invariant (rt : DistributedMorphology.Root)
+    (cls : Verb.Root.Classification) (rl : RootLabel)
     (t1 t2 : SemiticTemplate) :
-    (VerbalizedRoot.mk cr t1 rl).categorized.classification.valency =
-      (VerbalizedRoot.mk cr t2 rl).categorized.classification.valency := rfl
+    (VerbalizedRoot.mk rt cls t1 rl).classification.valency =
+      (VerbalizedRoot.mk rt cls t2 rl).classification.valency := rfl
 
 /-! ### Template-to-Voice correspondence
 
@@ -331,11 +336,12 @@ theorem voice_distinguishes_templates :
 
 /-- [kratzer-1996]'s severing instantiated for Semitic: root-level valency is
     template-invariant while the Voice contribution varies by template. -/
-theorem severing_instantiated (cr : CategorizedRoot) (rl : RootLabel) :
-    (VerbalizedRoot.mk cr .XaYaZ rl).categorized.classification.valency =
-      (VerbalizedRoot.mk cr .XaYYaZ rl).categorized.classification.valency ∧
+theorem severing_instantiated (rt : DistributedMorphology.Root)
+    (cls : Verb.Root.Classification) (rl : RootLabel) :
+    (VerbalizedRoot.mk rt cls .XaYaZ rl).classification.valency =
+      (VerbalizedRoot.mk rt cls .XaYYaZ rl).classification.valency ∧
     SemiticTemplate.toVoiceFlavor .XaYaZ ≠ SemiticTemplate.toVoiceFlavor .XaYYaZ :=
-  ⟨valency_template_invariant cr rl .XaYaZ .XaYYaZ, voice_distinguishes_templates⟩
+  ⟨valency_template_invariant rt cls rl .XaYaZ .XaYYaZ, voice_distinguishes_templates⟩
 
 /-! ### Cross-linguistic Voice coverage
 

@@ -44,7 +44,6 @@ the head inventory is `Gender.KramerN`.
 namespace DistributedMorphology
 
 open Minimalist Minimalist.Voice
-open Verb Verb.Root
 
 /-! ### Phi-features on categorizing heads
 
@@ -169,7 +168,10 @@ instance : Inhabited PhiBundle := ⟨{}⟩
 
 /-- A categorizing head with its phi-features and the selectional feature
 {D}, which creates a specifier position for an iPossessor DP in Spec,nP
-([adamson-2024], following [myler-2016]'s convention). -/
+([adamson-2024], following [myler-2016]'s convention). A functional
+morpheme is a feature bundle: `CatHead` is the head-leaf label of
+`WordStructure CatHead`, the φ-enriched instance of word-internal
+structure. -/
 structure CatHead where
   /-- The categorizer n, v, or a. -/
   cat : Categorizer
@@ -276,6 +278,16 @@ def CatHead.v_plain : CatHead where
 /-- The adjectival categorizer, with no phi-features. -/
 def CatHead.a_plain : CatHead where
   cat := .a
+
+/-- In the categorization configuration [n √], all φ-content sits on the
+single head leaf and the single root leaf carries none: gender enters
+nominal structure only through n ([kramer-2015]). -/
+theorem heads_roots_categorize_ofRoot (ch : CatHead) (r : Root) :
+    heads (categorize ch (ofRoot r)) = {ch}
+      ∧ roots (categorize ch (ofRoot r)) = {r} := by
+  constructor
+  · rw [heads_categorize, heads_ofRoot, Multiset.cons_zero]
+  · rw [roots_categorize, roots_ofRoot]
 
 /-! ### Licensing Conditions ([kramer-2015] §3.4) -/
 

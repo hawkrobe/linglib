@@ -667,15 +667,21 @@ def verbalizerCat : CatHead := CatHead.v_plain
 
 theorem verbalizer_is_verbal : verbalizerCat.cat = .v := rfl
 
-/-- Denominal verb derivation (n → v): `Recategorization.denominal`. -/
-theorem denominal_ideophone_verb :
-    Recategorization.denominal.source = .n ∧
-    Recategorization.denominal.target = .v := ⟨rfl, rfl⟩
+/-- Denominal verb derivation (n → v): the ideophonic base categorized
+    by n, recategorized by the tonal verbalizer — [v [n √]] is v-headed
+    over an n-headed inner layer, with the base root untouched. -/
+theorem denominal_ideophone_verb (r : DistributedMorphology.Root) :
+    Headed (categorize verbalizerCat (categorize CatHead.n_plain (ofRoot r)))
+      verbalizerCat ∧
+    roots (categorize verbalizerCat (categorize CatHead.n_plain (ofRoot r)))
+      = {r} :=
+  ⟨.categorize .., by rw [roots_categorize, roots_categorize, roots_ofRoot]⟩
 
-/-- Deadjectival verb derivation (a → v). -/
-theorem deadjectival_ideophone_verb :
-    Recategorization.deadjectival.source = .a ∧
-    Recategorization.deadjectival.target = .v := ⟨rfl, rfl⟩
+/-- Deadjectival verb derivation (a → v): [v [a √]]. -/
+theorem deadjectival_ideophone_verb (r : DistributedMorphology.Root) :
+    Headed (categorize verbalizerCat (categorize CatHead.a_plain (ofRoot r)))
+      verbalizerCat :=
+  .categorize ..
 
 -- ============================================================================
 -- §9: Expressiveness Preservation (after [potts-2007])
