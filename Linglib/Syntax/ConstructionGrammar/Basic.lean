@@ -1,105 +1,89 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Data.UD.Basic
 import Mathlib.Data.List.Dedup
 
 /-!
 # Construction Grammar: Core Types
 
-Constructions — learned pairings of form and function ([goldberg-2006]) —
-are the basic units of grammatical knowledge in CxG. The form side is
-typed: a `TypedForm` is a sequence of `Slot`s, each fixing a lexeme,
-opening a category, or admitting any phrase ([dunn-2025]'s LEX/SYN/SEM
-slot-constraint levels, plus [kay-fillmore-1999]'s grammatical functions,
-coreference indices, and slot constraints). `Specificity` is *derived*
-from the slot structure (`Construction.specificity`), not stipulated.
+A construction is a learned pairing of a form and a meaning
+([goldberg-2006]), the basic unit of grammatical knowledge in CxG. The
+form side is a `TypedForm`: a sequence of `Slot`s, each fixing a lexeme,
+opening a category, or admitting any phrase, with a construction's
+`Specificity` derived from its slot structure rather than stipulated.
 
-A slot also records the bar level of its position; a `phrasal` filler in
-a `zero`-level position (`Slot.IsPhraseInWordSlot`) is the
-phrase-in-word-slot configuration of phrasal compounds and the PAL
-construction.
+## Main definitions
 
-## Main declarations
-
-- `SlotFiller`, `Slot`, `TypedForm`: the typed form side
-- `derivedSpecificity`, `HasConstraint`, `refGroupCount`: measures derived
+* `SlotFiller`, `Slot`, `TypedForm`: the typed form side
+* `derivedSpecificity`, `HasConstraint`, `refGroupCount`: measures derived
   from forms
-- `Construction`, `Construction.specificity`, `Construction.map`: typed
+* `Construction`, `Construction.specificity`, `Construction.map`: typed
   form–meaning pairings
-- `InheritanceLink`, `Constructicon`: the network
+* `InheritanceLink`, `Constructicon`: the network
 -/
 
 namespace ConstructionGrammar
 
-/-- How specified a construction's form side is: the degree-of-abstraction
-continuum of [goldberg-2003]:220, discretized as in [goldberg-shirtz-2025]'s
-Table 8.
-
-| Specificity | Example |
-|---|---|
-| lexicallySpecified | "veggie-wrap", "must-read" |
-| partiallyOpen | "N-wrap", "a simple ⟨PAL⟩" |
-| fullyAbstract | [N⁰ N⁰ N⁰], [N′ PAL⁰ N] |
--/
+/-- How specified a construction's form side is: [goldberg-2003]'s
+degree-of-abstraction continuum, discretized as in
+[goldberg-shirtz-2025]'s Table 8. -/
 inductive Specificity where
+  /-- Every slot lexically filled: *veggie-wrap*, *must-read*. -/
   | lexicallySpecified
+  /-- Fixed and open slots mixed: *N-wrap*, *a simple ⟨PAL⟩*. -/
   | partiallyOpen
+  /-- Every slot open: [N⁰ N⁰ N⁰], [N′ PAL⁰ N]. -/
   | fullyAbstract
   deriving Repr, DecidableEq
 
-/-- Mode of information transfer in an inheritance link
-([goldberg-1995] §3.3.1, p. 73–74).
-
-[goldberg-1995] distinguishes two modes, orthogonal to link type:
-- **Normal**: child inherits defaults from parent but may override them.
-  Allows subregularities and exceptions. The only mode used in
-  [goldberg-1995]'s system.
-- **Complete**: all information from dominating nodes is inherited strictly;
-  no conflicts allowed. The mode "normally assumed in unification-based
-  grammars" (p. 74, citing Kay 1984 and Fillmore & Kay 1993); the
-  normal/complete distinction follows Flickinger, Pollard & Wasow (1985).
-  Not exploited in [goldberg-1995]'s constructional analysis.
-
-Computational semantics for both modes: `ConstructionGrammar.Inheritance`. -/
+/-- Mode of information transfer in an inheritance link, orthogonal to
+the link's semantic relation ([goldberg-1995] §3.3.1, p. 73–74). -/
 inductive InheritanceMode where
-  | normal     -- child inherits defaults, may override
-  | complete   -- all properties inherited strictly (not used in Goldberg 1995)
+  /-- The child inherits defaults from its parents but may override
+  them — the only mode [goldberg-1995] uses. -/
+  | normal
+  /-- All information is inherited strictly, with no conflicts allowed —
+  the mode "normally assumed in unification-based grammars" (p. 74). -/
+  | complete
   deriving Repr, DecidableEq
 
-/-- Type of semantic relation in an inheritance link
-([goldberg-1995] §3.3.2, p. 75).
-
-[goldberg-1995] distinguishes four major link types:
-- **I_P (Polysemy)**: relates the central sense of a construction to its
-  extensions. Each extension inherits syntax but differs in meaning
-  (e.g., the six senses of the ditransitive, pp. 75–77).
-- **I_M (Metaphorical extension)**: source and target related by systematic
-  metaphor (e.g., caused-motion → resultative via the motion→change
-  metaphor, p. 81).
-- **I_S (Subpart)**: one construction is a proper subpart of another
-  (e.g., intransitive motion is a subpart of caused-motion, p. 78).
-- **I_I (Instance)**: one construction is a more fully specified version
-  of another (e.g., *drive*-crazy is an instance of the resultative, p. 79). -/
+/-- The semantic relation an inheritance link records: [goldberg-1995]'s
+four major link types (§3.3.2, p. 75). -/
 inductive LinkType where
-  | polysemy       -- I_P: central sense → extension
-  | metaphorical   -- I_M: source → target via metaphor
-  | subpart        -- I_S: child is proper subpart of parent
-  | instance       -- I_I: child is special case of parent
+  /-- I_P: relates a construction's central sense to an extension, which
+  inherits the syntax but differs in meaning (the six senses of the
+  ditransitive, pp. 75–77). -/
+  | polysemy
+  /-- I_M: source and target related by a systematic metaphor
+  (caused-motion → resultative via motion→change, p. 81). -/
+  | metaphorical
+  /-- I_S: the child is a proper subpart of the parent (intransitive
+  motion inside caused-motion, p. 78). -/
+  | subpart
+  /-- I_I: the child is a more fully specified version of the parent
+  (*drive*-crazy as an instance of the resultative, p. 79). -/
+  | instance
   deriving Repr, DecidableEq
 
 /-- X-bar level of a syntactic position or constructional output. -/
 inductive BarLevel where
-  | zero    -- X⁰
-  | bar     -- X′
-  | phrase  -- XP
+  /-- X⁰, a word-level position. -/
+  | zero
+  /-- X′, an intermediate projection. -/
+  | bar
+  /-- XP, a full phrase. -/
+  | phrase
   deriving DecidableEq, Repr
 
 /-! ### Typed slots
 
-[dunn-2025] distinguishes three representation levels for slot content —
-LEX (a fixed lexeme), SYN (any word of a category), SEM (any expression
-meeting a semantic constraint) — and [kay-fillmore-1999] add headed
-phrases, grammatical functions, coreference indices, and syntactic
-constraints. The `phrasal` filler (any phrase, no fixed head) is the
-filler type of phrasal compounds and PAL constructions. -/
+Slot content comes at [dunn-2025]'s three representation levels — LEX (a
+fixed lexeme), SYN (any word of a category), SEM (a semantic constraint) —
+plus [kay-fillmore-1999]'s headed phrases, grammatical functions,
+coreference indices, and slot constraints. -/
 
 /-- A slot's filler: the representation level of slot content.
 
@@ -123,11 +107,9 @@ inductive SlotFiller (Lex : Type*) where
   | phrasal : SlotFiller Lex
   deriving DecidableEq, Repr
 
-/-- Is this slot open (not lexically anchored)?
-
-`open_` (SYN), `semantic` (SEM+), and `phrasal` slots count as open for
-abstraction-level computation. `headed` slots do not: they fix the head
-lexeme even though the phrase is open. -/
+/-- Whether a slot is open — not lexically anchored: `open_`, `semantic`,
+and `phrasal` fillers count as open; `fixed` and `headed` do not, the
+latter fixing its head lexeme even though the phrase is open. -/
 def SlotFiller.isOpen {Lex : Type*} : SlotFiller Lex → Bool
   | .fixed _ => false
   | .open_ _ => true
@@ -135,14 +117,18 @@ def SlotFiller.isOpen {Lex : Type*} : SlotFiller Lex → Bool
   | .semantic _ => true
   | .phrasal => true
 
-/-- Grammatical function of a valence member ([kay-fillmore-1999], Figure 12).
-    Distinct from semantic role: a subject (gf) can be an agent, theme,
-    or experiencer (role). -/
+/-- Grammatical function of a valence member ([kay-fillmore-1999],
+Figure 12), distinct from semantic role: a subject can be an agent, a
+theme, or an experiencer. -/
 inductive GramFunction where
-  | subj   -- subject
-  | comp   -- complement (clausal/verbal)
-  | obj    -- direct object
-  | pred   -- predicative complement / secondary predicate
+  /-- Subject. -/
+  | subj
+  /-- Clausal or verbal complement. -/
+  | comp
+  /-- Direct object. -/
+  | obj
+  /-- Predicative complement or secondary predicate. -/
+  | pred
   deriving DecidableEq, Repr
 
 /-- Referential index for cross-slot coreference constraints. Slots
@@ -152,9 +138,12 @@ abbrev RefIndex := Nat
 
 /-- Syntactic constraint on a slot ([kay-fillmore-1999], Figure 12). -/
 inductive SlotConstraint where
-  | locMinus   -- [loc -]: must occur left-isolated, not VP-internal
-  | negMinus   -- [neg -]: cannot be negated
-  | refEmpty   -- [ref ∅]: nonreferential (no variable-binding function)
+  /-- [loc -]: must occur left-isolated, not VP-internal. -/
+  | locMinus
+  /-- [neg -]: cannot be negated. -/
+  | negMinus
+  /-- [ref ∅]: nonreferential — no variable-binding function. -/
+  | refEmpty
   deriving DecidableEq, Repr
 
 /-- A slot in a construction's form: filler content, headedness, and the
@@ -179,10 +168,10 @@ structure Slot (Lex : Type*) where
 /-- A typed form: the form side of a construction as a sequence of slots. -/
 abbrev TypedForm (Lex : Type*) := List (Slot Lex)
 
-/-- A phrase in a word-level slot: phrasal filler, zero-level position.
-The defining configuration of phrasal compounds and the PAL construction
-([goldberg-shirtz-2025]) — and the cell lexical-integrity hypotheses rule
-out. -/
+/-- A phrase in a word-level slot: phrasal filler, zero-level position —
+the defining configuration of phrasal compounds and the PAL construction
+([goldberg-shirtz-2025]), and the cell that lexical-integrity hypotheses
+rule out. -/
 def Slot.IsPhraseInWordSlot {Lex : Type*} (s : Slot Lex) : Prop :=
   s.filler = .phrasal ∧ s.level = some .zero
 
@@ -195,16 +184,9 @@ instance {Lex : Type*} [DecidableEq Lex] (s : Slot Lex) :
 section DerivedSpecificity
 variable {Lex : Type*}
 
-/-- Derive `Specificity` from the slot structure.
-
-| Condition | Result |
-|-----------|--------|
-| All slots open | `.fullyAbstract` |
-| No slots open | `.lexicallySpecified` |
-| Mix of fixed and open | `.partiallyOpen` |
-
-Changing a slot from open to fixed automatically changes the
-specificity. -/
+/-- The specificity of a form: `fullyAbstract` when every slot is open
+(vacuously so for the empty form), `lexicallySpecified` when none is,
+and `partiallyOpen` otherwise. -/
 def derivedSpecificity (form : TypedForm Lex) : Specificity :=
   let openCount := (form.filter (·.filler.isOpen)).length
   if openCount = form.length then .fullyAbstract
@@ -269,12 +251,10 @@ end DerivedSpecificity
 
 /-! ### Constructions and the network -/
 
-/-- A construction: a learned pairing of form and meaning. The form is a
-`TypedForm`; the meaning pole is typed by the domain that owns the
-construction — a composition rule, a `MeaningComponents` contribution, a
-presupposition — with `Unit` for a purely formal record or a defective,
-form-only construction. Specificity is derived from the form
-(`Construction.specificity`), not stipulated. -/
+/-- A construction: a learned pairing of form and meaning. The meaning
+pole is typed by the domain that owns the construction — a composition
+rule, a `MeaningComponents` contribution, a presupposition — with `Unit`
+for a purely formal record or a defective, form-only construction. -/
 structure Construction (Sem : Type*) where
   name : String
   form : TypedForm String
@@ -297,24 +277,30 @@ def Construction.map {Sem' : Type*} (f : Sem → Sem') (c : Construction Sem) :
   { name := c.name, form := c.form, meaning := f c.meaning
   , pragmaticPoint := c.pragmaticPoint }
 
-/-- An inheritance link between two constructions in the network.
-
-Each link specifies both how information flows (`mode`, §3.3.1) and
-what semantic relation holds (`linkType`, §3.3.2). Links without a
-specific semantic relation (e.g., general taxonomic inheritance of
-shared morphophonological properties) use `linkType := none`. -/
+/-- An inheritance link between two constructions in the network,
+recording how information flows and what semantic relation holds; purely
+taxonomic links use `linkType := none`. -/
 structure InheritanceLink where
+  /-- Name of the parent construction. -/
   parent : String
+  /-- Name of the child construction. -/
   child : String
+  /-- How information flows along the link. -/
   mode : InheritanceMode
+  /-- The semantic relation the link records, if any. -/
   linkType : Option LinkType := none
+  /-- Properties the child inherits from the parent. -/
   sharedProperties : List String
+  /-- Inherited properties the child overrides. -/
   overriddenProperties : List String := []
   deriving Repr, DecidableEq
 
-/-- A constructicon: a network of constructions connected by inheritance links. -/
+/-- A constructicon: a network of constructions connected by inheritance
+links. -/
 structure Constructicon (Sem : Type*) where
+  /-- The inventory of constructions. -/
   constructions : List (Construction Sem)
+  /-- The inheritance links, keyed by construction name. -/
   links : List InheritanceLink
   deriving Repr
 

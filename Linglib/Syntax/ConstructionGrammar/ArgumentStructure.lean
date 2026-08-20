@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
@@ -5,18 +10,23 @@ import Linglib.Data.UD.Basic
 
 /-!
 # Argument Structure Constructions
-[goldberg-1995]
 
-CxG's argument structure constructions: explicit slot structure, full
-compositionality, polysemy families, and verb–construction fusion.
+An argument structure construction is an independent form–meaning
+pairing whose meaning pole records the meaning components it contributes
+beyond the verb ([goldberg-1995]); a verb appearing in the construction
+fuses its own components with them, which derives
+construction-dependent alternation behavior.
 
-Fully abstract constructions without pragmatic point are fully
-compositional (`isFullyCompositional`); constructions with idiosyncratic
-form–meaning pairings (*let alone*, WXDY, PAL) are irreducible phrasal
-patterns that only CxG can capture. The decomposition of fully abstract constructions into
-[mueller-2013]'s three universal combination schemata lives in
-`Studies/Mueller2013.lean` (`Mueller2013.decompose`).
+## Main definitions
 
+* `ditransitive`, `causedMotion`, `resultative`, `intransitiveMotion`,
+  `conative`: [goldberg-1995]'s constructions
+* `isFullyCompositional`: analyzable by the universal combination
+  schemata alone
+* `PolysemyFamily`, `goldberg1995Network`: one argument frame with many
+  senses, and the ch. 2–3 network
+* `composedMeaning`, `predictedAlternationInConstruction`:
+  verb–construction fusion
 -/
 
 namespace ConstructionGrammar
@@ -99,16 +109,10 @@ def conative : Construction MeaningComponents :=
 
 /-! ## Full compositionality -/
 
-/-- A construction is fully compositional if it has specificity `fullyAbstract`
-and no construction-specific pragmatic point.
-
-This is a proxy for [mueller-2013]'s structural criterion (whether the
-construction can be analyzed as a sequence of headed binary combinations).
-The proxy works because fully abstract constructions without pragmatic
-functions have no idiosyncratic form–meaning pairings that would resist
-decomposition into the three universal schemata. The Boolean approximates
-what [kay-michaelis-2019] survey as a continuum of constructional meaning
-contributions. -/
+/-- Whether a construction is analyzable by universal combination
+schemata alone: fully abstract form and no pragmatic point — a Boolean
+proxy for [mueller-2013]'s structural criterion, approximating what
+[kay-michaelis-2019] survey as a continuum. -/
 def isFullyCompositional {Sem : Type*} (c : Construction Sem) : Bool :=
   c.specificity == .fullyAbstract && !c.pragmaticPoint
 
@@ -152,8 +156,8 @@ def PolysemyFamily.centralConstruction (f : PolysemyFamily Sem) :
     Construction Sem :=
   { name := f.name, form := f.form, meaning := f.centralMeaning }
 
-/-- Build an extension construction. Uses the family's `form` — shared
-by construction, not by assertion. -/
+/-- An extension construction, sharing the family's `form`
+definitionally rather than by assertion. -/
 def PolysemyFamily.extensionConstruction (f : PolysemyFamily Sem)
     (ext : String × Sem × List String) : Construction Sem :=
   { name := f.name ++ "-" ++ ext.1, form := f.form, meaning := ext.2.1 }
@@ -168,7 +172,7 @@ def PolysemyFamily.allConstructions (f : PolysemyFamily Sem) :
     List (Construction Sem) :=
   f.centralConstruction :: f.extensionConstructions
 
-/-- Derive polysemy links from the family structure. -/
+/-- The polysemy links a family determines, one per extension. -/
 def PolysemyFamily.polysemyLinks (f : PolysemyFamily Sem) : List InheritanceLink :=
   f.extensions.map fun ⟨extName, _, overrides⟩ =>
     { parent := f.name
@@ -308,24 +312,15 @@ theorem PolysemyFamily.polysemyLinks_typed (f : PolysemyFamily Sem) :
 
 /-! ## Verb–construction fusion
 
-[goldberg-1995]'s central claim: argument structure constructions are
-independent form–meaning pairings. When a verb appears in a construction,
-its meaning **fuses** with the construction's meaning. The composed meaning
-can have properties neither has alone.
+A verb appearing in a construction fuses its meaning components with the
+construction's — componentwise, so the composed meaning can have
+properties neither has alone ([goldberg-1995]; [levin-2026]): *push*
+lacks change of state and causation, but *push* in the resultative
+acquires both, and the causative alternation is predicted. -/
 
-At the level of [levin-1993] meaning components, fusion is componentwise
-OR: if either the verb or the construction contributes a component, the
-composed meaning has it. This simple mechanism derives construction-dependent
-alternation behavior ([levin-2026]):
-
-- *push* alone: `{−CoS, +contact, +motion, −causation}` → no causative alternation
-- *push* + resultative: `{+CoS, +contact, +motion, +causation}` → causative alternation predicted
-
-The construction adds what the verb lacks; `predictedAlternation` on the
-fused result gives the correct prediction without any new alternation logic. -/
-
-/-- The composed meaning of a verb in an argument structure construction.
-    Verb root semantics fused with the construction's semantic contribution. -/
+/-- The composed meaning of a verb in an argument structure construction:
+the verb's meaning components fused with the construction's meaning
+pole. -/
 def composedMeaning (verbMC : MeaningComponents) (cxn : Construction MeaningComponents) :
     MeaningComponents :=
   verbMC.fuse cxn.meaning
@@ -359,13 +354,11 @@ theorem causedMotion_adds_motion_causation :
     causedMotion.meaning.motion = true ∧
     causedMotion.meaning.causation = true := ⟨rfl, rfl⟩
 
-/-! ### Key derivation: construction-dependent alternation
+/-! ### Construction-dependent alternation
 
-The payoff: `predictedAlternation` on fused components derives that manner
-verbs participate in the causative alternation inside the resultative, even
-though they cannot outside it. No new alternation logic is needed — the
-existing component-based prediction (`mc.changeOfState && mc.causation`)
-fires on the fused result. -/
+Manner verbs participate in the causative alternation inside the
+resultative but not outside it: the component-based prediction fires on
+the fused result, with no alternation logic specific to constructions. -/
 
 /-- A pure manner verb (no CoS, no causation) cannot alternate alone. -/
 theorem manner_verb_no_alternation (mc : MeaningComponents)
@@ -391,27 +384,21 @@ theorem hit_no_alternation_alone :
 
 /-! ### Multiple alternation flips from a single construction
 
-The key architectural insight: fusing a construction's components with a verb's
-components can flip *multiple* alternation predictions simultaneously. The
-resultative adds CoS + causation, which unlocks not just causativeInchoative but
-also middle, instrumentSubject, and the resultative alternation itself — all
-from the same mechanism, with no new alternation logic.
+Fusion can flip several alternation predictions at once: every
+alternation whose required components the augmented profile satisfies
+becomes available ([goldberg-1995]). -/
 
-This is the formal payoff of Goldbergian fusion ([goldberg-1995]):
-constructions don't just license one new alternation — they systematically
-augment the verb's meaning component profile, and every alternation whose
-required components are now satisfied becomes available. -/
-
-/-- Hit-class verbs alone: no middle, no instrumentSubject, no resultative alternation. -/
+/-- Hit-class verbs alone permit neither the middle, the
+instrument-subject, nor the resultative alternation. -/
 theorem hit_blocked_alone :
     MeaningComponents.hit.predictedAlternation .middle = false
     ∧ MeaningComponents.hit.predictedAlternation .instrumentSubject = false
     ∧ MeaningComponents.hit.predictedAlternation .resultative = false := by
   exact ⟨rfl, rfl, rfl⟩
 
-/-- Hit-class in resultative: ALL FOUR component-derived alternations flip.
-    The resultative adds CoS + causation → fused = ⟨true, true, true, true, false, false⟩.
-    This unlocks causativeInchoative, middle, instrumentSubject, AND resultative. -/
+/-- Hit-class verbs in the resultative permit all four component-derived
+alternations: the construction's change of state and causation complete
+the profile. -/
 theorem hit_resultative_full_profile :
     predictedAlternationInConstruction .hit resultative .causativeInchoative = true
     ∧ predictedAlternationInConstruction .hit resultative .middle = true
