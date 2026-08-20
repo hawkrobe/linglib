@@ -96,7 +96,7 @@ theorem wood_state_derivation :
 theorem cen_sen_v_difference :
     (readingFromAllosemes .eventive .zero).isSome = true ∧
     (readingFromAllosemes .zero .simpleEvent).isSome = true ∧
-    VAlloseme.eventive ≠ VAlloseme.zero := by decide
+    VerbalizerAlloseme.eventive ≠ VerbalizerAlloseme.zero := by decide
 
 /-- The five reading types from [wood-2023] Ch. 1 (1.18) are
     pairwise distinct. -/
@@ -388,14 +388,14 @@ open McNallyDeSwart2011
 open DistributedMorphology.Allosemy
 
 /-- Wood's framework requires every `n`-headed nominalisation to commit
-    to an `NAlloseme` (one of the 9 cases). Panagiotidis's framework
+    to an `NominalizerAlloseme` (one of the 9 cases). Panagiotidis's framework
     requires no such commitment — `n` is uniformly [N].
 
     For the [mcnally-deswart-2011] `hetAsCap` analysis (where M&deS
     posit a *trope* interpretation, an entity correlate of a property
     uniquely instantiated in one bearer per [moltmann-2004]), Wood's
     framework would need to specify which alloseme `het` selects. None
-    of the 9 NAlloseme cases is "trope":
+    of the 9 NominalizerAlloseme cases is "trope":
 
     * `relational, sortal, alienator, content` — semantically wrong type
       (relational arguments / kind sortation / possessor closure /
@@ -407,14 +407,14 @@ open DistributedMorphology.Allosemy
     * `entity` — closest fit, but M&deS distinguish tropes from
       ordinary entities (§3.4 + cite of [moltmann-2004] ontology)
 
-    So Wood's framework would require **extending NAlloseme** to model
+    So Wood's framework would require **extending NominalizerAlloseme** to model
     M&deS's trope analysis. Panagiotidis's framework would not. -/
-def woodAllosemeForRival : InflectedAnalysis → Option NAlloseme
+def woodAllosemeForRival : InflectedAnalysis → Option NominalizerAlloseme
   | .nominalisation => some .entity   -- closest fit; not exact
   | .ellipsis       => none           -- no n at surface; elided
-  | .hetAsCap       => none           -- no NAlloseme is "trope"; gap
+  | .hetAsCap       => none           -- no NominalizerAlloseme is "trope"; gap
 
-instance : DecidableEq (Option NAlloseme) := inferInstance
+instance : DecidableEq (Option NominalizerAlloseme) := inferInstance
 
 /-- The Panagiotidis-side prediction: for any rival, what does
     Panagiotidis say `n` does interpretively? Answer (from
@@ -436,7 +436,7 @@ theorem wood_panagiotidis_alloseme_divergence (a : InflectedAnalysis) :
     woodRequiresAllosemeChoice a ≠ panagiotidisRequiresAllosemeChoice a := by
   cases a <;> decide
 
-/-- **The substantive gap on `hetAsCap`.** Wood's NAlloseme inventory
+/-- **The substantive gap on `hetAsCap`.** Wood's NominalizerAlloseme inventory
     has no case obviously fitting M&deS's trope analysis. Wood's
     framework would need extension; Panagiotidis's framework would not.
     Concrete: `woodAllosemeForRival .hetAsCap = none`, recording the
@@ -448,7 +448,7 @@ theorem wood_no_trope_alloseme_for_hetAsCap :
     zero, simpleEvent, result, state, entity. None of these is "trope".
     The bridge documents this as a substantive limitation of Wood's
     inventory when applied to M&deS's adjectival nominalisation data. -/
-theorem nAlloseme_cases_count : nAllosemic.allosemeCount = 9 := rfl
+theorem nAlloseme_cases_count : nominalizer.allosemeCount = 9 := rfl
 
 /-! ## Three-way framework dialogue
 
@@ -461,7 +461,7 @@ dialogue on Dutch nominalisation morphology:
   geometrically; agrees with M&deS on each rival's predictions
   (shared Ackema & Neeleman 2004 lineage).
 * `Wood2023`: requires alloseme commitment per rival; identifies a
-  framework gap (no "trope" NAlloseme), making the divergence with
+  framework gap (no "trope" NominalizerAlloseme), making the divergence with
   Panagiotidis (uniform [N], no allosemes) substantive.
 
 Each framework's distinctive theoretical primitives generate distinct

@@ -73,7 +73,7 @@ theorem beobachtung_diagnostics :
 is semantically vacuous on all readings but the CEN (§3.5, following
 [wood-2023]). By `adopted_roundtrip` and `adopted_unique`, this is the unique
 derivation of each reading in which the two heads are not both contentful. -/
-def adoptedAllosemes : NominalizationReading → VAlloseme × NAlloseme
+def adoptedAllosemes : NominalizationReading → VerbalizerAlloseme × NominalizerAlloseme
   | .complexEvent => (.eventive, .zero)
   | .simpleEvent  => (.zero, .simpleEvent)
   | .result       => (.zero, .result)
@@ -89,8 +89,8 @@ theorem adopted_roundtrip (r : NominalizationReading) :
 /-- Among derivations in which the two heads are not both contentful, the
 adopted pair is the only one deriving the reading — economy of interpretation
 pins the analysis. -/
-theorem adopted_unique (r : NominalizationReading) (v : VAlloseme) (n : NAlloseme)
-    (hr : readingFromAllosemes v n = some r)
+theorem adopted_unique (r : NominalizationReading) (v : VerbalizerAlloseme)
+    (n : NominalizerAlloseme) (hr : readingFromAllosemes v n = some r)
     (h : v.introducesEvent = false ∨ n = .zero) :
     (v, n) = adoptedAllosemes r := by
   cases v <;> cases n <;> cases r <;>
@@ -103,7 +103,7 @@ theorem adopted_unique (r : NominalizationReading) (v : VAlloseme) (n : NAllosem
 §3.5): an event reading arises only from contentful v with vacuous n, while
 a result or content reading forces the corresponding contentful n, whatever
 v contributes. -/
-theorem reading_determines_contentful_head (v : VAlloseme) (n : NAlloseme) :
+theorem reading_determines_contentful_head (v : VerbalizerAlloseme) (n : NominalizerAlloseme) :
     (readingFromAllosemes v n = some .complexEvent →
       v.introducesEvent = true ∧ n = .zero) ∧
     (readingFromAllosemes v n = some .result → n = .result) ∧
@@ -134,25 +134,25 @@ def nContext (eventive : Bool) : SyntacticContext :=
 /-- The readings derivable in the nominalization structure: any licensed v
 alloseme composed with any licensed n alloseme. -/
 def availableReadings (eventive : Bool) : List NominalizationReading :=
-  (vAllosemic.licensed (vContext eventive)).flatMap (λ v =>
-    (nAllosemic.licensed (nContext eventive)).filterMap (readingFromAllosemes v))
+  (verbalizer.licensed (vContext eventive)).flatMap (λ v =>
+    (nominalizer.licensed (nContext eventive)).filterMap (readingFromAllosemes v))
 
 /-- Over an event-entailing root both v allosemes are licensed — the premise
 of the reading ambiguity — while a non-eventive root licenses only vacuous
 v. -/
 theorem v_allosemes_licensed :
-    vAllosemic.licensed (vContext true) = [.eventive, .zero] ∧
-    vAllosemic.licensed (vContext false) = [.zero] := ⟨rfl, rfl⟩
+    verbalizer.licensed (vContext true) = [.eventive, .zero] ∧
+    verbalizer.licensed (vContext false) = [.zero] := ⟨rfl, rfl⟩
 
 open Morphology.Exponence in
 /-- The canonical v alloseme of the root typology is the engine's Elsewhere
 winner: the more specified eventive entry beats vacuous v exactly when the
-root entails an event, so `VAlloseme.fromRootType` is derived, not
+root entails an event, so `VerbalizerAlloseme.fromRootType` is derived, not
 stipulated. -/
 theorem fromRootType_is_selectBy_winner (rt : Verb.Root.ChangeType) :
-    (selectBy AllosemicEntry.score vAllosemic.entries
+    (selectBy AllosemicEntry.score verbalizer.entries
         (vContext rt.entailsChange)).map (·.denotation) =
-      some (VAlloseme.fromRootType rt) := by
+      some (VerbalizerAlloseme.fromRootType rt) := by
   cases rt <;> rfl
 
 /-- Every attested *Beobachtung* reading is available in the single
@@ -681,19 +681,19 @@ theorem rsp_data_grounded_in_fragments :
 
 /-- *brechen* (result root) and *frieren* (property-concept root) yield
 opposite canonical v allosemes, connecting the fragment's `rootType` to
-`VAlloseme.fromRootType` and `VAlloseme.introducesEvent`. -/
+`VerbalizerAlloseme.fromRootType` and `VerbalizerAlloseme.introducesEvent`. -/
 theorem rootType_alloseme_divergence :
-    brechen.rootType.map VAlloseme.fromRootType = some .eventive ∧
-    frieren.rootType.map VAlloseme.fromRootType = some .zero ∧
-    brechen.rootType.map (VAlloseme.fromRootType · |>.introducesEvent) = some true ∧
-    frieren.rootType.map (VAlloseme.fromRootType · |>.introducesEvent) = some false :=
+    brechen.rootType.map VerbalizerAlloseme.fromRootType = some .eventive ∧
+    frieren.rootType.map VerbalizerAlloseme.fromRootType = some .zero ∧
+    brechen.rootType.map (VerbalizerAlloseme.fromRootType · |>.introducesEvent) = some true ∧
+    frieren.rootType.map (VerbalizerAlloseme.fromRootType · |>.introducesEvent) = some false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-- A result root selects eventive v, which with vacuous n yields *brechen*'s
 complex event reading. -/
 theorem brechen_cen_path :
     brechen.rootType.bind
-      (λ rt => readingFromAllosemes (VAlloseme.fromRootType rt) .zero) =
+      (λ rt => readingFromAllosemes (VerbalizerAlloseme.fromRootType rt) .zero) =
       some .complexEvent := rfl
 
 /-- A property-concept root selects vacuous v, which with entity n yields
@@ -701,7 +701,7 @@ theorem brechen_cen_path :
 too, since the canonical alloseme is a default rather than a constraint. -/
 theorem frieren_entity_path :
     frieren.rootType.bind
-      (λ rt => readingFromAllosemes (VAlloseme.fromRootType rt) .entity) =
+      (λ rt => readingFromAllosemes (VerbalizerAlloseme.fromRootType rt) .entity) =
       some .simpleEntity := rfl
 
 end Benz2025
