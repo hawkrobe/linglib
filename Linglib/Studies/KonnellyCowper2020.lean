@@ -1,4 +1,4 @@
-import Linglib.Morphology.DistributedMorphology.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Fragments.English.Pronouns

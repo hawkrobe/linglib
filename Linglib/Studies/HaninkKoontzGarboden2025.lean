@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Studies.KoontzGarboden2009
-import Linglib.Morphology.DistributedMorphology.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Semantics.Possessive.Relational
 
 /-!

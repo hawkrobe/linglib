@@ -1,36 +1,22 @@
-import Mathlib.Tactic.TypeStar
+import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
 
 /-!
-# Roots, categorizers, vocabulary items, and allosemes
+# Vocabulary items and allosemes
 
-The objects of Distributed Morphology ([halle-marantz-1993]): acategorial
-roots individuated by arbitrary indices, the categorizing heads n/v/a, and
-the rule types of the two interpretive lists — `VI.VocabItem` (List 2, form)
-and `Allosemy.AllosemicEntry` (List 3, meaning), the latter conditioned by
-`Allosemy.SyntacticContext`. The shared selection-engine instances live in
-`DistributedMorphology/Basic.lean`.
+The rule types of Distributed Morphology's two interpretive lists:
+`VI.VocabItem` pairs a phonological exponent with the context that
+licenses it (List 2), and `Allosemy.AllosemicEntry` pairs a meaning with
+the conditioning `Allosemy.SyntacticContext` (List 3). The shared
+selection-engine instances live in `DistributedMorphology/Basic.lean`.
+
+## References
+
+* [M. Halle and A. Marantz, *Distributed Morphology and the pieces of
+  inflection*][halle-marantz-1993]
+* [J. Benz, *Structure and interpretation across categories*][benz-2025]
 -/
 
 namespace DistributedMorphology
-
-/-- A Root terminal node, individuated by an arbitrary index alone — with
-deliberately no form or meaning fields, following [harley-2014]'s answer to
-what roots are. It receives its form at Vocabulary Insertion. A different
-object from the comparative-concept root of `Morphology/Root/Basic.lean`,
-which is a contentful morph. -/
-structure Root where
-  /-- The individuating index. -/
-  index : Nat
-  deriving DecidableEq, Repr
-
-/-- A categorizing head that merges with an acategorial root to project
-    syntactic structure. The three options correspond to the functional
-    heads n, v, a in Distributed Morphology ([marantz-1997], [harley-2014] §2). -/
-inductive Categorizer where
-  | n  -- nominal categorizer
-  | v  -- verbal categorizer
-  | a  -- adjectival categorizer
-  deriving DecidableEq, Repr
 
 namespace VI
 

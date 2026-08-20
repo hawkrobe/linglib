@@ -1,6 +1,6 @@
 import Linglib.Morphology.DistributedMorphology.NominalStructure
-import Linglib.Morphology.DistributedMorphology.Categorizer
-import Linglib.Morphology.DistributedMorphology.CategorizerSemantics
+import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+import Linglib.Morphology.DistributedMorphology.Categorizer.Semantics
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Jarawara.PossessedNouns

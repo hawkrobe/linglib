@@ -1250,8 +1250,9 @@ import Linglib.Morphology.Construction.Schema
 import Linglib.Morphology.Construction.Sister
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Morphology.DistributedMorphology.Basic
-import Linglib.Morphology.DistributedMorphology.Categorizer
-import Linglib.Morphology.DistributedMorphology.CategorizerSemantics
+import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
+import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+import Linglib.Morphology.DistributedMorphology.Categorizer.Semantics
 import Linglib.Morphology.DistributedMorphology.Defs
 import Linglib.Morphology.DistributedMorphology.DomainLocality
 import Linglib.Morphology.DistributedMorphology.Fission

@@ -2,7 +2,7 @@ import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Xhosa.Basic
 import Linglib.Fragments.Shona.Basic
 import Linglib.Fragments.Swahili.Basic
-import Linglib.Morphology.DistributedMorphology.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Studies.Kramer2020
 import Linglib.Features.Number.Resolve
 import Linglib.Features.Person.Resolve

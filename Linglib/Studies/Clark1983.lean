@@ -1,6 +1,6 @@
 import Linglib.Discourse.CommonGround
 import Linglib.Discourse.SpeechAct
-import Linglib.Morphology.DistributedMorphology.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Pragmatics.RSA.LexicalUncertainty
 import Mathlib.Data.Fintype.BigOperators

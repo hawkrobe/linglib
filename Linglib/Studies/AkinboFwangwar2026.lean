@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Morphology.DistributedMorphology.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.Word.Tree
 import Linglib.Studies.Rolle2018
 import Linglib.Phonology.Autosegmental.Floating

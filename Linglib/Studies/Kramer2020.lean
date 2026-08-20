@@ -1,6 +1,6 @@
 import Linglib.Features.Gender.Basic
 import Linglib.Studies.Corbett1991
-import Linglib.Morphology.DistributedMorphology.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Fragments.Spanish.Gender
 import Linglib.Fragments.Slavic.Russian.Gender
 import Linglib.Fragments.Hausa.Gender
