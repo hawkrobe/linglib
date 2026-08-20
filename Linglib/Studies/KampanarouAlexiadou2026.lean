@@ -1,5 +1,5 @@
 import Linglib.Features.Possession
-import Linglib.Morphology.DistributedMorphology.NominalStructure
+import Linglib.Morphology.DistributedMorphology.NominalSpine
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Syntax.Minimalist.Verbal.SmallClause
 import Linglib.Syntax.Minimalist.Verbal.Applicative

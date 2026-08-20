@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
-import Linglib.Morphology.DistributedMorphology.NominalStructure
+import Linglib.Morphology.DistributedMorphology.NominalSpine
 import Linglib.Semantics.Possessive.Relational
 
 /-!
@@ -271,12 +271,12 @@ open ArgumentStructure.Relational in
 theorem bare_sortal_blocks_relational :
     ¬ NominalInterpType.sortal.canTakePossessor := id
 
--- ─── Bridge to NominalStructure (Possession Type) ───
+-- ─── Bridge to the nominal spine (Possession Type) ───
 
 open DistributedMorphology in
 
 /-- Delayed gratification connects to the inalienable/alienable distinction
-    from NominalStructure.lean:
+    from NominalSpine.lean:
 
     - Inalienable possessor (Spec,nP): can undergo delayed gratification
       to Spec,VoiceP → yields relational HAVE with inalienable reading
