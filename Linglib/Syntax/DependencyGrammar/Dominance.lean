@@ -14,32 +14,30 @@ import Mathlib.Order.SuccPred.Tree
 import Linglib.Core.Order.SuccPred.Tree
 
 /-!
-# Dominance
+# Dominance and dependency trees
 
-Dominance as the reflexive-transitive closure of the arc relation, the
-projection (yield) it induces, tree well-formedness, and the order
-theory of dominance on trees ([kuhlmann-nivre-2006] §2).
+This file defines dominance as the reflexive-transitive closure of the
+arc relation, the projection (yield) it induces, tree well-formedness,
+and the order theory of dominance on trees.
 
-## Main declarations
+## Main definitions
 
-* `Dominates`, `Graph.dominated`, `Graph.projection`, `Graph.mem_projection` —
-  the dominance relation, the positions a node dominates, that set in
-  ascending order, and the bridge between them.
-* `Graph.IsTree` — no arc into the root, unique heads elsewhere,
-  acyclicity; decidable. `IsTree.root_dominates`: the root dominates
-  every position, so dominance on a tree is a partial order with the
-  root as bottom.
-* `Dominates.antisymm`, `Dominates.to_head`, `Dominates.comparable` —
-  on trees dominance is a partial order under which the dominators of
-  any position form a chain.
-* `Graph.headOf`, `DominanceOrder`, `Graph.toRootedTree` — the head
-  function; `Fin n` re-ordered by dominance, with `[Fact g.IsTree]` a
-  `PartialOrder` + `OrderBot` + `PredOrder` + `IsPredArchimedean` +
-  `SemilatticeInf` (root as `⊥`, head as `Order.pred`, lowest common
-  governor as `⊓`); and the bundling as mathlib's `RootedTree`.
-* `Tree n` — well-formed graphs bundled with their tree-hood
-  (`t.isTree`), so the dominance-order instances hold with no side
-  conditions and the graph API is a parent projection away.
+* `Dominates` is the reflexive-transitive closure of the arc relation.
+* `Graph.IsTree` is tree well-formedness: no arc into the root, a unique
+  head elsewhere, and acyclicity. It is decidable.
+* `DominanceOrder` is `Fin n` reordered by dominance. On a tree it is a
+  partial order with the root as bottom, the head as predecessor, and the
+  lowest common governor as meet, bundled as mathlib's `RootedTree` by
+  `Graph.toRootedTree`.
+* `Tree n` is a graph bundled with its tree-hood, so the dominance-order
+  instances hold with no side conditions.
+
+## Main results
+
+* `IsTree.root_dominates`: the root of a tree dominates every position.
+* `Dominates.antisymm` and `Dominates.comparable`: on trees dominance is
+  a partial order under which the dominators of any position form a
+  chain.
 
 ## Implementation notes
 
@@ -48,6 +46,11 @@ mathlib's closure API (`.refl`, `.tail`, `.trans`, `.single`,
 `cases_tail`, `total_of_right_unique`, …) applies to dominance facts
 directly; this file adds only what mentions the dependency carrier.
 Decidability comes from `Core/Relation/ReflTransGen.lean`.
+
+## References
+
+[kuhlmann-nivre-2006] — Mildly non-projective dependency structures,
+source of the dominance and projection definitions
 -/
 
 namespace DependencyGrammar

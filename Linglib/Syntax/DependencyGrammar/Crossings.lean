@@ -13,24 +13,33 @@ import Mathlib.Tactic.FinCases
 /-!
 # Crossings under random linearization
 
-[ferrer-i-cancho-2017]'s null hypothesis for dependency crossings: if a
-sentence's word order were lost and replaced by a uniformly random one, the
-expected number of crossings would depend only on the arc structure, because
-two links cross in a third of the linearizations when they share no endpoint
-and in none otherwise. Summed over all `n !` linearizations and cleared of
-denominators, that is `Graph.three_mul_sum_crossings_relabel`. No tree
-hypothesis is needed: the identity holds for any link structure.
+This file proves that if a sentence's word order were lost and replaced by
+a uniformly random one, the expected number of crossings would depend only
+on the arc structure: two links cross in a third of the linearizations
+when they share no endpoint, and in none otherwise. No tree hypothesis is
+needed; the identity holds for any link structure.
 
-## Main declarations
+## Main definitions
 
-* `Graph.crossingsUnder` — the crossings `g` would show under a permutation
-  of its positions; `Graph.crossings_relabel` equates it with the crossings
-  of `Graph.relabel`.
-* `Graph.disjointLinkPairs` — the pairs of links sharing no endpoint,
-  [ferrer-i-cancho-2017]'s potential crossings, which [ferrer-i-cancho-2013]
-  reduces to the link count and the degree second moment.
-* `Graph.three_mul_sum_crossings_relabel` — the expected-crossings identity
+* `Graph.crossingsUnder` is the crossings `g` would show under a
+  permutation of its positions.
+* `Graph.disjointLinkPairs` is the number of unordered pairs of links
+  sharing no endpoint — the pairs that can cross at all.
+
+## Main results
+
+* `Graph.crossings_relabel`: the crossings of a relabelled graph are the
+  crossings under the permutation.
+* `Graph.three_mul_sum_crossings_relabel`: the expected-crossings identity
   `3 * ∑ σ, (g.relabel σ).crossings = n ! * g.disjointLinkPairs`.
+
+## References
+
+[ferrer-i-cancho-2017] — Random crossings in dependency trees, source of
+the expected-crossings identity (eq. 13)
+[ferrer-i-cancho-2013] — Hubiness, length, crossings and their
+relationships in syntactic dependencies, reduces the disjoint-pair count
+to the link count and the degree second moment
 -/
 
 namespace DependencyGrammar

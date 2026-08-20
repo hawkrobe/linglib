@@ -21,34 +21,35 @@ In this file we define those constraints and prove the inclusions among them
 that hold on trees. The witnesses separating the constraints are the source
 papers' own figures, and live in their study files.
 
-## Main declarations
+## Main definitions
 
-* `Alternate` — the alternation `a < c < b < d` that both binary constraints
-  forbid.
-* `Graph.IsProjective` — every `Graph.dominated` set is an interval
-  (Definition 3).
-* `Graph.IsPlanar` — no two links cross (Definition 4), the Link Grammar
-  notion, traced there to [melcuk-1988].
-* `Graph.Interleave`, `Graph.IsWellNested` — Definition 8.
-* `Graph.gapDegree` — Definitions 6–7. Gap degree + 1 is the block-degree,
-  the fan-out of the LCFRS rule extracted for that node.
-* `Graph.isProjective_iff_gapDegree_eq_zero`,
-  `Graph.isPlanar_iff_crossings_eq_zero` — each binary constraint is the
-  least value of a count (`Graph.gapDegree`, `Graph.crossings`).
-* `Graph.IsProjective.isPlanar`, `Graph.IsPlanar.isWellNested` — the §3.5
-  chain `projective ⊆ planar ⊆ well-nested` on trees, with
-  `Graph.IsProjective.isWellNested` its composite.
-* `Graph.IsPlanar.root_mem_gap` — every gap of a planar tree contains the
-  root, so a planar tree rooted at a sentence boundary is already projective
-  (`Graph.IsPlanar.isProjective_of_isBot`). This is why planarity is a weaker
-  constraint than projectivity only by the root's position.
+* `Graph.IsProjective` is projectivity: every `Graph.dominated` set is an
+  interval (Definition 3).
+* `Graph.IsPlanar` is planarity: no two links cross (Definition 4), the
+  Link Grammar notion.
+* `Graph.Interleave` and `Graph.IsWellNested` are interleaving and
+  well-nestedness (Definition 8).
+* `Graph.gapDegree` counts the discontinuities in a node's projection
+  (Definitions 6–7).
+
+## Main results
+
+* `Graph.isProjective_iff_gapDegree_eq_zero` and
+  `Graph.isPlanar_iff_crossings_eq_zero`: each binary constraint is the
+  least value of a count.
+* `Graph.IsProjective.isPlanar` and `Graph.IsPlanar.isWellNested`: the
+  chain `projective ⊆ planar ⊆ well-nested` on trees.
+* `Graph.IsPlanar.isProjective_of_isBot`: every gap of a planar tree
+  contains the root (`Graph.IsPlanar.root_mem_gap`), so a planar tree
+  rooted at a sentence boundary is already projective.
 
 ## References
 
 [kuhlmann-nivre-2006] — Mildly non-projective dependency structures, source
 of the Definition numbers cited above
 [kuhlmann-2013] — Mildly non-projective dependency grammar
-[melcuk-1988] — Dependency syntax: theory and practice
+[melcuk-1988] — Dependency syntax: theory and practice, source of the Link
+Grammar planarity notion
 -/
 
 namespace DependencyGrammar
