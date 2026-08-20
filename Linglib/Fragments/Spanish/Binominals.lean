@@ -21,6 +21,7 @@ namespace Spanish.Binominals
 
 open Quantification.Binominal
 open DistributedMorphology
+open DistributedMorphology.Categorizer (Head)
 
 /-- A Spanish binominal noun entry, with gender encoded via the DM
     categorizing head on n ([kramer-2015]). -/
@@ -28,7 +29,7 @@ structure BinominalNoun where
   /-- The noun form -/
   form : String
   /-- Categorizing head (encodes gender structurally) -/
-  nHead : CatHead
+  nHead : Head
   /-- Binominal class -/
   binominalType : BinominalType
   /-- Gloss in English -/
@@ -36,19 +37,19 @@ structure BinominalNoun where
   deriving Repr
 
 -- Group nouns (pseudo-partitive)
-def grupo     : BinominalNoun := ⟨"grupo",     CatHead.n_plain, .pseudoPartitive,  "group"⟩
-def conjunto  : BinominalNoun := ⟨"conjunto",  CatHead.n_plain, .pseudoPartitive,  "set"⟩
-def serie     : BinominalNoun := ⟨"serie",     CatHead.n_uFem,  .pseudoPartitive,  "series"⟩
+def grupo     : BinominalNoun := ⟨"grupo",     Head.n_plain, .pseudoPartitive,  "group"⟩
+def conjunto  : BinominalNoun := ⟨"conjunto",  Head.n_plain, .pseudoPartitive,  "set"⟩
+def serie     : BinominalNoun := ⟨"serie",     Head.n_uFem,  .pseudoPartitive,  "series"⟩
 
 -- Quantity nouns (quantificational)
-def montón    : BinominalNoun := ⟨"montón",    CatHead.n_plain, .quantificational, "heap/lot"⟩
-def pila      : BinominalNoun := ⟨"pila",      CatHead.n_uFem,  .quantificational, "pile"⟩
-def cantidad  : BinominalNoun := ⟨"cantidad",  CatHead.n_uFem,  .quantificational, "quantity"⟩
+def montón    : BinominalNoun := ⟨"montón",    Head.n_plain, .quantificational, "heap/lot"⟩
+def pila      : BinominalNoun := ⟨"pila",      Head.n_uFem,  .quantificational, "pile"⟩
+def cantidad  : BinominalNoun := ⟨"cantidad",  Head.n_uFem,  .quantificational, "quantity"⟩
 
 -- Expressive nouns (qualitative)
-def mierda    : BinominalNoun := ⟨"mierda",    CatHead.n_uFem,  .qualitative,      "shit"⟩
-def maravilla : BinominalNoun := ⟨"maravilla", CatHead.n_uFem,  .qualitative,      "wonder"⟩
-def desastre  : BinominalNoun := ⟨"desastre",  CatHead.n_plain, .qualitative,      "disaster"⟩
+def mierda    : BinominalNoun := ⟨"mierda",    Head.n_uFem,  .qualitative,      "shit"⟩
+def maravilla : BinominalNoun := ⟨"maravilla", Head.n_uFem,  .qualitative,      "wonder"⟩
+def desastre  : BinominalNoun := ⟨"desastre",  Head.n_plain, .qualitative,      "disaster"⟩
 
 /-- All binominal noun entries. -/
 def allNouns : List BinominalNoun :=

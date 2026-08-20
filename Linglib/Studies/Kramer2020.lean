@@ -462,7 +462,7 @@ structure SameRootNominal where
   /-- Language -/
   language : String
   /-- Possible gender assignments (> 1 for same-root nominals) -/
-  possibleNHeads : List CatHead
+  possibleNHeads : List Categorizer.Head
   deriving Repr
 
 /-- Whether this is a genuine same-root nominal (multiple n options). -/
@@ -474,7 +474,7 @@ def SameRootNominal.isSameRoot (n : SameRootNominal) : Bool :=
 def amharicHakim : SameRootNominal :=
   { form := "hakim"
     language := "Amharic"
-    possibleNHeads := [CatHead.n_iFem, CatHead.n_iMasc] }
+    possibleNHeads := [Categorizer.Head.n_iFem, Categorizer.Head.n_iMasc] }
 
 theorem hakim_is_same_root : amharicHakim.isSameRoot = true := rfl
 
@@ -486,7 +486,7 @@ theorem same_root_two_n_heads :
 
 /-- The two n heads for *hakim* are distinct gender features. -/
 theorem hakim_distinct_genders :
-    CatHead.n_iFem ≠ CatHead.n_iMasc := by decide
+    Categorizer.Head.n_iFem ≠ Categorizer.Head.n_iMasc := by decide
 
 -- ============================================================================
 -- § 7: Hybrid Nouns ([kramer-2020] §2.2.3, §3.3.2)
@@ -558,7 +558,7 @@ theorem hybrid_nouns_favor_structural :
     Mangarayi 3). -/
 structure NInventory where
   language : String
-  nHeads : List CatHead
+  nHeads : List Categorizer.Head
   surfaceGenders : Nat
   deriving Repr
 
@@ -574,48 +574,48 @@ def NInventory.purelySemanticGender (inv : NInventory) : Bool :=
 -- 3-n languages: no u-feature ([kramer-2015] Ch 5)
 
 def dieriNs : NInventory :=
-  ⟨"Dieri", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain], 2⟩
+  ⟨"Dieri", [Categorizer.Head.n_iFem, Categorizer.Head.n_iMasc, Categorizer.Head.n_plain], 2⟩
 
 def mangarayiNs : NInventory :=
-  ⟨"Mangarayi", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain], 3⟩
+  ⟨"Mangarayi", [Categorizer.Head.n_iFem, Categorizer.Head.n_iMasc, Categorizer.Head.n_plain], 3⟩
 
 -- 4-n languages, Set 1: u[+FEM] ([kramer-2015] Ch 6)
 
 def amharicNs : NInventory :=
-  ⟨"Amharic", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
-               CatHead.n_uFem], 2⟩
+  ⟨"Amharic", [Categorizer.Head.n_iFem, Categorizer.Head.n_iMasc, Categorizer.Head.n_plain,
+               Categorizer.Head.n_uFem], 2⟩
 
 def spanishNs : NInventory :=
-  ⟨"Spanish", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
-               CatHead.n_uFem], 2⟩
+  ⟨"Spanish", [Categorizer.Head.n_iFem, Categorizer.Head.n_iMasc, Categorizer.Head.n_plain,
+               Categorizer.Head.n_uFem], 2⟩
 
 def hausaNs : NInventory :=
-  ⟨"Hausa", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
-             CatHead.n_uFem], 2⟩
+  ⟨"Hausa", [Categorizer.Head.n_iFem, Categorizer.Head.n_iMasc, Categorizer.Head.n_plain,
+             Categorizer.Head.n_uFem], 2⟩
 
 -- 4-n languages, Set 2: u[−FEM] ([kramer-2015] Ch 6)
 
 def maaNs : NInventory :=
-  ⟨"Maa", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
-           CatHead.n_uNegFem], 2⟩
+  ⟨"Maa", [Categorizer.Head.n_iFem, Categorizer.Head.n_iMasc, Categorizer.Head.n_plain,
+           Categorizer.Head.n_uNegFem], 2⟩
 
 -- 3-n languages with animacy features ([kramer-2015] Ch 5, §5.3)
 
 def lealaoNs : NInventory :=
-  ⟨"Lealao Chinantec", [CatHead.n_iAnim, CatHead.n_iInanim,
-                         CatHead.n_plain], 2⟩
+  ⟨"Lealao Chinantec", [Categorizer.Head.n_iAnim, Categorizer.Head.n_iInanim,
+                         Categorizer.Head.n_plain], 2⟩
 
 -- 4-n languages, animacy dimension ([kramer-2015] Ch 6, §6.4)
 
 def ojibweNs : NInventory :=
-  ⟨"Ojibwe", [CatHead.n_iAnim, CatHead.n_iInanim, CatHead.n_plain,
-              CatHead.n_uAnim], 2⟩
+  ⟨"Ojibwe", [Categorizer.Head.n_iAnim, Categorizer.Head.n_iInanim, Categorizer.Head.n_plain,
+              Categorizer.Head.n_uAnim], 2⟩
 
 -- 5-n languages ([kramer-2015] Ch 7)
 
 def lavukaleveNs : NInventory :=
-  ⟨"Lavukaleve", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
-                  CatHead.n_uFem, CatHead.n_uNegFem], 3⟩
+  ⟨"Lavukaleve", [Categorizer.Head.n_iFem, Categorizer.Head.n_iMasc, Categorizer.Head.n_plain,
+                  Categorizer.Head.n_uFem, Categorizer.Head.n_uNegFem], 3⟩
 
 /-- Same n inventory, different surface genders: Dieri (2) vs Mangarayi (3).
     This demonstrates that surface gender count depends on VI, not the
@@ -673,7 +673,7 @@ open Spanish.Gender (SpanishNoun SameRootEntry)
     (Spanish is the canonical Set 1 language per [kramer-2015]
     Ch. 6, alongside Amharic). The four cells of (attestedGender ×
     isNaturalGender) cover the four Set-1 n-heads. -/
-def nHead (n : SpanishNoun) : CatHead :=
+def nHead (n : SpanishNoun) : Categorizer.Head :=
   match n.attestedGender, n.isNaturalGender with
   | .feminine,  true  => .n_iFem
   | .masculine, true  => .n_iMasc
@@ -684,8 +684,8 @@ def nHead (n : SpanishNoun) : CatHead :=
 /-- Same-root nominals project to BOTH possible n-heads (the polymorphic
     same-root pattern [kramer-2015] §3.4 / [kramer-2020]
     §2.2.3). The framework decision lives here, not in the Fragment. -/
-def sameRootNHeads (_ : SameRootEntry) : List CatHead :=
-  [CatHead.n_iFem, CatHead.n_iMasc]
+def sameRootNHeads (_ : SameRootEntry) : List Categorizer.Head :=
+  [Categorizer.Head.n_iFem, Categorizer.Head.n_iMasc]
 
 end Spanish
 
@@ -698,7 +698,7 @@ open Russian.Gender (RussianNoun)
     binary), so the (attestedGender × isNaturalGender) cells project to
     five n-heads: i[+FEM], i[−FEM], u[+FEM], u[−FEM], plain n.
     Verified against [kramer-2015] Ch. 7. -/
-def nHead (n : RussianNoun) : CatHead :=
+def nHead (n : RussianNoun) : Categorizer.Head :=
   match n.attestedGender, n.isNaturalGender with
   | .feminine,  true  => .n_iFem
   | .masculine, true  => .n_iMasc
@@ -758,10 +758,10 @@ theorem spanish_four_n_types :
 
 /-- The fragment inventory covers all four Set-1 n-types via projection. -/
 theorem spanish_fragment_covers_inventory :
-    Spanish.Gender.allNouns.any (Spanish.nHead · == CatHead.n_iFem) ∧
-    Spanish.Gender.allNouns.any (Spanish.nHead · == CatHead.n_iMasc) ∧
-    Spanish.Gender.allNouns.any (Spanish.nHead · == CatHead.n_uFem) ∧
-    Spanish.Gender.allNouns.any (Spanish.nHead · == CatHead.n_plain) := by
+    Spanish.Gender.allNouns.any (Spanish.nHead · == Categorizer.Head.n_iFem) ∧
+    Spanish.Gender.allNouns.any (Spanish.nHead · == Categorizer.Head.n_iMasc) ∧
+    Spanish.Gender.allNouns.any (Spanish.nHead · == Categorizer.Head.n_uFem) ∧
+    Spanish.Gender.allNouns.any (Spanish.nHead · == Categorizer.Head.n_plain) := by
   decide
 
 -- ============================================================================
@@ -799,12 +799,12 @@ inductive RootClass where
   deriving DecidableEq, Repr
 
 /-- The n head each root class is licensed to combine with. -/
-def RootClass.licensedNHead : RootClass → CatHead
-  | .femaleReferent => CatHead.n_iFem
-  | .maleReferent   => CatHead.n_iMasc
-  | .arbitraryFem   => CatHead.n_uFem
-  | .arbitraryMasc  => CatHead.n_uNegFem
-  | .default        => CatHead.n_plain
+def RootClass.licensedNHead : RootClass → Categorizer.Head
+  | .femaleReferent => Categorizer.Head.n_iFem
+  | .maleReferent   => Categorizer.Head.n_iMasc
+  | .arbitraryFem   => Categorizer.Head.n_uFem
+  | .arbitraryMasc  => Categorizer.Head.n_uNegFem
+  | .default        => Categorizer.Head.n_plain
 
 /-- The licensing type for each root class. -/
 def RootClass.licensing : RootClass → LicensingType
@@ -859,16 +859,16 @@ theorem spanish_licensing_libro :
     the `GenderFeature.licensingType` (defined in `Categorizer.lean`) produces
     the same result as `RootClass.licensing`. -/
 theorem licensing_bridge_femaleReferent :
-    (CatHead.n_iFem.phi.gender.get (by rfl)).licensingType =
+    (Categorizer.Head.n_iFem.phi.gender.get (by rfl)).licensingType =
       RootClass.femaleReferent.licensing := rfl
 theorem licensing_bridge_maleReferent :
-    (CatHead.n_iMasc.phi.gender.get (by rfl)).licensingType =
+    (Categorizer.Head.n_iMasc.phi.gender.get (by rfl)).licensingType =
       RootClass.maleReferent.licensing := rfl
 theorem licensing_bridge_arbitraryFem :
-    (CatHead.n_uFem.phi.gender.get (by rfl)).licensingType =
+    (Categorizer.Head.n_uFem.phi.gender.get (by rfl)).licensingType =
       RootClass.arbitraryFem.licensing := rfl
 theorem licensing_bridge_arbitraryMasc :
-    (CatHead.n_uNegFem.phi.gender.get (by rfl)).licensingType =
+    (Categorizer.Head.n_uNegFem.phi.gender.get (by rfl)).licensingType =
       RootClass.arbitraryMasc.licensing := rfl
 
 /-- Russian fragment nouns project to their root classes via `Russian.nHead`. -/
@@ -964,41 +964,41 @@ In Set 2 languages (Maa, Wari'), the same logic yields feminine as default:
 The polarity of the u-feature determines which gender is arbitrary vs default. -/
 
 
--- Set 1 (Spanish) derivation chain — uses DM bridge (CatHead.surfaceGenderSet1)
+-- Set 1 (Spanish) derivation chain — uses DM bridge (Categorizer.Head.surfaceGenderSet1)
 
 /-- Plain n → masculine (the default). -/
 theorem set1_plain_n_masculine :
-    CatHead.n_plain.surfaceGenderSet1 = .masculine := rfl
+    Categorizer.Head.n_plain.surfaceGenderSet1 = .masculine := rfl
 
 /-- i[+FEM] → feminine (natural female). -/
 theorem set1_iFem_feminine :
-    CatHead.n_iFem.surfaceGenderSet1 = .feminine := rfl
+    Categorizer.Head.n_iFem.surfaceGenderSet1 = .feminine := rfl
 
 /-- i[−FEM] → masculine (natural male). -/
 theorem set1_iMasc_masculine :
-    CatHead.n_iMasc.surfaceGenderSet1 = .masculine := rfl
+    Categorizer.Head.n_iMasc.surfaceGenderSet1 = .masculine := rfl
 
 /-- u[+FEM] → feminine (arbitrary feminine). -/
 theorem set1_uFem_feminine :
-    CatHead.n_uFem.surfaceGenderSet1 = .feminine := rfl
+    Categorizer.Head.n_uFem.surfaceGenderSet1 = .feminine := rfl
 
--- Set 2 (Maa) derivation chain — uses DM bridge (CatHead.surfaceGenderSet2)
+-- Set 2 (Maa) derivation chain — uses DM bridge (Categorizer.Head.surfaceGenderSet2)
 
 /-- Plain n → feminine (the default in Set 2). -/
 theorem set2_plain_n_feminine :
-    CatHead.n_plain.surfaceGenderSet2 = .feminine := rfl
+    Categorizer.Head.n_plain.surfaceGenderSet2 = .feminine := rfl
 
 /-- u[−FEM] → masculine (arbitrary masculine in Set 2). -/
 theorem set2_uNegFem_masculine :
-    CatHead.n_uNegFem.surfaceGenderSet2 = .masculine := rfl
+    Categorizer.Head.n_uNegFem.surfaceGenderSet2 = .masculine := rfl
 
 /-- i[−FEM] → masculine (natural male, same in both sets). -/
 theorem set2_iMasc_masculine :
-    CatHead.n_iMasc.surfaceGenderSet2 = .masculine := rfl
+    Categorizer.Head.n_iMasc.surfaceGenderSet2 = .masculine := rfl
 
 /-- i[+FEM] → feminine (natural female, same in both sets). -/
 theorem set2_iFem_feminine :
-    CatHead.n_iFem.surfaceGenderSet2 = .feminine := rfl
+    Categorizer.Head.n_iFem.surfaceGenderSet2 = .feminine := rfl
 
 /-- Verify the full derivation chain for Spanish fragment nouns: the
     surface gender computed via `Spanish.nHead` projection then Set 1 VI
@@ -1036,8 +1036,8 @@ as Lavukaleve, supporting [kramer-2015]'s prediction that n-inventory
 size and surface gender count are independent (mediated by VI). -/
 
 def russianNs : NInventory :=
-  ⟨"Russian", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
-               CatHead.n_uFem, CatHead.n_uNegFem], 3⟩
+  ⟨"Russian", [Categorizer.Head.n_iFem, Categorizer.Head.n_iMasc, Categorizer.Head.n_plain,
+               Categorizer.Head.n_uFem, Categorizer.Head.n_uNegFem], 3⟩
 
 /-- Russian and Lavukaleve share the same n-inventory (5 heads). -/
 theorem russian_lavukaleve_same_ns :
@@ -1106,15 +1106,15 @@ theorem russian_projection_round_trips :
 /-- Projection-derived: Russian Fragment covers all 5 n-types. -/
 theorem russian_fragment_covers_inventory :
     Russian.Gender.allNouns.any
-      (Russian.nHead · == CatHead.n_iFem) ∧
+      (Russian.nHead · == Categorizer.Head.n_iFem) ∧
     Russian.Gender.allNouns.any
-      (Russian.nHead · == CatHead.n_iMasc) ∧
+      (Russian.nHead · == Categorizer.Head.n_iMasc) ∧
     Russian.Gender.allNouns.any
-      (Russian.nHead · == CatHead.n_uFem) ∧
+      (Russian.nHead · == Categorizer.Head.n_uFem) ∧
     Russian.Gender.allNouns.any
-      (Russian.nHead · == CatHead.n_uNegFem) ∧
+      (Russian.nHead · == Categorizer.Head.n_uNegFem) ∧
     Russian.Gender.allNouns.any
-      (Russian.nHead · == CatHead.n_plain) := by decide
+      (Russian.nHead · == Categorizer.Head.n_plain) := by decide
 
 -- ============================================================================
 -- § 14: VI-Derived Surface Gender Count
@@ -1135,23 +1135,23 @@ The key VI patterns from [kramer-2015]:
     class (encoded as Nat). Two n-heads yielding the same Nat surface
     as the same gender. -/
 def NInventory.computeGenders (inv : NInventory)
-    (viMap : CatHead → Nat) : Nat :=
+    (viMap : Categorizer.Head → Nat) : Nat :=
   (inv.nHeads.map viMap).eraseDups.length
 
 /-- Set 1 VI: [+FEM] → 0 (feminine), everything else → 1 (masculine). -/
-def viSet1 (ch : CatHead) : Nat :=
+def viSet1 (ch : Categorizer.Head) : Nat :=
   match ch.phi.gender with
   | some gf => if gf.val == ⟨.fem, .pos⟩ then 0 else 1
   | none    => 1
 
 /-- Set 2 VI: [−FEM] → 1 (masculine), everything else → 0 (feminine). -/
-def viSet2 (ch : CatHead) : Nat :=
+def viSet2 (ch : Categorizer.Head) : Nat :=
   match ch.phi.gender with
   | some gf => if gf.val == ⟨.fem, .neg⟩ then 1 else 0
   | none    => 0
 
 /-- 3-gender VI: [+FEM] → 0, [−FEM] → 1, no feature → 2. -/
-def viThreeGender (ch : CatHead) : Nat :=
+def viThreeGender (ch : Categorizer.Head) : Nat :=
   match ch.phi.gender with
   | some gf => if gf.val == ⟨.fem, .pos⟩ then 0 else 1
   | none    => 2
@@ -1250,7 +1250,7 @@ open _root_.Hausa (Noun)
     UNVERIFIED: Hausa is not classified by [kramer-2015] (it
     appears only in introductory data examples in Ch. 1). The Set-1
     placement extrapolates from [kramer-2020] Table 3 (p. 56). -/
-def nHead (n : Noun) : CatHead :=
+def nHead (n : Noun) : Categorizer.Head :=
   match n.attestedGender, n.isNaturalGender with
   | .feminine,  true  => .n_iFem
   | .masculine, true  => .n_iMasc
@@ -1284,11 +1284,11 @@ end Hausa
 theorem hausa_nHead_projection_correct :
     Hausa.allNouns.all (fun n =>
       Hausa.nHead n == match n.attestedGender, n.isNaturalGender with
-        | .feminine,  true  => CatHead.n_iFem
-        | .masculine, true  => CatHead.n_iMasc
-        | .feminine,  false => CatHead.n_uFem
-        | .masculine, false => CatHead.n_plain
-        | _, _              => CatHead.n_plain) := by decide
+        | .feminine,  true  => Categorizer.Head.n_iFem
+        | .masculine, true  => Categorizer.Head.n_iMasc
+        | .feminine,  false => Categorizer.Head.n_uFem
+        | .masculine, false => Categorizer.Head.n_plain
+        | _, _              => Categorizer.Head.n_plain) := by decide
 
 /-- *yārinyā* 'girl' projects to natural feminine (i[+FEM]).
     Parallels `spanish_licensing_mujer` (§10). -/
@@ -1335,10 +1335,10 @@ theorem hausa_licensing_uba :
 /-- The Hausa Fragment covers all four Set-1 n-heads via its projection.
     Parallels `fragment_covers_inventory` for Spanish. -/
 theorem hausa_fragment_covers_inventory :
-    Hausa.allNouns.any (Hausa.nHead · == CatHead.n_iFem) ∧
-    Hausa.allNouns.any (Hausa.nHead · == CatHead.n_iMasc) ∧
-    Hausa.allNouns.any (Hausa.nHead · == CatHead.n_uFem) ∧
-    Hausa.allNouns.any (Hausa.nHead · == CatHead.n_plain) := by
+    Hausa.allNouns.any (Hausa.nHead · == Categorizer.Head.n_iFem) ∧
+    Hausa.allNouns.any (Hausa.nHead · == Categorizer.Head.n_iMasc) ∧
+    Hausa.allNouns.any (Hausa.nHead · == Categorizer.Head.n_uFem) ∧
+    Hausa.allNouns.any (Hausa.nHead · == Categorizer.Head.n_plain) := by
   decide
 
 -- § 15.2: §3.3.1 phonological-assignment refutation

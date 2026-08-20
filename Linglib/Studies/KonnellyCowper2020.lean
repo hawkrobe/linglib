@@ -44,7 +44,7 @@ set_option autoImplicit false
 namespace KonnellyCowper2020
 
 open DistributedMorphology (Contrastivity GenderFeature GenderVal GenderDimension
-  Polarity Interpretability CatHead PhiBundle)
+  Polarity Interpretability Categorizer.Head PhiBundle)
 open DistributedMorphology.VI (FeatureVI subsetPrinciple)
 
 -- ============================================================================
@@ -346,7 +346,7 @@ theorem stage1_they_restricted :
     independent [MASC] and [FEM], while [kramer-2015] uses [±FEM]
     with polarity. For English pronoun VI, these are equivalent: K&C's
     [FEM] = Kramer's [+FEM], K&C's [MASC] = Kramer's [−FEM]. -/
-def catHeadToPronFeatures (ch : CatHead) : List PronFeature :=
+def catHeadToPronFeatures (ch : Categorizer.Head) : List PronFeature :=
   match ch.phi.gender with
   | some gf =>
     match gf.val with
@@ -361,19 +361,19 @@ def catHeadToPronFeatures (ch : CatHead) : List PronFeature :=
     Elsewhere Condition. -/
 theorem iFem_singular_yields_she :
     subsetPrinciple pronounVIs
-      ([.sg] ++ catHeadToPronFeatures CatHead.n_iFem) = some "she" := by
+      ([.sg] ++ catHeadToPronFeatures Categorizer.Head.n_iFem) = some "she" := by
   decide
 
 /-- n i[−FEM] (masculine natural gender) → "he". -/
 theorem iMasc_singular_yields_he :
     subsetPrinciple pronounVIs
-      ([.sg] ++ catHeadToPronFeatures CatHead.n_iMasc) = some "he" := by
+      ([.sg] ++ catHeadToPronFeatures Categorizer.Head.n_iMasc) = some "he" := by
   decide
 
 /-- n i[−ANIM] (inanimate) → "it". -/
 theorem iInanim_singular_yields_it :
     subsetPrinciple pronounVIs
-      ([.sg] ++ catHeadToPronFeatures CatHead.n_iInanim) = some "it" := by
+      ([.sg] ++ catHeadToPronFeatures Categorizer.Head.n_iInanim) = some "it" := by
   decide
 
 /-- Plain n (no gender feature) → "they" (elsewhere).
@@ -381,7 +381,7 @@ theorem iInanim_singular_yields_it :
     what VI produces when the n-head lacks a gender feature. -/
 theorem plain_n_singular_yields_they :
     subsetPrinciple pronounVIs
-      ([.sg] ++ catHeadToPronFeatures CatHead.n_plain) = some "they" := by
+      ([.sg] ++ catHeadToPronFeatures Categorizer.Head.n_plain) = some "they" := by
   decide
 
 -- ============================================================================
@@ -411,7 +411,7 @@ open Minimalist (fValue allCategoryConsistent allFMonotone catFamily)
     [borer-2005]'s full nominal spine N → n → Q → Num → D. -/
 structure PronDP where
   /-- The categorizing head n, bearing gender and animacy features. -/
-  nHead : CatHead
+  nHead : Categorizer.Head
   /-- Whether the Num head bears [SG] (singular number). -/
   singular : Bool
   /-- Whether D hosts a quantifier (relevant for bound-variable pronouns
@@ -441,36 +441,36 @@ def PronDP.spellout (ns : PronDP) : Option String :=
 
 /-- A singular feminine nominal (n i[+FEM], Num [SG]) → "she". -/
 theorem singular_feminine_spellout :
-    ({ nHead := CatHead.n_iFem, singular := true : PronDP }).spellout
+    ({ nHead := Categorizer.Head.n_iFem, singular := true : PronDP }).spellout
       = some "she" := by decide
 
 /-- A singular masculine nominal (n i[−FEM], Num [SG]) → "he". -/
 theorem singular_masculine_spellout :
-    ({ nHead := CatHead.n_iMasc, singular := true : PronDP }).spellout
+    ({ nHead := Categorizer.Head.n_iMasc, singular := true : PronDP }).spellout
       = some "he" := by decide
 
 /-- A singular inanimate nominal (n i[−ANIM], Num [SG]) → "it". -/
 theorem singular_inanimate_spellout :
-    ({ nHead := CatHead.n_iInanim, singular := true : PronDP }).spellout
+    ({ nHead := Categorizer.Head.n_iInanim, singular := true : PronDP }).spellout
       = some "it" := by decide
 
 /-- A singular nominal with plain n (no gender, Num [SG]) → "they".
     The DP structure DETERMINES the elsewhere outcome — plain n projects
     no gender feature, so the Subset Principle selects the elsewhere VI. -/
 theorem singular_ungendered_spellout :
-    ({ nHead := CatHead.n_plain, singular := true : PronDP }).spellout
+    ({ nHead := Categorizer.Head.n_plain, singular := true : PronDP }).spellout
       = some "they" := by decide
 
 /-- A plural nominal (no [SG]) → "they" (elsewhere). -/
 theorem plural_spellout :
-    ({ nHead := CatHead.n_plain, singular := false : PronDP }).spellout
+    ({ nHead := Categorizer.Head.n_plain, singular := false : PronDP }).spellout
       = some "they" := by decide
 
 /-- A quantifier-bound singular nominal with plain n → "they".
     The `isQuantifier` flag records the D-head status but does not
     affect VI: feature projection reads n and Num, not D content. -/
 theorem quantifier_bound_spellout :
-    ({ nHead := CatHead.n_plain, singular := true,
+    ({ nHead := Categorizer.Head.n_plain, singular := true,
        isQuantifier := true : PronDP }).spellout
       = some "they" := by decide
 
@@ -513,7 +513,7 @@ theorem kc14_spine_nominal :
     contexts, not the syntactic architecture itself. -/
 theorem stage3_they_from_structure (ctx : ReferentContext) :
     genderObligatoryFor ctx .stage3 = false ∧
-    ({ nHead := CatHead.n_plain, singular := true : PronDP }).spellout
+    ({ nHead := Categorizer.Head.n_plain, singular := true : PronDP }).spellout
       = some "they" :=
   ⟨by cases ctx <;> rfl, by decide⟩
 

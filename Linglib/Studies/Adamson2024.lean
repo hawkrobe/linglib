@@ -49,7 +49,7 @@ cannot affect gender assignment.
 ## Connection to Linglib
 
 This module uses types from `Morphology/DistributedMorphology/NominalStructure.lean`
-(the GLH, `NominalPosition`, `PossessionType`), `CatHead` and `PhiBundle`
+(the GLH, `NominalPosition`, `PossessionType`), `Head` and `PhiBundle`
 from `Morphology/DistributedMorphology/Categorizer.lean` ([kramer-2015]),
 `VocabItem` from `Morphology/DistributedMorphology/VocabularyInsertion.lean`,
 and Fragment data from `Fragments/Teop/Nouns.lean` and
@@ -59,15 +59,16 @@ and Fragment data from `Fragments/Teop/Nouns.lean` and
 namespace Adamson2024
 
 open DistributedMorphology
+open DistributedMorphology.Categorizer (Head)
 open DistributedMorphology.VI
 open Minimalist
 
 -- ============================================================================
--- § 1: GLH + CatHead Bridge
+-- § 1: GLH + Head Bridge
 -- ============================================================================
 
 /-- An n head with selectsD licenses an iPossessor in Spec,nP.
-    This connects `CatHead.selectsD` to the GLH: the {D} feature
+    This connects `Head.selectsD` to the GLH: the {D} feature
     places the possessor nP-internally, making it gender-relevant. -/
 theorem selectsD_implies_local_possessor :
     PossessionType.inalienable.possessorPosition = .specN ∧
@@ -76,23 +77,23 @@ theorem selectsD_implies_local_possessor :
 /-- Gender features live on the nominal categorizer (n), as established
     by [kramer-2015] and confirmed by [adamson-2024]. -/
 theorem categorizer_has_gender_locus :
-    CatHead.n_iFem.phi.gender.isSome = true ∧
-    CatHead.n_iMasc.phi.gender.isSome = true ∧
-    CatHead.n_uFem.phi.gender.isSome = true ∧
-    CatHead.n_plain.phi.gender.isNone = true := ⟨rfl, rfl, rfl, rfl⟩
+    Head.n_iFem.phi.gender.isSome = true ∧
+    Head.n_iMasc.phi.gender.isSome = true ∧
+    Head.n_uFem.phi.gender.isSome = true ∧
+    Head.n_plain.phi.gender.isNone = true := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- The ANIM-dimension types also carry gender features on n. -/
 theorem anim_categorizer_has_gender :
-    CatHead.n_iAnim.phi.gender.isSome = true ∧
-    CatHead.n_iInanim.phi.gender.isSome = true ∧
-    CatHead.n_uAnim.phi.gender.isSome = true := ⟨rfl, rfl, rfl⟩
+    Head.n_iAnim.phi.gender.isSome = true ∧
+    Head.n_iInanim.phi.gender.isSome = true ∧
+    Head.n_uAnim.phi.gender.isSome = true := ⟨rfl, rfl, rfl⟩
 
 /-- The GLH targets the nominal categorizer specifically. Verbal and
     adjectival categorizers do not host gender features. -/
 theorem glh_targets_nominal_categorizer :
-    CatHead.n_plain.cat = .n ∧
-    CatHead.v_plain.phi.gender.isNone = true ∧
-    CatHead.a_plain.phi.gender.isNone = true := ⟨rfl, rfl, rfl⟩
+    Head.n_plain.categorizer = .n ∧
+    Head.v_plain.phi.gender.isNone = true ∧
+    Head.a_plain.phi.gender.isNone = true := ⟨rfl, rfl, rfl⟩
 
 
 -- ============================================================================
@@ -103,16 +104,16 @@ theorem glh_targets_nominal_categorizer :
     When a body-part root combines with this n, the {D} feature creates
     a specifier position for an iPossessor DP. The u[+ANIM] feature
     results in gender I (animate article *a*). -/
-def teopBodyPartN : CatHead :=
+def teopBodyPartN : Head :=
   .iPoss { gender := some ⟨.u, ⟨.anim, .pos⟩⟩ }
 
 /-- Teop alienator n: plain n with no gender feature and no iPossessor. -/
-def teopAlienatorN : CatHead := CatHead.n_plain
+def teopAlienatorN : Head := Head.n_plain
 
 /-- Determine gender from the n head's feature content.
     If n has any [ANIM]-dimension gender feature → gender I;
     otherwise → gender II. -/
-def teopGenderFromN (nh : CatHead) : Teop.Gender :=
+def teopGenderFromN (nh : Head) : Teop.Gender :=
   match nh.phi.gender with
   | some gf => if gf.val.dim == .anim then .gI else .gII
   | none    => .gII
@@ -229,27 +230,27 @@ theorem teop_prediction_kinship_alienator :
 -- ============================================================================
 
 /-- Jarawara gender from the n head's feature content. -/
-def jarawaraGenderFromN (nh : CatHead) : Bool :=  -- true = masculine
+def jarawaraGenderFromN (nh : Head) : Bool :=  -- true = masculine
   match nh.phi.gender with
   | some gf => gf.val.dim == .masc
   | none    => false  -- feminine (unmarked)
 
 /-- The n head for Jarawara iPossessable nouns: has {D} (licenses iPossessor
     in Spec,nP) but no gender feature (feminine = unmarked in the [±MASC]
-    system). This is distinct from `CatHead.n_plain` (which has selectsD = false). -/
-def jarawaraIPossN : CatHead := .iPoss
+    system). This is distinct from `Head.n_plain` (which has selectsD = false). -/
+def jarawaraIPossN : Head := .iPoss
 
 /-- iPossessable roots in Jarawara are feminine: their n has no marked gender. -/
 theorem jarawara_ipossessable_always_fem :
     jarawaraGenderFromN jarawaraIPossN = false := rfl
 
-/-- iPossessable n in Jarawara has {D} — by construction via `CatHead.iPoss`. -/
+/-- iPossessable n in Jarawara has {D} — by construction via `Head.iPoss`. -/
 theorem jarawara_ipossessable_selectsD :
     jarawaraIPossN.selectsD = true := rfl
 
 /-- Masculine nouns in Jarawara bear [+MASC] on n. -/
 theorem jarawara_masc_has_feature :
-    jarawaraGenderFromN CatHead.n_uMasc = true := rfl
+    jarawaraGenderFromN Head.n_uMasc = true := rfl
 
 /-! ### Jarawara impoverishment ([adamson-2024] ex. 63)
 
@@ -362,7 +363,7 @@ structure InheritedGenderNoun where
     dimension or polarity. Its value (including dimension) comes entirely
     from the iPossessor DP via Probe-Goal Agree ([adamson-2024] (90)).
     We represent this as `phi := {}` (no valued gender on n itself). -/
-def inheritedGenderN : CatHead := .iPoss
+def inheritedGenderN : Head := .iPoss
 
 /-- Yanyuwa: seven gender classes (Kirton 1971a,b).
 
@@ -429,7 +430,7 @@ Two-gender systems arise when only one marked value + plain are attested. -/
     Two n heads produce the same surface gender iff they have the same
     gender feature content (ignoring interpretability, which is only
     visible at LF vs PF). -/
-def surfaceGenderClass (nh : CatHead) : Option GenderVal :=
+def surfaceGenderClass (nh : Head) : Option GenderVal :=
   nh.phi.gender.map (·.val)
 
 /-- The four Amharic n-types yield exactly 3 surface genders:
@@ -437,19 +438,19 @@ def surfaceGenderClass (nh : CatHead) : Option GenderVal :=
     the same surface class [+FEM]. -/
 theorem amharic_three_surface_genders :
     let classes :=
-      [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain, CatHead.n_uFem].map
+      [Head.n_iFem, Head.n_iMasc, Head.n_plain, Head.n_uFem].map
         surfaceGenderClass
     classes.eraseDups.length = 3 := by native_decide
 
 /-- A two-gender system (e.g., Jarawara [±MASC]) uses only two n types:
     marked (u[+MASC]) and plain. -/
 theorem two_gender_system :
-    let classes := [CatHead.n_uMasc, CatHead.n_plain].map surfaceGenderClass
+    let classes := [Head.n_uMasc, Head.n_plain].map surfaceGenderClass
     classes.eraseDups.length = 2 := by native_decide
 
 /-- The Teop two-gender system uses the ANIM dimension. -/
 theorem teop_two_gender_system :
-    let classes := [CatHead.n_uAnim, CatHead.n_plain].map surfaceGenderClass
+    let classes := [Head.n_uAnim, Head.n_plain].map surfaceGenderClass
     classes.eraseDups.length = 2 := by native_decide
 
 -- ============================================================================
@@ -460,13 +461,13 @@ theorem teop_two_gender_system :
 Without this, the n-head cannot license an iPossessor in Spec,nP, and the
 semantic pipeline (`catHeadSemanticType`) will compute sortal instead of
 relational. This invariant was violated before 0.229.208 (Jarawara used
-`CatHead.n_plain` which has selectsD = false). -/
+`Head.n_plain` which has selectsD = false). -/
 
 /-- All iPossessable n-heads across all four languages have selectsD = true.
     Regression test: adding a new iPossessable n-head? Add it to the
     disjunction here. If it fails, the n-head is missing {D}. -/
 theorem ipossessable_n_heads_have_selectsD
-    (nh : CatHead) (h : nh = teopBodyPartN ∨ nh = jarawaraIPossN ∨ nh = inheritedGenderN) :
+    (nh : Head) (h : nh = teopBodyPartN ∨ nh = jarawaraIPossN ∨ nh = inheritedGenderN) :
     nh.selectsD = true := by
   rcases h with rfl | rfl | rfl <;> rfl
 
@@ -476,11 +477,11 @@ theorem ipossessable_n_heads_have_selectsD
 
 /-! ### Two derivation pipelines from a single n-head
 
-A CatHead determines two things in parallel:
+A Head determines two things in parallel:
 
 ```
            ┌──→ gender ──→ article form   (PF pipeline)
-CatHead ──┤
+Head ──┤
            └──→ NSemanticType ──→ can take possessor?   (semantic pipeline)
 ```
 
@@ -500,15 +501,15 @@ open DistributedMorphology.CategorizerSemantics
 /-- The PF derivation pipeline: n-head → gender → article.
     Gender is an intermediate value computed from φ-features, then fed
     into VI as part of the article context. -/
-def teopPFDerive (nh : CatHead) (pl proprial : Bool := false) : Option String :=
+def teopPFDerive (nh : Head) (pl proprial : Bool := false) : Option String :=
   let gender := teopGenderFromN nh
   vocabularyInsert teopArticleRules ⟨gender, pl, proprial⟩ ()
 
 /-- The semantic derivation pipeline: n-head → semantic type → possessor capability.
     The semantic type is an intermediate value, fed into Barker's type classification
     to determine whether the noun can directly take a possessor.
-    Generic over any CatHead — not Teop-specific despite the examples below. -/
-def canTakePossessorSem (nh : CatHead) (mediatesAPoss : Bool := false) : Bool :=
+    Generic over any Head — not Teop-specific despite the examples below. -/
+def canTakePossessorSem (nh : Head) (mediatesAPoss : Bool := false) : Bool :=
   let semType := catHeadSemanticType nh (mediatesAPossession := mediatesAPoss)
   semType.toBarker.canTakePossessor
 
@@ -531,7 +532,7 @@ theorem sem_alienator : canTakePossessorSem teopAlienatorN = false := rfl
     consequences of the same structural feature (selectsD on n).
 
     Stated as a Bool identity: "is gender I" = "can take possessor". -/
-theorem pf_semantic_correlation (nh : CatHead)
+theorem pf_semantic_correlation (nh : Head)
     (h : nh = teopBodyPartN ∨ nh = teopAlienatorN) :
     (teopGenderFromN nh == .gI) = canTakePossessorSem nh := by
   rcases h with rfl | rfl <;> rfl

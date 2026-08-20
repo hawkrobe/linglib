@@ -663,24 +663,24 @@ theorem mwaghavul_is_tonal_hyman :
 open DistributedMorphology
 
 /-- The verbaliser produces verbal category. -/
-def verbalizerCat : CatHead := CatHead.v_plain
+def verbalizer : Categorizer.Head := Categorizer.Head.v_plain
 
-theorem verbalizer_is_verbal : verbalizerCat.cat = .v := rfl
+theorem verbalizer_is_verbal : verbalizer.categorizer = .v := rfl
 
 /-- Denominal verb derivation (n → v): the ideophonic base categorized
     by n, recategorized by the tonal verbalizer — [v [n √]] is v-headed
     over an n-headed inner layer, with the base root untouched. -/
 theorem denominal_ideophone_verb (r : DistributedMorphology.Root) :
-    Headed (categorize verbalizerCat (categorize CatHead.n_plain (ofRoot r)))
-      verbalizerCat ∧
-    roots (categorize verbalizerCat (categorize CatHead.n_plain (ofRoot r)))
+    Headed (categorize verbalizer (categorize Categorizer.Head.n_plain (ofRoot r)))
+      verbalizer ∧
+    roots (categorize verbalizer (categorize Categorizer.Head.n_plain (ofRoot r)))
       = {r} :=
   ⟨.categorize .., by rw [roots_categorize, roots_categorize, roots_ofRoot]⟩
 
 /-- Deadjectival verb derivation (a → v): [v [a √]]. -/
 theorem deadjectival_ideophone_verb (r : DistributedMorphology.Root) :
-    Headed (categorize verbalizerCat (categorize CatHead.a_plain (ofRoot r)))
-      verbalizerCat :=
+    Headed (categorize verbalizer (categorize Categorizer.Head.a_plain (ofRoot r)))
+      verbalizer :=
   .categorize ..
 
 -- ============================================================================

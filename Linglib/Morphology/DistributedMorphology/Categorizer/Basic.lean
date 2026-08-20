@@ -19,7 +19,7 @@ and layered derivation are facts about leaves rather than stipulations.
 
 * `Categorizer` — the closed inventory n, v, a
 * `WordStructure` — word-internal structure over a head alphabet:
-  `Categorizer` for the bare theory, `CatHead`
+  `Categorizer` for the bare theory, `Categorizer.Head`
   (`Categorizer/Gender.lean`) when heads carry φ-content
 * `categorize`, `roots`, `heads`, `Headed` — head merger, the two leaf
   projections, and outermost headedness

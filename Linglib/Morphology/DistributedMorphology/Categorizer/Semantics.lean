@@ -19,7 +19,7 @@ stated over `Semantics/Possessive/`.
 * `NSemanticType` — relational, sortal, alienator
 * `nBodyPartDenot`, `nSortalDenot`, `nAlienatorDenot` — the three head
   denotations
-* `catHeadSemanticType` — the semantic type read off a `CatHead`
+* `catHeadSemanticType` — the semantic type read off a `Categorizer.Head`
 
 ## Main statements
 
@@ -53,7 +53,7 @@ inductive NSemanticType where
   deriving DecidableEq, Repr
 
 /-- The semantic type read off a head's features. -/
-def catHeadSemanticType (ch : CatHead) (mediatesAPossession : Bool := false)
+def catHeadSemanticType (ch : Categorizer.Head) (mediatesAPossession : Bool := false)
     : NSemanticType :=
   if ch.selectsD then .relational
   else if mediatesAPossession then .alienator
@@ -98,7 +98,7 @@ theorem nAlienatorDenot_is_ex_flipped {E S : Type}
   simp only [nAlienatorDenot, Ex]
 
 /-- An n head has {D} iff its semantic type is relational. -/
-theorem selectsD_iff_relational (ch : CatHead) :
+theorem selectsD_iff_relational (ch : Categorizer.Head) :
     ch.selectsD = true ↔
     catHeadSemanticType ch = .relational := by
   unfold catHeadSemanticType
@@ -157,7 +157,7 @@ end TeopExample
 
 /-! The Barker–Adamson correspondence:
 
-| CatHead feature           | Semantic type | Barker operation |
+| Categorizer.Head feature           | Semantic type | Barker operation |
 |----------------------------|---------------|------------------|
 | selectsD = true            | relational    | π                |
 | selectsD = false (regular) | sortal        | bare             |

@@ -52,7 +52,7 @@ of [+FEM] on n, NOT phonological *assignment*. Aligns with Newman's
 synchronic view.
 
 The cross-framework theorems live in `Studies/Kramer2020.lean`.
-Spanish/Russian/German Fragment Gender files still bake in DM `CatHead`
+Spanish/Russian/German Fragment Gender files still bake in DM `Categorizer.Head`
 fields; Hausa is the pilot for theory-neutral Fragment-layer encoding.
 -/
 
