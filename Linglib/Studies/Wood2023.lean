@@ -448,7 +448,7 @@ theorem wood_no_trope_alloseme_for_hetAsCap :
     zero, simpleEvent, result, state, entity. None of these is "trope".
     The bridge documents this as a substantive limitation of Wood's
     inventory when applied to M&deS's adjectival nominalisation data. -/
-theorem nAlloseme_cases_count : Nominalizer.head.allosemeCount = 9 := rfl
+theorem nAlloseme_cases_count : Nominalizer.vocabulary.length = 9 := rfl
 
 /-! ## Three-way framework dialogue
 
