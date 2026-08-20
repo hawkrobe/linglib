@@ -1254,7 +1254,6 @@ import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.DistributedMorphology.Categorizer.Semantics
 import Linglib.Morphology.DistributedMorphology.Defs
-import Linglib.Morphology.DistributedMorphology.DomainLocality
 import Linglib.Morphology.DistributedMorphology.Fission
 import Linglib.Morphology.DistributedMorphology.Fusion
 import Linglib.Morphology.DistributedMorphology.Impoverishment
@@ -1289,6 +1288,7 @@ import Linglib.Morphology.Paradigm.Case
 import Linglib.Morphology.Paradigm.Complexity
 import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Morphology.Paradigm.Degree
+import Linglib.Morphology.Paradigm.DomainContiguity
 import Linglib.Morphology.Paradigm.Function
 import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.Paradigm.Morphome
