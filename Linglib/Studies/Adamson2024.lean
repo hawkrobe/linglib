@@ -258,6 +258,37 @@ Two separate impoverishment rules delete [MASC] in different contexts:
 - [MASC] → ∅ / [PARTICIPANT]
 -/
 
+/-- A morphosyntactic context triggering the paper's gender impoverishment
+    (ex. 63; on impoverishment generally see Bonet 1991 and
+    [embick-noyer-2007], the paper's own citations). Each context is a
+    separate rule. -/
+inductive ImpoverishmentContext where
+  | plural       -- [PL]: number feature
+  | participant  -- [PARTICIPANT]: 1st/2nd person (speech act participants)
+  deriving DecidableEq, Repr
+
+/-- A gender-impoverishment rule (ex. 63): delete `targetGender` from the
+    phi-bundle when the conditioning context is active. Postsyntactic,
+    feeding Vocabulary Insertion — impoverishment bleeds the more specific
+    exponent, so the unmarked feminine surfaces. -/
+structure GenderImpoverishmentRule where
+  /-- The feature to be deleted. -/
+  targetGender : GenderVal
+  /-- The conditioning context (feature that triggers deletion). -/
+  context : ImpoverishmentContext
+  deriving DecidableEq, Repr
+
+/-- Apply impoverishment: if the rule matches, delete the gender feature. -/
+def GenderImpoverishmentRule.apply (rule : GenderImpoverishmentRule)
+    (phi : PhiBundle) (contextActive : Bool) : PhiBundle :=
+  if contextActive then
+    match phi.gender with
+    | some gf => if gf.val == rule.targetGender
+                 then { phi with gender := none }
+                 else phi
+    | none => phi
+  else phi
+
 /-- Impoverishment rule 1: [MASC] → ∅ / [PL]. -/
 def jarawaraImpoverishPL : GenderImpoverishmentRule where
   targetGender := ⟨.masc, .pos⟩
@@ -377,7 +408,8 @@ theorem coastalMarind_inheriting_prerequisites :
 /-- Inherited gender is consistent with the GLH: the possessor whose
     gender is inherited occupies Spec,nP (nP-internal). -/
 theorem inherited_gender_glh_consistent :
-    genderLocalityHypothesis PossessionGenderMechanism.inheritedGender.possessorPosition = true := rfl
+    genderLocalityHypothesis
+      PossessionGenderMechanism.inheritedGender.possessorPosition = true := rfl
 
 -- ============================================================================
 -- § 5: n-Type System ↔ Surface Gender Counts
@@ -404,7 +436,9 @@ def surfaceGenderClass (nh : CatHead) : Option GenderVal :=
     [+FEM], [−FEM], and ∅ (plain). Both i[+FEM] and u[+FEM] map to
     the same surface class [+FEM]. -/
 theorem amharic_three_surface_genders :
-    let classes := [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain, CatHead.n_uFem].map surfaceGenderClass
+    let classes :=
+      [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain, CatHead.n_uFem].map
+        surfaceGenderClass
     classes.eraseDups.length = 3 := by native_decide
 
 /-- A two-gender system (e.g., Jarawara [±MASC]) uses only two n types:
