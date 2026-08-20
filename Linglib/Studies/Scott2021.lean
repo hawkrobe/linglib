@@ -315,17 +315,14 @@ def realize (tree : Tree DPCat String) (origin : PronOrigin) : String :=
 -- § 7: Core Predictions — Bound Resumptives
 -- ============================================================================
 
--- TODO: `decide` chokes on String equality through `DistributedMorphology.VI`;
--- restructure as compositional lemmas (extractFeatures + insertResumptive).
-
 /-- Bound 1SG in adjunct island → person-matching *-mi*. -/
-theorem island_bound_1sg : realize pronTree1sg .bound = "-mi" := by native_decide
+theorem island_bound_1sg : realize pronTree1sg .bound = "-mi" := by decide
 
 /-- Bound 2SG in adjunct island → person-matching *-we*. -/
-theorem island_bound_2sg : realize pronTree2sg .bound = "-we" := by native_decide
+theorem island_bound_2sg : realize pronTree2sg .bound = "-we" := by decide
 
 /-- Bound 1PL in adjunct island → person-matching *-si*. -/
-theorem island_bound_1pl : realize pronTree1pl .bound = "-si" := by native_decide
+theorem island_bound_1pl : realize pronTree1pl .bound = "-si" := by decide
 
 -- ============================================================================
 -- § 8: Core Predictions — Movement Resumptives
@@ -333,22 +330,22 @@ theorem island_bound_1pl : realize pronTree1pl .bound = "-si" := by native_decid
 
 /-- Movement copy 1SG in parasitic gap → personless *-ye*. -/
 theorem parasitic_movement_1sg : realize pronTree1sg .movementCopy = "-ye" := by
-  native_decide
+  decide
 
 /-- Movement copy 2SG in parasitic gap → also *-ye*. Person is irrelevant
     because chain reduction deletes PersP regardless. -/
 theorem parasitic_movement_2sg : realize pronTree2sg .movementCopy = "-ye" := by
-  native_decide
+  decide
 
 /-- Movement copy 1PL in parasitic gap → personless *-o*. -/
 theorem parasitic_movement_1pl : realize pronTree1pl .movementCopy = "-o" := by
-  native_decide
+  decide
 
 /-- Both 1SG and 2SG movement copies produce the same form — chain
     reduction erases the person distinction. -/
 theorem movement_erases_person_distinction :
     realize pronTree1sg .movementCopy = realize pronTree2sg .movementCopy := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 9: End-to-End Argumentation Chain
@@ -369,7 +366,7 @@ theorem end_to_end :
     realize pronTree1sg .movementCopy = "-ye" ∧
     -- Step 5: unreduced VI produces -mi
     realize pronTree1sg .bound = "-mi" := by
-  refine ⟨rfl, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨rfl, ?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- § 10: Parasitic Gap Interspeaker Variation (Table 4)
@@ -419,7 +416,7 @@ theorem islands_are_syntactic :
     realize pronTree1sg .bound = "-mi" ∧
     realize pronTree1sg .movementCopy = "-ye" ∧
     realize pronTree1sg .bound ≠ realize pronTree1sg .movementCopy := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- § 12: MaxElide Targets PersP
@@ -503,7 +500,7 @@ theorem fragment_consistency_1sg :
     resumptivePronounIsPersonMatching .first .sg = true ∧
     realize pronTree1sg .bound = resumptivePronoun .first .sg ∧
     realize pronTree1sg .movementCopy = resumptivePronoun .third .sg := by
-  refine ⟨rfl, ?_, ?_⟩ <;> native_decide
+  refine ⟨rfl, ?_, ?_⟩ <;> decide
 
 /-- The movement marker in the Fragment is correctly classified. -/
 theorem marker_classification :

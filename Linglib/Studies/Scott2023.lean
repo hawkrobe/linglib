@@ -238,7 +238,7 @@ theorem voice_agrees_person :
     applyAgree voiceProbe dp3sg .person =
     some (.ofGramFeatures
       [.valued (.phi (.person .third)), .unvalued (.phi (.number .singular))]) := by
-  native_decide
+  decide
 
 /-- After person agreement, Voice's [uNumber] is valued as [Number:sg].
     This is the second step of φ-Agree: person first, then number. -/
@@ -248,7 +248,7 @@ theorem voice_agrees_number :
     applyAgree afterPerson dp3sg .number =
     some (.ofGramFeatures
       [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]) := by
-  native_decide
+  decide
 
 /-- Full φ-valuation of Voice by a 3SG agent: both person and number valued. -/
 def voiceFullyAgreed : FeatureBundle :=
@@ -259,7 +259,7 @@ theorem voice_agree_pipeline :
     (applyAgree voiceProbe dp3sg .person).bind
       (λ fb => applyAgree fb dp3sg .number) =
     some voiceFullyAgreed := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 4: Set A Spellout — Voice → agreement morphology
@@ -268,7 +268,7 @@ theorem voice_agree_pipeline :
 /-- Set A spellout: Voice's valued [Person:3, Number:sg] yields "t-" (A2/3SG). -/
 theorem setA_spellout_3sg :
     spellout setAVocab voiceFullyAgreed (some .v) = some "t-" := by
-  native_decide
+  decide
 
 /-- Set A spellout for 1SG: Voice with [Person:1, Number:sg] yields the
     A1SG marker (pre-consonantal citation form `n-`; the pre-vocalic
@@ -277,7 +277,7 @@ theorem setA_spellout_1sg :
     let v1sg : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
     spellout setAVocab v1sg (some .v) = some "n-" := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 5: Set B — Two Paths to "tz'="
@@ -291,7 +291,7 @@ theorem setB_intransitive_3sg :
     let inflAgreed : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]
     spellout setBVocab inflAgreed (some .T) = some "tz'=" := by
-  native_decide
+  decide
 
 /-- **Transitive path**: Infl's probe is blocked by Voice_TR → no
     φ-features are copied → the Infl node has an empty feature bundle.
@@ -303,7 +303,7 @@ theorem setB_intransitive_3sg :
 theorem setB_transitive_default :
     let inflBlocked : FeatureBundle := ⊥
     spellout setBVocab inflBlocked (some .T) = some "tz'=" := by
-  native_decide
+  decide
 
 /-- The two paths produce the same exponent — the surface form is
     identical even though the underlying mechanism differs (real agreement
@@ -314,7 +314,7 @@ theorem setB_same_surface :
     let inflBlocked : FeatureBundle := ⊥
     spellout setBVocab inflAgreed3sg (some .T) =
     spellout setBVocab inflBlocked (some .T) := by
-  native_decide
+  decide
 
 /-- Set B spellout for 1SG intransitive: Infl copies [Person:1, Number:sg]
     from S, yielding "chin" — NOT the Elsewhere form. This is real
@@ -323,7 +323,7 @@ theorem setB_intransitive_1sg :
     let t1sg : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
     spellout setBVocab t1sg (some .T) = some "chin" := by
-  native_decide
+  decide
 
 /-- In a transitive with a 1SG object, the default "tz'=" still appears —
     NOT "chin". This is because Infl's probe was blocked by Voice_TR,
@@ -336,7 +336,7 @@ theorem setB_transitive_ignores_object :
     let inflAgreed1sg : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
     spellout setBVocab inflAgreed1sg (some .T) = some "chin" := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 -- ============================================================================
 -- § 6: Probe Restriction — Why objects lack φ-agreement
@@ -364,7 +364,7 @@ theorem probe_restriction_yields_default :
       (.ofGramFeatures
         [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
       (some .T) = some "chin" := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 -- ============================================================================
 -- § 7: Intransitive Pipeline — Infl Agrees with S
@@ -390,7 +390,7 @@ theorem intransitive_pipeline_1sg :
       (.ofGramFeatures
         [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
       (some .T) = some "chin" := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 -- ============================================================================
 -- § 8: Transitive Pipeline — Voice Agrees, Infl Blocked
@@ -413,9 +413,9 @@ theorem full_pipeline_3sg_transitive :
     -- Step 5: patient is not eligible for reduction → overt pronoun
     ¬ ArgPosition.CanBeReduced .P := by
   refine ⟨?_, ?_, ?_, ?_⟩
-  · native_decide
-  · native_decide
-  · native_decide
+  · decide
+  · decide
+  · decide
   · decide
 
 /-- The pipeline generalizes: for every argument position, reduction
@@ -434,19 +434,19 @@ theorem all_positions_match (pos : ArgPosition) :
 theorem setA_setB_differ_by_context :
     spellout setAVocab voiceFullyAgreed (some .v) ≠
     spellout setBVocab voiceFullyAgreed (some .v) := by
-  native_decide
+  decide
 
 /-- Set A vocabulary does NOT match Infl context. -/
 theorem setA_wrong_context :
     spellout setAVocab voiceFullyAgreed (some .T) = none := by
-  native_decide
+  decide
 
 /-- Set B vocabulary does NOT match Voice context (for specified entries).
     Only the Elsewhere entry could match (it has no features), but it
     requires Infl context. -/
 theorem setB_wrong_context :
     spellout setBVocab voiceFullyAgreed (some .v) = none := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 10: The Tripartite Agreement Pattern
@@ -492,7 +492,7 @@ theorem different_probe_heads :
     observed in Mam transitives. -/
 theorem transitive_is_probe_failure :
     (phiProbe .person).outcome [⊥] = .unvalued := by
-  native_decide
+  decide
 
 /-- The intransitive case is real agreement: Infl's φ-probe finds S, so its
     outcome is `valued`. -/
@@ -501,7 +501,7 @@ theorem intransitive_is_real_agreement :
       [.ofGramFeatures
         [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]]
       = .valued := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 12: Deriving Probe Blocking from SatisfactionCond ([deal-2024])
@@ -523,7 +523,7 @@ theorem satisfaction_derives_patient_no_agree :
     mamInflSatisfaction.isSatisfied ⊥ (some .v) = true ∧
     mamInflSatisfaction.copiedFeatures ⊥ (some .v) = false ∧
     ¬ ArgPosition.IsPhiAgreed .P :=
-  ⟨by native_decide, by native_decide, by decide⟩
+  ⟨by decide, by decide, by decide⟩
 
 /-- In an intransitive clause, `mamInflSatisfaction` is satisfied by
     φ-features and DOES copy them — matching `IsPhiAgreed .S`. -/
@@ -533,7 +533,7 @@ theorem satisfaction_derives_intranS_agree :
     mamInflSatisfaction.isSatisfied dp1sg none = true ∧
     mamInflSatisfaction.copiedFeatures dp1sg none = true ∧
     ArgPosition.IsPhiAgreed .S :=
-  ⟨by native_decide, by native_decide, trivial⟩
+  ⟨by decide, by decide, trivial⟩
 
 /-- The satisfaction condition's `copiedFeatures` Bool aligns with
     the Fragment's `IsPhiAgreed` Prop for both Infl-probed positions:
@@ -548,8 +548,8 @@ theorem satisfaction_matches_fragment :
       none = true ↔
       ArgPosition.IsPhiAgreed .S) := by
   refine ⟨?_, ?_⟩
-  · constructor <;> intro h <;> first | (native_decide) | trivial
-  · exact ⟨fun _ => trivial, fun _ => by native_decide⟩
+  · constructor <;> intro h <;> first | (decide) | trivial
+  · exact ⟨fun _ => trivial, fun _ => by decide⟩
 
 /-! ### Deriving the probe table from relativized search (`Probe/Basic.lean`)
 
@@ -564,7 +564,7 @@ from the conclusion (the table) to independently motivated premises:
 order (Infl > Voice_TR > A > P). The goal lists are stipulated
 linearizations per clause type, not computed from a `SyntacticObject`
 — the tree-geometric derivation exists in `Agree.lean` but is
-`native_decide`-bound; this level matches `Probing.lean`'s altitude. -/
+`decide`-bound; this level matches `Probing.lean`'s altitude. -/
 
 /-- An element a probe encounters while walking its search domain:
     the argument position it realizes (`none` for non-DP heads like

@@ -291,43 +291,43 @@ private abbrev gkIN : AnnotatedFeatures GenderNode :=
 
 /-- (25) Uniform humans resolve to their shared gender. -/
 theorem gk_uniform_fem :
-    resolve gkHF gkHF = some [cls, masc, fem] := by native_decide
+    resolve gkHF gkHF = some [cls, masc, fem] := by decide
 
 theorem gk_uniform_masc :
-    resolve gkHM gkHM = some [cls, masc] := by native_decide
+    resolve gkHM gkHM = some [cls, masc] := by decide
 
 /-- (22a) Mismatched humans → {CLASS, MASC} → masculine plural.
     Intersection: {CLASS,MASC,FEM} ∩ {CLASS,MASC} = {CLASS,MASC}.
     FEM is eliminated because only one conjunct bears it. -/
 theorem gk_human_mismatch :
-    resolve gkHF gkHM = some [cls, masc] := by native_decide
+    resolve gkHF gkHM = some [cls, masc] := by decide
 
 theorem gk_human_mismatch_vi :
-    greekVI [cls, masc] = .masc := by native_decide
+    greekVI [cls, masc] = .masc := by decide
 
 /-- (22b, 40a-c) All inanimate mismatch combinations → {CLASS} → neuter.
     Percolation extracts only iCLASS from each conjunct (uFs excluded).
     This is NOT default insertion — it is the result of intersecting
     the iF sets, which contain only iCLASS for all inanimates. -/
 theorem gk_inanim_MF :
-    resolve gkIM gkIF = some [cls] := by native_decide
+    resolve gkIM gkIF = some [cls] := by decide
 
 theorem gk_inanim_NF :
-    resolve gkIN gkIF = some [cls] := by native_decide
+    resolve gkIN gkIF = some [cls] := by decide
 
 theorem gk_inanim_NM :
-    resolve gkIN gkIM = some [cls] := by native_decide
+    resolve gkIN gkIM = some [cls] := by decide
 
 theorem gk_inanim_mismatch_vi :
-    greekVI [cls] = .neut := by native_decide
+    greekVI [cls] = .neut := by decide
 
 /-- Mismatch Resolution Hypothesis (24): no default feature insertion.
     All resolution outcomes have non-empty intersection (matching). -/
 theorem gk_no_default_human :
-    (resolve gkHF gkHM).isSome = true := by native_decide
+    (resolve gkHF gkHM).isSome = true := by decide
 
 theorem gk_no_default_inanim :
-    (resolve gkIM gkIF).isSome = true := by native_decide
+    (resolve gkIM gkIF).isSome = true := by decide
 
 -- ============================================================================
 -- § 5: Greek — Fixed-Gender Humans
@@ -357,21 +357,21 @@ private abbrev gkFixedNeutFemale : AnnotatedFeatures GenderNode :=
     Despite both being grammatically feminine, iF resolution
     yields {CLASS,MASC} ∩ {CLASS,MASC,FEM} = {CLASS,MASC} → MASC. -/
 theorem gk_fixed_genius_sister :
-    resolve gkFixedFemMale gkHF = some [cls, masc] := by native_decide
+    resolve gkFixedFemMale gkHF = some [cls, masc] := by decide
 
 theorem gk_fixed_genius_sister_vi :
-    (resolve gkFixedFemMale gkHF).map greekVI = some .masc := by native_decide
+    (resolve gkFixedFemMale gkHF).map greekVI = some .masc := by decide
 
 /-- (37) *thima* (female referent) + her mother → feminine (N♀ + F♀ = F).
     Neuter noun's iFs are feminine (referent is female):
     {CLASS,MASC,FEM} ∩ {CLASS,MASC,FEM} = {CLASS,MASC,FEM} → FEM. -/
 theorem gk_fixed_victim_mother :
     resolve gkFixedNeutFemale gkHF = some [cls, masc, fem] := by
-  native_decide
+  decide
 
 theorem gk_fixed_victim_mother_vi :
     (resolve gkFixedNeutFemale gkHF).map greekVI = some .fem := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 6: Greek — [H + I] Coordination
@@ -396,26 +396,26 @@ def gkHIConverges (humanIFs inanimUFs : List GenderNode) : Bool :=
 /-- (54a) M♂ + M■ → grammatical: both map to MASC.
     *kleftis* 'thief' (M) + *pinakas* 'painting' (M). -/
 theorem gk_hi_matched_masc :
-    gkHIConverges [cls, masc] [cls, masc] = true := by native_decide
+    gkHIConverges [cls, masc] [cls, masc] = true := by decide
 
 /-- (54b) F♀ + F■ → grammatical: both map to FEM.
     *gineka* 'woman' (F) + *ombrela* 'umbrella' (F). -/
 theorem gk_hi_matched_fem :
     gkHIConverges [cls, masc, fem] [cls, masc, fem] = true := by
-  native_decide
+  decide
 
 /-- (47) M♂ + N■ → ineffable: MASC ≠ NEUT → PF crash.
     *kleftis* 'thief' (M♂) + *daxtilidi* 'ring' (N■).
     Human iFs → MASC; inanimate uFs → NEUT. No single exponent. -/
 theorem gk_hi_crash :
-    gkHIConverges [cls, masc] [cls] = false := by native_decide
+    gkHIConverges [cls, masc] [cls] = false := by decide
 
 /-- (56) Fixed-gender F♂ + M■ → grammatical: iFs match.
     *megalofiia* 'genius' (iF = M♂) + *pinakas* 'painting' (uF = M■).
     Human's iFs = {CLASS,MASC} → MASC; inanimate's uFs = {CLASS,MASC} → MASC.
     PF converges despite different grammatical genders. -/
 theorem gk_hi_fixed_converge :
-    gkHIConverges [cls, masc] [cls, masc] = true := by native_decide
+    gkHIConverges [cls, masc] [cls, masc] = true := by decide
 
 -- ============================================================================
 -- § 7: Greek — Fixed-Gender + Inanimate [H + I]
@@ -432,7 +432,7 @@ theorem gk_hi_fixed_converge :
     iFs of victim (male) = {CLASS, MASC}; uFs of painting = {CLASS, MASC}.
     VI match: MASC = MASC → PF converges. -/
 theorem gk_hi_fixed_victim_male :
-    gkHIConverges [cls, masc] [cls, masc] = true := by native_decide
+    gkHIConverges [cls, masc] [cls, masc] = true := by decide
 
 /-- (57b) *thima* (N♀ victim, female referent) + *fotografia* (F■) → FEM.
     iFs of victim (female) = {CLASS, MASC, FEM};
@@ -440,14 +440,14 @@ theorem gk_hi_fixed_victim_male :
     VI match: FEM = FEM → PF converges. -/
 theorem gk_hi_fixed_victim_female :
     gkHIConverges [cls, masc, fem] [cls, masc, fem] = true := by
-  native_decide
+  decide
 
 /-- (57a corollary) *thima* (N♀, male ref) + *fotografia* (F■) → PF crash.
     iFs of victim (male) = {CLASS, MASC} → VI → MASC.
     uFs of picture = {CLASS, MASC, FEM} → VI → FEM.
     MASC ≠ FEM → crash. -/
 theorem gk_hi_fixed_victim_male_fem_crash :
-    gkHIConverges [cls, masc] [cls, masc, fem] = false := by native_decide
+    gkHIConverges [cls, masc] [cls, masc, fem] = false := by decide
 
 -- ============================================================================
 -- § 8: Greek — Inanimate Uniform Patterns
@@ -463,15 +463,15 @@ theorem gk_hi_fixed_victim_male_fem_crash :
 
 /-- (38a) F■ + F■ = F: *fusta* 'skirt' + *bluza* 'T-shirt'. -/
 theorem gk_uniform_inanim_fem :
-    greekVI [cls, masc, fem] = .fem := by native_decide
+    greekVI [cls, masc, fem] = .fem := by decide
 
 /-- (38b) M■ + M■ = M: *anaptiras* 'lighter' + *fakos* 'torch'. -/
 theorem gk_uniform_inanim_masc :
-    greekVI [cls, masc] = .masc := by native_decide
+    greekVI [cls, masc] = .masc := by decide
 
 /-- (38c) N■ + N■ = N: *piruni* 'fork' + *kutali* 'spoon'. -/
 theorem gk_uniform_inanim_neut :
-    greekVI [cls] = .neut := by native_decide
+    greekVI [cls] = .neut := by decide
 
 -- ============================================================================
 -- § 9: Greek — Clausal Subjects
@@ -480,7 +480,7 @@ theorem gk_uniform_inanim_neut :
 /-- (2a, 58) Clausal subjects lack gender features entirely.
     No features to percolate → no vocabulary item matches → neuter
     (the elsewhere exponent, least specified). -/
-theorem gk_clausal_default : greekVI [] = .neut := by native_decide
+theorem gk_clausal_default : greekVI [] = .neut := by decide
 
 -- ============================================================================
 -- § 10: Icelandic
@@ -526,17 +526,17 @@ private abbrev isIN : AnnotatedFeatures GenderNode :=
     {CLASS,MASC} ∩ {CLASS,FEM} = {CLASS}. Because MASC and FEM are
     independent siblings, only CLASS survives intersection. -/
 theorem is_human_mismatch :
-    resolve isHM isHF = some [cls] := by native_decide
+    resolve isHM isHF = some [cls] := by decide
 
 theorem is_human_mismatch_vi :
-    icelandicVI [cls] = .neut := by native_decide
+    icelandicVI [cls] = .neut := by decide
 
 /-- (59) Mismatched inanimates → {CLASS} → neuter.
     *frægð* 'fame' (F) + *frami* 'success' (M) → neuter plural.
     All Icelandic inanimates share iFs = {iCLASS} regardless of
     grammatical gender — uFs (uFEM, uMASC) are excluded from resolution. -/
 theorem is_inanim_mismatch :
-    resolve isIF isIM = some [cls] := by native_decide
+    resolve isIF isIM = some [cls] := by decide
 
 /-- The geometry contrast: same labels, different geometry, different outcome.
     Greek {CLASS,MASC,FEM} ∩ {CLASS,MASC} = some {CLASS,MASC}.
@@ -544,7 +544,7 @@ theorem is_inanim_mismatch :
     Same mechanism, different input → different result. -/
 theorem geometry_drives_variation :
     resolve gkHF gkHM ≠ resolve isHF isHM := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 11: BCS (Bosnian/Croatian/Serbian)
@@ -604,16 +604,16 @@ private abbrev bcsN : AnnotatedFeatures GenderNode :=
     = {CLASS,INDIV,MASC,ANIM}. -/
 theorem bcs_human_mismatch :
     resolve bcsHF bcsHM =
-    some [cls, indiv, masc, anim] := by native_decide
+    some [cls, indiv, masc, anim] := by decide
 
 theorem bcs_human_mismatch_vi :
-    bcsVI [cls, indiv, masc, anim] = .masc := by native_decide
+    bcsVI [cls, indiv, masc, anim] = .masc := by decide
 
 /-- Mismatched M + F inanimates → {CLASS, INDIV, MASC} → masculine.
     Both conjuncts share {CLASS, INDIV, MASC} as iFs;
     ANIM + FEM on the feminine noun are uFs, excluded from resolution. -/
 theorem bcs_inanim_MF :
-    resolve bcsIM bcsIF = some [cls, indiv, masc] := by native_decide
+    resolve bcsIM bcsIF = some [cls, indiv, masc] := by decide
 
 /-- (69) Mismatched N + F inanimates → masculine.
     *znanje* 'knowledge' (N) + *intuicija* 'intuition' (F).
@@ -626,15 +626,15 @@ theorem bcs_inanim_MF :
     resolution itself yields {CLASS}, and the coordinate structure's
     INDIV (from GRP/plural) independently ensures masculine VI. -/
 theorem bcs_inanim_NF_resolved :
-    resolve bcsN bcsIF = some [cls] := by native_decide
+    resolve bcsN bcsIF = some [cls] := by decide
 
 /-- After coordination introduces INDIV, the combined features
     ({CLASS} from resolution + {INDIV} from GRP) map to masculine. -/
 theorem bcs_inanim_NF_vi :
-    bcsVI [cls, indiv] = .masc := by native_decide
+    bcsVI [cls, indiv] = .masc := by decide
 
 theorem bcs_inanim_mismatch_vi :
-    bcsVI [cls, indiv, masc] = .masc := by native_decide
+    bcsVI [cls, indiv, masc] = .masc := by decide
 
 /-- (70) Even matched neuters → masculine when coordinated.
     *selo* 'village' (N) + *brdo* 'hill' (N).
@@ -643,10 +643,10 @@ theorem bcs_inanim_mismatch_vi :
     (entailing INDIV). The combined {CLASS, INDIV} at &P maps to
     masculine via VI — INDIV is present → masculine. -/
 theorem bcs_neut_resolved :
-    resolve bcsN bcsN = some [cls] := by native_decide
+    resolve bcsN bcsN = some [cls] := by decide
 
 theorem bcs_neut_coord_masc :
-    bcsVI [cls, indiv] = .masc := by native_decide
+    bcsVI [cls, indiv] = .masc := by decide
 
 -- ============================================================================
 -- § 12: Cross-Linguistic Summary (Table 2)
@@ -654,22 +654,22 @@ theorem bcs_neut_coord_masc :
 
 /-- Table 2 verified: all six cells derived from geometry + intersection. -/
 theorem table2_greek_humans :
-    (resolve gkHF gkHM).map greekVI = some .masc := by native_decide
+    (resolve gkHF gkHM).map greekVI = some .masc := by decide
 
 theorem table2_greek_inanimates :
-    (resolve gkIM gkIF).map greekVI = some .neut := by native_decide
+    (resolve gkIM gkIF).map greekVI = some .neut := by decide
 
 theorem table2_icelandic_humans :
-    (resolve isHM isHF).map icelandicVI = some .neut := by native_decide
+    (resolve isHM isHF).map icelandicVI = some .neut := by decide
 
 theorem table2_icelandic_inanimates :
-    (resolve isIF isIM).map icelandicVI = some .neut := by native_decide
+    (resolve isIF isIM).map icelandicVI = some .neut := by decide
 
 theorem table2_bcs_humans :
-    (resolve bcsHF bcsHM).map bcsVI = some .masc := by native_decide
+    (resolve bcsHF bcsHM).map bcsVI = some .masc := by decide
 
 theorem table2_bcs_inanimates :
-    (resolve bcsIM bcsIF).map bcsVI = some .masc := by native_decide
+    (resolve bcsIM bcsIF).map bcsVI = some .masc := by decide
 
 -- ============================================================================
 -- § 13: Redundancy Rule
@@ -686,12 +686,12 @@ def redundancyRule (iFs uFs : List GenderNode) : List GenderNode :=
 /-- Human feminine: uFs empty → redundancy fills from iFs. -/
 theorem redundancy_human :
     redundancyRule [cls, masc, fem] [] = [cls, masc, fem] := by
-  native_decide
+  decide
 
 /-- Arbitrary feminine: uFs already filled → preserved. -/
 theorem redundancy_arbitrary :
     redundancyRule [cls] [cls, masc, fem] = [cls, masc, fem] := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 14: ABA Syncretism Prediction
@@ -708,7 +708,7 @@ theorem redundancy_arbitrary :
     This rules out N = F ≠ M syncretism patterns. -/
 theorem no_aba_syncretism :
     ¬(greekVI [] = greekVI [cls, masc, fem] ∧
-      greekVI [] ≠ greekVI [cls, masc]) := by native_decide
+      greekVI [] ≠ greekVI [cls, masc]) := by decide
 
 -- ============================================================================
 -- § 15: Feature Geometry Functions
@@ -746,27 +746,27 @@ def icelandicGeometry : GenderNode → AnnotatedFeatures GenderNode
     (FEM entails MASC). -/
 theorem greek_geometry_human_mismatch :
     resolve (greekGeometry .fem) (greekGeometry .masc) =
-    some [cls, masc] := by native_decide
+    some [cls, masc] := by decide
 
 /-- The independent geometry means human mismatch loses both
     MASC and FEM — only CLASS survives intersection. -/
 theorem icelandic_geometry_human_mismatch :
     resolve (icelandicGeometry .fem) (icelandicGeometry .masc) =
-    some [cls] := by native_decide
+    some [cls] := by decide
 
 /-- Geometry determines resolution outcome: same mechanism + same
     feature labels → different VI output, entirely from geometry. -/
 theorem geometry_determines_resolution :
     (resolve (greekGeometry .fem) (greekGeometry .masc)).map greekVI = some .masc ∧
     (resolve (icelandicGeometry .fem) (icelandicGeometry .masc)).map icelandicVI = some .neut := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- The geometry functions reconstruct the noun data: Greek nouns
     are exactly the geometry applied to their most specific iF. -/
-theorem greek_geometry_faithful_fem : greekGeometry .fem = gkHF := by native_decide
-theorem greek_geometry_faithful_masc : greekGeometry .masc = gkHM := by native_decide
-theorem icelandic_geometry_faithful_fem : icelandicGeometry .fem = isHF := by native_decide
-theorem icelandic_geometry_faithful_masc : icelandicGeometry .masc = isHM := by native_decide
+theorem greek_geometry_faithful_fem : greekGeometry .fem = gkHF := by decide
+theorem greek_geometry_faithful_masc : greekGeometry .masc = gkHM := by decide
+theorem icelandic_geometry_faithful_fem : icelandicGeometry .fem = isHF := by decide
+theorem icelandic_geometry_faithful_masc : icelandicGeometry .masc = isHM := by decide
 
 /-- Entailment asymmetry: in the linear chain (Greek), FEM's iFs
     are a superset of MASC's iFs. In the independent geometry
@@ -774,11 +774,11 @@ theorem icelandic_geometry_faithful_masc : icelandicGeometry .masc = isHM := by 
     This is WHY the intersection outcomes differ. -/
 theorem greek_fem_entails_masc :
     (percolateI (greekGeometry .masc)).all
-      ((percolateI (greekGeometry .fem)).contains ·) = true := by native_decide
+      ((percolateI (greekGeometry .fem)).contains ·) = true := by decide
 
 theorem icelandic_fem_not_entails_masc :
     (percolateI (icelandicGeometry .masc)).all
-      ((percolateI (icelandicGeometry .fem)).contains ·) = false := by native_decide
+      ((percolateI (icelandicGeometry .fem)).contains ·) = false := by decide
 
 -- ============================================================================
 -- § 16: Subset Principle — Formal Vocabulary Items
@@ -810,20 +810,20 @@ def bcsVocabItems : List (FeatureVI GenderNode Infl) :=
 
 /-- Subset Principle agrees with ad-hoc `greekVI` for human mismatch. -/
 theorem sp_greek_human_mismatch :
-    subsetPrinciple greekVocabItems [cls, masc] = some .masc := by native_decide
+    subsetPrinciple greekVocabItems [cls, masc] = some .masc := by decide
 
 /-- Subset Principle agrees with `greekVI` for inanimate mismatch. -/
 theorem sp_greek_inanim_mismatch :
-    subsetPrinciple greekVocabItems [cls] = some .neut := by native_decide
+    subsetPrinciple greekVocabItems [cls] = some .neut := by decide
 
 /-- Subset Principle agrees with `greekVI` for uniform feminine. -/
 theorem sp_greek_uniform_fem :
-    subsetPrinciple greekVocabItems [cls, masc, fem] = some .fem := by native_decide
+    subsetPrinciple greekVocabItems [cls, masc, fem] = some .fem := by decide
 
 /-- Subset Principle agrees with `bcsVI` for human mismatch. -/
 theorem sp_bcs_human_mismatch :
     subsetPrinciple bcsVocabItems [cls, indiv, masc, anim] = some .masc := by
-  native_decide
+  decide
 
 /-- Same vocabulary + different geometry → different outcome.
     Greek and Icelandic share the vocabulary (both use `greekVocabItems`),
@@ -832,7 +832,7 @@ theorem sp_bcs_human_mismatch :
 theorem sp_same_vocab_different_geometry :
     subsetPrinciple greekVocabItems [cls, masc] = some .masc ∧
     subsetPrinciple greekVocabItems [cls] = some .neut := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 -- ============================================================================
 -- § 17: Feature Geometry as FeatureOrder
@@ -857,19 +857,19 @@ def icelandicOrder : FeatureOrder GenderNode :=
 
 /-- Greek entailment: FEM entails MASC (FEM's bundle ⊇ MASC's bundle). -/
 theorem greek_order_fem_entails_masc :
-    greekOrder.entails fem masc = true := by native_decide
+    greekOrder.entails fem masc = true := by decide
 
 /-- Icelandic: FEM does NOT entail MASC (independent siblings). -/
 theorem icelandic_order_fem_not_entails_masc :
-    icelandicOrder.entails fem masc = false := by native_decide
+    icelandicOrder.entails fem masc = false := by decide
 
 /-- Greek: MASC entails CLASS. -/
 theorem greek_order_masc_entails_cls :
-    greekOrder.entails masc cls = true := by native_decide
+    greekOrder.entails masc cls = true := by decide
 
 /-- Greek: CLASS does NOT entail MASC (entailment is asymmetric). -/
 theorem greek_order_cls_not_entails_masc :
-    greekOrder.entails cls masc = false := by native_decide
+    greekOrder.entails cls masc = false := by decide
 
 -- ============================================================================
 -- § 18: Mismatch Resolution Hypothesis — Geometry Property
@@ -886,20 +886,20 @@ theorem greek_order_cls_not_entails_masc :
 
 /-- Greek satisfies MRH: all pairwise resolutions succeed. -/
 theorem greek_satisfies_mrh :
-    greekOrder.satisfiesMRH' = true := by native_decide
+    greekOrder.satisfiesMRH' = true := by decide
 
 /-- Icelandic satisfies MRH: all pairwise resolutions succeed.
     Despite different outcomes (neuter for humans instead of masculine),
     no resolution yields an empty intersection. -/
 theorem icelandic_satisfies_mrh :
-    icelandicOrder.satisfiesMRH' = true := by native_decide
+    icelandicOrder.satisfiesMRH' = true := by decide
 
 /-- Both satisfy MRH — this is the paper's "no default insertion"
     claim: the difference between Greek and Icelandic is the
     *content* of the intersection, not whether it exists. -/
 theorem both_satisfy_mrh :
     greekOrder.satisfiesMRH' = true ∧ icelandicOrder.satisfiesMRH' = true := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 -- ============================================================================
 -- § 19: N-ary Coordination
@@ -913,27 +913,27 @@ theorem both_satisfy_mrh :
 
 /-- Greek: three human feminines → {CLASS,MASC,FEM}. -/
 theorem gk_ternary_uniform_fem :
-    resolveN [gkHF, gkHF, gkHF] = some [cls, masc, fem] := by native_decide
+    resolveN [gkHF, gkHF, gkHF] = some [cls, masc, fem] := by decide
 
 /-- Greek: three mismatched humans → {CLASS,MASC} (FEM eliminated).
     FEM + MASC + FEM: FEM present in first and third but not second. -/
 theorem gk_ternary_human_mismatch :
-    resolveN [gkHF, gkHM, gkHF] = some [cls, masc] := by native_decide
+    resolveN [gkHF, gkHM, gkHF] = some [cls, masc] := by decide
 
 /-- Greek: three inanimates → {CLASS} → neuter. -/
 theorem gk_ternary_inanim :
-    resolveN [gkIF, gkIM, gkIN] = some [cls] := by native_decide
+    resolveN [gkIF, gkIM, gkIN] = some [cls] := by decide
 
 /-- Icelandic: three mismatched humans → {CLASS} → neuter.
     Because MASC and FEM are independent, any mismatch loses both. -/
 theorem is_ternary_human_mismatch :
-    resolveN [isHF, isHM, isHF] = some [cls] := by native_decide
+    resolveN [isHF, isHM, isHF] = some [cls] := by decide
 
 /-- BCS: three mismatched humans → {CLASS,INDIV,MASC,ANIM} → masculine.
     INDIV guarantees masculine even with mismatched FEM. -/
 theorem bcs_ternary_human_mismatch :
     resolveN [bcsHF, bcsHM, bcsHF]
-    = some [cls, indiv, masc, anim] := by native_decide
+    = some [cls, indiv, masc, anim] := by decide
 
 /-- N-ary subsumes binary: resolveN [fs1, fs2] = resolve fs1 fs2. -/
 theorem nary_subsumes_binary_greek :

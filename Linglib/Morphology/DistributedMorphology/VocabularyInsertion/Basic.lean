@@ -48,19 +48,14 @@ namespace DistributedMorphology.VI
 -- § 1: Vocabulary Insertion
 -- ============================================================================
 
-/-- Insert a Vocabulary Item at a terminal node. Tries all rules in
-    specificity order (highest first); returns the exponent of the
-    first matching rule. Returns `none` if no rule matches.
-
-    This implements the **Subset Principle** / **Elsewhere Condition**
-    ([halle-marantz-1993]): among all matching rules, the most
-    specific one wins. -/
+/-- Insert a Vocabulary Item at a terminal node: the exponent of the
+highest-`specificity` matching rule (the shared engine's `realize`; ties go
+to the earlier rule), `none` if no rule matches — the **Elsewhere
+Condition** of [halle-marantz-1993]. -/
 def vocabularyInsert {Ctx Root : Type*}
     (rules : List (VocabItem Ctx Root))
     (ctx : Ctx) (root : Root) : Option String :=
-  let sorted := rules.mergeSort (λ a b => a.specificity ≥ b.specificity)
-  sorted.findSome? λ vi =>
-    if vi.matches ctx root then some vi.exponent else none
+  Morphology.Exponence.realize VocabItem.specificity rules (ctx, root)
 
 /-- Simplified insertion when rules are not root-specific. -/
 def vocabularyInsertSimple {Ctx : Type*}
@@ -294,60 +289,17 @@ Prop is the obligation the stipulation incurs, and
 def SpecificityFaithful (rules : List (VocabItem Ctx Root)) : Prop :=
   ∀ a ∈ rules, ∀ b ∈ rules, a ≤ b → ¬ b ≤ a → b.specificity < a.specificity
 
-private theorem findSome?_pairwise_max {l : List (VocabItem Ctx Root)}
-    (hs : l.Pairwise (λ a b => b.specificity ≤ a.specificity))
-    {ctx : Ctx} {root : Root} {e : String}
-    (h : (l.findSome? λ vi =>
-      if vi.matches ctx root then some vi.exponent else none) = some e) :
-    ∃ vi ∈ l, vi.matches ctx root = true ∧ vi.exponent = e ∧
-      ∀ b ∈ l, b.matches ctx root = true → b.specificity ≤ vi.specificity := by
-  induction l with
-  | nil => simp at h
-  | cons x l ih =>
-    rw [List.findSome?_cons] at h
-    obtain ⟨hx, hl⟩ := List.pairwise_cons.mp hs
-    by_cases hm : x.matches ctx root
-    · rw [if_pos hm] at h
-      refine ⟨x, List.mem_cons_self .., hm, Option.some.inj h, ?_⟩
-      intro b hb
-      rcases List.mem_cons.mp hb with rfl | hb'
-      · exact λ _ => Nat.le_refl _
-      · exact λ _ => hx b hb'
-    · rw [if_neg hm] at h
-      obtain ⟨vi, hvi, hvm, hve, hmax⟩ := ih hl h
-      refine ⟨vi, List.mem_cons_of_mem _ hvi, hvm, hve, ?_⟩
-      intro b hb
-      rcases List.mem_cons.mp hb with rfl | hb'
-      · exact λ hbm => absurd hbm (by simpa using hm)
-      · exact hmax b hb'
-
 /-- Under a faithful specificity stipulation, the engine's selection is
 an Elsewhere winner of the shared core. -/
 theorem vocabularyInsert_isElsewhereWinner {rules : List (VocabItem Ctx Root)}
     {ctx : Ctx} {root : Root} {e : String}
     (h : vocabularyInsert rules ctx root = some e)
     (hf : SpecificityFaithful rules) :
-    ∃ vi ∈ rules, vi.exponent = e ∧
-      IsElsewhereWinner rules (ctx, root) vi := by
-  unfold vocabularyInsert at h
-  have hsort : (rules.mergeSort (λ a b => a.specificity ≥ b.specificity)).Pairwise
-      (λ a b => b.specificity ≤ a.specificity) := by
-    have := List.pairwise_mergeSort
-      (le := λ a b : VocabItem Ctx Root => decide (a.specificity ≥ b.specificity))
-      (λ a b c hab hbc => by
-        simp only [decide_eq_true_eq] at *; omega)
-      (λ a b => by simp only [Bool.or_eq_true, decide_eq_true_eq]; omega)
-      rules
-    exact this.imp (λ hab => by simpa using hab)
-  obtain ⟨vi, hvi, hvm, hve, hmax⟩ := findSome?_pairwise_max hsort h
-  rw [List.mem_mergeSort] at hvi
-  refine ⟨vi, hvi, hve, ⟨hvi, hvm⟩, ?_⟩
-  rintro s ⟨hs, happ⟩ hspec
-  by_contra hns
-  have hlt : vi.specificity < s.specificity := hf s hs vi hvi hspec hns
-  have hble : s.specificity ≤ vi.specificity :=
-    hmax s (List.mem_mergeSort.mpr hs) happ
-  omega
+    ∃ vi ∈ rules, vi.exponent = e ∧ IsElsewhereWinner rules (ctx, root) vi := by
+  obtain ⟨vi, hvi, hve⟩ := Option.map_eq_some_iff.mp h
+  exact ⟨vi, selectBy_mem hvi, hve, selectBy_isElsewhereWinner
+    (λ a ha b hb hab => hf a (mem_applicable.mp ha).1 b (mem_applicable.mp hb).1
+      (lt_iff_le_not_ge.mp hab).1 (lt_iff_le_not_ge.mp hab).2) hvi⟩
 
 end ExponenceCore
 

@@ -95,33 +95,33 @@ def englishTnsVI : List (FeatureVI EngInflFeature String) :=
     [halle-marantz-1993]. -/
 theorem past_participle_gets_n :
     subsetPrinciple englishTnsVI [.past, .participle] = some "-n" := by
-  native_decide
+  decide
 
 /-- Past finite: [+past] → `-d`.
     `-n` does not match because [+participle] ⊄ {past}.
     [halle-marantz-1993]. -/
 theorem past_finite_gets_d :
     subsetPrinciple englishTnsVI [.past] = some "-d" := by
-  native_decide
+  decide
 
 /-- Non-finite participle: [+participle] → `-ing`.
     [halle-marantz-1993]. -/
 theorem nonpast_participle_gets_ing :
     subsetPrinciple englishTnsVI [.participle] = some "-ing" := by
-  native_decide
+  decide
 
 /-- Third singular present: [3sg] → `-z`.
     [halle-marantz-1993]. -/
 theorem sg3_present_gets_z :
     subsetPrinciple englishTnsVI [.sg3] = some "-z" := by
-  native_decide
+  decide
 
 /-- Elsewhere (bare stem): [] → `∅`.
     When no features are present, the elsewhere entry wins.
     [halle-marantz-1993]. -/
 theorem elsewhere_gets_null :
     subsetPrinciple englishTnsVI [] = some "∅" := by
-  native_decide
+  decide
 
 /-- The Subset Principle resolves `-n` vs `-d` competition: for a
     [+past, +participle] target, `-n` (2 features) beats `-d`
@@ -129,7 +129,7 @@ theorem elsewhere_gets_null :
 theorem n_beats_d_for_past_participle :
     subsetPrinciple englishTnsVI [.past, .participle] ≠
     subsetPrinciple englishTnsVI [.past] := by
-  native_decide
+  decide
 
 /-- The paradigm is total: every possible feature combination
     receives an exponent (thanks to the elsewhere entry). -/
@@ -198,41 +198,41 @@ def conditionedPastVI : List (VocabItem Bool SampleVerb) :=
 /-- Regular verbs get `-d`: no root-specific entry matches. -/
 theorem walk_gets_d :
     vocabularyInsert conditionedPastVI true .walk = some "-d" := by
-  native_decide
+  decide
 
 theorem play_gets_d :
     vocabularyInsert conditionedPastVI true .play = some "-d" := by
-  native_decide
+  decide
 
 /-- Verbs in the `-t` class: root restriction overrides default. -/
 theorem dwell_gets_t :
     vocabularyInsert conditionedPastVI true .dwell = some "-t" := by
-  native_decide
+  decide
 
 theorem buy_gets_t :
     vocabularyInsert conditionedPastVI true .buy = some "-t" := by
-  native_decide
+  decide
 
 /-- Verbs in the `∅` class: no overt past tense marking. -/
 theorem put_gets_null :
     vocabularyInsert conditionedPastVI true .put = some "∅" := by
-  native_decide
+  decide
 
 theorem beat_gets_null :
     vocabularyInsert conditionedPastVI true .beat = some "∅" := by
-  native_decide
+  decide
 
 /-- The Paninian principle: root-restricted entries override the
     default for matching roots. -/
 theorem root_restriction_overrides_default :
     vocabularyInsert conditionedPastVI true .dwell ≠
     vocabularyInsert conditionedPastVI true .walk := by
-  native_decide
+  decide
 
 /-- Non-past context: no entry matches (all require [+past]). -/
 theorem nonpast_no_match :
     vocabularyInsert conditionedPastVI false .walk = none := by
-  native_decide
+  decide
 
 end ConditionedAllomorphy
 
@@ -297,35 +297,35 @@ def fusedFeatures (tPast tPart : Bool) (aSg3 : Bool) : List EngInflFeature :=
     One exponent realizes both heads. -/
 theorem fusion_3sg_present :
     subsetPrinciple englishTnsVI (fusedFeatures false false true) = some "-z" := by
-  native_decide
+  decide
 
 /-- Past finite: Tns[+past] fused with Agr[−3sg] → [past] → `-d`. -/
 theorem fusion_past :
     subsetPrinciple englishTnsVI (fusedFeatures true false false) = some "-d" := by
-  native_decide
+  decide
 
 /-- Past participle: Tns[+past,+part] fused with Agr[−3sg]
     → [past, participle] → `-n`. -/
 theorem fusion_past_participle :
     subsetPrinciple englishTnsVI (fusedFeatures true true false) = some "-n" := by
-  native_decide
+  decide
 
 /-- Present participle: Tns[−past,+part] fused with Agr[−3sg]
     → [participle] → `-ing`. -/
 theorem fusion_present_participle :
     subsetPrinciple englishTnsVI (fusedFeatures false true false) = some "-ing" := by
-  native_decide
+  decide
 
 /-- Elsewhere: Tns[−past,−part] fused with Agr[−3sg] → [] → `∅`. -/
 theorem fusion_elsewhere :
     subsetPrinciple englishTnsVI (fusedFeatures false false false) = some "∅" := by
-  native_decide
+  decide
 
 /-- Every Tns+Agr fusion produces a feature bundle that the VI
     paradigm can spell out — the paradigm is complete. -/
 theorem fusion_always_spellable (tPast tPart aSg3 : Bool) :
     (subsetPrinciple englishTnsVI (fusedFeatures tPast tPart aSg3)).isSome = true := by
-  cases tPast <;> cases tPart <;> cases aSg3 <;> native_decide
+  cases tPast <;> cases tPart <;> cases aSg3 <;> decide
 
 /-- The Tns+Agr pipeline over a spell-out domain: the fusion module,
     then pointwise insertion by the Subset Principle. -/
@@ -339,7 +339,7 @@ def tnsAgrSpellout :
 theorem walks_pf :
     tnsAgrSpellout.pf
         [(InflHead.tns false false).features, (InflHead.agr true).features]
-      = [some "-z"] := by native_decide
+      = [some "-z"] := by decide
 
 /-- Two syntactic terminals enter, one exponent slot leaves — the
     terminal/exponent misalignment is carried entirely by the fusion
@@ -406,20 +406,20 @@ theorem impoverish_produces_syncretism :
     subsetPrinciple englishTnsVI
       (deleteFeature [.past, .participle] .participle) =
     subsetPrinciple englishTnsVI [.past] := by
-  native_decide
+  decide
 
 /-- Without impoverishment, [+past, +participle] gets `-n`
     (*taken*, *eaten*). -/
 theorem without_impoverishment_gets_n :
     subsetPrinciple englishTnsVI [.past, .participle] = some "-n" := by
-  native_decide
+  decide
 
 /-- With impoverishment of [+participle], the same context gets `-d`
     (*walked* as both simple past and past participle). -/
 theorem with_impoverishment_gets_d :
     subsetPrinciple englishTnsVI
       (deleteFeature [.past, .participle] .participle) = some "-d" := by
-  native_decide
+  decide
 
 /-- Full DM pipeline: Fusion → Impoverishment → VI.
 
@@ -434,7 +434,7 @@ theorem with_impoverishment_gets_d :
 theorem pipeline_fusion_impoverishment_vi :
     subsetPrinciple englishTnsVI
       (deleteFeature (fusedFeatures true true false) .participle) = some "-d" := by
-  native_decide
+  decide
 
 end ImpoverishmentSyncretism
 

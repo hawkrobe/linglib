@@ -88,7 +88,7 @@ def statusToBundle (s : GenderStatus) : AnnotatedFeatures SemanticCore :=
 theorem interpretable_self_nonempty (c : SemanticCore) :
     resolve (statusToBundle (.interpretable c)) (statusToBundle (.interpretable c))
     = some [c] := by
-  cases c <;> native_decide
+  cases c <;> decide
 
 /-- Uninterpretable genders yield empty intersection with themselves. -/
 theorem uninterpretable_self_empty :
@@ -116,7 +116,7 @@ theorem mismatched_cores_empty (c1 c2 : SemanticCore) (h : c1 ≠ c2) :
 theorem bantu_matching_iff_interpretable (s : GenderStatus) :
     (resolve (statusToBundle s) (statusToBundle s)).isSome = s.isInterpretable := by
   cases s with
-  | interpretable c => cases c <;> native_decide
+  | interpretable c => cases c <;> decide
   | uninterpretable => rfl
 
 -- ============================================================================
@@ -130,14 +130,14 @@ theorem bantu_matching_iff_interpretable (s : GenderStatus) :
 theorem xhosa_1and1_matching :
     resolve (statusToBundle (Xhosa.Gender.genderA).status)
            (statusToBundle (Xhosa.Gender.genderA).status)
-    = some [.human] := by native_decide
+    = some [.human] := by decide
 
 /-- [7&7] inanimate conjuncts: intersection = [inanimate] → matching cl 8.
     [carstens-2026] Table 13: 100% zi- for non-human [7&7]. -/
 theorem xhosa_7and7_matching :
     resolve (statusToBundle (Xhosa.Gender.genderD).status)
            (statusToBundle (Xhosa.Gender.genderD).status)
-    = some [.inanimate] := by native_decide
+    = some [.inanimate] := by decide
 
 /-- [9&9] animal conjuncts: intersection = [animal] → matching cl 10.
     [carstens-2026] Table 13: 50% zi- matching + 40% ba- default
@@ -145,7 +145,7 @@ theorem xhosa_7and7_matching :
 theorem xhosa_9and9_matching :
     resolve (statusToBundle (Xhosa.Gender.genderE).status)
            (statusToBundle (Xhosa.Gender.genderE).status)
-    = some [.animal] := by native_decide
+    = some [.animal] := by decide
 
 /-! ### Matching agreement unavailable (uninterpretable genders) -/
 
@@ -171,7 +171,7 @@ theorem xhosa_5and5_no_matching :
 theorem xhosa_matching_iff_interpretable (g : Xhosa.Gender) :
     (resolve (statusToBundle g.status) (statusToBundle g.status)).isSome
     = g.status.isInterpretable := by
-  cases g <;> native_decide
+  cases g <;> decide
 
 -- ============================================================================
 -- § 3: Xhosa Predictions — Mismatched Conjoined Singulars
@@ -183,7 +183,7 @@ theorem xhosa_matching_iff_interpretable (g : Xhosa.Gender) :
 theorem xhosa_mismatched_human :
     resolve (statusToBundle (.interpretable .human))
            (statusToBundle (.interpretable .human))
-    = some [.human] := by native_decide
+    = some [.human] := by decide
 
 /-- Mismatched [inanimate] conjuncts (e.g. [3&5] carrot + egg):
     both have [inanimate] core from stacking → intersection = [inanimate].
@@ -191,7 +191,7 @@ theorem xhosa_mismatched_human :
 theorem xhosa_mismatched_inanimate :
     resolve (statusToBundle (.interpretable .inanimate))
            (statusToBundle (.interpretable .inanimate))
-    = some [.inanimate] := by native_decide
+    = some [.inanimate] := by decide
 
 /-- Human + inanimate (e.g. [9&1a] girl + train):
     [human] ∩ [inanimate] = ∅ → ineffable.
@@ -200,7 +200,7 @@ theorem xhosa_mismatched_inanimate :
 theorem xhosa_human_inanimate_ineffable :
     resolve (statusToBundle (.interpretable .human))
            (statusToBundle (.interpretable .inanimate))
-    = none := by native_decide
+    = none := by decide
 
 -- ============================================================================
 -- § 4: Default Agreement Classes
@@ -228,14 +228,14 @@ theorem default_animal_is_class8 :
 theorem shona_1and1_matching :
     resolve (statusToBundle (Shona.Gender.genderA).status)
            (statusToBundle (Shona.Gender.genderA).status)
-    = some [.human] := by native_decide
+    = some [.human] := by decide
 
 /-- Shona [7&7]: class 8 zvi- (non-human matching/default).
     [carstens-2026] (62): zvi- for non-human [7&7] (consistent across speakers). -/
 theorem shona_7and7_matching :
     resolve (statusToBundle (Shona.Gender.genderD).status)
            (statusToBundle (Shona.Gender.genderD).status)
-    = some [.nonhuman] := by native_decide
+    = some [.nonhuman] := by decide
 
 /-- Shona [3&3]: no matching → default only.
     [carstens-2026] (59): zvi- (class 8 default) for non-human. -/
@@ -284,7 +284,7 @@ theorem shona_12and12_no_matching :
 theorem shona_matching_iff_interpretable (g : Shona.Gender) :
     (resolve (statusToBundle g.status) (statusToBundle g.status)).isSome
     = g.status.isInterpretable := by
-  cases g <;> native_decide
+  cases g <;> decide
 
 -- ============================================================================
 -- § 6: Cross-linguistic Comparison
@@ -308,7 +308,7 @@ theorem shona_matching_is_minority :
     ([Shona.Gender.genderA, .genderB, .genderC, .genderD,
      .genderE, .genderF, .genderG, .genderH].filter
       (λ g => !(resolve (statusToBundle g.status) (statusToBundle g.status)).isSome)).length = 6 := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 7: nP Stacking Verification
@@ -424,7 +424,7 @@ theorem mismatched_3and5_human :
     resolveStacks
       ⟨3, 1, .interpretable .human⟩
       ⟨5, 1, .interpretable .human⟩
-    = some [.human] := by native_decide
+    = some [.human] := by decide
 
 /-- Carrot (cl3) + egg (cl5): both [inanimate] core → class 8 zi-.
     [carstens-2026] (85)b, (86)b. -/
@@ -432,7 +432,7 @@ theorem mismatched_3and5_inanimate :
     resolveStacks
       ⟨3, 7, .interpretable .inanimate⟩
       ⟨5, 7, .interpretable .inanimate⟩
-    = some [.inanimate] := by native_decide
+    = some [.inanimate] := by decide
 
 /-- Medium (cl7, human) + girl (cl9, human): both have [human] core
     from nP stacking → [human] ∩ [human] = {[human]} → class 2 ba-.
@@ -442,7 +442,7 @@ theorem mismatched_7and9_both_human :
     resolveStacks
       ⟨7, 1, .interpretable .human⟩
       ⟨9, 1, .interpretable .human⟩
-    = some [.human] := by native_decide
+    = some [.human] := by decide
 
 /-- Backpack (cl1a, inanimate) + book (cl9, inanimate): both have
     [inanimate] core → [inanimate] ∩ [inanimate] = {[inanimate]} → class 8 zi-.
@@ -451,7 +451,7 @@ theorem mismatched_1aand9_both_inanimate :
     resolveStacks
       ⟨1, 7, .interpretable .inanimate⟩
       ⟨9, 7, .interpretable .inanimate⟩
-    = some [.inanimate] := by native_decide
+    = some [.inanimate] := by decide
 
 -- ============================================================================
 -- § 11: Swahili General Animate Concords Connection
@@ -530,7 +530,7 @@ def elephantBundle := nP .animal
     Chain: canonical class 1 → i[human] percolates → {human} ∩ {human}
     = {human} → matching → class 2 ba-. -/
 theorem derivation_1and1_human :
-    resolve citizenBundle citizenBundle = some [.human] := by native_decide
+    resolve citizenBundle citizenBundle = some [.human] := by decide
 
 /-- End-to-end derivation: gangster.3 & policeman.5 → matching [human].
     [carstens-2026] (86)a: class 2 ba- agreement.
@@ -539,7 +539,7 @@ theorem derivation_1and1_human :
     u excluded, {human} percolates from each →
     {human} ∩ {human} = {human} → matching → class 2 ba-. -/
 theorem derivation_3and5_human :
-    resolve gangsterBundle policemanBundle = some [.human] := by native_decide
+    resolve gangsterBundle policemanBundle = some [.human] := by decide
 
 /-- End-to-end derivation: carrot.3 & egg.5 → matching [inanimate].
     [carstens-2026] (86)b: class 8 zi- agreement.
@@ -547,7 +547,7 @@ theorem derivation_3and5_human :
     Chain: u-outer + i[inanimate]-inner →
     {inanimate} ∩ {inanimate} = {inanimate} → matching → class 8 zi-. -/
 theorem derivation_3and5_inanimate :
-    resolve carrotBundle eggBundle = some [.inanimate] := by native_decide
+    resolve carrotBundle eggBundle = some [.inanimate] := by decide
 
 /-- End-to-end derivation: hat.3 & gun.3 → default.
     [carstens-2026] (77)a, (38)a: class 8 zi- (default for non-human).
@@ -563,7 +563,7 @@ theorem derivation_3and3_default :
     Chain: canonical class 9 → i[animal] percolates →
     {animal} ∩ {animal} = {animal} → matching → class 10 zi-. -/
 theorem derivation_9and9_animal :
-    resolve elephantBundle elephantBundle = some [.animal] := by native_decide
+    resolve elephantBundle elephantBundle = some [.animal] := by decide
 
 /-- End-to-end derivation: human + inanimate → default (generally ineffable).
     [carstens-2026] (91)–(92): *girl.9 & train.1a → no agreement.
@@ -573,7 +573,7 @@ theorem derivation_9and9_animal :
     But no default class satisfies both cores → ineffable. -/
 theorem derivation_human_inanimate_default :
     resolve citizenBundle (nP .inanimate)
-    = none := by native_decide
+    = none := by decide
 
 -- ============================================================================
 -- § 13: Two Grammars — Highest Wins vs Best Semantic Match
@@ -619,13 +619,13 @@ def divinerFeatures : AnnotatedFeatures TwoGrammarFeature :=
     [carstens-2026] (79)a: &P {1, {7}} ∩ {1, {7}} = {1, {7}}. -/
 theorem train_intersection :
     resolve trainFeatures trainFeatures
-    = some [⟨1, false⟩, ⟨7, true⟩] := by native_decide
+    = some [⟨1, false⟩, ⟨7, true⟩] := by decide
 
 /-- Intersection for diviner.7 & scholar.7: both layers survive.
     [carstens-2026] (79)b: &P {7, {1}} ∩ {7, {1}} = {7, {1}}. -/
 theorem diviner_intersection :
     resolve divinerFeatures divinerFeatures
-    = some [⟨7, false⟩, ⟨1, true⟩] := by native_decide
+    = some [⟨7, false⟩, ⟨1, true⟩] := by decide
 
 /-- Highest Wins for train.1a & machine.1a: outermost = class 1 → cl 2 ba-.
     [carstens-2026] (79)a. -/
@@ -817,8 +817,8 @@ theorem bantu_aa_self_matching_consistent :
     (∀ f : GenderNode,
       (resolve [⟨f, .interpretable⟩] [⟨f, .interpretable⟩]).isSome = true) := by
   constructor
-  · intro c; cases c <;> native_decide
-  · intro f; cases f <;> native_decide
+  · intro c; cases c <;> decide
+  · intro f; cases f <;> decide
 
 -- ============================================================================
 -- § 16: Mismatch Resolution Hypothesis — Bantu
@@ -838,7 +838,7 @@ theorem bantu_fails_mrh :
                   statusToBundle (.interpretable .inanimate),
                   statusToBundle (.interpretable .animal),
                   statusToBundle .uninterpretable]
-    = false := by native_decide
+    = false := by decide
 
 /-- Restricted to interpretable-only, MRH still fails:
     mismatched cores (human ≠ inanimate) yield empty intersection. -/
@@ -846,14 +846,14 @@ theorem bantu_interpretable_fails_mrh :
     satisfiesMRH [statusToBundle (.interpretable .human),
                   statusToBundle (.interpretable .inanimate),
                   statusToBundle (.interpretable .animal)]
-    = false := by native_decide
+    = false := by decide
 
 /-- But uniform cores satisfy MRH trivially (self-matching). -/
 theorem bantu_uniform_satisfies_mrh (c : SemanticCore) :
     satisfiesMRH [statusToBundle (.interpretable c),
                   statusToBundle (.interpretable c)]
     = true := by
-  cases c <;> native_decide
+  cases c <;> decide
 
 -- ============================================================================
 -- § 17: N-ary Bantu Resolution
@@ -870,14 +870,14 @@ theorem nary_three_humans :
     resolveN [statusToBundle (.interpretable .human),
               statusToBundle (.interpretable .human),
               statusToBundle (.interpretable .human)]
-    = some [.human] := by native_decide
+    = some [.human] := by decide
 
 /-- Three [inanimate] conjuncts → matching [inanimate]. -/
 theorem nary_three_inanimates :
     resolveN [statusToBundle (.interpretable .inanimate),
               statusToBundle (.interpretable .inanimate),
               statusToBundle (.interpretable .inanimate)]
-    = some [.inanimate] := by native_decide
+    = some [.inanimate] := by decide
 
 /-- Three uninterpretable conjuncts → default (none). -/
 theorem nary_three_uninterpretable :
@@ -892,7 +892,7 @@ theorem nary_mixed_fails :
     resolveN [statusToBundle (.interpretable .human),
               statusToBundle (.interpretable .human),
               statusToBundle (.interpretable .inanimate)]
-    = none := by native_decide
+    = none := by decide
 
 /-- Mixed: two [human] + one uninterpretable → default (none).
     Uninterpretable conjuncts block matching even with uniform cores. -/

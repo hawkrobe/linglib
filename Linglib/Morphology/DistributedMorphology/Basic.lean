@@ -122,6 +122,9 @@ pairs, applicability is `matches`. -/
 instance : Morphology.Exponence.Rule (VocabItem Ctx Root) (Ctx × Root) String :=
   ⟨VocabItem.exponent, fun vi cr => vi.matches cr.1 cr.2 = true⟩
 
+instance : DecidableRel (Applies : VocabItem Ctx Root → Ctx × Root → Prop) :=
+  fun vi cr => inferInstanceAs (Decidable (vi.matches cr.1 cr.2 = true))
+
 instance : Preorder (VocabItem Ctx Root) := Morphology.Exponence.toPreorder
 
 end VI

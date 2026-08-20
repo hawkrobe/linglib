@@ -1219,41 +1219,41 @@ def viThreeGender (ch : Categorizer.Head) : Nat :=
 
 -- Set 1 verification
 theorem spanish_vi_derived :
-    spanishNs.computeGenders viSet1 = spanishNs.surfaceGenders := by native_decide
+    spanishNs.computeGenders viSet1 = spanishNs.surfaceGenders := by decide
 
 theorem amharic_vi_derived :
-    amharicNs.computeGenders viSet1 = amharicNs.surfaceGenders := by native_decide
+    amharicNs.computeGenders viSet1 = amharicNs.surfaceGenders := by decide
 
 theorem hausa_vi_derived :
-    hausaNs.computeGenders viSet1 = hausaNs.surfaceGenders := by native_decide
+    hausaNs.computeGenders viSet1 = hausaNs.surfaceGenders := by decide
 
 -- Set 2 verification
 theorem maa_vi_derived :
-    maaNs.computeGenders viSet2 = maaNs.surfaceGenders := by native_decide
+    maaNs.computeGenders viSet2 = maaNs.surfaceGenders := by decide
 
 -- 3-gender verification
 theorem russian_vi_derived :
-    russianNs.computeGenders viThreeGender = russianNs.surfaceGenders := by native_decide
+    russianNs.computeGenders viThreeGender = russianNs.surfaceGenders := by decide
 
 theorem mangarayi_vi_derived :
     mangarayiNs.computeGenders viThreeGender =
-      mangarayiNs.surfaceGenders := by native_decide
+      mangarayiNs.surfaceGenders := by decide
 
 theorem lavukaleve_vi_derived :
     lavukaleveNs.computeGenders viThreeGender =
-      lavukaleveNs.surfaceGenders := by native_decide
+      lavukaleveNs.surfaceGenders := by decide
 
 /-- Dieri: same 3-n inventory as Mangarayi but 2 surface genders under
     Set 1 VI (where plain n → masculine, not neuter). -/
 theorem dieri_vi_derived :
-    dieriNs.computeGenders viSet1 = dieriNs.surfaceGenders := by native_decide
+    dieriNs.computeGenders viSet1 = dieriNs.surfaceGenders := by decide
 
 /-- The Dieri vs Mangarayi contrast: same n-heads, different VI → different
     surface gender counts. This is now DERIVED, not stipulated. -/
 theorem dieri_mangarayi_vi_contrast :
     dieriNs.nHeads = mangarayiNs.nHeads ∧
     dieriNs.computeGenders viSet1 ≠
-      mangarayiNs.computeGenders viThreeGender := ⟨rfl, by native_decide⟩
+      mangarayiNs.computeGenders viThreeGender := ⟨rfl, by decide⟩
 
 -- ============================================================================
 -- § 15: Hausa Phonological-Assignment Refutation ([kramer-2020] §3.3.1)

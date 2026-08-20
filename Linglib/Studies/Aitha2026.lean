@@ -201,39 +201,39 @@ def mkNContext (rc : StrongClass) (c : TeluguCase) : NContext :=
 
 theorem vi_luTi_nom :
     vocabularyInsertSimple strongVIRules (mkNContext .luTi .nom)
-      = some "lu" := by native_decide
+      = some "lu" := by decide
 
 theorem vi_luTi_acc :
     vocabularyInsertSimple strongVIRules (mkNContext .luTi .acc)
-      = some "ṭi" := by native_decide
+      = some "ṭi" := by decide
 
 theorem vi_luTi_gen :
     vocabularyInsertSimple strongVIRules (mkNContext .luTi .gen)
-      = some "ṭi" := by native_decide
+      = some "ṭi" := by decide
 
 theorem vi_luTi_dat :
     vocabularyInsertSimple strongVIRules (mkNContext .luTi .dat)
-      = some "ṭi" := by native_decide
+      = some "ṭi" := by decide
 
 theorem vi_uI_nom :
     vocabularyInsertSimple strongVIRules (mkNContext .uI .nom)
-      = some "u" := by native_decide
+      = some "u" := by decide
 
 theorem vi_uI_acc :
     vocabularyInsertSimple strongVIRules (mkNContext .uI .acc)
-      = some "i" := by native_decide
+      = some "i" := by decide
 
 /-- VI produces the correct strong paradigm for -lu∼-ṭi nouns. -/
 theorem vi_matches_strong_luTi (c : TeluguCase) :
     vocabularyInsertSimple strongVIRules (mkNContext .luTi c)
       = some (strongSurface luTiParadigm c) := by
-  cases c <;> native_decide
+  cases c <;> decide
 
 /-- VI produces the correct strong paradigm for -u∼-i nouns. -/
 theorem vi_matches_strong_uI (c : TeluguCase) :
     vocabularyInsertSimple strongVIRules (mkNContext .uI c)
       = some (strongSurface uIParadigm c) := by
-  cases c <;> native_decide
+  cases c <;> decide
 
 -- ============================================================================
 -- § 3: Weak Alternation — *ABA Violation
@@ -285,7 +285,7 @@ theorem weak_pattern_from_paradigm :
       { nom := (weakParadigm .nom).toNat
       , acc := (weakParadigm .acc).toNat
       , gen := (weakParadigm .gen).toNat
-      , dat := (weakParadigm .dat).toNat } := by native_decide
+      , dat := (weakParadigm .dat).toNat } := by decide
 
 -- ────────────────────────────────────────────────────────────────────
 -- Agreement suffixes trigger the weak alternation
@@ -589,7 +589,7 @@ theorem wordNomCands_ne : wordNomCands ≠ [] := by decide
     Surface: *samudr-am* (short form). -/
 theorem wordNom_optimal :
     (Tableau.ofRanking wordNomCands wordNomRanking wordNomCands_ne).optimal
-      = {.deleteNi} := by native_decide
+      = {.deleteNi} := by decide
 
 -- ────────────────────────────────────────────────────────────────────
 -- § 5.2: DAT — light -ki follows within Word
@@ -643,7 +643,7 @@ theorem wordDatCands_ne : wordDatCands ≠ [] := by decide
     Surface: *samudr-āni-ki* (long form). -/
 theorem wordDat_optimal :
     (Tableau.ofRanking wordDatCands (wordDatRanking.map (·.2)) wordDatCands_ne).optimal
-      = {.compLengthen} := by native_decide
+      = {.compLengthen} := by decide
 
 -- ────────────────────────────────────────────────────────────────────
 -- § 5.3: Core result — same constraints, different outputs
@@ -748,7 +748,7 @@ theorem phrasePostpCands_ne : phrasePostpCands ≠ [] := by decide
     is tolerated rather than repaired. Surface: *samudram nunci*. -/
 theorem phrasePostp_optimal :
     (Tableau.ofRanking phrasePostpCands (phrasePostpRanking.map (·.2)) phrasePostpCands_ne).optimal
-      = {.faithful} := by native_decide
+      = {.faithful} := by decide
 
 end PhraseLevel
 
@@ -987,7 +987,7 @@ theorem vi_derives_strong_pattern :
      if strongSurface luTiParadigm .acc == strongSurface luTiParadigm .nom then 0 else 1,
      if strongSurface luTiParadigm .gen == strongSurface luTiParadigm .nom then 0 else 1,
      if strongSurface luTiParadigm .dat == strongSurface luTiParadigm .nom then 0 else 1)
-    = (0, 1, 1, 1) := by native_decide
+    = (0, 1, 1, 1) := by decide
 
 /-- End-to-end argumentation chain:
     1. Strong alternation: VI derives ABB → contiguous → valid case allomorphy
