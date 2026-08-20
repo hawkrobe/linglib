@@ -268,7 +268,8 @@ theorem Hkm_not_templateInvariant : ¬ templateInvariant .Hkm :=
 theorem cSelection_vs_lSelection :
     (∀ (i : DistributedMorphology.Root) (r : Verb.Root.Classification)
         (c1 c2 : Categorizer),
-      (CategorizedRoot.mk i r c1).root.valency = (CategorizedRoot.mk i r c2).root.valency) ∧
+      (CategorizedRoot.mk i r c1).classification.valency
+        = (CategorizedRoot.mk i r c2).classification.valency) ∧
     (∃ r : RootLabel, ¬ templateInvariant r) :=
   ⟨fun _ _ _ _ => rfl, ⟨.krh, krh_not_templateInvariant⟩⟩
 
@@ -298,8 +299,8 @@ def VerbalizedRoot.voiceFlavor (vr : VerbalizedRoot) : Flavor :=
     and l-selection factor differently in the grammar. -/
 theorem valency_template_invariant (cr : CategorizedRoot) (rl : RootLabel)
     (t1 t2 : SemiticTemplate) :
-    (VerbalizedRoot.mk cr t1 rl).categorized.root.valency =
-      (VerbalizedRoot.mk cr t2 rl).categorized.root.valency := rfl
+    (VerbalizedRoot.mk cr t1 rl).categorized.classification.valency =
+      (VerbalizedRoot.mk cr t2 rl).categorized.classification.valency := rfl
 
 /-! ### Template-to-Voice correspondence
 
@@ -331,8 +332,8 @@ theorem voice_distinguishes_templates :
 /-- [kratzer-1996]'s severing instantiated for Semitic: root-level valency is
     template-invariant while the Voice contribution varies by template. -/
 theorem severing_instantiated (cr : CategorizedRoot) (rl : RootLabel) :
-    (VerbalizedRoot.mk cr .XaYaZ rl).categorized.root.valency =
-      (VerbalizedRoot.mk cr .XaYYaZ rl).categorized.root.valency ∧
+    (VerbalizedRoot.mk cr .XaYaZ rl).categorized.classification.valency =
+      (VerbalizedRoot.mk cr .XaYYaZ rl).categorized.classification.valency ∧
     SemiticTemplate.toVoiceFlavor .XaYaZ ≠ SemiticTemplate.toVoiceFlavor .XaYYaZ :=
   ⟨valency_template_invariant cr rl .XaYaZ .XaYYaZ, voice_distinguishes_templates⟩
 
