@@ -736,7 +736,9 @@ theorem searchOutcome_valued_but_unvalued (rest : List Encounter) :
     Built via the `paradigmatic` smart constructor — the F-diacritic
     condition only inspects the focus bundle (the agreed-with pronoun's
     own features), so the rule is paradigmatic by construction. -/
-def mamImpoverishmentRule : DistributedMorphology.Impoverishment.ImpoverishmentRule :=
+def mamImpoverishmentRule :
+    DistributedMorphology.Impoverishment.ImpoverishmentRule
+      Minimalist.FeatureBundle Minimalist.FeatureVal :=
   DistributedMorphology.Impoverishment.paradigmatic
     -- Check for [+author] (= valued first person): the F diacritic
     -- condition is modeled by this rule only being applied in
