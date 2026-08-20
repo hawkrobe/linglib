@@ -15,20 +15,20 @@ several allosemes, selected by the syntactic context rather than tracked
 by morphosyntactic features, and the ambiguity of deverbal
 nominalizations between event, result, state, entity, and content
 readings is the visible trace of that selection. The alloseme
-inventories here compose: the typed denotations of `VerbalizerAlloseme.denote`
-and `NominalizerAlloseme.denote` derive the reading typology, and the analytical
+inventories here compose: the typed denotations of `Verbalizer.Alloseme.denote`
+and `Nominalizer.Alloseme.denote` derive the reading typology, and the analytical
 choice of where the eventive component lives — v or n — is provably
 immaterial for the result and content readings.
 
 ## Main definitions
 
-* `VerbalizerAlloseme`, `NominalizerAlloseme`, `VoiceAlloseme` — the alloseme inventories
-  of v, n, and Voice
-* `verbalizer`, `nominalizer` — v and n as `AllosemicHead`s over the
-  shared selection engine
+* `Verbalizer.Alloseme`, `Nominalizer.Alloseme`, `Voice.Alloseme` —
+  each head's alloseme inventory under its own API
+* `Verbalizer.head`, `Nominalizer.head` — v and n as `AllosemicHead`s
+  over the shared selection engine
 * `NominalizationReading`, `readingFromAllosemes` — the reading typology
   of deverbal nominalizations and its alloseme table
-* `NominalizationModel`, `VerbalizerAlloseme.denote`, `NominalizerAlloseme.denote` — typed
+* `NominalizationModel`, `Verbalizer.Alloseme.denote`, `Nominalizer.Alloseme.denote` — typed
   alloseme denotations and their composition
 
 ## Main statements
@@ -38,10 +38,10 @@ immaterial for the result and content readings.
   denotation: the event and result readings are mirror images
 * `readingFromAllosemes_isSome_iff_denote` — the reading table has a
   reading exactly where the composed denotation is defined
-* `verbalizer_ambiguity`, `cen_result_ambiguity` — one deverbal context licenses
+* `Verbalizer.ambiguity`, `Nominalizer.cen_result_ambiguity` — one deverbal context licenses
   both v allosemes and several n allosemes: nominalization ambiguity as
   non-singleton licensing
-* `verbalizer_isAllosemous` — v's contextual meaning variation on the
+* `Verbalizer.isAllosemous` — v's contextual meaning variation on the
   shared `Realization.Interpreted` carrier
 
 ## Implementation notes
@@ -49,7 +49,7 @@ immaterial for the result and content readings.
 `AllosemicEntry` is a `Morphology.Exponence.Rule` instance, just as
 `VI.VocabItem` is, so DM's List 2 (form) and List 3 (meaning) run on one
 selection engine: `Exponence.selectBy` on the non-wildcard-field score
-(`selectBy_score_isElsewhereWinner`). `VoiceAlloseme.fromComplement` is
+(`selectBy_score_isElsewhereWinner`). `Voice.Alloseme.fromComplement` is
 a worked List-3 competition on that engine; `readingFromAllosemes` is a
 different object — the composition of two already-selected allosemes.
 Existing infrastructure this module retroactively classifies as
@@ -79,13 +79,13 @@ open Minimalist.Voice (Flavor Head)
     eventive when v is interpreted and n vacuous, referential when n is
     interpreted and v vacuous: one root, one structure, the readings
     differing in which head's alloseme is contentful. -/
-inductive VerbalizerAlloseme where
+inductive Verbalizer.Alloseme where
   | eventive   -- introduces an event variable (CEN contexts)
   | zero       -- semantically Ø / identity (SEN/RN contexts)
   deriving DecidableEq, Repr
 
 /-- Does this v alloseme introduce an event variable? -/
-def VerbalizerAlloseme.introducesEvent : VerbalizerAlloseme → Bool
+def Verbalizer.Alloseme.introducesEvent : Verbalizer.Alloseme → Bool
   | .eventive => true
   | .zero     => false
 
@@ -93,8 +93,8 @@ def VerbalizerAlloseme.introducesEvent : VerbalizerAlloseme → Bool
 eventive complement, while the zero alloseme is the unconditioned
 elsewhere option, available trivially in any context ([benz-2025] §2.2).
 Engine selection picks the more specific eventive alloseme in eventive
-contexts; `licensed` keeps both (`verbalizer_ambiguity`). -/
-def verbalizer : AllosemicHead VerbalizerAlloseme where
+contexts; `licensed` keeps both (`Verbalizer.ambiguity`). -/
+def Verbalizer.head : AllosemicHead Verbalizer.Alloseme where
   morpheme := .v
   entries := [
     { label := "v_eventive"
@@ -109,23 +109,23 @@ def verbalizer : AllosemicHead VerbalizerAlloseme where
 zero alloseme is the elsewhere option — so an *observation*-type
 nominalization supports the eventive and the referential reading from
 one structure ([benz-2025] §2.2's symmetric proposal). -/
-theorem verbalizer_ambiguity :
-    VerbalizerAlloseme.eventive ∈ verbalizer.licensed { complementIsEventive := true }
-      ∧ VerbalizerAlloseme.zero ∈ verbalizer.licensed { complementIsEventive := true } := by
+theorem Verbalizer.ambiguity :
+    Verbalizer.Alloseme.eventive ∈ Verbalizer.head.licensed { complementIsEventive := true }
+      ∧ Verbalizer.Alloseme.zero ∈ Verbalizer.head.licensed { complementIsEventive := true } := by
   constructor <;> decide
 
 /-- Root change-type conditions v alloseme selection: result roots,
     which entail a prior change, demand the event variable; property
     concept roots do not ([beavers-etal-2021]'s root typology feeding v
     allosemy). -/
-def VerbalizerAlloseme.fromRootType : Verb.Root.ChangeType → VerbalizerAlloseme
+def Verbalizer.Alloseme.fromRootType : Verb.Root.ChangeType → Verbalizer.Alloseme
   | .result          => .eventive
   | .propertyConcept => .zero
 
 /-- The bridge preserves the change entailment: eventive v iff the root
 entails change. -/
-theorem fromRootType_iff_entailsChange (rt : Verb.Root.ChangeType) :
-    (VerbalizerAlloseme.fromRootType rt).introducesEvent = rt.entailsChange := by
+theorem Verbalizer.fromRootType_iff_entailsChange (rt : Verb.Root.ChangeType) :
+    (Verbalizer.Alloseme.fromRootType rt).introducesEvent = rt.entailsChange := by
   cases rt <;> rfl
 
 /-! ### n allosemy -/
@@ -133,8 +133,8 @@ theorem fromRootType_iff_entailsChange (rt : Verb.Root.ChangeType) :
 /-- Allosemes of the nominal categorizer n: the three non-deverbal types
     of `CategorizerSemantics.NSemanticType`, [benz-2025]'s content
     alloseme for content nominalizations, and [wood-2023]'s deverbal
-    inventory. The deverbal denotations live in `NominalizerAlloseme.denote`. -/
-inductive NominalizerAlloseme where
+    inventory. The deverbal denotations live in `Nominalizer.Alloseme.denote`. -/
+inductive Nominalizer.Alloseme where
   | relational    -- introduces a relation (body-part-of)
   | sortal        -- bare categorization
   | alienator     -- existentially closes a possessor
@@ -147,7 +147,7 @@ inductive NominalizerAlloseme where
   deriving DecidableEq, Repr
 
 /-- The non-deverbal allosemes are `NSemanticType` under another name. -/
-def NominalizerAlloseme.ofNSemanticType : NSemanticType → NominalizerAlloseme
+def Nominalizer.Alloseme.ofNSemanticType : NSemanticType → Nominalizer.Alloseme
   | .relational => .relational
   | .sortal     => .sortal
   | .alienator  => .alienator
@@ -156,7 +156,7 @@ def NominalizerAlloseme.ofNSemanticType : NSemanticType → NominalizerAlloseme
 unconditioned (all-wildcard contexts), the deverbal ones require a
 verbal complement, with the CEN and result allosemes further demanding
 an eventive one. -/
-def nominalizer : AllosemicHead NominalizerAlloseme where
+def Nominalizer.head : AllosemicHead Nominalizer.Alloseme where
   morpheme := .n
   entries := [
     { label := "n_relational"
@@ -192,10 +192,10 @@ def nominalizer : AllosemicHead NominalizerAlloseme where
 the CEN reading (zero n) and the result reading among them. The
 ambiguity of a nominalization is non-singleton licensing, not structural
 ambiguity ([benz-2025], [wood-2023]). -/
-theorem cen_result_ambiguity :
-    NominalizerAlloseme.zero ∈ nominalizer.licensed
+theorem Nominalizer.cen_result_ambiguity :
+    Nominalizer.Alloseme.zero ∈ Nominalizer.head.licensed
         { belowCat := some .v, complementIsEventive := true }
-      ∧ NominalizerAlloseme.result ∈ nominalizer.licensed
+      ∧ Nominalizer.Alloseme.result ∈ Nominalizer.head.licensed
         { belowCat := some .v, complementIsEventive := true } := by
   constructor <;> decide
 
@@ -209,7 +209,7 @@ theorem cen_result_ambiguity :
     by the head. [myler-2016] extends the inventory to four, adding the
     engineer role for ECM *have* and an expletive identity alloseme for
     relational and light-verb *have*, where Voice assigns no θ-role. -/
-inductive VoiceAlloseme where
+inductive Voice.Alloseme where
   | agent     -- combines with dynamic action complements
   | holder    -- combines with stative complements
   | engineer  -- ECM *have*: saturated eventive VoiceP complement
@@ -218,17 +218,17 @@ inductive VoiceAlloseme where
 
 /-- The alloseme assigns a thematic role to the external argument;
 only the expletive identity does not. -/
-def VoiceAlloseme.AssignsTheta (a : VoiceAlloseme) : Prop :=
+def Voice.Alloseme.AssignsTheta (a : Voice.Alloseme) : Prop :=
   a ≠ .expletive
 
-instance : DecidablePred VoiceAlloseme.AssignsTheta :=
+instance : DecidablePred Voice.Alloseme.AssignsTheta :=
   fun _ => inferInstanceAs (Decidable (_ ≠ _))
 
 /-- The Voice allosemes as a competing exponence vocabulary
     ([myler-2016]): engineer for a saturated eventive VoiceP complement
     (most specified), holder for a stative one, expletive elsewhere (the
     all-wildcard default). -/
-def voiceVocabulary : List (AllosemicEntry VoiceAlloseme) :=
+def Voice.vocabulary : List (AllosemicEntry Voice.Alloseme) :=
   [ { label := "Voice_engineer", denotation := .engineer
     , context := { belowCat := some .v, complementIsEventive := true } },
     { label := "Voice_holder", denotation := .holder
@@ -237,33 +237,33 @@ def voiceVocabulary : List (AllosemicEntry VoiceAlloseme) :=
     , context := {} } ]
 
 /-- Voice alloseme selection from complement properties: Elsewhere
-    competition over `voiceVocabulary`, resolved by the shared exponence
+    competition over `Voice.vocabulary`, resolved by the shared exponence
     engine ([myler-2016]'s conditioning of the alloseme on the nature of
     *have*'s complement). -/
-def VoiceAlloseme.fromComplement
+def Voice.Alloseme.fromComplement
     (complementIsEventiveVoiceP : Prop) [Decidable complementIsEventiveVoiceP]
-    (complementIsStative : Prop) [Decidable complementIsStative] : VoiceAlloseme :=
+    (complementIsStative : Prop) [Decidable complementIsStative] : Voice.Alloseme :=
   let q : SyntacticContext :=
     { belowCat := if complementIsEventiveVoiceP then some .v else none
       complementIsEventive := decide complementIsEventiveVoiceP
       complementIsStative := decide complementIsStative }
-  ((Morphology.Exponence.selectBy AllosemicEntry.score voiceVocabulary q).map
+  ((Morphology.Exponence.selectBy AllosemicEntry.score Voice.vocabulary q).map
     AllosemicEntry.denotation).getD .expletive
 
 /-- Eventive-VoiceP complement selects engineer ([myler-2016]). -/
-example : VoiceAlloseme.fromComplement True False = .engineer := by decide
+example : Voice.Alloseme.fromComplement True False = .engineer := by decide
 
 /-- Stative complement selects holder ([kratzer-1996]). -/
-example : VoiceAlloseme.fromComplement False True = .holder := by decide
+example : Voice.Alloseme.fromComplement False True = .holder := by decide
 
 /-- Neither condition met selects the elsewhere expletive. -/
-example : VoiceAlloseme.fromComplement False False = .expletive := by decide
+example : Voice.Alloseme.fromComplement False False = .expletive := by decide
 
 /-- Bridge to the syntactic `Flavor` inventory. Syntactically all four
     allosemes realize the same Voice with a DP specifier; the θ-role
     distinction is resolved at LF ([myler-2016]). The map picks the
     flavor matching each alloseme's syntactic behavior. -/
-def VoiceAlloseme.toFlavor : VoiceAlloseme → Flavor
+def Voice.Alloseme.toFlavor : Voice.Alloseme → Flavor
   | .agent    => .agentive
   | .holder   => .experiencer
   | .engineer => .agentive
@@ -271,9 +271,9 @@ def VoiceAlloseme.toFlavor : VoiceAlloseme → Flavor
 
 /-- The bridge respects θ-assignment: an alloseme assigns a thematic
 role iff its syntactic flavor does. -/
-theorem voice_alloseme_theta_consistent (a : VoiceAlloseme) :
+theorem Voice.theta_consistent (a : Voice.Alloseme) :
     a.AssignsTheta ↔ Head.AssignsTheta { flavor := a.toFlavor, hasD := true } := by
-  cases a <;> simp [VoiceAlloseme.AssignsTheta, VoiceAlloseme.toFlavor] <;> decide
+  cases a <;> simp [Voice.Alloseme.AssignsTheta, Voice.Alloseme.toFlavor] <;> decide
 
 /-! ### Nominalization readings -/
 
@@ -307,7 +307,7 @@ inductive NominalizationReading where
     referential readings could instead involve no v at all, a
     root-attached n — a different structure rather than a different
     alloseme, outside this table. -/
-def readingFromAllosemes : VerbalizerAlloseme → NominalizerAlloseme → Option NominalizationReading
+def readingFromAllosemes : Verbalizer.Alloseme → Nominalizer.Alloseme → Option NominalizationReading
   | .eventive, .zero        => some .complexEvent
   | .eventive, .result      => some .result   -- both-heads-interpreted option
   | .eventive, .content     => some .content  -- both-heads-interpreted option
@@ -361,12 +361,13 @@ structure RootMeaning (E S : Type*) where
 
 /-- What v hands to n: verbal event content under the eventive alloseme,
 the untouched root under the zero alloseme. -/
-inductive VerbalizerDenotation (E S : Type*) where
+inductive Verbalizer.Denotation (E S : Type*) where
   | eventive (p : S → Prop)
   | zero (ρ : RootMeaning E S)
 
 /-- The v alloseme applied to the root. -/
-def VerbalizerAlloseme.denote (ρ : RootMeaning E S) : VerbalizerAlloseme → VerbalizerDenotation E S
+def Verbalizer.Alloseme.denote (ρ : RootMeaning E S) :
+    Verbalizer.Alloseme → Verbalizer.Denotation E S
   | .eventive => .eventive ρ.onEvents
   | .zero     => .zero ρ
 
@@ -378,8 +379,8 @@ event of the root's kind produced ([benz-2025]'s denotation, taken over
 from [wood-2023]); the content alloseme ignores the verbal layer
 entirely. The non-deverbal allosemes have their semantics in
 `Categorizer/Semantics.lean`. -/
-def NominalizerAlloseme.denote (m : NominalizationModel E S) :
-    VerbalizerDenotation E S → NominalizerAlloseme → Option (E → Prop)
+def Nominalizer.Alloseme.denote (m : NominalizationModel E S) :
+    Verbalizer.Denotation E S → Nominalizer.Alloseme → Option (E → Prop)
   | .eventive p, .zero        => some fun x => ∃ e, x = m.ev e ∧ p e
   | .eventive p, .result      => some fun x => ∃ e, p e ∧ m.result x e
   | .eventive _, .content     => some m.hasContent
@@ -396,32 +397,32 @@ vacuous v with the same — compose to the same denotation, so the choice
 of where the eventive component lives is immaterial ([benz-2025] §3.5,
 crediting [wood-2023]). -/
 theorem result_options_agree (m : NominalizationModel E S) (ρ : RootMeaning E S) :
-    NominalizerAlloseme.denote m (VerbalizerAlloseme.eventive.denote ρ) .result
-      = NominalizerAlloseme.denote m (VerbalizerAlloseme.zero.denote ρ) .result := rfl
+    Nominalizer.Alloseme.denote m (Verbalizer.Alloseme.eventive.denote ρ) .result
+      = Nominalizer.Alloseme.denote m (Verbalizer.Alloseme.zero.denote ρ) .result := rfl
 
 /-- The content reading likewise ignores the verbal layer: both v
 options compose to `hasContent`, which is how simple content nouns can
 have the reading with no verbal source at all ([benz-2025] §3.5). -/
 theorem content_options_agree (m : NominalizationModel E S) (ρ : RootMeaning E S) :
-    NominalizerAlloseme.denote m (VerbalizerAlloseme.eventive.denote ρ) .content
-      = NominalizerAlloseme.denote m (VerbalizerAlloseme.zero.denote ρ) .content := rfl
+    Nominalizer.Alloseme.denote m (Verbalizer.Alloseme.eventive.denote ρ) .content
+      = Nominalizer.Alloseme.denote m (Verbalizer.Alloseme.zero.denote ρ) .content := rfl
 
 /-- The reading typology tracks denotational definedness: a (v, n) pair
 has a reading exactly when its composed denotation is defined. -/
 theorem readingFromAllosemes_isSome_iff_denote (m : NominalizationModel E S)
-    (ρ : RootMeaning E S) (v : VerbalizerAlloseme) (n : NominalizerAlloseme) :
+    (ρ : RootMeaning E S) (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
     (readingFromAllosemes v n).isSome
-      ↔ (NominalizerAlloseme.denote m (v.denote ρ) n).isSome := by
+      ↔ (Nominalizer.Alloseme.denote m (v.denote ρ) n).isSome := by
   cases v <;> cases n <;>
-    simp [readingFromAllosemes, VerbalizerAlloseme.denote, NominalizerAlloseme.denote]
+    simp [readingFromAllosemes, Verbalizer.Alloseme.denote, Nominalizer.Alloseme.denote]
 
 /-- A complex event nominal holds only of event-entities: the ground of
 its event reading (temporal modification, aspectual behavior). -/
 theorem cen_denotes_events (m : NominalizationModel E S) (ρ : RootMeaning E S)
     {p : E → Prop}
-    (h : NominalizerAlloseme.denote m (VerbalizerAlloseme.eventive.denote ρ) .zero = some p) :
+    (h : Nominalizer.Alloseme.denote m (Verbalizer.Alloseme.eventive.denote ρ) .zero = some p) :
     ∀ x, p x → ∃ e, x = m.ev e := by
-  simp only [VerbalizerAlloseme.denote, NominalizerAlloseme.denote, Option.some.injEq] at h
+  simp only [Verbalizer.Alloseme.denote, Nominalizer.Alloseme.denote, Option.some.injEq] at h
   subst h
   rintro x ⟨e, rfl, -⟩
   exact ⟨e, rfl⟩
@@ -453,7 +454,7 @@ def AllosemicHead.toInterpreted {Sem : Type} (h : AllosemicHead Sem) :
 under an eventive complement, zero elsewhere — so v is `IsAllosemous` on
 the shared carrier: contextual meaning variation as non-constancy of the
 `interp` map ([benz-2025]). -/
-theorem verbalizer_isAllosemous : verbalizer.toInterpreted.IsAllosemous () :=
+theorem Verbalizer.isAllosemous : Verbalizer.head.toInterpreted.IsAllosemous () :=
   ⟨{ complementIsEventive := true }, { complementIsEventive := false },
    .eventive, by decide, .zero, by decide, by decide⟩
 
