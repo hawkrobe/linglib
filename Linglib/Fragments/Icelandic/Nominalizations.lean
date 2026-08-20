@@ -1,4 +1,4 @@
-import Linglib.Morphology.DM.Allosemy
+import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Fragments.Icelandic.Predicates
 
 /-!
@@ -18,7 +18,7 @@ connecting them to the -st verb data in `Predicates.lean`.
 
 namespace Icelandic.Nominalizations
 
-open Morphology.DM.Allosemy
+open Morphology.DistributedMorphology.Allosemy
 open Icelandic.Predicates
 
 -- ============================================================================

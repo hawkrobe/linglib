@@ -5,7 +5,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
-import Linglib.Morphology.DM.VocabSimple
+import Linglib.Morphology.DistributedMorphology.VocabSimple
 import Linglib.Studies.Scott2023
 
 /-!

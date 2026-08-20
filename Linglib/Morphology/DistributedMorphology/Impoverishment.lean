@@ -30,7 +30,7 @@ they are recoverable from agreement, yielding a reduced form. Mam's
 rule is paradigmatic — see `Studies/Scott2023.lean`.
 -/
 
-namespace Morphology.DM.Impoverishment
+namespace Morphology.DistributedMorphology.Impoverishment
 
 open Minimalist
 
@@ -160,7 +160,7 @@ def runChain {R : Type} (apply : R → Neighborhood → FeatureBundle)
     the second chain starts where the first left off. The proof is
     `List.foldl_append`. This lemma underwrites the
     strict-vs-interleaved equivalence in
-    `Morphology/DM/PostsyntacticDerivation.lean`. -/
+    `Morphology/DistributedMorphology/PostsyntacticDerivation.lean`. -/
 theorem runChain_append {R : Type} (apply : R → Neighborhood → FeatureBundle)
     (rs₁ rs₂ : List R) (n : Neighborhood) :
     runChain apply (rs₁ ++ rs₂) n =
@@ -226,4 +226,4 @@ theorem deleteFeature_idempotent (fb : FeatureBundle) (target : FeatureVal) :
     deleteFeature (deleteFeature fb target) target = deleteFeature fb target := by
   simp only [deleteFeature, Function.update_idem]
 
-end Morphology.DM.Impoverishment
+end Morphology.DistributedMorphology.Impoverishment

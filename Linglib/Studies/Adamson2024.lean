@@ -1,7 +1,7 @@
-import Linglib.Morphology.DM.NominalStructure
-import Linglib.Morphology.DM.Categorizer
-import Linglib.Morphology.DM.CategorizerSemantics
-import Linglib.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.NominalStructure
+import Linglib.Morphology.DistributedMorphology.Categorizer
+import Linglib.Morphology.DistributedMorphology.CategorizerSemantics
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Jarawara.PossessedNouns
 import Linglib.Fragments.Italian.NumberGender
@@ -48,18 +48,18 @@ cannot affect gender assignment.
 
 ## Connection to Linglib
 
-This module uses types from `Morphology/DM/NominalStructure.lean`
+This module uses types from `Morphology/DistributedMorphology/NominalStructure.lean`
 (the GLH, `NominalPosition`, `PossessionType`), `CatHead` and `PhiBundle`
-from `Morphology/DM/Categorizer.lean` ([kramer-2015]),
-`VocabItem` from `Morphology/DM/VocabularyInsertion.lean`,
+from `Morphology/DistributedMorphology/Categorizer.lean` ([kramer-2015]),
+`VocabItem` from `Morphology/DistributedMorphology/VocabularyInsertion.lean`,
 and Fragment data from `Fragments/Teop/Nouns.lean` and
 `Fragments/Jarawara/PossessedNouns.lean`.
 -/
 
 namespace Adamson2024
 
-open Morphology.DM
-open Morphology.DM.VI
+open Morphology.DistributedMorphology
+open Morphology.DistributedMorphology.VI
 open Minimalist
 
 -- ============================================================================
@@ -461,7 +461,7 @@ and gender II co-occurs with non-relational (no possessor slot). The
 correlation is structural — both paths read `selectsD` from the same
 n-head. -/
 
-open Morphology.DM.CategorizerSemantics
+open Morphology.DistributedMorphology.CategorizerSemantics
 
 /-- The PF derivation pipeline: n-head → gender → article.
     Gender is an intermediate value computed from φ-features, then fed

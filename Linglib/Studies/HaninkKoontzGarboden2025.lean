@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Studies.KoontzGarboden2009
-import Linglib.Morphology.DM.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer
 import Linglib.Semantics.Possessive.Relational
 
 /-!
@@ -65,7 +65,7 @@ namespace HaninkKoontzGarboden2025
 
 open Verb Verb.Root
 open KoontzGarboden2009.Monotonicity
-open Morphology.DM (Categorizer)
+open Morphology.DistributedMorphology (Categorizer)
 open ArgumentStructure.Relational (π)
 
 -- ════════════════════════════════════════════════════

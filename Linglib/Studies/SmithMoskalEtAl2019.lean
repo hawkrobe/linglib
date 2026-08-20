@@ -1,7 +1,7 @@
 import Linglib.Morphology.Paradigm.Degree
 import Linglib.Syntax.Case.Order
 import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Morphology.DM.DomainLocality
+import Linglib.Morphology.DistributedMorphology.DomainLocality
 
 /-!
 # Smith, Moskal, Xu, Kang & Bobaljik (2019) — Case and Number Suppletion in Pronouns
@@ -63,7 +63,7 @@ AD-local vocabulary. (3) remains a substrate-addition TODO.
 - Accessibility-domain locality (`§ 4`): `DomainLocal` (rule-level,
   trigger-relative, per the paper's actual formulation), the
   relativized plateau, and the AAB-generability converse; the
-  cell-level projection lives in `Morphology/DM/DomainLocality.lean`.
+  cell-level projection lives in `Morphology/DistributedMorphology/DomainLocality.lean`.
 -/
 
 namespace SmithMoskalEtAl2019
@@ -401,7 +401,7 @@ theorem wardaman_realize_contiguous :
 -- ============================================================================
 
 /-! The cell-level projection of the AD computation
-(`Morphology/DM/DomainLocality.lean`: `DomainPartition`, `SameDomain`,
+(`Morphology/DistributedMorphology/DomainLocality.lean`: `DomainPartition`, `SameDomain`,
 `IsContiguousWithin`), instantiated for the case and number domains
 the paper discusses:
 

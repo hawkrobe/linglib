@@ -1,4 +1,4 @@
-import Linglib.Morphology.DM.NominalStructure
+import Linglib.Morphology.DistributedMorphology.NominalStructure
 import Linglib.Features.Possession
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities

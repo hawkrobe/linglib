@@ -1,6 +1,6 @@
 import Linglib.Features.Gender.Basic
 import Linglib.Studies.Corbett1991
-import Linglib.Morphology.DM.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer
 import Linglib.Fragments.Spanish.Gender
 import Linglib.Fragments.Slavic.Russian.Gender
 import Linglib.Fragments.Hausa.Gender
@@ -31,7 +31,7 @@ assignment. Three main results:
 
 - **Typology ↔ DM bridge**: `SemanticBasis.toGenderDimension` connects the
   typological `SemanticBasis` (from `Studies/Corbett1991.lean`) to
-  the DM `GenderDimension` (from `Morphology/DM/Categorizer.lean`),
+  the DM `GenderDimension` (from `Morphology/DistributedMorphology/Categorizer.lean`),
   making explicit that the semantic core properties are the *same things*
   parameterized as feature dimensions in the structural approach.
 
@@ -68,7 +68,7 @@ The mapping is partial in two ways:
 
 namespace Corbett1991
 
-open Morphology.DM
+open Morphology.DistributedMorphology
 
 /-- Whether a `SemanticBasis` falls within the semantic core.
 
@@ -106,7 +106,7 @@ def SemanticBasis.toGenderDimension : SemanticBasis → Option GenderDimension
 
 end Corbett1991
 
-namespace Morphology.DM
+namespace Morphology.DistributedMorphology
 
 open Corbett1991
 
@@ -117,7 +117,7 @@ def GenderDimension.toSemanticBasis : GenderDimension → Corbett1991.SemanticBa
   | .masc => .sex
   | .anim => .animacy
 
-end Morphology.DM
+end Morphology.DistributedMorphology
 
 -- ============================================================================
 -- Main study namespace
@@ -126,7 +126,7 @@ end Morphology.DM
 namespace Kramer2020
 
 open Corbett1991 hiding russian spanish hausa
-open Morphology.DM
+open Morphology.DistributedMorphology
 
 /-- Aliases for Kramer's three case-study languages, drawn from the
     [corbett-1991] study sample (WALS-grounded there). -/

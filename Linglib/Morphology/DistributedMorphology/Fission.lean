@@ -18,7 +18,7 @@ A `FissionRule` is parameterized over the fissioned feature bundle, the
 structural context licensing Fission, and the realization output.
 Conditions are `Prop`-valued with carried `DecidablePred` witnesses,
 matching the `ImpoverishmentRule` shape in
-`Linglib/Morphology/DM/Impoverishment.lean`.
+`Linglib/Morphology/DistributedMorphology/Impoverishment.lean`.
 
 ## Main declarations
 
@@ -49,7 +49,7 @@ as in [noyer-1992]'s original mechanism. Consumed by
   repair of the T-Noninitiality constraint.)
 -/
 
-namespace Morphology.DM
+namespace Morphology.DistributedMorphology
 
 /-- A Fission rule is parameterized over:
 * `Bundle` — the fissioned morphological feature bundle (e.g., φ-features);
@@ -113,4 +113,4 @@ theorem isSome_apply :
 
 end FissionRule
 
-end Morphology.DM
+end Morphology.DistributedMorphology

@@ -297,7 +297,7 @@ end Hom
 end Realization
 
 /-- The two-map extension ([marantz-1997]: spellout is List 2, `interp` List
-3 — allosemy, `DM/Allosemy.lean`). A [borer-2013]-style system stays a bare
+3 — allosemy, `DistributedMorphology/Allosemy.lean`). A [borer-2013]-style system stays a bare
 `System`; a lexicalist lexeme is an `Interpreted` system whose interpretation
 is `IsIntrinsic`. -/
 structure Realization.Interpreted (R Ctx F M : Type*) extends

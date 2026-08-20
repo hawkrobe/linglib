@@ -1,4 +1,4 @@
-import Linglib.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
 import Linglib.Morphology.Morphotactics.MirrorPrinciple
 
 /-!
@@ -34,7 +34,7 @@ mechanism (`subsetPrinciple`) IS Late Insertion in action: it maps
 feature bundles to exponents, making DM realizational by construction.
 
 Impoverishment — also introduced in this paper — is formalized as a
-general mechanism in `Morphology/DM/Impoverishment.lean`.
+general mechanism in `Morphology/DistributedMorphology/Impoverishment.lean`.
 This study file instantiates impoverishment on the English paradigm
 to derive syncretism (§4). Fusion is defined inline (§3) since this
 file is its only consumer.
@@ -42,7 +42,7 @@ file is its only consumer.
 
 namespace HalleMarantz1993
 
-open Morphology.DM.VI
+open Morphology.DistributedMorphology.VI
 open Morphology.MirrorPrinciple
 open Morphology (MorphCategory)
 
@@ -352,7 +352,7 @@ fall together at VI, producing **syncretism** — distinct morphosyntactic
 specifications receiving the same exponent.
 
 The general Impoverishment mechanism is formalized in
-`Morphology/DM/Impoverishment.lean`. Here we instantiate it
+`Morphology/DistributedMorphology/Impoverishment.lean`. Here we instantiate it
 on the English Tns/Agr paradigm to demonstrate the derivation of
 syncretism: deleting [+participle] from [+past, +participle] causes
 the past participle to receive the same exponent as simple past.
@@ -365,7 +365,7 @@ section ImpoverishmentSyncretism
 
 /-- Delete occurrences of a feature from a bundle.
 
-    This mirrors `deleteFeature` in `Morphology/DM/Impoverishment.lean`,
+    This mirrors `deleteFeature` in `Morphology/DistributedMorphology/Impoverishment.lean`,
     instantiated for `EngInflFeature`. The structural parallel is
     exact: both filter a list, removing elements that match the target. -/
 def deleteFeature (bundle : List EngInflFeature) (target : EngInflFeature) :

@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Morphology.DM.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer
 import Linglib.Morphology.Word.Tree
 import Linglib.Studies.Rolle2018
 import Linglib.Phonology.Autosegmental.Floating
@@ -660,7 +660,7 @@ theorem mwaghavul_is_tonal_hyman :
     as a verb through merger with v, whose sole phonological exponent
     is a tonal melody. -/
 
-open Morphology.DM
+open Morphology.DistributedMorphology
 
 /-- The verbaliser produces verbal category. -/
 def verbalizerCat : CatHead := CatHead.v_plain

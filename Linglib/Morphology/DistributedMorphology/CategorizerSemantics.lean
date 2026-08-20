@@ -1,4 +1,4 @@
-import Linglib.Morphology.DM.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer
 import Linglib.Semantics.Possessive.Relational
 import Linglib.Semantics.Possessive.Basic
 
@@ -36,7 +36,7 @@ This means the DM categorizer head is simultaneously:
 2. A compositional semantic operator (determining the noun's semantic type)
 -/
 
-namespace Morphology.DM.CategorizerSemantics
+namespace Morphology.DistributedMorphology.CategorizerSemantics
 
 open ArgumentStructure.Relational
 
@@ -233,4 +233,4 @@ theorem possessor_requires_relational (t : NSemanticType) :
     t.toBarker.canTakePossessor ↔ t = .relational := by
   cases t <;> simp [NSemanticType.toBarker, NominalInterpType.canTakePossessor]
 
-end Morphology.DM.CategorizerSemantics
+end Morphology.DistributedMorphology.CategorizerSemantics

@@ -1,5 +1,5 @@
-import Linglib.Morphology.DM.Categorizer
-import Linglib.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.Categorizer
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Fragments.English.Pronouns
 
@@ -34,8 +34,8 @@ Condition yields *they* as the default singular animate pronoun.
 ## Formalization
 
 We define the pronoun VI rules using `FeatureVI` from
-`Morphology.DM.VocabularyInsertion`, parameterize the three
-stages via `Contrastivity` from `Morphology.DM.Categorizer`,
+`Morphology.DistributedMorphology.VocabularyInsertion`, parameterize the three
+stages via `Contrastivity` from `Morphology.DistributedMorphology.Categorizer`,
 and prove the Elsewhere-Condition predictions across the three stages.
 -/
 
@@ -43,9 +43,9 @@ set_option autoImplicit false
 
 namespace KonnellyCowper2020
 
-open Morphology.DM (Contrastivity GenderFeature GenderVal GenderDimension
+open Morphology.DistributedMorphology (Contrastivity GenderFeature GenderVal GenderDimension
   Polarity Interpretability CatHead PhiBundle)
-open Morphology.DM.VI (FeatureVI subsetPrinciple)
+open Morphology.DistributedMorphology.VI (FeatureVI subsetPrinciple)
 
 -- ============================================================================
 -- § 1: Morphosyntactic Features for English Pronouns

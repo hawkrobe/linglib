@@ -1,6 +1,6 @@
 import Linglib.Features.Possession
-import Linglib.Morphology.DM.NominalStructure
-import Linglib.Morphology.DM.Allosemy
+import Linglib.Morphology.DistributedMorphology.NominalStructure
+import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Syntax.Minimalist.Verbal.SmallClause
 import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Fragments.Greek.StandardModern.Possession
@@ -32,7 +32,7 @@ be construable as a SET.
 - §2 Paradigm gaps in `-aki` diminutives (K&A §3, citing
   [sims-2006] and [mertyris-2014]; also [alexiadou-2024]).
 - §4 Scope diagnostic for inalienable vs alienable vs *apo*-PP (K&A §7,
-  exx 38–39); reuses `Morphology.DM.PossessionType`.
+  exx 38–39); reuses `Morphology.DistributedMorphology.PossessionType`.
 - §5 Three syntactic analyses (eq 41 N-selects-PP, eq 43 Pred-SC,
   eq 47 light-p), each tied to substrate primitives; convergent
   no-stacking prediction.
@@ -61,8 +61,8 @@ set_option autoImplicit false
 namespace KampanarouAlexiadou2026
 
 open Possession (Notion InalienabilityRank)
-open Morphology.DM (PossessionType NominalPosition)
-open Morphology.DM.Allosemy (NominalizationReading)
+open Morphology.DistributedMorphology (PossessionType NominalPosition)
+open Morphology.DistributedMorphology.Allosemy (NominalizationReading)
 open Minimalist (SmallClause SCPredCategory ApplType)
 
 -- ============================================================================

@@ -3,8 +3,8 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Morphology.DM.VocabularyInsertion
-import Linglib.Morphology.DM.Allosemy
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Morphology.Root.Certificates
 
 /-!
@@ -36,7 +36,7 @@ indices are distinct roots — which is exactly what lets `√tenne` block
 
 * `vocabulary` — the Hiaki suppletive List-2 entries ([harley-2014] (3),
   (26), (27)), keyed by `RootIndex`, resolved by the shared DM engine
-  `Morphology.DM.VI.vocabularyInsert`.
+  `Morphology.DistributedMorphology.VI.vocabularyInsert`.
 * Selection theorems — the engine picks the attested form per context.
 * `suppletion_ignores_ergative` — the §3.3 ergative-absolutive
   generalization: suppletion tracks the **internal (absolutive)**
@@ -61,8 +61,8 @@ number-unspecified).
 
 namespace Harley2014
 
-open Morphology.DM.VI
-open Morphology.DM.Allosemy (SyntacticContext AllosemicEntry AllosemicHead)
+open Morphology.DistributedMorphology.VI
+open Morphology.DistributedMorphology.Allosemy (SyntacticContext AllosemicEntry AllosemicHead)
 open Morphology.Exponence (selectBy realize)
 
 /-! ### List 1: roots as abstract indices -/

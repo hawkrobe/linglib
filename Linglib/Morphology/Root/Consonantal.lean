@@ -25,7 +25,7 @@ tier).
 Owner-relative roots coexist: the top-level root is a contentful morph
 (`Morphology/Root/Basic.lean`, under whose definition consonantal skeletons
 are explicitly *not* roots); `Morphology.ConsonantalRoot` (this file) is the
-*consonantal melody*; `Morphology.DM.Root` is the abstract acategorial
+*consonantal melody*; `Morphology.DistributedMorphology.Root` is the abstract acategorial
 terminal; `Panagiotidis2015.RootFamily` records a category-neutral lexical
 root with its category-stamped derivatives; `Verb.Root`
 (`Semantics/ArgumentStructure/Root/`) is the *lexical-semantic* root. No identification

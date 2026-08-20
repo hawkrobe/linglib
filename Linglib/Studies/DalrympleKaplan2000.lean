@@ -450,7 +450,8 @@ grammar (PATR, HPSG, LFG — reentrant feature structures, phrasal combination) 
 syntax family whose substrate belongs in `Syntax/` when consuming studies demand it.
 What lives here is only the tradition's morphological-bundle fragment — the algebra
 of one token's Feats column — which it shares with rivals: at the level of claims
-about morphological feature combination this file is a sibling of `DM/` and
+about morphological feature combination this file is a sibling of
+`DistributedMorphology/` and
 `Nanosyntax/`, not a foundation beneath them.
 
 ## Implementation notes
@@ -459,7 +460,8 @@ Morphology owns the bundle algebra: `MorphFeatures` is the token's morphology (U
 Feats column), and unification at the ms-word level is the morphology/syntax interface
 operation. The *matching clause* of DM's Subset Principle (an exponent is insertable
 iff `exponent.features ≤ morpheme.features`) *could* consume `≤` directly, but the
-existing `Morphology/DM/VocabularyInsertion.lean` matches by `List`-subset on `[BEq F]`
+existing `Morphology/DistributedMorphology/VocabularyInsertion.lean` matches by
+`List`-subset on `[BEq F]`
 rather than `MorphFeatures.≤`; bridging is left for a future PR. The competition
 clause — most-specified-wins — is separate `argmax` machinery already implemented in
 that same file. (Nanosyntax's Superset Principle is *not* a consumer: it matches by

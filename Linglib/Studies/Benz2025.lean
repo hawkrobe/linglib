@@ -1,4 +1,4 @@
-import Linglib.Morphology.DM.Allosemy
+import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Data.Examples.Benz2025
 import Linglib.Fragments.German.Predicates
@@ -8,7 +8,7 @@ import Linglib.Fragments.German.Predicates
 
 Three case studies from [benz-2025] (PhD dissertation, University of
 Pennsylvania) on the syntax–LF interface in German, all running on the
-contextual-allosemy substrate of `Morphology.DM.Allosemy`. Nominalizations
+contextual-allosemy substrate of `Morphology.DistributedMorphology.Allosemy`. Nominalizations
 like *Beobachtung* carry event, referential, and content readings from a
 single syntactic structure, with the variation located in the allosemes of v
 and n (Ch. 3). The co-occurrence restrictions among prefixes, particles, and
@@ -30,7 +30,7 @@ distribution from the structure-problem solutions.
 
 namespace Benz2025
 
-open Morphology.DM.Allosemy Data.Examples German.Predicates ArgumentStructure
+open Morphology.DistributedMorphology.Allosemy Data.Examples German.Predicates ArgumentStructure
 open Features (VendlerClass)
 
 /-! ## Content nominalizations (Ch. 3) -/
