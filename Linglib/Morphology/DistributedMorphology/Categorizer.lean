@@ -11,19 +11,22 @@ import Linglib.Syntax.Minimalist.Verbal.Voice
 roots in DM:
 
 1. **What are roots?** (§2) Root terminal nodes are individuated by arbitrary
-   indices, not by phonological or semantic content.
-   The **Categorization Assumption** holds: roots must merge with a categorizing
-   head (n, v, a) to enter the syntax.
+   indices, not by phonological or semantic content. Roots enter the syntax
+   only under a categorizing head (n, v, a) — the categorization assumption
+   of [embick-marantz-2008], which [harley-2014] adopts.
 
 2. **Can roots take complements?** (§3) Yes — roots can Merge directly with
    internal arguments without mediation by a functional head. Evidence:
-   *one*-replacement in argument structure nominals, verb-object idioms,
-   Hiaki suppletive verbs conditioned by the root's complement.
+   *one*-replacement (§3.1, *this student of chemistry* vs. *that one of
+   physics*), verb-object idioms (§3.2, after [kratzer-1996]), and
+   morphological ergative splits (§3.3); Hiaki suppletion conditioned by the
+   root's complement is the §2.1 individuation-and-locality evidence.
 
 3. **What delimits the domain of special interpretation?** (§4) VoiceP, not
    the first categorizing head. Idiosyncratic interpretation can extend past
-   the first categorizer (evidence: multiply derived words like *editorial*,
-   *classifieds*, *nationalize*). Voice is the phase head.
+   the first categorizer — multiply derived words like *editor-ial*,
+   *classifi-eds*, *national-ize* ((36)) — and "Voice is the phase head,
+   not v".
 
 ## DM Three-Lists Architecture ([marantz-1997], [harley-2014] §2.4)
 
@@ -44,8 +47,8 @@ across languages by **dimension** (what binary feature is used):
 | Maa         | [±FEM]    | n i[+FEM], n i[−FEM], n, n u[−FEM]       |
 | Algonquian  | [±ANIM]   | n i[+ANIM], n i[−ANIM], n, n u[+ANIM]   |
 
-([kramer-2015] Chs 3, 5-7; [adamson-2024] extends this to Teop [±ANIM]
-and Jarawara [±MASC])
+([kramer-2015] Table 6.1 and Ch 6; Amharic also Ch 3. [adamson-2024]
+extends the inventory to Teop [±ANIM] and Jarawara [±MASC].)
 
 This module formalizes the categorization layer, its phi-feature content,
 and its relationship to Voice. List 2 (Vocabulary Insertion) is formalized
@@ -58,9 +61,7 @@ namespace DistributedMorphology
 open Minimalist Minimalist.Voice
 open Verb Verb.Root
 
--- ============================================================================
--- § 1: Categorizer Type
--- ============================================================================
+/-! ### Categorizer Type -/
 
 /-- Map a categorizer to its syntactic category. -/
 def Categorizer.toCategory : Categorizer → Cat
@@ -68,16 +69,18 @@ def Categorizer.toCategory : Categorizer → Cat
   | .v => .V
   | .a => .A
 
--- ============================================================================
--- § 1b: Phi-Features on Categorizing Heads ([kramer-2015] Ch 3)
--- ============================================================================
+/-! ### Phi-Features on Categorizing Heads ([kramer-2015] Ch 3) -/
 
 /-- Gender feature dimension. Different languages locate different
-    binary features on n ([kramer-2015] Chs 3, 5-7):
+    binary features on n:
 
-    - **FEM**: [±FEM] dimension (Amharic, Spanish, Maa, Dieri, Wari', Lavukaleve)
-    - **MASC**: [±MASC] dimension (Jarawara; [adamson-2024])
-    - **ANIM**: [±ANIM] dimension (Algonquian, Teop, Lealao Chinantec) -/
+    - **FEM**: [±FEM] (Amharic and Spanish with u[+FEM], Maa with u[−FEM],
+      [kramer-2015] Chs 3, 6; the natural-gender-only systems of Ch 5 — Dieri,
+      Zayse, Zargulla — and the three-gender systems of Ch 7 use the same
+      dimension without/with further u-features)
+    - **MASC**: [±MASC] (Jarawara; [adamson-2024] (58))
+    - **ANIM**: [±ANIM] (Lealao Chinantec [kramer-2015] §5.3, Algonquian
+      §6.4, Teop [adamson-2024] §3.1) -/
 inductive GenderDimension where
   | fem   -- [FEM] dimension
   | masc  -- [MASC] dimension
@@ -179,11 +182,12 @@ def GenderFeature.IsArbitrary (g : GenderFeature) : Prop :=
 instance : DecidablePred GenderFeature.IsArbitrary :=
   fun _ => inferInstanceAs (Decidable (_ = _))
 
-/-- Number feature on the n head ([kramer-2015] §3.5).
+/-- Number feature on the n head ([kramer-2015] §3.3, Ch 8).
 
-    **Split plurality**: irregular plurals are marked on n (within the
-    categorization domain), while regular plurals are marked on Num
-    (outside nP). Only irregular number lives on the categorizer. -/
+    **Split plurality**: irregular plurals (e.g. Amharic broken plurals) are
+    marked on n, within the categorization domain, while the regular plural
+    (Amharic *-otʃtʃ*) is the realization of Num outside nP. Only irregular
+    number lives on the categorizer. -/
 inductive NumberOnN where
   | sg   -- singular (default/unmarked)
   | pl   -- irregular plural (e.g., Amharic broken plurals)
@@ -238,14 +242,13 @@ def CatHead.iPoss (phi : PhiBundle := {}) : CatHead where
 theorem CatHead.iPoss_selectsD (phi : PhiBundle) :
     (CatHead.iPoss phi).selectsD = true := rfl
 
--- ============================================================================
--- § 1c: Kramer's Four Types of n ([kramer-2015] Ch 3)
--- ============================================================================
+/-! ### Kramer's Four Types of n ([kramer-2015] Ch 3) -/
 
 /-! ### FEM dimension (Amharic, Spanish, Romance; [kramer-2015] Chs 3, 6) -/
 
-/-- n with interpretable [+FEM]: female natural gender.
-    Examples: Amharic *-it* suffix on animate female nouns. -/
+/-- n with interpretable [+FEM]: female natural gender. In Amharic the
+    female member of a same-root pair can carry the suffix *-it*
+    ([kramer-2015] (10), non-deterministically). -/
 def CatHead.n_iFem : CatHead where
   cat := .n
   phi := { gender := some ⟨.i, ⟨.fem, .pos⟩⟩ }
@@ -267,11 +270,11 @@ def CatHead.n_plain : CatHead where
   cat := .n
 
 /-- n with uninterpretable [+FEM]: feminine arbitrary gender.
-    Examples: Amharic nouns arbitrarily assigned to feminine class
-    (door, lip, sun, ear, eye).
-    In Set 1 languages ([kramer-2015] Chs 5-6), the u-feature
-    has positive polarity, making feminine the arbitrary gender and
-    masculine the default. Languages: Amharic, Spanish. -/
+    Examples: Amharic's handful of feminine inanimates — car, whirlpool,
+    country, earth, sun, city, church, moon ([kramer-2015] (9)).
+    In Set 1 languages (Ch 6), the u-feature has positive polarity, making
+    feminine the arbitrary gender and masculine the default. Languages:
+    Amharic, Spanish. -/
 def CatHead.n_uFem : CatHead where
   cat := .n
   phi := { gender := some ⟨.u, ⟨.fem, .pos⟩⟩ }
@@ -279,8 +282,7 @@ def CatHead.n_uFem : CatHead where
 /-- n with uninterpretable [−FEM]: masculine arbitrary gender in the
     FEM dimension. In Set 2 languages ([kramer-2015] Ch 6), the
     u-feature has negative polarity, making masculine the arbitrary
-    gender and feminine the default.
-    Languages: Maa, Wari' ([kramer-2015] Chs 6-7). -/
+    gender and feminine the default. Language: Maa (§6.3). -/
 def CatHead.n_uNegFem : CatHead where
   cat := .n
   phi := { gender := some ⟨.u, ⟨.fem, .neg⟩⟩ }
@@ -317,8 +319,10 @@ def CatHead.n_uAnim : CatHead where
     current coverage ([adamson-2024] §3.2). -/
 
 /-- n with uninterpretable [+MASC]: masculine arbitrary gender.
-    In Jarawara, masculine is the marked gender;
-    feminine is unmarked (plain n). -/
+    In Jarawara, masculine is the marked gender and feminine is unmarked
+    (plain n); [adamson-2024] (58) allows the marked n either
+    interpretability (i/u[MASC]) — only the uninterpretable one is modeled
+    here. -/
 def CatHead.n_uMasc : CatHead where
   cat := .n
   phi := { gender := some ⟨.u, ⟨.masc, .pos⟩⟩ }
@@ -331,9 +335,7 @@ def CatHead.v_plain : CatHead where
 def CatHead.a_plain : CatHead where
   cat := .a
 
--- ============================================================================
--- § 1d: Licensing Conditions ([kramer-2015] §3.4)
--- ============================================================================
+/-! ### Licensing Conditions ([kramer-2015] §3.4) -/
 
 /-- Two types of root–n licensing condition ([kramer-2015] §3.4.1).
 
@@ -419,15 +421,7 @@ theorem licensesIntrusion_iff_n_and_gen (ch : CatHead) :
     ch.licensesIntrusion = true ↔ ch.cat = .n ∧ ch.phi.gender.isSome = true := by
   simp only [CatHead.licensesIntrusion, Bool.and_eq_true, decide_eq_true_eq]
 
--- ============================================================================
--- § 1e: Phi-Feature Verification
--- ============================================================================
-
-/-- All four Amharic n types are nominal categorizers. -/
-theorem four_n_types_are_nominal :
-    CatHead.n_iFem.cat = .n ∧ CatHead.n_iMasc.cat = .n ∧
-    CatHead.n_plain.cat = .n ∧ CatHead.n_uFem.cat = .n :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-! ### Phi-Feature Verification -/
 
 /-- The four Amharic n types are pairwise distinct. -/
 theorem four_n_types_distinct :
@@ -454,7 +448,8 @@ theorem plain_n_no_gender : CatHead.n_plain.phi.gender = none := rfl
 /-- Natural and arbitrary gender are mutually exclusive on any feature. -/
 theorem natural_arbitrary_exclusive (gf : GenderFeature) :
     ¬(gf.IsNatural ∧ gf.IsArbitrary) := by
-  cases gf with | mk interp val => cases interp <;> simp [GenderFeature.IsNatural, GenderFeature.IsArbitrary]
+  cases gf with | mk interp val =>
+  cases interp <;> simp [GenderFeature.IsNatural, GenderFeature.IsArbitrary]
 
 /-- Interpretable gender is semantically licensed; uninterpretable gender
     is arbitrarily licensed ([kramer-2015] §3.4.1). -/
@@ -465,16 +460,16 @@ def GenderFeature.licensingType : GenderFeature → LicensingType
 /-- Natural gender → semantic licensing. -/
 theorem natural_semantic_licensing (gf : GenderFeature) (h : gf.IsNatural) :
     gf.licensingType = .semantic := by
-  cases gf with | mk interp val => cases interp <;> simp_all [GenderFeature.IsNatural, GenderFeature.licensingType]
+  cases gf with | mk interp val =>
+  cases interp <;> simp_all [GenderFeature.IsNatural, GenderFeature.licensingType]
 
 /-- Arbitrary gender → arbitrary licensing. -/
 theorem arbitrary_arbitrary_licensing (gf : GenderFeature) (h : gf.IsArbitrary) :
     gf.licensingType = .arbitrary := by
-  cases gf with | mk interp val => cases interp <;> simp_all [GenderFeature.IsArbitrary, GenderFeature.licensingType]
+  cases gf with | mk interp val =>
+  cases interp <;> simp_all [GenderFeature.IsArbitrary, GenderFeature.licensingType]
 
--- ============================================================================
--- § 1e-bridge: DM Gender → Minimalist Feature System
--- ============================================================================
+/-! ### DM Gender → Minimalist Feature System -/
 
 /-- Canonical encoding of gender values as natural numbers for the
     Minimalism `PhiFeature.gender` constructor. Each dimension × polarity
@@ -538,48 +533,7 @@ theorem anim_not_plain :
     CatHead.n_iAnim ≠ CatHead.n_plain ∧
     CatHead.n_uAnim ≠ CatHead.n_plain := by decide
 
--- ============================================================================
--- § 1f: Impoverishment ([adamson-2024] §3.2; Bonet 1991)
--- ============================================================================
-
-/-- A morphosyntactic context that can trigger impoverishment.
-
-    [adamson-2024] ex. 63: [MASC] → ∅ in context of [PL] or
-    [PARTICIPANT]. Each context is a separate impoverishment rule. -/
-inductive ImpoverishmentContext where
-  | plural       -- [PL]: number feature
-  | participant  -- [PARTICIPANT]: 1st/2nd person (speech act participants)
-  deriving DecidableEq, Repr
-
-/-- Impoverishment: postsyntactic deletion of morphosyntactic features.
-
-    In DM, impoverishment rules apply after syntax but before Vocabulary
-    Insertion, deleting features from terminal nodes. This can neutralize
-    gender distinctions in certain contexts.
-
-    [adamson-2024] ex. 63: Jarawara [MASC] → ∅ in the context of
-    [PL] or [PARTICIPANT]. -/
-structure GenderImpoverishmentRule where
-  /-- The feature to be deleted. -/
-  targetGender : GenderVal
-  /-- The conditioning context (feature that triggers deletion). -/
-  context : ImpoverishmentContext
-  deriving DecidableEq, Repr
-
-/-- Apply impoverishment: if the rule matches, delete the gender feature. -/
-def GenderImpoverishmentRule.apply (rule : GenderImpoverishmentRule)
-    (phi : PhiBundle) (contextActive : Bool) : PhiBundle :=
-  if contextActive then
-    match phi.gender with
-    | some gf => if gf.val == rule.targetGender
-                 then { phi with gender := none }
-                 else phi
-    | none => phi
-  else phi
-
--- ============================================================================
--- § 2: CategorizedRoot
--- ============================================================================
+/-! ### CategorizedRoot -/
 
 /-- A root that has been merged with a categorizing head, yielding a
     syntactically projectable unit ([harley-2014] §2).
@@ -589,7 +543,7 @@ def GenderImpoverishmentRule.apply (rule : GenderImpoverishmentRule)
     (re)categorization (`recategorize_preserves_index`), so it, not the
     `root` classification, is what makes √HAMMER *one* root across
     *hammer*/*to hammer*. `root` is the c-selection content (arity,
-    change-type) the categorizer apparatus reads (§3); unrelated roots may
+    change-type) the categorizer apparatus reads ([harley-2014] §3); unrelated roots may
     share it, so it cannot individuate. -/
 structure CategorizedRoot where
   /-- The acategorial root index — DM's List-1 individuator (`DistributedMorphology.Root`). -/
@@ -604,9 +558,7 @@ structure CategorizedRoot where
 def CategorizedRoot.category (cr : CategorizedRoot) : Cat :=
   cr.categorizer.toCategory
 
--- ============================================================================
--- § 3: Cross-Categorial Identity and Root Complement Selection
--- ============================================================================
+/-! ### Cross-Categorial Identity and Root Complement Selection -/
 
 /-- Same root + different categorizer → different syntactic category.
     This is the formal content of the claim that √HAMMER can surface as
@@ -631,21 +583,23 @@ theorem same_root_different_category (i : DistributedMorphology.Root) (r : Class
 
     Evidence for root-level valency:
 
-    1. *one*-replacement in argument structure nominals: "the proud owner
-       of a large dog" → "the proud one" — *one* replaces nP including
-       √OWN + complement, showing the root took its complement directly.
-    2. Verb-object idioms: *kick the bucket* — √KICK selects *the bucket*
-       directly under vP, not via mediation by v.
-    3. Hiaki suppletive verbs: suppletive forms are conditioned by the
+    1. *one*-replacement ([harley-2014] §3.1, (18)): *this student of
+       chemistry* does not allow *that one of physics* — the argument PP
+       cannot strand because the root selects it and projects √P, which is
+       what *one* targets (resolving Jackendoff's nonbranching-N′ problem
+       in Bare Phrase Structure).
+    2. Verb-object idioms (§3.2, after [kratzer-1996]): special meanings
+       arise for verb-object combinations while the agentive subject
+       composes freely — the root and its complement form the local domain
+       for contingent interpretation.
+    3. Hiaki suppletive verbs (§2.1): suppletive forms are conditioned by the
        root's complement (singular vs. plural object), showing locality
        between root and argument below the categorizer. -/
 theorem complement_selection_at_root_level (i : DistributedMorphology.Root) (r : Classification)
     (c1 c2 : Categorizer) :
     (CategorizedRoot.mk i r c1).root.valency = (CategorizedRoot.mk i r c2).root.valency := rfl
 
--- ============================================================================
--- § 4: Layered Derivation (Denominal, Deadjectival, Deverbal)
--- ============================================================================
+/-! ### Layered Derivation (Denominal, Deadjectival, Deverbal) -/
 
 /-- Layered derivational morphology: a root categorized by one head can be
     further categorized by another, yielding derived forms. For example,
@@ -735,9 +689,7 @@ theorem deadjectival_source_target :
     Recategorization.deadjectival.source = .a ∧
     Recategorization.deadjectival.target = .v := ⟨rfl, rfl⟩
 
--- ============================================================================
--- § 5: VoiceP as Phase Boundary
--- ============================================================================
+/-! ### VoiceP as Phase Boundary -/
 
 /- Harley (2014 §4) argues that the first phase head above the root is
    **Voice**, not the categorizer. Evidence:
@@ -753,35 +705,21 @@ theorem deadjectival_source_target :
    Formal consequence: categorizers are never phase heads,
    while `Head.IsPhasal` can be `true`. -/
 
-/-- Categorizers are never phase heads ([harley-2014] §4). -/
-def Categorizer.isPhaseHead : Categorizer → Bool
-  | _ => false
-
-/-- No categorizer is a phase head ([harley-2014] §4). -/
-theorem categorizer_never_phase (c : Categorizer) :
-    c.isPhaseHead = false := by cases c <;> rfl
-
-/-- Agentive Voice IS a phase head — it demarcates the boundary above which
-    interpretation must be compositional ([harley-2014] §4). -/
+/-- Agentive Voice is a phase head — the boundary above which
+    interpretation must be compositional. [harley-2014] §4: "Voice is the
+    phase head, not v"; the categorizer inventory here accordingly carries
+    no phasal structure at all, so the special-interpretation domain
+    extends past n, v, a and closes only at Voice. -/
 theorem agentive_voice_is_phase : agentive.IsPhasal := by decide
-
-/-- The phase-boundary asymmetry: Voice can be a phase head while
-    categorizers never are. This is why idiosyncratic interpretation
-    extends past categorizers but not past Voice ([harley-2014] §4). -/
-theorem phase_boundary_at_voice_not_categorizer (c : Categorizer) :
-    c.isPhaseHead = false ∧ agentive.IsPhasal :=
-  ⟨by cases c <;> rfl, by decide⟩
 
 /-- Voice introduces the external argument ([harley-2014] §4, following
     [kratzer-1996]). The categorizer does NOT introduce arguments —
-    complement selection is a root property (§3). -/
+    complement selection is a root property ([harley-2014] §3). -/
 theorem voice_introduces_external_arg :
     agentive.HasD ∧ agentive.AssignsTheta := by
   refine ⟨?_, ?_⟩ <;> decide
 
--- ============================================================================
--- § 6: Surface Gender Bridge ([kramer-2020] §3; [kramer-2015] Chs 5-7)
--- ============================================================================
+/-! ### Surface Gender Bridge ([kramer-2020]; [kramer-2015] Chs 5-7) -/
 
 /-! The bridge between DM phi-features on n and descriptive `Gender`
 is mediated by Vocabulary Insertion (VI). Different VI systems yield
@@ -790,12 +728,12 @@ different surface genders from the same underlying features.
 Three VI patterns are attested ([kramer-2015] Chs 5-7):
 
 - **Set 1** (Amharic, Spanish): [+FEM] → feminine, else → masculine (2 genders)
-- **Set 2** (Maa, Wari'): [−FEM] → masculine, else → feminine (2 genders)
-- **3-gender** (Russian, Mangarayi, Lavukaleve): [+FEM] → feminine,
-  [−FEM] → masculine, no feature → neuter (3 genders)
+- **Set 2** (Maa): [−FEM] → masculine, else → feminine (2 genders)
+- **3-gender** (Mangarayi): [+FEM] → feminine, [−FEM] → masculine,
+  no feature → neuter (3 genders)
 
-For animacy-based systems (Teop, Algonquian), [+ANIM] → animate,
-[−ANIM]/none → inanimate (2 genders). -/
+For animacy-based systems (Lealao Chinantec, Algonquian, Teop),
+[+ANIM] → animate, [−ANIM]/none → inanimate (2 genders). -/
 
 
 /-- Set 1 VI: [+FEM] → feminine, else → masculine.
@@ -808,21 +746,25 @@ def CatHead.surfaceGenderSet1 (ch : CatHead) : Gender :=
 
 /-- Set 2 VI: [−FEM] → masculine, else → feminine.
     Default gender: feminine (plain n has no [−FEM]).
-    Languages: Maa, Wari'. ([kramer-2015] Ch 6) -/
+    Language: Maa, "the Set 2 counterpart" of Amharic/Spanish
+    ([kramer-2015] §6.3). -/
 def CatHead.surfaceGenderSet2 (ch : CatHead) : Gender :=
   match ch.phi.gender with
   | some gf => if gf.val == ⟨.fem, .neg⟩ then .masculine else .feminine
   | none    => .feminine
 
 /-- Three-gender VI: [+FEM] → feminine, [−FEM] → masculine, none → neuter.
-    Languages: Russian, Mangarayi, Lavukaleve. ([kramer-2015] Ch 7) -/
+    The three-ns system of Mangarayi ([kramer-2015] §7.2); the other Ch 7
+    case studies add uninterpretable features to this inventory (Wari' one,
+    Lavukaleve two). -/
 def CatHead.surfaceGenderThree (ch : CatHead) : Gender :=
   match ch.phi.gender with
   | some gf => if gf.val == ⟨.fem, .pos⟩ then .feminine else .masculine
   | none    => .neuter
 
 /-- Animacy VI: [+ANIM] → animate, else → inanimate.
-    Languages: Teop, Algonquian, Lealao Chinantec. ([kramer-2015] Ch 5) -/
+    Languages: Lealao Chinantec (natural animacy, [kramer-2015] §5.3),
+    Algonquian (uninterpretable animacy, §6.4), Teop ([adamson-2024]). -/
 def CatHead.surfaceGenderAnimacy (ch : CatHead) : Gender :=
   match ch.phi.gender with
   | some gf => if gf.val.dim == .anim && gf.val.pol == .pos
@@ -864,9 +806,7 @@ theorem set1_set2_default_contrast :
     CatHead.n_plain.surfaceGenderSet1 ≠ CatHead.n_plain.surfaceGenderSet2 := by
   decide
 
--- ============================================================================
--- § 7: Composed Morphisms: DM → Discourse
--- ============================================================================
+/-! ### Composed Morphisms: DM → Discourse -/
 
 
 /-- Composed morphism: DM categorizer → discourse-level gender knowledge.

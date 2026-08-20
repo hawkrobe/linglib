@@ -11,18 +11,26 @@ semantics via [barker-2011]'s type-shifting framework.
 
 [adamson-2024] proposes three denotation types for n heads in Teop:
 
-- **n_{body-part{D}}** (36): λy.λx. ROOT(x) ∧ body-part-of(x,y)
-  Introduces a body-part-of relation, yielding a relational predicate
-  (type ⟨e,⟨e,t⟩⟩). Equivalent to [barker-2011]'s π (relationalizer).
+- **n_{body-part{D}}** ((36)): the head denotes
+  λP.λy.λx. P(x) ∧ body-part-of(x,y), so the composed nP for √BINA is
+  λy.λx. spleen(x) ∧ body-part-of(x,y) — a relational predicate
+  (type ⟨e,⟨e,t⟩⟩). The same operation as [barker-2011]'s π
+  (relationalizer), modulo argument order: Adamson binds the possessor
+  outermost with body-part-of(possessee, possessor), Barker's
+  π = λP.λx.λy. P(y) ∧ R(x,y) binds the possessor first with a
+  possessor-first relation.
 
-- **n_{sortal}** (37): λx. ROOT(x)
-  Bare sortal predicate (type ⟨e,t⟩). Equivalent to [barker-2011]'s
+- **n_{sortal}** ((37)): the head is the identity λP.λx. P(x), so the
+  composed nP for √INU is λx. house(x) (type ⟨e,t⟩) — [barker-2011]'s
   bare semantics.
 
-- **n_{alienator}** (43): λQ.λx. ∃y. Q(y)(x)
-  Existentially closes the possessor argument of a relational noun,
-  yielding a property (type ⟨e,t⟩). Structurally parallel to
-  [barker-2011]'s Ex (existential closure).
+- **n_{alienator}** ((43)): λQ.λx. ∃y. Q(y)(x) — existentially closes
+  the possessor argument of a relational noun, yielding a property
+  (type ⟨e,t⟩). The detransitivizing move of [barker-2011]'s
+  Ex = λR.λx.∃y. R(x,y), applied to the possessor slot. In (43) the
+  alienator stacks on a body-part n that lacks {D}; the alienator bears
+  its own gender (gender II in Teop), and the lexicon lacks both a
+  gender-II body-part n and a u[ANIMATE] alienator.
 
 ## Key structural correspondence
 
@@ -40,9 +48,7 @@ namespace DistributedMorphology.CategorizerSemantics
 
 open ArgumentStructure.Relational
 
--- ============================================================================
--- § 1: Semantic Denotation Types for n Heads
--- ============================================================================
+/-! ### Semantic Denotation Types for n Heads -/
 
 /-- The semantic type contributed by a categorizing head n.
     This determines how the root's content is composed into the noun's
@@ -65,26 +71,24 @@ def catHeadSemanticType (ch : CatHead) (mediatesAPossession : Bool := false)
   else if mediatesAPossession then .alienator
   else .sortal
 
--- ============================================================================
--- § 2: Denotation Functions
--- ============================================================================
+/-! ### Denotation Functions -/
 
 /-- Denotation of n_{body-part{D}}: combines a root predicate with a
     body-part-of relation to yield a relational noun.
 
-    [adamson-2024] (36): ⟦nP⟧ = λy.λx. ROOT(x) ∧ body-part-of(x,y)
+    [adamson-2024] (36): ⟦nP⟧ = λy.λx. spleen(x) ∧ body-part-of(x,y).
 
-    This is [barker-2011]'s π (relationalizer):
-    π(P, R) = λx.λy. P(y) ∧ R(x,y)
-
-    In π's convention: first arg = possessor, second arg = possessee. -/
+    Implemented as [barker-2011]'s π (relationalizer),
+    π(P, R) = λx.λy. P(y) ∧ R(x,y), whose convention this file follows:
+    the relation's first argument is the possessor, so `bodyPartOf` here
+    is possessor-first (the flip of Adamson's possessee-first
+    body-part-of). -/
 def nBodyPartDenot {E S : Type}
     (rootPred : E → S → Prop) (bodyPartOf : E → E → S → Prop) : E → E → S → Prop :=
   π rootPred bodyPartOf
 
-/-- Denotation of n_{sortal}: the root predicate, unchanged.
-
-    [adamson-2024] (37): ⟦nP⟧ = λx. ROOT(x) -/
+/-- Denotation of n_{sortal}: the root predicate, unchanged — the head is
+    the identity λP.λx. P(x) ([adamson-2024] (37)). -/
 def nSortalDenot {E S : Type} (rootPred : E → S → Prop) : E → S → Prop :=
   bareSemantics rootPred
 
@@ -100,9 +104,7 @@ def nAlienatorDenot {E S : Type}
     (relation : E → E → S → Prop) (x : E) (s : S) : Prop :=
   ∃ y, relation y x s
 
--- ============================================================================
--- § 3: Bridge to Barker 2011
--- ============================================================================
+/-! ### Bridge to Barker 2011 -/
 
 /-- n_{body-part{D}} IS Barker's π: the relationalizer. -/
 theorem nBodyPartDenot_eq_pi {E S : Type}
@@ -131,9 +133,7 @@ theorem selectsD_iff_relational (ch : CatHead) :
   unfold catHeadSemanticType
   cases ch.selectsD <;> simp
 
--- ============================================================================
--- § 4: Composition Examples ([adamson-2024] §3.1)
--- ============================================================================
+/-! ### Composition Examples ([adamson-2024] §3.1) -/
 
 section TeopExample
 
@@ -155,7 +155,8 @@ def teopSpleenIPossessed : E → E → S → Prop :=
 def teopSpleenAPossessed (x : E) (s : S) : Prop :=
   nAlienatorDenot (nBodyPartDenot isSpleen bodyPartOf) x s
 
-/-- Sortal noun: √TARA + n_{sortal} → bare predicate.
+/-- Sortal noun: √INU 'house' + n_{sortal} → bare predicate
+    ([adamson-2024] (37)).
 
     ⟦house⟧ = λx. isHouse(x)
     No possessor slot available. -/
@@ -190,9 +191,7 @@ theorem alienated_closes_possessor (x : E) (s : S) :
 
 end TeopExample
 
--- ============================================================================
--- § 5: Morphosyntax–Semantics Correspondence
--- ============================================================================
+/-! ### Morphosyntax–Semantics Correspondence -/
 
 /-! The Barker–Adamson correspondence:
 
@@ -204,18 +203,20 @@ end TeopExample
 
 The genuine correspondence theorem is `selectsD_iff_relational` above:
 selectsD on n ↔ relational semantic type. The sortal/alienator distinction
-is secondary (determined by whether aPossession is mediated). -/
+is secondary (determined by whether aPossession is mediated). NB the
+single-head classifier compresses [adamson-2024]'s (43), where the
+alienator is a second n stacked on a {D}-less body-part n. -/
 
 /-- The retraction property: applying the alienator to a π-relational noun
     recovers the root predicate (up to existential closure).
 
     nAlienatorDenot(π(P, R), x, s) ↔ ∃y. P(x,s) ∧ R(y,x,s)
 
-    This is why "free" uses of iPossessable nouns in Jarawara are feminine:
-    the root combines with n_{alienator}, existentially closing the
-    possessor slot. The result is a property, which is the same type as
-    n_{sortal}. Since the alienator n is plain (no gender feature), the
-    noun is feminine (unmarked). -/
+    In Teop the alienator bears its own gender II, which as the highest
+    gender is what agreement sees — the body-part noun 'switches' from
+    gender I to II when unpossessed ((38)–(43)). In Jarawara the free use
+    of an iPossessable noun is feminine instead, because there the
+    alienating n is unmarked. -/
 theorem alienator_retraction {E S : Type}
     (P : E → S → Prop) (R : E → E → S → Prop) (x : E) (s : S) :
     nAlienatorDenot (π P R) x s ↔ ∃ y, P x s ∧ R y x s := by
