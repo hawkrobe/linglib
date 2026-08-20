@@ -40,21 +40,22 @@ open Minimalist
 
 /-- The local context a postsyntactic rule may inspect. The `focus` bundle
     is the terminal targeted for deletion; `leftCtx` and `rightCtx` are
-    the bundles of immediately adjacent terminals (left- and right-adjacent
-    in the morphological structure).
+    the bundles of the surrounding terminals, nearest first (so the head
+    of each list is the immediately adjacent terminal). The zipper view
+    of a whole spell-out domain is `Spellout.lean`'s `mapNeighborhoods`.
 
     Splitting `focus` from context is what makes the
     paradigmatic/syntagmatic distinction structural. A condition that
     only inspects `focus` is paradigmatic by construction; one that
     reads `leftCtx` or `rightCtx` is syntagmatic. -/
-structure Neighborhood where
-  focus    : FeatureBundle
-  leftCtx  : List FeatureBundle := []
-  rightCtx : List FeatureBundle := []
+structure Neighborhood (Bundle : Type*) where
+  focus    : Bundle
+  leftCtx  : List Bundle := []
+  rightCtx : List Bundle := []
   deriving Repr
 
 /-- A bundle, viewed as a context-free neighborhood. -/
-def Neighborhood.ofBundle (fb : FeatureBundle) : Neighborhood :=
+def Neighborhood.ofBundle {Bundle : Type*} (fb : Bundle) : Neighborhood Bundle :=
   { focus := fb }
 
 -- ============================================================================
@@ -70,7 +71,7 @@ def Neighborhood.ofBundle (fb : FeatureBundle) : Neighborhood :=
     `applyImpoverishment` reduces by `decide` on concrete inputs. -/
 structure ImpoverishmentRule where
   /-- Does this rule apply at the given neighborhood? -/
-  condition : Neighborhood → Prop
+  condition : Neighborhood FeatureBundle → Prop
   /-- Decidability witness, exposed as an instance (see below). -/
   decCond : DecidablePred condition
   /-- Which feature type is deleted from the focus bundle. -/
@@ -78,7 +79,7 @@ structure ImpoverishmentRule where
 
 /-- Expose the rule's decidability as an instance so that
     `if rule.condition n then ... else ...` elaborates. -/
-instance (rule : ImpoverishmentRule) (n : Neighborhood) :
+instance (rule : ImpoverishmentRule) (n : Neighborhood FeatureBundle) :
     Decidable (rule.condition n) := rule.decCond n
 
 -- ============================================================================
@@ -95,7 +96,8 @@ instance (rule : ImpoverishmentRule) (n : Neighborhood) :
     constructors below (`paradigmatic`, `syntagmatic`) discharge it
     automatically when the condition is built focus-only. -/
 def Paradigmatic (r : ImpoverishmentRule) : Prop :=
-  ∀ n₁ n₂ : Neighborhood, n₁.focus = n₂.focus → (r.condition n₁ ↔ r.condition n₂)
+  ∀ n₁ n₂ : Neighborhood FeatureBundle,
+    n₁.focus = n₂.focus → (r.condition n₁ ↔ r.condition n₂)
 
 /-- A rule is **syntagmatic** iff it is not paradigmatic — i.e., there
     exist neighborhoods agreeing on focus that disagree on the condition,
@@ -124,7 +126,7 @@ theorem paradigmatic_isParadigmatic
 /-- Build a (potentially) syntagmatic rule from a full-neighborhood
     Boolean check. Whether the result is genuinely syntagmatic depends
     on `cond` — verify with a separate `Syntagmatic` proof if needed. -/
-def syntagmatic (cond : Neighborhood → Bool) (target : FeatureVal) :
+def syntagmatic (cond : Neighborhood FeatureBundle → Bool) (target : FeatureVal) :
     ImpoverishmentRule where
   condition n := cond n = true
   decCond n := inferInstanceAs (Decidable (cond n = true))
@@ -142,7 +144,7 @@ def deleteFeature (fb : FeatureBundle) (target : FeatureVal) : FeatureBundle :=
 /-- Apply an Impoverishment rule at a neighborhood: when the condition
     holds, return the focus with `target` deleted; otherwise return the
     focus unchanged. -/
-def applyImpoverishment (rule : ImpoverishmentRule) (n : Neighborhood) :
+def applyImpoverishment (rule : ImpoverishmentRule) (n : Neighborhood FeatureBundle) :
     FeatureBundle :=
   if rule.condition n then deleteFeature n.focus rule.target else n.focus
 
@@ -151,34 +153,34 @@ def applyImpoverishment (rule : ImpoverishmentRule) (n : Neighborhood) :
     surrounding context fixed. This is the shared shape of one cycle of
     Impoverishment and one cycle of Metathesis (and any other focus-rewriting
     rule class). -/
-def runChain {R : Type} (apply : R → Neighborhood → FeatureBundle)
-    (rules : List R) (n : Neighborhood) : FeatureBundle :=
+def runChain {R : Type} (apply : R → Neighborhood FeatureBundle → FeatureBundle)
+    (rules : List R) (n : Neighborhood FeatureBundle) : FeatureBundle :=
   rules.foldl (init := n.focus)
     (λ focusAcc rule => apply rule { n with focus := focusAcc })
 
 /-- Concatenating two chains is the same as running them sequentially:
     the second chain starts where the first left off. The proof is
     `List.foldl_append`. This lemma underwrites the
-    strict-vs-interleaved equivalence in
-    `Morphology/DistributedMorphology/PostsyntacticDerivation.lean`. -/
-theorem runChain_append {R : Type} (apply : R → Neighborhood → FeatureBundle)
-    (rs₁ rs₂ : List R) (n : Neighborhood) :
+    strict-vs-interleaved equivalence
+    (`Middleton2026.runStrict_eq_interleaved_paraSyn`). -/
+theorem runChain_append {R : Type} (apply : R → Neighborhood FeatureBundle → FeatureBundle)
+    (rs₁ rs₂ : List R) (n : Neighborhood FeatureBundle) :
     runChain apply (rs₁ ++ rs₂) n =
       runChain apply rs₂ { n with focus := runChain apply rs₁ n } := by
   simp only [runChain, List.foldl_append]
 
 /-- The empty chain is the identity on the focus. -/
-@[simp] theorem runChain_nil {R : Type} (apply : R → Neighborhood → FeatureBundle)
-    (n : Neighborhood) : runChain apply [] n = n.focus := rfl
+@[simp] theorem runChain_nil {R : Type} (apply : R → Neighborhood FeatureBundle → FeatureBundle)
+    (n : Neighborhood FeatureBundle) : runChain apply [] n = n.focus := rfl
 
 /-- Apply a sequence of impoverishment rules. Specializes `runChain`. -/
 def applyImpoverishmentChain (rules : List ImpoverishmentRule)
-    (n : Neighborhood) : FeatureBundle :=
+    (n : Neighborhood FeatureBundle) : FeatureBundle :=
   runChain applyImpoverishment rules n
 
 /-- `applyImpoverishmentChain` distributes over list concatenation. -/
 theorem applyImpoverishmentChain_append (rs₁ rs₂ : List ImpoverishmentRule)
-    (n : Neighborhood) :
+    (n : Neighborhood FeatureBundle) :
     applyImpoverishmentChain (rs₁ ++ rs₂) n =
       applyImpoverishmentChain rs₂
         { n with focus := applyImpoverishmentChain rs₁ n } :=

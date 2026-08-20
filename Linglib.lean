@@ -1259,6 +1259,7 @@ import Linglib.Morphology.DistributedMorphology.Fusion
 import Linglib.Morphology.DistributedMorphology.Impoverishment
 import Linglib.Morphology.DistributedMorphology.Merger
 import Linglib.Morphology.DistributedMorphology.NominalStructure
+import Linglib.Morphology.DistributedMorphology.Spellout
 import Linglib.Morphology.DistributedMorphology.VocabSimple
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
 import Linglib.Morphology.Exponence.Basic

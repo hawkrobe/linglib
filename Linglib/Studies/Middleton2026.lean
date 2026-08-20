@@ -1,4 +1,5 @@
 import Linglib.Morphology.DistributedMorphology.Impoverishment
+import Linglib.Morphology.DistributedMorphology.Spellout
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
 import Linglib.Fragments.Taos.Agreement
 import Linglib.Fragments.Basque.Postsyntax
@@ -45,11 +46,11 @@ re-derive the entire paradigm. What lives here:
 * The Basque half of the paper requires *whole terminal* deletion
   (Participant Dissimilation, rule 16) and *adjacent terminal* swap
   (Ergative Metathesis, rule 13) — operations the focus-level Taos
-  sections cannot express. The framework lift — `MorphPhrase`,
-  `TermImpovRule`, `TermMetaRule` with their applicators — is
-  inlined at the end of the file; the bundles live in
-  `Fragments/Basque/Postsyntax.lean`; the rules and the Ondarru
-  `s-endu-n` (17a) divergence witness are stated here.
+  sections cannot express. The domain-level rule shapes are
+  `DistributedMorphology.ObliterationRule` and
+  `DistributedMorphology.TerminalMetathesisRule` (`Spellout.lean`);
+  the bundles live in `Fragments/Basque/Postsyntax.lean`; the rules
+  and the Ondarru `s-endu-n` (17a) divergence witness are stated here.
 
 What is **not** modeled:
 
@@ -63,12 +64,13 @@ What is **not** modeled:
 
 namespace Middleton2026
 
-open Minimalist DistributedMorphology.Impoverishment DistributedMorphology.VI
+open Minimalist DistributedMorphology DistributedMorphology.Impoverishment
+  DistributedMorphology.VI
      Taos.Agreement Basque.Postsyntax
 
 /-! ### Metathesis Rule
 
-`MetathesisRule` parallels `ImpoverishmentRule`: keyed on a `Neighborhood`,
+`MetathesisRule` parallels `ImpoverishmentRule`: keyed on a `Neighborhood FeatureBundle`,
 carries a decidable condition. The structural change is to swap two
 distinguished feature *types* in the focus bundle — the rule names a pair
 of feature types and exchanges the positions of the first occurrences of
@@ -77,12 +79,12 @@ each. The directionality matches [arregi-nevins-2012]'s
 -/
 
 structure MetathesisRule where
-  condition : Neighborhood → Prop
+  condition : Neighborhood FeatureBundle → Prop
   decCond : DecidablePred condition
   swapFst : FeatureVal
   swapSnd : FeatureVal
 
-instance (rule : MetathesisRule) (n : Neighborhood) :
+instance (rule : MetathesisRule) (n : Neighborhood FeatureBundle) :
     Decidable (rule.condition n) := rule.decCond n
 
 /-- Build a metathesis rule from a Boolean condition over the focus
@@ -130,7 +132,7 @@ def swapInBundle (fb : FeatureBundle) (swapFst swapSnd : FeatureVal) :
     only ever carry an empty metathesis chain). The empirically contentful,
     order-sensitive focus-level metathesis of [middleton-2026] is stated on
     the exponent-string view directly (`derivIM`/`derivMI`). -/
-def applyMetathesis (rule : MetathesisRule) (n : Neighborhood) :
+def applyMetathesis (rule : MetathesisRule) (n : Neighborhood FeatureBundle) :
     FeatureBundle :=
   if rule.condition n then
     FeatureBundle.ofGramFeatures (swapInBundle n.focus rule.swapFst rule.swapSnd)
@@ -139,13 +141,13 @@ def applyMetathesis (rule : MetathesisRule) (n : Neighborhood) :
 /-- Apply a sequence of metathesis rules left-to-right. Each rule sees
     the focus as updated by prior rules; surrounding context is held
     fixed (one cycle of metathesis). Specializes `runChain`. -/
-def applyMetathesisChain (rules : List MetathesisRule) (n : Neighborhood) :
+def applyMetathesisChain (rules : List MetathesisRule) (n : Neighborhood FeatureBundle) :
     FeatureBundle :=
   runChain applyMetathesis rules n
 
 /-- `applyMetathesisChain` distributes over list concatenation. -/
 theorem applyMetathesisChain_append (rs₁ rs₂ : List MetathesisRule)
-    (n : Neighborhood) :
+    (n : Neighborhood FeatureBundle) :
     applyMetathesisChain (rs₁ ++ rs₂) n =
       applyMetathesisChain rs₂
         { n with focus := applyMetathesisChain rs₁ n } :=
@@ -189,7 +191,7 @@ structure ModularPostsyntax where
   metathesis   : List MetathesisRule
 
 /-- A&N's strict pipeline: para-block, then syn-block, then metathesis. -/
-def runStrict (M : ModularPostsyntax) (n : Neighborhood) : FeatureBundle :=
+def runStrict (M : ModularPostsyntax) (n : Neighborhood FeatureBundle) : FeatureBundle :=
   let afterPara := applyImpoverishmentChain M.paradigmatic n
   let afterSyn  := applyImpoverishmentChain M.syntagmatic { n with focus := afterPara }
   applyMetathesisChain M.metathesis { n with focus := afterSyn }
@@ -201,7 +203,7 @@ structure InterleavedPostsyntax where
   impoverishment : List ImpoverishmentRule
   metathesis     : List MetathesisRule
 
-def runInterleaved (M : InterleavedPostsyntax) (n : Neighborhood) :
+def runInterleaved (M : InterleavedPostsyntax) (n : Neighborhood FeatureBundle) :
     FeatureBundle :=
   let afterImp := applyImpoverishmentChain M.impoverishment n
   applyMetathesisChain M.metathesis { n with focus := afterImp }
@@ -218,7 +220,7 @@ def ModularPostsyntax.toInterleaved (M : ModularPostsyntax) :
     strictly *less expressive* than `runInterleaved`: anything strict
     can derive, interleaved can derive too (with the same rules). -/
 theorem runStrict_eq_interleaved_paraSyn
-    (M : ModularPostsyntax) (n : Neighborhood) :
+    (M : ModularPostsyntax) (n : Neighborhood FeatureBundle) :
     runStrict M n = runInterleaved M.toInterleaved n := by
   simp only [runStrict, runInterleaved, ModularPostsyntax.toInterleaved,
              applyImpoverishmentChain_append]
@@ -226,7 +228,7 @@ theorem runStrict_eq_interleaved_paraSyn
 /-- A two-rule strict pipeline (one paradigmatic, one syntagmatic, no
     metathesis) reduces to applying `[p, s]` in order. -/
 @[simp] theorem runStrict_singleton (p s : ImpoverishmentRule)
-    (n : Neighborhood) :
+    (n : Neighborhood FeatureBundle) :
     runStrict ⟨[p], [s], []⟩ n = applyImpoverishmentChain [p, s] n := by
   simp only [runStrict, applyImpoverishmentChain, runChain,
              applyMetathesisChain, List.foldl_nil, List.foldl_cons]
@@ -234,7 +236,7 @@ theorem runStrict_eq_interleaved_paraSyn
 /-- An interleaved pipeline with no metathesis reduces to the
     impoverishment chain. -/
 @[simp] theorem runInterleaved_no_metathesis (rs : List ImpoverishmentRule)
-    (n : Neighborhood) :
+    (n : Neighborhood FeatureBundle) :
     runInterleaved ⟨rs, []⟩ n = applyImpoverishmentChain rs n := by
   simp only [runInterleaved, applyMetathesisChain, runChain, List.foldl_nil]
 
@@ -249,14 +251,14 @@ theorem runStrict_eq_interleaved_paraSyn
     §4.2.1–§4.2.4 require precisely the syn-before-para derivation that
     `runStrict` excludes by construction. -/
 theorem runStrict_forces_paraSyn_order
-    (p s : ImpoverishmentRule) (n : Neighborhood) :
+    (p s : ImpoverishmentRule) (n : Neighborhood FeatureBundle) :
     runStrict ⟨[p], [s], []⟩ n = applyImpoverishmentChain [p, s] n :=
   runStrict_singleton p s n
 
 /-- The interleaved pipeline can deliver the syn-first derivation that
     `runStrict` cannot. -/
 theorem runInterleaved_admits_synPara
-    (p s : ImpoverishmentRule) (n : Neighborhood) :
+    (p s : ImpoverishmentRule) (n : Neighborhood FeatureBundle) :
     runInterleaved ⟨[s, p], []⟩ n = applyImpoverishmentChain [s, p] n :=
   runInterleaved_no_metathesis _ _
 
@@ -264,7 +266,7 @@ theorem runInterleaved_admits_synPara
     at `n`, then the strict pipeline ⟨[p], [s], []⟩ cannot match the
     interleaved pipeline ⟨[s, p], []⟩ at `n`. -/
 theorem runStrict_neq_runInterleaved_of_diverges
-    (p s : ImpoverishmentRule) (n : Neighborhood)
+    (p s : ImpoverishmentRule) (n : Neighborhood FeatureBundle)
     (h : applyImpoverishmentChain [p, s] n ≠ applyImpoverishmentChain [s, p] n) :
     runStrict ⟨[p], [s], []⟩ n ≠ runInterleaved ⟨[s, p], []⟩ n := by
   rw [runStrict_singleton, runInterleaved_no_metathesis]
@@ -273,14 +275,14 @@ theorem runStrict_neq_runInterleaved_of_diverges
 /-- A two-step pipeline that runs impoverishment then metathesis at a
     neighborhood (the order both A&N and Middleton endorse). -/
 def runImpovThenMeta (rs : List ImpoverishmentRule) (ms : List MetathesisRule)
-    (n : Neighborhood) : FeatureBundle :=
+    (n : Neighborhood FeatureBundle) : FeatureBundle :=
   applyMetathesisChain ms { n with focus := applyImpoverishmentChain rs n }
 
 /-- The reversed two-step pipeline: metathesis first, then impoverishment
     (the order both A&N and Middleton reject — supported by Basque in §3.1
     and by Taos in §3.2 of [middleton-2026]). -/
 def runMetaThenImpov (rs : List ImpoverishmentRule) (ms : List MetathesisRule)
-    (n : Neighborhood) : FeatureBundle :=
+    (n : Neighborhood FeatureBundle) : FeatureBundle :=
   applyImpoverishmentChain rs { n with focus := applyMetathesisChain ms n }
 
 /-- **Metathesis-after-impoverishment is non-trivial.** If a single
@@ -289,7 +291,7 @@ def runMetaThenImpov (rs : List ImpoverishmentRule) (ms : List MetathesisRule)
     and `runMetaThenImpov` differ — i.e., the architectural choice has
     empirical content. -/
 theorem runImpov_neq_runMeta_of_diverges
-    (r : ImpoverishmentRule) (m : MetathesisRule) (n : Neighborhood)
+    (r : ImpoverishmentRule) (m : MetathesisRule) (n : Neighborhood FeatureBundle)
     (h : applyMetathesisChain [m] { n with focus := applyImpoverishment r n } ≠
          applyImpoverishment r { n with focus := applyMetathesis m n }) :
     runImpovThenMeta [r] [m] n ≠ runMetaThenImpov [r] [m] n := by
@@ -341,9 +343,9 @@ theorem synMinimalRule_isSyntagmatic : Syntagmatic synMinimalRule := by
   intro hPara
   let fb : FeatureBundle :=
     .ofGramFeatures [.valued (fAtomic true), .valued (fMinimal true)]
-  let n₁ : Neighborhood :=
+  let n₁ : Neighborhood FeatureBundle :=
     { focus := fb, leftCtx := [], rightCtx := [argBundle person3 numSg] }
-  let n₂ : Neighborhood := { focus := fb, leftCtx := [], rightCtx := [] }
+  let n₂ : Neighborhood FeatureBundle := { focus := fb, leftCtx := [], rightCtx := [] }
   have hfoc : n₁.focus = n₂.focus := rfl
   have h := hPara n₁ n₂ hfoc
   have h₁ : synMinimalRule.condition n₁ := by decide
@@ -363,7 +365,7 @@ def witnessFocus : FeatureBundle :=
 /-- Witness neighborhood: the 1s-style focus, with a real 3s
     bundle to the right standing in for the Taos object slot
     that conditions `synMinimalRule`. -/
-def witness : Neighborhood :=
+def witness : Neighborhood FeatureBundle :=
   { focus := witnessFocus,
     leftCtx := [],
     rightCtx := [argBundle person3 numSg] }
@@ -585,108 +587,30 @@ theorem arregiNevins_vs_middleton_surface :
 /-! ### Basque — Whole-Terminal Postsyntax (Middleton §3.1)
 
 The Basque half of the paper operates on whole terminals, not features
-within a terminal. We lift the focus-level `Neighborhood`-based machinery
-of `Impoverishment.lean` / `Metathesis.lean` to phrase-level scans, then
-state Participant Dissimilation, Ergative Metathesis, and the Ondarru
-divergence witness.
+within a terminal. The domain-level rule shapes are
+`DistributedMorphology.ObliterationRule` (whole-terminal deletion) and
+`DistributedMorphology.TerminalMetathesisRule` (adjacent-terminal swap)
+from `Spellout.lean`; this section instantiates them as Participant
+Dissimilation and Ergative Metathesis and states the Ondarru divergence
+witness. Embick & Noyer 2001 call rules of the terminal-metathesis shape
+"Local Dislocation". -/
 
-Embick & Noyer 2001 call rules of `TermMetaRule`'s shape "Local
-Dislocation". `TermMetaRule` is the `FeatureBundle`-typed
-instantiation with the applicator. -/
-
-/-- A Basque morphological phrase: a linear sequence of terminal
-    `FeatureBundle`s, head-leftmost in linear (post-linearisation)
-    order. -/
-abbrev MorphPhrase := List FeatureBundle
-
-/-- A **terminal-level Impoverishment** rule: deletes a whole terminal
-    when its `Neighborhood` (focus = the candidate terminal,
-    `leftCtx`/`rightCtx` = its phrase-mates) satisfies `condition`.
-    Parallel to the focus-level `ImpoverishmentRule` whose target is a
-    feature within one terminal; here the target is the terminal
-    itself. Motivating case: Basque Participant Dissimilation,
-    [middleton-2026] (16). -/
-structure TermImpovRule where
-  condition : Neighborhood → Prop
-  decCond : DecidablePred condition
-
-instance (rule : TermImpovRule) (n : Neighborhood) :
-    Decidable (rule.condition n) := rule.decCond n
-
-/-- Build a `TermImpovRule` from a Boolean predicate over the
-    neighborhood. -/
-private def termImpov (cond : Neighborhood → Bool) : TermImpovRule where
-  condition n := cond n = true
-  decCond _ := inferInstanceAs (Decidable (cond _ = true))
-
-/-- Apply a `TermImpovRule`, scanning the phrase left-to-right. The
-    first terminal whose neighborhood satisfies the rule is dropped;
-    if no terminal matches, the phrase is returned unchanged. -/
-def applyTermImpov (rule : TermImpovRule) (phrase : MorphPhrase) :
-    MorphPhrase :=
-  let rec go (left rest : List FeatureBundle) : List FeatureBundle :=
-    match rest with
-    | [] => left
-    | t :: rest' =>
-      let n : Neighborhood :=
-        { focus := t, leftCtx := left, rightCtx := rest' }
-      if rule.condition n then left ++ rest'
-      else go (left ++ [t]) rest'
-  go [] phrase
-
-/-- A **terminal-level Metathesis** rule: swaps two adjacent terminals
-    when the condition holds at their joint context. By convention `t1`
-    is the immediate left of `t2`. Motivating case: Basque Ergative
-    Metathesis, [middleton-2026] (13). -/
-structure TermMetaRule where
-  condition : List FeatureBundle → FeatureBundle → FeatureBundle →
-              List FeatureBundle → Prop
-  decCond : ∀ left t1 t2 right, Decidable (condition left t1 t2 right)
-
-instance (rule : TermMetaRule) (left t1 t2 right) :
-    Decidable (rule.condition left t1 t2 right) :=
-  rule.decCond left t1 t2 right
-
-/-- Build a `TermMetaRule` from a Boolean predicate. -/
-private def termMeta
-    (cond : List FeatureBundle → FeatureBundle → FeatureBundle →
-            List FeatureBundle → Bool) :
-    TermMetaRule where
-  condition left t1 t2 right := cond left t1 t2 right = true
-  decCond _ _ _ _ :=
-    inferInstanceAs (Decidable (cond _ _ _ _ = true))
-
-/-- Apply a `TermMetaRule`, scanning the phrase left-to-right. Swap the
-    first adjacent pair whose joint context satisfies the condition. -/
-def applyTermMeta (rule : TermMetaRule) (phrase : MorphPhrase) :
-    MorphPhrase :=
-  let rec go (left rest : List FeatureBundle) : List FeatureBundle :=
-    match rest with
-    | [] => left
-    | [t] => left ++ [t]
-    | t1 :: t2 :: rest' =>
-      if rule.condition left t1 t2 rest' then
-        left ++ (t2 :: t1 :: rest')
-      else
-        go (left ++ [t1]) (t2 :: rest')
-  go [] phrase
-
-/-- Run impoverishment first, then metathesis — the endorsed pipeline
-    of both [arregi-nevins-2012] and [middleton-2026]. -/
+/-- Run obliteration first, then terminal metathesis — the endorsed
+    pipeline of both [arregi-nevins-2012] and [middleton-2026]. -/
 def runPhraseImpovThenMeta
-    (impovs : List TermImpovRule) (metas : List TermMetaRule)
-    (phrase : MorphPhrase) : MorphPhrase :=
-  metas.foldl (λ p r => applyTermMeta r p)
-    (impovs.foldl (λ p r => applyTermImpov r p) phrase)
+    (impovs : List (ObliterationRule FeatureBundle))
+    (metas : List (TerminalMetathesisRule FeatureBundle))
+    (phrase : SpelloutDomain FeatureBundle) : SpelloutDomain FeatureBundle :=
+  runModules (impovs.map (·.apply) ++ metas.map (·.apply)) phrase
 
-/-- Run metathesis first, then impoverishment — the order both authors
-    reject; the Basque Ondarru `*s-endu-s-n` form [middleton-2026]
-    (17b) is the diagnostic witness. -/
+/-- Run terminal metathesis first, then obliteration — the order both
+    authors reject; the Basque Ondarru `*s-endu-s-n` form
+    [middleton-2026] (17b) is the diagnostic witness. -/
 def runPhraseMetaThenImpov
-    (impovs : List TermImpovRule) (metas : List TermMetaRule)
-    (phrase : MorphPhrase) : MorphPhrase :=
-  impovs.foldl (λ p r => applyTermImpov r p)
-    (metas.foldl (λ p r => applyTermMeta r p) phrase)
+    (impovs : List (ObliterationRule FeatureBundle))
+    (metas : List (TerminalMetathesisRule FeatureBundle))
+    (phrase : SpelloutDomain FeatureBundle) : SpelloutDomain FeatureBundle :=
+  runModules (metas.map (·.apply) ++ impovs.map (·.apply)) phrase
 
 /-- **Participant Dissimilation** ([middleton-2026] (16),
     [arregi-nevins-2012] §4.6). Delete a 1p absolutive clitic
@@ -694,8 +618,8 @@ def runPhraseMetaThenImpov
     clitic somewhere to the right in the same auxiliary. The rule
     operates at the terminal level — it deletes a whole bundle, not a
     feature within one. -/
-def participantDissimilation : TermImpovRule :=
-  termImpov (λ n =>
+def participantDissimilation : ObliterationRule FeatureBundle :=
+  .ofBool (λ n =>
     isAbsParticipantAuthor n.focus &&
     n.rightCtx.any isErgParticipant)
 
@@ -705,14 +629,14 @@ def participantDissimilation : TermImpovRule :=
     The leftmost requirement (`left.isEmpty`) is what lets
     Participant Dissimilation *feed* Ergative Metathesis: only
     after PD deletes the absolutive clitic does T become leftmost. -/
-def ergativeMetathesis : TermMetaRule :=
-  termMeta (λ left t1 t2 _ =>
+def ergativeMetathesis : TerminalMetathesisRule FeatureBundle :=
+  .ofBool (λ left t1 t2 _ =>
     left.isEmpty && isT t1 && isErgClitic t2)
 
 /-- The Ondarru witness phrase from [middleton-2026] (17a):
     `s-endu-n` `[1pABS, T:past, 2sERG]`. The complementizer is
     suppressed — it does not participate in either rule. -/
-def basqueWitnessPhrase : MorphPhrase :=
+def basqueWitnessPhrase : SpelloutDomain FeatureBundle :=
   [abs1pAuthor, tPast, erg2s]
 
 /-- **PD-then-Meta surface form (the grammatical s-endu-n order).**

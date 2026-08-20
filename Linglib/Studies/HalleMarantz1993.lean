@@ -1,4 +1,4 @@
-import Linglib.Morphology.DistributedMorphology.Fusion
+import Linglib.Morphology.DistributedMorphology.Spellout
 import Linglib.Morphology.Morphotactics.MirrorPrinciple
 
 /-!
@@ -326,6 +326,31 @@ theorem fusion_elsewhere :
 theorem fusion_always_spellable (tPast tPart aSg3 : Bool) :
     (subsetPrinciple englishTnsVI (fusedFeatures tPast tPart aSg3)).isSome = true := by
   cases tPast <;> cases tPart <;> cases aSg3 <;> native_decide
+
+/-- The Tns+Agr pipeline over a spell-out domain: the fusion module,
+    then pointwise insertion by the Subset Principle. -/
+def tnsAgrSpellout :
+    DistributedMorphology.Spellout (List EngInflFeature) String where
+  modules := [tnsAgrFusion.applyFirstAdjacent ()]
+  insert := subsetPrinciple englishTnsVI
+
+/-- *walk-s*: the domain [Tns[−past,−part], Agr[3sg]] spells out as the
+    single exponent `-z`. -/
+theorem walks_pf :
+    tnsAgrSpellout.pf
+        [(InflHead.tns false false).features, (InflHead.agr true).features]
+      = [some "-z"] := by native_decide
+
+/-- Two syntactic terminals enter, one exponent slot leaves — the
+    terminal/exponent misalignment is carried entirely by the fusion
+    module. -/
+theorem walks_terminal_exponent_misalignment :
+    [(InflHead.tns false false).features,
+      (InflHead.agr true).features].length = 2 ∧
+    (tnsAgrSpellout.pf
+        [(InflHead.tns false false).features,
+          (InflHead.agr true).features]).length = 1 := by
+  exact ⟨rfl, by rw [walks_pf]; rfl⟩
 
 end TnsAgrFusion
 
