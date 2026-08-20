@@ -7,28 +7,35 @@ import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Syntax.Category.Verb.Complement.Basic
 
 /-!
-# Valency: argument-structure frames over dependency graphs
+# Valency frames
 
-The DG valency layer: slot data types, standard frame schemas for the basic
-valences, the map from a verb's lexical `ComplementType` into them, and
-satisfaction of a frame by a position's dependents. [hudson-2010],
-[osborne-2019].
+This file defines valency frames over dependency graphs: slot data,
+standard frame schemas for the basic valences, the map from a verb's
+lexical `ComplementType` into them, and satisfaction of a frame by a
+position's dependents.
 
-Frames are a *side table* (`Frames n`), not part of the graph carrier: the
+## Main definitions
+
+* `Valency` is a word's valency as a list of slots: relation, side of
+  the head, optionality.
+* `Frames n` is the per-position valency table.
+* `Graph.SatisfiesFrames` is frame satisfaction: every filler on its
+  slot's side of the head, required slots filled, and no unlicensed core
+  arguments.
+
+## Implementation notes
+
+Frames are a side table (`Frames n`), not part of the graph carrier: the
 frame is framework apparatus (like HPSG's ARG-ST), supplied alongside the
 graph by the consumers that reason about valency and populated from the
 lexical carrier (a verb's `complementType.valency`).
 
-## Main declarations
+## References
 
-* `Valency`, `Valency.Slot` — a word's valency ([tesniere-1959]'s term) as a
-  list of slots: relation, side of the head, optionality.
-* `Frames n`, `Frames.ofList` — the per-position valency table.
-* `Valency.intransitive/transitive/ditransitive/passiveTransitive`,
-  `ComplementType.valency` — standard schemas and the lexical map into them.
-* `SatisfiesValency`, `Graph.SatisfiesFrames` — valency satisfaction: every
-  filler on its slot's side of the head, required slots filled, no
-  unlicensed core arguments.
+[tesniere-1959] — Éléments de syntaxe structurale, source of the valency
+notion
+[hudson-2010] — An introduction to Word Grammar
+[osborne-2019] — A dependency grammar of English
 -/
 
 namespace DependencyGrammar
@@ -105,14 +112,14 @@ section Satisfaction
 variable {n : ℕ}
 
 /-- The dependents of `v` linked by relation `rel`. -/
-def Graph.fillersOf (g : Graph n) (v : Fin n) (rel : UD.DepRel) : List (Fin n) :=
-  (g.children v).filter (g.label v · == some rel)
+def Graph.fillersOf (g : Graph n) (v : Fin n) (rel : UD.DepRel) : Finset (Fin n) :=
+  {w ∈ g.children v | g.label v w = some rel}
 
 /-- The graph satisfies a valency at head `v`: every filler of every slot
     sits on the slot's side of the head, and required slots are filled. -/
 def SatisfiesValency (g : Graph n) (v : Fin n) (val : Valency) : Prop :=
   ∀ slot ∈ val, (∀ w ∈ g.fillersOf v slot.depType, slot.dir.Admits v w) ∧
-    (slot.required → g.fillersOf v slot.depType ≠ [])
+    (slot.required → (g.fillersOf v slot.depType).Nonempty)
 
 instance (g : Graph n) (v : Fin n) (val : Valency) :
     Decidable (SatisfiesValency g v val) :=
@@ -133,7 +140,7 @@ private def CoreArgsLicensed (g : Graph n) (v : Fin n) (val : Valency) : Prop :=
 
 private instance (g : Graph n) (v : Fin n) (val : Valency) :
     Decidable (CoreArgsLicensed g v val) :=
-  List.decidableBAll _ _
+  Finset.decidableDforallFinset
 
 /-- Each verb's dependents satisfy its frame: required slots filled in the
     right direction (`SatisfiesValency`) and no unlicensed core arguments

@@ -60,16 +60,16 @@ open Morphology (Word)
 /-! ### Predicate-valent type -/
 
 /-- The conjuncts of the coordinate structure headed at `c`: the head
-    (first conjunct, per UD) plus its `.conj` dependents. -/
-def allConjuncts {n : ℕ} (g : Graph n) (c : Fin n) : List (Fin n) :=
-  c :: (g.children c).filter (λ w => g.label c w == some .conj)
+    (the first conjunct, per UD) plus its `.conj` dependents. -/
+def allConjuncts {n : ℕ} (g : Graph n) (c : Fin n) : Finset (Fin n) :=
+  insert c {w ∈ g.children c | g.label c w = some .conj}
 
 /-- Position `c` heads a coordinate structure: it has a `conj` dependent. -/
 def HasConjuncts {n : ℕ} (g : Graph n) (c : Fin n) : Prop :=
   ∃ w ∈ g.children c, g.label c w = some .conj
 
 instance {n : ℕ} (g : Graph n) (c : Fin n) : Decidable (HasConjuncts g c) :=
-  List.decidableBEx _ _
+  Finset.decidableExistsAndFinset
 
 /-- Word `valentIdx` is a *conjunct valent* of predicate `predIdx`: a
     conjunct of a coordinate structure that fills a valency role of
@@ -80,7 +80,7 @@ def IsConjunctValent {n : ℕ} (g : Graph n) (predIdx valentIdx : Fin n) : Prop 
 
 instance {n : ℕ} (g : Graph n) (predIdx valentIdx : Fin n) :
     Decidable (IsConjunctValent g predIdx valentIdx) :=
-  List.decidableBEx _ _
+  Finset.decidableExistsAndFinset
 
 /-- Word `valentIdx` is a *full valent* of `predIdx`: a valent that is
     not a conjunct valent — the paper's definition (p. 651): "a valent

@@ -10,17 +10,31 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 /-!
 # Dependency length
 
-The core quantity behind [futrell-gibson-2020]'s claim that natural
-languages minimise total dependency length beyond what independent
-constraints predict, together with [behaghel-1932]'s "Oberstes Gesetz"
-threshold. Arc length is `Nat.dist` on positions; the total is a
-`Finset` sum, so relabeling arguments are mathlib sum-reindexings.
+This file defines the total dependency length of a graph and its
+relabeling along a position permutation. Dependency-length minimisation
+claims natural languages reduce the former beyond what independent
+constraints predict; relabeling is the formal core of the
+random-reordering baselines that test the claim.
 
-`Graph.relabel` transports a graph along a position permutation — the
-formal core of [futrell-gibson-2020]'s random-reordering baselines — and
-`Graph.mirror` is relabeling along `Fin.rev`, with `totalLength_mirror`
-recording that the head-final mirror of a graph has the same total
-dependency length.
+## Main definitions
+
+* `Graph.totalLength` is the sum of `Nat.dist` over all arcs.
+* `OberstesGesetz` bounds every arc length by a threshold.
+* `Graph.relabel` transports a graph along a position permutation;
+  `Graph.mirror` is relabeling along `Fin.rev`.
+
+## Main results
+
+* `Graph.totalLength_relabel`: relabeling along an isometry of the
+  positions preserves total dependency length.
+
+## References
+
+[behaghel-1932] — Deutsche Syntax IV, source of the "Oberstes Gesetz"
+threshold
+[futrell-gibson-2020] — Dependency locality as an explanatory principle
+for word order, source of the minimisation claim and the
+random-reordering baselines
 -/
 
 namespace DependencyGrammar
@@ -30,7 +44,7 @@ variable {n : ℕ}
 /-- Total dependency length: the sum of `Nat.dist` over all arcs — the
     quantity dependency-length minimisation is about. -/
 def Graph.totalLength (g : Graph n) : Nat :=
-  ∑ v : Fin n, ∑ w ∈ Finset.univ.filter (g.Adj v ·), Nat.dist v w
+  ∑ v : Fin n, ∑ w ∈ g.children v, Nat.dist v w
 
 /-- Total dependency length reads only the arc structure, never the
     tokens. -/
@@ -68,7 +82,7 @@ theorem Graph.totalLength_relabel (g : Graph n) (σ : Equiv.Perm (Fin n))
     (hσ : ∀ v w : Fin n, Nat.dist (σ v) (σ w) = Nat.dist v w) :
     (g.relabel σ).totalLength = g.totalLength := by
   unfold totalLength
-  simp only [Finset.sum_filter]
+  simp only [Graph.children, Finset.sum_filter]
   refine Fintype.sum_equiv σ.symm _ _ (λ v => ?_)
   refine Fintype.sum_equiv σ.symm _ _ (λ w => ?_)
   simp only [relabel_adj]

@@ -13,24 +13,33 @@ import Mathlib.Tactic.FinCases
 /-!
 # Crossings under random linearization
 
-[ferrer-i-cancho-2017]'s null hypothesis for dependency crossings: if a
-sentence's word order were lost and replaced by a uniformly random one, the
-expected number of crossings would depend only on the arc structure, because
-two links cross in a third of the linearizations when they share no endpoint
-and in none otherwise. Summed over all `n !` linearizations and cleared of
-denominators, that is `Graph.three_mul_sum_crossings_relabel`. No tree
-hypothesis is needed: the identity holds for any link structure.
+This file proves that if a sentence's word order were lost and replaced by
+a uniformly random one, the expected number of crossings would depend only
+on the arc structure: two links cross in a third of the linearizations
+when they share no endpoint, and in none otherwise. No tree hypothesis is
+needed; the identity holds for any link structure.
 
-## Main declarations
+## Main definitions
 
-* `Graph.crossingsUnder` — the crossings `g` would show under a permutation
-  of its positions; `Graph.crossings_relabel` equates it with the crossings
-  of `Graph.relabel`.
-* `Graph.disjointLinkPairs` — the pairs of links sharing no endpoint,
-  [ferrer-i-cancho-2017]'s potential crossings, which [ferrer-i-cancho-2013]
-  reduces to the link count and the degree second moment.
-* `Graph.three_mul_sum_crossings_relabel` — the expected-crossings identity
+* `Graph.crossingsUnder` is the crossings `g` would show under a
+  permutation of its positions.
+* `Graph.disjointLinkPairs` is the number of unordered pairs of links
+  sharing no endpoint — the pairs that can cross at all.
+
+## Main results
+
+* `Graph.crossings_relabel`: the crossings of a relabelled graph are the
+  crossings under the permutation.
+* `Graph.three_mul_sum_crossings_relabel`: the expected-crossings identity
   `3 * ∑ σ, (g.relabel σ).crossings = n ! * g.disjointLinkPairs`.
+
+## References
+
+[ferrer-i-cancho-2017] — Random crossings in dependency trees, source of
+the expected-crossings identity (eq. 13)
+[ferrer-i-cancho-2013] — Hubiness, length, crossings and their
+relationships in syntactic dependencies, reduces the disjoint-pair count
+to the link count and the degree second moment
 -/
 
 namespace DependencyGrammar
@@ -46,7 +55,7 @@ variable {n : ℕ} (g : Graph n)
     in `g`'s own. -/
 def Graph.crossingsUnder (σ : Perm (Fin n)) : Nat :=
   (Finset.univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-    Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2 ∧
+    g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2 ∧
       Alternate (σ x.1) (σ x.2.1) (σ x.2.2.1) (σ x.2.2.2))).card
 
 /-- The unordered pairs of links sharing no endpoint — the pairs that can
@@ -55,7 +64,7 @@ def Graph.crossingsUnder (σ : Perm (Fin n)) : Nat :=
     and the earlier-starting link first. -/
 def Graph.disjointLinkPairs : Nat :=
   (Finset.univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-    Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2 ∧
+    g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2 ∧
       x.1 < x.2.1 ∧ x.2.2.1 < x.2.2.2 ∧ x.1 < x.2.2.1 ∧
         x.2.1 ≠ x.2.2.1 ∧ x.2.1 ≠ x.2.2.2)).card
 
@@ -69,7 +78,7 @@ theorem Graph.crossings_relabel (σ : Perm (Fin n)) :
   refine Finset.card_equiv
     (σ.symm.prodCongr (σ.symm.prodCongr (σ.symm.prodCongr σ.symm))) ?_
   rintro ⟨a, b, c, d⟩
-  simp [Linked, Alternate]
+  simp [Graph.Linked, Alternate]
 
 /-! ### One linearization in twenty-four alternates a distinct quadruple -/
 
@@ -130,13 +139,13 @@ private instance : DecidablePred (distinct4 (n := n)) :=
 private theorem sum_crossingsUnder :
     ∑ σ : Perm (Fin n), g.crossingsUnder σ =
       ∑ x ∈ univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-          Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2),
+          g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2),
         #{σ : Perm (Fin n) | Alternate (σ x.1) (σ x.2.1) (σ x.2.2.1) (σ x.2.2.2)} := by
   simp only [Graph.crossingsUnder, Finset.card_filter]
   rw [Finset.sum_comm]
   rw [Finset.sum_filter]
   refine Finset.sum_congr rfl (λ x _ => ?_)
-  by_cases h1 : Linked g x.1 x.2.1 <;> by_cases h2 : Linked g x.2.2.1 x.2.2.2 <;>
+  by_cases h1 : g.Linked x.1 x.2.1 <;> by_cases h2 : g.Linked x.2.2.1 x.2.2.2 <;>
     simp [h1, h2]
 
 /-- Each linked quadruple of distinct positions contributes `n !` to
@@ -145,10 +154,10 @@ private theorem sum_crossingsUnder :
 private theorem mul_sum_crossingsUnder :
     24 * ∑ σ : Perm (Fin n), g.crossingsUnder σ =
       n ! * #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-        (Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2) ∧ distinct4 x)) := by
+        (g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x)) := by
   rw [sum_crossingsUnder, Finset.mul_sum]
   have hcongr : ∀ x ∈ univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-      Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2),
+      g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2),
       24 * #{σ : Perm (Fin n) |
         Alternate (σ x.1) (σ x.2.1) (σ x.2.2.1) (σ x.2.2.2)} =
         if distinct4 x then n ! else 0 := by
@@ -186,12 +195,12 @@ private theorem card_filter_eq_two_mul {α : Type*} [Fintype α] [DecidableEq α
     orientation for each link and the order of the two links. -/
 private theorem card_linked_distinct :
     #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-        (Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2) ∧ distinct4 x)) =
+        (g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x)) =
       8 * g.disjointLinkPairs := by
   have h1 : #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-        (Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2) ∧ distinct4 x)) =
+        (g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x)) =
       2 * #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-        ((Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
+        ((g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
           x.1 < x.2.1)) := by
     refine card_filter_eq_two_mul (λ x => (x.2.1, x.1, x.2.2)) (λ _ => rfl) ?_ ?_
     · rintro ⟨a, b, c, d⟩ ⟨⟨h1, h2⟩, d1, d2, d3, d4, d5, d6⟩
@@ -201,10 +210,10 @@ private theorem card_linked_distinct :
       show b < a ↔ ¬ a < b
       omega
   have h2 : #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-        ((Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
+        ((g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
           x.1 < x.2.1)) =
       2 * #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-        (((Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
+        (((g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
           x.1 < x.2.1) ∧ x.2.2.1 < x.2.2.2)) := by
     refine card_filter_eq_two_mul (λ x => (x.1, x.2.1, x.2.2.2, x.2.2.1))
       (λ _ => rfl) ?_ ?_
@@ -215,10 +224,10 @@ private theorem card_linked_distinct :
       show d < c ↔ ¬ c < d
       omega
   have h3 : #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-        (((Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
+        (((g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
           x.1 < x.2.1) ∧ x.2.2.1 < x.2.2.2)) =
       2 * #(univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-        ((((Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
+        ((((g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
           x.1 < x.2.1) ∧ x.2.2.1 < x.2.2.2) ∧ x.1 < x.2.2.1)) := by
     refine card_filter_eq_two_mul (λ x => (x.2.2.1, x.2.2.2, x.1, x.2.1))
       (λ _ => rfl) ?_ ?_
@@ -229,10 +238,10 @@ private theorem card_linked_distinct :
       show c < a ↔ ¬ a < c
       omega
   have h4 : univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-        ((((Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
+        ((((g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x) ∧
           x.1 < x.2.1) ∧ x.2.2.1 < x.2.2.2) ∧ x.1 < x.2.2.1) =
       univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-        Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2 ∧
+        g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2 ∧
           x.1 < x.2.1 ∧ x.2.2.1 < x.2.2.2 ∧ x.1 < x.2.2.1 ∧
             x.2.1 ≠ x.2.2.1 ∧ x.2.1 ≠ x.2.2.2) := by
     refine Finset.filter_congr (λ x _ => ?_)

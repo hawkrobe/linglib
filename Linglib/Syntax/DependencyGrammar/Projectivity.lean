@@ -21,34 +21,35 @@ In this file we define those constraints and prove the inclusions among them
 that hold on trees. The witnesses separating the constraints are the source
 papers' own figures, and live in their study files.
 
-## Main declarations
+## Main definitions
 
-* `Alternate` — the alternation `a < c < b < d` that both binary constraints
-  forbid.
-* `Graph.IsProjective` — every `Graph.dominated` set is an interval
-  (Definition 3).
-* `Graph.IsPlanar` — no two links cross (Definition 4), the Link Grammar
-  notion, traced there to [melcuk-1988].
-* `Graph.Interleave`, `Graph.IsWellNested` — Definition 8.
-* `Graph.gapDegree` — Definitions 6–7. Gap degree + 1 is the block-degree,
-  the fan-out of the LCFRS rule extracted for that node.
-* `Graph.isProjective_iff_gapDegree_eq_zero`,
-  `Graph.isPlanar_iff_crossings_eq_zero` — each binary constraint is the
-  least value of a count (`Graph.gapDegree`, `Graph.crossings`).
-* `Graph.IsProjective.isPlanar`, `Graph.IsPlanar.isWellNested` — the §3.5
-  chain `projective ⊆ planar ⊆ well-nested` on trees, with
-  `Graph.IsProjective.isWellNested` its composite.
-* `Graph.IsPlanar.root_mem_gap` — every gap of a planar tree contains the
-  root, so a planar tree rooted at a sentence boundary is already projective
-  (`Graph.IsPlanar.isProjective_of_isBot`). This is why planarity is a weaker
-  constraint than projectivity only by the root's position.
+* `Graph.IsProjective` is projectivity: every `Graph.dominated` set is an
+  interval (Definition 3).
+* `Graph.IsPlanar` is planarity: no two links cross (Definition 4), the
+  Link Grammar notion.
+* `Graph.Interleave` and `Graph.IsWellNested` are interleaving and
+  well-nestedness (Definition 8).
+* `Graph.gapDegree` counts the discontinuities in a node's projection
+  (Definitions 6–7).
+
+## Main results
+
+* `Graph.isProjective_iff_gapDegree_eq_zero` and
+  `Graph.isPlanar_iff_crossings_eq_zero`: each binary constraint is the
+  least value of a count.
+* `Graph.IsProjective.isPlanar` and `Graph.IsPlanar.isWellNested`: the
+  chain `projective ⊆ planar ⊆ well-nested` on trees.
+* `Graph.IsPlanar.isProjective_of_isBot`: every gap of a planar tree
+  contains the root (`Graph.IsPlanar.root_mem_gap`), so a planar tree
+  rooted at a sentence boundary is already projective.
 
 ## References
 
 [kuhlmann-nivre-2006] — Mildly non-projective dependency structures, source
 of the Definition numbers cited above
 [kuhlmann-2013] — Mildly non-projective dependency grammar
-[melcuk-1988] — Dependency syntax: theory and practice
+[melcuk-1988] — Dependency syntax: theory and practice, source of the Link
+Grammar planarity notion
 -/
 
 namespace DependencyGrammar
@@ -68,7 +69,7 @@ abbrev Alternate (a b c d : Fin n) : Prop := a < c ∧ c < b ∧ b < d
 /-- A dependency graph is planar if no two links alternate, so that its arcs
     can be drawn above the sentence without crossing. -/
 def Graph.IsPlanar : Prop :=
-  ∀ ⦃a b c d : Fin n⦄, Linked g a b → Linked g c d → ¬ Alternate a b c d
+  ∀ ⦃a b c d : Fin n⦄, g.Linked a b → g.Linked c d → ¬ Alternate a b c d
 
 /-- The subtrees at `v` and `w` interleave if each contributes two positions
     and the two pairs alternate. -/
@@ -115,7 +116,7 @@ def Graph.gapDegree : Nat := Finset.univ.sup g.gapDegreeAt
     since of the two ways to order the pairs only one alternates. -/
 def Graph.crossings : Nat :=
   (Finset.univ.filter (λ x : Fin n × Fin n × Fin n × Fin n =>
-    Linked g x.1 x.2.1 ∧ Linked g x.2.2.1 x.2.2.2 ∧
+    g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2 ∧
       Alternate x.1 x.2.1 x.2.2.1 x.2.2.2)).card
 
 variable {g}
@@ -245,7 +246,7 @@ theorem Graph.IsProjective.isPlanar (hT : g.IsTree) (hP : g.IsProjective) :
 /-- In a planar graph, a link with one endpoint strictly inside the span of
     another link has its other endpoint inside that span too. -/
 theorem Graph.IsPlanar.mem_uIcc_of_linked (hPl : g.IsPlanar) {lo hi p q : Fin n}
-    (hL : Linked g lo hi) (hL' : Linked g p q)
+    (hL : g.Linked lo hi) (hL' : g.Linked p q)
     (hlp : lo < p) (hph : p < hi) : q ∈ Set.uIcc lo hi := by
   by_contra hq
   simp only [Set.mem_uIcc] at hq
@@ -257,7 +258,7 @@ theorem Graph.IsPlanar.mem_uIcc_of_linked (hPl : g.IsPlanar) {lo hi p q : Fin n}
 /-- Planarity forbids a link with one endpoint strictly inside another link's
     span and the other endpoint outside it. -/
 theorem Graph.IsPlanar.no_strict_straddle (hPl : g.IsPlanar) {p q p' q' : Fin n}
-    (hL : Linked g p q) (hL' : Linked g p' q') (hin : p' ∈ Set.uIcc p q)
+    (hL : g.Linked p q) (hL' : g.Linked p' q') (hin : p' ∈ Set.uIcc p q)
     (hne1 : p' ≠ p) (hne2 : p' ≠ q) (hout : q' ∉ Set.uIcc p q) : False := by
   simp only [Set.mem_uIcc] at hin
   rcases lt_trichotomy p q with h | rfl | h
@@ -275,7 +276,7 @@ theorem Graph.IsPlanar.isWellNested (hT : g.IsTree) (hPl : g.IsPlanar) :
   push Not at hcon
   obtain ⟨hvw, hwv⟩ := hcon
   have hdis : ∀ {x}, Dominates g v x → Dominates g w x → False :=
-    λ h1 h2 => disjoint_dominated hT hvw hwv h1 h2
+    λ h1 h2 => Set.disjoint_left.mp (disjoint_dominated hT hvw hwv) h1 h2
   have hab : a < b := hac.trans hcb
   -- A link below `w` crosses the boundary of the span of `a` and `b`.
   have hcS : c ∈ Set.uIcc a b := by simp [Set.mem_uIcc]; omega
@@ -321,8 +322,11 @@ theorem Graph.IsPlanar.root_mem_gap (hT : g.IsTree) (hPl : g.IsPlanar)
   have hrS : g.root ∉ Set.uIcc i j := by simp [Set.mem_uIcc]; omega
   -- The root's path to `k` enters the span of `i` and `j` at an arc that
   -- misses everything `v` dominates.
-  obtain ⟨p, q, hpq, hpS, hqS, hqk⟩ :=
-    exists_adj_in_dominating (hT.root_dominates k) hrS hkS
+  obtain ⟨p, q, hpq, hpS', hqS', -, hqk⟩ :=
+    (hT.root_dominates k).exists_boundary (S := (Set.uIcc i j)ᶜ) hrS
+      (not_not_intro hkS)
+  have hpS : p ∉ Set.uIcc i j := hpS'
+  have hqS : q ∈ Set.uIcc i j := not_not.mp hqS'
   have hqv : ¬ Dominates g v q := λ h => hk (h.trans hqk)
   have hpv : ¬ Dominates g v p := λ h =>
     hk (h.trans ((Relation.ReflTransGen.single hpq).trans hqk))

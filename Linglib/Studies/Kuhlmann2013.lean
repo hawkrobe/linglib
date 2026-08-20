@@ -64,7 +64,8 @@ example : ¬ dutchCrossSerial.IsProjective ∧ germanNested.IsProjective := by d
 example : dutchCrossSerial.gapDegree = 1 ∧ germanNested.gapDegree = 0 := by decide
 
 /-- Cross-serial dependencies stay well-nested; they are not planar. -/
-example : dutchCrossSerial.IsWellNested ∧ ¬ dutchCrossSerial.IsPlanar := by decide
+example : dutchCrossSerial.IsWellNested ∧ ¬ dutchCrossSerial.IsPlanar := by
+  decide +kernel
 
 /-- The nested order has no crossing links; the cross-serial order has five. -/
 example : germanNested.crossings = 0 := by decide +kernel
