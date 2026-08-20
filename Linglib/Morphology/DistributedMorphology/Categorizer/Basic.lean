@@ -1,35 +1,43 @@
+import Linglib.Core.Data.RoseTree.Leaves
 import Linglib.Morphology.DistributedMorphology.Root
-import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # Categorization
 
-The categorizing heads n, v, a of Distributed Morphology merge with an
-acategorial root to give it a syntactic category — the categorization
-assumption. The same root index survives categorization and
-re-categorization, which is what makes √HAMMER one root across *hammer*
-and *to hammer*. Complement selection is a property of the root, and the
-domain of idiosyncratic interpretation is bounded by Voice, not by the
-categorizer.
+Word formation is syntactic: a categorizing head n, v, or a merges with
+an acategorial root — the categorization assumption — and layered
+derivation is more of the same merger, [v [n √SHELF]] for *to shelve*
+beside [n √SHELF] for *shelf*. Word-internal structure is a nonplanar
+tree over root and head leaves, the same carrier shape as syntactic and
+morphological objects elsewhere in the library, so the root's survival
+across (re)categorization and the structural difference between direct
+and layered derivation are facts about leaves rather than stipulations.
 
 ## Main definitions
 
 * `Categorizer` — the closed inventory n, v, a
-* `Categorizer.toCategory` — the syntactic category of n, v, a
-* `CategorizedRoot`, `Recategorization` — roots under a categorizer and
-  layered derivation
+* `WordStructure` — word-internal structure over a head alphabet:
+  `Categorizer` for the bare theory, `CatHead`
+  (`Categorizer/Gender.lean`) when heads carry φ-content
+* `categorize`, `roots`, `heads`, `Headed` — head merger, the two leaf
+  projections, and outermost headedness
 
 ## Main statements
 
-* `same_root_different_category`, `recategorize_preserves_root` — one
-  root index across categories, threaded unchanged through derivation
+* `roots_categorize` — categorization does not touch root leaves: one
+  root index across categories and layers
+* `categorize_ne_of_ne`, `categorize_categorize_ne` — distinct heads
+  build distinct structures, and layered derivation differs from direct
+  derivation even when the outermost head agrees
 * `agentive_voice_is_phase` — Voice, not the categorizer, bounds special
   interpretation
 
 ## References
 
+* [M. Halle and A. Marantz, *Distributed Morphology and the pieces of
+  inflection*][halle-marantz-1993]
 * [A. Marantz, *No escape from syntax*][marantz-1997]
 * [H. Harley, *On the identity of roots*][harley-2014]
 * [D. Embick and A. Marantz, *Architecture and blocking*][embick-marantz-2008]
@@ -37,8 +45,7 @@ categorizer.
 
 namespace DistributedMorphology
 
-open Minimalist Minimalist.Voice
-open Verb Verb.Root
+open Minimalist Minimalist.Voice RoseTree
 
 /-! ### The categorizer inventory -/
 
@@ -61,134 +68,113 @@ def Categorizer.toCategory : Categorizer → Cat
   | .v => .V
   | .a => .A
 
-/-! ### CategorizedRoot -/
+/-! ### Word-internal structure
 
-/-- A root merged with a categorizing head, yielding a syntactically
-    projectable unit ([harley-2014] §2). The `root` atom is what survives
-    (re)categorization (`recategorize_preserves_root`) and so what makes
-    √HAMMER one root across *hammer* and *to hammer*; the `classification`
-    is c-selection content ([harley-2014] §3) that unrelated roots may
-    share, so it cannot individuate. -/
-structure CategorizedRoot where
-  /-- The acategorial root. -/
-  root : DistributedMorphology.Root
-  /-- The root's c-selection content (arity, change-type). -/
-  classification : Classification
-  /-- The categorizing head that gives it syntactic category. -/
-  categorizer : Categorizer
-  deriving DecidableEq, Repr
+Distributed Morphology builds words with the same binary structure
+building as sentences ([halle-marantz-1993]): a categorized root is the
+configuration [x √], not a kind of object, and re-categorization is
+merger of a further head. The carrier is a nonplanar tree whose leaves
+are acategorial roots or categorizing heads and whose internal vertices
+are bare. -/
 
-/-- The syntactic category of a categorized root, derived from its categorizer. -/
-def CategorizedRoot.category (cr : CategorizedRoot) : Cat :=
-  cr.categorizer.toCategory
+/-- Word-internal syntactic structure over head labels `H`: a nonplanar
+tree whose leaves are acategorial roots or heads and whose internal
+vertices are bare. -/
+abbrev WordStructure (H : Type*) :=
+  Nonplanar ((Root ⊕ H) ⊕ Unit)
 
-/-! ### Cross-categorial identity and root complement selection
+variable {H : Type*}
 
-[harley-2014] §3's evidence that roots select their complements directly:
-*one*-replacement (§3.1 — *this student of chemistry* rejects *that one of
-physics* because the root selects the PP and projects √P, which *one*
-targets), verb-object idioms (§3.2, after [kratzer-1996] — special
-meanings arise for verb-object pairs while the agentive subject composes
-freely), and morphological ergative splits (§3.3). Hiaki suppletion
-conditioned by the object's number is the §2.1 sisterhood evidence. -/
+/-- The structure consisting of a bare root. -/
+def ofRoot (r : Root) : WordStructure H :=
+  Nonplanar.leaf (.inl (.inl r))
 
-/-- Same root + different categorizer → different syntactic category.
-    This is the formal content of the claim that √HAMMER can surface as
-    either a noun (hammer) or a verb (to hammer) — same root, different
-    category, determined entirely by the categorizer ([harley-2014] §2). -/
-theorem same_root_different_category (i : DistributedMorphology.Root) (r : Classification)
-    (c1 c2 : Categorizer) (h : c1 ≠ c2) :
-    (CategorizedRoot.mk i r c1).category ≠ (CategorizedRoot.mk i r c2).category := by
-  simp only [CategorizedRoot.category, Categorizer.toCategory]
-  cases c1 <;> cases c2 <;> simp_all
+/-- The structure consisting of a bare head. -/
+def ofHead (h : H) : WordStructure H := Nonplanar.leaf (.inl (.inr h))
 
-/-- Complement valency is a root-level property, unaltered by the
-categorizer ([harley-2014] §3). This covers c-selection, not l-selection,
-which [hewett-2026] shows can vary by verbal template (`Hewett2026`). -/
-theorem complement_selection_at_root_level (i : DistributedMorphology.Root) (r : Classification)
-    (c1 c2 : Categorizer) :
-    (CategorizedRoot.mk i r c1).classification.valency
-      = (CategorizedRoot.mk i r c2).classification.valency := rfl
+/-- Merge a categorizing head with a structure: the configuration [h T].
+Categorization is `categorize h (ofRoot r)`; re-categorization is
+another `categorize` on top — *to shelve* is
+`categorize .v (categorize .n (ofRoot shelf))` — and every further
+derivation (*happi-ness* a → n, *boy-ish* n → a) is simply another
+instance, with no inventory of re-categorization types to extend. -/
+noncomputable def categorize (h : H) (T : WordStructure H) : WordStructure H :=
+  Nonplanar.node (.inr ()) (ofHead h ::ₘ {T})
 
-/-! ### Layered Derivation (Denominal, Deadjectival, Deverbal) -/
+/-- The root leaves: the List-1 content of a word structure. -/
+def roots (T : WordStructure H) : Multiset Root :=
+  T.leaves.filterMap fun x => x.getLeft?.bind Sum.getLeft?
 
-/-- A re-categorization further categorizes an already categorized root,
-as in √SHELF + n (*shelf*) + v (*to shelve*). Idiosyncratic
-interpretation can survive the inner categorizer ([harley-2014] §4). -/
-inductive Recategorization where
-  | denominal    -- n → v (to hammer, to shelve)
-  | deadjectival -- a → v (to flatten, to widen)
-  | deverbal_n   -- v → n (a build, a throw)
-  | deverbal_a   -- v → a (broken, flattened)
-  deriving DecidableEq, Repr
+/-- The head leaves: the functional content of a word structure. -/
+def heads (T : WordStructure H) : Multiset H :=
+  T.leaves.filterMap fun x => x.getLeft?.bind Sum.getRight?
 
-/-- The source categorizer of a re-categorization. -/
-def Recategorization.source : Recategorization → Categorizer
-  | .denominal    => .n
-  | .deadjectival => .a
-  | .deverbal_n   => .v
-  | .deverbal_a   => .v
+@[simp] theorem roots_ofRoot (r : Root) :
+    roots (ofRoot r : WordStructure H) = {r} := rfl
 
-/-- The target categorizer of a re-categorization. -/
-def Recategorization.target : Recategorization → Categorizer
-  | .denominal    => .v
-  | .deadjectival => .v
-  | .deverbal_n   => .n
-  | .deverbal_a   => .a
+@[simp] theorem roots_ofHead (h : H) :
+    roots (ofHead h : WordStructure H) = 0 := rfl
 
-/-- Apply a re-categorization to a categorized root. Returns `none` if the
-    root's current categorizer doesn't match the expected source. -/
-def CategorizedRoot.recategorize (cr : CategorizedRoot)
-    (rc : Recategorization) : Option CategorizedRoot :=
-  if cr.categorizer = rc.source then
-    some { root := cr.root, classification := cr.classification, categorizer := rc.target }
-  else
-    none
+@[simp] theorem heads_ofHead (h : H) :
+    heads (ofHead h : WordStructure H) = {h} := rfl
 
-/-- Denominal verbs start from n-categorized roots. -/
-theorem denominal_requires_n (cr : CategorizedRoot) (cr' : CategorizedRoot)
-    (h : cr.recategorize .denominal = some cr') :
-    cr.categorizer = .n := by
-  unfold CategorizedRoot.recategorize at h
-  simp only [Recategorization.source] at h
-  split at h <;> simp_all
+@[simp] theorem heads_ofRoot (r : Root) :
+    heads (ofRoot r : WordStructure H) = 0 := rfl
 
-/-- Re-categorization yields the target categorizer. -/
-theorem recategorization_changes_category (cr : CategorizedRoot)
-    (rc : Recategorization) (cr' : CategorizedRoot)
-    (h : cr.recategorize rc = some cr') :
-    cr'.categorizer = rc.target := by
-  unfold CategorizedRoot.recategorize at h
-  split at h
-  case isTrue => simp only [Option.some.injEq] at h; rw [← h]
-  case isFalse => simp at h
+/-- Categorization does not touch root leaves: the same root index
+survives categorization and re-categorization — √HAMMER is one root
+across *hammer* and *to hammer* ([harley-2014] §2, §4) — and with it
+every piece of root-level lexical content. C-selection is therefore
+untouched by the categorizer ([harley-2014] §3: *one*-replacement,
+verb-object idioms, ergative splits), in contrast with l-selection,
+which varies with the functional structure (`Hewett2026`). -/
+theorem roots_categorize (h : H) (T : WordStructure H) :
+    roots (categorize h T) = roots T := by
+  rw [categorize, roots, Nonplanar.leaves_node_cons, Multiset.filterMap_add,
+    show Multiset.filterMap (fun x => x.getLeft?.bind Sum.getLeft?)
+      (ofHead h : WordStructure H).leaves
+      = (0 : Multiset Root) from rfl]
+  simp [roots]
 
-/-- The acategorial root survives (re)categorization, so *shelf* (n) and
-    *to shelve* (v) share one List-1 root ([harley-2014] §2, §4). -/
-theorem recategorize_preserves_root (cr cr' : CategorizedRoot)
-    (rc : Recategorization) (h : cr.recategorize rc = some cr') :
-    cr'.root = cr.root := by
-  unfold CategorizedRoot.recategorize at h
-  split at h
-  case isTrue => simp only [Option.some.injEq] at h; rw [← h]
-  case isFalse => simp at h
+/-- Each categorization contributes exactly its head. -/
+theorem heads_categorize (h : H) (T : WordStructure H) :
+    heads (categorize h T) = h ::ₘ heads T := by
+  rw [categorize, heads, Nonplanar.leaves_node_cons, Multiset.filterMap_add]
+  rw [show Multiset.filterMap (fun x => x.getLeft?.bind Sum.getRight?)
+      (ofHead h : WordStructure H).leaves = {h} from rfl]
+  simp [heads, Multiset.singleton_add]
 
-/-- A denominal verb and a directly verbal root yield the same syntactic
-    category (V), but have different internal structure. √HAMMER + v gives
-    V directly; √HAMMER + n + v also gives V but via layered derivation.
-    This structural ambiguity is invisible at the category level
-    ([harley-2014] §2). -/
-theorem denominal_yields_verbal (i : DistributedMorphology.Root) (r : Classification) :
-    ∃ cr, (CategorizedRoot.mk i r .n).recategorize .denominal = some cr ∧
-          cr.category = Cat.V :=
-  ⟨⟨i, r, .v⟩, rfl, rfl⟩
+/-- Each categorization adds one leaf. -/
+theorem numLeaves_categorize (h : H) (T : WordStructure H) :
+    (categorize h T).numLeaves = T.numLeaves + 1 := by
+  rw [← Nonplanar.card_leaves, categorize, Nonplanar.leaves_node_cons,
+    Multiset.card_add]
+  simp [ofHead, Nonplanar.card_leaves, Nat.add_comm]
 
-/-- Deadjectival derivation (a → v) connects to [embick-2004]'s result-stative
-    structure ([AspP AspR [vP DP v_become √ROOT]]): in DM terms, a root first
-    categorized by a, then further categorized by v. -/
-theorem deadjectival_source_target :
-    Recategorization.deadjectival.source = .a ∧
-    Recategorization.deadjectival.target = .v := ⟨rfl, rfl⟩
+/-- Outermost headedness: the structure is the head itself, or was built
+by merging it last. -/
+inductive Headed : WordStructure H → H → Prop
+  | ofHead (h : H) : Headed (ofHead h) h
+  | categorize (h : H) (T : WordStructure H) : Headed (categorize h T) h
+
+/-- Same base, different categorizer, different structure: √HAMMER under
+n (*hammer*) and under v (*to hammer*) are distinct objects
+([marantz-1997], [harley-2014] §2). -/
+theorem categorize_ne_of_ne {h h' : H} (hne : h ≠ h') (T : WordStructure H) :
+    categorize h T ≠ categorize h' T := fun he => by
+  have hh := congrArg heads he
+  rw [heads_categorize, heads_categorize] at hh
+  exact hne ((Multiset.cons_inj_left _).mp hh)
+
+/-- Layered derivation is structurally distinct from direct derivation
+even when the outermost head agrees: [v [n √SHELF]] (*to shelve*) is not
+[v √SHELF], though both are `Headed` by v — the ambiguity a bare
+category label hides ([harley-2014] §2, §4). -/
+theorem categorize_categorize_ne (h₁ h₂ h₃ : H) (T : WordStructure H) :
+    categorize h₁ (categorize h₂ T) ≠ categorize h₃ T := fun he => by
+  have := congrArg Nonplanar.numLeaves he
+  rw [numLeaves_categorize, numLeaves_categorize, numLeaves_categorize] at this
+  omega
 
 /-! ### VoiceP as phase boundary
 

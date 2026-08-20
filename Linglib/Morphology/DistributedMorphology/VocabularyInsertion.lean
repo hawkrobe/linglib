@@ -37,9 +37,9 @@ exist.
 
 This module provides the generic VI framework. Language-specific VI
 rules live in `Fragments/` or in phenomenon-specific `Studies/` files.
-The `Categorizer` and `CategorizedRoot` types from
-`Morphology/DistributedMorphology/Categorizer.lean` provide the syntax-side
-terminal nodes that VI targets.
+The `Categorizer` type and the `WordStructure` trees from
+`Morphology/DistributedMorphology/Categorizer/Basic.lean` provide the
+syntax-side terminals and configurations that VI targets.
 -/
 
 namespace DistributedMorphology.VI
