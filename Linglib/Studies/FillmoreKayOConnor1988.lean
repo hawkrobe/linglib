@@ -1,7 +1,7 @@
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Idiom
 import Linglib.Syntax.ConstructionGrammar.Inheritance
-import Linglib.Features.Acceptability
+import Linglib.Data.Examples.FillmoreKayOConnor1988
 import Linglib.Features.Polarity
 import Linglib.Semantics.Polarity.Item
 import Mathlib.Tactic.DeriveFintype
@@ -38,13 +38,14 @@ the linguists × languages model is the paper's own 2D example.
   compositional
 - `FillmoreKayOConnor1988.rankScalarModel`, `linguistLangModel`: worked
   scalar models
-- `FillmoreKayOConnor1988.allExamples`: the paper's judgment data
+- `Data.Examples.FillmoreKayOConnor1988`: the paper's judgment data
+  (generated module; `Examples.all`)
 -/
 
 namespace FillmoreKayOConnor1988
 
 open ConstructionGrammar
-open Features (Acceptability Polarity)
+open Features (Polarity)
 
 /-! ### Scalar models (§2.3.2, Appendix)
 
@@ -562,260 +563,27 @@ theorem competent_french_incomparable_brilliant_hittite :
 
 /-! ### Judgment data
 
-Grammaticality judgments and contrasts from the paper, by example number.
-Verified against the published text; judgments reproduce the paper's
-markings (* ungrammatical, # anomalous, ? marginal). -/
+The paper's judgment data — basic *let alone* (exx. 15–16), NPI licensing
+and the *barely*/*almost*/*only* contrast (exx. 62–66, 113–115),
+constituency probes (topicalization, VP ellipsis, wh-extraction,
+IT-clefting; exx. 31–34, 39–41), scalar anomalies (exx. 104, 106–107,
+121–122), and the attested positive-polarity cases (exx. 71–72) — live in
+the generated module `Data.Examples.FillmoreKayOConnor1988`
+(`Examples.all`, `Examples.ex113`, ...), sourced from
+`Linglib/Data/Examples/FillmoreKayOConnor1988.json`. -/
 
-/-- A single attested or judged example. -/
-structure ExampleDatum where
-  /-- Example number in the paper -/
-  exNumber : String
-  /-- The sentence -/
-  sentence : String
-  /-- Acceptability judgment -/
-  judgment : Acceptability
-  /-- What phenomenon this illustrates -/
-  phenomenon : String
-  deriving Repr, BEq
+/-- The positive-polarity examples (exx. 71–72) are judged acceptable —
+the attested cases `LetAloneConditions.polarity := .positive` covers,
+challenging a purely syntactic NPI account. -/
+theorem positive_polarity_attested :
+    (Examples.ex71.judgment, Examples.ex72.judgment)
+      = (.acceptable, .acceptable) := by decide
 
-/-! #### Basic *let alone* (§2.1, exx. 15–16, p. 512) -/
-
-def ex15b : ExampleDatum :=
-  { exNumber := "15b"
-  , sentence := "I barely got up in time to eat lunch, let alone cook breakfast"
-  , judgment := .ok
-  , phenomenon := "basic let alone with barely" }
-
-def ex16b : ExampleDatum :=
-  { exNumber := "16b"
-  , sentence := "I doubt you could get Fred to eat shrimp, let alone Louise squid"
-  , judgment := .ok
-  , phenomenon := "let alone with multiple paired foci" }
-
-/-! #### NPI licensing (§2.2.4, exx. 62–66, p. 518) -/
-
-def ex62 : ExampleDatum :=
-  { exNumber := "62"
-  , sentence := "He didn't reach Denver, let alone Chicago"
-  , judgment := .ok
-  , phenomenon := "let alone licensed by simple negation" }
-
-def ex63 : ExampleDatum :=
-  { exNumber := "63"
-  , sentence := "I'm too tired to get up, let alone go running with you"
-  , judgment := .ok
-  , phenomenon := "let alone licensed by too-complementation" }
-
-def ex66 : ExampleDatum :=
-  { exNumber := "66"
-  , sentence := "I barely got up in time for lunch, let alone breakfast"
-  , judgment := .ok
-  , phenomenon := "let alone licensed by barely" }
-
-/-! #### *Barely* vs. *almost*/*only* (§2.3.3, exx. 113–115, p. 529)
-
-*Barely* licenses *let alone*; *almost* and non-subject *only* do not —
-"*barely* is syntactically a negative polarity trigger while *almost* and
-nonsubject *only* are not". -/
-
-def ex113 : ExampleDatum :=
-  { exNumber := "113"
-  , sentence := "*He almost reached Denver let alone Chicago"
-  , judgment := .unacceptable
-  , phenomenon := "let alone NOT licensed by almost" }
-
-def ex114 : ExampleDatum :=
-  { exNumber := "114"
-  , sentence := "*He only reached Denver let alone Chicago"
-  , judgment := .unacceptable
-  , phenomenon := "let alone NOT licensed by non-subject only" }
-
-def ex115 : ExampleDatum :=
-  { exNumber := "115"
-  , sentence := "He barely reached Denver let alone Chicago"
-  , judgment := .ok
-  , phenomenon := "let alone licensed by barely (contrast with almost/only)" }
-
-/-- NPI licensing contrasts: barely licenses, almost and only do not. -/
-def npiContrasts : List ExampleDatum :=
-  [ex113, ex114, ex115]
-
-/-! #### Topicalization asymmetry (§2.2.1, exx. 31a–d, p. 515) -/
-
-def ex31a : ExampleDatum :=
-  { exNumber := "31a"
-  , sentence := "Shrimp and squid Moishe won't eat"
-  , judgment := .ok
-  , phenomenon := "and-coordination permits topicalization" }
-
-def ex31b : ExampleDatum :=
-  { exNumber := "31b"
-  , sentence := "*Shrimp let alone squid Moishe won't eat"
-  , judgment := .unacceptable
-  , phenomenon := "let alone blocks topicalization" }
-
-def ex31c : ExampleDatum :=
-  { exNumber := "31c"
-  , sentence := "*Shrimp Moishe won't eat and squid"
-  , judgment := .unacceptable
-  , phenomenon := "and-coordination: can't split" }
-
-def ex31d : ExampleDatum :=
-  { exNumber := "31d"
-  , sentence := "Shrimp Moishe won't eat, let alone squid"
-  , judgment := .ok
-  , phenomenon := "let alone permits parenthetical-like extraposition" }
-
-/-- Topicalization asymmetry: *and* allows full topicalization,
-*let alone* only allows extraposed second conjunct. -/
-def topicalizationContrasts : List ExampleDatum :=
-  [ex31a, ex31b, ex31d]
-
-/-! #### VP ellipsis (§2.2.1, exx. 39–41, p. 516) -/
-
-def ex39 : ExampleDatum :=
-  { exNumber := "39"
-  , sentence := "Max will eat shrimp more willingly than Minnie will"
-  , judgment := .ok
-  , phenomenon := "comparative permits VP ellipsis" }
-
-def ex40 : ExampleDatum :=
-  { exNumber := "40"
-  , sentence := "Max won't eat shrimp but Minnie will"
-  , judgment := .ok
-  , phenomenon := "but-coordination permits VP ellipsis" }
-
-def ex41 : ExampleDatum :=
-  { exNumber := "41"
-  , sentence := "*Max won't eat shrimp let alone Minnie will"
-  , judgment := .unacceptable
-  , phenomenon := "let alone blocks VP ellipsis" }
-
-/-- VP ellipsis contrast: *and*/*but* allow it, *let alone* does not. -/
-def vpEllipsisContrasts : List ExampleDatum :=
-  [ex39, ex40, ex41]
-
-/-! #### Wh-extraction (§2.2.1, exx. 32a–b, p. 515) -/
-
-def ex32a : ExampleDatum :=
-  { exNumber := "32a"
-  , sentence := "*a man who Mary hasn't met or ridden in his car"
-  , judgment := .unacceptable
-  , phenomenon := "wh-extraction from and-coordination blocked" }
-
-def ex32b : ExampleDatum :=
-  { exNumber := "32b"
-  , sentence := "?a man who Mary hasn't met, let alone ridden in his car"
-  , judgment := .marginal
-  , phenomenon := "wh-extraction from let alone is better" }
-
-/-! #### Scalar anomaly (§2.3.2, exx. 104, 121–122, pp. 525, 530–531) -/
-
-def ex104 : ExampleDatum :=
-  { exNumber := "104"
-  , sentence := "#Fred doesn't have an odd number of books, let alone seventy-five"
-  , judgment := .anomalous
-  , phenomenon := "scalar anomaly: odd-number doesn't form a scale with 75" }
-
-def ex121 : ExampleDatum :=
-  { exNumber := "121"
-  , sentence := "You couldn't get a poor man to wash your car for $2, let alone a rich man to wax your truck for $1"
-  , judgment := .ok
-  , phenomenon := "multi-dimensional scalar model: four paired foci (ex. 120 adds a fifth dimension)" }
-
-def ex122a : ExampleDatum :=
-  { exNumber := "122a"
-  , sentence := "#You couldn't get a rich man to wash your car for $2 let alone a poor man to wax your truck for $1"
-  , judgment := .anomalous
-  , phenomenon := "scalar anomaly: swapped foci on poor/rich dimension" }
-
-def ex122b : ExampleDatum :=
-  { exNumber := "122b"
-  , sentence := "#You couldn't get a poor man to wax your car for $2 let alone a rich man to wash your truck for $1"
-  , judgment := .anomalous
-  , phenomenon := "scalar anomaly: swapped foci on wash/wax dimension" }
-
-/-- Scalar anomaly contrasts: well-formed scalar ordering vs. swapped foci. -/
-def scalarAnomalyContrasts : List ExampleDatum :=
-  [ex121, ex122a, ex122b]
-
-/-! #### IT-clefting (§2.2.1, exx. 33–34, pp. 515–516) -/
-
-def ex33 : ExampleDatum :=
-  { exNumber := "33"
-  , sentence := "*It's shrimp let alone squid that Max won't eat"
-  , judgment := .unacceptable
-  , phenomenon := "IT-clefting blocked with let alone" }
-
-def ex34 : ExampleDatum :=
-  { exNumber := "34"
-  , sentence := "It's shrimp and squid that Max won't eat"
-  , judgment := .ok
-  , phenomenon := "IT-clefting fine with and-coordination" }
-
-/-! #### Lowest-point anomaly (§2.3.2, exx. 106–107, p. 526)
-
-With B the lowest scale point, negating a non-lowest point yields no
-a-fortiori conclusion about it (see `secondLieutenant_is_lowest`). -/
-
-def ex106 : ExampleDatum :=
-  { exNumber := "106"
-  , sentence := "He wasn't even a commissioned officer, let alone a colonel"
-  , judgment := .ok
-  , phenomenon := "let alone with B higher on the scale" }
-
-def ex107 : ExampleDatum :=
-  { exNumber := "107"
-  , sentence := "#He wasn't even a commissioned officer, let alone a second lieutenant"
-  , judgment := .anomalous
-  , phenomenon := "scalar anomaly: B is the lowest point on the scale" }
-
-/-! #### Positive polarity (§2.2.4, exx. 71–72, p. 519)
-
-Rare but attested; these challenge a purely syntactic NPI account and are
-the cases `LetAloneConditions.polarity := .positive` covers. -/
-
-def ex71 : ExampleDatum :=
-  { exNumber := "71"
-  , sentence := "You've got enough material there for a whole semester, let alone a week"
-  , judgment := .ok
-  , phenomenon := "let alone in positive polarity context (attested)" }
-
-def ex72 : ExampleDatum :=
-  { exNumber := "72"
-  , sentence := "Penutian has been broken up, let alone Macro-Penutian"
-  , judgment := .ok
-  , phenomenon := "let alone in positive polarity context (attested)" }
-
-/-- Positive polarity *let alone* examples challenge pure NPI analysis. -/
-def positivePolarityExamples : List ExampleDatum :=
-  [ex71, ex72]
-
-/-- All judgment data from the paper. -/
-def allExamples : List ExampleDatum :=
-  [ ex15b, ex16b
-  , ex62, ex63, ex66, ex113, ex114, ex115
-  , ex31a, ex31b, ex31c, ex31d
-  , ex39, ex40, ex41
-  , ex32a, ex32b
-  , ex104, ex121, ex122a, ex122b
-  , ex33, ex34
-  , ex106, ex107
-  , ex71, ex72 ]
-
-/-- All grammatical examples. -/
-def grammaticalExamples : List ExampleDatum :=
-  allExamples.filter (·.judgment == .ok)
-
-/-- All ungrammatical examples. -/
-def ungrammaticalExamples : List ExampleDatum :=
-  allExamples.filter (·.judgment == .unacceptable)
-
-/-- The data cover all four judgment types. -/
-theorem has_all_judgment_types :
-    (allExamples.any (·.judgment == .ok)) = true ∧
-    (allExamples.any (·.judgment == .unacceptable)) = true ∧
-    (allExamples.any (·.judgment == .marginal)) = true ∧
-    (allExamples.any (·.judgment == .anomalous)) = true := by decide
+/-- The *barely*/*almost*/*only* minimal triple (exx. 113–115): *barely*
+licenses *let alone*; *almost* and non-subject *only* do not. -/
+theorem barely_almost_only_contrast :
+    Examples.ex115.judgment = .acceptable ∧
+    Examples.ex113.judgment = .ungrammatical ∧
+    Examples.ex114.judgment = .ungrammatical := by decide
 
 end FillmoreKayOConnor1988
