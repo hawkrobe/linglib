@@ -38,8 +38,9 @@ immaterial for the result and content readings.
   denotation: the event and result readings are mirror images
 * `readingFromAllosemes_isSome_iff_denote` — the reading table has a
   reading exactly where the composed denotation is defined
-* `cen_result_ambiguity` — one deverbal context licenses several n
-  allosemes: nominalization ambiguity as non-singleton licensing
+* `v_ambiguity`, `cen_result_ambiguity` — one deverbal context licenses
+  both v allosemes and several n allosemes: nominalization ambiguity as
+  non-singleton licensing
 * `vAllosemic_isAllosemous` — v's contextual meaning variation on the
   shared `Realization.Interpreted` carrier
 
@@ -71,11 +72,13 @@ open Minimalist.Voice (Flavor Head)
 
 /-! ### v allosemy -/
 
-/-- Allosemes of the verbal categorizer v ([benz-2025] §2.2;
-    [wood-2023]): v either contributes eventive semantics or is
-    semantically null, and in nominalization contexts both are available
-    for the same root — the CEN vs SEN/RN ambiguity arises from v's
-    alloseme, not from the root. -/
+/-- The allosemes of the verbal categorizer v that the nominalization
+    typology turns on ([benz-2025] §2.2, after [wood-2023]): v is either
+    interpreted exactly as in the verbal domain or receives a zero
+    alloseme. The proposal is symmetric in v and n — *observation* is
+    eventive when v is interpreted and n vacuous, referential when n is
+    interpreted and v vacuous: one root, one structure, the readings
+    differing in which head's alloseme is contentful. -/
 inductive VAlloseme where
   | eventive   -- introduces an event variable (CEN contexts)
   | zero       -- semantically Ø / identity (SEN/RN contexts)
@@ -86,8 +89,11 @@ def VAlloseme.introducesEvent : VAlloseme → Bool
   | .eventive => true
   | .zero     => false
 
-/-- v allosemy as an `AllosemicHead`: eventive under an eventive
-complement, zero elsewhere. -/
+/-- v allosemy as an `AllosemicHead`: the eventive alloseme requires an
+eventive complement, while the zero alloseme is the unconditioned
+elsewhere option, available trivially in any context ([benz-2025] §2.2).
+Engine selection picks the more specific eventive alloseme in eventive
+contexts; `licensed` keeps both (`v_ambiguity`). -/
 def vAllosemic : AllosemicHead VAlloseme where
   morpheme := .v
   entries := [
@@ -96,8 +102,17 @@ def vAllosemic : AllosemicHead VAlloseme where
     , context := { complementIsEventive := true } },
     { label := "v_zero"
     , denotation := .zero
-    , context := { complementIsEventive := false } }
+    , context := {} }
   ]
+
+/-- Both v allosemes are licensed under an eventive complement — the
+zero alloseme is the elsewhere option — so an *observation*-type
+nominalization supports the eventive and the referential reading from
+one structure ([benz-2025] §2.2's symmetric proposal). -/
+theorem v_ambiguity :
+    VAlloseme.eventive ∈ vAllosemic.licensed { complementIsEventive := true }
+      ∧ VAlloseme.zero ∈ vAllosemic.licensed { complementIsEventive := true } := by
+  constructor <;> decide
 
 /-- Root change-type conditions v alloseme selection: result roots,
     which entail a prior change, demand the event variable; property
@@ -288,7 +303,10 @@ inductive NominalizationReading where
     'rumor', *fact*, *idea*) have the reading with no corresponding verb
     ([benz-2025] §3.5, Table 2). The non-deverbal allosemes yield no
     nominalization reading — their semantics lives in
-    `Categorizer/Semantics.lean`. -/
+    `Categorizer/Semantics.lean`. [benz-2025] §2.2 further observes that
+    referential readings could instead involve no v at all, a
+    root-attached n — a different structure rather than a different
+    alloseme, outside this table. -/
 def readingFromAllosemes : VAlloseme → NAlloseme → Option NominalizationReading
   | .eventive, .zero        => some .complexEvent
   | .eventive, .result      => some .result   -- both-heads-interpreted option
