@@ -166,7 +166,7 @@ theorem english_ssg :
 /-- The comparative form is synthetic (a single morphological word,
     not periphrastic "more X"), detected as the absence of a space in
     the form string. Structural counterpart:
-    `Morphology.DistributedMorphology.Synthesis` (see the worked vocabularies
+    `DistributedMorphology.Synthesis` (see the worked vocabularies
     below). -/
 def IsSyntheticComp (e : AdjModifierEntry) : Prop :=
   ∃ f ∈ e.formComp, ' ' ∉ f.toList
@@ -270,7 +270,7 @@ and the two unattested shapes are exhibited as violations of exactly
 one condition each: AAB violates `Grounded` ((202)), surface ABA
 violates `Antihomophonous` ((44)). -/
 
-open Morphology.Containment Morphology.DistributedMorphology
+open Morphology.Containment DistributedMorphology
 
 /-- Czech BAD ([bobaljik-2012] (39)): root allomorph `hor-` conditioned
     by CMPR, elsewhere `špatn-`. -/
@@ -402,7 +402,7 @@ theorem fakeAba_not_antihomophonous : ¬ Antihomophonous fakeAba := by decide
 /-! ### Synthesis: the Merger layer on the worked vocabularies -/
 
 /-- The structural synthetic/analytic notion
-    (`Morphology.DistributedMorphology.Synthesis`) on English `good`: the word
+    (`DistributedMorphology.Synthesis`) on English `good`: the word
     merges through the superlative (`wordTop = 2`), and since the
     word-internal realization shows distinct root forms at the positive
     and comparative grades, `rsg` certifies the comparative as

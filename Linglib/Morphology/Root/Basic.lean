@@ -17,7 +17,8 @@ free form as a proper part. The definition is deliberately inclusive
 `Studies/Qin2025.lean` grades instances by canonicity, and
 [haspelmath-2025-root]'s contentfulness-gated alternative is
 `Studies/Haspelmath2025Root.lean`. Consonantal skeletons are
-`ConsonantalRoot`; DM's acategorial root is `Morphology/DistributedMorphology/Root.lean`.
+`ConsonantalRoot`; DM's acategorial root is `DistributedMorphology.Root`
+(`Morphology/DistributedMorphology/Defs.lean`).
 
 ## Main declarations
 

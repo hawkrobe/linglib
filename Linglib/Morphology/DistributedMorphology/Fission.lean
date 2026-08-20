@@ -49,7 +49,7 @@ as in [noyer-1992]'s original mechanism. Consumed by
   repair of the T-Noninitiality constraint.)
 -/
 
-namespace Morphology.DistributedMorphology
+namespace DistributedMorphology
 
 /-- A Fission rule is parameterized over:
 * `Bundle` — the fissioned morphological feature bundle (e.g., φ-features);
@@ -113,4 +113,4 @@ theorem isSome_apply :
 
 end FissionRule
 
-end Morphology.DistributedMorphology
+end DistributedMorphology

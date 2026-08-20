@@ -88,7 +88,7 @@ theorem isGrammatical_table :
 
 /-- Every root class verbalizes under some v/Voice⁰ head:
     categorization is free at category grain
-    (`Morphology.DistributedMorphology.same_root_different_category`); the paradigm gaps
+    (`DistributedMorphology.same_root_different_category`); the paradigm gaps
     are flavor-level selection (`selects`). -/
 theorem every_class_verbalizes (rc : RootClass) :
     ∃ vs, isGrammatical rc vs = true := by
@@ -98,7 +98,7 @@ theorem every_class_verbalizes (rc : RootClass) :
 /-- Each v/Voice⁰ head is a verbal categorizer in the DM sense
     ([coon-2019] treats all four as bundled v/Voice⁰). -/
 def _root_.Chuj.VoiceSuffix.categorizer :
-    VoiceSuffix → Morphology.DistributedMorphology.Categorizer :=
+    VoiceSuffix → DistributedMorphology.Categorizer :=
   λ _ => .v
 
 /-- A root class forms bare transitive stems exactly when it licenses

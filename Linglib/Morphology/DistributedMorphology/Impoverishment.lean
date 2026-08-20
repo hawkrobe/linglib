@@ -30,7 +30,7 @@ they are recoverable from agreement, yielding a reduced form. Mam's
 rule is paradigmatic — see `Studies/Scott2023.lean`.
 -/
 
-namespace Morphology.DistributedMorphology.Impoverishment
+namespace DistributedMorphology.Impoverishment
 
 open Minimalist
 
@@ -226,4 +226,4 @@ theorem deleteFeature_idempotent (fb : FeatureBundle) (target : FeatureVal) :
     deleteFeature (deleteFeature fb target) target = deleteFeature fb target := by
   simp only [deleteFeature, Function.update_idem]
 
-end Morphology.DistributedMorphology.Impoverishment
+end DistributedMorphology.Impoverishment

@@ -1,4 +1,5 @@
 import Mathlib.Tactic.TypeStar
+import Linglib.Morphology.DistributedMorphology.Basic
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Realization
 
@@ -41,48 +42,11 @@ The `Categorizer` and `CategorizedRoot` types from
 terminal nodes that VI targets.
 -/
 
-namespace Morphology.DistributedMorphology.VI
+namespace DistributedMorphology.VI
 
 -- ============================================================================
--- § 1: Vocabulary Item
+-- § 1: Vocabulary Insertion
 -- ============================================================================
-
-/-- A Vocabulary Item: a rule mapping morphosyntactic context to a
-    phonological exponent.
-
-    - `Ctx`: the type of morphosyntactic contexts (e.g., feature bundles)
-    - `Root`: the type of root identifiers (for root-specific rules)
-
-    The `specificity` field encodes the Elsewhere Condition: when
-    multiple rules match, the highest-specificity rule wins. In
-    practice, specificity equals the number of features the context
-    checks — a rule conditioned on [ACC, +animate] (specificity 2) beats
-    a default rule with no feature requirements (specificity 0). -/
-structure VocabItem (Ctx Root : Type*) where
-  /-- The phonological exponent inserted at the terminal. -/
-  exponent : String
-  /-- Context check: does the terminal's feature bundle match? -/
-  contextMatch : Ctx → Bool
-  /-- Root restriction: which roots this rule applies to.
-      `none` means the rule is unrestricted (default/elsewhere). -/
-  rootMatch : Option (Root → Bool) := none
-  /-- Specificity for Elsewhere Condition resolution. Higher = more
-      specific. When two rules both match, the higher-specificity
-      rule wins. -/
-  specificity : Nat := 0
-
--- ============================================================================
--- § 2: Vocabulary Insertion
--- ============================================================================
-
-/-- Does a Vocabulary Item match at a given terminal node?
-    Checks both the morphosyntactic context and the root restriction. -/
-def VocabItem.matches {Ctx Root : Type*}
-    (vi : VocabItem Ctx Root) (ctx : Ctx) (root : Root) : Bool :=
-  vi.contextMatch ctx &&
-  match vi.rootMatch with
-  | none => true
-  | some f => f root
 
 /-- Insert a Vocabulary Item at a terminal node. Tries all rules in
     specificity order (highest first); returns the exponent of the
@@ -105,7 +69,7 @@ def vocabularyInsertSimple {Ctx : Type*}
   vocabularyInsert rules ctx ()
 
 -- ============================================================================
--- § 3: Feature-Set Vocabulary Items (Subset Principle)
+-- § 2: Feature-Set Vocabulary Items (Subset Principle)
 -- ============================================================================
 
 /-- A feature-set vocabulary item for the Subset Principle.
@@ -147,7 +111,7 @@ theorem elsewhere_always_matches {F E : Type*} [BEq F]
   simp [List.all_nil]
 
 -- ============================================================================
--- § 4: The shared exponence core
+-- § 3: The shared exponence core
 -- ============================================================================
 
 section ExponenceCore
@@ -155,14 +119,6 @@ section ExponenceCore
 open Morphology.Exponence
 
 variable {Ctx Root : Type*}
-
-/-- A Vocabulary Item exposes the shared exponence core interface
-(`Morphology.Exponence.Rule`): contexts are (feature-context, root)
-pairs, applicability is `matches`. -/
-instance : Exponence.Rule (VocabItem Ctx Root) (Ctx × Root) String :=
-  ⟨VocabItem.exponent, fun vi cr => vi.matches cr.1 cr.2 = true⟩
-
-instance : Preorder (VocabItem Ctx Root) := Exponence.toPreorder
 
 /-- The stipulated `specificity` rank is **faithful** when it refines
 the derived specificity of the shared core: a strictly more specific
@@ -247,4 +203,4 @@ theorem toRealization_isUnivalent {Ctx Root : Type*}
     simp only [toRealization]
     cases vocabularyInsert rules c r <;> simp
 
-end Morphology.DistributedMorphology.VI
+end DistributedMorphology.VI

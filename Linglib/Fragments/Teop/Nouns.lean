@@ -19,7 +19,7 @@ aPossessed (with n_{alienator}) → gender II.
 
 namespace Teop
 
-open Morphology.DistributedMorphology
+open DistributedMorphology
 
 -- ============================================================================
 -- § 1: Gender Classes
@@ -159,34 +159,34 @@ def Gender.toGender : Gender → _root_.Gender
 -- § 8: Bridge to DM Categorizer ([kramer-2015] Ch 5)
 -- ============================================================================
 
-open Morphology.DistributedMorphology in
+open DistributedMorphology in
 /-- Map Teop gender classes to their DM categorizing heads.
     Gender I (animates) ↔ n i[+ANIM]; Gender II (inanimates) ↔ plain n. -/
 def Gender.toCatHead : Gender → CatHead
   | .gI  => CatHead.n_iAnim
   | .gII => CatHead.n_plain
 
-open Morphology.DistributedMorphology in
+open DistributedMorphology in
 /-- Gender I maps to a natural (interpretable) gender feature. -/
 theorem gI_natural_gender :
     Gender.gI.toCatHead.phi.gender = some ⟨.i, ⟨.anim, .pos⟩⟩ := rfl
 
-open Morphology.DistributedMorphology in
+open DistributedMorphology in
 /-- Gender II maps to plain n (no gender feature). -/
 theorem gII_no_gender :
     Gender.gII.toCatHead.phi.gender = none := rfl
 
-open Morphology.DistributedMorphology in
+open DistributedMorphology in
 /-- Body-part nouns when iPossessed switch to n with u[+ANIM]
     ([adamson-2024] §3.1). -/
 def iPossessedCatHead (n : Noun) : CatHead :=
   if n.isBodyPart then CatHead.n_uAnim else n.gender.toCatHead
 
-open Morphology.DistributedMorphology in
+open DistributedMorphology in
 theorem spleen_ipossessed_cathead :
     iPossessedCatHead bina = CatHead.n_uAnim := rfl
 
-open Morphology.DistributedMorphology in
+open DistributedMorphology in
 theorem spleen_free_cathead :
     bina.gender.toCatHead = CatHead.n_plain := rfl
 

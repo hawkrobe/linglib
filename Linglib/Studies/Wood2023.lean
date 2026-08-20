@@ -60,7 +60,7 @@ with multiple context-dependent meanings:
 
 namespace Wood2023
 
-open Morphology.DistributedMorphology.Allosemy
+open DistributedMorphology.Allosemy
 open Icelandic.Nominalizations
 open Icelandic.Predicates
 open Wood2015 (opnastInfo)
@@ -385,7 +385,7 @@ bridge in `Panagiotidis2015.lean` (`namespace MdSBridge`) noted as
 namespace MdSPanaDivergence
 
 open McNallyDeSwart2011
-open Morphology.DistributedMorphology.Allosemy
+open DistributedMorphology.Allosemy
 
 /-- Wood's framework requires every `n`-headed nominalisation to commit
     to an `NAlloseme` (one of the 9 cases). Panagiotidis's framework

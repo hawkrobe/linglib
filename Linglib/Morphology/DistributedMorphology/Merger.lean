@@ -44,8 +44,9 @@ refinements of [moskal-2015] and [smith-moskal-xu-kang-bobaljik-2019].
   `Synthesis.domainPartition`
 -/
 
-namespace Morphology.DistributedMorphology
+namespace DistributedMorphology
 
+open Morphology (Paradigm IsContiguous)
 open Morphology.Containment
 
 variable {n : ℕ} {F : Type*}
@@ -253,4 +254,4 @@ theorem Synthesis.sameDomain_domainPartition_iff {s : Synthesis n} {i j : Fin n}
     SameDomain s.domainPartition i j ↔ (s.SyntheticAt i ↔ s.SyntheticAt j) := by
   simp [SameDomain, domainPartition, decide_eq_decide]
 
-end Morphology.DistributedMorphology
+end DistributedMorphology

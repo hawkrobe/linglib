@@ -725,7 +725,7 @@ theorem searchOutcome_valued_but_unvalued (rest : List Encounter) :
     the pronominal base morphemes *qin* ([+author,+singular]) and *qo*
     ([+author,−singular]), yielding reduced pronouns.
 
-    We model this using `Morphology.DistributedMorphology.Impoverishment.ImpoverishmentRule`.
+    We model this using `DistributedMorphology.Impoverishment.ImpoverishmentRule`.
     The condition checks for [+author] (= first person in our feature
     system), and the target is [±singular] (= number). -/
 
@@ -736,8 +736,8 @@ theorem searchOutcome_valued_but_unvalued (rest : List Encounter) :
     Built via the `paradigmatic` smart constructor — the F-diacritic
     condition only inspects the focus bundle (the agreed-with pronoun's
     own features), so the rule is paradigmatic by construction. -/
-def mamImpoverishmentRule : Morphology.DistributedMorphology.Impoverishment.ImpoverishmentRule :=
-  Morphology.DistributedMorphology.Impoverishment.paradigmatic
+def mamImpoverishmentRule : DistributedMorphology.Impoverishment.ImpoverishmentRule :=
+  DistributedMorphology.Impoverishment.paradigmatic
     -- Check for [+author] (= valued first person): the F diacritic
     -- condition is modeled by this rule only being applied in
     -- agreed-with contexts (subj/poss position, not objects).
@@ -748,13 +748,13 @@ def mamImpoverishmentRule : Morphology.DistributedMorphology.Impoverishment.Impo
 
 /-- Mam's rule is paradigmatic — discharged by the smart constructor. -/
 theorem mamImpoverishment_paradigmatic :
-    Morphology.DistributedMorphology.Impoverishment.Paradigmatic mamImpoverishmentRule :=
-  Morphology.DistributedMorphology.Impoverishment.paradigmatic_isParadigmatic _ _
+    DistributedMorphology.Impoverishment.Paradigmatic mamImpoverishmentRule :=
+  DistributedMorphology.Impoverishment.paradigmatic_isParadigmatic _ _
 
 /-- The impoverishment rule fires for 1st person bundles. -/
 theorem impoverishment_fires_1sg :
     mamImpoverishmentRule.condition
-      (Morphology.DistributedMorphology.Impoverishment.Neighborhood.ofBundle
+      (DistributedMorphology.Impoverishment.Neighborhood.ofBundle
         (.ofGramFeatures
           [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])) := by
   decide
@@ -762,7 +762,7 @@ theorem impoverishment_fires_1sg :
 /-- The impoverishment rule does NOT fire for 3rd person bundles. -/
 theorem impoverishment_blocked_3sg :
     ¬ mamImpoverishmentRule.condition
-        (Morphology.DistributedMorphology.Impoverishment.Neighborhood.ofBundle
+        (DistributedMorphology.Impoverishment.Neighborhood.ofBundle
           (.ofGramFeatures
             [.valued (.phi (.person .third)), .valued (.phi (.number .singular))])) := by
   decide

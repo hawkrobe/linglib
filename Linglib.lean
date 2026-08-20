@@ -1249,14 +1249,15 @@ import Linglib.Morphology.Construction.SameExcept
 import Linglib.Morphology.Construction.Schema
 import Linglib.Morphology.Construction.Sister
 import Linglib.Morphology.DistributedMorphology.Allosemy
+import Linglib.Morphology.DistributedMorphology.Basic
 import Linglib.Morphology.DistributedMorphology.Categorizer
 import Linglib.Morphology.DistributedMorphology.CategorizerSemantics
+import Linglib.Morphology.DistributedMorphology.Defs
 import Linglib.Morphology.DistributedMorphology.DomainLocality
 import Linglib.Morphology.DistributedMorphology.Fission
 import Linglib.Morphology.DistributedMorphology.Impoverishment
 import Linglib.Morphology.DistributedMorphology.Merger
 import Linglib.Morphology.DistributedMorphology.NominalStructure
-import Linglib.Morphology.DistributedMorphology.Root
 import Linglib.Morphology.DistributedMorphology.VocabSimple
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
 import Linglib.Morphology.Exponence.Basic

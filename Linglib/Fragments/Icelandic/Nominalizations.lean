@@ -18,7 +18,7 @@ connecting them to the -st verb data in `Predicates.lean`.
 
 namespace Icelandic.Nominalizations
 
-open Morphology.DistributedMorphology.Allosemy
+open DistributedMorphology.Allosemy
 open Icelandic.Predicates
 
 -- ============================================================================

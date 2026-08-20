@@ -19,7 +19,7 @@ within nP can condition gender; features outside nP cannot.
 
 namespace Italian.NumberGender
 
-open Morphology.DistributedMorphology
+open DistributedMorphology
 
 -- ============================================================================
 -- § 1: Plural Classes
