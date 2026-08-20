@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Idiom
 import Linglib.Syntax.ConstructionGrammar.Inheritance
@@ -29,15 +34,16 @@ the linguists × languages model is the paper's own 2D example.
 
 ## Main declarations
 
-- `FillmoreKayOConnor1988.ScalarModel`: argument points, `entails`,
-  `strongerThan` (A5), `negEntails` (A4), `satisfiesA3`
+- `FillmoreKayOConnor1988.IsScalarModel`: definition A3, over points in
+  their product order and propositions ordered by entailment; `NegEntails`
+  is definition A4
 - `FillmoreKayOConnor1988.letAloneConstruction`, `LetAloneConditions`,
   `ex21Conditions`: the construction, its felicity conditions (p. 528),
   and their instantiation for ex. 21
 - `FillmoreKayOConnor1988.let_alone_irreducible`: *let alone* is not fully
   compositional
-- `FillmoreKayOConnor1988.rankScalarModel`, `linguistLangModel`: worked
-  scalar models
+- `FillmoreKayOConnor1988.MadeRank`, `CanRead`: the worked scalar
+  models
 - `Data.Examples.FillmoreKayOConnor1988`: the paper's judgment data
   (generated module; `Examples.all`)
 -/
@@ -49,104 +55,48 @@ open Features (Polarity)
 
 /-! ### Scalar models (§2.3.2, Appendix)
 
-The formal backbone of the paper: an n-dimensional argument space with a
-monotonicity constraint on propositional functions. Definition A3 (p. 536):
-⟨S, T, Dˣ, P⟩ is a scalar model iff, for distinct dᵢ, dⱼ in Dˣ, P(dⱼ)
-entails P(dᵢ) just in case dᵢ is lower than dⱼ. -/
+The argument space Dˣ is a product of scales carrying its product order:
+definition A2's "dᵢ is lower than dⱼ" (p. 536) — no coordinate higher, at
+least one strictly lower — is `di < dj` in that order. Propositions are
+ordered by entailment — `P dj ≤ P di`, pointwise over states — so
+definition A5's "stronger" (p. 537) is strict entailment `P dj < P di`.
+Definition A3 (p. 536) then classifies propositional functions:
+⟨S, T, Dˣ, P⟩ is a scalar model iff, for distinct dᵢ, dⱼ, P(dⱼ) entails
+P(dᵢ) just in case dᵢ is lower than dⱼ. -/
 
-/-- An argument point in the n-dimensional argument space Dˣ. In the
-paper's 2D example, (Brilliant, English) is an argument point in the
-linguists × languages space. -/
-structure ArgumentPoint (α : Type*) where
-  /-- Coordinates, one per dimension -/
-  coordinates : List α
-  deriving DecidableEq, Repr
+variable {Point S : Type*}
 
-/-- dᵢ is LOWER than dⱼ (definition A2, p. 536): no coordinate of dᵢ has a
-higher value than the corresponding coordinate of dⱼ, and at least one
-coordinate is strictly lower. -/
-def ArgumentPoint.isLower {α : Type*} (le : α → α → Bool)
-    (di dj : ArgumentPoint α) : Bool :=
-  (di.coordinates.zip dj.coordinates).all (λ ⟨a, b⟩ => le a b) &&
-  (di.coordinates.zip dj.coordinates).any (λ ⟨a, b⟩ => le a b && !(le b a))
+instance {P Q : S → Prop} [Fintype S] [DecidablePred P] [DecidablePred Q] :
+    Decidable (P ≤ Q) :=
+  inferInstanceAs (Decidable (∀ s, P s → Q s))
 
-/-- A scalar model candidate: argument points, a propositional function,
-and a per-dimension ordering. Definition A3's monotonicity constraint is
-checked by `satisfiesA3` rather than carried as a field, so that
-deliberately defective models can be discussed. -/
-structure ScalarModel (S : Type*) (α : Type*) where
-  /-- Argument points (elements of Dˣ) -/
-  points : List (ArgumentPoint α)
-  /-- Propositional function: argument point → proposition over states -/
-  propFn : ArgumentPoint α → S → Bool
-  /-- Ordering on individual dimension values -/
-  dimLe : α → α → Bool
-
-/-- Scalar entailment: P(dⱼ) entails P(dᵢ) iff every state verifying P(dⱼ)
-verifies P(dᵢ). -/
-def ScalarModel.entails {S α : Type*} (sm : ScalarModel S α)
-    (dj di : ArgumentPoint α) : Prop :=
-  ∀ s, sm.propFn dj s = true → sm.propFn di s = true
-
-instance {S α : Type*} [Fintype S] (sm : ScalarModel S α)
-    (dj di : ArgumentPoint α) : Decidable (sm.entails dj di) :=
-  inferInstanceAs (Decidable (∀ _s, _ = true → _ = true))
-
-/-- Informativeness/strength (definition A5, p. 537): p is MORE INFORMATIVE
-(STRONGER) than q relative to a scalar model iff p entails q and q does not
-entail p. -/
-def ScalarModel.strongerThan {S α : Type*} (sm : ScalarModel S α)
-    (dj di : ArgumentPoint α) : Prop :=
-  sm.entails dj di ∧ ¬sm.entails di dj
-
-instance {S α : Type*} [Fintype S] (sm : ScalarModel S α)
-    (dj di : ArgumentPoint α) : Decidable (sm.strongerThan dj di) :=
+instance {P Q : S → Prop} [Fintype S] [DecidablePred P] [DecidablePred Q] :
+    Decidable (P < Q) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Negative scalar entailment (definition A4, p. 536): ¬P(dᵢ) entails
-¬P(dⱼ) just in case dᵢ is lower than dⱼ. This is the direction at work in
-the canonical negative *let alone* sentences: "he didn't make colonel; a
-fortiori, he didn't make general" (p. 523). -/
-def ScalarModel.negEntails {S α : Type*} (sm : ScalarModel S α)
-    (di dj : ArgumentPoint α) : Prop :=
-  ∀ s, sm.propFn di s = false → sm.propFn dj s = false
-
-instance {S α : Type*} [Fintype S] (sm : ScalarModel S α)
-    (di dj : ArgumentPoint α) : Decidable (sm.negEntails di dj) :=
-  inferInstanceAs (Decidable (∀ _s, _ = false → _ = false))
-
-/-- A5 strength for negated propositions: ¬P(dᵢ) is stronger than ¬P(dⱼ)
-iff it entails and is not entailed by it. -/
-def ScalarModel.negStrongerThan {S α : Type*} (sm : ScalarModel S α)
-    (di dj : ArgumentPoint α) : Prop :=
-  sm.negEntails di dj ∧ ¬sm.negEntails dj di
-
-instance {S α : Type*} [Fintype S] (sm : ScalarModel S α)
-    (di dj : ArgumentPoint α) : Decidable (sm.negStrongerThan di dj) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Forward half of definition A3 over a finite state list: whenever dᵢ is
-lower than dⱼ, P(dⱼ) entails P(dᵢ). -/
-def ScalarModel.satisfiesA3Forward {S α : Type*}
-    (sm : ScalarModel S α) (states : List S) : Bool :=
-  sm.points.all λ di =>
-    sm.points.all λ dj =>
-      if di.isLower sm.dimLe dj then
-        states.all λ s => !(sm.propFn dj s) || sm.propFn di s
-      else true
-
-/-- Full definition A3 over a finite state list: for *distinct* dᵢ, dⱼ,
-P(dⱼ) entails P(dᵢ) **just in case** dᵢ is lower than dⱼ. The biconditional
-is demanding: a state list too sparse to separate the points produces
-artifact entailments between incomparable points and fails this check (see
+/-- Definition A3 (p. 536): for distinct points, entailment of the
+propositions reflects the reversed point order. The biconditional is
+demanding: a state space too sparse to separate the points produces
+artifact entailments between incomparable points and fails it (see
 `ll_sparse_fails_A3`). -/
-def ScalarModel.satisfiesA3 {S α : Type*} [DecidableEq α]
-    (sm : ScalarModel S α) (states : List S) : Bool :=
-  sm.points.all λ di =>
-    sm.points.all λ dj =>
-      if di = dj then true
-      else (states.all λ s => !(sm.propFn dj s) || sm.propFn di s)
-             == di.isLower sm.dimLe dj
+def IsScalarModel [Preorder Point] (P : Point → S → Prop) : Prop :=
+  ∀ di dj : Point, di ≠ dj → (P dj ≤ P di ↔ di < dj)
+
+instance [Preorder Point] [DecidableEq Point] [DecidableLT Point]
+    [Fintype Point] [Fintype S] (P : Point → S → Prop)
+    [∀ d, DecidablePred (P d)] : Decidable (IsScalarModel P) :=
+  inferInstanceAs
+    (Decidable (∀ di dj : Point, di ≠ dj → (P dj ≤ P di ↔ di < dj)))
+
+/-- Definition A4 (p. 536): ¬P(dᵢ) entails ¬P(dⱼ) — the direction at work
+in the canonical negative *let alone* sentences: "he didn't make colonel;
+a fortiori, he didn't make general" (p. 523). -/
+def NegEntails (P : Point → S → Prop) (di dj : Point) : Prop :=
+  ∀ s, ¬ P di s → ¬ P dj s
+
+instance [Fintype S] (P : Point → S → Prop) [∀ d, DecidablePred (P d)]
+    (di dj : Point) : Decidable (NegEntails P di dj) :=
+  inferInstanceAs (Decidable (∀ s, _ → _))
 
 /-! ### The *let alone* construction (§2.1–2.4) -/
 
@@ -187,34 +137,39 @@ through definition A4 in the negative case: in "he didn't make colonel,
 let alone general" (ex. 21), ¬P(colonel) is stronger than ¬P(general)
 because colonel is the *lower* point. The paper itself flags the potential
 confusion between point-strength and clause-strength here (p. 532). -/
-structure LetAloneConditions (S α : Type*) where
-  /-- The presupposed scalar model -/
-  scalarModel : ScalarModel S α
+structure LetAloneConditions (Point S : Type*) where
+  /-- The presupposed scalar model's propositional function -/
+  P : Point → S → Prop
   /-- Argument point for the A focus (in the initial, full clause) -/
-  focusA : ArgumentPoint α
+  focusA : Point
   /-- Argument point for the B focus (in the reduced clause) -/
-  focusB : ArgumentPoint α
+  focusB : Point
   /-- Condition (2): shared polarity of the two clauses -/
   polarity : Polarity
   /-- Condition (3): the full clause expresses the stronger proposition —
-      via A4 under negation, via A5 directly under positive polarity
-      (the attested positive cases, exx. 71–72, p. 519) -/
+      via A4 under negation, via A5's strict entailment directly under
+      positive polarity (the attested positive cases, exx. 71–72,
+      p. 519) -/
   fullClauseStronger :
     match polarity with
-    | .negative => scalarModel.negStrongerThan focusA focusB
-    | .positive => scalarModel.strongerThan focusA focusB
+    | .negative => NegEntails P focusA focusB ∧ ¬ NegEntails P focusB focusA
+    | .positive => P focusA < P focusB
 
 /-- The *let alone* family (p. 533): conjunctions presupposing a scalar
 model relating their conjuncts. "*Let alone*, together with *much less*
 and *not to mention*, presents the stronger statement first"; *in fact*
 and *if not* present it second. -/
 inductive LetAloneFamily where
-  | letAlone      -- "He didn't make colonel, let alone general"
-  | muchLess      -- stronger first
-  | notToMention  -- stronger first
-  | neverMind     -- "She didn't eat a BITE, never mind a WHOLE MEAL" (ex. 49)
-  | ifNot         -- "I believe he made colonel, if not general" (ex. 132)
-  | inFact        -- stronger point second (ex. 131)
+  /-- "He didn't make colonel, let alone general." -/
+  | letAlone
+  | muchLess
+  | notToMention
+  /-- "She didn't eat a BITE, never mind a WHOLE MEAL" (ex. 49). -/
+  | neverMind
+  /-- "I believe he made colonel, if not general" (ex. 132). -/
+  | ifNot
+  /-- Presents the stronger point second (ex. 131). -/
+  | inFact
   deriving DecidableEq, Repr
 
 /-- Clause ordering within the family (p. 533). The paper's explicit
@@ -235,14 +190,23 @@ attainment qualifiers, these and more" — over nine examples; the last
 three cases are formalizer labels for the remaining illustrated
 environments. -/
 inductive LetAloneNPITrigger where
-  | simpleNegation        -- ex. 62: "He didn't reach Denver, let alone Chicago"
-  | tooComplementation    -- ex. 63: "I'm too tired to get up, let alone go running (with you)"
-  | comparisonOfInequality -- ex. 64
-  | onlyDeterminer        -- ex. 65: "Only a linguist would BUY that book, let alone READ it"
-  | minimalAttainment     -- ex. 66: "I barely got up in time for lunch, let alone breakfast"
-  | conditionalSurprise   -- ex. 68
-  | failureVerb           -- ex. 69: "failed to reach the sixth GRADE … get a B.A."
-  | anyoneWhod            -- ex. 70: "Anyone who'd been to HIGH SCHOOL, let alone GRADUATE students in MATH, should be able to solve that problem"
+  /-- Ex. 62: "He didn't reach Denver, let alone Chicago." -/
+  | simpleNegation
+  /-- Ex. 63: "I'm too tired to get up, let alone go running with you." -/
+  | tooComplementation
+  /-- Ex. 64. -/
+  | comparisonOfInequality
+  /-- Ex. 65: "Only a linguist would BUY that book, let alone READ it." -/
+  | onlyDeterminer
+  /-- Ex. 66: "I barely got up in time for lunch, let alone breakfast." -/
+  | minimalAttainment
+  /-- Ex. 68. -/
+  | conditionalSurprise
+  /-- Ex. 69: "failed to reach the sixth GRADE … get a B.A.". -/
+  | failureVerb
+  /-- Ex. 70: "Anyone who'd been to HIGH SCHOOL, let alone GRADUATE
+  students in MATH, should be able to solve that problem." -/
+  | anyoneWhod
   deriving DecidableEq, Repr
 
 open Polarity in
@@ -355,8 +319,7 @@ def Rank.idx : Rank → Nat
   | .colonel => 4
   | .general => 5
 
-/-- Rank ordering. -/
-def rankLe (a b : Rank) : Bool := a.idx ≤ b.idx
+instance : LinearOrder Rank := .lift' Rank.idx (by decide)
 
 /-- Career outcomes: the down-sets of the rank chain — either no
 commission, or every rank up to some ceiling. -/
@@ -365,69 +328,57 @@ inductive AchievementState where
   | achievedUpTo (ceiling : Rank)
   deriving DecidableEq, Repr, Fintype
 
-/-- "He made rank r" holds iff the career reached at least r. -/
-def madeRank (r : Rank) : AchievementState → Bool
-  | .achievedNone => false
-  | .achievedUpTo c => rankLe r c
+/-- "He made rank r": the career reached at least r. -/
+def MadeRank (r : Rank) : AchievementState → Prop
+  | .achievedNone => False
+  | .achievedUpTo c => r ≤ c
 
-/-- All career outcomes. -/
-def rankStates : List AchievementState :=
-  [ .achievedNone
-  , .achievedUpTo .secondLieutenant, .achievedUpTo .lieutenant
-  , .achievedUpTo .captain, .achievedUpTo .major
-  , .achievedUpTo .colonel, .achievedUpTo .general ]
-
-/-- The military rank scalar model. -/
-def rankScalarModel : ScalarModel AchievementState Rank :=
-  { points := [⟨[.secondLieutenant]⟩, ⟨[.lieutenant]⟩, ⟨[.captain]⟩,
-               ⟨[.major]⟩, ⟨[.colonel]⟩, ⟨[.general]⟩]
-  , propFn := λ pt => match pt.coordinates.head? with
-      | some r => madeRank r
-      | none => λ _ => false
-  , dimLe := rankLe }
+instance (r : Rank) : DecidablePred (MadeRank r) := fun s =>
+  match s with
+  | .achievedNone => inferInstanceAs (Decidable False)
+  | .achievedUpTo c => inferInstanceAs (Decidable (r ≤ c))
 
 /-- The rank model satisfies full definition A3: for distinct ranks,
 entailment holds exactly when the entailed point is lower. The down-set
 state space is what makes the biconditional (not just its forward half)
 go through. -/
-theorem rank_model_satisfiesA3 :
-    rankScalarModel.satisfiesA3 rankStates = true := by decide
+theorem rank_model_satisfiesA3 : IsScalarModel MadeRank := by decide
 
 /-- "He made general" entails "he made colonel" (A3, forward). -/
 theorem general_entails_colonel :
-    rankScalarModel.entails ⟨[.general]⟩ ⟨[.colonel]⟩ := by decide
+    MadeRank .general ≤ MadeRank .colonel := by decide
 
 /-- "He made colonel" does not entail "he made general" (A3, converse
 direction for the higher point). -/
 theorem colonel_does_not_entail_general :
-    ¬ rankScalarModel.entails ⟨[.colonel]⟩ ⟨[.general]⟩ := by decide
+    ¬ MadeRank .colonel ≤ MadeRank .general := by decide
 
-/-- Making general is the stronger *positive* proposition (A5). NB the
-paper's warning (p. 532): in ex. 21 the clauses are negated, so the
-stronger *clause* is "didn't make colonel" — see `ex21Conditions`. -/
+/-- Making general is the stronger *positive* proposition (A5's strict
+entailment). NB the paper's warning (p. 532): in ex. 21 the clauses are
+negated, so the stronger *clause* is "didn't make colonel" — see
+`ex21Conditions`. -/
 theorem general_stronger_than_colonel :
-    rankScalarModel.strongerThan ⟨[.general]⟩ ⟨[.colonel]⟩ := by
-  exact ⟨general_entails_colonel, colonel_does_not_entail_general⟩
+    MadeRank .general < MadeRank .colonel := by decide
 
 /-- The felicity conditions of p. 528, instantiated for ex. 21
 "I doubt he made COLONEL, let alone GENERAL": negative polarity, A focus
 *colonel*, B focus *general*; the full clause ¬P(colonel) is stronger by
 definition A4 because colonel is the lower point. -/
-def ex21Conditions : LetAloneConditions AchievementState Rank :=
-  { scalarModel := rankScalarModel
-  , focusA := ⟨[.colonel]⟩
-  , focusB := ⟨[.general]⟩
+def ex21Conditions : LetAloneConditions Rank AchievementState :=
+  { P := MadeRank
+  , focusA := .colonel
+  , focusB := .general
   , polarity := .negative
   , fullClauseStronger := by
-      show rankScalarModel.negStrongerThan ⟨[.colonel]⟩ ⟨[.general]⟩
+      show NegEntails MadeRank .colonel .general ∧
+        ¬ NegEntails MadeRank .general .colonel
       decide }
 
 /-- Second lieutenant is the lowest point: no rank is lower. This is the
 paper's explanation (p. 526) of ex. 107's anomaly — with B the lowest
 point, the a-fortiori inference has nothing to conclude. -/
 theorem secondLieutenant_is_lowest :
-    ∀ pt ∈ rankScalarModel.points,
-      ¬ pt.isLower rankLe ⟨[.secondLieutenant]⟩ = true := by decide
+    ∀ r : Rank, ¬ r < .secondLieutenant := by decide
 
 /-! ### The linguists × languages model (§2.3.2, Tables 1–2)
 
@@ -435,131 +386,113 @@ The paper's own 2D example (pp. 526–527; Appendix Tables 3–4, p. 535):
 four professors ordered by erudition, four languages ordered by
 accessibility, and the propositional function "X can read L". -/
 
-/-- Linguists ordered by erudition (most → least). -/
+/-- Linguists ordered by erudition, most erudite lowest (definition A2's
+worked example, p. 537): "Apotheosis reads English" is the easiest
+proposition to satisfy. -/
 inductive Linguist where
   | apotheosis | brilliant | competent | dimm
   deriving DecidableEq, Repr, Fintype
 
-/-- Languages ordered by accessibility (most → least). -/
+/-- Position on the erudition scale. -/
+def Linguist.idx : Linguist → Nat
+  | .apotheosis => 0
+  | .brilliant => 1
+  | .competent => 2
+  | .dimm => 3
+
+instance : LinearOrder Linguist := .lift' Linguist.idx (by decide)
+
+/-- Languages ordered by accessibility, most accessible lowest. -/
 inductive Lang where
   | english | french | greek | hittite
   deriving DecidableEq, Repr, Fintype
 
-/-- Dimension value: a linguist or a language. The argument space is
-Linguist × Lang, encoded as 2-element coordinate lists. -/
-inductive LingLangVal where
-  | ling : Linguist → LingLangVal
-  | lang : Lang → LingLangVal
-  deriving DecidableEq, Repr
+/-- Position on the accessibility scale. -/
+def Lang.idx : Lang → Nat
+  | .english => 0
+  | .french => 1
+  | .greek => 2
+  | .hittite => 3
 
-/-- Dimension ordering. A LOWER point yields a WEAKER proposition
-(definition A2; worked example p. 537: "(B, E) is lower than (B, G)").
-More erudite linguists and more accessible languages are lower: "Apotheosis
-reads English" is the easiest proposition to satisfy. Cross-dimension
-comparisons are false (dimensions are independent). -/
-def lingLangLe : LingLangVal → LingLangVal → Bool
-  | .ling .apotheosis, .ling _ => true
-  | .ling .brilliant,  .ling .apotheosis => false
-  | .ling .brilliant,  .ling _ => true
-  | .ling .competent,  .ling .apotheosis => false
-  | .ling .competent,  .ling .brilliant => false
-  | .ling .competent,  .ling _ => true
-  | .ling .dimm,       .ling .dimm => true
-  | .ling .dimm,       .ling _ => false
-  | .lang .english, .lang _ => true
-  | .lang .french,  .lang .english => false
-  | .lang .french,  .lang _ => true
-  | .lang .greek,   .lang .english => false
-  | .lang .greek,   .lang .french => false
-  | .lang .greek,   .lang _ => true
-  | .lang .hittite, .lang .hittite => true
-  | .lang .hittite, .lang _ => false
-  | .ling _, .lang _ => false
-  | .lang _, .ling _ => false
+instance : LinearOrder Lang := .lift' Lang.idx (by decide)
 
-/-- States of who-reads-what. The first four are Table 2's states a–d
-(p. 527); `diagonal` is a constructed staircase state (not in the paper),
-included to refute converse entailments. -/
+/-- States of who-reads-what. Every state assigns each professor an
+initial segment of the accessibility scale (`threshold`). -/
 inductive LLState where
-  | allFalse    -- Table 2a: nobody reads anything
-  | topLeft     -- Table 2b: only Apotheosis reads English
-  | twoTrue     -- Table 2c: Apotheosis reads English & French, Brilliant reads English
-  | allTrue     -- Table 2d: everybody reads everything
-  | diagonal    -- constructed: Apotheosis reads all, Brilliant up to Greek, Competent up to French, Dimm only English
+  /-- Table 2a (p. 527): nobody reads anything. -/
+  | allFalse
+  /-- Table 2b: only Apotheosis reads English. -/
+  | topLeft
+  /-- Table 2c: Apotheosis reads English and French, Brilliant English. -/
+  | twoTrue
+  /-- Table 2d: everybody reads everything. -/
+  | allTrue
+  /-- A constructed staircase state (not in the paper), included to
+  refute converse entailments. -/
+  | diagonal
   deriving DecidableEq, Repr, Fintype
 
-/-- "Professor X can read language L" in each state. -/
-def canRead : Linguist → Lang → LLState → Bool
-  | _, _, .allFalse => false
-  | _, _, .allTrue  => true
-  | .apotheosis, .english, .topLeft => true
-  | _, _, .topLeft => false
-  | .apotheosis, .english, .twoTrue => true
-  | .apotheosis, .french, .twoTrue  => true
-  | .brilliant, .english, .twoTrue  => true
-  | _, _, .twoTrue => false
-  | .apotheosis, _, .diagonal => true
-  | .brilliant, .hittite, .diagonal => false
-  | .brilliant, _, .diagonal => true
-  | .competent, .english, .diagonal => true
-  | .competent, .french, .diagonal  => true
-  | .competent, _, .diagonal => false
-  | .dimm, .english, .diagonal => true
-  | .dimm, _, .diagonal => false
+/-- How many languages, in accessibility order, each professor reads in
+a state. -/
+def LLState.threshold : LLState → Linguist → Nat
+  | .allFalse, _ => 0
+  | .topLeft, .apotheosis => 1
+  | .topLeft, _ => 0
+  | .twoTrue, .apotheosis => 2
+  | .twoTrue, .brilliant => 1
+  | .twoTrue, _ => 0
+  | .allTrue, _ => 4
+  | .diagonal, .apotheosis => 4
+  | .diagonal, .brilliant => 3
+  | .diagonal, .competent => 2
+  | .diagonal, .dimm => 1
 
-/-- Convenience constructor for 2D argument points. -/
-def llPoint (l : Linguist) (lang : Lang) : ArgumentPoint LingLangVal :=
-  ⟨[.ling l, .lang lang]⟩
+/-- "Professor X can read language L" in a state: L falls within X's
+initial segment of the accessibility scale. -/
+def CanRead (p : Linguist × Lang) (s : LLState) : Prop :=
+  p.2.idx < s.threshold p.1
 
-/-- The linguists × languages scalar model. -/
-def linguistLangModel : ScalarModel LLState LingLangVal :=
-  { points := do
-      let l ← [Linguist.apotheosis, .brilliant, .competent, .dimm]
-      let lang ← [Lang.english, .french, .greek, .hittite]
-      return llPoint l lang
-  , propFn := λ pt =>
-      match pt.coordinates with
-      | [.ling l, .lang lang] => canRead l lang
-      | _ => λ _ => false
-  , dimLe := lingLangLe }
+instance (p : Linguist × Lang) : DecidablePred (CanRead p) := fun _ =>
+  inferInstanceAs (Decidable (_ < _))
 
-/-- All five states. -/
-def llStates : List LLState :=
-  [.allFalse, .topLeft, .twoTrue, .allTrue, .diagonal]
+instance : DecidableLE (Linguist × Lang) := fun _ _ =>
+  inferInstanceAs (Decidable (_ ∧ _))
+
+instance : DecidableLT (Linguist × Lang) := fun _ _ =>
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The 2D model satisfies the forward half of A3 over the five states:
 lower points' propositions are entailed. -/
 theorem ll_model_satisfiesA3Forward :
-    linguistLangModel.satisfiesA3Forward llStates = true := by decide
+    ∀ di dj : Linguist × Lang, di < dj → CanRead dj ≤ CanRead di := by
+  decide
 
-/-- The five-state list is too sparse for full A3: incomparable points end
-up with artifact entailments (e.g. "Brilliant reads Hittite" entails
+/-- The five-state space is too sparse for full A3: incomparable points
+end up with artifact entailments (e.g. "Brilliant reads Hittite" entails
 "Competent reads French" over these states, though the points are
 incomparable), violating A3's only-if direction. A genuine model of the
 paper's Table 2 universe would need the full space of nested states. -/
-theorem ll_sparse_fails_A3 :
-    linguistLangModel.satisfiesA3 llStates = false := by decide
+theorem ll_sparse_fails_A3 : ¬ IsScalarModel CanRead := by decide
 
 /-- "Brilliant can read Hittite" entails "Brilliant can read English":
 Hittite is less accessible, so reading it is the stronger claim. -/
 theorem brilliant_hittite_entails_english :
-    linguistLangModel.entails (llPoint .brilliant .hittite)
-      (llPoint .brilliant .english) := by decide
+    CanRead (.brilliant, .hittite) ≤ CanRead (.brilliant, .english) := by
+  decide
 
 /-- The paper's worked example (p. 537): (Brilliant, English) is lower
 than (Brilliant, Greek). -/
 theorem brilliant_english_lower_than_brilliant_greek :
-    (llPoint .brilliant .english).isLower lingLangLe
-      (llPoint .brilliant .greek) = true := by decide
+    ((.brilliant, .english) : Linguist × Lang) < (.brilliant, .greek) := by
+  decide
 
 /-- (Competent, French) and (Brilliant, Hittite) are incomparable
 (definition A2): Competent > Brilliant on erudition but French < Hittite
 on accessibility. -/
 theorem competent_french_incomparable_brilliant_hittite :
-    (llPoint .competent .french).isLower lingLangLe
-      (llPoint .brilliant .hittite) = false ∧
-    (llPoint .brilliant .hittite).isLower lingLangLe
-      (llPoint .competent .french) = false := by decide
+    ¬ ((.competent, .french) : Linguist × Lang) < (.brilliant, .hittite) ∧
+    ¬ ((.brilliant, .hittite) : Linguist × Lang) < (.competent, .french) := by
+  decide
 
 /-! ### Judgment data
 

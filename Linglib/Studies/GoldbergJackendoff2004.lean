@@ -3,44 +3,25 @@ import Linglib.Data.Examples.GoldbergJackendoff2004
 
 /-!
 # [goldberg-jackendoff-2004]: The English Resultative as a Family of Constructions
-[goldberg-jackendoff-2004]
 
-Paper data and per-datum verifications for [goldberg-jackendoff-2004].
-The construction-theoretic primitives (`ResultativeSubconstruction`,
-`SubeventDesc`, the fusion machinery, the universal-quantifier theorems)
-live in `Syntax/ConstructionGrammar/Resultatives.lean`, which
-this file imports.
+The English resultative is a family of four subconstructions —
+causative/noncausative × property/path RP, summarized as (97) — each
+pairing a verbal with a constructional subevent under a typed relation,
+constrained by Full Argument Realization (37), Semantic Coherence (44),
+telicity from RP boundedness (§4.1), and the temporal relation of the
+subevents (§4.2). The theory-side machinery lives in
+`ConstructionGrammar.Resultatives`; this file runs it on the paper's
+entries and projects the generated example rows
+(`Data.Examples.GoldbergJackendoff2004`) into typed data.
 
-## Key claims
+## Main declarations
 
-1. The English resultative is not one construction but a **family of four subconstructions**
-   organized along two dimensions: causative/noncausative × property/path RP
-2. Every resultative has a **dual subevent structure**: a verbal subevent (from the verb)
-   and a constructional subevent (CAUSE + BECOME/GO from the construction)
-3. The verbal and constructional subevents are linked by typed semantic relations:
-   MEANS, RESULT, INSTANCE, or CO-OCCURRENCE
-4. **Full Argument Realization (FAR)**: all obligatory arguments of both verb and
-   construction must be syntactically realized; shared arguments fuse
-5. **Semantic Coherence**: verb role rV and construction role rC may fuse only if
-   rV is construable as an instance of rC
-6. **Aspectual constraint**: resultatives are telic iff the RP denotes a bounded path/property
-7. **Temporal constraint**: the constructional subevent cannot temporally precede
-   the verbal subevent
-
-## File contents
-
-This file holds:
-
-- The paper's eight resultative *entries* (`hammerFlat`, `pushOffSofa`, …)
-  and the `allEntries` list — concrete data points the paper discusses.
-- Derived-prediction theorems: the theory's fusion and aspect machinery,
-  applied to each entry's independent classification, reproduces the
-  paper's claims about CAUSE/BECOME profiles, telicity, and alternations.
-- A typed empirical-data layer (`ResultativeType`, `ResultativeDatum`,
-  `allExamples`, `aspectualContrasts`) projected from the paper's
-  generated example rows (`Data.Examples.GoldbergJackendoff2004`:
-  exx. 5–9, 23–24, 45, 97c, §6.2) — the shared data other studies
-  (Dendikken, Tay, Levin) connect to their own analyses.
+- `GoldbergJackendoff2004.allEntries`: the paper's resultative entries,
+  with derived CAUSE/BECOME, telicity, and alternation predictions
+- `GoldbergJackendoff2004.ResultativeDatum`, `allExamples`: the judgment
+  rows, classified by subconstruction
+- `GoldbergJackendoff2004.aspectualContrasts`: §4.1's for-adverbial
+  contrasts (exx. 23–24)
 -/
 
 namespace GoldbergJackendoff2004
@@ -198,44 +179,32 @@ theorem hammer_gains_cos_causation :
     hammerFlat.verbMC.changeOfState = false ∧
     hammerFlat.verbMC.causation = false ∧
     hammerFlat.fusedMC.changeOfState = true ∧
-    hammerFlat.fusedMC.causation = true := by
-  constructor; decide
-  constructor; decide
-  constructor <;> decide
+    hammerFlat.fusedMC.causation = true := by decide
 
 /-- Freeze (otherCoS): already has CoS + causation → construction doesn't change profile. -/
 theorem freeze_already_has_cos :
     freezeSolid.verbMC.changeOfState = true ∧
     freezeSolid.verbMC.causation = true ∧
-    freezeSolid.fusedMC = freezeSolid.verbMC := by
-  constructor; decide
-  constructor <;> decide
+    freezeSolid.fusedMC = freezeSolid.verbMC := by decide
 
 /-- Roll (manner-of-motion): gains CoS from construction; no causation (noncausative). -/
 theorem roll_gains_cos_only :
     rollDownHill.verbMC.changeOfState = false ∧
     rollDownHill.fusedMC.changeOfState = true ∧
-    rollDownHill.fusedMC.causation = false := by
-  constructor; decide
-  constructor <;> decide
+    rollDownHill.fusedMC.causation = false := by decide
 
 /-- Yell (manner of speaking): pure manner verb — construction adds CoS + causation. -/
 theorem yell_gains_cos_causation :
     yellHoarse.verbMC.changeOfState = false ∧
     yellHoarse.verbMC.causation = false ∧
     yellHoarse.fusedMC.changeOfState = true ∧
-    yellHoarse.fusedMC.causation = true := by
-  constructor; decide
-  constructor; decide
-  constructor <;> decide
+    yellHoarse.fusedMC.causation = true := by decide
 
 /-- Wipe (wipe-class): already has full profile — construction is redundant. -/
 theorem wipe_already_has_everything :
     wipeClean.verbMC.changeOfState = true ∧
     wipeClean.verbMC.causation = true ∧
-    wipeClean.fusedMC = wipeClean.verbMC := by
-  constructor; decide
-  constructor <;> decide
+    wipeClean.fusedMC = wipeClean.verbMC := by decide
 
 /-! ## Empirical data: grammaticality judgments
 
@@ -247,7 +216,7 @@ shared data through the datum layer or the rows directly. -/
 
 /-- What type of resultative is exemplified.
 
-Extends the paper's 2×2 matrix (§2) with fake reflexives (§5) and
+Extends the paper's 2×2 matrix (§2) with fake reflexives (§2, ex. 9) and
 anticausative property resultatives ([levin-2026]). -/
 inductive ResultativeType where
   | causativeProperty
