@@ -21,8 +21,11 @@ study can adopt or refute.
   mismatch zoo: committee-type collectives for number, Russian
   profession nouns for gender, Hebrew be'alim, Chichewa heroes) are
   exactly what the special cases cannot represent.
-* **Kramer's gender calculus** ([kramer-2015]): gender features on the
-  nominalizing head n, drawn from `KramerN` = {plain, i[±FEM], u[±FEM]}.
+* **Kramer's gender calculus** ([kramer-2015]): valued gender features
+  are signed binary dimensions (`Signed` over `Dimension` — FEM, ANIM,
+  and [adamson-2024]'s MASC), whose `surface` labels underdetermine them
+  (`Signed.surface_femNeg_eq_mascPos`). The interpretability-annotated
+  FEM slice is `KramerN` = {plain, i[±FEM], u[±FEM]}.
   Natural and arbitrary gender differ only in interpretability and receive
   the same exponence at PF (`KramerN.exponence`), which yields the
   calculus's signature limit, here a theorem
@@ -219,6 +222,78 @@ def Features.fromGender : Gender → Option Features
 theorem roundtrip_fromGender_toGender :
     [neuterF, feminineF, masculineF].all
       (λ f => f.toGender.bind Features.fromGender == some f) = true := by
+  decide
+
+/-! ### Dimensions and signed features
+
+Kramer's calculus ranges over language-particular binary dimensions:
+[±FEM] (Amharic, Spanish, Maa), [±ANIM] (Lealao Chinantec, Algonquian,
+Teop), and [adamson-2024]'s [±MASC] (Jarawara). A signed dimension is a
+valued gender feature, and its `surface` is the comparative label of the
+chosen pole. `KramerN` below is the interpretability-annotated FEM
+slice. -/
+
+/-- A binary gender dimension: the contrast a language's gender features
+are drawn over ([kramer-2015]; [adamson-2024] for MASC). -/
+inductive Dimension where
+  | fem   -- [±FEM]: Amharic, Spanish, Maa
+  | masc  -- [±MASC]: Jarawara
+  | anim  -- [±ANIM]: Lealao Chinantec, Algonquian, Teop
+  deriving DecidableEq, Repr, Fintype
+
+/-- The sign of a valued binary feature. Neither sign is inherently
+marked: which one a language's arbitrary gender carries is the Set 1 vs
+Set 2 parameter ([kramer-2015] Ch 6). -/
+inductive Pole where
+  | pos  -- [+VAL]
+  | neg  -- [−VAL]
+  deriving DecidableEq, Repr, Fintype
+
+/-- The comparative label at a dimension's positive pole. -/
+def Dimension.positive : Dimension → Gender
+  | .fem  => .feminine
+  | .masc => .masculine
+  | .anim => .animate
+
+/-- The comparative label at a dimension's negative pole. -/
+def Dimension.negative : Dimension → Gender
+  | .fem  => .masculine
+  | .masc => .feminine
+  | .anim => .inanimate
+
+/-- A valued gender feature: a dimension with a sign — [+FEM], [−FEM],
+[+ANIM], and so on. -/
+structure Signed where
+  dim : Dimension
+  pole : Pole
+  deriving DecidableEq, Repr, Fintype
+
+/-- The comparative label a valued feature denotes: the pole its sign
+picks. -/
+def Signed.surface (v : Signed) : Gender :=
+  match v.pole with
+  | .pos => v.dim.positive
+  | .neg => v.dim.negative
+
+/-- Surface labels underdetermine features: Maa's [−FEM] and Jarawara's
+[+MASC] both surface masculine ([kramer-2015] §6.3 vs [adamson-2024]
+§3.2) — drawing the featural distinction is what the dimension inventory
+is for. -/
+theorem Signed.surface_femNeg_eq_mascPos :
+    (Signed.mk .fem .neg).surface = (Signed.mk .masc .pos).surface := rfl
+
+/-- The canonical numbering of the six valued features — the encoding
+consumers with numeral gender slots (the Minimalist φ-interface) use. -/
+def Signed.toNat : Signed → Nat
+  | ⟨.fem, .pos⟩  => 0  -- [+FEM]
+  | ⟨.fem, .neg⟩  => 1  -- [−FEM]
+  | ⟨.masc, .pos⟩ => 2  -- [+MASC]
+  | ⟨.masc, .neg⟩ => 3  -- [−MASC]
+  | ⟨.anim, .pos⟩ => 4  -- [+ANIM]
+  | ⟨.anim, .neg⟩ => 5  -- [−ANIM]
+
+/-- The numbering is faithful. -/
+theorem Signed.toNat_injective : Function.Injective Signed.toNat := by
   decide
 
 /-! ### Kramer's gender calculus and its three-gender bound -/

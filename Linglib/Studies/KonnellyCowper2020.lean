@@ -43,8 +43,8 @@ set_option autoImplicit false
 
 namespace KonnellyCowper2020
 
-open DistributedMorphology (Contrastivity GenderFeature GenderVal GenderDimension
-  Polarity Interpretability Categorizer.Head PhiBundle)
+open DistributedMorphology (Contrastivity GenderFeature
+  Interpretability Categorizer.Head PhiBundle)
 open DistributedMorphology.VI (FeatureVI subsetPrinciple)
 
 -- ============================================================================

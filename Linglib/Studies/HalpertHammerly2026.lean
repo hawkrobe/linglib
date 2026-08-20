@@ -417,7 +417,7 @@ open DistributedMorphology
     `GenderFeature` on the categorizing head n.
 
     H&H's `AnimacyFeatures` encode core noun class via [±Animate, ±Human].
-    Kramer's framework uses `GenderDimension.anim` with interpretability.
+    Kramer's framework uses `Gender.Dimension.anim` with interpretability.
     The bridge maps:
     - [+Animate] (human or animal) → i[+ANIM] (interpretable animate)
     - [−Animate] (inanimate) → i[−ANIM] (interpretable inanimate)
@@ -425,12 +425,12 @@ open DistributedMorphology
     Both systems agree that the n-head bears gender features and that
     interpretability distinguishes natural from arbitrary gender. -/
 def toGenderFeature (af : AnimacyFeatures) : GenderFeature :=
-  { interp := .i, val := { dim := .anim, pol := if af.isAnimate then .pos else .neg } }
+  { interp := .i, val := { dim := .anim, pole := if af.isAnimate then .pos else .neg } }
 
 private def iAnimPos : GenderFeature :=
-  { interp := .i, val := { dim := .anim, pol := .pos } }
+  { interp := .i, val := { dim := .anim, pole := .pos } }
 private def iAnimNeg : GenderFeature :=
-  { interp := .i, val := { dim := .anim, pol := .neg } }
+  { interp := .i, val := { dim := .anim, pole := .neg } }
 
 theorem human_is_iAnimPos :
     toGenderFeature AnimacyFeatures.human = iAnimPos := rfl
@@ -455,7 +455,7 @@ theorem interpretability_alignment :
     GenderStatus.isInterpretable (.interpretable .human) = true ∧
     GenderStatus.isInterpretable .uninterpretable = false ∧
     GenderFeature.IsNatural iAnimPos ∧
-    GenderFeature.IsArbitrary { interp := .u, val := { dim := .anim, pol := .pos } } :=
+    GenderFeature.IsArbitrary { interp := .u, val := { dim := .anim, pole := .pos } } :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 end KramerBridge

@@ -274,7 +274,7 @@ inductive ImpoverishmentContext where
     exponent, so the unmarked feminine surfaces. -/
 structure GenderImpoverishmentRule where
   /-- The feature to be deleted. -/
-  targetGender : GenderVal
+  targetGender : Gender.Signed
   /-- The conditioning context (feature that triggers deletion). -/
   context : ImpoverishmentContext
   deriving DecidableEq, Repr
@@ -430,7 +430,7 @@ Two-gender systems arise when only one marked value + plain are attested. -/
     Two n heads produce the same surface gender iff they have the same
     gender feature content (ignoring interpretability, which is only
     visible at LF vs PF). -/
-def surfaceGenderClass (nh : Head) : Option GenderVal :=
+def surfaceGenderClass (nh : Head) : Option Gender.Signed :=
   nh.phi.gender.map (·.val)
 
 /-- The four Amharic n-types yield exactly 3 surface genders:

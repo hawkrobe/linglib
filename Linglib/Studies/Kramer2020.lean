@@ -31,7 +31,7 @@ assignment. Three main results:
 
 - **Typology ↔ DM bridge**: `SemanticBasis.toGenderDimension` connects the
   typological `SemanticBasis` (from `Studies/Corbett1991.lean`) to
-  the DM `GenderDimension` (from `Morphology/DistributedMorphology/Categorizer.lean`),
+  the DM `Gender.Dimension` (from `Morphology/DistributedMorphology/Categorizer.lean`),
   making explicit that the semantic core properties are the *same things*
   parameterized as feature dimensions in the structural approach.
 
@@ -45,10 +45,10 @@ assignment. Three main results:
 -/
 
 -- ============================================================================
--- § 2: SemanticBasis ↔ GenderDimension Bridge (in source namespaces)
+-- § 2: SemanticBasis ↔ Gender.Dimension Bridge (in source namespaces)
 -- ============================================================================
 
-/-! The typological `SemanticBasis` and the DM `GenderDimension` describe the
+/-! The typological `SemanticBasis` and the DM `Gender.Dimension` describe the
 same underlying distinction from different perspectives: typology asks *what
 semantic property organizes the system*, while DM asks *what binary feature
 sits on n*. [kramer-2020] makes this connection explicit by analyzing
@@ -97,7 +97,7 @@ instance : DecidablePred Profile.SatisfiesSemanticCore := fun p =>
     The `.humanness` → `.anim` mapping reflects a gap in [kramer-2015]'s
     feature inventory: no [±HUMAN] dimension is posited, so humanness-based
     systems are approximated by [±ANIM]. -/
-def SemanticBasis.toGenderDimension : SemanticBasis → Option GenderDimension
+def SemanticBasis.toGenderDimension : SemanticBasis → Option Gender.Dimension
   | .sex         => some .fem   -- default: feminine as marked value
   | .animacy     => some .anim
   | .humanness   => some .anim  -- no [±HUMAN] in Kramer 2015; closest is [±ANIM]
@@ -112,7 +112,7 @@ open Corbett1991
 
 /-- Inverse direction: map a DM gender dimension to its typological basis.
     ([kramer-2020] §3) -/
-def GenderDimension.toSemanticBasis : GenderDimension → Corbett1991.SemanticBasis
+def Gender.Dimension.toSemanticBasis : Gender.Dimension → Corbett1991.SemanticBasis
   | .fem  => .sex
   | .masc => .sex
   | .anim => .animacy
@@ -166,7 +166,7 @@ theorem roundtrip_sex_fem :
 
 /-- Round-trip: `.anim` → `.animacy` → `.anim`. -/
 theorem roundtrip_anim :
-    GenderDimension.anim.toSemanticBasis.toGenderDimension = some .anim := rfl
+    Gender.Dimension.anim.toSemanticBasis.toGenderDimension = some .anim := rfl
 
 -- ============================================================================
 -- § 3: Cross-Linguistic Variation in Arbitrary Assignment (Table 2)
@@ -260,7 +260,7 @@ structure LexicalGenderRule where
   /-- Semantic trigger (e.g. sex → social gender triggers the rule) -/
   semanticBasis : SemanticBasis
   /-- DM gender dimension assigned (e.g. fem) -/
-  targetDimension : GenderDimension
+  targetDimension : Gender.Dimension
   /-- Context restriction (e.g. humanness) -/
   context : SemanticBasis
   deriving DecidableEq, Repr
@@ -519,9 +519,9 @@ structure HybridNoun where
   /-- Language -/
   language : String
   /-- Morphosyntactic gender (from n head) -/
-  morphGender : GenderVal
+  morphGender : Gender.Signed
   /-- Semantic gender (from social-gender projection, triggered by referent) -/
-  semGender : GenderVal
+  semGender : Gender.Signed
   /-- The two genders must differ for hybrid agreement to arise. -/
   distinct : morphGender ≠ semGender
   deriving Repr
@@ -964,67 +964,113 @@ In Set 2 languages (Maa, Wari'), the same logic yields feminine as default:
 The polarity of the u-feature determines which gender is arbitrary vs default. -/
 
 
--- Set 1 (Spanish) derivation chain — uses DM bridge (Categorizer.Head.surfaceGenderSet1)
+-- Set 1 (Spanish) derivation chain: Vocabulary Insertion into the Spanish
+-- fragment's own gender system (`Fragments/Spanish/Gender.lean`)
+
+/-- The Spanish valuation: [+FEM] realizes the feminine class, everything
+    else the masculine. -/
+def spanishValue : Gender.Signed → Spanish.Gender.Value
+  | ⟨.fem, .pos⟩ => .fem
+  | _            => .masc
+
+/-- Spanish is a Set 1 system: [+FEM] realizes the feminine-labeled class
+    and the default is masculine-labeled. -/
+theorem spanish_isSet1 : IsSet1 Spanish.Gender.system spanishValue := ⟨rfl, rfl⟩
 
 /-- Plain n → masculine (the default). -/
 theorem set1_plain_n_masculine :
-    Categorizer.Head.n_plain.surfaceGenderSet1 = .masculine := rfl
+    Categorizer.Head.n_plain.realizeGender Spanish.Gender.system spanishValue
+      = .masc := rfl
 
 /-- i[+FEM] → feminine (natural female). -/
 theorem set1_iFem_feminine :
-    Categorizer.Head.n_iFem.surfaceGenderSet1 = .feminine := rfl
+    Categorizer.Head.n_iFem.realizeGender Spanish.Gender.system spanishValue
+      = .fem := rfl
 
 /-- i[−FEM] → masculine (natural male). -/
 theorem set1_iMasc_masculine :
-    Categorizer.Head.n_iMasc.surfaceGenderSet1 = .masculine := rfl
+    Categorizer.Head.n_iMasc.realizeGender Spanish.Gender.system spanishValue
+      = .masc := rfl
 
 /-- u[+FEM] → feminine (arbitrary feminine). -/
 theorem set1_uFem_feminine :
-    Categorizer.Head.n_uFem.surfaceGenderSet1 = .feminine := rfl
+    Categorizer.Head.n_uFem.realizeGender Spanish.Gender.system spanishValue
+      = .fem := rfl
 
--- Set 2 (Maa) derivation chain — uses DM bridge (Categorizer.Head.surfaceGenderSet2)
+-- Set 2 (Maa) derivation chain: a study-local Maa system
+
+/-- Maa's two controller genders ([kramer-2015] §6.3). -/
+inductive MaaValue where
+  | masc
+  | fem
+  deriving DecidableEq, Repr
+
+/-- The Maa system: full comparative labelling, feminine default. -/
+def maaSystem : Gender.System MaaValue where
+  label := fun g => match g with
+    | .masc => some .masculine
+    | .fem  => some .feminine
+  default := .fem
+
+/-- The Maa valuation: [−FEM] realizes the masculine class. -/
+def maaValue : Gender.Signed → MaaValue
+  | ⟨.fem, .neg⟩ => .masc
+  | _            => .fem
+
+/-- Maa is a Set 2 system: [−FEM] realizes the masculine-labeled class
+    and the default is feminine-labeled. -/
+theorem maa_isSet2 : IsSet2 maaSystem maaValue := ⟨rfl, rfl⟩
 
 /-- Plain n → feminine (the default in Set 2). -/
 theorem set2_plain_n_feminine :
-    Categorizer.Head.n_plain.surfaceGenderSet2 = .feminine := rfl
+    Categorizer.Head.n_plain.realizeGender maaSystem maaValue = .fem := rfl
 
 /-- u[−FEM] → masculine (arbitrary masculine in Set 2). -/
 theorem set2_uNegFem_masculine :
-    Categorizer.Head.n_uNegFem.surfaceGenderSet2 = .masculine := rfl
+    Categorizer.Head.n_uNegFem.realizeGender maaSystem maaValue = .masc := rfl
 
 /-- i[−FEM] → masculine (natural male, same in both sets). -/
 theorem set2_iMasc_masculine :
-    Categorizer.Head.n_iMasc.surfaceGenderSet2 = .masculine := rfl
+    Categorizer.Head.n_iMasc.realizeGender maaSystem maaValue = .masc := rfl
 
 /-- i[+FEM] → feminine (natural female, same in both sets). -/
 theorem set2_iFem_feminine :
-    Categorizer.Head.n_iFem.surfaceGenderSet2 = .feminine := rfl
+    Categorizer.Head.n_iFem.realizeGender maaSystem maaValue = .fem := rfl
 
 /-- Verify the full derivation chain for Spanish fragment nouns: the
-    surface gender computed via `Spanish.nHead` projection then Set 1 VI
-    matches the entry's `attestedGender`. -/
+    controller gender computed via `Spanish.nHead` projection then Set 1
+    VI into the fragment's system. -/
 theorem spanish_derivation_chain :
-    (Spanish.nHead Spanish.Gender.mujer).surfaceGenderSet1 = .feminine ∧
-    (Spanish.nHead Spanish.Gender.hombre).surfaceGenderSet1 = .masculine ∧
-    (Spanish.nHead Spanish.Gender.mesa).surfaceGenderSet1 = .feminine ∧
-    (Spanish.nHead Spanish.Gender.libro).surfaceGenderSet1 = .masculine ∧
-    (Spanish.nHead Spanish.Gender.persona).surfaceGenderSet1 = .feminine ∧
-    (Spanish.nHead Spanish.Gender.ángel).surfaceGenderSet1 = .masculine :=
+    (Spanish.nHead Spanish.Gender.mujer).realizeGender
+        Spanish.Gender.system spanishValue = .fem ∧
+    (Spanish.nHead Spanish.Gender.hombre).realizeGender
+        Spanish.Gender.system spanishValue = .masc ∧
+    (Spanish.nHead Spanish.Gender.mesa).realizeGender
+        Spanish.Gender.system spanishValue = .fem ∧
+    (Spanish.nHead Spanish.Gender.libro).realizeGender
+        Spanish.Gender.system spanishValue = .masc ∧
+    (Spanish.nHead Spanish.Gender.persona).realizeGender
+        Spanish.Gender.system spanishValue = .fem ∧
+    (Spanish.nHead Spanish.Gender.ángel).realizeGender
+        Spanish.Gender.system spanishValue = .masc :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Stronger meta-theorem: for every Spanish entry, the projection
-    composed with Set 1 VI recovers the entry's attestedGender. The
-    Fragment-side empirical fact (`attestedGender`) and the Studies-side
-    structural derivation (Spanish.nHead + Set 1 VI) agree. -/
+    composed with Set 1 VI recovers the entry's controller gender — the
+    Fragment-side empirical fact and the Studies-side structural
+    derivation agree, entirely inside the fragment's own carrier. -/
 theorem spanish_projection_round_trips :
     Spanish.Gender.allNouns.all (fun n =>
-      (Spanish.nHead n).surfaceGenderSet1 == n.attestedGender) := by decide
+      (Spanish.nHead n).realizeGender Spanish.Gender.system spanishValue
+        == n.controllerGender) := by decide
 
-/-- Fixed-gender nouns: *persona* surfaces as feminine despite denoting
-    persons of any sex; *ángel* surfaces as masculine. -/
+/-- Fixed-gender nouns: *persona* surfaces in the feminine class despite
+    denoting persons of any sex; *ángel* in the masculine. -/
 theorem fixed_gender_from_n_head :
-    (Spanish.nHead Spanish.Gender.persona).surfaceGenderSet1 = .feminine ∧
-    (Spanish.nHead Spanish.Gender.ángel).surfaceGenderSet1 = .masculine :=
+    (Spanish.nHead Spanish.Gender.persona).realizeGender
+        Spanish.Gender.system spanishValue = .fem ∧
+    (Spanish.nHead Spanish.Gender.ángel).realizeGender
+        Spanish.Gender.system spanishValue = .masc :=
   ⟨rfl, rfl⟩
 
 -- ============================================================================
@@ -1087,21 +1133,36 @@ theorem vrač_matches_hybrid :
     (Russian.nHead Russian.Gender.vrač).phi.gender =
       some ⟨.u, russianVrac.morphGender⟩ := ⟨rfl, rfl⟩
 
-/-- Projection-derived: *zakon* (Class I) surfaces as masculine via 3-gender VI. -/
-theorem zakon_fragment_masculine :
-    (Russian.nHead Russian.Gender.zakon).surfaceGenderThree =
-      .masculine := rfl
+/-- The Russian valuation: [+FEM] realizes the feminine class, [−FEM]
+    the masculine; the neuter default covers plain n. -/
+def russianValue : Gender.Signed → Russian.Gender.Value
+  | ⟨.fem, .pos⟩ => .fem
+  | _            => .masc
 
-/-- Projection-derived: *vino* (default) surfaces as neuter via 3-gender VI. -/
+/-- Russian is a three-gender system: both FEM poles realized, neuter
+    default. -/
+theorem russian_isThreeGender :
+    IsThreeGender Russian.Gender.system russianValue := ⟨rfl, rfl, rfl⟩
+
+/-- Projection-derived: *zakon* (Class I) surfaces in the masculine class
+    via 3-gender VI. -/
+theorem zakon_fragment_masculine :
+    (Russian.nHead Russian.Gender.zakon).realizeGender
+      Russian.Gender.system russianValue = .masc := rfl
+
+/-- Projection-derived: *vino* (default) surfaces in the neuter class via
+    3-gender VI. -/
 theorem vino_fragment_neuter :
-    (Russian.nHead Russian.Gender.vino).surfaceGenderThree =
-      .neuter := rfl
+    (Russian.nHead Russian.Gender.vino).realizeGender
+      Russian.Gender.system russianValue = .neut := rfl
 
 /-- Russian projection round-trip: every Russian entry's projection,
-    composed with 3-gender VI, recovers the entry's `attestedGender`. -/
+    composed with 3-gender VI into the fragment's system, recovers the
+    entry's controller gender. -/
 theorem russian_projection_round_trips :
     Russian.Gender.allNouns.all (fun n =>
-      (Russian.nHead n).surfaceGenderThree == n.attestedGender) := by decide
+      (Russian.nHead n).realizeGender Russian.Gender.system russianValue
+        == Russian.Gender.Value.ofLabel n.attestedGender) := by decide
 
 /-- Projection-derived: Russian Fragment covers all 5 n-types. -/
 theorem russian_fragment_covers_inventory :
