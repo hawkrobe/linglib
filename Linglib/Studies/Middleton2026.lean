@@ -1,6 +1,6 @@
 import Linglib.Morphology.DistributedMorphology.Impoverishment
 import Linglib.Morphology.DistributedMorphology.Spellout
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Fragments.Taos.Agreement
 import Linglib.Fragments.Basque.Postsyntax
 

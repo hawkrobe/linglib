@@ -1,4 +1,4 @@
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
 # Fusion (Distributed Morphology)

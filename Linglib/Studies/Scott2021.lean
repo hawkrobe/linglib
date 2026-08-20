@@ -1,7 +1,7 @@
 import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Syntax.Tree.Cat
 import Linglib.Fragments.Swahili.Relativization
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Syntax.Minimalist.Features
 
 /-!

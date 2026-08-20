@@ -1261,8 +1261,8 @@ import Linglib.Morphology.DistributedMorphology.Merger
 import Linglib.Morphology.DistributedMorphology.NominalSpine
 import Linglib.Morphology.DistributedMorphology.Root
 import Linglib.Morphology.DistributedMorphology.Spellout
-import Linglib.Morphology.DistributedMorphology.VocabSimple
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Minimalist
 import Linglib.Morphology.Exponence.Basic
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.Exponence.Containment.Defs

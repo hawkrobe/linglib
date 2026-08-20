@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Morphology.DistributedMorphology.NominalSpine
 import Linglib.Semantics.Possessive.Relational
 
