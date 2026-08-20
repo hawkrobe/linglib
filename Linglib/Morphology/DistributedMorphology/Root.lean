@@ -11,9 +11,9 @@ The abstract Root: a syntactic atom individuated by an arbitrary index,
 with no phonological or semantic content ([harley-2014] §2,
 [marantz-1997]). It is acategorial — it enters the syntax only by merging
 with a categorizing head (the Categorization Assumption; the categorizer
-inventory and `RootLicense` interface are `DM/Categorizer.lean`, whose
+inventory and `RootLicense` interface are `DistributedMorphology/Categorizer.lean`, whose
 `RootIdx` parameter this type instantiates) — and receives its form at
-Vocabulary Insertion (`DM/VocabularyInsertion.lean`).
+Vocabulary Insertion (`DistributedMorphology/VocabularyInsertion.lean`).
 
 This is a different object from the comparative-concept root of
 `Morphology/Root/Basic.lean`, which is a contentful *morph*: a DM Root is
@@ -24,7 +24,7 @@ different categorizers; that rivalry is study content, this file only
 fixes the object.
 -/
 
-namespace Morphology.DM
+namespace Morphology.DistributedMorphology
 
 /-- A Root terminal node, individuated by an arbitrary index alone — with
 deliberately no form or meaning fields, following [harley-2014]'s answer to
@@ -34,4 +34,4 @@ structure Root where
   index : Nat
   deriving DecidableEq, Repr
 
-end Morphology.DM
+end Morphology.DistributedMorphology

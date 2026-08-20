@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Morphology.DM.Categorizer
-import Linglib.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.Categorizer
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
 import Linglib.Features.Gender.Basic
 
 /-!
@@ -187,7 +187,7 @@ inductive GenderNode where
   | anim   -- animate (BCS: under MASC)
   deriving DecidableEq, Repr
 
-open Morphology.DM (GenderDimension)
+open Morphology.DistributedMorphology (GenderDimension)
 
 /-- Partial bridge from privative geometry nodes to DM gender dimensions.
     `.cls`, `.indiv`, and `.grp` are structural organizing nodes with no
@@ -794,7 +794,7 @@ theorem icelandic_fem_not_entails_masc :
     the same exponents. This connects the gender resolution mechanism to
     the formal DM vocabulary insertion framework. -/
 
-open Morphology.DM.VI (FeatureVI subsetPrinciple)
+open Morphology.DistributedMorphology.VI (FeatureVI subsetPrinciple)
 
 /-- Greek vocabulary items as `FeatureVI` entries (schema 21).
     Most specific first: {FEM,MASC} → F, {MASC} → M, {} → N. -/

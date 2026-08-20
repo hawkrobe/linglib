@@ -1,5 +1,5 @@
-import Linglib.Morphology.DM.Categorizer
-import Linglib.Morphology.DM.CategorizerSemantics
+import Linglib.Morphology.DistributedMorphology.Categorizer
+import Linglib.Morphology.DistributedMorphology.CategorizerSemantics
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Realization
 import Linglib.Semantics.ArgumentStructure.Root.Classification
@@ -41,7 +41,7 @@ and retroactively classifies existing n and Voice types as allosemy.
 
 `AllosemicEntry` is a `Morphology.Exponence.Rule` instance
 (`SyntacticContext.matches` as applicability, denotation as exponent),
-just as `DM.VI.VocabItem` is. So DM's List 2 (form) and List 3 (meaning)
+just as `DistributedMorphology.VI.VocabItem` is. So DM's List 2 (form) and List 3 (meaning)
 are resolved by **one** selection engine: `Exponence.selectBy` on the
 non-wildcard-field score, whose winner is the Elsewhere winner
 (`selectBy_score_isElsewhereWinner`). `VoiceAlloseme.fromComplement` is a
@@ -51,10 +51,10 @@ allosemes (v ⊕ n), not a single-head competition — so it stays a table.
 
 -/
 
-namespace Morphology.DM.Allosemy
+namespace Morphology.DistributedMorphology.Allosemy
 
-open Morphology.DM (Categorizer CatHead)
-open Morphology.DM.CategorizerSemantics (NSemanticType)
+open Morphology.DistributedMorphology (Categorizer CatHead)
+open Morphology.DistributedMorphology.CategorizerSemantics (NSemanticType)
 open Minimalist.Voice (Flavor Head)
 
 -- ════════════════════════════════════════════════════
@@ -194,7 +194,7 @@ def AllosemicHead.licensed {Sem : Type} (h : AllosemicHead Sem)
 An `AllosemicEntry` is a rule of exponence (`Morphology/Exponence/`): its
 denotation is the exponent, its context's `matches` predicate the
 applicability set. So the very engine that resolves DM's List 2
-(`DM/VocabularyInsertion.lean`) resolves List 3 — LF competition among
+(`DistributedMorphology/VocabularyInsertion.lean`) resolves List 3 — LF competition among
 allosemes — with no new machinery. `AllosemicEntry.score` is the
 non-wildcard-field count of the entry's context; `score_strictAnti` shows
 it is strictly antitone in specificity, so `selectBy score` is Elsewhere
@@ -688,4 +688,4 @@ theorem vAllosemic_isAllosemous : vAllosemic.toInterpreted.IsAllosemous () :=
   ⟨{ complementIsEventive := true }, { complementIsEventive := false },
    .eventive, by decide, .zero, by decide, by decide⟩
 
-end Morphology.DM.Allosemy
+end Morphology.DistributedMorphology.Allosemy

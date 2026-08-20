@@ -1,6 +1,6 @@
 import Linglib.Discourse.CommonGround
 import Linglib.Discourse.SpeechAct
-import Linglib.Morphology.DM.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Pragmatics.RSA.LexicalUncertainty
 import Mathlib.Data.Fintype.BigOperators
@@ -54,7 +54,7 @@ as a request projects to `prepCondition := some .knowledge` — the same
 substrate `Studies/FrancikClark1985.lean` and
 `Studies/RuytenbeekEtAl2017.lean` consume.
 
-The DM bridge in `§I` consumes `Morphology.DM.Categorizer`'s
+The DM bridge in `§I` consumes `Morphology.DistributedMorphology.Categorizer`'s
 `Recategorization.denominal` for the syntactic operation underlying nonce
 verbs. The LU-RSA bridge in `§H` consumes
 `RSA.Lexicon`.
@@ -71,7 +71,7 @@ namespace Clark1983
 
 open CommonGround
 open RSA (Lexicon)
-open Morphology.DM (Categorizer Recategorization CategorizedRoot
+open Morphology.DistributedMorphology (Categorizer Recategorization CategorizedRoot
   denominal_requires_n recategorization_changes_category)
 
 /-! ## §A. Sense and reference: fixed vs shifting (Table 9.1, p. 300) -/

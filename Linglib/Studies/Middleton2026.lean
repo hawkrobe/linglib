@@ -1,5 +1,5 @@
-import Linglib.Morphology.DM.Impoverishment
-import Linglib.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.Impoverishment
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
 import Linglib.Fragments.Taos.Agreement
 import Linglib.Fragments.Basque.Postsyntax
 
@@ -63,7 +63,7 @@ What is **not** modeled:
 
 namespace Middleton2026
 
-open Minimalist Morphology.DM.Impoverishment Morphology.DM.VI
+open Minimalist Morphology.DistributedMorphology.Impoverishment Morphology.DistributedMorphology.VI
      Taos.Agreement Basque.Postsyntax
 
 /-! ### Metathesis Rule

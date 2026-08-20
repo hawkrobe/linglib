@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Morphology.Exponence.Select
-import Linglib.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
 import Mathlib.Data.List.MinMax
 
 /-!
@@ -12,7 +12,7 @@ A concrete Minimalist specialization of Vocabulary Insertion.
 `VocabEntry` carries `features : FeatureBundle` (the Minimalist
 global) + `exponent : String` + optional context restriction
 `Option Cat`. Sits alongside the more general parametric type
-`Morphology.DM.VI.VocabItem (Ctx Root : Type)` in
+`Morphology.DistributedMorphology.VI.VocabItem (Ctx Root : Type)` in
 `VocabularyInsertion.lean`: same Distributed Morphology mechanism
 (Halle-Marantz late insertion + Elsewhere Condition), specialized to
 Minimalist's feature-bundle ergonomics so downstream consumers don't
@@ -181,7 +181,7 @@ theorem VocabEntry.matchesFeatures_self (e : VocabEntry) :
 `e'`'s features are a subset of `e`'s and `e'`'s context restriction is
 compatible. Upgrades `le_of_superset` to an iff — over feature bundles
 the intensional superset order IS the specificity order, with no
-faithfulness assumption (contrast `Morphology.DM.VI.SpecificityFaithful`,
+faithfulness assumption (contrast `Morphology.DistributedMorphology.VI.SpecificityFaithful`,
 which the opaque-predicate engine must stipulate). -/
 theorem VocabEntry.le_iff {e e' : VocabEntry} :
     e ≤ e' ↔
@@ -203,11 +203,11 @@ theorem VocabEntry.le_iff {e e' : VocabEntry} :
 /-! #### Bridge to the opaque-predicate engine -/
 
 /-- Embed a vocabulary entry into the opaque-predicate engine
-(`Morphology.DM.VI.VocabItem`): the context check is feature matching,
+(`Morphology.DistributedMorphology.VI.VocabItem`): the context check is feature matching,
 the root check is the category restriction, and the stipulated rank is
 the feature count. -/
 def VocabEntry.toVocabItem (e : VocabEntry) :
-    Morphology.DM.VI.VocabItem FeatureBundle (Option Cat) where
+    Morphology.DistributedMorphology.VI.VocabItem FeatureBundle (Option Cat) where
   exponent := e.exponent
   contextMatch := λ t => decide (e.MatchesFeatures t)
   rootMatch := some (λ c => decide (e.context = none ∨ e.context = c))
@@ -218,7 +218,7 @@ agrees with `Matches`. -/
 theorem VocabEntry.toVocabItem_matches (e : VocabEntry)
     (t : FeatureBundle) (c : Option Cat) :
     e.toVocabItem.matches t c = true ↔ e.Matches t c := by
-  simp [Morphology.DM.VI.VocabItem.matches, VocabEntry.toVocabItem,
+  simp [Morphology.DistributedMorphology.VI.VocabItem.matches, VocabEntry.toVocabItem,
     VocabEntry.Matches]
 
 /-- The two engines' interfaces agree: the embedded item applies exactly

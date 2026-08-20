@@ -1,5 +1,5 @@
 import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Morphology.DM.DomainLocality
+import Linglib.Morphology.DistributedMorphology.DomainLocality
 import Mathlib.Logic.Relation
 
 /-!
@@ -29,7 +29,7 @@ book's generalizations are theorems about the reachable regions:
 
 The merged region also induces a two-block domain partition of the
 grades (`Synthesis.domainPartition`) — [bobaljik-2012]'s structural
-adjacency as one source of `Morphology/DM/DomainLocality.lean`'s
+adjacency as one source of `Morphology/DistributedMorphology/DomainLocality.lean`'s
 domain-relativized contiguity, alongside the accessibility-domain
 refinements of [moskal-2015] and [smith-moskal-xu-kang-bobaljik-2019].
 
@@ -44,7 +44,7 @@ refinements of [moskal-2015] and [smith-moskal-xu-kang-bobaljik-2019].
   `Synthesis.domainPartition`
 -/
 
-namespace Morphology.DM
+namespace Morphology.DistributedMorphology
 
 open Morphology.Containment
 
@@ -244,7 +244,7 @@ open Morphology.DomainLocality in
 /-- The two-block domain partition induced by Merger: word-internal
 grades vs periphrastic ones — [bobaljik-2012]'s structural adjacency
 as a source of domain partitions for
-`Morphology/DM/DomainLocality.lean`. -/
+`Morphology/DistributedMorphology/DomainLocality.lean`. -/
 def Synthesis.domainPartition (s : Synthesis n) : DomainPartition n Bool :=
   λ g => decide (s.SyntheticAt g)
 
@@ -253,4 +253,4 @@ theorem Synthesis.sameDomain_domainPartition_iff {s : Synthesis n} {i j : Fin n}
     SameDomain s.domainPartition i j ↔ (s.SyntheticAt i ↔ s.SyntheticAt j) := by
   simp [SameDomain, domainPartition, decide_eq_decide]
 
-end Morphology.DM
+end Morphology.DistributedMorphology

@@ -1,4 +1,4 @@
-import Linglib.Morphology.DM.Allosemy
+import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Fragments.Icelandic.Nominalizations
 import Linglib.Fragments.Icelandic.Predicates
 import Linglib.Studies.Wood2015
@@ -60,7 +60,7 @@ with multiple context-dependent meanings:
 
 namespace Wood2023
 
-open Morphology.DM.Allosemy
+open Morphology.DistributedMorphology.Allosemy
 open Icelandic.Nominalizations
 open Icelandic.Predicates
 open Wood2015 (opnastInfo)
@@ -362,7 +362,7 @@ ambiguous (CEN/SEN/RN/SimpleState/SimpleEntity). All readings stem from
 ONE structure; the *interpretive* variation comes from `n` (and `v`)
 having multiple **allosemes** — `n` can be `zero / sortal / relational /
 alienator / content / simpleEvent / result / state / entity` (9 cases per
-`Morphology/DM/Allosemy.lean`).
+`Morphology/DistributedMorphology/Allosemy.lean`).
 
 [panagiotidis-2015] treats `n` as a uniform categoriser bearing the
 interpretable feature [N]. There is no alloseme machinery in
@@ -385,7 +385,7 @@ bridge in `Panagiotidis2015.lean` (`namespace MdSBridge`) noted as
 namespace MdSPanaDivergence
 
 open McNallyDeSwart2011
-open Morphology.DM.Allosemy
+open Morphology.DistributedMorphology.Allosemy
 
 /-- Wood's framework requires every `n`-headed nominalisation to commit
     to an `NAlloseme` (one of the 9 cases). Panagiotidis's framework

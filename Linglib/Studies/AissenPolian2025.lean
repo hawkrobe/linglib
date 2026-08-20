@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Tseltalan
-import Linglib.Morphology.DM.NominalStructure
+import Linglib.Morphology.DistributedMorphology.NominalStructure
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Binding.SpecificityCondition
@@ -100,7 +100,7 @@ namespace AissenPolian2025
 
 open Mayan (MarkerSet ABSPosition)
 open Mayan.Tseltalan
-open Morphology.DM
+open Morphology.DistributedMorphology
 
 -- ============================================================================
 -- § 1: Nominal Size and Specificity

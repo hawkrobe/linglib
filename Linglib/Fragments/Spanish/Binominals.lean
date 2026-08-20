@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.BinominalDefs
-import Linglib.Morphology.DM.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer
 
 /-!
 # Spanish Binominal Nouns [saab-2026]
@@ -20,7 +20,7 @@ and thereby the availability of NP-ellipsis.
 namespace Spanish.Binominals
 
 open Quantification.Binominal
-open Morphology.DM
+open Morphology.DistributedMorphology
 
 /-- A Spanish binominal noun entry, with gender encoded via the DM
     categorizing head on n ([kramer-2015]). -/

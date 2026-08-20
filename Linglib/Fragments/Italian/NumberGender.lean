@@ -1,4 +1,4 @@
-import Linglib.Morphology.DM.NominalStructure
+import Linglib.Morphology.DistributedMorphology.NominalStructure
 import Linglib.Fragments.Italian.Nouns
 
 /-!
@@ -19,7 +19,7 @@ within nP can condition gender; features outside nP cannot.
 
 namespace Italian.NumberGender
 
-open Morphology.DM
+open Morphology.DistributedMorphology
 
 -- ============================================================================
 -- § 1: Plural Classes

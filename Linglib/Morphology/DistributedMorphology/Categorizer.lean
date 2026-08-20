@@ -1,5 +1,5 @@
 import Linglib.Features.Gender.Interp
-import Linglib.Morphology.DM.Root
+import Linglib.Morphology.DistributedMorphology.Root
 import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Verbal.Voice
@@ -53,7 +53,7 @@ in `VocabularyInsertion.lean`.
 
 -/
 
-namespace Morphology.DM
+namespace Morphology.DistributedMorphology
 
 open Minimalist Minimalist.Voice
 open Verb Verb.Root
@@ -593,7 +593,7 @@ def GenderImpoverishmentRule.apply (rule : GenderImpoverishmentRule)
 /-- A root that has been merged with a categorizing head, yielding a
     syntactically projectable unit ([harley-2014] §2).
 
-    `index` is DM's List-1 individuator — the acategorial atom `DM.Root`,
+    `index` is DM's List-1 individuator — the acategorial atom `DistributedMorphology.Root`,
     an arbitrary tag carrying no form or meaning. It is what survives
     (re)categorization (`recategorize_preserves_index`), so it, not the
     `root` classification, is what makes √HAMMER *one* root across
@@ -601,8 +601,8 @@ def GenderImpoverishmentRule.apply (rule : GenderImpoverishmentRule)
     change-type) the categorizer apparatus reads (§3); unrelated roots may
     share it, so it cannot individuate. -/
 structure CategorizedRoot where
-  /-- The acategorial root index — DM's List-1 individuator (`DM.Root`). -/
-  index : DM.Root
+  /-- The acategorial root index — DM's List-1 individuator (`DistributedMorphology.Root`). -/
+  index : DistributedMorphology.Root
   /-- The acategorial root's c-selection content (arity, change-type, etc.) -/
   root : Classification
   /-- The categorizing head that gives it syntactic category -/
@@ -621,7 +621,7 @@ def CategorizedRoot.category (cr : CategorizedRoot) : Cat :=
     This is the formal content of the claim that √HAMMER can surface as
     either a noun (hammer) or a verb (to hammer) — same root, different
     category, determined entirely by the categorizer ([harley-2014] §2). -/
-theorem same_root_different_category (i : DM.Root) (r : Classification)
+theorem same_root_different_category (i : DistributedMorphology.Root) (r : Classification)
     (c1 c2 : Categorizer) (h : c1 ≠ c2) :
     (CategorizedRoot.mk i r c1).category ≠ (CategorizedRoot.mk i r c2).category := by
   simp only [CategorizedRoot.category, Categorizer.toCategory]
@@ -648,7 +648,7 @@ theorem same_root_different_category (i : DM.Root) (r : Classification)
     3. Hiaki suppletive verbs: suppletive forms are conditioned by the
        root's complement (singular vs. plural object), showing locality
        between root and argument below the categorizer. -/
-theorem complement_selection_at_root_level (i : DM.Root) (r : Classification)
+theorem complement_selection_at_root_level (i : DistributedMorphology.Root) (r : Classification)
     (c1 c2 : Categorizer) :
     (CategorizedRoot.mk i r c1).root.valency = (CategorizedRoot.mk i r c2).root.valency := rfl
 
@@ -713,7 +713,7 @@ theorem recategorization_changes_category (cr : CategorizedRoot)
   case isFalse => simp at h
 
 /-- The acategorial index survives (re)categorization: the individuating
-    `DM.Root` atom is invariant under `recategorize`, so *shelf* (n) and
+    `DistributedMorphology.Root` atom is invariant under `recategorize`, so *shelf* (n) and
     *to shelve* (v) share one List-1 root ([harley-2014] §2, §4). This is
     the work DM's own individuator does that the `root` classification
     cannot — valency/change-type is shared by unrelated roots, the index is
@@ -732,7 +732,7 @@ theorem recategorize_preserves_index (cr cr' : CategorizedRoot)
     V directly; √HAMMER + n + v also gives V but via layered derivation.
     This structural ambiguity is invisible at the category level
     ([harley-2014] §2). -/
-theorem denominal_yields_verbal (i : DM.Root) (r : Classification) :
+theorem denominal_yields_verbal (i : DistributedMorphology.Root) (r : Classification) :
     ∃ cr, (CategorizedRoot.mk i r .n).recategorize .denominal = some cr ∧
           cr.category = Cat.V :=
   ⟨⟨i, r, .v⟩, rfl, rfl⟩
@@ -912,4 +912,4 @@ theorem catHead_gender_always_known_three (ch : CatHead) :
     ∃ g, ch.toGenderInfoThree = .known g := by
   exact ⟨ch.surfaceGenderThree, rfl⟩
 
-end Morphology.DM
+end Morphology.DistributedMorphology

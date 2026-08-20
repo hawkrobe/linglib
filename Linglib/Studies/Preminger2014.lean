@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Probe.Phi
-import Linglib.Morphology.DM.VocabSimple
+import Linglib.Morphology.DistributedMorphology.VocabSimple
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Studies.Halpert2012
 import Linglib.Studies.BejarRezac2003
@@ -112,7 +112,7 @@ gives five arguments against hierarchy accounts:
   obligatory probe); `Probe/Phi.lean` — `PLC`: the search-and-licensing layer
   the derivations below consume. Failed Agree = an `unvalued` probe outcome
   that is *tolerated* (no crash) and spells out as the Elsewhere entry.
-- `Morphology/DM/VocabSimple.lean` — `Vocabulary`,
+- `Morphology/DistributedMorphology/VocabSimple.lean` — `Vocabulary`,
   `Agreement.Cell.toPhiFeatures`, `makePersonVocab`, `spellout`.
 - `Studies/Scott2023.lean` — the same DM/Agree machinery applied to
   Mam (where Infl's φ-probe is blocked in transitives).

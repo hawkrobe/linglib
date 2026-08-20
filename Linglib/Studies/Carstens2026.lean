@@ -2,7 +2,7 @@ import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Xhosa.Basic
 import Linglib.Fragments.Shona.Basic
 import Linglib.Fragments.Swahili.Basic
-import Linglib.Morphology.DM.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer
 import Linglib.Studies.Kramer2020
 import Linglib.Features.Number.Resolve
 import Linglib.Features.Person.Resolve
@@ -341,7 +341,7 @@ theorem stacking_preserves_core :
     Interpretable genders bear `Interpretability.i` (natural gender);
     uninterpretable genders bear `Interpretability.u` (arbitrary gender).
     [carstens-2026] directly extends [kramer-2015]'s i/u distinction. -/
-def toDMInterpretability : GenderStatus → Morphology.DM.Interpretability
+def toDMInterpretability : GenderStatus → Morphology.DistributedMorphology.Interpretability
   | .interpretable _ => .i
   | .uninterpretable => .u
 

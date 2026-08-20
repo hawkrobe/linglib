@@ -5,7 +5,7 @@ import Linglib.Morphology.Paradigm.Case
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.OptimalityTheory.TableauSystem
 import Linglib.Phonology.Prosody.Foot
-import Linglib.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
 import Linglib.Phonology.OptimalityTheory.Stratal
 
 open Morphology.Case.Allomorphy
@@ -55,7 +55,7 @@ namespace Aitha2026
 
 
 open Core Constraints OptimalityTheory Core.Optimization Core.Optimization.Evaluation
-open Morphology.DM.VI
+open Morphology.DistributedMorphology.VI
 open Prosody
 
 -- ============================================================================

@@ -37,11 +37,11 @@ exist.
 This module provides the generic VI framework. Language-specific VI
 rules live in `Fragments/` or in phenomenon-specific `Studies/` files.
 The `Categorizer` and `CategorizedRoot` types from
-`Morphology/DM/Categorizer.lean` provide the syntax-side
+`Morphology/DistributedMorphology/Categorizer.lean` provide the syntax-side
 terminal nodes that VI targets.
 -/
 
-namespace Morphology.DM.VI
+namespace Morphology.DistributedMorphology.VI
 
 -- ============================================================================
 -- § 1: Vocabulary Item
@@ -247,4 +247,4 @@ theorem toRealization_isUnivalent {Ctx Root : Type*}
     simp only [toRealization]
     cases vocabularyInsert rules c r <;> simp
 
-end Morphology.DM.VI
+end Morphology.DistributedMorphology.VI

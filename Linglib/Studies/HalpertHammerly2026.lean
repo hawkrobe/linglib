@@ -2,7 +2,7 @@ import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Xhosa.Basic
 import Linglib.Fragments.Swahili.Basic
 import Linglib.Features.Person.Decomposition
-import Linglib.Morphology.DM.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer
 
 /-!
 # Halpert & Hammerly 2026: Reconciling Animacy and Noun Class in Bantu
@@ -411,7 +411,7 @@ theorem om_and_override_share_predicate (stack : NPStack) :
 -- ============================================================================
 
 section KramerBridge
-open Morphology.DM
+open Morphology.DistributedMorphology
 
 /-- Bridge from H&H's animacy features to [kramer-2015]'s
     `GenderFeature` on the categorizing head n.
