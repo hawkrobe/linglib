@@ -3,45 +3,34 @@ import Linglib.Semantics.Possessive.Relational
 import Linglib.Semantics.Possessive.Basic
 
 /-!
-# Categorizer Semantics [adamson-2024] [barker-2011]
+# Categorizer semantics
 
-Semantic denotations for categorizing heads (n) in Distributed Morphology,
-bridging the morphosyntactic structure of DM categorizers to compositional
-semantics via [barker-2011]'s type-shifting framework.
+The denotations of nominal categorizing heads: an n head is simultaneously
+a morphosyntactic object (gender features, the selectional feature {D}) and
+the compositional operator fixing the noun's semantic type. An n with {D}
+composes a root with the body-part-of relation into a relational noun, a
+sortal n is the identity on the root predicate, and the alienator n
+existentially closes a relational noun's possessor — the relationalizer π,
+bare interpretation, and detransitivizing Ex of the possession literature,
+stated over `Semantics/Possessive/`.
 
-[adamson-2024] proposes three denotation types for n heads in Teop:
+## Main definitions
 
-- **n_{body-part{D}}** ((36)): the head denotes
-  λP.λy.λx. P(x) ∧ body-part-of(x,y), so the composed nP for √BINA is
-  λy.λx. spleen(x) ∧ body-part-of(x,y) — a relational predicate
-  (type ⟨e,⟨e,t⟩⟩). The same operation as [barker-2011]'s π
-  (relationalizer), modulo argument order: Adamson binds the possessor
-  outermost with body-part-of(possessee, possessor), Barker's
-  π = λP.λx.λy. P(y) ∧ R(x,y) binds the possessor first with a
-  possessor-first relation.
+* `NSemanticType` — relational, sortal, alienator
+* `nBodyPartDenot`, `nSortalDenot`, `nAlienatorDenot` — the three head
+  denotations
+* `catHeadSemanticType` — the semantic type read off a `CatHead`
 
-- **n_{sortal}** ((37)): the head is the identity λP.λx. P(x), so the
-  composed nP for √INU is λx. house(x) (type ⟨e,t⟩) — [barker-2011]'s
-  bare semantics.
+## Main statements
 
-- **n_{alienator}** ((43)): λQ.λx. ∃y. Q(y)(x) — existentially closes
-  the possessor argument of a relational noun, yielding a property
-  (type ⟨e,t⟩). The detransitivizing move of [barker-2011]'s
-  Ex = λR.λx.∃y. R(x,y), applied to the possessor slot. In (43) the
-  alienator stacks on a body-part n that lacks {D}; the alienator bears
-  its own gender (gender II in Teop), and the lexicon lacks both a
-  gender-II body-part n and a u[ANIMATE] alienator.
+* `selectsD_iff_relational` — {D} on n iff relational type
+* `alienator_retraction` — closing π's possessor slot recovers the root
+  predicate up to existential closure
 
-## Key structural correspondence
+## References
 
-The morphosyntactic features on n determine the semantic type:
-- n with {D} (`selectsD = true`) → relational denotation (π)
-- n without {D}, combining with a non-relational root → sortal (bare)
-- n without {D}, mediating aPossession → existential closure (Ex)
-
-This means the DM categorizer head is simultaneously:
-1. A morphosyntactic object (bearing gender features, licensing possession)
-2. A compositional semantic operator (determining the noun's semantic type)
+* [L. J. Adamson, *Gender assignment is local*][adamson-2024]
+* [C. Barker, *Possessives and relational nouns*][barker-2011]
 -/
 
 namespace DistributedMorphology.CategorizerSemantics

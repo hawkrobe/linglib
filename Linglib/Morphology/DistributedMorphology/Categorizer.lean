@@ -7,53 +7,42 @@ import Linglib.Syntax.Minimalist.Verbal.Voice
 /-!
 # Categorizing heads
 
-[harley-2014] "On the identity of roots" addresses three questions about
-roots in DM:
+A categorizing head n, v, or a merges with an acategorial root to give it a
+syntactic category — the categorization assumption. The nominal categorizer
+is also the locus of grammatical gender: an n may carry an interpretable
+(natural) or uninterpretable (arbitrary) gender feature, and
+language-particular Vocabulary Insertion maps the resulting inventory to
+surface genders. Complement selection is a property of the root, and the
+domain of idiosyncratic interpretation is bounded by Voice, not by the
+categorizer.
 
-1. **What are roots?** (§2) Root terminal nodes are individuated by arbitrary
-   indices, not by phonological or semantic content. Roots enter the syntax
-   only under a categorizing head (n, v, a) — the categorization assumption
-   of [embick-marantz-2008], which [harley-2014] adopts.
+## Main definitions
 
-2. **Can roots take complements?** (§3) Yes — roots can Merge directly with
-   internal arguments without mediation by a functional head. Evidence:
-   *one*-replacement (§3.1, *this student of chemistry* vs. *that one of
-   physics*), verb-object idioms (§3.2, after [kratzer-1996]), and
-   morphological ergative splits (§3.3); Hiaki suppletion conditioned by the
-   root's complement is the §2.1 individuation-and-locality evidence.
+* `GenderVal`, `GenderFeature`, `Interpretability`, `Contrastivity` —
+  gender features on n and their LF status
+* `CatHead` — a categorizer with phi-features and the selectional feature
+  {D}; canonical heads `CatHead.n_iFem` … `CatHead.n_uMasc`
+* `CatHead.surfaceGenderSet1`/`Set2`/`Three`/`Animacy` — the attested
+  Vocabulary-Insertion maps from features to surface gender
+* `RootLicense`, `CatHead.licensesIntrusion` — root–n licensing and
+  gender-conditioned templatic t-intrusion
+* `CategorizedRoot`, `Recategorization` — roots under a categorizer and
+  layered derivation
 
-3. **What delimits the domain of special interpretation?** (§4) VoiceP, not
-   the first categorizing head. Idiosyncratic interpretation can extend past
-   the first categorizer — multiply derived words like *editor-ial*,
-   *classifi-eds*, *national-ize* ((36)) — and "Voice is the phase head,
-   not v".
+## Main statements
 
-## DM Three-Lists Architecture ([marantz-1997], [harley-2014] §2.4)
+* `same_root_different_category`, `recategorize_preserves_index` — one
+  root index across categories, threaded unchanged through derivation
+* `agentive_voice_is_phase` — Voice, not the categorizer, bounds special
+  interpretation
 
-- **List 1**: Root terminal nodes — syntactic atoms with opaque indices
-- **List 2**: Vocabulary Items — phonological realizations competing for insertion
-- **List 3**: Encyclopedia entries — interpretations conditioned by context
+## References
 
-## Phi-Features on n ([kramer-2015] Ch 3)
-
-[kramer-2015] argues that grammatical gender is a phi-feature located on
-the nominalizing head n, not on roots. The feature system is parameterized
-across languages by **dimension** (what binary feature is used):
-
-| Language    | Dimension | Four types of n                          |
-|-------------|-----------|------------------------------------------|
-| Amharic     | [±FEM]    | n i[+FEM], n i[−FEM], n, n u[+FEM]      |
-| Spanish     | [±FEM]    | n i[+FEM], n i[−FEM], n, n u[+FEM]      |
-| Maa         | [±FEM]    | n i[+FEM], n i[−FEM], n, n u[−FEM]       |
-| Algonquian  | [±ANIM]   | n i[+ANIM], n i[−ANIM], n, n u[+ANIM]   |
-
-([kramer-2015] Table 6.1 and Ch 6; Amharic also Ch 3. [adamson-2024]
-extends the inventory to Teop [±ANIM] and Jarawara [±MASC].)
-
-This module formalizes the categorization layer, its phi-feature content,
-and its relationship to Voice. List 2 (Vocabulary Insertion) is formalized
-in `VocabularyInsertion.lean`.
-
+* [H. Harley, *On the identity of roots*][harley-2014]
+* [D. Embick and A. Marantz, *Architecture and blocking*][embick-marantz-2008]
+* [R. Kramer, *The morphosyntax of gender*][kramer-2015]
+* [L. J. Adamson, *Gender assignment is local*][adamson-2024]
+* [L. Konnelly and E. Cowper, *Gender diversity and morphosyntax*][konnelly-cowper-2020]
 -/
 
 namespace DistributedMorphology
@@ -69,7 +58,20 @@ def Categorizer.toCategory : Categorizer → Cat
   | .v => .V
   | .a => .A
 
-/-! ### Phi-Features on Categorizing Heads ([kramer-2015] Ch 3) -/
+/-! ### Phi-features on categorizing heads
+
+[kramer-2015] locates grammatical gender on n, parameterized by which
+binary dimension a language uses (Table 6.1 and Ch 6; Amharic also Ch 3;
+[adamson-2024] extends the inventory to Teop [±ANIM] and Jarawara
+[±MASC]):
+
+| Language    | Dimension | Four types of n                          |
+|-------------|-----------|------------------------------------------|
+| Amharic     | [±FEM]    | n i[+FEM], n i[−FEM], n, n u[+FEM]      |
+| Spanish     | [±FEM]    | n i[+FEM], n i[−FEM], n, n u[+FEM]      |
+| Maa         | [±FEM]    | n i[+FEM], n i[−FEM], n, n u[−FEM]       |
+| Algonquian  | [±ANIM]   | n i[+ANIM], n i[−ANIM], n, n u[+ANIM]   |
+-/
 
 /-- Gender feature dimension. Different languages locate different
     binary features on n:
