@@ -1,4 +1,4 @@
-import Linglib.Morphology.DistributedMorphology.NominalStructure
+import Linglib.Morphology.DistributedMorphology.NominalSpine
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.DistributedMorphology.Categorizer.Semantics
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
@@ -48,7 +48,7 @@ cannot affect gender assignment.
 
 ## Connection to Linglib
 
-This module uses types from `Morphology/DistributedMorphology/NominalStructure.lean`
+This module uses types from `Morphology/DistributedMorphology/NominalSpine.lean`
 (the GLH, `NominalPosition`, `PossessionType`), `Head` and `PhiBundle`
 from `Morphology/DistributedMorphology/Categorizer.lean` ([kramer-2015]),
 `VocabItem` from `Morphology/DistributedMorphology/VocabularyInsertion.lean`,

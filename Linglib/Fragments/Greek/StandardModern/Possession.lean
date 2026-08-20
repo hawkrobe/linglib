@@ -27,7 +27,7 @@ the possessor (per [kampanarou-alexiadou-2026] §7, citing
 of the possessee NP, alienable possessors in the specifier of a dedicated
 PossP). The structural distinction is not visible in these
 typological-surface values; it lives in
-`Morphology/DistributedMorphology/NominalStructure.lean::PossessionType`.
+`Morphology/DistributedMorphology/NominalSpine.lean::PossessionType`.
 
 The `apo`-PP variant of the genitive (e.g., *to vivlio apo ton ðimarxo*
 'the book of the mayor') is a partitive-coerced alternative to inflectional
