@@ -9,13 +9,16 @@ import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Data.UD.Basic
 
 /-!
-# Argument Structure Constructions
+# Argument structure in Construction Grammar
 
-An argument structure construction is an independent form–meaning
-pairing whose meaning pole records the meaning components it contributes
-beyond the verb ([goldberg-1995]); a verb appearing in the construction
-fuses its own components with them, which derives
-construction-dependent alternation behavior.
+[goldberg-1995]'s account of argument structure: clausal argument
+realization is not projected from verb entries alone but contributed by
+independent form–meaning pairings — argument structure constructions —
+whose meaning pole records the components they add beyond the verb. A
+verb appearing in a construction fuses its components with the
+construction's, deriving alternation behavior the verb lacks in
+isolation, and the constructions themselves form a network of polysemy
+and inheritance links.
 
 ## Main definitions
 

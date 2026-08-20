@@ -7,7 +7,7 @@ import Linglib.Core.Order.Flat
 import Linglib.Syntax.ConstructionGrammar.Basic
 
 /-!
-# Construction Grammar: Inheritance Modes
+# Constructional inheritance
 
 Computational content for the two modes of constructional inheritance
 distinguished by [goldberg-1995] §3.3.1 (the `InheritanceMode` enum in

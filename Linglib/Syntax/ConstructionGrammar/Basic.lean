@@ -7,7 +7,7 @@ import Linglib.Data.UD.Basic
 import Mathlib.Data.List.Dedup
 
 /-!
-# Construction Grammar: Core Types
+# Constructions and the constructicon
 
 A construction is a learned pairing of a form and a meaning
 ([goldberg-2006]), the basic unit of grammatical knowledge in CxG. The
