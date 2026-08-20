@@ -1,36 +1,35 @@
+import Linglib.Morphology.DistributedMorphology.Root
 import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
-# Roots and categorization
+# Categorization
 
-The acategorial roots of Distributed Morphology, individuated by an
-arbitrary index alone, and the categorizing heads n, v, a that merge with
-them to give a syntactic category — the categorization assumption. The
-same root index survives categorization and re-categorization, which is
-what makes √HAMMER one root across *hammer* and *to hammer*. Complement
-selection is a property of the root, and the domain of idiosyncratic
-interpretation is bounded by Voice, not by the categorizer.
+The categorizing heads n, v, a of Distributed Morphology merge with an
+acategorial root to give it a syntactic category — the categorization
+assumption. The same root index survives categorization and
+re-categorization, which is what makes √HAMMER one root across *hammer*
+and *to hammer*. Complement selection is a property of the root, and the
+domain of idiosyncratic interpretation is bounded by Voice, not by the
+categorizer.
 
 ## Main definitions
 
-* `Root`, `Categorizer` — the acategorial root and the heads n, v, a
+* `Categorizer` — the closed inventory n, v, a
 * `Categorizer.toCategory` — the syntactic category of n, v, a
 * `CategorizedRoot`, `Recategorization` — roots under a categorizer and
   layered derivation
 
 ## Main statements
 
-* `same_root_different_category`, `recategorize_preserves_index` — one
+* `same_root_different_category`, `recategorize_preserves_root` — one
   root index across categories, threaded unchanged through derivation
 * `agentive_voice_is_phase` — Voice, not the categorizer, bounds special
   interpretation
 
 ## References
 
-* [M. Halle and A. Marantz, *Distributed Morphology and the pieces of
-  inflection*][halle-marantz-1993]
 * [A. Marantz, *No escape from syntax*][marantz-1997]
 * [H. Harley, *On the identity of roots*][harley-2014]
 * [D. Embick and A. Marantz, *Architecture and blocking*][embick-marantz-2008]
@@ -41,17 +40,7 @@ namespace DistributedMorphology
 open Minimalist Minimalist.Voice
 open Verb Verb.Root
 
-/-! ### Roots and categorizers -/
-
-/-- A Root terminal node, individuated by an arbitrary index alone — with
-deliberately no form or meaning fields, following [harley-2014]'s answer to
-what roots are. It receives its form at Vocabulary Insertion. A different
-object from the comparative-concept root of `Morphology/Root/Basic.lean`,
-which is a contentful morph. -/
-structure Root where
-  /-- The individuating index. -/
-  index : Nat
-  deriving DecidableEq, Repr
+/-! ### The categorizer inventory -/
 
 /-- A categorizing head that merges with an acategorial root to project
     syntactic structure. The three options correspond to the functional
@@ -60,7 +49,11 @@ inductive Categorizer where
   | n  -- nominal categorizer
   | v  -- verbal categorizer
   | a  -- adjectival categorizer
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
+
+/-- The categorizer inventory is closed: unlike the open class of roots
+(`Infinite Root`), the functional heads are exactly n, v, a. -/
+theorem card_categorizer : Fintype.card Categorizer = 3 := rfl
 
 /-- The syntactic category of a categorizer. -/
 def Categorizer.toCategory : Categorizer → Cat
@@ -70,24 +63,20 @@ def Categorizer.toCategory : Categorizer → Cat
 
 /-! ### CategorizedRoot -/
 
-/-- A root that has been merged with a categorizing head, yielding a
-    syntactically projectable unit ([harley-2014] §2).
-
-    `index` is DM's List-1 individuator — the acategorial atom `DistributedMorphology.Root`,
-    an arbitrary tag carrying no form or meaning. It is what survives
-    (re)categorization (`recategorize_preserves_index`), so it, not the
-    `root` classification, is what makes √HAMMER *one* root across
-    *hammer*/*to hammer*. `root` is the c-selection content (arity,
-    change-type) the categorizer apparatus reads ([harley-2014] §3); unrelated roots may
-    share it, so it cannot individuate. -/
+/-- A root merged with a categorizing head, yielding a syntactically
+    projectable unit ([harley-2014] §2). The `root` atom is what survives
+    (re)categorization (`recategorize_preserves_root`) and so what makes
+    √HAMMER one root across *hammer* and *to hammer*; the `classification`
+    is c-selection content ([harley-2014] §3) that unrelated roots may
+    share, so it cannot individuate. -/
 structure CategorizedRoot where
-  /-- The acategorial root index — DM's List-1 individuator (`DistributedMorphology.Root`). -/
-  index : DistributedMorphology.Root
-  /-- The acategorial root's c-selection content (arity, change-type, etc.) -/
-  root : Classification
-  /-- The categorizing head that gives it syntactic category -/
+  /-- The acategorial root. -/
+  root : DistributedMorphology.Root
+  /-- The root's c-selection content (arity, change-type). -/
+  classification : Classification
+  /-- The categorizing head that gives it syntactic category. -/
   categorizer : Categorizer
-  deriving BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The syntactic category of a categorized root, derived from its categorizer. -/
 def CategorizedRoot.category (cr : CategorizedRoot) : Cat :=
@@ -118,7 +107,8 @@ categorizer ([harley-2014] §3). This covers c-selection, not l-selection,
 which [hewett-2026] shows can vary by verbal template (`Hewett2026`). -/
 theorem complement_selection_at_root_level (i : DistributedMorphology.Root) (r : Classification)
     (c1 c2 : Categorizer) :
-    (CategorizedRoot.mk i r c1).root.valency = (CategorizedRoot.mk i r c2).root.valency := rfl
+    (CategorizedRoot.mk i r c1).classification.valency
+      = (CategorizedRoot.mk i r c2).classification.valency := rfl
 
 /-! ### Layered Derivation (Denominal, Deadjectival, Deverbal) -/
 
@@ -151,7 +141,7 @@ def Recategorization.target : Recategorization → Categorizer
 def CategorizedRoot.recategorize (cr : CategorizedRoot)
     (rc : Recategorization) : Option CategorizedRoot :=
   if cr.categorizer = rc.source then
-    some { index := cr.index, root := cr.root, categorizer := rc.target }
+    some { root := cr.root, classification := cr.classification, categorizer := rc.target }
   else
     none
 
@@ -173,16 +163,11 @@ theorem recategorization_changes_category (cr : CategorizedRoot)
   case isTrue => simp only [Option.some.injEq] at h; rw [← h]
   case isFalse => simp at h
 
-/-- The acategorial index survives (re)categorization: the individuating
-    `DistributedMorphology.Root` atom is invariant under `recategorize`, so *shelf* (n) and
-    *to shelve* (v) share one List-1 root ([harley-2014] §2, §4). This is
-    the work DM's own individuator does that the `root` classification
-    cannot — valency/change-type is shared by unrelated roots, the index is
-    not — so it is the index, not the classification, that the derivational
-    history threads unchanged. -/
-theorem recategorize_preserves_index (cr cr' : CategorizedRoot)
+/-- The acategorial root survives (re)categorization, so *shelf* (n) and
+    *to shelve* (v) share one List-1 root ([harley-2014] §2, §4). -/
+theorem recategorize_preserves_root (cr cr' : CategorizedRoot)
     (rc : Recategorization) (h : cr.recategorize rc = some cr') :
-    cr'.index = cr.index := by
+    cr'.root = cr.root := by
   unfold CategorizedRoot.recategorize at h
   split at h
   case isTrue => simp only [Option.some.injEq] at h; rw [← h]
