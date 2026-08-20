@@ -104,27 +104,25 @@ theorem unify_bot [OrderBot α] (a : α) : unify a (⊥ : α) = some a := by
   rw [unify_comm]; exact bot_unify a
 
 omit [PartialUnify α] in
+/-- Glueing a LUB into a set: when `v` is a least upper bound of `s`,
+LUBs of `{a, v}` are exactly LUBs of `insert a s`. -/
+theorem isLUB_pair_iff_insert {s : Set α} {a v u : α} (hv : IsLUB s v) :
+    IsLUB {a, v} u ↔ IsLUB (insert a s) u := by
+  have hub : upperBounds ({a, v} : Set α) = upperBounds (insert a s) := by
+    ext w
+    simp only [upperBounds_insert, upperBounds_singleton, Set.mem_inter_iff,
+      Set.mem_Ici]
+    exact and_congr_right fun _ => isLUB_le_iff hv
+  unfold IsLUB
+  rw [hub]
+
+omit [PartialUnify α] in
 /-- Glueing pairwise LUBs: if `v` is the LUB of `{a, b}`, then LUBs of
 `{v, c}` are exactly LUBs of `{a, b, c}`. -/
 theorem isLUB_pair_step {a b c v u : α} (hv : IsLUB {a, b} v) :
     IsLUB {v, c} u ↔ IsLUB ({a, b, c} : Set α) u := by
-  have hub : upperBounds ({v, c} : Set α) = upperBounds {a, b, c} := by
-    ext w
-    constructor
-    · intro hw x hx
-      rcases hx with rfl | rfl | rfl
-      · exact (hv.1 (Set.mem_insert _ _)).trans (hw (Set.mem_insert _ _))
-      · exact (hv.1 (Set.mem_insert_of_mem _ rfl)).trans (hw (Set.mem_insert _ _))
-      · exact hw (Set.mem_insert_of_mem _ rfl)
-    · intro hw x hx
-      rcases hx with rfl | rfl
-      · exact hv.2 λ y hy => by
-          rcases hy with rfl | rfl
-          · exact hw (Set.mem_insert _ _)
-          · exact hw (Set.mem_insert_of_mem _ (Set.mem_insert _ _))
-      · exact hw (Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl))
-  unfold IsLUB
-  rw [hub]
+  rw [Set.pair_comm v c, isLUB_pair_iff_insert hv, Set.insert_comm,
+    Set.pair_comm c b]
 
 theorem bind_unify_left_eq_some_iff {u : α} :
     (unify a b).bind (unify · c) = some u ↔ IsLUB ({a, b, c} : Set α) u := by
@@ -350,3 +348,86 @@ theorem lubs_assoc (H : ∀ a b : α, Compat a b → ∃ c, IsLUB ({a, b} : Set 
     exact ⟨a, ha, b, hb, w, hw, hset b w a ▸ h⟩
 
 end Set
+
+/-! ### List unification -/
+
+namespace PartialUnify
+
+section ListUnify
+
+variable {α : Type*} [PartialOrder α] [OrderBot α] [PartialUnify α]
+
+/-- Unification of a finite list of elements: the least upper bound of
+its members (together with `⊥`) when they are jointly bounded, `none`
+otherwise. -/
+def unifyList : List α → Option α
+  | [] => some ⊥
+  | a :: l => (unifyList l).bind (unify a)
+
+@[simp] theorem unifyList_nil : unifyList ([] : List α) = some ⊥ := rfl
+
+theorem unifyList_cons (a : α) (l : List α) :
+    unifyList (a :: l) = (unifyList l).bind (unify a) := rfl
+
+theorem isLUB_of_unifyList_eq_some {l : List α} {u : α}
+    (h : unifyList l = some u) : IsLUB (insert ⊥ {x | x ∈ l}) u := by
+  induction l generalizing u with
+  | nil =>
+    obtain rfl : (⊥ : α) = u := Option.some_inj.mp h
+    simp
+  | cons a l ih =>
+    rw [unifyList_cons, Option.bind_eq_some_iff] at h
+    obtain ⟨v, hv, hu⟩ := h
+    have h1 := (isLUB_pair_iff_insert (ih hv)).mp
+      (unify_eq_some_iff_isLUB.mp hu)
+    rwa [Set.insert_comm,
+      show (insert a {x | x ∈ l} : Set α) = {x | x ∈ a :: l} from by
+        ext x; simp] at h1
+
+theorem isSome_unifyList_of_bddAbove {l : List α}
+    (h : BddAbove {x | x ∈ l}) : (unifyList l).isSome := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+    obtain ⟨u, hu⟩ := h
+    have hl : BddAbove {x | x ∈ l} :=
+      ⟨u, fun x hx => hu (by simp only [Set.mem_ofPred_eq, List.mem_cons]; exact Or.inr hx)⟩
+    obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp (ih hl)
+    have hvu : v ≤ u := (isLUB_of_unifyList_eq_some hv).2 (by
+      rintro x (rfl | hx)
+      · exact bot_le
+      · exact hu (by simpa using Or.inr hx))
+    have hau : a ≤ u := hu (by simp)
+    have : (unify a v).isSome :=
+      isSome_unify_of_bddAbove ⟨u, mem_upperBounds_pair.mpr ⟨hau, hvu⟩⟩
+    rw [unifyList_cons, hv]
+    exact this
+
+theorem unifyList_eq_some_iff_isLUB {l : List α} {u : α} :
+    unifyList l = some u ↔ IsLUB (insert ⊥ {x | x ∈ l}) u := by
+  refine ⟨isLUB_of_unifyList_eq_some, fun h => ?_⟩
+  have hbdd : BddAbove {x | x ∈ l} :=
+    ⟨u, fun x hx => h.1 (Set.mem_insert_of_mem _ hx)⟩
+  obtain ⟨v, hv⟩ :=
+    Option.isSome_iff_exists.mp (isSome_unifyList_of_bddAbove hbdd)
+  rw [hv, Option.some_inj]
+  exact (isLUB_of_unifyList_eq_some hv).unique h
+
+theorem isSome_unifyList_iff_bddAbove {l : List α} :
+    (unifyList l).isSome ↔ BddAbove {x | x ∈ l} := by
+  refine ⟨fun h => ?_, isSome_unifyList_of_bddAbove⟩
+  obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp h
+  exact ⟨u, fun x hx =>
+    (isLUB_of_unifyList_eq_some hu).1 (Set.mem_insert_of_mem _ hx)⟩
+
+theorem unifyList_eq_none_iff {l : List α} :
+    unifyList l = none ↔ ¬ BddAbove {x | x ∈ l} := by
+  rw [← isSome_unifyList_iff_bddAbove]
+  cases unifyList l <;> simp
+
+@[simp] theorem unifyList_pair (a b : α) : unifyList [a, b] = unify a b := by
+  simp [unifyList]
+
+end ListUnify
+
+end PartialUnify

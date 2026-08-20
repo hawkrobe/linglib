@@ -29,10 +29,10 @@ Formal defaults-with-override traditions this abstracts: DATR
 ([evans-gazdar-1996]) and Network Morphology ([brown-hippisley-2012]).
 [jackendoff-audring-2020] argue inheritance and the impoverished-entry model do
 not by themselves explicate motivation — their claim, contested in the DATR
-literature. The one-level default-override primitive already lives in
-`Syntax/ConstructionGrammar/Inheritance.lean` (`inheritField`, child-wins); the
-transitive chain walk here is new, and the shared `Option`-level override
-primitive is a candidate for a future `Core/Order/` lift.
+literature. The recursion step is the priority union of the flat
+feature-slot order (`Option.or`, i.e. `Flat.or`; see `valueFuel_succ`);
+its multi-parent default-inheritance form lives in
+`Syntax/ConstructionGrammar/Inheritance.lean` (`inheritField`).
 
 ## Main declarations
 
@@ -63,6 +63,13 @@ def valueFuel (parent : ι → Option ι) (att : ι → Option β) : Nat → ι 
     match att n with
     | some v => some v
     | none => (parent n).bind (valueFuel parent att k)
+
+/-- The recursion step is the priority union of the flat feature-slot
+order: the local specification wins, else defer to the parent. -/
+theorem valueFuel_succ (k : Nat) (n : ι) :
+    valueFuel parent att (k + 1) n =
+      (att n).or ((parent n).bind (valueFuel parent att k)) := by
+  cases h : att n <;> simp [valueFuel, h, Option.or]
 
 /-! ### Fuel monotonicity and saturation -/
 

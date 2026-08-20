@@ -202,10 +202,85 @@ def palConstructicon : Constructicon :=
         , sharedProperties := ["lemma-like construal: presumed familiarity"]
         , overriddenProperties := ["head N optional; PAL may serve as head"] } ] }
 
+/-! ### Form-side specifications (§6)
+
+The inheritable form-side properties at issue in the Figure 5 network, as
+`Flat` feature slots (`⊥` = the construction does not legislate), with
+the componentwise lifts of the `ConstructionGrammar.Inheritance` slot
+algebra. -/
+
+/-- Locus of primary stress in a modification construction: compound
+stress falls within the modifier (*BLACKbird*), phrasal modification
+stresses the head (*black BIRD*). -/
+inductive StressLocus where
+  | modifier
+  | head
+  deriving DecidableEq, Repr
+
+/-- Position of the modifier slot relative to the head. -/
+inductive ModPosition where
+  | prenominal
+  | postnominal
+  deriving DecidableEq, Repr
+
+/-- Whether a construction's output can recur inside the construction's
+own open slot. -/
+inductive SelfEmbedding where
+  | allowed
+  | banned
+  deriving DecidableEq, Repr
+
+/-- A partial constructional specification: the inheritable form-side
+properties of a nominal-modification construction ([goldberg-1995] §3.3;
+[goldberg-shirtz-2025] §6). -/
+structure CxnSpec where
+  /-- X-bar level of the construction's output -/
+  level : Flat BarLevel := ⊥
+  /-- Position of the modifier slot -/
+  modPosition : Flat ModPosition := ⊥
+  /-- Locus of primary stress -/
+  stress : Flat StressLocus := ⊥
+  /-- Whether the construction self-embeds -/
+  selfEmbedding : Flat SelfEmbedding := ⊥
+  deriving DecidableEq, Repr
+
+namespace CxnSpec
+
+/-- Componentwise compatibility: complete-mode inheritance
+([goldberg-1995]'s complete mode; the regime of [sag-2012]'s type
+hierarchy) is defined exactly on compatible specifications. -/
+def IsCompatible (p q : CxnSpec) : Prop :=
+  Compat p.level q.level ∧ Compat p.modPosition q.modPosition ∧
+    Compat p.stress q.stress ∧ Compat p.selfEmbedding q.selfEmbedding
+
+instance (p q : CxnSpec) : Decidable (p.IsCompatible q) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
+
+/-- Normal-mode inheritance from a family of parent specifications,
+componentwise. -/
+def inherit (own : CxnSpec) (parents : List CxnSpec) : CxnSpec where
+  level := inheritField own.level (parents.map (·.level))
+  modPosition := inheritField own.modPosition (parents.map (·.modPosition))
+  stress := inheritField own.stress (parents.map (·.stress))
+  selfEmbedding := inheritField own.selfEmbedding (parents.map (·.selfEmbedding))
+
+/-- The child's own specification legislates every field its parents
+conflict on — well-formedness of a normal-mode multi-mother node. -/
+def Resolves (own : CxnSpec) (parents : List CxnSpec) : Prop :=
+  ResolvesField own.level (parents.map (·.level)) ∧
+    ResolvesField own.modPosition (parents.map (·.modPosition)) ∧
+    ResolvesField own.stress (parents.map (·.stress)) ∧
+    ResolvesField own.selfEmbedding (parents.map (·.selfEmbedding))
+
+instance (own : CxnSpec) (parents : List CxnSpec) :
+    Decidable (own.Resolves parents) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
+
+end CxnSpec
+
 /-! ### Two mothers force normal-mode inheritance (§6)
 
-The paper's argument for normal-mode over complete inheritance, derived
-with the `CxnSpec` algebra from `ConstructionGrammar.Inheritance`: PAL's
+The paper's argument for normal-mode over complete inheritance: PAL's
 two mothers conflict — the NN compound construction yields an N⁰ with
 modifier-internal stress, adjectival modification an N′ with head stress —
 so strict unification of the parents is impossible
@@ -218,9 +293,9 @@ modifier slot from both mothers, non-self-embedding from Adj+N
 /-- NN compound specification: zero-level output, prenominal modifier,
 compound stress within the modifier. -/
 def nnCompoundSpec : CxnSpec :=
-  { level := some .zero
-  , modPosition := some .prenominal
-  , stress := some .modifier }
+  { level := .some .zero
+  , modPosition := .some .prenominal
+  , stress := .some .modifier }
 
 /-- Adj+N modification specification: N′ output, prenominal modifier,
 phrasal (head) stress; per §6, "like Adj + N combinations, the PAL N
@@ -228,18 +303,18 @@ construction cannot be recursively embedded within another PAL N
 construction", so Adj+N carries the non-self-embedding value PAL
 inherits. -/
 def adjNSpec : CxnSpec :=
-  { level := some .bar
-  , modPosition := some .prenominal
-  , stress := some .head
-  , selfEmbedding := some .banned }
+  { level := .some .bar
+  , modPosition := .some .prenominal
+  , stress := .some .head
+  , selfEmbedding := .some .banned }
 
 /-- The PAL construction's own specification: exactly the two fields its
 mothers conflict on, resolved as the paper describes — N′ output (with
 Adj+N, against the compound) and PAL-internal stress (with the compound,
 against Adj+N). -/
 def palOwnSpec : CxnSpec :=
-  { level := some .bar
-  , stress := some .modifier }
+  { level := .some .bar
+  , stress := .some .modifier }
 
 /-- Own-specification assignment for the Figure 5 network: the two
 mothers carry their specifications, PAL legislates exactly its mothers'
@@ -254,7 +329,7 @@ def figure5Spec (c : Construction) : CxnSpec :=
 /-- PAL's full specification, computed through the network's links by
 normal-mode inheritance. -/
 def palSpec : CxnSpec :=
-  palConstructicon.derivedSpec figure5Spec palConstruction
+  palConstructicon.derivedSpec CxnSpec.inherit figure5Spec palConstruction
 
 /-- No dangling links: every Figure 5 link endpoint names a construction
 of the network. -/
@@ -269,7 +344,7 @@ theorem pal_parents :
 /-- The whole network is normal-mode well-formed: every construction
 legislates every field its parents conflict on. -/
 theorem palConstructicon_resolvesAll :
-    palConstructicon.ResolvesAll figure5Spec := by decide
+    palConstructicon.ResolvesAll CxnSpec.Resolves figure5Spec := by decide
 
 /-- The two mothers conflict (bar level and stress), so complete-mode
 inheritance cannot relate PAL to both parents — the formal content of §6's
@@ -291,10 +366,10 @@ non-self-embedding is inherited from Adj+N alone, and N′-hood and
 PAL-internal stress come from PAL's own conflict resolutions. -/
 theorem palSpec_eq :
     palSpec =
-      { level := some .bar
-      , modPosition := some .prenominal
-      , stress := some .modifier
-      , selfEmbedding := some .banned } := by decide
+      { level := .some .bar
+      , modPosition := .some .prenominal
+      , stress := .some .modifier
+      , selfEmbedding := .some .banned } := by decide
 
 /-! ### Licensing: PAL is load-bearing
 
