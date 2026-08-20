@@ -1,4 +1,4 @@
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion
+import Linglib.Morphology.DistributedMorphology.Fusion
 import Linglib.Morphology.Morphotactics.MirrorPrinciple
 
 /-!
@@ -33,11 +33,11 @@ until Vocabulary Insertion at MS — this is **Late Insertion**. The VI
 mechanism (`subsetPrinciple`) IS Late Insertion in action: it maps
 feature bundles to exponents, making DM realizational by construction.
 
-Impoverishment — also introduced in this paper — is formalized as a
-general mechanism in `Morphology/DistributedMorphology/Impoverishment.lean`.
-This study file instantiates impoverishment on the English paradigm
-to derive syncretism (§4). Fusion is defined inline (§3) since this
-file is its only consumer.
+Impoverishment and Fusion — both introduced in this paper — are
+formalized as general mechanisms in
+`Morphology/DistributedMorphology/Impoverishment.lean` and `Fusion.lean`.
+This study file instantiates impoverishment on the English paradigm to
+derive syncretism (§4) and fusion on the Tns/Agr pair (§3).
 -/
 
 namespace HalleMarantz1993
@@ -252,32 +252,10 @@ affixes) for Tns+Agr: *walk-s* realizes both non-past Tns and 3sg
 Agr in one exponent, because Fusion merges the two terminals before
 VI applies.
 
-We model fusion using `FusionRule` (inlined below; this study is its
-only consumer in linglib) and show that the fused features feed
-directly into the VI paradigm from §1. -/
+We model fusion with `DistributedMorphology.FusionRule` and show that the
+fused features feed directly into the VI paradigm from §1. -/
 
 section TnsAgrFusion
-
-/-- Fusion ([halle-marantz-1993]): merges two adjacent terminal
-    nodes into a single terminal before Vocabulary Insertion. The fused
-    node bears the union of both terminals' features; a single VI then
-    spells out the fused bundle, yielding a portmanteau.
-
-    Canonical example: French *du* = Fusion of P[de] and D[le.MASC.SG].
-    [kalin-bjorkman-etal-2026] §4.4. -/
-structure FusionRule (Terminal : Type) where
-  /-- First terminal (structurally higher). -/
-  terminal1 : Terminal
-  /-- Second terminal (structurally lower / complement head). -/
-  terminal2 : Terminal
-
-/-- The result of Fusion: a single terminal bearing features from both
-    inputs, parameterized over a feature-union operation. -/
-def FusionRule.apply {Terminal Features : Type}
-    (r : FusionRule Terminal)
-    (getFeatures : Terminal → Features)
-    (union : Features → Features → Features) : Features :=
-  union (getFeatures r.terminal1) (getFeatures r.terminal2)
 
 /-- The two inflectional heads that fuse in English. -/
 inductive InflHead where
@@ -296,12 +274,24 @@ def InflHead.features : InflHead → List EngInflFeature
   | .agr true        => [.sg3]
   | .agr false       => []
 
-/-- Compute the fused feature bundle for a Tns+Agr combination.
-    Uses `FusionRule.apply` with list concatenation as the union
-    operation. -/
+/-- Tns+Agr fusion ([halle-marantz-1993]): the two heads are adjacent
+    sisters after head movement, so the structural condition is trivially
+    met here and the fused bundle is feature-list union. -/
+def tnsAgrFusion : DistributedMorphology.FusionRule (List EngInflFeature) Unit where
+  contextOk _ := True
+  decContext _ := inferInstanceAs (Decidable True)
+  bundlesOk _ _ := True
+  decBundles _ _ := inferInstanceAs (Decidable True)
+  fuse := (· ++ ·)
+
+/-- The conditioned application always succeeds for adjacent Tns/Agr. -/
+theorem tnsAgrFusion_apply (p q : List EngInflFeature) :
+    tnsAgrFusion.apply p q () = some (p ++ q) :=
+  DistributedMorphology.FusionRule.apply_pos trivial trivial
+
+/-- The fused feature bundle for a Tns+Agr combination. -/
 def fusedFeatures (tPast tPart : Bool) (aSg3 : Bool) : List EngInflFeature :=
-  (FusionRule.mk (.tns tPast tPart) (.agr aSg3) : FusionRule InflHead).apply
-    InflHead.features (· ++ ·)
+  tnsAgrFusion.fuse (InflHead.tns tPast tPart).features (InflHead.agr aSg3).features
 
 /-- 3sg present: Tns[−past,−part] fused with Agr[3sg] → [sg3] → `-z`.
     One exponent realizes both heads. -/

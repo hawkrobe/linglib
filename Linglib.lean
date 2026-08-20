@@ -1255,6 +1255,7 @@ import Linglib.Morphology.DistributedMorphology.CategorizerSemantics
 import Linglib.Morphology.DistributedMorphology.Defs
 import Linglib.Morphology.DistributedMorphology.DomainLocality
 import Linglib.Morphology.DistributedMorphology.Fission
+import Linglib.Morphology.DistributedMorphology.Fusion
 import Linglib.Morphology.DistributedMorphology.Impoverishment
 import Linglib.Morphology.DistributedMorphology.Merger
 import Linglib.Morphology.DistributedMorphology.NominalStructure
