@@ -117,14 +117,15 @@ in any morphosyntactic context, intruder-bearing ones require external
 licensing — see `intrusionLicensed`. -/
 abbrev hasIntruder : Prop := ∃ a ∈ m.associations, a.source = .affix
 
-/-- A match is *intrusion-licensed* under an external licensing flag iff
-either the morphosyntactic context licenses an intruding sister bound root
-([lowenstamm-2014]) or the match contains no intruders. For [faust-2026]'s
-analysis the flag is `true` iff the template is realized at an n[+gen]
-head in [kramer-2020]'s sense; verbal templates, whose gender lives on a
-higher Agr head, evaluate to `false` and admit no intrusion. -/
-abbrev intrusionLicensed (licensed : Bool) : Prop :=
-  licensed = true ∨ ¬ m.hasIntruder
+/-- A match is *intrusion-licensed* under an external licensing condition
+iff either the morphosyntactic context licenses an intruding sister bound
+root ([lowenstamm-2014]) or the match contains no intruders. For
+[faust-2026]'s analysis the condition holds iff the template is realized
+at an n[+gen] head in [kramer-2020]'s sense
+(`Categorizer.Head.LicensesIntrusion`); verbal templates, whose gender
+lives on a higher Agr head, admit no intrusion. -/
+abbrev intrusionLicensed (licensed : Prop) : Prop :=
+  licensed ∨ ¬ m.hasIntruder
 
 end Morphology.TemplateMatch
 
@@ -156,20 +157,20 @@ theorem not_isMisaligned_of_all_intruder (r : ConsonantalRoot α) (t : CVTemplat
 licensing iff either the external predicate licenses intrusion or the
 match is intruder-free — the formal content of the verbal/nominal
 asymmetry. -/
-theorem intrusionLicensed_iff (m : TemplateMatch α) (licensed : Bool) :
+theorem intrusionLicensed_iff (m : TemplateMatch α) (licensed : Prop) :
     m.intrusionLicensed licensed ↔
-      licensed = true ∨ ¬ m.hasIntruder := Iff.rfl
+      licensed ∨ ¬ m.hasIntruder := Iff.rfl
 
 /-- Intruder-free matches are licensed in any morphosyntactic context. -/
 theorem intrusionLicensed_of_no_intruder (m : TemplateMatch α)
-    (h : ¬ m.hasIntruder) (licensed : Bool) :
+    (h : ¬ m.hasIntruder) (licensed : Prop) :
     m.intrusionLicensed licensed := Or.inr h
 
-/-- An intruder-bearing match is licensed iff the external predicate is
-`true` — the contrapositive that delivers the verbal/nominal split. -/
+/-- An intruder-bearing match is licensed iff the external condition
+holds — the contrapositive that delivers the verbal/nominal split. -/
 theorem intrusionLicensed_with_intruder (m : TemplateMatch α)
-    (h : m.hasIntruder) (licensed : Bool) :
-    m.intrusionLicensed licensed ↔ licensed = true := by
+    (h : m.hasIntruder) (licensed : Prop) :
+    m.intrusionLicensed licensed ↔ licensed := by
   simp [TemplateMatch.intrusionLicensed, h]
 
 /-! ### *Misalignment as an alignment constraint -/
@@ -914,12 +915,12 @@ Kramer's `Categorizer.Head` taxonomy changes. -/
 
 open DistributedMorphology (Categorizer.Head)
 
-/-! The morphological-licensing predicate `Categorizer.Head.licensesIntrusion`
+/-! The morphological-licensing predicate `Categorizer.Head.LicensesIntrusion`
 itself lives in `Morphology/DistributedMorphology/Categorizer.lean` (alongside
 the Kramer taxonomy it ranges over), together with its per-canonical-
 head verification theorems (`n_uFem_licenses_intrusion`,
 `v_plain_blocks_intrusion`, etc.) and the iff characterization
-`DistributedMorphology.licensesIntrusion_iff_n_and_gen`. The Faust-specific
+`DistributedMorphology.LicensesIntrusion_iff_n_and_gen`. The Faust-specific
 content of §12 is the *per-template `Categorizer.Head` tagging* and the
 per-derivation verdicts below. -/
 
@@ -973,16 +974,10 @@ instances of this universal claim. -/
     disjunct holds for the specific (match, head) pair. -/
 theorem intrusion_wellformed_iff_no_intruder_or_n_with_gen
     (m : TemplateMatch String) (ch : Categorizer.Head) :
-    m.intrusionLicensed ch.licensesIntrusion ↔
-      ¬ m.hasIntruder ∨ (ch.categorizer = .n ∧ ch.phi.gender.isSome = true) := by
+    m.intrusionLicensed ch.LicensesIntrusion ↔
+      ¬ m.hasIntruder ∨ (ch.categorizer = .n ∧ ch.phi.gender.isSome) := by
   rw [intrusionLicensed_iff]
-  constructor
-  · rintro (hlic | hno)
-    · exact Or.inr ((DistributedMorphology.licensesIntrusion_iff_n_and_gen ch).mp hlic)
-    · exact Or.inl hno
-  · rintro (hno | hgen)
-    · exact Or.inr hno
-    · exact Or.inl ((DistributedMorphology.licensesIntrusion_iff_n_and_gen ch).mpr hgen)
+  exact or_comm
 
 /-- **Corollary (verbal half).** Under a verbal locus (`v_plain`, with
     no gender feature), licensing reduces to intruder-freeness. This is
@@ -990,7 +985,7 @@ theorem intrusion_wellformed_iff_no_intruder_or_n_with_gen
     to be morphologically licensed — the spreading and empty-slot
     strategies are the only options open to v. -/
 theorem v_plain_licenses_iff_no_intruder (m : TemplateMatch String) :
-    m.intrusionLicensed Categorizer.Head.v_plain.licensesIntrusion ↔
+    m.intrusionLicensed Categorizer.Head.v_plain.LicensesIntrusion ↔
       ¬ m.hasIntruder := by
   rw [intrusion_wellformed_iff_no_intruder_or_n_with_gen]
   constructor
@@ -1005,14 +1000,14 @@ theorem v_plain_licenses_iff_no_intruder (m : TemplateMatch String) :
     like Hebrew taQTiL and Amharic gerunds/INFs — the Kramer-2020
     structure makes the n[+gen] exponent morphosyntactically present. -/
 theorem n_uFem_licenses_universally (m : TemplateMatch String) :
-    m.intrusionLicensed Categorizer.Head.n_uFem.licensesIntrusion := by
+    m.intrusionLicensed Categorizer.Head.n_uFem.LicensesIntrusion := by
   rw [intrusion_wellformed_iff_no_intruder_or_n_with_gen]
   exact Or.inr ⟨rfl, rfl⟩
 
 /-! #### Per-derivation licensing theorems
 
 For every match, the predicate `TemplateMatch.intrusionLicensed`
-applied to the corresponding template's `Categorizer.Head.licensesIntrusion`
+applied to the corresponding template's `Categorizer.Head.LicensesIntrusion`
 gives the well-formedness verdict. The proofs are `decide` — the
 disjunction reduces by `rfl` once the predicates evaluate. -/
 
@@ -1020,23 +1015,23 @@ disjunction reduces by `rfl` once the predicates evaluate. -/
 
 theorem kalat_licensed_at_v :
     hebrewKlt_kalat.intrusionLicensed
-      hebrewPst3msg_locus.licensesIntrusion := by decide
+      hebrewPst3msg_locus.LicensesIntrusion := by decide
 
 theorem kalal_kll_licensed_at_v :
     hebrewKll_kalal.intrusionLicensed
-      hebrewPst3msg_locus.licensesIntrusion := by decide
+      hebrewPst3msg_locus.LicensesIntrusion := by decide
 
 theorem kala_licensed_at_v :
     hebrewKlj_kala.intrusionLicensed
-      hebrewPst3msg_locus.licensesIntrusion := by decide
+      hebrewPst3msg_locus.LicensesIntrusion := by decide
 
 theorem kalal_klj_licensed_at_v :
     hebrewKlj_kalal.intrusionLicensed
-      hebrewPst3msg_locus.licensesIntrusion := by decide
+      hebrewPst3msg_locus.LicensesIntrusion := by decide
 
 theorem kaluj_licensed_at_v :
     hebrewKlj_kaluj.intrusionLicensed
-      hebrewPassPrtcpl_locus.licensesIntrusion := by decide
+      hebrewPassPrtcpl_locus.LicensesIntrusion := by decide
 
 /-! ##### Hebrew nominal taQTiL (intrusion possible) -/
 
@@ -1046,29 +1041,29 @@ theorem kaluj_licensed_at_v :
     morphological licensing — a useful separation. -/
 theorem dmj_illicit_licensed_at_n :
     hebrewDmj_illicit.intrusionLicensed
-      hebrewTaQTiL_locus.licensesIntrusion := by decide
+      hebrewTaQTiL_locus.LicensesIntrusion := by decide
 
 theorem tadmit_licensed_at_n :
     hebrewDmj_tadmit.intrusionLicensed
-      hebrewTaQTiL_locus.licensesIntrusion := by decide
+      hebrewTaQTiL_locus.LicensesIntrusion := by decide
 
 /-! ##### Amharic verbal vs nominal -/
 
 theorem fdj_pfv_licensed_at_v :
     amharicFdj_pfv.intrusionLicensed
-      amharicPfv3msg_locus.licensesIntrusion := by decide
+      amharicPfv3msg_locus.LicensesIntrusion := by decide
 
 theorem wd_pfv_licensed_at_v :
     amharicWd_pfv.intrusionLicensed
-      amharicPfv3msg_locus.licensesIntrusion := by decide
+      amharicPfv3msg_locus.LicensesIntrusion := by decide
 
 theorem fdj_grnd_licensed_at_n :
     amharicFdj_grnd.intrusionLicensed
-      amharicGrnd_locus.licensesIntrusion := by decide
+      amharicGrnd_locus.LicensesIntrusion := by decide
 
 theorem sma_inf_licensed_at_n :
     amharicSma_inf.intrusionLicensed
-      amharicInf_locus.licensesIntrusion := by decide
+      amharicInf_locus.LicensesIntrusion := by decide
 
 /-! #### The verbal-intrusion blocking theorem
 
@@ -1102,7 +1097,7 @@ theorem hebrew_pst3msg_intrusion_prosodically_satisfies :
     it fails: v-locus does not license n[+gen]'s /t/ exponent. -/
 theorem hebrew_pst3msg_intrusion_morphologically_blocked :
     ¬ hebrewDmj_pst3msg_intrusion.intrusionLicensed
-      hebrewPst3msg_locus.licensesIntrusion := by decide
+      hebrewPst3msg_locus.LicensesIntrusion := by decide
 
 /-! #### The cross-paper integration theorem -/
 
@@ -1130,20 +1125,20 @@ theorem hebrew_pst3msg_intrusion_morphologically_blocked :
 theorem verbal_nominal_asymmetry_from_kramer :
     -- Nominal locus licenses intrusion candidates
     hebrewDmj_tadmit.intrusionLicensed
-      hebrewTaQTiL_locus.licensesIntrusion ∧
+      hebrewTaQTiL_locus.LicensesIntrusion ∧
     amharicFdj_grnd.intrusionLicensed
-      amharicGrnd_locus.licensesIntrusion ∧
+      amharicGrnd_locus.LicensesIntrusion ∧
     -- Verbal locus blocks intrusion candidates
     ¬ hebrewDmj_pst3msg_intrusion.intrusionLicensed
-      hebrewPst3msg_locus.licensesIntrusion ∧
+      hebrewPst3msg_locus.LicensesIntrusion ∧
     -- The verbal candidate's prosodic satisfaction is irrelevant —
     -- it satisfies the template but fails the morphological licensing
     hebrewDmj_pst3msg_intrusion.satisfies ∧
     -- Intruder-free verbal forms always pass
     hebrewKlj_kala.intrusionLicensed
-      hebrewPst3msg_locus.licensesIntrusion ∧
+      hebrewPst3msg_locus.LicensesIntrusion ∧
     amharicFdj_pfv.intrusionLicensed
-      amharicPfv3msg_locus.licensesIntrusion := by
+      amharicPfv3msg_locus.LicensesIntrusion := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 end Faust2026

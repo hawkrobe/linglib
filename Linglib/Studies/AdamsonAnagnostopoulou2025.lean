@@ -187,13 +187,11 @@ inductive GenderNode where
   | anim   -- animate (BCS: under MASC)
   deriving DecidableEq, Repr
 
-open DistributedMorphology (GenderDimension)
-
 /-- Partial bridge from privative geometry nodes to DM gender dimensions.
     `.cls`, `.indiv`, and `.grp` are structural organizing nodes with no
-    counterpart in the DM `GenderDimension` type (which tracks only
+    counterpart in the DM `Gender.Dimension` type (which tracks only
     semantic gender dimensions). -/
-def GenderNode.toGenderDimension : GenderNode → Option GenderDimension
+def GenderNode.toGenderDimension : GenderNode → Option Gender.Dimension
   | .masc => some .masc
   | .fem  => some .fem
   | .anim => some .anim
