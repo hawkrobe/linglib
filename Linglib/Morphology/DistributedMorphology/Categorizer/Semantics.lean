@@ -1,4 +1,4 @@
-import Linglib.Morphology.DistributedMorphology.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Semantics.Possessive.Relational
 import Linglib.Semantics.Possessive.Basic
 

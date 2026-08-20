@@ -1,21 +1,18 @@
 import Linglib.Features.Gender.Decomposition
 import Linglib.Features.Gender.Interp
-import Linglib.Morphology.DistributedMorphology.Defs
-import Linglib.Semantics.ArgumentStructure.Root.Classification
-import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.Verbal.Voice
+import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
 
 /-!
-# Categorizing heads
+# Gender on the nominal categorizer
 
-A categorizing head n, v, or a merges with an acategorial root to give it a
-syntactic category — the categorization assumption. The nominal categorizer
-is also the locus of grammatical gender: an n may carry an interpretable
-(natural) or uninterpretable (arbitrary) gender feature, and
-language-particular Vocabulary Insertion maps the resulting inventory to
-surface genders. Complement selection is a property of the root, and the
-domain of idiosyncratic interpretation is bounded by Voice, not by the
-categorizer.
+The nominal categorizer is the locus of grammatical gender: an n may
+carry an interpretable (natural) or uninterpretable (arbitrary) gender
+feature over a language-particular dimension, and language-particular
+Vocabulary Insertion maps the resulting inventory to surface genders.
+The apparatus is grounded in the general gender machinery of
+`Features/Gender/` — dimensions are poles over `Gender`, DM features are
+the non-hybrid fragment of `Gender.SplitFeature`, and the FEM slice of
+the head inventory is `Gender.KramerN`.
 
 ## Main definitions
 
@@ -27,37 +24,27 @@ categorizer.
   Vocabulary-Insertion maps from features to surface gender
 * `RootLicense`, `CatHead.licensesIntrusion` — root–n licensing and
   gender-conditioned templatic t-intrusion
-* `CategorizedRoot`, `Recategorization` — roots under a categorizer and
-  layered derivation
 
 ## Main statements
 
-* `same_root_different_category`, `recategorize_preserves_index` — one
-  root index across categories, threaded unchanged through derivation
-* `agentive_voice_is_phase` — Voice, not the categorizer, bounds special
-  interpretation
+* `toSplitFeature_not_isHybrid` — the DM calculus generates no hybrid
+  features
+* `surfaceGenderSet1_eq_surface` (and kin) — each insertion map realizes
+  a valued feature at its `GenderVal.surface` pole, differing only in the
+  default for plain n
 
 ## References
 
-* [H. Harley, *On the identity of roots*][harley-2014]
-* [D. Embick and A. Marantz, *Architecture and blocking*][embick-marantz-2008]
 * [R. Kramer, *The morphosyntax of gender*][kramer-2015]
 * [L. J. Adamson, *Gender assignment is local*][adamson-2024]
 * [L. Konnelly and E. Cowper, *Gender diversity and morphosyntax*][konnelly-cowper-2020]
+* [P. W. Smith, *Feature mismatches*][smith-2015]
 -/
 
 namespace DistributedMorphology
 
 open Minimalist Minimalist.Voice
 open Verb Verb.Root
-
-/-! ### Categorizer Type -/
-
-/-- The syntactic category of a categorizer. -/
-def Categorizer.toCategory : Categorizer → Cat
-  | .n => .N
-  | .v => .V
-  | .a => .A
 
 /-! ### Phi-features on categorizing heads
 
@@ -87,6 +74,32 @@ structure GenderVal where
   dim : GenderDimension
   pol : Polarity
   deriving DecidableEq, Repr
+
+/-- The descriptive gender at a dimension's positive pole. -/
+def GenderDimension.positive : GenderDimension → Gender
+  | .fem  => .feminine
+  | .masc => .masculine
+  | .anim => .animate
+
+/-- The descriptive gender at a dimension's negative pole. -/
+def GenderDimension.negative : GenderDimension → Gender
+  | .fem  => .masculine
+  | .masc => .feminine
+  | .anim => .inanimate
+
+/-- The descriptive gender a valued feature denotes — the dimension's pole
+picked by the sign. -/
+def GenderVal.surface (v : GenderVal) : Gender :=
+  match v.pol with
+  | .pos => v.dim.positive
+  | .neg => v.dim.negative
+
+/-- Surface gender underdetermines the feature: Maa's [−FEM] and
+Jarawara's [+MASC] both surface as masculine, and drawing that featural
+distinction is what the dimension inventory is for ([kramer-2015] §6.3
+vs. [adamson-2024] §3.2). -/
+theorem surface_femNeg_eq_mascPos :
+    (GenderVal.mk .fem .neg).surface = (GenderVal.mk .masc .pos).surface := rfl
 
 /-- Whether a gender feature is legible at LF ([kramer-2015] §3.4.2).
 Interpretable gender is natural gender, restricting the denotation and
@@ -506,164 +519,6 @@ theorem anim_not_plain :
     CatHead.n_iAnim ≠ CatHead.n_plain ∧
     CatHead.n_uAnim ≠ CatHead.n_plain := by decide
 
-/-! ### CategorizedRoot -/
-
-/-- A root that has been merged with a categorizing head, yielding a
-    syntactically projectable unit ([harley-2014] §2).
-
-    `index` is DM's List-1 individuator — the acategorial atom `DistributedMorphology.Root`,
-    an arbitrary tag carrying no form or meaning. It is what survives
-    (re)categorization (`recategorize_preserves_index`), so it, not the
-    `root` classification, is what makes √HAMMER *one* root across
-    *hammer*/*to hammer*. `root` is the c-selection content (arity,
-    change-type) the categorizer apparatus reads ([harley-2014] §3); unrelated roots may
-    share it, so it cannot individuate. -/
-structure CategorizedRoot where
-  /-- The acategorial root index — DM's List-1 individuator (`DistributedMorphology.Root`). -/
-  index : DistributedMorphology.Root
-  /-- The acategorial root's c-selection content (arity, change-type, etc.) -/
-  root : Classification
-  /-- The categorizing head that gives it syntactic category -/
-  categorizer : Categorizer
-  deriving BEq, Repr
-
-/-- The syntactic category of a categorized root, derived from its categorizer. -/
-def CategorizedRoot.category (cr : CategorizedRoot) : Cat :=
-  cr.categorizer.toCategory
-
-/-! ### Cross-categorial identity and root complement selection
-
-[harley-2014] §3's evidence that roots select their complements directly:
-*one*-replacement (§3.1 — *this student of chemistry* rejects *that one of
-physics* because the root selects the PP and projects √P, which *one*
-targets), verb-object idioms (§3.2, after [kratzer-1996] — special
-meanings arise for verb-object pairs while the agentive subject composes
-freely), and morphological ergative splits (§3.3). Hiaki suppletion
-conditioned by the object's number is the §2.1 sisterhood evidence. -/
-
-/-- Same root + different categorizer → different syntactic category.
-    This is the formal content of the claim that √HAMMER can surface as
-    either a noun (hammer) or a verb (to hammer) — same root, different
-    category, determined entirely by the categorizer ([harley-2014] §2). -/
-theorem same_root_different_category (i : DistributedMorphology.Root) (r : Classification)
-    (c1 c2 : Categorizer) (h : c1 ≠ c2) :
-    (CategorizedRoot.mk i r c1).category ≠ (CategorizedRoot.mk i r c2).category := by
-  simp only [CategorizedRoot.category, Categorizer.toCategory]
-  cases c1 <;> cases c2 <;> simp_all
-
-/-- Complement valency is a root-level property, unaltered by the
-categorizer ([harley-2014] §3). This covers c-selection, not l-selection,
-which [hewett-2026] shows can vary by verbal template (`Hewett2026`). -/
-theorem complement_selection_at_root_level (i : DistributedMorphology.Root) (r : Classification)
-    (c1 c2 : Categorizer) :
-    (CategorizedRoot.mk i r c1).root.valency = (CategorizedRoot.mk i r c2).root.valency := rfl
-
-/-! ### Layered Derivation (Denominal, Deadjectival, Deverbal) -/
-
-/-- A re-categorization further categorizes an already categorized root,
-as in √SHELF + n (*shelf*) + v (*to shelve*). Idiosyncratic
-interpretation can survive the inner categorizer ([harley-2014] §4). -/
-inductive Recategorization where
-  | denominal    -- n → v (to hammer, to shelve)
-  | deadjectival -- a → v (to flatten, to widen)
-  | deverbal_n   -- v → n (a build, a throw)
-  | deverbal_a   -- v → a (broken, flattened)
-  deriving DecidableEq, Repr
-
-/-- The source categorizer of a re-categorization. -/
-def Recategorization.source : Recategorization → Categorizer
-  | .denominal    => .n
-  | .deadjectival => .a
-  | .deverbal_n   => .v
-  | .deverbal_a   => .v
-
-/-- The target categorizer of a re-categorization. -/
-def Recategorization.target : Recategorization → Categorizer
-  | .denominal    => .v
-  | .deadjectival => .v
-  | .deverbal_n   => .n
-  | .deverbal_a   => .a
-
-/-- Apply a re-categorization to a categorized root. Returns `none` if the
-    root's current categorizer doesn't match the expected source. -/
-def CategorizedRoot.recategorize (cr : CategorizedRoot)
-    (rc : Recategorization) : Option CategorizedRoot :=
-  if cr.categorizer = rc.source then
-    some { index := cr.index, root := cr.root, categorizer := rc.target }
-  else
-    none
-
-/-- Denominal verbs start from n-categorized roots. -/
-theorem denominal_requires_n (cr : CategorizedRoot) (cr' : CategorizedRoot)
-    (h : cr.recategorize .denominal = some cr') :
-    cr.categorizer = .n := by
-  unfold CategorizedRoot.recategorize at h
-  simp only [Recategorization.source] at h
-  split at h <;> simp_all
-
-/-- Re-categorization yields the target categorizer. -/
-theorem recategorization_changes_category (cr : CategorizedRoot)
-    (rc : Recategorization) (cr' : CategorizedRoot)
-    (h : cr.recategorize rc = some cr') :
-    cr'.categorizer = rc.target := by
-  unfold CategorizedRoot.recategorize at h
-  split at h
-  case isTrue => simp only [Option.some.injEq] at h; rw [← h]
-  case isFalse => simp at h
-
-/-- The acategorial index survives (re)categorization: the individuating
-    `DistributedMorphology.Root` atom is invariant under `recategorize`, so *shelf* (n) and
-    *to shelve* (v) share one List-1 root ([harley-2014] §2, §4). This is
-    the work DM's own individuator does that the `root` classification
-    cannot — valency/change-type is shared by unrelated roots, the index is
-    not — so it is the index, not the classification, that the derivational
-    history threads unchanged. -/
-theorem recategorize_preserves_index (cr cr' : CategorizedRoot)
-    (rc : Recategorization) (h : cr.recategorize rc = some cr') :
-    cr'.index = cr.index := by
-  unfold CategorizedRoot.recategorize at h
-  split at h
-  case isTrue => simp only [Option.some.injEq] at h; rw [← h]
-  case isFalse => simp at h
-
-/-- A denominal verb and a directly verbal root yield the same syntactic
-    category (V), but have different internal structure. √HAMMER + v gives
-    V directly; √HAMMER + n + v also gives V but via layered derivation.
-    This structural ambiguity is invisible at the category level
-    ([harley-2014] §2). -/
-theorem denominal_yields_verbal (i : DistributedMorphology.Root) (r : Classification) :
-    ∃ cr, (CategorizedRoot.mk i r .n).recategorize .denominal = some cr ∧
-          cr.category = Cat.V :=
-  ⟨⟨i, r, .v⟩, rfl, rfl⟩
-
-/-- Deadjectival derivation (a → v) connects to [embick-2004]'s result-stative
-    structure ([AspP AspR [vP DP v_become √ROOT]]): in DM terms, a root first
-    categorized by a, then further categorized by v. -/
-theorem deadjectival_source_target :
-    Recategorization.deadjectival.source = .a ∧
-    Recategorization.deadjectival.target = .v := ⟨rfl, rfl⟩
-
-/-! ### VoiceP as phase boundary
-
-[harley-2014] §4: the phase head above the root is Voice, not the
-categorizer. Multiply derived words carry idiosyncratic senses above the
-first categorizer ((36) *editor-ial*, *classifi-eds*, *national-ize*),
-while the external argument that Voice introduces stays compositional. -/
-
-/-- Agentive Voice is a phase head — the boundary above which
-    interpretation must be compositional. [harley-2014] §4: "Voice is the
-    phase head, not v"; the categorizer inventory here accordingly carries
-    no phasal structure at all, so the special-interpretation domain
-    extends past n, v, a and closes only at Voice. -/
-theorem agentive_voice_is_phase : agentive.IsPhasal := by decide
-
-/-- Voice introduces the external argument ([harley-2014] §4, following
-    [kratzer-1996]). The categorizer does NOT introduce arguments —
-    complement selection is a root property ([harley-2014] §3). -/
-theorem voice_introduces_external_arg :
-    agentive.HasD ∧ agentive.AssignsTheta := by
-  refine ⟨?_, ?_⟩ <;> decide
-
 /-! ### Surface Gender Bridge ([kramer-2020]; [kramer-2015] Chs 5-7) -/
 
 /-! The bridge from phi-features on n to descriptive `Gender` is
@@ -731,6 +586,75 @@ theorem animacy_verification :
     CatHead.n_iInanim.surfaceGenderAnimacy = .inanimate ∧
     CatHead.n_uAnim.surfaceGenderAnimacy = .animate ∧
     CatHead.n_plain.surfaceGenderAnimacy = .inanimate := ⟨rfl, rfl, rfl, rfl⟩
+
+/-! Each insertion map realizes a valued feature of its home dimension at
+its `GenderVal.surface` pole — the four patterns differ only in the
+default for plain n. -/
+
+/-- On FEM-dimension bundles, Set 1 is surface realization with a
+masculine default. -/
+theorem surfaceGenderSet1_eq_surface (ch : CatHead)
+    (h : ∀ gf ∈ ch.phi.gender, gf.val.dim = .fem) :
+    ch.surfaceGenderSet1 = (ch.phi.gender.map (·.val.surface)).getD .masculine := by
+  cases hg : ch.phi.gender with
+  | none => simp [CatHead.surfaceGenderSet1, hg]
+  | some gf =>
+    obtain ⟨itp, d, pol⟩ := gf
+    have hmem : (⟨itp, d, pol⟩ : GenderFeature) ∈ ch.phi.gender := by
+      rw [hg]; rfl
+    obtain rfl : d = .fem := h _ hmem
+    cases pol <;>
+      simp [CatHead.surfaceGenderSet1, hg, GenderVal.surface,
+        GenderDimension.positive, GenderDimension.negative]
+
+/-- On FEM-dimension bundles, Set 2 is surface realization with a
+feminine default. -/
+theorem surfaceGenderSet2_eq_surface (ch : CatHead)
+    (h : ∀ gf ∈ ch.phi.gender, gf.val.dim = .fem) :
+    ch.surfaceGenderSet2 = (ch.phi.gender.map (·.val.surface)).getD .feminine := by
+  cases hg : ch.phi.gender with
+  | none => simp [CatHead.surfaceGenderSet2, hg]
+  | some gf =>
+    obtain ⟨itp, d, pol⟩ := gf
+    have hmem : (⟨itp, d, pol⟩ : GenderFeature) ∈ ch.phi.gender := by
+      rw [hg]; rfl
+    obtain rfl : d = .fem := h _ hmem
+    cases pol <;>
+      simp [CatHead.surfaceGenderSet2, hg, GenderVal.surface,
+        GenderDimension.positive, GenderDimension.negative]
+
+/-- On FEM-dimension bundles, the three-gender pattern is surface
+realization with a neuter default. -/
+theorem surfaceGenderThree_eq_surface (ch : CatHead)
+    (h : ∀ gf ∈ ch.phi.gender, gf.val.dim = .fem) :
+    ch.surfaceGenderThree = (ch.phi.gender.map (·.val.surface)).getD .neuter := by
+  cases hg : ch.phi.gender with
+  | none => simp [CatHead.surfaceGenderThree, hg]
+  | some gf =>
+    obtain ⟨itp, d, pol⟩ := gf
+    have hmem : (⟨itp, d, pol⟩ : GenderFeature) ∈ ch.phi.gender := by
+      rw [hg]; rfl
+    obtain rfl : d = .fem := h _ hmem
+    cases pol <;>
+      simp [CatHead.surfaceGenderThree, hg, GenderVal.surface,
+        GenderDimension.positive, GenderDimension.negative]
+
+/-- On ANIM-dimension bundles, the animacy pattern is surface realization
+with an inanimate default. -/
+theorem surfaceGenderAnimacy_eq_surface (ch : CatHead)
+    (h : ∀ gf ∈ ch.phi.gender, gf.val.dim = .anim) :
+    ch.surfaceGenderAnimacy =
+      (ch.phi.gender.map (·.val.surface)).getD .inanimate := by
+  cases hg : ch.phi.gender with
+  | none => simp [CatHead.surfaceGenderAnimacy, hg]
+  | some gf =>
+    obtain ⟨itp, d, pol⟩ := gf
+    have hmem : (⟨itp, d, pol⟩ : GenderFeature) ∈ ch.phi.gender := by
+      rw [hg]; rfl
+    obtain rfl : d = .anim := h _ hmem
+    cases pol <;>
+      simp [CatHead.surfaceGenderAnimacy, hg, GenderVal.surface,
+        GenderDimension.positive, GenderDimension.negative]
 
 /-- Set 1 surface gender sees only what `Gender.KramerN.exponence` sees —
 interpretability is invisible at PF. -/

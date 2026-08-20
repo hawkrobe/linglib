@@ -1,6 +1,6 @@
 import Linglib.Features.Gender.Basic
 import Linglib.Morphology.DistributedMorphology.NominalStructure
-import Linglib.Morphology.DistributedMorphology.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 
 /-!
 # Teop Noun Inventory [adamson-2024]

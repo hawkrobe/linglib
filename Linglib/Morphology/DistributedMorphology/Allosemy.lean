@@ -1,6 +1,6 @@
 import Linglib.Morphology.DistributedMorphology.Basic
-import Linglib.Morphology.DistributedMorphology.Categorizer
-import Linglib.Morphology.DistributedMorphology.CategorizerSemantics
+import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+import Linglib.Morphology.DistributedMorphology.Categorizer.Semantics
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Realization
 import Linglib.Semantics.ArgumentStructure.Root.Classification

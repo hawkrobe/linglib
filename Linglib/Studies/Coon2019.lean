@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Morphology.DistributedMorphology.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Fragments.Mayan.Chuj.RootClasses
 import Linglib.Fragments.Mayan.Chuj.VoiceSystem

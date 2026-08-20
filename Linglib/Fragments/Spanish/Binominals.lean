@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.BinominalDefs
-import Linglib.Morphology.DistributedMorphology.Categorizer
+import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 
 /-!
 # Spanish Binominal Nouns [saab-2026]
