@@ -85,30 +85,53 @@ structure FeatureVI (F E : Type*) where
   exponent : E
   deriving DecidableEq, Repr
 
+/-- The vocabulary items applicable at a target: those whose feature
+specification is a subset of the target bundle. -/
+def applicable {F E : Type*} [BEq F]
+    (items : List (FeatureVI F E)) (target : List F) : List (FeatureVI F E) :=
+  items.filter (·.features.all (target.contains ·))
+
+/-- Longest-specification choice step for `winner?`; earlier items win
+ties. -/
+private def pickLonger {F E : Type*}
+    (acc : Option (FeatureVI F E)) (item : FeatureVI F E) :
+    Option (FeatureVI F E) :=
+  match acc with
+  | none => some item
+  | some prev =>
+    if item.features.length > prev.features.length then some item else some prev
+
+/-- The Subset Principle's winning item: the longest-specification
+applicable item (the earliest, under ties). -/
+def winner? {F E : Type*} [BEq F]
+    (items : List (FeatureVI F E)) (target : List F) :
+    Option (FeatureVI F E) :=
+  (applicable items target).foldl pickLonger none
+
 /-- The **Subset Principle** ([halle-marantz-1993]): among vocabulary
     items whose feature specification is a subset of the target, select
     the most specific (longest feature list).
 
-    Returns `none` only if `items` is empty. When items include an
+    Returns `none` only if no item is applicable. When items include an
     elsewhere entry (empty feature list), `subsetPrinciple` always
     succeeds — the elsewhere item matches any target. -/
 def subsetPrinciple {F E : Type*} [BEq F]
     (items : List (FeatureVI F E)) (target : List F) : Option E :=
-  let matching := items.filter (·.features.all (target.contains ·))
-  (matching.foldl (init := none) fun acc item =>
-    match acc with
-    | none => some item
-    | some prev =>
-      if item.features.length > prev.features.length
-      then some item
-      else some prev
-  ).map (·.exponent)
+  (winner? items target).map (·.exponent)
 
 /-- An elsewhere item (empty features) matches any target. -/
 theorem elsewhere_always_matches {F E : Type*} [BEq F]
     (e : E) (target : List F) :
     (FeatureVI.mk ([] : List F) e).features.all (target.contains ·) = true := by
   simp [List.all_nil]
+
+private theorem pickLonger_cases {F E : Type*} (acc : Option (FeatureVI F E))
+    (x : FeatureVI F E) : pickLonger acc x = some x ∨ pickLonger acc x = acc := by
+  cases acc with
+  | none => exact .inl rfl
+  | some prev =>
+    by_cases hlen : x.features.length > prev.features.length <;>
+      simp [pickLonger, hlen]
 
 private theorem foldl_choice_mem {α : Type*} {pick : Option α → α → Option α}
     (hpick : ∀ acc x, pick acc x = some x ∨ pick acc x = acc) :
@@ -127,25 +150,130 @@ private theorem foldl_choice_mem {α : Type*} {pick : Option α → α → Optio
         exact .inl (List.mem_cons_self ..)
       · exact .inr (hkeep ▸ hacc)
 
-/-- The Subset Principle's winner is an item of the vocabulary whose
-features are all present in the target — the selected exponent never
-draws on features the node does not bear. -/
+private theorem foldl_pickLonger_ne_none {F E : Type*} :
+    ∀ (l : List (FeatureVI F E)) (a : FeatureVI F E),
+      l.foldl pickLonger (some a) ≠ none := by
+  intro l
+  induction l with
+  | nil => exact fun a h => by simp at h
+  | cons x xs ih =>
+    intro a h
+    rw [List.foldl_cons] at h
+    rcases pickLonger_cases (some a) x with hx | hkeep
+    · rw [hx] at h; exact ih x h
+    · rw [hkeep] at h; exact ih a h
+
+private theorem foldl_pickLonger_max {F E : Type*} :
+    ∀ (l : List (FeatureVI F E)) (acc : Option (FeatureVI F E))
+      (i : FeatureVI F E), l.foldl pickLonger acc = some i →
+      (∀ j ∈ l, j.features.length ≤ i.features.length) ∧
+        ∀ a, acc = some a → a.features.length ≤ i.features.length := by
+  intro l
+  induction l with
+  | nil =>
+    intro acc i h
+    refine ⟨by simp, fun a ha => ?_⟩
+    rw [ha] at h
+    obtain rfl := Option.some.inj h
+    exact Nat.le_refl _
+  | cons x xs ih =>
+    intro acc i h
+    rw [List.foldl_cons] at h
+    obtain ⟨hxs, hstep⟩ := ih (pickLonger acc x) i h
+    have hx : x.features.length ≤ i.features.length := by
+      cases acc with
+      | none => exact hstep x rfl
+      | some prev =>
+        by_cases hlen : x.features.length > prev.features.length
+        · exact hstep x (by simp [pickLonger, hlen])
+        · have := hstep prev (by simp [pickLonger, hlen])
+          omega
+    refine ⟨fun j hj => ?_, fun a ha => ?_⟩
+    · rcases List.mem_cons.mp hj with rfl | hj'
+      · exact hx
+      · exact hxs j hj'
+    · subst ha
+      by_cases hlen : x.features.length > a.features.length
+      · omega
+      · have := hstep a (by simp [pickLonger, hlen])
+        omega
+
+/-- The winner is an applicable item. -/
+theorem winner?_mem {F E : Type*} [BEq F]
+    {items : List (FeatureVI F E)} {target : List F} {i : FeatureVI F E}
+    (h : winner? items target = some i) : i ∈ applicable items target := by
+  rcases foldl_choice_mem pickLonger_cases h with hmem | hnone
+  · exact hmem
+  · exact absurd hnone (by simp)
+
+/-- The winner belongs to the vocabulary and draws only on features the
+target bears. -/
+theorem winner?_spec {F E : Type*} [BEq F]
+    {items : List (FeatureVI F E)} {target : List F} {i : FeatureVI F E}
+    (h : winner? items target = some i) :
+    i ∈ items ∧ i.features.all (target.contains ·) = true := by
+  have := List.mem_filter.mp (winner?_mem h)
+  exact ⟨this.1, this.2⟩
+
+/-- The Subset Principle's exponent comes from an applicable vocabulary
+item — the selection never draws on features the node does not bear. -/
 theorem subsetPrinciple_winner_mem {F E : Type*} [BEq F]
     {items : List (FeatureVI F E)} {target : List F} {e : E}
     (h : subsetPrinciple items target = some e) :
     ∃ i ∈ items, i.exponent = e ∧ i.features.all (target.contains ·) = true := by
-  unfold subsetPrinciple at h
-  obtain ⟨i, hfold, rfl⟩ := Option.map_eq_some_iff.mp h
-  have hmem := foldl_choice_mem (fun acc x => by
-    cases acc with
-    | none => exact .inl rfl
-    | some prev =>
-      by_cases hlen : x.features.length > prev.features.length <;>
-        simp [hlen]) hfold
-  rcases hmem with hmem | hnone
-  · have := List.mem_filter.mp hmem
-    exact ⟨i, this.1, rfl, this.2⟩
-  · exact absurd hnone (by simp)
+  obtain ⟨i, hw, rfl⟩ := Option.map_eq_some_iff.mp h
+  obtain ⟨hi, happ⟩ := winner?_spec hw
+  exact ⟨i, hi, rfl, happ⟩
+
+/-- `winner?` succeeds iff some item is applicable. -/
+theorem winner?_isSome_iff {F E : Type*} [BEq F]
+    {items : List (FeatureVI F E)} {target : List F} :
+    (winner? items target).isSome ↔ applicable items target ≠ [] := by
+  unfold winner?
+  cases hl : applicable items target with
+  | nil => simp
+  | cons x xs =>
+    simp only [List.foldl_cons, ne_eq, reduceCtorEq, not_false_eq_true,
+      iff_true]
+    have hstep : pickLonger (none : Option (FeatureVI F E)) x = some x := rfl
+    rw [hstep, Option.isSome_iff_ne_none]
+    exact foldl_pickLonger_ne_none xs x
+
+/-- The winner is maximally specific among the applicable items. -/
+theorem winner?_max {F E : Type*} [BEq F]
+    {items : List (FeatureVI F E)} {target : List F} {i : FeatureVI F E}
+    (h : winner? items target = some i) :
+    ∀ j ∈ applicable items target, j.features.length ≤ i.features.length :=
+  (foldl_pickLonger_max _ _ _ h).1
+
+/-- Applicability is monotone in the target bundle. -/
+theorem applicable_mono {F E : Type*} [BEq F]
+    {items : List (FeatureVI F E)} {t t' : List F}
+    (hsub : ∀ x, t'.contains x = true → t.contains x = true) :
+    ∀ i ∈ applicable items t', i ∈ applicable items t := by
+  intro i hi
+  obtain ⟨him, hall⟩ := List.mem_filter.mp hi
+  refine List.mem_filter.mpr ⟨him, ?_⟩
+  rw [List.all_eq_true] at hall ⊢
+  exact fun x hx => hsub x (hall x hx)
+
+/-- **Retreat to the general case**: shrinking the target — deleting
+features by Impoverishment — can only make the Subset-Principle winner
+weakly less specific, which is why impoverishment yields syncretism with
+a more general exponent rather than a different specific one
+([halle-marantz-1993], [arregi-nevins-2012]). -/
+theorem winner?_retreat {F E : Type*} [BEq F]
+    {items : List (FeatureVI F E)} {t t' : List F} {i' : FeatureVI F E}
+    (hsub : ∀ x, t'.contains x = true → t.contains x = true)
+    (h' : winner? items t' = some i') :
+    ∃ i, winner? items t = some i ∧
+      i'.features.length ≤ i.features.length := by
+  have hmem : i' ∈ applicable items t :=
+    applicable_mono hsub _ (winner?_mem h')
+  have hne : applicable items t ≠ [] := fun hnil => by simp [hnil] at hmem
+  obtain ⟨i, hi⟩ :=
+    Option.isSome_iff_exists.mp (winner?_isSome_iff.mpr hne)
+  exact ⟨i, hi, winner?_max hi _ hmem⟩
 
 -- ============================================================================
 -- § 3: The shared exponence core
