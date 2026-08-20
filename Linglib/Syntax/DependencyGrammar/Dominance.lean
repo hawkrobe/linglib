@@ -56,6 +56,8 @@ source of the dominance and projection definitions
 
 namespace DependencyGrammar
 
+open Relation
+
 section Dominance
 
 variable {n : ℕ}
@@ -63,7 +65,7 @@ variable {n : ℕ}
 /-- `v` dominates `x` if a (possibly empty) chain of arcs leads from `v`
     to `x` ([kuhlmann-nivre-2006] §2). -/
 abbrev Dominates (g : Graph n) : Fin n → Fin n → Prop :=
-  Relation.ReflTransGen g.Adj
+  ReflTransGen g.Adj
 
 /-- The positions `v` dominates, `v` itself included — the *yield* of `v` in
     the source terminology. -/
@@ -94,12 +96,12 @@ def Graph.projection (g : Graph n) (v : Fin n) : List (Fin n) :=
 structure Graph.IsTree (g : Graph n) : Prop where
   not_adj_root : ∀ v, ¬ g.Adj v g.root
   existsUnique_adj : ∀ w, w ≠ g.root → ∃! v, g.Adj v w
-  acyclic : ∀ v, ¬ Relation.TransGen g.Adj v v
+  acyclic : ∀ v, ¬ TransGen g.Adj v v
 
 theorem Graph.isTree_iff (g : Graph n) :
     g.IsTree ↔ (∀ v, ¬ g.Adj v g.root) ∧
       (∀ w, w ≠ g.root → ∃! v, g.Adj v w) ∧
-      (∀ v, ¬ Relation.TransGen g.Adj v v) :=
+      (∀ v, ¬ TransGen g.Adj v v) :=
   ⟨λ h => ⟨h.1, h.2, h.3⟩, λ h => ⟨h.1, h.2.1, h.2.2⟩⟩
 
 instance (g : Graph n) : Decidable g.IsTree :=
@@ -118,14 +120,14 @@ theorem Graph.IsTree.rightUnique_flip_adj (hT : g.IsTree) :
   exact (hz u hu).trans (hz u' hu').symm
 
 /-- No arc closes a dominance cycle, on acyclic graphs. -/
-theorem not_adj_dominates (hacyc : ∀ v, ¬ Relation.TransGen g.Adj v v)
+theorem not_adj_dominates (hacyc : ∀ v, ¬ TransGen g.Adj v v)
     (hadj : g.Adj v w) (hdom : Dominates g w v) : False :=
-  hacyc v (Relation.TransGen.head' hadj hdom)
+  hacyc v (TransGen.head' hadj hdom)
 
 /-- Dominance is antisymmetric on acyclic graphs. -/
-theorem Dominates.antisymm (hacyc : ∀ v, ¬ Relation.TransGen g.Adj v v)
+theorem Dominates.antisymm (hacyc : ∀ v, ¬ TransGen g.Adj v v)
     (hvw : Dominates g v w) (hwv : Dominates g w v) : v = w := by
-  rcases Relation.ReflTransGen.cases_head hvw with rfl | ⟨u, hvu, huw⟩
+  rcases ReflTransGen.cases_head hvw with rfl | ⟨u, hvu, huw⟩
   · rfl
   · exact absurd (huw.trans hwv) (λ h => not_adj_dominates hacyc hvu h)
 
@@ -133,7 +135,7 @@ theorem Dominates.antisymm (hacyc : ∀ v, ¬ Relation.TransGen g.Adj v v)
 theorem Dominates.to_head {u : Fin n} (hT : g.IsTree)
     (hvw : Dominates g v w) (hne : v ≠ w) (hu : g.Adj u w) :
     Dominates g v u := by
-  rcases Relation.ReflTransGen.cases_tail hvw with rfl | ⟨z, hvz, hzw⟩
+  rcases ReflTransGen.cases_tail hvw with rfl | ⟨z, hvz, hzw⟩
   · exact absurd rfl hne
   · exact hT.rightUnique_flip_adj hzw hu ▸ hvz
 
@@ -142,23 +144,23 @@ theorem Dominates.to_head {u : Fin n} (hT : g.IsTree)
 theorem Dominates.comparable {x : Fin n} (hT : g.IsTree)
     (hv : Dominates g v x) (hw : Dominates g w x) :
     Dominates g v w ∨ Dominates g w v :=
-  (Relation.ReflTransGen.total_of_right_unique hT.rightUnique_flip_adj
-      (Relation.reflTransGen_swap.mpr hv)
-      (Relation.reflTransGen_swap.mpr hw)).symm.imp
-    Relation.reflTransGen_swap.mp Relation.reflTransGen_swap.mp
+  (ReflTransGen.total_of_right_unique hT.rightUnique_flip_adj
+      (reflTransGen_swap.mpr hv)
+      (reflTransGen_swap.mpr hw)).symm.imp
+    reflTransGen_swap.mp reflTransGen_swap.mp
 
 /-- The root dominates every position: head chains ascend, without
     repetition, to the unique headless position. -/
 theorem Graph.IsTree.root_dominates (hT : g.IsTree) (v : Fin n) :
     Dominates g g.root v := by
-  have : Std.Irrefl (Relation.TransGen g.Adj) := ⟨hT.acyclic⟩
+  have : Std.Irrefl (TransGen g.Adj) := ⟨hT.acyclic⟩
   refine (Finite.wellFounded_of_trans_of_irrefl
-    (Relation.TransGen g.Adj)).induction (C := (Dominates g g.root ·)) v ?_
+    (TransGen g.Adj)).induction (C := (Dominates g g.root ·)) v ?_
   intro v ih
   by_cases hv : v = g.root
-  · exact hv ▸ Relation.ReflTransGen.refl
+  · exact hv ▸ ReflTransGen.refl
   · obtain ⟨u, hu, -⟩ := hT.existsUnique_adj v hv
-    exact (ih u (Relation.TransGen.single hu)).tail hu
+    exact (ih u (TransGen.single hu)).tail hu
 
 /-- The root's projection is the whole sentence. -/
 theorem Graph.IsTree.projection_root (hT : g.IsTree) :
@@ -167,47 +169,10 @@ theorem Graph.IsTree.projection_root (hT : g.IsTree) :
 
 /-! ### Paths across a boundary -/
 
-/-- Disjoint subtrees of a tree share no dominated position. -/
+/-- Incomparable positions of a tree dominate disjoint sets. -/
 theorem disjoint_dominated (hT : g.IsTree) (hvw : ¬ Dominates g v w)
-    (hwv : ¬ Dominates g w v) {x : Fin n} (hv : Dominates g v x)
-    (hw : Dominates g w x) : False :=
-  (Dominates.comparable hT hv hw).elim hvw hwv
-
-/-- A dominance path leaving `S` crosses the boundary at an arc, both of whose
-    endpoints the source still dominates. -/
-theorem exists_adj_out {S : Set (Fin n)} {x : Fin n} (h : Dominates g v x)
-    (hv : v ∈ S) (hx : x ∉ S) :
-    ∃ p q, g.Adj p q ∧ Dominates g v p ∧ Dominates g v q ∧ p ∈ S ∧ q ∉ S := by
-  induction h with
-  | refl => exact absurd hv hx
-  | @tail b c hvb hbc ih =>
-    by_cases hb : b ∈ S
-    · exact ⟨b, c, hbc, hvb, hvb.tail hbc, hb, hx⟩
-    · exact ih hb
-
-/-- Dually for a path entering `S`. -/
-theorem exists_adj_in {S : Set (Fin n)} {x : Fin n} (h : Dominates g v x)
-    (hv : v ∉ S) (hx : x ∈ S) :
-    ∃ p q, g.Adj p q ∧ Dominates g v p ∧ Dominates g v q ∧ p ∉ S ∧ q ∈ S := by
-  induction h with
-  | refl => exact absurd hx hv
-  | @tail b c hvb hbc ih =>
-    by_cases hb : b ∈ S
-    · exact ih hb
-    · exact ⟨b, c, hbc, hvb, hvb.tail hbc, hb, hx⟩
-
-/-- A path from `v` into `S` enters at an arc whose inner endpoint still
-    reaches the target. -/
-theorem exists_adj_in_dominating {S : Set (Fin n)} {x : Fin n}
-    (h : Dominates g v x) (hv : v ∉ S) (hx : x ∈ S) :
-    ∃ p q, g.Adj p q ∧ p ∉ S ∧ q ∈ S ∧ Dominates g q x := by
-  induction h with
-  | refl => exact absurd hx hv
-  | @tail b c _ hbc ih =>
-    by_cases hb : b ∈ S
-    · obtain ⟨p, q, h1, h2, h3, h4⟩ := ih hb
-      exact ⟨p, q, h1, h2, h3, h4.tail hbc⟩
-    · exact ⟨b, c, hbc, hb, hx, .refl⟩
+    (hwv : ¬ Dominates g w v) : Disjoint (g.dominated v) (g.dominated w) :=
+  Set.disjoint_left.mpr λ _ hv hw => (Dominates.comparable hT hv hw).elim hvw hwv
 
 /-- If `v` dominates a position inside `S` and one outside it, some link below
     `v` crosses the boundary of `S`. -/
@@ -215,10 +180,11 @@ theorem exists_link_across {S : Set (Fin n)} {x y : Fin n}
     (hx : Dominates g v x) (hy : Dominates g v y) (hxS : x ∈ S) (hyS : y ∉ S) :
     ∃ p q, g.Linked p q ∧ Dominates g v p ∧ Dominates g v q ∧ p ∈ S ∧ q ∉ S := by
   by_cases hv : v ∈ S
-  · obtain ⟨p, q, hpq, hp, hq, h1, h2⟩ := exists_adj_out hy hv hyS
-    exact ⟨p, q, Or.inl hpq, hp, hq, h1, h2⟩
-  · obtain ⟨p, q, hpq, hp, hq, h1, h2⟩ := exists_adj_in hx hv hxS
-    exact ⟨q, p, Or.inr hpq, hq, hp, h2, h1⟩
+  · obtain ⟨p, q, hpq, hpS, hqS, hvp, -⟩ := hy.exists_boundary hv hyS
+    exact ⟨p, q, Or.inl hpq, hvp, hvp.tail hpq, hpS, hqS⟩
+  · obtain ⟨p, q, hpq, hpS, hqS, hvp, -⟩ :=
+      hx.exists_boundary (S := Sᶜ) hv (not_not_intro hxS)
+    exact ⟨q, p, Or.inr hpq, hvp.tail hpq, hvp, not_not.mp hqS, hpS⟩
 
 /-! ### The head function -/
 
@@ -278,7 +244,7 @@ instance [Fact g.IsTree] : PredOrder (DominanceOrder g) where
     by_cases hv : v = g.root
     · subst hv
       exact le_of_eq ((Fact.out : g.IsTree).headOf_root)
-    · exact Relation.ReflTransGen.single ((Fact.out : g.IsTree).adj_headOf hv)
+    · exact ReflTransGen.single ((Fact.out : g.IsTree).adj_headOf hv)
   min_of_le_pred {v} h := by
     by_cases hv : v = g.root
     · subst hv
@@ -300,7 +266,7 @@ instance [Fact g.IsTree] :
 
 instance [Fact g.IsTree] : IsPredArchimedean (DominanceOrder g) where
   exists_pred_iterate_of_le {a b} h := by
-    have h' : Relation.ReflTransGen g.Adj a b := h
+    have h' : ReflTransGen g.Adj a b := h
     clear h
     induction h' with
     | refl => exact ⟨0, rfl⟩

@@ -525,4 +525,24 @@ instance [Fintype α] [DecidableEq α] {r : α → α → Prop} [DecidableRel r]
     DecidableRel (Relation.TransGen r) :=
   decidable_TransGen_of_fintype
 
+-- ----------------------------------------------------------------------------
+-- Crossing a boundary
+-- ----------------------------------------------------------------------------
+
+/-- A reflexive-transitive path from inside `S` to outside it crosses the
+boundary at a single step, the source reaching the exit and the entry
+reaching the target — the `Relation.ReflTransGen` analogue of
+`SimpleGraph.Walk.exists_boundary_dart`. -/
+theorem exists_boundary {r : α → α → Prop} {S : Set α} {a b : α}
+    (h : Relation.ReflTransGen r a b) (ha : a ∈ S) (hb : b ∉ S) :
+    ∃ c d, r c d ∧ c ∈ S ∧ d ∉ S ∧
+      Relation.ReflTransGen r a c ∧ Relation.ReflTransGen r d b := by
+  induction h with
+  | refl => exact absurd ha hb
+  | @tail c d hac hcd ih =>
+    by_cases hc : c ∈ S
+    · exact ⟨c, d, hcd, hc, hb, hac, .refl⟩
+    · obtain ⟨p, q, hpq, hpS, hqS, hap, hqc⟩ := ih hc
+      exact ⟨p, q, hpq, hpS, hqS, hap, hqc.tail hcd⟩
+
 end Relation.ReflTransGen

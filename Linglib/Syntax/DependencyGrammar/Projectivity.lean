@@ -276,7 +276,7 @@ theorem Graph.IsPlanar.isWellNested (hT : g.IsTree) (hPl : g.IsPlanar) :
   push Not at hcon
   obtain ⟨hvw, hwv⟩ := hcon
   have hdis : ∀ {x}, Dominates g v x → Dominates g w x → False :=
-    λ h1 h2 => disjoint_dominated hT hvw hwv h1 h2
+    λ h1 h2 => Set.disjoint_left.mp (disjoint_dominated hT hvw hwv) h1 h2
   have hab : a < b := hac.trans hcb
   -- A link below `w` crosses the boundary of the span of `a` and `b`.
   have hcS : c ∈ Set.uIcc a b := by simp [Set.mem_uIcc]; omega
@@ -322,8 +322,11 @@ theorem Graph.IsPlanar.root_mem_gap (hT : g.IsTree) (hPl : g.IsPlanar)
   have hrS : g.root ∉ Set.uIcc i j := by simp [Set.mem_uIcc]; omega
   -- The root's path to `k` enters the span of `i` and `j` at an arc that
   -- misses everything `v` dominates.
-  obtain ⟨p, q, hpq, hpS, hqS, hqk⟩ :=
-    exists_adj_in_dominating (hT.root_dominates k) hrS hkS
+  obtain ⟨p, q, hpq, hpS', hqS', -, hqk⟩ :=
+    (hT.root_dominates k).exists_boundary (S := (Set.uIcc i j)ᶜ) hrS
+      (not_not_intro hkS)
+  have hpS : p ∉ Set.uIcc i j := hpS'
+  have hqS : q ∈ Set.uIcc i j := not_not.mp hqS'
   have hqv : ¬ Dominates g v q := λ h => hk (h.trans hqk)
   have hpv : ¬ Dominates g v p := λ h =>
     hk (h.trans ((Relation.ReflTransGen.single hpq).trans hqk))
