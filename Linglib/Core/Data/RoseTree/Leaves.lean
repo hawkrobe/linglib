@@ -167,4 +167,15 @@ theorem card_leaves (t : Nonplanar α) : Multiset.card t.leaves = t.numLeaves :=
 theorem numLeaves_le_numNodes (t : Nonplanar α) : t.numLeaves ≤ t.numNodes :=
   Quotient.inductionOn t fun p => RoseTree.numLeaves_le_numNodes p
 
+/-- The leaf labels of a branching node are the concatenation of its
+children's: `Nonplanar` counterpart of `RoseTree.leaves_node_cons`. -/
+theorem leaves_node_cons (T : Nonplanar α) (cs : Multiset (Nonplanar α)) :
+    (node a (T ::ₘ cs)).leaves = T.leaves + (cs.map leaves).sum := by
+  refine forest_inductionOn cs fun ps => ?_
+  refine Quotient.inductionOn T fun t => ?_
+  show (node a (Multiset.ofList ((t :: ps).map mk))).leaves
+      = (mk t).leaves + ((Multiset.ofList (ps.map mk)).map leaves).sum
+  rw [node_mk_tree_list, leaves_mk, RoseTree.leaves_node_cons]
+  simp [List.map_map, Function.comp_def]
+
 end RoseTree.Nonplanar

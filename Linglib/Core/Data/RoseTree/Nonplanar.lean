@@ -431,6 +431,16 @@ theorem map_map (f : α → β) (g : β → γ) (t : Nonplanar α) :
   show map g (map f (mk p)) = map (g ∘ f) (mk p)
   rw [map_mk, map_mk, map_mk, RoseTree.comp_map]
 
+/-- `map` commutes with `node`: relabel the root and map the children. -/
+theorem map_node (f : α → β) (a : α) (cs : Multiset (Nonplanar α)) :
+    map f (node a cs) = node (f a) (cs.map (map f)) := by
+  refine forest_inductionOn cs fun ps => ?_
+  rw [node_mk_tree_list, map_mk, RoseTree.map_node,
+    show (Multiset.ofList (ps.map mk)).map (map f)
+        = Multiset.ofList ((ps.map (RoseTree.map f)).map mk) by
+      simp [List.map_map, Function.comp_def, map_mk],
+    node_mk_tree_list]
+
 /-! ### Counting interactions -/
 
 @[simp] theorem numNodes_map (f : α → β) (t : Nonplanar α) :
