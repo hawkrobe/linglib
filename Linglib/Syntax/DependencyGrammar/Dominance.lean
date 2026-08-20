@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Core.Relation.ReflTransGen
+import Linglib.Core.Data.Fintype.ExistsUnique
 import Mathlib.Logic.Relation
 import Mathlib.Data.Fintype.Card
 import Mathlib.Data.Finset.Max
@@ -64,10 +65,6 @@ variable {n : ℕ}
 abbrev Dominates (g : Graph n) : Fin n → Fin n → Prop :=
   Relation.ReflTransGen g.Adj
 
-instance (g : Graph n) : DecidableRel (Dominates g) :=
-  Relation.ReflTransGen.decidable_of_finite (List.finRange n)
-    (λ _ b _ => List.mem_finRange b)
-
 /-- The positions `v` dominates, `v` itself included — the *yield* of `v` in
     the source terminology. -/
 def Graph.dominated (g : Graph n) (v : Fin n) : Set (Fin n) :=
@@ -104,13 +101,6 @@ theorem Graph.isTree_iff (g : Graph n) :
       (∀ w, w ≠ g.root → ∃! v, g.Adj v w) ∧
       (∀ v, ¬ Relation.TransGen g.Adj v v) :=
   ⟨λ h => ⟨h.1, h.2, h.3⟩, λ h => ⟨h.1, h.2.1, h.2.2⟩⟩
-
-instance (g : Graph n) (v w : Fin n) : Decidable (Relation.TransGen g.Adj v w) :=
-  decidable_of_iff (∃ u, g.Adj v u ∧ Dominates g u w)
-    Relation.TransGen.head'_iff.symm
-
-instance (g : Graph n) (w : Fin n) : Decidable (∃! v, g.Adj v w) :=
-  decidable_of_iff (∃ v, g.Adj v w ∧ ∀ u, g.Adj u w → u = v) Iff.rfl
 
 instance (g : Graph n) : Decidable g.IsTree :=
   decidable_of_iff _ (g.isTree_iff).symm

@@ -513,4 +513,16 @@ def decidable_TransGen_of_fintype [Fintype α] [DecidableEq α] {r : α → α �
     (fun a b => by simp [decide_eq_true_eq])
     a b
 
+/-- Reachability on a `[Fintype]` carrier is decidable — the
+`Relation.ReflTransGen` analogue of mathlib's `DecidableRel G.Reachable`
+for finite simple graphs. Concrete `decide`s over this instance may need
+`+kernel`. -/
+instance [Fintype α] [DecidableEq α] {r : α → α → Prop} [DecidableRel r] :
+    DecidableRel (Relation.ReflTransGen r) :=
+  decidable_of_fintype
+
+instance [Fintype α] [DecidableEq α] {r : α → α → Prop} [DecidableRel r] :
+    DecidableRel (Relation.TransGen r) :=
+  decidable_TransGen_of_fintype
+
 end Relation.ReflTransGen
