@@ -351,6 +351,18 @@ def malen : GermanVerbEntry where
   frames := [Frame.np]
   vendlerClass := some .activity
 
+/-- *bemalen* — "paint (all over)" (*be-* prefix): accomplishment. The
+    prefixed counterpart of *malen*; the pair grounds the *-ung* contrast
+    *Be-mal-ung* vs **Mal-ung* ([benz-2025]'s illustration that *-ung*
+    needs complex change-of-state event structure). -/
+def bemalen : GermanVerbEntry where
+  form := "bemalen"
+  form3sg := "bemalt"
+  formPast := "bemalte"
+  formPastPart := "bemalt"
+  frames := [Frame.np]
+  vendlerClass := some .accomplishment
+
 /-- *küssen* — "kiss": activity. Used in RSP examples (*wach-küssen*). -/
 def kuessen : GermanVerbEntry where
   form := "küssen"
@@ -383,9 +395,8 @@ def rauben : GermanVerbEntry where
 
 /-! ### Change-of-state verbs
 
-These verbs have inherent result states and can form *-ung* nominalizations
-(complex event reading). Their root type determines the canonical v alloseme
-via `VAlloseme.fromRootType`. -/
+These verbs have inherent result states. Their root type determines the
+canonical v alloseme via `VAlloseme.fromRootType`. -/
 
 /-- *brechen* — "break": achievement with result root. The broken state
     entails prior change (you can't be broken without having been broken).
@@ -566,7 +577,7 @@ def allVerbs : List GermanVerbEntry :=
    verklagen, gratulieren, zurechtweisen,
    anzeigen, auszeichnen, belangen, ehren, entlassen,
    raechen, revanchieren, zurVerantwortungZiehen,
-   haemmern, malen, kuessen, fuehren, rauben,
+   haemmern, malen, bemalen, kuessen, fuehren, rauben,
    brechen, frieren, beobachten, einfuehren, verbinden,
    beenden, streichen, uebereilen, entwickeln,
    veranlassen, vergessen, erwarten, beschliessen]
