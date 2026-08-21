@@ -1,347 +1,151 @@
-import Linglib.Semantics.Causation.Implicative
-import Linglib.Semantics.Causation.Interpretation
-import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Fragments.English.Predicates.Copular
+import Linglib.Semantics.Causation.VerbClass
+import Linglib.Semantics.Presupposition.Basic
 
 /-!
-# Karttunen 1971: Implicative Verbs [karttunen-1971]
+# Karttunen (1971): implicative verbs
 
-Implicative Verbs. Language 47(2): 340–358.
-
-## Core Contribution
-
-Complement-taking predicates that take infinitival complements divide into
-**implicative** and **non-implicative** classes based on complement entailment:
-
-- **Implicative** (*manage*, *remember*, *bother*): "managed to VP" → VP;
-  "didn't manage to VP" → ¬VP. Two-way entailment.
-- **Non-implicative** (*hope*, *want*, *intend*): no complement entailment.
-- **Negative implicatives** (*fail*, *forget*): entail ¬complement.
-- **Sufficient-only** (*force*, *cause*): affirmative → complement, but
-  negation ↛ ¬complement.
-- **Necessary-only** (*be able*, *possible*): negation → ¬complement, but
-  affirmative ↛ complement.
-
-## Historical Context
-
-Karttunen's 2×2 classification (necessary × sufficient) was the original
-descriptive taxonomy. The modern consensus ([nadathur-2023]) derives
-the entailment patterns from **causal structure** rather than from
-presuppositional schemas. The theory layer (`Causation/Implicative.lean`)
-implements the modern causal analysis; this study file preserves
-Karttunen's original classification. The bridges to the modern types
-live with the papers that draw them: `Studies/Nadathur2023.lean`
-(classification conversion) and `Studies/NadathurLauer2020.lean`
-(entailment cells vs causal mechanism).
-
-Key differences from the modern analysis:
-- Karttunen treats the entailment as arising from a *presupposition* that
-  v(S) is a nec/suf condition for S. Nadathur derives it from causal
-  sufficiency in a structural equation model.
-- Karttunen's classification ignores aspect. Nadathur shows that *be able*
-  is aspect-governed (perfective triggers entailment, imperfective doesn't).
-- Karttunen groups *force*/*cause*/*make* together (ex. 56) as having
-  the same entailment pattern (sufficient-only). Nadathur & Lauer show
-  they have the same entailment pattern but **different truth conditions**:
-  *make*/*force* assert causal sufficiency, while *cause* asserts causal
-  necessity. This difference surfaces in overdetermination scenarios.
+[karttunen-1971] identifies a class of complement-taking verbs — *manage*, *remember*,
+*bother*, *dare*, *happen*, … (his (2)) — whose assertion commits the speaker to the
+complement and whose negation commits the speaker to its negation, and analyzes such a
+sentence as a presupposition–proposition pair: the proposition `v(S)` is what is asserted,
+negated, or questioned, and the presupposition says what condition `v(S)` is for the
+complement `S`. Schema (37) makes `v(S)` necessary and sufficient for `S` (*manage*); (41)
+necessary and sufficient for `¬S` (*fail*, *forget*); (54) necessary only (*be able*, *be
+possible*); (59) sufficient only (*force*, *cause*); non-implicatives (*hope*, *want*,
+*try*) carry no such presupposition and are plain `PartialProp.ofProp`. `Condition` is the
+presupposed condition, `Schema` pairs it with the polarity of the complement, and
+`Schema.sentence` is the presupposition–proposition pair as a `PartialProp`. The paper's
+entailment facts follow: an affirmative assertion entails the (polarity-adjusted)
+complement when the condition is sufficient (`holds_imp`), a negated one entails its
+negation when the condition is necessary (`neg_holds_imp`), double negation cancels, his
+(13) (`manage_neg_neg_holds_imp`), and the one-way cells and the non-implicatives leave the
+other direction open (`force_neg_not_entails`, `beAble_not_entails`,
+`ofProp_not_entails`).
 -/
 
 namespace Karttunen1971
 
-open Implicative
-open English.Predicates.Verbal
-open English.Predicates.Copular (beAble)
-open ArgumentStructure
-open Causation
+open Semantics.Presupposition (PartialProp)
 
--- ════════════════════════════════════════════════════════════════
--- § 1. Karttunen's Four-Cell Classification (§§9–11)
--- ════════════════════════════════════════════════════════════════
+/-- The condition `v(S)` is presupposed to be for the complement. -/
+inductive Condition where
+  /-- (59): *force*, *cause*, *make*. -/
+  | sufficient
+  /-- (54): *be able*, *be possible*. -/
+  | necessary
+  /-- (37) and (41): *manage*, *fail*. -/
+  | necessaryAndSufficient
+  deriving DecidableEq, Repr
 
-/-! Karttunen's schemas:
-    - (37) nec + suf: PRESUP v(S) is nec+suf for S. PROP v(S).
-    - (41) nec + suf (neg): same but for ¬S.
-    - (54) nec only: PRESUP v(S) is nec for S. PROP v(S).
-    - (59) suf only: PRESUP v(S) is suf for S. PROP v(S).
-    - neither: no complement entailment. -/
+namespace Condition
 
-/-- Karttunen's descriptive classification of complement-entailing predicates
-    as a 2×2: necessary × sufficient × polarity.
+/-- The presupposition: `v` stands in the condition to `S`. -/
+def presup : Condition → Prop → Prop → Prop
+  | .sufficient, v, S => v → S
+  | .necessary, v, S => S → v
+  | .necessaryAndSufficient, v, S => v ↔ S
 
-    This is the *historical* taxonomy from the 1971 paper. The modern
-    causal analysis uses `ImplicativeClass` (which adds `aspectGoverned`)
-    and `Causative` (which distinguishes causal mechanisms). -/
-structure KarttunenClass where
-  /-- v(S) is sufficient for S: affirmative entails complement. -/
-  isSufficient : Bool
-  /-- v(S) is necessary for S: negation entails ¬complement. -/
-  isNecessary : Bool
-  /-- Positive (*manage*: entails S) vs negative (*fail*: entails ¬S). -/
+/-- The condition is at least sufficient. -/
+def IsSufficient : Condition → Prop
+  | .necessary => False
+  | _ => True
+
+/-- The condition is at least necessary. -/
+def IsNecessary : Condition → Prop
+  | .sufficient => False
+  | _ => True
+
+variable {v S : Prop}
+
+theorem presup_imp : ∀ {c : Condition}, c.IsSufficient → c.presup v S → v → S
+  | .sufficient, _, h => h
+  | .necessaryAndSufficient, _, h => h.1
+
+theorem presup_imp_rev : ∀ {c : Condition}, c.IsNecessary → c.presup v S → S → v
+  | .necessary, _, h => h
+  | .necessaryAndSufficient, _, h => h.2
+
+end Condition
+
+/-- The presupposition–proposition schema of an implicative verb: the condition `v(S)` is
+presupposed to be, and whether the complement in question is `S` (*manage*) or `¬S`
+(*fail*). -/
+structure Schema where
+  condition : Condition
   polarity : Implicative
   deriving DecidableEq, Repr
 
--- ── Instances ──
+namespace Schema
 
-def KarttunenClass.manage : KarttunenClass :=
-  { isSufficient := true, isNecessary := true, polarity := .positive }
+/-- (37): *manage*, *remember*, *bother*. -/
+def manage : Schema := ⟨.necessaryAndSufficient, .positive⟩
 
-def KarttunenClass.fail : KarttunenClass :=
-  { isSufficient := true, isNecessary := true, polarity := .negative }
+/-- (41): *fail*, *forget*, *neglect*. -/
+def fail : Schema := ⟨.necessaryAndSufficient, .negative⟩
 
-/-- Sufficient only: "forced X to VP" → VP; "didn't force" ↛ ¬VP. -/
-def KarttunenClass.force : KarttunenClass :=
-  { isSufficient := true, isNecessary := false, polarity := .positive }
+/-- (59): *force*, *cause*, *make*. -/
+def force : Schema := ⟨.sufficient, .positive⟩
 
-/-- Sufficient only, negative: "prevented X from VP-ing" → ¬VP. -/
-def KarttunenClass.prevent : KarttunenClass :=
-  { isSufficient := true, isNecessary := false, polarity := .negative }
+/-- (59) for the negated complement: *prevent*. -/
+def prevent : Schema := ⟨.sufficient, .negative⟩
 
-/-- Necessary only: "wasn't able to VP" → ¬VP; "was able" ↛ VP. -/
-def KarttunenClass.beAble : KarttunenClass :=
-  { isSufficient := false, isNecessary := true, polarity := .positive }
+/-- (54): *be able*, *be possible*. -/
+def beAble : Schema := ⟨.necessary, .positive⟩
 
-/-- Neither: *hope*, *want*, *intend*. -/
-def KarttunenClass.hope : KarttunenClass :=
-  { isSufficient := false, isNecessary := false, polarity := .positive }
+variable (k : Schema)
 
--- ── Derived predicates ──
+/-- The two-way implicatives of (37) and (41). -/
+def TwoWay : Prop := k.condition = .necessaryAndSufficient
 
-def KarttunenClass.isTwoWay (k : KarttunenClass) : Bool :=
-  k.isNecessary && k.isSufficient
+instance : Decidable k.TwoWay := inferInstanceAs (Decidable (_ = _))
 
-def KarttunenClass.hasEntailment (k : KarttunenClass) : Bool :=
-  k.isNecessary || k.isSufficient
+/-- The complement the schema speaks of: `S` or `¬S` by polarity. -/
+def implied (S : Prop) : Prop :=
+  match k.polarity with
+  | .positive => S
+  | .negative => ¬ S
 
--- ── Classification theorems ──
+variable {W : Type*} (v S : W → Prop) (w : W)
 
-theorem manage_isTwoWay : KarttunenClass.manage.isTwoWay = true := rfl
-theorem fail_isTwoWay : KarttunenClass.fail.isTwoWay = true := rfl
-theorem force_not_twoWay : KarttunenClass.force.isTwoWay = false := rfl
-theorem beAble_not_twoWay : KarttunenClass.beAble.isTwoWay = false := rfl
-theorem hope_no_entailment : KarttunenClass.hope.hasEntailment = false := rfl
+/-- The sentence `v(S)`: the schema's presupposition, and `v` as the proposition. -/
+def sentence : PartialProp W := ⟨fun w => k.condition.presup (v w) (k.implied (S w)), v⟩
 
-/-- *manage* and *fail* differ only in polarity. -/
-theorem manage_fail_same_profile :
-    KarttunenClass.manage.isNecessary = KarttunenClass.fail.isNecessary ∧
-    KarttunenClass.manage.isSufficient = KarttunenClass.fail.isSufficient ∧
-    KarttunenClass.manage.polarity ≠ KarttunenClass.fail.polarity := by
-  exact ⟨rfl, rfl, by decide⟩
+/-- An affirmative assertion commits the speaker to the complement when `v(S)` is
+presupposed sufficient. -/
+theorem holds_imp (h : k.condition.IsSufficient) (hs : (k.sentence v S).holds w) :
+    k.implied (S w) :=
+  Condition.presup_imp h hs.1 hs.2
 
-/-- *force* and *prevent* differ only in polarity. -/
-theorem force_prevent_same_profile :
-    KarttunenClass.force.isNecessary = KarttunenClass.prevent.isNecessary ∧
-    KarttunenClass.force.isSufficient = KarttunenClass.prevent.isSufficient ∧
-    KarttunenClass.force.polarity ≠ KarttunenClass.prevent.polarity := by
-  exact ⟨rfl, rfl, by decide⟩
+/-- A negated assertion commits the speaker to the negation of the complement when `v(S)`
+is presupposed necessary. -/
+theorem neg_holds_imp (h : k.condition.IsNecessary)
+    (hs : (PartialProp.neg (k.sentence v S)).holds w) : ¬ k.implied (S w) :=
+  fun hS => hs.2 (Condition.presup_imp_rev h hs.1 hS)
 
--- ════════════════════════════════════════════════════════════════
--- § 2. Fragment Verification (ex. 2)
--- ════════════════════════════════════════════════════════════════
+/-- Double negation cancels, (13): `John didn't remember not to lock his door` commits the
+speaker to `John locked his door`. -/
+theorem manage_neg_neg_holds_imp
+    (hs : (PartialProp.neg (manage.sentence v fun w => ¬ S w)).holds w) : S w :=
+  not_not.mp (neg_holds_imp manage v _ w trivial hs)
 
-/-! Verify that Fragment verb entries carry the correct annotations,
-    matching Karttunen's inventory (ex. 2, p.341). -/
+/-- (58): `John didn't force Mary to stay home` leaves open whether she stayed. -/
+theorem force_neg_not_entails :
+    ∃ (v S : Unit → Prop), (PartialProp.neg (force.sentence v S)).holds () ∧ S () :=
+  ⟨fun _ => False, fun _ => True, ⟨fun _ => trivial, id⟩, trivial⟩
 
--- ── Positive implicatives ──
+/-- (55): `John was able to come` leaves open whether he came. -/
+theorem beAble_not_entails :
+    ∃ (v S : Unit → Prop), (beAble.sentence v S).holds () ∧ ¬ S () :=
+  ⟨fun _ => True, fun _ => False, ⟨fun h => h.elim, trivial⟩, id⟩
 
-theorem manage_positive_implicative :
-    manage.toVerb.implicative = some .positive := rfl
+end Schema
 
-theorem remember_positive_implicative :
-    remember.toVerb.implicative = some .positive := rfl
-
-theorem dare_positive_implicative :
-    dare.toVerb.implicative = some .positive := rfl
-
-theorem bother_positive_implicative :
-    bother.toVerb.implicative = some .positive := rfl
-
-theorem venture_positive_implicative :
-    venture.toVerb.implicative = some .positive := rfl
-
-theorem condescend_positive_implicative :
-    condescend.toVerb.implicative = some .positive := rfl
-
-theorem happen_positive_implicative :
-    happen.toVerb.implicative = some .positive := rfl
-
--- ── Negative implicatives (§10, ex. 38) ──
-
-theorem fail_negative_implicative :
-    fail.toVerb.implicative = some .negative := rfl
-
-theorem forget_negative_implicative :
-    forget.toVerb.implicative = some .negative := rfl
-
-theorem neglect_negative_implicative :
-    neglect.toVerb.implicative = some .negative := rfl
-
--- ── Non-implicatives ──
-
-theorem hope_not_implicative :
-    hope.toVerb.implicative = none := rfl
-
-theorem want_not_implicative :
-    want.toVerb.implicative = none := rfl
-
-theorem try_not_implicative :
-    try_.toVerb.implicative = none := rfl
-
-theorem believe_not_implicative :
-    believe.toVerb.implicative = none := rfl
-
--- ── Derived entailment predictions ──
-
-theorem manage_entails :
-    manage.toVerb.implicative = some .positive := rfl
-
-theorem fail_entails_not :
-    fail.toVerb.implicative = some .negative := rfl
-
-theorem hope_no_complement_entailment :
-    hope.toVerb.implicative = none := rfl
-
--- ── Raising vs control ──
-
-/-- *happen* is a raising verb, not subject-control. "It happened to rain"
-    is grammatical — the matrix subject receives no theta role from *happen*.
-    Karttunen (§9) describes *happen*'s presupposition as chance-dependence,
-    but does not discuss its syntactic control type. -/
-theorem happen_is_raising :
-    happen.toVerb.controlType = .raising := rfl
-
-/-- *dare* and *bother* have both presupposition (occasion verbs) AND
-    implicative entailment: "John dared to speak" presupposes risk AND
-    entails "John spoke." These are compatible per Karttunen §9. -/
-theorem dare_presup_and_implicative :
-    dare.toVerb.presupType = some .prerequisiteSoft ∧
-    dare.toVerb.implicative = some .positive := ⟨rfl, rfl⟩
-
-theorem bother_presup_and_implicative :
-    bother.toVerb.presupType = some .prerequisiteSoft ∧
-    bother.toVerb.implicative = some .positive := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 4. Factive vs Implicative (§§0–2)
--- ════════════════════════════════════════════════════════════════
-
-/-! The key diagnostic: factives preserve complement presupposition under
-    negation; implicatives *reverse* the complement entailment.
-
-    "John didn't realize he had no money" — still presupposes "he had no money."
-    "John didn't manage to solve it" — entails "he didn't solve it." -/
-
-theorem know_factive_not_implicative :
-    know.toVerb.presupType = some .softTrigger ∧
-    know.toVerb.implicative = none := ⟨rfl, rfl⟩
-
-theorem manage_implicative_not_factive :
-    manage.toVerb.implicative = some .positive ∧
-    manage.toVerb.presupType = some .prerequisiteSoft := ⟨rfl, rfl⟩
-
-theorem hope_neither :
-    hope.toVerb.presupType = none ∧
-    hope.toVerb.implicative = none := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 5. Sufficient-Only Verbs (§11, ex. 56–59)
--- ════════════════════════════════════════════════════════════════
-
-theorem force_has_causative :
-    force.toVerb.causative = some .force := rfl
-
-theorem force_asserts_sufficiency :
-    Causative.force.AssertsSufficiency := .inr (.inl rfl)
-
--- ════════════════════════════════════════════════════════════════
--- § 6. KarttunenClass → Entailment Predictions
--- ════════════════════════════════════════════════════════════════
-
-/-! The grounding chain: KarttunenClass → Implicative →
-    causal semantics → complement entailment.
-
-    For sufficient-positive classes, the chain is:
-    `KarttunenClass.manage.polarity` = `.positive`
-    → `Implicative.positive.toSemantics` = `manageSem`
-    → `manage_entails_complement`: manageSem sc → complement true
-
-    These theorems derive the entailment from the classification,
-    not just re-export the theory-layer theorem. -/
-
-/-! `sufficient_positive_class_entails` / `sufficient_negative_class_entails`
-    / `manage_class_entails` / `fail_class_entails` — these grounded
-    `KarttunenClass.polarity.toSemantics` chain theorems were over the
-    legacy `ImplicativeScenario`/`normalDevelopment` substrate; deleted
-    in Phase D-H. The polymorphic V2 analog is direct: for any
-    `BoolSEM V` and a positive (resp. negative) `KarttunenClass`,
-    `Implicative.toSemantics M .positive bg p xP c xC` IS
-    `Implicative.manageSem M bg p xP c xC` IS
-    `SEM.causallySufficient M bg p xP c xC` (rfl-chain). -/
-
--- ════════════════════════════════════════════════════════════════
--- § 7. Double Negation (§2, ex. 13; §10, ex. 40)
--- ════════════════════════════════════════════════════════════════
-
-/-! Double negation cancellation is a signature property of implicative
-    verbs. Karttunen's examples:
-
-    - (13) "John didn't remember not to lock his door" → "John locked his door."
-    - (40a) "John didn't forget to lock his door" → (40d) "John locked his door."
-
-    The current causal semantics models the *positive* direction
-    (manageSem → complement true) and the *negative* direction
-    (failSem → complement false) separately. Full double negation
-    — where matrix negation and complement negation interact to yield
-    a positive entailment — would require compositional negation over
-    the causal model, which is not yet formalized.
-
-    What we CAN verify: the two directions (positive entailment, negative
-    entailment) are separately grounded, and two-way KarttunenClasses
-    predict both directions. -/
-
-/-- Two-way classes predict entailment in BOTH directions:
-    the positive polarity grounds the affirmative direction,
-    the negative polarity grounds the negation direction. -/
-theorem two_way_has_both_directions (k : KarttunenClass)
-    (hTwoWay : k.isTwoWay = true) :
-    k.isSufficient = true ∧ k.isNecessary = true := by
-  simp only [KarttunenClass.isTwoWay, Bool.and_eq_true] at hTwoWay
-  exact ⟨hTwoWay.2, hTwoWay.1⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 8. Coverage Summary
--- ════════════════════════════════════════════════════════════════
-
-/-- All four cells of the 2×2 are populated by Fragment entries. -/
-theorem all_cells_populated :
-    KarttunenClass.manage.isTwoWay = true ∧     -- nec + suf: manage
-    KarttunenClass.force.isTwoWay = false ∧      -- suf only: force
-    KarttunenClass.beAble.isTwoWay = false ∧     -- nec only: be able
-    KarttunenClass.hope.hasEntailment = false :=  -- neither: hope
-  ⟨rfl, rfl, rfl, rfl⟩
-
--- ── Necessary-only cell: be able (§11, schema 54) ──
-
-/-- *be able* is NOT a lexical implicative — it has no `implicative`.
-    The actuality entailment is **aspect-governed** ([nadathur-2023]):
-    perfective "was able to VP" → VP; imperfective "was able to VP" ↛ VP.
-    Karttunen (§11) notes these verbs are ambiguous between implicative
-    and non-implicative readings. -/
-theorem beAble_not_lexical_implicative :
-    beAble.implicative = none := rfl
-
-/-- *be able* takes infinitival complement with subject control.
-    "He was able to leave" — the subject has the ability (theta role). -/
-theorem beAble_infinitival_subject_control :
-    beAble.complementType = .infinitival ∧
-    beAble.controlType = .subjectControl := ⟨rfl, rfl⟩
-
-/-! ### Tension with Noonan's Reality Status
-
-    [noonan-2007] classifies achievement CTPs (*manage*, *fail*) as
-    IRREALIS because they take infinitival complements. But Karttunen shows
-    these verbs ENTAIL complement truth — semantically realis. Complement
-    *form* (irrealis) and complement *entailment* (realis) diverge for
-    implicative verbs. -/
+/-- (5): a non-implicative, which has no presupposition, commits the speaker to nothing
+about its complement in either polarity. -/
+theorem ofProp_not_entails :
+    (∃ (v S : Unit → Prop), (PartialProp.ofProp v).holds () ∧ ¬ S ()) ∧
+      ∃ (v S : Unit → Prop), (PartialProp.neg (PartialProp.ofProp v)).holds () ∧ S () :=
+  ⟨⟨fun _ => True, fun _ => False, ⟨trivial, trivial⟩, id⟩,
+   ⟨fun _ => False, fun _ => True, ⟨trivial, id⟩, trivial⟩⟩
 
 end Karttunen1971

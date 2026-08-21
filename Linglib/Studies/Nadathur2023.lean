@@ -231,7 +231,8 @@ from [karttunen-1971]'s descriptive 2×2 taxonomy; the conversion lives
 here (the later paper draws the comparison). The two-way cell's defining
 entailment pattern is not stipulated but *derived*:
 `Implicative.twoWay_entailment_profile` produces both halves of Fact B
-from the sufficiency + necessity presuppositions, witnessed concretely
+from the sufficiency + necessity presuppositions, and `schema_manage_presup`
+recovers Karttunen's (37) presupposition itself at every consistent completion, witnessed concretely
 at the Dreyfus model by `Nadathur2023.dare_felicitous_for_msg` together
 with `Nadathur2023.no_msg_without_nerve`. -/
 
@@ -239,20 +240,36 @@ namespace Karttunen1971
 
 open Implicative
 
-/-- Convert `KarttunenClass` to `ImplicativeClass`
+/-- Convert a Karttunen `Schema` to `ImplicativeClass`
     ([nadathur-2023-implicatives]). `aspectGoverned` is always false
     because Karttunen's 1971 analysis does not account for aspect — a
     limitation the modern analysis corrects. -/
-def KarttunenClass.toImplicativeClass (k : KarttunenClass) : ImplicativeClass :=
+def Schema.toImplicativeClass (k : Schema) : ImplicativeClass :=
   { polarity := k.polarity
-    directionality := if k.isTwoWay then .twoWay else .oneWay
+    directionality := if k.TwoWay then .twoWay else .oneWay
     aspectGoverned := false
-    prerequisite := if k.isTwoWay then some .unspecified else none }
+    prerequisite := if k.TwoWay then some .unspecified else none }
 
 theorem karttunen_manage_matches :
-    KarttunenClass.manage.toImplicativeClass = ImplicativeClass.manage := rfl
+    Schema.manage.toImplicativeClass = ImplicativeClass.manage := rfl
 
 theorem karttunen_fail_matches :
-    KarttunenClass.fail.toImplicativeClass = ImplicativeClass.fail := rfl
+    Schema.fail.toImplicativeClass = ImplicativeClass.fail := rfl
+
+open Causation (SEM CausalGraph Valuation DecidableValuation) in
+/-- The causal account validates Karttunen's (37): in a felicitous two-way context, at
+every consistent completion the prerequisite is realized iff the complement is — the
+presupposition `Schema.manage` carries, with causal entailment as the condition. -/
+theorem schema_manage_presup {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    {background : Valuation α} {p : V} {xP : α p} {c : V} {xC : α c}
+    (hexo : M.graph.parents p = ∅) (hp : background.get p = none)
+    (hsuf : manageSem M background p xP c xC)
+    (hnec : necessityPresup M background p xP c xC) (s' : Valuation α)
+    (hset : SEM.IsExogenousSettlement M background s') (hc : s'.get c = none) :
+    Schema.manage.condition.presup (SEM.causallyEntails M s' p xP)
+      (SEM.causallyEntails M s' c xC) :=
+  (complement_iff_prerequisite M hexo hp hsuf hnec s' hset hc).symm
 
 end Karttunen1971
