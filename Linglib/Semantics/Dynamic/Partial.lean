@@ -7,7 +7,7 @@ import Linglib.Semantics.Presupposition.Context
 
 Heim's context change potentials are *partial* functions on contexts: the
 domain condition IS the presupposition ([heim-1983]'s "c admits φ",
-[karttunen-1974]'s "c satisfies-the-presuppositions-of φ").
+[karttunen-1974-presupposition]'s "c satisfies-the-presuppositions-of φ").
 `CCP.Partial P := Set P →. Set P` grounds this in mathlib's
 `PFun`: `Part.Dom` is admittance, and the satisfaction law for conjunction —
 "c admits φ∧ψ iff c admits φ and c[φ] admits ψ" — is the domain condition
@@ -62,7 +62,7 @@ namespace CCP.Partial
 variable {P W : Type*}
 
 /-- `u.admits s`: the update is defined at `s` ([heim-1983]'s "s admits u",
-    [karttunen-1974]'s satisfaction). This is `Part.Dom`. -/
+    [karttunen-1974-presupposition]'s satisfaction). This is `Part.Dom`. -/
 def admits (u : CCP.Partial P) (s : Set P) : Prop := (u s).Dom
 
 /-- Total CCPs are partial CCPs with trivial presupposition. -/
@@ -141,7 +141,7 @@ theorem seq_eliminative {φ ψ : CCP.Partial P}
 
 /-! ### The satisfaction law -/
 
-/-- **The Karttunen satisfaction law** ([karttunen-1974]), by construction:
+/-- **The Karttunen satisfaction law** ([karttunen-1974-presupposition]), by construction:
     `s` admits `φ ∧ ψ` iff `s` admits `φ` and `s[φ]` admits `ψ`. The
     statement is the domain condition of `Part.bind`. -/
 theorem admits_seq (φ ψ : CCP.Partial P) (s : Set P) :
@@ -161,7 +161,7 @@ theorem admits_seq_iff (φ ψ : CCP.Partial P) (s : Set P)
 
 /-- Conditional admittance: `s` admits `if φ, ψ` iff `s` admits `φ` and
     `s[φ]` admits `ψ` — the same condition as conjunction
-    ([karttunen-1974]). -/
+    ([karttunen-1974-presupposition]). -/
 theorem admits_cond (φ ψ : CCP.Partial P) (s : Set P) :
     (cond φ ψ).admits s ↔ ∃ h : φ.admits s, ψ.admits ((φ s).get h) :=
   Iff.rfl

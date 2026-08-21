@@ -111,7 +111,7 @@ theorem accommodate_eq_defined (c : ContextSet W) (p : PartialProp W) (w : W) :
 /-! ### Local contexts (satisfaction tradition)
 
 Per-connective local contexts, stipulated in the satisfaction tradition
-([karttunen-1974], [heim-1983]); [schlenker-2009]'s algorithm reconstructs
+([karttunen-1974-presupposition], [heim-1983]); [schlenker-2009]'s algorithm reconstructs
 these clauses from bivalent meanings plus incremental transparency. A
 presupposition is filtered at a position iff the local context there
 satisfies it (`presupSatisfied`), and projects otherwise

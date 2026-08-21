@@ -7,7 +7,7 @@ import Linglib.Semantics.Presupposition.BeliefEmbedding
 
 [heim-1992] derives Karttunen's generalization — if the complement of an
 attitude report presupposes `p`, the report presupposes that the attitude
-holder believes `p` ([karttunen-1974]) — from context change potentials for
+holder believes `p` ([karttunen-1974-presupposition]) — from context change potentials for
 the attitude predicates. The belief rule (18) makes `c + a believes φ`
 defined iff `Dox_a(w) + φ` is defined for every `w ∈ c`, and then keeps the
 worlds whose doxastic state `φ` maps to itself; `believes` is that rule as a
