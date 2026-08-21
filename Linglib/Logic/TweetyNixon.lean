@@ -2,11 +2,11 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # Tweety Triangle and Nixon Diamond
-[veltman-1996] [goldszmidt-pearl-1996] [asher-pelletier-2013]
+[goldszmidt-pearl-1996] [asher-pelletier-2013]
 
 The two classic default-reasoning testbeds, as finite world types shared
-by the rival accounts in `Studies/Veltman1996`, `Studies/GoldszmidtPearl1996`,
-and `Studies/AsherPelletier2013`:
+by the rival accounts in `Studies/GoldszmidtPearl1996` and
+`Studies/AsherPelletier2013`:
 
 1. **Tweety Triangle** (specificity): birds normally fly; penguins are
    birds; penguins normally don't fly. The more specific default wins.
