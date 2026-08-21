@@ -78,7 +78,7 @@ inductive EngInflFeature where
   | past
   | participle
   | sg3
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Context-free VI entries for English verbal inflection.
     [halle-marantz-1993]. -/
@@ -161,8 +161,9 @@ Condition applied to root-conditioned entries) selects the most
 specific matching entry: a root-restricted rule overrides the
 unrestricted default when the root matches.
 
-This section uses `VocabItem` (which supports root restrictions via
-`rootMatch`) rather than `VocabularyItem` (which is context-free). -/
+Root conditioning is a contextual feature on the Tns terminal's bundle —
+the identity of the adjacent root — and a root class contributes one item
+per member, as the paper's set-valued context does. -/
 
 section ConditionedAllomorphy
 
@@ -171,68 +172,56 @@ inductive SampleVerb where
   | walk | play
   | dwell | buy | send
   | put | beat | hit
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
-/-- Root-conditioned past tense VI rules.
+/-- Features visible at the past-tense Tns terminal: its own [+past] and
+the identity of the adjacent root ([halle-marantz-1993]'s contextual
+specification). -/
+inductive PastContext where
+  | past
+  | root (v : SampleVerb)
+  deriving DecidableEq, Repr
 
-    All three entries share [+past] context (modeled as `Bool`);
-    they differ in root restriction and specificity.
-    [halle-marantz-1993]. -/
-def conditionedPastVI : List (VocabItem Bool SampleVerb) :=
-  [-- /-t/ for specific roots (specificity 2: context + root)
-   { exponent := "-t"
-     contextMatch := id
-     rootMatch := some ([SampleVerb.dwell, .buy, .send].contains ·)
-     specificity := 2 },
-   -- /∅/ for specific roots (specificity 2: context + root)
-   { exponent := "∅"
-     contextMatch := id
-     rootMatch := some ([SampleVerb.put, .beat, .hit].contains ·)
-     specificity := 2 },
-   -- /-d/ default (specificity 1: context only, no root restriction)
-   { exponent := "-d"
-     contextMatch := id
-     rootMatch := none
-     specificity := 1 }]
+/-- A root class's items: `e` for [+past] next to each listed root. -/
+def rootClass (roots : List SampleVerb) (e : String) :
+    List (VocabularyItem PastContext String) :=
+  roots.map fun v => ⟨[.past, .root v], e⟩
 
-/-- Regular verbs get `-d`: no root-specific entry matches. -/
-theorem walk_gets_d :
-    vocabularyInsert conditionedPastVI true .walk = some "-d" := by
+/-- Root-conditioned past tense items: `-t` and `∅` for their root classes,
+`-d` for [+past] elsewhere ([halle-marantz-1993]). -/
+def conditionedPastVI : List (VocabularyItem PastContext String) :=
+  rootClass [.dwell, .buy, .send] "-t" ++ rootClass [.put, .beat, .hit] "∅" ++ [⟨[.past], "-d"⟩]
+
+/-- Regular verbs get `-d`: no root-specific item applies. -/
+theorem walk_gets_d : subsetPrinciple conditionedPastVI [.past, .root .walk] = some "-d" := by
   decide
 
-theorem play_gets_d :
-    vocabularyInsert conditionedPastVI true .play = some "-d" := by
+theorem play_gets_d : subsetPrinciple conditionedPastVI [.past, .root .play] = some "-d" := by
   decide
 
-/-- Verbs in the `-t` class: root restriction overrides default. -/
-theorem dwell_gets_t :
-    vocabularyInsert conditionedPastVI true .dwell = some "-t" := by
+/-- Verbs in the `-t` class: the root-conditioned item beats the default. -/
+theorem dwell_gets_t : subsetPrinciple conditionedPastVI [.past, .root .dwell] = some "-t" := by
   decide
 
-theorem buy_gets_t :
-    vocabularyInsert conditionedPastVI true .buy = some "-t" := by
+theorem buy_gets_t : subsetPrinciple conditionedPastVI [.past, .root .buy] = some "-t" := by
   decide
 
 /-- Verbs in the `∅` class: no overt past tense marking. -/
-theorem put_gets_null :
-    vocabularyInsert conditionedPastVI true .put = some "∅" := by
+theorem put_gets_null : subsetPrinciple conditionedPastVI [.past, .root .put] = some "∅" := by
   decide
 
-theorem beat_gets_null :
-    vocabularyInsert conditionedPastVI true .beat = some "∅" := by
+theorem beat_gets_null : subsetPrinciple conditionedPastVI [.past, .root .beat] = some "∅" := by
   decide
 
-/-- The Paninian principle: root-restricted entries override the
-    default for matching roots. -/
+/-- The Paninian principle: root-conditioned items override the default for
+their roots. -/
 theorem root_restriction_overrides_default :
-    vocabularyInsert conditionedPastVI true .dwell ≠
-    vocabularyInsert conditionedPastVI true .walk := by
+    subsetPrinciple conditionedPastVI [.past, .root .dwell] ≠
+      subsetPrinciple conditionedPastVI [.past, .root .walk] := by
   decide
 
-/-- Non-past context: no entry matches (all require [+past]). -/
-theorem nonpast_no_match :
-    vocabularyInsert conditionedPastVI false .walk = none := by
-  decide
+/-- Non-past context: no item applies (all require [+past]). -/
+theorem nonpast_no_match : subsetPrinciple conditionedPastVI [.root .walk] = none := by decide
 
 end ConditionedAllomorphy
 

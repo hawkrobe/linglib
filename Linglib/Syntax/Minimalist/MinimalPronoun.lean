@@ -71,9 +71,9 @@ inductive BVAContext where
     Vocabulary items are ordered by specificity. When multiple items could
     apply, the most specific (first in the list) wins.
 
-    This is a specialization of the general DM `DistributedMorphology.VocabItem`
-    in `Morphology/DistributedMorphology/VocabularyInsertion/Basic.lean`, restricted to
-    `BVAContext` matching with a parameterized `Form` type. -/
+    This is a specialization of DM's `DistributedMorphology.VocabularyItem`: a
+    single `BVAContext` feature matched exactly, with a parameterized `Form`
+    type. -/
 structure VocabItem (Form : Type) where
   /-- The syntactic context this item is restricted to -/
   context : BVAContext

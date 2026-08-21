@@ -1,10 +1,11 @@
 import Linglib.Morphology.DistributedMorphology.Defs
 import Linglib.Morphology.Exponence.Select
+import Mathlib.Data.Finset.Card
 
 /-!
 # Vocabulary items and allosemes as exponence rules
 
-A `VocabItem` and an `Allosemy.AllosemicEntry` each expose the shared
+A `VocabularyItem` and an `Allosemy.AllosemicEntry` each expose the shared
 exponence interface (`Morphology.Exponence.Rule`), so DM's List 2 (form) and
 List 3 (meaning) are resolved by one `Exponence.selectBy` competition, whose
 winner is the Elsewhere winner. This file holds the two `Rule` instances and
@@ -112,17 +113,47 @@ end Exponence
 
 end Allosemy
 
-variable {Ctx Root : Type*}
+namespace VocabularyItem
 
-/-- A Vocabulary Item exposes the shared exponence core interface
-(`Morphology.Exponence.Rule`): contexts are (feature-context, root)
-pairs, applicability is `matches`. -/
-instance : Morphology.Exponence.Rule (VocabItem Ctx Root) (Ctx × Root) String :=
-  ⟨VocabItem.exponent, fun vi cr => vi.matches cr.1 cr.2 = true⟩
+variable {F E : Type*} {i j : VocabularyItem F E} {t : List F}
 
-instance : DecidableRel (Applies : VocabItem Ctx Root → Ctx × Root → Prop) :=
-  fun vi cr => inferInstanceAs (Decidable (vi.matches cr.1 cr.2 = true))
+/-- A Vocabulary Item exposes the shared exponence interface: contexts are
+feature bundles, applicability is feature inclusion. -/
+instance : Rule (VocabularyItem F E) (List F) E := ⟨exponent, fun i t => i.features ⊆ t⟩
 
-instance : Preorder (VocabItem Ctx Root) := Morphology.Exponence.toPreorder
+instance : Preorder (VocabularyItem F E) := toPreorder
+
+theorem applies_iff : Applies i t ↔ i.features ⊆ t := Iff.rfl
+
+/-- An item with no features applies at every bundle. -/
+theorem elsewhere_applies (e : E) (t : List F) : Applies (⟨[], e⟩ : VocabularyItem F E) t :=
+  List.nil_subset _
+
+theorem le_iff_applies : i ≤ j ↔ ∀ ⦃t : List F⦄, i.features ⊆ t → j.features ⊆ t := Iff.rfl
+
+/-- The engine's specificity order is reverse feature inclusion. -/
+theorem le_iff : i ≤ j ↔ j.features ⊆ i.features :=
+  ⟨fun h => le_iff_applies.mp h (List.Subset.refl _),
+    fun h => le_iff_applies.mpr fun _ ht => List.Subset.trans h ht⟩
+
+variable [DecidableEq F]
+
+instance : DecidableRel (Applies : VocabularyItem F E → List F → Prop) :=
+  fun i t => decidable_of_iff (∀ f ∈ i.features, f ∈ t) Iff.rfl
+
+/-- The number of distinct features an item specifies — the Subset
+Principle's specificity score. -/
+def specificity (i : VocabularyItem F E) : ℕ := i.features.toFinset.card
+
+theorem toFinset_subset_toFinset :
+    i.features.toFinset ⊆ j.features.toFinset ↔ i.features ⊆ j.features :=
+  Multiset.toFinset_subset.trans Multiset.coe_subset
+
+theorem specificity_strictAnti : StrictAnti (specificity : VocabularyItem F E → ℕ) :=
+  fun _ _ h => Finset.card_lt_card <| Finset.ssubset_def.mpr
+    ⟨toFinset_subset_toFinset.mpr (le_iff.mp h.le),
+      fun hc => (lt_iff_le_not_ge.mp h).2 (le_iff.mpr (toFinset_subset_toFinset.mp hc))⟩
+
+end VocabularyItem
 
 end DistributedMorphology

@@ -46,25 +46,30 @@ def copulaVI (voice : Head) : CopulaForm :=
   if voice.hasD && voice.flavor != .nonThematic && voice.flavor != .passive
   then .have else .be
 
-open DistributedMorphology in
-/-- The copula VI as competing `VocabItem`s (HAVE specificity 2, BE elsewhere). -/
-def copulaVIRules : List (VocabItem Head Unit) :=
-  [ { exponent := "have"
-    , contextMatch := λ v => v.hasD && v.flavor != .nonThematic && v.flavor != .passive
-    , specificity := 2 }
-  , { exponent := "be", contextMatch := λ _ => true, specificity := 0 } ]
+/-- The Voice features the copula's insertion context exposes: [D] and a
+thematic, non-passive flavor — Voice_{D},φ of [myler-2016] (89). -/
+inductive VoiceFeature where
+  | d
+  | thematic
+  deriving DecidableEq, Repr
+
+/-- The copula's context bundle for a Voice head. -/
+def voiceFeatures (v : Head) : List VoiceFeature :=
+  (if v.hasD then [.d] else []) ++
+    (if v.flavor ≠ .nonThematic ∧ v.flavor ≠ .passive then [.thematic] else [])
 
 open DistributedMorphology in
-/-- The `VocabItem` formulation agrees with `copulaVI`. -/
+/-- The copula items: HAVE for transitive Voice, BE elsewhere. -/
+def copulaVIRules : List (VocabularyItem VoiceFeature String) :=
+  [⟨[.d, .thematic], "have"⟩, ⟨[], "be"⟩]
+
+open DistributedMorphology in
+/-- The Subset Principle over `copulaVIRules` agrees with `copulaVI`. -/
 theorem copulaVI_agrees_vocabItem (v : Head) :
-    vocabularyInsertSimple copulaVIRules v =
-    some (if copulaVI v = .have then "have" else "be") := by
-  cases v with | mk flavor hasD _ checksCase features =>
-  cases flavor <;> cases hasD <;> cases checksCase <;>
-  simp [copulaVI, copulaVIRules, vocabularyInsertSimple, vocabularyInsert,
-    VocabItem.matches, Morphology.Exponence.realize, Morphology.Exponence.selectBy,
-    Morphology.Exponence.applicable, Morphology.Exponence.Applies,
-    Morphology.Exponence.exponent, List.argmax, List.argAux]
+    subsetPrinciple copulaVIRules (voiceFeatures v) =
+      some (if copulaVI v = .have then "have" else "be") := by
+  cases v with | mk flavor hasD _ _ _ =>
+  cases flavor <;> cases hasD <;> rfl
 
 /-- HAVE ↔ Voice is transitive (external argument, not PF-only, not passive). -/
 theorem vi_characterization (v : Head) :
@@ -150,38 +155,32 @@ theorem hafa_iff_pred (dp : IcelandicPossDP) :
     icelandicHaveVI dp = .hafa ↔ dp.hasPredP = true := by
   cases dp with | mk p pp => cases p <;> simp [icelandicHaveVI]
 
--- ─── VocabItem formulation (parallel to copulaVIRules) ───
+-- ─── Vocabulary-item formulation (parallel to copulaVIRules) ───
+
+/-- The DP-internal feature the Icelandic HAVE items see: a PredP. -/
+inductive PossDPFeature where
+  | predP
+  deriving DecidableEq, Repr
+
+/-- The insertion bundle for a possessive DP; the PP-possessor option is
+never consulted. -/
+def possDPFeatures (dp : IcelandicPossDP) : List PossDPFeature :=
+  if dp.hasPredP then [.predP] else []
 
 open DistributedMorphology in
-
-/-- Icelandic HAVE VI as proper `VocabItem`s from the DM framework.
-
-    Two items compete via the Elsewhere Condition:
-    - *hafa*: specificity 1 (checks hasPredP = true)
-    - *eiga*: specificity 0 (elsewhere — matches any transitive context)
-
-    This parallels `copulaVIRules` for the English HAVE/BE alternation,
-    but applies within the HAVE domain: both *hafa* and *eiga* realize
-    transitive Voice, differing only in the DP-internal structure. -/
-def icelandicHaveVIRules : List (VocabItem IcelandicPossDP Unit) :=
-  [ { exponent := "hafa"
-    , contextMatch := fun dp => dp.hasPredP
-    , specificity := 1 }
-  , { exponent := "eiga"
-    , contextMatch := fun _ => true
-    , specificity := 0 } ]
+/-- Icelandic HAVE items: *hafa* on a PredP, *eiga* elsewhere — parallel to
+`copulaVIRules` but within the HAVE domain, where both realize transitive
+Voice and differ only in DP-internal structure. -/
+def icelandicHaveVIRules : List (VocabularyItem PossDPFeature String) :=
+  [⟨[.predP], "hafa"⟩, ⟨[], "eiga"⟩]
 
 open DistributedMorphology in
-
-/-- The VocabItem formulation agrees with the direct `icelandicHaveVI`. -/
+/-- The Subset Principle over `icelandicHaveVIRules` agrees with
+`icelandicHaveVI`. -/
 theorem icelandicVI_agrees_vocabItem (dp : IcelandicPossDP) :
-    vocabularyInsertSimple icelandicHaveVIRules dp =
-    some (if icelandicHaveVI dp = .hafa then "hafa" else "eiga") := by
-  cases dp with | mk p pp => cases p <;> cases pp <;>
-  simp [icelandicHaveVI, icelandicHaveVIRules, vocabularyInsertSimple,
-    vocabularyInsert, VocabItem.matches, Morphology.Exponence.realize,
-    Morphology.Exponence.selectBy, Morphology.Exponence.applicable,
-    Morphology.Exponence.Applies, Morphology.Exponence.exponent, List.argmax, List.argAux]
+    subsetPrinciple icelandicHaveVIRules (possDPFeatures dp) =
+      some (if icelandicHaveVI dp = .hafa then "hafa" else "eiga") := by
+  cases dp with | mk p pp => cases p <;> cases pp <;> rfl
 
 -- ════════════════════════════════════════════════════
 -- § 2. The Two Puzzles, Solved

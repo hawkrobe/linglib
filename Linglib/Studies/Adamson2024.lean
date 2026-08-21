@@ -51,7 +51,7 @@ cannot affect gender assignment.
 This module uses types from `Morphology/DistributedMorphology/NominalSpine.lean`
 (the GLH, `NominalPosition`, `PossessionType`), `Head` and `PhiBundle`
 from `Morphology/DistributedMorphology/Categorizer.lean` ([kramer-2015]),
-`VocabItem` from `Morphology/DistributedMorphology/VocabularyInsertion.lean`,
+`VocabularyItem` from `Morphology/DistributedMorphology/Defs.lean`,
 and Fragment data from `Fragments/Teop/Nouns.lean` and
 `Fragments/Jarawara/PossessedNouns.lean`.
 -/
@@ -139,45 +139,46 @@ theorem teop_uses_anim_dimension :
 
 /-! ### Teop Vocabulary Insertion -/
 
-/-- Teop article VI rules, ordered by specificity. -/
-def teopArticleRules : List (VocabItem Teop.ArticleCtx Unit) :=
-  [ { exponent := "e"
-      contextMatch := λ c => c.gender == .gI && c.proprial
-      specificity := 3 }
-  , { exponent := "a"
-      contextMatch := λ c => c.gender == .gI && !c.plural && !c.proprial
-      specificity := 2 }
-  , { exponent := "ra"
-      contextMatch := λ c => c.gender == .gI && c.plural
-      specificity := 2 }
-  , { exponent := "o"
-      contextMatch := λ c => c.gender == .gII && !c.plural
-      specificity := 1 }
-  , { exponent := "ro"
-      contextMatch := λ c => c.gender == .gII && c.plural
-      specificity := 1 }
-  ]
+/-- Features of the Teop article's agreement bundle: the noun's gender and
+number, and proprial status. -/
+inductive ArticleFeature where
+  | gI | gII | plural | proprial
+  deriving DecidableEq, Repr
 
-theorem teop_ipossessed_body_part_article :
-    vocabularyInsert teopArticleRules ⟨.gI, false, false⟩ () = some "a" := by decide
+/-- The article's bundle for a Fragment `Teop.ArticleCtx`. -/
+def articleFeatures (c : Teop.ArticleCtx) : List ArticleFeature :=
+  (match c.gender with | .gI => [.gI] | .gII => [.gII]) ++
+    (if c.plural then [.plural] else []) ++ (if c.proprial then [.proprial] else [])
+
+/-- Teop article items: proprial *e*, plural *ra*/*ro*, and the singular
+defaults *a*/*o* per gender. -/
+def teopArticleRules : List (VocabularyItem ArticleFeature String) :=
+  [⟨[.gI, .proprial], "e"⟩, ⟨[.gI, .plural], "ra"⟩, ⟨[.gI], "a"⟩,
+   ⟨[.gII, .plural], "ro"⟩, ⟨[.gII], "o"⟩]
+
+/-- The article the Subset Principle inserts for a context. -/
+def teopArticle (c : Teop.ArticleCtx) : Option String :=
+  subsetPrinciple teopArticleRules (articleFeatures c)
+
+theorem teop_ipossessed_body_part_article : teopArticle ⟨.gI, false, false⟩ = some "a" := by decide
 theorem teop_unpossessed_body_part_article :
-    vocabularyInsert teopArticleRules ⟨.gII, false, false⟩ () = some "o" := by decide
-theorem teop_proprial_article :
-    vocabularyInsert teopArticleRules ⟨.gI, false, true⟩ () = some "e" := by decide
-theorem teop_plural_gI_article :
-    vocabularyInsert teopArticleRules ⟨.gI, true, false⟩ () = some "ra" := by decide
-theorem teop_plural_gII_article :
-    vocabularyInsert teopArticleRules ⟨.gII, true, false⟩ () = some "ro" := by decide
+    teopArticle ⟨.gII, false, false⟩ = some "o" := by decide
+theorem teop_proprial_article : teopArticle ⟨.gI, false, true⟩ = some "e" := by decide
+theorem teop_plural_gI_article : teopArticle ⟨.gI, true, false⟩ = some "ra" := by decide
+theorem teop_plural_gII_article : teopArticle ⟨.gII, true, false⟩ = some "ro" := by decide
+
+/-- Vocabulary Insertion reproduces the Fragment's article table. -/
+theorem teopArticle_eq_articleForm (c : Teop.ArticleCtx) :
+    teopArticle c = some (Teop.articleForm c) := by
+  rcases c with ⟨g, p, q⟩; cases g <;> cases p <;> cases q <;> decide
 
 /-- End-to-end: body-part root + n_{body-part{D}} → gender I → article *a*. -/
 theorem teop_end_to_end_ipossessed :
-    vocabularyInsert teopArticleRules
-      ⟨teopGenderFromN teopBodyPartN, false, false⟩ () = some "a" := by decide
+    teopArticle ⟨teopGenderFromN teopBodyPartN, false, false⟩ = some "a" := by decide
 
 /-- End-to-end: body-part root + n_{alienator} → gender II → article *o*. -/
 theorem teop_end_to_end_unpossessed :
-    vocabularyInsert teopArticleRules
-      ⟨teopGenderFromN teopAlienatorN, false, false⟩ () = some "o" := by decide
+    teopArticle ⟨teopGenderFromN teopAlienatorN, false, false⟩ = some "o" := by decide
 
 /-! ### Bridge to Fragment Data
 
@@ -485,7 +486,7 @@ Head ──┤
 ```
 
 The PF pipeline genuinely threads: `teopGenderFromN` computes the gender,
-which feeds into `vocabularyInsert` as the article context. The semantic
+which feeds into `teopArticle` as the article context. The semantic
 pipeline threads similarly: `catHeadSemanticType` computes the semantic
 type, which feeds into `.toBarker.canTakePossessor`.
 
@@ -502,7 +503,7 @@ open DistributedMorphology.CategorizerSemantics
     into VI as part of the article context. -/
 def teopPFDerive (nh : Head) (pl proprial : Bool := false) : Option String :=
   let gender := teopGenderFromN nh
-  vocabularyInsert teopArticleRules ⟨gender, pl, proprial⟩ ()
+  teopArticle ⟨gender, pl, proprial⟩
 
 /-- The semantic derivation pipeline: n-head → semantic type → possessor capability.
     The semantic type is an intermediate value, fed into Barker's type classification
