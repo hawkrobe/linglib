@@ -7,7 +7,7 @@ import Mathlib.Data.Finset.Card
 
 A `VocabularyItem` exposes the shared exponence interface
 (`Morphology.Exponence.Rule`) over neighborhoods: it applies where its
-specification is included in the neighborhood, and its specificity — the
+site is included in the neighborhood, and its specificity — the
 number of positioned features it mentions — is strictly antitone in the
 engine's order, so score selection is Elsewhere selection.
 -/
@@ -19,37 +19,37 @@ open Morphology.Exponence
 variable {F E : Type*} {i j : VocabularyItem F E} {n : Neighborhood (List F)}
 
 /-- A Vocabulary Item exposes the shared exponence interface: contexts are
-neighborhoods, applicability is inclusion of the specification. -/
-instance : Rule (VocabularyItem F E) (Neighborhood (List F)) E := ⟨exponent, fun i n => i.spec ⊆ n⟩
+neighborhoods, applicability is inclusion of the item's site. -/
+instance : Rule (VocabularyItem F E) (Neighborhood (List F)) E := ⟨exponent, fun i n => i.site ⊆ n⟩
 
 instance : Preorder (VocabularyItem F E) := toPreorder
 
-theorem applies_iff : Applies i n ↔ i.spec ⊆ n := Iff.rfl
+theorem applies_iff : Applies i n ↔ i.site ⊆ n := Iff.rfl
 
 /-- The Elsewhere item applies at every neighborhood. -/
 theorem elsewhere_applies (e : E) (n : Neighborhood (List F)) :
     Applies (⟨∅, e⟩ : VocabularyItem F E) n :=
   List.nil_subset _
 
-theorem le_iff_applies : i ≤ j ↔ ∀ ⦃n : Neighborhood (List F)⦄, i.spec ⊆ n → j.spec ⊆ n :=
+theorem le_iff_applies : i ≤ j ↔ ∀ ⦃n : Neighborhood (List F)⦄, i.site ⊆ n → j.site ⊆ n :=
   Iff.rfl
 
-/-- The engine's specificity order is reverse inclusion of specifications. -/
-theorem le_iff : i ≤ j ↔ j.spec ⊆ i.spec :=
+/-- The engine's specificity order is reverse inclusion of sites. -/
+theorem le_iff : i ≤ j ↔ j.site ⊆ i.site :=
   ⟨fun h => le_iff_applies.mp h (Neighborhood.Subset.refl _),
     fun h => le_iff_applies.mpr fun _ hn => Neighborhood.Subset.trans h hn⟩
 
 variable [DecidableEq F]
 
 instance : DecidableRel (Applies : VocabularyItem F E → Neighborhood (List F) → Prop) :=
-  fun i n => inferInstanceAs (Decidable (i.spec ⊆ n))
+  fun i n => inferInstanceAs (Decidable (i.site ⊆ n))
 
 /-- The number of distinct positioned features an item mentions — the
 Subset Principle's specificity score. -/
-def specificity (i : VocabularyItem F E) : ℕ := i.spec.positioned.toFinset.card
+def specificity (i : VocabularyItem F E) : ℕ := i.site.positioned.toFinset.card
 
 theorem toFinset_subset_toFinset :
-    i.spec.positioned.toFinset ⊆ j.spec.positioned.toFinset ↔ i.spec ⊆ j.spec :=
+    i.site.positioned.toFinset ⊆ j.site.positioned.toFinset ↔ i.site ⊆ j.site :=
   Multiset.toFinset_subset.trans Multiset.coe_subset
 
 theorem specificity_strictAnti : StrictAnti (specificity : VocabularyItem F E → ℕ) :=

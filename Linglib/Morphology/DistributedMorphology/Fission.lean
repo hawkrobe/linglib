@@ -1,116 +1,143 @@
-import Mathlib.Tactic.TypeStar
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
-# Fission (Distributed Morphology)
+# Fission
 
-Fission is the postsyntactic DM operation that splits a single terminal
-node into multiple positions of exponence, each independently subject
-to Vocabulary Insertion ([noyer-1992], [halle-1997]; adopted in
-[halle-marantz-1993]). The classical motivation is [noyer-1992]'s
-analysis of Afro-Asiatic prefix-conjugation agreement, where a single
-AGR node surfaces as one, two, or three separate affixes.
-[arregi-nevins-2012]'s Plural Fission splits the number feature
-[−singular] off the person features of second/third-person plural
-pronominal clitics in Basque auxiliaries (their §3.3.4), yielding the
-plural exponent at a second terminal-of-exponence.
+Fission lets one syntactic node be realized in several adjacent positions
+of exponence: a Vocabulary Item inserted at the node discharges only the
+features it spells out, and the remaining features fission off to a
+subsidiary position where insertion continues. The procedure here is strict
+scansion: the Vocabulary is scanned once, top to bottom; an item whose site
+one of the node's feature matrices contains is inserted and its features are
+discharged from that matrix; the residue stays available to the items
+below, and scansion halts at the bottom of the list — so no item is
+inserted twice, with no stipulation about elsewhere items.
 
-A `FissionRule` is parameterized over the fissioned feature bundle, the
-structural context licensing Fission, and the realization output.
-Conditions are `Prop`-valued with carried `DecidablePred` witnesses,
-matching the `ImpoverishmentRule` shape in
-`Linglib/Morphology/DistributedMorphology/Impoverishment.lean`.
+A node may bear several matrices, one per argument it agrees with (the
+Yucatec Agr3 agrees with both the ergative subject and the nominative
+object), and the matrices are kept apart: an item's features must all come
+from one of them. Features carry multiplicity (`List.diff`), so two
+arguments' shared features are discharged one at a time.
 
-## Main declarations
+## Main definitions
 
-* `FissionRule Bundle Ctx Out` — the generic rule structure
-* `FissionRule.apply` — partial application returning `Option Out`
-* `FissionRule.apply_eq_some_iff`, `FissionRule.apply_eq_none_iff`,
-  `FissionRule.isSome_apply` — the characterization API
+* `discharge`: remove an item's features from the first matrix containing
+  its site.
+* `scansion`: the exponents a node's matrices receive under strict
+  scansion with local Fission.
 
-## Implementation notes
+## Main results
 
-The realization output `Out` is opaque: this interface stipulates the
-fissioned exponents via `realize` rather than deriving them from
-iterated Vocabulary Insertion discharging features against a residue,
-as in [noyer-1992]'s original mechanism. Consumed by
-`Studies/MunozPerez2026.lean` (Chilean Spanish stylistic applicatives).
+* `scansion_sublist`: the exponents are a subsequence of the Vocabulary's
+  — each item at most once, in list order.
+* `scansion_nil`: a node with no matrix receives nothing.
+* `head?_scansion_singleton`: on a Vocabulary ordered by specificity, the
+  first insertion at a single matrix is the Subset Principle's winner.
 
-## Todo
+## References
 
-* Derive `realize` from a vocabulary: iterate insertion over the
-  feature residue so the number of exponents is a theorem, not a
-  parameter. Noyer's Tamazight Berber prefix conjugation (one-to-three
-  affix fission) is the canonical stress test.
-* Toward a second consumer: [arregi-nevins-2012]'s Plural Fission is a
-  feature-pair split with the residue copied into *both* output nodes
-  (their §3.3.4), so hosting it needs a two-node output and a computed
-  residue rather than an opaque `realize`. (Their Ergative/Dative
-  Doubling is not Fission: a post-Linearization Generalized-Reduplication
-  repair of the T-Noninitiality constraint.)
+* [R. Noyer, *Features, positions and affixes in autonomous morphological
+  structure*][noyer-1992]
+* [M. Halle, *Distributed Morphology: Impoverishment and Fission*][halle-1997]
+* [A. González Poot and M. McGinnis, *Local versus long-distance Fission in
+  Distributed Morphology*][gonzalez-poot-mcginnis-2006]
 -/
 
 namespace DistributedMorphology
 
-/-- A Fission rule is parameterized over:
-* `Bundle` — the fissioned morphological feature bundle (e.g., φ-features);
-* `Ctx`    — the structural context licensing Fission;
-* `Out`    — the realization output.
+open Morphology.Exponence
 
-Both `contextOk` and `bundleOk` are `Prop`-valued with carried
-`DecidablePred` witnesses, matching the `ImpoverishmentRule` template
-(see `Impoverishment.lean`). -/
-structure FissionRule (Bundle Ctx Out : Type*) where
-  /-- The structural condition licensing Fission. -/
-  contextOk : Ctx → Prop
-  /-- Decidability witness for `contextOk`. -/
-  decContext : DecidablePred contextOk
-  /-- The condition on the fissioned bundle (e.g., [+PART, +SING]). -/
-  bundleOk : Bundle → Prop
-  /-- Decidability witness for `bundleOk`. -/
-  decBundle : DecidablePred bundleOk
-  /-- Realization: map each licensed bundle to its output. -/
-  realize : Bundle → Out
+variable {F E : Type*} [DecidableEq F]
 
-namespace FissionRule
+/-- Discharge the item's features from the first of the matrices containing
+its site, in the environment `env` (whose focus is ignored); `none` when no
+matrix does. -/
+def discharge (i : VocabularyItem F E) (env : Neighborhood (List F)) :
+    List (List F) → Option (List (List F))
+  | [] => none
+  | m :: ms =>
+    if i.site ⊆ ({ env with focus := m } : Neighborhood (List F)) then
+      some (m.diff i.site.focus :: ms)
+    else (discharge i env ms).map (m :: ·)
 
-variable {Bundle Ctx Out : Type*} {rule : FissionRule Bundle Ctx Out}
-  {p : Bundle} {c : Ctx} {out : Out}
+/-- Strict scansion with local Fission: the exponents received by a node
+bearing the matrices `ms` in the environment `env`. -/
+def scansion (items : List (VocabularyItem F E)) (env : Neighborhood (List F)) :
+    List (List F) → List E
+  | ms => go items ms
+where
+  /-- Scan the remaining items against the remaining matrices. -/
+  go : List (VocabularyItem F E) → List (List F) → List E
+    | [], _ => []
+    | i :: rest, ms =>
+      match discharge i env ms with
+      | some ms' => i.exponent :: go rest ms'
+      | none => go rest ms
 
-instance (rule : FissionRule Bundle Ctx Out) (c : Ctx) :
-    Decidable (rule.contextOk c) := rule.decContext c
+variable {items : List (VocabularyItem F E)} {env : Neighborhood (List F)}
 
-instance (rule : FissionRule Bundle Ctx Out) (p : Bundle) :
-    Decidable (rule.bundleOk p) := rule.decBundle p
+@[simp] theorem discharge_nil (i : VocabularyItem F E) : discharge i env [] = none := rfl
 
-/-- Apply Fission: yield the realization when both the structural and
-bundle conditions hold; otherwise `none`. -/
-def apply (rule : FissionRule Bundle Ctx Out) (p : Bundle) (c : Ctx) :
-    Option Out :=
-  if rule.contextOk c ∧ rule.bundleOk p then some (rule.realize p) else none
+theorem scansion_go_nil : ∀ items : List (VocabularyItem F E), scansion.go env items [] = []
+  | [] => rfl
+  | _ :: rest => by simp [scansion.go, scansion_go_nil rest]
 
-theorem apply_pos (hc : rule.contextOk c) (hb : rule.bundleOk p) :
-    rule.apply p c = some (rule.realize p) :=
-  if_pos ⟨hc, hb⟩
+/-- A node with no matrix receives nothing. -/
+@[simp] theorem scansion_nil : scansion items env [] = [] := scansion_go_nil items
 
-theorem apply_neg (h : ¬(rule.contextOk c ∧ rule.bundleOk p)) :
-    rule.apply p c = none :=
-  if_neg h
+/-- Each item is inserted at most once, in Vocabulary order. -/
+theorem scansion_go_sublist :
+    ∀ (items : List (VocabularyItem F E)) (ms : List (List F)),
+      (scansion.go env items ms).Sublist (items.map (·.exponent))
+  | [], _ => List.Sublist.refl _
+  | i :: rest, ms => by
+    simp only [scansion.go, List.map_cons]
+    split
+    · exact (scansion_go_sublist rest _).cons_cons _
+    · exact (scansion_go_sublist rest ms).cons _
 
-@[simp]
-theorem apply_eq_some_iff :
-    rule.apply p c = some out ↔
-      (rule.contextOk c ∧ rule.bundleOk p) ∧ rule.realize p = out := by
-  unfold apply; split <;> simp_all
+theorem scansion_sublist (ms : List (List F)) :
+    (scansion items env ms).Sublist (items.map (·.exponent)) :=
+  scansion_go_sublist items ms
 
-@[simp]
-theorem apply_eq_none_iff :
-    rule.apply p c = none ↔ ¬(rule.contextOk c ∧ rule.bundleOk p) := by
-  unfold apply; split <;> simp_all
+theorem length_scansion_le (ms : List (List F)) :
+    (scansion items env ms).length ≤ items.length := by
+  simpa using (scansion_sublist (items := items) (env := env) ms).length_le
 
-theorem isSome_apply :
-    (rule.apply p c).isSome ↔ rule.contextOk c ∧ rule.bundleOk p := by
-  unfold apply; split <;> simp_all
+/-- At a single matrix, an item discharges iff it applies there. -/
+theorem discharge_singleton (i : VocabularyItem F E) (m : List F) :
+    discharge i env [m] =
+      if i.site ⊆ ({ env with focus := m } : Neighborhood (List F))
+        then some [m.diff i.site.focus] else none := by
+  simp [discharge]
 
-end FissionRule
+/-- On a Vocabulary ordered by decreasing specificity, the first insertion at
+a single matrix is the Subset Principle's winner: scansion agrees with
+Elsewhere competition where both apply. -/
+theorem head?_scansion_singleton (m : List F)
+    (hsorted : items.Pairwise fun i j => j.specificity ≤ i.specificity) :
+    (scansion items env [m]).head? =
+      (winner? items ({ env with focus := m } : Neighborhood (List F))).map (·.exponent) := by
+  induction items with
+  | nil => simp [scansion, scansion.go, winner?, selectBy, applicable]
+  | cons i rest ih =>
+    rw [List.pairwise_cons] at hsorted
+    simp only [scansion, scansion.go, discharge_singleton]
+    by_cases h : i.site ⊆ ({ env with focus := m } : Neighborhood (List F))
+    · rw [if_pos h]
+      simp only [List.head?_cons, winner?, selectBy, applicable, List.filter_cons,
+        decide_eq_true (show Applies i _ from h), if_true]
+      rw [List.argmax_cons]
+      rcases hc : List.argmax VocabularyItem.specificity
+        (rest.filter fun r =>
+          decide (Applies r ({ env with focus := m } : Neighborhood (List F)))) with _ | c
+      · rfl
+      · have hle : c.specificity ≤ i.specificity :=
+          hsorted.1 c (List.mem_of_mem_filter (List.argmax_mem hc))
+        simp [not_lt.mpr hle]
+    · rw [if_neg h]
+      have := ih hsorted.2
+      simpa [scansion, winner?, selectBy, applicable, List.filter_cons,
+        decide_eq_false (show ¬ Applies i _ from h)] using this
 
 end DistributedMorphology

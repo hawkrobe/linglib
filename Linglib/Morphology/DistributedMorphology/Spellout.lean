@@ -7,9 +7,8 @@ import Linglib.Morphology.DistributedMorphology.Impoverishment
 The PF branch of the Y-model at the domain level: a spell-out domain is
 the sequence of terminals the syntax hands over, the postsyntactic modules
 transform it, and Vocabulary Insertion realizes what survives, each
-position in its neighborhood
-([halle-marantz-1993]; module inventory and ordering per
-[arregi-nevins-2012]). The focus-level rule types
+position in its neighborhood; the module inventory and its ordering follow
+the Basque morphotactics. The focus-level rule types
 (`ImpoverishmentRule` and kin) rewrite one terminal inside
 its `Neighborhood`; the operations here move, remove, and merge the
 terminals themselves, which no focus-level rule can express.
@@ -17,8 +16,9 @@ terminals themselves, which no focus-level rule can express.
 Each operation carries its position-count law, so terminal/exponent
 misalignment is arithmetic: neighborhood rewriting and terminal
 metathesis preserve the count, obliteration and fusion decrease it, and
-`Spellout.length_pf` says exponent slots equal terminals after the
-modules. `winner?_retreat` (`VocabularyInsertion/Basic.lean`) supplies the
+`Spellout.length_pf` says insertion positions equal terminals after the
+modules — Fission multiplies exponents within a position (`scansion`),
+not positions. `winner?_retreat` (`VocabularyInsertion/Basic.lean`) supplies the
 insertion-side ordering law.
 
 Consumers: `Studies/Middleton2026.lean` (Basque whole-terminal rules and
@@ -30,8 +30,8 @@ fusion feeding one insertion).
 * `SpelloutDomain`, `mapNeighborhoods` — the domain and the zipper lift
   of focus-level rewriting
 * `ObliterationRule`, `TerminalMetathesisRule` — whole-terminal deletion
-  ([arregi-nevins-2012]'s Obliteration) and adjacent-terminal swap, with
-  first-match applicators and count laws
+  (Obliteration) and adjacent-terminal swap, with first-match applicators
+  and count laws
 * `FusionRule.applyFirstAdjacent` — the domain lift of Fusion
 * `Spellout` — the module sequence plus insertion in context; `run`, `pf`,
   `runModules_append`
@@ -41,10 +41,15 @@ fusion feeding one insertion).
 * The LF branch: an `Interpreted` extension whose interpretation reads
   the input domain (the Y-model separation by type), seeded by the
   domain-level allosemy licensing of `Studies/Benz2025.lean`.
-* A Fission lift, once `FissionRule` derives its positions of exponence
-  from the vocabulary rather than an opaque `realize`.
 * Stratifying the module list by linearization — Lowering before,
-  Local Dislocation after ([embick-noyer-2001]).
+  Local Dislocation after.
+
+## References
+
+* [M. Halle and A. Marantz, *Distributed Morphology and the pieces of
+  inflection*][halle-marantz-1993]
+* [K. Arregi and A. Nevins, *Morphotactics*][arregi-nevins-2012]
+* [D. Embick and R. Noyer, *Movement operations after syntax*][embick-noyer-2001]
 -/
 
 namespace DistributedMorphology
@@ -191,27 +196,28 @@ end TerminalMetathesisRule
 
 namespace FusionRule
 
+variable {F : Type*}
+
 /-- The domain lift of Fusion: fuse the first adjacent pair the rule
-licenses in context `c`; otherwise the domain is unchanged. -/
-def applyFirstAdjacent (rule : FusionRule Bundle Ctx) (c : Ctx) :
-    SpelloutDomain Bundle → SpelloutDomain Bundle
+licenses; otherwise the domain is unchanged. -/
+def applyFirstAdjacent (rule : FusionRule F) :
+    SpelloutDomain (List F) → SpelloutDomain (List F)
   | [] => []
   | [b] => [b]
   | b₁ :: b₂ :: rest =>
-    if rule.contextOk c ∧ rule.bundlesOk b₁ b₂ then rule.fuse b₁ b₂ :: rest
-    else b₁ :: applyFirstAdjacent rule c (b₂ :: rest)
+    if rule.condition b₁ b₂ then (b₁ ++ b₂) :: rest
+    else b₁ :: applyFirstAdjacent rule (b₂ :: rest)
 
 /-- Fusion never increases the number of terminals. -/
-theorem length_applyFirstAdjacent_le (rule : FusionRule Bundle Ctx) (c : Ctx) :
-    ∀ d : SpelloutDomain Bundle,
-      (rule.applyFirstAdjacent c d).length ≤ d.length
+theorem length_applyFirstAdjacent_le (rule : FusionRule F) :
+    ∀ d : SpelloutDomain (List F), (rule.applyFirstAdjacent d).length ≤ d.length
   | [] => by simp [applyFirstAdjacent]
   | [b] => by simp [applyFirstAdjacent]
   | b₁ :: b₂ :: rest => by
     rw [applyFirstAdjacent]
     split
     · simp
-    · have := length_applyFirstAdjacent_le rule c (b₂ :: rest)
+    · have := length_applyFirstAdjacent_le rule (b₂ :: rest)
       simp only [List.length_cons] at this ⊢
       omega
 
@@ -242,9 +248,9 @@ position, in its neighborhood. -/
 structure Spellout (Bundle F : Type*) where
   /-- The ordered postsyntactic module sequence. -/
   modules : List (SpelloutDomain Bundle → SpelloutDomain Bundle)
-  /-- Vocabulary Insertion at a position, seeing its neighbors; `none` is a
-  non-licensed position. -/
-  insert : Neighborhood Bundle → Option F
+  /-- The exponents inserted at a position, seeing its neighbors: one,
+  several under Fission (`scansion`), none at a non-licensed position. -/
+  insert : Neighborhood Bundle → List F
 
 namespace Spellout
 
@@ -257,7 +263,7 @@ def run (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
 
 /-- The PF output: one insertion slot per surviving position. -/
 def pf (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
-    List (Option F) :=
+    List (List F) :=
   mapNeighborhoods s.insert (s.run d)
 
 /-- Exponent slots equal terminals after the modules: the exponent count

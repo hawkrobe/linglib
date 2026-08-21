@@ -2207,6 +2207,7 @@ import Linglib.Studies.GoldbergShirtz2025
 import Linglib.Studies.GoldszmidtPearl1996
 import Linglib.Studies.GoldwaterJohnson2003
 import Linglib.Studies.Gong2022
+import Linglib.Studies.GonzalezPootMcGinnis2006
 import Linglib.Studies.GoodmanStuhlmuller2013
 import Linglib.Studies.Graf2019
 import Linglib.Studies.Grano2024
@@ -2934,3 +2935,4 @@ import Linglib.Data.Examples.Benz2025
 import Linglib.Data.Examples.HalleMarantz1993
 import Linglib.Data.Examples.Myler2016
 import Linglib.Data.Examples.Scott2021
+import Linglib.Data.Examples.GonzalezPootMcGinnis2006

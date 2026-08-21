@@ -1,5 +1,4 @@
 import Linglib.Features.Acceptability
-import Linglib.Morphology.DistributedMorphology.Fission
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Predicates
@@ -16,8 +15,10 @@ A lens into the nature of anticausative SE" (*Glossa* 11(1)).
 ## Main declarations
 
 * `Judgment`, `CliticPattern`, `DativeCliticPerson` — empirical data types
-* `spanishFissionRule` — instantiation of the generic
-  `DistributedMorphology.FissionRule` with Chilean-Spanish-specific data
+* `ApplicativeFission`, `spanishFissionRule` — the paper's structural
+  Fission rule (55), study-local: the paper lists the two positions'
+  forms rather than a Vocabulary for the residue-driven
+  `DistributedMorphology.scansion`
 * `voice_semantically_vacuous` — re-export of
   `Minimalist.Voice.nonThematic_no_semantics`
 * `three_way_synonymy_from_vacuity`,
@@ -244,7 +245,6 @@ theorem negative_controls_unacceptable :
 /-! ### Spanish Fission instantiation -/
 
 open Minimalist Minimalist.Voice
-open DistributedMorphology
 open Spanish.PersonFeatures
 open Spanish.Predicates
 open Spanish.Clitics
@@ -260,15 +260,38 @@ structure FissionOutput where
   cl2Form : String
   deriving Repr, DecidableEq
 
-/-- The stylistic applicative Fission rule for Chilean Spanish
-    ([munoz-perez-2026] rule 55).
+/-- A structural Fission rule with listed outputs: under its context and
+    bundle conditions the clitic node splits into the two positions whose
+    forms `realize` gives. -/
+structure ApplicativeFission where
+  /-- The structural condition licensing Fission. -/
+  contextOk : List VerbHead → Prop
+  /-- Decidability witness for `contextOk`. -/
+  decContext : DecidablePred contextOk
+  /-- The condition on the fissioned bundle. -/
+  bundleOk : Category → Prop
+  /-- Decidability witness for `bundleOk`. -/
+  decBundle : DecidablePred bundleOk
+  /-- The two positions' forms. -/
+  realize : Category → FissionOutput
 
-    Instantiates the generic `DistributedMorphology.FissionRule` with
-    Spanish-specific data:
+instance (rule : ApplicativeFission) (c : List VerbHead) : Decidable (rule.contextOk c) :=
+  rule.decContext c
+
+instance (rule : ApplicativeFission) (p : Category) : Decidable (rule.bundleOk p) :=
+  rule.decBundle p
+
+/-- Apply the rule: the two positions when both conditions hold. -/
+def ApplicativeFission.apply (rule : ApplicativeFission) (p : Category) (c : List VerbHead) :
+    Option FissionOutput :=
+  if rule.contextOk c ∧ rule.bundleOk p then some (rule.realize p) else none
+
+/-- The stylistic applicative Fission rule for Chilean Spanish
+    ([munoz-perez-2026] rule 55):
     - Context: inchoative verbal-head sequence (vGO ⌒ vBE)
     - Bundle: [+PART, +SING] person (1SG or 2SG)
     - Realization: Cl₁ = me/te (from [±AUTHOR]), Cl₂ = le (invariable) -/
-def spanishFissionRule : FissionRule Category (List VerbHead) FissionOutput where
+def spanishFissionRule : ApplicativeFission where
   contextOk := fun heads => isInchoative heads = true
   decContext := fun heads => inferInstanceAs (Decidable (isInchoative heads = true))
   bundleOk := IsFissionApplicable
