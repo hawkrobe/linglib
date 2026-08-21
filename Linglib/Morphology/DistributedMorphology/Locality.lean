@@ -1,10 +1,15 @@
 import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
+import Linglib.Morphology.Word.Tree
 import Mathlib.Tactic.Abel
 
 /-!
 # Locality domains for contextual allomorphy and allosemy
 
-A word is its root with the heads merged above it, innermost first. The
+A word is its root with the heads merged above it, innermost first — the
+complex head that successive Merger builds, whose first `k` heads form the
+word after `k` steps. Its surface follows from the side on which each head's
+exponent attaches: prefixes outermost first, the root, suffixes innermost
+first, so the affixes of each side mirror the order of merger. The
 category-defining heads are cyclic: merging one sends the cyclic domains in
 its complement to the interfaces, so the heads of a word fall into cycles —
 a head's cycle is the number of cyclic heads at or below it — and a head
@@ -22,8 +27,9 @@ other.
 
 ## Main definitions
 
-* `Spine`, `Spine.toWordStructure`: the word as root and head sequence, and
-  its word-structure tree.
+* `Spine`, `Spine.toWordStructure`, `Spine.toTree`: the word as root and head
+  sequence, its word-structure tree, and its word tree by affix side.
+* `Spine.word`: the complex head after `k` steps of Merger.
 * `Spine.cycle`, `Spine.insertionCycle`: a head's cycle and the cycle of its
   insertion.
 * `Spine.Coactive`, `Spine.RootLocal`: presence of one head at another's
@@ -34,6 +40,10 @@ other.
 
 ## Main results
 
+* `surface_eq`: the Mirror Principle — the surface reads each side's heads
+  outward from the root in order of merger.
+* `heads_word_isPrefix`, `mem_word_of_le`: the merged word is an initial
+  segment of the spine.
 * `cycle_mono`, `RootLocal.of_le`: cycles grow outward and the root's domain is
   an initial segment.
 * `not_rootLocal_of_cyclic_of_cyclic`, `RootLocal.cyclic_first`: an outer
@@ -47,6 +57,7 @@ other.
 
 ## References
 
+* [M. Baker, *The Mirror Principle and morphosyntactic explanation*][baker-1985]
 * [D. Embick, *Localism versus globalism in morphology and phonology*][embick-2010]
 * [A. Marantz, *Locality domains for contextual allomorphy across the
   interfaces*][marantz-2013]
@@ -95,6 +106,36 @@ theorem roots_foldl_categorize (T : WordStructure H) : ∀ hs : List H,
 @[simp] theorem heads_toWordStructure :
     DistributedMorphology.heads s.toWordStructure = ↑s.heads := by
   rw [toWordStructure, heads_foldl_categorize, heads_ofRoot, add_zero]
+
+/-! ### Merger and the surface -/
+
+/-- The complex head after `k` steps of Merger: the root with the first `k`
+heads. The remaining heads are realized periphrastically. -/
+def word (k : ℕ) : Spine H := ⟨s.root, s.heads.take k⟩
+
+theorem heads_word_isPrefix (k : ℕ) : (s.word k).heads <+: s.heads := List.take_prefix k s.heads
+
+/-- Merger skips no head: a head in the word brings every head below it. -/
+theorem mem_word_of_le {k : ℕ} {i j : Fin s.heads.length} (hji : j ≤ i)
+    (hi : (i : ℕ) < k) : (j : ℕ) < k := lt_of_le_of_lt hji hi
+
+/-- The word tree: each head attached on the side its exponent takes,
+innermost first. -/
+def toTree (side : H → Morphology.Morph.Side) : Morphology.Word.Tree (Root ⊕ H) :=
+  Morphology.Word.Tree.attachAll (.inl s.root) (s.heads.map fun h => (side h, .inr h))
+
+/-- The surface order of root and heads. -/
+def surface (side : H → Morphology.Morph.Side) : List (Root ⊕ H) := (s.toTree side).toList
+
+/-- **The Mirror Principle**: the surface is the prefixal heads outermost first,
+the root, and the suffixal heads innermost first — on each side, surface order
+outward from the root is the order of merger. -/
+theorem surface_eq (side : H → Morphology.Morph.Side) :
+    s.surface side =
+      ((s.heads.filter fun h => side h = .before).map Sum.inr).reverse ++
+        Sum.inl s.root :: (s.heads.filter fun h => side h = .after).map Sum.inr := by
+  simp [surface, toTree, Morphology.Word.Tree.toList_attachAll, List.filter_map, List.map_map,
+    Function.comp_def]
 
 /-! ### Cycles -/
 

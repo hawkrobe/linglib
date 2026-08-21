@@ -17,8 +17,11 @@ constituency, which applying the operations as functions would forget.
 ## Main declarations
 
 * `Word.Tree` — the operation-typed tree
+* `Word.Tree.attach`, `Word.Tree.attachAll` — attachment of an affix on a side
+  of its host, and of a sequence of affixes to a root, innermost first
 * `Word.Tree.toList`, `Word.Tree.IsConcatenative` — linearization, and the
-  shapes where it is the word's segmentation
+  shapes where it is the word's segmentation; `toList_attachAll` reads the
+  affixes of each side outward from the root in order of attachment
 * `Word.Tree.base`, `Word.Tree.stem`, `Word.Tree.roots` — [booij-2012]'s
   relational notions
 * `Word.Tree.IsKindCoherent` — attachment kinds match their positions
@@ -111,6 +114,53 @@ instance decIsConcatenative : (t : Tree M) → Decidable t.IsConcatenative
   | .prefixed _ b | .suffixed b _ | .converted b => decIsConcatenative b
   | .compound l r => @instDecidableAnd _ _ (decIsConcatenative l) (decIsConcatenative r)
   | .infixed .. | .circumfixed .. | .reduplicated .. => .isFalse id
+
+/-! ### Attachment by side -/
+
+/-- Attach an affix on a side of its host. -/
+def attach (side : Morph.Side) (afx : M) (t : Tree M) : Tree M :=
+  match side with
+  | .before => .prefixed afx t
+  | .after => .suffixed t afx
+
+@[simp] theorem attach_before (afx : M) (t : Tree M) : t.attach .before afx = .prefixed afx t := rfl
+
+@[simp] theorem attach_after (afx : M) (t : Tree M) : t.attach .after afx = .suffixed t afx := rfl
+
+/-- Attach affixes to a root in order, innermost first. -/
+def attachAll (root : M) (affixes : List (Morph.Side × M)) : Tree M :=
+  affixes.foldl (fun t p => t.attach p.1 p.2) (.root root)
+
+theorem toList_foldl_attach (t : Tree M) : ∀ affixes : List (Morph.Side × M),
+    (affixes.foldl (fun t p => t.attach p.1 p.2) t).toList =
+      ((affixes.filter (·.1 = .before)).map (·.2)).reverse ++ t.toList ++
+        (affixes.filter (·.1 = .after)).map (·.2)
+  | [] => by simp
+  | ⟨s, a⟩ :: rest => by
+    rw [List.foldl_cons, toList_foldl_attach (t.attach s a) rest]
+    cases s <;> simp [toList]
+
+/-- The surface of attachment: the affixes of each side read outward from the
+root in the order they were attached — prefixes outermost first, suffixes
+innermost first. -/
+theorem toList_attachAll (root : M) (affixes : List (Morph.Side × M)) :
+    (attachAll root affixes).toList =
+      ((affixes.filter (·.1 = .before)).map (·.2)).reverse ++
+        root :: (affixes.filter (·.1 = .after)).map (·.2) := by
+  rw [attachAll, toList_foldl_attach]; simp [toList]
+
+theorem isConcatenative_foldl_attach {t : Tree M} (ht : t.IsConcatenative) :
+    ∀ affixes : List (Morph.Side × M),
+      (affixes.foldl (fun t p => t.attach p.1 p.2) t).IsConcatenative
+  | [] => ht
+  | ⟨s, a⟩ :: rest => by
+    rw [List.foldl_cons]
+    exact isConcatenative_foldl_attach (by cases s <;> exact ht) rest
+
+/-- Attachment by side is concatenative, so `toList` is the segmentation. -/
+theorem isConcatenative_attachAll (root : M) (affixes : List (Morph.Side × M)) :
+    (attachAll root affixes).IsConcatenative :=
+  isConcatenative_foldl_attach (show (Tree.root root).IsConcatenative from trivial) affixes
 
 /-! ### Laws -/
 
