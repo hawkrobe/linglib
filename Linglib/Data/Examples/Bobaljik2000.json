@@ -1,0 +1,106 @@
+[
+  {
+    "id": "bobaljik2000_9a",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(9a)"},
+    "language": "itel1242",
+    "primaryText": "t’-kzu-s-cen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["t’-kzu-s-cen", "1S:SU-help-PRES-1>3P:OB"]
+    ],
+    "translation": "I'm helping the mice",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "kzu"],
+      ["rootClass", "I"],
+      ["subj", "1sg"],
+      ["obj", "3pl"],
+      ["m1", "t"],
+      ["m2", "kzu"],
+      ["m3", "s"],
+      ["m4", "cen"]
+    ],
+    "comment": "Class I: no class marker."
+  },
+  {
+    "id": "bobaljik2000_9b",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(9b)"},
+    "language": "itel1242",
+    "primaryText": "t-t-s-ki-cen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["t-t-s-ki-cen", "1S:SU-bring-PRES-II-1>3P:OB"]
+    ],
+    "translation": "I'm bringing tasty rotten (mouse) heads",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "t"],
+      ["rootClass", "II"],
+      ["subj", "1sg"],
+      ["obj", "3pl"],
+      ["m1", "t"],
+      ["m2", "t"],
+      ["m3", "s"],
+      ["m4", "ki"],
+      ["m5", "cen"]
+    ],
+    "comment": "Class II marker -ki- for a first-person subject acting on a third-person object (11)."
+  },
+  {
+    "id": "bobaljik2000_10a",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(10a)"},
+    "language": "itel1242",
+    "primaryText": "lcqu-z-in",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["lcqu-z-in", "see-PRES-2S>3S:OB"]
+    ],
+    "translation": "Do you see our house?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "lcqu"],
+      ["rootClass", "I"],
+      ["subj", "2sg"],
+      ["obj", "3sg"],
+      ["m1", "lcqu"],
+      ["m2", "s"],
+      ["m3", "in"]
+    ],
+    "comment": "Present /s/ voiced intervocalically (note 4); second-singular realis subject prefix is null (7)."
+  },
+  {
+    "id": "bobaljik2000_10b",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(10b)"},
+    "language": "itel1242",
+    "primaryText": "t-s-c-in",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["t-s-c-in", "bring-PRES-II-2S>3S:OB"]
+    ],
+    "translation": "What are you bringing?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "t"],
+      ["rootClass", "II"],
+      ["subj", "2sg"],
+      ["obj", "3sg"],
+      ["m1", "t"],
+      ["m2", "s"],
+      ["m3", "c"],
+      ["m4", "in"]
+    ],
+    "comment": "Class II marker -c- for a second-singular realis subject acting on a third-person object (11)."
+  }
+]
