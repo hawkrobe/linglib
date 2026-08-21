@@ -37,7 +37,7 @@ The fourth uses `universalCounterfactual` from `Counterfactual.lean`.
 namespace Causation.PsychLink
 
 open Causation.Psych (CausalSource)
-open Core.Order (SimilarityOrdering)
+open Semantics.Conditionals (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)
 
 /-! ### PsychCausalLink -/

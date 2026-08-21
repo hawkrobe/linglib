@@ -166,8 +166,8 @@ false under the belief state `sick`, since `w2` is believed and not recovered. -
 theorem not_sick_subset_recovered : ¬ sick ⊆ recovered := λ h => @h .w2 trivial
 
 /-- Every world is equally similar to every other. -/
-def trivialSim : Core.Order.SimilarityOrdering HealthWorld := by
-  refine Core.Order.SimilarityOrdering.ofBool (λ _ _ _ => true) ?_ ?_
+def trivialSim : Semantics.Conditionals.SimilarityOrdering HealthWorld := by
+  refine Semantics.Conditionals.SimilarityOrdering.ofBool (λ _ _ _ => true) ?_ ?_
   · intros; rfl
   · intros; rfl
 

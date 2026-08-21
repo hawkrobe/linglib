@@ -1,4 +1,4 @@
-import Linglib.Core.Order.SimilarityOrdering
+import Linglib.Semantics.Conditionals.SimilarityOrdering
 import Mathlib.Data.Set.Finite.Basic
 
 /-!
@@ -22,7 +22,7 @@ desirability relation cannot make both `p` and `¬p` wanted (`Want.not_compl`).
 
 namespace Desire.Conditional
 
-open Core.Order (SimilarityOrdering)
+open Semantics.Conditionals (SimilarityOrdering)
 
 variable {W : Type*}
 

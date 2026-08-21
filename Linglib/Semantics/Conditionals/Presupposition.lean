@@ -43,7 +43,7 @@ in `Counterfactual.closestWorlds`.
 namespace Semantics.Conditionals.Presupposition
 
 open Semantics.Conditionals
-open Core.Order (SimilarityOrdering)
+open Semantics.Conditionals (SimilarityOrdering)
 open Semantics.Presupposition
 
 variable {W : Type*}

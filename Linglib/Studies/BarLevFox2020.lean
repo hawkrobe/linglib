@@ -472,7 +472,7 @@ instance : DecidablePred sdaR := fun w => by cases w <;> unfold sdaR <;> infer_i
     `wpq`. From `wp`, `wp` itself is closer than `wpq` (so closest
     p-worlds from wp are just {wp}). Symmetric for `wq`. The minimal
     structure needed for the cell-witness analysis at `actual`. -/
-def sdaSim : Core.Order.SimilarityOrdering SDAWorld := .ofBool
+def sdaSim : Semantics.Conditionals.SimilarityOrdering SDAWorld := .ofBool
   (fun w₀ w₁ w₂ => w₁ == w₂ ||
     (w₀ == .actual && (w₁ == .wp || w₁ == .wq) && w₂ == .wpq) ||
     (w₀ == .wp && w₁ == .wp && w₂ == .wpq) ||
@@ -551,7 +551,7 @@ theorem sdaPandQbox_always_false (u : SDAWorld) : ¬ sdaPandQbox u := by
     ext v; cases v <;> simp [sdaP, sdaQ]
   rw [hfilter] at h
   have hwpq_in : SDAWorld.wpq ∈ sdaSim.closestWorlds u {SDAWorld.wpq} := by
-    rw [Core.Order.SimilarityOrdering.mem_closestWorlds]
+    rw [Semantics.Conditionals.SimilarityOrdering.mem_closestWorlds]
     refine ⟨Finset.mem_singleton.mpr rfl, ?_⟩
     intro w'' hw''
     rw [Finset.mem_singleton] at hw''; subst hw''

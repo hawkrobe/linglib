@@ -94,7 +94,7 @@ combined with inquisitive lifting (§4) — and §6.4's SNCA derivation
 
 namespace CiardelliZhangChampollion2018
 
-open Core.Order (SimilarityOrdering)
+open Semantics.Conditionals (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual
   (universalCounterfactual selectionalCounterfactual homogeneityCounterfactual
    PresupStatus PresupResult)
