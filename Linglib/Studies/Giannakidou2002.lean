@@ -1,4 +1,5 @@
 import Linglib.Studies.Karttunen1974
+import Linglib.Studies.Heinamaki1974
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Tense.SentDenotation
 import Linglib.Data.Examples.Giannakidou2002
@@ -69,7 +70,7 @@ namespace Giannakidou2002
 open Core.Order
 open NonemptyInterval
 open Semantics.Aspect
-open Tense Anscombe1964 Karttunen1974
+open Tense Anscombe1964 Karttunen1974 Heinamaki1974
 
 variable {Time : Type*} [LinearOrder Time]
 
@@ -247,7 +248,7 @@ theorem timeTrace_impf_eq_prfv (P : Unit → Event Time → Prop) :
     interval set via IMPF, so *until* can take it as an argument.
     Negation scopes over the entire *until*-clause. -/
 def wideScopeNotUntil (A : Unit → Event Time → Prop) (B : SentDenotation Time) : Prop :=
-  ¬ Karttunen.when_ (impfDen A) B
+  ¬ when_ (impfDen A) B
 
 /-- **Narrow-scope negation** under *until* (= Karttunen's ¬*before*):
 
@@ -259,7 +260,7 @@ def wideScopeNotUntil (A : Unit → Event Time → Prop) (B : SentDenotation Tim
     since PRFV gives a bounded event, *until* reduces to temporal ordering
     and negation gives Karttunen's notUntil = ¬before. -/
 def narrowScopeNotUntil (A : Unit → Event Time → Prop) (B : SentDenotation Time) : Prop :=
-  Karttunen.notUntil (prfvDen A) B
+  notUntil (prfvDen A) B
 
 /-- Narrow-scope ¬*until* is exactly ¬*before* (by definition).
     This is [karttunen-1974]'s identity, now made explicit in the
@@ -340,7 +341,7 @@ theorem scope_readings_independent :
     ⟦dhen P para monon Q⟧ = (∃t. t∈A ∧ t∈B) ∧ ¬(A before B)
 
     This builds actualization into the **assertion**, unlike
-    `Karttunen.notUntil` (= ¬before alone) which holds vacuously when A is
+    `notUntil` (= ¬before alone) which holds vacuously when A is
     empty.
 
     This is a simplified version of the full ex. (39), which additionally
@@ -370,19 +371,19 @@ theorem eventiveUntil_entails_complement (A B : SentDenotation Time) :
 
 /-- Eventive UNTIL entails ¬*before*: A didn't happen prior to B. -/
 theorem eventiveUntil_entails_notBefore (A B : SentDenotation Time) :
-    eventiveUntil A B → Karttunen.notUntil A B :=
+    eventiveUntil A B → notUntil A B :=
   And.right
 
 /-- Eventive UNTIL entails temporal coincidence (*when*): A and B overlap. -/
 theorem eventiveUntil_entails_when (A B : SentDenotation Time) :
-    eventiveUntil A B → Karttunen.when_ A B := by
+    eventiveUntil A B → when_ A B := by
   rintro ⟨⟨t, htA, htB⟩, _⟩; exact ⟨t, htA, htB⟩
 
 /-- Karttunen's `notUntil` does NOT entail eventive UNTIL:
     ¬(A before B) holds vacuously when A is empty (no actualization). -/
 theorem notUntil_not_implies_eventiveUntil :
     ∃ (A B : SentDenotation ℤ),
-      Karttunen.notUntil A B ∧ ¬ eventiveUntil A B := by
+      notUntil A B ∧ ¬ eventiveUntil A B := by
   refine ⟨∅, { NonemptyInterval.pure 0 }, ?_, ?_⟩
   · intro ⟨t, ⟨i, hi, _⟩, _⟩
     exact absurd hi (Set.mem_empty_iff_false i).mp
@@ -422,7 +423,7 @@ theorem wideScopeNotUntil_compatible_with_empty_main :
     is not entailed. -/
 theorem durative_compatible_with_before :
     ∃ (A B : SentDenotation ℤ),
-      Karttunen.until A B ∧ Anscombe.before A B := by
+      until_ A B ∧ Anscombe.before A B := by
   let iA : NonemptyInterval ℤ := ⟨⟨0, 10⟩, by omega⟩
   let iB : NonemptyInterval ℤ := ⟨⟨5, 5⟩, by omega⟩
   refine ⟨stativeDenotation iA, {iB}, ?_, ?_⟩
@@ -442,8 +443,8 @@ theorem durative_compatible_with_before :
     This is the formal content of [giannakidou-2002]'s central claim:
     the two readings are not truth-conditionally equivalent under negation. -/
 theorem eventiveUntil_strictly_stronger :
-    (∀ (A B : SentDenotation ℤ), eventiveUntil A B → Karttunen.notUntil A B) ∧
-    (∃ (A B : SentDenotation ℤ), Karttunen.notUntil A B ∧ ¬ eventiveUntil A B) :=
+    (∀ (A B : SentDenotation ℤ), eventiveUntil A B → notUntil A B) ∧
+    (∃ (A B : SentDenotation ℤ), notUntil A B ∧ ¬ eventiveUntil A B) :=
   ⟨fun _ _ h => h.2, notUntil_not_implies_eventiveUntil⟩
 
 -- ============================================================================
@@ -489,8 +490,8 @@ def actualizationOf (row : LinguisticExample) : Option ActualizationStatus :=
 
 /-- The actualization status each semantic type carries, matching the
     formal operators: eventive = `eventiveUntil` (the overlap conjunct
-    entails actualization), endpoint = `Karttunen.until` (boundary
-    change-of-state only implicated), before = `Karttunen.notUntil` under
+    entails actualization), endpoint = `until_` (boundary
+    change-of-state only implicated), before = `notUntil` under
     negation (lateness alone, cf. `negBefore_lacks_actualization`). -/
 def UntilType.actualization : UntilType → ActualizationStatus
   | .before   => .absent
@@ -572,7 +573,7 @@ open Greek.StandardModern.TemporalConnectives
 /-- Greek lexicalizes the three semantic types as distinct lexemes:
     *mexri* (durative), *para monon* (eventive NPI), *prin* (before).
     Each maps to a different temporal connective operator:
-    - *mexri* → `Karttunen.until` (= `when_`, overlap)
+    - *mexri* → `until_` (= `when_`, overlap)
     - *para monon* → `eventiveUntil` (overlap + lateness)
     - *prin* → `Anscombe.before` (ordering) -/
 theorem greek_three_way_maps_to_operators :
@@ -725,7 +726,7 @@ theorem english_past_perfective_default :
     (the overlap conjunct forces a witness in A). -/
 theorem negBefore_lacks_actualization :
     ∃ (A B : SentDenotation ℤ),
-      Karttunen.notUntil A B ∧ ¬ ∃ t, t ∈ timeTrace A := by
+      notUntil A B ∧ ¬ ∃ t, t ∈ timeTrace A := by
   refine ⟨∅, { NonemptyInterval.pure 0 }, ?_, ?_⟩
   · intro ⟨t, ⟨i, hi, _⟩, _⟩
     exact absurd hi (Set.mem_empty_iff_false i).mp
@@ -747,7 +748,7 @@ theorem before_not_equiv_eventiveUntil :
     -- eventiveUntil entails main-clause actualization
     (∀ (A B : SentDenotation Time), eventiveUntil A B → ∃ t, t ∈ timeTrace A) ∧
     -- ¬before is compatible with main-clause non-actualization
-    (∃ (A B : SentDenotation ℤ), Karttunen.notUntil A B ∧ ¬ ∃ t, t ∈ timeTrace A) :=
+    (∃ (A B : SentDenotation ℤ), notUntil A B ∧ ¬ ∃ t, t ∈ timeTrace A) :=
   ⟨eventiveUntil_entails_actualization, negBefore_lacks_actualization⟩
 
 -- ============================================================================

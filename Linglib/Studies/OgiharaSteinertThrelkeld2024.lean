@@ -1,5 +1,6 @@
 import Linglib.Studies.Anscombe1964
 import Linglib.Studies.Karttunen1974
+import Linglib.Studies.Heinamaki1974
 import Linglib.Studies.BeaverCondoravdi2003
 import Linglib.Semantics.Tense.SentDenotation
 import Linglib.Semantics.Aspect.SubintervalProperty
@@ -301,7 +302,7 @@ theorem veridicality_asymmetry :
 -- Bridge content (merged from Bridge.lean)
 -- ════════════════════════════════════════════════════════════════
 
-open Tense Anscombe1964 Karttunen1974
+open Tense Anscombe1964 Karttunen1974 Heinamaki1974
 open English.TemporalExpressions
 
 -- ════════════════════════════════════════════════════════════════
@@ -745,7 +746,7 @@ namespace OgiharaSteinertThrelkeld2024.VeridicalityBridge
 
 open Core.Order
 open NonemptyInterval
-open Tense Anscombe1964 Karttunen1974
+open Tense Anscombe1964 Karttunen1974 Heinamaki1974
 open English.TemporalExpressions
 open OgiharaSteinertThrelkeld2024
 
@@ -769,25 +770,25 @@ theorem after_veridicality_grounded :
 /-- *when* is veridical: Fragment field matches theory proof. -/
 theorem when_veridicality_grounded :
     when_conn.complementVeridical = true ∧
-    (∀ (A B : SentDenotation ℤ), Karttunen.when_ A B → ∃ t, t ∈ timeTrace B) :=
+    (∀ (A B : SentDenotation ℤ), when_ A B → ∃ t, t ∈ timeTrace B) :=
   ⟨rfl, when_veridical_complement⟩
 
 /-- *until* (durative) is veridical: Fragment field matches theory proof. -/
 theorem until_veridicality_grounded :
     until_.complementVeridical = true ∧
-    (∀ (A B : SentDenotation ℤ), Karttunen.until A B → ∃ t, t ∈ timeTrace B) :=
+    (∀ (A B : SentDenotation ℤ), until_ A B → ∃ t, t ∈ timeTrace B) :=
   ⟨rfl, until_veridical_complement⟩
 
 /-- *since* is veridical: Fragment field matches theory proof. -/
 theorem since_veridicality_grounded :
     since_conn.complementVeridical = true ∧
-    (∀ (A B : SentDenotation ℤ), Karttunen.since A B → ∃ t, t ∈ timeTrace B) :=
+    (∀ (A B : SentDenotation ℤ), since A B → ∃ t, t ∈ timeTrace B) :=
   ⟨rfl, since_veridical_complement⟩
 
 /-- *by* is veridical w.r.t. its main clause: Fragment field matches theory proof. -/
 theorem by_veridicality_grounded :
     by_deadline.complementVeridical = true ∧
-    (∀ (A B : SentDenotation ℤ), Karttunen.by_ A B → ∃ t, t ∈ timeTrace A) :=
+    (∀ (A B : SentDenotation ℤ), by_ A B → ∃ t, t ∈ timeTrace A) :=
   ⟨rfl, by_veridical_main⟩
 
 /-! ### Non-veridical connectives -/

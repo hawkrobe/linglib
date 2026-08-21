@@ -887,7 +887,7 @@ theorem before_licensing :
     surfaces as the complement-clause negator, which is exactly EN. -/
 theorem until_en_from_before_negation {Time : Type*} [LinearOrder Time]
     (A B : SentDenotation Time) :
-    Karttunen.notUntil A B ↔ ¬ Anscombe.before A B := Iff.rfl
+    notUntil A B ↔ ¬ Anscombe.before A B := Iff.rfl
 
 -- ════════════════════════════════════════════════════
 -- § 9. Modal Bridge: IMPOSSIBLE → Logical Operator
