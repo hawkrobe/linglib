@@ -2949,3 +2949,4 @@ import Linglib.Data.Examples.Embick2021
 import Linglib.Data.Examples.Embick2010
 import Linglib.Data.Examples.HarleyRitter2002
 import Linglib.Data.Examples.McGinnis2013
+import Linglib.Data.Examples.Arad2005
