@@ -30,14 +30,11 @@ This file:
 
 ## Cross-framework convergence
 
-`Santorio2018.IsTruthmaker p S` is the
-**world-extensional** truthmaker of [santorio-2018]. It is now
-defined as an `abbrev` for `ExactEntails` on the Bool extension:
-`IsTruthmaker p S := (p · = true) ⊨ₑ (S · = true)`. It does **not**
-correspond to `IsContentPart` (= `AnalyticEntails`); the Up clause and
-mereological parthood are exactly what the world-extensional notion
-drops. This non-equivalence is theorematised in
-`santorio_truthmaker_neq_fine_content_part` in the same study file.
+[santorio-2018]'s truthmakers (`Studies/Santorio2018.lean`, `truthmakers`) are
+**world-extensional**: a truthmaker `p` of `S` is a finset of worlds with `p ⊆ S`, i.e.
+`ExactEntails` on indicator propositions. It does **not** correspond to `IsContentPart`
+(= `AnalyticEntails`); the Up clause and mereological parthood are exactly what the
+world-extensional notion drops.
 
 `Semantics/Attitudes/Doxastic.lean`'s Hintikka `BoxAt` is
 ∀-over-accessible-worlds; truthmaker `attHolds` (`Basic.lean`) is

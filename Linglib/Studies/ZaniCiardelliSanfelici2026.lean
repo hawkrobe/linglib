@@ -1,4 +1,4 @@
-import Linglib.Studies.Santorio2018
+import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
 import Linglib.Studies.BarLevFox2020
 import Linglib.Studies.TieuKrizChemla2019
 import Mathlib.Data.Rat.Defs
@@ -39,7 +39,7 @@ The DCR→SDA trajectory supports homogeneity-based accounts
 
 - DAC readings use the alternative-sensitive conditional semantics from
   `Studies/Santorio2018.lean`:
-  `homogeneityEval`, `sdaEval`
+  `homogeneity`, `Distributive`
 - The DCR (Disjunctive Conditional Reading) operator `dcrEval` is
   defined in this file. **DCR is named here in [zani-ciardelli-sanfelici-2026] (p. 10),
   not in [santorio-2018]** — Santorio's two readings are SDA (with
@@ -55,7 +55,7 @@ namespace ZaniCiardelliSanfelici2026
 open Trivalent (ProjectionType)
 open Semantics.Conditionals (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)
-open Santorio2018
+open Semantics.Conditionals.Counterfactual (Distributive homogeneity)
 
 
 -- ============================================================
@@ -72,12 +72,12 @@ open Santorio2018
     because DCR is not part of Santorio's framework. -/
 def dcrEval {W : Type*} [DecidableEq W] [Fintype W]
     (sim : SimilarityOrdering W)
-    (alts : List (DecAlt W)) (C : W → Prop) [DecidablePred C]
+    (alts : List (Finset W)) (C : W → Prop) [DecidablePred C]
     (w : W) : Prop :=
-  ∃ a ∈ alts, universalCounterfactual sim a.pred C w
+  ∃ a ∈ alts, universalCounterfactual sim (· ∈ a) C w
 
 instance {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (alts : List (DecAlt W))
+    (sim : SimilarityOrdering W) (alts : List (Finset W))
     (C : W → Prop) [DecidablePred C] (w : W) :
     Decidable (dcrEval sim alts C w) :=
   inferInstanceAs (Decidable (∃ a ∈ alts, _))
@@ -105,9 +105,9 @@ theorem ar_entails_dcr : DACReading.ar.strength ≥ DACReading.dcr.strength := b
 -- SECTION 2: DAC Readings ↔ Projection Types
 -- ============================================================
 
--- Alternative-sensitive conditional semantics (altConditionalResults,
--- sdaEval, homogeneityEval, lewisDAC) are imported from
--- Studies/Santorio2018.lean. `dcrEval` is
+-- The distributive, collective, and homogeneity readings over a set of
+-- antecedent propositions are `Semantics/Conditionals/Counterfactual/Alternatives.lean`;
+-- `dcrEval` is
 -- defined locally above because DCR is a Zani-Ciardelli-Sanfelici 2026
 -- coinage, not part of Santorio's framework.
 
@@ -124,13 +124,12 @@ def dacProjection : DACReading → ProjectionType
     "if {A,B}, C" ≡ ∀p ∈ {A,B}. min_w(p) ⊆ C ≡ (if A, C) ∧ (if B, C).
     Under Lewis, SDA is only contingently valid. -/
 theorem alt_semantics_validates_sda {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : DecAlt W)
+    (sim : SimilarityOrdering W) (A B : Finset W)
     (C : W → Prop) [DecidablePred C] (w : W) :
-    sdaEval sim [A, B] C w ↔
-    universalCounterfactual sim A.pred C w ∧
-    universalCounterfactual sim B.pred C w := by
-  rw [sdaEval_iff_forall]
-  simp
+    Distributive sim [A, B] C w ↔
+    universalCounterfactual sim (· ∈ A) C w ∧
+    universalCounterfactual sim (· ∈ B) C w := by
+  simp [Distributive]
 
 
 -- ============================================================
@@ -517,7 +516,7 @@ predicted **pre-SDA stage** as a stipulation. The two SDA-deriving
 mature accounts (homogeneity / exhaustification) themselves coincide on
 the SDA inference proper — verifiable at the Lean substrate level via:
 
-- [santorio-2018]'s `Santorio2018.sdaEval` (per-alternative
+- [santorio-2018]'s `Distributive` (per-alternative
   homogeneity, `Studies/Santorio2018.lean`)
 - [bar-lev-fox-2020]'s `BarLevFox2020.bar_lev_fox_sda` (Innocent
   Inclusion derivation, `Studies/BarLevFox2020.lean`)
@@ -525,7 +524,7 @@ the SDA inference proper — verifiable at the Lean substrate level via:
 The cross-mechanism agreement
 `BarLevFox2020.bar_lev_fox_sda_implies_santorio_sda_inference` proves
 that on the shared 4-world `SDAWorld` model, Bar-Lev/Fox's
-`Exh^{IE+II}` verdict entails Santorio's `sdaEval` verdict on the SDA
+`Exh^{IE+II}` verdict entails Santorio's distributive verdict on the SDA
 inference proper. Bar-Lev/Fox is **strictly stronger** (also derives
 `¬((p∧q)□→r)`); Santorio is silent on the conjunctive negation. They
 **agree on the SDA inference itself** — the empirical pattern this
@@ -542,14 +541,14 @@ the two only at the developmental level, not the mature-grammar level.
 /-- **Substrate witness for the mature-grammar agreement**: on the
     shared 4-world `SDAWorld` model from
     `BarLevFox2020.lean`, Bar-Lev/Fox's `Exh^{IE+II}` verdict at
-    `.actual` entails Santorio's `sdaEval` verdict on the SDA
+    `.actual` entails Santorio's distributive verdict on the SDA
     inference. Direct re-export of the cross-framework theorem
     proved in `BarLevFox2020.lean §7`. -/
 theorem bar_lev_fox_and_santorio_agree_on_mature_sda :
     ∀ w, Exhaustification.exhIEII
             BarLevFox2020.sdaALT
             BarLevFox2020.sdaPrejacent w →
-      Santorio2018.sdaEval
+      Distributive
         BarLevFox2020.sdaSim
         BarLevFox2020.sdaSantorioAlts
         BarLevFox2020.sdaR w :=
