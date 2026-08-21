@@ -2,7 +2,7 @@ import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
 import Linglib.Semantics.Exhaustification.Operators.Decidable
 import Linglib.Semantics.Conditionals.Counterfactual
-import Linglib.Studies.Santorio2018
+import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
 
 /-!
 # Bar-Lev & Fox (2020) — Free Choice via Innocent Inclusion
@@ -760,14 +760,14 @@ theorem bar_lev_fox_sda :
 end SDA
 
 -- ============================================================================
--- §7. Cross-framework agreement: Bar-Lev/Fox SDA vs Santorio's `sdaEval`
+-- §7. Cross-framework agreement: Bar-Lev/Fox SDA vs Santorio's `Distributive`
 -- ============================================================================
 
 /-!
 ## The central debate Zani-Ciardelli-Sanfelici 2026 frames
 
 [santorio-2018] derives SDA via per-alternative homogeneity
-(`sdaEval` = universal over per-disjunct counterfactuals).
+(`Distributive` = universal over per-disjunct counterfactuals).
 [bar-lev-fox-2020] derives SDA via Innocent Inclusion
 (`exhIEII` over disjunct-replacement alternatives, asserting the
 non-IE conditional alternatives). The two mechanisms are RIVAL but
@@ -782,34 +782,34 @@ The cross-mechanism agreement theorem below makes this Lean-checkable.
 
 Bar-Lev/Fox's full verdict additionally entails `¬((p∧q)□→r)` (the
 IE-driven negation of the conjunctive alternative); Santorio's
-`sdaEval` does not entail this. So Bar-Lev/Fox is STRICTLY STRONGER
+`Distributive` does not entail this. So Bar-Lev/Fox is STRICTLY STRONGER
 than Santorio on this scenario — they agree on SDA, diverge on the
 extra negative conjunct.
 -/
 
-open Santorio2018
+open Semantics.Conditionals.Counterfactual (Distributive universalCounterfactual_mem_filter)
 
 /-- The SDA alternatives as `DecAlt SDAWorld`s for use in
-    [santorio-2018]'s `sdaEval` apparatus. -/
-def sdaSantorioAlts : List (DecAlt SDAWorld) :=
-  [⟨sdaP, inferInstance⟩, ⟨sdaQ, inferInstance⟩]
+    [santorio-2018]'s `Distributive` apparatus. -/
+def sdaSantorioAlts : List (Finset SDAWorld) :=
+  [Finset.univ.filter sdaP, Finset.univ.filter sdaQ]
 
 /-- **Cross-framework agreement on the SDA inference.**
     [bar-lev-fox-2020]'s `Exh^{IE+II}` verdict on the SDA prejacent
-    entails [santorio-2018]'s `sdaEval` verdict on the same scenario.
+    entails [santorio-2018]'s `Distributive` verdict on the same scenario.
 
     Direct application of the substrate-level multi-target cell-witness
     factorization `exhIEII_implies_cell_witnessed_alts` to the list of
     Santorio-style disjunct conditionals `[sdaPbox, sdaQbox]`. The
     factorization captures the abstract structural fact (any
     cell-witnessed alternatives are jointly entailed by `Exh^{IE+II}`);
-    the bridge to `sdaEval` is mechanical via `sdaEval_iff_forall`.
+    the bridge to `Distributive` is mechanical via `sdaEval_iff_forall`.
     Santorio is silent on the negative conjunct
     `¬((p∧q)□→r)` that Bar-Lev/Fox additionally derives — they coincide
     on the SDA inference proper, diverge on the negative component. -/
 theorem bar_lev_fox_sda_implies_santorio_sda_inference :
     ∀ w, exhIEII sdaALT sdaPrejacent w →
-      sdaEval sdaSim sdaSantorioAlts sdaR w := by
+      Distributive sdaSim sdaSantorioAlts sdaR w := by
   intro w h
   have h_targets := exhIEII_implies_cell_witnessed_alts sdaALT sdaPrejacent
     [sdaPbox, sdaQbox]
@@ -823,11 +823,10 @@ theorem bar_lev_fox_sda_implies_santorio_sda_inference :
         · exact sdaPbox_at_actual
         · exact sdaQbox_at_actual)
     w h
-  rw [sdaEval_iff_forall]
   intro a ha
   simp only [sdaSantorioAlts, List.mem_cons, List.not_mem_nil, or_false] at ha
   rcases ha with rfl | rfl
-  · exact h_targets sdaPbox (by simp)
+  · exact (universalCounterfactual_mem_filter _ _ _ _).2 (h_targets sdaPbox (by simp))
   · exact h_targets sdaQbox (by simp)
 
 -- ============================================================================

@@ -1,4 +1,5 @@
-import Linglib.Studies.Santorio2018
+import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
+import Linglib.Studies.McKayVanInwagen1977
 import Linglib.Syntax.Category.Coordinator
 
 /-!
@@ -31,12 +32,12 @@ without abandoning minimal change. Two refinements:
    ⟦if A, would C⟧ = `λw. ∀p ∈ Alt(A): f_{≤,w}(p) ⊆ ⟦C⟧`
 
 Equivalently: every disjunct alternative's closest worlds satisfy the
-consequent. **This is structurally [santorio-2018]'s `sdaEval`** —
+consequent. **This is structurally [santorio-2018]'s `Distributive`** —
 universal-over-per-alternative-conditionals (Simplification reading).
 
 ## Connection to linglib substrate
 
-`aoConditional` IS [santorio-2018]'s `sdaEval`
+`aoConditional` IS [santorio-2018]'s `Distributive`
 (`Studies/Santorio2018.lean`); the bridge is
 `rfl`. The frameworks DIFFER in their treatment of the **alternative
 set**, not the per-alternative evaluation:
@@ -57,7 +58,7 @@ namespace AlonsoOvalle2009
 
 open Semantics.Conditionals (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)
-open Santorio2018 (DecAlt sdaEval sdaEval_iff_forall)
+open Semantics.Conditionals.Counterfactual (Distributive universalCounterfactual_mem_filter)
 open McKayVanInwagen1977 (CropWorld cropSim goodWeather sunCold bumperCrop
   bumperCrop_lewis_true bumperCrop_conjunction_false)
 
@@ -79,24 +80,24 @@ substrate. -/
     antecedent (eqn 25–26 p. 217): every disjunct alternative's
     closest worlds satisfy the consequent.
 
-    Definitionally equal to [santorio-2018]'s `sdaEval` — the
+    Definitionally equal to [santorio-2018]'s `Distributive` — the
     Simplification reading. The two accounts diverge in how the
     alternative SET is generated (see module docstring), not in this
     per-alternative evaluation rule. -/
 def aoConditional {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (alts : List (DecAlt W))
+    (sim : SimilarityOrdering W) (alts : List (Finset W))
     (C : W → Prop) [DecidablePred C] (w : W) : Prop :=
-  sdaEval sim alts C w
+  Distributive sim alts C w
 
-/-- **Bridge: AO = Santorio's `sdaEval`.** Definitionally equal; the
+/-- **Bridge: AO = Santorio's `Distributive`.** Definitionally equal; the
     two formalisations of the per-alternative-conditional reading
     coincide. The substantive difference between
     [alonso-ovalle-2009] and [santorio-2018] is the
     alternative-set construction, not this evaluation rule. -/
-theorem aoConditional_eq_sdaEval {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (alts : List (DecAlt W))
+theorem aoConditional_eq_distributive {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W) (alts : List (Finset W))
     (C : W → Prop) [DecidablePred C] (w : W) :
-    aoConditional sim alts C w = sdaEval sim alts C w := rfl
+    aoConditional sim alts C w = Distributive sim alts C w := rfl
 
 /-- **Disjunct-only alternative set construction** (Hamblin Or Rule,
     eqn 13 p. 213). For a disjunctive antecedent `A or B`,
@@ -105,10 +106,7 @@ theorem aoConditional_eq_sdaEval {W : Type*} [DecidableEq W] [Fintype W]
     decidability. No conjunction, no disjunctive closure, no
     Katzir-generated structural alternatives. This is the locality
     [santorio-2018] §III argues against. -/
-def aoAlternatives {W : Type*}
-    (A B : W → Prop) [DecidablePred A] [DecidablePred B] :
-    List (DecAlt W) :=
-  [⟨A, inferInstance⟩, ⟨B, inferInstance⟩]
+def aoAlternatives {W : Type*} (A B : Finset W) : List (Finset W) := [A, B]
 
 
 /-! ## §2.2.3 Universal force
@@ -124,15 +122,10 @@ inference (27a) ⊨ (27b) ∧ (27c). The Lean witness below uses
     derives from universal force over alternatives. Consequence of
     `sdaEval_iff_forall`. -/
 theorem ao_conjunction_inference {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (C : W → Prop) [DecidablePred C]
-    (w : W) :
-    aoConditional sim (aoAlternatives A B) C w →
-    universalCounterfactual sim A C w ∧ universalCounterfactual sim B C w := by
-  intro h
-  have h' := (sdaEval_iff_forall sim (aoAlternatives A B) C w).mp h
-  exact ⟨h' ⟨A, inferInstance⟩ (by simp [aoAlternatives]),
-         h' ⟨B, inferInstance⟩ (by simp [aoAlternatives])⟩
+    (sim : SimilarityOrdering W) (A B : Finset W) (C : W → Prop) [DecidablePred C] (w : W)
+    (h : aoConditional sim (aoAlternatives A B) C w) :
+    universalCounterfactual sim (· ∈ A) C w ∧ universalCounterfactual sim (· ∈ B) C w :=
+  ⟨h A (by simp [aoAlternatives]), h B (by simp [aoAlternatives])⟩
 
 
 /-! ## §1 The divergence: Boolean `or` (`Coordinator.op .disj`) is the wrong meaning
@@ -161,9 +154,13 @@ theorem op_disj_eq_union :
     the meaning of `or` in a disjunctive antecedent: the alternatives must stay separate. -/
 theorem op_disj_overgenerates_disjunctive_counterfactual :
     universalCounterfactual cropSim (fun w => goodWeather w ∨ sunCold w) bumperCrop .actual ∧
-    ¬ aoConditional cropSim (aoAlternatives goodWeather sunCold) bumperCrop .actual := by
+    ¬ aoConditional cropSim
+      (aoAlternatives (Finset.univ.filter goodWeather) (Finset.univ.filter sunCold))
+      bumperCrop .actual := by
   refine ⟨bumperCrop_lewis_true, fun h => ?_⟩
+  have ⟨h₁, h₂⟩ := ao_conjunction_inference cropSim _ _ bumperCrop .actual h
   exact bumperCrop_conjunction_false
-    (ao_conjunction_inference cropSim goodWeather sunCold bumperCrop .actual h)
+    ⟨(universalCounterfactual_mem_filter _ _ _ _).1 h₁,
+     (universalCounterfactual_mem_filter _ _ _ _).1 h₂⟩
 
 end AlonsoOvalle2009

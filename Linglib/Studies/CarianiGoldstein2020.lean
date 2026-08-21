@@ -1,4 +1,4 @@
-import Linglib.Studies.Santorio2018
+import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
 
 /-!
 # Cariani & Goldstein 2020 — "Conditional Heresies"
@@ -16,7 +16,7 @@ homogeneity accounts of the conditional. [zani-ciardelli-sanfelici-2026]
                 = 0   if ∀p ∈ Alt(A) : min_w(p) ⊆ ¬C
                 = undef otherwise
 
-This is **literally** Santorio 2018's `homogeneityEval` truth-table:
+This is **literally** Santorio 2018's `homogeneity` truth-table:
 TRUE iff every alternative simplification holds, FALSE iff every
 alternative simplification fails, GAP otherwise. The two accounts
 coincide on truth-conditional content and diverge primarily on
@@ -28,7 +28,7 @@ algorithm).
 
 This file establishes the truth-conditional coincidence as a
 near-`rfl` bridge: the C&G conditional verdict on a DAC equals
-Santorio's `homogeneityEval`. Worked examples that differentiate the
+Santorio's `homogeneity`. Worked examples that differentiate the
 two accounts (e.g., scope-of-`undef` for embedded conditionals, or the
 projection-vs-stability mechanism distinction) require infrastructure
 not yet present in linglib and are left as future work.
@@ -37,7 +37,7 @@ not yet present in linglib and are left as future work.
 namespace CarianiGoldstein2020
 
 open Semantics.Conditionals (SimilarityOrdering)
-open Santorio2018 (DecAlt homogeneityEval)
+open Semantics.Conditionals.Counterfactual (homogeneity)
 
 
 -- ════════════════════════════════════════════════════
@@ -49,9 +49,9 @@ open Santorio2018 (DecAlt homogeneityEval)
     p. 8: TRUE iff all alternative simplifications hold, FALSE iff all
     fail, undefined otherwise. -/
 def cgConditional {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (alts : List (DecAlt W))
+    (sim : SimilarityOrdering W) (alts : List (Finset W))
     (C : W → Prop) [DecidablePred C] (w : W) : Trivalent :=
-  homogeneityEval sim alts C w
+  homogeneity sim alts C w
 
 
 -- ════════════════════════════════════════════════════
@@ -59,16 +59,16 @@ def cgConditional {W : Type*} [DecidableEq W] [Fintype W]
 -- ════════════════════════════════════════════════════
 
 /-- **C&G ↔ Santorio coincidence.** [cariani-goldstein-2020]'s
-    trivalent conditional and [santorio-2018]'s `homogeneityEval`
+    trivalent conditional and [santorio-2018]'s `homogeneity`
     deliver the same verdict on every alternative set. The two accounts
     diverge on **mechanism** (projection vs. truthmaker stability) but
     agree on **truth-conditional content** — a load-bearing fact for
     the [zani-ciardelli-sanfelici-2026] acquisition study, which
     treats both as members of the homogeneity-of-DACs family. -/
-theorem cgConditional_eq_santorioHomogeneityEval {W : Type*}
+theorem cgConditional_eq_homogeneity {W : Type*}
     [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W)
-    (alts : List (DecAlt W)) (C : W → Prop) [DecidablePred C] (w : W) :
-    cgConditional sim alts C w = homogeneityEval sim alts C w := rfl
+    (alts : List (Finset W)) (C : W → Prop) [DecidablePred C] (w : W) :
+    cgConditional sim alts C w = homogeneity sim alts C w := rfl
 
 
 end CarianiGoldstein2020
