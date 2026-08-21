@@ -392,13 +392,13 @@ theorem result_licenses_theme_apo :
 /-- **Cross-framework theorem 1** (vs [myler-2016]). K&A §5 explicitly
     rejects a realizational/VI-style account for SMG (apo-PP is NOT an
     alternative spell-out of inflectional genitive). Myler's Icelandic
-    `hafa`/`eiga` IS a VI-style alternation (`Myler2016.icelandicHaveVI`
-    bidirectionally conditions on PP-internal possessor). The structural
+    `hafa`/`eiga` IS a VI-style alternation (`Myler2016.icelandicItems`
+    condition *hafa* on the PredP that hosts a PP possessor). The structural
     asymmetry: Icelandic is realizational, SMG is not. -/
 theorem ka2026_refutes_myler_VI_for_smg :
     -- Icelandic (Myler): bidirectional VI conditioning IS the analysis
-    Myler2016.icelandicHaveVI { hasPredP := true, hasPPPossessor := true }
-      = .hafa ∧
+    Myler2016.spellout Myler2016.icelandicItems Myler2016.Attributive.predP.context
+      = some "hafa" ∧
     -- SMG (K&A): no analogous VI for apo vs gen — K&A footnote 17 cites
     -- pronominal clitic syncretism with ACCUSATIVE (not genitive) as
     -- evidence that any realizational alternant for genitive would have
@@ -407,7 +407,7 @@ theorem ka2026_refutes_myler_VI_for_smg :
     -- 41/43/47), not phonology.
     Greek.StandardModern.Possession.adnominalStrategy
       = .dependentMarking := by
-  refine ⟨rfl, rfl⟩
+  refine ⟨by decide, rfl⟩
 
 /-- **Cross-framework theorem 2** (vs [aissen-polian-2025]). Both
     papers commit to `NominalSize.nP` as a structural locus for inalienable

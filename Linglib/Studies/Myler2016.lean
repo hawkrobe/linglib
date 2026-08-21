@@ -1,305 +1,220 @@
-import Linglib.Syntax.Minimalist.Verbal.Voice
+import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Morphology.DistributedMorphology.NominalSpine
-import Linglib.Semantics.Possessive.Relational
+import Linglib.Data.Examples.Myler2016
 
 /-!
-# Myler 2016: Building and Interpreting Possession Sentences
-[myler-2016]
+# Building and interpreting possession sentences
 
-This study file connects the copula theory (Copula.lean) to empirical
-predictions and cross-linguistic data from [myler-2016].
+[myler-2016] treats every *have* and *be* as one meaningless copula v, whose
+meaning is the identity function and whose form is fixed by its syntactic
+surroundings: *have* under a transitive Voice — one that bears the specifier
+feature {D} and φ-features — and *be* otherwise. The possession relation
+comes from inside the DP complement, and Voice adds a θ-role only when the
+complement is a predicate of eventualities. Icelandic's two *have* verbs
+divide the transitive context by what lies below v: *hafa* over a PredP,
+*eiga* elsewhere.
 
-## Contents
+## Main definitions
 
-- **Icelandic hafa/eiga** (§4.3): two HAVE verbs with bidirectional
-  VI conditioning, formalized as VocabItems
-- **The two puzzles**: injectivity of `haveReading` (too-many-meanings)
-  and `vi_characterization` (too-many-structures)
-- **Cross-module bridges**: connections to possession typology
-  ([stassen-2009]), Barker's π ([barker-2011]), and
-  nominal structure (inalienable/alienable)
+* `Context`, `englishItems`, `icelandicItems`: what v's insertion sees and
+  the Vocabulary Items of English and Icelandic.
+* `Attributive`: the two DP-internal possession structures, a PP possessor
+  under Pred or a possessor in Spec,PossP.
+* `voiceAlloseme`: the Voice alloseme a complement selects, the substrate's
+  `Voice.Alloseme.fromComplement`.
+
+## Main results
+
+* `have_iff_transitive`: *have* is *be* in a transitive Voice context.
+* `hafa_iff_predP`, `eiga_only_if_no_pp`, `hafa_only_if_pp`: the Icelandic
+  items and the two generalizations that follow from the structures.
+* `clausal_rows`, `attributive_rows`: the items reproduce the Icelandic data
+  pool, clausal and attributive.
+* `expletive_voice_passes_complement`: with a relational complement Voice
+  is the identity, so the sentence means what its complement means.
+
+## Implementation notes
+
+The dissertation text ([myler-2016] revises Myler's 2014 NYU dissertation) was
+checked; example numbers cited here are the dissertation's. The Minimalist
+`Voice.Head` flavors are not used for the insertion context: Myler's
+condition is syntactic ({D} and φ), and relational *have* has an expletive
+Voice at LF while still surfacing as *have*.
 -/
 
 namespace Myler2016
 
-open Minimalist Minimalist.Voice
+open DistributedMorphology DistributedMorphology.Allosemy Data.Examples
 
--- ════════════════════════════════════════════════════
--- § 0. Copula substrate ([myler-2016]: the vacuous light verb)
--- ════════════════════════════════════════════════════
+/-! ### The copula's context and form -/
 
-/-! Formerly `Syntax/Minimalist/Copula.lean`, dissolved into its single consumer
-(the rest of that file — `GratificationType`, `FreeHead`, `voiceAllosemeForComplement`,
-`haveThetaPrediction`, … — was dead). The copula `v` is a semantically vacuous light
-verb (⟦v⟧ = λx.x); its PF form is HAVE in a transitive-Voice environment, BE elsewhere
-(HAVE = BE + transitivity). -/
-
-/-- The surface realization of the copula, by Vocabulary Insertion. -/
-inductive CopulaForm where
-  | have | be
+/-- What the insertion of v sees: the specifier feature {D} and the
+φ-features on the Voice above, and a PredP complement below. -/
+inductive Feature where
+  | d | phi | pred
   deriving DecidableEq, Repr
 
-/-- [myler-2016] (89): v ⇔ HAVE / ___Voice_{D},φ ; v ⇔ BE / elsewhere. The HAVE
-    environment is transitive Voice — `hasD` with a thematic, non-passive flavor. -/
-def copulaVI (voice : Head) : CopulaForm :=
-  if voice.hasD && voice.flavor != .nonThematic && voice.flavor != .passive
-  then .have else .be
+/-- A clause's context for v. -/
+structure Context where
+  voiceD : Bool
+  voicePhi : Bool
+  predComplement : Bool
+  deriving DecidableEq, Repr, Fintype
 
-/-- The Voice features the copula's insertion context exposes: [D] and a
-thematic, non-passive flavor — Voice_{D},φ of [myler-2016] (89). -/
-inductive VoiceFeature where
-  | d
-  | thematic
+/-- The features a context exposes. -/
+def Context.features (c : Context) : List Feature :=
+  (if c.voiceD then [.d] else []) ++ (if c.voicePhi then [.phi] else []) ++
+    (if c.predComplement then [.pred] else [])
+
+/-- A transitive context: Voice introduces an external argument and bears
+φ-features that license v's complement. -/
+def Context.Transitive (c : Context) : Prop := c.voiceD = true ∧ c.voicePhi = true
+
+instance (c : Context) : Decidable c.Transitive := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- English: *have* in a transitive context, *be* elsewhere. -/
+def englishItems : List (VocabularyItem Feature String) := [⟨[.d, .phi], "have"⟩, ⟨[], "be"⟩]
+
+/-- Icelandic ((15)): *hafa* in a transitive context over a PredP, *eiga* in
+a transitive context otherwise, and the copula *vera* elsewhere. -/
+def icelandicItems : List (VocabularyItem Feature String) :=
+  [⟨[.d, .phi, .pred], "hafa"⟩, ⟨[.d, .phi], "eiga"⟩, ⟨[], "vera"⟩]
+
+/-- The form of v in a context, by the Subset Principle over a language's
+items. -/
+def spellout (items : List (VocabularyItem Feature String)) (c : Context) : Option String :=
+  subsetPrinciple items c.features
+
+/-- *have* is *be* plus transitivity. -/
+theorem have_iff_transitive :
+    ∀ c : Context, spellout englishItems c = some "have" ↔ c.Transitive := by
+  decide
+
+/-- *hafa* is the transitive spell-out over a PredP; the rule is conditioned
+from both sides of v. -/
+theorem hafa_iff_predP :
+    ∀ c : Context,
+      spellout icelandicItems c = some "hafa" ↔ c.Transitive ∧ c.predComplement = true := by
+  decide
+
+/-! ### Attributive possession and the two generalizations (§5) -/
+
+/-- The two DP-internal possession structures ((19), (20)): the possessor in
+a PP under Pred, or in Spec,PossP. -/
+inductive Attributive where
+  | predP | possP
+  deriving DecidableEq, Repr, Fintype
+
+/-- A PP possessor is available exactly under the PredP structure ((18),
+column C). -/
+def Attributive.AllowsPP : Attributive → Prop
+  | .predP => True
+  | .possP => False
+
+instance : DecidablePred Attributive.AllowsPP :=
+  fun a => by cases a <;> unfold Attributive.AllowsPP <;> infer_instance
+
+/-- Clausal possession embeds the attributive structure under v in a
+transitive context ((21), (22)). -/
+def Attributive.context (a : Attributive) : Context := ⟨true, true, a = .predP⟩
+
+/-- Generalization 1 ((16a)): clausal possession with *eiga* only if
+DP-internal possession cannot use a PP. -/
+theorem eiga_only_if_no_pp (a : Attributive) (h : spellout icelandicItems a.context = some "eiga") :
+    ¬ a.AllowsPP := by
+  revert h; cases a <;> decide
+
+/-- Generalization 2 ((16b)): clausal possession with *hafa* only if
+DP-internal possession can use a PP. -/
+theorem hafa_only_if_pp (a : Attributive) (h : spellout icelandicItems a.context = some "hafa") :
+    a.AllowsPP := by
+  revert h; cases a <;> decide
+
+/-! ### The Icelandic data pool -/
+
+/-- The possession relations of (17) and (18). -/
+inductive Relation where
+  | concrete | kinship | bodyPart | abstract
+  deriving DecidableEq, Repr, Fintype
+
+def Relation.ofString : String → Option Relation
+  | "concrete" => some .concrete | "kinship" => some .kinship | "bodyPart" => some .bodyPart
+  | "abstract" => some .abstract | _ => none
+
+/-- The structure each relation is built with: body parts and abstract
+relations under Pred with a PP possessor, concrete and kinship relations
+under Poss ((18)–(20)). -/
+def Relation.attributive : Relation → Attributive
+  | .concrete | .kinship => .possP
+  | .bodyPart | .abstract => .predP
+
+/-- A clausal row of (17): the relation, the verb, and whether it is
+accepted. -/
+structure ClausalRow where
+  relation : Relation
+  verb : String
+  accepted : Bool
   deriving DecidableEq, Repr
 
-/-- The copula's context bundle for a Voice head. -/
-def voiceFeatures (v : Head) : List VoiceFeature :=
-  (if v.hasD then [.d] else []) ++
-    (if v.flavor ≠ .nonThematic ∧ v.flavor ≠ .passive then [.thematic] else [])
+def ClausalRow.ofExample (ex : LinguisticExample) : Option ClausalRow := do
+  guard (ex.paperFeatures.lookup "construction" = some "clausal")
+  let relation ← ex.paperFeatures.lookup "relation" >>= Relation.ofString
+  let verb ← ex.paperFeatures.lookup "verb"
+  pure ⟨relation, verb, ex.judgment = .acceptable⟩
 
-open DistributedMorphology in
-/-- The copula items: HAVE for transitive Voice, BE elsewhere. -/
-def copulaVIRules : List (VocabularyItem VoiceFeature String) :=
-  [⟨[.d, .thematic], "have"⟩, ⟨[], "be"⟩]
-
-open DistributedMorphology in
-/-- The Subset Principle over `copulaVIRules` agrees with `copulaVI`. -/
-theorem copulaVI_agrees_vocabItem (v : Head) :
-    subsetPrinciple copulaVIRules (voiceFeatures v) =
-      some (if copulaVI v = .have then "have" else "be") := by
-  cases v with | mk flavor hasD _ _ _ =>
-  cases flavor <;> cases hasD <;> rfl
-
-/-- HAVE ↔ Voice is transitive (external argument, not PF-only, not passive). -/
-theorem vi_characterization (v : Head) :
-    copulaVI v = .have ↔
-    (v.hasD = true ∧ v.flavor ≠ .nonThematic ∧ v.flavor ≠ .passive) := by
-  cases v with | mk flavor hasD _ checksCase _ =>
-  cases flavor <;> cases hasD <;> simp [copulaVI]
-
-/-- The complement type of a HAVE sentence ([myler-2016] §5). -/
-inductive HaveComplement where
-  | possessedDP | eventDP | saturatedEventiveVoiceP | stativeSC | freeP | modalBase
+/-- A column-C row of (18): the relation and whether the PP possessor is
+accepted. -/
+structure PPRow where
+  relation : Relation
+  accepted : Bool
   deriving DecidableEq, Repr
 
-/-- The reading of a HAVE sentence ([myler-2016] table (100)). -/
-inductive HaveReading where
-  | relational | lightVerb | engineer | causer | experiencerEventive
-  | experiencerStative | locative | temporaryPossession | modal
-  deriving DecidableEq, Repr
+def PPRow.ofExample (ex : LinguisticExample) : Option PPRow := do
+  guard (ex.paperFeatures.lookup "construction" = some "attributiveC")
+  let relation ← ex.paperFeatures.lookup "relation" >>= Relation.ofString
+  pure ⟨relation, ex.judgment = .acceptable⟩
 
-/-- The predicted reading per complement type. The too-many-meanings puzzle is
-    that this is **injective** (`haveReading_injective`). -/
-def haveReading : HaveComplement → HaveReading
-  | .possessedDP             => .relational
-  | .eventDP                 => .lightVerb
-  | .saturatedEventiveVoiceP => .engineer
-  | .stativeSC               => .causer
-  | .freeP                   => .experiencerEventive
-  | .modalBase               => .modal
+def clausalRows : List ClausalRow := Examples.all.filterMap ClausalRow.ofExample
 
--- ════════════════════════════════════════════════════
--- § 1. Icelandic: Two HAVEs (§4.3)
--- ════════════════════════════════════════════════════
+def ppRows : List PPRow := Examples.all.filterMap PPRow.ofExample
 
-/-- Icelandic has two HAVE verbs (*hafa* and *eiga*) that carve up the
-    possession domain based on the DP-internal structure of the complement.
+/-- Every example is a clausal row or an attributive row. -/
+theorem rows_cover :
+    ∀ ex ∈ Examples.all,
+      (ClausalRow.ofExample ex).isSome ∨ ex.paperFeatures.lookup "construction" ≠ some "clausal" := by
+  decide
 
-    [myler-2016] §4.3 / Myler, Sigurðsson & Wood 2014:
-    - v ⇔ *hafa* / ___Voice_{D},φ ___Pred (complement contains PredP)
-    - v ⇔ *eiga* / ___Voice_{D},φ       (elsewhere in transitive context)
+/-- **Clausal possession** ((17)): each relation's structure spells out as
+exactly the accepted verb. -/
+theorem clausal_rows :
+    ∀ r ∈ clausalRows,
+      (spellout icelandicItems r.relation.attributive.context = some r.verb) = r.accepted := by
+  decide
 
-    The distribution:
-    - *eiga*: concrete possession, kinship (Poss head mediates, no PP possessor)
-    - *hafa*: body parts, abstract (root-introduced relation, PP possessor possible)
-    - Both work for non-possessive small clause complements (*hafa* only)
+/-- **Attributive possession** ((18), column C): a PP possessor is accepted
+exactly for the relations built under Pred. -/
+theorem attributive_rows :
+    ∀ r ∈ ppRows, decide r.relation.attributive.AllowsPP = r.accepted := by
+  decide
 
-    Generalizations:
-    (90a) Clausal possession with *eiga* only if DP-internal possession
-          CANNOT be expressed with a PP.
-    (90b) Clausal possession with *hafa* only if DP-internal possession
-          CAN be expressed with a PP. -/
-inductive IcelandicHaveVerb where
-  | hafa   -- v ⇔ hafa / ___Voice_{D},φ ___Pred
-  | eiga   -- v ⇔ eiga / ___Voice_{D},φ (elsewhere transitive)
-  deriving DecidableEq, Repr
+/-! ### The meaning of a *have* sentence -/
 
-/-- Does the DP-internal possession use a PP (preposition) to introduce
-    the possessor? This is the bidirectional conditioning environment. -/
-structure IcelandicPossDP where
-  /-- Is there a PredP (small clause) in the DP structure? -/
-  hasPredP : Bool
-  /-- Can the possessor be expressed with a PP inside the DP? -/
-  hasPPPossessor : Bool
-  deriving DecidableEq, Repr
+/-- The Voice alloseme a *have* sentence's complement selects ((61)): the
+substrate's competition over `Voice.vocabulary`. -/
+def voiceAlloseme (eventiveVoiceP stative : Bool) : Voice.Alloseme :=
+  Voice.Alloseme.fromComplement (eventiveVoiceP = true) (stative = true)
 
-/-- Icelandic VI rule for HAVE verbs.
-    Bidirectional conditioning: looks at both Voice above AND complement below. -/
-def icelandicHaveVI (dp : IcelandicPossDP) : IcelandicHaveVerb :=
-  if dp.hasPredP then .hafa else .eiga
+/-- ⟦v⟧ = λx.x ((60)) and, over a relational complement — neither an
+eventive VoiceP nor a state — Voice is the expletive identity: the
+sentence means what its complement means. Relational, locative, and
+experiencer *have* are this case. -/
+theorem expletive_voice_passes_complement : voiceAlloseme false false = .expletive := by decide
 
-/-- Body parts and abstract nouns (PP possessor possible) → hafa. -/
-theorem bodyPart_hafa : icelandicHaveVI { hasPredP := true, hasPPPossessor := true } = .hafa := rfl
-
-/-- Concrete and kinship (no PP possessor) → eiga. -/
-theorem concrete_eiga : icelandicHaveVI { hasPredP := false, hasPPPossessor := false } = .eiga := rfl
-
-/-- Generalization (90a): eiga ↔ no PP possessor internally. -/
-theorem eiga_iff_no_pp (dp : IcelandicPossDP) :
-    icelandicHaveVI dp = .eiga ↔ dp.hasPredP = false := by
-  cases dp with | mk p pp => cases p <;> simp [icelandicHaveVI]
-
-/-- Generalization (90b): hafa ↔ PP possessor available internally. -/
-theorem hafa_iff_pred (dp : IcelandicPossDP) :
-    icelandicHaveVI dp = .hafa ↔ dp.hasPredP = true := by
-  cases dp with | mk p pp => cases p <;> simp [icelandicHaveVI]
-
--- ─── Vocabulary-item formulation (parallel to copulaVIRules) ───
-
-/-- The DP-internal feature the Icelandic HAVE items see: a PredP. -/
-inductive PossDPFeature where
-  | predP
-  deriving DecidableEq, Repr
-
-/-- The insertion bundle for a possessive DP; the PP-possessor option is
-never consulted. -/
-def possDPFeatures (dp : IcelandicPossDP) : List PossDPFeature :=
-  if dp.hasPredP then [.predP] else []
-
-open DistributedMorphology in
-/-- Icelandic HAVE items: *hafa* on a PredP, *eiga* elsewhere — parallel to
-`copulaVIRules` but within the HAVE domain, where both realize transitive
-Voice and differ only in DP-internal structure. -/
-def icelandicHaveVIRules : List (VocabularyItem PossDPFeature String) :=
-  [⟨[.predP], "hafa"⟩, ⟨[], "eiga"⟩]
-
-open DistributedMorphology in
-/-- The Subset Principle over `icelandicHaveVIRules` agrees with
-`icelandicHaveVI`. -/
-theorem icelandicVI_agrees_vocabItem (dp : IcelandicPossDP) :
-    subsetPrinciple icelandicHaveVIRules (possDPFeatures dp) =
-      some (if icelandicHaveVI dp = .hafa then "hafa" else "eiga") := by
-  cases dp with | mk p pp => cases p <;> cases pp <;> rfl
-
--- ════════════════════════════════════════════════════
--- § 2. The Two Puzzles, Solved
--- ════════════════════════════════════════════════════
-
-/-- The "too-many-meanings" puzzle: how can one construction (*have*)
-    have so many different meanings?
-
-    [myler-2016] (81): possession constructions can mean so many
-    things because they involve sentencifying a meaning that comes from
-    inside DP. The meanings are a *syntactic* natural class (all introduced
-    by heads inside DP), not a *semantic* one. Since v = λx.x, ALL the
-    thematic content comes from the complement and from Voice allosemy.
-
-    Formally: `haveReading` is **injective** — each complement type
-    produces a distinct reading. This captures the claim that v contributes
-    nothing: the complement alone determines the interpretation. -/
-theorem too_many_meanings_solution :
-    Function.Injective haveReading := by
-  intro a b h; cases a <;> cases b <;> first | rfl | simp [haveReading] at h
-
-/-- The "too-many-structures" puzzle: how can the same possessive meanings
-    be realized in so many syntactically different ways across languages?
-
-    [myler-2016] (93): possession relations originate inside DP
-    (root-introduced or Poss-head-introduced). Since v is meaningless
-    and makes no semantic demands, syntax alone decides where the
-    possessor is first-merged. Combined with parametric variation in
-    delayed gratification and the ±D property of functional heads,
-    this generates the full typology from a small set of parameters.
-
-    Formally: the HAVE/BE distinction depends only on whether Voice is
-    transitive, which is independent of the possession relation itself. -/
-theorem too_many_structures_solution (v : Head) :
-    copulaVI v = .have ↔
-    (v.hasD = true ∧ v.flavor ≠ .nonThematic ∧ v.flavor ≠ .passive) :=
-  vi_characterization v
-
--- ════════════════════════════════════════════════════
--- § 3. Cross-Module Bridges
--- ════════════════════════════════════════════════════
-
--- ─── Bridge to Possession Typology ───
-
-/-- [myler-2016]'s HAVE = BE + Voice_{D},φ provides the syntactic
-    analysis underlying the have-verb predicative possession strategy
-    from [stassen-2009].
-
-    A language uses the have-verb strategy iff its possession construction
-    has transitive Voice — exactly the `copulaVI` condition.
-    Derived from `copulaVI`, not stipulated independently. -/
-def isHaveVerbLanguage (voice : Head) : Bool :=
-  copulaVI voice == .have
-
-/-- A language with transitive, θ-assigning Voice produces HAVE. -/
-theorem haveVerb_from_transitive_voice :
-    isHaveVerbLanguage agentive = true := rfl
-
-/-- A language with intransitive Voice produces BE (locational/existential). -/
-theorem be_from_intransitive_voice :
-    isHaveVerbLanguage anticausative = false := rfl
-
-/-- `isHaveVerbLanguage` agrees with `copulaVI` by construction. -/
-theorem isHaveVerbLanguage_iff_copulaVI (v : Head) :
-    isHaveVerbLanguage v = true ↔ copulaVI v = .have := by
-  simp [isHaveVerbLanguage, beq_iff_eq]
-
--- ─── Bridge to Barker 2011 (Possession inside DP) ───
-
-open ArgumentStructure.Relational in
-
-/-- The relational HAVE reading requires the complement DP to have a
-    two-place interpretation (either lexically relational or via π-shift).
-    This is exactly `NominalInterpType.relational` from [barker-2011].
-
-    [myler-2016]: "The meanings [of HAVE] are a syntactic natural
-    class: all introduced by heads inside DP." For relational HAVE, the
-    DP must supply a possessor slot — which is what a relational denotation provides.
-
-    The bridge: relational HAVE ↔ possessedDP complement ↔
-    `NominalInterpType.relational` (has relatum slot for possessor). -/
-theorem relational_have_requires_pred2 :
-    NominalInterpType.relational.hasRelatumSlot ∧
-    NominalInterpType.relational.canTakePossessor := ⟨trivial, trivial⟩
-
-open ArgumentStructure.Relational in
-
-/-- Bare sortals (one-place, no π) cannot appear in relational HAVE:
-    "I have a cloud" requires a contextually supplied relation (π).
-    Without π, the DP has no possessor slot, so no possessive reading. -/
-theorem bare_sortal_blocks_relational :
-    ¬ NominalInterpType.sortal.canTakePossessor := id
-
--- ─── Bridge to the nominal spine (Possession Type) ───
-
-open DistributedMorphology in
-
-/-- Delayed gratification connects to the inalienable/alienable distinction
-    from NominalSpine.lean:
-
-    - Inalienable possessor (Spec,nP): can undergo delayed gratification
-      to Spec,VoiceP → yields relational HAVE with inalienable reading
-    - Alienable possessor (Spec,PossP): can undergo delayed gratification
-      to Spec,VoiceP → yields relational HAVE with alienable reading
-
-    In both cases, the possessor starts DP-internally and percolates to
-    Spec,VoiceP. The structural position inside DP determines the
-    INTERPRETATION (kinship vs ownership), not whether HAVE surfaces. -/
-theorem both_possession_types_allow_have :
-    PossessionType.inalienable.possessorPosition.isWithinNP = true ∧
-    PossessionType.alienable.possessorPosition.isWithinNP = false := ⟨rfl, rfl⟩
-
-open DistributedMorphology in
-
-/-- Inalienable possession is nP-internal (can affect gender under GLH);
-    alienable possession is nP-external (cannot). This is orthogonal to
-    whether the language spells out v as HAVE or BE. -/
-theorem possession_type_orthogonal_to_copula :
-    PossessionType.inalienable.canAffectGender = true ∧
-    PossessionType.alienable.canAffectGender = false := ⟨rfl, rfl⟩
+/-- Over an eventuality predicate Voice adds a θ-role — the holder of a
+state, the engineer of an eventive VoiceP — so light-verb and ECM *have*
+mean more than their complement. -/
+theorem contentful_voice_adds_theta :
+    (voiceAlloseme false true).AssignsTheta ∧ (voiceAlloseme true false).AssignsTheta := by
+  decide
 
 end Myler2016
