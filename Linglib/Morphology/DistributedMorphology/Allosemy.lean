@@ -177,7 +177,9 @@ specification mentions no feature of its own head — the vocabulary is the
 head's — and conditions on the neighbors: the complement below, toward the
 root, and the embedding head above ([benz-2025] §2.4: allosemy is
 conditioned by the interpreted domain below and the features of the next
-head above; the exact locality is open). -/
+head above). The locality of the conditioning — the first category head's
+spell-out domain, across semantically null heads only — is `Spine.Visible`
+(`Locality.lean`). -/
 
 /-- What an alloseme may require of a neighboring terminal: its category,
 or that it denotes an event or a state ([kratzer-1996] §2.3 for the

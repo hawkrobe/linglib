@@ -31,7 +31,7 @@ and layered derivation are facts about leaves rather than stipulations.
 * `categorize_ne_of_ne`, `categorize_categorize_ne` — distinct heads
   build distinct structures, and layered derivation differs from direct
   derivation even when the outermost head agrees
-* `agentive_voice_is_phase` — Voice, not the categorizer, bounds special
+* `agentive_voice_is_phase` — Voice, not the categorizer, bounds idiomatic
   interpretation
 
 ## References
@@ -41,6 +41,8 @@ and layered derivation are facts about leaves rather than stipulations.
 * [A. Marantz, *No escape from syntax*][marantz-1997]
 * [H. Harley, *On the identity of roots*][harley-2014]
 * [D. Embick and A. Marantz, *Architecture and blocking*][embick-marantz-2008]
+* [A. Marantz, *Locality domains for contextual allomorphy across the
+  interfaces*][marantz-2013]
 -/
 
 namespace DistributedMorphology
@@ -176,18 +178,20 @@ theorem categorize_categorize_ne (h₁ h₂ h₃ : H) (T : WordStructure H) :
   rw [numLeaves_categorize, numLeaves_categorize, numLeaves_categorize] at this
   omega
 
-/-! ### VoiceP as phase boundary
+/-! ### VoiceP as the idiom boundary
 
-[harley-2014] §4: the phase head above the root is Voice, not the
-categorizer. Multiply derived words carry idiosyncratic senses above the
-first categorizer ((36) *editor-ial*, *classifi-eds*, *national-ize*),
-while the external argument that Voice introduces stays compositional. -/
+[harley-2014] §4: multiply derived words carry idiosyncratic senses above
+the first categorizer ((36) *editor-ial*, *classifi-eds*, *national-ize*),
+while the external argument that Voice introduces stays compositional. This
+is the idiom domain (`Spine.IdiomLocal`, `Locality.lean`); the choice of a
+root's alloseme is bounded separately, by the cyclic categorizers
+([marantz-2013]; `Spine.RootLocal`). -/
 
-/-- Agentive Voice is a phase head — the boundary above which
-    interpretation must be compositional. [harley-2014] §4: "Voice is the
-    phase head, not v"; the categorizer inventory here accordingly carries
-    no phasal structure at all, so the special-interpretation domain
-    extends past n, v, a and closes only at Voice. -/
+/-- Agentive Voice is a phase head — the boundary above which idiomatic
+    interpretation is unavailable. [harley-2014] §4: "Voice is the phase
+    head, not v"; the categorizer inventory here accordingly carries no
+    phasal structure of its own, so the idiom domain extends past n, v, a
+    and closes only at Voice. -/
 theorem agentive_voice_is_phase : agentive.IsPhasal := by decide
 
 /-- Voice introduces the external argument ([harley-2014] §4, following
