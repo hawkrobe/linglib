@@ -49,10 +49,12 @@ theorem not_scf_of_acceptable_neutral {Acc : ContextSet W → Prop} (h : Acc c)
 
 /-- §5: under `a believes S` at `w`, `m` has local effect when it is part of `a`'s belief
 state. -/
-def LocalEffect (Dox : E → W → W → Prop) (a : E) (w : W) : Prop := ContextSet.entails (Dox a w) m
+def LocalEffect (Dox : E → W → W → Prop) (a : E) (w : W) : Prop :=
+  ContextSet.entails (Dox a w) m
 
 /-- Obligatory local effect: wherever the belief report is acceptable, `m` has local effect. -/
-def ObligatoryLocalEffect (Dox : E → W → W → Prop) (a : E) (Acc : ContextSet W → Prop) : Prop :=
+def ObligatoryLocalEffect (Dox : E → W → W → Prop) (a : E) (Acc : ContextSet W → Prop) :
+    Prop :=
   ∀ c, Acc c → ∀ w ∈ c, LocalEffect m Dox a w
 
 /-- (41i): acceptability of the report with the holder ignorant of `m` refutes obligatory
