@@ -12,7 +12,7 @@ import Linglib.Fragments.English.Nouns
 /-!
 # [elbourne-2013]: Situation-Semantic Definite Descriptions [elbourne-2013]
 [barwise-perry-1983] [elbourne-2005] [heim-1982] [postal-1966] [schwarz-2009] [kamp-1981] [stanley-szab-2000] [tonhauser-beaver-roberts-simons-2013] [roberts-2012]
-[donnellan-1966] [kripke-1977] [karttunen-1974]
+[donnellan-1966] [kripke-1977] [karttunen-1974-presupposition]
 
 Formalizes the core theoretical machinery and empirical predictions from:
 

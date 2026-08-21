@@ -33,7 +33,7 @@ co-developer, but it is formalised separately at
 `Studies/Aloni2022.lean` and not engaged here.
 
 Yagi's example (8) — "Either baldness is not hereditary, or all of Bill's
-children are bald" ([karttunen-1974]) — appears in §2.2 as a
+children are bald" ([karttunen-1974-presupposition]) — appears in §2.2 as a
 counterexample to the K&P modification `Π(φ ∨ ψ) := Π(φ) ∨ Π(ψ)` (eq. 7).
 This formula is exactly what `PartialProp.orFlex.presup` computes. The
 flexible-accommodation framework Yagi defends in §3.2 evades the eq. (7)
@@ -696,7 +696,7 @@ theorem neg_flex_truth_table :
 [yagi-2025] §2.2 (between Def 3 and §2.3) considers a modification
 to K&P, `Π(φ ∨ ψ) := Π(φ) ∨ Π(ψ)` (eq. (7)). This formula IS what
 `PartialProp.orFlex.presup` computes. Yagi shows it correctly predicts (1c)
-Buganda but is "too weak" for (8) [karttunen-1974]: "Either baldness
+Buganda but is "too weak" for (8) [karttunen-1974-presupposition]: "Either baldness
 is not hereditary, or all of Bill's children are bald." Eq. (7) predicts
 the tautological presupposition `⊤ ∨ Π(ψ) = ⊤`, but the empirical
 intuition is that (8) presupposes Bill has children.
