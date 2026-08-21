@@ -87,4 +87,21 @@ theorem klt_final_is_t : klt.finalSegment = some "t" := rfl
     spreading the final /l/ to template-final is legitimate. -/
 theorem kll_final_is_l : kll.finalSegment = some "l" := rfl
 
+-- ============================================================================
+-- § 3: The binyan roots of [arad-2005] (3)
+-- ============================================================================
+
+/-- √lmd — *lamad* 'learn' (P1), *nilmad* 'learn (passive)' (P2) ([arad-2005] (3)). -/
+def lmd : ConsonantalRoot String := ⟨["l", "m", "d"]⟩
+
+/-- √spr — *siper* 'tell' (P3), *supar* 'tell (passive)' (P4) ([arad-2005] (3)). -/
+def spr : ConsonantalRoot String := ⟨["s", "p", "r"]⟩
+
+/-- √qlt — *hiqlit* 'record' (P5), *huqlat* 'record (passive)' (P6)
+([arad-2005] (3)). -/
+def qlt : ConsonantalRoot String := ⟨["q", "l", "t"]⟩
+
+/-- √pll — *hitpalel* 'pray' (P7) ([arad-2005] (3)). -/
+def pll : ConsonantalRoot String := ⟨["p", "l", "l"]⟩
+
 end Hebrew

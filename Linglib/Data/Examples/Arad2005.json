@@ -1,0 +1,156 @@
+[
+  {
+    "id": "arad2005_p1",
+    "source": {"bibkey": "arad-2005", "paperLabel": "(3)"},
+    "language": "hebr1245",
+    "primaryText": "lamad",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["lamad", "learn"]
+    ],
+    "translation": "learn",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "lmd"],
+      ["pattern", "1"],
+      ["binyan", "cvcvc"],
+      ["voice", "active"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "arad2005_p2",
+    "source": {"bibkey": "arad-2005", "paperLabel": "(3)"},
+    "language": "hebr1245",
+    "primaryText": "nilmad",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nilmad", "learn (passive)"]
+    ],
+    "translation": "learn",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "lmd"],
+      ["pattern", "2"],
+      ["binyan", "nvccvc"],
+      ["voice", "active"]
+    ],
+    "comment": "Binyan 2 is the passive of binyan 1 by rewriting of the binyan (footnote 13); its own vowels are the [+active] exponent in the context nVCCVC of (25)."
+  },
+  {
+    "id": "arad2005_p3",
+    "source": {"bibkey": "arad-2005", "paperLabel": "(3)"},
+    "language": "hebr1245",
+    "primaryText": "siper",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["siper", "tell"]
+    ],
+    "translation": "tell",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "spr"],
+      ["pattern", "3"],
+      ["binyan", "cvccvc"],
+      ["voice", "active"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "arad2005_p4",
+    "source": {"bibkey": "arad-2005", "paperLabel": "(3)"},
+    "language": "hebr1245",
+    "primaryText": "supar",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["supar", "tell (passive)"]
+    ],
+    "translation": "tell",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "spr"],
+      ["pattern", "4"],
+      ["binyan", "cvccvc"],
+      ["voice", "passive"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "arad2005_p5",
+    "source": {"bibkey": "arad-2005", "paperLabel": "(3)"},
+    "language": "hebr1245",
+    "primaryText": "hiqlit",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["hiqlit", "record"]
+    ],
+    "translation": "record",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "qlt"],
+      ["pattern", "5"],
+      ["binyan", "hvccvc"],
+      ["voice", "active"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "arad2005_p6",
+    "source": {"bibkey": "arad-2005", "paperLabel": "(3)"},
+    "language": "hebr1245",
+    "primaryText": "huqlat",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["huqlat", "record (passive)"]
+    ],
+    "translation": "record",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "qlt"],
+      ["pattern", "6"],
+      ["binyan", "hvccvc"],
+      ["voice", "passive"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "arad2005_p7",
+    "source": {"bibkey": "arad-2005", "paperLabel": "(3)"},
+    "language": "hebr1245",
+    "primaryText": "hitpalel",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["hitpalel", "pray"]
+    ],
+    "translation": "pray",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "pll"],
+      ["pattern", "7"],
+      ["binyan", "hitcvccvc"],
+      ["voice", "active"]
+    ],
+    "comment": ""
+  }
+]
