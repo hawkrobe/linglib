@@ -20,11 +20,6 @@ redundancy diagnostic. Calculability and detachability are properties of
 a *derivation*, not of an (assertion, content) pair, so they are stated
 where the derivations live, not here.
 
-The headline consumer is `Studies/DelPinalBassiSauerland2024.lean`: pex
-outputs fail cancellability via
-`IsCancellable.false_of_assertion_implies_content` because the pex
-assertion entails its presupposed content.
-
 Magri-style obligatory SI ([magri-2009]) is **not** an `IsCancellable`
 failure, even common-ground-relativized: for "#Some Italians come from a
 warm country" with CK restricting to all-warm worlds, "in fact all" is a

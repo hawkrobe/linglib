@@ -124,8 +124,6 @@ inductive ProjectiveTrigger where
   | only_prejacent
   /-- *almost*: polar content. -/
   | almost_polar
-  /-- Definite descriptions: existence and uniqueness. -/
-  | definite_description
   /-- Occasion verbs: prior occasioning eventuality
       ([solstad-bott-2024]). *Punish* presupposes a prior offense;
       *manage* presupposes a prior difficulty. SCF=no (can be
@@ -152,7 +150,6 @@ def ProjectiveTrigger.toClass : ProjectiveTrigger → ProjectiveClass
   | .know_complement => .classC
   | .only_prejacent => .classC
   | .almost_polar => .classC
-  | .definite_description => .classC
   | .occasion_verb => .classC
   | .too_salience => .classD
   | .demonstrative_indication => .classD

@@ -276,7 +276,7 @@ private theorem permB_not_ie :
 because adjoining `permAandBᶜ` to any MC-set is consistent (witnessed at
 `onlyA` whenever the MC-set itself is consistent), so maximality forces
 inclusion. -/
-private theorem permAandB_is_ie :
+theorem permAandB_is_ie :
     IsInnocentlyExcludable fcALT fcPrejacent permAandB := by
   refine ⟨by simp [fcALT], ?_⟩
   intro E hE
