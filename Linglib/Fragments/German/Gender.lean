@@ -113,9 +113,7 @@ theorem diminutive_suffixes_assign_neuter :
 /-- **Mädchen override**: *Mädchen* 'girl' is neuter despite its
     semantic referent being female. The diminutive suffix *-chen*
     overrides the natural-gender expectation — empirical fact that any
-    theory must account for. The DM-specific analysis (suffix IS the n
-    head, plain n → neuter via 3-gender VI) lives in
-    `Studies/Kramer2020.lean`. -/
+    theory must account for. -/
 theorem maedchen_neuter_override :
     maedchen.gender = .neuter ∧ maedchen.gloss = "girl" := ⟨rfl, rfl⟩
 

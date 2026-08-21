@@ -32,8 +32,7 @@ predicate adjective) when the referent is female, while retaining
 masculine morphology ([wade-2020], e.g. "Врач обязана..." with
 fem.-agreeing predicate; [corbett-1991]). The Fragment encodes
 *vrač*'s morphological gender (masculine, derived from Class I); the
-hybrid agreement story lives in `Studies/Kramer2020.lean §7` via the
-existing `russianVrac : HybridNoun` struct.
+hybrid agreement datum is `Kramer2020.hybridTargets`.
 
 ## Per-entry verification
 
@@ -78,8 +77,8 @@ structure RussianNoun where
   attestedGender : Gender
   /-- True iff the gender comes from biological sex of the referent.
       For *vrač* 'doctor' (hybrid) the morphological gender is encoded
-      here as masculine; the hybrid female-referent agreement lives in
-      `Studies/Kramer2020.lean §7`. -/
+      here as masculine; the hybrid female-referent agreement is the
+      datum `Kramer2020.hybridTargets`. -/
   isNaturalGender : Bool
   /-- Optional declension class. Semantic-core nouns may omit since
       their gender is determined by the referent. -/
@@ -151,7 +150,7 @@ def put'   : RussianNoun :=
     feminine agreement on some targets when the referent is female
     (verified at [wade-2020] "Врач обязана…" with feminine-agreeing
     predicate). The Fragment encodes morphological gender; the hybrid
-    behavior is captured in `Studies/Kramer2020.lean §7`. -/
+    behavior is the datum `Kramer2020.hybridTargets`. -/
 def vrač : RussianNoun :=
   { form := "vrač", gloss := "doctor", attestedGender := .masculine
   , isNaturalGender := false, declClass := some .I }
@@ -208,9 +207,9 @@ def Value.pastConcord : Value → PastConcord
   | .neut => .o
 
 /-- The Russian gender system over its own carrier: full comparative
-    labelling; neuter is the morphosyntactic default (plain-*n* roots
-    like *vino* surface neuter — [kramer-2015]'s ch. 7 derivation,
-    exercised at `Kramer2020.russian_licensing_vino`). -/
+    labelling; neuter is the morphosyntactic default (the all-others
+    nouns like *vino* of [corbett-1991]'s declension rule surface neuter,
+    at `Kramer2020.declensionGender`). -/
 def system : Gender.System Value where
   label := fun g => match g with
     | .masc => some .masculine
@@ -226,8 +225,8 @@ def Value.ofLabel : Gender → Value
 
 /-- Controller gender of a noun, from the attested agreement fact. For
     the hybrid *vrač* this is the morphological masculine; the
-    female-referent agreement alternation lives in
-    `Studies/Kramer2020.lean` §7. -/
+    female-referent agreement alternation is the datum
+    `Kramer2020.hybridTargets`. -/
 def RussianNoun.controllerGender (n : RussianNoun) : Value :=
   Value.ofLabel n.attestedGender
 
