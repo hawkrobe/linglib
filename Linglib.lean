@@ -1258,6 +1258,7 @@ import Linglib.Morphology.DistributedMorphology.Defs
 import Linglib.Morphology.DistributedMorphology.Fission
 import Linglib.Morphology.DistributedMorphology.Fusion
 import Linglib.Morphology.DistributedMorphology.Impoverishment
+import Linglib.Morphology.DistributedMorphology.Locality
 import Linglib.Morphology.DistributedMorphology.Merger
 import Linglib.Morphology.DistributedMorphology.Neighborhood
 import Linglib.Morphology.DistributedMorphology.NominalSpine
@@ -2133,6 +2134,8 @@ import Linglib.Studies.Elbourne2026
 import Linglib.Studies.ElkinsTorrenceBrown2026
 import Linglib.Studies.Elliott2025
 import Linglib.Studies.ElliottSudo2025
+import Linglib.Studies.Embick2010
+import Linglib.Studies.Embick2021
 import Linglib.Studies.EngelhardtEtAl2006
 import Linglib.Studies.Enguehard2024
 import Linglib.Studies.ErkHerbelot2024
@@ -2452,6 +2455,7 @@ import Linglib.Studies.Major2024
 import Linglib.Studies.Mandelkern2019
 import Linglib.Studies.Mandelkern2022
 import Linglib.Studies.Marantz1991
+import Linglib.Studies.Marantz2013
 import Linglib.Studies.MarcoRasin2026
 import Linglib.Studies.MarcolliChomskyBerwick2025
 import Linglib.Studies.MarcolliLarson2025
@@ -2939,4 +2943,7 @@ import Linglib.Data.Examples.HalleMarantz1993
 import Linglib.Data.Examples.Myler2016
 import Linglib.Data.Examples.Scott2021
 import Linglib.Data.Examples.GonzalezPootMcGinnis2006
+import Linglib.Data.Examples.Marantz2013
+import Linglib.Data.Examples.Embick2021
+import Linglib.Data.Examples.Embick2010
 import Linglib.Data.Examples.HarleyRitter2002
