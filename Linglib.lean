@@ -2469,6 +2469,7 @@ import Linglib.Studies.McCarthy1981
 import Linglib.Studies.McCarthy2005
 import Linglib.Studies.McCarthyPrince1995
 import Linglib.Studies.McCollumEtAl2020
+import Linglib.Studies.McGinnis2013
 import Linglib.Studies.McKayVanInwagen1977
 import Linglib.Studies.McMullin2016
 import Linglib.Studies.McNallyDeSwart2011
@@ -2947,3 +2948,4 @@ import Linglib.Data.Examples.Marantz2013
 import Linglib.Data.Examples.Embick2021
 import Linglib.Data.Examples.Embick2010
 import Linglib.Data.Examples.HarleyRitter2002
+import Linglib.Data.Examples.McGinnis2013

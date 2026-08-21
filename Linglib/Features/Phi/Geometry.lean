@@ -12,7 +12,8 @@ The morphosyntactic feature geometry of pronouns: monovalent person, number,
 and class features organized as a dependency tree under a root Referring
 Expression node, with Participant (Speaker, Addressee) and Individuation
 (Group, Minimal with its dependent Augmented, and Class) as the organizing
-nodes. A feature appears only together with the nodes it depends on, so the
+nodes, with the collective first-person node Multispeaker below Speaker. A
+feature appears only together with the nodes it depends on, so the
 feature content of a pronoun is a lower set of the dominance order; markedness
 is node count; and an organizing node with no dependent receives its default
 daughter — Speaker, Minimal, Inanimate — by rule. Person and number cells are
@@ -21,7 +22,8 @@ inventories that activate it.
 
 ## Main definitions
 
-* `Node`, `Node.parent`, and dominance `≤`, a `PartialOrder` with the root as `⊥`.
+* `Node`, `Node.parent`, and dominance `≤`, a `PartialOrder` with the root as `⊥`;
+  `Node.below` is the content a node brings with it.
 * `Node.defaultDependent?`, `fillDefaults`: the default daughters and their fill-in.
 * `personNodes`, `numberNodes`, `cell`: the geometries of person, of number, and of
   a person–number cell, relative to an active inventory.
@@ -38,6 +40,7 @@ inventories that activate it.
 * [H. Harley and E. Ritter, *Person and number in pronouns: A feature-geometric
   analysis*][harley-ritter-2002]
 * [H. Harley, *Hug a tree*][harley-1994]
+* [M. McGinnis, *Agree and Fission in Georgian plurals*][mcginnis-2013]
 * [G. N. Clements, *The geometry of phonological features*][clements-1985]
 -/
 
@@ -52,6 +55,9 @@ inductive Node where
   | participant
   /-- Includes the speaker; Participant's default dependent. -/
   | speaker
+  /-- Includes the speaker and others: a collective first person, expressing
+  first-person plurality through person where number does not. -/
+  | multispeaker
   /-- Includes the addressee. -/
   | addressee
   /-- Number and class. -/
@@ -82,6 +88,7 @@ def parent : Node → Option Node
   | .referringExpression => none
   | .participant | .individuation => some .referringExpression
   | .speaker | .addressee => some .participant
+  | .multispeaker => some .speaker
   | .group | .minimal | .nounClass => some .individuation
   | .augmented => some .minimal
   | .animate | .inanimate => some .nounClass
@@ -153,6 +160,27 @@ instance : LocallyFiniteOrder Node := Fintype.toLocallyFiniteOrder
 
 theorem lt_of_parent {a b : Node} (h : b.parent = some a) : a < b := by
   revert h; cases a <;> cases b <;> decide
+
+/-- Every node. -/
+def all : List Node :=
+  [.referringExpression, .participant, .speaker, .multispeaker, .addressee, .individuation, .group,
+    .minimal, .augmented, .nounClass, .animate, .inanimate, .feminine, .masculine]
+
+theorem mem_all (n : Node) : n ∈ all := by cases n <;> decide
+
+/-- The nodes a node depends on, itself included and the root excluded: the
+content a privative feature brings with it. -/
+def below (n : Node) : List Node := all.filter fun a => ⊥ < a ∧ a ≤ n
+
+theorem mem_below {a n : Node} : a ∈ below n ↔ ⊥ < a ∧ a ≤ n := by
+  simp [below, mem_all]
+
+theorem toFinset_below (n : Node) : (below n).toFinset = Finset.Ioc ⊥ n := by
+  ext a; simp [mem_below]
+
+/-- A dependent brings more than what it depends on. -/
+theorem below_subset_below {a b : Node} (h : a ≤ b) : below a ⊆ below b :=
+  fun _ hx => mem_below.2 ⟨(mem_below.1 hx).1, (mem_below.1 hx).2.trans h⟩
 
 /-- The default daughter of an organizing node: Speaker, Minimal, Inanimate. -/
 def defaultDependent? : Node → Option Node

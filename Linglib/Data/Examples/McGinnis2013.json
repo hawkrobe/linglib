@@ -1,0 +1,456 @@
+[
+  {
+    "id": "mcginnis2013_17a",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(2), (17a)"},
+    "language": "nucl1302",
+    "primaryText": "g-nax-a-t",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["g-nax-a-t", "2.dat-see-aor-pl"]
+    ],
+    "translation": "He/she saw you (pl).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "3"],
+      ["subjNumber", "sg"],
+      ["objPerson", "2"],
+      ["objNumber", "pl"],
+      ["objCase", "dat"],
+      ["screeve", "aorist"],
+      ["prefix", "g"],
+      ["suffix1", "a"],
+      ["suffix2", "t"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "mcginnis2013_17b",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(3a), (17b)"},
+    "language": "nucl1302",
+    "primaryText": "g-nax-es",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["g-nax-es", "2.dat-see-aor.3pl"]
+    ],
+    "translation": "They saw you (sg).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "3"],
+      ["subjNumber", "pl"],
+      ["objPerson", "2"],
+      ["objNumber", "sg"],
+      ["objCase", "dat"],
+      ["screeve", "aorist"],
+      ["prefix", "g"],
+      ["suffix1", "es"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "mcginnis2013_3b",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(3b), (17b)"},
+    "language": "nucl1302",
+    "primaryText": "g-nax-es-t",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["g-nax-es-t", "2.dat-see-aor.3pl-pl"]
+    ],
+    "translation": "They saw you (pl).",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "3"],
+      ["subjNumber", "pl"],
+      ["objPerson", "2"],
+      ["objNumber", "pl"],
+      ["objCase", "dat"],
+      ["screeve", "aorist"],
+      ["prefix", "g"],
+      ["suffix1", "es"],
+      ["suffix2", "t"]
+    ],
+    "comment": "Double plural marking: the subject's Group is discharged by -es, and the object contributes no second Group."
+  },
+  {
+    "id": "mcginnis2013_5c",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(5c)"},
+    "language": "nucl1302",
+    "primaryText": "g-nax-a",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["g-nax-a", "2.dat-see-aor"]
+    ],
+    "translation": "She/he saw you (sg).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "3"],
+      ["subjNumber", "sg"],
+      ["objPerson", "2"],
+      ["objNumber", "sg"],
+      ["objCase", "dat"],
+      ["screeve", "aorist"],
+      ["prefix", "g"],
+      ["suffix1", "a"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "mcginnis2013_6a",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(6a)"},
+    "language": "nucl1302",
+    "primaryText": "v-nax-es",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["v-nax-es", "1-see-aor.3pl"]
+    ],
+    "translation": "I saw them.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "1"],
+      ["subjNumber", "sg"],
+      ["objPerson", "3"],
+      ["objNumber", "pl"],
+      ["objCase", "dat"],
+      ["screeve", "aorist"],
+      ["prefix", "v"],
+      ["suffix1", "es"]
+    ],
+    "comment": "A third-person object is not a clitic and is out of T's reach."
+  },
+  {
+    "id": "mcginnis2013_6b_we",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(6b), (11b), (22b)"},
+    "language": "nucl1302",
+    "primaryText": "v-nax-e-t",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["v-nax-e-t", "1-see-aor.part-pl"]
+    ],
+    "translation": "We saw him/her/it/them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "1"],
+      ["subjNumber", "pl"],
+      ["objPerson", "3"],
+      ["objNumber", "sg"],
+      ["objCase", "dat"],
+      ["screeve", "aorist"],
+      ["prefix", "v"],
+      ["suffix1", "e"],
+      ["suffix2", "t"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "mcginnis2013_6b_i",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(6b)"},
+    "language": "nucl1302",
+    "primaryText": "v-nax-e-t",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["v-nax-e-t", "1-see-aor.part-pl"]
+    ],
+    "translation": "I saw them.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "1"],
+      ["subjNumber", "sg"],
+      ["objPerson", "3"],
+      ["objNumber", "pl"],
+      ["objCase", "dat"],
+      ["screeve", "aorist"],
+      ["prefix", "v"],
+      ["suffix1", "e"],
+      ["suffix2", "t"]
+    ],
+    "comment": "The reading on which -t registers the third-person plural object."
+  },
+  {
+    "id": "mcginnis2013_6c",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(6c), (22a)"},
+    "language": "nucl1302",
+    "primaryText": "v-nax-e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["v-nax-e", "1-see-aor.part"]
+    ],
+    "translation": "I saw him/her/it/them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "1"],
+      ["subjNumber", "sg"],
+      ["objPerson", "3"],
+      ["objNumber", "sg"],
+      ["objCase", "dat"],
+      ["screeve", "aorist"],
+      ["prefix", "v"],
+      ["suffix1", "e"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "mcginnis2013_18a",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(12), (18a)"},
+    "language": "nucl1302",
+    "primaryText": "g-nax-o-s",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["g-nax-o-s", "2.dat-see-opt-#"]
+    ],
+    "translation": "... that he/she see you (sg)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "3"],
+      ["subjNumber", "sg"],
+      ["objPerson", "2"],
+      ["objNumber", "sg"],
+      ["objCase", "dat"],
+      ["screeve", "optative"],
+      ["prefix", "g"],
+      ["suffix1", "o"],
+      ["suffix2", "s"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "mcginnis2013_18b",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(15), (18b)"},
+    "language": "nucl1302",
+    "primaryText": "g-nax-o-t",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["g-nax-o-t", "2.dat-see-opt-pl"]
+    ],
+    "translation": "... that he/she see you (pl)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "3"],
+      ["subjNumber", "sg"],
+      ["objPerson", "2"],
+      ["objNumber", "pl"],
+      ["objCase", "dat"],
+      ["screeve", "optative"],
+      ["prefix", "g"],
+      ["suffix1", "o"],
+      ["suffix2", "t"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "mcginnis2013_18b_st",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(15), (18b)"},
+    "language": "nucl1302",
+    "primaryText": "g-nax-o-s-t",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["g-nax-o-s-t", "2.dat-see-opt-#-pl"]
+    ],
+    "translation": "... that he/she see you (pl)",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "3"],
+      ["subjNumber", "sg"],
+      ["objPerson", "2"],
+      ["objNumber", "pl"],
+      ["objCase", "dat"],
+      ["screeve", "optative"],
+      ["prefix", "g"],
+      ["suffix1", "o"],
+      ["suffix2", "s"],
+      ["suffix3", "t"]
+    ],
+    "comment": "-t discharges [#], so -s cannot."
+  },
+  {
+    "id": "mcginnis2013_18b_ts",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(15), (18b)"},
+    "language": "nucl1302",
+    "primaryText": "g-nax-o-t-s",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["g-nax-o-t-s", "2.dat-see-opt-pl-#"]
+    ],
+    "translation": "... that he/she see you (pl)",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "3"],
+      ["subjNumber", "sg"],
+      ["objPerson", "2"],
+      ["objNumber", "pl"],
+      ["objCase", "dat"],
+      ["screeve", "optative"],
+      ["prefix", "g"],
+      ["suffix1", "o"],
+      ["suffix2", "t"],
+      ["suffix3", "s"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "mcginnis2013_21",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(21)"},
+    "language": "nucl1302",
+    "primaryText": "gv-nax-e-t",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gv-nax-e-t", "multisp.dat-see-aor.part-pl"]
+    ],
+    "translation": "You (pl) saw us.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "2"],
+      ["subjNumber", "pl"],
+      ["objPerson", "1"],
+      ["objNumber", "pl"],
+      ["objCase", "dat"],
+      ["screeve", "aorist"],
+      ["prefix", "gv"],
+      ["suffix1", "e"],
+      ["suffix2", "t"]
+    ],
+    "comment": "The dative first-person plural bears Multispeaker, its Group impoverished; the plural subject supplies the one Group."
+  },
+  {
+    "id": "mcginnis2013_23a",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(23a)"},
+    "language": "nucl1302",
+    "primaryText": "m-nax-a",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["m-nax-a", "1.dat-see-aor"]
+    ],
+    "translation": "He/she saw me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "3"],
+      ["subjNumber", "sg"],
+      ["objPerson", "1"],
+      ["objNumber", "sg"],
+      ["objCase", "dat"],
+      ["screeve", "aorist"],
+      ["prefix", "m"],
+      ["suffix1", "a"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "mcginnis2013_23b",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(23b)"},
+    "language": "nucl1302",
+    "primaryText": "gv-nax-a",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gv-nax-a", "multisp.dat-see-aor"]
+    ],
+    "translation": "He/she saw us.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "3"],
+      ["subjNumber", "sg"],
+      ["objPerson", "1"],
+      ["objNumber", "pl"],
+      ["objCase", "dat"],
+      ["screeve", "aorist"],
+      ["prefix", "gv"],
+      ["suffix1", "a"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "mcginnis2013_23b_t",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(23b)"},
+    "language": "nucl1302",
+    "primaryText": "gv-nax-a-t",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gv-nax-a-t", "multisp.dat-see-aor-pl"]
+    ],
+    "translation": "He/she saw us.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "3"],
+      ["subjNumber", "sg"],
+      ["objPerson", "1"],
+      ["objNumber", "pl"],
+      ["objCase", "dat"],
+      ["screeve", "aorist"],
+      ["prefix", "gv"],
+      ["suffix1", "a"],
+      ["suffix2", "t"]
+    ],
+    "comment": "No Group survives Impoverishment on the dative first-person plural."
+  },
+  {
+    "id": "mcginnis2013_26",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(26)"},
+    "language": "nucl1302",
+    "primaryText": "gv-nax-es",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gv-nax-es", "multisp.dat-see-aor.3pl"]
+    ],
+    "translation": "They saw us.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "3"],
+      ["subjNumber", "pl"],
+      ["objPerson", "1"],
+      ["objNumber", "pl"],
+      ["objCase", "dat"],
+      ["screeve", "aorist"],
+      ["prefix", "gv"],
+      ["suffix1", "es"]
+    ],
+    "comment": ""
+  }
+]
