@@ -1,7 +1,6 @@
 import Linglib.Logic.SystemZ
 import Linglib.Logic.TweetyNixon
 import Linglib.Core.Probability.SoftmaxLimits
-import Linglib.Studies.Veltman1996
 import Mathlib.Algebra.Tropical.BigOperators
 
 /-!
@@ -32,10 +31,6 @@ from a set of defaults, using tolerance-based stratification.
 3. **Specificity**: More specific defaults automatically override
    general ones — penguinNoFly outranks penguinFlies because the
    penguin-specific rule has higher Z-priority.
-
-4. **Bridge to Veltman**: The κ^z ranking derives the same specificity
-   result that [veltman-1996] obtains by stipulating orderings.
-   We prove the agreement directly.
 
 ## Ranking Functions as RSA Limits
 
@@ -203,7 +198,7 @@ theorem birds_fly :
   cases w <;> simp_all [isBird, flies]
   all_goals exact ⟨.birdFlies, trivial, trivial, by decide⟩
 
-/-! ### Specificity: κ^z Derives What Veltman Stipulates -/
+/-! ### Specificity -/
 
 /-- The κ^z ranking makes penguinNoFly strictly more plausible than
     penguinFlies. -/
@@ -220,34 +215,6 @@ theorem general_default_preserved :
 theorem κz_connected :
     Core.Order.Normality.connected κ_z.toPlausibilityOrder.toPreorder :=
   κ_z.ranking_connected
-
-/-! ### Bridge to Veltman 1996
-
-[veltman-1996] manually stipulates subdomain orderings to
-resolve the Tweety Triangle: `birdOrd` promotes flying,
-`penguinOrd` promotes not-flying. The key result is
-`penguinFlies_not_normal_in_birds` — penguinFlies fails the
-normality test because the penguin subdomain ordering demotes it.
-
-G&P's System Z *derives* the same specificity result from the
-rules alone, without any stipulated orderings. The following
-theorem makes this derivation-vs-stipulation relationship explicit
-by combining both papers' conclusions. -/
-
-open Veltman1996 in
-
-/-- What [veltman-1996] stipulates about penguin normality,
-    [goldszmidt-pearl-1996]'s System Z derives:
-    - Veltman: penguinFlies is not normal among birds (via stipulated
-      penguin subdomain ordering)
-    - G&P: penguinFlies has strictly higher κ^z rank than birdFlies
-      (derived from tolerance stratification alone)
-    Both reach the same conclusion: flying penguins are less normal
-    than non-flying penguins in a bird context. -/
-theorem gp_derives_veltman_specificity :
-    TweetyWorld.penguinFlies ∉ tweetyFrame.normal birdDomain ∧
-    κ_z.rank .penguinFlies > κ_z.rank .birdFlies :=
-  ⟨penguinFlies_not_normal_in_birds, by decide⟩
 
 /-! ### RSA Bridge Substrate: Rankings as Softmax Limits
 
