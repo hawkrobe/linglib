@@ -1,0 +1,680 @@
+[
+  {
+    "id": "scott2021_cleft_24_mi",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(24)"},
+    "language": "swah1253",
+    "primaryText": "Mimi ndi-ye amba-ye Bahati a-li-pika na-mi.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
+      ["a-li-pika", "1-PST-cook"], ["na-mi", "with-PRO"]
+    ],
+    "translation": "It's me/you who Bahati cooked with.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "cleft"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["form", "mi"]
+    ],
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_cleft_24_ye",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(24)"},
+    "language": "swah1253",
+    "primaryText": "Mimi ndi-ye amba-ye Bahati a-li-pika na-ye.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
+      ["a-li-pika", "1-PST-cook"], ["na-ye", "with-PRO"]
+    ],
+    "translation": "It's me/you who Bahati cooked with.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "cleft"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["form", "ye"]
+    ],
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_cleft_25_we",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(25)"},
+    "language": "swah1253",
+    "primaryText": "Wewe ndi-ye amba-ye Bahati a-li-pika na-we.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Wewe", "2SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
+      ["a-li-pika", "1-PST-cook"], ["na-we", "with-PRO"]
+    ],
+    "translation": "It's me/you who Bahati cooked with.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "cleft"],
+      ["antecedentPerson", "2"],
+      ["antecedentNumber", "sg"],
+      ["form", "we"]
+    ],
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_cleft_25_ye",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(25)"},
+    "language": "swah1253",
+    "primaryText": "Wewe ndi-ye amba-ye Bahati a-li-pika na-ye.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Wewe", "2SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
+      ["a-li-pika", "1-PST-cook"], ["na-ye", "with-PRO"]
+    ],
+    "translation": "It's me/you who Bahati cooked with.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "cleft"],
+      ["antecedentPerson", "2"],
+      ["antecedentNumber", "sg"],
+      ["form", "ye"]
+    ],
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_cleft_29a_si",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(29a)"},
+    "language": "swah1253",
+    "primaryText": "Mimi ndi-ye amba-ye Bahati a-li-pika na-si.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
+      ["a-li-pika", "1-PST-cook"], ["na-si", "with-PRO"]
+    ],
+    "translation": "It's me/you who Bahati cooked with.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "cleft"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["form", "si"]
+    ],
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_cleft_29a_o",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(29a)"},
+    "language": "swah1253",
+    "primaryText": "Mimi ndi-ye amba-ye Bahati a-li-pika na-o.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
+      ["a-li-pika", "1-PST-cook"], ["na-o", "with-PRO"]
+    ],
+    "translation": "It's me/you who Bahati cooked with.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "cleft"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["form", "o"]
+    ],
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_cleft_29b_nyi",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(29b)"},
+    "language": "swah1253",
+    "primaryText": "Wewe ndi-ye amba-ye Bahati a-li-pika na-nyi.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Wewe", "2SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
+      ["a-li-pika", "1-PST-cook"], ["na-nyi", "with-PRO"]
+    ],
+    "translation": "It's me/you who Bahati cooked with.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "cleft"],
+      ["antecedentPerson", "2"],
+      ["antecedentNumber", "sg"],
+      ["form", "nyi"]
+    ],
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_cleft_29b_o",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(29b)"},
+    "language": "swah1253",
+    "primaryText": "Wewe ndi-ye amba-ye Bahati a-li-pika na-o.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Wewe", "2SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
+      ["a-li-pika", "1-PST-cook"], ["na-o", "with-PRO"]
+    ],
+    "translation": "It's me/you who Bahati cooked with.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "cleft"],
+      ["antecedentPerson", "2"],
+      ["antecedentNumber", "sg"],
+      ["form", "o"]
+    ],
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_island_31_we",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(31)"},
+    "language": "swah1253",
+    "primaryText": "… na-we",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-we", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "island"],
+      ["antecedentPerson", "2"],
+      ["antecedentNumber", "sg"],
+      ["form", "we"]
+    ],
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_island_31_ye",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(31)"},
+    "language": "swah1253",
+    "primaryText": "… na-ye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-ye", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "island"],
+      ["antecedentPerson", "2"],
+      ["antecedentNumber", "sg"],
+      ["form", "ye"]
+    ],
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_island_32_mi",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(32)"},
+    "language": "swah1253",
+    "primaryText": "… na-mi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-mi", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "island"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["form", "mi"]
+    ],
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_island_32_ye",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(32)"},
+    "language": "swah1253",
+    "primaryText": "… na-ye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-ye", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "island"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["form", "ye"]
+    ],
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_island_33_mi",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(33)"},
+    "language": "swah1253",
+    "primaryText": "… na-mi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-mi", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "island"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["form", "mi"]
+    ],
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_island_33_ye",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(33)"},
+    "language": "swah1253",
+    "primaryText": "… na-ye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-ye", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "island"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["form", "ye"]
+    ],
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_pg_36",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(36)"},
+    "language": "swah1253",
+    "primaryText": "Mimi ndi-ye amba-ye u-li-pika na-ye kabla ya ku-ondoka na-ye.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-ye", "with-1"], ["na-ye", "with-1"]
+    ],
+    "translation": "It's me who you cooked with before leaving with.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "parasiticGap"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["trueGap", "ye"],
+      ["parasitic", "ye"]
+    ],
+    "comment": "Movement copies in both the true-gap and parasitic positions.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_pg_37",
+    "source": {"bibkey": "scott-2021", "paperLabel": "(37)"},
+    "language": "swah1253",
+    "primaryText": "Mimi ndi-ye amba-ye u-li-pika na-mi kabla ya ku-cheza na-ye.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-mi", "with-1SG"], ["na-ye", "with-1"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "parasiticGap"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["trueGap", "mi"],
+      ["parasitic", "ye"]
+    ],
+    "comment": "A personless parasitic pronoun is not licensed by a bound true-gap pronoun; ye must be read as third person.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_table4_sp1_ye_ye",
+    "source": {"bibkey": "scott-2021", "paperLabel": "Table 4"},
+    "language": "swah1253",
+    "primaryText": "… na-ye … na-ye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-ye", "with-PRO"], ["na-ye", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "parasiticGap"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["trueGap", "ye"],
+      ["parasitic", "ye"],
+      ["speaker", "1"]
+    ],
+    "comment": "Table 4, Speaker 1: true-gap ye, parasitic-gap ye.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_table4_sp1_mi_ye",
+    "source": {"bibkey": "scott-2021", "paperLabel": "Table 4"},
+    "language": "swah1253",
+    "primaryText": "… na-mi … na-ye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-mi", "with-PRO"], ["na-ye", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "parasiticGap"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["trueGap", "mi"],
+      ["parasitic", "ye"],
+      ["speaker", "1"]
+    ],
+    "comment": "Table 4, Speaker 1: true-gap mi, parasitic-gap ye.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_table4_sp1_mi_mi",
+    "source": {"bibkey": "scott-2021", "paperLabel": "Table 4"},
+    "language": "swah1253",
+    "primaryText": "… na-mi … na-mi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-mi", "with-PRO"], ["na-mi", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "parasiticGap"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["trueGap", "mi"],
+      ["parasitic", "mi"],
+      ["speaker", "1"]
+    ],
+    "comment": "Table 4, Speaker 1: true-gap mi, parasitic-gap mi.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_table4_sp1_ye_mi",
+    "source": {"bibkey": "scott-2021", "paperLabel": "Table 4"},
+    "language": "swah1253",
+    "primaryText": "… na-ye … na-mi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-ye", "with-PRO"], ["na-mi", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "parasiticGap"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["trueGap", "ye"],
+      ["parasitic", "mi"],
+      ["speaker", "1"]
+    ],
+    "comment": "Table 4, Speaker 1: true-gap ye, parasitic-gap mi.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_table4_sp2_ye_ye",
+    "source": {"bibkey": "scott-2021", "paperLabel": "Table 4"},
+    "language": "swah1253",
+    "primaryText": "… na-ye … na-ye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-ye", "with-PRO"], ["na-ye", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "parasiticGap"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["trueGap", "ye"],
+      ["parasitic", "ye"],
+      ["speaker", "2"]
+    ],
+    "comment": "Table 4, Speaker 2: true-gap ye, parasitic-gap ye.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_table4_sp2_mi_ye",
+    "source": {"bibkey": "scott-2021", "paperLabel": "Table 4"},
+    "language": "swah1253",
+    "primaryText": "… na-mi … na-ye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-mi", "with-PRO"], ["na-ye", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "parasiticGap"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["trueGap", "mi"],
+      ["parasitic", "ye"],
+      ["speaker", "2"]
+    ],
+    "comment": "Table 4, Speaker 2: true-gap mi, parasitic-gap ye.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_table4_sp2_mi_mi",
+    "source": {"bibkey": "scott-2021", "paperLabel": "Table 4"},
+    "language": "swah1253",
+    "primaryText": "… na-mi … na-mi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-mi", "with-PRO"], ["na-mi", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "parasiticGap"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["trueGap", "mi"],
+      ["parasitic", "mi"],
+      ["speaker", "2"]
+    ],
+    "comment": "Table 4, Speaker 2: true-gap mi, parasitic-gap mi.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_table4_sp2_ye_mi",
+    "source": {"bibkey": "scott-2021", "paperLabel": "Table 4"},
+    "language": "swah1253",
+    "primaryText": "… na-ye … na-mi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-ye", "with-PRO"], ["na-mi", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "parasiticGap"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["trueGap", "ye"],
+      ["parasitic", "mi"],
+      ["speaker", "2"]
+    ],
+    "comment": "Table 4, Speaker 2: true-gap ye, parasitic-gap mi.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_table4_sp3_ye_ye",
+    "source": {"bibkey": "scott-2021", "paperLabel": "Table 4"},
+    "language": "swah1253",
+    "primaryText": "… na-ye … na-ye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-ye", "with-PRO"], ["na-ye", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "parasiticGap"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["trueGap", "ye"],
+      ["parasitic", "ye"],
+      ["speaker", "3"]
+    ],
+    "comment": "Table 4, Speaker 3: true-gap ye, parasitic-gap ye.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_table4_sp3_mi_ye",
+    "source": {"bibkey": "scott-2021", "paperLabel": "Table 4"},
+    "language": "swah1253",
+    "primaryText": "… na-mi … na-ye",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-mi", "with-PRO"], ["na-ye", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "parasiticGap"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["trueGap", "mi"],
+      ["parasitic", "ye"],
+      ["speaker", "3"]
+    ],
+    "comment": "Table 4, Speaker 3: true-gap mi, parasitic-gap ye.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_table4_sp3_mi_mi",
+    "source": {"bibkey": "scott-2021", "paperLabel": "Table 4"},
+    "language": "swah1253",
+    "primaryText": "… na-mi … na-mi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-mi", "with-PRO"], ["na-mi", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "parasiticGap"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["trueGap", "mi"],
+      ["parasitic", "mi"],
+      ["speaker", "3"]
+    ],
+    "comment": "Table 4, Speaker 3: true-gap mi, parasitic-gap mi.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "scott2021_table4_sp3_ye_mi",
+    "source": {"bibkey": "scott-2021", "paperLabel": "Table 4"},
+    "language": "swah1253",
+    "primaryText": "… na-ye … na-mi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["na-ye", "with-PRO"], ["na-mi", "with-PRO"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "parasiticGap"],
+      ["antecedentPerson", "1"],
+      ["antecedentNumber", "sg"],
+      ["trueGap", "ye"],
+      ["parasitic", "mi"],
+      ["speaker", "3"]
+    ],
+    "comment": "Table 4, Speaker 3: true-gap ye, parasitic-gap mi.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  }
+]
