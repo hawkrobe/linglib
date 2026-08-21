@@ -53,7 +53,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      ["m1", "hu"],
+      ["m2", "na'"],
+      ["m3", "fan"],
+      ["m4", "otchu"]
+    ],
     "comment": "fan- (inside causative na'-) registers the plurality of the semantic subject of 'eat', not the surface subject. Repeated as Baker's (30).",
     "lgrConformance": "WORD_ALIGNED"
   },
@@ -73,7 +78,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      ["m1", "hu"],
+      ["m2", "na'"],
+      ["m3", "fan"],
+      ["m4", "saolak"],
+      ["m5", "in"]
+    ],
     "comment": "Causative of passive: fan- sits between -in- and na'- and registers the intermediate subject (post-passive, pre-causative) -- 'the children' is neither the semantic nor the surface subject.",
     "lgrConformance": "WORD_ALIGNED"
   },
@@ -92,7 +103,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      ["m1", "maqa"],
+      ["m2", "naku"],
+      ["m3", "ya"],
+      ["m4", "chi"],
+      ["m5", "n"]
+    ],
     "comment": "Baker's translation carries coreference indices ('He_j is causing them_i to beat each other_i'): the reciprocal binds within the caused event. Quechua variety unspecified; Baker credits Muysken 1981. Glottocode is the Quechuan family.",
     "lgrConformance": "WORD_ALIGNED"
   },
@@ -111,7 +128,13 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      ["m1", "maqa"],
+      ["m2", "chi"],
+      ["m3", "naku"],
+      ["m4", "rka"],
+      ["m5", "n"]
+    ],
     "comment": "Baker's translation carries coreference indices ('They_j let someone_i beat each other_j'): the reciprocal binds the causers, applying after the causative.",
     "lgrConformance": "WORD_ALIGNED"
   },
@@ -131,7 +154,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      ["m1", "naa"],
+      ["m2", "mon"],
+      ["m3", "an"],
+      ["m4", "ya"]
+    ],
     "comment": "Reciprocal -an inside causative -ya: the same order and interpretation as Quechua (39a). Baker credits the Bemba data to Givon 1976.",
     "lgrConformance": "WORD_ALIGNED"
   },
@@ -151,7 +179,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      ["m1", "baa"],
+      ["m2", "mon"],
+      ["m3", "eshy"],
+      ["m4", "ana"]
+    ],
     "comment": "Causative -eshy inside reciprocal -ana. Bemba's causative is Chamorro-type (Baker's (50)-(51)), so Reciprocal links causer and initial agent -- unlike Quechua (39b), where it links causer and initial patient.",
     "lgrConformance": "WORD_ALIGNED"
   },
@@ -171,7 +204,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      ["m1", "me"],
+      ["m2", "puutinanai"],
+      ["m3", "ri"],
+      ["m4", "yeri"]
+    ],
     "comment": "Passive of the applicative (54b): the beneficiary has become subject (quantifier morphology, subject agreement), and benefactive -ri is closer to the verb than passive -yeri. Baker credits the Huichol data to Comrie 1982.",
     "lgrConformance": "WORD_ALIGNED"
   },
@@ -191,7 +229,12 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      ["m1", "tet"],
+      ["m2", "el"],
+      ["m3", "el"],
+      ["m4", "a"]
+    ],
     "comment": "Passive of the applicative (56b): the goal 'the teacher' is surface subject; passive -a outside applied -el. SP = subject prefix (here null).",
     "lgrConformance": "WORD_ALIGNED"
   },
@@ -231,7 +274,14 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      ["m1", "i"],
+      ["m2", "ra"],
+      ["m3", "andik"],
+      ["m4", "iish"],
+      ["m5", "w"],
+      ["m6", "a"]
+    ],
     "comment": "The instrument has become subject; passive -w outside applied -iish, as the Mirror Principle predicts. Baker credits the Kinyarwanda data to Kimenyi 1980.",
     "lgrConformance": "WORD_ALIGNED"
   },

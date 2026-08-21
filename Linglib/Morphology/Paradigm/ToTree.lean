@@ -50,8 +50,8 @@ def AffixAction.material : AffixAction M → M
 
 /-- Apply an affix action to a tree. -/
 def AffixAction.apply : AffixAction M → Word.Tree M → Word.Tree M
-  | .pre m, t => .prefixed m t
-  | .suf m, t => .suffixed t m
+  | .pre m, t => t.attach .before m
+  | .suf m, t => t.attach .after m
 
 /-- Apply an affix action to a material sequence. -/
 def AffixAction.applyList : AffixAction M → List M → List M

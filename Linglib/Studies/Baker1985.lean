@@ -23,6 +23,8 @@ ordering in Huichol, Chi-Mwi:ni, and Kinyarwanda (§4.2).
 * `quechuaRecipInsideCaus` … `bembaCausInsideRecip`: the §4.1 ordering pairs.
 * `huichol`, `chiMwini`, `kinyarwanda`: the applied affix universally inner to the
   passive affix (§4.2).
+* `surface_sublist`: the surface each derivation derives is a subsequence of its
+  stimulus's segmentation.
 
 The glossed stimuli live in `Data/Examples/Baker1985.json` (generated module
 `Data.Examples.Baker1985`); each analysis below names its stimulus row.
@@ -30,7 +32,7 @@ The glossed stimuli live in `Data/Examples/Baker1985.json` (generated module
 
 namespace Baker1985
 
-open Morphology.MirrorPrinciple
+open Morphology.MirrorPrinciple Data.Examples
 
 /-! ### The Agreement Restriction ([baker-1985] §3.2)
 
@@ -108,7 +110,7 @@ sits between the two GF-rule morphemes and registers the intermediate subject �
 post-passive, pre-causative ([baker-1985] (25), (26)). Stimulus row:
 `Examples.chamorro_25`. -/
 def chamorroCausativePassive : Derivation :=
-  [⟨.passive, "-in-"⟩, ⟨.causative, "na'-"⟩]
+  [⟨.passive, "in", .after⟩, ⟨.causative, "na'", .before⟩]
 
 theorem chamorroCausativePassive_ruleOrder :
     ruleOrder chamorroCausativePassive = [.passive, .causative] := rfl
@@ -129,14 +131,14 @@ inside causative *-chi*, so Reciprocal applies first, linking agent and patient 
 the root; Causative then adds the causer ([baker-1985] (39a), (45)–(46)). Stimulus
 row: `Examples.quechua_39a`. -/
 def quechuaRecipInsideCaus : Derivation :=
-  [⟨.reflexReciprocal, "-naku"⟩, ⟨.causative, "-chi"⟩]
+  [⟨.reflexReciprocal, "naku", .after⟩, ⟨.causative, "chi", .after⟩]
 
 /-- *Maqa-chi-naku-rka-n* 'They let someone beat each other': causative *-chi* inside
 reciprocal *-naku*, so Causative applies first; Reciprocal then links the causers to
 the initial patients ([baker-1985] (39b), (47)–(48)). Stimulus row:
 `Examples.quechua_39b`. -/
 def quechuaCausInsideRecip : Derivation :=
-  [⟨.causative, "-chi"⟩, ⟨.reflexReciprocal, "-naku"⟩]
+  [⟨.causative, "chi", .after⟩, ⟨.reflexReciprocal, "naku", .after⟩]
 
 theorem quechuaRecipInsideCaus_ruleOrder :
     ruleOrder quechuaRecipInsideCaus = [.reflexReciprocal, .causative] := rfl
@@ -154,7 +156,7 @@ theorem quechua_ruleOrders_differ :
 reciprocal *-an* inside causative *-ya* — the same order and interpretation as
 Quechua (39a) ([baker-1985] (49a)). Stimulus row: `Examples.bemba_49a`. -/
 def bembaRecipInsideCaus : Derivation :=
-  [⟨.reflexReciprocal, "-an"⟩, ⟨.causative, "-ya"⟩]
+  [⟨.reflexReciprocal, "an", .after⟩, ⟨.causative, "ya", .after⟩]
 
 /-- *Mwape na Chilufya baa-mon-eshy-ana Mutumba* 'Mwape and Chilufya made each other
 see Mutumba': causative *-eshy* inside reciprocal *-ana*. Causative applies first
@@ -162,7 +164,7 @@ and — being Chamorro-type — puts the initial agent in object position, so Re
 links causer and initial agent, unlike Quechua (39b) ([baker-1985] (49b), (52)).
 Stimulus row: `Examples.bemba_49b`. -/
 def bembaCausInsideRecip : Derivation :=
-  [⟨.causative, "-eshy"⟩, ⟨.reflexReciprocal, "-ana"⟩]
+  [⟨.causative, "eshy", .after⟩, ⟨.reflexReciprocal, "ana", .after⟩]
 
 theorem bembaRecipInsideCaus_ruleOrder :
     ruleOrder bembaRecipInsideCaus = [.reflexReciprocal, .causative] := rfl
@@ -206,19 +208,19 @@ Kinyarwanda from [kimenyi-1980]. -/
 /-- Huichol *Tiiri yi-nauka-ti nawazi me-puutinanai-ri-yeri* 'Four children were
 bought a knife': benefactive *-ri* inside passive *-yeri* ([baker-1985] (55)).
 Stimulus row: `Examples.huichol_55`. -/
-def huichol : Derivation := [⟨.applicative, "-ri"⟩, ⟨.passive, "-yeri"⟩]
+def huichol : Derivation := [⟨.applicative, "ri", .after⟩, ⟨.passive, "yeri", .after⟩]
 
 /-- Chi-Mwi:ni *Mwa:limu tet-el-el-a chibu:ku na Nu:ru* 'The teacher was brought the
 book by Nuru': applied *-el* inside passive *-a*, with aspect between them
 ([baker-1985] (56c)). Stimulus rows: `Examples.chimwiini_56c` and the starred
 `Examples.chimwiini_56d`. -/
-def chiMwini : Derivation := [⟨.applicative, "-el"⟩, ⟨.passive, "-a"⟩]
+def chiMwini : Derivation := [⟨.applicative, "el", .after⟩, ⟨.passive, "a", .after⟩]
 
 /-- Kinyarwanda *Ikaramu i-ra-andik-iish-w-a ibaruwa n'umugabo* 'The pen was
 written-with the letter by the man': instrumental applicative *-iish* inside passive
 *-w* ([baker-1985] (57c)). Stimulus rows: `Examples.kinyarwanda_57c` and
 `Examples.kinyarwanda_57d`. -/
-def kinyarwanda : Derivation := [⟨.applicative, "-iish"⟩, ⟨.passive, "-w"⟩]
+def kinyarwanda : Derivation := [⟨.applicative, "iish", .after⟩, ⟨.passive, "w", .after⟩]
 
 /-- All three languages place the applied affix before the passive affix, as the
 feeding order requires. -/
@@ -242,5 +244,26 @@ Kinyarwanda passive independently promotes either postverbal NP of a double-obje
 verb ((58)), so (57d) is not a Mirror Principle counterexample. -/
 theorem kinyarwanda_57d_acceptable :
     Examples.kinyarwanda_57d.judgment = .acceptable := rfl
+
+/-! ### The derived surfaces -/
+
+/-- A stimulus's morph segmentation. -/
+def segments (ex : LinguisticExample) : List String :=
+  ["m1", "m2", "m3", "m4", "m5", "m6"].filterMap ex.feature?
+
+/-- Each derivation's surface — the GF-rule affixes attached on their sides around
+the root — is a subsequence of the stimulus's segmentation: prefixal *na'-* outside
+the passive, suffixal reciprocal, causative, applied, and passive affixes in the order
+the rules applied, the non-GF morphemes interleaved. -/
+theorem surface_sublist :
+    (surface "saolak" chamorroCausativePassive).Sublist (segments Examples.chamorro_25) ∧
+      (surface "maqa" quechuaRecipInsideCaus).Sublist (segments Examples.quechua_39a) ∧
+      (surface "maqa" quechuaCausInsideRecip).Sublist (segments Examples.quechua_39b) ∧
+      (surface "mon" bembaRecipInsideCaus).Sublist (segments Examples.bemba_49a) ∧
+      (surface "mon" bembaCausInsideRecip).Sublist (segments Examples.bemba_49b) ∧
+      (surface "puutinanai" huichol).Sublist (segments Examples.huichol_55) ∧
+      (surface "tet" chiMwini).Sublist (segments Examples.chimwiini_56c) ∧
+      (surface "andik" kinyarwanda).Sublist (segments Examples.kinyarwanda_57c) := by
+  decide
 
 end Baker1985
