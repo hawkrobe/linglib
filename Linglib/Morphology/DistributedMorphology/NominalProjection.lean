@@ -2,11 +2,11 @@ import Mathlib.Order.WithBot
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# The nominal spine
+# The extended nominal projection
 
-The extended nominal projection as a spine order — √ROOT < n < Poss <
-Num < D — with the positions of the nominal domain classified by where
-they attach. Locality to n is then geometry: a position is within nP
+The extended nominal projection — the nominal spine √ROOT < n < Poss <
+Num < D — as an order of heads, with the positions of the nominal domain
+classified by where they attach. Locality to n is then geometry: a position is within nP
 exactly when its attachment site is at or below n, which is what
 [adamson-2024]'s Gender Locality Hypothesis (gender features on n are
 valued only within nP) quantifies over. The inalienable/alienable
@@ -16,10 +16,10 @@ number likewise ([adamson-2024]).
 
 ## Main definitions
 
-* `SpineHead` — the heads of the extended nominal projection, linearly
-  ordered by height
-* `NominalPosition`, `NominalPosition.attachmentSite`, `isWithinNP` —
-  the positions of the nominal domain and their spine geometry
+* `NominalProjection.Head` — the heads of the extended nominal projection,
+  linearly ordered by height
+* `NominalProjection.Position`, `Position.attachmentSite`, `isWithinNP` —
+  the positions of the nominal domain and their place on the projection
 * `PossessionType`, `NumberPosition` — the possession and number
   contrasts as attachment contrasts
 * `ExternalFeature` — features attached above nP, clausal ones outside
@@ -54,12 +54,14 @@ which this substrate does not represent.
 
 namespace DistributedMorphology
 
-/-! ### The nominal spine -/
+namespace NominalProjection
 
-/-- The heads of the extended nominal projection, in spine order:
+/-! ### The heads -/
+
+/-- The heads of the extended nominal projection, in order of height:
 √ROOT < n < Poss < Num < D ([adamson-2024]; the Poss layer after
 [alexiadou-2003], [myler-2016]). -/
-inductive SpineHead where
+inductive Head where
   | root
   | n
   | poss
@@ -67,16 +69,16 @@ inductive SpineHead where
   | d
   deriving DecidableEq, Repr, Fintype
 
-/-- The height of a head on the spine. -/
-def SpineHead.height : SpineHead → Nat
+/-- The height of a head on the projection. -/
+def Head.height : Head → Nat
   | .root => 0
   | .n    => 1
   | .poss => 2
   | .num  => 3
   | .d    => 4
 
-instance : LinearOrder SpineHead :=
-  LinearOrder.lift' SpineHead.height (by decide)
+instance : LinearOrder Head :=
+  LinearOrder.lift' Head.height (by decide)
 
 /-! ### Positions and their attachment sites -/
 
@@ -84,8 +86,8 @@ instance : LinearOrder SpineHead :=
 
     [DP D [NumP Num [PossP DP Poss [nP DP [n √ROOT n]]]]]
 
-heads of the spine together with the two possessor specifiers. -/
-inductive NominalPosition where
+heads of the projection together with the two possessor specifiers. -/
+inductive Position where
   | root         -- √ROOT: the acategorial root itself
   | nHead        -- n: the categorizing head bearing gender features
   | specN        -- Spec,nP: inalienable possessor position
@@ -95,9 +97,9 @@ inductive NominalPosition where
   | d            -- D head: definiteness
   deriving DecidableEq, Repr, Fintype
 
-/-- Where each position attaches on the spine: a specifier attaches at
-its head's projection. -/
-def NominalPosition.attachmentSite : NominalPosition → SpineHead
+/-- Where each position attaches: a specifier attaches at its head's
+projection. -/
+def Position.attachmentSite : Position → Head
   | .root     => .root
   | .nHead    => .n
   | .specN    => .n
@@ -106,14 +108,18 @@ def NominalPosition.attachmentSite : NominalPosition → SpineHead
   | .num      => .num
   | .d        => .d
 
-/-- Within-nP is spine geometry: the position attaches at or below n. -/
-def NominalPosition.isWithinNP (p : NominalPosition) : Bool :=
-  decide (p.attachmentSite ≤ SpineHead.n)
+/-- Within-nP is geometry: the position attaches at or below n. -/
+def Position.isWithinNP (p : Position) : Bool :=
+  decide (p.attachmentSite ≤ Head.n)
+
+end NominalProjection
+
+open NominalProjection
 
 /-- The Gender Locality Hypothesis ([adamson-2024]): gender features on
 n are valued only within nP, so a position can condition gender exactly
 when its attachment site is at or below n. -/
-def genderLocalityHypothesis (pos : NominalPosition) : Bool :=
+def genderLocalityHypothesis (pos : Position) : Bool :=
   pos.isWithinNP
 
 /-! ### Possession -/
@@ -131,7 +137,7 @@ inductive PossessionType where
   deriving DecidableEq, Repr, Fintype
 
 /-- The possessor's position. -/
-def PossessionType.possessorPosition : PossessionType → NominalPosition
+def PossessionType.possessorPosition : PossessionType → Position
   | .inalienable => .specN
   | .alienable   => .specPoss
 
@@ -152,7 +158,7 @@ inductive NumberPosition where
   deriving DecidableEq, Repr, Fintype
 
 /-- The position a number feature occupies. -/
-def NumberPosition.toNominalPosition : NumberPosition → NominalPosition
+def NumberPosition.toPosition : NumberPosition → Position
   | .onN   => .nHead
   | .onNum => .num
 
@@ -170,8 +176,8 @@ inductive ExternalFeature where
   deriving DecidableEq, Repr, Fintype
 
 /-- Where an external feature attaches: case and definiteness at D,
-the clausal features outside the nominal spine altogether. -/
-def ExternalFeature.attachmentSite : ExternalFeature → WithTop SpineHead
+the clausal features outside the nominal projection altogether. -/
+def ExternalFeature.attachmentSite : ExternalFeature → WithTop Head
   | .case         => some .d
   | .definiteness => some .d
   | .tense        => ⊤
@@ -180,7 +186,7 @@ def ExternalFeature.attachmentSite : ExternalFeature → WithTop SpineHead
 
 /-- No external feature attaches within nP. -/
 theorem ExternalFeature.not_withinNP (f : ExternalFeature) :
-    ¬ f.attachmentSite ≤ (SpineHead.n : WithTop SpineHead) := by
+    ¬ f.attachmentSite ≤ (Head.n : WithTop Head) := by
   cases f <;> decide
 
 /-! ### Possession–gender mechanisms -/
@@ -199,7 +205,7 @@ inductive PossessionGenderMechanism where
 
 /-- Both mechanisms involve an iPossessor in Spec,nP. -/
 def PossessionGenderMechanism.possessorPosition :
-    PossessionGenderMechanism → NominalPosition
+    PossessionGenderMechanism → Position
   | .possesseeGender => .specN
   | .inheritedGender => .specN
 
