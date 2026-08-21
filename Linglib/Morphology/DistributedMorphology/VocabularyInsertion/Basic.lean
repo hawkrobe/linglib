@@ -6,8 +6,8 @@ import Linglib.Morphology.Exponence.Select
 
 Vocabulary Insertion supplies syntactic terminals with phonological
 exponents: the Vocabulary Items of List 2 compete for insertion at each
-terminal, and the Subset Principle of [halle-marantz-1993] picks the item
-whose specification is the largest one the terminal's neighborhood contains —
+terminal, and the Subset Principle picks the item whose site is the largest
+one the terminal's neighborhood contains —
 its own features and, for a contextual item, the features of the adjacent
 terminals. This file specializes the shared exponence engine
 (`Morphology.Exponence.selectBy`) to that competition.
@@ -21,7 +21,7 @@ terminals. This file specializes the shared exponence engine
 
 * `winner?_isElsewhereWinner`: the winner is an Elsewhere winner of the
   shared core, with no faithfulness hypothesis — the engine's specificity
-  order is reverse inclusion of specifications (`VocabularyItem.le_iff`).
+  order is reverse inclusion of sites (`VocabularyItem.le_iff`).
 * `winner?_retreat`: deleting features from the neighborhood can only make
   the winner less specific — retreat to the general case.
 
@@ -29,6 +29,7 @@ terminals. This file specializes the shared exponence engine
 
 * [M. Halle and A. Marantz, *Distributed Morphology and the pieces of
   inflection*][halle-marantz-1993]
+* [K. Arregi and A. Nevins, *Morphotactics*][arregi-nevins-2012]
 -/
 
 namespace DistributedMorphology
@@ -48,22 +49,21 @@ def winner? (items : List (VocabularyItem F E)) (n : Neighborhood (List F)) :
     Option (VocabularyItem F E) :=
   selectBy VocabularyItem.specificity items n
 
-/-- The **Subset Principle** ([halle-marantz-1993]): the exponent of the most
-specific item whose specification the neighborhood contains; `none` iff no
-item applies. -/
+/-- The **Subset Principle**: the exponent of the most specific item whose
+site the neighborhood contains; `none` iff no item applies. -/
 def subsetPrinciple (items : List (VocabularyItem F E)) (n : Neighborhood (List F)) : Option E :=
   realize VocabularyItem.specificity items n
 
 theorem winner?_mem (h : winner? items n = some i) : i ∈ applicable items n :=
   List.argmax_mem h
 
-theorem winner?_spec (h : winner? items n = some i) : i ∈ items ∧ i.spec ⊆ n :=
+theorem winner?_spec (h : winner? items n = some i) : i ∈ items ∧ i.site ⊆ n :=
   mem_applicable.mp (winner?_mem h)
 
 /-- The Subset Principle's exponent comes from an applicable item — the
 selection never draws on features the neighborhood does not bear. -/
 theorem subsetPrinciple_winner_mem (h : subsetPrinciple items n = some e) :
-    ∃ i ∈ items, i.exponent = e ∧ i.spec ⊆ n := by
+    ∃ i ∈ items, i.exponent = e ∧ i.site ⊆ n := by
   obtain ⟨i, hi, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨i, (winner?_spec hi).1, rfl, (winner?_spec hi).2⟩
 
@@ -91,8 +91,7 @@ theorem applicable_mono (hsub : n' ⊆ n) : applicable items n' ⊆ applicable i
 /-- **Retreat to the general case**: shrinking the neighborhood — deleting
 features by Impoverishment — can only make the winner weakly less specific,
 which is why impoverishment yields syncretism with a more general exponent
-rather than a different specific one ([halle-marantz-1993],
-[arregi-nevins-2012]). -/
+rather than a different specific one. -/
 theorem winner?_retreat (hsub : n' ⊆ n) (h' : winner? items n' = some i') :
     ∃ i, winner? items n = some i ∧ i'.specificity ≤ i.specificity := by
   have hmem := applicable_mono hsub (winner?_mem h')
