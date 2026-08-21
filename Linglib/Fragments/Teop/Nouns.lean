@@ -8,9 +8,12 @@ import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 Gender I and gender II nouns in Teop (Austronesian, Oceanic), drawn from
 [adamson-2024] Table 1 (sampled from Mosel & Spriggs 2000:336–40).
 
-Teop has two genders distinguished by article form:
-- **Gender I** (article *a*): animates — encoded via [±ANIM] on n
-- **Gender II** (article *o*): inanimates — plain n
+Teop has two genders distinguished by article form, with a "cross-identity"
+between gender and number ([adamson-2024] (25)–(26)): gender I takes *a* in
+the singular and *o* in the plural, gender II *o* in the singular and *a* in
+the plural; proprial nouns of gender I take *e* in the singular.
+- **Gender I**: animates — encoded via [animate] on n
+- **Gender II**: inanimates — plain n
 
 Body-part nouns appear in **both** genders depending on possession:
 iPossessed (with n_{body-part{D}}) → gender I; unpossessed or
@@ -27,8 +30,8 @@ open DistributedMorphology
 
 /-- Teop gender: two classes (Mosel & Spriggs 2000, Mosel 2014). -/
 inductive Gender where
-  | gI   -- article *a/ra*; animates
-  | gII  -- article *o/ro*; inanimates
+  | gI   -- article *a* (sg) ~ *o* (pl); animates
+  | gII  -- article *o* (sg) ~ *a* (pl); inanimates
   deriving DecidableEq, Repr
 
 /-- A Teop noun with its gloss and gender assignment. -/
@@ -98,9 +101,9 @@ def iPossessedGender (n : Noun) : Gender :=
 -- § 5: Article Paradigm (Mosel & Spriggs 2000)
 -- ============================================================================
 
-/-- Teop articles, conditioned by gender and number.
-    Gender Ie (proprial *e*) is treated as gender I with a proprial
-    feature, following [adamson-2024] §3.1. -/
+/-- Teop articles, conditioned by gender and number. Gender Ie (proprial
+    *e*) is treated as gender I with a proprial feature, following
+    [adamson-2024] §3.1; the plural neutralizes it ([adamson-2024] (29)). -/
 structure ArticleCtx where
   gender : Gender
   plural : Bool
@@ -108,11 +111,11 @@ structure ArticleCtx where
   deriving DecidableEq, Repr
 
 def articleForm : ArticleCtx → String
-  | ⟨.gI,  _, true⟩      => "e"
-  | ⟨.gI,  false, false⟩  => "a"
-  | ⟨.gI,  true,  false⟩  => "ra"
-  | ⟨.gII, false, _⟩      => "o"
-  | ⟨.gII, true,  _⟩      => "ro"
+  | ⟨.gI,  false, true⟩  => "e"
+  | ⟨.gI,  false, false⟩ => "a"
+  | ⟨.gI,  true,  _⟩     => "o"
+  | ⟨.gII, false, _⟩     => "o"
+  | ⟨.gII, true,  _⟩     => "a"
 
 -- ============================================================================
 -- § 6: Verification
