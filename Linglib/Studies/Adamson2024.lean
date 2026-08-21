@@ -1,4 +1,4 @@
-import Linglib.Morphology.DistributedMorphology.NominalSpine
+import Linglib.Morphology.DistributedMorphology.NominalProjection
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Morphology.DistributedMorphology.Impoverishment
