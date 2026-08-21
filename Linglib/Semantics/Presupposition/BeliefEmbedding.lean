@@ -32,23 +32,6 @@ variable {W : Type*} {Agent : Type*}
 
 
 /--
-An agent's belief state at a world: the doxastically accessible worlds,
-viewed as a context set. Doxastic accessibility is the agent-indexed
-agent-indexed accessibility relation `E → W → W → Prop` ([hintikka-1962]):
-`Dox agent w w'` means `w'` is compatible with what `agent` believes at `w`.
--/
-def beliefState (Dox : Agent → W → W → Prop) (agent : Agent) (w : W) : ContextSet W :=
-  Dox agent w
-
-/--
-An agent believes a proposition at a world iff the proposition holds at all
-doxastically accessible worlds.
--/
-def believes (Dox : Agent → W → W → Prop) (agent : Agent) (p : W → Prop) (w : W) : Prop :=
-  ∀ w', Dox agent w w' → p w'
-
-
-/--
 The local context of an embedded clause under a belief predicate.
 
 For "agent believes φ" evaluated in context C at world w*:

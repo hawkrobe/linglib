@@ -47,6 +47,12 @@ def diamond (p : W → Prop) (w : W) : Prop :=
     ¬ ◇[R] p w ↔ □[R] (fun v => ¬ p v) w := by
   simp [box, diamond, not_and]
 
+/-- Necessity distributes over conjunction ([hintikka-1962]'s
+`a believes A and B ↔ a believes A and a believes B`). -/
+theorem box_and (p q : W → Prop) (w : W) :
+    □[R] (fun v => p v ∧ q v) w ↔ □[R] p w ∧ □[R] q w := by
+  simp only [box, imp_and, forall_and]
+
 /-! ### Frame conditions -/
 
 /-- `R` is **serial** if every world accesses at least one world. -/

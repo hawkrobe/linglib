@@ -2,7 +2,7 @@ import Linglib.Semantics.Presupposition.Basic
 import Linglib.Discourse.CommonGround
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Semantics.Presupposition.Context
-import Linglib.Semantics.Presupposition.BeliefEmbedding
+import Linglib.Logic.Modal.Defs
 
 /-!
 # Karttunen 1973: Presuppositions of Compound Sentences
@@ -22,10 +22,12 @@ genealogical ancestor of CCP local contexts ([heim-1983],
 This file makes load-bearing the contributions that survive: the
 classification (§§3–4), the rule (13)/(17)/(24) filters, the §8 Harman
 derivation, the §9 X-set machinery (with concrete Geraldine example),
-and the §10 three-valued comparison (Bochvar internal/external negation
-in particular). K1973's §11 verdict on propositional attitudes
-(tentative plug, hedged) is recorded explicitly and contrasted with the
-Heim-1992-era hole consensus.
+the §10 three-valued comparison (Bochvar internal/external negation
+in particular), and the §11 argument on propositional attitudes: the
+[hintikka-1962] equivalence (38) rescues the hole treatment of *believe*
+for (37) by re-collecting the conjunction inside the attitude, but not for
+(42), where *believe* and *hope* cannot be re-collected — hence K's
+tentative plug verdict for the class.
 -/
 
 namespace Karttunen1973
@@ -109,97 +111,50 @@ theorem promise_force_minimal_pair :
     promise.toVerb.projectionBehavior ≠ force.toVerb.projectionBehavior := by
   decide
 
--- ════════════════════════════════════════════════════════════════
--- § 2. Believe — K1973 §11 vs Modern Consensus
--- ════════════════════════════════════════════════════════════════
+/-! ### Propositional attitudes (§11) -/
 
-/-! K1973 §11 (pp. 188–190) discusses propositional attitudes at length.
-    §4 raised the question (hole or plug?) and postponed it. §11
-    considers the hole-with-equivalence-machinery analysis: the (37)/(38)
-    move uses [hintikka-1962]'s `believe(A) ∧ believe(B) ↔
-    believe(A ∧ B)` to let *believe* survive as a hole even when the
-    complement-internal presupposition appears not to project. (38) keeps
-    the hole verdict safe for cases like
+section Attitudes
 
-        (37) Bill believes Fred has been beating Zelda, and furthermore,
-             Bill believes that Fred has stopped beating Zelda.
+open ModalLogic (box box_and)
 
-    But K's (42) defeats the trick — two distinct attitude verbs (believe
-    + hope) on a shared presupposed clause can't be re-collected into a
-    single attitude:
+variable {W : Type*} (att att₁ att₂ : (W → Prop) → W → Prop) (φ : PartialProp W)
+  (R : W → W → Prop) (p q : W → Prop) (w : W)
 
-        (42) Bill believed that Fred had been beating his wife and hoped
-             that Fred would stop beating her.
+/-- A hole lets the complement's presuppositions through: `att` applies to its assertion. -/
+def hole : PartialProp W := ⟨φ.presup, att φ.assertion⟩
 
-    K's tentative §11 conclusion (p. 190): "we do not seem to have any
-    other alternative except to classify all propositional attitude verbs
-    as plugs, although I am still not convinced that this is the right
-    approach." So K1973's published verdict on `believe` is **tentative
-    plug, with explicit hedging**. The Fragment annotation
-    `believe.projectionBehavior = some .hole` reflects the post-1974 /
-    [heim-1992] consensus, not K1973. -/
+/-- A plug blocks them. -/
+def plug : PartialProp W := ⟨λ _ => True, att φ.assertion⟩
 
-/-- The Fragment `believe` annotation diverges from K1973 §11. -/
-theorem believe_fragment_is_hole :
-    believe.toVerb.projectionBehavior = some .hole := rfl
+/-- (37) `Bill believes that Fred has been beating Zelda, and furthermore, Bill believes that
+Fred has stopped beating Zelda` under the hole treatment: rule (17) filters the second
+conjunct's presupposition `p` only where the first conjunct's assertion — that Bill believes
+`p` — yields `p`. The same holds of (42), with *hope* as the second attitude. -/
+theorem andFilter_hole_hole_presup :
+    (PartialProp.andFilter (hole att₁ (.ofProp p)) (hole att₂ ⟨p, q⟩)).presup w ↔
+      (att₁ p w → p w) := by
+  simp [PartialProp.andFilter, PartialProp.ofProp, hole]
 
-/-- *believe* has no presupposition trigger (doxastic, not factive). -/
-theorem believe_nontrigger :
-    believe.toVerb.presupType = none := rfl
+/-- (39), the re-collected `Bill believes that Fred has been beating Zelda and that he has
+stopped`: the filter applies inside the complement and nothing is presupposed, whatever the
+verb's status. -/
+theorem hole_andFilter_presup :
+    (hole att (PartialProp.andFilter (.ofProp p) ⟨p, q⟩)).presup w := ⟨trivial, id⟩
 
-/-! ### Contentful disagreement on a concrete scenario
+/-- (38): (37) and (39) assert the same thing ([hintikka-1962]), so the hole treatment survives
+(37) only at the price of letting the equivalence do the filtering. -/
+theorem hole_andFilter_assertion_iff :
+    (hole (box R) (PartialProp.andFilter (.ofProp p) ⟨p, q⟩)).assertion w ↔
+      (PartialProp.andFilter (hole (box R) (.ofProp p)) (hole (box R) ⟨p, q⟩)).assertion w :=
+  box_and R p q w
 
-    The flat enum-tag inequality `.plug ≠ .hole` is meta-fact. The real
-    disagreement: on a scenario where the complement of *believe* carries
-    a presupposition that is true in the attitude holder's belief state
-    but false in reality, the two analyses make distinct predictions
-    about what the speaker is committed to. -/
+/-- Two distinct attitudes (43) have no (38)-style re-collection; as plugs, (42) presupposes
+nothing outright — K's tentative verdict for the whole class. -/
+theorem andFilter_plug_plug_presup :
+    (PartialProp.andFilter (plug att₁ (.ofProp p)) (plug att₂ ⟨p, q⟩)).presup w :=
+  ⟨trivial, λ _ => trivial⟩
 
-/-- Two-world model: *actual* (where Mary never smoked) and *believed*
-    (John's belief world, where Mary did smoke). -/
-inductive AttWorld where
-  | actual    -- Mary never smoked here; speaker's reality
-  | believed  -- John believes this world; Mary did smoke
-  deriving DecidableEq, Repr
-
-/-- "Mary used to smoke" — the presupposition of "stop smoking". True in
-    `believed`, false in `actual`. -/
-def maryUsedToSmoke : PartialProp AttWorld where
-  presup := fun _ => True
-  assertion := fun w => w = .believed
-
-/-- The speaker-projection of a *plug*-treatment of *believe*: nothing of
-    the complement projects. -/
-def plugSpeakerCommitment : PartialProp AttWorld where
-  presup := fun _ => True
-  assertion := fun _ => True
-
-/-- The speaker-projection of K1973's flat *hole*-treatment of *believe*
-    (pre-Heim 1992): the complement's presupposition projects unchanged
-    to the speaker. -/
-def holeSpeakerCommitment : PartialProp AttWorld := maryUsedToSmoke
-
-/-- The plug analysis predicts no speaker commitment to "Mary used to
-    smoke" at the actual world; the hole analysis predicts the speaker
-    IS committed there. The two analyses make different predictions on
-    the same input. -/
-theorem plug_vs_hole_diverge_at_actual :
-    plugSpeakerCommitment.assertion .actual ∧
-    ¬ holeSpeakerCommitment.assertion .actual := by
-  refine ⟨trivial, ?_⟩
-  simp [holeSpeakerCommitment, maryUsedToSmoke]
-
-/-- Heim 1992 / [schlenker-2009] resolve the dispute by attributing
-    the presupposition to the *attitude holder*, not the speaker. The
-    holder-attribution analysis lives in
-    `Semantics/Presupposition/BeliefEmbedding.lean` as
-    `presupAttributedToHolder`. K1973's flat hole-treatment differs from
-    both Heim 1992's holder-attribution and K1973 §11's tentative plug
-    verdict — three coexisting positions on the same data. -/
-theorem karttunen1973_disagrees_with_modern_consensus :
-    -- K1973 §11 verdict (plug) ≠ Fragment annotation (hole)
-    (some .plug : Option ProjectionBehavior) ≠
-      believe.toVerb.projectionBehavior := by decide
+end Attitudes
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Filter Rules for the Connectives

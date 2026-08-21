@@ -66,7 +66,7 @@ theorem admits_believes : (believes Dox a φ).admits c ↔ ∀ w ∈ c, φ.admit
 `a` believes `p`. -/
 theorem admits_believes_ofPartialProp :
     (believes Dox a (ofPartialProp p)).admits c ↔
-      ∀ w ∈ c, BeliefEmbedding.believes Dox a p.presup w :=
+      ∀ w ∈ c, ModalLogic.Epistemic.believes Dox a p.presup w :=
   Iff.rfl
 
 /-- Karttunen's rule (3) on atomic complements: definedness on each `Dox_a(w)` is definedness
