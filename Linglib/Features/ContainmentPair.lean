@@ -2,6 +2,7 @@ import Mathlib.Logic.Equiv.Defs
 import Mathlib.Data.Fintype.Card
 import Mathlib.Data.Fintype.Sigma
 import Mathlib.Order.Basic
+import Mathlib.Order.UpperLower.Basic
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -36,7 +37,8 @@ specification (the "size of structure" markedness metric of
 
 * `ContainmentPair` — the bivalent pair carrier (all four cells)
 * `ContainmentPair.WellFormed` — the containment filter, as the Bool order
-  fact `inner ≤ outer`; the well-formed cells carry a `LinearOrder`
+  fact `inner ≤ outer`, equivalently a lower set of the dependency chain
+  (`wellFormed_iff_isLowerSet`); the well-formed cells carry a `LinearOrder`
   (specification chain) and have `Fintype.card` three
 * `ContainmentPairLike` — injective presentation of a carrier type as
   containment pairs (the `SetLike` pattern); `no_four_way`, `specLevel`,
@@ -99,6 +101,20 @@ def WellFormed (p : ContainmentPair) : Prop :=
 
 instance : DecidablePred WellFormed :=
   fun p => inferInstanceAs (Decidable (p.inner = true → p.outer = true))
+
+/-- The pair as a valuation on the two-element dependency chain, `false` the
+    outer feature below `true` the inner. -/
+def valuation (p : ContainmentPair) : Bool → Bool
+  | false => p.outer
+  | true => p.inner
+
+/-- Well-formedness is the positively valued features forming a lower set of
+    the dependency chain — the general shape of a feature geometry
+    (`Features/Phi/Geometry.lean`). -/
+theorem wellFormed_iff_isLowerSet (p : ContainmentPair) :
+    p.WellFormed ↔ IsLowerSet {b | p.valuation b = true} := by
+  obtain ⟨o, i⟩ := p
+  cases o <;> cases i <;> simp [WellFormed, IsLowerSet, valuation]
 
 /-! ### Canonical cells -/
 
