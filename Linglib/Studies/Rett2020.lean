@@ -3,6 +3,7 @@ import Linglib.Semantics.Degree.Basic
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Studies.Karttunen1974
+import Linglib.Studies.Heinamaki1974
 import Linglib.Fragments.English.TemporalExpressions
 
 
@@ -43,7 +44,7 @@ linguistically. *after* and *while* are not ambidirectional.
 
 namespace Rett2020
 
-open Tense Anscombe1964 Karttunen1974
+open Tense Anscombe1964 Karttunen1974 Heinamaki1974
 
 open Core.Order
 open NonemptyInterval
@@ -341,7 +342,8 @@ Concrete scenarios verifying that the Anscombe, Rett, and Karttunen
 formalizations produce correct truth-value judgments.
 
 Scenarios 1–6 verify [rett-2020] Table 1 for *before*/*after*.
-Scenarios 7–10 verify [heinamaki-1974] Chs. 6, 8, 9 for *since*, *by*, *till*.
+Scenarios 7–10 verify [heinamaki-1974]'s *since* and *by* and [karttunen-1974]'s durative
+*until* (*till*).
 
 ## Scenarios (ℕ time points)
 
@@ -363,7 +365,7 @@ Scenarios 7–10 verify [heinamaki-1974] Chs. 6, 8, 9 for *since*, *by*, *till*.
 
 namespace Rett2020.Examples
 
-open Tense Anscombe1964 Karttunen1974
+open Tense Anscombe1964 Karttunen1974 Heinamaki1974
 
 open Core.Order
 open NonemptyInterval
@@ -615,27 +617,27 @@ private theorem mem_tt_deadline {t : ℕ} :
   simp only [NonemptyInterval.mem_def, ee_deadline, NonemptyInterval.pure, Set.mem_ofPred_eq]
   omega
 
-/-- "He has been happy₅₋₁₀ since she arrived₅" — True under `Karttunen.since`.
+/-- "He has been happy₅₋₁₀ since she arrived₅" — True under `since`.
     Witness: t = 5 ∈ B, and ∀t' ∈ A (i.e., 5 ≤ t' ≤ 10), 5 ≤ t'. -/
-theorem scenario_since : Karttunen.since A_stative B_onset := by
+theorem scenario_since : since A_stative B_onset := by
   refine ⟨5, mem_tt_onset.mpr rfl, ?_⟩
   intro t' ht'
   exact (mem_tt_stative.mp ht').1
 
 /-- *Since* is veridical for its complement in scenario: she arrived. -/
 theorem scenario_since_veridical :
-    Karttunen.since A_stative B_onset → ∃ t, t ∈ timeTrace B_onset :=
+    since A_stative B_onset → ∃ t, t ∈ timeTrace B_onset :=
   since_veridical_complement _ _
 
-/-- "He arrived₁ by 3pm₃" — True under `Karttunen.by_`.
+/-- "He arrived₁ by 3pm₃" — True under `by_`.
     Witness: t = 1 ∈ A, and ∀t' ∈ B (t' = 3), 1 ≤ 3. -/
-theorem scenario_by_strict : Karttunen.by_ A_early B_deadline := by
+theorem scenario_by_strict : by_ A_early B_deadline := by
   refine ⟨1, mem_tt_early.mpr rfl, ?_⟩
   intro t' ht'; have := mem_tt_deadline.mp ht'; omega
 
-/-- "He arrived₃ by 3pm₃" — True under `Karttunen.by_`.
+/-- "He arrived₃ by 3pm₃" — True under `by_`.
     Witness: t = 3 ∈ A, 3 ≤ 3 (coincidence allowed). -/
-theorem scenario_by_coincidence : Karttunen.by_ A_at_deadline B_deadline := by
+theorem scenario_by_coincidence : by_ A_at_deadline B_deadline := by
   refine ⟨3, mem_tt_at_deadline.mpr rfl, ?_⟩
   intro t' ht'; have := mem_tt_deadline.mp ht'; omega
 
@@ -649,21 +651,16 @@ theorem scenario_before_coincidence_false :
   omega
 
 /-- *By* but not *before* on the same scenario: demonstrates the strict
-    weakening from `before_implies_by`. -/
+    weakening from `before_by`. -/
 theorem by_without_before :
-    Karttunen.by_ A_at_deadline B_deadline ∧
+    by_ A_at_deadline B_deadline ∧
     ¬ Anscombe.before A_at_deadline B_deadline :=
   ⟨scenario_by_coincidence, scenario_before_coincidence_false⟩
 
-/-- "He slept₅₋₁₀ till she arrived₅" — True under `Karttunen.till`.
+/-- "He slept₅₋₁₀ till she arrived₅" — True under durative `until_` (*till* is *until*).
     Witness: t = 5 ∈ both time traces (overlap). -/
-theorem scenario_till : Karttunen.till A_stative B_onset := by
+theorem scenario_till : until_ A_stative B_onset := by
   exact ⟨5, mem_tt_stative.mpr ⟨le_refl _, by omega⟩, mem_tt_onset.mpr rfl⟩
-
-/-- *Till* agrees with *until* on the same scenario (definitional). -/
-theorem till_matches_until_scenario :
-    Karttunen.till A_stative B_onset ↔ Karttunen.until A_stative B_onset :=
-  till_iff_until _ _
 
 -- ============================================================================
 -- § 10: Punctual *Until* + Negation ([karttunen-1974])
@@ -671,14 +668,14 @@ theorem till_matches_until_scenario :
 
 /-! ### Not...until scenarios
 
-Karttunen's identity: punctual *until* = ¬*before* (eq. 33).
-We verify this on concrete time points.
+Karttunen's identity: punctual *until* = ¬*before*, with the presupposition that the main
+clause is actualized. We verify this on concrete time points.
 
-| # | ME           | EE          | Construction    | Result |
-|---|--------------|-------------|-----------------|--------|
-|11 | point(3)     | point(5)    | not...until     | True   |
-|12 | point(3)     | point(5)    | presup + assert | when   |
-|13 | point(7)     | point(5)    | not...until     | False  |
+| # | ME           | EE          | Construction    | Result                 |
+|---|--------------|-------------|-----------------|------------------------|
+|11 | point(3)     | point(5)    | not...until     | False                  |
+|12 | point(5)     | point(5)    | not...until     | True, at the kiss      |
+|13 | point(7)     | point(5)    | not...until     | True, a little later   |
 -/
 
 /-- ME: "The princess woke up" — punctual event at time 3 (early). -/
@@ -713,7 +710,7 @@ theorem scenario11_before_true : Anscombe.before A_wake_early B_kiss := by
 /-- Scenario 11': "The princess didn't wake up₃ until the prince kissed her₅" — FALSE.
     NOT(BEFORE) = NOT(wake₃ before kiss₅) = ¬(3 < 5) = False.
     The princess DID wake up before the kiss, so "not until" is false. -/
-theorem scenario11_notUntil_false : ¬ Karttunen.notUntil A_wake_early B_kiss := by
+theorem scenario11_notUntil_false : ¬ notUntil A_wake_early B_kiss := by
   intro h; exact h scenario11_before_true
 
 /-- ME: "The princess woke up" — punctual event at time 5 (AT the kiss). -/
@@ -729,25 +726,17 @@ private theorem mem_tt_wake_at {t : ℕ} :
 /-- Scenario 12: "The princess didn't wake up₅ until the prince kissed her₅"
     — TRUE. NOT(BEFORE) = NOT(wake₅ before kiss₅) = ¬(5 < 5) = True.
     She woke up at exactly the time of the kiss. -/
-theorem scenario12_notUntil_true : Karttunen.notUntil A_wake_at B_kiss := by
+theorem scenario12_notUntil_true : notUntil A_wake_at B_kiss := by
   intro ⟨t, ht, hall⟩
   have ht5 := mem_tt_wake_at.mp ht
   have hlt := hall 5 (mem_tt_kiss.mpr rfl)
   omega
 
-/-- Scenario 12': Presupposition (wake₅ before kiss₅ ∨ wake₅ when kiss₅) is
-    satisfied: the waking happens at the kiss time (when), so the left
-    disjunct is false but the right is true. -/
-theorem scenario12_presupposition :
-    Anscombe.before A_wake_at B_kiss ∨ Karttunen.when_ A_wake_at B_kiss :=
-  Or.inr ⟨5, mem_tt_wake_at.mpr rfl, mem_tt_kiss.mpr rfl⟩
-
-/-- Scenario 12'': Presupposition + assertion → when (disjunctive syllogism).
-    This is Karttunen's key result: "not until" + presupposition derives "when". -/
-theorem scenario12_derives_when :
-    Karttunen.when_ A_wake_at B_kiss :=
-  notUntil_with_presupposition A_wake_at B_kiss
-    scenario12_presupposition scenario12_notUntil_true
+/-- Scenario 12': with the actualization presupposition, the waking is at or after the
+    kiss — here exactly at it. -/
+theorem scenario12_at_or_after :
+    ∃ t ∈ timeTrace A_wake_at, ∃ t' ∈ timeTrace B_kiss, t' ≤ t :=
+  notUntil_actualization _ _ scenario12_notUntil_true ⟨5, mem_tt_wake_at.mpr rfl⟩
 
 /-- ME: "The princess woke up" — punctual event at time 7 (AFTER the kiss). -/
 def me_wake_late : NonemptyInterval ℕ := NonemptyInterval.pure 7
@@ -762,32 +751,18 @@ private theorem mem_tt_wake_late {t : ℕ} :
 /-- Scenario 13: "The princess didn't wake up₇ until the prince kissed her₅"
     — TRUE. NOT(BEFORE) = NOT(wake₇ before kiss₅) = ¬(7 < 5) = True.
     She woke up after the kiss, so she didn't wake up before it. -/
-theorem scenario13_notUntil_true : Karttunen.notUntil A_wake_late B_kiss := by
+theorem scenario13_notUntil_true : notUntil A_wake_late B_kiss := by
   intro ⟨t, ht, hall⟩
   have ht7 := mem_tt_wake_late.mp ht
   have hlt := hall 5 (mem_tt_kiss.mpr rfl)
   omega
 
-/-- Scenario 13': wake₇ is NOT when kiss₅ (no overlap at any time point). -/
-theorem scenario13_not_when : ¬ Karttunen.when_ A_wake_late B_kiss := by
+/-- Scenario 13': wake₇ is not when kiss₅ — the waking is "a little later", as
+    [karttunen-1974] allows. -/
+theorem scenario13_not_when : ¬ when_ A_wake_late B_kiss := by
   rintro ⟨t, ht_w, ht_k⟩
   have := mem_tt_wake_late.mp ht_w
   have := mem_tt_kiss.mp ht_k
   omega
-
-/-- Scenario 13'': The presupposition (before ∨ when) is NOT satisfied,
-    so *not...until* is vacuously true but pragmatically infelicitous.
-    This models why "She didn't wake up until the prince kissed her" is
-    odd when she woke up AFTER the kiss — the presupposition fails. -/
-theorem scenario13_presup_fails :
-    ¬ (Anscombe.before A_wake_late B_kiss ∨ Karttunen.when_ A_wake_late B_kiss) := by
-  intro h
-  cases h with
-  | inl hbefore =>
-    obtain ⟨t, ht, hall⟩ := hbefore
-    have := mem_tt_wake_late.mp ht
-    have := hall 5 (mem_tt_kiss.mpr rfl)
-    omega
-  | inr hwhen => exact scenario13_not_when hwhen
 
 end Rett2020.Examples
