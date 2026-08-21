@@ -723,12 +723,11 @@ here; `necessity_cancellable` above is its kernel-checked witness. -/
 
 namespace KarttunenCells
 
-open Karttunen1971 (KarttunenClass)
+open Karttunen1971 (Schema)
 
-/-- Derive the `KarttunenClass` cell from an `Implicative` polarity
+/-- Derive the Karttunen `Schema` cell from an `Implicative` polarity
     (two-way cell: complement entailment under both polarities). -/
-def karttunenOfImplicative (b : Implicative) : KarttunenClass :=
-  { isSufficient := true, isNecessary := true, polarity := b }
+def karttunenOfImplicative (b : Implicative) : Schema := ⟨.necessaryAndSufficient, b⟩
 
 /-- Map modern `Causative` to the Karttunen cell that matches the
     builder's **entailment pattern** (Karttunen's original criterion).
@@ -741,28 +740,26 @@ def karttunenOfImplicative (b : Implicative) : KarttunenClass :=
     [nadathur-lauer-2020]'s insight: these verbs differ in causal
     MECHANISM (sufficiency vs necessity) despite sharing the same
     ENTAILMENT PATTERN. See `cause_make_same_cell_different_mechanism`. -/
-def karttunenOfCausative : Causative → KarttunenClass
-  | .make | .force | .enable | .cause =>
-    { isSufficient := true, isNecessary := false, polarity := .positive }
-  | .prevent =>
-    { isSufficient := true, isNecessary := false, polarity := .negative }
+def karttunenOfCausative : Causative → Schema
+  | .make | .force | .enable | .cause => ⟨.sufficient, .positive⟩
+  | .prevent => ⟨.sufficient, .negative⟩
 
 theorem manage_karttunen_class :
-    karttunenOfImplicative .positive = KarttunenClass.manage := rfl
+    karttunenOfImplicative .positive = Schema.manage := rfl
 
 theorem fail_karttunen_class :
-    karttunenOfImplicative .negative = KarttunenClass.fail := rfl
+    karttunenOfImplicative .negative = Schema.fail := rfl
 
 theorem force_karttunen_class :
-    karttunenOfCausative .force = KarttunenClass.force := rfl
+    karttunenOfCausative .force = Schema.force := rfl
 
 theorem prevent_karttunen_class :
-    karttunenOfCausative .prevent = KarttunenClass.prevent := rfl
+    karttunenOfCausative .prevent = Schema.prevent := rfl
 
-/-- All positive causative builders map to `KarttunenClass.force`
+/-- All positive causative builders map to `Schema.force`
     (Karttunen's sufficient-only cell). -/
 theorem cause_karttunen_class :
-    karttunenOfCausative .cause = KarttunenClass.force := rfl
+    karttunenOfCausative .cause = Schema.force := rfl
 
 /-- `cause` and `make` have the same Karttunen entailment cell
     (sufficient-only) despite having different causal mechanisms.
