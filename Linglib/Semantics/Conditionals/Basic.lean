@@ -176,8 +176,8 @@ theorem perfection_not_entailed_variablyStrict :
     ∃ (W : Type) (sim : SimilarityOrdering W) (domain p q : Set W) (w : W),
       w ∈ variablyStrictImp sim domain p q ∧ w ∉ conditionalPerfection p q :=
   ⟨Bool,
-    ⟨λ _ => Preorder.ofLE (λ _ _ => True) (λ _ => trivial)
-      (λ _ _ _ _ _ => trivial), λ _ _ _ => .isTrue trivial⟩,
+    ⟨λ _ _ _ => True, λ _ _ => trivial, λ _ _ _ _ _ _ => trivial,
+      λ _ _ _ => .isTrue trivial⟩,
     Set.univ, {w | w = true}, Set.univ, false,
     Or.inr ⟨true, ⟨Set.mem_univ _, rfl⟩, λ _ _ _ => trivial⟩,
     λ h => h Bool.false_ne_true trivial⟩
