@@ -1,6 +1,5 @@
 import Linglib.Logic.Trivalent.Prop3
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Studies.Heim1992Projection
 
 /-!
 # [grove-2022]: Presupposition Projection as a Scope Phenomenon
@@ -58,7 +57,7 @@ mechanism derives:
   a wetsuit
 * **Global** (de re): presupposition is that Theo *has* a wetsuit
 
-This connects to `Heim1992Projection.lean`'s know/believe asymmetry but
+This connects to the know/believe contrast of `Heim1992.lean` but
 derives it from scope rather than from local-context filtering.
 
 ## Parallel with the set monad ([charlow-2020])
@@ -482,11 +481,21 @@ theorem eta_bind_reconstructs (w : CWorld) :
 
 /-! ### §12 Attitude verbs: "Theo believes he lost his wetsuit"
 
-Reuse the world model from [heim-1992] (`AttWorld` with `actual` and
-`believed`) and show that the scope theory derives the same empirical
-predictions via different machinery. -/
+A two-world model — `actual` (Theo has no wetsuit) and `believed` (his
+belief world, where he has one) — on which the scope theory derives the
+know/believe contrast of [heim-1992] via scope rather than local-context
+filtering. -/
 
-open Heim1992 (AttWorld believesRBool)
+/-- `actual` (no wetsuit) and `believed` (Theo's belief world). -/
+inductive AttWorld where
+  | actual
+  | believed
+  deriving DecidableEq
+
+/-- Theo's doxastic accessibility: from either world, only `believed`. -/
+def dox : AttWorld → AttWorld → Bool
+  | _, .believed => true
+  | _, .actual => false
 
 /-- The complement "he lost his wetsuit" as an `Iₚ`-typed meaning.
 Presupposes Theo has a wetsuit at the evaluation world. When defined,
@@ -500,7 +509,7 @@ def lostWetsuit : Iₚ AttWorld Bool
 complement stays in situ; `believe` quantifies over doxastic
 alternatives with the complement evaluated locally. -/
 def believeLocal : Iₚ AttWorld Bool :=
-  believe (λ _ => believesRBool) [AttWorld.actual, AttWorld.believed]
+  believe (λ _ => dox) [AttWorld.actual, AttWorld.believed]
     lostWetsuit () -- () stands for Theo (single-agent model)
 
 /-- Local reading at `actual`: Theo's only belief-world is `believed`,
@@ -524,7 +533,7 @@ definedness is evaluated at the actual world (not within the scope of
 `believe`). -/
 def believeGlobal : Iₚ AttWorld Bool :=
   λ i => lostWetsuit i >>= (λ b =>
-    believe (λ _ => believesRBool) [AttWorld.actual, AttWorld.believed]
+    believe (λ _ => dox) [AttWorld.actual, AttWorld.believed]
       (pure b) () i)
 
 /-- Global reading at `actual`: complement is undefined → `none`. The
@@ -543,9 +552,9 @@ theorem believe_global_definedness (w : AttWorld) :
 
 /-! ### §13 Bridge to [heim-1992]
 
-[heim-1992]'s know/believe asymmetry is derived in
-`Heim1992Projection.lean` via local-context filtering and KD45 frame
-conditions. The scope theory provides an alternative explanation: the
+In `Heim1992.lean` the know/believe contrast follows from the partial
+context change potentials of *believe* (rule (18)) and factive *know*.
+The scope theory provides an alternative explanation: the
 asymmetry arises because the trigger can take different scopes relative
 to the attitude verb.
 

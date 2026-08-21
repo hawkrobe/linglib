@@ -34,14 +34,11 @@ descriptor, minimising churn to consumers of the existing file:
 |---|---|
 | Chapter suffix | `Cooper2023.lean` (Anaphora) + `Cooper2023Ch6.lean` (Modality) + `Cooper2023Ch7.lean` (Quantification) + `Cooper2023Ch8.lean` (Anaphora) |
 | Phenomenon suffix | `Dryer2013.lean` (Complementation WALS) + `Dryer2013Question.lean` + `Dryer2013Negation.lean` |
-| Topic suffix | `Heim1992Desire.lean` + `Heim1992Projection.lean` (same paper, two formalisations) |
 | Suffix-on-arrival | `Rouillard2026.lean` (TenseAspect) + `Rouillard2026Gradability.lean` (the newer file gets the suffix) |
 
-When two formalisations of the same paper define non-conflicting
-identifiers and would naturally share `namespace AuthorYear`, they can
-coexist as separate files extending the same namespace (this is how
-`Heim1992Desire` and `Heim1992Projection` both keep `namespace Heim1992`
-internally — Lean lets the namespace span files).
+Two formalisations of the same paper grow one file rather than a
+suffixed sibling (`Heim1992.lean` holds both the belief-projection and
+the desire halves): the suffix is for cross-paper collisions only.
 
 ## Bridge files don't belong here
 
