@@ -27,7 +27,7 @@ The closest worlds are mathlib's `Minimal`, and the Limit Assumption is
   similar to `w₀` as `w₂` is".
 -/
 
-namespace Core.Order
+namespace Semantics.Conditionals
 
 /-! ## Structure -/
 
@@ -176,4 +176,4 @@ def candidateSelections {W : Type*} (sim : SimilarityOrdering W)
 notation:50 w₁ " ≤[" sim "," w₀ "] " w₂ =>
   SimilarityOrdering.closer sim w₀ w₁ w₂
 
-end Core.Order
+end Semantics.Conditionals

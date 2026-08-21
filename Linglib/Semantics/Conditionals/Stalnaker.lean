@@ -1,7 +1,7 @@
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.SelectionFunction
 import Linglib.Semantics.Mood.Defs
-import Linglib.Core.Order.SimilarityOrdering
+import Linglib.Semantics.Conditionals.SimilarityOrdering
 import Linglib.Discourse.CommonGround
 
 /-!
@@ -39,7 +39,7 @@ A selection function `s` determines a pairwise preference:
 `success`) and total (by definition); transitivity requires
 `s.isCoherent` — rationalizability by a total preorder. The
 `coherentSelectionToSimilarity` constructor turns a coherent `s` into
-a `Core.Order.SimilarityOrdering`.
+a `Semantics.Conditionals.SimilarityOrdering`.
 
 ## Stalnakerian indicative/subjunctive split ([stalnaker-1975])
 
@@ -61,7 +61,7 @@ namespace Semantics.Conditionals
 open CommonGround (ContextSet)
 open Mood (Grammatical)
 open _root_.Semantics.Conditionals (SelectionFunction selectionPrefers)
-open Core.Order (SimilarityOrdering)
+open Semantics.Conditionals (SimilarityOrdering)
 
 /-! ## Coherent selection ⇒ similarity ordering -/
 

@@ -46,7 +46,7 @@ open Semantics.Conditionals
 open Trivalent (ProjectionType dist)
 
 
-open Core.Order (SimilarityOrdering)
+open Semantics.Conditionals (SimilarityOrdering)
 
 
 /-!

@@ -55,7 +55,7 @@ The differential prediction lives in [santorio-2018] §IV.3
 
 namespace AlonsoOvalle2009
 
-open Core.Order (SimilarityOrdering)
+open Semantics.Conditionals (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)
 open Santorio2018 (DecAlt sdaEval sdaEval_iff_forall)
 open McKayVanInwagen1977 (CropWorld cropSim goodWeather sunCold bumperCrop

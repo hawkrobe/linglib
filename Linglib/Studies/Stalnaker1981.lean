@@ -31,7 +31,7 @@ A Defense of Conditional Excluded Middle. In Harper, Stalnaker & Pearce
 
 namespace Stalnaker1981
 
-open Core.Order (SimilarityOrdering)
+open Semantics.Conditionals (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual
 
 -- ════════════════════════════════════════════════════

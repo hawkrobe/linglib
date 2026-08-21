@@ -127,7 +127,7 @@ follow-up.
 namespace Santorio2018
 
 open Trivalent (distList)
-open Core.Order (SimilarityOrdering)
+open Semantics.Conditionals (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)
 
 

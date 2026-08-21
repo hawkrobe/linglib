@@ -258,7 +258,6 @@ import Linglib.Core.Order.Relation
 import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Order.SetPreimage
 import Linglib.Core.Order.SignVectors
-import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Order.StrictBounds
 import Linglib.Core.Order.SuccPred.Tree
 import Linglib.Core.Order.TotalPreorder
@@ -1565,6 +1564,7 @@ import Linglib.Semantics.Conditionals.Presupposition
 import Linglib.Semantics.Conditionals.Probabilistic
 import Linglib.Semantics.Conditionals.Restrictor
 import Linglib.Semantics.Conditionals.SelectionFunction
+import Linglib.Semantics.Conditionals.SimilarityOrdering
 import Linglib.Semantics.Conditionals.Stalnaker
 import Linglib.Semantics.Conditionals.Sweetser
 import Linglib.Semantics.Conditionals.WillConditional

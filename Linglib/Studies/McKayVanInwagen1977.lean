@@ -43,7 +43,7 @@ instances are auto-derived from `DecidableEq` on the world enums.
 
 namespace McKayVanInwagen1977
 
-open Core.Order (SimilarityOrdering)
+open Semantics.Conditionals (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)
 
 

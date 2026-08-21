@@ -36,7 +36,7 @@ not yet present in linglib and are left as future work.
 
 namespace CarianiGoldstein2020
 
-open Core.Order (SimilarityOrdering)
+open Semantics.Conditionals (SimilarityOrdering)
 open Santorio2018 (DecAlt homogeneityEval)
 
 
