@@ -1,0 +1,1307 @@
+[
+  {
+    "id": "aitha2026_house_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
+    "language": "telu1262",
+    "primaryText": "illuø",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["il-lu-ø", "house-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "illu"],
+      ["root", "house"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "lu"]
+    ],
+    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_house_acc",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
+    "language": "telu1262",
+    "primaryText": "inṭini",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["in-ṭi-ni", "house-n-ACC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "illu"],
+      ["root", "house"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "acc"],
+      ["suffix", "ni"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ṭi"]
+    ],
+    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_house_gen",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
+    "language": "telu1262",
+    "primaryText": "inṭiø",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["in-ṭi-ø", "house-n-GEN"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "illu"],
+      ["root", "house"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "gen"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "ṭi"]
+    ],
+    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_house_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
+    "language": "telu1262",
+    "primaryText": "inṭiki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["in-ṭi-ki", "house-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "illu"],
+      ["root", "house"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ṭi"]
+    ],
+    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_house_p",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(1)"},
+    "language": "telu1262",
+    "primaryText": "inṭilō",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["in-ṭi-lō", "house-n-in"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "illu"],
+      ["root", "house"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "p"],
+      ["suffix", "lō"],
+      ["suffixKind", "postposition"],
+      ["prwd", "external"],
+      ["weight", "heavy"],
+      ["n", "ṭi"]
+    ],
+    "comment": "Strong paradigm of illu 'house' (Krishnamurti & Gwynn 1985).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_town_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "ūru",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ūr-u", "town-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "ūru"],
+      ["root", "town"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "u"]
+    ],
+    "comment": "Strong noun, nominative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_town_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "ūriki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ūr-i-ki", "town-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "ūru"],
+      ["root", "town"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "i"]
+    ],
+    "comment": "Strong noun, dative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_husband_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "moguḍu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["moguḍ-u", "husband-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "moguḍu"],
+      ["root", "husband"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "u"]
+    ],
+    "comment": "Strong noun, nominative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_husband_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "moguḍiki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["moguḍ-i-ki", "husband-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "moguḍu"],
+      ["root", "husband"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "i"]
+    ],
+    "comment": "Strong noun, dative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_bow_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "villu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["vil-lu", "bow-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "villu"],
+      ["root", "bow"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "lu"]
+    ],
+    "comment": "Strong noun, nominative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_bow_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "vinṭiki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["vin-ṭi-ki", "bow-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "villu"],
+      ["root", "bow"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ṭi"]
+    ],
+    "comment": "Strong noun, dative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_eye_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "kannu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kan-nu", "eye-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "kannu"],
+      ["root", "eye"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "nu"]
+    ],
+    "comment": "Strong noun, nominative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_eye_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "kanṭiki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["kan-ṭi-ki", "eye-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "kannu"],
+      ["root", "eye"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ṭi"]
+    ],
+    "comment": "Strong noun, dative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_tooth_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "pannu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["pan-nu", "tooth-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "pannu"],
+      ["root", "tooth"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "nu"]
+    ],
+    "comment": "Strong noun, nominative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_tooth_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "panṭiki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["pan-ṭi-ki", "tooth-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "pannu"],
+      ["root", "tooth"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ṭi"]
+    ],
+    "comment": "Strong noun, dative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_nest_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "gūḍu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gū-ḍu", "nest-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "gūḍu"],
+      ["root", "nest"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "ḍu"]
+    ],
+    "comment": "Strong noun, nominative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_nest_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "gūṭiki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gū-ṭi-ki", "nest-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "gūḍu"],
+      ["root", "nest"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ṭi"]
+    ],
+    "comment": "Strong noun, dative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_stream_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "ēru",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ē-ru", "stream-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "ēru"],
+      ["root", "stream"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "ru"]
+    ],
+    "comment": "Strong noun, nominative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_stream_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "ēṭiki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ē-ṭi-ki", "stream-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "ēru"],
+      ["root", "stream"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ṭi"]
+    ],
+    "comment": "Strong noun, dative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_mouth_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "nōru",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nō-ru", "mouth-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "nōru"],
+      ["root", "mouth"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "ru"]
+    ],
+    "comment": "Strong noun, nominative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_mouth_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "nōṭiki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nō-ṭi-ki", "mouth-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "nōru"],
+      ["root", "mouth"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ṭi"]
+    ],
+    "comment": "Strong noun, dative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_plough_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "nāgali",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nāga-li", "plough-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "nāgali"],
+      ["root", "plough"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "li"]
+    ],
+    "comment": "Strong noun, nominative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_plough_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "nāgaṭiki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nāga-ṭi-ki", "plough-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "nāgali"],
+      ["root", "plough"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ṭi"]
+    ],
+    "comment": "Strong noun, dative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ghee_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "nēyi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nē-yi", "ghee-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "nēyi"],
+      ["root", "ghee"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "yi"]
+    ],
+    "comment": "Strong noun, nominative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ghee_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "nētiki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nē-ti-ki", "ghee-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "nēyi"],
+      ["root", "ghee"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ti"]
+    ],
+    "comment": "Strong noun, dative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_well_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "nūyi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nū-yi", "well-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "nūyi"],
+      ["root", "well"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "yi"]
+    ],
+    "comment": "Strong noun, nominative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_well_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(2)"},
+    "language": "telu1262",
+    "primaryText": "nūtiki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nū-ti-ki", "well-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "nūyi"],
+      ["root", "well"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ti"]
+    ],
+    "comment": "Strong noun, dative ((2)).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
+    "language": "telu1262",
+    "primaryText": "samudramø",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-am-ø", "ocean-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "am"]
+    ],
+    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_acc",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
+    "language": "telu1262",
+    "primaryText": "samudrānini",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-āni-ni", "ocean-n-ACC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "acc"],
+      ["suffix", "ni"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "āni"]
+    ],
+    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_gen",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
+    "language": "telu1262",
+    "primaryText": "samudramø",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-am-ø", "ocean-n-GEN"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "gen"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "am"]
+    ],
+    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
+    "language": "telu1262",
+    "primaryText": "samudrāniki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-āni-ki", "ocean-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "āni"]
+    ],
+    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_p",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(8)"},
+    "language": "telu1262",
+    "primaryText": "samudramlō",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-am-lō", "ocean-n-in"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "p"],
+      ["suffix", "lō"],
+      ["suffixKind", "postposition"],
+      ["prwd", "external"],
+      ["weight", "heavy"],
+      ["n", "am"]
+    ],
+    "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_1sg",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(13)"},
+    "language": "telu1262",
+    "primaryText": "samudrānini",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-āni-ni", "ocean-n-1SG"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ni"],
+      ["suffixKind", "agreement"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "āni"]
+    ],
+    "comment": "Predicate nominal with nominal agreement suffix (author's data).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_2sg",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(14)"},
+    "language": "telu1262",
+    "primaryText": "samudrānivi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-āni-vi", "ocean-n-2SG"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "vi"],
+      ["suffixKind", "agreement"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "āni"]
+    ],
+    "comment": "Predicate nominal with nominal agreement suffix (author's data).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_3sg",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(15)"},
+    "language": "telu1262",
+    "primaryText": "samudramø",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-am-ø", "ocean-n-3SG"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "agreement"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "am"]
+    ],
+    "comment": "Predicate nominal with nominal agreement suffix (author's data).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_picture_1sg_apc",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(16)"},
+    "language": "telu1262",
+    "primaryText": "citrānini",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["citr-āni-ni", "picture-n-1SG"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "citram"],
+      ["root", "picture"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ni"],
+      ["suffixKind", "agreement"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "āni"]
+    ],
+    "comment": "Adnominal pronoun construction: nominative subject with the long form.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_whole_acc",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(17)"},
+    "language": "telu1262",
+    "primaryText": "samudramantaṭini",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-am-antaṭi-ni", "ocean-n-whole-ACC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "acc"],
+      ["suffix", "antaṭi"],
+      ["suffixKind", "quantifier"],
+      ["prwd", "internal"],
+      ["weight", "heavy"],
+      ["n", "am"]
+    ],
+    "comment": "Postposed quantifier antaṭi 'whole' intervenes between n and ACC.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_about",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(18)"},
+    "language": "telu1262",
+    "primaryText": "samudramgurinci",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-am-gurinci", "ocean-n-about"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "p"],
+      ["suffix", "gurinci"],
+      ["suffixKind", "postposition"],
+      ["prwd", "external"],
+      ["weight", "light"],
+      ["n", "am"]
+    ],
+    "comment": "Postposition with a light initial syllable, outside the prosodic word.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_infront",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(18)"},
+    "language": "telu1262",
+    "primaryText": "samudrameduru",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-am-eduru", "ocean-n-in.front.of"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "p"],
+      ["suffix", "eduru"],
+      ["suffixKind", "postposition"],
+      ["prwd", "external"],
+      ["weight", "light"],
+      ["n", "am"]
+    ],
+    "comment": "Postposition with a light initial syllable, outside the prosodic word.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_house_1sg",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "fn. 6"},
+    "language": "telu1262",
+    "primaryText": "illuni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["il-lu-ni", "house-n-1SG"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "illu"],
+      ["root", "house"],
+      ["class", "strong"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ni"],
+      ["suffixKind", "agreement"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "lu"]
+    ],
+    "comment": "Strong noun with nominal agreement: no oblique.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_pl_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
+    "language": "telu1262",
+    "primaryText": "samudrāluø",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-ā-lu-ø", "ocean-n-PL-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "pl"],
+      ["case", "nom"],
+      ["suffix", "lu"],
+      ["suffixKind", "number"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ā"]
+    ],
+    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_pl_acc",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
+    "language": "telu1262",
+    "primaryText": "samudrālani",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-ā-la-ni", "ocean-n-PL-ACC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "pl"],
+      ["case", "acc"],
+      ["suffix", "la"],
+      ["suffixKind", "number"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ā"]
+    ],
+    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_pl_gen",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
+    "language": "telu1262",
+    "primaryText": "samudrālaø",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-ā-la-ø", "ocean-n-PL-GEN"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "pl"],
+      ["case", "gen"],
+      ["suffix", "la"],
+      ["suffixKind", "number"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ā"]
+    ],
+    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_pl_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
+    "language": "telu1262",
+    "primaryText": "samudrālaki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-ā-la-ki", "ocean-n-PL-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "pl"],
+      ["case", "dat"],
+      ["suffix", "la"],
+      ["suffixKind", "number"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ā"]
+    ],
+    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_pl_p",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(39)"},
+    "language": "telu1262",
+    "primaryText": "samudrālalō",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["samudr-ā-la-lō", "ocean-n-PL-in"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "pl"],
+      ["case", "p"],
+      ["suffix", "la"],
+      ["suffixKind", "number"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ā"]
+    ],
+    "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  }
+]
