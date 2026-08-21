@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Tseltalan
-import Linglib.Morphology.DistributedMorphology.NominalSpine
+import Linglib.Morphology.DistributedMorphology.NominalProjection
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Binding.SpecificityCondition
@@ -84,7 +84,7 @@ alongside Tz'utujil, Chickasaw, Sinitic double-unaccusative).
 
 ## Integration Points
 
-- `NominalPosition` / `PossessionType` from `NominalSpine.lean`
+- `NominalProjection.Position` / `PossessionType` from `NominalProjection.lean`
 - `SpecificityCondition` from `Core/SpecificityCondition.lean`
 - `JudgmentType` — [kuroda-1972]'s categorical/thetic distinction, defined in §9
 - `GramFunction`, `absPosition` from `Fragments/Mayan/Tseltalan.lean`
@@ -111,7 +111,7 @@ open DistributedMorphology
     definites project to DP; non-specific indefinites project only to
     nP (if non-possessive) or PossP (if possessive).
 
-    Derived from the nominal spine in `NominalSpine.lean`:
+    Derived from the nominal spine in `NominalProjection.lean`:
     √ROOT < n < (Poss) < D. -/
 inductive NominalSize where
   | dp    -- projects to D: specific nominals
@@ -124,7 +124,7 @@ inductive NominalSize where
     from external D-probes). For non-specific nominals, the highest
     position IS the possessor's specifier position, making the
     possessor directly accessible. -/
-def NominalSize.highestProjection : NominalSize → NominalPosition
+def NominalSize.highestProjection : NominalSize → NominalProjection.Position
   | .dp    => .d       -- D head shields possessor
   | .possP => .specPoss -- possessor directly accessible
   | .nP    => .specN    -- possessor directly accessible
@@ -377,7 +377,7 @@ theorem extracted_always_external : ¬ CanĀSubextract :=
 -- § 7: Bridge to the nominal spine
 -- ============================================================================
 
-/-- Map nominal size to possession type from `NominalSpine.lean`.
+/-- Map nominal size to possession type from `NominalProjection.lean`.
 
     - nP-internal possessors (Spec,nP) → inalienable
     - PossP-level possessors (Spec,PossP) → alienable
@@ -395,7 +395,7 @@ theorem alienable_at_possP :
 
 /-- For non-specific nominals, the highest projection IS the possessor's
     position, agreeing with PossessionType.possessorPosition from
-    NominalSpine.lean. For DPs, the highest projection is D (the
+    NominalProjection.lean. For DPs, the highest projection is D (the
     possessor is shielded below). -/
 theorem highest_agrees_inalienable :
     NominalSize.nP.highestProjection =

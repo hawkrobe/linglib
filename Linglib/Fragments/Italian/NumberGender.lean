@@ -1,4 +1,4 @@
-import Linglib.Morphology.DistributedMorphology.NominalSpine
+import Linglib.Morphology.DistributedMorphology.NominalProjection
 import Linglib.Fragments.Italian.Nouns
 
 /-!
@@ -46,7 +46,7 @@ def PluralClass.toNumberPosition : PluralClass → NumberPosition
 /-- Can this plural class's number feature interact with gender?
     Derived from the number position via the GLH — not stipulated. -/
 def PluralClass.canAffectGender (pc : PluralClass) : Bool :=
-  genderLocalityHypothesis pc.toNumberPosition.toNominalPosition
+  genderLocalityHypothesis pc.toNumberPosition.toPosition
 
 -- ============================================================================
 -- § 2: Number–Gender Nouns
@@ -157,11 +157,11 @@ theorem casa_pl_fem : casaNG.plGender = .feminine := rfl
 -- ============================================================================
 
 /-- The GLH pipeline for number–gender interaction:
-    PluralClass → NumberPosition → NominalPosition → GLH evaluation.
+    PluralClass → NumberPosition → NominalProjection.Position → GLH evaluation.
     Each stage feeds the next. -/
 def numberGenderPipeline (pc : PluralClass) : Bool :=
   let numPos := pc.toNumberPosition
-  let nomPos := numPos.toNominalPosition
+  let nomPos := numPos.toPosition
   genderLocalityHypothesis nomPos
 
 -- -a plurals: low number → within nP → CAN affect gender

@@ -1,5 +1,5 @@
 import Linglib.Features.Gender.Basic
-import Linglib.Morphology.DistributedMorphology.NominalSpine
+import Linglib.Morphology.DistributedMorphology.NominalProjection
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 
 /-!

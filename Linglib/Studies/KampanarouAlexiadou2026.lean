@@ -1,5 +1,5 @@
 import Linglib.Features.Possession
-import Linglib.Morphology.DistributedMorphology.NominalSpine
+import Linglib.Morphology.DistributedMorphology.NominalProjection
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Syntax.Minimalist.Verbal.SmallClause
 import Linglib.Syntax.Minimalist.Verbal.Applicative
@@ -61,7 +61,8 @@ set_option autoImplicit false
 namespace KampanarouAlexiadou2026
 
 open Possession (Notion InalienabilityRank)
-open DistributedMorphology (PossessionType NominalPosition)
+open DistributedMorphology (PossessionType)
+open DistributedMorphology.NominalProjection (Position)
 open DistributedMorphology.Allosemy (NominalizationReading)
 open Minimalist (SmallClause SCPredCategory ApplType)
 
