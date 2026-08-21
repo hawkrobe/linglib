@@ -24,7 +24,7 @@ both keyed.
 
 ## Main definitions
 
-* `siteFeatures`: a suppletive root's insertion site in a clause
+* `site`: a suppletive root's insertion site in a clause
   (`Clause.Arguments Number`) — its index and the number of the internal
   argument, the local conditioning environment of §3.3.
 * `vocabulary`: the Hiaki items of (3a), (3f), (3g): a singular-conditioned
@@ -62,7 +62,8 @@ categorizing head.
 namespace Harley2014
 
 open DistributedMorphology
-open DistributedMorphology.Allosemy (SyntacticContext AllosemicEntry toInterpreted)
+open scoped DistributedMorphology.VocabularyItem
+open DistributedMorphology.Allosemy (toInterpreted embedding)
 open Morphology.Exponence (selectBy)
 open Clause (Arguments)
 open Clause.Arguments (unaccusative unergative transitive empty)
@@ -84,24 +85,25 @@ def sing : Root := ⟨500⟩
 
 /-! ### The insertion site -/
 
-/-- Features at a suppletive root's insertion site: its index and the number
-of the internal argument. -/
+/-- What a root's Vocabulary Items may mention: its index, and the number
+of the internal argument on the terminal below. -/
 inductive SiteFeature where
   | root (r : Root)
   | internal (n : Number)
   deriving DecidableEq, Repr
 
-/-- The insertion bundle for root `r` in a clause bearing the numbers `c`: the
-external argument is not in the local environment (§3.3). -/
-def siteFeatures (c : Arguments Number) (r : Root) : List SiteFeature :=
-  .root r :: ((c .internal).map .internal).toList
+/-- The neighborhood of root `r` in a clause bearing the numbers `c`: the
+internal argument is the terminal below; the external argument is not in the
+local environment (§3.3). -/
+def site (c : Arguments Number) (r : Root) : Neighborhood (List SiteFeature) :=
+  ⟨[.root r], ((c .internal).map fun n => ([.internal n] : List SiteFeature)).toList, []⟩
 
 /-! ### List 2: the suppletive Vocabulary Items -/
 
-/-- A suppletive root's two items: the form conditioned by a singular
-internal argument and the Elsewhere form ((14), fn. 16). -/
+/-- A suppletive root's two items ((14), fn. 16): the form conditioned by a
+singular internal argument below, and the Elsewhere form. -/
 def suppletive (r : Root) (sgForm elseForm : String) : List (VocabularyItem SiteFeature String) :=
-  [⟨[.root r, .internal .singular], sgForm⟩, ⟨[.root r], elseForm⟩]
+  [⟨⟨[.root r], [[.internal .singular]], []⟩, sgForm⟩, [.root r] ⟷ elseForm]
 
 /-- The Hiaki suppletive vocabulary of (3a), (3f), (3g). -/
 def vocabulary : List (VocabularyItem SiteFeature String) :=
@@ -110,7 +112,7 @@ def vocabulary : List (VocabularyItem SiteFeature String) :=
 /-- Spell out root `r` in clause `c` by the Subset Principle over
 `vocabulary`. -/
 def spellout (c : Arguments Number) (r : Root) : Option String :=
-  subsetPrinciple vocabulary (siteFeatures c r)
+  subsetPrinciple vocabulary (site c r)
 
 /-- Singular subject → *vuite* ((6a)). -/
 theorem run_sg : spellout (unaccusative .singular) run = some "vuite" := by decide
@@ -146,7 +148,7 @@ theorem run_two_forms :
 intransitive root receives no exponent from `vocabulary` — why List-1 roots
 must be distinct before spell-out (§2.1). -/
 theorem index_local (c : Arguments Number) : spellout c sing = none := by
-  unfold spellout siteFeatures
+  unfold spellout site
   rcases h : c .internal with _ | n
   · rfl
   · cases n <;> rfl
@@ -195,13 +197,13 @@ def cahoot : Root := ⟨548⟩
 
 /-- The List-3 entry of √548: "a conspiracy" in the frame of (16), recorded by
 its categorizing head, and no Elsewhere. -/
-def cahootLF : List (AllosemicEntry String) :=
-  [{ denotation := "a conspiracy", context := { aboveCat := some .n } }]
+def cahootLF : List (VocabularyItem Allosemy.Feature String) :=
+  [⟨embedding [.cat .n], "a conspiracy"⟩]
 
 /-- Outside its frame the caboodle item has no interpretation. The paper adds
 that no List-3 entry could be a true Elsewhere, since an interpretation must
 compose with its sister's type; caboodle items make the absence visible. -/
-theorem cahoot_no_elsewhere : selectBy AllosemicEntry.score cahootLF {} = none := by decide
+theorem cahoot_no_elsewhere : winner? cahootLF ∅ = none := by decide
 
 /-! ### Both flanks on the `Realization` carrier
 
@@ -236,15 +238,16 @@ theorem run_hasSuppletiveCore : Morphology.Root.HasSuppletiveCore realization (f
     (realization.isSuppletive_iff.mpr (Or.inr run_isProperlySuppletive))
 
 /-- √548 as a List-3 `Realization.Interpreted` view. -/
-def cahootHead : Morphology.Realization.Interpreted Unit SyntacticContext Unit String :=
+def cahootHead :
+    Morphology.Realization.Interpreted Unit (Neighborhood (List Allosemy.Feature)) Unit String :=
   toInterpreted cahootLF
 
 /-- The caboodle item is interpreted inside its frame and has an empty
 `interp` fiber elsewhere — a gap, the meaning-side analogue of an empty
 realization fiber, so a licensing failure rather than allosemy (§2.3). -/
 theorem cahoot_interp_gap :
-    cahootHead.interp () { aboveCat := some .n } = {"a conspiracy"} ∧
-      cahootHead.interp () {} = ∅ := by
+    cahootHead.interp () (embedding [.cat .n]) = {"a conspiracy"} ∧
+      cahootHead.interp () ∅ = ∅ := by
   refine ⟨?_, ?_⟩ <;> decide
 
 end Harley2014

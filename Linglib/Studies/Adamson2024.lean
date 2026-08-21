@@ -57,6 +57,7 @@ per marked feature.
 namespace Adamson2024
 
 open DistributedMorphology
+open scoped DistributedMorphology.VocabularyItem
 open DistributedMorphology.Categorizer (Head)
 
 /-! ### The Gender Locality Hypothesis -/
@@ -129,8 +130,8 @@ inductive ArticleFeature where
 
 /-- The items of (32), in the paper's order. -/
 def articles : List (VocabularyItem ArticleFeature String) :=
-  [⟨[.animate, .pl], "o"⟩, ⟨[.pl], "a"⟩, ⟨[.animate, .proper], "e"⟩, ⟨[.animate], "a"⟩,
-    ⟨[], "o"⟩]
+  [[.animate, .pl] ⟷ "o", [.pl] ⟷ "a", [.animate, .proper] ⟷ "e", [.animate] ⟷ "a",
+    [] ⟷ "o"]
 
 /-- The article's bundle for a Fragment `ArticleCtx`. -/
 def articleFeatures (c : ArticleCtx) : List ArticleFeature :=
@@ -223,7 +224,7 @@ def impoverish (φ : List Phi) : List Phi :=
   runChain (ImpoverishmentRule.apply List.erase) impoverishment (Neighborhood.ofBundle φ)
 
 /-- The declarative marker's items (59): `decl[masc] ↔ ka`, `decl ↔ ke`. -/
-def declarative : List (VocabularyItem Phi String) := [⟨[.masc], "ka"⟩, ⟨[], "ke"⟩]
+def declarative : List (VocabularyItem Phi String) := [[.masc] ⟷ "ka", [] ⟷ "ke"]
 
 /-- The declarative marker agreeing with a nominal of features `φ`. -/
 def decl (φ : List Phi) : Option String := subsetPrinciple declarative (impoverish φ)
@@ -238,7 +239,7 @@ theorem decl_masc_only :
 /-- The possessed noun *mano* 'arm' (A7): *mano* for a marked feature —
 `[participant]` or a surviving `[masc]` — and *mani* elsewhere. -/
 def manV : List (VocabularyItem Phi String) :=
-  [⟨[.participant], "mano"⟩, ⟨[.masc], "mano"⟩, ⟨[], "mani"⟩]
+  [[.participant] ⟷ "mano", [.masc] ⟷ "mano", [] ⟷ "mani"]
 
 /-- The form of *mano* agreeing with possessor `p`. -/
 def mano (p : Possessor) : Option String := subsetPrinciple manV (impoverish (possessorPhi p))

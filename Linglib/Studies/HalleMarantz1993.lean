@@ -42,6 +42,7 @@ paper's separate rule system and is outside this file.
 namespace HalleMarantz1993
 
 open DistributedMorphology Data.Examples
+open scoped DistributedMorphology.VocabularyItem
 
 /-! ### The fused Tns–Agr node -/
 
@@ -101,7 +102,7 @@ def tPast : List Verb := [.dwell]
 disjunctive list in a contextual feature. -/
 def forStems (features : List Feature) (e : String) (stems : List Verb) :
     List (VocabularyItem Feature String) :=
-  stems.map fun v => ⟨features ++ [.stem v], e⟩
+  stems.map fun v => (features ++ [.stem v]) ⟷ e
 
 /-- The seven suffixes of (8): the past block (`-n`, the unordered `∅` and
 `-t`, default `-d`), then `[3sg]` `-z`, `[+participle]` `-ing`, and
@@ -109,7 +110,7 @@ the Elsewhere `∅`. -/
 def vocabulary : List (VocabularyItem Feature String) :=
   forStems [.past true, .participle true] "-n" strongParticiple ++
     forStems [.past true] "∅" strongPast ++ forStems [.past true] "-t" tPast ++
-    [⟨[.past true], "-d"⟩, ⟨[.sg3], "-z"⟩, ⟨[.participle true], "-ing"⟩, ⟨[], "∅"⟩]
+    [[.past true] ⟷ "-d", [.sg3] ⟷ "-z", [.participle true] ⟷ "-ing", [] ⟷ "∅"]
 
 /-- The `∅` and `-t` pasts "are not ordered by complexity" and need no
 ordering: their stem lists are disjoint. -/
@@ -179,7 +180,7 @@ theorem participle_eq_past_of_not_strong (v : Verb) (hv : v ∉ strongParticiple
 /-- The stem-conditioned past `∅` (*put*) blocks the default `-d`: the
 winner is the stem-listed item. -/
 theorem zero_past_blocks_default :
-    winner? vocabulary (Part.pastFinite.node .put) = some ⟨[.past true, .stem .put], "∅"⟩ := by
+    winner? vocabulary (Part.pastFinite.node .put) = some ([.past true, .stem .put] ⟷ "∅") := by
   decide
 
 /-- The paper's two zero morphemes are different items: the stem-conditioned

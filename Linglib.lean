@@ -1257,6 +1257,7 @@ import Linglib.Morphology.DistributedMorphology.Fission
 import Linglib.Morphology.DistributedMorphology.Fusion
 import Linglib.Morphology.DistributedMorphology.Impoverishment
 import Linglib.Morphology.DistributedMorphology.Merger
+import Linglib.Morphology.DistributedMorphology.Neighborhood
 import Linglib.Morphology.DistributedMorphology.NominalSpine
 import Linglib.Morphology.DistributedMorphology.Root
 import Linglib.Morphology.DistributedMorphology.Spellout

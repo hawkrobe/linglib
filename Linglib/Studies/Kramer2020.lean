@@ -57,6 +57,7 @@ semantic core from the structural account alone.
 namespace Kramer2020
 
 open Corbett1991 (SemanticBasis Profile allProfiles)
+open scoped DistributedMorphology.VocabularyItem
 open DistributedMorphology
 open Spanish.Gender (SpanishNoun)
 open Russian.Gender (DeclClass)
@@ -277,7 +278,7 @@ def determinerFeatures (ch : Categorizer.Head) : List DetFeature :=
 /-- The Spanish definite determiners (25): *la* with [+fem], *el*
 underspecified. -/
 def determiners : List (VocabularyItem DetFeature String) :=
-  [⟨[.d, .definite, .gender ⟨.fem, .pos⟩], "la"⟩, ⟨[.d, .definite], "el"⟩]
+  [[.d, .definite, .gender ⟨.fem, .pos⟩] ⟷ "la", [.d, .definite] ⟷ "el"]
 
 /-- The determiner a head takes, by the Subset Principle. -/
 def determiner (ch : Categorizer.Head) : Option String :=

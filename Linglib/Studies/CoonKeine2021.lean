@@ -645,14 +645,14 @@ theorem mefirst_diverges_from_pConstraint :
 For morphological agreement (vs. clitics), gluttony is fatal only at
 PF: the probe carries one value per agreed goal (their (16)/(58)),
 each value *demands* a Vocabulary item (the most specific compatible
-one — the Elsewhere Condition, as in `Minimalist.bestMatch`), and
+one — the Elsewhere Condition, as in `DistributedMorphology.winner?`), and
 only one VI can be inserted. Conflicting demands → ineffability
 (their (83)); syncretic demands → grammatical despite gluttony
 (their (85)) — the signature prediction separating this account from
 licensing: "gluttony and gluttonous probes do not by themselves give
 rise to ungrammaticality". The VI type is study-local because its
-context slot is the number value, not a syntactic category
-(`Minimalist.VocabEntry`'s `context : Option Cat` does not fit).
+context slot is the number value rather than the neighborhood a
+`DistributedMorphology.VocabularyItem` conditions on.
 
 Scope: person effects only. The German number hierarchy (*SG>PL,
 their (52)/(64)) and Icelandic number effects (their fn. 35) need
@@ -691,7 +691,7 @@ structure VI where
 
 /-- The VI a single person value demands in a number context: the
     most specific compatible item (Elsewhere Condition; ties by list
-    order, as in `Minimalist.bestMatch`). -/
+    order, as in `DistributedMorphology.winner?`). -/
 def demand (vocab : List VI) (plural : Bool) (value : List Segment) :
     Option VI :=
   (vocab.filter (fun vi =>

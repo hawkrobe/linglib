@@ -130,6 +130,8 @@ theorem different_mechanisms :
 -- ============================================================================
 
 open Minimalist SyntacticObject
+open DistributedMorphology (VocabularyItem)
+open scoped DistributedMorphology.VocabularyItem
 
 /-! ### Mam Voice substrate (Minimalist)
 
@@ -191,14 +193,11 @@ def dirCis : MamDirHead := { cislocative := true, hasUOblique := true }
 /-- Translocative directional with [uOblique]. -/
 def dirTrans : MamDirHead := { cislocative := false, hasUOblique := true }
 
-/-- Vocabulary entry for =(y)a': maps [+oblique] on Voice⁰ to "=(y)a'". -/
-def eqYaVocab : VocabEntry :=
-  { features := .ofGramFeatures [.valued (.oblique true)]
-  , exponent := "=(y)a'"
-  , context := some .Voice }
+/-- The Vocabulary Item for =(y)a': [+oblique] on Voice⁰ spells out as "=(y)a'". -/
+def eqYaVocab : VocabularyItem GramFeature String := [.valued (.oblique true)] ⟷ "=(y)a'"
 
-/-- The Mam Voice vocabulary: just the =(y)a' entry. -/
-def mamVoiceVocab : Vocabulary := [eqYaVocab]
+/-- The items Voice⁰ consults in Mam: just =(y)a'. -/
+def mamVoiceVocab : List (VocabularyItem GramFeature String) := [eqYaVocab]
 
 /-- Mam passive Voice head: carries [uOblique] just like agentive Voice.
     [elkins-torrence-brown-2026] §7.2: =(y)a' co-occurs with
@@ -275,18 +274,12 @@ theorem antipassive_vs_agentive :
 
 /-- Valued [+oblique] on Voice spells out as =(y)a'. -/
 theorem spellout_oblique_voice :
-    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique true)]) (some .Voice) = some "=(y)a'" := by
+    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique true)]) = some "=(y)a'" := by
   decide
 
 /-- Without [+oblique], Voice has no exponent from this vocabulary. -/
 theorem spellout_no_oblique :
-    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique false)]) (some .Voice) = none := by
-  decide
-
-/-- [+oblique] on a non-Voice head does not yield =(y)a'
-    (context restriction blocks insertion). -/
-theorem spellout_oblique_wrong_context :
-    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique true)]) (some .T) = none := by
+    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique false)]) = none := by
   decide
 
 -- ============================================================================
@@ -434,7 +427,7 @@ theorem dir_probe_matches_voice :
 
 /-- Dir⁰ with valued [+oblique] also spells out as =(y)a'. -/
 theorem dir_spellout_eqya :
-    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique true)]) (some .Voice) = some "=(y)a'" := by
+    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique true)]) = some "=(y)a'" := by
   decide
 
 -- ============================================================================
@@ -481,14 +474,14 @@ theorem voice_agree_values_oblique :
 
 /-- Spellout: valued [+oblique] on Voice maps to "=(y)a'". -/
 theorem voice_spellout_eqya :
-    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique true)]) (some .Voice) =
+    spellout mamVoiceVocab (.ofGramFeatures [.valued (.oblique true)]) =
     some "=(y)a'" := by
   decide
 
 /-- Full derivation pipeline: Agree then Spellout → "=(y)a'". -/
 theorem full_derivation_pipeline :
     (applyAgree mamVoice.features oblique_goal_features .oblique).bind
-      (λ fb => spellout mamVoiceVocab fb (some .Voice)) = some "=(y)a'" := by
+      (λ fb => spellout mamVoiceVocab fb) = some "=(y)a'" := by
   decide
 
 end Derivation
@@ -532,11 +525,11 @@ theorem phi_and_oblique_agree_parallel :
     -- φ-Agree pipeline: value person, then number, then spellout
     (applyAgree voiceProbe dp3sg .person).bind
       (λ fb => applyAgree fb dp3sg .number) = some voiceFullyAgreed ∧
-    spellout setAVocab voiceFullyAgreed (some .v) = some "t-" ∧
+    spellout setAVocab voiceFullyAgreed = some "t-" ∧
     -- Oblique-Agree pipeline: value oblique, then spellout
     applyAgree voiceOblProbe (.ofGramFeatures [.valued (.oblique true)]) .oblique =
       some (.ofGramFeatures [.valued (.oblique true)]) ∧
-    spellout [eqYaVocab] (.ofGramFeatures [.valued (.oblique true)]) (some .Voice) = some "=(y)a'" := by
+    spellout [eqYaVocab] (.ofGramFeatures [.valued (.oblique true)]) = some "=(y)a'" := by
   exact ⟨by decide, by decide, by decide, by decide⟩
 
 end UnifiedAgree

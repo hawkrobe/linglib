@@ -66,6 +66,7 @@ infinitival classification.
 namespace Ostrove2026
 
 open Minimalist.MinimalPronoun
+open scoped DistributedMorphology.VocabularyItem
 open Control
 open Minimalist (InfinitivalTenseClass)
 open Mixtec.SMPM (EmbeddedClauseType clauseProperties)
@@ -233,8 +234,8 @@ theorem landau_predicts_control (c : Control.ClauseClass) :
     pronoun elsewhere. English distinguishes all three non-free BVA
     contexts morphologically. -/
 def englishInventory : MinPronInventory PronForm where
-  items := [ ⟨.controlledSubject, .null⟩,      -- (94a) D[πφ] → ∅ / controlled
-             ⟨.locallyBound, .reflexive⟩ ]      -- (94b) D[πφ] → -self / locally bound
+  items := [ [.controlledSubject] ⟷ .null,      -- (94a) D[πφ] → ∅ / controlled
+             [.locallyBound] ⟷ .reflexive ]      -- (94b) D[πφ] → -self / locally bound
   elsewhere := .pronoun                          -- (94c) D[πφ] → pronoun
 
 /-- Haitian vocabulary items (96a–b).
@@ -243,7 +244,7 @@ def englishInventory : MinPronInventory PronForm where
     LACKS a reflexive allomorph — reflexives and bound variables
     are both realized as pronouns ([dechaine-manfredi-1994]). -/
 def haitianInventory : MinPronInventory PronForm where
-  items := [ ⟨.controlledSubject, .null⟩ ]      -- (96a) D[πφ] → ∅ / controlled
+  items := [ [.controlledSubject] ⟷ .null ]      -- (96a) D[πφ] → ∅ / controlled
   elsewhere := .pronoun                          -- (96b) D[πφ] → pronoun
 
 /-- SMPM vocabulary items (98a–b).
@@ -252,7 +253,7 @@ def haitianInventory : MinPronInventory PronForm where
     LACKS a null allomorph — controlled subjects and bound variables
     are both realized as overt clitic pronouns (=rà, =ñá, etc.). -/
 def smpmInventory : MinPronInventory PronForm where
-  items := [ ⟨.locallyBound, .reflexive⟩ ]      -- (98a) D[πφ] → mí + pronoun / locally bound
+  items := [ [.locallyBound] ⟷ .reflexive ]      -- (98a) D[πφ] → mí + pronoun / locally bound
   elsewhere := .pronoun                          -- (98b) D[πφ] → pronoun
 
 /-- Quiegolani Zapotec: no context-specific items at all

@@ -56,6 +56,7 @@ in the text layer.
 namespace Aitha2026
 
 open Morphology.Case.Allomorphy DistributedMorphology Prosody Data.Examples
+open scoped DistributedMorphology.VocabularyItem
 open Core Constraints OptimalityTheory Core.Optimization Core.Optimization.Evaluation
 
 /-! ### Case -/
@@ -111,7 +112,7 @@ def site (r : Root) (c : TeluguCase) : List Feature :=
 of [ACC] when `acc`. -/
 def forRoots (roots : List Root) (e : String) (acc : Bool := false) :
     List (VocabularyItem Feature String) :=
-  roots.map fun r => ⟨.root r :: if acc then [.acc] else [], e⟩
+  roots.map fun r => (.root r :: if acc then [.acc] else []) ⟷ e
 
 /-- The Vocabulary Items of (4) for the roots of (2): the nominative exponents
 next to their roots, and the oblique exponents next to the same roots and
@@ -266,11 +267,11 @@ inductive NumContext where
 
 /-- The Vocabulary Items of Num in the singular ((40)): *-ni* after *-am*,
 null elsewhere — conditioned inward, as root-out insertion allows. -/
-def numItems : List (VocabularyItem NumContext String) := [⟨[.afterAm], "ni"⟩, ⟨[], "ø"⟩]
+def numItems : List (VocabularyItem NumContext String) := [[.afterAm] ⟷ "ni", [] ⟷ "ø"]
 
 /-- The singular exponent of Num after an n exponent. -/
 def numSg (nExponent : String) : Option String :=
-  subsetPrinciple numItems (if nExponent = "am" then [.afterAm] else [])
+  subsetPrinciple numItems (if nExponent = "am" then [.afterAm] else [] : List NumContext)
 
 /-- Weak nouns take *-ni*, strong nouns the null singular: the underlying weak
 singular is *samudr-am-ni-K* ((41)). -/

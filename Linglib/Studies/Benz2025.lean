@@ -30,7 +30,8 @@ distribution from the structure-problem solutions.
 
 namespace Benz2025
 
-open DistributedMorphology.Allosemy Data.Examples German.Predicates ArgumentStructure
+open DistributedMorphology DistributedMorphology.Allosemy Data.Examples German.Predicates
+  ArgumentStructure
 open Features (VendlerClass)
 
 /-! ## Content nominalizations (Ch. 3) -/
@@ -109,19 +110,19 @@ theorem reading_determines_contentful_head (v : Verbalizer.Alloseme) (n : Nomina
 /-! ### Alloseme selection in the nominalization structure
 
 The selection side is DM's own engine, not a further table: allosemes are
-vocabulary entries over `SyntacticContext`, applicability is context
-matching, and canonical defaults are Elsewhere competition
-(`Exponence.selectBy`). The readings available in the (66)/(68) structure
-[n [v √]] are whatever the licensed allosemes compose to. -/
+Vocabulary Items over neighborhoods, applicability is the Subset Principle,
+and canonical defaults are Elsewhere competition (`winner?`). The readings
+available in the (66)/(68) structure [n [v √]] are whatever the licensed
+allosemes compose to. -/
 
 /-- v's context in the nominalization structure [n [v √]] — its complement is
 the root, event-entailing or not, and it is embedded under n. -/
-def vContext (eventive : Bool) : SyntacticContext :=
-  { aboveCat := some .n, complementIsEventive := eventive }
+def vContext (eventive : Bool) : Neighborhood (List Feature) :=
+  ⟨[], [if eventive then [.eventive] else []], [[.cat .n]]⟩
 
 /-- n's context in [n [v √]] — a verbal complement, eventive or not. -/
-def nContext (eventive : Bool) : SyntacticContext :=
-  { belowCat := some .v, complementIsEventive := eventive }
+def nContext (eventive : Bool) : Neighborhood (List Feature) :=
+  complement (.cat .v :: if eventive then [.eventive] else [])
 
 /-- The readings derivable in the nominalization structure: any licensed v
 alloseme composed with any licensed n alloseme. -/
@@ -143,8 +144,7 @@ winner: the more specified eventive entry beats vacuous v exactly when the
 root entails an event, so `Verbalizer.Alloseme.fromRootType` is derived, not
 stipulated. -/
 theorem fromRootType_is_selectBy_winner (rt : Verb.Root.ChangeType) :
-    (selectBy AllosemicEntry.score Verbalizer.vocabulary
-        (vContext rt.entailsChange)).map (·.denotation) =
+    (winner? Verbalizer.vocabulary (vContext rt.entailsChange)).map (·.exponent) =
       some (Verbalizer.Alloseme.fromRootType rt) := by
   cases rt <;> rfl
 

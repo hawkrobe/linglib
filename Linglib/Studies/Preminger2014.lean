@@ -113,7 +113,7 @@ gives five arguments against hierarchy accounts:
   the derivations below consume. Failed Agree = an `unvalued` probe outcome
   that is *tolerated* (no crash) and spells out as the Elsewhere entry.
 - `Morphology/DistributedMorphology/VocabularyInsertion/FeatureBundle.lean` —
-  `Vocabulary`, `Agreement.Cell.toPhiFeatures`, `makePersonVocab`, `spellout`.
+  `Agreement.Cell.toPhiFeatures`, `vocabularyOfCells`, `spellout`.
 - `Studies/Scott2023.lean` — the same DM/Agree machinery applied to
   Mam (where Infl's φ-probe is blocked in transitives).
 - `Studies/CoonMateoPedroPreminger2014.lean` — Voice/case-flavor
@@ -124,6 +124,8 @@ namespace Preminger2014
 
 open Kaqchikel
 open Minimalist
+open DistributedMorphology (VocabularyItem)
+open scoped DistributedMorphology.VocabularyItem
 open Agreement
 
 /-! ### Feature decomposition (grounded in `Phi/Geometry.lean`) -/
@@ -161,21 +163,19 @@ private def cellBundle (c : Agreement.Cell) : FeatureBundle :=
 
 /-- Set A as DM Vocabulary entries, contextualized to Voice/v.
     All six cells have overt exponents. -/
-def setAVocab : Vocabulary :=
-  makePersonVocab Agreement.Cell.pnCells Agreement.Cell.toPhiFeatures
-    (fun c => (((setAExponent .consonant).realize c).map
-      toString).getD "") (some .v)
+def setAVocab : List (VocabularyItem GramFeature String) :=
+  vocabularyOfCells Agreement.Cell.pnCells Agreement.Cell.toPhiFeatures
+    (fun c => (((setAExponent .consonant).realize c).map toString).getD "")
 
 /-- Set B as DM Vocabulary entries, contextualized to Infl/T: specific
     entries for the five overt cells, plus the Elsewhere ∅ entry
     realizing 3SG and failed agreement (see the module docstring on
     this DM rendering vs. Preminger's own formulation). -/
-def setBVocab : Vocabulary :=
-  makePersonVocab (Agreement.Cell.pnCells.filter (· != .pn .third .Sing))
+def setBVocab : List (VocabularyItem GramFeature String) :=
+  vocabularyOfCells (Agreement.Cell.pnCells.filter (· != .pn .third .Sing))
     Agreement.Cell.toPhiFeatures
-    (fun c => ((setBExponent.realize c).map
-      toString).getD "") (some .T) ++
-  [{ features := ⊥, exponent := "∅", context := some .T }]
+    (fun c => ((setBExponent.realize c).map toString).getD "") ++
+  [[] ⟷ "∅"]
 
 /-- Vocabulary insertion recovers the fragment's paradigms: spelling
     out each cell's valued bundle yields the fragment's exponent — for
@@ -183,9 +183,9 @@ def setBVocab : Vocabulary :=
     specific entries. -/
 theorem spellout_matches_paradigm :
     ∀ c ∈ Agreement.Cell.pnCells,
-      spellout setAVocab (cellBundle c) (some .v) =
+      spellout setAVocab (cellBundle c) =
         ((setAExponent .consonant).realize c).map toString ∧
-      spellout setBVocab (cellBundle c) (some .T) =
+      spellout setBVocab (cellBundle c) =
         (setBExponent.realize c).map toString := by
   decide
 
@@ -278,7 +278,7 @@ def afMarker (subj obj : Agreement.Cell) : Option String :=
   if PLC Prod.snd ([(.A, subj), (.P, obj)] : List (ArgPosition × Agreement.Cell)) then
     ((afAgreementTarget subj obj).bind
       (fun t => (setBExponent.realize t).map toString)) <|>
-      spellout setBVocab ⊥ (some .T)
+      spellout setBVocab ⊥
   else none
 
 /-- The rank encoding (`probeResolutionRank`, [bejar-rezac-2003]
@@ -436,7 +436,7 @@ theorem failed_agree_tolerated :
     piOutcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
     numOutcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
     afProbe.Outcome (.pn .third .Sing) (.pn .third .Sing) = .unvalued ∧
-    spellout setBVocab ⊥ (some .T) = some "∅" ∧
+    spellout setBVocab ⊥ = some "∅" ∧
     afMarker (.pn .third .Sing) (.pn .third .Sing) = some "∅" := by
   decide
 

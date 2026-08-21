@@ -1,3 +1,5 @@
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+
 /-!
 # Minimal Pronoun Theory
 [kratzer-1998] [kratzer-2009] [safir-2014] [landau-2015]
@@ -17,8 +19,7 @@ item inventory.
 ## Key Definitions
 
 - `BVAContext`: The four licensing contexts for bound variable anaphora
-- `VocabItem`: A context-sensitive realization rule (D[uφ] → Form / context)
-- `MinPronInventory`: A language's vocabulary item inventory + elsewhere default
+- `MinPronInventory`: A language's Vocabulary Items (D[uφ] → Form / context) + elsewhere default
 - `PronForm`: Standard surface form categories (null, pronoun, reflexive)
 
 ## Core Claims
@@ -64,43 +65,24 @@ inductive BVAContext where
 
 /-! ### Vocabulary Items and the Elsewhere Condition -/
 
-/-- A vocabulary item: a context-specific realization rule for a minimal pronoun.
-
-    In DM terms: D[uφ] → `form` / `context` ...
-
-    Vocabulary items are ordered by specificity. When multiple items could
-    apply, the most specific (first in the list) wins.
-
-    This is a specialization of DM's `DistributedMorphology.VocabularyItem`: a
-    single `BVAContext` feature matched exactly, with a parameterized `Form`
-    type. -/
-structure VocabItem (Form : Type) where
-  /-- The syntactic context this item is restricted to -/
-  context : BVAContext
-  /-- The surface form this item realizes -/
-  form : Form
-
-/-- A language's inventory of vocabulary items for minimal pronouns.
-
-    The `items` list is ordered by specificity (most specific first).
-    The `elsewhere` form applies when no context-specific item matches.
+/-- A language's inventory of Vocabulary Items for minimal pronouns: each
+    item realizes D[uφ] as a form in one `BVAContext` — D[uφ] → `form` /
+    `context` — and the `elsewhere` form applies when no item matches.
 
     [safir-2014]: "from this single element, all anaphoric diversity
     is morphological" -/
 structure MinPronInventory (Form : Type) where
-  /-- Context-specific vocabulary items, ordered by specificity -/
-  items : List (VocabItem Form)
+  /-- Context-specific Vocabulary Items. -/
+  items : List (DistributedMorphology.VocabularyItem BVAContext Form)
   /-- Default exponence: applies when no specific item matches.
       Crosslinguistically, this is the pronoun form ([safir-2014]). -/
   elsewhere : Form
 
-/-- The Elsewhere Condition: find the first vocabulary item whose context
-    matches; if none does, use the elsewhere (default pronoun) form. -/
+/-- The Elsewhere Condition: the Subset Principle over the items at the
+    context, falling back to the elsewhere (default pronoun) form. -/
 def MinPronInventory.realize {Form : Type}
     (inv : MinPronInventory Form) (ctx : BVAContext) : Form :=
-  match inv.items.find? (·.context == ctx) with
-  | some item => item.form
-  | none => inv.elsewhere
+  (DistributedMorphology.subsetPrinciple inv.items [ctx]).getD inv.elsewhere
 
 /-- A language's realized form for controlled subjects specifically.
     This is the function that distinguishes null-PRO from overt-PRO languages. -/

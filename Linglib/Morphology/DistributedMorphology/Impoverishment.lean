@@ -1,4 +1,5 @@
 import Linglib.Syntax.Minimalist.Features
+import Linglib.Morphology.DistributedMorphology.Neighborhood
 
 /-!
 # Impoverishment
@@ -7,8 +8,8 @@ Impoverishment deletes features from a terminal before Vocabulary
 Insertion — the Distributed Morphology mechanism for syncretism: a
 context that loses a distinguishing feature falls together with its
 neighbor at VI, forcing retreat to the more general exponent. A rule is
-evaluated against a `Neighborhood` — the focus terminal plus its
-adjacent terminals — and the focus/context split makes the
+evaluated against a `Neighborhood` (`DistributedMorphology/Neighborhood.lean`)
+— the focus terminal plus its adjacent terminals — and the focus/context split makes the
 paradigmatic/syntagmatic distinction structural: a rule whose condition
 factors through the focus is paradigmatic as a theorem about the rule,
 not an annotation. Deletion only removes: every dimension of the output
@@ -18,7 +19,6 @@ the post-impoverishment VI winner the retreat-to-the-general exponent
 
 ## Main definitions
 
-* `Neighborhood` — the local context a postsyntactic rule inspects
 * `ImpoverishmentRule` — a conditioned feature deletion, parametric in
   the bundle and target types; `ImpoverishmentRule.apply` instantiates
   it with a deletion operation
@@ -54,27 +54,6 @@ from fission and the coproduct (`Studies/SenturiaMarcolli2025.lean`).
 namespace DistributedMorphology
 
 open Minimalist
-
-/-! ### Neighborhoods -/
-
-/-- The local context a postsyntactic rule may inspect. The `focus`
-bundle is the terminal targeted for rewriting; `leftCtx` and `rightCtx`
-are the surrounding terminals, nearest first. The zipper view of a
-whole spell-out domain is `Spellout.lean`'s `mapNeighborhoods`.
-
-Splitting `focus` from context makes the paradigmatic/syntagmatic
-distinction structural: a condition that only inspects `focus` is
-paradigmatic by construction; one that reads `leftCtx` or `rightCtx` is
-syntagmatic. -/
-structure Neighborhood (Bundle : Type*) where
-  focus    : Bundle
-  leftCtx  : List Bundle := []
-  rightCtx : List Bundle := []
-  deriving Repr
-
-/-- A bundle, viewed as a context-free neighborhood. -/
-def Neighborhood.ofBundle {Bundle : Type*} (fb : Bundle) : Neighborhood Bundle :=
-  { focus := fb }
 
 /-! ### Impoverishment rules -/
 
