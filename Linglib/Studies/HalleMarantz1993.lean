@@ -70,21 +70,17 @@ def agr (sg3 : Bool) : List Feature :=
 
 /-- Agr fuses with a `[−participle]` Tns node into one terminal bearing both
 bundles. -/
-def tnsAgrFusion : FusionRule (List Feature) Unit where
-  contextOk _ := True
-  decContext _ := inferInstanceAs (Decidable True)
-  bundlesOk p _ := .participle false ∈ p
-  decBundles _ _ := inferInstanceAs (Decidable (_ ∈ _))
-  fuse := (· ++ ·)
+def tnsAgrFusion : FusionRule Feature where
+  condition p _ := .participle false ∈ p
+  decCond _ _ := inferInstanceAs (Decidable (_ ∈ _))
 
 /-- The fused node of a finite form. -/
-def tnsAgr (v : Verb) (past sg3 : Bool) : List Feature :=
-  tnsAgrFusion.fuse (tns v past false) (agr sg3)
+def tnsAgr (v : Verb) (past sg3 : Bool) : List Feature := tns v past false ++ agr sg3
 
 /-- Agr is added only to `[−participle]` nodes: Fusion rejects a participial
 Tns. -/
 theorem agr_only_on_finite (v : Verb) (past sg3 : Bool) :
-    tnsAgrFusion.apply (tns v past true) (agr sg3) () = none := by
+    tnsAgrFusion.apply (tns v past true) (agr sg3) = none := by
   simp [FusionRule.apply, tnsAgrFusion, tns]
 
 /-! ### The Vocabulary (8) -/
@@ -201,12 +197,12 @@ theorem past_precedes_agreement :
 
 /-- Fusion of adjacent Tns and Agr, then insertion by the Subset Principle. -/
 def tnsAgrSpellout : Spellout (List Feature) String where
-  modules := [tnsAgrFusion.applyFirstAdjacent ()]
-  insert := subsetPrinciple vocabulary
+  modules := [tnsAgrFusion.applyFirstAdjacent]
+  insert n := (subsetPrinciple vocabulary n).toList
 
 /-- *play-s*: the domain `[Tns, Agr]` spells out as the single exponent
 `-z`. -/
-theorem plays_pf : tnsAgrSpellout.pf [tns .play false false, agr true] = [some "-z"] := by
+theorem plays_pf : tnsAgrSpellout.pf [tns .play false false, agr true] = [["-z"]] := by
   decide
 
 /-- Two terminals enter, one exponent slot leaves: the misalignment is

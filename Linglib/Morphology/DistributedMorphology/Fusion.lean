@@ -1,107 +1,84 @@
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
-# Fusion (Distributed Morphology)
+# Fusion
 
-Fusion is the postsyntactic DM operation that merges two adjacent terminal
-nodes into a single terminal bearing both feature bundles, which a single
-Vocabulary Item then spells out ([halle-marantz-1993]'s Tns+Agr fusion in
-English; French *du* = P[de] fused with D[le] is the portmanteau case,
-[kalin-bjorkman-etal-2026] §4.4). It is the inverse misalignment from
-Fission: fission yields more positions of exponence than syntactic
-terminals, fusion fewer.
+Fusion merges two adjacent terminal nodes into a single terminal bearing
+both feature bundles, which a single Vocabulary Item then spells out — the
+Tns+Agr fusion of English finite verbs; French *du* = P[de] fused with
+D[le] is the portmanteau case. It is the inverse misalignment from Fission:
+fission yields more positions of exponence than syntactic terminals, fusion
+fewer. The fused bundle is the two bundles together; a rule contributes
+only the condition under which the two terminals fuse.
 
-A `FusionRule` follows the `FissionRule`/`ImpoverishmentRule` template —
-`Prop`-valued conditions with carried decidability witnesses. Unlike
-fission's opaque realization output, fusion's output is a bundle that
-continues to Vocabulary Insertion, and `portmanteau_needs_fusion` is the
-payoff: an exponent whose vocabulary items all draw on both input bundles
-is insertable only at the fused node.
+## Main definitions
 
-## Main declarations
+* `FusionRule`: the licensing condition on two adjacent bundles.
+* `FusionRule.apply`: the fused bundle when the condition holds.
 
-* `FusionRule Bundle Ctx` — the generic rule structure
-* `FusionRule.apply` — partial application returning `Option Bundle`, with
-  the `apply_eq_some_iff`/`apply_eq_none_iff`/`isSome_apply`
-  characterization API
-* `portmanteau_needs_fusion` — a cross-terminal exponent wins at neither
-  unfused node
+## Main results
+
+* `portmanteau_needs_fusion`: an exponent whose items all draw on both
+  bundles is insertable at neither unfused node.
+
+## References
+
+* [M. Halle and A. Marantz, *Distributed Morphology and the pieces of
+  inflection*][halle-marantz-1993]
+* [L. Kalin, B. Bjorkman et al.][kalin-bjorkman-etal-2026] §4.4
 -/
 
 namespace DistributedMorphology
 
-/-- A Fusion rule is parameterized over:
-* `Bundle` — the morphological feature bundles of the fusing terminals;
-* `Ctx`    — the structural context licensing Fusion (adjacency of the
-  two terminals under one head).
+variable {F E : Type*}
 
-Both conditions are `Prop`-valued with carried decidability witnesses,
-matching the `FissionRule`/`ImpoverishmentRule` template. -/
-structure FusionRule (Bundle Ctx : Type*) where
-  /-- The structural condition licensing Fusion. -/
-  contextOk : Ctx → Prop
-  /-- Decidability witness for `contextOk`. -/
-  decContext : DecidablePred contextOk
-  /-- The condition on the two fusing bundles (structurally higher first). -/
-  bundlesOk : Bundle → Bundle → Prop
-  /-- Decidability witness for `bundlesOk`. -/
-  decBundles : ∀ p, DecidablePred (bundlesOk p)
-  /-- The fused bundle — the union of the inputs in the intended instances. -/
-  fuse : Bundle → Bundle → Bundle
+/-- A Fusion rule: the condition under which two adjacent terminals, the
+structurally higher first, fuse into one bearing both bundles. -/
+structure FusionRule (F : Type*) where
+  /-- The condition on the two fusing bundles. -/
+  condition : List F → List F → Prop
+  /-- Decidability witness for `condition`. -/
+  decCond : ∀ p q, Decidable (condition p q)
 
 namespace FusionRule
 
-variable {Bundle Ctx : Type*} {rule : FusionRule Bundle Ctx}
-  {p q out : Bundle} {c : Ctx}
+variable {rule : FusionRule F} {p q out : List F}
 
-instance (rule : FusionRule Bundle Ctx) (c : Ctx) :
-    Decidable (rule.contextOk c) := rule.decContext c
+instance (rule : FusionRule F) (p q : List F) : Decidable (rule.condition p q) :=
+  rule.decCond p q
 
-instance (rule : FusionRule Bundle Ctx) (p q : Bundle) :
-    Decidable (rule.bundlesOk p q) := rule.decBundles p q
+/-- Apply Fusion: the two bundles together when the condition holds;
+otherwise `none`. -/
+def apply (rule : FusionRule F) (p q : List F) : Option (List F) :=
+  if rule.condition p q then some (p ++ q) else none
 
-/-- Apply Fusion: yield the fused bundle when both the structural and
-bundle conditions hold; otherwise `none`. -/
-def apply (rule : FusionRule Bundle Ctx) (p q : Bundle) (c : Ctx) :
-    Option Bundle :=
-  if rule.contextOk c ∧ rule.bundlesOk p q then some (rule.fuse p q) else none
+theorem apply_pos (h : rule.condition p q) : rule.apply p q = some (p ++ q) := if_pos h
 
-theorem apply_pos (hc : rule.contextOk c) (hb : rule.bundlesOk p q) :
-    rule.apply p q c = some (rule.fuse p q) :=
-  if_pos ⟨hc, hb⟩
+theorem apply_neg (h : ¬ rule.condition p q) : rule.apply p q = none := if_neg h
 
-theorem apply_neg (h : ¬(rule.contextOk c ∧ rule.bundlesOk p q)) :
-    rule.apply p q c = none :=
-  if_neg h
-
-@[simp]
-theorem apply_eq_some_iff :
-    rule.apply p q c = some out ↔
-      (rule.contextOk c ∧ rule.bundlesOk p q) ∧ rule.fuse p q = out := by
+@[simp] theorem apply_eq_some_iff :
+    rule.apply p q = some out ↔ rule.condition p q ∧ p ++ q = out := by
   unfold apply; split <;> simp_all
 
-@[simp]
-theorem apply_eq_none_iff :
-    rule.apply p q c = none ↔ ¬(rule.contextOk c ∧ rule.bundlesOk p q) := by
+@[simp] theorem apply_eq_none_iff : rule.apply p q = none ↔ ¬ rule.condition p q := by
   unfold apply; split <;> simp_all
 
-theorem isSome_apply :
-    (rule.apply p q c).isSome ↔ rule.contextOk c ∧ rule.bundlesOk p q := by
+theorem isSome_apply : (rule.apply p q).isSome ↔ rule.condition p q := by
   unfold apply; split <;> simp_all
 
 end FusionRule
 
 section Portmanteau
 
-variable {F E : Type*} [DecidableEq F]
+variable [DecidableEq F]
 
-/-- A portmanteau exponent needs fusion: when every vocabulary item
-carrying the exponent draws on features missing from each unfused bundle,
-the Subset Principle can select it at neither unfused node — only the
-fused bundle contains its item's features (`subsetPrinciple_winner_mem`). -/
+/-- A portmanteau exponent needs fusion: when every item carrying the
+exponent draws on features missing from each unfused bundle, the Subset
+Principle can select it at neither unfused node — only the fused bundle
+contains its item's features (`subsetPrinciple_winner_mem`). -/
 theorem portmanteau_needs_fusion {items : List (VocabularyItem F E)}
     {p q : Neighborhood (List F)} {e : E}
-    (he : ∀ i ∈ items, i.exponent = e → ¬ i.spec ⊆ p ∧ ¬ i.spec ⊆ q) :
+    (he : ∀ i ∈ items, i.exponent = e → ¬ i.site ⊆ p ∧ ¬ i.site ⊆ q) :
     subsetPrinciple items p ≠ some e ∧ subsetPrinciple items q ≠ some e := by
   refine ⟨fun h => ?_, fun h => ?_⟩ <;> obtain ⟨i, hi, rfl, happ⟩ := subsetPrinciple_winner_mem h
   · exact (he i hi rfl).1 happ

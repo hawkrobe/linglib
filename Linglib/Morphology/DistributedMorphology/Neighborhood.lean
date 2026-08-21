@@ -6,7 +6,7 @@ import Mathlib.Data.List.Basic
 The local environment a postsyntactic rule inspects: a focus terminal with
 the terminals to either side, nearest first. Vocabulary Items and
 Impoverishment rules are stated over the same neighborhoods — an item's
-specification is itself a neighborhood of feature lists, and it applies
+site is itself a neighborhood of feature lists, and it applies
 where every feature it mentions, at the focus or on a neighbor, is present
 (`Neighborhood.positioned`, `⊆`).
 
@@ -20,7 +20,7 @@ where every feature it mentions, at the focus or on a neighbor, is present
 ## Implementation notes
 
 A bare bundle coerces to the context-free neighborhood and `∅` is the
-empty specification, so a context-free Vocabulary Item is written
+empty site, so a context-free Vocabulary Item is written
 `⟨[f₁, f₂], e⟩` and the Elsewhere item `⟨∅, e⟩`. Positions count outward
 from the focus: `left` toward the root, `right` toward the clause.
 -/
@@ -71,9 +71,9 @@ def positioned (n : Neighborhood (List F)) : List (Position × F) :=
     n.leftCtx.zipIdx.flatMap (fun p => p.1.map (Position.left p.2, ·)) ++
     n.rightCtx.zipIdx.flatMap (fun p => p.1.map (Position.right p.2, ·))
 
-/-- A specification is included in a neighborhood when every positioned
-feature it mentions is present; a terminal it does not mention is
-unconstrained — the Subset Principle over neighborhoods. -/
+/-- A site is included in a neighborhood when every positioned feature it
+mentions is present; a terminal it does not mention is unconstrained — the
+Subset Principle over neighborhoods. -/
 instance : HasSubset (Neighborhood (List F)) := ⟨fun s n => s.positioned ⊆ n.positioned⟩
 
 theorem subset_def {s n : Neighborhood (List F)} : s ⊆ n ↔ s.positioned ⊆ n.positioned :=
@@ -99,7 +99,7 @@ instance : Trans (· ⊆ · : Neighborhood (List F) → Neighborhood (List F) �
 
 @[simp] theorem positioned_empty : (∅ : Neighborhood (List F)).positioned = [] := rfl
 
-/-- Context-free specifications compare by feature inclusion. -/
+/-- Context-free sites compare by feature inclusion. -/
 theorem ofBundle_subset_ofBundle {s t : List F} :
     (ofBundle s : Neighborhood (List F)) ⊆ ofBundle t ↔ s ⊆ t := by
   rw [subset_def, positioned_ofBundle, positioned_ofBundle]
