@@ -365,8 +365,8 @@ def toSemanticBasis : SemanticCore → Corbett1991.SemanticBasis
 
 /-- All Bantu semantic cores map to Kramer's semantic core bases. -/
 theorem bantu_cores_are_kramer_cores (c : SemanticCore) :
-    (toSemanticBasis c).isCore = true := by
-  cases c <;> rfl
+    Kramer2020.IsCore (toSemanticBasis c) := by
+  cases c <;> trivial
 
 -- ============================================================================
 -- § 9: Bridge to Gender Typology (WALS)
@@ -401,10 +401,10 @@ theorem profiles_wals_grounded :
 /-- Both profiles satisfy the Semantic Core Generalization
     ([kramer-2020] ex. 2/28). -/
 theorem xhosa_satisfies_semantic_core :
-    xhosaGenderProfile.SatisfiesSemanticCore := by decide
+    Kramer2020.SatisfiesSemanticCore xhosaGenderProfile := by decide
 
 theorem shona_satisfies_semantic_core :
-    shonaGenderProfile.SatisfiesSemanticCore := by decide
+    Kramer2020.SatisfiesSemanticCore shonaGenderProfile := by decide
 
 -- ============================================================================
 -- § 10: Resolution of Mismatched Conjuncts via nP Stack Cores

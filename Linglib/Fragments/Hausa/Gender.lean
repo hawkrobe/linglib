@@ -21,9 +21,8 @@ The Fragment commits to two empirical fields per entry:
   sex distinction in cases like *kāzā* 'hen' / *zàkarā* 'rooster').
   Newman/Corbett/Kramer all agree on this empirical field.
 
-These two fields suffice to project every entry's structural analysis
-under a Set-1 DM categorizer (see `Studies/Kramer2020.lean`
-for the projection); they also suffice for Newman-style and Corbett-style
+These two fields suffice for the *-ā* diagnostics of [kramer-2020]
+(`Studies/Kramer2020.lean`) and for Newman-style and Corbett-style
 analyses that don't go through DM at all.
 
 ## Empirical baseline ([newman-2000] Ch. 31)
