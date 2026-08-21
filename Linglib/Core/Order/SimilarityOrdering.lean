@@ -129,6 +129,37 @@ theorem closestWorlds_nonempty [DecidableEq W] (sim : SimilarityOrdering W)
   · exact Or.inl (hmin hw'' h)
   · exact Or.inr h
 
+/-! ## Closest worlds of a set -/
+
+/-- The closest `s`-worlds to `w₀`: the minimal elements of `s` under the similarity
+preorder centered at `w₀`. `closestWorlds` is the `Finset` form. -/
+def closest (sim : SimilarityOrdering W) (w₀ : W) (s : Set W) : Set W :=
+  {w ∈ s | ∀ w' ∈ s, sim.closer w₀ w w' ∨ ¬ sim.closer w₀ w' w}
+
+theorem closest_subset (sim : SimilarityOrdering W) (w₀ : W) (s : Set W) :
+    sim.closest w₀ s ⊆ s :=
+  Set.sep_subset _ _
+
+@[simp, norm_cast]
+theorem coe_closestWorlds [DecidableEq W] (sim : SimilarityOrdering W) (w₀ : W) (A : Finset W) :
+    (sim.closestWorlds w₀ A : Set W) = sim.closest w₀ A := by
+  ext; simp [closestWorlds, closest]
+
+/-- The Limit Assumption for finite sets. -/
+theorem closest_nonempty (sim : SimilarityOrdering W) (w₀ : W) {s : Set W} (hs : s.Finite)
+    (hne : s.Nonempty) : (sim.closest w₀ s).Nonempty := by
+  let _ : Preorder W := sim.atCenter w₀
+  obtain ⟨m, hm, hmin⟩ := hs.exists_minimal hne
+  refine ⟨m, hm, fun w' hw' => ?_⟩
+  by_cases h : sim.closer w₀ w' m
+  · exact Or.inl (hmin hw' h)
+  · exact Or.inr h
+
+instance [Fintype W] (sim : SimilarityOrdering W) (w₀ : W) (s : Set W)
+    [DecidablePred (· ∈ s)] : DecidablePred (· ∈ sim.closest w₀ s) :=
+  fun w => inferInstanceAs
+    (Decidable (w ∈ s ∧ ∀ w' ∈ s, sim.closer w₀ w w' ∨ ¬ sim.closer w₀ w' w))
+
 end SimilarityOrdering
 
 /-! ## Selection-function bridge primitives -/

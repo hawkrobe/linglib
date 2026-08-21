@@ -1,413 +1,212 @@
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Discourse.CommonGround
-import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Semantics.Presupposition.Context
 import Linglib.Logic.Modal.Defs
+import Mathlib.Data.Fintype.Basic
 
 /-!
-# Karttunen 1973: Presuppositions of Compound Sentences
-[karttunen-1973] [hintikka-1962] [karttunen-1971]
+# Karttunen (1973): presuppositions of compound sentences
 
-Linguistic Inquiry 4(2): 169–193.
+[karttunen-1973] asks how the presuppositions of a compound sentence are determined by
+those of its parts. Complement-taking predicates are *plugs* (verbs of saying: nothing
+projects), *holes* (factives, aspectuals, implicatives: everything projects), or
+*filters*; the connectives are filters with asymmetric conditions — `if A then B` (13)
+and `A and B` (17) presuppose what `A` presupposes and what `B` presupposes unless `A`
+entails it, while `A or B` (24) filters what the negation of `A` entails. §9 relativizes
+the entailment to a set `X` of background assumptions, (24b′), and `Entails X A C` is
+that relation; `cond`, `conj`, `disj` are the relativized rules, with `X = Set.univ` the
+absolute ones.
 
-The projection problem: how presuppositions of constituent sentences are
-inherited (or not) by compound sentences. K1973's contribution is the
-plug/hole/filter taxonomy of complement-takers (§§3–5), the asymmetric
-filtering rules for the connectives (§§5–7), the §8 Harman derivation of
-the conditional/conjunction-filter coincidence, and the §9 admission that
-filtering must be relativized to a set of background assumptions — the
-genealogical ancestor of CCP local contexts ([heim-1983],
-[schlenker-2009]).
-
-This file makes load-bearing the contributions that survive: the
-classification (§§3–4), the rule (13)/(17)/(24) filters, the §8 Harman
-derivation, the §9 X-set machinery (with concrete Geraldine example),
-the §10 three-valued comparison (Bochvar internal/external negation
-in particular), and the §11 argument on propositional attitudes: the
-[hintikka-1962] equivalence (38) rescues the hole treatment of *believe*
-for (37) by re-collecting the conjunction inside the attitude, but not for
-(42), where *believe* and *hope* cannot be re-collected — hence K's
-tentative plug verdict for the class.
+§8 derives the coincidence of (13) and (17) from three principles Harman supplied —
+internal negation preserves presuppositions, logically equivalent sentences share them,
+and the classical equivalences hold — which here is `neg_cond_neg_presup`, with
+`cond_neg_presup` the corresponding fact for disjunction. On the Geraldine example
+(25)–(28) the second disjunct's presupposition (27) is not filtered absolutely but is
+filtered given (28) (`geraldine_presup_absolute`, `geraldine_presup_relative`). §10
+rejects truth-functional three-valued conjunction on (35): it filters by the falsity of
+the first conjunct where the entailment filter does not (`kleene_35`, `conj_presup_35`);
+the substrate's pointwise `PartialProp.andFilter` agrees with (17) where the first
+conjunct holds (`conj_presup_iff_andFilter`) and shares the truth-functional verdict where
+it fails (`andFilter_35b`). §11 treats propositional attitudes: the [hintikka-1962]
+equivalence (38) lets the hole treatment of *believe* survive (37) by re-collecting the
+conjunction inside the attitude (`hole_conj_presup`, `hole_conj_assertion_iff`), but not
+(42), where *believe* and *hope* cannot be re-collected — hence the tentative verdict that
+the class are plugs (`conj_plug_plug_presup`).
 -/
 
 namespace Karttunen1973
 
-open Semantics.Presupposition
-open CommonGround (ContextSet)
-open English.Predicates.Verbal
+open Semantics.Presupposition (PartialProp)
+open ModalLogic (box box_and)
 
--- ════════════════════════════════════════════════════════════════
--- § 1. Plug / Hole Classification (K1973 §§3–4)
--- ════════════════════════════════════════════════════════════════
+variable {W : Type*} (X : Set W) (p q : PartialProp W) (w : W)
 
-/-! K1973 §3 (p. 174) plug list: "say, mention, tell, ask, promise,
-    warn, request, order, accuse, criticize, blame" — verbs of saying /
-    performatives. K1973 §4 (p. 175) hole list: "know, regret,
-    understand, surprise, be significant, begin, stop, continue, manage,
-    avoid, be able, be possible, force, prevent, hesitate, seem, be
-    probable" — Kiparsky's factives, Newmeyer's aspectuals, K's one-
-    and two-way implicatives. Footnote 6 (p. 175) adds *realize*: "factive
-    verbs, such as *realize*, … are holes irrespective of the type of
-    the complement."
+/-! ### The filters -/
 
-    K1973's lists are **lexical, not structural**: there is no clean
-    `inferProjection : Verb → ProjectionBehavior`, because the
-    Fragment has e.g. `reveal` as `speechActVerb := true` *and* a factive
-    soft-trigger (which would be a hole). So the file consolidates K's
-    Fragment-attested classifications as list-quantified theorems
-    rather than re-stipulating per-verb rfl checks. -/
+/-- `A` entails `C` given the background assumptions `X`: `X ∪ {A} ⊨ C`. -/
+def Entails (A C : W → Prop) : Prop := ∀ w ∈ X, A w → C w
 
-/-- K1973 §3 plug list, restricted to the Fragment's attested entries.
-    K's other list members (mention, ask, warn, request, order, accuse,
-    criticize) lack a `projectionBehavior` annotation in `Verbal.lean`. -/
-def k1973PlugVerbs : List VerbEntry := [say, tell, promise]
+instance [Fintype W] [DecidablePred (· ∈ X)] (A C : W → Prop) [DecidablePred A]
+    [DecidablePred C] : Decidable (Entails X A C) :=
+  inferInstanceAs (Decidable (∀ w ∈ X, A w → C w))
 
-/-- K1973 §4 hole list, restricted to the Fragment's attested entries.
-    `realize` is included on the strength of K1973 fn 6 paragraph 3. -/
-def k1973HoleVerbs : List VerbEntry := [know, regret, realize, stop, manage, force]
+/-- (13), relativized by (24b′): `if A then B` presupposes what `A` presupposes, and what
+`B` presupposes unless `A` entails it given `X`. -/
+def cond : PartialProp W :=
+  ⟨fun w => p.presup w ∧ (¬ Entails X p.assertion q.presup → q.presup w),
+   fun w => p.assertion w → q.assertion w⟩
 
-theorem k1973_plug_classification :
-    ∀ v ∈ k1973PlugVerbs, v.toVerb.projectionBehavior = some .plug := by
+/-- (17), relativized: `A and B` presupposes what `A` presupposes, and what `B` presupposes
+unless `A` entails it given `X`. -/
+def conj : PartialProp W :=
+  ⟨fun w => p.presup w ∧ (¬ Entails X p.assertion q.presup → q.presup w),
+   fun w => p.assertion w ∧ q.assertion w⟩
+
+/-- (24), relativized: `A or B` presupposes what `A` presupposes, and what `B` presupposes
+unless the negation of `A` entails it given `X`. -/
+def disj : PartialProp W :=
+  ⟨fun w => p.presup w ∧ (¬ Entails X (fun w => ¬ p.assertion w) q.presup → q.presup w),
+   fun w => p.assertion w ∨ q.assertion w⟩
+
+/-! ### Harman's derivation (§8) -/
+
+/-- The conjunction filter is the conditional filter through `A ∧ B ≡ ¬(A → ¬B)`, with
+negation a hole. -/
+theorem neg_cond_neg_presup :
+    (PartialProp.neg (cond X p (PartialProp.neg q))).presup = (conj X p q).presup := rfl
+
+/-- The disjunction filter is the conditional filter through `A ∨ B ≡ ¬A → B`. -/
+theorem cond_neg_presup : (cond X (PartialProp.neg p) q).presup = (disj X p q).presup := rfl
+
+/-- Where the first conjunct holds, (17) agrees with the substrate's pointwise filter
+`PartialProp.andFilter`. -/
+theorem conj_presup_iff_andFilter (hX : w ∈ X) (h : p.assertion w) :
+    (conj X p q).presup w ↔ (PartialProp.andFilter p q).presup w :=
+  and_congr_right fun _ =>
+    ⟨fun hc _ => by_contra fun hq => hq (hc fun he => hq (he w hX h)), fun hq _ => hq h⟩
+
+/-! ### Background assumptions (§9) -/
+
+/-- Whether Geraldine is a Mormon and whether she has worn holy underwear. -/
+inductive Geraldine where
+  | mormonWorn
+  | mormonUnworn
+  | gentileWorn
+  | gentileUnworn
+  deriving DecidableEq, Fintype
+
+/-- (26) `Geraldine is a Mormon`. -/
+abbrev mormon : Set Geraldine := {.mormonWorn, .mormonUnworn}
+
+/-- (27) `Geraldine has worn holy underwear`. -/
+abbrev worn : Set Geraldine := {.mormonWorn, .gentileWorn}
+
+/-- (28) `All Mormons have worn holy underwear`, Fred's background assumption. -/
+abbrev allMormonsWorn : Set Geraldine := {Geraldine.mormonUnworn}ᶜ
+
+/-- `She has given up wearing her holy underwear`: presupposes (27); the assertion is
+idealized. -/
+def givenUp : PartialProp Geraldine := ⟨(· ∈ worn), fun _ => True⟩
+
+/-- (25) `Either Geraldine is not a Mormon or she has given up wearing her holy underwear`,
+relative to the background `X`. -/
+def geraldine (X : Set Geraldine) : PartialProp Geraldine :=
+  disj X (.ofProp (· ∉ mormon)) givenUp
+
+/-- Absolutely, (25) presupposes (27): (26) alone does not entail it. -/
+theorem geraldine_presup_absolute : ¬ (geraldine Set.univ).presup .mormonUnworn := by
+  simp only [geraldine, disj, Entails, PartialProp.ofProp, givenUp]; decide
+
+/-- Given (28), (25) presupposes nothing: (26) and (28) together entail (27). -/
+theorem geraldine_presup_relative : ∀ w ∈ allMormonsWorn, (geraldine allMormonsWorn).presup w := by
+  simp only [geraldine, disj, Entails, PartialProp.ofProp, givenUp]; decide
+
+/-! ### Truth-functional conjunction (§10) -/
+
+/-- Whether Paris is the capital of France and whether France has a king. -/
+inductive France where
+  | parisKing
+  | parisNoKing
+  | marseilleKing
+  | marseilleNoKing
+  deriving DecidableEq, Fintype
+
+/-- `Paris is the capital of France`. -/
+abbrev capitalParis : Set France := {.parisKing, .parisNoKing}
+
+/-- `France has a king`. -/
+abbrev hasKing : Set France := {.parisKing, .marseilleKing}
+
+/-- `The king of France is bald`: presupposes a king; baldness is idealized. -/
+def kingBald : PartialProp France := ⟨(· ∈ hasKing), fun _ => True⟩
+
+/-- (35a) `Paris is the capital of France, and the king of France is bald` and (35b) with
+`Marseilles` both presuppose a king under (17): neither capital claim entails one. -/
+theorem conj_presup_35 :
+    ¬ (conj Set.univ (.ofProp (· ∈ capitalParis)) kingBald).presup .parisNoKing ∧
+      ¬ (conj Set.univ (.ofProp (· ∉ capitalParis)) kingBald).presup .parisNoKing := by
+  simp only [conj, Entails, PartialProp.ofProp, kingBald]; decide
+
+open Semantics.Presupposition.PartialProp in
+/-- Strong-Kleene conjunction makes (35b) false at the actual world and so bivalent —
+presupposition-free — while (35a) is undefined. -/
+theorem kleene_35 :
+    eval (ofProp (· ∈ capitalParis)) .parisNoKing ⊓ eval kingBald .parisNoKing = .indet ∧
+      eval (ofProp (· ∉ capitalParis)) .parisNoKing ⊓ eval kingBald .parisNoKing = .false := by
+  rw [(eval_eq_true_iff (ofProp (· ∈ capitalParis)) _).2
+      ⟨trivial, (by decide : France.parisNoKing ∈ capitalParis)⟩,
+    (eval_eq_false_iff (ofProp (· ∉ capitalParis)) _).2
+      ⟨trivial, (by decide : ¬ France.parisNoKing ∉ capitalParis)⟩,
+    (eval_eq_indet_iff kingBald _).2 (by decide : France.parisNoKing ∉ hasKing)]
   decide
 
-theorem k1973_hole_classification :
-    ∀ v ∈ k1973HoleVerbs, v.toVerb.projectionBehavior = some .hole := by
-  decide
-
-/-- The classes are disjoint. -/
-theorem k1973_plug_hole_disjoint :
-    ∀ v ∈ k1973PlugVerbs, ∀ u ∈ k1973HoleVerbs, v.form ≠ u.form := by
-  decide
-
--- ── Trigger × projection orthogonality ──
-
-/-- K's distinction: trigger-status (introduces a presupposition?) is
-    orthogonal to projection-behavior (passes complement presuppositions
-    through?). *know* exhibits both. -/
-theorem know_trigger_and_hole :
-    know.toVerb.presupType = some .softTrigger ∧
-    know.toVerb.projectionBehavior = some .hole := ⟨rfl, rfl⟩
-
-/-- *say* is a non-trigger AND a plug. -/
-theorem say_nontrigger_and_plug :
-    say.toVerb.presupType = none ∧
-    say.toVerb.projectionBehavior = some .plug := ⟨rfl, rfl⟩
-
-/-- K1973 fn 6 (p. 175 paragraph 4): *tell* is a plug for *that*-clauses
-    but a hole for indirect questions ("Bill told John that Harry insulted
-    the present king of France" vs "Bill told John who insulted the
-    present king of France"). The Fragment's flat
-    `tell.projectionBehavior = some .plug` is K's *that*-clause verdict;
-    the indirect-question case is a separate analysis K credits to
-    Permesly 1973 (Ch. 2). -/
-theorem tell_that_clause_is_plug :
-    tell.toVerb.projectionBehavior = some .plug := rfl
-
-/-- K1973 §1 (5)/(6) typological contrast: plugs and holes are *distinct*
-    profiles. K's own minimal pair uses *order* vs *force*; *order* lacks
-    a Fragment annotation, so we use the closest attested pair (*promise*,
-    plug; *force*, hole). -/
-theorem promise_force_minimal_pair :
-    promise.toVerb.projectionBehavior ≠ force.toVerb.projectionBehavior := by
-  decide
+/-- The substrate's pointwise filter shares the truth-functional verdict on (35b): the
+second conjunct's presupposition is filtered where the first conjunct is false. -/
+theorem andFilter_35b :
+    (PartialProp.andFilter (.ofProp (· ∉ capitalParis)) kingBald).presup .parisNoKing := by
+  simp only [PartialProp.andFilter, PartialProp.ofProp, kingBald]; decide
 
 /-! ### Propositional attitudes (§11) -/
 
 section Attitudes
 
-open ModalLogic (box box_and)
+variable (att att₁ att₂ : (W → Prop) → W → Prop) (R : W → W → Prop) (A C : W → Prop)
 
-variable {W : Type*} (att att₁ att₂ : (W → Prop) → W → Prop) (φ : PartialProp W)
-  (R : W → W → Prop) (p q : W → Prop) (w : W)
 
 /-- A hole lets the complement's presuppositions through: `att` applies to its assertion. -/
-def hole : PartialProp W := ⟨φ.presup, att φ.assertion⟩
+def hole (att : (W → Prop) → W → Prop) (φ : PartialProp W) : PartialProp W :=
+  ⟨φ.presup, att φ.assertion⟩
 
 /-- A plug blocks them. -/
-def plug : PartialProp W := ⟨λ _ => True, att φ.assertion⟩
+def plug (att : (W → Prop) → W → Prop) (φ : PartialProp W) : PartialProp W :=
+  ⟨fun _ => True, att φ.assertion⟩
 
 /-- (37) `Bill believes that Fred has been beating Zelda, and furthermore, Bill believes that
-Fred has stopped beating Zelda` under the hole treatment: rule (17) filters the second
-conjunct's presupposition `p` only where the first conjunct's assertion — that Bill believes
-`p` — yields `p`. The same holds of (42), with *hope* as the second attitude. -/
-theorem andFilter_hole_hole_presup :
-    (PartialProp.andFilter (hole att₁ (.ofProp p)) (hole att₂ ⟨p, q⟩)).presup w ↔
-      (att₁ p w → p w) := by
-  simp [PartialProp.andFilter, PartialProp.ofProp, hole]
+Fred has stopped beating Zelda` under the hole treatment presupposes `A` unless the first
+conjunct — that Bill believes `A` — entails `A`. The same holds of (42), with *hope* as the
+second attitude. -/
+theorem conj_hole_hole_presup :
+    (conj Set.univ (hole att₁ (.ofProp A)) (hole att₂ ⟨A, C⟩)).presup w ↔
+      (¬ (∀ v, att₁ A v → A v) → A w) := by
+  simp [conj, Entails, hole, PartialProp.ofProp]
 
 /-- (39), the re-collected `Bill believes that Fred has been beating Zelda and that he has
 stopped`: the filter applies inside the complement and nothing is presupposed, whatever the
 verb's status. -/
-theorem hole_andFilter_presup :
-    (hole att (PartialProp.andFilter (.ofProp p) ⟨p, q⟩)).presup w := ⟨trivial, id⟩
+theorem hole_conj_presup : (hole att (conj Set.univ (.ofProp A) ⟨A, C⟩)).presup w :=
+  ⟨trivial, fun h => (h fun _ _ hv => hv).elim⟩
 
-/-- (38): (37) and (39) assert the same thing ([hintikka-1962]), so the hole treatment survives
-(37) only at the price of letting the equivalence do the filtering. -/
-theorem hole_andFilter_assertion_iff :
-    (hole (box R) (PartialProp.andFilter (.ofProp p) ⟨p, q⟩)).assertion w ↔
-      (PartialProp.andFilter (hole (box R) (.ofProp p)) (hole (box R) ⟨p, q⟩)).assertion w :=
-  box_and R p q w
+/-- (38): (37) and (39) assert the same thing ([hintikka-1962]), so the hole treatment
+survives (37) only by letting the equivalence do the filtering. -/
+theorem hole_conj_assertion_iff :
+    (hole (box R) (conj Set.univ (.ofProp A) ⟨A, C⟩)).assertion w ↔
+      (conj Set.univ (hole (box R) (.ofProp A)) (hole (box R) ⟨A, C⟩)).assertion w :=
+  box_and R A C w
 
-/-- Two distinct attitudes (43) have no (38)-style re-collection; as plugs, (42) presupposes
-nothing outright — K's tentative verdict for the whole class. -/
-theorem andFilter_plug_plug_presup :
-    (PartialProp.andFilter (plug att₁ (.ofProp p)) (plug att₂ ⟨p, q⟩)).presup w :=
-  ⟨trivial, λ _ => trivial⟩
+/-- Two distinct attitudes (43) admit no re-collection; as plugs, (42) presupposes nothing
+outright — K's tentative verdict for the whole class. -/
+theorem conj_plug_plug_presup :
+    (conj Set.univ (plug att₁ (.ofProp A)) (plug att₂ ⟨A, C⟩)).presup w :=
+  ⟨trivial, fun _ => trivial⟩
 
 end Attitudes
-
--- ════════════════════════════════════════════════════════════════
--- § 3. Filter Rules for the Connectives
--- ════════════════════════════════════════════════════════════════
-
-/-! Karttunen's rules (13), (17), (24) are realized by `Semantics.Presupposition`
-    operators `impFilter`, `andFilter`, `disjFilterLeft`/`orFilter`.
-    Theorems below re-export Core facts under K's rule names for
-    greppability. -/
-
-variable {W : Type*}
-
-/-- K1973 rule (13a), p. 178: the antecedent's presupposition always
-    projects to "If A then B". -/
-theorem impFilter_presup_of_antecedent_undefined (p q : PartialProp W) (w : W)
-    (hp : ¬p.presup w) :
-    ¬(PartialProp.impFilter p q).presup w := by
-  simp only [PartialProp.impFilter, hp, false_and, not_false_eq_true]
-
-/-- K1973 rule (13b), p. 178: B's presupposition is filtered when A's
-    assertion entails it. -/
-theorem impFilter_eliminates_presup_when_entailed (p q : PartialProp W)
-    (h : ∀ w, p.assertion w → q.presup w) :
-    (PartialProp.impFilter p q).presup = p.presup :=
-  PartialProp.impFilter_eliminates_presup p q h
-
-/-- K1973 rule (17), p. 179: filtering for *and* matches that for
-    *if...then*. -/
-theorem andFilter_presup_eq_impFilter_presup (p q : PartialProp W) :
-    (PartialProp.andFilter p q).presup = (PartialProp.impFilter p q).presup :=
-  (PartialProp.impFilter_presup_eq_andFilter_presup p q).symm
-
-/-- K1973 rule (24b), p. 181 — paper-anchored alias for the substrate
-    `PartialProp.disjFilterLeft_eliminates_presup_when_neg_entails`. Karttunen's
-    asymmetric form: "A or B" carries no residual presupposition from B
-    when ¬A entails it. The substrate carries the proof; Karttunen 1973
-    is the paper that motivated it. -/
-theorem disjFilterLeft_eliminates_presup_when_neg_entails
-    (A : W → Prop) (q : PartialProp W)
-    (h : ∀ w, ¬A w → q.presup w) :
-    (PartialProp.disjFilterLeft A q).presup = fun _ => True :=
-  PartialProp.disjFilterLeft_eliminates_presup_when_neg_entails A q h
-
--- ════════════════════════════════════════════════════════════════
--- § 4. Cumulativity (K1973 §§5–7, Langendoen & Savin 1971)
--- ════════════════════════════════════════════════════════════════
-
-/-- K's "cumulative principle" (Langendoen & Savin 1971; named by Morgan
-    1969 per K1973 §1): the presuppositions of a compound include those
-    of its constituents. For `PartialProp.and` this is just the conjunction of
-    presuppositions. -/
-theorem cumulativity_principle (p q : PartialProp W) (w : W) :
-    (PartialProp.and p q).presup w ↔ p.presup w ∧ q.presup w := Iff.rfl
-
--- ════════════════════════════════════════════════════════════════
--- § 5. Classical-Logic Equivalence (K1973 §8)
--- ════════════════════════════════════════════════════════════════
-
-/-! K1973 §8 (p. 181) credits Gilbert Harman (p.c.) with the observation
-    that identical filtering for `if...then` and `and` is consistent with
-    classical logic given:
-    (i)   internal negation preserves presupposition,
-    (ii)  logical equivalents share presupposition,
-    (iii) classical De Morgan / contraposition.
-
-    `if_and_share_presup_function` re-exports the underlying Core
-    identity; `harman_derivation_principles_hold` records the principles
-    K's §8 argument relies on. -/
-
-/-- The presupposition functions of `if A then B` and `A and B` coincide. -/
-theorem if_and_share_presup_function (p q : PartialProp W) :
-    (PartialProp.impFilter p q).presup = (PartialProp.andFilter p q).presup :=
-  PartialProp.impFilter_presup_eq_andFilter_presup p q
-
-/-- Harman's principles, as facts about Core `PartialProp` connectives:
-    (i) internal negation preserves presupposition; (ii) impFilter and
-    andFilter share presupposition (the structural witness of
-    "logical equivalents share presupposition" specialized to the De
-    Morgan equivalence ⌜A ⊃ B⌝ ≡ ⌜~(A ∧ ~B)⌝). -/
-theorem harman_derivation_principles_hold :
-    (∀ p : PartialProp W, (PartialProp.neg p).presup = p.presup) ∧
-    (∀ p q : PartialProp W, (PartialProp.impFilter p q).presup = (PartialProp.andFilter p q).presup) :=
-  ⟨PartialProp.neg_presup, PartialProp.impFilter_presup_eq_andFilter_presup⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 6. Local-Context Bridge (K1973 §9 → CCP)
--- ════════════════════════════════════════════════════════════════
-
-/-! K1973 §9 (pp. 182–185) relativizes the filtering rules to a
-    "(possibly null) set X of assumed facts". K p. 185: "We can no longer
-    talk about the presuppositions of a compound sentence in an absolute
-    sense, only with regard to a given set of background assumptions."
-    This is the genealogical ancestor of CCP local contexts.
-
-    The bridge to local contexts is in `Context.lean`; the theorem
-    below consumes `local_context_matches_impFilter` explicitly so the
-    K1973 → CCP relation is a Lean dependency rather than a docstring
-    claim. -/
-
-/-- K1973 §9 ↔ CCP local contexts: the presupposition of `if A then B`
-    holds throughout context `c` iff at every world in `c`, A's
-    presupposition holds and A's assertion entails B's presupposition.
-    The forward direction is K's rule (13b) relativized; the backward
-    direction is Schlenker's local-context derivation. -/
-theorem k1973_section9_local_context_correspondence
-    (c : ContextSet W) (p q : PartialProp W) :
-    (∀ w, c w → (PartialProp.impFilter p q).presup w) ↔
-    (∀ w, c w → p.presup w ∧ (p.assertion w → q.presup w)) :=
-  Semantics.Presupposition.Context.local_context_matches_impFilter c p q
-
-/-- K1973 §9's revised rule (13b'): the simple rule (13b) is the X = ∅
-    instance. K p. 185 frames (13b) as a degenerate case of the X-set
-    machinery, which is what `Context.lean` makes load-bearing for
-    the general case. -/
-theorem rule13b_is_empty_X_instance (p q : PartialProp W)
-    (h : ∀ w, p.assertion w → q.presup w) :
-    (PartialProp.impFilter p q).presup = p.presup :=
-  PartialProp.impFilter_eliminates_presup p q h
-
--- ════════════════════════════════════════════════════════════════
--- § 7. Three-Valued Logic Comparison (K1973 §10)
--- ════════════════════════════════════════════════════════════════
-
-/-! K1973 §10 (pp. 185–188) compares four three-valued conjunction tables:
-
-    | System            | K's verdict (pp. 187–188)            |
-    |-------------------|---------------------------------------|
-    | Bochvar internal  | hole (no filtering, cumulative)       |
-    | Łukasiewicz       | symmetric truth-value-based filter    |
-    | Van Fraassen      | symmetric truth-value-based filter    |
-    | Bochvar external  | plug (truth operator t : # → F)       |
-
-    K rejects all four for natural language (p. 188): the truth-value-
-    based filters give wrong predictions on examples like (35), and the
-    Bochvar systems lack the asymmetric filtering K's (17)/(24) capture.
-    This motivates the §9 X-set / context-relative formulation that
-    becomes CCP. -/
-
-/-- Bochvar internal conjunction = `PartialProp.and` = cumulative principle.
-    K1973 p. 187: "the internal Bochvar connectives are holes." -/
-theorem bochvar_internal_is_cumulative (p q : PartialProp W) (w : W) :
-    (PartialProp.and p q).presup w ↔ (p.presup w ∧ q.presup w) := Iff.rfl
-
-/-- The filtering conjunction is strictly weaker than cumulative:
-    `andFilter` can be defined when `q`'s presupposition fails (provided
-    `p`'s assertion is false). -/
-theorem andFilter_presup_weaker_than_cumulative (p q : PartialProp W) (w : W)
-    (h : (PartialProp.and p q).presup w) :
-    (PartialProp.andFilter p q).presup w := by
-  simp only [PartialProp.and, PartialProp.andFilter] at *
-  exact ⟨h.1, fun _ => h.2⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 8. Internal vs External Negation (K1973 §10 fn 18)
--- ════════════════════════════════════════════════════════════════
-
-/-! K1973 §10 footnote 18 (p. 187): two senses of *not*.
-
-    > "As internal negation (choice negation), *not* is a hole and lets
-    > through all of the presuppositions of the sentence it negates.
-    > The external (exclusion negation) *not* is a plug that blocks off
-    > all of them." (p. 187)
-
-    K defines `⌜¬A⌝ ≡ ⌜~t(A)⌝`. Both operators are now in
-    `Semantics.Presupposition`: `PartialProp.neg` (internal/choice) and
-    `PartialProp.negExt` (external/exclusion = `neg ∘ truthOp`). -/
-
-/-- Internal negation preserves presupposition (it's a hole). -/
-theorem neg_preserves_presup (p : PartialProp W) :
-    (PartialProp.neg p).presup = p.presup := PartialProp.neg_presup p
-
-/-- External negation is always defined (it's a plug). -/
-theorem negExt_always_defined (p : PartialProp W) (w : W) :
-    (PartialProp.negExt p).presup w := PartialProp.negExt_presup p w
-
-/-- Internal and external negation agree on assertion at worlds where
-    the presupposition holds; they diverge only at presupposition failure
-    (where `neg` is undefined and `negExt` is asserted true). -/
-theorem neg_agrees_with_negExt_when_defined (p : PartialProp W) (w : W)
-    (h : p.presup w) :
-    (PartialProp.neg p).assertion w ↔ (PartialProp.negExt p).assertion w :=
-  PartialProp.neg_assertion_iff_negExt_assertion_when_defined p w h
-
--- ════════════════════════════════════════════════════════════════
--- § 9. Geraldine X-Set Example (K1973 §9, ex 25–28)
--- ════════════════════════════════════════════════════════════════
-
-/-! K1973 §9 ex (25)–(28), pp. 182–183:
-
-        (25) Either Geraldine is not a Mormon or she has given up
-             wearing her holy underwear.
-        (26) Geraldine is a Mormon.   (negation of first disjunct)
-        (27) Geraldine has worn holy underwear.   (presup of second)
-        (28) All Mormons have worn holy underwear.   (Fred's belief)
-
-    The simple rule (24b) requires ⌜~(25-first)⌝ ⊨ (27), i.e.,
-    (26) ⊨ (27). This fails directly. The revised (24b') admits an
-    X-set such that X ∪ {(26)} ⊨ (27); K supplies X = {(28)}. The
-    example demonstrates that filtering must consult background
-    assumptions beyond the disjuncts themselves — exactly the move that
-    becomes CCP. -/
-
-/-- Four-world model parameterized by Geraldine's Mormon-status and her
-    holy-underwear history. -/
-inductive Geraldine where
-  | mormon_worn       -- Mormon, has worn holy underwear (compatible w/ (28))
-  | mormon_notWorn    -- Mormon, never worn (excluded by (28))
-  | notMormon_worn    -- not Mormon, has worn (compatible)
-  | notMormon_notWorn -- not Mormon, never worn (compatible)
-  deriving DecidableEq, Repr
-
-/-- "Geraldine is a Mormon" — no presupposition. -/
-def isMormon : PartialProp Geraldine where
-  presup := fun _ => True
-  assertion := fun w => w = .mormon_worn ∨ w = .mormon_notWorn
-
-/-- Has worn holy underwear (the presupposition of (27)). -/
-def hasWornHolyUnderwear : Geraldine → Prop
-  | .mormon_worn | .notMormon_worn => True
-  | _ => False
-
-/-- K1973 (28): "All Mormons have worn holy underwear" — modeled as a
-    background assumption excluding `mormon_notWorn`. -/
-def belief28 : Geraldine → Prop
-  | .mormon_notWorn => False
-  | _ => True
-
-/-- The simple K1973 rule (24b) fails: there exist worlds where
-    `¬isMormon` holds but `hasWornHolyUnderwear` does not (witness:
-    `notMormon_notWorn`). So without an X-set, the second disjunct's
-    presupposition is not filtered. -/
-theorem geraldine_simple_rule_24b_fails :
-    ¬ (∀ w, ¬(isMormon).assertion w → hasWornHolyUnderwear w) := by
-  intro h
-  have h1 : ¬(isMormon).assertion .notMormon_notWorn := by
-    simp [isMormon]
-  exact h .notMormon_notWorn h1
-
-/-- The revised K1973 rule (24b') with X = {(28)} succeeds: at every
-    world consistent with the background assumption (28) where
-    `¬isMormon` also holds, `hasWornHolyUnderwear` does NOT need to
-    hold — but the rule (24b') only requires X ∪ {¬A} ⊨ C, and at the
-    surviving counterexample worlds the disjunction's first disjunct is
-    in fact true (or the world is excluded by (28)). The lemma below
-    formalizes the survivor: at every (28)-compatible world where
-    `¬isMormon` holds, `hasWornHolyUnderwear` need NOT hold (the rule
-    is vacuously satisfied at the kept worlds because `¬isMormon` and
-    `notMormon_notWorn` is one of the worlds). The genuine content is
-    that no (28)-compatible world is `mormon_notWorn`, where the
-    presupposition would have classically failed. -/
-theorem geraldine_revised_rule_24b'_excludes_problem_world :
-    ∀ w, belief28 w → w ≠ .mormon_notWorn := by
-  intro w h
-  cases w <;> simp [belief28] at h ⊢
 
 end Karttunen1973

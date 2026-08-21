@@ -1,4 +1,5 @@
-import Linglib.Semantics.Attitudes.Desire
+import Linglib.Semantics.Attitudes.Desire.QuestionBased
+import Mathlib.Data.Finset.Lattice.Fold
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -72,7 +73,7 @@ Our `ought_negation_via_coarse_falsemaking` makes this precise.
 ## Cross-framework: structural agreement with Phillips-Brown
 
 Cariani's `visible` is **definitionally identical** to Phillips-Brown's
-`IsConsidered` (`Semantics/Attitudes/Desire.lean`,
+`IsConsidered` (`Semantics/Attitudes/Desire/QuestionBased.lean`,
 [phillips-brown-2025] §3.6) — so much so that we don't redefine
 it: `Cariani2013.isVisible` is an `abbrev` for `IsConsidered` over the
 options list. The bridge theorem `isVisible_iff_IsConsidered` is
@@ -98,7 +99,7 @@ INHERITANCE." See `cariani_duality_right_to_left_failure`.
 
 namespace Cariani2013
 
-open Desire (IsConsidered)
+open Desire.QuestionBased (IsConsidered)
 
 /-! ## §1. Resolution Semantics primitives
 
@@ -111,11 +112,16 @@ parameters are options, ordering, benchmark. Per §4 (p.545):
 > logical space.
 
 We model options as a `List (Finset W)` — finite, with decidable
-membership — matching the substrate's `Desire` representation of
+membership — matching the substrate's `Desire.QuestionBased` representation of
 partition cells. Mutual exclusivity is a hypothesis
 on consumers, not a structure field. -/
 
 variable {W : Type*} [Fintype W] [DecidableEq W]
+
+/-- Cariani's propositions carry function-form decidability; the question-based substrate
+reads membership. -/
+instance {p : Set W} [DecidablePred p] : DecidablePred (· ∈ p) :=
+  fun w => inferInstanceAs (Decidable (p w))
 
 /-- A `ResolutionContext` packages Cariani's three parameters:
     options (mutually exclusive cells), an ordering on options, and a
@@ -249,7 +255,7 @@ instance (rc : ResolutionContext W) (p : Set W) [DecidablePred p] :
 /-! ## §4. Bridge to Phillips-Brown's `IsConsidered`
 
 [phillips-brown-2025]'s `IsConsidered`
-(`Desire`) is *definitionally* the same
+(`Desire.QuestionBased`) is *definitionally* the same
 predicate as Cariani's `isVisible`. Since `isVisible` is now an
 `abbrev` (§2 above), the bridge theorem is `Iff.rfl`.
 
@@ -339,14 +345,14 @@ def rossContext : ResolutionContext RossW where
 
 /-- `ought(attend)` holds in Ross's context: visible, optimal, and
     strongly permissible. -/
-theorem ross_ought_attend : ought rossContext attendProp := by decide
+theorem ross_ought_attend : ought rossContext attendProp := by decide +kernel
 
 /-- `attend` is visible in Ross's context — every option settles it. -/
-theorem ross_attend_visible : isVisible rossContext attendProp := by decide
+theorem ross_attend_visible : isVisible rossContext attendProp := by decide +kernel
 
 /-- `attend ∨ burn` is also visible (every option settles it). -/
 theorem ross_attend_or_burn_visible :
-    isVisible rossContext (fun w => attendProp w ∨ burnProp w) := by decide
+    isVisible rossContext (fun w => attendProp w ∨ burnProp w) := by decide +kernel
 
 /-- The disjunction `attend ∨ burn` is NOT strongly permissible — `burn`
     is a way-of-(attend ∨ burn) but doesn't meet the benchmark. -/
@@ -358,7 +364,7 @@ theorem ross_attend_or_burn_not_stronglyPermissible :
     Cariani's Resolution Semantics, even though `attend ⊨ attend ∨ burn`
     and `ought(attend)` is true. This is the INHERITANCE failure. -/
 theorem ross_puzzle_inheritance_failure :
-    ¬ ought rossContext (fun w => attendProp w ∨ burnProp w) := by decide
+    ¬ ought rossContext (fun w => attendProp w ∨ burnProp w) := by decide +kernel
 
 /-! ## §6. INHERITANCE failure on Procrastinate (paper §II)
 
@@ -422,13 +428,13 @@ instance : DecidablePred acceptProp := fun w => by unfold acceptProp; infer_inst
 
 /-- `accept_no_write` is a way-of-`accept` but does NOT meet benchmark. -/
 theorem proc_accept_not_stronglyPermissible :
-    ¬ isStronglyPermissible procContext acceptProp := by decide
+    ¬ isStronglyPermissible procContext acceptProp := by decide +kernel
 
 /-- **Procrastinate, formal**: `ought(accept)` is FALSE in Cariani's
     Resolution Semantics, even though `accept_write ⊨ accept` and
     `ought(accept_write)` is true. -/
 theorem procrastinate_inheritance_failure :
-    ¬ ought procContext acceptProp := by decide
+    ¬ ought procContext acceptProp := by decide +kernel
 
 /-! ## §7. Boxing as a special case (paper p.546)
 
@@ -548,7 +554,7 @@ impermissible way-of-disjunction option, as with `burn` above.) -/
     way-of-stay_home, meets benchmark, but `attend` is the unique best
     option and `attend` is NOT a way-of-stay_home. So `isOptimal` fails. -/
 theorem ross_ought_stay_home_false :
-    ¬ ought rossContext stayHomeProp := by decide
+    ¬ ought rossContext stayHomeProp := by decide +kernel
 
 /-! ## §11. Cross-framework summary
 
@@ -557,8 +563,8 @@ theorem ross_ought_stay_home_false :
   abbrev). Parallel discovery (Cariani via Lewis/Yalcin; PB via Crnič
   2011), not chain-of-influence.
 * Cariani's account is *anti-INHERITANCE by design* (proved in §5
-  Ross, §6 Procrastinate, §9 DUALITY-concern). vF (`WantVonFintel`) and Heim
-  (`WantHeim`) are *pro-INHERITANCE* (their universal-over-best-worlds
+  Ross, §6 Procrastinate, §9 DUALITY-concern). vF (`Desire.BestWorlds.Want`) and Heim
+  (`Desire.Conditional.Want`) are *pro-INHERITANCE* (their universal-over-best-worlds
   shape entails it). Lassiter is anti-INHERITANCE via *intermediacy
   of E_V* (a different mechanism — see Lassiter2017.lean).
 * `Cariani.ought` satisfies COARSENESS (paper §1 p.534) and is
