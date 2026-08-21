@@ -204,7 +204,8 @@ theorem attributive_rows :
 /-- The Voice alloseme a *have* sentence's complement selects ((62)): the
 substrate's competition over `Voice.vocabulary`. -/
 def voiceAlloseme (eventiveVoiceP stative : Bool) : Voice.Alloseme :=
-  Voice.Alloseme.fromComplement (eventiveVoiceP = true) (stative = true)
+  Voice.Alloseme.fromComplement
+    ((if eventiveVoiceP then [.cat .v, .eventive] else []) ++ if stative then [.stative] else [])
 
 /-- ⟦v⟧ = λx.x ((61)) and, over a relational complement — neither an
 eventive VoiceP nor a state — Voice is the expletive identity: the
