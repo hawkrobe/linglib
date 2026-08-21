@@ -73,16 +73,13 @@ transitive (from coherence). -/
 def coherentSelectionToSimilarity {W : Type*} [DecidableEq W]
     (s : SelectionFunction W)
     (h_coherent : s.isCoherent) : SimilarityOrdering W where
-  atCenter w₀ :=
-    Preorder.ofLE (fun w₁ w₂ => selectionPrefers s w₀ w₁ w₂)
-      (fun w => by
-        show s.sel w₀ {w, w} = w
-        have h_eq : ({w, w} : Set W) = {w} := Set.insert_eq_of_mem (Set.mem_singleton w)
-        rw [h_eq]
-        have h_ne : ({w} : Set W).Nonempty := ⟨w, Set.mem_singleton w⟩
-        have h_in := s.inclusion w₀ {w} h_ne
-        exact Set.mem_singleton_iff.mp h_in)
-      (fun w₁ w₂ w₃ => h_coherent w₀ w₁ w₂ w₃)
+  closer w₀ w₁ w₂ := selectionPrefers s w₀ w₁ w₂
+  closer_refl w₀ w := by
+    show s.sel w₀ {w, w} = w
+    have h_eq : ({w, w} : Set W) = {w} := Set.insert_eq_of_mem (Set.mem_singleton w)
+    rw [h_eq]
+    exact Set.mem_singleton_iff.mp (s.inclusion w₀ {w} ⟨w, Set.mem_singleton w⟩)
+  closer_trans := h_coherent
   decClose w₀ w₁ w₂ := by exact inferInstanceAs (Decidable (s.sel w₀ {w₁, w₂} = w₁))
 
 /-! ## Stalnakerian mood machinery
