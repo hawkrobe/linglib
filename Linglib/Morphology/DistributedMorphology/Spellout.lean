@@ -9,7 +9,7 @@ the sequence of terminals the syntax hands over, the postsyntactic modules
 transform it, and pointwise Vocabulary Insertion realizes what survives
 ([halle-marantz-1993]; module inventory and ordering per
 [arregi-nevins-2012]). The focus-level rule types
-(`Impoverishment.ImpoverishmentRule` and kin) rewrite one terminal inside
+(`ImpoverishmentRule` and kin) rewrite one terminal inside
 its `Neighborhood`; the operations here move, remove, and merge the
 terminals themselves, which no focus-level rule can express.
 
@@ -48,7 +48,6 @@ fusion feeding one insertion).
 
 namespace DistributedMorphology
 
-open Impoverishment (Neighborhood)
 
 /-- A spell-out domain: the linear sequence of terminals handed over by
 the syntax at spell-out. -/

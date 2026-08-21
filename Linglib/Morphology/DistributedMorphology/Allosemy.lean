@@ -1,7 +1,6 @@
 import Mathlib.Algebra.Group.WithOne.Defs
 import Linglib.Morphology.DistributedMorphology.Basic
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
-import Linglib.Morphology.DistributedMorphology.Categorizer.Semantics
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Realization
 import Linglib.Semantics.ArgumentStructure.Root.Classification
@@ -62,8 +61,8 @@ selection engine: `Exponence.selectBy` on the non-wildcard-field score
 a worked List-3 competition on that engine; `readingFromAllosemes` is a
 different object — the composition of two already-selected allosemes.
 Existing infrastructure this module retroactively classifies as
-allosemy: `CategorizerSemantics.NSemanticType` (n), `Minimalist.Voice.Flavor`
-(Voice), and root change-type conditioning of v.
+allosemy: `Minimalist.Voice.Flavor` (Voice) and root change-type
+conditioning of v.
 
 ## References
 
@@ -71,12 +70,12 @@ allosemy: `CategorizerSemantics.NSemanticType` (n), `Minimalist.Voice.Flavor`
 * [J. Wood, *Icelandic nominalizations and allosemy*][wood-2023]
 * [A. Kratzer, *Severing the external argument from its verb*][kratzer-1996]
 * [N. Myler, *Building and interpreting possession sentences*][myler-2016]
+* [L. J. Adamson, *Gender assignment is local*][adamson-2024]
 -/
 
 namespace DistributedMorphology.Allosemy
 
 open DistributedMorphology (Categorizer Categorizer.Head)
-open DistributedMorphology.CategorizerSemantics (NSemanticType)
 open Minimalist.Voice (Flavor Head)
 
 /-! ### The alloseme carrier
@@ -205,10 +204,12 @@ theorem Verbalizer.fromRootType_iff_entailsChange (rt : Verb.Root.ChangeType) :
 
 /-! ### n allosemy -/
 
-/-- The contentful allosemes of the nominal categorizer n: the three
-non-deverbal types of `CategorizerSemantics.NSemanticType`,
-[benz-2025]'s content alloseme, and [wood-2023]'s deverbal inventory.
-The deverbal denotations live in `Nominalizer.Alloseme.denote`. -/
+/-- The contentful allosemes of the nominal categorizer n: [adamson-2024]'s
+three root-attached types — relational (the body-part-of relation of (36)),
+sortal ((37)), and the alienator that closes a possessor slot ((43),
+`ArgumentStructure.Relational.ExPossessor`) — [benz-2025]'s content
+alloseme, and [wood-2023]'s deverbal inventory. The deverbal denotations
+live in `Nominalizer.Alloseme.denote`. -/
 inductive Nominalizer.Contentful where
   | relational    -- introduces a relation (body-part-of)
   | sortal        -- bare categorization
@@ -248,12 +249,6 @@ instance : Fintype Nominalizer.Alloseme :=
   inferInstanceAs (Fintype (Allosemy.Alloseme Nominalizer.Contentful))
 
 end Nominalizer.Alloseme
-
-/-- The non-deverbal allosemes are `NSemanticType` under another name. -/
-def Nominalizer.Alloseme.ofNSemanticType : NSemanticType → Nominalizer.Alloseme
-  | .relational => .relational
-  | .sortal     => .sortal
-  | .alienator  => .alienator
 
 /-- n's alloseme vocabulary: the non-deverbal allosemes are
 unconditioned (all-wildcard contexts), the deverbal ones require a
@@ -406,8 +401,8 @@ inductive NominalizationReading where
     require a verbal source at all: simple content nouns (*Gerücht*
     'rumor', *fact*, *idea*) have the reading with no corresponding verb
     ([benz-2025] §3.5, Table 2). The non-deverbal allosemes yield no
-    nominalization reading — their semantics lives in
-    `Categorizer/Semantics.lean`. [benz-2025] §2.2 further observes that
+    nominalization reading — their semantics is the relationalizer π and
+    its possessor-closing `ExPossessor`. [benz-2025] §2.2 further observes that
     referential readings could instead involve no v at all, a
     root-attached n — a different structure rather than a different
     alloseme, outside this table. -/
@@ -499,7 +494,7 @@ entity content of an event-entity; the result alloseme picks out what an
 event of the root's kind produced ([benz-2025]'s denotation, taken over
 from [wood-2023]); the content alloseme ignores the verbal layer
 entirely. The non-deverbal allosemes have their semantics in
-`Categorizer/Semantics.lean`. -/
+`Semantics/Possessive/Relational.lean` (π, `ExPossessor`). -/
 def Nominalizer.Alloseme.denote (m : NominalizationModel E S) :
     Verbalizer.Denotation E S → Nominalizer.Alloseme →
       Option (NominalDenotation E S)
