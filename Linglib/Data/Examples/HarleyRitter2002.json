@@ -1,0 +1,1316 @@
+[
+  {
+    "id": "hr2002_daga_1sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 3"},
+    "language": "daga1275",
+    "primaryText": "ne",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1"],
+      ["number", "sg"]
+    ],
+    "comment": "Murane 1974:34, emphatic pronouns."
+  },
+  {
+    "id": "hr2002_daga_1pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 3"},
+    "language": "daga1275",
+    "primaryText": "nu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1"],
+      ["number", "pl"]
+    ],
+    "comment": "Murane 1974:34, emphatic pronouns."
+  },
+  {
+    "id": "hr2002_daga_2sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 3"},
+    "language": "daga1275",
+    "primaryText": "ge",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (singular)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "sg"]
+    ],
+    "comment": "Murane 1974:34, emphatic pronouns."
+  },
+  {
+    "id": "hr2002_daga_2pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 3"},
+    "language": "daga1275",
+    "primaryText": "e",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (plural)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "pl"]
+    ],
+    "comment": "Murane 1974:34, emphatic pronouns."
+  },
+  {
+    "id": "hr2002_daga_3sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 3"},
+    "language": "daga1275",
+    "primaryText": "me",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he/she/it",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "sg"]
+    ],
+    "comment": "Murane 1974:34, emphatic pronouns."
+  },
+  {
+    "id": "hr2002_daga_3pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 3"},
+    "language": "daga1275",
+    "primaryText": "mu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "they",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "pl"]
+    ],
+    "comment": "Murane 1974:34, emphatic pronouns."
+  },
+  {
+    "id": "hr2002_gali_1exsg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 4"},
+    "language": "gali1262",
+    "primaryText": "au",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1ex"],
+      ["number", "sg"]
+    ],
+    "comment": "Hoff 1968:277, emphatic pronouns."
+  },
+  {
+    "id": "hr2002_gali_1expl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 4"},
+    "language": "gali1262",
+    "primaryText": "aʔna",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we (exclusive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1ex"],
+      ["number", "pl"]
+    ],
+    "comment": "Hoff 1968:277, emphatic pronouns."
+  },
+  {
+    "id": "hr2002_gali_1insg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 4"},
+    "language": "gali1262",
+    "primaryText": "kïxko",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you and I",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1in"],
+      ["number", "sg"]
+    ],
+    "comment": "Hoff 1968:277, emphatic pronouns."
+  },
+  {
+    "id": "hr2002_gali_1inpl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 4"},
+    "language": "gali1262",
+    "primaryText": "kïxka:ro",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we (inclusive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1in"],
+      ["number", "pl"]
+    ],
+    "comment": "Hoff 1968:277, emphatic pronouns."
+  },
+  {
+    "id": "hr2002_gali_2sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 4"},
+    "language": "gali1262",
+    "primaryText": "amo:ro",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (singular)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "sg"]
+    ],
+    "comment": "Hoff 1968:277, emphatic pronouns."
+  },
+  {
+    "id": "hr2002_gali_2pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 4"},
+    "language": "gali1262",
+    "primaryText": "amïiyaro",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (plural)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "pl"]
+    ],
+    "comment": "Hoff 1968:277, emphatic pronouns."
+  },
+  {
+    "id": "hr2002_gali_3sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 4"},
+    "language": "gali1262",
+    "primaryText": "moxko",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he/she/it",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "sg"]
+    ],
+    "comment": "Hoff 1968:277, emphatic pronouns."
+  },
+  {
+    "id": "hr2002_gali_3pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 4"},
+    "language": "gali1262",
+    "primaryText": "moxka:ro",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "they",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "pl"]
+    ],
+    "comment": "Hoff 1968:277, emphatic pronouns."
+  },
+  {
+    "id": "hr2002_tonk_1sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 5"},
+    "language": "tonk1249",
+    "primaryText": "caˑya",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1"],
+      ["number", "sg"]
+    ],
+    "comment": "Hoijer 1933:122, nominative pronouns."
+  },
+  {
+    "id": "hr2002_tonk_1du",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 5"},
+    "language": "tonk1249",
+    "primaryText": "geucaˑya",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we two",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1"],
+      ["number", "du"]
+    ],
+    "comment": "Hoijer 1933:122, nominative pronouns."
+  },
+  {
+    "id": "hr2002_tonk_1pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 5"},
+    "language": "tonk1249",
+    "primaryText": "geucaˑga",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1"],
+      ["number", "pl"]
+    ],
+    "comment": "Hoijer 1933:122, nominative pronouns."
+  },
+  {
+    "id": "hr2002_tonk_2sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 5"},
+    "language": "tonk1249",
+    "primaryText": "naˑya",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (singular)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "sg"]
+    ],
+    "comment": "Hoijer 1933:122, nominative pronouns."
+  },
+  {
+    "id": "hr2002_tonk_2du",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 5"},
+    "language": "tonk1249",
+    "primaryText": "wenaˑya",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you two",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "du"]
+    ],
+    "comment": "Hoijer 1933:122, nominative pronouns."
+  },
+  {
+    "id": "hr2002_tonk_2pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 5"},
+    "language": "tonk1249",
+    "primaryText": "wenaˑga",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (plural)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "pl"]
+    ],
+    "comment": "Hoijer 1933:122, nominative pronouns."
+  },
+  {
+    "id": "hr2002_tonk_3sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 5"},
+    "language": "tonk1249",
+    "primaryText": "ʔayeˑla",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he/she/it",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "sg"]
+    ],
+    "comment": "Hoijer 1933:122, nominative pronouns."
+  },
+  {
+    "id": "hr2002_tonk_3du",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 5"},
+    "language": "tonk1249",
+    "primaryText": "ʔaweˑla",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "they two",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "du"]
+    ],
+    "comment": "Hoijer 1933:122, nominative pronouns."
+  },
+  {
+    "id": "hr2002_tonk_3pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 5"},
+    "language": "tonk1249",
+    "primaryText": "ʔaweˑga",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "they",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "pl"]
+    ],
+    "comment": "Hoijer 1933:122, nominative pronouns."
+  },
+  {
+    "id": "hr2002_chin_1exsg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 6"},
+    "language": "chin1286",
+    "primaryText": "naika",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1ex"],
+      ["number", "sg"]
+    ],
+    "comment": "Boas 1911b:626."
+  },
+  {
+    "id": "hr2002_chin_1exdu",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 6"},
+    "language": "chin1286",
+    "primaryText": "ntaika",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we two (exclusive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1ex"],
+      ["number", "du"]
+    ],
+    "comment": "Boas 1911b:626."
+  },
+  {
+    "id": "hr2002_chin_1expl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 6"},
+    "language": "chin1286",
+    "primaryText": "ntcaika",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we (exclusive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1ex"],
+      ["number", "pl"]
+    ],
+    "comment": "Boas 1911b:626."
+  },
+  {
+    "id": "hr2002_chin_1indu",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 6"},
+    "language": "chin1286",
+    "primaryText": "tχaika",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you and I",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1in"],
+      ["number", "du"]
+    ],
+    "comment": "Boas 1911b:626."
+  },
+  {
+    "id": "hr2002_chin_1inpl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 6"},
+    "language": "chin1286",
+    "primaryText": "lχaika",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we (inclusive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1in"],
+      ["number", "pl"]
+    ],
+    "comment": "Boas 1911b:626."
+  },
+  {
+    "id": "hr2002_chin_2sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 6"},
+    "language": "chin1286",
+    "primaryText": "maika",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (singular)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "sg"]
+    ],
+    "comment": "Boas 1911b:626."
+  },
+  {
+    "id": "hr2002_chin_2du",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 6"},
+    "language": "chin1286",
+    "primaryText": "mtaika",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you two",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "du"]
+    ],
+    "comment": "Boas 1911b:626."
+  },
+  {
+    "id": "hr2002_chin_2pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 6"},
+    "language": "chin1286",
+    "primaryText": "mcaika",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (plural)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "pl"]
+    ],
+    "comment": "Boas 1911b:626."
+  },
+  {
+    "id": "hr2002_chin_3sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 6"},
+    "language": "chin1286",
+    "primaryText": "áχka",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he/she/it",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "sg"]
+    ],
+    "comment": "Boas 1911b:626; the feminine form, gender being set aside."
+  },
+  {
+    "id": "hr2002_chin_3du",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 6"},
+    "language": "chin1286",
+    "primaryText": "ctáχka",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "they two",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "du"]
+    ],
+    "comment": "Boas 1911b:626."
+  },
+  {
+    "id": "hr2002_chin_3pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 6"},
+    "language": "chin1286",
+    "primaryText": "táska",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "they",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "pl"]
+    ],
+    "comment": "Boas 1911b:626."
+  },
+  {
+    "id": "hr2002_yima_1sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 7"},
+    "language": "yima1243",
+    "primaryText": "ama",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1"],
+      ["number", "sg"]
+    ],
+    "comment": "Foley 1991:111, 126."
+  },
+  {
+    "id": "hr2002_yima_1du",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 7"},
+    "language": "yima1243",
+    "primaryText": "kapa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we two",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1"],
+      ["number", "du"]
+    ],
+    "comment": "Foley 1991:111, 126."
+  },
+  {
+    "id": "hr2002_yima_1pc",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 7"},
+    "language": "yima1243",
+    "primaryText": "paŋkt",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we few",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1"],
+      ["number", "pc"]
+    ],
+    "comment": "Foley 1991:111, 126; syncretic with the second-person paucal."
+  },
+  {
+    "id": "hr2002_yima_1pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 7"},
+    "language": "yima1243",
+    "primaryText": "ipa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1"],
+      ["number", "pl"]
+    ],
+    "comment": "Foley 1991:111, 126."
+  },
+  {
+    "id": "hr2002_yima_2sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 7"},
+    "language": "yima1243",
+    "primaryText": "mi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (singular)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "sg"]
+    ],
+    "comment": "Foley 1991:111, 126."
+  },
+  {
+    "id": "hr2002_yima_2du",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 7"},
+    "language": "yima1243",
+    "primaryText": "kapwa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you two",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "du"]
+    ],
+    "comment": "Foley 1991:111, 126."
+  },
+  {
+    "id": "hr2002_yima_2pc",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 7"},
+    "language": "yima1243",
+    "primaryText": "paŋkt",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you few",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "pc"]
+    ],
+    "comment": "Foley 1991:111, 126; syncretic with the first-person paucal."
+  },
+  {
+    "id": "hr2002_yima_2pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 7"},
+    "language": "yima1243",
+    "primaryText": "ipwa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (plural)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "pl"]
+    ],
+    "comment": "Foley 1991:111, 126."
+  },
+  {
+    "id": "hr2002_yima_3sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 7"},
+    "language": "yima1243",
+    "primaryText": "nak",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he/she/it",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "sg"]
+    ],
+    "comment": "Foley 1991:111, 126; a masculine proximal demonstrative, no personal pronoun."
+  },
+  {
+    "id": "hr2002_yima_3du",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 7"},
+    "language": "yima1243",
+    "primaryText": "impak",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "they two",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "du"]
+    ],
+    "comment": "Foley 1991:111, 126."
+  },
+  {
+    "id": "hr2002_yima_3pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 7"},
+    "language": "yima1243",
+    "primaryText": "puk",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "they",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "pl"]
+    ],
+    "comment": "Foley 1991:111, 126."
+  },
+  {
+    "id": "hr2002_fiji_1exsg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "yau",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1ex"],
+      ["number", "sg"]
+    ],
+    "comment": "Dixon 1988:54–55, cardinal pronouns."
+  },
+  {
+    "id": "hr2002_fiji_1expl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "'eimami",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we (exclusive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1ex"],
+      ["number", "pl"]
+    ],
+    "comment": "Dixon 1988:54–55, cardinal pronouns."
+  },
+  {
+    "id": "hr2002_fiji_1exdu",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "'eirau",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we two (exclusive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1ex"],
+      ["number", "du"]
+    ],
+    "comment": "Dixon 1988:54–55, cardinal pronouns."
+  },
+  {
+    "id": "hr2002_fiji_1expc",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "'eitou",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we few (exclusive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1ex"],
+      ["number", "pc"]
+    ],
+    "comment": "Dixon 1988:54–55, cardinal pronouns."
+  },
+  {
+    "id": "hr2002_fiji_1inpl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "'eta",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we (inclusive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1in"],
+      ["number", "pl"]
+    ],
+    "comment": "Dixon 1988:54–55, cardinal pronouns."
+  },
+  {
+    "id": "hr2002_fiji_1indu",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "'eetaru",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you and I",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1in"],
+      ["number", "du"]
+    ],
+    "comment": "Dixon 1988:54–55; the inclusive has no singular cell."
+  },
+  {
+    "id": "hr2002_fiji_1inpc",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "'etatou",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we few (inclusive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1in"],
+      ["number", "pc"]
+    ],
+    "comment": "Dixon 1988:54–55, cardinal pronouns."
+  },
+  {
+    "id": "hr2002_fiji_2sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "i'o",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (singular)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "sg"]
+    ],
+    "comment": "Dixon 1988:54–55, cardinal pronouns."
+  },
+  {
+    "id": "hr2002_fiji_2pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "'emunuu",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you (plural)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "pl"]
+    ],
+    "comment": "Dixon 1988:54–55, cardinal pronouns."
+  },
+  {
+    "id": "hr2002_fiji_2du",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "'emudrau",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you two",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "du"]
+    ],
+    "comment": "Dixon 1988:54–55, cardinal pronouns."
+  },
+  {
+    "id": "hr2002_fiji_2pc",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "'emudou",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you few",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "pc"]
+    ],
+    "comment": "Dixon 1988:54–55, cardinal pronouns."
+  },
+  {
+    "id": "hr2002_fiji_3sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "'ea",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he/she/it",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "sg"]
+    ],
+    "comment": "Dixon 1988:54–55, cardinal pronouns."
+  },
+  {
+    "id": "hr2002_fiji_3pl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "(i)ra",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "they",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "pl"]
+    ],
+    "comment": "Dixon 1988:54–55, cardinal pronouns."
+  },
+  {
+    "id": "hr2002_fiji_3du",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "(i)rau",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "they two",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "du"]
+    ],
+    "comment": "Dixon 1988:54–55, cardinal pronouns."
+  },
+  {
+    "id": "hr2002_fiji_3pc",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 8"},
+    "language": "fiji1243",
+    "primaryText": "(i)ratou",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "they few",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "pc"]
+    ],
+    "comment": "Dixon 1988:54–55, cardinal pronouns."
+  },
+  {
+    "id": "hr2002_pira_1",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 13"},
+    "language": "pira1253",
+    "primaryText": "ti",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I/we",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1"],
+      ["number", "none"]
+    ],
+    "comment": "Thomason & Everett 2002."
+  },
+  {
+    "id": "hr2002_pira_2",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 13"},
+    "language": "pira1253",
+    "primaryText": "gi / gia",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "none"]
+    ],
+    "comment": "Thomason & Everett 2002."
+  },
+  {
+    "id": "hr2002_pira_3",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 13"},
+    "language": "pira1253",
+    "primaryText": "hi",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he/she/it/they",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "none"]
+    ],
+    "comment": "Thomason & Everett 2002."
+  },
+  {
+    "id": "hr2002_maxa_1sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 14"},
+    "language": "maxa1247",
+    "primaryText": "('ũ)g / ('ũ)k",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1"],
+      ["number", "sg"]
+    ],
+    "comment": "Popovich 1986:352; the table lists it as first exclusive singular, (27) as first singular, the bare Participant geometry."
+  },
+  {
+    "id": "hr2002_maxa_1expl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 14"},
+    "language": "maxa1247",
+    "primaryText": "yũmũg",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we (exclusive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1ex"],
+      ["number", "pl"]
+    ],
+    "comment": "Popovich 1986:352, absolutive pronouns."
+  },
+  {
+    "id": "hr2002_maxa_1in",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 14"},
+    "language": "maxa1247",
+    "primaryText": "('ũ)mũg",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we (inclusive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1in"],
+      ["number", "none"]
+    ],
+    "comment": "Popovich 1986:352, absolutive pronouns."
+  },
+  {
+    "id": "hr2002_maxa_2",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 14"},
+    "language": "maxa1247",
+    "primaryText": "'ã",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "none"]
+    ],
+    "comment": "Popovich 1986:352, absolutive pronouns."
+  },
+  {
+    "id": "hr2002_maxa_3",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 14"},
+    "language": "maxa1247",
+    "primaryText": "'(ũ)",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he/she/it/they",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "none"]
+    ],
+    "comment": "Popovich 1986:352, absolutive pronouns."
+  },
+  {
+    "id": "hr2002_kwak_1sg",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 15"},
+    "language": "kwak1269",
+    "primaryText": "-En(L)",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1"],
+      ["number", "sg"]
+    ],
+    "comment": "Boas 1911a:529; the table lists it as first exclusive singular, (27) as first singular, the bare Participant geometry."
+  },
+  {
+    "id": "hr2002_kwak_1expl",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 15"},
+    "language": "kwak1269",
+    "primaryText": "-Enuᵉx̣ᵘ",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we (exclusive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1ex"],
+      ["number", "pl"]
+    ],
+    "comment": "Boas 1911a:529, nominative pronouns."
+  },
+  {
+    "id": "hr2002_kwak_1in",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 15"},
+    "language": "kwak1269",
+    "primaryText": "-Ens",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "we (inclusive)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "1in"],
+      ["number", "none"]
+    ],
+    "comment": "Boas 1911a:529, nominative pronouns."
+  },
+  {
+    "id": "hr2002_kwak_2",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 15"},
+    "language": "kwak1269",
+    "primaryText": "-Es",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "you",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "2"],
+      ["number", "none"]
+    ],
+    "comment": "Boas 1911a:529, nominative pronouns."
+  },
+  {
+    "id": "hr2002_kwak_3",
+    "source": {"bibkey": "harley-ritter-2002", "paperLabel": "Table 15"},
+    "language": "kwak1269",
+    "primaryText": "–",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he/she/it/they",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["person", "3"],
+      ["number", "none"]
+    ],
+    "comment": "Boas 1911a:529; no overt form."
+  }
+]
