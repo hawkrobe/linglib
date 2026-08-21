@@ -265,6 +265,7 @@ import Linglib.Core.Order.TotalPreorder
 import Linglib.Core.Order.Tree
 import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.UpperLower.Closure
+import Linglib.Core.Order.UpperLower.Finset
 import Linglib.Core.Order.WellFoundedSet
 import Linglib.Core.Probability.BayesianUpdate
 import Linglib.Core.Probability.Choice.GumbelLuce
@@ -692,6 +693,7 @@ import Linglib.Features.Person.Basic
 import Linglib.Features.Person.Capabilities
 import Linglib.Features.Person.Decomposition
 import Linglib.Features.Phi
+import Linglib.Features.Phi.Geometry
 import Linglib.Features.Person.Interp
 import Linglib.Features.Person.Resolve
 import Linglib.Features.Polarity
@@ -2244,6 +2246,7 @@ import Linglib.Studies.Harbour2016
 import Linglib.Studies.HardingGerstenbergIcard2025
 import Linglib.Studies.HarizanovGribanova2019
 import Linglib.Studies.Harley2014
+import Linglib.Studies.HarleyRitter2002
 import Linglib.Studies.HarrisPotts2009
 import Linglib.Studies.HartmannZimmermann2004
 import Linglib.Studies.HartmannZimmermann2007
@@ -2936,3 +2939,4 @@ import Linglib.Data.Examples.HalleMarantz1993
 import Linglib.Data.Examples.Myler2016
 import Linglib.Data.Examples.Scott2021
 import Linglib.Data.Examples.GonzalezPootMcGinnis2006
+import Linglib.Data.Examples.HarleyRitter2002
