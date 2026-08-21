@@ -5,53 +5,58 @@ import Linglib.Morphology.DistributedMorphology.Impoverishment
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Jarawara.PossessedNouns
 import Linglib.Fragments.Italian.NumberGender
+import Linglib.Semantics.Possessive.Relational
 
 /-!
 # Gender assignment is local
 
-[adamson-2024]'s Gender Locality Hypothesis — gender features on n are valued
-within nP ((15)) — lets an inalienable possessor, introduced in Spec,nP,
-bear on a noun's gender while an alienable possessor, in Spec,PossP, cannot
-((16)). The hypothesis is `DistributedMorphology.genderLocalityHypothesis`;
-this file derives the paper's case studies from it and from the shared
-Vocabulary Insertion and Impoverishment engines.
+[adamson-2024] proposes the Gender Locality Hypothesis: the gender feature
+on a nominalizer n is valued within nP. An inalienable possessor sits in
+Spec,nP and can therefore determine a noun's gender; an alienable possessor
+sits in Spec,PossP and cannot. The hypothesis itself is
+`DistributedMorphology.genderLocalityHypothesis`. This file derives the
+paper's case studies from it and from the shared Vocabulary Insertion and
+Impoverishment engines.
 
 ## Main definitions
 
-* `Teop.relationalN`, `Teop.alienatorN`, `Teop.outerGender`: the two
-  nominalizers of body-part and kinship roots ((36), (43)) and the gender of
-  a head stack, that of its highest n.
-* `Teop.articles`, `Teop.article`: the article vocabulary (32).
-* `Jarawara.impoverish`, `Jarawara.decl`, `Jarawara.mano`: the gender
-  impoverishment (63) feeding the declarative items (59) and the possessed
-  noun *mano*~*mani* (A7).
-* `possesseeGender`: what fixes a possessee's gender under each of the two
-  mechanisms, possessee gender and inherited gender.
+* `Teop.relationalN`, `Teop.alienatorN`: the two nominalizers available to a
+  body-part or kinship root — one licensing an inalienable possessor, the
+  other stacked above it to close the possessor slot.
+* `Teop.outerGender`: the gender of a nominal, read off its highest n.
+* `Teop.articles`: the article vocabulary, the paper's (32).
+* `Teop.ipossessedDenot`, `Teop.freeDenot`: the two nominalizers'
+  denotations, Barker's relationalizer and its possessor-closing inverse.
+* `Jarawara.impoverish`, `Jarawara.decl`, `Jarawara.mano`: gender
+  impoverishment feeding the declarative agreement marker and the possessed
+  noun *mano* ~ *mani*.
+* `possesseeGender`: the two ways a possessor can fix a possessee's gender.
 
 ## Main results
 
 * `Teop.article_eq_articleForm`: the Subset Principle over (32) yields the
-  Fragment's article paradigm, cross-identities included ((25)–(26)).
-* `Teop.switch`: a body-part root is gender I under the {D} nominalizer and
-  gender II under the alienator ((39)–(40)).
-* `Jarawara.mano_eq_manoForm`: impoverishment then insertion derives the
-  paradigm of Table 6 cell by cell.
-* `Italian.aPlural_changes_gender`: only number on n changes gender ((99)).
+  Fragment's article paradigm, including the cross-identity of singular
+  gender I with plural gender II.
+* `Teop.switch`: one body-part root is gender I under the possessor-licensing
+  nominalizer and gender II under the alienator; `Teop.freeDenot_iff` is the
+  semantic side of the same switch.
+* `Jarawara.mano_eq_manoForm`: impoverishment followed by insertion derives
+  the possessed-noun paradigm of Table 6.
+* `Italian.aPlural_changes_gender`: number on n changes gender; number on
+  Num does not.
 
 ## Implementation notes
 
-Nominal structure is a head stack, innermost first, and gender is read off
-the highest n, the paper's rule for denominal nominalization under (43). The
-alienator's two further effects — existential closure of the possessor slot
-and the allomorph *-na* — are in `Categorizer/Semantics.lean` and prose here.
-Jarawara's privative `[masc]`, `[pl]`, `[participant]` are the paper's own;
-(A7)'s secondary feature `[marked]` is spelled out as one item per marked
-feature.
+A nominal is a stack of heads, innermost first, and its gender is that of
+the highest n — the paper's rule for stacked nominalizers. Jarawara's
+features `[masc]`, `[pl]`, `[participant]` are privative, as in the paper;
+the secondary feature `[marked]` of (A7) is rendered as one Vocabulary Item
+per marked feature.
 -/
 
 namespace Adamson2024
 
-open DistributedMorphology DistributedMorphology.Impoverishment
+open DistributedMorphology
 open DistributedMorphology.Categorizer (Head)
 
 /-! ### The Gender Locality Hypothesis -/
@@ -166,6 +171,29 @@ theorem kinship :
       article ⟨outerGender free, false, false⟩ = some "o" := by
   decide
 
+/-! #### The denotations of (36) and (43) -/
+
+section Denotation
+
+open ArgumentStructure.Relational
+
+variable {E S : Type*} (isSpleen : E → S → Prop) (bodyPartOf : E → E → S → Prop)
+
+/-- The iPossessed body-part noun ((36)): the root relationalized by the
+body-part-of relation — Barker's π, possessor first — awaiting its possessor. -/
+def ipossessedDenot : E → E → S → Prop := π isSpleen bodyPartOf
+
+/-- The free body-part noun ((43)): the alienator closes the possessor slot. -/
+def freeDenot : E → S → Prop := ExPossessor (π isSpleen bodyPartOf)
+
+/-- One root, two types: the possessor slot is open under the {D} nominalizer
+and existentially closed under the alienator. -/
+theorem freeDenot_iff (y : E) (s : S) :
+    freeDenot isSpleen bodyPartOf y s ↔ isSpleen y s ∧ ∃ x, bodyPartOf x y s :=
+  exPossessor_pi ..
+
+end Denotation
+
 end Teop
 
 /-! ### Jarawara: possessee gender and agreement (§3.2) -/
@@ -188,7 +216,7 @@ def possessorPhi (p : Possessor) : List Phi :=
 /-- Gender impoverishment (63): `[masc]` is deleted next to `[pl]` and next to
 `[participant]`, two paradigmatic rules on the shared engine. -/
 def impoverishment : List (ImpoverishmentRule (List Phi) Phi) :=
-  [paradigmatic (·.contains .pl) .masc, paradigmatic (·.contains .participant) .masc]
+  [.paradigmatic (·.contains .pl) .masc, .paradigmatic (·.contains .participant) .masc]
 
 /-- The φ-bundle after (63). -/
 def impoverish (φ : List Phi) : List Phi :=

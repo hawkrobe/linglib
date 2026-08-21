@@ -25,7 +25,8 @@ this substrate.
 ## Main definitions
 
 * `π P R`: Barker's relationalizer.
-* `Ex R`: existential closure of a relation.
+* `Ex R`, `ExPossessor R`: existential closure of a relation in its second
+  argument, and in its first — the possessor of `π P R`.
 * `iotaPresupposition P`: Russellian uniqueness presupposition for definites.
 * `naSemantics`, `bareSemantics`: demonstrative and bare nominal denotations.
 * `NominalInterpType`: relational arity of a nominal denotation.
@@ -39,6 +40,7 @@ this substrate.
 
 * [barker-2011]: Possessives and relational nouns
   (von Heusinger/Maienborn/Portner handbook, pp. 1109–1130; π and Ex at p. 1114).
+* [adamson-2024]: the alienator nominalizer, `ExPossessor`.
 
 ## Tags
 
@@ -63,6 +65,18 @@ def π (P : E → S → Prop) (R : E → E → S → Prop) : E → E → S → P
 `Ex R x s ↔ ∃ y, R x y s`. -/
 def Ex (R : E → E → S → Prop) : E → S → Prop :=
   λ x s => ∃ y, R x y s
+
+/-- Existential closure of a relation in its first argument — the possessor of
+`π P R`: `ExPossessor R y s ↔ ∃ x, R x y s`. The alienator nominalizer of
+[adamson-2024], which closes a relational noun's possessor slot. -/
+def ExPossessor (R : E → E → S → Prop) : E → S → Prop :=
+  λ y s => ∃ x, R x y s
+
+/-- The alienator over a relationalized noun keeps the sortal core and closes
+the relation. -/
+theorem exPossessor_pi (P : E → S → Prop) (R : E → E → S → Prop) (y : E) (s : S) :
+    ExPossessor (π P R) y s ↔ P y s ∧ ∃ x, R x y s := by
+  simp only [ExPossessor, π, exists_and_left]
 
 /-- `Ex (π P R) z s` is witnessed whenever some `y` satisfies both `P y s`
 and `R z y s`. -/

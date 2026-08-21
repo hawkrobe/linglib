@@ -22,15 +22,15 @@ the post-impoverishment VI winner the retreat-to-the-general exponent
 * `ImpoverishmentRule` — a conditioned feature deletion, parametric in
   the bundle and target types; `ImpoverishmentRule.apply` instantiates
   it with a deletion operation
-* `Paradigmatic`, `Syntagmatic` — condition factors through the focus,
-  or genuinely reads context
+* `ImpoverishmentRule.Paradigmatic`, `ImpoverishmentRule.Syntagmatic` —
+  condition factors through the focus, or genuinely reads context
 * `deleteFeature`, `chain` — the Minimalist-bundle instantiation and
   its rule chains
 
 ## Main statements
 
-* `paradigmatic_isParadigmatic` — rules built focus-only are
-  paradigmatic by construction
+* `ImpoverishmentRule.paradigmatic_isParadigmatic` — rules built focus-only
+  are paradigmatic by construction
 * `chain_pointwise` — impoverishment only deletes: chains never
   introduce or alter feature values
 * `runChain_append` — chains compose sequentially (the ground for the
@@ -51,7 +51,7 @@ from fission and the coproduct (`Studies/SenturiaMarcolli2025.lean`).
 * [G. Scott, *Pronoun reduction in Mam*][scott-2023]
 -/
 
-namespace DistributedMorphology.Impoverishment
+namespace DistributedMorphology
 
 open Minimalist
 
@@ -114,33 +114,34 @@ node's surroundings — a theorem about a rule, not a flag. -/
 /-- A rule is **paradigmatic** iff its condition factors through the
 focus bundle: any two neighborhoods with the same focus agree on the
 condition. -/
-def Paradigmatic (r : ImpoverishmentRule Bundle Target) : Prop :=
+def ImpoverishmentRule.Paradigmatic (r : ImpoverishmentRule Bundle Target) : Prop :=
   ∀ n₁ n₂ : Neighborhood Bundle,
     n₁.focus = n₂.focus → (r.condition n₁ ↔ r.condition n₂)
 
 /-- A rule is **syntagmatic** iff it is not paradigmatic: some
 neighborhoods agree on focus but disagree on the condition, so the
 condition genuinely depends on context. -/
-def Syntagmatic (r : ImpoverishmentRule Bundle Target) : Prop := ¬ Paradigmatic r
+def ImpoverishmentRule.Syntagmatic (r : ImpoverishmentRule Bundle Target) : Prop :=
+  ¬ r.Paradigmatic
 
 /-- Build a paradigmatic rule from a focus-only Boolean check; the
 `Paradigmatic` proof is `paradigmatic_isParadigmatic`. -/
-def paradigmatic (focusCheck : Bundle → Bool) (target : Target) :
+def ImpoverishmentRule.paradigmatic (focusCheck : Bundle → Bool) (target : Target) :
     ImpoverishmentRule Bundle Target where
   condition n := focusCheck n.focus = true
   decCond n := inferInstanceAs (Decidable (focusCheck n.focus = true))
   target := target
 
 /-- A rule built by `paradigmatic` is paradigmatic by construction. -/
-theorem paradigmatic_isParadigmatic (focusCheck : Bundle → Bool) (target : Target) :
-    Paradigmatic (paradigmatic focusCheck target) := by
+theorem ImpoverishmentRule.paradigmatic_isParadigmatic (focusCheck : Bundle → Bool)
+    (target : Target) : (ImpoverishmentRule.paradigmatic focusCheck target).Paradigmatic := by
   intro n₁ n₂ hfoc
-  simp only [paradigmatic, hfoc]
+  simp only [ImpoverishmentRule.paradigmatic, hfoc]
 
 /-- Build a (potentially) syntagmatic rule from a full-neighborhood
 Boolean check. Whether the result is genuinely syntagmatic depends on
 `cond` — verify with a separate `Syntagmatic` proof if needed. -/
-def syntagmatic (cond : Neighborhood Bundle → Bool) (target : Target) :
+def ImpoverishmentRule.syntagmatic (cond : Neighborhood Bundle → Bool) (target : Target) :
     ImpoverishmentRule Bundle Target where
   condition n := cond n = true
   decCond n := inferInstanceAs (Decidable (cond n = true))
@@ -273,14 +274,14 @@ inspects the focus bundle, so the rule is paradigmatic by
 construction. -/
 def redundancyRule (source : List FeatureVal) (target : FeatureVal) :
     ImpoverishmentRule FeatureBundle FeatureVal :=
-  paradigmatic
+  .paradigmatic
     (λ fb => allRecoverable source
       ((FeatureBundle.toGramFeatures fb).map GramFeature.featureType))
     target
 
 /-- Redundancy rules are paradigmatic. -/
 theorem redundancyRule_isParadigmatic (source : List FeatureVal)
-    (target : FeatureVal) : Paradigmatic (redundancyRule source target) :=
-  paradigmatic_isParadigmatic _ _
+    (target : FeatureVal) : (redundancyRule source target).Paradigmatic :=
+  ImpoverishmentRule.paradigmatic_isParadigmatic _ _
 
-end DistributedMorphology.Impoverishment
+end DistributedMorphology

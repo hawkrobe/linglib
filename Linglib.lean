@@ -1252,7 +1252,6 @@ import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Morphology.DistributedMorphology.Basic
 import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
-import Linglib.Morphology.DistributedMorphology.Categorizer.Semantics
 import Linglib.Morphology.DistributedMorphology.Defs
 import Linglib.Morphology.DistributedMorphology.Fission
 import Linglib.Morphology.DistributedMorphology.Fusion
@@ -2932,4 +2931,5 @@ import Linglib.Data.Examples.Baker1985
 import Linglib.Data.Examples.FillmoreKayOConnor1988
 import Linglib.Data.Examples.Benz2025
 import Linglib.Data.Examples.HalleMarantz1993
-import Linglib.Data.Examples.Aitha2026
+import Linglib.Data.Examples.Myler2016
+import Linglib.Data.Examples.Scott2021
