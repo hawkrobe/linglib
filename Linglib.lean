@@ -1259,6 +1259,7 @@ import Linglib.Morphology.DistributedMorphology.Fission
 import Linglib.Morphology.DistributedMorphology.Fusion
 import Linglib.Morphology.DistributedMorphology.Impoverishment
 import Linglib.Morphology.DistributedMorphology.Locality
+import Linglib.Morphology.DistributedMorphology.ComplexHead
 import Linglib.Morphology.DistributedMorphology.Merger
 import Linglib.Morphology.DistributedMorphology.Neighborhood
 import Linglib.Morphology.DistributedMorphology.NominalProjection
@@ -1973,6 +1974,7 @@ import Linglib.Studies.BhattPancheva2004
 import Linglib.Studies.BhattTakahashi2011
 import Linglib.Studies.BillEtAl2025
 import Linglib.Studies.Blutner2000
+import Linglib.Studies.Bobaljik2000
 import Linglib.Studies.Bobaljik2012
 import Linglib.Studies.Bochnak2015
 import Linglib.Studies.Bohnemeyer2004
@@ -2135,6 +2137,7 @@ import Linglib.Studies.ElkinsTorrenceBrown2026
 import Linglib.Studies.Elliott2025
 import Linglib.Studies.ElliottSudo2025
 import Linglib.Studies.Embick2010
+import Linglib.Studies.Embick2015
 import Linglib.Studies.Embick2021
 import Linglib.Studies.EngelhardtEtAl2006
 import Linglib.Studies.Enguehard2024
@@ -2950,3 +2953,5 @@ import Linglib.Data.Examples.Embick2010
 import Linglib.Data.Examples.HarleyRitter2002
 import Linglib.Data.Examples.McGinnis2013
 import Linglib.Data.Examples.Arad2005
+import Linglib.Data.Examples.Embick2015
+import Linglib.Data.Examples.Bobaljik2000
