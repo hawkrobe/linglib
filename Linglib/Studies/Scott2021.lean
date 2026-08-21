@@ -1,184 +1,84 @@
-import Linglib.Syntax.RelativeClause.Basic
-import Linglib.Syntax.Tree.Cat
+import Linglib.Syntax.Tree.Basic
 import Linglib.Fragments.Swahili.Relativization
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.FeatureBundle
 import Linglib.Syntax.Minimalist.Features
+import Linglib.Data.Examples.Scott2021
 
 /-!
-# Scott 2021: Two Types of Resumptive Pronouns in Swahili
-[scott-2021]
+# Two types of resumptive pronouns in Swahili
 
-Two Types of Resumptive Pronouns in Swahili. *Linguistic Inquiry*
-52(4): 812–833.
+[scott-2021]: the resumptive pronouns that objects of monosyllabic
+prepositions require are of two kinds. Bound pronouns, the only option in
+adjunct islands ((31)–(33)), match the head in person; movement copies,
+diagnosed by parasitic gaps ((35)–(37)), never carry person. Both follow
+from one Vocabulary ((28)) and the copy theory of movement: a movement copy
+in a position with a phonological requirement is reduced rather than deleted
+([landau-2006]), and MaxElide removes the largest constituent whose residue
+can still be spelled out — PersP, since *-ye* spells out `[sg + n_anim]`
+while nothing spells out Num alone ((46)–(48)).
 
-## Core Claims
+## Main definitions
 
-Swahili distinguishes two types of resumptive pronouns:
+* `pronoun`: the pronoun structures of (40)–(44), with PersP only for local
+  persons.
+* `resumptiveVocab`, `spellout`: the Vocabulary Items of (28) over a
+  pronoun's features.
+* `Deletable`, `maxElideTarget`: a layer is deletable when its residue has an
+  exponent; MaxElide takes the largest such layer.
+* `pronounce`: the chain reduction of a copy — full deletion, or PersP
+  deletion where Minimality forbids deleting the copy — against a bound
+  pronoun's full spell-out.
 
-1. **Movement copies** (personless: *-ye*, *-o*): lower copies of Ā-movement
-   chains, reduced by chain reduction at PF. Diagnosed by parasitic gap
-   constructions — the "true gap" position must license movement, and
-   the "parasitic gap" position shows personless resumptives.
+## Main results
 
-2. **Base-generated bound pronouns** (person-matching: *-mi*, *-we*, *-si*, *-nyi*):
-   not copies — syntactically bound by the head of the RC. Diagnosed by
-   adjunct islands — movement is blocked, so only binding is available,
-   and bound resumptives obligatorily match person.
+* `table2`: the paradigm of the Fragment's `resumptivePronoun` is (28) over
+  the structures (42) and (44).
+* `maxElide_persP`: PersP is the unique deletable layer, by the Vocabulary.
+* `cleft_rows`, `island_rows`, `parasitic_rows`: the data pool — clefts
+  allow either pronoun but fix number, islands allow only the bound pronoun,
+  and a personless parasitic pronoun needs a personless true gap for every
+  speaker of Table 4.
+* `person_entails_number`: any deletion that keeps person keeps number,
+  since Num is above Pers (§6).
 
-## Analysis: Chain Reduction + MaxElide
+## Implementation notes
 
-Following [landau-2006] and [van-urk-2018]:
-
-- Movement leaves full copies of the pronoun (including PersP)
-- Chain reduction at PF deletes copies except the highest
-- Where a phonological requirement (bimoraic Minimality on monosyllabic
-  prepositions) prevents full deletion, MaxElide deletes the largest
-  deletable constituent — PersP
-- After PersP deletion, the remaining features [GEN: ANIM, NUM: SG/PL]
-  trigger insertion of the less specific (personless) VI *-ye* or *-o*
-
-## DP Structure (Tree-Based)
-
-Pronouns: [DP D [NumP Num [nP n_anim [PersP Pers:x]]]]
-Lexical DPs: [DP D [NumP Num [nP n/n_anim [√P √]]]]
-
-Modeled using `Syntax DPCat String` with Minimalism-grounded
-categories (D, Num, n, Pers).
-
-## Vocabulary Insertion (FeatureBundle-Based)
-
-Uses `Minimalist.FeatureBundle` and `Minimalist.spellout`
-from the DM theory module. The Elsewhere Condition is structural: person-
-specified rules (specificity 3) beat personless defaults (specificity 2).
-Chain reduction removes person features from the bundle, so only the
-default matches.
+The structures are `Syntax.Tree`s over the four DP-internal categories, so
+MaxElide is structural deletion rather than feature removal; features are
+read off the terminals for Vocabulary Insertion. The interspeaker variation
+of Table 4 beyond its first two rows is not derived, as the paper does not
+derive it.
 -/
 
 namespace Scott2021
 
-open Core Swahili
-open Minimalist (FeatureBundle FeatureVal PhiFeature)
+open Swahili Syntax Data.Examples
+open Minimalist (FeatureBundle FeatureVal PhiFeature GramFeature Vocabulary VocabEntry)
 
--- ============================================================================
--- § 1: DP-Internal Categories
--- ============================================================================
+/-! ### The structure of pronouns (§5.1) -/
 
-/-- Categories for DP-internal structure. Grounded in Minimalism
-    categories but restricted to the four projections relevant to
-    Bantu pronoun structure ([scott-2021]). -/
+/-- The DP-internal projections of (40)–(41): D, Num, the animate n, and the
+Person projection that only local-person pronouns have. -/
 inductive DPCat where
-  | D     -- determiner (outermost; null in Swahili)
-  | Num   -- number (hosts sg/pl; portmanteau with n)
-  | n     -- categorizer (hosts gender/animacy; [kramer-2015])
-  | Pers  -- person (innermost; only in pronouns, not lexical DPs)
-  deriving DecidableEq, Repr
+  | D | Num | n | Pers
+  deriving DecidableEq, Repr, Fintype
 
-instance : Inhabited DPCat := ⟨.D⟩
-
--- ============================================================================
--- § 2: Tree-Based DP Structure
--- ============================================================================
-
-open Syntax (Tree)
-
-/-- 1SG pronoun *mi*: [DP D [NumP Num:sg [nP n_anim [PersP 1]]]]
-    [scott-2021]. -/
-def pronTree1sg : Tree DPCat String :=
+/-- A pronoun ((41)): `[DP D [NumP Num [nP n_anim [PersP Pers]]]]`, without
+PersP for the personless pronouns of (42). -/
+def pronoun (person : Option Person) (number : Number) : Tree DPCat String :=
   .node .D [
     .terminal .D "",
     .node .Num [
-      .terminal .Num "sg",
-      .node .n [
-        .terminal .n "anim",
-        .node .Pers [.terminal .Pers "1"]]]]
+      .terminal .Num (if number = .plural then "pl" else "sg"),
+      .node .n ((.terminal .n "anim") ::
+        match person with
+        | some .first => [.node .Pers [.terminal .Pers "1"]]
+        | some .second => [.node .Pers [.terminal .Pers "2"]]
+        | _ => [])]]
 
-/-- 2SG pronoun *we*: [DP D [NumP Num:sg [nP n_anim [PersP 2]]]] -/
-def pronTree2sg : Tree DPCat String :=
-  .node .D [
-    .terminal .D "",
-    .node .Num [
-      .terminal .Num "sg",
-      .node .n [
-        .terminal .n "anim",
-        .node .Pers [.terminal .Pers "2"]]]]
-
-/-- Noun class 1 pronoun *ye* (no person): [DP D [NumP Num:sg [nP n_anim]]]
-    [scott-2021]. This is also the structure AFTER chain reduction
-    deletes PersP from a 1SG/2SG pronoun. -/
-def pronTreeCl1 : Tree DPCat String :=
-  .node .D [
-    .terminal .D "",
-    .node .Num [
-      .terminal .Num "sg",
-      .node .n [.terminal .n "anim"]]]
-
-/-- Plural counterparts. -/
-def pronTree1pl : Tree DPCat String :=
-  .node .D [
-    .terminal .D "",
-    .node .Num [
-      .terminal .Num "pl",
-      .node .n [
-        .terminal .n "anim",
-        .node .Pers [.terminal .Pers "1"]]]]
-
-def pronTreeCl2 : Tree DPCat String :=
-  .node .D [
-    .terminal .D "",
-    .node .Num [
-      .terminal .Num "pl",
-      .node .n [.terminal .n "anim"]]]
-
--- ============================================================================
--- § 3: MaxElide as Structural Deletion
--- ============================================================================
-
-mutual
-/-- Delete the PersP subtree from a pronoun tree. This is what MaxElide
-    does to movement copies: it removes the biggest deletable constituent,
-    which is PersP (nP cannot be deleted because Num and n form a
-    portmanteau — no VI exists for Num alone).
-
-    Uses mutual recursion with list helpers so that tree operations
-    reduce definitionally on concrete trees. -/
-def deletePersP : Tree DPCat String → Tree DPCat String
-  | .node .n children => .node .n (filterPers children)
-  | .node c children => .node c (mapDeletePersP children)
-  | other => other
-
-private def mapDeletePersP : List (Tree DPCat String) → List (Tree DPCat String)
-  | [] => []
-  | t :: ts => deletePersP t :: mapDeletePersP ts
-
-private def filterPers : List (Tree DPCat String) → List (Tree DPCat String)
-  | [] => []
-  | t :: ts => if t.cat == .Pers then filterPers ts else t :: filterPers ts
-end
-
-/-- Deleting PersP from a 1SG pronoun yields a class 1 pronoun. -/
-theorem delete_persP_1sg : deletePersP pronTree1sg = pronTreeCl1 := rfl
-
-/-- Deleting PersP from a 2SG pronoun yields the same class 1 pronoun. -/
-theorem delete_persP_2sg : deletePersP pronTree2sg = pronTreeCl1 := rfl
-
-/-- Deleting PersP from a 1PL pronoun yields a class 2 pronoun. -/
-theorem delete_persP_1pl : deletePersP pronTree1pl = pronTreeCl2 := rfl
-
-/-- Class 1 pronoun has no PersP — deletion is idempotent. -/
-theorem delete_persP_idempotent : deletePersP pronTreeCl1 = pronTreeCl1 := rfl
-
--- ============================================================================
--- § 4: Feature Extraction from Trees
--- ============================================================================
-
-/-- Extract the feature bundle from a pronoun tree's terminals.
-    Each terminal maps to a `FeatureVal`:
-    - Pers "1" → phi (person .first)
-    - Pers "2" → phi (person .second)
-    - Num "sg" → phi (number .Sing)
-    - Num "pl" → phi (number .Plur)
-    - n "anim" → phi (gender 1)   (encoding animacy as gender 1) -/
-def terminalToFeature : DPCat → String → Option FeatureVal
+/-- The feature a terminal contributes: person, number, or the animate gender
+(encoded as gender 1). -/
+def terminalFeature : DPCat → String → Option FeatureVal
   | .Pers, "1" => some (.phi (.person .first))
   | .Pers, "2" => some (.phi (.person .second))
   | .Num, "sg" => some (.phi (.number .singular))
@@ -187,326 +87,193 @@ def terminalToFeature : DPCat → String → Option FeatureVal
   | _, _ => none
 
 mutual
-/-- Collect all features from a tree's terminals as a list of `GramFeature`s,
-    in depth-first traversal order. The list traversal is the natural shape;
-    `extractFeatures` wraps it into a `FeatureBundle` assignment.
-    Uses mutual recursion for definitional reduction. -/
-def extractFeatureList : Tree DPCat String → List Minimalist.GramFeature
-  | .terminal c w => match terminalToFeature c w with
+/-- The features at a tree's terminals, in depth-first order. -/
+def featureList : Tree DPCat String → List GramFeature
+  | .terminal c w => match terminalFeature c w with
     | some fv => [.valued fv]
     | none => []
-  | .node _ children => extractFeatureListAux children
+  | .node _ children => featureListAll children
   | .trace _ _ => []
-  | .bind _ _ body => extractFeatureList body
+  | .bind _ _ body => featureList body
 
-private def extractFeatureListAux :
-    List (Tree DPCat String) → List Minimalist.GramFeature
+private def featureListAll : List (Tree DPCat String) → List GramFeature
   | [] => []
-  | t :: ts => extractFeatureList t ++ extractFeatureListAux ts
+  | t :: ts => featureList t ++ featureListAll ts
 end
 
-/-- The feature bundle of a pronoun tree: fold its terminal features into the
-    total assignment. Each pronoun structure has at most one feature per
-    dimension, so no information is lost in the fold. -/
-def extractFeatures (t : Tree DPCat String) : FeatureBundle :=
-  Minimalist.FeatureBundle.ofGramFeatures (extractFeatureList t)
+/-- The feature bundle of a tree. -/
+def features (t : Tree DPCat String) : FeatureBundle :=
+  Minimalist.FeatureBundle.ofGramFeatures (featureList t)
 
-/-- 1SG pronoun has features: [number:sg, gender:anim, person:1].
-    (Order follows depth-first tree traversal.) -/
-theorem features_1sg :
-    extractFeatureList pronTree1sg =
-    [.valued (.phi (.number .singular)),
-     .valued (.phi (.gender 1)),
-     .valued (.phi (.person .first))] := by decide
+/-! ### Vocabulary Insertion (§3.4) -/
 
-/-- After PersP deletion, features are: [number:sg, gender:anim] — no person. -/
-theorem features_after_deletion :
-    extractFeatureList (deletePersP pronTree1sg) =
-    [.valued (.phi (.number .singular)),
-     .valued (.phi (.gender 1))] := by decide
-
--- ============================================================================
--- § 5: Vocabulary Insertion via DM Elsewhere Condition
--- ============================================================================
-
-/-- Helper: does a feature bundle contain a person feature? -/
-def hasPerson (fb : FeatureBundle) : Bool :=
-  (Minimalist.FeatureBundle.toGramFeatures fb).any fun f => match f with
-    | .valued (.phi (.person _)) => true
-    | _ => false
-
-/-- Helper: is the number singular? -/
-def isSg (fb : FeatureBundle) : Bool :=
-  (Minimalist.FeatureBundle.toGramFeatures fb).any fun f => match f with
-    | .valued (.phi (.number .singular)) => true
-    | _ => false
-
-/-- Helper: does the bundle contain animacy? -/
-def isAnim (fb : FeatureBundle) : Bool :=
-  (Minimalist.FeatureBundle.toGramFeatures fb).any fun f => match f with
-    | .valued (.phi (.gender 1)) => true
-    | _ => false
-
-/-- Swahili resumptive Vocabulary Items ([scott-2021]): person-specified
-entries and personless animate defaults, competing by the Subset Principle. -/
-def resumptiveVocab : Minimalist.Vocabulary :=
-  let entry (fs : List Minimalist.GramFeature) (e : String) : Minimalist.VocabEntry :=
+/-- The Vocabulary Items of (28): person-specified animate entries and the
+personless animate defaults *-ye* and *-o*. -/
+def resumptiveVocab : Vocabulary :=
+  let entry (fs : List GramFeature) (e : String) : VocabEntry :=
     { features := Minimalist.FeatureBundle.ofGramFeatures fs, exponent := e }
   [ entry [.valued (.phi (.person .first)), .valued (.phi (.gender 1)),
-      .valued (.phi (.number .singular))] "-mi",
+      .valued (.phi (.number .singular))] "mi",
     entry [.valued (.phi (.person .first)), .valued (.phi (.gender 1)),
-      .valued (.phi (.number .plural))] "-si",
+      .valued (.phi (.number .plural))] "si",
     entry [.valued (.phi (.person .second)), .valued (.phi (.gender 1)),
-      .valued (.phi (.number .singular))] "-we",
+      .valued (.phi (.number .singular))] "we",
     entry [.valued (.phi (.person .second)), .valued (.phi (.gender 1)),
-      .valued (.phi (.number .plural))] "-nyi",
-    entry [.valued (.phi (.gender 1)), .valued (.phi (.number .singular))] "-ye",
-    entry [.valued (.phi (.gender 1)), .valued (.phi (.number .plural))] "-o" ]
+      .valued (.phi (.number .plural))] "nyi",
+    entry [.valued (.phi (.gender 1)), .valued (.phi (.number .singular))] "ye",
+    entry [.valued (.phi (.gender 1)), .valued (.phi (.number .plural))] "o" ]
 
-/-- Insert the resumptive exponent for a feature bundle by the Subset
-Principle, defaulting to *-ye*. -/
-def insertResumptive (fb : FeatureBundle) : String :=
-  (Minimalist.spellout resumptiveVocab fb none).getD "-ye"
+/-- The exponent of a pronoun structure, by the Subset Principle over (28). -/
+def spellout (t : Tree DPCat String) : Option String :=
+  Minimalist.spellout resumptiveVocab (features t) none
 
--- ============================================================================
--- § 6: Chain Reduction Pipeline
--- ============================================================================
+/-- The Fragment's person cells as the structures' person: third person is the
+absence of PersP. -/
+def relPerson : RelPerson → Option Person
+  | .first => some .first
+  | .second => some .second
+  | .third => none
 
-/-- Whether a pronoun occurrence is a movement copy (part of an
-    Ā-movement chain). Only copies undergo chain reduction. -/
-inductive PronOrigin where
-  | bound
-  | movementCopy
-  deriving DecidableEq, Repr
+/-- **Table 2 from (28)**: every cell of the Fragment's resumptive paradigm is
+the Subset Principle's choice for the corresponding structure ((43), (45)). -/
+theorem table2 :
+    ∀ (p : RelPerson) (n : RelGramNum),
+      (spellout (pronoun (relPerson p) n.toNumber)).map ("-" ++ ·) =
+        some (resumptivePronoun p n) := by
+  intro p n; cases p <;> cases n <;> decide
 
-/-- Full pipeline: tree → (optional) MaxElide → feature extraction → VI.
+/-! ### MaxElide (§5.2–5.3) -/
 
-    - Bound pronouns: tree is unchanged → full features → person-matching VI
-    - Movement copies: MaxElide deletes PersP → reduced features → personless VI -/
-def realize (tree : Tree DPCat String) (origin : PronOrigin) : String :=
-  let pfTree := match origin with
-    | .bound => tree
-    | .movementCopy => deletePersP tree
-  insertResumptive (extractFeatures pfTree)
+mutual
+/-- Delete the constituent of category `c` — the subtree it heads — from a
+tree. -/
+def deleteLayer (c : DPCat) : Tree DPCat String → Tree DPCat String
+  | .node k children => .node k (deleteLayerAll c children)
+  | other => other
 
--- ============================================================================
--- § 7: Core Predictions — Bound Resumptives
--- ============================================================================
+private def deleteLayerAll (c : DPCat) : List (Tree DPCat String) → List (Tree DPCat String)
+  | [] => []
+  | t :: ts => if t.cat = c then deleteLayerAll c ts else deleteLayer c t :: deleteLayerAll c ts
+end
 
-/-- Bound 1SG in adjunct island → person-matching *-mi*. -/
-theorem island_bound_1sg : realize pronTree1sg .bound = "-mi" := by decide
+/-- A layer of a pronoun is deletable when what remains can still be spelled
+out — MaxElide's condition ((48)): deleting PersP leaves `[sg + n_anim]`,
+which *-ye* spells out, while deleting nP leaves Num alone, which nothing
+spells out. -/
+def Deletable (t : Tree DPCat String) (c : DPCat) : Prop :=
+  c ≠ .D ∧ (spellout (deleteLayer c t)).isSome = true
 
-/-- Bound 2SG in adjunct island → person-matching *-we*. -/
-theorem island_bound_2sg : realize pronTree2sg .bound = "-we" := by decide
+instance (t : Tree DPCat String) (c : DPCat) : Decidable (Deletable t c) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Bound 1PL in adjunct island → person-matching *-si*. -/
-theorem island_bound_1pl : realize pronTree1pl .bound = "-si" := by decide
+/-- The layers of a pronoun, outermost first. -/
+def layers : List DPCat := [.D, .Num, .n, .Pers]
 
--- ============================================================================
--- § 8: Core Predictions — Movement Resumptives
--- ============================================================================
+/-- MaxElide: the largest deletable constituent. -/
+def maxElideTarget (t : Tree DPCat String) : Option DPCat :=
+  layers.find? fun c => decide (Deletable t c)
 
-/-- Movement copy 1SG in parasitic gap → personless *-ye*. -/
-theorem parasitic_movement_1sg : realize pronTree1sg .movementCopy = "-ye" := by
+/-- In a local-person pronoun PersP is the unique deletable layer, so MaxElide
+deletes it ((46)–(47)). -/
+theorem maxElide_persP :
+    ∀ (p : Person) (n : Number), p = .first ∨ p = .second →
+      maxElideTarget (pronoun (some p) n) = some .Pers := by
   decide
 
-/-- Movement copy 2SG in parasitic gap → also *-ye*. Person is irrelevant
-    because chain reduction deletes PersP regardless. -/
-theorem parasitic_movement_2sg : realize pronTree2sg .movementCopy = "-ye" := by
-  decide
-
-/-- Movement copy 1PL in parasitic gap → personless *-o*. -/
-theorem parasitic_movement_1pl : realize pronTree1pl .movementCopy = "-o" := by
-  decide
-
-/-- Both 1SG and 2SG movement copies produce the same form — chain
-    reduction erases the person distinction. -/
-theorem movement_erases_person_distinction :
-    realize pronTree1sg .movementCopy = realize pronTree2sg .movementCopy := by
-  decide
-
--- ============================================================================
--- § 9: End-to-End Argumentation Chain
--- ============================================================================
-
-/-- The complete derivation in one theorem:
-    1. Start with 1SG pronoun tree (with PersP:1)
-    2. MaxElide deletes PersP → tree matches class 1 structure
-    3. Feature extraction yields [number:sg, gender:anim] — no person
-    4. VI inserts *-ye* (specificity 2 default beats nothing more specific)
-    5. The same tree, unreduced (bound), yields *-mi* (specificity 3 wins) -/
-theorem end_to_end :
-    -- Step 2: MaxElide produces class 1 structure
-    deletePersP pronTree1sg = pronTreeCl1 ∧
-    -- Step 3: no person features remain
-    hasPerson (extractFeatures (deletePersP pronTree1sg)) = false ∧
-    -- Step 4: VI produces -ye
-    realize pronTree1sg .movementCopy = "-ye" ∧
-    -- Step 5: unreduced VI produces -mi
-    realize pronTree1sg .bound = "-mi" := by
-  refine ⟨rfl, ?_, ?_, ?_⟩ <;> decide
-
--- ============================================================================
--- § 10: Parasitic Gap Interspeaker Variation (Table 4)
--- ============================================================================
-
-/-- Parasitic gap judgments per speaker. Each field encodes whether the
-    combination (true-gap-form ... parasitic-gap-form) is accepted.
-    [scott-2021] Table 4. -/
-structure ParasiticGapJudgments where
-  moveMove : Bool       -- Row 1: ye_t ... ye_p
-  pronounMove : Bool    -- Row 2: mi_t ... ye_p
-  pronounPronoun : Bool -- Row 3: mi_t ... mi_p
-  movePronoun : Bool    -- Row 4: ye_t ... mi_p
-  deriving DecidableEq, Repr
-
-def speaker1 : ParasiticGapJudgments :=
-  { moveMove := true, pronounMove := false, pronounPronoun := false, movePronoun := false }
-
-def speaker2 : ParasiticGapJudgments :=
-  { moveMove := true, pronounMove := false, pronounPronoun := true, movePronoun := false }
-
-def speaker3 : ParasiticGapJudgments :=
-  { moveMove := true, pronounMove := false, pronounPronoun := true, movePronoun := false }
-
-/-- All speakers accept ye...ye (Row 1); no speaker accepts mi...ye
-    (Row 2) or ye...mi (Row 4). The parasitic gap requires the true gap
-    to also be movement, and a movement true gap cannot license a bound
-    parasitic pronoun. -/
-theorem parasitic_gap_generalization :
-    -- Row 1: ye_t ... ye_p is universally accepted
-    (speaker1.moveMove && speaker2.moveMove && speaker3.moveMove) = true ∧
-    -- Row 2: mi_t ... ye_p is universally rejected
-    (speaker1.pronounMove || speaker2.pronounMove || speaker3.pronounMove) = false ∧
-    -- Row 4: ye_t ... mi_p is universally rejected
-    (speaker1.movePronoun || speaker2.movePronoun || speaker3.movePronoun) = false :=
-  ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 11: Islands Are Syntactic, Not Phonological
--- ============================================================================
-
-/-- Both island constructions have overt resumptive pronouns — the
-    difference is syntactic (movement vs. binding), not phonological
-    (overt vs. gap). If islands were phonological, both *-mi* and *-ye*
-    should be equally acceptable inside islands. -/
-theorem islands_are_syntactic :
-    realize pronTree1sg .bound = "-mi" ∧
-    realize pronTree1sg .movementCopy = "-ye" ∧
-    realize pronTree1sg .bound ≠ realize pronTree1sg .movementCopy := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
-
--- ============================================================================
--- § 12: MaxElide Targets PersP
--- ============================================================================
-
-/-- Whether a DP layer can be deleted by MaxElide. Deletable iff the
-    remaining material can be spelled out (a VI exists for the residue).
-    - PersP: deletable (VI [sg + n_anim] ↔ *-ye* exists)
-    - nP: NOT deletable (Num and n portmanteau; no VI for Num alone)
-    - NumP/DP: never deleted (highest copy is pronounced) -/
-def DPCat.isDeletable : DPCat → Bool
-  | .Pers => true
-  | .n    => false
-  | .Num  => false
-  | .D    => false
-
-/-- MaxElide: "Elide the biggest deletable constituent." Trying from
-    biggest (D) to smallest (Pers), PersP is the only deletable layer. -/
-def maxElideTarget : Option DPCat :=
-  [DPCat.D, .Num, .n, .Pers].find? DPCat.isDeletable
-
-theorem maxElide_targets_persP : maxElideTarget = some .Pers := by decide
-
--- ============================================================================
--- § 13: Structural Properties
--- ============================================================================
-
-/-- Chain reduction (PersP deletion) preserves number features. -/
-theorem reduction_preserves_number :
-    isSg (extractFeatures (deletePersP pronTree1sg)) =
-    isSg (extractFeatures pronTree1sg) := by decide
-
-/-- Chain reduction preserves animacy features. -/
-theorem reduction_preserves_animacy :
-    isAnim (extractFeatures (deletePersP pronTree1sg)) =
-    isAnim (extractFeatures pronTree1sg) := by decide
-
-/-- Chain reduction removes person features. -/
-theorem reduction_removes_person :
-    hasPerson (extractFeatures pronTree1sg) = true ∧
-    hasPerson (extractFeatures (deletePersP pronTree1sg)) = false :=
-  ⟨by decide, by decide⟩
-
-/-- Bound pronouns retain person features (no PersP deletion). -/
-theorem bound_retains_person :
-    hasPerson (extractFeatures pronTree1sg) = true := by decide
-
--- ============================================================================
--- § 14: Cross-Linguistic Prediction
--- ============================================================================
-
-/-- If a language has both types with morphological distinction,
-    the movement resumptive is featurally a proper subset of the
-    bound resumptive (chain reduction only deletes). -/
-theorem movement_is_subset :
-    let fullFeats := extractFeatureList pronTree1sg
-    let reducedFeats := extractFeatureList (deletePersP pronTree1sg)
-    reducedFeats.length < fullFeats.length ∧
-    reducedFeats.all (· ∈ fullFeats) := by
-  constructor <;> decide
-
-/-- Full pronoun alternation: bound *-mi* can alternate with full
-    *mimi*, but movement *-ye* cannot alternate with *yeye*.
-    Movement copies exist only to satisfy bimoraic minimality. -/
-def canAlternateWithFull (origin : PronOrigin) : Bool :=
-  match origin with
-  | .bound => true
-  | .movementCopy => false
-
-theorem bound_alternates : canAlternateWithFull .bound = true := rfl
-theorem movement_no_alternate : canAlternateWithFull .movementCopy = false := rfl
-
--- ============================================================================
--- § 15: Bridge — Fragment Consistency
--- ============================================================================
-
-/-- The theory-neutral observation in the Fragment (`resumptivePronounIsPersonMatching`)
-    is consistent with the theoretical pipeline in this study (`realize`).
-    Person-matching (bound) ↔ Fragment says true; personless (movement) ↔ false. -/
-theorem fragment_consistency_1sg :
-    resumptivePronounIsPersonMatching .first .sg = true ∧
-    realize pronTree1sg .bound = resumptivePronoun .first .sg ∧
-    realize pronTree1sg .movementCopy = resumptivePronoun .third .sg := by
-  refine ⟨rfl, ?_, ?_⟩ <;> decide
-
-/-- The movement marker in the Fragment is correctly classified. -/
-theorem marker_classification :
-    ambaMovement.npRel.resumptiveKind = some .movementCopy ∧
-    ambaBound.npRel.resumptiveKind = some .bound ∧
-    ambaGap.npRel.resumptiveKind = none := by
-  exact ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 16: Cross-Linguistic Prediction — Person Entails Number
--- ============================================================================
-
-/-- "If the copied pronouns match in person, they also match in number"
-    ([scott-2021] §6). This follows from the DP structure: Num
-    dominates PersP, so deleting PersP cannot affect Num. Conversely,
-    if person survives (not deleted), then Num — being structurally
-    higher — necessarily also survived. -/
+/-- Deleting a layer can keep person only if it keeps number: Num is above
+Pers (§6). -/
 theorem person_entails_number :
-    -- If person features are present, number features must be present too
-    hasPerson (extractFeatures pronTree1sg) = true →
-    isSg (extractFeatures pronTree1sg) = true := by
-  intro; decide
+    ∀ (c : DPCat) (n : Number),
+      (featureList (deleteLayer c (pronoun (some .first) n))).any
+          (fun f => match f with | .valued (.phi (.person _)) => true | _ => false) = true →
+        (featureList (deleteLayer c (pronoun (some .first) n))).any
+          (fun f => match f with | .valued (.phi (.number _)) => true | _ => false) = true := by
+  decide
 
-/-- The converse does NOT hold: number can be present without person
-    (as in noun class pronouns / movement copies). -/
-theorem number_without_person :
-    isSg (extractFeatures pronTreeCl1) = true ∧
-    hasPerson (extractFeatures pronTreeCl1) = false := by
-  constructor <;> decide
+/-! ### Chain reduction (§5.2–5.3) -/
+
+/-- How a resumptive relates to the head: a base-generated bound pronoun, or
+a lower copy of Ā-movement. -/
+inductive Origin where
+  | bound | movementCopy
+  deriving DecidableEq, Repr
+
+/-- The pronounced form. A bound pronoun is spelled out in full. A movement
+copy is deleted by Economy of Pronunciation unless its position carries the
+bimoraic Minimality requirement of a monosyllabic preposition (§3.3), where
+Phonological Recoverability forces partial deletion: MaxElide removes PersP
+and the residue is spelled out. -/
+def pronounce (t : Tree DPCat String) : Origin → (minimality : Bool) → Option String
+  | .bound, _ => spellout t
+  | .movementCopy, true => spellout (deleteLayer .Pers t)
+  | .movementCopy, false => none
+
+/-- Subjects and objects, with no Minimality requirement, leave a gap
+((17)–(18)). -/
+theorem gap_without_minimality (t : Tree DPCat String) :
+    pronounce t .movementCopy false = none := rfl
+
+/-- A movement copy under Minimality loses its person and surfaces as the
+personless pronoun ((36)). -/
+theorem movement_copy_personless :
+    ∀ (p : Person) (n : Number), p = .first ∨ p = .second →
+      pronounce (pronoun (some p) n) .movementCopy true =
+        pronounce (pronoun none n) .bound true := by
+  decide
+
+/-! ### The data pool (§3.4, §4) -/
+
+/-- A cell of the pool: the antecedent's person and number, the construction,
+the resumptive form or forms, and the judgment. -/
+structure Row where
+  construction : String
+  person : Person
+  number : Number
+  form : String
+  parasitic : Option String
+  accepted : Bool
+  deriving DecidableEq, Repr
+
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let fs := ex.paperFeatures
+  let construction ← fs.lookup "construction"
+  let person ← match fs.lookup "antecedentPerson" with
+    | some "1" => some Person.first | some "2" => some Person.second | _ => none
+  let number ← match fs.lookup "antecedentNumber" with
+    | some "sg" => some Number.singular | some "pl" => some Number.plural | _ => none
+  let form ← fs.lookup "form" <|> fs.lookup "trueGap"
+  pure ⟨construction, person, number, form, fs.lookup "parasitic", ex.judgment = .acceptable⟩
+
+theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- The antecedent's structure. -/
+def Row.tree (r : Row) : Tree DPCat String := pronoun (some r.person) r.number
+
+/-- **Clefts** ((24)–(25), (29)): either the bound pronoun or the movement
+copy is available, so the form is accepted iff it is one of the two — which
+fixes number while leaving person optional. -/
+theorem cleft_rows :
+    ∀ r ∈ rows, r.construction = "cleft" →
+      (r.accepted = (pronounce r.tree .bound true = some r.form ∨
+        pronounce r.tree .movementCopy true = some r.form)) := by
+  decide
+
+/-- **Adjunct islands** ((31)–(33)): movement is blocked, so the form is
+accepted iff it is the bound pronoun's. -/
+theorem island_rows :
+    ∀ r ∈ rows, r.construction = "island" →
+      (r.accepted = (pronounce r.tree .bound true = some r.form)) := by
+  decide
+
+/-- **Parasitic gaps** ((36)–(37), Table 4): a movement copy in the parasitic
+position is licensed only by a movement copy in the true-gap position — for
+every speaker, *ye … ye* is in and *mi … ye* is out. -/
+theorem parasitic_rows :
+    ∀ r ∈ rows, r.construction = "parasiticGap" →
+      r.parasitic = pronounce r.tree .movementCopy true →
+        (r.accepted = (some r.form = pronounce r.tree .movementCopy true)) := by
+  decide
 
 end Scott2021
