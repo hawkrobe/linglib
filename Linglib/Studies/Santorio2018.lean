@@ -46,7 +46,8 @@ def Stable (alts σ : List (Finset W)) : Prop :=
   ∃ w, (∀ A ∈ σ, w ∈ A) ∧ ∀ A ∈ alts, A ∉ σ → w ∉ A
 
 instance (alts σ : List (Finset W)) : Decidable (Stable alts σ) :=
-  inferInstanceAs (Decidable (∃ w, (∀ A ∈ σ, w ∈ A) ∧ ∀ A ∈ alts, A ∉ σ → w ∉ A))
+  inferInstanceAs
+    (Decidable (∃ w, (∀ A ∈ σ, w ∈ A) ∧ ∀ A ∈ alts, A ∉ σ → w ∉ A))
 
 /-- A nonempty stable sublist of `alts` none of whose nonempty proper sublists is stable.
 (The empty set, stable whenever some world falsifies every alternative, is excluded.) -/
@@ -55,7 +56,8 @@ def MinimalStable (alts σ : List (Finset W)) : Prop :=
     ∀ τ ∈ σ.sublists, τ ≠ [] → τ ≠ σ → ¬ Stable alts τ
 
 instance (alts σ : List (Finset W)) : Decidable (MinimalStable alts σ) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ ∀ τ ∈ σ.sublists, _ → _ → ¬ Stable alts τ))
+  inferInstanceAs
+    (Decidable (_ ∧ _ ∧ _ ∧ ∀ τ ∈ σ.sublists, _ → _ → ¬ Stable alts τ))
 
 /-- `⋀σ`. -/
 def conjunctiveClosure (σ : List (Finset W)) : Finset W := σ.foldr (· ∩ ·) Finset.univ
@@ -149,10 +151,12 @@ theorem karenina_truthmakers :
     (truthmakers readingAlts everyAorW).toFinset = {everyA, everyW, someA ∩ someW} := by
   decide
 
-/-- The mixed truthmaker is realized where no universal alternative is: [alonso-ovalle-2009]'s
-disjunct alternatives `{∀A, ∀W}` miss the way for (35) to be true that makes (39) infelicitous. -/
+/-- The mixed truthmaker is realized where no universal alternative is:
+[alonso-ovalle-2009]'s disjunct alternatives `{∀A, ∀W}` miss the way for (35) to be true that
+makes (39) infelicitous. -/
 theorem karenina_mixed_not_alonsoOvalle :
-    Reading.mixed ∈ someA ∩ someW ∧ Reading.mixed ∉ everyA ∧ Reading.mixed ∉ everyW := by
+    Reading.mixed ∈ someA ∩ someW ∧ Reading.mixed ∉ everyA ∧
+      Reading.mixed ∉ everyW := by
   decide
 
 /-! ### Spain (8), on [mckay-vaninwagen-1977] -/
