@@ -42,6 +42,8 @@ dynamic conjunction, conditional, and disjunction
 - `neg_eliminative`, `seq_eliminative` — Heim's Principle (A), and its
   closure under sequencing
 - `admits_ofPartialProp` — admittance is `Context.presupSatisfied`
+- `mem_ofPartialProp_self` — a context is a fixed point of an atomic update iff
+  presupposition and assertion hold throughout it ([heim-1992]'s `c + φ = same`)
 - `admits_seq_ofPartialProp`, `admits_cond_ofPartialProp`,
   `admits_disj_ofPartialProp` — the filtering connectives, derived
 -/
@@ -84,6 +86,13 @@ def ofPartialProp (p : PartialProp W) : CCP.Partial W :=
 @[simp] theorem ofPartialProp_get (p : PartialProp W) (s : Set W)
     (h : ((ofPartialProp p) s).Dom) :
     ((ofPartialProp p) s).get h = { w ∈ s | p.assertion w } := rfl
+
+/-- A context is a fixed point of an atomic update iff the presupposition and the assertion
+hold throughout it ([heim-1992]'s `c + φ = same`). -/
+theorem mem_ofPartialProp_self (p : PartialProp W) (s : Set W) :
+    s ∈ ofPartialProp p s ↔ s ⊆ p.presup ∧ s ⊆ p.assertion :=
+  ⟨λ ⟨h, e⟩ => ⟨h, Set.sep_eq_self_iff_mem_true.1 e⟩,
+   λ ⟨h, e⟩ => ⟨h, Set.sep_eq_self_iff_mem_true.2 e⟩⟩
 
 /-! ### Connectives -/
 

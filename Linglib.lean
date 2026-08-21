@@ -2274,8 +2274,7 @@ import Linglib.Studies.HayesWilson2008
 import Linglib.Studies.HeKaiserIskarous2025
 import Linglib.Studies.Heim1982.Basic
 import Linglib.Studies.Heim1983
-import Linglib.Studies.Heim1992Desire
-import Linglib.Studies.Heim1992Projection
+import Linglib.Studies.Heim1992
 import Linglib.Studies.Heim1994
 import Linglib.Studies.Heim2001
 import Linglib.Studies.HeimComments1994
