@@ -2802,6 +2802,7 @@ import Linglib.Syntax.Category.Verb.Defs
 import Linglib.Syntax.Category.Verb.Reciprocal
 import Linglib.Syntax.Category.Verb.Stem
 import Linglib.Syntax.Category.Verb.Symmetric
+import Linglib.Syntax.Clause.Arguments
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Clause.Chaining
 import Linglib.Syntax.Clause.Complementation
