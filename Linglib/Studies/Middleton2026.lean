@@ -64,7 +64,7 @@ What is **not** modeled:
 
 namespace Middleton2026
 
-open Minimalist DistributedMorphology DistributedMorphology.Impoverishment
+open Minimalist DistributedMorphology
      Taos.Agreement Basque.Postsyntax
 
 /-! ### Metathesis Rule
@@ -315,14 +315,14 @@ theorem runImpov_neq_runMeta_of_diverges
     [middleton-2026] §4.2.1–§4.2.4 — it is not a transcription of
     any specific paper rule. -/
 def paraAtomicRule : ImpoverishmentRule FeatureBundle FeatureVal :=
-  paradigmatic
+  ImpoverishmentRule.paradigmatic
     (λ fb =>
       (FeatureBundle.toGramFeatures fb).any (λ f => f.featureType.sameType (fAuthor true)) &&
       (FeatureBundle.toGramFeatures fb).any (λ f => f.featureType.sameType (fMinimal true)))
     (fAtomic true)
 
-theorem paraAtomicRule_isParadigmatic : Paradigmatic paraAtomicRule :=
-  paradigmatic_isParadigmatic _ _
+theorem paraAtomicRule_isParadigmatic : ImpoverishmentRule.Paradigmatic paraAtomicRule :=
+  ImpoverishmentRule.paradigmatic_isParadigmatic _ _
 
 /-- A **syntagmatic** rule: deletes `[+minimal]` when the focus
     contains `[+atomic]` *and* there is at least one bundle of
@@ -343,7 +343,7 @@ def synMinimalRule : ImpoverishmentRule FeatureBundle FeatureVal where
     actually depends on its right-context (it is *not* paradigmatic).
     Witness: two neighborhoods that share a focus but differ on
     `rightCtx`. -/
-theorem synMinimalRule_isSyntagmatic : Syntagmatic synMinimalRule := by
+theorem synMinimalRule_isSyntagmatic : ImpoverishmentRule.Syntagmatic synMinimalRule := by
   intro hPara
   let fb : FeatureBundle :=
     .ofGramFeatures [.valued (fAtomic true), .valued (fMinimal true)]
