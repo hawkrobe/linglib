@@ -33,7 +33,7 @@ Condition yields *they* as the default singular animate pronoun.
 
 ## Formalization
 
-We define the pronoun VI rules using `FeatureVI` from
+We define the pronoun VI rules using `VocabularyItem` from
 `DistributedMorphology.VocabularyInsertion`, parameterize the three
 stages via `Contrastivity` from `DistributedMorphology.Categorizer`,
 and prove the Elsewhere-Condition predictions across the three stages.
@@ -45,7 +45,7 @@ namespace KonnellyCowper2020
 
 open DistributedMorphology (Contrastivity GenderFeature
   Interpretability Categorizer.Head PhiBundle)
-open DistributedMorphology.VI (FeatureVI subsetPrinciple)
+open DistributedMorphology (VocabularyItem subsetPrinciple)
 
 -- ============================================================================
 -- § 1: Morphosyntactic Features for English Pronouns
@@ -79,22 +79,22 @@ inductive PronFeature where
          b. [SG] [MASC]  ↔ *he*
          c. [SG, INANIM] ↔ *it*
          d. Elsewhere     ↔ *they*  -/
-def vi_she : FeatureVI PronFeature String :=
+def vi_she : VocabularyItem PronFeature String :=
   ⟨[.sg, .fem], "she"⟩
 
-def vi_he : FeatureVI PronFeature String :=
+def vi_he : VocabularyItem PronFeature String :=
   ⟨[.sg, .masc], "he"⟩
 
-def vi_it : FeatureVI PronFeature String :=
+def vi_it : VocabularyItem PronFeature String :=
   ⟨[.sg, .inanim], "it"⟩
 
-def vi_they : FeatureVI PronFeature String :=
+def vi_they : VocabularyItem PronFeature String :=
   ⟨[], "they"⟩
 
 /-- The complete VI rule set for English 3rd-person pronouns.
     Order does not matter — the Subset Principle selects by specificity
     (feature-list length). -/
-def pronounVIs : List (FeatureVI PronFeature String) :=
+def pronounVIs : List (VocabularyItem PronFeature String) :=
   [vi_she, vi_he, vi_it, vi_they]
 
 -- ============================================================================

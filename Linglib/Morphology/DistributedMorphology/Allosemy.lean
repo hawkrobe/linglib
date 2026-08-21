@@ -56,7 +56,7 @@ immaterial for the result and content readings.
 ## Implementation notes
 
 `AllosemicEntry` is a `Morphology.Exponence.Rule` instance, just as
-`VI.VocabItem` is, so DM's List 2 (form) and List 3 (meaning) run on one
+`VocabItem` is, so DM's List 2 (form) and List 3 (meaning) run on one
 selection engine: `Exponence.selectBy` on the non-wildcard-field score
 (`selectBy_score_isElsewhereWinner`). `Voice.Alloseme.fromComplement` is
 a worked List-3 competition on that engine; `readingFromAllosemes` is a

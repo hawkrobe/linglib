@@ -46,7 +46,7 @@ def copulaVI (voice : Head) : CopulaForm :=
   if voice.hasD && voice.flavor != .nonThematic && voice.flavor != .passive
   then .have else .be
 
-open DistributedMorphology.VI in
+open DistributedMorphology in
 /-- The copula VI as competing `VocabItem`s (HAVE specificity 2, BE elsewhere). -/
 def copulaVIRules : List (VocabItem Head Unit) :=
   [ { exponent := "have"
@@ -54,7 +54,7 @@ def copulaVIRules : List (VocabItem Head Unit) :=
     , specificity := 2 }
   , { exponent := "be", contextMatch := λ _ => true, specificity := 0 } ]
 
-open DistributedMorphology.VI in
+open DistributedMorphology in
 /-- The `VocabItem` formulation agrees with `copulaVI`. -/
 theorem copulaVI_agrees_vocabItem (v : Head) :
     vocabularyInsertSimple copulaVIRules v =
@@ -152,7 +152,7 @@ theorem hafa_iff_pred (dp : IcelandicPossDP) :
 
 -- ─── VocabItem formulation (parallel to copulaVIRules) ───
 
-open DistributedMorphology.VI in
+open DistributedMorphology in
 
 /-- Icelandic HAVE VI as proper `VocabItem`s from the DM framework.
 
@@ -171,7 +171,7 @@ def icelandicHaveVIRules : List (VocabItem IcelandicPossDP Unit) :=
     , contextMatch := fun _ => true
     , specificity := 0 } ]
 
-open DistributedMorphology.VI in
+open DistributedMorphology in
 
 /-- The VocabItem formulation agrees with the direct `icelandicHaveVI`. -/
 theorem icelandicVI_agrees_vocabItem (dp : IcelandicPossDP) :

@@ -2,7 +2,6 @@ import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Morphology.Exponence.Select
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Mathlib.Data.List.MinMax
 
 /-!
@@ -38,18 +37,14 @@ assume it.
 * `VocabEntry.le_iff` — the engine's specificity order is feature-list
   inclusion plus context compatibility
 * `bestMatch_isElsewhereWinner` — inherited from the engine
-* `VocabEntry.toVocabItem_le_iff` — the embedding into the
-  opaque-predicate engine preserves specificity
 
 ## Implementation notes
 
-This is the ergonomic specialization of the parametric
-`VI.VocabItem (Ctx Root)` in `VocabularyInsertion/Basic.lean` — same
-late insertion and Elsewhere Condition ([halle-marantz-1993]),
-concretized to Minimalist bundles so consumers need not instantiate the
-parameters; `VocabEntry.toVocabItem` is the faithfulness-preserving
-embedding. The namespace is `Minimalist`, since the entry's vocabulary
-is the Minimalist feature system's PF interface.
+This is the Minimalist-bundle specialization of Vocabulary Insertion
+(`VocabularyInsertion/Basic.lean`) — same late insertion and Elsewhere
+Condition ([halle-marantz-1993]), concretized so consumers need not
+instantiate the parameters. The namespace is `Minimalist`, since the
+entry's vocabulary is the Minimalist feature system's PF interface.
 
 ## References
 
@@ -145,7 +140,7 @@ theorem VocabEntry.matchesFeatures_self (e : VocabEntry) :
 features are included in `e`'s and `e'`'s context restriction is
 compatible. Over feature bundles the intensional inclusion order IS the
 specificity order, with no faithfulness assumption — contrast
-`DistributedMorphology.VI.SpecificityFaithful`, which the
+`DistributedMorphology.SpecificityFaithful`, which the
 opaque-predicate engine must stipulate. -/
 theorem VocabEntry.le_iff {e e' : VocabEntry} :
     e ≤ e' ↔
@@ -192,43 +187,6 @@ theorem bestMatch_isElsewhereWinner {vocab : Vocabulary}
     (h : bestMatch vocab target ctx = some e) :
     IsElsewhereWinner vocab (target, ctx) e :=
   selectBy_isElsewhereWinner hf h
-
-/-! ### Bridge to the opaque-predicate engine -/
-
-/-- Embed a vocabulary entry into the opaque-predicate engine
-(`DistributedMorphology.VI.VocabItem`): the context check is feature
-matching, the root check is the category restriction, and the
-stipulated rank is the feature count. -/
-def VocabEntry.toVocabItem (e : VocabEntry) :
-    DistributedMorphology.VI.VocabItem FeatureBundle (Option Cat) where
-  exponent := e.exponent
-  contextMatch := λ t => decide (e.MatchesFeatures t)
-  rootMatch := some (λ c => decide (e.context = none ∨ e.context = c))
-  specificity := (FeatureBundle.toGramFeatures e.features).length
-
-/-- The embedding tracks applicability: the opaque engine's `matches`
-agrees with `Matches`. -/
-theorem VocabEntry.toVocabItem_matches (e : VocabEntry)
-    (t : FeatureBundle) (c : Option Cat) :
-    e.toVocabItem.matches t c = true ↔ e.Matches t c := by
-  simp [DistributedMorphology.VI.VocabItem.matches, VocabEntry.toVocabItem,
-    VocabEntry.Matches]
-
-/-- The two engines' interfaces agree: the embedded item applies exactly
-where the entry does. -/
-theorem VocabEntry.toVocabItem_applies (e : VocabEntry)
-    (tc : FeatureBundle × Option Cat) :
-    Morphology.Exponence.Applies e.toVocabItem tc ↔
-      Morphology.Exponence.Applies e tc :=
-  e.toVocabItem_matches tc.1 tc.2
-
-/-- Specificity transfers along the embedding — the cross-engine
-translation is faithful to the shared core's order. -/
-theorem VocabEntry.toVocabItem_le_iff {e f : VocabEntry} :
-    e.toVocabItem ≤ f.toVocabItem ↔ e ≤ f := by
-  constructor <;> intro h c hc
-  · exact (f.toVocabItem_applies c).mp (h ((e.toVocabItem_applies c).mpr hc))
-  · exact (f.toVocabItem_applies c).mpr (h ((e.toVocabItem_applies c).mp hc))
 
 end ExponenceCore
 

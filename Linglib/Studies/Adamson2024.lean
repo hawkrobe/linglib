@@ -60,7 +60,6 @@ namespace Adamson2024
 
 open DistributedMorphology
 open DistributedMorphology.Categorizer (Head)
-open DistributedMorphology.VI
 open Minimalist
 
 -- ============================================================================

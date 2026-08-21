@@ -65,7 +65,6 @@ What is **not** modeled:
 namespace Middleton2026
 
 open Minimalist DistributedMorphology DistributedMorphology.Impoverishment
-  DistributedMorphology.VI
      Taos.Agreement Basque.Postsyntax
 
 /-! ### Metathesis Rule
@@ -550,7 +549,7 @@ def middletonOutput : FeatureBundle :=
     matching entry. We use `Morpheme.surface` for the exponents to
     keep the connection to the Taos morpheme inventory in the
     Fragment. -/
-def viSet : List (FeatureVI FeatureVal String) :=
+def viSet : List (VocabularyItem FeatureVal String) :=
   [ -- specific: 1st-person + minimal (surfaces with `n` per [middleton-2026] rule 21)
     ⟨[fAuthor true, fMinimal true], Morpheme.n.surface⟩
   , -- specific: 1st-person + atomic

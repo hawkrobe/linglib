@@ -1,299 +1,197 @@
-import Mathlib.Tactic.TypeStar
+import Mathlib.Data.Finset.Card
 import Linglib.Morphology.DistributedMorphology.Basic
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Realization
 
 /-!
-# Vocabulary Insertion (Distributed Morphology)
+# Vocabulary insertion
 
-Vocabulary Insertion is the mechanism by which syntactic terminal nodes
-receive phonological exponents in Distributed Morphology. It is the
-formal realization of DM's **List 2**: a set of Vocabulary Items (VI
-rules) that compete for insertion at each terminal.
+Vocabulary Insertion is the operation that supplies syntactic terminals with
+phonological exponents in Distributed Morphology: the Vocabulary Items of
+List 2 compete for insertion at each terminal, and the Subset Principle of
+[halle-marantz-1993] picks the item whose feature specification is the
+largest subset of the terminal's bundle. This file specializes the shared
+exponence engine (`Morphology.Exponence.selectBy`) to that competition.
 
-## Architecture
+## Main definitions
 
-A Vocabulary Item specifies:
-1. A **phonological exponent** (the surface form)
-2. A **morphosyntactic context** (the features the terminal must bear)
-3. A **root context** (optional: which roots the rule applies to)
+* `VocabularyItem F E`: a feature specification with an exponent, applicable
+  at a bundle containing every specified feature.
+* `VocabularyItem.specificity`: the number of distinct specified features.
+* `winner?`, `subsetPrinciple`: the Subset Principle's winning item and its
+  exponent.
+* `vocabularyInsert`: selection over `VocabItem`s, whose applicability is an
+  opaque predicate and whose rank is stipulated.
 
-When multiple VI rules match a terminal, the **Elsewhere Condition**
-([halle-marantz-1993]) resolves the competition: the most specific
-matching rule wins. A rule is more specific if its context is a proper
-superset of another matching rule's context.
+## Main results
 
-## Root-Out Insertion
+* `VocabularyItem.le_iff`: the engine's specificity order on vocabulary items
+  is reverse feature inclusion, so `specificity` is strictly antitone and
+  `winner?_isElsewhereWinner` needs no faithfulness hypothesis.
+* `winner?_retreat`: deleting features from the target can only make the
+  winner less specific — retreat to the general case.
+* `vocabularyInsert_isElsewhereWinner`: under `SpecificityFaithful`, the
+  opaque engine also selects an Elsewhere winner.
 
-[bobaljik-2000] argues that VI proceeds **root-out**: the root is
-inserted first, then inflectional affixes outward. This means VI for
-outer morphemes can only be phonologically conditioned by material
-already inserted (inward) — it cannot "look ahead" to morphemes not yet
-inserted. This is the basis for the claim that outward-sensitive
-phonologically conditioned suppletive allomorphy (OS-PCSA) should not
-exist.
+## Implementation notes
 
-## Connection to Linglib
+A `VocabItem` carries an arbitrary decidable context predicate, an optional
+root restriction (the root-conditioned allomorphy that [bobaljik-2000]'s
+root-out insertion makes available inward), and a stipulated rank; with
+opaque predicates the derived specificity order is not computable, so
+`SpecificityFaithful` is the obligation the stipulation incurs. Over
+`VocabularyItem`s no such obligation arises.
 
-This module provides the generic VI framework. Language-specific VI
-rules live in `Fragments/` or in phenomenon-specific `Studies/` files.
-The `Categorizer` type and the `WordStructure` trees from
-`Morphology/DistributedMorphology/Categorizer/Basic.lean` provide the
-syntax-side terminals and configurations that VI targets.
+## References
+
+* [M. Halle and A. Marantz, *Distributed Morphology and the pieces of
+  inflection*][halle-marantz-1993]
+* [J. D. Bobaljik, *The ins and outs of contextual allomorphy*][bobaljik-2000]
 -/
 
-namespace DistributedMorphology.VI
-
--- ============================================================================
--- § 1: Vocabulary Insertion
--- ============================================================================
-
-/-- Insert a Vocabulary Item at a terminal node: the exponent of the
-highest-`specificity` matching rule (the shared engine's `realize`; ties go
-to the earlier rule), `none` if no rule matches — the **Elsewhere
-Condition** of [halle-marantz-1993]. -/
-def vocabularyInsert {Ctx Root : Type*}
-    (rules : List (VocabItem Ctx Root))
-    (ctx : Ctx) (root : Root) : Option String :=
-  Morphology.Exponence.realize VocabItem.specificity rules (ctx, root)
-
-/-- Simplified insertion when rules are not root-specific. -/
-def vocabularyInsertSimple {Ctx : Type*}
-    (rules : List (VocabItem Ctx Unit))
-    (ctx : Ctx) : Option String :=
-  vocabularyInsert rules ctx ()
-
--- ============================================================================
--- § 2: Feature-Set Vocabulary Items (Subset Principle)
--- ============================================================================
-
-/-- A feature-set vocabulary item for the Subset Principle.
-    Simpler than the full `VocabItem`: a feature specification paired
-    with an exponent. The **Subset Principle** selects the most specific
-    item whose features are all present in the target.
-
-    Used when VI is purely determined by feature-subset matching
-    (e.g., gender agreement class selection in
-    [adamson-anagnostopoulou-2025]). -/
-structure FeatureVI (F E : Type*) where
-  features : List F
-  exponent : E
-  deriving DecidableEq, Repr
-
-/-- The vocabulary items applicable at a target: those whose feature
-specification is a subset of the target bundle. -/
-def applicable {F E : Type*} [BEq F]
-    (items : List (FeatureVI F E)) (target : List F) : List (FeatureVI F E) :=
-  items.filter (·.features.all (target.contains ·))
-
-/-- Longest-specification choice step for `winner?`; earlier items win
-ties. -/
-private def pickLonger {F E : Type*}
-    (acc : Option (FeatureVI F E)) (item : FeatureVI F E) :
-    Option (FeatureVI F E) :=
-  match acc with
-  | none => some item
-  | some prev =>
-    if item.features.length > prev.features.length then some item else some prev
-
-/-- The Subset Principle's winning item: the longest-specification
-applicable item (the earliest, under ties). -/
-def winner? {F E : Type*} [BEq F]
-    (items : List (FeatureVI F E)) (target : List F) :
-    Option (FeatureVI F E) :=
-  (applicable items target).foldl pickLonger none
-
-/-- The **Subset Principle** ([halle-marantz-1993]): among vocabulary
-    items whose feature specification is a subset of the target, select
-    the most specific (longest feature list).
-
-    Returns `none` only if no item is applicable. When items include an
-    elsewhere entry (empty feature list), `subsetPrinciple` always
-    succeeds — the elsewhere item matches any target. -/
-def subsetPrinciple {F E : Type*} [BEq F]
-    (items : List (FeatureVI F E)) (target : List F) : Option E :=
-  (winner? items target).map (·.exponent)
-
-/-- An elsewhere item (empty features) matches any target. -/
-theorem elsewhere_always_matches {F E : Type*} [BEq F]
-    (e : E) (target : List F) :
-    (FeatureVI.mk ([] : List F) e).features.all (target.contains ·) = true := by
-  simp [List.all_nil]
-
-private theorem pickLonger_cases {F E : Type*} (acc : Option (FeatureVI F E))
-    (x : FeatureVI F E) : pickLonger acc x = some x ∨ pickLonger acc x = acc := by
-  cases acc with
-  | none => exact .inl rfl
-  | some prev =>
-    by_cases hlen : x.features.length > prev.features.length <;>
-      simp [pickLonger, hlen]
-
-private theorem foldl_choice_mem {α : Type*} {pick : Option α → α → Option α}
-    (hpick : ∀ acc x, pick acc x = some x ∨ pick acc x = acc) :
-    ∀ {l : List α} {acc : Option α} {i : α},
-      l.foldl pick acc = some i → i ∈ l ∨ acc = some i := by
-  intro l
-  induction l with
-  | nil => exact fun h => .inr h
-  | cons x xs ih =>
-    intro acc i h
-    rcases ih h with hmem | hacc
-    · exact .inl (List.mem_cons_of_mem _ hmem)
-    · rcases hpick acc x with hx | hkeep
-      · rw [hx] at hacc
-        obtain rfl := Option.some.inj hacc
-        exact .inl (List.mem_cons_self ..)
-      · exact .inr (hkeep ▸ hacc)
-
-private theorem foldl_pickLonger_ne_none {F E : Type*} :
-    ∀ (l : List (FeatureVI F E)) (a : FeatureVI F E),
-      l.foldl pickLonger (some a) ≠ none := by
-  intro l
-  induction l with
-  | nil => exact fun a h => by simp at h
-  | cons x xs ih =>
-    intro a h
-    rw [List.foldl_cons] at h
-    rcases pickLonger_cases (some a) x with hx | hkeep
-    · rw [hx] at h; exact ih x h
-    · rw [hkeep] at h; exact ih a h
-
-private theorem foldl_pickLonger_max {F E : Type*} :
-    ∀ (l : List (FeatureVI F E)) (acc : Option (FeatureVI F E))
-      (i : FeatureVI F E), l.foldl pickLonger acc = some i →
-      (∀ j ∈ l, j.features.length ≤ i.features.length) ∧
-        ∀ a, acc = some a → a.features.length ≤ i.features.length := by
-  intro l
-  induction l with
-  | nil =>
-    intro acc i h
-    refine ⟨by simp, fun a ha => ?_⟩
-    rw [ha] at h
-    obtain rfl := Option.some.inj h
-    exact Nat.le_refl _
-  | cons x xs ih =>
-    intro acc i h
-    rw [List.foldl_cons] at h
-    obtain ⟨hxs, hstep⟩ := ih (pickLonger acc x) i h
-    have hx : x.features.length ≤ i.features.length := by
-      cases acc with
-      | none => exact hstep x rfl
-      | some prev =>
-        by_cases hlen : x.features.length > prev.features.length
-        · exact hstep x (by simp [pickLonger, hlen])
-        · have := hstep prev (by simp [pickLonger, hlen])
-          omega
-    refine ⟨fun j hj => ?_, fun a ha => ?_⟩
-    · rcases List.mem_cons.mp hj with rfl | hj'
-      · exact hx
-      · exact hxs j hj'
-    · subst ha
-      by_cases hlen : x.features.length > a.features.length
-      · omega
-      · have := hstep a (by simp [pickLonger, hlen])
-        omega
-
-/-- The winner is an applicable item. -/
-theorem winner?_mem {F E : Type*} [BEq F]
-    {items : List (FeatureVI F E)} {target : List F} {i : FeatureVI F E}
-    (h : winner? items target = some i) : i ∈ applicable items target := by
-  rcases foldl_choice_mem pickLonger_cases h with hmem | hnone
-  · exact hmem
-  · exact absurd hnone (by simp)
-
-/-- The winner belongs to the vocabulary and draws only on features the
-target bears. -/
-theorem winner?_spec {F E : Type*} [BEq F]
-    {items : List (FeatureVI F E)} {target : List F} {i : FeatureVI F E}
-    (h : winner? items target = some i) :
-    i ∈ items ∧ i.features.all (target.contains ·) = true := by
-  have := List.mem_filter.mp (winner?_mem h)
-  exact ⟨this.1, this.2⟩
-
-/-- The Subset Principle's exponent comes from an applicable vocabulary
-item — the selection never draws on features the node does not bear. -/
-theorem subsetPrinciple_winner_mem {F E : Type*} [BEq F]
-    {items : List (FeatureVI F E)} {target : List F} {e : E}
-    (h : subsetPrinciple items target = some e) :
-    ∃ i ∈ items, i.exponent = e ∧ i.features.all (target.contains ·) = true := by
-  obtain ⟨i, hw, rfl⟩ := Option.map_eq_some_iff.mp h
-  obtain ⟨hi, happ⟩ := winner?_spec hw
-  exact ⟨i, hi, rfl, happ⟩
-
-/-- `winner?` succeeds iff some item is applicable. -/
-theorem winner?_isSome_iff {F E : Type*} [BEq F]
-    {items : List (FeatureVI F E)} {target : List F} :
-    (winner? items target).isSome ↔ applicable items target ≠ [] := by
-  unfold winner?
-  cases hl : applicable items target with
-  | nil => simp
-  | cons x xs =>
-    simp only [List.foldl_cons, ne_eq, reduceCtorEq, not_false_eq_true,
-      iff_true]
-    have hstep : pickLonger (none : Option (FeatureVI F E)) x = some x := rfl
-    rw [hstep, Option.isSome_iff_ne_none]
-    exact foldl_pickLonger_ne_none xs x
-
-/-- The winner is maximally specific among the applicable items. -/
-theorem winner?_max {F E : Type*} [BEq F]
-    {items : List (FeatureVI F E)} {target : List F} {i : FeatureVI F E}
-    (h : winner? items target = some i) :
-    ∀ j ∈ applicable items target, j.features.length ≤ i.features.length :=
-  (foldl_pickLonger_max _ _ _ h).1
-
-/-- Applicability is monotone in the target bundle. -/
-theorem applicable_mono {F E : Type*} [BEq F]
-    {items : List (FeatureVI F E)} {t t' : List F}
-    (hsub : ∀ x, t'.contains x = true → t.contains x = true) :
-    ∀ i ∈ applicable items t', i ∈ applicable items t := by
-  intro i hi
-  obtain ⟨him, hall⟩ := List.mem_filter.mp hi
-  refine List.mem_filter.mpr ⟨him, ?_⟩
-  rw [List.all_eq_true] at hall ⊢
-  exact fun x hx => hsub x (hall x hx)
-
-/-- **Retreat to the general case**: shrinking the target — deleting
-features by Impoverishment — can only make the Subset-Principle winner
-weakly less specific, which is why impoverishment yields syncretism with
-a more general exponent rather than a different specific one
-([halle-marantz-1993], [arregi-nevins-2012]). -/
-theorem winner?_retreat {F E : Type*} [BEq F]
-    {items : List (FeatureVI F E)} {t t' : List F} {i' : FeatureVI F E}
-    (hsub : ∀ x, t'.contains x = true → t.contains x = true)
-    (h' : winner? items t' = some i') :
-    ∃ i, winner? items t = some i ∧
-      i'.features.length ≤ i.features.length := by
-  have hmem : i' ∈ applicable items t :=
-    applicable_mono hsub _ (winner?_mem h')
-  have hne : applicable items t ≠ [] := fun hnil => by simp [hnil] at hmem
-  obtain ⟨i, hi⟩ :=
-    Option.isSome_iff_exists.mp (winner?_isSome_iff.mpr hne)
-  exact ⟨i, hi, winner?_max hi _ hmem⟩
-
--- ============================================================================
--- § 3: The shared exponence core
--- ============================================================================
-
-section ExponenceCore
+namespace DistributedMorphology
 
 open Morphology.Exponence
 
-variable {Ctx Root : Type*}
+/-! ### Vocabulary items -/
 
-/-- The stipulated `specificity` rank is **faithful** when it refines
-the derived specificity of the shared core: a strictly more specific
-item always outranks. With opaque `contextMatch` predicates the derived
-order is not computable, so this engine must stipulate a rank — this
-Prop is the obligation the stipulation incurs, and
-`vocabularyInsert_isElsewhereWinner` is what discharging it buys. -/
+/-- A Vocabulary Item: a feature specification paired with an exponent,
+applicable at any bundle containing every specified feature. -/
+structure VocabularyItem (F E : Type*) where
+  /-- The features the item spells out. -/
+  features : List F
+  /-- The exponent the item inserts. -/
+  exponent : E
+  deriving DecidableEq, Repr
+
+namespace VocabularyItem
+
+variable {F E : Type*} [DecidableEq F] {i j : VocabularyItem F E} {t : List F}
+
+instance : Rule (VocabularyItem F E) (List F) E := ⟨exponent, fun i t => i.features ⊆ t⟩
+
+instance : DecidableRel (Applies : VocabularyItem F E → List F → Prop) :=
+  fun i t => decidable_of_iff (∀ f ∈ i.features, f ∈ t) Iff.rfl
+
+instance : Preorder (VocabularyItem F E) := toPreorder
+
+theorem applies_iff : Applies i t ↔ i.features ⊆ t := Iff.rfl
+
+/-- An item with no features applies at every bundle. -/
+theorem elsewhere_applies (e : E) (t : List F) : Applies (⟨[], e⟩ : VocabularyItem F E) t :=
+  List.nil_subset _
+
+theorem le_iff_applies : i ≤ j ↔ ∀ ⦃t : List F⦄, i.features ⊆ t → j.features ⊆ t := Iff.rfl
+
+/-- The engine's specificity order is reverse feature inclusion. -/
+theorem le_iff : i ≤ j ↔ j.features ⊆ i.features :=
+  ⟨fun h => le_iff_applies.mp h (List.Subset.refl _),
+    fun h => le_iff_applies.mpr fun _ ht => List.Subset.trans h ht⟩
+
+/-- The number of distinct features an item specifies — the Subset
+Principle's specificity score. -/
+def specificity (i : VocabularyItem F E) : ℕ := i.features.toFinset.card
+
+theorem toFinset_subset_toFinset :
+    i.features.toFinset ⊆ j.features.toFinset ↔ i.features ⊆ j.features :=
+  Multiset.toFinset_subset.trans Multiset.coe_subset
+
+theorem specificity_strictAnti : StrictAnti (specificity : VocabularyItem F E → ℕ) :=
+  fun _ _ h => Finset.card_lt_card <| Finset.ssubset_def.mpr
+    ⟨toFinset_subset_toFinset.mpr (le_iff.mp h.le),
+      fun hc => (lt_iff_le_not_ge.mp h).2 (le_iff.mpr (toFinset_subset_toFinset.mp hc))⟩
+
+end VocabularyItem
+
+/-! ### The Subset Principle -/
+
+section SubsetPrinciple
+
+variable {F E : Type*} [DecidableEq F] {items : List (VocabularyItem F E)} {t t' : List F}
+  {i i' : VocabularyItem F E} {e : E}
+
+/-- The Subset Principle's winning item: the applicable item of greatest
+`specificity` (the earliest, under ties). -/
+def winner? (items : List (VocabularyItem F E)) (t : List F) : Option (VocabularyItem F E) :=
+  selectBy VocabularyItem.specificity items t
+
+/-- The **Subset Principle** ([halle-marantz-1993]): the exponent of the most
+specific item whose features the target bears; `none` iff no item applies. -/
+def subsetPrinciple (items : List (VocabularyItem F E)) (t : List F) : Option E :=
+  realize VocabularyItem.specificity items t
+
+theorem winner?_mem (h : winner? items t = some i) : i ∈ applicable items t :=
+  List.argmax_mem h
+
+theorem winner?_spec (h : winner? items t = some i) : i ∈ items ∧ i.features ⊆ t :=
+  mem_applicable.mp (winner?_mem h)
+
+/-- The Subset Principle's exponent comes from an applicable item — the
+selection never draws on features the node does not bear. -/
+theorem subsetPrinciple_winner_mem (h : subsetPrinciple items t = some e) :
+    ∃ i ∈ items, i.exponent = e ∧ i.features ⊆ t := by
+  obtain ⟨i, hi, rfl⟩ := Option.map_eq_some_iff.mp h
+  exact ⟨i, (winner?_spec hi).1, rfl, (winner?_spec hi).2⟩
+
+theorem winner?_isSome_iff : (winner? items t).isSome ↔ applicable items t ≠ [] := by
+  rw [Option.isSome_iff_ne_none]; exact not_congr selectBy_eq_none_iff
+
+theorem winner?_max (h : winner? items t = some i) :
+    ∀ j ∈ applicable items t, j.specificity ≤ i.specificity :=
+  fun _ hj => List.le_of_mem_argmax hj h
+
+/-- The winner is an Elsewhere winner of the shared core — with no
+faithfulness hypothesis, since `VocabularyItem.specificity` is strictly
+antitone outright. -/
+theorem winner?_isElsewhereWinner (h : winner? items t = some i) : IsElsewhereWinner items t i :=
+  selectBy_isElsewhereWinner (VocabularyItem.specificity_strictAnti.strictAntiOn _) h
+
+theorem subsetPrinciple_realizes (h : subsetPrinciple items t = some e) : Realizes items t e :=
+  realize_realizes (VocabularyItem.specificity_strictAnti.strictAntiOn _) h
+
+/-- Applicability is monotone in the target bundle. -/
+theorem applicable_mono (hsub : t' ⊆ t) : applicable items t' ⊆ applicable items t :=
+  fun _ hi => mem_applicable.mpr
+    ⟨(mem_applicable.mp hi).1, List.Subset.trans (mem_applicable.mp hi).2 hsub⟩
+
+/-- **Retreat to the general case**: shrinking the target — deleting features
+by Impoverishment — can only make the winner weakly less specific, which is
+why impoverishment yields syncretism with a more general exponent rather than
+a different specific one ([halle-marantz-1993], [arregi-nevins-2012]). -/
+theorem winner?_retreat (hsub : t' ⊆ t) (h' : winner? items t' = some i') :
+    ∃ i, winner? items t = some i ∧ i'.specificity ≤ i.specificity := by
+  have hmem := applicable_mono hsub (winner?_mem h')
+  obtain ⟨i, hi⟩ :=
+    Option.isSome_iff_exists.mp (winner?_isSome_iff.mpr (List.ne_nil_of_mem hmem))
+  exact ⟨i, hi, winner?_max hi _ hmem⟩
+
+end SubsetPrinciple
+
+/-! ### Opaque-context items -/
+
+section VocabItem
+
+variable {Ctx Root : Type*} {rules : List (VocabItem Ctx Root)} {ctx : Ctx} {root : Root}
+  {e : String}
+
+/-- Insert a Vocabulary Item at a terminal node: the exponent of the
+highest-`specificity` matching rule (ties go to the earlier rule), `none` if
+no rule matches — the **Elsewhere Condition** of [halle-marantz-1993]. -/
+def vocabularyInsert (rules : List (VocabItem Ctx Root)) (ctx : Ctx) (root : Root) :
+    Option String :=
+  realize VocabItem.specificity rules (ctx, root)
+
+/-- Insertion over rules with no root restriction. -/
+def vocabularyInsertSimple (rules : List (VocabItem Ctx Unit)) (ctx : Ctx) : Option String :=
+  vocabularyInsert rules ctx ()
+
+/-- The stipulated `specificity` rank is **faithful** when it refines the
+engine's specificity order: a strictly more specific item always outranks. -/
 def SpecificityFaithful (rules : List (VocabItem Ctx Root)) : Prop :=
   ∀ a ∈ rules, ∀ b ∈ rules, a ≤ b → ¬ b ≤ a → b.specificity < a.specificity
 
-/-- Under a faithful specificity stipulation, the engine's selection is
-an Elsewhere winner of the shared core. -/
-theorem vocabularyInsert_isElsewhereWinner {rules : List (VocabItem Ctx Root)}
-    {ctx : Ctx} {root : Root} {e : String}
-    (h : vocabularyInsert rules ctx root = some e)
+/-- Under a faithful rank, `vocabularyInsert` selects an Elsewhere winner. -/
+theorem vocabularyInsert_isElsewhereWinner (h : vocabularyInsert rules ctx root = some e)
     (hf : SpecificityFaithful rules) :
     ∃ vi ∈ rules, vi.exponent = e ∧ IsElsewhereWinner rules (ctx, root) vi := by
   obtain ⟨vi, hvi, hve⟩ := Option.map_eq_some_iff.mp h
@@ -301,23 +199,20 @@ theorem vocabularyInsert_isElsewhereWinner {rules : List (VocabItem Ctx Root)}
     (λ a ha b hb hab => hf a (mem_applicable.mp ha).1 b (mem_applicable.mp hb).1
       (lt_iff_le_not_ge.mp hab).1 (lt_iff_le_not_ge.mp hab).2) hvi⟩
 
-end ExponenceCore
-
-/-! ### The realization view -/
-
-/-- Vocabulary Insertion as a realization: roots as opaque indices,
-syntactic
-contexts as contexts, `none` as non-licensing — the univalent stratum. -/
-def toRealization {Ctx Root : Type*} (rules : List (VocabItem Ctx Root)) :
+/-- Vocabulary Insertion as a `Realization`: roots as indices, contexts as
+contexts, `none` as non-licensing. -/
+def VocabItem.toRealization (rules : List (VocabItem Ctx Root)) :
     Morphology.Realization Root Ctx String :=
   ⟨fun r c => match vocabularyInsert rules c r with
     | some f => {f}
     | none => ∅⟩
 
-theorem toRealization_isUnivalent {Ctx Root : Type*}
-    (rules : List (VocabItem Ctx Root)) : (toRealization rules).IsUnivalent :=
+theorem VocabItem.toRealization_isUnivalent (rules : List (VocabItem Ctx Root)) :
+    (toRealization rules).IsUnivalent :=
   fun r c => by
     simp only [toRealization]
     cases vocabularyInsert rules c r <;> simp
 
-end DistributedMorphology.VI
+end VocabItem
+
+end DistributedMorphology

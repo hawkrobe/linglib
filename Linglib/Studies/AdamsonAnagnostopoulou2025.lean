@@ -784,26 +784,26 @@ theorem icelandic_fem_not_entails_masc :
 -- § 16: Subset Principle — Formal Vocabulary Items
 -- ============================================================================
 
-/-! ### Vocabulary as FeatureVI items
+/-! ### Vocabulary as VocabularyItem items
 
     The ad-hoc `greekVI` function above implements the Subset Principle
-    procedurally. Here we define the same vocabulary as `FeatureVI` items
+    procedurally. Here we define the same vocabulary as `VocabularyItem` items
     ([halle-marantz-1993]) and prove that `subsetPrinciple` selects
     the same exponents. This connects the gender resolution mechanism to
     the formal DM vocabulary insertion framework. -/
 
-open DistributedMorphology.VI (FeatureVI subsetPrinciple)
+open DistributedMorphology (VocabularyItem subsetPrinciple)
 
-/-- Greek vocabulary items as `FeatureVI` entries (schema 21).
+/-- Greek vocabulary items as `VocabularyItem` entries (schema 21).
     Most specific first: {FEM,MASC} → F, {MASC} → M, {} → N. -/
-def greekVocabItems : List (FeatureVI GenderNode Infl) :=
+def greekVocabItems : List (VocabularyItem GenderNode Infl) :=
   [ ⟨[fem, masc], .fem⟩,
     ⟨[masc], .masc⟩,
     ⟨[], .neut⟩ ]
 
-/-- BCS vocabulary items as `FeatureVI` entries (schema 75).
+/-- BCS vocabulary items as `VocabularyItem` entries (schema 75).
     {FEM,ANIM} → F, {INDIV} → M, {} → N. -/
-def bcsVocabItems : List (FeatureVI GenderNode Infl) :=
+def bcsVocabItems : List (VocabularyItem GenderNode Infl) :=
   [ ⟨[fem, anim], .fem⟩,
     ⟨[indiv], .masc⟩,
     ⟨[], .neut⟩ ]

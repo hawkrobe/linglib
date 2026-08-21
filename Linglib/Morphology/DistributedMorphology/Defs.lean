@@ -4,7 +4,7 @@ import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
 # Vocabulary items and allosemes
 
 The rule types of Distributed Morphology's two interpretive lists:
-`VI.VocabItem` pairs a phonological exponent with the context that
+`VocabItem` pairs a phonological exponent with the context that
 licenses it (List 2), and `Allosemy.AllosemicEntry` pairs a meaning with
 the conditioning `Allosemy.SyntacticContext` (List 3). The shared
 selection-engine instances live in `DistributedMorphology/Basic.lean`.
@@ -17,8 +17,6 @@ selection-engine instances live in `DistributedMorphology/Basic.lean`.
 -/
 
 namespace DistributedMorphology
-
-namespace VI
 
 /-- A Vocabulary Item: a rule mapping morphosyntactic context to a
     phonological exponent.
@@ -52,8 +50,6 @@ def VocabItem.matches {Ctx Root : Type*}
   match vi.rootMatch with
   | none => true
   | some f => f root
-
-end VI
 
 namespace Allosemy
 

@@ -12,7 +12,7 @@ Chapter 3 of *The View from Building 20* (Hale & Keyser, eds.).
 ## Structure
 
 - **§1**: English Verb Inflection — the context-free Tns/Agr paradigm,
-  formalized using `FeatureVI` and `subsetPrinciple`, demonstrating
+  formalized using `VocabularyItem` and `subsetPrinciple`, demonstrating
   Elsewhere Condition competition
 - **§2**: Conditioned Allomorphy — root-specific past tense exponents
   (`-t`, `∅`) illustrating the Paninian principle (most specific wins)
@@ -42,7 +42,7 @@ derive syncretism (§4) and fusion on the Tns/Agr pair (§3).
 
 namespace HalleMarantz1993
 
-open DistributedMorphology.VI
+open DistributedMorphology
 open Morphology.MirrorPrinciple
 open Morphology (MorphCategory)
 
@@ -82,7 +82,7 @@ inductive EngInflFeature where
 
 /-- Context-free VI entries for English verbal inflection.
     [halle-marantz-1993]. -/
-def englishTnsVI : List (FeatureVI EngInflFeature String) :=
+def englishTnsVI : List (VocabularyItem EngInflFeature String) :=
   [⟨[.past, .participle], "-n"⟩,
    ⟨[.past],              "-d"⟩,
    ⟨[.participle],        "-ing"⟩,
@@ -162,7 +162,7 @@ specific matching entry: a root-restricted rule overrides the
 unrestricted default when the root matches.
 
 This section uses `VocabItem` (which supports root restrictions via
-`rootMatch`) rather than `FeatureVI` (which is context-free). -/
+`rootMatch`) rather than `VocabularyItem` (which is context-free). -/
 
 section ConditionedAllomorphy
 
