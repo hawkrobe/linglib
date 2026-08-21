@@ -7,7 +7,7 @@ import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Morphology.Root.Certificates
 import Linglib.Features.Number.Basic
-import Linglib.Semantics.ArgumentStructure.Valency
+import Linglib.Syntax.Clause.Arguments
 import Linglib.Studies.Marantz1991
 
 /-!
@@ -24,10 +24,9 @@ both keyed.
 
 ## Main definitions
 
-* `Clause`, `siteFeatures`: the number at each core-argument position
-  (`ArgumentStructure.ArgPosition`), and a suppletive root's insertion site —
-  its index and the number of the internal argument, the local conditioning
-  environment of §3.3.
+* `siteFeatures`: a suppletive root's insertion site in a clause
+  (`Clause.Arguments Number`) — its index and the number of the internal
+  argument, the local conditioning environment of §3.3.
 * `vocabulary`: the Hiaki items of (3a), (3f), (3g): a singular-conditioned
   form and an Elsewhere form per root ((14), fn. 16).
 * `cahootLF`: the List-3 entry of (16), one frame and no Elsewhere.
@@ -45,9 +44,9 @@ both keyed.
   Vocabulary-Item competition rather than agreement (§3.3).
 * `index_local`: a suppletive item blocks nothing at another index — the
   thought experiment of §2.1.
-* `intransitive_isRootValency`: the conditioning argument of an intransitive
-  occupies the root's valency — the paper's prediction that the intransitive
-  suppletive verbs are unaccusative.
+* `unergative_elsewhere`: an intransitive whose sole argument is external is
+  spelled out by the Elsewhere form whatever its number — the paper's
+  prediction that the intransitive suppletive verbs are unaccusative.
 
 ## Implementation notes
 
@@ -62,9 +61,11 @@ categorizing head.
 
 namespace Harley2014
 
-open DistributedMorphology ArgumentStructure
+open DistributedMorphology
 open DistributedMorphology.Allosemy (SyntacticContext AllosemicEntry toInterpreted)
 open Morphology.Exponence (selectBy)
+open Clause (Arguments)
+open Clause.Arguments (unaccusative unergative transitive empty)
 
 /-! ### List 1: roots as indices -/
 
@@ -83,27 +84,6 @@ def sing : Root := ⟨500⟩
 
 /-! ### The insertion site -/
 
-/-- The number borne at each core-argument position of a clause, `none` where
-the position is unfilled. -/
-abbrev Clause := ArgPosition → Option Number
-
-/-- An intransitive clause whose sole argument, of number `n`, is internal. -/
-def intransitive (n : Number) : Clause
-  | .internal => some n
-  | .external => none
-
-/-- A transitive clause with an internal argument of number `obj` and an
-external one of number `subj`. -/
-def transitive (obj subj : Number) : Clause
-  | .internal => some obj
-  | .external => some subj
-
-/-- The impersonal passive: no number-bearing argument (fn. 16). -/
-def impersonal : Clause := fun _ => none
-
-/-- The positions a clause fills. -/
-def Clause.valency (c : Clause) : Valency := Finset.univ.filter fun p => (c p).isSome
-
 /-- Features at a suppletive root's insertion site: its index and the number
 of the internal argument. -/
 inductive SiteFeature where
@@ -111,9 +91,9 @@ inductive SiteFeature where
   | internal (n : Number)
   deriving DecidableEq, Repr
 
-/-- The insertion bundle for root `r` in clause `c`: the external argument
-is not in the local environment (§3.3). -/
-def siteFeatures (c : Clause) (r : Root) : List SiteFeature :=
+/-- The insertion bundle for root `r` in a clause bearing the numbers `c`: the
+external argument is not in the local environment (§3.3). -/
+def siteFeatures (c : Arguments Number) (r : Root) : List SiteFeature :=
   .root r :: ((c .internal).map .internal).toList
 
 /-! ### List 2: the suppletive Vocabulary Items -/
@@ -129,23 +109,23 @@ def vocabulary : List (VocabularyItem SiteFeature String) :=
 
 /-- Spell out root `r` in clause `c` by the Subset Principle over
 `vocabulary`. -/
-def spellout (c : Clause) (r : Root) : Option String :=
+def spellout (c : Arguments Number) (r : Root) : Option String :=
   subsetPrinciple vocabulary (siteFeatures c r)
 
 /-- Singular subject → *vuite* ((6a)). -/
-theorem run_sg : spellout (intransitive .singular) run = some "vuite" := by decide
+theorem run_sg : spellout (unaccusative .singular) run = some "vuite" := by decide
 
 /-- Plural subject → *tenne* ((6b)). -/
-theorem run_pl : spellout (intransitive .plural) run = some "tenne" := by decide
+theorem run_pl : spellout (unaccusative .plural) run = some "tenne" := by decide
 
 /-- No number-bearing argument (the impersonal passive) → *tenne*, the
 Elsewhere form (fn. 16). -/
-theorem run_impersonal : spellout impersonal run = some "tenne" := by decide
+theorem run_impersonal : spellout empty run = some "tenne" := by decide
 
 /-- *weye*/*kaate* with a singular/plural subject ((26)). -/
 theorem walk_sg_pl :
-    spellout (intransitive .singular) walk = some "weye" ∧
-      spellout (intransitive .plural) walk = some "kaate" := by
+    spellout (unaccusative .singular) walk = some "weye" ∧
+      spellout (unaccusative .plural) walk = some "kaate" := by
   decide
 
 /-- *mea*/*sua* with a singular/plural object, whatever the subject ((27)). -/
@@ -159,13 +139,13 @@ theorem kill_sgObj_plObj :
 /-- One index, two phonologically unrelated forms: a root identified by its
 form would split √322 in two (§2.2). -/
 theorem run_two_forms :
-    spellout (intransitive .singular) run ≠ spellout (intransitive .plural) run := by
+    spellout (unaccusative .singular) run ≠ spellout (unaccusative .plural) run := by
   decide
 
 /-- The suppletive items compete only at their own index: a non-suppletive
 intransitive root receives no exponent from `vocabulary` — why List-1 roots
 must be distinct before spell-out (§2.1). -/
-theorem index_local (c : Clause) : spellout c sing = none := by
+theorem index_local (c : Arguments Number) : spellout c sing = none := by
   unfold spellout siteFeatures
   rcases h : c .internal with _ | n
   · rfl
@@ -177,17 +157,17 @@ theorem index_local (c : Clause) : spellout c sing = none := by
 theorem suppletion_ignores_external (obj subj subj' : Number) (r : Root) :
     spellout (transitive obj subj) r = spellout (transitive obj subj') r := rfl
 
-/-- The conditioning argument of an intransitive occupies the root's valency
-([coon-2019]'s division of labor): the intransitive suppletive verbs are
-unaccusative, the paper's prediction from locality. -/
-theorem intransitive_isRootValency (n : Number) : (intransitive n).valency.IsRootValency := by
-  revert n; decide
+/-- Only an internal argument conditions the form: an intransitive whose sole
+argument is external gets the Elsewhere form whatever its number, so the
+suppletive intransitives must be unaccusative — the paper's prediction from
+locality. -/
+theorem unergative_elsewhere (n : Number) : spellout (unergative n) run = some "tenne" := rfl
 
 /-- Which arguments condition Hiaki suppletion, read off `spellout`: the sole
 argument of an intransitive and the object of a transitive, not the
 transitive subject. -/
 def conditioningPattern : Minimalist.AgreementPattern where
-  sAgrees := spellout (intransitive .singular) run != spellout (intransitive .plural) run
+  sAgrees := spellout (unaccusative .singular) run != spellout (unaccusative .plural) run
   aAgrees := spellout (transitive .singular .singular) kill !=
     spellout (transitive .singular .plural) kill
   pAgrees := spellout (transitive .singular .singular) kill !=
@@ -232,19 +212,19 @@ List-3 map. -/
 
 /-- List 2 as a `Realization`: a root's Elsewhere-selected exponent as a
 singleton fiber, `∅` at an index with no item. -/
-def realization : Morphology.Realization Root Clause String :=
+def realization : Morphology.Realization Root (Arguments Number) String :=
   ⟨fun r c => (spellout c r).elim ∅ ({·})⟩
 
 /-- √322 realizes two nonempty, distinct fibers across two licensed clauses —
 the *go*/*went* case the predicate names (§2.2). -/
 theorem run_isProperlySuppletive : realization.IsProperlySuppletive run := by
-  have hsg : realization.realize run (intransitive .singular) = {"vuite"} := by
-    show (spellout (intransitive .singular) run).elim ∅ ({·}) = _
+  have hsg : realization.realize run (unaccusative .singular) = {"vuite"} := by
+    show (spellout (unaccusative .singular) run).elim ∅ ({·}) = _
     simp [run_sg]
-  have hpl : realization.realize run (intransitive .plural) = {"tenne"} := by
-    show (spellout (intransitive .plural) run).elim ∅ ({·}) = _
+  have hpl : realization.realize run (unaccusative .plural) = {"tenne"} := by
+    show (spellout (unaccusative .plural) run).elim ∅ ({·}) = _
     simp [run_pl]
-  refine ⟨intransitive .singular, intransitive .plural, hsg ▸ Finset.singleton_nonempty _,
+  refine ⟨unaccusative .singular, unaccusative .plural, hsg ▸ Finset.singleton_nonempty _,
     hpl ▸ Finset.singleton_nonempty _, ?_⟩
   rw [hsg, hpl, ne_eq, Finset.singleton_inj]; decide
 
