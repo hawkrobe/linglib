@@ -45,6 +45,7 @@ syntactic ({D} and φ, the transitive configuration of (24)), and relational
 namespace Myler2016
 
 open DistributedMorphology DistributedMorphology.Allosemy Data.Examples
+open scoped DistributedMorphology.VocabularyItem
 
 /-! ### The copula's context and form -/
 
@@ -73,12 +74,12 @@ def Context.Transitive (c : Context) : Prop := c.voiceD = true ∧ c.voicePhi = 
 instance (c : Context) : Decidable c.Transitive := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- English ((89) of chapter 1): *have* in a transitive context, *be* elsewhere. -/
-def englishItems : List (VocabularyItem Feature String) := [⟨[.d, .phi], "have"⟩, ⟨[], "be"⟩]
+def englishItems : List (VocabularyItem Feature String) := [[.d, .phi] ⟷ "have", [] ⟷ "be"]
 
 /-- Icelandic ((89) of chapter 4): *hafa* in a transitive context over a PredP,
 *eiga* in a transitive context otherwise, and the copula *vera* elsewhere. -/
 def icelandicItems : List (VocabularyItem Feature String) :=
-  [⟨[.d, .phi, .pred], "hafa"⟩, ⟨[.d, .phi], "eiga"⟩, ⟨[], "vera"⟩]
+  [[.d, .phi, .pred] ⟷ "hafa", [.d, .phi] ⟷ "eiga", [] ⟷ "vera"]
 
 /-- The form of v in a context, by the Subset Principle over a language's
 items. -/

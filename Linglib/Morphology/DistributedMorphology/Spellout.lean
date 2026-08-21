@@ -6,7 +6,8 @@ import Linglib.Morphology.DistributedMorphology.Impoverishment
 
 The PF branch of the Y-model at the domain level: a spell-out domain is
 the sequence of terminals the syntax hands over, the postsyntactic modules
-transform it, and pointwise Vocabulary Insertion realizes what survives
+transform it, and Vocabulary Insertion realizes what survives, each
+position in its neighborhood
 ([halle-marantz-1993]; module inventory and ordering per
 [arregi-nevins-2012]). The focus-level rule types
 (`ImpoverishmentRule` and kin) rewrite one terminal inside
@@ -32,7 +33,7 @@ fusion feeding one insertion).
   ([arregi-nevins-2012]'s Obliteration) and adjacent-terminal swap, with
   first-match applicators and count laws
 * `FusionRule.applyFirstAdjacent` — the domain lift of Fusion
-* `Spellout` — the module sequence plus pointwise insertion; `run`, `pf`,
+* `Spellout` — the module sequence plus insertion in context; `run`, `pf`,
   `runModules_append`
 
 ## Todo
@@ -55,15 +56,16 @@ abbrev SpelloutDomain (Bundle : Type*) := List Bundle
 
 variable {Bundle Ctx : Type*}
 
-/-- Rewrite every terminal in its neighborhood: position `i` sees the
+/-- Apply `f` to every terminal in its neighborhood: position `i` sees the
 earlier terminals as `leftCtx` and the later ones as `rightCtx`, nearest
-first. The domain lift of a focus-level rule such as Impoverishment. -/
-def mapNeighborhoods (f : Neighborhood Bundle → Bundle)
-    (d : SpelloutDomain Bundle) : SpelloutDomain Bundle :=
+first. The domain lift of a focus-level rule such as Impoverishment, and of
+Vocabulary Insertion. -/
+def mapNeighborhoods {C : Type*} (f : Neighborhood Bundle → C)
+    (d : SpelloutDomain Bundle) : List C :=
   d.mapIdx fun i b => f ⟨b, (d.take i).reverse, d.drop (i + 1)⟩
 
 /-- Neighborhood rewriting preserves the number of terminals. -/
-@[simp] theorem length_mapNeighborhoods (f : Neighborhood Bundle → Bundle)
+@[simp] theorem length_mapNeighborhoods {C : Type*} (f : Neighborhood Bundle → C)
     (d : SpelloutDomain Bundle) :
     (mapNeighborhoods f d).length = d.length := by
   simp [mapNeighborhoods]
@@ -235,13 +237,14 @@ theorem runModules_append
       = d := rfl
 
 /-- A PF-branch pipeline over a spell-out domain: the ordered
-postsyntactic modules, then pointwise Vocabulary Insertion at each
-surviving position. -/
+postsyntactic modules, then Vocabulary Insertion at each surviving
+position, in its neighborhood. -/
 structure Spellout (Bundle F : Type*) where
   /-- The ordered postsyntactic module sequence. -/
   modules : List (SpelloutDomain Bundle → SpelloutDomain Bundle)
-  /-- Pointwise Vocabulary Insertion; `none` is a non-licensed position. -/
-  insert : Bundle → Option F
+  /-- Vocabulary Insertion at a position, seeing its neighbors; `none` is a
+  non-licensed position. -/
+  insert : Neighborhood Bundle → Option F
 
 namespace Spellout
 
@@ -255,7 +258,7 @@ def run (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
 /-- The PF output: one insertion slot per surviving position. -/
 def pf (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
     List (Option F) :=
-  (s.run d).map s.insert
+  mapNeighborhoods s.insert (s.run d)
 
 /-- Exponent slots equal terminals after the modules: the exponent count
 diverges from the syntactic terminal count only through the modules. -/

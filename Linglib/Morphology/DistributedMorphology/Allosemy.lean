@@ -1,5 +1,5 @@
 import Mathlib.Algebra.Group.WithOne.Defs
-import Linglib.Morphology.DistributedMorphology.Basic
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Realization
@@ -54,12 +54,13 @@ immaterial for the result and content readings.
 
 ## Implementation notes
 
-`AllosemicEntry` is a `Morphology.Exponence.Rule` instance, just as
-`VocabularyItem` is, so DM's List 2 (form) and List 3 (meaning) run on one
-selection engine: `Exponence.selectBy` on the non-wildcard-field score
-(`selectBy_score_isElsewhereWinner`). `Voice.Alloseme.fromComplement` is
-a worked List-3 competition on that engine; `readingFromAllosemes` is a
-different object — the composition of two already-selected allosemes.
+An alloseme is a `VocabularyItem` whose exponent is a denotation, so DM's
+List 2 (form) and List 3 (meaning) run on one selection engine
+(`subsetPrinciple`, `winner?_isElsewhereWinner`); its specification
+conditions on the neighboring terminals, not on features of its own head.
+`Voice.Alloseme.fromComplement` is a worked List-3 competition on that
+engine; `readingFromAllosemes` is a different object — the composition of
+two already-selected allosemes.
 Existing infrastructure this module retroactively classifies as
 allosemy: `Minimalist.Voice.Flavor` (Voice) and root change-type
 conditioning of v.
@@ -76,6 +77,7 @@ conditioning of v.
 namespace DistributedMorphology.Allosemy
 
 open DistributedMorphology (Categorizer Categorizer.Head)
+open scoped DistributedMorphology.VocabularyItem
 open Minimalist.Voice (Flavor Head)
 
 /-! ### The alloseme carrier
@@ -168,24 +170,53 @@ def Verbalizer.Alloseme.introducesEvent : Verbalizer.Alloseme → Bool
   | .eventive => true
   | .zero     => false
 
+/-! ### Allosemic entries
+
+An alloseme is a Vocabulary Item whose exponent is a denotation. Its
+specification mentions no feature of its own head — the vocabulary is the
+head's — and conditions on the neighbors: the complement below, toward the
+root, and the embedding head above ([benz-2025] §2.4: allosemy is
+conditioned by the interpreted domain below and the features of the next
+head above; the exact locality is open). -/
+
+/-- What an alloseme may require of a neighboring terminal: its category,
+or that it denotes an event or a state ([kratzer-1996] §2.3 for the
+stative–dynamic split conditioning Voice). -/
+inductive Feature where
+  | cat (c : Categorizer)
+  | eventive
+  | stative
+  deriving DecidableEq, Repr
+
+/-- A specification on the complement, the terminal below the head. -/
+def complement (fs : List Feature) : Neighborhood (List Feature) := ⟨[], [fs], []⟩
+
+/-- A specification on the embedding head, the terminal above. -/
+def embedding (fs : List Feature) : Neighborhood (List Feature) := ⟨[], [], [fs]⟩
+
+/-- The denotations a vocabulary licenses in a context — the exponents of
+its applicable entries. Ambiguity in a context is non-singleton licensing;
+the canonical default among the licensed entries is the Elsewhere winner
+(`winner?_isElsewhereWinner`). -/
+def licensed {Sem : Type*} (v : List (VocabularyItem Feature Sem))
+    (n : Neighborhood (List Feature)) : List Sem :=
+  (Morphology.Exponence.applicable v n).map (·.exponent)
+
 /-- v's alloseme vocabulary: the eventive alloseme requires an eventive
 complement, while the zero alloseme is the unconditioned elsewhere
 option, available trivially in any context ([benz-2025] §2.2). Engine
 selection picks the more specific eventive alloseme in eventive
 contexts; `licensed` keeps both (`Verbalizer.ambiguity`). -/
-def Verbalizer.vocabulary : List (AllosemicEntry Verbalizer.Alloseme) :=
-  [ { denotation := .eventive, context := { complementIsEventive := true } },
-    { denotation := .zero, context := {} } ]
+def Verbalizer.vocabulary : List (VocabularyItem Feature Verbalizer.Alloseme) :=
+  [⟨complement [.eventive], .eventive⟩, [] ⟷ .zero]
 
 /-- Both v allosemes are licensed under an eventive complement — the
 zero alloseme is the elsewhere option — so an *observation*-type
 nominalization supports the eventive and the referential reading from
 one structure ([benz-2025] §2.2's symmetric proposal). -/
 theorem Verbalizer.ambiguity :
-    Verbalizer.Alloseme.eventive
-        ∈ licensed Verbalizer.vocabulary { complementIsEventive := true }
-      ∧ Verbalizer.Alloseme.zero
-        ∈ licensed Verbalizer.vocabulary { complementIsEventive := true } := by
+    Verbalizer.Alloseme.eventive ∈ licensed Verbalizer.vocabulary (complement [.eventive])
+      ∧ Verbalizer.Alloseme.zero ∈ licensed Verbalizer.vocabulary (complement [.eventive]) := by
   constructor <;> decide
 
 /-- Root change-type conditions v alloseme selection: result roots,
@@ -254,28 +285,23 @@ end Nominalizer.Alloseme
 unconditioned (all-wildcard contexts), the deverbal ones require a
 verbal complement, with the CEN and result allosemes further demanding
 an eventive one. -/
-def Nominalizer.vocabulary : List (AllosemicEntry Nominalizer.Alloseme) :=
-  [ { denotation := .relational, context := { belowCat := none } },
-    { denotation := .sortal, context := { belowCat := none } },
-    { denotation := .alienator, context := { belowCat := none } },
-    { denotation := .content, context := { belowCat := some .v } },
-    { denotation := .zero
-    , context := { belowCat := some .v, complementIsEventive := true } },
-    { denotation := .simpleEvent, context := { belowCat := some .v } },
-    { denotation := .result
-    , context := { belowCat := some .v, complementIsEventive := true } },
-    { denotation := .state, context := { belowCat := some .v } },
-    { denotation := .entity, context := { belowCat := some .v } } ]
+def Nominalizer.vocabulary : List (VocabularyItem Feature Nominalizer.Alloseme) :=
+  [[] ⟷ .relational, [] ⟷ .sortal, [] ⟷ .alienator,
+    ⟨complement [.cat .v], .content⟩,
+    ⟨complement [.cat .v, .eventive], .zero⟩,
+    ⟨complement [.cat .v], .simpleEvent⟩,
+    ⟨complement [.cat .v, .eventive], .result⟩,
+    ⟨complement [.cat .v], .state⟩,
+    ⟨complement [.cat .v], .entity⟩]
 
 /-- One eventive deverbal context licenses several n allosemes at once —
 the CEN reading (zero n) and the result reading among them. The
 ambiguity of a nominalization is non-singleton licensing, not structural
 ambiguity ([benz-2025], [wood-2023]). -/
 theorem Nominalizer.cen_result_ambiguity :
-    Nominalizer.Alloseme.zero ∈ licensed Nominalizer.vocabulary
-        { belowCat := some .v, complementIsEventive := true }
-      ∧ Nominalizer.Alloseme.result ∈ licensed Nominalizer.vocabulary
-        { belowCat := some .v, complementIsEventive := true } := by
+    Nominalizer.Alloseme.zero ∈ licensed Nominalizer.vocabulary (complement [.cat .v, .eventive])
+      ∧ Nominalizer.Alloseme.result
+        ∈ licensed Nominalizer.vocabulary (complement [.cat .v, .eventive]) := by
   constructor <;> decide
 
 /-! ### Voice allosemy -/
@@ -329,11 +355,9 @@ instance : DecidablePred Voice.Alloseme.AssignsTheta :=
     ([myler-2016]): engineer for a saturated eventive VoiceP complement
     (most specified), holder for a stative one, expletive elsewhere (the
     all-wildcard default). -/
-def Voice.vocabulary : List (AllosemicEntry Voice.Alloseme) :=
-  [ { denotation := .engineer
-    , context := { belowCat := some .v, complementIsEventive := true } },
-    { denotation := .holder, context := { complementIsStative := true } },
-    { denotation := .expletive, context := {} } ]
+def Voice.vocabulary : List (VocabularyItem Feature Voice.Alloseme) :=
+  [⟨complement [.cat .v, .eventive], .engineer⟩, ⟨complement [.stative], .holder⟩,
+    [] ⟷ .expletive]
 
 /-- Voice alloseme selection from complement properties: Elsewhere
     competition over `Voice.vocabulary`, resolved by the shared exponence
@@ -342,12 +366,9 @@ def Voice.vocabulary : List (AllosemicEntry Voice.Alloseme) :=
 def Voice.Alloseme.fromComplement
     (complementIsEventiveVoiceP : Prop) [Decidable complementIsEventiveVoiceP]
     (complementIsStative : Prop) [Decidable complementIsStative] : Voice.Alloseme :=
-  let q : SyntacticContext :=
-    { belowCat := if complementIsEventiveVoiceP then some .v else none
-      complementIsEventive := decide complementIsEventiveVoiceP
-      complementIsStative := decide complementIsStative }
-  ((Morphology.Exponence.selectBy AllosemicEntry.score Voice.vocabulary q).map
-    AllosemicEntry.denotation).getD .expletive
+  (subsetPrinciple Voice.vocabulary (complement
+    ((if complementIsEventiveVoiceP then [.cat .v, .eventive] else []) ++
+      if complementIsStative then [.stative] else []))).getD .expletive
 
 /-- Eventive-VoiceP complement selects engineer ([myler-2016]). -/
 example : Voice.Alloseme.fromComplement True False = .engineer := by decide
@@ -610,18 +631,14 @@ allosemy is meaning-only. Contextual meaning variation, Benz's core
 claim that allosemy is allomorphy's LF analogue, is then literally
 `Realization.Interpreted.IsAllosemous`. -/
 
-open Morphology.Exponence in
 /-- The allosemy engine as a `Realization.Interpreted` view: one
-abstract head whose contextual interpretation is the alloseme `selectBy`
-picks from the vocabulary (a singleton, `∅` at a semantic gap), with an
-empty List-2 form side. -/
-def toInterpreted {Sem : Type} (v : List (AllosemicEntry Sem)) :
-    Morphology.Realization.Interpreted Unit SyntacticContext Unit Sem where
+abstract head whose contextual interpretation is the alloseme the Subset
+Principle picks from the vocabulary (a singleton, `∅` at a semantic gap),
+with an empty List-2 form side. -/
+def toInterpreted {Sem : Type} (v : List (VocabularyItem Feature Sem)) :
+    Morphology.Realization.Interpreted Unit (Neighborhood (List Feature)) Unit Sem where
   realize _ _ := ∅
-  interp _ c :=
-    match selectBy AllosemicEntry.score v c with
-    | some e => {e.denotation}
-    | none => ∅
+  interp _ n := (subsetPrinciple v n).elim ∅ ({·})
 
 /-- The verbal categorizer's meaning varies with context — eventive
 under an eventive complement, zero elsewhere — so v is `IsAllosemous` on
@@ -629,7 +646,6 @@ the shared carrier: contextual meaning variation as non-constancy of the
 `interp` map ([benz-2025]). -/
 theorem Verbalizer.isAllosemous :
     (toInterpreted Verbalizer.vocabulary).IsAllosemous () :=
-  ⟨{ complementIsEventive := true }, { complementIsEventive := false },
-   .eventive, by decide, .zero, by decide, by decide⟩
+  ⟨complement [.eventive], ∅, .eventive, by decide, .zero, by decide, by decide⟩
 
 end DistributedMorphology.Allosemy

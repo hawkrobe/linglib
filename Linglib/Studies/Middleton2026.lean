@@ -66,6 +66,7 @@ namespace Middleton2026
 
 open Minimalist DistributedMorphology
      Taos.Agreement Basque.Postsyntax
+open scoped DistributedMorphology.VocabularyItem
 
 /-! ### Metathesis Rule
 
@@ -551,11 +552,11 @@ def middletonOutput : FeatureBundle :=
     Fragment. -/
 def viSet : List (VocabularyItem FeatureVal String) :=
   [ -- specific: 1st-person + minimal (surfaces with `n` per [middleton-2026] rule 21)
-    ⟨[fAuthor true, fMinimal true], Morpheme.n.surface⟩
+    [fAuthor true, fMinimal true] ⟷ Morpheme.n.surface
   , -- specific: 1st-person + atomic
-    ⟨[fAuthor true, fAtomic true], Morpheme.o.surface⟩
+    [fAuthor true, fAtomic true] ⟷ Morpheme.o.surface
   , -- elsewhere: empty feature spec, matches anything
-    ⟨[], Morpheme.ô.surface⟩ ]
+    [] ⟷ Morpheme.ô.surface ]
 
 /-- A&N's output feeds VI as `[+author, +minimal]`; the Subset
     Principle selects the `[+author, +minimal]` entry over the

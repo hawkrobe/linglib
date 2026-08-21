@@ -38,6 +38,7 @@ need phrase-structure substrate and are not formalized.
 namespace Allotey2021
 
 open Minimalist Minimalist.MinimalPronoun Control Ga
+open scoped DistributedMorphology.VocabularyItem
 open Landau2015 (Tier)
 open Semantics.Composition.TypeShifting (ComplementDenotation)
 
@@ -338,7 +339,7 @@ theorem null_pro_impossible (inv : MinPronInventory PronForm)
     [ostrove-2026]'s syncretism row for Gã; UNVERIFIED — [allotey-2021]
     never discusses Gã reflexives, check [campbell-2017].) -/
 def gaInventory : MinPronInventory PronForm where
-  items := [⟨.locallyBound, .reflexive⟩]
+  items := [[.locallyBound] ⟷ .reflexive]
   elsewhere := .pronoun
 
 /-- The Gã inventory meets the tone-hosting requirement. -/

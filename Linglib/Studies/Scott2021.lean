@@ -1,6 +1,6 @@
 import Linglib.Syntax.Tree.Basic
 import Linglib.Fragments.Swahili.Relativization
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.FeatureBundle
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Data.Examples.Scott2021
 
@@ -52,8 +52,9 @@ derive it.
 
 namespace Scott2021
 
-open Swahili Syntax Data.Examples
-open Minimalist (FeatureBundle FeatureVal PhiFeature GramFeature Vocabulary VocabEntry)
+open Swahili Syntax DistributedMorphology Data.Examples
+open scoped DistributedMorphology.VocabularyItem
+open Minimalist (FeatureVal PhiFeature GramFeature)
 
 /-! ### The structure of pronouns (§5.1) -/
 
@@ -101,17 +102,12 @@ private def featureListAll : List (Tree DPCat String) → List GramFeature
   | t :: ts => featureList t ++ featureListAll ts
 end
 
-/-- The feature bundle of a tree. -/
-def features (t : Tree DPCat String) : FeatureBundle :=
-  Minimalist.FeatureBundle.ofGramFeatures (featureList t)
-
 /-! ### Vocabulary Insertion (§3.4) -/
 
 /-- The Vocabulary Items of (28): person-specified animate entries and the
 personless animate defaults *-ye* and *-o*. -/
-def resumptiveVocab : Vocabulary :=
-  let entry (fs : List GramFeature) (e : String) : VocabEntry :=
-    { features := Minimalist.FeatureBundle.ofGramFeatures fs, exponent := e }
+def resumptiveVocab : List (VocabularyItem GramFeature String) :=
+  let entry (fs : List GramFeature) (e : String) : VocabularyItem GramFeature String := ⟨fs, e⟩
   [ entry [.valued (.phi (.person .first)), .valued (.phi (.gender 1)),
       .valued (.phi (.number .singular))] "mi",
     entry [.valued (.phi (.person .first)), .valued (.phi (.gender 1)),
@@ -125,7 +121,7 @@ def resumptiveVocab : Vocabulary :=
 
 /-- The exponent of a pronoun structure, by the Subset Principle over (28). -/
 def spellout (t : Tree DPCat String) : Option String :=
-  Minimalist.spellout resumptiveVocab (features t) none
+  subsetPrinciple resumptiveVocab (featureList t)
 
 /-- The Fragment's person cells as the structures' person: third person is the
 absence of PersP. -/

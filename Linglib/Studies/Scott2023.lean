@@ -166,6 +166,8 @@ section AgreeSpellout
 
 open Minimalist Mam
 open Agreement
+open DistributedMorphology (VocabularyItem)
+open scoped DistributedMorphology.VocabularyItem
 
 -- ============================================================================
 -- § 0: Minimalism-Specific Vocabulary (Set A / Set B as VI entries)
@@ -174,16 +176,15 @@ open Agreement
 /-! These Vocabulary Insertion entries encode the Fragment's theory-neutral
     marker tables as Minimalism feature bundles, enabling the Agree → Spellout
     pipeline. The Fragment (`Agreement.lean`) stores the markers as simple
-    person × number → string tables; here they are parameterized by
-    `FeatureBundle` and `Cat` for use with `spellout`. -/
+    person × number → string tables; here they are Vocabulary Items over
+    `GramFeature`s for use with `spellout`. -/
 
 /-- Set A (ERG) vocabulary entries: φ-features on Voice (.v)
     yield the morphological exponent ([scott-2023] Table 2.8).
     All six cells have specific entries. -/
-def setAVocab : Vocabulary :=
-  makePersonVocab Agreement.Cell.pnCells Agreement.Cell.toPhiFeatures
-    (fun c => (((setAExponent .consonant).realize c).map
-      toString).getD "") (some .v)
+def setAVocab : List (VocabularyItem GramFeature String) :=
+  vocabularyOfCells Agreement.Cell.pnCells Agreement.Cell.toPhiFeatures
+    (fun c => (((setAExponent .consonant).realize c).map toString).getD "")
 
 /-- Set B (ABS) vocabulary entries: φ-features on Infl (.T)
     yield the morphological exponent ([scott-2023] Table 3.5).
@@ -191,11 +192,10 @@ def setAVocab : Vocabulary :=
     entries; 2SG and 3SG fall through to the Elsewhere entry
     (no features, tz'=) which surfaces when no specific entry
     matches — also catching the blocked-Infl-probe case in transitives. -/
-def setBVocab : Vocabulary :=
-  makePersonVocab setBSpecificCells Agreement.Cell.toPhiFeatures
-    (fun c => ((setBExponent.realize c).map
-      toString).getD "") (some .T) ++
-    [{ features := ⊥, exponent := toString defaultSetB, context := some .T }]
+def setBVocab : List (VocabularyItem GramFeature String) :=
+  vocabularyOfCells setBSpecificCells Agreement.Cell.toPhiFeatures
+    (fun c => ((setBExponent.realize c).map toString).getD "") ++
+    [[] ⟷ toString defaultSetB]
 
 /-- Which Minimalist head φ-Agrees with each argument position.
     Ditransitive R/T default to none (not modeled). -/
@@ -267,7 +267,7 @@ theorem voice_agree_pipeline :
 
 /-- Set A spellout: Voice's valued [Person:3, Number:sg] yields "t-" (A2/3SG). -/
 theorem setA_spellout_3sg :
-    spellout setAVocab voiceFullyAgreed (some .v) = some "t-" := by
+    spellout setAVocab voiceFullyAgreed = some "t-" := by
   decide
 
 /-- Set A spellout for 1SG: Voice with [Person:1, Number:sg] yields the
@@ -276,7 +276,7 @@ theorem setA_spellout_3sg :
 theorem setA_spellout_1sg :
     let v1sg : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
-    spellout setAVocab v1sg (some .v) = some "n-" := by
+    spellout setAVocab v1sg = some "n-" := by
   decide
 
 -- ============================================================================
@@ -290,7 +290,7 @@ theorem setA_spellout_1sg :
 theorem setB_intransitive_3sg :
     let inflAgreed : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]
-    spellout setBVocab inflAgreed (some .T) = some "tz'=" := by
+    spellout setBVocab inflAgreed = some "tz'=" := by
   decide
 
 /-- **Transitive path**: Infl's probe is blocked by Voice_TR → no
@@ -302,7 +302,7 @@ theorem setB_intransitive_3sg :
     the object's person/number features. -/
 theorem setB_transitive_default :
     let inflBlocked : FeatureBundle := ⊥
-    spellout setBVocab inflBlocked (some .T) = some "tz'=" := by
+    spellout setBVocab inflBlocked = some "tz'=" := by
   decide
 
 /-- The two paths produce the same exponent — the surface form is
@@ -312,8 +312,8 @@ theorem setB_same_surface :
     let inflAgreed3sg : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]
     let inflBlocked : FeatureBundle := ⊥
-    spellout setBVocab inflAgreed3sg (some .T) =
-    spellout setBVocab inflBlocked (some .T) := by
+    spellout setBVocab inflAgreed3sg =
+    spellout setBVocab inflBlocked := by
   decide
 
 /-- Set B spellout for 1SG intransitive: Infl copies [Person:1, Number:sg]
@@ -322,7 +322,7 @@ theorem setB_same_surface :
 theorem setB_intransitive_1sg :
     let t1sg : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
-    spellout setBVocab t1sg (some .T) = some "chin" := by
+    spellout setBVocab t1sg = some "chin" := by
   decide
 
 /-- In a transitive with a 1SG object, the default "tz'=" still appears —
@@ -331,11 +331,11 @@ theorem setB_intransitive_1sg :
 theorem setB_transitive_ignores_object :
     -- Even though the object is 1SG, Infl shows default "tz'=", not "chin"
     let inflBlocked : FeatureBundle := ⊥
-    spellout setBVocab inflBlocked (some .T) = some "tz'=" ∧
+    spellout setBVocab inflBlocked = some "tz'=" ∧
     -- Compare: a 1SG intransitive S would trigger "chin"
     let inflAgreed1sg : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
-    spellout setBVocab inflAgreed1sg (some .T) = some "chin" := by
+    spellout setBVocab inflAgreed1sg = some "chin" := by
   exact ⟨by decide, by decide⟩
 
 -- ============================================================================
@@ -358,12 +358,11 @@ theorem setB_transitive_ignores_object :
     table below for the search-level statement). -/
 theorem probe_restriction_yields_default :
     -- Transitive: probe blocked → empty → Elsewhere
-    spellout setBVocab (⊥ : FeatureBundle) (some .T) = some "tz'=" ∧
+    spellout setBVocab (⊥ : FeatureBundle) = some "tz'=" ∧
     -- Intransitive 1SG: probe succeeds → "chin" (not default)
     spellout setBVocab
       (.ofGramFeatures
-        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
-      (some .T) = some "chin" := by
+        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]) = some "chin" := by
   exact ⟨by decide, by decide⟩
 
 -- ============================================================================
@@ -388,8 +387,7 @@ theorem intransitive_pipeline_1sg :
     -- Spells out as "chin" (not default "tz'=")
     spellout setBVocab
       (.ofGramFeatures
-        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
-      (some .T) = some "chin" := by
+        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]) = some "chin" := by
   exact ⟨by decide, by decide⟩
 
 -- ============================================================================
@@ -407,9 +405,9 @@ theorem full_pipeline_3sg_transitive :
     -- Step 1-2: Voice Agrees and spells out as Set A
     (applyAgree voiceProbe dp3sg .person).bind
       (λ fb => applyAgree fb dp3sg .number) = some voiceFullyAgreed ∧
-    spellout setAVocab voiceFullyAgreed (some .v) = some "t-" ∧
+    spellout setAVocab voiceFullyAgreed = some "t-" ∧
     -- Step 3-4: Infl probe blocked → default Set B
-    spellout setBVocab (⊥ : FeatureBundle) (some .T) = some "tz'=" ∧
+    spellout setBVocab (⊥ : FeatureBundle) = some "tz'=" ∧
     -- Step 5: patient is not eligible for reduction → overt pronoun
     ¬ ArgPosition.CanBeReduced .P := by
   refine ⟨?_, ?_, ?_, ?_⟩
@@ -423,30 +421,6 @@ theorem full_pipeline_3sg_transitive :
 theorem all_positions_match (pos : ArgPosition) :
     pos.CanBeReduced ↔ pos.IsPhiAgreed :=
   Iff.rfl
-
--- ============================================================================
--- § 9: Cross-Paradigm Spellout
--- ============================================================================
-
-/-- Set A and Set B have different contexts: Set A on Voice (.v), Set B
-    on Infl (.T). The same valued features produce different exponents
-    depending on which head hosts them. -/
-theorem setA_setB_differ_by_context :
-    spellout setAVocab voiceFullyAgreed (some .v) ≠
-    spellout setBVocab voiceFullyAgreed (some .v) := by
-  decide
-
-/-- Set A vocabulary does NOT match Infl context. -/
-theorem setA_wrong_context :
-    spellout setAVocab voiceFullyAgreed (some .T) = none := by
-  decide
-
-/-- Set B vocabulary does NOT match Voice context (for specified entries).
-    Only the Elsewhere entry could match (it has no features), but it
-    requires Infl context. -/
-theorem setB_wrong_context :
-    spellout setBVocab voiceFullyAgreed (some .v) = none := by
-  decide
 
 -- ============================================================================
 -- § 10: The Tripartite Agreement Pattern

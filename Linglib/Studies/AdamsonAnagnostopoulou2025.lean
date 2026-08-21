@@ -793,20 +793,21 @@ theorem icelandic_fem_not_entails_masc :
     the formal DM vocabulary insertion framework. -/
 
 open DistributedMorphology (VocabularyItem subsetPrinciple)
+open scoped DistributedMorphology.VocabularyItem
 
 /-- Greek vocabulary items as `VocabularyItem` entries (schema 21).
     Most specific first: {FEM,MASC} → F, {MASC} → M, {} → N. -/
 def greekVocabItems : List (VocabularyItem GenderNode Infl) :=
-  [ ⟨[fem, masc], .fem⟩,
-    ⟨[masc], .masc⟩,
-    ⟨[], .neut⟩ ]
+  [ [fem, masc] ⟷ .fem,
+    [masc] ⟷ .masc,
+    [] ⟷ .neut ]
 
 /-- BCS vocabulary items as `VocabularyItem` entries (schema 75).
     {FEM,ANIM} → F, {INDIV} → M, {} → N. -/
 def bcsVocabItems : List (VocabularyItem GenderNode Infl) :=
-  [ ⟨[fem, anim], .fem⟩,
-    ⟨[indiv], .masc⟩,
-    ⟨[], .neut⟩ ]
+  [ [fem, anim] ⟷ .fem,
+    [indiv] ⟷ .masc,
+    [] ⟷ .neut ]
 
 /-- Subset Principle agrees with ad-hoc `greekVI` for human mismatch. -/
 theorem sp_greek_human_mismatch :

@@ -46,6 +46,7 @@ namespace KonnellyCowper2020
 open DistributedMorphology (Contrastivity GenderFeature
   Interpretability Categorizer.Head PhiBundle)
 open DistributedMorphology (VocabularyItem subsetPrinciple)
+open scoped DistributedMorphology.VocabularyItem
 
 -- ============================================================================
 -- § 1: Morphosyntactic Features for English Pronouns
@@ -80,16 +81,16 @@ inductive PronFeature where
          c. [SG, INANIM] ↔ *it*
          d. Elsewhere     ↔ *they*  -/
 def vi_she : VocabularyItem PronFeature String :=
-  ⟨[.sg, .fem], "she"⟩
+  [.sg, .fem] ⟷ "she"
 
 def vi_he : VocabularyItem PronFeature String :=
-  ⟨[.sg, .masc], "he"⟩
+  [.sg, .masc] ⟷ "he"
 
 def vi_it : VocabularyItem PronFeature String :=
-  ⟨[.sg, .inanim], "it"⟩
+  [.sg, .inanim] ⟷ "it"
 
 def vi_they : VocabularyItem PronFeature String :=
-  ⟨[], "they"⟩
+  [] ⟷ "they"
 
 /-- The complete VI rule set for English 3rd-person pronouns.
     Order does not matter — the Subset Principle selects by specificity
@@ -103,14 +104,14 @@ def pronounVIs : List (VocabularyItem PronFeature String) :=
 
 /-- A plural bundle (no [SG]) → *they* (elsewhere). -/
 theorem plural_yields_they :
-    subsetPrinciple pronounVIs [] = some "they" := by decide
+    subsetPrinciple pronounVIs ∅ = some "they" := by decide
 
 /-- A singular bundle with both [MASC] and [FEM] → the VI system is
     well-defined even for this impossible configuration (no nominal
     bears both features). FEM wins by being listed first among
     equal-length matches. -/
 theorem masc_fem_overlap_resolves :
-    (subsetPrinciple pronounVIs [.sg, .masc, .fem]).isSome = true := by decide
+    (subsetPrinciple pronounVIs ([.sg, .masc, .fem] : List PronFeature)).isSome = true := by decide
 
 -- ============================================================================
 -- § 4: The Three Stages
@@ -361,19 +362,19 @@ def catHeadToPronFeatures (ch : Categorizer.Head) : List PronFeature :=
     Elsewhere Condition. -/
 theorem iFem_singular_yields_she :
     subsetPrinciple pronounVIs
-      ([.sg] ++ catHeadToPronFeatures Categorizer.Head.n_iFem) = some "she" := by
+      (.sg :: catHeadToPronFeatures Categorizer.Head.n_iFem : List PronFeature) = some "she" := by
   decide
 
 /-- n i[−FEM] (masculine natural gender) → "he". -/
 theorem iMasc_singular_yields_he :
     subsetPrinciple pronounVIs
-      ([.sg] ++ catHeadToPronFeatures Categorizer.Head.n_iMasc) = some "he" := by
+      (.sg :: catHeadToPronFeatures Categorizer.Head.n_iMasc : List PronFeature) = some "he" := by
   decide
 
 /-- n i[−ANIM] (inanimate) → "it". -/
 theorem iInanim_singular_yields_it :
     subsetPrinciple pronounVIs
-      ([.sg] ++ catHeadToPronFeatures Categorizer.Head.n_iInanim) = some "it" := by
+      (.sg :: catHeadToPronFeatures Categorizer.Head.n_iInanim : List PronFeature) = some "it" := by
   decide
 
 /-- Plain n (no gender feature) → "they" (elsewhere).
@@ -381,7 +382,7 @@ theorem iInanim_singular_yields_it :
     what VI produces when the n-head lacks a gender feature. -/
 theorem plain_n_singular_yields_they :
     subsetPrinciple pronounVIs
-      ([.sg] ++ catHeadToPronFeatures Categorizer.Head.n_plain) = some "they" := by
+      (.sg :: catHeadToPronFeatures Categorizer.Head.n_plain : List PronFeature) = some "they" := by
   decide
 
 -- ============================================================================

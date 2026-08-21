@@ -99,8 +99,9 @@ variable {F E : Type*} [DecidableEq F]
 carrying the exponent draws on features missing from each unfused bundle,
 the Subset Principle can select it at neither unfused node — only the
 fused bundle contains its item's features (`subsetPrinciple_winner_mem`). -/
-theorem portmanteau_needs_fusion {items : List (VocabularyItem F E)} {p q : List F} {e : E}
-    (he : ∀ i ∈ items, i.exponent = e → ¬ i.features ⊆ p ∧ ¬ i.features ⊆ q) :
+theorem portmanteau_needs_fusion {items : List (VocabularyItem F E)}
+    {p q : Neighborhood (List F)} {e : E}
+    (he : ∀ i ∈ items, i.exponent = e → ¬ i.spec ⊆ p ∧ ¬ i.spec ⊆ q) :
     subsetPrinciple items p ≠ some e ∧ subsetPrinciple items q ≠ some e := by
   refine ⟨fun h => ?_, fun h => ?_⟩ <;> obtain ⟨i, hi, rfl, happ⟩ := subsetPrinciple_winner_mem h
   · exact (he i hi rfl).1 happ
