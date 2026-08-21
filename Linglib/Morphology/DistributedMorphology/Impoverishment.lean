@@ -14,7 +14,7 @@ factors through the focus is paradigmatic as a theorem about the rule,
 not an annotation. Deletion only removes: every dimension of the output
 is the input's value or absent (`chain_pointwise`), which is what makes
 the post-impoverishment VI winner the retreat-to-the-general exponent
-(`VI.winner?_retreat`).
+(`winner?_retreat`).
 
 ## Main definitions
 

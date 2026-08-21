@@ -4,7 +4,7 @@ import Linglib.Morphology.Exponence.Select
 /-!
 # Vocabulary items and allosemes as exponence rules
 
-A `VI.VocabItem` and an `Allosemy.AllosemicEntry` each expose the shared
+A `VocabItem` and an `Allosemy.AllosemicEntry` each expose the shared
 exponence interface (`Morphology.Exponence.Rule`), so DM's List 2 (form) and
 List 3 (meaning) are resolved by one `Exponence.selectBy` competition, whose
 winner is the Elsewhere winner. This file holds the two `Rule` instances and
@@ -112,8 +112,6 @@ end Exponence
 
 end Allosemy
 
-namespace VI
-
 variable {Ctx Root : Type*}
 
 /-- A Vocabulary Item exposes the shared exponence core interface
@@ -126,7 +124,5 @@ instance : DecidableRel (Applies : VocabItem Ctx Root → Ctx × Root → Prop) 
   fun vi cr => inferInstanceAs (Decidable (vi.matches cr.1 cr.2 = true))
 
 instance : Preorder (VocabItem Ctx Root) := Morphology.Exponence.toPreorder
-
-end VI
 
 end DistributedMorphology

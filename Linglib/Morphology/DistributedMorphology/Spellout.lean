@@ -17,7 +17,7 @@ Each operation carries its position-count law, so terminal/exponent
 misalignment is arithmetic: neighborhood rewriting and terminal
 metathesis preserve the count, obliteration and fusion decrease it, and
 `Spellout.length_pf` says exponent slots equal terminals after the
-modules. `winner?_retreat` (`VocabularyInsertion.lean`) supplies the
+modules. `winner?_retreat` (`VocabularyInsertion/Basic.lean`) supplies the
 insertion-side ordering law.
 
 Consumers: `Studies/Middleton2026.lean` (Basque whole-terminal rules and

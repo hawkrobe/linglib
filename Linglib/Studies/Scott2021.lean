@@ -47,7 +47,7 @@ categories (D, Num, n, Pers).
 
 ## Vocabulary Insertion (FeatureBundle-Based)
 
-Uses `Minimalist.FeatureBundle` and `DistributedMorphology.VI.vocabularyInsertSimple`
+Uses `Minimalist.FeatureBundle` and `DistributedMorphology.vocabularyInsertSimple`
 from the DM theory module. The Elsewhere Condition is structural: person-
 specified rules (specificity 3) beat personless defaults (specificity 2).
 Chain reduction removes person features from the bundle, so only the
@@ -258,7 +258,7 @@ def isAnim (fb : FeatureBundle) : Bool :=
     (checking 3 features); personless defaults have specificity 2.
     The Elsewhere Condition in `vocabularyInsertSimple` picks the most
     specific matching rule. -/
-def resumptiveVIRules : List (DistributedMorphology.VI.VocabItem FeatureBundle Unit) :=
+def resumptiveVIRules : List (DistributedMorphology.VocabItem FeatureBundle Unit) :=
   [ -- [PERS: 1, GEN: ANIM, NUM: SG] ↔ -mi
     { exponent := "-mi"
     , contextMatch := fun fb => getPerson fb == some .first && isAnim fb && isSg fb
@@ -288,7 +288,7 @@ def resumptiveVIRules : List (DistributedMorphology.VI.VocabItem FeatureBundle U
 /-- Insert the correct resumptive exponent for a feature bundle
     using the DM Elsewhere Condition. -/
 def insertResumptive (fb : FeatureBundle) : String :=
-  (DistributedMorphology.VI.vocabularyInsertSimple resumptiveVIRules fb).getD "-ye"
+  (DistributedMorphology.vocabularyInsertSimple resumptiveVIRules fb).getD "-ye"
 
 -- ============================================================================
 -- § 6: Chain Reduction Pipeline

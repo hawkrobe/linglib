@@ -36,7 +36,7 @@ indices are distinct roots — which is exactly what lets `√tenne` block
 
 * `vocabulary` — the Hiaki suppletive List-2 entries ([harley-2014] (3),
   (26), (27)), keyed by `RootIndex`, resolved by the shared DM engine
-  `DistributedMorphology.VI.vocabularyInsert`.
+  `DistributedMorphology.vocabularyInsert`.
 * Selection theorems — the engine picks the attested form per context.
 * `suppletion_ignores_ergative` — the §3.3 ergative-absolutive
   generalization: suppletion tracks the **internal (absolutive)**
@@ -61,7 +61,7 @@ number-unspecified).
 
 namespace Harley2014
 
-open DistributedMorphology.VI
+open DistributedMorphology
 open DistributedMorphology.Allosemy (SyntacticContext AllosemicEntry toInterpreted)
 open Morphology.Exponence (selectBy realize)
 
@@ -142,39 +142,33 @@ instance : DecidableRel
     (Morphology.Exponence.Applies : VocabItem Ctx RootIndex → Ctx × RootIndex → Prop) :=
   fun vi c => inferInstanceAs (Decidable (vi.matches c.1 c.2 = true))
 
-/-- Spell out root `idx` in context `ctx` by Elsewhere competition over
-`vocabulary`, resolved by the shared exponence engine (`Exponence.realize`
-on the `VocabItem` specificity score) — the same selection engine as the
-allosemy LF side below. -/
-def insert (ctx : Ctx) (idx : RootIndex) : Option String :=
-  realize VocabItem.specificity vocabulary (ctx, idx)
-
 /-! ### Selection: the engine picks the attested form -/
 
 /-- Singular subject → `vuite` ([harley-2014] (1a)). -/
-theorem run_sg : insert ⟨.sg, none⟩ runRoot = some "vuite" := by decide
+theorem run_sg : vocabularyInsert vocabulary ⟨.sg, none⟩ runRoot = some "vuite" := by decide
 
 /-- Plural subject → `tenne` ([harley-2014] (1b)). -/
-theorem run_pl : insert ⟨.pl, none⟩ runRoot = some "tenne" := by decide
+theorem run_pl : vocabularyInsert vocabulary ⟨.pl, none⟩ runRoot = some "tenne" := by decide
 
 /-- Number-unspecified (impersonal passive) → `tenne`, the true Elsewhere
 form ([harley-2014] fn. 16): the diagnostic that `tenne`, not `vuite`, is
 Elsewhere. -/
-theorem run_impersonal : insert ⟨.unspecified, none⟩ runRoot = some "tenne" := by decide
+theorem run_impersonal :
+    vocabularyInsert vocabulary ⟨.unspecified, none⟩ runRoot = some "tenne" := by decide
 
 /-- Singular subject → `weye` ([harley-2014] (26a)). -/
-theorem walk_sg : insert ⟨.sg, none⟩ walkRoot = some "weye" := by decide
+theorem walk_sg : vocabularyInsert vocabulary ⟨.sg, none⟩ walkRoot = some "weye" := by decide
 
 /-- Plural subject → `kaate` ([harley-2014] (26b)). -/
-theorem walk_pl : insert ⟨.pl, none⟩ walkRoot = some "kaate" := by decide
+theorem walk_pl : vocabularyInsert vocabulary ⟨.pl, none⟩ walkRoot = some "kaate" := by decide
 
 /-- Singular object → `mea`, regardless of the (plural) subject
 ([harley-2014] (27a)). -/
-theorem kill_sgObj : insert ⟨.sg, some .pl⟩ killRoot = some "mea" := by decide
+theorem kill_sgObj : vocabularyInsert vocabulary ⟨.sg, some .pl⟩ killRoot = some "mea" := by decide
 
 /-- Plural object → `sua`, regardless of the (singular) subject
 ([harley-2014] (27b)). -/
-theorem kill_plObj : insert ⟨.pl, some .sg⟩ killRoot = some "sua" := by decide
+theorem kill_plObj : vocabularyInsert vocabulary ⟨.pl, some .sg⟩ killRoot = some "sua" := by decide
 
 /-! ### §3.3 The ergative-absolutive conditioning generalization -/
 
@@ -184,7 +178,7 @@ the external (ergative) argument's number is never consulted. This is the
 ergative-absolutive distribution of suppletive agreement — the challenge to
 [bobaljik-2008]'s marked-case generalization the paper raises. -/
 theorem suppletion_ignores_ergative (n : Number) (e e' : Option Number) (i : RootIndex) :
-    insert ⟨n, e⟩ i = insert ⟨n, e'⟩ i := rfl
+    vocabularyInsert vocabulary ⟨n, e⟩ i = vocabularyInsert vocabulary ⟨n, e'⟩ i := rfl
 
 /-! ### §2.1 Individuation is not phonological -/
 
@@ -193,7 +187,8 @@ phonologically unrelated exponents (`vuite` vs `tenne`). Any identification
 of the root by its phonological form would split it in two, making
 suppletion incoherent ([harley-2014] §2.2, contra Borer 2009). -/
 theorem run_index_two_forms :
-    insert ⟨.sg, none⟩ runRoot ≠ insert ⟨.pl, none⟩ runRoot := by decide
+    vocabularyInsert vocabulary ⟨.sg, none⟩ runRoot ≠
+      vocabularyInsert vocabulary ⟨.pl, none⟩ runRoot := by decide
 
 /-- **The suppletive rule is index-local** ([harley-2014] §2.1, Marantz's
 thought experiment): `tenne` competes only at `√322`, so it does not block
@@ -201,7 +196,7 @@ insertion at a different intransitive root — a non-suppletive `√500`
 (*bwiika* 'sing') gets no exponent from this vocabulary. This is why List-1
 roots must be individuated (as indices) before spell-out. -/
 theorem suppletive_rule_index_local (n : Number) :
-    insert ⟨n, none⟩ singRoot = none := by
+    vocabularyInsert vocabulary ⟨n, none⟩ singRoot = none := by
   cases n <;> decide
 
 /-! ### §2.3 Individuation is not semantic: the cran-morph on the LF side
@@ -246,17 +241,15 @@ empty `interp` fiber outside the cran-morph's frame, via
 `Allosemy.toInterpreted`). The vocabulary of §2.1 is the List-2 map,
 `cahootLF` the List-3 map.
 
-The form side wraps this file's `insert` — the shared Exponence engine
-(`Exponence.realize`, argmax) — as a `Realization`. `VI.toRealization`
-wraps the equivalent DM `vocabularyInsert`, whose `List.mergeSort` is
-well-founded-recursive and so kernel-opaque; `insert` computes, so the
-fibers reduce and the same theorem lands on the same data. -/
+The form side is `VocabItem.toRealization vocabulary` — the shared
+Exponence engine (`Exponence.realize`, argmax) as a `Realization`, whose
+fibers compute, so the same theorem lands on the same data. -/
 
 /-- The Hiaki suppletive vocabulary as a `Realization`: index `→` its
-Elsewhere-selected exponent (`insert`) as a singleton fiber, `∅` at an
-unlicensed index — the univalent stratum ([marantz-1997]'s List 2). -/
+Elsewhere-selected exponent as a singleton fiber, `∅` at an unlicensed
+index — the univalent stratum ([marantz-1997]'s List 2). -/
 def realization : Morphology.Realization RootIndex Ctx String :=
-  ⟨fun r c => match insert c r with | some f => {f} | none => ∅⟩
+  VocabItem.toRealization vocabulary
 
 /-- **Phonological individuation fails, on the carrier** ([harley-2014]
 §2.1–2.2): the Hiaki √322 realizes two nonempty, distinct fibers
@@ -265,11 +258,11 @@ the exact √GO case the predicate names. A root identified by its form would
 split here. -/
 theorem run_isProperlySuppletive : realization.IsProperlySuppletive runRoot := by
   have hsg : realization.realize runRoot ⟨.sg, none⟩ = {"vuite"} := by
-    show (match insert ⟨.sg, none⟩ runRoot with
+    show (match vocabularyInsert vocabulary ⟨.sg, none⟩ runRoot with
       | some f => ({f} : Finset String) | none => ∅) = _
     rw [run_sg]
   have hpl : realization.realize runRoot ⟨.pl, none⟩ = {"tenne"} := by
-    show (match insert ⟨.pl, none⟩ runRoot with
+    show (match vocabularyInsert vocabulary ⟨.pl, none⟩ runRoot with
       | some f => ({f} : Finset String) | none => ∅) = _
     rw [run_pl]
   refine ⟨⟨.sg, none⟩, ⟨.pl, none⟩, hsg ▸ Finset.singleton_nonempty _,
