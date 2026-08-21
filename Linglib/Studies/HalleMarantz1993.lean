@@ -1,490 +1,218 @@
 import Linglib.Morphology.DistributedMorphology.Spellout
-import Linglib.Morphology.Morphotactics.MirrorPrinciple
+import Linglib.Data.Examples.HalleMarantz1993
 
 /-!
-# [halle-marantz-1993]: Distributed Morphology and the Pieces of Inflection
-[halle-marantz-1993]
+# Distributed Morphology and the pieces of inflection
 
-This study file formalizes the core architecture and predictions of
-Distributed Morphology as presented in [halle-marantz-1993],
-Chapter 3 of *The View from Building 20* (Hale & Keyser, eds.).
+[halle-marantz-1993]'s English verb inflection: the seven suffixes of their
+(8) compete for the fused Tns–Agr node, and the principal parts of their (7)
+fall out. Their account of the regular verb's identical finite past and past
+participle is underspecification, not a participle rule — `-d` carries only
+`[+past]`, and the only participle-specific past item is the stem-listed
+`-n`.
 
-## Structure
+## Main definitions
 
-- **§1**: English Verb Inflection — the context-free Tns/Agr paradigm,
-  formalized using `VocabularyItem` and `subsetPrinciple`, demonstrating
-  Elsewhere Condition competition
-- **§2**: Conditioned Allomorphy — root-specific past tense exponents
-  (`-t`, `∅`) illustrating the Paninian principle (most specific wins)
-- **§3**: Tns + Agr Fusion — the MS operation that merges Tns and Agr
-  into a single terminal before VI
-- **§4**: Impoverishment and Syncretism — feature deletion before VI
-  derives syncretism (past participle falling together with simple past)
-- **§5**: Baker 1985 Bridge — English Tns/Agr features are outside
-  GF-rule categories in [bybee-1985]'s relevance hierarchy,
-  connecting [baker-1985], [bybee-1985], and
-  [halle-marantz-1993]
+* `Feature`: the fused node's alphabet — binary `[±past]` and
+  `[±participle]`, the `[3sg]` agreement complex, and the stem the node is
+  inserted next to (the paper's contextual feature).
+* `vocabulary`: the items of (8), in the paper's order.
+* `tnsAgrFusion`, `tnsAgrSpellout`: Agr, added at MS to `[−participle]` Tns
+  nodes, fuses with Tns before insertion.
 
-## Architecture
+## Main results
 
-[halle-marantz-1993] adopt a Y-model (DS → SS → {LF, MS → PF}).
-Terminal nodes bear morphosyntactic features but no phonological content
-until Vocabulary Insertion at MS — this is **Late Insertion**. The VI
-mechanism (`subsetPrinciple`) IS Late Insertion in action: it maps
-feature bundles to exponents, making DM realizational by construction.
+* `principal_parts`: every cell of (7) receives the suffix the paper segments.
+* `participle_eq_past_of_not_strong`: the participle/finite-past syncretism of
+  every stem outside the `-n` list, by underspecification.
+* `zero_morphemes_distinct`: the stem-conditioned past `∅` and the Elsewhere
+  `∅` are different Vocabulary Items.
+* `agr_only_on_finite`: Fusion refuses a `[+participle]` Tns node.
 
-Impoverishment and Fusion — both introduced in this paper — are
-formalized as general mechanisms in
-`Morphology/DistributedMorphology/Impoverishment.lean` and `Fusion.lean`.
-This study file instantiates impoverishment on the English paradigm to
-derive syncretism (§4) and fusion on the Tns/Agr pair (§3).
+## Implementation notes
+
+The paper says the ordering among the past block, `[3sg]` `-z`, and
+`[+participle]` `-ing` "is not determined by complexity" and "must be
+stipulated"; the Subset Principle's count ties at those points, and the
+list order of `vocabulary` carries the stipulation
+(`past_precedes_agreement`). Stem readjustment (*dwel-t*, *brough-t*) is the
+paper's separate rule system and is outside this file.
 -/
 
 namespace HalleMarantz1993
 
-open DistributedMorphology
-open Morphology.MirrorPrinciple
-open Morphology (MorphCategory)
+open DistributedMorphology Data.Examples
 
--- ============================================================================
--- §1: English Verb Inflection
--- ============================================================================
+/-! ### The fused Tns–Agr node -/
 
-/-! ### The Subset Principle and English Tns/Agr
+/-- The four stems of (7), one per past-suffix class. -/
+inductive Verb where
+  | beat | put | dwell | play
+  deriving DecidableEq, Repr
 
-[halle-marantz-1993] give the Vocabulary Items for English verbal
-inflection. The terminal node for Tns+Agr (after fusion — see §3)
-bears features drawn from {[+past], [+participle], [3sg]}. The
-**Subset Principle** / **Elsewhere Condition** selects the most specific
-matching VI entry: the entry whose feature specification is the largest
-subset of the terminal's features.
-
-Context-free VI entries:
-
-| Features             | Exponent | Example           |
-|----------------------|----------|-------------------|
-| [+past, +participle] | `-n`     | taken, eaten      |
-| [+past]              | `-d`     | walked, played    |
-| [+participle]        | `-ing`   | walking, playing  |
-| [3sg]                | `-z`     | walks, plays      |
-| ∅ (elsewhere)        | `∅`      | walk, play        |
--/
-
-section EnglishVerb
-
-/-- Features on the English Tns+Agr terminal after fusion.
-    [halle-marantz-1993]. -/
-inductive EngInflFeature where
-  | past
-  | participle
+/-- Features at the fused Tns–Agr node: the paper's binary `[±past]` and
+`[±participle]`, its `[3sg]` person–number complex, and the adjacent stem. -/
+inductive Feature where
+  | past (b : Bool)
+  | participle (b : Bool)
   | sg3
+  | stem (v : Verb)
   deriving DecidableEq, Repr
 
-/-- Context-free VI entries for English verbal inflection.
-    [halle-marantz-1993]. -/
-def englishTnsVI : List (VocabularyItem EngInflFeature String) :=
-  [⟨[.past, .participle], "-n"⟩,
-   ⟨[.past],              "-d"⟩,
-   ⟨[.participle],        "-ing"⟩,
-   ⟨[.sg3],               "-z"⟩,
-   ⟨[],                   "∅"⟩]
+/-- A Tns node next to stem `v`. -/
+def tns (v : Verb) (past participle : Bool) : List Feature :=
+  [.past past, .participle participle, .stem v]
 
-/-- Past participle: [+past, +participle] → `-n`.
-    `-n` beats `-d` and `-ing` because its feature set {past,
-    participle} is the largest subset of the target.
-    [halle-marantz-1993]. -/
-theorem past_participle_gets_n :
-    subsetPrinciple englishTnsVI [.past, .participle] = some "-n" := by
-  decide
+/-- The Agr node added at MS: the `[3sg]` complex or the unmarked one. -/
+def agr (sg3 : Bool) : List Feature :=
+  if sg3 then [.sg3] else []
 
-/-- Past finite: [+past] → `-d`.
-    `-n` does not match because [+participle] ⊄ {past}.
-    [halle-marantz-1993]. -/
-theorem past_finite_gets_d :
-    subsetPrinciple englishTnsVI [.past] = some "-d" := by
-  decide
-
-/-- Non-finite participle: [+participle] → `-ing`.
-    [halle-marantz-1993]. -/
-theorem nonpast_participle_gets_ing :
-    subsetPrinciple englishTnsVI [.participle] = some "-ing" := by
-  decide
-
-/-- Third singular present: [3sg] → `-z`.
-    [halle-marantz-1993]. -/
-theorem sg3_present_gets_z :
-    subsetPrinciple englishTnsVI [.sg3] = some "-z" := by
-  decide
-
-/-- Elsewhere (bare stem): [] → `∅`.
-    When no features are present, the elsewhere entry wins.
-    [halle-marantz-1993]. -/
-theorem elsewhere_gets_null :
-    subsetPrinciple englishTnsVI [] = some "∅" := by
-  decide
-
-/-- The Subset Principle resolves `-n` vs `-d` competition: for a
-    [+past, +participle] target, `-n` (2 features) beats `-d`
-    (1 feature). -/
-theorem n_beats_d_for_past_participle :
-    subsetPrinciple englishTnsVI [.past, .participle] ≠
-    subsetPrinciple englishTnsVI [.past] := by
-  decide
-
-/-- The paradigm is total: every possible feature combination
-    receives an exponent (thanks to the elsewhere entry). -/
-theorem paradigm_total :
-    (subsetPrinciple englishTnsVI [.past, .participle]).isSome = true ∧
-    (subsetPrinciple englishTnsVI [.past]).isSome = true ∧
-    (subsetPrinciple englishTnsVI [.participle]).isSome = true ∧
-    (subsetPrinciple englishTnsVI [.sg3]).isSome = true ∧
-    (subsetPrinciple englishTnsVI []).isSome = true := by
-  exact ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-end EnglishVerb
-
--- ============================================================================
--- §2: Conditioned Allomorphy
--- ============================================================================
-
-/-! ### Root-Specific Past Tense Entries
-
-The default past tense entry `-d` coexists with root-conditioned
-variants ([halle-marantz-1993]):
-
-- **`-t`**: dwell → dwelt, buy → bought, send → sent, ...
-- **`∅`**: put → put, beat → beat, hit → hit, ...
-
-These share the same morphosyntactic context ([+past]) but have
-different root restrictions. The **Paninian principle** (= Elsewhere
-Condition applied to root-conditioned entries) selects the most
-specific matching entry: a root-restricted rule overrides the
-unrestricted default when the root matches.
-
-Root conditioning is a contextual feature on the Tns terminal's bundle —
-the identity of the adjacent root — and a root class contributes one item
-per member, as the paper's set-valued context does. -/
-
-section ConditionedAllomorphy
-
-/-- Sample verb roots for demonstrating conditioned allomorphy. -/
-inductive SampleVerb where
-  | walk | play
-  | dwell | buy | send
-  | put | beat | hit
-  deriving DecidableEq, Repr
-
-/-- Features visible at the past-tense Tns terminal: its own [+past] and
-the identity of the adjacent root ([halle-marantz-1993]'s contextual
-specification). -/
-inductive PastContext where
-  | past
-  | root (v : SampleVerb)
-  deriving DecidableEq, Repr
-
-/-- A root class's items: `e` for [+past] next to each listed root. -/
-def rootClass (roots : List SampleVerb) (e : String) :
-    List (VocabularyItem PastContext String) :=
-  roots.map fun v => ⟨[.past, .root v], e⟩
-
-/-- Root-conditioned past tense items: `-t` and `∅` for their root classes,
-`-d` for [+past] elsewhere ([halle-marantz-1993]). -/
-def conditionedPastVI : List (VocabularyItem PastContext String) :=
-  rootClass [.dwell, .buy, .send] "-t" ++ rootClass [.put, .beat, .hit] "∅" ++ [⟨[.past], "-d"⟩]
-
-/-- Regular verbs get `-d`: no root-specific item applies. -/
-theorem walk_gets_d : subsetPrinciple conditionedPastVI [.past, .root .walk] = some "-d" := by
-  decide
-
-theorem play_gets_d : subsetPrinciple conditionedPastVI [.past, .root .play] = some "-d" := by
-  decide
-
-/-- Verbs in the `-t` class: the root-conditioned item beats the default. -/
-theorem dwell_gets_t : subsetPrinciple conditionedPastVI [.past, .root .dwell] = some "-t" := by
-  decide
-
-theorem buy_gets_t : subsetPrinciple conditionedPastVI [.past, .root .buy] = some "-t" := by
-  decide
-
-/-- Verbs in the `∅` class: no overt past tense marking. -/
-theorem put_gets_null : subsetPrinciple conditionedPastVI [.past, .root .put] = some "∅" := by
-  decide
-
-theorem beat_gets_null : subsetPrinciple conditionedPastVI [.past, .root .beat] = some "∅" := by
-  decide
-
-/-- The Paninian principle: root-conditioned items override the default for
-their roots. -/
-theorem root_restriction_overrides_default :
-    subsetPrinciple conditionedPastVI [.past, .root .dwell] ≠
-      subsetPrinciple conditionedPastVI [.past, .root .walk] := by
-  decide
-
-/-- Non-past context: no item applies (all require [+past]). -/
-theorem nonpast_no_match : subsetPrinciple conditionedPastVI [.root .walk] = none := by decide
-
-end ConditionedAllomorphy
-
--- ============================================================================
--- §3: Tns + Agr Fusion
--- ============================================================================
-
-/-! ### Fusion of Tns and Agr at MS
-
-[halle-marantz-1993] argue that English Tns and Agr are separate
-syntactic heads. At MS, they undergo **Fusion**: the two adjacent
-terminals merge into a single terminal bearing the union of both
-feature bundles. A single VI entry then spells out the fused node.
-
-This explains why English has a single affix (not two stacked
-affixes) for Tns+Agr: *walk-s* realizes both non-past Tns and 3sg
-Agr in one exponent, because Fusion merges the two terminals before
-VI applies.
-
-We model fusion with `DistributedMorphology.FusionRule` and show that the
-fused features feed directly into the VI paradigm from §1. -/
-
-section TnsAgrFusion
-
-/-- The two inflectional heads that fuse in English. -/
-inductive InflHead where
-  /-- Tns head: bears tense/aspect features. -/
-  | tns (past : Bool) (participle : Bool)
-  /-- Agr head: bears agreement features. -/
-  | agr (sg3 : Bool)
-  deriving DecidableEq, Repr
-
-/-- Extract inflectional features from each head type. -/
-def InflHead.features : InflHead → List EngInflFeature
-  | .tns true true   => [.past, .participle]
-  | .tns true false  => [.past]
-  | .tns false true  => [.participle]
-  | .tns false false => []
-  | .agr true        => [.sg3]
-  | .agr false       => []
-
-/-- Tns+Agr fusion ([halle-marantz-1993]): the two heads are adjacent
-    sisters after head movement, so the structural condition is trivially
-    met here and the fused bundle is feature-list union. -/
-def tnsAgrFusion : DistributedMorphology.FusionRule (List EngInflFeature) Unit where
+/-- Agr fuses with a `[−participle]` Tns node into one terminal bearing both
+bundles. -/
+def tnsAgrFusion : FusionRule (List Feature) Unit where
   contextOk _ := True
   decContext _ := inferInstanceAs (Decidable True)
-  bundlesOk _ _ := True
-  decBundles _ _ := inferInstanceAs (Decidable True)
+  bundlesOk p _ := .participle false ∈ p
+  decBundles _ _ := inferInstanceAs (Decidable (_ ∈ _))
   fuse := (· ++ ·)
 
-/-- The conditioned application always succeeds for adjacent Tns/Agr. -/
-theorem tnsAgrFusion_apply (p q : List EngInflFeature) :
-    tnsAgrFusion.apply p q () = some (p ++ q) :=
-  DistributedMorphology.FusionRule.apply_pos trivial trivial
+/-- The fused node of a finite form. -/
+def tnsAgr (v : Verb) (past sg3 : Bool) : List Feature :=
+  tnsAgrFusion.fuse (tns v past false) (agr sg3)
 
-/-- The fused feature bundle for a Tns+Agr combination. -/
-def fusedFeatures (tPast tPart : Bool) (aSg3 : Bool) : List EngInflFeature :=
-  tnsAgrFusion.fuse (InflHead.tns tPast tPart).features (InflHead.agr aSg3).features
+/-- Agr is added only to `[−participle]` nodes: Fusion rejects a participial
+Tns. -/
+theorem agr_only_on_finite (v : Verb) (past sg3 : Bool) :
+    tnsAgrFusion.apply (tns v past true) (agr sg3) () = none := by
+  simp [FusionRule.apply, tnsAgrFusion, tns]
 
-/-- 3sg present: Tns[−past,−part] fused with Agr[3sg] → [sg3] → `-z`.
-    One exponent realizes both heads. -/
-theorem fusion_3sg_present :
-    subsetPrinciple englishTnsVI (fusedFeatures false false true) = some "-z" := by
+/-! ### The Vocabulary (8) -/
+
+/-- Stems taking `-n` in the past participle (*beat-en*). -/
+def strongParticiple : List Verb := [.beat]
+
+/-- Stems taking the `∅` past (*beat*, *put*). -/
+def strongPast : List Verb := [.beat, .put]
+
+/-- Stems taking the `-t` past (*dwel-t*). -/
+def tPast : List Verb := [.dwell]
+
+/-- The items of a stem-conditioned suffix: one per listed stem, the paper's
+disjunctive list in a contextual feature. -/
+def forStems (features : List Feature) (e : String) (stems : List Verb) :
+    List (VocabularyItem Feature String) :=
+  stems.map fun v => ⟨features ++ [.stem v], e⟩
+
+/-- The seven suffixes of (8): the past block (`-n`, the unordered `∅` and
+`-t`, default `-d`), then `[3sg]` `-z`, `[+participle]` `-ing`, and
+the Elsewhere `∅`. -/
+def vocabulary : List (VocabularyItem Feature String) :=
+  forStems [.past true, .participle true] "-n" strongParticiple ++
+    forStems [.past true] "∅" strongPast ++ forStems [.past true] "-t" tPast ++
+    [⟨[.past true], "-d"⟩, ⟨[.sg3], "-z"⟩, ⟨[.participle true], "-ing"⟩, ⟨[], "∅"⟩]
+
+/-- The `∅` and `-t` pasts "are not ordered by complexity" and need no
+ordering: their stem lists are disjoint. -/
+theorem strongPast_disjoint_tPast : List.Disjoint strongPast tPast :=
+  List.disjoint_left.mpr (by decide)
+
+/-! ### The principal parts (7) -/
+
+/-- A row of (7). -/
+inductive Part where
+  | pastParticiple | pastFinite | nonpast3sg | nonpastParticiple | nonpastFinite
+  deriving DecidableEq, Repr
+
+/-- The fused node a row is spelled out at; participles take no Agr. -/
+def Part.node : Part → Verb → List Feature
+  | .pastParticiple, v => tns v true true
+  | .pastFinite, v => tnsAgr v true false
+  | .nonpast3sg, v => tnsAgr v false true
+  | .nonpastParticiple, v => tns v false true
+  | .nonpastFinite, v => tnsAgr v false false
+
+/-- A cell of (7): stem, row, and the suffix the paper segments. -/
+structure Cell where
+  verb : Verb
+  part : Part
+  suffix : String
+  deriving DecidableEq, Repr
+
+def Verb.ofString : String → Option Verb
+  | "beat" => some .beat | "put" => some .put | "dwell" => some .dwell | "play" => some .play
+  | _ => none
+
+def Part.ofString : String → Option Part
+  | "past_participle" => some .pastParticiple | "past_finite" => some .pastFinite
+  | "nonpast_3sg" => some .nonpast3sg | "nonpast_participle" => some .nonpastParticiple
+  | "nonpast_finite" => some .nonpastFinite | _ => none
+
+/-- The cell an example of (7) records, from its `paperFeatures`. -/
+def Cell.ofExample (ex : LinguisticExample) : Option Cell := do
+  let verb ← ex.paperFeatures.lookup "verb" >>= Verb.ofString
+  let part ← ex.paperFeatures.lookup "part" >>= Part.ofString
+  let suffix ← ex.paperFeatures.lookup "suffix"
+  pure ⟨verb, part, suffix⟩
+
+/-- Every row of the data pool is a well-formed cell. -/
+theorem cell_ofExample_isSome : ∀ ex ∈ Examples.all, (Cell.ofExample ex).isSome := by decide
+
+/-- The cells of (7). -/
+def cells : List Cell := Examples.all.filterMap Cell.ofExample
+
+/-- **The principal parts**: the Subset Principle over (8) spells out every
+cell of (7) with the suffix the paper segments. -/
+theorem principal_parts :
+    ∀ c ∈ cells, subsetPrinciple vocabulary (c.part.node c.verb) = some c.suffix := by
   decide
 
-/-- Past finite: Tns[+past] fused with Agr[−3sg] → [past] → `-d`. -/
-theorem fusion_past :
-    subsetPrinciple englishTnsVI (fusedFeatures true false false) = some "-d" := by
+/-! ### What the competition explains -/
+
+/-- **Syncretism by underspecification**: outside the `-n` list, the past
+participle and the finite past receive the same suffix, because every past
+item but `-n` carries only `[+past]`. -/
+theorem participle_eq_past_of_not_strong (v : Verb) (hv : v ∉ strongParticiple) :
+    subsetPrinciple vocabulary (Part.pastParticiple.node v) =
+      subsetPrinciple vocabulary (Part.pastFinite.node v) := by
+  revert hv; cases v <;> decide
+
+/-- The stem-conditioned past `∅` (*put*) blocks the default `-d`: the
+winner is the stem-listed item. -/
+theorem zero_past_blocks_default :
+    winner? vocabulary (Part.pastFinite.node .put) = some ⟨[.past true, .stem .put], "∅"⟩ := by
   decide
 
-/-- Past participle: Tns[+past,+part] fused with Agr[−3sg]
-    → [past, participle] → `-n`. -/
-theorem fusion_past_participle :
-    subsetPrinciple englishTnsVI (fusedFeatures true true false) = some "-n" := by
+/-- The paper's two zero morphemes are different items: the stem-conditioned
+past `∅` and the Elsewhere `∅` of the nonpast finite node. -/
+theorem zero_morphemes_distinct :
+    winner? vocabulary (Part.pastFinite.node .put) ≠
+      winner? vocabulary (Part.nonpastFinite.node .put) := by
   decide
 
-/-- Present participle: Tns[−past,+part] fused with Agr[−3sg]
-    → [participle] → `-ing`. -/
-theorem fusion_present_participle :
-    subsetPrinciple englishTnsVI (fusedFeatures false true false) = some "-ing" := by
+/-- The stipulated block order: at a `[+past]` node that is also `[3sg]`,
+`-d` and `-z` tie on specificity and the past block's precedence in
+`vocabulary` decides — *play-ed*, not *play-s*. -/
+theorem past_precedes_agreement :
+    subsetPrinciple vocabulary (tnsAgr .play true true) = some "-d" := by
   decide
 
-/-- Elsewhere: Tns[−past,−part] fused with Agr[−3sg] → [] → `∅`. -/
-theorem fusion_elsewhere :
-    subsetPrinciple englishTnsVI (fusedFeatures false false false) = some "∅" := by
-  decide
+/-! ### Fusion in the spell-out pipeline -/
 
-/-- Every Tns+Agr fusion produces a feature bundle that the VI
-    paradigm can spell out — the paradigm is complete. -/
-theorem fusion_always_spellable (tPast tPart aSg3 : Bool) :
-    (subsetPrinciple englishTnsVI (fusedFeatures tPast tPart aSg3)).isSome = true := by
-  cases tPast <;> cases tPart <;> cases aSg3 <;> decide
-
-/-- The Tns+Agr pipeline over a spell-out domain: the fusion module,
-    then pointwise insertion by the Subset Principle. -/
-def tnsAgrSpellout :
-    DistributedMorphology.Spellout (List EngInflFeature) String where
+/-- Fusion of adjacent Tns and Agr, then insertion by the Subset Principle. -/
+def tnsAgrSpellout : Spellout (List Feature) String where
   modules := [tnsAgrFusion.applyFirstAdjacent ()]
-  insert := subsetPrinciple englishTnsVI
+  insert := subsetPrinciple vocabulary
 
-/-- *walk-s*: the domain [Tns[−past,−part], Agr[3sg]] spells out as the
-    single exponent `-z`. -/
-theorem walks_pf :
-    tnsAgrSpellout.pf
-        [(InflHead.tns false false).features, (InflHead.agr true).features]
-      = [some "-z"] := by decide
-
-/-- Two syntactic terminals enter, one exponent slot leaves — the
-    terminal/exponent misalignment is carried entirely by the fusion
-    module. -/
-theorem walks_terminal_exponent_misalignment :
-    [(InflHead.tns false false).features,
-      (InflHead.agr true).features].length = 2 ∧
-    (tnsAgrSpellout.pf
-        [(InflHead.tns false false).features,
-          (InflHead.agr true).features]).length = 1 := by
-  exact ⟨rfl, by rw [walks_pf]; rfl⟩
-
-end TnsAgrFusion
-
--- ============================================================================
--- §4: Impoverishment and Syncretism
--- ============================================================================
-
-/-! ### Impoverishment Derives Syncretism
-
-[halle-marantz-1993] introduce **Impoverishment**: deletion of
-features from a terminal node before Vocabulary Insertion. When a
-distinguishing feature is deleted, two formerly distinct contexts
-fall together at VI, producing **syncretism** — distinct morphosyntactic
-specifications receiving the same exponent.
-
-The general Impoverishment mechanism is formalized in
-`Morphology/DistributedMorphology/Impoverishment.lean`. Here we instantiate it
-on the English Tns/Agr paradigm to demonstrate the derivation of
-syncretism: deleting [+participle] from [+past, +participle] causes
-the past participle to receive the same exponent as simple past.
-
-This models the fact that regular English verbs have identical simple
-past and past participle forms (*walked* does both): the [+participle]
-feature is not visible at VI, leaving only [+past] to trigger `-d`. -/
-
-section ImpoverishmentSyncretism
-
-/-- Delete occurrences of a feature from a bundle.
-
-    This mirrors `deleteFeature` in `Morphology/DistributedMorphology/Impoverishment.lean`,
-    instantiated for `EngInflFeature`. The structural parallel is
-    exact: both filter a list, removing elements that match the target. -/
-def deleteFeature (bundle : List EngInflFeature) (target : EngInflFeature) :
-    List EngInflFeature :=
-  bundle.filter (· != target)
-
-/-- Impoverishment is idempotent: deleting a feature twice is the
-    same as deleting it once.
-
-    This mirrors `deleteFeature_idempotent` in `Impoverishment.lean`
-    — filter is idempotent when the predicate is stable. -/
-theorem deleteFeature_idempotent (bundle : List EngInflFeature)
-    (target : EngInflFeature) :
-    deleteFeature (deleteFeature bundle target) target =
-    deleteFeature bundle target := by
-  simp only [deleteFeature, List.filter_filter]
-  congr 1; ext f; simp only [Bool.and_self]
-
-/-- Impoverishing [+participle] from [+past, +participle] produces
-    syncretism: the impoverished bundle receives the same exponent
-    as simple [+past]. -/
-theorem impoverish_produces_syncretism :
-    subsetPrinciple englishTnsVI
-      (deleteFeature [.past, .participle] .participle) =
-    subsetPrinciple englishTnsVI [.past] := by
+/-- *play-s*: the domain `[Tns, Agr]` spells out as the single exponent
+`-z`. -/
+theorem plays_pf : tnsAgrSpellout.pf [tns .play false false, agr true] = [some "-z"] := by
   decide
 
-/-- Without impoverishment, [+past, +participle] gets `-n`
-    (*taken*, *eaten*). -/
-theorem without_impoverishment_gets_n :
-    subsetPrinciple englishTnsVI [.past, .participle] = some "-n" := by
-  decide
-
-/-- With impoverishment of [+participle], the same context gets `-d`
-    (*walked* as both simple past and past participle). -/
-theorem with_impoverishment_gets_d :
-    subsetPrinciple englishTnsVI
-      (deleteFeature [.past, .participle] .participle) = some "-d" := by
-  decide
-
-/-- Full DM pipeline: Fusion → Impoverishment → VI.
-
-    Past participle with impoverishment of [+participle]:
-    1. Fusion: Tns[+past,+part] + Agr[−3sg] → [past, participle]
-    2. Impoverishment: delete [+participle] → [past]
-    3. VI: [past] → `-d`
-
-    Without impoverishment, step 3 would give `-n` (via
-    `fusion_past_participle`). This full pipeline connects
-    §1 (VI), §3 (fusion), and §4 (impoverishment). -/
-theorem pipeline_fusion_impoverishment_vi :
-    subsetPrinciple englishTnsVI
-      (deleteFeature (fusedFeatures true true false) .participle) = some "-d" := by
-  decide
-
-end ImpoverishmentSyncretism
-
--- ============================================================================
--- §5: Baker 1985 Bridge
--- ============================================================================
-
-/-! ### Connecting to the Mirror Principle and Bybee's Hierarchy
-
-[halle-marantz-1993] discuss how DM's post-syntactic architecture
-derives [baker-1985]'s Mirror Principle: GF-rules (passive,
-causative, applicative, reflexive/reciprocal) are syntactic head
-movements, and Morphological Structure preserves the derivation order.
-Affix layering necessarily mirrors syntactic structure because MS is
-derived from syntax.
-
-We formalize two connections:
-
-1. English verb inflection is concatenative, placing it within
-   [baker-1985]'s scope.
-
-2. All English Tns/Agr features map to [bybee-1985] categories
-   that are OUTSIDE GF-rule categories in the relevance hierarchy.
-   This is consistent with DM's clause structure: Tns and Agr sit
-   structurally above GF-rule projections, so their exponents are
-   outermost after head movement. -/
-
-section BakerBridge
-
-/-- Map English inflectional features to [bybee-1985]'s
-    morphological categories. -/
-def EngInflFeature.toMorphCategory : EngInflFeature → MorphCategory
-  | .past => .tense
-  | .participle => .aspect
-  | .sg3 => .agreement .subj
-
-/-- All English Tns/Agr features map to categories that are OUTSIDE
-    GF-rule categories in [bybee-1985]'s relevance hierarchy.
-
-    GF-rules (passive → voice rank 3, causative/applicative/reciprocal
-    → valence rank 2) are always closer to the stem than English
-    Tns/Agr features (aspect rank 4, tense rank 5, agreement rank 8).
-
-    This is consistent with DM's clause structure: Tns and Agr are
-    structurally above GF-rule projections (PassP, CausP, ApplP),
-    so after head movement and fusion, the Tns+Agr exponent sits
-    outermost. The relevance hierarchy and the syntactic hierarchy
-    converge — connecting [baker-1985], [bybee-1985],
-    and [halle-marantz-1993]. -/
-theorem tnsAgr_outside_gfRules (f : EngInflFeature) (r : GFRuleType) :
-    r.toMorphCategory.RelevanceLT f.toMorphCategory := by
-  cases f <;> cases r <;> decide
-
-/-- English verb inflection is concatenative: affixes are linearly
-    concatenated to the stem. This places it within the scope of
-    [baker-1985]'s Mirror Principle ([baker-1985] restricts
-    the principle to concatenative morphology, excluding clitics and
-    nonconcatenative processes). -/
-theorem english_inflection_in_scope :
-    MorphDomain.concatenative.InScope := rfl
-
-end BakerBridge
+/-- Two terminals enter, one exponent slot leaves: the misalignment is
+carried by the fusion module. -/
+theorem plays_misalignment :
+    [tns .play false false, agr true].length = 2 ∧
+      (tnsAgrSpellout.pf [tns .play false false, agr true]).length = 1 := by
+  exact ⟨rfl, by rw [plays_pf]; rfl⟩
 
 end HalleMarantz1993
