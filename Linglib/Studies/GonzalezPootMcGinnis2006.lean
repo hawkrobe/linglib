@@ -1,4 +1,6 @@
 import Linglib.Morphology.DistributedMorphology.Fission
+import Linglib.Syntax.Minimalist.Features
+import Linglib.Features.Person.Decomposition
 import Linglib.Data.Examples.GonzalezPootMcGinnis2006
 
 /-!
@@ -20,8 +22,8 @@ distinction ((42), on the feature-geometric treatment of first person).
 
 ## Main definitions
 
-* `Feature`, `matrix`, `ergMatrix`: the binary features of (26) with case,
-  and an argument's matrix.
+* `matrix`, `ergMatrix`: an argument's matrix over `Minimalist.FeatureVal` —
+  the person features of (26) from `Person.toFeatures`, number, and case.
 * `agr3`, `agr1`, `agr2`: the Vocabularies (27), (43), (44).
 * `suffixes`: Agr3's exponents for a subject and an object, by `scansion`.
 * `templateSuffixes`: the rival template (18), one node per argument.
@@ -53,70 +55,61 @@ inserted but not counted among a row's overt suffixes.
 namespace GonzalezPootMcGinnis2006
 
 open DistributedMorphology Data.Examples
+open Minimalist (FeatureVal)
 open scoped DistributedMorphology.VocabularyItem
 
 /-! ### Features and matrices (§3–4) -/
 
-/-- Case of an agreeing argument. -/
-inductive Case where
-  | nom
-  | erg
-  deriving DecidableEq, Repr
+/-- The person features of (26), [±PSE, ±Auth], as the substrate's
+[±participant, ±author] decomposition of a person. -/
+def personFeatures (p : Person) : List FeatureVal :=
+  match Person.toFeatures p with
+  | some f => [.participant f.hasParticipant, .author f.hasAuthor]
+  | none => []
 
-/-- The binary person features of (26), number as [±Pl], and case. -/
-inductive Feature where
-  | pse (b : Bool)
-  | auth (b : Bool)
-  | pl (b : Bool)
-  | case (c : Case)
-  deriving DecidableEq, Repr
-
-/-- Grammatical person. -/
-inductive Person where
-  | first
-  | second
-  | third
-  deriving DecidableEq, Repr
+/-- Number as [±Pl]: plural or singular. -/
+def number (pl : Bool) : FeatureVal := .phi (.number (if pl then .plural else .singular))
 
 /-- An ergative argument's matrix ((42)): first-person number is a person
 distinction — singular [+PSE, +Auth], plural [+Auth]. -/
-def ergMatrix : Person → Bool → List Feature
-  | .first, false => [.pse true, .auth true, .case .erg]
-  | .first, true => [.auth true, .case .erg]
-  | .second, pl => [.pse true, .auth false, .pl pl, .case .erg]
-  | .third, pl => [.pse false, .auth false, .pl pl, .case .erg]
+def ergMatrix : Person → Bool → List FeatureVal
+  | .first, false => [.participant true, .author true, .case .erg]
+  | .first, true => [.author true, .case .erg]
+  | p, pl => personFeatures p ++ [number pl, .case .erg]
 
 /-- An argument's matrix for Agr3: (42) for ergative arguments and for
 second and third person; for nominative first person the assignment (27)
 presupposes — *-oʔon* 1pl [+PSE, +Auth, NOM], *-en* 1sg [+Auth, NOM]. -/
-def matrix : Person → Bool → Case → List Feature
-  | .first, false, .nom => [.auth true, .case .nom]
-  | .first, true, .nom => [.pse true, .auth true, .case .nom]
+def matrix : Person → Bool → Case → List FeatureVal
+  | .first, false, .nom => [.author true, .case .nom]
+  | .first, true, .nom => [.participant true, .author true, .case .nom]
   | p, pl, .erg => ergMatrix p pl
-  | .second, pl, .nom => [.pse true, .auth false, .pl pl, .case .nom]
-  | .third, pl, .nom => [.pse false, .auth false, .pl pl, .case .nom]
+  | p, pl, c => personFeatures p ++ [number pl, .case c]
 
 /-! ### The Vocabularies (27), (43), (44) -/
 
 /-- The Agr3 Vocabulary Items (27), in scansion order. -/
-def agr3 : List (VocabularyItem Feature String) :=
-  [[.pse true, .auth true, .case .nom] ⟷ "oʔon", [.pse true, .pl false, .case .nom] ⟷ "etʃ",
-    [.auth true, .case .nom] ⟷ "en", [.pse true, .pl true] ⟷ "éːʃ", [.pl true] ⟷ "oʔob",
-    [] ⟷ "Ø"]
+def agr3 : List (VocabularyItem FeatureVal String) :=
+  [[.participant true, .author true, .case .nom] ⟷ "oʔon",
+    [.participant true, number false, .case .nom] ⟷ "etʃ",
+    [.author true, .case .nom] ⟷ "en", [.participant true, number true] ⟷ "éːʃ",
+    [number true] ⟷ "oʔob", [] ⟷ "Ø"]
 
 /-- The Agr1 Vocabulary Items (43): the ergative auxiliary suffix. -/
-def agr1 : List (VocabularyItem Feature String) :=
-  [[.pse true, .auth true] ⟷ "in", [.auth true] ⟷ "k", [.pse true] ⟷ "a", [] ⟷ "u"]
+def agr1 : List (VocabularyItem FeatureVal String) :=
+  [[.participant true, .author true] ⟷ "in", [.author true] ⟷ "k", [.participant true] ⟷ "a",
+    [] ⟷ "u"]
 
 /-- The Agr2 Vocabulary Items (44): the ergative verbal prefix. -/
-def agr2 : List (VocabularyItem Feature String) :=
-  [[.pse true] ⟷ "w", [.pse false] ⟷ "j", [] ⟷ ""]
+def agr2 : List (VocabularyItem FeatureVal String) :=
+  [[.participant true] ⟷ "w", [.participant false] ⟷ "j", [] ⟷ ""]
 
 /-- The overt verbal suffixes of a clause: Agr3 bears the subject's matrix
 and, in a transitive clause, the object's ((25), (28b)); strict scansion of
 (27) realizes them, and the elsewhere *-Ø* is not overt. -/
 def suffixes (subj : Person × Bool) (obj : Option (Person × Bool)) : List String :=
-  (scansion agr3 ∅ (matrix subj.1 subj.2 .erg :: (obj.map fun o => [matrix o.1 o.2 .nom]).getD []))
+  (scansion agr3 ∅
+    (matrix subj.1 subj.2 .erg :: (obj.map fun o => [matrix o.1 o.2 .nom]).getD []))
     |>.filter (· ≠ "Ø")
 
 /-- The rival template (18): object agreement then subject agreement, each a
@@ -138,15 +131,15 @@ structure Row where
   accepted : Bool
   deriving DecidableEq, Repr
 
-def Person.ofString : String → Option Person
+def personOfString : String → Option Person
   | "1" => some .first | "2" => some .second | "3" => some .third | _ => none
 
 def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let fs := ex.paperFeatures
-  let sp ← fs.lookup "subjPerson" >>= Person.ofString
+  let sp ← fs.lookup "subjPerson" >>= personOfString
   let sn ← fs.lookup "subjNumber"
   let obj ← match fs.lookup "objPerson", fs.lookup "objNumber" with
-    | some p, some n => (Person.ofString p).map fun op => some (op, decide (n = "pl"))
+    | some p, some n => (personOfString p).map fun op => some (op, decide (n = "pl"))
     | _, _ => some none
   let aux ← fs.lookup "aux"
   let prefix_ ← fs.lookup "prefix"
