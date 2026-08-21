@@ -22,7 +22,9 @@ which the distribution of preverbal elements across them follows (Ch. 5).
 The (32), (87)–(89), and (115) stimuli live in `Data.Examples.Benz2025`.
 `availableReadings` derives the reading inventory from the exponence engine's
 licensed allosemes, with `adopted_unique` characterizing the adopted analysis
-as the unique economical derivation of each reading; `blocked_sound` and
+as the unique economical derivation of each reading and `denoteN` grounding
+the reading table in typed denotations
+(`readingFromAllosemes_isSome_iff_denote`); `blocked_sound` and
 `blocked_complete` show the two Ch. 4 principles exactly generate the
 co-occurrence paradigm; `peAcceptable_from_solutions` derives the Ch. 5
 distribution from the structure-problem solutions.
@@ -160,6 +162,156 @@ reading is derivable; the content reading survives, since simple content
 nouns like *Gerücht* 'rumor' need no verbal source (Table 2). -/
 theorem nonEventive_readings :
     availableReadings false = [.content, .simpleEvent, .simpleState, .simpleEntity] := rfl
+
+/-! ### Typed alloseme denotations (Ch. 3)
+
+The denotations of the deverbal allosemes, after [wood-2023] as taken over
+in Ch. 3: nominalization semantics runs over a domain in which eventualities
+are entities, and each n alloseme builds an entity predicate from what v
+hands it. The reading typology is then derived, not tabulated: readings exist
+exactly where the composition is defined
+(`readingFromAllosemes_isSome_iff_denote`), and the analytical options for
+the result and content readings compose to identical entity predicates
+(`result_options_pred_agree`, `content_options_agree`). -/
+
+variable {E S : Type*}
+
+/-- A model for nominalization denotations: eventualities embed into the
+entity domain (a nominal can describe an event as an entity), split into
+stative and dynamic, with `result` relating an entity to the eventuality
+that produced it and `hasContent` picking out the entities with
+propositional content. -/
+structure NominalizationModel (E S : Type*) where
+  /-- Eventualities as entities. -/
+  ev : S → E
+  ev_injective : Function.Injective ev
+  /-- Stative eventualities. -/
+  stative : S → Prop
+  /-- The entity is the result of the eventuality. -/
+  result : E → S → Prop
+  /-- The entity has propositional content (*rumor*, *idea*, *claim*). -/
+  hasContent : E → Prop
+
+/-- A root's contribution to nominalization semantics: what it says of
+entities and of eventualities, and its Theme relation — which entity an
+eventuality of the root's kind is predicated of. -/
+structure RootMeaning (E S : Type*) where
+  onEntities : E → Prop
+  onEvents : S → Prop
+  theme : E → S → Prop
+
+/-- What v hands to n: under the eventive alloseme, verbal event content
+together with the Theme position v introduces (§2.2); under the zero
+alloseme, the untouched root — and no argument position, since none is
+introduced by v (§3.5). -/
+inductive VerbalDenotation (E S : Type*) where
+  | eventive (p : S → Prop) (theme : E → S → Prop)
+  | zero (ρ : RootMeaning E S)
+
+/-- The v alloseme applied to the root. -/
+def denoteV (ρ : RootMeaning E S) : Verbalizer.Alloseme → VerbalDenotation E S
+  | .eventive => .eventive ρ.onEvents ρ.theme
+  | .zero     => .zero ρ
+
+/-- A nominal denotation: the entity predicate, together with the
+internal-argument relation when the nominal retains one. The relation is
+present exactly when v introduced the Theme position — no such position
+is part of the denotation unless v contributes it (§2.2, §3.5). -/
+structure NominalDenotation (E S : Type*) where
+  /-- What the nominal describes. -/
+  pred : E → Prop
+  /-- The internal-argument relation: `internalArg y x` holds when `y`
+  saturates the nominal `x`'s Theme position (*the observation of the
+  sky*). -/
+  internalArg : Option (E → E → Prop) := none
+
+/-- The n alloseme applied to v's output, `none` where the combination
+is uninterpretable. The CEN describes the events the verb describes and
+retains the Theme position v introduced; the SEN predicates the root's
+entity content of an event-entity; the result alloseme picks out what an
+event of the root's kind produced ([wood-2023]'s denotation); the content
+alloseme ignores the verbal layer entirely. The non-deverbal allosemes
+have their semantics in `Semantics/Possessive/Relational.lean`. -/
+def denoteN (m : NominalizationModel E S) :
+    VerbalDenotation E S → Nominalizer.Alloseme → Option (NominalDenotation E S)
+  | .eventive p θ, .zero =>
+      some { pred := fun x => ∃ e, x = m.ev e ∧ p e
+           , internalArg := some fun y x => ∃ e, x = m.ev e ∧ p e ∧ θ y e }
+  | .eventive p θ, .result =>
+      some { pred := fun x => ∃ e, p e ∧ m.result x e
+           , internalArg := some fun y x => ∃ e, p e ∧ θ y e ∧ m.result x e }
+  | .eventive _ _, .content => some { pred := m.hasContent }
+  | .zero ρ, .simpleEvent =>
+      some { pred := fun x => ρ.onEntities x ∧ ∃ e, x = m.ev e }
+  | .zero ρ, .state =>
+      some { pred := fun x => ∃ e, x = m.ev e ∧ m.stative e ∧ ρ.onEvents e }
+  | .zero ρ, .result =>
+      some { pred := fun x => ∃ e, ρ.onEvents e ∧ m.result x e }
+  | .zero ρ, .entity => some { pred := ρ.onEntities }
+  | .zero _, .content => some { pred := m.hasContent }
+  | _, _ => none
+
+/-- The event and result readings are mirror images at the
+entity-predicate level: the two analytical options for the result
+reading — eventive v with n's result alloseme, or vacuous v with the
+same — agree on what the nominal describes (§3.5, crediting
+[wood-2023]). -/
+theorem result_options_pred_agree (m : NominalizationModel E S) (ρ : RootMeaning E S) :
+    (denoteN m (denoteV ρ .eventive) .result).map (·.pred)
+      = (denoteN m (denoteV ρ .zero) .result).map (·.pred) := rfl
+
+/-- ...but not on argument structure: on the both-heads-interpreted
+option the result nominal retains the internal-argument position v
+introduced, on the v-vacuous option it has none. Since result nominals
+cannot saturate an internal argument, this is the reason for adopting the
+vacuous option for the RN reading (§3.5, following [wood-2023]). -/
+theorem result_options_disagree_on_arguments (m : NominalizationModel E S)
+    (ρ : RootMeaning E S) :
+    (∃ r, denoteN m (denoteV ρ .eventive) .result = some r ∧ r.internalArg.isSome)
+      ∧ ∃ r, denoteN m (denoteV ρ .zero) .result = some r ∧ r.internalArg = none :=
+  ⟨⟨_, rfl, rfl⟩, _, rfl, rfl⟩
+
+/-- CENs retain argument structure: the complex event nominal carries
+the Theme position v introduced (*the observation of the sky*), which is
+what separates it from every zero-v reading
+(`zero_v_no_argument_structure`). -/
+theorem cen_retains_argument_structure (m : NominalizationModel E S) (ρ : RootMeaning E S) :
+    ∃ r, denoteN m (denoteV ρ .eventive) .zero = some r ∧ r.internalArg.isSome :=
+  ⟨_, rfl, rfl⟩
+
+/-- No zero-v reading has an internal-argument position: none is
+introduced by v, so none is part of the denotation (§3.5). -/
+theorem zero_v_no_argument_structure (m : NominalizationModel E S) (ρ : RootMeaning E S)
+    (n : Nominalizer.Alloseme) {r : NominalDenotation E S}
+    (h : denoteN m (denoteV ρ .zero) n = some r) : r.internalArg = none := by
+  rcases n with _ | cn
+  · simp [denoteV, denoteN] at h
+  · cases cn <;> simp only [denoteV, denoteN, Option.some.injEq, reduceCtorEq] at h <;>
+      (try subst h) <;> rfl
+
+/-- The content reading likewise ignores the verbal layer: both v
+options compose to `hasContent`, which is how simple content nouns can
+have the reading with no verbal source at all (§3.5). -/
+theorem content_options_agree (m : NominalizationModel E S) (ρ : RootMeaning E S) :
+    denoteN m (denoteV ρ .eventive) .content = denoteN m (denoteV ρ .zero) .content := rfl
+
+/-- The reading typology tracks denotational definedness: a (v, n) pair
+has a reading exactly when its composed denotation is defined. -/
+theorem readingFromAllosemes_isSome_iff_denote (m : NominalizationModel E S)
+    (ρ : RootMeaning E S) (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
+    (readingFromAllosemes v n).isSome ↔ (denoteN m (denoteV ρ v) n).isSome := by
+  rcases v with _ | cv <;> rcases n with _ | cn <;> (try cases cv) <;> (try cases cn) <;>
+    simp [readingFromAllosemes, denoteV, denoteN]
+
+/-- A complex event nominal holds only of event-entities: the ground of
+its event reading (temporal modification, aspectual behavior). -/
+theorem cen_denotes_events (m : NominalizationModel E S) (ρ : RootMeaning E S)
+    {r : NominalDenotation E S} (h : denoteN m (denoteV ρ .eventive) .zero = some r) :
+    ∀ x, r.pred x → ∃ e, x = m.ev e := by
+  simp only [denoteV, denoteN, Option.some.injEq] at h
+  subst h
+  rintro x ⟨e, rfl, -⟩
+  exact ⟨e, rfl⟩
 
 /-! ## Prefixes, particles, and resultatives (Ch. 4) -/
 
