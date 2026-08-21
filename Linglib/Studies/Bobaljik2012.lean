@@ -1,397 +1,209 @@
 import Linglib.Morphology.Paradigm.Degree
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.DistributedMorphology.Merger
-import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Latin.Adjectives
 
 /-!
-# Bobaljik (2012): Universals in Comparative Morphology
-[bobaljik-2012]
+# Universals in comparative morphology
 
-## Overview
+[bobaljik-2012] surveys comparative and superlative suppletion in some 300
+languages and finds three root patterns — AAA, ABB, ABC — with *ABA and
+*AAB unattested: the Comparative-Superlative Generalization (1)–(2), beside
+the Synthetic Superlative Generalization (3), the Root Suppletion
+Generalization (4), and Lesslessness (5). All but the last follow from the
+Containment Hypothesis (6) — the superlative contains the comparative —
+under Late Insertion, Elsewhere ordering, and locality (8). A comparative
+root allomorph is chosen in the superlative too, so ABA needs an accidental
+homophony that Antihomophony (44) excludes; AAB needs a
+superlative-conditioned allomorph with no comparative counterpart, which
+adjacency (190) or the markedness condition (202) excludes; and a root sees
+CMPR only when Merger has made the comparative synthetic (90), which is the
+RSG, with the SSG as Merger's downward closure.
 
-[bobaljik-2012] surveys comparative and superlative morphology
-across languages and derives several cross-linguistic generalizations
-from the **containment hypothesis**: the superlative structurally
-contains the comparative (`[[[ADJ] CMPR] SPRL]`).
+## Main definitions
 
-## Key Generalizations
+* `czechBad`, `englishGood`, `englishBad`, `welshGood`, `latinBonus`: the
+  book's vocabularies (39), (203), (194), (198), (204) as `SpanRule`s.
+* `aabContextual`, `welshAAB`, `fakeAba`: the vocabularies behind the
+  unattested shapes — (190), (201), and the homophony loophole of (44).
+* `greekBad`: the Modern Greek vocabulary (93).
+* `latinBonusNS`: the Latin entries in nanosyntax form.
+* `Periphrastic`: a two-word grade form.
 
-1. **CSG (Comparative-Superlative Generalizations)**: two directions.
-   CSG1: a suppletive comparative forces a suppletive superlative
-   (*ABA excluded); CSG2: a suppletive superlative forces a suppletive
-   comparative (*AAB excluded). Attested: AAA, ABB, ABC. Unattested:
-   *ABA, *AAB. The derivations are asymmetric — CSG1 needs containment
-   + Elsewhere + Antihomophony, CSG2 additionally portmanteau exponence,
-   adjacency, and the markedness condition (202) — in the formalization
-   adjacency's AAB-blocking role is absorbed into `Grounded`; see
-   `Morphology/Exponence/Containment/Contiguity.lean`. Both are instantiated on
-   the book's worked vocabularies below.
-   **Scope**: relative superlatives only, not absolute superlatives /
-   elatives (p. 2, p. 28). The CSG ranges over synthetic grades; among
-   periphrastic superlatives it holds exactly of those embedding the
-   comparative form (p. 30, p. 78).
+## Main results
 
-2. **SSG (Synthetic Superlative Generalization)**: No language has a
-   morphological (synthetic) superlative without also having a
-   morphological comparative.
+* `english_patterns`, `latin_patterns`, `latin_all_three`: the Fragments
+  show the attested patterns of (191) and no others.
+* `english_ssg`, `english_rsg`: (3) and (4) on the English Fragment.
+* `czech_bad_abb`, `latin_realize_abc`, `welsh_good_abc`: the engine derives
+  the book's paradigms.
+* `aabContextual_not_adjacent`, `welshAAB_not_grounded`,
+  `fakeAba_not_antihomophonous`: each unattested shape violates exactly one
+  condition.
+* `latin_sprl_needs_portmanteau`: ABC needs a portmanteau ((199)).
+* `greek_comparative`, `greek_superlative`: *pjo kak-ós*, not *pjo
+  cheir-ós* ((94)), and a periphrastic superlative embedding the comparative
+  inherits its root ((106)).
+* `latin_ns_eq_dm`: nanosyntax and DM realize Latin alike.
 
-3. **RSG (Root Suppletion Generalization)**: Root suppletion is
-   limited to synthetic (morphological) comparatives. No language
-   has a periphrastic comparative with a suppletive root
-   (*good → more bett).
+## Implementation notes
 
-4. **Lesslessness**: No language has a synthetic comparative of
-   inferiority. "Less tall" is always periphrastic.
-
-## English and Latin Fragment Verification
-
-This module verifies the CSG, SSG, RSG, and lesslessness against
-both the English adjective fragment (`Fragments/English/Modifiers/
-Adjectives.lean`) and the Latin adjective fragment (`Fragments/Latin/
-Adjectives.lean`), using the `suppletion` field on each entry to
-encode empirically observed root-class patterns.
+Lesslessness (5) — no language has a synthetic comparative of inferiority
+((278)–(279)) — is the book's most robust generalization but is not
+derived here: its account, a polarity-reversing head under the Complexity
+Condition, is a sketch in the book as well. The generalizations concern
+relative superlatives only; absolute superlatives lack the comparative
+component and its structure.
 -/
-
-/-! ### Scale-Generation Substrate -/
-
-/-! Connects morphological infrastructure (`Morphology`) to scalar-
-alternative infrastructure (`Semantics/Alternatives/HornScale.lean`),
-enabling automatic generation of the alternatives needed for scalar
-implicature computation. Lives in this study file because it is the
-sole consumer. [horn-1972] [kennedy-2007] -/
-
-namespace Bobaljik2012.ScaleFromParadigm
-
-open Morphology
-open Alternatives (HornScale)
-
-/-- A morphologically-derived Horn scale. -/
-structure MorphScale where
-  positive : String
-  comparative : String
-  superlative : String
-  deriving Repr, BEq
-
-/-- Convert a `MorphScale` to a `HornScale String`, weakest-to-strongest. -/
-def MorphScale.toHornScale (ms : MorphScale) : HornScale String :=
-  ⟨[ms.positive, ms.comparative, ms.superlative]⟩
-
-/-- Extract a degree scale from an adjective entry's degree forms. -/
-def adjectiveScale (a : English.Modifiers.Adjectives.AdjModifierEntry) :
-    Option MorphScale :=
-  match a.formComp, a.formSuper with
-  | some comp, some super_ =>
-    some { positive := a.form, comparative := comp, superlative := super_ }
-  | _, _ => none
-
-/-- Scale-mates as scalar alternatives, scale order preserved. -/
-def morphologicalAlternatives (a : English.Modifiers.Adjectives.AdjModifierEntry)
-    (form : String) : List String :=
-  match adjectiveScale a with
-  | none => []
-  | some ms =>
-    let scale := ms.toHornScale
-    scale.members.filter (· != form)
-
-end Bobaljik2012.ScaleFromParadigm
 
 namespace Bobaljik2012
 
-open Morphology.Degree
-open English.Modifiers.Adjectives
+open Morphology.Degree Morphology.Containment DistributedMorphology
+open English.Modifiers.Adjectives (AdjModifierEntry allEntries good)
 
-/-! ### Pattern Verification (English) -/
+/-! ### The patterns on the Fragments (ch. 4) -/
 
-/-- Regular adjectives have AAA suppletion patterns. -/
-theorem tall_aaa : tall.suppletion = aaa := rfl
-theorem short_aaa : short.suppletion = aaa := rfl
-theorem happy_aaa : happy.suppletion = aaa := rfl
-theorem hot_aaa : hot.suppletion = aaa := rfl
-theorem expensive_aaa : expensive.suppletion = aaa := rfl
-theorem dry_aaa : dry.suppletion = aaa := rfl
+/-- The English Fragment shows only AAA and ABB. -/
+theorem english_patterns : ∀ e ∈ allEntries, e.suppletion = aaa ∨ e.suppletion = abb := by
+  decide
 
-/-- Suppletive adjectives have ABB suppletion patterns. -/
-theorem good_abb : good.suppletion = abb := rfl
-theorem bad_abb : bad.suppletion = abb := rfl
+/-- The Latin Fragment shows only the attested patterns of (191). -/
+theorem latin_patterns :
+    ∀ e ∈ Latin.Adjectives.allEntries,
+      e.suppletion = aaa ∨ e.suppletion = abb ∨ e.suppletion = abc := by
+  decide
 
-/-! ### CSG Verification (English) -/
+/-- Latin shows all three: *longus*, *parvus*, *bonus*. -/
+theorem latin_all_three :
+    (∃ e ∈ Latin.Adjectives.allEntries, e.suppletion = aaa) ∧
+      (∃ e ∈ Latin.Adjectives.allEntries, e.suppletion = abb) ∧
+      ∃ e ∈ Latin.Adjectives.allEntries, e.suppletion = abc := by
+  decide
 
-/-- **CSG**: All English adjective entries satisfy contiguity
-    (no *ABA violations). -/
-theorem english_no_aba :
-    ∀ e ∈ allEntries, e.suppletion.IsContiguous := by decide
-
-/-- CSG Part I applied to English data: "good" and "bad" have
-    suppletive comparatives, so by `csg_part1` their superlatives
-    must be suppletive too — and they are. -/
-theorem good_csg : good.suppletion.SprlSuppletive :=
+/-- CSG1 (1) on *good*: a suppletive comparative forces a suppletive
+superlative, by contiguity. -/
+theorem good_csg1 : good.suppletion.SprlSuppletive :=
   csg_part1 good.suppletion (by decide) (by decide)
 
-theorem bad_csg : bad.suppletion.SprlSuppletive :=
-  csg_part1 bad.suppletion (by decide) (by decide)
+/-- A two-word form: periphrastic *more X*. -/
+def Periphrastic (f : String) : Prop := ' ' ∈ f.toList
 
-/-- CSG Part II on the English data: if the superlative is suppletive,
-    the comparative is too. Data-level check; the engine derivation
-    (`Morphology.Containment.realize_const_of_grounded`) is instantiated at
-    `welshAAB_blocked` below. -/
-theorem good_csg_part2 : good.suppletion.CmprSuppletive := by decide
-theorem bad_csg_part2 : bad.suppletion.CmprSuppletive := by decide
+instance (f : String) : Decidable (Periphrastic f) := inferInstanceAs (Decidable (_ ∈ _))
 
-/-! ### Attestedness Verification (English) -/
-
-/-- All English root suppletion patterns satisfy both contiguity (no
-    *ABA — `csg_part1`) and the terminal-adjacent plateau (CMPR cell =
-    SPRL cell —
-    `Morphology.Containment.realize_const_of_terminal_adjacent`). The
-    conjunction restricts root patterns to AAA / ABB. Stated as the
-    explicit conjunction so the underlying derivation is visible at use
-    site, rather than packaged as a stipulated `isAttested` field. -/
-theorem english_all_attested :
-    ∀ e ∈ allEntries,
-      e.suppletion.IsContiguous ∧ e.suppletion.cmpr = e.suppletion.sprl := by
-  decide
-
-/-! ### SSG (Synthetic Superlative Generalization) -/
-
-/-- **SSG** ([bobaljik-2012]): If an entry has a synthetic
-    superlative form, it also has a synthetic comparative form.
-    No English adjective has `-est` without `-er`. -/
+/-- SSG (3) on the Fragment: a synthetic superlative comes with a synthetic
+comparative — structurally, `Synthesis.syntheticAt_of_le`. -/
 theorem english_ssg :
-    ∀ e ∈ allEntries, e.formSuper.isSome → e.formComp.isSome := by decide
+    ∀ e ∈ allEntries, ∀ s ∈ e.formSuper, ¬ Periphrastic s →
+      ∃ c ∈ e.formComp, ¬ Periphrastic c := by
+  decide
 
-/-! ### RSG (Root Suppletion Generalization) -/
-
-/-- The comparative form is synthetic (a single morphological word,
-    not periphrastic "more X"), detected as the absence of a space in
-    the form string. Structural counterpart:
-    `DistributedMorphology.Synthesis` (see the worked vocabularies
-    below). -/
-def IsSyntheticComp (e : AdjModifierEntry) : Prop :=
-  ∃ f ∈ e.formComp, ' ' ∉ f.toList
-
-instance (e : AdjModifierEntry) : Decidable (IsSyntheticComp e) := by
-  unfold IsSyntheticComp; infer_instance
-
-/-- **RSG** ([bobaljik-2012]): Root suppletion is limited to
-    synthetic comparatives. If an entry has a suppletive root (CMPR
-    differs from POS), then its comparative form is synthetic (not
-    periphrastic).
-
-    This rules out patterns like *good → more bett: a language
-    cannot have a periphrastic comparative with a suppletive root.
-
-    Verified: "good" → "better" (synthetic), "bad" → "worse" (synthetic).
-    Contrast: "expensive" → "more expensive" (periphrastic, but
-    non-suppletive root — AAA, not ABB). -/
+/-- RSG (4) on the Fragment: a suppletive comparative is synthetic —
+*better*, *worse*, never *more bett*. -/
 theorem english_rsg :
-    ∀ e ∈ allEntries, e.suppletion.CmprSuppletive → IsSyntheticComp e := by
+    ∀ e ∈ allEntries, e.suppletion.CmprSuppletive → ∃ c ∈ e.formComp, ¬ Periphrastic c := by
   decide
 
-/-! ### Lesslessness -/
+/-! ### The book's vocabularies (ch. 2, ch. 5)
 
-/-! **Lesslessness** ([bobaljik-2012] (5), ch. 7): no language has a
-synthetic comparative of inferiority — "less tall" is always
-periphrastic. The book's empirically strongest generalization but its
-least derived: the proposed account (CMPR plus a polarity-reversal
-head, with synthetic spellout blocked by the polar antonym's
-comparative) is a sketch the book itself flags as incomplete, so it is
-recorded as data-level prose, not as a theorem of the ch. 2–5
-axioms. -/
+Each vocabulary is run through the Elsewhere engine of
+`Morphology/Exponence/Containment/Contiguity.lean`; `degreeShape` reads the
+root pattern off the realized cells. -/
 
-/-! ### Fragment Cross-Check -/
+/-- Czech BAD (39): *hor-* under CMPR, elsewhere *špatn-*. -/
+def czechBad : List (SpanRule 3 String) := [⟨"špatn", 0, none⟩, ⟨"hor", 0, some 1⟩]
 
-/-- The fragment records suppletive forms for "good" and "bad". -/
-theorem good_forms :
-    good.formComp = some "better" ∧ good.formSuper = some "best" :=
-  ⟨rfl, rfl⟩
-
-theorem bad_forms :
-    bad.formComp = some "worse" ∧ bad.formSuper = some "worst" :=
-  ⟨rfl, rfl⟩
-
-/-- The suppletion field agrees with the surface forms:
-    "good" → "better" → "best" is ABB (suppletive root shared
-    across CMPR and SPRL). -/
-theorem good_abb_from_forms :
-    good.suppletion = abb ∧
-    good.formComp = some "better" ∧
-    good.formSuper = some "best" :=
-  ⟨rfl, rfl, rfl⟩
-
-/-! ### Cross-Linguistic Pattern Inventory -/
-
-/-- The three attested degree-suppletive patterns. -/
-def attestedPatterns : List (String × DegreePattern) :=
-  [ ("AAA (tall–taller–tallest)",       aaa)
-  , ("ABB (good–better–best)",          abb)
-  , ("ABC (bonus–melior–optimus)",      abc) ]
-
-/-- All attested patterns are contiguous. -/
-theorem attested_all_contiguous :
-    ∀ pair ∈ attestedPatterns, pair.2.IsContiguous := by decide
-
-/-- The unattested *ABA pattern is not contiguous. -/
-theorem aba_unattested : ¬ aba.IsContiguous := by decide
-
-/-! ### Cross-Linguistic Verification (Latin) -/
-
-open Latin.Adjectives in
-/-- **Latin CSG**: All Latin adjective entries satisfy contiguity. -/
-theorem latin_no_aba :
-    ∀ e ∈ Latin.Adjectives.allEntries, e.suppletion.IsContiguous := by
+/-- *špatn-ý, hor-ší, nej-hor-ší*: the comparative allomorph is chosen in the
+superlative, since the superlative contains its context. -/
+theorem czech_bad_realize : realize czechBad = ![some "špatn", some "hor", some "hor"] := by
   decide
-
-open Latin.Adjectives in
-/-- Latin *bonus – melior – optimus* derives ABC. -/
-theorem latin_bonus_abc : bonus.suppletion = abc := rfl
-
-open Latin.Adjectives in
-/-- Latin exhibits all three attested patterns (AAA, ABB, ABC),
-    confirming the cross-linguistic pattern inventory against a
-    language with richer suppletion than English. -/
-theorem latin_all_three_patterns :
-    (∃ e ∈ Latin.Adjectives.allEntries, e.suppletion = aaa) ∧
-    (∃ e ∈ Latin.Adjectives.allEntries, e.suppletion = abb) ∧
-    (∃ e ∈ Latin.Adjectives.allEntries, e.suppletion = abc) := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
-
-/-! ### The Realizational Derivation: the Book's Worked Vocabularies -/
-
-/-! The engine of `Morphology/Exponence/Containment/Contiguity.lean` run on the
-vocabularies [bobaljik-2012] actually writes down. `SpanRule`s record
-exponent, exponed span, and conditioning context; `realize` runs
-Elsewhere insertion; `degreeShape` reads the root-suppletion class off
-the realized cells. The hypotheses of the engine's theorems
-(`realize_const_of_grounded`, `exists_portmanteau_of_ne`) are
-`decide`-checked on each vocabulary,
-and the two unattested shapes are exhibited as violations of exactly
-one condition each: AAB violates `Grounded` ((202)), surface ABA
-violates `Antihomophonous` ((44)). -/
-
-open Morphology.Containment DistributedMorphology
-
-/-- Czech BAD ([bobaljik-2012] (39)): root allomorph `hor-` conditioned
-    by CMPR, elsewhere `špatn-`. -/
-def czechBad : List (SpanRule 3 String) :=
-  [⟨"špatn", 0, none⟩, ⟨"hor", 0, some 1⟩]
-
-/-- Elsewhere insertion realizes *špatn-ý, hor-ší, nej-hor-ší*: ABB. -/
-theorem czech_bad_realize :
-    realize czechBad = ![some "špatn", some "hor", some "hor"] := by decide
 
 theorem czech_bad_abb : degreeShape (realize czechBad) = abb := by decide
 
-/-- English GOOD ([bobaljik-2012] (203)): `bett- / __]CMPR]`, elsewhere
-    `good`. Terminal and adjacent, so the plateau applies. -/
-def englishGood : List (SpanRule 3 String) :=
-  [⟨"good", 0, none⟩, ⟨"bett", 0, some 1⟩]
+/-- English GOOD (203): *bett-* under CMPR, elsewhere *good*. -/
+def englishGood : List (SpanRule 3 String) := [⟨"good", 0, none⟩, ⟨"bett", 0, some 1⟩]
 
 theorem english_good_abb : degreeShape (realize englishGood) = abb := by decide
 
-/-- English BAD ([bobaljik-2012] (194)): `worse` as a √ROOT+CMPR
-    portmanteau, elsewhere `bad`. ABB arises on the portmanteau route
-    too — `worse` simply realizes the whole comparative node. -/
-def englishBad : List (SpanRule 3 String) :=
-  [⟨"bad", 0, none⟩, ⟨"worse", 1, none⟩]
+/-- English BAD (194): *worse* as a √ROOT+CMPR portmanteau, elsewhere
+*bad*. -/
+def englishBad : List (SpanRule 3 String) := [⟨"bad", 0, none⟩, ⟨"worse", 1, none⟩]
 
 theorem english_bad_abb : degreeShape (realize englishBad) = abb := by decide
 
-/-- Welsh GOOD ([bobaljik-2012] (198)): `gor- / __]SPRL]` and `gwell`,
-    both √ROOT+CMPR portmanteaux, elsewhere `da`. -/
+/-- Welsh GOOD (198): *gor-* under SPRL and *gwell*, both √ROOT+CMPR
+portmanteaus, elsewhere *da*. -/
 def welshGood : List (SpanRule 3 String) :=
   [⟨"da", 0, none⟩, ⟨"gwell", 1, none⟩, ⟨"gor", 1, some 2⟩]
 
-/-- *da, gwell, gor-au*: ABC, generable because the C-exponent is a
-    portmanteau. -/
+/-- *da, gwell, gor-au*: ABC, since the superlative exponent is a
+portmanteau. -/
 theorem welsh_good_abc : degreeShape (realize welshGood) = abc := by decide
 
-/-- Latin GOOD ([bobaljik-2012] (204)): `opt-` a √ROOT+CMPR portmanteau
-    conditioned by SPRL, `mel-` a root allomorph conditioned by CMPR,
-    elsewhere `bon`. The span structure also explains *\*opt-ior-imus*:
-    `opt-` swallows the CMPR cell, so regular `-ior` has nothing to
-    realize. -/
+/-- Latin GOOD (204): *opt-* a √ROOT+CMPR portmanteau under SPRL, *mel-* a
+root allomorph under CMPR, elsewhere *bon*. Since *opt-* expones the CMPR
+cell, *-ior* has nothing to realize: *opt-imus*, not *\*opt-ior-imus*. -/
 def latinBonus : List (SpanRule 3 String) :=
   [⟨"bon", 0, none⟩, ⟨"mel", 0, some 1⟩, ⟨"opt", 1, some 2⟩]
 
-/-- *bon-us, mel-ior, opt-imus*: the engine derives the book's star
-    ABC paradigm. -/
-theorem latin_bonus_realize :
-    realize latinBonus = ![some "bon", some "mel", some "opt"] := by decide
+theorem latin_bonus_realize : realize latinBonus = ![some "bon", some "mel", some "opt"] := by
+  decide
 
 theorem latin_realize_abc : degreeShape (realize latinBonus) = abc := by decide
 
-/-- Latin satisfies every condition the CSG2 derivation needs. -/
+/-- Latin satisfies every condition the CSG2 derivation uses. -/
 theorem latin_wellformed :
-    Adjacent latinBonus ∧ Grounded latinBonus ∧ Antihomophonous latinBonus := by
-  decide
+    Adjacent latinBonus ∧ Grounded latinBonus ∧ Antihomophonous latinBonus := by decide
 
-/-- Latin is *not* terminal — and must not be: the terminal-adjacent
-    plateau (`realize_const_of_terminal_adjacent`) would force
-    CMPR = SPRL, wrongly excluding ABC. The portmanteau rule is what
-    escapes it. -/
+/-- Latin is not terminal — it must not be, since terminal adjacent rules
+plateau at the comparative (`realize_const_of_terminal_adjacent`), which
+would exclude ABC. -/
 theorem latin_not_terminal : ¬ Terminal latinBonus := by decide
 
-/-- Latin's superlative winner computed concretely: the portmanteau
-    `opt-` — the ABC-requires-portmanteau consequence
-    ([bobaljik-2012] §5.3.1, generalized there as (199)). -/
-theorem latin_superlative_portmanteau :
-    winner latinBonus 2 = some ⟨"opt", 1, some 2⟩ := by decide
+/-- The superlative winner is the portmanteau *opt-*. -/
+theorem latin_superlative_portmanteau : winner latinBonus 2 = some ⟨"opt", 1, some 2⟩ := by
+  decide
 
-/-- The engine theorem applied: since Latin's comparative and
-    superlative cells diverge, `exists_portmanteau_of_ne` forces a
-    portmanteau winner at the superlative. -/
+/-- ABC needs a portmanteau ((199), §5.3.1): under adjacency, distinct
+comparative and superlative cells force a winner exponing more than the
+root. -/
 theorem latin_sprl_needs_portmanteau :
     ∃ it ∈ latinBonus, winner latinBonus 2 = some it ∧ 0 < (it.spans : ℕ) :=
   exists_portmanteau_of_ne (by decide) (by decide)
 
-/-- The nanosyntax lexicon for Latin GOOD, in the [caha-2009] method
-    (the degree application is later literature; see
-    `Morphology/Exponence/Containment/Contiguity.lean`): context-free entries
-    storing successively larger constituents, competing under the
-    Superset Principle. -/
-def latinBonusNS : List (SpanRule 3 String) :=
-  [⟨"bon", 0, none⟩, ⟨"mel", 1, none⟩, ⟨"opt", 2, none⟩]
+/-! ### The unattested shapes
 
-theorem latin_ns_contextFree : ContextFree latinBonusNS := by decide
+AAB has two routes, each closed by one condition: a root allomorph
+conditioned by a nonadjacent SPRL ((190), (45)), and a portmanteau
+conditioned by SPRL with no comparative-level counterpart ((201)). Surface
+ABA has one, accidental homophony, closed by Antihomophony ((44)). -/
 
-/-- Superset spellout derives the same ABC paradigm with no contextual
-    apparatus — the entries are portmanteaus by constituent size alone,
-    doing the work of DM's context-restricted ch. 5 machinery. -/
-theorem latin_ns_spellout :
-    spellout latinBonusNS = ![some "bon", some "mel", some "opt"] := by decide
+/-- (190): *be(tt)-* conditioned by SPRL across the comparative. -/
+def aabContextual : List (SpanRule 3 String) := [⟨"good", 0, none⟩, ⟨"bett", 0, some 2⟩]
 
-/-- Cross-framework agreement on the data: the nanosyntax lexicon and
-    the DM vocabulary (204) realize the same paradigm cell for cell
-    (the concrete face of
-    `Morphology.Containment.spelloutGenerable_iff_generable`). -/
-theorem latin_ns_eq_dm : spellout latinBonusNS = realize latinBonus :=
-  latin_ns_spellout.trans latin_bonus_realize.symm
+theorem aabContextual_realizes_aab : degreeShape (realize aabContextual) = aab := by decide
 
-/-- The hypothetical AAB vocabulary ([bobaljik-2012] (201)): `gor-`
-    restricted to the superlative with no comparative-level
-    counterpart. It generates the unattested AAB shape
-    (*\*da – da-ch – gor-au*)... -/
-def welshAAB : List (SpanRule 3 String) :=
-  [⟨"da", 0, none⟩, ⟨"gor", 1, some 2⟩]
+/-- Its context skips the comparative: adjacency excludes it. -/
+theorem aabContextual_not_adjacent : ¬ Adjacent aabContextual := by decide
+
+/-- (201): *gor-* restricted to the superlative with no comparative-level
+counterpart — *\*da – da-ch – gor-au*. -/
+def welshAAB : List (SpanRule 3 String) := [⟨"da", 0, none⟩, ⟨"gor", 1, some 2⟩]
 
 theorem welshAAB_realizes_aab : degreeShape (realize welshAAB) = aab := by decide
 
-/-- ...and is excluded by exactly one condition: its threshold set
-    skips the comparative grade, violating `Grounded` ((202)). -/
+/-- The node [GOOD, CMPR] has a context-sensitive rule and no context-free
+one: (202) excludes it. -/
 theorem welshAAB_not_grounded : ¬ Grounded welshAAB := by decide
 
-/-- The engine theorem `realize_const_of_grounded` applied: no vocabulary
-    realizing the AAB cells can satisfy both Antihomophony and `Grounded` —
-    the AAB realization itself refutes the conjunction. -/
+/-- `realize_const_of_grounded` applied: the AAB cells refute Antihomophony
+and (202) together. -/
 theorem welshAAB_blocked : ¬ (Antihomophonous welshAAB ∧ Grounded welshAAB) :=
   λ ⟨hAH, hG⟩ =>
     absurd (realize_const_of_grounded hAH hG (by decide) (by decide)) (by decide)
 
-/-- The homophonous-ABC loophole ([bobaljik-2012] (44) discussion):
-    without Antihomophony, surface ABA is generable — a superlative
-    root allomorph accidentally homophonous with the positive. -/
+/-- The homophony loophole of (44): a superlative allomorph accidentally
+homophonous with the positive yields surface ABA. -/
 def fakeAba : List (SpanRule 3 String) :=
   [⟨"A", 0, none⟩, ⟨"B", 0, some 1⟩, ⟨"A", 0, some 2⟩]
 
@@ -399,76 +211,51 @@ theorem fakeAba_realizes_aba : degreeShape (realize fakeAba) = aba := by decide
 
 theorem fakeAba_not_antihomophonous : ¬ Antihomophonous fakeAba := by decide
 
-/-! ### Synthesis: the Merger layer on the worked vocabularies -/
+/-! ### Periphrasis and locality (§3.3) -/
 
-/-- The structural synthetic/analytic notion
-    (`DistributedMorphology.Synthesis`) on English `good`: the word
-    merges through the superlative (`wordTop = 2`), and since the
-    word-internal realization shows distinct root forms at the positive
-    and comparative grades, `rsg` certifies the comparative as
-    synthetic — the structural counterpart of `english_rsg`'s
-    string-level check. -/
-theorem english_good_synthetic_comparative :
-    (Synthesis.mk 2 : Synthesis 3).SyntheticAt 1 :=
-  rsg (s := ⟨2⟩) (v := englishGood) (g := 1) (g' := 0) (by decide)
+/-- Modern Greek BAD (93): *cheiró-* under CMPR, elsewhere *kak-*. -/
+def greekBad : List (SpanRule 3 String) := [⟨"kak", 0, none⟩, ⟨"cheiró", 0, some 1⟩]
 
-/-- A lexeme with no Merger (`wordTop = 0`, fully periphrastic
-    paradigm) cannot exhibit root suppletion even with a suppletive
-    vocabulary — the RSG direction made constructive: *more bett* is
-    underivable because `bett-`'s conditioning CMPR head sits outside
-    the word. -/
-example : realizeIn ⟨0⟩ englishGood 1 = realizeIn ⟨0⟩ englishGood 0 :=
-  realizeIn_const_of_wordTop_eq_zero rfl 1 0
+/-- (94): with Merger the comparative is *cheiró-ter-os*; without it the
+root cannot see CMPR, and the periphrastic comparative is *pjo kak-ós*, not
+*\*pjo cheir-ós* — the RSG from locality (90). -/
+theorem greek_comparative :
+    realizeIn (⟨1⟩ : Synthesis 3) greekBad 1 = some "cheiró" ∧
+      realizeIn (⟨0⟩ : Synthesis 3) greekBad 1 = some "kak" := by
+  decide
 
-/-! ### Scale Generation from Degree Paradigms -/
+/-- The engine's RSG applied: Greek's distinct root forms certify its
+comparative as synthetic. -/
+theorem greek_rsg : (Synthesis.mk 1 : Synthesis 3).SyntheticAt 1 :=
+  rsg (s := ⟨1⟩) (v := greekBad) (g := 1) (g' := 0) (by decide)
 
-/-! `ScaleFromParadigm` (the Scale-Generation Substrate section above)
-derives Horn scales from degree paradigms: a stem with comparative + superlative rules
-yields a 3-point scale `[positive, comparative, superlative]`. The tests
-below verify the extractor on the English adjective fragment. -/
+/-- (106a): the periphrastic superlative *o cheiró-ter-os* embeds the
+comparative word, so it inherits the suppletive root — CSG1 holds of a
+periphrastic superlative exactly when it embeds the comparative (§3.3.3). -/
+theorem greek_superlative : realizeIn (⟨1⟩ : Synthesis 3) greekBad 2 = some "cheiró" := by
+  decide
 
-open Bobaljik2012.ScaleFromParadigm
+/-! ### The nanosyntax reading
 
+The book treats *opt-* and *gor-* as portmanteaus by Fusion or insertion at
+a nonterminal node, citing [caha-2009] among others (§5.3.1). Caha's
+lexicon does it with context-free entries storing successively larger
+constituents, competing under the Superset Principle. -/
 
-/-- Gradable adjectives produce a scale; non-gradables do not. -/
-theorem tall_scale_exists : (adjectiveScale tall).isSome = true := rfl
+/-- The Latin entries as a nanosyntax lexicon. -/
+def latinBonusNS : List (SpanRule 3 String) :=
+  [⟨"bon", 0, none⟩, ⟨"mel", 1, none⟩, ⟨"opt", 2, none⟩]
 
-theorem dead_no_scale : (adjectiveScale dead).isNone = true := rfl
+theorem latin_ns_contextFree : ContextFree latinBonusNS := by decide
 
-theorem pregnant_no_scale : (adjectiveScale pregnant).isNone = true := rfl
+/-- Superset spellout derives the same paradigm with no contextual
+apparatus. -/
+theorem latin_ns_spellout : spellout latinBonusNS = ![some "bon", some "mel", some "opt"] := by
+  decide
 
-/-- Regular paradigm yields the expected 3-point scale. -/
-theorem tall_scale_members :
-    (adjectiveScale tall).map (·.toHornScale.members)
-    = some ["tall", "taller", "tallest"] := rfl
-
-/-- Suppletive paradigm yields the irregular forms in scale position. -/
-theorem good_scale_members :
-    (adjectiveScale good).map (·.toHornScale.members)
-    = some ["good", "better", "best"] := rfl
-
-/-- Periphrastic paradigm yields multi-word scale members. -/
-theorem expensive_scale_members :
-    (adjectiveScale expensive).map (·.toHornScale.members)
-    = some ["expensive", "more expensive", "most expensive"] := rfl
-
-/-! ### Morphological Alternatives -/
-
-/-! `morphologicalAlternatives stem form` returns paradigm-mates of `form`
-preserving scale order — the input shape scalar-implicature reasoning
-expects. Tests confirm filter-by-equality semantics across the three
-scale positions, plus the empty-list result for non-gradable stems. -/
-
-theorem tall_alternatives :
-    morphologicalAlternatives tall "tall" = ["taller", "tallest"] := rfl
-
-theorem taller_alternatives :
-    morphologicalAlternatives tall "taller" = ["tall", "tallest"] := rfl
-
-theorem tallest_alternatives :
-    morphologicalAlternatives tall "tallest" = ["tall", "taller"] := rfl
-
-theorem dead_no_alternatives :
-    morphologicalAlternatives dead "dead" = [] := rfl
+/-- The two frameworks realize Latin cell for cell — the concrete face of
+`spelloutGenerable_iff_generable`. -/
+theorem latin_ns_eq_dm : spellout latinBonusNS = realize latinBonus :=
+  latin_ns_spellout.trans latin_bonus_realize.symm
 
 end Bobaljik2012

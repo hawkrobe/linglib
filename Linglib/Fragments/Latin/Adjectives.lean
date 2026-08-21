@@ -13,10 +13,14 @@ morphological (no scale `dimension`).
 Latin exhibits all three attested degree suppletion patterns:
 
 - **AAA**: regular (`longus – longior – longissimus`)
-- **ABB**: suppletive CMPR+SPRL sharing a root (`magnus – maior – maximus`)
+- **ABB**: suppletive CMPR+SPRL sharing a root (`parvus – minor – minimus`)
 - **ABC**: three distinct roots (`bonus – melior – optimus`)
 
-No Latin adjective shows an *ABA pattern.
+No Latin adjective shows an *ABA pattern. Suppletion is the categorical
+replacement of one root by another, not a point on a cline of irregularity:
+*magnus – maior – maximus* keeps one root throughout and is not suppletive,
+and *malus – pēj-or – pe-ssimus* shares one suppletive root across the two
+graded forms ([bobaljik-2012] Table 4.1), so it is ABB.
 -/
 
 namespace Latin.Adjectives
@@ -55,18 +59,19 @@ def bonus : Adjective :=
   , comparison := { formComp := "melior", formSuper := "optimus", suppletion := abc
                   , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive } }
 
-/-- *malus – peior – pessimus* ('bad – worse – worst'): three distinct roots (ABC). -/
+/-- *malus – peior – pessimus* ('bad – worse – worst'): ABB — one suppletive
+    root *pēj-*/*pe-* in both graded forms ([bobaljik-2012] Table 4.1). -/
 def malus : Adjective :=
   { form := "malus"
-  , comparison := { formComp := "peior", formSuper := "pessimus", suppletion := abc
+  , comparison := { formComp := "peior", formSuper := "pessimus", suppletion := abb
                   , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive } }
 
-/-- *magnus – maior – maximus* ('great – greater – greatest'): ABB — the
-    comparative and superlative share the suppletive root *mai-*/*max-*. -/
+/-- *magnus – maior – maximus* ('great – greater – greatest'): irregular but
+    not suppletive — *mag-*, *mai-*, *max-* are one root, and the triple is
+    absent from [bobaljik-2012]'s Table 4.1. AAA. -/
 def magnus : Adjective :=
   { form := "magnus"
-  , comparison := { formComp := "maior", formSuper := "maximus", suppletion := abb
-                  , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive } }
+  , comparison := { formComp := "maior", formSuper := "maximus", suppletion := aaa } }
 
 /-- *parvus – minor – minimus* ('small – smaller – smallest'): ABB, suppletive
     root *min-* shared across comparative and superlative. -/
@@ -81,35 +86,5 @@ def parvus : Adjective :=
 
 def allEntries : List Adjective :=
   [longus, altus, fortis, bonus, malus, magnus, parvus]
-
--- ============================================================================
--- § 4: Contiguity Verification
--- ============================================================================
-
-/-- All Latin entries satisfy contiguity (no *ABA). -/
-theorem latin_no_aba :
-    ∀ e ∈ allEntries, e.suppletion.IsContiguous := by decide
-
-/-- Regular entries derive AAA patterns. -/
-theorem longus_aaa : longus.suppletion = aaa := rfl
-theorem altus_aaa : altus.suppletion = aaa := rfl
-theorem fortis_aaa : fortis.suppletion = aaa := rfl
-
-/-- bonus/melior/optimus is ABC. -/
-theorem bonus_abc : bonus.suppletion = abc := rfl
-
-/-- malus/peior/pessimus is ABC. -/
-theorem malus_abc : malus.suppletion = abc := rfl
-
-/-- magnus/maior/maximus is ABB. -/
-theorem magnus_abb : magnus.suppletion = abb := rfl
-
-/-- parvus/minor/minimus is ABB. -/
-theorem parvus_abb : parvus.suppletion = abb := rfl
-
-/-- Latin has all three attested patterns: AAA, ABB, ABC. -/
-theorem latin_has_aaa : allEntries.any (λ e => e.suppletion == aaa) = true := by decide
-theorem latin_has_abb : allEntries.any (λ e => e.suppletion == abb) = true := by decide
-theorem latin_has_abc : allEntries.any (λ e => e.suppletion == abc) = true := by decide
 
 end Latin.Adjectives
