@@ -1,4 +1,4 @@
-import Linglib.Semantics.Attitudes.Desire
+import Linglib.Semantics.Attitudes.Desire.Conditional
 import Linglib.Semantics.Dynamic.Partial
 import Linglib.Semantics.Presupposition.BeliefEmbedding
 
@@ -30,8 +30,8 @@ The desire half (§4) replaces the Hintikka-style rule (27) with the
 comparative-belief semantics (31): `a wants φ` holds iff each doxastic
 alternative's closest `φ`-worlds are more desirable than its closest
 `¬φ`-worlds, on [stalnaker-1968] / [lewis-1973] similarity. The substrate is
-`Semantics/Attitudes/Desire.lean` (`WantHeimNaive`, `WantHeim`,
-`WantHeimDefined`, `HeimDesireParams`). The four-world model below shows the
+`Semantics/Attitudes/Desire/Conditional.lean` (`Frame`, `Want`, `Defined`). The four-world
+model below shows the
 naive rule failing on the shape of [asher-1987]'s Concorde case (32) and the
 (40) amendment blocking simultaneous `want p ∧ want ¬p`. Stalnaker's get-well
 / have-been-sick contrast ([stalnaker-1984], Heim's three-world model on
@@ -40,7 +40,7 @@ p. 195) needs a non-trivial similarity ordering and is not formalized.
 
 namespace Heim1992
 
-open DynamicSemantics CCP.Partial Semantics.Presupposition Desire
+open DynamicSemantics CCP.Partial Semantics.Presupposition Desire.Conditional
 open Semantics.Presupposition.BeliefEmbedding
   (presupAttributedToHolder transparentProjection opaque_implies_transparent_when_reflexive)
 
@@ -157,14 +157,13 @@ inductive HealthWorld where
 def recovered : Set HealthWorld | .w0 | .w1 => True | _ => False
 def sick : Set HealthWorld | .w0 | .w2 => True | _ => False
 
-instance : DecidablePred recovered := λ w => by cases w <;> unfold recovered <;> infer_instance
-instance : DecidablePred sick := λ w => by cases w <;> unfold sick <;> infer_instance
+instance : DecidablePred (· ∈ recovered) := λ w => by
+  cases w <;> first | exact isTrue trivial | exact isFalse id
 
-/-- The naive Hintikka rule (`a wants φ` iff every doxastic alternative is a `φ`-world), which
-Heim rejects on [asher-1987]'s Concorde case (32), predicts `wants recovered` false under the
-belief state `sick`, since `w2` is believed and not recovered. -/
-theorem not_wantHeimNaive_recovered : ¬ WantHeimNaive sick recovered :=
-  λ h => h .w2 (by decide)
+/-- The naive Hintikka rule (27) — `a wants φ` iff every doxastic alternative is a `φ`-world,
+`bel ⊆ φ` — which Heim rejects on [asher-1987]'s Concorde case (32), predicts `wants recovered`
+false under the belief state `sick`, since `w2` is believed and not recovered. -/
+theorem not_sick_subset_recovered : ¬ sick ⊆ recovered := λ h => @h .w2 trivial
 
 /-- Every world is equally similar to every other. -/
 def trivialSim : Core.Order.SimilarityOrdering HealthWorld := by
@@ -174,34 +173,26 @@ def trivialSim : Core.Order.SimilarityOrdering HealthWorld := by
 
 /-- Recovered worlds are preferred to non-recovered ones, at every evaluation world. -/
 def prefRecovered : HealthWorld → HealthWorld → HealthWorld → Prop :=
-  λ _ x y => recovered x ∧ ¬ recovered y
+  λ _ x y => x ∈ recovered ∧ y ∉ recovered
 
-instance : ∀ w x y, Decidable (prefRecovered w x y) :=
-  λ _ x y => by unfold prefRecovered; infer_instance
+instance (w : HealthWorld) : DecidableRel (prefRecovered w) :=
+  λ x y => inferInstanceAs (Decidable (x ∈ recovered ∧ y ∉ recovered))
 
-def heimParams : HeimDesireParams HealthWorld where
-  sim := trivialSim
-  pref := prefRecovered
-  prefDec := inferInstance
+instance (w : HealthWorld) : Std.Antisymm (prefRecovered w) :=
+  ⟨λ _ _ ⟨_, hny⟩ ⟨hy, _⟩ => absurd hy hny⟩
 
-instance : DecidablePred (Set.univ : Set HealthWorld) := λ _ => isTrue trivial
+abbrev heimFrame : Frame HealthWorld := ⟨trivialSim, prefRecovered⟩
 
-/-- The (40) amendment: `WantHeim recovered` is defined when both recovered and non-recovered
+/-- The (40) amendment: `want recovered` is defined when both recovered and non-recovered
 worlds are believed possible. -/
-theorem wantHeimDefined_recovered : WantHeimDefined Set.univ recovered :=
+theorem defined_recovered : Defined Set.univ recovered :=
   ⟨⟨.w0, trivial, trivial⟩, ⟨.w2, trivial, id⟩⟩
-
-theorem prefRecovered_asymm (w : HealthWorld) :
-    ∀ x y, prefRecovered w x y → prefRecovered w y x → x = y :=
-  λ _ _ ⟨_, hny⟩ ⟨hy, _⟩ => absurd hy hny
 
 /-- Under (40) and an asymmetric preference, `want recovered` and `want ¬recovered` cannot both
 hold. (Heim's own worry about (40)'s restrictiveness, at (41)–(42), concerns wanting what one is
 convinced of; her remedy (43) replaces `Dox_a` by a superset `F_a`.) -/
-theorem not_wantHeim_recovered_and_not_recovered :
-    ¬ (WantHeim Set.univ heimParams .w0 recovered ∧
-       WantHeim Set.univ heimParams .w0 (¬ recovered ·)) :=
-  wantHeim_no_conflict Set.univ heimParams .w0 recovered (prefRecovered_asymm .w0)
-    wantHeimDefined_recovered
+theorem not_want_recovered_compl (h : Want heimFrame Set.univ .w0 recovered) :
+    ¬ Want heimFrame Set.univ .w0 recoveredᶜ :=
+  h.not_compl defined_recovered
 
 end Heim1992

@@ -1502,7 +1502,11 @@ import Linglib.Semantics.Aspect.SubeventStructure
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Semantics.Attitudes.Anchor
 import Linglib.Semantics.Attitudes.Confidence
-import Linglib.Semantics.Attitudes.Desire
+import Linglib.Semantics.Attitudes.Desire.BestWorlds
+import Linglib.Semantics.Attitudes.Desire.Conditional
+import Linglib.Semantics.Attitudes.Desire.ExpectedValue
+import Linglib.Semantics.Attitudes.Desire.Preferential
+import Linglib.Semantics.Attitudes.Desire.QuestionBased
 import Linglib.Semantics.Attitudes.Distributivity
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.EpistemicThreshold

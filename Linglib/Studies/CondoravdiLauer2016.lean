@@ -1,4 +1,4 @@
-import Linglib.Semantics.Attitudes.Desire
+import Linglib.Semantics.Attitudes.Desire.Preferential
 import Linglib.Semantics.Conditionals.Restrictor
 import Linglib.Data.Examples.Schema
 import Mathlib.Tactic.FinCases
@@ -10,7 +10,7 @@ import Linglib.Data.Examples.CondoravdiLauer2016
 C&L's central claim: anankastics (eq. 1, the Harlem sentence) need no
 special compositional treatment, provided (i) `want` is given the
 effective-preference reading from § 5 (substrate at
-`Semantics/Attitudes/Desire.lean`, `WantExactMatch`) and (ii) the
+`Semantics/Attitudes/Desire/Preferential.lean`, `Preferential.Want`) and (ii) the
 conditional has the double-modal `NEC[ψ][MODAL[φ]]` LF from § 6. The
 Hoboken problem (§ 2.3, § 7.1.1) is then solved by *consistency-driven
 vacuous truth*: a hypothetical effective preference for Harlem is
@@ -45,7 +45,7 @@ paper-specific; tracked in
 
 ## Cross-references
 
-* `Semantics/Attitudes/Desire.lean` — `WantExactMatch`;
+* `Semantics/Attitudes/Desire/Preferential.lean` — `Preferential.Want`;
   `Semantics/Attitudes/Preference.lean` —
   `maxElts_pair_belief_compatible` (the load-bearing lemma).
 * `Studies/vonFintelIatridou2005.lean` — vF&I's
@@ -85,7 +85,7 @@ def doubleModalLF {W : Type u} (fOuter : ModalBase W) (gOuter : OrderingSource W
 
 /-- [condoravdi-lauer-2016] eq. (88) at the operator level: the
 Harlem-sentence LF parameterised over its four contextual backgrounds.
-`NEC_{fBelS, gNorm}[WantExactMatch(Ad, Harlem)] [MUST_{fHist, gInner}[ATrain]]`.
+`NEC_{fBelS, gNorm}[Preferential.Want(Ad, Harlem)] [MUST_{fHist, gInner}[ATrain]]`.
 
 The four contextual parameters:
 * `fBelS` — modal base of NEC, "speaker's true beliefs" (paper p. 41).
@@ -105,7 +105,7 @@ def harlemLF {Agent W : Type u}
     (fHist : ModalBase W) (gInner : OrderingSource W)
     (Ad : Agent) (Harlem ATrain : Set W) (w : W) : Prop :=
   doubleModalLF fBelS gNorm
-    (fun w' => WantExactMatch P Ad Harlem w')
+    (fun w' => Preferential.Want P Ad Harlem w')
     (fun w' => necessity fHist gInner (· ∈ ATrain) w')
     w
 
@@ -190,7 +190,7 @@ theorem prefBg_consistent (u : Unit) (w : World) :
 
 /-- At `wActual = w₀`: Ad effectively prefers Hoboken. -/
 theorem hoboken_wanted_at_wActual :
-    WantExactMatch prefBg () Hoboken wActual := by
+    Preferential.Want prefBg () Hoboken wActual := by
   show Hoboken ∈ (prefBg () wActual).maxElts
   simp only [prefBg, wActual, if_pos]
   exact singletonPS_mem_maxElts Hoboken
@@ -200,7 +200,7 @@ maximal preferences of a consistent structure must meet inside the
 belief state (`maxElts_pair_belief_compatible`), but
 Hoboken ∩ Harlem = ∅. -/
 theorem harlem_not_wanted_at_wActual :
-    ¬ WantExactMatch prefBg () Harlem wActual := by
+    ¬ Preferential.Want prefBg () Harlem wActual := by
   intro hHarlem
   have h := (prefBg () wActual).maxElts_pair_belief_compatible
     (prefBg_consistent () wActual) hoboken_wanted_at_wActual hHarlem
@@ -236,7 +236,7 @@ conflicting-goals problem § 2.3 raised against Sæbø 2001.
 
 Mechanism: the NEC's modal base is `fBelS = [(· = wActual)]`, so
 `accessibleWorlds fBelS wActual = {wActual}`. Restricting by the
-antecedent `WantExactMatch prefBg Ad Harlem` removes `wActual` from the
+antecedent `Preferential.Want prefBg Ad Harlem` removes `wActual` from the
 accessible set (by `harlem_not_wanted_at_wActual`, derived from the
 consistency of the background and `Harlem ∩ Hoboken = ∅`), leaving the
 empty set. The NEC quantifies over `bestWorlds` of that empty set,
@@ -252,7 +252,7 @@ theorem harlem_true_in_hoboken_scenario :
   intro w' hw'
   exfalso
   have hAcc : w' ∈ accessibleWorlds (restrictedBase fBelS
-      (fun w'' => WantExactMatch prefBg () Harlem w'')) wActual := hw'.1
+      (fun w'' => Preferential.Want prefBg () Harlem w'')) wActual := hw'.1
   rw [restricted_accessible_eq] at hAcc
   obtain ⟨hAccBase, hAntec⟩ := hAcc
   have hEq : w' = wActual := by

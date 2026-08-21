@@ -1,5 +1,6 @@
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Dynamic.Partial
+import Linglib.Studies.Karttunen1973
 
 /-!
 # Heim (1983): Projection and Partial Context Change
@@ -16,6 +17,9 @@ and the filtering predictions derived from partial context change potentials.
 - `conditional_admitted_everywhere` / `bare_consequent_not_admitted`:
   conditional filtering derived from `CCP.Partial` admittance rather than
   stipulated.
+- `admits_seq_iff_conj`: [karttunen-1973]'s conjunction filter, relativized to
+  the context as its set of background assumptions, is admittance of the
+  sequenced update.
 -/
 
 
@@ -139,5 +143,20 @@ theorem bare_consequent_not_admitted :
     ¬ (CCP.Partial.ofPartialProp kingBald).admits Set.univ := by
   intro h
   exact h (Set.mem_univ .noKing)
+
+open DynamicSemantics CCP.Partial in
+/-- [karttunen-1973]'s filter for conjunction, relativized to the context itself as the set of
+background assumptions (his §9), is admittance of the sequenced update. -/
+theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : PartialProp W) :
+    (seq (ofPartialProp p) (ofPartialProp q)).admits c ↔
+      ∀ w ∈ c, (Karttunen1973.conj c p q).presup w := by
+  rw [admits_seq_ofPartialProp]
+  constructor
+  · intro h w hw
+    exact ⟨(h w hw).1, fun hne => absurd (fun v hv ha => (h v hv).2 ha) hne⟩
+  · intro h w hw
+    refine ⟨(h w hw).1, fun ha => ?_⟩
+    by_contra hq
+    exact hq ((h w hw).2 fun he => hq (he w hw ha))
 
 end Heim1983

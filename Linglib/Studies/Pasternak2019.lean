@@ -70,9 +70,9 @@ do not exist. Corrected:
   `Event.Mereology` (which already provides the
   `PartialOrder (Event Time)` instance Pasternak's part-whole relation
   consumes). Not a substrate gap; a refinement.
-- §5 `want`/`wish`/`regret`: `Semantics/Attitudes/Desire.lean`
-  already provides `WantVonFintel` (von Fintel-style) and
-  `worldSatisfactionOrdering`. The Pasternak §5 integration is a
+- §5 `want`/`wish`/`regret`: `Semantics/Attitudes/Desire/BestWorlds.lean`
+  already provides `BestWorlds.Want` (von Fintel-style) and
+  `BestWorlds.le`. The Pasternak §5 integration is a
   composition with the new `MentalStateHomogeneity` discipline, not
   fresh substrate.
 - DOG (eq. 87): `Core.Order.PullbackPreorder.coarsen_via_monotone`
@@ -434,8 +434,8 @@ follow-up. Out of scope here because it is not load-bearing for §1–§6.
 Pasternak §5 integrates Hintikkan world-quantification into the two-
 dimensional ontology via point-states (eq. 67), `WANT_vF` (eq. 73,
 [von-fintel-1999]), `WANT_H` (eq. 91, [heim-1992]), and DOG.
-The substrate has `Attitudes.Desire.WantVonFintel` and
-`Attitudes.Desire.WorldAtLeastAsGood` already; the Pasternak §5
+The substrate has `Desire.BestWorlds.Want` and
+`Desire.BestWorlds.le` already; the Pasternak §5
 integration is a composition with `MentalStateHomogeneity`, not new
 substrate. A follow-on `Pasternak2019Attitudes.lean` (or extension of
 this file) is the natural next paper-level deepening, alongside
@@ -444,8 +444,8 @@ linglib bib yet.
 
 The chronologically-later [phillips-brown-2025] formalization
 (`Studies/PhillipsBrown2025.lean`) builds on the same
-`Attitudes.Desire` substrate, generalizing `WantVonFintel` to question-based
-`WantQuestionBased`. That study file's §11 makes the disagreement with
+`Attitudes/Desire/` substrate, generalizing `BestWorlds.Want` to question-based
+`QuestionBased.Want`. That study file's §11 makes the disagreement with
 [condoravdi-lauer-2016] explicit; the analogous Pasternak vs
 question-based contrast (intensity-based vs question-based resolution
 of conflicting desires) is left as future work.
@@ -454,7 +454,7 @@ The chronologically-later [lassiter-2017] formalization
 (`Studies/Lassiter2017.lean`) sits structurally
 adjacent to Pasternak: both are gradable-`want` accounts (Pasternak
 intensity, Lassiter expected value) using ℚ-valued degree functions.
-The substrate overlap is `Attitudes.Desire.Lassiter.expectedValue` vs
+The substrate overlap is `Desire.ExpectedValue.expectedValue` vs
 Pasternak's mereological `intensityComparative`; both are
 `Set.entails`-style `μ(p) > μ(q)` predicates over different scales.
 A `pasternak_lassiter_intensity_vs_EV` bridge theorem comparing

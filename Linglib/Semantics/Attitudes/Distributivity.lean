@@ -21,7 +21,7 @@ instantiate the world-sensitive form (`Studies/UegakiSudo2019.lean`).
 
 Questions are alternative lists over `Finset W` propositions,
 matching the question representation of
-`Semantics/Attitudes/Desire.lean`.
+`Semantics/Attitudes/Desire/`.
 -/
 
 namespace Distributivity

@@ -3,7 +3,7 @@ import Linglib.Logic.Trivalent.Prop3
 import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Semantics.Dynamic.Partial
 import Linglib.Studies.Geurts2005
-import Linglib.Studies.Karttunen1973
+import Linglib.Semantics.Presupposition.Basic
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -841,15 +841,13 @@ theorem ex18_unprincipled_in_right_presup_failure :
   ⟨id, ex18_orFlex_no_projection_via_vacuous_left, ex18_left_presup_vacuous⟩
 
 /-- [karttunen-1973]'s asymmetric rule (24b) — formalised in
-`Studies/Karttunen1973.lean` as
 `PartialProp.disjFilterLeft` — gives a *principled* derivation: `¬(¬solved) =
-solved` entails the factive presupposition, so it is filtered. We invoke
-the K1973 sibling theorem
-`Karttunen1973.disjFilterLeft_eliminates_presup_when_neg_entails`. -/
+solved` entails the factive presupposition, so it is filtered
+(`PartialProp.disjFilterLeft_eliminates_presup_when_neg_entails`). -/
 theorem ex18_asymmetric_K1973_principled :
     (PartialProp.disjFilterLeft (fun w => ¬solved w) maryRealized).presup
       = fun _ => True := by
-  apply Karttunen1973.disjFilterLeft_eliminates_presup_when_neg_entails
+  apply PartialProp.disjFilterLeft_eliminates_presup_when_neg_entails
   intro w hw
   -- hw : ¬¬solved w, so solved w.
   exact (Classical.not_not.mp hw : maryRealized.presup w)

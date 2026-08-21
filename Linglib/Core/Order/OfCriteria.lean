@@ -17,8 +17,7 @@ One construction, several instantiations across the library:
   worlds ordered by an ordering source.
 - `Core.Order.NormalityOrder.fromProps` — the same order repackaged as a
   `NormalityOrder` for the default-reasoning infrastructure.
-- `Desire.WorldAtLeastAsGood` — worlds ordered by
-  desires (via `atLeastAsGoodAs`).
+- `Desire.BestWorlds.le` — worlds ordered by desires (via `atLeastAsGoodAs`).
 - `Core.Order.SatisfactionOrdering.ofCriteria` — the bundled
   `Bool`-valued/`List`-criteria specialization with decidable `≤`
   (`SatisfactionOrdering.le_iff_ofCriteria`).
