@@ -4,8 +4,8 @@ import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
 # Vocabulary items and allosemes
 
 The rule types of Distributed Morphology's two interpretive lists:
-`VocabItem` pairs a phonological exponent with the context that
-licenses it (List 2), and `Allosemy.AllosemicEntry` pairs a meaning with
+`VocabularyItem` pairs a feature specification with the exponent that
+spells it out (List 2), and `Allosemy.AllosemicEntry` pairs a meaning with
 the conditioning `Allosemy.SyntacticContext` (List 3). The shared
 selection-engine instances live in `DistributedMorphology/Basic.lean`.
 
@@ -18,38 +18,14 @@ selection-engine instances live in `DistributedMorphology/Basic.lean`.
 
 namespace DistributedMorphology
 
-/-- A Vocabulary Item: a rule mapping morphosyntactic context to a
-    phonological exponent.
-
-    - `Ctx`: the type of morphosyntactic contexts (e.g., feature bundles)
-    - `Root`: the type of root identifiers (for root-specific rules)
-
-    The `specificity` field encodes the Elsewhere Condition: when
-    multiple rules match, the highest-specificity rule wins. In
-    practice, specificity equals the number of features the context
-    checks — a rule conditioned on [ACC, +animate] (specificity 2) beats
-    a default rule with no feature requirements (specificity 0). -/
-structure VocabItem (Ctx Root : Type*) where
-  /-- The phonological exponent inserted at the terminal. -/
-  exponent : String
-  /-- Context check: does the terminal's feature bundle match? -/
-  contextMatch : Ctx → Bool
-  /-- Root restriction: which roots this rule applies to.
-      `none` means the rule is unrestricted (default/elsewhere). -/
-  rootMatch : Option (Root → Bool) := none
-  /-- Specificity for Elsewhere Condition resolution. Higher = more
-      specific. When two rules both match, the higher-specificity
-      rule wins. -/
-  specificity : Nat := 0
-
-/-- Does a Vocabulary Item match at a given terminal node?
-    Checks both the morphosyntactic context and the root restriction. -/
-def VocabItem.matches {Ctx Root : Type*}
-    (vi : VocabItem Ctx Root) (ctx : Ctx) (root : Root) : Bool :=
-  vi.contextMatch ctx &&
-  match vi.rootMatch with
-  | none => true
-  | some f => f root
+/-- A Vocabulary Item: a feature specification paired with an exponent,
+applicable at any bundle containing every specified feature. -/
+structure VocabularyItem (F E : Type*) where
+  /-- The features the item spells out. -/
+  features : List F
+  /-- The exponent the item inserts. -/
+  exponent : E
+  deriving DecidableEq, Repr
 
 namespace Allosemy
 

@@ -1,7 +1,7 @@
 import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Syntax.Tree.Cat
 import Linglib.Fragments.Swahili.Relativization
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.FeatureBundle
 import Linglib.Syntax.Minimalist.Features
 
 /-!
@@ -47,7 +47,7 @@ categories (D, Num, n, Pers).
 
 ## Vocabulary Insertion (FeatureBundle-Based)
 
-Uses `Minimalist.FeatureBundle` and `DistributedMorphology.vocabularyInsertSimple`
+Uses `Minimalist.FeatureBundle` and `Minimalist.spellout`
 from the DM theory module. The Elsewhere Condition is structural: person-
 specified rules (specificity 3) beat personless defaults (specificity 2).
 Chain reduction removes person features from the bundle, so only the
@@ -235,12 +235,6 @@ def hasPerson (fb : FeatureBundle) : Bool :=
     | .valued (.phi (.person _)) => true
     | _ => false
 
-/-- Helper: extract the person level if present. -/
-def getPerson (fb : FeatureBundle) : Option Person :=
-  (Minimalist.FeatureBundle.toGramFeatures fb).findSome? fun f => match f with
-    | .valued (.phi (.person p)) => some p
-    | _ => none
-
 /-- Helper: is the number singular? -/
 def isSg (fb : FeatureBundle) : Bool :=
   (Minimalist.FeatureBundle.toGramFeatures fb).any fun f => match f with
@@ -253,42 +247,26 @@ def isAnim (fb : FeatureBundle) : Bool :=
     | .valued (.phi (.gender 1)) => true
     | _ => false
 
-/-- Swahili resumptive VI rules using the DM `VocabItem` type.
-    [scott-2021]. Person-specified rules have specificity 3
-    (checking 3 features); personless defaults have specificity 2.
-    The Elsewhere Condition in `vocabularyInsertSimple` picks the most
-    specific matching rule. -/
-def resumptiveVIRules : List (DistributedMorphology.VocabItem FeatureBundle Unit) :=
-  [ -- [PERS: 1, GEN: ANIM, NUM: SG] ↔ -mi
-    { exponent := "-mi"
-    , contextMatch := fun fb => getPerson fb == some .first && isAnim fb && isSg fb
-    , specificity := 3 }
-  , -- [PERS: 1, GEN: ANIM, NUM: PL] ↔ -si
-    { exponent := "-si"
-    , contextMatch := fun fb => getPerson fb == some .first && isAnim fb && !isSg fb
-    , specificity := 3 }
-  , -- [PERS: 2, GEN: ANIM, NUM: SG] ↔ -we
-    { exponent := "-we"
-    , contextMatch := fun fb => getPerson fb == some .second && isAnim fb && isSg fb
-    , specificity := 3 }
-  , -- [PERS: 2, GEN: ANIM, NUM: PL] ↔ -nyi
-    { exponent := "-nyi"
-    , contextMatch := fun fb => getPerson fb == some .second && isAnim fb && !isSg fb
-    , specificity := 3 }
-  , -- [GEN: ANIM, NUM: SG] ↔ -ye (default animate sg)
-    { exponent := "-ye"
-    , contextMatch := fun fb => isAnim fb && isSg fb
-    , specificity := 2 }
-  , -- [GEN: ANIM, NUM: PL] ↔ -o (default animate pl)
-    { exponent := "-o"
-    , contextMatch := fun fb => isAnim fb && !isSg fb
-    , specificity := 2 }
-  ]
+/-- Swahili resumptive Vocabulary Items ([scott-2021]): person-specified
+entries and personless animate defaults, competing by the Subset Principle. -/
+def resumptiveVocab : Minimalist.Vocabulary :=
+  let entry (fs : List Minimalist.GramFeature) (e : String) : Minimalist.VocabEntry :=
+    { features := Minimalist.FeatureBundle.ofGramFeatures fs, exponent := e }
+  [ entry [.valued (.phi (.person .first)), .valued (.phi (.gender 1)),
+      .valued (.phi (.number .singular))] "-mi",
+    entry [.valued (.phi (.person .first)), .valued (.phi (.gender 1)),
+      .valued (.phi (.number .plural))] "-si",
+    entry [.valued (.phi (.person .second)), .valued (.phi (.gender 1)),
+      .valued (.phi (.number .singular))] "-we",
+    entry [.valued (.phi (.person .second)), .valued (.phi (.gender 1)),
+      .valued (.phi (.number .plural))] "-nyi",
+    entry [.valued (.phi (.gender 1)), .valued (.phi (.number .singular))] "-ye",
+    entry [.valued (.phi (.gender 1)), .valued (.phi (.number .plural))] "-o" ]
 
-/-- Insert the correct resumptive exponent for a feature bundle
-    using the DM Elsewhere Condition. -/
+/-- Insert the resumptive exponent for a feature bundle by the Subset
+Principle, defaulting to *-ye*. -/
 def insertResumptive (fb : FeatureBundle) : String :=
-  (DistributedMorphology.vocabularyInsertSimple resumptiveVIRules fb).getD "-ye"
+  (Minimalist.spellout resumptiveVocab fb none).getD "-ye"
 
 -- ============================================================================
 -- § 6: Chain Reduction Pipeline

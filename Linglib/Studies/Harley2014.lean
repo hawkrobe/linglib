@@ -35,8 +35,8 @@ indices are distinct roots — which is exactly what lets `√tenne` block
 ## This file
 
 * `vocabulary` — the Hiaki suppletive List-2 entries ([harley-2014] (3),
-  (26), (27)), keyed by `RootIndex`, resolved by the shared DM engine
-  `DistributedMorphology.vocabularyInsert`.
+  (26), (27)), keyed by `RootIndex`, resolved by the Subset Principle
+  (`DistributedMorphology.subsetPrinciple`).
 * Selection theorems — the engine picks the attested form per context.
 * `suppletion_ignores_ergative` — the §3.3 ergative-absolutive
   generalization: suppletion tracks the **internal (absolutive)**
@@ -112,63 +112,69 @@ structure Ctx where
 
 /-! ### List 2: the suppletive Vocabulary Items
 
-Each root index has a singular-conditioned entry (specificity 1) and an
-Elsewhere entry (specificity 0); the DM engine's Elsewhere resolution
-(`vocabularyInsert`) selects the more specific matching rule. -/
+Each root index has a singular-conditioned item and an Elsewhere item; the
+Subset Principle selects the more specific applicable one. -/
 
-/-- A singular-conditioned suppletive entry for `idx`. -/
-private def sgEntry (form : String) (idx : RootIndex) : VocabItem Ctx RootIndex where
-  exponent := form
-  contextMatch := fun c => decide (c.absNumber = Number.sg)
-  rootMatch := some (· == idx)
-  specificity := 1
+/-- Features at a suppletive root's insertion site: the root's index and the
+number of its absolutive argument. -/
+inductive SiteFeature where
+  | root (idx : RootIndex)
+  | abs (n : Number)
+  deriving DecidableEq, Repr
 
-/-- An Elsewhere suppletive entry for `idx` (matches any context). -/
-private def elseEntry (form : String) (idx : RootIndex) : VocabItem Ctx RootIndex where
-  exponent := form
-  contextMatch := fun _ => true
-  rootMatch := some (· == idx)
-  specificity := 0
+/-- The insertion bundle for root `idx` in context `c` — the ergative
+argument's number is not part of it (§3.3). -/
+def siteFeatures (c : Ctx) (idx : RootIndex) : List SiteFeature :=
+  [.root idx, .abs c.absNumber]
+
+/-- A singular-conditioned suppletive item for `idx`. -/
+private def sgEntry (form : String) (idx : RootIndex) : VocabularyItem SiteFeature String :=
+  ⟨[.root idx, .abs .sg], form⟩
+
+/-- An Elsewhere suppletive item for `idx`. -/
+private def elseEntry (form : String) (idx : RootIndex) : VocabularyItem SiteFeature String :=
+  ⟨[.root idx], form⟩
 
 /-- The Hiaki suppletive vocabulary ([harley-2014] (3), (26), (27)): three
 suppletive roots, each an sg-conditioned form competing with an Elsewhere
 form, all keyed by `RootIndex`. -/
-def vocabulary : List (VocabItem Ctx RootIndex) :=
+def vocabulary : List (VocabularyItem SiteFeature String) :=
   [ sgEntry "vuite" runRoot,  elseEntry "tenne" runRoot,
     sgEntry "weye"  walkRoot, elseEntry "kaate" walkRoot,
     sgEntry "mea"   killRoot, elseEntry "sua"   killRoot ]
 
-instance : DecidableRel
-    (Morphology.Exponence.Applies : VocabItem Ctx RootIndex → Ctx × RootIndex → Prop) :=
-  fun vi c => inferInstanceAs (Decidable (vi.matches c.1 c.2 = true))
+/-- Spell out root `idx` in context `c` by the Subset Principle over
+`vocabulary`. -/
+def spellout (c : Ctx) (idx : RootIndex) : Option String :=
+  subsetPrinciple vocabulary (siteFeatures c idx)
 
 /-! ### Selection: the engine picks the attested form -/
 
 /-- Singular subject → `vuite` ([harley-2014] (1a)). -/
-theorem run_sg : vocabularyInsert vocabulary ⟨.sg, none⟩ runRoot = some "vuite" := by decide
+theorem run_sg : spellout ⟨.sg, none⟩ runRoot = some "vuite" := by decide
 
 /-- Plural subject → `tenne` ([harley-2014] (1b)). -/
-theorem run_pl : vocabularyInsert vocabulary ⟨.pl, none⟩ runRoot = some "tenne" := by decide
+theorem run_pl : spellout ⟨.pl, none⟩ runRoot = some "tenne" := by decide
 
 /-- Number-unspecified (impersonal passive) → `tenne`, the true Elsewhere
 form ([harley-2014] fn. 16): the diagnostic that `tenne`, not `vuite`, is
 Elsewhere. -/
 theorem run_impersonal :
-    vocabularyInsert vocabulary ⟨.unspecified, none⟩ runRoot = some "tenne" := by decide
+    spellout ⟨.unspecified, none⟩ runRoot = some "tenne" := by decide
 
 /-- Singular subject → `weye` ([harley-2014] (26a)). -/
-theorem walk_sg : vocabularyInsert vocabulary ⟨.sg, none⟩ walkRoot = some "weye" := by decide
+theorem walk_sg : spellout ⟨.sg, none⟩ walkRoot = some "weye" := by decide
 
 /-- Plural subject → `kaate` ([harley-2014] (26b)). -/
-theorem walk_pl : vocabularyInsert vocabulary ⟨.pl, none⟩ walkRoot = some "kaate" := by decide
+theorem walk_pl : spellout ⟨.pl, none⟩ walkRoot = some "kaate" := by decide
 
 /-- Singular object → `mea`, regardless of the (plural) subject
 ([harley-2014] (27a)). -/
-theorem kill_sgObj : vocabularyInsert vocabulary ⟨.sg, some .pl⟩ killRoot = some "mea" := by decide
+theorem kill_sgObj : spellout ⟨.sg, some .pl⟩ killRoot = some "mea" := by decide
 
 /-- Plural object → `sua`, regardless of the (singular) subject
 ([harley-2014] (27b)). -/
-theorem kill_plObj : vocabularyInsert vocabulary ⟨.pl, some .sg⟩ killRoot = some "sua" := by decide
+theorem kill_plObj : spellout ⟨.pl, some .sg⟩ killRoot = some "sua" := by decide
 
 /-! ### §3.3 The ergative-absolutive conditioning generalization -/
 
@@ -178,7 +184,7 @@ the external (ergative) argument's number is never consulted. This is the
 ergative-absolutive distribution of suppletive agreement — the challenge to
 [bobaljik-2008]'s marked-case generalization the paper raises. -/
 theorem suppletion_ignores_ergative (n : Number) (e e' : Option Number) (i : RootIndex) :
-    vocabularyInsert vocabulary ⟨n, e⟩ i = vocabularyInsert vocabulary ⟨n, e'⟩ i := rfl
+    spellout ⟨n, e⟩ i = spellout ⟨n, e'⟩ i := rfl
 
 /-! ### §2.1 Individuation is not phonological -/
 
@@ -187,8 +193,8 @@ phonologically unrelated exponents (`vuite` vs `tenne`). Any identification
 of the root by its phonological form would split it in two, making
 suppletion incoherent ([harley-2014] §2.2, contra Borer 2009). -/
 theorem run_index_two_forms :
-    vocabularyInsert vocabulary ⟨.sg, none⟩ runRoot ≠
-      vocabularyInsert vocabulary ⟨.pl, none⟩ runRoot := by decide
+    spellout ⟨.sg, none⟩ runRoot ≠
+      spellout ⟨.pl, none⟩ runRoot := by decide
 
 /-- **The suppletive rule is index-local** ([harley-2014] §2.1, Marantz's
 thought experiment): `tenne` competes only at `√322`, so it does not block
@@ -196,7 +202,7 @@ insertion at a different intransitive root — a non-suppletive `√500`
 (*bwiika* 'sing') gets no exponent from this vocabulary. This is why List-1
 roots must be individuated (as indices) before spell-out. -/
 theorem suppletive_rule_index_local (n : Number) :
-    vocabularyInsert vocabulary ⟨n, none⟩ singRoot = none := by
+    spellout ⟨n, none⟩ singRoot = none := by
   cases n <;> decide
 
 /-! ### §2.3 Individuation is not semantic: the cran-morph on the LF side
@@ -241,15 +247,15 @@ empty `interp` fiber outside the cran-morph's frame, via
 `Allosemy.toInterpreted`). The vocabulary of §2.1 is the List-2 map,
 `cahootLF` the List-3 map.
 
-The form side is `VocabItem.toRealization vocabulary` — the shared
-Exponence engine (`Exponence.realize`, argmax) as a `Realization`, whose
-fibers compute, so the same theorem lands on the same data. -/
+The form side wraps `spellout` — the shared Exponence engine
+(`Exponence.realize`, argmax) — as a `Realization`, whose fibers compute, so
+the same theorem lands on the same data. -/
 
 /-- The Hiaki suppletive vocabulary as a `Realization`: index `→` its
 Elsewhere-selected exponent as a singleton fiber, `∅` at an unlicensed
 index — the univalent stratum ([marantz-1997]'s List 2). -/
 def realization : Morphology.Realization RootIndex Ctx String :=
-  VocabItem.toRealization vocabulary
+  ⟨fun r c => (spellout c r).elim ∅ ({·})⟩
 
 /-- **Phonological individuation fails, on the carrier** ([harley-2014]
 §2.1–2.2): the Hiaki √322 realizes two nonempty, distinct fibers
@@ -258,13 +264,11 @@ the exact √GO case the predicate names. A root identified by its form would
 split here. -/
 theorem run_isProperlySuppletive : realization.IsProperlySuppletive runRoot := by
   have hsg : realization.realize runRoot ⟨.sg, none⟩ = {"vuite"} := by
-    show (match vocabularyInsert vocabulary ⟨.sg, none⟩ runRoot with
-      | some f => ({f} : Finset String) | none => ∅) = _
-    rw [run_sg]
+    show (spellout ⟨.sg, none⟩ runRoot).elim ∅ ({·}) = _
+    simp [run_sg]
   have hpl : realization.realize runRoot ⟨.pl, none⟩ = {"tenne"} := by
-    show (match vocabularyInsert vocabulary ⟨.pl, none⟩ runRoot with
-      | some f => ({f} : Finset String) | none => ∅) = _
-    rw [run_pl]
+    show (spellout ⟨.pl, none⟩ runRoot).elim ∅ ({·}) = _
+    simp [run_pl]
   refine ⟨⟨.sg, none⟩, ⟨.pl, none⟩, hsg ▸ Finset.singleton_nonempty _,
     hpl ▸ Finset.singleton_nonempty _, ?_⟩
   rw [hsg, hpl, ne_eq, Finset.singleton_inj]; decide

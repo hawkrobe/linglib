@@ -153,85 +153,60 @@ def weakParadigm : TeluguCase → WeakStemForm
 -- § 2: Strong Alternation — VI Rules and Elsewhere Condition
 -- ============================================================================
 
-/-- Morphosyntactic context for VI at the *n* head in Telugu.
-    Carries the root class and the Telugu case directly; nonnominativity
-    is derived from `case.IsNonnom` rather than stored as a Bool — so
-    the McFadden 2018 / Caha 2009 containment substrate is the source of
-    truth at every VI use site. -/
-structure NContext where
-  rootClass : StrongClass
-  case : TeluguCase
+/-- Features at the Telugu *n* head: the root class, and nonnominativity —
+derived from `case.IsNonnom` rather than stored, so the McFadden 2018 /
+Caha 2009 containment substrate is the source of truth at every VI use
+site. -/
+inductive NFeature where
+  | rootClass (c : StrongClass)
+  | nonnom
   deriving DecidableEq, Repr
 
-/-- VI rule for NOM *n* of the -lu∼-ṭi class.
-    No nonnominative requirement → this is the elsewhere/default rule. -/
-def viLuNom : VocabItem NContext Unit :=
-  { exponent := "lu"
-  , contextMatch := λ ctx => ctx.rootClass == .luTi
-  , specificity := 1 }
+/-- The *n* head's bundle for a root class in a case. -/
+def nFeatures (rc : StrongClass) (c : TeluguCase) : List NFeature :=
+  .rootClass rc :: if c.IsNonnom then [.nonnom] else []
 
-/-- VI rule for oblique *n* of the -lu∼-ṭi class.
-    Requires `case.IsNonnom` → more specific, wins over `viLuNom` in non-NOM. -/
-def viLuObl : VocabItem NContext Unit :=
-  { exponent := "ṭi"
-  , contextMatch := λ ctx => ctx.rootClass == .luTi && decide ctx.case.IsNonnom
-  , specificity := 2 }
-
-/-- VI rule for NOM *n* of the -u∼-i class. -/
-def viUNom : VocabItem NContext Unit :=
-  { exponent := "u"
-  , contextMatch := λ ctx => ctx.rootClass == .uI
-  , specificity := 1 }
-
-/-- VI rule for oblique *n* of the -u∼-i class. -/
-def viUObl : VocabItem NContext Unit :=
-  { exponent := "i"
-  , contextMatch := λ ctx => ctx.rootClass == .uI && decide ctx.case.IsNonnom
-  , specificity := 2 }
-
-/-- All VI rules for strong noun *n*-exponents. -/
-def strongVIRules : List (VocabItem NContext Unit) :=
-  [viLuNom, viLuObl, viUNom, viUObl]
-
-/-- Build the morphosyntactic context for VI from Telugu case + root class. -/
-def mkNContext (rc : StrongClass) (c : TeluguCase) : NContext :=
-  ⟨rc, c⟩
+/-- Strong-noun *n* items: per class, the NOM form as the class default and
+the oblique form on the nonnominative bundle ([aitha-2026]). -/
+def strongVIRules : List (VocabularyItem NFeature String) :=
+  [⟨[.rootClass .luTi], "lu"⟩, ⟨[.rootClass .luTi, .nonnom], "ṭi"⟩,
+   ⟨[.rootClass .uI], "u"⟩, ⟨[.rootClass .uI, .nonnom], "i"⟩]
 
 -- Elsewhere Condition: oblique rules override default in non-NOM contexts
 
 theorem vi_luTi_nom :
-    vocabularyInsertSimple strongVIRules (mkNContext .luTi .nom)
+    subsetPrinciple strongVIRules (nFeatures .luTi .nom)
       = some "lu" := by decide
 
 theorem vi_luTi_acc :
-    vocabularyInsertSimple strongVIRules (mkNContext .luTi .acc)
+    subsetPrinciple strongVIRules (nFeatures .luTi .acc)
       = some "ṭi" := by decide
 
 theorem vi_luTi_gen :
-    vocabularyInsertSimple strongVIRules (mkNContext .luTi .gen)
+    subsetPrinciple strongVIRules (nFeatures .luTi .gen)
       = some "ṭi" := by decide
 
 theorem vi_luTi_dat :
-    vocabularyInsertSimple strongVIRules (mkNContext .luTi .dat)
+    subsetPrinciple strongVIRules (nFeatures .luTi .dat)
       = some "ṭi" := by decide
 
 theorem vi_uI_nom :
-    vocabularyInsertSimple strongVIRules (mkNContext .uI .nom)
+    subsetPrinciple strongVIRules (nFeatures .uI .nom)
       = some "u" := by decide
 
 theorem vi_uI_acc :
-    vocabularyInsertSimple strongVIRules (mkNContext .uI .acc)
+    subsetPrinciple strongVIRules (nFeatures .uI .acc)
       = some "i" := by decide
 
 /-- VI produces the correct strong paradigm for -lu∼-ṭi nouns. -/
 theorem vi_matches_strong_luTi (c : TeluguCase) :
-    vocabularyInsertSimple strongVIRules (mkNContext .luTi c)
+    subsetPrinciple strongVIRules (nFeatures .luTi c)
       = some (strongSurface luTiParadigm c) := by
   cases c <;> decide
 
 /-- VI produces the correct strong paradigm for -u∼-i nouns. -/
 theorem vi_matches_strong_uI (c : TeluguCase) :
-    vocabularyInsertSimple strongVIRules (mkNContext .uI c)
+    subsetPrinciple strongVIRules (nFeatures .uI c)
       = some (strongSurface uIParadigm c) := by
   cases c <;> decide
 

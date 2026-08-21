@@ -19,9 +19,8 @@ Selection and realization are the shared exponence engine
 (`Exponence.selectBy`, `Exponence.realize`), so the Elsewhere Condition
 is inherited, not reproved. Over concrete feature bundles the intensional
 subset order is provably the engine's specificity order
-(`VocabEntry.le_iff`), with no faithfulness stipulation — contrast the
-opaque-predicate engine (`VocabularyInsertion/Basic.lean`), which must
-assume it.
+(`VocabEntry.le_iff`), as for `DistributedMorphology.VocabularyItem.le_iff`,
+with the category restriction as an extra conjunct.
 
 ## Main definitions
 
@@ -139,9 +138,7 @@ theorem VocabEntry.matchesFeatures_self (e : VocabEntry) :
 /-- The engine's specificity order, characterized: `e ≤ e'` iff `e'`'s
 features are included in `e`'s and `e'`'s context restriction is
 compatible. Over feature bundles the intensional inclusion order IS the
-specificity order, with no faithfulness assumption — contrast
-`DistributedMorphology.SpecificityFaithful`, which the
-opaque-predicate engine must stipulate. -/
+specificity order, as in `DistributedMorphology.VocabularyItem.le_iff`. -/
 theorem VocabEntry.le_iff {e e' : VocabEntry} :
     e ≤ e' ↔
       FeatureBundle.toGramFeatures e'.features ⊆
