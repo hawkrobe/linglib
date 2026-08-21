@@ -182,8 +182,8 @@ def Value.concord : Value → Concord
 
 /-- The Spanish gender system over its own carrier: full comparative
     labelling; masculine is the morphosyntactic default (plain-*n* roots
-    surface masculine — [kramer-2015]'s Set-1 derivation, exercised at
-    `Kramer2020.set1_plain_n_masculine`). -/
+    surface masculine — the underspecified determiner of
+    [kramer-2020] (25), at `Kramer2020.determiner_iMasc_eq_plain`). -/
 def system : Gender.System Value where
   label := fun g => match g with
     | .masc => some .masculine
