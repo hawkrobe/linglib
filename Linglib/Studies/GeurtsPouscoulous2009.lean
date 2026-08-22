@@ -70,8 +70,8 @@ The paper uses different statistical tests at different points:
 The canonical *some*/*all* world model `SomeAllWorld` lives in
 `Pragmatics.Implicature.SomeAll`; this file uses it for the
 implicature-spine bridge. The §8 derivation routes through
-`NeoGricean.processAlternative` (Sauerland-style competence
-machinery). The `think` empirical condition is bridged to the
+`NeoGricean.BeliefState.strongImplicature_iff` (Sauerland-style
+competence machinery). The `think` empirical condition is bridged to the
 global/local distinction for attitude-embedded scalars
 (`AttitudeInterpretation`, defined in the bridge section below).
 
@@ -825,19 +825,13 @@ derivation of seemingly-embedded SIs that the §8 argument is built on:
 [spector-2006]. None of [russell-2006], [spector-2006],
 or [geurts-2006] are formalized in linglib yet. -/
 
-/-- The §8 derivation routed through the canonical Sauerland-style
-competence machinery in `NeoGricean`. The paper's claim is
-that *given* the speaker has a determinate negative stance about the
-alternative (here `.disbelief` — speaker believes ¬(Bob-believes-all))
-*and* the competence assumption (33), the strong implicature is
-derived. The spine's `processAlternative true .disbelief` produces the
-strong-derived flag exactly when these conditions hold; this theorem
-exhibits the spine's `outcome_ii_strong` machinery applied to the §8
-think-reading derivation. -/
-theorem competence_explains_think_via_processAlternative :
-    let p := NeoGricean.processAlternative true .disbelief
-    p.weakHolds = true ∧ p.competenceAssumed = true ∧ p.strongDerived = true :=
-  NeoGricean.outcome_ii_strong
+/-- The §8 derivation routed through the Sauerland-style competence
+machinery in `NeoGricean`: from the primary implicature (32) — the
+speaker does not believe the alternative — and the competence
+assumption (33), the strong implicature (34) follows. -/
+theorem competence_explains_think {b : NeoGricean.BeliefState}
+    (h₃₂ : b.WeakImplicature) (h₃₃ : b.Competent) : b.StrongImplicature :=
+  NeoGricean.BeliefState.strongImplicature_iff.2 ⟨h₃₂, h₃₃⟩
 
 /-- The same derivation chain *applied to universal quantifiers*
 (paper §8 (35)–(38)). For "All the customers shot at some of the

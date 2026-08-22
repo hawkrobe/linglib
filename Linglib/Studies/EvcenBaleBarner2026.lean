@@ -108,9 +108,9 @@ def qudProvidesAlternatives (q : QUDType) : Prop := q = .antecedentFocused
 /-- Exhaustification is licensed when the QUD provides alternative
 antecedents and the speaker is competent about them — the paper's ALT
 constraint `ALT(p) ⊆ ANS(QUD) ∩ {q : Kₛ(q) ∨ Kₛ(¬q)}`. Competence is
-`BaleEtAl2025.toBeliefState`'s mapping into `NeoGricean.competent`. -/
+`BaleEtAl2025.toBeliefState`'s mapping into `NeoGricean.BeliefState.Competent`. -/
 def exhaustificationLicensed (k : SpeakerKnowledge) (q : QUDType) : Prop :=
-  qudProvidesAlternatives q ∧ competent (toBeliefState k) = true
+  qudProvidesAlternatives q ∧ (toBeliefState k).Competent
 
 /-- Exhaustification is licensed exactly under an antecedent-focused QUD
 with a fully knowledgeable speaker. -/
@@ -120,7 +120,7 @@ with a fully knowledgeable speaker. -/
       q = .antecedentFocused ∧ k = .fullKnowledge := by
   cases k <;>
     simp [exhaustificationLicensed, qudProvidesAlternatives, toBeliefState,
-      competent]
+      BeliefState.Competent]
 
 /-! ### Licensing predicts the observed rates -/
 

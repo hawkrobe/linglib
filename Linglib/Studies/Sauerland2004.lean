@@ -99,22 +99,16 @@ theorem conj_secondary_licensed : SecondaryLicensed disj orAlts conj := by
 
 /-- **The blocked secondary implicature**: K¬A is inconsistent with the
 commitments. From K(A∨B) and K¬A every possible world satisfies B, so
-KB holds — contradicting the primary implicature ¬KB. The disjuncts
-therefore yield only ignorance inferences, never "not A". -/
-theorem disjunct_secondary_blocked : ¬ SecondaryLicensed disj orAlts propA := by
-  rintro ⟨e, ⟨hφ, hprim⟩, hsec⟩
-  refine hprim propB (by simp [orAlts]) (fun w hw => ?_)
-  have hd := hφ w hw
-  have hna := hsec w hw
-  cases w <;> simp_all [disj, propA, propB]
+KB holds — contradicting the primary implicature ¬KB: by
+`secondaryLicensed_iff`, the single primary ¬KB blocks K¬A because no
+world realizes A∨B, ¬A, and ¬B together. The disjuncts therefore yield
+only ignorance inferences, never "not A". -/
+theorem disjunct_secondary_blocked : ¬ SecondaryLicensed disj orAlts propA := fun h =>
+  absurd ((secondaryLicensed_iff.1 h).2 propB (by simp [orAlts])) (by decide)
 
-/-- By the A↔B symmetry of the model, K¬B is blocked identically. -/
-theorem disjunct_secondary_blocked' : ¬ SecondaryLicensed disj orAlts propB := by
-  rintro ⟨e, ⟨hφ, hprim⟩, hsec⟩
-  refine hprim propA (by simp [orAlts]) (fun w hw => ?_)
-  have hd := hφ w hw
-  have hnb := hsec w hw
-  cases w <;> simp_all [disj, propA, propB]
+/-- By the A↔B symmetry of the model, K¬B is blocked identically, by ¬KA. -/
+theorem disjunct_secondary_blocked' : ¬ SecondaryLicensed disj orAlts propB := fun h =>
+  absurd ((secondaryLicensed_iff.1 h).2 propA (by simp [orAlts])) (by decide)
 
 /-- The strengthened reading of *A or B* the algorithm predicts:
 assertion plus the licensed "not both", realizable at exactly the
