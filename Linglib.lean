@@ -1942,8 +1942,7 @@ import Linglib.Studies.Barker2002
 import Linglib.Studies.BarkerPullum1990
 import Linglib.Studies.BarnettEtAl2022
 import Linglib.Studies.BarwiseCooper1981
-import Linglib.Studies.Beaver2001.ABLE
-import Linglib.Studies.Beaver2001.Basic
+import Linglib.Studies.Beaver2001
 import Linglib.Studies.Beaver2004
 import Linglib.Studies.BeaverCondoravdi2003
 import Linglib.Studies.Beavers2010
