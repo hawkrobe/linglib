@@ -237,20 +237,17 @@ def toBeliefState : SpeakerKnowledge → BeliefState
   | .fullKnowledge    => .disbelief
   | .partialKnowledge => .noOpinion
 
-theorem fk_competent : competent (toBeliefState .fullKnowledge) = true := rfl
-theorem pk_not_competent : competent (toBeliefState .partialKnowledge) = false := rfl
+theorem fk_competent : (toBeliefState .fullKnowledge).Competent := trivial
+theorem pk_not_competent : ¬ (toBeliefState .partialKnowledge).Competent := id
 
-/-- FK speaker: `processAlternative` yields a strong SI. -/
-theorem fk_yields_strong :
-    let p := processAlternative true (toBeliefState .fullKnowledge)
-    p.weakHolds = true ∧ p.competenceAssumed = true ∧ p.strongDerived = true := by
-  decide
+/-- FK speaker: the strong SI is derived. -/
+theorem fk_yields_strong : (toBeliefState .fullKnowledge).StrongImplicature := trivial
 
 /-- PK speaker (correctly identified): weak-only SI. -/
 theorem pk_yields_weak_only :
-    let p := processAlternative true (toBeliefState .partialKnowledge)
-    p.weakHolds = true ∧ p.competenceAssumed = false ∧ p.strongDerived = false := by
-  decide
+    (toBeliefState .partialKnowledge).WeakImplicature ∧
+      ¬ (toBeliefState .partialKnowledge).StrongImplicature :=
+  ⟨trivial, id⟩
 
 /-- The default belief state: listeners assume speakers are competent. -/
 def defaultBeliefState : BeliefState := .disbelief
@@ -278,25 +275,19 @@ theorem load_pk_defaults_to_competent :
 
 /-- Under load + PK, the default competence yields a strong SI (10% → 23.3%). -/
 theorem load_pk_yields_strong :
-    let b := effectiveBeliefState .partialKnowledge .load
-    let p := processAlternative true b
-    p.strongDerived = true := by decide
+    (effectiveBeliefState .partialKnowledge .load).StrongImplicature := by decide
 
 /-- Under no-load + PK, correct context integration yields weak-only (10%). -/
 theorem noLoad_pk_yields_weak :
-    let b := effectiveBeliefState .partialKnowledge .noLoad
-    let p := processAlternative true b
-    p.strongDerived = false := by decide
+    ¬ (effectiveBeliefState .partialKnowledge .noLoad).StrongImplicature := by decide
 
 /-- The crossover prediction: load flips PK from weak to strong,
     but leaves FK unchanged. -/
 theorem crossover_prediction :
-    let pk_noLoad := processAlternative true (effectiveBeliefState .partialKnowledge .noLoad)
-    let pk_load   := processAlternative true (effectiveBeliefState .partialKnowledge .load)
-    let fk_noLoad := processAlternative true (effectiveBeliefState .fullKnowledge .noLoad)
-    let fk_load   := processAlternative true (effectiveBeliefState .fullKnowledge .load)
-    pk_noLoad.strongDerived = false ∧ pk_load.strongDerived = true ∧
-    fk_noLoad.strongDerived = true ∧ fk_load.strongDerived = true := by
+    ¬ (effectiveBeliefState .partialKnowledge .noLoad).StrongImplicature ∧
+      (effectiveBeliefState .partialKnowledge .load).StrongImplicature ∧
+      (effectiveBeliefState .fullKnowledge .noLoad).StrongImplicature ∧
+      (effectiveBeliefState .fullKnowledge .load).StrongImplicature := by
   decide
 
 end BaleEtAl2025
