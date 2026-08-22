@@ -70,7 +70,7 @@ The paper uses different statistical tests at different points:
 The canonical *some*/*all* world model `SomeAllWorld` lives in
 `Pragmatics.Implicature.SomeAll`; this file uses it for the
 implicature-spine bridge. The §8 derivation routes through
-`NeoGricean.processAlternative` (Sauerland-style competence
+`NeoGricean.subset_compl_iff_not_subset` (Sauerland-style competence
 machinery). The `think` empirical condition is bridged to the
 global/local distinction for attitude-embedded scalars
 (`AttitudeInterpretation`, defined in the bridge section below).
@@ -825,19 +825,13 @@ derivation of seemingly-embedded SIs that the §8 argument is built on:
 [spector-2006]. None of [russell-2006], [spector-2006],
 or [geurts-2006] are formalized in linglib yet. -/
 
-/-- The §8 derivation routed through the canonical Sauerland-style
-competence machinery in `NeoGricean`. The paper's claim is
-that *given* the speaker has a determinate negative stance about the
-alternative (here `.disbelief` — speaker believes ¬(Bob-believes-all))
-*and* the competence assumption (33), the strong implicature is
-derived. The spine's `processAlternative true .disbelief` produces the
-strong-derived flag exactly when these conditions hold; this theorem
-exhibits the spine's `outcome_ii_strong` machinery applied to the §8
-think-reading derivation. -/
-theorem competence_explains_think_via_processAlternative :
-    let p := NeoGricean.processAlternative true .disbelief
-    p.weakHolds = true ∧ p.competenceAssumed = true ∧ p.strongDerived = true :=
-  NeoGricean.outcome_ii_strong
+/-- The §8 derivation routed through the Sauerland-style competence
+machinery in `NeoGricean`: for Bob's (consistent) belief state `s`, the
+primary implicature (32) `¬K all` and the competence assumption (33)
+`K all ∨ K¬all` yield the strong implicature (34) `K¬all`. -/
+theorem competence_explains_think {W : Type*} {s all : Set W} (hs : s.Nonempty)
+    (h₃₂ : ¬ s ⊆ all) (h₃₃ : s ⊆ all ∨ s ⊆ allᶜ) : s ⊆ allᶜ :=
+  (NeoGricean.subset_compl_iff_not_subset hs h₃₃).2 h₃₂
 
 /-- The same derivation chain *applied to universal quantifiers*
 (paper §8 (35)–(38)). For "All the customers shot at some of the

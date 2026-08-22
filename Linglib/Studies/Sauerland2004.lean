@@ -42,42 +42,16 @@ inductive DisjWorld where
 namespace DisjWorld
 
 /-- The first disjunct A. -/
-def propA : DisjWorld → Prop
-  | .onlyA => True
-  | .both => True
-  | _ => False
+def propA : Set DisjWorld := {.onlyA, .both}
 
 /-- The second disjunct B. -/
-def propB : DisjWorld → Prop
-  | .onlyB => True
-  | .both => True
-  | _ => False
+def propB : Set DisjWorld := {.onlyB, .both}
 
 /-- The assertion *A or B*. -/
-def disj : DisjWorld → Prop
-  | .neither => False
-  | _ => True
+def disj : Set DisjWorld := {.onlyA, .onlyB, .both}
 
 /-- The conjunctive alternative *A and B*. -/
-def conj : DisjWorld → Prop
-  | .both => True
-  | _ => False
-
-instance : DecidablePred propA
-  | .onlyA | .both => isTrue trivial
-  | .neither | .onlyB => isFalse not_false
-
-instance : DecidablePred propB
-  | .onlyB | .both => isTrue trivial
-  | .neither | .onlyA => isFalse not_false
-
-instance : DecidablePred disj
-  | .neither => isFalse not_false
-  | .onlyA | .onlyB | .both => isTrue trivial
-
-instance : DecidablePred conj
-  | .both => isTrue trivial
-  | .neither | .onlyA | .onlyB => isFalse not_false
+def conj : Set DisjWorld := {.both}
 
 end DisjWorld
 
@@ -85,41 +59,36 @@ open DisjWorld
 
 /-- The scalar alternatives to *A or B*: each disjunct and the
 conjunction. -/
-def orAlts : List (DisjWorld → Prop) := [propA, propB, conj]
+def orAlts : List (Set DisjWorld) := [propA, propB, conj]
 
 /-- **The licensed secondary implicature**: K¬(A∧B) is consistent with
 the assertion and all primary implicatures — witnessed by the state
 considering exactly `onlyA` and `onlyB` possible. This is the "not
 both" inference of *A or B*. -/
-theorem conj_secondary_licensed : SecondaryLicensed disj orAlts conj := by
-  refine ⟨⟨{.onlyA, .onlyB}, ⟨.onlyA, by decide⟩⟩, ⟨by decide, ?_⟩, by decide⟩
-  intro ψ hψ
-  simp only [orAlts, List.mem_cons, List.not_mem_nil, or_false] at hψ
-  rcases hψ with rfl | rfl | rfl <;> decide
+theorem conj_secondary_licensed : SecondaryLicensed disj orAlts conj :=
+  ⟨{.onlyA, .onlyB}, Set.insert_nonempty _ _,
+    by simp [SatisfiesPrimaries, orAlts, disj, propA, propB, conj, Set.insert_subset_iff],
+    by simp [conj]⟩
 
 /-- **The blocked secondary implicature**: K¬A is inconsistent with the
 commitments. From K(A∨B) and K¬A every possible world satisfies B, so
-KB holds — contradicting the primary implicature ¬KB. The disjuncts
-therefore yield only ignorance inferences, never "not A". -/
-theorem disjunct_secondary_blocked : ¬ SecondaryLicensed disj orAlts propA := by
-  rintro ⟨e, ⟨hφ, hprim⟩, hsec⟩
-  refine hprim propB (by simp [orAlts]) (fun w hw => ?_)
-  have hd := hφ w hw
-  have hna := hsec w hw
-  cases w <;> simp_all [disj, propA, propB]
+KB holds — contradicting the primary implicature ¬KB: by
+`secondaryLicensed_iff`, the single primary ¬KB blocks K¬A because no
+world realizes A∨B, ¬A, and ¬B together. The disjuncts therefore yield
+only ignorance inferences, never "not A". -/
+theorem disjunct_secondary_blocked : ¬ SecondaryLicensed disj orAlts propA := fun h =>
+  absurd ((secondaryLicensed_iff.1 h).2 propB (by simp [orAlts]))
+    (by simp [Set.Nonempty, disj, propA, propB])
 
-/-- By the A↔B symmetry of the model, K¬B is blocked identically. -/
-theorem disjunct_secondary_blocked' : ¬ SecondaryLicensed disj orAlts propB := by
-  rintro ⟨e, ⟨hφ, hprim⟩, hsec⟩
-  refine hprim propA (by simp [orAlts]) (fun w hw => ?_)
-  have hd := hφ w hw
-  have hnb := hsec w hw
-  cases w <;> simp_all [disj, propA, propB]
+/-- By the A↔B symmetry of the model, K¬B is blocked identically, by ¬KA. -/
+theorem disjunct_secondary_blocked' : ¬ SecondaryLicensed disj orAlts propB := fun h =>
+  absurd ((secondaryLicensed_iff.1 h).2 propA (by simp [orAlts]))
+    (by simp [Set.Nonempty, disj, propA, propB])
 
 /-- The strengthened reading of *A or B* the algorithm predicts:
 assertion plus the licensed "not both", realizable at exactly the
 one-disjunct worlds. -/
-theorem strengthened_or_realizable :
-    ∃ w, disj w ∧ ¬ conj w := ⟨.onlyA, trivial, not_false⟩
+theorem strengthened_or_realizable : (disj \ conj).Nonempty :=
+  ⟨.onlyA, by simp [disj, conj]⟩
 
 end Sauerland2004

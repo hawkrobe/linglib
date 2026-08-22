@@ -1,298 +1,121 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
-import Linglib.Semantics.Alternatives.AsymStronger
-import Linglib.Logic.Modal.Defs
+import Mathlib.Data.Set.Insert
+import Mathlib.Order.BooleanAlgebra.Set
 
 /-!
-# Neo-Gricean pragmatics: epistemic states and the Standard Recipe
-[sauerland-2004] [geurts-2010]
+# Neo-Gricean pragmatics: secondary implicatures and the Standard Recipe
 
-The epistemic layer of Neo-Gricean implicature: an `EpistemicState` (the
-worlds compatible with the speaker's knowledge) with `knows` (K) and
-`possible` (P) realized as `box`/`diamond` over a serial accessibility
-from `Modal`, and the Standard Recipe run over the derived
-three-way `BeliefState` classification.
+This file defines [sauerland-2004]'s consistency-gated derivation of secondary implicatures
+and the Standard Recipe of [geurts-2010]. A speaker's epistemic state is a set of worlds
+`s : Set W` — the same object as the `ContextSet` of `Discourse/CommonGround.lean` — and a
+proposition is a `Set W`, so the speaker knows `φ` iff `s ⊆ φ`, knows `¬φ` iff `s ⊆ φᶜ`, and
+is competent about `φ` iff `s ⊆ φ ∨ s ⊆ φᶜ`; consistency of the speaker is the hypothesis
+`s.Nonempty` (the `Filter.NeBot` convention).
+Asserting `φ` yields the primary implicature `¬Kψ` for each stronger alternative `ψ`; the
+secondary implicature `K¬ψ` arises only when it is consistent with the assertion and all
+primary implicatures, and the Standard Recipe obtains it from `¬Kψ` under competence.
 
-[sauerland-2004] distinguishes **primary implicatures** ¬Kψ from
-**secondary implicatures** K¬ψ, a secondary arising only when K¬ψ is
-consistent with the assertion together with all primary implicatures.
-The epistemic modalization ¬Kψ goes back to [soames-1982] and
-[horn-1989]; the competence step Kψ ∨ K¬ψ strengthening primaries to
-secondaries is formalized by [sauerland-2004], [vanrooij-schulz-2004],
-and [spector-2006]; [geurts-2010] is the textbook presentation.
+## Main definitions
 
-This file provides the modal substrate, the consistency-gated
-derivation (`SatisfiesPrimaries`, `SecondaryLicensed`), and the recipe
-over the belief-state classification. `secondary_blocked_if_possible`
-and `primary_possibility` are instances of K/P duality; the flagship
-multi-alternative blocking case is exercised in
-`Studies/Sauerland2004.lean`.
+* `SatisfiesPrimaries`, `SecondaryLicensed`: the commitment set after an assertion and the
+  consistency condition licensing a secondary implicature.
 
-The asymmetric-entailment primitive characterizing primary-implicature
-alternatives is `asymStrongerOn` in `Semantics/Alternatives/AsymStronger.lean`;
-a consumer writes `alts.filter (asymStrongerOn e.possible · φ)` directly.
-For the graded counterpart of competence (the RSA knowledgeability
-parameter) see `Pragmatics/RSA/`; `Studies/Franke2011/RSABridge.lean`
-relates RSA speakers to IBR argmax behaviour.
+## Main results
+
+* `secondaryLicensed_iff`: licensing decomposes over the alternatives, so a blocked secondary
+  implicature is always blocked by a single primary; the disjunction case (K¬(A∧B) licensed,
+  K¬A blocked) is `Studies/Sauerland2004.lean`.
+* `secondaryLicensed_of_ssubset`: a lone asymmetrically stronger alternative always licenses
+  its secondary implicature.
+* `subset_compl_iff_not_subset`: the Standard Recipe — for a competent speaker, the strong
+  implicature `K¬ψ` is exactly the weak implicature `¬Kψ`.
+
+## References
+
+* [sauerland-2004] — primary vs secondary implicatures and the consistency condition
+* [geurts-2010] — the Standard Recipe; textbook presentation
+* [soames-1982], [horn-1989] — the epistemic modalization `¬Kψ`
+* [vanrooij-schulz-2004], [spector-2006] — the competence step `Kψ ∨ K¬ψ`
 -/
 
 namespace NeoGricean
 
-open ModalLogic (box diamond IsSerial)
-
-variable {W : Type*}
-
-/-! ### Epistemic states and the K/P operators -/
-
-/-- An epistemic state: the (nonempty, finite) set of worlds compatible
-with the speaker's knowledge. -/
-structure EpistemicState (W : Type*) where
-  /-- Worlds compatible with speaker's knowledge -/
-  possible : Finset W
-  /-- Non-empty (speaker knows something is true) -/
-  nonempty : possible.Nonempty
-
-/-- K operator: the speaker knows φ iff φ holds in all epistemically
-possible worlds. -/
-def knows (e : EpistemicState W) (φ : W → Prop) : Prop :=
-  ∀ w ∈ e.possible, φ w
-
-instance (e : EpistemicState W) (φ : W → Prop) [DecidablePred φ] :
-    Decidable (knows e φ) :=
-  inferInstanceAs (Decidable (∀ w ∈ e.possible, φ w))
-
-/-- P operator: the speaker considers φ possible. -/
-def possible (e : EpistemicState W) (φ : W → Prop) : Prop :=
-  ∃ w ∈ e.possible, φ w
-
-instance (e : EpistemicState W) (φ : W → Prop) [DecidablePred φ] :
-    Decidable (possible e φ) :=
-  inferInstanceAs (Decidable (∃ w ∈ e.possible, φ w))
-
-/-! ### `K`/`P` as restricted modality
-
-`knows`/`possible` are `box`/`diamond` over the (world-independent)
-epistemic accessibility `accessFrom e`, serial because `e.possible` is
-nonempty. The epistemic square of opposition is
-`ModalLogic.modalSquare (accessFrom e)` with `modalSquare_relations`
-discharged by this `IsSerial` instance. -/
-
-/-- Epistemic accessibility: from any world, the speaker's live possibilities. -/
-def accessFrom (e : EpistemicState W) : W → W → Prop := fun _ w' => w' ∈ e.possible
-
-instance (e : EpistemicState W) : IsSerial (accessFrom e) := ⟨fun _ => e.nonempty⟩
-
-/-- `K` is `□` over epistemic accessibility. -/
-theorem knows_eq_box (e : EpistemicState W) (φ : W → Prop) (w : W) :
-    knows e φ = box (accessFrom e) φ w := rfl
-
-/-- `P` is `◇` over epistemic accessibility. -/
-theorem possible_eq_diamond (e : EpistemicState W) (φ : W → Prop) (w : W) :
-    possible e φ = diamond (accessFrom e) φ w := rfl
-
-/-- Epistemic duality: ¬K¬φ ↔ Pφ — the box–diamond duality underlying
-the modal square of opposition (`ModalLogic.modalSquare_relations`). -/
-theorem duality (e : EpistemicState W) (φ : W → Prop) :
-    ¬ knows e (fun w => ¬ φ w) ↔ possible e φ := by
-  simp only [knows, possible, not_forall, not_not, exists_prop]
-
-/-- Secondary implicature: the speaker knows the alternative is false. -/
-def hasSecondaryImplicature (e : EpistemicState W) (ψ : W → Prop) : Prop :=
-  knows e (fun w => ¬ ψ w)
-
-instance (e : EpistemicState W) (ψ : W → Prop) [DecidablePred ψ] :
-    Decidable (hasSecondaryImplicature e ψ) :=
-  inferInstanceAs (Decidable (∀ w ∈ e.possible, ¬ ψ w))
-
-/-- If ψ is epistemically possible, K¬ψ fails. An instance of `duality`;
-the substrate fact used when checking a candidate secondary implicature
-against the speaker's state. -/
-theorem secondary_blocked_if_possible (e : EpistemicState W) (ψ : W → Prop) :
-    possible e ψ → ¬ hasSecondaryImplicature e ψ := by
-  rintro ⟨w, hw, hψ⟩ hknow
-  exact hknow w hw hψ
-
-/-- A primary implicature ¬Kψ entails that ¬ψ is epistemically possible.
-An instance of `duality`. -/
-theorem primary_possibility (e : EpistemicState W) (ψ : W → Prop) :
-    ¬ knows e ψ → possible e (fun w => ¬ ψ w) := by
-  intro h
-  simp only [knows, not_forall] at h
-  obtain ⟨w, hw⟩ := h
-  exact ⟨w, hw.1, hw.2⟩
+variable {W : Type*} {s φ ψ χ : Set W} {alts : List (Set W)}
 
 /-! ### The Sauerland derivation
 
-Asserting φ against scalar alternatives `alts` commits the speaker to
-Kφ plus, for each alternative, the primary implicature ¬Kψ
-([sauerland-2004] (42), verified p. 383). A secondary implicature K¬ψ
-arises exactly when it is *consistent* with that commitment set
-([sauerland-2004] (43)): here, when some epistemic state realizes the
-commitments together with K¬ψ. `secondaryLicensed_iff_reinforceable`
-identifies the single-alternative case with the reinforceability
-diagnostic; the flagship multi-alternative blocking case (K¬A blocked
-for a disjunction because it forces KB) is `Studies/Sauerland2004.lean`. -/
+Asserting `φ` against scalar alternatives `alts` commits the speaker to `Kφ` plus, for each
+alternative, the primary implicature `¬Kψ` ([sauerland-2004] (42), verified p. 383). A
+secondary implicature `K¬ψ` arises exactly when it is *consistent* with that commitment set
+([sauerland-2004] (43)): when some nonempty epistemic state realizes the commitments together
+with `K¬ψ`. -/
 
-/-- The speaker commitment after asserting φ against `alts`: the
-assertion is known (Kφ) and every primary implicature holds (¬Kψ for
-each alternative). Per [sauerland-2004] (42), the caller supplies only
-the asymmetrically-stronger alternatives (ψ ⇒ φ but not φ ⇒ ψ, e.g. via
-`asymStrongerOn`); the definition itself does not enforce the filter. -/
-def SatisfiesPrimaries (e : EpistemicState W) (φ : W → Prop)
-    (alts : List (W → Prop)) : Prop :=
-  knows e φ ∧ ∀ ψ ∈ alts, ¬ knows e ψ
+/-- The speaker commitment after asserting `φ` against `alts`: `Kφ` and the primary implicature
+`¬Kψ` for each alternative. Per [sauerland-2004], the caller supplies only the asymmetrically
+stronger alternatives (`ψ ⊂ φ`); the definition does not enforce the filter. -/
+def SatisfiesPrimaries (s φ : Set W) (alts : List (Set W)) : Prop :=
+  s ⊆ φ ∧ ∀ ψ ∈ alts, ¬ s ⊆ ψ
 
-/-- Sauerland's consistency condition: the secondary implicature K¬ψ is
-licensed iff some epistemic state realizes the assertion, all primary
-implicatures, and K¬ψ jointly. -/
-def SecondaryLicensed (φ : W → Prop) (alts : List (W → Prop))
-    (ψ : W → Prop) : Prop :=
-  ∃ e : EpistemicState W, SatisfiesPrimaries e φ alts ∧ hasSecondaryImplicature e ψ
+/-- [sauerland-2004]'s consistency condition: the secondary implicature `K¬ψ` is licensed iff
+some nonempty epistemic state realizes the assertion, all primary implicatures, and `K¬ψ`
+jointly. -/
+def SecondaryLicensed (φ : Set W) (alts : List (Set W)) (ψ : Set W) : Prop :=
+  ∃ s : Set W, s.Nonempty ∧ SatisfiesPrimaries s φ alts ∧ s ⊆ ψᶜ
 
-/-- For a lone alternative, Sauerland licensing reduces to consistency
-of the strengthened meaning: K¬ψ is compatible with the commitments
-Kφ ∧ ¬Kψ exactly when φ ∧ ¬ψ is realizable at some world — the same
-condition under which the content ¬ψ is a non-redundant strengthening
-of φ (`Implicature.IsReinforceable φ ψ` in the diagnostics' pair
-form). -/
-theorem secondaryLicensed_iff_strengthening_consistent [Fintype W]
-    (φ ψ : W → Prop) [DecidablePred φ] [DecidablePred ψ] :
-    SecondaryLicensed φ [ψ] ψ ↔ ∃ w, φ w ∧ ¬ ψ w := by
+/-- Licensing decomposes over the alternatives: `K¬ψ` is consistent with the commitments iff
+the strengthened meaning `φ \ ψ` is realizable and, for each alternative `χ`, realizable
+outside `ψ ∪ χ`. A blocked secondary implicature is thus always blocked by a single primary. -/
+theorem secondaryLicensed_iff :
+    SecondaryLicensed φ alts ψ ↔ (φ \ ψ).Nonempty ∧ ∀ χ ∈ alts, (φ \ (ψ ∪ χ)).Nonempty := by
   constructor
-  · rintro ⟨e, ⟨hφ, _⟩, hψ⟩
-    obtain ⟨w, hw⟩ := e.nonempty
-    exact ⟨w, hφ w hw, hψ w hw⟩
-  · rintro ⟨w, hφw, hψw⟩
-    have hmem : w ∈ Finset.univ.filter (fun v => φ v ∧ ¬ ψ v) :=
-      Finset.mem_filter.2 ⟨Finset.mem_univ w, hφw, hψw⟩
-    refine ⟨⟨Finset.univ.filter (fun v => φ v ∧ ¬ ψ v), ⟨w, hmem⟩⟩, ⟨?_, ?_⟩, ?_⟩
-    · exact fun v hv => ((Finset.mem_filter.1 hv).2).1
-    · simp only [List.mem_singleton, forall_eq]
-      exact fun hk => hψw (hk w hmem)
-    · exact fun v hv => ((Finset.mem_filter.1 hv).2).2
+  · rintro ⟨s, hs, ⟨hφ, hprim⟩, hψ⟩
+    refine ⟨hs.mono fun w hw => ⟨hφ hw, hψ hw⟩, fun χ hχ => ?_⟩
+    obtain ⟨w, hw, hχ⟩ := Set.not_subset.1 (hprim χ hχ)
+    exact ⟨w, hφ hw, fun h => h.elim (hψ hw) hχ⟩
+  · rintro ⟨⟨w₀, hw₀⟩, h⟩
+    induction alts with
+    | nil =>
+      exact ⟨{w₀}, Set.singleton_nonempty w₀, ⟨Set.singleton_subset_iff.2 hw₀.1, by simp⟩,
+        Set.singleton_subset_iff.2 hw₀.2⟩
+    | cons χ alts ih =>
+      obtain ⟨s, hs, ⟨hφ, hprim⟩, hψ⟩ := ih fun χ' hχ' => h χ' (List.mem_cons_of_mem χ hχ')
+      obtain ⟨w, hφw, hw⟩ := h χ List.mem_cons_self
+      obtain ⟨hψw, hχw⟩ := not_or.1 hw
+      refine ⟨insert w s, Set.insert_nonempty w s,
+        ⟨Set.insert_subset_iff.2 ⟨hφw, hφ⟩, List.forall_mem_cons.2 ⟨?_, ?_⟩⟩,
+        Set.insert_subset_iff.2 ⟨hψw, hψ⟩⟩
+      · exact fun hk => hχw (hk (Set.mem_insert w s))
+      · exact fun χ' hχ' hk => hprim χ' hχ' ((Set.subset_insert w s).trans hk)
 
-/-! ### The three-way belief-state classification
+/-- For a lone alternative `χ`, `K¬ψ` is licensed iff `φ` is realizable outside `ψ ∪ χ`. -/
+theorem secondaryLicensed_singleton :
+    SecondaryLicensed φ [χ] ψ ↔ (φ \ (ψ ∪ χ)).Nonempty := by
+  rw [secondaryLicensed_iff, List.forall_mem_singleton]
+  exact and_iff_right_of_imp fun h => h.mono (Set.sdiff_subset_sdiff_right Set.subset_union_left)
 
-`BeliefState` is the decidable classification of a speaker's attitude
-toward one alternative ψ: `Bel_S(ψ)`, `Bel_S(¬ψ)`, or no opinion.
-`EpistemicState.beliefState` grounds the enum in the modal substrate, so
-the Standard Recipe below is a projection of K/P reasoning, not a
-parallel encoding. -/
+/-- Against its own alternative alone, `K¬ψ` is licensed iff the strengthened meaning `φ \ ψ`
+is realizable. -/
+theorem secondaryLicensed_singleton_self : SecondaryLicensed φ [ψ] ψ ↔ (φ \ ψ).Nonempty := by
+  simp [secondaryLicensed_singleton]
 
-/-- Speaker's belief state about a proposition ψ: belief `Bel_S(ψ)`,
-disbelief `Bel_S(¬ψ)`, or no opinion `¬Bel_S(ψ) ∧ ¬Bel_S(¬ψ)`. -/
-inductive BeliefState where
-  | belief
-  | disbelief
-  | noOpinion
-  deriving DecidableEq, Repr
+/-- A lone asymmetrically stronger alternative always yields its secondary implicature: the
+*some ⇝ not all* case. -/
+theorem secondaryLicensed_of_ssubset (h : ψ ⊂ φ) : SecondaryLicensed φ [ψ] ψ :=
+  secondaryLicensed_singleton_self.2 (Set.sdiff_nonempty.2 h.2)
 
-/-- Classify an epistemic state by its attitude toward ψ: `Kψ` is
-belief, `K¬ψ` disbelief, anything else no opinion. -/
-def EpistemicState.beliefState (e : EpistemicState W) (ψ : W → Prop)
-    [DecidablePred ψ] : BeliefState :=
-  if knows e ψ then .belief
-  else if hasSecondaryImplicature e ψ then .disbelief
-  else .noOpinion
+/-! ### Competence and the Standard Recipe
 
-/-- Competence: the speaker knows whether ψ, `Bel_S(ψ) ∨ Bel_S(¬ψ)`. -/
-def competent : BeliefState → Bool
-  | .belief => true
-  | .disbelief => true
-  | .noOpinion => false
+Competence about `ψ` is [sauerland-2004]'s `Kψ ∨ K¬ψ`, `s ⊆ ψ ∨ s ⊆ ψᶜ` — the speaker *knows
+whether* `ψ`, which is support of the polar question `Question.polar ψ` by
+`Question.mem_polar`. -/
 
-/-- Non-belief `¬Bel_S(ψ)` — the weak (primary) implicature. -/
-def nonBelief : BeliefState → Bool
-  | .belief => false
-  | .disbelief => true
-  | .noOpinion => true
+/-- A consistent speaker cannot both know `ψ` and know `¬ψ`. -/
+theorem not_subset_compl_of_subset (hs : s.Nonempty) (h : s ⊆ ψ) : ¬ s ⊆ ψᶜ :=
+  fun h' => hs.elim fun _ hw => h' hw (h hw)
 
-/-- Strong (secondary) implicature `Bel_S(¬ψ)`. -/
-def strongImpl : BeliefState → Bool
-  | .belief => false
-  | .disbelief => true
-  | .noOpinion => false
-
-/-- The classification is faithful: `disbelief` holds exactly when the
-secondary implicature K¬ψ does. -/
-theorem beliefState_disbelief_iff (e : EpistemicState W) (ψ : W → Prop)
-    [DecidablePred ψ] (h : ¬ knows e ψ) :
-    e.beliefState ψ = .disbelief ↔ hasSecondaryImplicature e ψ := by
-  simp only [EpistemicState.beliefState, if_neg h]
-  by_cases hs : hasSecondaryImplicature e ψ <;> simp [hs]
-
-/-- Competence strengthening: `¬Bel_S(ψ) ∧ (Bel_S(ψ) ∨ Bel_S(¬ψ)) → Bel_S(¬ψ)`. -/
-theorem competence_strengthening {b : BeliefState}
-    (hweak : nonBelief b = true) (hcomp : competent b = true) :
-    strongImpl b = true := by
-  cases b <;> simp_all [nonBelief, competent, strongImpl]
-
-/-- A weak implicature can hold without the strong one (incompetent speaker). -/
-theorem weak_without_strong :
-    ∃ b : BeliefState, nonBelief b = true ∧ strongImpl b = false :=
-  ⟨.noOpinion, by decide⟩
-
-/-- `Bel_S(¬ψ) → ¬Bel_S(ψ)`. -/
-theorem strong_implies_weak {b : BeliefState} (h : strongImpl b = true) :
-    nonBelief b = true := by
-  cases b <;> simp_all [strongImpl, nonBelief]
-
-/-- `Bel_S(¬ψ) → Bel_S(ψ) ∨ Bel_S(¬ψ)`. -/
-theorem strong_implies_competent {b : BeliefState} (h : strongImpl b = true) :
-    competent b = true := by
-  cases b <;> simp_all [strongImpl, competent]
-
-/-! ### Running the recipe
-
-`processAlternative` applies the Standard Recipe to one alternative,
-gated by whether the hearer assumes competence. The three `outcome_*`
-theorems are [geurts-2010]'s outcome typology. -/
-
-/-- Outcome of processing one alternative: the inferred belief state,
-whether the weak implicature holds, whether competence was assumed
-(and consistent), and whether the strong implicature was derived. -/
-structure ImplicatureProcessing where
-  /-- The belief state inferred -/
-  beliefState : BeliefState
-  /-- Whether weak implicature ¬Bel_S(ψ) holds -/
-  weakHolds : Bool
-  /-- Whether competence was assumed -/
-  competenceAssumed : Bool
-  /-- Whether strong implicature Bel_S(¬ψ) was derived -/
-  strongDerived : Bool
-  deriving Repr
-
-/-- Run the Standard Recipe on one alternative under a competence
-assumption. -/
-def processAlternative (assumeCompetence : Bool) (b : BeliefState) :
-    ImplicatureProcessing :=
-  { beliefState := b
-  , weakHolds := nonBelief b
-  , competenceAssumed := assumeCompetence && competent b
-  , strongDerived := assumeCompetence && strongImpl b
-  }
-
-/-- Outcome i (undecided): without the competence assumption, only the
-weak implicature arises. -/
-theorem outcome_i_undecided {b : BeliefState} (hne : b ≠ .belief) :
-    (processAlternative false b).weakHolds = true ∧
-    (processAlternative false b).strongDerived = false := by
-  cases b <;> simp_all [processAlternative, nonBelief]
-
-/-- Outcome ii (strong): competence assumed and consistent — the strong
-implicature is derived. -/
-theorem outcome_ii_strong :
-    (processAlternative true .disbelief).weakHolds = true ∧
-    (processAlternative true .disbelief).competenceAssumed = true ∧
-    (processAlternative true .disbelief).strongDerived = true := by
-  decide
-
-/-- Outcome iii (incompetent): the speaker has no opinion, so the
-competence assumption fails and only the weak implicature survives. -/
-theorem outcome_iii_incompetent :
-    (processAlternative true .noOpinion).weakHolds = true ∧
-    (processAlternative true .noOpinion).competenceAssumed = false ∧
-    (processAlternative true .noOpinion).strongDerived = false := by
-  decide
+/-- The Standard Recipe: for a consistent speaker competent about `ψ`, the strong implicature
+`K¬ψ` is exactly the weak implicature `¬Kψ`. -/
+theorem subset_compl_iff_not_subset (hs : s.Nonempty) (hc : s ⊆ ψ ∨ s ⊆ ψᶜ) :
+    s ⊆ ψᶜ ↔ ¬ s ⊆ ψ :=
+  ⟨fun h h' => not_subset_compl_of_subset hs h' h, hc.resolve_left⟩
 
 end NeoGricean

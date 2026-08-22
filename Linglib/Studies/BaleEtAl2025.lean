@@ -1,302 +1,122 @@
 import Linglib.Pragmatics.NeoGricean.Basic
+import Linglib.Studies.GoodmanStuhlmuller2013
 
 /-!
-# [bale-etal-2025] — Competence by Default
+# Bale, Noguchi, Rolland & Barner (2025): competence by default
 
-Bale, A. C., Noguchi, H., Rolland, M. & Barner, D. (2025). Competence by
-default: Do listeners assume that speakers are knowledgeable when computing
-conversational inferences? *Journal of Semantics* 42(1–2): 39–55.
+[bale-etal-2025] test whether listeners assume by default that a speaker is competent about
+unsaid alternatives — [geurts-2010]'s competence-by-default hypothesis — against contextual
+licensing, on which competence must be contextually established ([soames-1982],
+[horn-1989]). Farmer Brown looks into two or three of three boxes and says *Some of the boxes
+have red cubes* (4); the listener generates the alternative *all* (5), the weak implicature
+`¬K all` (6), and, if competence (7) `K all ∨ K¬all` is assumed, the strong implicature
+`K¬all` (8). Half the participants are under cognitive load (a dot-array memory task). If
+competence is a default that contextual integration must cancel, load should *raise* the
+strong-implicature ("No") rate when the speaker is ignorant, which it does (10% → 23.3%,
+P = .02), while the knowledgeable-speaker rate shows only the generalized load reduction of
+earlier studies (65.6% → 56.7%, P = .22; Knowledge × Load interaction β = 2.62, χ²(1) = 11.3,
+P < .001).
 
-## Core Contribution
+## Main definitions
 
-Tests whether the competence assumption in scalar implicature derivation
-(step 5 of [soames-1982] / [horn-1989] / [sauerland-2004]) is a cognitive default
-or must be contextually licensed. The 5-step derivation:
+* `speakerState`: Farmer Brown's epistemic state as a [goodman-stuhlmuller-2013] observation
+  state — all three boxes seen, two with red cubes (full knowledge), or two boxes seen, both
+  with red cubes (partial knowledge).
+* `Competent`: (7), derived from `speakerState`.
+* `AssumesCompetent`, `ContextuallyLicensed`: the two hearer models — competence as a default
+  cancelled only by contextual integration, which load blocks, versus competence only when
+  the context establishes it.
 
-1. Speaker said φ (e.g., "some of the marbles are red")
-2. There exists a stronger alternative ψ (e.g., "all of the marbles are red")
-3. Speaker didn't say ψ (Quantity)
-4. Therefore ¬Bel_S(ψ) — weak implicature
-5. With competence (Bel_S(ψ) ∨ Bel_S(¬ψ)), derive Bel_S(¬ψ) — strong SI
+## Main results
 
-Step 5 depends on the **competence assumption**: the listener assumes the
-speaker knows whether ψ. Three hypotheses about when this is applied:
-
-- **Competence-by-default**: competence is assumed by default;
-  cancellation requires effortful integration of contextual evidence
-- **SSI-by-default**: the entire SSI is a default; load
-  disrupts SI computation itself
-- **Contextual licensing**:
-  competence must be contextually justified; it is not a default
-
-## Experimental Design
-
-Dual-task paradigm with 2 × 2 design:
-- **Between-subjects**: cognitive load (load vs. no load), n = 30 per group
-- **Within-subjects**: speaker knowledge (full knowledge = FK vs. partial
-  knowledge = PK)
-- **Trials**: FK+All (control), FK+Some, PK+Some
-- **Response**: 3-way forced choice ("Yes" / "No" / "I don't know")
-- **Key DV**: proportion of "No" responses on *some* trials (= SSI computed)
-
-## Key Finding
-
-GLMM reveals a significant **Knowledge × Load interaction** (β = 2.62,
-SE = 0.86, χ²(1) = 11.3, P < .001): load increases SSI rate in the PK
-(ignorant) condition (10% → 23.3%) while non-significantly decreasing it
-in the FK (competent) condition (65.6% → 56.7%). This crossover supports
-competence-by-default: load impairs effortful cancellation of the default
-competence assumption.
+* `fk_competent`, `pk_not_competent`: competence is derived from the observation states.
+* `fk_strong`: the Standard Recipe runs (6) and (7) to (8) for the knowledgeable speaker.
+* `agree_of_fullKnowledge_or_noLoad`, `diverge_pk_load`: the hearer models agree except for
+  the ignorant speaker under load, where only competence by default predicts the strong
+  implicature — the observed rise.
 -/
 
 namespace BaleEtAl2025
 
-/-- Total participants (N = 60, n = 30 per load group). -/
-def nTotal : Nat := 60
+open GoodmanStuhlmuller2013 NeoGricean
 
-
-/-! ## Experimental Conditions -/
-
-/-- Speaker's epistemic state regarding the stronger alternative ψ.
-
-    Manipulated via cover story: speaker either looked in all sections of
-    a box (full knowledge) or only some sections (partial knowledge). -/
+/-- Whether Farmer Brown looked into the third box. -/
 inductive SpeakerKnowledge where
-  /-- Full Knowledge: speaker inspected all sections, knows whether ψ -/
   | fullKnowledge
-  /-- Partial Knowledge: speaker inspected only some sections, ignorant of ψ -/
   | partialKnowledge
   deriving DecidableEq, Repr
 
-/-- Cognitive load manipulation (between-subjects). -/
+/-- The between-subjects cognitive-load manipulation (dot-array memorization). -/
 inductive LoadCondition where
-  /-- No concurrent task -/
   | noLoad
-  /-- Dual-task: memorize a dot pattern while processing utterance -/
   | load
   deriving DecidableEq, Repr
 
-/-- A full experimental condition: speaker knowledge × cognitive load. -/
-structure ExperimentalCondition where
-  knowledge : SpeakerKnowledge
-  load : LoadCondition
-  deriving DecidableEq, Repr
+/-! ### Speaker knowledge as observation access -/
 
+/-- The alternative (5): *all of the boxes have red cubes*. -/
+def all : Set WorldState := {w | qMeaning .all w}
 
-/-! ## Observed SSI Rates
+/-- Farmer Brown's epistemic state in the *some* trials: the worlds compatible with seeing
+all three boxes, two with red cubes (full knowledge), or two boxes, both with red cubes
+(partial knowledge). -/
+def speakerState : SpeakerKnowledge → Set WorldState
+  | .fullKnowledge    => {w | obsCompatible 3 2 w}
+  | .partialKnowledge => {w | obsCompatible 2 2 w}
 
-    Rates are stored in tenths of a percent to preserve the one-decimal-place
-    precision reported in the paper (e.g., 233 = 23.3%). -/
+theorem speakerState_nonempty (k : SpeakerKnowledge) : (speakerState k).Nonempty := by
+  cases k <;> exact ⟨.s2, by simp [speakerState]; decide⟩
 
-/-- Observed strong scalar implicature rate for one condition. -/
-structure SSIRate where
-  /-- The experimental condition -/
-  condition : ExperimentalCondition
-  /-- SSI rate in tenths of a percent (e.g., 233 = 23.3%) -/
-  rateTenths : Nat
-  /-- Number of participants in this load group -/
-  n : Nat
-  deriving Repr
+/-- Competence (7): the speaker knows whether *all*. -/
+def Competent (k : SpeakerKnowledge) : Prop :=
+  speakerState k ⊆ all ∨ speakerState k ⊆ allᶜ
 
-/-- FK + No Load: 65.6% SSI rate (baseline for competent speaker). -/
-def fk_noLoad : SSIRate :=
-  { condition := ⟨.fullKnowledge, .noLoad⟩
-  , rateTenths := 656
-  , n := 30 }
+/-- The weak implicature (6) holds for both speakers: neither knows *all*. -/
+theorem not_speakerState_subset_all (k : SpeakerKnowledge) : ¬ speakerState k ⊆ all := by
+  cases k <;> simp only [speakerState, all, Set.ofPred_subset_ofPred] <;> decide
 
-/-- FK + Load: 56.7% SSI rate (non-significant decrease, P = .22). -/
-def fk_load : SSIRate :=
-  { condition := ⟨.fullKnowledge, .load⟩
-  , rateTenths := 567
-  , n := 30 }
+/-- The knowledgeable speaker is competent: he knows *not all*. -/
+theorem fk_competent : Competent .fullKnowledge :=
+  Or.inr <| by simp only [speakerState, all, Set.compl_ofPred, Set.ofPred_subset_ofPred]; decide
 
-/-- PK + No Load: 10.0% SSI rate (competence properly canceled). -/
-def pk_noLoad : SSIRate :=
-  { condition := ⟨.partialKnowledge, .noLoad⟩
-  , rateTenths := 100
-  , n := 30 }
-
-/-- PK + Load: 23.3% SSI rate — the key finding.
-    Load impairs cancellation of the default competence assumption,
-    yielding more SSIs despite speaker ignorance. -/
-def pk_load : SSIRate :=
-  { condition := ⟨.partialKnowledge, .load⟩
-  , rateTenths := 233
-  , n := 30 }
-
-/-- All four conditions. -/
-def allConditions : List SSIRate :=
-  [fk_noLoad, fk_load, pk_noLoad, pk_load]
-
-
-/-! ## Interaction Test
-
-    The key statistical test: Knowledge × Load interaction in a GLMM. -/
-
-/-- Result of the Knowledge × Load interaction test (GLMM, logistic). -/
-structure InteractionTest where
-  /-- Interaction coefficient -/
-  beta : Float
-  /-- Standard error -/
-  se : Float
-  /-- Chi-squared statistic (likelihood ratio, 1 df) -/
-  chiSq : Float
-  /-- p-value -/
-  p : Float
-  deriving Repr
-
-/-- The observed interaction: β = 2.62, χ²(1) = 11.3, P < .001. -/
-def knowledgeLoadInteraction : InteractionTest :=
-  { beta := 2.62
-  , se := 0.86
-  , chiSq := 11.3
-  , p := 0.001 }
-
-/-- The interaction is significant (P < .05). -/
-theorem interaction_significant :
-    knowledgeLoadInteraction.p < 0.05 := by native_decide
-
-
-/-! ## Load Effects by Condition -/
-
-/-- Signed load effect in tenths of a percent.
-    Positive = load increases SSI rate; negative = load decreases. -/
-def loadEffect (k : SpeakerKnowledge) : Int :=
-  match k with
-  | .fullKnowledge    => (fk_load.rateTenths : Int) - fk_noLoad.rateTenths
-  | .partialKnowledge => (pk_load.rateTenths : Int) - pk_noLoad.rateTenths
-
-/-- The crossover interaction: load increases SSIs for PK speakers
-    but decreases SSIs for FK speakers. -/
-theorem crossover_interaction :
-    loadEffect .partialKnowledge > 0 ∧ loadEffect .fullKnowledge < 0 := by
-  simp only [loadEffect, fk_load, fk_noLoad, pk_load, pk_noLoad]
-  omega
-
-/-- Load increases SSI rate in PK condition by 13.3 percentage points. -/
-theorem pk_load_increase :
-    pk_load.rateTenths > pk_noLoad.rateTenths := by
-  simp only [pk_load, pk_noLoad]
-  omega
-
-/-- The interaction magnitude: the difference in load effects across
-    knowledge conditions is positive (PK effect > FK effect). -/
-theorem interaction_magnitude :
-    loadEffect .partialKnowledge - loadEffect .fullKnowledge > 0 := by
-  simp only [loadEffect, fk_load, fk_noLoad, pk_load, pk_noLoad]
-  omega
-
-
-/-! ## Competing Hypotheses -/
-
-/-- Three hypotheses about the status of the competence assumption. -/
-inductive CompetenceHypothesis where
-  /-- Competence is assumed by default; cancellation requires effortful
-      processing. Load impairs cancellation → more SSIs when speaker is
-      actually ignorant. -/
-  | competenceByDefault
-  /-- The entire SI derivation is a default; load disrupts SI computation
-      itself. Predicts load decreases SSI rates. -/
-  | ssiByDefault
-  /-- Competence must be contextually licensed; it is not a default.
-      Load should not increase SSI rates for ignorant speakers — competence
-      was never assumed, so there is nothing to fail to cancel. -/
-  | contextualLicensing
-  deriving DecidableEq, Repr
-
-/-- Whether a hypothesis predicts a positive Knowledge × Load interaction
-    (i.e., load increases SSI more — or decreases it less — in PK than FK).
-
-    This is the key discriminating prediction: only competence-by-default
-    predicts a positive interaction. -/
-def predictsPositiveInteraction : CompetenceHypothesis → Bool
-  | .competenceByDefault  => true   -- load prevents canceling default competence
-  | .ssiByDefault         => false  -- load disrupts SI uniformly
-  | .contextualLicensing  => false  -- no default to fail to cancel
-
-/-- Competence-by-default is the only hypothesis predicting a positive
-    interaction, matching the observed data. -/
-theorem only_competenceByDefault_predicts_interaction :
-    [CompetenceHypothesis.competenceByDefault, .ssiByDefault, .contextualLicensing].filter
-      predictsPositiveInteraction
-    = [.competenceByDefault] := by decide
-
-
--- ============================================================================
--- Part II: NeoGricean Competence Bridge
--- ============================================================================
-
-/-! Connects the experimental findings to the NeoGricean competence
-formalization in `Pragmatics.NeoGricean.Basic`. -/
-
-open NeoGricean
-
-/-- Map speaker knowledge to NeoGricean belief state about the stronger
-    alternative ψ. FK speaker knows ¬ψ; PK speaker has no opinion. -/
-def toBeliefState : SpeakerKnowledge → BeliefState
-  | .fullKnowledge    => .disbelief
-  | .partialKnowledge => .noOpinion
-
-theorem fk_competent : competent (toBeliefState .fullKnowledge) = true := rfl
-theorem pk_not_competent : competent (toBeliefState .partialKnowledge) = false := rfl
-
-/-- FK speaker: `processAlternative` yields a strong SI. -/
-theorem fk_yields_strong :
-    let p := processAlternative true (toBeliefState .fullKnowledge)
-    p.weakHolds = true ∧ p.competenceAssumed = true ∧ p.strongDerived = true := by
+/-- The ignorant speaker is not competent about *all*. -/
+theorem pk_not_competent : ¬ Competent .partialKnowledge := by
+  simp only [Competent, speakerState, all, Set.compl_ofPred, Set.ofPred_subset_ofPred]
   decide
 
-/-- PK speaker (correctly identified): weak-only SI. -/
-theorem pk_yields_weak_only :
-    let p := processAlternative true (toBeliefState .partialKnowledge)
-    p.weakHolds = true ∧ p.competenceAssumed = false ∧ p.strongDerived = false := by
-  decide
+/-- The strong implicature (8) for the knowledgeable speaker, by the Standard Recipe from
+(6) and (7). -/
+theorem fk_strong : speakerState .fullKnowledge ⊆ allᶜ :=
+  (subset_compl_iff_not_subset (speakerState_nonempty _) fk_competent).2
+    (not_speakerState_subset_all _)
 
-/-- The default belief state: listeners assume speakers are competent. -/
-def defaultBeliefState : BeliefState := .disbelief
+/-- The ignorant speaker knows neither *all* nor *not all*. -/
+theorem pk_ignorant : ¬ speakerState .partialKnowledge ⊆ allᶜ := by
+  simp only [speakerState, all, Set.compl_ofPred, Set.ofPred_subset_ofPred]; decide
 
-/-- Context integration: no load → yes; load → no. -/
-def canIntegrateContext : LoadCondition → Bool
-  | .noLoad => true
-  | .load   => false
+/-! ### The two hearer models -/
 
-/-- The effective belief state after (possibly failed) context integration. -/
-def effectiveBeliefState (k : SpeakerKnowledge) (l : LoadCondition) : BeliefState :=
-  if canIntegrateContext l then
-    toBeliefState k
-  else
-    defaultBeliefState
+/-- Competence by default: (7) is assumed and cancelled only when contextual information
+about the speaker is integrated, which load blocks. -/
+def AssumesCompetent (k : SpeakerKnowledge) : LoadCondition → Prop
+  | .load   => True
+  | .noLoad => Competent k
 
-theorem noLoad_fk_correct :
-    effectiveBeliefState .fullKnowledge .noLoad = .disbelief := rfl
-theorem noLoad_pk_correct :
-    effectiveBeliefState .partialKnowledge .noLoad = .noOpinion := rfl
-theorem load_fk_default :
-    effectiveBeliefState .fullKnowledge .load = .disbelief := rfl
-theorem load_pk_defaults_to_competent :
-    effectiveBeliefState .partialKnowledge .load = .disbelief := rfl
+/-- Contextual licensing: (7) is adopted only when the context establishes it. -/
+def ContextuallyLicensed (k : SpeakerKnowledge) (_ : LoadCondition) : Prop := Competent k
 
-/-- Under load + PK, the default competence yields a strong SI (10% → 23.3%). -/
-theorem load_pk_yields_strong :
-    let b := effectiveBeliefState .partialKnowledge .load
-    let p := processAlternative true b
-    p.strongDerived = true := by decide
+/-- Outside the ignorant-speaker-under-load cell the two hearer models agree. -/
+theorem agree_of_fullKnowledge_or_noLoad :
+    ∀ k l, k = .fullKnowledge ∨ l = .noLoad → (AssumesCompetent k l ↔ ContextuallyLicensed k l)
+  | .fullKnowledge, .load, _ => iff_of_true trivial fk_competent
+  | .fullKnowledge, .noLoad, _ => Iff.rfl
+  | .partialKnowledge, .noLoad, _ => Iff.rfl
+  | .partialKnowledge, .load, h => absurd h (by decide)
 
-/-- Under no-load + PK, correct context integration yields weak-only (10%). -/
-theorem noLoad_pk_yields_weak :
-    let b := effectiveBeliefState .partialKnowledge .noLoad
-    let p := processAlternative true b
-    p.strongDerived = false := by decide
-
-/-- The crossover prediction: load flips PK from weak to strong,
-    but leaves FK unchanged. -/
-theorem crossover_prediction :
-    let pk_noLoad := processAlternative true (effectiveBeliefState .partialKnowledge .noLoad)
-    let pk_load   := processAlternative true (effectiveBeliefState .partialKnowledge .load)
-    let fk_noLoad := processAlternative true (effectiveBeliefState .fullKnowledge .noLoad)
-    let fk_load   := processAlternative true (effectiveBeliefState .fullKnowledge .load)
-    pk_noLoad.strongDerived = false ∧ pk_load.strongDerived = true ∧
-    fk_noLoad.strongDerived = true ∧ fk_load.strongDerived = true := by
-  decide
+/-- For the ignorant speaker under load, competence by default predicts the strong
+implicature and contextual licensing does not: the observed 10% → 23.3% rise. -/
+theorem diverge_pk_load :
+    AssumesCompetent .partialKnowledge .load ∧ ¬ ContextuallyLicensed .partialKnowledge .load :=
+  ⟨trivial, pk_not_competent⟩
 
 end BaleEtAl2025
