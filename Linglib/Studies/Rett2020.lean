@@ -668,14 +668,14 @@ theorem scenario_till : until_ A_stative B_onset := by
 
 /-! ### Not...until scenarios
 
-Karttunen's identity: punctual *until* = ¬*before*, with the presupposition that the main
-clause is actualized. We verify this on concrete time points.
+Karttunen's identity (33): punctual *until* = ¬*before*, with the presupposition (34)
+*before ∨ when*. We verify this on concrete time points.
 
-| # | ME           | EE          | Construction    | Result                 |
-|---|--------------|-------------|-----------------|------------------------|
-|11 | point(3)     | point(5)    | not...until     | False                  |
-|12 | point(5)     | point(5)    | not...until     | True, at the kiss      |
-|13 | point(7)     | point(5)    | not...until     | True, a little later   |
+| # | ME           | EE          | Construction    | Result                       |
+|---|--------------|-------------|-----------------|------------------------------|
+|11 | point(3)     | point(5)    | not...until     | False                        |
+|12 | point(5)     | point(5)    | presup + assert | when                         |
+|13 | point(7)     | point(5)    | not...until     | True, presupposition fails   |
 -/
 
 /-- ME: "The princess woke up" — punctual event at time 3 (early). -/
@@ -732,11 +732,14 @@ theorem scenario12_notUntil_true : notUntil A_wake_at B_kiss := by
   have hlt := hall 5 (mem_tt_kiss.mpr rfl)
   omega
 
-/-- Scenario 12': with the actualization presupposition, the waking is at or after the
-    kiss — here exactly at it. -/
-theorem scenario12_at_or_after :
-    ∃ t ∈ timeTrace A_wake_at, ∃ t' ∈ timeTrace B_kiss, t' ≤ t :=
-  notUntil_actualization _ _ scenario12_notUntil_true ⟨5, mem_tt_wake_at.mpr rfl⟩
+/-- Scenario 12': the presupposition (34) holds — the waking is *when* the kiss is. -/
+theorem scenario12_presupposition : presupposition A_wake_at B_kiss :=
+  Or.inr ⟨5, mem_tt_wake_at.mpr rfl, mem_tt_kiss.mpr rfl⟩
+
+/-- Scenario 12'': assertion and presupposition derive *when* by disjunctive syllogism,
+    Karttunen's (36). -/
+theorem scenario12_derives_when : when_ A_wake_at B_kiss :=
+  notUntil_when _ _ scenario12_notUntil_true scenario12_presupposition
 
 /-- ME: "The princess woke up" — punctual event at time 7 (AFTER the kiss). -/
 def me_wake_late : NonemptyInterval ℕ := NonemptyInterval.pure 7
@@ -757,12 +760,21 @@ theorem scenario13_notUntil_true : notUntil A_wake_late B_kiss := by
   have hlt := hall 5 (mem_tt_kiss.mpr rfl)
   omega
 
-/-- Scenario 13': wake₇ is not when kiss₅ — the waking is "a little later", as
-    [karttunen-1974] allows. -/
+/-- Scenario 13': wake₇ is not when kiss₅. -/
 theorem scenario13_not_when : ¬ when_ A_wake_late B_kiss := by
   rintro ⟨t, ht_w, ht_k⟩
   have := mem_tt_wake_late.mp ht_w
   have := mem_tt_kiss.mp ht_k
   omega
+
+/-- Scenario 13'': the presupposition (34) fails, so *not...until* is true but infelicitous
+    when she woke up well after the kiss — [karttunen-1974]'s (29b) allows only "shortly
+    thereafter", which (34) does not capture (his fn. 7). -/
+theorem scenario13_presup_fails : ¬ presupposition A_wake_late B_kiss := by
+  rintro (⟨t, ht, hall⟩ | hwhen)
+  · have := mem_tt_wake_late.mp ht
+    have := hall 5 (mem_tt_kiss.mpr rfl)
+    omega
+  · exact scenario13_not_when hwhen
 
 end Rett2020.Examples
