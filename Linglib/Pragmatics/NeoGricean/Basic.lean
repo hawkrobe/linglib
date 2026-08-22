@@ -5,28 +5,21 @@ import Linglib.Logic.Modal.Defs
 /-!
 # Neo-Gricean pragmatics: epistemic states and the Standard Recipe
 
-The epistemic layer of Neo-Gricean implicature: a speaker's
-`EpistemicState` (the nonempty finite set of worlds compatible with
-what the speaker knows) with the operators `knows` (K) and `possible`
-(P), [sauerland-2004]'s consistency-gated derivation of secondary
-implicatures, and the three-way `BeliefState` classification over
-which [geurts-2010]'s Standard Recipe runs.
-
-[sauerland-2004] distinguishes **primary implicatures** ¬Kψ from
-**secondary implicatures** K¬ψ, a secondary arising only when K¬ψ is
-consistent with the assertion together with all primary implicatures.
-The epistemic modalization ¬Kψ goes back to [soames-1982] and
-[horn-1989]; the competence step Kψ ∨ K¬ψ strengthening primaries to
-secondaries is formalized by [sauerland-2004], [vanrooij-schulz-2004],
-and [spector-2006]; [geurts-2010] is the textbook presentation.
+This file defines a speaker's epistemic state as a nonempty finite set of worlds, the
+knowledge and possibility operators K and P over it, the consistency-gated derivation of
+secondary implicatures of [sauerland-2004], and the three-way belief-state classification
+over which the Standard Recipe of [geurts-2010] runs. Asserting `φ` yields the primary
+implicature `¬Kψ` for each stronger alternative `ψ`; the secondary implicature `K¬ψ` arises
+only when it is consistent with the assertion and all primary implicatures, and the Standard
+Recipe obtains it from `¬Kψ` under the competence assumption `Kψ ∨ K¬ψ`.
 
 ## Main definitions
 
 * `EpistemicState`: a nonempty finite set of worlds, with `SetLike` membership.
 * `EpistemicState.knows`, `EpistemicState.possible`: the K and P operators, `box`/`diamond`
   over the epistemic accessibility `EpistemicState.access`.
-* `SatisfiesPrimaries`, `SecondaryLicensed`: [sauerland-2004]'s commitment set after an
-  assertion and the consistency condition licensing a secondary implicature.
+* `SatisfiesPrimaries`, `SecondaryLicensed`: the commitment set after an assertion and the
+  consistency condition licensing a secondary implicature.
 * `BeliefState`, `EpistemicState.beliefState`: belief, disbelief, or no opinion about an
   alternative, with the Standard Recipe's predicates `BeliefState.Competent`,
   `BeliefState.WeakImplicature`, `BeliefState.StrongImplicature`.
@@ -34,15 +27,19 @@ and [spector-2006]; [geurts-2010] is the textbook presentation.
 ## Main results
 
 * `secondaryLicensed_iff`: licensing decomposes over the alternatives, so a blocked secondary
-  implicature is always blocked by a single primary.
+  implicature is always blocked by a single primary; the disjunction case (K¬(A∧B) licensed,
+  K¬A blocked) is `Studies/Sauerland2004.lean`.
 * `secondaryLicensed_of_asymStrongerOn`: a lone asymmetrically stronger alternative always
   licenses its secondary implicature.
 * `BeliefState.strongImplicature_iff`: the strong implicature is exactly the weak implicature
   plus competence.
 
-The flagship multi-alternative case (K¬(A∧B) licensed but K¬A blocked for *A or B*) is
-`Studies/Sauerland2004.lean`; the graded counterpart of competence is the RSA
-knowledgeability parameter in `Pragmatics/RSA/`.
+## References
+
+* [sauerland-2004] — primary vs secondary implicatures and the consistency condition
+* [geurts-2010] — the Standard Recipe; textbook presentation
+* [soames-1982], [horn-1989] — the epistemic modalization `¬Kψ`
+* [vanrooij-schulz-2004], [spector-2006] — the competence step `Kψ ∨ K¬ψ`
 -/
 
 namespace NeoGricean
