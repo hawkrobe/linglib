@@ -73,7 +73,7 @@ The RSA model adds two things the Neo-Gricean account lacks:
 namespace BumfordRett2021
 
 open RSA
-open Rett2015 (Polarity)
+open Core.Order (ScalePolarity)
 open Degree (Construction)
 
 -- ============================================================================
@@ -844,8 +844,8 @@ constructions:
 /-! ### RSA ↔ Neo-Gricean Agreement
 
 [rett-2015]'s Neo-Gricean account (formalized in
-`Pragmatics/Implicature/Evaluativity.lean`) classifies
-constructions categorically using `Construction` and `Polarity`:
+`Studies/Rett2015.lean`) classifies
+constructions categorically using `Construction` and `ScalePolarity`:
 - **Positive** (`.positive`): evaluative for both polarities (Q-implicature)
 - **Equative** (`.equative`): evaluative for `.negative` only (Manner/R-implicature)
 - **Comparative** (`.comparative`): NOT evaluative (no applicable implicature)
@@ -858,8 +858,8 @@ the categorical classification. The RSA model adds:
 3. **≥ equative predictions** — partial overlap produces intermediate evaluativity,
    a novel prediction the categorical account does not make -/
 
-/-- Map utterance polarity to the evaluativity `Polarity` type. -/
-def utterancePolarity : Utterance → Option Polarity
+/-- Map utterance polarity to the adjective's `ScalePolarity`. -/
+def utterancePolarity : Utterance → Option ScalePolarity
   | .unmarked => some .positive
   | .marked   => some .negative
   | .null     => none
@@ -870,7 +870,7 @@ abbrev posConstruction  : Construction := .positive
 abbrev eqConstruction   : Construction := .equative
 abbrev compConstruction : Construction := .comparative
 
-open Rett2015 (deriveEvaluativity)
+open Rett2015 (Evaluative)
 
 /-- Cross-theory agreement: the RSA model and [rett-2015]'s Neo-Gricean
     account agree on the full evaluativity paradigm.
@@ -883,21 +883,21 @@ open Rett2015 (deriveEvaluativity)
       RSA confirms: neither polarity shifts strongly.
 
     This theorem connects two independent formalizations — the categorical
-    `deriveEvaluativity` function and the RSA `L1` predictions — proving they
+    `Rett2015.Evaluative` and the RSA `L1` predictions — proving they
     make compatible predictions despite using entirely different mechanisms. -/
 theorem rsa_neo_gricean_agreement (e : ℝ) (he0 : 0 < e) :
     -- Positive: both accounts say evaluative for both polarities
-    (deriveEvaluativity posConstruction .positive).isEvaluative = true ∧
-    (deriveEvaluativity posConstruction .negative).isEvaluative = true ∧
+    Evaluative posConstruction .positive ∧
+    Evaluative posConstruction .negative ∧
     (posL1 .unmarked he0).fst (mkW 5 2) > (posL1 .unmarked he0).fst (mkW 3 2) ∧
     (posL1 .marked he0).fst (mkW 3 2) > (posL1 .marked he0).fst (mkW 5 2) ∧
     -- Equative: Neo-Gricean says marked-only; RSA shows marked shift
-    (deriveEvaluativity eqConstruction .positive).isEvaluative = false ∧
-    (deriveEvaluativity eqConstruction .negative).isEvaluative = true ∧
+    ¬ Evaluative eqConstruction .positive ∧
+    Evaluative eqConstruction .negative ∧
     (eqL1 .marked he0).fst (mkW 4 4) > (eqL1 .marked he0).fst (mkW 4 0) ∧
     -- Comparative: both say not evaluative
-    (deriveEvaluativity compConstruction .positive).isEvaluative = false ∧
-    (deriveEvaluativity compConstruction .negative).isEvaluative = false :=
+    ¬ Evaluative compConstruction .positive ∧
+    ¬ Evaluative compConstruction .negative :=
   ⟨by decide, by decide,
    pos_tall_evaluative e he0, pos_short_evaluative e he0,
    by decide, by decide,

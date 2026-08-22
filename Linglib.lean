@@ -1403,7 +1403,6 @@ import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Pragmatics.InformationTheory.Channel
 import Linglib.Pragmatics.InformationTheory.ChannelCapacity
 import Linglib.Pragmatics.NeoGricean.Basic
-import Linglib.Pragmatics.NeoGricean.Markedness
 import Linglib.Pragmatics.RSA.Atoms
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Canonical
@@ -2299,7 +2298,6 @@ import Linglib.Studies.HollidayIcard2013
 import Linglib.Studies.HollidayMandelkern2024
 import Linglib.Studies.Holmberg2016
 import Linglib.Studies.Horn1972
-import Linglib.Studies.Horn1984
 import Linglib.Studies.Horn1989
 import Linglib.Studies.HoulihanEtAl2023
 import Linglib.Studies.HuangSpelkeSnedeker2013
@@ -2959,3 +2957,4 @@ import Linglib.Data.Examples.McGinnis2013
 import Linglib.Data.Examples.Arad2005
 import Linglib.Data.Examples.Embick2015
 import Linglib.Data.Examples.Bobaljik2000
+import Linglib.Data.Examples.Rett2015
