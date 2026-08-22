@@ -332,15 +332,14 @@ theorem sdp_implies_unif {W E : Type*}
 theorem everyoneKnows_implies_everyoneProbOne {W E : Type*} [Fintype W]
     (kp : KripkeKP W E) (hCONS : CONS kp) (hNorm : Normalized kp)
     (group : List E) (φ : (W → Bool)) (w : W)
-    (h : everyoneKnows kp.accessRel group (fun v => φ v = true) w) :
+    (h : everyoneKnows kp.accessRel {i | i ∈ group} (fun v => φ v = true) w) :
     everyoneProbably kp.worldCredence group 1 φ w = true := by
   unfold everyoneProbably
   rw [List.all_eq_true]
   intro i hi
   simp only [nestedThreshold, decide_eq_true_eq]
   linarith [knows_implies_prob_one kp hCONS hNorm i φ w
-    (ModalLogic.Epistemic.everyoneKnows_implies_knows
-      kp.accessRel group _ w i hi h)]
+    (ModalLogic.Epistemic.knows_of_everyoneKnows hi h)]
 
 -- ============================================================================
 -- §7. UNIF and Introspection

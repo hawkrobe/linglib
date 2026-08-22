@@ -1,5 +1,4 @@
 import Linglib.Semantics.Presupposition.Context
-import Linglib.Logic.Modal.Epistemic
 
 /-!
 # Belief Embedding and Local Contexts
