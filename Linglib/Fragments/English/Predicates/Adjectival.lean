@@ -1,5 +1,4 @@
 import Linglib.Semantics.Degree.Adjective
-import Linglib.Pragmatics.NeoGricean.Markedness
 
 /-! # Adjectival Predicate Lexicon Fragment
 
@@ -33,6 +32,7 @@ abbrev AdjectivalPredicateEntry := GradableAdjective
 /-- "tall" — open scale, contrary to "short" -/
 def tall : AdjectivalPredicateEntry where
   form := "tall"
+  polarity := some .positive
   dimension := some .height
   antonymForm := some "short"
   antonymRelation := some .contrary
@@ -40,6 +40,7 @@ def tall : AdjectivalPredicateEntry where
 /-- "short" — open scale, contrary to "tall" -/
 def short : AdjectivalPredicateEntry where
   form := "short"
+  polarity := some .negative
   dimension := some .height
   antonymForm := some "tall"
   antonymRelation := some .contrary
@@ -54,6 +55,7 @@ For the 2-place veridical-preferential attitude predicate
 -/
 def happy : AdjectivalPredicateEntry where
   form := "happy"
+  polarity := some .positive
   dimension := some .happiness
   antonymForm := some "unhappy"
   antonymRelation := some .contrary
@@ -62,6 +64,7 @@ def happy : AdjectivalPredicateEntry where
 /-- "unhappy" — open scale, contrary to "happy" -/
 def unhappy : AdjectivalPredicateEntry where
   form := "unhappy"
+  polarity := some .negative
   dimension := some .happiness
   antonymForm := some "happy"
   antonymRelation := some .contrary
@@ -846,38 +849,5 @@ theorem decent_no_cc      : ¬ decent.IsRelative := by decide
 theorem all_gradable :
     tall.IsGradable ∧ full.IsGradable ∧ wet.IsGradable ∧ good.IsGradable ∧
       decent.IsGradable := by decide
-
-/-! ### Morphology-extended entries
-
-Antonym-pair entries extended with the morphological and scale-pole
-metadata that `NeoGricean.Markedness` computes markedness from.
-Exercised by `Studies/Horn1984.lean`, `Studies/Krifka2007.lean`, and
-`Studies/Rett2015.lean`. -/
-
-open NeoGricean.Markedness (GradableAdjWithMorphology simpleMorphology prefixedMorphology)
-
-/-- *tall* with morphology: simple, positive pole. -/
-def tall_with_morphology : GradableAdjWithMorphology where
-  toGradableAdjective := tall
-  morphology := simpleMorphology "tall"
-  isPositivePole := true
-
-/-- *short* with morphology: simple, negative pole. -/
-def short_with_morphology : GradableAdjWithMorphology where
-  toGradableAdjective := short
-  morphology := simpleMorphology "short"
-  isPositivePole := false
-
-/-- *happy* with morphology: simple, positive pole. -/
-def happy_with_morphology : GradableAdjWithMorphology where
-  toGradableAdjective := happy
-  morphology := simpleMorphology "happy"
-  isPositivePole := true
-
-/-- *unhappy* with morphology: prefixed, negative pole. -/
-def unhappy_with_morphology : GradableAdjWithMorphology where
-  toGradableAdjective := unhappy
-  morphology := prefixedMorphology "unhappy"
-  isPositivePole := false
 
 end English.Predicates.Adjectival
