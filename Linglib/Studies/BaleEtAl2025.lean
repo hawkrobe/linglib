@@ -237,18 +237,6 @@ def toBeliefState : SpeakerKnowledge → BeliefState
   | .fullKnowledge    => .disbelief
   | .partialKnowledge => .noOpinion
 
-theorem fk_competent : (toBeliefState .fullKnowledge).Competent := trivial
-theorem pk_not_competent : ¬ (toBeliefState .partialKnowledge).Competent := id
-
-/-- FK speaker: the strong SI is derived. -/
-theorem fk_yields_strong : (toBeliefState .fullKnowledge).StrongImplicature := trivial
-
-/-- PK speaker (correctly identified): weak-only SI. -/
-theorem pk_yields_weak_only :
-    (toBeliefState .partialKnowledge).WeakImplicature ∧
-      ¬ (toBeliefState .partialKnowledge).StrongImplicature :=
-  ⟨trivial, id⟩
-
 /-- The default belief state: listeners assume speakers are competent. -/
 def defaultBeliefState : BeliefState := .disbelief
 
@@ -273,21 +261,13 @@ theorem load_fk_default :
 theorem load_pk_defaults_to_competent :
     effectiveBeliefState .partialKnowledge .load = .disbelief := rfl
 
-/-- Under load + PK, the default competence yields a strong SI (10% → 23.3%). -/
-theorem load_pk_yields_strong :
-    (effectiveBeliefState .partialKnowledge .load).StrongImplicature := by decide
-
-/-- Under no-load + PK, correct context integration yields weak-only (10%). -/
-theorem noLoad_pk_yields_weak :
-    ¬ (effectiveBeliefState .partialKnowledge .noLoad).StrongImplicature := by decide
-
-/-- The crossover prediction: load flips PK from weak to strong,
-    but leaves FK unchanged. -/
+/-- The crossover prediction: load flips PK from weak-only (10%) to the strong SI
+    (23.3%, the default competence) but leaves FK's strong SI in place. -/
 theorem crossover_prediction :
-    ¬ (effectiveBeliefState .partialKnowledge .noLoad).StrongImplicature ∧
-      (effectiveBeliefState .partialKnowledge .load).StrongImplicature ∧
-      (effectiveBeliefState .fullKnowledge .noLoad).StrongImplicature ∧
-      (effectiveBeliefState .fullKnowledge .load).StrongImplicature := by
+    effectiveBeliefState .partialKnowledge .noLoad ≠ .disbelief ∧
+      effectiveBeliefState .partialKnowledge .load = .disbelief ∧
+      effectiveBeliefState .fullKnowledge .noLoad = .disbelief ∧
+      effectiveBeliefState .fullKnowledge .load = .disbelief := by
   decide
 
 end BaleEtAl2025

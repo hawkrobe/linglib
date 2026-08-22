@@ -70,8 +70,8 @@ The paper uses different statistical tests at different points:
 The canonical *some*/*all* world model `SomeAllWorld` lives in
 `Pragmatics.Implicature.SomeAll`; this file uses it for the
 implicature-spine bridge. The §8 derivation routes through
-`NeoGricean.BeliefState.strongImplicature_iff` (Sauerland-style
-competence machinery). The `think` empirical condition is bridged to the
+`NeoGricean.subset_compl_iff_not_subset` (Sauerland-style competence
+machinery). The `think` empirical condition is bridged to the
 global/local distinction for attitude-embedded scalars
 (`AttitudeInterpretation`, defined in the bridge section below).
 
@@ -830,8 +830,8 @@ machinery in `NeoGricean`: from the primary implicature (32) — the
 speaker does not believe the alternative — and the competence
 assumption (33), the strong implicature (34) follows. -/
 theorem competence_explains_think {b : NeoGricean.BeliefState}
-    (h₃₂ : b.WeakImplicature) (h₃₃ : b.Competent) : b.StrongImplicature :=
-  NeoGricean.BeliefState.strongImplicature_iff.2 ⟨h₃₂, h₃₃⟩
+    (h₃₂ : b ≠ .belief) (h₃₃ : b ≠ .noOpinion) : b = .disbelief := by
+  cases b <;> simp_all
 
 /-- The same derivation chain *applied to universal quantifiers*
 (paper §8 (35)–(38)). For "All the customers shot at some of the
