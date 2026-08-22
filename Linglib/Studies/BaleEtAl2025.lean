@@ -67,9 +67,8 @@ def speakerState : SpeakerKnowledge → Set WorldState
 theorem speakerState_nonempty (k : SpeakerKnowledge) : (speakerState k).Nonempty := by
   cases k <;> exact ⟨.s2, by simp [speakerState]; decide⟩
 
-/-- Competence (7): the speaker knows whether *all*. -/
-def Competent (k : SpeakerKnowledge) : Prop :=
-  speakerState k ⊆ all ∨ speakerState k ⊆ allᶜ
+/-- Competence (7): the speaker's state knows whether *all*. -/
+def Competent (k : SpeakerKnowledge) : Prop := speakerState k ∈ competent all
 
 /-- The weak implicature (6) holds for both speakers: neither knows *all*. -/
 theorem not_speakerState_subset_all (k : SpeakerKnowledge) : ¬ speakerState k ⊆ all := by
@@ -77,11 +76,13 @@ theorem not_speakerState_subset_all (k : SpeakerKnowledge) : ¬ speakerState k �
 
 /-- The knowledgeable speaker is competent: he knows *not all*. -/
 theorem fk_competent : Competent .fullKnowledge :=
-  Or.inr <| by simp only [speakerState, all, Set.compl_ofPred, Set.ofPred_subset_ofPred]; decide
+  Or.inr <| by
+    simp only [speakerState, all, Set.mem_Iic, Set.compl_ofPred, Set.ofPred_subset_ofPred]; decide
 
 /-- The ignorant speaker is not competent about *all*. -/
 theorem pk_not_competent : ¬ Competent .partialKnowledge := by
-  simp only [Competent, speakerState, all, Set.compl_ofPred, Set.ofPred_subset_ofPred]
+  simp only [Competent, mem_competent, speakerState, all, Set.compl_ofPred,
+    Set.ofPred_subset_ofPred]
   decide
 
 /-- The strong implicature (8) for the knowledgeable speaker, by the Standard Recipe from
