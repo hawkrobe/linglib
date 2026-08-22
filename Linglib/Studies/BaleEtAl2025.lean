@@ -1,4 +1,5 @@
 import Linglib.Pragmatics.NeoGricean.Basic
+import Linglib.Studies.GoodmanStuhlmuller2013
 
 /-!
 # [bale-etal-2025] — Competence by Default
@@ -222,52 +223,74 @@ theorem only_competenceByDefault_predicts_interaction :
     = [.competenceByDefault] := by decide
 
 
--- ============================================================================
--- Part II: NeoGricean Competence Bridge
--- ============================================================================
+/-! ### Speaker knowledge as observation access
 
-/-! Connects the experimental findings to the NeoGricean competence
-formalization in `Pragmatics.NeoGricean.Basic`. -/
+The cover story is [goodman-stuhlmuller-2013]'s access paradigm: the
+speaker inspects some of the three sections of the box and reports what
+she saw, so her epistemic state is the set of worlds compatible with the
+observation (`GoodmanStuhlmuller2013.obsCompatible`). Competence about
+the stronger alternative *all* is then derived, not stipulated: the
+full-knowledge state settles *whether all* and the partial-knowledge
+state does not, while both support the *some* assertion. -/
 
-open NeoGricean
+open GoodmanStuhlmuller2013 NeoGricean
 
-/-- Map speaker knowledge to NeoGricean belief state about the stronger
-    alternative ψ. FK speaker knows ¬ψ; PK speaker has no opinion. -/
-def toBeliefState : SpeakerKnowledge → BeliefState
-  | .fullKnowledge    => .disbelief
-  | .partialKnowledge => .noOpinion
+/-- The stronger alternative ψ: *all of the marbles are red*. -/
+def all : Set WorldState := {w | qMeaning .all w}
 
-/-- The default belief state: listeners assume speakers are competent. -/
-def defaultBeliefState : BeliefState := .disbelief
+/-- The speaker's epistemic state: the worlds compatible with inspecting
+all three sections and seeing two red marbles (FK), or inspecting two
+sections and seeing both red (PK). -/
+def speakerState : SpeakerKnowledge → Set WorldState
+  | .fullKnowledge    => {w | obsCompatible 3 2 w}
+  | .partialKnowledge => {w | obsCompatible 2 2 w}
 
-/-- Context integration: no load → yes; load → no. -/
-def canIntegrateContext : LoadCondition → Bool
-  | .noLoad => true
-  | .load   => false
+theorem speakerState_nonempty (k : SpeakerKnowledge) : (speakerState k).Nonempty := by
+  cases k <;> exact ⟨.s2, by simp [speakerState]; decide⟩
 
-/-- The effective belief state after (possibly failed) context integration. -/
-def effectiveBeliefState (k : SpeakerKnowledge) (l : LoadCondition) : BeliefState :=
-  if canIntegrateContext l then
-    toBeliefState k
-  else
-    defaultBeliefState
+/-- Competence about *all*, [sauerland-2004]'s `K all ∨ K¬all`: the speaker's state settles
+*whether all*. -/
+def Competent (k : SpeakerKnowledge) : Prop :=
+  speakerState k ⊆ all ∨ speakerState k ⊆ allᶜ
 
-theorem noLoad_fk_correct :
-    effectiveBeliefState .fullKnowledge .noLoad = .disbelief := rfl
-theorem noLoad_pk_correct :
-    effectiveBeliefState .partialKnowledge .noLoad = .noOpinion := rfl
-theorem load_fk_default :
-    effectiveBeliefState .fullKnowledge .load = .disbelief := rfl
-theorem load_pk_defaults_to_competent :
-    effectiveBeliefState .partialKnowledge .load = .disbelief := rfl
+/-- Neither speaker knows *all*: the weak implicature `¬K all` holds in
+both knowledge conditions. -/
+theorem not_speakerState_subset_all (k : SpeakerKnowledge) : ¬ speakerState k ⊆ all := by
+  cases k <;> simp only [speakerState, all, Set.ofPred_subset_ofPred] <;> decide
 
-/-- The crossover prediction: load flips PK from weak-only (10%) to the strong SI
-    (23.3%, the default competence) but leaves FK's strong SI in place. -/
-theorem crossover_prediction :
-    effectiveBeliefState .partialKnowledge .noLoad ≠ .disbelief ∧
-      effectiveBeliefState .partialKnowledge .load = .disbelief ∧
-      effectiveBeliefState .fullKnowledge .noLoad = .disbelief ∧
-      effectiveBeliefState .fullKnowledge .load = .disbelief := by
+/-- The full-knowledge speaker is competent: she knows `¬all`. -/
+theorem fk_competent : Competent .fullKnowledge :=
+  Or.inr <| by simp only [speakerState, all, Set.compl_ofPred, Set.ofPred_subset_ofPred]; decide
+
+/-- The partial-knowledge speaker is not competent about *all*. -/
+theorem pk_not_competent : ¬ Competent .partialKnowledge := by
+  simp only [Competent, speakerState, all, Set.compl_ofPred, Set.ofPred_subset_ofPred]
   decide
+
+/-- The Standard Recipe for the full-knowledge speaker: the weak
+implicature plus competence yields the strong SI `K¬all`. -/
+theorem fk_strong : speakerState .fullKnowledge ⊆ allᶜ :=
+  (subset_compl_iff_not_subset (speakerState_nonempty _) fk_competent).2
+    (not_speakerState_subset_all _)
+
+/-- The partial-knowledge speaker is ignorant: neither `K all` nor `K¬all`. -/
+theorem pk_ignorant : ¬ speakerState .partialKnowledge ⊆ allᶜ := by
+  simp only [speakerState, all, Set.compl_ofPred, Set.ofPred_subset_ofPred]; decide
+
+/-! ### Competence by default -/
+
+/-- The competence-by-default hearer assumes the speaker is competent
+unless context can be integrated (no load) and shows otherwise. -/
+def AssumesCompetent (k : SpeakerKnowledge) : LoadCondition → Prop
+  | .load   => True
+  | .noLoad => Competent k
+
+/-- The crossover prediction: load flips the partial-knowledge speaker from
+weak-only (10%) to the strong SI (23.3%) but leaves the full-knowledge
+speaker's strong SI (65.6%, 56.7%) in place. -/
+theorem crossover_prediction :
+    ¬ AssumesCompetent .partialKnowledge .noLoad ∧ AssumesCompetent .partialKnowledge .load ∧
+      AssumesCompetent .fullKnowledge .noLoad ∧ AssumesCompetent .fullKnowledge .load :=
+  ⟨pk_not_competent, trivial, fk_competent, trivial⟩
 
 end BaleEtAl2025

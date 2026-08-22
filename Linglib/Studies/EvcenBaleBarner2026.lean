@@ -31,9 +31,10 @@ logistic mixed-effects regressions):
 The paper's ALT constraint — alternatives are QUD answers the speaker is
 competent about, `ALT(p) ⊆ ANS(QUD) ∩ {q : Kₛ(q) ∨ Kₛ(¬q)}` — is
 `exhaustificationLicensed`; the competence half is
-`BaleEtAl2025.toBeliefState`, the same mapping [bale-etal-2025]'s
-scalar-implicature paradigm uses, so conditional perfection and scalar
-implicature share the competence gate by construction. Perfection is not a semantic entailment
+`BaleEtAl2025.Competent`, derived from the speaker's observation state,
+the same derivation [bale-etal-2025]'s scalar-implicature paradigm uses,
+so conditional perfection and scalar implicature share the competence
+gate by construction. Perfection is not a semantic entailment
 (`Semantics.Conditionals.perfection_not_entailed_variablyStrict`), and
 coverage without exclusion does not suffice
 (`VonFintel2001.coverage_without_exclusion_insufficient`).
@@ -54,7 +55,7 @@ coverage without exclusion does not suffice
 namespace EvcenBaleBarner2026
 
 open VonFintel2001 Semantics.Conditionals Exhaustification NeoGricean
-open BaleEtAl2025 (SpeakerKnowledge toBeliefState)
+open BaleEtAl2025 (SpeakerKnowledge Competent fk_competent pk_not_competent)
 
 /-! ### Experimental conditions and observed rates -/
 
@@ -107,10 +108,9 @@ def qudProvidesAlternatives (q : QUDType) : Prop := q = .antecedentFocused
 
 /-- Exhaustification is licensed when the QUD provides alternative
 antecedents and the speaker is competent about them — the paper's ALT
-constraint `ALT(p) ⊆ ANS(QUD) ∩ {q : Kₛ(q) ∨ Kₛ(¬q)}`. Competence is
-`BaleEtAl2025.toBeliefState k ≠ .noOpinion`. -/
+constraint `ALT(p) ⊆ ANS(QUD) ∩ {q : Kₛ(q) ∨ Kₛ(¬q)}`. -/
 def exhaustificationLicensed (k : SpeakerKnowledge) (q : QUDType) : Prop :=
-  qudProvidesAlternatives q ∧ toBeliefState k ≠ .noOpinion
+  qudProvidesAlternatives q ∧ Competent k
 
 /-- Exhaustification is licensed exactly under an antecedent-focused QUD
 with a fully knowledgeable speaker. -/
@@ -119,7 +119,7 @@ with a fully knowledgeable speaker. -/
     exhaustificationLicensed k q ↔
       q = .antecedentFocused ∧ k = .fullKnowledge := by
   cases k <;>
-    simp [exhaustificationLicensed, qudProvidesAlternatives, toBeliefState]
+    simp [exhaustificationLicensed, qudProvidesAlternatives, fk_competent, pk_not_competent]
 
 /-! ### Licensing predicts the observed rates -/
 

@@ -826,12 +826,12 @@ derivation of seemingly-embedded SIs that the §8 argument is built on:
 or [geurts-2006] are formalized in linglib yet. -/
 
 /-- The §8 derivation routed through the Sauerland-style competence
-machinery in `NeoGricean`: from the primary implicature (32) — the
-speaker does not believe the alternative — and the competence
-assumption (33), the strong implicature (34) follows. -/
-theorem competence_explains_think {b : NeoGricean.BeliefState}
-    (h₃₂ : b ≠ .belief) (h₃₃ : b ≠ .noOpinion) : b = .disbelief := by
-  cases b <;> simp_all
+machinery in `NeoGricean`: for Bob's (consistent) belief state `s`, the
+primary implicature (32) `¬K all` and the competence assumption (33)
+`K all ∨ K¬all` yield the strong implicature (34) `K¬all`. -/
+theorem competence_explains_think {W : Type*} {s all : Set W} (hs : s.Nonempty)
+    (h₃₂ : ¬ s ⊆ all) (h₃₃ : s ⊆ all ∨ s ⊆ allᶜ) : s ⊆ allᶜ :=
+  (NeoGricean.subset_compl_iff_not_subset hs h₃₃).2 h₃₂
 
 /-- The same derivation chain *applied to universal quantifiers*
 (paper §8 (35)–(38)). For "All the customers shot at some of the

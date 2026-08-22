@@ -2,24 +2,22 @@ import Mathlib.Data.Set.Insert
 import Mathlib.Order.BooleanAlgebra.Set
 
 /-!
-# Neo-Gricean pragmatics: epistemic states and the Standard Recipe
+# Neo-Gricean pragmatics: secondary implicatures and the Standard Recipe
 
 This file defines [sauerland-2004]'s consistency-gated derivation of secondary implicatures
-and the three-way belief-state classification over which the Standard Recipe of
-[geurts-2010] runs. A speaker's epistemic state is a set of worlds `s : Set W` — the same
-object as the `ContextSet` of `Discourse/CommonGround.lean` — and a proposition is a `Set W`,
-so the speaker knows `φ` iff `s ⊆ φ`, knows `¬φ` iff `s ⊆ φᶜ`, and considers `φ` possible iff
-`(s ∩ φ).Nonempty`; consistency of the speaker is the hypothesis `s.Nonempty` (the
-`Filter.NeBot` convention), not part of a bundled type. Asserting `φ` yields the primary
-implicature `¬Kψ` for each stronger alternative `ψ`; the secondary implicature `K¬ψ` arises
-only when it is consistent with the assertion and all primary implicatures, and the Standard
-Recipe obtains it from `¬Kψ` under the competence assumption `Kψ ∨ K¬ψ`.
+and the Standard Recipe of [geurts-2010]. A speaker's epistemic state is a set of worlds
+`s : Set W` — the same object as the `ContextSet` of `Discourse/CommonGround.lean` — and a
+proposition is a `Set W`, so the speaker knows `φ` iff `s ⊆ φ`, knows `¬φ` iff `s ⊆ φᶜ`, and
+is competent about `φ` iff `s ⊆ φ ∨ s ⊆ φᶜ`; consistency of the speaker is the hypothesis
+`s.Nonempty` (the `Filter.NeBot` convention).
+Asserting `φ` yields the primary implicature `¬Kψ` for each stronger alternative `ψ`; the
+secondary implicature `K¬ψ` arises only when it is consistent with the assertion and all
+primary implicatures, and the Standard Recipe obtains it from `¬Kψ` under competence.
 
 ## Main definitions
 
 * `SatisfiesPrimaries`, `SecondaryLicensed`: the commitment set after an assertion and the
   consistency condition licensing a secondary implicature.
-* `BeliefState`, `beliefState`: belief, disbelief, or no opinion about an alternative.
 
 ## Main results
 
@@ -28,7 +26,7 @@ Recipe obtains it from `¬Kψ` under the competence assumption `Kψ ∨ K¬ψ`.
   K¬A blocked) is `Studies/Sauerland2004.lean`.
 * `secondaryLicensed_of_ssubset`: a lone asymmetrically stronger alternative always licenses
   its secondary implicature.
-* `subset_compl_iff_not_subset`: the Standard Recipe — under competence, the strong
+* `subset_compl_iff_not_subset`: the Standard Recipe — for a competent speaker, the strong
   implicature `K¬ψ` is exactly the weak implicature `¬Kψ`.
 
 ## References
@@ -104,53 +102,20 @@ theorem secondaryLicensed_singleton_self : SecondaryLicensed φ [ψ] ψ ↔ (φ 
 theorem secondaryLicensed_of_ssubset (h : ψ ⊂ φ) : SecondaryLicensed φ [ψ] ψ :=
   secondaryLicensed_singleton_self.2 (Set.sdiff_nonempty.2 h.2)
 
-/-! ### The three-way belief-state classification
+/-! ### Competence and the Standard Recipe
 
-`BeliefState` is the knows-whether trichotomy for one alternative `ψ`, and `beliefState`
-grounds it in the epistemic state. The Standard Recipe is `subset_compl_iff_not_subset`: for
-a consistent, competent speaker, knowing `¬ψ` is exactly not knowing `ψ`. -/
-
-/-- A speaker's attitude toward an alternative `ψ`: belief `Bel_S(ψ)`, disbelief `Bel_S(¬ψ)`,
-or no opinion. -/
-inductive BeliefState where
-  | belief
-  | disbelief
-  | noOpinion
-  deriving DecidableEq, Repr
+Competence about `ψ` is [sauerland-2004]'s `Kψ ∨ K¬ψ`, `s ⊆ ψ ∨ s ⊆ ψᶜ` — the speaker *knows
+whether* `ψ`, which is support of the polar question `Question.polar ψ` by
+`Question.mem_polar`. -/
 
 /-- A consistent speaker cannot both know `ψ` and know `¬ψ`. -/
 theorem not_subset_compl_of_subset (hs : s.Nonempty) (h : s ⊆ ψ) : ¬ s ⊆ ψᶜ :=
   fun h' => hs.elim fun _ hw => h' hw (h hw)
 
-/-- The Standard Recipe: for a consistent speaker competent about `ψ` (`Kψ ∨ K¬ψ`), the strong
-implicature `K¬ψ` is exactly the weak implicature `¬Kψ`. -/
+/-- The Standard Recipe: for a consistent speaker competent about `ψ`, the strong implicature
+`K¬ψ` is exactly the weak implicature `¬Kψ`. -/
 theorem subset_compl_iff_not_subset (hs : s.Nonempty) (hc : s ⊆ ψ ∨ s ⊆ ψᶜ) :
     s ⊆ ψᶜ ↔ ¬ s ⊆ ψ :=
   ⟨fun h h' => not_subset_compl_of_subset hs h' h, hc.resolve_left⟩
-
-variable [Decidable (s ⊆ ψ)] [Decidable (s ⊆ ψᶜ)]
-
-/-- Classify an epistemic state by its attitude toward `ψ`: `Kψ` is belief, `K¬ψ` disbelief,
-anything else no opinion. -/
-def beliefState (s ψ : Set W) [Decidable (s ⊆ ψ)] [Decidable (s ⊆ ψᶜ)] : BeliefState :=
-  if s ⊆ ψ then .belief else if s ⊆ ψᶜ then .disbelief else .noOpinion
-
-@[simp] theorem beliefState_eq_belief_iff : beliefState s ψ = .belief ↔ s ⊆ ψ := by
-  unfold beliefState
-  split_ifs <;> simp [*]
-
-/-- Disbelief is `K¬ψ`; the `Kψ` branch is excluded by consistency. -/
-theorem beliefState_eq_disbelief_iff (hs : s.Nonempty) :
-    beliefState s ψ = .disbelief ↔ s ⊆ ψᶜ := by
-  unfold beliefState
-  split_ifs with h₁ h₂
-  · exact iff_of_false (by decide) (not_subset_compl_of_subset hs h₁)
-  · exact iff_of_true rfl h₂
-  · exact iff_of_false (by decide) h₂
-
-@[simp] theorem beliefState_eq_noOpinion_iff :
-    beliefState s ψ = .noOpinion ↔ ¬ s ⊆ ψ ∧ ¬ s ⊆ ψᶜ := by
-  unfold beliefState
-  split_ifs <;> simp [*]
 
 end NeoGricean
