@@ -1,6 +1,5 @@
 import Linglib.Semantics.Degree.Antonymy
 import Linglib.Semantics.Degree.Antonymy
-import Linglib.Pragmatics.NeoGricean.Markedness
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Data.Examples.TesslerFranke2019
 import Linglib.Phonology.Constraints.Defs
@@ -226,16 +225,8 @@ theorem equivalent_to_positive_iff_strengthened :
   decide
 
 -- ════════════════════════════════════════════════════
--- § 7. Bridge to Markedness Infrastructure
+-- § 7. Cost is complexity
 -- ════════════════════════════════════════════════════
-
-/-- Krifka's form complexity ordering matches the markedness infrastructure.
-    "unhappy" is marked over "happy" by morphological complexity. -/
-theorem unhappy_marked_by_morphology :
-    NeoGricean.Markedness.computeMarked
-      English.Predicates.Adjectival.happy_with_morphology
-      English.Predicates.Adjectival.unhappy_with_morphology = some "unhappy" := by
-  decide
 
 /-- **Cost = complexity**: the rows' cost parameters (`C(un-) = 2`,
     `C(not) = 3`, additive) equal Krifka's form complexity

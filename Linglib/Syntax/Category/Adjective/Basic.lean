@@ -1,3 +1,4 @@
+import Linglib.Core.Order.Boundedness
 import Linglib.Features.ScalarDimension
 import Linglib.Morphology.Paradigm.Degree
 
@@ -86,6 +87,9 @@ structure Adjective where
   /-- Which pole of the scale the adjective lexicalizes (*short*, *empty*, *wet*):
       the only thing distinguishing polar scale-mates that share one `dimension`. -/
   isLowerEndpoint : Bool := false
+  /-- The direction of the ordering the adjective imposes on its `dimension`: antonyms share a
+      dimension and reverse the ordering (*tall* positive, *short* negative). -/
+  polarity : Option Core.Order.ScalePolarity := none
   /-- Comparative/superlative morphology. -/
   comparison : Adjective.ComparisonFacet := .regular
   /-- Lexical antonym's surface form, when it has a stable one. -/
