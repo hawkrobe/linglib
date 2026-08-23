@@ -289,7 +289,7 @@ profile stays visible at the def-site. -/
 /-- Romero & Han's framework offers exactly one analytic option for
     salient polarity: the FOR-SURE-CommonGround operator. M&N call this LOT. -/
 inductive RHAnalysis where
-  /-- [romero-han-2004]'s `forSureCG` operator analyzes the
+  /-- [romero-han-2004]'s `RomeroHan2004.verum` operator analyzes the
       structure as expressing speaker certainty about CommonGround-addition. -/
   | epistemicVerum
   deriving DecidableEq, Repr
