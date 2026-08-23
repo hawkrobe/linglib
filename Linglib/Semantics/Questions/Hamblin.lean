@@ -38,6 +38,10 @@ variable {W : Type u}
 def polar (p : Set W) : Question W :=
   ofSet p ⊔ ofSet pᶜ
 
+/-- A polar question does not depend on which of `p`, `pᶜ` is asked about. -/
+@[simp] theorem polar_compl (p : Set W) : polar pᶜ = polar p := by
+  rw [polar, polar, compl_compl, sup_comm]
+
 /-- `polar` is, by definition, the inquisitive disjunction of the two
     declaratives. *Not* `@[simp]`: `polar p` is a meaningful surface
     primitive (it's the polar interrogative), and unfolding it to its
