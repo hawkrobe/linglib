@@ -2809,6 +2809,7 @@ import Linglib.Syntax.Category.Pronoun.Indefinite
 import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
 import Linglib.Syntax.Category.Pronoun.Logophoric
 import Linglib.Syntax.Category.Pronoun.WALS
+import Linglib.Syntax.Category.Verb.Argument
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Category.Verb.Complement.Basic
 import Linglib.Syntax.Category.Verb.Complement.Takes
