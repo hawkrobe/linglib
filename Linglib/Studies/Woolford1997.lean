@@ -53,7 +53,7 @@ with Nez Perce as the primary case study.
 
 - Local `WCase` type adds OBJ (absent from `Case`)
 - Bridge theorems connect to `Case` hierarchy validation
-- Bridge theorems connect to dependent case algorithm (`DependentCase.lean`)
+- Bridge theorems connect to dependent case algorithm (`Syntax/Case/Dependent.lean`)
   showing where the theories agree and diverge
 -/
 

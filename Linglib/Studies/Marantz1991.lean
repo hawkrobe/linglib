@@ -23,7 +23,7 @@ Morphological case obeys a disjunctive hierarchy:
 
     lexically governed > dependent (ACC/ERG) > unmarked > default
 
-This is formalized in `DependentCase.lean` as `CaseSource`
+This is formalized in `Syntax/Case/Dependent.lean` as `CaseSource`
 (lexical > dependent > unmarked). [marantz-1991]'s fourth level,
 **default** case (absolute last resort when no other principle applies),
 is not modeled separately; it is conceptually distinct from unmarked
@@ -294,7 +294,7 @@ open Georgian.Agreement
 
 /-- Map alignment family to dependent case language type.
     Bridges the typological description (`Alignment.SplitErgativity`) to
-    the case algorithm (`DependentCase`). -/
+    the case algorithm (`Syntax/Case/Dependent.lean`). -/
 def alignmentToLangType : Features.AlignmentFamily → CaseLanguageType
   | .accusative => .accusative
   | .ergative   => .ergative

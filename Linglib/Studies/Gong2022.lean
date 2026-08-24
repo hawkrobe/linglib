@@ -224,7 +224,7 @@ theorem sbg_overpredicts :
     what makes the case position available for late merger.
 
     This connects the Mongolian fragment's WLM predictions to the
-    theory-layer dependent case algorithm in `DependentCase.lean`,
+    theory-layer dependent case algorithm in `Syntax/Case/Dependent.lean`,
     rather than stipulating case positions independently. -/
 theorem dependent_acc_determines_wlm :
     -- The dependent case algorithm assigns ACC to DO above IO

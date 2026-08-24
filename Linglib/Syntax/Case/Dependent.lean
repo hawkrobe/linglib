@@ -1,714 +1,427 @@
 import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Capabilities
 import Linglib.Features.Case.Source
+
 /-!
-# Dependent Case Theory
-[marantz-1991] [baker-2015]
+# Dependent case
 
-The dependent case algorithm: case is determined by the structural
-configuration of NPs within a Spell-Out domain, applied via a
-disjunctive priority hierarchy:
+This file defines the configurational case algorithm of [marantz-1991], in
+the form [baker-2015] gives it. Case is read off the arrangement of NPs in
+a Spell-Out domain under a disjunctive priority hierarchy: lexical case
+assigned by a particular head outranks dependent case, assigned to an NP
+standing in a c-command relation with another caseless NP, which in turn
+outranks the unmarked default. Which case the dependent rule assigns is the
+alignment parameter — accusative on the lower NP, ergative on the higher, or
+both at once in a tripartite system.
 
-1. **Lexical case**: assigned by a particular head (P, V) — highest priority
-2. **Dependent case**: assigned to an NP that stands in a c-command
-   relation with another caseless NP in the same domain
-   - Accusative languages: lower NP gets ACC
-   - Ergative languages: higher NP gets ERG
-   - Tripartite languages: higher NP gets ERG *and* lower gets ACC
-3. **Unmarked case**: default for any NP still without case
-   - Accusative languages: NOM
-   - Ergative languages: ABS
-   - Tripartite languages: ABS
+`assignCases` runs the hierarchy over a flat Spell-Out domain, list position
+encoding c-command. `assignCasesPhased` runs the two-cycle variant of
+[baker-vinokurova-2010], in which the configurational rules apply once per
+phase and Agree with a functional head values whatever they leave unmarked.
+`CaseSystemConfig` selects a mechanism per case, so a purely configurational
+grammar, a purely Agree-based one ([chomsky-2000]), and the mixed grammars
+in between are parameterizations of a single algorithm rather than rival
+formalisations.
 
-This file is the *theory* — the language-typology enum, the configural
-rules, and the case-assignment algorithm. Empirical applications,
-cross-linguistic validation, and competing analyses live in
-`Studies/`.
+## Main definitions
 
-## Where to Find What
+* `CaseSource`: how a case was assigned; `CaseSource.toNeutral` projects it
+  onto the account-neutral `Case.Source`.
+* `CaseLanguageType`: the alignment parameter fixing the dependent and
+  unmarked cases.
+* `NPInDomain`, `CasedNP`: an NP before and after case assignment.
+* `assignCases`: the one-pass algorithm over a Spell-Out domain.
+* `structuralCasesFor`: the cases the algorithm can assign to a caseless NP.
+* `CaseSystemConfig`: per-case choice of assignment mechanism.
+* `PhasedNP`, `assignCasesPhased`: the two-cycle algorithm.
 
-- `Studies/Marantz1991.lean` — the original proposal: abstract vs.
-  morphological case, Georgian split-ergative spellout, the case
-  realization hierarchy as the parallel to the agreement accessibility
-  hierarchy
-- `Studies/Baker2015.lean` — the typological survey: cross-linguistic
-  derivations across accusative (German, Turkish), ergative (Basque),
-  and split-ergative (Hindi, Georgian) columns
-- `Studies/BakerVinokurova2010.lean` — the Sakha case study, including
-  the dependent-case-with-Agree hybrid
-- `Studies/Woolford1997.lean` — four-way case systems (Nez Perce):
-  ERG-as-inherent challenges the dependent-case derivation of ergative
-- `Studies/Scott2023.lean` — voice-based case in Mam: a sibling theory
-  in which Voice and Infl assign case directly by argument position,
-  with `dependent_case_ignores_voice` staging the contrast
-- `Studies/Ozaki2026.lean` — Japanese departure verbs: dependent ACC on
-  the source of dyadic unaccusatives, with lexical ABL from *kara*
-  bleeding dependent case
-- `Studies/Caha2009.lean` — typological prediction at the inventory level,
-  using the scoped Caha `PartialOrder` from `Syntax/Case/Order.lean`
-  and the `RespectsCahaContainment` predicate now defined in `Caha2009.lean`
-  itself. The dependent case algorithm produces values in `Case`;
-  their relative ranking is the canonical containment order, which
-  Caha's *ABA constraint applies to.
+## Main results
 
-## Companion Infrastructure
+* `lexical_bleeds_dependent`: lexical case pre-empts the dependent rule.
+* `nonlexical_case_mem_structuralCasesFor`: the algorithm assigns a caseless
+  NP only cases its alignment type admits.
+* `assignCases_length`, `assignCasesPhased_length`: both algorithms are
+  total — one `CasedNP` per input NP.
+* `dat_persists_through_assignCasesPhased`: the Elsewhere ordering of the
+  dative rule over the accusative rule is structural, not a stipulated rule
+  ordering.
 
-- `Syntax/Minimalism/Voice.lean` — Voice flavors and
-  phase-hood, used by the Agree-based competitor and by Voice-based
-  case (Scott 2023)
-- `Syntax/Minimalism/CaseFilter.lean` — the Agree-based
-  licensing requirement that every DP must receive Case
-- `Syntax/Case/Licensing.lean` — Kalin's hybrid licensing
-  framework: one obligatory primary licenser per clause + secondary
-  licensers as a last-resort response to convergence failure, deriving
-  DOM patterns as the surface signature of secondary-licenser activation
-- `Syntax/Case/Order.lean` — the containment hierarchy (a *scoped*
-  `PartialOrder` on `Case`); `Morphology/Paradigm/Case.lean` — the
-  framework-neutral `AllomorphyPattern` and *ABA substrate; `Studies/
-  Caha2009.lean` — the Caha-specific `RespectsCahaContainment`
-  predicate that consumes `Case` values
+## Implementation notes
 
+List position encodes structural height: earlier is higher, and c-commands
+everything later. NP identity is carried by a `String` label, which
+`getCaseOf` and `getSourceOf` look up; the labels are inert for the
+algorithm, which reads only the lexical-case field and list position.
+
+## References
+
+* [marantz-1991]
+* [baker-2015]
+* [baker-vinokurova-2010]
 -/
 
 namespace Syntax.Case
 
+/-! ### Case sources -/
 
--- ============================================================================
--- § 1: Case Sources
--- ============================================================================
-
-/-- The source of case assignment, ordered by priority.
-    Lexical case (assigned by P, V) takes priority over dependent case,
-    which takes priority over unmarked (default) case. -/
+/-- The mechanism that assigned a case, ordered by priority: `lexical`
+    (a specific head, e.g. P or inherent V case) outranks `dependent`
+    (structural configuration), which outranks `unmarked` (the default).
+    `agree` is the Chomskyan alternative to `dependent`, valuation by a
+    functional head. -/
 inductive CaseSource where
-  | lexical    -- Assigned by a specific head (P, inherent V case)
-  | dependent  -- Assigned by structural configuration ([baker-2015])
-  | unmarked   -- Default when no other case applies
-  | agree      -- Assigned by Agree with a functional head T or D
-               -- ([chomsky-2000]; NOM/GEN in [baker-vinokurova-2010])
+  | lexical
+  | dependent
+  | unmarked
+  | agree
   deriving DecidableEq, Repr
 
-/-- The neutral provenance (`Case.Source`) of a dependent-case source:
-    configural and Agree-valued cases are `structural`, lexical is
-    `inherent`, unmarked is `default`. Dependent case is total, so it never
-    maps to `uncased` (`CaseSource.toNeutral_ne_uncased`). -/
+/-- The account-neutral provenance of a dependent-case source: configural
+    and Agree-valued cases are `structural`, lexical is `inherent`, and
+    unmarked is `default`. -/
 def CaseSource.toNeutral : CaseSource → _root_.Case.Source
   | .lexical => .inherent
   | .dependent => .structural
   | .unmarked => .default
   | .agree => .structural
 
-/-- Marantz dependent case is **total**: no source it produces is the crash
-    (`uncased`). The provenance-level contrast with Kalin hybrid licensing,
-    which can crash (`Licensing.LicensingOutcome.toNeutral_uncased_iff`). -/
+/-- Dependent case is total: no source it produces is the crash `uncased`,
+    unlike the hybrid licensing of `Licensing.LicensingOutcome`. -/
 theorem CaseSource.toNeutral_ne_uncased (s : CaseSource) :
     s.toNeutral ≠ _root_.Case.Source.uncased := by
   cases s <;> decide
 
--- ============================================================================
--- § 2: Language Typology
--- ============================================================================
+/-! ### Alignment types -/
 
-/-- Language type determines which dependent and unmarked cases are used.
-    - Accusative: dependent = ACC (on lower NP), unmarked = NOM
-    - Ergative: dependent = ERG (on higher NP), unmarked = ABS
-    - Tripartite: dependent = ERG (on higher) + ACC (on lower), unmarked = ABS
-      ([scott-2023]: SJA Mam; cf. Nez Perce) -/
+/-- The alignment parameter, fixing which case the dependent rule assigns
+    and which case is the default: accusative (dependent ACC on the lower
+    NP, unmarked NOM), ergative (dependent ERG on the higher NP, unmarked
+    ABS), or tripartite (both dependent rules active, unmarked ABS). -/
 inductive CaseLanguageType where
-  | accusative  -- Japanese, English, Romance, ...
-  | ergative    -- Basque, Hindi (split), ...
-  | tripartite  -- Nez Perce ([deal-2010]), Warlpiri, ...
+  | accusative
+  | ergative
+  | tripartite
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 3: NP in a Spell-Out Domain
--- ============================================================================
+/-! ### Spell-Out domains -/
 
-/-- An NP within a Spell-Out domain, before case assignment.
-    List position encodes structural height: earlier = higher = c-commands later.
-
-    If a P head (e.g., Japanese *kara*) assigns lexical case to the NP,
-    `lexicalCase` is `some c`; otherwise it is `none`. -/
+/-- An NP in a Spell-Out domain, before case assignment. `lexicalCase` is
+    `some c` when a P or V head has pre-assigned case `c`. -/
 structure NPInDomain where
-  /-- Label identifying this NP -/
+  /-- Label identifying this NP. -/
   label : String
-  /-- Lexical case pre-assigned by a P or V head (e.g., ABL from *kara*) -/
+  /-- Case pre-assigned by a P or V head, e.g. ablative from Japanese *kara*. -/
   lexicalCase : Option Case
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 4: Case Assignment Result
--- ============================================================================
-
-/-- Result of case assignment: an NP with its case value and source. -/
+/-- An NP after case assignment, carrying its case and the source that
+    assigned it. -/
 structure CasedNP where
+  /-- Label identifying this NP, inherited from its `NPInDomain`. -/
   label : String
+  /-- The assigned case. -/
   case : Case
+  /-- The mechanism that assigned it. -/
   source : CaseSource
   deriving DecidableEq, Repr
 
-/-- A cased NP bears its assigned case. -/
 instance : HasCase CasedNP := ⟨fun np => some np.case⟩
 
-/-- Look up the assigned case for an NP by label. -/
+/-- The case assigned to the NP labelled `label`, if any. -/
 def getCaseOf (label : String) (results : List CasedNP) : Option Case :=
   (results.find? (·.label == label)).bind HasCase.caseOf
 
-/-- Look up the case source for an NP by label. -/
+/-- The source of the case assigned to the NP labelled `label`, if any. -/
 def getSourceOf (label : String) (results : List CasedNP) : Option CaseSource :=
   (results.find? (·.label == label)).map (·.source)
 
--- ============================================================================
--- § 5: Dependent Case Rules
--- ============================================================================
+/-! ### The dependent case rules -/
 
-/-- Does any NP in the list lack lexical case?
-    Used to check whether a dependent case competitor exists. -/
+/-- Some NP in the list has no lexical case, and so can serve as the
+    caseless competitor a dependent rule needs. -/
 def anyLacksCaseIn (nps : List NPInDomain) : Bool :=
   nps.any (·.lexicalCase.isNone)
 
-/-- Dependent accusative: assigned to an NP that is c-commanded by
-    another caseless NP in the same domain.
-
-    In our list representation, NP at index i is c-commanded by all NPs
-    at index j < i. So NP_i gets ACC if it has no lexical case and
-    some NP before it also has no lexical case. -/
+/-- Dependent accusative: a caseless NP c-commanded by a caseless NP gets
+    ACC. `higherNPs` are the NPs c-commanding `np`. -/
 def dependentAccusative (higherNPs : List NPInDomain) (np : NPInDomain) : Option Case :=
-  if np.lexicalCase.isNone && anyLacksCaseIn higherNPs then
-    some .acc
-  else
-    none
+  if np.lexicalCase.isNone && anyLacksCaseIn higherNPs then some .acc else none
 
-/-- Dependent ergative: assigned to an NP that c-commands another caseless NP.
-    NP_i gets ERG if it has no lexical case and some NP after it also
-    has no lexical case. -/
+/-- Dependent ergative: a caseless NP c-commanding a caseless NP gets ERG.
+    `lowerNPs` are the NPs `np` c-commands. -/
 def dependentErgative (np : NPInDomain) (lowerNPs : List NPInDomain) : Option Case :=
-  if np.lexicalCase.isNone && anyLacksCaseIn lowerNPs then
-    some .erg
-  else
-    none
+  if np.lexicalCase.isNone && anyLacksCaseIn lowerNPs then some .erg else none
 
--- ============================================================================
--- § 6: Unmarked Case
--- ============================================================================
-
-/-- Unmarked (default) case for a given language type.
-    - Accusative languages: NOM
-    - Ergative languages: ABS
-    - Tripartite languages: ABS (only intransitive S gets unmarked case) -/
-def unmarkedCaseFor (lang : CaseLanguageType) : Case :=
-  match lang with
+/-- The default case an alignment type assigns to an NP no other rule
+    reached: NOM in an accusative language, ABS otherwise. -/
+def unmarkedCaseFor : CaseLanguageType → Case
   | .accusative => .nom
   | .ergative => .abs
   | .tripartite => .abs
 
--- ============================================================================
--- § 7: Full Algorithm
--- ============================================================================
+/-! ### One-pass case assignment -/
 
-/-- Assign case to a single NP given the NPs structurally above and below it.
-    Applies the three-step priority: lexical → dependent → unmarked. -/
+/-- Case for one NP, given the NPs above and below it: lexical case if it
+    has any, else the dependent case its alignment type licenses, else the
+    unmarked default. A tripartite language tries ergative before
+    accusative, so an NP with a caseless competitor on both sides — the
+    middle NP of a caseless triple — surfaces as ERG. -/
 def assignOneCase (lang : CaseLanguageType) (higherNPs lowerNPs : List NPInDomain)
     (np : NPInDomain) : CasedNP :=
+  let cased c src : CasedNP := { label := np.label, case := c, source := src }
+  let unmarked := cased (unmarkedCaseFor lang) .unmarked
   match np.lexicalCase with
-  | some c => { label := np.label, case := c, source := .lexical }
+  | some c => cased c .lexical
   | none =>
     match lang with
-    | .accusative =>
-      match dependentAccusative higherNPs np with
-      | some c => { label := np.label, case := c, source := .dependent }
-      | none => { label := np.label, case := unmarkedCaseFor lang, source := .unmarked }
-    | .ergative =>
-      match dependentErgative np lowerNPs with
-      | some c => { label := np.label, case := c, source := .dependent }
-      | none => { label := np.label, case := unmarkedCaseFor lang, source := .unmarked }
+    | .accusative => ((dependentAccusative higherNPs np).map (cased · .dependent)).getD unmarked
+    | .ergative => ((dependentErgative np lowerNPs).map (cased · .dependent)).getD unmarked
     | .tripartite =>
-      -- Tripartite: both dependent ERG and ACC are active. An NP that
-      -- c-commands a caseless NP gets ERG; an NP c-commanded by a caseless
-      -- NP gets ACC. An NP with neither competitor gets unmarked ABS.
-      match dependentErgative np lowerNPs with
-      | some c => { label := np.label, case := c, source := .dependent }
-      | none =>
-        match dependentAccusative higherNPs np with
-        | some c => { label := np.label, case := c, source := .dependent }
-        | none => { label := np.label, case := unmarkedCaseFor lang, source := .unmarked }
+      (((dependentErgative np lowerNPs).orElse fun _ => dependentAccusative higherNPs np).map
+        (cased · .dependent)).getD unmarked
 
-/-- Assign case to all NPs in a Spell-Out domain.
-    Processes the list left-to-right, maintaining context of higher NPs
-    and remaining lower NPs for each position. -/
-def assignCasesAux (lang : CaseLanguageType) (higher : List NPInDomain)
-    (remaining : List NPInDomain) : List CasedNP :=
-  match remaining with
+/-- `assignCases`, with the already-processed NPs accumulated in `higher`. -/
+private def assignCasesGo (lang : CaseLanguageType) (higher : List NPInDomain) :
+    List NPInDomain → List CasedNP
   | [] => []
-  | np :: rest =>
-    let result := assignOneCase lang higher rest np
-    result :: assignCasesAux lang (higher ++ [np]) rest
+  | np :: rest => assignOneCase lang higher rest np :: assignCasesGo lang (higher ++ [np]) rest
 
-/-- Top-level case assignment for a list of NPs in a Spell-Out domain.
-    List order encodes structural height:
-    first = highest = c-commands all others. -/
+/-- Case for every NP in a Spell-Out domain. List order encodes structural
+    height: the first NP is highest and c-commands all the others. -/
 def assignCases (lang : CaseLanguageType) (nps : List NPInDomain) : List CasedNP :=
-  assignCasesAux lang [] nps
+  assignCasesGo lang [] nps
 
--- ============================================================================
--- § 8: Ozaki's Alternation — Worked Derivations
--- ============================================================================
+private theorem assignCasesGo_length (lang : CaseLanguageType)
+    (higher nps : List NPInDomain) : (assignCasesGo lang higher nps).length = nps.length := by
+  induction nps generalizing higher with
+  | nil => rfl
+  | cons _ _ ih => simp [assignCasesGo, ih]
 
-/-! ## ACC Variant
+/-- The one-pass algorithm is total: exactly one `CasedNP` per input NP. -/
+@[simp] theorem assignCases_length (lang : CaseLanguageType) (nps : List NPInDomain) :
+    (assignCases lang nps).length = nps.length :=
+  assignCasesGo_length lang [] nps
 
-"Taro-ga mura-o hanare-ta" (Taro-NOM village-ACC leave-PAST)
+/-! ### Priority and alignment -/
 
-Two bare NPs in the TP Spell-Out domain:
-- Leaver NP (higher, raised to Spec-TP)
-- Source NP (lower, complement of V)
-- Source gets dependent ACC; Leaver gets unmarked NOM -/
-
-def accVariantNPs : List NPInDomain :=
-  [ { label := "leaver", lexicalCase := none },
-    { label := "source", lexicalCase := none } ]
-
-def accVariantResult : List CasedNP :=
-  assignCases .accusative accVariantNPs
-
-/-! ## ABL Variant
-
-"Taro-ga mura-kara hanare-ta" (Taro-NOM village-from leave-PAST)
-
-One bare NP + one PP (lexical ABL from *kara*):
-- Leaver NP (higher, raised to Spec-TP)
-- Source PP (lower, *kara* assigns lexical ABL)
-- Source has lexical ABL (bleeds dependent case); Leaver gets unmarked NOM -/
-
-def ablVariantNPs : List NPInDomain :=
-  [ { label := "leaver", lexicalCase := none },
-    { label := "source", lexicalCase := some .abl } ]
-
-def ablVariantResult : List CasedNP :=
-  assignCases .accusative ablVariantNPs
-
--- ============================================================================
--- § 9: Verification Theorems
--- ============================================================================
-
-/-- Lexical case bleeds dependent case: an NP with lexical case is never
-    assigned dependent case, regardless of structural configuration. -/
-theorem lexical_bleeds_dependent (lang : CaseLanguageType) (c : Case)
+/-- An NP with lexical case keeps it, whatever the configuration. -/
+theorem lexical_bleeds_dependent (lang : CaseLanguageType) (c : Case) (label : String)
     (higherNPs lowerNPs : List NPInDomain) :
     (assignOneCase lang higherNPs lowerNPs
-      { label := "x", lexicalCase := some c }).source = .lexical := by
-  cases lang <;> simp [assignOneCase]
+      { label := label, lexicalCase := some c }).source = .lexical := by
+  cases lang <;> rfl
 
-/-- ACC variant: source (lower NP) gets dependent accusative. -/
-theorem acc_variant_source_gets_acc :
-    getCaseOf "source" accVariantResult = some .acc := by decide
-
-/-- ACC variant: source case is dependent (not lexical or unmarked). -/
-theorem acc_variant_source_is_dependent :
-    getSourceOf "source" accVariantResult = some .dependent := by decide
-
-/-- ACC variant: leaver (higher NP) gets unmarked nominative. -/
-theorem acc_variant_leaver_gets_nom :
-    getCaseOf "leaver" accVariantResult = some .nom := by decide
-
-/-- ACC variant: leaver case is unmarked. -/
-theorem acc_variant_leaver_is_unmarked :
-    getSourceOf "leaver" accVariantResult = some .unmarked := by decide
-
-/-- ABL variant: source gets lexical ablative (from *kara*). -/
-theorem abl_variant_source_gets_abl :
-    getCaseOf "source" ablVariantResult = some .abl := by decide
-
-/-- ABL variant: source case is lexical (from P head *kara*). -/
-theorem abl_variant_source_is_lexical :
-    getSourceOf "source" ablVariantResult = some .lexical := by decide
-
-/-- ABL variant: leaver gets unmarked nominative. -/
-theorem abl_variant_leaver_gets_nom :
-    getCaseOf "leaver" ablVariantResult = some .nom := by decide
-
-/-- Dependent ACC does not require agentive Voice — it only requires
-    two caseless NPs in the same Spell-Out domain. The Voice head's
-    flavor is irrelevant to the case algorithm. -/
+/-- Dependent accusative needs only two caseless NPs in one domain, not an
+    agentive Voice head; cf. `Scott2023.dependent_case_ignores_voice`. -/
 theorem no_voice_needed_for_acc :
     let nps : List NPInDomain :=
       [ { label := "subj", lexicalCase := none },
         { label := "obj", lexicalCase := none } ]
     getCaseOf "obj" (assignCases .accusative nps) = some .acc ∧
-    getSourceOf "obj" (assignCases .accusative nps) = some .dependent := by
-  decide
+    getSourceOf "obj" (assignCases .accusative nps) = some .dependent := by decide
 
-/-- All NPs receive case in the ACC variant. -/
-theorem acc_variant_all_cased :
-    accVariantResult.length = 2 := by decide
-
-/-- All NPs receive case in the ABL variant. -/
-theorem abl_variant_all_cased :
-    ablVariantResult.length = 2 := by decide
-
--- ============================================================================
--- § 9b: Tripartite Alignment Properties
--- ============================================================================
-
-/-! ## Tripartite: Theory-Level Properties
-
-In a tripartite system, both dependent ergative and dependent accusative
-are active simultaneously: the higher NP gets ERG, the lower gets ACC,
-and an NP with no case competitor gets unmarked ABS. These are properties
-of the algorithm, not of any particular language. Language-specific
-derivations live in Studies files (e.g., SJA Mam in `Studies/Scott2023`). -/
-
-/-- Tripartite transitive: higher NP gets dependent ERG. -/
-theorem tripartite_higher_gets_erg :
-    let nps : List NPInDomain :=
-      [ { label := "higher", lexicalCase := none },
-        { label := "lower", lexicalCase := none } ]
-    getCaseOf "higher" (assignCases .tripartite nps) = some .erg := by decide
-
-/-- Tripartite transitive: lower NP gets dependent ACC. -/
-theorem tripartite_lower_gets_acc :
-    let nps : List NPInDomain :=
-      [ { label := "higher", lexicalCase := none },
-        { label := "lower", lexicalCase := none } ]
-    getCaseOf "lower" (assignCases .tripartite nps) = some .acc := by decide
-
-/-- Tripartite intransitive: sole NP gets unmarked ABS. -/
-theorem tripartite_sole_gets_abs :
-    let nps : List NPInDomain :=
-      [ { label := "sole", lexicalCase := none } ]
-    getCaseOf "sole" (assignCases .tripartite nps) = some .abs := by decide
-
-/-- All three cases are distinct — the defining property of tripartite.
-    ERG ≠ ACC ≠ ABS, derived purely from the algorithm. -/
-theorem tripartite_three_distinct :
-    let tr := assignCases .tripartite
-          [ { label := "higher", lexicalCase := none },
-            { label := "lower", lexicalCase := none } ]
-    let intr := assignCases .tripartite
-          [ { label := "sole", lexicalCase := none } ]
-    getCaseOf "higher" tr ≠ getCaseOf "lower" tr ∧
-    getCaseOf "higher" tr ≠ getCaseOf "sole" intr ∧
-    getCaseOf "lower" tr ≠ getCaseOf "sole" intr := by decide
-
-/-- Tripartite subsumes both ergative and accusative dependent case:
-    ERG on the higher NP matches pure ergative; ACC on the lower NP
-    matches pure accusative. -/
-theorem tripartite_subsumes_both :
-    let nps : List NPInDomain :=
-      [ { label := "higher", lexicalCase := none },
-        { label := "lower", lexicalCase := none } ]
-    getCaseOf "higher" (assignCases .tripartite nps) =
-    getCaseOf "higher" (assignCases .ergative nps) ∧
-    getCaseOf "lower" (assignCases .tripartite nps) =
-    getCaseOf "lower" (assignCases .accusative nps) := by decide
-
--- ============================================================================
--- § 10: Deeper Properties
--- ============================================================================
-
-/-- ACC and ABL are mutually exclusive on the source: the same structural
-    position receives exactly one of ACC (dependent) or ABL (lexical),
-    never both. This follows from the priority ordering — lexical case
-    preempts dependent case entirely. -/
-theorem acc_abl_mutually_exclusive :
-    getCaseOf "source" accVariantResult = some .acc ∧
-    getCaseOf "source" ablVariantResult = some .abl := by decide
-
-/-- The leaver gets NOM in both variants. The alternation affects only the
-    source argument; the subject case is invariant. -/
-theorem leaver_nom_invariant :
-    getCaseOf "leaver" accVariantResult = some .nom ∧
-    getCaseOf "leaver" ablVariantResult = some .nom := by decide
-
-/-- Ergative mirror: in an ergative language with two caseless NPs, the
-    *higher* NP gets dependent ERG and the lower gets unmarked ABS.
-    This is the typological inverse of the accusative pattern. -/
+/-- Two caseless NPs in an ergative language: the higher gets dependent ERG
+    and the lower unmarked ABS, mirroring the accusative pattern. -/
 theorem ergative_mirror :
     let nps : List NPInDomain :=
       [ { label := "higher", lexicalCase := none },
         { label := "lower", lexicalCase := none } ]
     getCaseOf "higher" (assignCases .ergative nps) = some .erg ∧
-    getCaseOf "lower" (assignCases .ergative nps) = some .abs := by
-  decide
+    getCaseOf "lower" (assignCases .ergative nps) = some .abs := by decide
 
-/-- A single caseless NP in an accusative language gets NOM — the
-    standard intransitive case. No dependent case arises because
-    there is no case competitor. -/
+/-- A lone caseless NP in an accusative language gets unmarked NOM: with no
+    competitor, no dependent case arises. -/
 theorem single_np_nom :
-    let nps : List NPInDomain :=
-      [ { label := "sole", lexicalCase := none } ]
+    let nps : List NPInDomain := [ { label := "sole", lexicalCase := none } ]
     getCaseOf "sole" (assignCases .accusative nps) = some .nom ∧
-    getSourceOf "sole" (assignCases .accusative nps) = some .unmarked := by
-  decide
+    getSourceOf "sole" (assignCases .accusative nps) = some .unmarked := by decide
 
-/-- Case is purely configural: two NPs with identical labels but different
-    lexical case inputs produce different outputs. The algorithm is
-    sensitive only to the NP inventory, not to verb type or Voice flavor. -/
-theorem case_is_configural :
-    getCaseOf "source" accVariantResult ≠ getCaseOf "source" ablVariantResult := by
-  decide
+/-- A tripartite transitive marks the higher NP ERG and the lower ACC, and
+    a tripartite intransitive marks its sole NP ABS. -/
+theorem tripartite_transitive_and_intransitive :
+    let tr : List NPInDomain :=
+      [ { label := "higher", lexicalCase := none },
+        { label := "lower", lexicalCase := none } ]
+    let intr : List NPInDomain := [ { label := "sole", lexicalCase := none } ]
+    getCaseOf "higher" (assignCases .tripartite tr) = some .erg ∧
+    getCaseOf "lower" (assignCases .tripartite tr) = some .acc ∧
+    getCaseOf "sole" (assignCases .tripartite intr) = some .abs := by decide
 
--- ============================================================================
--- § 11: Structural Case Inventory
--- ============================================================================
+/-- Tripartite alignment subsumes both others: its higher NP gets the case
+    an ergative language would assign, its lower NP the case an accusative
+    language would. -/
+theorem tripartite_subsumes_both :
+    let nps : List NPInDomain :=
+      [ { label := "higher", lexicalCase := none },
+        { label := "lower", lexicalCase := none } ]
+    getCaseOf "higher" (assignCases .tripartite nps) =
+      getCaseOf "higher" (assignCases .ergative nps) ∧
+    getCaseOf "lower" (assignCases .tripartite nps) =
+      getCaseOf "lower" (assignCases .accusative nps) := by decide
 
-/-- The structural (non-lexical) cases that the dependent case algorithm
-    can assign for each language type. These are exactly the cases that
-    appear in the `none` (no lexical case) branch of `assignOneCase`. -/
+/-! ### The structural case inventory -/
+
+/-- The cases the algorithm can assign to an NP without lexical case. -/
 def structuralCasesFor : CaseLanguageType → List Case
   | .accusative => [.nom, .acc]
-  | .ergative   => [.abs, .erg]
+  | .ergative => [.abs, .erg]
   | .tripartite => [.abs, .erg, .acc]
 
-/-- In an accusative language, any NP without lexical case receives
-    either NOM (unmarked) or ACC (dependent). -/
-theorem accusative_nonlexical_cases
-    (higherNPs lowerNPs : List NPInDomain) (np : NPInDomain)
-    (h : np.lexicalCase = none) :
-    let result := assignOneCase .accusative higherNPs lowerNPs np
-    result.case = .nom ∨ result.case = .acc := by
-  simp only [assignOneCase, dependentAccusative, h, Option.isNone, Bool.true_and,
-             unmarkedCaseFor]
-  cases anyLacksCaseIn higherNPs
-  · left; rfl
-  · right; rfl
+/-- A caseless NP receives one of the cases its alignment type admits. -/
+theorem nonlexical_case_mem_structuralCasesFor (lang : CaseLanguageType)
+    (higherNPs lowerNPs : List NPInDomain) (np : NPInDomain) (h : np.lexicalCase = none) :
+    (assignOneCase lang higherNPs lowerNPs np).case ∈ structuralCasesFor lang := by
+  cases lang <;>
+    by_cases hh : anyLacksCaseIn higherNPs <;> by_cases hl : anyLacksCaseIn lowerNPs <;>
+    simp [assignOneCase, dependentAccusative, dependentErgative, structuralCasesFor,
+      unmarkedCaseFor, h, hh, hl]
 
-/-- In an ergative language, any NP without lexical case receives
-    either ABS (unmarked) or ERG (dependent). -/
-theorem ergative_nonlexical_cases
-    (higherNPs lowerNPs : List NPInDomain) (np : NPInDomain)
-    (h : np.lexicalCase = none) :
-    let result := assignOneCase .ergative higherNPs lowerNPs np
-    result.case = .abs ∨ result.case = .erg := by
-  simp only [assignOneCase, dependentErgative, h, Option.isNone, Bool.true_and,
-             unmarkedCaseFor]
-  cases anyLacksCaseIn lowerNPs
-  · left; rfl
-  · right; rfl
+/-! ### Per-case assignment mechanisms -/
 
-/-- In a tripartite language, any NP without lexical case receives
-    ABS (unmarked), ERG (dependent on a lower NP), or ACC (dependent
-    on a higher NP). -/
-theorem tripartite_nonlexical_cases
-    (higherNPs lowerNPs : List NPInDomain) (np : NPInDomain)
-    (h : np.lexicalCase = none) :
-    let result := assignOneCase .tripartite higherNPs lowerNPs np
-    result.case = .abs ∨ result.case = .erg ∨ result.case = .acc := by
-  simp only [assignOneCase, dependentErgative, dependentAccusative, h,
-             Option.isNone, Bool.true_and, unmarkedCaseFor]
-  cases anyLacksCaseIn lowerNPs
-  · cases anyLacksCaseIn higherNPs
-    · left; rfl
-    · right; right; rfl
-  · right; left; rfl
-
--- ============================================================================
--- S 12: Language-Specific Case System Configuration
--- ============================================================================
-
-/-- How nominative case is assigned in a language.
-    [baker-vinokurova-2010]: in Sakha (and Mongolian, per
-    [gong-2022]), NOM is assigned by finite T via Agree, not
-    as an unmarked default. This distinction matters for Wholesale
-    Late Merger: Agree-based NOM is tied to a specific functional
-    head, while unmarked NOM is a last-resort default. -/
+/-- How nominative is assigned: by Agree with finite T, or as the elsewhere
+    default. [baker-vinokurova-2010] argue for the former in Sakha, and
+    [gong-2022] for Mongolian. -/
 inductive NomAssignment where
-  | agreeT           -- NOM assigned by finite T via Agree
-  | unmarkedDefault  -- NOM is the elsewhere/default case
+  | agreeT
+  | unmarkedDefault
   deriving DecidableEq, Repr
 
-/-- How dative case is assigned.
-    [gong-2022]: DAT is nonstructural in Mongolian — it does not
-    participate in dependent case competition and is not available at
-    intermediate scrambling positions for WLM. -/
+/-- How dative is assigned: as dependent case, or nonstructurally, in which
+    case it neither competes for dependent case nor is available at
+    intermediate positions ([gong-2022] on Mongolian). -/
 inductive DatAssignment where
-  | nonstructural  -- Inherent/lexical (Mongolian, Japanese)
-  | dependent      -- Dependent case (structurally assigned)
+  | nonstructural
+  | dependent
   deriving DecidableEq, Repr
 
-/-- How accusative case is assigned.
-    [baker-vinokurova-2010]: in Sakha (and Mongolian, per
-    [gong-2022]), ACC is dependent case (Marantz-style); the
-    standard Chomskyan alternative is that ACC is assigned by v/Voice
-    via Agree (often paired with Burzio's Generalization). -/
+/-- How accusative is assigned: as dependent case ([marantz-1991]), or by
+    Agree with v ([chomsky-2000]). -/
 inductive AccAssignment where
-  | dependent  -- ACC is dependent case (Marantz; B&V Sakha)
-  | agreeV     -- ACC assigned by v via Agree (standard Chomsky 2000/2001)
+  | dependent
+  | agreeV
   deriving DecidableEq, Repr
 
-/-- How genitive case is assigned.
-    [baker-vinokurova-2010]: in Sakha, GEN is assigned by D via
-    Agree to the possessor (parallel to T-Agree NOM at the clausal
-    level). Russian numeric and partitive GEN is nonstructural. -/
+/-- How genitive is assigned: by Agree with D, the DP-internal counterpart
+    of T-Agree ([baker-vinokurova-2010]), or nonstructurally, as in the
+    Russian numeric and partitive genitives. -/
 inductive GenAssignment where
-  | agreeD         -- GEN assigned by D via Agree (Sakha; [baker-vinokurova-2010])
-  | nonstructural  -- GEN as inherent/lexical (Russian numeric)
+  | agreeD
+  | nonstructural
   deriving DecidableEq, Repr
 
-/-- A language-specific case system configuration.
-    Bundles the alignment type with the per-case mechanism choices.
-
-    Each of the four structural cases (NOM, GEN, ACC, DAT) gets an
-    independent mechanism plug-in. Marantz's purely-configurational
-    picture, Chomsky's purely-Agree picture, and B&V's two-modality
-    Sakha grammar all fall out as parameterizations of this single
-    structure:
-
-    | Theory          | nom              | gen      | acc       | dat            |
-    |-----------------|------------------|----------|-----------|----------------|
-    | Marantz pure    | unmarkedDefault  | (—)      | dependent | dependent      |
-    | Chomsky pure    | agreeT           | agreeD   | agreeV    | nonstructural  |
-    | Sakha (B&V)     | agreeT           | agreeD   | dependent | dependent      |
-    | Mongolian       | agreeT           | agreeD   | dependent | nonstructural  |
-
-    `accMode` and `genMode` default to the most common values across the
-    library so that existing instances need not specify them. -/
+/-- A grammar's choice of mechanism for each structural case, alongside its
+    alignment type. A purely configurational grammar takes `unmarkedDefault`
+    nominative with `dependent` accusative and dative; a purely Agree-based
+    one takes `agreeT`, `agreeD`, `agreeV` and nonstructural dative; the
+    Sakha grammar of [baker-vinokurova-2010] mixes the two, valuing
+    nominative and genitive by Agree but accusative and dative
+    configurationally. -/
 structure CaseSystemConfig where
+  /-- The alignment type, fixing the dependent and unmarked cases. -/
   langType : CaseLanguageType
+  /-- How nominative is assigned. -/
   nomMode : NomAssignment
+  /-- How dative is assigned. -/
   datMode : DatAssignment
+  /-- How accusative is assigned. -/
   accMode : AccAssignment := .dependent
+  /-- How genitive is assigned. -/
   genMode : GenAssignment := .agreeD
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 13: Phased Case Assignment ([baker-vinokurova-2010])
--- ============================================================================
+/-! ### Phased case assignment -/
 
-/-! ## Phased case assignment
-
-[baker-vinokurova-2010] formalize Sakha case as cycling over
-two phases: VP (the smaller phase) and CP. Two configurational
-rules apply (paper (4a)/(4b), restated as (85)):
-
-- (4a) DAT rule: if NP1 c-commands NP2 in the same VP-phase,
-  value NP1 as DAT unless NP2 is already marked.
-- (4b) ACC rule: if NP1 c-commands NP2 in the same phase,
-  value NP2 as ACC unless NP1 is already marked.
-
-(4a) bleeds (4b) on the VP cycle by Elsewhere ordering — its
-context (one specific phase) is more restrictive than (4b)'s
-(any phase).
-
-After dependent case has applied, Agree (paper (5)/(86)) values
-remaining unvalued NPs:
-
-- T agrees with the highest unvalued NP visible at CP, valuing NOM.
-- D agrees with its dependent NP inside a DP, valuing GEN.
-
-Each NP carries a `basePhase` (where it was merged) and a
-`shifted` flag (did it move to a higher phase before evaluation).
-PIC: NPs that stayed inside VP are not visible on the CP cycle. -/
-
-/-- Cycle in the [baker-vinokurova-2010] two-phase model.
-    Distinct from the more articulated `Minimalist.Phase` structure
-    in `Phase.lean`; this is just the binary VP-vs-CP distinction
-    that the case algorithm cycles over. -/
+/-- The cycle a case rule applies on, in the two-phase model: the VP phase
+    or the CP phase. Coarser than `Minimalist.Phase`, which the case
+    algorithm does not need. -/
 inductive CasePhase where
-  | vp  -- inside VP (the smaller phase in B&V)
-  | cp  -- in SpecvP or higher (visible on the CP cycle)
+  | vp
+  | cp
   deriving DecidableEq, Repr
 
-/-- An NP equipped with phase information.
-    `basePhase` records where the NP was merged; `shifted` marks
-    NPs that have moved to a higher phase before case evaluation.
-    `isArgumental` flags whether the NP bears a θ-role w.r.t. some
-    case-assigning head — only argumental NPs are case competitors
-    for rules (4a)/(4b). Bare-NP adverbs (e.g., 'yesterday', 'two
-    kilometers') are non-argumental. [baker-vinokurova-2010]
-    (8)–(9) and footnote 5.
-
-    `inDP` flags NPs that participate only in DP-internal case
-    assignment (possessors): these are skipped by every clausal pass
-    and are valued by `applyGenAgree` when `genMode := .agreeD`. -/
+/-- An NP carrying the phase information the cyclic algorithm reads:
+    where it was merged, whether it moved to a higher phase before case was
+    evaluated, whether it is a case competitor at all, and whether it is
+    DP-internal. -/
 structure PhasedNP extends NPInDomain where
+  /-- The phase the NP was merged in. -/
   basePhase : CasePhase
+  /-- The NP moved to a higher phase before case was evaluated. -/
   shifted : Bool := false
+  /-- The NP bears a θ-role with respect to some case assigner. Bare-NP
+      adverbs do not, and so are not competitors for the dependent rules. -/
   isArgumental : Bool := true
+  /-- The NP is a DP-internal possessor, invisible to the clausal passes and
+      valued instead by D-Agree. -/
   inDP : Bool := false
   deriving DecidableEq, Repr
 
-/-- Visible on the VP cycle: NPs whose basePhase is `vp`.
-    Even shifted NPs are visible at this point — shift happens at
-    the boundary between cycles. -/
+/-- Every VP-merged NP is visible on the VP cycle: shift happens at the
+    boundary between cycles. -/
 def PhasedNP.visibleOnVP (p : PhasedNP) : Bool := p.basePhase == .vp
 
-/-- Visible on the CP cycle: NPs in `cp`, plus VP-base NPs that
-    shifted out of VP. Unshifted VP NPs were transferred (PIC). -/
+/-- An NP is visible on the CP cycle when it was merged there or shifted out
+    of VP; an unshifted VP-internal NP has been transferred. -/
 def PhasedNP.visibleOnCP (p : PhasedNP) : Bool :=
   p.basePhase == .cp || p.shifted
 
-/-- Mutable state during phased case assignment. `case = none`
-    means "not yet valued"; lexical case starts with the value
-    pre-set. -/
+/-- An NP part-way through the derivation. `case = none` means not yet
+    valued; lexical case is valued from the start. -/
 structure PhasedState where
+  /-- The NP being valued. -/
   np : PhasedNP
+  /-- Its case and the source that valued it, once some pass has. -/
   case : Option (Case × CaseSource)
-  deriving Repr
+  deriving DecidableEq, Repr
 
-/-- An NP is "marked" iff its case has been valued (lexically,
-    by dependent rule, or by agreement). The "unless...marked"
-    clauses of (4a)/(4b) check this. -/
+/-- The NP has been valued, by any mechanism. The dependent rules apply
+    only to unmarked NPs, which is what makes their ordering an Elsewhere
+    ordering rather than a stipulation. -/
 def PhasedState.marked (s : PhasedState) : Bool := s.case.isSome
 
-/-- Initialize: pre-fill lexical case from the NP's `lexicalCase`
-    field; everything else starts unvalued. -/
+/-- Value lexical case from each NP, leaving everything else unmarked. -/
 def initStates (nps : List PhasedNP) : List PhasedState :=
-  nps.map fun p => { np := p,
-                     case := p.lexicalCase.map (fun c => (c, .lexical)) }
+  nps.map fun p => { np := p, case := p.lexicalCase.map (fun c => (c, .lexical)) }
 
-/-- Replace the case of the NP at index `i` with `(c, src)`. -/
+/-- Value the NP at index `i` as `c` from source `src`. -/
 def setCaseAt (i : Nat) (c : Case) (src : CaseSource)
     (states : List PhasedState) : List PhasedState :=
-  states.zipIdx.map fun (s, j) =>
-    if j == i then { s with case := some (c, src) } else s
+  states.modify i fun s => { s with case := some (c, src) }
 
-/-- The eligibility predicate used by `unmarkedVisible`: a state is
-    eligible iff it is visible on the cycle, argumental, not DP-
-    internal, and not yet marked. Factored out so structural proofs
-    (e.g. `applyAccRule_preserves_marked_at`) can manipulate the
-    condition without unfolding pattern lambdas. -/
+/-- The state is a candidate for a case rule on this cycle: visible,
+    argumental, clause-level, and not yet valued. -/
 def unmarkedEligible (cycle : CasePhase) (s : PhasedState) : Bool :=
   let visible := match cycle with
-                 | .vp => s.np.visibleOnVP
-                 | .cp => s.np.visibleOnCP
+    | .vp => s.np.visibleOnVP
+    | .cp => s.np.visibleOnCP
   visible && s.np.isArgumental && !s.np.inDP && !s.marked
 
-/-- Indices of unmarked, *argumental*, clause-level NPs visible on a
-    given cycle, in c-command order (highest first, since list-position
-    encodes height). Non-argumental NPs (bare-NP adverbs) and DP-
-    internal NPs (possessors) are filtered out: per
-    [baker-vinokurova-2010] (8)–(9), rules (4a)/(4b) apply only
-    between argumental NPs at the clausal level. -/
+/-- The indices of the states eligible on a cycle, highest first. -/
 def unmarkedVisible (cycle : CasePhase) (states : List PhasedState) : List Nat :=
-  states.zipIdx.filterMap fun p =>
-    if unmarkedEligible cycle p.1 then some p.2 else none
+  states.zipIdx.filterMap fun p => if unmarkedEligible cycle p.1 then some p.2 else none
 
-/-- Apply the DAT rule (4a) on the VP cycle: if there are at least
-    two unmarked NPs visible at vP, mark the highest as DAT. -/
+/-- The dative rule: on the VP cycle, an NP c-commanding another unmarked NP
+    is valued dative. Its context is the more restrictive one, so it bleeds
+    the accusative rule on that cycle. -/
 def applyDatRule (cfg : CaseSystemConfig) (states : List PhasedState) :
     List PhasedState :=
   if cfg.datMode != .dependent then states
   else match unmarkedVisible .vp states with
-       | i :: _ :: _ => setCaseAt i .dat .dependent states
-       | _ => states
+    | i :: _ :: _ => setCaseAt i .dat .dependent states
+    | _ => states
 
-/-- Apply the ACC rule (4b) on a given cycle: if there are at least
-    two unmarked NPs visible, mark the lowest as ACC. -/
+/-- The accusative rule: on either cycle, an NP c-commanded by another
+    unmarked NP is valued accusative. -/
 def applyAccRule (cfg : CaseSystemConfig) (cycle : CasePhase)
     (states : List PhasedState) : List PhasedState :=
   if cfg.accMode != .dependent then states
-  else
-    match (unmarkedVisible cycle states).reverse with
+  else match (unmarkedVisible cycle states).reverse with
     | last :: _ :: _ => setCaseAt last .acc .dependent states
     | _ => states
 
-/-- Apply v-Agree: the lowest CP-visible unmarked argumental NP gets
-    ACC via Agree. This is the standard Chomskyan picture
-    ([chomsky-2000]; [chomsky-2001]): v probes downward into
-    its complement and Agrees with the closest goal. The dependent-
-    accusative algorithm (`applyAccRule`) is the alternative to this
-    pass; the two are mutually exclusive on a given grammar via the
-    `accMode` parameter. -/
+/-- v-Agree: v probes into its complement and values the closest unmarked
+    goal accusative. The Chomskyan alternative to `applyAccRule`; `accMode`
+    makes the two mutually exclusive. -/
 def applyAccAgree (cfg : CaseSystemConfig) (states : List PhasedState) :
     List PhasedState :=
   match cfg.accMode with
@@ -718,8 +431,7 @@ def applyAccAgree (cfg : CaseSystemConfig) (states : List PhasedState) :
     | [] => states
   | .dependent => states
 
-/-- Apply T-Agree (paper (5)/(86)): the highest unmarked NP visible
-    on the CP cycle gets NOM via Agree. -/
+/-- T-Agree: T values the highest unmarked NP visible at CP nominative. -/
 def applyNomAgree (cfg : CaseSystemConfig) (states : List PhasedState) :
     List PhasedState :=
   match cfg.nomMode with
@@ -729,124 +441,79 @@ def applyNomAgree (cfg : CaseSystemConfig) (states : List PhasedState) :
     | [] => states
   | .unmarkedDefault => states
 
-/-- Apply D-Agree (paper (5)/(86)): every unmarked DP-internal NP
-    (possessor) is valued GEN by its dominating D head. The clausal
-    algorithm sees DP-internals as opaque (filtered from
-    `unmarkedVisible`); this pass is the DP-internal counterpart to
-    `applyNomAgree`. The Russian numeric/partitive GEN, by contrast,
-    is `.nonstructural` and lives in `lexicalCase`. -/
+/-- D-Agree: each D values its unmarked possessor genitive. The clausal
+    passes see a DP as opaque, so this is the only pass that reaches inside
+    one. -/
 def applyGenAgree (cfg : CaseSystemConfig) (states : List PhasedState) :
     List PhasedState :=
   match cfg.genMode with
   | .agreeD =>
     states.map fun s =>
-      if s.np.inDP && !s.marked then
-        { s with case := some (.gen, .agree) }
-      else s
+      if s.np.inDP && !s.marked then { s with case := some (.gen, .agree) } else s
   | .nonstructural => states
 
-/-- Default case for any NP still unmarked at the end of the
-    derivation. Uses `unmarkedCaseFor` from § 6. -/
+/-- The last-resort sweep: every still-unmarked NP takes the unmarked case
+    of its alignment type. -/
 def applyDefault (cfg : CaseSystemConfig) (states : List PhasedState) :
     List PhasedState :=
   states.map fun s =>
-    if s.marked then s
-    else { s with case := some (unmarkedCaseFor cfg.langType, .unmarked) }
+    if s.marked then s else { s with case := some (unmarkedCaseFor cfg.langType, .unmarked) }
 
-/-- Materialize a `PhasedState` as a `CasedNP` (or omit if no case
-    was ever assigned — caller should ensure `applyDefault` ran). -/
+/-- The valued NP, or `none` if no pass reached it. -/
 def PhasedState.toCased (s : PhasedState) : Option CasedNP :=
   s.case.map fun (c, src) => { label := s.np.label, case := c, source := src }
 
-/-- The B&V phased algorithm: VP cycle (DAT then ACC), CP cycle (ACC),
-    v-Agree → ACC (only when `accMode := .agreeV`), T-Agree → NOM,
-    D-Agree → GEN, then a default sweep.
-
-    `applyAccRule` and `applyAccAgree` are mutually exclusive on the
-    cases they touch (gated by `accMode`), so their relative order
-    only matters when neither fires. The order chosen — dependent
-    rules first, then Agree — mirrors the standard Chomskyan picture
-    where v probes after VP-internal structure has been built. -/
-def assignCasesPhased (cfg : CaseSystemConfig) (nps : List PhasedNP) :
-    List CasedNP :=
+/-- The two-cycle algorithm: the dative then accusative rule on the VP
+    cycle, the accusative rule again on the CP cycle, then the Agree probes,
+    then the default sweep. The dependent rules and their Agree counterparts
+    are gated on disjoint `CaseSystemConfig` settings, so their relative
+    order matters only where neither fires. -/
+def assignCasesPhased (cfg : CaseSystemConfig) (nps : List PhasedNP) : List CasedNP :=
   let s0 := initStates nps
-  let s1 := applyDatRule cfg s0           -- VP cycle: (4a)
-  let s2 := applyAccRule cfg .vp s1       -- VP cycle: (4b), bled if (4a) fired
-  let s3 := applyAccRule cfg .cp s2       -- CP cycle: (4b)
-  let s4 := applyAccAgree cfg s3          -- v-Agree → ACC (Chomsky)
-  let s5 := applyNomAgree cfg s4          -- T-Agree → NOM
-  let s6 := applyGenAgree cfg s5          -- D-Agree → GEN (DP-internal)
-  let s7 := applyDefault cfg s6           -- last resort
+  let s1 := applyDatRule cfg s0
+  let s2 := applyAccRule cfg .vp s1
+  let s3 := applyAccRule cfg .cp s2
+  let s4 := applyAccAgree cfg s3
+  let s5 := applyNomAgree cfg s4
+  let s6 := applyGenAgree cfg s5
+  let s7 := applyDefault cfg s6
   s7.filterMap PhasedState.toCased
 
--- ============================================================================
--- § 14: Soundness of the Phased Algorithm
--- ============================================================================
+/-! ### Totality of the phased algorithm -/
 
-/-! Length preservation (one CasedNP per input PhasedNP) and totality
-(every input NP receives exactly one case) are the key well-formedness
-properties of `assignCasesPhased`. They fall out structurally:
-each per-pass operation preserves list length, and `applyDefault`
-guarantees no state escapes uncased. -/
+@[simp] theorem initStates_length (nps : List PhasedNP) :
+    (initStates nps).length = nps.length := List.length_map ..
 
-theorem initStates_length (nps : List PhasedNP) :
-    (initStates nps).length = nps.length := by
-  unfold initStates; rw [List.length_map]
-
-theorem setCaseAt_length (i : Nat) (c : Case) (src : CaseSource)
+@[simp] theorem setCaseAt_length (i : Nat) (c : Case) (src : CaseSource)
     (states : List PhasedState) :
-    (setCaseAt i c src states).length = states.length := by
-  unfold setCaseAt
-  rw [List.length_map, List.length_zipIdx]
+    (setCaseAt i c src states).length = states.length := List.length_modify ..
 
-theorem applyDatRule_length (cfg : CaseSystemConfig)
-    (states : List PhasedState) :
+@[simp] theorem applyDatRule_length (cfg : CaseSystemConfig) (states : List PhasedState) :
     (applyDatRule cfg states).length = states.length := by
-  unfold applyDatRule
-  split
-  · rfl
-  · split <;> first | rfl | exact setCaseAt_length _ _ _ _
+  unfold applyDatRule; split <;> [rfl; (split <;> simp)]
 
-theorem applyAccRule_length (cfg : CaseSystemConfig) (cycle : CasePhase)
+@[simp] theorem applyAccRule_length (cfg : CaseSystemConfig) (cycle : CasePhase)
     (states : List PhasedState) :
     (applyAccRule cfg cycle states).length = states.length := by
-  unfold applyAccRule
-  split
-  · rfl
-  · split <;> first | rfl | exact setCaseAt_length _ _ _ _
+  unfold applyAccRule; split <;> [rfl; (split <;> simp)]
 
-theorem applyAccAgree_length (cfg : CaseSystemConfig)
-    (states : List PhasedState) :
+@[simp] theorem applyAccAgree_length (cfg : CaseSystemConfig) (states : List PhasedState) :
     (applyAccAgree cfg states).length = states.length := by
-  unfold applyAccAgree
-  split
-  · split <;> first | rfl | exact setCaseAt_length _ _ _ _
-  · rfl
+  unfold applyAccAgree; split <;> [(split <;> simp); rfl]
 
-theorem applyNomAgree_length (cfg : CaseSystemConfig)
-    (states : List PhasedState) :
+@[simp] theorem applyNomAgree_length (cfg : CaseSystemConfig) (states : List PhasedState) :
     (applyNomAgree cfg states).length = states.length := by
-  unfold applyNomAgree
-  split
-  · split <;> first | rfl | exact setCaseAt_length _ _ _ _
-  · rfl
+  unfold applyNomAgree; split <;> [(split <;> simp); rfl]
 
-theorem applyGenAgree_length (cfg : CaseSystemConfig)
-    (states : List PhasedState) :
+@[simp] theorem applyGenAgree_length (cfg : CaseSystemConfig) (states : List PhasedState) :
     (applyGenAgree cfg states).length = states.length := by
-  unfold applyGenAgree
-  split
-  · rw [List.length_map]
-  · rfl
+  unfold applyGenAgree; split <;> simp
 
-theorem applyDefault_length (cfg : CaseSystemConfig)
-    (states : List PhasedState) :
-    (applyDefault cfg states).length = states.length := by
-  unfold applyDefault; rw [List.length_map]
+@[simp] theorem applyDefault_length (cfg : CaseSystemConfig) (states : List PhasedState) :
+    (applyDefault cfg states).length = states.length := List.length_map ..
 
-/-- After the final default sweep, every state's case is valued. -/
-theorem applyDefault_all_some (cfg : CaseSystemConfig)
-    (states : List PhasedState) :
+/-- The default sweep leaves nothing unvalued. -/
+theorem applyDefault_all_some (cfg : CaseSystemConfig) (states : List PhasedState) :
     ∀ s ∈ applyDefault cfg states, s.case.isSome := by
   intro s hs
   simp only [applyDefault, List.mem_map] at hs
@@ -854,227 +521,126 @@ theorem applyDefault_all_some (cfg : CaseSystemConfig)
   unfold PhasedState.marked
   split <;> simp_all
 
-private theorem filterMap_length_of_all_some {α β}
-    (f : α → Option β) (l : List α)
-    (h : ∀ x ∈ l, (f x).isSome) :
-    (l.filterMap f).length = l.length := by
-  induction l with
-  | nil => rfl
-  | cons x xs ih =>
-    have hx : (f x).isSome := h x (by simp)
-    have hxs : ∀ y ∈ xs, (f y).isSome := fun y hy => h y (by simp [hy])
-    rw [List.filterMap_cons]
-    cases hf : f x with
-    | none => rw [hf] at hx; cases hx
-    | some _ =>
-      simp only [List.length_cons]
-      exact congrArg (· + 1) (ih hxs)
+@[simp] private theorem toCased_isSome (s : PhasedState) :
+    s.toCased.isSome = s.case.isSome := by
+  unfold PhasedState.toCased; cases s.case <;> rfl
 
-private theorem toCased_isSome_iff (s : PhasedState) :
-    s.toCased.isSome ↔ s.case.isSome := by
-  unfold PhasedState.toCased
-  cases s.case <;> simp
-
-/-- **Soundness (length preservation).** The phased algorithm produces
-    exactly one `CasedNP` per input `PhasedNP`. No NP is dropped or
-    duplicated; the algorithm is total. -/
+/-- The phased algorithm is total: exactly one `CasedNP` per input NP, none
+    dropped and none duplicated. -/
 theorem assignCasesPhased_length (cfg : CaseSystemConfig) (nps : List PhasedNP) :
     (assignCasesPhased cfg nps).length = nps.length := by
-  unfold assignCasesPhased
-  simp only []
-  rw [filterMap_length_of_all_some _ _ (fun s hs => by
-        rw [toCased_isSome_iff]; exact applyDefault_all_some _ _ s hs)]
-  rw [applyDefault_length, applyGenAgree_length, applyNomAgree_length,
-      applyAccAgree_length, applyAccRule_length, applyAccRule_length,
-      applyDatRule_length, initStates_length]
+  rw [assignCasesPhased, List.filterMap_length_eq_length.mpr
+    (fun s hs => by simpa using applyDefault_all_some _ _ s hs)]
+  simp
 
--- ============================================================================
--- § 15: Bleeding by Marking — (4a) DAT Bleeds (4b) ACC, Structurally
--- ============================================================================
+/-! ### Valued NPs are never overwritten -/
 
-/-! The Elsewhere ordering of (4a) over (4b) on the VP cycle is not a
-stipulated rule-ordering preference: it falls out from the fact that
-`unmarkedVisible` filters out marked NPs, so any pass that only
-modifies indices in `unmarkedVisible` cannot overwrite a previously-
-valued NP. We prove this once for `applyAccRule` (it never overwrites
-a marked state) and use it to derive the bleeding theorem for
-arbitrary inputs. -/
-
-/-- `setCaseAt` at index `i` leaves every other index untouched. -/
-private theorem setCaseAt_get?_ne (i j : Nat) (c : Case) (src : CaseSource)
-    (states : List PhasedState) (h : i ≠ j) :
-    (setCaseAt i c src states)[j]? = states[j]? := by
-  unfold setCaseAt
-  rw [List.getElem?_map, List.getElem?_zipIdx]
-  cases hj : states[j]? with
-  | none => rfl
-  | some s =>
-    simp only [Option.map_some, Nat.zero_add]
-    have : (j == i) = false := by
-      simp only [beq_eq_false_iff_ne, ne_eq]; exact fun heq => h heq.symm
-    rw [this]
-    rfl
-
-/-- Every index in `unmarkedVisible cycle states` corresponds to an
-    unmarked state. -/
-private theorem unmarkedVisible_unmarked (cycle : CasePhase)
-    (states : List PhasedState) (i : Nat)
-    (h : i ∈ unmarkedVisible cycle states) :
+/-- Every index a cycle offers a case rule points at an unvalued state. -/
+private theorem unmarkedVisible_unmarked {cycle : CasePhase} {states : List PhasedState}
+    {i : Nat} (h : i ∈ unmarkedVisible cycle states) :
     ∃ s, states[i]? = some s ∧ s.marked = false := by
-  unfold unmarkedVisible at h
-  rw [List.mem_filterMap] at h
+  rw [unmarkedVisible, List.mem_filterMap] at h
   obtain ⟨⟨s, k⟩, hmem, hcond⟩ := h
-  -- hcond : (if unmarkedEligible cycle s then some k else none) = some i
-  by_cases hg : unmarkedEligible cycle s = true
-  · rw [if_pos hg] at hcond
-    have hki : k = i := Option.some.inj hcond
-    subst hki
-    rw [List.mem_iff_getElem?] at hmem
-    obtain ⟨n, hn⟩ := hmem
-    rw [List.getElem?_zipIdx] at hn
-    cases hsn : states[n]? with
-    | none => rw [hsn] at hn; cases hn
-    | some s' =>
-      rw [hsn] at hn
-      simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq, Nat.zero_add] at hn
-      obtain ⟨hs_eq, hk_eq⟩ := hn
-      subst hs_eq; subst hk_eq
-      refine ⟨s', hsn, ?_⟩
-      unfold unmarkedEligible at hg
-      simp only [Bool.and_eq_true, Bool.not_eq_true'] at hg
-      exact hg.2
+  rw [List.mem_zipIdx_iff_getElem?] at hmem
+  by_cases hg : unmarkedEligible cycle s
+  · obtain rfl := Option.some.inj (if_pos hg ▸ hcond)
+    exact ⟨s, hmem, by simp_all [unmarkedEligible]⟩
   · rw [if_neg hg] at hcond; cases hcond
 
-/-- Spec for `applyAccRule`: it either leaves states unchanged, or it
-    sets one specific unmarked-visible index to ACC. -/
+/-- A pass that either leaves the states alone or rewrites a single index
+    drawn from `unmarkedVisible` cannot overwrite a valued NP. This is the
+    structural content of the Elsewhere ordering: `unmarkedVisible` filters
+    valued states out, so no later rule can reach one. -/
+private theorem getElem?_of_spec {cycle : CasePhase} {states out : List PhasedState}
+    {i : Nat} {s : PhasedState} (h_get : states[i]? = some s) (h_marked : s.marked)
+    (hspec : out = states ∨
+      ∃ j ∈ unmarkedVisible cycle states, ∃ f, out = states.modify j f) :
+    out[i]? = some s := by
+  obtain rfl | ⟨j, hj, f, rfl⟩ := hspec
+  · exact h_get
+  · obtain ⟨s', hs', hs'_unmarked⟩ := unmarkedVisible_unmarked hj
+    have hne : j ≠ i := by rintro rfl; rw [h_get] at hs'; cases hs'; simp_all
+    rw [List.getElem?_modify_ne _ _ hne]; exact h_get
+
 private theorem applyAccRule_spec (cfg : CaseSystemConfig) (cycle : CasePhase)
     (states : List PhasedState) :
     applyAccRule cfg cycle states = states ∨
-    ∃ last, last ∈ unmarkedVisible cycle states ∧
-      applyAccRule cfg cycle states = setCaseAt last .acc .dependent states := by
+      ∃ j ∈ unmarkedVisible cycle states, ∃ f,
+        applyAccRule cfg cycle states = states.modify j f := by
   unfold applyAccRule
   split
-  · exact Or.inl rfl
+  · exact .inl rfl
   · split
     case h_1 last _ _ heq =>
-      refine Or.inr ⟨last, ?_, rfl⟩
-      have : last ∈ (unmarkedVisible cycle states).reverse := by rw [heq]; simp
-      simpa using this
-    case h_2 => exact Or.inl rfl
+      have : last ∈ (unmarkedVisible cycle states).reverse := by
+        rw [heq]; exact List.mem_cons_self ..
+      exact .inr ⟨last, by simpa using this, _, rfl⟩
+    case h_2 => exact .inl rfl
 
-/-- **(4b) ACC never overwrites a marked NP.** This is the structural
-    content of the Elsewhere ordering: once a state has been valued
-    (lexically, by (4a) DAT, or by Agree), `unmarkedVisible` no
-    longer includes its index, so `applyAccRule` cannot touch it. -/
-theorem applyAccRule_preserves_marked_at (cfg : CaseSystemConfig)
-    (cycle : CasePhase) (states : List PhasedState) (i : Nat) (s : PhasedState)
-    (h_get : states[i]? = some s) (h_marked : s.marked = true) :
-    (applyAccRule cfg cycle states)[i]? = some s := by
-  rcases applyAccRule_spec cfg cycle states with heq | ⟨last, hlast, heq⟩
-  · rw [heq]; exact h_get
-  · rw [heq]
-    obtain ⟨s', hs', hs'_unmarked⟩ := unmarkedVisible_unmarked cycle states last hlast
-    have hne : last ≠ i := by
-      intro hidx
-      rw [hidx, h_get] at hs'
-      have : s = s' := (Option.some.injEq _ _).mp hs'
-      rw [this] at h_marked
-      rw [hs'_unmarked] at h_marked
-      cases h_marked
-    rw [setCaseAt_get?_ne _ _ _ _ _ hne]
-    exact h_get
-
-/-- v-Agree, like (4b), only touches `unmarkedVisible` indices and so
-    cannot overwrite a marked NP. -/
-theorem applyAccAgree_preserves_marked_at (cfg : CaseSystemConfig)
-    (states : List PhasedState) (i : Nat) (s : PhasedState)
-    (h_get : states[i]? = some s) (h_marked : s.marked = true) :
-    (applyAccAgree cfg states)[i]? = some s := by
+private theorem applyAccAgree_spec (cfg : CaseSystemConfig) (states : List PhasedState) :
+    applyAccAgree cfg states = states ∨
+      ∃ j ∈ unmarkedVisible .cp states, ∃ f, applyAccAgree cfg states = states.modify j f := by
   unfold applyAccAgree
   split
   · split
     case h_1 last _ heq =>
-      have hlast_mem : last ∈ unmarkedVisible .cp states := by
-        have : last ∈ (unmarkedVisible .cp states).reverse := by
-          rw [heq]; exact List.mem_cons_self
-        simpa using this
-      obtain ⟨s', hs', hs'_unmarked⟩ :=
-        unmarkedVisible_unmarked .cp states last hlast_mem
-      have hne : last ≠ i := by
-        intro hidx
-        rw [hidx, h_get] at hs'
-        have : s = s' := (Option.some.injEq _ _).mp hs'
-        rw [this, hs'_unmarked] at h_marked
-        cases h_marked
-      rw [setCaseAt_get?_ne _ _ _ _ _ hne]; exact h_get
-    case h_2 => exact h_get
-  · exact h_get
+      have : last ∈ (unmarkedVisible .cp states).reverse := by rw [heq]; exact List.mem_cons_self ..
+      exact .inr ⟨last, by simpa using this, _, rfl⟩
+    case h_2 => exact .inl rfl
+  · exact .inl rfl
 
-/-- T-Agree only touches `unmarkedVisible .cp` indices. -/
-theorem applyNomAgree_preserves_marked_at (cfg : CaseSystemConfig)
-    (states : List PhasedState) (i : Nat) (s : PhasedState)
-    (h_get : states[i]? = some s) (h_marked : s.marked = true) :
-    (applyNomAgree cfg states)[i]? = some s := by
+private theorem applyNomAgree_spec (cfg : CaseSystemConfig) (states : List PhasedState) :
+    applyNomAgree cfg states = states ∨
+      ∃ j ∈ unmarkedVisible .cp states, ∃ f, applyNomAgree cfg states = states.modify j f := by
   unfold applyNomAgree
   split
   · split
-    case h_1 first _ heq =>
-      have hfirst_mem : first ∈ unmarkedVisible .cp states := by
-        rw [heq]; exact List.mem_cons_self
-      obtain ⟨s', hs', hs'_unmarked⟩ :=
-        unmarkedVisible_unmarked .cp states first hfirst_mem
-      have hne : first ≠ i := by
-        intro hidx
-        rw [hidx, h_get] at hs'
-        have : s = s' := (Option.some.injEq _ _).mp hs'
-        rw [this, hs'_unmarked] at h_marked
-        cases h_marked
-      rw [setCaseAt_get?_ne _ _ _ _ _ hne]; exact h_get
-    case h_2 => exact h_get
-  · exact h_get
+    case h_1 first _ heq => exact .inr ⟨first, heq ▸ List.mem_cons_self .., _, rfl⟩
+    case h_2 => exact .inl rfl
+  · exact .inl rfl
 
-/-- D-Agree only modifies unmarked DP-internal states. -/
+/-- The accusative rule never overwrites a valued NP. -/
+theorem applyAccRule_preserves_marked_at (cfg : CaseSystemConfig)
+    (cycle : CasePhase) (states : List PhasedState) (i : Nat) (s : PhasedState)
+    (h_get : states[i]? = some s) (h_marked : s.marked = true) :
+    (applyAccRule cfg cycle states)[i]? = some s :=
+  getElem?_of_spec h_get h_marked (applyAccRule_spec cfg cycle states)
+
+/-- v-Agree never overwrites a valued NP. -/
+theorem applyAccAgree_preserves_marked_at (cfg : CaseSystemConfig)
+    (states : List PhasedState) (i : Nat) (s : PhasedState)
+    (h_get : states[i]? = some s) (h_marked : s.marked = true) :
+    (applyAccAgree cfg states)[i]? = some s :=
+  getElem?_of_spec h_get h_marked (applyAccAgree_spec cfg states)
+
+/-- T-Agree never overwrites a valued NP. -/
+theorem applyNomAgree_preserves_marked_at (cfg : CaseSystemConfig)
+    (states : List PhasedState) (i : Nat) (s : PhasedState)
+    (h_get : states[i]? = some s) (h_marked : s.marked = true) :
+    (applyNomAgree cfg states)[i]? = some s :=
+  getElem?_of_spec h_get h_marked (applyNomAgree_spec cfg states)
+
+/-- D-Agree never overwrites a valued NP. -/
 theorem applyGenAgree_preserves_marked_at (cfg : CaseSystemConfig)
     (states : List PhasedState) (i : Nat) (s : PhasedState)
     (h_get : states[i]? = some s) (h_marked : s.marked = true) :
     (applyGenAgree cfg states)[i]? = some s := by
   unfold applyGenAgree
   split
-  · rw [List.getElem?_map, h_get]
-    simp only [Option.map_some]
-    have : (s.np.inDP && !s.marked) = false := by
-      rw [h_marked]; simp
-    rw [this]; rfl
+  · rw [List.getElem?_map, h_get]; simp [h_marked]
   · exact h_get
 
-/-- The default sweep only modifies unmarked states. -/
+/-- The default sweep never overwrites a valued NP. -/
 theorem applyDefault_preserves_marked_at (cfg : CaseSystemConfig)
     (states : List PhasedState) (i : Nat) (s : PhasedState)
     (h_get : states[i]? = some s) (h_marked : s.marked = true) :
     (applyDefault cfg states)[i]? = some s := by
-  unfold applyDefault
-  rw [List.getElem?_map, h_get]
-  simp only [Option.map_some]
-  rw [h_marked]; rfl
+  rw [applyDefault, List.getElem?_map, h_get]; simp [h_marked]
 
-/-- **DAT bleeds ACC on the VP cycle, structurally.** For every input
-    state list, the NP marked DAT by `applyDatRule` keeps its DAT case
-    through the subsequent VP-cycle `applyAccRule` call. -/
-theorem dat_persists_through_vp_acc (cfg : CaseSystemConfig)
-    (states : List PhasedState) (i : Nat) (s : PhasedState)
-    (h_get : (applyDatRule cfg states)[i]? = some s)
-    (h_dat  : s.case = some (.dat, .dependent)) :
-    (applyAccRule cfg .vp (applyDatRule cfg states))[i]? = some s := by
-  apply applyAccRule_preserves_marked_at
-  · exact h_get
-  · unfold PhasedState.marked; rw [h_dat]; rfl
-
-/-- **DAT marking persists all the way through `assignCasesPhased`.**
-    Whatever NP `applyDatRule` values DAT survives every subsequent
-    pass — both ACC cycles, both Agree probes, and the default sweep —
-    because each pass only modifies states it sees as unmarked. The
-    Sakha-specific empirical theorem `ditrans_goal_dat` follows from
-    this structural fact applied to the ditransitive input. -/
+/-- A dative valued by the dative rule survives every later pass, so the
+    Elsewhere ordering of the dative rule over the accusative rule is a
+    consequence of how the passes read `unmarkedVisible`, not a stipulated
+    rule ordering. -/
 theorem dat_persists_through_assignCasesPhased (cfg : CaseSystemConfig)
     (nps : List PhasedNP) (i : Nat) (s : PhasedState)
     (h_get : (applyDatRule cfg (initStates nps))[i]? = some s)
@@ -1088,13 +654,13 @@ theorem dat_persists_through_assignCasesPhased (cfg : CaseSystemConfig)
     let s6 := applyGenAgree cfg s5
     let s7 := applyDefault cfg s6
     s7[i]? = some s := by
-  have h_marked : s.marked = true := by
-    unfold PhasedState.marked; rw [h_dat]; rfl
-  have h2 := applyAccRule_preserves_marked_at cfg .vp _ i s h_get h_marked
-  have h3 := applyAccRule_preserves_marked_at cfg .cp _ i s h2 h_marked
-  have h4 := applyAccAgree_preserves_marked_at cfg _ i s h3 h_marked
-  have h5 := applyNomAgree_preserves_marked_at cfg _ i s h4 h_marked
-  have h6 := applyGenAgree_preserves_marked_at cfg _ i s h5 h_marked
-  exact applyDefault_preserves_marked_at cfg _ i s h6 h_marked
+  have h_marked : s.marked = true := by rw [PhasedState.marked, h_dat]; rfl
+  exact applyDefault_preserves_marked_at cfg _ i s
+    (applyGenAgree_preserves_marked_at cfg _ i s
+      (applyNomAgree_preserves_marked_at cfg _ i s
+        (applyAccAgree_preserves_marked_at cfg _ i s
+          (applyAccRule_preserves_marked_at cfg .cp _ i s
+            (applyAccRule_preserves_marked_at cfg .vp _ i s h_get h_marked)
+            h_marked) h_marked) h_marked) h_marked) h_marked
 
 end Syntax.Case

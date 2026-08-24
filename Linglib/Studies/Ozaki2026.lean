@@ -296,6 +296,26 @@ open Minimalist Minimalist.Voice
 open Syntax.Case
 open Japanese.Predicates
 
+/-! ### The Spell-Out domain of a departure verb
+
+*Taroo-ga mura-o hanare-ta* puts two bare NPs in the TP domain, the raised
+leaver above the source. *Taroo-ga mura-kara hanare-ta* replaces the source
+with a PP, *kara* assigning it lexical ablative. -/
+
+/-- The accusative variant: leaver and source, both caseless. -/
+def accVariantNPs : List NPInDomain :=
+  [ { label := "leaver", lexicalCase := none },
+    { label := "source", lexicalCase := none } ]
+
+/-- The ablative variant: *kara* has valued the source ablative. -/
+def ablVariantNPs : List NPInDomain :=
+  [ { label := "leaver", lexicalCase := none },
+    { label := "source", lexicalCase := some .abl } ]
+
+def accVariantResult : List CasedNP := assignCases .accusative accVariantNPs
+
+def ablVariantResult : List CasedNP := assignCases .accusative ablVariantNPs
+
 /-- Departure verbs predict no external argument: non-thematic Voice
     does not assign a θ-role ([kratzer-1996], [schaefer-2025]). -/
 theorem departure_no_external :
@@ -314,20 +334,26 @@ theorem departure_voice_no_theta :
 /-- ACC variant produces dependent ACC on source, unmarked NOM on leaver. -/
 theorem acc_derivation_correct :
     getCaseOf "source" accVariantResult = some .acc ∧
-    getCaseOf "leaver" accVariantResult = some .nom := by native_decide
+    getCaseOf "leaver" accVariantResult = some .nom := by decide
 
 /-- ABL variant produces lexical ABL on source, unmarked NOM on leaver. -/
 theorem abl_derivation_correct :
     getCaseOf "source" ablVariantResult = some .abl ∧
-    getCaseOf "leaver" ablVariantResult = some .nom := by native_decide
+    getCaseOf "leaver" ablVariantResult = some .nom := by decide
 
 /-- In the ACC variant, source case is dependent. -/
 theorem acc_source_from_configuration :
-    getSourceOf "source" accVariantResult = some .dependent := by native_decide
+    getSourceOf "source" accVariantResult = some .dependent := by decide
 
 /-- In the ABL variant, source case is lexical. -/
 theorem abl_source_from_lexical_p :
-    getSourceOf "source" ablVariantResult = some .lexical := by native_decide
+    getSourceOf "source" ablVariantResult = some .lexical := by decide
+
+/-- The alternation touches only the source: the leaver takes unmarked
+    nominative in both variants. -/
+theorem leaver_unmarked_in_both :
+    getSourceOf "leaver" accVariantResult = some .unmarked ∧
+    getSourceOf "leaver" ablVariantResult = some .unmarked := by decide
 
 /-- Anticausative Voice is not a phase head. -/
 theorem agree_acc_needs_phase_head :
@@ -343,11 +369,7 @@ theorem accusative_unaccusative_paradox :
     ¬ anticausative.IsPhasal ∧
     getCaseOf "source" accVariantResult = some .acc ∧
     getSourceOf "source" accVariantResult = some .dependent := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · decide
-  · decide
-  · native_decide
-  · native_decide
+  refine ⟨by decide, by decide, by decide, by decide⟩
 
 /-- Fragment entry for *hanareru* is marked unaccusative. -/
 theorem hanareru_is_unaccusative :
