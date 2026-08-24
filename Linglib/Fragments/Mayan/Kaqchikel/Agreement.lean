@@ -36,7 +36,7 @@ high-abs analysis (consistent with [preminger-2014] and
 argument, in contrast with San Juan Atitán Mam, where Infl's φ-probe
 is blocked in transitives and the patient goes unagreed ([scott-2023];
 see `Mam/Agreement.lean`) — the non-differential/differential pair
-consumed by `Studies/Aissen2003Agreement.lean`. The AF agreement table
+consumed by `Studies/Just2024.lean`. The AF agreement table
 ([preminger-2014] §3.2, table (22)) and the choice rule that predicts
 it live in `Studies/Preminger2014.lean`. The non-perfective `accCase`
 records [imanishi-2014]'s analysis of the progressive *ajin*

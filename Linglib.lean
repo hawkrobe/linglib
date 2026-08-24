@@ -1328,6 +1328,7 @@ import Linglib.Phonology.Hiatus
 import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 import Linglib.Phonology.Constraints.Harmony
 import Linglib.Phonology.HarmonicGrammar.Separability
+import Linglib.Studies.Just2024
 import Linglib.Studies.Riggle2009
 import Linglib.Phonology.Harmony.Basic
 import Linglib.Phonology.Harmony.TongueRoot
@@ -1874,7 +1875,6 @@ import Linglib.Studies.AhnZhu2025
 import Linglib.Studies.Aikhenvald2000
 import Linglib.Studies.Aikhenvald2004
 import Linglib.Studies.Aissen2003
-import Linglib.Studies.Aissen2003Agreement
 import Linglib.Studies.AissenPolian2025
 import Linglib.Studies.Aitha2026
 import Linglib.Studies.AkinboFwangwar2026

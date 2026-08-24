@@ -277,21 +277,21 @@ theorem universal3_single_argument_flagging (r : ArgumentRole) :
     > flagging depending on some prominence scale, then the special
     > flag is used on the prominent P-argument.
 
-    Re-exported from [aissen-2003]'s OT factorial typology, which
+    Re-exported from [aissen-2003]'s OT interpolation typology, which
     *predicts* this universal: the typology generates only monotone DOM
     patterns. -/
 
-/-- [aissen-2003]'s OT factorial typology *predicts* Universal 4:
-    every animacy DOM pattern in `animOptima` is monotone (the prominent
-    end gets the marker first). Renamed from `universal4_split_P_flagging`
-    to clarify that this is a *model prediction* of U4, not the universal
-    itself: a model-internal lemma can support a typological universal
-    without being identical to it. -/
-theorem universal4_aissen_predicts : animOptima.all (λ opts =>
-    opts.checkAll (λ c =>
-      (if c.an then c.hu else true) &&
-      (if c.inan then c.an else true))) = true :=
-  animacy_all_monotone
+/-- [aissen-2003]'s OT typology *predicts* Universal 4: every grammar in
+    the animacy interpolation typology marks an upward-closed segment of
+    the scale, so the prominent end gets the marker first
+    (`Aissen2003.no_reversed_system`). This is a *model prediction* of U4,
+    not the universal itself: a model-internal lemma can support a
+    typological universal without being identical to it. -/
+theorem universal4_aissen_predicts :
+    ∀ k < 4, ∀ a a' : AnimacyLevel, a ≤ a' →
+      markedWins (interpolation AnimacyLevel.all k) a = true →
+      markedWins (interpolation AnimacyLevel.all k) a' = true :=
+  no_reversed_system
 
 -- ============================================================================
 -- § 5: Universal 5 — Scenario Coding Universal

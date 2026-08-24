@@ -496,8 +496,14 @@ The critical structural point: the **same** prominence hierarchies
 connection is built in by construction — both import `Features.Prominence`. -/
 
 open Features.Prominence (DefinitenessLevel)
-open Aissen2003
-  (DOMProfile spanishDOM russianDOM turkishDOM hindiDOM noDOMProfile)
+open Features.Prominence (MarkingPattern)
+open Aissen2003 (spanishDOM turkishDOM hindiDOM noDOM)
+
+/-- Russian: the accusative of animates is realized by the genitive form —
+    animacy-based differential marking of P. Not part of [aissen-2003]'s
+    sample; formalized here for [comrie-1989]'s alignment–DOM consistency
+    check. -/
+def russianDOM : MarkingPattern := .animacyAtLeast .animate
 open Dixon1994 (russian turkish dyirbalSplit)
 open Alignment (AlignmentFamily Aspect hindiSplit)
 
@@ -524,11 +530,12 @@ theorem acc_dom_erg_dsm :
     domExpected .accusative ∧ ¬ dsmExpected .accusative ∧
     ¬ domExpected .ergative ∧ dsmExpected .ergative := by decide
 
-/-- Whether a DOMProfile has any differential marking (at least one
-    prominence cell is overtly marked). -/
-def hasAnyMarking (dom : DOMProfile) : Bool :=
-  AnimacyLevel.all.any (λ a =>
-    DefinitenessLevel.all.any (λ d => dom.marks a d))
+/-- The pattern marks at least one prominence cell. -/
+def HasAnyMarking (dom : MarkingPattern) : Prop :=
+  ∃ a d, dom a d = true
+
+instance : DecidablePred HasAnyMarking := λ dom => by
+  unfold HasAnyMarking; infer_instance
 
 -- ============================================================================
 -- § 7a: Per-Language DOM × Alignment Consistency
@@ -537,7 +544,7 @@ def hasAnyMarking (dom : DOMProfile) : Bool :=
 /-! ### Testing the alignment–DOM prediction against language data
 
 Languages with both an `AlignmentProfile` (from `Alignment.Typology`)
-and a `DOMProfile` (from `Case.Typology`) can be tested: accusative
+and a DOM `MarkingPattern` can be tested: accusative
 alignment predicts DOM; ergative predicts DSM instead.
 
 - **Turkish**: accusative + DOM (definiteness-based) → consistent
@@ -548,19 +555,19 @@ alignment predicts DOM; ergative predicts DSM instead.
 
 /-- Turkish: accusative alignment → DOM expected; DOM present. -/
 theorem turkish_dom_consistent :
-    domExpected turkish.npAlignment ∧
-    hasAnyMarking turkishDOM = true := ⟨by decide, by native_decide⟩
+    domExpected turkish.npAlignment ∧ HasAnyMarking turkishDOM :=
+  ⟨by decide, by decide⟩
 
 /-- Russian: accusative alignment → DOM expected; DOM present. -/
 theorem russian_dom_consistent :
-    domExpected russian.npAlignment ∧
-    hasAnyMarking russianDOM = true := ⟨by decide, by native_decide⟩
+    domExpected russian.npAlignment ∧ HasAnyMarking russianDOM :=
+  ⟨by decide, by decide⟩
 
 /-- No-DOM languages with neutral alignment: DOM not expected,
     and no DOM exists. Doubly consistent. -/
 theorem neutral_no_dom :
-    ¬ domExpected .neutral ∧
-    hasAnyMarking noDOMProfile = false := ⟨by decide, by native_decide⟩
+    ¬ domExpected .neutral ∧ ¬ HasAnyMarking noDOM :=
+  ⟨by decide, by decide⟩
 
 -- ============================================================================
 -- § 7b: Split Ergativity × DOM Interaction
@@ -604,7 +611,7 @@ theorem hindi_pfv_no_dom :
     aspects. The empirical profile exceeds the per-zone prediction:
     ko operates on top of the case system, not within it. -/
 theorem hindi_has_dom_across_aspects :
-    hasAnyMarking hindiDOM = true := by native_decide
+    HasAnyMarking hindiDOM := by decide
 
 /-- Dyirbal's animacy-based split creates analogous zones: inanimates
     get ergative alignment (DOM not expected), animates get accusative
@@ -626,7 +633,8 @@ The animacy hierarchy operates in two independent grammatical systems:
    which NPs get ergative vs accusative alignment. In Dyirbal,
    `inanimate → ergative`, `human/animate → accusative`.
 2. **DOM** ([aissen-2003]): `AnimacyLevel` determines which objects get
-   overt marking. In Spanish, `human → marked`, `non-human → unmarked`.
+   overt marking. In Spanish, definite human objects are marked, inanimates
+   unmarked.
 
 Both are monotone cutoffs on the **same** linearly ordered type. A change
 to `AnimacyLevel` propagates automatically to both systems. This is
@@ -635,29 +643,30 @@ recur across grammatical domains. -/
 
 /-- The animacy hierarchy governs both split ergativity and DOM.
     Dyirbal uses it for the ergative split; Spanish uses it for DOM.
-    Both are monotone cutoffs on the same ordered type. -/
+    Both are monotone in the same ordered type. -/
 theorem animacy_governs_split_and_dom :
     -- Split ergativity: inanimate below threshold (ergative)
     dyirbalSplit.alignment .inanimate = .ergative ∧
     -- Split ergativity: human above threshold (accusative)
     dyirbalSplit.alignment .human = .accusative ∧
-    -- DOM: human above marking threshold (marked)
-    spanishDOM.marks .human .nonSpecific = true ∧
-    -- DOM: inanimate below marking threshold (unmarked)
-    spanishDOM.marks .inanimate .nonSpecific = false := ⟨rfl, rfl, rfl, rfl⟩
+    -- DOM: definite human objects obligatorily marked
+    spanishDOM .human .definite = true ∧
+    -- DOM: inanimate objects never obligatorily marked
+    spanishDOM .inanimate .definite = false := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- Hindi-Urdu's bidimensional DOM uses BOTH prominence scales:
-    human objects need only indefinite-specific status for ko-marking,
-    while animate objects require definite status. The staircase cutoff
-    operates jointly on `AnimacyLevel × DefinitenessLevel`. -/
+    human objects need only indefinite-specific status for obligatory
+    ko-marking, while animates must be pronouns or proper names. The
+    staircase cutoff operates jointly on
+    `AnimacyLevel × DefinitenessLevel`. -/
 theorem hindi_bidimensional_dom :
     -- Human + indefinite specific: marked
-    hindiDOM.marks .human .indefiniteSpecific = true ∧
+    hindiDOM .human .indefiniteSpecific = true ∧
     -- Animate + indefinite specific: NOT marked
-    hindiDOM.marks .animate .indefiniteSpecific = false ∧
-    -- Animate + definite: marked
-    hindiDOM.marks .animate .definite = true ∧
-    -- Inanimate: never marked regardless of definiteness
-    hindiDOM.marks .inanimate .personalPronoun = false := ⟨rfl, rfl, rfl, rfl⟩
+    hindiDOM .animate .indefiniteSpecific = false ∧
+    -- Animate + proper name: marked
+    hindiDOM .animate .properName = true ∧
+    -- Inanimate: never obligatorily marked regardless of definiteness
+    hindiDOM .inanimate .personalPronoun = false := ⟨rfl, rfl, rfl, rfl⟩
 
 end Comrie1989

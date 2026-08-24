@@ -2,6 +2,7 @@ import Linglib.Semantics.ArgumentStructure.CaseRegion
 import Linglib.Semantics.ArgumentStructure.Projection
 import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Studies.Aissen2003
+import Linglib.Syntax.Case.Dependent
 import Linglib.Studies.Dowty1991
 
 /-!
@@ -23,7 +24,7 @@ referential-property treatment the paper attributes to [grimm-2005].
 - `russian_dom_matches_lattice` / `spanish_dom_within_lattice` /
   `animate_dom_object_is_dative_node`: the lattice predicts DOM for exactly
   {animate, human}, and the animate DOM object is literally the dative node.
-- `domPredicted_monotone`, `latticeDOM_isMonotone`,
+- `domPredicted_monotone`, `latticeDOM_monotoneP`,
   `latticeDOM_matches_aissen_type2`: the lattice derives [aissen-2003]'s
   monotonicity universal and reproduces OT Type 2.
 - `genitive_requires_entailment_free`: only the entailment-free object
@@ -34,8 +35,8 @@ referential-property treatment the paper attributes to [grimm-2005].
   loses, and the ASP re-derived from dominance
   (`outranks_of_lattice_dominance`) rather than checked per verb.
 - `lattice_diverges_from_dependent_case`: the semantic-case vs
-  structural-case fault line on animate objects, made explicit against the
-  dependent-case pipeline in `Studies/Aissen2003.lean`.
+  structural-case fault line on animate objects, made explicit against a
+  dependent-case pipeline over prominence-annotated clauses.
 -/
 
 namespace Grimm2011
@@ -320,50 +321,51 @@ theorem domPredicted_monotone (p : PersistenceLevel) :
 
 /-! #### Checking attested DOM languages -/
 
+/-- Russian animate accusative: the genitive form realizes the accusative of
+    animates — an animacy-cutoff marking pattern. Not part of
+    [aissen-2003]'s sample; instantiated here for the lattice check. -/
+def russianDOM : MarkingPattern := .animacyAtLeast .animate
+
 /-- Russian (animate accusative) marks exactly the lattice-predicted
     cells. -/
 theorem russian_dom_matches_lattice :
-    ∀ a, russianDOM.marks a .definite = true ↔
+    ∀ a, russianDOM a .definite = true ↔
       DomPredictedByLattice a .quPersBeginning := by decide
 
-/-- Spanish (human `a`) is a proper subset of the lattice prediction: it
-    under-marks the predicted animate cell. -/
+/-- Spanish *a* on definite objects is a proper subset of the lattice
+    prediction: it under-marks the predicted animate cell. -/
 theorem spanish_dom_within_lattice :
-    (∀ a, spanishDOM.marks a .definite = true →
+    (∀ a, spanishDOM a .definite = true →
       DomPredictedByLattice a .quPersBeginning) ∧
-    spanishDOM.marks .animate .definite = false ∧
+    spanishDOM .animate .definite = false ∧
     DomPredictedByLattice .animate .quPersBeginning := by decide
 
 /-- Hindi agrees on the animacy boundary: inanimate never marked,
     animate/human marked at some definiteness level. -/
 theorem hindi_dom_consistent_on_animacy :
-    (∀ d, hindiDOM.marks .inanimate d = false) ∧
-    (∃ d, hindiDOM.marks .animate d = true) ∧
-    (∃ d, hindiDOM.marks .human d = true) := by decide
+    (∀ d, hindiDOM .inanimate d = false) ∧
+    (∃ d, hindiDOM .animate d = true) ∧
+    (∃ d, hindiDOM .human d = true) := by decide
 
 /-! #### The lattice-derived profile against [aissen-2003]'s OT typology -/
 
 /-- The lattice's DOM prediction at a fixed persistence level, as a
-    [just-2024]-style differential marking profile. -/
-def latticeDOM (p : PersistenceLevel) : DOMProfile :=
-  { name := "Lattice-derived"
-    role := .P
-    channel := .flagging
-    marks := λ a _ => decide (DomPredictedByLattice a p) }
+    differential marking pattern. -/
+def latticeDOM (p : PersistenceLevel) : MarkingPattern :=
+  λ a _ => decide (DomPredictedByLattice a p)
 
-/-- Lattice-derived profiles satisfy [aissen-2003]'s monotonicity
-    universal, structurally via `isMonotoneP_of`. -/
-theorem latticeDOM_isMonotone (p : PersistenceLevel) :
-    (latticeDOM p).isMonotone = true :=
-  (latticeDOM p).isMonotoneP_of fun ha _ hm =>
+/-- Lattice-derived patterns satisfy [aissen-2003]'s monotonicity universal,
+    structurally via `domPredicted_monotone`. -/
+theorem latticeDOM_monotoneP (p : PersistenceLevel) : (latticeDOM p).MonotoneP :=
+  λ _ _ _ _ ha _ hm =>
     decide_eq_true (domPredicted_monotone p _ _ ha (of_decide_eq_true hm))
 
 /-- At `quPersBeginning` the lattice-derived profile coincides with
-    [aissen-2003]'s OT Type 2 (Hu + An; `Aissen2003.anim_type_hu_an`) —
-    two frameworks, independent premises, same prediction. -/
+    [aissen-2003]'s animate-cutoff interpolation type (Dhargari's, Figure 3;
+    `Aissen2003.figure3_languages`) — two frameworks, independent premises,
+    same prediction. -/
 theorem latticeDOM_matches_aissen_type2 :
-    ∀ a d, (latticeDOM .quPersBeginning).marks a d =
-      (animCandToDOM ⟨true, true, false⟩).marks a d := by decide
+    ∀ a d, latticeDOM .quPersBeginning a d = dhargariDOM a d := by decide
 
 /-! #### Limitation: total-persistence objects
 
@@ -504,10 +506,43 @@ theorem kiss_flat_count_from_lattice :
 
 /-! ### Grimm vs dependent case
 
-`Studies/Aissen2003.lean` Part II assigns abstract ACC to every transitive
-object, with DOM a realization filter; Grimm assigns the case *category* by
-lattice position. On Grimm's line Spanish *a* is dative, not flagged ACC —
-the fault line between structural and semantic case. -/
+The dependent-case algorithm ([marantz-1991], `Syntax/Case/Dependent.lean`)
+assigns abstract ACC to every transitive object — case assignment is
+prominence-blind, with DOM a realization filter over it ([aissen-2003]).
+Grimm instead assigns the case *category* by lattice position: on his line
+Spanish *a* is dative, not flagged ACC — the fault line between structural
+and semantic case. The pipeline below runs the dependent-case algorithm on a
+prominence-annotated clause to make the divergence explicit. -/
+
+open Syntax.Case
+
+/-- An NP annotated with referential prominence. Dependent case ignores the
+    annotation; the lattice reads it. -/
+structure ProminentNP where
+  label : String
+  lexicalCase : Option Case
+  animacy : AnimacyLevel
+  definiteness : DefinitenessLevel
+  deriving DecidableEq, Repr
+
+/-- The NP as the dependent-case algorithm sees it. -/
+def ProminentNP.toNP (pnp : ProminentNP) : NPInDomain := ⟨pnp.label, pnp.lexicalCase⟩
+
+/-- A transitive clause: subject c-commands object. -/
+structure TransClause where
+  subject : ProminentNP
+  object : ProminentNP
+  deriving DecidableEq, Repr
+
+/-- Abstract case assigned to the object by the dependent-case algorithm. -/
+def objectCase (lang : CaseLanguageType) (tc : TransClause) : Option Case :=
+  getCaseOf tc.object.label (assignCases lang [tc.subject.toNP, tc.object.toNP])
+
+/-- A transitive clause with a fixed human-pronoun subject and a
+    variable-prominence object, both without lexical case. -/
+def mkTrans (a : AnimacyLevel) (d : DefinitenessLevel) : TransClause :=
+  { subject := ⟨"subj", none, .human, .personalPronoun⟩
+    object := ⟨"obj", none, a, d⟩ }
 
 /-- Animate definite object of a canonical transitive: dependent case says
     ACC, the lattice says DAT — different categories, not different

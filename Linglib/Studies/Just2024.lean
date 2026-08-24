@@ -6,12 +6,12 @@ import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Hungarian.Predicates
 
 /-!
-# Differential Indexing
-[aissen-2003] [just-2024] [haspelmath-2019] [siewierska-2004] [preminger-2014] [haspelmath-2021]
+# Just 2024: Differential A and P Indexing
+[just-2024] [aissen-2003] [haspelmath-2019] [siewierska-2004] [preminger-2014] [haspelmath-2021]
 
-Formalizes the typological survey of Just, E. (2024), *A structural and
+Formalizes the typological survey of [just-2024], *A structural and
 functional comparison of differential A and P indexing* (Linguistics 62(2):
-295–321), and connects it to [aissen-2003]'s DOM profiles
+295–321), and connects it to [aissen-2003]'s DOM patterns
 (`Features/Prominence`), [preminger-2014]'s φ-geometry
 (`Syntax/Minimalist/Phi/`), and the Kaqchikel, Basque, Georgian, and
 Hungarian fragments.
@@ -27,7 +27,7 @@ readily regardless of role; A defaults prominent, P does not.
 ## Main declarations
 
 - `IndexingFragment`: per-language differential-indexing profile,
-  extending `DifferentialMarkingProfile` (channel `.indexing`)
+  carrying a `Features.Prominence.MarkingPattern` grid
 - `pIndexingLanguages`, `aIndexingLanguages`: Just (2024) Tables 1–2
 - `mirror_image_universal`: every language targets the role-appropriate
   end of each conditioning scale
@@ -39,7 +39,7 @@ readily regardless of role; A defaults prominent, P does not.
   `hungarian_conjugation_split`: fragment paradigms ground the survey rows
 -/
 
-namespace Aissen2003
+namespace Just2024
 
 open Features.Prominence
 
@@ -79,12 +79,9 @@ theorem indexing_person_rank_injective (a b : IndexingPersonLevel)
 -- § 2: Indexing Fragment
 -- ============================================================================
 
-/-- A differential indexing fragment for a single language.
-
-    Extends `DifferentialMarkingProfile` with language metadata and
-    per-dimension marking predicates. The 2D `marks` predicate is computed
-    from `animacyIndexed` and `definitenessIndexed` by the `mk'` constructor,
-    and the channel is always `.indexing`.
+/-- A differential indexing fragment for a single language: language
+    metadata, the indexed argument role, and per-dimension marking
+    predicates.
 
     For P indexing: `true` at a level means "P arguments at this level
     ARE indexed." The expectation (Just §4.2) is that P indexing targets
@@ -93,11 +90,15 @@ theorem indexing_person_rank_injective (a b : IndexingPersonLevel)
     For A indexing: `true` at a level means "A arguments at this level
     ARE indexed." The expectation is that A indexing targets the
     non-prominent end. -/
-structure IndexingFragment extends DifferentialMarkingProfile where
+structure IndexingFragment where
+  /-- Language name -/
+  name : String
   /-- ISO 639-3 code -/
   iso639 : String
   /-- Language family -/
   family : String
+  /-- Which argument role is differentially indexed -/
+  role : ArgumentRole
   /-- Which person levels trigger indexing -/
   personIndexed : IndexingPersonLevel → Bool
   /-- Which animacy levels trigger indexing -/
@@ -105,16 +106,18 @@ structure IndexingFragment extends DifferentialMarkingProfile where
   /-- Which definiteness levels trigger indexing -/
   definitenessIndexed : DefinitenessLevel → Bool
 
-/-- Smart constructor for `IndexingFragment`.
-    Computes the 2D `marks` predicate as the product of
-    `animacyIndexed` and `definitenessIndexed`, and sets `channel :=.indexing`. -/
+/-- Positional constructor for `IndexingFragment`. -/
 def IndexingFragment.mk' (name iso639 family : String) (role : ArgumentRole)
     (personIndexed : IndexingPersonLevel → Bool)
     (animacyIndexed : AnimacyLevel → Bool)
     (definitenessIndexed : DefinitenessLevel → Bool) : IndexingFragment :=
-  { name, iso639, family, role, channel := .indexing
-    marks := λ a d => animacyIndexed a && definitenessIndexed d
-    personIndexed, animacyIndexed, definitenessIndexed }
+  { name, iso639, family, role, personIndexed, animacyIndexed,
+    definitenessIndexed }
+
+/-- The fragment's animacy × definiteness marking grid: the product of
+    `animacyIndexed` and `definitenessIndexed`. -/
+def IndexingFragment.marks (f : IndexingFragment) : MarkingPattern :=
+  λ a d => f.animacyIndexed a && f.definitenessIndexed d
 
 -- ============================================================================
 -- § 3: Derived Conditioning Factors
@@ -502,29 +505,29 @@ theorem mirror_image_universal :
 -- ============================================================================
 
 /-! For languages where animacy and/or definiteness condition indexing,
-    we verify monotonicity of the inherited `DifferentialMarkingProfile`
-    on the 2D grid. The `marks` predicate is derived from the fragment's
+    monotonicity of the role-appropriate direction holds on the 2D grid:
+    upper set for the P-indexing languages, lower set for A-indexing
+    Eastern Mansi. The `marks` grid is derived from the fragment's
     `animacyIndexed` and `definitenessIndexed` — no separate stipulation. -/
 
-/-- All animacy/definiteness-conditioned profiles are monotone. -/
-theorem hungarian_monotone : hungarian.isMonotone = true := by native_decide
-theorem swahili_monotone : swahili.isMonotone = true := by native_decide
-theorem kagulu_monotone : kagulu.isMonotone = true := by native_decide
-theorem easternMansi_monotone : easternMansi.isMonotone = true := by native_decide
+/-- All animacy/definiteness-conditioned patterns are monotone. -/
+theorem hungarian_monotone : hungarian.marks.MonotoneP := by decide
+theorem swahili_monotone : swahili.marks.MonotoneP := by decide
+theorem kagulu_monotone : kagulu.marks.MonotoneP := by decide
+theorem easternMansi_monotone : easternMansi.marks.MonotoneA := by decide
 
 /-- Swahili P indexing depends only on animacy (definiteness is irrelevant). -/
-theorem swahili_animacy_only : swahili.isAnimacyOnly = true := by native_decide
+theorem swahili_animacy_only : swahili.marks.AnimacyOnly := by decide
 
 /-- Kagulu P indexing depends only on animacy. -/
-theorem kagulu_animacy_only : kagulu.isAnimacyOnly = true := by native_decide
+theorem kagulu_animacy_only : kagulu.marks.AnimacyOnly := by decide
 
 /-- Hungarian P indexing depends only on definiteness (animacy is irrelevant). -/
-theorem hungarian_definiteness_only : hungarian.isDefinitenessOnly = true := by
-  native_decide
+theorem hungarian_definiteness_only : hungarian.marks.DefinitenessOnly := by decide
 
 /-- Eastern Mansi A indexing depends only on definiteness. -/
-theorem easternMansi_definiteness_only : easternMansi.isDefinitenessOnly = true := by
-  native_decide
+theorem easternMansi_definiteness_only : easternMansi.marks.DefinitenessOnly := by
+  decide
 
 -- ============================================================================
 -- § 14: Family Clustering ([just-2024], §2.2, §3.1)
@@ -572,15 +575,13 @@ theorem complement_differs_by_role :
   exact ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
--- § 16: DOM ↔ DifferentialMarkingProfile Structural Isomorphism
+-- § 16: DOM ↔ Differential Indexing on One Grid
 -- ============================================================================
 
-/-! `DOMProfile` is an abbreviation for `DifferentialMarkingProfile`
-    (specialized to role P + channel flagging), and `IndexingFragment`
-    extends `DifferentialMarkingProfile` (with channel = `.indexing`).
-    Both DOM profiles and indexing fragments inherit all DMP infrastructure
-    (monotonicity, dimensionality, cutoff constructors, mirror image)
-    directly — no conversion or bridge theorems needed. -/
+/-! [aissen-2003]'s DOM grids and `IndexingFragment.marks` are both
+    `Features.Prominence.MarkingPattern`s, so flagging and indexing share
+    the monotonicity, dimensionality, and cutoff infrastructure directly —
+    no conversion or bridge theorems needed. -/
 
 open Minimalist
 open Kaqchikel
@@ -784,4 +785,4 @@ theorem hungarian_definiteness_conditioned :
 theorem hungarian_not_person_conditioned :
     hungarian.personConditioned = false := by native_decide
 
-end Aissen2003
+end Just2024

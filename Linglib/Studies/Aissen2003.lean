@@ -1,42 +1,45 @@
 import Linglib.Features.Prominence
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Syntax.Case.Dependent
 
 /-!
-# [aissen-2003]: Differential Object Marking [aissen-2003]
+# Aissen 2003: Differential Object Marking
+[aissen-2003]
 
-Differential Object Marking: Iconicity vs. Economy.
-Natural Language & Linguistic Theory 21(3): 435–483.
+Differential Object Marking: Iconicity vs. Economy. Natural Language &
+Linguistic Theory 21(3), 435–483.
 
-Formalizes the core OT analysis: Harmonic Alignment of prominence scales
-with the relational scale (Subj > Obj) derives two constraint families:
+The higher in prominence a direct object, the more likely it is to be overtly
+case-marked. [aissen-2003] derives this in OT: harmonic alignment of the
+animacy and definiteness scales with the relational scale, locally conjoined
+with \*Ø_C, yields a fixed subhierarchy of iconicity constraints \*Oj/X & \*Ø_C
+("penalize a zero-marked object at prominence X"), and a single economy
+constraint \*STRUC_C ("penalize overt case morphology") interpolates into it.
+The interpolation point is the grammar: an object is obligatorily marked iff
+its iconicity constraint outranks \*STRUC_C, so each of the n + 1 points on an
+n-level scale is a language type, and every type marks an upward-closed
+segment of the scale. The subhierarchies' derivation by harmonic alignment
+(the paper's §§2–3) is taken as given; the constraint lists below are written
+directly in their derived ranking.
 
-- **Iconicity** (*Ø/X): penalizes zero-marked objects at prominence level X.
-  Fixed ranking: *Ø most prominent >>... >> *Ø least prominent.
-- **Economy** (*!/X): penalizes marked objects at prominence level X.
-  Fixed ranking: *!/least prominent >>... >> *!/most prominent.
+Language grids (`Features.Prominence.MarkingPattern`) record *obligatory*
+marking — the zone whose constraints strictly dominate \*STRUC_C. The paper's
+optional zones (constraints that rerank with \*STRUC_C, stochastically in
+Boersma's sense) are noted in docstrings but not represented.
 
-Rankings are fixed within each family but free between families. The factorial
-typology over all consistent interleavings predicts exactly the attested DOM
-patterns.
+## Main results
 
-## Key Results
-
-| Scale Size | Consistent Rankings | Language Types | Impossible Patterns |
-|------------|-------------------|---------------|-------------------|
-| 2 elements | 6 | 3 | Mark low without high |
-| 3 elements | 20 | 4 | Any non-monotone pattern |
-
-For the 3-element animacy scale {Hu > An > In}, 4 of 8 logically possible
-patterns are generated — exactly the monotone ones (Table 17, p. 476).
-
-## Connection to Existing Infrastructure
-
-The predicted DOM profiles are matched against the `DOMProfile` language data
-in §0 below, verifying that every attested pattern corresponds
-to a possible OT grammar.
-
+- `dom_monotonicity_universal`, `dom_obligatory_zone_upperSet` — the paper's
+  (33b): every attested obligatory-marking zone is an upper set in Figure 4's
+  product prominence order.
+- `tableaux_1_2` — the Hebrew/Turkish minimal pair on specific indefinites.
+- `figure2_typology` / `figure2_languages` — the six interpolation points on
+  the definiteness subhierarchy generate exactly the six cutoff systems,
+  matched type-for-type to Kalkatungu, Catalan, Pitjantjatjara, Hebrew,
+  Turkish, and Written Japanese.
+- `figure3_typology` / `figure3_languages` — likewise for the animacy scale.
+- `two_dimensional_systems` — Hindi and both stages of Spanish need both
+  scales.
 -/
 
 namespace Aissen2003
@@ -44,614 +47,213 @@ namespace Aissen2003
 open Features.Prominence
 open Constraints OptimalityTheory
 
-open Core.Optimization.Evaluation (Finset.checkAll Finset.checkAny)
+/-! ### The DOM systems of the paper
 
--- ============================================================================
--- §0. DOM language profiles (Aissen 2003 empirical core)
--- ============================================================================
---
--- The 8 DOM language profiles plus monotonicity / 1D-classification /
--- scale-dominance / extreme-cell theorems were dissolved here from a
--- former case-typology mash-up file (which mixed WALS Iggesen
--- substrate with Aissen DOM data). DOM data empirically belongs to Aissen
--- 2003 — it is the empirical input the OT factorial typology (§§1–8 below)
--- predicts. The substrate type `DifferentialMarkingProfile` lives in
--- `Features/Prominence.lean`; consumers Comrie1989, DeHoopMalchukov2008,
--- and Grimm2011 read these profiles from this file. `noDOMProfile` is
--- included in `allDOMProfiles` because it corresponds to OT Type 4 (no
--- marking) — see `nodom_matches_type4` in §6.
-
-/-- A DOM (Differential Object Marking) profile: a `DifferentialMarkingProfile`
-    specialized to role P + channel flagging.
-
-    Each cell `(a, d)` records whether an object with animacy level `a`
-    and definiteness level `d` obligatorily receives an overt DOM marker
-    (e.g., Spanish `a`, Turkish `-(y)I`, Hindi `-ko`).
-
-    DOM is the P-flagging instance of [just-2024]'s general differential
-    marking framework. Monotonicity (`isMonotone`), `isAnimacyOnly`, and
-    `isDefinitenessOnly` are all inherited from `DifferentialMarkingProfile`. -/
-abbrev DOMProfile := DifferentialMarkingProfile
+The one-dimensional definiteness systems are the six interpolation types of
+Figure 2, one cited language each; Ritharngu and Dhargari instantiate the
+clean animacy types of Figure 3 (Yiddish and Sinhalese sit at its
+optional-zone points). Hindi, Persian, and the two stages of Spanish are the
+two-dimensional systems of §5. -/
 
 section DOMLanguages
 
-/-- Spanish: `a`-marking for human direct objects regardless of definiteness.
-    One-dimensional (animacy-based), cutoff between human and animate. -/
-def spanishDOM : DOMProfile :=
-  .animacyCutoffP "Spanish" .flagging .human
+/-- Catalan: only (strong) personal-pronoun objects are marked with *a*
+    (Figure 2, §4.1). -/
+def catalanDOM : MarkingPattern := .definitenessAtLeast .personalPronoun
 
-/-- Russian: animate accusative (genitive form used as accusative for
-    animate nouns). One-dimensional (animacy-based), cutoff between animate
-    and inanimate. -/
-def russianDOM : DOMProfile :=
-  .animacyCutoffP "Russian" .flagging .animate
+/-- Pitjantjatjara: only pronoun and proper-name objects are case-marked
+    (Figure 2). -/
+def pitjantjatjaraDOM : MarkingPattern := .definitenessAtLeast .properName
 
-/-- Turkish: `-(y)I` marking for definite direct objects regardless of
-    animacy. One-dimensional (definiteness-based), cutoff between definite
-    and indefinite specific. -/
-def turkishDOM : DOMProfile :=
-  .definitenessCutoffP "Turkish" .flagging .definite
+/-- Hebrew: *ʔet* is obligatory on pronoun, proper-name, and definite
+    objects (Figure 2, §4.1). -/
+def hebrewDOM : MarkingPattern := .definitenessAtLeast .definite
 
-/-- Hebrew: `ʔet` marking for definite direct objects regardless of
-    animacy. Same one-dimensional definiteness cutoff as Turkish. -/
-def hebrewDOM : DOMProfile :=
-  .definitenessCutoffP "Hebrew" .flagging .definite
+/-- Turkish: *-(y)I* marks all objects except non-specifics — unlike Hebrew,
+    specific indefinites are obligatorily marked (Figure 2, Tableaux 1–2). -/
+def turkishDOM : MarkingPattern := .definitenessAtLeast .indefiniteSpecific
 
-/-- Persian: `-rā` marking for definite direct objects. One-dimensional
-    (definiteness-based) for obligatory marking; optional extension to
-    specific indefinite animates. -/
-def persianDOM : DOMProfile :=
-  .definitenessCutoffP "Persian" .flagging .definite
+/-- Persian: *-rā* is obligatory on all definites regardless of animacy and,
+    exactly as in Turkish, on specific indefinites (§5.3). Animacy enters
+    only in the optional zone (non-specific indefinites), so the obligatory
+    grid is one-dimensional. -/
+def persianDOM : MarkingPattern := .definitenessAtLeast .indefiniteSpecific
 
-/-- Catalan: `a`-marking restricted to personal pronouns. The most
-    restrictive DOM pattern attested. -/
-def catalanDOM : DOMProfile :=
-  .definitenessCutoffP "Catalan" .flagging .personalPronoun
+/-- Written Japanese: all objects are case-marked — DOM extended to the whole
+    scale, "thereby ceasing to be differential" (Figures 2–3, fn. 33). -/
+def writtenJapaneseDOM : MarkingPattern := .definitenessAtLeast .nonSpecific
 
-/-- Hindi-Urdu: `-ko` marking conditioned by BOTH animacy and definiteness.
-    Two-dimensional DOM with a staircase cutoff. -/
-def hindiDOM : DOMProfile :=
-  { name := "Hindi-Urdu", role := .P, channel := .flagging
-    marks := λ a d =>
-      match a with
-      | .human     => d.rank ≥ DefinitenessLevel.indefiniteSpecific.rank
-      | .animate   => d.rank ≥ DefinitenessLevel.definite.rank
-      | .inanimate => false }
+/-- Ritharngu: all human objects obligatorily case-marked; the "some
+    animates" spillover the paper reports is optional-zone (Figure 3). -/
+def ritharnguDOM : MarkingPattern := .animacyAtLeast .human
 
-/-- No DOM: trivially monotone. Included in `allDOMProfiles` to match OT
-    Type 4 (no marking) via `nodom_matches_type4` in §6. -/
-def noDOMProfile : DOMProfile :=
-  { name := "No DOM", role := .P, channel := .flagging, marks := λ _ _ => false }
+/-- Dhargari: all animate objects case-marked (Figure 3). -/
+def dhargariDOM : MarkingPattern := .animacyAtLeast .animate
+
+/-- No DOM: no object is case-marked — Kalkatungu in Figures 2–3, where
+    \*STRUC_C dominates the whole subhierarchy. Kept as the neutral
+    no-marking baseline other studies consume. -/
+def noDOM : MarkingPattern := λ _ _ => false
+
+/-- Hindi: *-ko* (§5.2, Figure 7). Obligatory: human objects down to specific
+    indefinites, plus animate pronouns and proper names (which "assimilate to
+    the human class"). Optional: human non-specifics, animate definites and
+    below, inanimate definites. Excluded: other inanimates. -/
+def hindiDOM : MarkingPattern := λ a d =>
+  match a with
+  | .human     => decide (DefinitenessLevel.indefiniteSpecific ≤ d)
+  | .animate   => decide (DefinitenessLevel.properName ≤ d)
+  | .inanimate => false
+
+/-- Spanish of the Cantar de Mio Cid: *a* obligatory exactly on the personal
+    pronouns and proper names of humans and animals (§5.1, Figure 5).
+    Optional: human common NPs and geographic proper names. -/
+def cmcSpanishDOM : MarkingPattern := λ a d =>
+  decide (AnimacyLevel.animate ≤ a) && decide (DefinitenessLevel.properName ≤ d)
+
+/-- Modern Spanish: the CMC system with \*STRUC_C demoted below the
+    human-definite and human-specific constraints, so *a* is now also
+    obligatory with definite and specific human objects (§5.4, Figure 9).
+    The obligatory grid coincides with Hindi's; the two differ in their
+    optional zones (Figure 7 vs. Figure 9). -/
+def spanishDOM : MarkingPattern := λ a d =>
+  match a with
+  | .human     => decide (DefinitenessLevel.indefiniteSpecific ≤ d)
+  | .animate   => decide (DefinitenessLevel.properName ≤ d)
+  | .inanimate => false
 
 end DOMLanguages
 
-/-- All DOM profiles in the sample (7 attested + 1 no-marking baseline). -/
-def allDOMProfiles : List DOMProfile :=
-  [spanishDOM, russianDOM, turkishDOM, hebrewDOM, persianDOM,
-   catalanDOM, hindiDOM, noDOMProfile]
+/-- The DOM systems cited in the paper. -/
+def allDOMPatterns : List MarkingPattern :=
+  [catalanDOM, pitjantjatjaraDOM, hebrewDOM, turkishDOM, persianDOM,
+   writtenJapaneseDOM, ritharnguDOM, dhargariDOM, hindiDOM, cmcSpanishDOM,
+   spanishDOM, noDOM]
 
-theorem allDOMProfiles_count : allDOMProfiles.length = 8 := by decide
+/-! ### Monotonicity: the (33b) universal -/
 
--- §0.1 Per-language monotonicity (Aissen's central prediction: every DOM
--- pattern forms an upper set in the bidimensional animacy × definiteness
--- grid). The one-dimensional cutoff languages inherit it directly from the
--- generic `animacyCutoffP_monotone`/`definitenessCutoffP_monotone` (proved
--- once over the scale's `LinearOrder`), rather than re-deciding per language.
-
-theorem spanish_monotone : spanishDOM.isMonotone = true :=
-  animacyCutoffP_monotone .flagging .human
-theorem russian_monotone : russianDOM.isMonotone = true :=
-  animacyCutoffP_monotone .flagging .animate
-theorem turkish_monotone : turkishDOM.isMonotone = true :=
-  definitenessCutoffP_monotone .flagging .definite
-theorem hebrew_monotone : hebrewDOM.isMonotone = true :=
-  definitenessCutoffP_monotone .flagging .definite
-theorem persian_monotone : persianDOM.isMonotone = true :=
-  definitenessCutoffP_monotone .flagging .definite
-theorem catalan_monotone : catalanDOM.isMonotone = true :=
-  definitenessCutoffP_monotone .flagging .personalPronoun
-theorem hindi_monotone : hindiDOM.isMonotone = true := by decide
-theorem no_dom_monotone : noDOMProfile.isMonotone = true := by decide
-
-/-- **Aissen's DOM monotonicity universal**: all attested DOM patterns in
-    the sample form upper sets in the bidimensional animacy × definiteness
-    grid. No language marks a less-prominent object while leaving a
-    more-prominent one unmarked. -/
+/-- Every attested DOM system is monotone: no language obligatorily marks a
+    less prominent object while leaving a more prominent one unmarked. -/
 theorem dom_monotonicity_universal :
-    allDOMProfiles.all (·.isMonotone) = true := by decide
-
--- §0.2 One-dimensional classification
-
-theorem spanish_animacy_only : spanishDOM.isAnimacyOnly = true := by native_decide
-theorem russian_animacy_only : russianDOM.isAnimacyOnly = true := by native_decide
-theorem turkish_definiteness_only : turkishDOM.isDefinitenessOnly = true := by native_decide
-theorem hebrew_definiteness_only : hebrewDOM.isDefinitenessOnly = true := by native_decide
-theorem persian_definiteness_only : persianDOM.isDefinitenessOnly = true := by native_decide
-theorem catalan_definiteness_only : catalanDOM.isDefinitenessOnly = true := by native_decide
-
-/-- Hindi DOM depends on both animacy and definiteness — it cannot be
-    reduced to a single scale. -/
-theorem hindi_not_animacy_only : hindiDOM.isAnimacyOnly = false := by native_decide
-theorem hindi_not_definiteness_only : hindiDOM.isDefinitenessOnly = false := by native_decide
-
--- §0.3 Scale-dominance consequences of monotonicity
-
-/-- In all sample languages, human objects are never less marked than
-    animate objects at the same definiteness level. -/
-theorem human_dominates_animate :
-    allDOMProfiles.all (λ p =>
-      DefinitenessLevel.all.all (λ d =>
-        if p.marks .animate d then p.marks .human d else true)) = true := by
-  native_decide
-
-/-- In all sample languages, animate objects are never less marked than
-    inanimate objects at the same definiteness level. -/
-theorem animate_dominates_inanimate :
-    allDOMProfiles.all (λ p =>
-      DefinitenessLevel.all.all (λ d =>
-        if p.marks .inanimate d then p.marks .animate d else true)) = true := by
-  native_decide
-
-/-- In all sample languages, pronouns are never less marked than proper
-    names at the same animacy level. -/
-theorem pronoun_dominates_properName :
-    allDOMProfiles.all (λ p =>
-      AnimacyLevel.all.all (λ a =>
-        if p.marks a .properName then p.marks a .personalPronoun else true)) = true := by
-  native_decide
-
-/-- In all sample languages, definite NPs are never less marked than
-    indefinite specific NPs at the same animacy level. -/
-theorem definite_dominates_indefiniteSpecific :
-    allDOMProfiles.all (λ p =>
-      AnimacyLevel.all.all (λ a =>
-        if p.marks a .indefiniteSpecific then p.marks a .definite else true)) = true := by
-  native_decide
-
--- §0.4 Extreme-cell theorems
-
-/-- If any cell is marked, the most prominent cell (human, pronoun)
-    is also marked. -/
-theorem top_cell_marked_if_any :
-    allDOMProfiles.all (λ p =>
-      if AnimacyLevel.all.any (λ a =>
-           DefinitenessLevel.all.any (λ d => p.marks a d))
-      then p.marks .human .personalPronoun
-      else true) = true := by native_decide
-
-/-- The least prominent cell (inanimate, non-specific) is unmarked in
-    all DOM languages in the sample. -/
-theorem bottom_cell_unmarked :
-    allDOMProfiles.all (λ p =>
-      p.marks .inanimate .nonSpecific == false) = true := by native_decide
-
--- §0.5 Grid size + total marked cells
-
-/-- The bidimensional grid has 3 × 5 = 15 cells per language. -/
-theorem grid_size :
-    AnimacyLevel.all.length * DefinitenessLevel.all.length = 15 := by native_decide
-
-/-- Total marked cells across all sample languages. -/
-def totalMarkedCells : Nat :=
-  allDOMProfiles.foldl (λ acc p =>
-    acc + (AnimacyLevel.all.foldl (λ acc₂ a =>
-      acc₂ + (DefinitenessLevel.all.filter (p.marks a)).length) 0)) 0
-
-/-- Marked cells: Spanish (5) + Russian (10) + Turkish (9) + Hebrew (9) +
-    Persian (9) + Catalan (3) + Hindi (7) + NoDOM (0) = 52. -/
-theorem total_marked_cells_value : totalMarkedCells = 52 := by native_decide
-
--- ============================================================================
--- § 1: Interleavings
--- ============================================================================
-
-/-- All interleavings of two lists, preserving internal order of each.
-
-    Given two constraint families with fixed internal rankings, this generates
-    all total orders consistent with both. The number of
-    interleavings of lists of lengths m and n is C(m+n, m). -/
-def interleavings {α : Type} : List α → List α → List (List α)
-  | [], ys => [ys]
-  | xs, [] => [xs]
-  | x :: xs, y :: ys =>
-    (interleavings xs (y :: ys)).map (x :: ·) ++
-    (interleavings (x :: xs) ys).map (y :: ·)
-
--- ============================================================================
--- § 2: Two-Element Scale (Table 14, p. 473)
--- ============================================================================
-
-/-- DOM candidate for a 2-element prominence scale {High > Low}.
-    `true` = overtly case-marked; `false` = zero-marked. -/
-structure Scale2Cand where
-  high : Bool
-  low : Bool
-  deriving DecidableEq, Repr
-
-def scale2Cands : List Scale2Cand :=
-  [⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩]
-
-/-- *Ø/High: penalize unmarked High objects. -/
-def starZeroHigh : Constraint Scale2Cand :=
-  Constraint.binary fun c => c.high = false
-
-/-- *Ø/Low: penalize unmarked Low objects. -/
-def starZeroLow : Constraint Scale2Cand :=
-  Constraint.binary fun c => c.low = false
-
-/-- *!/Low: penalize marked Low objects (economy). -/
-def starBangLow : Constraint Scale2Cand :=
-  Constraint.binary fun c => c.low = true
-
-/-- *!/High: penalize marked High objects (economy). -/
-def starBangHigh : Constraint Scale2Cand :=
-  Constraint.binary fun c => c.high = true
-
-/-- Iconicity family (fixed: *Ø/High >> *Ø/Low). -/
-def iconicity2 : List (Constraint Scale2Cand) := [starZeroHigh, starZeroLow]
-
-/-- Economy family (fixed: *!/Low >> *!/High). -/
-def economy2 : List (Constraint Scale2Cand) := [starBangLow, starBangHigh]
-
-/-- All consistent rankings: interleavings of the two families. -/
-def rankings2 : List (List (Constraint Scale2Cand)) :=
-  interleavings iconicity2 economy2
-
-/-- There are exactly 6 consistent rankings (C(4,2) = 6). -/
-theorem rankings2_count : rankings2.length = 6 := by native_decide
-
-/-- Compute optima for each consistent ranking. -/
-def optima2 : List (Finset Scale2Cand) :=
-  rankings2.map λ ranking =>
-    (Tableau.ofRanking scale2Cands ranking).optimal
-
-/-- Distinct language types. -/
-def types2 : List (Finset Scale2Cand) := optima2.eraseDups
-
-/-- The 2-element scale yields exactly 3 language types, not 4
-    (Table 14, p. 473). -/
-theorem two_element_three_types : types2.length = 3 := by native_decide
-
-/-- The impossible pattern — mark Low without High — is never optimal. -/
-theorem no_low_without_high :
-    optima2.all (λ opts =>
-      opts.checkAll (λ c => !(c.low && !c.high))) = true := by native_decide
-
--- ============================================================================
--- § 3: Three-Element Animacy Scale (Table 17, p. 476)
--- ============================================================================
-
-/-- DOM candidate for the 3-element animacy scale {Hu > An > In}.
-    `true` = overtly case-marked; `false` = zero-marked. -/
-structure AnimCand where
-  hu : Bool
-  an : Bool
-  inan : Bool
-  deriving DecidableEq, Repr
-
-def animCands : List AnimCand :=
-  [⟨true, true, true⟩, ⟨true, true, false⟩,
-   ⟨true, false, true⟩, ⟨true, false, false⟩,
-   ⟨false, true, true⟩, ⟨false, true, false⟩,
-   ⟨false, false, true⟩, ⟨false, false, false⟩]
-
-/-- Iconicity: *Ø/Hu >> *Ø/An >> *Ø/In. -/
-def starZeroHu : Constraint AnimCand :=
-  Constraint.binary fun c => c.hu = false
-
-def starZeroAn : Constraint AnimCand :=
-  Constraint.binary fun c => c.an = false
-
-def starZeroIn : Constraint AnimCand :=
-  Constraint.binary fun c => c.inan = false
-
-/-- Economy: *!/In >> *!/An >> *!/Hu. -/
-def starBangIn : Constraint AnimCand :=
-  Constraint.binary fun c => c.inan = true
-
-def starBangAn : Constraint AnimCand :=
-  Constraint.binary fun c => c.an = true
-
-def starBangHu : Constraint AnimCand :=
-  Constraint.binary fun c => c.hu = true
-
-/-- Iconicity family (fixed: *Ø/Hu >> *Ø/An >> *Ø/In). -/
-def animIconicity : List (Constraint AnimCand) :=
-  [starZeroHu, starZeroAn, starZeroIn]
-
-/-- Economy family (fixed: *!/In >> *!/An >> *!/Hu). -/
-def animEconomy : List (Constraint AnimCand) :=
-  [starBangIn, starBangAn, starBangHu]
-
-/-- All consistent rankings for the 3-element scale. -/
-def animRankings : List (List (Constraint AnimCand)) :=
-  interleavings animIconicity animEconomy
-
-/-- There are exactly 20 consistent rankings (C(6,3) = 20). -/
-theorem anim_rankings_count : animRankings.length = 20 := by native_decide
-
-/-- Compute optima for each consistent ranking. -/
-def animOptima : List (Finset AnimCand) :=
-  animRankings.map λ ranking =>
-    (Tableau.ofRanking animCands ranking).optimal
-
-/-- Distinct language types. -/
-def animTypes : List (Finset AnimCand) := animOptima.eraseDups
-
-/-- The 3-element animacy scale yields exactly 4 language types, not 8
-    (Table 17, p. 476). -/
-theorem animacy_four_types : animTypes.length = 4 := by native_decide
-
-/-- Every generated type is monotone: if An is marked then Hu is too;
-    if In is marked then An is too (Aissen's central prediction). -/
-theorem animacy_all_monotone :
-    animOptima.all (λ opts =>
-      opts.checkAll (λ c =>
-        (if c.an then c.hu else true) &&
-        (if c.inan then c.an else true))) = true := by native_decide
-
--- ============================================================================
--- § 4: Type Identification
--- ============================================================================
-
-/-- Type 1: mark all (Hu + An + In). Extreme iconicity. -/
-theorem anim_type_all :
-    animTypes.any (λ opts =>
-      opts.checkAny (λ c => c.hu && c.an && c.inan)) = true := by native_decide
-
-/-- Type 2: mark Hu + An only. Russian pattern (animate accusative). -/
-theorem anim_type_hu_an :
-    animTypes.any (λ opts =>
-      opts.checkAny (λ c => c.hu && c.an && !c.inan)) = true := by native_decide
-
-/-- Type 3: mark Hu only. Spanish pattern (personal `a`). -/
-theorem anim_type_hu_only :
-    animTypes.any (λ opts =>
-      opts.checkAny (λ c => c.hu && !c.an && !c.inan)) = true := by native_decide
-
-/-- Type 4: mark none. No DOM (economy dominates). -/
-theorem anim_type_none :
-    animTypes.any (λ opts =>
-      opts.checkAny (λ c => !c.hu && !c.an && !c.inan)) = true := by native_decide
-
--- ============================================================================
--- § 5: Impossible Patterns
--- ============================================================================
-
-/-- Mark In without An: never generated. -/
-theorem no_in_without_an :
-    animOptima.all (λ opts =>
-      opts.checkAll (λ c => !(c.inan && !c.an))) = true := by native_decide
-
-/-- Mark An without Hu: never generated. -/
-theorem no_an_without_hu :
-    animOptima.all (λ opts =>
-      opts.checkAll (λ c => !(c.an && !c.hu))) = true := by native_decide
-
-/-- Mark In without Hu: never generated. -/
-theorem no_in_without_hu :
-    animOptima.all (λ opts =>
-      opts.checkAll (λ c => !(c.inan && !c.hu))) = true := by native_decide
-
-/-- Mark In only (without An or Hu): never generated. -/
-theorem no_in_only :
-    animOptima.all (λ opts =>
-      opts.checkAll (λ c => !(c.inan && !c.an && !c.hu))) = true := by native_decide
-
--- ============================================================================
--- § 6: Bridge to DOMProfiles
--- ============================================================================
-
-/-- Convert an AnimCand to a one-dimensional animacy DOMProfile. -/
-def animCandToDOM (c : AnimCand) : DOMProfile :=
-  { name := "OT-predicted", role := .P, channel := .flagging
-    marks := λ a _ =>
-      match a with
-      | .human => c.hu
-      | .animate => c.an
-      | .inanimate => c.inan }
-
-/-- Every OT-generated animacy type produces a monotone DOMProfile. -/
-theorem ot_types_are_monotone_dom :
-    animOptima.all (λ opts =>
-      opts.checkAll (λ c => (animCandToDOM c).isMonotone)) = true := by native_decide
-
-/-- Spanish DOM (human only) matches OT Type 3 (Hu only). -/
-theorem spanish_matches_type3 :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        spanishDOM.marks a d == (animCandToDOM ⟨true, false, false⟩).marks a d)) = true := by
-  native_decide
-
-/-- Russian DOM (animate+) matches OT Type 2 (Hu + An). -/
-theorem russian_matches_type2 :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        russianDOM.marks a d == (animCandToDOM ⟨true, true, false⟩).marks a d)) = true := by
-  native_decide
-
-/-- No-DOM profile matches OT Type 4 (none marked). -/
-theorem nodom_matches_type4 :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        noDOMProfile.marks a d == (animCandToDOM ⟨false, false, false⟩).marks a d)) = true := by
-  native_decide
-
--- ============================================================================
--- § 7: Definiteness Scale (2-Element: Pro > D)
--- ============================================================================
-
-/-! The 2-element definiteness scale {Pro > D} from §4 of the paper,
-    where "D" covers definite NPs (including proper names). This gives
-    the same 3-type factorial typology as any 2-element scale. -/
-
-/-- Convert a Scale2Cand to a definiteness-based DOMProfile.
-    High = personalPronoun, Low = properName + definite (i.e., ≥ definite). -/
-def defCandToDOM (c : Scale2Cand) : DOMProfile :=
-  { name := "OT-predicted", role := .P, channel := .flagging
-    marks := λ _ d =>
-      if d.rank ≥ DefinitenessLevel.personalPronoun.rank then c.high
-      else if d.rank ≥ DefinitenessLevel.definite.rank then c.low
-      else false }
-
-/-- Catalan DOM (pronouns only) matches 2-element Type 2 (High only). -/
-theorem catalan_matches_high_only :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        catalanDOM.marks a d == (defCandToDOM ⟨true, false⟩).marks a d)) = true := by
-  native_decide
-
-/-- Turkish DOM (definite+) matches 2-element Type 1 (both marked). -/
-theorem turkish_matches_both :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        turkishDOM.marks a d == (defCandToDOM ⟨true, true⟩).marks a d)) = true := by
-  native_decide
-
-/-- Hebrew DOM (definite+) also matches 2-element Type 1. -/
-theorem hebrew_matches_both :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        hebrewDOM.marks a d == (defCandToDOM ⟨true, true⟩).marks a d)) = true := by
-  native_decide
-
--- ============================================================================
--- § 8: Counting Argument (§4.1, p. 473)
--- ============================================================================
-
-/-- Of 8 logically possible 3-element patterns, OT generates exactly 4. -/
-theorem animacy_excludes_half : animCands.length = 8 ∧ animTypes.length = 4 := by
-  constructor <;> native_decide
-
-/-- Of 4 logically possible 2-element patterns, OT generates exactly 3. -/
-theorem two_element_excludes_one : scale2Cands.length = 4 ∧ types2.length = 3 := by
-  constructor <;> native_decide
-
-/-- The number of consistent rankings grows as C(2n, n).
-    For n=2: C(4,2) = 6. For n=3: C(6,3) = 20. -/
-theorem ranking_counts :
-    rankings2.length = 6 ∧ animRankings.length = 20 := by
-  constructor <;> native_decide
-
--- ============================================================================
--- Part II: Dependent Case → DOM Pipeline
--- ============================================================================
-
-open Syntax.Case
-
--- ============================================================================
--- § Prominence-Annotated NPs
--- ============================================================================
-
-/-- An NP enriched with referential prominence properties.
-
-    Structural case assignment (dependent case) is blind to these properties —
-    it cares only about c-command and lexical case. DOM then consults prominence
-    to decide overt realization. -/
-structure ProminentNP where
-  label : String
-  lexicalCase : Option Case
-  animacy : AnimacyLevel
-  definiteness : DefinitenessLevel
-  deriving DecidableEq, Repr
-
-/-- Strip prominence, yielding the NP that the case algorithm sees. -/
-def ProminentNP.toNP (pnp : ProminentNP) : NPInDomain :=
-  ⟨pnp.label, pnp.lexicalCase⟩
-
--- ============================================================================
--- § Transitive Pipeline
--- ============================================================================
-
-/-- A transitive clause: subject c-commands object. -/
-structure TransClause where
-  subject : ProminentNP
-  object  : ProminentNP
-  deriving DecidableEq, Repr
-
-/-- Run the dependent case algorithm on a transitive clause. -/
-def derivation (lang : CaseLanguageType) (tc : TransClause) : List CasedNP :=
-  assignCases lang [tc.subject.toNP, tc.object.toNP]
-
-/-- Abstract case assigned to the object. -/
-def objectCase (lang : CaseLanguageType) (tc : TransClause) : Option Case :=
-  getCaseOf tc.object.label (derivation lang tc)
-
-/-- Whether the object receives overt case morphology.
-
-    Two conditions:
-    1. The dependent case algorithm assigns ACC (syntax).
-    2. The DOM profile marks this prominence cell (morphology). -/
-def objectOvert (lang : CaseLanguageType) (dom : DOMProfile)
-    (tc : TransClause) : Bool :=
-  objectCase lang tc == some .acc &&
-  dom.marks tc.object.animacy tc.object.definiteness
-
--- ============================================================================
--- § Standard Transitive Template
--- ============================================================================
-
-/-- A standard transitive clause with a fixed subject (human pronoun)
-    and a variable-prominence object. Both lack lexical case. -/
-def mkTrans (a : AnimacyLevel) (d : DefinitenessLevel) : TransClause :=
-  { subject := ⟨"subj", none, .human, .personalPronoun⟩
-    object  := ⟨"obj",  none, a, d⟩ }
-
--- ============================================================================
--- § Layer 1 — Object Always Gets ACC
--- ============================================================================
-
-/-- In accusative transitives, the object receives abstract ACC regardless
-    of its animacy or definiteness. Dependent case is prominence-blind. -/
-theorem object_always_acc :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        objectCase .accusative (mkTrans a d) == some .acc)) = true := by
-  native_decide
-
-/-- The subject always gets NOM (unmarked case). -/
-theorem subject_always_nom :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        getCaseOf "subj" (derivation .accusative (mkTrans a d)) == some .nom)) = true := by
-  native_decide
-
--- ============================================================================
--- § Layer 3 — OT Constrains the Pipeline
--- ============================================================================
-
-/-- The overt marking profile produced by running the full pipeline
-    (dependent case + DOM filter). -/
-def overtProfile (lang : CaseLanguageType) (dom : DOMProfile) : DOMProfile :=
-  { name := dom.name ++ " (pipeline)", role := .P, channel := .flagging
-    marks := λ a d => objectOvert lang dom (mkTrans a d) }
-
-/-- Every OT-predicted animacy type, run through the full pipeline,
-    produces a monotone overt marking profile. -/
-theorem ot_pipeline_monotone :
-    animOptima.all (λ opts =>
-      opts.checkAll (λ c =>
-        (overtProfile .accusative (animCandToDOM c)).isMonotone)) = true := by
-  native_decide
-
-/-- The pipeline preserves monotonicity for all attested DOM languages. -/
-theorem attested_pipeline_monotone :
-    allDOMProfiles.all (λ dom =>
-      (overtProfile .accusative dom).isMonotone) = true := by native_decide
-
--- ============================================================================
--- § End-to-End Summary
--- ============================================================================
-
-/-- All 8 attested DOM profiles, run through the accusative case pipeline,
-    produce overt marking that is faithful to the DOM input AND monotone. -/
-theorem full_pipeline_faithful_and_monotone :
-    allDOMProfiles.all (λ dom =>
-      -- Faithful: pipeline output = DOM input
-      AnimacyLevel.all.all (λ a =>
-        DefinitenessLevel.all.all (λ d =>
-          (overtProfile .accusative dom).marks a d = dom.marks a d)) &&
-      -- Monotone: overt marking pattern is an upper set
-      (overtProfile .accusative dom).isMonotone) = true := by native_decide
+    ∀ p ∈ allDOMPatterns, p.MonotoneP := by decide
+
+/-- (33b), order-theoretically: in every attested system the obligatorily
+    marked cells form an upper set in the product prominence order of
+    Figure 4. -/
+theorem dom_obligatory_zone_upperSet :
+    ∀ p ∈ allDOMPatterns,
+      IsUpperSet {c : AnimacyLevel × DefinitenessLevel | p c.1 c.2 = true} :=
+  λ p hp => p.monotoneP_iff_isUpperSet.mp (dom_monotonicity_universal p hp)
+
+/-- The Figure 2 and §5.3 systems are animacy-blind. -/
+theorem definiteness_systems_one_dimensional :
+    ∀ p ∈ [catalanDOM, pitjantjatjaraDOM, hebrewDOM, turkishDOM, persianDOM,
+      writtenJapaneseDOM], p.DefinitenessOnly := by decide
+
+/-- The Figure 3 systems are definiteness-blind. -/
+theorem animacy_systems_one_dimensional :
+    ∀ p ∈ [ritharnguDOM, dhargariDOM], p.AnimacyOnly := by decide
+
+/-- Hindi and both stages of Spanish are genuinely two-dimensional (§5):
+    neither scale alone determines the obligatory zone. -/
+theorem two_dimensional_systems :
+    ∀ p ∈ [hindiDOM, cmcSpanishDOM, spanishDOM],
+      ¬ p.AnimacyOnly ∧ ¬ p.DefinitenessOnly := by decide
+
+/-! ### The interpolation engine
+
+The paper evaluates candidates per input: for an object at prominence level
+`ℓ`, GEN offers a case-marked and a zero-marked parse. \*Oj/ℓ & \*Ø_C
+penalizes the zero-marked parse; \*STRUC_C penalizes the case-marked one. A
+grammar linearizes the fixed subhierarchy with \*STRUC_C interpolated, and
+the winner at `ℓ` is the marked parse iff `ℓ`'s iconicity constraint
+outranks \*STRUC_C. -/
+
+variable {L : Type} [DecidableEq L]
+
+/-- \*STRUC_C: penalizes overt case morphology — violated by the case-marked
+    parse. Candidates are level–marking pairs; `true` is the marked parse. -/
+def starStruc : Constraint (L × Bool) := Constraint.binary (·.2 = true)
+
+/-- \*Oj/ℓ & \*Ø_C: violated by a zero-marked object at level `ℓ`. -/
+def starZero (ℓ : L) : Constraint (L × Bool) :=
+  Constraint.binary (λ c => c.1 = ℓ ∧ c.2 = false)
+
+/-- The iconicity subhierarchy of a scale (most prominent level first) with
+    \*STRUC_C interpolated at position `k`. -/
+def interpolation (levels : List L) (k : Nat) : List (Constraint (L × Bool)) :=
+  (levels.map starZero).insertIdx k starStruc
+
+/-- Whether the case-marked parse wins for an object at level `ℓ`. -/
+def markedWins (ranking : List (Constraint (L × Bool))) (ℓ : L) : Bool :=
+  decide ((Tableau.ofRanking [(ℓ, true), (ℓ, false)] ranking (by simp)).optimal
+    = {(ℓ, true)})
+
+/-- Tableaux 1–2: a specific indefinite object. In Hebrew \*STRUC_C outranks
+    \*Oj/Spec & \*Ø_C and the zero parse wins; in Turkish the ranking is
+    reversed and the marked parse wins. -/
+theorem tableaux_1_2 :
+    markedWins (interpolation DefinitenessLevel.all 3) .indefiniteSpecific = false ∧
+    markedWins (interpolation DefinitenessLevel.all 4) .indefiniteSpecific = true := by
+  constructor <;> decide
+
+/-- Figure 2: the six interpolation points on the definiteness subhierarchy
+    generate exactly the six cutoff systems — no non-monotone pattern
+    arises. -/
+theorem figure2_typology :
+    (List.range 6).map
+        (λ k => DefinitenessLevel.all.map (markedWins (interpolation DefinitenessLevel.all k)))
+      = [[false, false, false, false, false],
+         [true,  false, false, false, false],
+         [true,  true,  false, false, false],
+         [true,  true,  true,  false, false],
+         [true,  true,  true,  true,  false],
+         [true,  true,  true,  true,  true]] := by decide
+
+/-- Figure 2 cites "one language for each of the possible DOM types": each
+    cited language's obligatory grid is its interpolation type's predicted
+    pattern. -/
+theorem figure2_languages :
+    (∀ a d, noDOM a d = markedWins (interpolation DefinitenessLevel.all 0) d) ∧
+    (∀ a d, catalanDOM a d = markedWins (interpolation DefinitenessLevel.all 1) d) ∧
+    (∀ a d, pitjantjatjaraDOM a d = markedWins (interpolation DefinitenessLevel.all 2) d) ∧
+    (∀ a d, hebrewDOM a d = markedWins (interpolation DefinitenessLevel.all 3) d) ∧
+    (∀ a d, turkishDOM a d = markedWins (interpolation DefinitenessLevel.all 4) d) ∧
+    (∀ a d, writtenJapaneseDOM a d = markedWins (interpolation DefinitenessLevel.all 5) d) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
+
+/-- Persian's obligatory grid realizes the same interpolation type as
+    Turkish's (§5.3: specific indefinites "require the suffix -rā, exactly as
+    ... the accusative suffix in Turkish"). -/
+theorem persian_same_type_as_turkish :
+    ∀ a d, persianDOM a d = turkishDOM a d := by decide
+
+/-- Figure 3: the four interpolation points on the animacy subhierarchy
+    generate exactly the four cutoff systems. -/
+theorem figure3_typology :
+    (List.range 4).map
+        (λ k => AnimacyLevel.all.map (markedWins (interpolation AnimacyLevel.all k)))
+      = [[false, false, false],
+         [true,  false, false],
+         [true,  true,  false],
+         [true,  true,  true]] := by decide
+
+/-- Figure 3's cleanly cutoff languages, type-for-type: Kalkatungu (none),
+    Ritharngu (humans), Dhargari (animates), Written Japanese and Dhalandji
+    (all). -/
+theorem figure3_languages :
+    (∀ a d, noDOM a d = markedWins (interpolation AnimacyLevel.all 0) a) ∧
+    (∀ a d, ritharnguDOM a d = markedWins (interpolation AnimacyLevel.all 1) a) ∧
+    (∀ a d, dhargariDOM a d = markedWins (interpolation AnimacyLevel.all 2) a) ∧
+    (∀ a d, writtenJapaneseDOM a d = markedWins (interpolation AnimacyLevel.all 3) a) := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
+
+/-- "This account predicts that the reverse is not found, e.g., languages in
+    which only inanimates are case-marked": every interpolation grammar marks
+    an upward-closed segment of the scale. -/
+theorem no_reversed_system :
+    ∀ k < 4, ∀ a a' : AnimacyLevel, a ≤ a' →
+      markedWins (interpolation AnimacyLevel.all k) a = true →
+      markedWins (interpolation AnimacyLevel.all k) a' = true := by decide
 
 end Aissen2003
