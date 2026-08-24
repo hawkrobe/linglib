@@ -31,20 +31,6 @@ open Features.Prominence
 open _root_.Agreement
 
 -- ============================================================================
--- § 1: Argument Positions
--- ============================================================================
-
-/-- Argument positions in a Basque clause. -/
-inductive ArgPosition where
-  /-- A: transitive agent (ERG) -/
-  | agent
-  /-- P: transitive patient (ABS) -/
-  | patient
-  /-- S: intransitive subject (ABS) -/
-  | intranS
-  deriving DecidableEq, Repr
-
--- ============================================================================
 -- § 2: Differential P Indexing
 -- ============================================================================
 
