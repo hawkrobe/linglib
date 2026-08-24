@@ -1,8 +1,8 @@
 # Linglib
 
 [![CI](https://github.com/hawkrobe/linglib/actions/workflows/ci.yml/badge.svg)](https://github.com/hawkrobe/linglib/actions/workflows/ci.yml)
-[![Lean 4](https://img.shields.io/badge/Lean-v4.31.0-blue)](https://leanprover.github.io/)
-[![Mathlib](https://img.shields.io/badge/mathlib-v4.31.0-blueviolet)](https://github.com/leanprover-community/mathlib4)
+[![Lean 4](https://img.shields.io/badge/Lean-v4.33.1-blue)](https://leanprover.github.io/)
+[![Mathlib](https://img.shields.io/badge/mathlib-v4.33.1-blueviolet)](https://github.com/leanprover-community/mathlib4)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 
 A Lean 4 library for formal linguistics — semantics, syntax, pragmatics, morphology, phonology, and processing.
@@ -40,11 +40,11 @@ lake build
 
 ## Using Linglib in your own Lake project
 
-Linglib pins a specific toolchain (currently **Lean v4.31.0 / mathlib v4.31.0**), so your project's `lean-toolchain` must match. Add to your `lakefile.lean`:
+Linglib pins a specific toolchain (currently **Lean v4.33.1 / mathlib v4.33.1**), so your project's `lean-toolchain` must match. Add to your `lakefile.lean`:
 
 ```lean
 require linglib from git
-  "https://github.com/hawkrobe/linglib" @ "v4.31.0"
+  "https://github.com/hawkrobe/linglib" @ "v4.32.2"
 ```
 
 (Use `@ "main"` to track the latest development instead of the pinned release.)
