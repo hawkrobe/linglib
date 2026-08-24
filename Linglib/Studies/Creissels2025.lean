@@ -415,7 +415,7 @@ open FreeMonoid (lift of)
 /-- A term's coding status in a construction (a *state*; `ParticipantFate` is the
     *transition*, derived below via `fateOf`). -/
 inductive Coding
-  | core (r : TRRole)
+  | core (r : TermRole)
   | oblique
   | suppressed
   deriving DecidableEq
@@ -448,31 +448,31 @@ def normalizeFrame (f : CodingFrame) : CodingFrame :=
 
 def freshId (f : CodingFrame) : Nat := f.foldl (fun m t => Nat.max m (t.id + 1)) 0
 
-def setFirstCore (r : TRRole) (c : Coding) : CodingFrame → Option CodingFrame
+def setFirstCore (r : TermRole) (c : Coding) : CodingFrame → Option CodingFrame
   | [] => none
   | t :: ts =>
     if t.coding = .core r then some (⟨t.id, c⟩ :: ts)
     else (setFirstCore r c ts).map (t :: ·)
 
-def removeFirstCore (r : TRRole) : CodingFrame → Option CodingFrame
+def removeFirstCore (r : TermRole) : CodingFrame → Option CodingFrame
   | [] => none
   | t :: ts =>
     if t.coding = .core r then some ts
     else (removeFirstCore r ts).map (t :: ·)
 
 /-- Some core term in the frame bears role `r`. -/
-def HasCore (r : TRRole) (f : CodingFrame) : Prop := ∃ t ∈ f, t.coding = .core r
+def HasCore (r : TermRole) (f : CodingFrame) : Prop := ∃ t ∈ f, t.coding = .core r
 
-instance (r : TRRole) (f : CodingFrame) : Decidable (HasCore r f) :=
+instance (r : TermRole) (f : CodingFrame) : Decidable (HasCore r f) :=
   inferInstanceAs (Decidable (∃ t ∈ f, t.coding = .core r))
 
 /-- The atomic voice operations: Creissels's nucleativization /
     denucleativization (§8.1.3) plus cumulation (reflexivization, §8.3.3). -/
 inductive Atom
-  | nucleativize (target : TRRole)  -- a non-core participant becomes core   (+1)
-  | denucleativize (role : TRRole)  -- core role → oblique (kept)             (−1)
-  | suppress (role : TRRole)        -- core role → suppressed (removed)       (−1)
-  | cumulate (r1 r2 : TRRole)       -- merge two cores into one               (−1)
+  | nucleativize (target : TermRole)  -- a non-core participant becomes core   (+1)
+  | denucleativize (role : TermRole)  -- core role → oblique (kept)             (−1)
+  | suppress (role : TermRole)        -- core role → suppressed (removed)       (−1)
+  | cumulate (r1 r2 : TermRole)       -- merge two cores into one               (−1)
   deriving DecidableEq
 
 /-- An alternation as a word over atoms; composition = the free-monoid product
@@ -543,7 +543,7 @@ def fateOf : Coding → Coding → ParticipantFate
   | _, _ => .maintained
 
 /-- Id of the participant currently in core role `r` (frame-relative). -/
-def roleHolder (r : TRRole) : CodingFrame → Option Nat
+def roleHolder (r : TermRole) : CodingFrame → Option Nat
   | [] => none
   | t :: ts => if t.coding = .core r then some t.id else roleHolder r ts
 

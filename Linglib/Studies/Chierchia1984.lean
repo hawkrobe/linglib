@@ -406,7 +406,7 @@ open Voice
     Subject control: A is the controller (the subject has property P).
     Object control: P is the controller (the object has property P).
     Raising/none: no semantic controller (the CP does not apply). -/
-def controllerRole : ControlType → Option TRRole
+def controllerRole : ControlType → Option TermRole
   | .subjectControl => some .A
   | .objectControl  => some .P
   | .raising        => none
