@@ -5,7 +5,7 @@ import Linglib.Semantics.Quantification.Lexicon
 
 /-!
 # English Determiners
-[horn-1972] [barwise-cooper-1981]
+[horn-1972] [barwise-cooper-1981] [keenan-stavi-1986]
 
 English-specific determiner lexicon. Each entry is *marked* like a `Pronoun`
 (a decidable record carrying only the morphosyntax synonyms diverge on) and
@@ -13,8 +13,9 @@ typed by the standard determiner taxonomy in `Syntax/Category/Determiner/Basic.l
 
 - the genuinely quantificational words (every, some, no, most, few, half, all,
   each, many, both, neither) are `Syntax.Determiner.Quantifier`;
-- the definites/indefinites (the, a, an) are `Article`s and the demonstratives
-  (this, that, these, those) are `DemonstrativeDeterminer`s.
+- the definites/indefinites (the, a, an) are `Article`s, the demonstratives
+  (this, that, these, those) are `DemonstrativeDeterminer`s, and the possessive
+  paradigm (my, your, his, her, its, our, their) are `Possessive`s.
 
 A determiner's **denotation** is a generalized quantifier supplied externally —
 the marked record carries no `GQ`, exactly as `Pronoun` carries no referent.
@@ -23,9 +24,10 @@ For the six-word quantity scale the form↦`GQ` map is `QuantityWord.gqDenotatio
 strength, conservativity) is a theorem about that denotation, not a stored field
 (see `Studies/BarwiseCooper1981.lean`).
 
-The cross-paper typological labels (B&C Table II strength/monotonicity, K&S
-force) are kept as the textbook-consensus `QuantityWord.entry : QuantityWord.Metadata`
-metadata table (a small local record over the `Quantification.Lexicon` enums),
+The cross-paper typological labels (B&C Table II strength/monotonicity,
+Keenan & Stavi ([keenan-stavi-1986]) force) are kept as the textbook-consensus
+`QuantityWord.entry : QuantityWord.Metadata` metadata table (a small local
+record over the `Quantification.Lexicon` enums),
 consumed by GQT and exceptive studies that need the descriptive classification
 rather than the denotation.
 
@@ -128,53 +130,32 @@ def these : DemonstrativeDeterminer := { form := "these", deictic := .proximal }
 /-- "those" — distal demonstrative determiner, plural. -/
 def those : DemonstrativeDeterminer := { form := "those", deictic := .distal }
 
-/-- "my" — first-person possessive determiner. -/
+/-! ## Possessives
+
+The full possessive-determiner paradigm. Like `Article`s, these are not
+quantifiers — their denotation is definiteness via a possession relation
+(`Possessive.denote`, `Semantics/Definiteness/DeterminerDenotation.lean`). -/
+
+/-- "my" — first-person singular possessive determiner. -/
 def my : Possessive := { form := "my" }
 
-/-- "your" — second-person possessive determiner. -/
+/-- "your" — second-person possessive determiner (number-neutral). -/
 def your : Possessive := { form := "your" }
 
-/-! ## Numerical Determiners
-[barwise-cooper-1981] [van-de-pol-etal-2023]
+/-- "his" — third-person singular masculine possessive determiner. -/
+def his : Possessive := { form := "his" }
 
-Parameterized by a numerical threshold `n`. These are the class of
-determiners [van-de-pol-etal-2023] show satisfy all three semantic
-universals (and have low MDL).
--/
+/-- "her" — third-person singular feminine possessive determiner. -/
+def her : Possessive := { form := "her" }
 
-/-- Numerical determiner entry. -/
-structure NumericalDetEntry where
-  form : String
-  qforce : QForce
-  monotonicity : Monotonicity
-  /-- The numerical threshold -/
-  threshold : Nat
-  deriving Repr, BEq
+/-- "its" — third-person singular neuter possessive determiner. -/
+def its : Possessive := { form := "its" }
 
-/-- "at least n" — upward monotone in scope, conservative, quantity -/
-def atLeast (n : Nat) : NumericalDetEntry :=
-  { form := s!"at least {n}", qforce := .proportional
-  , monotonicity := .increasing, threshold := n }
+/-- "our" — first-person plural possessive determiner. -/
+def our : Possessive := { form := "our" }
 
-/-- "at most n" — downward monotone in scope, conservative, quantity -/
-def atMost (n : Nat) : NumericalDetEntry :=
-  { form := s!"at most {n}", qforce := .proportional
-  , monotonicity := .decreasing, threshold := n }
-
-/-- "exactly n" — non-monotone (neither UE nor DE), conservative, quantity -/
-def exactlyN (n : Nat) : NumericalDetEntry :=
-  { form := s!"exactly {n}", qforce := .proportional
-  , monotonicity := .nonMonotone, threshold := n }
-
-/-- "more than n" — upward monotone, conservative, quantity -/
-def moreThan (n : Nat) : NumericalDetEntry :=
-  { form := s!"more than {n}", qforce := .proportional
-  , monotonicity := .increasing, threshold := n }
-
-/-- "fewer than n" — downward monotone, conservative, quantity -/
-def fewerThan (n : Nat) : NumericalDetEntry :=
-  { form := s!"fewer than {n}", qforce := .proportional
-  , monotonicity := .decreasing, threshold := n }
+/-- "their" — third-person plural (and singular *they*) possessive determiner. -/
+def their : Possessive := { form := "their" }
 
 /-! ## The Canonical Quantity Scale
 [barwise-cooper-1981] [van-tiel-franke-sauerland-2021]
@@ -190,9 +171,14 @@ inductive QuantityWord where
   | none_ | few | some_ | half | most | all
   deriving Repr, DecidableEq, Inhabited
 
+/-- All quantity words as a list, in scale order. The single source of the
+    enumeration — the `Fintype` instance is read off it. -/
+def QuantityWord.toList : List QuantityWord :=
+  [.none_, .few, .some_, .half, .most, .all]
+
 instance : Fintype QuantityWord where
-  elems := {.none_, .few, .some_, .half, .most, .all}
-  complete := fun x => by cases x <;> simp
+  elems := QuantityWord.toList.toFinset
+  complete := fun x => List.mem_toFinset.mpr (by cases x <;> decide)
 
 /-- B&C Table II typological metadata: the textbook-consensus descriptive
     labels (force, monotonicity, weak/strong strength) a quantity word carries.
@@ -228,10 +214,6 @@ def QuantityWord.entry : QuantityWord → QuantityWord.Metadata
 def QuantityWord.monotonicity (q : QuantityWord) : Monotonicity :=
   q.entry.monotonicity
 
-/-- All quantity words as a list. -/
-def QuantityWord.toList : List QuantityWord :=
-  [.none_, .few, .some_, .half, .most, .all]
-
 /-- Canonical model-theoretic generalized-quantifier denotation
     (B&C-style), built on `every_sem`/`some_sem`/`no_sem`/etc. from
     `Quantification.Quantifier`. -/
@@ -240,11 +222,11 @@ noncomputable def QuantityWord.gqDenotation (q : QuantityWord)
   open Quantification in
   match q with
   | .none_ => no_sem
-  | .some_ => some_sem
-  | .all   => every_sem
-  | .most  => most_sem
   | .few   => few_sem
+  | .some_ => some_sem
   | .half  => half_sem
+  | .most  => most_sem
+  | .all   => every_sem
 
 /-! ## Lexicon Access -/
 
@@ -260,7 +242,7 @@ def allArticles : List Article := [the, a, an]
 def allDemonstratives : List DemonstrativeDeterminer := [this, that, these, those]
 
 /-- All possessive-determiner entries. -/
-def allPossessives : List Possessive := [my, your]
+def allPossessives : List Possessive := [my, your, his, her, its, our, their]
 
 /-- The full inventory as a heterogeneous `Determiner.Inventory`
     (the per-language form a Fragment declares). -/
