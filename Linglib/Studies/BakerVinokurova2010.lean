@@ -21,7 +21,7 @@ competition — they coexist in a single grammar:
   and values it GEN. (DP-internal; not modeled by the clausal
   algorithm here, but parameterized via `genMode := .agreeD`.)
 
-The library's `CaseSystemConfig` (in `DependentCase.lean`) is
+The library's `CaseSystemConfig` (in `Syntax/Case/Dependent.lean`) is
 parameterized so each of the four structural cases gets an independent
 mechanism slot. Sakha is the configuration where ACC and DAT are
 dependent while NOM and GEN are Agree-based — exactly the
@@ -213,7 +213,7 @@ theorem ditrans_full_pattern :
     This is the per-datum verification. The structural reason — that
     `applyAccRule` cannot overwrite *any* marked NP, regardless of the
     input — is `applyAccRule_preserves_marked_at` in
-    `DependentCase.lean`, and the full pipeline analogue is
+    `Syntax/Case/Dependent.lean`, and the full pipeline analogue is
     `dat_persists_through_assignCasesPhased`. -/
 theorem dat_bleeds_acc_on_vp_cycle :
     (ditransitiveResult.filter (·.case == .acc)).length = 1 ∧
@@ -607,12 +607,12 @@ theorem all_four_modalities_in_one_clause :
     getSourceOf "theme" r = some .dependent := by decide
 
 -- ============================================================================
--- § 15: Soundness — One Case per NP (Re-export from DependentCase)
+-- § 15: Soundness — One Case per NP
 -- ============================================================================
 
 /-- The phased algorithm is total on every Sakha derivation in this
     file: each input NP appears in the output with exactly one case.
-    Follows from `assignCasesPhased_length` in `DependentCase.lean`. -/
+    Follows from `assignCasesPhased_length`. -/
 theorem all_sakha_derivations_total :
     transSpecificResult.length = transSpecific.length ∧
     transNonspecificResult.length = transNonspecific.length ∧

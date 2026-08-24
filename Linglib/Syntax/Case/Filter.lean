@@ -16,7 +16,7 @@ Case assigners (Agree-based):
 - P assigns oblique to its complement
 
 For the competing dependent-case approach,
-see `DependentCase.lean`. For inherent/Voice-based case,
+see `Syntax/Case/Dependent.lean`. For inherent/Voice-based case,
 see `Voice.lean` and `Mam.Agreement`.
 
 -/
