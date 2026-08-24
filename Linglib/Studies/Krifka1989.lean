@@ -85,7 +85,7 @@ open Features
     proper part of a 3kg entity also weighs 3kg (extensivity of
     weight). -/
 theorem qmod_qua {α : Type*} [SemilatticeSup α]
-    {R : α → Prop} {μ : α → ℚ} [hμ : ExtMeasure α μ]
+    {R : α → Prop} {μ : α → ℚ} [hμ : ExtMeasure μ]
     {n : ℚ} (_hn : 0 < n) :
     QUA (QMOD R μ n) :=
   Mereology.qmod_qua R n
@@ -94,7 +94,7 @@ theorem qmod_qua {α : Type*} [SemilatticeSup α]
     yields a QUA measure phrase. [krifka-1989] §3 D28. -/
 theorem qmod_of_cum_is_qua {α : Type*} [SemilatticeSup α]
     {R : α → Prop} (_hCum : CUM R)
-    {μ : α → ℚ} [ExtMeasure α μ]
+    {μ : α → ℚ} [ExtMeasure μ]
     {n : ℚ} (hn : 0 < n) :
     QUA (QMOD R μ n) :=
   qmod_qua hn
@@ -106,7 +106,7 @@ theorem qmod_of_cum_is_qua {α : Type*} [SemilatticeSup α]
 theorem measure_phrase_makes_qua {α β : Type*}
     [SemilatticeSup α] [SemilatticeSup β]
     {R : α → Prop} (hCum : CUM R)
-    {μ : α → ℚ} [ExtMeasure α μ]
+    {μ : α → ℚ} [ExtMeasure μ]
     {n : ℚ} (hn : 0 < n)
     {θ : α → β → Prop} [IsSincVerb θ] :
     QUA (VP θ (QMOD R μ n)) :=
@@ -251,7 +251,7 @@ end Grounding
     quantized via D28 (QMOD, §3 p. 82) and the upstream T6 (extensive
     measure → quantized, §2 p. 80). These theorems CALL the K89 theory
     file's `qmod_of_cum_is_qua` and `measure_phrase_makes_qua` on an
-    abstract `[ExtMeasure α μ]` instance — the docstring promise the
+    abstract `[ExtMeasure μ]` instance — the docstring promise the
     previous file's `measure_phrase_qua` (which was just `⟨rfl, rfl⟩`
     on stipulated fields) failed to honor. -/
 
@@ -264,7 +264,7 @@ variable {α β : Type*} [SemilatticeSup α]
     `qmod_of_cum_is_qua` (K89 theory §2). -/
 theorem threeKilosRice_qua_via_qmod
     {Rice : α → Prop} (hRice : CUM Rice)
-    {μ : α → ℚ} [ExtMeasure α μ] :
+    {μ : α → ℚ} [ExtMeasure μ] :
     QUA (QMOD Rice μ 3) :=
   qmod_of_cum_is_qua hRice (by norm_num)
 
@@ -274,7 +274,7 @@ theorem threeKilosRice_qua_via_qmod
     theory §4, typeclass-canonical form). -/
 theorem eatThreeKilosRice_qua_vp [SemilatticeSup β]
     {Rice : α → Prop} (hRice : CUM Rice)
-    {μ : α → ℚ} [ExtMeasure α μ]
+    {μ : α → ℚ} [ExtMeasure μ]
     {θ : α → β → Prop} [IsSincVerb θ] :
     QUA (VP θ (QMOD Rice μ 3)) :=
   measure_phrase_makes_qua hRice (by norm_num)
@@ -534,10 +534,8 @@ variable {I Q : Type*} [SemilatticeSup I] [SemilatticeSup Q]
 
 /-- K89's homomorphism law `h(x ∪ y) = h(x) ⊔ h(y)` (page 87) is the
     `map_sup'` clause of a `Materialization` (= `SupHom I Q`). This
-    lemma exposes it as a named theorem for K89-side use; a
-    join-homomorphism is constructed from any `IsSumHom`-bearing
-    function via `IsSumHom.toSupHom` (e.g., for the temporal trace
-    `τ : E → T` from §5 D40, page 96). -/
+    lemma exposes it as a named theorem for K89-side use (e.g., for the
+    temporal trace `τ : E → T` from §5 D40, page 96). -/
 theorem materialization_join (mat : Materialization I Q) (x y : I) :
     mat (x ⊔ y) = mat x ⊔ mat y :=
   mat.map_sup' x y
@@ -640,7 +638,7 @@ def k89Section7Data : List K89QuantDatum :=
     cross-framework gluing across [krifka-1989], [kennedy-2007],
     [rouillard-2026] (see the mereological-dimension lemmas in
     `Semantics/Mereology.lean` for the structural facts that DO hold —
-    e.g. `qua_pullback_mereoDim`, `cum_measure_unbounded`), but it does
+    e.g. `qua_pullback`, `cum_measure_unbounded`), but it does
     not follow from K89's definitions.
     The two examples below show the gap in both directions.
 

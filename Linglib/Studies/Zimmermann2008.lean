@@ -99,6 +99,13 @@ instance : PartialOrder Faasinjee where
   le_trans _ _ _ h1 h2 := h1.trans h2
   le_antisymm _ _ h _ := h
 
+/-- Passengers have no null individual. -/
+instance : NoBotOrder Faasinjee where
+  exists_not_ge
+    | .audu => ⟨.balki, Faasinjee.noConfusion⟩
+    | .balki => ⟨.audu, Faasinjee.noConfusion⟩
+    | .cadi => ⟨.audu, Faasinjee.noConfusion⟩
+
 /-- The flat `Faasinjee` order is an `IsAtomicDomain`; its atom/disjoint facts now
 derive from the shared `Mereology` machinery rather than bespoke proofs. -/
 instance : Mereology.IsAtomicDomain Faasinjee :=
@@ -118,7 +125,7 @@ instance : DecidablePred Daura := fun x => match x with
 /-! ### Mereological structure -/
 
 theorem atom_of_faasinjee (x : Faasinjee) : Mereology.Atom x :=
-  Mereology.IsAtomicDomain.all_atoms x
+  Mereology.IsAtomicDomain.all_atoms x (not_isBot x)
 
 theorem faasinjee_disjoint (x y : Faasinjee) (h : Mereology.Overlap x y) :
     x = y := Mereology.IsAtomicDomain.eq_of_overlap h

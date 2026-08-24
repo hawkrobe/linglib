@@ -61,9 +61,9 @@ structure ONE_AT {α : Type*} [PartialOrder α] (P : α → Prop) : Prop where
 theorem ONE_AT_implies_ONE_empty {α : Type*} [PartialOrder α]
     {P : α → Prop} (h : ONE_AT P) : ONE_empty P where
   has_two := h.has_two
-  pairwise_disjoint := λ x y hPx hPy ⟨z, hzx, hzy⟩ =>
-    let hzx_eq := Atom.eq (h.all_atomic x hPx) hzx  -- z = x
-    let hzy_eq := Atom.eq (h.all_atomic y hPy) hzy  -- z = y
+  pairwise_disjoint := λ x y hPx hPy ⟨z, hz, hzx, hzy⟩ =>
+    let hzx_eq := Atom.eq (h.all_atomic x hPx) hzx hz  -- z = x
+    let hzy_eq := Atom.eq (h.all_atomic y hPy) hzy hz  -- z = y
     hzx_eq.symm.trans hzy_eq
 
 /-! ### English UQ Decomposition -/
@@ -111,13 +111,14 @@ theorem every_distributes {α : Type*} [PartialOrder α]
     exact hAll x hPx
 
 /-- On an atomic restrictor sort (`Mereology.IsAtomicDomain`), every restrictor
-satisfies `ONE_AT`'s atomicity for free, so the presupposition reduces to the
-`|P| > 1` cardinality condition. This connects the sort-level
+excluding the null individual satisfies `ONE_AT`'s atomicity for free, so the
+presupposition reduces to the `|P| > 1` cardinality condition. This connects the sort-level
 `Mereology.IsAtomicDomain` typeclass to the predicate-level `ONE_AT` structure —
 they are the same atomicity at two granularities, not parallel notions. -/
 theorem ONE_AT_of_isAtomicDomain {α : Type*} [PartialOrder α] [IsAtomicDomain α]
-    {P : α → Prop} (h2 : ∃ (x y : α), P x ∧ P y ∧ x ≠ y) : ONE_AT P where
+    {P : α → Prop} (hP0 : ∀ x, P x → ¬ IsBot x)
+    (h2 : ∃ (x y : α), P x ∧ P y ∧ x ≠ y) : ONE_AT P where
   has_two := h2
-  all_atomic := fun x _ => IsAtomicDomain.all_atoms x
+  all_atomic := fun x hx => IsAtomicDomain.all_atoms x (hP0 x hx)
 
 end Quantification.ONEModifiers

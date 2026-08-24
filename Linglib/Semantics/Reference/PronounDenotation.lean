@@ -47,8 +47,9 @@ open Intensional.Variables (interpPronoun DenotGS SitAssignment)
 /-- The conjoined φ-feature presupposition of a pronoun entry, over an entity
 domain `E`. The model supplies the entity-level predicates the cells need
 (`speaker`/`addressee` for person, `isFemale`/`isInanimate` for gender;
-number atomicity comes from the `PartialOrder`). A feature that is absent —
-or present but outside the cells' coverage — contributes `PartialProp.top`. -/
+number atomicity comes from the parthood order and its null individual). A
+feature that is absent — or present but outside the cells' coverage —
+contributes `PartialProp.top`. -/
 def PersonalPronoun.phiPresup {E : Type*} [PartialOrder E] (e : PersonalPronoun)
     (speaker addressee : E) (isFemale isInanimate : E → Prop) : PartialProp E :=
   PartialProp.and

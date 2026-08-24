@@ -425,7 +425,8 @@ def Mvar_u (v : ℕ) (K : State.CCP W E) [PartialOrder E] : State.CCP W E :=
 
 /-- Cardinality test at the state level (eq. 75): filter the context for
 pairs where the atom count of `v` equals `n`. -/
-def CardTest_u (v : ℕ) (n : ℕ) [PartialOrder E] [Fintype E] : State.CCP W E :=
+def CardTest_u (v : ℕ) (n : ℕ) [PartialOrder E] [Fintype E] :
+    State.CCP W E :=
   λ s => {p ∈ s | Mereology.atomCount E (p.2 v) = n}
 
 /-- Dynamic sequencing at the state level (eq. 80): function composition,
@@ -439,7 +440,8 @@ def RelTest (v₁ v₂ : ℕ) (R : E → E → Prop) : State.CCP W E :=
 
 /-- Single-quantifier "exactly n" pipeline, `E^v P ; M_v(E^v P) ; n_v` — the
 trivial-scope instantiation of the scope-taking update GQ (eq. 81). -/
-def exactlyN_u (v : ℕ) (P : E → Prop) (n : ℕ) [PartialOrder E] [Fintype E] :
+def exactlyN_u (v : ℕ) (P : E → Prop) (n : ℕ) [PartialOrder E]
+    [Fintype E] :
     State.CCP W E :=
   dseq_u (dseq_u (Evar_u v P) (Mvar_u v (Evar_u v P))) (CardTest_u v n)
 

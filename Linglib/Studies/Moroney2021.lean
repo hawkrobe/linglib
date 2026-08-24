@@ -207,10 +207,18 @@ def isDog : FakeMassEntity → Prop
 instance : DecidablePred isDog := fun x => by
   cases x <;> unfold isDog <;> infer_instance
 
+/-- `P` is g-homogeneous if every proper part of a `P`-element has a `P`-part. -/
+def gHomogeneous {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
+  ∀ x y, P x → y < x → ∃ z, z ≤ y ∧ P z
+
+/-- A fake mass predicate ([moroney-2021] §2.3.1): cumulative but not g-homogeneous. -/
+def FakeMass {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
+  Mereology.CUM P ∧ ¬ gHomogeneous P
+
 /-- Shan bare count nouns pattern with English furniture-type nouns
     ([moroney-2021] §2.3.1): cumulative — the sum of dogs is dogs — but not
     g-homogeneous, since the leg below the sum has no dog part. -/
-theorem isDog_fakeMass : Mereology.FakeMass isDog := by
+theorem isDog_fakeMass : FakeMass isDog := by
   constructor
   · intro x hx y hy
     cases x <;> cases y <;> first | exact trivial | exact hx.elim

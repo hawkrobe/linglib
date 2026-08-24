@@ -76,24 +76,28 @@ theorem modelUp_injective :
   exact Encodable.encode_injective (Sum.inr.inj
     (Finset.singleton_injective h'))
 
-open Classical in
+instance : Nonempty {F : Finset (β ⊕ ℕ) // F.Nonempty} :=
+  ⟨⟨{Sum.inr 0}, Finset.singleton_nonempty _⟩⟩
+
 /-- Landman's group operators are consistent: the nonempty finite subsets
-    of `β ⊕ ℕ` carry a `GroupStructure`, with dissolution recovering the
-    packed plurality from the marker's code. -/
+    of `β ⊕ ℕ` carry a `GroupStructure`, with dissolution the left inverse
+    of formation. -/
 noncomputable def finsetModel (β : Type*) [DecidableEq β] [Encodable β] :
     GroupStructure {F : Finset (β ⊕ ℕ) // F.Nonempty} where
   up := modelUp
-  down y := if h : ∃ x, modelUp x = y then h.choose else y
+  down := Function.invFun modelUp
   atom_up x := by
-    intro z hz
+    refine ⟨fun h => ?_, fun z _ hz => ?_⟩
+    · have h0 := Sum.inr.inj (Finset.mem_singleton.mp (Finset.singleton_subset_iff.mp
+        (h ⟨{Sum.inr 0}, Finset.singleton_nonempty _⟩)))
+      have h1 := Sum.inr.inj (Finset.mem_singleton.mp (Finset.singleton_subset_iff.mp
+        (h ⟨{Sum.inr 1}, Finset.singleton_nonempty _⟩)))
+      omega
     have hsub : z.val ⊆ {Sum.inr (Encodable.encode x)} := hz
     rcases Finset.subset_singleton_iff.mp hsub with hempty | hsingle
     · exact absurd hempty (Finset.nonempty_iff_ne_empty.mp z.2)
     · exact le_of_eq (Subtype.ext hsingle.symm)
-  down_up x := by
-    have h : ∃ x', modelUp x' = modelUp (β := β) x := ⟨x, rfl⟩
-    rw [dif_pos h]
-    exact modelUp_injective h.choose_spec
+  down_up := Function.leftInverse_invFun modelUp_injective
 
 @[simp] theorem finsetModel_up [DecidableEq β]
     (x : {F : Finset (β ⊕ ℕ) // F.Nonempty}) :

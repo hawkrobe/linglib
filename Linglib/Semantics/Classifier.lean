@@ -94,8 +94,9 @@ abbrev clfForNum {α μTy : Type*} (P : α → Prop) (μ : α → μTy) (n : μT
 /-- CLF-for-NUM produces quantized predicates when μ is an extensive
     measure: no proper part of an n-measure entity also has measure n.
     Generalizes over any base predicate P. -/
-theorem clfForNum_qua {α M : Type*} [SemilatticeSup α] [AddCommMonoid M] [PartialOrder M]
-    {P : α → Prop} {μ : α → M} [ExtMeasure α μ] (n : M) :
+theorem clfForNum_qua {α M : Type*} [SemilatticeSup α] [AddCommMonoid M]
+    [PartialOrder M]
+    {P : α → Prop} {μ : α → M} [ExtMeasure μ] (n : M) :
     QUA (fun x => QMOD P μ n x) :=
   Mereology.qmod_qua P n
 
@@ -168,11 +169,12 @@ theorem classifier_quantizes_forNoun {α : Type*} [SemilatticeSup α]
 -- §5: CLF-for-N Preserves Membership
 -- ============================================================================
 
-/-- Atomization is a restriction: every atom of P is in P. -/
+/-- Every atom of a noun that excludes the null individual is one of its
+    atomized instances. -/
 theorem clfForNoun_mem {α : Type*} [PartialOrder α]
-    {P : α → Prop} {x : α} (hAtom : Atom x) (hP : P x) :
+    {P : α → Prop} (hP0 : ∀ ⦃y⦄, P y → ¬ IsBot y) {x : α} (hAtom : Atom x) (hP : P x) :
     clfForNoun P x :=
-  ⟨hP, fun _ _ hyx => hAtom hyx⟩
+  ⟨hP, fun _ hy hyx => hAtom.2 (hP0 hy) hyx⟩
 
 /-- If P has atoms, then CLF-for-N is non-empty. This is the
     content of the "sortal classifier" requirement: the classifier
@@ -180,8 +182,8 @@ theorem clfForNoun_mem {α : Type*} [PartialOrder α]
     Mass nouns (divisive predicates with no atoms) require a
     mensural classifier instead. -/
 theorem clfForNoun_nonempty {α : Type*} [PartialOrder α]
-    {P : α → Prop} {a : α} (hP : P a) (hAtom : Atom a) :
+    {P : α → Prop} (hP0 : ∀ ⦃y⦄, P y → ¬ IsBot y) {a : α} (hP : P a) (hAtom : Atom a) :
     ∃ x, clfForNoun P x :=
-  ⟨a, hP, fun _ _ hyx => hAtom hyx⟩
+  ⟨a, clfForNoun_mem hP0 hAtom hP⟩
 
 end Semantics.Classifier

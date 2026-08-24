@@ -69,12 +69,12 @@ scoped infix:50 " ≼ " => AnalyticEntails
 
 namespace AnalyticEntails
 
-@[refl] theorem refl (p : TMProp S) : p ≼ p := Mereology.IsContentPart.refl p
+@[refl] theorem refl (p : TMProp S) : p ≼ p := IsContentPart.refl p
 
 theorem trans {p q r : TMProp S} (hpq : p ≼ q) (hqr : q ≼ r) : p ≼ r :=
   -- hpq : q is content part of p; hqr : r is content part of q.
   -- Want: r is content part of p. Compose: r ⊑ q ⊑ p (both clauses).
-  Mereology.IsContentPart.trans hqr hpq
+  IsContentPart.trans hqr hpq
 
 end AnalyticEntails
 
@@ -96,7 +96,7 @@ variable {S : Type*} [Preorder S]
 theorem InexactEntails.of_analytic {p q : TMProp S} (h : p ≼ q) :
     p ⊨ᵢ q := by
   intro s ⟨u, hule, hp⟩
-  obtain ⟨t, hqt, htle⟩ := h.1 u hp
+  obtain ⟨t, hqt, htle⟩ := mem_upperClosure.1 (h.1 hp)
   exact ⟨t, le_trans htle hule, hqt⟩
 
 /-- Mutual exact entailment lifts to analytic entailment. The Up clause
@@ -106,8 +106,8 @@ theorem InexactEntails.of_analytic {p q : TMProp S} (h : p ≼ q) :
     trivially satisfies both clauses with self as witness. -/
 theorem AnalyticEntails.of_exact_of_subset {p q : TMProp S}
     (hpq : p ⊨ₑ q) (hqp : q ⊨ₑ p) : p ≼ q :=
-  ⟨fun s hp => ⟨s, hpq s hp, le_refl s⟩,
-   fun s hq => ⟨s, hqp s hq, le_refl s⟩⟩
+  ⟨fun s hp => mem_upperClosure.2 ⟨s, hpq s hp, le_refl s⟩,
+   fun s hq => mem_lowerClosure.2 ⟨s, hqp s hq, le_refl s⟩⟩
 
 end Bridges
 
@@ -150,7 +150,7 @@ theorem not_isSubsumedBy_tmOr_intro_general :
        IsSubsumedBy p (tmOr p q)) := by
   intro h
   have := h Bool inferInstance (· = true) (· = false)
-  obtain ⟨t, ht, hle⟩ := this false (Or.inr rfl)
+  obtain ⟨t, (ht : t = true), hle⟩ := mem_upperClosure.1 (@this false (Or.inr rfl))
   -- ht : t = true, hle : t ≤ false. Subst and contradict.
   cases ht
   exact absurd hle (by decide)

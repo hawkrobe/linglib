@@ -75,12 +75,12 @@ def QForall {α : Type*} [PartialOrder α]
 
 /-! ### Properties of maxNonOverlap -/
 
-/-- maxNonOverlap implies Maximal: if x absorbs all overlapping
-    P-elements, it is certainly maximal (no proper P-extension). -/
+/-- maxNonOverlap implies Maximal for a non-null `x`: if x absorbs all
+    overlapping P-elements, it is certainly maximal (no proper P-extension). -/
 theorem maxNonOverlap_imp_maximal {α : Type*} [PartialOrder α]
-    {P : α → Prop} {x : α} (h : maxNonOverlap P x) :
+    {P : α → Prop} {x : α} (hx : ¬ IsBot x) (h : maxNonOverlap P x) :
     Maximal P x :=
-  ⟨h.1, λ y hy hle => h.2 y hy ⟨x, le_refl x, hle⟩⟩
+  ⟨h.1, λ y hy hle => h.2 y hy ⟨x, hx, le_refl x, hle⟩⟩
 
 /-- For atoms with a disjointness property, maxNonOverlap reduces to
     membership in P.
@@ -157,21 +157,23 @@ theorem dng_cum {α : Type*} [SemilatticeSup α]
     maxNonOverlap elements must be equal (both are Maximal,
     and CUM predicates have at most one maximal element). -/
 theorem maxNonOverlap_unique_of_cum {α : Type*} [SemilatticeSup α]
-    {P : α → Prop} (hCum : CUM P)
-    {x y : α} (hx : maxNonOverlap P x) (hy : maxNonOverlap P y) :
+    {P : α → Prop} (hCum : CUM P) {x y : α} (hx0 : ¬ IsBot x) (hy0 : ¬ IsBot y)
+    (hx : maxNonOverlap P x) (hy : maxNonOverlap P y) :
     x = y :=
   cum_maximal_unique hCum
-    (maxNonOverlap_imp_maximal hx)
-    (maxNonOverlap_imp_maximal hy)
+    (maxNonOverlap_imp_maximal hx0 hx)
+    (maxNonOverlap_imp_maximal hy0 hy)
 
-/-- Combined DNG-PL: for CUM predicates with a maximal element,
-    Q_∀(P)(Q) ↔ Q(m), without needing to supply `hOnly` separately. -/
+/-- Combined DNG-PL: for CUM predicates excluding the null individual, with a
+    maximal element, Q_∀(P)(Q) ↔ Q(m), without needing to supply `hOnly`
+    separately. -/
 theorem dng_cum' {α : Type*} [SemilatticeSup α]
-    {P Q : α → Prop} (hCum : CUM P)
+    {P Q : α → Prop} (hP0 : ∀ x, P x → ¬ IsBot x) (hCum : CUM P)
     {m : α} (hMax : Maximal P m) :
     QForall P Q ↔ Q m :=
   dng_cum hCum hMax (λ _x hx =>
-    maxNonOverlap_unique_of_cum hCum hx (maxNonOverlap_of_cum_maximal hCum hMax))
+    maxNonOverlap_unique_of_cum hCum (hP0 _ hx.1) (hP0 m hMax.1) hx
+      (maxNonOverlap_of_cum_maximal hCum hMax))
 
 /-! ### Bridge to Standard GQ (every_sem) -/
 

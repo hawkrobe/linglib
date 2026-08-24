@@ -100,9 +100,10 @@ theorem sg_domain_subset_pl {E : Type*} [PartialOrder E] (x : E) :
 /-- The containment is strict: there exist non-atomic entities in
     dom(Pl) \ dom(Sg). -/
 theorem sg_domain_strict_subset_pl {E : Type*} [SemilatticeSup E]
-    (a b : E) (_ : Atom a) (_ : Atom b) (hne : a ≠ b) :
+    (a b : E) (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
     (plSem E).defined (a ⊔ b) ∧ ¬(sgSem E).defined (a ⊔ b) :=
-  ⟨trivial, fun hAtom => hne ((Atom.eq hAtom le_sup_left).trans (Atom.eq hAtom le_sup_right).symm)⟩
+  ⟨trivial, fun hAtom => hne ((Atom.eq hAtom le_sup_left ha.not_isBot).trans
+    (Atom.eq hAtom le_sup_right hb.not_isBot).symm)⟩
 
 /-- The `specLevel` ordering on `ContainmentPair` is the Feature-Subset
     Principle: more specified cells have strictly smaller presuppositional
@@ -205,9 +206,10 @@ section Coordination
 variable {E : Type*} [SemilatticeSup E]
 
 /-- A coordination of two distinct atoms produces a non-atom. -/
-theorem coordination_nonatom (a b : E) (_ : Atom a) (_ : Atom b)
+theorem coordination_nonatom (a b : E) (ha : Atom a) (hb : Atom b)
     (hne : a ≠ b) : ¬Atom (a ⊔ b) :=
-  fun hAtom => hne ((Atom.eq hAtom le_sup_left).trans (Atom.eq hAtom le_sup_right).symm)
+  fun hAtom => hne ((Atom.eq hAtom le_sup_left ha.not_isBot).trans
+    (Atom.eq hAtom le_sup_right hb.not_isBot).symm)
 
 /-- Each conjunct individually satisfies [Sg]. -/
 theorem conjuncts_singular (a b : E) (ha : Atom a) (hb : Atom b) :
@@ -652,7 +654,8 @@ theorem czech_father_child_masc :
     Presupposition selects the less specified (vacuous) alternative. -/
 theorem gender_number_parallel :
     -- Number: non-atom → only Pl
-    (∀ (E : Type*) [PartialOrder E] (x : E), ¬Atom x → (plSem E).defined x) ∧
+    (∀ (E : Type*) [PartialOrder E] (x : E),
+      ¬Atom x → (plSem E).defined x) ∧
     -- Gender: male referent → only Masc
     (mascSem (E := ReferentGender)).defined .male :=
   ⟨fun _ _ _ _ => trivial, trivial⟩

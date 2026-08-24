@@ -193,8 +193,11 @@ def SubEventReading (V : Set E) (ag th : E → D) (d₁ d₂ : D) (e : E) : Prop
 /-- An event with the sub-event reading has proper parts, so it is not
     atomic. -/
 theorem SubEventReading.not_atom :
-    SubEventReading V ag th d₁ d₂ e → ¬ Mereology.Atom e :=
-  fun ⟨_, _, h₁, _, _, _⟩ ha => h₁.ne (ha.eq h₁.le)
+    SubEventReading V ag th d₁ d₂ e → ¬ Mereology.Atom e := by
+  rintro ⟨e₁, e₂, h₁, h₂, h₃, -⟩ ha
+  by_cases hn : IsBot e₁
+  · exact h₂.ne (by rw [h₃]; exact (sup_eq_right.mpr (hn _)).symm)
+  · exact h₁.ne (ha.eq h₁.le hn)
 
 /-- Incomparable crossed sub-events yield the sub-event reading — the
     accumulation reading makes sub-events visible ((46b)). -/

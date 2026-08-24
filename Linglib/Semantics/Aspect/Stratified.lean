@@ -330,10 +330,10 @@ theorem reference_mono {α β : Type*} [SemilatticeSup α]
 
 /-- **Dimension-polymorphic substrate witness.** Stratified reference with
     reflexive granularity is satisfied by every `P`-element via the base
-    case. Quantifies over any `d : α → β` (no `IsSumHom` needed for this
-    direction, since the witness is structural).
+    case. Quantifies over any `d : α → β` (no sum homomorphism needed for
+    this direction, since the witness is structural).
 
-    The companion direction — closure under sums via `IsSumHom d` — is
+    The companion direction — closure under sums via a `SupHom` — is
     `reference_join` below; together they establish that stratified
     reference composes faithfully with the trace-function abstraction. -/
 theorem reference_of_refl_granularity {α β : Type*} [SemilatticeSup α]
@@ -344,15 +344,15 @@ theorem reference_of_refl_granularity {α β : Type*} [SemilatticeSup α]
 /-- Stratified reference is closed under join when (i) the dimension is a
     sum-homomorphism and (ii) the granularity is monotone in the outer
     position w.r.t. `≤` on β. The substrate validation that the
-    trace-function abstraction (`[IsSumHom d]`, applicable uniformly to τ,
-    σ, agentOf, patientOf, themeOf via the instances in `Events/CEM.lean`)
-    composes correctly with stratified reference.
+    trace-function abstraction (`d : SupHom α β`, applicable uniformly to
+    τ, σ, agentOf, patientOf, themeOf) composes correctly with stratified
+    reference.
 
-    The `IsSumHom` assumption ensures `d (x ⊔ y) = d x ⊔ d y`; the
+    The `SupHom` structure ensures `d (x ⊔ y) = d x ⊔ d y`; the
     monotonicity assumption on γ then carries the stratification witnesses
     for `x` and `y` over to a witness for `x ⊔ y`. -/
 theorem reference_join {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
-    (d : α → β) [hHom : IsSumHom d]
+    (d : SupHom α β)
     {γ : β → β → Prop}
     (hMono : ∀ a b₁ b₂, γ a b₁ → b₁ ≤ b₂ → γ a b₂)
     {P : α → Prop} {x y : α}
@@ -370,7 +370,7 @@ theorem reference_join {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
       exact algClosure_mono
         (λ z ⟨hp, hg⟩ => ⟨hp, hMono _ _ _ hg le_sup_right⟩) y hy
     exact AlgClosure.sum hx' hy'
-  rw [hHom.map_sup]
+  rw [map_sup]
   exact hxy
 
 /-! ### Aspect Bridge (subinterval reference ↔ atelicity) -/

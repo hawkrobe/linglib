@@ -343,7 +343,7 @@ theorem sixteen_wellformed_configs :
 /-! The lattice-grounded feature predicates — [harbour-2014]'s (20)
 `[±atomic]`, (21) `[±minimal]`, (10) `[±additive]` as predicates over a
 join-semilattice, with the CUM identity for the number–aspect nexus —
-graduated to `Features/Number/Interp.lean` (`Number.minimalIn`,
+graduated to `Features/Number/Interp.lean` (`Mereology.atomize`,
 `Number.additiveIn`, `Number.additive_subregion_is_cum`). -/
 
 -- ============================================================================

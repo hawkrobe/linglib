@@ -217,12 +217,10 @@ distributive inference / star-closure ([link-1983]; `Algebra.star =
 Mereology.AlgClosure`). These two theorems discharge the
 `distMaximal_iff_star_atoms` Todo flagged in `Plurality/Algebra.lean` §6.
 
-The `Algebra.distr_atom_part` route does *not* instantiate at this carrier:
-the bespoke `Mereology.Atom x := ∀ y ≤ x, y = x` degenerates over an
-`OrderBot` lattice — only `⊥`/`∅` satisfies it (for nonempty `x`,
-`∅ ≤ x ∧ ∅ ≠ x` falsifies it). The faithful bridge therefore runs through
-mathlib's `IsAtom` (which excludes `⊥`); over `Finset Atom` the atoms are
-the singletons (`Finset.isAtom_iff`). -/
+The bridge runs through mathlib's `IsAtom`, which is what `Mereology.Atom`
+is over an `OrderBot` carrier (`Mereology.atom_iff_isAtom`): the null `∅` is
+excluded and the atoms of `Finset Atom` are the singletons
+(`Finset.isAtom_iff`). -/
 
 omit [DecidableEq Atom] in
 /-- `distMaximal` is Link's **distributive inference**: `P` holds maximally

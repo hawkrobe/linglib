@@ -9,7 +9,7 @@ The spatial trace σ maps events to the paths they traverse ([zwarts-2005],
 dimensions, alongside the temporal trace τ (`Event.runtime`) and the thematic
 dimension θ. Following the mixin convention of `Semantics/Events/CEM.lean`,
 `Trace` carries only the function σ; its structural assumptions — sum
-homomorphism (`Mereology.IsSumHom`) and injectivity — are stated at use sites.
+homomorphism and injectivity — are stated at use sites.
 
 ## Main declarations
 
@@ -28,9 +28,9 @@ namespace Spatial
 /-- The spatial trace σ assigns each event the path it traverses
     ([zwarts-2005], [gawron-2009]), parallel to the temporal trace τ
     (`Event.runtime`). Structural assumptions on σ are stated as mixins at
-    use sites, per `Semantics/Events/CEM.lean`: `[Mereology.IsSumHom st.σ]`
-    for sum preservation, `Function.Injective st.σ` where QUA pullback
-    needs it. -/
+    use sites, per `Semantics/Events/CEM.lean`: sum preservation as a
+    `map_sup` hypothesis, `Function.Injective st.σ` where QUA pullback needs
+    it. -/
 class Trace (Loc Time : Type*) [LinearOrder Time] where
   /-- The path traversed in an event. -/
   σ : Event Time → Path Loc
@@ -49,16 +49,16 @@ variable {Loc Time : Type*} [LinearOrder Time] [Event.Mereology Time]
     fact quantized (bounded = non-cumulative instead; see
     `Studies/Zwarts2005.lean`), so this records the Krifka-style analysis,
     applicable when a path predicate is QUA. -/
-theorem bounded_path_telic [hσ : IsSumHom st.σ]
+theorem bounded_path_telic (hσ : ∀ e e', st.σ (e ⊔ e') = st.σ e ⊔ st.σ e')
     (hinj : Function.Injective st.σ) (hP : QUA P) : QUA (P ∘ st.σ) :=
-  qua_of_injective_sumHom hσ hinj hP
+  qua_pullback ((OrderHomClass.monotone (SupHom.mk st.σ hσ)).strictMono_of_injective hinj) hP
 
 /-- CUM path predicates pull back through a sum-homomorphic σ to CUM
     (atelic) VP predicates: *walk towards the store* is atelic because
     *towards the store* denotes a cumulative set of paths ([zwarts-2005]). -/
-theorem unbounded_path_atelic [hσ : IsSumHom st.σ] (hP : CUM P) :
+theorem unbounded_path_atelic (hσ : ∀ e e', st.σ (e ⊔ e') = st.σ e ⊔ st.σ e') (hP : CUM P) :
     CUM (P ∘ st.σ) :=
-  cum_pullback hσ hP
+  hP.preimage (SupHom.mk st.σ hσ)
 
 end Trace
 

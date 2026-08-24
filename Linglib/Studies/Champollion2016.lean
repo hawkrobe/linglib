@@ -119,7 +119,8 @@ theorem linkD_distributiveOverJoin {E : Type*} [SemilatticeSup E]
     · exact hy z h hAtom
 
 /-- A Link `ᴰ`-closed predicate licenses the type-shift `⊔ ↦ ⊓`. -/
-theorem individual_join_eq_op_of_linkD (hJP : AtomJoinPrime E) (x y : E) (Q : E → Prop) :
+theorem individual_join_eq_op_of_linkD (hJP : AtomJoinPrime E) (x y : E)
+    (Q : E → Prop) :
     individual (x ⊔ y : E) (D Q : E → Prop)
       ↔ Coordinator.op .j (individual x) (individual y) (D Q : E → Prop) :=
   individual_join_eq_op_of_distributive x y (linkD_distributiveOverJoin hJP Q)

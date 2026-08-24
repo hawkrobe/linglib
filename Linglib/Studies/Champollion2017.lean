@@ -16,10 +16,9 @@ verbs.
 
 ## Main definitions
 
-* `materializationOfSumHom` / `LexicallyCumulative` /
-  `lexicallyCumulative_imp_cum` — the §2.5 (thematic roles are sum
-  homomorphisms) and §2.7.2 (lexical cumulativity ⟹ Krifka `CUM`)
-  algebraic substrate.
+* `LexicallyCumulative` / `lexicallyCumulative_imp_cum` — the §2.7.2
+  (lexical cumulativity ⟹ Krifka `CUM`) algebraic substrate; §2.5's sum
+  homomorphisms are mathlib's `SupHom`.
 * `ChampollionPostulates` — Champollion's per-verb distributivity meaning
   postulates (§6.2–6.3), over the Fragment verbs' denotations via
   `Verb.StratifiesOver`.
@@ -75,19 +74,9 @@ open Semantics.Plurality.Algebra (Materialization)
 open Semantics.Aspect.Stratified
 open Semantics.Plurality.Cover (IsFinCover algClosure_iff_exists_finCover)
 
-/-! ### §2.5/§2.7.2 algebraic substrate -/
+/-! ### §2.7.2 algebraic substrate -/
 
 section ThematicRolesAndCumulativity
-variable {E I : Type*} [SemilatticeSup E] [SemilatticeSup I]
-
-/-- Champollion §2.5: any sum-homomorphism `f : Event → α` (thematic role
-    or `τ` runtime) packages into a `Materialization` (= `SupHom E I`) via
-    `IsSumHom.toSupHom`. -/
-def materializationOfSumHom (f : E → I) [hf : IsSumHom f] : Materialization E I :=
-  hf.toSupHom
-
-@[simp] theorem materializationOfSumHom_apply (f : E → I) [IsSumHom f] (x : E) :
-    materializationOfSumHom f x = f x := rfl
 
 /-- Champollion §2.7.2: lexical cumulativity of a predicate — `AlgClosure P = P`
     extensionally (`P` a fixed point of the `*`-operator). -/

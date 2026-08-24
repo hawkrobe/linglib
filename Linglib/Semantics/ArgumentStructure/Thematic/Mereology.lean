@@ -33,7 +33,7 @@ def UP (θ : α → β → Prop) : Prop :=
 
 /-- Cumulative theta (CumTheta): θ preserves sums.
     [krifka-1998] eq. 44: θ(x,e) ∧ θ(y,e') → θ(x⊕y, e⊕e').
-    This is the relational analog of `IsSumHom`. -/
+    This is the relational analog of a `SupHom`. -/
 def CumTheta (θ : α → β → Prop) : Prop :=
   ∀ (x y : α) (e e' : β), θ x e → θ y e' → θ (x ⊔ y) (e ⊔ e')
 
@@ -80,12 +80,11 @@ def GUE (θ : α → β → Prop) : Prop :=
     This connects the functional view (θ as projection function) to
     the relational view (θ as binary predicate) at the cumulativity
     level. -/
-theorem roleHom_implies_cumTheta
-    {f : β → α} (hf : IsSumHom f) :
+theorem roleHom_implies_cumTheta (f : SupHom β α) :
     CumTheta (fun (x : α) (e : β) => f e = x) := by
   intro x y e e' hx hy
   rw [← hx, ← hy]
-  exact hf.map_sup e e'
+  exact map_sup f e e'
 
 /-! ### IsCumThetaVerb — typeclass for cumulative-θ verbs -/
 

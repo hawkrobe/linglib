@@ -619,12 +619,12 @@ entails `Jessica married a linguist or a philosopher`. The paper
 proposes Fine's *conjunctive parthood* (eq. 94, footnote 27) as a
 refinement.
 
-This is exactly `Mereology.IsContentPart` (Jago Def 5, re-exported
+This is exactly `Semantics.Truthmaker.IsContentPart` (Jago Def 5, re-exported
 through `Semantics/Truthmaker/Basic.lean`). With argument
 order matching the paper's convention "Q' is conjunctive part of Q",
 we have:
 
-  paper "Q' is conjunctive part of Q"  ↔  `Mereology.IsContentPart Q Q'`
+  paper "Q' is conjunctive part of Q"  ↔  `Semantics.Truthmaker.IsContentPart Q Q'`
 
 Below we exhibit the paper's witness (eq. 95): with Q = {p₃} ("Jessica
 married an American linguist") and Q' = {p₁, p₂} ("Jessica married a
@@ -639,14 +639,14 @@ variable {W : Type*}
 
 /-- A singleton `{q}` is **not** a conjunctive part of `p` whenever some
     `q' ∈ p` lacks `q` as a sub-element (i.e., `¬ q ≤ q'`). The Down
-    clause of `Mereology.IsContentPart` requires every `p`-element to
+    clause of `Semantics.Truthmaker.IsContentPart` requires every `p`-element to
     have a `{q}`-element below it; with only `q` available, `q ≤ q'`
     must hold for every `q' ∈ p`. -/
 theorem not_isContentPart_of_singleton_not_le {α : Type*} [Preorder α]
     {q : α} {p : α → Prop} {q' : α} (hq' : p q') (h : ¬ q ≤ q') :
-    ¬ Mereology.IsContentPart (· = q) p := by
+    ¬ Semantics.Truthmaker.IsContentPart (· = q) p := by
   intro ⟨hd, _⟩
-  obtain ⟨t, ht, hle⟩ := hd q' hq'
+  obtain ⟨t, (ht : t = q), hle⟩ := mem_upperClosure.1 (hd hq')
   -- ht : t = q (from singleton membership), so q ≤ q' would follow
   exact h (ht ▸ hle)
 
@@ -665,7 +665,7 @@ theorem conjunctive_parthood_blocks_disj_intro
     (p₁ p₂ p₃ : Set W)
     (_h_p3_p1 : p₃ ⊆ p₁)        -- "American linguist" ⊆ "linguist"
     (h_not_p3_p2 : ¬ p₃ ⊆ p₂) :  -- "American linguist" ⊄ "philosopher"
-    ¬ Mereology.IsContentPart (· = p₃) ({p₁, p₂} : Set (Set W)) :=
+    ¬ Semantics.Truthmaker.IsContentPart (· = p₃) ({p₁, p₂} : Set (Set W)) :=
   not_isContentPart_of_singleton_not_le
     (q := p₃) (p := ({p₁, p₂} : Set (Set W)))
     (Set.mem_insert_iff.mpr (Or.inr rfl)) h_not_p3_p2
