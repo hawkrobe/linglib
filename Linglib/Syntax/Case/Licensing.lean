@@ -1,7 +1,6 @@
 import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Source
 import Linglib.Syntax.Case.Dependent
-import Linglib.Syntax.Case.Filter
 
 /-!
 # Hybrid licensing
@@ -29,9 +28,7 @@ primitive.
 * `Licenser`, `ClauseLicensers`: a licenser and a clause's inventory of them,
   exactly one of which is primary.
 * `LicensedNP`: a nominal together with its licensing requirement.
-* `LicensingOutcome`: which licenser valued a nominal, or the crash;
-  `LicensingOutcome.toNeutral` projects it onto the account-neutral
-  `Case.Source`.
+* `LicensingOutcome`: which licenser valued a nominal, or the crash.
 * `licenseNPs`: the licensing algorithm over a clause.
 * `isDOMMarked`: a nominal is DOM-marked exactly when a secondary licensed it.
 
@@ -42,9 +39,6 @@ primitive.
 * `licenseActive_no_crash_when_enough_secondaries`,
   `no_need_means_no_secondaries_used`: with enough secondaries nothing
   crashes, and with nothing needing licensing no secondary activates.
-* `isLicensed_iff_satisfiesCaseFilter`: a nominal is licensed iff it
-  satisfies the Case Filter of `Syntax/Case/Filter.lean`, so the filter is a
-  theorem of hybrid licensing rather than a separate stipulation.
 
 ## References
 
@@ -55,7 +49,6 @@ namespace Syntax.Case.Licensing
 
 -- `Case` is qualified throughout: a different `Case` (UD.Case) is aliased at
 -- root scope.
-open Minimalist (DPFeatures satisfiesCaseFilter)
 
 /-! ### Licensers -/
 
@@ -171,25 +164,6 @@ def LicensingOutcome.assignedCase : LicensingOutcome → Option Case
   | .bySecondary _ c  => some c
   | .byLexical c      => some c
   | .unlicensed       => none
-
-/-- The neutral provenance (`Case.Source`) of a licensing outcome: primary
-    and secondary licensing are `structural` (Agree-valued), lexical
-    pre-licensing is `inherent`, and the crash `unlicensed` is `uncased` —
-    the only account in the library that produces it. -/
-def LicensingOutcome.toNeutral : LicensingOutcome → _root_.Case.Source
-  | .byPrimary _ _   => .structural
-  | .bySecondary _ _ => .structural
-  | .byLexical _     => .inherent
-  | .unlicensed      => .uncased
-
-/-- The neutral source faithfully records licensing **failure**: an outcome
-    is `uncased` iff it is unlicensed. With `CaseSource.toNeutral_ne_uncased`
-    (dependent case is total), this is the foundational provenance-level
-    contrast between the two rival accounts — one can crash, the other
-    cannot. -/
-theorem LicensingOutcome.toNeutral_uncased_iff (o : LicensingOutcome) :
-    o.toNeutral = _root_.Case.Source.uncased ↔ ¬ o.IsLicensed := by
-  cases o <;> simp [LicensingOutcome.toNeutral]
 
 /-- The result of licensing a single NP. -/
 structure LicensedResult where
@@ -388,45 +362,6 @@ theorem no_need_means_no_secondaries_used (cl : ClauseLicensers)
   obtain ⟨h_need, h_lex⟩ := h np hnp_mem
   rw [← hr_eq]
   simp [h_lex, h_need]
-
-/-! ### The Case Filter -/
-
-/-! Connects `LicensingOutcome` to the Chomskyan Case Filter
-formalized in `Minimalism/CaseFilter.lean`: an outcome valued by
-*any* mechanism (primary, secondary, or lexical) satisfies the Case
-Filter; only `.unlicensed` violates it. Kalin's framework thus
-*derives* the Case Filter as the convergence condition on hybrid
-licensing — not a separate stipulation. -/
-
-/-- Translate a licensing outcome into the DP feature bundle that
-    `Minimalist.satisfiesCaseFilter` consumes. Any valued outcome
-    becomes a DP with valued [Case]; `.unlicensed` becomes a DP with
-    unvalued [Case]. -/
-def LicensingOutcome.toDPFeatures : LicensingOutcome → DPFeatures
-  | .byPrimary _ c   => DPFeatures.withCase [] c
-  | .bySecondary _ c => DPFeatures.withCase [] c
-  | .byLexical c     => DPFeatures.withCase [] c
-  | .unlicensed      => DPFeatures.withUnvaluedCase []
-
-/-- **Bridge: licensing convergence ⟺ Case Filter satisfied.** A
-    nominal's [Case] is valued by some hybrid-licensing mechanism iff
-    it satisfies the Chomskyan Case Filter. The two convergence
-    conditions are extensionally equivalent — making the Case Filter a
-    theorem of hybrid licensing rather than an independent axiom. -/
-theorem isLicensed_iff_satisfiesCaseFilter (o : LicensingOutcome) :
-    o.IsLicensed ↔ satisfiesCaseFilter o.toDPFeatures := by
-  cases o <;>
-    simp [satisfiesCaseFilter, LicensingOutcome.toDPFeatures, HasCase.caseOf,
-      DPFeatures.withCase, DPFeatures.withUnvaluedCase]
-
-/-- A list of licensing results converges (no `.unlicensed`) iff every
-    induced DP satisfies the Case Filter. -/
-theorem all_isLicensed_iff_caseFilterHolds (results : List LicensedResult) :
-    (∀ r ∈ results, r.outcome.IsLicensed) ↔
-      Minimalist.caseFilterHolds (results.map λ r => r.outcome.toDPFeatures) := by
-  simp only [Minimalist.caseFilterHolds, List.all_eq_true, List.mem_map,
-    forall_exists_index, and_imp, forall_apply_eq_imp_iff₂,
-    isLicensed_iff_satisfiesCaseFilter]
 
 /-! ### Differential marking requires an available secondary -/
 

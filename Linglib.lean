@@ -2783,7 +2783,6 @@ import Linglib.Syntax.CCG.Intonation
 import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Case.Assigner
 import Linglib.Syntax.Case.Dependent
-import Linglib.Syntax.Case.Filter
 import Linglib.Syntax.Case.Licensing
 import Linglib.Syntax.Case.Order
 import Linglib.Syntax.Category.Adjective.Basic
@@ -2862,6 +2861,7 @@ import Linglib.Syntax.Minimalist.Ellipsis
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
+import Linglib.Syntax.Minimalist.Case
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.LateMerger
 import Linglib.Syntax.Minimalist.LeftPeriphery

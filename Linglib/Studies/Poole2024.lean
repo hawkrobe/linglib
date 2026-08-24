@@ -51,12 +51,12 @@ def agreeAssigner : Assigner := fun nps label =>
   | none => none
   | some np =>
     match np.lexicalCase with
-    | some c => some ⟨.inherent, some c⟩
+    | some c => some (.assigned c .inherent)
     | none =>
       let caseless := (nps.filter (·.lexicalCase.isNone)).map (·.label)
       match caseless.findIdx (· == np.label) with
-      | 1 => some ⟨.structural, some .acc⟩   -- second probe: dependent ACC
-      | _ => some ⟨.default, some .nom⟩      -- unlocker / lone DP: unmarked
+      | 1 => some (.assigned .acc .structural)   -- second probe: dependent ACC
+      | _ => some (.assigned .nom .default)      -- unlocker / lone DP: unmarked
   /- (`findIdx` is total — `np` is caseless and present, so its label is in
      `caseless`; index 0 is the unlocker, ≥2 are post-discharge.) -/
 
@@ -76,7 +76,7 @@ private def stim2 (sc oc : Option Case) (sn on : Bool) : List LicensedNP :=
 
 /-- **m1 = m2 on every transitive clause.** For *any* case content (`sc`, `oc`)
     and licensing status of the two arguments, the Agree probe stack and
-    configurational dependent case assign the identical verdict — case *and*
+    configurational dependent case assign the identical result — case *and*
     provenance — to each argument. This is [poole-2024]'s extensional
     equivalence as a statement about the two *functions*, not a finite sample:
     on the configurations a single low-dependent stack covers, m2 ≤ m1. -/
@@ -89,7 +89,7 @@ theorem agree_eq_dependent_two_args (sc oc : Option Case) (sn on : Bool) :
   rcases hnp with rfl | rfl <;> cases sc <;> cases oc <;> rfl
 
 /-- **m1 ≈ m2 through the harness, over the whole paradigm.** A corollary of
-    the verdict identity: the two accounts `AgreesOnCase` *and* `AgreesOnSource`
+    the assignment identity: the two accounts `AgreesOnCase` *and* `AgreesOnSource`
     on every transitive — the convergence dual of `Kalin2018`'s
     `dependentCase_vs_licensing_diverge_on_perfective_object` (`¬ AgreesOnCase`).
     The harness compares outcomes, so this is exactly the extensional
@@ -120,8 +120,9 @@ private def threeCaseless : List LicensedNP :=
     single probe stack leaves it unmarked (`nom`), whereas configurational case
     marks it accusative (it is c-commanded by a caseless DP). -/
 theorem agree_diverges_dependent_three_caseless :
-    agreeAssigner threeCaseless "c" = some ⟨.default, some .nom⟩ ∧
-    dependentAssigner .accusative threeCaseless "c" = some ⟨.structural, some .acc⟩ := by
+    agreeAssigner threeCaseless "c" = some (.assigned .nom .default) ∧
+    dependentAssigner .accusative threeCaseless "c"
+      = some (.assigned .acc .structural) := by
   exact ⟨by decide, by decide⟩
 
 end Poole2024
