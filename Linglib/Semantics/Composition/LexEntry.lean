@@ -21,17 +21,17 @@ open Intensional
 
 /-- A typed lexical entry whose denotation carries the effect `M`
 (default `Id` = pure H&K). -/
-structure LexEntry (E W : Type) (M : Type → Type := Id) where
+structure LexEntry (E W : Type) (M : Type → Type := Id) (D : Type := ℝ) where
   ty : Ty
-  denot : M (Denot E W ty)
+  denot : M (Denot E W ty D)
 
 /-- String-keyed lexicon of `M`-effectful entries (default `Id`). -/
-def Lexicon (E W : Type) (M : Type → Type := Id) :=
-  String → Option (LexEntry E W M)
+def Lexicon (E W : Type) (M : Type → Type := Id) (D : Type := ℝ) :=
+  String → Option (LexEntry E W M D)
 
 /-- Embed a pure lexicon into effect `M` by `pure`-lifting every entry. -/
-def Lexicon.lift {E W : Type} (M : Type → Type) [Pure M] (lex : Lexicon E W) :
-    Lexicon E W M :=
+def Lexicon.lift {E W D : Type} (M : Type → Type) [Pure M] (lex : Lexicon E W Id D) :
+    Lexicon E W M D :=
   λ w => (lex w).map λ e => ⟨e.ty, pure e.denot⟩
 
 end Semantics.Montague

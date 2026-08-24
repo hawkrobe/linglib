@@ -341,7 +341,7 @@ private theorem interpBinary_t_tt (p : Denot E W .t) (F : Denot E W (.t ⇒ .t))
     interpBinary (M := Id) ⟨.t, p⟩ ⟨.t ⇒ .t, F⟩ = some ⟨.t, F p⟩ := rfl
 
 private theorem predAbs_id_dist :
-    PredAbs.dist? (M := Id) (E := E) (W := W) = some (fun _ f => f) := rfl
+    PredAbs.dist? (M := Id) (E := E) (W := W) (D := ℝ) = some (fun _ f => f) := rfl
 
 /-- Congruence for truth-valued results: an `Iff` lifts through
 `some ⟨.t, ·⟩`. -/

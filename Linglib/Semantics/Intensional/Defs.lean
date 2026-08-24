@@ -1,5 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Rat.Defs
+import Mathlib.Data.Real.Basic
 
 /-!
 # Intensional Logic: Types and Denotations
@@ -45,13 +46,15 @@ inductive Ty where
   | e : Ty
   | t : Ty
   /-- Degrees (type `d`): the scale sort of degree semantics
-      ([heim-2001], [wellwood-2015]). Denoted by ℚ, the repo's exact
-      degree carrier. -/
+      ([heim-2001], [wellwood-2015]). Denoted by the model's scale `D`,
+      `Denot`'s trailing parameter (default `ℝ`): a degree is a value of a
+      measure on the part structure, and the number system is only its
+      representation. -/
   | d : Ty
   /-- Numbers (type `n`): the cardinality sort — [sudo-2016]'s type-n
       numerals, [scontras-2014]'s CARD, the measure-function codomain
       ⟨e,n⟩ of [little-moroney-royer-2022]. Denoted by ℕ; distinct from
-      degrees `d` (ℚ), into which cardinality embeds by `Nat.cast`. -/
+      degrees `d`, into whose scale cardinality embeds by `Nat.cast`. -/
   | n : Ty
   /-- Events (type `v`): the neo-Davidsonian event sort ([davidson-1967],
       [parsons-1990]). -/
@@ -131,7 +134,7 @@ def Ty.isConjoinable : Ty → Bool
 
     D_e = E
     D_t = Prop
-    D_d = ℚ
+    D_d = D   (the degree scale, a model parameter like `E` and `W`; default ℝ)
     D_n = ℕ
     D_⟨a,b⟩ = D_a → D_b
     D_⟨s,a⟩ = W → D_a
@@ -142,22 +145,23 @@ def Ty.isConjoinable : Ty → Bool
     interpretation is the extension point — a carrier-parametric
     variant of `Denot` supplying event and state domains — and lands
     with the first study that composes event-typed denotations. -/
-def Denot (E W : Type) : Ty → Type
+def Denot (E W : Type) (ty : Ty) (D : Type := ℝ) : Type :=
+  match ty with
   | .e => E
   | .t => Prop
-  | .d => ℚ
+  | .d => D
   | .n => ℕ
   | .v => Empty
   | .s => Empty
-  | .fn a b => Denot E W a → Denot E W b
-  | .intens a => W → Denot E W a
+  | .fn a b => Denot E W a D → Denot E W b D
+  | .intens a => W → Denot E W a D
 
 /-- Soundness of type-level application: when `apply` succeeds, the
     denotation domain of the function type is exactly the function space
     from the argument's domain to the value's. -/
-theorem Denot.apply_sound {E W : Type} {f x c : Ty}
+theorem Denot.apply_sound {E W D : Type} {f x c : Ty}
     (h : f.apply x = some c) :
-    Denot E W f = (Denot E W x → Denot E W c) := by
+    Denot E W f D = (Denot E W x D → Denot E W c D) := by
   rw [Ty.apply_eq_some_iff] at h; subst h; rfl
 
 -- ════════════════════════════════════════════════════════════════
@@ -167,17 +171,17 @@ theorem Denot.apply_sound {E W : Type} {f x c : Ty}
 /-- ^α — form the rigid intension of an expression.
     Maps a denotation to the constant function over indices.
     Definitionally equal to `Intensional.Intension.rigid`. -/
-def up {E W : Type} {a : Ty} (x : Denot E W a) : Denot E W (.intens a) :=
+def up {E W D : Type} {a : Ty} (x : Denot E W a D) : Denot E W (.intens a) D :=
   λ _ => x
 
 /-- ˇα — extract the extension at index i.
     Evaluates an intension at a given index.
     Definitionally equal to `Intensional.Intension.evalAt`. -/
-def down {E W : Type} {a : Ty} (s : Denot E W (.intens a)) (i : W) : Denot E W a :=
+def down {E W D : Type} {a : Ty} (s : Denot E W (.intens a) D) (i : W) : Denot E W a D :=
   s i
 
 /-- Down-up cancellation: ˇ(^α) = α at any index. DWP Theorem 1. -/
-theorem down_up {E W : Type} {a : Ty} (x : Denot E W a) (i : W) :
+theorem down_up {E W D : Type} {a : Ty} (x : Denot E W a D) (i : W) :
     down (up x) i = x := rfl
 
 -- ════════════════════════════════════════════════════════════════

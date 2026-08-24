@@ -453,7 +453,7 @@ application. -/
 
 /-- Alternatives do not distribute through predicate abstraction —
     the honest `none`. -/
-instance (E W : Type) : PredAbs AltMeaning E W := ⟨none⟩
+instance (E W D : Type) : PredAbs AltMeaning E W D := ⟨none⟩
 
 /-- The focus lexicon at `M = AltMeaning`: every entry `pure`-lifts
     except focused *[Mary]F*, whose entry carries the subject

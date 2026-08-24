@@ -237,16 +237,16 @@ With these in scope, [partee-rooth-1983]'s `genConj`/`genDisj` are `⊓`/`⊔` a
 *every* conjoinable type (not just the `t` base case proved above), so the bespoke
 recursion is provably the pointwise lattice operation. -/
 
-instance instBooleanAlgebraDenotT : BooleanAlgebra (Denot E W .t) :=
+instance instBooleanAlgebraDenotT {D : Type} : BooleanAlgebra (Denot E W .t D) :=
   inferInstanceAs (BooleanAlgebra Prop)
 
-instance instBooleanAlgebraDenotFn (a b : Ty) [BooleanAlgebra (Denot E W b)] :
-    BooleanAlgebra (Denot E W (a ⇒ b)) :=
-  inferInstanceAs (BooleanAlgebra (Denot E W a → Denot E W b))
+instance instBooleanAlgebraDenotFn {D : Type} (a b : Ty) [BooleanAlgebra (Denot E W b D)] :
+    BooleanAlgebra (Denot E W (a ⇒ b) D) :=
+  inferInstanceAs (BooleanAlgebra (Denot E W a D → Denot E W b D))
 
-instance instBooleanAlgebraDenotIntens (a : Ty) [BooleanAlgebra (Denot E W a)] :
-    BooleanAlgebra (Denot E W (.intens a)) :=
-  inferInstanceAs (BooleanAlgebra (W → Denot E W a))
+instance instBooleanAlgebraDenotIntens {D : Type} (a : Ty) [BooleanAlgebra (Denot E W a D)] :
+    BooleanAlgebra (Denot E W (.intens a) D) :=
+  inferInstanceAs (BooleanAlgebra (W → Denot E W a D))
 
 open Conjunction in
 /-- Generalized conjunction is `⊓` at `⟨e,t⟩` — the inductive step, where the
