@@ -84,21 +84,21 @@ open Syntax.Case
     the assignment fixed by θ-position rather than by Agree or by NP
     configuration. -/
 theorem voice_assigns_case_by_position :
-    Mayan.ergCaseMam .A = .erg ∧
-    Mayan.ergCaseMam .P = .acc ∧
-    Mayan.ergCaseMam .S = .abs := ⟨rfl, rfl, rfl⟩
+    (Mayan.caseMam .Perf) .A = .erg ∧
+    (Mayan.caseMam .Perf) .P = .acc ∧
+    (Mayan.caseMam .Perf) .S = .abs := ⟨rfl, rfl, rfl⟩
 
 /-- The three argument positions receive three distinct cases — a
     tripartite underlying system (ERG ≠ ACC ≠ ABS) at the case-assignment
     layer, prior to any morphological syncretism. Inherits from
     `Alignment.tripartite_distinguishes_all` via the substrate connection. -/
 theorem voice_based_tripartite :
-    Mayan.ergCaseMam .A ≠
-      Mayan.ergCaseMam .P ∧
-    Mayan.ergCaseMam .A ≠
-      Mayan.ergCaseMam .S ∧
-    Mayan.ergCaseMam .P ≠
-      Mayan.ergCaseMam .S :=
+    (Mayan.caseMam .Perf) .A ≠
+      (Mayan.caseMam .Perf) .P ∧
+    (Mayan.caseMam .Perf) .A ≠
+      (Mayan.caseMam .Perf) .S ∧
+    (Mayan.caseMam .Perf) .P ≠
+      (Mayan.caseMam .Perf) .S :=
   Alignment.tripartite_distinguishes_all
 
 -- ============================================================================
@@ -438,12 +438,12 @@ theorem all_positions_match (pos : ArgumentRole) :
 theorem agreement_is_tripartite :
     -- Agreed-with positions: A (ERG, by Voice) and S (ABS, by Infl)
     IsPhiAgreed .A ∧
-    Mayan.ergCaseMam .A = .erg ∧
+    (Mayan.caseMam .Perf) .A = .erg ∧
     IsPhiAgreed .S ∧
-    Mayan.ergCaseMam .S = .abs ∧
+    (Mayan.caseMam .Perf) .S = .abs ∧
     -- Not agreed-with: P (ACC, from Voice but no φ-Agree)
     ¬ IsPhiAgreed .P ∧
-    Mayan.ergCaseMam .P = .acc :=
+    (Mayan.caseMam .Perf) .P = .acc :=
   ⟨trivial, rfl, trivial, rfl, by decide, rfl⟩
 
 /-- Agreement probes are on different heads: Voice for Set A, Infl for

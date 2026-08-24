@@ -24,8 +24,8 @@ burying me', [hofling-2017] Table 24.15): Yucatec is LOW-ABS.
 * `Yukatek.setAExponent`, `Yukatek.setBExponent`: the Set A and Set B
   exponent tables ([hofling-2017] Tables 24.8, 24.12).
 * `Yukatek.absPosition`: LOW-ABS morpheme placement.
-* Case assignment over `ArgumentRole` via `Mayan.ergCaseYukatek`
-  (completive, ergative) and `Mayan.accCaseYukatek` (incompletive,
+* Case assignment over `ArgumentRole` via `(Mayan.caseYukatek .Perf)`
+  (completive, ergative) and `(Mayan.caseYukatek .Imp)` (incompletive,
   extended-ergative).
 
 ## Implementation notes

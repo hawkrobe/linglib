@@ -673,8 +673,8 @@ theorem kaqArg_role_mapping :
 /-- Ergative-absolutive alignment: A is distinguished (ERG) while P and S
     pattern together (ABS). This parallels Just's A/P split. -/
 theorem erg_abs_matches_AP :
-    Mayan.ergCaseKaqchikel .A ≠ Mayan.ergCaseKaqchikel .P ∧
-    Mayan.ergCaseKaqchikel .P = Mayan.ergCaseKaqchikel .S :=
+    (Mayan.caseKaqchikel .Perf) .A ≠ (Mayan.caseKaqchikel .Perf) .P ∧
+    (Mayan.caseKaqchikel .Perf) .P = (Mayan.caseKaqchikel .Perf) .S :=
   Kaqchikel.erg_abs_alignment
 
 -- ============================================================================

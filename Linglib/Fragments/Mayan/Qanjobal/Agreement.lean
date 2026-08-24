@@ -22,8 +22,8 @@ England 1992:21, Kaufman 1974) — alongside the Cholan-Tzeltalan branch
   markers by following-segment environment (pre-consonantal vs
   pre-vocalic variant shapes) and the Set B absolutive suffixes
   ([coon-mateo-pedro-preminger-2014] table (13)).
-* Case assignment over `ArgumentRole` via `Mayan.ergCaseQanjobalan`
-  (canonical ergative) and `Mayan.accCaseQanjobalan` (split,
+* Case assignment over `ArgumentRole` via `(Mayan.caseQanjobalan .Perf)`
+  (canonical ergative) and `(Mayan.caseQanjobalan .Prog)` (split,
   extended-ergative), shared with Chol.
 * `Qanjobal.absPosition`: HIGH-ABS morpheme placement.
 

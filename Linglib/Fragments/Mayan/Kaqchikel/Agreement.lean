@@ -24,8 +24,8 @@ collapse to a single marker drawn from the Set B paradigm.
 * `Kaqchikel.setAExponent`, `Kaqchikel.setBExponent`: the Set A (ERG)
   and Set B (ABS) exponent tables ([preminger-2014] table (29)).
 * `Kaqchikel.absPosition`: HIGH-ABS morpheme placement.
-* Case assignment over `ArgumentRole` via `Mayan.ergCaseKaqchikel` and
-  `Mayan.accCaseKaqchikel`; `IsPhiAgreed` records the (non-differential)
+* Case assignment over `ArgumentRole` via `(Mayan.caseKaqchikel .Perf)` and
+  `(Mayan.caseKaqchikel .Prog)`; `IsPhiAgreed` records the (non-differential)
   φ-agreement status of each position.
 * `Kaqchikel.caseInventory`: the {ERG, ABS} case inventory, validated
   against [blake-1994]'s hierarchy.
@@ -40,10 +40,10 @@ is blocked in transitives and the patient goes unagreed ([scott-2023];
 see `Mam/Agreement.lean`) — the non-differential/differential pair
 consumed by `Studies/Just2024.lean`. The AF agreement table
 ([preminger-2014] §3.2, table (22)) and the choice rule that predicts
-it live in `Studies/Preminger2014.lean`. The non-perfective `accCase`
-records [imanishi-2014]'s analysis of the progressive *ajin*
-construction — an analysis, not consensus typology; the derivation
-lives with `Mayan.accCaseKaqchikel` in `Fragments/Mayan/Params.lean`.
+it live in `Studies/Preminger2014.lean`. The non-perfective case pattern
+(`Mayan.caseKaqchikel .Prog`) records [imanishi-2014]'s analysis of the
+progressive *ajin* construction — an analysis, not consensus typology;
+the derivation lives in `Fragments/Mayan/Params.lean`.
 Parenthesized exponent segments drop in certain phonological contexts.
 Person-number cells come from the canonical `Agreement.Cell`
 (`Syntax/Agreement/Paradigm.lean`).
@@ -106,19 +106,19 @@ family-level statement is
 `CoonMateoPedroPreminger2014.mayan_perfective_ergative`. -/
 
 /-- Agent gets ERG (from Voice). -/
-theorem A_case : Mayan.ergCaseKaqchikel .A = .erg := Alignment.ergative.assignCase_A
+theorem A_case : (Mayan.caseKaqchikel .Perf) .A = .erg := Alignment.ergative.assignCase_A
 
 /-- Patient gets ABS (from Infl). -/
-theorem P_case : Mayan.ergCaseKaqchikel .P = .abs := Alignment.ergative.assignCase_P
+theorem P_case : (Mayan.caseKaqchikel .Perf) .P = .abs := Alignment.ergative.assignCase_P
 
 /-- Intransitive S gets ABS (from Infl). -/
-theorem S_case : Mayan.ergCaseKaqchikel .S = .abs := Alignment.ergative.assignCase_S
+theorem S_case : (Mayan.caseKaqchikel .Perf) .S = .abs := Alignment.ergative.assignCase_S
 
 /-- Ergative-absolutive alignment: the agent is distinguished (ERG)
     while patient and intranS share a case value (ABS). -/
 theorem erg_abs_alignment :
-    Mayan.ergCaseKaqchikel .A ≠ Mayan.ergCaseKaqchikel .P ∧
-    Mayan.ergCaseKaqchikel .P = Mayan.ergCaseKaqchikel .S :=
+    (Mayan.caseKaqchikel .Perf) .A ≠ (Mayan.caseKaqchikel .Perf) .P ∧
+    (Mayan.caseKaqchikel .Perf) .P = (Mayan.caseKaqchikel .Perf) .S :=
   Alignment.ergative_distinguishes_A
 
 /-- All core argument positions trigger φ-agreement. -/
@@ -129,12 +129,12 @@ theorem all_positions_agreed (p : ArgumentRole) (_ : p ∈ ArgumentRole.core) :
 /-! ### Case inventory ([blake-1994]) -/
 
 /-- The case inventory realized by the core positions: {ERG, ABS}. -/
-def caseInventory : Finset Case := (ArgumentRole.core.map Mayan.ergCaseKaqchikel).toFinset
+def caseInventory : Finset Case := (ArgumentRole.core.map (Mayan.caseKaqchikel .Perf)).toFinset
 
 /-- The inventory covers all argument positions: every position's case
     is in the inventory. -/
 theorem inventory_covers_positions :
-    ∀ p ∈ ArgumentRole.core, Mayan.ergCaseKaqchikel p ∈ caseInventory := by decide
+    ∀ p ∈ ArgumentRole.core, (Mayan.caseKaqchikel .Perf) p ∈ caseInventory := by decide
 
 -- Kaqchikel's {ERG, ABS} inventory is valid per Blake's case hierarchy
 -- (both are core cases at the top `hierarchyRank`, trivially no gaps).

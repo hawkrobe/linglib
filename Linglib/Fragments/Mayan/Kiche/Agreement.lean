@@ -28,7 +28,7 @@ inverted alignment.
 * `Kiche.setBMarker`, `Kiche.setAPreC`, `Kiche.setAPreV`: the Set B
   (absolutive) and Set A (ergative, pre-consonantal / pre-vocalic)
   exponents.
-* `Kiche.agreementSet`, `Kiche.Mayan.ergCaseKiche`: the
+* `Kiche.agreementSet`, `Kiche.(Mayan.caseKiche .Perf)`: the
   agreement set and case each argument position triggers.
 * `Kiche.independentPronoun`: the free personal pronouns.
 * `Kiche.setAExponent`, `Kiche.setBExponent`: canonical φ-cell exponent
@@ -42,7 +42,7 @@ which is morphologically tripartite (S, A, P each distinct;
 [scott-2023]). K'iche' has two 2nd-person formality levels; the formal
 forms (laal SG, alaq PL) are syntactically postverbal and pattern
 outside the prefix paradigm. K'iche' is HIGH-ABS (Set B pre-stem on
-Infl), and its case wiring reuses `Mayan.ergCaseKiche` (from
+Infl), and its case wiring reuses `(Mayan.caseKiche .Perf)` (from
 `Alignment.ergative`); the canonical φ-cell exponent tables key on
 `Agreement.Cell` for cross-Mayan consumption. Extraction marking (AF
 and *wi*) lives in `Kiche/Extraction.lean`.
@@ -189,8 +189,8 @@ theorem ergative_absolutive_alignment :
 /-- A receives ERG while P and S share a case (ABS) — the ergative
     partition, re-exported from `Alignment.ergative_distinguishes_A`. -/
 theorem erg_abs_pattern :
-    Mayan.ergCaseKiche .A ≠ Mayan.ergCaseKiche .P ∧
-    Mayan.ergCaseKiche .P = Mayan.ergCaseKiche .S :=
+    (Mayan.caseKiche .Perf) .A ≠ (Mayan.caseKiche .Perf) .P ∧
+    (Mayan.caseKiche .Perf) .P = (Mayan.caseKiche .Perf) .S :=
   Alignment.ergative_distinguishes_A
 
 /-- K'iche' alignment contrast with Mam: K'iche' is ergative-absolutive
@@ -198,7 +198,7 @@ theorem erg_abs_pattern :
     receive distinct cases). In K'iche', both P and S trigger Set B;
     in Mam, P triggers no agreement at all. -/
 theorem kiche_not_tripartite :
-    Mayan.ergCaseKiche .S = Mayan.ergCaseKiche .P := rfl
+    (Mayan.caseKiche .Perf) .S = (Mayan.caseKiche .Perf) .P := rfl
 
 /-! ### Set B per-cell verification -/
 
