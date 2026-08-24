@@ -219,7 +219,7 @@ instance : DecidableRel PersonRestrictionOk := fun subj obj =>
     arguments cannot both be licensed and the derivation crashes. -/
 theorem personRestrictionOk_iff_plc (s o : Agreement.Cell) :
     PersonRestrictionOk s o ↔
-      PLC Prod.snd ([(.A, s), (.P, o)] : List (ArgPosition × Agreement.Cell)) := by
+      PLC Prod.snd ([(.A, s), (.P, o)] : List (ArgumentRole × Agreement.Cell)) := by
   unfold PersonRestrictionOk PLC
   rw [Probe.allLicensed_iff]
   constructor
@@ -245,7 +245,7 @@ theorem ch4_relativization_contrast :
     ¬ BejarRezac2003.PLCOk [[⟨.third, true⟩, ⟨.first, false⟩]]
         [⟨.third, true⟩, ⟨.first, false⟩] ∧
     PLC Prod.snd ([(.A, .pn .third .Sing), (.P, .pn .first .Sing)] :
-        List (ArgPosition × Agreement.Cell)) := by
+        List (ArgumentRole × Agreement.Cell)) := by
   decide
 
 /-- π⁰: the person probe — the denotation of the substrate's
@@ -275,7 +275,7 @@ def afAgreementTarget (subj obj : Agreement.Cell) : Option Agreement.Cell :=
     fails on the clause's goal tokens (equivalently, when the surface
     person restriction is violated: `personRestrictionOk_iff_plc`). -/
 def afMarker (subj obj : Agreement.Cell) : Option String :=
-  if PLC Prod.snd ([(.A, subj), (.P, obj)] : List (ArgPosition × Agreement.Cell)) then
+  if PLC Prod.snd ([(.A, subj), (.P, obj)] : List (ArgumentRole × Agreement.Cell)) then
     ((afAgreementTarget subj obj).bind
       (fun t => (setBExponent.realize t).map toString)) <|>
       spellout setBVocab ⊥
@@ -496,7 +496,7 @@ theorem ch7_arg4_form_distinctness :
 theorem ch7_arg5_zulu_parallel :
     -- Kichean: π⁰ skips a 3SG subject and licenses a 1SG object
     PLC Prod.snd ([(.A, .pn .third .Sing), (.P, .pn .first .Sing)] :
-      List (ArgPosition × Agreement.Cell)) ∧
+      List (ArgumentRole × Agreement.Cell)) ∧
     -- Zulu: an augmented subject intervenes; the augmentless object
     -- is unlicensed
     ¬ Halpert2012.LicensingOk [⟨1, true⟩, ⟨5, false⟩] ∧

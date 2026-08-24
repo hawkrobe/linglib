@@ -84,21 +84,21 @@ open Syntax.Case
     the assignment fixed by θ-position rather than by Agree or by NP
     configuration. -/
 theorem voice_assigns_case_by_position :
-    Mam.ArgPosition.case .A = .erg ∧
-    Mam.ArgPosition.case .P = .acc ∧
-    Mam.ArgPosition.case .S = .abs := ⟨rfl, rfl, rfl⟩
+    Mayan.ergCaseMam .A = .erg ∧
+    Mayan.ergCaseMam .P = .acc ∧
+    Mayan.ergCaseMam .S = .abs := ⟨rfl, rfl, rfl⟩
 
 /-- The three argument positions receive three distinct cases — a
     tripartite underlying system (ERG ≠ ACC ≠ ABS) at the case-assignment
     layer, prior to any morphological syncretism. Inherits from
     `Alignment.tripartite_distinguishes_all` via the substrate connection. -/
 theorem voice_based_tripartite :
-    Mam.ArgPosition.case .A ≠
-      Mam.ArgPosition.case .P ∧
-    Mam.ArgPosition.case .A ≠
-      Mam.ArgPosition.case .S ∧
-    Mam.ArgPosition.case .P ≠
-      Mam.ArgPosition.case .S :=
+    Mayan.ergCaseMam .A ≠
+      Mayan.ergCaseMam .P ∧
+    Mayan.ergCaseMam .A ≠
+      Mayan.ergCaseMam .S ∧
+    Mayan.ergCaseMam .P ≠
+      Mayan.ergCaseMam .S :=
   Alignment.tripartite_distinguishes_all
 
 -- ============================================================================
@@ -199,7 +199,7 @@ def setBVocab : List (VocabularyItem GramFeature String) :=
 
 /-- Which Minimalist head φ-Agrees with each argument position.
     Ditransitive R/T default to none (not modeled). -/
-def agreeProbe : ArgPosition → Option Cat
+def agreeProbe : ArgumentRole → Option Cat
   | .A => some .v   -- Voice probes, A in Spec,VoiceP
   | .P => none      -- Infl probe blocked by Voice_TR
   | .S => some .T   -- Infl probes, S in its domain
@@ -409,7 +409,7 @@ theorem full_pipeline_3sg_transitive :
     -- Step 3-4: Infl probe blocked → default Set B
     spellout setBVocab (⊥ : FeatureBundle) = some "tz'=" ∧
     -- Step 5: patient is not eligible for reduction → overt pronoun
-    ¬ ArgPosition.CanBeReduced .P := by
+    ¬ CanBeReduced .P := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · decide
   · decide
@@ -418,8 +418,8 @@ theorem full_pipeline_3sg_transitive :
 
 /-- The pipeline generalizes: for every argument position, reduction
     eligibility ≡ φ-agreement (definitionally — `CanBeReduced := IsPhiAgreed`). -/
-theorem all_positions_match (pos : ArgPosition) :
-    pos.CanBeReduced ↔ pos.IsPhiAgreed :=
+theorem all_positions_match (pos : ArgumentRole) :
+    CanBeReduced pos ↔ IsPhiAgreed pos :=
   Iff.rfl
 
 -- ============================================================================
@@ -437,13 +437,13 @@ theorem all_positions_match (pos : ArgPosition) :
     assigned by different heads (Voice for ERG/ACC, Infl for ABS). -/
 theorem agreement_is_tripartite :
     -- Agreed-with positions: A (ERG, by Voice) and S (ABS, by Infl)
-    ArgPosition.IsPhiAgreed .A ∧
-    ArgPosition.case .A = .erg ∧
-    ArgPosition.IsPhiAgreed .S ∧
-    ArgPosition.case .S = .abs ∧
+    IsPhiAgreed .A ∧
+    Mayan.ergCaseMam .A = .erg ∧
+    IsPhiAgreed .S ∧
+    Mayan.ergCaseMam .S = .abs ∧
     -- Not agreed-with: P (ACC, from Voice but no φ-Agree)
-    ¬ ArgPosition.IsPhiAgreed .P ∧
-    ArgPosition.case .P = .acc :=
+    ¬ IsPhiAgreed .P ∧
+    Mayan.ergCaseMam .P = .acc :=
   ⟨trivial, rfl, trivial, rfl, by decide, rfl⟩
 
 /-- Agreement probes are on different heads: Voice for Set A, Infl for
@@ -496,7 +496,7 @@ theorem intransitive_is_real_agreement :
 theorem satisfaction_derives_patient_no_agree :
     mamInflSatisfaction.isSatisfied ⊥ (some .v) = true ∧
     mamInflSatisfaction.copiedFeatures ⊥ (some .v) = false ∧
-    ¬ ArgPosition.IsPhiAgreed .P :=
+    ¬ IsPhiAgreed .P :=
   ⟨by decide, by decide, by decide⟩
 
 /-- In an intransitive clause, `mamInflSatisfaction` is satisfied by
@@ -506,7 +506,7 @@ theorem satisfaction_derives_intranS_agree :
       [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
     mamInflSatisfaction.isSatisfied dp1sg none = true ∧
     mamInflSatisfaction.copiedFeatures dp1sg none = true ∧
-    ArgPosition.IsPhiAgreed .S :=
+    IsPhiAgreed .S :=
   ⟨by decide, by decide, trivial⟩
 
 /-- The satisfaction condition's `copiedFeatures` Bool aligns with
@@ -515,12 +515,12 @@ theorem satisfaction_derives_intranS_agree :
     - intranS (intransitive): copiedFeatures = true ↔ IsPhiAgreed .S -/
 theorem satisfaction_matches_fragment :
     (mamInflSatisfaction.copiedFeatures ⊥ (some .v) = true ↔
-      ArgPosition.IsPhiAgreed .P) ∧
+      IsPhiAgreed .P) ∧
     (mamInflSatisfaction.copiedFeatures
       (.ofGramFeatures
         [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
       none = true ↔
-      ArgPosition.IsPhiAgreed .S) := by
+      IsPhiAgreed .S) := by
   refine ⟨?_, ?_⟩
   · constructor <;> intro h <;> first | (decide) | trivial
   · exact ⟨fun _ => trivial, fun _ => by decide⟩
@@ -546,7 +546,7 @@ linearizations per clause type, not computed from a `SyntacticObject`
     DP goals). The `(FeatureBundle, Option Cat)` pair is exactly the
     argument signature of `SatisfactionCond.isSatisfied`. -/
 structure Encounter where
-  pos : Option ArgPosition
+  pos : Option ArgumentRole
   feats : FeatureBundle
   cat : Option Cat
 
@@ -562,7 +562,7 @@ def satProbe (cond : SatisfactionCond) : Probe Encounter :=
     — the probe agrees with the found element only if satisfaction
     copied features (feature match, not head encounter). -/
 def agreesWith (cond : SatisfactionCond) (goals : List Encounter) :
-    Option ArgPosition :=
+    Option ArgumentRole :=
   ((satProbe cond).agree goals).bind (·.pos)
 
 /-- Transitive Voice as an encounter: a head of category `.v`, no
@@ -570,7 +570,7 @@ def agreesWith (cond : SatisfactionCond) (goals : List Encounter) :
 def voiceTR : Encounter := ⟨none, ⊥, some .v⟩
 
 /-- A DP goal realizing position `p` with φ-bundle `φ`. -/
-def dpGoal (p : ArgPosition) (φ : FeatureBundle) : Encounter := ⟨some p, φ, none⟩
+def dpGoal (p : ArgumentRole) (φ : FeatureBundle) : Encounter := ⟨some p, φ, none⟩
 
 /-- Voice's probe: standard φ feature-match (no head-encounter disjunct). -/
 def voiceSat : SatisfactionCond := .featureMatch .person
@@ -581,7 +581,7 @@ theorem agreesWith_nil (cond : SatisfactionCond) :
 
 /-- Voice's goal sequence in the clause containing position `p`:
     Voice probes only in transitives; the agent is closest. -/
-def voiceGoals (φA φP : FeatureBundle) : ArgPosition → List Encounter
+def voiceGoals (φA φP : FeatureBundle) : ArgumentRole → List Encounter
   | .A | .P => [dpGoal .A φA, dpGoal .P φP]
   | _ => []
 
@@ -590,7 +590,7 @@ def voiceGoals (φA φP : FeatureBundle) : ArgPosition → List Encounter
     downward search encounters is the Voice_TR head, before either DP.
     In an intransitive there is no transitive Voice; the search reaches
     S directly. -/
-def inflGoals (φA φP φS : FeatureBundle) : ArgPosition → List Encounter
+def inflGoals (φA φP φS : FeatureBundle) : ArgumentRole → List Encounter
   | .A | .P => [voiceTR, dpGoal .A φA, dpGoal .P φP]
   | .S => [dpGoal .S φS]
   | .R | .T => []
@@ -624,7 +624,7 @@ theorem voice_finds_A (φA φP : FeatureBundle)
 /-- DERIVED probe table: which head φ-agrees with position `p`,
     computed by running each probe's `Probe.search` over the goal
     sequence of the clause containing `p`. -/
-def derivedAgreeProbe (φA φP φS : FeatureBundle) (p : ArgPosition) :
+def derivedAgreeProbe (φA φP φS : FeatureBundle) (p : ArgumentRole) :
     Option Cat :=
   if agreesWith voiceSat (voiceGoals φA φP p) = some p then some .v
   else if agreesWith mamInflSatisfaction (inflGoals φA φP φS p) = some p

@@ -631,16 +631,16 @@ theorem personLevel_rank_matches_probe_rank :
 
 /-- Kaqchikel indexes all three argument positions (agent, patient, intranS).
     This makes it non-differential: no prominence condition gates indexing. -/
-theorem kaqchikel_indexes_all (p : ArgPosition)
+theorem kaqchikel_indexes_all (p : ArgumentRole)
     (h : p ∈ ArgumentRole.core) :
-    ArgPosition.IsPhiAgreed p :=
+    IsPhiAgreed p :=
   Kaqchikel.all_positions_agreed p h
 
 /-- Both A (agent) and P (patient) are indexed in Kaqchikel:
     agent via Set A on Voice/v, patient via Set B on Infl/T. -/
 theorem kaqchikel_A_and_P_indexed :
-    ArgPosition.IsPhiAgreed .A ∧
-    ArgPosition.IsPhiAgreed .P := ⟨trivial, trivial⟩
+    IsPhiAgreed .A ∧
+    IsPhiAgreed .P := ⟨trivial, trivial⟩
 
 /-- The A marker paradigm (Set A) and P marker paradigm (Set B) are
     distinct: every person-number combination gets a unique marker in
@@ -656,11 +656,10 @@ theorem kaqchikel_dual_paradigms :
 -- § 19: Kaqchikel Argument Roles ↔ Just's ArgumentRole
 -- ============================================================================
 
-/-- Map Kaqchikel argument positions to Just's A/P roles. The
-    absolutive collapse: S patterns with P, A stays distinct;
-    ditransitive R/T default to P (consistent with absolutive
+/-- The absolutive collapse on coding roles: S patterns with P, A stays
+    distinct; ditransitive R/T default to P (consistent with absolutive
     grouping). -/
-def kaqArgToRole : ArgPosition → ArgumentRole
+def kaqArgToRole : ArgumentRole → ArgumentRole
   | .A => .A
   | .S | .P | .R | .T => .P  -- S patterns with P (absolutive alignment)
 
@@ -674,8 +673,8 @@ theorem kaqArg_role_mapping :
 /-- Ergative-absolutive alignment: A is distinguished (ERG) while P and S
     pattern together (ABS). This parallels Just's A/P split. -/
 theorem erg_abs_matches_AP :
-    ArgPosition.case .A ≠ ArgPosition.case .P ∧
-    ArgPosition.case .P = ArgPosition.case .S :=
+    Mayan.ergCaseKaqchikel .A ≠ Mayan.ergCaseKaqchikel .P ∧
+    Mayan.ergCaseKaqchikel .P = Mayan.ergCaseKaqchikel .S :=
   Kaqchikel.erg_abs_alignment
 
 -- ============================================================================

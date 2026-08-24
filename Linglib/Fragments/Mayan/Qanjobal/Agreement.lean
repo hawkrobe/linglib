@@ -22,10 +22,9 @@ England 1992:21, Kaufman 1974) — alongside the Cholan-Tzeltalan branch
   markers by following-segment environment (pre-consonantal vs
   pre-vocalic variant shapes) and the Set B absolutive suffixes
   ([coon-mateo-pedro-preminger-2014] table (13)).
-* `Qanjobal.ArgPosition` with `.case`, `.accCase`: argument positions
-  and their canonical-ergative and split (extended-ergative) case,
-  shared with Chol via `Mayan.ergCaseQanjobalan` /
-  `Mayan.accCaseQanjobalan`.
+* Case assignment over `ArgumentRole` via `Mayan.ergCaseQanjobalan`
+  (canonical ergative) and `Mayan.accCaseQanjobalan` (split,
+  extended-ergative), shared with Chol.
 * `Qanjobal.absPosition`: HIGH-ABS morpheme placement.
 
 ## Implementation notes
@@ -61,21 +60,6 @@ namespace Qanjobal
 open Mayan (ExponentTable)
 
 /-! ### Argument positions -/
-
-/-- Argument positions, aliased to the canonical
-    `ArgumentRole` (S/A/P/R/T). -/
-abbrev ArgPosition := ArgumentRole
-
-/-- Canonical ergative case assignment (clauses with an overt preverbal
-    aspect marker), shared with Chol via `Mayan.ergCaseQanjobalan`
-    (= `Alignment.ergative.assignCase`). -/
-abbrev ArgPosition.case : ArgPosition → Case := Mayan.ergCaseQanjobalan
-
-/-- Split (extended-ergative) case assignment in aspectless contexts,
-    via the `.Prog` projection `Mayan.accCaseQanjobalan`
-    (= `Alignment.extendedErgative.assignCase`) — making the
-    accusative-side parallel with Chol true by construction. -/
-abbrev ArgPosition.accCase : ArgPosition → Case := Mayan.accCaseQanjobalan
 
 /-! ### Absolutive position (HIGH-ABS) -/
 

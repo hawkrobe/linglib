@@ -322,21 +322,21 @@ theorem chol_no_syntactic_ergativity :
 /-- Q'anjob'al's ergative alignment matches the standard pattern:
     transitive agent = ERG, transitive object = ABS. -/
 theorem qanjobal_erg_alignment :
-    Qanjobal.ArgPosition.case .A = .erg ∧
-    Qanjobal.ArgPosition.case .P = .abs := ⟨rfl, rfl⟩
+    Mayan.ergCaseQanjobalan .A = .erg ∧
+    Mayan.ergCaseQanjobalan .P = .abs := ⟨rfl, rfl⟩
 
 /-- Chol's ergative alignment matches the same standard pattern. -/
 theorem chol_erg_alignment :
-    Chol.ArgPosition.case .A = .erg ∧
-    Chol.ArgPosition.case .P = .abs := ⟨rfl, rfl⟩
+    Mayan.ergCaseChol .A = .erg ∧
+    Mayan.ergCaseChol .P = .abs := ⟨rfl, rfl⟩
 
 /-- Despite sharing ergative morphology, Q'anjob'al and Chol differ in
     whether agent extraction is banned. The difference traces to their
     distinct case loci, not to properties of the ergative NP. -/
 theorem shared_morphology_different_syntax :
     -- Same ergative case on agent
-    Qanjobal.ArgPosition.case .A =
-      Chol.ArgPosition.case .A ∧
+    Mayan.ergCaseQanjobalan .A =
+      Mayan.ergCaseChol .A ∧
     -- But different syntactic ergativity predictions
     hasSyntacticErgativity .absNom ≠ hasSyntacticErgativity .absDef :=
   ⟨rfl, by decide⟩

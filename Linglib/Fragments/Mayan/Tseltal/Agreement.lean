@@ -14,8 +14,8 @@ syntactic properties relevant to possessor extraction ([aissen-polian-2025];
 
 ## Main declarations
 
-* `Tseltal.ArgPosition` with `.case`, `.accCase`: argument positions and
-  their case (ergative-absolutive, no aspect split).
+* Case assignment over `ArgumentRole` via `Mayan.caseTseltalan`
+  (ergative-absolutive, no aspect split).
 * `Tseltal.setALinearity`, `Tseltal.setBLinearity`: prefixal Set A,
   consistently suffixal Set B.
 * `Tseltal.setAExponent`, `Tseltal.setBExponent`: Oxchuc Tseltal exponent
@@ -49,22 +49,6 @@ open Agreement
 export Mayan.Tseltalan (GramFunction)
 
 /-! ### Argument positions -/
-
-/-- Argument positions in a Tseltal clause, aliased to the canonical
-    `ArgumentRole` (S/A/P/R/T). -/
-abbrev ArgPosition := ArgumentRole
-
-/-- Case assignment for Tseltal: `Mayan.caseTseltalan .Perf`
-    (A → ERG, S/P → ABS). No aspect-conditioned split, so a single function
-    covers perfective and non-perfective. -/
-abbrev ArgPosition.case : ArgPosition → Case :=
-  Mayan.caseTseltalan .Perf
-
-/-- Non-perfective case assignment for Tseltal: identical to perfective
-    (no aspect split, [polian-2013]); provided for cross-Mayan
-    shape-uniformity. -/
-abbrev ArgPosition.accCase : ArgPosition → Case :=
-  Mayan.caseTseltalan .Imp
 
 /-! ### Absolutive position (LOW-ABS) -/
 

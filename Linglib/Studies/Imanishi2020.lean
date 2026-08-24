@@ -239,29 +239,29 @@ theorem anticausative_ron_compatible :
     fragment: A = ERG, S = P = ABS. Confirms the ergative side is
     shared across all three languages. -/
 theorem kaqchikel_perfective_bridge :
-    Kaqchikel.ArgPosition.case .A = .erg ∧
-    Kaqchikel.ArgPosition.case .P = .abs ∧
-    Kaqchikel.ArgPosition.case .S = .abs :=
+    Mayan.ergCaseKaqchikel .A = .erg ∧
+    Mayan.ergCaseKaqchikel .P = .abs ∧
+    Mayan.ergCaseKaqchikel .S = .abs :=
   ⟨Kaqchikel.A_case, Kaqchikel.P_case, Kaqchikel.S_case⟩
 
 /-- Chol's perfective alignment matches the same ergative pattern. -/
 theorem chol_perfective_bridge :
-    Chol.ArgPosition.case .A = .erg ∧
-    Chol.ArgPosition.case .P = .abs ∧
-    Chol.ArgPosition.case .S = .abs := ⟨rfl, rfl, rfl⟩
+    Mayan.ergCaseChol .A = .erg ∧
+    Mayan.ergCaseChol .P = .abs ∧
+    Mayan.ergCaseChol .S = .abs := ⟨rfl, rfl, rfl⟩
 
 /-- Q'anjob'al's perfective alignment matches the same ergative pattern. -/
 theorem qanjobal_perfective_bridge :
-    Qanjobal.ArgPosition.case .A = .erg ∧
-    Qanjobal.ArgPosition.case .P = .abs ∧
-    Qanjobal.ArgPosition.case .S = .abs := ⟨rfl, rfl, rfl⟩
+    Mayan.ergCaseQanjobalan .A = .erg ∧
+    Mayan.ergCaseQanjobalan .P = .abs ∧
+    Mayan.ergCaseQanjobalan .S = .abs := ⟨rfl, rfl, rfl⟩
 
 /-- All three languages share ergative alignment in the perfective. -/
 theorem shared_ergative :
-    Kaqchikel.ArgPosition.case .A =
-      Chol.ArgPosition.case .A ∧
-    Chol.ArgPosition.case .A =
-      Qanjobal.ArgPosition.case .A := ⟨rfl, rfl⟩
+    Mayan.ergCaseKaqchikel .A =
+      Mayan.ergCaseChol .A ∧
+    Mayan.ergCaseChol .A =
+      Mayan.ergCaseQanjobalan .A := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 9: Case-to-Marker Bridge
@@ -284,49 +284,49 @@ theorem erg_gen_homophonous :
 /-- Chol's fragment case values, mapped through the Mayan marker bridge,
     yield the predicted accusative-side pattern. -/
 theorem chol_case_to_marker_bridge :
-    caseToMarker (Chol.ArgPosition.accCase .A) = cholPattern.sMarker ∧
-    caseToMarker (Chol.ArgPosition.accCase .P) = cholPattern.oMarker :=
+    caseToMarker (Mayan.accCaseChol .A) = cholPattern.sMarker ∧
+    caseToMarker (Mayan.accCaseChol .P) = cholPattern.oMarker :=
   ⟨rfl, rfl⟩
 
 /-- Q'anjob'al's fragment case values yield the same pattern as Chol. -/
 theorem qanjobal_case_to_marker_bridge :
-    caseToMarker (Qanjobal.ArgPosition.accCase .A) = cholPattern.sMarker ∧
-    caseToMarker (Qanjobal.ArgPosition.accCase .P) = cholPattern.oMarker :=
+    caseToMarker (Mayan.accCaseQanjobalan .A) = cholPattern.sMarker ∧
+    caseToMarker (Mayan.accCaseQanjobalan .P) = cholPattern.oMarker :=
   ⟨rfl, rfl⟩
 
 /-- Kaqchikel's fragment accusative-side case values, mapped through the
     Mayan marker bridge, yield the predicted Kaqchikel alignment pattern. -/
 theorem kaqchikel_case_to_marker_bridge :
-    caseToMarker (Kaqchikel.ArgPosition.accCase .A) = kaqchikelPattern.sMarker ∧
-    caseToMarker (Kaqchikel.ArgPosition.accCase .P) = kaqchikelPattern.oMarker :=
+    caseToMarker (Mayan.accCaseKaqchikel .A) = kaqchikelPattern.sMarker ∧
+    caseToMarker (Mayan.accCaseKaqchikel .P) = kaqchikelPattern.oMarker :=
   ⟨rfl, rfl⟩
 
 /-- The accusative-side case contrast between Kaqchikel and Chol is a
     true mirror image: agent and patient cases are swapped. -/
 theorem acc_case_mirror :
-    Kaqchikel.ArgPosition.accCase .A =
-      Chol.ArgPosition.accCase .P ∧
-    Kaqchikel.ArgPosition.accCase .P =
-      Chol.ArgPosition.accCase .A := ⟨rfl, rfl⟩
+    Mayan.accCaseKaqchikel .A =
+      Mayan.accCaseChol .P ∧
+    Mayan.accCaseKaqchikel .P =
+      Mayan.accCaseChol .A := ⟨rfl, rfl⟩
 
 /-- End-to-end: for all three languages, the fragment case data (mapped
     through the marker bridge) matches the parametrically derived pattern.
     This closes the argumentation chain from parameters → alignment → case → markers. -/
 theorem end_to_end_all_languages :
     -- Kaqchikel: fragment cases match derived pattern
-    (caseToMarker (Kaqchikel.ArgPosition.accCase .A) =
+    (caseToMarker (Mayan.accCaseKaqchikel .A) =
       (deriveAccPattern kaqchikelParams).sMarker ∧
-     caseToMarker (Kaqchikel.ArgPosition.accCase .P) =
+     caseToMarker (Mayan.accCaseKaqchikel .P) =
       (deriveAccPattern kaqchikelParams).oMarker) ∧
     -- Chol: fragment cases match derived pattern
-    (caseToMarker (Chol.ArgPosition.accCase .A) =
+    (caseToMarker (Mayan.accCaseChol .A) =
       (deriveAccPattern cholParams).sMarker ∧
-     caseToMarker (Chol.ArgPosition.accCase .P) =
+     caseToMarker (Mayan.accCaseChol .P) =
       (deriveAccPattern cholParams).oMarker) ∧
     -- Q'anjob'al: fragment cases match derived pattern
-    (caseToMarker (Qanjobal.ArgPosition.accCase .A) =
+    (caseToMarker (Mayan.accCaseQanjobalan .A) =
       (deriveAccPattern qanjobalParams).sMarker ∧
-     caseToMarker (Qanjobal.ArgPosition.accCase .P) =
+     caseToMarker (Mayan.accCaseQanjobalan .P) =
       (deriveAccPattern qanjobalParams).oMarker) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 

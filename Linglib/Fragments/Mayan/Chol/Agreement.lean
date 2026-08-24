@@ -18,8 +18,9 @@ intransitive subjects in non-perfective. The formal-syntactic analyses of
 
 ## Main declarations
 
-* `Chol.ArgPosition` with `.case`, `.accCase`: argument positions and
-  their perfective (ergative) and non-perfective (extended-ergative) case.
+* Case assignment over `ArgumentRole` via `Mayan.ergCaseChol`
+  (perfective, ergative) and `Mayan.accCaseChol` (non-perfective,
+  extended-ergative).
 * `Chol.absPosition`: LOW-ABS morpheme placement.
 * `Chol.setAExponent`, `Chol.setBExponent`: the Set A (ERG/GEN) and Set B
   (ABS) exponent tables ([vazquez-alvarez-2011] Table 10).
@@ -97,8 +98,8 @@ Per [vazquez-alvarez-2011] §1.9.4, Chol exhibits all
 four Dixon alignment types: ergative-absolutive, nominative-accusative, **Split-S**
 (some intransitives obligatorily Sa = Set A on light verb *cha'l*; others
 obligatorily So = Set B), and **Fluid-S** (verbs like *wäy* 'sleep' that
-take either Set A or Set B). The current `ArgPosition.intranS` collapses
-Sa/So/fluid-S into a single intransitive subject category — sufficient
+take either Set A or Set B). The single S cell of `ArgumentRole` collapses
+Sa/So/fluid-S into one intransitive subject category — sufficient
 for the perfective↔non-perfective split formalization but undermodels
 the agentive split. Future refinement: split into `intranSAgentive` /
 `intranSPatientive` / `intranSFluid`.
@@ -111,18 +112,6 @@ namespace Chol
 open Mayan (ExponentTable)
 
 /-! ### Argument positions -/
-
-/-- Argument positions in a Chol clause, aliased to the canonical
-    `ArgumentRole` (S/A/P/R/T). -/
-abbrev ArgPosition := ArgumentRole
-
-/-- Perfective (ergative) case assignment: `Mayan.ergCaseChol`
-    (A → ERG, S/P → ABS). -/
-abbrev ArgPosition.case : ArgPosition → Case := Mayan.ergCaseChol
-
-/-- Non-perfective (extended-ergative) case assignment: `Mayan.accCaseChol`
-    (S/A → GEN, P → ABS), shared with Q'anjob'al. -/
-abbrev ArgPosition.accCase : ArgPosition → Case := Mayan.accCaseChol
 
 /-! ### Absolutive position (LOW-ABS) -/
 

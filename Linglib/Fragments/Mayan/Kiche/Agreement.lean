@@ -28,7 +28,7 @@ inverted alignment.
 * `Kiche.setBMarker`, `Kiche.setAPreC`, `Kiche.setAPreV`: the Set B
   (absolutive) and Set A (ergative, pre-consonantal / pre-vocalic)
   exponents.
-* `Kiche.ArgPosition.agreementSet`, `Kiche.ArgPosition.case`: the
+* `Kiche.agreementSet`, `Kiche.Mayan.ergCaseKiche`: the
   agreement set and case each argument position triggers.
 * `Kiche.independentPronoun`: the free personal pronouns.
 * `Kiche.setAExponent`, `Kiche.setBExponent`: canonical φ-cell exponent
@@ -160,12 +160,6 @@ instance (φ : PhiFeatures) : Decidable (SetAIsPrefix φ) :=
 
 /-! ### Argument positions and alignment -/
 
-/-- Argument positions in a K'iche' clause. Aliased to the canonical
-    `ArgumentRole` (S/A/P/R/T) so cross-Mayan and
-    cross-framework code shares one inventory. Use the canonical
-    constructor names `.A` / `.P` / `.S` directly. -/
-abbrev ArgPosition := ArgumentRole
-
 /-- Which agreement set cross-references each argument position? -/
 inductive AgreementSet where
   | setA  -- Ergative markers
@@ -177,32 +171,26 @@ inductive AgreementSet where
     S and P both trigger Set B (= absolutive grouping).
     A triggers Set A (= ergative). Ditransitive R/T default to `.none`
     (not modeled in this fragment). -/
-def ArgPosition.agreementSet : ArgPosition → AgreementSet
+def agreementSet : ArgumentRole → AgreementSet
   | .A => .setA  -- A → Set A (ergative)
   | .P => .setB  -- P → Set B (absolutive)
   | .S => .setB  -- S → Set B (absolutive)
   | .R | .T => .none
-
-/-- The case associated with each argument position. Definitionally
-    equal to `Mayan.ergCaseKiche`, which derives from
-    `Alignment.ergative.assignCase` in `Syntax/Case/Alignment.lean`. -/
-abbrev ArgPosition.case : ArgPosition → Case :=
-  Mayan.ergCaseKiche
 
 /-! ### Alignment theorems -/
 
 /-- K'iche' groups S and P together (both trigger Set B):
     ergative-absolutive alignment. -/
 theorem ergative_absolutive_alignment :
-    ArgPosition.agreementSet .S = ArgPosition.agreementSet .P ∧
-    ArgPosition.agreementSet .A ≠ ArgPosition.agreementSet .P :=
+    agreementSet .S = agreementSet .P ∧
+    agreementSet .A ≠ agreementSet .P :=
   ⟨rfl, by decide⟩
 
 /-- A receives ERG while P and S share a case (ABS) — the ergative
     partition, re-exported from `Alignment.ergative_distinguishes_A`. -/
 theorem erg_abs_pattern :
-    ArgPosition.case .A ≠ ArgPosition.case .P ∧
-    ArgPosition.case .P = ArgPosition.case .S :=
+    Mayan.ergCaseKiche .A ≠ Mayan.ergCaseKiche .P ∧
+    Mayan.ergCaseKiche .P = Mayan.ergCaseKiche .S :=
   Alignment.ergative_distinguishes_A
 
 /-- K'iche' alignment contrast with Mam: K'iche' is ergative-absolutive
@@ -210,7 +198,7 @@ theorem erg_abs_pattern :
     receive distinct cases). In K'iche', both P and S trigger Set B;
     in Mam, P triggers no agreement at all. -/
 theorem kiche_not_tripartite :
-    ArgPosition.case .S = ArgPosition.case .P := rfl
+    Mayan.ergCaseKiche .S = Mayan.ergCaseKiche .P := rfl
 
 /-! ### Set B per-cell verification -/
 
