@@ -7,6 +7,7 @@ import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Morphology.Morph
 import Linglib.Morphology.Word.Basic
 import Linglib.Morphology.Morphotactics.Template
+import Linglib.Syntax.ArgumentRole
 
 open Morphology (Word)
 
@@ -160,7 +161,7 @@ choice — a descriptive-grammar implementation would return `.nom`.
     (accusative-like) in all non-perfective aspects. Used by Chol;
     presumably also Chontal, Ch'orti', Cholti per the Cholan-branch
     generalization ([aissen-england-zavala-2017]). -/
-def caseChol : UD.Aspect → Features.Prominence.ArgumentRole → Case
+def caseChol : UD.Aspect → ArgumentRole → Case
   | .Perf, r => Alignment.ergative.assignCase r
   | .Imp, r | .Prog, r | .Prosp, r | .Hab, r | .Iter, r =>
     Alignment.extendedErgative.assignCase r
@@ -173,30 +174,30 @@ def caseChol : UD.Aspect → Features.Prominence.ArgumentRole → Case
     aspects (e.g. `.Imp` with the `chi-` marker) keep canonical ergative.
     Contrast Cholan, where the IMP `mi-` marker does trigger the accusative
     split. -/
-def caseQanjobalan : UD.Aspect → Features.Prominence.ArgumentRole → Case
+def caseQanjobalan : UD.Aspect → ArgumentRole → Case
   | .Prog, r => Alignment.extendedErgative.assignCase r
   | .Perf, r | .Imp, r | .Prosp, r | .Hab, r | .Iter, r =>
     Alignment.ergative.assignCase r
 
 /-- Perfective projection of `caseChol`. Equals
     `Alignment.ergative.assignCase` by definition. -/
-abbrev ergCaseChol : Features.Prominence.ArgumentRole → Case := caseChol .Perf
+abbrev ergCaseChol : ArgumentRole → Case := caseChol .Perf
 
 /-- Non-perfective (imperfective-and-up) projection of `caseChol`. Equals
     `Alignment.extendedErgative.assignCase` by definition. Reflects
     Chol's pattern of split in all non-perfective aspects. -/
-abbrev accCaseChol : Features.Prominence.ArgumentRole → Case := caseChol .Imp
+abbrev accCaseChol : ArgumentRole → Case := caseChol .Imp
 
 /-- Perfective projection of `caseQanjobalan`. Equals
     `Alignment.ergative.assignCase` by definition. -/
-abbrev ergCaseQanjobalan : Features.Prominence.ArgumentRole → Case :=
+abbrev ergCaseQanjobalan : ArgumentRole → Case :=
   caseQanjobalan .Perf
 
 /-- Progressive projection of `caseQanjobalan`. Equals
     `Alignment.extendedErgative.assignCase` by definition. Reflects
     Q'anjob'al's `lanan`-construction trigger; other non-perfective
     aspects in Q'anjob'al keep canonical ergative. -/
-abbrev accCaseQanjobalan : Features.Prominence.ArgumentRole → Case :=
+abbrev accCaseQanjobalan : ArgumentRole → Case :=
   caseQanjobalan .Prog
 
 /-- Kaqchikel (K'ichean-Mamean = Eastern Mayan) aspect-driven case
@@ -216,7 +217,7 @@ abbrev accCaseQanjobalan : Features.Prominence.ArgumentRole → Case :=
     (p. 141), some varieties/consultants reject patterns in
     [garcia-matzar-rodriguez-guajan-1997]; the claim rests on Imanishi's
     fieldwork on a specific variety. -/
-def caseKaqchikel : UD.Aspect → Features.Prominence.ArgumentRole → Case
+def caseKaqchikel : UD.Aspect → ArgumentRole → Case
   | .Prog, r => Alignment.invertedErgative.assignCase r
   | .Perf, r | .Imp, r | .Prosp, r | .Hab, r | .Iter, r =>
     Alignment.ergative.assignCase r
@@ -224,7 +225,7 @@ def caseKaqchikel : UD.Aspect → Features.Prominence.ArgumentRole → Case
 /-- Perfective projection of `caseKaqchikel`. Equals
     `Alignment.ergative.assignCase` by definition. Kaqchikel perfective
     is canonical ergative (A → ERG, S/P → ABS). -/
-abbrev ergCaseKaqchikel : Features.Prominence.ArgumentRole → Case :=
+abbrev ergCaseKaqchikel : ArgumentRole → Case :=
   caseKaqchikel .Perf
 
 /-- Progressive projection of `caseKaqchikel`. Equals
@@ -232,7 +233,7 @@ abbrev ergCaseKaqchikel : Features.Prominence.ArgumentRole → Case :=
     construction-specific inverted pattern (S/A → ABS, P → ERG/GEN)
     documented by Imanishi 2014/2020 for Kaqchikel `ajin`-progressive
     sentences. -/
-abbrev accCaseKaqchikel : Features.Prominence.ArgumentRole → Case :=
+abbrev accCaseKaqchikel : ArgumentRole → Case :=
   caseKaqchikel .Prog
 
 /-- K'iche' (K'ichean) case assignment. Per [mondloch-2017] (Lessons 9,
@@ -244,12 +245,12 @@ abbrev accCaseKaqchikel : Features.Prominence.ArgumentRole → Case :=
     documents no analogous K'iche' split. The aspect parameter is retained
     for shape-uniformity with the other Mayan `case*` functions; all aspects
     map to canonical ergative. -/
-def caseKiche : UD.Aspect → Features.Prominence.ArgumentRole → Case
+def caseKiche : UD.Aspect → ArgumentRole → Case
   | _, r => Alignment.ergative.assignCase r
 
 /-- K'iche' ergative-absolutive case (uniform across aspects). Equals
     `Alignment.ergative.assignCase` by definition. -/
-abbrev ergCaseKiche : Features.Prominence.ArgumentRole → Case :=
+abbrev ergCaseKiche : ArgumentRole → Case :=
   caseKiche .Perf
 
 /-- San Juan Atitán Mam (K'ichean-Mamean / Eastern Mayan) case assignment.
@@ -265,12 +266,12 @@ abbrev ergCaseKiche : Features.Prominence.ArgumentRole → Case :=
     encodes Scott's SJA Mam analysis. Mam shows no aspect-conditioned split
     (Scott ch. 3), so the aspect parameter is retained only for
     shape-uniformity; all aspects map to tripartite. -/
-def caseMam : UD.Aspect → Features.Prominence.ArgumentRole → Case
+def caseMam : UD.Aspect → ArgumentRole → Case
   | _, r => Alignment.tripartite.assignCase r
 
 /-- SJA Mam tripartite case (uniform across aspects). Equals
     `Alignment.tripartite.assignCase` by definition. -/
-abbrev ergCaseMam : Features.Prominence.ArgumentRole → Case :=
+abbrev ergCaseMam : ArgumentRole → Case :=
   caseMam .Perf
 
 /-- Tseltalan (Tseltal, Tsotsil) case assignment.
@@ -280,12 +281,12 @@ abbrev ergCaseMam : Features.Prominence.ArgumentRole → Case :=
     conditioned split (in contrast with their Cholan cousins). The
     aspect parameter is retained for shape-uniformity with the other
     Mayan `case*` functions. -/
-def caseTseltalan : UD.Aspect → Features.Prominence.ArgumentRole → Case
+def caseTseltalan : UD.Aspect → ArgumentRole → Case
   | _, r => Alignment.ergative.assignCase r
 
 /-- Tseltalan ergative-absolutive case (uniform across aspects). Equals
     `Alignment.ergative.assignCase` by definition. -/
-abbrev ergCaseTseltalan : Features.Prominence.ArgumentRole → Case :=
+abbrev ergCaseTseltalan : ArgumentRole → Case :=
   caseTseltalan .Perf
 
 /-- Yucatecan aspect/status-driven case assignment ([hofling-2017] p. 692:
@@ -293,17 +294,17 @@ abbrev ergCaseTseltalan : Features.Prominence.ArgumentRole → Case :=
     subjects; Set B marks transitive objects and completive intransitive
     subjects): ergative in the completive (perfective),
     extended-ergative in the incompletive aspects. -/
-def caseYukatek : UD.Aspect → Features.Prominence.ArgumentRole → Case
+def caseYukatek : UD.Aspect → ArgumentRole → Case
   | .Perf, r => Alignment.ergative.assignCase r
   | .Imp, r | .Prog, r | .Prosp, r | .Hab, r | .Iter, r =>
     Alignment.extendedErgative.assignCase r
 
 /-- Yucatec completive ergative-absolutive case. -/
-abbrev ergCaseYukatek : Features.Prominence.ArgumentRole → Case :=
+abbrev ergCaseYukatek : ArgumentRole → Case :=
   caseYukatek .Perf
 
 /-- Yucatec incompletive extended-ergative case. -/
-abbrev accCaseYukatek : Features.Prominence.ArgumentRole → Case :=
+abbrev accCaseYukatek : ArgumentRole → Case :=
   caseYukatek .Imp
 
 /-! ### Person-number paradigm
@@ -419,7 +420,7 @@ def isStandard : Mayan → Bool
     existing per-branch `case*` substrate functions; the dispatcher is
     the consolidation point that lets cross-Mayan theorems quantify
     over `Mayan` rather than enumerate per-language `rfl` facts. -/
-def caseAt : Mayan → UD.Aspect → Features.Prominence.ArgumentRole → Case
+def caseAt : Mayan → UD.Aspect → ArgumentRole → Case
   | .Chol,      asp, r => caseChol asp r
   | .Qanjobal,  asp, r => caseQanjobalan asp r
   | .Kaqchikel, asp, r => caseKaqchikel asp r

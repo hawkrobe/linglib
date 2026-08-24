@@ -2772,6 +2772,7 @@ import Linglib.Syntax.Agreement.Profile
 import Linglib.Syntax.Agreement.Target
 import Linglib.Syntax.Anaphora.Basic
 import Linglib.Syntax.Anaphora.Diagnostic
+import Linglib.Syntax.ArgumentRole
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
 import Linglib.Syntax.Binding.SpecificityCondition

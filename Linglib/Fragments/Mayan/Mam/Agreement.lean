@@ -5,6 +5,7 @@ import Linglib.Fragments.Mayan.Mam.Pronouns
 import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Extraction
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Mam Agreement Fragment
@@ -69,7 +70,6 @@ namespace Mam
 
 open Mayan (MarkerLinearity ExponentTable)
 open Agreement
-open Features.Prominence (ArgumentRole)
 
 /-! ### Agreement marker paradigms -/
 
@@ -111,8 +111,8 @@ def defaultSetB : List Morphology.Morph := [.procl "tz'"]
 /-! ### Argument positions and agreement status -/
 
 /-- Argument positions, aliased to the canonical
-    `Features.Prominence.ArgumentRole` (S/A/P/R/T) ([scott-2023] ch. 3). -/
-abbrev ArgPosition := Features.Prominence.ArgumentRole
+    `ArgumentRole` (S/A/P/R/T) ([scott-2023] ch. 3). -/
+abbrev ArgPosition := ArgumentRole
 
 /-- Tripartite case assignment: `Mayan.ergCaseMam` (A → ERG inherent
     from Voice, P → ACC structural from Voice, S → ABS structural from

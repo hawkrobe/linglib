@@ -4,6 +4,7 @@ import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Hungarian.Predicates
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Just 2024: Differential A and P Indexing
@@ -630,7 +631,7 @@ theorem personLevel_rank_matches_probe_rank :
 /-- Kaqchikel indexes all three argument positions (agent, patient, intranS).
     This makes it non-differential: no prominence condition gates indexing. -/
 theorem kaqchikel_indexes_all (p : ArgPosition)
-    (h : p ∈ Features.Prominence.ArgumentRole.core) :
+    (h : p ∈ ArgumentRole.core) :
     ArgPosition.IsPhiAgreed p :=
   Kaqchikel.all_positions_agreed p h
 

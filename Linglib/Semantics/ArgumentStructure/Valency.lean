@@ -2,6 +2,7 @@ import Linglib.Features.Prominence
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Valency
@@ -22,7 +23,7 @@ valency `{.internal}`, `noTheme` ~ valency `∅`) was this lattice
 restricted by the thesis.
 
 `label` maps a valency to the comparative core-term labels of
-`Features.Prominence.ArgumentRole`: a lone position — internal or
+`ArgumentRole`: a lone position — internal or
 external alike — surfaces as S, both together as A and P. The labels
 are relational, so `label` is deliberately not monotone
 (`label_not_monotone`): adding a co-argument relabels S, which is why
@@ -37,7 +38,6 @@ alignment typology needs S as its own comparative concept.
 
 namespace ArgumentStructure
 
-open Features.Prominence (ArgumentRole)
 
 /-- A core-argument position of the verbal clause: the internal argument
     (complement of the lexical core) or the external argument (specifier
@@ -100,7 +100,7 @@ theorem isTransitive_union_iff :
 /-! ### Comparative core-term labels -/
 
 /-- The comparative core-term labels a valency's arguments surface with
-    (S ~ A ~ P, `Features.Prominence.ArgumentRole`): a lone position —
+    (S ~ A ~ P, `ArgumentRole`): a lone position —
     internal or external alike — is the S of an intransitive clause;
     both together are A and P. -/
 def label (v : Valency) : Finset ArgumentRole :=

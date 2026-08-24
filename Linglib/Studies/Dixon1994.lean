@@ -4,6 +4,7 @@ import Linglib.Syntax.Case.Alignment
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Hindi.Case
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Dixon (1994): Ergativity — typology + Silverstein hierarchy + ditransitives
@@ -653,7 +654,6 @@ theorem hindi_split_bridge :
 
 section BridgesToTheoriesAlignment
 
-open Features.Prominence (ArgumentRole)
 
 theorem ergative_function_marks_A :
     (_root_.Alignment.ergative.assignCase .A != _root_.Alignment.ergative.assignCase .S) =

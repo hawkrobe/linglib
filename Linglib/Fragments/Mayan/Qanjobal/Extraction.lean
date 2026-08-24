@@ -3,6 +3,7 @@ import Linglib.Features.Reflex
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Extraction
 import Linglib.Fragments.Mayan.Params
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Q'anjob'al Agent Focus and Extraction Fragment

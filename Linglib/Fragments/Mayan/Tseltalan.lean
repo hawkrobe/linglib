@@ -1,5 +1,6 @@
 import Linglib.Fragments.Mayan.Params
 import Linglib.Features.Prominence
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Shared Tseltalan Infrastructure
@@ -89,7 +90,7 @@ def absPosition : Mayan.ABSPosition := .low
     with no `ArgumentRole` analog. Cross-Mayan consumers use this projection;
     the Aissen-Polian possessor-extraction analysis uses `GramFunction`
     directly for its DP-internal claims. -/
-def GramFunction.toArgumentRole? : GramFunction → Option Features.Prominence.ArgumentRole
+def GramFunction.toArgumentRole? : GramFunction → Option ArgumentRole
   | .A   => some .A
   | .S_A => some .S
   | .S_O => some .S
