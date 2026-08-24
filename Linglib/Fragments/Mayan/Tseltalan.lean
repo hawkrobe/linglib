@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Params
 import Linglib.Features.Prominence
-import Linglib.Syntax.ArgumentRole
+import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Shared Tseltalan Infrastructure
