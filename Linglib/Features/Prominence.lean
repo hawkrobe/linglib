@@ -2,7 +2,6 @@ import Mathlib.Order.Nat
 import Mathlib.Order.UpperLower.Basic
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Core.Order.Markedness
-import Linglib.Features.Person.Basic
 
 /-!
 # Referential prominence
@@ -16,8 +15,6 @@ marking, and the marking grids over them.
   scales, as `LinearOrder`s; `AnimacyRank` — the fine-grained
   plural-marking hierarchy, with the coarsening
   `AnimacyRank.toAnimacyLevel`.
-- `Person.prominence` — graded person prominence over the canonical
-  `Person` inventory.
 - `MarkingPattern` — which cells of the animacy × definiteness grid are
   marked; the `MonotoneP`/`MonotoneA` staircases, cutoff constructors, and
   `monotoneP_iff_isUpperSet`.
@@ -158,20 +155,6 @@ instance : LinearOrder DefinitenessLevel :=
 /-- All definiteness levels, most prominent first. -/
 def DefinitenessLevel.all : List DefinitenessLevel :=
   [.personalPronoun, .properName, .definite, .indefiniteSpecific, .nonSpecific]
-
-/-! ### Person prominence -/
-
-/-- Graded person prominence over the canonical `Person` inventory:
-    1st (2) > 2nd (1) > 3rd (0). The load-bearing cut is locuphoric
-    (1st/2nd) > aliophoric (3rd) — [haspelmath-2021]'s person scale (8a);
-    the ranking of 1st over 2nd within the locuphoric zone follows the
-    person-hierarchy tradition and varies across languages.
-    Clusivity-marked firsts rank with `first`; the impersonal `zero` is
-    `[−participant]` and ranks with third. -/
-def _root_.Person.prominence : Person → Nat
-  | .first | .firstInclusive | .firstExclusive => 2
-  | .second => 1
-  | .third | .zero => 0
 
 /-! ### Differential marking patterns -/
 

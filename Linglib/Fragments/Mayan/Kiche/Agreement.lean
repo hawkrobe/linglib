@@ -6,6 +6,7 @@ import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.Extraction
 import Linglib.Syntax.ArgumentRole
+import Linglib.Features.Person.Basic
 
 /-!
 # K'iche' Agreement Fragment

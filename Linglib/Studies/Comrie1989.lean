@@ -6,6 +6,7 @@ import Linglib.Studies.Dixon1994
 import Linglib.Studies.Aissen2003
 import Linglib.Fragments.Dargwa.ComplexPredicates
 import Linglib.Syntax.ArgumentRole
+import Linglib.Features.Person.Basic
 
 /-!
 # Comrie (1989) [comrie-1989]

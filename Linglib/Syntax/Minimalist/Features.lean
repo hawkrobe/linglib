@@ -4,6 +4,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Features.Prominence
 import Linglib.Features.Number.Basic
 import Linglib.Features.Slot
+import Linglib.Features.Person.Basic
 
 /-!
 # Feature Infrastructure for Minimalist Agree

@@ -3,6 +3,7 @@ import Linglib.Phonology.Segmental.Defs
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.ArgumentRole
+import Linglib.Features.Person.Basic
 
 /-!
 # Kaqchikel Agreement Fragment

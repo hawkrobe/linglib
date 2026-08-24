@@ -26,8 +26,8 @@ capability mixin (`Features/Person/Capabilities.lean`), unified
 resolution (`Features/Person/Resolve.lean`), feature decomposition and
 the Cysouw categories (`Features/Person/Decomposition.lean`).
 
-The prominence scale over this inventory (`Person.prominence`, the
-dissolved `Person`'s role) lives in `Features/Prominence.lean`.
+`Person.prominence` is the graded prominence scale over this
+inventory, consumed by person-hierarchy and scenario-split accounts.
 -/
 
 set_option autoImplicit false
@@ -157,6 +157,17 @@ structure System where
   /-- The person values the system distinguishes. -/
   values : List Person
   deriving DecidableEq, Repr
+
+/-- Graded person prominence: 1st (2) > 2nd (1) > 3rd (0). The
+    load-bearing cut is locuphoric (1st/2nd) > aliophoric (3rd) —
+    [haspelmath-2021]'s person scale (8a); the ranking of 1st over 2nd
+    within the locuphoric zone follows the person-hierarchy tradition and
+    varies across languages. Clusivity-marked firsts rank with `first`;
+    the impersonal `zero` is `[−participant]` and ranks with third. -/
+def prominence : Person → Nat
+  | .first | .firstInclusive | .firstExclusive => 2
+  | .second => 1
+  | .third | .zero => 0
 
 namespace System
 
