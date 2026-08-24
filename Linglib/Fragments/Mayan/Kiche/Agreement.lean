@@ -5,6 +5,7 @@ import Linglib.Features.Number.Capabilities
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.Extraction
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # K'iche' Agreement Fragment
@@ -159,10 +160,10 @@ instance (φ : PhiFeatures) : Decidable (SetAIsPrefix φ) :=
 /-! ### Argument positions and alignment -/
 
 /-- Argument positions in a K'iche' clause. Aliased to the canonical
-    `Features.Prominence.ArgumentRole` (S/A/P/R/T) so cross-Mayan and
+    `ArgumentRole` (S/A/P/R/T) so cross-Mayan and
     cross-framework code shares one inventory. Use the canonical
     constructor names `.A` / `.P` / `.S` directly. -/
-abbrev ArgPosition := Features.Prominence.ArgumentRole
+abbrev ArgPosition := ArgumentRole
 
 /-- Which agreement set cross-references each argument position? -/
 inductive AgreementSet where

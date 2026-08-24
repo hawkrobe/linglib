@@ -1,6 +1,7 @@
 import Linglib.Features.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Fragments.Mayan.Params
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Q'anjob'al Agreement and Case Fragment
@@ -62,8 +63,8 @@ open Mayan (ExponentTable)
 /-! ### Argument positions -/
 
 /-- Argument positions, aliased to the canonical
-    `Features.Prominence.ArgumentRole` (S/A/P/R/T). -/
-abbrev ArgPosition := Features.Prominence.ArgumentRole
+    `ArgumentRole` (S/A/P/R/T). -/
+abbrev ArgPosition := ArgumentRole
 
 /-- Canonical ergative case assignment (clauses with an overt preverbal
     aspect marker), shared with Chol via `Mayan.ergCaseQanjobalan`

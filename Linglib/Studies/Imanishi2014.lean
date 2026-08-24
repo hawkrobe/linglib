@@ -1,5 +1,6 @@
 import Linglib.Syntax.Case.Alignment
 import Linglib.Fragments.Mayan.Params
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Imanishi 2014 — Default Ergative [imanishi-2014]
@@ -79,7 +80,6 @@ a different parameterization.
 
 namespace Imanishi2014
 
-open Features.Prominence (ArgumentRole)
 
 -- ============================================================================
 -- § 1: URN (Unaccusative Requirement on Nominalization)

@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Features.Case.Basic
 import Linglib.Features.Prominence
 import Mathlib.Data.Fintype.Prod
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Alignment Case-Assignment Functions
@@ -13,7 +14,7 @@ import Mathlib.Data.Fintype.Prod
 
 The SAP-indexed counterpart to `Syntax/Case/Dependent.lean`'s
 configural algorithm. Each `Alignment.X.assignCase` is a function from
-`Features.Prominence.ArgumentRole` to `Case` capturing the canonical
+`ArgumentRole` to `Case` capturing the canonical
 case pattern of alignment type X. The configural derivations in
 `Dependent.lean` (Marantz/Baker) and the observational `AlignmentType` enum
 (WALS-style classification, below) are checked against the case-assignment
@@ -56,7 +57,6 @@ them as scaffolding subject to revision when ditransitive consumers arrive:
 
 namespace Alignment
 
-open Features.Prominence (ArgumentRole)
 
 namespace ergative
 

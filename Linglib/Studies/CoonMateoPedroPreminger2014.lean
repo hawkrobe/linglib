@@ -14,6 +14,7 @@ import Linglib.Fragments.Mayan.Mam.Extraction
 import Linglib.Fragments.Mayan.Kiche.Agreement
 import Linglib.Fragments.Mayan.Kiche.Extraction
 import Linglib.Fragments.Mayan.Yukatek.Agreement
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Coon, Mateo Pedro & Preminger (2014) [coon-mateo-pedro-preminger-2014]
@@ -621,7 +622,7 @@ theorem attested_cells :
     `Mayan.isStandard` and `Studies/Scott2023.lean`). -/
 theorem mayan_perfective_ergative
     (lang : Mayan) (h : lang.isStandard = true)
-    (r : Features.Prominence.ArgumentRole) :
+    (r : ArgumentRole) :
     Mayan.caseAt lang .Perf r = Alignment.ergative.assignCase r := by
   cases lang <;> first | rfl | (simp [Mayan.isStandard] at h)
 

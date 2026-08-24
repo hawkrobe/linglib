@@ -2,6 +2,7 @@ import Linglib.Features.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Kaqchikel Agreement Fragment
@@ -51,7 +52,6 @@ namespace Kaqchikel
 
 open Mayan (ExponentTable)
 open Agreement
-open Features.Prominence (ArgumentRole)
 
 /-! ### ABS position (HIGH-ABS) -/
 
@@ -89,8 +89,8 @@ def setBExponent : ExponentTable :=
 /-! ### Argument positions -/
 
 /-- Argument positions, aliased to the canonical
-    `Features.Prominence.ArgumentRole` (S/A/P/R/T). -/
-abbrev ArgPosition := Features.Prominence.ArgumentRole
+    `ArgumentRole` (S/A/P/R/T). -/
+abbrev ArgPosition := ArgumentRole
 
 /-- Perfective (ergative) case assignment: `Mayan.ergCaseKaqchikel`
     (A → ERG, S/P → ABS). -/

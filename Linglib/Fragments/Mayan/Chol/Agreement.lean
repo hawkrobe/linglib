@@ -3,6 +3,7 @@ import Linglib.Phonology.Segmental.Defs
 import Linglib.Features.Reflex
 import Linglib.Syntax.Extraction
 import Linglib.Fragments.Mayan.Params
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Chol Agreement and Case Fragment
@@ -112,8 +113,8 @@ open Mayan (ExponentTable)
 /-! ### Argument positions -/
 
 /-- Argument positions in a Chol clause, aliased to the canonical
-    `Features.Prominence.ArgumentRole` (S/A/P/R/T). -/
-abbrev ArgPosition := Features.Prominence.ArgumentRole
+    `ArgumentRole` (S/A/P/R/T). -/
+abbrev ArgPosition := ArgumentRole
 
 /-- Perfective (ergative) case assignment: `Mayan.ergCaseChol`
     (A → ERG, S/P → ABS). -/

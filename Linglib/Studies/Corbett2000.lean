@@ -217,21 +217,17 @@ structure AnimacyNumberProfile where
   /-- Marking status at each position on the hierarchy. -/
   status : AnimacyRank → MarkingStatus
 
-private def allRanks : List AnimacyRank :=
-  [.speaker, .addressee, .thirdPerson, .kin, .human,
-   .higherAnimal, .lowerAnimal, .discreteInanimate, .nondiscreteInanimate]
-
 /-- **Constraint I** (Corbett Ch 3): the sg–pl distinction must affect a
     top segment of the hierarchy. If any position has obligatory marking,
     then the topmost position (speaker) does too. -/
 def AnimacyNumberProfile.RespectsConstraintI (p : AnimacyNumberProfile) : Prop :=
-  (∃ r ∈ allRanks, (p.status r).toNat ≥ 2) → (p.status .speaker).toNat ≥ 2
+  (∃ r ∈ AnimacyRank.all, (p.status r).toNat ≥ 2) → (p.status .speaker).toNat ≥ 2
 
 /-- **Constraint III** (Corbett Ch 3): as we move rightward along the
     hierarchy, the likelihood of number being distinguished decreases
     monotonically — no intervening increase. -/
 def AnimacyNumberProfile.RespectsConstraintIII (p : AnimacyNumberProfile) : Prop :=
-  ∀ r1 ∈ allRanks, ∀ r2 ∈ allRanks,
+  ∀ r1 ∈ AnimacyRank.all, ∀ r2 ∈ AnimacyRank.all,
     r1.toNat ≤ r2.toNat ∨ (p.status r1).toNat ≥ (p.status r2).toNat
 
 instance (p : AnimacyNumberProfile) : Decidable p.RespectsConstraintI := by
@@ -413,15 +409,15 @@ structure IndividuationProfile where
 /-- **Constraint II** (Corbett Ch 4): if trial exists at position X, then dual
     exists at X and at all positions higher on the animacy hierarchy. -/
 def IndividuationProfile.RespectsConstraintII (p : IndividuationProfile) : Prop :=
-  ∀ r ∈ allRanks, .trial ∈ p.valuesAt r →
+  ∀ r ∈ AnimacyRank.all, .trial ∈ p.valuesAt r →
     .dual ∈ p.valuesAt r ∧
-    ∀ r' ∈ allRanks, r'.toNat ≤ r.toNat ∨ .dual ∈ p.valuesAt r'
+    ∀ r' ∈ AnimacyRank.all, r'.toNat ≤ r.toNat ∨ .dual ∈ p.valuesAt r'
 
 /-- **Monotonicity**: number value inventories never grow as we move rightward
     (down) the hierarchy. If a value exists at position X, it exists at all
     higher positions. -/
 def IndividuationProfile.RespectsMonotonicity (p : IndividuationProfile) : Prop :=
-  ∀ r1 ∈ allRanks, ∀ r2 ∈ allRanks,
+  ∀ r1 ∈ AnimacyRank.all, ∀ r2 ∈ AnimacyRank.all,
     r1.toNat ≤ r2.toNat ∨ ∀ v ∈ p.valuesAt r2, v ∈ p.valuesAt r1
 
 instance (p : IndividuationProfile) : Decidable p.RespectsConstraintII := by
@@ -622,7 +618,7 @@ def IndividuationProfile.RespectsConstraintVII (p : IndividuationProfile) : Prop
     at some animacy position, it must also exist at all higher positions.
     Minor numbers obey the same monotonicity as full number values. -/
 def IndividuationProfile.RespectsConstraintIV (p : IndividuationProfile) : Prop :=
-  ∀ v ∈ p.minorValues, ∀ r1 ∈ allRanks, ∀ r2 ∈ allRanks,
+  ∀ v ∈ p.minorValues, ∀ r1 ∈ AnimacyRank.all, ∀ r2 ∈ AnimacyRank.all,
     r1.toNat ≤ r2.toNat ∨ v ∉ p.valuesAt r2 ∨ v ∈ p.valuesAt r1
 
 instance (p : IndividuationProfile) : Decidable p.RespectsConstraintVII := by

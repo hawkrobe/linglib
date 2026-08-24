@@ -2,6 +2,7 @@ import Linglib.Features.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Yucatec Maya Agreement Fragment
@@ -80,8 +81,8 @@ theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
 /-! ### Argument positions -/
 
 /-- Argument positions, aliased to the canonical
-    `Features.Prominence.ArgumentRole` (S/A/P/R/T). -/
-abbrev ArgPosition := Features.Prominence.ArgumentRole
+    `ArgumentRole` (S/A/P/R/T). -/
+abbrev ArgPosition := ArgumentRole
 
 /-- Completive (ergative) case assignment: `Mayan.ergCaseYukatek`
     (A → ERG, S/P → ABS). -/

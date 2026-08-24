@@ -2,6 +2,7 @@ import Linglib.Fragments.Mayan.Tseltalan
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Features.Reflex
 import Linglib.Syntax.Extraction
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Tsotsil Agreement Fragment
@@ -48,8 +49,8 @@ export Mayan.Tseltalan (GramFunction)
 /-! ### Argument positions -/
 
 /-- Argument positions in a Tsotsil clause, aliased to the canonical
-    `Features.Prominence.ArgumentRole` (S/A/P/R/T). -/
-abbrev ArgPosition := Features.Prominence.ArgumentRole
+    `ArgumentRole` (S/A/P/R/T). -/
+abbrev ArgPosition := ArgumentRole
 
 /-- Case assignment for Tsotsil: `Mayan.caseTseltalan .Perf`
     (A → ERG, S/P → ABS); Tseltalan has no aspect-conditioned split. -/

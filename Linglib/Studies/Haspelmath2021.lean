@@ -4,6 +4,7 @@ import Linglib.Studies.Aissen2003
 import Linglib.Studies.DeHoopMalchukov2008
 import Linglib.Studies.Marantz1991
 import Linglib.Syntax.Case.Alignment
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # [haspelmath-2021]: Role-reference associations and the explanation of argument coding splits
@@ -72,7 +73,7 @@ Haspelmath himself: "I do not focus on documenting the discourse frequencies
 in this paper... testing this claim more thoroughly is a topic for future
 comparative corpus research" (p. 126). Lean theorems committing the
 frequency-class function to specific Nat values would over-reify a
-tendency-claim. We use `Scenario.frequencyClass` from the substrate as a
+tendency-claim. We use `Scenario.frequencyClass` (co-located in §0) as a
 discrete proxy and clearly mark its theorems as proxy-checks, not empirical
 claims about token frequencies.
 
@@ -107,10 +108,76 @@ open Alignment
        longer (overt) coding.
 
     Previously housed in `Core/FormFrequency.lean` — demoted to this study
-    file at 0.230.551 when the consumer count was 1 (only Haspelmath2021
-    used any of the primitives) and four primitives in the substrate file
-    (`respectsFormFrequency`, `argumentCodingRespectsFrequency`,
-    `VoiceDirection`, `DitransitiveFrame`) were completely unused. -/
+    file at 0.230.551 when the consumer count was 1. The scenario machinery,
+    the `prominenceRank` proxy, and the default-zone classifier were likewise
+    demoted here from `Features/Prominence.lean` (sole consumer). -/
+
+/-- A monotransitive scenario: the person combination of A and P
+    ([haspelmath-2021] (10); the term is from Bickel and Zúñiga, fn. 4).
+    The paper's scenarios also range over nominality; this formalization
+    restricts to the person scale, the dimension its scenario universals
+    are checked on below. -/
+structure Scenario where
+  /-- Person of the A argument -/
+  aPerson : Person
+  /-- Person of the P argument -/
+  pPerson : Person
+  deriving DecidableEq, Repr
+
+/-- Downstream scenario ((11)): A outranks P in person prominence — the
+    usual direction, predicted to get the shortest coding. -/
+def Scenario.Downstream (s : Scenario) : Prop :=
+  s.pPerson.prominence < s.aPerson.prominence
+
+/-- Upstream scenario ((11)): P outranks A — the unusual direction,
+    predicted to get the longest coding. -/
+def Scenario.Upstream (s : Scenario) : Prop :=
+  s.aPerson.prominence < s.pPerson.prominence
+
+/-- Balanced scenario ((11)): A and P have equal person prominence. -/
+def Scenario.Balanced (s : Scenario) : Prop :=
+  s.aPerson.prominence = s.pPerson.prominence
+
+instance (s : Scenario) : Decidable s.Downstream :=
+  inferInstanceAs (Decidable (_ < _))
+instance (s : Scenario) : Decidable s.Upstream :=
+  inferInstanceAs (Decidable (_ < _))
+instance (s : Scenario) : Decidable s.Balanced :=
+  inferInstanceAs (Decidable (_ = _))
+
+/-- The 9 scenarios over the person tripartition. -/
+def Scenario.all : List Scenario :=
+  [⟨.first, .first⟩,  ⟨.first, .second⟩,  ⟨.first, .third⟩,
+   ⟨.second, .first⟩, ⟨.second, .second⟩, ⟨.second, .third⟩,
+   ⟨.third, .first⟩,  ⟨.third, .second⟩,  ⟨.third, .third⟩]
+
+/-- Frequency class: downstream (usual) 2 > balanced 1 > upstream 0 —
+    a discrete proxy for the paper's usualness claims, not a corpus
+    measurement. -/
+def Scenario.frequencyClass (s : Scenario) : Nat :=
+  if s.Downstream then 2 else if s.Balanced then 1 else 0
+
+/-- Combined prominence for a cell of the animacy × definiteness grid:
+    the sum of the two ranks, from 0 (inanimate non-specific) to 6 (human
+    pronoun). A representational proxy — the paper's own prominence order
+    on cells is the partial product order ([aissen-2003] Figure 4); the
+    additive scalar linearizes it for the frequency proxy below. -/
+def prominenceRank (a : AnimacyLevel) (d : DefinitenessLevel) : Nat :=
+  a.rank + d.rank
+
+/-- The cell lies in the role's usual zone ((6): A/R arguments are usually
+    prominent, P/T arguments usually non-prominent; S is the reference
+    point). The threshold at the scalar midpoint is representational. -/
+def IsDefaultZone (role : ArgumentRole) (a : AnimacyLevel)
+    (d : DefinitenessLevel) : Prop :=
+  match role with
+  | .A | .R => 3 ≤ prominenceRank a d
+  | .S => True
+  | .P | .T => prominenceRank a d ≤ 2
+
+instance (role : ArgumentRole) (a : AnimacyLevel) (d : DefinitenessLevel) :
+    Decidable (IsDefaultZone role a d) := by
+  cases role <;> simp only [IsDefaultZone] <;> infer_instance
 
 /-- Relative coding length of an argument expression. Haspelmath's claim
     is about *relative* length, not absolute morpheme counts. -/
@@ -144,12 +211,10 @@ def frequencyProxy (role : ArgumentRole)
     every default-zone cell has at least the median proxy value. -/
 theorem frequency_proxy_matches_default (role : ArgumentRole)
     (a : AnimacyLevel) (d : DefinitenessLevel) :
-    (isDefaultZone role a d = true) →
-    (frequencyProxy role a d ≥ 3) := by
+    IsDefaultZone role a d → frequencyProxy role a d ≥ 3 := by
   intro h
   cases role <;>
-    simp only [isDefaultZone, frequencyProxy, prominenceRank,
-               decide_eq_true_eq] at h ⊢ <;> omega
+    simp only [IsDefaultZone, frequencyProxy, prominenceRank] at h ⊢ <;> omega
 
 /-- Scenario-level form-frequency correspondence: higher frequency-class
     scenarios should get shorter-or-equal coding. -/
@@ -176,7 +241,7 @@ def scenarioRespectsFormFrequency
     specialization is Universal 3.
 
     Formalized as: for each argument role `r`, the "deviation zone" is
-    the negation of `r`'s default zone (`isDefaultZone r a d = false`),
+    the complement of `r`'s default zone (`¬ IsDefaultZone r a d`),
     and the meta-universal predicts non-default cells get longer coding.
     The cell-level corollary is captured by `frequency_proxy_matches_default`
     (co-located in §0): default cells have `frequencyProxy ≥ 3`, non-default
@@ -184,11 +249,11 @@ def scenarioRespectsFormFrequency
     Form-frequency correspondence (U68) then maps this to coding length. -/
 
 /-- Universal 1 (cell form): default-zone cells have at least the median
-    frequency proxy. Substrate lemma re-exported with the U1 framing. -/
+    frequency proxy — `frequency_proxy_matches_default` with the U1
+    framing. -/
 theorem universal1_role_reference_association
     (role : ArgumentRole) (a : AnimacyLevel) (d : DefinitenessLevel) :
-    (isDefaultZone role a d = true) →
-    (frequencyProxy role a d ≥ 3) :=
+    IsDefaultZone role a d → frequencyProxy role a d ≥ 3 :=
   frequency_proxy_matches_default role a d
 
 -- ============================================================================
@@ -204,8 +269,12 @@ theorem universal1_role_reference_association
     rank) tend to be human, definite, topical. P/T arguments (lower role
     rank) tend to be inanimate, indefinite, new-information.
 
-    Formalized via the substrate's `highDefault` (A, R) / `lowDefault`
-    (P, T) predicates. -/
+    Formalized via the substrate's `IsHighDefault` (A, R) / `IsLowDefault`
+    (P, T) classification, which also carries the paper's role-rank
+    vocabulary: (7) (p. 127) fixes only the monotransitive A > P and the
+    ditransitive R > T, and "the notion of role rank is not crucial"
+    (p. 127) — a total ordering over all five roles would over-formalize,
+    so none is stated. -/
 
 /-- Universal 2 (default-side): A and R have high-default-prominence
     expectations; P and T have low-default-prominence expectations.
@@ -213,27 +282,9 @@ theorem universal1_role_reference_association
     (Haspelmath fn. 15, p. 138 explicitly excludes intransitives from
     the analysis). -/
 theorem universal2_usual_associations :
-    ArgumentRole.A.highDefault = true ∧
-    ArgumentRole.R.highDefault = true ∧
-    ArgumentRole.P.lowDefault = true ∧
-    ArgumentRole.T.lowDefault = true := ⟨rfl, rfl, rfl, rfl⟩
-
-/-! Haspelmath on role rank, p. 127: "the notion of role rank is not
-    crucial. (Since some readers will be curious, I will make a few
-    remarks below in Section 11.2, but it should be kept in mind that
-    these considerations are not essential for this paper.)"
-
-    The only role-rank claims the paper commits to are the
-    monotransitive A > P (statement (7), p. 127) and the ditransitive
-    R > T. We do *not* state a total ordering A > R > S > T > P; that
-    would over-formalize. -/
-
-/-- Universal 2 (role-rank fragment): A > P (monotransitive) and R > T
-    (ditransitive). These are the only role-rank orderings the paper
-    commits to. -/
-theorem universal2_role_rank_committed_orderings :
-    ArgumentRole.A.roleRank > ArgumentRole.P.roleRank ∧
-    ArgumentRole.R.roleRank > ArgumentRole.T.roleRank := by decide
+    ArgumentRole.A.IsHighDefault ∧ ArgumentRole.R.IsHighDefault ∧
+    ArgumentRole.P.IsLowDefault ∧ ArgumentRole.T.IsLowDefault :=
+  ⟨Or.inl rfl, Or.inr rfl, Or.inl rfl, Or.inr rfl⟩
 
 -- ============================================================================
 -- § 3: Universal 3 — Single-Argument Flagging Universal
@@ -250,22 +301,25 @@ theorem universal2_role_rank_committed_orderings :
     follow as specific cases for each argument role. It applies to both
     flagging and indexing (statement (15)).
 
-    **Derived from U1 + U2.** Substrate-level: for any role `r`,
-    `differentialTargetsProminent r = lowDefault r` (the prominent end
-    is the "deviation" for low-default roles, and the non-prominent end
-    is the deviation for high-default roles). U3 asserts this equality
-    over the four core roles. -/
+    The direction claim is carried by the marking-grid vocabulary: a split
+    on a low-default role marks an upper set of the prominence grid
+    (prominent end = deviation), a split on a high-default role a lower
+    set. -/
 
-/-- Universal 3 derives from U1 + U2: for any argument role, the
-    differential-flagging direction is determined by whether the role is
-    low-default (prominent end = deviation) or high-default (non-prominent
-    end = deviation). Strictly stronger than the four-conjunct over
-    {A, P, R, T} since it ranges over all five roles, including S.
+/-- U3-compliance of a single-argument split: on a low-default role (P/T)
+    the marked zone is an upper set of the prominence grid; on a
+    high-default role (A/R), a lower set. -/
+def universal3Compliant (r : ArgumentRole)
+    (p : Features.Prominence.MarkingPattern) : Prop :=
+  (r.IsLowDefault → p.MonotoneP) ∧ (r.IsHighDefault → p.MonotoneA)
 
-    `rfl` because substrate `differentialTargetsProminent r := r.lowDefault`
-    is the alias — the equality holds by construction, not by enumeration. -/
-theorem universal3_single_argument_flagging (r : ArgumentRole) :
-    differentialTargetsProminent r = r.lowDefault := rfl
+/-- Universal 3, instantiated at role P over [aissen-2003]'s attested DOM
+    systems: every obligatory-marking grid in the sample is U3-compliant. -/
+theorem universal3_attested_dom_compliant :
+    ∀ p ∈ Aissen2003.allDOMPatterns, universal3Compliant .P p := by
+  intro p hp
+  exact ⟨λ _ => Aissen2003.dom_monotonicity_universal p hp,
+    λ h => absurd h (by decide)⟩
 
 -- ============================================================================
 -- § 4: Universal 4 — Split P Flagging (DOM)
@@ -318,13 +372,13 @@ def downstreamScenario : Scenario := ⟨.first, .third⟩
 def upstreamScenario : Scenario := ⟨.third, .first⟩
 def balancedScenario : Scenario := ⟨.third, .third⟩
 
-/-- Universal 5: the downstream/upstream/balanced trichotomy is exhaustive
-    for *every* `Scenario`, not just the 9 in `Scenario.all`. Strictly
-    stronger than the list-anchored form (which silently passes if
-    `Scenario.all` ever loses an inhabitant). -/
+/-- Universal 5: the downstream/balanced/upstream trichotomy is exhaustive
+    for *every* `Scenario` — it is `Nat.lt_trichotomy` on the person
+    prominences. -/
 theorem universal5_trichotomy_exhaustive (s : Scenario) :
-    (s.isDownstream || s.isUpstream || s.isBalanced) = true := by
-  obtain ⟨a, p⟩ := s; cases a <;> cases p <;> rfl
+    s.Downstream ∨ s.Balanced ∨ s.Upstream :=
+  (Nat.lt_trichotomy s.pPerson.prominence s.aPerson.prominence).imp
+    id (Or.imp Eq.symm id)
 
 /-- Universal 5: the frequency-class proxy is monotone in the "usualness"
     of the scenario — downstream > balanced > upstream. This is a
@@ -384,13 +438,17 @@ theorem universal6_dehoopmalchukov_predicts :
     to those about split A and P flagging seen earlier"). The parallelism
     IS Haspelmath's. -/
 
-/-- Universal 7: R targets the non-prominent end (like A). -/
-theorem universal7_R_like_A :
-    differentialTargetsProminent .R = differentialTargetsProminent .A := rfl
+/-- Universal 7: R targets the non-prominent end (like A) — R and A impose
+    the same compliance condition on a split. -/
+theorem universal7_R_like_A (p : Features.Prominence.MarkingPattern) :
+    universal3Compliant .R p ↔ universal3Compliant .A p := by
+  simp [universal3Compliant, ArgumentRole.IsLowDefault, ArgumentRole.IsHighDefault]
 
-/-- Universal 8: T targets the prominent end (like P). -/
-theorem universal8_T_like_P :
-    differentialTargetsProminent .T = differentialTargetsProminent .P := rfl
+/-- Universal 8: T targets the prominent end (like P) — T and P impose the
+    same compliance condition. -/
+theorem universal8_T_like_P (p : Features.Prominence.MarkingPattern) :
+    universal3Compliant .T p ↔ universal3Compliant .P p := by
+  simp [universal3Compliant, ArgumentRole.IsLowDefault, ArgumentRole.IsHighDefault]
 
 -- ============================================================================
 -- § 8: Universals 9a/9b — Ditransitive Person-Role
@@ -460,9 +518,9 @@ theorem universal10_relative_scenario :
 
     Upstream = unusual = lower frequency class = predicted longer by FFC.
     The direct/inverse distinction is captured at the scenario level via
-    `Scenario.isDownstream`/`isUpstream` (substrate `Features/Prominence.lean`);
-    a dedicated `VoiceDirection` enum was carried in `Core/FormFrequency.lean`
-    until 0.230.551 but never used and was demoted out. -/
+    `Scenario.Downstream`/`Upstream` (§0); a dedicated `VoiceDirection`
+    enum was carried in `Core/FormFrequency.lean` until 0.230.551 but
+    never used and was demoted out. -/
 
 theorem universal11_inverse :
     upstreamScenario.frequencyClass < downstreamScenario.frequencyClass := by decide
@@ -647,8 +705,8 @@ theorem alignment_correlation_deHoopMalchukov :
     scenarios, longest to upstream — exactly the gradient U10/U11
     predict. -/
 def usualnessCoding (s : Scenario) : CodingLength :=
-  if s.isDownstream then .zero
-  else if s.isBalanced then .short
+  if s.Downstream then .zero
+  else if s.Balanced then .short
   else .long
 
 /-- The `usualnessCoding` proxy respects the form-frequency correspondence
@@ -658,19 +716,6 @@ def usualnessCoding (s : Scenario) : CodingLength :=
     a hand-rolled all-pairs sweep. -/
 theorem universal68_scenario_form_frequency :
     scenarioRespectsFormFrequency Scenario.all usualnessCoding = true := by decide
-
--- ============================================================================
--- § 17: Form-Frequency Grounding (re-export)
--- ============================================================================
-
-/-- The cell-level form-frequency claim under U1: default cells have
-    `frequencyProxy ≥ 3`. Re-exported from substrate for direct citation
-    under the U1 framing. -/
-theorem universal1_frequency_grounding (role : ArgumentRole)
-    (a : AnimacyLevel) (d : DefinitenessLevel) :
-    (isDefaultZone role a d = true) →
-    (frequencyProxy role a d ≥ 3) :=
-  frequency_proxy_matches_default role a d
 
 -- ============================================================================
 -- § 18: Contrast with [marantz-1991] — Configurational Case

@@ -5,6 +5,7 @@ import Linglib.Syntax.Case.Alignment
 import Linglib.Studies.Dixon1994
 import Linglib.Studies.Aissen2003
 import Linglib.Fragments.Dargwa.ComplexPredicates
+import Linglib.Syntax.ArgumentRole
 
 /-!
 # Comrie (1989) [comrie-1989]
@@ -84,7 +85,7 @@ The same pattern holds for `DefinitenessLevel` and `Person` — all
 three prominence scales are defined once in `Features.Prominence` and
 imported by every downstream module. -/
 
-open Features.Prominence (AnimacyLevel ArgumentRole)
+open Features.Prominence (AnimacyLevel)
 open Alignment (AlignmentType)
 
 -- ============================================================================
@@ -191,10 +192,10 @@ theorem neutral_marks_neither :
     accusative systems differentially mark the low-default role (P),
     ergative systems differentially mark the high-default role (A).
     This mirrors the polarity of marking in `Features.Prominence`:
-    P is lowDefault, A is highDefault. -/
+    P is low-default, A is high-default. -/
 theorem marking_polarity_matches_alignment :
-    ArgumentRole.P.lowDefault = true ∧
-    ArgumentRole.A.highDefault = true := ⟨rfl, rfl⟩
+    ArgumentRole.P.IsLowDefault ∧
+    ArgumentRole.A.IsHighDefault := ⟨Or.inl rfl, Or.inl rfl⟩
 
 -- ============================================================================
 -- § 2a: Deriving Subject Properties from Alignment
