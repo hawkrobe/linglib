@@ -3,7 +3,7 @@ import Linglib.Phonology.Segmental.Defs
 import Linglib.Features.Reflex
 import Linglib.Syntax.Extraction
 import Linglib.Fragments.Mayan.Params
-import Linglib.Syntax.ArgumentRole
+import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Chol Agreement and Case Fragment

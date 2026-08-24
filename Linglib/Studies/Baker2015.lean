@@ -6,7 +6,7 @@ import Linglib.Fragments.Hindi.Case
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Mayan.Chol.Agreement
-import Linglib.Syntax.ArgumentRole
+import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Baker (2015) — Case: Its Principles and Its Parameters

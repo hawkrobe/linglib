@@ -5,7 +5,7 @@ import Linglib.Syntax.Case.Alignment
 import Linglib.Studies.Dixon1994
 import Linglib.Studies.Aissen2003
 import Linglib.Fragments.Dargwa.ComplexPredicates
-import Linglib.Syntax.ArgumentRole
+import Linglib.Syntax.Clause.ArgumentRole
 import Linglib.Features.Person.Basic
 
 /-!

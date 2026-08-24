@@ -5,7 +5,7 @@ import Linglib.Fragments.Mayan.Mam.Pronouns
 import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Extraction
-import Linglib.Syntax.ArgumentRole
+import Linglib.Syntax.Clause.ArgumentRole
 import Linglib.Features.Person.Basic
 
 /-!

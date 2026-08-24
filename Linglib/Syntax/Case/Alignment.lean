@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Features.Case.Basic
 import Linglib.Features.Prominence
 import Mathlib.Data.Fintype.Prod
-import Linglib.Syntax.ArgumentRole
+import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Alignment Case-Assignment Functions

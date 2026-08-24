@@ -2772,7 +2772,6 @@ import Linglib.Syntax.Agreement.Profile
 import Linglib.Syntax.Agreement.Target
 import Linglib.Syntax.Anaphora.Basic
 import Linglib.Syntax.Anaphora.Diagnostic
-import Linglib.Syntax.ArgumentRole
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
 import Linglib.Syntax.Binding.SpecificityCondition
@@ -2817,6 +2816,7 @@ import Linglib.Syntax.Category.Verb.Defs
 import Linglib.Syntax.Category.Verb.Reciprocal
 import Linglib.Syntax.Category.Verb.Stem
 import Linglib.Syntax.Category.Verb.Symmetric
+import Linglib.Syntax.Clause.ArgumentRole
 import Linglib.Syntax.Clause.Arguments
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Clause.Chaining

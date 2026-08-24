@@ -4,7 +4,7 @@ import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Hungarian.Predicates
-import Linglib.Syntax.ArgumentRole
+import Linglib.Syntax.Clause.ArgumentRole
 import Linglib.Features.Person.Basic
 
 /-!

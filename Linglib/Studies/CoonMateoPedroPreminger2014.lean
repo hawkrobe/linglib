@@ -14,7 +14,7 @@ import Linglib.Fragments.Mayan.Mam.Extraction
 import Linglib.Fragments.Mayan.Kiche.Agreement
 import Linglib.Fragments.Mayan.Kiche.Extraction
 import Linglib.Fragments.Mayan.Yukatek.Agreement
-import Linglib.Syntax.ArgumentRole
+import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Coon, Mateo Pedro & Preminger (2014) [coon-mateo-pedro-preminger-2014]

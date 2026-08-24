@@ -1,4 +1,4 @@
-import Linglib.Syntax.ArgumentRole
+import Linglib.Syntax.Clause.ArgumentRole
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Semantics.ArgumentStructure.Linking
 
@@ -68,7 +68,10 @@ def coreArguments (v : Verb) : List Argument :=
     parallel to `coreArguments` ([comrie-1978]): the sole core argument of
     a one-place frame is S; a two-place frame has A and P; a double-object
     frame has A, R, and T. A function of the frame's arity — coding roles
-    are read off argument structure, not assigned to it. -/
+    are read off argument structure, not assigned to it. This classifies
+    the *citation clause*; the general clause-token classification is
+    `Clause.Arguments.codingRole` (a passive clause of the same verb has
+    an S). -/
 def codingRoles (v : Verb) : List ArgumentRole :=
   match v.coreArguments.length with
   | 0 => []

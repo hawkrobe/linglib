@@ -2,10 +2,13 @@
 # Comparative argument roles
 
 `ArgumentRole`: the S/A/P/R/T comparative concepts for argument coding,
-neutral between case and agreement. `ArgumentRole.core` is the
-monotransitive core that alignment partitions quantify over;
-`IsHighDefault`/`IsLowDefault` classify the roles by their usual
-referential prominence (the role-reference association).
+neutral between case and agreement. The *clause* takes the classification
+— a passive clause's sole argument is S whatever the predicate calls it —
+so the label set lives with the clause vocabulary; `Clause.Arguments.codingRole`
+classifies clause tokens and `Verb.codingRoles` the citation clause.
+`ArgumentRole.core` is the monotransitive core that alignment partitions
+quantify over; `IsHighDefault`/`IsLowDefault` classify the roles by their
+usual referential prominence (the role-reference association).
 
 Distinct from the semantic tier (`ArgumentStructure.ThetaRole`, the Dowty
 proto-role profiles): S/A/P/R/T are construction-relative coding slots —
