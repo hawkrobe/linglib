@@ -65,7 +65,6 @@ set_option autoImplicit false
 namespace Stassen1985
 
 open Comparative
-open Features (CaseAssignment FixedCaseEncoding)
 
 -- ════════════════════════════════════════════════════
 -- § 0. The Stassen 1985 six-way typology

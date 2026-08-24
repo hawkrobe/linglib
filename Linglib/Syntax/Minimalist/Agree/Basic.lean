@@ -22,7 +22,7 @@ exposes its projecting head's bundle through selection-driven labeling
 (`headBundle`). The feature *types* live in `Features.lean`; the search
 kernel and failure model ([preminger-2014] Ch. 5) in `Probe/Basic.lean`;
 richer satisfaction conditions ([deal-2024], [keine-2019]) in
-`Probe/Satisfaction.lean`; the Case Filter in `Syntax/Case/Filter.lean`.
+`Probe/Satisfaction.lean`; the Case Filter in `Syntax/Minimalist/Case.lean`.
 -/
 
 namespace Minimalist

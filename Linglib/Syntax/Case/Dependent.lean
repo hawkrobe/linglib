@@ -26,7 +26,8 @@ formalisations.
 ## Main definitions
 
 * `CaseSource`: how a case was assigned; `CaseSource.toNeutral` projects it
-  onto the account-neutral `Case.Source`.
+  onto the account-neutral `Case.Source`. Dependent case is total, which the
+  projection's totality records by construction.
 * `CaseLanguageType`: the alignment parameter fixing the dependent and
   unmarked cases.
 * `NPInDomain`, `CasedNP`: an NP before and after case assignment.
@@ -84,12 +85,6 @@ def CaseSource.toNeutral : CaseSource → _root_.Case.Source
   | .dependent => .structural
   | .unmarked => .default
   | .agree => .structural
-
-/-- Dependent case is total: no source it produces is the crash `uncased`,
-    unlike the hybrid licensing of `Licensing.LicensingOutcome`. -/
-theorem CaseSource.toNeutral_ne_uncased (s : CaseSource) :
-    s.toNeutral ≠ _root_.Case.Source.uncased := by
-  cases s <;> decide
 
 /-! ### Alignment types -/
 

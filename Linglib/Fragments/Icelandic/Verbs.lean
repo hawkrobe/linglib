@@ -1,3 +1,4 @@
+import Linglib.Features.Case.Source
 import Linglib.Fragments.Icelandic.Case
 
 /-!
@@ -40,16 +41,14 @@ NAG (~20), NAA (~2).
 
 ## Case Assignment ([zaenen-maling-thrainsson-1985])
 
-Quirky case is **fixed** (lexical): it is preserved under raising and is
-not affected by passivization. Structural case (NOM, ACC in standard
-frames) is **derived**: it changes under passivization (ACC object →
-NOM subject in passive). This distinction is encoded via `CaseAssignment`
-from `Case`.
+Quirky case is **lexical**: it is preserved under raising and is not
+affected by passivization. Structural case (NOM, ACC in standard frames)
+changes under passivization (ACC object → NOM subject in passive). The
+distinction is the subject's case provenance, encoded as `Case.Source`
+(`.inherent` vs `.structural`).
 -/
 
 namespace Icelandic.Verbs
-
-open Features (CaseAssignment)
 
 -- ============================================================================
 -- § 1: Verb Case Frames
@@ -75,11 +74,11 @@ structure VerbCaseFrame where
   firstObject : Option Case := none
   /-- Case of the second post-verbal argument, if any -/
   secondObject : Option Case := none
-  /-- How the subject's case is assigned: `.derived` (structural — changes
-      under passivization/raising) or `.fixed` (lexical/quirky — preserved
-      under raising). Default: NOM → derived, all others → fixed. -/
-  subjectCaseAssignment : CaseAssignment :=
-    if subjectCase == .nom then .derived else .fixed
+  /-- Provenance of the subject's case: `.structural` (changes under
+      passivization/raising) or `.inherent` (lexical/quirky — preserved
+      under raising). Default: NOM → structural, all others → inherent. -/
+  subjectCaseSource : Case.Source :=
+    if subjectCase == .nom then .structural else .inherent
   deriving Repr, BEq
 
 /-- Is the subject non-nominative (quirky)?
@@ -380,15 +379,15 @@ theorem nom_verbs_not_quirky :
 
 -- § 9.2: Case assignment
 
-/-- Quirky subjects have fixed (lexical) case assignment. -/
-theorem quirky_subjects_are_fixed :
+/-- Quirky subjects bear inherent (lexical) case. -/
+theorem quirky_subjects_inherent :
     quirkySubjectVerbs.all
-      (fun v => v.subjectCaseAssignment == .fixed) = true := by decide
+      (fun v => v.subjectCaseSource == .inherent) = true := by decide
 
-/-- Nominative subjects have derived (structural) case assignment. -/
-theorem nom_subjects_are_derived :
+/-- Nominative subjects bear structural case. -/
+theorem nom_subjects_structural :
     nomSubjectVerbs.all
-      (fun v => v.subjectCaseAssignment == .derived) = true := by decide
+      (fun v => v.subjectCaseSource == .structural) = true := by decide
 
 -- § 9.3: Agreement
 
@@ -476,6 +475,6 @@ theorem leidast_is_quirky_dn :
     leidastCF.subjectCase = .dat ∧
     leidastCF.firstObject = some .nom ∧
     leidastCF.quirkySubject = true ∧
-    leidastCF.subjectCaseAssignment = .fixed := ⟨rfl, rfl, rfl, rfl⟩
+    leidastCF.subjectCaseSource = .inherent := ⟨rfl, rfl, rfl, rfl⟩
 
 end Icelandic.Verbs
