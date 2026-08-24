@@ -18,8 +18,8 @@ intransitive subjects in non-perfective. The formal-syntactic analyses of
 
 ## Main declarations
 
-* Case assignment over `ArgumentRole` via `Mayan.ergCaseChol`
-  (perfective, ergative) and `Mayan.accCaseChol` (non-perfective,
+* Case assignment over `ArgumentRole` via `(Mayan.caseChol .Perf)`
+  (perfective, ergative) and `(Mayan.caseChol .Imp)` (non-perfective,
   extended-ergative).
 * `Chol.absPosition`: LOW-ABS morpheme placement.
 * `Chol.setAExponent`, `Chol.setBExponent`: the Set A (ERG/GEN) and Set B

@@ -18,7 +18,7 @@ This study file consumes the substrate primitives in
 `Syntax/Case/Alignment.lean`
 (`Alignment.invertedErgative.assignCase`,
 `Alignment.ergative.assignCase`) and `Fragments/Mayan/Params.lean`
-(`caseKaqchikel`, `ergCaseKaqchikel`, `accCaseKaqchikel`,
+(`caseKaqchikel`, `(Mayan.caseKaqchikel .Perf)`, `(Mayan.caseKaqchikel .Prog)`,
 `caseChol`, `caseQanjobalan`) and verifies that the substrate
 faithfully encodes Imanishi's analysis.
 
@@ -119,35 +119,35 @@ def qanjobalURN : URN := .optional
     `Fragments/Mayan/Params.lean:246`); this theorem verifies the
     derived case values match Imanishi's Kaqchikel-type table (87). -/
 theorem kaqchikel_progressive_matches_imanishi :
-    Mayan.accCaseKaqchikel .A = .abs ∧
-    Mayan.accCaseKaqchikel .P = .gen ∧
-    Mayan.accCaseKaqchikel .S = .abs := ⟨rfl, rfl, rfl⟩
+    (Mayan.caseKaqchikel .Prog) .A = .abs ∧
+    (Mayan.caseKaqchikel .Prog) .P = .gen ∧
+    (Mayan.caseKaqchikel .Prog) .S = .abs := ⟨rfl, rfl, rfl⟩
 
-/-- The substrate's `accCaseKaqchikel` is exactly
+/-- The substrate's `(Mayan.caseKaqchikel .Prog)` is exactly
     `invertedErgative.assignCase` — the Phase F load-bearing theorem.
-    Holds by definitional equality (`accCaseKaqchikel := caseKaqchikel
+    Holds by definitional equality (`(Mayan.caseKaqchikel .Prog) := caseKaqchikel
     .Prog := invertedErgative.assignCase`). -/
 theorem invertedErgative_matches_kaqchikel_progressive :
-    Mayan.accCaseKaqchikel .A = Alignment.invertedErgative.assignCase .A ∧
-    Mayan.accCaseKaqchikel .P = Alignment.invertedErgative.assignCase .P ∧
-    Mayan.accCaseKaqchikel .S = Alignment.invertedErgative.assignCase .S :=
+    (Mayan.caseKaqchikel .Prog) .A = Alignment.invertedErgative.assignCase .A ∧
+    (Mayan.caseKaqchikel .Prog) .P = Alignment.invertedErgative.assignCase .P ∧
+    (Mayan.caseKaqchikel .Prog) .S = Alignment.invertedErgative.assignCase .S :=
   ⟨rfl, rfl, rfl⟩
 
 /-- [imanishi-2014] eq. (88) Chol/Q'anjob'al-type: in their
     non-perfective, S/A → ERG, P → ABS (extended ergative). The
-    substrate's `accCaseChol` returns `extendedErgative.assignCase`. -/
+    substrate's `(Mayan.caseChol .Imp)` returns `extendedErgative.assignCase`. -/
 theorem chol_nonperfective_matches_imanishi :
-    Mayan.accCaseChol .A = .gen ∧
-    Mayan.accCaseChol .P = .abs ∧
-    Mayan.accCaseChol .S = .gen := ⟨rfl, rfl, rfl⟩
+    (Mayan.caseChol .Imp) .A = .gen ∧
+    (Mayan.caseChol .Imp) .P = .abs ∧
+    (Mayan.caseChol .Imp) .S = .gen := ⟨rfl, rfl, rfl⟩
 
 /-- Q'anjob'alan non-perfective matches the same extended-ergative
     pattern as Chol. (Q'anjob'alan only triggers split in PROG, so
-    `accCaseQanjobalan` is `caseQanjobalan .Prog`.) -/
+    `(Mayan.caseQanjobalan .Prog)` is `caseQanjobalan .Prog`.) -/
 theorem qanjobalan_progressive_matches_imanishi :
-    Mayan.accCaseQanjobalan .A = .gen ∧
-    Mayan.accCaseQanjobalan .P = .abs ∧
-    Mayan.accCaseQanjobalan .S = .gen := ⟨rfl, rfl, rfl⟩
+    (Mayan.caseQanjobalan .Prog) .A = .gen ∧
+    (Mayan.caseQanjobalan .Prog) .P = .abs ∧
+    (Mayan.caseQanjobalan .Prog) .S = .gen := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 3: Cross-Language Inversion — Kaqchikel inverts Chol on A/P axis
@@ -159,8 +159,8 @@ theorem qanjobalan_progressive_matches_imanishi :
     A → ABS and P → GEN. The two-element diff between the substrate
     cases makes the inversion structurally visible. -/
 theorem kaqchikel_inverts_chol_on_AP :
-    Mayan.accCaseKaqchikel .A = Mayan.accCaseChol .P ∧
-    Mayan.accCaseKaqchikel .P = Mayan.accCaseChol .A :=
+    (Mayan.caseKaqchikel .Prog) .A = (Mayan.caseChol .Imp) .P ∧
+    (Mayan.caseKaqchikel .Prog) .P = (Mayan.caseChol .Imp) .A :=
   ⟨rfl, rfl⟩
 
 /-- The S argument behaves identically in both language types: ABS in
@@ -168,7 +168,7 @@ theorem kaqchikel_inverts_chol_on_AP :
     Chol (D-assigned to nominalized-clause-internal subject). The
     inversion is on A and P; S is asymmetric. -/
 theorem S_does_not_invert :
-    Mayan.accCaseKaqchikel .S ≠ Mayan.accCaseChol .S := by
+    (Mayan.caseKaqchikel .Prog) .S ≠ (Mayan.caseChol .Imp) .S := by
   decide
 
 -- ============================================================================
@@ -211,12 +211,12 @@ def imanishiPredictedAccP (lang : URN) : Case :=
 
 /-- The substrate values match Imanishi's URN-driven predictions. -/
 theorem substrate_matches_URN_predictions :
-    Mayan.accCaseKaqchikel .A = imanishiPredictedAccA kaqchikelURN ∧
-    Mayan.accCaseKaqchikel .P = imanishiPredictedAccP kaqchikelURN ∧
-    Mayan.accCaseChol .A = imanishiPredictedAccA cholURN ∧
-    Mayan.accCaseChol .P = imanishiPredictedAccP cholURN ∧
-    Mayan.accCaseQanjobalan .A = imanishiPredictedAccA qanjobalURN ∧
-    Mayan.accCaseQanjobalan .P = imanishiPredictedAccP qanjobalURN :=
+    (Mayan.caseKaqchikel .Prog) .A = imanishiPredictedAccA kaqchikelURN ∧
+    (Mayan.caseKaqchikel .Prog) .P = imanishiPredictedAccP kaqchikelURN ∧
+    (Mayan.caseChol .Imp) .A = imanishiPredictedAccA cholURN ∧
+    (Mayan.caseChol .Imp) .P = imanishiPredictedAccP cholURN ∧
+    (Mayan.caseQanjobalan .Prog) .A = imanishiPredictedAccA qanjobalURN ∧
+    (Mayan.caseQanjobalan .Prog) .P = imanishiPredictedAccP qanjobalURN :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end Imanishi2014

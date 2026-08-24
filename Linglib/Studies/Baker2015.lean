@@ -320,8 +320,8 @@ theorem georgian_present_in_inventory :
 
     The agreement at the table level is provable here: both Baker's
     `Alignment.ergative.assignCase` (the Phase-4 typological ground truth) and
-    the Chol fragment's `ergCase` (which derives from the same function via
-    `Mayan.ergCaseExtErg`) produce identical case for A/S/P. The disagreement
+    the Chol fragment's perfective pattern (`Mayan.caseChol .Perf`, the
+    same function by definition) produce identical case for A/S/P. The disagreement
     is invisible at this level — it shows up only when one asks *why* a given
     case appears, not *which* case appears.
 
@@ -421,7 +421,7 @@ theorem dependent_source_distinct_from_inherent :
   refine ⟨by decide, by decide⟩
 
 /-- The Chol fragment's case table (Phase 3) inherits the equivalence
-    automatically: since `ArgumentRole.agent.ergCase` is definitionally
+    automatically: since `Mayan.caseChol .Perf .A` is definitionally
     equal to `Alignment.ergative.assignCase .A` (via the Phase-3 substrate
     chain), the equivalence theorem above immediately yields
     `getCaseOf "agent" (assignCases .ergative transitiveMonoNPs)`
@@ -430,7 +430,7 @@ theorem dependent_source_distinct_from_inherent :
     can cite it directly. -/
 theorem chol_perfective_ergCase_matches_dependent :
     getCaseOf "agent" (assignCases .ergative transitiveMonoNPs)
-      = some (Mayan.ergCaseChol .A) := by decide
+      = some ((Mayan.caseChol .Perf) .A) := by decide
 
 /-- **Dependent case is INSUFFICIENT for extended ergative.** The Chol
     non-perfective S/A → GEN, P → ABS pattern is a fourth typological

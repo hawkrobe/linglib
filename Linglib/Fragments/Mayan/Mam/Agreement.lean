@@ -27,7 +27,7 @@ as a more formal variant ([scott-2023] ch. 3, ex. 156).
 
 * `Mam.setAExponent`, `Mam.setBExponent`: the Set A (ERG) and Set B
   (ABS) exponent tables ([scott-2023] Tables 2.8, 3.5).
-* Tripartite case assignment via `Mayan.ergCaseMam`; `IsPhiAgreed` and
+* Tripartite case assignment via `(Mayan.caseMam .Perf)`; `IsPhiAgreed` and
   `CanBeReduced` classify each `ArgumentRole` by φ-agreement status and
   reduction eligibility.
 * `Mam.PhiDimension` with `.Copied`, `agreedDimensions`,
@@ -150,20 +150,20 @@ instance : DecidablePred CanBeReduced := fun pos => by
 -- is a re-export of the substrate lemma.
 
 /-- Agent gets ERG (inherent, from Voice). -/
-theorem A_case : Mayan.ergCaseMam .A = .erg := Alignment.tripartite.assignCase_A
+theorem A_case : (Mayan.caseMam .Perf) .A = .erg := Alignment.tripartite.assignCase_A
 
 /-- Patient gets ACC (structural, from Voice). -/
-theorem P_case : Mayan.ergCaseMam .P = .acc := Alignment.tripartite.assignCase_P
+theorem P_case : (Mayan.caseMam .Perf) .P = .acc := Alignment.tripartite.assignCase_P
 
 /-- Intransitive S gets ABS (structural, from Infl). -/
-theorem S_case : Mayan.ergCaseMam .S = .abs := Alignment.tripartite.assignCase_S
+theorem S_case : (Mayan.caseMam .Perf) .S = .abs := Alignment.tripartite.assignCase_S
 
 /-- Three distinct underlying cases (morphologically tripartite),
     inherited from `Alignment.tripartite_distinguishes_all`. -/
 theorem tripartite_alignment :
-    Mayan.ergCaseMam .A ≠ Mayan.ergCaseMam .P ∧
-    Mayan.ergCaseMam .A ≠ Mayan.ergCaseMam .S ∧
-    Mayan.ergCaseMam .P ≠ Mayan.ergCaseMam .S :=
+    (Mayan.caseMam .Perf) .A ≠ (Mayan.caseMam .Perf) .P ∧
+    (Mayan.caseMam .Perf) .A ≠ (Mayan.caseMam .Perf) .S ∧
+    (Mayan.caseMam .Perf) .P ≠ (Mayan.caseMam .Perf) .S :=
   Alignment.tripartite_distinguishes_all
 
 /-- Reduction eligibility coincides with φ-agreement — reflexivity,
@@ -175,11 +175,11 @@ theorem reduction_eligible_iff_phi_agreed (pos : ArgumentRole) :
 /-! ### Case inventory ([blake-1994]) -/
 
 /-- The case inventory realized by the core positions: {ERG, ACC, ABS}. -/
-def caseInventory : Finset Case := (ArgumentRole.core.map Mayan.ergCaseMam).toFinset
+def caseInventory : Finset Case := (ArgumentRole.core.map (Mayan.caseMam .Perf)).toFinset
 
 /-- The inventory covers all argument positions. -/
 theorem inventory_covers_positions :
-    ∀ p ∈ ArgumentRole.core, Mayan.ergCaseMam p ∈ caseInventory := by decide
+    ∀ p ∈ ArgumentRole.core, (Mayan.caseMam .Perf) p ∈ caseInventory := by decide
 
 -- Mam's {ERG, ACC, ABS} inventory is valid per Blake's case hierarchy
 -- (all are core cases at rank 6, trivially no gaps).
