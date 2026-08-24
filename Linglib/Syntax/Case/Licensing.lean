@@ -4,112 +4,60 @@ import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Case.Filter
 
 /-!
-# Hybrid Licensing
-[kalin-2018] [coon-keine-2021] [marantz-1991] [baker-2015]
+# Hybrid licensing
 
-A theory of nominal licensing that decouples *which* nominals need
-licensing from *where* the licensers live. Following [kalin-2018]'s
-analysis of differential object marking (DOM) in the Neo-Aramaic
-language Senaya, every clause carries
+This file formalizes the theory of nominal licensing of [kalin-2018], which
+decouples *which* nominals need licensing from *where* the licensers live.
+Every clause carries one obligatory primary licenser plus zero or more
+secondary licensers that merge only when their inactivity would leave some
+nominal unlicensed — a last-resort economy condition on functional structure.
+Independently, a language fixes which nominals need licensing at all: making
+every nominal need it yields no differential object marking, while restricting
+the requirement to nominals carrying a structural or featural component
+([+specific], [+definite], [+animate]) yields DOM as the visible signature of
+a secondary licenser having been activated.
 
-1. an **obligatory primary licenser** (always merged), plus
-2. zero or more **secondary licensers** that merge only when their
-   inactivity would cause some nominal to remain unlicensed —
-   essentially a global last-resort economy condition on functional
-   structure.
+"Needs licensing" is an uninterpretable, unvalued [Case] feature in the sense
+of [pesetsky-torrego-2007], and licensing is its valuation under Agree;
+`LicensedNP.needsLicensing` is that feature's Boolean abstraction. A nominal
+is *unmarked* when the primary licenser suffices and *marked* when convergence
+required a secondary, so the marked/unmarked split is derived rather than
+primitive.
 
-Independently, languages parameterize *which* nominals need licensing in
-the first place. Some make every nominal need licensing (no DOM);
-others restrict the licensing requirement to nominals carrying certain
-structural/featural components (e.g., [+specific], [+definite],
-[+animate]) — yielding DOM as the visible signature of secondary
-licensers being activated.
+## Main definitions
 
-## Feature-Theoretic Implementation
+* `Licenser`, `ClauseLicensers`: a licenser and a clause's inventory of them,
+  exactly one of which is primary.
+* `LicensedNP`: a nominal together with its licensing requirement.
+* `LicensingOutcome`: which licenser valued a nominal, or the crash;
+  `LicensingOutcome.toNeutral` projects it onto the account-neutral
+  `Case.Source`.
+* `licenseNPs`: the licensing algorithm over a clause.
+* `isDOMMarked`: a nominal is DOM-marked exactly when a secondary licensed it.
 
-[kalin-2018] cashes "needs licensing" as carrying an
-*uninterpretable, unvalued* [Case] feature in the
-[pesetsky-torrego-2007] framework: licensing is feature
-*valuation* via Agree with an active licenser. Nominals without the
-unvalued feature are not active for licensing — they are interpretable
-in situ. The `needsLicensing` flag on `LicensedNP` is the Boolean
-abstraction of this feature; the `caseFeature` accessor returns the
-NP's licensing-relevant case state (valued by lexical case, valued by
-a licenser, or unvalued).
+## Main results
 
-## Why "Hybrid"
+* `licenseNPs_length`, `licenseNPs_labels`: licensing is total and
+  order-preserving.
+* `licenseActive_no_crash_when_enough_secondaries`,
+  `no_need_means_no_secondaries_used`: with enough secondaries nothing
+  crashes, and with nothing needing licensing no secondary activates.
+* `isLicensed_iff_satisfiesCaseFilter`: a nominal is licensed iff it
+  satisfies the Case Filter of `Syntax/Case/Filter.lean`, so the filter is a
+  theorem of hybrid licensing rather than a separate stipulation.
 
-The architecture is hybrid in two senses:
+## References
 
-- **Licensers**: primary (obligatory) + secondary (last-resort) coexist
-  in the same clause. This contrasts with Agree-based theories
-  ([marantz-1991] as a foil; classical Minimalism) in which case is
-  assigned by a fixed set of functional heads, and with dependent case
-  (`Dependent.lean`, [baker-2015]) in which configuration alone
-  determines case without a head-based licensing requirement.
-- **Marked vs. unmarked objects**: under hybrid licensing, marked
-  objects are not structurally distinguished from unmarked ones in the
-  usual sense (they don't necessarily occupy a high position or escape
-  pseudo-incorporation); the difference is that they triggered
-  activation of a secondary licenser.
-
-## Two Parameters
-
-A language's licensing system is determined by:
-
-- `needsLicensing : NPFeatures → Bool` — which nominals require licensing
-- the inventory of `Licenser`s, of which exactly one is `primary` and
-  the rest are `secondary`
-
-DOM patterns fall out from the interaction. A nominal is *unmarked* if
-the primary licenser suffices; *marked* if convergence required
-activating a secondary licenser. Non-DOM languages either (a) license
-every nominal via the primary head (no secondary licenser ever
-activates) or (b) make every nominal need licensing so that secondary
-licensers always activate uniformly.
-
-## Relation to Other Case Theories
-
-- **Dependent case** (`Dependent.lean`, [baker-2015]): configural,
-  no head-based licensing requirement. Hybrid licensing is largely
-  orthogonal — the two can in principle coexist in a single language,
-  with dependent case assigning the morphological exponent and licensing
-  determining whether a secondary licenser had to merge to host a given
-  nominal.
-- **Voice-based case** (`Studies/Scott2023.lean`): case
-  is keyed to argument position via Voice. Both frameworks use
-  designated functional heads as case assigners; whether secondary
-  licensers in a particular language are best identified with Voice
-  flavors is a language-specific question this file does not adjudicate.
-- **Feature gluttony** ([coon-keine-2021]): an alternative to
-  licensing-based accounts of hierarchy effects (PCC, dative-nominative
-  configurations). [coon-keine-2021] argue that hierarchy effects
-  are *not* due to failures of nominal licensing but to a probe
-  participating in too many Agree dependencies. Hybrid licensing
-  applies to DOM patterns that feature gluttony does not target;
-  the two are adjacent debates rather than competing analyses of the
-  same data.
-
-## Bridge to the Case Filter
-
-§ 7 connects this module's `LicensingOutcome` to the Chomskyan Case
-Filter formalized in `Syntax/Minimalism/CaseFilter.lean`:
-an outcome that values Case (any of `.byPrimary`, `.bySecondary`, or
-`.byLexical`) satisfies the Case Filter, while `.unlicensed` does not.
-Kalin's framework thus *derives* the Case Filter as the convergence
-condition on hybrid licensing rather than stipulating it.
-
+* [kalin-2018]
+* [pesetsky-torrego-2007]
 -/
-
 namespace Syntax.Case.Licensing
 
--- We qualify `Case` everywhere because `Core/Lexical/Word.lean`
--- aliases a *different* `Case` (UD.Case) at root scope.
+-- `Case` is qualified throughout: a different `Case` (UD.Case) is aliased at
+-- root scope.
 open Minimalist (DPFeatures satisfiesCaseFilter)
 
--- ============================================================================
--- § 1: Primary vs. Secondary Licensers
--- ============================================================================
+/-! ### Licensers -/
 
 /-- A licenser merges either obligatorily (primary) or as a last-resort
     response to convergence requirements (secondary). Following
@@ -131,13 +79,7 @@ structure Licenser where
   assignedCase : Case
   deriving DecidableEq, Repr
 
-/-- Is this licenser primary (obligatorily merged in every clause)? -/
-@[simp] def Licenser.isPrimary (ℓ : Licenser) : Bool :=
-  ℓ.kind == .primary
-
--- ============================================================================
--- § 2: Nominals and Their Licensing Need
--- ============================================================================
+/-! ### Nominals and their licensing requirement -/
 
 /-- A nominal as seen by the licensing system. Extends `NPInDomain`
     (the configural type from `Dependent.lean`) with the
@@ -181,9 +123,7 @@ theorem LicensedNP.caseFeature_none_iff_active (np : LicensedNP) :
   unfold caseFeature isActive
   cases np.lexicalCase <;> cases np.needsLicensing <;> simp
 
--- ============================================================================
--- § 3: A Clause's Licensing Inventory
--- ============================================================================
+/-! ### The licensing inventory of a clause -/
 
 /-- A clause's licensing potential: its primary licenser plus the
     secondary licensers available for last-resort activation.
@@ -198,13 +138,7 @@ structure ClauseLicensers where
 def ClauseLicensers.all (cl : ClauseLicensers) : List Licenser :=
   cl.primary :: cl.secondaries
 
-theorem ClauseLicensers.primary_isPrimary (cl : ClauseLicensers) :
-    cl.primary.isPrimary = true := by
-  simp [Licenser.isPrimary, cl.primary_is_primary]
-
--- ============================================================================
--- § 4: The Licensing Algorithm
--- ============================================================================
+/-! ### The licensing algorithm -/
 
 /-- Outcome of licensing a nominal. Each constructor records *which*
     licenser valued the NP's [Case] feature and *what* case was
@@ -223,11 +157,13 @@ inductive LicensingOutcome where
   | unlicensed
   deriving DecidableEq, Repr
 
-/-- Has this NP's [Case] feature been valued? `true` for any of the
-    three valuation outcomes; `false` only for `.unlicensed`. -/
-@[simp] def LicensingOutcome.isLicensed : LicensingOutcome → Bool
-  | .unlicensed => false
-  | _ => true
+/-- The nominal's [Case] feature was valued, by any of the three mechanisms. -/
+@[simp] def LicensingOutcome.IsLicensed : LicensingOutcome → Prop
+  | .unlicensed => False
+  | _ => True
+
+instance : DecidablePred LicensingOutcome.IsLicensed := fun o => by
+  cases o <;> unfold LicensingOutcome.IsLicensed <;> infer_instance
 
 /-- The case value an outcome assigns, if any. -/
 def LicensingOutcome.assignedCase : LicensingOutcome → Option Case
@@ -252,7 +188,7 @@ def LicensingOutcome.toNeutral : LicensingOutcome → _root_.Case.Source
     contrast between the two rival accounts — one can crash, the other
     cannot. -/
 theorem LicensingOutcome.toNeutral_uncased_iff (o : LicensingOutcome) :
-    o.toNeutral = _root_.Case.Source.uncased ↔ o.isLicensed = false := by
+    o.toNeutral = _root_.Case.Source.uncased ↔ ¬ o.IsLicensed := by
   cases o <;> simp [LicensingOutcome.toNeutral]
 
 /-- The result of licensing a single NP. -/
@@ -327,9 +263,7 @@ def getOutcomeOf (label : String) (results : List LicensedResult) :
     Option LicensingOutcome :=
   (results.find? (·.label == label)).map (·.outcome)
 
--- ============================================================================
--- § 5: DOM as Hybrid-Licensing Signature
--- ============================================================================
+/-! ### Differential object marking -/
 
 /-- A nominal is *DOM-marked* iff licensing required activating a
     secondary licenser. The unmarked/marked split in DOM languages is
@@ -346,9 +280,7 @@ instance : DecidablePred isDOMMarked := fun o => by
 def domMarkedNPs (results : List LicensedResult) : List String :=
   (results.filter λ r => decide (isDOMMarked r.outcome)).map (·.label)
 
--- ============================================================================
--- § 6: Structural Properties
--- ============================================================================
+/-! ### Structural properties -/
 
 /-! These hold for arbitrary inputs and lock down the algorithm's
 shape: the secondary queue is consumed left-to-right, and an NP is
@@ -359,26 +291,12 @@ theorem licenseSecondaries_length (avail : List Licenser)
     (licenseSecondaries avail active).length = active.length := by
   induction active generalizing avail with
   | nil => rfl
-  | cons _ rest ih =>
-    cases avail with
-    | nil =>
-      unfold licenseSecondaries
-      simp only [List.length_cons]
-      exact congrArg (· + 1) (ih [])
-    | cons s ss =>
-      unfold licenseSecondaries
-      simp only [List.length_cons]
-      exact congrArg (· + 1) (ih ss)
+  | cons _ _ ih => cases avail <;> simp [licenseSecondaries, ih]
 
 theorem licenseActive_length (primary : Licenser) (secondaries : List Licenser)
     (active : List LicensedNP) :
     (licenseActive primary secondaries active).length = active.length := by
-  cases active with
-  | nil => rfl
-  | cons _ rest =>
-    unfold licenseActive
-    simp only [List.length_cons]
-    exact congrArg (· + 1) (licenseSecondaries_length secondaries rest)
+  cases active <;> simp [licenseActive, licenseSecondaries_length]
 
 /-- **Totality of the licensing algorithm.** Every input NP yields
     exactly one output result, in the same order. The algorithm
@@ -471,9 +389,7 @@ theorem no_need_means_no_secondaries_used (cl : ClauseLicensers)
   rw [← hr_eq]
   simp [h_lex, h_need]
 
--- ============================================================================
--- § 7: Bridge to the Case Filter
--- ============================================================================
+/-! ### The Case Filter -/
 
 /-! Connects `LicensingOutcome` to the Chomskyan Case Filter
 formalized in `Minimalism/CaseFilter.lean`: an outcome valued by
@@ -498,104 +414,69 @@ def LicensingOutcome.toDPFeatures : LicensingOutcome → DPFeatures
     conditions are extensionally equivalent — making the Case Filter a
     theorem of hybrid licensing rather than an independent axiom. -/
 theorem isLicensed_iff_satisfiesCaseFilter (o : LicensingOutcome) :
-    o.isLicensed = satisfiesCaseFilter o.toDPFeatures := by
-  cases o <;> rfl
+    o.IsLicensed ↔ satisfiesCaseFilter o.toDPFeatures := by
+  cases o <;>
+    simp [satisfiesCaseFilter, LicensingOutcome.toDPFeatures, HasCase.caseOf,
+      DPFeatures.withCase, DPFeatures.withUnvaluedCase]
 
 /-- A list of licensing results converges (no `.unlicensed`) iff every
     induced DP satisfies the Case Filter. -/
 theorem all_isLicensed_iff_caseFilterHolds (results : List LicensedResult) :
-    results.all (·.outcome.isLicensed) =
+    (∀ r ∈ results, r.outcome.IsLicensed) ↔
       Minimalist.caseFilterHolds (results.map λ r => r.outcome.toDPFeatures) := by
-  induction results with
-  | nil => rfl
-  | cons r rest ih =>
-    simp only [List.all_cons, List.map_cons, Minimalist.caseFilterHolds,
-               List.all_cons]
-    rw [isLicensed_iff_satisfiesCaseFilter]
-    unfold Minimalist.caseFilterHolds at ih
-    rw [ih]
+  simp only [Minimalist.caseFilterHolds, List.all_eq_true, List.mem_map,
+    forall_exists_index, and_imp, forall_apply_eq_imp_iff₂,
+    isLicensed_iff_satisfiesCaseFilter]
 
--- ============================================================================
--- § 8: Worked Examples
--- ============================================================================
+/-! ### Differential marking requires an available secondary -/
 
-/-! These illustrate the algorithm on a Turkish-style DOM clause and on
-the degenerate no-secondary configuration. They are not the empirical
-core of the framework — that lives in `Studies/` — but
-they exercise the algorithm end-to-end and would catch breakage from
-any refactor of the licensing pipeline. -/
+private theorem licenseSecondaries_nil (active : List LicensedNP) :
+    ∀ r ∈ licenseSecondaries [] active, r.outcome = .unlicensed := by
+  induction active with
+  | nil => simp [licenseSecondaries]
+  | cons _ _ ih =>
+    intro r hr
+    rcases List.mem_cons.mp hr with rfl | hr' <;> [rfl; exact ih r hr']
 
-private def primaryT : Licenser :=
-  { kind := .primary, head := "T", assignedCase := .nom }
+private theorem licenseActive_nil_not_dom (primary : Licenser)
+    (active : List LicensedNP) :
+    ∀ r ∈ licenseActive primary [] active, ¬ isDOMMarked r.outcome := by
+  intro r hr
+  cases active with
+  | nil => cases hr
+  | cons _ tl =>
+    rcases List.mem_cons.mp hr with rfl | hr'
+    · simp
+    · simp [licenseSecondaries_nil tl r hr']
 
-private def secondaryAgrO : Licenser :=
-  { kind := .secondary, head := "AGRO", assignedCase := .acc }
+/-- With no secondary licenser available, nothing is DOM-marked: the
+    marked/unmarked split exists only where a secondary can activate. -/
+theorem no_dom_without_secondaries (cl : ClauseLicensers) (nps : List LicensedNP)
+    (h : cl.secondaries = []) :
+    ∀ r ∈ licenseNPs cl nps, ¬ isDOMMarked r.outcome := by
+  intro r hr
+  simp only [licenseNPs, List.mem_map] at hr
+  obtain ⟨np, _, rfl⟩ := hr
+  cases hlex : np.lexicalCase with
+  | some c => simp
+  | none =>
+    by_cases hneed : np.needsLicensing
+    · simp only [hneed, if_pos]
+      rcases hfind : List.find? (·.label == np.label)
+        (licenseActive cl.primary cl.secondaries
+          (nps.filter LicensedNP.isActive)) with _ | q
+      · rw [hfind]; simp
+      · rw [hfind]
+        simpa using licenseActive_nil_not_dom cl.primary _ q
+          (h ▸ List.mem_of_find?_eq_some hfind)
+    · simp [hneed]
 
-private def turkishLikeClause : ClauseLicensers :=
-  { primary := primaryT, secondaries := [secondaryAgrO] }
-
-/-- A canonical transitive: subject + specific object. The subject is
-    licensed by primary T; the object needs licensing and is handled by
-    the secondary AGRO — yielding DOM marking on the object. -/
-private def transitive_specific : List LicensedNP :=
-  [ { label := "subj", lexicalCase := none, needsLicensing := true }
-  , { label := "obj-specific", lexicalCase := none, needsLicensing := true } ]
-
-/-- A nonspecific object that lacks the licensing requirement remains
-    unmarked — the secondary licenser need not activate. -/
-private def transitive_nonspecific : List LicensedNP :=
-  [ { label := "subj", lexicalCase := none, needsLicensing := true }
-  , { label := "obj-nonspecific", lexicalCase := none, needsLicensing := false } ]
-
-theorem specific_object_is_dom_marked :
-    getOutcomeOf "obj-specific"
-      (licenseNPs turkishLikeClause transitive_specific) =
-    some (.bySecondary "AGRO" .acc) := by decide
-
-theorem nonspecific_object_unmarked :
-    getOutcomeOf "obj-nonspecific"
-      (licenseNPs turkishLikeClause transitive_nonspecific) =
-    some (.byPrimary "T" .nom) := by decide
-
-theorem subject_always_primary :
-    getOutcomeOf "subj"
-      (licenseNPs turkishLikeClause transitive_specific) =
-        some (.byPrimary "T" .nom) ∧
-    getOutcomeOf "subj"
-      (licenseNPs turkishLikeClause transitive_nonspecific) =
-        some (.byPrimary "T" .nom) := ⟨by decide, by decide⟩
-
-/-- DOM signature: only the specific object is marked in the specific
-    transitive; nothing is marked in the nonspecific transitive. -/
-theorem dom_signature :
-    domMarkedNPs (licenseNPs turkishLikeClause transitive_specific) =
-      ["obj-specific"] ∧
-    domMarkedNPs (licenseNPs turkishLikeClause transitive_nonspecific) = [] :=
-  ⟨by decide, by decide⟩
-
-/-- A clause with no secondary licenser cannot host a second active
-    nominal — modeling languages where the primary licenser is the only
-    one available. -/
-private def noSecondaryClause : ClauseLicensers :=
-  { primary := primaryT, secondaries := [] }
-
-theorem no_secondary_means_crash :
-    getOutcomeOf "obj-specific"
-      (licenseNPs noSecondaryClause transitive_specific) =
-        some .unlicensed := by decide
-
-/-- **Primary head identity is load-bearing.** Two clauses with
-    different primary licensers produce distinguishable outcomes — the
-    algorithm honors the primary's identity rather than collapsing it
-    to an opaque `.byPrimary` token. -/
-private def inflPrimaryClause : ClauseLicensers :=
-  { primary := { kind := .primary, head := "Infl", assignedCase := .nom },
-    secondaries := [secondaryAgrO] }
-
-theorem primary_head_distinguishes :
-    getOutcomeOf "subj"
-      (licenseNPs turkishLikeClause transitive_specific) ≠
-    getOutcomeOf "subj"
-      (licenseNPs inflPrimaryClause transitive_specific) := by decide
+/-- Every DOM-marked label in a result list was licensed by a secondary. -/
+theorem mem_domMarkedNPs (results : List LicensedResult) (lbl : String)
+    (h : lbl ∈ domMarkedNPs results) :
+    ∃ r ∈ results, r.label = lbl ∧ isDOMMarked r.outcome := by
+  simp only [domMarkedNPs, List.mem_map, List.mem_filter, decide_eq_true_eq] at h
+  obtain ⟨r, ⟨hmem, hdom⟩, rfl⟩ := h
+  exact ⟨r, hmem, rfl, hdom⟩
 
 end Syntax.Case.Licensing
