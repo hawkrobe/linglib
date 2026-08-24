@@ -309,8 +309,7 @@ theorem distr_properPlural_extends {P : E → Prop}
     (hx : P x) (hy : P y) (hne : x ≠ y) :
     properPlural P (x ⊔ y) :=
   ⟨AlgClosure.sum (AlgClosure.base hx) (AlgClosure.base hy),
-   fun hAtom => hne ((Atom.eq hAtom le_sup_left (hDistr x hx).not_isBot).trans
-     (Atom.eq hAtom le_sup_right (hDistr y hy).not_isBot).symm)⟩
+   not_atom_sup_of_ne (hDistr x hx) (hDistr y hy) hne⟩
 
 /-- CUM for the proper plural ⊕P: sums of proper plurals are
     proper plurals. -/

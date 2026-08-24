@@ -305,7 +305,7 @@ theorem mix_both_conceivable
 /-- The conceivability presuppositions have the same assertive
     content — both sg and pl indefinites contribute the same truth
     conditions (especially under negation: |C| = 0 for both).
-    This mirrors `Sauerland2003.sg_pl_same_assertion` at the
+    This mirrors `Sauerland2003.sg_pl_competition` at the
     conceivability level: the competition is entirely presuppositional.
     But unlike Sauerland's entity-level presuppositions, the
     conceivability presuppositions are not ordered by strength. -/

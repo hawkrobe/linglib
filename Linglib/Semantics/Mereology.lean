@@ -229,6 +229,11 @@ theorem Overlap.not_isBot_right (h : Overlap x y) : ¬ IsBot y := h.symm.not_isB
 
 end Atoms
 
+/-- The sum of two distinct atoms is not an atom. -/
+theorem not_atom_sup_of_ne [SemilatticeSup α] {x y : α} (hx : Atom x) (hy : Atom y) (hne : x ≠ y) :
+    ¬ Atom (x ⊔ y) :=
+  fun h => hne ((h.eq le_sup_left hx.not_isBot).trans (h.eq le_sup_right hy.not_isBot).symm)
+
 /-! ### Bounded and bottomless carriers -/
 
 section OrderBot
