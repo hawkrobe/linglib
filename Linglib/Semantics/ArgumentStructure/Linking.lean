@@ -245,11 +245,11 @@ theorem canonical_profiles_wellformed (r : ThetaRole) :
 
 namespace ArgumentStructure.Linking
 
-/-- Which argument position in the clause we're asking about.
+/-- The grammatical function a linking theory's output targets.
     Theory-neutral: expressed as grammatical functions, not structural
     positions (Spec-vP, Comp-VP, etc.), so that theories with different
     structural vocabularies can all target the same output. -/
-inductive ArgPosition where
+inductive GramFunction where
   | subject         -- Grammatical subject (external or raised)
   | directObject    -- Direct object
   | indirectObject  -- Indirect object / dative
@@ -290,7 +290,7 @@ structure LinkingTheory (Verb Ctx : Type) where
   compatible : Verb → List Ctx
   /-- Predict each argument's theta role in a given context.
       Returns `none` for positions the theory is silent about. -/
-  predict : Verb → Ctx → ArgPosition → Option ThetaRole
+  predict : Verb → Ctx → GramFunction → Option ThetaRole
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 7. Testing predictions against fragment data
@@ -303,7 +303,7 @@ structure LinkingTheory (Verb Ctx : Type) where
     if ANY context produces the correct prediction — the fragment entry
     records one use of the verb, not all possible uses. -/
 def LinkingTheory.matchesAt {Verb Ctx : Type} [BEq Ctx]
-    (th : LinkingTheory Verb Ctx) (v : Verb) (pos : ArgPosition)
+    (th : LinkingTheory Verb Ctx) (v : Verb) (pos : GramFunction)
     (actual : Option ThetaRole) : Bool :=
   (th.compatible v).any fun ctx => th.predict v ctx pos == actual
 
