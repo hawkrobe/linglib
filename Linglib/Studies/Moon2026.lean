@@ -635,8 +635,8 @@ theorem both_break_cum
     mixed drinks require a novel individuation mechanism beyond
     standard mereological atomicity.
 
-    Compare Borer's `same_root_mass_and_count`: the root √BEER is
-    CUM ∧ Div(√BEER) is QUA. For mixed drinks: the recipe denotation
+    Compare Borer's `div_qua`: the root √BEER is CUM and Div(√BEER) is
+    QUA. For mixed drinks: the recipe denotation
     is ¬CUM ∧ ¬QUA — neither mass nor count in Borer's strict sense,
     but count in DISTRIBUTIONAL behavior (pluralizes, takes numerals). -/
 theorem mixedDrink_not_qua {n : ℕ}

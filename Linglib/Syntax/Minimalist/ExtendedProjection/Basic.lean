@@ -388,8 +388,8 @@ theorem fhead_extends_projection :
     pairs with Q (individuation, F2), while Fin (clause-typing, F3)
     pairs with Num (number, F3). These are structural analogs
     occupying the same EP zone, but their semantic functions differ.
-    See `borer_ordering_unique` in `Borer2005.lean` for the formal
-    argument that Q must be below Num. -/
+    See `Borer2005.q_below_num` for the formal argument that Q must be
+    below Num. -/
 theorem verbal_nominal_parallel :
     fValue .V = fValue .N ∧ fValue .v = fValue .n ∧
     fValue .T = fValue .Q ∧ fValue .Fin = fValue .Num := by decide
