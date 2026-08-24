@@ -3,7 +3,6 @@ import Linglib.Features.Reflex
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Extraction
 import Linglib.Fragments.Mayan.Params
-import Linglib.Syntax.ArgumentRole
 
 /-!
 # Q'anjob'al Agent Focus and Extraction Fragment
@@ -69,7 +68,7 @@ def StatusSuffix.form : StatusSuffix → String
 
 -- The substantive claim "A-extraction is banned without AF" is expressed
 -- as `Extraction.Marked Extraction.realize .subject` (subject = .agent's
--- default position per `Extraction.ArgumentRole.defaultPosition`).
+-- default position per `Extraction.MacroRole.defaultPosition`).
 
 /-! ### Agent Focus construction -/
 

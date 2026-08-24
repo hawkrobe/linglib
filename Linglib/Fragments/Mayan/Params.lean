@@ -8,6 +8,7 @@ import Linglib.Morphology.Morph
 import Linglib.Morphology.Word.Basic
 import Linglib.Morphology.Morphotactics.Template
 import Linglib.Syntax.ArgumentRole
+import Linglib.Features.Person.Basic
 
 open Morphology (Word)
 

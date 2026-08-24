@@ -38,7 +38,7 @@ syntax projects onto these operations via
 as *constructional* properties of nominal terms, not semantic roles. A is
 "the nominal term whose coding matches the agent of a prototypical transitive
 verb" — it's defined by coding (flagging, indexation, order), anchored to
-semantic prototypes. These are already captured by `Prominence.ArgumentRole`
+semantic prototypes. These are already captured by `ArgumentRole`
 (S, A, P, R, T). This file adds X (oblique) as a `TRRole` that extends
 `ArgumentRole` with the non-core case.
 
@@ -73,7 +73,7 @@ open ArgumentStructure (DiathesisAlternation)
 
 /-- Transitivity-Related role including obliques.
 
-    Extends `Prominence.ArgumentRole` (S, A, P, R, T) with X for obliques.
+    Extends `ArgumentRole` (S, A, P, R, T) with X for obliques.
     §1.3.3: "OBLIQUE NOMINAL TERMS (or simply OBLIQUES),
     symbolized as X, are defined as nominal terms of verbal clauses that do
     not meet the definition of either A, P, or S." -/
