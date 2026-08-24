@@ -94,9 +94,9 @@ abbrev clfForNum {α μTy : Type*} (P : α → Prop) (μ : α → μTy) (n : μT
 /-- CLF-for-NUM produces quantized predicates when μ is an extensive
     measure: no proper part of an n-measure entity also has measure n.
     Generalizes over any base predicate P. -/
-theorem clfForNum_qua {α M : Type*} [SemilatticeSup α] [Null α] [AddCommMonoid M]
+theorem clfForNum_qua {α M : Type*} [SemilatticeSup α] [AddCommMonoid M]
     [PartialOrder M]
-    {P : α → Prop} {μ : α → M} [ExtMeasure α μ] (n : M) :
+    {P : α → Prop} {μ : α → M} [ExtMeasure μ] (n : M) :
     QUA (fun x => QMOD P μ n x) :=
   Mereology.qmod_qua P n
 
@@ -118,14 +118,14 @@ theorem clfForNum_qua {α M : Type*} [SemilatticeSup α] [Null α] [AddCommMonoi
 
     We use `Atom x` instead of `μ(x) = 1` since atomicity is the
     mereological content of "counting as one group." -/
-def groupClf {E D : Type*} [SemilatticeSup E] [Null E] [SemilatticeSup D]
+def groupClf {E D : Type*} [SemilatticeSup E] [SemilatticeSup D]
     (mat : Semantics.Plurality.Algebra.Materialization E D)
     (P : E → Prop) (x : E) : Prop :=
   Atom x ∧ ∃ y, P y ∧ mat y = mat x
 
 /-- Group classifier output is quantized: no proper part of a group
     is itself a group (since groups are atoms). -/
-theorem groupClf_qua {E D : Type*} [SemilatticeSup E] [Null E] [SemilatticeSup D]
+theorem groupClf_qua {E D : Type*} [SemilatticeSup E] [SemilatticeSup D]
     (mat : Semantics.Plurality.Algebra.Materialization E D)
     {P : E → Prop} : QUA (groupClf mat P) :=
   Mereology.qua_of_atom fun _ h => h.1
@@ -171,8 +171,8 @@ theorem classifier_quantizes_forNoun {α : Type*} [SemilatticeSup α]
 
 /-- Every atom of a noun that excludes the null individual is one of its
     atomized instances. -/
-theorem clfForNoun_mem {α : Type*} [PartialOrder α] [Null α]
-    {P : α → Prop} (hP0 : ∀ ⦃y⦄, P y → ¬ null y) {x : α} (hAtom : Atom x) (hP : P x) :
+theorem clfForNoun_mem {α : Type*} [PartialOrder α]
+    {P : α → Prop} (hP0 : ∀ ⦃y⦄, P y → ¬ IsBot y) {x : α} (hAtom : Atom x) (hP : P x) :
     clfForNoun P x :=
   ⟨hP, fun _ hy hyx => hAtom.2 (hP0 hy) hyx⟩
 
@@ -181,8 +181,8 @@ theorem clfForNoun_mem {α : Type*} [PartialOrder α] [Null α]
     can only apply to nouns whose denotation includes atoms.
     Mass nouns (divisive predicates with no atoms) require a
     mensural classifier instead. -/
-theorem clfForNoun_nonempty {α : Type*} [PartialOrder α] [Null α]
-    {P : α → Prop} (hP0 : ∀ ⦃y⦄, P y → ¬ null y) {a : α} (hP : P a) (hAtom : Atom a) :
+theorem clfForNoun_nonempty {α : Type*} [PartialOrder α]
+    {P : α → Prop} (hP0 : ∀ ⦃y⦄, P y → ¬ IsBot y) {a : α} (hP : P a) (hAtom : Atom a) :
     ∃ x, clfForNoun P x :=
   ⟨a, clfForNoun_mem hP0 hAtom hP⟩
 

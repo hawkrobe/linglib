@@ -14,11 +14,10 @@ weak supplementation — the binary event sum `⊔` is the *unique fusion* of a 
 
 There is deliberately no single bundled event-mereology class. An event theory's
 two assumptions — that events form a classical mereology, and (separately) that a
-trace function such as the temporal trace `Event.runtime` is a
-`Mereology.IsSumHom` — are logically independent, so callers state the standard
-mixins directly:
-`[ClassicalMereology (Event Time)]` and, where τ-pullback is needed,
-`[IsSumHom (fun e => e.runtime)]` ([champollion-2017] §2.5; [bach-1986] for the
+trace function such as the temporal trace `Event.runtime` preserves sums (a
+`SupHom`) — are logically independent, so callers state the standard mixins
+directly: `[ClassicalMereology (Event Time)]` and, where τ-pullback is needed, a
+`map_sup` hypothesis on the trace ([champollion-2017] §2.5; [bach-1986] for the
 underlying event algebra).
 
 Lexical cumulativity of a verb predicate is just `Mereology.CUM` over
@@ -32,19 +31,13 @@ event-specific re-spelling.
   from the classical-mereology fusion axioms.
 * `sup_isLUB` — the event sum is the mereological fusion (a least upper bound).
 
-Generic mereological vocabulary (`CUM`, `QUA`, `IsSumHom`, `Overlap`, `IsFusion`,
+Generic mereological vocabulary (`CUM`, `QUA`, `Overlap`, `IsFusion`,
 `ClassicalMereology`, …) lives in `Mereology`; consumers `open Mereology`.
 -/
 
 namespace Semantics.Events.CEM
 
 open _root_.Mereology
-
-/-- Events have no null event: the event domain is a classical mereology
-    ([hovda-2009]). -/
-instance instNullEvent (Time : Type*) [LinearOrder Time] [Event.Mereology Time] :
-    Null (Event Time) :=
-  Null.noNull _
 
 /-- The binary sum `⊔` on events, derived from the classical-mereology fusion
     axioms: `e₁ ⊔ e₂` is the unique type-2 fusion of `{e₁, e₂}`. Noncomputable

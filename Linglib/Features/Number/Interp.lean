@@ -46,7 +46,7 @@ pragmatic and not encoded.
 
 namespace Number
 
-open Mereology (Atom CUM Null atomize null)
+open Mereology (Atom CUM atomize)
 
 variable {D : Type*} [SemilatticeSup D]
 
@@ -68,7 +68,6 @@ theorem additive_subregion_is_cum (Q : D → Prop) : CUM (additiveIn Q) :=
 instance {Q : D → Prop} [Fintype D] [DecidablePred Q] (x : D) : Decidable (additiveIn Q x) :=
   decidable_of_iff (Q x ∧ ∀ y, Q y → Q (x ⊔ y)) Iff.rfl
 
-variable [Null D]
 
 /-- The atoms of `P`: Harbour's `[+atomic]`, the singular region. -/
 abbrev atomsOf (P : D → Prop) (x : D) : Prop := P x ∧ Atom x
@@ -84,7 +83,7 @@ abbrev pluralOf (P : D → Prop) (x : D) : Prop := nonAtomsOf P x ∧ ¬ dualOf 
 
 /-- An atom of a region excluding the null individual is minimal in it:
 `[+atomic]` entails `[+minimal]`. -/
-theorem singular_subset_minimal {P : D → Prop} (hP : ∀ y, P y → ¬ null y) {x : D}
+theorem singular_subset_minimal {P : D → Prop} (hP : ∀ y, P y → ¬ IsBot y) {x : D}
     (hx : atomsOf P x) : atomize P x :=
   ⟨hx.1, fun _ hy hle => hx.2.2 (hP _ hy) hle⟩
 
@@ -92,7 +91,7 @@ theorem singular_subset_minimal {P : D → Prop} (hP : ∀ y, P y → ¬ null y)
 `[±atomic]` cannot undergo feature recursion. -/
 theorem atomize_eq_of_atoms {P : D → Prop} (hAll : ∀ x, P x → Atom x) : atomize P = P :=
   funext fun x => propext ⟨fun h => h.1, fun hPx =>
-    singular_subset_minimal (fun y hy => (hAll y hy).not_null) ⟨hPx, hAll x hPx⟩⟩
+    singular_subset_minimal (fun y hy => (hAll y hy).not_isBot) ⟨hPx, hAll x hPx⟩⟩
 
 /-- The region a number value denotes over `P`; the approximative values
 return `none`. -/

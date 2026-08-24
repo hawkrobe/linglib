@@ -336,10 +336,8 @@ theorem intensityComparative_max {Entity Time : Type*} [LinearOrder Time]
 When `Event = Event Time` and the preorder comes from
 `Semantics/Events/Basic.lean::Event.Mereology`, Pasternak's claim
 becomes: vP-predicates respect the event-mereology part-of. We expose
-two substrate consequences below: a downward-closure inheritance lemma
-for sort-determined predicates (using `Event.Mereology.sort_preserved`),
-and a g-homogeneity bridge to `Semantics/Mereology.lean::gHomogeneous`
-(triggered when the carrier is a `PartialOrder`).
+one substrate consequence below: a downward-closure inheritance lemma
+for sort-determined predicates (using `Event.Mereology.sort_preserved`).
 
 CSW [cariani-santorio-wellwood-2024] share Pasternak's monotonicity
 discipline: their eq. (21) is the same `StrictMono` constraint exposed
@@ -365,16 +363,6 @@ theorem sortDetermined_isHomogeneous
     MentalStateHomogeneity (fun e : Event Time => e.sort = s) := by
   exact fun e e' hle hPe =>
     (Event.Mereology.sort_preserved e' e hle).trans hPe
-
-/-- On a `PartialOrder` carrier, Pasternak's `MentalStateHomogeneity`
-    implies `Mereology.gHomogeneous` (every proper part has a P-part —
-    itself, by reflexivity). Direct application of the substrate's
-    `Mereology.div_implies_gHomogeneous` since `MentalStateHomogeneity`
-    is definitionally `Mereology.DIV`. -/
-theorem mentalStateHomogeneity_implies_gHomogeneous
-    {Event : Type*} [PartialOrder Event] {P : Event → Prop}
-    (h : MentalStateHomogeneity P) : Mereology.gHomogeneous P :=
-  Mereology.div_implies_gHomogeneous h
 
 /-! ## §6.1 Fragment Integration: English Psych Verbs
 

@@ -157,7 +157,7 @@ theorem connectivity_middle_ground {α : Type*} [SemilatticeSup α]
 -- § 1. Mixed Drink Recipe
 -- ════════════════════════════════════════════════════
 
-variable {α : Type*} [SemilatticeSup α] [Null α] [TopologicalSpace α]
+variable {α : Type*} [SemilatticeSup α] [TopologicalSpace α]
 
 /-- A mixed drink recipe: ingredient predicates, ratio constants, and
     an index identifying which ingredient is the MEASURED PART.
@@ -207,7 +207,7 @@ structure MixedDrinkWitness {n : ℕ} (recipe : Recipe α n)
   /-- Each part is a part of the whole -/
   part_le : ∀ i, assign i ≤ x
   /-- Each ingredient slot is filled by something. -/
-  present : ∀ i, ¬ null (assign i)
+  present : ∀ i, ¬ IsBot (assign i)
   /-- Each part satisfies its ingredient predicate -/
   satisfies : ∀ i, recipe.ingredients i (assign i)
   /-- Ratio constraint holds between all parts -/
@@ -576,7 +576,7 @@ theorem mixedDrink_not_atom {n : ℕ}
   have hne : (0 : Fin (n + 2)) ≠ 1 := by simp
   have hDisj := w.disjoint 0 1 hne
   rw [h0, h1] at hDisj
-  exact hDisj (Overlap.refl hAtom.not_null)
+  exact hDisj (Overlap.refl hAtom.not_isBot)
 
 /-- Borer's standard `Div` excludes mixed drinks from the individuated
     extension. Since mixed drinks are not atoms (`mixedDrink_not_atom`),

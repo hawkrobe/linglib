@@ -1,6 +1,7 @@
 import Linglib.Semantics.Mereology
 import Linglib.Logic.Bilateral.Defs
 import Mathlib.Order.UpperLower.Basic
+import Mathlib.Order.UpperLower.Closure
 import Mathlib.Order.UpperLower.CompleteLattice
 
 /-! # Truthmaker Semantics [fine-2017] [bondarenko-elliott-2026] [jago-2026]
@@ -114,35 +115,47 @@ end Connectives
 -- § 2. Content Parthood (Jago Def 5: Up + Down)
 -- ════════════════════════════════════════════════════
 
-/-- **Down clause** of conjunctive parthood ([jago-2026] Def 5;
-    [bondarenko-elliott-2026] content parthood):
-    every verifier of `p` has a part verifying `q`.
+section ContentParthood
 
-    Re-export of `Mereology.IsSubsumedBy` — the Down clause is a generic
-    poset relation, not truthmaker-specific.
+variable {S : Type*} [Preorder S] {p q r : TMProp S}
 
-    The Down-only relation suffices for [bondarenko-elliott-2026]'s
-    monotonicity arguments. -/
-abbrev IsSubsumedBy {S : Type*} [Preorder S] (q p : TMProp S) : Prop :=
-  Mereology.IsSubsumedBy q p
+/-- The Down clause of conjunctive parthood ([jago-2026]; [bondarenko-elliott-2026]'s
+content parthood): every verifier of `p` lies above a verifier of `q`. The Down clause
+alone carries [bondarenko-elliott-2026]'s monotonicity arguments. -/
+def IsSubsumedBy (q p : TMProp S) : Prop := {s | p s} ⊆ upperClosure {t | q t}
 
-/-- **Up clause** of conjunctive parthood ([jago-2026] Def 5):
-    every verifier of `q` is part of some verifier of `p`.
+/-- The Up clause of conjunctive parthood ([jago-2026]): every verifier of `q` lies below
+a verifier of `p`. `Subserves p (tmAnd p q)` needs `q` inhabited, a departure from Fine's
+convention that propositions are nonempty. -/
+def Subserves (q p : TMProp S) : Prop := {s | q s} ⊆ lowerClosure {t | p t}
 
-    Re-export of `Mereology.Subserves`. The Up clause is more delicate:
-    `Subserves p (tmAnd p q)` requires `q` to be inhabited (you need a
-    witness to fuse with) — a deliberate departure from the Fine
-    convention that propositions are nonempty. -/
-abbrev Subserves {S : Type*} [Preorder S] (q p : TMProp S) : Prop :=
-  Mereology.Subserves q p
+/-- Conjunctive parthood ([jago-2026]), written `q ≤ p` there: `q` is a content part of
+`p` if both the Down and the Up clause hold. -/
+def IsContentPart (q p : TMProp S) : Prop := IsSubsumedBy q p ∧ Subserves q p
 
-/-- Full conjunctive parthood ([jago-2026] Def 5):
-    `q` is a content part of `p` iff both the Down and Up clauses hold.
+@[refl] theorem IsSubsumedBy.refl (p : TMProp S) : IsSubsumedBy p p := subset_upperClosure
 
-    Re-export of `Mereology.IsContentPart`. Written `q ≤ p` in Jago's
-    notation. -/
-abbrev IsContentPart {S : Type*} [Preorder S] (q p : TMProp S) : Prop :=
-  Mereology.IsContentPart q p
+theorem IsSubsumedBy.trans (hpq : IsSubsumedBy p q) (hqr : IsSubsumedBy q r) :
+    IsSubsumedBy p r :=
+  Set.Subset.trans hqr (upperClosure_min hpq (upperClosure _).upper)
+
+@[refl] theorem Subserves.refl (p : TMProp S) : Subserves p p := subset_lowerClosure
+
+theorem Subserves.trans (hpq : Subserves p q) (hqr : Subserves q r) : Subserves p r :=
+  Set.Subset.trans hpq (lowerClosure_min hqr (lowerClosure _).lower)
+
+@[refl] theorem IsContentPart.refl (p : TMProp S) : IsContentPart p p :=
+  ⟨IsSubsumedBy.refl p, Subserves.refl p⟩
+
+theorem IsContentPart.trans (hpq : IsContentPart p q) (hqr : IsContentPart q r) :
+    IsContentPart p r :=
+  ⟨hpq.1.trans hqr.1, hpq.2.trans hqr.2⟩
+
+theorem IsContentPart.subsumed (h : IsContentPart q p) : IsSubsumedBy q p := h.1
+
+theorem IsContentPart.subserves (h : IsContentPart q p) : Subserves q p := h.2
+
+end ContentParthood
 
 -- ════════════════════════════════════════════════════
 -- § 3. Content Parts of Conjunctions
@@ -156,12 +169,12 @@ variable {S : Type*} [SemilatticeSup S] (p q : TMProp S)
     so `s₁ ≤ s` is the required part. -/
 theorem IsSubsumedBy.tmAnd_left : IsSubsumedBy p (tmAnd p q) := by
   intro s ⟨s₁, _, hp, _, hs⟩
-  exact ⟨s₁, hp, hs ▸ le_sup_left⟩
+  exact mem_upperClosure.2 ⟨s₁, hp, hs ▸ le_sup_left⟩
 
 /-- `q` is subsumed by `p ∧ q` (symmetric to `tmAnd_left`). -/
 theorem IsSubsumedBy.tmAnd_right : IsSubsumedBy q (tmAnd p q) := by
   intro s ⟨_, s₂, _, hq, hs⟩
-  exact ⟨s₂, hq, hs ▸ le_sup_right⟩
+  exact mem_upperClosure.2 ⟨s₂, hq, hs ▸ le_sup_right⟩
 
 /-- `p` subserves `p ∧ q` provided `q` is inhabited (Up clause).
     Take any `s` verifying `p`; pick a witness `s₂` verifying `q`;
@@ -169,13 +182,13 @@ theorem IsSubsumedBy.tmAnd_right : IsSubsumedBy q (tmAnd p q) := by
 theorem Subserves.tmAnd_left (hq : ∃ s, q s) : Subserves p (tmAnd p q) := by
   intro s hp
   obtain ⟨s₂, hqs₂⟩ := hq
-  exact ⟨s ⊔ s₂, ⟨s, s₂, hp, hqs₂, rfl⟩, le_sup_left⟩
+  exact mem_lowerClosure.2 ⟨s ⊔ s₂, ⟨s, s₂, hp, hqs₂, rfl⟩, le_sup_left⟩
 
 /-- `q` subserves `p ∧ q` provided `p` is inhabited. -/
 theorem Subserves.tmAnd_right (hp : ∃ s, p s) : Subserves q (tmAnd p q) := by
   intro s hq
   obtain ⟨s₁, hps₁⟩ := hp
-  exact ⟨s₁ ⊔ s, ⟨s₁, s, hps₁, hq, rfl⟩, le_sup_right⟩
+  exact mem_lowerClosure.2 ⟨s₁ ⊔ s, ⟨s₁, s, hps₁, hq, rfl⟩, le_sup_right⟩
 
 /-- `p` is a content part of `p ∧ q` whenever `q` is inhabited (full Jago Def 5). -/
 theorem IsContentPart.tmAnd_left (hq : ∃ s, q s) :
@@ -247,7 +260,7 @@ theorem isSubsumedBy_or_not_general :
        IsSubsumedBy q (tmOr p q)) := by
   intro h
   have := h Nat inferInstance (· = 0) (· = 1)
-  obtain ⟨t, ht, hle⟩ := this 0 (Or.inl rfl)
+  obtain ⟨t, (ht : t = 1), hle⟩ := mem_upperClosure.1 (@this 0 (Or.inl rfl))
   omega
 
 

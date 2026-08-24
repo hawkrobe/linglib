@@ -61,7 +61,7 @@ open _root_.Mereology
 -- § 1. Individuation Operator
 -- ════════════════════════════════════════════════════
 
-variable {α : Type*} [SemilatticeSup α] [Null α]
+variable {α : Type*} [SemilatticeSup α]
 
 /-- The individuation operator (Borer's CL#/Div).
 

@@ -32,33 +32,17 @@ namespace Degree
     - [schwarzschild-2002] [schwarzschild-2006] — *Monotonicity Constraint*
       on the measure function in nominal pseudopartitives.
     - [krifka-1989] — extensive measure functions on quantized objects.
-    - [wellwood-2015] — `μ` admissibility for `much`-comparatives;
-      `admissibleMeasure_of_mereoDim` bridges to the bundled `MereoDim`
-      typeclass.
+    - [wellwood-2015] — `μ` admissibility for `much`-comparatives.
     - [cariani-santorio-wellwood-2024] (eq. 21) — CSW use this exact
       formulation for confidence orderings.
     - [pasternak-2019] (def 4) — `μ_int` monotonicity on the
       part-whole structure of mental states.
     - [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025] —
       `EpistemicThreshold.IsProbabilistic` is a strengthening of this
-      (Monotone, not StrictMono).
-
-    The bundled-typeclass form is `MereoDim` in `Semantics/Mereology.lean`
-    (with `[PartialOrder]` carriers); the unbundled-Prop form is here
-    (with `[Preorder]`, more permissive). Use `MereoDim` when typeclass
-    inference is desired; use `admissibleMeasure` when the witness is
-    passed explicitly. -/
+      (Monotone, not StrictMono). -/
 abbrev admissibleMeasure {S D : Type*} [Preorder S] [Preorder D]
     (μ : S → D) : Prop :=
   StrictMono μ
-
-/-- Every `MereoDim` witness yields the unbundled `admissibleMeasure` Prop
-    (`MereoDim` bundles `StrictMono` with `[PartialOrder]` carriers). -/
-theorem admissibleMeasure_of_mereoDim
-    {A D : Type*} [PartialOrder A] [PartialOrder D]
-    {μ : A → D} (h : Mereology.MereoDim μ) :
-    admissibleMeasure μ :=
-  h.toStrictMono
 
 /-! ### Dimensional restriction -/
 

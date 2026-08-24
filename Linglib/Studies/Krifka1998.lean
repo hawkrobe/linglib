@@ -200,13 +200,13 @@ section K98PropositionalSubstrate
 open ArgumentStructure (MO)
 
 /-- K98 §4.1 eq. 63 EXP: θ-arguments of temporally-ordered events do not overlap. -/
-def EXP [PartialOrder α] [Null α]
+def EXP [PartialOrder α]
     (precedes : β → β → Prop) (θ : α → β → Prop) : Prop :=
   ∀ (x y : α) (e e' : β),
     θ x e → θ y e' → precedes e e' → ¬ Overlap x y
 
 /-- K98 §4.1 eq. 65 SEINC: strictly expansive incremental. EXP ∧ MO. -/
-def SEINC [SemilatticeSup α] [Null α] [SemilatticeSup β]
+def SEINC [SemilatticeSup α] [SemilatticeSup β]
     (precedes : β → β → Prop) (θ : α → β → Prop) : Prop :=
   EXP precedes θ ∧ MO θ
 
@@ -259,20 +259,20 @@ open Spatial
 
 variable {Loc Time : Type*} [LinearOrder Time]
 variable [Event.Mereology Time] [ClassicalMereology (Event Time)] [SemilatticeSup (Path Loc)]
-variable [st : Trace Loc Time] [IsSumHom st.σ]
+variable [st : Trace Loc Time]
 
 /-- Bounded path (QUA) ↦ telic VP via the σ-pullback (K98 §4.5 *walked from X to Y*). -/
 theorem walked_from_to_telic_propositional
-    (hinj : Function.Injective st.σ)
+    (hσ : ∀ e e', st.σ (e ⊔ e') = st.σ e ⊔ st.σ e') (hinj : Function.Injective st.σ)
     {P : Path Loc → Prop} (hP : QUA P) :
     QUA (P ∘ st.σ) :=
-  Trace.bounded_path_telic hinj hP
+  Trace.bounded_path_telic hσ hinj hP
 
 /-- Unbounded path (CUM) ↦ atelic VP via the σ-pullback (K98 §4.5 *walked towards X*). -/
 theorem walked_towards_atelic_propositional
-    {P : Path Loc → Prop} (hP : CUM P) :
+    (hσ : ∀ e e', st.σ (e ⊔ e') = st.σ e ⊔ st.σ e') {P : Path Loc → Prop} (hP : CUM P) :
     CUM (P ∘ st.σ) :=
-  Trace.unbounded_path_atelic hP
+  Trace.unbounded_path_atelic hσ hP
 
 end SpatialTracePullback
 
@@ -324,7 +324,7 @@ end MotionData
 
 section Expansiveness
 
-variable [SemilatticeSup α] [Null α] {Time : Type*} [LinearOrder Time]
+variable [SemilatticeSup α] {Time : Type*} [LinearOrder Time]
 
 /-- EXP-as-property of any θ : α → Event Time → Prop using `Event.precedes`. -/
 abbrev expEv (θ : α → Event Time → Prop) : Prop :=

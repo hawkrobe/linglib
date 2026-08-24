@@ -45,7 +45,7 @@ built on it.
 
 * The full single-phase strict definitions (35)–(36), (39)–(40) and the
   minimality/grinder operators (63)–(64).
-* Reconciling `Spatial.Trace`'s `IsSumHom` law with this study's trace
+* Reconciling `Spatial.Trace`'s sum-homomorphism law with this study's trace
   homomorphism: Zwarts (§3.2) follows Rothstein in using partial event
   concatenation, not the unrestricted mereological sum.
 -/

@@ -16,7 +16,7 @@ Closures are not redefined here — they are imported from
 `Semantics/Mereology.lean`:
 
 - `Mereology.AlgClosure P` is `P^⊔` (Jago: closed under fusion).
-- `Mereology.algClosureOp : ClosureOperator (α → Prop)` bundles it.
+- `Mereology.setOf_algClosure` identifies it with mathlib's `supClosure`.
 - `ordConnectedHull P` is `P^∼` (Jago: convex under parthood).
 - `ordConnectedHull : ClosureOperator (Set α)` bundles it.
 - `Set.OrdConnected` is the convex predicate (via `ordConnectedHull`).

@@ -124,7 +124,7 @@ def ReferenceUniv {α β : Type*} [SemilatticeSup α]
 
 /-! ### Atomic granularity (shared γ) -/
 
-/-- Atomic granularity for dimensions where `[PartialOrder β] [Null β]` is
+/-- Atomic granularity for dimensions where `[PartialOrder β]` is
     available: the inner d-image is an `Atom` in β. Used by
     `DistributiveReference` (dimension = θ thematic role; entities have a
     partial-order instance via the entity lattice).
@@ -135,7 +135,7 @@ def ReferenceUniv {α β : Type*} [SemilatticeSup α]
     `NonemptyInterval Time`). The unification is at the `Reference`
     parameter-space level: both express "γ = inner is atomic in the
     dimension's natural sense" at different concrete instantiations. -/
-def AtomicGranularity {β : Type*} [PartialOrder β] [Null β] : β → β → Prop :=
+def AtomicGranularity {β : Type*} [PartialOrder β] : β → β → Prop :=
   λ inner _outer => Atom inner
 
 /-! ### Stratified Distributive Reference ([champollion-2017] eq. 24) -/
@@ -148,12 +148,12 @@ def AtomicGranularity {β : Type*} [PartialOrder β] [Null β] : β → β → P
     over atomic agents.
 
     Genuine instance of `Reference` with `γ := AtomicGranularity`. -/
-def DistributiveReference {α β : Type*} [SemilatticeSup α] [PartialOrder β] [Null β]
+def DistributiveReference {α β : Type*} [SemilatticeSup α] [PartialOrder β]
     (θ : α → β) (P : α → Prop) (x : α) : Prop :=
   Reference θ AtomicGranularity P x
 
 /-- Universal distributive reference: every P-entity distributes along θ. -/
-def DistributiveReferenceUniv {α β : Type*} [SemilatticeSup α] [PartialOrder β] [Null β]
+def DistributiveReferenceUniv {α β : Type*} [SemilatticeSup α] [PartialOrder β]
     (θ : α → β) (P : α → Prop) : Prop :=
   ∀ x, P x → DistributiveReference θ P x
 
@@ -174,19 +174,19 @@ coincides with the functional form on a role's graph
     iff it has an atomic `R`-filler. Under thematic uniqueness
     (`ArgumentStructure.UP R`) that filler is unique, recovering "the
     `R`-filler of `y` is atomic". -/
-def RelationalDistributiveReference {Entity α : Type*} [PartialOrder Entity] [Null Entity]
+def RelationalDistributiveReference {Entity α : Type*} [PartialOrder Entity]
     [SemilatticeSup α] (R : Entity → α → Prop) (P : α → Prop) (x : α) : Prop :=
   AlgClosure (λ y => P y ∧ ∃ a, R a y ∧ Atom a) x
 
 /-- Universal relational distributive reference: every P-element
     distributes along R. -/
-def RelationalDistributiveReferenceUniv {Entity α : Type*} [PartialOrder Entity] [Null Entity]
+def RelationalDistributiveReferenceUniv {Entity α : Type*} [PartialOrder Entity]
     [SemilatticeSup α] (R : Entity → α → Prop) (P : α → Prop) : Prop :=
   ∀ x, P x → RelationalDistributiveReference R P x
 
 /-- Relational distributive reference is monotone in the predicate. -/
 theorem relationalDistributiveReference_mono {Entity α : Type*}
-    [PartialOrder Entity] [Null Entity] [SemilatticeSup α]
+    [PartialOrder Entity] [SemilatticeSup α]
     {R : Entity → α → Prop} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
     ∀ x, RelationalDistributiveReference R P x →
       RelationalDistributiveReference R Q x := by
@@ -198,7 +198,7 @@ theorem relationalDistributiveReference_mono {Entity α : Type*}
     justifying the relational form as the faithful generalization of
     [champollion-2017]'s distributive reference. -/
 theorem relationalDistributiveReference_graph {Entity α : Type*}
-    [PartialOrder Entity] [Null Entity] [SemilatticeSup α]
+    [PartialOrder Entity] [SemilatticeSup α]
     {θ : α → Entity} {P : α → Prop} {x : α} :
     RelationalDistributiveReference (λ a y => θ y = a) P x ↔
       DistributiveReference θ P x := by
@@ -283,7 +283,7 @@ abbrev DistributivityConstraint {α β : Type*} [SemilatticeSup α]
 
 /-- "each" distributes over atomic θ-fillers.
     Map = θ (thematic role), granularity = Atom (inner only). -/
-abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β] [Null β]
+abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β]
     (θ : α → β) (Share : α → Prop) (x : α) : Prop :=
   DistributiveReference θ Share x
 
@@ -313,7 +313,7 @@ theorem reference_trivial_granularity {α β : Type*} [SemilatticeSup α]
 
 /-- Distributive reference is monotone in the predicate. -/
 theorem distributiveReference_mono {α β : Type*} [SemilatticeSup α]
-    [PartialOrder β] [Null β]
+    [PartialOrder β]
     {θ : α → β} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
     ∀ x, DistributiveReference θ P x → DistributiveReference θ Q x := by
   intro x hx
@@ -330,10 +330,10 @@ theorem reference_mono {α β : Type*} [SemilatticeSup α]
 
 /-- **Dimension-polymorphic substrate witness.** Stratified reference with
     reflexive granularity is satisfied by every `P`-element via the base
-    case. Quantifies over any `d : α → β` (no `IsSumHom` needed for this
-    direction, since the witness is structural).
+    case. Quantifies over any `d : α → β` (no sum homomorphism needed for
+    this direction, since the witness is structural).
 
-    The companion direction — closure under sums via `IsSumHom d` — is
+    The companion direction — closure under sums via a `SupHom` — is
     `reference_join` below; together they establish that stratified
     reference composes faithfully with the trace-function abstraction. -/
 theorem reference_of_refl_granularity {α β : Type*} [SemilatticeSup α]
@@ -344,15 +344,15 @@ theorem reference_of_refl_granularity {α β : Type*} [SemilatticeSup α]
 /-- Stratified reference is closed under join when (i) the dimension is a
     sum-homomorphism and (ii) the granularity is monotone in the outer
     position w.r.t. `≤` on β. The substrate validation that the
-    trace-function abstraction (`[IsSumHom d]`, applicable uniformly to τ,
-    σ, agentOf, patientOf, themeOf via the instances in `Events/CEM.lean`)
-    composes correctly with stratified reference.
+    trace-function abstraction (`d : SupHom α β`, applicable uniformly to
+    τ, σ, agentOf, patientOf, themeOf) composes correctly with stratified
+    reference.
 
-    The `IsSumHom` assumption ensures `d (x ⊔ y) = d x ⊔ d y`; the
+    The `SupHom` structure ensures `d (x ⊔ y) = d x ⊔ d y`; the
     monotonicity assumption on γ then carries the stratification witnesses
     for `x` and `y` over to a witness for `x ⊔ y`. -/
 theorem reference_join {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
-    (d : α → β) [hHom : IsSumHom d]
+    (d : SupHom α β)
     {γ : β → β → Prop}
     (hMono : ∀ a b₁ b₂, γ a b₁ → b₁ ≤ b₂ → γ a b₂)
     {P : α → Prop} {x y : α}
@@ -370,7 +370,7 @@ theorem reference_join {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
       exact algClosure_mono
         (λ z ⟨hp, hg⟩ => ⟨hp, hMono _ _ _ hg le_sup_right⟩) y hy
     exact AlgClosure.sum hx' hy'
-  rw [hHom.map_sup]
+  rw [map_sup]
   exact hxy
 
 /-! ### Aspect Bridge (subinterval reference ↔ atelicity) -/

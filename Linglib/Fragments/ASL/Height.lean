@@ -129,7 +129,7 @@ def heightToDDRP {E : Type*} (zone : E → VerticalHeight) : HeightDDRP E where
     This uses `Mereology.Atom` from `Semantics/Mereology.lean`. The at-issue
     content is the identity — arc contributes only a presupposition, not
     assertoric content. -/
-def arcPresup (E : Type*) [PartialOrder E] [Mereology.Null E] : PartialProp E where
+def arcPresup (E : Type*) [PartialOrder E] : PartialProp E where
   presup := λ x => ¬ Mereology.Atom x
   assertion := λ _ => True
 
@@ -148,7 +148,7 @@ def arcPresup (E : Type*) [PartialOrder E] [Mereology.Null E] : PartialProp E wh
       consistent with [schwarzschild-2002]'s view of specificity as
       extreme domain restriction. The presupposition is maximally
       restrictive: the domain collapses to a single individual. -/
-def domainPresup {E : Type*} [PartialOrder E] [Mereology.Null E] (C : E → Prop) :
+def domainPresup {E : Type*} [PartialOrder E] (C : E → Prop) :
     VerticalHeight → PartialProp E
   | .high => { presup := λ x => (∀ y, C y → y ≤ x) ∧ ∃ y, y ≤ x ∧ ¬ C y
                assertion := λ _ => True }
@@ -161,7 +161,7 @@ def domainPresup {E : Type*} [PartialOrder E] [Mereology.Null E] (C : E → Prop
     and domain (height-dependent containment) presuppositions.
 
     ⟦[IX_i]-arc-height⟧ = ιz: ¬Atom(z) ∧ domainPresup(height). (z = g(i)) -/
-def ixArcHeightPresup {E : Type*} [PartialOrder E] [Mereology.Null E] (C : E → Prop)
+def ixArcHeightPresup {E : Type*} [PartialOrder E] (C : E → Prop)
     (h : VerticalHeight) : PartialProp E where
   presup := λ x => (arcPresup E).presup x ∧ (domainPresup C h).presup x
   assertion := λ _ => True
@@ -173,7 +173,7 @@ def ixArcHeightPresup {E : Type*} [PartialOrder E] [Mereology.Null E] (C : E →
 /-- The high presupposition entails the neutral presupposition is false:
     if Cₑ is a proper subpart of {y : y ≤ x}, then NOT all parts of x
     are in Cₑ. These are complementary conditions on the same domain. -/
-theorem high_incompatible_with_neutral {E : Type*} [PartialOrder E] [Mereology.Null E]
+theorem high_incompatible_with_neutral {E : Type*} [PartialOrder E]
     {C : E → Prop} {x : E}
     (hHigh : (domainPresup C .high).presup x) :
     ¬ (domainPresup C .neutral).presup x := by
@@ -188,7 +188,7 @@ theorem high_incompatible_with_neutral {E : Type*} [PartialOrder E] [Mereology.N
     [davidson-gagne-2022] (p. 39): the specific indefinite reading
     with low height uses SOME (an existential quantifier), not IX-arc
     (the plural pronoun). -/
-theorem arc_low_contradictory {E : Type*} [PartialOrder E] [Mereology.Null E]
+theorem arc_low_contradictory {E : Type*} [PartialOrder E]
     {C : E → Prop} {x : E} :
     ¬ (ixArcHeightPresup C .low).presup x := by
   intro ⟨hArc, hLow⟩
@@ -233,7 +233,7 @@ theorem arc_low_contradictory {E : Type*} [PartialOrder E] [Mereology.Null E]
     exactly `Set.Iic z ⊆ C`. The proof is `id`.
 
     [davidson-gagne-2022] eq. (50c): ⟦(of) IX-arc-neutral⟧ = λy. y ∈ Cₑ. -/
-theorem partitive_neutral_subset {E : Type*} [PartialOrder E] [Mereology.Null E]
+theorem partitive_neutral_subset {E : Type*} [PartialOrder E]
     {C : Set E} {z : E}
     (hNeut : (domainPresup C .neutral).presup z) :
     Set.Iic z ⊆ C :=
@@ -247,7 +247,7 @@ theorem partitive_neutral_subset {E : Type*} [PartialOrder E] [Mereology.Null E]
 
     [davidson-gagne-2022] eq. (51c): ⟦(of) IX-arc-high⟧ = λy. y ∈ C',
     where C ⊂ C'. -/
-theorem partitive_high_superset {E : Type*} [PartialOrder E] [Mereology.Null E]
+theorem partitive_high_superset {E : Type*} [PartialOrder E]
     {C : Set E} {z : E}
     (hHigh : (domainPresup C .high).presup z) :
     C ⊆ Set.Iic z ∧ ∃ y ∈ Set.Iic z, ¬ C y :=

@@ -25,7 +25,7 @@ namespace Semantics.Plurality
 /-- Landman's group structure: `up` packs a sum into a group atom, `down`
     recovers the underlying sum. The two laws are the operative core of
     [landman-1989]'s postulates. -/
-structure GroupStructure (E : Type*) [SemilatticeSup E] [Mereology.Null E] where
+structure GroupStructure (E : Type*) [SemilatticeSup E] where
   /-- Group formation (Landman's `↑`). -/
   up : E → E
   /-- Group dissolution (Landman's `↓`). -/
@@ -37,7 +37,7 @@ structure GroupStructure (E : Type*) [SemilatticeSup E] [Mereology.Null E] where
 
 namespace GroupStructure
 
-variable {E : Type*} [SemilatticeSup E] [Mereology.Null E] (G : GroupStructure E)
+variable {E : Type*} [SemilatticeSup E] (G : GroupStructure E)
 
 /-- Distinct sums form distinct group atoms. -/
 theorem up_injective : Function.Injective G.up :=
@@ -76,9 +76,6 @@ theorem modelUp_injective :
   exact Encodable.encode_injective (Sum.inr.inj
     (Finset.singleton_injective h'))
 
-/-- Nonempty finite pluralities have no null individual. -/
-instance {γ : Type*} : Mereology.Null {F : Finset γ // F.Nonempty} := Mereology.Null.noNull _
-
 instance : Nonempty {F : Finset (β ⊕ ℕ) // F.Nonempty} :=
   ⟨⟨{Sum.inr 0}, Finset.singleton_nonempty _⟩⟩
 
@@ -90,7 +87,12 @@ noncomputable def finsetModel (β : Type*) [DecidableEq β] [Encodable β] :
   up := modelUp
   down := Function.invFun modelUp
   atom_up x := by
-    refine ⟨not_false, fun z _ hz => ?_⟩
+    refine ⟨fun h => ?_, fun z _ hz => ?_⟩
+    · have h0 := Sum.inr.inj (Finset.mem_singleton.mp (Finset.singleton_subset_iff.mp
+        (h ⟨{Sum.inr 0}, Finset.singleton_nonempty _⟩)))
+      have h1 := Sum.inr.inj (Finset.mem_singleton.mp (Finset.singleton_subset_iff.mp
+        (h ⟨{Sum.inr 1}, Finset.singleton_nonempty _⟩)))
+      omega
     have hsub : z.val ⊆ {Sum.inr (Encodable.encode x)} := hz
     rcases Finset.subset_singleton_iff.mp hsub with hempty | hsingle
     · exact absurd hempty (Finset.nonempty_iff_ne_empty.mp z.2)

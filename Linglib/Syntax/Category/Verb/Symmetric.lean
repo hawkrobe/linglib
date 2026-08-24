@@ -30,7 +30,7 @@ structure Verb.Symmetric extends Verb where
 
 section Denotation
 
-variable {D E : Type*} [SemilatticeSup D] [Mereology.Null D] [SemilatticeSup E] [Mereology.Null E]
+variable {D E : Type*} [SemilatticeSup D] [SemilatticeSup E]
 
 /-- The symmetric-verb denotational contract: `sym` is a set of atomic
     events whose role `agTh` assigns the group atom over an unordered

@@ -54,7 +54,7 @@ where the atoms are the singletons.
 namespace Number
 
 open _root_.Features (ContainmentPair ContainmentPairLike)
-open Mereology (Atom CUM Null atomize null)
+open Mereology (Atom CUM atomize)
 
 /-! ### The feature bundle -/
 
@@ -138,8 +138,8 @@ theorem toNumber_ofNumber : ∀ (n : Number) (f : Features),
 
 section Lattice
 
-variable {D : Type*} [SemilatticeSup D] [Null D] [Fintype D] [DecidableLE D]
-  [DecidablePred (null : D → Prop)]
+variable {D : Type*} [SemilatticeSup D] [Fintype D] [DecidableLE D]
+ 
 
 /-- The bundle a lattice element realizes in the region `P`: singular on the
 atoms of `P`, dual on its minimal non-atoms, plural on the rest — the decidable

@@ -34,7 +34,7 @@ elements and that no two distinct elements overlap.
 [haslinger-etal-2025-nllt] eq. (75a): blocks plural complements
 (which contain overlapping sums) and forces [+dist] readings.
 -/
-structure ONE_empty {α : Type*} [PartialOrder α] [Null α] (P : α → Prop) : Prop where
+structure ONE_empty {α : Type*} [PartialOrder α] (P : α → Prop) : Prop where
   /-- At least two distinct elements in P -/
   has_two : ∃ (x y : α), P x ∧ P y ∧ x ≠ y
   /-- Pairwise non-overlap: distinct P-elements share no part -/
@@ -48,7 +48,7 @@ elements and that all elements are atoms.
 degree-interval predicates like *ten minutes* (which are non-atomic).
 This distinguishes *each* from *every*.
 -/
-structure ONE_AT {α : Type*} [PartialOrder α] [Null α] (P : α → Prop) : Prop where
+structure ONE_AT {α : Type*} [PartialOrder α] (P : α → Prop) : Prop where
   /-- At least two distinct elements in P -/
   has_two : ∃ (x y : α), P x ∧ P y ∧ x ≠ y
   /-- All P-elements are atoms -/
@@ -58,7 +58,7 @@ structure ONE_AT {α : Type*} [PartialOrder α] [Null α] (P : α → Prop) : Pr
 
     If x and y are both atoms and Overlap(x, y), then ∃z, z ≤ x ∧ z ≤ y.
     By atomicity of x: z = x. By atomicity of y: z = y. Hence x = y. -/
-theorem ONE_AT_implies_ONE_empty {α : Type*} [PartialOrder α] [Null α]
+theorem ONE_AT_implies_ONE_empty {α : Type*} [PartialOrder α]
     {P : α → Prop} (h : ONE_AT P) : ONE_empty P where
   has_two := h.has_two
   pairwise_disjoint := λ x y hPx hPy ⟨z, hz, hzx, hzy⟩ =>
@@ -73,14 +73,14 @@ theorem ONE_AT_implies_ONE_empty {α : Type*} [PartialOrder α] [Null α]
 Non-distributive with PL complements, distributive with SG complements.
 [haslinger-etal-2025-nllt] eq. (79a).
 -/
-abbrev allSem {α : Type*} [PartialOrder α] [Null α] := @QForall α _
+abbrev allSem {α : Type*} [PartialOrder α] := @QForall α _
 
 /--
 **every = Q_∀ + ONE_∅**: universal quantifier with non-overlap presupposition.
 Always distributive (since ONE_∅ ensures all elements are maxNonOverlap).
 [haslinger-etal-2025-nllt] eq. (79b).
 -/
-def everyPresup {α : Type*} [PartialOrder α] [Null α]
+def everyPresup {α : Type*} [PartialOrder α]
     (P : α → Prop) (Q : α → Prop) : Prop :=
   ONE_empty P ∧ QForall P Q
 
@@ -89,18 +89,18 @@ def everyPresup {α : Type*} [PartialOrder α] [Null α]
 presupposition. Always distributive, and restricted to atomic predicates.
 [haslinger-etal-2025-nllt] eq. (79c).
 -/
-def eachPresup {α : Type*} [PartialOrder α] [Null α]
+def eachPresup {α : Type*} [PartialOrder α]
     (P : α → Prop) (Q : α → Prop) : Prop :=
   ONE_AT P ∧ QForall P Q
 
 /-- *each* entails *every*: ONE_AT is stronger than ONE_∅. -/
-theorem each_entails_every {α : Type*} [PartialOrder α] [Null α]
+theorem each_entails_every {α : Type*} [PartialOrder α]
     {P Q : α → Prop} (h : eachPresup P Q) : everyPresup P Q :=
   ⟨ONE_AT_implies_ONE_empty h.1, h.2⟩
 
 /-- When ONE_empty holds, QForall reduces to pointwise universal.
     This is the core semantic consequence of the ONE_∅ presupposition. -/
-theorem every_distributes {α : Type*} [PartialOrder α] [Null α]
+theorem every_distributes {α : Type*} [PartialOrder α]
     {P Q : α → Prop} (hONE : ONE_empty P) :
     QForall P Q ↔ ∀ (x : α), P x → Q x := by
   constructor
@@ -115,8 +115,8 @@ excluding the null individual satisfies `ONE_AT`'s atomicity for free, so the
 presupposition reduces to the `|P| > 1` cardinality condition. This connects the sort-level
 `Mereology.IsAtomicDomain` typeclass to the predicate-level `ONE_AT` structure —
 they are the same atomicity at two granularities, not parallel notions. -/
-theorem ONE_AT_of_isAtomicDomain {α : Type*} [PartialOrder α] [Null α] [IsAtomicDomain α]
-    {P : α → Prop} (hP0 : ∀ x, P x → ¬ null x)
+theorem ONE_AT_of_isAtomicDomain {α : Type*} [PartialOrder α] [IsAtomicDomain α]
+    {P : α → Prop} (hP0 : ∀ x, P x → ¬ IsBot x)
     (h2 : ∃ (x y : α), P x ∧ P y ∧ x ≠ y) : ONE_AT P where
   has_two := h2
   all_atomic := fun x hx => IsAtomicDomain.all_atoms x (hP0 x hx)
