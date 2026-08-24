@@ -60,7 +60,7 @@ two-feature simplification).
 
 namespace AndersonJM2006
 
-open ArgumentStructure.Linking (LinkingTheory ArgPosition)
+open ArgumentStructure.Linking (LinkingTheory GrammaticalFunction)
 open ArgumentStructure
 open English.Predicates.Verbal
 
@@ -224,7 +224,7 @@ theorem Case.acc_abs_same_relation :
 namespace AndersonJM2006
 
 open ArgumentStructure
-open ArgumentStructure.Linking (LinkingTheory ArgPosition)
+open ArgumentStructure.Linking (LinkingTheory GrammaticalFunction)
 open English.Predicates.Verbal
 
 -- ============================================================================

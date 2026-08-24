@@ -87,7 +87,7 @@ alongside Tz'utujil, Chickasaw, Sinitic double-unaccusative).
 - `NominalProjection.Position` / `PossessionType` from `NominalProjection.lean`
 - `SpecificityCondition` from `Core/SpecificityCondition.lean`
 - `JudgmentType` — [kuroda-1972]'s categorical/thetic distinction, defined in §9
-- `GramFunction`, `absPosition` from `Fragments/Mayan/Tseltalan.lean`
+- `GrammaticalFunction`, `absPosition` from `Fragments/Mayan/Tseltalan.lean`
 - `ABSPosition` from `Fragments/Mayan/Params.lean`
 - `Probe.Profile` from `Syntax/Minimalist/Probe/Profile.lean`;
   `isClosestGoalIn`, `behindHorizonIn` from `Syntax/Minimalist/Agree/Basic.lean`;
@@ -459,11 +459,11 @@ instance (j : JudgmentType) : Decidable j.HasψSubject :=
 
     [aissen-polian-2025] §5, Table 1: all ψ-subject constructions
     are structurally unaccusative, so the ψ-subject is always S_O. -/
-def ψSubjectGramFunction : GramFunction := .S_O
+def ψSubjectGrammaticalFunction : GrammaticalFunction := .S_O
 
-/-- ψ-subject agreement is DERIVED from GramFunction.markerSet:
+/-- ψ-subject agreement is DERIVED from GrammaticalFunction.markerSet:
     ψ-subjects are S_O, and S_O maps to Set B (absolutive). -/
-def ψSubjectMarkerSet : MarkerSet := ψSubjectGramFunction.markerSet
+def ψSubjectMarkerSet : MarkerSet := ψSubjectGrammaticalFunction.markerSet
 
 /-- ψ-subjects receive Set B (absolutive) agreement — derived from
     the fact that they are S_O, and S_O maps to Set B. -/
@@ -598,7 +598,7 @@ theorem ψ_constructions_no_vP (c : ψConstruction) :
 /-- The ψ-subject grammatical function in every §5 construction is S_O
     ([aissen-polian-2025] §5: in all three, the ψ-subject raises
     from an unaccusative-internal-argument position). -/
-def ψConstruction.ψSubjectFunction (_ : ψConstruction) : GramFunction :=
+def ψConstruction.ψSubjectFunction (_ : ψConstruction) : GrammaticalFunction :=
   .S_O
 
 /-- Every §5 ψ-construction assigns S_O to its ψ-subject. -/
@@ -623,7 +623,7 @@ def ψPPConstruction.clauseType (_ : ψPPConstruction) : ArgumentStructureClass 
     (possessor of object of preposition). The §6.2 cases differ from §5
     in that the ψ-subject originates inside a PP rather than a PossP,
     but the grammatical function on the verb tracks the Theme not the
-    extracted possessor. We do not assign a `GramFunction` here for the
+    extracted possessor. We do not assign a `GrammaticalFunction` here for the
     extracted Psr-OP because Psr-OP has no per-verb agreement slot in
     the Tseltalan paradigm. -/
 theorem ψ_pp_constructions_unaccusative (c : ψPPConstruction) :

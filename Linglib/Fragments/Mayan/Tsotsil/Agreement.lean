@@ -44,7 +44,7 @@ open Mayan (MarkerSet MarkerLinearity ExponentTable)
 open Agreement
 
 -- Re-export shared Tseltalan types
-export Mayan.Tseltalan (GramFunction)
+export Mayan.Tseltalan (GrammaticalFunction)
 
 /-! ### Argument positions -/
 

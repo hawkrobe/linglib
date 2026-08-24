@@ -120,7 +120,7 @@ def SlotFiller.isOpen {Lex : Type*} : SlotFiller Lex → Bool
 /-- Grammatical function of a valence member ([kay-fillmore-1999],
 Figure 12), distinct from semantic role: a subject can be an agent, a
 theme, or an experiencer. -/
-inductive GramFunction where
+inductive GrammaticalFunction where
   /-- Subject. -/
   | subj
   /-- Clausal or verbal complement. -/
@@ -158,7 +158,7 @@ structure Slot (Lex : Type*) where
   /-- Bar level of the position (`some .zero` = a word-level slot) -/
   level : Option BarLevel := none
   /-- Grammatical function (subj, comp, obj, pred) — [kay-fillmore-1999] -/
-  gf : Option GramFunction := none
+  gf : Option GrammaticalFunction := none
   /-- Coreference index: slots sharing an index have unified semantics -/
   refIdx : Option RefIndex := none
   /-- Syntactic constraints on this slot ([loc -], [neg -], [ref ∅]) -/
