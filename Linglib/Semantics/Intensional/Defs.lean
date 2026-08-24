@@ -12,7 +12,7 @@ explicit entity (`E`) and index (`W`) type parameters and a type.
 
 ## Key definitions
 
-- `Ty` — semantic types: `e`, `t`, `⟨a,b⟩`, `⟨s,a⟩`
+- `Ty` — semantic types: `e`, `t`, `n`, `d`, `v`, `s`, `⟨a,b⟩`, `⟨s,a⟩`
 - `Denot E W` — denotation domains (DWP Def B.3), parameterized by entity and index types
 - `up`, `down` — intension formation / extension extraction (DWP Rules B.14–B.15)
 -/
@@ -48,6 +48,11 @@ inductive Ty where
       ([heim-2001], [wellwood-2015]). Denoted by ℚ, the repo's exact
       degree carrier. -/
   | d : Ty
+  /-- Numbers (type `n`): the cardinality sort — [sudo-2016]'s type-n
+      numerals, [scontras-2014]'s CARD, the measure-function codomain
+      ⟨e,n⟩ of [little-moroney-royer-2022]. Denoted by ℕ; distinct from
+      degrees `d` (ℚ), into which cardinality embeds by `Nat.cast`. -/
+  | n : Ty
   /-- Events (type `v`): the neo-Davidsonian event sort ([davidson-1967],
       [parsons-1990]). -/
   | v : Ty
@@ -84,6 +89,7 @@ theorem Ty.apply_eq_some_iff {f x c : Ty} :
     | e => exact absurd h (by simp [Ty.apply])
     | t => exact absurd h (by simp [Ty.apply])
     | d => exact absurd h (by simp [Ty.apply])
+    | n => exact absurd h (by simp [Ty.apply])
     | v => exact absurd h (by simp [Ty.apply])
     | s => exact absurd h (by simp [Ty.apply])
     | intens a => exact absurd h (by simp [Ty.apply])
@@ -106,6 +112,7 @@ def Ty.isConjoinable : Ty → Bool
   | .t => true
   | .e => false
   | .d => false
+  | .n => false
   | .v => false
   | .s => false
   | .fn _ τ => τ.isConjoinable
@@ -124,6 +131,8 @@ def Ty.isConjoinable : Ty → Bool
 
     D_e = E
     D_t = Prop
+    D_d = ℚ
+    D_n = ℕ
     D_⟨a,b⟩ = D_a → D_b
     D_⟨s,a⟩ = W → D_a
 
@@ -137,6 +146,7 @@ def Denot (E W : Type) : Ty → Type
   | .e => E
   | .t => Prop
   | .d => ℚ
+  | .n => ℕ
   | .v => Empty
   | .s => Empty
   | .fn a b => Denot E W a → Denot E W b
