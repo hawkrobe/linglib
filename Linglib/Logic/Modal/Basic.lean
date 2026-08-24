@@ -3,6 +3,8 @@ import Linglib.Logic.Aristotelian.Square
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.GaloisConnection.Basic
 import Mathlib.Order.Lattice
+import Mathlib.Logic.Function.Iterate
+import Mathlib.Logic.Relation
 
 /-!
 # Modal logic over accessibility relations
@@ -100,6 +102,32 @@ theorem box_restrict (p : W → Prop) : Antitone fun R : W → W → Prop => □
 /-- Restricting accessibility weakens possibility. -/
 theorem diamond_restrict (p : W → Prop) : Monotone fun R : W → W → Prop => ◇[R] p :=
   fun _ _ h _ hd => let ⟨v, hwv, hpv⟩ := hd; ⟨v, h _ _ hwv, hpv⟩
+
+/-! ### Transitive closure
+
+Necessity along the transitive closure of `R` is the infinite conjunction of iterated
+necessity along `R`: `□[R⁺] p = □[R] p ∧ □[R] (□[R] p) ∧ ⋯`. -/
+
+theorem box_iterate_succ_of_box_transGen :
+    ∀ (n : ℕ) {p : W → Prop} {w : W}, □[Relation.TransGen R] p w → (□[R])^[n + 1] p w
+  | 0, _, _, h => fun v hv => h v (Relation.TransGen.single hv)
+  | n + 1, _, _, h => by
+    rw [Function.iterate_succ_apply']
+    exact fun v hv =>
+      box_iterate_succ_of_box_transGen n fun u hu => h u (Relation.TransGen.head hv hu)
+
+theorem exists_box_iterate_imp_of_transGen {w v : W} (h : Relation.TransGen R w v) :
+    ∃ n, ∀ q : W → Prop, (□[R])^[n + 1] q w → q v := by
+  induction h with
+  | single hwv => exact ⟨0, fun _ hq => hq _ hwv⟩
+  | tail _ huv ih =>
+    obtain ⟨n, hn⟩ := ih
+    exact ⟨n + 1, fun q hq => hn (□[R] q) (by rwa [Function.iterate_succ_apply] at hq) _ huv⟩
+
+theorem box_transGen_iff {p : W → Prop} {w : W} :
+    □[Relation.TransGen R] p w ↔ ∀ n, (□[R])^[n + 1] p w :=
+  ⟨fun h n => box_iterate_succ_of_box_transGen R n h,
+   fun h _ hv => let ⟨n, hn⟩ := exists_box_iterate_imp_of_transGen R hv; hn p (h n)⟩
 
 /-! ### Bundled frame classes -/
 

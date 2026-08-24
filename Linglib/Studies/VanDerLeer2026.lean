@@ -61,11 +61,10 @@ def MutuallyCommitted (C : CommitmentSpace W A) (π : Set W) : Prop :=
   ∀ c ∈ C.states, ∀ w, MutuallyCommittedAt c π w
 
 /-- A proposition is commonly believed via the substrate's
-    `EpistemicLogic.commonBelief` on the state's belief relation. -/
+    `ModalLogic.Epistemic.commonKnowledge` on the state's belief relation. -/
 def CommonlyBelieved (c : CommitmentState W A) (group : List A)
-    (π : Set W) (bound : ℕ) (w : W) : Prop :=
-  ModalLogic.Epistemic.commonBelief c.belief group
-    (fun v => v ∈ π) bound w
+    (π : Set W) (w : W) : Prop :=
+  ModalLogic.Epistemic.commonKnowledge c.belief {a | a ∈ group} (· ∈ π) w
 
 end CommitmentSpace
 

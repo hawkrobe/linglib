@@ -1,271 +1,104 @@
 import Linglib.Discourse.CommonGround
 import Linglib.Logic.Modal.Basic
-import Linglib.Core.Order.ComparativeProbability.Systems
+import Mathlib.Order.CompleteLattice.Basic
 
 /-!
-# Multi-Agent Epistemic Logic
+# Multi-agent epistemic logic
 
-[halpern-2003] [fagin-halpern-1994]
+This file defines the group knowledge operators of [fagin-halpern-moses-vardi-1995] over
+agent-indexed accessibility relations `Rs : E → W → W → Prop`: individual knowledge `Kᵢ` is
+`box (Rs i)`, everyone-knows `E_G` is `box` over the union `⨆ i ∈ G, Rs i`, distributed
+knowledge `D_G` is `box` over the intersection `⨅ i ∈ G, Rs i`, and common knowledge `C_G` is
+`box` over the transitive closure of the union — `φ` holds at every world reachable by a chain
+of members' accessibility. The infinite-conjunction form `E_G φ ∧ E_G (E_G φ) ∧ ⋯` is the
+theorem `commonKnowledge_iff_forall_iterate`, an instance of `ModalLogic.box_transGen_iff`.
+Belief is the same operator over a KD45 frame (`ModalLogic.IsKD45Frame`), with the D, 4, and
+5 laws `ModalLogic.box_D`, `ModalLogic.box_four`, and `ModalLogic.box_five`.
 
-Multi-agent epistemic operators from [halpern-2003]: individual
-knowledge (Kᵢ), everyone knows (E_G), common knowledge (C_G),
-distributed knowledge (D_G), and their doxastic (KD45 belief) counterparts.
+## Main definitions
 
-Connects to Stalnaker's common ground via `CommonGround.groundedIn`: a common
-ground is grounded when its context set equals what is commonly known.
+* `knows`, `everyoneKnows`, `distributedKnowledge`, `commonKnowledge`: `Kᵢ`, `E_G`, `D_G`,
+  `C_G`.
+* `CommonGround.GroundedIn`: a common ground whose context set is exactly what is common
+  knowledge ([stalnaker-2002]).
 
-## Operators
+## Main results
 
-| Operator | Symbol | Definition |
-|----------|--------|------------|
-| Individual knowledge | Kᵢ(φ) | φ at all i-accessible worlds |
-| Everyone knows | E_G(φ) | ∧ᵢ∈G Kᵢ(φ) |
-| Common knowledge | C_G(φ) | φ ∧ E(φ) ∧ E(E(φ)) ∧... |
-| Distributed knowledge | D_G(φ) | φ at all (∩ᵢ Rᵢ)-accessible worlds |
+* `knows_of_everyoneKnows`, `everyoneKnows_of_commonKnowledge`,
+  `distributedKnowledge_of_knows`: the hierarchy `C_G ≤ E_G ≤ Kᵢ ≤ D_G`, each by restricting
+  accessibility (`ModalLogic.box_restrict`).
+* `commonKnowledge_iff_forall_iterate`: `C_G` as the infinite conjunction of iterated `E_G`.
 
-## Architecture
+## References
 
-This file lives in `Semantics/Modality/` because it makes
-substantive theoretical commitments (S5 for knowledge, KD45 for belief,
-fixed-point characterization of common knowledge). The framework-agnostic
-context management (`ContextSet`, `CommonGround`) lives in
-`Discourse/CommonGround.lean`.
-
-Following mathlib style, all operators are `Prop`-valued; computation
-on finite worlds goes through `Decidable` instances + `decide`.
+* [fagin-halpern-moses-vardi-1995] — group knowledge and its reachability semantics
+* [halpern-2003] — the same operators in the uncertainty setting
+* [fagin-halpern-1994] — the probabilistic extension, `Studies/FaginHalpern1994.lean`
+* [hintikka-1962] — knowledge as `box`
+* [stalnaker-2002] — common ground as common knowledge
 -/
 
 namespace ModalLogic.Epistemic
 
-open ModalLogic
-  (box diamond IsSerial IsEuclidean box_T box_D box_four box_B box_five)
+open ModalLogic Relation
 
-/-! ## Individual Knowledge
+variable {W E : Type*} {Rs : E → W → W → Prop} {i : E} {G : Set E} {φ : W → Prop} {w : W}
 
-Agent i knows φ at world w iff φ holds at all worlds accessible to i:
-`box` with agent-indexed accessibility relations. -/
+/-- Agent `i` knows `φ` at `w`: `φ` holds at every world `i` considers possible. -/
+def knows (Rs : E → W → W → Prop) (i : E) (φ : W → Prop) (w : W) : Prop := box (Rs i) φ w
 
-/-- Agent i knows φ at world w: Kᵢ(φ)(w) = □ᵢ φ(w). -/
-def knows {W E : Type*} (Rs : E → W → W → Prop) (i : E)
-    (φ : W → Prop) (w : W) : Prop :=
-  box (Rs i) φ w
+/-- Everyone in `G` knows `φ` at `w`: `box` over the union of the members' accessibility. -/
+def everyoneKnows (Rs : E → W → W → Prop) (G : Set E) (φ : W → Prop) (w : W) : Prop :=
+  box (⨆ i ∈ G, Rs i) φ w
 
-/-! ## Everyone Knows
+/-- Distributed knowledge: what `G` would know by pooling its information, `box` over the
+intersection of the members' accessibility. -/
+def distributedKnowledge (Rs : E → W → W → Prop) (G : Set E) (φ : W → Prop) (w : W) : Prop :=
+  box (⨅ i ∈ G, Rs i) φ w
 
-E_G(φ) holds at w iff every agent in group G knows φ at w.
-E_G(φ) = ∧ᵢ∈G Kᵢ(φ). -/
+/-- Common knowledge: `φ` holds at every world reachable from `w` by a chain of members'
+accessibility. -/
+def commonKnowledge (Rs : E → W → W → Prop) (G : Set E) (φ : W → Prop) (w : W) : Prop :=
+  box (TransGen (⨆ i ∈ G, Rs i)) φ w
 
-/-- Everyone in group G knows φ at w. -/
-def everyoneKnows {W E : Type*} (Rs : E → W → W → Prop)
-    (group : List E) (φ : W → Prop) (w : W) : Prop :=
-  ∀ i ∈ group, knows Rs i φ w
+theorem everyoneKnows_iff : everyoneKnows Rs G φ w ↔ ∀ i ∈ G, knows Rs i φ w := by
+  simp only [everyoneKnows, knows, box, iSup_apply, iSup_Prop_eq, exists_prop,
+    forall_exists_index, and_imp]
+  exact ⟨fun h i hi v hv => h v i hi hv, fun h v i hi hv => h i hi v hv⟩
 
-/-- Everyone knows implies each individual knows. -/
-theorem everyoneKnows_implies_knows {W E : Type*}
-    (Rs : E → W → W → Prop) (group : List E) (φ : W → Prop) (w : W)
-    (i : E) (hi : i ∈ group)
-    (h : everyoneKnows Rs group φ w) :
-    knows Rs i φ w :=
-  h i hi
+/-! ### The knowledge hierarchy -/
 
-/-! ## Common Knowledge
+theorem knows_of_everyoneKnows (hi : i ∈ G) (h : everyoneKnows Rs G φ w) : knows Rs i φ w :=
+  box_restrict φ (le_iSup₂ (f := fun i (_ : i ∈ G) => Rs i) i hi) w h
 
-C_G(φ) is the greatest fixed point of X = φ ∧ E_G(X). Equivalently,
-C_G(φ) = φ ∧ E_G(φ) ∧ E_G(E_G(φ)) ∧... (infinite conjunction).
+theorem everyoneKnows_of_commonKnowledge (h : commonKnowledge Rs G φ w) :
+    everyoneKnows Rs G φ w :=
+  box_restrict φ (fun _ _ => TransGen.single) w h
 
-For computation on finite worlds, we iterate E_G up to a bound. Since
-there are finitely many truth assignments, the iteration reaches a
-fixed point within a finite number of steps. -/
+theorem distributedKnowledge_of_knows (hi : i ∈ G) (h : knows Rs i φ w) :
+    distributedKnowledge Rs G φ w :=
+  box_restrict φ (iInf₂_le (f := fun i (_ : i ∈ G) => Rs i) i hi) w h
 
-/-- Iterate "everyone knows" n times: E^n_G(φ). -/
-def everyoneKnowsIter {W E : Type*} (Rs : E → W → W → Prop)
-    (group : List E) (φ : W → Prop) : ℕ → (W → Prop)
-  | .zero => φ
-  | .succ n => everyoneKnows Rs group (everyoneKnowsIter Rs group φ n)
+/-- Common knowledge is veridical once some member's accessibility is reflexive. -/
+theorem commonKnowledge_imp (hi : i ∈ G) [hR : Std.Refl (Rs i)]
+    (h : commonKnowledge Rs G φ w) : φ w :=
+  h w (TransGen.single (le_iSup₂ (f := fun i (_ : i ∈ G) => Rs i) i hi w w (hR.refl w)))
 
-/-- Common knowledge as a finite approximation: C_G(φ)(w) iff
-    E^n_G(φ)(w) for all n up to the iteration bound.
-
-    For finite W with |W| = k, the fixed point is reached within
-    2^k iterations (since each iteration can only shrink the set
-    of satisfying worlds). -/
-def commonKnowledge {W E : Type*} (Rs : E → W → W → Prop)
-    (group : List E) (φ : W → Prop) (bound : ℕ) (w : W) : Prop :=
-  ∀ n, n ≤ bound → everyoneKnowsIter Rs group φ n w
-
-/-- Common knowledge implies everyone knows (at depth 1). -/
-theorem commonKnowledge_implies_everyoneKnows {W E : Type*}
-    (Rs : E → W → W → Prop) (group : List E) (φ : W → Prop)
-    (bound : ℕ) (w : W) (hbound : 1 ≤ bound)
-    (h : commonKnowledge Rs group φ bound w) :
-    everyoneKnows Rs group φ w :=
-  h 1 hbound
-
-/-- Common knowledge implies the proposition itself (depth 0). -/
-theorem commonKnowledge_implies_prop {W E : Type*}
-    (Rs : E → W → W → Prop) (group : List E) (φ : W → Prop)
-    (bound : ℕ) (w : W)
-    (h : commonKnowledge Rs group φ bound w) :
-    φ w :=
-  h 0 (Nat.zero_le _)
-
-/-! ## Distributed Knowledge
-
-D_G(φ) holds at w iff φ holds at all worlds accessible to EVERY agent
-in G simultaneously. The accessibility relation is the intersection:
-R_D = ∩ᵢ∈G Rᵢ.
-
-Distributed knowledge is what the group WOULD know if they pooled all
-their information. It is stronger than individual knowledge but weaker
-than common knowledge in the opposite direction:
-D_G(φ) → Kᵢ(φ) for each i, but C_G(φ) → E_G(φ) → Kᵢ(φ). -/
-
-/-- Intersection of accessibility relations for a group. -/
-def groupAccessRel {W E : Type*} (Rs : E → W → W → Prop)
-    (group : List E) : W → W → Prop :=
-  fun w v => ∀ i ∈ group, Rs i w v
-
-/-- Distributed knowledge: D_G(φ)(w) = □_{∩R} φ(w). -/
-def distributedKnowledge {W E : Type*} (Rs : E → W → W → Prop)
-    (group : List E) (φ : W → Prop) (w : W) : Prop :=
-  box (groupAccessRel Rs group) φ w
-
-/-- Individual knowledge implies distributed knowledge: the intersection
-    of accessibility relations is a subset of each component, so every
-    group-accessible world is also i-accessible. Therefore if φ holds
-    at all i-accessible worlds, it holds at all group-accessible worlds. -/
-theorem knows_implies_distributedKnowledge {W E : Type*}
-    (Rs : E → W → W → Prop) (group : List E) (φ : W → Prop) (w : W)
-    (i : E) (hi : i ∈ group)
-    (h : knows Rs i φ w) :
-    distributedKnowledge Rs group φ w := by
-  intro v hv
-  exact h v (hv i hi)
-
-/-! ## KD45 Belief Operators
-
-Parallel to the S5 knowledge operators above, but with KD45
-accessibility (serial + transitive + Euclidean, not reflexive).
-
-Knowledge (S5) is veridical: Kφ → φ. Belief (KD45) is not: an
-agent can believe φ without φ being true. But belief is consistent
-(Bφ → ◇φ, from seriality), positively introspective (Bφ → BBφ,
-from transitivity), and negatively introspective (¬Bφ → B¬Bφ,
-from Euclideanness).
-
-The connection Kφ → Bφ requires R_B ⊆ R_K: every belief-accessible
-world is knowledge-accessible. Since S5 frames are reflexive (more
-accessible worlds), knowledge is harder to achieve than belief. -/
-
-/-- Agent i believes φ at world w: Bᵢ(φ)(w) = □ᵢ φ(w).
-    Same evaluation as knows, but the accessibility relation
-    satisfies KD45 (serial + transitive + Euclidean) rather than
-    S5 (reflexive + Euclidean). -/
-def believes {W E : Type*} (Rs : E → W → W → Prop) (i : E)
-    (φ : W → Prop) (w : W) : Prop :=
-  box (Rs i) φ w
-
-/-- Everyone in group G believes φ at w. -/
-def everyoneBelieves {W E : Type*} (Rs : E → W → W → Prop)
-    (group : List E) (φ : W → Prop) (w : W) : Prop :=
-  ∀ i ∈ group, believes Rs i φ w
-
-/-- Iterate "everyone believes" n times: EB^n_G(φ). -/
-def everyoneBeliefIter {W E : Type*} (Rs : E → W → W → Prop)
-    (group : List E) (φ : W → Prop) : ℕ → (W → Prop)
-  | .zero => φ
-  | .succ n => everyoneBelieves Rs group (everyoneBeliefIter Rs group φ n)
-
-/-- Common belief: CB_G(φ)(w) iff EB^n_G(φ)(w) for all n up to bound. -/
-def commonBelief {W E : Type*} (Rs : E → W → W → Prop)
-    (group : List E) (φ : W → Prop) (bound : ℕ) (w : W) : Prop :=
-  ∀ n, n ≤ bound → everyoneBeliefIter Rs group φ n w
-
-/-- Distributed belief: DB_G(φ)(w) = □_{∩R_B} φ(w). -/
-def distributedBelief {W E : Type*} (Rs : E → W → W → Prop)
-    (group : List E) (φ : W → Prop) (w : W) : Prop :=
-  box (groupAccessRel Rs group) φ w
-
-/-- Knowledge implies belief: Kᵢ(φ) → Bᵢ(φ), given that every
-    belief-accessible world is knowledge-accessible (`Rb i ≤ Rk i` in the
-    pointwise order on relations); whether `Rk` is S5 and `Rb` is KD45 is
-    a separate stipulation (cf. Hintikka 1962). -/
-theorem knows_implies_believes {W E : Type*}
-    (Rk Rb : E → W → W → Prop) (i : E) (hsub : Rb i ≤ Rk i)
-    (φ : W → Prop) (w : W) (h : knows Rk i φ w) :
-    believes Rb i φ w := fun v hv => h v (hsub w v hv)
-
-/-- Belief is consistent: Bᵢ(φ) → ◇ᵢφ (the D axiom).
-    Follows from seriality of the belief accessibility relation. -/
-theorem believes_consistent {W E : Type*}
-    {Rs : E → W → W → Prop} (i : E) [IsSerial (Rs i)]
-    (φ : W → Prop) (w : W) (h : believes Rs i φ w) :
-    diamond (Rs i) φ w :=
-  box_D h
-
-/-- Positive introspection: Bᵢ(φ) → Bᵢ(Bᵢ(φ)) (the 4 axiom).
-    Follows from transitivity of the belief accessibility relation. -/
-theorem believes_positive_introspection {W E : Type*}
-    {Rs : E → W → W → Prop} (i : E) [IsTrans W (Rs i)]
-    (φ : W → Prop) (w : W) (h : believes Rs i φ w) :
-    believes Rs i (believes Rs i φ) w :=
-  box_four h
-
-/-- Negative introspection: ◇Bφ → □◇Bφ (the 5 axiom).
-    Follows from Euclideanness of the belief accessibility relation. -/
-theorem believes_negative_introspection {W E : Type*}
-    {Rs : E → W → W → Prop} (i : E) [IsEuclidean (Rs i)]
-    (φ : W → Prop) (w : W) (h : diamond (Rs i) φ w) :
-    box (Rs i) (diamond (Rs i) φ) w :=
-  box_five h
-
-/-- Belief is not veridical: there exist frames where Bᵢ(φ) ∧ ¬φ.
-    Unlike knowledge (which requires reflexivity), belief frames are
-    serial but not reflexive, so an agent can believe φ at a world
-    where φ is false. -/
-theorem believes_not_veridical :
-    ∃ (W : Type) (E : Type) (Rs : E → W → W → Prop)
-      (i : E) (φ : W → Prop) (w : W),
-      believes Rs i φ w ∧ ¬ φ w := by
-  -- W = Bool, single agent: Rs () w v ↔ v = true; φ = (· = true); w = false.
-  -- Then believes Rs () φ false ↔ ∀ v, v = true → v = true (true), and φ false = false.
-  refine ⟨Bool, Unit, fun _ _ v => v = true, (), (· = true), false, ?_, ?_⟩
-  · intro v hv
-    exact hv
-  · simp
-
-/-! ## Common Ground as Common Knowledge
-
-[stalnaker-2002]: the common ground is the set of propositions that
-are common knowledge among the discourse participants. -/
-
-/-- A common ground is grounded in common knowledge when its context
-    set equals the intersection of what is commonly known. -/
-def _root_.CommonGround.groundedIn {W E : Type*}
-    (cg : CommonGround W) (Rs : E → W → W → Prop) (group : List E)
-    (bound : ℕ) : Prop :=
-  ∀ w, cg.contextSet w ↔
-    ∀ p ∈ cg.propositions, commonKnowledge Rs group p bound w
-
-/-! ## Bridge to EpistemicScale
-
-An S5 frame (reflexive + Euclidean accessibility) induces an
-`EpistemicSystemW` via Lewis's l-lifting. This connects the
-syntactic side (Kripke frames, correspondence theorems in
-`ModalLogic.lean`) to the algebraic side (plausibility measures,
-representation theorems in `EpistemicScale/`). -/
-
-/-- An S5 accessibility relation induces a world ordering for
-    `dominationLift`: w ≥ v iff w is accessible from v. -/
-def s5ToWorldOrder {W : Type*} (R : W → W → Prop) (w v : W) : Prop :=
-  R v w
-
-/-- An S5 frame yields an `EpistemicSystemW` via l-lifting.
-
-    The reflexivity of R gives reflexivity of the world ordering;
-    `dominationLiftSystemW` does the rest. -/
-def s5ToSystemW {W : Type*} (R : W → W → Prop) [hRefl : Std.Refl R] :
-    ComparativeProbability.EpistemicSystemW W :=
-  ComparativeProbability.dominationLiftSystemW (s5ToWorldOrder R) (fun w => hRefl.refl w)
+/-- Common knowledge is the infinite conjunction `E_G φ ∧ E_G (E_G φ) ∧ ⋯`. -/
+theorem commonKnowledge_iff_forall_iterate :
+    commonKnowledge Rs G φ w ↔ ∀ n, (everyoneKnows Rs G)^[n + 1] φ w :=
+  box_transGen_iff _
 
 end ModalLogic.Epistemic
+
+namespace CommonGround
+
+variable {W E : Type*}
+
+/-- A common ground is grounded in common knowledge when its context set is exactly the set
+of worlds where each of its propositions is common knowledge among `G` ([stalnaker-2002]). -/
+def GroundedIn (cg : CommonGround W) (Rs : E → W → W → Prop) (G : Set E) : Prop :=
+  ∀ w, w ∈ cg.contextSet ↔
+    ∀ p ∈ cg.propositions, ModalLogic.Epistemic.commonKnowledge Rs G (· ∈ p) w
+
+end CommonGround
