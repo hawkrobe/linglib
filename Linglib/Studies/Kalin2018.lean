@@ -106,13 +106,13 @@ theorem subject_always_licensed :
 
 /-- On the perfective object, the two accounts assign **incompatible
     verdicts**: a Marantz-style total configurational account gives it a
-    structural accusative, while Kalin licensing crashes it (`uncased`,
-    caseless). This is the witness behind the divergence. -/
+    structural accusative, while Kalin licensing assigns it nothing. This is
+    the witness behind the divergence. -/
 theorem perfective_object_verdicts :
     dependentAssigner .accusative specificObjectClause "obj"
-      = some ⟨.structural, some .acc⟩ ∧
+      = some (.assigned .acc .structural) ∧
     kalinAssigner perfectiveClause specificObjectClause "obj"
-      = some ⟨.uncased, none⟩ := by
+      = some .unassigned := by
   exact ⟨by decide, by decide⟩
 
 /-- **Licensing diverges from total configurational case assignment**

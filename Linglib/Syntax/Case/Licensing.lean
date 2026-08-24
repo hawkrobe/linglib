@@ -28,9 +28,7 @@ primitive.
 * `Licenser`, `ClauseLicensers`: a licenser and a clause's inventory of them,
   exactly one of which is primary.
 * `LicensedNP`: a nominal together with its licensing requirement.
-* `LicensingOutcome`: which licenser valued a nominal, or the crash;
-  `LicensingOutcome.toNeutral` projects it onto the account-neutral
-  `Case.Source`.
+* `LicensingOutcome`: which licenser valued a nominal, or the crash.
 * `licenseNPs`: the licensing algorithm over a clause.
 * `isDOMMarked`: a nominal is DOM-marked exactly when a secondary licensed it.
 
@@ -166,25 +164,6 @@ def LicensingOutcome.assignedCase : LicensingOutcome → Option Case
   | .bySecondary _ c  => some c
   | .byLexical c      => some c
   | .unlicensed       => none
-
-/-- The neutral provenance (`Case.Source`) of a licensing outcome: primary
-    and secondary licensing are `structural` (Agree-valued), lexical
-    pre-licensing is `inherent`, and the crash `unlicensed` is `uncased` —
-    the only account in the library that produces it. -/
-def LicensingOutcome.toNeutral : LicensingOutcome → _root_.Case.Source
-  | .byPrimary _ _   => .structural
-  | .bySecondary _ _ => .structural
-  | .byLexical _     => .inherent
-  | .unlicensed      => .uncased
-
-/-- The neutral source faithfully records licensing **failure**: an outcome
-    is `uncased` iff it is unlicensed. With `CaseSource.toNeutral_ne_uncased`
-    (dependent case is total), this is the foundational provenance-level
-    contrast between the two rival accounts — one can crash, the other
-    cannot. -/
-theorem LicensingOutcome.toNeutral_uncased_iff (o : LicensingOutcome) :
-    o.toNeutral = _root_.Case.Source.uncased ↔ ¬ o.IsLicensed := by
-  cases o <;> simp [LicensingOutcome.toNeutral]
 
 /-- The result of licensing a single NP. -/
 structure LicensedResult where

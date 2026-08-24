@@ -9,10 +9,10 @@ dimension on which the formalized assignment accounts agree that a case
 "comes from" somewhere. It is **not** a theory-neutral universal: it is the
 common quotient that Marantz dependent case (`Syntax/Case/Dependent.lean`'s
 `CaseSource`) and Kalin hybrid licensing (`Syntax/Case/Licensing.lean`'s
-`LicensingOutcome`) both map *into* (`toNeutral`), so a cross-theory
-comparison can ask whether two accounts agree on *provenance*, not merely on
-the surface case. Each account keeps its own finer source enum; `Source` is
-where they become commensurable.
+`LicensingOutcome`) both map into, so a cross-theory comparison can ask
+whether two accounts agree on *provenance*, not merely on the surface case.
+Each account keeps its own finer source enum; `Source` is where they become
+commensurable.
 
 Living in `Features/` — below the assignment theories — lets both theories
 project into it (and lets a future pooled comparison name it). The
@@ -32,17 +32,14 @@ namespace Case
       Chomskyan `agree`, Kalin primary/secondary licensing);
     * `inherent` — lexical/quirky, θ-associated (Marantz `lexical`, Kalin
       `byLexical`);
-    * `default` — elsewhere / last-resort unmarked case;
-    * `uncased` — no source valued the nominal: the crash (Kalin
-      `unlicensed`, a Case-Filter violation).
+    * `default` — elsewhere / last-resort unmarked case.
 
-    A *total* assignment account never produces `uncased`; a licensing
-    account can. -/
+    Failure to assign is not a provenance and is not a cell here: an account
+    that can fail reports it as `Syntax.Case.Assignment.unassigned`. -/
 inductive Source where
   | structural
   | inherent
   | default
-  | uncased
   deriving DecidableEq, Repr, Inhabited
 
 /-- The case was valued by configuration or Agree. The structural-vs-inherent
@@ -51,12 +48,5 @@ def Source.IsStructural (s : Source) : Prop := s = .structural
 
 instance (s : Source) : Decidable s.IsStructural :=
   inferInstanceAs (Decidable (s = .structural))
-
-/-- The derivation crashed: no source valued the nominal. Distinguishes a
-    licensing account (which can fail) from a total assignment account. -/
-def Source.IsCrash (s : Source) : Prop := s = .uncased
-
-instance (s : Source) : Decidable s.IsCrash :=
-  inferInstanceAs (Decidable (s = .uncased))
 
 end Case

@@ -36,43 +36,61 @@ namespace Syntax.Case
 
 open Licensing (LicensedNP ClauseLicensers Licenser licenseNPs LicensingOutcome)
 
-/-- What a case account predicts for one nominal: its surface case (`none`
-    exactly when the provenance is the crash `uncased`) and its neutral
-    `Case.Source` provenance. -/
-structure Verdict where
-  source : _root_.Case.Source
-  surfaceCase : Option _root_.Case
+/-- What a case account assigns one nominal: a case together with its neutral
+    provenance, or nothing at all. An account that cannot fail simply never
+    produces `unassigned`. -/
+inductive Assignment where
+  | assigned (case : _root_.Case) (source : _root_.Case.Source)
+  | unassigned
   deriving DecidableEq, Repr
 
+/-- The surface case, absent exactly when nothing was assigned. -/
+def Assignment.surfaceCase : Assignment → Option _root_.Case
+  | .assigned c _ => some c
+  | .unassigned => none
+
+/-- The provenance, absent exactly when nothing was assigned. -/
+def Assignment.provenance : Assignment → Option _root_.Case.Source
+  | .assigned _ s => some s
+  | .unassigned => none
+
 /-- A case-assignment account as a function from the shared stimulus to a
-    per-label verdict (`none` = no nominal with that label). The signature
+    per-label assignment (`none` = no nominal with that label). The signature
     that makes rival theories runnable on one input. -/
-abbrev Assigner := List LicensedNP → String → Option Verdict
+abbrev Assigner := List LicensedNP → String → Option Assignment
 
 /-- Marantz dependent case as an `Assigner`: it reads the configural
     projection (`needsLicensing` ignored) and is total, so it never produces
-    the crash `uncased`. -/
+    `unassigned`. -/
 def dependentAssigner (lang : CaseLanguageType) : Assigner := fun nps label =>
   ((assignCases lang (nps.map (·.toNPInDomain))).find? (·.label == label)).map
-    fun r => ⟨r.source.toNeutral, some r.case⟩
+    fun r => .assigned r.case r.source.toNeutral
 
-/-- Kalin hybrid licensing as an `Assigner`: an unlicensed nominal crashes to
-    `⟨uncased, none⟩`. -/
+/-- A licensing outcome as a neutral assignment: primary and secondary
+    licensing are structural, lexical pre-licensing inherent, and the crash
+    assigns nothing. -/
+def Licensing.LicensingOutcome.toAssignment : LicensingOutcome → Assignment
+  | .byPrimary _ c   => .assigned c .structural
+  | .bySecondary _ c => .assigned c .structural
+  | .byLexical c     => .assigned c .inherent
+  | .unlicensed      => .unassigned
+
+/-- Kalin hybrid licensing as an `Assigner`: an unlicensed nominal is
+    `unassigned`. -/
 def kalinAssigner (cl : ClauseLicensers) : Assigner := fun nps label =>
-  ((licenseNPs cl nps).find? (·.label == label)).map
-    fun r => ⟨r.outcome.toNeutral, r.outcome.assignedCase⟩
+  ((licenseNPs cl nps).find? (·.label == label)).map (·.outcome.toAssignment)
 
 /-- Two accounts agree on the **surface case** of every nominal in the
     stimulus. -/
 def AgreesOnCase (a b : Assigner) (nps : List LicensedNP) : Prop :=
-  ∀ np ∈ nps, (a nps np.label).map Verdict.surfaceCase
-            = (b nps np.label).map Verdict.surfaceCase
+  ∀ np ∈ nps, (a nps np.label).map Assignment.surfaceCase
+            = (b nps np.label).map Assignment.surfaceCase
 
 /-- Two accounts agree on the **provenance** of every nominal in the
     stimulus. Two accounts can agree on case yet diverge here. -/
 def AgreesOnSource (a b : Assigner) (nps : List LicensedNP) : Prop :=
-  ∀ np ∈ nps, (a nps np.label).map Verdict.source
-            = (b nps np.label).map Verdict.source
+  ∀ np ∈ nps, (a nps np.label).map Assignment.provenance
+            = (b nps np.label).map Assignment.provenance
 
 instance (a b : Assigner) (nps : List LicensedNP) : Decidable (AgreesOnCase a b nps) := by
   unfold AgreesOnCase; infer_instance
@@ -99,10 +117,10 @@ private def turkishLikeClause : ClauseLicensers :=
   , secondaries := [{ kind := .secondary, head := "AGRO", assignedCase := .acc }] }
 
 example : dependentAssigner .accusative transitiveStimulus "obj"
-    = some ⟨.structural, some .acc⟩ := by decide
+    = some (.assigned .acc .structural) := by decide
 
 example : kalinAssigner turkishLikeClause transitiveStimulus "obj"
-    = some ⟨.structural, some .acc⟩ := by decide
+    = some (.assigned .acc .structural) := by decide
 
 example : AgreesOnCase (dependentAssigner .accusative)
     (kalinAssigner turkishLikeClause) transitiveStimulus := by decide
