@@ -39,7 +39,7 @@ as *constructional* properties of nominal terms, not semantic roles. A is
 "the nominal term whose coding matches the agent of a prototypical transitive
 verb" — it's defined by coding (flagging, indexation, order), anchored to
 semantic prototypes. These are already captured by `ArgumentRole`
-(S, A, P, R, T). This file adds X (oblique) as a `TRRole` that extends
+(S, A, P, R, T). This file adds X (oblique) as a `TermRole` classifying
 `ArgumentRole` with the non-core case.
 
 ## Nucleativization and Denucleativization
@@ -68,25 +68,24 @@ namespace Voice
 open ArgumentStructure (DiathesisAlternation)
 
 -- ════════════════════════════════════════════════════
--- § 1. TR-Roles (§1.3.3)
+-- § 1. Nominal-term roles (§1.3.3)
 -- ════════════════════════════════════════════════════
 
-/-- Transitivity-Related role including obliques.
-
-    Extends `ArgumentRole` (S, A, P, R, T) with X for obliques.
+/-- Role of a nominal term of a verbal clause in [creissels-2025]'s binary
+    core-term system: the core roles S, A, P, plus X for obliques.
     §1.3.3: "OBLIQUE NOMINAL TERMS (or simply OBLIQUES),
     symbolized as X, are defined as nominal terms of verbal clauses that do
     not meet the definition of either A, P, or S." -/
-inductive TRRole where
+inductive TermRole where
   | S    -- sole core term of intransitive clause
   | A    -- agent-like core term of transitive clause
   | P    -- patient-like core term of transitive clause
   | X    -- oblique (non-core term)
   deriving DecidableEq, Repr
 
-/-- Convert `ArgumentRole` to `TRRole`. R and T map to P (both are
+/-- Convert `ArgumentRole` to `TermRole`. R and T map to P (both are
     P-like in Creissels' binary core-term system). -/
-def TRRole.ofArgumentRole : ArgumentRole → TRRole
+def TermRole.ofArgumentRole : ArgumentRole → TermRole
   | .S => .S
   | .A => .A
   | .P => .P
@@ -104,7 +103,7 @@ def TRRole.ofArgumentRole : ArgumentRole → TRRole
 inductive ParticipantFate where
   /-- Participant is nucleativized: becomes a core term in the derived
       construction. The `target` specifies which TR-role it acquires. -/
-  | nucleativized (target : TRRole)
+  | nucleativized (target : TermRole)
   /-- Participant is denucleativized: demoted from core term to oblique or
       unexpressed, but MAINTAINED IN PARTICIPANT STRUCTURE. The participant
       is still semantically present and may appear as an oblique phrase.
@@ -175,7 +174,7 @@ structure ValencyAlternation where
   fateOfS : ParticipantFate
   /-- Is a new participant introduced in the derived construction?
       If so, which TR-role does it receive? -/
-  newParticipant : Option TRRole
+  newParticipant : Option TermRole
   /-- Is the initial construction transitive, intransitive, or either? -/
   initialTransitive : Option Bool
   /-- Is the derived construction transitive? -/
@@ -443,7 +442,7 @@ structure VoiceMarkerProfile where
 -- ════════════════════════════════════════════════════
 
 /-- Look up what this alternation does to a given TR-role. -/
-def ValencyAlternation.fateOfRole (va : ValencyAlternation) : TRRole → ParticipantFate
+def ValencyAlternation.fateOfRole (va : ValencyAlternation) : TermRole → ParticipantFate
   | .A => va.fateOfA
   | .P => va.fateOfP
   | .S => va.fateOfS
