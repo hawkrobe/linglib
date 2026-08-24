@@ -25,7 +25,7 @@ them requires. This file gives them one shared signature.
   `agree_on_…`/`diverge_on_…` pattern of `Studies/Woolford1997.lean` and
   `Studies/Baker2015.lean`.
 
-The Chomskyan Case Filter (`Syntax/Case/Filter.lean`) is a *checker*, not an
+The Chomskyan Case Filter (`Syntax/Minimalist/Case.lean`) is a *checker*, not an
 assigner, and is bridged separately. The paper-anchored dependent-case ⟺
 licensing DOM divergence belongs in the later paper's study file
 (`Studies/Kalin2018.lean`); the `example`s here only validate that the harness

@@ -1,4 +1,5 @@
 import Linglib.Syntax.Case.Assigner
+import Linglib.Syntax.Minimalist.Case
 
 /-!
 # Kalin (2018) — Licensing and Differential Object Marking
@@ -36,7 +37,8 @@ namespace Kalin2018
 
 open Syntax.Case
 open Syntax.Case.Licensing (ClauseLicensers Licenser LicensingOutcome LicensedNP
-  licenseNPs getOutcomeOf)
+  LicensedResult licenseNPs getOutcomeOf)
+open Minimalist (DPFeatures satisfiesCaseFilter caseFilterHolds)
 
 /-! ### Senaya clause configurations
 
@@ -124,5 +126,37 @@ theorem perfective_object_verdicts :
 theorem dependentCase_vs_licensing_diverge_on_perfective_object :
     ¬ AgreesOnCase (dependentAssigner .accusative)
         (kalinAssigner perfectiveClause) specificObjectClause := by decide
+
+/-! ### The Case Filter as a theorem of licensing -/
+
+/-! [kalin-2018] takes licensing to subsume the Case Filter: a nominal
+converges exactly when some licenser valued it. Stated against the
+Agree-based formulation of `Syntax/Minimalist/Case.lean`, the two convergence
+conditions coincide, so the filter need not be stipulated alongside licensing.
+-/
+
+/-- The DP feature bundle a licensing outcome induces: any valued outcome
+    gives a DP with valued [Case], the crash gives one with [uCase]. -/
+def dpFeaturesOf : LicensingOutcome → DPFeatures
+  | .byPrimary _ c   => DPFeatures.withCase [] c
+  | .bySecondary _ c => DPFeatures.withCase [] c
+  | .byLexical c     => DPFeatures.withCase [] c
+  | .unlicensed      => DPFeatures.withUnvaluedCase []
+
+/-- A nominal is licensed iff it satisfies the Case Filter. -/
+theorem isLicensed_iff_satisfiesCaseFilter (o : LicensingOutcome) :
+    o.IsLicensed ↔ satisfiesCaseFilter (dpFeaturesOf o) := by
+  cases o <;>
+    simp [satisfiesCaseFilter, dpFeaturesOf, HasCase.caseOf,
+      DPFeatures.withCase, DPFeatures.withUnvaluedCase]
+
+/-- A derivation converges under licensing iff its DPs satisfy the Case
+    Filter. -/
+theorem all_isLicensed_iff_caseFilterHolds (results : List LicensedResult) :
+    (∀ r ∈ results, r.outcome.IsLicensed) ↔
+      caseFilterHolds (results.map λ r => dpFeaturesOf r.outcome) := by
+  simp only [caseFilterHolds, List.all_eq_true, List.mem_map,
+    forall_exists_index, and_imp, forall_apply_eq_imp_iff₂,
+    isLicensed_iff_satisfiesCaseFilter]
 
 end Kalin2018

@@ -2,32 +2,37 @@ import Linglib.Features.Case.Capabilities
 import Linglib.Syntax.Minimalist.Features
 
 /-!
-# The Case Filter
-[baker-2015] [chomsky-2001] [marantz-1991] [woolford-2006]
+# Case in the Minimalist feature system
 
-Every DP must receive Case. In Minimalist terms:
-- Every DP has [uCase] (unvalued Case feature)
-- [uCase] must be valued by Agree with a Case-assigning head
-- Failure to value [uCase] causes the derivation to crash
+This file gives the Agree-based account of structural case its feature-level
+form: T, v and P carry a valued Case feature they assign to the closest DP
+([chomsky-2001]), a DP carries [uCase] until some head values it, and the Case
+Filter is the convergence condition that no DP reach the interfaces unvalued.
 
-Case assigners (Agree-based):
-- T assigns nominative to its specifier (subject)
-- v assigns accusative to its complement (object)
-- P assigns oblique to its complement
+`DPFeatures` is the DP-side bundle — φ-features plus one Case feature, valued
+or not — and `satisfiesCaseFilter` is the predicate on it. The configural
+alternative, on which case is read off the arrangement of nominals rather than
+assigned by a head, is `Syntax/Case/Dependent.lean` ([marantz-1991],
+[baker-2015]).
 
-For the competing dependent-case approach,
-see `Syntax/Case/Dependent.lean`. For inherent/Voice-based case,
-see `Voice.lean` and `Mam.Agreement`.
+## Main definitions
 
+* `DPFeatures`: a DP's φ-features together with its Case feature.
+* `satisfiesCaseFilter`, `caseFilterHolds`: the Case Filter on one DP and on a
+  derivation's DPs.
+* `tAssignsNominative`, `vAssignsAccusative`, `dpNeedsCase`: the assigner and
+  goal feature bundles.
+
+## References
+
+* [chomsky-2001]
+* [woolford-2006]
 -/
-
 namespace Minimalist
 
 open Features.Prominence
 
--- ============================================================================
--- § 1: Case Assignment Bundles (Agree-based)
--- ============================================================================
+/-! ### Assigner feature bundles -/
 
 /-- Nominative Case is assigned by T.
     T has [uCase:nom], assigns to closest DP in Spec-TP. -/
@@ -46,9 +51,7 @@ def vAssignsAccusative : FeatureBundle :=
 def dpNeedsCase : FeatureBundle :=
   .ofGramFeatures [.unvalued (.case .dat)]
 
--- ============================================================================
--- § 2: DP Feature Structures
--- ============================================================================
+/-! ### DP feature structures -/
 
 /-- A DP's features (with unvalued Case). -/
 structure DPFeatures where
@@ -82,9 +85,7 @@ def satisfiesCaseFilter (dp : DPFeatures) : Bool :=
 def DPFeatures.toBundle (dp : DPFeatures) : FeatureBundle :=
   .ofGramFeatures (dp.phi.map (λ p => .valued (.phi p)) ++ [dp.caseFeature])
 
--- ============================================================================
--- § 3: Case Filter Predicate
--- ============================================================================
+/-! ### The Case Filter -/
 
 /-- The Case Filter: a derivation converges only if all DPs have valued Case.
     This is stated as: for all DPs in the structure, their Case feature
