@@ -183,17 +183,17 @@ abbrev Dom (Ent α : Type) : Type := Ent ⊕ α
 /-- Wellwood's lexicon over the engine: `much` is the assignment-supplied
     measure (eqs. 7/28), `-er` the strict and `ABS` (38.ii) the weak
     degree head, `role` a [kratzer-1996] role head composing by EI. -/
-def lexicon (role : Ent → α → Prop) (P : α → Prop) (μ0 : α → ℚ)
-    (subj : Ent) (δ : ℚ) : Lexicon (Dom Ent α) Unit := fun w =>
+def lexicon {D : Type} [LinearOrder D] [Zero D] (role : Ent → α → Prop) (P : α → Prop)
+    (μ0 : α → D) (subj : Ent) (δ : D) : Lexicon (Dom Ent α) Unit Id D := fun w =>
   match w with
-  | "much" => some ⟨.e ⇒ .d, show Dom Ent α → ℚ from fun x => match x with
+  | "much" => some ⟨.e ⇒ .d, show Dom Ent α → D from fun x => match x with
       | .inr e => μ0 e
       | .inl _ => 0⟩
   | "er" => some ⟨(.e ⇒ .d) ⇒ .d ⇒ .e ⇒ .t,
-      show (Dom Ent α → ℚ) → ℚ → Dom Ent α → Prop from fun m d x => m x > d⟩
+      show (Dom Ent α → D) → D → Dom Ent α → Prop from fun m d x => m x > d⟩
   | "ABS" => some ⟨(.e ⇒ .d) ⇒ .d ⇒ .e ⇒ .t,
-      show (Dom Ent α → ℚ) → ℚ → Dom Ent α → Prop from fun m d x => m x ≥ d⟩
-  | "δ" => some ⟨.d, show ℚ from δ⟩
+      show (Dom Ent α → D) → D → Dom Ent α → Prop from fun m d x => m x ≥ d⟩
+  | "δ" => some ⟨.d, show D from δ⟩
   | "pred" => some ⟨.e ⇒ .t, fun x => match x with
       | .inr e => P e
       | .inl _ => False⟩

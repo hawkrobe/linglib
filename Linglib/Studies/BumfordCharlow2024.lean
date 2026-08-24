@@ -464,12 +464,12 @@ effects, so scope and binding must come from effect sequencing instead
 `(Entity → Cont R α) → Cont R (Entity → α)` would have to run one
 continuation at every entity simultaneously. Binding under scope arises
 from `bind`-order instead (§7). -/
-instance {R E W : Type} : Tree.PredAbs (Cont R) E W := ⟨none⟩
+instance {R E W D : Type} : Tree.PredAbs (Cont R) E W D := ⟨none⟩
 
 /-- CI effects do not support Predicate Abstraction: the log of
 `⟦β⟧^{g[n↦x]}` may vary with `x`, so no log-respecting distributor
 exists. CI content composes around abstraction, not through it. -/
-instance {ω E W : Type} : Tree.PredAbs (Writer ω) E W := ⟨none⟩
+instance {ω E W D : Type} : Tree.PredAbs (Writer ω) E W D := ⟨none⟩
 
 end PredAbsInstances
 

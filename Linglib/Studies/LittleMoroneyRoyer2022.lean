@@ -1,3 +1,5 @@
+import Mathlib.Data.Finset.Grade
+import Linglib.Core.Order.Valuation
 import Linglib.Semantics.Classifier
 import Linglib.Semantics.Composition.Tree
 import Linglib.Studies.Chierchia1998
@@ -27,8 +29,10 @@ numeral (`shan_clfNoun_composes`, `chol_clfNoun_fails`, `chol_ocho`).
 
 Pluralities are `Finset α`, the atoms and their sums with `∅` excluded by
 `Finset.Nonempty`, so the measure function μ# is `Finset.card` at type
-`⟨e,d⟩`. Prediction 2 of §4 (nouns that need no classifier) rests on
-Vietnamese rather than Ch'ol or Shan data and is not formalized.
+`⟨e,n⟩` — the grade of the plurality lattice (`Finset.grade_eq`) and a
+positive valuation on it, which is all quantization needs
+(`clfForNum_dogs_qua`). Prediction 2 of §4 (nouns that need no classifier)
+rests on Vietnamese rather than Ch'ol or Shan data and is not formalized.
 
 ## References
 
@@ -65,26 +69,19 @@ variable {α : Type} (g : Assignment (Finset α))
 /-- A count noun denotes the atoms and their sums ((6)). -/
 def dogs (x : Finset α) : Prop := x.Nonempty
 
-/-- μ#, the atom-counting measure ((8)). -/
-def atomMeasure (x : Finset α) : ℚ := x.card
-
-theorem clfForNum_dogs_iff (x : Finset α) : clfForNum dogs atomMeasure 2 x ↔ x.card = 2 := by
-  simp only [clfForNum, Mereology.QMOD, dogs, atomMeasure, ← Finset.card_pos]
-  norm_cast
+theorem clfForNum_dogs_iff (x : Finset α) : clfForNum dogs Finset.card 2 x ↔ x.card = 2 := by
+  simp only [clfForNum, Mereology.QMOD, dogs, ← Finset.card_pos]
   omega
 
-/-- Atomizing a count noun yields its atoms, `IoninMatushansky2006.IsAtomOf`. -/
+/-- Atomizing a count noun yields the atoms of the plurality lattice
+(`Mereology.atomize_ne_bot`), the singletons `IoninMatushansky2006.IsAtomOf`. -/
 theorem clfForNoun_dogs : (clfForNoun dogs : Finset α → Prop) = IsAtomOf (λ _ => True) := by
+  have h : (dogs : Finset α → Prop) = (· ≠ ⊥) :=
+    funext λ _ => propext Finset.nonempty_iff_ne_empty
+  rw [show (clfForNoun dogs : Finset α → Prop) = Mereology.atomize (· ≠ ⊥) from
+    congrArg Mereology.atomize h, Mereology.atomize_ne_bot]
   funext x
-  simp only [clfForNoun, Mereology.atomize, minimal_iff, IsAtomOf, true_and, dogs, eq_iff_iff]
-  constructor
-  · rintro ⟨⟨a, ha⟩, h⟩
-    exact ⟨a, h (Finset.singleton_nonempty a) (Finset.singleton_subset_iff.2 ha)⟩
-  · rintro ⟨a, rfl⟩
-    refine ⟨Finset.singleton_nonempty a, λ y hy hle => ?_⟩
-    rcases Finset.subset_singleton_iff.1 hle with rfl | rfl
-    · exact absurd hy Finset.not_nonempty_empty
-    · rfl
+  simp [Finset.isAtom_iff, IsAtomOf]
 
 /-! ### Ch'ol: classifier-for-numeral -/
 
@@ -93,12 +90,12 @@ classifier *-kojty* is μ# ((8)) keyed on `Chol.Classifiers.kojty`, the
 Spanish loan *ocho* 'eight' has its measure built in ((34b)), and *ts'i'*
 is 'dog'. -/
 def cholLex : Lexicon (Finset α) Unit := λ w =>
-  if w = "cha'" then some ⟨(.e ⇒ .d) ⇒ (.e ⇒ .t) ⇒ .e ⇒ .t,
-    show (Finset α → ℚ) → (Finset α → Prop) → Finset α → Prop from
+  if w = "cha'" then some ⟨(.e ⇒ .n) ⇒ (.e ⇒ .t) ⇒ .e ⇒ .t,
+    show (Finset α → ℕ) → (Finset α → Prop) → Finset α → Prop from
       λ m P x => P x ∧ m x = 2⟩
-  else if w = Chol.Classifiers.kojty.form then some ⟨.e ⇒ .d, atomMeasure⟩
+  else if w = Chol.Classifiers.kojty.form then some ⟨.e ⇒ .n, Finset.card⟩
   else if w = "ocho" then some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t,
-    show (Finset α → Prop) → Finset α → Prop from λ P x => P x ∧ atomMeasure x = 8⟩
+    show (Finset α → Prop) → Finset α → Prop from λ P x => P x ∧ x.card = 8⟩
   else if w = "ts'i'" then some ⟨.e ⇒ .t, dogs⟩
   else none
 
@@ -110,17 +107,17 @@ def cholTree : Tree Unit String := .bin cholNumClf (.leaf "ts'i'")
 
 /-- The Ch'ol root is the measure-modified noun `λx. dogs x ∧ μ# x = 2` ((51)). -/
 theorem cholTree_interp :
-    interp (Finset α) Unit cholLex g cholTree = some ⟨.e ⇒ .t, clfForNum dogs atomMeasure 2⟩ :=
+    interp (Finset α) Unit cholLex g cholTree = some ⟨.e ⇒ .t, clfForNum dogs Finset.card 2⟩ :=
   rfl
 
 /-- Numeral and classifier compose without a noun, into the measure phrase
 `λP λx. P x ∧ μ# x = 2` ((45)–(46), Prediction 4). -/
 theorem chol_numClf_composes :
     interp (Finset α) Unit cholLex g cholNumClf =
-      some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, λ P => clfForNum P atomMeasure 2⟩ :=
+      some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, λ P => clfForNum P Finset.card 2⟩ :=
   rfl
 
-/-- The classifier, a measure of type `⟨e,d⟩`, cannot compose with the noun
+/-- The classifier, a measure of type `⟨e,n⟩`, cannot compose with the noun
 without the numeral ((43a)). -/
 theorem chol_clfNoun_fails :
     interp (Finset α) Unit cholLex g (.bin (.leaf Chol.Classifiers.kojty.form) (.leaf "ts'i'")) =
@@ -131,7 +128,7 @@ theorem chol_clfNoun_fails :
 ((33)–(34), Prediction 1). -/
 theorem chol_ocho :
     interp (Finset α) Unit cholLex g (.bin (.leaf "ocho") (.leaf "ts'i'")) =
-        some ⟨.e ⇒ .t, clfForNum dogs atomMeasure 8⟩ ∧
+        some ⟨.e ⇒ .t, clfForNum dogs Finset.card 8⟩ ∧
       interp (Finset α) Unit cholLex g (.bin (.leaf "ocho") (.leaf Chol.Classifiers.kojty.form)) =
         none :=
   ⟨rfl, rfl⟩
@@ -180,10 +177,16 @@ theorem shan_numClf_fails :
 
 /-! ### One denotation for *two dogs* -/
 
+/-- Measure modification by the atom count is quantized: `Finset.card` is a
+positive valuation, and strict monotonicity is all `qua_pullback` needs. -/
+theorem clfForNum_dogs_qua : Mereology.QUA (clfForNum dogs Finset.card 2 : Finset α → Prop) := by
+  refine (Mereology.qua_pullback ?_ (Mereology.singleton_qua 2)).subset λ _ h => h.2
+  exact IsPositiveValuation.strictMono (v := (Finset.card : Finset α → ℕ))
+
 /-- Derivationally distinct, the two strategies denote the same two-dog
 pluralities (§4.5). -/
 theorem forNumeral_iff_forNoun (x : Finset α) :
-    clfForNum dogs atomMeasure 2 x ↔ cardMod 2 (clfForNoun dogs) x := by
+    clfForNum dogs Finset.card 2 x ↔ cardMod 2 (clfForNoun dogs) x := by
   simp [clfForNum_dogs_iff, clfForNoun_dogs, cardMod_atoms_iff]
 
 /-- Three dogs ((6)). -/
@@ -192,9 +195,9 @@ inductive Dog | a | b | c
 
 -- *two dogs* denotes `{ab, ac, bc}` ((51)–(52)).
 example (x : Finset Dog) :
-    clfForNum dogs atomMeasure 2 x ↔
-      x ∈ ({{.a, .b}, {.a, .c}, {.b, .c}} : Finset (Finset Dog)) := by
-  rw [clfForNum_dogs_iff]; revert x; decide
+    clfForNum dogs Finset.card 2 x ↔
+      x ∈ ({{.a, .b}, {.a, .c}, {.b, .c}} : Finset (Finset Dog)) :=
+  (clfForNum_dogs_iff x).trans (by revert x; decide)
 
 end
 
