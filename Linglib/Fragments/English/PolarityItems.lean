@@ -183,6 +183,13 @@ def already : Item :=
   , baseForce := .temporal
   , licensingContexts := [] }
 
+/-- *too* — additive PPI, the positive counterpart of *either* ([ladd-1981]). -/
+def too : Item :=
+  { form := "too"
+  , ppi := true
+  , baseForce := .additive
+  , licensingContexts := [] }
+
 /-- *somewhat* — degree PPI; attenuating (weaker than *very*). -/
 def somewhat : Item :=
   { form := "somewhat"
@@ -321,7 +328,7 @@ def allFCIs : List Item :=
 
 /-- The plain PPIs. -/
 def canonicalPPIs : List Item :=
-  [some_ppi, already, somewhat, rather, tonsOf, utterly]
+  [some_ppi, already, too, somewhat, rather, tonsOf, utterly]
 
 /-- The minimizer PPIs. -/
 def invertedPPIs : List Item :=

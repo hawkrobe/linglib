@@ -6,7 +6,6 @@ import Linglib.Discourse.Roles
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Studies.Faller2019
 import Linglib.Studies.Hohle1992
-import Linglib.Studies.RomeroHan2004
 
 /-!
 # Martínez Vera (2026): Verum, contrast, and evidentiality in Saraguro Kichwa
@@ -58,7 +57,7 @@ Three empirical signatures:
 * `mv_partition_neq_romeroHan_partition` — the cross-framework
   divergence theorem showing MV's polar partition `{p, pᶜ}` is in
   general distinct from Romero & Han's verum partition
-  `{forSureCG p, ¬forSureCG p}`. Makes the line-a (focus) vs line-b
+  `{VERUM p, ¬VERUM p}`. Makes the line-a (focus) vs line-b
   (CommonGround-modal verum operator) split visible at the type level.
 
 ## Substrate consumed
@@ -450,8 +449,8 @@ theorem mi_eq_hohle_as_verumOperator
 
 /-! ### § 6. Cross-framework divergence: MV's partition vs R&H's verum partition
 
-Romero & Han 2004 analyse verum as a CommonGround-modal operator `forSureCG`
-producing an *unbalanced* polar partition `{forSureCG p, ¬forSureCG p}`
+Romero & Han 2004 analyse verum as a CommonGround-modal operator `RomeroHan2004.verum`
+producing an *unbalanced* polar partition `{VERUM p, ¬VERUM p}`
 (line-b account). MV implicitly takes a line-a (focus over polarity)
 position: the partition over which `=mi` operates is the standard polar
 `{p, pᶜ}`. These two partitions are in general distinct — the line-a/b
@@ -459,12 +458,12 @@ debate (Goodhue 2022a §1) is non-vacuous.
 -/
 
 /-- The MV polar partition `{p, pᶜ}` and the R&H verum partition
-    `{forSureCG p, ¬forSureCG p}` are in general distinct. There exist
-    contexts (witness: any model where forSureCG p ≠ p) in which MV's
+    `{VERUM p, ¬VERUM p}` are in general distinct. There exist
+    contexts (witness: any model where VERUM p ≠ p) in which MV's
     line-a focus partition and R&H's line-b VERUM partition pick out
     different cells.
 
-    Witness construction: the forSureCG operator can fail to coincide
+    Witness construction: the VERUM operator can fail to coincide
     with `p` whenever the speaker's epistemic state and conversational
     goals don't trivially settle p — which is the very case that makes
     verum interesting (cf. R&H §3 on biased polar questions). -/
