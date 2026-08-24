@@ -1,3 +1,4 @@
+import Mathlib.Data.Real.Basic
 import Linglib.Semantics.Mereology
 
 /-!
@@ -62,7 +63,7 @@ theorem admissibleMeasure_of_mereoDim
 /-! ### Dimensional restriction -/
 
 /-- A domain is dimensionally restricted when any two admissible measure
-    functions (`StrictMono` maps to ℚ) agree on the comparative ordering
+    functions (`StrictMono` maps into the scale `D`, default `ℝ`) agree on the comparative ordering
     of all elements: the comparative is determined by the background
     ordering alone, not by the choice of measure.
 
@@ -70,32 +71,32 @@ theorem admissibleMeasure_of_mereoDim
     forward direction is `linearOrder_dimensionallyRestricted`; the
     converse is witnessed by incomparable elements with disagreeing
     measures (`prod_not_dimensionallyRestricted`). -/
-def DimensionallyRestricted (α : Type*) [Preorder α] : Prop :=
-  ∀ (μ₁ μ₂ : α → ℚ), StrictMono μ₁ → StrictMono μ₂ →
+def DimensionallyRestricted (α : Type*) [Preorder α] (D : Type := ℝ) [Preorder D] : Prop :=
+  ∀ (μ₁ μ₂ : α → D), StrictMono μ₁ → StrictMono μ₂ →
     ∀ (a b : α), μ₁ a < μ₁ b ↔ μ₂ a < μ₂ b
 
 /-- Linear orders are dimensionally restricted: the comparative ordering
     is uniquely determined by the ambient order, regardless of which
     admissible measure function is chosen. -/
-theorem linearOrder_dimensionallyRestricted {α : Type*} [LinearOrder α] :
-    DimensionallyRestricted α :=
+theorem linearOrder_dimensionallyRestricted {α : Type*} [LinearOrder α] {D : Type} [Preorder D] :
+    DimensionallyRestricted α D :=
   fun _ _ hμ₁ hμ₂ _ _ => hμ₁.lt_iff_lt.trans hμ₂.lt_iff_lt.symm
 
 /-- If two admissible measures disagree on some pair, the domain is NOT
     dimensionally restricted. -/
-theorem not_restricted_of_disagreement {α : Type*} [Preorder α]
-    {μ₁ μ₂ : α → ℚ} (hμ₁ : StrictMono μ₁) (hμ₂ : StrictMono μ₂)
+theorem not_restricted_of_disagreement {α : Type*} [Preorder α] {D : Type} [Preorder D]
+    {μ₁ μ₂ : α → D} (hμ₁ : StrictMono μ₁) (hμ₂ : StrictMono μ₂)
     {a b : α} (h₁ : μ₁ a < μ₁ b) (h₂ : ¬ μ₂ a < μ₂ b) :
-    ¬ DimensionallyRestricted α :=
+    ¬ DimensionallyRestricted α D :=
   fun hDR => h₂ ((hDR μ₁ μ₂ hμ₁ hμ₂ a b).mp h₁)
 
-/-- The converse witness: on the componentwise-ordered `ℚ × ℚ` (weight ×
+/-- The converse witness: on the componentwise-ordered `D × D` (weight ×
     volume), the admissible measures `2·w + v` and `w + v` order the
     incomparable elements `(0, 1)` and `(1, 0)` differently — the
     multi-dimensional signature of entity/event domains. -/
-theorem prod_not_dimensionallyRestricted :
-    ¬ DimensionallyRestricted (ℚ × ℚ) := by
-  have hmono : ∀ c : ℚ, 0 < c → StrictMono (fun p : ℚ × ℚ => c * p.1 + p.2) := by
+theorem prod_not_dimensionallyRestricted {D : Type} [Field D] [LinearOrder D]
+    [IsStrictOrderedRing D] : ¬ DimensionallyRestricted (D × D) D := by
+  have hmono : ∀ c : D, 0 < c → StrictMono (fun p : D × D => c * p.1 + p.2) := by
     intro c hc p q hpq
     rcases Prod.lt_iff.mp hpq with ⟨h1, h2⟩ | ⟨h1, h2⟩
     · have := mul_lt_mul_of_pos_left h1 hc

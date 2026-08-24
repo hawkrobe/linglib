@@ -24,7 +24,7 @@ available aggregation functions:
 - **Weighted** (§2): x is F iff Σᵢ wᵢ·fᵢ(x) ≥ θ (utilitarian aggregation).
   Subsumes Waldon et al.'s eq. 8.
 - **Spatially-normalized weighted** (§2): x is F iff (Σᵢ wᵢ·fᵢ(x)) / s(x) ≥ θ,
-  where s : α → ℚ is a host-extent measure. Tham 2025's eq. 47b for
+  where s : α → K is a host-extent measure on an ordered field `K`. Tham 2025's eq. 47b for
   physical disturbance adjectives.
 - **Multiplicative** (§4): x is F iff Πᵢ fᵢ(x) ≥ θ (Cobb-Douglas aggregation).
   Sassoon-Fadlon argue natural kinds compose multiplicatively.
@@ -35,7 +35,7 @@ reduce to counting aggregation.
 
 namespace Degree.Aggregation
 
-variable {α : Type*}
+variable {α K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
 
 /-! ### Counting Aggregation -/
 
@@ -56,31 +56,31 @@ def countBinding (k : Nat) (dims : List (α → Bool)) (x : α) : Bool :=
 def majorityBinding (dims : List (α → Bool)) (x : α) : Bool :=
   decide (2 * (dims.filter (fun d => d x)).length > dims.length)
 
-/-! ### Weighted Aggregation (Unified ℚ) -/
+/-! ### Weighted Aggregation (over an ordered field) -/
 
-/-- Lift Bool dimension predicates to ℚ-valued measure functions.
+/-- Lift Bool dimension predicates to `K`-valued measure functions.
     Each `d : α → Bool` becomes `fun x => if d x then 1 else 0`. -/
-def boolMeasures (dims : List (α → Bool)) : List (α → ℚ) :=
+def boolMeasures (dims : List (α → Bool)) : List (α → K) :=
   dims.map (fun d x => if d x then 1 else 0)
 
-/-- Weighted score: Σᵢ wᵢ · fᵢ(x), where each fᵢ : α → ℚ is a
+/-- Weighted score: Σᵢ wᵢ · fᵢ(x), where each fᵢ : α → K is a
     measure function along one dimension.
 
     This is the unified core: [waldon-etal-2023]'s eq. (8) uses
-    ℚ-valued measures directly; [dambrosio-hedden-2024]'s Bool
+    `K`-valued measures directly; [dambrosio-hedden-2024]'s Bool
     dimensions are the special case via `boolMeasures`. -/
-def weightedScore (weights : List ℚ) (measures : List (α → ℚ)) (x : α) : ℚ :=
+def weightedScore (weights : List K) (measures : List (α → K)) (x : α) : K :=
   (weights.zip measures).foldl (fun acc (w, f) => acc + w * f x) 0
 
 /-- Weighted binding (Bool dimensions): x is F iff its weighted score
     over Bool-lifted measures exceeds threshold θ. -/
-def weightedBinding (weights : List ℚ) (θ : ℚ)
+def weightedBinding (weights : List K) (θ : K)
     (dims : List (α → Bool)) (x : α) : Bool :=
   decide (weightedScore weights (boolMeasures dims) x ≥ θ)
 
-/-- Weighted binding over continuous ℚ-valued measures. -/
-def weightedBindingQ (weights : List ℚ) (θ : ℚ)
-    (measures : List (α → ℚ)) (x : α) : Bool :=
+/-- Weighted binding over continuous `K`-valued measures. -/
+def weightedBindingQ (weights : List K) (θ : K)
+    (measures : List (α → K)) (x : α) : Bool :=
   decide (weightedScore weights measures x ≥ θ)
 
 /-- Spatially-normalized weighted score: (Σᵢ wᵢ·fᵢ(x)) / s(x).
@@ -93,15 +93,15 @@ def weightedBindingQ (weights : List ℚ) (θ : ℚ)
     of the scale comes from the denominator, not from any single
     dimension. Returns `0` when `spatial x = 0` (avoiding division by
     zero); callers should ensure `spatial x ≠ 0` for meaningful results. -/
-def spatialNormalizedScore (weights : List ℚ) (measures : List (α → ℚ))
-    (spatial : α → ℚ) (x : α) : ℚ :=
+def spatialNormalizedScore (weights : List K) (measures : List (α → K))
+    (spatial : α → K) (x : α) : K :=
   if spatial x = 0 then 0 else weightedScore weights measures x / spatial x
 
 /-- Spatially-normalized weighted binding (Bool dimensions): x is F iff
     its spatially-normalized weighted score over Bool-lifted measures
     exceeds threshold θ. -/
-def spatialNormalizedBinding (weights : List ℚ) (θ : ℚ)
-    (dims : List (α → Bool)) (spatial : α → ℚ) (x : α) : Bool :=
+def spatialNormalizedBinding (weights : List K) (θ : K)
+    (dims : List (α → Bool)) (spatial : α → K) (x : α) : Bool :=
   decide (spatialNormalizedScore weights (boolMeasures dims) spatial x ≥ θ)
 
 /-! ### Properties -/
@@ -114,7 +114,7 @@ theorem countBinding_zero (dims : List (α → Bool)) (x : α) :
 /-- The spatial-normalization reduces to plain weighted score when
     `spatial x = 1` (constant unit host extent). -/
 @[simp]
-theorem spatialNormalizedScore_unit (weights : List ℚ) (measures : List (α → ℚ))
+theorem spatialNormalizedScore_unit (weights : List K) (measures : List (α → K))
     (x : α) :
     spatialNormalizedScore weights measures (fun _ => 1) x =
       weightedScore weights measures x := by
@@ -123,12 +123,13 @@ theorem spatialNormalizedScore_unit (weights : List ℚ) (measures : List (α �
   · exact absurd h one_ne_zero
   · exact div_one _
 
+omit [IsStrictOrderedRing K] in
 /-- Spatial normalization at a zero-extent host returns 0. Documents the
     edge-case convention: a host with no spatial extent cannot exhibit a
     physical disturbance, so the predicate is vacuously not satisfied. -/
 @[simp]
-theorem spatialNormalizedScore_zero (weights : List ℚ) (measures : List (α → ℚ))
-    (spatial : α → ℚ) (x : α) (h : spatial x = 0) :
+theorem spatialNormalizedScore_zero (weights : List K) (measures : List (α → K))
+    (spatial : α → K) (x : α) (h : spatial x = 0) :
     spatialNormalizedScore weights measures spatial x = 0 := by
   simp [spatialNormalizedScore, h]
 
@@ -138,8 +139,8 @@ theorem spatialNormalizedScore_zero (weights : List ℚ) (measures : List (α �
     2025's "boundedness from spatial extent" claim (§3.4) into a
     structural theorem rather than a stipulation. -/
 theorem spatialNormalizedScore_le_one
-    (weights : List ℚ) (measures : List (α → ℚ))
-    (spatial : α → ℚ) (x : α)
+    (weights : List K) (measures : List (α → K))
+    (spatial : α → K) (x : α)
     (hsum : weightedScore weights measures x ≤ spatial x)
     (hpos : 0 < spatial x) :
     spatialNormalizedScore weights measures spatial x ≤ 1 := by
@@ -153,8 +154,8 @@ theorem spatialNormalizedScore_le_one
     this places the score in `[0, 1]` — the "fraction of the totality"
     intuition Tham 2025 §3.4 and Solt 2018 eq. 21 both require. -/
 theorem spatialNormalizedScore_nonneg
-    (weights : List ℚ) (measures : List (α → ℚ))
-    (spatial : α → ℚ) (x : α)
+    (weights : List K) (measures : List (α → K))
+    (spatial : α → K) (x : α)
     (hnum : 0 ≤ weightedScore weights measures x)
     (hspatial : 0 ≤ spatial x) :
     0 ≤ spatialNormalizedScore weights measures spatial x := by
@@ -169,7 +170,7 @@ theorem spatialNormalizedScore_nonneg
     [sassoon-fadlon-2017] argue natural kind nouns compose
     multiplicatively: failure on ANY single dimension kills membership.
     Contrast with additive `weightedScore` for artifact nouns. -/
-def multiplicativeScore (measures : List (α → ℚ)) (x : α) : ℚ :=
+def multiplicativeScore (measures : List (α → K)) (x : α) : K :=
   measures.foldl (fun acc f => acc * f x) 1
 
 /-! ### Classification -/
