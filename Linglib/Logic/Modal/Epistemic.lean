@@ -9,8 +9,9 @@ This file defines the group knowledge operators of [fagin-halpern-moses-vardi-19
 agent-indexed accessibility relations `Rs : E → W → W → Prop`: individual knowledge `Kᵢ` is
 `box (Rs i)`, everyone-knows `E_G` is `box` over the union `⨆ i ∈ G, Rs i`, distributed
 knowledge `D_G` is `box` over the intersection `⨅ i ∈ G, Rs i`, and common knowledge `C_G` is
-`box` over the transitive closure of the union — `φ` holds at every world reachable by a chain
-of members' accessibility. The infinite-conjunction form `E_G φ ∧ E_G (E_G φ) ∧ ⋯` is the
+`box` over the transitive closure of the union — `φ` holds at every world reachable by a
+chain of members' accessibility ([lederman-2014] Appendix 2.B's construction). The
+infinite-conjunction form `E_G φ ∧ E_G (E_G φ) ∧ ⋯` is the
 theorem `commonKnowledge_iff_forall_iterate`, an instance of `ModalLogic.box_transGen_iff`.
 Belief is the same operator over a KD45 frame (`ModalLogic.IsKD45Frame`), with the D, 4, and
 5 laws `ModalLogic.box_D`, `ModalLogic.box_four`, and `ModalLogic.box_five`.

@@ -24,12 +24,13 @@ the absurd context is `⊥`.
 
 ## Implementation notes
 
-The filter axioms are the body-of-information view of the common ground and deliberately
-carry no epistemology: whether what grounds them is iterated common belief
-([stalnaker-2002]) or common acceptance as a primitive ([stalnaker-2014]) is stated
-separately, as `Filter.GroundedIn` in `Logic/Modal/Epistemic.lean` — the epistemology, and
-in particular closure of acceptance under conjunction (the filter's `inter_sets`), is the
-contested idealization in that debate, not a commitment every consumer inherits.
+The filter axioms are the body-of-information view of the common ground ([geurts-2024]'s
+survey) and deliberately carry no epistemology: whether what grounds them is iterated
+common belief ([stalnaker-2002]), common acceptance as a primitive ([stalnaker-2014]), or
+[lederman-2014]'s non-iterated minimal theory is stated separately, as `Filter.GroundedIn`
+in `Logic/Modal/Epistemic.lean` — the epistemology, and in particular closure of acceptance
+under conjunction (the filter's `inter_sets`, [lederman-2014] §2.C's contested axiom), is
+the disputed idealization in that debate, not a commitment every consumer inherits.
 Proposal-based ([farkas-bruce-2010]) and graded non-monotonic ([anderson-2021]) assertion
 models are deliberate non-instances of `HasAssertion`; see
 `FarkasBruce2010.assert_not_narrowing` and `Anderson2021.graded_update_keeps_false_world`.
