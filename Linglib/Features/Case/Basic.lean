@@ -6,7 +6,7 @@ import Linglib.Data.UD.Basic
 
 /-!
 # Case — the canonical inventory
-[blake-1994] [de-marneffe-zeman-2021] [stassen-1985]
+[blake-1994] [de-marneffe-zeman-2021]
 
 The root-namespace `Case` type is the canonical, analytical case
 inventory: the values languages' case systems distinguish. All
@@ -37,8 +37,6 @@ inventory at root namespace, UD demoted to realization.
 * `Case.IsValidInventory` — inventory contiguity on the hierarchy,
   decidable, with the order-theoretic characterization
   `isValidInventory_iff_ordConnected`
-* `Features.AlignmentFamily`, `Features.CaseAssignment`,
-  `Features.FixedCaseEncoding` — small per-entry companion enums
 -/
 
 set_option autoImplicit false
@@ -317,28 +315,3 @@ example : InventoryAdjacent ({.erg, .abs, .inst} : Finset Case) .erg .inst := by
   decide
 
 end Case
-
-namespace Features
-
-/-! ### Companion per-entry enums -/
-
-/-- The two major morphosyntactic alignment families. -/
-inductive AlignmentFamily where
-  | accusative
-  | ergative
-  deriving DecidableEq, Repr
-
-/-- How case is assigned to an NP in a given construction
-    ([stassen-1985], §2.2.1). -/
-inductive CaseAssignment where
-  | derived
-  | fixed
-  deriving DecidableEq, Repr
-
-/-- For fixed-case NPs, what syntactic role the NP occupies. -/
-inductive FixedCaseEncoding where
-  | directObject
-  | adverbial
-  deriving DecidableEq, Repr
-
-end Features

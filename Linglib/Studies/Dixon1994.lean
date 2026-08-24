@@ -495,14 +495,9 @@ section SilversteinSplit
 
 open Features.Prominence (AnimacyLevel)
 
-/-- Map the binary Core alignment family to the full alignment type. -/
-private def toAlignmentType : Features.AlignmentFamily → AlignmentType
-  | .accusative => .accusative
-  | .ergative   => .ergative
-
 /-- Silverstein's hierarchy: NPs at or above the prominence threshold get
     accusative alignment; those below get ergative. -/
-def silverstein (threshold : Nat) (npProminence : Nat) : Features.AlignmentFamily :=
+def silverstein (threshold : Nat) (npProminence : Nat) : AlignmentFamily :=
   if npProminence ≥ threshold then .accusative else .ergative
 
 /-- Silverstein is monotone: if prominence p₁ ≥ p₂ and p₂ gets accusative,
@@ -536,12 +531,12 @@ theorem dyirbal_inanimate_erg :
 /-- Dyirbal split matches the Dyirbal alignment profile: inanimate NPs get
     ergative alignment. -/
 theorem dyirbal_split_matches_np :
-    toAlignmentType (dyirbalSplit.alignment .inanimate)
+    (dyirbalSplit.alignment .inanimate).toAlignmentType
     = dyirbal.npAlignment := rfl
 
 /-- Human/animate arguments get accusative alignment. -/
 theorem dyirbal_split_matches_pron :
-    toAlignmentType (dyirbalSplit.alignment .human)
+    (dyirbalSplit.alignment .human).toAlignmentType
     = dyirbal.pronAlignment := rfl
 
 end SilversteinSplit
@@ -621,7 +616,7 @@ theorem dargwa_fragment_bridge :
 /-- Dargwa: Fragment alignment family is ergative → Typology profile is
     consistently ergative. -/
 theorem dargwa_alignment_family_bridge :
-    toAlignmentType Dargwa.Case.alignment
+    Dargwa.Case.alignment.toAlignmentType
     = dargwa.npAlignment := rfl
 
 /-- Japanese: Fragment case inventory contains NOM and ACC → Typology says
@@ -635,14 +630,14 @@ theorem japanese_fragment_bridge :
     Typology's ergative NP alignment. -/
 theorem hindi_fragment_bridge :
     Alignment.hindiSplit.alignment .perfective = .ergative ∧
-    toAlignmentType (Alignment.hindiSplit.alignment .perfective)
+    (Alignment.hindiSplit.alignment .perfective).toAlignmentType
       = hindiUrdu.npAlignment := ⟨rfl, rfl⟩
 
 /-- Hindi: Fragment imperfective → ACC matches Typology's accusative
     pronoun alignment. -/
 theorem hindi_split_bridge :
     Alignment.hindiSplit.alignment .imperfective = .accusative ∧
-    toAlignmentType (Alignment.hindiSplit.alignment .imperfective)
+    (Alignment.hindiSplit.alignment .imperfective).toAlignmentType
       = hindiUrdu.pronAlignment := ⟨rfl, rfl⟩
 
 -- ============================================================================

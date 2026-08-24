@@ -17,6 +17,9 @@ typology, superlative strategies, and the WALS Ch 121A lookup and aggregates.
 - `Comparative.type` : the WALS Ch 121 type, derived from the anatomy —
   derived-case constructions split on marker presence (particle vs conjoined),
   fixed-case constructions on encoding role (exceed vs locational).
+- `Comparative.CaseAssignment`, `Comparative.FixedCaseEncoding` :
+  [stassen-1985]'s standard-NP parameters (derived vs fixed case; object vs
+  adverbial encoding).
 - `DegreeWordType` ([beck-2009] 3-way), `SuperlativeStrategy` (6-way).
 - `ComparativeType.ofWALS` : WALS Ch 121A comparative type by ISO 639-3
   lookup; `none` for languages the chapter leaves uncoded.
@@ -29,7 +32,21 @@ chaining universals) lives in `Studies/Stassen1985.lean` (paper-anchored).
 
 set_option autoImplicit false
 
-open Features (CaseAssignment FixedCaseEncoding)
+/-- Case assignment to the standard NP of a comparative ([stassen-1985]
+    §2.2.1): `derived` — the standard NP derives its case from the comparee
+    NP's; `fixed` — one construction-determined case regardless of the
+    comparee's. -/
+inductive Comparative.CaseAssignment where
+  | derived
+  | fixed
+  deriving DecidableEq, Repr
+
+/-- Syntactic encoding of a fixed-case standard NP ([stassen-1985] §2.2.2):
+    direct object of a transitive (exceed) verb, or adverbial. -/
+inductive Comparative.FixedCaseEncoding where
+  | directObject
+  | adverbial
+  deriving DecidableEq, Repr
 
 /-- A comparative construction: how it encodes the standard of comparison in
     "X is more Adj than Y" — [stassen-1985]'s construction parameters. A
@@ -43,10 +60,10 @@ structure Comparative where
   standardMarker : Option String := none
   /-- Case assignment to the standard NP: derived from the comparee's case vs
       fixed by the construction ([stassen-1985]). -/
-  caseAssignment : CaseAssignment
+  caseAssignment : Comparative.CaseAssignment
   /-- For fixed-case constructions: the standard's syntactic role — direct
       object of an exceed verb, or adverbial. -/
-  fixedEncoding : Option FixedCaseEncoding := none
+  fixedEncoding : Option Comparative.FixedCaseEncoding := none
   /-- Case on an adverbially encoded standard (ablative for separatives,
       partitive for the Finnish secondary option). Adpositions with the
       corresponding semantics count (Japanese *yori*, Arabic *min* → `abl`). -/

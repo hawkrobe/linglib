@@ -1,3 +1,4 @@
+import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Georgian.Agreement
@@ -295,7 +296,7 @@ open Georgian.Agreement
 /-- Map alignment family to dependent case language type.
     Bridges the typological description (`Alignment.SplitErgativity`) to
     the case algorithm (`Syntax/Case/Dependent.lean`). -/
-def alignmentToLangType : Features.AlignmentFamily → CaseLanguageType
+def alignmentToLangType : Alignment.AlignmentFamily → CaseLanguageType
   | .accusative => .accusative
   | .ergative   => .ergative
 
