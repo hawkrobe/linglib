@@ -63,7 +63,6 @@ open SolstadBott2022
 open German.Predicates
 open Semantics.Presupposition
 open Semantics.Presupposition.Context
-open CommonGround
 open Generalizations.Projectivity
 
 /-! ### Filtering direction and context resolution -/
@@ -195,7 +194,7 @@ theorem occasion_presup_projects {W : Type*}
     "If the judge punishes Peter, he was convicted": at "punishes" the
     presupposition is not entailed → projects. -/
 theorem heim_antecedent_projects {W : Type*}
-    (c : ContextSet W) (trigger _consequence : PartialProp W)
+    (c : Set W) (trigger _consequence : PartialProp W)
     (h : ∃ w, c w ∧ ¬trigger.presup w) :
     presupProjects c trigger := by
   obtain ⟨w, hw_in, hpresup_false⟩ := h
@@ -207,13 +206,13 @@ theorem heim_antecedent_projects {W : Type*}
 /-- Symmetric filtering makes the consequent's assertion available to the local
     context at the antecedent. -/
 def symmetricLocalCtxAntecedent {W : Type*}
-    (c : ContextSet W) (consequent : PartialProp W) : ContextSet W :=
-  ContextSet.update c consequent.assertion
+    (c : Set W) (consequent : PartialProp W) : Set W :=
+  c ∩ {w | consequent.assertion w}
 
 /-- When the consequent entails the occasion presupposition, symmetric filtering
     predicts it is filtered. -/
 theorem symmetric_filters_when_consequent_entails {W : Type*}
-    (c : ContextSet W) (trigger consequent : PartialProp W)
+    (c : Set W) (trigger consequent : PartialProp W)
     (h : ∀ w, c w → consequent.assertion w → trigger.presup w) :
     presupSatisfied (symmetricLocalCtxAntecedent c consequent) trigger := by
   intro w hw

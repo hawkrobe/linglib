@@ -68,7 +68,7 @@ The §3 prima-facie challenge is formalized abstractly:
 hypothesis on the conception. Substantive Ney soundness — that the
 resolution holds under a *realistic* CommonGround operator derived from
 `commonBelief` ([stalnaker-2002]) — requires a `CommonGround.toAgentAccess :
-CommonGround W → E → W → W → Prop` bridge in `Discourse/CommonGround.lean`
+Filter W → E → W → W → Prop` bridge in `Discourse/CommonGround.lean`
 that does not yet exist. Until that bridge lands, the resolution
 theorems are witnessed by toy operators (a degenerate `inCG := · = True`
 that distinguishes intersection-CommonGround-transparency from union-CommonGround-transparency
@@ -138,7 +138,7 @@ the §5 conclusion proposes the broader "insinuative speech" terminology.
 
 namespace Ney2026
 
-open Semantics.Reference.Basic CommonGround
+open Semantics.Reference.Basic
 
 /-! ## §1. Metasemantic apparatus -/
 
@@ -189,7 +189,7 @@ abbrev ConceptionOfReasonableness (C W E : Type*) :=
 /-- A *metasemantics of demonstratives*: a recipe assigning each
 speaker intention a success Prop.
 
-`Account` is intentionally CommonGround-free (no `CommonGround W` parameter): in
+`Account` is intentionally CommonGround-free (no `Filter W` parameter): in
 [ney-2026]'s argument the CommonGround-availability of the success-fact is
 the load-bearing modal claim, formalized via the abstract `inCG`
 operator on the `prima_facie_challenge` theorem rather than threaded

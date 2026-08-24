@@ -494,14 +494,14 @@ theorem krifka_eager_vs_farkasBruce_lazy_intermediate :
       [IndexedCommitment.commit .speaker isRaining] ∧
     -- F&B: assert leaves cg untouched; commitment is on
     -- speaker's slate + table only
-    (assert (DiscourseState.empty : State Weather) isRaining).cgPropositions = [] ∧
+    (assert (DiscourseState.empty : State Weather) isRaining).cg = ⊤ ∧
     (assert (DiscourseState.empty : State Weather) isRaining).dcS = [isRaining] ∧
     (assert (DiscourseState.empty : State Weather) isRaining).table.length = 1 := by
   refine ⟨rfl, ?_, ?_, ?_⟩ <;> simp
 
 /-- Bridge at the completed-trace state: after the addressee accepts the
     assertion, both frameworks have φ in the joint CommonGround (modulo Krifka's
-    speaker indexing on the root entries; F&B's `cg` is bare `Set W`).
+    speaker indexing on the root entries; F&B's `cg` is a bare filter).
 
     Krifka's "addressee accepts" pathway is `assert φ .addressee`
     (the `Yes` reaction, paper p. 334 eq. 21). F&B's pathway is
@@ -518,11 +518,11 @@ theorem krifka_double_assert_eq_farkasBruce_assert_accept :
       [IndexedCommitment.commit .addressee isRaining,
        IndexedCommitment.commit .speaker isRaining] ∧
     -- F&B: assertion has migrated from table → cg, with dcS/dcL also updated
-    fbState.cgPropositions = [isRaining] ∧
+    {w | isRaining w} ∈ fbState.cg ∧
     fbState.dcS   = [isRaining] ∧
     fbState.dcL   = [isRaining] ∧
     fbState.table = [] := by
-  refine ⟨rfl, rfl, rfl, ?_, ?_, ?_, ?_⟩ <;> simp
+  refine ⟨rfl, rfl, rfl, accept_after_assert_mem_cg _ _, ?_, ?_, ?_⟩ <;> simp
 
 /-- The headline observation: at a completed assertion+acceptance trace,
     the two frameworks agree on the **context-set projection** —

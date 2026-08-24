@@ -32,7 +32,6 @@ The five-world model and alternative set are [bar-lev-fox-2020]'s.
 namespace DelPinalBassiSauerland2024
 
 open Semantics.Presupposition (PartialProp)
-open CommonGround (ContextSet)
 open Exhaustification Exhaustification.Presuppositional BarLevFox2020 ModalLogic
 open Semantics.Presupposition.Context (presupSatisfied localCtxSecondDisjunct)
 
@@ -115,14 +114,14 @@ theorem exh_unaware_too_weak :
 
 /-- In `A or pex[◇(p ∨ q)]` the homogeneity presupposition is satisfied in the second
 disjunct's local context `c ∧ ¬A`, and free choice follows there. -/
-theorem filtering_fc (c : ContextSet FCWorld) (A : PartialProp FCWorld) (hc : w ∈ c)
+theorem filtering_fc (c : Set FCWorld) (A : PartialProp FCWorld) (hc : w ∈ c)
     (hA : ¬ A.assertion w) (hf : presupSatisfied (localCtxSecondDisjunct c A) pexFC)
     (hassert : pexFC.assertion w) : permA w ∧ permB w :=
   pex_fc ⟨hf ⟨hc, hA⟩, hassert⟩
 
 /-- A flat `exh` second disjunct has nothing to filter: its free-choice content is
 assertive and stays inside the disjunct (§4.1). -/
-theorem exh_filtering_trivial (c : ContextSet FCWorld) (A : PartialProp FCWorld) :
+theorem exh_filtering_trivial (c : Set FCWorld) (A : PartialProp FCWorld) :
     presupSatisfied (localCtxSecondDisjunct c A) (PartialProp.ofProp flatExhFC) :=
   fun _ _ => trivial
 

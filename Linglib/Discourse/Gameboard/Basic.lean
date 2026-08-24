@@ -8,7 +8,7 @@ import Linglib.Semantics.Questions.Support
 
 Operations on the Dialogue Gameboard: pushing onto QUD, downdating
 resolved questions, recording moves, asserting facts. Plus the
-`HasContextSet` bridge connecting DGB facts to the standard common
+`HasCommonGround` bridge connecting DGB facts to the standard common
 ground type, the `non-resolve-cond` well-formedness check, and the
 partition-based answerhood predicate `PropResolvesQUD`.
 
@@ -17,7 +17,7 @@ partition-based answerhood predicate `PropResolvesQUD`.
 - §1. DGB structural lemmas (initial state)
 - §2. DGB update operations: pushQud, downdateQud, addFact, recordMove, assertFact
 - §3. DGB content mapping: mapFacts, mapQud
-- §4. HasContextSet bridge to CommonGround
+- §4. HasCommonGround bridge to the common ground
 - §5. QUD downdate properties + non-resolve-cond well-formedness
 - §6. Partition-based answerhood (`PropResolvesQUD`)
 
@@ -100,27 +100,24 @@ def DGB.assertFact {P Fact QContent : Type*} {Cont : Type} [DecidableSupport Fac
   (dgb.addFact p).downdateQud
 
 -- ════════════════════════════════════════════════════
--- § 3. HasContextSet Bridge
+-- § 3. HasCommonGround Bridge
 -- ════════════════════════════════════════════════════
 
-open CommonGround in
-/-- DGB with `Set W` facts projects to a context set.
+/-- DGB with `Set W` facts projects to a common ground.
     [ginzburg-2012] Ch. 4: the DGB's FACTS field IS the common ground. -/
 instance {W Participant QContent : Type*} {Cont : Type} :
-    HasContextSet (DGB Participant (Set W) QContent Cont) W where
-  toContextSet dgb := λ w => ∀ p ∈ dgb.facts, p w
+    HasCommonGround (DGB Participant (Set W) QContent Cont) W where
+  commonGround dgb := Filter.principal fun w => ∀ p ∈ dgb.facts, p w
 
-open CommonGround in
-/-- TIS with `Set W` facts inherits the DGB's context set. -/
+/-- TIS with `Set W` facts inherits the DGB's common ground. -/
 instance {W Participant QContent : Type*} {Cont : Type} :
-    HasContextSet (TIS Participant (Set W) QContent Cont) W where
-  toContextSet tis := λ w => ∀ p ∈ tis.dgb.facts, p w
+    HasCommonGround (TIS Participant (Set W) QContent Cont) W where
+  commonGround tis := Filter.principal fun w => ∀ p ∈ tis.dgb.facts, p w
 
-open CommonGround in
-/-- TIS context set is extracted from the DGB. -/
-theorem tis_contextSet_eq_dgb {W Participant QContent : Type*} {Cont : Type}
+/-- TIS common ground is extracted from the DGB. -/
+theorem tis_commonGround_eq_dgb {W Participant QContent : Type*} {Cont : Type}
     (tis : TIS Participant (Set W) QContent Cont) :
-    HasContextSet.toContextSet tis = HasContextSet.toContextSet tis.dgb := rfl
+    commonGround tis = commonGround tis.dgb := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 4. QUD Downdate Properties + Non-Resolve-Cond

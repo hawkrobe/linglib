@@ -27,40 +27,40 @@ substrate's own rendering of that theory, `Context.presupSatisfied` at the matri
 
 namespace TonhauserEtAl2013
 
-open CommonGround Semantics.Presupposition Semantics.Presupposition.Context
+open Semantics.Presupposition Semantics.Presupposition.Context
   Semantics.Presupposition.BeliefEmbedding Semantics.Presupposition.ProjectiveContent
 
-variable {W E : Type*} (m : Set W) (c : ContextSet W)
+variable {W E : Type*} (m : Set W) (c : Set W)
 
 /-- (10): the context entails `m`. -/
-def MPositive : Prop := ContextSet.entails c m
+def MPositive : Prop := c ⊆ m
 
 /-- (10): the context entails neither `m` nor `¬m`. -/
-def MNeutral : Prop := ¬ ContextSet.entails c m ∧ ¬ ContextSet.entails c mᶜ
+def MNeutral : Prop := ¬ c ⊆ m ∧ ¬ c ⊆ mᶜ
 
 /-- (11): uttering the trigger's sentence, acceptable in the contexts `Acc`, is acceptable
 only in `m`-positive contexts. -/
-def StrongContextualFelicity (Acc : ContextSet W → Prop) : Prop := ∀ c, Acc c → MPositive m c
+def StrongContextualFelicity (Acc : Set W → Prop) : Prop := ∀ c, Acc c → MPositive m c
 
 /-- (12i): acceptability in an `m`-neutral context refutes the constraint. -/
-theorem not_scf_of_acceptable_neutral {Acc : ContextSet W → Prop} (h : Acc c)
+theorem not_scf_of_acceptable_neutral {Acc : Set W → Prop} (h : Acc c)
     (hn : MNeutral m c) : ¬ StrongContextualFelicity m Acc :=
   fun hs => hn.1 (hs c h)
 
 /-- §5: under `a believes S` at `w`, `m` has local effect when it is part of `a`'s belief
 state. -/
 def LocalEffect (Dox : E → W → W → Prop) (a : E) (w : W) : Prop :=
-  ContextSet.entails (Dox a w) m
+  {v | Dox a w v} ⊆ m
 
 /-- Obligatory local effect: wherever the belief report is acceptable, `m` has local effect. -/
-def ObligatoryLocalEffect (Dox : E → W → W → Prop) (a : E) (Acc : ContextSet W → Prop) :
+def ObligatoryLocalEffect (Dox : E → W → W → Prop) (a : E) (Acc : Set W → Prop) :
     Prop :=
   ∀ c, Acc c → ∀ w ∈ c, LocalEffect m Dox a w
 
 /-- (41i): acceptability of the report with the holder ignorant of `m` refutes obligatory
 local effect. -/
 theorem not_ole_of_acceptable_ignorant {Dox : E → W → W → Prop} {a : E}
-    {Acc : ContextSet W → Prop} (h : Acc c) {w : W} (hw : w ∈ c) (hig : MNeutral m (Dox a w)) :
+    {Acc : Set W → Prop} (h : Acc c) {w : W} (hw : w ∈ c) (hig : MNeutral m (Dox a w)) :
     ¬ ObligatoryLocalEffect m Dox a Acc :=
   fun ho => hig.1 (ho c h w hw)
 

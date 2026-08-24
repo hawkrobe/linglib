@@ -24,7 +24,6 @@ the attitude holder).
 namespace Semantics.Presupposition.BeliefEmbedding
 
 open Semantics.Presupposition
-open CommonGround
 open Semantics.Presupposition.Context
 
 variable {W : Type*} {Agent : Type*}
@@ -43,7 +42,7 @@ Following [schlenker-2009] Section 3.1.2, this is a function from
 -/
 structure BeliefLocalCtx (W : Type*) (Agent : Type*) where
   /-- The global context set -/
-  globalCtx : ContextSet W
+  globalCtx : Set W
   /-- The doxastic accessibility relation -/
   dox : Agent → W → W → Prop
   /-- The attitude holder -/
@@ -54,7 +53,7 @@ Get the local context at a specific world of utterance.
 
 This is Schlenker's λw* λw(w* ∈ C and w ∈ DoxJ(w*))
 -/
-def BeliefLocalCtx.atWorld (blc : BeliefLocalCtx W Agent) (w_star : W) : ContextSet W :=
+def BeliefLocalCtx.atWorld (blc : BeliefLocalCtx W Agent) (w_star : W) : Set W :=
   λ w => blc.globalCtx w_star ∧ blc.dox blc.agent w_star w
 
 /--
@@ -65,7 +64,7 @@ This is the OLE=yes case: the presupposition becomes part of the
 attitude holder's beliefs.
 -/
 def presupAttributedToHolder (blc : BeliefLocalCtx W Agent) (p : PartialProp W) : Prop :=
-  ∀ w_star, blc.globalCtx w_star → ContextSet.entails (blc.atWorld w_star) p.presup
+  ∀ w_star, blc.globalCtx w_star → blc.atWorld w_star ⊆ {w | p.presup w}
 
 /-!
 ### Opaque vs Transparent Presupposition Projection
@@ -95,8 +94,8 @@ variable {W : Type*} {Agent : Type*}
     the complement *holds* in the actual world.
 
     [delpinal-bassi-sauerland-2024] §3.2 -/
-def transparentProjection (globalCtx : ContextSet W) (p : PartialProp W) : Prop :=
-  ContextSet.entails globalCtx p.presup
+def transparentProjection (globalCtx : Set W) (p : PartialProp W) : Prop :=
+  globalCtx ⊆ {w | p.presup w}
 
 /-- `PartialProp.negFactive` subsumes transparent projection: its presupposition
     (complement holds = presup ∧ assertion) entails transparent projection of
@@ -105,8 +104,8 @@ def transparentProjection (globalCtx : ContextSet W) (p : PartialProp W) : Prop 
     This grounds the `negFactive` combinator in the projection theory.
     [heim-1992], [delpinal-bassi-sauerland-2024] §3.2 -/
 theorem negFactive_entails_transparent (complement : PartialProp W)
-    (believes : Set W → Set W) (globalCtx : ContextSet W)
-    (h : ContextSet.entails globalCtx (PartialProp.negFactive complement believes).presup) :
+    (believes : Set W → Set W) (globalCtx : Set W)
+    (h : globalCtx ⊆ {w | (PartialProp.negFactive complement believes).presup w}) :
     transparentProjection globalCtx complement := by
   intro w hw
   exact (h hw).1

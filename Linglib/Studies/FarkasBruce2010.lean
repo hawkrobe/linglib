@@ -29,11 +29,11 @@ theorem assert_preserves_cg (ds : State W) (p : W → Prop) :
     survive the assertion of `p` without satisfying `p`, because assertion
     only proposes (`dcS` + table) and the context set moves at acceptance.
     This is the formal witness for the non-instance advertised at
-    `CommonGround.HasAssertion` — `State W` does not instantiate it via
+    `HasAssertion` — `State W` does not instantiate it via
     F&B's own `assert`. -/
 theorem assert_not_narrowing :
     ∃ (ds : State Bool) (p : Bool → Prop) (w : Bool),
       w ∈ (assert ds p).contextSet ∧ ¬ p w :=
-  ⟨.empty, (· = true), false, trivial, Bool.false_ne_true⟩
+  ⟨.empty, (· = true), false, by simp [DiscourseState.contextSet], Bool.false_ne_true⟩
 
 end FarkasBruce2010

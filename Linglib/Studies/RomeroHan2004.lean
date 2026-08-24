@@ -59,18 +59,18 @@ open ModalLogic (box)
 open Question (polar polar_compl)
 open Set (Iic)
 
-variable {W : Type*} (epi conv : W → W → Prop) (cg : W → CommonGround W) (p q : Set W)
+variable {W : Type*} (epi conv : W → W → Prop) (cg : W → Filter W) (p q : Set W)
 
 /-! ### VERUM -/
 
 /-- The VERUM operator `FOR-SURE-CG_x p` ((43)): `p` is in the common ground at every world
 compatible with the conversational goals of every world compatible with `x`'s knowledge. -/
 def verum : Set W :=
-  {w | ∀ w', epi w w' → ∀ w'', conv w' w'' → p ∈ (cg w'').propositions}
+  {w | ∀ w', epi w w' → ∀ w'', conv w' w'' → p ∈ cg w''}
 
 /-- VERUM is a necessity nested in a necessity. -/
 theorem verum_eq_box_box :
-    verum epi conv cg p = box epi (box conv fun w => p ∈ (cg w).propositions) := rfl
+    verum epi conv cg p = box epi (box conv fun w => p ∈ cg w) := rfl
 
 /-! ### The four VERUM questions -/
 

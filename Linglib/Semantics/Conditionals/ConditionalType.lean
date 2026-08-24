@@ -89,7 +89,7 @@ antecedent grounded in prior discourse.
 def echoesDiscourse {W : Type*} (ds : State W) (p : Set W)
     (worlds : List W) : Prop :=
   (∃ q ∈ ds.dcS, ∀ w ∈ worlds, q w → p w) ∨
-  (∃ q ∈ ds.cgPropositions,  ∀ w ∈ worlds, q w → p w)
+  (∃ q ∈ ds.cg, ∀ w ∈ worlds, w ∈ q → p w)
 
 /--
 Weaker echo check: proposition is merely consistent with discourse.

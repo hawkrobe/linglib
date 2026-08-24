@@ -19,7 +19,7 @@ Belief is the same operator over a KD45 frame (`ModalLogic.IsKD45Frame`), with t
 
 * `knows`, `everyoneKnows`, `distributedKnowledge`, `commonKnowledge`: `Kᵢ`, `E_G`, `D_G`,
   `C_G`.
-* `CommonGround.GroundedIn`: a common ground whose context set is exactly what is common
+* `Filter.GroundedIn`: a common ground whose context set is exactly what is common
   knowledge ([stalnaker-2002]).
 
 ## Main results
@@ -91,14 +91,14 @@ theorem commonKnowledge_iff_forall_iterate :
 
 end ModalLogic.Epistemic
 
-namespace CommonGround
+namespace Filter
 
 variable {W E : Type*}
 
-/-- A common ground is grounded in common knowledge when its context set is exactly the set
-of worlds where each of its propositions is common knowledge among `G` ([stalnaker-2002]). -/
-def GroundedIn (cg : CommonGround W) (Rs : E → W → W → Prop) (G : Set E) : Prop :=
-  ∀ w, w ∈ cg.contextSet ↔
-    ∀ p ∈ cg.propositions, ModalLogic.Epistemic.commonKnowledge Rs G (· ∈ p) w
+/-- A common ground `cg : Filter W` is grounded in common knowledge when its context set
+`cg.ker` is exactly the set of worlds where each accepted proposition is common knowledge
+among `G` ([stalnaker-2002]). -/
+def GroundedIn (cg : Filter W) (Rs : E → W → W → Prop) (G : Set E) : Prop :=
+  ∀ w, w ∈ cg.ker ↔ ∀ p ∈ cg, ModalLogic.Epistemic.commonKnowledge Rs G (· ∈ p) w
 
-end CommonGround
+end Filter

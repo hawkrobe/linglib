@@ -30,7 +30,6 @@ predicates carry `[DecidablePred p]` constraints.
 
 namespace Rudin2025
 
-open CommonGround
 
 abbrev World := Fin 4
 
@@ -224,7 +223,7 @@ theorem nsfUpdateMust_eq_nonEpistemic (p : (W → Prop)) [DecidablePred p] (c : 
     parameter, the NSF update is intersection with the proposition —
     exactly [stalnaker-1978]'s original formalization.
 
-    Bridges `nsfUpdateNonEpistemic` to `ContextSet.update` from CommonGround:
+    Bridges `nsfUpdateNonEpistemic` to intersective context-set update:
     both compute c ∩ p (filter c to p-worlds). -/
 theorem nsf_recovers_stalnaker (p : (W → Prop)) [DecidablePred p] (c : List W) (w : W) :
     w ∈ nsfUpdateNonEpistemic p c ↔ w ∈ c ∧ p w := by
