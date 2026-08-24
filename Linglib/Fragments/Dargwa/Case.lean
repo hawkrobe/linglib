@@ -1,5 +1,5 @@
 import Linglib.Features.Case.Basic
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Alignment
 /-!
 # Dargwa (Tanti) Case Inventory [sumbatova-2021]
 
@@ -57,7 +57,7 @@ theorem inventory_not_strictly_contiguous :
 /-- Dargwa alignment: consistently ergative — no tense/aspect split.
     Transitive A-arguments always take ergative *-li*;
     S and P arguments take unmarked absolutive. -/
-def alignment : Features.AlignmentFamily := .ergative
+def alignment : Alignment.AlignmentFamily := .ergative
 
 /-- Case of the transitive agent (A-argument): always ergative. -/
 def agentCase : Case := .erg

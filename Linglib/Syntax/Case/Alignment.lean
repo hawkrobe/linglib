@@ -338,6 +338,19 @@ def AlignmentType.marksPatient (a : AlignmentType) : Prop := a = .accusative ∨
 instance (a : AlignmentType) : Decidable a.marksPatient := by
   unfold AlignmentType.marksPatient; infer_instance
 
+/-- The two major alignment families ([dixon-1994]): the binary
+    classification that split-ergative zones and prominence-based splits
+    project to. Coarser than `AlignmentType` — `toAlignmentType` embeds it. -/
+inductive AlignmentFamily where
+  | accusative
+  | ergative
+  deriving DecidableEq, Repr
+
+/-- Embed the binary family into the five-way observational type. -/
+def AlignmentFamily.toAlignmentType : AlignmentFamily → AlignmentType
+  | .accusative => .accusative
+  | .ergative   => .ergative
+
 /-! ### Split ergativity [blake-1994] [dixon-1994]
 
 A `SplitErgativity Factor` is parameterised by the conditioning factor (aspect,
@@ -345,8 +358,6 @@ person, animacy, …); `alignment` projects to the ergative or accusative family
 The Hindi aspect-conditioned split (`hindiSplit`) is the canonical worked
 example, used as the cross-linguistic reference point by the Yukatek/Hindi
 fragments and the Mayan/Silverstein studies. -/
-
-open Features (AlignmentFamily)
 
 /-- A split-ergative system ([blake-1994], [dixon-1994]): alignment varies by
     some conditioning factor. -/

@@ -499,8 +499,7 @@ open Features.Prominence (DefinitenessLevel)
 open Aissen2003
   (DOMProfile spanishDOM russianDOM turkishDOM hindiDOM noDOMProfile)
 open Dixon1994 (russian turkish dyirbalSplit)
-open Features (AlignmentFamily)
-open Alignment (Aspect hindiSplit)
+open Alignment (AlignmentFamily Aspect hindiSplit)
 
 /-- Whether DOM (differential P marking) is expected given alignment.
     Structurally identical to `AlignmentType.marksPatient`: exactly
