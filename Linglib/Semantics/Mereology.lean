@@ -1,10 +1,6 @@
 import Mathlib.Algebra.Order.Archimedean.Basic
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Set.Card
-import Mathlib.Order.Antichain
 import Mathlib.Order.Atoms
-import Mathlib.Order.Minimal
 import Mathlib.Order.SupClosed
 import Linglib.Core.Order.Antichain
 import Linglib.Core.Order.Valuation
