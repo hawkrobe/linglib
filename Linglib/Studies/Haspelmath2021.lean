@@ -5,7 +5,7 @@ import Linglib.Studies.Aissen2003
 import Linglib.Studies.DeHoopMalchukov2008
 import Linglib.Studies.Marantz1991
 import Linglib.Syntax.Case.Alignment
-import Linglib.Syntax.ArgumentRole
+import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # [haspelmath-2021]: Role-reference associations and the explanation of argument coding splits

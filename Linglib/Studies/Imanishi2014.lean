@@ -1,6 +1,6 @@
 import Linglib.Syntax.Case.Alignment
 import Linglib.Fragments.Mayan.Params
-import Linglib.Syntax.ArgumentRole
+import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Imanishi 2014 — Default Ergative [imanishi-2014]

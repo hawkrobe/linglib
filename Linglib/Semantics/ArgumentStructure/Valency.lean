@@ -2,7 +2,7 @@ import Linglib.Features.Prominence
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.ArgumentRole
+import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Valency

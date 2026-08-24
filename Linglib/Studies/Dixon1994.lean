@@ -4,7 +4,7 @@ import Linglib.Syntax.Case.Alignment
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Hindi.Case
-import Linglib.Syntax.ArgumentRole
+import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Dixon (1994): Ergativity — typology + Silverstein hierarchy + ditransitives

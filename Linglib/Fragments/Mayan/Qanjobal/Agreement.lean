@@ -1,7 +1,7 @@
 import Linglib.Features.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Fragments.Mayan.Params
-import Linglib.Syntax.ArgumentRole
+import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Q'anjob'al Agreement and Case Fragment
