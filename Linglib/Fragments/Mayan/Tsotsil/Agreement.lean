@@ -12,8 +12,8 @@ Agreement morphology for Zinacantec Tsotsil (Tseltalan, Mayan)
 
 ## Main declarations
 
-* `Tsotsil.ArgPosition` with `.case`, `.accCase`: argument positions and
-  their case (ergative-absolutive, no aspect split).
+* Case assignment over `ArgumentRole` via `Mayan.caseTseltalan`
+  (ergative-absolutive, no aspect split).
 * `Tsotsil.setALinearity`, `Tsotsil.setBLinearity`: prefixal Set A,
   prefixal-or-suffixal Set B.
 * `Tsotsil.setAExponent`, `Tsotsil.setBExponent`: Zinacantec Tsotsil
@@ -47,20 +47,6 @@ open Agreement
 export Mayan.Tseltalan (GramFunction)
 
 /-! ### Argument positions -/
-
-/-- Argument positions in a Tsotsil clause, aliased to the canonical
-    `ArgumentRole` (S/A/P/R/T). -/
-abbrev ArgPosition := ArgumentRole
-
-/-- Case assignment for Tsotsil: `Mayan.caseTseltalan .Perf`
-    (A → ERG, S/P → ABS); Tseltalan has no aspect-conditioned split. -/
-abbrev ArgPosition.case : ArgPosition → Case :=
-  Mayan.caseTseltalan .Perf
-
-/-- Non-perfective case assignment for Tsotsil: identical to perfective
-    (no aspect split, [polian-2013]). -/
-abbrev ArgPosition.accCase : ArgPosition → Case :=
-  Mayan.caseTseltalan .Imp
 
 /-! ### Absolutive position (LOW-ABS) -/
 

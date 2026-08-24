@@ -56,14 +56,14 @@ inductive FocusSite where
     S fronts like A but intransitive verbs have no AF form. Ditransitive
     R/T focus is unattested in the source and falls to the A-less
     default. -/
-def focusRealize : ArgPosition → Marking FocusSite
+def focusRealize : ArgumentRole → Marking FocusSite
   | .A => ⟨.focusPhrase,
            [.displacement .focusPhrase, .morpheme .focusPhrase, .morpheme .verb]⟩
   | _  => ⟨.focusPhrase, [.displacement .focusPhrase, .morpheme .focusPhrase]⟩
 
 /-- The verb-hosted reflex (AF) appears under transitive-subject focus
     only. -/
-theorem af_reflex_iff (p : ArgPosition) :
+theorem af_reflex_iff (p : ArgumentRole) :
     Reflex.morpheme FocusSite.verb ∈ (focusRealize p).reflexes ↔ p = .A := by
   cases p <;> decide
 

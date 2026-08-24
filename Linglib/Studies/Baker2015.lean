@@ -421,16 +421,16 @@ theorem dependent_source_distinct_from_inherent :
   refine ⟨by decide, by decide⟩
 
 /-- The Chol fragment's case table (Phase 3) inherits the equivalence
-    automatically: since `Chol.ArgPosition.agent.ergCase` is definitionally
+    automatically: since `ArgumentRole.agent.ergCase` is definitionally
     equal to `Alignment.ergative.assignCase .A` (via the Phase-3 substrate
     chain), the equivalence theorem above immediately yields
     `getCaseOf "agent" (assignCases .ergative transitiveMonoNPs)`
-    `= some Chol.ArgPosition.agent.ergCase`. We state this
+    `= some ArgumentRole.agent.ergCase`. We state this
     one Chol-specific corollary explicitly so downstream Mayan consumers
     can cite it directly. -/
 theorem chol_perfective_ergCase_matches_dependent :
     getCaseOf "agent" (assignCases .ergative transitiveMonoNPs)
-      = some (Chol.ArgPosition.case .A) := by decide
+      = some (Mayan.ergCaseChol .A) := by decide
 
 /-- **Dependent case is INSUFFICIENT for extended ergative.** The Chol
     non-perfective S/A → GEN, P → ABS pattern is a fourth typological

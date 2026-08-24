@@ -27,9 +27,9 @@ as a more formal variant ([scott-2023] ch. 3, ex. 156).
 
 * `Mam.setAExponent`, `Mam.setBExponent`: the Set A (ERG) and Set B
   (ABS) exponent tables ([scott-2023] Tables 2.8, 3.5).
-* `Mam.ArgPosition` with `.case`, `.IsPhiAgreed`, `.CanBeReduced`:
-  argument positions, their tripartite case values, φ-agreement status,
-  and reduction eligibility.
+* Tripartite case assignment via `Mayan.ergCaseMam`; `IsPhiAgreed` and
+  `CanBeReduced` classify each `ArgumentRole` by φ-agreement status and
+  reduction eligibility.
 * `Mam.PhiDimension` with `.Copied`, `agreedDimensions`,
   `baseDimensions`, `encliticDimensions`: the φ-feature redundancy
   calculus behind pronoun reduction.
@@ -111,28 +111,18 @@ def defaultSetB : List Morphology.Morph := [.procl "tz'"]
 
 /-! ### Argument positions and agreement status -/
 
-/-- Argument positions, aliased to the canonical
-    `ArgumentRole` (S/A/P/R/T) ([scott-2023] ch. 3). -/
-abbrev ArgPosition := ArgumentRole
-
-/-- Tripartite case assignment: `Mayan.ergCaseMam` (A → ERG inherent
-    from Voice, P → ACC structural from Voice, S → ABS structural from
-    Infl; [scott-2023] ch. 3 §3.4). -/
-abbrev ArgPosition.case : ArgPosition → Case :=
-  Mayan.ergCaseMam
-
 /-- Whether a position triggers φ-Agree. A is probed by Voice (→ Set A),
     S by Infl (→ Set B); the transitive patient is not, because Infl's
     φ-probe has a disjunctive satisfaction condition [SAT: φ or Voice_TR]
     and stops at transitive Voice before copying features, so default Set
     B surfaces. R/T default to participating (not modeled). -/
-def ArgPosition.IsPhiAgreed : ArgPosition → Prop
+def IsPhiAgreed : ArgumentRole → Prop
   | .A => True   -- φ-Agreed by Voice → Set A
   | .P => False  -- NOT φ-Agreed: Infl probe blocked by Voice_TR
   | .S | .R | .T => True   -- S φ-Agreed by Infl → Set B; R/T default
 
-instance : DecidablePred ArgPosition.IsPhiAgreed := fun p => by
-  cases p <;> unfold ArgPosition.IsPhiAgreed <;> infer_instance
+instance : DecidablePred IsPhiAgreed := fun p => by
+  cases p <;> unfold IsPhiAgreed <;> infer_instance
 
 /-! ### Pronoun reduction eligibility -/
 
@@ -146,11 +136,11 @@ instance : DecidablePred ArgPosition.IsPhiAgreed := fun p => by
     ([scott-2023] Table 4.25, p. 200). Only agreed-with positions are
     eligible; whether reduction actually applies depends on person (see
     `realizedPronoun`). -/
-def ArgPosition.CanBeReduced (pos : ArgPosition) : Prop :=
-  pos.IsPhiAgreed
+def CanBeReduced (pos : ArgumentRole) : Prop :=
+  IsPhiAgreed pos
 
-instance : DecidablePred ArgPosition.CanBeReduced := fun pos => by
-  unfold ArgPosition.CanBeReduced; exact inferInstance
+instance : DecidablePred CanBeReduced := fun pos => by
+  unfold CanBeReduced; exact inferInstance
 
 /-! ### Per-position verification -/
 
@@ -160,36 +150,36 @@ instance : DecidablePred ArgPosition.CanBeReduced := fun pos => by
 -- is a re-export of the substrate lemma.
 
 /-- Agent gets ERG (inherent, from Voice). -/
-theorem A_case : ArgPosition.case .A = .erg := Alignment.tripartite.assignCase_A
+theorem A_case : Mayan.ergCaseMam .A = .erg := Alignment.tripartite.assignCase_A
 
 /-- Patient gets ACC (structural, from Voice). -/
-theorem P_case : ArgPosition.case .P = .acc := Alignment.tripartite.assignCase_P
+theorem P_case : Mayan.ergCaseMam .P = .acc := Alignment.tripartite.assignCase_P
 
 /-- Intransitive S gets ABS (structural, from Infl). -/
-theorem S_case : ArgPosition.case .S = .abs := Alignment.tripartite.assignCase_S
+theorem S_case : Mayan.ergCaseMam .S = .abs := Alignment.tripartite.assignCase_S
 
 /-- Three distinct underlying cases (morphologically tripartite),
     inherited from `Alignment.tripartite_distinguishes_all`. -/
 theorem tripartite_alignment :
-    ArgPosition.case .A ≠ ArgPosition.case .P ∧
-    ArgPosition.case .A ≠ ArgPosition.case .S ∧
-    ArgPosition.case .P ≠ ArgPosition.case .S :=
+    Mayan.ergCaseMam .A ≠ Mayan.ergCaseMam .P ∧
+    Mayan.ergCaseMam .A ≠ Mayan.ergCaseMam .S ∧
+    Mayan.ergCaseMam .P ≠ Mayan.ergCaseMam .S :=
   Alignment.tripartite_distinguishes_all
 
 /-- Reduction eligibility coincides with φ-agreement — reflexivity,
     since `CanBeReduced := IsPhiAgreed`. -/
-theorem reduction_eligible_iff_phi_agreed (pos : ArgPosition) :
-    pos.CanBeReduced ↔ pos.IsPhiAgreed :=
+theorem reduction_eligible_iff_phi_agreed (pos : ArgumentRole) :
+    CanBeReduced pos ↔ IsPhiAgreed pos :=
   Iff.rfl
 
 /-! ### Case inventory ([blake-1994]) -/
 
 /-- The case inventory realized by the core positions: {ERG, ACC, ABS}. -/
-def caseInventory : Finset Case := (ArgumentRole.core.map ArgPosition.case).toFinset
+def caseInventory : Finset Case := (ArgumentRole.core.map Mayan.ergCaseMam).toFinset
 
 /-- The inventory covers all argument positions. -/
 theorem inventory_covers_positions :
-    ∀ p ∈ ArgumentRole.core, ArgPosition.case p ∈ caseInventory := by decide
+    ∀ p ∈ ArgumentRole.core, Mayan.ergCaseMam p ∈ caseInventory := by decide
 
 -- Mam's {ERG, ACC, ABS} inventory is valid per Blake's case hierarchy
 -- (all are core cases at rank 6, trivially no gaps).
@@ -246,8 +236,8 @@ theorem enclitic_survives : ¬ (∀ d ∈ encliticDimensions, d.Copied) := by de
     everything else keeps its independent form. Realization selects among
     the shared `PersonalPronoun` entries, not a separate form
     classification. -/
-def realizedPronoun (pos : ArgPosition) (c : PronCell) : Option PersonalPronoun :=
-  if pos.IsPhiAgreed then subjPoss c else independent c
+def realizedPronoun (pos : ArgumentRole) (c : PronCell) : Option PersonalPronoun :=
+  if IsPhiAgreed pos then subjPoss c else independent c
 
 /-- 1SG agent: reduced to the bare disagreement enclitic (base bled by
     impoverishment). -/

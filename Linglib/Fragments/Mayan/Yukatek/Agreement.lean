@@ -24,8 +24,9 @@ burying me', [hofling-2017] Table 24.15): Yucatec is LOW-ABS.
 * `Yukatek.setAExponent`, `Yukatek.setBExponent`: the Set A and Set B
   exponent tables ([hofling-2017] Tables 24.8, 24.12).
 * `Yukatek.absPosition`: LOW-ABS morpheme placement.
-* `Yukatek.ArgPosition` with `.case`, `.accCase`: argument positions and
-  their completive (ergative) and incompletive (extended-ergative) case.
+* Case assignment over `ArgumentRole` via `Mayan.ergCaseYukatek`
+  (completive, ergative) and `Mayan.accCaseYukatek` (incompletive,
+  extended-ergative).
 
 ## Implementation notes
 
@@ -79,18 +80,5 @@ def setBExponent : ExponentTable :=
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
 
 /-! ### Argument positions -/
-
-/-- Argument positions, aliased to the canonical
-    `ArgumentRole` (S/A/P/R/T). -/
-abbrev ArgPosition := ArgumentRole
-
-/-- Completive (ergative) case assignment: `Mayan.ergCaseYukatek`
-    (A → ERG, S/P → ABS). -/
-abbrev ArgPosition.case : ArgPosition → Case := Mayan.ergCaseYukatek
-
-/-- Incompletive (extended-ergative) case assignment:
-    `Mayan.accCaseYukatek` (S/A → Set A, P → Set B; [hofling-2017]
-    p. 692). -/
-abbrev ArgPosition.accCase : ArgPosition → Case := Mayan.accCaseYukatek
 
 end Yukatek

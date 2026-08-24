@@ -24,8 +24,8 @@ collapse to a single marker drawn from the Set B paradigm.
 * `Kaqchikel.setAExponent`, `Kaqchikel.setBExponent`: the Set A (ERG)
   and Set B (ABS) exponent tables ([preminger-2014] table (29)).
 * `Kaqchikel.absPosition`: HIGH-ABS morpheme placement.
-* `Kaqchikel.ArgPosition` with `.case`, `.accCase`, `.IsPhiAgreed`:
-  argument positions, their case wiring, and the (non-differential)
+* Case assignment over `ArgumentRole` via `Mayan.ergCaseKaqchikel` and
+  `Mayan.accCaseKaqchikel`; `IsPhiAgreed` records the (non-differential)
   φ-agreement status of each position.
 * `Kaqchikel.caseInventory`: the {ERG, ABS} case inventory, validated
   against [blake-1994]'s hierarchy.
@@ -89,27 +89,13 @@ def setBExponent : ExponentTable :=
 
 /-! ### Argument positions -/
 
-/-- Argument positions, aliased to the canonical
-    `ArgumentRole` (S/A/P/R/T). -/
-abbrev ArgPosition := ArgumentRole
-
-/-- Perfective (ergative) case assignment: `Mayan.ergCaseKaqchikel`
-    (A → ERG, S/P → ABS). -/
-abbrev ArgPosition.case : ArgPosition → Case :=
-  Mayan.ergCaseKaqchikel
-
-/-- Non-perfective (PROG *ajin*) case assignment: `Mayan.accCaseKaqchikel`
-    (S/A → ABS, P → ERG/GEN, per [imanishi-2014]). -/
-abbrev ArgPosition.accCase : ArgPosition → Case :=
-  Mayan.accCaseKaqchikel
-
 /-- Every position triggers φ-agreement — Kaqchikel is non-differential
-    (contrast `Mam.ArgPosition.IsPhiAgreed`); R/T default to
+    (contrast `Mam.IsPhiAgreed`); R/T default to
     participating. -/
-def ArgPosition.IsPhiAgreed : ArgPosition → Prop
+def IsPhiAgreed : ArgumentRole → Prop
   | .A | .P | .S | .R | .T => True
 
-instance : DecidablePred ArgPosition.IsPhiAgreed := fun p =>
+instance : DecidablePred IsPhiAgreed := fun p =>
   match p with
   | .A | .P | .S | .R | .T => isTrue trivial
 
@@ -120,35 +106,35 @@ family-level statement is
 `CoonMateoPedroPreminger2014.mayan_perfective_ergative`. -/
 
 /-- Agent gets ERG (from Voice). -/
-theorem A_case : ArgPosition.case .A = .erg := Alignment.ergative.assignCase_A
+theorem A_case : Mayan.ergCaseKaqchikel .A = .erg := Alignment.ergative.assignCase_A
 
 /-- Patient gets ABS (from Infl). -/
-theorem P_case : ArgPosition.case .P = .abs := Alignment.ergative.assignCase_P
+theorem P_case : Mayan.ergCaseKaqchikel .P = .abs := Alignment.ergative.assignCase_P
 
 /-- Intransitive S gets ABS (from Infl). -/
-theorem S_case : ArgPosition.case .S = .abs := Alignment.ergative.assignCase_S
+theorem S_case : Mayan.ergCaseKaqchikel .S = .abs := Alignment.ergative.assignCase_S
 
 /-- Ergative-absolutive alignment: the agent is distinguished (ERG)
     while patient and intranS share a case value (ABS). -/
 theorem erg_abs_alignment :
-    ArgPosition.case .A ≠ ArgPosition.case .P ∧
-    ArgPosition.case .P = ArgPosition.case .S :=
+    Mayan.ergCaseKaqchikel .A ≠ Mayan.ergCaseKaqchikel .P ∧
+    Mayan.ergCaseKaqchikel .P = Mayan.ergCaseKaqchikel .S :=
   Alignment.ergative_distinguishes_A
 
 /-- All core argument positions trigger φ-agreement. -/
-theorem all_positions_agreed (p : ArgPosition) (_ : p ∈ ArgumentRole.core) :
-    ArgPosition.IsPhiAgreed p := by
+theorem all_positions_agreed (p : ArgumentRole) (_ : p ∈ ArgumentRole.core) :
+    IsPhiAgreed p := by
   cases p <;> trivial
 
 /-! ### Case inventory ([blake-1994]) -/
 
 /-- The case inventory realized by the core positions: {ERG, ABS}. -/
-def caseInventory : Finset Case := (ArgumentRole.core.map ArgPosition.case).toFinset
+def caseInventory : Finset Case := (ArgumentRole.core.map Mayan.ergCaseKaqchikel).toFinset
 
 /-- The inventory covers all argument positions: every position's case
     is in the inventory. -/
 theorem inventory_covers_positions :
-    ∀ p ∈ ArgumentRole.core, ArgPosition.case p ∈ caseInventory := by decide
+    ∀ p ∈ ArgumentRole.core, Mayan.ergCaseKaqchikel p ∈ caseInventory := by decide
 
 -- Kaqchikel's {ERG, ABS} inventory is valid per Blake's case hierarchy
 -- (both are core cases at the top `hierarchyRank`, trivially no gaps).
