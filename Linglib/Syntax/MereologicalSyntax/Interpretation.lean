@@ -62,7 +62,7 @@ noncomputable def nominalDenotation (d : SynObj) (P : α → Prop) : α → Prop
     which atoms qualify, based on the classifier's semantic content
     (e.g., 张 *zhāng* restricts to flat-surface atoms). -/
 noncomputable def nominalDenotationCL (d : SynObj) (P : α → Prop)
-    (cl : ClassifierPred α) : α → Prop :=
+    (cl : α → Prop) : α → Prop :=
   if individuates d then DivCL P cl else P
 
 -- ════════════════════════════════════════════════════
@@ -85,7 +85,7 @@ theorem invisible_cl_preserves_root (d : SynObj) (P : α → Prop)
 /-- Classifier-parametric bridge: visible Cl with classifier predicate
     still yields QUA. -/
 theorem visible_cl_gives_qua_CL (d : SynObj) (P : α → Prop)
-    (cl : ClassifierPred α) (hv : individuates d = true) :
+    (cl : α → Prop) (hv : individuates d = true) :
     QUA (nominalDenotationCL d P cl) := by
   unfold nominalDenotationCL; rw [hv]; exact divCL_qua P cl
 
