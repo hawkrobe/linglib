@@ -55,6 +55,7 @@ set_option autoImplicit false
 namespace Number
 
 open _root_.Features (ContainmentPair ContainmentPairLike)
+open Mereology (atomize)
 
 /-! ### The feature bundle -/
 
@@ -193,12 +194,11 @@ Number features grounded in a join-semilattice of individuals.
 
 The containment `[+atomic] → [+minimal]` is a *theorem* of lattice
 theory (`Number.singular_subset_minimal`), not a stipulation. On finite
-carriers the predicates are decidable (instances in `Interp.lean`), so
-every concrete classification below is kernel-checked by `decide`:
-domains are `Finset (Fin n)` powerset lattices with join = union.
-Minimality is domain-relative (`minimalIn (· ∈ domain)`), agreeing with
-the global `Mereology.Atom` when the domain is downward closed
-in `D⁺`. -/
+carriers the predicates are decidable, so every concrete classification
+below is kernel-checked by `decide`: domains are `Finset (Fin n)` powerset
+lattices with join = union. Minimality is domain-relative
+(`Mereology.atomize (· ∈ domain)`), agreeing with the global `Mereology.Atom`
+when the domain is downward closed in `D⁺`. -/
 
 section Lattice
 
@@ -207,18 +207,18 @@ variable {D : Type*} [SemilatticeSup D]
 /-- The minimal non-atoms of `domain`: minimal among its non-minimal
     elements — the dual's region ([harbour-2014] `[−atomic, +minimal]`). -/
 def minimalNonAtomIn (domain : D → Prop) : D → Prop :=
-  minimalIn fun y => domain y ∧ ¬minimalIn domain y
+  atomize fun y => domain y ∧ ¬atomize domain y
 
 /-- A minimal non-atom is not domain-minimal. -/
-theorem not_minimalIn_of_minimalNonAtomIn {domain : D → Prop} {x : D}
-    (h : minimalNonAtomIn domain x) : ¬minimalIn domain x := h.1.2
+theorem not_atomize_of_minimalNonAtomIn {domain : D → Prop} {x : D}
+    (h : minimalNonAtomIn domain x) : ¬atomize domain x := h.1.2
 
 /-- A region is join-complete: every element is `[+additive]` in it —
     `Mereology.CUM` restricted to the region ([harbour-2014] (11),
     complement completeness). -/
 def RegionAdditive (Q : D → Prop) : Prop := ∀ x, Q x → additiveIn Q x
 
-variable [Fintype D] [DecidableEq D] [DecidableLE D]
+variable [Fintype D] [DecidableLE D]
 
 instance {domain : D → Prop} [DecidablePred domain] (x : D) :
     Decidable (minimalNonAtomIn domain x) := by
@@ -234,7 +234,7 @@ instance {Q : D → Prop} [DecidablePred Q] :
     minimal non-atom → dual, otherwise → plural. -/
 def latticeToFeatures (domain : D → Prop) [DecidablePred domain]
     (x : D) : Features :=
-  if minimalIn domain x then singularF
+  if atomize domain x then singularF
   else if minimalNonAtomIn domain x then dualF
   else pluralF
 
@@ -389,12 +389,12 @@ theorem dualPredOnLattice_eq_via_features [Fintype D] [DecidableEq D]
   refine and_congr_right fun _ => ?_
   constructor
   · intro hMin
-    rw [if_neg (not_minimalIn_of_minimalNonAtomIn hMin), if_pos hMin]
+    rw [if_neg (not_atomize_of_minimalNonAtomIn hMin), if_pos hMin]
   · intro hF
     by_cases hm : minimalNonAtomIn domain x
     · exact hm
     · exfalso
-      by_cases ha : minimalIn domain x
+      by_cases ha : atomize domain x
       · rw [if_pos ha] at hF
         exact absurd hF (by decide)
       · rw [if_neg ha, if_neg hm] at hF

@@ -503,6 +503,11 @@ def QMOD {α μTy : Type*} (R : α → Prop) (μ : α → μTy) (n : μTy) : α 
 
 abbrev atomize {α : Type*} [PartialOrder α] (P : α → Prop) : α → Prop := Minimal P
 
+/-- Minimality in a region is decidable on a finite carrier with decidable order. -/
+instance {α : Type*} [PartialOrder α] [Fintype α] [DecidableLE α] {P : α → Prop}
+    [DecidablePred P] (x : α) : Decidable (Minimal P x) :=
+  decidable_of_iff (P x ∧ ∀ y, P y → y ≤ x → x ≤ y) Iff.rfl
+
 /-- Atomize restricts: atomize P ⊆ P. -/
 theorem atomize_sub {α : Type*} [PartialOrder α]
     {P : α → Prop} {x : α} (h : atomize P x) : P x :=
