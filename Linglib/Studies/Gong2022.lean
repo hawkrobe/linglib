@@ -1,4 +1,5 @@
 import Linglib.Fragments.Mongolian.Case
+import Linglib.Studies.BakerVinokurova2010
 
 /-!
 # Gong 2022 [gong-2022]
@@ -287,11 +288,35 @@ theorem lds_agrees_with_fragment_subj :
 /-- The CP edge alone — without a matrix case position — never
     bleeds Condition C, regardless of the binder's height. -/
 theorem lds_cp_edge_irrelevant :
-    wlmForcesReconstruction
-      (successiveCyclicChain [{ height := 4, admissible := false, phaseCat := .C }]) (binderHeight .io) = true ∧
-    wlmForcesReconstruction
-      (successiveCyclicChain [{ height := 4, admissible := false, phaseCat := .C }]) (binderHeight .subject) = true := by
+    let cpEdge := successiveCyclicChain
+      [{ height := 4, admissible := false, phaseCat := .C }]
+    wlmForcesReconstruction cpEdge (binderHeight .io) = true ∧
+    wlmForcesReconstruction cpEdge (binderHeight .subject) = true := by
   exact ⟨lds_cp_edge_alone_no_bleed 4 (binderHeight .io),
           lds_cp_edge_alone_no_bleed 4 (binderHeight .subject)⟩
+
+/-! ### Dative is inherent, not dependent -/
+
+/-! [gong-2022] adopts the Sakha grammar of [baker-vinokurova-2010] for
+Mongolian but takes dative to be inherent rather than dependent. Holding the
+other three mechanisms fixed and varying only `datMode`, the algorithm stops
+deriving dative at all, so the dative on a Mongolian goal must be supplied as
+lexical case. -/
+
+open Syntax.Case in
+/-- Mongolian differs from Sakha in `datMode` alone. -/
+theorem mongolian_differs_from_sakha_in_dat_only :
+    Mongolian.Case.mongolianCaseConfig =
+      { BakerVinokurova2010.sakhaConfig with datMode := .nonstructural } := rfl
+
+open Syntax.Case in
+/-- On the Sakha ditransitive, the Mongolian configuration derives no dative
+    at all, and the goal that Sakha values dative is valued differently. -/
+theorem mongolian_derives_no_dative :
+    let r := assignCasesPhased Mongolian.Case.mongolianCaseConfig
+      BakerVinokurova2010.ditransitive
+    (∀ cn ∈ r, cn.case ≠ .dat) ∧
+    getCaseOf "goal" r ≠ getCaseOf "goal" BakerVinokurova2010.ditransitiveResult := by
+  decide
 
 end Gong2022
