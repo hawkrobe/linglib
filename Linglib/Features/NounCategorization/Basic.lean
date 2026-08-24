@@ -199,7 +199,7 @@ def collectSemantics (cls : List ClassifierEntry) : List SemanticParameter :=
 /-- The semantic strategy a theoretical framework attributes to classifier
     constructions. Three competing positions are represented:
 
-    - **forNumeral** (CLF-for-NUM): [krifka-1995], [bale-coon-2014],
+    - **forNumeral** (CLF-for-NUM): [krifka-1995b], [bale-coon-2014],
       [little-moroney-royer-2022]. The classifier is a measure function
       required by the numeral. The numeral takes the classifier as its first
       argument: ⟦TWO⟧ = λm⟨e,n⟩λPλx.[P(x) ∧ m(x) = 2]. Predicts: numeral

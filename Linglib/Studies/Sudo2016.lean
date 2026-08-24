@@ -43,9 +43,7 @@ but the semantics of numerals. His core proposal:
 noun) and `Sudo2016.japaneseStrategy = .sudoBlocking` (CLF blocks the
 silent ∪-operator on numerals) commit to incompatible analyses of the
 same empirical fact (Japanese requires classifiers). The disagreement is
-proved structurally in `sudo_disagrees_with_chierchia_on_japanese` below
-and propagates to divergent empirical predictions through LMR's
-diagnostic battery (`LittleMoroneyRoyer2022.predictionsOf`).
+proved structurally in `sudo_disagrees_with_chierchia_on_japanese` below.
 
 ## What is formalized
 
@@ -599,11 +597,7 @@ def japaneseStrategy : NounCategorization.ClassifierStrategy := .sudoBlocking
 /-- Sudo and Chierchia disagree about which strategy Japanese exhibits:
     Chierchia's analysis assigns `.forNoun` (CLF atomizes a kind-denoting
     noun); Sudo's assigns `.sudoBlocking` (CLF blocks the silent ∪-operator
-    on numerals). The disagreement is structural, not editorial.
-
-    The two also disagree on the *empirical predictions* this generates
-    under [little-moroney-royer-2022]'s diagnostic battery — see
-    `LittleMoroneyRoyer2022.predictionsOf` for the per-strategy profiles. -/
+    on numerals). The disagreement is structural, not editorial. -/
 theorem sudo_disagrees_with_chierchia_on_japanese :
     japaneseStrategy ≠ NMP.japaneseStrategy := by decide
 
