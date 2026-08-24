@@ -64,6 +64,10 @@ inductive AlgClosure {α : Type*} [SemilatticeSup α] (P : α → Prop) : α →
 abbrev CUM {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
   SupClosed {x | P x}
 
+instance {α : Type*} [SemilatticeSup α] [Fintype α] {P : α → Prop} [DecidablePred P] :
+    Decidable (CUM P) :=
+  decidable_of_iff (∀ x, P x → ∀ y, P y → P (x ⊔ y)) Iff.rfl
+
 /-- Divisive reference (DIV): P is closed downward under ≤. Grounded in
     mathlib's `IsLowerSet` — `DIV P` **is** `IsLowerSet {x | P x}`. Apply a
     `DIV` hypothesis directly (`hDiv hle hz : P w` from `hle : w ≤ z`,
@@ -125,6 +129,10 @@ theorem null_of_le {α : Type*} [PartialOrder α] [Null α] {x y : α} (hx : nul
 
 @[simp] theorem null_iff_eq_bot {α : Type*} [PartialOrder α] [OrderBot α] {x : α} :
     null x ↔ x = ⊥ := Iff.rfl
+
+instance {α : Type*} [PartialOrder α] [OrderBot α] [DecidableEq α] :
+    DecidablePred (null : α → Prop) :=
+  fun x => inferInstanceAs (Decidable (x = ⊥))
 
 /-- Mereological atom: a non-null element with no non-null proper part —
     mathlib's `Minimal` over the non-null elements ([link-1983] (D.10);
