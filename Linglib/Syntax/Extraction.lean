@@ -1,4 +1,5 @@
 import Linglib.Features.Reflex
+import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!
 # Extraction Morphology
@@ -86,40 +87,15 @@ inductive ExtractionTarget where
   | possessor
   deriving DecidableEq, Repr
 
-/-- The thematic category of an argument being extracted: agent
-    (external argument), patient (internal argument), or oblique.
-
-    Coarser than `ThetaRole` (which distinguishes agent/experiencer/
-    causer, patient/theme, goal/source/instrument). Used when the
-    relevant distinction is which macro-role is extracted, not fine-
-    grained thematic relations or structural positions.
-
-    Complements `ExtractionTarget` (structural position): MacroRole
-    identifies *what* is extracted; ExtractionTarget identifies *where*
-    it was extracted. The two coincide in simple active clauses
-    (agent = subject, patient = object) but diverge under voice
-    alternation (in OV, the patient becomes the subject). -/
-inductive MacroRole where
-  | agent    -- external argument (agent, experiencer, causer)
-  | patient  -- internal argument (patient, theme)
-  | oblique  -- oblique argument (instrument, goal, source, etc.)
-  deriving DecidableEq, Repr
-
-/-- Default structural position for a given argument role (active voice). -/
-def MacroRole.defaultPosition : MacroRole → ExtractionTarget
-  | .agent => .subject
-  | .patient => .directObject
-  | .oblique => .oblique
-
-/-- What is being extracted: a DP argument (which has a thematic role
-    and needs Case licensing) or a non-DP adjunct (which has no
-    thematic role and is Case-exempt).
+/-- What is being extracted: a DP argument, identified by its
+    `ThetaRole` label (it needs Case licensing), or a
+    non-DP adjunct (no thematic role, Case-exempt).
 
     This distinction drives the DP/non-DP extraction asymmetry: in
     predicate-fronting languages like Toba Batak, only DP extraction
     is restricted to the pivot; adjuncts extract freely. -/
 inductive Extractee where
-  | dpArg : MacroRole → Extractee
+  | dpArg : ThetaRole → Extractee
   | adjunct : Extractee
   deriving DecidableEq, Repr
 

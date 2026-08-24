@@ -47,7 +47,7 @@ inductive Voice where
   deriving Repr, DecidableEq
 
 /-- Which argument role is the pivot for a given voice? -/
-def Voice.pivotRole : Voice → Extraction.MacroRole
+def Voice.pivotRole : Voice → ThetaRole
   | .av => .agent
   | .ov => .patient
 
@@ -98,11 +98,6 @@ def avPatientExtraction : ExtractionDatum :=
   { voice := .av, extracted := .dpArg .patient, judgment := .ungrammatical
     description := "AV + patient (non-pivot): *'Aha man-uhor si Poltak?' (*What did Poltak buy?) [= (1a)/(8a)]" }
 
-/-- AV + oblique extraction: ungrammatical (oblique is never pivot). -/
-def avObliqueExtraction : ExtractionDatum :=
-  { voice := .av, extracted := .dpArg .oblique, judgment := .ungrammatical
-    description := "AV + oblique (non-pivot) [predicted, not directly tested in §2]" }
-
 /-- OV + patient extraction: grammatical (patient is pivot in OV). -/
 def ovPatientExtraction : ExtractionDatum :=
   { voice := .ov, extracted := .dpArg .patient, judgment := .grammatical
@@ -112,11 +107,6 @@ def ovPatientExtraction : ExtractionDatum :=
 def ovAgentExtraction : ExtractionDatum :=
   { voice := .ov, extracted := .dpArg .agent, judgment := .ungrammatical
     description := "OV + agent (non-pivot): *'Ise di-tuhor buku i?' (*Who bought the book?) [= (7b)]" }
-
-/-- OV + oblique extraction: ungrammatical (oblique is never pivot). -/
-def ovObliqueExtraction : ExtractionDatum :=
-  { voice := .ov, extracted := .dpArg .oblique, judgment := .ungrammatical
-    description := "OV + oblique (non-pivot) [predicted, not directly tested in §2]" }
 
 /-- AV + adjunct extraction: grammatical (adjuncts don't need Case). -/
 def avAdjunctExtraction : ExtractionDatum :=
@@ -130,8 +120,8 @@ def ovAdjunctExtraction : ExtractionDatum :=
 
 /-- All monoclausal extraction data. -/
 def extractionData : List ExtractionDatum :=
-  [ avAgentExtraction, avPatientExtraction, avObliqueExtraction
-  , ovPatientExtraction, ovAgentExtraction, ovObliqueExtraction
+  [ avAgentExtraction, avPatientExtraction
+  , ovPatientExtraction, ovAgentExtraction
   , avAdjunctExtraction, ovAdjunctExtraction ]
 
 -- ============================================================================
