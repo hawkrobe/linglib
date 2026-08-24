@@ -344,8 +344,8 @@ order; the formalism traces to [krifka-1989]'s cumulative/quantized
 distinction). Definitionally `Mereology.ExtMeasure E μ.apply`; declared as
 `abbrev` so the underlying class instance elaborates through it without manual
 unfolding. -/
-abbrev DimensionedMeasure.IsExtensive {E : Type*} [SemilatticeSup E] [AddCommMonoid D]
-    [PartialOrder D] (μ : DimensionedMeasure E D) : Prop :=
+abbrev DimensionedMeasure.IsExtensive {E : Type*} [SemilatticeSup E] [Mereology.Null E]
+    [AddCommMonoid D] [PartialOrder D] (μ : DimensionedMeasure E D) : Prop :=
   Mereology.ExtMeasure E μ.apply
 
 /-- A `DimensionedMeasure` is **admissible** (in [wellwood-2015]'s /
@@ -363,7 +363,7 @@ abbrev DimensionedMeasure.IsAdmissible {E : Type*} [Preorder E] [Preorder D]
 produces a QUA predicate. Measure terms ("three kilos of rice") yield
 quantized predicates because their measure function is extensive. -/
 theorem extensive_measureFn_qmod_qua
-    {E : Type*} [SemilatticeSup E] [AddCommMonoid D] [PartialOrder D]
+    {E : Type*} [SemilatticeSup E] [Mereology.Null E] [AddCommMonoid D] [PartialOrder D]
     {μ : DimensionedMeasure E D}
     (hExt : DimensionedMeasure.IsExtensive μ)
     {R : E → Prop} {n : D} (_hn : 0 < n) :

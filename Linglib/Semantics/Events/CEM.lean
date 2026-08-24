@@ -40,6 +40,12 @@ namespace Semantics.Events.CEM
 
 open _root_.Mereology
 
+/-- Events have no null event: the event domain is a classical mereology
+    ([hovda-2009]). -/
+instance instNullEvent (Time : Type*) [LinearOrder Time] [Event.Mereology Time] :
+    Null (Event Time) :=
+  Null.noNull _
+
 /-- The binary sum `⊔` on events, derived from the classical-mereology fusion
     axioms: `e₁ ⊔ e₂` is the unique type-2 fusion of `{e₁, e₂}`. Noncomputable
     because the fusion is extracted by choice from `Fusion2E`. -/

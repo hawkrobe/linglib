@@ -48,7 +48,7 @@ section Semantics
 open _root_.Mereology
 open Borer2005
 
-variable {α : Type*} [SemilatticeSup α]
+variable {α : Type*} [SemilatticeSup α] [Null α]
 
 /-- The nominal denotation at a syntactic node, given a root predicate P.
 

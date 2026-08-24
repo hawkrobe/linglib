@@ -124,7 +124,7 @@ def ReferenceUniv {α β : Type*} [SemilatticeSup α]
 
 /-! ### Atomic granularity (shared γ) -/
 
-/-- Atomic granularity for dimensions where `[PartialOrder β]` is
+/-- Atomic granularity for dimensions where `[PartialOrder β] [Null β]` is
     available: the inner d-image is an `Atom` in β. Used by
     `DistributiveReference` (dimension = θ thematic role; entities have a
     partial-order instance via the entity lattice).
@@ -135,7 +135,7 @@ def ReferenceUniv {α β : Type*} [SemilatticeSup α]
     `NonemptyInterval Time`). The unification is at the `Reference`
     parameter-space level: both express "γ = inner is atomic in the
     dimension's natural sense" at different concrete instantiations. -/
-def AtomicGranularity {β : Type*} [PartialOrder β] : β → β → Prop :=
+def AtomicGranularity {β : Type*} [PartialOrder β] [Null β] : β → β → Prop :=
   λ inner _outer => Atom inner
 
 /-! ### Stratified Distributive Reference ([champollion-2017] eq. 24) -/
@@ -148,12 +148,12 @@ def AtomicGranularity {β : Type*} [PartialOrder β] : β → β → Prop :=
     over atomic agents.
 
     Genuine instance of `Reference` with `γ := AtomicGranularity`. -/
-def DistributiveReference {α β : Type*} [SemilatticeSup α] [PartialOrder β]
+def DistributiveReference {α β : Type*} [SemilatticeSup α] [PartialOrder β] [Null β]
     (θ : α → β) (P : α → Prop) (x : α) : Prop :=
   Reference θ AtomicGranularity P x
 
 /-- Universal distributive reference: every P-entity distributes along θ. -/
-def DistributiveReferenceUniv {α β : Type*} [SemilatticeSup α] [PartialOrder β]
+def DistributiveReferenceUniv {α β : Type*} [SemilatticeSup α] [PartialOrder β] [Null β]
     (θ : α → β) (P : α → Prop) : Prop :=
   ∀ x, P x → DistributiveReference θ P x
 
@@ -174,19 +174,19 @@ coincides with the functional form on a role's graph
     iff it has an atomic `R`-filler. Under thematic uniqueness
     (`ArgumentStructure.UP R`) that filler is unique, recovering "the
     `R`-filler of `y` is atomic". -/
-def RelationalDistributiveReference {Entity α : Type*} [PartialOrder Entity]
+def RelationalDistributiveReference {Entity α : Type*} [PartialOrder Entity] [Null Entity]
     [SemilatticeSup α] (R : Entity → α → Prop) (P : α → Prop) (x : α) : Prop :=
   AlgClosure (λ y => P y ∧ ∃ a, R a y ∧ Atom a) x
 
 /-- Universal relational distributive reference: every P-element
     distributes along R. -/
-def RelationalDistributiveReferenceUniv {Entity α : Type*} [PartialOrder Entity]
+def RelationalDistributiveReferenceUniv {Entity α : Type*} [PartialOrder Entity] [Null Entity]
     [SemilatticeSup α] (R : Entity → α → Prop) (P : α → Prop) : Prop :=
   ∀ x, P x → RelationalDistributiveReference R P x
 
 /-- Relational distributive reference is monotone in the predicate. -/
 theorem relationalDistributiveReference_mono {Entity α : Type*}
-    [PartialOrder Entity] [SemilatticeSup α]
+    [PartialOrder Entity] [Null Entity] [SemilatticeSup α]
     {R : Entity → α → Prop} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
     ∀ x, RelationalDistributiveReference R P x →
       RelationalDistributiveReference R Q x := by
@@ -198,7 +198,7 @@ theorem relationalDistributiveReference_mono {Entity α : Type*}
     justifying the relational form as the faithful generalization of
     [champollion-2017]'s distributive reference. -/
 theorem relationalDistributiveReference_graph {Entity α : Type*}
-    [PartialOrder Entity] [SemilatticeSup α]
+    [PartialOrder Entity] [Null Entity] [SemilatticeSup α]
     {θ : α → Entity} {P : α → Prop} {x : α} :
     RelationalDistributiveReference (λ a y => θ y = a) P x ↔
       DistributiveReference θ P x := by
@@ -283,7 +283,7 @@ abbrev DistributivityConstraint {α β : Type*} [SemilatticeSup α]
 
 /-- "each" distributes over atomic θ-fillers.
     Map = θ (thematic role), granularity = Atom (inner only). -/
-abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β]
+abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β] [Null β]
     (θ : α → β) (Share : α → Prop) (x : α) : Prop :=
   DistributiveReference θ Share x
 
@@ -313,7 +313,7 @@ theorem reference_trivial_granularity {α β : Type*} [SemilatticeSup α]
 
 /-- Distributive reference is monotone in the predicate. -/
 theorem distributiveReference_mono {α β : Type*} [SemilatticeSup α]
-    [PartialOrder β]
+    [PartialOrder β] [Null β]
     {θ : α → β} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
     ∀ x, DistributiveReference θ P x → DistributiveReference θ Q x := by
   intro x hx

@@ -200,13 +200,13 @@ section K98PropositionalSubstrate
 open ArgumentStructure (MO)
 
 /-- K98 §4.1 eq. 63 EXP: θ-arguments of temporally-ordered events do not overlap. -/
-def EXP [PartialOrder α]
+def EXP [PartialOrder α] [Null α]
     (precedes : β → β → Prop) (θ : α → β → Prop) : Prop :=
   ∀ (x y : α) (e e' : β),
     θ x e → θ y e' → precedes e e' → ¬ Overlap x y
 
 /-- K98 §4.1 eq. 65 SEINC: strictly expansive incremental. EXP ∧ MO. -/
-def SEINC [SemilatticeSup α] [SemilatticeSup β]
+def SEINC [SemilatticeSup α] [Null α] [SemilatticeSup β]
     (precedes : β → β → Prop) (θ : α → β → Prop) : Prop :=
   EXP precedes θ ∧ MO θ
 
@@ -324,7 +324,7 @@ end MotionData
 
 section Expansiveness
 
-variable [SemilatticeSup α] {Time : Type*} [LinearOrder Time]
+variable [SemilatticeSup α] [Null α] {Time : Type*} [LinearOrder Time]
 
 /-- EXP-as-property of any θ : α → Event Time → Prop using `Event.precedes`. -/
 abbrev expEv (θ : α → Event Time → Prop) : Prop :=

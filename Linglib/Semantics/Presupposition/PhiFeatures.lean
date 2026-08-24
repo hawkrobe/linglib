@@ -113,7 +113,7 @@ theorem phiPresup_same_assertion {E : Type*}
 
 /-- ⟦Sg⟧: presupposes atomicity. The identity function restricted to
     atoms — defined only when the referent is an atom. -/
-def sgSem (E : Type*) [PartialOrder E] : PartialProp E where
+def sgSem (E : Type*) [PartialOrder E] [Mereology.Null E] : PartialProp E where
   presup := Atom
   assertion := fun _ => True
 
@@ -133,12 +133,12 @@ def dualSem {E : Type*} (minimalP : E → Prop) : PartialProp E where
 -- ── Number denotations as `phiPresup` instances ─────
 
 /-- `sgSem` is `phiPresup` at the maximal cell. -/
-@[simp] theorem sgSem_eq_phiPresup {E : Type*} [PartialOrder E]
+@[simp] theorem sgSem_eq_phiPresup {E : Type*} [PartialOrder E] [Mereology.Null E]
     (outerP : E → Prop) :
     phiPresup Atom outerP .maximal = sgSem E := rfl
 
 /-- `dualSem` is `phiPresup` at the intermediate cell. -/
-@[simp] theorem dualSem_eq_phiPresup {E : Type*} [PartialOrder E]
+@[simp] theorem dualSem_eq_phiPresup {E : Type*} [PartialOrder E] [Mereology.Null E]
     (minimalP : E → Prop) :
     phiPresup (E := E) Atom minimalP .intermediate = dualSem minimalP := rfl
 
@@ -584,7 +584,7 @@ theorem conceivable_nesting
   exact ⟨e, hC, phiPresup_nesting hContain hw₁ hw₂ hSpec e hdef⟩
 
 /-- Sg conceivability ↔ some conceivable entity is atomic. -/
-theorem sg_conceivable_iff_atom [PartialOrder E]
+theorem sg_conceivable_iff_atom [PartialOrder E] [Mereology.Null E]
     (outerP : E → Prop) (C : E → Prop) :
     cellConceivableIn Atom outerP .maximal C ↔ conceivableIn Atom C :=
   Iff.rfl

@@ -50,7 +50,7 @@ Equivalently: x absorbs all overlapping P-elements. In a singular
 NP denotation (atoms only), every atom satisfies this. In a plural
 NP denotation (closed under sum), only the maximal sum does.
 -/
-def maxNonOverlap {α : Type*} [PartialOrder α] (P : α → Prop) (x : α) : Prop :=
+def maxNonOverlap {α : Type*} [PartialOrder α] [Null α] (P : α → Prop) (x : α) : Prop :=
   P x ∧ ∀ (y : α), P y → Overlap x y → y ≤ x
 
 /-! ### The Unified Universal Quantifier -/
@@ -69,18 +69,18 @@ When P = ⟦student⟧ (atoms {a,b,c}):
 When P = ⟦student-PL⟧ (closed under ⊔, max = a⊔b⊔c):
   Q_∀(P)(Q) = Q(a⊔b⊔c)  — non-distributive (maximization)
 -/
-def QForall {α : Type*} [PartialOrder α]
+def QForall {α : Type*} [PartialOrder α] [Null α]
     (P : α → Prop) (Q : α → Prop) : Prop :=
   ∀ (x : α), maxNonOverlap P x → Q x
 
 /-! ### Properties of maxNonOverlap -/
 
-/-- maxNonOverlap implies Maximal: if x absorbs all overlapping
-    P-elements, it is certainly maximal (no proper P-extension). -/
-theorem maxNonOverlap_imp_maximal {α : Type*} [PartialOrder α]
-    {P : α → Prop} {x : α} (h : maxNonOverlap P x) :
+/-- maxNonOverlap implies Maximal for a non-null `x`: if x absorbs all
+    overlapping P-elements, it is certainly maximal (no proper P-extension). -/
+theorem maxNonOverlap_imp_maximal {α : Type*} [PartialOrder α] [Null α]
+    {P : α → Prop} {x : α} (hx : ¬ null x) (h : maxNonOverlap P x) :
     Maximal P x :=
-  ⟨h.1, λ y hy hle => h.2 y hy ⟨x, le_refl x, hle⟩⟩
+  ⟨h.1, λ y hy hle => h.2 y hy ⟨x, hx, le_refl x, hle⟩⟩
 
 /-- For atoms with a disjointness property, maxNonOverlap reduces to
     membership in P.
@@ -88,7 +88,7 @@ theorem maxNonOverlap_imp_maximal {α : Type*} [PartialOrder α]
     The hypothesis `hDisj` says distinct P-atoms don't overlap. This
     holds in any atomic Boolean algebra (or distributive lattice where
     atoms are join-prime). -/
-theorem maxNonOverlap_of_atom {α : Type*} [PartialOrder α]
+theorem maxNonOverlap_of_atom {α : Type*} [PartialOrder α] [Null α]
     {P : α → Prop} {x : α}
     (hPx : P x) (_hAtom : Atom x)
     (hDisj : ∀ (y : α), P y → Overlap x y → y = x) :
@@ -101,7 +101,7 @@ theorem maxNonOverlap_of_atom {α : Type*} [PartialOrder α]
 
     Proof: if y ∈ P overlaps x, then x ⊔ y ∈ P (by CUM), and
     x ≤ x ⊔ y, so x = x ⊔ y (by maximality), hence y ≤ x. -/
-theorem maxNonOverlap_of_cum_maximal {α : Type*} [SemilatticeSup α]
+theorem maxNonOverlap_of_cum_maximal {α : Type*} [SemilatticeSup α] [Null α]
     {P : α → Prop} (hCum : CUM P)
     {x : α} (hMax : Maximal P x) :
     maxNonOverlap P x :=
@@ -117,7 +117,7 @@ Q_∀(P)(Q) reduces to universal quantification: ∀x, P(x) → Q(x).
 
 This is the **[+dist]** case: [haslinger-etal-2025-nllt] eq. (30b).
 -/
-theorem dng_atoms {α : Type*} [PartialOrder α]
+theorem dng_atoms {α : Type*} [PartialOrder α] [Null α]
     {P Q : α → Prop}
     (hAtoms : ∀ (x : α), P x → Atom x)
     (hDisj : ∀ (x y : α), P x → P y → Overlap x y → x = y) :
@@ -139,7 +139,7 @@ This is the **[−dist]** case: [haslinger-etal-2025-nllt] eq. (30a).
 The unique maximal element of a CUM predicate is the join of all
 P-elements — the "maximal plurality."
 -/
-theorem dng_cum {α : Type*} [SemilatticeSup α]
+theorem dng_cum {α : Type*} [SemilatticeSup α] [Null α]
     {P Q : α → Prop} (hCum : CUM P)
     {m : α} (hMax : Maximal P m)
     (hOnly : ∀ (x' : α), maxNonOverlap P x' → x' = m) :
@@ -156,22 +156,24 @@ theorem dng_cum {α : Type*} [SemilatticeSup α]
     This derives `hOnly` for `dng_cum`: if P is CUM, any two
     maxNonOverlap elements must be equal (both are Maximal,
     and CUM predicates have at most one maximal element). -/
-theorem maxNonOverlap_unique_of_cum {α : Type*} [SemilatticeSup α]
-    {P : α → Prop} (hCum : CUM P)
-    {x y : α} (hx : maxNonOverlap P x) (hy : maxNonOverlap P y) :
+theorem maxNonOverlap_unique_of_cum {α : Type*} [SemilatticeSup α] [Null α]
+    {P : α → Prop} (hCum : CUM P) {x y : α} (hx0 : ¬ null x) (hy0 : ¬ null y)
+    (hx : maxNonOverlap P x) (hy : maxNonOverlap P y) :
     x = y :=
   cum_maximal_unique hCum
-    (maxNonOverlap_imp_maximal hx)
-    (maxNonOverlap_imp_maximal hy)
+    (maxNonOverlap_imp_maximal hx0 hx)
+    (maxNonOverlap_imp_maximal hy0 hy)
 
-/-- Combined DNG-PL: for CUM predicates with a maximal element,
-    Q_∀(P)(Q) ↔ Q(m), without needing to supply `hOnly` separately. -/
-theorem dng_cum' {α : Type*} [SemilatticeSup α]
-    {P Q : α → Prop} (hCum : CUM P)
+/-- Combined DNG-PL: for CUM predicates excluding the null individual, with a
+    maximal element, Q_∀(P)(Q) ↔ Q(m), without needing to supply `hOnly`
+    separately. -/
+theorem dng_cum' {α : Type*} [SemilatticeSup α] [Null α]
+    {P Q : α → Prop} (hP0 : ∀ x, P x → ¬ null x) (hCum : CUM P)
     {m : α} (hMax : Maximal P m) :
     QForall P Q ↔ Q m :=
   dng_cum hCum hMax (λ _x hx =>
-    maxNonOverlap_unique_of_cum hCum hx (maxNonOverlap_of_cum_maximal hCum hMax))
+    maxNonOverlap_unique_of_cum hCum (hP0 _ hx.1) (hP0 m hMax.1) hx
+      (maxNonOverlap_of_cum_maximal hCum hMax))
 
 /-! ### Bridge to Standard GQ (every_sem) -/
 
@@ -184,7 +186,7 @@ This theorem bridges the mereological Q_∀ to the flat-domain GQ:
 the two coincide when the restrictor has no mereological structure
 (all elements are atoms with no overlap).
 -/
-theorem QForall_eq_standardGQ {α : Type*} [PartialOrder α]
+theorem QForall_eq_standardGQ {α : Type*} [PartialOrder α] [Null α]
     {P Q : α → Prop}
     (hAtoms : ∀ (x : α), P x → Atom x)
     (hDisj : ∀ (x y : α), P x → P y → Overlap x y → x = y) :
@@ -195,8 +197,8 @@ theorem QForall_eq_standardGQ {α : Type*} [PartialOrder α]
 
 section Decidable
 
-variable {α : Type*} [DecidableEq α] [Fintype α] [PartialOrder α]
-         [DecidableRel ((· ≤ ·) : α → α → Prop)]
+variable {α : Type*} [DecidableEq α] [Fintype α] [PartialOrder α] [Null α]
+         [DecidablePred (null : α → Prop)] [DecidableRel ((· ≤ ·) : α → α → Prop)]
 
 /-- Decidable overlap on a finite type with decidable ≤. -/
 instance decidableOverlap (x y : α) : Decidable (Overlap x y) :=

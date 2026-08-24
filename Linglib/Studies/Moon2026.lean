@@ -157,7 +157,7 @@ theorem connectivity_middle_ground {α : Type*} [SemilatticeSup α]
 -- § 1. Mixed Drink Recipe
 -- ════════════════════════════════════════════════════
 
-variable {α : Type*} [SemilatticeSup α] [TopologicalSpace α]
+variable {α : Type*} [SemilatticeSup α] [Null α] [TopologicalSpace α]
 
 /-- A mixed drink recipe: ingredient predicates, ratio constants, and
     an index identifying which ingredient is the MEASURED PART.
@@ -206,6 +206,8 @@ structure MixedDrinkWitness {n : ℕ} (recipe : Recipe α n)
   assign : Fin n → α
   /-- Each part is a part of the whole -/
   part_le : ∀ i, assign i ≤ x
+  /-- Each ingredient slot is filled by something. -/
+  present : ∀ i, ¬ null (assign i)
   /-- Each part satisfies its ingredient predicate -/
   satisfies : ∀ i, recipe.ingredients i (assign i)
   /-- Ratio constraint holds between all parts -/
@@ -569,12 +571,12 @@ theorem mixedDrink_not_atom {n : ℕ}
     ¬ Atom x := by
   intro hAtom
   obtain ⟨w⟩ := hx
-  have h0 : w.assign 0 = x := Atom.eq hAtom (w.part_le 0)
-  have h1 : w.assign 1 = x := Atom.eq hAtom (w.part_le 1)
+  have h0 : w.assign 0 = x := Atom.eq hAtom (w.part_le 0) (w.present 0)
+  have h1 : w.assign 1 = x := Atom.eq hAtom (w.part_le 1) (w.present 1)
   have hne : (0 : Fin (n + 2)) ≠ 1 := by simp
   have hDisj := w.disjoint 0 1 hne
   rw [h0, h1] at hDisj
-  exact hDisj (Overlap.refl x)
+  exact hDisj (Overlap.refl hAtom.not_null)
 
 /-- Borer's standard `Div` excludes mixed drinks from the individuated
     extension. Since mixed drinks are not atoms (`mixedDrink_not_atom`),

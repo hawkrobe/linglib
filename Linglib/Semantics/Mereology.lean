@@ -27,6 +27,14 @@ Framework-agnostic mereological infrastructure formalized over Mathlib's
 making them usable for entities, events, times, paths, or any domain
 with part-whole structure.
 
+A carrier may or may not contain a **null individual**: Boolean-algebra
+models have `⊥ = ∅`, while classical mereology in [hovda-2009]'s sense has
+none. `Null α` records which — on an `OrderBot` carrier the null is `⊥`, and
+a bottomless carrier declares `Null.noNull`. Atoms, overlap, extensive
+measures and atom counts are stated relative to it, so on bounded carriers
+they are mathlib's `IsAtom` and `¬ Disjoint` (`atom_iff_isAtom`,
+`overlap_iff_not_disjoint`) and on bottomless ones `IsMin` and shared-part
+overlap (`atom_iff_isMin`).
 -/
 
 namespace Mereology
@@ -90,19 +98,57 @@ theorem qua_of_forall {α : Type*} [PartialOrder α] {P : α → Prop}
   rintro a ha b hb hab hab_le
   exact h b a hb (lt_of_le_of_ne hab_le hab) ha
 
-/-- Mereological atom: x has no proper part — grounded as mathlib's `IsMin`
-    (minimal element). [link-1983] (D.10); [champollion-2017] §2.2:
-    `Atom(x) ⇔ ¬∃y. y < x`. This is the **absolute** (P-independent) notion;
-    the P-relative one (Krifka D17, "no proper *P*-part") is `atomize` /
-    mathlib `Minimal P`. No `OrderBot` needed — many mereological domains lack
-    a bottom; on a carrier that has one, `Atom ⊥` holds and `Overlap` is
-    trivial, so use mathlib's `IsAtom` and `Disjoint` there (`atomize_ne_bot`). -/
-abbrev Atom {α : Type*} [PartialOrder α] (x : α) : Prop := IsMin x
+/-! ### The null individual -/
 
-/-- An atom's only part is itself — the `y = x` elimination form of `IsMin`. -/
-theorem Atom.eq {α : Type*} [PartialOrder α] {x y : α} (h : Atom x) (hy : y ≤ x) :
-    y = x :=
-  le_antisymm hy (h hy)
+/-- The null individual of a carrier, if it has one: `null x` says `x` counts
+as nothing, and nothing is a part of everything. Bounded carriers take `⊥`
+(`Null.ofOrderBot`); classical mereologies ([hovda-2009]), which have no
+null, declare `Null.noNull`. -/
+class Null (α : Type*) [LE α] where
+  null : α → Prop
+  null_le : ∀ {x y : α}, null x → x ≤ y
+
+export Null (null null_le)
+
+/-- On a carrier with a bottom, the null individual is `⊥`. -/
+instance Null.ofOrderBot {α : Type*} [PartialOrder α] [OrderBot α] : Null α where
+  null x := x = ⊥
+  null_le hx := hx ▸ bot_le
+
+/-- A carrier without a null individual. -/
+abbrev Null.noNull (α : Type*) [LE α] : Null α := ⟨fun _ => False, fun h => h.elim⟩
+
+/-- Parts of nothing are nothing. -/
+theorem null_of_le {α : Type*} [PartialOrder α] [Null α] {x y : α} (hx : null x)
+    (hy : y ≤ x) : null y :=
+  (le_antisymm hy (null_le hx)).symm ▸ hx
+
+@[simp] theorem null_iff_eq_bot {α : Type*} [PartialOrder α] [OrderBot α] {x : α} :
+    null x ↔ x = ⊥ := Iff.rfl
+
+/-- Mereological atom: a non-null element with no non-null proper part —
+    mathlib's `Minimal` over the non-null elements ([link-1983] (D.10);
+    [champollion-2017] §2.2). On a bounded carrier this is `IsAtom`
+    (`atom_iff_isAtom`); without a null it is `IsMin` (`atom_iff_isMin`). The
+    `P`-relative notion (Krifka D17, "no proper *P*-part") is `atomize`. -/
+abbrev Atom {α : Type*} [PartialOrder α] [Null α] (x : α) : Prop :=
+  Minimal (¬ null ·) x
+
+theorem Atom.not_null {α : Type*} [PartialOrder α] [Null α] {x : α} (h : Atom x) :
+    ¬ null x := h.1
+
+/-- An atom's only non-null part is itself. -/
+theorem Atom.eq {α : Type*} [PartialOrder α] [Null α] {x y : α} (h : Atom x) (hle : y ≤ x)
+    (hy : ¬ null y) : y = x :=
+  le_antisymm hle (h.2 hy hle)
+
+theorem atom_iff_isAtom {α : Type*} [PartialOrder α] [OrderBot α] {x : α} :
+    Atom x ↔ IsAtom x :=
+  isAtom_iff_le_of_ge.symm
+
+theorem atom_iff_isMin {α : Type*} [PartialOrder α] {x : α} :
+    @Atom α _ (Null.noNull α) x ↔ IsMin x :=
+  ⟨fun h _ hy => h.2 not_false hy, fun h => ⟨not_false, fun _ _ hy => h hy⟩⟩
 
 /-! ### Key Theorems -/
 
@@ -158,20 +204,20 @@ theorem qua_cum_incompatible {α : Type*} [SemilatticeSup α]
 /-- Atoms form an antichain — the absolute case of mathlib's
     `setOf_minimal_antichain` (atoms are the `Minimal (fun _ => True)` elements,
     via `minimal_true`). The engine behind `qua_of_atom`. -/
-theorem isAntichain_setOf_atom {α : Type*} [PartialOrder α] :
-    IsAntichain (· ≤ ·) {x : α | Atom x} := by
-  simp only [Atom, ← minimal_true]; exact setOf_minimal_antichain _
+theorem isAntichain_setOf_atom {α : Type*} [PartialOrder α] [Null α] :
+    IsAntichain (· ≤ ·) {x : α | Atom x} :=
+  setOfPred_minimal_antichain _
 
 /-- **Combinator**: a predicate holding only of atoms is quantized — its
     extension is a subset of the atoms, which form an antichain
     (`IsAntichain.subset`). Factors the recurring "atomic ⟹ QUA" pattern
     (mass-noun part predicates, classifier atoms). -/
-theorem qua_of_atom {α : Type*} [PartialOrder α] {P : α → Prop}
+theorem qua_of_atom {α : Type*} [PartialOrder α] [Null α] {P : α → Prop}
     (h : ∀ ⦃x⦄, P x → Atom x) : QUA P :=
   isAntichain_setOf_atom.subset h
 
 /-- Atoms are trivially quantized: the singleton `{x}` is QUA when x is an atom. -/
-theorem atom_qua {α : Type*} [PartialOrder α]
+theorem atom_qua {α : Type*} [PartialOrder α] [Null α]
     {x : α} (hAtom : Atom x) : QUA (· = x) :=
   qua_of_atom fun _ hz => hz ▸ hAtom
 
@@ -264,19 +310,37 @@ theorem IsSumHom.cum_preimage {α β : Type*}
 
 /-! ### Overlap and Extensive Measures ([krifka-1998]) -/
 
-/-- Mereological overlap: x and y share a common part.
-    [krifka-1998] eq. (1e): O(x, y) ⇔ ∃z. z ≤ x ∧ z ≤ y. -/
-def Overlap {γ : Type*} [PartialOrder γ] (x y : γ) : Prop :=
-  ∃ z, z ≤ x ∧ z ≤ y
+/-- Mereological overlap: `x` and `y` share a non-null part ([krifka-1998]
+    (1e)). On a bounded carrier this is `¬ Disjoint x y`
+    (`overlap_iff_not_disjoint`). -/
+def Overlap {α : Type*} [PartialOrder α] [Null α] (x y : α) : Prop :=
+  ∃ z, ¬ null z ∧ z ≤ x ∧ z ≤ y
 
-/-- Overlap is reflexive: every element overlaps itself (via x ≤ x). -/
-theorem Overlap.refl {γ : Type*} [PartialOrder γ] (x : γ) : Overlap x x :=
-  ⟨x, le_refl x, le_refl x⟩
+/-- A non-null element overlaps itself. -/
+theorem Overlap.refl {α : Type*} [PartialOrder α] [Null α] {x : α} (h : ¬ null x) :
+    Overlap x x :=
+  ⟨x, h, le_rfl, le_rfl⟩
 
-/-- Overlap is symmetric. -/
-theorem Overlap.symm {γ : Type*} [PartialOrder γ] {x y : γ}
+theorem Overlap.symm {α : Type*} [PartialOrder α] [Null α] {x y : α}
     (h : Overlap x y) : Overlap y x :=
-  let ⟨z, hzx, hzy⟩ := h; ⟨z, hzy, hzx⟩
+  let ⟨z, hz, hzx, hzy⟩ := h; ⟨z, hz, hzy, hzx⟩
+
+theorem Overlap.not_null_left {α : Type*} [PartialOrder α] [Null α] {x y : α}
+    (h : Overlap x y) : ¬ null x :=
+  let ⟨_, hz, hzx, _⟩ := h; fun hx => hz (null_of_le hx hzx)
+
+theorem Overlap.not_null_right {α : Type*} [PartialOrder α] [Null α] {x y : α}
+    (h : Overlap x y) : ¬ null y :=
+  h.symm.not_null_left
+
+theorem overlap_iff_not_disjoint {α : Type*} [PartialOrder α] [OrderBot α] {x y : α} :
+    Overlap x y ↔ ¬ Disjoint x y := by
+  constructor
+  · rintro ⟨z, hz, hzx, hzy⟩ hd
+    exact hz (le_bot_iff.mp (hd hzx hzy))
+  · intro hd
+    by_contra h
+    exact hd fun z hzx hzy => le_bot_iff.mpr (by_contra fun hz => h ⟨z, hz, hzx, hzy⟩)
 
 /-! ### Classical (extensional) mereology ([hovda-2009])
 
@@ -291,13 +355,13 @@ antisymmetry), so the fusion-existence axiom delivers binary sums for free. -/
 
 /-- Type-2 (Tarski) fusion ([hovda-2009] §1.1.2): `t` fuses the `P`-things iff
 `t` is an upper bound on `P` and every part of `t` overlaps some `P`-thing. -/
-def IsFusion {α : Type*} [PartialOrder α] (P : α → Prop) (t : α) : Prop :=
+def IsFusion {α : Type*} [PartialOrder α] [Null α] (P : α → Prop) (t : α) : Prop :=
   (∀ x, P x → x ≤ t) ∧ ∀ y, y ≤ t → ∃ x, P x ∧ Overlap y x
 
 /-- Classical (extensional) mereology ([hovda-2009] §3): parthood is a partial
 order closed under type-2 fusion of every inhabited predicate (`Fusion2E`) and
 satisfying weak supplementation (`WeakSup`). -/
-class ClassicalMereology (α : Type*) [PartialOrder α] : Prop where
+class ClassicalMereology (α : Type*) [PartialOrder α] [Null α] : Prop where
   /-- `Fusion2E`: every inhabited predicate has a type-2 fusion. -/
   fusion_exists : ∀ P : α → Prop, (∃ x, P x) → ∃ t, IsFusion P t
   /-- `WeakSup`: a proper part is supplemented by a disjoint part. -/
@@ -306,7 +370,7 @@ class ClassicalMereology (α : Type*) [PartialOrder α] : Prop where
 /-- A type-2 fusion of `P` is the least upper bound of `P` ([hovda-2009] Fu2MUB):
 weak supplementation forces the fusion (which is by definition *an* upper bound)
 to be the *least* one. -/
-theorem IsFusion.isLUB {α : Type*} [PartialOrder α] [ClassicalMereology α]
+theorem IsFusion.isLUB {α : Type*} [PartialOrder α] [Null α] [ClassicalMereology α]
     {P : α → Prop} {t : α} (h : IsFusion P t) : IsLUB {x | P x} t := by
   refine ⟨fun a ha => h.1 a ha, fun w hw => ?_⟩
   -- `w` is an upper bound on `P`; show the fusion `t ≤ w` via the sum of `{w, t}`.
@@ -318,21 +382,21 @@ theorem IsFusion.isLUB {α : Type*} [PartialOrder α] [ClassicalMereology α]
   by_contra hne
   obtain ⟨s, hsv, hsw⟩ :=
     ClassicalMereology.weak_supplementation w v (lt_of_le_of_ne hwv (Ne.symm hne))
-  obtain ⟨u, hu, p, hps, hpu⟩ := hv.2 s hsv
+  obtain ⟨u, hu, p, hp, hps, hpu⟩ := hv.2 s hsv
   rcases hu with rfl | rfl
-  · exact hsw ⟨p, hps, hpu⟩
-  · obtain ⟨a, hPa, q, hqp, hqa⟩ := h.2 p hpu
-    exact hsw ⟨q, hqp.trans hps, hqa.trans (hw hPa)⟩
+  · exact hsw ⟨p, hp, hps, hpu⟩
+  · obtain ⟨a, hPa, q, hq, hqp, hqa⟩ := h.2 p hpu
+    exact hsw ⟨q, hq, hqp.trans hps, hqa.trans (hw hPa)⟩
 
 /-- Type-2 fusions are unique ([hovda-2009] Fu2Uniqueness): immediate from
 `IsFusion.isLUB` and antisymmetry of the parthood order. -/
-theorem IsFusion.unique {α : Type*} [PartialOrder α] [ClassicalMereology α]
+theorem IsFusion.unique {α : Type*} [PartialOrder α] [Null α] [ClassicalMereology α]
     {P : α → Prop} {s t : α} (hs : IsFusion P s) (ht : IsFusion P t) : s = t :=
   hs.isLUB.unique ht.isLUB
 
 /-- In a classical mereology every pair has a least upper bound (the binary sum
 `a ⊕ b`), obtained by fusing `{a, b}`. -/
-theorem ClassicalMereology.exists_isLUB_pair {α : Type*} [PartialOrder α]
+theorem ClassicalMereology.exists_isLUB_pair {α : Type*} [PartialOrder α] [Null α]
     [ClassicalMereology α] (a b : α) : ∃ s, IsLUB {a, b} s := by
   obtain ⟨t, ht⟩ := ClassicalMereology.fusion_exists (fun u => u = a ∨ u = b) ⟨a, Or.inl rfl⟩
   refine ⟨t, ?_⟩
@@ -344,7 +408,7 @@ mereology, with parthood `≤` as its order. The join `a ⊔ b` is the unique
 type-2 fusion of `{a, b}`; noncomputable because it is extracted by choice from
 the fusion-existence axiom. -/
 @[reducible] noncomputable def ClassicalMereology.toSemilatticeSup {α : Type*}
-    [PartialOrder α] [ClassicalMereology α] : SemilatticeSup α :=
+    [PartialOrder α] [Null α] [ClassicalMereology α] : SemilatticeSup α :=
   { ‹PartialOrder α› with
     sup := fun a b => Classical.choose (ClassicalMereology.exists_isLUB_pair a b)
     le_sup_left := fun a b =>
@@ -371,50 +435,57 @@ intervals) simply has no instance. Everything below reduces to the existing
 `Atom`/`QUA`/`IsAntichain` machinery — this class adds resolution ergonomics, not
 a new notion. -/
 
-/-- A `PartialOrder` all of whose elements are atoms (`IsMin`) — a discrete order
-/ a `≤`-antichain on the whole type. -/
-class IsAtomicDomain (α : Type*) [PartialOrder α] : Prop where
-  /-- Every element is an atom. -/
-  all_atoms : ∀ x : α, Atom x
+/-- A `PartialOrder` all of whose non-null elements are atoms — a discrete
+order, a `≤`-antichain on the non-null elements. -/
+class IsAtomicDomain (α : Type*) [PartialOrder α] [Null α] : Prop where
+  /-- Every non-null element is an atom. -/
+  all_atoms : ∀ x : α, ¬ null x → Atom x
 
 /-- A discrete order (`a ≤ b ↔ a = b`) is an atomic domain — the canonical way to
 discharge the instance for `Student`-style flat fixtures. -/
-theorem isAtomicDomain_of_le_iff_eq {α : Type*} [PartialOrder α]
+theorem isAtomicDomain_of_le_iff_eq {α : Type*} [PartialOrder α] [Null α]
     (h : ∀ a b : α, a ≤ b ↔ a = b) : IsAtomicDomain α where
-  all_atoms x := fun {b} hbx => le_of_eq ((h b x).1 hbx).symm
+  all_atoms x hx := ⟨hx, fun _ _ hbx => le_of_eq ((h _ x).1 hbx).symm⟩
 
-/-- The whole type of an atomic domain is quantized — the sort-level face of
-`QUA`, routed through `qua_of_atom`. -/
-theorem IsAtomicDomain.qua_true {α : Type*} [PartialOrder α] [IsAtomicDomain α] :
-    QUA (fun _ : α => True) :=
-  qua_of_atom fun x _ => IsAtomicDomain.all_atoms x
+/-- The non-null elements of an atomic domain are quantized — the sort-level
+face of `QUA`, routed through `qua_of_atom`. -/
+theorem IsAtomicDomain.qua_nonNull {α : Type*} [PartialOrder α] [Null α]
+    [IsAtomicDomain α] : QUA (fun x : α => ¬ null x) :=
+  qua_of_atom fun x hx => IsAtomicDomain.all_atoms x hx
 
 /-- In an atomic domain, overlapping elements are equal (atoms are disjoint). -/
-theorem IsAtomicDomain.eq_of_overlap {α : Type*} [PartialOrder α] [IsAtomicDomain α]
-    {x y : α} (h : Overlap x y) : x = y :=
-  let ⟨_, hzx, hzy⟩ := h
-  (Atom.eq (IsAtomicDomain.all_atoms x) hzx).symm.trans
-    (Atom.eq (IsAtomicDomain.all_atoms y) hzy)
+theorem IsAtomicDomain.eq_of_overlap {α : Type*} [PartialOrder α] [Null α]
+    [IsAtomicDomain α] {x y : α} (h : Overlap x y) : x = y := by
+  obtain ⟨z, hz, hzx, hzy⟩ := h
+  rw [← Atom.eq (IsAtomicDomain.all_atoms x fun hx => hz (null_of_le hx hzx)) hzx hz,
+    ← Atom.eq (IsAtomicDomain.all_atoms y fun hy => hz (null_of_le hy hzy)) hzy hz]
 
 /-- Extensive measure function, valued in an ordered additive monoid (ℕ for
-    cardinality, ℚ for dimensioned measures): additive over non-overlapping
-    entities, [krifka-1998] §2.2, eq. (7): μ(x ⊕ y) = μ(x) + μ(y) when ¬O(x,y).
-    The bottomless-semilattice counterpart of mathlib's
-    `MeasureTheory.AddContent`; order-interval sibling `IsIntervalContent`
-    (`Core/Order/IntervalContent.lean`). On a carrier with a bottom `Overlap` is
-    trivial and additivity vacuous — use `Disjoint`-additivity there
-    (`Finset.card_union_of_disjoint`) and the grade (`Finset.grade_eq`). -/
-class ExtMeasure (α : Type*) [SemilatticeSup α] {M : Type*} [AddCommMonoid M]
+    cardinality, ℚ or ℝ for dimensioned measures): additive over
+    non-overlapping entities and positive on non-null ones, [krifka-1998] §2.2,
+    eq. (7): μ(x ⊕ y) = μ(x) + μ(y) when ¬O(x,y). On a bounded carrier this is
+    disjoint-additivity — `Finset.card` is the model instance — the semilattice
+    counterpart of mathlib's `MeasureTheory.AddContent` and of the lattice
+    valuations of `Core/Order/Valuation.lean`; order-interval sibling
+    `IsIntervalContent` (`Core/Order/IntervalContent.lean`). -/
+class ExtMeasure (α : Type*) [SemilatticeSup α] [Null α] {M : Type*} [AddCommMonoid M]
     [PartialOrder M] (μ : α → M) : Prop where
   /-- Additivity: μ is additive over non-overlapping entities. -/
   additive : ∀ (x y : α), ¬ Overlap x y → μ (x ⊔ y) = μ x + μ y
-  /-- Positivity: every entity has positive measure. -/
-  positive : ∀ (x : α), 0 < μ x
+  /-- Positivity: every non-null entity has positive measure. -/
+  positive : ∀ (x : α), ¬ null x → 0 < μ x
   /-- Strict monotonicity: proper parts have strictly smaller measure.
       In a CEM with complementation, this follows from additivity + positivity:
       y < x implies x = y ⊔ z with ¬O(y,z), so μ(x) = μ(y) + μ(z) > μ(y).
       We axiomatize it directly since `SemilatticeSup` lacks complementation. -/
   strict_mono : ∀ (x y : α), y < x → μ y < μ x
+
+/-- Cardinality is an extensive measure on finite pluralities. -/
+instance {α : Type*} [DecidableEq α] :
+    ExtMeasure (Finset α) (Finset.card : Finset α → ℕ) where
+  additive _ _ h := Finset.card_union_of_disjoint (not_not.mp (overlap_iff_not_disjoint.not.mp h))
+  positive _ hs := Finset.card_pos.mpr (Finset.nonempty_iff_ne_empty.mpr hs)
+  strict_mono _ _ h := Finset.card_strictMono h
 
 /-! Measure phrases create QUA predicates: `{x : μ(x) = n}` is QUA whenever
 μ is an extensive measure ([krifka-1998] §2.2: "two kilograms of flour" is
@@ -441,10 +512,10 @@ theorem atomize_sub {α : Type*} [PartialOrder α]
     (mathlib's `setOf_minimal_antichain`). -/
 theorem atomize_qua {α : Type*} [PartialOrder α]
     {P : α → Prop} : QUA (atomize P) :=
-  setOf_minimal_antichain P
+  setOfPred_minimal_antichain P
 
 /-- On a carrier with a bottom, the atoms relative to "non-null" are mathlib's
-    `IsAtom`; `Atom` itself would pick out `⊥`. -/
+    `IsAtom` — the predicate form of `atom_iff_isAtom`. -/
 theorem atomize_ne_bot {α : Type*} [PartialOrder α] [OrderBot α] :
     atomize (· ≠ (⊥ : α)) = IsAtom := by
   funext x; exact propext isAtom_iff_le_of_ge.symm
@@ -452,7 +523,7 @@ theorem atomize_ne_bot {α : Type*} [PartialOrder α] [OrderBot α] :
 /-- Count atoms below `x`, as the cardinality of the (classically finite)
     set of atomic parts. Used by [charlow-2021] for cardinality tests on
     plural individuals. -/
-noncomputable def atomCount (α : Type*) [PartialOrder α] [Fintype α]
+noncomputable def atomCount (α : Type*) [PartialOrder α] [Null α] [Fintype α]
     (x : α) : ℕ :=
   {a : α | Atom a ∧ a ≤ x}.ncard
 
@@ -484,7 +555,7 @@ theorem cum_pullback {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 /-- Extract `StrictMono` from an extensive measure.
     `ExtMeasure.strict_mono` axiomatizes that proper parts have strictly
     smaller measure; this is exactly `StrictMono μ`. -/
-theorem extMeasure_strictMono {α M : Type*} [SemilatticeSup α] [AddCommMonoid M]
+theorem extMeasure_strictMono {α M : Type*} [SemilatticeSup α] [Null α] [AddCommMonoid M]
     [PartialOrder M] {μ : α → M} (hμ : ExtMeasure α μ) : StrictMono μ :=
   fun _a _b hab => hμ.strict_mono _ _ hab
 
@@ -496,7 +567,7 @@ theorem singleton_qua {α : Type*} [PartialOrder α]
 
 /-- Measure phrases are quantized: `{x | μ x = n}` is QUA when μ is an extensive
     measure ([krifka-1998] §2.2) — `singleton_qua` pulled back along μ. -/
-theorem extMeasure_qua {α M : Type*} [SemilatticeSup α] [AddCommMonoid M]
+theorem extMeasure_qua {α M : Type*} [SemilatticeSup α] [Null α] [AddCommMonoid M]
     [PartialOrder M] {μ : α → M} [hμ : ExtMeasure α μ] (n : M) :
     QUA (fun x => μ x = n) :=
   qua_pullback (extMeasure_strictMono hμ) (singleton_qua n)
@@ -504,7 +575,7 @@ theorem extMeasure_qua {α M : Type*} [SemilatticeSup α] [AddCommMonoid M]
 /-- **Combinator**: a measure-quantizing modification is quantized.
     `QMOD R μ n ⊆ {μ = n}`, an antichain by `extMeasure_qua`, so any subset is
     too (`IsAntichain.subset`). -/
-theorem qmod_qua {α M : Type*} [SemilatticeSup α] [AddCommMonoid M] [PartialOrder M]
+theorem qmod_qua {α M : Type*} [SemilatticeSup α] [Null α] [AddCommMonoid M] [PartialOrder M]
     {μ : α → M} [ExtMeasure α μ] (R : α → Prop) (n : M) : QUA (QMOD R μ n) :=
   (extMeasure_qua n).subset fun _ h => h.2
 
@@ -748,7 +819,7 @@ variable {Source Inter Measure : Type*}
 theorem composed (dc : DimensionChain f μ) : MereoDim (μ ∘ f) :=
   MereoDim.comp dc.leg₂ dc.leg₁
 
-theorem cum_measure_unbounded {α : Type*} [SemilatticeSup α]
+theorem cum_measure_unbounded {α : Type*} [SemilatticeSup α] [Null α]
     {μ : α → ℚ} [hμ : ExtMeasure α μ]
     {P : α → Prop} (hCum : CUM P)
     {δ : ℚ} (hδ : 0 < δ)

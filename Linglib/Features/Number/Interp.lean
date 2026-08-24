@@ -45,7 +45,7 @@ set_option autoImplicit false
 
 namespace Number
 
-variable {D : Type*} [SemilatticeSup D]
+variable {D : Type*} [SemilatticeSup D] [Mereology.Null D]
 
 /-! ### The feature semantics ([harbour-2014] (20), (21), (10)) -/
 
@@ -59,6 +59,7 @@ def minimalIn (P : D → Prop) (x : D) : Prop :=
 def additiveIn (Q : D → Prop) (x : D) : Prop :=
   Q x ∧ ∀ y, Q y → Q (x ⊔ y)
 
+omit [Mereology.Null D] in
 /-- The `[+additive]` region is closed under join: joining two
     `[+additive]` elements gives another. -/
 theorem additiveIn_sup {Q : D → Prop}
@@ -75,7 +76,7 @@ theorem additiveIn_sup {Q : D → Prop}
 theorem minimalIn_of_atom {P : D → Prop}
     (hAllAtoms : ∀ x, P x → Mereology.Atom x)
     {x : D} (hPx : P x) : minimalIn P x :=
-  ⟨hPx, fun y _ hle => Mereology.Atom.eq (hAllAtoms x hPx) hle⟩
+  ⟨hPx, fun y hy hle => Mereology.Atom.eq (hAllAtoms x hPx) hle (hAllAtoms y hy).not_null⟩
 
 /-- The `[−minimal]` complement of an all-atom region is empty
     ([harbour-2014] §4.2). -/
@@ -84,6 +85,7 @@ theorem not_nonminimal_of_atoms {P : D → Prop}
     ¬(P x ∧ ¬minimalIn P x) :=
   fun ⟨hPx, hNonMin⟩ => hNonMin (minimalIn_of_atom hAllAtoms hPx)
 
+omit [Mereology.Null D] in
 /-- The `[+additive]` subregion is cumulative (`Mereology.CUM`): the
     number–aspect–telicity nexus of [harbour-2014] §4.4 — mass nouns are
     `[+additive]` (cumulative), telic predicates `[−additive]`
@@ -132,13 +134,13 @@ theorem interp_isSome_iff (P : D → Prop) (n : Number) :
         List Number) := by
   cases n <;> simp [interp]
 
-/-- Singular entails minimal over any region: the value-level containment
-    `[+atomic] → [+minimal]`, derived from `minimalIn_of_atom` rather than
-    stipulated — the semantic ground of `Number.Features.WellFormed`
+/-- Singular entails minimal over any region that excludes the null
+    individual: the value-level containment `[+atomic] → [+minimal]`, derived
+    rather than stipulated — the semantic ground of `Number.Features.WellFormed`
     (`Features/Number/Decomposition.lean`). -/
-theorem singular_subset_minimal (P : D → Prop) {x : D}
+theorem singular_subset_minimal (P : D → Prop) (hP : ∀ y, P y → ¬ Mereology.null y) {x : D}
     (h : P x ∧ Mereology.Atom x) : minimalIn P x :=
-  ⟨h.1, fun y _ hle => Mereology.Atom.eq h.2 hle⟩
+  ⟨h.1, fun y hy hle => Mereology.Atom.eq h.2 hle (hP y hy)⟩
 
 /-- Dual and plural partition the non-atoms: every non-atom of `P` is
     dual or plural, never both — the `[±minimal]` split of the

@@ -63,7 +63,7 @@ open Semantics.Presupposition.MaximizePresupposition (phiMP phi_mp_selects_maxim
 -- ============================================================================
 
 /-- The presupposition of [Sg] is mereological atomicity. -/
-theorem sg_presup_eq_atom {E : Type*} [PartialOrder E] :
+theorem sg_presup_eq_atom {E : Type*} [PartialOrder E] [Mereology.Null E] :
     (sgSem E).presup = Atom := rfl
 
 /-- [Pl] is always defined — its presupposition is vacuous. -/
@@ -71,7 +71,7 @@ theorem pl_always_defined {E : Type*} (x : E) :
     (plSem E).defined x := trivial
 
 /-- [Sg] is defined exactly at atoms. -/
-theorem sg_defined_iff_atom {E : Type*} [PartialOrder E] (x : E) :
+theorem sg_defined_iff_atom {E : Type*} [PartialOrder E] [Mereology.Null E] (x : E) :
     (sgSem E).defined x ↔ Atom x := Iff.rfl
 
 -- ============================================================================
@@ -93,16 +93,17 @@ are necessarily nested (atoms ⊂ all entities).
 /-- Presuppositional domain nesting: the domain of [Sg] (atoms) is
     contained in the domain of [Pl] (all entities). This is the
     Feature-Subset Principle for number: dom(Sg) ⊆ dom(Pl). -/
-theorem sg_domain_subset_pl {E : Type*} [PartialOrder E] (x : E) :
+theorem sg_domain_subset_pl {E : Type*} [PartialOrder E] [Mereology.Null E] (x : E) :
     (sgSem E).defined x → (plSem E).defined x :=
   fun _ => trivial
 
 /-- The containment is strict: there exist non-atomic entities in
     dom(Pl) \ dom(Sg). -/
-theorem sg_domain_strict_subset_pl {E : Type*} [SemilatticeSup E]
-    (a b : E) (_ : Atom a) (_ : Atom b) (hne : a ≠ b) :
+theorem sg_domain_strict_subset_pl {E : Type*} [SemilatticeSup E] [Mereology.Null E]
+    (a b : E) (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
     (plSem E).defined (a ⊔ b) ∧ ¬(sgSem E).defined (a ⊔ b) :=
-  ⟨trivial, fun hAtom => hne ((Atom.eq hAtom le_sup_left).trans (Atom.eq hAtom le_sup_right).symm)⟩
+  ⟨trivial, fun hAtom => hne ((Atom.eq hAtom le_sup_left ha.not_null).trans
+    (Atom.eq hAtom le_sup_right hb.not_null).symm)⟩
 
 /-- The `specLevel` ordering on `ContainmentPair` is the Feature-Subset
     Principle: more specified cells have strictly smaller presuppositional
@@ -136,7 +137,7 @@ is satisfied), the optimal candidate must have maximal `presupStrength`.
 
 /-- Same assertive content: [Sg] and [Pl] both assert `True`.
     Instance of the general `phiPresup_same_assertion`. -/
-theorem sg_pl_same_assertion {E : Type*} [PartialOrder E]
+theorem sg_pl_same_assertion {E : Type*} [PartialOrder E] [Mereology.Null E]
     (outerP : E → Prop) (x : E) :
     (phiPresup Atom outerP .maximal).assertion x ↔
     (phiPresup Atom outerP .minimal).assertion x :=
@@ -145,7 +146,7 @@ theorem sg_pl_same_assertion {E : Type*} [PartialOrder E]
 /-- [Sg]'s presupposition is strictly stronger than [Pl]'s:
     dom(Sg) ⊂ dom(Pl). Given any non-atom, it witnesses the strict
     inclusion. -/
-theorem sg_strictly_stronger {E : Type*} [PartialOrder E]
+theorem sg_strictly_stronger {E : Type*} [PartialOrder E] [Mereology.Null E]
     (x : E) (hNotAtom : ¬Atom x) :
     (∀ y, (sgSem E).defined y → (plSem E).defined y) ∧
     (plSem E).defined x ∧ ¬(sgSem E).defined x :=
@@ -170,7 +171,7 @@ theorem mp_selects_sg
     [Sg] is defined (its presupposition is satisfied), making `.maximal`
     a viable candidate. By `mp_selects_sg`, MP selects [Sg] over [Pl].
     This is why "*John are here" is ungrammatical. -/
-theorem mp_blocks_plural_at_atom {E : Type*} [PartialOrder E]
+theorem mp_blocks_plural_at_atom {E : Type*} [PartialOrder E] [Mereology.Null E]
     (x : E) (hAtom : Atom x) :
     -- Sg is defined → it enters the candidate set
     (sgSem E).defined x ∧
@@ -182,7 +183,7 @@ theorem mp_blocks_plural_at_atom {E : Type*} [PartialOrder E]
 
 /-- At a non-atomic referent, [Sg] is undefined — only [Pl] is available.
     This is why "The books were lying on the table" requires plural. -/
-theorem only_plural_at_nonatom {E : Type*} [PartialOrder E]
+theorem only_plural_at_nonatom {E : Type*} [PartialOrder E] [Mereology.Null E]
     (x : E) (hNotAtom : ¬Atom x) :
     ¬(sgSem E).defined x ∧ (plSem E).defined x :=
   ⟨hNotAtom, trivial⟩
@@ -202,12 +203,13 @@ on the non-atomic sum.
 
 section Coordination
 
-variable {E : Type*} [SemilatticeSup E]
+variable {E : Type*} [SemilatticeSup E] [Mereology.Null E]
 
 /-- A coordination of two distinct atoms produces a non-atom. -/
-theorem coordination_nonatom (a b : E) (_ : Atom a) (_ : Atom b)
+theorem coordination_nonatom (a b : E) (ha : Atom a) (hb : Atom b)
     (hne : a ≠ b) : ¬Atom (a ⊔ b) :=
-  fun hAtom => hne ((Atom.eq hAtom le_sup_left).trans (Atom.eq hAtom le_sup_right).symm)
+  fun hAtom => hne ((Atom.eq hAtom le_sup_left ha.not_null).trans
+    (Atom.eq hAtom le_sup_right hb.not_null).symm)
 
 /-- Each conjunct individually satisfies [Sg]. -/
 theorem conjuncts_singular (a b : E) (ha : Atom a) (hb : Atom b) :
@@ -306,7 +308,7 @@ open Quantification.UnifiedUniversal (QForall dng_atoms)
     The atomicity restriction comes from the [Sg] feature in φ below JE.
     The atom relation is mereological: `a` is an atom of `X` iff
     `Atom a ∧ a ≤ X`. -/
-def JE {E : Type*} [PartialOrder E]
+def JE {E : Type*} [PartialOrder E] [Mereology.Null E]
     (X : E) (P : E → Prop) (domP : E → Prop := fun _ => True) :
     PartialProp E where
   presup := fun _ => ∀ a, Atom a → a ≤ X → domP a
@@ -315,7 +317,7 @@ def JE {E : Type*} [PartialOrder E]
 /-- JE presupposes that the scope predicate is defined at every atom
     of X. This derives presupposition projection under "every":
     "Every boy invited his sister" presupposes each boy has a sister. -/
-theorem je_presup_projects {E : Type*} [PartialOrder E]
+theorem je_presup_projects {E : Type*} [PartialOrder E] [Mereology.Null E]
     (X : E) (P : E → Prop) (domP : E → Prop) (w : E)
     (h : (JE X P domP).defined w) :
     ∀ a, Atom a → a ≤ X → domP a := h
@@ -325,7 +327,7 @@ theorem je_presup_projects {E : Type*} [PartialOrder E]
     atoms of a group individual is *the same primitive* as Link's D
     operator on its assertion side. The substrate-level connection
     makes the K&S-tradition/Link-tradition convergence kernel-checked. -/
-theorem je_assertion_eq_D {E : Type*} [SemilatticeSup E]
+theorem je_assertion_eq_D {E : Type*} [SemilatticeSup E] [Mereology.Null E]
     (X : E) (P : E → Prop) (w : E) :
     (JE X P).assertion w ↔ D P X := by
   constructor
@@ -334,7 +336,7 @@ theorem je_assertion_eq_D {E : Type*} [SemilatticeSup E]
 
 /-- With a total scope predicate (no presupposition), JE's
     presupposition is trivially satisfied. -/
-theorem je_total_trivial {E : Type*} [PartialOrder E]
+theorem je_total_trivial {E : Type*} [PartialOrder E] [Mereology.Null E]
     (X : E) (P : E → Prop) (w : E) :
     (JE X P).defined w :=
   fun _ _ _ => trivial
@@ -345,7 +347,7 @@ theorem je_total_trivial {E : Type*} [PartialOrder E]
     the result.
 
     `⟦every⟧(R)(P)` = `⟦JE⟧(max(*R))(P)` -/
-def everySem {E : Type*} [PartialOrder E]
+def everySem {E : Type*} [PartialOrder E] [Mereology.Null E]
     (maxStarR : E) (P : E → Prop) (domP : E → Prop := fun _ => True) :
     PartialProp E :=
   JE maxStarR P domP
@@ -355,7 +357,7 @@ def everySem {E : Type*} [PartialOrder E]
 /-- **DER is well-defined**: `*R` is CUM, so it has at most one maximal
     element (`cum_maximal_unique`). DER's uniqueness presupposition is
     automatically satisfied for star-closed predicates. -/
-theorem der_unique {E : Type*} [SemilatticeSup E]
+theorem der_unique {E : Type*} [SemilatticeSup E] [Mereology.Null E]
     (R : E → Prop) (m₁ m₂ : E)
     (h₁ : Maximal (AlgClosure R) m₁) (h₂ : Maximal (AlgClosure R) m₂) :
     m₁ = m₂ :=
@@ -367,7 +369,7 @@ theorem der_unique {E : Type*} [SemilatticeSup E]
 
     This makes explicit what `je_der_agrees_with_qforall` leaves
     implicit: JE's truth conditions at `max(*R)` are `∀x, R(x) → Q(x)`. -/
-theorem je_assertion_eq_forall {E : Type*} [PartialOrder E]
+theorem je_assertion_eq_forall {E : Type*} [PartialOrder E] [Mereology.Null E]
     (R : E → Prop) (maxR : E)
     (hCov : ∀ x, R x → Atom x ∧ x ≤ maxR)
     (hCov' : ∀ x, Atom x → x ≤ maxR → R x)
@@ -385,7 +387,7 @@ theorem je_assertion_eq_forall {E : Type*} [PartialOrder E]
     equivalence chain:
 
       JE(DER(R))(Q) ↔ ∀x, R(x) → Q(x) ↔ QForall R Q -/
-theorem je_der_agrees_with_qforall {E : Type*} [PartialOrder E]
+theorem je_der_agrees_with_qforall {E : Type*} [PartialOrder E] [Mereology.Null E]
     {R Q : E → Prop}
     (hAtoms : ∀ x, R x → Atom x)
     (hDisj : ∀ x y, R x → R y → Mereology.Overlap x y → x = y) :
@@ -401,7 +403,7 @@ theorem je_der_agrees_with_qforall {E : Type*} [PartialOrder E]
     satisfied. The sentence is compatible with boys having different
     numbers of sisters, including just one (though MP implicates ≥ 2
     for at least one). -/
-theorem pl_projects_trivially {E : Type*} [PartialOrder E]
+theorem pl_projects_trivially {E : Type*} [PartialOrder E] [Mereology.Null E]
     (boys : E) (w : E) :
     (JE boys (fun _ => True) (fun _ => True)).defined w :=
   fun _ _ _ => trivial
@@ -449,7 +451,7 @@ theorem aSem_existential_projection {E : Type*}
 
     This asymmetry follows from the quantificational force of the
     determiner, not from any property of the presupposition itself. -/
-theorem projection_asymmetry {E : Type*} [PartialOrder E]
+theorem projection_asymmetry {E : Type*} [PartialOrder E] [Mereology.Null E]
     (boys : E) (R : E → Prop) (domP : E → Prop)
     (a₁ a₂ : E) (ha₂ : Atom a₂)
     (h₂ : a₂ ≤ boys)
@@ -553,7 +555,7 @@ the assertion is negated, blocking the reasoning from (40)).
     was harvested either. This follows from the inclusive semantics of
     [Pl] (which covers atoms) and holds because [Pl]'s assertion
     subsumes [Sg]'s assertion. -/
-theorem negated_pl_entails_negated_sg {E : Type*} [PartialOrder E]
+theorem negated_pl_entails_negated_sg {E : Type*} [PartialOrder E] [Mereology.Null E]
     (starR : E → Prop) (harvest : E → Prop)
     (hNoPlHarvest : ¬∃ e, starR e ∧ harvest e) :
     ¬∃ e, Atom e ∧ starR e ∧ harvest e :=
@@ -652,10 +654,11 @@ theorem czech_father_child_masc :
     Presupposition selects the less specified (vacuous) alternative. -/
 theorem gender_number_parallel :
     -- Number: non-atom → only Pl
-    (∀ (E : Type*) [PartialOrder E] (x : E), ¬Atom x → (plSem E).defined x) ∧
+    (∀ (E : Type*) [PartialOrder E] [Mereology.Null E] (x : E),
+      ¬Atom x → (plSem E).defined x) ∧
     -- Gender: male referent → only Masc
     (mascSem (E := ReferentGender)).defined .male :=
-  ⟨fun _ _ _ _ => trivial, trivial⟩
+  ⟨fun _ _ _ _ _ => trivial, trivial⟩
 
 end CzechGender
 

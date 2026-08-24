@@ -237,6 +237,9 @@ instance : PartialOrder Student where
   le_trans := fun _ _ _ h1 h2 => h1.trans h2
   le_antisymm := fun _ _ h _ => h
 
+/-- Students have no null individual. -/
+instance : Null Student := Null.noNull _
+
 /-- The flat `Student` order is the canonical `IsAtomicDomain`: its atomicity and
 disjointness now come from the shared `Mereology` machinery, not bespoke proofs. -/
 instance : IsAtomicDomain Student := isAtomicDomain_of_le_iff_eq (fun _ _ => Iff.rfl)
@@ -250,7 +253,7 @@ def passed : Student → Prop
 /-- All `Student`s are atoms — derived from the `IsAtomicDomain` instance. -/
 theorem student_atoms : ∀ (x : Student), (fun _ => True : Student → Prop) x →
     Mereology.Atom x :=
-  fun x _ => IsAtomicDomain.all_atoms x
+  fun x _ => IsAtomicDomain.all_atoms x not_false
 
 /-- Distinct `Student`s don't overlap — derived from the `IsAtomicDomain` instance. -/
 theorem student_disjoint : ∀ (x y : Student),
@@ -310,7 +313,7 @@ Verified: each ⊂ every ⊂ all in presuppositional strength. -/
 
 section EnglishDecomposition
 
-variable {α : Type*} [PartialOrder α] {P Q : α → Prop}
+variable {α : Type*} [PartialOrder α] [Null α] {P Q : α → Prop}
 
 /-- *each* entails *every* (ONE_AT ⊂ ONE_∅). -/
 theorem each_stronger_than_every :
@@ -403,7 +406,7 @@ Following [fassi-fehri-2020]; [haslinger-etal-2025-nllt] §6.2. -/
 /-- `ONE_AT` rejects non-atomic predicates. *every ten minutes* is fine (`ONE_∅`
     accepts non-overlapping intervals), but *each ten minutes* is out (`ONE_AT`
     requires atoms). -/
-theorem each_ten_minutes_blocked {α : Type*} [PartialOrder α]
+theorem each_ten_minutes_blocked {α : Type*} [PartialOrder α] [Null α]
     {P : α → Prop}
     (hNonAtomic : ∃ x, P x ∧ ¬Atom x)
     (hONE_AT : ONE_AT P) : False := by
@@ -422,14 +425,14 @@ Barwise–Cooper `every_sem`, the Lindström `everyDet.toGQ`, and Sauerland's
 `JE∘DER` already meet at, with the atomicity presupposition realized as a
 typeclass on the sort rather than a side condition. -/
 
-/-- On an atomic restrictor sort, `Q_∀` is the canonical universal generalized
-quantifier `every_sem`. The `[IsAtomicDomain α]` instance is *used* — it
-discharges both hypotheses of `QForall_eq_standardGQ`.
-[haslinger-etal-2025-nllt] eq. (30b). -/
-theorem QForall_eq_every_sem {α : Type*} [PartialOrder α] [IsAtomicDomain α]
-    {P Q : α → Prop} :
+/-- On an atomic restrictor sort, `Q_∀` over a restrictor excluding the null
+individual is the canonical universal generalized quantifier `every_sem`. The
+`[IsAtomicDomain α]` instance is *used* — it discharges both hypotheses of
+`QForall_eq_standardGQ`. [haslinger-etal-2025-nllt] eq. (30b). -/
+theorem QForall_eq_every_sem {α : Type*} [PartialOrder α] [Null α] [IsAtomicDomain α]
+    {P Q : α → Prop} (hP0 : ∀ x, P x → ¬ null x) :
     QForall P Q ↔ Quantification.every_sem P Q :=
-  QForall_eq_standardGQ (fun x _ => IsAtomicDomain.all_atoms x)
+  QForall_eq_standardGQ (fun x hx => IsAtomicDomain.all_atoms x (hP0 x hx))
     (fun _ _ _ _ h => IsAtomicDomain.eq_of_overlap h)
 
 end HaslingerHienEtAl2025

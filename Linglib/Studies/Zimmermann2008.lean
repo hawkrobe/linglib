@@ -66,7 +66,7 @@ universal entry, reframed via the [haslinger-etal-2025-nllt]
 Q_∀ + ONE decomposition. *kō-wh* receives Q_∀ + ONE_∅ (atom-by-atom
 distributivity, Jaggar §9.5.1); *DUK* receives bare Q_∀ on a CUM
 restrictor (collective single-set scope, Jaggar §9.5.4). -/
-def z2008Denot {α : Type*} [PartialOrder α] :
+def z2008Denot {α : Type*} [PartialOrder α] [Mereology.Null α] :
     UniversalQuantifier → (α → Prop) → (α → Prop) → Prop
   | .kowWh => everyPresup
   | .duk   => QForall
@@ -99,6 +99,9 @@ instance : PartialOrder Faasinjee where
   le_trans _ _ _ h1 h2 := h1.trans h2
   le_antisymm _ _ h _ := h
 
+/-- Passengers have no null individual. -/
+instance : Mereology.Null Faasinjee := Mereology.Null.noNull _
+
 /-- The flat `Faasinjee` order is an `IsAtomicDomain`; its atom/disjoint facts now
 derive from the shared `Mereology` machinery rather than bespoke proofs. -/
 instance : Mereology.IsAtomicDomain Faasinjee :=
@@ -118,7 +121,7 @@ instance : DecidablePred Daura := fun x => match x with
 /-! ### Mereological structure -/
 
 theorem atom_of_faasinjee (x : Faasinjee) : Mereology.Atom x :=
-  Mereology.IsAtomicDomain.all_atoms x
+  Mereology.IsAtomicDomain.all_atoms x not_false
 
 theorem faasinjee_disjoint (x y : Faasinjee) (h : Mereology.Overlap x y) :
     x = y := Mereology.IsAtomicDomain.eq_of_overlap h

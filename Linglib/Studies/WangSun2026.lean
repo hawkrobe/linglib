@@ -521,7 +521,7 @@ section SemanticGrounding
 
 open Mereology (CUM QUA)
 
-variable {α : Type*} [SemilatticeSup α]
+variable {α : Type*} [SemilatticeSup α] [Mereology.Null α]
 
 /-- Without 的: Cl visible → denotation is individuated → QUA. -/
 theorem noDe_is_qua (P : α → Prop) :
@@ -573,7 +573,7 @@ section CrossTheoryChain
 
 open Mereology (CUM QUA)
 
-variable {α : Type*} [SemilatticeSup α]
+variable {α : Type*} [SemilatticeSup α] [Mereology.Null α]
 
 /-- Mandarin's NMP is [+arg, -pred]: nouns denote kinds, requiring
     classifiers for counting. This is the typological precondition

@@ -158,7 +158,7 @@ the derivation of (41). -/
 
 section Events
 
-variable {D E : Type*} [SemilatticeSup E] {V : Set E} {ag th : E → D}
+variable {D E : Type*} [SemilatticeSup E] [Mereology.Null E] {V : Set E} {ag th : E → D}
   {d₁ d₂ : D} {e : E} {GE : GroupStructure E}
 
 /-- Two base-verb events realizing the two directions between `d₁` and
@@ -193,9 +193,13 @@ def SubEventReading (V : Set E) (ag th : E → D) (d₁ d₂ : D) (e : E) : Prop
 /-- An event with the sub-event reading has proper parts, so it is not
     atomic. -/
 theorem SubEventReading.not_atom :
-    SubEventReading V ag th d₁ d₂ e → ¬ Mereology.Atom e :=
-  fun ⟨_, _, h₁, _, _, _⟩ ha => h₁.ne (ha.eq h₁.le)
+    SubEventReading V ag th d₁ d₂ e → ¬ Mereology.Atom e := by
+  rintro ⟨e₁, e₂, h₁, h₂, h₃, -⟩ ha
+  by_cases hn : Mereology.null e₁
+  · exact h₂.ne (by rw [h₃]; exact (sup_eq_right.mpr (Mereology.null_le hn)).symm)
+  · exact h₁.ne (ha.eq h₁.le hn)
 
+omit [Mereology.Null E] in
 /-- Incomparable crossed sub-events yield the sub-event reading — the
     accumulation reading makes sub-events visible ((46b)). -/
 theorem subEventReading_of_crossedPair {e₁ e₂ : E} (h₁ : ¬ e₂ ≤ e₁)
@@ -219,7 +223,7 @@ theorem GroupEventReading.underlyingReading
   obtain ⟨e₁, e₂, rfl, hc⟩ := h
   exact ⟨e₁, e₂, GE.down_up _, hc⟩
 
-variable [SemilatticeSup D] {GD : GroupStructure D} {Vsym : Set E}
+variable [SemilatticeSup D] [Mereology.Null D] {GD : GroupStructure D} {Vsym : Set E}
   {agTh : E → D}
 
 /-- (41): `∃e [kiss_SYM(e) ∧ [Ag-Th](e, John and Mary)]` entails two
@@ -650,7 +654,7 @@ directional relations, which sum to the accumulation reading. -/
 
 section Periphrastic
 
-variable {D E : Type*} [SemilatticeSup E] [DecidableEq D] {V : Set E}
+variable {D E : Type*} [SemilatticeSup E] [Mereology.Null E] [DecidableEq D] {V : Set E}
   {ag th : E → D} {d₁ d₂ : D}
 
 /-- On a pair antecedent, the each∘other LF is the crossed directional
@@ -670,6 +674,7 @@ theorem eachOtherLF_pair (R : D → D → Prop) (hne : d₁ ≠ d₂) :
     · exact h₂
     · exact absurd rfl hba
 
+omit [Mereology.Null E] in
 /-- The periphrastic construction has the accumulation reading: the LF's
     two directional relations, read off the base verb's events, sum to a
     plural reciprocal event (§2.1–2.2). -/
@@ -848,7 +853,7 @@ lexically (fn. 32). -/
 
 section Dyadic
 
-variable {D E : Type*} [SemilatticeSup D] {GD : GroupStructure D}
+variable {D E : Type*} [SemilatticeSup D] [Mereology.Null D] {GD : GroupStructure D}
   {Vsym : Set E} {d₁ d₂ : D} {e : E}
 
 /-- The dyadic realization (§7.5): the verb's events and complex role are
@@ -870,7 +875,7 @@ theorem dyadicReading_comm {agTh : E → D} :
 /-- The discontinuous construction entails reciprocity between subject and
     oblique (§7.1): the dyadic reading of a symmetric verb yields the
     crossed directional events in both directions. -/
-theorem DyadicReading.underlying [SemilatticeSup E]
+theorem DyadicReading.underlying [SemilatticeSup E] [Mereology.Null E]
     {GE : GroupStructure E} {V : Set E} {ag th agTh : E → D}
     [h : Verb.SymmetricDenotation GD GE V ag th Vsym agTh] (hne : d₁ ≠ d₂)
     (hd : DyadicReading GD Vsym agTh d₁ d₂ e) :

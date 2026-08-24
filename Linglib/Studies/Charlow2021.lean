@@ -159,7 +159,7 @@ must reach. -/
 
 section Pointwise
 
-variable {R S E : Type*} [RegisterStructure R S E] [PartialOrder E] [Fintype E]
+variable {R S E : Type*} [RegisterStructure R S E] [PartialOrder E] [Mereology.Null E] [Fintype E]
 
 /-- Existential dref introduction (eq. 17): introduce a referent satisfying
 `P` at dref `v`. -/
@@ -216,7 +216,7 @@ the nuclear scope can only attach outside maximization. -/
 
 section Tower
 
-variable {R S E : Type*} [RegisterStructure R S E] [PartialOrder E] [Fintype E]
+variable {R S E : Type*} [RegisterStructure R S E] [PartialOrder E] [Mereology.Null E] [Fintype E]
 
 /-- Higher-order dynamic GQ type, `(Q → t) → t` with `Q ::= (e→t)→t`
 (eq. 24), rendered via the continuation monad with answer type
@@ -363,7 +363,7 @@ def trueAt (p : PostSupp S (Update S)) (i : S) : Prop :=
 
 end PostSupp
 
-variable {R S E : Type*} [RegisterStructure R S E] [PartialOrder E] [Fintype E]
+variable {R S E : Type*} [RegisterStructure R S E] [PartialOrder E] [Mereology.Null E] [Fintype E]
 
 /-- "Exactly n" as a bi-dimensional meaning (eq. 53): maximized dref
 introduction at issue; the cardinality test deferred as a post-supposition. -/
@@ -425,7 +425,8 @@ def Mvar_u (v : ℕ) (K : State.CCP W E) [PartialOrder E] : State.CCP W E :=
 
 /-- Cardinality test at the state level (eq. 75): filter the context for
 pairs where the atom count of `v` equals `n`. -/
-def CardTest_u (v : ℕ) (n : ℕ) [PartialOrder E] [Fintype E] : State.CCP W E :=
+def CardTest_u (v : ℕ) (n : ℕ) [PartialOrder E] [Mereology.Null E] [Fintype E] :
+    State.CCP W E :=
   λ s => {p ∈ s | Mereology.atomCount E (p.2 v) = n}
 
 /-- Dynamic sequencing at the state level (eq. 80): function composition,
@@ -439,7 +440,8 @@ def RelTest (v₁ v₂ : ℕ) (R : E → E → Prop) : State.CCP W E :=
 
 /-- Single-quantifier "exactly n" pipeline, `E^v P ; M_v(E^v P) ; n_v` — the
 trivial-scope instantiation of the scope-taking update GQ (eq. 81). -/
-def exactlyN_u (v : ℕ) (P : E → Prop) (n : ℕ) [PartialOrder E] [Fintype E] :
+def exactlyN_u (v : ℕ) (P : E → Prop) (n : ℕ) [PartialOrder E] [Mereology.Null E]
+    [Fintype E] :
     State.CCP W E :=
   dseq_u (dseq_u (Evar_u v P) (Mvar_u v (Evar_u v P))) (CardTest_u v n)
 
@@ -451,7 +453,7 @@ maximizes over the whole context it correctly represents the cumulative
 reading (the paper's (83)/(84) contrast). -/
 def sentenceMeaning_u (v u : ℕ) (PSubj PObj : E → Prop)
     (R : E → E → Prop) (nSubj nObj : ℕ)
-    [PartialOrder E] [Fintype E] : State.CCP W E :=
+    [PartialOrder E] [Mereology.Null E] [Fintype E] : State.CCP W E :=
   let inner := Mvar_u u (dseq_u (Evar_u u PObj) (RelTest u v R))
   dseq_u
     (Mvar_u v (dseq_u (dseq_u (Evar_u v PSubj) inner) (CardTest_u u nObj)))
@@ -484,7 +486,7 @@ theorem Mvar_u_nondistributive [PartialOrder E] [Nonempty W]
   exact hnotmem (h s ▸ hmem)
 
 /-- Cardinality tests are distributive: they inspect one pair at a time. -/
-theorem CardTest_u_distributive [PartialOrder E] [Fintype E]
+theorem CardTest_u_distributive [PartialOrder E] [Mereology.Null E] [Fintype E]
     (v : ℕ) (n : ℕ) :
     IsDistributive (CardTest_u (W := W) (E := E) v n) := by
   intro s
@@ -552,7 +554,7 @@ regardless of input, so maximization selects the same elements whether
 processing the full state or per-element. Cumulative readings arise from the
 non-distributivity of `Mvar_u` itself (`Mvar_u_nondistributive`), not from
 the single-quantifier pipeline. -/
-theorem exactlyN_u_distributive [PartialOrder E] [Fintype E]
+theorem exactlyN_u_distributive [PartialOrder E] [Mereology.Null E] [Fintype E]
     (v : ℕ) (P : E → Prop) (n : ℕ) :
     IsDistributive (exactlyN_u (W := W) (E := E) v P n) := by
   intro s; ext ⟨w, g⟩

@@ -84,7 +84,7 @@ open Features
     [krifka-1989] §2: "three kilos of rice" is QUA because no
     proper part of a 3kg entity also weighs 3kg (extensivity of
     weight). -/
-theorem qmod_qua {α : Type*} [SemilatticeSup α]
+theorem qmod_qua {α : Type*} [SemilatticeSup α] [Null α]
     {R : α → Prop} {μ : α → ℚ} [hμ : ExtMeasure α μ]
     {n : ℚ} (_hn : 0 < n) :
     QUA (QMOD R μ n) :=
@@ -92,7 +92,7 @@ theorem qmod_qua {α : Type*} [SemilatticeSup α]
 
 /-- A CUM mass noun combined with QMOD (via an extensive measure)
     yields a QUA measure phrase. [krifka-1989] §3 D28. -/
-theorem qmod_of_cum_is_qua {α : Type*} [SemilatticeSup α]
+theorem qmod_of_cum_is_qua {α : Type*} [SemilatticeSup α] [Null α]
     {R : α → Prop} (_hCum : CUM R)
     {μ : α → ℚ} [ExtMeasure α μ]
     {n : ℚ} (hn : 0 < n) :
@@ -104,7 +104,7 @@ theorem qmod_of_cum_is_qua {α : Type*} [SemilatticeSup α]
     phrases turn mass nouns into quantized predicates, and quantization
     propagates through strictly incremental verbs to yield telic VPs. -/
 theorem measure_phrase_makes_qua {α β : Type*}
-    [SemilatticeSup α] [SemilatticeSup β]
+    [SemilatticeSup α] [Null α] [SemilatticeSup β]
     {R : α → Prop} (hCum : CUM R)
     {μ : α → ℚ} [ExtMeasure α μ]
     {n : ℚ} (hn : 0 < n)
@@ -262,7 +262,7 @@ variable {α β : Type*} [SemilatticeSup α]
 /-- *Three kilos of rice* is QUA: a CUM mass noun + an extensive measure
     + a positive value yields a quantized predicate. Direct call to
     `qmod_of_cum_is_qua` (K89 theory §2). -/
-theorem threeKilosRice_qua_via_qmod
+theorem threeKilosRice_qua_via_qmod [Null α]
     {Rice : α → Prop} (hRice : CUM Rice)
     {μ : α → ℚ} [ExtMeasure α μ] :
     QUA (QMOD Rice μ 3) :=
@@ -272,7 +272,7 @@ theorem threeKilosRice_qua_via_qmod
     via extensive measure → QUA NP, then `[IsSincVerb θ]` propagates
     QUA to the VP. Direct call to `measure_phrase_makes_qua` (K89
     theory §4, typeclass-canonical form). -/
-theorem eatThreeKilosRice_qua_vp [SemilatticeSup β]
+theorem eatThreeKilosRice_qua_vp [Null α] [SemilatticeSup β]
     {Rice : α → Prop} (hRice : CUM Rice)
     {μ : α → ℚ} [ExtMeasure α μ]
     {θ : α → β → Prop} [IsSincVerb θ] :

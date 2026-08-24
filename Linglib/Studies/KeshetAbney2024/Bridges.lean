@@ -220,7 +220,7 @@ Link's `Atom` corresponds to PIP's `SINGLE` when the lattice element
 is the join of a singleton set. If P is a distributive predicate and
 x satisfies P, then {x} is SINGLE and x is an Atom.
 -/
-theorem atom_iff_single_base {E : Type*} [SemilatticeSup E] {P : E → Prop}
+theorem atom_iff_single_base {E : Type*} [SemilatticeSup E] [Mereology.Null E] {P : E → Prop}
     (hDistr : Semantics.Plurality.Algebra.IsDistr P) {x : E} (hPx : P x) :
     Mereology.Atom x := hDistr x hPx
 
