@@ -22,7 +22,7 @@ correct, for different languages:
   `⟦CLF⟧ = λPλx.[P(x) ∧ Atom(x)]`. This is `Mereology.atomize`.
   Languages: Shan, Mandarin, Japanese.
 
-- **CLF-for-NUM** ([krifka-1995]; [bale-coon-2014]): the
+- **CLF-for-NUM** ([krifka-1995b]; [bale-coon-2014]): the
   classifier is a measure function required by the numeral.
   `⟦TWO⟧ = λmλPλx.[P(x) ∧ m(x) = 2]`. This is `Mereology.QMOD`.
   Languages: Ch'ol.
@@ -79,7 +79,7 @@ theorem clfForNoun_sub {α : Type*} [PartialOrder α]
   atomize_sub h
 
 -- ============================================================================
--- §2: CLF-for-NUM — Measure Modification ([krifka-1995])
+-- §2: CLF-for-NUM — Measure Modification ([krifka-1995b])
 -- ============================================================================
 
 /-- CLF-for-NUM denotation: the classifier is a measure function, and
