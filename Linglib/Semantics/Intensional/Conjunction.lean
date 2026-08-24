@@ -32,6 +32,7 @@ def genConj (τ : Ty) (E W : Type) : Denot E W τ → Denot E W τ → Denot E W
   | .t => λ x y => x ∧ y
   | .e => λ x _ => x
   | .d => λ x _ => x
+  | .n => λ x _ => x
   | .v => λ x _ => x
   | .s => λ x _ => x
   | .fn _ τ' => λ f g => λ x => genConj τ' E W (f x) (g x)
@@ -43,6 +44,7 @@ def genDisj (τ : Ty) (E W : Type) : Denot E W τ → Denot E W τ → Denot E W
   | .t => λ x y => x ∨ y
   | .e => λ x _ => x
   | .d => λ x _ => x
+  | .n => λ x _ => x
   | .v => λ x _ => x
   | .s => λ x _ => x
   | .fn _ τ' => λ f g => λ x => genDisj τ' E W (f x) (g x)
@@ -55,6 +57,7 @@ def genNeg (τ : Ty) (E W : Type) : Denot E W τ → Denot E W τ :=
   | .t => λ p => ¬p
   | .e => λ x => x
   | .d => λ x => x
+  | .n => λ x => x
   | .v => λ x => x
   | .s => λ x => x
   | .fn _ τ' => λ f => λ x => genNeg τ' E W (f x)
