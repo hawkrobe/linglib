@@ -98,6 +98,12 @@ theorem fullArrow_all_enabled :
 inductive Person where | alice | bob
   deriving Repr, DecidableEq
 
+/-- Speed-heavy weights `[3, 1, 1]` over (speed, agility, endurance). -/
+def speedHeavy : List ℚ := [3, 1, 1]
+
+/-- Endurance-heavy weights `[1, 1, 3]`. -/
+def enduranceHeavy : List ℚ := [1, 1, 3]
+
 /-- Dimensional profiles for *athletic*:
     - Alice: fast, agile, not enduring
     - Bob: not fast, not agile, enduring -/
@@ -117,18 +123,18 @@ theorem bob_not_athletic_majority :
 /-- Under speed-heavy weights [3, 1, 1] with θ = 3, Alice IS athletic
     (score = 3 + 1 + 0 = 4 ≥ 3) but Bob is NOT (score = 0 + 0 + 1 = 1). -/
 theorem alice_athletic_speed_heavy :
-    weightedBinding [3, 1, 1] 3 athleticDims .alice = true := by native_decide
+    weightedBinding speedHeavy 3 athleticDims .alice = true := by native_decide
 
 theorem bob_not_athletic_speed_heavy :
-    weightedBinding [3, 1, 1] 3 athleticDims .bob = false := by native_decide
+    weightedBinding speedHeavy 3 athleticDims .bob = false := by native_decide
 
 /-- Under endurance-heavy weights [1, 1, 3] with θ = 3, Alice is NOT
     athletic (score = 1 + 1 + 0 = 2 < 3) but Bob IS (0 + 0 + 3 = 3 ≥ 3). -/
 theorem alice_not_athletic_endurance_heavy :
-    weightedBinding [1, 1, 3] 3 athleticDims .alice = false := by native_decide
+    weightedBinding enduranceHeavy 3 athleticDims .alice = false := by native_decide
 
 theorem bob_athletic_endurance_heavy :
-    weightedBinding [1, 1, 3] 3 athleticDims .bob = true := by native_decide
+    weightedBinding enduranceHeavy 3 athleticDims .bob = true := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 3. Comparative Vagueness
@@ -143,24 +149,24 @@ theorem bob_athletic_endurance_heavy :
 
 /-- Under speed-heavy weights, Alice outscores Bob. -/
 theorem speed_heavy_alice_wins :
-    weightedScore [3, 1, 1] (boolMeasures athleticDims) .alice >
-    weightedScore [3, 1, 1] (boolMeasures athleticDims) .bob := by native_decide
+    weightedScore speedHeavy (boolMeasures athleticDims) .alice >
+    weightedScore speedHeavy (boolMeasures athleticDims) .bob := by native_decide
 
 /-- Under endurance-heavy weights, Bob outscores Alice. -/
 theorem endurance_heavy_bob_wins :
-    weightedScore [1, 1, 3] (boolMeasures athleticDims) .bob >
-    weightedScore [1, 1, 3] (boolMeasures athleticDims) .alice := by native_decide
+    weightedScore enduranceHeavy (boolMeasures athleticDims) .bob >
+    weightedScore enduranceHeavy (boolMeasures athleticDims) .alice := by native_decide
 
 /-- Comparative vagueness: when both weight vectors are admissible,
     "Alice is more athletic than Bob" is **indeterminate** — one
     aggregation function says yes, the other says no. -/
 theorem comparative_vagueness :
     -- Speed-heavy: Alice > Bob
-    weightedScore [3, 1, 1] (boolMeasures athleticDims) .alice >
-    weightedScore [3, 1, 1] (boolMeasures athleticDims) .bob ∧
+    weightedScore speedHeavy (boolMeasures athleticDims) .alice >
+    weightedScore speedHeavy (boolMeasures athleticDims) .bob ∧
     -- Endurance-heavy: Bob > Alice
-    weightedScore [1, 1, 3] (boolMeasures athleticDims) .bob >
-    weightedScore [1, 1, 3] (boolMeasures athleticDims) .alice :=
+    weightedScore enduranceHeavy (boolMeasures athleticDims) .bob >
+    weightedScore enduranceHeavy (boolMeasures athleticDims) .alice :=
   ⟨speed_heavy_alice_wins, endurance_heavy_bob_wins⟩
 
 -- ════════════════════════════════════════════════════

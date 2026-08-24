@@ -383,20 +383,20 @@ theorem qua_measures_vacuously_admissible {α : Type*} [PartialOrder α]
     entity and event domains have incomparable parts (weight × volume,
     distance × duration). -/
 abbrev MeasuredDomain.Model : MeasuredDomain → Type
-  | .state  => ℚ
-  | .entity => ℚ × ℚ
-  | .event  => ℚ × ℚ
+  | .state  => ℝ
+  | .entity => ℝ × ℝ
+  | .event  => ℝ × ℝ
 
 instance : (m : MeasuredDomain) → Preorder m.Model
-  | .state  => inferInstanceAs (Preorder ℚ)
-  | .entity => inferInstanceAs (Preorder (ℚ × ℚ))
-  | .event  => inferInstanceAs (Preorder (ℚ × ℚ))
+  | .state  => inferInstanceAs (Preorder ℝ)
+  | .entity => inferInstanceAs (Preorder (ℝ × ℝ))
+  | .event  => inferInstanceAs (Preorder (ℝ × ℝ))
 
 /-- §3.4 as order theory: exactly the state domain is dimensionally
     restricted. -/
 theorem model_restricted_iff : ∀ m : MeasuredDomain,
     DimensionallyRestricted m.Model ↔ m = .state
-  | .state  => iff_of_true (linearOrder_dimensionallyRestricted (α := ℚ)) rfl
+  | .state  => iff_of_true (linearOrder_dimensionallyRestricted (α := ℝ)) rfl
   | .entity => iff_of_false prod_not_dimensionallyRestricted (by decide)
   | .event  => iff_of_false prod_not_dimensionallyRestricted (by decide)
 
