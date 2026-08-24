@@ -320,7 +320,7 @@ this referent. Sauerland's account predicts pre-emption; BK's data
 deny it.
 
 A *full* contradiction theorem requires bridging Sauerland's entity-
-level MP (`Sauerland2003.mp_blocks_plural_at_atom : ∀ x : E, Atom x → ...`)
+level MP (`Sauerland2003.mp_selects_sg`)
 to BK's tree-level Katzir competition. Such a bridge is not currently
 in linglib; this section provides the witness and the structural
 argument in prose. -/
