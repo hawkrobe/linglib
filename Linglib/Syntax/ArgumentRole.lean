@@ -7,6 +7,14 @@ monotransitive core that alignment partitions quantify over;
 `IsHighDefault`/`IsLowDefault` classify the roles by their usual
 referential prominence (the role-reference association).
 
+Distinct from the semantic tier (`ArgumentStructure.ThetaRole`, the Dowty
+proto-role profiles): S/A/P/R/T are construction-relative coding slots —
+the A of a transitive clause may be an instrument or experiencer, and S
+spans unergative agents and unaccusative patients, which is what lets
+alignment statements like "S groups with P" be expressed at all. The
+linking theories relating the two tiers live in
+`Semantics/ArgumentStructure/Linking.lean` and its studies.
+
 ## References
 
 * [comrie-1978]

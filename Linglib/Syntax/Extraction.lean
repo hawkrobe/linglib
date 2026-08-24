@@ -1,5 +1,4 @@
 import Linglib.Features.Reflex
-import Linglib.Syntax.ArgumentRole
 
 /-!
 # Extraction Morphology
@@ -95,19 +94,19 @@ inductive ExtractionTarget where
     relevant distinction is which macro-role is extracted, not fine-
     grained thematic relations or structural positions.
 
-    Complements `ExtractionTarget` (structural position): ArgumentRole
+    Complements `ExtractionTarget` (structural position): MacroRole
     identifies *what* is extracted; ExtractionTarget identifies *where*
     it was extracted. The two coincide in simple active clauses
     (agent = subject, patient = object) but diverge under voice
     alternation (in OV, the patient becomes the subject). -/
-inductive ArgumentRole where
+inductive MacroRole where
   | agent    -- external argument (agent, experiencer, causer)
   | patient  -- internal argument (patient, theme)
   | oblique  -- oblique argument (instrument, goal, source, etc.)
   deriving DecidableEq, Repr
 
 /-- Default structural position for a given argument role (active voice). -/
-def ArgumentRole.defaultPosition : ArgumentRole → ExtractionTarget
+def MacroRole.defaultPosition : MacroRole → ExtractionTarget
   | .agent => .subject
   | .patient => .directObject
   | .oblique => .oblique
@@ -120,7 +119,7 @@ def ArgumentRole.defaultPosition : ArgumentRole → ExtractionTarget
     predicate-fronting languages like Toba Batak, only DP extraction
     is restricted to the pivot; adjuncts extract freely. -/
 inductive Extractee where
-  | dpArg : ArgumentRole → Extractee
+  | dpArg : MacroRole → Extractee
   | adjunct : Extractee
   deriving DecidableEq, Repr
 

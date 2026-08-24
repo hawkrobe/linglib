@@ -1,7 +1,6 @@
 import Linglib.Features.Reflex
 import Linglib.Syntax.Extraction
 import Linglib.Syntax.Voice.Basic
-import Linglib.Syntax.ArgumentRole
 
 /-!
 # Toba Batak Fragment [erlewine-2018]
@@ -48,7 +47,7 @@ inductive Voice where
   deriving Repr, DecidableEq
 
 /-- Which argument role is the pivot for a given voice? -/
-def Voice.pivotRole : Voice → Extraction.ArgumentRole
+def Voice.pivotRole : Voice → Extraction.MacroRole
   | .av => .agent
   | .ov => .patient
 
