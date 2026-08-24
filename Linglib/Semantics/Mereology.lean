@@ -12,6 +12,7 @@ import Mathlib.Order.Hom.Lattice
 import Mathlib.Order.Interval.Set.OrdConnected
 import Mathlib.Order.Lattice
 import Mathlib.Order.Minimal
+import Mathlib.Order.Atoms
 import Mathlib.Order.SupClosed
 import Mathlib.Order.UpperLower.Closure
 import Linglib.Core.Order.Antichain
@@ -94,7 +95,8 @@ theorem qua_of_forall {α : Type*} [PartialOrder α] {P : α → Prop}
     `Atom(x) ⇔ ¬∃y. y < x`. This is the **absolute** (P-independent) notion;
     the P-relative one (Krifka D17, "no proper *P*-part") is `atomize` /
     mathlib `Minimal P`. No `OrderBot` needed — many mereological domains lack
-    a bottom. -/
+    a bottom; on a carrier that has one, `Atom ⊥` holds and `Overlap` is
+    trivial, so use mathlib's `IsAtom` and `Disjoint` there (`atomize_ne_bot`). -/
 abbrev Atom {α : Type*} [PartialOrder α] (x : α) : Prop := IsMin x
 
 /-- An atom's only part is itself — the `y = x` elimination form of `IsMin`. -/
@@ -394,13 +396,16 @@ theorem IsAtomicDomain.eq_of_overlap {α : Type*} [PartialOrder α] [IsAtomicDom
   (Atom.eq (IsAtomicDomain.all_atoms x) hzx).symm.trans
     (Atom.eq (IsAtomicDomain.all_atoms y) hzy)
 
-/-- Extensive measure function: additive over non-overlapping entities.
-    [krifka-1998] §2.2, eq. (7): μ(x ⊕ y) = μ(x) + μ(y) when ¬O(x,y).
-    Examples: weight, volume, number (cardinality). Order-interval sibling:
-    `IsIntervalContent` (`Core/Order/IntervalContent.lean`) — disjoint
-    intervals have no interval join, so the two substrates coexist. -/
-class ExtMeasure (α : Type*) [SemilatticeSup α]
-    (μ : α → ℚ) : Prop where
+/-- Extensive measure function, valued in an ordered additive monoid (ℕ for
+    cardinality, ℚ for dimensioned measures): additive over non-overlapping
+    entities, [krifka-1998] §2.2, eq. (7): μ(x ⊕ y) = μ(x) + μ(y) when ¬O(x,y).
+    The bottomless-semilattice counterpart of mathlib's
+    `MeasureTheory.AddContent`; order-interval sibling `IsIntervalContent`
+    (`Core/Order/IntervalContent.lean`). On a carrier with a bottom `Overlap` is
+    trivial and additivity vacuous — use `Disjoint`-additivity there
+    (`Finset.card_union_of_disjoint`) and the grade (`Finset.grade_eq`). -/
+class ExtMeasure (α : Type*) [SemilatticeSup α] {M : Type*} [AddCommMonoid M]
+    [PartialOrder M] (μ : α → M) : Prop where
   /-- Additivity: μ is additive over non-overlapping entities. -/
   additive : ∀ (x y : α), ¬ Overlap x y → μ (x ⊔ y) = μ x + μ y
   /-- Positivity: every entity has positive measure. -/
@@ -438,6 +443,12 @@ theorem atomize_qua {α : Type*} [PartialOrder α]
     {P : α → Prop} : QUA (atomize P) :=
   setOf_minimal_antichain P
 
+/-- On a carrier with a bottom, the atoms relative to "non-null" are mathlib's
+    `IsAtom`; `Atom` itself would pick out `⊥`. -/
+theorem atomize_ne_bot {α : Type*} [PartialOrder α] [OrderBot α] :
+    atomize (· ≠ (⊥ : α)) = IsAtom := by
+  funext x; exact propext isAtom_iff_le_of_ge.symm
+
 /-- Count atoms below `x`, as the cardinality of the (classically finite)
     set of atomic parts. Used by [charlow-2021] for cardinality tests on
     plural individuals. -/
@@ -473,8 +484,8 @@ theorem cum_pullback {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 /-- Extract `StrictMono` from an extensive measure.
     `ExtMeasure.strict_mono` axiomatizes that proper parts have strictly
     smaller measure; this is exactly `StrictMono μ`. -/
-theorem extMeasure_strictMono {α : Type*} [SemilatticeSup α]
-    {μ : α → ℚ} (hμ : ExtMeasure α μ) : StrictMono μ :=
+theorem extMeasure_strictMono {α M : Type*} [SemilatticeSup α] [AddCommMonoid M]
+    [PartialOrder M] {μ : α → M} (hμ : ExtMeasure α μ) : StrictMono μ :=
   fun _a _b hab => hμ.strict_mono _ _ hab
 
 /-- Singleton predicates are quantized: `{x | x = n}` is QUA on any partial
@@ -485,16 +496,16 @@ theorem singleton_qua {α : Type*} [PartialOrder α]
 
 /-- Measure phrases are quantized: `{x | μ x = n}` is QUA when μ is an extensive
     measure ([krifka-1998] §2.2) — `singleton_qua` pulled back along μ. -/
-theorem extMeasure_qua {α : Type*} [SemilatticeSup α]
-    {μ : α → ℚ} [hμ : ExtMeasure α μ] (n : ℚ) :
+theorem extMeasure_qua {α M : Type*} [SemilatticeSup α] [AddCommMonoid M]
+    [PartialOrder M] {μ : α → M} [hμ : ExtMeasure α μ] (n : M) :
     QUA (fun x => μ x = n) :=
   qua_pullback (extMeasure_strictMono hμ) (singleton_qua n)
 
 /-- **Combinator**: a measure-quantizing modification is quantized.
     `QMOD R μ n ⊆ {μ = n}`, an antichain by `extMeasure_qua`, so any subset is
     too (`IsAntichain.subset`). -/
-theorem qmod_qua {α : Type*} [SemilatticeSup α] {μ : α → ℚ} [ExtMeasure α μ]
-    (R : α → Prop) (n : ℚ) : QUA (QMOD R μ n) :=
+theorem qmod_qua {α M : Type*} [SemilatticeSup α] [AddCommMonoid M] [PartialOrder M]
+    {μ : α → M} [ExtMeasure α μ] (R : α → Prop) (n : M) : QUA (QMOD R μ n) :=
   (extMeasure_qua n).subset fun _ h => h.2
 
 theorem IsSumHom.strictMono_of_injective {α β : Type*}

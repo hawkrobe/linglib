@@ -88,14 +88,14 @@ theorem clfForNoun_sub {α : Type*} [PartialOrder α]
 
     This IS `Mereology.QMOD` instantiated with a measure function μ
     and a target value n. -/
-abbrev clfForNum {α : Type*} (P : α → Prop) (μ : α → ℚ) (n : ℚ) : α → Prop :=
+abbrev clfForNum {α μTy : Type*} (P : α → Prop) (μ : α → μTy) (n : μTy) : α → Prop :=
   QMOD P μ n
 
 /-- CLF-for-NUM produces quantized predicates when μ is an extensive
     measure: no proper part of an n-measure entity also has measure n.
     Generalizes over any base predicate P. -/
-theorem clfForNum_qua {α : Type*} [SemilatticeSup α]
-    {P : α → Prop} {μ : α → ℚ} [hμ : ExtMeasure α μ] (n : ℚ) :
+theorem clfForNum_qua {α M : Type*} [SemilatticeSup α] [AddCommMonoid M] [PartialOrder M]
+    {P : α → Prop} {μ : α → M} [ExtMeasure α μ] (n : M) :
     QUA (fun x => QMOD P μ n x) :=
   Mereology.qmod_qua P n
 
@@ -144,8 +144,8 @@ theorem groupClf_qua {E D : Type*} [SemilatticeSup E] [SemilatticeSup D]
       with Chierchia is *not* in noun-side individuation; it's in *where*
       the obligation to use a classifier comes from. See
       `Studies/Sudo2016.lean`.) -/
-def classifierDenot {α : Type*} [PartialOrder α]
-    (s : ClassifierStrategy) (P : α → Prop) (μ : α → ℚ) (n : ℚ) : α → Prop :=
+def classifierDenot {α μTy : Type*} [PartialOrder α]
+    (s : ClassifierStrategy) (P : α → Prop) (μ : α → μTy) (n : μTy) : α → Prop :=
   match s with
   | .forNoun     => clfForNoun P
   | .forNumeral  => clfForNum P μ n
