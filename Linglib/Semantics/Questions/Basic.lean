@@ -1017,7 +1017,7 @@ declaratives can be genuinely inquisitive
 (`exists_isInquisitive_ofSet_sup`) — inquisitive content enters
 the algebra exactly at `⊔`. The classical context-set picture of
 `Discourse/CommonGround.lean` (its scoped meet monoid and
-`CommonGround.HasAssertion`) is the declarative fragment of the
+`HasAssertion`) is the declarative fragment of the
 inquisitive one along this embedding. -/
 
 @[simp] theorem ofSet_univ : ofSet (Set.univ : Set W) = ⊤ := by

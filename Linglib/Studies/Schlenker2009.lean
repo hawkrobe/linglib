@@ -28,7 +28,6 @@ per-connective local contexts are substrate
 
 namespace Schlenker2009
 
-open CommonGround
 open Semantics.Presupposition
 open Semantics.Presupposition.Context
 open Semantics.Presupposition.BeliefEmbedding
@@ -39,14 +38,14 @@ variable {W : Type*} {Agent : Type*}
 /-- **Negation projects**: "not φ" has the same local context at φ as the
 unembedded sentence (the matrix local context being the global context
 itself), so φ's presupposition projects unless globally entailed. -/
-theorem negation_projects (c : ContextSet W) (p : PartialProp W) :
+theorem negation_projects (c : Set W) (p : PartialProp W) :
     presupProjects (localCtxNegation c) p ↔ presupProjects c p :=
   Iff.rfl
 
 /-- **Conditionals filter**: in "if φ then ψ", the antecedent's assertion
 enters ψ's local context; when it entails ψ's presupposition, the
 presupposition is filtered. -/
-theorem conditional_filters (c : ContextSet W) (p q : PartialProp W)
+theorem conditional_filters (c : Set W) (p q : PartialProp W)
     (h : ∀ w, c w → p.assertion w → q.presup w) :
     presupSatisfied (localCtxConsequent c p) q :=
   conditional_filters_when_entailed c p q h
@@ -54,7 +53,7 @@ theorem conditional_filters (c : ContextSet W) (p q : PartialProp W)
 /-- "If the king exists, the king is bald": the local context at
 "the king is bald" is `c` + [king exists], which entails the existence
 presupposition, so it is filtered. -/
-theorem king_conditional_filters (c : ContextSet KingWorld) :
+theorem king_conditional_filters (c : Set KingWorld) :
     presupSatisfied (localCtxConsequent c kingExists) kingBald := by
   intro w hw
   obtain ⟨-, hw_assert⟩ := hw
@@ -65,7 +64,7 @@ theorem king_conditional_filters (c : ContextSet KingWorld) :
 /-- On the king example, the local-context account and the Karttunen
 filtering connective agree: both pronounce the conditional
 presuppositionless. -/
-theorem king_accounts_agree (c : ContextSet KingWorld) :
+theorem king_accounts_agree (c : Set KingWorld) :
     presupSatisfied (localCtxConsequent c kingExists) kingBald ∧
     ifKingThenBald.presup = (λ _ => True) :=
   ⟨king_conditional_filters c, ifKingThenBald_no_presup⟩

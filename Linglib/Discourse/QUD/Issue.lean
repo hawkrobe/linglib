@@ -6,7 +6,7 @@ import Linglib.Semantics.Questions.Basic
 [ciardelli-groenendijk-roelofsen-2018]
 
 The issue-side observable on discourse states: `HasIssue` extracts the
-current issue (a `Question W`) the way `CommonGround.HasContextSet`
+current issue (a `Question W`) the way `HasCommonGround`
 extracts the context set. In inquisitive pragmatics the context is an
 issue and the context set is its informative content
 ([ciardelli-groenendijk-roelofsen-2018]); frameworks tracking both

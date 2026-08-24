@@ -779,7 +779,6 @@ speaker and hearer derive the same DDRP. Different perceptual access yields
 different DDRPs, motivating R&S's requirement of perceptual co-presence. -/
 
 open Core
-open CommonGround
 
 /-- The DDRP generative model as a BToM instance over ℝ≥0∞: percept and
 belief are veridical deltas ([baker-jara-ettinger-saxe-tenenbaum-2017]'s

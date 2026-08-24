@@ -39,7 +39,6 @@ namespace Semantics.Presupposition.Accommodation
 
 open Classical
 open Semantics.Presupposition
-open CommonGround
 open Semantics.Presupposition.Context
 
 variable {W : Type*}
@@ -65,7 +64,7 @@ inductive AccommodationLevel where
  [lewis-1979]: "presupposition P comes into existence."
 
  Delegates to `Semantics.Presupposition.Context.accommodate`. -/
-abbrev globalAccommodate (c : ContextSet W) (presup : Set W) : ContextSet W :=
+abbrev globalAccommodate (c : Set W) (presup : Set W) : Set W :=
  accommodate c presup
 
 /-! ### Accommodation constraints -/
@@ -86,7 +85,7 @@ instance (bindingDepth : Nat) : DecidablePred (isTrapped bindingDepth) := fun l 
 
 /-- All constraints bundled together.
  Uses canonical operations from `Semantics.Presupposition.Context`. -/
-structure AccommodationOK (c : ContextSet W) (presup : Set W) : Prop where
+structure AccommodationOK (c : Set W) (presup : Set W) : Prop where
  informative : accommodationInformative c presup
  consistent : accommodationConsistent c presup
 
@@ -100,7 +99,7 @@ structure AccommodationOK (c : ContextSet W) (presup : Set W) : Prop where
  for global over local accommodation, we recapture the effect of
  Gazdar's assumption that presupposition cancellation occurs only
  under the threat of inconsistency." -/
-noncomputable def heimSelect (c : ContextSet W) (presup : Set W) :
+noncomputable def heimSelect (c : Set W) (presup : Set W) :
  AccommodationLevel :=
  if Set.Nonempty (globalAccommodate c presup)
  then .global
@@ -118,14 +117,14 @@ noncomputable def heimSelect (c : ContextSet W) (presup : Set W) :
  [beaver-2001] Ch. 5.8.1: "with one short remark buried in a
  terse paper, Heim offers a simple synthesis between the two antitheses
  of 1970s presupposition theory." -/
-theorem heim_cancellation_equivalence (c : ContextSet W) (presup : Set W)
+theorem heim_cancellation_equivalence (c : Set W) (presup : Set W)
  (h_inconsistent : ¬Set.Nonempty (globalAccommodate c presup)) :
  heimSelect c presup = .local := by
  simp only [heimSelect, h_inconsistent, ↓reduceIte]
 
 /-- When global accommodation IS consistent, Heim's strategy projects
  the presupposition globally — matching Karttunen's projection. -/
-theorem heim_projection_when_consistent (c : ContextSet W) (presup : Set W)
+theorem heim_projection_when_consistent (c : Set W) (presup : Set W)
  (h_consistent : Set.Nonempty (globalAccommodate c presup)) :
  heimSelect c presup = .global := by
  simp only [heimSelect, h_consistent, ↓reduceIte]
@@ -140,7 +139,7 @@ theorem heim_projection_when_consistent (c : ContextSet W) (presup : Set W)
 
  This is formalized as: the Heim preference strategy never selects
  intermediate accommodation. -/
-theorem heim_never_intermediate (c : ContextSet W) (presup : Set W) :
+theorem heim_never_intermediate (c : Set W) (presup : Set W) :
  ∀ d, heimSelect c presup ≠ .intermediate d := by
  intro d
  by_cases h : Set.Nonempty (globalAccommodate c presup)

@@ -26,7 +26,6 @@ commitment slates, and a common ground.
 namespace Discourse.Commitment.Table
 
 open Discourse.Commitment (TaggedSlate CommitmentSource CommitmentForce)
-open CommonGround (HasContextSet)
 open Mood (Illocutionary)
 
 /-- An at-issue item on the conversational table. -/
@@ -49,14 +48,14 @@ structure DiscourseState (A W I : Type*) where
   /-- Per-agent discourse commitments. -/
   dc : A → TaggedSlate W
   /-- The common ground. -/
-  cg : CommonGround W
+  cg : Filter W
 
 namespace DiscourseState
 variable {A W I : Type*}
 
 /-- Initial state: empty table, empty commitments, trivial CommonGround. -/
 def empty : DiscourseState A W I :=
-  ⟨[], fun _ => TaggedSlate.empty, CommonGround.empty⟩
+  ⟨[], fun _ => TaggedSlate.empty, ⊤⟩
 
 instance : Inhabited (DiscourseState A W I) := ⟨empty⟩
 
@@ -67,7 +66,7 @@ instance (s : DiscourseState A W I) : Decidable s.IsStable :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- Worlds compatible with the common ground. -/
-def contextSet (s : DiscourseState A W I) : Set W := s.cg.contextSet
+def contextSet (s : DiscourseState A W I) : Set W := s.cg.ker
 
 /-! ### Commitment accessors
 
@@ -82,10 +81,6 @@ def doxasticOf (s : DiscourseState A W I) (a : A) : List (W → Prop) :=
 def Commits (s : DiscourseState A W I) (a : A) (p : W → Prop) : Prop :=
   p ∈ s.doxasticOf a
 
-/-- The common-ground propositions. -/
-def cgPropositions (s : DiscourseState A W I) : List (Set W) :=
-  s.cg.propositions
-
 /-! ### Primitive updates -/
 
 def pushItem (s : DiscourseState A W I) (i : I) : DiscourseState A W I :=
@@ -95,7 +90,7 @@ def popItem (s : DiscourseState A W I) : DiscourseState A W I :=
   { s with table := s.table.tail }
 
 def addToCG (s : DiscourseState A W I) (p : W → Prop) : DiscourseState A W I :=
-  { s with cg := s.cg.add p }
+  { s with cg := s.cg ⊓ Filter.principal {w | p w} }
 
 /-- Add `(p, src, force)` to agent `a`'s slate. Defaults: self-generated,
     doxastic — the standard assertion-driven cell. -/
@@ -110,7 +105,7 @@ def addCommit [DecidableEq A] (s : DiscourseState A W I) (a : A)
 @[simp] theorem empty_table : (empty : DiscourseState A W I).table = [] := rfl
 @[simp] theorem empty_dc (a : A) :
     (empty : DiscourseState A W I).dc a = TaggedSlate.empty := rfl
-@[simp] theorem empty_cg : (empty : DiscourseState A W I).cg = CommonGround.empty := rfl
+@[simp] theorem empty_cg : (empty : DiscourseState A W I).cg = ⊤ := rfl
 @[simp] theorem empty_isStable : (empty : DiscourseState A W I).IsStable := rfl
 
 @[simp] theorem pushItem_table (s : DiscourseState A W I) (i : I) :
@@ -126,7 +121,7 @@ def addCommit [DecidableEq A] (s : DiscourseState A W I) (a : A)
 @[simp] theorem popItem_cg (s : DiscourseState A W I) : s.popItem.cg = s.cg := rfl
 
 @[simp] theorem addToCG_cg (s : DiscourseState A W I) (p : W → Prop) :
-    (s.addToCG p).cg = s.cg.add p := rfl
+    (s.addToCG p).cg = s.cg ⊓ Filter.principal {w | p w} := rfl
 @[simp] theorem addToCG_table (s : DiscourseState A W I) (p : W → Prop) :
     (s.addToCG p).table = s.table := rfl
 @[simp] theorem addToCG_dc (s : DiscourseState A W I) (p : W → Prop) :
@@ -169,27 +164,25 @@ def addCommit [DecidableEq A] (s : DiscourseState A W I) (a : A)
 @[simp] theorem doxasticOf_popItem (s : DiscourseState A W I) (a : A) :
     s.popItem.doxasticOf a = s.doxasticOf a := rfl
 
-@[simp] theorem cgPropositions_popItem (s : DiscourseState A W I) :
-    s.popItem.cgPropositions = s.cgPropositions := rfl
+
 
 @[simp] theorem doxasticOf_addToCG (s : DiscourseState A W I) (p : W → Prop) (a : A) :
     (s.addToCG p).doxasticOf a = s.doxasticOf a := rfl
 
-@[simp] theorem cgPropositions_addToCG (s : DiscourseState A W I) (p : W → Prop) :
-    (s.addToCG p).cgPropositions = p :: s.cgPropositions := rfl
+theorem mem_cg_addToCG (s : DiscourseState A W I) (p : W → Prop) :
+    {w | p w} ∈ (s.addToCG p).cg :=
+  Filter.le_principal_iff.1 inf_le_right
 
-@[simp] theorem cgPropositions_addCommit [DecidableEq A] (s : DiscourseState A W I)
+@[simp] theorem cg_addCommit [DecidableEq A] (s : DiscourseState A W I)
     (a : A) (p : W → Prop) (src : CommitmentSource) (force : CommitmentForce) :
-    (s.addCommit a p src force).cgPropositions = s.cgPropositions := rfl
+    (s.addCommit a p src force).cg = s.cg := rfl
 
-@[simp] theorem cgPropositions_pushItem (s : DiscourseState A W I) (i : I) :
-    (s.pushItem i).cgPropositions = s.cgPropositions := rfl
+
 
 @[simp] theorem empty_doxasticOf (a : A) :
     (empty : DiscourseState A W I).doxasticOf a = [] := rfl
 
-@[simp] theorem empty_cgPropositions :
-    (empty : DiscourseState A W I).cgPropositions = [] := rfl
+
 
 theorem pushItem_not_isStable (s : DiscourseState A W I) (i : I) :
     ¬ (s.pushItem i).IsStable := by
@@ -197,8 +190,8 @@ theorem pushItem_not_isStable (s : DiscourseState A W I) (i : I) :
 
 end DiscourseState
 
-instance {A W I : Type*} : HasContextSet (DiscourseState A W I) W where
-  toContextSet := DiscourseState.contextSet
+instance {A W I : Type*} : HasCommonGround (DiscourseState A W I) W where
+  commonGround s := s.cg
 
 /-- The full Farkas-Bruce model: the table holds rich speech-act `Item`s. -/
 abbrev ItemState (A W : Type*) := DiscourseState A W (Item A W)
@@ -274,7 +267,7 @@ theorem polarQuestion_not_isStable (ds : State W) (p : W → Prop) :
   DiscourseState.pushItem_not_isStable _ _
 
 theorem accept_after_assert_cg (ds : State W) (p : W → Prop) :
-    (acceptTop (assert ds p)).cg = ds.cg.add p := by
+    (acceptTop (assert ds p)).cg = ds.cg ⊓ Filter.principal {w | p w} := by
   show (acceptTop (assert ds p)).cg = _
   unfold acceptTop
   rw [show (assert ds p).table =
@@ -288,8 +281,7 @@ theorem accept_after_assert_cg (ds : State W) (p : W → Prop) :
     (assert ds p).dcS = p :: ds.dcS := rfl
 @[simp] theorem assert_dcL (ds : State W) (p : W → Prop) :
     (assert ds p).dcL = ds.dcL := rfl
-@[simp] theorem assert_cgPropositions (ds : State W) (p : W → Prop) :
-    (assert ds p).cgPropositions = ds.cgPropositions := rfl
+
 @[simp] theorem polarQuestion_dcS (ds : State W) (p : W → Prop) :
     (polarQuestion ds p).dcS = ds.dcS := rfl
 @[simp] theorem polarQuestion_dcL (ds : State W) (p : W → Prop) :
@@ -300,13 +292,10 @@ theorem accept_after_assert_cg (ds : State W) (p : W → Prop) :
     (ds.pushItem i).dcL = ds.dcL := rfl
 
 /-- After asserting `p` and accepting it, `p` reaches the common ground. -/
-@[simp] theorem accept_after_assert_cgPropositions (ds : State W) (p : W → Prop) :
-    (acceptTop (assert ds p)).cgPropositions = p :: ds.cgPropositions := by
-  show (acceptTop (assert ds p)).cg.propositions = _
-  unfold acceptTop
-  rw [show (assert ds p).table =
-      ⟨.speaker, .addressee, .declarative, [p]⟩ :: ds.table from rfl]
-  rfl
+theorem accept_after_assert_mem_cg (ds : State W) (p : W → Prop) :
+    {w | p w} ∈ (acceptTop (assert ds p)).cg := by
+  rw [accept_after_assert_cg]
+  exact Filter.le_principal_iff.1 inf_le_right
 
 /-- Acceptance adds `p` to the addressee's commitments. -/
 @[simp] theorem accept_after_assert_dcL (ds : State W) (p : W → Prop) :

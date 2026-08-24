@@ -33,7 +33,7 @@ import Linglib.Discourse.CommonGround
    the formal point is that constructive dilemma is valid only for
    entailments, not for reasonable inferences.
 
-6. **Polymorphic lift via `CommonGround.HasAssertion`** (§ 4 below): the
+6. **Polymorphic lift via `HasAssertion`** (§ 4 below): the
    Stalnaker-1975 change-function calculus is shown to be the
    Stalnaker-instance projection of the framework-generic
    `HasAssertion.assert`. The direct-argument theorem then lifts
@@ -83,7 +83,7 @@ The formal apparatus is a triple `(⟦·⟧, A, g)`:
 * `A(P, k)`: the **appropriateness** relation — whether asserting `P` in
   context `k` is appropriate;
 * `g(P, k) = k ∩ ⟦P⟧_k`: the **change function** — the new context after
-  asserting `P`. This is exactly `CommonGround.ContextSet.update`.
+  asserting `P`. This is exactly intersective update of the context set.
 
 This module defines `Appropriateness`, sequential appropriateness `A*`,
 sequential update `g*`, and the `reasonableInference` predicate.
@@ -96,7 +96,6 @@ exhibits the gap.
 
 namespace Discourse.ReasonableInference
 
-open CommonGround
 
 /--
 **Appropriateness** of a sentence in a context. Stalnaker leaves this
@@ -104,24 +103,24 @@ maximally schematic; concrete theories of conditionals, disjunction,
 presupposition fill it in. Two universal constraints from the Appendix
 are captured below as `compatible_of_appropriate` and the change-function
 identity. -/
-abbrev Appropriateness (W : Type*) := Set W → ContextSet W → Prop
+abbrev Appropriateness (W : Type*) := Set W → Set W → Prop
 
 /--
-The **change function** `g(P, k) = k ∩ ⟦P⟧_k`. Already exists as
-`ContextSet.update`; this is the Stalnakerian alias. -/
-def changeFn {W : Type*} (P : Set W) (k : ContextSet W) : ContextSet W :=
-  ContextSet.update k P
+The **change function** `g(P, k) = k ∩ ⟦P⟧_k`: intersective update of the
+context set. -/
+def changeFn {W : Type*} (P : Set W) (k : Set W) : Set W :=
+  k ∩ P
 
 /-- Sequential update along a list of asserted sentences. -/
-def changeFnSeq {W : Type*} (σ : List (Set W)) (k : ContextSet W) :
-    ContextSet W :=
+def changeFnSeq {W : Type*} (σ : List (Set W)) (k : Set W) :
+    Set W :=
   σ.foldl (λ acc P => changeFn P acc) k
 
 /-- Sequential appropriateness: each `Pᵢ` is appropriate in the context
     obtained by updating with `P₁, …, Pᵢ₋₁`. Stalnaker's `A(σ, k) = ⋀ᵢ
     A(Pᵢ, kᵢ)`. -/
 def appropriateSeq {W : Type*} (A : Appropriateness W)
-    (σ : List (Set W)) (k : ContextSet W) : Prop :=
+    (σ : List (Set W)) (k : Set W) : Prop :=
   match σ with
   | [] => True
   | P :: rest => A P k ∧ appropriateSeq A rest (changeFn P k)
@@ -132,16 +131,16 @@ def appropriateSeq {W : Type*} (A : Appropriateness W)
 `σ ⊨ᵣ Q` (reasonable-in-`A`) iff in every context `k` in which the premise
 sequence is appropriate, the post-update context entails the conclusion.
 
-This is **distinct from** `ContextSet.entails (changeFnSeq σ k) ⟦Q⟧` for
+This is **distinct from** `changeFnSeq σ k ⊆ ⟦Q⟧` for
 *arbitrary* `k`: reasonable inference quantifies only over contexts in
 which the premises can be asserted in sequence. The premise filter is
 exactly what lets pragmatic information (e.g., the disjunction-
 appropriateness condition) feed into the inference. -/
 def reasonableInference {W : Type*} (A : Appropriateness W)
     (σ : List (Set W)) (Q : Set W) : Prop :=
-  ∀ k : ContextSet W,
+  ∀ k : Set W,
     appropriateSeq A σ k →
-    ContextSet.entails (changeFnSeq σ k) Q
+    changeFnSeq σ k ⊆ Q
 
 /-- **Entailment ⇒ reasonable inference** for any appropriateness relation:
     if a single premise semantically entails the conclusion, the inference
@@ -160,22 +159,21 @@ theorem entailment_implies_reasonable {W : Type*}
 theorem reasonable_nil {W : Type*} (A : Appropriateness W) (Q : Set W) :
     reasonableInference A [] Q ↔ ∀ w, Q w := by
   unfold reasonableInference changeFnSeq appropriateSeq
-  refine ⟨λ h w => h ContextSet.trivial trivial (Set.mem_univ w),
+  refine ⟨λ h w => h Set.univ trivial (Set.mem_univ w),
           λ h _ _ _ hw => h _⟩
 
 /-- **Stalnaker's first universal constraint** ([stalnaker-1975]
     Appendix, postulate 1): one cannot appropriately assert a proposition
     in a context incompatible with it. Any concrete `A` should satisfy this. -/
 def respectsCompatibility {W : Type*} (A : Appropriateness W) : Prop :=
-  ∀ P k, A P k → ContextSet.compatible k P
+  ∀ P k, A P k → (k ∩ P).Nonempty
 
 /-- **Stalnaker's second universal constraint** ([stalnaker-1975]
     Appendix, postulate 2): the change function commutes with the
     interpretation — `g(P, k) = k ∩ ⟦P⟧_k`. This holds by construction
     of `changeFn`. -/
-theorem changeFn_eq {W : Type*} (P : Set W) (k : ContextSet W) (w : W) :
-    changeFn P k w ↔ k w ∧ P w := by
-  unfold changeFn ContextSet.update; rfl
+theorem changeFn_eq {W : Type*} (P : Set W) (k : Set W) (w : W) :
+    changeFn P k w ↔ k w ∧ P w := Iff.rfl
 
 end Discourse.ReasonableInference
 
@@ -183,7 +181,6 @@ end Discourse.ReasonableInference
 namespace Stalnaker1975
 
 open Mood (Grammatical)
-open CommonGround (ContextSet)
 open _root_.Semantics.Conditionals (SelectionFunction)
 open Semantics.Conditionals
 open Discourse.ReasonableInference
@@ -208,7 +205,7 @@ Stalnaker's appropriateness condition for disjunction (§III, end) — that
 asserting `A or B` requires both `¬A∧B` and `A∧¬B` to be open in the prior
 context — is what guarantees `h_open_notA` after the update. -/
 theorem direct_argument_reasonable {W : Type*}
-    (s : SelectionFunction W) (C : ContextSet W)
+    (s : SelectionFunction W) (C : Set W)
     (notA B AorB : W → Prop)
     (h_constraint : pragmaticConstraint s C)
     (h_C_AorB : ∀ w, C w → AorB w)
@@ -343,14 +340,14 @@ theorem direct_argument_holds_under_indicative_selection :
 
 /-! Stalnaker 1975's change-function calculus uses `changeFn p k`
 (set intersection) as the post-assertion update operator. The
-`CommonGround.HasAssertion` typeclass abstracts over
+`HasAssertion` typeclass abstracts over
 *any* dialogue-state representation that admits Stalnakerian
 narrowing. This section shows that:
 
 1. The `changeFn` operator IS the projection of
    `HasAssertion.assert` in EVERY `HasAssertion` framework — the
-   typeclass's `toContextSet_assert` law restated through
-   `changeFn = ContextSet.update`.
+   typeclass's `commonGround_assert` law restated through
+   `changeFn` = intersective update.
 2. The direct-argument theorem lifts to be polymorphic over
    `[HasAssertion S W]` — Stalnaker's "reasonable inference" claim
    doesn't depend on Stalnaker's particular state representation.
@@ -359,25 +356,24 @@ narrowing. This section shows that:
    commitment-space representation with a radically different
    internal structure but the same projected context-set behavior).
 
-This is the consumer that earns the `CommonGround.HasAssertion`
+This is the consumer that earns the `HasAssertion`
 typeclass's existence: a substantive philosophical claim
 (reasonable inference is framework-generic) given a
 substrate-level proof (the typeclass's update law is
 sufficient). -/
 
-open CommonGround (HasAssertion)
-open CommonGround (HasContextSet)
+open HasCommonGround (contextSet)
 
 /-- **Bridge theorem**: Stalnaker's `changeFn` operator equals the
-    `HasContextSet`-projection of `HasAssertion.assert` — in any
+    context-set projection of `HasAssertion.assert` — in any
     `HasAssertion` framework, since `changeFn p k` is definitionally
-    `ContextSet.update k p` (Stalnaker 1975 Appendix postulate 2) and
-    the typeclass's update law demands exactly that projection. -/
+    `k ∩ p` (Stalnaker 1975 Appendix postulate 2) and the typeclass's
+    update law projects to exactly that (`HasAssertion.contextSet_assert`). -/
 theorem assert_eq_changeFn {S W : Type*} [HasAssertion S W]
     (s : S) (p : Set W) :
-    HasContextSet.toContextSet (HasAssertion.assert s p) =
-    changeFn p (HasContextSet.toContextSet s) :=
-  HasAssertion.toContextSet_assert s p
+    contextSet (HasAssertion.assert s p) =
+    changeFn p (contextSet s) :=
+  HasAssertion.contextSet_assert s p
 
 /-- **Polymorphic direct argument**: for ANY `HasAssertion` framework,
     asserting `A∨B` yields a context set in which the indicative
@@ -387,7 +383,7 @@ theorem assert_eq_changeFn {S W : Type*} [HasAssertion S W]
     (`direct_argument_reasonable`) because the HasAssertion typeclass
     provides one of the hypotheses for free: every world surviving
     the assertion satisfies `AorB` (the typeclass law
-    `assert_narrows`). Compare with the Stalnaker-specific
+    `contextSet_assert`). Compare with the Stalnaker-specific
     version, which had to take this as a hypothesis (`h_C_AorB`). -/
 theorem direct_argument_reasonable_polymorphic
     {S W : Type*} [HasAssertion S W]
@@ -395,29 +391,30 @@ theorem direct_argument_reasonable_polymorphic
     (notA B AorB : W → Prop)
     (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
     (h_constraint : pragmaticConstraint sel
-      (HasContextSet.toContextSet (HasAssertion.assert s AorB)))
+      (contextSet (HasAssertion.assert s AorB)))
     (h_open_notA : ∃ w' ∈ {w' | notA w'},
-      HasContextSet.toContextSet (HasAssertion.assert s AorB) w') :
-    ∀ w, HasContextSet.toContextSet (HasAssertion.assert s AorB) w →
+      contextSet (HasAssertion.assert s AorB) w') :
+    ∀ w, contextSet (HasAssertion.assert s AorB) w →
       moodedConditional .indicative sel notA B w := by
   apply direct_argument_reasonable sel _ notA B AorB h_constraint
     _ h_AorB_decomp h_open_notA
   -- The post-assertion context set ⊆ {w | AorB w}, by the typeclass law.
   intro w hw
-  exact HasAssertion.assert_narrows s AorB hw
+  rw [HasAssertion.contextSet_assert] at hw
+  exact hw.2
 
 /-- **Stalnaker instance application**: the polymorphic lift fires on
     the Stalnaker framework. Recovers the framework-specific
     `direct_argument_reasonable` for the post-assertion context. -/
 theorem direct_argument_reasonable_stalnaker {W : Type*}
-    (s : CommonGround W) (sel : SelectionFunction W)
+    (s : Filter W) (sel : SelectionFunction W)
     (notA B AorB : W → Prop)
     (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
     (h_constraint : pragmaticConstraint sel
-      (HasContextSet.toContextSet (HasAssertion.assert s AorB)))
+      (contextSet (HasAssertion.assert s AorB)))
     (h_open_notA : ∃ w' ∈ {w' | notA w'},
-      HasContextSet.toContextSet (HasAssertion.assert s AorB) w') :
-    ∀ w, HasContextSet.toContextSet (HasAssertion.assert s AorB) w →
+      contextSet (HasAssertion.assert s AorB) w') :
+    ∀ w, contextSet (HasAssertion.assert s AorB) w →
       moodedConditional .indicative sel notA B w :=
   direct_argument_reasonable_polymorphic s sel notA B AorB
     h_AorB_decomp h_constraint h_open_notA
@@ -433,10 +430,10 @@ theorem direct_argument_reasonable_krifka {W : Type*}
     (notA B AorB : W → Prop)
     (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
     (h_constraint : pragmaticConstraint sel
-      (HasContextSet.toContextSet (HasAssertion.assert s AorB)))
+      (contextSet (HasAssertion.assert s AorB)))
     (h_open_notA : ∃ w' ∈ {w' | notA w'},
-      HasContextSet.toContextSet (HasAssertion.assert s AorB) w') :
-    ∀ w, HasContextSet.toContextSet (HasAssertion.assert s AorB) w →
+      contextSet (HasAssertion.assert s AorB) w') :
+    ∀ w, contextSet (HasAssertion.assert s AorB) w →
       moodedConditional .indicative sel notA B w :=
   direct_argument_reasonable_polymorphic s sel notA B AorB
     h_AorB_decomp h_constraint h_open_notA

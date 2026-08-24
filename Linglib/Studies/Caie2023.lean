@@ -47,7 +47,7 @@ sequential update = single conjunctive update — apply directly.
 
 ## Relationship to Existing Infrastructure
 
-- `ContextSet.update c p` in `CommonGround.lean` is the special case where
+- intersective update `c ∩ p` (`CommonGround.lean`) is the special case where
   every world gets the same interpretation (no context sensitivity).
   See `disjunctiveUpdate_constant`.
 
@@ -61,7 +61,6 @@ sequential update = single conjunctive update — apply directly.
 
 namespace Caie2023
 
-open CommonGround (ContextSet)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 0. Parameterized Update (general substrate)
@@ -497,14 +496,14 @@ theorem disjunctiveUpdate_mono_interp (cs : Set W)
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 7. Connection to ContextSet.update
+-- § 7. Connection to intersective update
 -- ════════════════════════════════════════════════════════════════
 
 /-- When there is a single fixed interpretation for all worlds, disjunctive
-    updating reduces to propositional filtering — the mechanism formalized
-    as `ContextSet.update` in `CommonGround.lean`.
+    updating reduces to propositional filtering — intersective update of the
+    context set (`Discourse/CommonGround.lean`).
 
-    This witnesses the fact that `ContextSet.update` is the degenerate case
+    This witnesses the fact that intersective update is the degenerate case
     of Disjunctive Updating where context sensitivity plays no role: the
     same proposition is expressed at every world. -/
 theorem disjunctiveUpdate_constant (cs : Set W) (c₀ : C)
@@ -517,15 +516,14 @@ theorem disjunctiveUpdate_constant (cs : Set W) (c₀ : C)
     λ ⟨hw, _, hc, hs⟩ => by subst hc; exact ⟨hw, hs⟩,
     λ ⟨hw, hs⟩ => ⟨hw, _, rfl, hs⟩⟩
 
-/-- Disjunctive updating with a fixed context reduces to `ContextSet.update`.
+/-- Disjunctive updating with a fixed context reduces to intersective update.
 
     This explicitly connects the general framework to the infrastructure in
     `CommonGround.lean`: context-insensitive assertions (same proposition at
     every world) update via ordinary propositional filtering. -/
-theorem disjunctiveUpdate_eq_contextSet_update (cs : Set W) (c₀ : C)
+theorem disjunctiveUpdate_eq_inter (cs : Set W) (c₀ : C)
     (sem : C → W → Prop) :
-    disjunctiveUpdate cs (λ _ c => c = c₀) sem =
-    ContextSet.update cs (sem c₀) := by
+    disjunctiveUpdate cs (λ _ c => c = c₀) sem = cs ∩ {w | sem c₀ w} := by
   exact disjunctiveUpdate_constant cs c₀ sem
 
 

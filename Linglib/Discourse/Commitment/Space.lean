@@ -76,7 +76,6 @@ open Discourse.Commitment
   (CommitmentSlate IndexedCommitment IndexedWeightedCommitment CommitmentForce
    HasSupport CommitmentGrade)
 open Discourse (DiscourseRole)
-open CommonGround (ContextSet)
 open Mood (Illocutionary)
 
 -- ════════════════════════════════════════════════════
@@ -360,7 +359,7 @@ def negatedQuestionLow [CommitmentGrade G] (cs : CommitmentSpace W G)
     two attitudes (per [condoravdi-lauer-2012]), use
     `toDoxasticContextSet` / `toPreferentialContextSet`. -/
 def toContextSet [HasSupport G] (cs : CommitmentSpace W G) :
-    ContextSet W :=
+    Set W :=
   fun w => ∀ ic ∈ cs.root, IndexedWeightedCommitment.toCommitment ic w
 
 /-- Doxastic-only context set: worlds compatible with the root's
@@ -371,7 +370,7 @@ def toContextSet [HasSupport G] (cs : CommitmentSpace W G) :
     public BELIEFS the speaker is committed to". A declarative assertion
     contributes here; an imperative utterance does not. -/
 def toDoxasticContextSet [HasSupport G] (cs : CommitmentSpace W G) :
-    ContextSet W :=
+    Set W :=
   fun w => ∀ ic ∈ cs.root,
     ic.force = .doxastic → IndexedWeightedCommitment.toCommitment ic w
 
@@ -386,7 +385,7 @@ def toDoxasticContextSet [HasSupport G] (cs : CommitmentSpace W G) :
     closure (5.33b) `pep(p) ∈ PB ⟺ p ∈ PEP` is a HIGHER-ORDER
     interaction not modeled by these flat projections). -/
 def toPreferentialContextSet [HasSupport G] (cs : CommitmentSpace W G) :
-    ContextSet W :=
+    Set W :=
   fun w => ∀ ic ∈ cs.root,
     ic.force = .preferential → IndexedWeightedCommitment.toCommitment ic w
 
@@ -539,7 +538,7 @@ def rejectContinuation (s : KrifkaState W) : KrifkaState W :=
 
 /-- Context set: from the commitment space root (= CommonGround), via
     `IndexedCommitment.toCommitment` projection. -/
-def contextSet (s : KrifkaState W) : ContextSet W :=
+def contextSet (s : KrifkaState W) : Set W :=
   s.space.toContextSet
 
 /-- The space has no open continuations. -/
@@ -754,27 +753,24 @@ def applyComplex (s : KrifkaState W) : ComplexSpeechAct W → KrifkaState W
 end KrifkaState
 
 -- ════════════════════════════════════════════════════
--- § 5. HasContextSet Instances
+-- § 5. HasCommonGround Instances
 -- ════════════════════════════════════════════════════
 
-open CommonGround in
-/-- A polymorphic commitment space projects to a context set via its root,
-    using the `[HasSupport G]` typeclass's `support` projection. Recovers
-    the binary case at `G = Prop` definitionally (via `support := id` in
-    the `Prop` instance). -/
+/-- A polymorphic commitment space projects to the principal common ground of
+    its root, using the `[HasSupport G]` typeclass's `support` projection.
+    Recovers the binary case at `G = Prop` definitionally (via `support := id`
+    in the `Prop` instance). -/
 instance {W G : Type*} [HasSupport G] :
-    HasContextSet (CommitmentSpace W G) W where
-  toContextSet := CommitmentSpace.toContextSet
+    HasCommonGround (CommitmentSpace W G) W where
+  commonGround cs := Filter.principal {w | cs.toContextSet w}
 
-open CommonGround in
-/-- A Krifka state projects to a context set via the commitment space root. -/
-instance {W : Type*} : HasContextSet (KrifkaState W) W where
-  toContextSet := KrifkaState.contextSet
+/-- A Krifka state projects via the commitment space root. -/
+instance {W : Type*} : HasCommonGround (KrifkaState W) W where
+  commonGround s := Filter.principal {w | s.contextSet w}
 
-open CommonGround in
-/-- KrifkaState context set agrees with CommitmentSpace context set. -/
-theorem krifkaState_contextSet_eq_space {W : Type*} (s : KrifkaState W) :
-    HasContextSet.toContextSet s = HasContextSet.toContextSet s.space := rfl
+/-- KrifkaState common ground agrees with CommitmentSpace common ground. -/
+theorem krifkaState_commonGround_eq_space {W : Type*} (s : KrifkaState W) :
+    commonGround s = commonGround s.space := rfl
 
 open Discourse.Commitment (IndexedWeightedCommitment)
 
@@ -782,12 +778,19 @@ open Discourse.Commitment (IndexedWeightedCommitment)
     `commit speaker doxastic φ` to the root, whose projection through
     `HasSupport` narrows the context set by exactly `φ`. -/
 instance instHasAssertion {W : Type*} :
-    CommonGround.HasAssertion (KrifkaState W) W where
+    HasAssertion (KrifkaState W) W where
   initial := KrifkaState.empty
   assert s φ := s.assert φ
-  toContextSet_initial :=
-    Set.eq_univ_of_forall fun _ _ hic => absurd hic List.not_mem_nil
-  toContextSet_assert s φ := by
+  commonGround_initial := by
+    have h : {w | (KrifkaState.empty : KrifkaState W).contextSet w} = Set.univ :=
+      Set.eq_univ_of_forall fun _ _ hic => absurd hic List.not_mem_nil
+    show Filter.principal {w | (KrifkaState.empty : KrifkaState W).contextSet w} = ⊤
+    rw [h, Filter.principal_univ]
+  commonGround_assert s φ := by
+    show Filter.principal {w | (s.assert φ).contextSet w} =
+      Filter.principal {w | s.contextSet w} ⊓ _
+    rw [Filter.inf_principal]
+    refine congrArg _ ?_
     ext w
     rw [Set.mem_inter_iff]
     constructor

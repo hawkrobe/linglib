@@ -68,7 +68,6 @@ level rather than a vacuous law-of-excluded-middle.
 namespace Clark1983
 
 
-open CommonGround
 open RSA (Lexicon)
 open DistributedMorphology (Categorizer WordStructure ofRoot categorize Headed)
 
@@ -300,7 +299,7 @@ structure GoalHierarchy (W : Type*) where
   /-- Subgoal (1): the intended meaning on this occasion. -/
   intendedMeaning : W → Prop
   /-- The common ground used for the inference. -/
-  commonGround : CommonGround W
+  commonGround : Filter W
   /-- Subgoal (2): the meta-recognition that the speaker invokes a
       convention licensing the direct → intended inference. For
       conventional uses this is `True` (no specific convention required).
@@ -355,12 +354,12 @@ structure DenominalVerbConvention (W : Type*) where
   /-- The conventional denotation of the parent noun. -/
   nounDenotation : W → Prop
   /-- (e) The common ground of speaker and listener. -/
-  commonGround : CommonGround W
+  commonGround : Filter W
   /-- (b–d) The speaker has good reason to believe the listener can
       readily compute the situation uniquely from mutual knowledge.
       Operationalized as: every CommonGround-compatible world satisfies the
       situation. -/
-  cgDeterminesSituation : ∀ w, commonGround.contextSet w → situation w
+  cgDeterminesSituation : ∀ w, w ∈ commonGround.ker → situation w
   /-- (f, extensional) The noun's denotation is realized in every
       situation-world — there is a teapot wherever a teapotting happens. -/
   nounParticipates : ∀ w, situation w → nounDenotation w
@@ -390,7 +389,7 @@ def DenominalVerbConvention.toGoalHierarchy {W : Type*}
     -- (b–d): CommonGround uniquely determines the situation
     -- (f, extensional): noun denotation realized in every situation-world
     -- (f, role-distinctness): parent noun role differs from other surface args' roles
-    (∀ w, conv.commonGround.contextSet w → conv.situation w) ∧
+    (∀ w, w ∈ conv.commonGround.ker → conv.situation w) ∧
       (∀ w, conv.situation w → conv.nounDenotation w) ∧
       conv.parentNounRole ∉ conv.otherArgRoles
 
@@ -443,8 +442,8 @@ def teapotNoun (w : TeapotWorld) : Prop := w.teapot = true
     rubbing-with-teapot situation; in a fuller formalization the CommonGround
     would entail the relevant odd-habit knowledge from which the
     listener derives the situation. -/
-def teapotCG : CommonGround TeapotWorld :=
-  CommonGround.empty.add { w | w.rubbing = true ∧ w.teapot = true }
+def teapotCG : Filter TeapotWorld :=
+  Filter.principal { w | w.rubbing = true ∧ w.teapot = true }
 
 /-- The Innovative Denominal Verb Convention (paper p. 321) instantiated
     for *Max teapotted a policeman* (paper pp. 320–321, 325–326).
@@ -592,12 +591,12 @@ def stereosDirectMeaning : StereosWorld → Prop := λ w => w.phonographsCommon 
 def arlenesGoalHierarchy : GoalHierarchy StereosWorld where
   directMeaning := stereosDirectMeaning
   intendedMeaning := stereosDirectMeaning
-  commonGround := .empty
+  commonGround := ⊤
   invokesConvention := True
 
 /-- Bombeck's CommonGround: discourse context establishes "owners are common." -/
-def bombecksCG : CommonGround StereosWorld :=
-  CommonGround.empty.add { w | w.ownersCommon = true }
+def bombecksCG : Filter StereosWorld :=
+  Filter.principal { w | w.ownersCommon = true }
 
 /-- Bombeck's goal hierarchy: innovative use. The intended meaning is the
     nonce reading (owners are common). `invokesConvention` is left at `True`
@@ -650,7 +649,7 @@ structure IndirectAct (W : Type*) where
       condition). -/
   prepCondition : Option PreparatoryCondition
   /-- Common ground licensing the inference. -/
-  commonGround : CommonGround W
+  commonGround : Filter W
 
 /-- Project an indirect act to a goal hierarchy.
 
@@ -687,7 +686,7 @@ def timeQuestionExample : IndirectAct Unit where
   directContent := λ _ => True   -- literal: "do you know X?" — toy stand-in
   intendedContent := λ _ => False -- intended: "tell me X" — distinct
   prepCondition := some .knowledge
-  commonGround := .empty
+  commonGround := ⊤
 
 /-- The time-question example projects via the `.knowledge` preparatory
     condition, exactly the substrate `Studies/FrancikClark1985.lean`
@@ -754,7 +753,7 @@ def amexQuestion : IndirectAct Unit where
   directContent := λ _ => True   -- "Do you accept AmEx?" — toy stand-in
   intendedContent := λ _ => True  -- intended = direct (4-subgoal hierarchy collapses to (4))
   prepCondition := none           -- Clark-style goal-hierarchy mechanism, not Searle-prep
-  commonGround := .empty
+  commonGround := ⊤
 
 /-- Credit cards case: the question carries BOTH a direct interpretation
     AND an indirect request for the list of acceptable cards (paper
@@ -768,7 +767,7 @@ def creditCardsQuestion : IndirectAct Unit where
   directContent := λ _ => True    -- "Do you accept credit cards?"
   intendedContent := λ _ => False -- intended ≠ direct (5-subgoal hierarchy: (5) + indirect (4))
   prepCondition := none
-  commonGround := .empty
+  commonGround := ⊤
 
 /-- The AmEx and credit-cards questions are surface-identical in their
     direct content (both "Do you accept X?") but diverge in intended
@@ -841,14 +840,14 @@ of `§F` is what you get by **evaluating** this function at a specific CommonGro
     maps a CommonGround to the **intended** meaning on a given occasion. -/
 structure ContextualMeaning (W : Type*) where
   directMeaning : W → Prop
-  compute : CommonGround W → (W → Prop)
+  compute : Filter W → (W → Prop)
 
 /-- Evaluate a contextual meaning at a specific CommonGround, producing a goal
     hierarchy. The convention-recognition is left at `True` here — the
     fuller treatment exposes a CommonGround-dependence witness via the source-class
     projections (`DenominalVerbConvention.toGoalHierarchy` etc.). -/
 def ContextualMeaning.evaluate {W : Type*}
-    (cm : ContextualMeaning W) (cg : CommonGround W) : GoalHierarchy W where
+    (cm : ContextualMeaning W) (cg : Filter W) : GoalHierarchy W where
   directMeaning := cm.directMeaning
   intendedMeaning := cm.compute cg
   commonGround := cg
@@ -858,17 +857,17 @@ def ContextualMeaning.evaluate {W : Type*}
     difference. This is sense-selection. -/
 def ContextualMeaning.isCGIndependent {W : Type*}
     (cm : ContextualMeaning W) : Prop :=
-  ∀ cg : CommonGround W, cm.compute cg = cm.directMeaning
+  ∀ cg : Filter W, cm.compute cg = cm.directMeaning
 
 /-- A contextual meaning is **CommonGround-dependent** when there exists a CommonGround that
     shifts the intended meaning away from the direct meaning. This is
     sense-creation. -/
 def ContextualMeaning.isCGDependent {W : Type*}
     (cm : ContextualMeaning W) : Prop :=
-  ∃ cg : CommonGround W, cm.compute cg ≠ cm.directMeaning
+  ∃ cg : Filter W, cm.compute cg ≠ cm.directMeaning
 
 theorem cg_independent_conventional {W : Type*}
-    (cm : ContextualMeaning W) (h : cm.isCGIndependent) (cg : CommonGround W) :
+    (cm : ContextualMeaning W) (h : cm.isCGIndependent) (cg : Filter W) :
     (cm.evaluate cg).isConventional := h cg
 
 theorem cg_dependent_innovative {W : Type*}
@@ -891,25 +890,25 @@ open Classical
 def stereosMeaning : ContextualMeaning StereosWorld where
   directMeaning := stereosDirectMeaning
   compute := λ cg =>
-    if ∀ w, cg.contextSet w → w.ownersCommon = true
+    if ∀ w ∈ cg.ker, w.ownersCommon = true
     then λ w => w.ownersCommon = true
     else stereosDirectMeaning
 
 end
 
 private theorem bombecksCG_entails_owners :
-    ∀ w, bombecksCG.contextSet w → w.ownersCommon = true := by
+    ∀ w ∈ bombecksCG.ker, w.ownersCommon = true := by
   intro w h
-  exact h.1
+  rwa [bombecksCG, Filter.ker_principal] at h
 
 private theorem emptyCG_not_entails_owners :
-    ¬ ∀ w, (CommonGround.empty : CommonGround StereosWorld).contextSet w → w.ownersCommon = true := by
+    ¬ ∀ w ∈ (⊤ : Filter StereosWorld).ker, w.ownersCommon = true := by
   intro h
-  have := h ⟨true, false⟩ (by trivial)
+  have := h ⟨true, false⟩ (by simp)
   exact absurd this (by decide)
 
 theorem stereos_arlene :
-    stereosMeaning.evaluate .empty = arlenesGoalHierarchy := by
+    stereosMeaning.evaluate ⊤ = arlenesGoalHierarchy := by
   unfold stereosMeaning ContextualMeaning.evaluate
   simp only [if_neg emptyCG_not_entails_owners, arlenesGoalHierarchy]
 

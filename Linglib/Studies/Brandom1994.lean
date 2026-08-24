@@ -38,7 +38,6 @@ inferential role.
 namespace Brandom1994
 
 open Discourse.Commitment (CommitmentSlate)
-open CommonGround (ContextSet)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Normative Status
@@ -150,7 +149,7 @@ def assert (s : BrandomState W) (p : Set W) : BrandomState W :=
     model has strictly more structure (entitlements, disagreement
     between scorekeepers), but for the `AssertionTheory` interface
     we need a single `ContextSet`. -/
-def effectiveContextSet (s : BrandomState W) : ContextSet W :=
+def effectiveContextSet (s : BrandomState W) : Set W :=
   λ w =>
     -- Intersection: w must be compatible with all commitments
     -- that both agents agree the speaker has
@@ -218,17 +217,16 @@ theorem scorekeepers_can_disagree :
     else NormativeStatus.empty⟩, by decide⟩
 
 -- ════════════════════════════════════════════════════
--- § 7. HasContextSet instance
+-- § 7. HasCommonGround instance
 -- ════════════════════════════════════════════════════
 
-open CommonGround in
-/-- Brandom states project to a context set via `effectiveContextSet`
-    (the lossy Brandom → Stalnaker projection: intersection of all
-    self-attributed commitments). The lossy projection is the price of
-    the typeclass — Brandom's per-scorekeeper disagreement is
-    invisible at the `HasContextSet` API level (cf.
+/-- Brandom states project to the principal common ground of
+    `effectiveContextSet` (the lossy Brandom → Stalnaker projection:
+    intersection of all self-attributed commitments). The lossy projection
+    is the price of the typeclass — Brandom's per-scorekeeper disagreement
+    is invisible at the `HasCommonGround` API level (cf.
     `scorekeepers_can_disagree`). -/
-instance {W : Type*} : HasContextSet (BrandomState W) W where
-  toContextSet := BrandomState.effectiveContextSet
+instance {W : Type*} : HasCommonGround (BrandomState W) W where
+  commonGround s := Filter.principal s.effectiveContextSet
 
 end Brandom1994

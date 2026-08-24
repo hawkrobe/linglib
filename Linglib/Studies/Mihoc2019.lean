@@ -452,7 +452,7 @@ Assertions carry a null epistemic necessity modal `□_S`; `O` applies above
 it, negating pre-exhaustified domain alternatives
 (`Exhaustification.preExh`) and the stronger σA. Her running model: the CMN
 *less than three* / SMN *at most two*, worlds = candidate maxima 0–3,
-`□_S` = `ContextSet.entails` over a nonempty epistemic state
+`□_S` = context-set entailment (`⊆`) over a nonempty epistemic state
 (`boxS_iff_entails`). The DA are the value-regions inside the prejacent set
 {0, 1, 2}: singletons and doubletons.
 
@@ -469,7 +469,7 @@ namespace Ignorance
 /-- Worlds: the candidate maximum, values 0–3. -/
 abbrev EWorld := Fin 4
 
-/-- `□_S` over a finite epistemic state — `ContextSet.entails` in
+/-- `□_S` over a finite epistemic state — `⊆` in
 computable clothing (`boxS_iff_entails`). -/
 def boxS (E : Finset EWorld) (p : EWorld → Prop) : Prop := ∀ w ∈ E, p w
 
@@ -478,8 +478,8 @@ instance (E : Finset EWorld) (p : EWorld → Prop) [DecidablePred p] :
   inferInstanceAs (Decidable (∀ w ∈ E, p w))
 
 theorem boxS_iff_entails (E : Finset EWorld) (p : EWorld → Prop) :
-    boxS E p ↔ CommonGround.ContextSet.entails (↑E : Set EWorld) {w | p w} := by
-  simp [boxS, CommonGround.ContextSet.entails, Set.subset_def]
+    boxS E p ↔ (↑E : Set EWorld) ⊆ {w | p w} := by
+  simp [boxS, Set.subset_def]
 
 /-- The asserted prejacent: `□_S`(*less than three*). -/
 def prejacent (E : Finset EWorld) : Prop :=

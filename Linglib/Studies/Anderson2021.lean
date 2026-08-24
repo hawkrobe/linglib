@@ -51,7 +51,6 @@ can regain probability (fn. 7); intersection update survives only at
 lr = 1. -/
 namespace Discourse
 
-open CommonGround (ContextSet HasContextSet)
 
 variable {W : Type*}
 
@@ -63,13 +62,15 @@ success criterion — and `PMF.toRealFn` (the ℝ-valued masses every RSA
 consumer reads) already on the carrier. The classical context set is the
 support. -/
 
-/-- A distribution projects to [stalnaker-2002]'s context set: the
-    positive-mass worlds. -/
-instance : HasContextSet (PMF W) W := ⟨fun p w => w ∈ p.support⟩
+/-- A distribution's common ground is principal on [stalnaker-2002]'s context
+    set, the positive-mass worlds (the a.e. filter of the induced measure). -/
+instance : HasCommonGround (PMF W) W := ⟨fun p => Filter.principal {w | w ∈ p.support}⟩
 
-@[simp] theorem pmf_toContextSet (p : PMF W) (w : W) :
-    HasContextSet.toContextSet p w ↔ 0 < p.toRealFn w :=
-  (PMF.mem_support_iff p w).trans
+@[simp] theorem pmf_contextSet (p : PMF W) (w : W) :
+    w ∈ HasCommonGround.contextSet p ↔ 0 < p.toRealFn w := by
+  show w ∈ Filter.ker (Filter.principal {w | w ∈ p.support}) ↔ _
+  rw [Filter.ker_principal]
+  exact (PMF.mem_support_iff p w).trans
     ⟨fun h => ENNReal.toReal_pos h (p.apply_ne_top w),
      fun h => pos_iff_ne_zero.mp (ENNReal.toReal_pos_iff.mp h).1⟩
 
@@ -77,7 +78,6 @@ end Discourse
 
 namespace Anderson2021
 
-open CommonGround (ContextSet)
 open scoped ENNReal NNReal NNRat
 
 /-! ### MutualFriends Domain -/
@@ -555,9 +555,8 @@ lr = 1 limit: with the prior discarded, a zero-posterior world leaves
 the context set. -/
 theorem lr_one_excludes_false_worlds (cg post : PMF MFWorld)
     (w : MFWorld) (h : post.toRealFn w = 0) :
-    ¬CommonGround.HasContextSet.toContextSet
-      (updateCG cg post 1 zero_le_one (le_refl 1)) w := by
-  rw [Discourse.pmf_toContextSet, updateCG_lr_one, h]
+    w ∉ HasCommonGround.contextSet (updateCG cg post 1 zero_le_one (le_refl 1)) := by
+  rw [Discourse.pmf_contextSet, updateCG_lr_one, h]
   exact lt_irrefl 0
 
 /-- The graded divergence (fn. 7: "worlds can regain probability"): at
@@ -565,8 +564,8 @@ any lr < 1 the prior keeps a ruled-out world alive with mass
 `(1 − lr)·cg w` — the update never deletes a world the prior supports. -/
 theorem graded_update_keeps_false_world (cg post : PMF MFWorld)
     (w : MFWorld) (hcg : 0 < cg.toRealFn w) (lr : ℝ) (h0 : 0 ≤ lr) (h1 : lr < 1) :
-    CommonGround.HasContextSet.toContextSet (updateCG cg post lr h0 h1.le) w := by
-  rw [Discourse.pmf_toContextSet, updateCG_eq]
+    w ∈ HasCommonGround.contextSet (updateCG cg post lr h0 h1.le) := by
+  rw [Discourse.pmf_contextSet, updateCG_eq]
   have : 0 < (1 - lr) * cg.toRealFn w := mul_pos (by linarith) hcg
   have : 0 ≤ lr * post.toRealFn w :=
     mul_nonneg h0 (PMF.toRealFn_nonneg _ _)

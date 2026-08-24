@@ -556,7 +556,7 @@ The contrasts below make the architectural disagreements Lean-checkable.
 
 section CrossFrameworkContrasts
 
-/-- A simple two-world scenario for HasContextSet contrasts. -/
+/-- A simple two-world scenario for common-ground contrasts. -/
 inductive RainW where
   | rainy | sunny
   deriving DecidableEq, Repr
@@ -592,9 +592,8 @@ def kosSpeakerDGB : DGB String (Set RainW) String String :=
 def kosAddresseeDGB : DGB String (Set RainW) String String :=
   DGB.initial
 
-open CommonGround in
 /-- KOS-vs-Stalnaker architectural contrast: KOS's two DGBs project to
-*different* `ContextSet`s after one-sided assertion. Stalnaker's
+*different* common grounds after one-sided assertion. Stalnaker's
 framework has a single CommonGround that cannot represent this divergence —
 the contrast is structural, not a matter of degree.
 
@@ -603,15 +602,14 @@ requires `isRaining sunny = True` (i.e. `sunny = rainy`), which is
 False; the addressee's CS at sunny is vacuously True (empty universal
 over an empty `facts` list). -/
 theorem kos_vs_stalnaker_per_dgb_divergence :
-    HasContextSet.toContextSet kosSpeakerDGB ≠
-    HasContextSet.toContextSet kosAddresseeDGB := by
+    commonGround kosSpeakerDGB ≠ commonGround kosAddresseeDGB := by
   intro h
-  -- Apply both sides at .sunny
-  have hsunny := congrFun h RainW.sunny
+  -- Apply both context sets at .sunny
+  have hsunny := congrFun (Filter.principal_eq_iff_eq.1 h) RainW.sunny
   -- Speaker side: ∀ p ∈ [isRaining], p .sunny  ≡  isRaining .sunny  ≡  False
   -- Addressee side: ∀ p ∈ [], p .sunny         ≡  True
   -- So hsunny : False = True, contradiction
-  simp only [HasContextSet.toContextSet, kosSpeakerDGB, kosAddresseeDGB,
+  simp only [kosSpeakerDGB, kosAddresseeDGB,
              DGB.addFact, DGB.initial, isRaining,
              List.mem_singleton, forall_eq, List.not_mem_nil,
              IsEmpty.forall_iff, forall_const, eq_iff_iff, iff_true] at hsunny
@@ -643,7 +641,7 @@ theorem kos_vs_farkasbruce_architecture_differs
     -- F&B: a single discourse state keeps speaker/listener commitments and
     -- the common ground as separate per-agent slates
     let fb : State RainW := DiscourseState.empty.addCommit .speaker p
-    p ∈ fb.dcS ∧ fb.cgPropositions = [] ∧ fb.dcL = [] :=
+    p ∈ fb.dcS ∧ fb.cg = ⊤ ∧ fb.dcL = [] :=
   ⟨List.mem_cons_self, rfl, rfl⟩
 
 /-- The deeper architectural disagreement: **F&B can model retraction**
@@ -665,7 +663,7 @@ open Discourse.Commitment.Table in
 by re-introducing to dcS. The substrate-level disagreement: KOS's
 type-level commitment to monotonicity. -/
 theorem farkasbruce_cg_can_be_emptied :
-    (DiscourseState.empty : State RainW).cgPropositions = [] := rfl
+    (DiscourseState.empty : State RainW).cg = ⊤ := rfl
 
 /-! ### vs Roberts 1996/2012 (partition-stack QUD)
 

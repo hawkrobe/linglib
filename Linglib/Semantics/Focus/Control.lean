@@ -34,7 +34,7 @@ over finite models `decide`-friendly; the inquisitive layer plugs in
 via `Antecedent.ofQuestion` and `Question.alt`, with
 `alt_which_singleton` identifying the two Hamblin constructions. The
 `assertion` payload is a raw prior proposition; the
-`Discourse.CommonGround.HasAssertion` hookup (a correction/denial
+`HasAssertion` hookup (a correction/denial
 move) is deferred.
 -/
 

@@ -36,7 +36,6 @@ Source determines who can challenge:
 namespace Discourse.Gunlogson
 
 open Discourse.Commitment
-open CommonGround (ContextSet)
 open Discourse (DiscourseRole)
 open Semantics.Questions.Bias (ContextualEvidence)
 
@@ -94,7 +93,7 @@ def assert (s : GunlogsonState W) (p : Set W) : GunlogsonState W :=
 /-- Context set: intersection of both participants' commitment contexts.
     Only propositions that both participants are committed to (regardless
     of source) contribute to the shared context. -/
-def contextSet (s : GunlogsonState W) : ContextSet W :=
+def contextSet (s : GunlogsonState W) : Set W :=
   λ w => s.speakerSlate.toContextSet w ∧ s.addresseeSlate.toContextSet w
 
 /-- Stability: stable when neither participant has unresolved
@@ -334,17 +333,15 @@ theorem confirm_still_unstable {W : Type*} (p : Set W) :
   exact Nat.succ_ne_zero _ h
 
 -- ════════════════════════════════════════════════════
--- HasContextSet instance
+-- HasCommonGround instance
 -- ════════════════════════════════════════════════════
 
-open CommonGround in
-/-- Gunlogson states project to a context set via `contextSet` —
+/-- Gunlogson states project to the principal common ground of `contextSet` —
     the intersection of both participants' commitment contexts
     (regardless of source). -/
-instance {W : Type*} : HasContextSet (GunlogsonState W) W where
-  toContextSet := GunlogsonState.contextSet
+instance {W : Type*} : HasCommonGround (GunlogsonState W) W where
+  commonGround s := Filter.principal s.contextSet
 
-open CommonGround in
 /-- Gunlogson's state instantiates `HasAssertion`: a falling declarative
     commits only the speaker, but because the context set is the
     intersection of both participants' commitment contexts, the
@@ -354,14 +351,20 @@ open CommonGround in
     [stalnaker-1978] on the projected observable while
     [farkas-bruce-2010]'s proposal model does not instantiate. -/
 instance instHasAssertion {W : Type*} :
-    CommonGround.HasAssertion (GunlogsonState W) W where
+    HasAssertion (GunlogsonState W) W where
   initial := GunlogsonState.empty
   assert s p := s.assert p
-  toContextSet_initial :=
-    Set.eq_univ_of_forall fun _ =>
-      ⟨fun _ hq => absurd hq List.not_mem_nil,
-       fun _ hq => absurd hq List.not_mem_nil⟩
-  toContextSet_assert s p := by
+  commonGround_initial := by
+    have h : (GunlogsonState.empty : GunlogsonState W).contextSet = Set.univ :=
+      Set.eq_univ_of_forall fun _ =>
+        ⟨fun _ hq => absurd hq List.not_mem_nil,
+         fun _ hq => absurd hq List.not_mem_nil⟩
+    show Filter.principal (GunlogsonState.empty : GunlogsonState W).contextSet = ⊤
+    rw [h, Filter.principal_univ]
+  commonGround_assert s p := by
+    show Filter.principal (s.assert p).contextSet = Filter.principal s.contextSet ⊓ _
+    rw [Filter.inf_principal]
+    refine congrArg _ ?_
     ext w
     rw [Set.mem_inter_iff]
     constructor

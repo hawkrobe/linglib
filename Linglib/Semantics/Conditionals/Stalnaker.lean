@@ -58,7 +58,6 @@ equivalence within an appropriate context (the
 
 namespace Semantics.Conditionals
 
-open CommonGround (ContextSet)
 open Mood (Grammatical)
 open _root_.Semantics.Conditionals (SelectionFunction selectionPrefers)
 open Semantics.Conditionals (SimilarityOrdering)
@@ -102,7 +101,7 @@ The central new contribution of [stalnaker-1975]: it makes
 indicative inference forms behave the way they do, without changing
 the semantic clause. -/
 def pragmaticConstraint {W : Type*} (s : SelectionFunction W)
-    (C : ContextSet W) : Prop :=
+    (C : Set W) : Prop :=
   ∀ w (A : Set W), C w → (∃ w' ∈ A, C w') → C (s.sel w A)
 
 /-- **Mooded conditional** ([stalnaker-1975]): the truth-conditional
@@ -139,19 +138,19 @@ This makes "indicative vs subjunctive" a property of the
 *selection-function / context pairing*, not a separate semantic
 operator. -/
 def Mood.admissibleSelection {W : Type*} (m : Grammatical) (s : SelectionFunction W)
-    (C : ContextSet W) : Prop :=
+    (C : Set W) : Prop :=
   match m with
   | .indicative  => pragmaticConstraint s C
   | .subjunctive => True
 
 /-- Indicative admissibility unfolds to the pragmatic constraint. -/
 theorem admissibleSelection_indicative {W : Type*} (s : SelectionFunction W)
-    (C : ContextSet W) :
+    (C : Set W) :
     Mood.admissibleSelection .indicative s C = pragmaticConstraint s C := rfl
 
 /-- Subjunctive admissibility imposes no constraint. -/
 theorem admissibleSelection_subjunctive {W : Type*} (s : SelectionFunction W)
-    (C : ContextSet W) :
+    (C : Set W) :
     Mood.admissibleSelection .subjunctive s C = True := rfl
 
 /-- **Mood is irrelevant to the truth-conditional clause**
@@ -180,7 +179,7 @@ Hypotheses encode the "appropriate context" conditions:
 - `h_constraint`: `s` obeys the pragmatic constraint relative to `C`;
 - `h_C_imp`: in the context, the material conditional holds. -/
 theorem selectionConditional_eq_material_within_context {W : Type*}
-    (s : SelectionFunction W) (C : ContextSet W) (p q : W → Prop) (w : W)
+    (s : SelectionFunction W) (C : Set W) (p q : W → Prop) (w : W)
     (hC_w : C w)
     (h_open_p : ∃ w' ∈ {w' | p w'}, C w')
     (h_constraint : pragmaticConstraint s C)
@@ -200,7 +199,7 @@ theorem selectionConditional_eq_material_within_context {W : Type*}
 the selection function is admissible, the mooded conditional reduces
 to the material conditional within the context. -/
 theorem moodedConditional_indicative_eq_material_within_context {W : Type*}
-    (s : SelectionFunction W) (C : ContextSet W) (p q : W → Prop) (w : W)
+    (s : SelectionFunction W) (C : Set W) (p q : W → Prop) (w : W)
     (hC_w : C w)
     (h_open_p : ∃ w' ∈ {w' | p w'}, C w')
     (h_admissible : Mood.admissibleSelection .indicative s C)

@@ -6,7 +6,7 @@ import Linglib.Discourse.CommonGround
 [stalnaker-1974] [heim-1983] [lewis-1979]
 
 Canonical operations connecting presuppositions (`PartialProp W`) to contexts
-(`ContextSet W`): the shared vocabulary for projection, filtering,
+(`Set W`): the shared vocabulary for projection, filtering,
 accommodation, and conceivability.
 
 ## Main declarations
@@ -27,7 +27,6 @@ world in the context set satisfying it.
 namespace Semantics.Presupposition.Context
 
 open Semantics.Presupposition
-open CommonGround
 
 variable {W : Type*}
 
@@ -37,7 +36,7 @@ variable {W : Type*}
     entails it: every world in the context satisfies the presupposition.
 
     This is Karttunen's filtering condition and Schlenker's local satisfaction. -/
-abbrev presupSatisfied (c : ContextSet W) (p : PartialProp W) : Prop := c ⊆ p.presup
+abbrev presupSatisfied (c : Set W) (p : PartialProp W) : Prop := c ⊆ p.presup
 
 /-- A presupposition is **satisfiable** (conceivable) in context `c` iff some
     world in the context satisfies it.
@@ -45,66 +44,66 @@ abbrev presupSatisfied (c : ContextSet W) (p : PartialProp W) : Prop := c ⊆ p.
     This is Enguehard's conceivability condition: a singular indefinite's number
     presupposition is conceivable iff the common ground contains a world where
     the witness set has the right cardinality. -/
-abbrev presupSatisfiable (c : ContextSet W) (p : PartialProp W) : Prop :=
+abbrev presupSatisfiable (c : Set W) (p : PartialProp W) : Prop :=
   (c ∩ p.presup).Nonempty
 
 /-- A presupposition **projects** from context `c` iff it is NOT satisfied
     (not filtered). Projection is the complement of filtering. -/
-abbrev presupProjects (c : ContextSet W) (p : PartialProp W) : Prop :=
+abbrev presupProjects (c : Set W) (p : PartialProp W) : Prop :=
   ¬ presupSatisfied c p
 
 /-- **Accommodate** a presupposition: restrict the context to worlds where
     the presupposition holds.
 
     [lewis-1979]: "presupposition P comes into existence." -/
-abbrev accommodate (c : ContextSet W) (presup : Set W) : ContextSet W := c ∩ presup
+abbrev accommodate (c : Set W) (presup : Set W) : Set W := c ∩ presup
 
 /-- Accommodation is **informative** iff the presupposition is not already
     entailed — accommodation actually changes the context. -/
-abbrev accommodationInformative (c : ContextSet W) (presup : Set W) : Prop :=
+abbrev accommodationInformative (c : Set W) (presup : Set W) : Prop :=
   ¬ c ⊆ presup
 
 /-- Accommodation is **consistent** iff the restricted context is non-empty —
     the presupposition is compatible with the context. -/
-abbrev accommodationConsistent (c : ContextSet W) (presup : Set W) : Prop :=
+abbrev accommodationConsistent (c : Set W) (presup : Set W) : Prop :=
   (accommodate c presup).Nonempty
 
 /-! ### Theorems -/
 
 /-- Satisfaction implies satisfiability (when the context is non-empty). -/
-theorem satisfied_implies_satisfiable (c : ContextSet W) (p : PartialProp W)
+theorem satisfied_implies_satisfiable (c : Set W) (p : PartialProp W)
     (hne : c.Nonempty) (hsat : presupSatisfied c p) : presupSatisfiable c p := by
   obtain ⟨w, hw⟩ := hne
   exact ⟨w, hw, hsat hw⟩
 
 /-- If the presupposition is not even satisfiable, it projects. -/
-theorem not_satisfiable_implies_projects (c : ContextSet W) (p : PartialProp W)
+theorem not_satisfiable_implies_projects (c : Set W) (p : PartialProp W)
     (hne : c.Nonempty) (h : ¬ presupSatisfiable c p) : presupProjects c p :=
   fun hsat => h (satisfied_implies_satisfiable c p hne hsat)
 
 /-- After accommodation, the presupposition is satisfied. -/
-theorem accommodate_entails_presup (c : ContextSet W) (presup : Set W) :
+theorem accommodate_entails_presup (c : Set W) (presup : Set W) :
     accommodate c presup ⊆ presup :=
   Set.inter_subset_right
 
 /-- Accommodation is idempotent: accommodating what's already satisfied
     doesn't change the context. -/
-theorem accommodate_idempotent (c : ContextSet W) (presup : Set W)
+theorem accommodate_idempotent (c : Set W) (presup : Set W)
     (h : c ⊆ presup) : accommodate c presup = c :=
   Set.inter_eq_left.mpr h
 
 /-- Accommodation strengthens the context: fewer worlds survive. -/
-theorem accommodate_strengthens (c : ContextSet W) (presup : Set W) :
+theorem accommodate_strengthens (c : Set W) (presup : Set W) :
     accommodate c presup ⊆ c :=
   Set.inter_subset_left
 
 /-- Accommodation consistency = presupposition satisfiable in context. -/
-theorem accommodationConsistent_iff_satisfiable (c : ContextSet W) (p : PartialProp W) :
+theorem accommodationConsistent_iff_satisfiable (c : Set W) (p : PartialProp W) :
     accommodationConsistent c p.presup ↔ presupSatisfiable c p := Iff.rfl
 
 /-- Accommodation via `PartialProp.defined`: accommodating `p.presup` restricts
     to worlds where `p.defined` holds. -/
-theorem accommodate_eq_defined (c : ContextSet W) (p : PartialProp W) (w : W) :
+theorem accommodate_eq_defined (c : Set W) (p : PartialProp W) (w : W) :
     w ∈ accommodate c p.presup ↔ w ∈ c ∧ PartialProp.defined w p :=
   Iff.rfl
 
@@ -124,22 +123,22 @@ satisfies it (`presupSatisfied`), and projects otherwise
 
     This is why "If the king exists, the king is bald" doesn't presuppose
     king exists: the local context at "the king is bald" already entails it. -/
-def localCtxConsequent (c : ContextSet W) (antecedent : PartialProp W) : ContextSet W :=
-  ContextSet.update c antecedent.assertion
+def localCtxConsequent (c : Set W) (antecedent : PartialProp W) : Set W :=
+  c ∩ {w | antecedent.assertion w}
 
 /-- Local context for the second disjunct: "P or Q" gives Q the local
     context c + ¬P.assertion ([schlenker-2009], reconstructing
     [karttunen-1973]'s asymmetric disjunction rule). -/
-def localCtxSecondDisjunct (c : ContextSet W) (first : PartialProp W) : ContextSet W :=
+def localCtxSecondDisjunct (c : Set W) (first : PartialProp W) : Set W :=
   λ w => c w ∧ ¬first.assertion w
 
 /-- Local context under negation: unchanged — negation is a hole
     ([karttunen-1973]). -/
-def localCtxNegation (c : ContextSet W) : ContextSet W := c
+def localCtxNegation (c : Set W) : Set W := c
 
 /-- Presupposition of the consequent is filtered when the antecedent's
     assertion entails the presupposition throughout the context. -/
-theorem conditional_filters_when_entailed (c : ContextSet W) (p q : PartialProp W)
+theorem conditional_filters_when_entailed (c : Set W) (p q : PartialProp W)
     (h : ∀ w, c w → p.assertion w → q.presup w) :
     presupSatisfied (localCtxConsequent c p) q := by
   intro w hw
@@ -148,7 +147,7 @@ theorem conditional_filters_when_entailed (c : ContextSet W) (p q : PartialProp 
 
 /-- If the antecedent's assertion doesn't entail the consequent's
     presupposition somewhere in the context, it projects. -/
-theorem conditional_projects_when_not_entailed (c : ContextSet W) (p q : PartialProp W)
+theorem conditional_projects_when_not_entailed (c : Set W) (p q : PartialProp W)
     (h : ∃ w, c w ∧ p.assertion w ∧ ¬q.presup w) :
     presupProjects (localCtxConsequent c p) q := by
   obtain ⟨w, hw_in, hp_true, hq_false⟩ := h
@@ -157,7 +156,7 @@ theorem conditional_projects_when_not_entailed (c : ContextSet W) (p q : Partial
 
 /-- The stipulated local-context computation agrees with the Karttunen
     filtering implication formula ([karttunen-1973], [peters-1979]). -/
-theorem local_context_matches_impFilter (c : ContextSet W) (p q : PartialProp W) :
+theorem local_context_matches_impFilter (c : Set W) (p q : PartialProp W) :
     (∀ w, c w → (PartialProp.impFilter p q).presup w) ↔
     (∀ w, c w → p.presup w ∧ (p.assertion w → q.presup w)) :=
   Iff.rfl
@@ -172,7 +171,7 @@ theorem local_context_matches_impFilter (c : ContextSet W) (p q : PartialProp W)
     These are the same condition (currying/uncurrying the conjunction).
     Analogous to `local_context_matches_impFilter` for conditionals.
     [schlenker-2009], [karttunen-1973] -/
-theorem local_context_matches_disjFilterLeft (c : ContextSet W)
+theorem local_context_matches_disjFilterLeft (c : Set W)
     (firstDisjunct : PartialProp W) (second : PartialProp W) :
     presupSatisfied (localCtxSecondDisjunct c firstDisjunct) second ↔
     (∀ w, c w → (PartialProp.disjFilterLeft firstDisjunct.assertion second).presup w) := by

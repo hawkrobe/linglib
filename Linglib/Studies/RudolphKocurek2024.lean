@@ -34,7 +34,7 @@ delineation bridge, and the degree theory.
   (supplement §B) semantics.
 * `AssertoricContent`, `MetalinguisticCG` — acceptance and the common ground:
   the substrate's `ContextSet` at the ordering-world index, with assertion as
-  `ContextSet.update` and the Stalnaker laws inherited.
+  intersective update and the Stalnaker laws inherited.
 * `DistanceFunction`, `EvalVery`, `EvalSorta`, `EvalMostly`, `EvalMCond` —
   degree modifiers (§6.1) and metalinguistic conditionals (§6.3).
 * `degreeEquiv`, `strictlyBetter`, `MetaDegree` — the supplement's §C degree
@@ -48,7 +48,7 @@ delineation bridge, and the degree theory.
   l-liftings ([holliday-icard-2013]), extending the substrate's grounding of
   ≻; the distance-function axioms are exactly totality of "not far below".
 * `evalMCond_iff_entails` — for an MC-free consequent the conditional is
-  Stalnakerian `ContextSet.entails` of the consequent by the antecedent-cone.
+  Stalnakerian entailment (`⊆`) of the consequent by the antecedent-cone.
 * `eval_mc_iff_delineation_of_noReversal` — under No Reversal (§7) the MC is
   [klein-1980]'s `Delineation.comparativeSem`.
 * `mc_iff_degree_gt`, `me_iff_same_degree` — Facts 9–10: ≻ and ≈ are degree
@@ -556,14 +556,13 @@ instance [Fintype E] [DecidableEq E] [DecidableAtoms interp]
 omit [Fintype I] in
 /-- **Grounding in the common-ground substrate**: for an MC-free consequent —
 strictly weaker than the paper's reduction, which also assumes the antecedent
-MC-free — the metalinguistic conditional is Stalnakerian entailment
-(`ContextSet.entails`) of the consequent by the ranked antecedent-cone. The
+MC-free — the metalinguistic conditional is Stalnakerian entailment (`⊆`)
+of the consequent by the ranked antecedent-cone. The
 antecedent may contain ≻ freely: it is always evaluated at the full ordering,
 and an MC-free consequent never consults the restricted one. -/
 theorem evalMCond_iff_entails (hB : B.ComparativeFree) :
     EvalMCond interp A B ord i w ↔
-    CommonGround.ContextSet.entails
-      {x | ord.le x i ∧ ComparativeFormula.Realize interp A ord.le x w}
+    {x | ord.le x i ∧ ComparativeFormula.Realize interp A ord.le x w} ⊆
       {x | ComparativeFormula.Realize interp B ord.le x w} := by
   constructor
   · rintro h x ⟨hx1, hx2⟩
@@ -577,7 +576,6 @@ end Framework
 
 /-! ### Connection to Common Ground -/
 
-open CommonGround (ContextSet HasContextSet)
 
 /-- An ordering-world pair: the enriched index for the metalinguistic common
 ground — a Stalnakerian world that fixes interpretive as well as factual
@@ -586,9 +584,10 @@ structure OrderingWorldPair (I W : Type*) where
   ord : SemanticOrdering I
   world : W
 
-/-- The metalinguistic common ground IS the substrate's `ContextSet`, taken at
-the enriched index type: the Stalnaker generalization is "same object, richer worlds", so `ContextSet.update` and its laws apply unchanged. -/
-abbrev MetalinguisticCG (I W : Type*) := ContextSet (OrderingWorldPair I W)
+/-- The metalinguistic common ground IS the substrate's context set, taken at
+the enriched index type: the Stalnaker generalization is "same object, richer
+worlds", so intersective update and its laws apply unchanged. -/
+abbrev MetalinguisticCG (I W : Type*) := Set (OrderingWorldPair I W)
 
 namespace MetalinguisticCG
 
@@ -597,7 +596,7 @@ variable {I W : Type*}
 /-- Project to a classical context set: forget the ordering coordinate
 (`Set.image` of the world projection). A world survives iff some ordering
 paired with it does. -/
-def toContextSet (cg : MetalinguisticCG I W) : ContextSet W :=
+def toContextSet (cg : MetalinguisticCG I W) : Set W :=
   OrderingWorldPair.world '' cg
 
 variable {L : Language} {E : Type*} [Fintype I] [Fintype E] [DecidableEq E]
@@ -608,34 +607,34 @@ ordering-world pairs at which its assertoric content holds. -/
 def assertoricProp (φ : L.ComparativeFormula E) : Set (OrderingWorldPair I W) :=
   {pair | AssertoricContent interp φ pair.ord pair.world}
 
-/-- Assertion is the substrate's `ContextSet.update` with the assertoric
-proposition — not a new operation. -/
+/-- Assertion is intersective update with the assertoric proposition — not a
+new operation. -/
 def updateAssertoric (cg : MetalinguisticCG I W) (φ : L.ComparativeFormula E) :
     MetalinguisticCG I W :=
-  ContextSet.update cg (assertoricProp interp φ)
+  cg ∩ assertoricProp interp φ
 
 omit [Fintype E] [DecidableEq E] [DecidableAtoms interp] in
 /-- Stalnaker's law at the enriched type: assertion restricts the common
-ground (inherited from `ContextSet.update_restricts`). -/
+ground. -/
 theorem updateAssertoric_restricts (cg : MetalinguisticCG I W)
     (φ : L.ComparativeFormula E) : updateAssertoric interp cg φ ⊆ cg :=
-  ContextSet.update_restricts _ _
+  Set.inter_subset_left
 
 omit [Fintype E] [DecidableEq E] [DecidableAtoms interp] in
-/-- Assertion order is irrelevant (inherited from `ContextSet.update_comm`). -/
+/-- Assertion order is irrelevant. -/
 theorem updateAssertoric_comm (cg : MetalinguisticCG I W)
     (φ ψ : L.ComparativeFormula E) :
     updateAssertoric interp (updateAssertoric interp cg φ) ψ =
       updateAssertoric interp (updateAssertoric interp cg ψ) φ :=
-  ContextSet.update_comm _ _ _
+  Set.inter_right_comm _ _ _
 
 omit [Fintype E] [DecidableEq E] [DecidableAtoms interp] in
-/-- Reassertion is idempotent (inherited from `ContextSet.update_idem`). -/
+/-- Reassertion is idempotent. -/
 theorem updateAssertoric_idem (cg : MetalinguisticCG I W)
     (φ : L.ComparativeFormula E) :
     updateAssertoric interp (updateAssertoric interp cg φ) φ =
-      updateAssertoric interp cg φ :=
-  ContextSet.update_idem _ _
+      updateAssertoric interp cg φ := by
+  simp [updateAssertoric, Set.inter_assoc]
 
 omit [Fintype E] [DecidableEq E] [DecidableAtoms interp] in
 /-- The projection is monotone, so assertion restricts the projected classical
@@ -649,9 +648,9 @@ theorem toContextSet_updateAssertoric_subset (cg : MetalinguisticCG I W)
 
 end MetalinguisticCG
 
-/-- MetalinguisticCG projects to a ContextSet via HasContextSet. -/
-instance {I W : Type*} : HasContextSet (MetalinguisticCG I W) W where
-  toContextSet := MetalinguisticCG.toContextSet
+/-- MetalinguisticCG projects to a classical common ground. -/
+instance {I W : Type*} : HasCommonGround (MetalinguisticCG I W) W where
+  commonGround cg := Filter.principal cg.toContextSet
 
 noncomputable section DegreeTheory
 

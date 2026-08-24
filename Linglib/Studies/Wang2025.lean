@@ -184,7 +184,6 @@ theorem additive_deRe_available : ye_deRe.accepted = true := rfl
 -- ============================================================================
 
 open Semantics.Presupposition (PartialProp)
-open CommonGround (ContextSet)
 
 /-- Local Bool-valued accessibility used by Wang2025 for `List.all` evaluation
 of the speaker-K operator. The Prop-valued canonical version lives in
@@ -246,7 +245,7 @@ FP (Felicity Presupposition): the common ground entails the presupposition.
 Standard Stalnakerian presupposition satisfaction. When the CommonGround only partially
 entails the presupposition, FP is violated but may be tolerated.
 -/
-def satisfiesFP (cg : ContextSet W) (p : PartialProp W) : Prop :=
+def satisfiesFP (cg : Set W) (p : PartialProp W) : Prop :=
   ∀ w, cg w → PartialProp.defined w p
 
 /--
@@ -256,7 +255,7 @@ but not fully entailed.
 [wang-2025] Ch. 2-3: some triggers tolerate partial satisfaction (ye, you, reng)
 while others don't (jiu, zhidao).
 -/
-def partialFP (cg : ContextSet W) (p : PartialProp W) : Prop :=
+def partialFP (cg : Set W) (p : PartialProp W) : Prop :=
   (∃ w, cg w ∧ PartialProp.defined w p) ∧ ¬satisfiesFP cg p
 
 /--
@@ -266,7 +265,7 @@ form is more informative and the CommonGround supports its presupposition.
 MP is violated when the non-presuppositional alternative S is used despite
 the CommonGround supporting S_p's presupposition.
 -/
-def mpPrefers (cg : ContextSet W) (sp : PartialProp W) : Prop :=
+def mpPrefers (cg : Set W) (sp : PartialProp W) : Prop :=
   satisfiesFP cg sp ∧ satisfiesIC sp
 
 

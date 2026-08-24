@@ -312,11 +312,10 @@ end IndexedCommitment
 
 end Commitment
 
-/-! ### HasContextSet Instance -/
+/-! ### HasCommonGround instance -/
 
-open CommonGround in
-/-- A commitment slate projects to a context set. -/
-instance {W : Type*} : HasContextSet (Commitment.CommitmentSlate W) W where
-  toContextSet s := λ w => s.toContextSet w
+/-- A commitment slate's common ground: the principal filter of its context set. -/
+instance {W : Type*} : HasCommonGround (Commitment.CommitmentSlate W) W where
+  commonGround s := Filter.principal {w | s.toContextSet w}
 
 end Discourse
