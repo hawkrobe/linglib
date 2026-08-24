@@ -17,7 +17,7 @@ operate on the voice list.
 
 ## Main definitions
 
-* `PivotTarget` : the role a voice promotes to pivot (finer than `Extraction.MacroRole`).
+* `PivotTarget` : the role a voice promotes to pivot.
 * `VoiceEntry`, `VoiceSystemSymmetry` : one voice (name + promoted role); system symmetry.
 * `Voice.voiceCount` / `promotesRole` / `distinguishesObliques` / `isActivePassive`
   / `promotableRoles` : queries over a language's `List VoiceEntry`.
@@ -27,9 +27,9 @@ namespace Voice
 
 /-! ### Pivot target -/
 
-/-- Which argument role a voice promotes to pivot. Finer-grained than
-    `Extraction.MacroRole`: Philippine-type systems distinguish locative,
-    instrumental, benefactive, and circumstantial pivots, all collapsing to oblique. -/
+/-- Which argument a voice promotes to pivot. Philippine-type systems
+    distinguish locative, instrumental, benefactive, and circumstantial
+    pivots alongside agent and patient voices. -/
 inductive PivotTarget where
   | agent
   | patient
@@ -38,15 +38,6 @@ inductive PivotTarget where
   | benefactive
   | circumstantial
   deriving DecidableEq, Repr
-
-/-- Coarsen a `PivotTarget` to an `Extraction.MacroRole` (obliques collapse). -/
-def PivotTarget.toMacroRole : PivotTarget → Extraction.MacroRole
-  | .agent => .agent
-  | .patient => .patient
-  | .locative => .oblique
-  | .instrumental => .oblique
-  | .benefactive => .oblique
-  | .circumstantial => .oblique
 
 /-! ### Voice entry and symmetry -/
 

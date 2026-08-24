@@ -67,8 +67,8 @@ def StatusSuffix.form : StatusSuffix → String
   | .tv  => "-V'"
 
 -- The substantive claim "A-extraction is banned without AF" is expressed
--- as `Extraction.Marked Extraction.realize .subject` (subject = .agent's
--- default position per `Extraction.MacroRole.defaultPosition`).
+-- as `Extraction.Marked Extraction.realize .subject` (the agent's position
+-- in the basic transitive clause).
 
 /-! ### Agent Focus construction -/
 
