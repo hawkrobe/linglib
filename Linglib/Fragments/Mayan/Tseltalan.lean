@@ -13,7 +13,7 @@ Tseltal consistently suffixal).
 
 ## Main declarations
 
-* `Mayan.Tseltalan.GramFunction` with `.markerSet` and `.toArgumentRole?`:
+* `Mayan.Tseltalan.GrammaticalFunction` with `.markerSet` and `.toArgumentRole?`:
   the shared Split-S grammatical functions, their Set A / Set B assignment,
   and projection to the canonical `ArgumentRole`.
 * `Mayan.Tseltalan.absPosition`: the subgroup-level LOW-ABS constant.
@@ -37,7 +37,7 @@ open Mayan (MarkerSet)
 /-- Grammatical functions in Tseltalan — traditional Mayanist descriptive
     categories (footnote 9 of [aissen-polian-2025]) — determining which
     agreement marker set cross-references each argument. -/
-inductive GramFunction where
+inductive GrammaticalFunction where
   | A    -- transitive subject (agent)
   | S_A  -- intransitive subject (agentive)
   | S_O  -- intransitive subject (patientive)
@@ -49,7 +49,7 @@ inductive GramFunction where
 /-- The marker set cross-referencing each grammatical function (Set A =
     ergative/genitive, Set B = absolutive); shared across Tseltalan
     ([aissen-polian-2025], [polian-2013]). -/
-def GramFunction.markerSet : GramFunction → MarkerSet
+def GrammaticalFunction.markerSet : GrammaticalFunction → MarkerSet
   | .A   => .setA
   | .S_A => .setB
   | .S_O => .setB
@@ -62,14 +62,14 @@ def GramFunction.markerSet : GramFunction → MarkerSet
 /-- Ergative-genitive homophony: Set A cross-references both transitive
     agents and possessors. A pan-Mayan pattern. -/
 theorem erg_gen_homophonous :
-    GramFunction.A.markerSet = GramFunction.psr.markerSet := rfl
+    GrammaticalFunction.A.markerSet = GrammaticalFunction.psr.markerSet := rfl
 
 /-- All absolutive arguments (S_A, S_O, O, G) use Set B. -/
 theorem abs_uniform :
-    GramFunction.S_A.markerSet = .setB ∧
-    GramFunction.S_O.markerSet = .setB ∧
-    GramFunction.O.markerSet = .setB ∧
-    GramFunction.G.markerSet = .setB := ⟨rfl, rfl, rfl, rfl⟩
+    GrammaticalFunction.S_A.markerSet = .setB ∧
+    GrammaticalFunction.S_O.markerSet = .setB ∧
+    GrammaticalFunction.O.markerSet = .setB ∧
+    GrammaticalFunction.G.markerSet = .setB := ⟨rfl, rfl, rfl, rfl⟩
 
 /-! ### Absolutive position (LOW-ABS) -/
 
@@ -88,9 +88,9 @@ def absPosition : Mayan.ABSPosition := .low
     agentivity distinction (lossy but expected for cross-Mayan theorems that
     don't track Split-S); `.psr → none`, since possessors are DP-internal
     with no `ArgumentRole` analog. Cross-Mayan consumers use this projection;
-    the Aissen-Polian possessor-extraction analysis uses `GramFunction`
+    the Aissen-Polian possessor-extraction analysis uses `GrammaticalFunction`
     directly for its DP-internal claims. -/
-def GramFunction.toArgumentRole? : GramFunction → Option ArgumentRole
+def GrammaticalFunction.toArgumentRole? : GrammaticalFunction → Option ArgumentRole
   | .A   => some .A
   | .S_A => some .S
   | .S_O => some .S
