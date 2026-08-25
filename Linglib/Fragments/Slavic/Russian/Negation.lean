@@ -32,10 +32,6 @@ open Syntax.Negation
 def ne : Marker :=
   { morphs := [.free "не"] }
 
-/-- The Russian negation system: a single preverbal particle. -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "rus" [ne]
-
 /-- A Russian negation example. -/
 structure NegExample where
   affirmative : String

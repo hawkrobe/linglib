@@ -30,10 +30,6 @@ open Syntax.Negation
 def hira : Marker :=
   { morphs := [.suff "hira"] }
 
-/-- The Hixkaryana negation system: a single deverbalizing suffix. -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "hix" [hira]
-
 /-- A Hixkaryana negation example. -/
 structure NegExample where
   affirmative : String

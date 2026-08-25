@@ -46,10 +46,6 @@ def negSuffix : String := "-bu"
 def circumfix : Marker :=
   { morphs := [.pref "ma", .suff "bu"] }
 
-/-- The Burmese negation system: a single bipartite circumfix. -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "mya" [circumfix]
-
 /-- A Burmese negation paradigm entry showing TAM neutralization. -/
 structure NegParadigmEntry where
   tamLabel : String

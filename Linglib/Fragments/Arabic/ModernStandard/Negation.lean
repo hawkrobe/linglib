@@ -5,21 +5,19 @@ import Linglib.Syntax.Negation
 
 The MSA standard-negation inventory — four preverbal particles (*laa*, *lam*,
 *lan*, *maa*) plus the inflecting copular verb *lays-a* 'to not be' — typed
-against `Syntax.Negation` and bundled into a `NegationSystem`.
+against `Syntax.Negation`.
 
 ## Main definitions
 
 * `negMarkers` — the five sentential negators.
-* `negationSystem` — markers plus WALS Ch 112A/143A/144A datapoints (`ofISO "arb"`).
 
 ## Implementation notes
 
 *lam* / *lan* condition a mood shift (jussive / subjunctive) on an otherwise
 finite verb, and *lays-a* supplies a finite copula where the affirmative is
 verbless. MSA (`arb`) is absent from [miestamo-2005] and from WALS
-Ch 113A/114A (which carry only Egyptian `arz`), so no symmetric/asymmetric
-coding is recorded here; the position fields (Ch 143A/144A) are WALS-pulled
-by `NegationSystem.ofISO`.
+Ch 113A/114A, which carry only Egyptian `arz`, so no symmetric/asymmetric
+coding is recorded here.
 
 ## References
 
@@ -49,10 +47,5 @@ def negMarkers : List Marker :=
   , { morphs := [.free "lays-a"]
     , gloss := "NEG.COP" }
   ]
-
-/-- Bundled `NegationSystem` (markers + WALS Ch 112A/143A/144A datapoints
-    pulled from `Data.WALS` by ISO code `arb`). -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "arb" negMarkers
 
 end Arabic.ModernStandard.Negation

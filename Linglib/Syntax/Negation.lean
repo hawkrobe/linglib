@@ -1,8 +1,5 @@
-import Linglib.Data.WALS.Datapoint
 import Linglib.Data.WALS.Features.F112A
 import Linglib.Data.WALS.Features.F114A
-import Linglib.Data.WALS.Features.F143A
-import Linglib.Data.WALS.Features.F144A
 import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Features.Grammaticalization
 import Linglib.Morphology.Morph
@@ -25,8 +22,6 @@ classifying them, with per-ISO access to the WALS negation chapters.
 ## Main declarations
 
 * `Marker`: a standard negation marker, as the morphs exponing it.
-* `NegationSystem`: a language's markers keyed by ISO 639-3 code, with
-  its WALS Ch 112A/143A/144A values derived from that key.
 * `Strategy`: negative verb, affix, or particle — the grain at which
   negation meets auxiliary-verb constructions and the
   grammaticalization cline.
@@ -37,9 +32,8 @@ classifying them, with per-ISO access to the WALS negation chapters.
 ## Implementation notes
 
 The WALS chapters are the source of truth for the typological values, so
-the accessors return the `Data.WALS` enums rather than re-labelled
-copies, and `NegationSystem` derives its datapoints from the ISO code
-rather than storing them. An analysis reaching beyond WALS keeps its own
+the accessor returns the `Data.WALS` enum rather than a re-labelled
+copy. An analysis reaching beyond WALS keeps its own
 vocabulary in its study: [miestamo-2005]'s asymmetry subtypes, which
 separate an emphasis subtype the atlas does not encode, live in
 `Studies/Miestamo2005.lean`.
@@ -55,7 +49,7 @@ marker-side data; they live in `Fragments/{Lang}/PolarityItems.lean`.
 
 ## References
 
-* [dryer-2013-wals], Ch 112A, 143A
+* [dryer-2013-wals], Ch 112A
 * [miestamo-2013], Ch 114A
 * [miestamo-2005]
 * [anderson-2006], §1.7.2
@@ -82,38 +76,6 @@ structure Marker where
 /-- The surface form of a marker: its morphs with boundary notation,
 discontinuous pieces separated by `…`. -/
 def Marker.form (m : Marker) : String := toString m.morphs
-
-/-- A language's standard negation system: the marker or markers, keyed
-by ISO 639-3 code.
-
-Several markers handle mood-, aspect- or lexical-class-conditioned
-alternation (Greek, Mandarin, Korean); most languages have one. -/
-structure NegationSystem where
-  /-- ISO 639-3 code, the key for the language's WALS values. -/
-  iso : String := ""
-  /-- The negation marker(s), unmarked context first. -/
-  markers : List Marker
-  deriving Repr
-
-/-- WALS Ch 112A: the language's negative-morpheme classification. -/
-def NegationSystem.wals112A (s : NegationSystem) :
-    Option Data.WALS.F112A.NegativeMorphemeType :=
-  (Data.WALS.F112A.lookupISO s.iso).map (·.value)
-
-/-- WALS Ch 143A: the order of negative morpheme and verb. -/
-def NegationSystem.wals143A (s : NegationSystem) :
-    Option Data.WALS.F143A.NegVerbOrder :=
-  (Data.WALS.F143A.lookupISO s.iso).map (·.value)
-
-/-- WALS Ch 144A: the negative word's position relative to subject,
-object and verb. -/
-def NegationSystem.wals144A (s : NegationSystem) :
-    Option Data.WALS.F144A.PositionOfNegativeWordWithRespectToSubjectObjectAndVerb :=
-  (Data.WALS.F144A.lookupISO s.iso).map (·.value)
-
-/-- The negation system of the language with the given ISO 639-3 code. -/
-def NegationSystem.ofISO (iso : String) (markers : List Marker) : NegationSystem :=
-  { iso, markers }
 
 /-! ### Per-language WALS values -/
 
