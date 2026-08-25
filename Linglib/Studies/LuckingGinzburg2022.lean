@@ -1,4 +1,4 @@
-import Linglib.Studies.Cooper2023.Ch7
+import Linglib.Semantics.Quantification.Witness
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Quantification.NumberTree
 import Mathlib.Data.Finset.Powerset
@@ -34,12 +34,11 @@ a **descriptive quantifier condition** (q-cond), and a **quantifier perspective*
 - **GQT properties**: `Quantification.Quantifier` —
   `GQ`, `Conservative`
 - **Conservative count**: `Quantification.conservativeQuantifierCount`
-- **Dog example**: reuses `DogWorld` from TTR Ch. 7
+- **Dog example**: the dog world of [cooper-2023] Ch. 7, restated here
 -/
 
 namespace LuckingGinzburg2022
 
-open Cooper2023Ch7
 open Quantification
 
 -- ============================================================================
@@ -199,7 +198,21 @@ referentiality (refset in dgb-params vs q-params) and plurality — distinctions
 orthogonal to RTT's q-persp mechanism. RTT's novel prediction is specifically
 about **compset accessibility**, which we derive here. -/
 
-open Cooper2023Ch7 (DogWorld)
+/-- The individuals of the dog example of [cooper-2023] Ch. 7. -/
+inductive DogWorld
+  | fido | rex | spot | luna
+  deriving DecidableEq, Repr
+
+instance : Fintype DogWorld where
+  elems := {.fido, .rex, .spot, .luna}
+  complete x := by cases x <;> decide
+
+/-- Fido, Rex and Spot are dogs. -/
+def isDog : DogWorld → Prop
+  | .luna => False
+  | _ => True
+
+instance : DecidablePred isDog := λ x => by cases x <;> simp [isDog] <;> infer_instance
 
 /-- Prop version of `isDog` for decidable sieving. -/
 def isDogB : DogWorld → Prop
