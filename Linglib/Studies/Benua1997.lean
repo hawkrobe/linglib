@@ -1,4 +1,5 @@
 import Linglib.Phonology.OptimalityTheory.Correspondence
+import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Transderivational identity: [benua-1997]
@@ -14,7 +15,7 @@ violation of a dominant one is *recursive evaluation* (§2.3.1): the hierarchy
 is duplicated, the base's recursion dominating the derived word's, so
 misapplication in the base is always fatal (the priority of the base) and a
 paradigm competes by the base's violation profile first and the derived word's
-second. `recursive` states this over the substrate's `Corr`, `Constraint` and
+second. `recursive` states this over the substrate's `Correspondence`, `Constraint` and
 `Tableau`; `nonrecursive` is the summed evaluation the paper shows going wrong
 in (57), (88) and (119).
 
@@ -35,7 +36,6 @@ guttural CODACOND (§4.3.3), opacity (§4.4.3), and the serial alternatives (§3
 namespace Benua1997
 
 open Constraints OptimalityTheory
-open OptimalityTheory.Correspondence (Corr)
 
 variable {α : Type*} {ρ : Type*}
 
@@ -46,66 +46,53 @@ inductive Role
   | baseInput | base | derivInput | derivative
   deriving DecidableEq, Repr
 
-/-- The correspondence relation given by index pairs; pairs out of range are dropped. -/
-def edgeOf (m n : ℕ) (pairs : List (ℕ × ℕ)) : Finset (Fin m × Fin n) :=
-  (pairs.filterMap λ p =>
-    if h : p.1 < m ∧ p.2 < n then some (⟨p.1, h.1⟩, ⟨p.2, h.2⟩) else none).toFinset
-
 /-- The parallel correspondence `(0,0), …, (k-1,k-1)`. -/
 def parallel (k : ℕ) : List (ℕ × ℕ) := (List.range k).map λ i => (i, i)
 
 /-- A subparadigm: the base and the derived word with their inputs, and the three
 correspondence relations of (11) — each word's IO relation and the OO relation. -/
-def paradigm (bIn b dIn d : List α) (ioB ioD oo : List (ℕ × ℕ)) : Corr Role α where
-  form
-    | .baseInput => bIn
-    | .base => b
-    | .derivInput => dIn
-    | .derivative => d
-  edge r₁ r₂ :=
-    match r₁, r₂ with
-    | .baseInput, .base => edgeOf bIn.length b.length ioB
-    | .derivInput, .derivative => edgeOf dIn.length d.length ioD
-    | .base, .derivative => edgeOf b.length d.length oo
-    | _, _ => ∅
+def paradigm (bIn b dIn d : List α) (ioB ioD oo : List (ℕ × ℕ)) : Correspondence Role α :=
+  .ofPairs (λ | .baseInput => bIn | .base => b | .derivInput => dIn | .derivative => d)
+    λ | .baseInput, .base => ioB | .derivInput, .derivative => ioD | .base, .derivative => oo
+      | _, _ => []
 
 /-- A constraint of the hierarchy read at each word of the subparadigm: a markedness
 constraint on the word's output, IO-Faith on its IO relation, OO-Identity on the OO
 relation and vacuous at the base, which bears none (§2.3.1). -/
 structure ParadigmConstraint (α : Type*) where
-  atBase : Corr Role α → ℕ
-  atDerived : Corr Role α → ℕ
+  atBase : Correspondence Role α → ℕ
+  atDerived : Correspondence Role α → ℕ
 
 /-- A markedness constraint, read off each output. -/
 def markedness (m : List α → ℕ) : ρ → ParadigmConstraint α :=
   λ _ => ⟨λ c => m (c.form .base), λ c => m (c.form .derivative)⟩
 
 /-- An IO-Faith constraint, read off each word's IO relation. -/
-def ioFaith (f : Corr Role α → Role → Role → ℕ) : ρ → ParadigmConstraint α :=
+def ioFaith (f : Correspondence Role α → Role → Role → ℕ) : ρ → ParadigmConstraint α :=
   λ _ => ⟨λ c => f c .baseInput .base, λ c => f c .derivInput .derivative⟩
 
 /-- The OO-Identity constraint proper to the relation `rel`: read off the OO relation of
 a paradigm bearing `rel`, vacuous on paradigms bearing another (§4.6.3) and at the base. -/
-def ooIdentity [DecidableEq ρ] (rel : ρ) (f : Corr Role α → Role → Role → ℕ) :
+def ooIdentity [DecidableEq ρ] (rel : ρ) (f : Correspondence Role α → Role → Role → ℕ) :
     ρ → ParadigmConstraint α :=
   λ r => ⟨λ _ => 0, λ c => if r = rel then f c .base .derivative else 0⟩
 
 /-- Recursive evaluation (§2.3.1): the ranking is duplicated and the recursions ranked,
 the base's above the derived word's, for paradigms bearing relation `r`. -/
 def recursive (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
-    List (Constraint (Corr Role α)) :=
+    List (Constraint (Correspondence Role α)) :=
   ranking.map (λ k => (k r).atBase) ++ ranking.map (λ k => (k r).atDerived)
 
 /-- Non-recursive evaluation, each constraint's violations tallied over both words — the
 evaluation of (57), (88), (119). -/
 def nonrecursive (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :
-    List (Constraint (Corr Role α)) :=
+    List (Constraint (Correspondence Role α)) :=
   ranking.map λ k c => (k r).atBase c + (k r).atDerived c
 
 /-- The tableau of the labelled candidate paradigms `cand` under `eval` — `recursive` or
 `nonrecursive` — for paradigms bearing `r`. -/
-def tableau {L : Type*} [DecidableEq L] (cand : L → Corr Role α) (labels : List L)
-    (eval : List (ρ → ParadigmConstraint α) → ρ → List (Constraint (Corr Role α)))
+def tableau {L : Type*} [DecidableEq L] (cand : L → Correspondence Role α) (labels : List L)
+    (eval : List (ρ → ParadigmConstraint α) → ρ → List (Constraint (Correspondence Role α)))
     (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) (h : labels ≠ [] := by decide) :=
   Tableau.ofRanking labels ((eval ranking r).map (Constraint.comap cand)) h
 
@@ -145,12 +132,12 @@ def aerSigma : List Seg → ℕ
 
 /-- (15): `OO-IDENT[BK] >> *ær]σ >> IO-IDENT[BK]`. -/
 def ranking : List (Unit → ParadigmConstraint Seg) :=
-  [ooIdentity () (Corr.identViolFeature back), markedness aerSigma,
-   ioFaith (Corr.identViolFeature back)]
+  [ooIdentity () (Correspondence.identViolFeature back), markedness aerSigma,
+   ioFaith (Correspondence.identViolFeature back)]
 
 /-- The paradigms of (16): base *L[a]rry* or *L[æ]rry* with diminutive *L[a]r* or
 *L[æ]r*, from the inputs `/læri/` and `/læri + TRUNC/`. -/
-def cand : Cand4 → Corr Role Seg
+def cand : Cand4 → Correspondence Role Seg
   | .a => paradigm [.l, .ae, .r, .i] [.l, .a, .r, .i] [.l, .ae, .r, .i] [.l, .a, .r]
       (parallel 4) (parallel 3) (parallel 3)
   | .b => paradigm [.l, .ae, .r, .i] [.l, .a, .r, .i] [.l, .ae, .r, .i] [.l, .ae, .r]
@@ -209,8 +196,8 @@ def vNas (w : List Seg) : ℕ := w.count .nasalV
 
 /-- (58): `*NVORAL >> OO-IDENT[NAS] >> *VNAS >> IO-IDENT[NAS]`. -/
 def ranking : List (Unit → ParadigmConstraint Seg) :=
-  [markedness nvOral, ooIdentity () (Corr.identViolFeature nasal), markedness vNas,
-   ioFaith (Corr.identViolFeature nasal)]
+  [markedness nvOral, ooIdentity () (Correspondence.identViolFeature nasal), markedness vNas,
+   ioFaith (Correspondence.identViolFeature nasal)]
 
 /-- (47): the four rich inputs for *ŋãtur* 'arrange' and the candidates *ŋatur, ŋatũr,
 ŋãtũr, ŋãtur*. -/
@@ -230,7 +217,7 @@ allophony is decided by markedness over the rich input. -/
 theorem allophony : ∀ input ∈ inputs,
     (Tableau.ofRanking [.a, .b, .c, .d]
       [Constraint.comap word nvOral, Constraint.comap word vNas,
-       λ w => (Corr.parallel input (word w)).identViolFeature nasal .lhs .rhs]).optimal =
+       λ w => (Correspondence.parallel input (word w)).identViolFeature nasal .lhs .rhs]).optimal =
       {Cand4.d} := by
   decide
 
@@ -243,7 +230,7 @@ def infixOO : List (ℕ × ℕ) := [(0, 0), (1, 3), (2, 4), (3, 5)]
 
 /-- The paradigms of (52): base *ɲiar* or *ɲĩãr*, plural *ɲ-ãl-iar* or *ɲ-ãl-ĩãr*, from the
 inputs `/ɲĩãr/` and `/ãl + ɲĩãr/`. -/
-def plural : Cand4 → Corr Role Seg
+def plural : Cand4 → Correspondence Role Seg
   | .a => paradigm [.nasalC, .nasalV, .nasalV, .oralC] [.nasalC, .oralV, .oralV, .oralC]
       [.nasalV, .oralC, .nasalC, .nasalV, .nasalV, .oralC]
       [.nasalC, .nasalV, .oralC, .oralV, .oralV, .oralC] (parallel 4) infixIO infixOO
@@ -270,7 +257,7 @@ def umIO : List (ℕ × ℕ) := [(0, 1), (1, 2), (2, 0), (3, 3), (4, 4), (5, 5),
 
 /-- The paradigms of (55), all on the canonical base *dəhəs*: the infixed word's vowels
 oral or nasal in the infix and in the root. -/
-def approach : Cand4 → Corr Role Seg
+def approach : Cand4 → Correspondence Role Seg
   | .a => paradigm base base input
       [.oralC, .oralV, .nasalC, .oralV, .laryngeal, .oralV, .oralC] (parallel 5) umIO umOO
   | .b => paradigm base base input
@@ -290,7 +277,7 @@ theorem normalApplication :
 
 /-- (56)/(57): the base *də̃hə̃s* that would overapply to restore identity against the
 canonical *dəhəs*. -/
-def baseChoice : Cand3 → Corr Role Seg
+def baseChoice : Cand3 → Correspondence Role Seg
   | .a => paradigm approach.base [.oralC, .nasalV, .laryngeal, .nasalV, .oralC] approach.input
       [.oralC, .oralV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (parallel 5) umIO umOO
   | _ => approach .c
@@ -382,18 +369,18 @@ def spir (w : List Seg) : ℕ := w.count .spirant
 
 /-- The epenthesis hierarchy of (93): `SON-CON >> OOJ-DEP >> *COMPLEX-CODA >> IO-DEP`. -/
 def epenthesis : List (Relation → ParadigmConstraint Seg) :=
-  [markedness sonCon, ooIdentity .jussive Corr.depViol, markedness complexCoda,
-   ioFaith Corr.depViol]
+  [markedness sonCon, ooIdentity .jussive Correspondence.depViol, markedness complexCoda,
+   ioFaith Correspondence.depViol]
 
 /-- The spirantization hierarchy of (137). -/
 def spirantization : List (Relation → ParadigmConstraint Seg) :=
-  [ooIdentity .jussive (Corr.identViolFeature continuant), markedness vStop, markedness spir,
-   ooIdentity .imperative (Corr.identViolFeature continuant),
-   ioFaith (Corr.identViolFeature continuant)]
+  [ooIdentity .jussive (Correspondence.identViolFeature continuant), markedness vStop, markedness spir,
+   ooIdentity .imperative (Correspondence.identViolFeature continuant),
+   ioFaith (Correspondence.identViolFeature continuant)]
 
 /-- The jussive paradigms of (87), from `/ya-šbē/` and `/ya-šbē-TRUNC/`: the base *yi.šə.bē*
 or *yiš.bē*, the jussive *yi.šeb* or *yišb*. -/
-def captive : Cand4 → Corr Role Seg
+def captive : Cand4 → Correspondence Role Seg
   | .a => paradigm input [.glide, .vowel, .sibilant, .vowel, .stop, .vowel] input
       [.glide, .vowel, .sibilant, .vowel, .stop] epenthetic epenthetic (parallel 5)
   | .b => paradigm input [.glide, .vowel, .sibilant, .vowel, .stop, .vowel] input
@@ -422,7 +409,7 @@ theorem epenthesis_overapplies_nonrecursive :
 
 /-- The paradigms of (92), from `/ya-glē/`: base *yi.ɣə.lē* or *yiɣ.lē*, jussive *yi.ɣel* or
 *yiɣl*. -/
-def uncover : Cand3 → Corr Role Seg
+def uncover : Cand3 → Correspondence Role Seg
   | .a => paradigm input [.glide, .vowel, .spirant, .vowel, .liquid, .vowel] input
       [.glide, .vowel, .spirant, .vowel, .liquid] captive.epenthetic captive.epenthetic
       (parallel 5)
@@ -442,7 +429,7 @@ theorem tetru :
 
 /-- The 2fs paradigms of (118), from `/šamaʕ-tī/` and its truncation: the base's coronal
 a stop or a spirant, the 2fs stem's a stop or a spirant after the epenthetic vowel. -/
-def heard : Cand3 → Corr Role Seg
+def heard : Cand3 → Correspondence Role Seg
   | .a => paradigm input (stem .spirant .vowel) input (stem .vowel .spirant) (parallel 7)
       truncated truncated
   | .b => paradigm input (stem .stop .vowel) input (stem .vowel .spirant) (parallel 7)
@@ -470,7 +457,7 @@ theorem spirantization_overapplies_nonrecursive :
 
 /-- The imperative paradigms of (135), from `/ya-ktōb/`: base *yikθōβ* or *yixtōβ*, imperative
 *kəθōβ* or *xətōβ*. -/
-def write : Cand3 → Corr Role Seg
+def write : Cand3 → Correspondence Role Seg
   | .a => paradigm input [.glide, .vowel, .stop, .spirant, .vowel, .spirant] input
       [.stop, .vowel, .spirant, .vowel, .spirant] (parallel 6) imperativeIO imperativeOO
   | .b => paradigm input [.glide, .vowel, .spirant, .stop, .vowel, .spirant] input
