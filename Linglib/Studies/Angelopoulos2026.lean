@@ -374,6 +374,6 @@ Functional Application (§7.3). -/
 theorem transparency_conflates_axes :
     ¬ Bondarenko2022.transparentSSMapping .bareArgument ∧
     bareOtiAttested .complement .viaSituation :=
-  ⟨Bondarenko2022.bare_argument_predicted_impossible, trivial⟩
+  ⟨Bondarenko2022.not_transparentSSMapping_bareArgument, trivial⟩
 
 end Angelopoulos2026

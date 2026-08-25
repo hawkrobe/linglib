@@ -1,533 +1,386 @@
 import Linglib.Semantics.Attitudes.Anchor
+import Linglib.Semantics.Truthmaker.Inexact
 import Linglib.Fragments.Buryat.Complementizers
 import Linglib.Fragments.Korean.Complementizers
 import Linglib.Syntax.Category.Verb.Complement.Takes
 import Linglib.Data.Examples.Bondarenko2022
 
 /-!
-# Bondarenko 2022: Anatomy of an Attitude
+# [bondarenko-2022] — Anatomy of an Attitude
 
-[bondarenko-2022]
+Embedded clauses come in two sorts. A Cont-CP denotes a predicate of
+individuals with propositional content, CONT(x) = p ([kratzer-2006],
+[moulton-2015]), and projects a ContP whose head is overt in Buryat (*gɘ*
+'say') and Korean (*-ta*) and null in English and Russian; a Sit-CP
+denotes a predicate of situations exemplifying p ([kratzer-1989]) and
+lacks that layer. Content nouns take truth predicates and reject
+occurrence predicates, situation nouns the reverse, and a Sit-CP is
+referentially transparent where a Cont-CP is opaque. Content is fixed by
+equality rather than subset or overlap, which makes CONT a function and
+rules out clausal conjunction under one content individual
+([bassi-bondarenko-2021]).
 
-Embedded CPs receive two denotations, tracking a left-peripheral syntactic
-distinction (§1.1.1, ex. 1): a Cont-CP denotes a predicate on content
-individuals via CONT ([kratzer-2006]; [moulton-2009]; [moulton-2015];
-[elliott-2020-embedding]) and projects a ContP; a Sit-CP denotes a predicate
-on minimal exemplifying situations ([kratzer-1989]) and lacks one. ContP is
-overt in Korean (*-ta*) and Buryat (*gɘ* 'say'), null in English and Russian.
+With verbs, a clause composes either through the verb's situation
+argument by Predicate Modification or through a DP argument by Functional
+Application, and the thesis's mapping claim is that bare clauses take only
+the first path and nominalized clauses only the second: a bare CP is a
+predicate of situations, a nominalized CP an individual, and every Θ-head
+(Causer, Theme, About) wants an individual. [angelopoulos-2026] later
+attacks this mapping with Greek *oti*-clauses.
 
-Formalized here: equality semantics for displacement (eq. 7) against subset
-(eq. 10) and existential (eq. 15), whence the impossibility of true CP
-conjunction ([bassi-bondarenko-2021]); Sit-CP transparency vs Cont-CP opacity
-(§1.1.1.1 ex. 5-6); and the transparent syntax-semantics mapping thesis
-(§1.1.2, ch. 4) — bare CPs compose only as modifiers, nominalized CPs only as
-arguments — later attacked by [angelopoulos-2026] (comparison in
-`Studies/Angelopoulos2026.lean`, per the chronology rule).
-
-## Main declarations
-
-- `ExistentialContent` — the rejected existential semantics (eq. 15)
-- `cont_function_blocks_conjunction` — equality forces CONT-functionality
-- `ReferentiallyTransparentAt`, `comp_not_transparentAt` — the weak
-  transparency contrast
-- `saturatesTheta`, `bareCP_satisfies_no_theta` — the ch. 4 type-mismatch
-  mechanism behind the Causer/Theme/About bans
-- `transparentSSMapping`, `transparentSSMapping_iff_typed` — the mapping table
-  and its type-theoretic derivation
-- `NominalSort.truthEvaluable`, `NominalSort.occurrenceCompatible` — the ch. 2
-  co-occurrence asymmetries
-- `ContAnalysis`, `buryatAnalysis`, `koreanAnalysis` — per-language ContP
-  exponence, tied by law to the fragment inventories
-- `compHead` — the Comp head denotation (§2.3 ex. 151)
-
-## Implementation notes
-
-Bare `§`/`ex.`/`eq.` locators refer to the dissertation. Sections track different chapters: nominal sorts through the
-BE2026 bridge follow the ch. 1 summary, the type-theoretic sections ch. 4
-(§§4.2-4.5), the co-occurrence and head-denotation sections ch. 2 (§2.2.3,
-§2.3). The ch. 1 summary repeats later material: Table 1.1 = Table 4.1, and
-ch. 1 ex. 1 = §4.2 ex. 1-2.
-
-Out of scope: ch. 3 clausal coordination (only the conjunction-impossibility
-theorem lands here), ch. 5 polarity subjunctives (Russian NPI data,
-L-analyticity), and the morphological exposition of ContP, which lives in
-`Fragments/Buryat/Complementizers.lean` and
-`Fragments/Korean/Complementizers.lean`.
-
-Typed paradigm sentences (§2.2.3 ex. 105–112, 120–122; §4.3.1 ex. 30–32) live
-in `Bondarenko2022.Examples`, generated from `Data/Examples/Bondarenko2022.json`.
+The ch. 2 diagnostics and the Buryat clause shapes are checked here against
+the thesis's own examples (`Bondarenko2022.Examples`); the per-language
+Cont/Comp head assignments are stated over the Buryat and Korean fragment
+inventories.
 -/
 
 namespace Bondarenko2022
 
 open Anchor (comp)
+open Data.Examples Buryat
 
 /-! ### Nominal sorts -/
 
-/-- The dissertation's typology of nouns combining with embedded CPs (§2.2).
-Studies-local: the substrate (`ContentIndividual`, `SituationIndividual`)
-lives in `Semantics/Attitudes/`. -/
+/-- The two sorts of clause-taking noun (§2.2): content nouns (*idea*,
+*claim*, *rumor*) and situation nouns (*situation*, *event*, *case*). -/
 inductive NominalSort where
-  /-- Content nouns (§2.2): *idea*, *rumor*, *hypothesis*, *claim*, *fact*,
-      *lie*. -/
   | content
-  /-- Situation nouns (§2.2): *situation*, *event*, *case*, *circumstance*,
-      *state of affairs*. -/
   | situation
   deriving DecidableEq, Fintype, Repr
 
-/-! ### Equality vs. subset vs. existential semantics
+/-- Combines with 'true' / 'false' / 'mistaken'. -/
+def NominalSort.truthEvaluable : NominalSort → Prop
+  | .content => True
+  | .situation => False
 
-§1.1.1.2. The substrate exposes equality as `comp` and subset as
-`ContentIndividual.entails`; only the existential candidate is new here. -/
+/-- Combines with 'occur' / 'happen' / 'notice'. -/
+def NominalSort.occurrenceCompatible : NominalSort → Prop
+  | .content => False
+  | .situation => True
 
-/-- Existential semantics for a Cont-CP (eq. 15): `CONT(x) ∩ p ≠ ∅`. Rejected
-by the thesis in favor of equality (`comp`, eq. 7); subset is eq. 10. -/
-def ExistentialContent {W : Type*} (xc : ContentIndividual W)
-    (p : W → Prop) : Prop :=
-  ∃ w : W, xc.cont w ∧ p w
+instance : DecidablePred NominalSort.truthEvaluable
+  | .content => isTrue trivial
+  | .situation => isFalse id
 
-/-- Equality is stronger than subset (§1.1.1.2); re-export of
-`ContentIndividual.eq_implies_entails`. -/
-theorem equality_implies_subset {W : Type*} (xc : ContentIndividual W)
-    (p : W → Prop) : comp p xc → xc.entails p :=
-  ContentIndividual.eq_implies_entails xc p
+instance : DecidablePred NominalSort.occurrenceCompatible
+  | .content => isFalse id
+  | .situation => isTrue trivial
 
-/-- Equality implies existential for nonempty content; the empty-content
-witness in `ContentIndividual` shows the proviso is real. -/
-theorem equality_implies_existential {W : Type*}
-    (xc : ContentIndividual W) (p : W → Prop)
-    (hne : ∃ w, xc.cont w) :
-    comp p xc → ExistentialContent xc p := by
-  intro heq
-  obtain ⟨w, hw⟩ := hne
-  exact ⟨w, hw, heq ▸ hw⟩
+/-- The predicate a co-occurrence example tests the noun against. -/
+inductive Diagnostic where
+  | truth
+  | occurrence
+  deriving DecidableEq, Repr
 
-/-! ### CP conjunction impossibility
+def parseSort : String → Option NominalSort
+  | "content" => some .content
+  | "situation" => some .situation
+  | _ => none
 
-Equality semantics makes CONT a function, so true CP conjunction is impossible
-([bassi-bondarenko-2021], §1.1.1.2). -/
+def parseDiagnostic : String → Option Diagnostic
+  | "truth-predicates" => some .truth
+  | "occurrence-predicates" | "situation-only-predicate-notice" => some .occurrence
+  | _ => none
 
-/-- Equality forces functionality: two contents assigned to the same
-individual coincide. -/
-theorem cont_function_blocks_conjunction {W : Type*}
-    (xc : ContentIndividual W) (p1 p2 : W → Prop) :
-    comp p1 xc → comp p2 xc → p1 = p2 := by
-  intro h1 h2
-  exact h1.symm.trans h2
+/-- A noun of a given sort under a diagnostic predicate, with its
+judgment. -/
+structure CooccurrenceDatum where
+  sort : NominalSort
+  diagnostic : Diagnostic
+  acceptable : Bool
+  deriving DecidableEq, Repr
 
-/-- Subset does not force functionality: a non-vacuous content individual
-entails every superset of its content. Witness over `Bool`. -/
-theorem subset_does_not_force_functionality :
-    ¬ ∀ (xc : ContentIndividual Bool) (p1 p2 : Bool → Prop),
-      xc.entails p1 → xc.entails p2 → p1 = p2 := by
-  intro h
-  -- Non-vacuous witness: content holds exactly at `true`.
-  let xc : ContentIndividual Bool := ⟨fun b => b = true⟩
-  have h_p1 : xc.entails (fun b => b = true) := fun _ hb => hb
-  have h_p2 : xc.entails (fun _ => True) := fun _ _ => trivial
-  have heq : (fun b : Bool => b = true) = (fun _ : Bool => True) :=
-    h xc _ _ h_p1 h_p2
-  -- The propositions disagree at `false`.
-  exact (iff_of_eq (congr_fun heq false)).mpr trivial |> Bool.noConfusion
+def cooccurrenceDatum (e : LinguisticExample) : Option CooccurrenceDatum := do
+  let s ← parseSort (← e.paperFeatures.lookup "nounSort")
+  let d ← parseDiagnostic (← e.paperFeatures.lookup "diagnostic")
+  some ⟨s, d, e.judgment == Features.Judgment.acceptable⟩
 
-/-! ### Sit-CP transparency vs. Cont-CP opacity
+/-- The ch. 2 co-occurrence examples. -/
+def cooccurrenceData : List CooccurrenceDatum := Examples.all.filterMap cooccurrenceDatum
 
-The substitution test (§2.2.3 ex. 120-122; summarized at ch. 1 ex. 5-6):
-coextensional DPs substitute salva veritate under a Sit-NP but not under a
-Cont-NP — Cont-CPs are a referentially opaque domain ([barwise-1981],
-[higginbotham-1983]). Everywhere-coextensional transparency is
-`funext`-trivial; the substantive notion is transparency at the evaluation
-world. -/
+/-- Which predicate the datum's sort should accept. -/
+def Diagnostic.accepts : Diagnostic → NominalSort → Prop
+  | .truth, s => s.truthEvaluable
+  | .occurrence, s => s.occurrenceCompatible
 
-/-- Weak transparency at `s`: substituting predicates that agree at `s`
-preserves clause truth. -/
-def ReferentiallyTransparentAt {S : Type*}
-    (clause : (S → Prop) → S → Prop) (s : S) : Prop :=
+instance : ∀ (d : Diagnostic) (s : NominalSort), Decidable (d.accepts s)
+  | .truth, s => inferInstanceAs (Decidable s.truthEvaluable)
+  | .occurrence, s => inferInstanceAs (Decidable s.occurrenceCompatible)
+
+/-- The sort asymmetries reproduce every co-occurrence judgment. -/
+theorem sort_predicts_cooccurrence :
+    ∀ d ∈ cooccurrenceData, d.acceptable = true ↔ d.diagnostic.accepts d.sort := by
+  decide
+
+/-! ### Equality, subset and existential content -/
+
+variable {W : Type*}
+
+/-- Existential content: `CONT(x) ∩ p ≠ ∅`, the overlap semantics the thesis
+rejects for equality (`comp`); subset is `ContentIndividual.entails`. -/
+def ExistentialContent (xc : ContentIndividual W) (p : W → Prop) : Prop :=
+  ∃ w, xc.cont w ∧ p w
+
+theorem existentialContent_of_comp {xc : ContentIndividual W} {p : W → Prop}
+    (hne : ∃ w, xc.cont w) (h : comp p xc) : ExistentialContent xc p :=
+  let ⟨w, hw⟩ := hne; ⟨w, hw, h ▸ hw⟩
+
+/-- Equality makes CONT a function, so one individual cannot carry two
+contents — no clausal conjunction under a content individual. -/
+theorem eq_of_comp_of_comp {xc : ContentIndividual W} {p q : W → Prop}
+    (hp : comp p xc) (hq : comp q xc) : p = q :=
+  hp.symm.trans hq
+
+/-- Subset does not: a content entails every superset of itself. -/
+theorem entails_not_functional :
+    ¬ ∀ (xc : ContentIndividual Bool) (p q : Bool → Prop),
+      xc.entails p → xc.entails q → p = q :=
+  fun h => Bool.noConfusion <| (iff_of_eq (congrFun
+    (h ⟨(· = true)⟩ (· = true) (fun _ => True) (fun _ hb => hb) (fun _ _ => trivial)) false)).mpr
+    trivial
+
+/-! ### Transparency -/
+
+variable {S : Type*}
+
+/-- A clause is referentially transparent at `s` when predicates agreeing at
+`s` are interchangeable in it. -/
+def ReferentiallyTransparentAt (clause : (S → Prop) → S → Prop) (s : S) : Prop :=
   ∀ p q : S → Prop, (p s ↔ q s) → (clause p s ↔ clause q s)
 
-/-- A Sit-CP evaluates at the actual situation, hence is weak-transparent. -/
-theorem sit_cp_transparentAt {S : Type*} (s : S) :
-    ReferentiallyTransparentAt (fun p s' => p s') s := by
-  intro p q hpq
-  exact hpq
+/-- A Sit-CP is evaluated at the situation itself, hence transparent. -/
+theorem sit_transparentAt (s : S) : ReferentiallyTransparentAt (fun p s' => p s') s :=
+  fun _ _ h => h
 
-/-- `comp` is not weak-transparent (witness over `Bool`). This is the
-propositional-operator shadow of the §2.2.3 ex. 120 DP-level de dicto claim,
-whose binding-theoretic encoding ([elliott-2020-embedding]'s
-CONT-as-content-restrictor) is not yet substrate. -/
+/-- A Cont-CP is opaque: content identity is not settled at one world. -/
 theorem comp_not_transparentAt :
     ¬ ∀ (xc : ContentIndividual Bool) (w : Bool),
-      ReferentiallyTransparentAt (fun p _ => comp p xc) w := by
-  intro h
-  let xc : ContentIndividual Bool := ⟨fun b => b = false⟩
-  let p : Bool → Prop := fun b => b = false
-  let q : Bool → Prop := fun _ => True
-  have h_at : p false ↔ q false := by
-    constructor
-    · intro _; trivial
-    · intro _; rfl
-  have h_eq : comp p xc ↔ comp q xc := h xc false p q h_at
-  have hp : comp p xc := rfl
-  have hq : ¬ comp q xc := by
-    intro heq
-    -- xc.cont and q differ at `b = true`.
-    have h_true : (fun b : Bool => b = false) true = (fun _ : Bool => True) true :=
-      congrFun heq true
-    exact Bool.noConfusion <| (iff_of_eq h_true).mpr trivial
-  exact hq (h_eq.mp hp)
+      ReferentiallyTransparentAt (fun p _ => comp p xc) w :=
+  fun h => Bool.noConfusion <| (iff_of_eq (congrFun
+    ((h ⟨(· = false)⟩ false (· = false) (fun _ => True) ⟨fun _ => trivial, fun _ => rfl⟩).mp rfl)
+    true)).mpr trivial
 
-/-! ### The transparent syntax-semantics mapping thesis
-
-§1.1.2: bare CPs must compose as modifiers (PM via the situation argument),
-nominalized CPs as arguments (FA via the DP argument). [angelopoulos-2026]
-§7.3 attacks this thesis. -/
-
-/-- The four logically possible (clause shape, composition path)
-combinations. -/
-inductive ClauseStructurePath where
-  /-- Bare CP composing via Predicate Modification (modifier path). -/
-  | bareModifier
-  /-- Bare CP composing via Functional Application (argument path). -/
-  | bareArgument
-  /-- Nominalized CP composing via Predicate Modification. -/
-  | nominalizedModifier
-  /-- Nominalized CP composing via Functional Application. -/
-  | nominalizedArgument
+/-- A substitution triple's conclusion, with the sort of the embedded
+clause and whether the thesis judges the inference valid. -/
+structure SubstitutionDatum where
+  sort : NominalSort
+  valid : Bool
   deriving DecidableEq, Repr
 
-/-- The mapping thesis as a four-cell table (§1.1.2, ch. 4): the off-diagonal
-cells are impossible. Paper-fidelity bookkeeping —
-`transparentSSMapping_iff_typed` derives the cells from the type-theoretic
-apparatus; [angelopoulos-2026] attacks the `bareArgument` cell with Greek
-*oti*/*pu*. -/
-def transparentSSMapping : ClauseStructurePath → Prop
-  | .bareModifier => True
-  | .bareArgument => False
-  | .nominalizedModifier => False
-  | .nominalizedArgument => True
+def parseValidity : String → Option Bool
+  | "valid" => some true
+  | "invalid" => some false
+  | _ => none
 
-/-- The (bare, argument) cell is empty — the cell [angelopoulos-2026] attacks
-(see `Angelopoulos2026`). -/
-theorem bare_argument_predicted_impossible :
-    ¬ transparentSSMapping .bareArgument := by
-  intro h; exact h
+def substitutionDatum (e : LinguisticExample) : Option SubstitutionDatum := do
+  let s ← parseSort (← e.paperFeatures.lookup "nounSort")
+  let v ← parseValidity (← e.paperFeatures.lookup "inference")
+  some ⟨s, v⟩
 
-/-! ### Composition paths (Table 1.1) -/
+/-- The substitution-test conclusions of §2.2.3. -/
+def substitutionData : List SubstitutionDatum := Examples.all.filterMap substitutionDatum
 
-/-- Table 1.1's two composition paths: PM with the verb's situation argument,
-or FA into a DP argument slot. -/
-inductive CompositionPath where
-  | viaSituation
-  | viaDPArgument
-  deriving DecidableEq, Repr
+/-- Substitution goes through exactly under situation nouns. -/
+theorem substitution_valid_iff_situation :
+    ∀ d ∈ substitutionData, d.valid = true ↔ d.sort = .situation := by
+  decide
 
-/-- Table 1.1 (verbs like *think*; occurrence verbs like *slučatsja* are
-exempt, §4.2): the (Sit-CP, `viaSituation`) cell is unattested —
-intersective combination yields always-trivially-false sentences. -/
-def attestedCombination : NominalSort → CompositionPath → Prop
-  | .content, _              => True   -- Cont-CP via either path
-  | .situation, .viaDPArgument => True -- Sit-CP via DP-argument path
-  | .situation, .viaSituation  => False -- Sit-CP via Situation path: ✗
+/-! ### Clauses as arguments -/
 
-/-! ### Type-theoretic apparatus (§4.2)
-
-The §4.4 bans are type-theoretic, not structural: bare CPs are ⟨e,t⟩,
-nominalized CPs ⟨e⟩, Θ-heads require ⟨e⟩; N/D presence is the exponence of the
-type-shift, not its cause. In Bare Phrase Structure the X-bar
-argument/modifier distinction is gone, so the "modifier" claim is semantic. -/
-
-/-- The two semantic types the derivation uses: saturated ⟨e⟩ vs unsaturated
-⟨e,t⟩. -/
+/-- The two semantic types of an embedded clause (§4.2). -/
 inductive SemType where
   | individual
   | predicate
   deriving DecidableEq, Repr
 
-/-- The bare-vs-nominalized cut (§4.2), named by semantic content per Bare
-Phrase Structure. -/
+/-- Bare CPs are predicates of situations; nominalized CPs are individuals. -/
 inductive ClauseType where
-  /-- Nominalized CP: type ⟨e⟩. Buryat participial nominalization, with or
-      without the say-root *gɘ* (§4.3.1 ex. 31–32); Korean *-nun + kes*
-      clause. -/
   | predicateOfIndividuals
-  /-- Bare CP: type ⟨e,t⟩, predicate over (minimal) situations. Buryat
-      *gɘžɘ*-clause; Korean *-ko*-clause; Russian bare *čto*-clause. -/
   | predicateOfSituations
   deriving DecidableEq, Repr
 
-/-- Nominalized → individual, bare → predicate. -/
 def ClauseType.semanticType : ClauseType → SemType
   | .predicateOfIndividuals => .individual
-  | .predicateOfSituations  => .predicate
+  | .predicateOfSituations => .predicate
 
-/-- The Θ-heads of §4.4, all sharing one selectional restriction: an
-individual argument. Per-Θ presupposition flavor is deferred. -/
+/-- The Θ-heads of §4.4, each demanding an individual. -/
 inductive ThetaHead where
-  /-- Θ_Causer. §4.4.1. -/
   | causer
-  /-- Θ_Theme (internal-argument introducer). §4.4.2. -/
   | theme
-  /-- Θ_About: introduces the res-argument the attitude is about
-      ([quine-1956]; [cresswell-vonstechow-1982]); carries a pre-existence
-      presupposition not formalised here. §4.4.3. -/
   | aboutAttitude
   deriving DecidableEq, Repr
 
-/-- Every Θ-head requires an individual argument. -/
-def ThetaHead.requiredType : ThetaHead → SemType
-  | _ => .individual
+/-- A clause saturates a Θ-head when its type is the individual type. -/
+def saturatesTheta (ct : ClauseType) (_ : ThetaHead) : Prop :=
+  ct.semanticType = .individual
 
-/-- A clause type saturates a Θ-head iff its semantic type matches the head's
-required type (§4.2). -/
-def saturatesTheta (ct : ClauseType) (θ : ThetaHead) : Prop :=
-  ct.semanticType = θ.requiredType
-
-instance : ∀ (ct : ClauseType) (θ : ThetaHead),
-    Decidable (saturatesTheta ct θ) := fun ct θ => by
-  unfold saturatesTheta; infer_instance
-
-/-! ### Causer, Theme, About (§4.4)
-
-The three bans are one type-mismatch mechanism, not three stipulations. -/
-
-/-- §4.4.1: bare CPs cannot be Causers. -/
-theorem bareCP_not_Causer :
-    ¬ saturatesTheta .predicateOfSituations .causer := by
-  intro h; exact SemType.noConfusion h
-
-/-- §4.4.2: bare CPs cannot be Theme-arguments; cf. the *explain*-class data
-([pietroski-2000], [halpert-schueler-2013], [elliott-2016],
-[roelofsen-uegaki-2021]). -/
-theorem bareCP_not_Theme :
-    ¬ saturatesTheta .predicateOfSituations .theme := by
-  intro h; exact SemType.noConfusion h
-
-/-- §4.4.3: bare CPs cannot be About-arguments. -/
-theorem bareCP_not_About :
-    ¬ saturatesTheta .predicateOfSituations .aboutAttitude := by
-  intro h; exact SemType.noConfusion h
+instance (ct : ClauseType) (θ : ThetaHead) : Decidable (saturatesTheta ct θ) :=
+  inferInstanceAs (Decidable (_ = _))
 
 /-- Bare CPs satisfy no Θ-head (§4.4). -/
-theorem bareCP_satisfies_no_theta :
-    ∀ θ : ThetaHead, ¬ saturatesTheta .predicateOfSituations θ := by
-  intro θ h; exact SemType.noConfusion h
+theorem bareCP_satisfies_no_theta (θ : ThetaHead) :
+    ¬ saturatesTheta .predicateOfSituations θ :=
+  SemType.noConfusion
 
 /-- Nominalized CPs satisfy every Θ-head. -/
-theorem nominalizedCP_satisfies_every_theta :
-    ∀ θ : ThetaHead, saturatesTheta .predicateOfIndividuals θ := by
-  intro θ; rfl
+theorem nominalizedCP_satisfies_every_theta (θ : ThetaHead) :
+    saturatesTheta .predicateOfIndividuals θ :=
+  rfl
 
-/-! ### The modifier path (§4.5)
-
-Bare CPs compose with the verb's situation argument by Predicate Modification;
-`composesViaPM` is the qualitative projection of the `Modifier.intersective`
-substrate (`Semantics/Modification/Basic.lean`), whose Frame-typed
-instantiation is queued. -/
-
-/-- PM-compatibility with a verbal situation argument: bare CPs qualify,
-nominalized CPs do not. -/
+/-- Composes with the verb's situation argument by Predicate Modification
+(§4.5): bare CPs do, nominalized CPs do not. -/
 def composesViaPM : ClauseType → Prop
-  | .predicateOfIndividuals => False  -- nominalised, no PM compatibility
-  | .predicateOfSituations  => True   -- bare, PM-compatible
+  | .predicateOfIndividuals => False
+  | .predicateOfSituations => True
 
-instance : ∀ ct, Decidable (composesViaPM ct) := fun ct => by
-  cases ct <;> (unfold composesViaPM; infer_instance)
+instance : DecidablePred composesViaPM
+  | .predicateOfIndividuals => isFalse id
+  | .predicateOfSituations => isTrue trivial
 
-/-- §4.5: bare CPs are verbal modifiers. -/
-theorem bareCP_composes_via_PM : composesViaPM .predicateOfSituations := trivial
+/-- Table 1.1's two composition paths. -/
+inductive CompositionPath where
+  | viaSituation
+  | viaDPArgument
+  deriving DecidableEq, Repr
 
-/-- Nominalized CPs compose via FA, not PM (§4.5). -/
-theorem nominalizedCP_not_PM_modifier : ¬ composesViaPM .predicateOfIndividuals :=
-  fun h => h
+/-- The four (clause shape, composition path) combinations. -/
+inductive ClauseStructurePath where
+  | bareModifier
+  | bareArgument
+  | nominalizedModifier
+  | nominalizedArgument
+  deriving DecidableEq, Repr
 
-/-! ### Deriving the mapping table -/
+/-- The transparent syntax–semantics mapping (§1.1.2, ch. 4), read off the
+types: a cell is available when its clause type composes on its path. -/
+def transparentSSMapping : ClauseStructurePath → Prop
+  | .bareModifier => composesViaPM .predicateOfSituations
+  | .bareArgument => ∃ θ, saturatesTheta .predicateOfSituations θ
+  | .nominalizedModifier => composesViaPM .predicateOfIndividuals
+  | .nominalizedArgument => ∃ θ, saturatesTheta .predicateOfIndividuals θ
 
-/-- The table's cell values, derived from the type-theoretic predicates. -/
-def transparentSSMappingDerived : ClauseStructurePath → Prop
-  | .bareModifier         => composesViaPM .predicateOfSituations
-  | .bareArgument         => ∃ θ, saturatesTheta .predicateOfSituations θ
-  | .nominalizedModifier  => composesViaPM .predicateOfIndividuals
-  | .nominalizedArgument  => ∃ θ, saturatesTheta .predicateOfIndividuals θ
+/-- Bare clauses are never arguments — the cell [angelopoulos-2026]
+contests. -/
+theorem not_transparentSSMapping_bareArgument :
+    ¬ transparentSSMapping .bareArgument :=
+  fun ⟨θ, h⟩ => bareCP_satisfies_no_theta θ h
 
-/-- The §1.1.2 table agrees cell-by-cell with the type-theoretic derivation:
-the four-cell pattern is derived, not stipulated. -/
-theorem transparentSSMapping_iff_typed (path : ClauseStructurePath) :
-    transparentSSMapping path ↔ transparentSSMappingDerived path := by
-  cases path
-  case bareModifier =>
-    refine ⟨fun _ => bareCP_composes_via_PM, fun _ => trivial⟩
-  case bareArgument =>
-    refine ⟨fun h => h.elim, ?_⟩
-    rintro ⟨θ, hθ⟩
-    exact (bareCP_satisfies_no_theta θ hθ).elim
-  case nominalizedModifier =>
-    refine ⟨fun h => h.elim, ?_⟩
-    intro hpm; exact (nominalizedCP_not_PM_modifier hpm).elim
-  case nominalizedArgument =>
-    refine ⟨fun _ => ⟨.causer, nominalizedCP_satisfies_every_theta _⟩,
-            fun _ => trivial⟩
+theorem not_transparentSSMapping_nominalizedModifier :
+    ¬ transparentSSMapping .nominalizedModifier :=
+  id
 
-/-! ### Cross-linguistic ContP exponence
+theorem transparentSSMapping_diagonal :
+    transparentSSMapping .bareModifier ∧ transparentSSMapping .nominalizedArgument :=
+  ⟨trivial, .causer, rfl⟩
 
-Per-language Cont-exponence analyses (ch. 4), tied by law to the fragment
-inventories. Buryat carries the licenser-conditioned Comp allomorphy (§4.3.1
-ex. 33); Korean's parallel rule (§4.3.2 ex. 46) is not yet law-checked, so its
-witness stays at `ContAnalysis`. -/
+/-! ### The Comp head -/
 
-open Buryat
+open Semantics.Truthmaker in
+/-- The Comp head (§2.3 ex. 151): `x` is part of the evaluation situation
+and exactly verifies `p`, `compHead p x s ↔ x ≤ s ∧ p x`. -/
+def compHead [Preorder S] (p : S → Prop) (x s : S) : Prop :=
+  x ≤ s ∧ p x
 
-/-- A Cont-exponence analysis of one language's clause-typing inventory
-(ch. 4): the morpheme, if any, overtly exponing Cont (`none` = null exponence:
-English, Russian). A structure, not a class — rival frameworks construct
-rival witnesses. -/
+/-- Exact exemplification by a part is inexact verification. -/
+theorem inexactVer_of_compHead [Preorder S] {p : S → Prop} {x s : S}
+    (h : compHead p x s) : Semantics.Truthmaker.inexactVer p s :=
+  ⟨x, h.1, h.2⟩
+
+/-! ### Cont exponence -/
+
+/-- A Cont-exponence analysis of a clause-typing inventory (ch. 4): the
+morpheme, if any, overtly exponing Cont. -/
 structure ContAnalysis where
-  /-- The fragment inventory analyzed. -/
   inventory : List Complementizer
-  /-- The overt Cont exponent, if any. -/
   contExponent : Option Complementizer
-  /-- The exponent is drawn from the inventory. -/
   contExponent_mem : ∀ c ∈ contExponent, c ∈ inventory
 
-/-- A full Cont/Comp head assignment: `ContAnalysis` plus the
-licenser-conditioned Comp allomorphy and its laws. -/
+/-- A Cont analysis with the licenser-conditioned Comp allomorphy. -/
 structure ContCompAnalysis extends ContAnalysis where
-  /-- Comp allomorph selected by the licensing category. -/
   compAllomorph : Complementizer.Licenser → Complementizer
   compAllomorph_mem : ∀ l, compAllomorph l ∈ inventory
-  /-- The selected allomorph reproduces the fragment's distribution
-      datum. -/
   licenser_compAllomorph : ∀ l, (compAllomorph l).licenser = some l
-  /-- Head assignment is exhaustive over the inventory. -/
   cover : ∀ c ∈ inventory, c ∈ contExponent ∨ ∃ l, compAllomorph l = c
 
-/-- Buryat (§4.3.1 ex. 33): *gɘ* expones Cont; the suffixes are Comp
-allomorphs — participial *-Aːša* next to nominal projections, converbial
-*-žA* next to verbs. -/
+/-- Buryat (§4.3.1 ex. 33): *gɘ* expones Cont; participial *-Aːša* is the
+Comp allomorph next to nouns, converbial *-žA* next to verbs. -/
 def buryatAnalysis : ContCompAnalysis where
   inventory := complementizers
   contExponent := some ge
-  contExponent_mem := fun _ hc => by cases hc; exact .head _
+  contExponent_mem := by decide
   compAllomorph
     | .nominal => aasha
-    | .verbal  => zha
-  compAllomorph_mem := by
-    intro l
-    cases l
-    · exact .tail _ (.head _)
-    · exact .tail _ (.tail _ (.head _))
-  licenser_compAllomorph := by intro l; cases l <;> rfl
-  cover := by
-    intro c hc
-    fin_cases hc
-    · exact Or.inl rfl
-    · exact Or.inr ⟨.nominal, rfl⟩
-    · exact Or.inr ⟨.verbal, rfl⟩
+    | .verbal => zha
+  compAllomorph_mem := by decide
+  licenser_compAllomorph := by decide
+  cover := by decide
 
-/-- Korean (§4.3.2 ex. 46): *-ta*
-expones Cont; adnominal *-nun* and adverbal *-ko* are the Comp
-allomorphs, parallel to Buryat ex. 33. -/
+/-- Korean (§4.3.2 ex. 46): *-ta* expones Cont; adnominal *-nun* and
+adverbal *-ko* are the Comp allomorphs. -/
 def koreanAnalysis : ContCompAnalysis where
   inventory := Korean.Complementizers.complementizers
   contExponent := some Korean.Complementizers.ta
-  contExponent_mem := fun _ hc => by cases hc; exact .head _
+  contExponent_mem := by decide
   compAllomorph
     | .nominal => Korean.Complementizers.nun
-    | .verbal  => Korean.Complementizers.ko
-  compAllomorph_mem := by
-    intro l
-    cases l
-    · exact .tail _ (.head _)
-    · exact .tail _ (.tail _ (.head _))
-  licenser_compAllomorph := by intro l; cases l <;> rfl
-  cover := by
-    intro c hc
-    fin_cases hc
-    · exact Or.inl rfl
-    · exact Or.inr ⟨.nominal, rfl⟩
-    · exact Or.inr ⟨.verbal, rfl⟩
+    | .verbal => Korean.Complementizers.ko
+  compAllomorph_mem := by decide
+  licenser_compAllomorph := by decide
+  cover := by decide
 
-/-- In Buryat the Cont exponent is exactly the bare say-root — a
-Buryat-specific alignment, not a `ContAnalysis` law (Korean's *-ta* is itself
-a suffix). -/
+/-- In Buryat the Cont exponent is exactly the bare say-root; Korean's
+*-ta* is itself a suffix, so this is no law of `ContAnalysis`. -/
 theorem mem_buryatContExponent_iff :
     ∀ c ∈ complementizers,
       (c ∈ buryatAnalysis.contExponent ↔ ∀ m ∈ c.morphs, m.kind = .root) := by
   decide
 
-/-- Each of *hanaxa*'s two frames (§4.4.3) takes exactly one
-clause-typer — bare the converbial *-žA*, nominalized the participial
-*-Aːša* — and the say-root *gɘ* (which records no clausal axis)
-takes neither, so *hanaxa*'s typers within the closed inventory are
-exactly the two suffixes. -/
-theorem hanaxa_typers :
-    (Frame.finiteClause.Takes zha ∧ ¬ Frame.finiteClause.Takes aasha) ∧
-    (nominalizedFrame.Takes aasha ∧ ¬ nominalizedFrame.Takes zha) ∧
-    hanaxa.typers complementizers = [aasha, zha] := by decide
+/-- The clause-typers of a Buryat clause shape (§4.3.1 ex. 30–32). -/
+def parseShape : String → Option (List Complementizer)
+  | "bare gɘ-žɘ clause" => some [ge, zha]
+  | "nominalized participial clause" => some [aasha]
+  | "nominalized gɘ-participial clause" => some [ge, aasha]
+  | _ => none
 
-/-- *hanaxa* think~remember (§4.4.3): the attitude flips with the frame —
-    nonveridical/opaque on the bare CP, veridical on the nominalized
-    frame. Previously unstateable: `attitude` was per-lexeme. -/
-theorem hanaxa_frame_conditioned_attitude :
-    hanaxa.attitudeOn Frame.finiteClause = some (.doxastic .nonVeridical) ∧
-    hanaxa.attitudeOn nominalizedFrame = some (.doxastic .veridical) := by
+def parseClauseSort : String → Option NominalSort
+  | "Cont-CP" => some .content
+  | "Sit-CP" => some .situation
+  | _ => none
+
+/-- A Buryat embedded clause: its typers and the sort it denotes. -/
+structure ShapeDatum where
+  typers : List Complementizer
+  sort : NominalSort
+  deriving DecidableEq, Repr
+
+def shapeDatum (e : LinguisticExample) : Option ShapeDatum := do
+  let ts ← parseShape (← e.paperFeatures.lookup "shape")
+  let s ← parseClauseSort (← e.paperFeatures.lookup "clauseType")
+  some ⟨ts, s⟩
+
+/-- The Buryat clause shapes of §4.3.1. -/
+def shapeData : List ShapeDatum := Examples.all.filterMap shapeDatum
+
+/-- A clause denotes content exactly when the Cont exponent is among its
+typers — the thesis's argument that *gɘ* expones Cont. -/
+theorem content_iff_contExponent_mem :
+    ∀ d ∈ shapeData, ∀ c ∈ buryatAnalysis.contExponent, (d.sort = .content ↔ c ∈ d.typers) := by
   decide
 
-/-! ### Noun-predicate co-occurrence (§2.2.3)
+/-- *hanaxa*'s two frames (§4.4.3) each take exactly one typer — converbial
+*-žA* on the bare frame, participial *-Aːša* on the nominalized one — and
+the say-root takes neither. -/
+theorem hanaxa_typers :
+    (Frame.finiteClause.Takes zha ∧ ¬ Frame.finiteClause.Takes aasha) ∧
+      (nominalizedFrame.Takes aasha ∧ ¬ nominalizedFrame.Takes zha) ∧
+      hanaxa.typers complementizers = [aasha, zha] := by
+  decide
 
-Cont-NPs combine with truth-evaluable predicates, Sit-NPs do not
-(ex. 105-107); Sit-NPs combine with occurrence predicates, Cont-NPs do not
-(ex. 108-112). Both asymmetries project the `NominalSort` distinction:
-contents are truth-evaluated, situations occur. -/
-
-/-- Combines with 'true' / 'false' / 'mistaken' (ex. 105-107). -/
-def NominalSort.truthEvaluable : NominalSort → Prop
-  | .content   => True
-  | .situation => False
-
-instance : DecidablePred NominalSort.truthEvaluable
-  | .content   => isTrue trivial
-  | .situation => isFalse id
-
-/-- Combines with 'occur' / 'happen' (Russian *proizojti*, *slučit'sja*;
-Korean *ilena*) — ex. 108-112. The footnote-28 hedge on *alachay* is
-aggregated with the main paradigm. -/
-def NominalSort.occurrenceCompatible : NominalSort → Prop
-  | .content   => False
-  | .situation => True
-
-instance : DecidablePred NominalSort.occurrenceCompatible
-  | .content   => isFalse id
-  | .situation => isTrue trivial
-
-/-! ### Cont and Comp head denotations (§2.3)
-
-Ex. 150: ⟦Cont⟧ = λp.λx. CONT(x) = p — exactly the substrate `comp`.
-Ex. 151: ⟦Comp⟧ = λp.λx. x ⊑ s ∧ x ⊩ p — parthood plus exact exemplification.
-The dissertation's own abbreviation of ex. 151 drops the anchoring conjunct;
-its footnote 37 notes the anchoring matters in §5.2.3 (clauses as restrictors
-of existential quantifiers). `compHead` keeps it. -/
-
-/-- Ex. 150 is the existing `comp` — the ch. 2 proposal introduces no new
-machinery. The equality shape is further defended in §2.4 (no-stacking,
-ex. 171; *the fact* definiteness, ex. 177-178; the complex-claim argument,
-ex. 183-184), unformalized. -/
-theorem cont_head_denotation_is_comp {W : Type*}
-    (p : W → Prop) (xc : ContentIndividual W) :
-    comp p xc ↔ (xc.cont = p) := Iff.rfl
-
-/-- Ex. 151: `x` is part of the evaluation situation and exactly verifies `p`
-(verifier-membership, vs the part-existential `inexactVer` of
-`Semantics/Truthmaker/Inexact.lean`). -/
-def compHead {S : Type*} [Preorder S]
-    (p : S → Prop) (x evalSit : S) : Prop :=
-  x ≤ evalSit ∧ p x
-
-/-- Exact exemplification implies inexact: a verifier is a part of itself
-(cf. `inexactVer_of_exact`). -/
-theorem compHead_implies_inexactVerifier {S : Type*} [Preorder S]
-    (p : S → Prop) (x evalSit : S) (h : compHead p x evalSit) :
-    ∃ u, u ≤ evalSit ∧ p u :=
-  ⟨x, h.1, h.2⟩
+/-- *hanaxa* think ~ remember: nonveridical on the bare frame, veridical on
+the nominalized one. -/
+theorem hanaxa_frame_conditioned_attitude :
+    hanaxa.attitudeOn Frame.finiteClause = some (.doxastic .nonVeridical) ∧
+      hanaxa.attitudeOn nominalizedFrame = some (.doxastic .veridical) := by
+  decide
 
 end Bondarenko2022

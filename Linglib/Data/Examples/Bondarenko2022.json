@@ -354,7 +354,8 @@
     "paperFeatures": [
       ["diagnostic", "substitution"],
       ["nounSort", "content"],
-      ["role", "conclusion"]
+      ["role", "conclusion"],
+      ["inference", "invalid"]
     ],
     "comment": "Conclusion (c) of the (121) opacity triple: does not follow from (a),(b) — Cont-CPs are referentially opaque.",
     "metaLanguage": "stan1293",
@@ -431,7 +432,8 @@
     "paperFeatures": [
       ["diagnostic", "substitution"],
       ["nounSort", "situation"],
-      ["role", "conclusion"]
+      ["role", "conclusion"],
+      ["inference", "valid"]
     ],
     "comment": "Conclusion (c) of the (122) transparency triple: follows from (a),(b) — Sit-CPs are referentially transparent.",
     "metaLanguage": "stan1293",
