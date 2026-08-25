@@ -4,9 +4,6 @@ import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Syntax.Negation
 import Linglib.Studies.Sorace2000
-import Linglib.Studies.Miestamo2005
-import Linglib.Features.Grammaticalization
-import Linglib.Features.Aktionsart
 import Linglib.Data.Examples.Anderson2006
 
 /-!
@@ -121,14 +118,6 @@ def finnishNegForm : String :=
 `finnishNegForm` empty and breaks this. -/
 theorem finnishNegForm_eq : finnishNegForm = "en lue" := rfl
 
-/-- The Finnish distribution is consistent with [miestamo-2005]'s
-    constructional A/Fin coding: categories split across the negative
-    auxiliary and the main verb. -/
-theorem finnish_split_confirms_constructional :
-    finnishNegDist.onAux ≠ ∅ ∧ finnishNegDist.onLex ≠ ∅ ∧
-    Miestamo2005.finnish.asymmetryDimensions.contains .constructional := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
-
 /-- The inflectional pattern Anderson assigns an example. -/
 def parseInflPattern : String → Option InflPattern
   | "auxHeaded" => some .auxHeaded
@@ -146,89 +135,16 @@ def attestedPatterns : List InflPattern :=
 theorem all_patterns_attested (p : InflPattern) : p ∈ attestedPatterns := by
   cases p <;> decide
 
-/-! ### The Finnish negative AVC -/
-
-/-- The Finnish negative auxiliary construction is a split AVC: the
-    auxiliary hosts some inflectional categories and the lexical
-    verb hosts others, with neither element hosting all categories. -/
-theorem finnish_split_from_fragment :
-    finnishNegDist.onAux ≠ ∅ ∧ finnishNegDist.onLex ≠ ∅ := ⟨by decide, by decide⟩
-
-/-! ### Where the inflection sits -/
-
-/-- Doubled: the two elements host exactly the same categories. -/
-theorem gorum_doubled_same_categories : gorumDist.onAux = gorumDist.onLex := by decide
-
-/-- In Doyayo's lex-headed AVC, the auxiliary hosts ONLY tonal subject
-    agreement (per Anderson p. 120), and the LV carries TAM. -/
-theorem doyayo_lexHeaded_aux_agreement_only :
-    doyayoLexHeadedDist.onAux = {.agreement .subj} ∧
-    doyayoLexHeadedDist.onLex = {.tense} := ⟨rfl, rfl⟩
-
-/-- Chapter 5 (Doyayo): subject agreement is doubled across auxiliary
-    and lexical verb, while object agreement appears on the lexical verb
-    only. -/
-theorem doyayo_splitDoubled_subj_doubled_obj_lex_only :
-    let dist := doyayoSplitDoubledDist
-    MorphCategory.agreement .subj ∈ dist.onAux ∧
-    MorphCategory.agreement .subj ∈ dist.onLex ∧
-    MorphCategory.agreement .obj ∈ dist.onLex ∧
-    MorphCategory.agreement .obj ∉ dist.onAux := by decide
-
-/-- Chapter 5 (Pipil): the same generalization as Doyayo. The auxiliary
-    root *yu* encodes TAM lexically, so no `.tense` morpheme sits on the
-    auxiliary. -/
-theorem pipil_splitDoubled_subj_doubled_obj_lex_only :
-    let dist := pipilSplitDoubledDist
-    MorphCategory.agreement .subj ∈ dist.onAux ∧
-    MorphCategory.agreement .subj ∈ dist.onLex ∧
-    MorphCategory.agreement .obj ∈ dist.onLex ∧
-    MorphCategory.agreement .obj ∉ dist.onAux := by decide
-
-/-- In Pipil's lex-headed AVC, the auxiliary hosts no inflection. -/
-theorem pipil_lexHeaded_aux_empty : pipilLexHeadedDist.onAux = ∅ := rfl
-
-/-- Split: the two elements host disjoint categories. (`.stem` on the
-    lexical side is a base, not an inflectional overlap.) -/
-theorem finnish_split_disjoint : Disjoint finnishNegDist.onAux finnishNegDist.onLex := by
-  decide
-
-/-- Chapter 5 (Jakaltek): absolutive agreement on the auxiliary,
-    ergative on the lexical verb. -/
-theorem jakaltek_abs_on_aux_erg_on_lex :
-    let dist := jakaltekDist
-    MorphCategory.agreement .obj ∈ dist.onAux ∧
-    MorphCategory.agreement .subj ∈ dist.onLex ∧
-    MorphCategory.agreement .subj ∉ dist.onAux ∧
-    MorphCategory.agreement .obj ∉ dist.onLex := by decide
-
-/-- In Hemba's split/doubled AVC, subject agreement is doubled (on both
-    elements), tense is AUX-only, mood is LV-only. No object agreement
-    in this construction. -/
-theorem hemba_splitDoubled_agreement_doubled :
-    let dist := hembaDist
-    MorphCategory.agreement .subj ∈ dist.onAux ∧
-    MorphCategory.agreement .subj ∈ dist.onLex ∧
-    MorphCategory.tense ∈ dist.onAux ∧ MorphCategory.tense ∉ dist.onLex ∧
-    MorphCategory.mood ∉ dist.onAux ∧ MorphCategory.mood ∈ dist.onLex := by decide
-
-/-! ### Dual headedness
-
-Anderson distinguishes three notions of head — inflectional,
-phrasal/syntactic, and semantic (§1.4, pp. 22-24; Table 3.1 on
-p. 116 tabulates the assignment for the lex-headed pattern). The
-semantic head (content provider) is always the lexical verb
-(Anderson p. 23: "It is the lexical verb"); the inflectional
-host varies by pattern. This mismatch is what
-makes AVCs typologically distinctive. -/
-
-/-- The semantic head and inflectional host coincide only in
-    lex-headed AVCs. In all other patterns they diverge: the
-    semantic head is always the lexical verb, but inflection
-    may sit on the auxiliary (or on both elements). -/
-theorem heads_coincide_iff_lexHeaded (p : InflPattern) :
-    (p.semanticHead == p.inflHost) = (p == .lexHeaded) := by
-  cases p <;> rfl
+/-- Chapter 5's generalization across the split/doubled languages: subject
+agreement is doubled over both elements, while object agreement stays on
+the lexical verb ("Subjects are doubly marked… while objects occur only on
+lexical verbs", p. 224). -/
+theorem splitDoubled_subj_doubled_obj_lex_only :
+    ∀ d ∈ [doyayoSplitDoubledDist, pipilSplitDoubledDist],
+      MorphCategory.agreement .subj ∈ d.onAux ∧
+      MorphCategory.agreement .subj ∈ d.onLex ∧
+      MorphCategory.agreement .obj ∈ d.onLex ∧
+      MorphCategory.agreement .obj ∉ d.onAux := by decide
 
 /-! ### Negative auxiliaries as AVCs
 
@@ -282,12 +198,6 @@ contrastive theorem against Anderson's discrete pattern typology
 (`anderson_silent_on_intermediate_ash`) will land when ASH ranks
 are added. -/
 
-/-- Auxiliary selection presupposes aux-headed pattern: the
-    selecting auxiliary hosts tense/agreement (is the inflectional
-    head). -/
-theorem selection_presupposes_auxHeaded :
-    InflPattern.auxHeaded.inflHost = .aux := rfl
-
 /-- Quantified Sorace bridge: composing `vendlerClassToTypicalTransitivity`
     with `canonicalSelection` yields `.be` exactly for achievements,
     `.have` elsewhere (Italian *è arrivato* instantiates the
@@ -302,41 +212,5 @@ theorem sorace_canonical_chain (v : Features.VendlerClass) :
         | .achievement => .be
         | _ => .have := by
   cases v <;> rfl
-
-/-! ### Cross-framework: Miestamo's morpheme typology
-
-[miestamo-2005] classifies negation strategies by morpheme
-type (WALS Ch 112A: negative auxiliary verb, affix, particle, ...);
-[anderson-2006] via [heine-1993]'s grammaticalization
-framework places verbal negators on the cline at `.auxiliary` and
-non-verbal negators off the cline (Anderson §1.7.2 covers only
-verbal negators). The two frameworks classify by independently-
-motivated criteria but, for the strategies linglib's
-`Strategy` enum exposes, AGREE on which strategies are
-"verbal": Anderson's `.toGramStage = some .auxiliary` is exactly
-Miestamo's `.morphemeType = .negativeAuxiliaryVerb`.
-
-Composition with [miestamo-2005]'s
-`afin_verbal_implies_constructional` (in
-`Linglib/Studies/Miestamo2005.lean`) then
-yields: any `Strategy` Anderson places at the auxiliary cline
-stage, in any Miestamo A/Fin datum, shows constructional
-asymmetry — a falsifiable empirical prediction whose chain
-runs Anderson's cline → Miestamo's morpheme type → Miestamo's
-asymmetry dimension.
- -/
-
-/-- Cross-framework equivalence: Anderson's grammaticalization-cline
-    placement at `.auxiliary` and Miestamo's morpheme-type
-    classification as `.auxVerb` partition the `Strategy` enum
-    *identically*. Both frameworks classify exactly `.negVerb`
-    (Finnish *ei*-style inflecting negators) as the verbal subtype.
-    Falsifiable by changing either projection: a future split of
-    `Strategy.negVerb` into Miestamo-style auxVerb-vs-doubleNeg
-    subtypes would break this without breaking either projection
-    individually. -/
-theorem auxiliary_stage_iff_aux_verb_morpheme (s : Strategy) :
-    s.toGramStage = some .auxiliary ↔ s.morphemeType = .negativeAuxiliaryVerb := by
-  cases s <;> decide
 
 end Anderson2006
