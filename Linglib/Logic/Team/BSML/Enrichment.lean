@@ -1,27 +1,25 @@
 import Linglib.Logic.Team.BSML.Defs
 
 /-!
-# BSML Pragmatic Enrichment
-[aloni-2022]
+# BSML pragmatic enrichment
 
-Pragmatic enrichment [·]⁺ (Definition 6) adds non-emptiness constraints
-recursively to every subformula, capturing the "neglect-zero" tendency
-in human cognition: speakers/hearers ignore empty witness sets.
+Pragmatic enrichment `[·]⁺` ([aloni-2022] Definition 6) conjoins `NE` to every
+subformula, modelling the *neglect-zero* tendency: language users disregard
+models that verify a sentence by an empty witness. On the `NE`-free fragment
+enrichment strengthens (`[α]⁺ ⊨ α ∧ NE`, Facts 1–2), is vacuous under a single
+negation (Fact 9) but not under two (Fact 10), and coincides on classical
+positive formulas with BSML*, the variant excluding `∅` from the states
+(Fact 13). The free-choice consequences are drawn in `Studies/Aloni2022.lean`.
 
-## Key Properties
+## Main declarations
 
-- **Fact 1**: Enrichment strengthens — [α]⁺ ⊨ α (support + anti-support) for NE-free α
-- **Fact 2**: Enriched formula entails original plus NE — [α]⁺ ⊨ α ∧ NE for NE-free α
-- **Fact 9**: Enrichment vacuous under single negation — ¬[α]⁺ ≡ ¬α for positive α
-- **Fact 10**: Enrichment NOT vacuous under double negation — ¬¬[p]⁺ ≢ ¬¬p
-
-## Architecture
-
-Enrichment is the bridge between BSML's split disjunction (a semantic
-mechanism) and free choice (a pragmatic inference). The enrichment function
-transforms a formula so that empty teams are excluded at every level, and
-the combination with split disjunction forces both disjuncts to have
-non-empty witnesses — yielding free choice.
+* `enrich` — the enrichment function.
+* `enrichment_strengthens_support`, `enrichment_strengthens_antiSupport`,
+  `enrichment_entails_conj_ne` — Facts 1 and 2.
+* `enrichment_vacuous_under_negation`,
+  `enrichment_not_vacuous_under_double_negation` — Facts 9 and 10.
+* `consequencePlus`, `bsmlStar_iff_bsmlPlus`, `negativeFC_star` — BSML⁺
+  consequence, Fact 13, and the BSML* half of Fact 14.
 -/
 
 namespace BSML
@@ -30,9 +28,7 @@ open ModalLogic (KripkeModel)
 
 variable {W : Type*} [DecidableEq W] {Atom : Type*}
 
--- ============================================================================
--- §1: Pragmatic Enrichment (Definition 6)
--- ============================================================================
+/-! ### Pragmatic enrichment (Definition 6) -/
 
 /--
 Pragmatic enrichment [·]⁺ (Definition 6 from [aloni-2022]).
@@ -54,25 +50,7 @@ def enrich : Formula Atom → Formula Atom
   | .disj φ ψ => .conj (.disj (enrich φ) (enrich ψ)) .ne
   | .poss φ => .conj (.poss (enrich φ)) .ne
 
--- ============================================================================
--- §2: Structure Lemmas
--- ============================================================================
-
-theorem enrich_neg_structure (φ : Formula Atom) :
-    enrich (.neg φ) = .conj (.neg (enrich φ)) .ne := rfl
-
-theorem enrich_conj_structure (φ ψ : Formula Atom) :
-    enrich (.conj φ ψ) = .conj (.conj (enrich φ) (enrich ψ)) .ne := rfl
-
-theorem enrich_disj_structure (φ ψ : Formula Atom) :
-    enrich (.disj φ ψ) = .conj (.disj (enrich φ) (enrich ψ)) .ne := rfl
-
-theorem enrich_poss_structure (φ : Formula Atom) :
-    enrich (.poss φ) = .conj (.poss (enrich φ)) .ne := rfl
-
--- ============================================================================
--- §3: Enriched Support Implies Non-emptiness
--- ============================================================================
+/-! ### Enriched support implies non-emptiness -/
 
 /-- If an enriched formula is supported, the team is non-empty. -/
 theorem enriched_support_implies_nonempty (M : KripkeModel W Atom)
@@ -82,35 +60,7 @@ theorem enriched_support_implies_nonempty (M : KripkeModel W Atom)
   | ne => exact h
   | _ => exact h.2
 
--- ============================================================================
--- §4: Core Split Lemma
--- ============================================================================
-
-/-- If disjunction is supported, there exists a split where both parts
-    support their disjuncts. -/
-theorem split_exists (M : KripkeModel W Atom)
-    (φ ψ : Formula Atom) (t : Finset W)
-    (h : support M (.disj φ ψ) t) :
-    ∃ t₁ t₂ : Finset W, support M φ t₁ ∧ support M ψ t₂ := by
-  obtain ⟨t₁, t₂, _, h₁, h₂⟩ := h
-  exact ⟨t₁, t₂, h₁, h₂⟩
-
-/-- Enriched disjunction forces both parts of split to be non-empty. -/
-theorem enriched_split_forces_both_nonempty (M : KripkeModel W Atom)
-    (φ ψ : Formula Atom) (t : Finset W)
-    (h : support M (.disj (enrich φ) (enrich ψ)) t) :
-    ∃ t₁ t₂ : Finset W,
-      t₁.Nonempty ∧ t₂.Nonempty ∧
-      support M (enrich φ) t₁ ∧ support M (enrich ψ) t₂ := by
-  obtain ⟨t₁, t₂, _, h₁, h₂⟩ := h
-  exact ⟨t₁, t₂,
-    enriched_support_implies_nonempty M φ t₁ h₁,
-    enriched_support_implies_nonempty M ψ t₂ h₂,
-    h₁, h₂⟩
-
--- ============================================================================
--- §5: Anti-support of (φ ∧ NE) stripping
--- ============================================================================
+/-! ### Stripping `NE` from anti-support -/
 
 /-- Anti-support of (φ ∧ NE) implies anti-support of φ.
     From the SPLIT, one part anti-supports φ and the other (anti-supporting NE)
@@ -139,22 +89,14 @@ theorem antiSupport_conj_ne_iff (M : KripkeModel W Atom)
     antiSupport M (.conj φ .ne) t ↔ antiSupport M φ t :=
   ⟨antiSupport_strip_ne M φ t, antiSupport_conj_ne_of_antiSupport M φ t⟩
 
--- ============================================================================
--- §6: Anti-support Monotonicity
--- ============================================================================
+/-- `[¬¬φ]⁺` and `[φ]⁺` have the same support: the two `NE` conjuncts added by
+    the negations are absorbed. -/
+theorem support_enrich_neg_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
+    support M (enrich (.neg (.neg φ))) t ↔ support M (enrich φ) t :=
+  ⟨λ h => (antiSupport_conj_ne_iff M _ t).mp h.1,
+   λ h => ⟨(antiSupport_conj_ne_iff M _ t).mpr h, enriched_support_implies_nonempty M φ t h⟩⟩
 
-/-- Anti-support monotonicity for ◇: if antiSupport of φ implies antiSupport of ψ
-    for all teams, then ◇φ anti-support implies ◇ψ anti-support. -/
-theorem antiSupport_poss_weaken (M : KripkeModel W Atom)
-    (φ ψ : Formula Atom) (t : Finset W)
-    (hmono : ∀ t' : Finset W, antiSupport M φ t' → antiSupport M ψ t')
-    (h : antiSupport M (.poss φ) t) :
-    antiSupport M (.poss ψ) t :=
-  fun w hw => hmono _ (h w hw)
-
--- ============================================================================
--- §7: Enrichment Strengthens (Fact 1)
--- ============================================================================
+/-! ### Enrichment strengthens (Fact 1) -/
 
 /-- Both directions of Fact 1 (enrichment strengthens), proved by simultaneous
     induction on formula structure. -/
@@ -223,9 +165,7 @@ theorem enrichment_strengthens_antiSupport (M : KripkeModel W Atom)
     antiSupport M φ t :=
   (enrichment_strengthens_both M φ hNE).2 t h
 
--- ============================================================================
--- §8: Enrichment Entails Original Plus NE (Fact 2)
--- ============================================================================
+/-! ### Enrichment entails the original plus `NE` (Fact 2) -/
 
 /--
 Fact 2 from [aloni-2022]: [α]⁺ ⊨ α ∧ NE for NE-free α.
@@ -238,9 +178,7 @@ theorem enrichment_entails_conj_ne (M : KripkeModel W Atom)
   ⟨enrichment_strengthens_support M φ t hNE h,
    enriched_support_implies_nonempty M φ t h⟩
 
--- ============================================================================
--- §9: Enrichment Vacuous Under Single Negation (Fact 9)
--- ============================================================================
+/-! ### Enrichment vacuous under single negation (Fact 9) -/
 
 /--
 Pragmatic enrichment is vacuous under single negation for positive formulas
@@ -289,18 +227,14 @@ theorem enrichment_vacuous_under_negation_support (M : KripkeModel W Atom)
     support M (.neg (enrich φ)) t ↔ support M (.neg φ) t :=
   enrichment_vacuous_under_negation M φ t hPos
 
--- ============================================================================
--- §10: BSML+ Consequence (enriched formulas)
--- ============================================================================
+/-! ### BSML⁺ consequence -/
 
 /-- BSML+ consequence: consequence between enriched formulas.
     α ⊨_{BSML+} β iff [α]⁺ ⊨_{BSML} [β]⁺ ([aloni-2022] §6.3.1). -/
 def consequencePlus (φ ψ : Formula Atom) : Prop :=
   ∀ (M : KripkeModel W Atom) (t : Finset W), support M (enrich φ) t → support M (enrich ψ) t
 
--- ============================================================================
--- §11: BSML* ↔ BSML+ for Classical Positive Formulas (Fact 13)
--- ============================================================================
+/-! ### BSML* and BSML⁺ agree on classical positive formulas (Fact 13) -/
 
 /-- `Formula.ClassicalPositive φ` holds when `φ` has no `NE` and no negation —
     the fragment on which BSML* and BSML+ consequence coincide. -/
@@ -390,9 +324,7 @@ theorem bsmlStar_iff_bsmlPlus (φ ψ : Formula Atom)
     have hEnrich := (enriched_iff_star_nonempty M φ t hφ).mpr ⟨hφ_star, hne⟩
     exact ((enriched_iff_star_nonempty M ψ t hψ).mp (hPlus M t hEnrich)).1
 
--- ============================================================================
--- §12: Enrichment Not Vacuous Under Double Negation (Fact 10)
--- ============================================================================
+/-! ### Enrichment not vacuous under double negation (Fact 10) -/
 
 /--
 Pragmatic enrichment is NOT vacuous under double negation
