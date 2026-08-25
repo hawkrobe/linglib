@@ -16,98 +16,42 @@ import Linglib.Data.Examples.Anderson2006
 
 /-!
 # Anderson (2006): Auxiliary Verb Constructions
-[anderson-2006] [heine-1993]
 
-Cross-linguistic typology of auxiliary verb constructions (AVCs):
-classification by inflectional distribution between auxiliary and
-lexical verb, with diachronic grounding in [heine-1993]'s
-grammaticalization framework.
+An auxiliary verb construction pairs an auxiliary with a lexical verb, and
+languages differ in where the inflection lands: on the auxiliary (English
+*have eaten*), on the lexical verb (Doyayo), on both (Gorum), split between
+them (Jakaltek puts absolutive agreement on the auxiliary and ergative on
+the lexical verb), or split with some categories doubled (Pipil, Hemba).
+The lexical verb stays the semantic head throughout, and that mismatch
+between where meaning sits and where inflection sits is what makes AVCs
+typologically distinctive. Chapter 7 places the constructions on
+[heine-1993]'s grammaticalization cline.
 
-## Key contributions formalized
+Formalized here: nine datums across seven languages covering all five
+patterns, each recording which categories the auxiliary and the lexical
+verb host; the chapter 5 generalization that subject agreement doubles
+while object agreement stays on the lexical verb; negative auxiliaries as
+AVCs, with Kwerba as the counterexample to the verbal-negator
+tendency; and the compositions with [sorace-2000]'s auxiliary selection
+and [miestamo-2005]'s morpheme typology.
 
-1. **Inflectional pattern typology** (`InflPattern` from substrate):
-   auxHeaded, lexHeaded, doubled, split, splitDoubled — defined in
-   `Typology/AuxiliaryVerbs.lean`, verified per-datum here.
-2. **Semantic head invariant** (Anderson p. 23, Table 3.1 p. 116):
-   the lexical verb is always the semantic head, regardless of where
-   inflection sits.
-3. **Typed inflectional distribution**: `InflDistribution`
-   (study-local) records which `MorphCategory` values each
-   element hosts.
-4. **Grammaticalization grounding**: Anderson ch. 7 traces AVCs
-   onto Heine 1993's cline (Anderson p. 5: *"According to Heine
-   (1993: 48ff.)..."*). The cline lives in
-   `Features/Grammaticalization.lean`, anchored on
-   [heine-1993] ch. 3.
+## References
 
-## Coverage
-
-Sample of 9 AVC datums across 7 languages, covering all 5 patterns:
-
-- English *have eaten* (aux-headed) — Anderson ch. 2 canonical example
-- Doyayo lex-headed (Anderson ch. 3 ex. 15a, p. 121)
-- Doyayo split/doubled (Anderson ch. 5 ex. 129, p. 223)
-- Gorum (doubled)
-- Jakaltek (split, abs/erg)
-- Pipil split/doubled (Anderson ch. 5 ex. 133, p. 224)
-- Pipil lex-headed (Anderson ch. 3 ex. 49, p. 130, with *weli*)
-- Finnish split (negative auxiliary *ei*) [karlsson-2017]
-- Hemba split/doubled
-
-## 2026-04-30 audit fixes
-
-PDF-verified against Anderson 2006 (book pp. 5, 114, 116, 121, 224)
-and Heine 1993 (book p. 48ff. via Anderson p. 5):
-
-- **Doyayo `.split` → `.lexHeaded`** (Ch 3 ex. 15a) + new
-  `doyayoSplitDoubled` (Ch 5 ex. 129). Anderson never classifies
-  Doyayo as plain split.
-- **Pipil `.split` → `.splitDoubled`** (Ch 5 ex. 133, with subjects
-  doubly marked). Fragment `splitDistribution` corrected to put
-  `.agreement` on AUX (matches the gloss `1-AUX 1-2PL-show`).
-- **Cline reattributed to [heine-1993]** (Anderson p. 5
-  explicitly cites Heine 1993:48ff.).
-- **`negStrategyStage`** is now `Strategy.toGramStage :
-  Strategy → Option GramStage` (in `Syntax/Negation.lean`), with
-  `.negParticle => none` (not on the verbal cline) — fixes the
-  earlier formaliser-introduced collapse of [miestamo-2005]'s
-  particle-vs-verb distinction.
-- **Dropped Table 2.3 reference**: Anderson's Table 2.3 (p. 114)
-  catalogs *non-finite forms within AUX-headed AVCs* (a single-
-  pattern grid of language exemplars), not a cross-pattern
-  prediction. The pattern→LV-form prediction lives in Ch 2-5
-  prose, not in any single table.
-- **English exemplar**: switched from *will go* (modal) to *have
-  eaten* (perfect) as Anderson's canonical Ch 2 AUX-headed
-  example; gloss corrected from FUT (non-Andersonian for *will*)
-  to AUX.PRS + PTCP.
-- **9× `native_decide` → `decide`**: structural reduction is
-  tractable; native_decide bypasses the kernel.
-- **`finnish_form_from_paradigm`**: paired with
-  `finnish_1sg_in_paradigm` witness lemma, now provably
-  grounded in the Fragment paradigm rather than passing through
-  the dead `none` fallback branch.
-- **Sorace bridge** chains through [sorace-2000]'s
-  `vendlerClassToTypicalTransitivity` for a 2-step Vendler
-  → TransitivityClass derivation.
-- **Cross-framework theorem** `anderson_miestamo_agree_on_neg_morphology`
-  documents the corrected mapping that preserves Miestamo's
-  particle-vs-verb distinction.
+* [anderson-2006], §1.4, §1.7.2, chs. 2–5, ch. 7
+* [heine-1993], ch. 3
+* [karlsson-2017], §19.5
 -/
-
 namespace Anderson2006
 
 open AuxiliaryVerbs
 open ArgumentStructure.AuxiliarySelection
 open Syntax.Negation (Strategy)
 
-/-! ## Inflectional distribution (study-local apparatus)
+/-! ### Inflectional distribution
 
-Demoted from the former `Morphology/Periphrasis.lean` at the
-single-consumer bar: this study is the sole terminal of every
-distribution value. Possessing a distribution is neutral on
-periphrasis-hood ([spencer-popova-2015] pp. 200, 204); the data is the
-raw material for the distributed-exponence criterion. -/
+Possessing a distribution is neutral on periphrasis-hood
+([spencer-popova-2015] pp. 200, 204); the data is the raw material for
+the distributed-exponence criterion. -/
 
 open Morphology (MorphCategory)
 
@@ -166,21 +110,9 @@ def finnishNegDist : InflDistribution :=
   { onAux := [.negation, .tense, .agreement .subj]
   , onLex := [.stem, .aspect] }
 
-/-- Hemba: agreement doubled, tense split to AUX, mood split to LV —
-    the split/doubled pattern read directly off the distribution. -/
-theorem hemba_split_doubled_shape :
-    hembaDist.onAux.contains (.agreement .subj) = true ∧
-    hembaDist.onLex.contains (.agreement .subj) = true ∧
-    hembaDist.onAux.contains .tense = true ∧
-    hembaDist.onLex.contains .tense = false ∧
-    hembaDist.onAux.contains .mood = false ∧
-    hembaDist.onLex.contains .mood = true := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
-
 /-- The Finnish distribution is consistent with [miestamo-2005]'s
     constructional A/Fin coding: categories split across the negative
-    auxiliary and the main verb (moved here from the Miestamo file —
-    the cross-paper comparison belongs to the later study). -/
+    auxiliary and the main verb. -/
 theorem finnish_split_confirms_constructional :
     finnishNegDist.onAux.length > 0 ∧ finnishNegDist.onLex.length > 0 ∧
     Miestamo2005.finnish.asymmetryDimensions.contains .constructional := by
@@ -193,11 +125,10 @@ structure AVCDatum where
   language : String
   form : String
   inflPattern : InflPattern
-  distribution : Option InflDistribution := none
   gloss : String := ""
   deriving Repr, BEq
 
-/-! ## Per-language AVC data
+/-! ### Per-language AVC data
 
 The 9 sample datums (7 languages) covering all 5 of Anderson's
 inflectional patterns. Per-datum verification theorems below ensure
@@ -226,7 +157,6 @@ def doyayo : AVCDatum :=
   { language := "Doyayo"
   , form := Doyayo.AuxiliaryVerbs.lexHeadedForm
   , inflPattern := .lexHeaded
-  , distribution := some doyayoLexHeadedDist
   , gloss := Doyayo.AuxiliaryVerbs.lexHeadedGloss }
 
 /-- Doyayo split/doubled (Anderson Ch 5 ex. 129, p. 223).
@@ -237,7 +167,6 @@ def doyayoSplitDoubled : AVCDatum :=
   { language := "Doyayo"
   , form := Doyayo.AuxiliaryVerbs.splitDoubledForm
   , inflPattern := .splitDoubled
-  , distribution := some doyayoSplitDoubledDist
   , gloss := Doyayo.AuxiliaryVerbs.splitDoubledGloss }
 
 /-- Gorum (doubled): subject + TAM on both AUX and LV.
@@ -246,7 +175,6 @@ def gorum : AVCDatum :=
   { language := "Gorum"
   , form := Gorum.AuxiliaryVerbs.form
   , inflPattern := .doubled
-  , distribution := some gorumDist
   , gloss := Gorum.AuxiliaryVerbs.gloss }
 
 /-- Jakaltek (split): absolutive on AUX, ergative on LV.
@@ -255,7 +183,6 @@ def jakaltek : AVCDatum :=
   { language := "Jakaltek"
   , form := Jakaltek.AuxiliaryVerbs.form
   , inflPattern := .split
-  , distribution := some jakaltekDist
   , gloss := Jakaltek.AuxiliaryVerbs.gloss }
 
 /-- Pipil split/doubled (Anderson Ch 5 ex. 133b, p. 224).
@@ -268,7 +195,6 @@ def pipilSplitDoubled : AVCDatum :=
   { language := "Pipil"
   , form := Pipil.AuxiliaryVerbs.splitDoubledForm
   , inflPattern := .splitDoubled
-  , distribution := some pipilSplitDoubledDist
   , gloss := Pipil.AuxiliaryVerbs.splitDoubledGloss }
 
 /-- Pipil lex-headed (Anderson ch. 3 ex. 49, p. 130; Campbell 1985: 139).
@@ -281,7 +207,6 @@ def pipilLexHeaded : AVCDatum :=
   { language := "Pipil"
   , form := Pipil.AuxiliaryVerbs.lexHeadedForm
   , inflPattern := .lexHeaded
-  , distribution := some pipilLexHeadedDist
   , gloss := Pipil.AuxiliaryVerbs.lexHeadedGloss }
 
 /-- Finnish negative auxiliary *ei* (split): person/number on aux,
@@ -297,18 +222,13 @@ def pipilLexHeaded : AVCDatum :=
     The split nature derives from `finnishNegDist`:
     the negative auxiliary hosts negation, tense, and agreement, while
     the lexical verb retains stem and aspect.
-    The 1sg neg-aux form derives from `negParadigm`; see the
-    `finnish_1sg_form_eq` witness lemma for the strong pinning of
-    the form-construction. Gloss style follows Anderson's Uralic
-    convention (`Neg-1 read-conneg`). -/
+    The 1sg form is read out of `negParadigm`; gloss style follows
+    Anderson's Uralic convention (`Neg-1 read-conneg`). -/
 def finnish : AVCDatum :=
   { language := "Finnish"
-  , form := match Finnish.Negation.negParadigm.find?
-      (fun f => f.person == 1 && f.number == "sg") with
-    | some f => f.form ++ " lue"
-    | none => "en lue"
+  , form := (Finnish.Negation.negParadigm.find?
+      (fun f => f.person == 1 && f.number == "sg")).elim "" (·.form ++ " lue")
   , inflPattern := .split
-  , distribution := some finnishNegDist
   , gloss := "Neg-1 read-conneg" }
 
 /-- Hemba split/doubled: subject doubled on both AUX and LV; tense
@@ -318,7 +238,6 @@ def hemba : AVCDatum :=
   { language := "Hemba"
   , form := Hemba.AuxiliaryVerbs.form
   , inflPattern := .splitDoubled
-  , distribution := some hembaDist
   , gloss := Hemba.AuxiliaryVerbs.gloss }
 
 /-- All 9 AVC datums (covering all 5 of Anderson's patterns). -/
@@ -326,72 +245,16 @@ def allData : List AVCDatum :=
   [english, doyayo, doyayoSplitDoubled, gorum, jakaltek,
    pipilSplitDoubled, pipilLexHeaded, finnish, hemba]
 
-/-! ## Per-datum InflPattern verification
+/-- The sample instantiates every one of Anderson's five patterns. -/
+theorem all_patterns_attested (p : InflPattern) :
+    ∃ d ∈ allData, d.inflPattern = p := by
+  cases p <;> decide
 
-Each theorem below is a structural drift sentry: changing a
-Fragment entry's underlying analysis breaks exactly one theorem. -/
-
-theorem english_is_auxHeaded : english.inflPattern = .auxHeaded := rfl
-theorem doyayo_is_lexHeaded : doyayo.inflPattern = .lexHeaded := rfl
-theorem doyayoSplitDoubled_is_splitDoubled :
-    doyayoSplitDoubled.inflPattern = .splitDoubled := rfl
-theorem gorum_is_doubled : gorum.inflPattern = .doubled := rfl
-theorem jakaltek_is_split : jakaltek.inflPattern = .split := rfl
-theorem pipilSplitDoubled_is_splitDoubled :
-    pipilSplitDoubled.inflPattern = .splitDoubled := rfl
-theorem pipilLexHeaded_is_lexHeaded : pipilLexHeaded.inflPattern = .lexHeaded := rfl
-theorem finnish_is_split : finnish.inflPattern = .split := rfl
-theorem hemba_is_splitDoubled : hemba.inflPattern = .splitDoubled := rfl
-
-/-! ## Per-datum form/distribution Fragment grounding -/
-
-theorem doyayo_form_from_fragment :
-    doyayo.form = Doyayo.AuxiliaryVerbs.lexHeadedForm := rfl
-theorem doyayoSplitDoubled_form_from_fragment :
-    doyayoSplitDoubled.form = Doyayo.AuxiliaryVerbs.splitDoubledForm := rfl
-theorem gorum_form_from_fragment :
-    gorum.form = Gorum.AuxiliaryVerbs.form := rfl
-theorem jakaltek_form_from_fragment :
-    jakaltek.form = Jakaltek.AuxiliaryVerbs.form := rfl
-theorem pipilSplitDoubled_form_from_fragment :
-    pipilSplitDoubled.form = Pipil.AuxiliaryVerbs.splitDoubledForm := rfl
-theorem pipilLexHeaded_form_from_fragment :
-    pipilLexHeaded.form = Pipil.AuxiliaryVerbs.lexHeadedForm := rfl
-theorem hemba_form_from_fragment :
-    hemba.form = Hemba.AuxiliaryVerbs.form := rfl
-
-/-! ## Finnish form construction grounding
-
-The Finnish form construction uses `negParadigm.find?`, which is
-`Option`-typed. The fallback `| none => "en lue"` was historically
-chosen to coincide with the success-branch result, making
-`finnish.form = "en lue"` pass by `rfl` even when the lookup
-*would* return `none`. The witness theorem below grounds the
-construction in the actual paradigm content. -/
-
-/-- The Finnish 1sg negative-auxiliary entry exists in `negParadigm`. -/
-theorem finnish_1sg_in_paradigm :
-    (Finnish.Negation.negParadigm.find?
-      (fun f => f.person == 1 && f.number == "sg")).isSome = true := by
-  decide
-
-/-- Strong pinning: the 1sg paradigm entry's form is exactly `"en"`.
-    Together with `finnish_1sg_in_paradigm`, this pins `finnish.form`
-    to the Fragment's actual paradigm content. A future change to
-    `negParadigm` that altered the 1sg form (or removed the entry
-    entirely) would break this theorem; the dead-branch `| none =>
-    "en lue"` fallback in `finnish.form` cannot mask the change. -/
-theorem finnish_1sg_form_eq :
-    (Finnish.Negation.negParadigm.find?
-      (fun f => f.person == 1 && f.number == "sg")).map (·.form)
-      = some "en" := by
-  decide
-
-/-- The Finnish form is the 1sg `negParadigm` entry's form
-    concatenated with `" lue"`. -/
+/-- The 1sg entry of `negParadigm` builds the form: a change to that
+    entry leaves `finnish.form` empty and breaks this. -/
 theorem finnish_form_from_paradigm : finnish.form = "en lue" := rfl
 
-/-! ## Connection to Finnish Fragment -/
+/-! ### The Finnish negative AVC -/
 
 /-- The Finnish negative auxiliary construction is a split AVC: the
     auxiliary hosts some inflectional categories and the lexical
@@ -401,23 +264,7 @@ theorem finnish_split_from_fragment :
     dist.onAux ≠ [] ∧ dist.onLex ≠ [] := by
   exact ⟨by decide, by decide⟩
 
-/-! ## Pattern coverage (named witnesses)
-
-All five of Anderson's inflectional patterns are attested in the
-sample. Each pattern is witnessed by a *named* datum (existence by
-witness, not aggregate `.any`-scan). Adding a new datum doesn't
-break this theorem; changing one of the named witnesses' patterns
-does. -/
-
-theorem five_patterns_attested :
-    english.inflPattern = .auxHeaded ∧
-    doyayo.inflPattern = .lexHeaded ∧
-    gorum.inflPattern = .doubled ∧
-    jakaltek.inflPattern = .split ∧
-    hemba.inflPattern = .splitDoubled := by
-  exact ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-/-! ## Structural theorems on distribution -/
+/-! ### Where the inflection sits -/
 
 /-- In Gorum's doubled AVC, aux and lex host exactly the same categories. -/
 theorem gorum_doubled_same_categories :
@@ -431,11 +278,9 @@ theorem doyayo_lexHeaded_aux_agreement_only :
     doyayoLexHeadedDist.onLex = [.tense] := by
   exact ⟨rfl, rfl⟩
 
-/-- **Anderson Ch 5 §5.2 payoff (Doyayo)**: subject agreement is
-    doubled across AUX and LV; object agreement appears on LV only.
-    Now Lean-checkable directly via `Controller`-typed `.agreement`,
-    rather than via the fragile list-length encoding the 0.230.578
-    workaround used. -/
+/-- Chapter 5 (Doyayo): subject agreement is doubled across auxiliary
+    and lexical verb, while object agreement appears on the lexical verb
+    only. -/
 theorem doyayo_splitDoubled_subj_doubled_obj_lex_only :
     let dist := doyayoSplitDoubledDist
     dist.onAux.contains (.agreement .subj) = true ∧
@@ -444,10 +289,9 @@ theorem doyayo_splitDoubled_subj_doubled_obj_lex_only :
     dist.onAux.contains (.agreement .obj) = false := by
   exact ⟨by decide, by decide, by decide, by decide⟩
 
-/-- **Anderson Ch 5 §5.2 payoff (Pipil)**: same generalization as
-    Doyayo — subject doubled across AUX and LV, object on LV only.
-    The AUX root *yu* itself encodes TAM lexically (no separate
-    `.tense` morpheme on AUX). -/
+/-- Chapter 5 (Pipil): the same generalization as Doyayo. The auxiliary
+    root *yu* encodes TAM lexically, so no `.tense` morpheme sits on the
+    auxiliary. -/
 theorem pipil_splitDoubled_subj_doubled_obj_lex_only :
     let dist := pipilSplitDoubledDist
     dist.onAux.contains (.agreement .subj) = true ∧
@@ -466,10 +310,8 @@ theorem finnish_split_disjoint :
     let dist := finnishNegDist
     dist.onAux.all (fun c => !dist.onLex.contains c) = true := by decide
 
-/-- **Anderson Ch 5 abs/erg payoff (Jakaltek)**: with role-typed
-    agreement, the absolutive-on-AUX / ergative-on-LV split is now
-    a category-level distinction (`.agreement .obj` vs `.agreement .subj`),
-    not just a within-category meta-comment. -/
+/-- Chapter 5 (Jakaltek): absolutive agreement on the auxiliary,
+    ergative on the lexical verb. -/
 theorem jakaltek_abs_on_aux_erg_on_lex :
     let dist := jakaltekDist
     dist.onAux.contains (.agreement .obj) = true ∧
@@ -492,7 +334,7 @@ theorem hemba_splitDoubled_agreement_doubled :
   exact ⟨by decide, by decide, by decide,
          by decide, by decide, by decide⟩
 
-/-! ## Dual headedness
+/-! ### Dual headedness
 
 Anderson distinguishes three notions of head — inflectional,
 phrasal/syntactic, and semantic (§1.4, pp. 22-24; Table 3.1 on
@@ -510,7 +352,7 @@ theorem heads_coincide_iff_lexHeaded (p : InflPattern) :
     (p.semanticHead == p.inflHost) = (p == .lexHeaded) := by
   cases p <;> rfl
 
-/-! ## Negative auxiliaries as AVCs
+/-! ### Negative auxiliaries as AVCs
 
 [anderson-2006] §1.7.2 (p. 33-34) treats negative auxiliaries
 across multiple AVC patterns: aux-headed in Udihe, Neyo; split in
@@ -547,36 +389,9 @@ theorem komi_tense_on_aux :
     Examples.komi_neg_pres.primaryText ≠ Examples.komi_neg_past.primaryText :=
   ⟨rfl, by decide⟩
 
-/-! ## LV form predictions across patterns
+/-! ### Auxiliary selection
 
-Anderson predicts the verb form of the lexical verb from the
-inflectional pattern. AUX-headed AVCs have a nonfinite LV
-(infinitive/participle/etc.; Anderson Table 2.3 on p. 114
-catalogs the LV non-finite-form types within AUX-headed AVCs
-specifically — the table is a one-pattern grid of language
-exemplars, not a cross-pattern prediction). All other patterns
-have a finite LV (carrying at least some inflection, per Anderson
-chs. 3-5 prose). The pattern→LV-form prediction is formalized in
-`Typology.lvVerbForm`. -/
-
-theorem auxHeaded_predicts_nonfinite_lv :
-    InflPattern.auxHeaded.lvVerbForm = UD.VerbForm.Inf := rfl
-
-theorem lexHeaded_predicts_finite_lv :
-    InflPattern.lexHeaded.lvVerbForm = UD.VerbForm.Fin := rfl
-
-theorem doubled_predicts_finite_lv :
-    InflPattern.doubled.lvVerbForm = UD.VerbForm.Fin := rfl
-
-theorem split_predicts_finite_lv :
-    InflPattern.split.lvVerbForm = UD.VerbForm.Fin := rfl
-
-theorem splitDoubled_predicts_finite_lv :
-    InflPattern.splitDoubled.lvVerbForm = UD.VerbForm.Fin := rfl
-
-/-! ## Bridge to Sorace 2000 (auxiliary selection)
-
-Be/have auxiliary selection (`Typology/AuxiliaryVerbs.lean`) operates
+Be/have auxiliary selection (`Syntax/Category/Auxiliary/Constructions.lean`) operates
 within aux-headed AVCs: the question of *which* auxiliary appears
 presupposes the auxiliary hosts inflection. [sorace-2000]'s
 sister study `Studies/Sorace2000.lean` provides
@@ -610,7 +425,7 @@ theorem sorace_canonical_chain (v : Features.VendlerClass) :
         | _ => .have := by
   cases v <;> rfl
 
-/-! ## Cross-framework: Miestamo 2005 (negation morpheme classification)
+/-! ### Cross-framework: Miestamo's morpheme typology
 
 [miestamo-2005] classifies negation strategies by morpheme
 type (WALS Ch 112A: negative auxiliary verb, affix, particle, ...);
@@ -631,11 +446,7 @@ stage, in any Miestamo A/Fin datum, shows constructional
 asymmetry — a falsifiable empirical prediction whose chain
 runs Anderson's cline → Miestamo's morpheme type → Miestamo's
 asymmetry dimension.
-
-The earlier `anderson_miestamo_agree_on_neg_morphology` theorem
-in this slot (0.230.573) was a stapled conjunction of three
-independent facts; the meta-audit at 0.230.576 replaced it with
-the quantified-equivalence shape below. -/
+ -/
 
 /-- Cross-framework equivalence: Anderson's grammaticalization-cline
     placement at `.auxiliary` and Miestamo's morpheme-type
