@@ -59,46 +59,44 @@ structure InflDistribution where
   onLex : Finset MorphCategory
   deriving DecidableEq
 
-/-- Doyayo lex-headed (ch. 3 ex. 15a, p. 121), *mi¹ (gi²) kpel¹-ko¹* 'I'm
-going to pour': the auxiliary "partially encodes person of the subject
-through the tone" (p. 120), the lexical verb carries TAM. -/
+/-- Doyayo lex-headed (`Examples.doyayo_lexheaded`): the auxiliary
+"partially encodes person of the subject through the tone" (p. 120), the
+lexical verb carries TAM. -/
 def doyayoLexHeadedDist : InflDistribution :=
   { onAux := {.agreement .subj}, onLex := {.tense} }
 
-/-- Doyayo split/doubled (ch. 5 ex. 129, p. 223), *hi¹-za¹ hi¹-zaa¹³
-hi¹-lɔ-mɔ* 'they might come bite you': the subject is marked on both
-elements, the object only on the lexical verb. -/
+/-- Doyayo split/doubled (`Examples.doyayo_splitdoubled`): the subject is
+marked on both elements, the object only on the lexical verb. -/
 def doyayoSplitDoubledDist : InflDistribution :=
   { onAux := {.agreement .subj}
   , onLex := {.agreement .subj, .agreement .obj} }
 
-/-- Gorum doubled: subject agreement, tense and affectedness on both
-elements. -/
+/-- Gorum doubled (`Examples.gorum_tiger`, `Examples.gorum_vigorously`):
+subject agreement, tense and affectedness on both elements. -/
 def gorumDist : InflDistribution :=
   { onAux := {.agreement .subj, .tense, .voice}
   , onLex := {.agreement .subj, .tense, .voice} }
 
-/-- Hemba split/doubled: agreement on both elements, tense on the
-auxiliary, mood on the lexical verb. -/
+/-- Hemba split/doubled (`Examples.hemba_progressive`): agreement on both
+elements, tense on the auxiliary, mood on the lexical verb. -/
 def hembaDist : InflDistribution :=
   { onAux := {.agreement .subj, .tense}
   , onLex := {.agreement .subj, .mood} }
 
-/-- Jakaltek split: aspect and absolutive agreement on the auxiliary,
-ergative agreement on the lexical verb. -/
+/-- Jakaltek split (`Examples.jakaltek_completive`): aspect and absolutive
+agreement on the auxiliary, ergative agreement on the lexical verb. -/
 def jakaltekDist : InflDistribution :=
   { onAux := {.aspect, .agreement .obj}
   , onLex := {.agreement .subj} }
 
-/-- Pipil lex-headed (ch. 3 ex. 49, p. 130; Campbell 1985: 139), *weli
-ni-nehnemi wehka* 'I can walk far': the auxiliary *weli* is uninflected. -/
+/-- Pipil lex-headed (`Examples.pipil_capability`): the capability
+auxiliary *weli* is uninflected. -/
 def pipilLexHeadedDist : InflDistribution :=
   { onAux := ∅, onLex := {.agreement .subj} }
 
-/-- Pipil split/doubled (ch. 5 ex. 133b, p. 224), *n-yu ni-mitsin-ilwitia*
-'I'm going to show you': "Subjects are doubly marked… while objects occur
-only on lexical verbs". The auxiliary root *yu* carries prospective TAM
-lexically, so no tense morpheme sits on it. -/
+/-- Pipil split/doubled (`Examples.pipil_progressive`): "Subjects are doubly
+marked… while objects occur only on lexical verbs". The auxiliary root *yu*
+carries prospective TAM lexically, so no tense morpheme sits on it. -/
 def pipilSplitDoubledDist : InflDistribution :=
   { onAux := {.agreement .subj}
   , onLex := {.agreement .subj, .agreement .obj} }
@@ -130,6 +128,23 @@ theorem finnish_split_confirms_constructional :
     finnishNegDist.onAux ≠ ∅ ∧ finnishNegDist.onLex ≠ ∅ ∧
     Miestamo2005.finnish.asymmetryDimensions.contains .constructional := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
+
+/-- The inflectional pattern Anderson assigns an example. -/
+def parseInflPattern : String → Option InflPattern
+  | "auxHeaded" => some .auxHeaded
+  | "lexHeaded" => some .lexHeaded
+  | "doubled" => some .doubled
+  | "split" => some .split
+  | "splitDoubled" => some .splitDoubled
+  | _ => none
+
+/-- The patterns Anderson's examples are classified as. -/
+def attestedPatterns : List InflPattern :=
+  Examples.all.filterMap fun e => (e.feature? "infl_pattern").bind parseInflPattern
+
+/-- Anderson's examples instantiate every one of his five patterns. -/
+theorem all_patterns_attested (p : InflPattern) : p ∈ attestedPatterns := by
+  cases p <;> decide
 
 /-! ### The Finnish negative AVC -/
 

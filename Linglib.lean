@@ -750,7 +750,6 @@ import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Dargwa.ComplexPredicates
 import Linglib.Fragments.Dargwa.Coordination
 import Linglib.Fragments.Dargwa.Locatives
-import Linglib.Fragments.Doyayo.AuxiliaryVerbs
 import Linglib.Fragments.Drubea.Prosody
 import Linglib.Fragments.Dutch.Adjectives
 import Linglib.Fragments.Dutch.Adpositions
@@ -852,7 +851,6 @@ import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.VerbParticles
 import Linglib.Fragments.German.WordOrder
 import Linglib.Fragments.Gitksan.Modals
-import Linglib.Fragments.Gorum.AuxiliaryVerbs
 import Linglib.Fragments.Greek.Case
 import Linglib.Fragments.Greek.Grevena.Possession
 import Linglib.Fragments.Greek.Smyrna.Possession
@@ -878,7 +876,6 @@ import Linglib.Fragments.Hawaiian.Possession
 import Linglib.Fragments.Hebrew.ConsonantalRoots
 import Linglib.Fragments.Hebrew.Relativization
 import Linglib.Fragments.Hebrew.TemporalDeictic
-import Linglib.Fragments.Hemba.AuxiliaryVerbs
 import Linglib.Fragments.Hindi.Case
 import Linglib.Fragments.Hindi.PolarityItems
 import Linglib.Fragments.Hindi.Pronouns
@@ -1029,7 +1026,6 @@ import Linglib.Fragments.Mayan.Chol.Classifiers
 import Linglib.Fragments.Mayan.Chuj.ModalIndefinites
 import Linglib.Fragments.Mayan.Chuj.RootClasses
 import Linglib.Fragments.Mayan.Chuj.VoiceSystem
-import Linglib.Fragments.Mayan.Jakaltek.AuxiliaryVerbs
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 import Linglib.Fragments.Mayan.Kaqchikel.Focus
@@ -1064,7 +1060,6 @@ import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.Norwegian.VerbParticles
 import Linglib.Fragments.Numee.Prosody
 import Linglib.Fragments.Nungon.MedialVerbs
-import Linglib.Fragments.Pipil.AuxiliaryVerbs
 import Linglib.Fragments.Poko.Tone
 import Linglib.Fragments.Portuguese.Modals
 import Linglib.Fragments.Portuguese.MoodChoice
