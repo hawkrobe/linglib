@@ -44,10 +44,6 @@ def nicht : Marker :=
     non-NC languages is a separate axis from the operator. -/
 def negDeterminer : String := "kein"
 
-/-- The German negation system: a single particle. -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "deu" [nicht]
-
 /-- A negation example showing symmetric structure. -/
 structure NegExample where
   affirmative : String

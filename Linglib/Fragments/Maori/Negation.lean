@@ -37,10 +37,6 @@ open Syntax.Negation
 def kahore : Marker :=
   { morphs := [.free "kāhore"] }
 
-/-- The Maori negation system: a single quasi-auxiliary word. -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "mri" [kahore]
-
 /-- A Maori negation example. -/
 structure NegExample where
   affirmative : String

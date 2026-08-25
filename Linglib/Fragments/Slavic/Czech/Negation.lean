@@ -33,10 +33,6 @@ open Syntax.Negation
 def ne : Marker :=
   { morphs := [.pref "ne"] }
 
-/-- The Czech negation system: a single verbal prefix. -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "ces" [ne]
-
 /-- Legacy String accessor for the prefix. Kept for back-compat with
     `Studies/Miestamo2005.lean`. New consumers should
     use `ne.form`. -/

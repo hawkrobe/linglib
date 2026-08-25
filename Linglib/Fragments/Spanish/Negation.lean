@@ -44,10 +44,6 @@ open Syntax.Negation
 def no : Marker :=
   { morphs := [.free "no"] }
 
-/-- The Spanish negation system: a single preverbal particle. -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "spa" [no]
-
 /-- A Spanish negation example. -/
 structure NegExample where
   affirmative : String

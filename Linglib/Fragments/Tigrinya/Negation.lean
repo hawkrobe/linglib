@@ -36,7 +36,4 @@ def n : Morph := .suff "n"
 def circumfix : Marker where
   morphs := [aj, n]
 
-/-- Tigrinya standard negation: the single bipartite marker. -/
-def negationSystem : NegationSystem := .ofISO "tir" [circumfix]
-
 end Tigrinya.Negation

@@ -47,11 +47,6 @@ open Syntax.Negation
 def negSuffix : Marker :=
   { morphs := [.suff "nai"] }
 
-/-- The Japanese negation system: a single verbal affix with rich
-    morphological redistribution (see `japaneseNegDistribution`). -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "jpn" [negSuffix]
-
 /-- A Japanese negation paradigm entry. -/
 structure NegParadigmEntry where
   formLabel : String

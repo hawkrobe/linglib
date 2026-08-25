@@ -45,10 +45,6 @@ def mana : Marker :=
     ([miestamo-2005] p. 158). -/
 def chuSuffix : String := "-chu"
 
-/-- The Imbabura Quechua negation system: a single preverbal particle. -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "qvi" [mana]
-
 /-- An Imbabura Quechua negation example. -/
 structure NegExample where
   affirmative : String

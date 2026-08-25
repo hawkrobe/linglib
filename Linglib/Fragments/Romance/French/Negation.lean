@@ -55,12 +55,6 @@ def pasReinforcer : String := "pas"
 def bipartite : Marker :=
   { morphs := [.procl "ne", .free "pas"] }
 
-/-- The French negation system: a single bipartite construction.
-    *Length-1* `markers` list — *ne* and *pas* are not alternative
-    markers but two morphemes of one bipartite construction. The -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "fra" [bipartite]
-
 /-- A French negation example. -/
 structure NegExample where
   affirmative : String

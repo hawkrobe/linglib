@@ -50,12 +50,6 @@ def bu : Marker :=
 def mei : Marker :=
   { morphs := [.free "méi"] }
 
-/-- The Mandarin negation system: two aspect-conditioned markers.
-    *bù* (default, non-perfective) listed first per the ordering
-    convention in `NegationSystem`; *méi* second. -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "cmn" [bu, mei]
-
 /-- A Mandarin negation example. -/
 structure NegExample where
   affirmative : String

@@ -58,12 +58,6 @@ def mana : Marker :=
 def batu : Marker :=
   { morphs := [.free "batu"] }
 
-/-- The Zarma-Sonrai negation system: three aspect-conditioned markers.
-    *si* (imperfective) listed first per ordering convention; the two
-    perfective variants follow. -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "dje" [si, mana, batu]
-
 /-- Legacy String accessors (used by `enNegatorForAspect` in this file). -/
 def ipfvNeg : String := si.form
 def pfvNeg : String := mana.form

@@ -40,10 +40,6 @@ def not : Marker :=
     treat *not* as the canonical entry. -/
 def negContracted : String := "n't"
 
-/-- The English negation system: a single preverbal particle. -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "eng" [not]
-
 /-- An English negation example. -/
 structure NegExample where
   affirmative : String
