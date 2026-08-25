@@ -1,212 +1,244 @@
-import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phase.Basic
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Studies.Olivier2026Auxiliary
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 
 /-!
-# [olivier-2026] — clitic-typology asymmetry
+# Auxiliary Switch as person-identity matching: [olivier-2026]
 
-Novel observation in [olivier-2026] (also reported by
-[cardinaletti-shlonsky-2004], but not previously formalised):
-not all climbing clitics interact with Auxiliary Switch.
-**Prepositional clitics** (locative *y/ci*, partitive *en/ne*,
-non-reflexive dative *lui/gli*) climb to the matrix domain
-WITHOUT triggering AS. Only **reflexive** clitic climbing
-correlates with AS.
+[olivier-2026] analyses *Auxiliary Switch* (AS) — BE in place of HAVE on a modal in a
+compound tense whose infinitive is unaccusative or reflexive (2b), (3b) — as ordinary
+auxiliary selection across a transparent restructuring domain. Auxiliary selection
+itself ([olivier-2025b], §6.2) is not driven by argument structure: a person value
+carries the referential identity of its bearer (54), Voice's valued φ-set is
+redistributed by head splitting onto `vAux[uPers]` and `VoicePrt[uGen, uNum]` (57),
+and the Vocabulary Items (55) insert BE when `[vAux + T]` carry the same identity,
+HAVE elsewhere — so unaccusatives (59) and bound reflexives (60) take BE and
+transitives (61) HAVE. In a restructuring clause (40) the auxiliary belongs to the
+modal, and whether Voice(*) KEEPs its φ-features or SHAREs them with vMOD
+([ouali-2008]'s operations, (45), the substrate's `TransferStyle`) decides both clitic
+climbing and AS at once: KEEP leaves vAux featureless, HAVE (69), (74); SHARE brings
+the bound reflexive's identity — the subject's — to vAux, BE (71), (76).
 
-## Mechanism (Olivier 2026 §6.2, §7.1)
-
-The asymmetry derives from one structural property: a reflexive
-clitic is bound by the External Argument via Voice* (the strong,
-agentive phase head — [wurmbrand-shimamura-2017],
-[wood-2015]'s [+θ, +D] reflexive Voice). Under the SHARE
-mode of φ-feature transfer ([ouali-2008], formalised in
-`Minimalist.TransferStyle`), Voice* shares the now-EA-identical
-clitic features with vMOD; vAux inherits these via head-splitting;
-T probes EA and ends up with matching person/ID values, yielding
-BE-insertion. Other clitic types do not enter the EA-binding chain,
-so no ID-matching obtains and HAVE surfaces.
-
-All argument clitics carry φ-features (Olivier fn 27 — locatives
-and partitives included); the asymmetry is not that some clitics
-lack φ. The asymmetry is which clitics enter binding by EA via
-Voice*.
-
-## What this file commits to
-
-This file's load-bearing claim is the per-clitic-type structural
-property `boundByEAviaVoiceStar` and the projection from a clitic
-type to an `Olivier2026Auxiliary.RestructuringClause`
-configuration. The AS prediction is then *derived* from the
-sibling file's `AuxiliarySwitchOccurs` predicate — not stipulated
-per case.
-
-The `Minimalist.TransferStyle` (KEEP/SHARE/DONATE) and `Voice.Head`
-infrastructure are imported but not parametrised at the
-phenomenon level — language-level KEEP-vs-SHARE variation lives
-in the AuxVerbs sibling's diachronic-French / Sardinian
-generalisations, not here.
-
-## Empirical caveat (Olivier fn 18, Cinque 2006:60 fn 49)
-
-Prepositional-clitic climbing out of unaccusative complements
-(e.g. Italian *Maria c'ha dovuto venire molte volte* — locative
-climbing + HAVE despite unaccusative *venire*) is colloquial and
-yields varying acceptability among speakers. Olivier's analysis
-predicts AS in such cases (the embedded verb is unaccusative);
-the absence of AS is treated as diatopic markedness rather than
-counter-evidence. The formalisation below does not capture this
-colloquial-Italian deviation.
-
-The contrast formalised here is the canonical case: prepositional
-clitics climbing out of *transitive* complements vs reflexive
-clitics climbing out of *reflexive* complements.
+`compound` is the simple compound tense and `matrixAux` the restructuring one; the
+theorems derive the intro's conditions 3 and α (`share_switch_iff_selectsBe`,
+`reflexive_switch_iff_climbs`), Table 1's absence of AS without climbing, the
+optionality of AS with unaccusatives (§7.2), the prepositional clitics that climb
+without triggering AS (§7.3: *y/ci*, *en/ne*, *lui/gli* introduce no coreferential
+person value; a "rich" vAux also probing the internal argument gives the Italian and
+Sardinian speakers' BE), and the varieties of §7.1 as the transfers they admit. Out of
+scope: conditions 1–2, which the structure (40) presupposes; gender/number on the
+participle; impersonal *si* (fn. 53); the corpus counts of §3 (Tables 1–3) beyond the
+qualitative generalisations stated there.
 -/
 
 namespace Olivier2026
 
-open Olivier2026Auxiliary
-  (RestructuringClause AuxiliarySwitchOccurs predictedMatrixAux
-   beWantReflexiveClimbed)
-open ArgumentStructure.AuxiliarySelection (TransitivityClass PerfectAux SelectsBe)
+open Minimalist (TransferStyle)
+open ArgumentStructure.AuxiliarySelection
 
-/-! ## Clitic types
+/-! ### Person values with identity -/
 
-Romance argument-clitic categories relevant to the AS-trigger
-asymmetry. The taxonomy is empirically supported by the distinct
-forms (*y/ci*, *en/ne*, *lui/gli*, *le/la/lo*, *se/si*) and by
-their differential climbing behaviour in restructuring contexts. -/
-
-/-- Romance clitic categories relevant to the AS-trigger asymmetry
-    in [olivier-2026]. -/
-inductive CliticType where
-  /-- *se*, *si* — bound by the local subject via Voice*. -/
-  | reflexive
-  /-- *y*, *ci* — PP-internal locative. -/
-  | locative
-  /-- *en*, *ne* — PP-internal partitive. -/
-  | partitive
-  /-- *lui*, *gli* — non-reflexive dative (PP- or Appl-internal). -/
-  | dative
-  /-- *le*, *la*, *lo* — direct internal argument with independent
-      reference. -/
-  | accusative
+/-- `[Person: X [ID: α]]` (54): a person value with the referential index of its bearer;
+two values match for the Vocabulary Items (55) when their indices agree. -/
+structure IndexedPerson where
+  person : Person
+  id : ℕ
   deriving DecidableEq, Repr
 
-/-! ## The load-bearing configurational property
+/-- The clitics the paper distinguishes: the reflexive *se/si*, bound by the external
+argument through Voice* and so sharing its identity (54b), (60); the accusative *le/lo*
+and dative *lui/gli*, with identities of their own; the locative *y/ci* and partitive
+*en/ne*, which value a P-feature and carry no coreferential person (§7.3); and (65)'s
+*je ne m'aurais pas foutu dehors*, a reflexive whose identity is not its binder's
+(§6.2.3). -/
+inductive Clitic
+  | reflexive | detachedReflexive | accusative | dative | locative | partitive
+  deriving DecidableEq, Repr, Fintype
 
-Per [olivier-2026] §6.2: only reflexive clitics enter binding
-by the External Argument via Voice*. This is the single structural
-property from which the AS-trigger asymmetry derives. -/
+/-- The "prepositional" clitics of §3.2.2 — locative, partitive and non-reflexive dative —
+which pronominalise PP-constituents and never introduce the subject's identity. -/
+def Clitic.prepositional : Clitic → Bool
+  | .locative | .partitive | .dative => true
+  | _ => false
 
-/-- Whether a clitic of this type enters EA-binding via Voice*.
+/-- A clause by the class of its verb and its clitic, if any. -/
+structure Clause where
+  verb : TransitivityClass
+  clitic : Option Clitic := none
+  deriving DecidableEq, Repr
 
-    Only reflexive clitics do — locatives and partitives are
-    PP-internal arguments not introduced by Voice*; non-reflexive
-    datives have independent referents; accusatives bear their own
-    referential index distinct from EA's. -/
-def CliticType.boundByEAviaVoiceStar : CliticType → Bool
-  | .reflexive => true
-  | _          => false
+/-- The external argument's value carries index `0`, the internal argument's `1`, and any
+other bearer's — a cognate object (fn. 26), a detached reflexive — `2`. -/
+def externalArg (ea : Person) : IndexedPerson := ⟨ea, 0⟩
 
-/-- The embedded-verb transitivity class induced when a clitic of
-    this type is the embedded internal argument. Only a reflexive
-    clitic forces a `.reflexive` embedded class (and hence
-    BE-selection of the embedded predicate); the others appear with
-    transitive embedded verbs.
+/-- The internal argument's value. -/
+def internalArg (ia : Person) : IndexedPerson := ⟨ia, 1⟩
 
-    This is the projection from clitic-type taxonomy to the
-    `ArgumentStructure.AuxiliarySelection.TransitivityClass` enum
-    used by the AuxVerbs sibling's AS predicate. -/
-def CliticType.embeddedClassOnClimbing : CliticType → TransitivityClass
-  | .reflexive => .reflexive
-  | _          => .transitive
+/-- The person/identity Voice(*) comes to bear after probing (58)–(61): the internal
+argument's for unaccusatives and transitives (a DP or an accusative clitic), the bound
+reflexive's — the external argument's identity — for reflexive verbs (60), the identity
+of its own for a detached reflexive (65), and a default value for the cognate object of
+unergatives (fn. 26). -/
+def voicePerson (ea ia : Person) : Clause → IndexedPerson
+  | ⟨.unaccusative, _⟩ | ⟨.transitive, _⟩ => internalArg ia
+  | ⟨.reflexive, some .detachedReflexive⟩ => ⟨ea, 2⟩
+  | ⟨.reflexive, _⟩ => externalArg ea
+  | ⟨.unergative, _⟩ => ⟨.third, 2⟩
 
-/-! ## Canonical climbing scenarios
+/-- T's person/identity: the external argument's, or the raised internal argument's for
+unaccusatives (59). -/
+def tPerson (ea ia : Person) : TransitivityClass → IndexedPerson
+  | .unaccusative => internalArg ia
+  | _ => externalArg ea
 
-For each clitic type, the canonical modal-compound restructuring
-clause induced by climbing of a clitic of that type. The embedded
-verb class follows from the clitic type; the reflexive position
-flag is `.climbed` only when the clitic is itself reflexive. -/
+/-- Vocabulary Items (55): BE when `vAux` and `T` carry the same identity, HAVE elsewhere —
+HAVE is the default auxiliary. -/
+def insert (vAux : Option IndexedPerson) (t : IndexedPerson) : PerfectAux :=
+  if vAux.map (·.id) = some t.id then .be else .have
 
-/-- The canonical modal-compound restructuring scenario in which a
-    clitic of type `c` has climbed to the matrix domain. -/
-def CliticType.canonicalScenario (c : CliticType) : RestructuringClause :=
-  { matrixModal := true
-  , compoundTense := true
-  , embeddedClass := c.embeddedClassOnClimbing
-  , refCliticPos :=
-      if c.boundByEAviaVoiceStar then .climbed else .none }
+/-! ### Simple compound tenses (§6.2.2) -/
 
-/-! ## Theorems: AS prediction is derived, not stipulated
+/-- The auxiliary of a simple compound tense (58): Voice splits, so vAux carries Voice's
+person/identity, and T carries the subject's. -/
+def compound (ea ia : Person) (cl : Clause) : PerfectAux :=
+  insert (some (voicePerson ea ia cl)) (tPerson ea ia cl.verb)
 
-The central claim is `triggersAS_iff_boundByEAviaVoiceStar`: the
-AS prediction for a canonical climbing scenario is the iff of the
-configurational property, derived from the AuxVerbs sibling's
-`AuxiliarySwitchOccurs` predicate. The five per-clitic-type
-smoke checks below follow from it. -/
+/-- (59)–(61): identity matching yields the canonical distribution — BE with unaccusatives
+and reflexives, HAVE with transitives and unergatives — for every pair of persons. -/
+theorem compound_eq_canonical (ea ia : Person) (c : TransitivityClass) :
+    compound ea ia ⟨c, none⟩ = canonicalSelection c := by
+  revert ea ia c; decide
 
-/-- A clitic of type `c`, climbing in its canonical scenario,
-    triggers Auxiliary Switch iff it is bound by the External
-    Argument via Voice*. This is [olivier-2026]'s central
-    asymmetry, derived (not stipulated) from the structural
-    property `boundByEAviaVoiceStar` and the AuxVerbs sibling's
-    AS predicate. -/
-theorem triggersAS_iff_boundByEAviaVoiceStar (c : CliticType) :
-    AuxiliarySwitchOccurs c.canonicalScenario ↔
-      c.boundByEAviaVoiceStar = true := by
-  cases c <;>
-    simp [CliticType.canonicalScenario,
-          CliticType.boundByEAviaVoiceStar,
-          CliticType.embeddedClassOnClimbing,
-          AuxiliarySwitchOccurs, SelectsBe,
-          ArgumentStructure.AuxiliarySelection.canonicalSelection,
-          ArgumentStructure.AuxiliarySelection.selection]
+/-- (52): *Jean s'est regardé* against *Jean l'a regardé* — the same third-person value,
+identities matching only under binding. -/
+example : compound .third .third ⟨.reflexive, some .reflexive⟩ = .be ∧
+    compound .third .third ⟨.transitive, some .accusative⟩ = .have := by decide
 
-/-! ### Per-clitic-type smoke checks
+/-- (65): a reflexive whose identity is not its binder's takes HAVE. -/
+example : compound .first .first ⟨.reflexive, some .detachedReflexive⟩ = .have := by decide
 
-Decide-closed instantiations of `triggersAS_iff_boundByEAviaVoiceStar`.
-They document expected outputs and serve as guards against
-regressions in the AuxVerbs sibling's predicate. -/
+/-! ### Restructuring clauses (§5, §7) -/
 
-example : AuxiliarySwitchOccurs CliticType.reflexive.canonicalScenario := by
-  decide
-example : ¬ AuxiliarySwitchOccurs CliticType.locative.canonicalScenario := by
-  decide
-example : ¬ AuxiliarySwitchOccurs CliticType.partitive.canonicalScenario := by
-  decide
-example : ¬ AuxiliarySwitchOccurs CliticType.dative.canonicalScenario := by
-  decide
-example : ¬ AuxiliarySwitchOccurs CliticType.accusative.canonicalScenario := by
-  decide
+/-- A modal in a compound tense over an infinitive (40): the embedded clause, whether
+Voice(*) KEEPs its φ-features or SHAREs them with vMOD (45), and whether a vAux that
+receives a prepositional clitic's P-feature also receives the internal argument's person
+(§7.3's "rich" vAux; DONATE plays no role in the paper). -/
+structure Restructuring where
+  embedded : Clause
+  transfer : TransferStyle
+  richAux : Bool := true
+  deriving DecidableEq, Repr
 
-/-- Predicted matrix auxiliary across all five clitic types: BE iff
-    the clitic enters EA-binding via Voice*. -/
-theorem predictedAux_eq_be_iff_boundByEAviaVoiceStar (c : CliticType) :
-    predictedMatrixAux c.canonicalScenario = .be ↔
-      c.boundByEAviaVoiceStar = true := by
-  constructor
-  · intro h
-    apply (triggersAS_iff_boundByEAviaVoiceStar c).mp
-    by_contra hne
-    unfold predictedMatrixAux at h
-    rw [if_neg hne] at h
-    exact PerfectAux.noConfusion h
-  · intro hb
-    have hAS := (triggersAS_iff_boundByEAviaVoiceStar c).mpr hb
-    unfold predictedMatrixAux
-    rw [if_pos hAS]
+/-- A clitic climbs iff its φ-features are shared upwards — it spells out on the head that
+bears them (45), clitic reduplication showing the copies (41)–(44). -/
+def Restructuring.climbs (r : Restructuring) : Prop :=
+  r.embedded.clitic.isSome ∧ r.transfer = .share
 
-/-! ## Bridge to AuxVerbs sibling's canonical reflexive scenario
+instance (r : Restructuring) : Decidable r.climbs := inferInstanceAs (Decidable (_ ∧ _))
 
-The AuxVerbs sibling defines `beWantReflexiveClimbed` as the
-canonical reflexive-climbing scenario. We confirm this is exactly
-the canonical scenario produced by `CliticType.reflexive`. -/
+/-- The person/identity vAux receives after splitting vMOD: nothing under KEEP (69), (74);
+under SHARE, Voice's — unless a prepositional clitic climbed to a "poor" vAux, which then
+carries only its P-feature (§7.3). -/
+def Restructuring.vAuxPerson (ea ia : Person) (r : Restructuring) : Option IndexedPerson :=
+  match r.transfer with
+  | .share =>
+    if (r.embedded.clitic.map Clitic.prepositional).getD false ∧ !r.richAux then none
+    else some (voicePerson ea ia r.embedded)
+  | _ => none
 
-/-- The canonical reflexive-clitic scenario coincides with the
-    AuxVerbs sibling's `beWantReflexiveClimbed` witness. -/
-theorem reflexive_canonical_eq_beWantReflexiveClimbed :
-    CliticType.reflexive.canonicalScenario = beWantReflexiveClimbed := rfl
+/-- The modal's auxiliary. -/
+def Restructuring.matrixAux (ea ia : Person) (r : Restructuring) : PerfectAux :=
+  insert (r.vAuxPerson ea ia) (tPerson ea ia r.embedded.verb)
+
+/-- Auxiliary Switch: the modal surfaces with BE. -/
+def Restructuring.Switch (ea ia : Person) (r : Restructuring) : Prop :=
+  r.matrixAux ea ia = .be
+
+instance (ea ia : Person) (r : Restructuring) : Decidable (r.Switch ea ia) :=
+  inferInstanceAs (Decidable (_ = _))
+
+/-- (69), (74): under KEEP vAux is featureless, so the modal takes HAVE and no clitic
+climbs. -/
+theorem keep_have (ea ia : Person) (r : Restructuring) (h : r.transfer = .keep) :
+    r.matrixAux ea ia = .have ∧ ¬ r.climbs := by
+  refine ⟨?_, λ hc => TransferStyle.noConfusion (h.symm.trans hc.2)⟩
+  simp [Restructuring.matrixAux, Restructuring.vAuxPerson, h, insert]
+
+/-- Condition 3 derived: under SHARE, with no prepositional clitic, the modal switches to BE
+exactly when the infinitive is a BE-selecting predicate (71), (76) versus (61) — the
+identity vAux inherits is T's iff Voice probed the subject's bearer. -/
+theorem share_switch_iff_selectsBe (ea ia : Person) (c : TransitivityClass)
+    (cl : Option Clitic) (hcl : cl ≠ some .detachedReflexive)
+    (hp : (cl.map Clitic.prepositional).getD false = false) (rich : Bool) :
+    Restructuring.Switch ea ia ⟨⟨c, cl⟩, .share, rich⟩ ↔ SelectsBe c := by
+  rcases cl with _ | cl
+  · revert ea ia c rich; decide
+  · cases cl <;> first | exact absurd rfl hcl | (revert ea ia c rich; decide) | cases hp
+
+/-- Condition α and Table 1: with a reflexive infinitive, AS obtains exactly when the
+reflexive clitic climbs — (19b)/(20a) against (19a)/(20b) — so there is no AS without
+climbing. -/
+theorem reflexive_switch_iff_climbs (ea ia : Person) (t : TransferStyle) (rich : Bool) :
+    Restructuring.Switch ea ia ⟨⟨.reflexive, some .reflexive⟩, t, rich⟩ ↔
+      Restructuring.climbs ⟨⟨.reflexive, some .reflexive⟩, t, rich⟩ := by
+  revert ea ia rich; cases t <;> decide
+
+/-- §7.2: with an unaccusative infinitive and no clitic nothing but the auxiliary
+distinguishes SHARE (75)/(76) from KEEP (73)/(74) — AS is optional. -/
+theorem unaccusative_optional (ea ia : Person) (rich : Bool) :
+    Restructuring.matrixAux ea ia ⟨⟨.unaccusative, none⟩, .share, rich⟩ = .be ∧
+      Restructuring.matrixAux ea ia ⟨⟨.unaccusative, none⟩, .keep, rich⟩ = .have := by
+  revert ea ia rich; decide
+
+/-- §7.3: a prepositional clitic climbing out of an unaccusative leaves HAVE when vAux
+carries only its P-feature ((25)–(27), (36)), BE when vAux also probes the internal
+argument ((28)–(30), (37a)). -/
+theorem prepositional_climbing (ea ia : Person) (cl : Clitic) (hcl : cl.prepositional = true)
+    (rich : Bool) :
+    Restructuring.climbs ⟨⟨.unaccusative, some cl⟩, .share, rich⟩ ∧
+      (Restructuring.Switch ea ia ⟨⟨.unaccusative, some cl⟩, .share, rich⟩ ↔ rich = true) := by
+  revert ea ia cl rich; decide
+
+/-- (31), [cardinaletti-shlonsky-2004]'s *lo sarei voluto andare a trovare* aside: an
+accusative clitic climbs out of a transitive infinitive without AS — its identity is
+not the subject's. -/
+theorem accusative_climbing (ea ia : Person) (rich : Bool) :
+    Restructuring.climbs ⟨⟨.transitive, some .accusative⟩, .share, rich⟩ ∧
+      Restructuring.matrixAux ea ia ⟨⟨.transitive, some .accusative⟩, .share, rich⟩ = .have := by
+  revert ea ia rich; decide
+
+/-! ### Varieties (§7.1) -/
+
+/-- The grammars the paper compares by the transfers they admit: Modern French only KEEP,
+earlier French and Standard Italian both, Sardinian only SHARE. -/
+inductive Variety
+  | modernFrench | earlierFrench | standardItalian | sardinian
+  deriving DecidableEq, Repr, Fintype
+
+/-- The transfer operations a variety admits. -/
+def Variety.admits : Variety → TransferStyle → Prop
+  | .modernFrench, t => t = .keep
+  | .sardinian, t => t = .share
+  | _, t => t = .keep ∨ t = .share
+
+instance : (v : Variety) → (t : TransferStyle) → Decidable (v.admits t)
+  | .modernFrench, _ | .sardinian, _ => inferInstanceAs (Decidable (_ = _))
+  | .earlierFrench, _ | .standardItalian, _ => inferInstanceAs (Decidable (_ ∨ _))
+
+/-- (38): in Sardinian the reflexive clitic climbs and the modal takes BE, obligatorily. -/
+theorem sardinian_reflexive (ea ia : Person) (r : Restructuring)
+    (hv : Variety.sardinian.admits r.transfer)
+    (he : r.embedded = ⟨.reflexive, some .reflexive⟩) : r.climbs ∧ r.Switch ea ia := by
+  obtain ⟨e, t, rich⟩ := r
+  have ht : t = .share := hv
+  have he' : e = ⟨.reflexive, some .reflexive⟩ := he
+  subst ht he'; revert ea ia rich; decide
+
+/-- Modern French: KEEP alone yields neither climbing nor AS — (2a), (3a); the attested AS
+of §3.3 is the SHARE derivation (71) surfacing in a grammar that does not usually use it. -/
+theorem modernFrench_no_switch (ea ia : Person) (r : Restructuring)
+    (hv : Variety.modernFrench.admits r.transfer) : ¬ r.climbs ∧ ¬ r.Switch ea ia := by
+  have hk : r.transfer = .keep := hv
+  have := keep_have ea ia r hk
+  exact ⟨this.2, λ h => by simp [Restructuring.Switch, this.1] at h⟩
 
 end Olivier2026
