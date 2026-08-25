@@ -32,7 +32,8 @@ relations: [dolatian-heinz-2020]).
   positions of each ordered pair of roles.
 * `Correspondence.maxViol`, `depViol`, `identViol`, `identViolFeature`, `contigIViol`,
   `contigOViol`, `anchorLViol`, `anchorRViol`, `linearityViol`, `uniformityViol`,
-  `integrityViol` — the constraint families of Appendix A.
+  `integrityViol` — the constraint families of Appendix A; `maxViolOn`, `depViolOn` are
+  their segment-class restrictions (MAX-V, DEP-C, …).
 * `Correspondence.ofPairs`, `diagram`, `parallel`, `identity`, `reduplication` —
   constructors: from index pairs, the diagonal on a role predicate, and the binary
   and input–base–reduplicant diagonal diagrams.
@@ -90,6 +91,20 @@ def maxViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
 /-- DEP (A.2): the positions of `form r₂` without a correspondent in `form r₁`. -/
 def depViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   (Finset.univ \ (c.edge r₁ r₂).image Prod.snd).card
+
+/-- MAX (A.1) restricted to the positions of `form r₁` whose segment satisfies `P` — the
+segment-class instances MAX-V, MAX-C. -/
+def maxViolOn (P : α → Prop) [DecidablePred P] (c : Correspondence Role α) (r₁ r₂ : Role) :
+    ℕ :=
+  ((Finset.univ.filter fun i : Fin (c.form r₁).length => P (c.form r₁)[i]) \
+    (c.edge r₁ r₂).image Prod.fst).card
+
+/-- DEP (A.2) restricted to the positions of `form r₂` whose segment satisfies `P` — the
+segment-class instances DEP-V, DEP-C. -/
+def depViolOn (P : α → Prop) [DecidablePred P] (c : Correspondence Role α) (r₁ r₂ : Role) :
+    ℕ :=
+  ((Finset.univ.filter fun j : Fin (c.form r₂).length => P (c.form r₂)[j]) \
+    (c.edge r₁ r₂).image Prod.snd).card
 
 /-- IDENT (A.3) on whole segments: corresponding pairs whose segments differ. -/
 def identViol [DecidableEq α] (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
@@ -160,6 +175,12 @@ theorem depViol_eq_zero_iff :
     c.depViol r₁ r₂ = 0 ↔ Finset.univ ⊆ (c.edge r₁ r₂).image Prod.snd := by
   simp only [depViol, Finset.card_eq_zero, Finset.sdiff_eq_empty_iff_subset]
 
+theorem maxViolOn_true : maxViolOn (fun _ => True) c r₁ r₂ = c.maxViol r₁ r₂ := by
+  simp [maxViolOn, maxViol]
+
+theorem depViolOn_true : depViolOn (fun _ => True) c r₁ r₂ = c.depViol r₁ r₂ := by
+  simp [depViolOn, depViol]
+
 theorem integrityViol_eq_zero_iff :
     c.integrityViol r₁ r₂ = 0 ↔ ∀ i, ((c.edge r₁ r₂).filter fun p => p.1 = i).card ≤ 1 := by
   simp [integrityViol, Finset.filter_eq_empty_iff]
@@ -177,6 +198,9 @@ theorem linearityViol_eq_zero_iff :
       hinv.1 hinv.2⟩
 
 /-! ### Constructors -/
+
+/-- The index pairs `(0, 0), …, (k - 1, k - 1)` of a parallel correspondence. -/
+def diagonalPairs (k : ℕ) : List (ℕ × ℕ) := (List.range k).map fun i => (i, i)
 
 /-- The relation on positions given by index pairs; pairs out of range are dropped. -/
 def edgeOfPairs (m n : ℕ) (l : List (ℕ × ℕ)) : Finset (Fin m × Fin n) :=
