@@ -1197,7 +1197,8 @@ import Linglib.Fragments.Thai.Determiners
 import Linglib.Fragments.Tibetan.Coordination
 import Linglib.Fragments.Tibetan.Evidentiality
 import Linglib.Fragments.Tigre.Phonology
-import Linglib.Fragments.Tigrinya.ClausePrefixes
+import Linglib.Fragments.Tigrinya.Complementizers
+import Linglib.Fragments.Tigrinya.Negation
 import Linglib.Fragments.Tigrinya.Phonology
 import Linglib.Fragments.Tlingit.Modals
 import Linglib.Fragments.TobaBatak.Basic
@@ -2013,7 +2014,7 @@ import Linglib.Studies.Buring2015
 import Linglib.Studies.Burnett2019
 import Linglib.Studies.Bybee1985
 import Linglib.Studies.BylininaNouwen2020
-import Linglib.Studies.Cacchioli2025
+import Linglib.Studies.Cacchioli2026
 import Linglib.Studies.Caha2009
 import Linglib.Studies.Caie2023
 import Linglib.Studies.CaoWhiteLassiter2025

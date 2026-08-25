@@ -1,0 +1,41 @@
+import Linglib.Syntax.Negation
+import Linglib.Morphology.Morph
+
+/-!
+# Tigrinya Negation
+[cacchioli-2026] [dryer-haspelmath-2013]
+
+Tigrinya negates a declarative verbal clause with the circumfix
+*ʔaj-…-(ɨ)n* around the inflected verb (*ʔaj-ṭ'awɛt-ɨn* 'I do not
+play'); WALS codes the language as obligatory double negation. The
+suffix is confined to root declaratives, *ʔɨlu*-complements and the
+negative future: relative, subjunctive and imperative clauses take the
+prefix alone, in its post-prefixal allomorph *ɛj-* (*z-ɛj-nbɨb* 'that I
+do not read').
+-/
+
+namespace Tigrinya.Negation
+
+open Morphology (Morph)
+open Syntax.Negation
+
+/-- The negative prefix *ʔaj-*. -/
+def aj : Morph := .pref "ʔaj"
+
+/-- *ɛj-*, the allomorph of `aj` after *zɨ-* and *kɨ-*: the glottal stop
+drops and the vowel changes. -/
+def ej : Morph := .pref "ɛj"
+
+/-- The negative suffix *-(ɨ)n*, with epenthetic *ɨ* after a consonant. -/
+def n : Morph := .suff "n"
+
+/-- *ʔaj-…-(ɨ)n* — the standard-negation circumfix. -/
+def circumfix : NegMarkerEntry where
+  form := aj.form ++ "-...-" ++ n.form
+  morphemeType := .doubleNeg
+  position := .discontinuous
+
+/-- Tigrinya standard negation: the single bipartite marker. -/
+def negationSystem : NegationSystem := .ofISO "tir" [circumfix]
+
+end Tigrinya.Negation

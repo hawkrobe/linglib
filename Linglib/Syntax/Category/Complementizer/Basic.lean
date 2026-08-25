@@ -38,12 +38,9 @@ conventions:
 - `licenser` names the licensing projection, not the morphological
   host stem (which for a postfixed clause-typer is the verb it
   attaches to).
-- `agrees`: φ-agreement with a clause-internal argument (Tigrinya
-  *kɨ-* and *ʔay-…-n*; West Germanic complementizer agreement).
 - `factive` records only a lexical factive presupposition carried by
-  the morpheme itself (Greek *pu*, Tigrinya *kəmzi-*); leave `none`
-  when factivity tracks the verb or the construction — derived in
-  Studies, never stored.
+  the morpheme itself (Greek *pu*); leave `none` when factivity tracks
+  the verb or the construction — derived in Studies, never stored.
 -/
 
 namespace Morphology
@@ -97,11 +94,9 @@ structure Complementizer where
   verbForm : Option UD.VerbForm := none
   /-- Category of the adjacent licensing projection. -/
   licenser : Option Complementizer.Licenser := none
-  /-- Carries φ-agreement with a clause-internal argument? -/
-  agrees : Option Bool := none
   /-- Lexical factive presupposition. -/
   factive : Option Bool := none
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 namespace Complementizer
 

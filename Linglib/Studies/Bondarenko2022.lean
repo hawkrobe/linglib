@@ -400,8 +400,7 @@ theorem transparentSSMapping_iff_typed (path : ClauseStructurePath) :
 Per-language Cont-exponence analyses (ch. 4), tied by law to the fragment
 inventories. Buryat carries the licenser-conditioned Comp allomorphy (§4.3.1
 ex. 33); Korean's parallel rule (§4.3.2 ex. 46) is not yet law-checked, so its
-witness stays at `ContAnalysis`. [cacchioli-2025]'s Tigrinya extension lives
-in `Studies/Cacchioli2025.lean` per the chronology rule. -/
+witness stays at `ContAnalysis`. -/
 
 open Buryat
 
