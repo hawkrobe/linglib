@@ -111,8 +111,11 @@ def InflPattern.lvVerbForm : InflPattern → UD.VerbForm
 
 /-! ### Invariant theorems
 
-About `InflPattern` itself — Fragment-independent substrate facts. Per-language
-verification theorems live in `Studies/Anderson2006.lean`. -/
+About `InflPattern` itself. Anderson distinguishes inflectional, phrasal and
+semantic heads (§1.4, pp. 22-24; Table 3.1 tabulates the lex-headed
+assignment): the semantic head is always the lexical verb, while the
+inflectional host varies by pattern, and that mismatch is what makes AVCs
+typologically distinctive. -/
 
 /-- Anderson's key insight: the semantic head is always the lexical verb,
     regardless of inflectional pattern. -/
@@ -139,5 +142,12 @@ theorem auxHeaded_lv_nonfinite :
 /-- In lex-headed AVCs, the lexical verb is finite. -/
 theorem lexHeaded_lv_finite :
     InflPattern.lexHeaded.lvVerbForm = UD.VerbForm.Fin := rfl
+
+/-- The semantic head and the inflectional host coincide only in lex-headed
+    constructions; in every other pattern the lexical verb supplies the
+    content while inflection sits elsewhere. -/
+theorem heads_coincide_iff_lexHeaded (p : InflPattern) :
+    (p.semanticHead == p.inflHost) = (p == .lexHeaded) := by
+  cases p <;> rfl
 
 end AuxiliaryVerbs
