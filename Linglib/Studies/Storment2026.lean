@@ -133,7 +133,8 @@ theorem arrive_unaccusative : arrive.unaccusative = true := rfl
 /-! ## §3. TransitivityClass derivation
 
 Maps a `Verb` to the three-way transitivity classification used by
-the auxiliary-selection substrate (`Typology/AuxiliaryVerbs.lean`). -/
+the auxiliary-selection substrate
+(`Semantics/ArgumentStructure/AuxiliarySelection.lean`). -/
 
 /-- Derive `TransitivityClass` from `Verb` fields. -/
 def deriveTransitivityClass (v : Verb) : TransitivityClass :=

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 
 /-!
-# Auxiliary verb constructions: the inflectional patterns
+# The inflectional patterns of auxiliary verb constructions
 
 An auxiliary verb construction pairs an auxiliary with a lexical verb, and
 languages differ in which of the two carries the inflection. The lexical
@@ -15,13 +15,9 @@ makes the constructions typologically distinctive.
 
 Five macro-patterns exhaust the possibilities: the auxiliary hosts the
 inflection, the lexical verb does, both carry the same categories, the
-categories divide between them, or they divide with some doubled.
-
-## Main definitions
-
-* `InflPattern` — the five patterns.
-* `AVCElement` — which element of a construction bears a property.
-* `InflPattern.inflHost` — the element hosting inflection.
+categories divide between them, or they divide with some doubled. Which
+categories land where is finer-grained than the pattern and is recorded by
+the analysis that needs it, as in `Studies/Anderson2006.lean`.
 
 ## References
 
@@ -30,15 +26,8 @@ categories divide between them, or they divide with some doubled.
 
 namespace AuxiliaryVerbs
 
-/-- Which element of an auxiliary verb construction bears a property. -/
-inductive AVCElement where
-  | aux
-  | lex
-  | both
-  deriving DecidableEq, Repr
-
 /-- The five inflectional patterns of auxiliary verb constructions. -/
-inductive InflPattern where
+inductive InflectionPattern where
   /-- The auxiliary hosts the inflection and the lexical verb is nonfinite:
       English *have eaten*, French *va manger*. -/
   | auxHeaded
@@ -57,19 +46,5 @@ inductive InflPattern where
       common pattern rather than a marginal one. -/
   | splitDoubled
   deriving DecidableEq, Repr, Inhabited
-
-/-- The element hosting inflection. The three patterns that put material on
-both elements are distinguished by *which* categories go where, not by the
-host, so they share a value here. -/
-def InflPattern.inflHost : InflPattern → AVCElement
-  | .auxHeaded => .aux
-  | .lexHeaded => .lex
-  | .doubled | .split | .splitDoubled => .both
-
-/-- The inflectional host is the lexical verb — the element that is the
-semantic head anyway — only in the lex-headed pattern. -/
-theorem inflHost_eq_lex_iff (p : InflPattern) :
-    p.inflHost = .lex ↔ p = .lexHeaded := by
-  cases p <;> simp [InflPattern.inflHost]
 
 end AuxiliaryVerbs

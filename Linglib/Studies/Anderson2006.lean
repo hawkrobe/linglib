@@ -49,8 +49,8 @@ open Morphology (MorphCategory)
 
 /-- Which inflectional categories each element of an auxiliary verb
 construction carries. The category vocabulary is `MorphCategory`
-([bybee-1985]'s relevance hierarchy); the coarse question of which element
-is the inflectional head is `InflPattern.inflHost`. -/
+([bybee-1985]'s relevance hierarchy); which of the five patterns the
+marking realizes is `InflectionPattern`. -/
 structure InflectionalMarking where
   onAux : Finset MorphCategory
   onLex : Finset MorphCategory
@@ -119,7 +119,7 @@ def finnishNegForm : String :=
 theorem finnishNegForm_eq : finnishNegForm = "en lue" := rfl
 
 /-- The inflectional pattern Anderson assigns an example. -/
-def parseInflPattern : String → Option InflPattern
+def parseInflectionPattern : String → Option InflectionPattern
   | "auxHeaded" => some .auxHeaded
   | "lexHeaded" => some .lexHeaded
   | "doubled" => some .doubled
@@ -128,11 +128,11 @@ def parseInflPattern : String → Option InflPattern
   | _ => none
 
 /-- The patterns Anderson's examples are classified as. -/
-def attestedPatterns : List InflPattern :=
-  Examples.all.filterMap fun e => (e.feature? "infl_pattern").bind parseInflPattern
+def attestedPatterns : List InflectionPattern :=
+  Examples.all.filterMap fun e => (e.feature? "infl_pattern").bind parseInflectionPattern
 
 /-- Anderson's examples instantiate every one of his five patterns. -/
-theorem all_patterns_attested (p : InflPattern) : p ∈ attestedPatterns := by
+theorem all_patterns_attested (p : InflectionPattern) : p ∈ attestedPatterns := by
   cases p <;> decide
 
 /-- Chapter 5's generalization across the split/doubled languages: subject
@@ -154,8 +154,8 @@ Kokota; lex-headed in Kwerba; doubled in 'Iipay. The example rows
 live in `Data/Examples/Anderson2006.json` (Komi (47a,b), Udihe (49),
 Kwerba (52a,b), all verified against the book); each row's
 `infl_pattern` feature records the book's classification where it
-states one. The Strategy → InflPattern mapping lives in
-`Syntax/Negation.lean`: `Strategy.expectedInflPattern` encodes
+states one. The Strategy → InflectionPattern mapping lives in
+`Syntax/Negation.lean`: `Strategy.expectedInflectionPattern` encodes
 the most common verbal-negator → aux-headed mapping, and the Kwerba
 rows witness below that it is a tendency, not a law. -/
 
@@ -163,16 +163,16 @@ rows witness below that it is a tendency, not a law. -/
     and the strategy-level projection expects exactly that. -/
 theorem udihe_negVerb_expects_auxHeaded :
     Examples.udihe_neg.feature? "infl_pattern" = some "auxHeaded" ∧
-    Strategy.negVerb.expectedInflPattern = some .auxHeaded :=
+    Strategy.negVerb.expectedInflectionPattern = some .auxHeaded :=
   ⟨rfl, rfl⟩
 
 /-- Kwerba (52a,b) shows a negative auxiliary in a *lex-headed* AVC
     (the lexical verb hosts the inflection), so the aux-headed
-    expectation of `Strategy.expectedInflPattern` is defeasible —
+    expectation of `Strategy.expectedInflectionPattern` is defeasible —
     Anderson's own four-pattern list is the counterexample source. -/
 theorem kwerba_negVerb_lexHeaded_counterexample :
     Examples.kwerba_neg_fut.feature? "infl_pattern" = some "lexHeaded" ∧
-    Strategy.negVerb.expectedInflPattern ≠ some .lexHeaded :=
+    Strategy.negVerb.expectedInflectionPattern ≠ some .lexHeaded :=
   ⟨rfl, by decide⟩
 
 /-- The Komi tense alternation (47a,b) sits entirely on the negative
@@ -185,7 +185,7 @@ theorem komi_tense_on_aux :
 
 /-! ### Auxiliary selection
 
-Be/have auxiliary selection (`Syntax/Category/Auxiliary/Constructions.lean`) operates
+Be/have auxiliary selection (`Semantics/ArgumentStructure/AuxiliarySelection.lean`) operates
 within aux-headed AVCs: the question of *which* auxiliary appears
 presupposes the auxiliary hosts inflection. [sorace-2000]'s
 sister study `Studies/Sorace2000.lean` provides
