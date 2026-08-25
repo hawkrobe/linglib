@@ -1,12 +1,7 @@
+import Mathlib.Data.Finset.Basic
 import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
-import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Finnish.Negation
-import Linglib.Fragments.Doyayo.AuxiliaryVerbs
-import Linglib.Fragments.Gorum.AuxiliaryVerbs
-import Linglib.Fragments.Hemba.AuxiliaryVerbs
-import Linglib.Fragments.Mayan.Jakaltek.AuxiliaryVerbs
-import Linglib.Fragments.Pipil.AuxiliaryVerbs
 import Linglib.Syntax.Negation
 import Linglib.Studies.Sorace2000
 import Linglib.Studies.Miestamo2005
@@ -55,204 +50,86 @@ the distributed-exponence criterion. -/
 
 open Morphology (MorphCategory)
 
-/-- Distribution of inflectional categories between the two elements of an
-    auxiliary verb construction. The category vocabulary is
-    `MorphCategory` ([bybee-1985]'s relevance hierarchy); the pattern
-    taxonomy is [anderson-2006]'s AVC classification (see `InflPattern`). -/
+/-- Which inflectional categories each element of an auxiliary verb
+construction hosts. The category vocabulary is `MorphCategory`
+([bybee-1985]'s relevance hierarchy); which pattern a distribution
+realizes is `InflPattern`. -/
 structure InflDistribution where
-  onAux : List MorphCategory
-  onLex : List MorphCategory
-  deriving Repr, DecidableEq
+  onAux : Finset MorphCategory
+  onLex : Finset MorphCategory
+  deriving DecidableEq
 
-/-- Doyayo lex-headed: AUX carries tonal subject agreement (Anderson
-    p. 120: "partially encodes person of the subject through the tone");
-    LV carries TAM. -/
+/-- Doyayo lex-headed (ch. 3 ex. 15a, p. 121), *mi¹ (gi²) kpel¹-ko¹* 'I'm
+going to pour': the auxiliary "partially encodes person of the subject
+through the tone" (p. 120), the lexical verb carries TAM. -/
 def doyayoLexHeadedDist : InflDistribution :=
-  { onAux := [.agreement .subj], onLex := [.tense] }
+  { onAux := {.agreement .subj}, onLex := {.tense} }
 
-/-- Doyayo split/doubled (Anderson Ch 5 ex. 129, p. 223): subject doubled
-    on AUX and LV; object only on LV. -/
+/-- Doyayo split/doubled (ch. 5 ex. 129, p. 223), *hi¹-za¹ hi¹-zaa¹³
+hi¹-lɔ-mɔ* 'they might come bite you': the subject is marked on both
+elements, the object only on the lexical verb. -/
 def doyayoSplitDoubledDist : InflDistribution :=
-  { onAux := [.agreement .subj]
-  , onLex := [.agreement .subj, .agreement .obj] }
+  { onAux := {.agreement .subj}
+  , onLex := {.agreement .subj, .agreement .obj} }
 
-/-- Gorum doubled: both AUX and LV marked for subject agreement, tense,
-    and affectedness (version/voice). -/
+/-- Gorum doubled: subject agreement, tense and affectedness on both
+elements. -/
 def gorumDist : InflDistribution :=
-  { onAux := [.agreement .subj, .tense, .voice]
-  , onLex := [.agreement .subj, .tense, .voice] }
+  { onAux := {.agreement .subj, .tense, .voice}
+  , onLex := {.agreement .subj, .tense, .voice} }
 
-/-- Hemba split/doubled: agreement doubled, tense on AUX, mood on LV. -/
+/-- Hemba split/doubled: agreement on both elements, tense on the
+auxiliary, mood on the lexical verb. -/
 def hembaDist : InflDistribution :=
-  { onAux := [.agreement .subj, .tense]
-  , onLex := [.agreement .subj, .mood] }
+  { onAux := {.agreement .subj, .tense}
+  , onLex := {.agreement .subj, .mood} }
 
-/-- Jakaltek split: aspect and absolutive (object) agreement on AUX,
-    ergative (subject) agreement on LV. -/
+/-- Jakaltek split: aspect and absolutive agreement on the auxiliary,
+ergative agreement on the lexical verb. -/
 def jakaltekDist : InflDistribution :=
-  { onAux := [.aspect, .agreement .obj]
-  , onLex := [.agreement .subj] }
+  { onAux := {.aspect, .agreement .obj}
+  , onLex := {.agreement .subj} }
 
-/-- Pipil lex-headed: AUX uninflected, LV hosts subject agreement. -/
+/-- Pipil lex-headed (ch. 3 ex. 49, p. 130; Campbell 1985: 139), *weli
+ni-nehnemi wehka* 'I can walk far': the auxiliary *weli* is uninflected. -/
 def pipilLexHeadedDist : InflDistribution :=
-  { onAux := [], onLex := [.agreement .subj] }
+  { onAux := ∅, onLex := {.agreement .subj} }
 
-/-- Pipil split/doubled (Anderson Ch 5 ex. 133b, p. 224): subject doubled,
-    object only on LV. -/
+/-- Pipil split/doubled (ch. 5 ex. 133b, p. 224), *n-yu ni-mitsin-ilwitia*
+'I'm going to show you': "Subjects are doubly marked… while objects occur
+only on lexical verbs". The auxiliary root *yu* carries prospective TAM
+lexically, so no tense morpheme sits on it. -/
 def pipilSplitDoubledDist : InflDistribution :=
-  { onAux := [.agreement .subj]
-  , onLex := [.agreement .subj, .agreement .obj] }
+  { onAux := {.agreement .subj}
+  , onLex := {.agreement .subj, .agreement .obj} }
 
-/-- Finnish negative AVC: the negative auxiliary hosts negation, tense,
-    and agreement; the main verb retains stem and aspect (via participle
-    choice). [karlsson-2017] -/
+/-- Finnish negative AVC, *en lue* 'I do not read': the negative auxiliary
+hosts negation, tense and agreement, the main verb the stem and aspect
+(through the connegative). [anderson-2006] §1.7.2 presents Uralic negative
+auxiliaries with connegative-marked lexical verbs without assigning
+Finnish a pattern label; the split reading follows [karlsson-2017] §19.5,
+where the connegative suffix is the diagnostic. -/
 def finnishNegDist : InflDistribution :=
-  { onAux := [.negation, .tense, .agreement .subj]
-  , onLex := [.stem, .aspect] }
+  { onAux := {.negation, .tense, .agreement .subj}
+  , onLex := {.stem, .aspect} }
+
+/-- The 1sg negative auxiliary with the connegative *lue*, read out of
+`Finnish.Negation.negParadigm`; gloss `Neg-1 read-conneg`. -/
+def finnishNegForm : String :=
+  (Finnish.Negation.negParadigm.find?
+    (fun f => f.person == 1 && f.number == "sg")).elim "" (·.form ++ " lue")
+
+/-- The 1sg paradigm entry builds the form: a change to that entry leaves
+`finnishNegForm` empty and breaks this. -/
+theorem finnishNegForm_eq : finnishNegForm = "en lue" := rfl
 
 /-- The Finnish distribution is consistent with [miestamo-2005]'s
     constructional A/Fin coding: categories split across the negative
     auxiliary and the main verb. -/
 theorem finnish_split_confirms_constructional :
-    finnishNegDist.onAux.length > 0 ∧ finnishNegDist.onLex.length > 0 ∧
+    finnishNegDist.onAux ≠ ∅ ∧ finnishNegDist.onLex ≠ ∅ ∧
     Miestamo2005.finnish.asymmetryDimensions.contains .constructional := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
-
-/-- A cross-linguistic AVC datum. Study-local: the `AuxiliaryVerbs` substrate
-    classifies over `InflPattern`; this paper's per-language rows bundle the
-    form/distribution/gloss with it. -/
-structure AVCDatum where
-  language : String
-  form : String
-  inflPattern : InflPattern
-  gloss : String := ""
-  deriving Repr, BEq
-
-/-! ### Per-language AVC data
-
-The 9 sample datums (7 languages) covering all 5 of Anderson's
-inflectional patterns. Per-datum verification theorems below ensure
-each datum's `inflPattern` and `form`/`distribution` derive from
-the Fragment files (changing a Fragment entry breaks exactly one
-theorem). -/
-
-/-- English *have eaten* — aux-headed (AUX *have* carries tense and
-    agreement, LV *eaten* is a past participle). Anderson ch. 2
-    (p. 40) describes the English perfect as AUX *have* with the LV
-    in the *-ed* ~ *-en* form;
-    the specific *have eaten* form is this file's instantiation of
-    that pattern, not a verbatim Anderson example. -/
-def english : AVCDatum :=
-  { language := "English"
-  , form := "have eaten"
-  , inflPattern := .auxHeaded
-  , gloss := "AUX.PRS eat.PTCP" }
-
-/-- Doyayo lex-headed (Anderson Ch 3 ex. 15a, p. 121).
-    *mi¹ (gi²) kpel¹-ko¹* 'I'm going to pour'. Auxiliary `gi²`
-    parenthesized in Anderson's example, carrying only tonal subject
-    person (Anderson p. 120); LV carries proximate TAM. Form derived from
-    `Doyayo.AuxiliaryVerbs.lexHeadedForm`. -/
-def doyayo : AVCDatum :=
-  { language := "Doyayo"
-  , form := Doyayo.AuxiliaryVerbs.lexHeadedForm
-  , inflPattern := .lexHeaded
-  , gloss := Doyayo.AuxiliaryVerbs.lexHeadedGloss }
-
-/-- Doyayo split/doubled (Anderson Ch 5 ex. 129, p. 223).
-    *hi¹-za¹ hi¹-zaa¹³ hi¹-lɔ-mɔ* 'they might come bite you'.
-    Subject `hi¹` doubly marked on AUX and LV; object `-mɔ` only
-    on LV. Anderson p. 223: "this pattern... is common in Doyayo." -/
-def doyayoSplitDoubled : AVCDatum :=
-  { language := "Doyayo"
-  , form := Doyayo.AuxiliaryVerbs.splitDoubledForm
-  , inflPattern := .splitDoubled
-  , gloss := Doyayo.AuxiliaryVerbs.splitDoubledGloss }
-
-/-- Gorum (doubled): subject + TAM on both AUX and LV.
-    Form derived from `Gorum.AuxiliaryVerbs`. -/
-def gorum : AVCDatum :=
-  { language := "Gorum"
-  , form := Gorum.AuxiliaryVerbs.form
-  , inflPattern := .doubled
-  , gloss := Gorum.AuxiliaryVerbs.gloss }
-
-/-- Jakaltek (split): absolutive on AUX, ergative on LV.
-    Form derived from `Jakaltek.AuxiliaryVerbs`. -/
-def jakaltek : AVCDatum :=
-  { language := "Jakaltek"
-  , form := Jakaltek.AuxiliaryVerbs.form
-  , inflPattern := .split
-  , gloss := Jakaltek.AuxiliaryVerbs.gloss }
-
-/-- Pipil split/doubled (Anderson Ch 5 ex. 133b, p. 224).
-    *n-yu ni-mitsin-ilwitia* 'I'm going to show you'. Subject `1`
-    doubly marked (`n-` on AUX, `ni-` on LV); object `-mitsin-`
-    only on LV. AUX root *yu* lexically encodes prospective TAM.
-    Anderson p. 224: "Subjects are doubly marked... while objects
-    occur only on lexical verbs." -/
-def pipilSplitDoubled : AVCDatum :=
-  { language := "Pipil"
-  , form := Pipil.AuxiliaryVerbs.splitDoubledForm
-  , inflPattern := .splitDoubled
-  , gloss := Pipil.AuxiliaryVerbs.splitDoubledGloss }
-
-/-- Pipil lex-headed (Anderson ch. 3 ex. 49, p. 130; Campbell 1985: 139).
-    *weli ni-nehnemi wehka* 'CAP 1-walk far' 'I can walk far'.
-    AUX *weli* uninflected; LV carries subject agreement. Anderson's
-    fn. 6 (p. 221) separately documents lex-headed/split-doubled
-    variation in the Pipil *progressive* — a different AVC from
-    this capability construction. -/
-def pipilLexHeaded : AVCDatum :=
-  { language := "Pipil"
-  , form := Pipil.AuxiliaryVerbs.lexHeadedForm
-  , inflPattern := .lexHeaded
-  , gloss := Pipil.AuxiliaryVerbs.lexHeadedGloss }
-
-/-- Finnish negative auxiliary *ei* (split): person/number on aux,
-    TAM on lexical verb (connegative form). Anderson §1.7.2 (p. 33-34)
-    presents negative auxiliaries as a family-level Uralic trait
-    (with connegative-marked LV, exx. 44-48) and, across other
-    families, as spanning multiple AVC patterns — Udihe and Neyo
-    aux-headed, Kokota split, Kwerba lex-headed, 'Iipay doubled.
-    Finnish *ei* itself is
-    not classified by Anderson in §1.7.2 with a specific pattern label;
-    the split classification here follows [karlsson-2017] §19.5
-    where the connegative suffix on the LV is the load-bearing diagnostic.
-    The split nature derives from `finnishNegDist`:
-    the negative auxiliary hosts negation, tense, and agreement, while
-    the lexical verb retains stem and aspect.
-    The 1sg form is read out of `negParadigm`; gloss style follows
-    Anderson's Uralic convention (`Neg-1 read-conneg`). -/
-def finnish : AVCDatum :=
-  { language := "Finnish"
-  , form := (Finnish.Negation.negParadigm.find?
-      (fun f => f.person == 1 && f.number == "sg")).elim "" (·.form ++ " lue")
-  , inflPattern := .split
-  , gloss := "Neg-1 read-conneg" }
-
-/-- Hemba split/doubled: subject doubled on both AUX and LV; tense
-    on AUX only; mood on LV only. Form derived from
-    `Hemba.AuxiliaryVerbs`. -/
-def hemba : AVCDatum :=
-  { language := "Hemba"
-  , form := Hemba.AuxiliaryVerbs.form
-  , inflPattern := .splitDoubled
-  , gloss := Hemba.AuxiliaryVerbs.gloss }
-
-/-- All 9 AVC datums (covering all 5 of Anderson's patterns). -/
-def allData : List AVCDatum :=
-  [english, doyayo, doyayoSplitDoubled, gorum, jakaltek,
-   pipilSplitDoubled, pipilLexHeaded, finnish, hemba]
-
-/-- The sample instantiates every one of Anderson's five patterns. -/
-theorem all_patterns_attested (p : InflPattern) :
-    ∃ d ∈ allData, d.inflPattern = p := by
-  cases p <;> decide
-
-/-- The 1sg entry of `negParadigm` builds the form: a change to that
-    entry leaves `finnish.form` empty and breaks this. -/
-theorem finnish_form_from_paradigm : finnish.form = "en lue" := rfl
 
 /-! ### The Finnish negative AVC -/
 
@@ -260,79 +137,65 @@ theorem finnish_form_from_paradigm : finnish.form = "en lue" := rfl
     auxiliary hosts some inflectional categories and the lexical
     verb hosts others, with neither element hosting all categories. -/
 theorem finnish_split_from_fragment :
-    let dist := finnishNegDist
-    dist.onAux ≠ [] ∧ dist.onLex ≠ [] := by
-  exact ⟨by decide, by decide⟩
+    finnishNegDist.onAux ≠ ∅ ∧ finnishNegDist.onLex ≠ ∅ := ⟨by decide, by decide⟩
 
 /-! ### Where the inflection sits -/
 
-/-- In Gorum's doubled AVC, aux and lex host exactly the same categories. -/
-theorem gorum_doubled_same_categories :
-    let dist := gorumDist
-    dist.onAux == dist.onLex = true := by decide
+/-- Doubled: the two elements host exactly the same categories. -/
+theorem gorum_doubled_same_categories : gorumDist.onAux = gorumDist.onLex := by decide
 
 /-- In Doyayo's lex-headed AVC, the auxiliary hosts ONLY tonal subject
     agreement (per Anderson p. 120), and the LV carries TAM. -/
 theorem doyayo_lexHeaded_aux_agreement_only :
-    doyayoLexHeadedDist.onAux = [.agreement .subj] ∧
-    doyayoLexHeadedDist.onLex = [.tense] := by
-  exact ⟨rfl, rfl⟩
+    doyayoLexHeadedDist.onAux = {.agreement .subj} ∧
+    doyayoLexHeadedDist.onLex = {.tense} := ⟨rfl, rfl⟩
 
 /-- Chapter 5 (Doyayo): subject agreement is doubled across auxiliary
     and lexical verb, while object agreement appears on the lexical verb
     only. -/
 theorem doyayo_splitDoubled_subj_doubled_obj_lex_only :
     let dist := doyayoSplitDoubledDist
-    dist.onAux.contains (.agreement .subj) = true ∧
-    dist.onLex.contains (.agreement .subj) = true ∧
-    dist.onLex.contains (.agreement .obj) = true ∧
-    dist.onAux.contains (.agreement .obj) = false := by
-  exact ⟨by decide, by decide, by decide, by decide⟩
+    MorphCategory.agreement .subj ∈ dist.onAux ∧
+    MorphCategory.agreement .subj ∈ dist.onLex ∧
+    MorphCategory.agreement .obj ∈ dist.onLex ∧
+    MorphCategory.agreement .obj ∉ dist.onAux := by decide
 
 /-- Chapter 5 (Pipil): the same generalization as Doyayo. The auxiliary
     root *yu* encodes TAM lexically, so no `.tense` morpheme sits on the
     auxiliary. -/
 theorem pipil_splitDoubled_subj_doubled_obj_lex_only :
     let dist := pipilSplitDoubledDist
-    dist.onAux.contains (.agreement .subj) = true ∧
-    dist.onLex.contains (.agreement .subj) = true ∧
-    dist.onLex.contains (.agreement .obj) = true ∧
-    dist.onAux.contains (.agreement .obj) = false := by
-  exact ⟨by decide, by decide, by decide, by decide⟩
+    MorphCategory.agreement .subj ∈ dist.onAux ∧
+    MorphCategory.agreement .subj ∈ dist.onLex ∧
+    MorphCategory.agreement .obj ∈ dist.onLex ∧
+    MorphCategory.agreement .obj ∉ dist.onAux := by decide
 
 /-- In Pipil's lex-headed AVC, the auxiliary hosts no inflection. -/
-theorem pipil_lexHeaded_aux_empty :
-    pipilLexHeadedDist.onAux = [] := rfl
+theorem pipil_lexHeaded_aux_empty : pipilLexHeadedDist.onAux = ∅ := rfl
 
-/-- In Finnish's split AVC, aux and lex host disjoint category types.
-    (`.stem` on the lex side is a base, not an inflectional overlap.) -/
-theorem finnish_split_disjoint :
-    let dist := finnishNegDist
-    dist.onAux.all (fun c => !dist.onLex.contains c) = true := by decide
+/-- Split: the two elements host disjoint categories. (`.stem` on the
+    lexical side is a base, not an inflectional overlap.) -/
+theorem finnish_split_disjoint : Disjoint finnishNegDist.onAux finnishNegDist.onLex := by
+  decide
 
 /-- Chapter 5 (Jakaltek): absolutive agreement on the auxiliary,
     ergative on the lexical verb. -/
 theorem jakaltek_abs_on_aux_erg_on_lex :
     let dist := jakaltekDist
-    dist.onAux.contains (.agreement .obj) = true ∧
-    dist.onLex.contains (.agreement .subj) = true ∧
-    dist.onAux.contains (.agreement .subj) = false ∧
-    dist.onLex.contains (.agreement .obj) = false := by
-  exact ⟨by decide, by decide, by decide, by decide⟩
+    MorphCategory.agreement .obj ∈ dist.onAux ∧
+    MorphCategory.agreement .subj ∈ dist.onLex ∧
+    MorphCategory.agreement .subj ∉ dist.onAux ∧
+    MorphCategory.agreement .obj ∉ dist.onLex := by decide
 
 /-- In Hemba's split/doubled AVC, subject agreement is doubled (on both
     elements), tense is AUX-only, mood is LV-only. No object agreement
     in this construction. -/
 theorem hemba_splitDoubled_agreement_doubled :
     let dist := hembaDist
-    dist.onAux.contains (.agreement .subj) = true ∧
-    dist.onLex.contains (.agreement .subj) = true ∧
-    dist.onAux.contains .tense = true ∧
-    dist.onLex.contains .tense = false ∧
-    dist.onAux.contains .mood = false ∧
-    dist.onLex.contains .mood = true := by
-  exact ⟨by decide, by decide, by decide,
-         by decide, by decide, by decide⟩
+    MorphCategory.agreement .subj ∈ dist.onAux ∧
+    MorphCategory.agreement .subj ∈ dist.onLex ∧
+    MorphCategory.tense ∈ dist.onAux ∧ MorphCategory.tense ∉ dist.onLex ∧
+    MorphCategory.mood ∉ dist.onAux ∧ MorphCategory.mood ∈ dist.onLex := by decide
 
 /-! ### Dual headedness
 
