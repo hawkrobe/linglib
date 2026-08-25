@@ -1,260 +1,219 @@
+import Linglib.Logic.Team.BSML.Enrichment
+import Linglib.Logic.Team.BSML.ClassicalValidities
 import Linglib.Logic.Team.BSML.Scenarios
-import Linglib.Studies.Aloni2022.FreeChoice
 
 /-!
-# [aloni-2022]: BSML applied to permission disjunction
+# Free choice from neglect-zero: the BSML facts of [aloni-2022]
 
-[aloni-2022]
+[aloni-2022] derives free-choice inferences from a *neglect-zero* tendency: the
+pragmatic enrichment `[·]⁺` (`BSML.enrich`) conjoins `NE` to every subformula, so
+an enriched split disjunction needs two non-empty witnesses, and under a
+possibility modal each witness is a live option. This file proves the paper's
+free-choice facts for arbitrary `NE`-free `α β`: Modal Disjunction (Fact 3,
+state-based `R`), Narrow Scope FC (Fact 4) and its dependent-disjunct corollary,
+Wide Scope FC (Fact 5, indisputable `R`), Dual Prohibition (Fact 11), Double
+Negation (Fact 12), the epistemic contradiction that motivates the state-based
+reading of epistemic modals (§4.1), and the BSML⁺ failure of Negative FC
+(Fact 14). The paper's illustrations (Figures 1–5) are checked by `decide` on its
+four-world model `w_∅, w_a, w_b, w_ab` (`BSML.TwoAtomWorld`), whose running
+state is `{w_a, w_b}`.
 
-Computational instantiation of NS FC, WS FC, Dual Prohibition, Double Negation
-FC, and Modal Disjunction (Facts 3, 4, 5, 11, 12) in BSML+ on a 4-world deontic
-model. Each result is a named theorem invoking the universal substrate theorem
-in `Studies/Aloni2022/FreeChoice.lean`, applied to the concrete model
-constructed below.
-
-## Out of scope
-
-- Negative FC (Fact 14)
-- Universal FC, ALL-OTHERS-FC, ALL-OTHERS-DUAL-PROHIBITION (Aloni §6.2 first-order)
-- BSML* (Fact 13–14, §6.3.1) and BSML◇ / BSML∅ (§7) interpretation strategies
-- §6.1 epistemic vs deontic contrast (this file is purely deontic)
-
-The universal results live in `Studies/Aloni2022/FreeChoice.lean`:
-`narrowScopeFC`, `wideScopeFC`, `modalDisjunction`, `dualProhibition`,
-`doubleNegationFC`, `negativeFC_poss_fails_bsmlPlus`. The Negative FC failure
-(Fact 14) on a single Unit world is proved there.
-
-## Atoms and worlds
-
-This file uses **typed atoms** `FCAtom.{a, b}` (from `BSML.Atoms`)
-rather than String identifiers. The valuation routes directly through
-`TwoAtomWorld.holds`, eliminating the silent typo trap of the earlier
-String-based pattern (`match p with | "coffee" => ... | _ => false`).
-
-Worlds are `TwoAtomWorld` (`nothing`/`onlyA`/`onlyB`/`both`), matching
-Aloni 2022 Figure 1's `w_∅`/`w_a`/`w_b`/`w_ab`. We label `FCAtom.a` as
-"coffee" and `FCAtom.b` as "tea" in prose only — the formal types are
-the typed atoms throughout.
+The remaining facts are substrate: Facts 1, 2, 9, 10, 13 and the BSML* half of
+Fact 14 in `Logic/Team/BSML/Enrichment.lean`, Facts 6–8 in
+`ClassicalValidities.lean`, Fact 15 in `Bridge.lean`. Out of scope: the
+first-order extension (§6.2, see [aloni-vanormondt-2023]) and the BSML◇
+conjecture of §7 beyond its countermodel (63b).
 -/
 
 namespace Aloni2022
 
 open BSML
 open ModalLogic (KripkeModel)
-open BSML (FCAtom TwoAtomWorld)
 
--- ============================================================================
--- §1 Teams
--- ============================================================================
+variable {W : Type*} [DecidableEq W] {Atom : Type*} {M : KripkeModel W Atom}
+  {α β φ : Formula Atom} {t : Finset W}
 
-/-- The free-choice team: {`both`, `onlyA`, `onlyB`} = {w_ab, w_a, w_b}.
-    Excludes `nothing` (= w_∅), the world that would supply a zero-witness
-    substate for the disjunction enrichment. -/
-def freeChoiceTeam : Finset TwoAtomWorld :=
-  {.both, .onlyA, .onlyB}
+/-! ### Free-choice facts -/
 
-/-- The prohibition team: just `nothing` (= w_∅). With `restrictiveModel`,
-    R[nothing] = {nothing} so the prohibition `¬◇(a ∨ b)` is supported. -/
-def prohibitionTeam : Finset TwoAtomWorld :=
-  {.nothing}
+/-- `[α ∨ β]⁺ ⊨ (α ∧ NE) ∨ (β ∧ NE)`: an enriched split disjunction has a
+non-empty witness subteam for each disjunct. -/
+theorem witnesses_of_enrich_disj (hα : α.NEFree) (hβ : β.NEFree)
+    (h : support M (enrich (.disj α β)) t) :
+    (∃ s ⊆ t, s.Nonempty ∧ support M α s) ∧ ∃ s ⊆ t, s.Nonempty ∧ support M β s :=
+  have ⟨t₁, t₂, hu, h₁, h₂⟩ := h.1
+  ⟨⟨t₁, hu ▸ Finset.subset_union_left, enriched_support_implies_nonempty M α t₁ h₁,
+      enrichment_strengthens_support M α t₁ hα h₁⟩,
+    ⟨t₂, hu ▸ Finset.subset_union_right, enriched_support_implies_nonempty M β t₂ h₂,
+      enrichment_strengthens_support M β t₂ hβ h₂⟩⟩
 
--- ============================================================================
--- §2 Models
--- ============================================================================
+/-- Modal Disjunction (Fact 3): `[α ∨ β]⁺ ⊨ ◇α ∧ ◇β` on a state-based `R`. -/
+theorem modalDisjunction (hα : α.NEFree) (hβ : β.NEFree) (hSB : M.IsStateBased t)
+    (h : support M (enrich (.disj α β)) t) :
+    support M (.poss α) t ∧ support M (.poss β) t :=
+  have ⟨⟨s₁, hs₁, hne₁, h₁⟩, ⟨s₂, hs₂, hne₂, h₂⟩⟩ := witnesses_of_enrich_disj hα hβ h
+  ⟨λ w hw => ⟨s₁, (hSB w hw).symm ▸ hs₁, hne₁, h₁⟩,
+   λ w hw => ⟨s₂, (hSB w hw).symm ▸ hs₂, hne₂, h₂⟩⟩
 
-/-- Deontic model: universal accessibility from every world. Indisputable on
-    every non-empty team (R[w] = R[v] = univ trivially), but **not** state-based
-    on `freeChoiceTeam` since R[w] = univ ⊋ freeChoiceTeam.
+/-- Narrow Scope FC (Fact 4): `[◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β`. -/
+theorem narrowScopeFC (hα : α.NEFree) (hβ : β.NEFree)
+    (h : support M (enrich (.poss (.disj α β))) t) :
+    support M (.poss α) t ∧ support M (.poss β) t :=
+  ⟨λ w hw =>
+    have ⟨_, hs, _, h'⟩ := h.1 w hw
+    (witnesses_of_enrich_disj hα hβ h').1.imp λ _ ⟨hs', hne, h₁⟩ => ⟨hs'.trans hs, hne, h₁⟩,
+   λ w hw =>
+    have ⟨_, hs, _, h'⟩ := h.1 w hw
+    (witnesses_of_enrich_disj hα hβ h').2.imp λ _ ⟨hs', hne, h₂⟩ => ⟨hs'.trans hs, hne, h₂⟩⟩
 
-    Valuation: `val a w = w.holds a` — direct routing through the typed
-    atom. No String fallthrough, no silent typos. -/
-def deonticModel : KripkeModel TwoAtomWorld FCAtom where
-  access := λ _ => Finset.univ
-  val := λ p w => w.holds p
+/-- Free choice for logically dependent disjuncts:
+`[◇(α ∨ (α ∧ β))]⁺ ⊨ ◇α ∧ ◇(α ∧ β)`. -/
+theorem narrowScopeFC_dependent (hα : α.NEFree) (hβ : β.NEFree)
+    (h : support M (enrich (.poss (.disj α (.conj α β)))) t) :
+    support M (.poss α) t ∧ support M (.poss (.conj α β)) t :=
+  narrowScopeFC hα ⟨hα, hβ⟩ h
 
-/-- Restrictive deontic model: from `nothing`, only `nothing` is accessible;
-    from any other world, all worlds. Used for Dual Prohibition on the
-    prohibition team `{nothing}`. -/
-def restrictiveModel : KripkeModel TwoAtomWorld FCAtom where
-  access := λ w =>
-    match w with
-    | .nothing => {.nothing}
-    | _        => Finset.univ
-  val := λ p w => w.holds p
+/-- Wide Scope FC (Fact 5): `[◇α ∨ ◇β]⁺ ⊨ ◇α ∧ ◇β` on an indisputable `R`. -/
+theorem wideScopeFC (hα : α.NEFree) (hβ : β.NEFree) (hInd : M.IsIndisputable t)
+    (h : support M (enrich (.disj (.poss α) (.poss β))) t) :
+    support M (.poss α) t ∧ support M (.poss β) t :=
+  have ⟨⟨_, ht₁, ⟨w₁, hw₁⟩, h₁⟩, ⟨_, ht₂, ⟨w₂, hw₂⟩, h₂⟩⟩ :=
+    witnesses_of_enrich_disj (α := .poss α) (β := .poss β) hα hβ h
+  ⟨λ w hw => (h₁ w₁ hw₁).imp λ _ ⟨hs, hne, hs'⟩ => ⟨hInd w₁ (ht₁ hw₁) w hw ▸ hs, hne, hs'⟩,
+   λ w hw => (h₂ w₂ hw₂).imp λ _ ⟨hs, hne, hs'⟩ => ⟨hInd w₂ (ht₂ hw₂) w hw ▸ hs, hne, hs'⟩⟩
 
-/-- State-based deontic model: R[w] = freeChoiceTeam for every world. Strictly
-    stronger than indisputability; required for Modal Disjunction (Fact 3). -/
-def stateBasedModel : KripkeModel TwoAtomWorld FCAtom where
-  access := λ _ => freeChoiceTeam
-  val := λ p w => w.holds p
+/-- Dual Prohibition (Fact 11): `[¬◇(α ∨ β)]⁺ ⊨ ¬◇α ∧ ¬◇β`. -/
+theorem dualProhibition (hα : α.NEFree) (hβ : β.NEFree)
+    (h : support M (enrich (.neg (.poss (.disj α β)))) t) :
+    support M (.neg (.poss α)) t ∧ support M (.neg (.poss β)) t :=
+  have h' := antiSupport_strip_ne M _ t h.1
+  ⟨λ w hw => (enrichment_strengthens_antiSupport M (.disj α β) _ ⟨hα, hβ⟩ (h' w hw)).1,
+   λ w hw => (enrichment_strengthens_antiSupport M (.disj α β) _ ⟨hα, hβ⟩ (h' w hw)).2⟩
 
-/-- A deontic model where indisputability **fails** on `freeChoiceTeam` —
-    `onlyA` and `onlyB` see different accessible sets. Demonstrates that the
-    indisputable-R precondition of `wideScopeFC` (Fact 5) is necessary, not
-    incidental: WS FC's conclusion may fail on this model even when its
-    enriched premise is supported. (Aloni 2022 Figure 5(b) shape — non-indisputable R.
-    Figure 5(a) shows the dual case where R is indisputable but enrichment fails.) -/
-def looseDeonticModel : KripkeModel TwoAtomWorld FCAtom where
-  access := λ w =>
-    match w with
-    | .both    => {.both, .onlyA}
-    | .onlyA   => {.both, .onlyA}
-    | .onlyB   => {.onlyB}
-    | .nothing => Finset.univ
-  val := λ p w => w.holds p
+/-- Double Negation (Fact 12): `[¬¬◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β`. -/
+theorem doubleNegationFC (hα : α.NEFree) (hβ : β.NEFree)
+    (h : support M (enrich (.neg (.neg (.poss (.disj α β))))) t) :
+    support M (.poss α) t ∧ support M (.poss β) t :=
+  narrowScopeFC hα hβ ((support_enrich_neg_neg M _ t).mp h)
 
--- ============================================================================
--- §3 Formulas (over typed FCAtom)
--- ============================================================================
+/-- Epistemic contradiction (§4.1): on a state-based `R`, `◇φ ∧ ¬φ` is supported
+only by `∅`, the sole team supporting the weak contradiction `⊥`. -/
+theorem epistemicContradiction (hSB : M.IsStateBased t)
+    (h : support M (.conj (.poss φ) (.neg φ)) t) : t = ∅ :=
+  Finset.eq_empty_of_forall_notMem λ w hw =>
+    have ⟨_, hs, ⟨_, hv⟩, hsupp⟩ := h.1 w hw
+    Finset.disjoint_left.mp (disjoint_support_antiSupport M φ h.2 hsupp) (hSB w hw ▸ hs hv) hv
 
-/-- ◇(a ∨ b) — narrow-scope premise (Fact 4). -/
-def mayHaveCoffeeOrTea : Formula FCAtom :=
-  .poss (.disj (.atom .a) (.atom .b))
+/-! ### The four-world illustrations
 
-def mayCoffee : Formula FCAtom := .poss (.atom .a)
-def mayTea    : Formula FCAtom := .poss (.atom .b)
+The paper's figures are model–state pairs on `TwoAtomWorld`; each `figNx` fixes
+the accessibility arrows drawn in Figure N(x), worlds without arrows seeing `∅`. -/
 
-/-- ¬◇(a ∨ b) — Dual Prohibition premise (Fact 11). -/
-def prohibition : Formula FCAtom :=
-  .neg (.poss (.disj (.atom .a) (.atom .b)))
+/-- The paper's Kripke models on the four worlds: valuation `TwoAtomWorld.holds`,
+accessibility `R`. -/
+def model (R : TwoAtomWorld → Finset TwoAtomWorld) : KripkeModel TwoAtomWorld FCAtom :=
+  ⟨R, λ p w => w.holds p⟩
 
-def notMayCoffee : Formula FCAtom := .neg (.poss (.atom .a))
-def notMayTea    : Formula FCAtom := .neg (.poss (.atom .b))
+/-- The state `{w_a, w_b}` of Figures 1, 2(a), 3 and 5. -/
+def state : Finset TwoAtomWorld := {.onlyA, .onlyB}
 
-/-- ◇a ∨ ◇b — wide-scope disjunction premise (Fact 5). -/
-def wideScopeDisj : Formula FCAtom :=
-  .disj (.poss (.atom .a)) (.poss (.atom .b))
+/-- Figures 1–2 draw no arrows: only atoms and disjunction are evaluated. -/
+def propositional : KripkeModel TwoAtomWorld FCAtom := model λ _ => ∅
 
-/-- ¬¬◇(a ∨ b) — double-negation premise (Fact 12). -/
-def doubleNegMayHaveCoffeeOrTea : Formula FCAtom :=
-  .neg (.neg (.poss (.disj (.atom .a) (.atom .b))))
+/-- Figure 3(a): `R[w_a] = R[w_b] = {w_ab, w_∅}`. -/
+def fig3a : KripkeModel TwoAtomWorld FCAtom :=
+  model λ | .onlyA | .onlyB => {.both, .nothing} | _ => ∅
 
-/-- a ∨ b — plain disjunction (Modal Disjunction premise, Fact 3). -/
-def plainDisj : Formula FCAtom :=
-  .disj (.atom .a) (.atom .b)
+/-- Figure 3(b): `R[w_a] = R[w_b] = {w_a, w_b}`. -/
+def fig3b : KripkeModel TwoAtomWorld FCAtom :=
+  model λ | .onlyA | .onlyB => {.onlyA, .onlyB} | _ => ∅
 
--- ============================================================================
--- §4 Frame conditions on the chosen models
--- ============================================================================
+/-- Figure 3(c): `R[w_a] = {w_ab}`, `R[w_b] = {w_a, w_∅}`. -/
+def fig3c : KripkeModel TwoAtomWorld FCAtom :=
+  model λ | .onlyA => {.both} | .onlyB => {.onlyA, .nothing} | _ => ∅
 
-theorem deonticModel_indisputable_on_team :
-    deonticModel.IsIndisputable freeChoiceTeam := by decide
+/-- Figure 4(a): `R[w_ab] = {w_a}`. -/
+def fig4a : KripkeModel TwoAtomWorld FCAtom := model λ | .both => {.onlyA} | _ => ∅
 
-theorem stateBasedModel_state_based_on_team :
-    stateBasedModel.IsStateBased freeChoiceTeam := by decide
+/-- Figure 4(b): `R[w_ab] = {w_a, w_b}`. -/
+def fig4b : KripkeModel TwoAtomWorld FCAtom := model λ | .both => {.onlyA, .onlyB} | _ => ∅
 
-theorem deonticModel_not_state_based_on_team :
-    ¬ deonticModel.IsStateBased freeChoiceTeam := by decide
+/-- Figure 5(a): `R[w_a] = R[w_b] = {w_b}`. -/
+def fig5a : KripkeModel TwoAtomWorld FCAtom := model λ | .onlyA | .onlyB => {.onlyB} | _ => ∅
 
-theorem looseDeonticModel_not_indisputable_on_team :
-    ¬ looseDeonticModel.IsIndisputable freeChoiceTeam := by decide
+/-- Figure 5(b): `R[w_a] = {w_a}`, `R[w_b] = {w_b}`. -/
+def fig5b : KripkeModel TwoAtomWorld FCAtom :=
+  model λ | .onlyA => {.onlyA} | .onlyB => {.onlyB} | _ => ∅
 
--- ============================================================================
--- §5 Fact 4 (Narrow Scope FC) at `deonticModel`
--- ============================================================================
+/-- The disjunction `a ∨ b`. -/
+def aOrB : Formula FCAtom := .disj (.atom .a) (.atom .b)
 
-/-- Fact 4 instantiated at the deontic model + free-choice team:
-    enriched ◇(a ∨ b) entails ◇a ∧ ◇b.
-    Proved by invoking the universal substrate theorem `narrowScopeFC`. -/
-theorem aloni2022_fact4_NS_FC
-    (h : support deonticModel (enrich mayHaveCoffeeOrTea) freeChoiceTeam) :
-    support deonticModel mayCoffee freeChoiceTeam ∧
-    support deonticModel mayTea    freeChoiceTeam :=
-  narrowScopeFC deonticModel (.atom .a) (.atom .b) freeChoiceTeam
-    trivial trivial h
+/-- `◇a`. -/
+def mayA : Formula FCAtom := .poss (.atom .a)
 
-/-- The premise of Fact 4 holds on this model + team. -/
-theorem aloni2022_fact4_premise_supported :
-    support deonticModel (enrich mayHaveCoffeeOrTea) freeChoiceTeam := by decide
+/-- `◇b`. -/
+def mayB : Formula FCAtom := .poss (.atom .b)
 
--- ============================================================================
--- §6 Fact 11 (Dual Prohibition) at `restrictiveModel`
--- ============================================================================
+-- Figure 1: the state supports neither `a` nor `¬a`.
+example : ¬ support propositional (.atom .a) state ∧
+    ¬ support propositional (.neg (.atom .a)) state := by decide
 
-/-- Fact 11 instantiated at the restrictive model + prohibition team:
-    enriched ¬◇(a ∨ b) entails ¬◇a ∧ ¬◇b. -/
-theorem aloni2022_fact11_dual_prohibition
-    (h : support restrictiveModel (enrich prohibition) prohibitionTeam) :
-    support restrictiveModel notMayCoffee prohibitionTeam ∧
-    support restrictiveModel notMayTea    prohibitionTeam :=
-  dualProhibition restrictiveModel (.atom .a) (.atom .b) prohibitionTeam
-    trivial trivial h
+-- Figure 2: `a ∨ b` against `[a ∨ b]⁺` on (a) `{w_a, w_b}`, (b) `{w_ab, w_b}`,
+-- (c) `{w_a}` — a zero-model, `b` witnessed by `∅` — and (d) `{w_a, w_b, w_∅}`.
+example : support propositional aOrB state ∧ support propositional (enrich aOrB) state := by
+  decide
+example : support propositional aOrB {.both, .onlyB} ∧
+    support propositional (enrich aOrB) {.both, .onlyB} := by decide
+example : support propositional aOrB {.onlyA} ∧ ¬ support propositional (enrich aOrB) {.onlyA} := by
+  decide
+example : ¬ support propositional aOrB {.onlyA, .onlyB, .nothing} ∧
+    ¬ support propositional (enrich aOrB) {.onlyA, .onlyB, .nothing} := by decide
 
-theorem aloni2022_fact11_premise_supported :
-    support restrictiveModel (enrich prohibition) prohibitionTeam := by decide
+-- Figure 3: indisputability against state-basedness on `{w_a, w_b}`.
+example : fig3a.IsIndisputable state ∧ ¬ fig3a.IsStateBased state := by decide
+example : fig3b.IsStateBased state := by decide
+example : ¬ fig3c.IsIndisputable state := by decide
 
--- ============================================================================
--- §7 Fact 5 (Wide Scope FC) at `deonticModel` and failure on `looseDeonticModel`
--- ============================================================================
+-- §4.1 on Figure 3(b): `◇a` is supported but neither `a` (non-factivity) nor `¬a`
+-- is, so the epistemic contradiction `◇a ∧ ¬a` fails (`epistemicContradiction`).
+example : support fig3b mayA state ∧ ¬ support fig3b (.atom .a) state ∧
+    ¬ support fig3b (.neg (.atom .a)) state := by decide
 
-/-- Fact 5 instantiated at the deontic model + free-choice team:
-    enriched (◇a ∨ ◇b) entails ◇a ∧ ◇b, given indisputability.
-    Indisputability holds trivially on this model (universal access), so this
-    is a consequence-direction test — see `aloni2022_fact5_WS_FC_fails_loose`
-    for the discriminating failure direction. -/
-theorem aloni2022_fact5_WS_FC
-    (h : support deonticModel (enrich wideScopeDisj) freeChoiceTeam) :
-    support deonticModel mayCoffee freeChoiceTeam ∧
-    support deonticModel mayTea    freeChoiceTeam :=
-  wideScopeFC deonticModel (.atom .a) (.atom .b) freeChoiceTeam
-    trivial trivial deonticModel_indisputable_on_team h
+-- Figure 4: at `{w_ab}`, (a) supports `◇(a ∨ b)` but not `[◇(a ∨ b)]⁺`, since `b` is
+-- no open possibility in `R[w_ab]`; (b) supports `[◇(a ∨ b)]⁺`.
+example : support fig4a (.poss aOrB) {.both} ∧ ¬ support fig4a (enrich (.poss aOrB)) {.both} := by
+  decide
+example : support fig4b (enrich (.poss aOrB)) {.both} := by decide
 
-theorem aloni2022_fact5_premise_supported :
-    support deonticModel (enrich wideScopeDisj) freeChoiceTeam := by decide
-
-/-- The WS FC enriched premise IS supported on `looseDeonticModel` for
-    `freeChoiceTeam` — even though indisputability fails. This pairs with
-    `aloni2022_fact5_WS_FC_fails_loose` to demonstrate that the *implication*
-    of WS FC genuinely fails (premise holds, conclusion does not) on this
-    model — not a vacuous failure. -/
-theorem aloni2022_fact5_premise_supported_loose :
-    support looseDeonticModel (enrich wideScopeDisj) freeChoiceTeam := by decide
-
-/-- Necessity of indisputability: on `looseDeonticModel` (where indisputability
-    fails on `freeChoiceTeam`), the WS FC conclusion `mayCoffee` is **not**
-    supported on the team — even though the enriched premise IS supported
-    (`aloni2022_fact5_premise_supported_loose`). The substrate's `wideScopeFC`
-    cannot apply (its indisputability hypothesis fails), and the implication
-    genuinely breaks: premise holds, conclusion does not. -/
-theorem aloni2022_fact5_WS_FC_fails_loose :
-    ¬ support looseDeonticModel mayCoffee freeChoiceTeam := by decide
-
--- ============================================================================
--- §8 Fact 12 (Double Negation FC) at `deonticModel`
--- ============================================================================
-
-/-- Fact 12 instantiated at the deontic model + free-choice team:
-    enriched ¬¬◇(a ∨ b) entails ◇a ∧ ◇b (FC re-emerges
-    under double negation). The earlier instantiation of this file
-    (lines 117–118 in the pre-refactor version) duplicated the NS FC test
-    rather than exhibiting the entailment from the double-negation premise;
-    this is the correct form. -/
-theorem aloni2022_fact12_double_negation
-    (h : support deonticModel (enrich doubleNegMayHaveCoffeeOrTea) freeChoiceTeam) :
-    support deonticModel mayCoffee freeChoiceTeam ∧
-    support deonticModel mayTea    freeChoiceTeam :=
-  doubleNegationFC deonticModel (.atom .a) (.atom .b) freeChoiceTeam
-    trivial trivial h
-
-theorem aloni2022_fact12_premise_supported :
-    support deonticModel (enrich doubleNegMayHaveCoffeeOrTea) freeChoiceTeam := by
+-- Figure 5: wide-scope FC fails (a) without enrichment on an indisputable `R` and
+-- (b) with enrichment on a non-indisputable `R`; (63b) is the locally enriched
+-- `◇[a]⁺ ∨ ◇[b]⁺` of the BSML◇ conjecture, refuted on the same pair.
+example : fig5a.IsIndisputable state ∧ support fig5a (.disj mayA mayB) state ∧
+    ¬ support fig5a mayA state := by decide
+example : ¬ fig5b.IsIndisputable state ∧ support fig5b (enrich (.disj mayA mayB)) state ∧
+    ¬ support fig5b mayA state := by decide
+example : support fig5b (.disj (.poss (enrich (.atom .a))) (.poss (enrich (.atom .b)))) state := by
   decide
 
--- ============================================================================
--- §9 Fact 3 (Modal Disjunction) at `stateBasedModel`; failure on `deonticModel`
--- ============================================================================
+/-! ### Negative free choice (Fact 14)
 
-/-- Fact 3 instantiated at the state-based model + free-choice team:
-    enriched (a ∨ b) entails ◇a ∧ ◇b — without ◇ in the
-    premise, by virtue of state-basedness. -/
-theorem aloni2022_fact3_modal_disjunction
-    (h : support stateBasedModel (enrich plainDisj) freeChoiceTeam) :
-    support stateBasedModel mayCoffee freeChoiceTeam ∧
-    support stateBasedModel mayTea    freeChoiceTeam :=
-  modalDisjunction stateBasedModel (.atom .a) (.atom .b) freeChoiceTeam
-    trivial trivial stateBasedModel_state_based_on_team h
+BSML⁺ validates neither `◇¬(α ∧ β) ⊨ ◇¬α` nor `¬□(α ∧ β) ⊨ ¬□α` — the paper's
+(50), "Mary might not speak both Arabic and Bengali" ⇏ "she might not speak
+Arabic". The countermodel is Figure 5(b)'s frame at the state `{w_a}`: inside
+`[¬(a ∧ b)]⁺` a zero witness anti-supports `a`, but no non-empty subteam of
+`R[w_a] = {w_a}` anti-supports `a`. BSML* validates both inferences
+(`BSML.negativeFC_star`). -/
 
-theorem aloni2022_fact3_premise_supported :
-    support stateBasedModel (enrich plainDisj) freeChoiceTeam := by decide
+theorem not_negativeFC_poss :
+    ¬ consequencePlus (W := TwoAtomWorld) (Atom := FCAtom)
+      (.poss (.neg (.conj (.atom .a) (.atom .b)))) (.poss (.neg (.atom .a))) :=
+  λ h => (by decide : ¬ support fig5b (enrich (.poss (.neg (.atom .a)))) {.onlyA})
+    (h fig5b {.onlyA} (by decide))
+
+/-- The `□` form follows from the `◇` form by the duality `□φ := ¬◇¬φ`. -/
+theorem not_negativeFC_nec :
+    ¬ consequencePlus (W := TwoAtomWorld) (Atom := FCAtom)
+      (.neg (Formula.nec (.conj (.atom .a) (.atom .b)))) (.neg (Formula.nec (.atom .a))) :=
+  λ h => not_negativeFC_poss λ M t hp =>
+    (support_enrich_neg_neg M _ t).mp (h M t ((support_enrich_neg_neg M _ t).mpr hp))
 
 end Aloni2022

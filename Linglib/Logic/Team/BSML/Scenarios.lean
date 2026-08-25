@@ -4,28 +4,18 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Typed atoms and small world models for free-choice scenarios
 
-Shared scenario substrate for BSML- and QBSML-based free-choice studies
-([aloni-2022], [aloni-vanormondt-2023], [yan-2023]). Replaces ad-hoc
-string atoms (`"coffee"`, `"tea"`, ...) in scenario constructions, where
-a typo silently compiles to `false` under the
-`match p with | "coffee" => ... | _ => false` fallthrough pattern.
+Shared scenario substrate for the BSML and QBSML free-choice studies
+([aloni-2022], [aloni-vanormondt-2023], [yan-2023]).
 
 ## Main declarations
 
 * `FCAtom` — typed propositional atoms: `a`/`b` cover the disjuncts of
-  binary FC inferences; `c` is reserved for embedded scenarios involving
-  a third proposition.
+  binary FC inferences; `c` is a third atom.
 * `QVar` — the shared toy variable type for quantified FC scenarios
   (QBSML); the first-order counterpart of `FCAtom`.
 * `TwoAtomWorld` — the 2² = 4 truth assignments to two atoms
   ([aloni-2022] Figure 1: `w_∅`, `w_a`, `w_b`, `w_ab`), with the typed
   `holds` truth table.
-
-Studies instantiate `KripkeModel`'s String-keyed `val` field by
-pattern-matching on the canonical names via `FCAtom.toName`. Eliminating
-the String layer entirely (making `KripkeModel.val : FCAtom → α → Bool`)
-would require parameterizing `Formula` and `KripkeModel` over the atom
-type — a substrate-wide refactor deferred to a separate effort.
 -/
 
 namespace BSML
@@ -36,20 +26,14 @@ inductive FCAtom
   | a
   /-- Second disjunct (e.g. `tea`, `Rome`, `bus`). -/
   | b
-  /-- Third atom for embedded scenarios (negative free choice). -/
+  /-- Third atom, unsatisfiable in `TwoAtomWorld`; also the third individual
+  when `FCAtom` serves as a domain in the QBSML studies. -/
   | c
   deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype FCAtom where
   elems := {.a, .b, .c}
   complete := by intro x; cases x <;> simp
-
-/-- Canonical String name of an atom. Used at `KripkeModel.val` boundaries
-    where the substrate's `val : String → α → Bool` field forces String. -/
-def FCAtom.toName : FCAtom → String
-  | .a => "a"
-  | .b => "b"
-  | .c => "c"
 
 /-- Single variable `x` — the shared toy variable type for quantified FC
     scenarios (QBSML studies); the first-order counterpart of `FCAtom`. -/
@@ -77,9 +61,8 @@ instance : Fintype TwoAtomWorld where
 
 namespace TwoAtomWorld
 
-/-- Truth-table for the two-atom power set. The third atom (`c`) is
-    unsatisfiable in this baseline 4-world model — embedded scenarios
-    needing `c` should use a larger world type. -/
+/-- Truth table for the two-atom power set; the third atom `c` is false
+    everywhere. -/
 def holds : TwoAtomWorld → FCAtom → Bool
   | .both,    .a => true
   | .both,    .b => true
@@ -90,9 +73,6 @@ def holds : TwoAtomWorld → FCAtom → Bool
   | .nothing, .a => false
   | .nothing, .b => false
   | _,        .c => false
-
-/-- Synonym used by Studies that prefer the predicate spelling. -/
-abbrev satisfies : TwoAtomWorld → FCAtom → Bool := holds
 
 end TwoAtomWorld
 

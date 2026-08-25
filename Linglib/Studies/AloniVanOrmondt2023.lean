@@ -53,8 +53,7 @@ inductive Predicate | P | Q
 /-! ### The concrete model -/
 
 /-- Universal-access model on `TwoAtomWorld`: every world is accessible,
-    and both predicates hold of `d` at `w` iff `w` models the atom `d`.
-    Cf. `Aloni2022.deonticModel`. -/
+    and both predicates hold of `d` at `w` iff `w` models the atom `d`. -/
 def univAccessModel : Model TwoAtomWorld FCAtom FCAtom Predicate :=
   .ofMonadic (λ _ => Finset.univ) (λ _ => id) (λ w _ d => w.holds d)
 
@@ -157,8 +156,7 @@ theorem models_stUnivPxOrQxSentence_iff :
 /-! ### Frame conditions -/
 
 /-- `univAccessModel`'s universal accessibility makes R indisputable on every state
-    (every world sees the same `Finset.univ`). Mirrors
-    `Aloni2022.deonticModel_indisputable_on_team` for the QBSML carrier.
+    (every world sees the same `Finset.univ`).
 
     Indisputability vs state-basedness (paper §4.1.1, Definition 4.10):
     - Indisputable: all worlds in s↓ see the same accessible set (R constant).
@@ -221,7 +219,7 @@ theorem fact7_boxFC
     support univAccessModel (.poss Pa) s ∧ support univAccessModel (.poss Pb) s :=
   boxFC univAccessModel Pa_neFree Pb_neFree h
 
-/-- **Fact 8** (◇-free choice); cf. `Aloni2022.aloni2022_fact4_NS_FC`. -/
+/-- **Fact 8** (◇-free choice); cf. `Aloni2022.narrowScopeFC`. -/
 theorem fact8_narrowScopeFC
     (h : support univAccessModel (Formula.enrich (.poss (.disj Pa Pb))) s) :
     support univAccessModel (.poss Pa) s ∧ support univAccessModel (.poss Pb) s :=
@@ -235,8 +233,7 @@ theorem fact9_universalFC
     support univAccessModel (.univ .x (.poss Qx)) s :=
   universalFC univAccessModel Px_neFree Qx_neFree h
 
-/-- **Fact 10** (negation behaviour); cf.
-    `Aloni2022.aloni2022_fact11_dual_prohibition`. -/
+/-- **Fact 10** (negation behaviour); cf. `Aloni2022.dualProhibition`. -/
 theorem fact10_negation
     (h : support univAccessModel (Formula.enrich (.neg (.disj Pa Pb))) s) :
     support univAccessModel (.neg Pa) s ∧ support univAccessModel (.neg Pb) s :=
