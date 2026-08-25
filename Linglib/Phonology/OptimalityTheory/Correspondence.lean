@@ -285,7 +285,7 @@ private theorem image_swap_diagDiag (m n : ℕ) :
 /-- Universal constructor: where `hasEdge` holds, the parallel-pair
     correspondence `(0,0), (1,1), …` truncated to `min` of the two lengths;
     elsewhere none. For non-parallel structure (infixation, re-alignment)
-    build `edge` directly (e.g. `Benua1997.diagramWithEdge`). -/
+    build `edge` directly (e.g. `Benua1997.paradigm`). -/
 def diagram (form : Role → List α) (hasEdge : Role → Role → Prop)
     [DecidableRel hasEdge] : Corr Role α where
   form := form

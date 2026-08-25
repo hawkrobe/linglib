@@ -1956,9 +1956,7 @@ import Linglib.Studies.Beltrama2025
 import Linglib.Studies.BeltramaSchwarz2024
 import Linglib.Studies.BeltramaSoltBurnett2023
 import Linglib.Studies.Bennett2018
-import Linglib.Studies.Benua1997.Basic
-import Linglib.Studies.Benua1997.StratalCorr
-import Linglib.Studies.Benua1997.TCT
+import Linglib.Studies.Benua1997
 import Linglib.Studies.Benz2025
 import Linglib.Studies.BenzSalzmann2025
 import Linglib.Studies.Berent2026
