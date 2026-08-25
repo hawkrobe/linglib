@@ -40,8 +40,6 @@ the interpretation achieves relevance.
 
 -/
 
-set_option autoImplicit false
-
 namespace Pragmatics.RelevanceTheory
 
 open Pragmatics.RelevanceTheory

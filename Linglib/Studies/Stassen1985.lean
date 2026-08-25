@@ -60,8 +60,6 @@ Particle comparatives are modelled on balanced chains (either simultaneous
 or consecutive), confirming Universal 1A (p. 108).
 -/
 
-set_option autoImplicit false
-
 namespace Stassen1985
 
 open Comparative

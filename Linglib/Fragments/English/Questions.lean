@@ -13,8 +13,6 @@ English: no polar Q particle (subject-aux inversion + intonation), wh-fronting
 (do-support + inversion).
 -/
 
-set_option autoImplicit false
-
 namespace English.Questions
 
 open _root_.Syntax.Question

@@ -36,8 +36,6 @@ A's parent and A's parent dominates B iff A's sister dominates B —
 defining universal to the finite list of A's prefixes.
 -/
 
-set_option autoImplicit false
-
 namespace Reinhart1976
 
 open BarkerPullum1990

@@ -30,8 +30,6 @@ assignment keeps them apart by construction.
 * `HasPhi` / `Proform` / `Bound` instances routing it through the Pronoun API.
 -/
 
-set_option autoImplicit false
-
 /-- A deictic demonstrative pronoun: the general `Pronoun` (form + φ) plus the
     `Features.Deixis.Feature` it encodes — its proximal/medial/distal contrast (or `unspecified`
     for a distance-neutral demonstrative like German *dieser*). Carries no separate denotation here;

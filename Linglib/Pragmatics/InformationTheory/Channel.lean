@@ -29,8 +29,6 @@ purely Shannon character. Capacity-specific theorems live in the sibling
 - `mutualInfo`: `I(W;C) = Σ_{c,w} p(c) · p(w|c) · log(p(c|w)/p(c))`
 -/
 
-set_option autoImplicit false
-
 namespace Pragmatics.InformationTheory
 
 open Finset BigOperators Real

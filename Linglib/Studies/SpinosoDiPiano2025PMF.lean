@@ -69,8 +69,6 @@ theorem at specific `worldPrior` values. They are paper-finding content
 (empirical-fit) — out of scope for this architectural migration.
 -/
 
-set_option autoImplicit false
-
 namespace SpinosoDiPiano2025.PMF
 
 open scoped ENNReal

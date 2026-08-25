@@ -50,8 +50,6 @@ live in this file at the substrate layer per the project's "WALS goes to
 `Linglib/Typology/`" rule.
 -/
 
-set_option autoImplicit false
-
 namespace Syntax.Question
 
 private abbrev ch92  := Data.WALS.F92A.allData

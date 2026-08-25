@@ -36,8 +36,6 @@ noun-strategy fragment lands, factor a `PropertyConcept` superclass.
 open Features (ScalarDimension)
 open Morphology.Degree (DegreePattern)
 
-set_option autoImplicit false
-
 /-! ### Comparison morphology -/
 
 /-- How a comparative/superlative grade is formed. -/

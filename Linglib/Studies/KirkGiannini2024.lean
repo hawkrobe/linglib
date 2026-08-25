@@ -173,8 +173,6 @@ and `flat_loses_rContent` quantify the agreement and the information
 loss of the projection.
 -/
 
-set_option autoImplicit false
-
 namespace Semantics.Quotation
 
 open Pragmatics.Expressives (TwoDimProp)
@@ -721,8 +719,6 @@ theorem flat_loses_rContent
 end MQProp
 
 end Semantics.Quotation
-
-set_option autoImplicit false
 
 namespace KirkGiannini2024
 

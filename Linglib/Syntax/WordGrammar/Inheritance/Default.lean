@@ -24,8 +24,6 @@ arg-structure but overrides slot 1; the inverted auxiliary inherits the
 verb's subject slot but overrides its direction.
 -/
 
-set_option autoImplicit false
-
 namespace WordGrammar.Inheritance
 
 variable {α R : Type} [DecidableEq α] [DecidableEq R]

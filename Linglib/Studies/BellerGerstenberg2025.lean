@@ -64,8 +64,6 @@ illustrative Table 1 scenarios, M=true and U=true throughout.
 
 -/
 
-set_option autoImplicit false
-
 namespace BellerGerstenberg2025
 
 open Intensional (Index)

@@ -41,8 +41,6 @@ lexical gender are partially distinct facets ([hammerly-2019]; also
   content; its eventual re-grounding target is this typology.
 -/
 
-set_option autoImplicit false
-
 namespace Gender
 
 /-! ### Inference loci -/

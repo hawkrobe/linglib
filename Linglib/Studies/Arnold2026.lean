@@ -56,8 +56,6 @@ on use, particularly the role of discourse elaboration, which the
 grammatical account does not address.
 -/
 
-set_option autoImplicit false
-
 namespace Arnold2026
 
 /-- How elaborated a referent's discourse representation is ([arnold-2026]).

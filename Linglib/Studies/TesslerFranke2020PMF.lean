@@ -26,8 +26,6 @@ migration with a cost factor in the S1 score**:
   cross-observation API analysis.
 -/
 
-set_option autoImplicit false
-
 namespace TesslerFranke2020.PMF
 
 open scoped ENNReal

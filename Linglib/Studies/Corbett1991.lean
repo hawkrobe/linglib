@@ -45,8 +45,6 @@ Romanian, and — as a *pronominal* system — English), 4 genders (Dyirbal,
 Archi), 5+ noun classes (Swahili, Zulu, Fula).
 -/
 
-set_option autoImplicit false
-
 namespace Corbett1991
 
 open Agreement (Target)

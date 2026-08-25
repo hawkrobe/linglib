@@ -62,8 +62,6 @@ disagreement. A future expansion could formalize the rest if it
 becomes necessary for some downstream consumer.
 -/
 
-set_option autoImplicit false
-
 namespace Sidner1983
 
 -- ════════════════════════════════════════════════════

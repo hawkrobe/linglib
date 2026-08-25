@@ -26,8 +26,6 @@ principle — it derives implicatures about the speaker's knowledge and goals.
 
 -/
 
-set_option autoImplicit false
-
 namespace Pragmatics.RelevanceTheory
 
 /-- Relevance assessment: the two independent dimensions.

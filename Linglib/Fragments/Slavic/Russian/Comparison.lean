@@ -10,8 +10,6 @@ source for its Stassen classification. Degree is marked by the bound affix
 *-ee* ~ *-ej*; the superlative is morphological.
 -/
 
-set_option autoImplicit false
-
 namespace Russian.Comparison
 
 open Comparative

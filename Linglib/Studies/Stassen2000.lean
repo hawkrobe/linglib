@@ -53,8 +53,6 @@ parameters (casedness, tensedness) are recognised as tendencies but with
 many counterexamples.
 -/
 
-set_option autoImplicit false
-
 namespace Stassen2000
 
 open Syntax.Coordination

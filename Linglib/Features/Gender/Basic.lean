@@ -63,8 +63,6 @@ carrier in all but name. This file encodes the carrier directly, the way
   carriers, and their ad-hoc label maps are the `label` field.
 -/
 
-set_option autoImplicit false
-
 /-- Comparative-concept labels for controller genders ([corbett-1991]).
 
     These are the descriptive labels cross-linguistic comparison uses for a

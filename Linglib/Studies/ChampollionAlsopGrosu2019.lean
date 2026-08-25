@@ -50,8 +50,6 @@ recorded as prose for space (its α = 2 values are documented in the final
 section), and the §4 negation model is not formalised.
 -/
 
-set_option autoImplicit false
-
 namespace ChampollionAlsopGrosu2019
 
 open scoped ENNReal

@@ -15,8 +15,6 @@ The single `some-` series covers all three SK/SU/NS functions on
 unmarked).
 -/
 
-set_option autoImplicit false
-
 namespace English.Indefinites
 
 open Indefinite

@@ -30,8 +30,6 @@ becomes less informative), `KL(L1(a, u) ‖ prior)` decreases — the
 listener gains less information from the utterance.
 -/
 
-set_option autoImplicit false
-
 open Finset
 
 namespace Real

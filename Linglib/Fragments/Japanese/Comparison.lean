@@ -18,8 +18,6 @@ postposition, also used in spatial 'from' contexts. This exemplifies
 from spatial case morphology.
 -/
 
-set_option autoImplicit false
-
 namespace Japanese.Comparison
 
 open Comparative

@@ -63,8 +63,6 @@ Formalizes the core framework of:
   by [borer-2005] (see `Studies/Borer2005.lean`) and scalarly here.
 -/
 
-set_option autoImplicit false
-
 namespace Grimm2018
 
 

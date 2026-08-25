@@ -26,8 +26,6 @@ need not be finite).
 - `LangModel.surprisal`: −log p(w | c), in nats ([levy-2008])
 -/
 
-set_option autoImplicit false
-
 namespace Processing.LanguageModel
 
 open Real

@@ -12,8 +12,6 @@ the *higit* standard is oblique rather than a direct object, so neither the
 particle nor the exceed classification can be derived responsibly.
 -/
 
-set_option autoImplicit false
-
 namespace Tagalog.Comparison
 
 open Comparative

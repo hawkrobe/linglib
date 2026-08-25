@@ -47,8 +47,6 @@ remember? → Did you happen to read...?) corresponds to descending the
 subsumption hierarchy.
 -/
 
-set_option autoImplicit false
-
 namespace FrancikClark1985
 
 open Modality (ModalFlavor)

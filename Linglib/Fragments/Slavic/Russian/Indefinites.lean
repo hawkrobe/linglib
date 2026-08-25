@@ -26,8 +26,6 @@ captured by `IndefinitePronoun.consistentWith` in
 `Semantics/Quantification/DeganoAloni2025.lean`.
 -/
 
-set_option autoImplicit false
-
 namespace Russian.Indefinites
 
 open Indefinite

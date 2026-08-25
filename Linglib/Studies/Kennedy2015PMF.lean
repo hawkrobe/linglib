@@ -29,8 +29,6 @@ dominance patterns.
 * `kMean` — the meaning matrix, consumed directly by `RSA.extensionOf`
 -/
 
-set_option autoImplicit false
-
 namespace Kennedy2015.PMF
 
 open scoped ENNReal

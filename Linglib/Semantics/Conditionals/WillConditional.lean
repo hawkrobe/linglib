@@ -39,8 +39,6 @@ single-valuedness.
   collapses to its consequent: `will B` reduces to `B w`.
 -/
 
-set_option autoImplicit false
-
 namespace Semantics.Conditionals.WillConditional
 
 open _root_.Semantics.Conditionals (SelectionFunction)

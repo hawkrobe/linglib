@@ -62,8 +62,6 @@ operators; the pointwise API is now the sole RSA substrate.
 
 -/
 
-set_option autoImplicit false
-
 namespace RSA
 
 variable {U W : Type*}

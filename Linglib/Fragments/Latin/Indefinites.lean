@@ -15,8 +15,6 @@ The morphological-basis encoding is recorded for cross-linguistic
 comparison anyway.
 -/
 
-set_option autoImplicit false
-
 namespace Latin.Indefinites
 
 open Indefinite

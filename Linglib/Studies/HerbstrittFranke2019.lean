@@ -47,8 +47,6 @@ posterior-predictive evaluation (JAGS fits, the model–data correlations of
 Tables 6-10) is statistical, not structural, and is not formalised here.
 -/
 
-set_option autoImplicit false
-
 namespace HerbstrittFranke2019
 
 open scoped ENNReal

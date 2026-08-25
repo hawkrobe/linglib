@@ -26,8 +26,6 @@ the table, derived by existential projection (`LicensedIn`,
 * `Particle.toWord` — projection to `Word` (UD `PART`)
 -/
 
-set_option autoImplicit false
-
 open Clause (EmbeddingContext)
 
 /-- Where a particle sits relative to its host domain — the

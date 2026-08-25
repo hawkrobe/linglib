@@ -7,8 +7,6 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # FormSet operators `FS^(k)` — MCB Def 1.16.1
 [marcolli-chomsky-berwick-2025]

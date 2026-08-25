@@ -75,8 +75,6 @@ construction.
    (preference order is static)
 -/
 
-set_option autoImplicit false
-
 open scoped ENNReal
 
 namespace WesterbeekKoolenMaes2015

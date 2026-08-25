@@ -28,8 +28,6 @@ The core operations (`contradictoryNeg`, `contraryNeg`, `inGapRegion`,
 are defined in `Gradability/Adjective.lean`.
 -/
 
-set_option autoImplicit false
-
 namespace Degree.Antonymy
 
 

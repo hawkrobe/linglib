@@ -66,8 +66,6 @@ conceivability presupposition — not about the entity but about the
   *conceivable*, not *actual*.
 -/
 
-set_option autoImplicit false
-
 namespace Enguehard2024
 
 open Semantics.Presupposition (PartialProp)

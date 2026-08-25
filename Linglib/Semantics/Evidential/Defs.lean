@@ -37,8 +37,6 @@ a language's WALS cell is a theorem about its declared evidentials.
   derivations as theorems about the declared inventory.
 -/
 
-set_option autoImplicit false
-
 namespace Semantics.Evidential
 
 /-! ### Fine-grained source taxonomies ([aikhenvald-2004]) -/

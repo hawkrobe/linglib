@@ -25,8 +25,6 @@ The region semantics grounds the rest of the API:
   (`Studies/DalrympleKaplan2000.lean`, `person_resolve_is_union`).
 -/
 
-set_option autoImplicit false
-
 namespace Person
 
 variable {D : Type*} [DecidableEq D]

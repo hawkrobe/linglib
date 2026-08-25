@@ -56,8 +56,6 @@ language- and configuration-particular data.
   structurally higher / linearly first conjunct.
 -/
 
-set_option autoImplicit false
-
 namespace Gender
 
 variable {G : Type*}

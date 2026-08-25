@@ -39,8 +39,6 @@ Per-language Fragment-vs-WALS data-equality theorems are deliberately absent
 — see `feedback_no_per_lang_wals_grounding_in_studies` for the rationale.
 -/
 
-set_option autoImplicit false
-
 namespace Dixon1994
 
 open Alignment

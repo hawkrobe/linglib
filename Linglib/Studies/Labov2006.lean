@@ -54,8 +54,6 @@ via `StratificationProfile.hasCrossover` without stipulating the exact
 numbers from the finer-grained data.
 -/
 
-set_option autoImplicit false
-
 namespace Labov2006
 
 open SocialMeaning.IndexicalField

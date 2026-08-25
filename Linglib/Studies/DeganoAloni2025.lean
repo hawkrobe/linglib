@@ -63,8 +63,6 @@ type table is for reference.
 | (vii) | dep(v,x)∧var(∅,x)| {SU}                  | Kannada *yāru-oo*|
 -/
 
-set_option autoImplicit false
-
 -- ============================================================================
 -- §0. Private prelude: Hodges/Väänänen team-semantic primitives
 -- [hodges-1997] [vaananen-2007]

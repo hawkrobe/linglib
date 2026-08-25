@@ -6,8 +6,6 @@ Authors: Robert Hawkins
 import Linglib.Syntax.HPSG.Description
 import Mathlib.Tactic.DeriveFintype
 
-set_option autoImplicit false
-
 /-!
 # The canonical SBCG construct hierarchy with list-valued GAP in RSRL
 [sag-2010] [sag-etal-2020] [sag-2012] [bouma-malouf-sag-2001] [richter-2000] [richter-2024]

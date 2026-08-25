@@ -80,8 +80,6 @@ Out of scope (Beaver's §5 extensions):
   per-example witnesses, not the general schematic proof.
 -/
 
-set_option autoImplicit false
-
 namespace Beaver2004
 
 open Discourse.Centering Constraints OptimalityTheory Core.Optimization.Evaluation

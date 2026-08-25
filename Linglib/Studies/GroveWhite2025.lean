@@ -85,8 +85,6 @@ modulation finding from [degen-tonhauser-2021] (replicated in 2b) is
 the specific empirical regularity the world-knowledge component is fit to.
 -/
 
-set_option autoImplicit false
-
 namespace GroveWhite2025
 
 open Factivity

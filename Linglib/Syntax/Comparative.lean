@@ -30,8 +30,6 @@ Stassen's 1985 fine-grained adverbial typology (`ComparativeType1985`, the
 chaining universals) lives in `Studies/Stassen1985.lean` (paper-anchored).
 -/
 
-set_option autoImplicit false
-
 /-- Case assignment to the standard NP of a comparative ([stassen-1985]
     §2.2.1): `derived` — the standard NP derives its case from the comparee
     NP's; `fixed` — one construction-determined case regardless of the

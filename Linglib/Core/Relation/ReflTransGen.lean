@@ -41,8 +41,6 @@ Hudson's Word Grammar `IsA` relation. Generalised to be reusable across
 `SDRT.availableViaChain`.
 -/
 
-set_option autoImplicit false
-
 universe u
 
 namespace Relation.ReflTransGen

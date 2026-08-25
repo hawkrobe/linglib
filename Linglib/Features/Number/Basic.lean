@@ -48,8 +48,6 @@ The [harbour-2014] feature decomposition and its lattice grounding live in
 `Features/Number/Capabilities.lean`.
 -/
 
-set_option autoImplicit false
-
 /-- Grammatical number: [corbett-2000]'s analytical inventory of number values.
     The canonical type — `UD.Number` is its surface realization vocabulary
     (`Number.toUD`/`Number.fromUD`). -/

@@ -63,8 +63,6 @@ The same `η`/`≫=` structure with a different carrier:
 | Scope payoff | Indefinites escape islands | Presuppositions project past filters |
 -/
 
-set_option autoImplicit false
-
 namespace Charlow2020
 
 open Charlow2018 (setPure setAp)

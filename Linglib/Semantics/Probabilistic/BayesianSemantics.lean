@@ -38,8 +38,6 @@ Priors are mathlib `PMF`-valued (`ℝ≥0∞`), matching the rest of the
 probability layer.
 -/
 
-set_option autoImplicit false
-
 namespace Semantics.Montague.BayesianSemantics
 
 open Semantics.Probabilistic

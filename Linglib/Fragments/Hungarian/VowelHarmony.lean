@@ -79,8 +79,6 @@ is an approximation that works for the data but does not reflect the
 theoretical architecture of §6.1.
 -/
 
-set_option autoImplicit false
-
 namespace Hungarian.VowelHarmony
 
 open Phonology (Segment Feature)

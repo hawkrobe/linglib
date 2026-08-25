@@ -12,8 +12,6 @@ import Mathlib.Tactic.Abel
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # Single-tree pre-Lie product `insertSum` on `RoseTree α` and `Nonplanar α`
 [foissy-typed-decorated-rooted-trees-2018]

@@ -2,8 +2,6 @@ import Linglib.Core.Combinatorics.RootedTree.Cut
 import Linglib.Core.Data.RoseTree.Nonplanar
 import Mathlib.Tactic.Abel
 
-set_option autoImplicit false
-
 /-!
 # RoseTree double-cut coassociativity for Δ^c (combinatorial core of MCB 1.2.10)
 [marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]

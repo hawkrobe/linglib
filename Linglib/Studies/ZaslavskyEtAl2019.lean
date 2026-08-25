@@ -38,8 +38,6 @@ communicated). Their key finding is that *both* matter.
   and the posterior is the literal listener L₀.
 -/
 
-set_option autoImplicit false
-
 namespace ZaslavskyEtAl2019
 
 open Pragmatics.InformationTheory

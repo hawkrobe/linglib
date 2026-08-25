@@ -29,8 +29,6 @@ bridge, syncretism) are typological and live in `Typology/Indefinite.lean`.
 * `HasPhi` / `Proform` / `Bound` instances routing the object through the Pronoun API.
 -/
 
-set_option autoImplicit false
-
 namespace Indefinite
 
 

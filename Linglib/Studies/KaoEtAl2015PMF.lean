@@ -74,8 +74,6 @@ sketched. Empirical-fit content; the architectural payoff is the
 headline above.
 -/
 
-set_option autoImplicit false
-
 namespace KaoEtAl2015PMF
 
 open scoped ENNReal

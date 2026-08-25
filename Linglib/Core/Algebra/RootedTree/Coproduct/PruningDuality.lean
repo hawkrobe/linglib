@@ -6,8 +6,6 @@ import Linglib.Core.Algebra.RootedTree.GrossmanLarson.PairingMul
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # GL/CK duality for the pruning coproduct
 

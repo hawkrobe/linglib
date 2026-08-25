@@ -9,8 +9,6 @@ the free degree word *zyaadaa* 'more' is optional. Superlative via comparative
 with a universal standard (*sab se* 'than all').
 -/
 
-set_option autoImplicit false
-
 namespace HindiUrdu.Comparison
 
 open Comparative

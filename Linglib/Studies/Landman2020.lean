@@ -66,8 +66,6 @@ are perspectives on the same stuff, and Boolean atoms play no role.
   values classify referents.
 -/
 
-set_option autoImplicit false
-
 namespace Landman2020
 
 open Mereology (OverlapPred DisjointPred)

@@ -24,8 +24,6 @@ an input can be relevant — an input that produces none of these is irrelevant.
 
 -/
 
-set_option autoImplicit false
-
 namespace Pragmatics.RelevanceTheory
 
 /-- The three types of cognitive effect (S&W, Ch. 3).

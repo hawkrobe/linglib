@@ -34,8 +34,6 @@ theorems.
 - `ias_recovers_surprisal`: Standard surprisal is a special case of IAS
 -/
 
-set_option autoImplicit false
-
 namespace Processing.PredictiveUncertainty
 
 -- ============================================================================

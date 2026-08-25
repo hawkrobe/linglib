@@ -16,8 +16,6 @@ but unknown." This conjunctive type is cross-linguistically rare
 ([bubnov-2026] §6, [degano-aloni-2025]).
 -/
 
-set_option autoImplicit false
-
 namespace Kannada.Indefinites
 
 open Indefinite

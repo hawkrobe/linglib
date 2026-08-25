@@ -72,8 +72,6 @@ The asymmetry arises from monotonicity:
   informative → L1 prefers strong lexicon → enriched reading (SSS)
 -/
 
-set_option autoImplicit false
-
 open scoped ENNReal
 
 namespace PottsEtAl2016

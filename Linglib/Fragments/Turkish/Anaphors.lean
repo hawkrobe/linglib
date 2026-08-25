@@ -30,8 +30,6 @@ but can also function as an intensifier or logophor. Not formalized here.
 
 -/
 
-set_option autoImplicit false
-
 namespace Turkish.Anaphors
 
 /-- Type of Turkish local anaphor. -/

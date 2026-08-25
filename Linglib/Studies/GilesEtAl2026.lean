@@ -61,8 +61,6 @@ beyond discriminability.
 Regression coefficients verified against Tables 1 and 2 of the paper.
 -/
 
-set_option autoImplicit false
-
 namespace GilesEtAl2026
 
 -- ============================================================================

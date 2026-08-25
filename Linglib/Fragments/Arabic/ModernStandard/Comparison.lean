@@ -9,8 +9,6 @@ pattern *ʔafʕal* carries the comparison, with no separate degree word.
 Superlative via the elative without a comparison standard.
 -/
 
-set_option autoImplicit false
-
 namespace Arabic.ModernStandard.Comparison
 
 open Comparative

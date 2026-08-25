@@ -66,8 +66,6 @@ exercises this parallel with concrete data from Figures 3 and 4.
   personae, connecting to [burnett-2019]'s social meaning games
 -/
 
-set_option autoImplicit false
-
 namespace Eckert2008
 
 open SocialMeaning.IndexicalField

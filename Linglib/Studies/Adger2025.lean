@@ -5,8 +5,6 @@ import Linglib.Syntax.Minimalist.Defs
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # Mereological Syntax: Angular Locality and Islands
 [adger-2025]

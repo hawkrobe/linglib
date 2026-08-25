@@ -43,8 +43,6 @@ K-G's strip-then-mix architecture. Does not formalize the full appositive
 syntax/semantics or the experimental data H&P present.
 -/
 
-set_option autoImplicit false
-
 namespace HarrisPotts2009
 
 open Pragmatics.Expressives (TwoDimProp)

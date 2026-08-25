@@ -11,8 +11,6 @@ its anatomy (`quam.type`, `ablative.type`). Degree is marked by the bound
 affix *-ior*; the superlative is morphological.
 -/
 
-set_option autoImplicit false
-
 namespace Latin.Comparison
 
 open Comparative

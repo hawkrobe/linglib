@@ -20,8 +20,6 @@ different particles.
 Diacritics omitted following [kratzer-shimoyama-2002].
 -/
 
-set_option autoImplicit false
-
 namespace Latvian.IndeterminatePronouns
 
 /-- A row in a cross-linguistic indeterminate paradigm table.

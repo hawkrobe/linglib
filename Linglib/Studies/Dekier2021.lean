@@ -53,8 +53,6 @@ formalizes Dekier's POSITIVE nanosyntactic analysis; `Bubnov2026.lean`
 formalizes the critique.
 -/
 
-set_option autoImplicit false
-
 namespace Dekier2021
 
 open Morphology Morphology.Containment

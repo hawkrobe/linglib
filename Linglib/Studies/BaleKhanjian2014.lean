@@ -109,8 +109,6 @@ on syntactic-complexity competition. A Marti 2020 study file would be
 the natural cross-paper test case here.
 -/
 
-set_option autoImplicit false
-
 namespace BaleKhanjian2014
 
 open Syntax

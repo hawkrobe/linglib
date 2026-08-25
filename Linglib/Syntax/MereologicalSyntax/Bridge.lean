@@ -1,8 +1,6 @@
 import Linglib.Syntax.MereologicalSyntax.Basic
 import Linglib.Syntax.SynGraph
 
-set_option autoImplicit false
-
 /-!
 # Bridge: SynObj → SynGraph
 [adger-2025]

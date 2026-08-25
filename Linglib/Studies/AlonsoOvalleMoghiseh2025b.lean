@@ -47,8 +47,6 @@ closure. See `Farsi.Determiners` and
 `Studies.AlonsoOvalleMoghiseh2025` for the indefinite paradigm.
 -/
 
-set_option autoImplicit false
-
 namespace AlonsoOvalleMoghiseh2025b
 
 open Quantification (Quantifier conjGQ disjGQ conjGQs disjGQs nonemptySubsets

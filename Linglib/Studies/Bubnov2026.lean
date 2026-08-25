@@ -56,8 +56,6 @@ test case. Key claims:
   Alonso-Ovalle & Royer's modal-indefinite typology for *irgend-*.
 -/
 
-set_option autoImplicit false
-
 namespace Bubnov2026
 
 open DeganoAloni2025

@@ -62,8 +62,6 @@ captured by the headline theorem above. Future work to discharge them
 follows the Kao Metaphor / FG2012 pattern.
 -/
 
-set_option autoImplicit false
-
 namespace KaoEtAl2014PMFHyperbole
 
 open scoped ENNReal

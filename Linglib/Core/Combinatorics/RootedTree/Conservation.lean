@@ -8,8 +8,6 @@ import Linglib.Core.Data.RoseTree.Count
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # Trace-marker measures and conservation laws for the Δ^c cut enumeration
 [marcolli-chomsky-berwick-2025]

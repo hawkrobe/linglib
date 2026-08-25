@@ -5,8 +5,6 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Data.RoseTree.Basic
 
-set_option autoImplicit false
-
 /-!
 # Path-based vertex addressing for `RoseTree α`
 [foissy-typed-decorated-rooted-trees-2018]

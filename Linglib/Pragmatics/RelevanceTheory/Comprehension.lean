@@ -47,8 +47,6 @@ Set `effortWeight = 0` to ignore effort in the threshold (pure effects-based).
 
 -/
 
-set_option autoImplicit false
-
 namespace Pragmatics.RelevanceTheory
 
 -- ============================================================================

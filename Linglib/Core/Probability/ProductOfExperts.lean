@@ -30,8 +30,6 @@ The construction factors through `PMF.reweight` (defined in
   factor supports (the disjoint-supports caveat of [erk-herbelot-2024] fn 10).
 -/
 
-set_option autoImplicit false
-
 open scoped ENNReal
 
 namespace PMF

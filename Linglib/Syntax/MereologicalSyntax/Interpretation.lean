@@ -1,8 +1,6 @@
 import Linglib.Syntax.MereologicalSyntax.Basic
 import Linglib.Studies.Borer2005
 
-set_option autoImplicit false
-
 /-!
 # Mereological Syntax → Semantics Bridge
 [adger-2025] [borer-2005] [wang-sun-2026]

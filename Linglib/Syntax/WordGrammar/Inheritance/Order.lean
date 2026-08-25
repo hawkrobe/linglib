@@ -45,8 +45,6 @@ because instance synthesis unfolds `IsAOrder net` back to `α` and then fails to
 find `LE α`. The `mk` function-call carries the wrapper through elaboration.
 -/
 
-set_option autoImplicit false
-
 namespace WordGrammar.Inheritance
 
 variable {α R : Type} [DecidableEq α] [DecidableEq R]

@@ -32,8 +32,6 @@ canonical scalar scale and is small enough for `decide`. See also
 [prince-1981], [chafe-1976], [chafe-1987].
 -/
 
-set_option autoImplicit false
-
 namespace Features
 
 /-- [gundel-hedberg-zacharski-1993] six-tier Givenness Hierarchy

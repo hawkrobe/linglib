@@ -130,8 +130,6 @@ Equation": `P(if A then B) = P(B|A)`), used for PC-sorites premise
 strengths — neither captured.
 -/
 
-set_option autoImplicit false
-
 namespace LassiterGoodman2017.PMF
 
 open scoped ENNReal

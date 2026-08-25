@@ -65,8 +65,6 @@ sums are taken as `tsum` (`∑'`) which collapses to `Finset.sum` whenever a
   `LossyContext.lean`.
 -/
 
-set_option autoImplicit false
-
 namespace Processing.NoisyChannel
 
 open Real

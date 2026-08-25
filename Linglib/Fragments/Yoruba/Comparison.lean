@@ -8,8 +8,6 @@ the exceed verb *ju … lọ* takes the standard as its object. The adjective
 carries no degree marking; superlative via exceeding a universal standard.
 -/
 
-set_option autoImplicit false
-
 namespace Yoruba.Comparison
 
 open Comparative

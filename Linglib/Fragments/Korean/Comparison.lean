@@ -18,8 +18,6 @@ places Korean firmly in the separative class in [stassen-1985]'s
 typology.
 -/
 
-set_option autoImplicit false
-
 namespace Korean.Comparison
 
 open Comparative

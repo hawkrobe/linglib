@@ -7,8 +7,6 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # Edge-count grading of the Δ^c bialgebra
 [marcolli-chomsky-berwick-2025]

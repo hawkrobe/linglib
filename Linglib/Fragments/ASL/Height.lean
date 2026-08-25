@@ -37,8 +37,6 @@ pronouns or proximal/distal on demonstratives.
 - ⟦domain-k⟧ = ⟦high⟧ = λx: Cₑ ⊂ {y : y ≤ x}. x — context is proper subpart
 -/
 
-set_option autoImplicit false
-
 namespace ASL.Height
 
 open Semantics.Presupposition (PartialProp)

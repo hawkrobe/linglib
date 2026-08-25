@@ -26,8 +26,6 @@ typology; [cysouw-2009] discusses additional minor types
 substrate does not currently distinguish.
 -/
 
-set_option autoImplicit false
-
 namespace Features.Clusivity
 
 /-- The five common marking types of the first person complex

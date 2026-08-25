@@ -32,8 +32,6 @@ multidimensional approach) but is out of scope for the present
 cross-framework comparison.
 -/
 
-set_option autoImplicit false
-
 namespace Maier2014
 
 open Pragmatics.Expressives (TwoDimProp)

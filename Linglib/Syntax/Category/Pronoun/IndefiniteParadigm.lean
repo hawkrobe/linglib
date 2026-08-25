@@ -31,8 +31,6 @@ denotations, Hamblin alternatives) lives as projections in theory files (e.g.,
 bridge theorems anchored on a paper live in that paper's `Studies/AuthorYear.lean`.
 -/
 
-set_option autoImplicit false
-
 namespace Indefinite
 
 open Data.WALS

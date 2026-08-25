@@ -33,8 +33,6 @@ information. The current module covers non-communicative games; signaling
 games are in `Pragmatics/SignalingGame/Basic.lean`.
 -/
 
-set_option autoImplicit false
-
 namespace Pragmatics.GameTheory
 
 open Core

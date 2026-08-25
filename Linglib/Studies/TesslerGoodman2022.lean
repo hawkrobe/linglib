@@ -93,8 +93,6 @@ Per-kind mathlib-PMF pipeline with latent `ComparisonClass`, world `Height`:
 | 16 | jockey | short | sub | super (#12) | `literal_jockey_short_sub` |
 -/
 
-set_option autoImplicit false
-
 namespace TesslerGoodman2022
 
 open Degree (Bounded Threshold deg thr allDegrees allThresholds Bounded.toNat Threshold.toNat)

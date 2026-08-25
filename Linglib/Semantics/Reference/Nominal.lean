@@ -52,8 +52,6 @@ belongs with the first dynamic consumer that requires it. Until then the seam
 lemma carries the connection.
 -/
 
-set_option autoImplicit false
-
 namespace Semantics.Reference
 
 open Semantics.Presupposition (PartialProp)

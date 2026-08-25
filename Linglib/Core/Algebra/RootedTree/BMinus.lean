@@ -12,8 +12,6 @@ import Mathlib.Tactic.Ring
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # The B- operator and the B+/B- pairing adjoint
 

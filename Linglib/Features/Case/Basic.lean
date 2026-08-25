@@ -39,8 +39,6 @@ inventory at root namespace, UD demoted to realization.
   `isValidInventory_iff_ordConnected`
 -/
 
-set_option autoImplicit false
-
 /-- Grammatical case — the canonical analytical inventory. -/
 inductive Case where
   /-- Nominative: citation/subject case. -/

@@ -32,8 +32,6 @@ construction (`toSignalingGame`) rather than by a bridge theorem.
   maximum-a-posteriori estimation.
 -/
 
-set_option autoImplicit false
-
 /-- An interpretation game: a semantic `meaning` relation between messages
 and types, and a prior over types. The receiver's task is to guess the
 sender's type; utilities are fixed by the `toSignalingGame` reduction. -/

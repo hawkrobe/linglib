@@ -26,8 +26,6 @@ consumers live in `Entropy.lean`, Bayesian ones in `JointPosterior.lean`.
   characterization of the product.
 -/
 
-set_option autoImplicit false
-
 namespace PMF
 
 variable {α β γ : Type*} [Fintype α] [Fintype β] [Fintype γ]

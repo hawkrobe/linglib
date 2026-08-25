@@ -11,8 +11,6 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Phase.Basic
 
-set_option autoImplicit false
-
 /-!
 # The Role of Phases and Specificity in Definite Islands
 [shen-huang-2026]

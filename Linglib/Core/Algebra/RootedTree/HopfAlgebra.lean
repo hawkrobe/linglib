@@ -5,8 +5,6 @@ import Mathlib.RingTheory.Coalgebra.Convolution
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # `HopfAlgebra R (ConnesKreimer R (Nonplanar α))` — Foissy Connes-Kreimer Hopf algebra
 [marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]

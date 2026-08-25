@@ -11,8 +11,6 @@ import Mathlib.Tactic.Ring
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # The symmetry-weighted GL/CK pairing
 [foissy-typed-decorated-rooted-trees-2018]

@@ -1,5 +1,3 @@
-set_option autoImplicit false
-
 /-!
 # Syntactic Graphs
 [adger-2025]

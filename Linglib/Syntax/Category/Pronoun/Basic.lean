@@ -40,8 +40,6 @@ in as fields of the general `Pronoun`.
 -/
 
 
-set_option autoImplicit false
-
 /-! ### Structural deficiency ([cardinaletti-starke-1999]) -/
 
 /-- [cardinaletti-starke-1999]'s three pronoun classes, linearly ordered by

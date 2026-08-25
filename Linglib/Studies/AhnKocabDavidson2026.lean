@@ -44,8 +44,6 @@ differential object marking.
    by disambiguation need along prominence scales
 -/
 
-set_option autoImplicit false
-
 namespace AhnKocabDavidson2026
 
 open Discourse (AccessibilityLevel)

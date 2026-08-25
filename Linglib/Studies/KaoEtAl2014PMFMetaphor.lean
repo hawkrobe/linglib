@@ -56,8 +56,6 @@ This file uses the equivalent kernel-form: `World → PMF Cat` defined as
 The two formulations agree by associativity of `bind`.
 -/
 
-set_option autoImplicit false
-
 namespace KaoEtAl2014PMFMetaphor
 
 open scoped ENNReal
