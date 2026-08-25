@@ -171,7 +171,7 @@ def ForceFlavor.cartesianProduct (fos : List ModalForce) (fls : List ModalFlavor
 
 /-- A modal item: the shared core of any expression carrying modal meaning.
 
-    Unifies `Auxiliary.{form, meaning, register}`,
+    Unifies `Auxiliary.{form, modality, register}`,
     `ModalAdvEntry.{form, modalMeaning, register}`, and
     `ModalExpression.{form, meaning}` under a common type. -/
 structure ModalItem where

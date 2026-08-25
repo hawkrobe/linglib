@@ -605,16 +605,16 @@ open English.Auxiliaries
 
 /-- *should* is classified as weak necessity in the English fragment. -/
 theorem should_is_weak :
-    should.meaning.any (·.force == .weakNecessity) = true := by native_decide
+    should.modality.any (·.force == .weakNecessity) = true := by native_decide
 
 /-- *ought* is classified as weak necessity. -/
 theorem ought_is_weak :
-    ought.meaning.any (·.force == .weakNecessity) = true := by native_decide
+    ought.modality.any (·.force == .weakNecessity) = true := by native_decide
 
 /-- *must* is classified as strong necessity, not weak. -/
 theorem must_is_strong_not_weak :
-    must.meaning.any (·.force == .necessity) = true ∧
-    must.meaning.any (·.force == .weakNecessity) = false := by
+    must.modality.any (·.force == .necessity) = true ∧
+    must.modality.any (·.force == .weakNecessity) = false := by
   exact ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================

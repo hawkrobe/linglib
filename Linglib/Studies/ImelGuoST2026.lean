@@ -197,7 +197,7 @@ open English.Auxiliaries (can could will would shall should may might must)
 def english : ModalInventory :=
   .fromAuxEntries "English" "Indo-European" "Kratzer (1981), Palmer (2001)"
     [can, could, will, would, shall, should, may, might, must]
-    Auxiliary.form Auxiliary.meaning
+    Auxiliary.form Auxiliary.modality
 
 theorem english_all_iff : english.allIFF = true := by native_decide
 theorem english_size : english.size = 9 := by native_decide
@@ -213,7 +213,7 @@ open German.Predicates.Modal (allModals)
     individuation ([steinert-threlkeld-imel-guo-2023] §4.3). -/
 def german : ModalInventory :=
   .fromAuxEntries "German" "Indo-European" "Kratzer (1981)"
-    allModals Auxiliary.form Auxiliary.meaning
+    allModals Auxiliary.form Auxiliary.modality
 
 /-- All seven German modals satisfy IFF (including *sollte* as distinct
     from *sollen*). -/

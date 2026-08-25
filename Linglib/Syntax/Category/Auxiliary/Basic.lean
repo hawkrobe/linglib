@@ -22,14 +22,14 @@ force–flavor space — *must* is necessity over epistemic, deontic or
 circumstantial backgrounds — and may sit at a marked register (*shall*).
 
 This file provides the auxiliary as a lexical object: its form, its
-agreement and verb-form features, its modal meanings, and its register.
+agreement and verb-form features, its modality, and its register.
 Per-language fragments supply the entries.
 
 ## Main declarations
 
 * `Auxiliary` — the lexical object.
 * `Auxiliary.toWord` — the `AUX` word it spells out.
-* `Auxiliary.toModalItem`, `Auxiliary.modalFeature` — its modal content as
+* `Auxiliary.toModalItem`, `Auxiliary.modalFeature` — its modality as
   a `ModalItem`, and as the uninterpretable modal feature of [zeijlstra-2007].
 
 ## References
@@ -38,14 +38,14 @@ Per-language fragments supply the entries.
 * [zeijlstra-2007]
 -/
 
-/-- An auxiliary: form, agreement and verb-form features, modal meanings
-(empty for non-modal auxiliaries), and register. -/
+/-- An auxiliary: form, agreement and verb-form features, modality (empty
+for non-modal auxiliaries), and register. -/
 structure Auxiliary where
   form : String
   features : UD.MorphFeatures := {}
-  /-- Meanings in the force–flavor space; empty for the non-modal
+  /-- The modality, as force–flavor pairs; empty for the non-modal
       auxiliaries. -/
-  meaning : List ForceFlavor := []
+  modality : List ForceFlavor := []
   register : Level := .neutral
   deriving DecidableEq, Repr
 
@@ -66,14 +66,14 @@ def person (a : Auxiliary) : Option UD.Person := a.features.person
 def number (a : Auxiliary) : Option UD.Number := a.features.number
 
 /-- The modal item an auxiliary contributes: form, meanings, register. -/
-def toModalItem (a : Auxiliary) : ModalItem := ⟨a.form, a.meaning, a.register⟩
+def toModalItem (a : Auxiliary) : ModalItem := ⟨a.form, a.modality, a.register⟩
 
 /-- The modal feature a modal auxiliary carries ([zeijlstra-2007]): the force
 of its primary meaning, **uninterpretable** — semantically vacuous and
 checked by a c-commanding interpretable operator. `none` for an auxiliary
-with no modal meaning. -/
+with no modality. -/
 def modalFeature (a : Auxiliary) : Option ModalFeature :=
-  a.meaning.head?.map fun ff => ⟨ff.force, .uninterpretable⟩
+  a.modality.head?.map fun ff => ⟨ff.force, .uninterpretable⟩
 
 /-- The interpretability of the auxiliary's modal feature, if it has one. -/
 def interpretability (a : Auxiliary) : Option ModalInterpretability :=

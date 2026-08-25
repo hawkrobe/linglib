@@ -34,32 +34,32 @@ private abbrev cp := ForceFlavor.cartesianProduct
 /-- *können* — "can/may": epistemic + circumstantial possibility. -/
 def koennen : Auxiliary where
   form := "können"
-  meaning := cp [.possibility] [.epistemic, .circumstantial]
+  modality := cp [.possibility] [.epistemic, .circumstantial]
 
 /-- *dürfen* — "may/be allowed to": deontic possibility. -/
 def duerfen : Auxiliary where
   form := "dürfen"
-  meaning := cp [.possibility] [.deontic]
+  modality := cp [.possibility] [.deontic]
 
 /-- *müssen* — "must/have to": epistemic + deontic necessity. -/
 def muessen : Auxiliary where
   form := "müssen"
-  meaning := cp [.necessity] [.epistemic, .deontic]
+  modality := cp [.necessity] [.epistemic, .deontic]
 
 /-- *sollen* — "should/be supposed to": deontic necessity. -/
 def sollen : Auxiliary where
   form := "sollen"
-  meaning := cp [.necessity] [.deontic]
+  modality := cp [.necessity] [.deontic]
 
 /-- *mögen* — "may" (epistemic): epistemic possibility. -/
 def moegen : Auxiliary where
   form := "mögen"
-  meaning := cp [.possibility] [.epistemic]
+  modality := cp [.possibility] [.epistemic]
 
 /-- *wollen* — "want to": bouletic necessity. -/
 def wollen : Auxiliary where
   form := "wollen"
-  meaning := cp [.necessity] [.bouletic]
+  modality := cp [.necessity] [.bouletic]
 
 /-- *sollte* — Konjunktiv II of *sollen*: weak necessity across multiple flavors.
     Treated as a **separate modal** from *sollen* because it has complex
@@ -68,7 +68,7 @@ def wollen : Auxiliary where
     Both *soll* and *sollte* individually satisfy IFF. -/
 def sollte : Auxiliary where
   form := "sollte"
-  meaning := cp [.weakNecessity] [.deontic, .epistemic, .circumstantial]
+  modality := cp [.weakNecessity] [.deontic, .epistemic, .circumstantial]
 
 /-! ### All Modals -/
 
@@ -79,7 +79,7 @@ def allModals : List Auxiliary :=
 
 /-- *sollte* has wider flavor range than *sollen* (morphological flavor change). -/
 theorem sollte_wider_than_sollen :
-    sollte.meaning.length > sollen.meaning.length := by decide
+    sollte.modality.length > sollen.modality.length := by decide
 
 /-- Seven modals total (including *sollte* as distinct from *sollen*). -/
 theorem allModals_size : allModals.length = 7 := rfl

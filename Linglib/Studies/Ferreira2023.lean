@@ -685,9 +685,9 @@ open English.Auxiliaries in
 /-- English *should* and *ought* share Portuguese *dever*'s modal force
     (`.weakNecessity`), placing them at the SN_Xg vertex. -/
 theorem english_portuguese_weakNecessity_correspondence :
-    English.Auxiliaries.should.meaning.all
+    English.Auxiliaries.should.modality.all
         (·.force == .weakNecessity) = true ∧
-    English.Auxiliaries.ought.meaning.all
+    English.Auxiliaries.ought.modality.all
         (·.force == .weakNecessity) = true ∧
     PortugueseModal.dever.force = .weakNecessity := by
   exact ⟨by decide, by decide, rfl⟩
