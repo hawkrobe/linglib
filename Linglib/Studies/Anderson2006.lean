@@ -67,8 +67,8 @@ and Heine 1993 (book p. 48ff. via Anderson p. 5):
   `.agreement` on AUX (matches the gloss `1-AUX 1-2PL-show`).
 - **Cline reattributed to [heine-1993]** (Anderson p. 5
   explicitly cites Heine 1993:48ff.).
-- **`negStrategyStage`** is now `NegStrategy.toGramStage :
-  NegStrategy → Option GramStage` (in `Syntax/Negation.lean`), with
+- **`negStrategyStage`** is now `Strategy.toGramStage :
+  Strategy → Option GramStage` (in `Syntax/Negation.lean`), with
   `.negParticle => none` (not on the verbal cline) — fixes the
   earlier formaliser-introduced collapse of [miestamo-2005]'s
   particle-vs-verb distinction.
@@ -99,7 +99,7 @@ namespace Anderson2006
 
 open AuxiliaryVerbs
 open ArgumentStructure.AuxiliarySelection
-open Syntax.Negation (NegStrategy)
+open Syntax.Negation (Strategy)
 
 /-! ## Inflectional distribution (study-local apparatus)
 
@@ -518,8 +518,8 @@ Kokota; lex-headed in Kwerba; doubled in 'Iipay. The example rows
 live in `Data/Examples/Anderson2006.json` (Komi (47a,b), Udihe (49),
 Kwerba (52a,b), all verified against the book); each row's
 `infl_pattern` feature records the book's classification where it
-states one. The NegStrategy → InflPattern mapping lives in
-`Typology/Negation.lean`: `NegStrategy.expectedInflPattern` encodes
+states one. The Strategy → InflPattern mapping lives in
+`Syntax/Negation.lean`: `Strategy.expectedInflPattern` encodes
 the most common verbal-negator → aux-headed mapping, and the Kwerba
 rows witness below that it is a tendency, not a law. -/
 
@@ -527,16 +527,16 @@ rows witness below that it is a tendency, not a law. -/
     and the strategy-level projection expects exactly that. -/
 theorem udihe_negVerb_expects_auxHeaded :
     Examples.udihe_neg.feature? "infl_pattern" = some "auxHeaded" ∧
-    NegStrategy.negVerb.expectedInflPattern = some .auxHeaded :=
+    Strategy.negVerb.expectedInflPattern = some .auxHeaded :=
   ⟨rfl, rfl⟩
 
 /-- Kwerba (52a,b) shows a negative auxiliary in a *lex-headed* AVC
     (the lexical verb hosts the inflection), so the aux-headed
-    expectation of `NegStrategy.expectedInflPattern` is defeasible —
+    expectation of `Strategy.expectedInflPattern` is defeasible —
     Anderson's own four-pattern list is the counterexample source. -/
 theorem kwerba_negVerb_lexHeaded_counterexample :
     Examples.kwerba_neg_fut.feature? "infl_pattern" = some "lexHeaded" ∧
-    NegStrategy.negVerb.expectedInflPattern ≠ some .lexHeaded :=
+    Strategy.negVerb.expectedInflPattern ≠ some .lexHeaded :=
   ⟨rfl, by decide⟩
 
 /-- The Komi tense alternation (47a,b) sits entirely on the negative
@@ -613,20 +613,20 @@ theorem sorace_canonical_chain (v : Features.VendlerClass) :
 /-! ## Cross-framework: Miestamo 2005 (negation morpheme classification)
 
 [miestamo-2005] classifies negation strategies by morpheme
-type (`NegMorphemeType`: `.auxVerb`, `.affix`, `.particle`, ...);
+type (WALS Ch 112A: negative auxiliary verb, affix, particle, ...);
 [anderson-2006] via [heine-1993]'s grammaticalization
 framework places verbal negators on the cline at `.auxiliary` and
 non-verbal negators off the cline (Anderson §1.7.2 covers only
 verbal negators). The two frameworks classify by independently-
 motivated criteria but, for the strategies linglib's
-`NegStrategy` enum exposes, AGREE on which strategies are
+`Strategy` enum exposes, AGREE on which strategies are
 "verbal": Anderson's `.toGramStage = some .auxiliary` is exactly
-Miestamo's `.toNegMorphemeType = .auxVerb`.
+Miestamo's `.morphemeType = .negativeAuxiliaryVerb`.
 
 Composition with [miestamo-2005]'s
 `afin_verbal_implies_constructional` (in
 `Linglib/Studies/Miestamo2005.lean`) then
-yields: any `NegStrategy` Anderson places at the auxiliary cline
+yields: any `Strategy` Anderson places at the auxiliary cline
 stage, in any Miestamo A/Fin datum, shows constructional
 asymmetry — a falsifiable empirical prediction whose chain
 runs Anderson's cline → Miestamo's morpheme type → Miestamo's
@@ -639,15 +639,15 @@ the quantified-equivalence shape below. -/
 
 /-- Cross-framework equivalence: Anderson's grammaticalization-cline
     placement at `.auxiliary` and Miestamo's morpheme-type
-    classification as `.auxVerb` partition the `NegStrategy` enum
+    classification as `.auxVerb` partition the `Strategy` enum
     *identically*. Both frameworks classify exactly `.negVerb`
     (Finnish *ei*-style inflecting negators) as the verbal subtype.
     Falsifiable by changing either projection: a future split of
-    `NegStrategy.negVerb` into Miestamo-style auxVerb-vs-doubleNeg
+    `Strategy.negVerb` into Miestamo-style auxVerb-vs-doubleNeg
     subtypes would break this without breaking either projection
     individually. -/
-theorem auxiliary_stage_iff_aux_verb_morpheme (s : NegStrategy) :
-    s.toGramStage = some .auxiliary ↔ s.toNegMorphemeType = .auxVerb := by
+theorem auxiliary_stage_iff_aux_verb_morpheme (s : Strategy) :
+    s.toGramStage = some .auxiliary ↔ s.morphemeType = .negativeAuxiliaryVerb := by
   cases s <;> decide
 
 end Anderson2006

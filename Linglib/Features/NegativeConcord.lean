@@ -6,11 +6,10 @@ Lightweight, Fragment-importable types for negative concord: the item-level n-wo
 status, the NC subtype, and the clausal-position parameter the strict/non-strict
 contrast turns on.
 
-Kept separate from `Typology/Negation.lean` (the WALS-based negation survey) so that
-`Typology/PolarityItem.lean` and Fragment lexicons can import the n-word classification
-without pulling in the WALS datapoint files. `Negation.lean` imports *this* file to
-bridge the item-level status to its language-level WALS 115A `NegIndefiniteStrategy`
-(`NegIndefiniteStrategy.hasNegativeConcord` / `.admits`).
+Kept separate from `Syntax/Negation.lean` (the WALS-based negation survey) so that
+`Semantics/Polarity/Item.lean` and Fragment lexicons can import the n-word classification
+without pulling in the WALS datapoint files. `Studies/VanDerAuweraVanAlsenoy2016.lean`
+bridges the item-level status to a language's WALS Ch 115A value.
 
 ## Main declarations
 

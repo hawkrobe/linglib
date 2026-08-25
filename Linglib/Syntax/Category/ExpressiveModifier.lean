@@ -21,7 +21,7 @@ parameters, formalized here.
 Moved from `Core/Lexical/ExpressiveModifier.lean` in the cleanup that
 dissolved `Core/Lexical/`. The file's per-language entry-schema +
 abstract-licensing-predicate shape (Fragment-importable, syntax-framework-
-neutral) matches `Typology/PolarityMarking.lean` and `Typology/Negation.lean`,
+neutral) matches `Semantics/Polarity/Marking.lean` and `Syntax/Negation.lean`,
 not the framework-agnostic substrate shape `Core/` is for.
 
 **Framework commitment.** The parasitic/independent dichotomy

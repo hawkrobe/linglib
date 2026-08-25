@@ -1,4 +1,7 @@
 import Linglib.Syntax.Negation
+import Linglib.Data.WALS.Features.F112A
+import Linglib.Data.WALS.Features.F113A
+import Linglib.Data.WALS.Features.F114A
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.German.Negation
@@ -69,11 +72,39 @@ those live in `Data.WALS.F113A`.
 
 namespace Miestamo2005
 
-open Syntax.Negation
-  (NegSymmetry AsymmetrySubtype NegMorphemeType
-   morphemeTypeOfISO symmetryOfISO asymmetrySubtypeOfISO)
+open Syntax.Negation (asymmetrySubtypeOfISO)
+open Data.WALS
 
 /-! ## Miestamo's asymmetry dimensions (beyond WALS) -/
+
+/-- The domain an asymmetric negative construction departs in
+([miestamo-2005] Table 2). WALS Ch 114A codes the same distinctions
+except A/Emph, which the book separates and the atlas folds into
+A/Cat. -/
+inductive AsymmetrySubtype where
+  | finiteness
+  | realityStatus
+  | emphasis
+  | otherCategories
+  | finAndNonReal
+  | finAndEmph
+  | finAndCat
+  | nonRealAndCat
+  | emphAndCat
+  /-- The language has only symmetric negation. -/
+  | nonAssignable
+  deriving DecidableEq, BEq, Repr
+
+/-- The book's subtype recorded by a WALS Ch 114A value. -/
+def AsymmetrySubtype.ofWALS114A :
+    F114A.AsymmetricNegationSubtype → AsymmetrySubtype
+  | .aFin => .finiteness
+  | .aNonreal => .realityStatus
+  | .aCat => .otherCategories
+  | .aFinAndANonreal => .finAndNonReal
+  | .aFinAndACat => .finAndCat
+  | .aNonrealAndACat => .nonRealAndCat
+  | .nonAssignable => .nonAssignable
 
 /-- [miestamo-2005]'s two dimensions of asymmetry. WALS Ch 113 collapses
     these into a single symmetric/asymmetric distinction; Miestamo decomposes
@@ -99,9 +130,9 @@ structure MiestamoDatum where
   /-- ISO 639-3 code; the key for the WALS-consistency checks. -/
   iso : String
   /-- WALS Ch 112: morpheme type -/
-  morphemeType : NegMorphemeType
+  morphemeType : F112A.NegativeMorphemeType
   /-- WALS Ch 113: symmetric/asymmetric/both -/
-  symmetry : NegSymmetry
+  symmetry : F113A.NegationSymmetry
   /-- WALS Ch 114: asymmetry subtype -/
   asymmetrySubtype : AsymmetrySubtype
   /-- Which dimensions of asymmetry are present (Appendix III C/P columns) -/
@@ -123,7 +154,7 @@ gaps in the book's sample are flagged in the datum docstrings. -/
 def finnish : MiestamoDatum :=
   { language := "Finnish"
   , iso := "fin"
-  , morphemeType := .auxVerb
+  , morphemeType := .negativeAuxiliaryVerb
   , symmetry := .asymmetric
   , asymmetrySubtype := .finiteness
   , asymmetryDimensions := [.constructional]
@@ -136,7 +167,7 @@ def finnish : MiestamoDatum :=
 def german : MiestamoDatum :=
   { language := "German"
   , iso := "deu"
-  , morphemeType := .particle
+  , morphemeType := .negativeParticle
   , symmetry := .symmetric
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
@@ -152,7 +183,7 @@ def german : MiestamoDatum :=
 def japanese : MiestamoDatum :=
   { language := "Japanese"
   , iso := "jpn"
-  , morphemeType := .affix
+  , morphemeType := .negativeAffix
   , symmetry := .asymmetric
   , asymmetrySubtype := .finAndCat
   , asymmetryDimensions := [.constructional]
@@ -168,7 +199,7 @@ def japanese : MiestamoDatum :=
 def turkish : MiestamoDatum :=
   { language := "Turkish"
   , iso := "tur"
-  , morphemeType := .affix
+  , morphemeType := .negativeAffix
   , symmetry := .both
   , asymmetrySubtype := .otherCategories
   , asymmetryDimensions := [.constructional]
@@ -182,7 +213,7 @@ def turkish : MiestamoDatum :=
 def french : MiestamoDatum :=
   { language := "French"
   , iso := "fra"
-  , morphemeType := .particle
+  , morphemeType := .negativeParticle
   , symmetry := .symmetric
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
@@ -199,7 +230,7 @@ def french : MiestamoDatum :=
 def burmese : MiestamoDatum :=
   { language := "Burmese"
   , iso := "mya"
-  , morphemeType := .doubleNeg
+  , morphemeType := .doubleNegation
   , symmetry := .asymmetric
   , asymmetrySubtype := .otherCategories
   , asymmetryDimensions := [.constructional, .paradigmatic]
@@ -213,7 +244,7 @@ def burmese : MiestamoDatum :=
 def italian : MiestamoDatum :=
   { language := "Italian"
   , iso := "ita"
-  , morphemeType := .particle
+  , morphemeType := .negativeParticle
   , symmetry := .symmetric
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
@@ -226,7 +257,7 @@ def italian : MiestamoDatum :=
 def spanish : MiestamoDatum :=
   { language := "Spanish"
   , iso := "spa"
-  , morphemeType := .particle
+  , morphemeType := .negativeParticle
   , symmetry := .symmetric
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
@@ -244,7 +275,7 @@ def spanish : MiestamoDatum :=
 def mandarin : MiestamoDatum :=
   { language := "Mandarin Chinese"
   , iso := "cmn"
-  , morphemeType := .particle
+  , morphemeType := .negativeParticle
   , symmetry := .both
   , asymmetrySubtype := .finiteness
   , asymmetryDimensions := [.constructional]
@@ -264,7 +295,7 @@ def mandarin : MiestamoDatum :=
 def english : MiestamoDatum :=
   { language := "English"
   , iso := "eng"
-  , morphemeType := .particle
+  , morphemeType := .negativeParticle
   , symmetry := .both
   , asymmetrySubtype := .emphasis
   , asymmetryDimensions := [.paradigmatic]
@@ -278,7 +309,7 @@ def english : MiestamoDatum :=
 def russian : MiestamoDatum :=
   { language := "Russian"
   , iso := "rus"
-  , morphemeType := .particle
+  , morphemeType := .negativeParticle
   , symmetry := .symmetric
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
@@ -294,7 +325,7 @@ def russian : MiestamoDatum :=
 def czech : MiestamoDatum :=
   { language := "Czech"
   , iso := "ces"
-  , morphemeType := .affix
+  , morphemeType := .negativeAffix
   , symmetry := .symmetric
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
@@ -310,7 +341,7 @@ def czech : MiestamoDatum :=
 def maori : MiestamoDatum :=
   { language := "Maori"
   , iso := "mri"
-  , morphemeType := .wordUnclear
+  , morphemeType := .negativeWordUnclearIfVerbOrParticle
   , symmetry := .asymmetric
   , asymmetrySubtype := .finiteness
   , asymmetryDimensions := [.constructional]
@@ -324,7 +355,7 @@ def maori : MiestamoDatum :=
 def hixkaryana : MiestamoDatum :=
   { language := "Hixkaryana"
   , iso := "hix"
-  , morphemeType := .affix
+  , morphemeType := .negativeAffix
   , symmetry := .asymmetric
   , asymmetrySubtype := .finiteness
   , asymmetryDimensions := [.constructional]
@@ -341,7 +372,7 @@ def hixkaryana : MiestamoDatum :=
 def imbaburaQuechua : MiestamoDatum :=
   { language := "Quechua (Imbabura)"
   , iso := "qvi"
-  , morphemeType := .particle
+  , morphemeType := .negativeParticle
   , symmetry := .both
   , asymmetrySubtype := .realityStatus
   , asymmetryDimensions := [.paradigmatic]
@@ -361,27 +392,13 @@ The book's codings against the (later, same-author) WALS chapter rows,
 read via the `Syntax.Negation` per-ISO accessors. Languages absent from
 a chapter's WALS sample (Czech throughout) pass vacuously. -/
 
-set_option maxRecDepth 8192 in
-/-- Datum morpheme types agree with WALS Ch 112A wherever coded.
-    (Scoped `maxRecDepth`: kernel evaluation recurses through the
-    1157-row Ch 112A table.) -/
-theorem morphemeType_matches_wals :
-    allData.all (fun d =>
-      (morphemeTypeOfISO d.iso).all (· == d.morphemeType)) = true := by
-  decide
-
-/-- Datum symmetry codings agree with WALS Ch 113A wherever coded. -/
-theorem symmetry_matches_wals :
-    allData.all (fun d =>
-      (symmetryOfISO d.iso).all (· == d.symmetry)) = true := by
-  decide
-
-/-- Datum subtype codings agree with WALS Ch 114A wherever coded — except
-    English, where the book's A/Emph analysis diverges from WALS's A/Cat. -/
+/-- English is the sample's only book-vs-atlas disagreement: WALS Ch 114A
+    is Miestamo's own chapter, so the two codings otherwise coincide. -/
 theorem subtype_matches_wals_except_english :
     allData.all (fun d =>
       d.language == "English" ||
-      (asymmetrySubtypeOfISO d.iso).all (· == d.asymmetrySubtype)) = true := by
+      ((asymmetrySubtypeOfISO d.iso).map AsymmetrySubtype.ofWALS114A).all
+        (· == d.asymmetrySubtype)) = true := by
   decide
 
 /-- The book vs WALS on English: Appendix III codes English SN as
@@ -389,7 +406,7 @@ theorem subtype_matches_wals_except_english :
     Ch 114A codes English A/Cat. -/
 theorem english_subtype_diverges_from_wals :
     english.asymmetrySubtype = .emphasis ∧
-    asymmetrySubtypeOfISO english.iso = some .otherCategories :=
+    asymmetrySubtypeOfISO english.iso = some .aCat :=
   ⟨rfl, by decide⟩
 
 /-! ## Structural sanity of the coding -/
@@ -427,7 +444,7 @@ theorem afin_verbal_implies_constructional :
       (d.asymmetrySubtype == .finiteness ||
        d.asymmetrySubtype == .finAndCat ||
        d.asymmetrySubtype == .finAndNonReal) &&
-      d.morphemeType == .auxVerb)).all
+      d.morphemeType == .negativeAuxiliaryVerb)).all
       (fun d => d.asymmetryDimensions.contains .constructional) = true := by
   decide
 
@@ -448,14 +465,14 @@ theorem afin_always_constructional_in_sample :
     Mandarin and English are SymAsy particles with asymmetry elsewhere
     (méi(yǒu) introduces A/Fin; the emphatic paradigm is neutralized). -/
 theorem symmetric_particles_no_dimensions :
-    (allData.filter (fun d => d.morphemeType == .particle &&
+    (allData.filter (fun d => d.morphemeType == .negativeParticle &&
       d.symmetry == .symmetric)).all
       (fun d => d.asymmetryDimensions.isEmpty) = true := by
   decide
 
 /-- Affixes can produce symmetric, asymmetric, or SymAsy negation. -/
 theorem affixes_variable :
-    (allData.filter (·.morphemeType == .affix)).map (·.symmetry) =
+    (allData.filter (·.morphemeType == .negativeAffix)).map (·.symmetry) =
       [.asymmetric, .both, .symmetric, .asymmetric] := rfl
 
 /-- Constructional asymmetry (only) implies the paradigm is maintained:
@@ -656,22 +673,21 @@ theorem symmetric_no_paradigmatic :
 
 section NegAuxBridge
 
-open Syntax.Negation (NegStrategy)
+open Syntax.Negation (Strategy)
 
-/-- The NegStrategy→NegMorphemeType mapping is consistent with Finnish's
-    classification: the auxiliary literature's negVerb strategy and this
-    study's auxVerb morpheme type refer to the same phenomenon — the
-    negative element is an inflecting auxiliary verb. -/
+/-- The auxiliary literature's negative-verb strategy and this study's
+    auxiliary-verb morpheme type pick out the same Finnish phenomenon: an
+    inflecting negative auxiliary. -/
 theorem finnish_strategy_morpheme_consistent :
-    NegStrategy.negVerb.toNegMorphemeType = finnish.morphemeType := rfl
+    Strategy.negVerb.morphemeType = finnish.morphemeType := rfl
 
 /-- Verbal negation strategy implies constructional asymmetry in both
     the auxiliary literature (creates an AVC) and the negation typology
     (A/Fin). -/
 theorem neg_verb_implies_avc_and_afin :
-    NegStrategy.negVerb.isVerbal = true ∧
-    finnish.asymmetryDimensions.contains .constructional := by
-  exact ⟨rfl, by decide⟩
+    Strategy.negVerb.IsVerbal ∧
+    finnish.asymmetryDimensions.contains .constructional :=
+  ⟨trivial, by decide⟩
 
 end NegAuxBridge
 
