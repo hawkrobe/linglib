@@ -263,11 +263,11 @@ private lemma ge_empty_of_all_null {n : ℕ} (sys : EpistemicSystemFA (Fin n))
   | empty => simp only [Finset.coe_empty]; exact sys.refl ∅
   | @insert a S' haS' ih =>
     have h1 : (↑S' : Set (Fin n)) \ ({a} ∪ ↑S') = ∅ := by
-      ext x; simp only [Set.mem_diff, Set.mem_union, Finset.mem_coe,
+      ext x; simp only [Set.mem_sdiff, Set.mem_union, Finset.mem_coe,
         Set.mem_empty_iff_false, iff_false, not_and, Decidable.not_not]
       intro hx; exact Or.inr hx
     have h2 : ({a} ∪ ↑S' : Set (Fin n)) \ ↑S' = {a} := by
-      ext x; simp only [Set.mem_diff, Set.mem_union, Set.mem_singleton_iff, Finset.mem_coe]
+      ext x; simp only [Set.mem_sdiff, Set.mem_union, Set.mem_singleton_iff, Finset.mem_coe]
       constructor
       · rintro ⟨hx | hx, hnx⟩ <;> [exact hx; exact absurd hx hnx]
       · rintro rfl; exact ⟨Or.inl rfl, fun h => haS' (Finset.mem_coe.mp h)⟩

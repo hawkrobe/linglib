@@ -93,7 +93,7 @@ private theorem toFS_empty : toFS (∅ : Set (Fin 5)) = ∅ := by
 
 private theorem toFS_diff (A B : Set (Fin 5)) :
     toFS (A \ B) = toFS A \ toFS B := by
-  ext x; simp only [toFS_mem, Set.mem_diff, Finset.mem_sdiff]
+  ext x; simp only [toFS_mem, Set.mem_sdiff, Finset.mem_sdiff]
 
 private theorem toFS_subset (A B : Set (Fin 5)) :
     A ⊆ B ↔ toFS A ⊆ toFS B :=
@@ -213,30 +213,30 @@ theorem null_removal_disjoint {W : Type*} (sys : EpistemicSystemFA W)
     by_cases hj_in : j ∈ S
     · rw [sys.additive (S \ {j}) S,
         show (S \ {j}) \ S = ∅ by
-          ext x; simp only [Set.mem_diff, Set.mem_empty_iff_false, iff_false]; tauto,
+          ext x; simp only [Set.mem_sdiff, Set.mem_empty_iff_false, iff_false]; tauto,
         show S \ (S \ {j}) = {j} by
-          ext x; simp only [Set.mem_diff, Set.mem_singleton_iff]
+          ext x; simp only [Set.mem_sdiff, Set.mem_singleton_iff]
           exact ⟨fun ⟨hx, hn⟩ => by by_contra hne; exact hn ⟨hx, hne⟩,
             by rintro rfl; exact ⟨hj_in, fun ⟨_, h⟩ => h rfl⟩⟩]
       exact hj
-    · rw [Set.diff_singleton_eq_self hj_in]; exact sys.refl S
+    · rw [Set.sdiff_singleton_eq_self hj_in]; exact sys.refl S
   by_cases hjC : j ∈ C
   · have hjnD : j ∉ D := Set.disjoint_left.mp hdisj hjC
-    rw [Set.diff_singleton_eq_self hjnD]
+    rw [Set.sdiff_singleton_eq_self hjnD]
     exact ⟨fun h => sys.trans _ _ _ (null_sub C) h,
-           fun h => sys.trans _ _ _ (sys.mono _ _ Set.diff_subset) h⟩
-  · rw [Set.diff_singleton_eq_self hjC]
+           fun h => sys.trans _ _ _ (sys.mono _ _ Set.sdiff_subset) h⟩
+  · rw [Set.sdiff_singleton_eq_self hjC]
     by_cases hjD : j ∈ D
-    · exact ⟨fun h => sys.trans _ _ _ h (sys.mono _ _ Set.diff_subset),
+    · exact ⟨fun h => sys.trans _ _ _ h (sys.mono _ _ Set.sdiff_subset),
              fun h => sys.trans _ _ _ h (null_sub D)⟩
-    · rw [Set.diff_singleton_eq_self hjD]
+    · rw [Set.sdiff_singleton_eq_self hjD]
 
 /-- `Fin.succ '' (Fin.succ ⁻¹' S) = S \ {0}` for `S : Set (Fin (n+1))`. -/
 private theorem succ_image_preimage {n : ℕ} (S : Set (Fin (n + 1))) :
     Fin.succ '' (Fin.succ ⁻¹' S) = S \ {(0 : Fin (n + 1))} := by
   rw [Set.image_preimage_eq_range_inter, Fin.range_succ]
   ext x; simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_singleton_iff,
-    Set.mem_diff]; exact And.comm
+    Set.mem_sdiff]; exact And.comm
 
 /-- Pull back an FA system along an injection: `α`-propositions compare via their
     images. Non-triviality requires a witness and must be supplied. -/
@@ -256,7 +256,7 @@ def comapFA {α W : Type*} (f : α → W) (hf : Function.Injective f)
   trans _ _ _ h1 h2 := sys.trans _ _ _ h1 h2
   additive A B := by
     show sys.ge (f '' A) (f '' B) ↔ sys.ge (f '' (A \ B)) (f '' (B \ A))
-    rw [Set.image_diff hf, Set.image_diff hf]; exact sys.additive _ _
+    rw [Set.image_sdiff hf, Set.image_sdiff hf]; exact sys.additive _ _
 
 /-- Null element reduction: if atom 0 is null in an FA system on `Fin (n+2)` and
     some atom is not, representability reduces along `Fin.succ` to `Fin (n+1)`. -/
@@ -371,7 +371,7 @@ private theorem not_both_null_fin2 (sys : EpistemicSystemFA (Fin 2)) :
   intro ⟨h0, h1⟩
   have hd1 : ({(0 : Fin 2)} : Set _) \ Set.univ = ∅ := by ext x; simp
   have hd2 : Set.univ \ ({(0 : Fin 2)} : Set _) = {(1 : Fin 2)} := by
-    ext x; simp only [Set.mem_diff, Set.mem_univ, Set.mem_singleton_iff, true_and, Fin.ext_iff]
+    ext x; simp only [Set.mem_sdiff, Set.mem_univ, Set.mem_singleton_iff, true_and, Fin.ext_iff]
     omega
   exact sys.nonTrivial (sys.trans _ _ _ h0
     ((sys.additive {0} Set.univ).mpr (hd1 ▸ hd2 ▸ h1)))
@@ -553,7 +553,7 @@ def padFA {n : ℕ} (sys : EpistemicSystemFA (Fin n)) : EpistemicSystemFA (Fin (
   trans _ _ _ h1 h2 := sys.trans _ _ _ h1 h2
   additive A B := by
     show sys.ge _ _ ↔ sys.ge _ _
-    rw [Set.preimage_diff, Set.preimage_diff]; exact sys.additive _ _
+    rw [Set.preimage_sdiff, Set.preimage_sdiff]; exact sys.additive _ _
 
 /-- The padded atom is null. -/
 theorem padFA_last_null {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :

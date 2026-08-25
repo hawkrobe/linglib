@@ -224,25 +224,25 @@ lemma not_q_and_negQ {B : List (Fin 4 → Prop)} (hCons : isConsistent B)
 lemma pq_sublist_A : ([p, q] : List (Fin 4 → Prop)) ∈ A.sublists := by
   rw [List.mem_sublists]
   -- Build [p, q].Sublist [p, q, negQ]: keep p, keep q, drop negQ.
-  exact ((List.nil_sublist [negQ]).cons₂ q).cons₂ p
+  exact ((List.nil_sublist [negQ]).cons_cons q).cons_cons p
 
 /-- `[p, negQ]` is a sublist of `[p, q, negQ]` (drop `q`). -/
 lemma pnegQ_sublist_A : ([p, negQ] : List (Fin 4 → Prop)) ∈ A.sublists := by
   rw [List.mem_sublists]
   -- Build [p, negQ].Sublist [p, q, negQ]: keep p, drop q, keep negQ.
-  exact ((List.Sublist.refl ([negQ] : List (Fin 4 → Prop))).cons q).cons₂ p
+  exact ((List.Sublist.refl ([negQ] : List (Fin 4 → Prop))).cons q).cons_cons p
 
 /-- `[p]` is a sublist of `[p, q, negQ]`. -/
 lemma p_sublist_A : ([p] : List (Fin 4 → Prop)) ∈ A.sublists := by
   rw [List.mem_sublists]
   -- Build [p].Sublist [p, q, negQ]: keep p, drop q, drop negQ.
-  exact ((List.nil_sublist [negQ]).cons q).cons₂ p
+  exact ((List.nil_sublist [negQ]).cons q).cons_cons p
 
 /-- `[q]` is a sublist of `[p, q, negQ]`. -/
 lemma q_sublist_A : ([q] : List (Fin 4 → Prop)) ∈ A.sublists := by
   rw [List.mem_sublists]
   -- Build [q].Sublist [p, q, negQ]: drop p, keep q, drop negQ.
-  exact (((List.nil_sublist [negQ]).cons₂ q).cons p)
+  exact (((List.nil_sublist [negQ]).cons_cons q).cons p)
 
 /-- `[negQ]` is a sublist of `[p, q, negQ]`. -/
 lemma negQ_sublist_A : ([negQ] : List (Fin 4 → Prop)) ∈ A.sublists := by

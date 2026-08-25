@@ -86,7 +86,7 @@ structure EpistemicSystemW (W : Type*) where
   /-- The "at least as likely as" relation on propositions. -/
   ge : Set W → Set W → Prop
   /-- Reflexivity. -/
-  refl : Reflexive ge
+  refl : ∀ A, ge A A
   /-- Monotonicity: supersets are at least as likely. -/
   mono : ∀ A B : Set W, A ⊆ B → ge B A
 
@@ -330,7 +330,7 @@ def matchingLift (ge_w : W → W → Prop) (A B : Set W) : Prop :=
     (∀ b₁ b₂, b₁ ∈ B → b₂ ∈ B → f b₁ = f b₂ → b₁ = b₂)
 
 /-- The l-lifting of a reflexive relation is reflexive. -/
-theorem dominationLift_axiomR (hRefl : ∀ w, ge_w w w) : Reflexive (dominationLift ge_w) :=
+theorem dominationLift_axiomR (hRefl : ∀ w, ge_w w w) : ∀ A, dominationLift ge_w A A :=
   fun _ b hb => ⟨b, hb, hRefl b⟩
 
 /-- The l-lifting of a reflexive relation is monotone. -/
@@ -412,7 +412,7 @@ theorem dominationLift_axiomDS : DeterminedBySingletons (dominationLift ge_w) :=
     ⟨a, ha, fun _b' hb' => ⟨a, rfl, hb' ▸ hab⟩⟩
 
 /-- The m-lifting of a reflexive relation is reflexive. -/
-theorem matchingLift_axiomR (hRefl : ∀ w, ge_w w w) : Reflexive (matchingLift ge_w) :=
+theorem matchingLift_axiomR (hRefl : ∀ w, ge_w w w) : ∀ A, matchingLift ge_w A A :=
   fun _ => ⟨id, fun b hb => ⟨hb, hRefl b⟩, fun _ _ _ _ h => h⟩
 
 /-- The m-lifting of a reflexive relation is monotone. -/

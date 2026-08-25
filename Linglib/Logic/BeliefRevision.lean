@@ -115,7 +115,7 @@ private lemma filter_sublist_of_imp {α : Type*} (l : List α)
     by_cases hpa : p a
     · have hqa : q a := h a List.mem_cons_self hpa
       rw [if_pos (by simpa using hpa), if_pos (by simpa using hqa)]
-      exact ih'.cons₂ a
+      exact ih'.cons_cons a
     · rw [if_neg (by simpa using hpa)]
       by_cases hqa : q a
       · rw [if_pos (by simpa using hqa)]; exact ih'.cons a
@@ -238,7 +238,7 @@ private theorem mu_diff_eq_zero_of_condMu {W : Type*}
   rw [m.cond_univ, m.cond_univ] at hchain
   rw [hpsic, zero_mul] at hchain
   have : φ \ ψ = ψᶜ ∩ φ := by
-    ext x; simp [Set.mem_diff, Set.mem_compl_iff, Set.mem_inter_iff, and_comm]
+    ext x; simp [Set.mem_sdiff, Set.mem_compl_iff, Set.mem_inter_iff, and_comm]
   rw [this]; exact hchain
 
 open ComparativeProbability in

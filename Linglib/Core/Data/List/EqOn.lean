@@ -62,7 +62,7 @@ theorem dependsOn_iff_forall_dependsAt {g : List α → γ} {K : Set ℕ} :
 /-- `g` factors through the input's length and its restriction to `K`. -/
 theorem dependsOn_iff_factorsThrough :
     DependsOn g K ↔
-      Function.FactorsThrough g (fun u : List α => (u.length, K.restrict (u[·]?))) := by
+      Function.FactorsThrough g (fun u : List α => (u.length, K.domRestrict (u[·]?))) := by
   constructor
   · intro h u v huv
     rw [Prod.mk.injEq] at huv
