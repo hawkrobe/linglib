@@ -40,7 +40,6 @@ three core constraints can produce it. We prove this as
 namespace McCarthyPrince1995
 
 open Core.Optimization Constraints OptimalityTheory
-open OptimalityTheory
 
 -- ============================================================================
 -- § 1: Javanese Intervocalic h-Deletion (Overapplication)
@@ -102,31 +101,30 @@ theorem javanese_overapplication :
     = {JavaneseCand.over} := by decide
 
 -- ============================================================================
--- § 1.5: Javanese — Corr-grounded layer
+-- § 1.5: Javanese — Correspondence-grounded layer
 -- ============================================================================
 
-/-! ### Grounding the Javanese tableau in `Corr`
+/-! ### Grounding the Javanese tableau in `Correspondence`
 
 The constraints `javMaxIO`, `javIdentBR`, `javStarVhV` above stipulate
 violation counts via λ-tables. This section adds the *structural*
 substrate: each candidate is associated with a
-`Corr OptimalityTheory.Correspondence.RedupRole Seg` recording the input → base /
+`Correspondence OptimalityTheory.Correspondence.ReduplicationRole Seg` recording the input → base /
 base ↔ reduplicant correspondences. MAX-IO and "IDENT-BR" violation
-counts are then **derived from `Corr.maxViol`** rather than stipulated.
+counts are then **derived from `Correspondence.maxViol`** rather than stipulated.
 
-The 3-role substrate (`RedupRole`, `Corr.reduplication`,
-`Reduplication.maxIO`/`maxBR`) lives in
-`Phonology/OptimalityTheory/Correspondence.lean` — paper-agnostic
+The 3-role substrate (`ReduplicationRole`, `Correspondence.reduplication`)
+lives in `Phonology/OptimalityTheory/Correspondence.lean` — paper-agnostic
 and reusable across reduplicative studies (Balangao, Akan, Tagalog, …).
 This section supplies only the Javanese-specific data + agreement theorems.
 
-(`*VhV` remains a markedness constraint with no `Corr`-derived form
+(`*VhV` remains a markedness constraint with no `Correspondence`-derived form
 — markedness is structural over a single output, not a correspondence
 relation.) -/
 
 namespace JavaneseCorr
 
-open OptimalityTheory.Correspondence (Corr RedupRole)
+open OptimalityTheory.Correspondence (ReduplicationRole)
 
 /-- Phonological segments for the Javanese stem. Minimal abstract
     inventory (just the contrasts that matter for h-deletion). -/
@@ -143,30 +141,30 @@ def baseDeleted : List Seg := [.b, .schwa, .d, .a]
 /-- The base output `[bədah]` (h preserved, 5 segments). For `.under`/`.normal`. -/
 def baseFaithful : List Seg := [.b, .schwa, .d, .a, .h]
 
-/-- The `Corr` for the `over` candidate: h deleted from base and
+/-- The `Correspondence` for the `over` candidate: h deleted from base and
     reduplicant. -/
-def overCorr : Corr RedupRole Seg :=
-  Corr.reduplication stemInput baseDeleted baseDeleted
+def overCorr : Correspondence ReduplicationRole Seg :=
+  Correspondence.reduplication stemInput baseDeleted baseDeleted
 
-/-- The `Corr` for the `under` candidate: h preserved everywhere. -/
-def underCorr : Corr RedupRole Seg :=
-  Corr.reduplication stemInput baseFaithful baseFaithful
+/-- The `Correspondence` for the `under` candidate: h preserved everywhere. -/
+def underCorr : Correspondence ReduplicationRole Seg :=
+  Correspondence.reduplication stemInput baseFaithful baseFaithful
 
-/-- The `Corr` for the `normal` candidate: h preserved in base, *not*
-    in reduplicant. The default `Corr.reduplication` constructor uses
+/-- The `Correspondence` for the `normal` candidate: h preserved in base, *not*
+    in reduplicant. The default `Correspondence.reduplication` constructor uses
     parallel-pair correspondence truncated to `min`-length, which gives
     the right BR-MAX count (1 violation: base position 4 = h has no R
     correspondent). -/
-def normalCorr : Corr RedupRole Seg :=
-  Corr.reduplication stemInput baseFaithful baseDeleted
+def normalCorr : Correspondence ReduplicationRole Seg :=
+  Correspondence.reduplication stemInput baseFaithful baseDeleted
 
-/-- Each candidate's structural `Corr` representation. -/
-def toCorr : JavaneseCand → Corr RedupRole Seg
+/-- Each candidate's structural `Correspondence` representation. -/
+def toCorr : JavaneseCand → Correspondence ReduplicationRole Seg
   | .over   => overCorr
   | .under  => underCorr
   | .normal => normalCorr
 
-/-- **Structural derivation of MAX-IO**: the `Corr`-derived MAX-IO
+/-- **Structural derivation of MAX-IO**: the `Correspondence`-derived MAX-IO
     violation count equals the original stipulated `javMaxIO`.
     The deletion-based stipulation (`Constraint.binary (· = .over)`) now
     follows from the structural fact that `over`'s base lacks an
@@ -178,31 +176,28 @@ theorem javMaxIO_eq_corr (c : JavaneseCand) :
 /-- **Structural derivation of "IDENT-BR"**: the original constraint
     (`Constraint.binary (· = .normal)`) is empirically MAX-BR — it
     penalizes the `normal` candidate's base-only `h` (which has no R
-    correspondent). The structural count from `Corr.maxViol .base .reduplicant`
+    correspondent). The structural count from `Correspondence.maxViol .base .reduplicant`
     matches the stipulation. -/
 theorem javIdentBR_eq_corr (c : JavaneseCand) :
     javIdentBR c = (toCorr c).maxViol .base .reduplicant := by
   cases c <;> decide
 
-/-- The Javanese tableau as `Constraint (Corr RedupRole Seg)`s.
-    These are direct uses of the paper-agnostic
-    `OptimalityTheory.Correspondence.Reduplication.maxIO` / `maxBR` — no
-    Javanese-specific constraint construction needed. -/
-abbrev javMaxIOFromCorr : Constraint (Corr RedupRole Seg) :=
-  OptimalityTheory.Correspondence.Reduplication.maxIO
+/-- MAX-IO and MAX-BR as `Constraint (Correspondence ReduplicationRole Seg)`s. -/
+abbrev javMaxIOFromCorr : Constraint (Correspondence ReduplicationRole Seg) :=
+  (·.maxViol .input .base)
 
-abbrev javMaxBRFromCorr : Constraint (Corr RedupRole Seg) :=
-  OptimalityTheory.Correspondence.Reduplication.maxBR
+abbrev javMaxBRFromCorr : Constraint (Correspondence ReduplicationRole Seg) :=
+  (·.maxViol .base .reduplicant)
 
 /-- **Perfect copy is BR-faithful** (the keystone in action). The `under`
     candidate copies the base exactly (base = reduplicant = `[bədah]`), so it
     incurs zero MAX-BR — derived through the role-agnostic faithfulness keystone
-    `Corr.maxViol_eq_zero_of_diag` (the fully faithful candidate vanishes on a
+    `Correspondence.maxViol_eq_zero_of_diagonal` (the fully faithful candidate vanishes on a
     faithfulness constraint, [mccarthy-prince-1995]), not by `decide` over the
     toy table. -/
 theorem javMaxBR_under_zero : javMaxBRFromCorr underCorr = 0 := by
   show underCorr.maxViol .base .reduplicant = 0
-  exact Corr.maxViol_eq_zero_of_diag underCorr .base .reduplicant rfl rfl
+  exact Correspondence.maxViol_eq_zero_of_diagonal underCorr .base .reduplicant rfl rfl
 
 end JavaneseCorr
 
@@ -277,19 +272,19 @@ theorem balangao_emergence_unmarked :
     = {.partialRedup} := by decide
 
 -- ============================================================================
--- § 2.5: Balangao — Corr-grounded layer
+-- § 2.5: Balangao — Correspondence-grounded layer
 -- ============================================================================
 
-/-! ### Grounding the Balangao tableau in `Corr`
+/-! ### Grounding the Balangao tableau in `Correspondence`
 
 Mirroring the Javanese §1.5 refactor: the MAX-IO and MAX-BR violation
 counts now follow from the structural correspondence diagram via
-`Corr.maxViol`, rather than being stipulated as λ-tables. NO-CODA is
+`Correspondence.maxViol`, rather than being stipulated as λ-tables. NO-CODA is
 markedness over a single output and stays as the original stipulation. -/
 
 namespace BalangaoCorr
 
-open OptimalityTheory.Correspondence (Corr RedupRole)
+open OptimalityTheory.Correspondence (ReduplicationRole)
 
 /-- Phonological segments for the Balangao stem. Minimal abstract
     inventory (just the contrasts that matter for `tagtag`-reduplication). -/
@@ -316,34 +311,34 @@ def redFull : List Seg := [.t, .a, .g, .t, .a, .g]
     `.totalFaithful` and `.partialRedup`. -/
 def redPartial : List Seg := [.t, .a, .g, .t, .a]
 
-/-- The `Corr` for the `totalFaithful` candidate: input deleted to fit
+/-- The `Correspondence` for the `totalFaithful` candidate: input deleted to fit
     the coda-less shape (1 MAX-IO violation); B = R structurally. -/
-def totalFaithfulCorr : Corr RedupRole Seg :=
-  Corr.reduplication stemInput baseDeleted redPartial
+def totalFaithfulCorr : Correspondence ReduplicationRole Seg :=
+  Correspondence.reduplication stemInput baseDeleted redPartial
 
-/-- The `Corr` for the `totalRedup` candidate: full faithful copy
+/-- The `Correspondence` for the `totalRedup` candidate: full faithful copy
     everywhere; 0 MAX-IO, 0 MAX-BR violations. -/
-def totalRedupCorr : Corr RedupRole Seg :=
-  Corr.reduplication stemInput baseFaithful redFull
+def totalRedupCorr : Correspondence ReduplicationRole Seg :=
+  Correspondence.reduplication stemInput baseFaithful redFull
 
-/-- The `Corr` for the `partialRedup` candidate: faithful base, but
+/-- The `Correspondence` for the `partialRedup` candidate: faithful base, but
     reduplicant misses the final coda (1 MAX-BR violation, 0 MAX-IO). -/
-def partialRedupCorr : Corr RedupRole Seg :=
-  Corr.reduplication stemInput baseFaithful redPartial
+def partialRedupCorr : Correspondence ReduplicationRole Seg :=
+  Correspondence.reduplication stemInput baseFaithful redPartial
 
-/-- Each candidate's structural `Corr` representation. -/
-def toCorr : BalangaoCand → Corr RedupRole Seg
+/-- Each candidate's structural `Correspondence` representation. -/
+def toCorr : BalangaoCand → Correspondence ReduplicationRole Seg
   | .totalFaithful => totalFaithfulCorr
   | .totalRedup    => totalRedupCorr
   | .partialRedup  => partialRedupCorr
 
-/-- **Structural derivation of MAX-IO**: the `Corr`-derived MAX-IO
+/-- **Structural derivation of MAX-IO**: the `Correspondence`-derived MAX-IO
     violation count equals the original stipulated `balMaxIO`. -/
 theorem balMaxIO_eq_corr (c : BalangaoCand) :
     balMaxIO c = (toCorr c).maxViol .input .base := by
   cases c <;> decide
 
-/-- **Structural derivation of MAX-BR**: the `Corr`-derived MAX-BR
+/-- **Structural derivation of MAX-BR**: the `Correspondence`-derived MAX-BR
     violation count equals the original stipulated `balMaxBR`. -/
 theorem balMaxBR_eq_corr (c : BalangaoCand) :
     balMaxBR c = (toCorr c).maxViol .base .reduplicant := by
@@ -646,25 +641,25 @@ theorem akan_over_identIO_grounded :
 end AkanGrounding
 
 -- ============================================================================
--- § 5b: Akan — Corr-grounded layer (featural)
+-- § 5b: Akan — Correspondence-grounded layer (featural)
 -- ============================================================================
 
-/-! ### Grounding the Akan tableau in `Corr` via featural IDENT
+/-! ### Grounding the Akan tableau in `Correspondence` via featural IDENT
 
 Mirroring the Javanese §1.5 / Balangao §2.5 refactors, with one addition:
 Akan's `IDENT-BR(-cor)` and `IDENT-IO(-cor)` are *featural* faithfulness
 constraints on the `[coronal]` feature, not segmental identity. This
-section uses `Corr.identViolFeature` with a `coronal` projection to
+section uses `Correspondence.identViolFeature` with a `coronal` projection to
 derive the constraint values structurally.
 
-This is the first study file to exercise `Corr.identViolFeature`
+This is the first study file to exercise `Correspondence.identViolFeature`
 (introduced in 0.230.217). Successful agreement theorems here validate
 the featural-IDENT pattern for any future paper using `IDENT-[F]`
 constraints. -/
 
 namespace AkanCorr
 
-open OptimalityTheory.Correspondence (Corr RedupRole)
+open OptimalityTheory.Correspondence (ReduplicationRole)
 
 /-- Phonological segments for the Akan /RED-ka/ paradigm. The minimal
     abstract inventory tracking the [coronal] feature contrast. -/
@@ -699,20 +694,20 @@ def redPalatalized : List Seg := [.tCpal, .iSmCap]
 /-- Faithful reduplicant (`k ɪ`) — for `.under`. -/
 def redFaithful : List Seg := [.k, .iSmCap]
 
-/-- The `Corr` for the `over` candidate: palatalization in both B and R. -/
-def overCorr : Corr RedupRole Seg :=
-  Corr.reduplication stemInput basePalatalized redPalatalized
+/-- The `Correspondence` for the `over` candidate: palatalization in both B and R. -/
+def overCorr : Correspondence ReduplicationRole Seg :=
+  Correspondence.reduplication stemInput basePalatalized redPalatalized
 
-/-- The `Corr` for the `normal` candidate: palatalization in R only. -/
-def normalCorr : Corr RedupRole Seg :=
-  Corr.reduplication stemInput baseFaithful redPalatalized
+/-- The `Correspondence` for the `normal` candidate: palatalization in R only. -/
+def normalCorr : Correspondence ReduplicationRole Seg :=
+  Correspondence.reduplication stemInput baseFaithful redPalatalized
 
-/-- The `Corr` for the `under` candidate: no palatalization. -/
-def underCorr : Corr RedupRole Seg :=
-  Corr.reduplication stemInput baseFaithful redFaithful
+/-- The `Correspondence` for the `under` candidate: no palatalization. -/
+def underCorr : Correspondence ReduplicationRole Seg :=
+  Correspondence.reduplication stemInput baseFaithful redFaithful
 
-/-- Each candidate's structural `Corr` representation. -/
-def toCorr : AkanCand → Corr RedupRole Seg
+/-- Each candidate's structural `Correspondence` representation. -/
+def toCorr : AkanCand → Correspondence ReduplicationRole Seg
   | .over   => overCorr
   | .normal => normalCorr
   | .under  => underCorr

@@ -40,7 +40,7 @@ floating-tone representation (the tune is part of the trigger's UR, in
 ### Matrix-Basemap Correspondence
 * `deficientProjection`, `basemapOutput`, `tonalTier`
 * `basemapViolations` — IDENT-OO ([mccarthy-prince-1995]) on the tonal tier,
-  derived from `Corr.identViol`
+  derived from `Correspondence.identViol`
 * `mkBasemapConstraint`, `tonalOverwrite_basemap_faithful`
 
 ## References
@@ -53,7 +53,6 @@ floating-tone representation (the tune is part of the trigger's UR, in
 namespace Rolle2018
 
 open Tone
-open OptimalityTheory.Correspondence (Corr)
 open Constraints OptimalityTheory
 
 /-! ## CoP-scope: cophonological domain scope hierarchy -/
@@ -301,44 +300,44 @@ def tonalTier {S : Type} (tbus : List (TBU S)) : List TRN :=
     tonalTier tbus = tbus.map TBU.tone :=
   TierProjection.apply_total _ _
 
-/-! ### Matrix-Basemap Correspondence — derived from `Corr` -/
+/-! ### Matrix-Basemap Correspondence — derived from `Correspondence` -/
 
 /-- Matrix-Basemap Correspondence violation count: Hamming distance between
     the matrix tonal tier and the basemap tonal tier.
 
-    **Derived from `Corr.identViol`** on the `(false, true)` edge of the
+    **Derived from `Correspondence.identViol`** on the `(false, true)` edge of the
     binary parallel-pair correspondence between the two tiers. This
     structurally identifies MxBM-C as IDENT-OO of [mccarthy-prince-1995]
     / [benua-1997] specialized to the tonal tier — no separate Hamming
     implementation, no bridge theorem required.
 
-    On unequal-length tiers, the underlying `Corr.parallel` truncates to the
+    On unequal-length tiers, the underlying `Correspondence.parallel` truncates to the
     shorter prefix (matching `List.zip` semantics). -/
 def basemapViolations (tier₁ tier₂ : List TRN) : Nat :=
-  (Corr.parallel tier₁ tier₂).identViol .lhs .rhs
+  (Correspondence.parallel tier₁ tier₂).identViol .lhs .rhs
 
 /-- Self-comparison has zero basemap violations: a tonal tier is
-    perfectly faithful to itself. Derived from `Corr.identity_ident_zero`. -/
+    perfectly faithful to itself. Derived from `Correspondence.identViol_identity`. -/
 theorem basemapViolations_self_eq_zero (t : List TRN) :
     basemapViolations t t = 0 :=
-  Corr.identity_ident_zero t
+  Correspondence.identViol_identity t
 
 /-- Zero basemap violations with equal-length tiers implies the tiers are
     identical. The equal-length hypothesis is necessary because the
-    underlying `Corr.parallel` truncates to `min`. -/
+    underlying `Correspondence.parallel` truncates to `min`. -/
 theorem basemapViolations_eq_zero_imp
     (t₁ t₂ : List TRN) (hLen : t₁.length = t₂.length)
     (hZero : basemapViolations t₁ t₂ = 0) : t₁ = t₂ := by
-  unfold basemapViolations Corr.identViol at hZero
+  unfold basemapViolations Correspondence.identViol at hZero
   rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff] at hZero
   apply List.ext_getElem hLen
   intro n hn₁ hn₂
   have hmem : ((⟨n, hn₁⟩ : Fin t₁.length), (⟨n, hn₂⟩ : Fin t₂.length)) ∈
-      (Corr.parallel t₁ t₂).edge .lhs .rhs := by
-    rw [Corr.parallel_edge_lhs_rhs]
-    exact (Corr.mem_diagDiag _ _).mpr rfl
+      (Correspondence.parallel t₁ t₂).edge .lhs .rhs := by
+    rw [Correspondence.parallel_edge_lhs_rhs]
+    exact (Correspondence.mem_diagonal _ _).mpr rfl
   have hne := hZero hmem
-  simp only [Corr.parallel_form_lhs, Corr.parallel_form_rhs, not_not] at hne
+  simp only [Correspondence.parallel_form_lhs, Correspondence.parallel_form_rhs, not_not] at hne
   simpa using hne
 
 /-! ### Constraint bridge -/
