@@ -107,13 +107,6 @@ instance : HasNumber AuxEntry := ⟨fun a => a.number.bind Number.fromUD⟩
 
 instance : HasPerson AuxEntry := ⟨fun a => a.person.map Person.fromUD⟩
 
-/-- Every `AuxEntry` projects to a UD `AUX` word, carrying its agreement
-features. -/
-instance : Auxiliary AuxEntry where
-  toWord a := { form := a.form, cat := .AUX
-              , features := { person := a.person, number := a.number } }
-  cat_aux _ := rfl
-
 -- Modals (no agreement). Modal meanings follow [kratzer-1981], [palmer-2001].
 -- Each uses cartesianProduct with singleton force (fixed force, variable flavor).
 private abbrev cp := ForceFlavor.cartesianProduct
@@ -241,6 +234,8 @@ def allAuxiliaries : List AuxEntry := [
   have_, has, had
 ]
 
+/-- The UD `AUX` word an entry projects to, carrying its agreement features
+and finite verb form. -/
 def AuxEntry.toWord (a : AuxEntry) : Word :=
   { form := a.form
   , cat := .AUX
@@ -250,6 +245,8 @@ def AuxEntry.toWord (a : AuxEntry) : Word :=
       , number := a.number
     }
   }
+
+instance : Auxiliary AuxEntry := ⟨AuxEntry.toWord, fun _ => rfl⟩
 
 /-- Project to the shared modal item core (form + meaning + register). -/
 def AuxEntry.toModalItem (a : AuxEntry) : Modality.ModalItem where

@@ -543,6 +543,6 @@ open English.Auxiliaries in
 /-- At least five auxiliaries show phonological irregularity in their
 contracted negative form (Z&P criterion C). -/
 theorem nt_has_irregulars :
-    (allAuxiliaries.filter (λ a => a.negIrregular)).length ≥ 5 := by native_decide
+    (allAuxiliaries.filter (λ a => a.negIrregular)).length ≥ 5 := by decide
 
 end ZwickyPullum1983
