@@ -4,7 +4,7 @@ import Linglib.Syntax.Category.Auxiliary.Basic
 /-!
 # German Modal Verb Fragment
 
-Lexical entries for German modal verbs; like English `AuxEntry`, they
+Lexical entries for German modal verbs; like English `Auxiliary`, they
 instance the `Auxiliary` word-class category.
 
 German has six core modals, each with fixed force and contextually variable

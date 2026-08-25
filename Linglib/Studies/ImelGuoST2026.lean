@@ -190,14 +190,14 @@ theorem hungarian_size : hungarian.size = 8 := by native_decide
 -- §9: English (Indo-European) — derived from Fragment
 -- ============================================================================
 
-open English.Auxiliaries (AuxEntry can could will would shall should may might must)
+open English.Auxiliaries (Auxiliary can could will would shall should may might must)
 
 /-- English modal inventory, derived from the Fragment (single source of truth).
-    Uses `ModalInventory.fromAuxEntries` to extract modals from `AuxEntry` data. -/
+    Uses `ModalInventory.fromAuxEntries` to extract modals from `Auxiliary` data. -/
 def english : ModalInventory :=
   .fromAuxEntries "English" "Indo-European" "Kratzer (1981), Palmer (2001)"
     [can, could, will, would, shall, should, may, might, must]
-    AuxEntry.form AuxEntry.modalMeaning
+    Auxiliary.form Auxiliary.modalMeaning
 
 theorem english_all_iff : english.allIFF = true := by native_decide
 theorem english_size : english.size = 9 := by native_decide

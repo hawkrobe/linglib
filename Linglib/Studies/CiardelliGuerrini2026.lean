@@ -226,9 +226,9 @@ theorem checks_second (cd : ConcordDerivation) :
 
 end ConcordDerivation
 
-/-- Construct a `ConcordDerivation` from two `AuxEntry`s. The derivation is built
+/-- Construct a `ConcordDerivation` from two `Auxiliary`s. The derivation is built
 entirely from Fragment data — no stipulation. -/
-def ConcordDerivation.fromAux (a₁ a₂ : AuxEntry)
+def ConcordDerivation.fromAux (a₁ a₂ : Auxiliary)
     {f₁ f₂ : ModalFeature}
     (_h₁ : a₁.toModalFeature = some f₁) (_h₂ : a₂.toModalFeature = some f₂)
     (hI₁ : f₁.interp = .uninterpretable) (hI₂ : f₂.interp = .uninterpretable)
@@ -240,7 +240,7 @@ def ConcordDerivation.fromAux (a₁ a₂ : AuxEntry)
 
 /-- The modal auxiliaries that participate in concord: Fragment entries with
 uninterpretable features. -/
-def modalAuxiliaries : List AuxEntry :=
+def modalAuxiliaries : List Auxiliary :=
   allAuxiliaries.filter (λ a => a.interpretability == some .uninterpretable)
 
 /-- Exactly 13 English modal auxiliaries carry u-features. -/
@@ -248,7 +248,7 @@ theorem modal_aux_count : modalAuxiliaries.length = 13 := by decide
 
 /-- Modal auxiliaries with modal meaning (those that can form `ConcordDerivation`s).
 Excludes `dare`, which has u-features but no modal-meaning specification. -/
-def concordCapableModals : List AuxEntry :=
+def concordCapableModals : List Auxiliary :=
   modalAuxiliaries.filter (λ a => a.toModalFeature.isSome)
 
 /-- 12 of 13 modal auxiliaries have derivable modal features. -/

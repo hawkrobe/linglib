@@ -187,7 +187,7 @@ of inflectional affixes, not clitics.
 namespace ZwickyPullum1983
 
 open Morphology.Diagnostics
-open English.Auxiliaries (AuxEntry)
+open English.Auxiliaries (Auxiliary)
 
 -- ============================================================================
 -- §1: Diagnostic Profiles
