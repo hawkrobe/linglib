@@ -1,22 +1,266 @@
 [
   {
-    "id": "charlow2014_donkey1",
-    "source": {"bibkey": "geach-1962", "paperLabel": "ch. III, the donkey sentence"},
-    "reportedIn": {"bibkey": "charlow-2014", "paperLabel": "Ch. 2 donkey case"},
+    "id": "charlow2014_ex4_1a",
+    "source": {"bibkey": "charlow-2014", "paperLabel": "(4.1a)"},
     "language": "stan1293",
-    "primaryText": "Every farmer who owns a donkey beats it.",
+    "primaryText": "If a relative of mine dies, I'll inherit a house.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Every", "every"], ["farmer", "farmer"], ["who", "REL.ANIM"], ["owns", "own.PRS.3SG"],
-      ["a", "INDEF"], ["donkey", "donkey"], ["beats", "beat.PRS.3SG"], ["it", "3SG.N"]
+    "glossedTokens": [],
+    "translation": "If a relative of mine dies, I'll inherit a house.",
+    "context": "A single rich relative has put the speaker in her will, though the speaker may not know who.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "∃ > if", "judgment": "acceptable"}
     ],
-    "translation": "Every farmer who owns a donkey beats it.",
+    "comment": "Exceptional scope of an indefinite out of a conditional antecedent, a scope island.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "charlow2014_ex4_1b",
+    "source": {"bibkey": "charlow-2014", "paperLabel": "(4.1b)"},
+    "language": "stan1293",
+    "primaryText": "If every relative of mine dies, I'll inherit a house.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If every relative of mine dies, I'll inherit a house.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "comment": "The Geach donkey sentence (Geach 1962, Reference and Generality, ch. III). Charlow 2014 cites this as the central case for the dynamic-anaphora frameworks comparison. Note: the INDEF gloss for \"a donkey\" papers over the existential-vs-open-variable dispute that is the literature's whole subject; an alternative encoding would project the determiner status into a separate field once the schema gains paper-relativized claim layers.",
+    "readings": [
+      {"name": "∀ > if", "judgment": "unacceptable"}
+    ],
+    "comment": "A universal cannot scope out of the antecedent; contrast with (4.1a).",
     "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "lgrConformance": ""
+  },
+  {
+    "id": "charlow2014_ex4_1c",
+    "source": {"bibkey": "charlow-2014", "paperLabel": "(4.1c)"},
+    "language": "stan1293",
+    "primaryText": "If no relative of mine dies, I'll inherit a house.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If no relative of mine dies, I'll inherit a house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "¬∃ > if", "judgment": "unacceptable"}
+    ],
+    "comment": "A negative quantifier cannot scope out of the antecedent.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "charlow2014_ex4_2a",
+    "source": {"bibkey": "charlow-2014", "paperLabel": "(4.2a)"},
+    "language": "stan1293",
+    "primaryText": "No student read every book that a teacher of his recommended.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "No student read every book that a teacher of his recommended.",
+    "context": "Teachers vary with students but not with books.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "no > ∃ > every (intermediate)", "judgment": "acceptable"}
+    ],
+    "comment": "Intermediate exceptional scope out of a tensed relative clause, with the indefinite bound into by the subject.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "charlow2014_ex4_4",
+    "source": {"bibkey": "schwarz-2001", "paperLabel": "(25)"},
+    "reportedIn": {"bibkey": "charlow-2014", "paperLabel": "(4.4)"},
+    "language": "stan1293",
+    "primaryText": "No candidate submitted a paper he had written.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "No candidate submitted a paper he had written.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "∃ > no (pronoun bound)", "judgment": "unacceptable"}
+    ],
+    "comment": "The Binder Roof Constraint: an indefinite cannot take existential scope over an operator that binds into its restrictor.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "charlow2014_ex4_6",
+    "source": {"bibkey": "charlow-2014", "paperLabel": "(4.6)"},
+    "language": "stan1293",
+    "primaryText": "I didn't read a book by a famous linguist.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I didn't read a book by a famous linguist.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "a book > not > a famous linguist", "judgment": "unacceptable"}
+    ],
+    "comment": "A container indefinite cannot outscope negation while the embedded indefinite scopes below it.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "charlow2014_ex4_18b",
+    "source": {"bibkey": "charlow-2014", "paperLabel": "(4.18b)"},
+    "language": "stan1293",
+    "primaryText": "If a persuasive lawyer visits a relative of mine, I'll inherit a house.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If a persuasive lawyer visits a relative of mine, I'll inherit a house.",
+    "context": "For some relative of mine, if some persuasive lawyer or other visits them, I'll inherit a house; continue with 'she lives in Highland Park'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "a relative > if > a lawyer", "judgment": "acceptable"}
+    ],
+    "comment": "Selective exceptional scope: two indefinites on one island scope differently outside it.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "charlow2014_ex4_23a",
+    "source": {"bibkey": "rooth-partee-1982", "paperLabel": "(21c)"},
+    "reportedIn": {"bibkey": "charlow-2014", "paperLabel": "(4.23a)"},
+    "language": "stan1293",
+    "primaryText": "Bill hopes that someone will hire a maid or a cook.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Bill hopes that someone will hire a maid or a cook.",
+    "context": "Bill either hopes de dicto that someone hires a maid, or hopes de dicto that someone hires a cook.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "or > hopes, indefinites de dicto", "judgment": "acceptable"}
+    ],
+    "comment": "Disjunction takes exceptional scope while its disjuncts stay below the attitude verb: disjunction does not respect the Binder Roof Constraint.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "charlow2014_ex4_23b",
+    "source": {"bibkey": "rooth-partee-1982", "paperLabel": "(21a)"},
+    "reportedIn": {"bibkey": "charlow-2014", "paperLabel": "(4.23b)"},
+    "language": "stan1293",
+    "primaryText": "Bill hopes that someone will hire a maid and a cook.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Bill hopes that someone will hire a maid and a cook.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "and > hopes", "judgment": "unacceptable"}
+    ],
+    "comment": "Unstressed conjunction does not scope out of the island.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "charlow2014_ex4_25b",
+    "source": {"bibkey": "charlow-2014", "paperLabel": "(4.25b)"},
+    "language": "stan1293",
+    "primaryText": "If a farmer owns a donkey or a horse, he beats it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If a farmer owns a donkey or a horse, he beats it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "every farmer beats every donkey or horse he owns", "judgment": "acceptable"}
+    ],
+    "comment": "Disjunctions license donkey anaphora like indefinites.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "charlow2014_ex5_7a",
+    "source": {"bibkey": "charlow-2014", "paperLabel": "(5.7a)"},
+    "language": "stan1293",
+    "primaryText": "If everyone thinks John will come, we'll have to invite him. If everyone thinks BILL will, we WON'T have to invite him.",
+    "discourseSegments": [
+      "If everyone thinks John will come, we'll have to invite him.",
+      "If everyone thinks BILL will, we WON'T have to invite him."
+    ],
+    "glossedTokens": [],
+    "translation": "If everyone thinks John will come, we'll have to invite him. If everyone thinks BILL will, we WON'T have to invite him.",
+    "context": "Sloppy reading of the elided pronoun: we won't have to invite Bill.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sloppy (him = Bill)", "judgment": "acceptable"}
+    ],
+    "comment": "Surprising sloppy reading: Bill's dref must scope out of a tensed clause and over the dynamically closed 'everyone' to bind the sloppy pro-form.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "charlow2014_ex5_22",
+    "source": {"bibkey": "charlow-2014", "paperLabel": "(5.22)"},
+    "language": "stan1293",
+    "primaryText": "Everyone heard the rumor that at least six senators supported Cruz's filibuster. It turned out to be erroneous: they numbered at most three.",
+    "discourseSegments": [
+      "Everyone heard the rumor that at least six senators supported Cruz's filibuster.",
+      "It turned out to be erroneous: they numbered at most three."
+    ],
+    "glossedTokens": [],
+    "translation": "Everyone heard the rumor that at least six senators supported Cruz's filibuster. It turned out to be erroneous: they numbered at most three.",
+    "context": "'they' refers to the senators who supported the filibuster.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "they = maximal refset", "judgment": "acceptable"}
+    ],
+    "comment": "A maximal refset dref created inside a scope island, under dynamically closed operators, is available for cross-sentential anaphora.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "charlow2014_ex5_23",
+    "source": {"bibkey": "charlow-2014", "paperLabel": "(5.23)"},
+    "language": "stan1293",
+    "primaryText": "It's absolutely false that no senators admire Cruz. But even so, they're all very junior.",
+    "discourseSegments": [
+      "It's absolutely false that no senators admire Cruz.",
+      "But even so, they're all very junior."
+    ],
+    "glossedTokens": [],
+    "translation": "It's absolutely false that no senators admire Cruz. But even so, they're all very junior.",
+    "context": "'they' refers to the senators who admire Cruz.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "they = maximal refset", "judgment": "acceptable"}
+    ],
+    "comment": "The refset dref of 'no senators' survives the negation scoping over its island.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "charlow2014_ex5_27b",
+    "source": {"bibkey": "charlow-2014", "paperLabel": "(5.27b)"},
+    "language": "stan1293",
+    "primaryText": "He also only introduced BILL to SUE.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He also only introduced BILL to SUE.",
+    "context": "Reply to 'John only introduced BILL to Mary' at a party where Mary met only Bill and Sue also met only Bill.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "also > SUE > only > BILL", "judgment": "acceptable"}
+    ],
+    "comment": "Selective association with focus: only associates with BILL, also with SUE.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   }
 ]
