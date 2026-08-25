@@ -2067,11 +2067,7 @@ import Linglib.Studies.CondoravdiLauer2016
 import Linglib.Studies.Coon2019
 import Linglib.Studies.CoonKeine2021
 import Linglib.Studies.CoonMateoPedroPreminger2014
-import Linglib.Studies.Cooper2023.Basic
-import Linglib.Studies.Cooper2023.Ch6
-import Linglib.Studies.Cooper2023.Ch7
-import Linglib.Studies.Cooper2023.Ch8
-import Linglib.Studies.Cooper2023.TTR
+import Linglib.Studies.Cooper2023
 import Linglib.Studies.Coppock2018
 import Linglib.Studies.CoppockBeaver2015
 import Linglib.Studies.Corbett1991

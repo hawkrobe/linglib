@@ -15,7 +15,7 @@ architecture descends from [barwise-cooper-1981]'s notion of *witness
 sets*, formulated as type-theoretic predicates in [cooper-2023] Ch. 7.
 
 This file extracts the framework as reusable substrate. It is consumed by
-`Studies.Cooper2023.Ch7` (Cooper's own deployment) and
+`Studies.Cooper2023` (Cooper's own deployment) and
 `Studies.LuckingGinzburg2022` (the Referential Transparency Theory of
 quantification, which uses witness sets as a comparator for its
 refset/compset/maxset framework).
@@ -248,7 +248,7 @@ inductive QuantName where
 def anaphoraAvailable : QuantName → List AnaphoraRef
   | .exist   => [.refset]
   | .existPl => [.refset, .maxset]
-  | .no      => [.maxset]
+  | .no      => [.maxset, .compset]
   | .every   => [.maxset]
   | .most    => [.maxset]
   | .many    => [.maxset]
