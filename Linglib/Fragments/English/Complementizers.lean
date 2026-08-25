@@ -29,15 +29,19 @@ structure CompEntry extends Complementizer where
   optional : Bool := false
   deriving Repr, BEq, DecidableEq
 
+/-- *that* — declarative complementizer, omissible (that-drop). -/
 def that : CompEntry :=
   { morphs := [.free "that"],
     coding := some .indicative, force := some .declarative,
     optional := true }
 
+/-- *if* — conditional protasis marker and embedded polar-question
+complementizer. -/
 def if_ : CompEntry :=
   { morphs := [.free "if"],
     force := some .interrogative, conditional := true }
 
+/-- *whether* — embedded polar-question complementizer. -/
 def whether : CompEntry :=
   { morphs := [.free "whether"],
     force := some .interrogative }

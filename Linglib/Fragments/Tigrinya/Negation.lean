@@ -6,7 +6,7 @@ import Linglib.Morphology.Morph
 [cacchioli-2026] [dryer-haspelmath-2013]
 
 Tigrinya negates a declarative verbal clause with the circumfix
-*ʔaj-…-(ɨ)n* around the inflected verb (*ʔaj-ṭ'awɛt-ɨn* 'I do not
+*ʔaj-…-(ɨ)n* around the inflected verb (*ʔaj-ts'awɛt-ɨn* 'I do not
 play'); WALS codes the language as obligatory double negation. The
 suffix is confined to root declaratives, *ʔɨlu*-complements and the
 negative future: relative, subjunctive and imperative clauses take the

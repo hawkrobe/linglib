@@ -243,8 +243,9 @@ theorem spec_noun_sorted :
 
 /-- The sort of the light noun a verb verbalizes under incorporation:
 stative senses, stative preferential attitudes, and occurrence verbs
-relate to situations; saying, belief, and knowledge to content
-(§3.2). -/
+relate to situations; saying, belief, and knowledge to content —
+this file's encoding of §3.2's split between content-denoting and
+situation-denoting verbs. -/
 def nounSort (v : Verb) : Option NominalSort :=
   if v.senseTag = .stative then some .situation
   else if v.unaccusative && v.attitude.isNone then some .situation

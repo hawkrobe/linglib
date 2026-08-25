@@ -71,8 +71,8 @@ theorem kemzi_and_ki_iff (c : VerbClass) :
 The thesis's negated verbs (ch. 5), as word trees over the fragment
 morphs. -/
 
-/-- (5b) *ʔaj-ṭ'awɛt-ɨn* 'I do not play': a root declarative. -/
-def rootNegative : Word.Tree Morph := .circumfixed aj (.root (.free "ṭ'awɛt")) n
+/-- (5b) *ʔaj-ts'awɛt-ɨn* 'I do not play': a root declarative. -/
+def rootNegative : Word.Tree Morph := .circumfixed aj (.root (.free "ts'awɛt")) n
 
 /-- (25) *ʔaj-nɨfɨr-ɨn* '(that a chicken) does not fly': an *ʔɨlu*-complement. -/
 def iluNegative : Word.Tree Morph := .circumfixed aj (.root (.free "nɨfɨr")) n

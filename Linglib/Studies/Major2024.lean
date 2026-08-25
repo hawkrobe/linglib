@@ -59,6 +59,8 @@ generated from `Data/Examples/Major2024.json`.
 
 namespace Major2024
 
+open Morphology (Morph)
+
 /-! ### Merge modes read off the morphology (§2)
 
 Converbial -(I)p clauses adjoin at two heights (his 4): VP-level
@@ -155,8 +157,6 @@ construct rival witnesses. -/
 structure SayConverbAnalysis where
   /-- The fragment inventory analyzed. -/
   inventory : List Complementizer
-  /-- The apparent complementizer being decomposed (*dep*; Sakha *dien*). -/
-  surface : String
   /-- The say-root inside the complex linker. -/
   sayRoot : Complementizer
   /-- The converbial suffix heading the adjunct clause. -/
@@ -171,6 +171,11 @@ structure SayConverbAnalysis where
       (his 39a, 40a), a requirement that persists inside the adjunct
       (his 41: `*(birnémi-ler-ni) de-p warqiri-di`). -/
   say_transitive : say.complementType ≠ ComplementType.none ∧ say.implicitObj = none
+
+/-- The complex linker: the say-root's morphs followed by the converb's
+(*de-p*; Sakha *die-n*). -/
+def SayConverbAnalysis.linker (a : SayConverbAnalysis) : List Morph :=
+  a.sayRoot.morphs ++ a.converb.morphs
 
 /-- Any say-converb analysis fixes adjunction as the linker's merge
 mode. -/
@@ -199,7 +204,6 @@ theorem SayConverbAnalysis.argument_ban (a : SayConverbAnalysis)
 fragment inventory. -/
 def depAnalysis : SayConverbAnalysis where
   inventory := Uyghur.complementizers
-  surface := "dep"
   sayRoot := Uyghur.de
   converb := Uyghur.ip
   say := Uyghur.deVerb
@@ -207,6 +211,8 @@ def depAnalysis : SayConverbAnalysis where
   converb_mem := .tail _ (.head _)
   converb_conv := rfl
   say_transitive := ⟨by decide, rfl⟩
+
+example : depAnalysis.linker = [.root "de", .suff "(I)p"] := rfl
 
 /-- Dep clauses adjoin at VP and TP (his 4, 37, 51, 56). -/
 theorem dep_adjoins_vp_and_tp :

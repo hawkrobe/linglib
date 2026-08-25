@@ -43,8 +43,8 @@ g-ɘːšɘ), so it is recorded as a bound root. -/
 def ge : Complementizer where
   morphs := [.root "gɘ"]
 
-/-- *-Aːša* — agentive participle ([skribnik-2003]); appears next to
-nominal projections. The complement it types is Noonan-nominalized
+/-- *-Aːša* — past-oriented participle ([bondarenko-2020] ex. 36;
+[skribnik-2003]); appears next to nominal projections. The complement it types is Noonan-nominalized
 (case-marked, genitive subject) while the morpheme itself is a
 participle — two axes, two fields. -/
 def aasha : Complementizer where
@@ -80,9 +80,7 @@ def nominalizedFrame : Frame :=
 /-- *hanaxa* 'think ~ remember': 'think' with a bare gɘžɘ-CP, 'remember'
 with a nominalized complement (§4.4.3). The `readings` rows carry the
 think~remember alternation — nonveridical/opaque on the bare CP,
-veridical/transparent on the nominalized frame; the nominalized frame's
-pre-existence presupposition is tracked in
-`Studies/Williams2026.lean` (the pre-existence analysis). -/
+veridical/transparent on the nominalized frame. -/
 def hanaxa : Verb where
   form := "hanaxa"
   frames := [Frame.finiteClause, nominalizedFrame]
