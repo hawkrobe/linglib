@@ -154,4 +154,12 @@ def Strategy.morphemeType : Strategy → Data.WALS.F112A.NegativeMorphemeType
   | .negAffix => .negativeAffix
   | .negParticle => .negativeParticle
 
+/-- The two projections agree on which strategy is verbal: the cline stage
+[anderson-2006] assigns and the morpheme type [miestamo-2005] assigns
+partition the strategies identically. -/
+theorem toGramStage_auxiliary_iff_morphemeType_auxVerb (s : Strategy) :
+    s.toGramStage = some .auxiliary ↔
+      s.morphemeType = .negativeAuxiliaryVerb := by
+  cases s <;> decide
+
 end Syntax.Negation
