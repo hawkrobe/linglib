@@ -7,104 +7,57 @@ open Morphology (Word)
 # Korean Complementizers and Clause-Embedding Verbs
 [bondarenko-2022] [bogal-allbritten-moulton-2018] [kim-min-joo-2009]
 
-Korean clause-typing morphology and matrix verbs that select bare vs.
-nominalized embedded clauses ([bondarenko-2022] §4.3.2).
-
-## Three clause-typing morphemes (Bondarenko's specific decomposition)
-
-- **-ta** — declarative ending. [bondarenko-2022] §4.3.2
-  (following [bogal-allbritten-moulton-2018]) analyses *-ta* as
-  the overt exponent of ContP, the projection introducing the CONT
-  function. **NOT the consensus view**: alternative analyses
-  (Shim & Ihsane 2015; [kim-min-joo-2009]) treat *-ta*
-  differently (clause-typing morpheme without specific structural
-  decomposition). This Fragment file exposes the morpheme; the
-  ContP-bearing claim is paper-specific apparatus and lives in
-  `Studies/Bondarenko2022.lean`.
-- **-nun** — adnominal ending; turns a clause into a noun-modifier.
-  Co-occurs with *kes* in nominalized complement clauses.
-- **-ko** — connective / quotative complementizer. Used in serialised
-  predicate constructions and as a quotative complementizer.
-
-## The lexical noun *kes*
-
-- **kes** — 'thing'. Light noun (M.-J. Kim 2009) that combines with
-  an adnominal-clause modifier to yield a nominalized clause that
-  can saturate a DP argument slot. The Korean version of the
-  "Saxon-genitive D + N" Bondarenko's general analysis posits.
-
-## Scope
-
-Per the project Fragment-discipline rule (textbook-consensus
-metadata only): only the morphological inventory and verb entries
-belong here. The Bondarenko-specific Cont/Comp split projection
-lives in the `Bondarenko2022` Studies file.
-
-## Matrix verbs
-
-- *yukamsulewehay-ta* 'regret' — preferential negative, stative
-- *mit-ta* 'believe' — doxastic non-veridical
-- *sayngkakha-ta* 'think' — doxastic non-veridical
-- *haysekha-ta* 'interpret' — speech act / doxastic
-- *selmyengha-ta* 'explain' — accomplishment (the *explain*-class
-  verb anchoring §4.4.2 theme-arg analysis)
+Korean embeds clauses three ways ([bondarenko-2022] §4.3.2 ex. 45): a
+bare clause in the declarative ending *-ta* plus the connective *-ko*; a
+*-ta*-clause under the adnominal ending *-nun* and the light noun *kes*
+'thing'; and a bare adnominal clause under *kes*. The three endings are
+root `Complementizer` entries, *kes* a `Word`, and the matrix verbs of
+the thesis's Korean data `Verb` entries. The head assignment *-ta* ⇔
+Cont, *-nun*/*-ko* ⇔ Comp allomorphs (ex. 46) is the thesis's analysis,
+not a field.
 -/
 
 namespace Korean.Complementizers
 
 
 
--- ════════════════════════════════════════════════════════════════
--- § 1. Clause-typing morpheme inventory
--- ════════════════════════════════════════════════════════════════
+/-! ### Clause-typing morphemes -/
 
-/-- *-ta* — declarative ending. [bondarenko-2022] §4.3.2 (following
-    [bogal-allbritten-moulton-2018]) analyses it as the overt ContP
-    exponent — that decomposition is Studies-local
-    (`Bondarenko2022.koreanAnalysis`); the consensus view
-    (Shim & Ihsane 2015, [kim-min-joo-2009]) treats it as a
-    clause-typing morpheme without that structural decomposition. -/
+/-- *-ta* — the declarative ending, on finite verbs and on bare
+embedded clauses (*ilk-ess-ta-ko*, ex. 45a). -/
 def ta : Complementizer where
-  form := "-ta"
-  position := some .postfixed
+  morphs := [.suff "ta"]
   verbForm := some .Fin
   force := some .declarative
 
-/-- *-nun* — adnominal ending; turns a clause into a noun modifier
-    (typically followed by *kes* 'thing' in nominalized clauses). -/
+/-- *-nun* — the adnominal ending, turning a clause into a noun
+modifier; under *kes* 'thing' it yields nominalized complements
+(ex. 45b–c). -/
 def nun : Complementizer where
-  form := "-nun"
-  position := some .postfixed
+  morphs := [.suff "nun"]
   verbForm := some .Part
   licenser := some .nominal
 
-/-- *-ko* — connective / quotative complementizer; verb-adjacent Comp
-    allomorph, paired with adnominal *-nun* (§4.3.2 ex. 46 of
-    [bondarenko-2022]). -/
+/-- *-ko* — the connective ending on bare embedded clauses, adjacent
+to the verb (ex. 45a). -/
 def ko : Complementizer where
-  form := "-ko"
-  position := some .postfixed
+  morphs := [.suff "ko"]
   verbForm := some .Conv
   licenser := some .verbal
 
 /-- The clause-typing inventory. -/
 def complementizers : List Complementizer := [ta, nun, ko]
 
--- ════════════════════════════════════════════════════════════════
--- § 2. The lexical noun *kes*
--- ════════════════════════════════════════════════════════════════
+/-! ### The light noun *kes* -/
 
-/-- *kes* — 'thing'. Light noun analysed by [kim-min-joo-2009]
-    as null-D + N. Combines with an adnominal *-nun*-marked clause
-    to yield a nominalized DP that can saturate argument slots. -/
+/-- *kes* — 'thing', the light noun under adnominal clauses
+([kim-min-joo-2009]). -/
 def kes : Word := { form := "kes", cat := .NOUN }
 
--- ════════════════════════════════════════════════════════════════
--- § 3. Matrix verb entries
--- ════════════════════════════════════════════════════════════════
+/-! ### Matrix verbs -/
 
-/-- *yukamsulewehay-ta* — 'regret'. Preferential negative, stative.
-    [bondarenko-2022] §4.3.2. -/
+/-- *yukamsulewehay-ta* — 'regret'. Preferential negative, stative
+(ex. 45). -/
 def yukamsulewehayta : Verb where
   form := "yukamsulewehay-ta"
   frames := [Frame.finiteClause]
@@ -117,7 +70,6 @@ def mitta : Verb where
   frames := [Frame.finiteClause]
   attitude := some (.doxastic .nonVeridical)
   vendlerClass := some .state
-  passivizable := false
   opaqueContext := true
 
 /-- *sayngkakha-ta* — 'think'. Doxastic non-veridical, activity. -/
@@ -128,15 +80,15 @@ def sayngkakhata : Verb where
   vendlerClass := some .activity
   opaqueContext := true
 
-/-- *haysekha-ta* — 'interpret'. -/
+/-- *haysekha-ta* — 'interpret' (§2.5). -/
 def haysekhata : Verb where
   form := "haysekha-ta"
   frames := [Frame.finiteClause]
   vendlerClass := some .activity
   opaqueContext := true
 
-/-- *selmyengha-ta* — 'explain'. Accomplishment; central to
-    [bondarenko-2022] §4.4.2 theme-argument analysis. -/
+/-- *selmyengha-ta* — 'explain', the §4.4.2 Theme-argument verb
+(ex. 106–107). -/
 def selmyenghata : Verb where
   form := "selmyengha-ta"
   frames := [Frame.finiteClause]

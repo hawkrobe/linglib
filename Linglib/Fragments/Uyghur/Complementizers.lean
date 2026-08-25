@@ -37,11 +37,11 @@ namespace Uyghur
 
 /-- *de* — the verb root 'say'. A verb root, not an affix: it never
 surfaces bare — inflected as a main verb (*dé-d-i* 'say-PST-3', his 1)
-or converb-suffixed as a clause-linker (*de-p*, his 2) — so no
-attachment of its own is recorded. Main-verb argument structure:
+or converb-suffixed as a clause-linker (*de-p*, his 2) — so it is
+recorded as a bound root. Main-verb argument structure:
 `Uyghur.deVerb`. -/
 def de : Complementizer where
-  form := "de"
+  morphs := [.root "de"]
 
 /-- -(I)p — the general-purpose converbial suffix (glossed CNV),
 deriving converb clauses that adjoin at VP or TP (his 4; [sugar-2019],
@@ -49,8 +49,7 @@ deriving converb clauses that adjoin at VP or TP (his 4; [sugar-2019],
 the same suffix links ordinary serial events ('jump', 'fall', his 3)
 and the say-complex *de-p*. -/
 def ip : Complementizer where
-  form := "-(I)p"
-  position := some .postfixed
+  morphs := [.suff "(I)p"]
   verbForm := some .Conv
 
 /-- *-lik* — complementizer of the nominalized embedding strategy,
@@ -59,8 +58,7 @@ genitive subject — Noonan-nominalized. Participial clauses are
 Uyghur's genuine clausal arguments ([major-2024] §3.2): grammatical
 subjects (his 49a) and factive complements (his 61a). -/
 def lik : Complementizer where
-  form := "-lik"
-  position := some .postfixed
+  morphs := [.suff "lik"]
   coding := some .nominalized
 
 /-- The clause-linking morphemes at issue in [major-2024]: the two

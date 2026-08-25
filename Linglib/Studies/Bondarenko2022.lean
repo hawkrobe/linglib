@@ -42,8 +42,7 @@ arguments — later attacked by [angelopoulos-2026] (comparison in
 
 ## Implementation notes
 
-Bare `§`/`ex.`/`eq.` locators refer to the dissertation and were verified
-against its text. Sections track different chapters: nominal sorts through the
+Bare `§`/`ex.`/`eq.` locators refer to the dissertation. Sections track different chapters: nominal sorts through the
 BE2026 bridge follow the ch. 1 summary, the type-theoretic sections ch. 4
 (§§4.2-4.5), the co-occurrence and head-denotation sections ch. 2 (§2.2.3,
 §2.3). The ch. 1 summary repeats later material: Table 1.1 = Table 4.1, and
@@ -214,17 +213,6 @@ theorem bare_argument_predicted_impossible :
     ¬ transparentSSMapping .bareArgument := by
   intro h; exact h
 
-/-- The (nominalized, modifier) cell is empty. -/
-theorem nominalized_modifier_predicted_impossible :
-    ¬ transparentSSMapping .nominalizedModifier := by
-  intro h; exact h
-
-/-- The diagonal cells are available. -/
-theorem diagonal_attested :
-    transparentSSMapping .bareModifier ∧
-    transparentSSMapping .nominalizedArgument :=
-  ⟨trivial, trivial⟩
-
 /-! ### Composition paths (Table 1.1) -/
 
 /-- Table 1.1's two composition paths: PM with the verb's situation argument,
@@ -234,28 +222,13 @@ inductive CompositionPath where
   | viaDPArgument
   deriving DecidableEq, Repr
 
-/-- Table 1.1 (attitude and speech verbs; occurrence verbs are exempt,
-§4.3.3): the (Sit-CP, `viaSituation`) cell is unattested — intersective
-combination yields always-trivially-false sentences. -/
+/-- Table 1.1 (verbs like *think*; occurrence verbs like *slučatsja* are
+exempt, §4.2): the (Sit-CP, `viaSituation`) cell is unattested —
+intersective combination yields always-trivially-false sentences. -/
 def attestedCombination : NominalSort → CompositionPath → Prop
   | .content, _              => True   -- Cont-CP via either path
   | .situation, .viaDPArgument => True -- Sit-CP via DP-argument path
   | .situation, .viaSituation  => False -- Sit-CP via Situation path: ✗
-
-/-- The (Sit-CP, viaSituation) cell is empty by semantic triviality
-(§1.1.2). -/
-theorem sit_cp_via_situation_blocked :
-    ¬ attestedCombination .situation .viaSituation := by
-  intro h; exact h
-
-/-! ### Bridge to BondarenkoElliott2026 -/
-
-/-- Bondarenko & Elliott 2026's MSI/MSO/TECM apparatus presupposes the
-equality semantics `CONT(x) = ⟦S⟧` defended here; the cross-file bridge awaits
-a stable BE2026 lemma (this file does not import BE2026). -/
-theorem be2026_inherits_equality_substrate {W : Type*}
-    (xc : ContentIndividual W) (p : W → Prop) :
-    comp p xc ↔ xc.cont = p := Iff.rfl
 
 /-! ### Type-theoretic apparatus (§4.2)
 
@@ -400,8 +373,7 @@ theorem transparentSSMapping_iff_typed (path : ClauseStructurePath) :
 Per-language Cont-exponence analyses (ch. 4), tied by law to the fragment
 inventories. Buryat carries the licenser-conditioned Comp allomorphy (§4.3.1
 ex. 33); Korean's parallel rule (§4.3.2 ex. 46) is not yet law-checked, so its
-witness stays at `ContAnalysis`. [cacchioli-2025]'s Tigrinya extension lives
-in `Studies/Cacchioli2025.lean` per the chronology rule. -/
+witness stays at `ContAnalysis`. -/
 
 open Buryat
 
@@ -452,7 +424,7 @@ def buryatAnalysis : ContCompAnalysis where
     · exact Or.inr ⟨.nominal, rfl⟩
     · exact Or.inr ⟨.verbal, rfl⟩
 
-/-- Korean (§4.3.2 ex. 46; cf. [bogal-allbritten-moulton-2018]): *-ta*
+/-- Korean (§4.3.2 ex. 46): *-ta*
 expones Cont; adnominal *-nun* and adverbal *-ko* are the Comp
 allomorphs, parallel to Buryat ex. 33. -/
 def koreanAnalysis : ContCompAnalysis where
@@ -475,12 +447,12 @@ def koreanAnalysis : ContCompAnalysis where
     · exact Or.inr ⟨.nominal, rfl⟩
     · exact Or.inr ⟨.verbal, rfl⟩
 
-/-- In Buryat the Cont exponent is exactly the non-suffixal say-root — a
+/-- In Buryat the Cont exponent is exactly the bare say-root — a
 Buryat-specific alignment, not a `ContAnalysis` law (Korean's *-ta* is itself
 a suffix). -/
 theorem mem_buryatContExponent_iff :
     ∀ c ∈ complementizers,
-      (c ∈ buryatAnalysis.contExponent ↔ c.verbForm = none) := by
+      (c ∈ buryatAnalysis.contExponent ↔ ∀ m ∈ c.morphs, m.kind = .root) := by
   decide
 
 /-- Each of *hanaxa*'s two frames (§4.4.3) takes exactly one

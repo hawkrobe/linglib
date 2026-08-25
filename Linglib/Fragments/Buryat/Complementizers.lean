@@ -39,17 +39,16 @@ namespace Buryat
 
 /-- *gɘ* — grammaticalized root of *gɘxɘ* 'say' (fn. 21: no speech act
 entailed under 'hear' or 'see'). Never surfaces unsuffixed (gɘ-žɘ,
-g-ɘːšɘ), so its attachment is left unrecorded. -/
+g-ɘːšɘ), so it is recorded as a bound root. -/
 def ge : Complementizer where
-  form := "gɘ"
+  morphs := [.root "gɘ"]
 
-/-- *-Aːša* — agentive participle ([skribnik-2003]); appears next to
-nominal projections. The complement it types is Noonan-nominalized
+/-- *-Aːša* — past-oriented participle ([bondarenko-2020] ex. 36;
+[skribnik-2003]); appears next to nominal projections. The complement it types is Noonan-nominalized
 (case-marked, genitive subject) while the morpheme itself is a
 participle — two axes, two fields. -/
 def aasha : Complementizer where
-  form := "-Aːša"
-  position := some .postfixed
+  morphs := [.suff "Aːša"]
   coding := some .nominalized
   verbForm := some .Part
   licenser := some .nominal
@@ -57,8 +56,7 @@ def aasha : Complementizer where
 /-- *-žA* — imperfective converb ([skribnik-2003]); appears next to
 verbs, also in analytical verb forms and sentential adjuncts (ex. 30). -/
 def zha : Complementizer where
-  form := "-žA"
-  position := some .postfixed
+  morphs := [.suff "žA"]
   coding := some .indicative
   verbForm := some .Conv
   licenser := some .verbal
@@ -82,9 +80,7 @@ def nominalizedFrame : Frame :=
 /-- *hanaxa* 'think ~ remember': 'think' with a bare gɘžɘ-CP, 'remember'
 with a nominalized complement (§4.4.3). The `readings` rows carry the
 think~remember alternation — nonveridical/opaque on the bare CP,
-veridical/transparent on the nominalized frame; the nominalized frame's
-pre-existence presupposition is tracked in
-`Studies/Williams2026.lean` (the pre-existence analysis). -/
+veridical/transparent on the nominalized frame. -/
 def hanaxa : Verb where
   form := "hanaxa"
   frames := [Frame.finiteClause, nominalizedFrame]

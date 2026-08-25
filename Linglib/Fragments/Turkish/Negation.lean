@@ -40,9 +40,7 @@ open Syntax.Negation
     abstract citation form; the harmony-conditioned alternants are
     captured by the language's morphology layer, not the marker entry. -/
 def negSuffix : NegMarkerEntry :=
-  { form := "-mA-"
-  , morphemeType := .affix
-  , position := .morphological }
+  { morphs := [.suff "mA"] }
 
 /-- Turkish standard (verbal) negation: a single verbal affix.
     Nonverbal predication negates with copular *değil* and the

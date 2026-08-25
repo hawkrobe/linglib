@@ -38,26 +38,16 @@ open Syntax.Negation
     four particles precede the verb; *lays-a* is itself a verb inflecting for
     person / number / gender. -/
 def negMarkers : List NegMarkerEntry :=
-  [ { form := "laa"
-    , gloss := "NEG.IPFV"
-    , morphemeType := .particle
-    , position := .preverbal }
-  , { form := "lam"
-    , gloss := "NEG.PST"
-    , morphemeType := .particle
-    , position := .preverbal }
-  , { form := "lan"
-    , gloss := "NEG.FUT"
-    , morphemeType := .particle
-    , position := .preverbal }
-  , { form := "maa"
-    , gloss := "NEG.PST"
-    , morphemeType := .particle
-    , position := .preverbal }
-  , { form := "lays-a"
-    , gloss := "NEG.COP"
-    , morphemeType := .auxVerb
-    , position := .preverbal }
+  [ { morphs := [.free "laa"]
+    , gloss := "NEG.IPFV" }
+  , { morphs := [.free "lam"]
+    , gloss := "NEG.PST" }
+  , { morphs := [.free "lan"]
+    , gloss := "NEG.FUT" }
+  , { morphs := [.free "maa"]
+    , gloss := "NEG.PST" }
+  , { morphs := [.free "lays-a"]
+    , gloss := "NEG.COP" }
   ]
 
 /-- Bundled `NegationSystem` (markers + WALS Ch 112A/143A/144A datapoints

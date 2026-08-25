@@ -43,9 +43,7 @@ open Syntax.Negation
     `Non ho visto nessuno` 'NEG have seen nobody' = "I didn't see anyone".
     A free word, not a clitic; syntactically immediately preverbal. -/
 def non : NegMarkerEntry :=
-  { form := "non"
-  , morphemeType := .particle
-  , position := .preverbal }
+  { morphs := [.free "non"] }
 
 /-- The Italian negation system: a single preverbal particle.
     WALS classifications are pulled from `Data/WALS/Features/F112A.lean`

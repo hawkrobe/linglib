@@ -45,9 +45,7 @@ open Syntax.Negation
     *-nai* suffix is the A/Fin+A/Cat asymmetry captured by
     `japaneseNegDistribution` below. -/
 def negSuffix : NegMarkerEntry :=
-  { form := "-nai"
-  , morphemeType := .affix
-  , position := .morphological }
+  { morphs := [.suff "nai"] }
 
 /-- The Japanese negation system: a single verbal affix with rich
     morphological redistribution (see `japaneseNegDistribution`). -/
