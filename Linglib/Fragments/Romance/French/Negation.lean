@@ -146,29 +146,29 @@ def enMarker : String := neClitic
 
 /-- EN trigger-negator pairings from [jin-koenig-2021], Table 5
     and §6.1–6.4. -/
-def enTriggerNegators : List ENTriggerNegator :=
+def enTriggerNegators : List ExpletiveTrigger :=
   [ { triggerClass := "FEAR", triggerForm := "avoir peur"
-    , enNegatorForm := "ne", highEntrenchment := some true }
+    , negatorForm := "ne", highEntrenchment := some true }
   , { triggerClass := "AVOID", triggerForm := "éviter"
-    , enNegatorForm := "ne", highEntrenchment := some true }
+    , negatorForm := "ne", highEntrenchment := some true }
   , { triggerClass := "BEFORE", triggerForm := "avant que"
-    , enNegatorForm := "ne", highEntrenchment := some true }
+    , negatorForm := "ne", highEntrenchment := some true }
   , { triggerClass := "UNLESS", triggerForm := "à moins que"
-    , enNegatorForm := "ne", highEntrenchment := some true }
+    , negatorForm := "ne", highEntrenchment := some true }
   , { triggerClass := "DENY", triggerForm := "nier"
-    , enNegatorForm := "ne", highEntrenchment := some true }
+    , negatorForm := "ne", highEntrenchment := some true }
   , { triggerClass := "COMPARATIVES", triggerForm := "que (than)"
-    , enNegatorForm := "ne", highEntrenchment := some true }
+    , negatorForm := "ne", highEntrenchment := some true }
   , { triggerClass := "REGRET", triggerForm := "regretter"
-    , enNegatorForm := "ne (pas)", highEntrenchment := some false }
+    , negatorForm := "ne (pas)", highEntrenchment := some false }
   , { triggerClass := "FORGET", triggerForm := "oublier"
-    , enNegatorForm := "ne pas", highEntrenchment := some false } ]
+    , negatorForm := "ne pas", highEntrenchment := some false } ]
 
 /-- High-entrenchment EN uses the dedicated *ne* alone;
     low-entrenchment EN uses *ne...pas* (the standard negator). -/
 theorem high_entrenchment_uses_ne_alone :
     (enTriggerNegators.filter (·.highEntrenchment == some true)).all
-      (·.enNegatorForm == "ne") = true := by decide
+      (·.negatorForm == "ne") = true := by decide
 
 /-- French EN marker = preverbal *ne* = same clitic as in standard
     *ne...pas*, but without the reinforcer. -/

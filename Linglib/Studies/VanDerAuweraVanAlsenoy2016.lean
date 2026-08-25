@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Negation
 import Linglib.Features.NegativeConcord
+import Linglib.Data.WALS.Features.F115A
 
 /-!
 # [van-der-auwera-van-alsenoy-2016] — negative concord ↔ n-word status
@@ -28,21 +29,22 @@ paper-specific prediction with no other consumer; keeping it study-local lets
 
 namespace VanDerAuweraVanAlsenoy2016
 
-open Syntax.Negation (NegIndefiniteStrategy)
+open Data.WALS
 open Features.NegativeConcord (NWordStatus)
 
 /-- Whether the negative-indefinite system shows negative concord
-    ([van-der-auwera-van-alsenoy-2016]): WALS 115A `cooccur` (concord) and `mixed`
-    (position-dependent) do; `preclude` (double negation) and `negExistential` do not. -/
-def hasNegativeConcord : NegIndefiniteStrategy → Bool
-  | .cooccur | .mixed => true
-  | .preclude | .negExistential => false
+    ([van-der-auwera-van-alsenoy-2016]): WALS Ch 115A's predicate-negation-also-present (concord)
+    and mixed-behaviour (position-dependent) do; no-predicate-negation (double
+    negation) and the negative-existential construction do not. -/
+def hasNegativeConcord : F115A.NegativeIndefiniteType → Bool
+  | .predicateNegationAlsoPresent | .mixedBehaviour => true
+  | .noPredicateNegation | .negativeExistentialConstruction => false
 
 /-- Whether an item-level n-word status is consistent with a language's WALS 115A
     negative-indefinite strategy: an n-word needs a concord system, an inherently
     negative quantifier a non-concord (double-negation / neg-existential) one, an NPI
     any ([van-der-auwera-van-alsenoy-2016]). -/
-def admits : NegIndefiniteStrategy → NWordStatus → Bool
+def admits : F115A.NegativeIndefiniteType → NWordStatus → Bool
   | strat, .nWord => hasNegativeConcord strat
   | strat, .negQuantifier => !hasNegativeConcord strat
   | _, .npi => true
@@ -50,8 +52,8 @@ def admits : NegIndefiniteStrategy → NWordStatus → Bool
 /-- N-words live in negative-concord systems, inherently negative quantifiers in
     double-negation ones ([van-der-auwera-van-alsenoy-2016]). -/
 theorem nWord_vs_negQuantifier :
-    admits .cooccur .nWord = true ∧
-    admits .preclude .nWord = false ∧
-    admits .preclude .negQuantifier = true := by decide
+    admits .predicateNegationAlsoPresent .nWord = true ∧
+    admits .noPredicateNegation .nWord = false ∧
+    admits .noPredicateNegation .negQuantifier = true := by decide
 
 end VanDerAuweraVanAlsenoy2016

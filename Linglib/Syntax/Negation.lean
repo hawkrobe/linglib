@@ -1,8 +1,6 @@
 import Linglib.Data.WALS.Datapoint
 import Linglib.Data.WALS.Features.F112A
-import Linglib.Data.WALS.Features.F113A
 import Linglib.Data.WALS.Features.F114A
-import Linglib.Data.WALS.Features.F115A
 import Linglib.Data.WALS.Features.F143A
 import Linglib.Data.WALS.Features.F144A
 import Linglib.Syntax.Category.Auxiliary.Constructions
@@ -10,58 +8,59 @@ import Linglib.Features.Grammaticalization
 import Linglib.Morphology.Morph
 
 /-!
-# Typology.Negation
-[dryer-2013-wals] [haspelmath-2013] [miestamo-2005]
+# Standard negation
 
-Per-language typological substrate for the standard sentential negation
-marker of a language: its exponent as morphs, symmetric/
-asymmetric status, asymmetry subtype, and negative-indefinite strategy.
+A language negates a declarative verbal main clause with an affix on the
+verb, a free particle, or an inflecting negative auxiliary, and some
+languages use two morphemes at once (French *ne … pas*). Beyond adding a
+marker, negation may restructure the clause — imposing a nonfinite verb
+form, neutralizing tense distinctions — which is the symmetric/asymmetric
+divide of [miestamo-2005]. Expletive negation is a separate use of the
+same morphemes, semantically vacuous under triggers like 'fear' and
+'before'.
 
-Mirrors the `Linglib/Features/Possession.lean` (Possession), `Question.lean`
-(Question), and `Case.lean` (Case) substrate-extension pattern: the
-substrate carries (a) the marker schema (`Marker`,
-`NegationSystem`), (b) WALS converters and per-ISO accessors.
+This file records a language's negation marker(s) and the strategy
+classifying them, with per-ISO access to the WALS negation chapters.
 
-## What lives here
+## Main declarations
 
-- `NegMorphemeType` — direct projection from WALS Ch 112A's 6-way
-  classification (`negativeAffix`, `negativeParticle`, `negativeAuxiliaryVerb`,
-  `negativeWordUnclearIfVerbOrParticle`, `variationBetweenNegativeWordAndAffix`,
-  `doubleNegation`). This is **Dryer's WALS Ch 112 morpheme typology**, NOT
-  [miestamo-2005]'s construction-level typology — Miestamo classifies
-  *constructions*, not morphemes. The substrate carries Dryer's classification
-  for cross-linguistic indexing; Miestamo's framework lives in
-  `Studies/Miestamo2005.lean`.
-- `Marker` — a standard sentential negation marker.
-- `NegationSystem` — bundles markers + WALS Ch 112A/143A/144A datapoints.
-  The Fragment-side joint: every `Fragments/{Lang}/Negation.lean` exposes
-  `def negationSystem : NegationSystem`.
-- `NegSymmetry`, `AsymmetrySubtype`, `NegIndefiniteStrategy`,
-  `NegVerbPosition`, `NegMorphemePosition` — WALS Ch 113-115/143A
-  feature enums.
-- `NegStrategy` — AVC-oriented classification of the negation strategy
-  ([anderson-2006], [heine-1993]), with bridges to Anderson's AVC
-  patterns (`expectedInflPattern`), Heine's grammaticalization cline
-  (`toGramStage`), and WALS Ch 112 (`toNegMorphemeType`).
-- `ofWALS112A`/`fromWALS113A`/`114A`/`115A`/`143A` converters, and the
-  per-ISO accessors `morphemeTypeOfISO`/`symmetryOfISO`/
-  `asymmetrySubtypeOfISO`/`negIndefiniteOfISO` (study-consumed; `none`
-  when the language is not in the chapter's WALS sample).
+* `Marker`: a standard negation marker, as the morphs exponing it.
+* `NegationSystem`: a language's markers keyed by ISO 639-3 code, with
+  its WALS Ch 112A/143A/144A values derived from that key.
+* `Strategy`: negative verb, affix, or particle — the grain at which
+  negation meets auxiliary-verb constructions and the
+  grammaticalization cline.
+* `ExpletiveTrigger`: a lexical trigger of expletive negation with the
+  negator it licenses.
+* `asymmetrySubtypeOfISO`: a language's WALS Ch 114A value.
 
-## Theory-laden caveats
+## Implementation notes
 
-`NegSymmetry` and `AsymmetrySubtype` are **WALS Ch 113/114** values
-([dryer-haspelmath-2013]). [miestamo-2005]'s richer
-two-dimension framework (constructional vs paradigmatic asymmetry)
-lives in `Studies/Miestamo2005.lean` because it goes beyond what
-WALS encodes.
+The WALS chapters are the source of truth for the typological values, so
+the accessors return the `Data.WALS` enums rather than re-labelled
+copies, and `NegationSystem` derives its datapoints from the ISO code
+rather than storing them. An analysis reaching beyond WALS keeps its own
+vocabulary in its study: [miestamo-2005]'s asymmetry subtypes, which
+separate an emphasis subtype the atlas does not encode, live in
+`Studies/Miestamo2005.lean`.
 
-## Out of scope
+Polarity-sensitive items (n-words, NPIs, free-choice items) are not
+marker-side data; they live in `Fragments/{Lang}/PolarityItems.lean`.
 
-Polarity-sensitive items (n-words, NPIs, FCIs) are NOT marker-side data;
-they live in each language's `Fragments/{Lang}/PolarityItems.lean`. Cross-linguistic theorems consuming
-Fragment per-language data live in `Studies/Miestamo2005.lean`
-(Ch 113-115 grounding).
+## TODO
+
+* `ExpletiveTrigger.triggerClass` is free text. The taxonomy it
+  approximates is `JinKoenig2021.TriggerSubclass`, whose cases the
+  Fragment labels do not currently match.
+
+## References
+
+* [dryer-2013-wals], Ch 112A, 143A
+* [miestamo-2013], Ch 114A
+* [miestamo-2005]
+* [anderson-2006], §1.7.2
+* [heine-1993]
+* [jin-koenig-2021]
 -/
 
 set_option autoImplicit false
@@ -69,111 +68,6 @@ set_option autoImplicit false
 open Morphology (Morph)
 
 namespace Syntax.Negation
-
-/-! ### Substrate enums -/
-
-/-- Type of the standard negation morpheme [dryer-2013-wals].
-
-    Six categories anchored on WALS Ch 112A (negative morpheme classification).
-    Direct projection from `Data.WALS.F112A.NegativeMorphemeType` via
-    `ofWALS112A`; the substrate enum exists for ergonomic pattern-matching
-    in Fragment files. -/
-inductive NegMorphemeType where
-  /-- Negative affix on the verb (e.g., Kolyma Yukaghir `el-jaqa-te-je`
-      'NEG-achieve-FUT-1SG'). -/
-  | affix
-  /-- Free negative particle, no verbal inflection (e.g., English `not`,
-      Italian `non`). -/
-  | particle
-  /-- Negative auxiliary verb inflecting for verbal categories (e.g.,
-      Finnish `e-n` 'NEG-1SG'). -/
-  | auxVerb
-  /-- Negative word whose status as verb or particle is unclear, typically
-      in isolating languages (e.g., Maori `kaahore`). -/
-  | wordUnclear
-  /-- Language uses both negative word and negative affix in different
-      constructions (e.g., Rama). -/
-  | variation
-  /-- Bipartite negation: two co-occurring morphemes flanking the verb
-      (e.g., French `ne...pas`, Izi `to-...-du`). -/
-  | doubleNeg
-  deriving DecidableEq, BEq, Repr
-
-/-- WALS Ch 113A: whether negation changes clause structure beyond adding
-    the negative marker. Symmetric: no structural change. Asymmetric: changes
-    in finiteness, verb paradigm, or TAM marking. -/
-inductive NegSymmetry where
-  | symmetric
-  | asymmetric
-  /-- Both symmetric and asymmetric (Type SymAsy): some constructions
-      symmetric, others asymmetric. -/
-  | both
-  deriving DecidableEq, BEq, Repr
-
-/-- WALS Ch 114A: which grammatical domain is affected by asymmetric
-    negation. The four primary subtypes correspond to [miestamo-2005]'s
-    A/Fin (finiteness), A/NonReal (reality status), A/Emph (emphasis),
-    A/Cat (other categories) plus combined codings.
-
-    Note: WALS Ch 114 does not encode A/Emph as a separate value
-    ([miestamo-2005] Table 2 distinguishes it; WALS collapses it). -/
-inductive AsymmetrySubtype where
-  | finiteness
-  | realityStatus
-  | emphasis
-  | otherCategories
-  | finAndNonReal
-  | finAndEmph
-  | finAndCat
-  | nonRealAndCat
-  | emphAndCat
-  /-- Non-assignable: language has only symmetric negation. -/
-  | nonAssignable
-  deriving DecidableEq, BEq, Repr
-
-/-- WALS Ch 115A: how negative indefinites interact with predicate negation. -/
-inductive NegIndefiniteStrategy where
-  /-- Negative indefinites co-occur with predicate negation (negative concord).
-      Dominant pattern worldwide. -/
-  | cooccur
-  /-- Negative indefinites preclude predicate negation. -/
-  | preclude
-  /-- Mixed (position-dependent or different indefinite series). -/
-  | mixed
-  /-- Negative existential construction. -/
-  | negExistential
-  deriving DecidableEq, BEq, Repr
-
-/-- WALS Ch 143A: position of negative morpheme relative to verb.
-    Single-negation types (`NegV`/`VNeg`/`[Neg-V]`/`[V-Neg]`) plus
-    multi-negation types (obligatory/optional double, optional triple). -/
-inductive NegVerbPosition where
-  /-- Preverbal negative particle: `NegV`. -/
-  | preverbalParticle
-  /-- Postverbal negative particle: `VNeg`. -/
-  | postverbalParticle
-  /-- Preverbal negative affix: `[Neg-V]`. -/
-  | preverbalAffix
-  /-- Postverbal negative affix: `[V-Neg]`. -/
-  | postverbalAffix
-  | negativeTone
-  | mixedSingle
-  | obligDoublNeg
-  | optDoubleNeg
-  | tripleNeg
-  | optSingleNeg
-  deriving DecidableEq, BEq, Repr
-
-/-- WALS Ch 143E/F: whether a language has preverbal and/or postverbal
-    negative morphemes. -/
-inductive NegMorphemePosition where
-  | preverbalOnly
-  | postverbalOnly
-  | preverbalAffixOnly
-  | postverbalAffixOnly
-  | both
-  | none
-  deriving DecidableEq, BEq, Repr
 
 /-! ### Markers and negation systems -/
 
@@ -183,7 +77,7 @@ structure Marker where
       pieces (Burmese *ma-…-bu*). Affixal alternants are recorded by an
       abstract citation form (Turkish *-mA-* for *-ma-* ~ *-me-*). -/
   morphs : List Morph
-  /-- Standard interlinear gloss. Defaults to the WALS-style "NEG". -/
+  /-- Standard interlinear gloss. -/
   gloss : String := "NEG"
   deriving Repr
 
@@ -191,205 +85,113 @@ structure Marker where
 discontinuous pieces separated by `…`. -/
 def Marker.form (m : Marker) : String := toString m.morphs
 
-/-- A language's standard negation system.
+/-- A language's standard negation system: the marker or markers, keyed
+by ISO 639-3 code.
 
-    The Fragment-side joint: every `Fragments/{Lang}/Negation.lean` exposes
-    `def negationSystem : NegationSystem`. Multiple markers handle languages
-    with mood/aspect/lexical-class alternation (Greek, Mandarin, Korean).
-    Length-1 for most languages.
-
-    WALS datapoints are bundled at the system level — in WALS coding,
-    F112A/F143A/F144A take one value per language regardless of how many
-    markers the language has. -/
+Several markers handle mood-, aspect- or lexical-class-conditioned
+alternation (Greek, Mandarin, Korean); most languages have one. -/
 structure NegationSystem where
-  /-- ISO 639-3 code; populated by `NegationSystem.ofISO` and the key
-      for the per-ISO WALS accessors below. -/
+  /-- ISO 639-3 code, the key for the language's WALS values. -/
   iso : String := ""
-  /-- Standard negation marker(s). Order is editorial; Fragment files
-      should put the unmarked / default-context marker first. -/
+  /-- The negation marker(s), unmarked context first. -/
   markers : List Marker
-  /-- WALS Ch 112A: morpheme classification. Should not be hand-encoded
-      in Fragment files — use `NegationSystem.ofISO` to populate from the
-      `Data.WALS` data, which is the single source of truth. -/
-  wals112A : Option Data.WALS.F112A.NegativeMorphemeType := none
-  /-- WALS Ch 143A: NegV / VNeg / double-negation pattern. Populated by
-      `NegationSystem.ofISO`. -/
-  wals143A : Option Data.WALS.F143A.NegVerbOrder := none
-  /-- WALS Ch 144A: full S/O/V positional classification. Populated by
-      `NegationSystem.ofISO`. -/
-  wals144A :
-    Option Data.WALS.F144A.PositionOfNegativeWordWithRespectToSubjectObjectAndVerb
-    := none
   deriving Repr
 
-/-! ### Expletive negation triggers -/
+/-- WALS Ch 112A: the language's negative-morpheme classification. -/
+def NegationSystem.wals112A (s : NegationSystem) :
+    Option Data.WALS.F112A.NegativeMorphemeType :=
+  (Data.WALS.F112A.lookupISO s.iso).map (·.value)
 
-/-- An expletive-negation trigger and the negator it licenses.
+/-- WALS Ch 143A: the order of negative morpheme and verb. -/
+def NegationSystem.wals143A (s : NegationSystem) :
+    Option Data.WALS.F143A.NegVerbOrder :=
+  (Data.WALS.F143A.lookupISO s.iso).map (·.value)
 
-    Trigger classes are the [jin-koenig-2021] Table 5 labels (FEAR,
-    BEFORE, UNLESS, THAN, ...). The Fragment-side joint: EN-attesting
-    `Fragments/{Lang}/Negation.lean` files expose
-    `def enTriggerNegators : List ENTriggerNegator`. -/
-structure ENTriggerNegator where
-  /-- The trigger class label (from [jin-koenig-2021] Table 5). -/
+/-- WALS Ch 144A: the negative word's position relative to subject,
+object and verb. -/
+def NegationSystem.wals144A (s : NegationSystem) :
+    Option Data.WALS.F144A.PositionOfNegativeWordWithRespectToSubjectObjectAndVerb :=
+  (Data.WALS.F144A.lookupISO s.iso).map (·.value)
+
+/-- The negation system of the language with the given ISO 639-3 code. -/
+def NegationSystem.ofISO (iso : String) (markers : List Marker) : NegationSystem :=
+  { iso, markers }
+
+/-! ### Per-language WALS values -/
+
+/-- WALS Ch 114A: which domain the language's asymmetric negation
+affects. -/
+def asymmetrySubtypeOfISO (iso : String) :
+    Option Data.WALS.F114A.AsymmetricNegationSubtype :=
+  (Data.WALS.F114A.lookupISO iso).map (·.value)
+
+/-! ### Expletive negation -/
+
+/-- A lexical trigger of expletive negation together with the negator it
+licenses: Italian *prima che … non*, Mandarin *pà … bié*. -/
+structure ExpletiveTrigger where
+  /-- The trigger's semantic class. -/
   triggerClass : String
-  /-- The language's lexical trigger. -/
+  /-- The triggering lexical item. -/
   triggerForm : String
-  /-- The EN negator form. -/
-  enNegatorForm : String
-  /-- Gloss for the EN negator, when it differs from standard negation. -/
-  enNegatorGloss : Option String := none
-  /-- Whether the EN use is highly entrenched (grammaticalized),
-      when the source classifies it. -/
+  /-- The negator appearing under the trigger. -/
+  negatorForm : String
+  /-- Gloss for that negator, when it differs from standard negation. -/
+  negatorGloss : Option String := none
+  /-- Whether the use is entrenched, when the source classifies it. -/
   highEntrenchment : Option Bool := none
   deriving Repr, BEq, DecidableEq
 
-/-! ### WALS converters -/
+/-! ### Negation strategy
 
-/-- WALS Ch 112A → `NegMorphemeType`. -/
-def ofWALS112A : Data.WALS.F112A.NegativeMorphemeType → NegMorphemeType
-  | .negativeAffix => .affix
-  | .negativeParticle => .particle
-  | .negativeAuxiliaryVerb => .auxVerb
-  | .negativeWordUnclearIfVerbOrParticle => .wordUnclear
-  | .variationBetweenNegativeWordAndAffix => .variation
-  | .doubleNegation => .doubleNeg
-
-/-- WALS Ch 113A → `NegSymmetry`. -/
-def fromWALS113A : Data.WALS.F113A.NegationSymmetry → NegSymmetry
-  | .symmetric  => .symmetric
-  | .asymmetric => .asymmetric
-  | .both       => .both
-
-/-- WALS Ch 114A → `AsymmetrySubtype`. -/
-def fromWALS114A :
-    Data.WALS.F114A.AsymmetricNegationSubtype → AsymmetrySubtype
-  | .aFin           => .finiteness
-  | .aNonreal       => .realityStatus
-  | .aCat           => .otherCategories
-  | .aFinAndANonreal => .finAndNonReal
-  | .aFinAndACat    => .finAndCat
-  | .aNonrealAndACat => .nonRealAndCat
-  | .nonAssignable  => .nonAssignable
-
-/-- WALS Ch 115A → `NegIndefiniteStrategy`. -/
-def fromWALS115A :
-    Data.WALS.F115A.NegativeIndefiniteType → NegIndefiniteStrategy
-  | .predicateNegationAlsoPresent      => .cooccur
-  | .noPredicateNegation               => .preclude
-  | .mixedBehaviour                    => .mixed
-  | .negativeExistentialConstruction   => .negExistential
-
-/-- WALS Ch 143A → `NegVerbPosition`. -/
-def fromWALS143A : Data.WALS.F143A.NegVerbOrder → NegVerbPosition
-  | .negv => .preverbalParticle
-  | .vneg => .postverbalParticle
-  | .negV => .preverbalAffix
-  | .vNeg => .postverbalAffix
-  | .negativeTone => .negativeTone
-  | .type1Type2 => .mixedSingle
-  | .type1Type3 => .mixedSingle
-  | .type1Type4 => .mixedSingle
-  | .type2Type3 => .mixedSingle
-  | .type2Type4 => .mixedSingle
-  | .type3Type4 => .mixedSingle
-  | .type3NegativeInfix => .mixedSingle
-  | .optsingleneg => .optSingleNeg
-  | .obligdoubleneg => .obligDoublNeg
-  | .optdoubleneg => .optDoubleNeg
-  | .opttriplenegObligdoubleneg => .tripleNeg
-  | .opttriplenegOptdoubleneg => .tripleNeg
-
-/-- Build a `NegationSystem` for a language identified by ISO 639-3 code,
-    pulling F112A / F143A / F144A values from the `Data.WALS` data. -/
-def NegationSystem.ofISO (iso : String) (markers : List Marker) :
-    NegationSystem :=
-  { iso
-  , markers
-  , wals112A := (Data.WALS.F112A.lookupISO iso).map (·.value)
-  , wals143A := (Data.WALS.F143A.lookupISO iso).map (·.value)
-  , wals144A := (Data.WALS.F144A.lookupISO iso).map (·.value)
-  }
-
-/-! ### Per-ISO WALS accessors (study-consumed) -/
-
-/-- WALS Ch 112A value for a language, as `NegMorphemeType`. -/
-def morphemeTypeOfISO (iso : String) : Option NegMorphemeType :=
-  (Data.WALS.F112A.lookupISO iso).map (ofWALS112A ·.value)
-
-/-- WALS Ch 113A value for a language, as `NegSymmetry`. -/
-def symmetryOfISO (iso : String) : Option NegSymmetry :=
-  (Data.WALS.F113A.lookupISO iso).map (fromWALS113A ·.value)
-
-/-- WALS Ch 114A value for a language, as `AsymmetrySubtype`. -/
-def asymmetrySubtypeOfISO (iso : String) : Option AsymmetrySubtype :=
-  (Data.WALS.F114A.lookupISO iso).map (fromWALS114A ·.value)
-
-/-- WALS Ch 115A value for a language, as `NegIndefiniteStrategy`. -/
-def negIndefiniteOfISO (iso : String) : Option NegIndefiniteStrategy :=
-  (Data.WALS.F115A.lookupISO iso).map (fromWALS115A ·.value)
-
-/-! ### Negation strategy and the AVC bridge
-[anderson-2006] [heine-1993] [miestamo-2005]
-
-Some languages express sentential negation through a **negative auxiliary
-verb** that hosts inflection (tense, agreement) while the lexical verb
-appears in a nonfinite form (Finnish *ei mene* 'NEG.3SG go') — a special
-case of the aux-headed AVC pattern of `AuxiliaryVerbs`.
-`NegStrategy` classifies negation strategies at this AVC-relevant grain
-and bridges them to Anderson's inflectional patterns, Heine's
-grammaticalization cline, and the WALS Ch 112 morpheme typology. -/
+A **negative auxiliary verb** hosts the inflection its lexical verb
+loses (Finnish *ei mene* 'NEG.3SG go'), making negation a special case of
+the aux-headed auxiliary-verb construction; an affix or a particle does
+not. `Strategy` classifies negation at that grain. -/
 
 open AuxiliaryVerbs (InflPattern)
 open Grammaticalization (GramStage)
 
-/-- Strategy for expressing sentential negation. -/
-inductive NegStrategy where
-  /-- Negative auxiliary verb that inflects (Finnish *ei*, Komi *oz*). -/
+/-- How a language expresses sentential negation. -/
+inductive Strategy where
+  /-- An inflecting negative auxiliary (Finnish *ei*, Komi *oz*). -/
   | negVerb
-  /-- Bound negative morpheme (e.g., Turkish *-mA-*). -/
+  /-- A bound negative morpheme (Turkish *-mA-*). -/
   | negAffix
-  /-- Free negative particle (English *not*, Italian *non*). -/
+  /-- A free negative particle (English *not*, Italian *non*). -/
   | negParticle
   deriving DecidableEq, Repr
 
-/-- A negative verb creates an AVC and therefore has an expected inflectional
-    pattern: aux-headed (the neg verb hosts inflection). Affixes and particles
-    do not create AVCs. -/
-def NegStrategy.expectedInflPattern : NegStrategy → Option InflPattern
-  | .negVerb     => some .auxHeaded
-  | .negAffix    => none
+/-- A negative verb heads an auxiliary-verb construction, so it is
+expected to host the inflection; affixes and particles form no
+construction to head. -/
+def Strategy.expectedInflPattern : Strategy → Option InflPattern
+  | .negVerb => some .auxHeaded
+  | .negAffix | .negParticle => none
+
+/-- The strategy is verbal: its negator is itself a verb. -/
+def Strategy.IsVerbal : Strategy → Prop
+  | .negVerb => True
+  | .negAffix | .negParticle => False
+
+instance : DecidablePred Strategy.IsVerbal
+  | .negVerb => isTrue trivial
+  | .negAffix | .negParticle => isFalse id
+
+/-- The strategy's stage on the grammaticalization cline ([heine-1993];
+[anderson-2006] ch. 7): a negative verb is an auxiliary, a negative affix
+one stage further. A particle is not a bleached verb, so it is off the
+cline entirely. -/
+def Strategy.toGramStage : Strategy → Option GramStage
+  | .negVerb => some .auxiliary
+  | .negAffix => some .affix
   | .negParticle => none
 
-/-- Is this strategy verbal (i.e., does it create an AVC)? -/
-def NegStrategy.isVerbal : NegStrategy → Bool
-  | .negVerb => true
-  | _        => false
-
-/-- Project a negation strategy onto its grammaticalization-cline
-    stage ([heine-1993], [anderson-2006] ch. 7). A negative
-    *verb* (Finnish *ei*, Komi *oz*) sits at the auxiliary stage; a
-    negative *affix* (bound morpheme) is one stage further along the
-    cline. A free negative *particle* (English *not*, Italian *non*)
-    is not on the verbal cline at all — particles are not bleached
-    verbs and don't have a "stage" of grammaticalization in
-    Heine's/Anderson's verbal sense. Returning `none` for `.negParticle`
-    rather than collapsing it onto `.auxiliary` (an earlier
-    formaliser shorthand) preserves [miestamo-2005]'s
-    particle-vs-verb morphological distinction; the cross-framework
-    equivalence theorem `auxiliary_stage_iff_aux_verb_morpheme` in
-    `Studies/Anderson2006.lean` makes the
-    Anderson-cline / Miestamo-morpheme-type agreement Lean-checkable. -/
-def NegStrategy.toGramStage : NegStrategy → Option GramStage
-  | .negVerb     => some .auxiliary
-  | .negAffix    => some .affix
-  | .negParticle => none
-
-/-- Map from AVC-oriented `NegStrategy` to WALS-oriented `NegMorphemeType`:
-    both classify the morphological status of the negative marker. -/
-def NegStrategy.toNegMorphemeType : NegStrategy → NegMorphemeType
-  | .negVerb     => .auxVerb
-  | .negAffix    => .affix
-  | .negParticle => .particle
+/-- The strategy's negative morpheme in the WALS Ch 112A
+classification. -/
+def Strategy.morphemeType : Strategy → Data.WALS.F112A.NegativeMorphemeType
+  | .negVerb => .negativeAuxiliaryVerb
+  | .negAffix => .negativeAffix
+  | .negParticle => .negativeParticle
 
 end Syntax.Negation
