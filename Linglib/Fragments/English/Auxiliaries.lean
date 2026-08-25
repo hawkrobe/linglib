@@ -10,46 +10,26 @@ import Linglib.Morphology.Word.Basic
 open Morphology (Word)
 
 /-!
-# English Auxiliaries Lexicon Fragment
+# English Auxiliaries
 
-Lexical entries for English auxiliary verbs — the modal hub of the
-English Fragment. Three integrated sub-inventories:
+The English auxiliaries as `Auxiliary` entries: the modals *can*, *could*,
+*will*, *would*, *shall*, *should*, *may*, *might*, *must*, the periphrastic
+*have to* and the semi-modals *dare*, *need*, *ought*, each with its
+force–flavor meanings and register; and the agreeing forms of do-support,
+*be* and *have*. The contracted negatives (*can't*, *won't*, …) are entries
+in their own right, carrying `Polarity=Neg`, paired with their bases in
+`contractions`; *mayn't* and *amn't* are paradigm gaps.
 
-- **Modals**: `can`, `could`, `will`, `would`, `shall`, `should`,
-  `may`, `might`, `must`; periphrastic `haveTo`; semi-modals `dare`,
-  `need`, `ought`. Morphology + force-flavor classification + register
-  + contracted-negative form + Zeijlstra-style modal feature
-  interpretability.
-- **Do-support / Be / Have**: `do_`/`does`/`did`, `am`/`is_`/`are`/
-  `was`/`were`, `have_`/`has`/`had`. Carry person/number/tense
-  agreement.
-- **Modal adverbs**: `certainly`, `definitely`, `necessarily`,
-  `possibly`, `perhaps`, `maybe`, `probably`, `potentially`. Adverbial
-  expressions of modal force/flavor (used with auxiliaries in modal
-  concord constructions).
+The modal adverbs (*certainly*, *possibly*, …) and the infinitival marker
+*to* also live here, since they enter the same modal-concord and
+control constructions.
 
-Also includes the infinitival marker `toInf` (PART) — distinct from
-the preposition *to* (ADP).
+## References
 
-## Studies that bind to these entries
-
-This file is a hub: studies analysing English auxiliaries import
-specific entries from here and contribute precondition theorems that
-break if the morphological classification changes. Consumers (as of
-the last audit):
-
-- Modality: `Studies/{Ferreira2023, Rubinstein2014,
-  CarianiSantorio2018, AghaJeretic2022, AghaJeretic2026,
-  CiardelliGuerrini2026, ImelGuoST2026, LiuRotter2025,
-  RotterLiu2025, YingEtAl2025}`
-- Auxiliary diagnostics: `Studies/ZwickyPullum1983`
-- Argument structure / control: `Studies/
-  Osborne2019`, `Studies/Osborne2019Control`
-- Reference: `Studies/Percus2000` (via modal-adverb
-  side, indirectly)
-
-To find every claim made about a particular entry, grep for
-`English.Auxiliaries.<entry>` across the library.
+* [kratzer-1981]
+* [palmer-2001]
+* [zwicky-pullum-1983], Table 1
+* [imel-guo-steinert-threlkeld-2026]
 -/
 
 
@@ -60,210 +40,167 @@ section Modals
 open Modality (ForceFlavor ModalForce ModalFlavor ModalInterpretability ModalFeature)
 open Features.Register (Level)
 
-/-- Auxiliary type -/
-inductive AuxType where
-  | modal      -- can, will, must, should, etc.
-  | doSupport  -- do, does, did
-  | be         -- am, is, are, was, were
-  | have       -- have, has, had
-  deriving DecidableEq, Repr
+/-- Agreement features of a finite auxiliary. "Past" modals (*could*,
+*would*) carry `Past` as a morphological feature even where they are
+semantically non-past. -/
+private def agr (person : Option UD.Person := none)
+    (number : Option UD.Number := none) (tense : Option UD.Tense := none) :
+    UD.MorphFeatures :=
+  { verbForm := some .Fin, person := person, number := number, tense := tense }
 
-structure AuxEntry where
-  form : String
-  auxType : AuxType
-  /-- Person/number agreement -/
-  person : Option UD.Person := none
-  number : Option UD.Number := none
-  /-- Morphological tense. `none` for base forms (modals like *can*, *will*).
-      Note: "past" modals (*could*, *would*) carry `Past` as a morphological
-      feature even when semantically non-past (counterfactual, polite). -/
-  tense : Option UD.Tense := none
-  /-- Modal meaning in the force-flavor space (Imel, Guo, & [imel-guo-steinert-threlkeld-2026]).
-      Empty for non-modal auxiliaries. -/
-  modalMeaning : List ForceFlavor := []
-  /-- Register level. Formal items (*must*,
-      *shall*) vs informal items (*have to*) vs unmarked (*can*, *will*). -/
-  register : Level := .neutral
-  /-- Contracted negative form with *-n't*, if it exists. `none` for paradigm gaps (*mayn't*, *amn't*). -/
-  negForm : Option String := none
-  /-- Phonological irregularity in the negative form (Z&P criterion C).
-      `true` when the contracted form cannot be derived by regular *-n't*
-      suffixation (e.g., *won't* ← *will*, *can't* ← *can*, *don't* ← *do*). -/
-  negIrregular : Bool := false
-  /-- Modal feature interpretability ([zeijlstra-2007]).
-      Modal auxiliaries carry **uninterpretable** features [u∃/∀-MOD]:
-      they are semantically vacuous and checked by a c-commanding
-      interpretable operator. Non-modal auxiliaries (do, be, have) carry
-      no modal feature (`none`).
+/-- The contracted negative of an auxiliary: the same entry with the
+contracted form and `Polarity=Neg`. -/
+private def contract (a : Auxiliary) (form : String) : Auxiliary :=
+  { a with form := form, features := { a.features with polarity := some .Neg } }
 
-      [ciardelli-guerrini-2026] use this to derive narrow-scope
-      LFs for "may A or may B" via modal concord: both "may"s carry
-      [u∃-MOD], checked by a single silent [i∃-MOD] operator. -/
-  interpretability : Option ModalInterpretability := none
-  deriving Repr, BEq
-
-/-- An auxiliary bears its agreement number (`HasNumber`). -/
-instance : HasNumber AuxEntry := ⟨fun a => a.number.bind Number.fromUD⟩
-
-instance : HasPerson AuxEntry := ⟨fun a => a.person.map Person.fromUD⟩
-
-/-- Every `AuxEntry` projects to a UD `AUX` word, carrying its agreement
-features. -/
-instance : Auxiliary AuxEntry where
-  toWord a := { form := a.form, cat := .AUX
-              , features := { person := a.person, number := a.number } }
-  cat_aux _ := rfl
-
--- Modals (no agreement). Modal meanings follow [kratzer-1981], [palmer-2001].
--- Each uses cartesianProduct with singleton force (fixed force, variable flavor).
 private abbrev cp := ForceFlavor.cartesianProduct
 
 -- Modals. Negative forms from [zwicky-pullum-1983], Table 1.
-def can : AuxEntry where
-  form := "can"; auxType := .modal
-  modalMeaning := cp [.possibility] [.epistemic, .deontic, .circumstantial]
-  negForm := some "can't"; negIrregular := true   -- [kænt] not *[kænənt]
-  interpretability := some .uninterpretable
-def could : AuxEntry where
-  form := "could"; auxType := .modal; tense := some .Past
-  modalMeaning := cp [.possibility] [.epistemic, .deontic, .circumstantial]
-  negForm := some "couldn't"
-  interpretability := some .uninterpretable
-def will : AuxEntry where
-  form := "will"; auxType := .modal
-  modalMeaning := cp [.necessity] [.epistemic, .circumstantial]
-  negForm := some "won't"; negIrregular := true    -- [wont] not *[wɪlnt]
-  interpretability := some .uninterpretable
-def would : AuxEntry where
-  form := "would"; auxType := .modal; tense := some .Past
-  modalMeaning := cp [.necessity] [.epistemic, .circumstantial]
-  negForm := some "wouldn't"
-  interpretability := some .uninterpretable
-def shall : AuxEntry where
-  form := "shall"; auxType := .modal
-  modalMeaning := cp [.necessity] [.deontic]
+def can : Auxiliary where
+  form := "can"
+  modality := cp [.possibility] [.epistemic, .deontic, .circumstantial]
+def could : Auxiliary where
+  form := "could"
+  features := agr (tense := some .Past)
+  modality := cp [.possibility] [.epistemic, .deontic, .circumstantial]
+def will : Auxiliary where
+  form := "will"
+  modality := cp [.necessity] [.epistemic, .circumstantial]
+def would : Auxiliary where
+  form := "would"
+  features := agr (tense := some .Past)
+  modality := cp [.necessity] [.epistemic, .circumstantial]
+def shall : Auxiliary where
+  form := "shall"
   register := .formal
-  negForm := some "shan't"; negIrregular := true   -- [ʃænt] not *[ʃælnt]
-  interpretability := some .uninterpretable
-def should : AuxEntry where
-  form := "should"; auxType := .modal; tense := some .Past
-  modalMeaning := cp [.weakNecessity] [.deontic, .epistemic]
-  negForm := some "shouldn't"
-  interpretability := some .uninterpretable
-def may : AuxEntry where
-  form := "may"; auxType := .modal
-  modalMeaning := cp [.possibility] [.epistemic, .deontic]
-  negForm := none                                  -- *mayn't: paradigm gap
-  interpretability := some .uninterpretable
-def might : AuxEntry where
-  form := "might"; auxType := .modal; tense := some .Past
-  modalMeaning := cp [.possibility] [.epistemic]
-  negForm := some "mightn't"
-  interpretability := some .uninterpretable
-def must : AuxEntry where
-  form := "must"; auxType := .modal
-  modalMeaning := cp [.necessity] [.epistemic, .deontic, .circumstantial]
+  modality := cp [.necessity] [.deontic]
+def should : Auxiliary where
+  form := "should"
+  features := agr (tense := some .Past)
+  modality := cp [.weakNecessity] [.deontic, .epistemic]
+def may : Auxiliary where
+  form := "may"
+  modality := cp [.possibility] [.epistemic, .deontic]
+def might : Auxiliary where
+  form := "might"
+  features := agr (tense := some .Past)
+  modality := cp [.possibility] [.epistemic]
+def must : Auxiliary where
+  form := "must"
   register := .formal
-  negForm := some "mustn't"; negIrregular := true  -- [t] deletion: [mʌsnt]
-  interpretability := some .uninterpretable
+  modality := cp [.necessity] [.epistemic, .deontic, .circumstantial]
 
 -- Semi-modals and periphrastic modals
 
 /-- *Have to*: periphrastic deontic/circumstantial necessity.
     Informal register variant of *must*.
     Inflects unlike true modals: *has to*, *had to*, *having to*. -/
-def haveTo : AuxEntry where
-  form := "have to"; auxType := .modal
-  modalMeaning := cp [.necessity] [.deontic, .circumstantial]
+def haveTo : Auxiliary where
+  form := "have to"
   register := .informal
-  interpretability := some .uninterpretable
+  modality := cp [.necessity] [.deontic, .circumstantial]
 
 -- Semi-modals (Z&P Table 1 rows o–q)
-def dare : AuxEntry where
-  form := "dare"; auxType := .modal
-  negForm := some "daren't"
-  interpretability := some .uninterpretable
-def need : AuxEntry where
-  form := "need"; auxType := .modal
-  modalMeaning := cp [.necessity] [.deontic, .circumstantial]
-  negForm := some "needn't"
-  interpretability := some .uninterpretable
-def ought : AuxEntry where
-  form := "ought"; auxType := .modal
-  modalMeaning := cp [.weakNecessity] [.deontic, .epistemic]
-  negForm := some "oughtn't"
-  interpretability := some .uninterpretable
+def dare : Auxiliary where
+  form := "dare"
+def need : Auxiliary where
+  form := "need"
+  modality := cp [.necessity] [.deontic, .circumstantial]
+def ought : Auxiliary where
+  form := "ought"
+  modality := cp [.weakNecessity] [.deontic, .epistemic]
 
 -- Do-support
-def do_ : AuxEntry where
-  form := "do"; auxType := .doSupport; number := some .Plur
-  negForm := some "don't"; negIrregular := true    -- [dont] not *[dunt]
-def does : AuxEntry where
-  form := "does"; auxType := .doSupport; person := some .third; number := some .Sing
-  negForm := some "doesn't"
-def did : AuxEntry where
-  form := "did"; auxType := .doSupport; tense := some .Past
-  negForm := some "didn't"
+def do_ : Auxiliary where
+  form := "do"
+  features := agr (number := some .Plur)
+def does : Auxiliary where
+  form := "does"
+  features := agr (person := some .third) (number := some .Sing)
+def did : Auxiliary where
+  form := "did"
+  features := agr (tense := some .Past)
 
 -- Be
-def am : AuxEntry where
-  form := "am"; auxType := .be; person := some .first; number := some .Sing
-  negForm := none                                  -- *amn't: paradigm gap
-def is_ : AuxEntry where
-  form := "is"; auxType := .be; person := some .third; number := some .Sing
-  negForm := some "isn't"
-def are : AuxEntry where
-  form := "are"; auxType := .be; number := some .Plur
-  negForm := some "aren't"
-def was : AuxEntry where
-  form := "was"; auxType := .be; number := some .Sing; tense := some .Past
-  negForm := some "wasn't"
-def were : AuxEntry where
-  form := "were"; auxType := .be; number := some .Plur; tense := some .Past
-  negForm := some "weren't"
+def am : Auxiliary where
+  form := "am"
+  features := agr (person := some .first) (number := some .Sing)
+def is_ : Auxiliary where
+  form := "is"
+  features := agr (person := some .third) (number := some .Sing)
+def are : Auxiliary where
+  form := "are"
+  features := agr (number := some .Plur)
+def was : Auxiliary where
+  form := "was"
+  features := agr (number := some .Sing) (tense := some .Past)
+def were : Auxiliary where
+  form := "were"
+  features := agr (number := some .Plur) (tense := some .Past)
 
 -- Have
-def have_ : AuxEntry where
-  form := "have"; auxType := .have; number := some .Plur
-  negForm := some "haven't"
-def has : AuxEntry where
-  form := "has"; auxType := .have; person := some .third; number := some .Sing
-  negForm := some "hasn't"
-def had : AuxEntry where
-  form := "had"; auxType := .have; tense := some .Past
-  negForm := some "hadn't"
+def have_ : Auxiliary where
+  form := "have"
+  features := agr (number := some .Plur)
+def has : Auxiliary where
+  form := "has"
+  features := agr (person := some .third) (number := some .Sing)
+def had : Auxiliary where
+  form := "had"
+  features := agr (tense := some .Past)
 
-def allAuxiliaries : List AuxEntry := [
-  can, could, will, would, shall, should, may, might, must,
-  haveTo, dare, need, ought,
-  do_, does, did,
-  am, is_, are, was, were,
-  have_, has, had
-]
+/-- The modal auxiliaries. -/
+def modals : List Auxiliary :=
+  [can, could, will, would, shall, should, may, might, must, haveTo, dare, need, ought]
 
-def AuxEntry.toWord (a : AuxEntry) : Word :=
-  { form := a.form
-  , cat := .AUX
-  , features := {
-      verbForm := some .Fin
-      , person := a.person
-      , number := a.number
-    }
-  }
+/-- The forms of do-support. -/
+def doForms : List Auxiliary := [do_, does, did]
 
-/-- Project to the shared modal item core (form + meaning + register). -/
-def AuxEntry.toModalItem (a : AuxEntry) : Modality.ModalItem where
-  form := a.form
-  meaning := a.modalMeaning
-  register := a.register
+/-- The finite forms of *be*. -/
+def beForms : List Auxiliary := [am, is_, are, was, were]
 
-/-- Project to the modal feature (force × interpretability) for the primary
-    force value. Returns `none` for non-modal auxiliaries or entries without
-    modal meaning. -/
-def AuxEntry.toModalFeature (a : AuxEntry) : Option ModalFeature :=
-  match a.interpretability, a.modalMeaning with
-  | some interp, ff :: _ => some ⟨ff.force, interp⟩
-  | _, _ => none
+/-- The finite forms of *have*. -/
+def haveForms : List Auxiliary := [have_, has, had]
+
+def allAuxiliaries : List Auxiliary := modals ++ doForms ++ beForms ++ haveForms
+
+/-! ### Contracted negatives
+
+The *-n't* forms ([zwicky-pullum-1983] Table 1). *mayn't* and *amn't* are
+paradigm gaps and have no entry. -/
+
+def cant : Auxiliary := contract can "can't"
+def couldnt : Auxiliary := contract could "couldn't"
+def wont : Auxiliary := contract will "won't"
+def wouldnt : Auxiliary := contract would "wouldn't"
+def shant : Auxiliary := contract shall "shan't"
+def shouldnt : Auxiliary := contract should "shouldn't"
+def mightnt : Auxiliary := contract might "mightn't"
+def mustnt : Auxiliary := contract must "mustn't"
+def darent : Auxiliary := contract dare "daren't"
+def neednt : Auxiliary := contract need "needn't"
+def oughtnt : Auxiliary := contract ought "oughtn't"
+def dont : Auxiliary := contract do_ "don't"
+def doesnt : Auxiliary := contract does "doesn't"
+def didnt : Auxiliary := contract did "didn't"
+def isnt : Auxiliary := contract is_ "isn't"
+def arent : Auxiliary := contract are "aren't"
+def wasnt : Auxiliary := contract was "wasn't"
+def werent : Auxiliary := contract were "weren't"
+def havent : Auxiliary := contract have_ "haven't"
+def hasnt : Auxiliary := contract has "hasn't"
+def hadnt : Auxiliary := contract had "hadn't"
+
+/-- The contracted negatives. -/
+def negatives : List Auxiliary := [cant, couldnt, wont, wouldnt, shant, shouldnt, mightnt, mustnt, darent, neednt, oughtnt, dont, doesnt, didnt, isnt, arent, wasnt, werent, havent, hasnt, hadnt]
+
+/-- Each auxiliary paired with its contracted negative. -/
+def contractions : List (Auxiliary × Auxiliary) :=
+  [(can, cant), (could, couldnt), (will, wont), (would, wouldnt), (shall, shant), (should, shouldnt), (might, mightnt), (must, mustnt), (dare, darent), (need, neednt), (ought, oughtnt), (do_, dont), (does, doesnt), (did, didnt), (is_, isnt), (are, arent), (was, wasnt), (were, werent), (have_, havent), (has, hasnt), (had, hadnt)]
+
+/-- The contracted negative of an auxiliary, if it has one. -/
+def negative (a : Auxiliary) : Option Auxiliary :=
+  (contractions.find? (·.1 == a)).map (·.2)
 
 end Modals
 

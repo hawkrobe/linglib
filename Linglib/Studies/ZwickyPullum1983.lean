@@ -187,7 +187,6 @@ of inflectional affixes, not clitics.
 namespace ZwickyPullum1983
 
 open Morphology.Diagnostics
-open English.Auxiliaries (AuxEntry)
 
 -- ============================================================================
 -- §1: Diagnostic Profiles
@@ -324,52 +323,35 @@ theorem clitics_unambiguous :
     cliticD.isUnambiguousClitic = true := by
   constructor <;> [native_decide; constructor <;> native_decide]
 
--- ============================================================================
--- §3: Paradigm Gap Verification (Criterion B)
--- ============================================================================
+/-! ### Paradigm gaps (criterion B)
 
-/-! Verify that the paradigm gaps in Table 1 are encoded in the Fragment data. -/
-
-open English.Auxiliaries in
-/-- *may* has no contracted negative form (*mayn't is a paradigm gap). -/
-theorem may_gap : may.negForm = none := rfl
+*mayn't* and *amn't* have no entry among the fragment's contracted
+negatives. -/
 
 open English.Auxiliaries in
-/-- *am* has no contracted negative form (*amn't is a paradigm gap). -/
-theorem am_gap : am.negForm = none := rfl
-
--- ============================================================================
--- §4: Morphophonological Irregularity Verification (Criterion C)
--- ============================================================================
-
-/-! Verify that the phonologically irregular forms are flagged in Fragment data. -/
+theorem may_gap : negative may = none := by decide
 
 open English.Auxiliaries in
-/-- *won't* is phonologically irregular (not *willn't*). -/
-theorem wont_irregular : will.negIrregular = true := rfl
+theorem am_gap : negative am = none := by decide
+
+/-! ### Morphophonological irregularity (criterion C) -/
 
 open English.Auxiliaries in
-/-- *can't* is phonologically irregular. -/
-theorem cant_irregular : can.negIrregular = true := rfl
+/-- The contracted negatives whose form is not what suffixing *-n't* to the
+auxiliary would give: *won't*, *can't*, *shan't*, *don't* ([doʊnt], regular
+only in spelling), and *mustn't* with its [t]-deletion. -/
+def irregularNegatives : List Auxiliary := [wont, cant, shant, dont, mustnt]
 
 open English.Auxiliaries in
-/-- *don't* is phonologically irregular (not *don't* [dunt]). -/
-theorem dont_irregular : do_.negIrregular = true := rfl
+/-- Every irregular form is one of the fragment's contracted negatives. -/
+theorem irregular_are_negatives : ∀ a ∈ irregularNegatives, a ∈ negatives := by decide
 
 open English.Auxiliaries in
-/-- *shan't* is phonologically irregular (not *shalln't*). -/
-theorem shant_irregular : shall.negIrregular = true := rfl
-
-open English.Auxiliaries in
-/-- *mustn't* shows [t]-deletion: [mʌsnt] not *[mʌstnt]. -/
-theorem mustnt_irregular : must.negIrregular = true := rfl
-
-open English.Auxiliaries in
-/-- Regular forms: *couldn't*, *wouldn't*, *shouldn't* show no irregularity. -/
+/-- The regular *-n't* forms are contracted negatives that are not
+irregular. -/
 theorem regular_negatives :
-    could.negIrregular = false ∧
-    would.negIrregular = false ∧
-    should.negIrregular = false := ⟨rfl, rfl, rfl⟩
+    ∀ a ∈ [couldnt, wouldnt, shouldnt], a ∈ negatives ∧ a ∉ irregularNegatives := by
+  decide
 
 -- ============================================================================
 -- §5: Semantic Scope Bridge (Criterion D)
@@ -517,32 +499,22 @@ end ScopeBridge
 matches the auxiliary inventory from `Fragments/English/FunctionWords`. -/
 
 open English.Auxiliaries in
-/-- Every auxiliary in the inventory is either a modal, do-support, be, or have. -/
-theorem aux_hosts_are_closed_class :
-    allAuxiliaries.all (λ a => a.auxType == .modal
-      || a.auxType == .doSupport
-      || a.auxType == .be
-      || a.auxType == .have) = true := by native_decide
-
-open English.Auxiliaries in
 /-- The number of auxiliaries with contracted negative forms
     (= the productive range of *-n't*). -/
-def ntHostCount : Nat :=
-  allAuxiliaries.filter (λ a => a.negForm.isSome) |>.length
+def ntHostCount : Nat := contractions.length
 
 open English.Auxiliaries in
 /-- The number of paradigm gaps (auxiliaries without *-n't*). -/
 def ntGapCount : Nat :=
-  allAuxiliaries.filter (λ a => a.negForm.isNone) |>.length
+  allAuxiliaries.filter (λ a => (negative a).isNone) |>.length
 
 open English.Auxiliaries in
 /-- Most auxiliaries have a contracted negative form, but there are gaps. -/
-theorem nt_has_gaps : ntGapCount > 0 := by native_decide
+theorem nt_has_gaps : ntGapCount > 0 := by decide
 
 open English.Auxiliaries in
 /-- At least five auxiliaries show phonological irregularity in their
 contracted negative form (Z&P criterion C). -/
-theorem nt_has_irregulars :
-    (allAuxiliaries.filter (λ a => a.negIrregular)).length ≥ 5 := by native_decide
+theorem nt_has_irregulars : irregularNegatives.length ≥ 5 := by decide
 
 end ZwickyPullum1983

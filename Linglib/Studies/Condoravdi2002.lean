@@ -450,7 +450,7 @@ end Adverbs
     Other studies binding these Fragment entries are discoverable by
     greping `English.Auxiliaries.<entry>` across `Studies/`. -/
 theorem might_have_distinct_aux_types :
-    English.Auxiliaries.might.auxType ≠
-      English.Auxiliaries.have_.auxType := by decide
+    English.Auxiliaries.might ∈ English.Auxiliaries.modals ∧
+      English.Auxiliaries.have_ ∉ English.Auxiliaries.modals := by decide
 
 end Condoravdi2002

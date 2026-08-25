@@ -15,8 +15,8 @@ unaccusativity class of the lexical verb (the Auxiliary Selection Hierarchy):
 unaccusatives → *be* (Italian *è arrivato*, French *est arrivé*),
 unergatives/transitives → *have* (Italian *ha mangiato*). English has collapsed
 the split (all verbs take *have*). Graduated from the dissolved `Typology/`
-drawer; the orthogonal AVC inflection typology split off to
-`Syntax/Category/Auxiliary/Constructions.lean`.
+drawer; the orthogonal inflectional typology of auxiliary verb
+constructions lives in `Syntax/Category/Auxiliary/Constructions.lean`.
 
 ## Main definitions
 
@@ -38,24 +38,36 @@ namespace ArgumentStructure.AuxiliarySelection
 
 /-- Perfect auxiliary choice. -/
 inductive PerfectAux where
-  | be   -- Italian *essere*, French *être*, German *sein*
-  | have -- Italian *avere*, French *avoir*, German *haben*
+  /-- Italian *essere*, French *être*, German *sein*. -/
+  | be
+  /-- Italian *avere*, French *avoir*, German *haben*. -/
+  | have
   deriving DecidableEq, Repr
 
 /-- Transitivity class relevant to auxiliary selection. -/
 inductive TransitivityClass where
-  | unaccusative  -- subject = theme (arrive, fall, die)
-  | unergative    -- subject = agent, no object (run, laugh)
-  | transitive    -- subject = agent, object = theme (eat, build)
-  | reflexive     -- reflexive clitic triggers *be* in Romance, *have* in German
+  /-- Subject is the theme: *arrive*, *fall*, *die*. -/
+  | unaccusative
+  /-- Subject is an agent and there is no object: *run*, *laugh*. -/
+  | unergative
+  /-- Subject is an agent and the object a theme: *eat*, *build*. -/
+  | transitive
+  /-- A reflexive clitic, which selects *be* in Romance and *have* in
+      German. -/
+  | reflexive
   deriving DecidableEq, Repr
 
 /-- Language-level auxiliary selection rule. -/
 inductive SelectionRule where
-  | split    -- unaccusatives → be, rest → have (Italian, French, German, Dutch)
-  | haveOnly -- all verbs → have (English, Spanish)
-  | beOnly   -- all verbs → be (rare; some Sardinian dialects)
-  | mixed    -- gradient/variable selection (some German dialects)
+  /-- Unaccusatives take *be* and the rest *have*: Italian, French, German,
+      Dutch. -/
+  | split
+  /-- Every verb takes *have*: English, Spanish. -/
+  | haveOnly
+  /-- Every verb takes *be*; rare, reported for some Sardinian dialects. -/
+  | beOnly
+  /-- Gradient or variable selection, as in some German dialects. -/
+  | mixed
   deriving DecidableEq, Repr
 
 /-- Auxiliary selection driven by a single binary parameter: does the

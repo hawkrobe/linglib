@@ -96,31 +96,31 @@ matching the paper's §2.1 categorization. -/
 
 /-- "must" is strong necessity (paper ex. 6-7, 11). -/
 theorem must_is_strong_necessity :
-    must.modalMeaning.any (·.force == .necessity) = true := by native_decide
+    must.modality.any (·.force == .necessity) = true := by native_decide
 
 /-- "should" is weak necessity (paper ex. 8-9, 12-13). -/
 theorem should_is_weak_necessity :
-    should.modalMeaning.any (·.force == .weakNecessity) = true := by native_decide
+    should.modality.any (·.force == .weakNecessity) = true := by native_decide
 
 /-- "ought" is weak necessity (paper ex. 8-9, 12-13). -/
 theorem ought_is_weak_necessity :
-    ought.modalMeaning.any (·.force == .weakNecessity) = true := by native_decide
+    ought.modality.any (·.force == .weakNecessity) = true := by native_decide
 
 /-- "may" is possibility (paper §1). -/
 theorem may_is_possibility :
-    may.modalMeaning.any (·.force == .possibility) = true := by native_decide
+    may.modality.any (·.force == .possibility) = true := by native_decide
 
 /-- "might" is possibility (paper §1). -/
 theorem might_is_possibility :
-    might.modalMeaning.any (·.force == .possibility) = true := by native_decide
+    might.modality.any (·.force == .possibility) = true := by native_decide
 
 /-- "must" is NOT classified as weak necessity. -/
 theorem must_not_weak :
-    must.modalMeaning.any (·.force == .weakNecessity) = false := by native_decide
+    must.modality.any (·.force == .weakNecessity) = false := by native_decide
 
 /-- "should" is NOT classified as strong necessity. -/
 theorem should_not_strong :
-    should.modalMeaning.any (·.force == .necessity) = false := by native_decide
+    should.modality.any (·.force == .necessity) = false := by native_decide
 
 -- ============================================================================
 -- §3. Kratzer-Theoretic Entailment (Directive.lean bridge)
