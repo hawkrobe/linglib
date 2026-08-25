@@ -54,8 +54,6 @@ into being."
 * **Bridges** — `Core`'s `DenotG` apparatus and `Reference/Binding`'s Reader monad
 -/
 
-set_option autoImplicit false
-
 namespace Charlow2018
 
 open Intensional

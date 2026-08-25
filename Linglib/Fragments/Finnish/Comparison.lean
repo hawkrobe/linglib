@@ -10,8 +10,6 @@ separative option marking the standard with the partitive instead —
 Degree is marked by the bound affix *-mpi*; the superlative is morphological.
 -/
 
-set_option autoImplicit false
-
 namespace Finnish.Comparison
 
 open Comparative

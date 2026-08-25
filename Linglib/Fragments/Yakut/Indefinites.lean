@@ -30,8 +30,6 @@ outside D&A's SK/SU/NS subdivision; their D&A surface-classification is
 `none` by design.
 -/
 
-set_option autoImplicit false
-
 namespace Yakut.Indefinites
 
 open Indefinite

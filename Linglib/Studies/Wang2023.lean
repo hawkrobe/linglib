@@ -53,8 +53,6 @@ This file connects three layers:
 8. HonLevel ↔ ContainmentPair bridge — `ContainmentPairLike HonLevel` instance
 -/
 
-set_option autoImplicit false
-
 namespace Wang2023
 
 open Features (ContainmentPair ContainmentPairLike)

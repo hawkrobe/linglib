@@ -18,8 +18,6 @@ content of the middle types (units clumped together vs. connected but
 separable) is self-connection in the sense of [casati-varzi-1999].
 -/
 
-set_option autoImplicit false
-
 /-- Individuation types ([grimm-2018] (17)/(19)): the scale
     substance < granular aggregate < collective aggregate < individual. -/
 inductive IndividuationType where

@@ -67,8 +67,6 @@ The convergence of three independent mechanisms on the same result
 suggests restricted quantification is a deep linguistic universal.
 -/
 
-set_option autoImplicit false
-
 namespace Belnap1970
 
 open Semantics.Presupposition (PartialProp)

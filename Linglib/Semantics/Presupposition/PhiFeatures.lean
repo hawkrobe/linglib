@@ -45,8 +45,6 @@ separate general phi-feature presuppositional theory (which belongs in
 belong in `Studies/`).
 -/
 
-set_option autoImplicit false
-
 namespace Semantics.Presupposition.PhiFeatures
 
 open Mereology (Atom)

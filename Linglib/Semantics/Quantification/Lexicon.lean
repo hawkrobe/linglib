@@ -25,8 +25,6 @@ parameter type of the GQT `gqtMeaning` operator.
 -/
 
 
-set_option autoImplicit false
-
 namespace Quantification.Lexicon
 
 

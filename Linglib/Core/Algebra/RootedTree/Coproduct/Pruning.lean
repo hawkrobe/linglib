@@ -7,8 +7,6 @@ import Mathlib.RingTheory.TensorProduct.Maps
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # The pruning coproduct Δ^ρ
 

@@ -37,8 +37,6 @@ algorithm, not theorems about the typology.
   classifications diverge. Three representative cases.
 -/
 
-set_option autoImplicit false
-
 namespace Aikhenvald2004
 
 open Semantics.Evidential

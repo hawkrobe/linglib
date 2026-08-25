@@ -68,8 +68,6 @@ claiming it fails under point-estimate semantics (the old reflection
 tactic's interval arithmetic merely could not separate the sides).
 -/
 
-set_option autoImplicit false
-
 namespace YoonEtAl2020
 
 open scoped ENNReal

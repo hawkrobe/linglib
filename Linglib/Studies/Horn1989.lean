@@ -57,8 +57,6 @@ K-G consilience theorem in `KirkGiannini2024.lean`: K-G derives the
 same three predictions WITHOUT lexical ambiguity in *not*.
 -/
 
-set_option autoImplicit false
-
 namespace Horn1989
 
 /-- **Horn's two negations.** The lexical item *not* is ambiguous

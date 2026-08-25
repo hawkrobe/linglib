@@ -29,8 +29,6 @@ finite normalization) are provided for the patterns that recur in
 goes through `ennreal_arith` (see `Linglib.Core.Probability.ENNRealArith`).
 -/
 
-set_option autoImplicit false
-
 namespace PMF
 
 variable {α : Type*} [Fintype α]

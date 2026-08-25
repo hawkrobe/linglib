@@ -57,8 +57,6 @@ the per-paper inline `PMF.normalize ∘ exp ∘ score` pattern with a
 named primitive backed by the structural-decomposition lemma.
 -/
 
-set_option autoImplicit false
-
 open scoped ENNReal
 
 namespace PMF

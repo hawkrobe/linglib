@@ -65,8 +65,6 @@ strength directly (`mp_reverses_markedness`).
 - §4: Presuppositional strict total order on well-formed cells
 -/
 
-set_option autoImplicit false
-
 namespace Semantics.Presupposition.MaximizePresupposition
 
 open Features (ContainmentPair)

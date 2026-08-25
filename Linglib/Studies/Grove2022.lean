@@ -71,8 +71,6 @@ derives it from scope rather than from local-context filtering.
 | Scope | Indefinites escape islands | Presuppositions project past filters |
 -/
 
-set_option autoImplicit false
-
 namespace Grove2022
 
 open Trivalent (Prop3)

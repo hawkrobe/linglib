@@ -67,8 +67,6 @@ applying (paper §8.2 footnote 32).
 | 12| Universal-base will-conditional refutes CEM (the Lewis side) | `universal_will_conditional_cem_fails` |
 -/
 
-set_option autoImplicit false
-
 namespace CarianiSantorio2018
 
 open _root_.Semantics.Conditionals (SelectionFunction)

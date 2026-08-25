@@ -9,8 +9,6 @@ import Mathlib.Data.Multiset.Bind
 import Mathlib.Data.Multiset.Filter
 import Mathlib.Tactic.Abel
 
-set_option autoImplicit false
-
 /-!
 # Path-based single-vertex insertion and vertex decomposition for `RoseTree α`
 [foissy-typed-decorated-rooted-trees-2018]

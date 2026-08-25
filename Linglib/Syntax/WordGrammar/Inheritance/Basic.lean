@@ -42,8 +42,6 @@ negative `IsA` claims both reduce by `decide`. Termination of `ancestors`
 is bounded by `nodeUniverse.length`, not a magic constant.
 -/
 
-set_option autoImplicit false
-
 universe u v
 
 namespace WordGrammar.Inheritance

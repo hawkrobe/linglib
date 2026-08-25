@@ -12,8 +12,6 @@ Hindi-Urdu: initial polar Q particle *kya:*, wh-in-situ, polar formed by
 particle.
 -/
 
-set_option autoImplicit false
-
 namespace HindiUrdu.Questions
 
 open _root_.Syntax.Question

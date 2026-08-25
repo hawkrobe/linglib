@@ -8,8 +8,6 @@ import Mathlib.Data.Multiset.Basic
 import Mathlib.Data.Multiset.Bind
 import Mathlib.Data.Multiset.Filter
 
-set_option autoImplicit false
-
 /-!
 # Multi-path multi-tree grafting and vertex decomposition for `RoseTree α`
 [foissy-typed-decorated-rooted-trees-2018]

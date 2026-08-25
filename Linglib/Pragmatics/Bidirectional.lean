@@ -73,8 +73,6 @@ correspond to weak-BiOT super-optimal pairs for scalar games
 (see `Studies/Franke2011/ScalarGames.lean`).
 -/
 
-set_option autoImplicit false
-
 namespace Pragmatics.Bidirectional
 
 open Core.Optimization.Evaluation

@@ -62,8 +62,6 @@ condition from `Semantics.Probabilistic.ConditionalAssertability`: a conditional
 3. **Experiment 3: Assertability Thresholds** — θ ≈ 0.88 from model fitting.
 -/
 
-set_option autoImplicit false
-
 namespace GrusdtLassiterFranke2022
 
 open Causation

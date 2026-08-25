@@ -68,8 +68,6 @@ on the Ragni et al. 2019 dataset; bib entries for the latter two are deferred
 pending verified DOI/page metadata.
 -/
 
-set_option autoImplicit false
-
 namespace TesslerTenenbaumGoodman2022
 
 open Quantification.Syllogistic

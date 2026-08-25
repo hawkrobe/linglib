@@ -61,8 +61,6 @@ pattern end-to-end is the natural next step — see commented sketch in
 `L0LassiterGoodman` and `marginalizeKernel` docstrings for how to use them.
 -/
 
-set_option autoImplicit false
-
 open scoped ENNReal
 
 namespace RSA

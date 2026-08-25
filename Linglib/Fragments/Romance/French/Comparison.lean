@@ -9,8 +9,6 @@ marks degree; the superlative is the definite article plus the comparative
 (*le plus grand*).
 -/
 
-set_option autoImplicit false
-
 namespace French.Comparison
 
 open Comparative

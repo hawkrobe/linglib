@@ -5,8 +5,6 @@ Authors: Robert Hawkins
 -/
 import Mathlib.LinearAlgebra.TensorPower.Symmetric
 
-set_option autoImplicit false
-
 /-!
 # Universal property of `SymmetricPower R ι M`
 

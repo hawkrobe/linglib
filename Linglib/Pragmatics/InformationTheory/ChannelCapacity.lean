@@ -30,8 +30,6 @@ file is capacity-specific.
 on the (ι→ℝ) form. Bridge: `PMF.toReal_klDiv_eq_sum_log_div`.)
 -/
 
-set_option autoImplicit false
-
 namespace Pragmatics.InformationTheory
 
 open Finset BigOperators Real

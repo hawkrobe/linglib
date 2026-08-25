@@ -58,8 +58,6 @@ The bridge to `ProbabilityTheory.posterior` (via `PMF.toMeasure` /
 consumer needs the measure-theoretic identity.
 -/
 
-set_option autoImplicit false
-
 open scoped ENNReal
 
 namespace ENNReal

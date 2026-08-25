@@ -2,8 +2,6 @@ import Linglib.Syntax.Minimalist.Merge.Basic
 import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 import Linglib.Syntax.Minimalist.Workspace.Conservation
 
-set_option autoImplicit false
-
 /-!
 # Minimal Search: the generic (cut-policy-parameterized) Merge operator
 [marcolli-chomsky-berwick-2025]

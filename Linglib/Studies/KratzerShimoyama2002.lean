@@ -52,8 +52,6 @@ movement.
   `German/ModalIndefinites.lean`, and `Latvian/IndeterminatePronouns.lean`
 -/
 
-set_option autoImplicit false
-
 namespace KratzerShimoyama2002
 
 /-- Local singleton-set helper: Hamblin alternative sets denote `α → Prop`,

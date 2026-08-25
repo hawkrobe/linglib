@@ -16,8 +16,6 @@ representation would make exhaustivity and disjointness definitional rather than
 provable.
 -/
 
-set_option autoImplicit false
-
 namespace WordGrammar.Inheritance
 
 variable {α R : Type} [DecidableEq α] [DecidableEq R]

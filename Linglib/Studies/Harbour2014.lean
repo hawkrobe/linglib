@@ -68,8 +68,6 @@ This file consumes that substrate and states the paper's own claims.
   (33), Figure 8 and the §4.5 argument (pp. 210–212).
 -/
 
-set_option autoImplicit false
-
 namespace Harbour2014
 
 open Minimalist.Phi.Recursion (HarbourConfig harbour2014Table3)

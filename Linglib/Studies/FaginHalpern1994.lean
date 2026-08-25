@@ -51,8 +51,6 @@ relation (for knowledge operators) and the probability assignment
 (for RSA). Under CONS, the two are coherently linked.
 -/
 
-set_option autoImplicit false
-
 namespace FaginHalpern1994
 
 open ModalLogic

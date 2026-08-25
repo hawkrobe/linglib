@@ -74,8 +74,6 @@ Their §3.5 extends [krifka-1995b]'s kind-based semantics with
   than lexical class alone.
 -/
 
-set_option autoImplicit false
-
 namespace GrimmDocekal2021
 
 open Mereology (OverlapPred DisjointPred)

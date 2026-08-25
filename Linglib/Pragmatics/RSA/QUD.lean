@@ -38,8 +38,6 @@ and is used by [kao-bergen-goodman-2014] (metaphor),
 (irony), and the broader Kao family.
 -/
 
-set_option autoImplicit false
-
 namespace RSA.QUD
 
 open scoped ENNReal

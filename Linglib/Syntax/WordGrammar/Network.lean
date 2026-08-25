@@ -25,8 +25,6 @@ subject's direction from left to right, following [hudson-2010]'s
 treatment of inversion as a word-class subtype rather than a movement rule.
 -/
 
-set_option autoImplicit false
-
 namespace WordGrammar
 
 

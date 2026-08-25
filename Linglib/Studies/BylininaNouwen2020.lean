@@ -39,8 +39,6 @@ Heim–Kennedy generalization, lower-bound semantics ([horn-1972],
 primary anchors.
 -/
 
-set_option autoImplicit false
-
 namespace BylininaNouwen2020
 
 open Semantics.Composition.TypeShifting

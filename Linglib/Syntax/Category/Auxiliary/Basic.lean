@@ -26,8 +26,6 @@ Aux-related content elsewhere: AVC inflection-locus typology in
 types in `Fragments/`.
 -/
 
-set_option autoImplicit false
-
 /-- An entry type of auxiliaries: every member projects to a UD `AUX` word. -/
 class Auxiliary (α : Type*) where
   toWord : α → Word

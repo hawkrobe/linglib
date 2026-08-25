@@ -13,8 +13,6 @@ import Mathlib.Data.Multiset.Basic
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # Nonplanar multi-tree insertion
 

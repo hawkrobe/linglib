@@ -14,8 +14,6 @@ Italian: no polar Q particle, wh-fronting (not in WALS Ch 93A sample, so
 `whMovement = none`), polar formed by intonation only.
 -/
 
-set_option autoImplicit false
-
 namespace Italian.Questions
 
 open _root_.Syntax.Question

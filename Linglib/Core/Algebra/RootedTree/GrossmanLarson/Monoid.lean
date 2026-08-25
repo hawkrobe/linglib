@@ -9,8 +9,6 @@ import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # Grossman-Larson monoid structure
 [grossman-larson-1989] [foissy-2021] [oudom-guin-2008]

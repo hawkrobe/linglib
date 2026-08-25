@@ -40,8 +40,6 @@ defeq `abbrev`s, and one `@[simp]` `funMap`/`RelMap` lemma per symbol — see
 `Fragments/English/Toy.lean`.
 -/
 
-set_option autoImplicit false
-
 open FirstOrder Language
 open Intensional
 open Semantics.Montague (Lexicon)

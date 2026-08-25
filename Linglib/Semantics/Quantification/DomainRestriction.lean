@@ -43,8 +43,6 @@ satisfying C is equivalent to restricting the restrictor to C ∩ R.
 
 -/
 
-set_option autoImplicit false
-
 namespace Quantification.DomainRestriction
 
 /-! ### Domain-restricted quantifiers -/

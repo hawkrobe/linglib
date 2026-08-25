@@ -100,8 +100,6 @@ inferences about why the speaker chose to speak.
   with Exp 3 confirms inference computation is costly
 -/
 
-set_option autoImplicit false
-
 namespace ReesReksnesRohde2026
 
 open Pragmatics.RelevanceTheory

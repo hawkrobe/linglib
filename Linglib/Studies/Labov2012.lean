@@ -33,8 +33,6 @@ directional pattern (cool-guy prefers -in' in casual context, -ing in
 careful context) from Bayesian pragmatic reasoning.
 -/
 
-set_option autoImplicit false
-
 namespace Labov2012
 
 -- ============================================================================

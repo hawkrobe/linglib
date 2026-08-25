@@ -36,8 +36,6 @@ the effect.
   silence and the world is not a priori certain, reporting dominates.
 -/
 
-set_option autoImplicit false
-
 open scoped ENNReal
 
 namespace RohdeEtAl2022

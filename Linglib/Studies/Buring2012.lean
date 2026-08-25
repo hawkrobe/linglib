@@ -34,8 +34,6 @@ defined of a referent of any gender — exactly where *she* is undefined.
 * `they_defined_regardless_of_gender` — epicene *they* imposes no gender presup.
 -/
 
-set_option autoImplicit false
-
 namespace Buring2012
 
 open English.Pronouns (she they)

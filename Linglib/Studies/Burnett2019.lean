@@ -45,8 +45,6 @@ Predictions are exact `PMF`-value comparisons.
 6. **Cross-reference**: model predictions close to [labov-2012] data
 -/
 
-set_option autoImplicit false
-
 namespace Burnett2019
 
 open SocialMeaning

@@ -64,8 +64,6 @@ Q-principle blocking: the presuppositional form is more complex
 than the non-presuppositional alternative.
 -/
 
-set_option autoImplicit false
-
 namespace Blutner2000
 
 open Core.Optimization.Evaluation

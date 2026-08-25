@@ -35,8 +35,6 @@ holds two `ChannelAccess`es so it can be instantiated either by lifting two
 functions over a non-finite type (e.g., `String`-valued lexicons).
 -/
 
-set_option autoImplicit false
-
 namespace Pragmatics.Communication
 
 /-- Bare-bones channel access: a score function `C → W → ℝ` with no

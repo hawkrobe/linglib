@@ -9,8 +9,6 @@ more' is available. No superlative strategy is recorded: the free superlative
 word *zuì* fits none of `SuperlativeStrategy`'s cases.
 -/
 
-set_option autoImplicit false
-
 namespace Mandarin.Comparison
 
 open Comparative

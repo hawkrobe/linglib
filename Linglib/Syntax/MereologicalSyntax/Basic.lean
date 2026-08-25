@@ -1,7 +1,5 @@
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
-set_option autoImplicit false
-
 /-!
 # Mereological Syntax
 [adger-2025]

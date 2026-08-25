@@ -80,8 +80,6 @@ lacks one, counts everything — cf. `Grimm2018.yudjaClassify`).
   distinction (`Features/Number/Basic.lean`).
 -/
 
-set_option autoImplicit false
-
 namespace SuttonFilip2021
 
 /-! ### Overlap, disjointness, and individuation schemas

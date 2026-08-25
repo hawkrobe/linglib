@@ -30,8 +30,6 @@ in `Syntax/Category/Pronoun/Indefinite.lean`; a future `IndefiniteDeterminer` ov
   feature data (ontology / basis / function-coverage), word-class-neutral.
 -/
 
-set_option autoImplicit false
-
 namespace Indefinite
 
 /-! ### The implicational-map function inventory ([haspelmath-1997]) -/

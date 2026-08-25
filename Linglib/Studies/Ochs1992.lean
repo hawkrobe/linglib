@@ -62,8 +62,6 @@ mediation thesis (Figure 14.1):
   Ochs's indirect indexicality thesis via [burnett-2019]'s SMG
 -/
 
-set_option autoImplicit false
-
 namespace Ochs1992
 
 open SocialMeaning.IndexicalField

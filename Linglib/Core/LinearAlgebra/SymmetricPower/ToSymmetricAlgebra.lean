@@ -8,8 +8,6 @@ import Mathlib.LinearAlgebra.SymmetricAlgebra.Basic
 import Mathlib.Algebra.BigOperators.Group.List.Basic
 import Mathlib.Data.List.FinRange
 
-set_option autoImplicit false
-
 /-!
 # The natural map `Sym[R]^n M → SymmetricAlgebra R M`
 

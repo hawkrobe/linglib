@@ -15,8 +15,6 @@ clause representation `C` classifies into these cells obtains
 stored facets finite and decidable.
 -/
 
-set_option autoImplicit false
-
 open Clause (EmbeddingContext)
 
 /-- A carrier `α` with a recorded three-valued distribution over

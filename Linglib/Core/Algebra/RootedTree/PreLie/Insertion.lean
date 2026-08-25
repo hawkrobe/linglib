@@ -7,8 +7,6 @@ import Linglib.Core.Algebra.RootedTree.PreLie.Graft
 import Linglib.Core.Data.RoseTree.Nonplanar
 import Mathlib.Data.Multiset.Bind
 
-set_option autoImplicit false
-
 /-!
 # Foissy 2021 Theorem 5.1 multi-tree insertion (path-based)
 [foissy-typed-decorated-rooted-trees-2018]

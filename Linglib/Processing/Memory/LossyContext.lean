@@ -31,8 +31,6 @@ deterministic summary) recovers Shannon's `−log p(w | c)`.
   yields `mp.expectedSurprisal = lm.surprisal`
 -/
 
-set_option autoImplicit false
-
 namespace Processing.NoisyChannel
 
 open Processing.LanguageModel (LangModel)

@@ -64,8 +64,6 @@ must satisfy three constraints:
   decisively distinguishes selectional from universal accounts.
 -/
 
-set_option autoImplicit false
-
 namespace Modality.Selectional
 
 open _root_.Semantics.Conditionals (SelectionFunction)

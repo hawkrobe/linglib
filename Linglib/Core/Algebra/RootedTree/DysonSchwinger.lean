@@ -7,8 +7,6 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # Dyson-Schwinger equations on `ConnesKreimer R (Nonplanar α)` — MCB §1.17
 [marcolli-chomsky-berwick-2025]

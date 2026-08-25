@@ -25,8 +25,6 @@ its coordinate φ-resolution; `Studies/Corbett2000.lean` states the book's resol
 data over its language systems.
 -/
 
-set_option autoImplicit false
-
 namespace Number
 
 /-! ### Canonical resolution -/

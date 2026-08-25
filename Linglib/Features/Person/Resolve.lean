@@ -26,8 +26,6 @@ treated as an identity by convention (documented, not an empirical
 claim).
 -/
 
-set_option autoImplicit false
-
 namespace Person
 
 /-! ### Canonical resolution -/

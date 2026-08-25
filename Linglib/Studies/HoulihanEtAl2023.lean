@@ -47,8 +47,6 @@ computational appraisal theory.
 - §5. Lesion model structure
 -/
 
-set_option autoImplicit false
-
 namespace HoulihanEtAl2023
 
 open Core Pragmatics.GameTheory Core

@@ -64,8 +64,6 @@ substrate-level theorems that consume them.
 All proofs in this file are structural. No `sorry`, no `decide`.
 -/
 
-set_option autoImplicit false
-
 namespace PMF
 
 variable {α β γ : Type*} [Fintype α] [Fintype β] [Fintype γ]

@@ -8,8 +8,6 @@ import Linglib.Studies.Ross1967
 import Linglib.Studies.SagWasowBender2003
 import Linglib.Semantics.Mood.Defs
 
-set_option autoImplicit false
-
 /-!
 # English Filler-Gap Constructions
 [sag-2010]

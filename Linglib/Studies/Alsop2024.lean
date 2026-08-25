@@ -70,8 +70,6 @@ with no counterpart in the paper's model (its utterance set has no
 negation; NPI *any* is set aside in the paper's §2.1).
 -/
 
-set_option autoImplicit false
-
 namespace Alsop2024
 
 open scoped ENNReal

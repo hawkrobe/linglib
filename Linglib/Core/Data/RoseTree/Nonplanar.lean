@@ -8,8 +8,6 @@ import Mathlib.Algebra.Group.Nat.Defs
 import Mathlib.Data.Multiset.Basic
 import Mathlib.Data.Multiset.MapFold
 
-set_option autoImplicit false
-
 /-!
 # Nonplanar n-ary rooted trees as a quotient of `RoseTree α`
 [marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]

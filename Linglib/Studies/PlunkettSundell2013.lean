@@ -47,8 +47,6 @@ refutation theorem. Does not formalize P&S's broader normative
 account of metalinguistic negotiation as a category.
 -/
 
-set_option autoImplicit false
-
 namespace PlunkettSundell2013
 
 /-- A metalinguistic dispute between two speakers A and B over a

@@ -32,8 +32,6 @@ and `PMF.normalize` machinery. With this primitive, the observation kernel
 is a one-line definition.
 -/
 
-set_option autoImplicit false
-
 namespace PMF
 
 open ENNReal Finset

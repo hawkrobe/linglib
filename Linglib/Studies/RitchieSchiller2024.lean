@@ -55,8 +55,6 @@ infers the proximal restriction (§8). Predictions are checked by exact `PMF`
 evaluation on the `RSA.Canonical` pipeline.
 -/
 
-set_option autoImplicit false
-
 namespace RitchieSchiller2024
 
 open Quantification (every_sem some_sem)

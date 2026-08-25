@@ -9,8 +9,6 @@ import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # The pairing product rule for the Grossman-Larson product
 [foissy-2002] [oudom-guin-2008]

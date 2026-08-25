@@ -61,8 +61,6 @@ contradictory base → effective ThresholdPair is derived via two routes:
    derives the same effect through Bayesian pragmatic reasoning.
 -/
 
-set_option autoImplicit false
-
 namespace Krifka2007
 
 open Degree (Bounded Threshold deg thr)

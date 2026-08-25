@@ -36,8 +36,6 @@ nodes typed by linguistic categories) and the kinship taxonomy below
 identity is by construction at the level of the type `Network`.
 -/
 
-set_option autoImplicit false
-
 namespace Hudson2010
 
 

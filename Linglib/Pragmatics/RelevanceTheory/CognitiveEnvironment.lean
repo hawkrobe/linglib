@@ -15,8 +15,6 @@ highly manifest; distant inferences are weakly manifest.
 
 -/
 
-set_option autoImplicit false
-
 namespace Pragmatics.RelevanceTheory
 
 /-- A cognitive environment: assumptions manifest to an individual.

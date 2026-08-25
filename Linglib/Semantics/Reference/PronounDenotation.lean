@@ -37,8 +37,6 @@ surface genders contribute the vacuous cell here; the principled route is the
 bridges plus `ContainmentPairLike.toPair`, deferred until a study needs them.
 -/
 
-set_option autoImplicit false
-
 open Semantics.Presupposition (PartialProp)
 open Semantics.Presupposition.PhiFeatures
 open Semantics.Reference (NominalDenot)

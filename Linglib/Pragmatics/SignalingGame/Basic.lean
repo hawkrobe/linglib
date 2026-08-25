@@ -39,8 +39,6 @@ constrains nothing.
   the on-path posterior is a point mass: full information transmission.
 -/
 
-set_option autoImplicit false
-
 /-- A signaling game: the sender privately knows her type and chooses a
 message; the receiver observes the message and chooses an action. Utilities
 may depend on the message (signalling costs). -/

@@ -77,8 +77,6 @@ logistic gate (`TsvilodubEtAl2026.softGateRule`).
   one fact.
 -/
 
-set_option autoImplicit false
-
 namespace DongEtAl2026
 
 open scoped ENNReal

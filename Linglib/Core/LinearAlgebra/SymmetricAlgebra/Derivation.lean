@@ -7,8 +7,6 @@ import Mathlib.LinearAlgebra.SymmetricAlgebra.Basic
 import Mathlib.RingTheory.Derivation.Basic
 import Mathlib.Algebra.TrivSqZeroExt.Basic
 
-set_option autoImplicit false
-
 /-!
 # Derivations on the symmetric algebra
 

@@ -49,8 +49,6 @@ public import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 plus `@[expose] public section`.
 -/
 
-set_option autoImplicit false
-
 namespace SymmetricAlgebra
 
 variable (R : Type*) [CommRing R] (M : Type*) [AddCommMonoid M] [Module R M]

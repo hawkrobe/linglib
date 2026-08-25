@@ -481,8 +481,6 @@ generalization-then-unification reorderings in paradigm-induction
 learners.
 -/
 
-set_option autoImplicit false
-
 /-! ### The flat order on one feature slot
 
 The slot-level subsumption relation ([shieber-1986] §3.2.2: `⊥` below

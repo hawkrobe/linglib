@@ -35,8 +35,6 @@ adjunction through the Cascade spine, and nonaffixal overt prepositions
 
 -/
 
-set_option autoImplicit false
-
 /-! ## Cascade structures ([pesetsky-1995])
 
 Binary-branching PP spines where each node is a (possibly null) preposition that

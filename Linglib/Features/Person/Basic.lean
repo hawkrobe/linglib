@@ -30,8 +30,6 @@ the Cysouw categories (`Features/Person/Decomposition.lean`).
 inventory, consumed by person-hierarchy and scenario-split accounts.
 -/
 
-set_option autoImplicit false
-
 /-- Grammatical person — the canonical analytical inventory. Clusivity
     is a person-value distinction ([cysouw-2009]; [harbour-2016]'s
     quadripartition), not an orthogonal feature: `firstInclusive` and

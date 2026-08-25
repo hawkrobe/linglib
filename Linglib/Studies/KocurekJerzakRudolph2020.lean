@@ -59,8 +59,6 @@ no-context-shifting variant; Conventional Wisdom is the
 no-convention-shifting variant — KJR reject the latter).
 -/
 
-set_option autoImplicit false
-
 namespace KocurekJerzakRudolph2020
 
 /-- A linguistic convention: an assignment of extensions to predicates

@@ -9,8 +9,6 @@ degree is marked by the free word *more* or the bound affix *-er*, and the
 superlative is morphological (*-est*).
 -/
 
-set_option autoImplicit false
-
 namespace English.Comparison
 
 open Comparative

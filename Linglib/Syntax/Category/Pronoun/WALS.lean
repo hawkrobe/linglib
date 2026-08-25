@@ -40,8 +40,6 @@ theorem over the accessor in that study file.
   WALS Ch 35. The canonical home for this pronoun-paradigm feature.
 -/
 
-set_option autoImplicit false
-
 namespace Pronoun
 
 /-- WALS Ch 39: inclusive/exclusive distinction in independent pronouns. -/

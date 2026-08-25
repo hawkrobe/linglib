@@ -41,8 +41,6 @@ load-bearing form for the decide-checked case analyses in
 `Bool` projections.
 -/
 
-set_option autoImplicit false
-
 namespace RelativeClause
 
 open Extraction (ExtractionTarget)

@@ -97,8 +97,6 @@ We achieve this without ℚ division by computing:
 | 11 | Endorsement ⟺ exceeds E[k|prior] | — | — | `endorsement_iff_exceeds_expected` |
 -/
 
-set_option autoImplicit false
-
 namespace TesslerGoodman2019
 
 open Degree (Bounded Threshold deg thr allDegrees allThresholds Bounded.toNat Threshold.toNat)

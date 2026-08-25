@@ -16,8 +16,6 @@ queried directly from the `Data/WALS` rows; per-language marker
 inventories live in `Fragments/{Lang}/Relativization.lean`.
 -/
 
-set_option autoImplicit false
-
 namespace RelativeClause
 
 private abbrev ch122 := Data.WALS.F122A.allData

@@ -55,8 +55,6 @@ spell-out function φ (Appendix) is out of scope.
 
 -/
 
-set_option autoImplicit false
-
 namespace WechslerZlatic2000
 
 

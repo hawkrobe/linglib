@@ -6,8 +6,6 @@ import Mathlib.RingTheory.Bialgebra.Basic
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # Generic admissible-cut coproduct on `ConnesKreimer R (Nonplanar α)`
 [marcolli-chomsky-berwick-2025]

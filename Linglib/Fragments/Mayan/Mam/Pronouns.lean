@@ -50,8 +50,6 @@ Wordhood: *=i* is a morphological enclitic with promiscuous attachment
 classification, so `strength` is left unset throughout.
 -/
 
-set_option autoImplicit false
-
 namespace Mam
 
 /-! ### Lexical entries -/

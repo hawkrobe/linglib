@@ -4,8 +4,6 @@ open Morphology (Word)
 
 open Features.MinimalPairs
 
-set_option autoImplicit false
-
 /-!
 # Constraints on Variables in Syntax
 [ross-1967]

@@ -15,8 +15,6 @@ imports this module and constructs its `List WALSCount` from
 `Data.WALS.F{N}A.allData`.
 -/
 
-set_option autoImplicit false
-
 namespace Data.WALS
 
 /-- A single row in a WALS frequency table: a category label and the

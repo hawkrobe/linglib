@@ -68,8 +68,6 @@ not the empirical-fit tables produced by analysing them on specific
 neural networks.
 -/
 
-set_option autoImplicit false
-
 namespace GiulianelliEtAl2026
 
 open Processing.PredictiveUncertainty

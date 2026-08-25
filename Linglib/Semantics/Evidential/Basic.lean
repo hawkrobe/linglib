@@ -22,8 +22,6 @@ about the declared inventory, not stipulations.
   `ReportativeSource` (unidentified, identified).
 -/
 
-set_option autoImplicit false
-
 namespace Semantics.Evidential
 
 /-- A cell in [aikhenvald-2004] Ch 2's paradigm space. Each `Entry`

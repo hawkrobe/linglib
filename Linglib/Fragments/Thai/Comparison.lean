@@ -9,8 +9,6 @@ adjective carries no degree marking; superlative via exceeding a universal
 standard.
 -/
 
-set_option autoImplicit false
-
 namespace Thai.Comparison
 
 open Comparative

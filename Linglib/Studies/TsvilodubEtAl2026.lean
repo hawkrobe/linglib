@@ -56,8 +56,6 @@ file's choice (the paper's α has prior N(5, 1)) — the strict-preference
 theorems are stated for any α > 0.
 -/
 
-set_option autoImplicit false
-
 namespace TsvilodubEtAl2026
 
 open scoped ENNReal NNReal

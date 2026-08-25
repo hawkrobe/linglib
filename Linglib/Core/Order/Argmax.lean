@@ -25,8 +25,6 @@ Option α`; the set-valued form is the natural companion of `Finset.max'` and
 * `argmax_comp_strictMono` — invariance under strictly monotone rescaling.
 -/
 
-set_option autoImplicit false
-
 namespace Finset
 
 variable {α β γ : Type*} [LinearOrder β] [LinearOrder γ] {s : Finset α}

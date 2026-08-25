@@ -57,8 +57,6 @@ and *kami* (1+3 exclusive) instantiate Cysouw's *minimal-augmented* type
 [himmelmann-2005-tagalog] is also documented there.
 -/
 
-set_option autoImplicit false
-
 namespace Tagalog
 
 -- ============================================================================

@@ -69,8 +69,6 @@ theorems derive from `DDRP.every_nesting` / `DDRP.some_nesting` /
   Placeholder theorems are `sorry`-marked for future fragment work.
 -/
 
-set_option autoImplicit false
-
 namespace DavidsonGagne2022
 
 open Quantification (every_sem some_sem)

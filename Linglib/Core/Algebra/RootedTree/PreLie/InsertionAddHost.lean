@@ -6,8 +6,6 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Mathlib.Data.Multiset.Powerset
 
-set_option autoImplicit false
-
 /-!
 # Host-append decomposition for `RoseTree`-level multi-tree insertion
 

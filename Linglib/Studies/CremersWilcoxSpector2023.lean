@@ -133,8 +133,6 @@ configs have world-independent uniform latent priors and use the
   implicatures under lexical uncertainty.
 -/
 
-set_option autoImplicit false
-
 open scoped ENNReal
 
 namespace CremersWilcoxSpector2023

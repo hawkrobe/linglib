@@ -56,8 +56,6 @@ be construable as a SET.
   refactor, awaits 3rd consumer.
 -/
 
-set_option autoImplicit false
-
 namespace KampanarouAlexiadou2026
 
 open Possession (Notion InalienabilityRank)

@@ -19,8 +19,6 @@ superlative strategy is recorded: the free superlative word *en* fits none of
 `SuperlativeStrategy`'s cases.
 -/
 
-set_option autoImplicit false
-
 namespace Turkish.Comparison
 
 open Comparative

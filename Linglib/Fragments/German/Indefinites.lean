@@ -21,8 +21,6 @@ perspective on *irgendein* (domain widening per
 [kratzer-shimoyama-2002]).
 -/
 
-set_option autoImplicit false
-
 namespace German.Indefinites
 
 open Indefinite

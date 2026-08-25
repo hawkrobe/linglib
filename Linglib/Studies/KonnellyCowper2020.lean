@@ -39,8 +39,6 @@ stages via `Contrastivity` from `DistributedMorphology.Categorizer`,
 and prove the Elsewhere-Condition predictions across the three stages.
 -/
 
-set_option autoImplicit false
-
 namespace KonnellyCowper2020
 
 open DistributedMorphology (Contrastivity GenderFeature

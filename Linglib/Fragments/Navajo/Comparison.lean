@@ -9,8 +9,6 @@ predicates carry no comparative degree morphology. The standard-marking
 postposition is not recorded here.
 -/
 
-set_option autoImplicit false
-
 namespace Navajo.Comparison
 
 open Comparative

@@ -11,8 +11,6 @@ import Linglib.Syntax.Question
 Japanese: final polar Q particle *ka*, wh-in-situ, polar formed by particle.
 -/
 
-set_option autoImplicit false
-
 namespace Japanese.Questions
 
 open _root_.Syntax.Question

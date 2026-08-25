@@ -20,8 +20,6 @@ uncertainty) recovers Boolean truth — gradience is not stipulated but
 emerges from parameter uncertainty.
 -/
 
-set_option autoImplicit false
-
 namespace Semantics.Probabilistic
 
 open scoped ENNReal

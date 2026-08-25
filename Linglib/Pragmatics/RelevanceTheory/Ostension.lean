@@ -25,8 +25,6 @@ hearer to treat the stimulus as optimally relevant.
 
 -/
 
-set_option autoImplicit false
-
 namespace Pragmatics.RelevanceTheory
 
 /-- An informative intention: the set of assumptions the communicator

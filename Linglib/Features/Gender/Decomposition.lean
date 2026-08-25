@@ -52,8 +52,6 @@ study can adopt or refute.
   carriers as its rivals.
 -/
 
-set_option autoImplicit false
-
 open Features (ContainmentPair ContainmentPairLike)
 
 namespace Gender

@@ -37,8 +37,6 @@ classical −log p(w | c).
   (Eqs. 2a–2d of [giulianelli-etal-2026]).
 -/
 
-set_option autoImplicit false
-
 namespace Processing.PredictiveUncertainty
 
 open Finset BigOperators Real

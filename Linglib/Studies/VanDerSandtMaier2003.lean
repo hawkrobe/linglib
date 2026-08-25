@@ -61,8 +61,6 @@ negation; (3) preserve conditions at non-offensive layers.
 | Lady/wife (69) | Connotation | {imp} | 4 conds: pr, fr, fr + ¬[imp] |
 -/
 
-set_option autoImplicit false
-
 namespace VanDerSandtMaier2003
 
 open Semantics.ContentLayer

@@ -19,8 +19,6 @@ import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 
 open RoseTree RoseTree.Nonplanar
 
-set_option autoImplicit false
-
 /-!
 # Grossman-Larson Hopf algebra on forests of nonplanar rooted trees
 [grossman-larson-1989]
