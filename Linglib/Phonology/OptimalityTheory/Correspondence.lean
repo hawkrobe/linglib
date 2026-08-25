@@ -1,349 +1,297 @@
 import Mathlib.Data.Finset.Image
 import Mathlib.Data.Finset.Sort
 import Mathlib.Data.List.Chain
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Combinatorics.Quiver.Basic
 import Mathlib.Order.Hom.Basic
 import Mathlib.Order.Hom.Set
 import Mathlib.Data.Fintype.Card
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Correspondence Theory
-[mccarthy-prince-1995] [benua-1997]
 
-Correspondence diagrams and their faithfulness constraints. A `Corr Role α`
-gives each role a string (`form`) and each ordered role pair a correspondence
-relation `edge` between positions. Each faithfulness constraint is a map
-`Corr Role α → Role → Role → ℕ`.
+A correspondence between two strings ([mccarthy-prince-1995] (10)) is a relation ℛ
+between their positions, and a faithfulness constraint is a condition on ℛ: MAX reads
+its domain, DEP its range, IDENT the segments at corresponding positions.
+`Correspondence Role α` carries one string per role (`form`) and the relation
+`edge r₁ r₂` for every ordered pair of roles, so the input–output, base–reduplicant
+and output–output ([benua-1997]) relations of one candidate are cells of a single
+diagram. The relation is directed, as ℛ is; "correspondents of one another" is the
+derived property `IsSymmetric`.
 
-Following [mccarthy-prince-1995] (Def. 10), `edge r₁ r₂` is the directed
-relation ℛ ⊆ S₁ × S₂ that every constraint reads (MAX off its Domain, DEP off
-its Range, …). Symmetry — "correspondents of one another" — is a *derived*
-property (`IsSymmetric`, proved of the constructors), not built into the type,
-since M&P's ℛ is a directed subset. The position-relation encoding follows the
-model-theoretic treatment of [payne-vu-heinz-2017] and
-[potts-pullum-2002] (reduplicative B-R: [dolatian-heinz-2020]).
+The constraints of Appendix A are families `Correspondence Role α → Role → Role → ℕ`
+counting offending elements; a named constraint is a partial application (MAX-IO is
+`(·.maxViol .input .output)`), and each cardinal family vanishes iff the relation has
+the matching order-theoretic property (`maxViol_eq_zero_iff`, …). Positions are
+`Fin`-indexed, so every pair of `edge` is in range by type. The position-relation
+encoding follows [payne-vu-heinz-2017] and [potts-pullum-2002] (base–reduplicant
+relations: [dolatian-heinz-2020]).
 
 ## Main definitions
 
-* `Corr` — a correspondence diagram (`form` plus the directed relation `edge`).
-* `Corr.maxViol`, `depViol`, `identViol`, `linearityViol`, `contigIViol`,
-  `anchorLViol`, `integrityViol`, `uniformityViol` — the faithfulness
-  families; named constraints are partial applications (`MAX-IO` is
-  `c.maxViol .input .output`).
-* `Corr.diagram` — the universal constructor; `parallel`, `identity`,
-  `reduplication` are diagonal specializations.
-* `Corr.IsSymmetric` — correspondence symmetry, derived for the constructors.
-* `Corr.RoleQuiv` — the labeled-quiver structure on `Role`.
+* `Correspondence` — role-indexed strings with a directed relation between the
+  positions of each ordered pair of roles.
+* `Correspondence.maxViol`, `depViol`, `identViol`, `identViolFeature`, `contigIViol`,
+  `contigOViol`, `anchorLViol`, `anchorRViol`, `linearityViol`, `uniformityViol`,
+  `integrityViol` — the constraint families of Appendix A.
+* `Correspondence.ofPairs`, `diagram`, `parallel`, `identity`, `reduplication` —
+  constructors: from index pairs, the diagonal on a role predicate, and the binary
+  and input–base–reduplicant diagonal diagrams.
+* `Correspondence.IsSymmetric`, `IsFaithful` — symmetry of the relation; freedom from
+  the five order-relevant violations on an edge.
+* `Correspondence.IsFaithfulness`, `IsMarkedness` — the structural
+  faithfulness/markedness split for constraints over correspondences.
 
 ## Main results
 
-* `Corr.IsFaithful` — the conjunction of the five order-relevant zeros
-  (MAX, DEP, INTEGRITY, UNIFORMITY, LINEARITY).
-* `Corr.isFaithful_iff_exists_orderIso` — a correspondence is faithful iff
-  its edge is the graph of an order isomorphism between the two position
-  orders.
-* `Corr.exists_orderIso_of_faithful` — the forward direction (the converse
-  of the `identity_*_zero` lemmas).
+* `Correspondence.isFaithful_iff_exists_orderIso` — an edge is faithful iff it is the
+  graph of an order isomorphism between the two position orders.
+* `Correspondence.diagram_isSymmetric` — a diagonal diagram over a symmetric role
+  predicate is symmetric.
 -/
 
-namespace OptimalityTheory.Correspondence
+namespace OptimalityTheory
 
-open Constraints OptimalityTheory
-open Finset
+open Constraints
 
-/-! ### Binary and ternary roles -/
+/-- A correspondence diagram: a string per role and, for each ordered pair of roles,
+a directed relation between their positions. -/
+structure Correspondence (Role : Type*) (α : Type*) where
+  form : Role → List α
+  edge : (r₁ r₂ : Role) → Finset (Fin (form r₁).length × Fin (form r₂).length)
 
-/-- Roles for a binary correspondence (`Corr.parallel`, `Corr.identity`). -/
+namespace Correspondence
+
+variable {Role : Type*} {α : Type*}
+
+/-- Roles of a binary correspondence (`parallel`, `identity`). -/
 inductive Side where
   | lhs
   | rhs
   deriving DecidableEq, Repr
 
-/-- Roles for a reduplicative correspondence: input, base, reduplicant
-    ([mccarthy-prince-1995]); used by `Corr.reduplication`. -/
-inductive RedupRole where
+/-- Roles of the basic model of reduplication: input, base, reduplicant. -/
+inductive ReduplicationRole where
   | input
   | base
   | reduplicant
   deriving DecidableEq, Repr
 
-/-! ### The correspondence diagram -/
-
-/-- A correspondence diagram: role-indexed `form`s and a directed
-    correspondence relation `edge` between positions ([mccarthy-prince-1995]
-    Def. 10). The in-range bound is carried by the `Fin`-indexed type of
-    `edge` rather than a separate well-formedness field. -/
-structure Corr (Role : Type*) (α : Type*) where
-  form : Role → List α
-  edge : (r₁ r₂ : Role) → Finset (Fin (form r₁).length × Fin (form r₂).length)
-
-namespace Corr
-
-variable {Role : Type*} {α : Type*}
-
-/-- Correspondence is symmetric — "correspondents of one another"
-    ([mccarthy-prince-1995] Def. 10): each relation is the converse of
-    the reverse one. A derived property (`diagram_isSymmetric`), not a field. -/
-def IsSymmetric (c : Corr Role α) : Prop :=
+/-- Correspondence is symmetric when each relation is the converse of the reverse
+one. -/
+def IsSymmetric (c : Correspondence Role α) : Prop :=
   ∀ r₁ r₂, c.edge r₂ r₁ = (c.edge r₁ r₂).image Prod.swap
 
 /-! ### Constraint families -/
 
-/-- MAX ([mccarthy-prince-1995] A.1): the count of `form r₁` positions with
-    no correspondent in `form r₂`. MAX-OO is basemap faithfulness ([benua-1997]). -/
-def maxViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
+/-- MAX (A.1): the positions of `form r₁` without a correspondent in `form r₂`. -/
+def maxViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   (Finset.univ \ (c.edge r₁ r₂).image Prod.fst).card
 
-/-- DEP ([mccarthy-prince-1995] A.2): the count of `form r₂` positions with
-    no correspondent in `form r₁`. DEP-IO prohibits epenthesis. -/
-def depViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
+/-- DEP (A.2): the positions of `form r₂` without a correspondent in `form r₁`. -/
+def depViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   (Finset.univ \ (c.edge r₁ r₂).image Prod.snd).card
 
-/-- IDENT ([mccarthy-prince-1995] A.3): corresponding pairs whose segments
-    differ. IDENT-OO is OO-faithfulness ([benua-1997], [mccarthy-2005],
-    [rolle-2018]). Each coordinate of a correspondence pair is a `Fin`
-    in range, so `(form r₁)[p.1]` is the total indexed lookup (no `Option`).
-    See `identViolFeature` for the feature-by-feature variant. -/
-def identViol [DecidableEq α] (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
-  ((c.edge r₁ r₂).filter fun p =>
-    (c.form r₁)[p.1] ≠ (c.form r₂)[p.2]).card
+/-- IDENT (A.3) on whole segments: corresponding pairs whose segments differ. -/
+def identViol [DecidableEq α] (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
+  ((c.edge r₁ r₂).filter fun p => (c.form r₁)[p.1] ≠ (c.form r₂)[p.2]).card
 
-/-- Featural IDENT ([mccarthy-prince-1995] A.3): corresponding pairs
-    differing under `proj` ([benua-1997], [rose-walker-2011]). -/
+/-- IDENT(F) (A.3) for the feature `proj`: corresponding pairs differing under
+`proj`. -/
 def identViolFeature {F : Type*} [DecidableEq F] (proj : α → F)
-    (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
-  ((c.edge r₁ r₂).filter fun p =>
-    proj (c.form r₁)[p.1] ≠ proj (c.form r₂)[p.2]).card
+    (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
+  ((c.edge r₁ r₂).filter fun p => proj (c.form r₁)[p.1] ≠ proj (c.form r₂)[p.2]).card
 
-/-! ### Contiguity -/
+/-- I-CONTIG, "No Skipping" (A.4a): whether the domain of the relation is a contiguous
+substring of `form r₁`. -/
+def contigIViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
+  if ((((c.edge r₁ r₂).image Prod.fst).image Fin.val).sort (· ≤ ·)).IsChain
+      (fun a b => b = a + 1) then 0 else 1
 
-/-- A `ℕ`-list is contiguous iff consecutive elements differ by 1. -/
-abbrev IsContiguous (l : List ℕ) : Prop := List.IsChain (fun a b => b = a + 1) l
+/-- O-CONTIG, "No Intrusion" (A.4b): whether the range of the relation is a contiguous
+substring of `form r₂`. -/
+def contigOViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
+  if ((((c.edge r₁ r₂).image Prod.snd).image Fin.val).sort (· ≤ ·)).IsChain
+      (fun a b => b = a + 1) then 0 else 1
 
-instance : (l : List ℕ) → Decidable (IsContiguous l) :=
-  inferInstanceAs ((l : List ℕ) → Decidable (List.IsChain _ l))
+/-- L-ANCHOR (A.5): whether the leftmost positions correspond; vacuous when either
+string is empty. -/
+def anchorLViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
+  if h : 0 < (c.form r₁).length ∧ 0 < (c.form r₂).length then
+    if (⟨0, h.1⟩, ⟨0, h.2⟩) ∈ c.edge r₁ r₂ then 0 else 1
+  else 0
 
-/-- I-CONTIGUITY "No Skipping" ([mccarthy-prince-1995] A.4a): the domain
-    of correspondence is contiguous in `form r₁`. The `Fin`-valued domain is
-    projected to its `ℕ` values and sorted before the chain check. -/
-def contigIViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
-  let dom := (((c.edge r₁ r₂).image Prod.fst).image Fin.val).sort (· ≤ ·)
-  if IsContiguous dom then 0 else 1
+/-- R-ANCHOR (A.5): whether the rightmost positions correspond; vacuous when either
+string is empty. -/
+def anchorRViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
+  if h : 0 < (c.form r₁).length ∧ 0 < (c.form r₂).length then
+    if (⟨(c.form r₁).length - 1, Nat.pred_lt_self h.1⟩,
+        ⟨(c.form r₂).length - 1, Nat.pred_lt_self h.2⟩) ∈ c.edge r₁ r₂ then 0 else 1
+  else 0
 
-/-- O-CONTIGUITY "No Intrusion" ([mccarthy-prince-1995] A.4b): the range
-    of correspondence is contiguous in `form r₂`. -/
-def contigOViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
-  let rng := (((c.edge r₁ r₂).image Prod.snd).image Fin.val).sort (· ≤ ·)
-  if IsContiguous rng then 0 else 1
-
-/-! ### Anchors -/
-
-/-- L-ANCHOR ([mccarthy-prince-1995] A.5): leftmost positions correspond.
-    When either form is empty there is no leftmost position, so the constraint
-    is vacuously satisfied; otherwise the `Fin` endpoints are the two `0`s. -/
-def anchorLViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
-  if h : (c.form r₁).length = 0 ∨ (c.form r₂).length = 0 then 0
-  else
-    have h₁ : 0 < (c.form r₁).length := Nat.pos_of_ne_zero (fun e => h (Or.inl e))
-    have h₂ : 0 < (c.form r₂).length := Nat.pos_of_ne_zero (fun e => h (Or.inr e))
-    if (⟨0, h₁⟩, ⟨0, h₂⟩) ∈ c.edge r₁ r₂ then 0 else 1
-
-/-- R-ANCHOR ([mccarthy-prince-1995] A.5): rightmost positions correspond.
-    The `Fin` endpoints are the two `Fin.last`s when both forms are nonempty. -/
-def anchorRViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
-  if h : (c.form r₁).length = 0 ∨ (c.form r₂).length = 0 then 0
-  else
-    have h₁ : 0 < (c.form r₁).length := Nat.pos_of_ne_zero (fun e => h (Or.inl e))
-    have h₂ : 0 < (c.form r₂).length := Nat.pos_of_ne_zero (fun e => h (Or.inr e))
-    if (⟨(c.form r₁).length - 1, Nat.pred_lt_self h₁⟩,
-        ⟨(c.form r₂).length - 1, Nat.pred_lt_self h₂⟩) ∈ c.edge r₁ r₂
-       then 0 else 1
-
-/-! ### Linearity, uniformity, integrity -/
-
-/-- LINEARITY "No Metathesis" ([mccarthy-prince-1995] A.6): the count of
-    inversion pairs `(i₁,j₁), (i₂,j₂) ∈ edge` with `i₁ < i₂` but `j₂ < j₁`
-    (coordinates compared via `Fin.lt`). -/
-def linearityViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
+/-- LINEARITY, "No Metathesis" (A.6): the pairs of correspondences `(i₁, j₁)`,
+`(i₂, j₂)` with `i₁ < i₂` but `j₂ < j₁`. -/
+def linearityViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((c.edge r₁ r₂ ×ˢ c.edge r₁ r₂).filter fun pq => pq.1.1 < pq.2.1 ∧ pq.2.2 < pq.1.2).card
 
-/-- UNIFORMITY "No Coalescence" ([mccarthy-prince-1995] A.7): the count of
-    `form r₂` positions with more than one correspondent in `form r₁`. -/
-def uniformityViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
+/-- UNIFORMITY, "No Coalescence" (A.7): the positions of `form r₂` with more than one
+correspondent in `form r₁`. -/
+def uniformityViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((Finset.univ : Finset (Fin (c.form r₂).length)).filter fun j =>
-    ((c.edge r₁ r₂).filter fun p => p.2 = j).card > 1).card
+    1 < ((c.edge r₁ r₂).filter fun p => p.2 = j).card).card
 
-/-- INTEGRITY "No Breaking" ([mccarthy-prince-1995] A.8): the count of
-    `form r₁` positions with more than one correspondent in `form r₂`. -/
-def integrityViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
+/-- INTEGRITY, "No Breaking" (A.8): the positions of `form r₁` with more than one
+correspondent in `form r₂`. -/
+def integrityViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((Finset.univ : Finset (Fin (c.form r₁).length)).filter fun i =>
-    ((c.edge r₁ r₂).filter fun p => p.1 = i).card > 1).card
+    1 < ((c.edge r₁ r₂).filter fun p => p.1 = i).card).card
 
-/-! ### Faithfulness predicate bridges
+/-! ### Vanishing characterizations
 
-Each cardinal constraint vanishes iff the correspondence has the corresponding
-order-theoretic property (`maxViol = 0` ⟺ left-total, etc.). These are the
-named characterizations the order-isomorphism theorem is assembled from. -/
+Each cardinal constraint vanishes iff the relation has the corresponding order-theoretic
+property: left-total, right-total, functional, injective, order-preserving. -/
 
-theorem maxViol_eq_zero_iff (c : Corr Role α) (r₁ r₂ : Role) :
-    c.maxViol r₁ r₂ = 0 ↔
-      (Finset.univ : Finset (Fin (c.form r₁).length)) ⊆ (c.edge r₁ r₂).image Prod.fst := by
+variable (c : Correspondence Role α) (r₁ r₂ : Role)
+
+theorem maxViol_eq_zero_iff :
+    c.maxViol r₁ r₂ = 0 ↔ Finset.univ ⊆ (c.edge r₁ r₂).image Prod.fst := by
   simp only [maxViol, Finset.card_eq_zero, Finset.sdiff_eq_empty_iff_subset]
 
-theorem depViol_eq_zero_iff (c : Corr Role α) (r₁ r₂ : Role) :
-    c.depViol r₁ r₂ = 0 ↔
-      (Finset.univ : Finset (Fin (c.form r₂).length)) ⊆ (c.edge r₁ r₂).image Prod.snd := by
+theorem depViol_eq_zero_iff :
+    c.depViol r₁ r₂ = 0 ↔ Finset.univ ⊆ (c.edge r₁ r₂).image Prod.snd := by
   simp only [depViol, Finset.card_eq_zero, Finset.sdiff_eq_empty_iff_subset]
 
-theorem integrityViol_eq_zero_iff (c : Corr Role α) (r₁ r₂ : Role) :
-    c.integrityViol r₁ r₂ = 0 ↔
-      ∀ i, ((c.edge r₁ r₂).filter fun p => p.1 = i).card ≤ 1 := by
-  rw [integrityViol, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-  constructor
-  · intro h i; have := h (Finset.mem_univ i); omega
-  · intro h i _; have := h i; omega
+theorem integrityViol_eq_zero_iff :
+    c.integrityViol r₁ r₂ = 0 ↔ ∀ i, ((c.edge r₁ r₂).filter fun p => p.1 = i).card ≤ 1 := by
+  simp [integrityViol, Finset.filter_eq_empty_iff]
 
-theorem uniformityViol_eq_zero_iff (c : Corr Role α) (r₁ r₂ : Role) :
-    c.uniformityViol r₁ r₂ = 0 ↔
-      ∀ j, ((c.edge r₁ r₂).filter fun p => p.2 = j).card ≤ 1 := by
-  rw [uniformityViol, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-  constructor
-  · intro h j; have := h (Finset.mem_univ j); omega
-  · intro h j _; have := h j; omega
+theorem uniformityViol_eq_zero_iff :
+    c.uniformityViol r₁ r₂ = 0 ↔ ∀ j, ((c.edge r₁ r₂).filter fun p => p.2 = j).card ≤ 1 := by
+  simp [uniformityViol, Finset.filter_eq_empty_iff]
 
-theorem linearityViol_eq_zero_iff (c : Corr Role α) (r₁ r₂ : Role) :
+theorem linearityViol_eq_zero_iff :
     c.linearityViol r₁ r₂ = 0 ↔
       ∀ p ∈ c.edge r₁ r₂, ∀ q ∈ c.edge r₁ r₂, p.1 < q.1 → ¬ q.2 < p.2 := by
   rw [linearityViol, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-  constructor
-  · intro h p hp q hq hpq hqp
-    have hmem : (p, q) ∈ c.edge r₁ r₂ ×ˢ c.edge r₁ r₂ := Finset.mem_product.mpr ⟨hp, hq⟩
-    exact h hmem ⟨hpq, hqp⟩
-  · intro h pq hpq hinv
-    rw [Finset.mem_product] at hpq
-    exact h _ hpq.1 _ hpq.2 hinv.1 hinv.2
+  exact ⟨fun h p hp q hq hpq hqp => h (Finset.mk_mem_product hp hq) ⟨hpq, hqp⟩,
+    fun h pq hpq hinv => h _ (Finset.mem_product.1 hpq).1 _ (Finset.mem_product.1 hpq).2
+      hinv.1 hinv.2⟩
 
-/-! ### Universal constructors -/
+/-! ### Constructors -/
 
-/-- The parallel-pair diagonal in `Fin`-coordinates: `(0,0), (1,1), …` up to
-    `min m n`, each index cast up into the two position types via `Fin.castLE`. -/
-def diagDiag (m n : ℕ) : Finset (Fin m × Fin n) :=
-  (Finset.univ : Finset (Fin (min m n))).image
-    (fun i => (i.castLE (min_le_left _ _), i.castLE (min_le_right _ _)))
+/-- The relation on positions given by index pairs; pairs out of range are dropped. -/
+def edgeOfPairs (m n : ℕ) (l : List (ℕ × ℕ)) : Finset (Fin m × Fin n) :=
+  (l.filterMap fun p =>
+    if h : p.1 < m ∧ p.2 < n then some (⟨p.1, h.1⟩, ⟨p.2, h.2⟩) else none).toFinset
 
-/-- Membership in the diagonal: `(a, b) ∈ diagDiag m n` iff the two indices
-    have equal underlying values. -/
-theorem mem_diagDiag {m n : ℕ} (a : Fin m) (b : Fin n) :
-    (a, b) ∈ diagDiag m n ↔ (a : ℕ) = (b : ℕ) := by
-  simp only [diagDiag, Finset.mem_image, Finset.mem_univ, true_and]
-  constructor
-  · rintro ⟨i, hi⟩
-    rw [Prod.mk.injEq] at hi
-    have h1 : (a : ℕ) = (i : ℕ) := congrArg Fin.val hi.1.symm
-    have h2 : (b : ℕ) = (i : ℕ) := congrArg Fin.val hi.2.symm
-    rw [h1, h2]
-  · intro hab
-    refine ⟨⟨a.1, by have := a.2; have := b.2; omega⟩, ?_⟩
-    rw [Prod.mk.injEq]
-    exact ⟨Fin.ext rfl, Fin.ext hab⟩
+@[simp] theorem mem_edgeOfPairs {m n : ℕ} {l : List (ℕ × ℕ)} {p : Fin m × Fin n} :
+    p ∈ edgeOfPairs m n l ↔ ((p.1 : ℕ), (p.2 : ℕ)) ∈ l := by
+  obtain ⟨⟨a, ha⟩, ⟨b, hb⟩⟩ := p
+  simp [edgeOfPairs, ha, hb]
 
-theorem diagDiag_image_fst {m : ℕ} :
-    (diagDiag m m).image Prod.fst = (Finset.univ : Finset (Fin m)) := by
-  ext a
-  simp only [Finset.mem_image, Finset.mem_univ, iff_true, Prod.exists]
-  exact ⟨a, a, (mem_diagDiag a a).mpr rfl, rfl⟩
-
-theorem diagDiag_image_snd {m : ℕ} :
-    (diagDiag m m).image Prod.snd = (Finset.univ : Finset (Fin m)) := by
-  ext b
-  simp only [Finset.mem_image, Finset.mem_univ, iff_true, Prod.exists]
-  exact ⟨b, b, (mem_diagDiag b b).mpr rfl, rfl⟩
-
-/-- The diagonal has `min m n` pairs — one per index of the shorter form. -/
-theorem diagDiag_card (m n : ℕ) : (diagDiag m n).card = min m n := by
-  have hinj : Function.Injective
-      (fun i : Fin (min m n) => (i.castLE (min_le_left m n), i.castLE (min_le_right m n))) :=
-    fun _ _ hab => Fin.ext (congrArg (Fin.val ∘ Prod.fst) hab)
-  rw [diagDiag, Finset.card_image_of_injective _ hinj, Finset.card_univ, Fintype.card_fin]
-
-private theorem image_swap_diagDiag (m n : ℕ) :
-    (diagDiag m n).image Prod.swap = diagDiag n m := by
-  ext p
-  rw [Finset.mem_image]
-  constructor
-  · rintro ⟨q, hq, rfl⟩
-    rw [mem_diagDiag]
-    exact ((mem_diagDiag q.1 q.2).mp hq).symm
-  · intro hp
-    refine ⟨p.swap, ?_, p.swap_swap⟩
-    rw [mem_diagDiag]
-    exact ((mem_diagDiag p.1 p.2).mp hp).symm
-
-/-- Universal constructor: where `hasEdge` holds, the parallel-pair
-    correspondence `(0,0), (1,1), …` truncated to `min` of the two lengths;
-    elsewhere none. For non-parallel structure (infixation, re-alignment)
-    build `edge` directly (e.g. `Benua1997.paradigm`). -/
-def diagram (form : Role → List α) (hasEdge : Role → Role → Prop)
-    [DecidableRel hasEdge] : Corr Role α where
+/-- A correspondence from index pairs: `edge r₁ r₂` reads `pairs r₁ r₂` into the two
+position types. -/
+def ofPairs (form : Role → List α) (pairs : Role → Role → List (ℕ × ℕ)) :
+    Correspondence Role α where
   form := form
-  edge r₁ r₂ := if hasEdge r₁ r₂ then diagDiag (form r₁).length (form r₂).length else ∅
+  edge r₁ r₂ := edgeOfPairs _ _ (pairs r₁ r₂)
 
-@[simp] theorem diagram_form (form : Role → List α) (hasEdge : Role → Role → Prop)
-    [DecidableRel hasEdge] (r : Role) :
-    (diagram form hasEdge).form r = form r := rfl
+@[simp] theorem ofPairs_form (form : Role → List α) (pairs : Role → Role → List (ℕ × ℕ))
+    (r : Role) : (ofPairs form pairs).form r = form r := rfl
 
-theorem diagram_edge (form : Role → List α) (hasEdge : Role → Role → Prop)
-    [DecidableRel hasEdge] (r₁ r₂ : Role) :
-    (diagram form hasEdge).edge r₁ r₂ =
-      if hasEdge r₁ r₂ then diagDiag (form r₁).length (form r₂).length else ∅ := rfl
+@[simp] theorem ofPairs_edge (form : Role → List α) (pairs : Role → Role → List (ℕ × ℕ)) :
+    (ofPairs form pairs).edge r₁ r₂ = edgeOfPairs _ _ (pairs r₁ r₂) := rfl
 
-theorem diagram_edge_pos (form : Role → List α) (hasEdge : Role → Role → Prop)
-    [DecidableRel hasEdge] {r₁ r₂ : Role} (h : hasEdge r₁ r₂) :
-    (diagram form hasEdge).edge r₁ r₂ = diagDiag (form r₁).length (form r₂).length := by
-  rw [diagram_edge, if_pos h]
+/-- The diagonal `(0, 0), (1, 1), …` of `Fin m × Fin n`, one pair per index of the
+shorter string. -/
+def diagonal (m n : ℕ) : Finset (Fin m × Fin n) :=
+  (Finset.univ : Finset (Fin (min m n))).image
+    fun i => (i.castLE (min_le_left _ _), i.castLE (min_le_right _ _))
 
-theorem diagram_edge_neg (form : Role → List α) (hasEdge : Role → Role → Prop)
-    [DecidableRel hasEdge] {r₁ r₂ : Role} (h : ¬ hasEdge r₁ r₂) :
-    (diagram form hasEdge).edge r₁ r₂ = ∅ := by
-  rw [diagram_edge, if_neg h]
+@[simp] theorem mem_diagonal {m n : ℕ} (a : Fin m) (b : Fin n) :
+    (a, b) ∈ diagonal m n ↔ (a : ℕ) = (b : ℕ) := by
+  simp only [diagonal, Finset.mem_image, Finset.mem_univ, true_and, Prod.mk.injEq, Fin.ext_iff,
+    Fin.val_castLE]
+  exact ⟨fun ⟨_, h₁, h₂⟩ => h₁.symm.trans h₂,
+    fun h => ⟨⟨a, by have := a.2; have := b.2; omega⟩, rfl, h⟩⟩
 
-/-- A `diagram` over a symmetric predicate is a symmetric correspondence —
-    symmetry *derived*, not stipulated. -/
-theorem diagram_isSymmetric (form : Role → List α) (hasEdge : Role → Role → Prop)
-    [DecidableRel hasEdge] (hsymm : Symmetric hasEdge) :
+theorem card_diagonal (m n : ℕ) : (diagonal m n).card = min m n := by
+  rw [diagonal, Finset.card_image_of_injective _ fun _ _ h => Fin.ext (congrArg (·.1.1) h),
+    Finset.card_univ, Fintype.card_fin]
+
+theorem image_swap_diagonal (m n : ℕ) : (diagonal m n).image Prod.swap = diagonal n m := by
+  ext ⟨a, b⟩
+  simp only [Finset.mem_image, mem_diagonal, Prod.exists, Prod.swap_prod_mk, Prod.mk.injEq]
+  exact ⟨fun ⟨_, _, h, rfl, rfl⟩ => h.symm, fun h => ⟨b, a, h.symm, rfl, rfl⟩⟩
+
+/-- The diagonal correspondence on every pair of roles satisfying `hasEdge`, empty
+elsewhere. -/
+def diagram (form : Role → List α) (hasEdge : Role → Role → Prop) [DecidableRel hasEdge] :
+    Correspondence Role α where
+  form := form
+  edge r₁ r₂ := if hasEdge r₁ r₂ then diagonal (form r₁).length (form r₂).length else ∅
+
+section diagram
+
+variable (form : Role → List α) (hasEdge : Role → Role → Prop) [DecidableRel hasEdge]
+
+@[simp] theorem diagram_form (r : Role) : (diagram form hasEdge).form r = form r := rfl
+
+theorem diagram_edge : (diagram form hasEdge).edge r₁ r₂ =
+    if hasEdge r₁ r₂ then diagonal (form r₁).length (form r₂).length else ∅ := rfl
+
+theorem diagram_edge_pos {r₁ r₂ : Role} (h : hasEdge r₁ r₂) :
+    (diagram form hasEdge).edge r₁ r₂ = diagonal (form r₁).length (form r₂).length :=
+  if_pos h
+
+theorem diagram_edge_neg {r₁ r₂ : Role} (h : ¬ hasEdge r₁ r₂) :
+    (diagram form hasEdge).edge r₁ r₂ = ∅ :=
+  if_neg h
+
+theorem diagram_isSymmetric (hsymm : ∀ {r₁ r₂}, hasEdge r₁ r₂ → hasEdge r₂ r₁) :
     IsSymmetric (diagram form hasEdge) := by
   intro r₁ r₂
   by_cases h : hasEdge r₁ r₂
   · rw [diagram_edge_pos _ _ (hsymm h), diagram_edge_pos _ _ h]
-    exact (image_swap_diagDiag _ _).symm
-  · rw [diagram_edge_neg _ _ (fun h' => h (hsymm h')), diagram_edge_neg _ _ h,
-      Finset.image_empty]
+    exact (image_swap_diagonal _ _).symm
+  · rw [diagram_edge_neg _ _ (mt hsymm h), diagram_edge_neg _ _ h, Finset.image_empty]
 
-/-- Parallel-pair correspondence between two strings, truncated to the
-    shorter (`List.zip` semantics). -/
-def parallel (s₁ s₂ : List α) : Corr Side α :=
+end diagram
+
+/-- The diagonal correspondence between two strings, truncated to the shorter. -/
+def parallel (s₁ s₂ : List α) : Correspondence Side α :=
   diagram (fun | .lhs => s₁ | .rhs => s₂) (· ≠ ·)
 
-/-- The fully-faithful candidate: identity correspondence on one string
-    ([mccarthy-prince-1995]). -/
-def identity (s : List α) : Corr Side α := parallel s s
+/-- The fully faithful candidate: the diagonal correspondence of a string with itself. -/
+def identity (s : List α) : Correspondence Side α := parallel s s
 
-/-- 3-role input/base/reduplicant diagram with parallel-pair cross-role
-    edges ([mccarthy-prince-1995]). -/
-def reduplication (input base reduplicant : List α) : Corr RedupRole α :=
-  diagram
-    (fun | .input => input | .base => base | .reduplicant => reduplicant)
-    (· ≠ ·)
+/-- The input–base–reduplicant diagram with diagonal correspondence between each pair of
+distinct roles. -/
+def reduplication (input base reduplicant : List α) : Correspondence ReduplicationRole α :=
+  diagram (fun | .input => input | .base => base | .reduplicant => reduplicant) (· ≠ ·)
 
 theorem parallel_isSymmetric (s₁ s₂ : List α) : IsSymmetric (parallel s₁ s₂) :=
-  diagram_isSymmetric _ _ fun _ _ h => h.symm
+  diagram_isSymmetric _ _ Ne.symm
 
 theorem reduplication_isSymmetric (input base reduplicant : List α) :
     IsSymmetric (reduplication input base reduplicant) :=
-  diagram_isSymmetric _ _ fun _ _ h => h.symm
+  diagram_isSymmetric _ _ Ne.symm
+
+@[simp] theorem parallel_form_lhs (s₁ s₂ : List α) : (parallel s₁ s₂).form .lhs = s₁ := rfl
+
+@[simp] theorem parallel_form_rhs (s₁ s₂ : List α) : (parallel s₁ s₂).form .rhs = s₂ := rfl
+
+@[simp] theorem parallel_edge_diag (s₁ s₂ : List α) (r : Side) :
+    (parallel s₁ s₂).edge r r = ∅ :=
+  diagram_edge_neg _ _ (by cases r <;> decide)
+
+@[simp] theorem parallel_edge_lhs_rhs (s₁ s₂ : List α) :
+    (parallel s₁ s₂).edge .lhs .rhs = diagonal s₁.length s₂.length :=
+  diagram_edge_pos _ _ (by decide)
+
+@[simp] theorem parallel_edge_rhs_lhs (s₁ s₂ : List α) :
+    (parallel s₁ s₂).edge .rhs .lhs = diagonal s₂.length s₁.length := by
+  rw [parallel_isSymmetric s₁ s₂ .lhs .rhs, parallel_edge_lhs_rhs]
+  exact image_swap_diagonal _ _
 
 @[simp] theorem reduplication_form_input (input base reduplicant : List α) :
     (reduplication input base reduplicant).form .input = input := rfl
@@ -354,342 +302,167 @@ theorem reduplication_isSymmetric (input base reduplicant : List α) :
 @[simp] theorem reduplication_form_reduplicant (input base reduplicant : List α) :
     (reduplication input base reduplicant).form .reduplicant = reduplicant := rfl
 
-/-! ### Identity-correspondence zero lemmas -/
+/-! ### Faithfulness on the diagonal
 
-@[simp] theorem parallel_form_lhs (s₁ s₂ : List α) :
-    (parallel s₁ s₂).form .lhs = s₁ := rfl
+MAX, DEP and IDENT vanish on a diagonal edge between equal strings — the fully faithful
+candidate, and total reduplication read on its base–reduplicant edge. -/
 
-@[simp] theorem parallel_form_rhs (s₁ s₂ : List α) :
-    (parallel s₁ s₂).form .rhs = s₂ := rfl
-
-@[simp] theorem parallel_edge_diag (s₁ s₂ : List α) (r : Side) :
-    (parallel s₁ s₂).edge r r = ∅ := by
-  simp only [parallel]; exact diagram_edge_neg _ _ (by cases r <;> decide)
-
-@[simp] theorem parallel_edge_lhs_rhs (s₁ s₂ : List α) :
-    (parallel s₁ s₂).edge .lhs .rhs = diagDiag s₁.length s₂.length := by
-  simp only [parallel]; exact diagram_edge_pos _ _ (by decide)
-
-@[simp] theorem parallel_edge_rhs_lhs (s₁ s₂ : List α) :
-    (parallel s₁ s₂).edge .rhs .lhs = diagDiag s₂.length s₁.length := by
-  rw [parallel_isSymmetric s₁ s₂ .lhs .rhs, parallel_edge_lhs_rhs]
-  exact image_swap_diagDiag _ _
-
-/-- `MAX` vanishes on a **diagonal** edge between equal forms: if `c.edge r₁ r₂`
-    is the parallel-pair diagonal and `c.form r₁ = c.form r₂`, every `r₁`
-    position has a correspondent. The role-agnostic core of `identity_max_zero`
-    — it also fires for total reduplication (`r₁, r₂` the base/reduplicant roles
-    with equal forms). -/
-theorem maxViol_eq_zero_of_diag (c : Corr Role α) (r₁ r₂ : Role)
-    (hform : c.form r₁ = c.form r₂)
-    (hedge : c.edge r₁ r₂ = diagDiag (c.form r₁).length (c.form r₂).length) :
+theorem maxViol_eq_zero_of_diagonal (hform : c.form r₁ = c.form r₂)
+    (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
     c.maxViol r₁ r₂ = 0 := by
   have hlen : (c.form r₁).length = (c.form r₂).length := congrArg List.length hform
   rw [maxViol_eq_zero_iff, hedge]
   intro i _
-  rw [Finset.mem_image]
-  exact ⟨(i, ⟨(i : ℕ), hlen ▸ i.2⟩), (mem_diagDiag _ _).mpr rfl, rfl⟩
+  exact Finset.mem_image.2 ⟨(i, ⟨i, hlen ▸ i.2⟩), (mem_diagonal _ _).2 rfl, rfl⟩
 
-/-- `DEP` vanishes on a diagonal edge between equal forms — the dual of
-    `maxViol_eq_zero_of_diag`: every `r₂` position has a correspondent. -/
-theorem depViol_eq_zero_of_diag (c : Corr Role α) (r₁ r₂ : Role)
-    (hform : c.form r₁ = c.form r₂)
-    (hedge : c.edge r₁ r₂ = diagDiag (c.form r₁).length (c.form r₂).length) :
+theorem depViol_eq_zero_of_diagonal (hform : c.form r₁ = c.form r₂)
+    (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
     c.depViol r₁ r₂ = 0 := by
   have hlen : (c.form r₁).length = (c.form r₂).length := congrArg List.length hform
   rw [depViol_eq_zero_iff, hedge]
   intro j _
-  rw [Finset.mem_image]
-  exact ⟨(⟨(j : ℕ), hlen.symm ▸ j.2⟩, j), (mem_diagDiag _ _).mpr rfl, rfl⟩
+  exact Finset.mem_image.2 ⟨(⟨j, hlen.symm ▸ j.2⟩, j), (mem_diagonal _ _).2 rfl, rfl⟩
 
-theorem identity_max_zero (s : List α) :
-    (identity s).maxViol .lhs .rhs = 0 :=
-  maxViol_eq_zero_of_diag (identity s) .lhs .rhs rfl (parallel_edge_lhs_rhs s s)
-
-theorem identity_dep_zero (s : List α) :
-    (identity s).depViol .lhs .rhs = 0 :=
-  depViol_eq_zero_of_diag (identity s) .lhs .rhs rfl (parallel_edge_lhs_rhs s s)
-
-/-- `IDENT` vanishes on a diagonal edge between **equal forms**: corresponding
-    positions hold the same segment. Unlike `MAX`/`DEP`, this needs
-    `c.form r₁ = c.form r₂`, not just equal length — an order-isomorphic edge
-    between distinct strings can still violate `IDENT`. -/
-theorem identViol_eq_zero_of_diag [DecidableEq α] (c : Corr Role α) (r₁ r₂ : Role)
+theorem identViolFeature_eq_zero_of_diagonal {F : Type*} [DecidableEq F] (proj : α → F)
     (hform : c.form r₁ = c.form r₂)
-    (hedge : c.edge r₁ r₂ = diagDiag (c.form r₁).length (c.form r₂).length) :
-    c.identViol r₁ r₂ = 0 := by
-  simp only [identViol]
-  rw [hedge, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-  intro p hp
-  have hpq : (p.1 : ℕ) = (p.2 : ℕ) := (mem_diagDiag p.1 p.2).mp (by simpa using hp)
-  simp only [not_not]
-  have h? : (c.form r₁)[(p.1 : ℕ)]? = (c.form r₂)[(p.2 : ℕ)]? := by
-    rw [hpq]; exact congrArg (·[(p.2 : ℕ)]?) hform
-  rwa [List.getElem?_eq_getElem p.1.2, List.getElem?_eq_getElem p.2.2,
-       Option.some_inj] at h?
-
-/-- Featural `IDENT` vanishes on a diagonal edge between equal forms — the
-    `proj`-relativized form of `identViol_eq_zero_of_diag`. -/
-theorem identViolFeature_eq_zero_of_diag {F : Type*} [DecidableEq F] (proj : α → F)
-    (c : Corr Role α) (r₁ r₂ : Role)
-    (hform : c.form r₁ = c.form r₂)
-    (hedge : c.edge r₁ r₂ = diagDiag (c.form r₁).length (c.form r₂).length) :
+    (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
     c.identViolFeature proj r₁ r₂ = 0 := by
-  simp only [identViolFeature]
-  rw [hedge, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-  intro p hp
-  have hpq : (p.1 : ℕ) = (p.2 : ℕ) := (mem_diagDiag p.1 p.2).mp (by simpa using hp)
-  simp only [not_not]
-  have h? : (c.form r₁)[(p.1 : ℕ)]? = (c.form r₂)[(p.2 : ℕ)]? := by
-    rw [hpq]; exact congrArg (·[(p.2 : ℕ)]?) hform
-  have he : (c.form r₁)[p.1] = (c.form r₂)[p.2] := by
-    rwa [List.getElem?_eq_getElem p.1.2, List.getElem?_eq_getElem p.2.2,
-         Option.some_inj] at h?
-  rw [he]
+  simp only [identViolFeature, hedge, Finset.card_eq_zero, Finset.filter_eq_empty_iff, not_not]
+  rintro ⟨i, j⟩ hij
+  have hij : (i : ℕ) = j := (mem_diagonal i j).1 hij
+  have h : (c.form r₁)[(i : ℕ)]? = (c.form r₂)[(j : ℕ)]? := by rw [hij, hform]
+  rw [List.getElem?_eq_getElem i.2, List.getElem?_eq_getElem j.2, Option.some_inj] at h
+  exact congrArg proj h
 
-theorem identity_ident_zero [DecidableEq α] (s : List α) :
+theorem identViol_eq_zero_of_diagonal [DecidableEq α] (hform : c.form r₁ = c.form r₂)
+    (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
+    c.identViol r₁ r₂ = 0 :=
+  identViolFeature_eq_zero_of_diagonal c r₁ r₂ id hform hedge
+
+@[simp] theorem maxViol_identity (s : List α) : (identity s).maxViol .lhs .rhs = 0 :=
+  maxViol_eq_zero_of_diagonal _ _ _ rfl (parallel_edge_lhs_rhs s s)
+
+@[simp] theorem depViol_identity (s : List α) : (identity s).depViol .lhs .rhs = 0 :=
+  depViol_eq_zero_of_diagonal _ _ _ rfl (parallel_edge_lhs_rhs s s)
+
+@[simp] theorem identViol_identity [DecidableEq α] (s : List α) :
     (identity s).identViol .lhs .rhs = 0 :=
-  identViol_eq_zero_of_diag (identity s) .lhs .rhs rfl (parallel_edge_lhs_rhs s s)
+  identViol_eq_zero_of_diagonal _ _ _ rfl (parallel_edge_lhs_rhs s s)
 
-theorem identity_identFeature_zero {F : Type*} [DecidableEq F] (proj : α → F)
-    (s : List α) :
-    (identity s).identViolFeature proj .lhs .rhs = 0 :=
-  identViolFeature_eq_zero_of_diag proj (identity s) .lhs .rhs rfl
-    (parallel_edge_lhs_rhs s s)
+@[simp] theorem identViolFeature_identity {F : Type*} [DecidableEq F] (proj : α → F)
+    (s : List α) : (identity s).identViolFeature proj .lhs .rhs = 0 :=
+  identViolFeature_eq_zero_of_diagonal _ _ _ proj rfl (parallel_edge_lhs_rhs s s)
 
-/-! ### Faithfulness as order-isomorphism -/
+/-! ### Faithfulness as order isomorphism -/
 
-/-- The five order-relevant zeros bundled: a correspondence is **faithful**
-    (on the `(r₁, r₂)` edge) when it has no MAX, DEP, INTEGRITY, UNIFORMITY,
-    or LINEARITY violation ([mccarthy-prince-1995] (A.1), (A.2), (A.6),
-    (A.7), (A.8)). This is exactly the hypothesis set under which the edge is
-    the graph of an order isomorphism. -/
-structure IsFaithful (c : Corr Role α) (r₁ r₂ : Role) : Prop where
+/-- An edge is faithful when it has no MAX, DEP, INTEGRITY, UNIFORMITY or LINEARITY
+violation — exactly the hypotheses under which it is the graph of an order
+isomorphism. -/
+structure IsFaithful : Prop where
   max : c.maxViol r₁ r₂ = 0
   dep : c.depViol r₁ r₂ = 0
   integrity : c.integrityViol r₁ r₂ = 0
   uniformity : c.uniformityViol r₁ r₂ = 0
   linearity : c.linearityViol r₁ r₂ = 0
 
-/-- MAX + INTEGRITY: the edge is the graph of a function `Fin n → Fin m` — each
-    `form r₁` position has exactly one correspondent (MAX: at least one; INTEGRITY:
-    at most one). `Fin`-typed storage means `p ∈ edge` already gives `p : Fin n × Fin m`,
-    with no in-range packaging. -/
-private theorem exists_corrFun (c : Corr Role α) (r₁ r₂ : Role)
-    (hmax : c.maxViol r₁ r₂ = 0) (hint : c.integrityViol r₁ r₂ = 0) :
+/-- Without MAX or INTEGRITY violations the edge is the graph of a function. -/
+theorem exists_fun_mem_edge_iff (hmax : c.maxViol r₁ r₂ = 0)
+    (hint : c.integrityViol r₁ r₂ = 0) :
     ∃ f : Fin (c.form r₁).length → Fin (c.form r₂).length,
       ∀ i j, (i, j) ∈ c.edge r₁ r₂ ↔ f i = j := by
   have hexU : ∀ i, ∃! j, (i, j) ∈ c.edge r₁ r₂ := fun i => by
     obtain ⟨⟨a, b⟩, hp, rfl⟩ :=
-      Finset.mem_image.mp ((maxViol_eq_zero_iff c r₁ r₂).mp hmax (Finset.mem_univ i))
-    have hone := Finset.card_le_one.mp ((integrityViol_eq_zero_iff c r₁ r₂).mp hint a)
+      Finset.mem_image.1 ((maxViol_eq_zero_iff c r₁ r₂).1 hmax (Finset.mem_univ i))
+    have hone := Finset.card_le_one.1 ((integrityViol_eq_zero_iff c r₁ r₂).1 hint a)
     exact ⟨b, hp, fun j hj => congrArg Prod.snd
-      (hone _ (Finset.mem_filter.mpr ⟨hj, rfl⟩) _ (Finset.mem_filter.mpr ⟨hp, rfl⟩))⟩
+      (hone _ (Finset.mem_filter.2 ⟨hj, rfl⟩) _ (Finset.mem_filter.2 ⟨hp, rfl⟩))⟩
   choose f hf huniq using hexU
   exact ⟨f, fun i j => ⟨fun h => (huniq i j h).symm, fun h => h ▸ hf i⟩⟩
 
-/-- **Faithful ⟺ order-isomorphism.** A correspondence is faithful (no MAX,
-    DEP, INTEGRITY, UNIFORMITY, or LINEARITY violation) iff its edge is the
-    graph of an order isomorphism between the two position orders. The forward
-    direction is the converse of the `identity_*_zero` lemmas, and the formal
-    content of M&P's fully-faithful candidate being the identity. -/
-theorem isFaithful_iff_exists_orderIso (c : Corr Role α) (r₁ r₂ : Role) :
+theorem isFaithful_iff_exists_orderIso :
     c.IsFaithful r₁ r₂ ↔
       ∃ e : Fin (c.form r₁).length ≃o Fin (c.form r₂).length,
         ∀ i j, (i, j) ∈ c.edge r₁ r₂ ↔ e i = j := by
-  set E := c.edge r₁ r₂
   constructor
   · rintro ⟨hmax, hdep, hint, huni, hlin⟩
-    obtain ⟨f, mem_iff⟩ := exists_corrFun c r₁ r₂ hmax hint
-    have memf : ∀ i, (i, f i) ∈ E := fun i => (mem_iff i (f i)).mpr rfl
-    -- UNIFORMITY rules out collisions, LINEARITY rules out inversions: `f` is strictly
-    -- monotone (whence injective for free).
+    obtain ⟨f, mem_iff⟩ := exists_fun_mem_edge_iff c r₁ r₂ hmax hint
+    have memf : ∀ i, (i, f i) ∈ c.edge r₁ r₂ := fun i => (mem_iff i (f i)).2 rfl
+    -- UNIFORMITY rules out collisions and LINEARITY inversions, so `f` is strictly monotone.
     have hmono : StrictMono f := by
       intro a b hab
       rcases lt_trichotomy (f a) (f b) with h | h | h
       · exact h
-      · have hu := Finset.card_le_one.mp ((uniformityViol_eq_zero_iff c r₁ r₂).mp huni (f b))
-        exact absurd (congrArg Prod.fst <| hu _ (Finset.mem_filter.mpr ⟨memf a, h⟩)
-          _ (Finset.mem_filter.mpr ⟨memf b, rfl⟩)) (ne_of_lt hab)
-      · exact absurd h ((linearityViol_eq_zero_iff c r₁ r₂).mp hlin _ (memf a) _ (memf b) hab)
-    -- DEP makes `f` surjective.
-    have hsurj : Function.Surjective f := by
-      intro j
-      obtain ⟨p, hp, hp2⟩ := Finset.mem_image.mp
-        ((depViol_eq_zero_iff c r₁ r₂).mp hdep (Finset.mem_univ j))
-      exact ⟨p.1, (mem_iff p.1 j).mp (by simpa [← hp2] using hp)⟩
+      · have hu := Finset.card_le_one.1 ((uniformityViol_eq_zero_iff c r₁ r₂).1 huni (f b))
+        exact absurd (congrArg Prod.fst <| hu _ (Finset.mem_filter.2 ⟨memf a, h⟩)
+          _ (Finset.mem_filter.2 ⟨memf b, rfl⟩)) (ne_of_lt hab)
+      · exact absurd h ((linearityViol_eq_zero_iff c r₁ r₂).1 hlin _ (memf a) _ (memf b) hab)
+    have hsurj : Function.Surjective f := fun j => by
+      obtain ⟨p, hp, hp2⟩ := Finset.mem_image.1
+        ((depViol_eq_zero_iff c r₁ r₂).1 hdep (Finset.mem_univ j))
+      exact ⟨p.1, (mem_iff p.1 j).1 (by simpa [← hp2] using hp)⟩
     exact ⟨StrictMono.orderIsoOfSurjective f hmono hsurj,
       fun i j => by rw [mem_iff, StrictMono.coe_orderIsoOfSurjective]⟩
-  · -- The edge is the graph `{(i, e i)}`; each zero is a face of `e` being an order iso.
-    rintro ⟨e, he⟩
+  · rintro ⟨e, he⟩
     refine ⟨?_, ?_, ?_, ?_, ?_⟩
-    · exact (maxViol_eq_zero_iff c r₁ r₂).mpr fun i _ =>
-        Finset.mem_image.mpr ⟨(i, e i), (he i (e i)).mpr rfl, rfl⟩
-    · exact (depViol_eq_zero_iff c r₁ r₂).mpr fun j _ =>
-        Finset.mem_image.mpr ⟨(e.symm j, j), (he _ j).mpr (e.apply_symm_apply j), rfl⟩
-    · refine (integrityViol_eq_zero_iff c r₁ r₂).mpr fun i =>
-        Finset.card_le_one.mpr fun p hp q hq => ?_
+    · exact (maxViol_eq_zero_iff c r₁ r₂).2 fun i _ =>
+        Finset.mem_image.2 ⟨(i, e i), (he i (e i)).2 rfl, rfl⟩
+    · exact (depViol_eq_zero_iff c r₁ r₂).2 fun j _ =>
+        Finset.mem_image.2 ⟨(e.symm j, j), (he _ j).2 (e.apply_symm_apply j), rfl⟩
+    · refine (integrityViol_eq_zero_iff c r₁ r₂).2 fun i =>
+        Finset.card_le_one.2 fun p hp q hq => ?_
       rw [Finset.mem_filter] at hp hq
       exact Prod.ext (hp.2.trans hq.2.symm) <| calc
-        p.2 = e p.1 := ((he p.1 p.2).mp hp.1).symm
+        p.2 = e p.1 := ((he p.1 p.2).1 hp.1).symm
         _   = e q.1 := by rw [hp.2.trans hq.2.symm]
-        _   = q.2   := (he q.1 q.2).mp hq.1
-    · refine (uniformityViol_eq_zero_iff c r₁ r₂).mpr fun j =>
-        Finset.card_le_one.mpr fun p hp q hq => ?_
+        _   = q.2   := (he q.1 q.2).1 hq.1
+    · refine (uniformityViol_eq_zero_iff c r₁ r₂).2 fun j =>
+        Finset.card_le_one.2 fun p hp q hq => ?_
       rw [Finset.mem_filter] at hp hq
       refine Prod.ext (e.injective ?_) (hp.2.trans hq.2.symm)
-      calc e p.1 = p.2 := (he p.1 p.2).mp hp.1
+      calc e p.1 = p.2 := (he p.1 p.2).1 hp.1
         _ = q.2   := hp.2.trans hq.2.symm
-        _ = e q.1 := ((he q.1 q.2).mp hq.1).symm
-    · refine (linearityViol_eq_zero_iff c r₁ r₂).mpr fun p hp q hq hpq => ?_
-      rw [← (he p.1 p.2).mp hp, ← (he q.1 q.2).mp hq]
-      exact not_lt.mpr (le_of_lt (e.lt_iff_lt.mpr hpq))
+        _ = e q.1 := ((he q.1 q.2).1 hq.1).symm
+    · refine (linearityViol_eq_zero_iff c r₁ r₂).2 fun p hp q hq hpq => ?_
+      rw [← (he p.1 p.2).1 hp, ← (he q.1 q.2).1 hq]
+      exact not_lt.2 (e.lt_iff_lt.2 hpq).le
 
-/-- **Faithful ⟹ order-isomorphism** (the forward direction of
-    `isFaithful_iff_exists_orderIso`). -/
-theorem exists_orderIso_of_faithful (c : Corr Role α) (r₁ r₂ : Role)
-    (hmax : c.maxViol r₁ r₂ = 0) (hdep : c.depViol r₁ r₂ = 0)
-    (hint : c.integrityViol r₁ r₂ = 0) (huni : c.uniformityViol r₁ r₂ = 0)
-    (hlin : c.linearityViol r₁ r₂ = 0) :
-    ∃ e : Fin (c.form r₁).length ≃o Fin (c.form r₂).length,
-      ∀ i j, (i, j) ∈ c.edge r₁ r₂ ↔ e i = j :=
-  (isFaithful_iff_exists_orderIso c r₁ r₂).mp ⟨hmax, hdep, hint, huni, hlin⟩
-
-/-- A faithful correspondence forces equal lengths (no deletion, no
-    epenthesis). -/
-theorem length_eq_of_faithful (c : Corr Role α) (r₁ r₂ : Role)
-    (hmax : c.maxViol r₁ r₂ = 0) (hdep : c.depViol r₁ r₂ = 0)
-    (hint : c.integrityViol r₁ r₂ = 0) (huni : c.uniformityViol r₁ r₂ = 0)
-    (hlin : c.linearityViol r₁ r₂ = 0) :
+/-- A faithful edge joins strings of equal length. -/
+theorem length_eq_of_isFaithful (h : c.IsFaithful r₁ r₂) :
     (c.form r₁).length = (c.form r₂).length := by
-  obtain ⟨e, _⟩ := exists_orderIso_of_faithful c r₁ r₂ hmax hdep hint huni hlin
+  obtain ⟨e, _⟩ := (isFaithful_iff_exists_orderIso c r₁ r₂).1 h
   simpa using Fintype.card_congr e.toEquiv
 
-/-! ### Constraint bridges
+/-! ### Faithfulness and markedness constraints
 
-`Corr`-violation functions packaged as bare `Constraint (Corr Role α)` (`= Corr Role
-α → ℕ`). The faithfulness/markedness family is recovered structurally below
-(`VanishesOnIdentity` / `IsMarkedness`), not stamped by a tag. -/
+A constraint over correspondences is faithfulness when the fully faithful candidate
+satisfies it, and markedness when it reads only the output string. The split is
+structural, and non-vacuous: \*STRUC is markedness and fires on `identity s`. -/
 
-/-- IDENT over a `Corr`: featural-identity violations between roles `r₁`, `r₂`. -/
-def toIdentConstraint [DecidableEq α] (r₁ r₂ : Role) : Constraint (Corr Role α) :=
-  fun c => c.identViol r₁ r₂
+/-- A constraint over binary correspondences is **faithfulness** when the fully faithful
+candidate `identity s` satisfies it. -/
+def IsFaithfulness (k : Constraint (Correspondence Side α)) : Prop :=
+  ∀ s : List α, k (identity s) = 0
 
-/-- IDENT[F] over a `Corr`: violations of the feature picked out by `proj`. -/
-def toIdentFeatureConstraint {F : Type*} [DecidableEq F]
-    (proj : α → F) (r₁ r₂ : Role) : Constraint (Corr Role α) :=
-  fun c => c.identViolFeature proj r₁ r₂
+/-- A constraint is **markedness** for the role `out` when it depends only on
+`form out`. -/
+def IsMarkedness (out : Role) (k : Constraint (Correspondence Role α)) : Prop :=
+  ∀ c₁ c₂ : Correspondence Role α, c₁.form out = c₂.form out → k c₁ = k c₂
 
-/-- MAX over a `Corr`: deletion (input segments lacking a correspondent). -/
-def toMaxConstraint (r₁ r₂ : Role) : Constraint (Corr Role α) :=
-  fun c => c.maxViol r₁ r₂
+theorem isFaithfulness_maxViol : IsFaithfulness (α := α) (maxViol · .lhs .rhs) :=
+  maxViol_identity
 
-/-- DEP over a `Corr`: epenthesis (output segments lacking a correspondent). -/
-def toDepConstraint (r₁ r₂ : Role) : Constraint (Corr Role α) :=
-  fun c => c.depViol r₁ r₂
+theorem isFaithfulness_depViol : IsFaithfulness (α := α) (depViol · .lhs .rhs) :=
+  depViol_identity
 
-/-! ### Faithfulness of the bridges: vanishing on the faithful candidate
+theorem isFaithfulness_identViol [DecidableEq α] :
+    IsFaithfulness (α := α) (identViol · .lhs .rhs) :=
+  identViol_identity
 
-The MAX/DEP/IDENT bridges assign zero violations to the fully faithful candidate
-`identity s` — the defining behaviour of a Correspondence-Theory faithfulness
-constraint ([mccarthy-prince-1995]). This is the *structural* faithfulness now
-captured by `VanishesOnIdentity` (there is no `.faithfulness` tag). Markedness is
-non-vacuously different (`exists_markedness_not_vanishesOnIdentity`).
-Anti-faithfulness ([alderete-2001]) is out of scope — it demands disparity and is
-*maximal* on `identity`. -/
+theorem exists_isMarkedness_not_isFaithfulness [Inhabited α] :
+    ∃ k : Constraint (Correspondence Side α), IsMarkedness .rhs k ∧ ¬ IsFaithfulness k :=
+  ⟨fun c => (c.form .rhs).length, fun _ _ h => by simp [h],
+    fun h => by simpa [identity] using h [default]⟩
 
-@[simp] theorem toMaxConstraint_eval_identity (s : List α) :
-    toMaxConstraint Side.lhs Side.rhs (identity s) = 0 :=
-  identity_max_zero s
+end Correspondence
 
-@[simp] theorem toDepConstraint_eval_identity (s : List α) :
-    toDepConstraint Side.lhs Side.rhs (identity s) = 0 :=
-  identity_dep_zero s
-
-@[simp] theorem toIdentConstraint_eval_identity [DecidableEq α] (s : List α) :
-    toIdentConstraint Side.lhs Side.rhs (identity s) = 0 :=
-  identity_ident_zero s
-
-@[simp] theorem toIdentFeatureConstraint_eval_identity {F : Type*} [DecidableEq F]
-    (proj : α → F) (s : List α) :
-    toIdentFeatureConstraint proj Side.lhs Side.rhs (identity s) = 0 :=
-  identity_identFeature_zero proj s
-
-/-- A correspondence constraint **vanishes on the faithful candidate** — scores no
-    violations on any fully faithful `identity s`. This is the *structural*
-    definition of a faithfulness constraint ([mccarthy-prince-1995]), replacing the
-    old `.faithfulness` tag. -/
-def VanishesOnIdentity (c : Constraint (Corr Side α)) : Prop :=
-  ∀ s : List α, c (identity s) = 0
-
-/-- A correspondence constraint is **markedness** when it depends only on the `out`
-    form — it scores equal violations on candidates agreeing on `· .form out`. The
-    structural dual of `VanishesOnIdentity`, replacing the old `.markedness` tag. -/
-def IsMarkedness (out : Role) (c : Constraint (Corr Role α)) : Prop :=
-  ∀ c₁ c₂ : Corr Role α, c₁.form out = c₂.form out → c c₁ = c c₂
-
-theorem toMaxConstraint_vanishesOnIdentity :
-    VanishesOnIdentity (α := α) (toMaxConstraint Side.lhs Side.rhs) :=
-  toMaxConstraint_eval_identity
-
-theorem toDepConstraint_vanishesOnIdentity :
-    VanishesOnIdentity (α := α) (toDepConstraint Side.lhs Side.rhs) :=
-  toDepConstraint_eval_identity
-
-theorem toIdentConstraint_vanishesOnIdentity [DecidableEq α] :
-    VanishesOnIdentity (α := α) (toIdentConstraint Side.lhs Side.rhs) :=
-  toIdentConstraint_eval_identity
-
-/-- **Markedness need not vanish on the faithful candidate.** \*Struc (one
-    violation per output segment) is markedness yet fires on `identity s`, so the
-    faith/mark split is non-vacuous — and structural, not tag-based. -/
-theorem exists_markedness_not_vanishesOnIdentity [Inhabited α] :
-    ∃ c : Constraint (Corr Side α),
-      IsMarkedness Side.rhs c ∧ ¬ VanishesOnIdentity c :=
-  ⟨fun c => (c.form Side.rhs).length,
-   fun _ _ h => by simp [h],
-   fun h => by have h1 := h [default]; simp [identity] at h1⟩
-
-end Corr
-
-/-! ### Reduplication constraints
-
-The canonical [mccarthy-prince-1995] reduplicative-faithfulness constraints as
-`Constraint (Corr RedupRole α)`; study files import these names rather than
-re-rolling `Corr.toMaxConstraint .input .base`. -/
-
-namespace Reduplication
-
-def maxIO {α : Type*} : Constraint (Corr RedupRole α) :=
-  Corr.toMaxConstraint .input .base
-
-def maxBR {α : Type*} : Constraint (Corr RedupRole α) :=
-  Corr.toMaxConstraint .base .reduplicant
-
-def depIO {α : Type*} : Constraint (Corr RedupRole α) :=
-  Corr.toDepConstraint .input .base
-
-def identBR {α : Type*} [DecidableEq α] : Constraint (Corr RedupRole α) :=
-  Corr.toIdentConstraint .base .reduplicant
-
-def identIO {α : Type*} [DecidableEq α] : Constraint (Corr RedupRole α) :=
-  Corr.toIdentConstraint .input .base
-
-end Reduplication
-
-namespace Corr
-
-/-! ### Quiver structure -/
-
-/-- The labeled-quiver structure on `Role`: morphisms `r₁ ⟶ r₂` are the
-    correspondence pairs `(i, j) ∈ c.edge r₁ r₂`. Carried by a value-indexed
-    newtype since the instance depends on `c`; path-based (stratal, OT-CC)
-    evaluation via `Quiver.Path` is not yet formalised. -/
-def RoleQuiv {Role α : Type*} (_ : Corr Role α) : Type _ := Role
-
-instance {Role α : Type*} (c : Corr Role α) : Quiver (RoleQuiv c) where
-  Hom r₁ r₂ := { p : Fin (c.form r₁).length × Fin (c.form r₂).length // p ∈ c.edge r₁ r₂ }
-
-end Corr
-
-end OptimalityTheory.Correspondence
+end OptimalityTheory

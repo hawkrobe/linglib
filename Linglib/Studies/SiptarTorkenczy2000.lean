@@ -44,7 +44,6 @@ namespace SiptarTorkenczy2000
 
 open Phonology (Segment Feature)
 open Subregular.Harmony
-open OptimalityTheory.Correspondence (Corr)
 open Constraints OptimalityTheory Core.Optimization Core.Optimization.Evaluation
 open Hungarian.VowelHarmony
 
@@ -67,7 +66,7 @@ def spreadViolations (sys : System Segment) (triggerVal : Bool)
 /-- IDENT-[F] violations: count positions where the harmony feature
     changed between input and output.
 
-    **Derived from `Corr.identViol`** on the `(false, true)` edge of a
+    **Derived from `Correspondence.identViol`** on the `(false, true)` edge of a
     binary parallel-pair correspondence between the feature-projected
     tiers `input.map sys.pattern.value` and
     `output.map sys.pattern.value`. This structurally identifies
@@ -75,7 +74,7 @@ def spreadViolations (sys : System Segment) (triggerVal : Bool)
     the harmony feature. -/
 def identViolations (sys : System Segment)
     (input output : List Segment) : Nat :=
-  (Corr.parallel
+  (Correspondence.parallel
     (input.map  sys.pattern.value)
     (output.map sys.pattern.value)).identViol .lhs .rhs
 
@@ -150,11 +149,11 @@ theorem spreadSuffix_zero_spread (sys : System Segment) (val : Bool)
     exact ih (λ s' hs' => h s' (.tail _ hs'))
 
 /-- The faithful candidate (no changes) has zero IDENT violations.
-    Derived from `Corr.identity_ident_zero`. -/
+    Derived from `Correspondence.identViol_identity`. -/
 theorem faithful_zero_ident (sys : System Segment) (suffix : List Segment) :
     identViolations sys suffix suffix = 0 := by
-  show (Corr.identity _).identViol .lhs .rhs = 0
-  exact Corr.identity_ident_zero _
+  show (Correspondence.identity _).identViol .lhs .rhs = 0
+  exact Correspondence.identViol_identity _
 
 /-- IDENT on empty suffixes is zero. -/
 theorem identViolations_nil (sys : System Segment) :
