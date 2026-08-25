@@ -17,14 +17,14 @@ the unmarked, and majority rules.
 surface stem and input–stem correspondence; `Paradigm.corr` is the correspondence diagram
 whose ℛ_OP relations are read off the members' input correspondences — stem positions
 realising the same input position correspond, as do epenthetic positions at the same site —
-so the relation is symmetric and base-free by construction.
-`markedness`, `ioFaith` and `opFaith` sum a constraint over the members or the ordered
-member pairs. The Classical Arabic sections rerun the tableaux for the right edge of the verb
-stem (/faʕaːl/, /faʕl/), for the left edge (/fʕaːl/, /stafʕal/, /ftaʕal/) and for the
-Moroccan majority-rules paradigm of /kətb/; the Hebrew section reruns the jussive paradigms
-of [benua-1997] under OP, where epenthesis underapplies only because overapplication is
-blocked by the ban on a schwa in a two-sided open syllable. Locators are those of the
-ROA-485 (2001) version.
+so the relation is symmetric and base-free by construction. `markedness`, `ioFaith` and
+`opFaith` sum a constraint over the members or the ordered member pairs. The Classical
+Arabic section reruns the tableaux for the right edge of the verb stem (/faʕaːl/, /faʕl/),
+the left edge (/fʕal/, /ftaʕal/, /stafʕaːl/) and the geminate verbs under the summary
+ranking (21), the Moroccan section the majority-rules paradigm of /ʃərb/ (32), and the
+Hebrew section the jussive paradigms of [benua-1997] under OP (33), where epenthesis
+underapplies only because overapplication is blocked. Symmetric OP constraints count each
+direction of ℛ_OP, as in fn. 5 and (32).
 -/
 
 namespace McCarthy2005
@@ -109,115 +109,128 @@ def tableau {L : Type*} [DecidableEq L] (cand : L → Paradigm α ι) (labels : 
 
 /-- The candidate paradigms of a tableau. -/
 inductive Cand
-  | a | b | c | d
+  | a | b | c | d | e
   deriving DecidableEq, Repr
 
-/-! ### German *Bund* (§2)
+/-! ### Palatalization before *-i* (§8.2)
 
-The paradigm ⟨bʊnt, bʊndə⟩ draws two OP-IDENT(voice) marks, one on each direction of
-ℛ_OP, and ⟨bʊn, bʊndə⟩ one OP-MAX and one OP-DEP mark (fn. 3). -/
+From /mat/ with the plural suffix *-i*, the paradigm ⟨mat, maʧi⟩ draws two OP-IDENT(high)
+marks, one on each direction of ℛ_OP, and ⟨ma, maʧi⟩ one OP-MAX and one OP-DEP mark (fn. 5). -/
 
-namespace German
+namespace Palatalization
 
 inductive Seg
-  | b | u | n | t | d | schwa
+  | m | a | t | ch | i
   deriving DecidableEq, Repr
 
-/-- Voicing of the alternating obstruents. -/
-def voice : Seg → Option Bool
+/-- The feature distinguishing *t* from *ʧ*. -/
+def high : Seg → Option Bool
   | .t => some false
-  | .d => some true
+  | .ch => some true
   | _ => none
 
-/-- The paradigm of /bund/ with final devoicing: ⟨bʊnt, bʊndə⟩. -/
-def bund : Paradigm Seg (List Seg) :=
-  ⟨[.b, .u, .n, .d], [⟨[], [.b, .u, .n, .t], Correspondence.diagonalPairs 4⟩,
-    ⟨[.schwa], [.b, .u, .n, .d], Correspondence.diagonalPairs 4⟩]⟩
+/-- ⟨mat, maʧi⟩. -/
+def mat : Paradigm Seg (List Seg) :=
+  ⟨[.m, .a, .t], [⟨[], [.m, .a, .t], Correspondence.diagonalPairs 3⟩,
+    ⟨[.i], [.m, .a, .ch], Correspondence.diagonalPairs 3⟩]⟩
 
-example : opFaith (Correspondence.identViolFeature voice) bund = 2 := by decide
+example : opFaith (Correspondence.identViolFeature high) mat = 2 := by decide
 
-/-- The paradigm ⟨bʊn, bʊndə⟩ of fn. 3. -/
-def bun : Paradigm Seg (List Seg) :=
-  ⟨[.b, .u, .n, .d], [⟨[], [.b, .u, .n], Correspondence.diagonalPairs 3⟩,
-    ⟨[.schwa], [.b, .u, .n, .d], Correspondence.diagonalPairs 4⟩]⟩
+/-- ⟨ma, maʧi⟩. -/
+def ma : Paradigm Seg (List Seg) :=
+  ⟨[.m, .a, .t], [⟨[], [.m, .a], Correspondence.diagonalPairs 2⟩,
+    ⟨[.i], [.m, .a, .ch], Correspondence.diagonalPairs 3⟩]⟩
 
-example : opFaith Correspondence.maxViol bun = 1 ∧ opFaith Correspondence.depViol bun = 1 := by
+example : opFaith Correspondence.maxViol ma = 1 ∧ opFaith Correspondence.depViol ma = 1 := by
   decide
 
-end German
+end Palatalization
 
-/-! ### Arabic syllables
+/-! ### Arabic syllables and feet
 
-The markedness constraints of §4 and §5.1 read syllable weight. A long vowel is a vowel
-followed by its length mora `long`, a nuclear position of its own, so MAX-µ and MAX-V are
-MAX restricted to the moras and to the vowels. -/
+The markedness constraints of §8.4 read syllable weight and foot structure. Each vowel is a
+nucleus, long or short by `weight`; the consonants before a vowel but the last, its onset,
+close the preceding syllable. Feet are right-to-left moraic trochees with the final
+syllable extrametrical, as the paper assumes; SWP marks a stressed light syllable, so an
+(LL) foot. -/
 
 namespace Arabic
 
 inductive Seg
-  | f | ayn | l | s | t | j | k | b | n | a | i | u | schwa | long
+  | f | ayn | l | s | sh | t | j | k | b | n | m | r | hh | a | aa | i | ii | u | schwa
   deriving DecidableEq, Repr
 
-def IsVowel (x : Seg) : Prop := x ∈ [Seg.a, .i, .u, .schwa]
+def IsVowel (x : Seg) : Prop := x ∈ [Seg.a, .aa, .i, .ii, .u, .schwa]
 
 instance : DecidablePred IsVowel := λ x => inferInstanceAs (Decidable (x ∈ _))
 
-/-- A nuclear position: a vowel or a length mora. -/
-def IsNuclear (x : Seg) : Prop := IsVowel x ∨ x = .long
+/-- The weight of a vowel: long or short. -/
+def weight : Seg → Option Bool
+  | .aa | .ii => some true
+  | .a | .i | .u | .schwa => some false
+  | _ => none
 
-instance : DecidablePred IsNuclear := λ _ => inferInstanceAs (Decidable (_ ∨ _))
-
-/-- A syllable by its nucleus (one or two vowel positions) and coda. -/
+/-- A syllable by its nucleus and coda. -/
 structure Syllable where
-  nucleus : List Seg
+  nucleus : Seg
   coda : List Seg
   deriving DecidableEq, Repr
 
-/-- CV. -/
-def Syllable.IsLight (σ : Syllable) : Prop := σ.nucleus.length + σ.coda.length = 1
+def Syllable.moras (σ : Syllable) : ℕ :=
+  (if weight σ.nucleus = some true then 2 else 1) + σ.coda.length
 
-/-- CVVC or CVCC. -/
-def Syllable.IsSuperheavy (σ : Syllable) : Prop := 3 ≤ σ.nucleus.length + σ.coda.length
-
-instance : DecidablePred Syllable.IsLight := λ _ => inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred Syllable.IsSuperheavy := λ _ => inferInstanceAs (Decidable (_ ≤ _))
-
-/-- The maximal runs of vowels and of consonants. -/
-def runs : List Seg → List (List Seg)
+/-- Close the latest syllable with `coda`. -/
+def closeLast (coda : List Seg) : List Syllable → List Syllable
   | [] => []
-  | x :: xs =>
-    match runs xs with
-    | (y :: ys) :: rest =>
-      if IsNuclear x ↔ IsNuclear y then (x :: y :: ys) :: rest else [x] :: (y :: ys) :: rest
-    | rs => [x] :: rs
+  | σ :: σs => { σ with coda := coda } :: σs
 
-/-- The syllables of alternating vowel and consonant runs from the first vowel: a medial
-consonant run closes the preceding syllable but for its last consonant, the next onset. -/
-def nuclei : List (List Seg) → List Syllable
+/-- The syllables of a word, latest first: a vowel opens a syllable, the consonants pending
+before it but its onset close the previous one, and the final consonants close the last. -/
+def syllabifyRev : List Syllable → List Seg → List Seg → List Syllable
+  | σs, pending, [] => closeLast pending σs
+  | σs, pending, x :: xs =>
+    if IsVowel x then syllabifyRev (⟨x, []⟩ :: closeLast pending.dropLast σs) [] xs
+    else syllabifyRev σs (pending ++ [x]) xs
+
+def syllabify (w : List Seg) : List Syllable := (syllabifyRev [] [] w).reverse
+
+/-- Right-to-left moraic trochees over syllables listed latest first, carrying a light
+syllable awaiting a partner: a heavy syllable is a foot, two light syllables are a foot, a
+lone light syllable is unparsed. -/
+def footRev (pending : Option Syllable) : List Syllable → List (List Syllable)
   | [] => []
-  | [v] => [⟨v, []⟩]
-  | [v, c] => [⟨v, c⟩]
-  | v :: c :: v' :: rest => ⟨v, c.dropLast⟩ :: nuclei (v' :: rest)
+  | σ :: rest =>
+    if 2 ≤ σ.moras then [σ] :: footRev none rest
+    else
+      match pending with
+      | none => footRev (some σ) rest
+      | some σ₀ => [σ, σ₀] :: footRev none rest
 
-/-- The word-initial appendices and the syllables of a word: of the consonants before the
-first vowel, the last is its onset and the rest are appendices. -/
-def syllabify (w : List Seg) : ℕ × List Syllable :=
-  match runs w with
-  | [] => (0, [])
-  | r :: rest =>
-    if ∀ x ∈ r, IsNuclear x then (0, nuclei (r :: rest)) else (r.length - 1, nuclei rest)
+/-- The feet of a word, the final syllable extrametrical unless nothing else can be footed
+(fn. 22). -/
+def feet (w : List Seg) : List (List Syllable) :=
+  match footRev none (syllabifyRev [] [] w).tail with
+  | [] => footRev none (syllabifyRev [] [] w)
+  | fs => fs
 
-/-- NO-LL: adjacent light syllables (fn. 17 counts overlapping pairs). -/
-def noLL (w : List Seg) : ℕ :=
-  let σs := (syllabify w).2
-  ((σs.zip σs.tail).filter λ p => p.1.IsLight ∧ p.2.IsLight).length
-
-/-- EXH(PrWd): word-initial appendices. -/
-def exhPrWd (w : List Seg) : ℕ := (syllabify w).1
+/-- SWP: stressed light syllables, the heads of (LL) feet. -/
+def swp (w : List Seg) : ℕ := ((feet w).filter λ ft => ft.length = 2).length
 
 /-- Superheavy syllables, parsed with a moraic coda (\*µµµ]σ) or a syllable appendix
 (\*APP-σ). -/
-def superheavy (w : List Seg) : ℕ := ((syllabify w).2.filter (·.IsSuperheavy)).length
+def superheavy (w : List Seg) : ℕ := ((syllabify w).filter λ σ => 3 ≤ σ.moras).length
+
+/-- ALIGN-L(Stem, σ): a stem-initial consonant before another is never syllable-initial. -/
+def alignL : List Seg → ℕ
+  | x :: y :: _ => if ¬IsVowel x ∧ ¬IsVowel y then 1 else 0
+  | _ => 0
+
+/-- \*.CᵢV.CᵢV: identical consonants in the onsets of successive syllables. -/
+def identicalOnsets : List Seg → ℕ
+  | x :: v :: y :: v' :: rest =>
+    (if ¬IsVowel x ∧ IsVowel v ∧ x = y ∧ IsVowel v' then 1 else 0)
+      + identicalOnsets (v :: y :: v' :: rest)
+  | _ => 0
 
 /-- An inflectional cell of the Classical Arabic verb or noun: its affixes, and whether a
 superheavy coda is parsed as an appendix. -/
@@ -230,12 +243,14 @@ structure Cell where
 /-- The word of a stem in a cell. -/
 def Cell.word (c : Cell) (stem : List Seg) : List Seg := c.prefixes ++ stem ++ c.suffixes
 
-/-! ### The Classical Arabic verb (§4)
+/-! ### The Classical Arabic verb (§8.4)
 
 Verb stems end in CVC] and may begin with [CCV; noun stems may end in CVːC] or CVCC] and
-begin only with [CV. Verbs alone have C-initial suffixes and CV- prefixes, and OP
-faithfulness carries the repairs they force through the paradigm, whereas the noun's
-one-member paradigm leaves the markedness of each form to itself. -/
+begin only with [CV. Verbs alone have C-initial suffixes and CV- prefixes: before a
+C-initial suffix a superheavy coda is shortened or broken up and OP faithfulness carries the
+repair through the paradigm; after a CV- prefix SWP blocks the epenthesis that alignment
+would force into a stem-initial cluster, and OP faithfulness carries the blocking to the
+unprefixed forms. The noun's one-member paradigms leave each form to markedness alone. -/
 
 /-- \*µµµ]σ. -/
 def starTrimoraic : Constraint (Paradigm Seg Cell) :=
@@ -245,27 +260,30 @@ def starTrimoraic : Constraint (Paradigm Seg Cell) :=
 def starAppendix : Constraint (Paradigm Seg Cell) :=
   markedness λ c s => if c.appendix then superheavy (c.word s) else 0
 
-def noLLParadigm : Constraint (Paradigm Seg Cell) := markedness λ c s => noLL (c.word s)
+def swpParadigm : Constraint (Paradigm Seg Cell) := markedness λ c s => swp (c.word s)
 
-def exhParadigm : Constraint (Paradigm Seg Cell) := markedness λ c s => exhPrWd (c.word s)
+def alignLParadigm : Constraint (Paradigm Seg Cell) := markedness λ _ s => alignL s
 
 def opDepV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.depViolOn IsVowel)
 
-/-- OP-MAX-µ, on the length moras. -/
-def opMaxMora : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.maxViolOn (· = .long))
+def opIdentWt : Constraint (Paradigm Seg Cell) :=
+  opFaith (Correspondence.identViolFeature weight)
 
 def ioDepV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.depViolOn IsVowel)
 
 def ioMaxV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.maxViolOn IsVowel)
 
-/-- IO-MAX-µ, on the length moras. -/
-def ioMaxMora : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.maxViolOn (· = .long))
+def ioMaxC : Constraint (Paradigm Seg Cell) :=
+  ioFaith (Correspondence.maxViolOn λ x => ¬IsVowel x)
 
-/-- The summary ranking (18): IO-MAX-V, OP-DEP-V, \*µµµ]σ, \*APP-σ, OP-MAX-µ >> NO-LL >>
-EXH(PrWd) >> IO-DEP-V >> IO-MAX-µ. -/
+def ioIdentWt : Constraint (Paradigm Seg Cell) :=
+  ioFaith (Correspondence.identViolFeature weight)
+
+/-- The summary ranking (21): IO-MAX-V, OP-DEP-V, \*µµµ]σ, \*APP-σ, IO-MAX-C, OP-IDENT-WT >>
+SWP >> ALIGN-L(Stem, σ) >> IO-DEP-V >> IO-IDENT-WT. -/
 def ranking : List (Constraint (Paradigm Seg Cell)) :=
-  [ioMaxV, opDepV, starTrimoraic, starAppendix, opMaxMora, noLLParadigm, exhParadigm, ioDepV,
-   ioMaxMora]
+  [ioMaxV, opDepV, starTrimoraic, starAppendix, ioMaxC, opIdentWt, swpParadigm, alignLParadigm,
+   ioDepV, ioIdentWt]
 
 /-- The 3sg.m. perfective, suffix *-a*. -/
 def perfective : Cell := { suffixes := [.a] }
@@ -276,27 +294,23 @@ def perfective1 : Cell := { suffixes := [.t, .u] }
 /-- The 3sg.m. imperfective, *ja-* … *-u*. -/
 def imperfective : Cell := { prefixes := [.j, .a], suffixes := [.u] }
 
-/-- The nominative indefinite noun, suffix *-un*. -/
-def nominative : Cell := { suffixes := [.u, .n] }
+/-- The 3pl.f. imperfective, *ja-* … *-na*. -/
+def imperfectiveF : Cell := { prefixes := [.j, .a], suffixes := [.n, .a] }
 
 /-- The paradigms of /faʕaːl/ in (12): shortened throughout, long throughout with the
 superheavy coda an appendix or moraic, or alternating. -/
 def long : Cand → Paradigm Seg Cell
-  | .a => ⟨input, [⟨perfective, short, shortened⟩, ⟨perfective1, short, shortened⟩]⟩
-  | .b => ⟨input, [⟨perfective, input, Correspondence.diagonalPairs 6⟩,
-      ⟨{ perfective1 with appendix := true }, input, Correspondence.diagonalPairs 6⟩]⟩
-  | .c => ⟨input, [⟨perfective, input, Correspondence.diagonalPairs 6⟩,
-      ⟨perfective1, input, Correspondence.diagonalPairs 6⟩]⟩
-  | .d => ⟨input, [⟨perfective, input, Correspondence.diagonalPairs 6⟩,
-      ⟨perfective1, short, shortened⟩]⟩
+  | .a => ⟨input, [⟨perfective, short, diag⟩, ⟨perfective1, short, diag⟩]⟩
+  | .b => ⟨input, [⟨perfective, input, diag⟩, ⟨{ perfective1 with appendix := true }, input, diag⟩]⟩
+  | .c => ⟨input, [⟨perfective, input, diag⟩, ⟨perfective1, input, diag⟩]⟩
+  | _ => ⟨input, [⟨perfective, input, diag⟩, ⟨perfective1, short, diag⟩]⟩
 where
-  input : List Seg := [.f, .a, .ayn, .a, .long, .l]
+  input : List Seg := [.f, .a, .ayn, .aa, .l]
   short : List Seg := [.f, .a, .ayn, .a, .l]
-  /-- Closed-syllable shortening: one vowel position deleted. -/
-  shortened : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 3), (5, 4)]
+  diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 5
 
 /-- (12): the long vowel of /faʕaːl/ is shortened throughout the paradigm, ⟨faʕala, faʕaltu⟩ —
-overapplication of closed-syllable shortening, under OP-MAX-µ >> IO-MAX-µ. -/
+overapplication of closed-syllable shortening, under OP-IDENT-WT >> IO-IDENT-WT. -/
 theorem shortening_overapplies : (tableau long [.a, .b, .c, .d] ranking).optimal = {.a} := by
   decide
 
@@ -305,15 +319,13 @@ the superheavy coda an appendix or moraic, or alternating. -/
 def cluster : Cand → Paradigm Seg Cell
   | .a => ⟨input, [⟨perfective, epenthesized, epenthetic⟩,
       ⟨perfective1, epenthesized, epenthetic⟩]⟩
-  | .b => ⟨input, [⟨perfective, input, Correspondence.diagonalPairs 4⟩,
-      ⟨{ perfective1 with appendix := true }, input, Correspondence.diagonalPairs 4⟩]⟩
-  | .c => ⟨input, [⟨perfective, input, Correspondence.diagonalPairs 4⟩,
-      ⟨perfective1, input, Correspondence.diagonalPairs 4⟩]⟩
-  | .d => ⟨input, [⟨perfective, input, Correspondence.diagonalPairs 4⟩,
-      ⟨perfective1, epenthesized, epenthetic⟩]⟩
+  | .b => ⟨input, [⟨perfective, input, diag⟩, ⟨{ perfective1 with appendix := true }, input, diag⟩]⟩
+  | .c => ⟨input, [⟨perfective, input, diag⟩, ⟨perfective1, input, diag⟩]⟩
+  | _ => ⟨input, [⟨perfective, input, diag⟩, ⟨perfective1, epenthesized, epenthetic⟩]⟩
 where
   input : List Seg := [.f, .a, .ayn, .l]
   epenthesized : List Seg := [.f, .a, .ayn, .i, .l]
+  diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 4
   /-- A vowel epenthesized into the final cluster. -/
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 4)]
 
@@ -322,175 +334,248 @@ where
 theorem epenthesis_overapplies : (tableau cluster [.a, .b, .c, .d] ranking).optimal = {.a} := by
   decide
 
-/-- The noun /fʕaːl/ in (14): epenthesis or an initial appendix, in a one-member paradigm. -/
-def noun : Cand → Paradigm Seg Cell
-  | .a => ⟨input,
-      [⟨nominative, [.f, .i, .ayn, .a, .long, .l], [(0, 0), (1, 2), (2, 3), (3, 4), (4, 5)]⟩]⟩
-  | _ => ⟨input, [⟨nominative, input, Correspondence.diagonalPairs 5⟩]⟩
+/-- The paradigms of /faʕal/ in (17): the (LL) feet kept, or syncopated. -/
+def syncope : Cand → Paradigm Seg Cell
+  | .a => ⟨input, [⟨{ suffixes := [.u] }, input, Correspondence.diagonalPairs 5⟩,
+      ⟨perfective, input, Correspondence.diagonalPairs 5⟩]⟩
+  | _ => ⟨input, [⟨{ suffixes := [.u] }, [.f, .a, .ayn, .l], syncopated⟩,
+      ⟨perfective, [.f, .a, .ayn, .l], syncopated⟩]⟩
 where
-  input : List Seg := [.f, .ayn, .a, .long, .l]
+  input : List Seg := [.f, .a, .ayn, .a, .l]
+  syncopated : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (4, 3)]
 
-/-- (14): a [CCV noun stem is broken up by epenthesis, EXH(PrWd) >> IO-DEP-V. -/
+/-- (17): SWP cannot force syncope, IO-MAX-V >> SWP. -/
+theorem no_syncope : (tableau syncope [.a, .b] ranking).optimal = {.a} := by decide
+
+/-- The noun /fʕal/ with the case suffixes in (24): epenthesis, or the initial cluster. -/
+def noun : Cand → Paradigm Seg Cell
+  | .a => ⟨input, cases.map λ v => ⟨{ suffixes := [v] }, [.f, .i, .ayn, .a, .l], epenthetic⟩⟩
+  | _ => ⟨input, cases.map λ v => ⟨{ suffixes := [v] }, input, Correspondence.diagonalPairs 4⟩⟩
+where
+  input : List Seg := [.f, .ayn, .a, .l]
+  cases : List Seg := [.u, .a, .i]
+  epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4)]
+
+/-- (24): a [CCV noun stem is broken up by epenthesis, which SWP does not block in a
+prefixless paradigm, ALIGN-L(Stem, σ) >> IO-DEP-V. -/
 theorem noun_epenthesis : (tableau noun [.a, .b] ranking).optimal = {.a} := by decide
 
-/-- The paradigms of the tenth conjugation /stafʕal/ in (19): the initial cluster kept
-throughout, epenthesis throughout, or epenthesis in the unprefixed form only. -/
-def tenth : Cand → Paradigm Seg Cell
-  | .a => ⟨input, [⟨perfective, input, Correspondence.diagonalPairs 7⟩,
-      ⟨imperfective, [.s, .t, .a, .f, .ayn, .i, .l], Correspondence.diagonalPairs 7⟩]⟩
-  | .b => ⟨input, [⟨perfective, [.s, .i, .t, .a, .f, .ayn, .a, .l], epenthetic⟩,
-      ⟨imperfective, [.s, .i, .t, .a, .f, .ayn, .i, .l], epenthetic⟩]⟩
-  | _ => ⟨input, [⟨perfective, [.s, .i, .t, .a, .f, .ayn, .a, .l], epenthetic⟩,
-      ⟨imperfective, [.s, .t, .a, .f, .ayn, .i, .l], Correspondence.diagonalPairs 7⟩]⟩
-where
-  input : List Seg := [.s, .t, .a, .f, .ayn, .a, .l]
-  /-- A vowel epenthesized into the initial cluster. -/
-  epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7)]
+/-- The four representative cells of a verbal paradigm: the perfectives *-a*, *-tu* and the
+imperfectives *ja-…-u*, *ja-…-na*. -/
+def verbal (pfA pfTu impfU impfNa : Member Seg Cell) : List (Member Seg Cell) :=
+  [pfA, pfTu, impfU, impfNa]
 
-/-- (19): attraction to the unmarked — the prefixed *jastafʕilu*, which needs no epenthesis,
-is the attractor, and *sωtafʕala* keeps its appendix: NO-LL blocks epenthesis in the prefixed
-form and OP-DEP-V carries the blocking to the unprefixed one. -/
-theorem attraction_to_the_unmarked :
-    (tableau tenth [.a, .b, .c] ranking).optimal = {.a} := by decide
-
-/-- The paradigms of the eighth conjugation /ftaʕal/ in (17): the cluster kept, or epenthesis
-with syncope of the following vowel. -/
+/-- The paradigms of the eighth conjugation /ftaʕal/ in (19) and (25): the initial cluster
+kept throughout, epenthesis throughout, or epenthesis in the unprefixed forms only. -/
 def eighth : Cand → Paradigm Seg Cell
-  | .a => ⟨input, [⟨perfective, input, Correspondence.diagonalPairs 6⟩,
-      ⟨imperfective, [.f, .t, .a, .ayn, .i, .l], Correspondence.diagonalPairs 6⟩]⟩
-  | _ => ⟨input, [⟨perfective, [.f, .i, .t, .ayn, .a, .l], syncopated⟩,
-      ⟨imperfective, [.f, .i, .t, .ayn, .i, .l], syncopated⟩]⟩
+  | .a => ⟨input, verbal ⟨perfective, input, diag⟩ ⟨perfective1, input, diag⟩
+      ⟨imperfective, ablaut, diag⟩ ⟨imperfectiveF, ablaut, diag⟩⟩
+  | .b => ⟨input, verbal ⟨perfective, epenthesized input, epenthetic⟩
+      ⟨perfective1, epenthesized input, epenthetic⟩ ⟨imperfective, epenthesized ablaut, epenthetic⟩
+      ⟨imperfectiveF, epenthesized ablaut, epenthetic⟩⟩
+  | _ => ⟨input, verbal ⟨perfective, epenthesized input, epenthetic⟩
+      ⟨perfective1, epenthesized input, epenthetic⟩ ⟨imperfective, ablaut, diag⟩
+      ⟨imperfectiveF, ablaut, diag⟩⟩
 where
   input : List Seg := [.f, .t, .a, .ayn, .a, .l]
-  /-- Epenthesis into the initial cluster and syncope of the first stem vowel. -/
-  syncopated : List (ℕ × ℕ) := [(0, 0), (1, 2), (3, 3), (4, 4), (5, 5)]
+  /-- The imperfective stem vowel. -/
+  ablaut : List Seg := [.f, .t, .a, .ayn, .i, .l]
+  epenthesized (s : List Seg) : List Seg := s.take 1 ++ [.i] ++ s.drop 1
+  diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 6
+  epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6)]
 
-/-- (17): NO-LL is too low to force syncope, IO-MAX-V >> NO-LL. -/
-theorem no_syncope : (tableau eighth [.a, .b] ranking).optimal = {.a} := by decide
+/-- (25): attraction to the unmarked — the prefixed *jaftaʕilu*, where epenthesis would
+make an (LL) foot, is the attractor, and *ftaʕala* keeps its misaligned cluster:
+OP-DEP-V >> SWP >> ALIGN-L(Stem, σ). -/
+theorem attraction_to_the_unmarked :
+    (tableau eighth [.a, .b, .c] ranking).optimal = {.a} := by decide
 
-/-! ### Moroccan Arabic majority rules (§5.1)
+/-- The paradigms of /stafʕaːl/ in (27), the candidates obeying the undominated constraints:
+levelled to the short, unepenthesized stem; epenthesized throughout; long before V-initial
+suffixes; epenthesized in the perfectives; or both. -/
+def tenth : Cand → Paradigm Seg Cell
+  | .a => ⟨input, verbal ⟨perfective, short, diag⟩ ⟨perfective1, short, diag⟩
+      ⟨imperfective, shortAblaut, diag⟩ ⟨imperfectiveF, shortAblaut, diag⟩⟩
+  | .b => ⟨input, verbal ⟨perfective, epenthesized short, epenthetic⟩
+      ⟨perfective1, epenthesized short, epenthetic⟩
+      ⟨imperfective, epenthesized shortAblaut, epenthetic⟩
+      ⟨imperfectiveF, epenthesized shortAblaut, epenthetic⟩⟩
+  | .c => ⟨input, verbal ⟨perfective, input, diag⟩ ⟨perfective1, short, diag⟩
+      ⟨imperfective, ablaut, diag⟩ ⟨imperfectiveF, shortAblaut, diag⟩⟩
+  | .d => ⟨input, verbal ⟨perfective, epenthesized short, epenthetic⟩
+      ⟨perfective1, epenthesized short, epenthetic⟩ ⟨imperfective, shortAblaut, diag⟩
+      ⟨imperfectiveF, shortAblaut, diag⟩⟩
+  | .e => ⟨input, verbal ⟨perfective, epenthesized input, epenthetic⟩
+      ⟨perfective1, epenthesized short, epenthetic⟩ ⟨imperfective, ablaut, diag⟩
+      ⟨imperfectiveF, shortAblaut, diag⟩⟩
+where
+  input : List Seg := [.s, .t, .a, .f, .ayn, .aa, .l]
+  short : List Seg := [.s, .t, .a, .f, .ayn, .a, .l]
+  ablaut : List Seg := [.s, .t, .a, .f, .ayn, .ii, .l]
+  shortAblaut : List Seg := [.s, .t, .a, .f, .ayn, .i, .l]
+  epenthesized (s : List Seg) : List Seg := s.take 1 ++ [.i] ++ s.drop 1
+  diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 7
+  epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7)]
 
-Schwa is banned from open syllables and appears only to break up triconsonantal clusters,
-so the phonology fixes CCəC before C-initial and CəCC before V-initial suffixes; the
-unaffixed verb joins the larger class, *ktəb*, whereas nouns — paradigms of one — follow
-sonority. The prefixes of the imperfective play no part in the constraints and are
-omitted from the cells. -/
+/-- (27): different members attract different edges — the prefixed imperfectives block
+epenthesis at the left edge via OP-DEP-V, the C-suffixed forms force shortening at the right
+edge via OP-IDENT-WT — under the single ranking (21). -/
+theorem two_attractors : (tableau tenth [.a, .b, .c, .d, .e] ranking).optimal = {.a} := by
+  decide
 
-/-- Schwa in an open syllable. -/
+/-! ### Domination of OP faithfulness (§8.4.4)
+
+Geminate verbs delete the vowel between their identical consonants before V-initial
+suffixes, *ħmarra ~ ħmarartu*, so \*.CᵢV.CᵢV dominates IO-MAX-V and OP-MAX-V (29). -/
+
+def opMaxV : Constraint (Paradigm Seg Cell) := opFaith (Correspondence.maxViolOn IsVowel)
+
+/-- The paradigms of /ħmarar/ in (29): the vowel deleted before V-initial suffixes, or kept
+throughout. -/
+def geminate : Cand → Paradigm Seg Cell
+  | .a => ⟨input, verbal ⟨perfective, [.hh, .m, .a, .r, .r], deleted⟩ ⟨perfective1, input, diag⟩
+      ⟨imperfective, [.hh, .m, .a, .r, .r], deleted⟩ ⟨imperfectiveF, ablaut, diag⟩⟩
+  | _ => ⟨input, verbal ⟨perfective, input, diag⟩ ⟨perfective1, input, diag⟩
+      ⟨imperfective, ablaut, diag⟩ ⟨imperfectiveF, ablaut, diag⟩⟩
+where
+  input : List Seg := [.hh, .m, .a, .r, .a, .r]
+  ablaut : List Seg := [.hh, .m, .a, .r, .i, .r]
+  diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 6
+  deleted : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 3), (5, 4)]
+
+/-- (29): normal application — neither levelling wins, the vowel/zero alternation staying in
+the paradigm, \*.CᵢV.CᵢV >> IO-MAX-V, OP-MAX-V. -/
+theorem geminate_alternation :
+    (tableau geminate [.a, .b]
+      (markedness (λ c s => identicalOnsets (c.word s)) :: ranking)).optimal = {.a} := by
+  decide
+
+/-! ### Moroccan Arabic majority rules (§8.5.1)
+
+Schwa is banned from open syllables and triconsonantal clusters are prohibited, so the
+phonology fixes CCəC before C-initial and CəCC before V-initial suffixes; the unaffixed
+verb joins the larger class, *ʃrəb*, whereas nouns — paradigms of one — follow SONCON. -/
+
+/-- \*ə]σ. -/
 def schwaOpen (w : List Seg) : ℕ :=
-  ((syllabify w).2.filter λ σ => σ.nucleus = [.schwa] ∧ σ.coda = []).length
+  ((syllabify w).filter λ σ => σ.nucleus = .schwa ∧ σ.coda = []).length
 
-/-- Triconsonantal clusters. -/
+/-- \*CCC. -/
 def ccc : List Seg → ℕ
   | x :: y :: z :: rest =>
     (if ¬IsVowel x ∧ ¬IsVowel y ∧ ¬IsVowel z then 1 else 0) + ccc (y :: z :: rest)
   | _ => 0
 
-def IsSonorant (x : Seg) : Prop := x ∈ [Seg.l, .j, .n]
+/-- Sonority: glide > liquid > nasal > fricative > stop. -/
+def sonority : Seg → ℕ
+  | .j => 5
+  | .l | .r => 4
+  | .n | .m => 3
+  | .f | .s | .sh | .hh | .ayn => 2
+  | _ => 1
 
-instance : DecidablePred IsSonorant := λ x => inferInstanceAs (Decidable (x ∈ _))
-
-/-- The sonority constraints deciding nouns, as one constraint: CCəC wants a final sonorant,
-CəCC a final obstruent. -/
-def sonority : List Seg → ℕ
-  | [_, _, .schwa, x] => if IsSonorant x then 0 else 1
-  | [_, .schwa, _, x] => if IsSonorant x then 1 else 0
+/-- SONCON (30), on a word of three consonants and a schwa: CəC₂C₃ wants C₂ more sonorous
+than C₃, CC₂əC₃ not. -/
+def sonCon : List Seg → ℕ
+  | [_, .schwa, y, z] => if sonority y > sonority z then 0 else 1
+  | [_, y, .schwa, z] => if sonority y > sonority z then 1 else 0
   | _ => 0
 
-/-- The ranking of (23): the schwa phonotactics >> OP-MAX-V >> sonority >> IO-MAX-V, IO-DEP-V. -/
+/-- The ranking of (32): \*ə]σ, \*CCC >> OP-MAX-V >> SONCON >> IO-MAX-V, IO-DEP-V. -/
 def moroccanRanking : List (Constraint (Paradigm Seg (List Seg))) :=
   [markedness λ suf s => schwaOpen (s ++ suf), markedness λ suf s => ccc (s ++ suf),
-   opFaith (Correspondence.maxViolOn IsVowel), markedness λ _ s => sonority s,
+   opFaith (Correspondence.maxViolOn IsVowel), markedness λ suf s => sonCon (s ++ suf),
    ioFaith (Correspondence.maxViolOn IsVowel), ioFaith (Correspondence.depViolOn IsVowel)]
 
-/-- A CCəC member from /kətb/: the input schwa deleted, a schwa epenthesized. -/
+/-- A CCəC member from /ʃərb/: the input schwa deleted, a schwa epenthesized. -/
 def ccec (suffix : List Seg) : Member Seg (List Seg) :=
-  ⟨suffix, [.k, .t, .schwa, .b], [(0, 0), (2, 1), (3, 3)]⟩
+  ⟨suffix, [.sh, .r, .schwa, .b], [(0, 0), (2, 1), (3, 3)]⟩
 
-/-- A CəCC member from /kətb/. -/
+/-- A CəCC member from /ʃərb/. -/
 def cecc (suffix : List Seg) : Member Seg (List Seg) :=
-  ⟨suffix, [.k, .schwa, .t, .b], Correspondence.diagonalPairs 4⟩
+  ⟨suffix, [.sh, .schwa, .r, .b], Correspondence.diagonalPairs 4⟩
 
-/-- The suffixes of the fifteen members of (22): the unaffixed verb, four C-initial
-suffixes, four prefixed forms, and six V-initial suffixes. -/
-def cells : List (List Seg) :=
-  [[], [.t], [.n, .a], [.t, .i], [.t, .u], [], [], [], [], [.u], [.schwa, .t], [.i], [.u], [.u],
-   [.u]]
+/-- The suffixes of the perfective paradigm (31): none, four C-initial, two V-initial. -/
+def suffixes : List (List Seg) := [[], [.t], [.n, .a], [.t, .i], [.t, .u], [.u], [.schwa, .t]]
 
-/-- The paradigms of /kətb/ in (23): the unaffixed verb CCəC or CəCC with the rest fixed by
+/-- The paradigms of /ʃərb/ in (32): the unaffixed verb CCəC or CəCC with the rest fixed by
 the phonology, or levelled to CCəC or to CəCC throughout. -/
-def kteb : Cand → Paradigm Seg (List Seg)
-  | .a => ⟨input, (cells.take 9).map ccec ++ (cells.drop 9).map cecc⟩
-  | .b => ⟨input, cecc [] :: ((cells.drop 1).take 8).map ccec ++ (cells.drop 9).map cecc⟩
-  | .c => ⟨input, cells.map ccec⟩
-  | .d => ⟨input, cells.map cecc⟩
+def drink : Cand → Paradigm Seg (List Seg)
+  | .a => ⟨input, (suffixes.take 5).map ccec ++ (suffixes.drop 5).map cecc⟩
+  | .b => ⟨input, cecc [] :: ((suffixes.drop 1).take 4).map ccec ++ (suffixes.drop 5).map cecc⟩
+  | .c => ⟨input, suffixes.map ccec⟩
+  | _ => ⟨input, suffixes.map cecc⟩
 where
-  input : List Seg := [.k, .schwa, .t, .b]
+  input : List Seg := [.sh, .schwa, .r, .b]
 
-/-- (23): majority rules — the unaffixed *ktəb* joins the nine CCəC members against the six
-CəCC members, since OP-MAX-V is violated once in each direction by every CCəC–CəCC pair. -/
-theorem majority_rules : (tableau kteb [.a, .b, .c, .d] moroccanRanking).optimal = {.a} := by
-  decide +kernel
+/-- (32): majority rules — the unaffixed *ʃrəb* joins the five CCəC members against the two
+CəCC members, OP-MAX-V being violated once in each direction by every CCəC–CəCC pair
+(twenty against twenty-four marks). -/
+theorem majority_rules : (tableau drink [.a, .b, .c, .d] moroccanRanking).optimal = {.a} := by
+  decide
 
 end Arabic
 
-/-! ### Tiberian Hebrew jussives (§5.2)
+/-! ### Tiberian Hebrew jussives (§8.5.2)
 
-The final cluster of the jussive *yišb* is not broken up by the epenthesis that nouns
-undergo, the underapplication [benua-1997] derives from base priority. Under OP the
-paradigm ⟨yišbē, yišb⟩ wins because its levelled rival ⟨yišəbē, yišeb⟩ puts a schwa in a
-two-sided open syllable; into a rising-sonority cluster, SON-CON >> OP-MAX-V, epenthesis
-applies, ⟨yiɣlē, yiɣel⟩. The segments and the markedness constraints are those of the
-[benua-1997] study, whose winners the OP tableaux reproduce. -/
+The jussive truncates the final vowel of the imperfective, *jibkɛ ~ jeːbk*, and the final
+cluster is not broken up by the epenthesis nouns undergo — the underapplication
+[benua-1997] derives from base priority. Under OP every candidate loses a vowel to
+truncation, and ⟨jibkɛ, jeːbk⟩ wins because its levelled rival ⟨jibəkɛ, jibɛk⟩ puts a schwa
+between an open and a following syllable, \*VCəCV >> OP-MAX-V >> \*CC# (33); into a
+rising-sonority cluster epenthesis applies in the jussive alone, SON-CON >> OP-MAX-V
+(fn. 34). The segments and the markedness constraints are those of the [benua-1997] study,
+whose winners the OP tableaux reproduce. -/
 
 namespace Hebrew
 
 open Benua1997.Hebrew (Seg sonCon complexCoda)
 
-/-- A vowel in a two-sided open syllable, CV.CV.CV. -/
+/-- \*VCəCV: a vowel between an open syllable and a following one. -/
 def twoSidedOpen : List Seg → ℕ
   | v₁ :: c₁ :: v₂ :: c₂ :: v₃ :: rest =>
     (if v₁ = .vowel ∧ c₁ ≠ .vowel ∧ v₂ = .vowel ∧ c₂ ≠ .vowel ∧ v₃ = .vowel then 1 else 0)
       + twoSidedOpen (c₁ :: v₂ :: c₂ :: v₃ :: rest)
   | _ => 0
 
-/-- \*ə]σσ, SON-CON >> OP-MAX-V >> \*COMPLEX-CODA >> IO-DEP-V. -/
-def ranking : List (Constraint (Paradigm Seg (List Seg))) :=
-  [markedness λ suf s => twoSidedOpen (s ++ suf), markedness λ suf s => sonCon (s ++ suf),
-   opFaith (Correspondence.maxViolOn (· = .vowel)), markedness λ suf s => complexCoda (s ++ suf),
-   ioFaith (Correspondence.depViolOn (· = .vowel))]
+/-- \*VCəCV, SON-CON >> OP-MAX-V >> \*CC#. -/
+def ranking : List (Constraint (Paradigm Seg Unit)) :=
+  [markedness λ _ s => twoSidedOpen s, markedness λ _ s => sonCon s,
+   opFaith (Correspondence.maxViolOn (· = .vowel)), markedness λ _ s => complexCoda s]
 
-/-- The paradigms of an imperfective and its jussive from a stem ending in the cluster
-`x y`: the cluster throughout, epenthesis throughout, or epenthesis in the jussive alone. -/
-def jussive (x y : Seg) : Cand → Paradigm Seg (List Seg)
-  | .a => ⟨stem, [⟨[.vowel], stem, Correspondence.diagonalPairs 4⟩,
-      ⟨[], stem, Correspondence.diagonalPairs 4⟩]⟩
-  | .b => ⟨stem, [⟨[.vowel], epenthesized, epenthetic⟩, ⟨[], epenthesized, epenthetic⟩]⟩
-  | _ => ⟨stem, [⟨[.vowel], stem, Correspondence.diagonalPairs 4⟩, ⟨[], epenthesized, epenthetic⟩]⟩
+/-- The paradigms of an imperfective and its truncated jussive from a stem ending in the
+cluster `x y`: the cluster kept, epenthesis throughout, or epenthesis in the jussive alone. -/
+def jussive (x y : Seg) : Cand → Paradigm Seg Unit
+  | .a => ⟨stem, [⟨(), stem, Correspondence.diagonalPairs 5⟩,
+      ⟨(), [.glide, .vowel, x, y], Correspondence.diagonalPairs 4⟩]⟩
+  | .b => ⟨stem, [⟨(), [.glide, .vowel, x, .vowel, y, .vowel],
+      [(0, 0), (1, 1), (2, 2), (3, 4), (4, 5)]⟩, ⟨(), epenthesized, epenthetic⟩]⟩
+  | _ => ⟨stem, [⟨(), stem, Correspondence.diagonalPairs 5⟩, ⟨(), epenthesized, epenthetic⟩]⟩
 where
-  stem : List Seg := [.glide, .vowel, x, y]
+  stem : List Seg := [.glide, .vowel, x, y, .vowel]
   epenthesized : List Seg := [.glide, .vowel, x, .vowel, y]
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 4)]
 
-/-- *yiš.bē ~ yišb* 'take captive': the cluster is kept throughout, overapplication of
-epenthesis being blocked. -/
-theorem captive :
-    (tableau (jussive .sibilant .stop) [.a, .b, .c] ranking).optimal = {.a} := by decide
+/-- (33): *jibkɛ ~ jeːbk* 'cry' — the cluster is kept, overapplication of epenthesis being
+blocked. -/
+theorem cry : (tableau (jussive .spirant .stop) [.a, .b, .c] ranking).optimal = {.a} := by
+  decide
 
-/-- *yiɣ.lē ~ yi.ɣel* 'uncover': into a rising-sonority cluster epenthesis applies in the
-jussive alone, OP-MAX-V being dominated by SON-CON. -/
+/-- fn. 34: *jɛɣlɛ ~ jɛɣɛl* 'uncover' — into a rising-sonority cluster epenthesis applies in
+the jussive alone, OP-MAX-V being dominated by SON-CON. -/
 theorem uncover :
     (tableau (jussive .spirant .liquid) [.a, .b, .c] ranking).optimal = {.c} := by decide
 
-/-- The OP winners carry the forms of the [benua-1997] winners, (87) and (92). -/
+/-- The OP winners for *yišbē ~ yišb* 'take captive' and 'uncover' carry the forms of the
+[benua-1997] winners, (87) and (92). -/
 example :
-    ((Benua1997.Hebrew.captive .d).form .base, (Benua1997.Hebrew.captive .d).form .derivative) =
-      ((jussive .sibilant .stop .a).stem 0 ++ [.vowel], (jussive .sibilant .stop .a).stem 1) ∧
-    ((Benua1997.Hebrew.uncover .b).form .base, (Benua1997.Hebrew.uncover .b).form .derivative) =
-      ((jussive .spirant .liquid .c).stem 0 ++ [.vowel], (jussive .spirant .liquid .c).stem 1) :=
-  ⟨rfl, rfl⟩
+    (tableau (jussive .sibilant .stop) [.a, .b, .c] ranking).optimal = {.a} ∧
+    (Benua1997.Hebrew.captive .d).form .base = (jussive .sibilant .stop .a).stem 0 ∧
+    (Benua1997.Hebrew.captive .d).form .derivative = (jussive .sibilant .stop .a).stem 1 ∧
+    (Benua1997.Hebrew.uncover .b).form .base = (jussive .spirant .liquid .c).stem 0 ∧
+    (Benua1997.Hebrew.uncover .b).form .derivative = (jussive .spirant .liquid .c).stem 1 :=
+  ⟨by decide, rfl, rfl, rfl, rfl⟩
 
 end Hebrew
 
 end McCarthy2005
-
