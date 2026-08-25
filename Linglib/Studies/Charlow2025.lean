@@ -31,17 +31,17 @@ Canonical) have non-bilateral shapes. `IsLawfulDNELift` does not extend
 
 ## Connection to existing linglib infrastructure
 
-[charlow-2014]'s `AnaphoraFramework` (`Linglib/Studies/Charlow2014.lean`)
-formalizes the partition of dynamic-anaphora frameworks into
-`RepStrategy.stateThreading` (DRT, DPL, CDRT, BUS) vs `.typeStructure` (TTR).
-Charlow 2025 strengthens the state-threading side: any two lifts that
-satisfy Emb/Inv/Neg over the same substrate δ are isomorphic on the image
-of `liftInterp`. This subsumes the prose "three incompatible DNE solutions"
-table in `Semantics/Dynamic/Update.lean §49-78` for the
-state-threading row — bilateral and ICDRT-bilateral are not incompatible
-choices, they are isomorphic presentations once the substrate is fixed.
-TTR remains genuinely outside the lift framework (its classical metalanguage
-gives DNE statically, so there is no non-DNE substrate to lift from).
+[charlow-2014] (`Linglib/Studies/Charlow2014.lean`) builds dynamic semantics
+as the State.Set monad — a state-threading substrate in the sense of
+`DynamicSubstrate`, with `Charlow2014.neg` its dynamic negation. Charlow 2025
+strengthens the state-threading picture: any two lifts that satisfy
+Emb/Inv/Neg over the same substrate δ are isomorphic on the image of
+`liftInterp`. This subsumes the prose "three incompatible DNE solutions"
+table in `Semantics/Dynamic/Update.lean` for the state-threading row —
+bilateral and ICDRT-bilateral are not incompatible choices, they are
+isomorphic presentations once the substrate is fixed. TTR remains genuinely
+outside the lift framework (its classical metalanguage gives DNE statically,
+so there is no non-DNE substrate to lift from).
 
 ## Scope of this file
 
