@@ -42,13 +42,6 @@ open Syntax.Negation
 def negSuffix : Marker :=
   { morphs := [.suff "mA"] }
 
-/-- Turkish standard (verbal) negation: a single verbal affix.
-    Nonverbal predication negates with copular *değil* and the
-    existential with suppletive *yok* (for *var*), both outside
-    standard negation in [miestamo-2005]'s sense. -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "tur" [negSuffix]
-
 /-- A Turkish negation paradigm entry. -/
 structure NegParadigmEntry where
   formLabel : String

@@ -47,14 +47,6 @@ open Syntax.Negation
 def ei : Marker :=
   { morphs := [.free "ei"] }
 
-/-- The Finnish negation system: a single negative auxiliary with a
-    person/number paradigm. Multiple paradigm-form *surface* realizations
-    (`negParadigm`) are not multiple *markers* — they're inflectional
-    variants of one auxiliary, captured cross-linguistically by the single
-    `Marker`. -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "fin" [ei]
-
 /-! ### Negative auxiliary paradigm -/
 
 /-- Person–number features for the Finnish negative auxiliary. -/

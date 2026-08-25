@@ -3,9 +3,8 @@ import Linglib.Syntax.Negation
 /-! # Italian Negation Fragment
 [haspelmath-2013] [dryer-2013-wals] [zanuttini-1997] [cinque-1999]
 
-Italian sentential negation: the standard preverbal negation particle *non*
-and its packaging as a `NegationSystem`. The marker is a free particle
-in preverbal position; WALS Ch 143A classifies Italian as `.negv`.
+Italian sentential negation: the standard preverbal negation particle *non*,
+a free particle in preverbal position; WALS Ch 143A classifies Italian as `.negv`.
 Italian object clitics attach between *non* and the verb (*non lo vedo*,
 not **lo non vedo*) — the canonical syntactic analysis is
 [zanuttini-1997]'s NegP cartography, refined by [cinque-1999]'s
@@ -44,12 +43,6 @@ open Syntax.Negation
     A free word, not a clitic; syntactically immediately preverbal. -/
 def non : Marker :=
   { morphs := [.free "non"] }
-
-/-- The Italian negation system: a single preverbal particle.
-    WALS classifications are pulled from `Data/WALS/Features/F112A.lean`
-    et al. via `NegationSystem.ofISO` — never hand-encoded. -/
-def negationSystem : NegationSystem :=
-  NegationSystem.ofISO "ita" [non]
 
 /-! ## Expletive Negation
 [jin-koenig-2021]

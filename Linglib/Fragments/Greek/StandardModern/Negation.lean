@@ -86,12 +86,6 @@ def dhenMarker : Syntax.Negation.Marker :=
 def minMarker : Syntax.Negation.Marker :=
   { morphs := [.free "min"] }
 
-/-- The Greek negation system: two mood-conditioned preverbal particles.
-    *dhen* (indicative, default-context) listed first, *min* (subjunctive/
-    modal) second. -/
-def negationSystem : Syntax.Negation.NegationSystem :=
-  Syntax.Negation.NegationSystem.ofISO "ell" [dhenMarker, minMarker]
-
 /-! ### Semantics -/
 
 /-- Semantics of *dhen*: standard truth-functional negation.
