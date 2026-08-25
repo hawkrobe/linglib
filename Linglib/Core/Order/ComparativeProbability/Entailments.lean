@@ -267,7 +267,7 @@ theorem dominationLift_not_V13 :
       (∀ w, ge_w w w) ∧ ¬patternV13 (dominationLift ge_w) := by
   refine ⟨Fin 2, fun _ _ => True, fun _ => trivial, fun h => ?_⟩
   have hA : ({0} : Set (Fin 2)) \ {1} = {0} := by
-    ext x; simp only [Set.mem_diff, Set.mem_singleton_iff]; omega
+    ext x; simp only [Set.mem_sdiff, Set.mem_singleton_iff]; omega
   have hstrict : Strict (dominationLift (fun (_ _ : Fin 2) => True)) ({0} \ {1}) ∅ :=
     ⟨fun b hb => hb.elim, fun hge => by
       obtain ⟨a, ha, _⟩ := hge (0 : Fin 2) (by rw [hA]; rfl); exact ha.elim⟩

@@ -192,7 +192,7 @@ theorem exists_dominationLift_repr {W : Type*} [Fintype W]
     `A \ B` unchanged: `(A ∪ C) \ (B ∪ C) = A \ B`. -/
 private theorem union_diff_union_disjoint {W : Type*} (A B C : Set W)
     (hAC : ∀ x, x ∈ A → x ∉ C) : (A ∪ C) \ (B ∪ C) = A \ B := by
-  ext x; simp only [Set.mem_diff, Set.mem_union]
+  ext x; simp only [Set.mem_sdiff, Set.mem_union]
   refine ⟨fun h => h.1.elim (fun hx => ⟨hx, fun hb => h.2 (Or.inl hb)⟩)
     (fun hx => absurd (Or.inr hx) h.2), fun ⟨hxA, hxnB⟩ =>
     ⟨Or.inl hxA, fun h => h.elim hxnB (hAC x hxA)⟩⟩
@@ -211,7 +211,7 @@ theorem axiomA_iff_fa {W : Type*} (ge : Set W → Set W → Prop) :
   · intro hFA A B
     have h := hFA (A \ B) (B \ A) (A ∩ B)
       (fun x ⟨_, hxnB⟩ ⟨_, hxB⟩ => hxnB hxB) (fun x ⟨_, hxnA⟩ ⟨hxA, _⟩ => hxnA hxA)
-    rw [Set.diff_union_inter A B, Set.inter_comm A B, Set.diff_union_inter B A] at h
+    rw [Set.sdiff_union_inter A B, Set.inter_comm A B, Set.sdiff_union_inter B A] at h
     exact h.symm
 
 end ComparativeProbability
