@@ -109,7 +109,7 @@ loses (Finnish *ei mene* 'NEG.3SG go'), making negation a special case of
 the aux-headed auxiliary-verb construction; an affix or a particle does
 not. `Strategy` classifies negation at that grain. -/
 
-open AuxiliaryVerbs (InflPattern)
+open AuxiliaryVerbs (InflectionPattern)
 open Grammaticalization (GramStage)
 
 /-- How a language expresses sentential negation. -/
@@ -125,7 +125,7 @@ inductive Strategy where
 /-- A negative verb heads an auxiliary-verb construction, so it is
 expected to host the inflection; affixes and particles form no
 construction to head. -/
-def Strategy.expectedInflPattern : Strategy → Option InflPattern
+def Strategy.expectedInflectionPattern : Strategy → Option InflectionPattern
   | .negVerb => some .auxHeaded
   | .negAffix | .negParticle => none
 
