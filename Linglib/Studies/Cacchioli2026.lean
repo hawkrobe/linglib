@@ -22,6 +22,15 @@ fragment entries: the selection table (which verb classes take *kɛmzɨ-*,
 *kɨ-* and *ʔɨlu*), and the distribution of the negative suffix across
 clause types, read off the thesis's own negated words built from the
 fragment morphs.
+
+## TODO
+
+* State the head placements — PolP above TP above NegP, MoodP below TP —
+  against the extended-projection substrate once `fValue` separates Pol,
+  T, Neg and Mod (all F2 today).
+* Record *ʔɨlu*'s agreement with the matrix subject once `Complementizer`
+  carries an agreement axis; the former `agrees` field meant
+  clause-internal agreement and had no correct setter.
 -/
 
 namespace Cacchioli2026
