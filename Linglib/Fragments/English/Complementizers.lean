@@ -30,16 +30,16 @@ structure CompEntry extends Complementizer where
   deriving Repr, BEq, DecidableEq
 
 def that : CompEntry :=
-  { form := "that", position := some .detached,
+  { morphs := [.free "that"],
     coding := some .indicative, force := some .declarative,
     optional := true }
 
 def if_ : CompEntry :=
-  { form := "if", position := some .detached,
+  { morphs := [.free "if"],
     force := some .interrogative, conditional := true }
 
 def whether : CompEntry :=
-  { form := "whether", position := some .detached,
+  { morphs := [.free "whether"],
     force := some .interrogative }
 
 /-- The complementizer inventory (adverbial subordinators excluded). -/

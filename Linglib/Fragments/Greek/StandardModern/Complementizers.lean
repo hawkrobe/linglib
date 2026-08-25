@@ -22,8 +22,7 @@ namespace Greek.StandardModern.Complementizers
     Factivity of *oti*-clauses tracks the matrix verb (*kséro* vs
     *léo*), so no lexical `factive` value is recorded. -/
 def oti : Complementizer where
-  form := "oti"
-  position := some .detached
+  morphs := [.free "oti"]
   coding := some .indicative
   force := some .declarative
 
@@ -34,8 +33,7 @@ def oti : Complementizer where
     unifies the uses via a PLACE noun); the entry records the
     complement use. -/
 def pu : Complementizer where
-  form := "pu"
-  position := some .detached
+  morphs := [.free "pu"]
   coding := some .indicative
   force := some .declarative
   factive := some true
@@ -45,8 +43,7 @@ def pu : Complementizer where
     selected (*anarotjéme* 'wonder') and, under matrix negation or
     question, unselected (*dhen kséro an* 'I don't know if'). -/
 def an : Complementizer where
-  form := "an"
-  position := some .detached
+  morphs := [.free "an"]
   coding := some .indicative
   force := some .interrogative
 
@@ -55,8 +52,7 @@ def an : Complementizer where
     projection is debated; the schema is head-agnostic, and
     [angelopoulos-2026] sets *na* aside. -/
 def na : Complementizer where
-  form := "na"
-  position := some .detached
+  morphs := [.free "na"]
   coding := some .subjunctive
 
 /-- The complementizer inventory. -/

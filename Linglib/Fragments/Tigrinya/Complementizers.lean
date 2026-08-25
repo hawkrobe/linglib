@@ -1,5 +1,4 @@
 import Linglib.Syntax.Category.Complementizer.Basic
-import Linglib.Morphology.Morph
 
 /-!
 # Tigrinya Complementizers
@@ -34,8 +33,7 @@ comparatives and superlatives, subject noun-complement clauses,
 *seem*-clauses, and the clauses of particles such as *ʔɨntɛ* 'if' and
 *sɨlɛ* 'because'. Doubles on verb and auxiliary in periphrastic tenses. -/
 def zi : Complementizer where
-  form := zi.morph.form ++ "-"
-  position := some .praefixed
+  morphs := [zi.morph]
   coding := some .indicative
   verbForm := some .Fin
 
@@ -49,8 +47,7 @@ utterance ('say', 'ask') and perception ('see', 'hear') verbs, including
 embedded questions. Factivity tracks the matrix verb, so no lexical
 `factive` value is recorded. -/
 def kemzi : Complementizer where
-  form := kem.form ++ zi.morph.form ++ "-"
-  position := some .praefixed
+  morphs := [kem, zi.morph]
   coding := some .indicative
   verbForm := some .Fin
 
@@ -61,8 +58,7 @@ def ki.morph : Morph := .pref "kɨ"
 directive, desire, modal, emotive-factive, control and ECM verbs;
 purpose clauses, the future construction, sentential subjects. -/
 def ki : Complementizer where
-  form := ki.morph.form ++ "-"
-  position := some .praefixed
+  morphs := [ki.morph]
   coding := some .subjunctive
   verbForm := some .Fin
 
@@ -70,8 +66,7 @@ def ki : Complementizer where
 agreeing with the matrix subject (*ʔɨl-ɛ* 'COMP-1SG'). Limited to
 cognitive non-factive, fiction and utterance verbs. -/
 def ilu : Complementizer where
-  form := "ʔɨlu"
-  position := some .detached
+  morphs := [.free "ʔɨlu"]
   coding := some .indicative
   force := some .declarative
 

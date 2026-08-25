@@ -31,7 +31,7 @@ def n : Morph := .suff "n"
 
 /-- *ʔaj-…-(ɨ)n* — the standard-negation circumfix. -/
 def circumfix : NegMarkerEntry where
-  form := aj.form ++ "-...-" ++ n.form
+  form := toString [aj, n]
   morphemeType := .doubleNeg
   position := .discontinuous
 

@@ -65,16 +65,14 @@ namespace Korean.Complementizers
     (Shim & Ihsane 2015, [kim-min-joo-2009]) treats it as a
     clause-typing morpheme without that structural decomposition. -/
 def ta : Complementizer where
-  form := "-ta"
-  position := some .postfixed
+  morphs := [.suff "ta"]
   verbForm := some .Fin
   force := some .declarative
 
 /-- *-nun* — adnominal ending; turns a clause into a noun modifier
     (typically followed by *kes* 'thing' in nominalized clauses). -/
 def nun : Complementizer where
-  form := "-nun"
-  position := some .postfixed
+  morphs := [.suff "nun"]
   verbForm := some .Part
   licenser := some .nominal
 
@@ -82,8 +80,7 @@ def nun : Complementizer where
     allomorph, paired with adnominal *-nun* (§4.3.2 ex. 46 of
     [bondarenko-2022]). -/
 def ko : Complementizer where
-  form := "-ko"
-  position := some .postfixed
+  morphs := [.suff "ko"]
   verbForm := some .Conv
   licenser := some .verbal
 
