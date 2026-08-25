@@ -157,12 +157,13 @@ syllable extrametrical, as the paper assumes; SWP marks a stressed light syllabl
 namespace Arabic
 
 inductive Seg
-  | f | ayn | l | s | sh | t | j | k | b | n | m | r | hh | a | aa | i | ii | u | schwa
+  | f | ayn | l | s | sh | t | j | k | b | n | m | r | hh | g | d | ch | x | q | w | z | zh
+  | a | aa | i | ii | u | schwa
   deriving DecidableEq, Repr
 
-def IsVowel (x : Seg) : Prop := x ∈ [Seg.a, .aa, .i, .ii, .u, .schwa]
+def IsVowel (c : Seg) : Prop := c ∈ [Seg.a, .aa, .i, .ii, .u, .schwa]
 
-instance : DecidablePred IsVowel := λ x => inferInstanceAs (Decidable (x ∈ _))
+instance : DecidablePred IsVowel := λ c => inferInstanceAs (Decidable (c ∈ _))
 
 /-- The weight of a vowel: long or short. -/
 def weight : Seg → Option Bool
@@ -188,9 +189,9 @@ def closeLast (coda : List Seg) : List Syllable → List Syllable
 before it but its onset close the previous one, and the final consonants close the last. -/
 def syllabifyRev : List Syllable → List Seg → List Seg → List Syllable
   | σs, pending, [] => closeLast pending σs
-  | σs, pending, x :: xs =>
-    if IsVowel x then syllabifyRev (⟨x, []⟩ :: closeLast pending.dropLast σs) [] xs
-    else syllabifyRev σs (pending ++ [x]) xs
+  | σs, pending, c :: rest =>
+    if IsVowel c then syllabifyRev (⟨c, []⟩ :: closeLast pending.dropLast σs) [] rest
+    else syllabifyRev σs (pending ++ [c]) rest
 
 def syllabify (w : List Seg) : List Syllable := (syllabifyRev [] [] w).reverse
 
@@ -222,14 +223,14 @@ def superheavy (w : List Seg) : ℕ := ((syllabify w).filter λ σ => 3 ≤ σ.m
 
 /-- ALIGN-L(Stem, σ): a stem-initial consonant before another is never syllable-initial. -/
 def alignL : List Seg → ℕ
-  | x :: y :: _ => if ¬IsVowel x ∧ ¬IsVowel y then 1 else 0
+  | c₁ :: c₂ :: _ => if ¬IsVowel c₁ ∧ ¬IsVowel c₂ then 1 else 0
   | _ => 0
 
 /-- \*.CᵢV.CᵢV: identical consonants in the onsets of successive syllables. -/
 def identicalOnsets : List Seg → ℕ
-  | x :: v :: y :: v' :: rest =>
-    (if ¬IsVowel x ∧ IsVowel v ∧ x = y ∧ IsVowel v' then 1 else 0)
-      + identicalOnsets (v :: y :: v' :: rest)
+  | c :: v :: c' :: v' :: rest =>
+    (if ¬IsVowel c ∧ IsVowel v ∧ c = c' ∧ IsVowel v' then 1 else 0)
+      + identicalOnsets (v :: c' :: v' :: rest)
   | _ => 0
 
 /-- An inflectional cell of the Classical Arabic verb or noun: its affixes, and whether a
@@ -274,7 +275,7 @@ def ioDepV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.depViolOn
 def ioMaxV : Constraint (Paradigm Seg Cell) := ioFaith (Correspondence.maxViolOn IsVowel)
 
 def ioMaxC : Constraint (Paradigm Seg Cell) :=
-  ioFaith (Correspondence.maxViolOn λ x => ¬IsVowel x)
+  ioFaith (Correspondence.maxViolOn λ c => ¬IsVowel c)
 
 def ioIdentWt : Constraint (Paradigm Seg Cell) :=
   ioFaith (Correspondence.identViolFeature weight)
@@ -462,23 +463,23 @@ def schwaOpen (w : List Seg) : ℕ :=
 
 /-- \*CCC. -/
 def ccc : List Seg → ℕ
-  | x :: y :: z :: rest =>
-    (if ¬IsVowel x ∧ ¬IsVowel y ∧ ¬IsVowel z then 1 else 0) + ccc (y :: z :: rest)
+  | c₁ :: c₂ :: c₃ :: rest =>
+    (if ¬IsVowel c₁ ∧ ¬IsVowel c₂ ∧ ¬IsVowel c₃ then 1 else 0) + ccc (c₂ :: c₃ :: rest)
   | _ => 0
 
 /-- Sonority: glide > liquid > nasal > fricative > stop. -/
 def sonority : Seg → ℕ
-  | .j => 5
+  | .j | .w => 5
   | .l | .r => 4
   | .n | .m => 3
-  | .f | .s | .sh | .hh | .ayn => 2
+  | .f | .s | .sh | .hh | .ayn | .x | .z | .zh => 2
   | _ => 1
 
 /-- SONCON (30), on a word of three consonants and a schwa: CəC₂C₃ wants C₂ more sonorous
 than C₃, CC₂əC₃ not. -/
 def sonCon : List Seg → ℕ
-  | [_, .schwa, y, z] => if sonority y > sonority z then 0 else 1
-  | [_, y, .schwa, z] => if sonority y > sonority z then 1 else 0
+  | [_, .schwa, c₂, c₃] => if sonority c₂ > sonority c₃ then 0 else 1
+  | [_, c₂, .schwa, c₃] => if sonority c₂ > sonority c₃ then 1 else 0
   | _ => 0
 
 /-- The ranking of (32): \*ə]σ, \*CCC >> OP-MAX-V >> SONCON >> IO-MAX-V, IO-DEP-V. -/
