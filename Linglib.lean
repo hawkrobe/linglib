@@ -1895,9 +1895,6 @@ import Linglib.Studies.Alsop2024
 import Linglib.Studies.AlstottAravind2026
 import Linglib.Studies.AlstottAravind2026TemporalConnectives
 import Linglib.Studies.Amato2025
-import Linglib.Studies.Amato2025.NestedAgree
-import Linglib.Studies.Amato2025Agreement
-import Linglib.Studies.Amato2025Auxiliary
 import Linglib.Studies.AnandHacquard2013
 import Linglib.Studies.AnandHardtMcCloskey2021
 import Linglib.Studies.AnandNevins2004

@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Perfect-auxiliary selection (be/have)
@@ -55,7 +56,7 @@ inductive TransitivityClass where
   /-- A reflexive clitic, which selects *be* in Romance and *have* in
       German. -/
   | reflexive
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Language-level auxiliary selection rule. -/
 inductive SelectionRule where

@@ -79,6 +79,14 @@ inductive HonLevel where
   | hh    -- high honorific: S << referent
   deriving Repr, DecidableEq
 
+/-- Inflectional feature values: `[Infl]` ([bjorkman-2011]) is valued on the verb by
+the higher temporal/aspectual head that selects it (`perf` for a participle under
+Perf/Asp, `impf` under imperfective Asp). -/
+inductive Infl where
+  | perf
+  | impf
+  deriving Repr, DecidableEq
+
 -- ============================================================================
 -- § 3: Feature Values
 -- ============================================================================
@@ -92,6 +100,7 @@ inductive FeatureVal where
   | epp : Bool → FeatureVal          -- EPP (needs specifier)
   | tense : Bool → FeatureVal        -- [±tense]
   | hon : HonLevel → FeatureVal      -- [iHON] ([alok-bhalla-2026])
+  | infl : Infl → FeatureVal         -- [Infl] ([bjorkman-2011])
   | finite : Bool → FeatureVal       -- [±finite] (Fin head, [rizzi-1997])
   | factive : Bool → FeatureVal      -- [±factive] (clause-typing)
   | neg : Bool → FeatureVal          -- [±neg] (NegP, [pollock-1989])
@@ -132,6 +141,7 @@ def FeatureVal.sameType : FeatureVal → FeatureVal → Bool
   | .epp _, .epp _ => true
   | .tense _, .tense _ => true
   | .hon _, .hon _ => true
+  | .infl _, .infl _ => true
   | .finite _, .finite _ => true
   | .factive _, .factive _ => true
   | .neg _, .neg _ => true
@@ -218,7 +228,7 @@ duplicate dimensions. -/
 (`person`, `number`, `gender`) so each is a slot in its own right. -/
 inductive FeatureType where
   | person | number | gender
-  | case | wh | q | epp | tense | hon | finite | factive | neg | rel
+  | case | wh | q | epp | tense | hon | infl | finite | factive | neg | rel
   | oblique | ellipsis | catN | catV | foc | pol | pov
   | atomic | minimal | participant | author
   deriving Repr, DecidableEq, Fintype
@@ -226,7 +236,7 @@ inductive FeatureType where
 /-- All feature dimensions, for computable enumeration
 (`Finset.univ.toList` is noncomputable). -/
 def FeatureType.all : List FeatureType :=
-  [.person, .number, .gender, .case, .wh, .q, .epp, .tense, .hon, .finite,
+  [.person, .number, .gender, .case, .wh, .q, .epp, .tense, .hon, .infl, .finite,
    .factive, .neg, .rel, .oblique, .ellipsis, .catN, .catV, .foc, .pol, .pov,
    .atomic, .minimal, .participant, .author]
 
@@ -242,6 +252,7 @@ def FeatureVal.dimension : FeatureVal → FeatureType
   | .epp _ => .epp
   | .tense _ => .tense
   | .hon _ => .hon
+  | .infl _ => .infl
   | .finite _ => .finite
   | .factive _ => .factive
   | .neg _ => .neg
@@ -267,6 +278,7 @@ dimension carries (`person ↦ Person`, `number ↦ Number`, `gender ↦ Nat`,
   | .gender => Nat
   | .case => Case
   | .hon => HonLevel
+  | .infl => Infl
   | .wh | .q | .epp | .tense | .finite | .factive | .neg | .rel
   | .oblique | .ellipsis | .catN | .catV | .foc | .pol | .pov
   | .atomic | .minimal | .participant | .author => Bool
@@ -288,6 +300,7 @@ def FeatureVal.value : (fv : FeatureVal) → fv.dimension.ValueOf
   | .epp b => b
   | .tense b => b
   | .hon hl => hl
+  | .infl i => i
   | .finite b => b
   | .factive b => b
   | .neg b => b
@@ -372,6 +385,7 @@ def FeatureType.toFeatureVal : (t : FeatureType) → t.ValueOf → FeatureVal
   | .gender, g => .phi (.gender g)
   | .case, c => .case c
   | .hon, hl => .hon hl
+  | .infl, i => .infl i
   | .wh, b => .wh b
   | .q, b => .q b
   | .epp, b => .epp b
@@ -400,19 +414,23 @@ def FeatureType.placeholderValue : (t : FeatureType) → t.ValueOf
   | .gender => 0
   | .case => .nom
   | .hon => .nh
+  | .infl => .perf
   | .wh | .q | .epp | .tense | .finite | .factive | .neg | .rel
   | .oblique | .ellipsis | .catN | .catV | .foc | .pol | .pov
   | .atomic | .minimal | .participant | .author => false
 
+/-- `[t:_]`: the unvalued feature at dimension `t` (its placeholder value is inert,
+`ofGramFeatures` discarding it via `toSlot`). -/
+def FeatureType.unvalued (t : FeatureType) : GramFeature :=
+  .unvalued (t.toFeatureVal t.placeholderValue)
+
 /-- Bridge back to the legacy list representation: one `GramFeature` per
-specified dimension. The placeholder value on `unvalued` features is
-semantically inert (`ofGramFeatures` discards it via `toSlot`), so
-`ofGramFeatures ∘ toGramFeatures` round-trips. -/
+specified dimension, so `ofGramFeatures ∘ toGramFeatures` round-trips. -/
 def FeatureBundle.toGramFeatures (fb : FeatureBundle) : List GramFeature :=
   FeatureType.all.filterMap λ t =>
     match fb t with
     | .absent => none
-    | .unvalued => some (.unvalued (t.toFeatureVal t.placeholderValue))
+    | .unvalued => some t.unvalued
     | .valued v => some (.valued (t.toFeatureVal v))
 
 -- ============================================================================
