@@ -1,4 +1,3 @@
-import Linglib.Studies.McCarthy2005
 import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.OptimalityTheory.Tableau
@@ -47,7 +46,6 @@ namespace MarcoRasin2026
 
 open Core.Optimization Constraints OptimalityTheory
 open OptimalityTheory
-open McCarthy2005 (mkOPMaxV)
 open Phonology (Sonority)
 
 -- ============================================================================
@@ -106,7 +104,7 @@ def sonCon (c2 c3 : Phonology.Sonority) :
     For n₁ medial and n₂ initial members: n₁·n₂ + n₂·n₁ = 2·n₁·n₂
     total violations (matching [mccarthy-2005]'s counting). -/
 def opMaxV : Constraint (List JTAForm) :=
-  mkOPMaxV fun f1 f2 =>
+  liftPairwise fun f1 f2 =>
     if f1.schwa != f2.schwa then 1 else 0
 
 -- ============================================================================

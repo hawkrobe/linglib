@@ -46,9 +46,6 @@ inductive Role
   | baseInput | base | derivInput | derivative
   deriving DecidableEq, Repr
 
-/-- The parallel correspondence `(0,0), …, (k-1,k-1)`. -/
-def parallel (k : ℕ) : List (ℕ × ℕ) := (List.range k).map λ i => (i, i)
-
 /-- A subparadigm: the base and the derived word with their inputs, and the three
 correspondence relations of (11) — each word's IO relation and the OO relation. -/
 def paradigm (bIn b dIn d : List α) (ioB ioD oo : List (ℕ × ℕ)) : Correspondence Role α :=
@@ -139,13 +136,13 @@ def ranking : List (Unit → ParadigmConstraint Seg) :=
 *L[æ]r*, from the inputs `/læri/` and `/læri + TRUNC/`. -/
 def cand : Cand4 → Correspondence Role Seg
   | .a => paradigm [.l, .ae, .r, .i] [.l, .a, .r, .i] [.l, .ae, .r, .i] [.l, .a, .r]
-      (parallel 4) (parallel 3) (parallel 3)
+      (Correspondence.diagonalPairs 4) (Correspondence.diagonalPairs 3) (Correspondence.diagonalPairs 3)
   | .b => paradigm [.l, .ae, .r, .i] [.l, .a, .r, .i] [.l, .ae, .r, .i] [.l, .ae, .r]
-      (parallel 4) (parallel 3) (parallel 3)
+      (Correspondence.diagonalPairs 4) (Correspondence.diagonalPairs 3) (Correspondence.diagonalPairs 3)
   | .c => paradigm [.l, .ae, .r, .i] [.l, .ae, .r, .i] [.l, .ae, .r, .i] [.l, .a, .r]
-      (parallel 4) (parallel 3) (parallel 3)
+      (Correspondence.diagonalPairs 4) (Correspondence.diagonalPairs 3) (Correspondence.diagonalPairs 3)
   | .d => paradigm [.l, .ae, .r, .i] [.l, .ae, .r, .i] [.l, .ae, .r, .i] [.l, .ae, .r]
-      (parallel 4) (parallel 3) (parallel 3)
+      (Correspondence.diagonalPairs 4) (Correspondence.diagonalPairs 3) (Correspondence.diagonalPairs 3)
 
 /-- (16), (29): under recursive evaluation the underapplication paradigm *L[æ]rry ~ L[æ]r*
 wins — overapplication in the base costs an IO-IDENT violation in the dominant
@@ -233,16 +230,16 @@ inputs `/ɲĩãr/` and `/ãl + ɲĩãr/`. -/
 def plural : Cand4 → Correspondence Role Seg
   | .a => paradigm [.nasalC, .nasalV, .nasalV, .oralC] [.nasalC, .oralV, .oralV, .oralC]
       [.nasalV, .oralC, .nasalC, .nasalV, .nasalV, .oralC]
-      [.nasalC, .nasalV, .oralC, .oralV, .oralV, .oralC] (parallel 4) infixIO infixOO
+      [.nasalC, .nasalV, .oralC, .oralV, .oralV, .oralC] (Correspondence.diagonalPairs 4) infixIO infixOO
   | .b => paradigm [.nasalC, .nasalV, .nasalV, .oralC] [.nasalC, .oralV, .oralV, .oralC]
       [.nasalV, .oralC, .nasalC, .nasalV, .nasalV, .oralC]
-      [.nasalC, .nasalV, .oralC, .nasalV, .nasalV, .oralC] (parallel 4) infixIO infixOO
+      [.nasalC, .nasalV, .oralC, .nasalV, .nasalV, .oralC] (Correspondence.diagonalPairs 4) infixIO infixOO
   | .c => paradigm [.nasalC, .nasalV, .nasalV, .oralC] [.nasalC, .nasalV, .nasalV, .oralC]
       [.nasalV, .oralC, .nasalC, .nasalV, .nasalV, .oralC]
-      [.nasalC, .nasalV, .oralC, .oralV, .oralV, .oralC] (parallel 4) infixIO infixOO
+      [.nasalC, .nasalV, .oralC, .oralV, .oralV, .oralC] (Correspondence.diagonalPairs 4) infixIO infixOO
   | .d => paradigm [.nasalC, .nasalV, .nasalV, .oralC] [.nasalC, .nasalV, .nasalV, .oralC]
       [.nasalV, .oralC, .nasalC, .nasalV, .nasalV, .oralC]
-      [.nasalC, .nasalV, .oralC, .nasalV, .nasalV, .oralC] (parallel 4) infixIO infixOO
+      [.nasalC, .nasalV, .oralC, .nasalV, .nasalV, .oralC] (Correspondence.diagonalPairs 4) infixIO infixOO
 
 /-- (52): nasal spread overapplies in the plural — *ɲĩãr ~ ɲ-ãl-ĩãr* wins, the root vowels
 nasal in oral context to match the base. -/
@@ -259,13 +256,13 @@ def umIO : List (ℕ × ℕ) := [(0, 1), (1, 2), (2, 0), (3, 3), (4, 4), (5, 5),
 oral or nasal in the infix and in the root. -/
 def approach : Cand4 → Correspondence Role Seg
   | .a => paradigm base base input
-      [.oralC, .oralV, .nasalC, .oralV, .laryngeal, .oralV, .oralC] (parallel 5) umIO umOO
+      [.oralC, .oralV, .nasalC, .oralV, .laryngeal, .oralV, .oralC] (Correspondence.diagonalPairs 5) umIO umOO
   | .b => paradigm base base input
-      [.oralC, .nasalV, .nasalC, .oralV, .laryngeal, .oralV, .oralC] (parallel 5) umIO umOO
+      [.oralC, .nasalV, .nasalC, .oralV, .laryngeal, .oralV, .oralC] (Correspondence.diagonalPairs 5) umIO umOO
   | .c => paradigm base base input
-      [.oralC, .oralV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (parallel 5) umIO umOO
+      [.oralC, .oralV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (Correspondence.diagonalPairs 5) umIO umOO
   | .d => paradigm base base input
-      [.oralC, .nasalV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (parallel 5) umIO umOO
+      [.oralC, .nasalV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (Correspondence.diagonalPairs 5) umIO umOO
 where
   base : List Seg := [.oralC, .oralV, .laryngeal, .oralV, .oralC]
   input : List Seg := [.nasalV, .nasalC, .oralC, .oralV, .laryngeal, .oralV, .oralC]
@@ -279,7 +276,7 @@ theorem normalApplication :
 canonical *dəhəs*. -/
 def baseChoice : Cand3 → Correspondence Role Seg
   | .a => paradigm approach.base [.oralC, .nasalV, .laryngeal, .nasalV, .oralC] approach.input
-      [.oralC, .oralV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (parallel 5) umIO umOO
+      [.oralC, .oralV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (Correspondence.diagonalPairs 5) umIO umOO
   | _ => approach .c
 
 /-- (56): the base cannot misapply — its `*VNAS` marks fall in the dominant recursion. -/
@@ -382,14 +379,14 @@ def spirantization : List (Relation → ParadigmConstraint Seg) :=
 or *yiš.bē*, the jussive *yi.šeb* or *yišb*. -/
 def captive : Cand4 → Correspondence Role Seg
   | .a => paradigm input [.glide, .vowel, .sibilant, .vowel, .stop, .vowel] input
-      [.glide, .vowel, .sibilant, .vowel, .stop] epenthetic epenthetic (parallel 5)
+      [.glide, .vowel, .sibilant, .vowel, .stop] epenthetic epenthetic (Correspondence.diagonalPairs 5)
   | .b => paradigm input [.glide, .vowel, .sibilant, .vowel, .stop, .vowel] input
-      [.glide, .vowel, .sibilant, .stop] epenthetic (parallel 4) [(0, 0), (1, 1), (2, 2), (4, 3)]
+      [.glide, .vowel, .sibilant, .stop] epenthetic (Correspondence.diagonalPairs 4) [(0, 0), (1, 1), (2, 2), (4, 3)]
   | .c => paradigm input [.glide, .vowel, .sibilant, .stop, .vowel] input
-      [.glide, .vowel, .sibilant, .vowel, .stop] (parallel 5) epenthetic
+      [.glide, .vowel, .sibilant, .vowel, .stop] (Correspondence.diagonalPairs 5) epenthetic
       [(0, 0), (1, 1), (2, 2), (3, 4)]
   | .d => paradigm input [.glide, .vowel, .sibilant, .stop, .vowel] input
-      [.glide, .vowel, .sibilant, .stop] (parallel 5) (parallel 4) (parallel 4)
+      [.glide, .vowel, .sibilant, .stop] (Correspondence.diagonalPairs 5) (Correspondence.diagonalPairs 4) (Correspondence.diagonalPairs 4)
 where
   input : List Seg := [.glide, .vowel, .sibilant, .stop, .vowel]
   /-- An IO correspondence with a vowel epenthesized after the third segment. -/
@@ -412,12 +409,12 @@ theorem epenthesis_overapplies_nonrecursive :
 def uncover : Cand3 → Correspondence Role Seg
   | .a => paradigm input [.glide, .vowel, .spirant, .vowel, .liquid, .vowel] input
       [.glide, .vowel, .spirant, .vowel, .liquid] captive.epenthetic captive.epenthetic
-      (parallel 5)
+      (Correspondence.diagonalPairs 5)
   | .b => paradigm input [.glide, .vowel, .spirant, .liquid, .vowel] input
-      [.glide, .vowel, .spirant, .vowel, .liquid] (parallel 5) captive.epenthetic
+      [.glide, .vowel, .spirant, .vowel, .liquid] (Correspondence.diagonalPairs 5) captive.epenthetic
       [(0, 0), (1, 1), (2, 2), (3, 4)]
   | .c => paradigm input [.glide, .vowel, .spirant, .liquid, .vowel] input
-      [.glide, .vowel, .spirant, .liquid] (parallel 5) (parallel 4) (parallel 4)
+      [.glide, .vowel, .spirant, .liquid] (Correspondence.diagonalPairs 5) (Correspondence.diagonalPairs 4) (Correspondence.diagonalPairs 4)
 where
   input : List Seg := [.glide, .vowel, .spirant, .liquid, .vowel]
 
@@ -430,11 +427,11 @@ theorem tetru :
 /-- The 2fs paradigms of (118), from `/šamaʕ-tī/` and its truncation: the base's coronal
 a stop or a spirant, the 2fs stem's a stop or a spirant after the epenthetic vowel. -/
 def heard : Cand3 → Correspondence Role Seg
-  | .a => paradigm input (stem .spirant .vowel) input (stem .vowel .spirant) (parallel 7)
+  | .a => paradigm input (stem .spirant .vowel) input (stem .vowel .spirant) (Correspondence.diagonalPairs 7)
       truncated truncated
-  | .b => paradigm input (stem .stop .vowel) input (stem .vowel .spirant) (parallel 7)
+  | .b => paradigm input (stem .stop .vowel) input (stem .vowel .spirant) (Correspondence.diagonalPairs 7)
       truncated truncated
-  | .c => paradigm input (stem .stop .vowel) input (stem .vowel .stop) (parallel 7)
+  | .c => paradigm input (stem .stop .vowel) input (stem .vowel .stop) (Correspondence.diagonalPairs 7)
       truncated truncated
 where
   /-- *šāmaʕ* followed by two segments. -/
@@ -459,11 +456,11 @@ theorem spirantization_overapplies_nonrecursive :
 *kəθōβ* or *xətōβ*. -/
 def write : Cand3 → Correspondence Role Seg
   | .a => paradigm input [.glide, .vowel, .stop, .spirant, .vowel, .spirant] input
-      [.stop, .vowel, .spirant, .vowel, .spirant] (parallel 6) imperativeIO imperativeOO
+      [.stop, .vowel, .spirant, .vowel, .spirant] (Correspondence.diagonalPairs 6) imperativeIO imperativeOO
   | .b => paradigm input [.glide, .vowel, .spirant, .stop, .vowel, .spirant] input
-      [.spirant, .vowel, .stop, .vowel, .spirant] (parallel 6) imperativeIO imperativeOO
+      [.spirant, .vowel, .stop, .vowel, .spirant] (Correspondence.diagonalPairs 6) imperativeIO imperativeOO
   | .c => paradigm input [.glide, .vowel, .spirant, .stop, .vowel, .spirant] input
-      [.stop, .vowel, .spirant, .vowel, .spirant] (parallel 6) imperativeIO imperativeOO
+      [.stop, .vowel, .spirant, .vowel, .spirant] (Correspondence.diagonalPairs 6) imperativeIO imperativeOO
 where
   input : List Seg := [.glide, .vowel, .stop, .stop, .vowel, .stop]
   /-- The imperative keeps the root; its second vowel is epenthetic. -/
