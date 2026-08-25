@@ -63,11 +63,9 @@ marker-side data; they live in `Fragments/{Lang}/PolarityItems.lean`.
 * [jin-koenig-2021]
 -/
 
-set_option autoImplicit false
+namespace Syntax.Negation
 
 open Morphology (Morph)
-
-namespace Syntax.Negation
 
 /-! ### Markers and negation systems -/
 
