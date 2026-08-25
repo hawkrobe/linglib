@@ -31,9 +31,7 @@ open Syntax.Negation
     Attaches directly to the verb stem: *nepřijde* 'will not come',
     *neviděl* 'didn't see'. Symmetric across the paradigm. -/
 def ne : NegMarkerEntry :=
-  { form := "ne-"
-  , morphemeType := .affix
-  , position := .preverbal }
+  { morphs := [.pref "ne"] }
 
 /-- The Czech negation system: a single verbal prefix. -/
 def negationSystem : NegationSystem :=

@@ -28,9 +28,7 @@ open Syntax.Negation
     Deverbalizes the lexical verb (A/Fin asymmetry); a copula then takes
     over as the finite element. -/
 def hira : NegMarkerEntry :=
-  { form := "-hira"
-  , morphemeType := .affix
-  , position := .morphological }
+  { morphs := [.suff "hira"] }
 
 /-- The Hixkaryana negation system: a single deverbalizing suffix. -/
 def negationSystem : NegationSystem :=

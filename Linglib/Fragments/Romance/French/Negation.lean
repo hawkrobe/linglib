@@ -53,9 +53,7 @@ def pasReinforcer : String := "pas"
     consumers that need them (JinKoenig2021 uses *ne* alone as the EN
     marker; Miestamo2005 lists both as `negMarkers`). -/
 def bipartite : NegMarkerEntry :=
-  { form := "(ne) pas"
-  , morphemeType := .doubleNeg
-  , position := .discontinuous }
+  { morphs := [.procl "ne", .free "pas"] }
 
 /-- The French negation system: a single bipartite construction.
     *Length-1* `markers` list — *ne* and *pas* are not alternative

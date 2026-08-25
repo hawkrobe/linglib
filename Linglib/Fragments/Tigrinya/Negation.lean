@@ -3,7 +3,6 @@ import Linglib.Morphology.Morph
 
 /-!
 # Tigrinya Negation
-[cacchioli-2026] [dryer-haspelmath-2013]
 
 Tigrinya negates a declarative verbal clause with the circumfix
 *ʔaj-…-(ɨ)n* around the inflected verb (*ʔaj-ts'awɛt-ɨn* 'I do not
@@ -12,6 +11,11 @@ suffix is confined to root declaratives, *ʔɨlu*-complements and the
 negative future: relative, subjunctive and imperative clauses take the
 prefix alone, in its post-prefixal allomorph *ɛj-* (*z-ɛj-nbɨb* 'that I
 do not read').
+
+## References
+
+* [cacchioli-2026], ch. 5
+* [dryer-haspelmath-2013], ch. 112A, 143A, 144A
 -/
 
 namespace Tigrinya.Negation
@@ -30,9 +34,7 @@ def n : Morph := .suff "n"
 
 /-- *ʔaj-…-(ɨ)n* — the standard-negation circumfix. -/
 def circumfix : NegMarkerEntry where
-  form := toString [aj, n]
-  morphemeType := .doubleNeg
-  position := .discontinuous
+  morphs := [aj, n]
 
 /-- Tigrinya standard negation: the single bipartite marker. -/
 def negationSystem : NegationSystem := .ofISO "tir" [circumfix]

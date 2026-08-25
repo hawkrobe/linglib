@@ -34,11 +34,9 @@ open Syntax.Negation
     non-finite verb in periphrastic constructions (*Er hat nicht
     gelesen*). The V2/SOV alternation is why WALS Ch 143A classifies
     German as `.type1Type2` (mixed NegV / VNeg) rather than a single
-    position; the `position` field uses `.other` to flag this. -/
+    position. -/
 def nicht : NegMarkerEntry :=
-  { form := "nicht"
-  , morphemeType := .particle
-  , position := .other }
+  { morphs := [.free "nicht"] }
 
 /-- *kein* — negative determiner (fuses negation + indefinite article).
     Lives here as a lexical fact about German negation morphology;

@@ -36,9 +36,7 @@ open Syntax.Negation
     whose obligatory appearance under negation drives the WALS A/NonReal
     asymmetry classification. -/
 def mana : NegMarkerEntry :=
-  { form := "mana"
-  , morphemeType := .particle
-  , position := .preverbal }
+  { morphs := [.free "mana"] }
 
 /-- The validator enclitic *-chu*, triggered in negative and interrogative
     contexts. Glossed as VAL (validator); shared with polar questions.

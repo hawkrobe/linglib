@@ -7,13 +7,14 @@ import Linglib.Data.WALS.Features.F143A
 import Linglib.Data.WALS.Features.F144A
 import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Features.Grammaticalization
+import Linglib.Morphology.Morph
 
 /-!
 # Typology.Negation
 [dryer-2013-wals] [haspelmath-2013] [miestamo-2005]
 
 Per-language typological substrate for the standard sentential negation
-marker of a language: form, morphological status, position, symmetric/
+marker of a language: its exponent as morphs, symmetric/
 asymmetric status, asymmetry subtype, and negative-indefinite strategy.
 
 Mirrors the `Linglib/Features/Possession.lean` (Possession), `Question.lean`
@@ -31,7 +32,6 @@ substrate carries (a) per-paradigm-entry schema (`NegMarkerEntry`,
   *constructions*, not morphemes. The substrate carries Dryer's classification
   for cross-linguistic indexing; Miestamo's framework lives in
   `Studies/Miestamo2005.lean`.
-- `NegMarkerPosition` — coarsening of WALS Ch 144A.
 - `NegMarkerEntry` — one language's standard sentential negation marker.
 - `NegationSystem` — bundles markers + WALS Ch 112A/143A/144A datapoints.
   The Fragment-side joint: every `Fragments/{Lang}/Negation.lean` exposes
@@ -66,6 +66,8 @@ Fragment per-language data live in `Studies/Miestamo2005.lean`
 
 set_option autoImplicit false
 
+open Morphology (Morph)
+
 namespace Syntax.Negation
 
 /-! ### Substrate enums -/
@@ -95,19 +97,6 @@ inductive NegMorphemeType where
   /-- Bipartite negation: two co-occurring morphemes flanking the verb
       (e.g., French `ne...pas`, Izi `to-...-du`). -/
   | doubleNeg
-  deriving DecidableEq, BEq, Repr
-
-/-- Position of the negation morpheme relative to the verb.
-
-    One-way coarsening of WALS Ch 144A's full S/O/V grid. The `wals144A`
-    field on `NegationSystem` preserves the precise WALS classification
-    for callers that need decoarsening. -/
-inductive NegMarkerPosition where
-  | preverbal
-  | postverbal
-  | discontinuous
-  | morphological
-  | other
   deriving DecidableEq, BEq, Repr
 
 /-- WALS Ch 113A: whether negation changes clause structure beyond adding
@@ -190,18 +179,17 @@ inductive NegMorphemePosition where
 
 /-- One language's standard sentential negation marker. -/
 structure NegMarkerEntry where
-  /-- Surface form. For affixal negation this is an abstract citation form
-      (e.g., Turkish `-mA-` for the harmony-conditioned `-ma-` ~ `-me-`
-      alternants). For tonal/morphological negation use `position :=
-      .morphological` and document the realization in the `def` docstring. -/
-  form : String
+  /-- The exponent, in surface order; a bipartite marker lists both
+      pieces (Burmese *ma-…-bu*). Affixal alternants are recorded by an
+      abstract citation form (Turkish *-mA-* for *-ma-* ~ *-me-*). -/
+  morphs : List Morph
   /-- Standard interlinear gloss. Defaults to the WALS-style "NEG". -/
   gloss : String := "NEG"
-  /-- Morphological status: affix, free particle, auxiliary, etc. -/
-  morphemeType : NegMorphemeType
-  /-- Coarse position relative to the verb. -/
-  position : NegMarkerPosition
   deriving Repr
+
+/-- The surface form of a marker: its morphs with boundary notation,
+discontinuous pieces separated by `…`. -/
+def NegMarkerEntry.form (m : NegMarkerEntry) : String := toString m.morphs
 
 /-- A language's standard negation system.
 

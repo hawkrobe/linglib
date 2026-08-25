@@ -36,7 +36,7 @@ abbrev World := Fin 4
     properties from [tsiakmakis-2025]'s NEG₁/NEG₂ analysis.
 
     Distinct from the cross-linguistic `Syntax.Negation.NegMarkerEntry`
-    substrate (which carries only form/morphemeType/position): this
+    substrate (which carries only the exponent and gloss): this
     structure exposes the Tsiakmakis-specific paper apparatus that other
     languages don't have analogues for. The Core entries `dhenMarker` and
     `minMarker` below are the cross-linguistic typology face. -/
@@ -80,15 +80,11 @@ def min : MoodMarkerEntry :=
     indicative negator; the paper-specific mood/NCI apparatus lives on
     `MoodMarkerEntry` above. -/
 def dhenMarker : Syntax.Negation.NegMarkerEntry :=
-  { form := "dhen"
-  , morphemeType := .particle
-  , position := .preverbal }
+  { morphs := [.free "dhen"] }
 
 /-- *min* in Core substrate form. -/
 def minMarker : Syntax.Negation.NegMarkerEntry :=
-  { form := "min"
-  , morphemeType := .particle
-  , position := .preverbal }
+  { morphs := [.free "min"] }
 
 /-- The Greek negation system: two mood-conditioned preverbal particles.
     *dhen* (indicative, default-context) listed first, *min* (subjunctive/

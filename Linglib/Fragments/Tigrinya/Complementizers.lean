@@ -2,7 +2,6 @@ import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Tigrinya Complementizers
-[cacchioli-2026] [cacchioli-2023]
 
 Tigrinya (Ethio-Semitic, head-final) types its embedded clauses with
 prefixes on the embedded verb. *zɨ-* marks relative, comparative and
@@ -19,6 +18,11 @@ or Perfective verbs; none carries φ-features of its own.
 
 This file provides the four as `Complementizer` entries and the prefix
 morphs.
+
+## References
+
+* [cacchioli-2026], chs. 2–4, Table 6.1
+* [cacchioli-2023]
 -/
 
 namespace Tigrinya.Complementizers
