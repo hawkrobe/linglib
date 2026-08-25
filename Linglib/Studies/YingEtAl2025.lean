@@ -218,7 +218,7 @@ theorem uncertainAbout_contradicts_certainAbout (cr : E → Set W → ℚ)
 /-- Map an English modal auxiliary to its epistemic threshold entry;
     non-epistemic modals (deontic *shall*) have none. The mapping
     derives from the Fragment's `form` field. -/
-def toEpistemicEntry (a : AuxEntry) : Option EpistemicEntry :=
+def toEpistemicEntry (a : Auxiliary) : Option EpistemicEntry :=
   match a.form with
   | "must"   => some .must
   | "should" => some .should
@@ -229,8 +229,8 @@ def toEpistemicEntry (a : AuxEntry) : Option EpistemicEntry :=
 
 /-- The epistemic force of a modal auxiliary, if it has an epistemic
     reading. -/
-def epistemicForce (a : AuxEntry) : Option ModalForce :=
-  let epMeanings := a.modalMeaning.filter (·.flavor == .epistemic)
+def epistemicForce (a : Auxiliary) : Option ModalForce :=
+  let epMeanings := a.modality.filter (·.flavor == .epistemic)
   epMeanings.head?.map (·.force)
 
 /-! Per-entry checks of the form → entry → threshold pipeline; these

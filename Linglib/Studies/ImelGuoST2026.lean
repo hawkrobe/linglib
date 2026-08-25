@@ -190,14 +190,14 @@ theorem hungarian_size : hungarian.size = 8 := by native_decide
 -- §9: English (Indo-European) — derived from Fragment
 -- ============================================================================
 
-open English.Auxiliaries (AuxEntry can could will would shall should may might must)
+open English.Auxiliaries (can could will would shall should may might must)
 
 /-- English modal inventory, derived from the Fragment (single source of truth).
-    Uses `ModalInventory.fromAuxEntries` to extract modals from `AuxEntry` data. -/
+    Uses `ModalInventory.fromAuxEntries` to extract modals from `Auxiliary` data. -/
 def english : ModalInventory :=
   .fromAuxEntries "English" "Indo-European" "Kratzer (1981), Palmer (2001)"
     [can, could, will, would, shall, should, may, might, must]
-    AuxEntry.form AuxEntry.modalMeaning
+    Auxiliary.form Auxiliary.modality
 
 theorem english_all_iff : english.allIFF = true := by native_decide
 theorem english_size : english.size = 9 := by native_decide
@@ -206,14 +206,14 @@ theorem english_size : english.size = 9 := by native_decide
 -- §10: German (Indo-European) — derived from Fragment
 -- ============================================================================
 
-open German.Predicates.Modal (GermanModalEntry allModals)
+open German.Predicates.Modal (allModals)
 
 /-- German modal inventory, derived from the Fragment (single source of truth).
     *Sollte* is counted separately from *sollen* per morphological
     individuation ([steinert-threlkeld-imel-guo-2023] §4.3). -/
 def german : ModalInventory :=
   .fromAuxEntries "German" "Indo-European" "Kratzer (1981)"
-    allModals GermanModalEntry.form GermanModalEntry.modalMeaning
+    allModals Auxiliary.form Auxiliary.modality
 
 /-- All seven German modals satisfy IFF (including *sollte* as distinct
     from *sollen*). -/

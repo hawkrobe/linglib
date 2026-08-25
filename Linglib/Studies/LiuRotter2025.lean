@@ -134,7 +134,7 @@ theorem may_possibly_share :
     the fragment, so under the agreement account they contribute no operator. -/
 theorem stimulus_auxiliaries_uninterpretable :
     must.interpretability = some .uninterpretable ∧
-    may.interpretability = some .uninterpretable := ⟨rfl, rfl⟩
+    may.interpretability = some .uninterpretable := by decide
 
 /-! ### Predicting against the data
 
