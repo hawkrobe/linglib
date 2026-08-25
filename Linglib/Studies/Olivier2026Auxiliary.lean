@@ -62,13 +62,14 @@ file commits only to the per-clause prediction.
 ### DM elsewhere inversion (vs [amato-2025])
 
 Olivier (rule 55) takes HAVE as the more specific allomorph and
-BE as elsewhere. [amato-2025] (rule 48) takes the opposite
-convention: HAVE is `vAux[Pers:α]` and BE is the elsewhere
+BE as elsewhere. [amato-2025] (Vocabulary Items (14)) takes the
+opposite convention: HAVE is `Perf[π:α]` and BE is the elsewhere
 allomorph. This inversion is load-bearing for Olivier's account of
 how Modern French acquirers default to a non-AS grammar
 (HAVE-elsewhere is the unmarked acquirer's hypothesis). The two
 analyses are formalised as parallel theory instances in this file
-and in `Amato2025.lean`; neither is canonical at this layer.
+and in `Studies/Amato2025.lean` (`Amato2025.standardItalianAux`); neither
+is canonical at this layer.
 
 ### 19th-century counterexamples
 

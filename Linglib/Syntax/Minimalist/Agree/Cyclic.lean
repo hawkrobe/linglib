@@ -57,7 +57,7 @@ classification predicts which languages show differential P indexing
 
 ## Sibling mechanisms in `Syntax/Minimalism/`
 
-`NestedAgree.lean` ([amato-2025]) and Long-Distance Agree
+Nested Agree (`Studies/Amato2025.lean`, [amato-2025]) and Long-Distance Agree
 ([szabolcsi-2009], `Studies/Allotey2021.lean`) are sibling Layer-2
 patterns. All three address what a probe does beyond its first
 operation, but differently:
