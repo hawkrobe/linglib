@@ -16,8 +16,7 @@ do not read').
 
 namespace Tigrinya.Negation
 
-open Morphology (Morph)
-open Syntax.Negation
+open Morphology Syntax.Negation
 
 /-- The negative prefix *ʔaj-*. -/
 def aj : Morph := .pref "ʔaj"
