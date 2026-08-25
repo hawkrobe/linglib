@@ -39,7 +39,7 @@ open Syntax.Negation
     *gel-iyor* → *gel-m-iyor* (come-NEG-PROG). The form here is the
     abstract citation form; the harmony-conditioned alternants are
     captured by the language's morphology layer, not the marker entry. -/
-def negSuffix : NegMarkerEntry :=
+def negSuffix : Marker :=
   { morphs := [.suff "mA"] }
 
 /-- Turkish standard (verbal) negation: a single verbal affix.

@@ -34,7 +34,7 @@ open Syntax.Negation
     WALS Ch 112A classifies this as `.wordUnclear` — in Maori's isolating
     morphology, *kāhore* could be analyzed as a verb or a particle.
     Functions as a quasi-auxiliary that takes the TAM-particle position. -/
-def kahore : NegMarkerEntry :=
+def kahore : Marker :=
   { morphs := [.free "kāhore"] }
 
 /-- The Maori negation system: a single quasi-auxiliary word. -/

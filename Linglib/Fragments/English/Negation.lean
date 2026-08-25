@@ -31,7 +31,7 @@ open Syntax.Negation
     (*isn't*, *don't*, *won't*); see `negContracted` for the citation form
     of that allomorph. With lexical verbs, *do*-support is required:
     *He does not eat*, not **He not eats*. -/
-def not : NegMarkerEntry :=
+def not : Marker :=
   { morphs := [.free "not"] }
 
 /-- The contracted form *n't*. Phonologically a clitic on the auxiliary;

@@ -51,7 +51,7 @@ open Syntax.Negation
     Same form used as the EN marker across all attested EN-trigger
     classes (see § 2 below); Januubi shows no negator-trigger covariation
     unlike French and Mandarin. -/
-def maa : NegMarkerEntry :=
+def maa : Marker :=
   { morphs := [.free "maa"] }
 
 /-- The standard sentential negation marker in Januubi Arabic. -/

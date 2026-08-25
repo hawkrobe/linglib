@@ -40,14 +40,14 @@ open Syntax.Negation
     Used with imperfective, stative, modal, and future contexts;
     excluded from perfective and existential. Symmetric: simply adds
     to the verb without further structural change. -/
-def bu : NegMarkerEntry :=
+def bu : Marker :=
   { morphs := [.free "bù"] }
 
 /-- 没 *méi* (long form 没有 *méi-yǒu*) — the perfective/existential
     negation particle. Asymmetric: incompatible with the perfective
     aspect marker 了 *le*; required as the negator of 有 *yǒu* 'have'.
     The choice between *bù* and *méi* is aspect-conditioned. -/
-def mei : NegMarkerEntry :=
+def mei : Marker :=
   { morphs := [.free "méi"] }
 
 /-- The Mandarin negation system: two aspect-conditioned markers.

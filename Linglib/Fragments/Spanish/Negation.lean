@@ -41,7 +41,7 @@ open Syntax.Negation
 /-- *no* — Spanish's standard preverbal negation particle.
     A free word, syntactically immediately preverbal:
     *Juan **no** come* 'Juan doesn't eat'. -/
-def no : NegMarkerEntry :=
+def no : Marker :=
   { morphs := [.free "no"] }
 
 /-- The Spanish negation system: a single preverbal particle. -/

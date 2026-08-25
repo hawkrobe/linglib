@@ -35,7 +35,7 @@ abbrev World := Fin 4
 /-- A Greek sentential negation marker, augmented with the mood/NCI
     properties from [tsiakmakis-2025]'s NEG₁/NEG₂ analysis.
 
-    Distinct from the cross-linguistic `Syntax.Negation.NegMarkerEntry`
+    Distinct from the cross-linguistic `Syntax.Negation.Marker`
     substrate (which carries only the exponent and gloss): this
     structure exposes the Tsiakmakis-specific paper apparatus that other
     languages don't have analogues for. The Core entries `dhenMarker` and
@@ -79,11 +79,11 @@ def min : MoodMarkerEntry :=
 /-- *dhen* in Core substrate form. Cross-linguistic typology face of the
     indicative negator; the paper-specific mood/NCI apparatus lives on
     `MoodMarkerEntry` above. -/
-def dhenMarker : Syntax.Negation.NegMarkerEntry :=
+def dhenMarker : Syntax.Negation.Marker :=
   { morphs := [.free "dhen"] }
 
 /-- *min* in Core substrate form. -/
-def minMarker : Syntax.Negation.NegMarkerEntry :=
+def minMarker : Syntax.Negation.Marker :=
   { morphs := [.free "min"] }
 
 /-- The Greek negation system: two mood-conditioned preverbal particles.

@@ -46,13 +46,13 @@ def pasReinforcer : String := "pas"
 /-- *(ne) pas* — French's bipartite standard negation.
     The two morphemes flank the finite verb: *Je **ne** mange **pas***
     (formal), *Je mange **pas*** (colloquial, *ne*-drop). Encoded as a
-    single `NegMarkerEntry` with discontinuous position because *ne* and
+    single `Marker` with discontinuous position because *ne* and
     *pas* together constitute one logical negation construction (one
     WALS Ch 112A value, one Ch 143A value). The constituent forms
     `neClitic` and `pasReinforcer` are exposed separately for downstream
     consumers that need them (JinKoenig2021 uses *ne* alone as the EN
     marker; Miestamo2005 lists both as `negMarkers`). -/
-def bipartite : NegMarkerEntry :=
+def bipartite : Marker :=
   { morphs := [.procl "ne", .free "pas"] }
 
 /-- The French negation system: a single bipartite construction.

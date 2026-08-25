@@ -5,10 +5,9 @@ open Morphology (Word)
 /-!
 # English Complementizers Lexicon Fragment
 
-Lexical entries for the English complementizers *that*, *if*, *whether*,
-as root `Complementizer` entries extended with the English-specific
-flags (`conditional`, `optional`). *if* is split between conditional and
-embedded-question uses; the single entry carries both.
+The English complementizers *that*, *if*, *whether* as `Complementizer`
+entries; *if* doubles as the conditional subordinator and *that* drops
+under most verbs.
 
 The adverbial subordinators *because*, *although*, *while* are not
 complementizers (adverbial subordination is outside complementation,
@@ -19,35 +18,26 @@ distinct preposition *to* and the infinitival particle *to* live in
 
 namespace English.Complementizers
 
+/-- *that* — declarative complementizer; omissible under most verbs
+(that-drop). -/
+def that : Complementizer where
+  morphs := [.free "that"]
+  coding := some .indicative
+  force := some .declarative
 
-/-- An English complementizer entry: the root schema plus the
-English-specific flags. -/
-structure CompEntry extends Complementizer where
-  /-- Introduces a conditional protasis (*if*)? -/
-  conditional : Bool := false
-  /-- Can be omitted (that-drop)? -/
-  optional : Bool := false
-  deriving Repr, BEq, DecidableEq
-
-/-- *that* — declarative complementizer, omissible (that-drop). -/
-def that : CompEntry :=
-  { morphs := [.free "that"],
-    coding := some .indicative, force := some .declarative,
-    optional := true }
-
-/-- *if* — conditional protasis marker and embedded polar-question
-complementizer. -/
-def if_ : CompEntry :=
-  { morphs := [.free "if"],
-    force := some .interrogative, conditional := true }
+/-- *if* — embedded polar-question complementizer; the same word
+introduces conditional protases. -/
+def if_ : Complementizer where
+  morphs := [.free "if"]
+  force := some .interrogative
 
 /-- *whether* — embedded polar-question complementizer. -/
-def whether : CompEntry :=
-  { morphs := [.free "whether"],
-    force := some .interrogative }
+def whether : Complementizer where
+  morphs := [.free "whether"]
+  force := some .interrogative
 
 /-- The complementizer inventory (adverbial subordinators excluded). -/
-def allComplementizers : List CompEntry := [that, if_, whether]
+def complementizers : List Complementizer := [that, if_, whether]
 
 /-! ### Adverbial subordinators
 

@@ -19,7 +19,7 @@ asymmetric status, asymmetry subtype, and negative-indefinite strategy.
 
 Mirrors the `Linglib/Features/Possession.lean` (Possession), `Question.lean`
 (Question), and `Case.lean` (Case) substrate-extension pattern: the
-substrate carries (a) per-paradigm-entry schema (`NegMarkerEntry`,
+substrate carries (a) the marker schema (`Marker`,
 `NegationSystem`), (b) WALS converters and per-ISO accessors.
 
 ## What lives here
@@ -32,7 +32,7 @@ substrate carries (a) per-paradigm-entry schema (`NegMarkerEntry`,
   *constructions*, not morphemes. The substrate carries Dryer's classification
   for cross-linguistic indexing; Miestamo's framework lives in
   `Studies/Miestamo2005.lean`.
-- `NegMarkerEntry` — one language's standard sentential negation marker.
+- `Marker` — a standard sentential negation marker.
 - `NegationSystem` — bundles markers + WALS Ch 112A/143A/144A datapoints.
   The Fragment-side joint: every `Fragments/{Lang}/Negation.lean` exposes
   `def negationSystem : NegationSystem`.
@@ -175,10 +175,10 @@ inductive NegMorphemePosition where
   | none
   deriving DecidableEq, BEq, Repr
 
-/-! ### NegMarkerEntry / NegationSystem (Fragment marker-side joint) -/
+/-! ### Markers and negation systems -/
 
-/-- One language's standard sentential negation marker. -/
-structure NegMarkerEntry where
+/-- A standard sentential negation marker. -/
+structure Marker where
   /-- The exponent, in surface order; a bipartite marker lists both
       pieces (Burmese *ma-…-bu*). Affixal alternants are recorded by an
       abstract citation form (Turkish *-mA-* for *-ma-* ~ *-me-*). -/
@@ -189,7 +189,7 @@ structure NegMarkerEntry where
 
 /-- The surface form of a marker: its morphs with boundary notation,
 discontinuous pieces separated by `…`. -/
-def NegMarkerEntry.form (m : NegMarkerEntry) : String := toString m.morphs
+def Marker.form (m : Marker) : String := toString m.morphs
 
 /-- A language's standard negation system.
 
@@ -207,7 +207,7 @@ structure NegationSystem where
   iso : String := ""
   /-- Standard negation marker(s). Order is editorial; Fragment files
       should put the unmarked / default-context marker first. -/
-  markers : List NegMarkerEntry
+  markers : List Marker
   /-- WALS Ch 112A: morpheme classification. Should not be hand-encoded
       in Fragment files — use `NegationSystem.ofISO` to populate from the
       `Data.WALS` data, which is the single source of truth. -/
@@ -302,7 +302,7 @@ def fromWALS143A : Data.WALS.F143A.NegVerbOrder → NegVerbPosition
 
 /-- Build a `NegationSystem` for a language identified by ISO 639-3 code,
     pulling F112A / F143A / F144A values from the `Data.WALS` data. -/
-def NegationSystem.ofISO (iso : String) (markers : List NegMarkerEntry) :
+def NegationSystem.ofISO (iso : String) (markers : List Marker) :
     NegationSystem :=
   { iso
   , markers
