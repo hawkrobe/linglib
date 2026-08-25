@@ -42,7 +42,7 @@ open Syntax.Negation
 /-- *non* — Italian's standard preverbal negation particle.
     `Non ho visto nessuno` 'NEG have seen nobody' = "I didn't see anyone".
     A free word, not a clitic; syntactically immediately preverbal. -/
-def non : NegMarkerEntry :=
+def non : Marker :=
   { morphs := [.free "non"] }
 
 /-- The Italian negation system: a single preverbal particle.

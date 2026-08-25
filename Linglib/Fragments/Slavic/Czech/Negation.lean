@@ -30,7 +30,7 @@ open Syntax.Negation
 /-- *ne-* — Czech's standard negation prefix.
     Attaches directly to the verb stem: *nepřijde* 'will not come',
     *neviděl* 'didn't see'. Symmetric across the paradigm. -/
-def ne : NegMarkerEntry :=
+def ne : Marker :=
   { morphs := [.pref "ne"] }
 
 /-- The Czech negation system: a single verbal prefix. -/

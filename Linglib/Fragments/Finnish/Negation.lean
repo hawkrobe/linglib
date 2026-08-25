@@ -44,14 +44,14 @@ open Syntax.Negation
     appears in the connegative form (tense-stripped: *e-n osta* 'I don't
     buy' loses the tense marking *osta-n* 'I buy' carries). The 6 surface
     forms (en/et/ei/emme/ette/eivät) are accessible via `negParadigm`. -/
-def ei : NegMarkerEntry :=
+def ei : Marker :=
   { morphs := [.free "ei"] }
 
 /-- The Finnish negation system: a single negative auxiliary with a
     person/number paradigm. Multiple paradigm-form *surface* realizations
     (`negParadigm`) are not multiple *markers* — they're inflectional
     variants of one auxiliary, captured cross-linguistically by the single
-    `NegMarkerEntry`. -/
+    `Marker`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "fin" [ei]
 

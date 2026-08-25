@@ -44,7 +44,7 @@ open Syntax.Negation
     *tabe-naku-te* (GER). The shift of TAM marking from the stem to the
     *-nai* suffix is the A/Fin+A/Cat asymmetry captured by
     `japaneseNegDistribution` below. -/
-def negSuffix : NegMarkerEntry :=
+def negSuffix : Marker :=
   { morphs := [.suff "nai"] }
 
 /-- The Japanese negation system: a single verbal affix with rich

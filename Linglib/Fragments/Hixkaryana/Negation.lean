@@ -27,7 +27,7 @@ open Syntax.Negation
 /-- *-hira* — Hixkaryana's standard negation suffix.
     Deverbalizes the lexical verb (A/Fin asymmetry); a copula then takes
     over as the finite element. -/
-def hira : NegMarkerEntry :=
+def hira : Marker :=
   { morphs := [.suff "hira"] }
 
 /-- The Hixkaryana negation system: a single deverbalizing suffix. -/

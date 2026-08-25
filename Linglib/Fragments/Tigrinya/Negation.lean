@@ -33,7 +33,7 @@ def ej : Morph := .pref "ɛj"
 def n : Morph := .suff "n"
 
 /-- *ʔaj-…-(ɨ)n* — the standard-negation circumfix. -/
-def circumfix : NegMarkerEntry where
+def circumfix : Marker where
   morphs := [aj, n]
 
 /-- Tigrinya standard negation: the single bipartite marker. -/

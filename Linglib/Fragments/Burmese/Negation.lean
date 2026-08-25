@@ -43,7 +43,7 @@ def negSuffix : String := "-bu"
     affirmative TAM markers (realis *-deh*, irrealis *-meh*, future
     *-laimeh*), neutralizing TAM distinctions. WALS classifies Burmese
     as `.doubleNegation` (Ch 112A). -/
-def circumfix : NegMarkerEntry :=
+def circumfix : Marker :=
   { morphs := [.pref "ma", .suff "bu"] }
 
 /-- The Burmese negation system: a single bipartite circumfix. -/

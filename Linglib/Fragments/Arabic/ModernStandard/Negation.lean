@@ -37,7 +37,7 @@ open Syntax.Negation
     *lan* (future), *maa* (past, colloquial-leaning), *lays-a* (copular). The
     four particles precede the verb; *lays-a* is itself a verb inflecting for
     person / number / gender. -/
-def negMarkers : List NegMarkerEntry :=
+def negMarkers : List Marker :=
   [ { morphs := [.free "laa"]
     , gloss := "NEG.IPFV" }
   , { morphs := [.free "lam"]

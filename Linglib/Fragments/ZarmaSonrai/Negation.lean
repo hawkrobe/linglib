@@ -46,16 +46,16 @@ open Syntax.Negation
 
 /-- *si* — imperfective negation marker. Aspect-conditioned alternation
     with perfective *mana*/*batu*. Parallel to Mandarin's bù/méi split. -/
-def si : NegMarkerEntry :=
+def si : Marker :=
   { morphs := [.free "si"] }
 
 /-- *mana* — perfective negation marker (one of two variants). -/
-def mana : NegMarkerEntry :=
+def mana : Marker :=
   { morphs := [.free "mana"] }
 
 /-- *batu* — perfective negation marker (second variant; also surfaces
     as a verb 'wait/delay'). -/
-def batu : NegMarkerEntry :=
+def batu : Marker :=
   { morphs := [.free "batu"] }
 
 /-- The Zarma-Sonrai negation system: three aspect-conditioned markers.

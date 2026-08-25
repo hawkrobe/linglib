@@ -35,7 +35,7 @@ open Syntax.Negation
     gelesen*). The V2/SOV alternation is why WALS Ch 143A classifies
     German as `.type1Type2` (mixed NegV / VNeg) rather than a single
     position. -/
-def nicht : NegMarkerEntry :=
+def nicht : Marker :=
   { morphs := [.free "nicht"] }
 
 /-- *kein* — negative determiner (fuses negation + indefinite article).

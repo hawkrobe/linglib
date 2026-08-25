@@ -29,7 +29,7 @@ open Syntax.Negation
 
 /-- *не* — Russian's standard preverbal negation particle.
     A free word, syntactically immediately preverbal. -/
-def ne : NegMarkerEntry :=
+def ne : Marker :=
   { morphs := [.free "не"] }
 
 /-- The Russian negation system: a single preverbal particle. -/

@@ -35,7 +35,7 @@ open Syntax.Negation
     enclitic is a separate validator (also used in polar interrogatives)
     whose obligatory appearance under negation drives the WALS A/NonReal
     asymmetry classification. -/
-def mana : NegMarkerEntry :=
+def mana : Marker :=
   { morphs := [.free "mana"] }
 
 /-- The validator enclitic *-chu*, triggered in negative and interrogative
