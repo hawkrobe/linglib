@@ -147,18 +147,18 @@ arises compositionally for "may A or may B":
 
 /-- The modal feature carried by English "may" — derived from the Fragment entry's
 force and interpretability. -/
-def mayFeature : ModalFeature := may.toModalFeature.get!
+def mayFeature : ModalFeature := may.modalFeature.get!
 
 /-- The modal feature carried by English "must" — derived from the Fragment. -/
-def mustFeature : ModalFeature := must.toModalFeature.get!
+def mustFeature : ModalFeature := must.modalFeature.get!
 
 /-- "May" carries `[u∃-MOD]`: possibility force, uninterpretable. -/
 theorem may_feature_eq :
-    may.toModalFeature = some ⟨.possibility, .uninterpretable⟩ := rfl
+    may.modalFeature = some ⟨.possibility, .uninterpretable⟩ := rfl
 
 /-- "Must" carries `[u∀-MOD]`: necessity force, uninterpretable. -/
 theorem must_feature_eq :
-    must.toModalFeature = some ⟨.necessity, .uninterpretable⟩ := rfl
+    must.modalFeature = some ⟨.necessity, .uninterpretable⟩ := rfl
 
 /-- The silent operator that checks a given u-feature: same force, but
 interpretable. This is the operator [ciardelli-guerrini-2026] posit above the
@@ -230,7 +230,7 @@ end ConcordDerivation
 entirely from Fragment data — no stipulation. -/
 def ConcordDerivation.fromAux (a₁ a₂ : Auxiliary)
     {f₁ f₂ : ModalFeature}
-    (_h₁ : a₁.toModalFeature = some f₁) (_h₂ : a₂.toModalFeature = some f₂)
+    (_h₁ : a₁.modalFeature = some f₁) (_h₂ : a₂.modalFeature = some f₂)
     (hI₁ : f₁.interp = .uninterpretable) (hI₂ : f₂.interp = .uninterpretable)
     (hF : ConcordType.fromModalForce f₁.force = ConcordType.fromModalForce f₂.force) :
     ConcordDerivation :=
@@ -238,18 +238,17 @@ def ConcordDerivation.fromAux (a₁ a₂ : Auxiliary)
 
 /-! #### Universal modal properties -/
 
-/-- The modal auxiliaries that participate in concord: Fragment entries with
-uninterpretable features. -/
-def modalAuxiliaries : List Auxiliary :=
-  allAuxiliaries.filter (λ a => a.interpretability == some .uninterpretable)
+/-- The modal auxiliaries, the participants in concord. -/
+def modalAuxiliaries : List Auxiliary := modals
 
-/-- Exactly 13 English modal auxiliaries carry u-features. -/
+/-- Thirteen English modal auxiliaries. -/
 theorem modal_aux_count : modalAuxiliaries.length = 13 := by decide
 
-/-- Modal auxiliaries with modal meaning (those that can form `ConcordDerivation`s).
-Excludes `dare`, which has u-features but no modal-meaning specification. -/
+/-- Modal auxiliaries with a modal feature, those that can form
+`ConcordDerivation`s. Excludes `dare`, whose meaning the fragment leaves
+unspecified. -/
 def concordCapableModals : List Auxiliary :=
-  modalAuxiliaries.filter (λ a => a.toModalFeature.isSome)
+  modalAuxiliaries.filter (λ a => a.modalFeature.isSome)
 
 /-- 12 of 13 modal auxiliaries have derivable modal features. -/
 theorem concord_capable_count : concordCapableModals.length = 12 := by decide
@@ -262,9 +261,9 @@ theorem concord_capable_all_uninterpretable :
 
 /-- Non-modal auxiliaries have no modal feature — they cannot participate in
 concord at all. -/
-theorem do_no_feature : do_.toModalFeature = none := rfl
-theorem be_no_feature : am.toModalFeature = none := rfl
-theorem have_no_feature : have_.toModalFeature = none := rfl
+theorem do_no_feature : do_.modalFeature = none := rfl
+theorem be_no_feature : am.modalFeature = none := rfl
+theorem have_no_feature : have_.modalFeature = none := rfl
 
 /-! #### Instantiations -/
 
@@ -346,16 +345,16 @@ generalization. -/
 
 /-- Fragment-derived: the English modals used by [ciardelli-guerrini-2026] are
 modal auxiliaries. -/
-theorem may_is_modal : may.auxType = .modal := rfl
-theorem must_is_modal : must.auxType = .modal := rfl
-theorem can_is_modal : can.auxType = .modal := rfl
-theorem need_is_modal : need.auxType = .modal := rfl
+theorem may_is_modal : may ∈ modals := by decide
+theorem must_is_modal : must ∈ modals := by decide
+theorem can_is_modal : can ∈ modals := by decide
+theorem need_is_modal : need ∈ modals := by decide
 
 /-- All these modals carry uninterpretable features in the Fragment. -/
-theorem may_uninterpretable : may.interpretability = some .uninterpretable := rfl
-theorem must_uninterpretable : must.interpretability = some .uninterpretable := rfl
-theorem can_uninterpretable : can.interpretability = some .uninterpretable := rfl
-theorem need_uninterpretable : need.interpretability = some .uninterpretable := rfl
+theorem may_uninterpretable : may.interpretability = some .uninterpretable := by decide
+theorem must_uninterpretable : must.interpretability = some .uninterpretable := by decide
+theorem can_uninterpretable : can.interpretability = some .uninterpretable := by decide
+theorem need_uninterpretable : need.interpretability = some .uninterpretable := by decide
 
 /-- **The mechanism behind the auxiliary/non-auxiliary contrast**: an *interpreted*
 feature can never be checked. Non-auxiliary modal constructions ("it's ok that",
@@ -458,20 +457,20 @@ force (necessity) comes from the Fragment. -/
 
 /-- "Need" carries `[u∀-MOD]` in the Fragment. -/
 theorem need_feature_eq :
-    need.toModalFeature = some ⟨.necessity, .uninterpretable⟩ := rfl
+    need.modalFeature = some ⟨.necessity, .uninterpretable⟩ := rfl
 
 /-- The existential reading is available: `◇[i∃]` checks `¬NEED[u∀]`. -/
 theorem need_not_existential_ok :
     ModalFeature.checksAcrossNegation
       ⟨.possibility, .interpretable⟩
-      need.toModalFeature.get!
+      need.modalFeature.get!
     = true := by decide
 
 /-- The universal reading is blocked: `□[i∀]` cannot check `¬NEED[u∀]`. -/
 theorem need_not_universal_blocked :
     ModalFeature.checksAcrossNegation
       ⟨.necessity, .interpretable⟩
-      need.toModalFeature.get!
+      need.modalFeature.get!
     = false := by decide
 
 /-! ### Conjunctive permission, may-and-may (§2, ex. 7-8)
@@ -500,11 +499,11 @@ leaving one semantic operator. The fragment exhibits the precondition: `must` an
 /-- `must` and `have to` carry the same modal feature (both `[u∀-MOD]`) — a
 same-force concord configuration. -/
 theorem must_haveTo_same_feature :
-    must.toModalFeature = haveTo.toModalFeature := rfl
+    must.modalFeature = haveTo.modalFeature := rfl
 
 /-- `have to` carries `[u∀-MOD]`: necessity force, uninterpretable. -/
 theorem haveTo_feature_eq :
-    haveTo.toModalFeature = some ⟨.necessity, .uninterpretable⟩ := rfl
+    haveTo.modalFeature = some ⟨.necessity, .uninterpretable⟩ := rfl
 
 /-- The `must`/`have to` concord as a `ConcordDerivation`, derived from the
 Fragment: two `[u∀]` auxiliaries checked by one operator. -/
@@ -515,8 +514,8 @@ def mustHaveToConcord : ConcordDerivation :=
 operator. This predicts no concord between necessity and possibility modals. -/
 theorem must_may_no_concord :
     (ModalFeature.checks
-      ⟨may.toModalFeature.get!.force, .interpretable⟩
-      must.toModalFeature.get!)
+      ⟨may.modalFeature.get!.force, .interpretable⟩
+      must.modalFeature.get!)
     = false := by decide
 
 /-! ### Scope-data verification against the Fragment
@@ -526,14 +525,14 @@ against the Fragment's modal-meaning entries. -/
 
 /-- The force in `mayOrMay` matches the Fragment entry for "may". -/
 theorem mayOrMay_force_verified :
-    mayOrMay.modalForce = may.toModalFeature.get!.force := rfl
+    mayOrMay.modalForce = may.modalFeature.get!.force := rfl
 
 /-- The force in `mustOrMust` matches the Fragment entry for "must". -/
 theorem mustOrMust_force_verified :
-    mustOrMust.modalForce = must.toModalFeature.get!.force := rfl
+    mustOrMust.modalForce = must.modalFeature.get!.force := rfl
 
 /-- The force in `mayAndMay` matches the Fragment entry for "may". -/
 theorem mayAndMay_force_verified :
-    mayAndMay.modalForce = may.toModalFeature.get!.force := rfl
+    mayAndMay.modalForce = may.modalFeature.get!.force := rfl
 
 end CiardelliGuerrini2026

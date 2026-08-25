@@ -117,9 +117,10 @@ marginal). GSD also tags Arka's fifth auxiliary *mau* (and *ingin*) `AUX`,
 siding with [arka-2013] against [sneddon-1996]'s full-verb treatment. -/
 def auxMarkers : List TemporalMarker := [sudah, telah, sedang, akan]
 
-instance : Auxiliary {m : TemporalMarker // m ∈ auxMarkers} where
-  toWord m := { form := m.val.form, cat := .AUX }
-  cat_aux _ := rfl
+/-- A temporal marker as an `Auxiliary` entry; meaningful for the four
+`auxMarkers`. -/
+def TemporalMarker.toAuxiliary (m : TemporalMarker) : Auxiliary :=
+  { form := m.form, register := m.register }
 
 /-- *telah* has the same meaning as *sudah*; the difference between the two
 is in register (§2.144). -/

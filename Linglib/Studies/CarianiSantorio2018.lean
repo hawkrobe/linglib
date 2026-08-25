@@ -474,8 +474,7 @@ compared by direct equation; a divergence-witness theorem against
     constraint #1 (modal character) requires *will* to embed, scope,
     and interact with negation/quantifiers. -/
 theorem cs_assumes_will_is_modal_aux :
-    English.Auxiliaries.will.auxType =
-      English.Auxiliaries.AuxType.modal := rfl
+    English.Auxiliaries.will ∈ English.Auxiliaries.modals := by decide
 
 /-- **C&S precondition**: the Fragment marks *will* as morphologically
     non-past (`tense = none`). C&S analyse *will* as the present-tense

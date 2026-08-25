@@ -390,11 +390,11 @@ def negRaisingRows : List LinguisticExample :=
     single source of truth for modal force. (Evaluative comparatives are
     adjectives, outside the auxiliary fragment.) -/
 private def fragmentMarksWeak : String → Bool
-  | "should"  => English.Auxiliaries.should.modalMeaning.any (·.force == .weakNecessity)
-  | "ought"   => English.Auxiliaries.ought.modalMeaning.any (·.force == .weakNecessity)
-  | "must"    => English.Auxiliaries.must.modalMeaning.any (·.force == .weakNecessity)
-  | "have to" => English.Auxiliaries.haveTo.modalMeaning.any (·.force == .weakNecessity)
-  | "need"    => English.Auxiliaries.need.modalMeaning.any (·.force == .weakNecessity)
+  | "should"  => English.Auxiliaries.should.meaning.any (·.force == .weakNecessity)
+  | "ought"   => English.Auxiliaries.ought.meaning.any (·.force == .weakNecessity)
+  | "must"    => English.Auxiliaries.must.meaning.any (·.force == .weakNecessity)
+  | "have to" => English.Auxiliaries.haveTo.meaning.any (·.force == .weakNecessity)
+  | "need"    => English.Auxiliaries.need.meaning.any (·.force == .weakNecessity)
   | _         => false
 
 /-- **The neg-raising split, derived from the fragment.** For every English
@@ -559,41 +559,41 @@ Rubinstein's force assignments: *should*/*ought* are weak necessity
 
 /-- The English fragment classifies *should* as weak necessity. -/
 theorem fragment_should_weak :
-    English.Auxiliaries.should.modalMeaning.any
+    English.Auxiliaries.should.meaning.any
       (·.force == .weakNecessity) = true := by decide
 
 /-- The English fragment classifies *ought* as weak necessity. -/
 theorem fragment_ought_weak :
-    English.Auxiliaries.ought.modalMeaning.any
+    English.Auxiliaries.ought.meaning.any
       (·.force == .weakNecessity) = true := by decide
 
 /-- The English fragment classifies *must* as strong necessity. -/
 theorem fragment_must_strong :
-    English.Auxiliaries.must.modalMeaning.any
+    English.Auxiliaries.must.meaning.any
       (·.force == .necessity) = true := by decide
 
 /-- *must* is NOT classified as weak necessity — confirming it is
     outside the evaluative comparative natural class. -/
 theorem fragment_must_not_weak :
-    English.Auxiliaries.must.modalMeaning.any
+    English.Auxiliaries.must.meaning.any
       (·.force == .weakNecessity) = false := by decide
 
 /-- *should* is NOT classified as strong necessity — confirming the
     asymmetry: comparative class members have strictly weaker force. -/
 theorem fragment_should_not_strong :
-    English.Auxiliaries.should.modalMeaning.any
+    English.Auxiliaries.should.meaning.any
       (·.force == .necessity) = false := by decide
 
 /-- *need* is classified as strong necessity — matching its exclusion
     from the evaluative comparative class (§2.1.2, note 14). -/
 theorem fragment_need_strong :
-    English.Auxiliaries.need.modalMeaning.any
+    English.Auxiliaries.need.meaning.any
       (·.force == .necessity) = true := by decide
 
 /-- *need* is NOT classified as weak necessity — confirming it fails
     the scalar tests (examples 16, 18–19). -/
 theorem fragment_need_not_weak :
-    English.Auxiliaries.need.modalMeaning.any
+    English.Auxiliaries.need.meaning.any
       (·.force == .weakNecessity) = false := by decide
 
 end Rubinstein2014

@@ -230,7 +230,7 @@ def toEpistemicEntry (a : Auxiliary) : Option EpistemicEntry :=
 /-- The epistemic force of a modal auxiliary, if it has an epistemic
     reading. -/
 def epistemicForce (a : Auxiliary) : Option ModalForce :=
-  let epMeanings := a.modalMeaning.filter (·.flavor == .epistemic)
+  let epMeanings := a.meaning.filter (·.flavor == .epistemic)
   epMeanings.head?.map (·.force)
 
 /-! Per-entry checks of the form → entry → threshold pipeline; these
