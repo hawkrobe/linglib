@@ -39,7 +39,7 @@ open AuxiliaryVerbs
 open ArgumentStructure.AuxiliarySelection
 open Syntax.Negation (Strategy)
 
-/-! ### Inflectional distribution
+/-! ### Where the inflection is marked
 
 Possessing a distribution is neutral on periphrasis-hood
 ([spencer-popova-2015] pp. 200, 204); the data is the raw material for
@@ -48,10 +48,10 @@ the distributed-exponence criterion. -/
 open Morphology (MorphCategory)
 
 /-- Which inflectional categories each element of an auxiliary verb
-construction hosts. The category vocabulary is `MorphCategory`
-([bybee-1985]'s relevance hierarchy); which pattern a distribution
-realizes is `InflPattern`. -/
-structure InflDistribution where
+construction carries. The category vocabulary is `MorphCategory`
+([bybee-1985]'s relevance hierarchy); the coarse question of which element
+is the inflectional head is `InflPattern.inflHost`. -/
+structure InflectionalMarking where
   onAux : Finset MorphCategory
   onLex : Finset MorphCategory
   deriving DecidableEq
@@ -59,42 +59,42 @@ structure InflDistribution where
 /-- Doyayo lex-headed (`Examples.doyayo_lexheaded`): the auxiliary
 "partially encodes person of the subject through the tone" (p. 120), the
 lexical verb carries TAM. -/
-def doyayoLexHeadedDist : InflDistribution :=
+def doyayoLexHeaded : InflectionalMarking :=
   { onAux := {.agreement .subj}, onLex := {.tense} }
 
 /-- Doyayo split/doubled (`Examples.doyayo_splitdoubled`): the subject is
 marked on both elements, the object only on the lexical verb. -/
-def doyayoSplitDoubledDist : InflDistribution :=
+def doyayoSplitDoubled : InflectionalMarking :=
   { onAux := {.agreement .subj}
   , onLex := {.agreement .subj, .agreement .obj} }
 
 /-- Gorum doubled (`Examples.gorum_tiger`, `Examples.gorum_vigorously`):
 subject agreement, tense and affectedness on both elements. -/
-def gorumDist : InflDistribution :=
+def gorumDoubled : InflectionalMarking :=
   { onAux := {.agreement .subj, .tense, .voice}
   , onLex := {.agreement .subj, .tense, .voice} }
 
 /-- Hemba split/doubled (`Examples.hemba_progressive`): agreement on both
 elements, tense on the auxiliary, mood on the lexical verb. -/
-def hembaDist : InflDistribution :=
+def hembaSplitDoubled : InflectionalMarking :=
   { onAux := {.agreement .subj, .tense}
   , onLex := {.agreement .subj, .mood} }
 
 /-- Jakaltek split (`Examples.jakaltek_completive`): aspect and absolutive
 agreement on the auxiliary, ergative agreement on the lexical verb. -/
-def jakaltekDist : InflDistribution :=
+def jakaltekSplit : InflectionalMarking :=
   { onAux := {.aspect, .agreement .obj}
   , onLex := {.agreement .subj} }
 
 /-- Pipil lex-headed (`Examples.pipil_capability`): the capability
 auxiliary *weli* is uninflected. -/
-def pipilLexHeadedDist : InflDistribution :=
+def pipilLexHeaded : InflectionalMarking :=
   { onAux := ∅, onLex := {.agreement .subj} }
 
 /-- Pipil split/doubled (`Examples.pipil_progressive`): "Subjects are doubly
 marked… while objects occur only on lexical verbs". The auxiliary root *yu*
 carries prospective TAM lexically, so no tense morpheme sits on it. -/
-def pipilSplitDoubledDist : InflDistribution :=
+def pipilSplitDoubled : InflectionalMarking :=
   { onAux := {.agreement .subj}
   , onLex := {.agreement .subj, .agreement .obj} }
 
@@ -104,7 +104,7 @@ hosts negation, tense and agreement, the main verb the stem and aspect
 auxiliaries with connegative-marked lexical verbs without assigning
 Finnish a pattern label; the split reading follows [karlsson-2017] §19.5,
 where the connegative suffix is the diagnostic. -/
-def finnishNegDist : InflDistribution :=
+def finnishNegative : InflectionalMarking :=
   { onAux := {.negation, .tense, .agreement .subj}
   , onLex := {.stem, .aspect} }
 
@@ -140,7 +140,7 @@ agreement is doubled over both elements, while object agreement stays on
 the lexical verb ("Subjects are doubly marked… while objects occur only on
 lexical verbs", p. 224). -/
 theorem splitDoubled_subj_doubled_obj_lex_only :
-    ∀ d ∈ [doyayoSplitDoubledDist, pipilSplitDoubledDist],
+    ∀ d ∈ [doyayoSplitDoubled, pipilSplitDoubled],
       MorphCategory.agreement .subj ∈ d.onAux ∧
       MorphCategory.agreement .subj ∈ d.onLex ∧
       MorphCategory.agreement .obj ∈ d.onLex ∧
