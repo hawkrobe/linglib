@@ -1,6 +1,5 @@
 import Linglib.Fragments.Tigrinya.Complementizers
-import Linglib.Fragments.Tigrinya.Negation
-import Linglib.Morphology.Word.Tree
+import Linglib.Data.Examples.Cacchioli2026
 
 /-!
 # [cacchioli-2026] — The Syntax of Clausal Prefixes in Tigrinya
@@ -17,11 +16,10 @@ negation: *ʔaj-* heads NegP below TP and *-(ɨ)n* heads PolP above it,
 which is why the suffix is missing wherever the clause lacks the higher
 layer.
 
-Two of the thesis's descriptive generalizations are checked against the
-fragment entries: the selection table (which verb classes take *kɛmzɨ-*,
-*kɨ-* and *ʔɨlu*), and the distribution of the negative suffix across
-clause types, read off the thesis's own negated words built from the
-fragment morphs.
+Two of the thesis's descriptive generalizations are checked against its
+own examples (`Cacchioli2026.Examples`): the selection table (which verb
+classes take *kɛmzɨ-*, *kɨ-* and *ʔɨlu*) and the distribution of the
+negative suffix across clause types.
 
 ## TODO
 
@@ -35,7 +33,7 @@ fragment morphs.
 
 namespace Cacchioli2026
 
-open Morphology Tigrinya.Complementizers Tigrinya.Negation
+open Data.Examples Tigrinya.Complementizers
 
 /-! ### Selection -/
 
@@ -57,7 +55,7 @@ def selects : VerbClass → List Complementizer
 theorem kemzi_or_ki (c : VerbClass) : kemzi ∈ selects c ∨ ki ∈ selects c := by
   cases c <;> decide
 
-/-- *ʔɨlu* occurs only where *kɛmzɨ-* does (§3.2.3). -/
+/-- *ʔɨlu* occurs only where *kɛmzɨ-* does. -/
 theorem kemzi_of_ilu {c : VerbClass} (h : ilu ∈ selects c) : kemzi ∈ selects c := by
   revert h; cases c <;> decide
 
@@ -66,56 +64,94 @@ theorem kemzi_and_ki_iff (c : VerbClass) :
     kemzi ∈ selects c ∧ ki ∈ selects c ↔ c = .fiction ∨ c = .perception := by
   cases c <;> decide
 
-/-! ### Sentential negation
+def parseVerbClass : String → Option VerbClass
+  | "factive" => some .factive
+  | "cognitive_non_factive" => some .cognitiveNonFactive
+  | "fiction" => some .fiction
+  | "utterance" => some .utterance
+  | "perception" => some .perception
+  | "directive" => some .directive
+  | "desire" => some .desire
+  | "modal" => some .modal
+  | "emotive_factive" => some .emotiveFactive
+  | "control" => some .control
+  | "ecm" => some .ecm
+  | _ => none
 
-The thesis's negated verbs (ch. 5), as word trees over the fragment
-morphs. -/
+def parseTyper : String → Option Complementizer
+  | "kemzi" => some kemzi
+  | "ki" => some ki
+  | "ilu" => some ilu
+  | _ => none
 
-/-- (5b) *ʔaj-ts'awɛt-ɨn* 'I do not play': a root declarative. -/
-def rootNegative : Word.Tree Morph := .circumfixed aj (.root (.free "ts'awɛt")) n
+/-- A matrix verb of a given class attested with a given clause-typer. -/
+structure SelectionDatum where
+  verbClass : VerbClass
+  typer : Complementizer
+  deriving DecidableEq, Repr
 
-/-- (25) *ʔaj-nɨfɨr-ɨn* '(that a chicken) does not fly': an *ʔɨlu*-complement. -/
-def iluNegative : Word.Tree Morph := .circumfixed aj (.root (.free "nɨfɨr")) n
+def selectionDatum (e : LinguisticExample) : Option SelectionDatum := do
+  let c ← parseVerbClass (← e.paperFeatures.lookup "verb_class")
+  let t ← parseTyper (← e.paperFeatures.lookup "typer")
+  some ⟨c, t⟩
 
-/-- (24) *ʔaj-kɨ-bɛlʔɨ-n* 'will not eat': the negative future keeps the
-suffix, with *ʔaj-* outside *kɨ-*. -/
-def futureNegative : Word.Tree Morph :=
-  .circumfixed aj (.prefixed ki.morph (.root (.free "bɛlʔ"))) n
+/-- The attested (verb class, typer) pairs of the thesis's examples. -/
+def selectionData : List SelectionDatum := Examples.all.filterMap selectionDatum
 
-/-- (12a) *z-ɛj-nbɨb* '(the books) that I do not read': a relative clause
-takes the prefix alone. -/
-def relativeNegative : Word.Tree Morph :=
-  .prefixed zi.morph (.prefixed ej (.root (.free "nbɨb")))
-
-/-- (16) *kɛm-z-ɛj-fɛttu* '(what) I do not like': a *kɛmzɨ-*-complement. -/
-def complementNegative : Word.Tree Morph :=
-  .prefixed kem (.prefixed zi.morph (.prefixed ej (.root (.free "fɛttu"))))
-
-/-- (20) *k-ɛj-bɛki* 'not to cry': a *kɨ-*-clause. -/
-def subjunctiveNegative : Word.Tree Morph :=
-  .prefixed ki.morph (.prefixed ej (.root (.free "bɛki")))
-
-/-- The suffix *-(ɨ)n* appears in root declaratives, *ʔɨlu*-complements
-and the negative future, and in no *zɨ-* or other *kɨ-* clause. -/
-theorem suffix_distribution :
-    n ∈ rootNegative.toList ∧ n ∈ iluNegative.toList ∧ n ∈ futureNegative.toList ∧
-      n ∉ relativeNegative.toList ∧ n ∉ complementNegative.toList ∧
-      n ∉ subjunctiveNegative.toList := by
+/-- The selection table admits every attested pairing. -/
+theorem selects_covers_data : ∀ d ∈ selectionData, d.typer ∈ selects d.verbClass := by
   decide
 
-/-- Only the circumfixed words are non-concatenative; the prefix-only
-negatives segment as their morph lists. -/
-theorem concatenative_iff_no_suffix :
-    ¬ rootNegative.IsConcatenative ∧ ¬ futureNegative.IsConcatenative ∧
-      relativeNegative.IsConcatenative ∧ complementNegative.IsConcatenative ∧
-      subjunctiveNegative.IsConcatenative :=
-  ⟨id, id, trivial, trivial, trivial⟩
+/-! ### Sentential negation -/
 
-example : relativeNegative.toList.map Morph.form = ["zɨ", "ɛj", "nbɨb"] := rfl
+/-- The clause types in which the thesis negates a verb (ch. 5). -/
+inductive ClauseKind where
+  | root | ilu | future | relative | seem | conditional | complement | subjunctive | purpose
+  deriving DecidableEq, Repr
 
-example : rootNegative.IsKindCoherent ∧ futureNegative.IsKindCoherent ∧
-    relativeNegative.IsKindCoherent ∧ complementNegative.IsKindCoherent ∧
-    subjunctiveNegative.IsKindCoherent := by
+/-- Clauses carrying the PolP layer that hosts *-(ɨ)n*: root declaratives,
+*ʔɨlu*-complements and the negative future. -/
+def HasPolP : ClauseKind → Prop
+  | .root | .ilu | .future => True
+  | _ => False
+
+instance : DecidablePred HasPolP
+  | .root | .ilu | .future => isTrue trivial
+  | .relative | .seem | .conditional | .complement | .subjunctive | .purpose => isFalse id
+
+def parseClauseKind : String → Option ClauseKind
+  | "root" => some .root
+  | "ilu" => some .ilu
+  | "future" => some .future
+  | "relative" => some .relative
+  | "seem" => some .seem
+  | "conditional" => some .conditional
+  | "complement" => some .complement
+  | "subjunctive" => some .subjunctive
+  | "purpose" => some .purpose
+  | _ => none
+
+def parseSuffix : String → Option Bool
+  | "present" => some true
+  | "absent" => some false
+  | _ => none
+
+/-- A negated clause: its kind and whether the suffix *-(ɨ)n* appears. -/
+structure NegationDatum where
+  clause : ClauseKind
+  suffix : Bool
+  deriving DecidableEq, Repr
+
+def negationDatum (e : LinguisticExample) : Option NegationDatum := do
+  let c ← parseClauseKind (← e.paperFeatures.lookup "clause")
+  let s ← parseSuffix (← e.paperFeatures.lookup "neg_suffix")
+  some ⟨c, s⟩
+
+/-- The negated clauses of the thesis's examples. -/
+def negationData : List NegationDatum := Examples.all.filterMap negationDatum
+
+/-- The suffix appears exactly in the clauses that carry PolP. -/
+theorem suffix_iff_polP : ∀ d ∈ negationData, d.suffix = true ↔ HasPolP d.clause := by
   decide
 
 end Cacchioli2026
