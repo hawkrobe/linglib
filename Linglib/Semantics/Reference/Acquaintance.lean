@@ -16,10 +16,10 @@ cover identifies it at `p`.
 
 Instantiated at `Idx := Assignment E × WitnessSeq E`, `Res := E` this is the
 PLA cover system in `Semantics/Dynamic/PLA/Belief.lean`.
-Instantiated at `Idx := KContext W E P T`, `Res := T` this is the Abusch
-1997 time-concept (def. 13). The polymorphic substrate makes the
-individual ↔ temporal de re parallel that Abusch's prose asserts true by
-construction.
+Instantiated at `Idx := KContext W E P T`, `Res := T` this is
+[heim-1994-comments]'s time-concept; [abusch-1997]'s own de re rule, through an
+acquaintance relation rather than a cover, is `Acquaintance.deRe`
+(`Semantics/Attitudes/Acquaintance.lean`).
 
 ## Reuse
 
@@ -37,8 +37,8 @@ open Intensional (Intension)
     an evaluation index `Idx` representing the agent's available "ways of
     identifying" values of type `Res`.
 
-    The Abusch 1997 §3 acquaintance relation `R : eeiwt` is the temporal
-    instance with `Idx := KContext W E P T`, `Res := T`. -/
+    [heim-1994-comments]'s time-concepts are the instance with
+    `Idx := KContext W E P T`, `Res := T`. -/
 abbrev Cover (Idx Res : Type*) : Type _ := Set (Intension Idx Res)
 
 /-- A cover is exhaustive on a domain when, at every index, every value
