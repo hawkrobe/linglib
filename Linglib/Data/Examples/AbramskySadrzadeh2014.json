@@ -1,0 +1,299 @@
+[
+  {
+    "id": "abramskysadrzadeh2014_donkey",
+    "source": {"bibkey": "geach-1962", "paperLabel": "donkey sentence"},
+    "reportedIn": {"bibkey": "abramsky-sadrzadeh-2014", "paperLabel": "§1"},
+    "language": "stan1293",
+    "primaryText": "If a farmer owns a donkey, he beats it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If a farmer owns a donkey, he beats it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "donkey anaphora"]
+    ],
+    "comment": "Cited as the case where the usual Montague-style translation fails and DRT was first to succeed.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abramskysadrzadeh2014_drt_resolved",
+    "source": {"bibkey": "abramsky-sadrzadeh-2014", "paperLabel": "§3"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John owns a donkey. He beats it.",
+    "discourseSegments": [
+      "John owns a donkey.",
+      "He beats it."
+    ],
+    "glossedTokens": [],
+    "translation": "John owns a donkey. He beats it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["resolution", "full"],
+      ["unification", "v = x, w = y"]
+    ],
+    "comment": "The merge of the two DRS is followed by unification of the accessible, agreeing referents.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abramskysadrzadeh2014_drt_partial",
+    "source": {"bibkey": "abramsky-sadrzadeh-2014", "paperLabel": "§3"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John does not own a donkey. He beats it.",
+    "discourseSegments": [
+      "John does not own a donkey.",
+      "He beats it."
+    ],
+    "glossedTokens": [],
+    "translation": "John does not own a donkey. He beats it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "it = the donkey", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["resolution", "partial"],
+      ["unification", "v = x"]
+    ],
+    "comment": "The donkey referent sits in a negated sub-DRS and is inaccessible to `it`.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abramskysadrzadeh2014_ex1",
+    "source": {"bibkey": "abramsky-sadrzadeh-2014", "paperLabel": "example 1"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John sleeps. He snores.",
+    "discourseSegments": [
+      "John sleeps.",
+      "He snores."
+    ],
+    "glossedTokens": [],
+    "translation": "John sleeps. He snores.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cover", "x ↦ z ↤ y"],
+      ["gluing", "{John(z), sleeps(z), snores(z)}"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abramskysadrzadeh2014_ex2",
+    "source": {"bibkey": "abramsky-sadrzadeh-2014", "paperLabel": "example 2"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John beats his donkey.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John beats his donkey.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["cover", "x ↦ a, y ↦ b, u ↦ a, v ↦ b"],
+      ["gluing", "{John(a), donkey(b), owns(a, b), beats(a, b)}"]
+    ],
+    "comment": "Anaphor and antecedent in one sentence; three local sections for John, the donkey, and owning/beating.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abramskysadrzadeh2014_ex3",
+    "source": {"bibkey": "abramsky-sadrzadeh-2014", "paperLabel": "example 3"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John owns a donkey. It is grey.",
+    "discourseSegments": [
+      "John owns a donkey.",
+      "It is grey."
+    ],
+    "glossedTokens": [],
+    "translation": "John owns a donkey. It is grey.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "it = the donkey", "judgment": "acceptable"},
+      {"name": "it = John", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["resolution", "agreement"],
+      ["cover", "x ↦ a, y ↦ b, z ↦ b"]
+    ],
+    "comment": "Agreement is encoded by the negative literal ¬Man(y); merging `it` with John violates consistency.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abramskysadrzadeh2014_ex4",
+    "source": {"bibkey": "abramsky-sadrzadeh-2014", "paperLabel": "example 4"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John put the cup on the plate. He broke it.",
+    "discourseSegments": [
+      "John put the cup on the plate.",
+      "He broke it."
+    ],
+    "glossedTokens": [],
+    "translation": "John put the cup on the plate. He broke it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "it = the cup", "judgment": "acceptable"},
+      {"name": "it = the plate", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["resolution", "ambiguous"],
+      ["covers", "v ↦ y; v ↦ z"]
+    ],
+    "comment": "Two plausible covers; the paper defers their ranking to the probabilistic setting.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abramskysadrzadeh2014_brother_happy",
+    "source": {"bibkey": "abramsky-sadrzadeh-2014", "paperLabel": "§5"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John has a brother. He is happy.",
+    "discourseSegments": [
+      "John has a brother.",
+      "He is happy."
+    ],
+    "glossedTokens": [],
+    "translation": "John has a brother. He is happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "he = John", "judgment": "acceptable"},
+      {"name": "he = the brother", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["resolution", "preferential"],
+      ["preferred", "he = John"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abramskysadrzadeh2014_brother_nice",
+    "source": {"bibkey": "abramsky-sadrzadeh-2014", "paperLabel": "§5"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John has a brother. He is nice.",
+    "discourseSegments": [
+      "John has a brother.",
+      "He is nice."
+    ],
+    "glossedTokens": [],
+    "translation": "John has a brother. He is nice.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "he = John", "judgment": "acceptable"},
+      {"name": "he = the brother", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["resolution", "preferential"],
+      ["preferred", "he = the brother"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abramskysadrzadeh2014_cd",
+    "source": {"bibkey": "abramsky-sadrzadeh-2014", "paperLabel": "§5"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John put a cd in the computer and copied it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John put a cd in the computer and copied it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["resolution", "preferential"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abramskysadrzadeh2014_jim",
+    "source": {"bibkey": "abramsky-sadrzadeh-2014", "paperLabel": "§5"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John gave a donkey to Jim. James also gave him a dog.",
+    "discourseSegments": [
+      "John gave a donkey to Jim.",
+      "James also gave him a dog."
+    ],
+    "glossedTokens": [],
+    "translation": "John gave a donkey to Jim. James also gave him a dog.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["resolution", "preferential"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abramskysadrzadeh2014_bananas",
+    "source": {"bibkey": "abramsky-sadrzadeh-2014", "paperLabel": "§5 example"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John gave the bananas to the monkeys. They were ripe. They were cheeky.",
+    "discourseSegments": [
+      "John gave the bananas to the monkeys.",
+      "They were ripe.",
+      "They were cheeky."
+    ],
+    "glossedTokens": [],
+    "translation": "John gave the bananas to the monkeys. They were ripe. They were cheeky.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "ripe bananas, cheeky bananas", "judgment": "acceptable"},
+      {"name": "ripe bananas, cheeky monkeys", "judgment": "acceptable"},
+      {"name": "ripe monkeys, cheeky bananas", "judgment": "acceptable"},
+      {"name": "ripe monkeys, cheeky monkeys", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["resolution", "preferential"],
+      ["corpus", "British News, 200 million words"],
+      ["selected", "ripe bananas, cheeky monkeys"]
+    ],
+    "comment": "Four candidate coverings weighted by adjective–noun pattern frequencies (ripe banana 14, ripe monkey 0, cheeky banana 0, cheeky monkey 10); the covering u ↦ y, v ↦ z has probability 1/2.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
