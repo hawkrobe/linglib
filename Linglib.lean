@@ -1325,6 +1325,7 @@ import Linglib.Phonology.Hiatus
 import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 import Linglib.Phonology.Constraints.Harmony
 import Linglib.Phonology.HarmonicGrammar.Separability
+import Linglib.Studies.Ginzburg2012
 import Linglib.Studies.Just2024
 import Linglib.Studies.Riggle2009
 import Linglib.Phonology.Harmony.Basic
@@ -2181,15 +2182,6 @@ import Linglib.Studies.GeurtsPouscoulous2009
 import Linglib.Studies.Giannakidou2002
 import Linglib.Studies.Gibson2025
 import Linglib.Studies.GilesEtAl2026
-import Linglib.Studies.Ginzburg2012.Austinian
-import Linglib.Studies.Ginzburg2012.Basic
-import Linglib.Studies.Ginzburg2012.Examples
-import Linglib.Studies.Ginzburg2012.Genre
-import Linglib.Studies.Ginzburg2012.Grammar
-import Linglib.Studies.Ginzburg2012.Grounding
-import Linglib.Studies.Ginzburg2012.InquiryCycle
-import Linglib.Studies.Ginzburg2012.NSUTaxonomy
-import Linglib.Studies.Ginzburg2012.SelfRepair
 import Linglib.Studies.GinzburgCooper2004
 import Linglib.Studies.GiorgoloAsudeh2012
 import Linglib.Studies.GiulianelliEtAl2026
@@ -2945,3 +2937,4 @@ import Linglib.Data.Examples.Rett2015
 import Linglib.Data.Examples.RomeroHan2004
 import Linglib.Data.Examples.Cacchioli2026
 import Linglib.Data.Examples.Franke2011
+import Linglib.Data.Examples.Ginzburg2012

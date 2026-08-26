@@ -50,21 +50,20 @@ This file collects the load-bearing KOS types in dependency order:
 - §4. `LocProp` — locutionary proposition (Ch. 6 ex. 8d), polymorphic in content
 - §5. `InfoStruc` — QUD-cell with focus-establishing constituents (Ch. 7 App. B ex. 2)
 - §6. `DGB` — the dialogue gameboard, Ch. 6 final shape (ex. 43 p. 175):
-       pending = LocProp, qud = InfoStruc
+       pending and moves = LocProp, qud = InfoStruc
 - §7. `GenreType` — TTR record classifying conversations (§4.6, ex. 88).
-       Currently a thin record; full TTR enrichment in `Genre.lean`.
-- §8. `MaxPending`, `PrivateState`, `TIS` — total information state (ex. 93)
+- §8. `PrivateState`, `TIS` — total information state (ex. 93 p. 107)
 
 ## Ginzburg fidelity
 
 The DGB and TIS types take a `Cont` parameter for utterance content,
-enabling the Ch. 6 final shape (ex. 43 p. 175) where `Pending` stores
-`LocProp Cont` (utterances with form + cparams + content) and `QUD`
-stores `InfoStruc QContent Cont` (questions paired with their
-focus-establishing constituents, §6.3 (Pending added to DGB; QUD-as-InfoStruc treatment in §7.6 FEC discussion)). Moves still use
-`IllocMove Fact QContent` for case-analysis convenience; in the book's
-final version they are also LocProps, but the IllocMove constructor
-tags carry information our consumers find useful.
+enabling the Ch. 6 final shape (ex. 43 p. 175) where `Pending` and
+`Moves` store `LocProp Cont` (utterances with form + cparams + content)
+and `QUD` stores `InfoStruc QContent Cont` (questions paired with their
+focus-establishing constituents, the Ch. 7 refinement). `IllocMove` is
+the illocutionary content a move carries (`Cont := IllocMove Fact
+QContent` recovers the Ch. 4 gameboard whose moves are illocutionary
+propositions).
 
 -/
 
@@ -90,12 +89,9 @@ events classified by their illocutionary force. We abstract over the
 content: assertions carry propositional content, queries carry
 question content.
 
-The `Fact` and `QContent` parameters match the DGB's content types.
-
-**Note**: in the Ch. 6 final version (p. 215), MOVES stores LocProps
-(situated speech events). Here we keep `IllocMove` for case-analysis
-convenience — every constructor tag is a proper inductive case, which
-downstream pattern-matching consumers depend on. -/
+The `Fact` and `QContent` parameters match the DGB's content types. In
+the Ch. 6 final version MOVES stores LocProps (situated speech events);
+an `IllocMove` is then the content such a LocProp carries. -/
 inductive IllocMove (Fact QContent : Type*) where
   /-- An assertion: speaker commits to propositional content. -/
   | assert : Fact → IllocMove Fact QContent
@@ -274,11 +270,10 @@ The type parameters make content types explicit:
 This shape matches Ginzburg's Ch. 6 final DGB (ex. 43 p. 175), where
 `pending`/`moves` store `LocProp`s and `qud` is a poset of questions:
 - `pending` stores `LocProp` (with cparams, enabling CRification on form)
+- `moves` stores `LocProp` (the Ch. 4 gameboard, whose moves are
+  illocutionary propositions, is `Cont := IllocMove Fact QContent`)
 - `qud` stores `InfoStruc` (questions paired with FECs) — the InfoStruc-as-QUD
-  refinement is the Ch. 7 development (p. 239), not ex. 43 itself
-- `moves` keeps `IllocMove` for case-analysis convenience (the book's
-  final form uses LocProps; converting incurs no fidelity cost since
-  IllocMove constructors carry information LocProps would have to recover) -/
+  refinement is the Ch. 7 development, not ex. 43 itself -/
 structure DGB (Participant Fact QContent : Type*) (Cont : Type) where
   /-- Current speaker ([ginzburg-2012] ex. 100) -/
   spkr : Option Participant := none
@@ -286,8 +281,8 @@ structure DGB (Participant Fact QContent : Type*) (Cont : Type) where
   addr : Option Participant := none
   /-- Shared commitments. [ginzburg-2012]: "Facts : Set(Prop)" -/
   facts : List Fact := []
-  /-- History of illocutionary moves (Ch. 4 ex. 100; cf. Ch. 6 ex. 43 LocProp form) -/
-  moves : List (IllocMove Fact QContent) := []
+  /-- History of moves, most recent last (Ch. 6 ex. 43 p. 175: `Moves : list(LocProp)`) -/
+  moves : List (LocProp Cont) := []
   /-- Ungrounded locutionary propositions: Ch. 6 ex. 43 (p. 175) final shape.
       Each LocProp carries cparams (dgb-params) that the integration protocol
       (`integrateLocProp` in `Gameboard/Grounding.lean`) checks for resolution. -/
@@ -301,7 +296,7 @@ structure DGB (Participant Fact QContent : Type*) (Cont : Type) where
 
 /-- The latest move is the last element of the moves list. -/
 def DGB.latestMove {Participant Fact QContent : Type*} {Cont : Type}
-    (dgb : DGB Participant Fact QContent Cont) : Option (IllocMove Fact QContent) :=
+    (dgb : DGB Participant Fact QContent Cont) : Option (LocProp Cont) :=
   dgb.moves.getLast?
 
 /-- An empty DGB. -/
@@ -320,51 +315,27 @@ conversational structures. Example genres from the book: CasualChat
 (ex. 88a), PetrolMarket (ex. 88b), BakeryChat (ex. 88c).
 
 This schema captures the load-bearing fields from ex. 88:
-- `qnud` (anticipated questions) — the question types that conversations
-  of this genre are expected to raise
+- `qnud` (questions no longer under discussion) — the issues a
+  conversation of this genre raises and resolves
 - `anticipatedMoves` — illocutionary moves the genre licenses
-- `qudConstraint` — an optional explicit predicate on QUD content,
-  subsuming qnud when set (used for thin worked examples)
 
 The full TTR record per ex. 88 also includes agent fields (A, B : Ind),
-utt-time, facts subset, and a co-propositionality constraint (eq. 91
-p. 106) between MaxQUD and what each move can add. These need additional
-type parameters (Participant, Fact, Cont) and richer co-propositionality
-machinery that we defer to consumer-driven enrichment.
-
-The relevance check (ex. 90 p. 105) and outcome predicate live in
-`Gameboard/Genre.lean`. -/
+utt-time and a facts field. The outcome of a gameboard relative to a
+genre and activity relevance (ex. 89–90 p. 105) are defined by the
+anchoring study `Studies/Ginzburg2012.lean`. -/
 structure GenreType (Fact QContent : Type*) where
   /-- Genre name for identification -/
   name : String
-  /-- Anticipated questions in this genre (Ginzburg eq. 88 `qnud` field).
+  /-- The genre's anticipated questions (Ginzburg ex. 88 `qnud` field).
       Empty list = no anticipation (unrestricted on questions). -/
   qnud : List QContent := []
-  /-- Anticipated illocutionary moves the genre licenses (Ginzburg eq. 88
-      `moves` field). Used for outcome-fulfillability checks. -/
+  /-- Anticipated illocutionary moves the genre licenses (Ginzburg ex. 88
+      `moves` field). -/
   anticipatedMoves : List (IllocMove Fact QContent) := []
-  /-- Optional explicit constraint on QUD content; supersedes qnud when set.
-      `none` = unrestricted (like CasualChat). The `qudConstraint`-based
-      `genreRelevant` predicate (Ginzburg eq. 90) lives in `Gameboard/Genre.lean`. -/
-  qudConstraint : Option (List QContent → Bool) := none
 
 -- ════════════════════════════════════════════════════
 -- § 8. Total Information State
 -- ════════════════════════════════════════════════════
-
-/-! ### MaxPending = head of Pending (no separate field)
-
-Per [ginzburg-2012] §6.3 (footnote 31 p. 168) and §8.2: **MaxPending
-is the maximal element of the `dgb.pending` field**, not a separately-
-stored struct. Pending stores `LocProp Cont`s in last-in-first-out order;
-MaxPending is `pending.head?`. The previous formaliser struct
-(`MaxPending` with `phonSoFar`/`cat`/`partialContent`) bore no resemblance
-to Ginzburg's notion and is now deleted. The accessor lives on `TIS`
-(see `Gameboard/SelfRepair.lean`).
-
-For incremental construction (§8.2.3 word-by-word), substrate operates
-on the head of Pending directly — the LocProp's `phon` field gets
-extended, no separate "phonSoFar" field needed. -/
 
 /-- The private component of an information state.
 
