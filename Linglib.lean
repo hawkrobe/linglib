@@ -1326,6 +1326,7 @@ import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 import Linglib.Phonology.Constraints.Harmony
 import Linglib.Phonology.HarmonicGrammar.Separability
 import Linglib.Studies.Ginzburg2012
+import Linglib.Studies.Heim1982
 import Linglib.Studies.Just2024
 import Linglib.Studies.Riggle2009
 import Linglib.Phonology.Harmony.Basic
@@ -2250,7 +2251,6 @@ import Linglib.Studies.Hayes1989
 import Linglib.Studies.Hayes1995
 import Linglib.Studies.HayesWilson2008
 import Linglib.Studies.HeKaiserIskarous2025
-import Linglib.Studies.Heim1982.Basic
 import Linglib.Studies.Heim1983
 import Linglib.Studies.Heim1992
 import Linglib.Studies.Heim1994
