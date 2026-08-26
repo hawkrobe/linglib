@@ -31,6 +31,8 @@ relation to a point: an atom for a term, nothing for a formula.
   derived connectives.
 * `Formula.realize_exists_iff_abs_nonempty` — `∃xφ` is true iff `⋃{x : φ}` is
   nonempty, when `φ` is false of the null plurality.
+* `Term.realize_sigma_eq` — the value of a summation from a characterization
+  of its body.
 * `Expr.realize_elim` — the PIP constructs are eliminable: the translation
   preserves values and truth.
 
@@ -204,6 +206,22 @@ theorem Formula.realize_exists_iff_abs_nonempty (x : V) (φ : Formula V L P)
     exact ⟨a, g', hg, ha, hφ⟩
   · rintro ⟨_, g', hg, _, hφ⟩
     exact ⟨g', hg, hφ⟩
+
+/-- The value of a summation whose body, on the assignments agreeing outside the
+summation variable and its locals, depends on the summation variable's value
+alone: the union of the pluralities satisfying that condition. -/
+theorem Term.realize_sigma_eq {x : V} {φ : Formula V L P} {B : Set α → Prop}
+    (hφ : ∀ g', Set.EqOn g' g {y | y ∉ φ.locals ∧ y ≠ x} →
+      (Formula.Realize M g' φ ↔ B (g' x))) :
+    Term.realize M g (.sigma x φ) = {a | ∃ X, a ∈ X ∧ B X} := by
+  ext a
+  rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨g', hg, ha, hr⟩
+    exact ⟨g' x, ha, (hφ g' hg).1 hr⟩
+  · rintro ⟨X, ha, hB⟩
+    refine ⟨Function.update g x X, fun y hy => Function.update_of_ne hy.2 _ _, by simpa, ?_⟩
+    exact (hφ _ fun y hy => Function.update_of_ne hy.2 _ _).2 (by simpa)
 
 /-! ### Eliminability -/
 
