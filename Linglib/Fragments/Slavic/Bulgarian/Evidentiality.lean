@@ -1,35 +1,27 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# Bulgarian Evidentiality
-[de-haan-2013] [aikhenvald-2004]
+# Bulgarian evidentiality
 
-Two-choice direct vs indirect via the aorist (direct) vs l-form (indirect)
-contrast, fused with TAM. The best-known European language with grammatical
-evidentials. Balkan Sprachbund. WALS and Aikhenvald agree.
+Bulgarian marks non-firsthand information with the *l*-form, fused with tense and aspect,
+which covers inference and report and carries epistemic overtones of distance; the aorist is
+the unmarked counterpart. Aikhenvald classes the system as possibly A2, while noting that
+Balkan Slavic has been drifting toward an A1 system in which the unmarked form comes to signal
+firsthand information. The [cumming-2026] tense-evidential paradigm data are in
+`Fragments/Slavic/Bulgarian/Evidentials.lean`.
 
-Sister to `Fragments/Slavic/Bulgarian/Evidentials.lean` which holds the
-[cumming-2026] tense-evidential paradigm data.
+## References
+
+* [aikhenvald-2004], §2.1, §4.8
+* [de-haan-2013]
 -/
 
 namespace Bulgarian.Evidentiality
 
-/-! ### Typed evidential inventory
-
-Bulgarian's 2-way contrast via aorist (direct) vs l-form (indirect),
-fused with TAM. The l-form covers both inferential and reportative
-meanings — represented here as the inferential kind (the dominant
-inference function); reportative extensions are an Aikhenvald-style
-semantic extension. -/
-
 open Semantics.Evidential
 
+/-- The non-firsthand *l*-form; the aorist is its unmarked counterpart. -/
 def evidentials : List Entry :=
-  [ .direct      { form := "aorist", exponent := .tamFusion },
-    .inferential { form := "l-form", exponent := .tamFusion } ]
-
-example : evidentials.length = 2 := by decide
-example : (evidentials.filter Entry.IsDirect).length = 1 := by decide
-example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
+  [ .nonfirsthand { form := "l-form", exponent := .tamFusion } ]
 
 end Bulgarian.Evidentiality

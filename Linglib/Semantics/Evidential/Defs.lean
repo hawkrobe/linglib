@@ -18,8 +18,9 @@ a language's WALS cell is a theorem about its declared evidentials.
 ## Main declarations
 
 * `Evidential` — the base lexical-item record (just `form`).
-* `DirectEvidential`, `ReportativeEvidential`, `InferentialEvidential` —
-  the three Aikhenvald-coarse specializations.
+* `DirectEvidential`, `ReportativeEvidential`, `InferentialEvidential`,
+  `NonfirsthandEvidential` — the specializations: the three coarse sources and
+  the non-firsthand term that subsumes everything but firsthand evidence.
 * `Evidential.Exponent` — realization-strategy enum (analysis-neutral).
 * `DirectSource`, `ReportativeSource`, `InferentialBasis` — the
   [aikhenvald-2004] fine-grained source taxonomies the specializations carry.
@@ -137,14 +138,23 @@ structure InferentialEvidential extends Evidential where
   basis : InferentialBasis := .unspecified
   deriving DecidableEq, Repr
 
+/-- A non-firsthand evidential: one term covering everything but firsthand
+    evidence — inference, assumption, hearsay, and often non-visual
+    perception — the marked term of [aikhenvald-2004]'s two-choice A1 and
+    A2 systems (Turkish *-mIş*, Abkhaz *-zaap'*). -/
+structure NonfirsthandEvidential extends Evidential where
+  exponent : Semantics.Evidential.Exponent
+  deriving DecidableEq, Repr
+
 namespace Semantics.Evidential
 
 /-- An evidential occurrence in a language's inventory: one of the three
-    coarse kinds, carrying its typed payload. -/
+    coarse kinds or a non-firsthand term, carrying its typed payload. -/
 inductive Entry where
-  | direct      (e : DirectEvidential)
-  | reportative (e : ReportativeEvidential)
-  | inferential (e : InferentialEvidential)
+  | direct       (e : DirectEvidential)
+  | reportative  (e : ReportativeEvidential)
+  | inferential  (e : InferentialEvidential)
+  | nonfirsthand (e : NonfirsthandEvidential)
   deriving DecidableEq, Repr
 
 namespace Entry
@@ -173,17 +183,27 @@ def IsInferential : Entry → Prop
 instance : DecidablePred IsInferential := fun e => by
   cases e <;> unfold IsInferential <;> infer_instance
 
+/-- The occurrence is a non-firsthand evidential. -/
+def IsNonfirsthand : Entry → Prop
+  | .nonfirsthand _ => True
+  | _               => False
+
+instance : DecidablePred IsNonfirsthand := fun e => by
+  cases e <;> unfold IsNonfirsthand <;> infer_instance
+
 /-- The realization strategy of an entry. -/
 def exponent : Entry → Exponent
-  | .direct e      => e.exponent
-  | .reportative e => e.exponent
-  | .inferential e => e.exponent
+  | .direct e       => e.exponent
+  | .reportative e  => e.exponent
+  | .inferential e  => e.exponent
+  | .nonfirsthand e => e.exponent
 
 /-- The surface form of an entry. -/
 def form : Entry → String
-  | .direct e      => e.form
-  | .reportative e => e.form
-  | .inferential e => e.form
+  | .direct e       => e.form
+  | .reportative e  => e.form
+  | .inferential e  => e.form
+  | .nonfirsthand e => e.form
 
 end Entry
 

@@ -6,8 +6,8 @@ import Linglib.Semantics.Evidential.Defs
 
 Five-term system in the Vaupés multilingual area: visual, nonvisual,
 inferred, assumed, reported. WALS [de-haan-2013] F77A codes Tariana as
-`directAndIndirect`; [aikhenvald-2004]'s richer typology distinguishes
-the 5-way system. Studies-side override.
+`directAndIndirect`; [aikhenvald-2004] classes it as the five-choice type
+D1 (`Studies/Aikhenvald2004.lean`).
 -/
 
 namespace Tariana.Evidentiality

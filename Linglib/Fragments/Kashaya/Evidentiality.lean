@@ -44,7 +44,7 @@ def evidentials : List Entry :=
     .inferential { form := "-qá",         exponent := .verbalAffix },
     .inferential { form := "-bi",         exponent := .verbalAffix },
     .reportative { form := "-do",         exponent := .verbalAffix,
-                   sourceIdentity := .identified } ]
+                   sourceIdentity := .unidentified } ]
 
 example : evidentials.length = 6 := by decide
 example : (evidentials.filter Entry.IsDirect).length = 3 := by decide

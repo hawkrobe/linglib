@@ -1,23 +1,22 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# Japanese Evidentiality
-[de-haan-2013] [aikhenvald-2004]
+# Japanese evidentiality
 
-WALS [de-haan-2013] F77A: `indirectOnly` (de Haan classifies *soo da*,
-*rashii* as grammatical evidentials). [aikhenvald-2004] treats these as
-modal rather than evidential; Studies-side override.
+Japanese has several optional devices for marking information source — the reported
+*soo da* and the inferential *yoo da*, *rashii* and *soo da* — but no evidentiality as a
+unitary grammatical category, since the specification is not obligatory; at most the reported
+form could be taken as an A3 system on its own. The inventory is empty. WALS codes the
+language as indirect-only.
+
+## References
+
+* [aikhenvald-2004], §3.4
+* [de-haan-2013]
 -/
 
 namespace Japanese.Evidentiality
 
-/-! ### Typed evidential inventory (Aikhenvald-strict view)
-
-No grammatical evidentials per [aikhenvald-2004]. WALS divergence
-(modal *soo da* / *rashii*) is documented in `Studies/Aikhenvald2004.lean`. -/
-
 def evidentials : List Semantics.Evidential.Entry := []
-
-example : evidentials.length = 0 := by decide
 
 end Japanese.Evidentiality

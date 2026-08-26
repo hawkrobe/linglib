@@ -1,31 +1,25 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# Turkish Evidentiality
-[de-haan-2013] [aikhenvald-2004]
+# Turkish evidentiality
 
-Two-choice direct vs indirect. Past-tense paradigm contrasts *-DI*
-(witnessed) with *-mIş* (inferred or reported). The canonical
-indirect-evidential of a major language. Fused with TAM. WALS and
-Aikhenvald agree.
+Turkish has a two-choice system of Aikhenvald's type A2: the non-firsthand *-mIş*, covering
+report, inference and non-visual perception, contrasts with evidentiality-neutral forms such as
+the *-DI* past, which do not signal firsthand evidence but leave the source unspecified. The
+non-firsthand is fused with tense and the copula.
+
+## References
+
+* [aikhenvald-2004], §2.1
+* [de-haan-2013]
 -/
 
 namespace Turkish.Evidentiality
 
-/-! ### Typed evidential inventory
-
-Turkish's canonical 2-way contrast: `-DI` (direct/witnessed) vs `-mIş`
-(indirect, covering inference and report). Fused with past tense. The
-`-mIş` is Aikhenvald's classic example of an A2 non-firsthand marker. -/
-
 open Semantics.Evidential
 
+/-- The non-firsthand *-mIş*; the *-DI* past is evidentiality-neutral, not a firsthand term. -/
 def evidentials : List Entry :=
-  [ .direct      { form := "-DI",  exponent := .tamFusion },
-    .inferential { form := "-mIş", exponent := .tamFusion } ]
-
-example : evidentials.length = 2 := by decide
-example : (evidentials.filter Entry.IsDirect).length = 1 := by decide
-example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
+  [ .nonfirsthand { form := "-mIş", exponent := .tamFusion } ]
 
 end Turkish.Evidentiality
