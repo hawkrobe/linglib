@@ -1,4 +1,5 @@
-import Linglib.Fragments.Tarifit.Inventory
+import Linglib.Fragments.Tarifit.ConsonantalRoots
+import Linglib.Morphology.Morphotactics.CVTemplate
 import Linglib.Data.Examples.AfkirZellou2025
 
 /-!
@@ -10,9 +11,10 @@ a shorter, coarticulating intrusive schwa inside the initial cluster ([Cə̆CəC
 productions), and vowelless forms ([CCC], about five percent), neither of them sensitive to
 speaking style. The two schwas are independent processes, the template schwa a targeted segment
 whose deletion shortens the word and the intrusive schwa a targetless vocoid. Their distribution
-over the thirty-eight target words is tabulated by word, and this file states those tables'
-generalizations over the pooled rows, with each word's sonority profile computed from the
-fragment's consonant classes (`word?`, `intrusion?`, `vowelless?`).
+over the thirty-eight target words is tabulated by word. The words are the fragment's roots
+vocalized by the simple-imperative template CCəC (`imperative`, `surface`), and this file states
+the tables' generalizations over the pooled rows (`root?`, `intrusion?`, `vowelless?`), with each
+root's initial-cluster sonority profile read off its phones (`Rising`, `Falling`).
 
 Two hypotheses about the intrusive schwa are set against each other: repair, on which
 insertion should be most frequent in the dispreferred falling-sonority clusters, and the
@@ -41,7 +43,46 @@ here.
 
 namespace AfkirZellou2025
 
-open Tarifit Data.Examples
+open Tarifit Morphology Data.Examples
+
+/-! ### The simple imperative -/
+
+/-- The prosodic template CCəC of the simple imperative. -/
+def imperativeTemplate : CVTemplate := ⟨[.C, .C, .V, .C]⟩
+
+/-- A root in the simple imperative: its consonants fill the C-slots in order and the schwa
+the V-slot. -/
+def imperative (r : ConsonantalRoot Phone) : TemplateMatch Phone where
+  root := r
+  vocalism := [.schwa]
+  template := imperativeTemplate
+  associations := [⟨.root, 0, 0⟩, ⟨.root, 1, 1⟩, ⟨.vocalism, 0, 2⟩, ⟨.root, 2, 3⟩]
+
+theorem spellout_imperative (a b c : Phone) :
+    (imperative ⟨[a, b, c]⟩).spellout = [a, b, .schwa, c] := rfl
+
+/-- The transcription of a root's imperative. -/
+def surface (r : ConsonantalRoot Phone) : String :=
+  String.join ((imperative r).spellout.map Phone.ipa)
+
+/-- The phone at root position `i` is a voiceless obstruent. -/
+def VoicelessAt (r : ConsonantalRoot Phone) (i : ℕ) : Prop :=
+  ∃ p, r.segmentAt i = some p ∧ p.Voiceless
+
+/-- The initial cluster rises in sonority. -/
+def Rising (r : ConsonantalRoot Phone) : Prop :=
+  ∃ a b, r.segmentAt 0 = some a ∧ r.segmentAt 1 = some b ∧ a.rank < b.rank
+
+/-- The initial cluster falls in sonority. -/
+def Falling (r : ConsonantalRoot Phone) : Prop :=
+  ∃ a b, r.segmentAt 0 = some a ∧ r.segmentAt 1 = some b ∧ b.rank < a.rank
+
+instance (r : ConsonantalRoot Phone) (i : ℕ) : Decidable (VoicelessAt r i) := by
+  unfold VoicelessAt; infer_instance
+instance (r : ConsonantalRoot Phone) : Decidable (Rising r) := by unfold Rising; infer_instance
+instance (r : ConsonantalRoot Phone) : Decidable (Falling r) := by unfold Falling; infer_instance
+
+/-! ### The tables -/
 
 /-- Rate of the intrusive C1ə̆C2 schwa across a word's productions. -/
 inductive Intrusion
@@ -58,8 +99,9 @@ inductive Vowelless
   | often
   deriving DecidableEq, Repr
 
-/-- The target word a row reports, by its transcription. -/
-def word? (e : LinguisticExample) : Option TriconWord := words.find? (·.ipa == e.primaryText)
+/-- The root a row reports, by the transcription of its imperative. -/
+def root? (e : LinguisticExample) : Option (ConsonantalRoot Phone) :=
+  roots.find? (surface · == e.primaryText)
 
 /-- The row's intrusion category. -/
 def intrusion? (e : LinguisticExample) : Option Intrusion :=
@@ -78,39 +120,39 @@ def vowelless? (e : LinguisticExample) : Option Vowelless :=
   | some "often" => some .often
   | _ => none
 
-/-- Every row names a target word and carries both categories. -/
+/-- Every row names a root and carries both categories. -/
 theorem rows_complete :
-    ∀ e ∈ Examples.all, (word? e).isSome ∧ (intrusion? e).isSome ∧ (vowelless? e).isSome := by
+    ∀ e ∈ Examples.all, (root? e).isSome ∧ (intrusion? e).isSome ∧ (vowelless? e).isSome := by
   decide
 
 /-! ### The intrusive schwa -/
 
 /-- Intrusion is near-categorical exactly in the words whose second consonant is /r/. -/
 theorem almostExclusively_iff_c2_r :
-    ∀ e ∈ Examples.all, ∀ w ∈ word? e,
-      intrusion? e = some .almostExclusively ↔ w.c2 = .r := by
+    ∀ e ∈ Examples.all, ∀ r ∈ root? e,
+      intrusion? e = some .almostExclusively ↔ r.segmentAt 1 = some .r := by
   decide
 
 /-- A rising cluster shows intrusion at least variably unless its second consonant is
 voiceless. -/
 theorem intrusion_of_rising :
-    ∀ e ∈ Examples.all, ∀ w ∈ word? e, w.Rising →
+    ∀ e ∈ Examples.all, ∀ r ∈ root? e, Rising r →
       intrusion? e = some .variably ∨ intrusion? e = some .almostExclusively ∨
-        w.c2.Voiceless := by
+        VoicelessAt r 1 := by
   decide
 
 /-- Words that never or rarely show intrusion have a non-rising cluster or a voiceless second
 consonant. -/
 theorem nonRising_or_voiceless_of_never_rarely :
     ∀ e ∈ Examples.all, (intrusion? e = some .never ∨ intrusion? e = some .rarely) →
-      ∀ w ∈ word? e, ¬ w.Rising ∨ w.c2.Voiceless := by
+      ∀ r ∈ root? e, ¬ Rising r ∨ VoicelessAt r 1 := by
   decide
 
 /-- Variable intrusion goes with a rising cluster or a voiced second consonant, except for the
 three words the paper flags. -/
 theorem variably_exceptions :
     ∀ e ∈ Examples.all, intrusion? e = some .variably →
-      ∀ w ∈ word? e, w.Rising ∨ ¬ w.c2.Voiceless ∨ w ∈ [nqeb, nqer, qtes] := by
+      ∀ r ∈ root? e, Rising r ∨ ¬ VoicelessAt r 1 ∨ r ∈ [nqeb, nqer, qtes] := by
   decide
 
 /-! ### Vowelless production -/
@@ -118,13 +160,13 @@ theorem variably_exceptions :
 /-- Often-vowelless words have voiceless second and third consonants, except /ħkəm/. -/
 theorem voiceless_of_often_vowelless :
     ∀ e ∈ Examples.all, vowelless? e = some .often →
-      ∀ w ∈ word? e, (w.c2.Voiceless ∧ w.c3.Voiceless) ∨ w = hkem := by
+      ∀ r ∈ root? e, (VoicelessAt r 1 ∧ VoicelessAt r 2) ∨ r = hkem := by
   decide
 
 /-- Never-vowelless words have a voiced second or third consonant. -/
 theorem voiced_of_never_vowelless :
     ∀ e ∈ Examples.all, vowelless? e = some .never →
-      ∀ w ∈ word? e, ¬ w.c2.Voiceless ∨ ¬ w.c3.Voiceless := by
+      ∀ r ∈ root? e, ¬ VoicelessAt r 1 ∨ ¬ VoicelessAt r 2 := by
   decide
 
 end AfkirZellou2025

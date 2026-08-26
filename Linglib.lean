@@ -1196,7 +1196,8 @@ import Linglib.Fragments.Tangale.Phonology
 import Linglib.Fragments.Tangale.TAM
 import Linglib.Fragments.Taos.Agreement
 import Linglib.Fragments.Tariana.Evidentiality
-import Linglib.Fragments.Tarifit.Inventory
+import Linglib.Fragments.Tarifit.ConsonantalRoots
+import Linglib.Fragments.Tarifit.Phonology
 import Linglib.Fragments.Telugu.Case
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Thai.Comparison
