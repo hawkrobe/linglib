@@ -1,196 +1,77 @@
 import Linglib.Features.Gender.Basic
-import Linglib.Morphology.DistributedMorphology.NominalProjection
-import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 
 /-!
-# Teop Noun Inventory [adamson-2024]
+# Teop nouns
 
-Gender I and gender II nouns in Teop (Austronesian, Oceanic), drawn from
-[adamson-2024] Table 1 (sampled from Mosel & Spriggs 2000:336–40).
+Gender I and gender II nouns of Teop (Oceanic, Bougainville), sampled from Mosel and Spriggs's
+grammar sketch as tabulated in [adamson-2024], with the body-part and kinship nouns whose gender
+alternates with inalienable possession, and the article paradigm by gender, number, and proprial
+class. Gender I is the animate class; gender II the inanimate one; the proprial article marks
+names, kinship terms, and other socially prominent nouns.
 
-Teop has two genders distinguished by article form, with a "cross-identity"
-between gender and number ([adamson-2024] (25)–(26)): gender I takes *a* in
-the singular and *o* in the plural, gender II *o* in the singular and *a* in
-the plural; proprial nouns of gender I take *e* in the singular.
-- **Gender I**: animates — encoded via [animate] on n
-- **Gender II**: inanimates — plain n
+## References
 
-Body-part nouns appear in **both** genders depending on possession:
-iPossessed (with n_{body-part{D}}) → gender I; unpossessed or
-aPossessed (with n_{alienator}) → gender II.
+* [adamson-2024]
 -/
 
 namespace Teop
 
-open DistributedMorphology
-
--- ============================================================================
--- § 1: Gender Classes
--- ============================================================================
-
-/-- Teop gender: two classes (Mosel & Spriggs 2000, Mosel 2014). -/
+/-- The two genders, distinguished by article agreement. -/
 inductive Gender where
-  | gI   -- article *a* (sg) ~ *o* (pl); animates
-  | gII  -- article *o* (sg) ~ *a* (pl); inanimates
-  deriving DecidableEq, Repr
+  | gI
+  | gII
+  deriving DecidableEq, Repr, Fintype
 
-/-- A Teop noun with its gloss and gender assignment. -/
+/-- The surface gender of each class. -/
+def Gender.toGender : Gender → _root_.Gender
+  | .gI => .animate
+  | .gII => .inanimate
+
+/-- A noun with its gloss and the gender it takes unpossessed. -/
 structure Noun where
   form : String
   gloss : String
   gender : Gender
-  /-- Body-part nouns can be iPossessed, switching to gender I. -/
-  isBodyPart : Bool := false
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 2: Gender I Nouns ([adamson-2024] Table 1, left column)
--- ============================================================================
+/-- Gender I nouns. -/
+def genderINouns : List Noun :=
+  [⟨"moon", "woman", .gI⟩, ⟨"beikoo", "child", .gI⟩, ⟨"keusu", "rat", .gI⟩,
+    ⟨"naovana", "bird", .gI⟩, ⟨"overe", "coconut", .gI⟩, ⟨"pauna", "banana", .gI⟩,
+    ⟨"kepaa", "clay pot", .gI⟩, ⟨"anoo", "peeler (pearl shell)", .gI⟩,
+    ⟨"taba'ani", "food", .gI⟩, ⟨"tahii", "sea", .gI⟩, ⟨"huan", "rain", .gI⟩,
+    ⟨"uruuru", "love", .gI⟩]
 
-def moon     : Noun := ⟨"moon",      "woman",                   .gI, false⟩
-def beikoo   : Noun := ⟨"beikoo",    "child",                   .gI, false⟩
-def keusu    : Noun := ⟨"keusu",     "rat",                     .gI, false⟩
-def naovana  : Noun := ⟨"naovana",   "bird",                    .gI, false⟩
-def overe_c  : Noun := ⟨"overe",     "coconut",                 .gI, false⟩
-def pauna    : Noun := ⟨"pauna",     "banana",                  .gI, false⟩
-def kepaa    : Noun := ⟨"kepaa",     "clay pot",                .gI, false⟩
-def anoo     : Noun := ⟨"anoo",      "peeler (pearl shell)",    .gI, false⟩
-def tabaani  : Noun := ⟨"taba'ani",  "food",                    .gI, false⟩
-def tahii    : Noun := ⟨"tahii",     "sea",                     .gI, false⟩
-def huan     : Noun := ⟨"huan",      "rain",                    .gI, false⟩
-def uruuru   : Noun := ⟨"uruuru",    "love",                    .gI, false⟩
+/-- Gender II nouns. -/
+def genderIINouns : List Noun :=
+  [⟨"paka", "leaf", .gII⟩, ⟨"pus", "stump", .gII⟩, ⟨"hinahoo", "taro planting stick", .gII⟩,
+    ⟨"sinivi", "canoe", .gII⟩, ⟨"overe", "coconut palm", .gII⟩, ⟨"overe", "banana tree", .gII⟩,
+    ⟨"kurita", "octopus", .gII⟩, ⟨"demdem", "snail", .gII⟩, ⟨"paku", "feast", .gII⟩,
+    ⟨"suraa", "fire", .gII⟩, ⟨"giigii", "shooting star", .gII⟩, ⟨"koara", "language", .gII⟩]
 
--- ============================================================================
--- § 3: Gender II Nouns ([adamson-2024] Table 1, right column)
--- ============================================================================
+/-- Body-part nouns, gender II unpossessed and gender I with an inalienable possessor. -/
+def bodyPartNouns : List Noun :=
+  [⟨"bina", "spleen", .gII⟩, ⟨"kuri", "hand", .gII⟩, ⟨"iru", "back of head", .gII⟩,
+    ⟨"vuha", "heart", .gII⟩, ⟨"ihu", "nose", .gII⟩, ⟨"revasin", "blood", .gII⟩,
+    ⟨"hena", "name", .gII⟩, ⟨"moo", "leg", .gII⟩]
 
-def paka     : Noun := ⟨"paka",      "leaf",                    .gII, false⟩
-def pus      : Noun := ⟨"pus",       "stump",                   .gII, false⟩
-def hinahoo  : Noun := ⟨"hinahoo",   "taro planting stick",     .gII, false⟩
-def sinivi   : Noun := ⟨"sinivi",    "canoe",                   .gII, false⟩
-def overe_p  : Noun := ⟨"overe",     "coconut palm",            .gII, false⟩
-def overe_bt : Noun := ⟨"overe",     "banana tree",             .gII, false⟩
-def kurita   : Noun := ⟨"kurita",    "octopus",                 .gII, false⟩
-def demdem   : Noun := ⟨"demdem",    "snail",                   .gII, false⟩
-def paku     : Noun := ⟨"paku",      "feast",                   .gII, false⟩
-def suraa    : Noun := ⟨"suraa",     "fire",                    .gII, false⟩
-def giigii   : Noun := ⟨"giigii",    "shooting star",           .gII, false⟩
-def koara    : Noun := ⟨"koara",     "language",                .gII, false⟩
+/-- Body-part nouns whose unpossessed form carries the suffix *-na*. -/
+def derelationalized : List String := ["moo-na", "kuri-na", "ihu-na"]
 
--- ============================================================================
--- § 4: Body-Part Nouns (gender switches with iPossession)
--- ============================================================================
-
-/-- Body-part nouns: gender I when iPossessed, gender II when free.
-    The `gender` field records the UNPOSSESSED (default) gender II;
-    iPossession switches them to gender I via n_{body-part{D}}. -/
-def bina     : Noun := ⟨"bina",      "spleen",                  .gII, true⟩
-def kuri     : Noun := ⟨"kuri",      "hand",                    .gII, true⟩
-def iru      : Noun := ⟨"iru",       "back of head",            .gII, true⟩
-def vuha     : Noun := ⟨"vuha",      "heart",                   .gII, true⟩
-def ihu      : Noun := ⟨"ihu",       "nose",                    .gII, true⟩
-def revasin  : Noun := ⟨"revasin",   "blood",                   .gII, true⟩
-def hena     : Noun := ⟨"hena",      "name",                    .gII, true⟩
-def moo      : Noun := ⟨"moo",       "leg",                     .gII, true⟩
-
-/-- Body-part nouns when iPossessed switch to gender I. -/
-def iPossessedGender (n : Noun) : Gender :=
-  if n.isBodyPart then .gI else n.gender
-
--- ============================================================================
--- § 5: Article Paradigm (Mosel & Spriggs 2000)
--- ============================================================================
-
-/-- Teop articles, conditioned by gender and number. Gender Ie (proprial
-    *e*) is treated as gender I with a proprial feature, following
-    [adamson-2024] §3.1; the plural neutralizes it ([adamson-2024] (29)). -/
+/-- The features the prenominal article agrees in. -/
 structure ArticleCtx where
   gender : Gender
   plural : Bool
   proprial : Bool := false
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
+/-- The article paradigm: gender I *a* ~ *o*, gender II *o* ~ *a*, and the proprial *e* in the
+singular, neutralized in the plural. -/
 def articleForm : ArticleCtx → String
-  | ⟨.gI,  false, true⟩  => "e"
-  | ⟨.gI,  false, false⟩ => "a"
-  | ⟨.gI,  true,  _⟩     => "o"
-  | ⟨.gII, false, _⟩     => "o"
-  | ⟨.gII, true,  _⟩     => "a"
-
--- ============================================================================
--- § 6: Verification
--- ============================================================================
-
-/-- Gender I nouns are animate (Mosel & Spriggs 2000:337–38). -/
-def genderINouns : List Noun :=
-  [moon, beikoo, keusu, naovana, overe_c, pauna, kepaa, anoo,
-   tabaani, tahii, huan, uruuru]
-
-/-- Gender II nouns are inanimate (Mosel & Spriggs 2000:338–40). -/
-def genderIINouns : List Noun :=
-  [paka, pus, hinahoo, sinivi, overe_p, overe_bt, kurita, demdem,
-   paku, suraa, giigii, koara]
-
-def bodyPartNouns : List Noun :=
-  [bina, kuri, iru, vuha, ihu, revasin, hena, moo]
-
-theorem genderI_all_gI : genderINouns.all (·.gender == .gI) = true := by decide
-theorem genderII_all_gII : genderIINouns.all (·.gender == .gII) = true := by decide
-theorem bodyParts_all_marked : bodyPartNouns.all (·.isBodyPart) = true := by decide
-theorem bodyParts_default_gII : bodyPartNouns.all (·.gender == .gII) = true := by decide
-theorem bodyParts_iPossessed_gI :
-    bodyPartNouns.all (iPossessedGender · == .gI) = true := by decide
-
-/-- The article paradigm: iPossessed body part gets *a*,
-    unpossessed body part gets *o*. -/
-theorem spleen_ipossessed_article :
-    articleForm ⟨iPossessedGender bina, false, false⟩ = "a" := rfl
-theorem spleen_unpossessed_article :
-    articleForm ⟨bina.gender, false, false⟩ = "o" := rfl
-
--- ============================================================================
--- § 7: Bridge to Gender
--- ============================================================================
-
-/-- Map Teop gender classes to the shared surface-level gender type.
-    Gender I (animates) → animate; Gender II (inanimates) → inanimate. -/
-def Gender.toGender : Gender → _root_.Gender
-  | .gI  => .animate
-  | .gII => .inanimate
-
--- ============================================================================
--- § 8: Bridge to DM Categorizer ([kramer-2015] Ch 5)
--- ============================================================================
-
-open DistributedMorphology in
-/-- Map Teop gender classes to their DM categorizing heads.
-    Gender I (animates) ↔ n i[+ANIM]; Gender II (inanimates) ↔ plain n. -/
-def Gender.toHead : Gender → Categorizer.Head
-  | .gI  => Categorizer.Head.n_iAnim
-  | .gII => Categorizer.Head.n_plain
-
-open DistributedMorphology in
-/-- Gender I maps to a natural (interpretable) gender feature. -/
-theorem gI_natural_gender :
-    Gender.gI.toHead.phi.gender = some ⟨.i, ⟨.anim, .pos⟩⟩ := rfl
-
-open DistributedMorphology in
-/-- Gender II maps to plain n (no gender feature). -/
-theorem gII_no_gender :
-    Gender.gII.toHead.phi.gender = none := rfl
-
-open DistributedMorphology in
-/-- Body-part nouns when iPossessed switch to n with u[+ANIM]
-    ([adamson-2024] §3.1). -/
-def iPossessedHead (n : Noun) : Categorizer.Head :=
-  if n.isBodyPart then Categorizer.Head.n_uAnim else n.gender.toHead
-
-open DistributedMorphology in
-theorem spleen_ipossessed_cathead :
-    iPossessedHead bina = Categorizer.Head.n_uAnim := rfl
-
-open DistributedMorphology in
-theorem spleen_free_cathead :
-    bina.gender.toHead = Categorizer.Head.n_plain := rfl
+  | ⟨.gI, false, true⟩ => "e"
+  | ⟨.gI, false, false⟩ => "a"
+  | ⟨.gI, true, _⟩ => "o"
+  | ⟨.gII, false, _⟩ => "o"
+  | ⟨.gII, true, _⟩ => "a"
 
 end Teop
