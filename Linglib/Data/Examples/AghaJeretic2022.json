@@ -1,392 +1,1680 @@
 [
   {
-    "id": "aghajeretic2022_should_pos_all",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(8)-(9) modal homogeneity"},
+    "id": "aghajeretic2022_2a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(2a)"
+    },
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "According to the rules, you should go.",
+    "primaryText": "If you want to go to Colegio de México, you should take a taxi.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["According", "according"], ["to", "to"], ["the", "DEF"], ["rules", "rule.PL"],
-      ["you", "2SG"], ["should", "should"], ["go", "go"]
-    ],
-    "translation": "According to the rules, you should go.",
-    "context": "All best deontic worlds are go-worlds.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["polarity", "positive"],
-      ["condition", "ALL"],
-      ["modal", "should"]
+      [
+        "modal",
+        "should"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "continuation",
+        "but you could also take a bus if you have all morning"
+      ],
+      [
+        "continuation_felicity",
+        "felicitous"
+      ]
     ],
-    "comment": "UNVERIFIED paperLabel: example numbers carried from prior Lean file (Studies/AghaJeretic2022.lean shouldHomogeneity docstring), not checked against PDF. Migrated from shouldHomogeneity (positiveInAll = clearlyTrue): judged clearly true when all best worlds satisfy the prejacent.",
+    "comment": "",
     "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_2b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(2b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If you want to go to Colegio de México, you have to take a taxi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "have to"
+      ],
+      [
+        "force",
+        "strong"
+      ],
+      [
+        "continuation",
+        "but you could also take a bus if you have all morning"
+      ],
+      [
+        "continuation_felicity",
+        "infelicitous"
+      ]
+    ],
+    "comment": "Continuation marked ??.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_3a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(3a)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Tu dois partir.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You must go.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "devoir"
+      ],
+      [
+        "force",
+        "strong"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_3b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(3b)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Tu devrais partir.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You should go.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "devoir+CF"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "derivation",
+        "CF"
+      ],
+      [
+        "base",
+        "necessity"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_4a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(4a)"
+    },
+    "reportedIn": null,
+    "language": "java1254",
+    "primaryText": "Yu Dur mesthi nek omah.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Dur must be at home.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "mesthi"
+      ],
+      [
+        "force",
+        "strong"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_4b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(4b)"
+    },
+    "reportedIn": null,
+    "language": "java1254",
+    "primaryText": "Yu Dur mesthi-ne nek omah.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Dur should be at home.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "mesthi+NE"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "derivation",
+        "NE"
+      ],
+      [
+        "base",
+        "necessity"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_should_pos_all",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(8a), (20a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, you should go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "condition",
+        "ALL"
+      ],
+      [
+        "modal",
+        "should"
+      ]
+    ],
+    "comment": "Baseline cell: true when you go in all the best worlds.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
     "id": "aghajeretic2022_should_pos_none",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(8)-(9) modal homogeneity"},
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(20a)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "According to the rules, you should go.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["According", "according"], ["to", "to"], ["the", "DEF"], ["rules", "rule.PL"],
-      ["you", "2SG"], ["should", "should"], ["go", "go"]
-    ],
-    "translation": "According to the rules, you should go.",
-    "context": "No best deontic worlds are go-worlds.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["polarity", "positive"],
-      ["condition", "NONE"],
-      ["modal", "should"]
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "condition",
+        "NONE"
+      ],
+      [
+        "modal",
+        "should"
+      ]
     ],
-    "comment": "UNVERIFIED paperLabel: example numbers carried from prior Lean file, not checked against PDF. Migrated from shouldHomogeneity (positiveInNone = clearlyFalse): sentence is grammatical and felicitous but judged clearly FALSE when no best world satisfies the prejacent; the 5-level scale has no truth-value slot, so falsity is recorded here.",
+    "comment": "Baseline cell: false when you go in none of the best worlds.",
     "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "lgrConformance": ""
   },
   {
     "id": "aghajeretic2022_should_pos_gap",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(8)-(9) modal homogeneity"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "According to the rules, you should go.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["According", "according"], ["to", "to"], ["the", "DEF"], ["rules", "rule.PL"],
-      ["you", "2SG"], ["should", "should"], ["go", "go"]
-    ],
-    "translation": "According to the rules, you should go.",
-    "context": "Some but not all best deontic worlds are go-worlds.",
-    "judgment": "questionable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "positive"],
-      ["condition", "GAP"],
-      ["modal", "should"],
-      ["gap_detected", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: example numbers carried from prior Lean file, not checked against PDF. Migrated from shouldHomogeneity (positiveInGap = neitherTrueNorFalse): modal homogeneity gap — weak necessity, like a plural definite over worlds, is neither clearly true nor clearly false in a mixed domain.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aghajeretic2022_should_neg_all",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(8)-(9) modal homogeneity"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "According to the rules, you shouldn't go.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["According", "according"], ["to", "to"], ["the", "DEF"], ["rules", "rule.PL"],
-      ["you", "2SG"], ["shouldn't", "should.NEG"], ["go", "go"]
-    ],
-    "translation": "According to the rules, you shouldn't go.",
-    "context": "All best deontic worlds are go-worlds.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["condition", "ALL"],
-      ["modal", "should"]
-    ],
-    "comment": "UNVERIFIED paperLabel: example numbers carried from prior Lean file, not checked against PDF. Migrated from shouldHomogeneity (negativeInAll = clearlyFalse): grammatical and felicitous but judged clearly FALSE when all best worlds satisfy the prejacent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aghajeretic2022_should_neg_none",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(8)-(9) modal homogeneity"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "According to the rules, you shouldn't go.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["According", "according"], ["to", "to"], ["the", "DEF"], ["rules", "rule.PL"],
-      ["you", "2SG"], ["shouldn't", "should.NEG"], ["go", "go"]
-    ],
-    "translation": "According to the rules, you shouldn't go.",
-    "context": "No best deontic worlds are go-worlds.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["condition", "NONE"],
-      ["modal", "should"]
-    ],
-    "comment": "UNVERIFIED paperLabel: example numbers carried from prior Lean file, not checked against PDF. Migrated from shouldHomogeneity (negativeInNone = clearlyTrue): judged clearly true when no best world satisfies the prejacent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aghajeretic2022_should_neg_gap",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(8)-(9) modal homogeneity"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "According to the rules, you shouldn't go.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["According", "according"], ["to", "to"], ["the", "DEF"], ["rules", "rule.PL"],
-      ["you", "2SG"], ["shouldn't", "should.NEG"], ["go", "go"]
-    ],
-    "translation": "According to the rules, you shouldn't go.",
-    "context": "Some but not all best deontic worlds are go-worlds.",
-    "judgment": "questionable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["condition", "GAP"],
-      ["modal", "should"],
-      ["gap_detected", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: example numbers carried from prior Lean file, not checked against PDF. Migrated from shouldHomogeneity (negativeInGap = neitherTrueNorFalse): gap is symmetric under negation. Also carries the domain-restriction critique datum (Lean domainRestrictionFails): the existential followup 'but you are allowed to go' is empirically infelicitous (#) after negated should, contrary to what a bivalent not-all semantics predicts.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aghajeretic2022_haveTo_pos_gap",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(9b) strong necessity, no homogeneity"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "According to the rules, you have to go.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["According", "according"], ["to", "to"], ["the", "DEF"], ["rules", "rule.PL"],
-      ["you", "2SG"], ["have", "have"], ["to", "to"], ["go", "go"]
-    ],
-    "translation": "According to the rules, you have to go.",
-    "context": "Some but not all best deontic worlds are go-worlds.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "positive"],
-      ["condition", "GAP"],
-      ["modal", "haveTo"],
-      ["gap_detected", "false"],
-      ["classical_value", "false"]
-    ],
-    "comment": "UNVERIFIED paperLabel: example number carried from prior Lean file (haveToNoHomogeneity docstring), not checked against PDF. Migrated from haveToNoHomogeneity (positiveInGap = clearlyFalse): strong necessity is bivalent — grammatical and felicitous but judged clearly FALSE in the mixed domain, no truth-value gap. The ALL and NONE cells of haveToNoHomogeneity are identical to the should rows (clearlyTrue/clearlyFalse) and are not duplicated here.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aghajeretic2022_haveTo_neg_gap",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(9b) strong necessity, no homogeneity"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "According to the rules, you don't have to go.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["According", "according"], ["to", "to"], ["the", "DEF"], ["rules", "rule.PL"],
-      ["you", "2SG"], ["don't", "do.NEG"], ["have", "have"], ["to", "to"], ["go", "go"]
-    ],
-    "translation": "According to the rules, you don't have to go.",
-    "context": "Some but not all best deontic worlds are go-worlds.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["condition", "GAP"],
-      ["modal", "haveTo"],
-      ["gap_detected", "false"],
-      ["classical_value", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: example number carried from prior Lean file, not checked against PDF. Migrated from haveToNoHomogeneity (negativeInGap = clearlyTrue): the dominant reading is narrow-scope negation (not-required), judged clearly true in the mixed domain — compatible with the followup 'but you are allowed to go', unlike negated should.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aghajeretic2022_necessarily_removes_gap",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(14)-(15) homogeneity removal"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "According to the rules, you shouldn't necessarily go.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["According", "according"], ["to", "to"], ["the", "DEF"], ["rules", "rule.PL"],
-      ["you", "2SG"], ["shouldn't", "should.NEG"], ["necessarily", "necessarily"], ["go", "go"]
-    ],
-    "translation": "According to the rules, you shouldn't necessarily go.",
-    "context": "Some but not all best worlds are go-worlds.",
-    "judgment": "acceptable",
-    "alternatives": [
-      {"form": "According to the rules, you shouldn't go.", "judgment": "questionable"}
-    ],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["condition", "GAP"],
-      ["modal", "should"],
-      ["remover", "necessarily"]
-    ],
-    "comment": "UNVERIFIED paperLabel: example numbers carried from prior Lean file (necessarilyRemovesModalHomogeneity docstring), not checked against PDF. Migrated from necessarilyRemovesModalHomogeneity: 'necessarily' removes the gap, paralleling nominal 'all' — the bare variant (alternatives) is neither true nor false in the gap scenario, while the necessarily-variant gets a determinate truth value (Lean preciseJudgment = clearlyFalse; recorded as carried, the determinacy contrast is the migrated claim). Per the Lean section docstring, the necessarily-variant licenses the existential followup 'but you can go' that the bare variant blocks.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aghajeretic2022_should_exception_qud1",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(17) exception tolerance"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "To get a perfect grade, you should do every exercise.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["To", "to"], ["get", "get"], ["a", "INDEF"], ["perfect", "perfect"], ["grade", "grade"],
-      ["you", "2SG"], ["should", "should"], ["do", "do"], ["every", "every"],
-      ["exercise", "exercise"]
-    ],
-    "translation": "To get a perfect grade, you should do every exercise.",
-    "context": "One can get a perfect grade by doing most exercises; doing all gives extra credit. QUD: What is a way to get a perfect grade?",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "positive"],
-      ["modal", "should"],
-      ["qud", "way_to_perfect_grade"]
-    ],
-    "comment": "UNVERIFIED paperLabel: example number carried from prior Lean file (shouldExceptionTolerance docstring), not checked against PDF. Migrated from shouldExceptionTolerance (acceptableUnderQUD1 = true): weak necessity tolerates QUD-irrelevant exceptions.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aghajeretic2022_should_exception_qud2",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(17) exception tolerance"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "To get a perfect grade, you should do every exercise.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["To", "to"], ["get", "get"], ["a", "INDEF"], ["perfect", "perfect"], ["grade", "grade"],
-      ["you", "2SG"], ["should", "should"], ["do", "do"], ["every", "every"],
-      ["exercise", "exercise"]
-    ],
-    "translation": "To get a perfect grade, you should do every exercise.",
-    "context": "One can get a perfect grade by doing most exercises; doing all gives extra credit. QUD: What are the minimal requirements to get a perfect grade?",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "positive"],
-      ["modal", "should"],
-      ["qud", "minimal_requirements"]
-    ],
-    "comment": "UNVERIFIED paperLabel: example number carried from prior Lean file, not checked against PDF. Migrated from shouldExceptionTolerance (acceptableUnderQUD2 = false): when the QUD makes the exceptions relevant, the exception-tolerant use is infelicitous.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aghajeretic2022_haveTo_exception_qud1",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(17) exception tolerance"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "To get a perfect grade, you have to do every exercise.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["To", "to"], ["get", "get"], ["a", "INDEF"], ["perfect", "perfect"], ["grade", "grade"],
-      ["you", "2SG"], ["have", "have"], ["to", "to"], ["do", "do"], ["every", "every"],
-      ["exercise", "exercise"]
-    ],
-    "translation": "To get a perfect grade, you have to do every exercise.",
-    "context": "One can get a perfect grade by doing most exercises; doing all gives extra credit. QUD: What is a way to get a perfect grade?",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "positive"],
-      ["modal", "haveTo"],
-      ["qud", "way_to_perfect_grade"]
-    ],
-    "comment": "UNVERIFIED paperLabel: example number carried from prior Lean file (haveToExceptionTolerance docstring), not checked against PDF. Migrated from haveToExceptionTolerance (acceptableUnderQUD1 = false): strong necessity does not tolerate exceptions even when QUD-irrelevant.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aghajeretic2022_haveTo_exception_qud2",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(17) exception tolerance"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "To get a perfect grade, you have to do every exercise.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["To", "to"], ["get", "get"], ["a", "INDEF"], ["perfect", "perfect"], ["grade", "grade"],
-      ["you", "2SG"], ["have", "have"], ["to", "to"], ["do", "do"], ["every", "every"],
-      ["exercise", "exercise"]
-    ],
-    "translation": "To get a perfect grade, you have to do every exercise.",
-    "context": "One can get a perfect grade by doing most exercises; doing all gives extra credit. QUD: What are the minimal requirements to get a perfect grade?",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "positive"],
-      ["modal", "haveTo"],
-      ["qud", "minimal_requirements"]
-    ],
-    "comment": "UNVERIFIED paperLabel: example number carried from prior Lean file, not checked against PDF. Migrated from haveToExceptionTolerance (acceptableUnderQUD2 = false).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
-  },
-  {
-    "id": "aghajeretic2022_should_indet_response",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(19) well-responses to indeterminate sentences"},
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(19a)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "You should take the right door to go to the living room.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["You", "2SG"], ["should", "should"], ["take", "take"], ["the", "DEF"], ["right", "right"],
-      ["door", "door"], ["to", "to"], ["go", "go"], ["to", "to"], ["the", "DEF"],
-      ["living", "living"], ["room", "room"]
-    ],
-    "translation": "You should take the right door to go to the living room.",
+    "glossedTokens": [],
+    "translation": "",
     "context": "Two doors lead to the living room; both are equally good options.",
     "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["polarity", "positive"],
-      ["condition", "GAP"],
-      ["modal", "should"]
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "condition",
+        "GAP"
+      ],
+      [
+        "modal",
+        "should"
+      ],
+      [
+        "gap_detected",
+        "true"
+      ]
     ],
-    "comment": "UNVERIFIED paperLabel: example number carried from prior Lean file (shouldIndeterminateResponse docstring), not checked against PDF. Migrated from shouldIndeterminateResponse: borderline (indeterminate) weak-necessity sentence — outright 'No' denial is infelicitous (noResponseFelicitous = false), a 'Well, ...' response is preferred (wellResponseFelicitous = true), paralleling plural definites.",
+    "comment": "Indeterminate: outright denial is infelicitous, a well-response is preferred.",
     "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "lgrConformance": ""
   },
   {
-    "id": "aghajeretic2022_must_indet_response",
-    "source": {"bibkey": "agha-jeretic-2022", "paperLabel": "(19) well-responses to indeterminate sentences"},
+    "id": "aghajeretic2022_should_neg_all",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(20b)"
+    },
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "You must take the right door to go to the living room.",
+    "primaryText": "According to the rules, you shouldn't go.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["You", "2SG"], ["must", "must"], ["take", "take"], ["the", "DEF"], ["right", "right"],
-      ["door", "door"], ["to", "to"], ["go", "go"], ["to", "to"], ["the", "DEF"],
-      ["living", "living"], ["room", "room"]
-    ],
-    "translation": "You must take the right door to go to the living room.",
-    "context": "Two doors lead to the living room; both are equally good options.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["polarity", "positive"],
-      ["condition", "GAP"],
-      ["modal", "must"]
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "condition",
+        "ALL"
+      ],
+      [
+        "modal",
+        "should"
+      ]
     ],
-    "comment": "UNVERIFIED paperLabel: example number carried from prior Lean file, not checked against PDF. Migrated from mustIndeterminateResponse: strong necessity is bivalent — grammatical and felicitous but judged false in this scenario, so outright 'No' denial is felicitous (noResponseFelicitous = true) and a 'Well, ...' response is not (wellResponseFelicitous = false).",
+    "comment": "Baseline cell: false when you go in all the best worlds.",
     "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_should_neg_none",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(9a), (20b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, you shouldn't go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "condition",
+        "NONE"
+      ],
+      [
+        "modal",
+        "should"
+      ]
+    ],
+    "comment": "Baseline cell: true when you go in none of the best worlds.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_should_neg_gap",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(9a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, you shouldn't go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "condition",
+        "GAP"
+      ],
+      [
+        "modal",
+        "should"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "negation",
+        "clausemate"
+      ],
+      [
+        "gap_detected",
+        "true"
+      ],
+      [
+        "continuation",
+        "but you are allowed to go"
+      ],
+      [
+        "continuation_felicity",
+        "infelicitous"
+      ]
+    ],
+    "comment": "The existential continuation is contradictory, so the negated modal is not merely false in the mixed scenario.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_haveTo_pos_gap",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(9b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, you have to go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "condition",
+        "GAP"
+      ],
+      [
+        "modal",
+        "have to"
+      ],
+      [
+        "gap_detected",
+        "false"
+      ],
+      [
+        "classical_value",
+        "false"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_haveTo_neg_gap",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(9b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, you don't have to go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "condition",
+        "GAP"
+      ],
+      [
+        "modal",
+        "have to"
+      ],
+      [
+        "gap_detected",
+        "false"
+      ],
+      [
+        "classical_value",
+        "true"
+      ],
+      [
+        "continuation",
+        "but you are allowed to go"
+      ],
+      [
+        "continuation_felicity",
+        "felicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_8a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(8a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, you should go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "should"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "negation",
+        "none"
+      ],
+      [
+        "continuation",
+        "but you are allowed not to go"
+      ],
+      [
+        "continuation_felicity",
+        "infelicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_8b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(8b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, you have to go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "have to"
+      ],
+      [
+        "force",
+        "strong"
+      ],
+      [
+        "negation",
+        "none"
+      ],
+      [
+        "continuation",
+        "but you are allowed not to go"
+      ],
+      [
+        "continuation_felicity",
+        "infelicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_10a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(10a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, I don't think you should go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "should"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "negation",
+        "extra-clausal"
+      ],
+      [
+        "continuation",
+        "but you are allowed to go"
+      ],
+      [
+        "continuation_felicity",
+        "infelicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_10b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(10b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, I don't think you have to go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "have to"
+      ],
+      [
+        "force",
+        "strong"
+      ],
+      [
+        "negation",
+        "extra-clausal"
+      ],
+      [
+        "continuation",
+        "but you are allowed to go"
+      ],
+      [
+        "continuation_felicity",
+        "felicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_11a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(11a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, it's not the case that you should go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "should"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "negation",
+        "extra-clausal"
+      ],
+      [
+        "continuation",
+        "but you are allowed to go"
+      ],
+      [
+        "continuation_felicity",
+        "infelicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_11b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(11b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, it's not the case that you have to go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "have to"
+      ],
+      [
+        "force",
+        "strong"
+      ],
+      [
+        "negation",
+        "extra-clausal"
+      ],
+      [
+        "continuation",
+        "but you are allowed to go"
+      ],
+      [
+        "continuation_felicity",
+        "felicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_12a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(12a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, you mustn't go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "must"
+      ],
+      [
+        "force",
+        "strong"
+      ],
+      [
+        "negation",
+        "clausemate"
+      ],
+      [
+        "continuation",
+        "but you are allowed to go"
+      ],
+      [
+        "continuation_felicity",
+        "infelicitous"
+      ]
+    ],
+    "comment": "Must takes wide scope over clausemate negation, unlike have to.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_12b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(12b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, I don't think you must go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "must"
+      ],
+      [
+        "force",
+        "strong"
+      ],
+      [
+        "negation",
+        "extra-clausal"
+      ],
+      [
+        "continuation",
+        "but you are allowed to go"
+      ],
+      [
+        "continuation_felicity",
+        "felicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_14a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(14a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The advice was that you shouldn't go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "should"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "negation",
+        "clausemate"
+      ],
+      [
+        "continuation",
+        "but that you can go"
+      ],
+      [
+        "continuation_felicity",
+        "infelicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_14b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(14b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The advice was that you shouldn't necessarily go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "should"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "remover",
+        "necessarily"
+      ],
+      [
+        "continuation",
+        "but that you can go"
+      ],
+      [
+        "continuation_felicity",
+        "felicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_15a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(15a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, you should not work from home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "should"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "negation",
+        "clausemate"
+      ],
+      [
+        "continuation",
+        "but it is allowed"
+      ],
+      [
+        "continuation_felicity",
+        "infelicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_15b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(15b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "According to the rules, you should not necessarily work from home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "should"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "remover",
+        "necessarily"
+      ],
+      [
+        "continuation",
+        "but it is allowed"
+      ],
+      [
+        "continuation_felicity",
+        "felicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_17a_qud1",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(17a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "To get a perfect grade, you should do every exercise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "One can get a perfect grade by doing most exercises correctly; doing all gives extra credit.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "should"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "qud",
+        "What is a way to get a perfect grade?"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_17a_qud2",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(17a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "To get a perfect grade, you should do every exercise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "One can get a perfect grade by doing most exercises correctly; doing all gives extra credit.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "should"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "qud",
+        "What are the minimal requirements to get a perfect grade?"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_17b_qud1",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(17b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "To get a perfect grade, you have to do every exercise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "One can get a perfect grade by doing most exercises correctly; doing all gives extra credit.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "have to"
+      ],
+      [
+        "force",
+        "strong"
+      ],
+      [
+        "qud",
+        "What is a way to get a perfect grade?"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_17b_qud2",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(17b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "To get a perfect grade, you have to do every exercise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "One can get a perfect grade by doing most exercises correctly; doing all gives extra credit.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "have to"
+      ],
+      [
+        "force",
+        "strong"
+      ],
+      [
+        "qud",
+        "What are the minimal requirements to get a perfect grade?"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_19a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(19a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You should take the right door to go to the living room.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Two doors lead to the living room; both are equally good options.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "should"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "denial",
+        "No, that's not true, you don't have to, but you can"
+      ],
+      [
+        "denial_felicity",
+        "infelicitous"
+      ],
+      [
+        "well_response_felicity",
+        "felicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_19b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(19b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You must take the right door to go to the living room.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Two doors lead to the living room; both are equally good options.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "must"
+      ],
+      [
+        "force",
+        "strong"
+      ],
+      [
+        "denial",
+        "No, that's not true, you don't have to, but you can"
+      ],
+      [
+        "denial_felicity",
+        "felicitous"
+      ],
+      [
+        "well_response_felicity",
+        "infelicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_31a",
+    "source": {
+      "bibkey": "vander-klok-hohaus-2020",
+      "paperLabel": "(31a)"
+    },
+    "reportedIn": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(31a)"
+    },
+    "language": "java1254",
+    "primaryText": "Aku iso ngelangi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I can swim.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "iso"
+      ],
+      [
+        "force",
+        "possibility"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_31b",
+    "source": {
+      "bibkey": "vander-klok-hohaus-2020",
+      "paperLabel": "(31b)"
+    },
+    "reportedIn": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(31b)"
+    },
+    "language": "java1254",
+    "primaryText": "Aku iso-ne ngelangi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "iso+NE"
+      ],
+      [
+        "derivation",
+        "NE"
+      ],
+      [
+        "base",
+        "possibility"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_32a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(32a)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Tu devrais partir.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You should leave.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "devoir+CF"
+      ],
+      [
+        "derivation",
+        "CF"
+      ],
+      [
+        "base",
+        "necessity"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_32b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(32b)"
+    },
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Tu pourrais partir.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You could leave.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "pouvoir+CF"
+      ],
+      [
+        "derivation",
+        "CF"
+      ],
+      [
+        "base",
+        "possibility"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_38a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(38a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not true that I'll be happy if I get a sodastream.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "future conditional"
+      ],
+      [
+        "continuation",
+        "but I might be"
+      ],
+      [
+        "continuation_felicity",
+        "infelicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_38b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(38b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not necessarily true that I'll be happy if I get a sodastream.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "future conditional"
+      ],
+      [
+        "remover",
+        "necessarily"
+      ],
+      [
+        "continuation",
+        "but I might be"
+      ],
+      [
+        "continuation_felicity",
+        "felicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_40a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(40a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ticks don't carry lyme disease.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "generic"
+      ],
+      [
+        "continuation",
+        "but some of them do"
+      ],
+      [
+        "continuation_felicity",
+        "infelicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_40b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(40b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ticks don't necessarily carry lyme disease.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "generic"
+      ],
+      [
+        "remover",
+        "necessarily"
+      ],
+      [
+        "continuation",
+        "but some of them do"
+      ],
+      [
+        "continuation_felicity",
+        "felicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_41a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(41a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I don't smoke.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "habitual"
+      ],
+      [
+        "continuation",
+        "but I do sometimes"
+      ],
+      [
+        "continuation_felicity",
+        "infelicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_41b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(41b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I don't necessarily smoke.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "habitual"
+      ],
+      [
+        "remover",
+        "necessarily"
+      ],
+      [
+        "continuation",
+        "but I do sometimes"
+      ],
+      [
+        "continuation_felicity",
+        "felicitous"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_47a",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(47a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "To get to 10WP from Astoria, you should take the N.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "To get to 10 Washington Place from Astoria, you can take the N or the R, but the N is faster.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "should"
+      ],
+      [
+        "force",
+        "weak"
+      ],
+      [
+        "qud",
+        "Which train is best?"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2022_47b",
+    "source": {
+      "bibkey": "agha-jeretic-2022",
+      "paperLabel": "(47b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "To get to 10WP from Astoria, you have to take the N.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "To get to 10 Washington Place from Astoria, you can take the N or the R, but the N is faster.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "modal",
+        "have to"
+      ],
+      [
+        "force",
+        "strong"
+      ],
+      [
+        "qud",
+        "Which train is best?"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   }
 ]

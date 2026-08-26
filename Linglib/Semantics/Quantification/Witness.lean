@@ -356,4 +356,69 @@ def generalWC_decr_mono [DecidableEq E] (P Q Q' : E → Type)
     (w : GeneralWC_Decr P Q isWS) : GeneralWC_Decr P Q' isWS :=
   ⟨w.X, w.witnessOK, λ a hP hQ' => w.f a hP ⟨embed a hQ'.some⟩⟩
 
+
+/-! ### Minimal witness sets
+
+[barwise-cooper-1981]'s witness sets of a quantifier viewed as a set of sets: a *minimal* witness
+is a witness none of whose proper subsets witnesses. A universal quantifier over `D` has exactly
+one, `D` itself; an existential over `D` has one per element, the singletons. -/
+
+section Minimal
+
+variable {E : Type*} [DecidableEq E]
+
+/-- `X` witnesses `M` and no proper subset of `X` does. -/
+def IsMinimalWitness (M : Finset E → Prop) (X : Finset E) : Prop :=
+  M X ∧ ∀ Y ⊂ X, ¬ M Y
+
+/-- The minimal witnesses of the universal quantifier over `D` are exactly `D`. -/
+theorem isMinimalWitness_subset_iff (D X : Finset E) :
+    IsMinimalWitness (D ⊆ ·) X ↔ X = D := by
+  constructor
+  · rintro ⟨hDX, hmin⟩
+    by_contra hne
+    exact hmin D (Finset.ssubset_iff_subset_ne.2 ⟨hDX, Ne.symm hne⟩) le_rfl
+  · rintro rfl
+    exact ⟨le_rfl, fun Y hY hDY => hY.not_subset hDY⟩
+
+/-- The minimal witnesses of the existential quantifier over `D` are exactly the singletons of
+its elements. -/
+theorem isMinimalWitness_inter_nonempty_iff (D X : Finset E) :
+    IsMinimalWitness (fun X => (D ∩ X).Nonempty) X ↔ ∃ w ∈ D, X = {w} := by
+  constructor
+  · rintro ⟨⟨w, hw⟩, hmin⟩
+    rw [Finset.mem_inter] at hw
+    refine ⟨w, hw.1, ?_⟩
+    by_contra hne
+    exact hmin {w}
+      (Finset.ssubset_iff_subset_ne.2 ⟨Finset.singleton_subset_iff.2 hw.2, Ne.symm hne⟩)
+      ⟨w, Finset.mem_inter.2 ⟨hw.1, Finset.mem_singleton_self w⟩⟩
+  · rintro ⟨w, hw, rfl⟩
+    refine ⟨⟨w, Finset.mem_inter.2 ⟨hw, Finset.mem_singleton_self w⟩⟩, fun Y hY => ?_⟩
+    rw [Finset.ssubset_singleton_iff.1 hY]
+    simp
+
+/-- The universal quantifier over `D` has a unique minimal witness. -/
+theorem existsUnique_isMinimalWitness_subset (D : Finset E) :
+    ∃! X, IsMinimalWitness (D ⊆ ·) X :=
+  ⟨D, (isMinimalWitness_subset_iff D D).2 rfl, fun X hX => (isMinimalWitness_subset_iff D X).1 hX⟩
+
+/-- The existential quantifier over a nonempty `D` has a minimal witness. -/
+theorem exists_isMinimalWitness_inter_nonempty {D : Finset E} (h : D.Nonempty) :
+    ∃ X, IsMinimalWitness (fun X => (D ∩ X).Nonempty) X :=
+  let ⟨w, hw⟩ := h
+  ⟨{w}, (isMinimalWitness_inter_nonempty_iff D _).2 ⟨w, hw, rfl⟩⟩
+
+/-- The existential quantifier over a `D` with two or more elements has no unique minimal
+witness. -/
+theorem not_existsUnique_isMinimalWitness_inter_nonempty {D : Finset E} (h : 1 < D.card) :
+    ¬ ∃! X, IsMinimalWitness (fun X => (D ∩ X).Nonempty) X := by
+  rintro ⟨X, _, huniq⟩
+  obtain ⟨a, ha, b, hb, hab⟩ := Finset.one_lt_card.1 h
+  have ha' := huniq {a} ((isMinimalWitness_inter_nonempty_iff D _).2 ⟨a, ha, rfl⟩)
+  have hb' := huniq {b} ((isMinimalWitness_inter_nonempty_iff D _).2 ⟨b, hb, rfl⟩)
+  exact hab (Finset.singleton_injective (ha'.trans hb'.symm))
+
+end Minimal
+
 end Quantification

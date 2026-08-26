@@ -326,6 +326,22 @@ theorem dist_eq_indet_iff {α : Type*} (s : Finset α) (P : α → Prop) [Decida
       · rintro ⟨⟨a, ha, hPa⟩, _⟩
         exact (h2 ⟨a, ha, hPa⟩).elim
 
+/-- On a nonempty `s`, `dist` commutes with negation: truth and falsity swap and the gap is
+fixed — the homogeneity of plural predication. -/
+theorem dist_not_of_nonempty {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P]
+    (hne : s.Nonempty) : dist s (fun a => ¬ P a) = (dist s P).neg := by
+  cases h : dist s P with
+  | true =>
+    rw [dist_eq_true_iff] at h
+    exact (dist_eq_false_iff _ _).2 ⟨hne, fun a ha hn => hn (h a ha)⟩
+  | false =>
+    rw [dist_eq_false_iff] at h
+    exact (dist_eq_true_iff _ _).2 h.2
+  | indet =>
+    rw [dist_eq_indet_iff] at h
+    obtain ⟨⟨a, ha, hp⟩, b, hb, hn⟩ := h
+    exact (dist_eq_indet_iff _ _).2 ⟨⟨b, hb, hn⟩, a, ha, not_not.2 hp⟩
+
 /-- `dist` is `.true` on the empty Finset (vacuous super-truth). -/
 @[simp] theorem dist_empty {α : Type*} (P : α → Prop) [DecidablePred P] :
     dist (∅ : Finset α) P = .true := by simp [dist]
