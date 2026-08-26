@@ -2869,6 +2869,7 @@ import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.Phase.Domain
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phi.Lattice
+import Linglib.Syntax.Minimalist.Phi.PersonSpace
 import Linglib.Syntax.Minimalist.Phi.Recursion
 import Linglib.Syntax.Minimalist.Position
 import Linglib.Syntax.Minimalist.Probe.Basic
@@ -2945,3 +2946,4 @@ import Linglib.Data.Examples.Ginzburg2012
 import Linglib.Data.Examples.KeshetAbney2024
 import Linglib.Data.Examples.AbneyKeshet2025
 import Linglib.Data.Examples.AbramskySadrzadeh2014
+import Linglib.Data.Examples.AckemaNeeleman2018
