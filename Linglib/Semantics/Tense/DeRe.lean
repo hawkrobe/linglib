@@ -5,17 +5,14 @@ import Linglib.Semantics.Tense.Embedding
 /-!
 # Centered-world temporal de re
 
-[abusch-1997]'s temporal de re: a tense morpheme can take wide scope over
-an attitude operator by occupying the *res* position. The res contributes
-a time-concept (`TimeConcept`) plus a base-world condition — in the base
-world, the res denotation is picked out by an acquaintance relation
-relative to the holder's centered context ([abusch-1997] §3 p. 9). The
-centered-world framework is [lewis-1979-attitudes]'s de se reduction as
-generalized by [cresswell-vonstechow-1982]; Abusch develops it for
-individuals in §3 (the acquaintance relation `R₁ : eeiwt`, eq. 12, and
-the centered-proposition assembly, eq. 13) and applies it to times in §4
-(temporal acquaintance relations) and §11. Paper-anchored derivation
-theorems live in `Studies/Abusch1997.lean`.
+Temporal de re through *time-concepts*: [heim-1994-comments]'s reformulation of
+[abusch-1997]'s acquaintance-relation rule for tenses scoped out of an attitude
+(`Acquaintance.deRe`, `Semantics/Attitudes/Acquaintance.lean`). The res contributes
+a time-concept (`TimeConcept`) — a way of identifying a time from the holder's
+centered context — together with a base-world condition, the temporal instance of
+[lewis-1979-attitudes]'s de se reduction as generalized by
+[cresswell-vonstechow-1982]. Paper-anchored theorems live in
+`Studies/HeimComments1994.lean` and `Studies/Abusch1997.lean`.
 
 ## Implementation notes
 

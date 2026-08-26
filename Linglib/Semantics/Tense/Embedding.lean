@@ -136,11 +136,10 @@ theorem TensePronoun.bound_present_simultaneous
   simp only [TensePronoun.toFrame, ReichenbachFrame.isPresent]
   exact hBind
 
-/-- Double-access: present-under-past requires the complement to hold at
-    BOTH speech time (indexical rigidity) AND matrix event time (attitude
-    accessibility). -/
-def doubleAccess (p : Time → Prop)
-    (speechTime matrixEventTime : Time) : Prop :=
-  p speechTime ∧ p matrixEventTime
+/-- The double access reading of a present tense under a past attitude: the denotation of the
+present tense overlaps both the believing time and the utterance time. A condition on the
+tense's reference, not on the truth of the complement at either time. -/
+def DoubleAccess (I : Set Time) (believing utterance : Time) : Prop :=
+  believing ∈ I ∧ utterance ∈ I
 
 end Tense

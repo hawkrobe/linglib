@@ -1,4 +1,5 @@
-import Linglib.Studies.Abusch1997
+import Linglib.Semantics.Tense.Embedding
+import Linglib.Semantics.Tense.DeRe
 import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Semantics.Reference.Context.Shifts
 import Linglib.Data.Examples.Schema
@@ -48,9 +49,8 @@ Semantics.Context.Tower (ContextTower, push, innermost, origin)
     ↓
 Semantics.Context.Shifts (temporalShift: changes time, preserves agent/world)
     ↓
-This file: tower operations produce the Reichenbach frames in Studies/Abusch1997.lean
-    ↓
-Abusch1997 (matrixSaid, embeddedSickSimultaneous, etc.)
+This file: tower operations produce the Reichenbach frames of the SOT diagnostics
+(matrixSaid, embeddedSickSimultaneous, etc.)
 ```
 
 ## Key Results
@@ -65,12 +65,11 @@ Abusch1997 (matrixSaid, embeddedSickSimultaneous, etc.)
 
 -/
 
-open Tense
+open Tense Time
 
 namespace Schlenker2004
 
 open Semantics.Context
-open Abusch1997
 open Data.Examples (LinguisticExample)
 
 -- ============================================================================
@@ -99,6 +98,27 @@ theorem root_perspective_eq_speech :
 
 /-- Root tower has depth 0. -/
 theorem root_depth_zero : rootTower.depth = 0 := rfl
+/-! ### Reichenbach frames for the SOT diagnostics
+
+*John said Mary was sick* (simultaneous and shifted), *John said Mary is sick* (double access),
+built with the substrate's embedded-frame operators. -/
+
+/-- Matrix frame for *John said*: speech time `0`, saying at `-2`. -/
+def matrixSaid : ReichenbachFrame ℤ where
+  speechTime := 0
+  perspectiveTime := 0
+  referenceTime := -2
+  eventTime := -2
+
+/-- *Mary was sick*, simultaneous: embedded reference time at the saying. -/
+def embeddedSickSimultaneous : ReichenbachFrame ℤ := simultaneousFrame matrixSaid (-2)
+
+/-- *Mary was sick*, shifted: embedded reference time before the saying. -/
+def embeddedSickShifted : ReichenbachFrame ℤ := embeddedFrame matrixSaid (-5) (-5)
+
+/-- *Mary is sick*, double access: embedded reference at the saying, event at speech time. -/
+def embeddedSickPresent : ReichenbachFrame ℤ := embeddedFrame matrixSaid (-2) 0
+
 
 -- ============================================================================
 -- § SOT Embedding = Temporal Shift
@@ -223,28 +243,6 @@ theorem nested_double_access :
 -- § F3. Phase F bridge: Schlenker (origin reading) ↔ Abusch (double access)
 -- ============================================================================
 
-/-! [abusch-1997]'s `doubleAccess p speechTime matrixEventTime`
-predicate (`p speechTime ∧ p matrixEventTime`, formalized in
-`Studies/Abusch1997.lean`) and [schlenker-2004-sot]'s
-`presentAccess.depth = .origin` mechanism agree on the speech-time
-component of the Double Access Reading: both make embedded present
-require truth at speech time.
-
-Schlenker's mechanism reads the time *from* `.origin` (= speech time);
-Abusch's mechanism asserts the property holds *at* speech time.
-Different conceptual moves, same value-level prediction. The bridge
-makes the agreement on the speech-time conjunct kernel-checked. -/
-
-open Abusch1997 in
-/-- Phase F bridge — Schlenker-Abusch on the speech-time component of
-    Double Access: Schlenker's `.origin` reading discharges the first
-    conjunct of [abusch-1997]'s `doubleAccess`. -/
-theorem schlenker_origin_supports_abusch_double_access
-    (p : ℤ → Prop) (h_speech : p (presentAccess.resolve sotTower))
-    (h_matrix : p matrixSaid.eventTime) :
-    Tense.doubleAccess p
-      (presentAccess.resolve sotTower) matrixSaid.eventTime :=
-  ⟨h_speech, h_matrix⟩
 
 
 -- ============================================================================
@@ -252,7 +250,7 @@ theorem schlenker_origin_supports_abusch_double_access
 -- ============================================================================
 
 /-! Substrate-level bridge from [schlenker-2004-sot]'s tower-shift
-    framework to [abusch-1997]'s `TimeConcept` substrate
+    framework to the `TimeConcept` substrate
     (`Semantics/Tense/DeRe.lean`). Both formalisms resolve
     against the same `KContext` substrate (= `TenseCtx`); the
     substrate's `Intension.IsRigid` predicate distinguishes
@@ -294,7 +292,7 @@ open Tense.DeRe (TimeConcept TemporalDeReReading)
     as a rigid `TimeConcept`**: the Kaplan-stable origin reading IS
     the constant intension at speech time. Both formalisms encode
     Kaplan's thesis at the substrate level — Schlenker via tower
-    `.origin` access, Abusch via `Intension.rigid`. -/
+    `.origin` access, the time-concept substrate via `Intension.rigid`. -/
 def schlenkerPresent : TimeConcept Unit Unit Unit ℤ :=
   Intensional.Intension.rigid 0
 
@@ -341,11 +339,10 @@ theorem schlenkerShifted_not_isRigid : ¬ Intensional.Intension.IsRigid schlenke
 -- § Cross-Framework Agreement (Schlenker ↔ Abusch on simultaneous SOT)
 -- ============================================================================
 
-open Abusch1997 in
 /-- **Cross-framework value-coincidence on the simultaneous SOT value**:
     [schlenker-2004-sot]'s `shiftedAccess.resolve sotTower` and
-    [abusch-1997]'s `abusch_derives_simultaneous_via_binding`
-    (applied with `matrixSaid` as the matrix frame) yield the SAME
+    [abusch-1997]'s bound tense (`TensePronoun.bound_resolve_eq_binder`,
+    applied with `matrixSaid` as the matrix frame) yield the SAME
     value (= `matrixSaid.eventTime = -2`).
 
     *Caveat*: This is a **value-coincidence**, not a mechanism
@@ -372,8 +369,7 @@ theorem schlenker_abusch_agree_on_simultaneous_value
     shiftedAccess.resolve sotTower =
     tp.resolve (Tense.updateTemporal g tp.varIndex matrixSaid.eventTime) := by
   show matrixSaid.eventTime = _
-  exact (Abusch1997.abusch_derives_simultaneous_via_binding
-    tp g matrixSaid).symm
+  exact (tp.bound_resolve_eq_binder g matrixSaid.eventTime).symm
 
 
 -- ============================================================================

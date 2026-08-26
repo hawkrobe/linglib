@@ -1503,6 +1503,7 @@ import Linglib.Semantics.Aspect.PrecedenceClosure
 import Linglib.Semantics.Aspect.Stratified
 import Linglib.Semantics.Aspect.SubeventStructure
 import Linglib.Semantics.Aspect.SubintervalProperty
+import Linglib.Semantics.Attitudes.Acquaintance
 import Linglib.Semantics.Attitudes.Anchor
 import Linglib.Semantics.Attitudes.Confidence
 import Linglib.Semantics.Attitudes.Desire.BestWorlds
@@ -1853,6 +1854,7 @@ import Linglib.Semantics.Tense.DeRe
 import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Dynamic
 import Linglib.Semantics.Tense.Embedding
+import Linglib.Semantics.Tense.Licensing
 import Linglib.Semantics.Tense.Evidential
 import Linglib.Semantics.Tense.Perspective
 import Linglib.Semantics.Tense.Pronoun

@@ -79,5 +79,331 @@
     "comment": "Abusch 1997 ex (8), p. 5. Cornerstone present-under-past example. Sharvit 2003 ex (3) descends from this. The double-access constraint is one of two phenomena (alongside the ULC of ex 3) that the pure Independent Theory cannot derive; Abusch addresses both via de re belief + acquaintance relations.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "abusch1997_ex6",
+    "source": {"bibkey": "abusch-1997", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John found an ostrich in his apartment yesterday. Just before he opened the door he thought that a burglar would attack him.",
+    "discourseSegments": [
+      "John found an ostrich in his apartment yesterday.",
+      "Just before he opened the door he thought that a burglar would attack him."
+    ],
+    "glossedTokens": [],
+    "translation": "John found an ostrich in his apartment yesterday. Just before he opened the door he thought that a burglar would attack him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "forward-shifted (attack after thinking, co-temporal with the opening)", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["configuration", "would under past"],
+      ["reading", "forward-shifted"]
+    ],
+    "comment": "The forward-shifted reading (3) lacks is available with would: the past on would is anaphoric to the past on thought and woll orders the attack after it.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abusch1997_ex27",
+    "source": {"bibkey": "abusch-1997", "paperLabel": "(27)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Last Monday John believed that he was in Paris on Tuesday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Last Monday John believed that he was in Paris on Tuesday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "backward-shifted (a previous Tuesday)", "judgment": "acceptable"},
+      {"name": "forward-shifted (the Tuesday after last Monday)", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "upper limit"],
+      ["anaphora", "internal to the attitude"]
+    ],
+    "comment": "Temporal anaphora internal to the belief context, beyond the reach of acquaintance relations; an upper limit phenomenon.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abusch1997_ex29",
+    "source": {"bibkey": "abusch-1997", "paperLabel": "(29)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John believed he was in Paris at some time.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John believed he was in Paris at some time.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "backward-shifted, narrow scope (some time before the believing)", "judgment": "acceptable"},
+      {"name": "forward-shifted, narrow scope", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "upper limit"],
+      ["anaphora", "internal to the attitude"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abusch1997_ex30",
+    "source": {"bibkey": "abusch-1997", "paperLabel": "(30)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue believed that she would marry a man who loved her.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Sue believed that she would marry a man who loved her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous (loving at the marrying, after the believing)", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "sequence of tense"],
+      ["morphology", "past without precedence"]
+    ],
+    "comment": "Past morphology on loved with no precedence relative to the utterance time: anaphora internal to the attitude, so not de re.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abusch1997_ex34",
+    "source": {"bibkey": "abusch-1997", "paperLabel": "(34)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John decided a week ago that in ten days at breakfast he would say to his mother that they were having their last meal together.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John decided a week ago that in ten days at breakfast he would say to his mother that they were having their last meal together.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous (meal at the saying, three days after the utterance)", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "sequence of tense"],
+      ["morphology", "past without precedence"]
+    ],
+    "comment": "The meal time precedes no time mentioned in the sentence; a sequence-of-tense past licensed non-locally.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abusch1997_ex46a",
+    "source": {"bibkey": "abusch-1997", "paperLabel": "(46a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary believed that John was afraid during the last thunderstorm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary believed that John was afraid during the last thunderstorm.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "upper limit"],
+      ["reading", "backward-shifted"]
+    ],
+    "comment": "The past is determinate from an epistemic alternative.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abusch1997_ex46b",
+    "source": {"bibkey": "abusch-1997", "paperLabel": "(46b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary believed that John was afraid during the next thunderstorm.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary believed that John was afraid during the next thunderstorm.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "forward-shifted (the thunderstorm after the believing)", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "upper limit"],
+      ["reading", "forward-shifted"]
+    ],
+    "comment": "The future branches across epistemic alternatives; the now of an alternative is an upper limit for tense denotation.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abusch1997_ex47",
+    "source": {"bibkey": "abusch-1997", "paperLabel": "(47)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Leo will go to Rome on the day of Lea's dissertation defence. Lia believes that she will go with him then.",
+    "discourseSegments": [
+      "Leo will go to Rome on the day of Lea's dissertation defence.",
+      "Lia believes that she will go with him then."
+    ],
+    "glossedTokens": [],
+    "translation": "Leo will go to Rome on the day of Lea's dissertation defence. Lia believes that she will go with him then.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "future-directed acquaintance"],
+      ["source", "Bonomi"]
+    ],
+    "comment": "Anaphoric then under believes refers to a future time de re, refuting a constraint on acquaintance relations as the source of upper limit effects.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abusch1997_ex53",
+    "source": {"bibkey": "abusch-1997", "paperLabel": "(53)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Five days ago, John promised to talk two weeks later about the topic that the participants were most interested in.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Five days ago, John promised to talk two weeks later about the topic that the participants were most interested in.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "narrow scope (interest at the seminar, after the utterance)", "judgment": "acceptable"},
+      {"name": "wide scope (a specific topic; interest before the utterance)", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "sequence of tense"],
+      ["sensitivity", "logical scope"]
+    ],
+    "comment": "Non-local licensing of the relative-clause past is available only when the noun phrase scopes under the attitude.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abusch1997_ex60",
+    "source": {"bibkey": "abusch-1997", "paperLabel": "(60)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue expects to marry a man she met recently.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Sue expects to marry a man she met recently.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "meeting before the marrying (locally licensed)", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "local licensing"],
+      ["matrix", "present"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abusch1997_ex63",
+    "source": {"bibkey": "abusch-1997", "paperLabel": "(63)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue expects to marry a man she loved.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Sue expects to marry a man she loved.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "loving before the marrying", "judgment": "acceptable"},
+      {"name": "simultaneous (loving at the marrying)", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "local licensing"],
+      ["matrix", "present"]
+    ],
+    "comment": "Under a present matrix neither relation can license a past coindexed with the marrying time.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abusch1997_ex64",
+    "source": {"bibkey": "abusch-1997", "paperLabel": "(64)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue will marry a man she met recently.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Sue will marry a man she met recently.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "meeting before the marrying, possibly after the utterance", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "local licensing"],
+      ["operator", "will as evaluation-time shifter"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abusch1997_ex69",
+    "source": {"bibkey": "abusch-1997", "paperLabel": "(69)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said two weeks ago that Mary is pregnant but actually she has just been overeating for the last three months.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John said two weeks ago that Mary is pregnant but actually she has just been overeating for the last three months.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "double access"],
+      ["complement", "not true at either time"]
+    ],
+    "comment": "The double access reading does not require the complement to hold at the believing time or the utterance time.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abusch1997_ex81",
+    "source": {"bibkey": "abusch-1997", "paperLabel": "(81)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John believed that Mary was pregnant.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John believed that Mary was pregnant.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["phenomenon", "double access"],
+      ["alternative", "simultaneous past"]
+    ],
+    "comment": "The pragmatically neutral report when Mary's symptom no longer persists at the utterance time.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   }
 ]
