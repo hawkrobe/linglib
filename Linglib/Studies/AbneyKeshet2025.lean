@@ -201,7 +201,7 @@ def PM (φ ψ : Tm → Fm) : Tm → Fm := fun a => .conj (φ a) (ψ a)
 
 /-- Predicate abstraction `λxφ`, reading through the labels `A` of the preceding
 discourse before substituting for `x` (123). -/
-def PA (A : List (Lab × Fm)) (v : Var) (φ : Fm) : Tm → Fm := fun t => (φ.expand A).subst v t
+def PA (A : List (Lab × Fm)) (v : Var) (φ : Fm) : Tm → Fm := fun t => Expr.subst v t (φ.expand A)
 
 /-- Summation with a label: `ΣxZ where Z ≡ φ`, the definition attached to the use. -/
 def SA (v : Var) (Z : Lab) (φ : Fm) : Tm := .sigma v (.conj (.label Z) (.labelDef Z φ))
@@ -268,7 +268,7 @@ def Word.sem : (α : Word) → Sem α.ty
   | .it => fun z => .presup z (.sg z)
   | .they => fun z => .presup z (.pl z)
   | .not _ => fun ψ => .neg (.mem (.var .w) ψ)
-  | .might _ => fun β ψ => .some_ β ψ
+  | .might _ => fun β ψ => Formula.some_ β ψ
   | .must _ => fun β ψ => .subset β ψ
   | .base => modalBase
 
@@ -376,7 +376,7 @@ theorem interp_aFarmerWhoOwnsADonkey :
           (restricted .o fun e => .conj (pred₁ .ownEvt e)
             (.conj (pred₂ .hasPatient e (.var .d)) (restricted .d (pred₁ .donkey))))) := by
   simp only [aFarmerWhoOwnsADonkey, interp, Word.sem, FA, FX, PM, PA, lift, restricted, pred₁,
-    pred₂, Formula.expand, List.foldl_nil, Formula.subst, Term.subst, Term.bracket,
+    pred₂, Formula.expand, List.foldl_nil, Expr.subst, Expr.subst, Term.bracket,
     Matrix.comp_vecCons, Matrix.comp_vecEmpty, reduceCtorEq, reduceIte]
 
 /-- (66): "every girl wrote a paper", quantifier raising leaving a restricted-variable
@@ -437,8 +437,8 @@ theorem interp_mostOfThemUsedIt :
           (restricted .e fun e => .conj (pred₁ .useEvt e)
             (pred₂ .hasPatient e (.presup (.var .u) (.sg (.var .u))))))] := by
   simp only [mostOfThemUsedIt, interp, Word.sem, FA, FX, PM, PA, SA, lift, restricted, pred₁,
-    pred₂, defs118, Formula.expand, List.foldl_cons, List.foldl_nil, Formula.substLabels,
-    Term.substLabels, assignment, Formula.subst, Term.subst, Term.bracket, Matrix.comp_vecCons,
+    pred₂, defs118, Formula.expand, List.foldl_cons, List.foldl_nil, Expr.substLabels,
+    Expr.substLabels, assignment, Expr.subst, Expr.subst, Term.bracket, Matrix.comp_vecCons,
     Matrix.comp_vecEmpty, reduceCtorEq, reduceIte, Option.getD_some]
 
 /-! ### Scenarios -/
@@ -483,7 +483,7 @@ theorem felicitous_pred₂ (c : Lex 2) (s t : Tm) :
 
 /-- `w ∈ τ` at the world `w₀`. -/
 theorem realize_mem_world (hw : h .w = world w₀) (t : Tm) :
-    (Formula.mem (.var .w) t).Realize S.model h ↔ Sum.inl w₀ ∈ t.realize S.model h := by
+    Formula.Realize S.model h (.mem (.var .w) t) ↔ Sum.inl w₀ ∈ t.realize S.model h := by
   simp only [Formula.realize_mem, Term.realize_var, hw, world, Set.singleton_eq_singleton_iff,
     exists_eq_left']
 
@@ -516,7 +516,7 @@ variable (c₁ : Lex 1) (c₂ : Lex 2) {y : Var}
 theorem locals_indefOwned : (indefOwned c₁ c₂ y).locals = [y] := rfl
 
 theorem felicitous_indefOwned : (indefOwned c₁ c₂ y).Felicitous S.model h :=
-  Formula.felicitous_of_presupFree _ _ _ (of_decide_eq_true rfl)
+  Expr.felicitous_of_presupFree _ _ (of_decide_eq_true rfl) _
 
 theorem realize_indefOwned (hx : h .x = {Sum.inr x₀}) :
     (indefOwned c₁ c₂ y).Realize S.model h ↔
@@ -543,7 +543,7 @@ theorem realize_indefOwned (hx : h .x = {Sum.inr x₀}) :
 paycheck pronoun `ΣdD` denotes the dioramas made by whatever `x` is (112). -/
 theorem realize_sigma_indefOwned (hw : h .w = world w₀) (hx : h .x = {Sum.inr x₀})
     (hyw : y ≠ .w) (hyx : y ≠ .x) :
-    (Term.sigma y (indefOwned c₁ c₂ y)).realize S.model h =
+    Term.realize S.model h (.sigma y (indefOwned c₁ c₂ y)) =
       {a | ∃ e, a = Sum.inr e ∧ S.rel₁ c₁ w₀ e ∧ S.rel₂ c₂ w₀ x₀ e} := by
   ext a
   rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
@@ -564,7 +564,7 @@ theorem realize_sigma_indefOwned (hw : h .w = world w₀) (hx : h .x = {Sum.inr 
 /-- The summation over worlds of the indefinite's description: the worlds where `x` has
 such a thing. -/
 theorem realize_sigmaW_indefOwned (hx : h .x = {Sum.inr x₀}) (hyw : y ≠ .w) (hyx : y ≠ .x) :
-    (Term.sigma .w (indefOwned c₁ c₂ y)).realize S.model h =
+    Term.realize S.model h (.sigma .w (indefOwned c₁ c₂ y)) =
       {a | ∃ w e, a = Sum.inl w ∧ S.rel₁ c₁ w e ∧ S.rel₂ c₂ w x₀ e} := by
   ext a
   rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
@@ -618,7 +618,7 @@ theorem expandSelf_shop139 :
         (.labelDef .O ownCar) := by
   rw [Formula.expandSelf, show shop139.defs = [(.O, ownCar)] from rfl, Formula.expand]
   simp only [List.foldl_cons, List.foldl_nil, shop139, notOwn, Term.sgPronoun, pred₁, ownCar,
-    indefOwned, pred₂, Formula.substLabels, Term.substLabels, assignment, Matrix.comp_vecCons,
+    indefOwned, pred₂, Expr.substLabels, Expr.substLabels, assignment, Matrix.comp_vecCons,
     Matrix.comp_vecEmpty, reduceIte, Option.getD_some]
 
 theorem expandSelf_shop138 :
@@ -628,7 +628,7 @@ theorem expandSelf_shop138 :
         (.labelDef .O ownCar) := by
   rw [Formula.expandSelf, show shop138.defs = [(.O, ownCar)] from rfl, Formula.expand]
   simp only [List.foldl_cons, List.foldl_nil, shop138, notOwn, Term.sgPronoun, pred₁, ownCar,
-    indefOwned, pred₂, Formula.substLabels, Term.substLabels, assignment, Matrix.comp_vecCons,
+    indefOwned, pred₂, Expr.substLabels, Expr.substLabels, assignment, Matrix.comp_vecCons,
     Matrix.comp_vecEmpty, reduceIte, Option.getD_some]
 
 /-- (139) is felicitous at `w₀` iff he owns a car there — iff its first sentence is false. -/
@@ -670,14 +670,14 @@ def bathroomX : Fm :=
 /-- (143): "Either there is no bathroom here or it's in a funny place",
 `(w ∉ ΣwX ∨ FUNNY-PLACE_w(ΣbX | SG(ΣbX))) ∧ X ≡ …`. -/
 def bathroom143 : Fm :=
-  .conj (.disj (.neg (.mem (.var .w) (.sigma .w (.label .X))))
+  .conj (Formula.disj (.neg (.mem (.var .w) (.sigma .w (.label .X))))
       (pred₁ .funnyPlace (Term.sgPronoun .b (.label .X))))
     (.labelDef .X bathroomX)
 
 theorem locals_bathroomX : bathroomX.locals = [.b] := rfl
 
 theorem felicitous_bathroomX : bathroomX.Felicitous S.model h :=
-  Formula.felicitous_of_presupFree _ _ _ (by decide)
+  Expr.felicitous_of_presupFree _ _ (by decide) _
 
 theorem realize_bathroomX :
     bathroomX.Realize S.model h ↔
@@ -699,7 +699,7 @@ theorem realize_bathroomX :
       exact ⟨e, ha, by assumption⟩
 
 theorem realize_sigmaB_bathroomX (hw : h .w = world w₀) :
-    (Term.sigma .b bathroomX).realize S.model h =
+    Term.realize S.model h (.sigma .b bathroomX) =
       {a | ∃ e, a = Sum.inr e ∧ S.rel₁ .bathroom w₀ e ∧ S.rel₁ .here w₀ e} := by
   ext a
   rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
@@ -716,7 +716,7 @@ theorem realize_sigmaB_bathroomX (hw : h .w = world w₀) :
     rw [Function.update_of_ne (by decide), hw]
 
 theorem realize_sigmaW_bathroomX :
-    (Term.sigma .w bathroomX).realize S.model h =
+    Term.realize S.model h (.sigma .w bathroomX) =
       {a | ∃ w e, a = Sum.inl w ∧ S.rel₁ .bathroom w e ∧ S.rel₁ .here w e} := by
   ext a
   rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
@@ -733,12 +733,12 @@ theorem realize_sigmaW_bathroomX :
 
 theorem expandSelf_bathroom143 :
     bathroom143.expandSelf =
-      .conj (.disj (.neg (.mem (.var .w) (.sigma .w bathroomX)))
+      .conj (Formula.disj (.neg (.mem (.var .w) (.sigma .w bathroomX)))
           (pred₁ .funnyPlace (Term.sgPronoun .b bathroomX)))
         (.labelDef .X bathroomX) := by
   rw [Formula.expandSelf, show bathroom143.defs = [(.X, bathroomX)] from rfl, Formula.expand]
   simp only [List.foldl_cons, List.foldl_nil, bathroom143, Formula.disj, Term.sgPronoun, pred₁,
-    bathroomX, Formula.substLabels, Term.substLabels, assignment, Matrix.comp_vecCons,
+    bathroomX, Expr.substLabels, Expr.substLabels, assignment, Matrix.comp_vecCons,
     Matrix.comp_vecEmpty, reduceIte, Option.getD_some]
 
 /-- (145): the bathroom disjunction is felicitous at `w₀` iff, if there is a bathroom here,
@@ -767,7 +767,7 @@ def wolfE : Fm :=
 /-- (133): "A wolf might enter. It would eat Tasty Tim first.", `MIGHT(β_w, ΣwW) ∧
 MUST(β_w, ΣwW, ΣwE)` (129) with the second modal's restriction the first's nuclear scope. -/
 def wolfDiscourse : Fm :=
-  .conj (.conj (.some_ modalBase (.sigma .w (.label .W)))
+  .conj (.conj (Formula.some_ modalBase (.sigma .w (.label .W)))
       (.subset (.inter modalBase (.sigma .w (.label .W))) (.sigma .w (.label .E))))
     (.conj (.labelDef .W wolfW) (.labelDef .E wolfE))
 
@@ -776,13 +776,13 @@ def wolfE' : Fm := .conj wolfW (.conj (pred₁ .tim (.bvar .t)) (pred₂ .eats (
 
 theorem expandSelf_wolfDiscourse :
     wolfDiscourse.expandSelf =
-      .conj (.conj (.some_ modalBase (.sigma .w wolfW))
+      .conj (.conj (Formula.some_ modalBase (.sigma .w wolfW))
           (.subset (.inter modalBase (.sigma .w wolfW)) (.sigma .w wolfE')))
         (.conj (.labelDef .W wolfW) (.labelDef .E wolfE')) := by
   rw [Formula.expandSelf, show wolfDiscourse.defs = [(.W, wolfW), (.E, wolfE)] from rfl,
     Formula.expand]
   simp only [List.foldl_cons, List.foldl_nil, wolfDiscourse, wolfW, wolfE, wolfE', modalBase,
-    Formula.some_, pred₁, pred₂, Formula.substLabels, Term.substLabels, assignment,
+    Formula.some_, pred₁, pred₂, Expr.substLabels, Expr.substLabels, assignment,
     Matrix.comp_vecCons, Matrix.comp_vecEmpty, reduceCtorEq, reduceIte, Option.getD_some]
 
 theorem locals_wolfW : wolfW.locals = [.x] := rfl
@@ -828,7 +828,7 @@ theorem realize_wolfE' :
     exact ⟨⟨w, hw, hne, H⟩, ⟨w, hw, hne', H₁⟩, w, hw, hne, hne', H₂⟩
 
 theorem realize_sigmaW_wolfW :
-    (Term.sigma .w wolfW).realize S.model h =
+    Term.realize S.model h (.sigma .w wolfW) =
       {a | ∃ w e, a = Sum.inl w ∧ S.rel₁ .wolf w e ∧ S.rel₁ .enters w e} := by
   ext a
   rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
@@ -847,7 +847,7 @@ theorem realize_sigmaW_wolfW :
       exact ⟨e, ha, h₁, h₂⟩
 
 theorem realize_sigmaW_wolfE' :
-    (Term.sigma .w wolfE').realize S.model h =
+    Term.realize S.model h (.sigma .w wolfE') =
       {a | ∃ w e t, a = Sum.inl w ∧ (S.rel₁ .wolf w e ∧ S.rel₁ .enters w e) ∧
         S.rel₁ .tim w t ∧ S.rel₂ .eats w e t} := by
   ext a
@@ -922,8 +922,8 @@ theorem expandSelf_theyLoud :
           (.labelDef .B (.conj (pred₁ .dog (.bvar .d)) (pred₁ .barks (.var .d))))) := by
   rw [Formula.expandSelf, show theyLoud.defs = [(.D, pred₁ .dog (.bvar .d)),
     (.B, .conj (.label .D) (pred₁ .barks (.var .d)))] from rfl, Formula.expand]
-  simp only [List.foldl_cons, List.foldl_nil, theyLoud, pred₁, Formula.substLabels,
-    Term.substLabels, assignment, Matrix.comp_vecCons, Matrix.comp_vecEmpty, reduceCtorEq,
+  simp only [List.foldl_cons, List.foldl_nil, theyLoud, pred₁, Expr.substLabels,
+    Expr.substLabels, assignment, Matrix.comp_vecCons, Matrix.comp_vecEmpty, reduceCtorEq,
     reduceIte, Option.getD_some]
 
 /-! ### Presupposition under quantification -/
@@ -974,7 +974,7 @@ theorem expandSelf_everyMonarchy :
   rw [Formula.expandSelf, show everyMonarchy.defs =
     [(.R, monarchyR), (.K, monarchK), (.S, cherishBody .R)] from rfl, Formula.expand]
   simp only [List.foldl_cons, List.foldl_nil, everyMonarchy, cherishBody, cherishBody', monarchyR,
-    monarchK, Term.sgPronoun, pred₁, pred₂, Formula.substLabels, Term.substLabels, assignment,
+    monarchK, Term.sgPronoun, pred₁, pred₂, Expr.substLabels, Expr.substLabels, assignment,
     Matrix.comp_vecCons, Matrix.comp_vecEmpty, reduceCtorEq, reduceIte, Option.getD_some]
 
 theorem expandSelf_discourse150a :
@@ -987,12 +987,12 @@ theorem expandSelf_discourse150a :
     [(.C, countryC), (.M, monarchyM), (.K, monarchK), (.S, cherishBody .M)] from rfl,
     Formula.expand]
   simp only [List.foldl_cons, List.foldl_nil, discourse150a, cherishBody, cherishBody', countryC,
-    monarchyM, monarchyM', monarchK, Term.sgPronoun, pred₁, pred₂, Formula.substLabels,
-    Term.substLabels, assignment, Matrix.comp_vecCons, Matrix.comp_vecEmpty, reduceCtorEq,
+    monarchyM, monarchyM', monarchK, Term.sgPronoun, pred₁, pred₂, Expr.substLabels,
+    Expr.substLabels, assignment, Matrix.comp_vecCons, Matrix.comp_vecEmpty, reduceCtorEq,
     reduceIte, Option.getD_some]
 
 theorem felicitous_monarchK : monarchK.Felicitous S.model h :=
-  Formula.felicitous_of_presupFree _ _ _ (by decide)
+  Expr.felicitous_of_presupFree _ _ (by decide) _
 
 theorem realize_monarchK :
     monarchK.Realize S.model h ↔
@@ -1005,7 +1005,7 @@ theorem realize_monarchK :
 
 /-- "Its monarch" at a singular `m₀`: the monarchs of `m₀`. -/
 theorem realize_sigmaK_monarchK {m₀ : E} (hw : h .w = world w₀) (hm : h .m = {Sum.inr m₀}) :
-    (Term.sigma .k monarchK).realize S.model h =
+    Term.realize S.model h (.sigma .k monarchK) =
       {a | ∃ e, a = Sum.inr e ∧ S.rel₂ .monarchOf w₀ e m₀} := by
   ext a
   rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
@@ -1037,7 +1037,7 @@ theorem felicitous_sigmaM_cherishBody'_iff {ρ : Fm} {Q : E → Prop} (hw : h .w
     (hlw : Var.w ∉ ρ.locals) (hρf : ∀ g, ρ.Felicitous S.model g)
     (hρ : ∀ g : Var → Set (Atom W E), g .w = world w₀ →
       (ρ.Realize S.model g ↔ ∃ m₀, g .m = {Sum.inr m₀} ∧ Q m₀)) :
-    (Term.sigma .m (cherishBody' ρ)).Felicitous S.model h ↔
+    (Expr.sigma .m (cherishBody' ρ)).Felicitous S.model h ↔
       ∀ m₀, Q m₀ → ∃! e, S.rel₂ .monarchOf w₀ e m₀ := by
   rw [Term.felicitous_sigma]
   constructor
@@ -1060,7 +1060,7 @@ theorem felicitous_sigmaM_cherishBody'_iff {ρ : Fm} {Q : E → Prop} (hw : h .w
     exact (felicitous_sgPronoun_monarchK_iff S g' hw' hm).2 (H m₀ hq)
 
 theorem felicitous_monarchyR : monarchyR.Felicitous S.model h :=
-  Formula.felicitous_of_presupFree _ _ _ (by decide)
+  Expr.felicitous_of_presupFree _ _ (by decide) _
 
 theorem realize_monarchyR_iff (hw : h .w = world w₀) :
     monarchyR.Realize S.model h ↔ ∃ m₀, h .m = {Sum.inr m₀} ∧ S.rel₁ .monarchy w₀ m₀ := by
@@ -1088,10 +1088,10 @@ theorem felicitous_everyMonarchy_iff (hw : h .w = world w₀) :
       (fun g hg => realize_monarchyR_iff S g hg)]
 
 theorem felicitous_countryC : countryC.Felicitous S.model h :=
-  Formula.felicitous_of_presupFree _ _ _ (by decide)
+  Expr.felicitous_of_presupFree _ _ (by decide) _
 
 theorem felicitous_monarchyM' : monarchyM'.Felicitous S.model h :=
-  Formula.felicitous_of_presupFree _ _ _ (by decide)
+  Expr.felicitous_of_presupFree _ _ (by decide) _
 
 theorem realize_countryC_iff (hw : h .w = world w₀) :
     countryC.Realize S.model h ↔ ∃ m₀, h .m = {Sum.inr m₀} ∧ S.rel₁ .country w₀ m₀ := by
@@ -1123,7 +1123,7 @@ theorem realize_monarchyM'_iff (hw : h .w = world w₀) :
       fun a ha => ⟨e, by rw [hm] at ha; exact ha, he'⟩⟩
 
 theorem realize_sigmaM_countryC (hw : h .w = world w₀) :
-    (Term.sigma .m countryC).realize S.model h =
+    Term.realize S.model h (.sigma .m countryC) =
       {a | ∃ e, a = Sum.inr e ∧ S.rel₁ .country w₀ e} := by
   ext a
   rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
@@ -1138,7 +1138,7 @@ theorem realize_sigmaM_countryC (hw : h .w = world w₀) :
         ⟨e, Function.update_self .., he⟩⟩
 
 theorem realize_sigmaM_monarchyM' (hw : h .w = world w₀) :
-    (Term.sigma .m monarchyM').realize S.model h =
+    Term.realize S.model h (.sigma .m monarchyM') =
       {a | ∃ e, a = Sum.inr e ∧ S.rel₁ .country w₀ e ∧ S.rel₁ .monarchy w₀ e} := by
   ext a
   rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
