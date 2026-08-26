@@ -2,7 +2,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Card
-import Linglib.Features.NounCategorization.Basic
+import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Japanese Numeral Classifier Inventory
@@ -13,14 +13,6 @@ finite inductive type. Properties (form, gloss, encoded semantic
 parameters, dimensionality, mensural-vs-sortal, default flag) are
 projection functions or `Decidable` predicates over the type, not fields
 on a struct.
-
-## Architectural pilot
-
-This file is the pilot for an enum-as-source-of-truth fragment pattern
-(replacing the prior list-of-records pattern). Adding a classifier means
-adding a constructor here; the type checker propagates the addition to
-every projection function and every consumer that pattern-matches on
-`Classifier`. See `CHANGELOG.md` 0.230.179 for the rationale.
 
 ## Inventory provenance
 
@@ -33,14 +25,6 @@ every projection function and every consumer that pattern-matches on
   worked examples (eq. 4 for `-rin`, eq. 9a for `-kumi`, eq. 9b for
   `-daasu` — verified against the PDF).
 
-## Bridge to legacy
-
-`Classifier.toEntry : Classifier → ClassifierEntry` is the migration seam
-to the old `NounCategorization.ClassifierEntry` record type that
-sibling fragments (Mandarin, Shan, Chol) and `Typology/ClassifierSystem`
-still consume. Once those fragments are migrated to the same enum pattern,
-both this bridge and `ClassifierEntry` itself can be retired.
-
 ## Out of scope
 
 - Phonological allomorphy (rendaku/sokuon: ippon/sanbon/roppon for
@@ -50,11 +34,13 @@ both this bridge and `ClassifierEntry` itself can be retired.
   hitotsu/futatsu/...; Sino-classifiers select ichi/ni/san/...).
 - Inventory expansion to high-frequency classifiers not in Downing's
   inventory (`-kai` 回, `-bai` 倍, `-ban` 番, `-do` 度, etc.).
+
+The typological parameters follow [downing-1996] and [aikhenvald-2000]: numeral classifiers
+suffixed to numerals, chosen on semantic grounds, with *tsu* as the general classifier; the
+semantic parameters and the general classifier are read off the inventory.
 -/
 
 namespace Japanese
-
-open NounCategorization (SemanticParameter ShapeDimension ClassifierEntry)
 
 /-- The closed inventory of Japanese numeral classifiers. Constructors are
     named by Hepburn romanization, with kanji-distinct homophones
@@ -162,7 +148,7 @@ def gloss : Classifier → String
     Every constructor has an explicit arm; no fall-through. Adding a
     classifier requires deciding what it encodes — the type checker
     enforces it. -/
-def encodes : Classifier → List SemanticParameter
+def encodes : Classifier → List Classifier.Parameter
   -- animacy
   | .tsu => []
   | .nin => [.humanness]
@@ -213,7 +199,7 @@ def encodes : Classifier → List SemanticParameter
     boundedness/ring-form (wheels, single blossoms) rather than fitting
     cleanly on the 1D/2D/3D axis. See `encodes`, where `-rin` carries
     `.shape` and `.boundedness`. -/
-def shapeDim : Classifier → Option ShapeDimension
+def shapeDim : Classifier → Option Classifier.Dimension
   | .hon => some .oneD
   | .sao => some .oneD
   | .mai => some .twoD
@@ -242,9 +228,9 @@ instance : DecidablePred IsDefault := fun c =>
   inferInstanceAs (Decidable (c = .tsu))
 
 /-- `c` encodes the semantic parameter `p` iff `p ∈ c.encodes`. -/
-def Encodes (c : Classifier) (p : SemanticParameter) : Prop := p ∈ c.encodes
+def Encodes (c : Classifier) (p : Classifier.Parameter) : Prop := p ∈ c.encodes
 
-instance (c : Classifier) (p : SemanticParameter) : Decidable (Encodes c p) :=
+instance (c : Classifier) (p : Classifier.Parameter) : Decidable (Encodes c p) :=
   inferInstanceAs (Decidable (p ∈ c.encodes))
 
 /-! ## §4: Lookup and aggregations -/
@@ -259,32 +245,9 @@ def lookup (s : String) : Option Classifier :=
   all.find? fun c => c.form = s
 
 /-- The list of all semantic parameters encoded by some classifier in the
-    inventory (with duplicates removed). Used by
-    `Fragments/Japanese/ClassifierSystem` to compute `classifierSemantics`. -/
-def allEncodedParams : List SemanticParameter :=
+    inventory (with duplicates removed), the system's `classifierSemantics`. -/
+def allEncodedParams : List Classifier.Parameter :=
   (all.flatMap encodes).eraseDups
-
-/-! ## §5: Bridge to legacy `ClassifierEntry`
-
-Migration seam: `Typology/ClassifierSystem.lean` and the sibling
-fragments (Mandarin, Shan, Chol) still consume `NounCategorization.
-ClassifierEntry`. `toEntry` projects a typed `Classifier` back to the
-legacy record so cross-language aggregations continue to work during
-the transitional period. -/
-
-/-- Convert a typed `Classifier` to the legacy record. Migration-seam only;
-    new code should consume `Classifier` and its projections directly. -/
-def toEntry (c : Classifier) : ClassifierEntry where
-  form := c.form
-  gloss := c.gloss
-  semantics := c.encodes
-  isDefault := decide (IsDefault c)
-  isMensural := decide (IsMensural c)
-  shapeDimension := c.shapeDim
-
-/-- The full inventory as legacy records. Bridge for typology-side code that
-    still expects `List ClassifierEntry`. -/
-def allEntries : List ClassifierEntry := all.map toEntry
 
 /-! ## §6: Structural theorems -/
 
@@ -323,5 +286,40 @@ theorem ken_disambiguation : kenBuilding.form ≠ kenIncident.form := by decide
 theorem ken_homophony : kenBuilding.romaji = kenIncident.romaji := rfl
 
 end Classifier
+
+end Japanese
+
+/-! ### Typological parameters -/
+
+namespace Japanese
+
+/-- Classifiers occur in the numeral phrase and characterize the head noun. -/
+def classifierLocus : Classifier.Scope := .numeralNP
+
+def classifierConstituent : Classifier.Constituent := .headNoun
+
+/-- The kind of device, read off its locus and the constituent it characterizes. -/
+abbrev classifierKind : Option Classifier.Kind :=
+  Classifier.kind classifierLocus classifierConstituent
+
+/-- Every environment the device operates in. -/
+def classifierScopes : List Classifier.Scope := [.numeralNP]
+
+/-- Classifier choice is semantic. -/
+def classifierAssignment : Classifier.Assignment := .semantic
+
+/-- Suffixes on numerals. -/
+def classifierRealizations : List Classifier.Realization := [.suffix]
+
+def classifierAgreement : Bool := false
+
+def classifierObligatory : Bool := true
+
+/-- Whether the inventory has a general classifier. -/
+def classifierDefault : Bool := Classifier.defaultClassifier?.isSome
+
+def classifierSemantics : List Classifier.Parameter := Classifier.allEncodedParams
+
+def obligatoryNumber : Bool := false
 
 end Japanese

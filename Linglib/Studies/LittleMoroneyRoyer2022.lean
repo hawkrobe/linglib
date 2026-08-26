@@ -4,8 +4,8 @@ import Linglib.Semantics.Classifier
 import Linglib.Semantics.Composition.Tree
 import Linglib.Studies.Chierchia1998
 import Linglib.Studies.IoninMatushansky2006
-import Linglib.Fragments.Mayan.Chol.ClassifierSystem
-import Linglib.Fragments.Shan.ClassifierSystem
+import Linglib.Fragments.Mayan.Chol.Classifiers
+import Linglib.Fragments.Shan.Classifiers
 
 /-!
 # Little, Moroney & Royer (2022)
@@ -52,15 +52,13 @@ open Semantics.Composition.Tree (interp)
 open Semantics.Montague (Lexicon)
 open Syntax (Tree)
 open IoninMatushansky2006 (cardMod IsAtomOf cardMod_atoms_iff)
-open NounCategorization (ClassifierStrategy)
-
 /-! ### The two strategies -/
 
 /-- Ch'ol is classifier-for-numeral (Table 8). -/
-def cholStrategy : ClassifierStrategy := .forNumeral
+def cholStrategy : Classifier.Strategy := .forNumeral
 
 /-- Shan is classifier-for-noun (Table 8). -/
-def shanStrategy : ClassifierStrategy := .forNoun
+def shanStrategy : Classifier.Strategy := .forNoun
 
 variable {α : Type} (g : Assignment (Finset α))
 

@@ -1,4 +1,4 @@
-import Linglib.Features.NounCategorization.Basic
+import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Shan Numeral Classifier Lexicon
@@ -29,42 +29,45 @@ numeral), it appears in contexts beyond numerals: with quantifiers (*ku*
 Shan word order is [N Num CLF], with the noun preceding the numeral and
 classifier. [moroney-2021] analyzes this as NP-movement from a base
 position below ClfP to a position above the numeral and classifier.
+
+The typological parameters follow [moroney-2021] and [little-moroney-royer-2022]: free-morpheme
+numeral classifiers derived from nominal elements (*tǒ* 'body'), required uniformly by numerals
+and extending to quantifiers, demonstratives and relative clauses, with a generic classifier and
+no co-occurrence with plural marking.
 -/
 
 namespace Shan.Classifiers
-
-open NounCategorization (ClassifierEntry SemanticParameter ShapeDimension)
 
 -- ============================================================================
 -- Numeral classifiers (Table 6 of [little-moroney-royer-2022])
 -- ============================================================================
 
 /-- ʔǎn — inanimates (generic/default classifier for inanimate objects). -/
-def an : ClassifierEntry :=
+def an : Classifier :=
   { form := "ʔǎn", gloss := "inanimate/generic", isDefault := true }
 
 /-- tǒ — animals. Also means 'body' as a free noun. -/
-def to : ClassifierEntry :=
+def to : Classifier :=
   { form := "tǒ", gloss := "animal"
   , semantics := [.animacy] }
 
 /-- kǒ — people/humans. -/
-def ko : ClassifierEntry :=
+def ko : Classifier :=
   { form := "kǒ", gloss := "human"
   , semantics := [.humanness] }
 
 /-- hòj — round objects (fruits, jujubes). -/
-def hoj : ClassifierEntry :=
+def hoj : Classifier :=
   { form := "hòj", gloss := "round"
-  , semantics := [.shape], shapeDimension := some .threeD }
+  , semantics := [.shape], dimension := some .threeD }
 
 /-- ton — plants, trees. Head of compound *ton-mâj* 'tree'. -/
-def ton : ClassifierEntry :=
+def ton : Classifier :=
   { form := "ton", gloss := "plant"
-  , semantics := [.shape], shapeDimension := some .oneD }
+  , semantics := [.shape], dimension := some .oneD }
 
 /-- lǎŋ — buildings, houses. -/
-def lang : ClassifierEntry :=
+def lang : Classifier :=
   { form := "lǎŋ", gloss := "building"
   , semantics := [.function] }
 
@@ -72,10 +75,10 @@ def lang : ClassifierEntry :=
 -- Inventory
 -- ============================================================================
 
-def allClassifiers : List ClassifierEntry :=
+def allClassifiers : List Classifier :=
   [an, to, ko, hoj, ton, lang]
 
-def defaultClassifier : ClassifierEntry := an
+def defaultClassifier : Classifier := an
 
 -- ============================================================================
 -- Verification
@@ -94,3 +97,42 @@ theorem classifiers_are_free :
     allClassifiers.all (!·.form.startsWith "-") = true := by native_decide
 
 end Shan.Classifiers
+
+/-! ### Typological parameters -/
+
+namespace Shan
+
+/-- Classifiers occur in the numeral phrase and characterize the head noun. -/
+def classifierLocus : Classifier.Scope := .numeralNP
+
+def classifierConstituent : Classifier.Constituent := .headNoun
+
+/-- The kind of device, read off its locus and the constituent it characterizes. -/
+abbrev classifierKind : Option Classifier.Kind :=
+  Classifier.kind classifierLocus classifierConstituent
+
+/-- Every environment the device operates in. -/
+def classifierScopes : List Classifier.Scope := [.numeralNP, .attributiveNP]
+
+/-- Classifier choice is semantic. -/
+def classifierAssignment : Classifier.Assignment := .semantic
+
+/-- Free morphemes. -/
+def classifierRealizations : List Classifier.Realization := [.freeForm]
+
+def classifierAgreement : Bool := false
+
+def classifierObligatory : Bool := true
+
+/-- Whether the inventory has a general classifier. -/
+def classifierDefault : Bool := Classifiers.allClassifiers.any (·.isDefault)
+
+def classifierSemantics : List Classifier.Parameter :=
+  Classifier.parameters Classifiers.allClassifiers
+
+def obligatoryNumber : Bool := false
+
+/-- Whether classifiers and plural marking co-occur. -/
+def pluralClassifierCooccur : Bool := false
+
+end Shan

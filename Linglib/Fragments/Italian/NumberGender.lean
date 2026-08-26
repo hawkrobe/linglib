@@ -1,4 +1,5 @@
 import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Italian plurals in *-a*
@@ -62,3 +63,38 @@ def regulars : List Noun :=
     ⟨"ragazza", "ragazze", "girl", .feminine, .feminine, .regular⟩]
 
 end Italian.NumberGender
+
+/-! ### Typological parameters -/
+
+namespace Italian
+
+/-- Gender is realized by agreement inside the head-modifier NP; the clause is a further scope. -/
+def classifierLocus : Classifier.Scope := .headModifierNP
+
+def classifierConstituent : Classifier.Constituent := .headNoun
+
+/-- The kind of device, read off its locus and the constituent it characterizes. -/
+abbrev classifierKind : Option Classifier.Kind :=
+  Classifier.kind classifierLocus classifierConstituent
+
+/-- Every environment the device operates in. -/
+def classifierScopes : List Classifier.Scope := [.headModifierNP, .predicateArgument]
+
+/-- Sex plus the morphological *-o* / *-a* endings. -/
+def classifierAssignment : Classifier.Assignment := .mixed
+
+/-- Agreement inflection on modifiers; noun classes are never free lexemes. -/
+def classifierRealizations : List Classifier.Realization := [.suffix]
+
+def classifierAgreement : Bool := true
+
+def classifierObligatory : Bool := true
+
+/-- Masculine is the unmarked gender. -/
+def classifierDefault : Bool := true
+
+def classifierSemantics : List Classifier.Parameter := [.sex, .animacy]
+
+def obligatoryNumber : Bool := true
+
+end Italian

@@ -688,7 +688,6 @@ import Linglib.Features.MinimalPairs
 import Linglib.Features.Mirativity
 import Linglib.Features.ModalIndefinite
 import Linglib.Features.NegativeConcord
-import Linglib.Features.NounCategorization.Basic
 import Linglib.Features.Number.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Number.Decomposition
@@ -731,7 +730,7 @@ import Linglib.Fragments.Arabic.ModernStandard.Phonology
 import Linglib.Fragments.Arabic.ModernStandard.Possession
 import Linglib.Fragments.Arabic.ModernStandard.Relativization
 import Linglib.Fragments.Arabic.ModernStandard.WordOrder
-import Linglib.Fragments.Armenian.ClassifierSystem
+import Linglib.Fragments.Armenian.Classifiers
 import Linglib.Fragments.Aymara.Evidentiality
 import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Basque.Adposition
@@ -927,7 +926,6 @@ import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Irish.Possession
 import Linglib.Fragments.Irish.WordOrder
 import Linglib.Fragments.Italian.Binominals
-import Linglib.Fragments.Italian.ClassifierSystem
 import Linglib.Fragments.Italian.Determiners
 import Linglib.Fragments.Italian.ModalIndefinites
 import Linglib.Fragments.Italian.Modals
@@ -943,8 +941,7 @@ import Linglib.Fragments.Italian.Tense
 import Linglib.Fragments.Januubi.Negation
 import Linglib.Fragments.Japanese.Adposition
 import Linglib.Fragments.Japanese.Case
-import Linglib.Fragments.Japanese.Classifier
-import Linglib.Fragments.Japanese.ClassifierSystem
+import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Fragments.Japanese.Comparison
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.Japanese.Coordination
@@ -1006,7 +1003,6 @@ import Linglib.Fragments.Malayic.VoiceSystem
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Mandarin.Adposition
 import Linglib.Fragments.Mandarin.AspectComparison
-import Linglib.Fragments.Mandarin.ClassifierSystem
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Comparison
 import Linglib.Fragments.Mandarin.Conditionals
@@ -1031,7 +1027,6 @@ import Linglib.Fragments.Maori.Phonology
 import Linglib.Fragments.Marathi.Particles
 import Linglib.Fragments.MauritianCreole.Determiners
 import Linglib.Fragments.Mayan.Chol.Agreement
-import Linglib.Fragments.Mayan.Chol.ClassifierSystem
 import Linglib.Fragments.Mayan.Chol.Classifiers
 import Linglib.Fragments.Mayan.Chuj.ModalIndefinites
 import Linglib.Fragments.Mayan.Chuj.RootClasses
@@ -1086,7 +1081,6 @@ import Linglib.Fragments.Romance.Catalan.Predicates
 import Linglib.Fragments.Romance.Catalan.Reciprocals
 import Linglib.Fragments.Romance.Clitics
 import Linglib.Fragments.Romance.French.Binominals
-import Linglib.Fragments.Romance.French.ClassifierSystem
 import Linglib.Fragments.Romance.French.Comparison
 import Linglib.Fragments.Romance.French.Determiners
 import Linglib.Fragments.Romance.French.Evidentiality
@@ -1107,12 +1101,10 @@ import Linglib.Fragments.Romance.Spanish.Predicates
 import Linglib.Fragments.Romance.Spanish.Reciprocals
 import Linglib.Fragments.Romanian.MoodChoice
 import Linglib.Fragments.Sesotho.Morph
-import Linglib.Fragments.Shan.ClassifierSystem
 import Linglib.Fragments.Shan.Classifiers
 import Linglib.Fragments.Shan.Determiners
 import Linglib.Fragments.Shan.Nouns
 import Linglib.Fragments.Shona.Basic
-import Linglib.Fragments.Shona.ClassifierSystem
 import Linglib.Fragments.Singlish.Questions
 import Linglib.Fragments.Sinhala.Verbs
 import Linglib.Fragments.Slavic.Belarusian.Case
@@ -1173,7 +1165,6 @@ import Linglib.Fragments.Spanish.Pronouns
 import Linglib.Fragments.Statimcets.Modals
 import Linglib.Fragments.Swahili.Adposition
 import Linglib.Fragments.Swahili.Basic
-import Linglib.Fragments.Swahili.ClassifierSystem
 import Linglib.Fragments.Swahili.Comparison
 import Linglib.Fragments.Swahili.Phonology
 import Linglib.Fragments.Swahili.Possession
@@ -1244,7 +1235,6 @@ import Linglib.Fragments.Welsh.Relativization
 import Linglib.Fragments.Welsh.WordOrder
 import Linglib.Fragments.WestGreenlandic.Evidentiality
 import Linglib.Fragments.Xhosa.Basic
-import Linglib.Fragments.Xhosa.ClassifierSystem
 import Linglib.Fragments.Yakut.Case
 import Linglib.Fragments.Yakut.Indefinites
 import Linglib.Fragments.Yanyuwa.Gender
@@ -2779,6 +2769,7 @@ import Linglib.Syntax.Category.Adposition.Order
 import Linglib.Syntax.Category.Adposition.Spatial
 import Linglib.Syntax.Category.Auxiliary.Basic
 import Linglib.Syntax.Category.Auxiliary.Constructions
+import Linglib.Syntax.Category.Classifier.Basic
 import Linglib.Syntax.Category.Complementizer.Basic
 import Linglib.Syntax.Category.Coordinator
 import Linglib.Syntax.Category.Degree.Basic

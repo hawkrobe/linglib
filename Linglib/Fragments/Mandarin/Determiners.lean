@@ -1,6 +1,5 @@
 import Linglib.Data.UD.Basic
 import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Features.NounCategorization.Basic
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.Mandarin.Classifiers
 
@@ -34,7 +33,6 @@ Key typological properties:
 namespace Mandarin.Determiners
 
 open English.Determiners (QForce Monotonicity Strength)
-open NounCategorization (ClassifierEntry)
 open Mandarin.Classifiers (ge)
 
 /-- Mandarin quantifier entry. `extends Syntax.Determiner.Quantifier` (the
@@ -55,7 +53,7 @@ structure MandarinQuantEntry extends Quantifier where
   /-- Requires a classifier (liàngcí 量词) between determiner and noun -/
   requiresClassifier : Bool := false
   /-- Typical classifier used with this quantifier (个 gè by default) -/
-  typicalClassifier : Option ClassifierEntry := none
+  typicalClassifier : Option Classifier := none
   deriving Repr, BEq
 
 -- ============================================================================

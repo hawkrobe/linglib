@@ -1,5 +1,5 @@
 import Linglib.Semantics.Mereology
-import Linglib.Features.NounCategorization.Basic
+import Linglib.Syntax.Category.Classifier.Basic
 import Linglib.Semantics.Plurality.Algebra
 
 /-!
@@ -7,7 +7,7 @@ import Linglib.Semantics.Plurality.Algebra
 [chierchia-1998] [little-moroney-royer-2022] [moroney-2021]
 
 Unified compositional semantics for classifier constructions, connecting
-the typological vocabulary in `Features/NounCategorization` to the
+the typological vocabulary in `Syntax/Category/Classifier` to the
 mereological infrastructure in `Mereology` and the materialization
 homomorphism in `Semantics.Plurality.Algebra`.
 
@@ -45,14 +45,12 @@ This module composes existing pieces:
 - `Mereology.atomize_qua` — QUA result for CLF-for-N
 - `Mereology.extMeasure_qua` — QUA result for CLF-for-NUM
 - `Link1983.Materialization` — group classifier semantics
-- `NounCategorization.ClassifierStrategy` — typological dispatch
+- `Classifier.Strategy` — typological dispatch
 -/
 
 namespace Semantics.Classifier
 
 open _root_.Mereology
-open NounCategorization (ClassifierStrategy)
-
 -- ============================================================================
 -- §1: CLF-for-N — Atomization ([chierchia-1998])
 -- ============================================================================
@@ -134,7 +132,7 @@ theorem groupClf_qua {E D : Type*} [SemilatticeSup E] [SemilatticeSup D]
 -- §4: Strategy-Indexed Dispatch
 -- ============================================================================
 
-/-- Dispatch from `ClassifierStrategy` to a noun-side predicate transformer.
+/-- Dispatch from `Classifier.Strategy` to a noun-side predicate transformer.
 
     - `.forNoun` → `clfForNoun P` (Chierchia/LMR: classifier atomizes the noun)
     - `.forNumeral` → `clfForNum P μ n` (Krifka/Bale-Coon/LMR: measure-modify the numeral)
@@ -146,7 +144,7 @@ theorem groupClf_qua {E D : Type*} [SemilatticeSup E] [SemilatticeSup D]
       the obligation to use a classifier comes from. See
       `Studies/Sudo2016.lean`.) -/
 def classifierDenot {α μTy : Type*} [PartialOrder α]
-    (s : ClassifierStrategy) (P : α → Prop) (μ : α → μTy) (n : μTy) : α → Prop :=
+    (s : Classifier.Strategy) (P : α → Prop) (μ : α → μTy) (n : μTy) : α → Prop :=
   match s with
   | .forNoun     => clfForNoun P
   | .forNumeral  => clfForNum P μ n

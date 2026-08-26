@@ -1,7 +1,7 @@
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Alternatives.Structural
-import Linglib.Fragments.Armenian.ClassifierSystem
+import Linglib.Fragments.Armenian.Classifiers
 
 /-!
 # Bale & Khanjian (2014) — Singular-Plural Distinction in Western Armenian
@@ -68,7 +68,7 @@ Sudo's `.sudoBlocking` strategy doesn't apply; the language sits in a
 different typological cell.
 
 The Western Armenian classifier parameters are recorded in
-`Fragments/Armenian/ClassifierSystem.lean`: `classifierObligatory := false` and
+`Fragments/Armenian/Classifiers.lean`: `classifierObligatory := false` and
 `pluralClassifierCooccur := false` (per footnote 3, plurals are incompatible
 with classifiers).
 
@@ -352,7 +352,7 @@ theorem definiteness_asymmetry :
     structurally failing the input shape that obligatory-CL frameworks
     like [chierchia-1998] and [sudo-2016] presuppose.
 
-    The dependency goes from BK 2014 → `Fragments/Armenian/ClassifierSystem.lean`
+    The dependency goes from BK 2014 → `Fragments/Armenian/Classifiers.lean`
     rather than BK 2014 → Sudo 2016 (which would violate the chronology
     rule — study files may reference older papers, not newer ones). -/
 theorem western_armenian_lacks_obligatory_classifier_input :
