@@ -1,220 +1,272 @@
-import Linglib.Studies.Ross1967
-import Linglib.Syntax.SynGraph
-import Linglib.Syntax.Minimalist.Merge.MinimalYield
-import Linglib.Syntax.Minimalist.Defs
-
-open RoseTree RoseTree.Nonplanar
+import Linglib.Syntax.Mereological.AngularLocality
+import Linglib.Data.Examples.Adger2025
 
 /-!
-# Mereological Syntax: Angular Locality and Islands
-[adger-2025]
+# Mereological syntax: phrase structure, cyclicity, and islands
 
-[adger-2025] (Linguistic Inquiry Monograph 90, MIT Press) develops a
-mereological alternative to set-theoretic Bare Phrase Structure: syntactic
-objects are *parts* of one another (rather than members of sets), and the
-operation `Subjoin` makes one object a 1-part or 2-part of another. The
-book derives a range of locality phenomena from **Angular Locality** (AL):
-a structural condition on subjunction paths that fails when the path
-crosses dimensions (mixed 1-part/2-part transitivity).
+Adger replaces set-theoretic Merge by Subjoin, which makes one syntactic object a proper part
+of another in one of two dimensions: the first subjunction to an object yields its 1-part, the
+extended-projection complement, the second its 2-part, the specifier (`Parthood`). Parthood is
+transitive within a dimension only, and Angular Locality lets a part subjoin to a target only
+through a single angle: it must be an n-part of some 1-part of the target (`CanSubjoin`). The
+book's list of consequences is verified on its own structures: the complement of a head cannot
+resubjoin to it (`antilocality`), and subjunction to an unattached object, to a specifier, or
+downward fails because the target must contain the mover (`parallel`, `sideward`, `lowering`,
+`asked_who`); a 2-part of a 2-part of an object in the target's extended projection subjoins,
+while a 1-part of that 2-part does not (`angle`), so that a subjunction blocked from inside a
+specifier becomes possible once the mover has subjoined to that specifier (`escape_hatch`). This
+is successive cyclicity without phases: *who* reaches the matrix C of *guess who you said fell*
+only after subjoining to the embedded C (`said_fell`).
 
-## Coverage of this file
+Islands follow from the same mechanism with Dimensionality. Extraction from a nominal runs
+through D, so it needs D's 2-part: an indefinite leaves it free and *who did you buy a statue
+of* derives (`statue_indefinite`), while a definite fills it with Det and the wh-expression can
+neither subjoin to D nor skip it (`statue_definite`). Subjects are not islands as such: a
+subject subjoins to T itself (`subject_itself`), and under T[uD] the wh-expression subjoins to D
+and on to C (`subject_thetic`), but T[uFam] requires a [Fam]-bearing Det to fill D's 2-part
+first, which freezes the topic subject (`subject_topic`). Wh-islands, the WIRE effect, adjunct
+islands, *-linearization, and the cross-linguistic feature settings of chapters 5–7 are not
+formalized.
 
-This is a thin study layer that re-exports the AL substrate derivations
-from `Syntax/SynGraph.lean` (§10) and frames cross-framework
-engagement. The substrate covers:
+## References
 
-- **Subject islands** (Ch 7 §7.7, book pp. 216–223): cross-dimensional path
-  blocks sub-extraction; the subject DP itself, as T's direct 2-part, is
-  reachable. *Caveat:* Adger's full §7.7 derivation depends on a [Fam]/[uFam]
-  T feature triggering D-subjunction (which fills D's 2-part and produces
-  the cross-dimensional path). The substrate models the blocked endpoint,
-  not the [Fam] machinery that triggers it. Ch §7.8 emphasises that subject
-  islands are "not consistent islands" — strength varies with definiteness/
-  topicality of the subject.
-
-- **Definite nominal islands** (Ch 6 §6.3.2, book pp. 153–157): when
-  Det/Dem/Poss subjoins to D, D's 2-part is "used up", blocking extraction
-  through D. Indefinite DPs (D with a free 2-part) are transparent.
-
-- **Successive cyclicity** (Ch 4 §4.3): wh requires intermediate stops at
-  embedded C edges to traverse the right dimension chain at each step.
-
-- **Anti-locality, lowering, parallel merge, sideward subjunction** (Ch 4
-  consequences (35a–e)): all blocked by AL.
-
-## Out of scope
-
-- **Wh-Islands** (entire Ch 5, book pp. 117–142), including the **WIRE
-  Effect** (Wh-Island Re-Emergence, book p. 125) — Adger's most novel
-  cross-linguistic prediction. Formalising WIRE as a graph-decidable
-  predicate over Wh-pair clausemate configurations is the most natural
-  empirical extension.
-- **Adjunct islands beyond Ch 4 graph instantiation.** Adger explicitly
-  admits at the start of Ch 8 (book p. 225): "I owe at least a sketch of
-  how these islands might be tackled." The substrate's
-  `adjunct_island_blocks` exhibits the Ch 4 cross-dimensional mechanism on
-  an `AdvP` 2-part of `v`; the Ch 8 Mod-headed Geis/Haegeman analysis is
-  not formalised here.
-- **Concrete (§6.3.1) vs Relational (§6.3.2) nominal split.**
-- **Articleless-language typology** for nominal islands (§6.4):
-  Mandarin/Persian/Japanese contrasts predicted by D-Interpretation.
-- **The [Fam]/[uFam] T-feature machinery** (Ch 7 §7.7) driving subject-
-  island gradience — substrate models the structural endpoint only.
-
-## Cross-framework engagement
-
-§3 of this file articulates AL's relationship to one rival framework
-([marcolli-chomsky-berwick-2025] §1.6 algebraic Merge): both reach
-a `false` verdict on Sideward Merge from incompatible primitives.
-
-The classification handles `adgerSubjectIslandSource` and
-`adgerDefiniteNominalSources` are exposed for use by *later* paper-anchored
-Studies files. Newer rivals make convergence/divergence claims against
-Adger's classification:
-- [cartner-et-al-2026] (`Studies/CartnerEtAl2026.lean`) converges with
-  Adger on `IslandSource.syntactic` for subject islands, from cross-
-  constructional invariance data.
-- [shen-huang-2026] (`Studies/ShenHuang2026.lean`) diverges from
-  Adger on definite-nominal sources, arguing for a `[.syntactic, .semantic]`
-  composite from English VOC effects + Mandarin wh-in-situ data.
-
-Phase Theory (`Syntax/Minimalist/Phase.lean`,
-[chomsky-2000], [chomsky-2008]) is the immediate theoretical
-rival — Adger's framing is to derive island effects "without stipulating
-phases, barriers, or subjacency." No formal cross-translation is provided
-here: AL operates on graph-theoretic parthood across dimensions; Phase
-Theory on PIC over derivational phases. The frameworks share no
-structural lemma; identifying a configuration where AL blocks but PIC
-permits (or vice versa) is left as a future critical experiment.
-
+* [adger-2025]
 -/
 
 namespace Adger2025
 
--- §1. Substrate re-export
+open MereologicalSyntax MereologicalSyntax.Parthood
 
-/-! Core AL derivations live in `Syntax/SynGraph.lean` (§10):
+/-! ### Consequences of Angular Locality -/
 
-| Theorem | Phenomenon |
-|---|---|
-| `al_blocks_superlocal` | antilocality (35a) |
-| `al_blocks_lowering` | no lowering (35b) |
-| `al_blocks_sideward` | no sideward subjunction (35c) |
-| `al_blocks_parallel` | no parallel merge (35d) |
-| `al_blocks_cross_dim` / `al_allows_within_dim` | cross-dim transitivity (35e) |
-| `al_allows_rollup_2part` / `al_allows_rollup_1part` | roll-up movement |
-| `succ_cyc_blocked_cross_clause` | cross-clausal succ-cyc requires stops |
-| `succ_cyc_wh_reaches_C1_after_stop` | with stops, succ-cyc allowed |
-| `subject_island_blocks` / `subject_itself_can_extract` | subject islands |
-| `adjunct_island_blocks` / `adjunct_itself_can_extract` | adjunct islands |
-| `nominal_island_definite_blocks` / `nominal_island_indefinite_allows` | nominal islands |
-| `antilocality_sub1` / `antilocality_sub12` | general antilocality |
+/-- The objects of the schematic structures. -/
+inductive Obj
+  | a | b | c | d | e | f | g | u | w | x | y | z
+  deriving DecidableEq, Fintype, Repr
 
-The graphs `g_subject_island`, `g_adjunct_island`, `g_definite_island`,
-`g_sideward` are also public for downstream consumers. -/
+/-- `a` with `b` as its 1-part. -/
+def superlocal : Parthood Obj where
+  onePart | .a => some .b | _ => none
+  twoPart _ := none
 
--- §2. AL blocks three island configurations from one mechanism
+/-- The complement `b` cannot resubjoin to `a`. -/
+theorem antilocality : ¬ superlocal.CanSubjoin .b .a :=
+  not_canSubjoin_of_imm_one (acyclic_of_rank (fun | .a => 1 | _ => 0) (by decide)) rfl
 
-/-- The same `satisfiesAL` predicate fires `false` on three distinct
-    configurations: subject (Ch 7 §7.7), adjunct (Ch 4 mechanism on AdvP),
-    definite nominal (Ch 6 §6.3.2). The conjunction *composes* the
-    substrate theorems rather than re-running `native_decide` on inlined
-    copies of the same graphs.
+/-- Two roots: `d` with 1-part `e`, and `b` with 2-part `a` and 1-part `c`. -/
+def parallel : Parthood Obj where
+  onePart | .d => some .e | .b => some .c | _ => none
+  twoPart | .b => some .a | _ => none
 
-    The "same mechanism" claim is internal to Adger's account — all three
-    blockings route through cross-dimensional path failure on the AL
-    substrate. It is *not* a unification claim across all of CED:
-    - Adjunct islands receive only a Ch 8 sketch (book p. 225); the
-      substrate graph instantiates the Ch 4 mechanism, not Ch 8's
-      Mod-headed Geis/Haegeman analysis.
-    - Subject islands themselves are non-uniform per §7.8 — strength
-      varies with definiteness/topicality of the subject.
-    - The definite-nominal case requires the Det-subjunction-fills-D
-      machinery (book pp. 154–157), not just AL alone. -/
-theorem al_blocks_three_island_configurations :
-    g_subject_island.satisfiesAL ⟨8, by decide⟩ ⟨0, by decide⟩ = false ∧
-    g_adjunct_island.satisfiesAL ⟨7, by decide⟩ ⟨0, by decide⟩ = false ∧
-    g_definite_island.satisfiesAL ⟨9, by decide⟩ ⟨0, by decide⟩ = false :=
-  ⟨subject_island_blocks, adjunct_island_blocks, nominal_island_definite_blocks⟩
+/-- `a` cannot subjoin to the unattached `d`. -/
+theorem parallel_blocked : ¬ parallel.CanSubjoin .a .d :=
+  not_canSubjoin_of_le (fun | .b => 2 | .a | .d => 1 | _ => 0) (by decide) (by decide)
 
--- §3. Per-phenomenon classifications
+/-- `c` with 2-part `b` and 1-part `a`. -/
+def sideward : Parthood Obj where
+  onePart | .c => some .a | _ => none
+  twoPart | .c => some .b | _ => none
 
-/-- Adger's AL classifies subject islands as syntactically sourced — they
-    arise from the structural cross-dimensional path failure on a graph
-    (`subject_island_blocks`), not from binding (semantic), memory load
-    (processing), or information-structural backgroundedness (discourse).
+/-- Neither part of `c` subjoins to the other. -/
+theorem sideward_blocked : ¬ sideward.CanSubjoin .a .b ∧ ¬ sideward.CanSubjoin .b .a :=
+  ⟨not_canSubjoin_of_le (fun | .c => 1 | _ => 0) (by decide) (by decide),
+    not_canSubjoin_of_le (fun | .c => 1 | _ => 0) (by decide) (by decide)⟩
 
-    The classification is editorial in the sense that `IslandSource.syntactic`
-    is the natural bin for any structural-configurational mechanism;
-    `subject_island_blocks` is the structural fact this classification
-    summarises. Exposed as a handle for cross-framework theorems in newer
-    Studies files (e.g., `CartnerEtAl2026.subjectIslandSource`). -/
-def adgerSubjectIslandSource : IslandSource := .syntactic
+/-- `e` with 2-part `a` and 1-part `f`; `a` with 2-part `d` and 1-part `b`, whose 1-part chain
+continues `c`, `g`. -/
+def lowering : Parthood Obj where
+  onePart | .e => some .f | .a => some .b | .b => some .c | .c => some .g | _ => none
+  twoPart | .e => some .a | .a => some .d | _ => none
 
-/-- Adger's AL classifies definite-nominal islands as single-source
-    syntactic: the Det-subjunction-fills-D mechanism (Ch 6 §6.3.2) is
-    itself structural — Det subjoins to D filling its 2-part, blocking
-    extraction across the resulting cross-dimensional path
-    (`nominal_island_definite_blocks`). No separate semantic mechanism
-    is invoked.
+/-- `d` cannot subjoin downward to `c`. -/
+theorem lowering_blocked : ¬ lowering.CanSubjoin .d .c :=
+  not_canSubjoin_of_le (fun | .e => 4 | .a => 3 | .b => 2 | .c | .d => 1 | _ => 0) (by decide)
+    (by decide)
 
-    [shen-huang-2026] (`Studies/ShenHuang2026.lean`) argues from
-    English VOC effects + Mandarin wh-in-situ data that this should be a
-    `[.syntactic, .semantic]` composite — the divergence is recorded in
-    that file's theorems. -/
-def adgerDefiniteNominalSources : List IslandSource := [.syntactic]
+/-- `y` with 1-part `e`; `e` with 2-part `u` and 1-part `w`; `u` with 2-part `z` and 1-part
+`x`. -/
+def angle : Parthood Obj where
+  onePart | .y => some .e | .e => some .w | .u => some .x | _ => none
+  twoPart | .e => some .u | .u => some .z | _ => none
 
--- §4. Cross-framework convergence: Adger AL ↔ MCB §1.6 on Sideward
+/-- `z`, a 2-part of the 2-part `u` of `e`, subjoins to `y`; `x`, the 1-part of `u`, does not. -/
+theorem angle_turns_once : angle.CanSubjoin .z .y ∧ ¬ angle.CanSubjoin .x .y :=
+  ⟨⟨.e, .inr (.tail (b := .u) (.single (by decide)) (by decide)), .single (by decide)⟩,
+    not_canSubjoin_of_not_nPart_two (S := {.u, .z, .x}) (b := .u) (by decide) (by decide)
+      (by decide) (by decide) (by decide)
+      (not_nPart_of_unique (n := .one) (u := .u) (by decide) (by decide) _)⟩
 
-/-! Both [adger-2025] (mereological Merge, this file) and
-[marcolli-chomsky-berwick-2025] §1.6 (algebraic Merge) reach a
-`false` verdict on Sideward Merge from incompatible structural primitives:
+/-- As `angle`, but `u` has only the 1-part `x`, whose 2-part is `z` and whose 1-part is `g`. -/
+def escape : Parthood Obj where
+  onePart | .y => some .e | .e => some .w | .u => some .x | .x => some .g | _ => none
+  twoPart | .e => some .u | .x => some .z | _ => none
 
-- **Adger**: Sideward subjunction (sibling subjoin) violates Angular
-  Locality — the would-be mover and target are both 1-parts of the same
-  parent vertex, so the candidate-α set is empty (no within-dimension
-  chain reaches the target). See `al_blocks_sideward` in `SynGraph.lean`,
-  on the canonical `g_sideward` configuration. The book's own (35c) lists
-  this as "Sidewards subjunction (to a 2-part / 'specifier')," book p. 91
-  (PDF p. 103); the substrate's `g_sideward` is a graph-level
-  representation of (30) on book p. 91.
+/-- `escape` after `z` subjoins to `u`. -/
+def escape' : Parthood Obj where
+  onePart | .y => some .e | .e => some .w | .u => some .x | .x => some .g | _ => none
+  twoPart | .e => some .u | .x => some .z | .u => some .z | _ => none
 
-- **MCB**: Sideward operations 2(b), 3(a), 3(b) violate either
-  `MinimalYieldWeak` (Δb₀ > 0 — workspace components increase) or
-  `InducedMapNCL` (the canonical induced map decreases `leafCount`).
-  See `Syntax/Minimalist/Merge/MinimalYield.lean` and
-  `NoComplexityLoss.lean`.
+/-- `z` cannot subjoin to `y` from inside `u`, but can once it has subjoined to `u`. -/
+theorem escape_hatch :
+    ¬ escape.CanSubjoin .z .y ∧ escape.subjoin .z .u = some escape' ∧ escape'.CanSubjoin .z .y :=
+  ⟨not_canSubjoin_of_not_nPart_two (S := {.u, .x, .z, .g}) (b := .u) (by decide) (by decide)
+      (by decide) (by decide) (by decide) fun h =>
+        ((nPart_iff_of_unique (n := .two) (u := .x) (by decide) (by decide)).1 h).elim (by decide)
+          (not_nPart_of_unique (n := .one) (u := .u) (by decide) (by decide) _),
+    by decide, ⟨.e, .inr (.tail (b := .u) (.single (by decide)) (by decide)), .single (by decide)⟩⟩
 
-The two frameworks share NO structural lemma. AL reasons about
-graph-theoretic parthood across dimensions; MCB reasons about Hopf-
-algebra coproduct counting and induced component maps. The shared
-verdict is convergent evidence from incompatible foundations — exactly
-the kind of theoretical cross-checking linglib is designed to make
-visible (CLAUDE.md: "high interconnection density … incompatibilities
-between theories … become visible across the codebase").
+/-! ### Clausal derivations -/
 
-The bundled theorem below is *honestly* a verdict-comparison: a
-conjunction of two unrelated propositions about different structural
-objects, both true. A genuine reduction would require a translation
-`SynGraph → Forest (Nonplanar …)` lifting `satisfiesAL ↔ MinimalYieldWeak`;
-no such bridge is in scope here. -/
+/-- The categories of the clausal structures; primes mark the embedded clause. -/
+inductive Node
+  | C | T | v | O | V | Appl | C' | T' | v' | O' | who | you | D | Det | rel | rel' | P | N
+  deriving DecidableEq, Fintype, Repr
 
-/-- Verdict comparison: the canonical Sideward configuration is rejected
-    by both frameworks. Two propositions about different structural
-    objects, conjoined to make the cross-framework agreement visible at
-    the type level. The Adger conjunct does not depend on the MCB
-    parameters `T_i Tnode T_iq`; the MCB conjunct does not reference the
-    AL graph. The bundling is documentation, not a reduction. -/
-theorem adger_and_mcb_both_reject_sideward
-    (T_i Tnode T_iq : Nonplanar (Minimalist.LIToken ⊕ Unit)) :
-    -- MCB: Sideward 3(a)-shape transformation violates MinimalYieldWeak
-    (¬ Minimalist.Merge.MinimalYieldWeak
-        ({T_i} : Nonplanar.Forest (Nonplanar (Minimalist.LIToken ⊕ Unit)))
-        ({Tnode, T_iq} : Nonplanar.Forest (Nonplanar (Minimalist.LIToken ⊕ Unit))))
-    ∧
-    -- Adger: the canonical Sideward subjunction configuration fails AL
-    (g_sideward.satisfiesAL ⟨2, by decide⟩ ⟨1, by decide⟩ = false) :=
-  ⟨Minimalist.Merge.sideward_3a_violates_noDivergenceWeak T_i Tnode T_iq,
-   al_blocks_sideward⟩
+/-- *We asked who Anson wrote the book*: `who` is the 2-part of `Appl`, whose 1-part `O` has the
+embedded `C` as its 2-part. -/
+def asked : Parthood Node where
+  onePart | .Appl => some .O | .O => some .V | .C => some .T | _ => none
+  twoPart | .Appl => some .who | .O => some .C | _ => none
+
+/-- `who` cannot subjoin downward to the embedded `C`. -/
+theorem asked_who : ¬ asked.CanSubjoin .who .C :=
+  not_canSubjoin_of_le (fun | .Appl => 3 | .O => 2 | .C | .who => 1 | _ => 0) (by decide)
+    (by decide)
+
+/-- *Guess who you said fell*: the clausal complement is the 2-part of `O`, and `who` the 2-part
+of the embedded `O'`. -/
+def said : Parthood Node where
+  onePart
+    | .C => some .T | .T => some .v | .v => some .O
+    | .C' => some .T' | .T' => some .v' | .v' => some .O' | _ => none
+  twoPart | .v => some .you | .O => some .C' | .O' => some .who | _ => none
+
+/-- `said` after `who` subjoins to the embedded `C'`. -/
+def said' : Parthood Node where
+  onePart
+    | .C => some .T | .T => some .v | .v => some .O
+    | .C' => some .T' | .T' => some .v' | .v' => some .O' | _ => none
+  twoPart | .v => some .you | .O => some .C' | .O' => some .who | .C' => some .who | _ => none
+
+/-- `who` cannot reach the matrix `C` directly; it subjoins to the embedded `C'`, and from there
+reaches `C`. -/
+theorem said_fell :
+    ¬ said.CanSubjoin .who .C ∧ said.CanSubjoin .who .C' ∧
+      said.subjoin .who .C' = some said' ∧ said'.CanSubjoin .who .C :=
+  ⟨not_canSubjoin_of_not_nPart_two (S := {.C', .T', .v', .O', .who}) (b := .C') (by decide)
+      (by decide) (by decide) (by decide) (by decide) fun h =>
+        ((nPart_iff_of_unique (n := .two) (u := .O') (by decide) (by decide)).1 h).elim (by decide)
+          (not_nPart_of_unique (n := .one) (u := .v') (by decide) (by decide) _),
+    ⟨.O', .inr (.single (by decide)),
+      .tail (b := .T') (.tail (b := .v') (.single (by decide)) (by decide)) (by decide)⟩,
+    by decide,
+    ⟨.O, .inr (.tail (b := .C') (.single (by decide)) (by decide)),
+      .tail (b := .T) (.tail (b := .v) (.single (by decide)) (by decide)) (by decide)⟩⟩
+
+/-! ### Nominal islands -/
+
+/-- *Who did you buy a statue of*: the object `D` is the 2-part of `O`; its 1-part is the
+relational `rel`, with 2-part `P` (to which `who` has subjoined) and 1-part `N`. -/
+def statue : Parthood Node where
+  onePart
+    | .C => some .T | .T => some .v | .v => some .O | .D => some .rel | .rel => some .N
+    | _ => none
+  twoPart | .v => some .you | .O => some .D | .rel => some .P | .P => some .who | _ => none
+
+/-- `statue` after `who` subjoins to the indefinite `D`. -/
+def statue' : Parthood Node where
+  onePart
+    | .C => some .T | .T => some .v | .v => some .O | .D => some .rel | .rel => some .N
+    | _ => none
+  twoPart
+    | .v => some .you | .O => some .D | .rel => some .P | .P => some .who | .D => some .who
+    | _ => none
+
+/-- *Who did you buy the statue of*: `Det` has subjoined to `D`. -/
+def theStatue : Parthood Node where
+  onePart
+    | .C => some .T | .T => some .v | .v => some .O | .D => some .rel | .rel => some .N
+    | _ => none
+  twoPart
+    | .v => some .you | .O => some .D | .rel => some .P | .P => some .who | .D => some .Det
+    | _ => none
+
+/-- `who` is a 2-part of `rel` and cannot reach `C` from there, but it subjoins to the indefinite
+`D`, becoming a 2-part of `O`, and then reaches `C`. -/
+theorem statue_indefinite :
+    ¬ statue.CanSubjoin .who .C ∧ statue.CanSubjoin .who .D ∧
+      statue.subjoin .who .D = some statue' ∧ statue'.CanSubjoin .who .C :=
+  ⟨not_canSubjoin_of_not_nPart_two (S := {.D, .rel, .P, .N, .who}) (b := .D) (by decide)
+      (by decide) (by decide) (by decide) (by decide) fun h =>
+        ((nPart_iff_of_unique (n := .two) (u := .P) (by decide) (by decide)).1 h).elim (by decide)
+          fun h => ((nPart_iff_of_unique (n := .two) (u := .rel) (by decide) (by decide)).1 h).elim
+            (by decide) (not_nPart_of_unique (n := .one) (u := .D) (by decide) (by decide) _),
+    ⟨.rel, .inr (.tail (b := .P) (.single (by decide)) (by decide)), .single (by decide)⟩,
+    by decide,
+    ⟨.O, .inr (.tail (b := .D) (.single (by decide)) (by decide)),
+      .tail (b := .T) (.tail (b := .v) (.single (by decide)) (by decide)) (by decide)⟩⟩
+
+/-- With `Det` in `D`'s 2-part, Angular Locality still admits `who` at `D` but Dimensionality
+refuses it, and `C` is out of reach. -/
+theorem statue_definite :
+    theStatue.CanSubjoin .who .D ∧ theStatue.subjoin .who .D = none ∧
+      ¬ theStatue.CanSubjoin .who .C :=
+  ⟨⟨.rel, .inr (.tail (b := .P) (.single (by decide)) (by decide)), .single (by decide)⟩,
+    subjoin_eq_none_of_full rfl rfl,
+    not_canSubjoin_of_not_nPart_two (S := {.D, .Det, .rel, .P, .N, .who}) (b := .D) (by decide)
+      (by decide) (by decide) (by decide) (by decide) fun h =>
+        ((nPart_iff_of_unique (n := .two) (u := .P) (by decide) (by decide)).1 h).elim (by decide)
+          fun h => ((nPart_iff_of_unique (n := .two) (u := .rel) (by decide) (by decide)).1 h).elim
+            (by decide) (not_nPart_of_unique (n := .one) (u := .D) (by decide) (by decide) _)⟩
+
+/-! ### Subject islands -/
+
+/-- A subject `D` in the 2-part of `v`: its 1-part `rel` has 2-part `Det` and 1-part `rel'`, whose
+2-part is `who`. -/
+def subject : Parthood Node where
+  onePart
+    | .C => some .T | .T => some .v | .v => some .V | .D => some .rel | .rel => some .rel'
+    | .rel' => some .N | _ => none
+  twoPart | .v => some .D | .rel => some .Det | .rel' => some .who | _ => none
+
+/-- `subject` after `who` subjoins to `D`, under `T[uD]`. -/
+def thetic : Parthood Node where
+  onePart
+    | .C => some .T | .T => some .v | .v => some .V | .D => some .rel | .rel => some .rel'
+    | .rel' => some .N | _ => none
+  twoPart
+    | .v => some .D | .rel => some .Det | .rel' => some .who | .D => some .who | _ => none
+
+/-- `subject` after `Det[uD, Fam]` subjoins to `D`, as `T[uFam]` requires. -/
+def topic : Parthood Node where
+  onePart
+    | .C => some .T | .T => some .v | .v => some .V | .D => some .rel | .rel => some .rel'
+    | .rel' => some .N | _ => none
+  twoPart | .v => some .D | .rel => some .Det | .rel' => some .who | .D => some .Det | _ => none
+
+/-- The subject subjoins to `T` whether or not `Det` has filled its 2-part. -/
+theorem subject_itself : subject.CanSubjoin .D .T ∧ topic.CanSubjoin .D .T :=
+  ⟨⟨.v, .inr (.single (by decide)), .single (by decide)⟩,
+    ⟨.v, .inr (.single (by decide)), .single (by decide)⟩⟩
+
+/-- Under `T[uD]`, `who` subjoins to `D` and then to `C`. -/
+theorem subject_thetic :
+    subject.CanSubjoin .who .D ∧ subject.subjoin .who .D = some thetic ∧
+      thetic.CanSubjoin .who .C :=
+  ⟨⟨.rel', .inr (.single (by decide)), .tail (b := .rel) (.single (by decide)) (by decide)⟩,
+    by decide,
+    ⟨.v, .inr (.tail (b := .D) (.single (by decide)) (by decide)),
+      .tail (b := .T) (.single (by decide)) (by decide)⟩⟩
+
+/-- Under `T[uFam]`, `Det` fills `D`'s 2-part, and `who` can neither subjoin to `D` nor reach
+`C`. -/
+theorem subject_topic :
+    subject.subjoin .Det .D = some topic ∧ topic.subjoin .who .D = none ∧
+      ¬ topic.CanSubjoin .who .C :=
+  ⟨by decide, subjoin_eq_none_of_full rfl rfl,
+    not_canSubjoin_of_not_nPart_two (S := {.D, .Det, .rel, .rel', .N, .who}) (b := .D)
+      (by decide) (by decide) (by decide) (by decide) (by decide) fun h =>
+        ((nPart_iff_of_unique (n := .two) (u := .rel') (by decide) (by decide)).1 h).elim
+          (by decide) (not_nPart_of_unique (n := .one) (u := .rel) (by decide) (by decide) _)⟩
 
 end Adger2025

@@ -23,7 +23,6 @@ Source and strength classifications are NOT stipulated globally — each
 study derives its own from its theoretical commitments. See:
 - `LuPanDegen2025.lean`: `mosIslandSources`, `mosIslandStrength`
 - `ShenHuang2026.lean`: `definiteNominalSources`, `definiteNominalStrength`
-- `Adger2025.lean`: `adgerSubjectIslandSource`, `adgerDefiniteNominalSources`
 - `CartnerEtAl2026.lean`: `subjectIslandSource`
 -/
 

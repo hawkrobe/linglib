@@ -1,4 +1,4 @@
-import Linglib.Syntax.MereologicalSyntax.Basic
+import Linglib.Syntax.Mereological.Basic
 import Linglib.Studies.Borer2005
 
 /-!
@@ -12,7 +12,7 @@ independent uses of mereology in the library:
 
 1. **Semantic mereology** (`Semantics/Mereology.lean`): part-whole over entities.
    CUM (cumulative), QUA (quantized), Div (individuation to atoms).
-2. **Syntactic mereology** (`MereologicalSyntax/`): part-of over syntactic
+2. **Syntactic mereology** (`Mereological/`): part-of over syntactic
    objects. SynObj, subjoin, Dimensionality.
 
 The syntactic parthood structure *determines* which semantic operations

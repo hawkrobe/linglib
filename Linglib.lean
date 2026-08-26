@@ -2836,9 +2836,10 @@ import Linglib.Syntax.HPSG.Construction
 import Linglib.Syntax.HPSG.Description
 import Linglib.Syntax.HPSG.Interpretation
 import Linglib.Syntax.HPSG.Signature
-import Linglib.Syntax.MereologicalSyntax.Basic
-import Linglib.Syntax.MereologicalSyntax.Bridge
-import Linglib.Syntax.MereologicalSyntax.Interpretation
+import Linglib.Syntax.Mereological.AngularLocality
+import Linglib.Syntax.Mereological.Basic
+import Linglib.Syntax.Mereological.Interpretation
+import Linglib.Syntax.Mereological.Parthood
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Agree.Checking
 import Linglib.Syntax.Minimalist.Agree.Consistency
@@ -2910,7 +2911,6 @@ import Linglib.Syntax.Question
 import Linglib.Syntax.Reciprocal
 import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Syntax.RelativeClause.WALS
-import Linglib.Syntax.SynGraph
 import Linglib.Syntax.Tree.Basic
 import Linglib.Syntax.Tree.Cat
 import Linglib.Syntax.Voice.Alternation
@@ -2959,3 +2959,4 @@ import Linglib.Data.Examples.AckemaNeeleman2018
 import Linglib.Data.Examples.AckermanMalouf2013
 import Linglib.Data.Examples.Adamson2024
 import Linglib.Data.Examples.AdamsonAnagnostopoulou2025
+import Linglib.Data.Examples.Adger2025
