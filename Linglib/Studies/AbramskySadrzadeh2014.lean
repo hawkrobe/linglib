@@ -1,5 +1,4 @@
-import Mathlib.CategoryTheory.Sites.IsSheafFor
-import Mathlib.ModelTheory.Basic
+import Linglib.Semantics.Dynamic.DRS.Gluing
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Data.Finsupp.Basic
 import Mathlib.Algebra.BigOperators.Finsupp.Basic
@@ -14,28 +13,27 @@ Abramsky and Sadrzadeh model basic Discourse Representation Structures as a pres
 category of contexts — a finite vocabulary of relation symbols with a finite set of variables —
 and read anaphora resolution as sheaf gluing: the local theories of the parts of a discourse glue
 along a cover (the choice of which discourse referents to identify) exactly when some global theory
-restricts to each of them. `presheaf` is that functor, `Theory.restrict` its action on context
-morphisms, and `Cover.IsGluing` the gluing condition for a jointly surjective family of context
-morphisms, whose presieve is `Cover.presieve`.
+restricts to each of them. The presheaf is `DRT.presheaf`, covers and gluing are `DRT.Cover` and
+`DRT.Cover.IsGluing`, and the paper's reading of a cover as DRT's merge followed by unification of
+referents is `DRT.Cover.coe_conditions_toDRS_glue`.
 
 The paper's Proposition 1 says gluings are unique when they exist, its proof building the candidate
-`Cover.pushforward`. Uniqueness holds when every literal of the glued context factors through a
-cover map (`Cover.IsGluing.unique`, `Cover.isSeparatedFor_of_factors`), as in the first example
-(`snores_unique`), but fails on the paper's own second example, where `John(b)` is invisible to
-every restriction and may be added to the listed gluing (`isGluing_beats_insert`,
-`not_isSeparatedFor_beats`). What is unique is the least gluing: every gluing contains the
-pushforward (`Cover.IsGluing.pushforward_subset`), which glues whenever the vocabularies are
-pairwise disjoint and the cover maps injective (`Cover.isGluing_glue`). The two obstructions
-otherwise both occur in the paper: overlapping vocabularies in the discussion example
-(`not_exists_isGluing_overlap`) and inconsistency when *it* is merged with *John*
-(`not_exists_isGluing_merged`); the four linguistic examples are decided by kernel computation
-(`isGluing_snores`, `isGluing_beats`, `isGluing_grey`, `isGluing_broke`).
+`DRT.Cover.pushforward`. Uniqueness holds when every literal of the glued context factors through
+a cover map (`DRT.Cover.IsGluing.unique`), as in the first example (`snores_unique`), but fails on
+the paper's own second example, where `John(b)` is invisible to every restriction and may be added
+to the listed gluing (`isGluing_beats_insert`, `not_isSeparatedFor_beats`). What is unique is the
+least gluing, which glues whenever the vocabularies are pairwise disjoint and the cover maps
+injective (`DRT.Cover.isGluing_glue`); the two obstructions otherwise both occur in the paper:
+overlapping vocabularies in the discussion example (`not_exists_isGluing_overlap`) and
+inconsistency when *it* is merged with *John* (`not_exists_isGluing_merged`). The four linguistic
+examples are decided by kernel computation (`isGluing_snores`, `isGluing_beats`, `isGluing_grey`,
+`isGluing_broke`).
 
 The probabilistic half composes the presheaf with the distribution functor `distribution R` of a
-semiring `R`, whose gluing is `Cover.IsGluing (presheaf 𝓛 V ⋙ distribution R)`. The bananas
-discourse instantiates the paper's ranking of covers by corpus frequencies: pushing the covering
-distribution forward along the gluing map (`gluingDistribution`) makes *ripe bananas, cheeky
-monkeys* the most likely resolution (`gluingDistribution_ripe`).
+semiring `R`, whose gluing is `DRT.Cover.IsGluing (DRT.presheaf L V ⋙ distribution R)`. The
+bananas discourse instantiates the paper's ranking of covers by corpus frequencies: pushing the
+covering distribution forward along the gluing map (`gluingDistribution`) makes *ripe bananas,
+cheeky monkeys* the most likely resolution (`gluingDistribution_ripe`).
 
 ## References
 
@@ -46,247 +44,9 @@ monkeys* the most likely resolution (`gluingDistribution_ripe`).
 
 namespace AbramskySadrzadeh2014
 
-open CategoryTheory FirstOrder
+open CategoryTheory FirstOrder DRT
 
-universe u v w r
-
-section General
-
-/-! ### Contexts and the presheaf of basic DRS -/
-
-/-- A context `(L, X)`: a finite vocabulary of relation symbols and a finite set of variables. -/
-structure Context (𝓛 : Language.{u, v}) (V : Type w) where
-  /-- The vocabulary. -/
-  vocab : Finset (Σ n, 𝓛.Relations n)
-  /-- The variables. -/
-  vars : Finset V
-
-variable {𝓛 : Language.{u, v}} {V : Type w}
-
-/-- A context morphism: an inclusion of vocabularies together with a map of variables. -/
-structure Context.Hom (c c' : Context 𝓛 V) where
-  /-- The vocabulary inclusion. -/
-  incl : c.vocab ⊆ c'.vocab
-  /-- The variable map. -/
-  map : c.vars → c'.vars
-
-instance : Category (Context 𝓛 V) where
-  Hom := Context.Hom
-  id c := ⟨subset_rfl, id⟩
-  comp f g := ⟨f.incl.trans g.incl, g.map ∘ f.map⟩
-
-/-- A literal over a context: a signed atomic formula `±A(x̄)`. -/
-structure Literal (c : Context 𝓛 V) where
-  /-- The relation symbol. -/
-  rel : c.vocab
-  /-- The argument variables. -/
-  args : Fin rel.1.1 → c.vars
-  /-- The sign. -/
-  pos : Bool
-
-namespace Literal
-
-variable {c c' c'' : Context 𝓛 V}
-
-/-- Literals as dependent triples. -/
-def equivSigma (c : Context 𝓛 V) : Literal c ≃ Σ r : c.vocab, (Fin r.1.1 → c.vars) × Bool where
-  toFun l := ⟨l.rel, l.args, l.pos⟩
-  invFun l := ⟨l.1, l.2.1, l.2.2⟩
-  left_inv _ := rfl
-  right_inv _ := rfl
-
-/-- Substitution along a context morphism. -/
-def map (f : c ⟶ c') (l : Literal c) : Literal c' :=
-  ⟨⟨l.rel.1, f.incl l.rel.2⟩, f.map ∘ l.args, l.pos⟩
-
-@[simp] theorem map_id (l : Literal c) : l.map (𝟙 c) = l := rfl
-
-@[simp] theorem map_comp (f : c ⟶ c') (g : c' ⟶ c'') (l : Literal c) :
-    l.map (f ≫ g) = (l.map f).map g := rfl
-
-theorem map_injective {f : c ⟶ c'} (hf : Function.Injective f.map) :
-    Function.Injective (map f) := by
-  rintro ⟨⟨r, hr⟩, a, p⟩ ⟨⟨r', hr'⟩, a', p'⟩ h
-  obtain ⟨h₁, h₂, rfl⟩ := Literal.mk.inj h
-  obtain rfl := Subtype.mk.inj h₁
-  cases funext fun i => hf (congrFun (eq_of_heq h₂) i)
-  rfl
-
-/-- The complementary literal. -/
-def neg (l : Literal c) : Literal c := ⟨l.rel, l.args, !l.pos⟩
-
-@[simp] theorem neg_neg (l : Literal c) : l.neg.neg = l := by cases l; simp [neg]
-
-@[simp] theorem neg_map (f : c ⟶ c') (l : Literal c) : (l.map f).neg = l.neg.map f := rfl
-
-end Literal
-
-/-- A consistent finite set of literals over a context — the paper's `F(L, X)`, whose deductive
-closure adds no literals. -/
-@[ext] structure Theory (c : Context 𝓛 V) where
-  /-- The literals held true. -/
-  lits : Finset (Literal c)
-  /-- No literal occurs with both signs. -/
-  consistent : ∀ l ∈ lits, l.neg ∉ lits
-
-namespace Theory
-
-variable {c c' : Context 𝓛 V}
-
-instance : Bot (Theory c) := ⟨⟨∅, by simp⟩⟩
-
-@[simp] theorem lits_bot : (⊥ : Theory c).lits = ∅ := rfl
-
-end Theory
-
-variable [DecidableEq V] [∀ n, DecidableEq (𝓛.Relations n)]
-
--- Compared through non-dependent data, which kernel `decide` evaluates on enumerated literals.
-instance (c : Context 𝓛 V) : DecidableEq (Literal c) := fun l l' =>
-  decidable_of_iff (l.rel.1 = l'.rel.1 ∧ List.ofFn l.args = List.ofFn l'.args ∧ l.pos = l'.pos) (by
-    constructor
-    · rintro ⟨h₁, h₂, h₃⟩
-      obtain ⟨⟨r, hr⟩, a, p⟩ := l
-      obtain ⟨⟨r', hr'⟩, a', p'⟩ := l'
-      obtain rfl : r = r' := h₁
-      obtain rfl := List.ofFn_injective h₂
-      obtain rfl := h₃
-      rfl
-    · rintro rfl; exact ⟨rfl, rfl, rfl⟩)
-
-instance (c : Context 𝓛 V) : Fintype (Literal c) := Fintype.ofEquiv _ (Literal.equivSigma c).symm
-
-namespace Theory
-
-variable {c c' : Context 𝓛 V}
-
-instance : DecidableEq (Theory c) := fun _ _ => decidable_of_iff _ Theory.ext_iff.symm
-
-/-- Restriction along a context morphism: `F(f)(s) ⊢ ±A(x̄) ⟺ s ⊢ ±A(f(x̄))`. -/
-def restrict (f : c ⟶ c') (s : Theory c') : Theory c where
-  lits := Finset.univ.filter fun l => l.map f ∈ s.lits
-  consistent _ hl hn := s.consistent _ (Finset.mem_filter.1 hl).2 (Finset.mem_filter.1 hn).2
-
-@[simp] theorem mem_restrict {f : c ⟶ c'} {s : Theory c'} {l : Literal c} :
-    l ∈ (s.restrict f).lits ↔ l.map f ∈ s.lits := by simp [restrict]
-
-end Theory
-
-variable (𝓛 V) in
-/-- The presheaf of basic DRS: theories at each context, restriction along context morphisms. -/
-def presheaf : (Context 𝓛 V)ᵒᵖ ⥤ Type (max v w) where
-  obj c := Theory c.unop
-  map f := TypeCat.ofHom fun s => s.restrict f.unop
-
-@[simp] theorem presheaf_obj (c : (Context 𝓛 V)ᵒᵖ) : (presheaf 𝓛 V).obj c = Theory c.unop := rfl
-
-@[simp] theorem presheaf_map {c c' : (Context 𝓛 V)ᵒᵖ} (f : c ⟶ c') (s : Theory c.unop) :
-    (presheaf 𝓛 V).map f s = s.restrict f.unop := rfl
-
-/-! ### Covers and gluing -/
-
-/-- A cover of a context: a jointly surjective family of context morphisms into it
-(`⋃ Im fᵢ = X` and `L = ⋃ Lᵢ`). -/
-structure Cover (c : Context 𝓛 V) (ι : Type*) where
-  /-- The covering contexts. -/
-  part : ι → Context 𝓛 V
-  /-- The covering morphisms. -/
-  map : ∀ i, part i ⟶ c
-  exists_map_eq : ∀ x : c.vars, ∃ i y, (map i).map y = x
-  exists_mem_vocab : ∀ r ∈ c.vocab, ∃ i, r ∈ (part i).vocab
-
-namespace Cover
-
-variable {c : Context 𝓛 V} {ι : Type*} (C : Cover c ι)
-
-/-- The presieve of the covering morphisms. -/
-abbrev presieve : Presieve c := Presieve.ofArrows C.part C.map
-
-/-- `s` glues the family `x` over the cover: `P(fᵢ)(s) = xᵢ` for every `i`. -/
-def IsGluing (P : (Context 𝓛 V)ᵒᵖ ⥤ Type*) (x : ∀ i, P.obj (Opposite.op (C.part i)))
-    (s : P.obj (Opposite.op c)) : Prop :=
-  ∀ i, P.map (C.map i).op s = x i
-
-variable {C} {x : ∀ i, Theory (C.part i)} {s s' : Theory c}
-
-instance [Fintype ι] : Decidable (C.IsGluing (presheaf 𝓛 V) x s) :=
-  inferInstanceAs (Decidable (∀ i, s.restrict (C.map i) = x i))
-
-/-- The paper's candidate gluing `{±A(fᵢ(x̄)) | ±A(x̄) ∈ sᵢ}`. -/
-def pushforward [Fintype ι] (C : Cover c ι) (x : ∀ i, Theory (C.part i)) : Finset (Literal c) :=
-  Finset.univ.biUnion fun i => (x i).lits.image (Literal.map (C.map i))
-
-@[simp] theorem mem_pushforward [Fintype ι] {l : Literal c} :
-    l ∈ C.pushforward x ↔ ∃ i, ∃ m ∈ (x i).lits, m.map (C.map i) = l := by
-  simp [pushforward]
-
-theorem IsGluing.pushforward_subset [Fintype ι] (hs : C.IsGluing (presheaf 𝓛 V) x s) :
-    C.pushforward x ⊆ s.lits := by
-  intro l hl
-  obtain ⟨i, m, hm, rfl⟩ := mem_pushforward.1 hl
-  rw [← hs i] at hm
-  exact Theory.mem_restrict.1 hm
-
-/-- Every literal over the glued context is the image of a literal over some part. -/
-def Factors (C : Cover c ι) : Prop :=
-  ∀ l : Literal c, ∃ i, ∃ m : Literal (C.part i), m.map (C.map i) = l
-
-instance [Fintype ι] : Decidable C.Factors :=
-  inferInstanceAs (Decidable (∀ l : Literal c, ∃ i, ∃ m : Literal (C.part i), m.map (C.map i) = l))
-
-theorem IsGluing.lits_eq_pushforward [Fintype ι] (hC : C.Factors)
-    (hs : C.IsGluing (presheaf 𝓛 V) x s) : s.lits = C.pushforward x :=
-  subset_antisymm (fun l hl => by
-      obtain ⟨i, m, rfl⟩ := hC l
-      exact mem_pushforward.2 ⟨i, m, by rw [← hs i]; exact Theory.mem_restrict.2 hl, rfl⟩)
-    hs.pushforward_subset
-
-/-- Proposition 1, for covers through which every literal factors. -/
-theorem IsGluing.unique [Fintype ι] (hC : C.Factors) (hs : C.IsGluing (presheaf 𝓛 V) x s)
-    (hs' : C.IsGluing (presheaf 𝓛 V) x s') : s = s' :=
-  Theory.ext ((hs.lits_eq_pushforward hC).trans (hs'.lits_eq_pushforward hC).symm)
-
-/-- Proposition 1 in sheaf-theoretic terms: the presheaf is separated for a factoring cover. -/
-theorem isSeparatedFor_of_factors [Fintype ι] (hC : C.Factors) :
-    C.presieve.IsSeparatedFor (presheaf 𝓛 V) := fun x _ _ h h' =>
-  IsGluing.unique hC (x := fun i => x _ (.mk i))
-    ((Presieve.FamilyOfElements.isAmalgamation_iff_ofArrows _ _ x _).1 h)
-    ((Presieve.FamilyOfElements.isAmalgamation_iff_ofArrows _ _ x _).1 h')
-
-omit [DecidableEq V] [∀ n, DecidableEq (𝓛.Relations n)] in
-theorem eq_of_map_eq (hdisj : Pairwise fun i j => Disjoint (C.part i).vocab (C.part j).vocab)
-    {i j : ι} {m : Literal (C.part i)} {m' : Literal (C.part j)}
-    (h : m.map (C.map i) = m'.map (C.map j)) : i = j :=
-  by_contra fun hij => Finset.disjoint_left.1 (hdisj hij) m.rel.2
-    (by rw [show m.rel.1 = m'.rel.1 from congrArg (fun l : Literal c => l.rel.1) h]; exact m'.rel.2)
-
-/-- With pairwise disjoint vocabularies and injective cover maps the pushforward is consistent. -/
-def glue [Fintype ι] (C : Cover c ι)
-    (hdisj : Pairwise fun i j => Disjoint (C.part i).vocab (C.part j).vocab)
-    (hinj : ∀ i, Function.Injective (C.map i).map) (x : ∀ i, Theory (C.part i)) : Theory c where
-  lits := C.pushforward x
-  consistent _ hl hn := by
-    obtain ⟨i, m, hm, rfl⟩ := mem_pushforward.1 hl
-    obtain ⟨j, m', hm', h⟩ := mem_pushforward.1 hn
-    rw [Literal.neg_map] at h
-    obtain rfl : i = j := (C.eq_of_map_eq hdisj h).symm
-    exact (x i).consistent m hm (Literal.map_injective (hinj i) h ▸ hm')
-
-/-- Under disjoint vocabularies and injective cover maps the pushforward glues: the only
-obstruction to gluing is consistency, and it does not arise. -/
-theorem isGluing_glue [Fintype ι]
-    (hdisj : Pairwise fun i j => Disjoint (C.part i).vocab (C.part j).vocab)
-    (hinj : ∀ i, Function.Injective (C.map i).map) (x : ∀ i, Theory (C.part i)) :
-    C.IsGluing (presheaf 𝓛 V) x (C.glue hdisj hinj x) := fun i =>
-  Theory.ext (Finset.ext fun l => by
-    simp only [presheaf_map, Quiver.Hom.unop_op, Theory.mem_restrict, glue, mem_pushforward]
-    constructor
-    · rintro ⟨j, m, hm, h⟩
-      obtain rfl : i = j := (C.eq_of_map_eq hdisj h).symm
-      exact Literal.map_injective (hinj i) h ▸ hm
-    · exact fun hl => ⟨i, l, hl, rfl⟩)
-
-end Cover
+universe u r
 
 /-! ### The distribution functor -/
 
@@ -327,8 +87,6 @@ noncomputable def distribution : Type u ⥤ Type (max u r) where
   map_id _ := congrArg TypeCat.ofHom (funext fun d => by rw [hom_id]; exact Distribution.map_id d)
   map_comp f g := congrArg TypeCat.ofHom (funext fun d => by
     rw [hom_comp]; exact Distribution.map_comp f g d)
-
-end General
 
 /-! ### The paper's examples -/
 
