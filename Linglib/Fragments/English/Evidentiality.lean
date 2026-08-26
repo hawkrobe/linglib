@@ -16,8 +16,6 @@ namespace English.Evidentiality
 No grammatical evidentials per [aikhenvald-2004]; lexical
 strategies only. -/
 
-def evidentials : List Semantics.Evidential.Entry := []
-
-example : evidentials.length = 0 := by decide
+def evidentials : List Evidential := []
 
 end English.Evidentiality

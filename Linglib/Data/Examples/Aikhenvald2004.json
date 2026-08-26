@@ -15,7 +15,7 @@
     "readings": [],
     "paperFeatures": [
       ["system", "D1"],
-      ["cell", "visual"],
+      ["term", "visual"],
       ["source", "visual"]
     ],
     "comment": "Tariana's five-choice system: the evidential -ka is fused with recent past tense; omitting an evidential is ungrammatical."
@@ -36,7 +36,7 @@
     "readings": [],
     "paperFeatures": [
       ["system", "D1"],
-      ["cell", "nonvisualSensory"],
+      ["term", "sensory"],
       ["source", "nonvisual"]
     ],
     "comment": "Tariana's five-choice system: the evidential -mahka is fused with recent past tense; omitting an evidential is ungrammatical."
@@ -57,7 +57,7 @@
     "readings": [],
     "paperFeatures": [
       ["system", "D1"],
-      ["cell", "inferred"],
+      ["term", "inferred"],
       ["source", "inference"]
     ],
     "comment": "Tariana's five-choice system: the evidential -nihka is fused with recent past tense; omitting an evidential is ungrammatical."
@@ -78,7 +78,7 @@
     "readings": [],
     "paperFeatures": [
       ["system", "D1"],
-      ["cell", "assumed"],
+      ["term", "assumed"],
       ["source", "assumption"]
     ],
     "comment": "Tariana's five-choice system: the evidential -sika is fused with recent past tense; omitting an evidential is ungrammatical."
@@ -99,7 +99,7 @@
     "readings": [],
     "paperFeatures": [
       ["system", "D1"],
-      ["cell", "reported"],
+      ["term", "reported"],
       ["source", "report"]
     ],
     "comment": "Tariana's five-choice system: the evidential -pidaka is fused with recent past tense; omitting an evidential is ungrammatical."
@@ -120,7 +120,7 @@
     "readings": [],
     "paperFeatures": [
       ["system", "A2"],
-      ["cell", "nonfirsthand"],
+      ["term", "nonfirsthand"],
       ["source", "report"]
     ],
     "comment": "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson."
@@ -141,7 +141,7 @@
     "readings": [],
     "paperFeatures": [
       ["system", "A2"],
-      ["cell", "nonfirsthand"],
+      ["term", "nonfirsthand"],
       ["source", "inference"]
     ],
     "comment": "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson."
@@ -162,7 +162,7 @@
     "readings": [],
     "paperFeatures": [
       ["system", "A2"],
-      ["cell", "nonfirsthand"],
+      ["term", "nonfirsthand"],
       ["source", "nonvisual"]
     ],
     "comment": "The Turkish non-firsthand covers report, inference and non-visual perception; examples after Johanson."
@@ -184,7 +184,7 @@
     "readings": [],
     "paperFeatures": [
       ["system", "B1"],
-      ["cell", "firsthand"],
+      ["term", "visual"],
       ["source", "visual"]
     ],
     "comment": "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd."
@@ -206,7 +206,7 @@
     "readings": [],
     "paperFeatures": [
       ["system", "B1"],
-      ["cell", "inferred"],
+      ["term", "inferred"],
       ["source", "inference"]
     ],
     "comment": "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd."
@@ -228,7 +228,7 @@
     "readings": [],
     "paperFeatures": [
       ["system", "B1"],
-      ["cell", "reported"],
+      ["term", "reported"],
       ["source", "report"]
     ],
     "comment": "Wanka Quechua's three-choice system: direct -mi, inferred (conjectural) -chr(a), reported -shi; examples after Floyd."
@@ -272,7 +272,7 @@
     "readings": [],
     "paperFeatures": [
       ["system", "A2"],
-      ["cell", "nonfirsthand"],
+      ["term", "nonfirsthand"],
       ["source", "report"],
       ["extension", "epistemic"]
     ],

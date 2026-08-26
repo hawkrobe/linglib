@@ -19,7 +19,8 @@ namespace Abkhaz.Evidentiality
 open Semantics.Evidential
 
 /-- The non-firsthand affixes *-zaap'* and *-zaarən*. -/
-def evidentials : List Entry :=
-  [ .nonfirsthand { form := "-zaap'/-zaarən", exponent := .verbalAffix } ]
+def evidentials : List Evidential :=
+  [ { form := "-zaap'/-zaarən", exponent := .verbalAffix,
+      covers := {.inference, .assumption, .hearsay} } ]
 
 end Abkhaz.Evidentiality

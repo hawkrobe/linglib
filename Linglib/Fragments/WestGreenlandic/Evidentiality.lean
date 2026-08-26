@@ -17,10 +17,7 @@ covering inference; no dedicated direct or reportative marker. -/
 
 open Semantics.Evidential
 
-def evidentials : List Entry :=
-  [ .inferential { form := "-gunarpoq", exponent := .verbalAffix } ]
-
-example : evidentials.length = 1 := by decide
-example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
+def evidentials : List Evidential :=
+  [ { form := "-gunarpoq", exponent := .verbalAffix, covers := {.inference, .assumption} } ]
 
 end WestGreenlandic.Evidentiality

@@ -1,210 +1,114 @@
+import Mathlib.Data.Finset.Lattice.Fold
+import Mathlib.Tactic.DeriveFintype
+
 /-!
-# Evidential — lexical structure for evidential markers
-[aikhenvald-2004] [de-haan-2013] [murray-2017]
+# Evidentials
 
-The evidential as a lexical object, following the Determiner-API pattern
-(`Semantics/Definiteness/Determiner.lean`). The base `Evidential` carries only what is
-universal to all evidential markers — a surface `form`; each specialization
-(`DirectEvidential`, `ReportativeEvidential`, `InferentialEvidential`) adds
-its own structure: an `Exponent` (realization strategy) plus a fine-grained
-source value ([aikhenvald-2004]'s parameter carving).
+This file defines the evidential as a lexical object: a form, its realization, and the
+information sources it covers. Following Aikhenvald, information source is carved into six
+recurrent semantic parameters — visual, non-visual sensory, inference, assumption, hearsay and
+quotative — and an evidential covers a set of them: a firsthand term covers visual and sensory
+evidence together, a non-firsthand term covers inference, assumption and hearsay, a visual
+term covers visual evidence alone. A language's inventory is a `List Evidential` declared in
+its Fragment; it is well formed when no parameter is covered twice, so that the terms
+partition the parameters the language expresses (`Semantics/Evidential/Basic.lean`).
 
-A language's evidential inventory is a `List Evidential.Entry` (heterogeneous
-across the three kinds) declared in its Fragment. Typological classifications
-— WALS Ch 77 system-type, Ch 78 coding strategy, [aikhenvald-2004]
-paradigm system-type — are *derived* from the inventory, not stipulated:
-a language's WALS cell is a theorem about its declared evidentials.
+## Main definitions
 
-## Main declarations
+* `Semantics.Evidential.Parameter` — the six semantic parameters of information source.
+* `Semantics.Evidential.Exponent` — how an evidential is realized.
+* `Evidential` — the lexical entry; `Evidential.covers` its information sources.
+* `Evidential.IsDirect`, `IsInferential`, `IsReportative`, `IsNonfirsthand` — the coarse
+  kinds of term, as properties of coverage.
+* `Evidential.WellFormed`, `Evidential.expressed` — a paradigm's disjointness and its span.
 
-* `Evidential` — the base lexical-item record (just `form`).
-* `DirectEvidential`, `ReportativeEvidential`, `InferentialEvidential`,
-  `NonfirsthandEvidential` — the specializations: the three coarse sources and
-  the non-firsthand term that subsumes everything but firsthand evidence.
-* `Evidential.Exponent` — realization-strategy enum (analysis-neutral).
-* `DirectSource`, `ReportativeSource`, `InferentialBasis` — the
-  [aikhenvald-2004] fine-grained source taxonomies the specializations carry.
-* `Evidential.Entry` — an evidential occurrence in a language's inventory.
+## References
 
-## Implementation notes
-
-* The semantic side (Murray-style not-at-issue contribution, Faller-style
-  illocutionary modification, Korotkova-style modal force, Cumming-style
-  temporal anchoring) is deferred to `Studies/{Author}{Year}.lean` files
-  which provide opt-in typeclass instances on `Entry`. This file is the
-  framework-agnostic lexical and typological-derivation substrate only.
-* Mirrors the `Semantics/Definiteness/Determiner.lean` pattern: structure +
-  `Exponent` realization enum + `Entry` heterogeneous sum + typological
-  derivations as theorems about the declared inventory.
+* [aikhenvald-2004], §2.5
+* [willett-1988]
 -/
 
 namespace Semantics.Evidential
 
-/-! ### Fine-grained source taxonomies ([aikhenvald-2004]) -/
-
-/-- Sensory channel of a direct (firsthand) evidential. The visual vs
-    non-visual contrast is grammaticalized in many languages
-    (Tuyuca, Tariana, Kashaya); finer distinctions (auditory vs other
-    non-visual sensory) are grammaticalized in some (Kashaya). Languages
-    that don't grammaticalize the contrast use `.unspecified`. -/
-inductive DirectSource where
-  | unspecified
+/-- The six recurrent semantic parameters of information source. -/
+inductive Parameter where
+  /-- Information acquired through seeing. -/
   | visual
-  | auditory
-  | nonvisualSensory
-  deriving DecidableEq, Repr, Inhabited
+  /-- Information acquired through hearing, extended to smell, taste and touch. -/
+  | sensory
+  /-- Inference from visible or tangible evidence or result. -/
+  | inference
+  /-- Assumption from reasoning or general knowledge. -/
+  | assumption
+  /-- Reported information with no reference to its source. -/
+  | hearsay
+  /-- Reported information with overt reference to the quoted source. -/
+  | quotative
+  deriving DecidableEq, Repr, Fintype
 
-/-- Source-identity of a reportative evidential. [aikhenvald-2004]
-    distinguishes hearsay (original speaker not identified) from quotative
-    (specifically named source). -/
-inductive ReportativeSource where
-  | unspecified
-  | unidentified
-  | identified
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Basis of an inferential evidential. [aikhenvald-2004] distinguishes
-    inference `fromResult` (observable consequences) from `fromAssumption`
-    (general knowledge / reasoning). -/
-inductive InferentialBasis where
-  | unspecified
-  | fromResult
-  | fromAssumption
-  deriving DecidableEq, Repr, Inhabited
-
-/-- How an evidential is morphosyntactically realized. Analysis-neutral —
-    distinguishes Bulgarian-style TAM-fusion from Cuzco-Quechua-style
-    second-position clitic from Cheyenne-style clausal particle without
-    committing to a syntactic analysis. -/
+/-- How an evidential is morphosyntactically realized. -/
 inductive Exponent where
-  /-- A verbal affix or bound suffix (Kashaya `-yá`, Turkish `-mIş`). -/
+  /-- A verbal affix or bound suffix (Kashaya *-yá*, Turkish *-mIş*). -/
   | verbalAffix
-  /-- Fused into the TAM paradigm (Bulgarian indirect in the perfect). -/
+  /-- Fused into the TAM paradigm (the Bulgarian *l*-form). -/
   | tamFusion
-  /-- A second-position (Wackernagel) clitic (Cuzco Quechua `-si`/`-chá`). -/
+  /-- A second-position clitic (Cuzco Quechua *-si*, *-chá*). -/
   | clitic2P
-  /-- A clausal particle, typically clause-final (Cheyenne `=sėstse`,
-      Japanese `soo da`). -/
+  /-- A clausal particle, typically clause-final (Cheyenne *=sėstse*). -/
   | clauseParticle
-  /-- A parenthetical / matrix-frame construction (English "I hear"). -/
+  /-- A parenthetical or matrix-frame construction (English *I hear*). -/
   | parenthetical
-  /-- A grammaticalized lexical frame (Korean `-tay` matrix quotative). -/
+  /-- A grammaticalized lexical frame (Korean *-tay*). -/
   | lexicalFrame
-  /-- Tonal or ablaut realization (some Akha and Tibeto-Burman cases). -/
+  /-- Tonal or ablaut realization. -/
   | toneAblaut
   deriving DecidableEq, Repr
 
 end Semantics.Evidential
 
-open Semantics.Evidential (DirectSource ReportativeSource InferentialBasis)
-
-/-- The base evidential lexical item: only what is universal — a surface
-    form. Specializations (`DirectEvidential`, `ReportativeEvidential`,
-    `InferentialEvidential`) `extends` this. -/
+/-- An evidential: its form, its realization, and the information sources it covers. -/
 structure Evidential where
-  /-- Surface form (a representative morpheme or construction label). -/
+  /-- A representative morpheme or construction label. -/
   form : String
-  deriving DecidableEq, Repr
-
-/-- A direct (firsthand) evidential: signals that the speaker has direct
-    sensory evidence for the prejacent. The `source` field records the
-    sensory channel for languages that grammaticalize it (visual vs
-    non-visual sensory, etc.). -/
-structure DirectEvidential extends Evidential where
+  /-- The realization strategy. -/
   exponent : Semantics.Evidential.Exponent
-  /-- Aikhenvald-fine sensory channel (visual / auditory / …). Defaults
-      to `.unspecified` for languages that don't grammaticalize the
-      contrast. -/
-  source : DirectSource := .unspecified
-  deriving DecidableEq, Repr
+  /-- The semantic parameters the term covers. -/
+  covers : Finset Semantics.Evidential.Parameter
+  deriving DecidableEq
 
-/-- A reportative (hearsay / quotative) evidential: signals that the speaker
-    learned the prejacent from another speaker. `sourceIdentity` records
-    whether the original speaker is named (`identified` — quotative) or
-    not (`unidentified` — hearsay). -/
-structure ReportativeEvidential extends Evidential where
-  exponent : Semantics.Evidential.Exponent
-  /-- Whether the original speaker is identified. -/
-  sourceIdentity : ReportativeSource := .unspecified
-  deriving DecidableEq, Repr
+namespace Evidential
 
-/-- An inferential evidential: signals that the speaker reasoned to the
-    prejacent from indirect evidence. `basis` records whether the
-    inference is from observable results (Aikhenvald `fromResult`) or
-    from general knowledge / reasoning (Aikhenvald `fromAssumption`). -/
-structure InferentialEvidential extends Evidential where
-  exponent : Semantics.Evidential.Exponent
-  /-- The basis of inference. -/
-  basis : InferentialBasis := .unspecified
-  deriving DecidableEq, Repr
+open Semantics.Evidential
 
-/-- A non-firsthand evidential: one term covering everything but firsthand
-    evidence — inference, assumption, hearsay, and often non-visual
-    perception — the marked term of [aikhenvald-2004]'s two-choice A1 and
-    A2 systems (Turkish *-mIş*, Abkhaz *-zaap'*). -/
-structure NonfirsthandEvidential extends Evidential where
-  exponent : Semantics.Evidential.Exponent
-  deriving DecidableEq, Repr
+/-- A direct evidential covers firsthand evidence only. -/
+def IsDirect (e : Evidential) : Prop := e.covers.Nonempty ∧ e.covers ⊆ {.visual, .sensory}
 
-namespace Semantics.Evidential
+/-- An inferential evidential covers inference or assumption only. -/
+def IsInferential (e : Evidential) : Prop :=
+  e.covers.Nonempty ∧ e.covers ⊆ {.inference, .assumption}
 
-/-- An evidential occurrence in a language's inventory: one of the three
-    coarse kinds or a non-firsthand term, carrying its typed payload. -/
-inductive Entry where
-  | direct       (e : DirectEvidential)
-  | reportative  (e : ReportativeEvidential)
-  | inferential  (e : InferentialEvidential)
-  | nonfirsthand (e : NonfirsthandEvidential)
-  deriving DecidableEq, Repr
+/-- A reportative evidential covers hearsay or quotation only. -/
+def IsReportative (e : Evidential) : Prop :=
+  e.covers.Nonempty ∧ e.covers ⊆ {.hearsay, .quotative}
 
-namespace Entry
+/-- A non-firsthand evidential covers inference and hearsay together but not visual evidence:
+the marked term of a two-choice system. -/
+def IsNonfirsthand (e : Evidential) : Prop :=
+  .inference ∈ e.covers ∧ .hearsay ∈ e.covers ∧ .visual ∉ e.covers
 
-/-- The occurrence is a direct evidential. -/
-def IsDirect : Entry → Prop
-  | .direct _ => True
-  | _         => False
+instance : DecidablePred IsDirect := fun _ => inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred IsInferential := fun _ => inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred IsReportative := fun _ => inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred IsNonfirsthand := fun _ => inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-instance : DecidablePred IsDirect := fun e => by
-  cases e <;> unfold IsDirect <;> infer_instance
+/-- The parameters an inventory expresses. -/
+def expressed (es : List Evidential) : Finset Parameter := (es.map covers).toFinset.sup id
 
-/-- The occurrence is a reportative evidential. -/
-def IsReportative : Entry → Prop
-  | .reportative _ => True
-  | _              => False
+/-- An inventory is well formed when distinct terms cover disjoint parameters. -/
+def WellFormed (es : List Evidential) : Prop :=
+  ∀ a ∈ es, ∀ b ∈ es, a ≠ b → Disjoint a.covers b.covers
 
-instance : DecidablePred IsReportative := fun e => by
-  cases e <;> unfold IsReportative <;> infer_instance
+instance : DecidablePred WellFormed := fun es =>
+  inferInstanceAs (Decidable (∀ a ∈ es, ∀ b ∈ es, a ≠ b → Disjoint a.covers b.covers))
 
-/-- The occurrence is an inferential evidential. -/
-def IsInferential : Entry → Prop
-  | .inferential _ => True
-  | _              => False
-
-instance : DecidablePred IsInferential := fun e => by
-  cases e <;> unfold IsInferential <;> infer_instance
-
-/-- The occurrence is a non-firsthand evidential. -/
-def IsNonfirsthand : Entry → Prop
-  | .nonfirsthand _ => True
-  | _               => False
-
-instance : DecidablePred IsNonfirsthand := fun e => by
-  cases e <;> unfold IsNonfirsthand <;> infer_instance
-
-/-- The realization strategy of an entry. -/
-def exponent : Entry → Exponent
-  | .direct e       => e.exponent
-  | .reportative e  => e.exponent
-  | .inferential e  => e.exponent
-  | .nonfirsthand e => e.exponent
-
-/-- The surface form of an entry. -/
-def form : Entry → String
-  | .direct e       => e.form
-  | .reportative e  => e.form
-  | .inferential e  => e.form
-  | .nonfirsthand e => e.form
-
-end Entry
-
-end Semantics.Evidential
+end Evidential

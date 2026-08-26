@@ -15,6 +15,6 @@ the inventory is empty. WALS codes the language as indirect-only.
 
 namespace Korean.Evidentiality
 
-def evidentials : List Semantics.Evidential.Entry := []
+def evidentials : List Evidential := []
 
 end Korean.Evidentiality

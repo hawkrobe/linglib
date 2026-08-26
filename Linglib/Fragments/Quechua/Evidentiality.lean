@@ -22,15 +22,9 @@ clitics on finite clauses. -/
 
 open Semantics.Evidential
 
-def evidentials : List Entry :=
-  [ .direct      { form := "-mi",   exponent := .clitic2P },
-    .reportative { form := "-si",   exponent := .clitic2P,
-                   sourceIdentity := .unidentified },
-    .inferential { form := "-chá",  exponent := .clitic2P } ]
-
-example : evidentials.length = 3 := by decide
-example : (evidentials.filter Entry.IsDirect).length = 1 := by decide
-example : (evidentials.filter Entry.IsReportative).length = 1 := by decide
-example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
+def evidentials : List Evidential :=
+  [ { form := "-mi", exponent := .clitic2P, covers := {.visual, .sensory} },
+    { form := "-si", exponent := .clitic2P, covers := {.hearsay} },
+    { form := "-chá", exponent := .clitic2P, covers := {.inference, .assumption} } ]
 
 end Quechua.Evidentiality

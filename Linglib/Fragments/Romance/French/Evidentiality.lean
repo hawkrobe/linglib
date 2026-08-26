@@ -16,6 +16,6 @@ grammatical reportative, codes the language as indirect-only.
 
 namespace French.Evidentiality
 
-def evidentials : List Semantics.Evidential.Entry := []
+def evidentials : List Evidential := []
 
 end French.Evidentiality
