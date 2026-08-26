@@ -1,0 +1,1612 @@
+[
+  {
+    "id": "adamsonzompi2025_2a",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(2a)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Te la hanno affidata.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "They have entrusted her to you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "2"
+      ],
+      [
+        "accusative",
+        "3"
+      ],
+      [
+        "cell",
+        "2>3"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_2b",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(2b)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Glie la hanno affidata.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "They have entrusted her to her/him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "3"
+      ],
+      [
+        "cell",
+        "3>3"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_3a",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(3a)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Gli ti hanno affidato.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: They have entrusted you to her/him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "2"
+      ],
+      [
+        "cell",
+        "3>2"
+      ]
+    ],
+    "comment": "Ungrammatical in either clitic order and with either allomorph (gli/le, ti/te).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_4a",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(4a)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Intendo affidargliela.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I intend to entrust her to her/him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "3"
+      ],
+      [
+        "cell",
+        "3>3"
+      ],
+      [
+        "host",
+        "infinitive enclisis"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_4b",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(4b)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Intendo affidarglieti.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: I intend to entrust you to him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "2"
+      ],
+      [
+        "cell",
+        "3>2"
+      ],
+      [
+        "host",
+        "infinitive enclisis"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_5a",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(5a)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Gli hanno affidato te.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "They have entrusted you to her/him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "2 stressed"
+      ],
+      [
+        "repair",
+        "stressed pronoun"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_5b",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(5b)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Ti hanno affidato a lui.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "They have entrusted you to her/him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3 PP"
+      ],
+      [
+        "accusative",
+        "2"
+      ],
+      [
+        "repair",
+        "prepositional dative"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_6",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(6)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Mi ti hanno affidato.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "They have entrusted you to me / me to you.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "1 or 2"
+      ],
+      [
+        "accusative",
+        "2 or 1"
+      ],
+      [
+        "cell",
+        "1>2 / 2>1"
+      ]
+    ],
+    "comment": "Marked %: accepted by Weak PCC speakers, rejected by Strong PCC speakers.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_8a",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(8a)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Lei è qui.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You (polite) are here.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Lei sei qui.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "subject",
+        "LEI"
+      ],
+      [
+        "agreement",
+        "3SG"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_10",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(10)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "(Lei) si vede.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You (polite) see yourself.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "(Lei) ti vede.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "subject",
+        "LEI"
+      ],
+      [
+        "reflexive",
+        "3 si"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_11c",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(11c)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Ce La hanno portata.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "They have brought you (polite) there.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "La ci hanno portata.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "accusative",
+        "LEI"
+      ],
+      [
+        "order",
+        "LOC > LEI"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_14",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(14)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "La ho vista ieri in TV.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Doctor Biagi, I saw you on TV yesterday.",
+    "context": "Addressed to Dottor Biagi.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "La ho visto ieri in TV.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "accusative",
+        "LEI"
+      ],
+      [
+        "participle agreement",
+        "F.SG obligatory"
+      ]
+    ],
+    "comment": "Adapted from Maiden and Robustelli 2013; participle agreement matches the formal feminine of LEI, not the referent's gender.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_16",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(16)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Glie la hanno affidata.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "They have entrusted her to her/him/you (polite).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "LEI or 3"
+      ],
+      [
+        "accusative",
+        "3"
+      ],
+      [
+        "cell",
+        "LEI>3"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_17",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(17)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Glie La hanno affidata.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: They have entrusted you (polite) to her/him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "LEI"
+      ],
+      [
+        "cell",
+        "3>LEI"
+      ]
+    ],
+    "comment": "String-identical to (16) apart from capitalization.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_18",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(18)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Io glie La avevo affidata sperando che La curasse perbene.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: I entrusted you to him hoping that he would take proper care of you.",
+    "context": "Oh avvocato, come sta? Non sa quanto mi è dispiaciuto che il mio medico L'abbia trattata male. Quello lì è proprio un cretino, sa?",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "LEI"
+      ],
+      [
+        "cell",
+        "3>LEI"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_19a",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(19a)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Glie la hanno raccomandata.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "They have recommended her to you (polite).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "LEI"
+      ],
+      [
+        "accusative",
+        "3"
+      ],
+      [
+        "cell",
+        "LEI>3"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_19b",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(19b)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Glie La hanno raccomandata.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: They have recommended you (polite) to her/him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "LEI"
+      ],
+      [
+        "cell",
+        "3>LEI"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_20a",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(20a)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Intendo affidarGliela.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I intend to entrust her to her/him/you (polite).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "LEI or 3"
+      ],
+      [
+        "accusative",
+        "3"
+      ],
+      [
+        "host",
+        "infinitive enclisis"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_20b",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(20b)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Intendo affidarglieLa.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: I intend to entrust you (polite) to her/him.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "LEI"
+      ],
+      [
+        "host",
+        "infinitive enclisis"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_21a",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(21a)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Gli hanno affidato Lei.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "They have entrusted you (polite) to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "LEI stressed"
+      ],
+      [
+        "repair",
+        "stressed pronoun"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_21b",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(21b)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "La hanno affidata a lui.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "They have entrusted you (polite) to him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3 PP"
+      ],
+      [
+        "accusative",
+        "LEI"
+      ],
+      [
+        "repair",
+        "prepositional dative"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_24",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(24)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Micol la fa pettinare a Carlo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Micol is making Carlo comb her hair.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Micol ti fa pettinare a Carlo.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "faire infinitif"
+      ],
+      [
+        "causee",
+        "3"
+      ],
+      [
+        "accusative",
+        "3"
+      ]
+    ],
+    "comment": "Adapted from D'Alessandro and Pescarini 2016; the Fancy Constraint.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_25",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(25)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Signor Biagi, Micol La fa pettinare a Carlo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: Signor Biagi, Micol is making Carlo comb your hair.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "faire infinitif"
+      ],
+      [
+        "causee",
+        "3"
+      ],
+      [
+        "accusative",
+        "LEI"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_26",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(26)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Micol fa pettinare Lei a Carlo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Micol makes Carlo comb your (polite) hair.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "faire infinitif"
+      ],
+      [
+        "causee",
+        "3"
+      ],
+      [
+        "accusative",
+        "LEI stressed"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_27",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(27)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Vostro Onore, glie lo hanno già presentato, all'ambasciatrice?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Have they already introduced Your Honor to the ambassador?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "3 resuming camouflage nominal"
+      ],
+      [
+        "cell",
+        "3>imposter"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_29a",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(29a)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Il signor Duca, glie lo hanno già presentato, all'ambasciatrice?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Have they already introduced the duke (you) to the ambassador?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "3 resuming imposter"
+      ],
+      [
+        "cell",
+        "3>imposter"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_30",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(30)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Lei e l'ambasciatore di Svezia vi incontrerete domani.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You (polite) and the ambassador from Sweden will meet tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Lei e l'ambasciatore di Svezia si incontreranno domani.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "LEI + 3"
+      ],
+      [
+        "resolved",
+        "2PL"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_31",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(31)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Vostro Onore e l'ambasciatore di Svezia si incontreranno domani.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Your Honor and the ambassador from Sweden will meet tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Vostro Onore e l'ambasciatore di Svezia vi incontrerete domani.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "camouflage + 3"
+      ],
+      [
+        "resolved",
+        "3PL"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_32",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(32)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Il signor Duca e l'ambasciatore di Svezia si incontreranno domani.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The duke (you) and the ambassador from Sweden will meet tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Il signor Duca e l'ambasciatore di Svezia vi incontrerete domani.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "imposter + 3"
+      ],
+      [
+        "resolved",
+        "3PL"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_42",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(42)"
+    },
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Yo la respeto (a usted).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I respect you (polite).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "accusative",
+        "USTED"
+      ],
+      [
+        "clitic",
+        "3SG la"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_43",
+    "source": {
+      "bibkey": "rezac-2011",
+      "paperLabel": "(43)"
+    },
+    "reportedIn": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(43)"
+    },
+    "language": "stan1288",
+    "primaryText": "Se la presentaré (a los estudiantes).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I will introduce her / you (polite) to the students.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "accusative 3SG.F",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "accusative USTED",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "dative",
+        "3 (spurious se)"
+      ],
+      [
+        "accusative",
+        "3 or USTED"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_44a",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(44a)"
+    },
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Yo se lo encomendé (con la esperanza de que lo cuidara bien).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I entrusted him to you (in the hope that you would take good care of him).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "USTED or 3"
+      ],
+      [
+        "accusative",
+        "3"
+      ],
+      [
+        "cell",
+        "USTED>3"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_44b",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(44b)"
+    },
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Yo se lo encomendé (con la esperanza de que lo cuidara bien).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: I entrusted you (polite) to her/him.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "USTED"
+      ],
+      [
+        "cell",
+        "3>USTED"
+      ]
+    ],
+    "comment": "String-identical to (44a); the reading with accusative USTED is unavailable.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_45b",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(45b)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Sie sind nett.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You (polite, SG or PL) are nice.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Sie bist nett.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "subject",
+        "SIE"
+      ],
+      [
+        "agreement",
+        "3PL"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_46b",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(46b)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "weil dich ihm irgendwer vorgestellt hat",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: because someone introduced you to him",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "2"
+      ],
+      [
+        "cell",
+        "3>2"
+      ],
+      [
+        "position",
+        "Wackernagel cluster before subject"
+      ]
+    ],
+    "comment": "Reported from Anagnostopoulou 2008; the effect is restricted and judgments unstable.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_47",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(47)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Wer Maria und Johanna liebt, hat auch Angst, dass sie ihm jemand wegnehmen könnte.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Whoever loves Maria and Johanna is also afraid that someone could take them away from him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "3PL"
+      ],
+      [
+        "cell",
+        "3>3"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_48",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(48)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Wer Sie liebt, hat auch Angst, dass Sie ihm jemand wegnehmen könnte.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: Whoever loves you (polite) is also afraid that someone could take you away from him.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "3"
+      ],
+      [
+        "accusative",
+        "SIE"
+      ],
+      [
+        "cell",
+        "3>SIE"
+      ]
+    ],
+    "comment": "Marked ??/*; the authors flag the need for experimental confirmation.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_49a",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(49a)"
+    },
+    "reportedIn": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(49a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Du bist Martin.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You are Martin.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "assumed identity"
+      ],
+      [
+        "DP1",
+        "2SG"
+      ],
+      [
+        "DP2",
+        "3SG"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_49b",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(49b)"
+    },
+    "reportedIn": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(49b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Martin ist du.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: Martin is you.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "assumed identity"
+      ],
+      [
+        "DP1",
+        "3SG"
+      ],
+      [
+        "DP2",
+        "2SG"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_50a",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(50a)"
+    },
+    "reportedIn": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(50a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Die Kinder sind der Baum.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The children are the tree.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "assumed identity"
+      ],
+      [
+        "DP1",
+        "3PL"
+      ],
+      [
+        "DP2",
+        "3SG"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_50b",
+    "source": {
+      "bibkey": "coon-keine-2021",
+      "paperLabel": "(50b)"
+    },
+    "reportedIn": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(50b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Maria ist die Bäume.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: Maria is the trees.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "assumed identity"
+      ],
+      [
+        "DP1",
+        "3SG"
+      ],
+      [
+        "DP2",
+        "3PL"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_52",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(52)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Die Zwillinge sind sie.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The twins are them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Die Zwillinge sind ihr.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "assumed identity"
+      ],
+      [
+        "DP1",
+        "3PL"
+      ],
+      [
+        "DP2",
+        "3PL"
+      ]
+    ],
+    "comment": "DP2 sie marked (?).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_53",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(53)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Die Zwillinge sind Sie.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The twins are you (SG or PL).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "assumed identity"
+      ],
+      [
+        "DP1",
+        "3PL"
+      ],
+      [
+        "DP2",
+        "SIE"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_fn27i",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "fn. 27 (i)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Maria ist Sie.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: Maria is you (SG or PL).",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "assumed identity"
+      ],
+      [
+        "DP1",
+        "3SG"
+      ],
+      [
+        "DP2",
+        "SIE"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_55b",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(55b)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Me la hanno affidata.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "They have entrusted her to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "1"
+      ],
+      [
+        "accusative",
+        "3"
+      ],
+      [
+        "cell",
+        "1>3"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonzompi2025_56",
+    "source": {
+      "bibkey": "adamson-zompi-2025",
+      "paperLabel": "(56)"
+    },
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Me La hanno affidata.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Doctor Biagi, they have entrusted you to me.",
+    "context": "Addressed to Dottor Biagi.",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dative",
+        "1"
+      ],
+      [
+        "accusative",
+        "LEI"
+      ],
+      [
+        "cell",
+        "1>LEI"
+      ]
+    ],
+    "comment": "Marked %: rejected by some speakers who accept (55a); no correlation with (55a) judgments was found.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
