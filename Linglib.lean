@@ -95,6 +95,7 @@ import Linglib.Core.Computability.Variety.OmegaEquations
 import Linglib.Core.Computability.Variety.Definite
 import Linglib.Core.Computability.Variety.SemigroupLangs
 import Linglib.Core.Data.Fin.Tuple.Basic
+import Linglib.Core.Data.Fin.VecNotation
 import Linglib.Core.Data.Fintype.ExistsUnique
 import Linglib.Core.Data.Fintype.List
 import Linglib.Core.Data.Fintype.Sets
@@ -165,7 +166,10 @@ import Linglib.Logic.Modal.FirstOrder.Correspondence
 import Linglib.Core.ModelTheory.Lindstrom
 import Linglib.Core.ModelTheory.QuantifierRank
 import Linglib.Core.ModelTheory.TotalPreorder
-import Linglib.Logic.PIP.Basic
+import Linglib.Logic.PIP.Syntax
+import Linglib.Logic.PIP.Semantics
+import Linglib.Logic.PIP.Felicity
+import Linglib.Logic.PIP.Intensional
 import Linglib.Logic.Team.BSML.Bisimulation
 import Linglib.Logic.Team.BSML.Bridge
 import Linglib.Logic.Team.BSML.Characteristic

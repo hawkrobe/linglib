@@ -1,4 +1,6 @@
-import Linglib.Logic.PIP.Basic
+import Linglib.Core.Data.Fin.VecNotation
+import Linglib.Logic.PIP.Felicity
+import Linglib.Logic.PIP.Intensional
 import Linglib.Data.Examples.KeshetAbney2024
 
 /-!
@@ -28,9 +30,9 @@ assignment sending `w` to it.
 
 * `Scenario`, `Scenario.model` — an intensional model with accessibility, an
   antecedent description and a continuation.
-* `descE`, `base`, `Modal.apply`, `pronoun`, `continuation`, `discourse` — the
-  antecedent description, the modal base `β_w`, `might_w`/`must_w` (35), the
-  summation pronoun `Σbφ | single(Σbφ)` (71), and the discourse
+* `descE`, `base`, `Modal.apply`, `continuation`, `discourse` — the antecedent
+  description, the modal base `β_w`, `might_w`/`must_w` (35), the continuation
+  with its summation pronoun `Σbφ | single(Σbφ)` (71), and the discourse
   `modal_w(Σwφ) ∧ E ≡ … ∧ cont_w(Σbφ | single(Σbφ))` with `φ` the label `E`
   before expansion and its definition after.
 * `discourseMight`, `discourseMust`, `plain`, `bathroom` — (80b)+(82b), (89),
@@ -132,12 +134,9 @@ def Modal.apply : Modal → Tm → Tm → Fm
   | .might, β, ψ => .some_ β ψ
   | .must, β, ψ => .subset β ψ
 
-/-- `Σbφ | single(Σbφ)`: the summation pronoun with its singular
-presupposition (71), (82b). -/
-def pronoun (φ : Fm) : Tm := .presup (.sigma .b φ) (.sg (.sigma .b φ))
-
-/-- `cont_w(Σbφ | single(Σbφ))`: the continuation (82b). -/
-def continuation (φ : Fm) : Fm := .atom .cont (.var .w) ![pronoun φ]
+/-- `cont_w(Σbφ | single(Σbφ))`: the continuation (82b), with the summation pronoun
+`Term.sgPronoun` (71). -/
+def continuation (φ : Fm) : Fm := .atom .cont (.var .w) ![Term.sgPronoun .b φ]
 
 /-- `modal_w(Σwφ) ∧ E ≡ desc_w([b]) ∧ single(b) ∧ cont_w(Σbφ | single(Σbφ))`. -/
 def discourse (m : Modal) (φ : Fm) : Fm :=
@@ -163,23 +162,23 @@ def bathroom : Fm :=
 
 theorem expandSelf_discourseMight : discourseMight.expandSelf = discourse .might descE := by
   rw [Formula.expandSelf, show discourseMight.defs = [(.E, descE)] from rfl, Formula.expand]
-  simp only [List.foldl_cons, List.foldl_nil, discourseMight, discourse, Modal.apply,
-    Formula.some_, continuation, pronoun, descE, access, base, Formula.substLabels,
-    Term.substLabels, assignment, vecCons_map, vecEmpty_map, reduceIte, Option.getD_some]
+  simp only [List.foldl_cons, List.foldl_nil, discourseMight, discourse, Modal.apply, Formula.some_,
+    continuation, Term.sgPronoun, descE, access, base, Formula.substLabels, Term.substLabels,
+    assignment, Matrix.comp_vecCons, Matrix.comp_vecEmpty, reduceIte, Option.getD_some]
 
 theorem expandSelf_discourseMust : discourseMust.expandSelf = discourse .must descE := by
   rw [Formula.expandSelf, show discourseMust.defs = [(.E, descE)] from rfl, Formula.expand]
   simp only [List.foldl_cons, List.foldl_nil, discourseMust, discourse, Modal.apply,
-    continuation, pronoun, descE, access, base, Formula.substLabels, Term.substLabels,
-    assignment, vecCons_map, vecEmpty_map, reduceIte, Option.getD_some]
+    continuation, Term.sgPronoun, descE, access, base, Formula.substLabels, Term.substLabels,
+    assignment, Matrix.comp_vecCons, Matrix.comp_vecEmpty, reduceIte, Option.getD_some]
 
 theorem expandSelf_bathroom :
     bathroom.expandSelf =
       .conj (.disj (.neg (.exists_ .b descE)) (continuation descE)) (.labelDef .X descE) := by
   rw [Formula.expandSelf, show bathroom.defs = [(.X, descE)] from rfl, Formula.expand]
-  simp only [List.foldl_cons, List.foldl_nil, bathroom, Formula.disj, continuation, pronoun,
-    descE, Formula.substLabels, Term.substLabels, assignment, vecCons_map, vecEmpty_map,
-    reduceIte, Option.getD_some]
+  simp only [List.foldl_cons, List.foldl_nil, bathroom, Formula.disj, continuation, Term.sgPronoun,
+    descE, Formula.substLabels, Term.substLabels, assignment, Matrix.comp_vecCons,
+    Matrix.comp_vecEmpty, reduceIte, Option.getD_some]
 
 /-! ### Values and felicity at a world of evaluation -/
 
@@ -195,9 +194,9 @@ theorem felicitous_access : access.Felicitous S.model h :=
 
 theorem realize_descE :
     descE.Realize S.model h ↔ ∃ w e, h .w = world w ∧ h .b = {Sum.inr e} ∧ S.desc w e := by
-  simp only [descE, Formula.realize_conj, Formula.realize_atom, Formula.realize_sg, vecCons_map,
-    vecEmpty_map, Term.realize_var, Term.realize_bvar, Scenario.model, Model.intensional_apply₁,
-    Matrix.cons_val_zero]
+  simp only [descE, Formula.realize_conj, Formula.realize_atom, Formula.realize_sg,
+    Matrix.comp_vecCons, Matrix.comp_vecEmpty, Term.realize_var, Term.realize_bvar, Scenario.model,
+    Model.intensional_apply₁, Matrix.cons_val_zero]
   constructor
   · rintro ⟨⟨w, hw, -, hall⟩, a, ha⟩
     obtain ⟨e, rfl, he⟩ := hall a (by rw [ha]; exact Set.mem_singleton a)
@@ -244,8 +243,8 @@ theorem realize_base :
     base.realize S.model h = {a | ∃ w u, h .w = world w ∧ a = Sum.inl u ∧ S.acc w u} := by
   ext a
   rw [base, Term.mem_realize_sigma, Set.mem_ofPred_eq]
-  simp only [access, Formula.realize_atom, vecCons_map, vecEmpty_map, Term.realize_var,
-    Scenario.model, Model.intensional_apply₁, Matrix.cons_val_zero]
+  simp only [access, Formula.realize_atom, Matrix.comp_vecCons, Matrix.comp_vecEmpty,
+    Term.realize_var, Scenario.model, Model.intensional_apply₁, Matrix.cons_val_zero]
   constructor
   · rintro ⟨g', hg, ha, w, hw, -, hall⟩
     obtain ⟨u, rfl, hacc⟩ := hall a ha
@@ -290,10 +289,9 @@ theorem felicitous_modal (m : Modal) :
     Term.felicitous_sigma_of_forall _ _ (felicitous_descE S), and_self]
 
 theorem felicitous_pronoun_iff (hw : h .w = world w₀) :
-    (pronoun descE).Felicitous S.model h ↔ ∃! e, S.desc w₀ e := by
-  simp only [pronoun, Term.felicitous_presup, Formula.felicitous_sg, Formula.realize_sg,
-    Term.felicitous_sigma_of_forall _ _ (felicitous_descE S), true_and,
-    realize_sigmaB_descE S h hw, exists_eq_singleton_iff]
+    (Term.sgPronoun .b descE).Felicitous S.model h ↔ ∃! e, S.desc w₀ e := by
+  rw [Term.felicitous_sgPronoun, realize_sigmaB_descE S h hw, exists_eq_singleton_iff]
+  exact and_iff_right (Term.felicitous_sigma_of_forall _ _ (felicitous_descE S))
 
 theorem felicitous_continuation_iff (hw : h .w = world w₀) :
     (continuation descE).Felicitous S.model h ↔ ∃! e, S.desc w₀ e := by
