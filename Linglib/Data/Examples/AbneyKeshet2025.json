@@ -1,0 +1,1477 @@
+[
+  {
+    "id": "abneykeshet2025_10",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(10)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A dog appeared. It barked.",
+    "discourseSegments": [
+      "A dog appeared.",
+      "It barked."
+    ],
+    "glossedTokens": [],
+    "translation": "A dog appeared. It barked.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "pronoun",
+        "simple"
+      ],
+      [
+        "phenomenon",
+        "cross-sentential anaphora"
+      ]
+    ],
+    "comment": "Syntactic scope anaphora: the indefinite's local variable is closed by the discourse-level summation over the world.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_15",
+    "source": {
+      "bibkey": "geach-1962",
+      "paperLabel": "donkey sentence"
+    },
+    "reportedIn": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(15)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every farmer who owns a donkey pets it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every farmer who owns a donkey pets it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "every"
+      ],
+      [
+        "pronoun",
+        "donkey"
+      ]
+    ],
+    "comment": "Resumptive scope anaphora: the restriction label repeated in the nuclear scope closes the donkey variable for both indefinite and pronoun.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_16",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(16)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Most dogs bark.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Most dogs bark.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "most"
+      ]
+    ],
+    "comment": "A generalized quantifier as a relation between the summation of the restriction and of the restriction-plus-scope.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_20",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(20)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Most farmers who own a donkey pet it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Most farmers who own a donkey pet it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "most"
+      ],
+      [
+        "pronoun",
+        "donkey"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_45a",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(45a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Chris loves her.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Chris loves her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "pronoun",
+        "simple"
+      ]
+    ],
+    "comment": "The LF tree and the PIP tree of its meaning have the same shape.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_47",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(47)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A red dog barked.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A red dog barked.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "indefinite"
+      ]
+    ],
+    "comment": "The tree whose interpretation introduces restricted variables and the operation FX.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_66",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(66)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every girl wrote a paper.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every girl wrote a paper.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "every"
+      ]
+    ],
+    "comment": "Quantifier raising inserts two summation operators labeled with the restriction set and the reference set.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_80a",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(80a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Most girls wrote a paper. All of them did something for a grade.",
+    "discourseSegments": [
+      "Most girls wrote a paper.",
+      "All of them did something for a grade."
+    ],
+    "glossedTokens": [],
+    "translation": "Most girls wrote a paper. All of them did something for a grade.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "them = the girls (the restriction set)",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "operator",
+        "most"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ],
+      [
+        "antecedent",
+        "restriction set"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_80b",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(80b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Most girls wrote a paper. But a few of them left it at home.",
+    "discourseSegments": [
+      "Most girls wrote a paper.",
+      "But a few of them left it at home."
+    ],
+    "glossedTokens": [],
+    "translation": "Most girls wrote a paper. But a few of them left it at home.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "them = the girls that wrote a paper (the reference set)",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "operator",
+        "most"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ],
+      [
+        "antecedent",
+        "reference set"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_80c",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(80c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Most girls wrote a paper. In fact, they were mostly girls.",
+    "discourseSegments": [
+      "Most girls wrote a paper.",
+      "In fact, they were mostly girls."
+    ],
+    "glossedTokens": [],
+    "translation": "Most girls wrote a paper. In fact, they were mostly girls.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "they = the individuals that wrote a paper (the scope set)",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "operator",
+        "most"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ],
+      [
+        "antecedent",
+        "scope set"
+      ]
+    ],
+    "comment": "No DP denotes the simple scope set, so it is not an antecedent.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_98",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(98)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every girl wrote a paper. They are on Ms. Marple's desk.",
+    "discourseSegments": [
+      "Every girl wrote a paper.",
+      "They are on Ms. Marple's desk."
+    ],
+    "glossedTokens": [],
+    "translation": "Every girl wrote a paper. They are on Ms. Marple's desk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "they = the papers the girls wrote",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "operator",
+        "every"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ]
+    ],
+    "comment": "The summation pronoun sums the paper variable of the reference-set label, presupposing plurality.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_101",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(101)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Most dogs bark. They are loud.",
+    "discourseSegments": [
+      "Most dogs bark.",
+      "They are loud."
+    ],
+    "glossedTokens": [],
+    "translation": "Most dogs bark. They are loud.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "they = the dogs that bark",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "operator",
+        "most"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_105",
+    "source": {
+      "bibkey": "nouwen-2003",
+      "paperLabel": "(5.8)"
+    },
+    "reportedIn": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(105)"
+    },
+    "language": "stan1293",
+    "primaryText": "Three students each wrote exactly two papers. They each sent them to L&P.",
+    "discourseSegments": [
+      "Three students each wrote exactly two papers.",
+      "They each sent them to L&P."
+    ],
+    "glossedTokens": [],
+    "translation": "Three students each wrote exactly two papers. They each sent them to L&P.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "distributive: each student sent in their own two papers",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "collective over the papers: each student sent all six papers",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "operator",
+        "each"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ]
+    ],
+    "comment": "The collective reading, unavailable in Dynamic Plural Logic, is the summation pronoun over the papers written.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_106",
+    "source": {
+      "bibkey": "brasoveanu-2008",
+      "paperLabel": "(8)"
+    },
+    "reportedIn": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(106)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every parent who gives three balloons to two boys expects them to end up fighting (each other) for them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every parent who gives three balloons to two boys expects them to end up fighting (each other) for them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "collective: all the boys, all the balloons",
+        "judgment": "marginal"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "operator",
+        "every"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ]
+    ],
+    "comment": "The collective reading is available but dispreferred without pragmatic support for the boys gathering.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_107a",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(107a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every parent who had two children at Tappan Middle School was pleased when they (all) formed a rock band, the Tappin' Twofers, just for kids with siblings at the school.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every parent who had two children at Tappan Middle School was pleased when they (all) formed a rock band, the Tappin' Twofers, just for kids with siblings at the school.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "collective: all the children",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "operator",
+        "every"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_107b",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(107b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who ordered two or more drinks decided it was easier to just split the bill for them (all) evenly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Everyone who ordered two or more drinks decided it was easier to just split the bill for them (all) evenly.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "collective: all the drinks",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "operator",
+        "everyone"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_108",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(108)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Some girls were having lunch in the cafeteria. They waved to some boys having lunch there, too.",
+    "discourseSegments": [
+      "Some girls were having lunch in the cafeteria.",
+      "They waved to some boys having lunch there, too."
+    ],
+    "glossedTokens": [],
+    "translation": "Some girls were having lunch in the cafeteria. They waved to some boys having lunch there, too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Some girls were having lunch in the cafeteria. They waved to some other girls having lunch there, too.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "some"
+      ],
+      [
+        "pronoun",
+        "simple"
+      ]
+    ],
+    "comment": "A simple pronoun to a weak indefinite is not exhaustive: other lunching girls may be mentioned.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_109",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(109)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Most girls were having lunch in the cafeteria. They waved to some boys having lunch there, too.",
+    "discourseSegments": [
+      "Most girls were having lunch in the cafeteria.",
+      "They waved to some boys having lunch there, too."
+    ],
+    "glossedTokens": [],
+    "translation": "Most girls were having lunch in the cafeteria. They waved to some boys having lunch there, too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Most girls were having lunch in the cafeteria. They waved to some other girls having lunch there, too.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "most"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ]
+    ],
+    "comment": "A summation pronoun is exhaustive: it denotes all the girls lunching, so 'other girls' lunching is infelicitous.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_110",
+    "source": {
+      "bibkey": "jacobson-2000",
+      "paperLabel": "paycheck sentence"
+    },
+    "reportedIn": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(110)"
+    },
+    "language": "stan1293",
+    "primaryText": "The woman who saved her paycheck was wiser than the woman who spent it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The woman who saved her paycheck was wiser than the woman who spent it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "pronoun",
+        "paycheck"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_111",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(111)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Almost every girl brought the diorama she made to class. Very few of them forgot it at home.",
+    "discourseSegments": [
+      "Almost every girl brought the diorama she made to class.",
+      "Very few of them forgot it at home."
+    ],
+    "glossedTokens": [],
+    "translation": "Almost every girl brought the diorama she made to class. Very few of them forgot it at home.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "it = the diorama made by each of the few",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "operator",
+        "almost every"
+      ],
+      [
+        "pronoun",
+        "paycheck"
+      ]
+    ],
+    "comment": "The antecedent label contains the free variable of the girl, rebound by 'few'; the pronoun refers to dioramas not mentioned before.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_113",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(113)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who owns an umbrella brought it to school today.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Everyone who owns an umbrella brought it to school today.",
+    "context": "Some people own more than one umbrella; each brought only one, or a few brought more than one.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "weak: one umbrella per owner suffices",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "operator",
+        "everyone"
+      ],
+      [
+        "pronoun",
+        "donkey"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_114",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(114)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who owns an umbrella brought it to school today. They are in that rack.",
+    "discourseSegments": [
+      "Everyone who owns an umbrella brought it to school today.",
+      "They are in that rack."
+    ],
+    "glossedTokens": [],
+    "translation": "Everyone who owns an umbrella brought it to school today. They are in that rack.",
+    "context": "At least one person brought more than one umbrella.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "they = all the umbrellas actually brought, not one per owner",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "operator",
+        "everyone"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_115",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(115)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who brought something valuable locked it up.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Everyone who brought something valuable locked it up.",
+    "context": "A few people brought more than one valuable item.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "strong: each locked up all their valuables",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "operator",
+        "everyone"
+      ],
+      [
+        "pronoun",
+        "donkey"
+      ]
+    ],
+    "comment": "The strong reading with the indefinite as a generalized quantifier and 'it' a summation pronoun over the valuables brought.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_117a",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(117a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Almost every student brought an umbrella today. Most (of them) used it, too.",
+    "discourseSegments": [
+      "Almost every student brought an umbrella today.",
+      "Most (of them) used it, too."
+    ],
+    "glossedTokens": [],
+    "translation": "Almost every student brought an umbrella today. Most (of them) used it, too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "most"
+      ],
+      [
+        "pronoun",
+        "donkey"
+      ],
+      [
+        "phenomenon",
+        "quantificational subordination"
+      ]
+    ],
+    "comment": "The indefinite under the first quantifier antecedes a pronoun in the nuclear scope of the subordinate quantifier.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_117b",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(117b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Almost every student brought an umbrella today. Every one (of them) who used it stayed dry.",
+    "discourseSegments": [
+      "Almost every student brought an umbrella today.",
+      "Every one (of them) who used it stayed dry."
+    ],
+    "glossedTokens": [],
+    "translation": "Almost every student brought an umbrella today. Every one (of them) who used it stayed dry.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "every"
+      ],
+      [
+        "pronoun",
+        "donkey"
+      ],
+      [
+        "phenomenon",
+        "quantificational subordination"
+      ]
+    ],
+    "comment": "The novel observation: the pronoun may also appear in the subordinate quantifier's restriction.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_130a",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(130a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If she has a pet, it must be a donkey.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If she has a pet, it must be a donkey.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "must"
+      ],
+      [
+        "pronoun",
+        "donkey"
+      ]
+    ],
+    "comment": "A conditional donkey sentence: the modal's nuclear scope is subordinate to its if-clause restriction.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_131a",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(131a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It might rain.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It might rain.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "might"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_132",
+    "source": {
+      "bibkey": "roberts-1987",
+      "paperLabel": "modal subordination"
+    },
+    "reportedIn": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(132)"
+    },
+    "language": "stan1293",
+    "primaryText": "A wolf might enter. It would eat Tasty Tim first.",
+    "discourseSegments": [
+      "A wolf might enter.",
+      "It would eat Tasty Tim first."
+    ],
+    "glossedTokens": [],
+    "translation": "A wolf might enter. It would eat Tasty Tim first.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "might"
+      ],
+      [
+        "pronoun",
+        "donkey"
+      ],
+      [
+        "phenomenon",
+        "modal subordination"
+      ]
+    ],
+    "comment": "The second modal's restriction is anaphoric to the first's nuclear-scope label.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_134",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(134)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "He doesn't have a pen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He doesn't have a pen.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "negation"
+      ]
+    ],
+    "comment": "Negation existentially closes the indefinite: summation over worlds.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_135",
+    "source": {
+      "bibkey": "sells-1985",
+      "paperLabel": "modal subordination from negation"
+    },
+    "reportedIn": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(135)"
+    },
+    "language": "stan1293",
+    "primaryText": "He doesn't own a car. It would be too expensive.",
+    "discourseSegments": [
+      "He doesn't own a car.",
+      "It would be too expensive."
+    ],
+    "glossedTokens": [],
+    "translation": "He doesn't own a car. It would be too expensive.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "negation"
+      ],
+      [
+        "phenomenon",
+        "modal subordination"
+      ]
+    ],
+    "comment": "Negation antecedes modal subordination.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_138a",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(138a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not like he doesn't own a car. It is just in the shop.",
+    "discourseSegments": [
+      "It's not like he doesn't own a car.",
+      "It is just in the shop."
+    ],
+    "glossedTokens": [],
+    "translation": "It's not like he doesn't own a car. It is just in the shop.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "it = the car he owns",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "operator",
+        "negation"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ]
+    ],
+    "comment": "Anaphora out of double negation: the label embedded under two negations is accessible to a summation pronoun.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_139",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(139)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "He doesn't own a car. It is in the shop.",
+    "discourseSegments": [
+      "He doesn't own a car.",
+      "It is in the shop."
+    ],
+    "glossedTokens": [],
+    "translation": "He doesn't own a car. It is in the shop.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "negation"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ]
+    ],
+    "comment": "The set of his cars is empty, so the pronoun's singular presupposition fails.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_140",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(140)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary thinks I don't have a child, but I am a parent. He lives in England.",
+    "discourseSegments": [
+      "Mary thinks I don't have a child, but I am a parent.",
+      "He lives in England."
+    ],
+    "glossedTokens": [],
+    "translation": "Mary thinks I don't have a child, but I am a parent. He lives in England.",
+    "context": "Suggested by Matthew Mandelkern as a possible overgeneration.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "negation"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ]
+    ],
+    "comment": "Odd through the difficulty of accommodating the gender and number presuppositions of 'he', not through inaccessibility of the label.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_141a",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(141a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary thinks I don't have a son, but she's wrong. She just hasn't met him yet.",
+    "discourseSegments": [
+      "Mary thinks I don't have a son, but she's wrong.",
+      "She just hasn't met him yet."
+    ],
+    "glossedTokens": [],
+    "translation": "Mary thinks I don't have a son, but she's wrong. She just hasn't met him yet.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "negation"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_141b",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(141b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary thinks I don't have any children, but I am actually a father several times over. She just hasn't ever met any of them!",
+    "discourseSegments": [
+      "Mary thinks I don't have any children, but I am actually a father several times over.",
+      "She just hasn't ever met any of them!"
+    ],
+    "glossedTokens": [],
+    "translation": "Mary thinks I don't have any children, but I am actually a father several times over. She just hasn't ever met any of them!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "negation"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_142",
+    "source": {
+      "bibkey": "roberts-1987",
+      "paperLabel": "bathroom sentence"
+    },
+    "reportedIn": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(142)"
+    },
+    "language": "stan1293",
+    "primaryText": "Either there is no bathroom here or it's in a funny place.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Either there is no bathroom here or it's in a funny place.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "disjunction"
+      ],
+      [
+        "pronoun",
+        "summation"
+      ]
+    ],
+    "comment": "Attributed to Barbara Partee; felicity reduces to: if there is a bathroom here, it is unique.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_146a",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(146a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every monarchy cherishes its monarch.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every monarchy cherishes its monarch.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "every"
+      ],
+      [
+        "phenomenon",
+        "presupposition projection"
+      ]
+    ],
+    "comment": "No presupposition as a whole: the nuclear scope includes the restriction, which satisfies the pronoun's presupposition pointwise.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_146b",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(146b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Some people in my apartment building who own a bicycle own a car, too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Some people in my apartment building who own a bicycle own a car, too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "some"
+      ],
+      [
+        "phenomenon",
+        "presupposition projection"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_146c",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(146c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Most of my friends who used to smoke have quit smoking by now.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Most of my friends who used to smoke have quit smoking by now.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "most"
+      ],
+      [
+        "phenomenon",
+        "presupposition projection"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_147",
+    "source": {
+      "bibkey": "heim-1992",
+      "paperLabel": "(53)"
+    },
+    "reportedIn": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(147)"
+    },
+    "language": "stan1293",
+    "primaryText": "John believes that Mary is the only one here, but he wishes that Susan were here too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John believes that Mary is the only one here, but he wishes that Susan were here too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "believe"
+      ],
+      [
+        "phenomenon",
+        "presupposition projection"
+      ]
+    ],
+    "comment": "The presupposition of 'too' under 'wishes' is satisfied by the label of the belief report, as in modal subordination.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_150a",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(150a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "In the 1700s, every European country was a monarchy. Most of them cherished their monarchs.",
+    "discourseSegments": [
+      "In the 1700s, every European country was a monarchy.",
+      "Most of them cherished their monarchs."
+    ],
+    "glossedTokens": [],
+    "translation": "In the 1700s, every European country was a monarchy. Most of them cherished their monarchs.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "most"
+      ],
+      [
+        "phenomenon",
+        "presupposition projection"
+      ],
+      [
+        "phenomenon",
+        "quantificational subordination"
+      ]
+    ],
+    "comment": "Presupposition satisfaction across quantificational subordination: the first sentence's reference-set label is the second quantifier's restriction.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_150b",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(150b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone in my apartment building owns a bicycle. Some of them own a car, too.",
+    "discourseSegments": [
+      "Everyone in my apartment building owns a bicycle.",
+      "Some of them own a car, too."
+    ],
+    "glossedTokens": [],
+    "translation": "Everyone in my apartment building owns a bicycle. Some of them own a car, too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "some"
+      ],
+      [
+        "phenomenon",
+        "presupposition projection"
+      ],
+      [
+        "phenomenon",
+        "quantificational subordination"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "abneykeshet2025_150c",
+    "source": {
+      "bibkey": "abney-keshet-2025",
+      "paperLabel": "(150c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every friend of mine used to smoke. But most of them have quit smoking by now.",
+    "discourseSegments": [
+      "Every friend of mine used to smoke.",
+      "But most of them have quit smoking by now."
+    ],
+    "glossedTokens": [],
+    "translation": "Every friend of mine used to smoke. But most of them have quit smoking by now.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "operator",
+        "most"
+      ],
+      [
+        "phenomenon",
+        "presupposition projection"
+      ],
+      [
+        "phenomenon",
+        "quantificational subordination"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
