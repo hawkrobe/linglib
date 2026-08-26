@@ -1,8 +1,6 @@
 import Mathlib.CategoryTheory.Sites.IsSheafFor
 import Mathlib.ModelTheory.Basic
 import Mathlib.Data.Fin.VecNotation
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Data.Fintype.Sigma
 import Mathlib.Data.Finsupp.Basic
 import Mathlib.Algebra.BigOperators.Finsupp.Basic
 import Mathlib.Tactic.DeriveFintype
