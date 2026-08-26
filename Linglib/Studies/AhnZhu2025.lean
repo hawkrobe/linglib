@@ -1,226 +1,180 @@
-/-
-Copyright (c) 2026 Robert Hawkins. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Robert Hawkins
--/
-import Linglib.Semantics.Possessive.Relational
-import Linglib.Semantics.Definiteness.Defs
+import Linglib.Semantics.Possessive.Basic
 import Linglib.Studies.Jenks2018
 import Linglib.Data.Examples.AhnZhu2025
 
 /-!
-# Ahn & Zhu (2025): A bridge to definiteness
-[ahn-zhu-2025]
+# Bridging with Mandarin bare nouns and demonstratives
 
-Mandarin lacks a definite article; it marks definiteness with **bare nouns** and
-with **demonstrative descriptions** (*na*-CL-N). [ahn-zhu-2025] use *bridging* —
-the licensing of a definite whose referent was not introduced in the context — to
-probe which mechanism underlies each form, and propose that the demonstrative
-*na* is a **relationalizing definite**.
+Mandarin marks definiteness with bare nouns and with *na*-CL-N demonstrative descriptions. Ahn
+and Zhu probe which mechanism each form carries through bridging, a definite whose referent was
+never mentioned: part-whole bridging is resolvable by situational uniqueness, relational bridging
+needs an anaphoric relatum. Four studies find that both forms bridge both ways, with a preference
+for bare nouns in part-whole bridging; that English *that* is degraded where *na* is not; and,
+decisively, that a bare noun bridges relationally only when the noun is lexically relational
+(*zuozhe* 'author' but not *xiaoshuo-jia* 'novelist'), while *na* bridges with either. Neither an
+anti-uniqueness presupposition on *na* nor an Index! principle forcing the indexed form whenever
+an antecedent is available survives the data.
 
-## The analysis (eq. 48, eq. 44a)
+The analysis keeps the uniqueness ι for the bare noun and re-analyses *na* as a relationalizing
+definite whose restrictor is the π-shifted noun, `ιx[P(x)(sᵣ) ∧ R(z,x)(sᵣ)]` for a contextual
+relation `R` and an index `z`. That restrictor is `Possessive.viaModifier z P R` (`na`); a
+relational noun with its relatum dropped is `Possessive.viaArgument z Rel`; felicity is the
+substrate's `iotaPresupposition`. `na_of_two_satisfiers` shows the relation restoring uniqueness
+where the bare ι fails, `na_identity_iff` recovers the strong article as the identity-relation
+case, and `na_iff_bare_of_related` isolates the situations where `R` is redundant and the two
+forms compete on economy, which covers part-whole bridging (`na_seat_redundant`) and the moon.
+The Study 4 item runs through both routes: the bare non-relational noun fails
+(`bare_novelist_fails`) while `na_novelist`, `bare_author` and `na_ex_author` each pick the
+author. `index_contradicted_by_bare_relational` states the comparison drawn with Index!, and the
+closing theorems check the Studies' rows: *na* bridges everywhere (`na_bridges`), the bare noun
+bridges relationally exactly with a relational noun (`bare_relational_iff_lexical`), English
+*that* is never fully acceptable in bridging (`that_degraded`), and the *of* and *de*
+diagnostics classify the nouns (`of_iff_relational`, `de_of_relational`).
 
-The paper's denotations are built on [schwarz-2009]'s situation-semantic definite
-article and [jenks-2018]'s ι type-shifter; [barker-2011]'s relationalizer `π` and
-detransitivizer `Ex` (and [vikner-jensen-2002]'s `Prag`) supply the relational
-sub-component. Writing `sᵣ` for the resource situation:
+## References
 
-* bare definite (eq. 44a): `⟦bare P⟧ = λsᵣ. ιx[P(x)(sᵣ)]` — the unique `P` in `sᵣ`
-  (situational uniqueness; Schwarz-weak).
-* *na* definite (eq. 48): `⟦na P⟧ = λsᵣ. λz. ιx[π(P)(z)(x)(sᵣ)] = ιx[P(x)(sᵣ) ∧ R(z,x)(sᵣ)]`
-  — the unique `x` that is `P` **and** bears the contextual relation `R` to the
-  index `z`. Here `ι` (uniqueness) is the *definiteness*; `π` (relationalization)
-  is what *na* adds.
-
-## Layered grounding
-
-This file is a thin consumer of `Semantics/Possessive/Relational.lean`
-(Barker's `π`, `Ex`, `iotaPresupposition`, `naSemantics`, `bareSemantics`,
-`CanFillRelatum`). It does **not** re-implement them. `ι` is modelled by the
-substrate's `iotaPresupposition` (the existence-and-uniqueness presupposition a
-definite carries); the felicity of a definite is the holding of that
-presupposition.
-
-## Main results
-
-* `na_restores_uniqueness` — the keystone. When a sortal noun `P` is *not*
-  situationally unique (≥ 2 satisfiers), the bare definite's uniqueness
-  presupposition fails, but adding `R(z, ·)` via `π` (= *na*) narrows the
-  extension to a singleton, so the *na* definite is felicitous. The bridging
-  asymmetry is a consequence of `π` restoring uniqueness, not a stipulation.
-* `relational_bare_felicitous` — a lexically relational noun supplies its own
-  relatum (eq. 57–58: covert possessor / Mandarin argument-drop), so bare bridging
-  is licensed without *na*.
-* `bridge_licensed_iff` — the Study-4 2×2 as a derived fact over the substrate's
-  `CanFillRelatum`: relational bridging is licensed iff *na* applies **or** the
-  noun is lexically relational (i.e. fails exactly at bare + non-relational).
-* `diverges_from_jenks_on_bare_relational` — [ahn-zhu-2025] vs [jenks-2018]: Ahn &
-  Zhu license bare relational bridging, whereas Jenks's `Index!` (Maximize
-  Presupposition) strictly prefers the indexed *na* form whenever an antecedent is
-  available. The two accounts assign opposite status to the bare relational cell.
+* [ahn-zhu-2025]
+* [barker-2011]
+* [jenks-2018]
+* [schwarz-2009]
+* [dayal-jiang-2023]
+* [bremmers-etal-2022]
+* [vikner-jensen-2002]
 -/
 
 namespace AhnZhu2025
 
-open ArgumentStructure.Relational
-open Semantics.Definiteness
+open ArgumentStructure.Relational Possessive
 
-variable {E S : Type*}
+variable {E S : Type*} (P : E → S → Prop) (R : E → E → S → Prop) (z : E) (s : S)
 
-/-! ### The two definite-forming routes (eq. 44a, eq. 48) -/
+/-! ### Bare nouns and *na* -/
 
-/-- Felicity of a **bare** definite (eq. 44a): the uniqueness presupposition of
-the noun alone. *bare P* denotes the unique `x` with `P x` in `s` — situational
-uniqueness (Schwarz-weak / [jenks-2018]'s ι). -/
-def bareDefiniteFelicitous (P : E → S → Prop) (s : S) : Prop :=
-  iotaPresupposition (bareSemantics P) s
+/-- The *na* restrictor `na P R z x s ↔ P x s ∧ R z x s`: the noun relationalized by `π` with
+the index `z` in the relatum slot; the definite `ιx[P(x)(sᵣ) ∧ R(z,x)(sᵣ)]` is its
+`iotaPresupposition`. -/
+abbrev na : E → S → Prop := viaModifier z P R
 
-/-- Felicity of a **na** definite (eq. 48): the uniqueness presupposition of the
-relationalized predicate `π P R`. *na P* (with index `z`) denotes the unique `x`
-with `P x ∧ R z x` in `s`. The `ι` is the definiteness; the `π` is what *na*
-adds. -/
-def naDefiniteFelicitous (P : E → S → Prop) (R : E → E → S → Prop) (z : E) (s : S) : Prop :=
-  iotaPresupposition (naSemantics P R z) s
+/-- Two satisfiers of the noun defeat the bare noun's uniqueness presupposition; the relation to
+the index can restore it. -/
+theorem na_of_two_satisfiers (h : ∃ a b, a ≠ b ∧ P a s ∧ P b s) (hR : ∃! x, P x s ∧ R z x s) :
+    ¬ iotaPresupposition P s ∧ iotaPresupposition (na P R z) s :=
+  ⟨fun ⟨_, _, hu⟩ => let ⟨_, _, hab, ha, hb⟩ := h; hab ((hu _ ha).trans (hu _ hb).symm), hR⟩
 
-/-! ### The relationalizer restores uniqueness -/
+/-- With the identity relation *na* is the strong article: felicitous iff the indexed entity is
+`P`. -/
+theorem na_identity_iff : iotaPresupposition (na P (fun a b _ => a = b) z) s ↔ P z s :=
+  ⟨fun ⟨_, ⟨h, hz⟩, _⟩ => hz ▸ h, fun h => ⟨z, ⟨h, rfl⟩, fun _ hy => hy.2.symm⟩⟩
 
-/-- **Keystone.** A sortal noun `P` that is *not* situationally unique (two
-distinct satisfiers) cannot head a bare definite — its uniqueness presupposition
-fails. But *na* conjoins the contextual relation `R(z, ·)` via `π`, and if that
-narrows the extension to a singleton, the *na* definite **is** felicitous.
+/-- When every `P` in `s` bears `R` to the index, the relation is redundant: *na* and the bare
+noun have the same extension. -/
+theorem na_iff_bare_of_related (h : ∀ x, P x s → R z x s) (x : E) : na P R z x s ↔ P x s :=
+  ⟨And.left, fun hx => ⟨hx, h x hx⟩⟩
 
-This is [ahn-zhu-2025]'s bridging asymmetry *derived* from the denotations: the
-gap between bare and *na* is `π` restoring the `ι` presupposition, not a
-stipulation. -/
-theorem na_restores_uniqueness
-    (P : E → S → Prop) (R : E → E → S → Prop) (z : E) (s : S)
-    (hAmbiguous : ∃ a b, a ≠ b ∧ P a s ∧ P b s)
-    (hDisambiguated : ∃! x, P x s ∧ R z x s) :
-    ¬ bareDefiniteFelicitous P s ∧ naDefiniteFelicitous P R z s := by
-  refine ⟨?_, ?_⟩
-  · rintro ⟨x, _, huniq⟩
-    obtain ⟨a, b, hab, ha, hb⟩ := hAmbiguous
-    exact hab ((huniq a ha).trans (huniq b hb).symm)
-  · obtain ⟨x, hx, huniq⟩ := hDisambiguated
-    exact ⟨x, hx, huniq⟩
+theorem iotaPresupposition_na_iff (h : ∀ x, P x s → R z x s) :
+    iotaPresupposition (na P R z) s ↔ iotaPresupposition P s :=
+  existsUnique_congr (na_iff_bare_of_related P R z s h)
 
-/-- A lexically **relational** noun (a two-place predicate) supplies its own relatum: with the
-antecedent `z` filling the internal argument (eq. 57–58: covert possessor /
-Mandarin argument-drop), the bare definite's uniqueness presupposition can be met
-without *na*. This is why bare relational bridging is licensed. -/
-theorem relational_bare_felicitous
-    (Rel : E → E → S → Prop) (z : E) (s : S)
-    (hUnique : ∃! x, Rel z x s) :
-    bareDefiniteFelicitous (fun x => Rel z x) s := by
-  obtain ⟨x, hx, huniq⟩ := hUnique
-  exact ⟨x, hx, huniq⟩
+/-! ### Part-whole bridging: bike and seat -/
 
-/-! ### The bridging asymmetry as `InterpretationSource` (Study 4) -/
+/-- The bike and its seat. -/
+inductive Thing | bike | seat
+  deriving DecidableEq
 
-/-- The interpretation source of a bridged definite, *computed* from whether the
-noun is lexically relational and whether *na* (`π`) applies. The source is
-derived, not stipulated: it is the substrate's `InterpretationSource`. -/
-def bridgeSource (lexicallyRelational naApplies : Bool) : InterpretationSource :=
-  if naApplies then .appliedPi
-  else if lexicallyRelational then .lexicalRelation
-  else .noRelation
+/-- *chezuo* 'seat'. -/
+def seat : Thing → Unit → Prop := fun x _ => x = .seat
 
-/-- **Study 4, derived.** Relational bridging is licensed (`CanFillRelatum`)
-exactly when *na* applies **or** the noun is lexically relational — i.e. it fails
-only in the bare + non-relational cell. This is the 2×2 that [ahn-zhu-2025]'s
-Study 4 confirms, read off the computed `InterpretationSource`. -/
-theorem bridge_licensed_iff (lexRel naApp : Bool) :
-    CanFillRelatum (bridgeSource lexRel naApp) ↔ (naApp = true ∨ lexRel = true) := by
-  cases naApp <;> cases lexRel <;> simp [bridgeSource, CanFillRelatum]
+/-- `partOf z x`: `x` is a part of `z`. -/
+def partOf : Thing → Thing → Unit → Prop := fun z x _ => z = .bike ∧ x = .seat
 
-/-- The decisive Study-4 cell: a **bare, non-relational** noun cannot relationally
-bridge — no *na*, no lexical relation, so no relatum slot. -/
-theorem bare_nonrelational_cannot_bridge :
-    ¬ CanFillRelatum (bridgeSource false false) := by
-  simp [bridgeSource, CanFillRelatum]
+/-- The bare *chezuo* picks the unique seat of the situation. -/
+theorem bare_seat : iotaPresupposition seat () := ⟨.seat, rfl, fun _ h => h⟩
 
-/-! ### Shared bridging split ([schwarz-2009] / [jenks-2018]) -/
+/-- *na ge chezuo* with `R` resolved to part-of has the same extension as the bare noun, so the
+demonstrative's restriction is redundant and economy prefers the bare noun. -/
+theorem na_seat_redundant (x : Thing) : na seat partOf .bike x () ↔ seat x () :=
+  na_iff_bare_of_related seat partOf .bike () (fun _ h => ⟨rfl, h⟩) x
 
-/-- [ahn-zhu-2025] inherit Schwarz's bridging split, shared with [jenks-2018] via
-the common `Semantics.Definiteness.bridgingPresupType`: part-whole bridging is the
-uniqueness route (bare ι; bare nouns suffice), relational bridging the familiarity
-route (the relatum index; *na* or a lexical relation). -/
-theorem inherits_schwarz_bridging_split :
-    bridgingPresupType .partWhole = .uniqueness ∧
-    bridgingPresupType .relational = .familiarity :=
-  ⟨rfl, rfl⟩
+/-! ### Relational bridging: the novel, its author, and another novelist -/
 
-/-! ### Divergence from [jenks-2018] -/
+/-- The novel found, its author, and another novelist. -/
+inductive Ind | theNovel | itsAuthor | anotherNovelist
+  deriving DecidableEq
 
-/-- **Divergence from [jenks-2018]** (the comparison [ahn-zhu-2025] §4 draws).
+/-- *xiaoshuo-jia* 'novelist', a sortal noun true of both novelists. -/
+def novelist : Ind → Unit → Prop := fun x _ => x = .itsAuthor ∨ x = .anotherNovelist
 
-Ahn & Zhu license a **bare** relational definite: a lexically relational noun
-supplies its own relatum, so the uniqueness presupposition is met without *na*
-(`relational_bare_felicitous`).
+/-- *zuozhe* 'author': `author z x` holds when `x` is an author of `z`. -/
+def author : Ind → Ind → Unit → Prop := fun z x _ => z = .theNovel ∧ x = .itsAuthor
 
-[jenks-2018]'s `Index!` (a Maximize-Presupposition instance) instead requires the
-indexed *na* form **whenever an antecedent is available** — so it strictly
-disprefers the bare form in exactly this cell (`Jenks2018.index_prefers_indexed_when_available`).
+/-- The bare non-relational noun has no relatum slot, and situational uniqueness fails with two
+novelists. -/
+theorem bare_novelist_fails : ¬ iotaPresupposition novelist () := by
+  rintro ⟨x, -, hu⟩
+  exact absurd ((hu _ (Or.inl rfl)).trans (hu _ (Or.inr rfl)).symm) (by decide)
 
-The two accounts thus assign opposite status to the bare relational-bridging form:
-Ahn & Zhu predict it licensed; Jenks predicts it blocked. Both halves below are
-derived from each account's own machinery. -/
-theorem diverges_from_jenks_on_bare_relational
-    (Rel : E → E → S → Prop) (z : E) (s : S) (hUnique : ∃! x, Rel z x s) :
-    -- Ahn & Zhu: bare relational definite is felicitous (no *na* needed)
-    bareDefiniteFelicitous (fun x => Rel z x) s ∧
-    -- Jenks: Index! strictly prefers the indexed *na* form when an antecedent exists
-    Jenks2018.indexConstraint { isIndexed := true,  indexAvailable := true } <
-      Jenks2018.indexConstraint { isIndexed := false, indexAvailable := true } :=
-  ⟨relational_bare_felicitous Rel z s hUnique,
-   Jenks2018.index_prefers_indexed_when_available⟩
+/-- *na wei xiaoshuo-jia*: the demonstrative supplies the relatum, and `R` resolved to authorship
+picks the author. -/
+theorem na_novelist : iotaPresupposition (na novelist author .theNovel) () :=
+  ⟨.itsAuthor, ⟨Or.inl rfl, rfl, rfl⟩, fun _ hy => hy.2.2⟩
 
-/-! ### Data: the bridging felicity rows (`Data/Examples/AhnZhu2025.json`) -/
+/-- The bare *zuozhe* with its relatum argument covertly filled by the novel. -/
+theorem bare_author : iotaPresupposition (viaArgument .theNovel author) () :=
+  ⟨.itsAuthor, ⟨rfl, rfl⟩, fun _ hy => hy.2⟩
 
-section Data
+/-- *na wei zuozhe*: the relational noun detransitivized by `Ex` and re-relationalized by *na*. -/
+theorem na_ex_author : iotaPresupposition (na (ExPossessor author) author .theNovel) () :=
+  ⟨.itsAuthor, ⟨⟨.theNovel, rfl, rfl⟩, rfl, rfl⟩, fun _ hy => hy.2.2⟩
 
-open Data.Examples
+/-! ### The Studies' rows -/
 
-/-- *na*-CL is acceptable in every condition (both bridging types, both noun
-types) — *na* itself is the relationalizer, so it always supplies the relatum
-slot (`bridge_licensed_iff`, `naApp = true`). -/
-theorem naCL_rows_acceptable :
+/-- *na* is acceptable in every bridging row, part-whole and relational, with sortal and
+relational nouns alike. -/
+theorem na_bridges :
     ∀ row ∈ Examples.all, row.feature? "definite_form" = some "naCL" →
-      row.judgment = .acceptable := by decide
+      row.feature? "bridging_type" ≠ some "none" → row.judgment = .acceptable := by decide
 
-/-- Bare + **relational** noun bridges (Study 4): the lexically 2-place noun
-supplies its own relatum (`relational_bare_felicitous`). -/
-theorem bare_relational_noun_bridges :
-    ∀ row ∈ Examples.all,
-      row.feature? "definite_form" = some "bare" →
+theorem bare_partWhole :
+    ∀ row ∈ Examples.all, row.feature? "definite_form" = some "bare" →
+      row.feature? "bridging_type" = some "partWhole" → row.judgment = .acceptable := by decide
+
+/-- A bare noun bridges relationally exactly when the noun is lexically relational. -/
+theorem bare_relational_iff_lexical :
+    ∀ row ∈ Examples.all, row.feature? "definite_form" = some "bare" →
       row.feature? "bridging_type" = some "relational" →
-      row.feature? "noun_arity" = some "relational" →
-      row.judgment = .acceptable := by decide
+      (row.judgment = .acceptable ↔ row.feature? "noun_arity" = some "relational") := by decide
 
-/-- **The decisive Study-4 cell.** Bare + **non-relational** noun in relational
-bridging is degraded — a bare noun licenses relational bridging *only* if the noun
-is lexically relational (`bare_nonrelational_cannot_bridge`). Marginal, not out:
-the cell is rated below its rivals but not at floor. -/
-theorem bare_nonrelational_noun_degraded :
-    ∀ row ∈ Examples.all,
-      row.feature? "definite_form" = some "bare" →
+/-- Index! ranks the indexed form strictly above the bare one whenever an antecedent is
+available, predicting complementary distribution; the bare noun is nonetheless acceptable with
+every relational noun in the relational-bridging rows. -/
+theorem index_contradicted_by_bare_relational :
+    Jenks2018.indexConstraint ⟨true, true⟩ < Jenks2018.indexConstraint ⟨false, true⟩ ∧
+    ∀ row ∈ Examples.all, row.feature? "definite_form" = some "bare" →
       row.feature? "bridging_type" = some "relational" →
-      row.feature? "noun_arity" = some "sortal" →
-      row.judgment = .marginal := by decide
+      row.feature? "noun_arity" = some "relational" → row.judgment = .acceptable :=
+  ⟨Jenks2018.index_prefers_indexed_when_available,
+   fun row h h₁ h₂ => (bare_relational_iff_lexical row h h₁ h₂).2⟩
 
-/-- English demonstrative *that* is **degraded but not ungrammatical** in bridging
-(Study 2): economy-blocked because the definite competes, not a hard constraint.
-Modelled as `.marginal` (the paper's gradient ~4.3–5.0/7 finding), in contrast to
-English *the*, which is acceptable. -/
-theorem english_that_degraded :
+/-- English *that* is never fully acceptable in a bridging row, while its deferred deictic use
+is. -/
+theorem that_degraded :
     ∀ row ∈ Examples.all, row.feature? "definite_form" = some "that" →
-      row.judgment = .marginal := by decide
+      row.feature? "bridging_type" ≠ some "none" → row.judgment ≠ .acceptable := by decide
 
-/-- English definite *the* bridges freely (Study 2 baseline). -/
-theorem english_the_acceptable :
+theorem the_acceptable :
     ∀ row ∈ Examples.all, row.feature? "definite_form" = some "the" →
       row.judgment = .acceptable := by decide
 
-end Data
+/-- The English *of*-possessive classifies the nouns: it is grammatical exactly with a relational
+noun. -/
+theorem of_iff_relational :
+    ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "of" →
+      (row.judgment = .acceptable ↔ row.feature? "noun_arity" = some "relational") := by decide
+
+/-- Mandarin *de* admits every relational noun; the converse fails, since the sortal *hua*
+'flower' passes too. -/
+theorem de_of_relational :
+    ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "de" →
+      row.feature? "noun_arity" = some "relational" → row.judgment = .acceptable := by decide
 
 end AhnZhu2025

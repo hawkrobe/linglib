@@ -28,7 +28,6 @@ this substrate.
 * `Ex R`, `ExPossessor R`: existential closure of a relation in its second
   argument, and in its first — the possessor of `π P R`.
 * `iotaPresupposition P`: Russellian uniqueness presupposition for definites.
-* `naSemantics`, `bareSemantics`: demonstrative and bare nominal denotations.
 * `NominalInterpType`: relational arity of a nominal denotation.
 
 ## Main statements
@@ -88,7 +87,7 @@ theorem ex_pi_retraction [Nonempty E]
 
 end TypeShifters
 
-/-! ### Definiteness and demonstratives -/
+/-! ### Definiteness -/
 
 section Definites
 
@@ -100,37 +99,7 @@ full `ExistsUnique.*` API is available; the name records the linguistic role —
 the presupposition a definite description carries. -/
 abbrev iotaPresupposition (P : E → S → Prop) (s : S) : Prop := ∃! x, P x s
 
-/-- Demonstrative-headed nominal: `π` applied to a sortal noun with the
-demonstrative supplying the relatum. -/
-def naSemantics (nounPred : E → S → Prop) (R : E → E → S → Prop) (relatum : E) : E → S → Prop :=
-  π nounPred R relatum
-
-/-- Bare nominal: identity on the predicate (no relatum slot). -/
-def bareSemantics (nounPred : E → S → Prop) : E → S → Prop :=
-  nounPred
-
 end Definites
-
-/-! ### Interpretation sources and bridging -/
-
-/-- Source of a noun's relational interpretation. -/
-inductive InterpretationSource where
-  /-- Noun is lexically relational (e.g. *brother*, *author*). -/
-  | lexicalRelation
-  /-- `π` was applied (e.g. possessive, demonstrative). -/
-  | appliedPi
-  /-- No relation available (bare sortal). -/
-  | noRelation
-  deriving DecidableEq, Repr
-
-/-- Whether an interpretation source provides a relatum slot. -/
-def CanFillRelatum : InterpretationSource → Prop
-  | .lexicalRelation => True
-  | .appliedPi => True
-  | .noRelation => False
-
-instance : DecidablePred CanFillRelatum := λ s => by
-  cases s <;> unfold CanFillRelatum <;> infer_instance
 
 /-! ### Nominal interpretation type -/
 
