@@ -1,1431 +1,399 @@
-import Linglib.Studies.KeshetAbney2024.Bridges
-import Linglib.Studies.KeshetAbney2024.Connectives
-import Linglib.Studies.KeshetAbney2024.Felicity
-import Linglib.Semantics.Dynamic.Update
-import Linglib.Logic.Assignment
-import Linglib.Data.Examples.Heim1982
-import Linglib.Data.Examples.ElliottSudo2025
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Fin.VecNotation
+import Linglib.Logic.PIP.Basic
+import Linglib.Data.Examples.KeshetAbney2024
 
 /-!
 # Keshet & Abney (2024): Intensional Anaphora
 
-[keshet-abney-2024] [partee-1972] [roberts-1987]
-[stone-1999] [brasoveanu-2010]
+[keshet-abney-2024] [stone-1999] [brasoveanu-2010]
 
-Formalizes the core contributions of [keshet-abney-2024]'s PIP
-(Plural Intensional Presuppositional predicate calculus) and connects
-them to the anaphora example rows in `Data/Examples/`.
+A pronoun presupposes that its antecedent description has a non-empty
+extension (9). In PIP (`Logic/PIP/Basic.lean`) the antecedent description of a
+summation pronoun is a formula label, so "Andrea might be eating a
+cheeseburger. #It is large." (79) is `might_w(ΣwE) ∧ E ≡ … ∧ large_w(ΣbE |
+single(ΣbE))`: the world variable of `E` is bound by the summation inside
+`might` at its first use and by the discourse at the pronoun, so the
+pronoun's description is evaluated at the discourse world, and felicity (83)
+demands `single(ΣbE)` in every world where Andrea *might* be eating one —
+including the worlds where she is not. With `must` (88)–(90) the realistic
+modal base guarantees the description at the world of evaluation, and the
+pronoun is fine; with a value-based presupposition of existence
+([stone-1999], [brasoveanu-2010]) the mayoral candidates of (85), who all
+exist, would wrongly license "she". This file states the paper's
+discourses over `PIP` and proves the felicity conditions it derives from
+them, at the level of a scenario (accessibility, antecedent description,
+continuation) and on its models.
 
-## Paper's Core Claim
+The paper's felicity conditions (78), (83), (87), (90), (97) quantify `∀w`
+over worlds; the statements below take a world of evaluation `w₀` and an
+assignment sending `w` to it.
 
-Pronouns carry **descriptive content** (formula labels), not stored entity
-values. A pronoun presupposes that its antecedent description has a
-non-empty extension in every world of the context set (paper item 9).
+## Main definitions
 
-This single hypothesis, implemented via PIP's formula labels and felicity
-conditions, uniformly explains:
+* `Scenario`, `Scenario.model` — an intensional model with worlds and
+  entities as atoms, distributive predicates, `single`, `some`, `every` and
+  accessibility.
+* `descE`, `base`, `modal`, `pronoun`, `continuation`, `discourse` — the
+  antecedent description, the modal base `β_w`, `might_w`/`must_w` (35), the
+  summation pronoun `Σbφ | single(Σbφ)` (71), and the discourse
+  `modal_w(Σwφ) ∧ E ≡ … ∧ cont_w(Σbφ | single(Σbφ))` with `φ` the label `E`
+  before expansion and its definition after.
+* `discourseMight`, `discourseMust`, `plain`, `bathroom` — (80b)+(82b), (89),
+  (75)+(76), and (95).
 
-1. **Modal subordination** — labels survive modals (paper §2.6.3, items 59–60)
-2. **Bathroom sentences** — labels survive negation (paper §3.4, item 92b)
-3. **Donkey anaphora** — labels survive ∀ = ¬∃¬ (paper §2.6.2, items 53–56)
-4. **Paycheck pronouns** — descriptions re-evaluated (paper §2.6.4, items 66–67)
-5. **Intensional anaphora** — might blocks, must allows (paper §3.1–3.3)
+## Main statements
 
-## Architecture
-
-This study file imports:
-- **Framework**: the PIP mechanism in `Studies/KeshetAbney2024/`
-- **Data**: `Heim1982.Examples` / `ElliottSudo2025.Examples` (typed
-  example rows from `Data/Examples/`)
-
-and proves that PIP's predictions match the empirical data on worked
-finite models.
-
+* `expandSelf_discourse`, `expandSelf_bathroom` — expanding the label
+  retrieves the antecedent description in the modal and at the pronoun.
+* `fel_discourse_iff` — a modal discourse is felicitous at `w₀` iff the modal
+  claim there implies a unique satisfier of the description at `w₀`.
+* `fel_discourseMight_iff`, `not_fel_burger` — (83)/(87): with `might`, every
+  world from which a description-world is accessible needs a unique
+  satisfier; (79) fails at a world where Andrea is fasting.
+* `fel_discourseMust_iff`, `fel_discourseMust_of_realistic` — (90): with a
+  realistic modal base and unique satisfiers, `must` licenses the pronoun.
+* `fel_plain` — (78): the unembedded discourse (74) is felicitous.
+* `fel_bathroom_iff` — (97): the bathroom disjunction is felicitous iff a
+  bathroom, if there is one, is unique.
 -/
-
-/-! ### Dynamic quantification over `Assignment E`
-
-[groenendijk-stokhof-1991] [muskens-1996]
-
-`Nat`-indexed dynamic operators on the Tarski-style state `Assignment E := Nat → E`
-(`Assignment`), generic over `E`: `randomAssignAt n` (DPL `[x_n]`), `existsAt n φ`
-(DPL `∃x_n.φ`, CDRT `[u_n]; φ`), `forallAt n φ` (DPL `∀x_n.φ`), `closeAt φ` (DPL `◇φ`).
-`existsAt n` is `seq` after `randomAssignAt n`; `forallAt n` is `¬∃¬` via `test`/`neg`.
-`RegisterStructure` (`Dynamic/CDRT.lean`) abstracts these: its canonical
-instance at `Nat → E` has register indices `n` with projection values.
-
-The DPL comparison below (`dpl_dne_fails_anaphora`) consumes these; they stay in
-`DynamicSemantics` so they read as substrate names, awaiting promotion to
-`Studies/GroenendijkStokhof1991.lean`. -/
-
-namespace DynamicSemantics
-
-open DynamicSemantics
-open DynamicSemantics.Update (test seq neg closure)
-
-variable {E : Type*}
-
-/-- The "open file card n" operation: `g[n↦?]` non-deterministically. -/
-def randomAssignAt (n : Nat) : Update (Assignment E) :=
-  fun g h => ∃ d : E, h = Function.update g n d
-
-/-- `existsAt n φ` is `seq (randomAssignAt n) φ`. Holds at `(g, h)` iff
-some witness `d : E` makes `φ` accept the input `g[n↦d]` and produce `h`. -/
-def existsAt (n : Nat) (φ : Update (Assignment E)) : Update (Assignment E) :=
-  seq (randomAssignAt n) φ
-
-/-- The decomposition: `existsAt = seq ∘ randomAssignAt`. -/
-@[simp] theorem existsAt_eq_dseq (n : Nat) (φ : Update (Assignment E)) :
-    existsAt n φ = seq (randomAssignAt n) φ := rfl
-
-/-- Direct unfolding: `existsAt n φ g h ↔ ∃ d : E, φ (Function.update g n d) h`. -/
-theorem existsAt_iff (n : Nat) (φ : Update (Assignment E)) (g h : Assignment E) :
-    existsAt n φ g h ↔ ∃ d : E, φ (Function.update g n d) h := by
-  simp only [existsAt, seq, Relation.Comp, randomAssignAt]
-  constructor
-  · rintro ⟨k, ⟨d, rfl⟩, hφ⟩; exact ⟨d, hφ⟩
-  · rintro ⟨d, hφ⟩; exact ⟨Function.update g n d, ⟨d, rfl⟩, hφ⟩
-
-/-- `forallAt n φ`: a test that requires `φ` to succeed for every value at `n`.
-Definitionally `test (neg (existsAt n (test (neg φ))))` — the standard
-DPL/Muskens reduction `∀ ≈ ¬∃¬`. -/
-def forallAt (n : Nat) (φ : Update (Assignment E)) : Update (Assignment E) :=
-  test (neg (existsAt n (test (neg φ))))
-
-/-- Direct truth condition: `forallAt n φ g h ↔ g = h ∧ ∀ d, ∃ k, φ (Function.update g n d) k`. -/
-theorem forallAt_iff (n : Nat) (φ : Update (Assignment E)) (g h : Assignment E) :
-    forallAt n φ g h ↔ g = h ∧ ∀ d : E, ∃ k, φ (Function.update g n d) k := by
-  simp only [forallAt, test, neg, existsAt, seq, Relation.Comp, randomAssignAt]
-  constructor
-  · rintro ⟨rfl, hneg⟩
-    refine ⟨rfl, fun d => ?_⟩
-    by_contra hne
-    push Not at hne
-    exact hneg ⟨Function.update g n d,
-      ⟨Function.update g n d, ⟨d, rfl⟩, rfl, fun ⟨k, hφ⟩ => hne k hφ⟩⟩
-  · rintro ⟨rfl, hall⟩
-    refine ⟨rfl, ?_⟩
-    rintro ⟨_, ⟨_, ⟨d, rfl⟩, rfl, hneg⟩⟩
-    exact hneg (hall d)
-
-/-- `closeAt φ`: a test that succeeds iff `φ` has any output. Equals
-`test (closure φ)` from `Connectives.Defs`. -/
-def closeAt (φ : Update (Assignment E)) : Update (Assignment E) :=
-  test (closure φ)
-
-@[simp] theorem closeAt_eq (φ : Update (Assignment E)) :
-    closeAt φ = test (closure φ) := rfl
-
-end DynamicSemantics
-
 
 namespace KeshetAbney2024
 
-open KeshetAbney2024.PIP
-open DynamicSemantics.ICDRT (IVar Assignment Entity Context idUp)
+open PIP
 
+/-- The variables of the discourses: the world `w`, the modal-base world `u`,
+the antecedent's individual `b`. -/
+inductive Var
+  | w
+  | u
+  | b
+  deriving DecidableEq
 
--- ============================================================
--- Stone's Puzzle: Modal Subordination (paper §2.6.3)
--- ============================================================
+/-- The formula labels: the antecedent description `E`, and `X` of (95). -/
+inductive Lab
+  | E
+  | X
+  deriving DecidableEq
 
-section Stone
+/-- Predicate symbols: `single`, the quantifier relations `some` and `every`
+over pluralities, accessibility `acc`, a world-indexed antecedent
+description `desc` and continuation `cont`. -/
+inductive Pred
+  | single
+  | some
+  | every
+  | acc
+  | desc
+  | cont
+  deriving DecidableEq
 
-/--
-Stone's puzzle world model ([stone-1999], [roberts-1987]).
+/-! ### Scenarios -/
 
-Three possible worlds:
-- `actual`: the evaluation world (no wolf present)
-- `wolfIn`: a world where a wolf comes in
-- `noWolf`: a world where no wolf comes in
--/
-inductive SWorld where
-  | actual | wolfIn | noWolf
-  deriving DecidableEq, Repr, Inhabited
+/-- The atoms of an intensional model: worlds and entities. -/
+abbrev Atom (W E : Type) := W ⊕ E
 
-inductive SEntity where
-  | wolf
-  deriving DecidableEq, Repr, Inhabited
+variable {W E : Type}
 
-def sWorlds : List SWorld := [.actual, .wolfIn, .noWolf]
-def αWolf : FLabel := ⟨0⟩
-def vWolf : IVar := ⟨0⟩
+/-- A world as a singleton plurality. -/
+def world (w : W) : Set (Atom W E) := {Sum.inl w}
 
-/-- Epistemic accessibility from actual world. -/
-def sAccess : SWorld → SWorld → Prop
-  | .actual, .wolfIn => True
-  | .actual, .noWolf => True
-  | _, _ => False
+theorem world_inj {w w' : W} : (world w : Set (Atom W E)) = world w' ↔ w = w' :=
+  Set.singleton_eq_singleton_iff.trans Sum.inl_injective.eq_iff
 
-def isWolf (g : Assignment SWorld SEntity) (w : SWorld) : Prop :=
-  g.indiv vWolf w = .some .wolf
+/-- A distributive predicate at a world: true of a nonempty plurality of
+entities each satisfying `R` there. -/
+def distr (R : W → E → Prop) (Wp X : Set (Atom W E)) : Prop :=
+  ∃ w, Wp = world w ∧ X.Nonempty ∧ ∀ a ∈ X, ∃ e, a = Sum.inr e ∧ R w e
 
-def comesIn (g : Assignment SWorld SEntity) (w : SWorld) : Prop :=
-  g.indiv vWolf w = .some .wolf ∧ w = .wolfIn
+/-- A scenario: accessibility between worlds, the antecedent description and
+the continuation's predicate, each relative to a world. -/
+structure Scenario (W E : Type) where
+  acc : W → W → Prop
+  desc : W → E → Prop
+  cont : W → E → Prop
 
-/--
-"A wolf might come in." (paper item 59a)
+/-- The model of a scenario. -/
+def Scenario.model (S : Scenario W E) : Model Pred (Atom W E) where
+  I p := fun {n} ts => match p, n, ts with
+    | .single, 1, ts => ∃ a, ts 0 = {a}
+    | .some, 2, ts => (ts 0 ∩ ts 1).Nonempty
+    | .every, 2, ts => ts 0 ⊆ ts 1
+    | .acc, 2, ts => ∃ w u, ts 0 = world w ∧ ts 1 = world u ∧ S.acc w u
+    | .desc, 2, ts => distr S.desc (ts 0) (ts 1)
+    | .cont, 2, ts => distr S.cont (ts 0) (ts 1)
+    | _, _, _ => False
 
-  might(∃^αWolf x. wolf(x) ∧ comeIn(x))
+/-! ### The discourses -/
 
-Label αWolf records the description "wolf(x) that comes in".
--/
-def stoneSentence1 : PUpdate SWorld SEntity :=
-  might sAccess sWorlds
-    (existsLabeled αWolf vWolf {.wolf}
-      isWolf
-      (atom (λ g w => isWolf g w ∧ comesIn g w)))
+/-- `E ≡ desc_w([b]) ∧ single(b)`: the antecedent description of (80b),
+with a bracketed local variable for the indefinite. -/
+def descE : Formula Var Lab Pred :=
+  .conj (.atom .desc ![.var .w, .bvar .b]) (.atom .single ![.var .b])
 
-/-- After "A wolf might come in", the label αWolf is registered. -/
-theorem stone_label_registered (d : Discourse SWorld SEntity)
-    (_hConsistent : d.info.Nonempty) :
-    (stoneSentence1 d).labels.registered αWolf = true := by
-  simp only [stoneSentence1, might, modalExpand, existsLabeled, atom, Discourse.mapInfo,
-             LabelStore.registered, Option.isSome, LabelStore.register, αWolf]
-  rfl
+/-- `acc(w, u)`: `u` is accessible from `w`. -/
+def access : Formula Var Lab Pred := .atom .acc ![.var .w, .var .u]
 
-/--
-"It would eat you first." (paper item 59b)
+/-- `Σu acc(w, u)`: the modal base `β_w`. -/
+def base : Term Var Lab Pred := .sigma .u access
 
-"It" = DEF_αWolf{x}; "would" = must with inherited accessibility.
--/
-def stoneSentence2 : PUpdate SWorld SEntity :=
-  conj
-    (retrieveDef αWolf)
-    (would sAccess sWorlds
-      (atom (λ g w => g.indiv vWolf w ≠ .star)))
+/-- `q(β_w, Σwφ)`: `might_w(Σwφ)` for `q = some` and `must_w(Σwφ)` for
+`q = every` (35). -/
+def modal (q : Pred) (φ : Formula Var Lab Pred) : Formula Var Lab Pred :=
+  .atom q ![base, .sigma .w φ]
 
-def stoneDiscourse : PUpdate SWorld SEntity :=
-  conj stoneSentence1 stoneSentence2
+/-- `Σbφ | single(Σbφ)`: the summation pronoun with its singular
+presupposition (71), (82b). -/
+def pronoun (φ : Formula Var Lab Pred) : Term Var Lab Pred :=
+  .presup (.sigma .b φ) (.atom .single ![.sigma .b φ])
 
-/-- After the full discourse, the label is still available. -/
-theorem stone_discourse_label_available (d : Discourse SWorld SEntity) :
-    (stoneDiscourse d).labels.registered αWolf = true := by
-  simp only [stoneDiscourse, conj, stoneSentence2, stoneSentence1,
-             would, must, might, modalExpand, existsLabeled, atom, retrieveDef,
-             Discourse.mapInfo, LabelStore.registered, Option.isSome,
-             LabelStore.register, LabelStore.lookup, αWolf, vWolf, isWolf]
-  rfl
+/-- `cont_w(Σbφ | single(Σbφ))`: the continuation (82b). -/
+def continuation (φ : Formula Var Lab Pred) : Formula Var Lab Pred :=
+  .atom .cont ![.var .w, pronoun φ]
 
-private def g₀_stone : Assignment SWorld SEntity :=
-  { indiv := λ _ _w => .star, prop := λ _ => ∅ }
+/-- `q(β_w, Σwφ) ∧ E ≡ desc_w([b]) ∧ single(b) ∧ cont_w(Σbφ | single(Σbφ))`. -/
+def discourse (q : Pred) (φ : Formula Var Lab Pred) : Formula Var Lab Pred :=
+  .conj (.conj (modal q φ) (.labelDef .E descE)) (continuation φ)
 
-private def g_wolf : Assignment SWorld SEntity :=
-  g₀_stone.updateIndivConst vWolf (.some .wolf)
+/-- (80b) ∧ (82b): "Andrea might be eating a cheeseburger. It is large." -/
+def discourseMight : Formula Var Lab Pred := discourse .some (.label .E)
 
-private def stone_d₀ : Discourse SWorld SEntity :=
-  { info := Set.univ, labels := LabelStore.empty }
+/-- (89): "There must be some sort of animal in the shed. It's making quite a
+racket!" -/
+def discourseMust : Formula Var Lab Pred := discourse .every (.label .E)
 
-private theorem g_wolf_in_sentence1 :
-    (g_wolf, SWorld.actual) ∈ (stoneSentence1 stone_d₀).info := by
-  unfold stoneSentence1 might modalExpand
-  dsimp only
+/-- (75) ∧ (76): "Andrea is eating a cheeseburger. It is large.", with the
+simple pronoun `b | single(b)`. -/
+def plain : Formula Var Lab Pred :=
+  .conj descE (.atom .cont ![.var .w, .presup (.var .b) (.atom .single ![.var .b])])
+
+/-- (95): "Either there's no bathroom in this house or it's in a funny place.",
+`(¬∃bX ∨ cont_w(ΣbX | single(ΣbX))) ∧ X ≡ desc_w([b]) ∧ single(b)`. -/
+def bathroom : Formula Var Lab Pred :=
+  .conj (.disj (.neg (.exists_ .b (.label .X))) (continuation (.label .X))) (.labelDef .X descE)
+
+/-! ### Label expansion -/
+
+theorem vecCons_map {α β : Type*} {n : ℕ} (f : α → β) (a : α) (v : Fin n → α) :
+    (fun i => f (Matrix.vecCons a v i)) = Matrix.vecCons (f a) fun i => f (v i) :=
+  Fin.comp_cons f a v
+
+theorem vecEmpty_map {α β : Type*} (f : α → β) : (fun i => f (![] i)) = (![] : Fin 0 → β) :=
+  funext fun i => i.elim0
+
+theorem substLabel_descE (Y : Lab) (ψ : Formula Var Lab Pred) :
+    Formula.substLabel Y ψ descE = descE := by
+  simp only [descE, Formula.substLabel, Term.substLabel, vecCons_map, vecEmpty_map]
+
+/-- Expanding the label retrieves the antecedent description in the modal
+and at the pronoun. -/
+theorem expandSelf_discourse (q : Pred) :
+    (discourse q (.label .E)).expandSelf = discourse q descE := by
+  rw [Formula.expandSelf, show (discourse q (.label .E)).defs = [(.E, descE)] from rfl]
+  simp only [Formula.expand, List.foldr_cons, List.foldr_nil, discourse, modal, base, access,
+    continuation, pronoun, Formula.substLabel, Term.substLabel, substLabel_descE, vecCons_map,
+    vecEmpty_map, reduceIte]
+
+theorem expandSelf_bathroom :
+    bathroom.expandSelf =
+      .conj (.disj (.neg (.exists_ .b descE)) (continuation descE)) (.labelDef .X descE) := by
+  rw [Formula.expandSelf, show bathroom.defs = [(.X, descE)] from rfl]
+  simp only [Formula.expand, List.foldr_cons, List.foldr_nil, bathroom, Formula.disj, continuation,
+    pronoun, Formula.substLabel, Term.substLabel, substLabel_descE, vecCons_map, vecEmpty_map,
+    reduceIte]
+
+/-! ### Values and felicity at a world of evaluation -/
+
+variable (S : Scenario W E) (h : Var → Set (Atom W E)) {w₀ : W}
+
+theorem locals_descE : descE.locals = [.b] := rfl
+
+theorem locals_access : access.locals = [] := rfl
+
+theorem fel_descE : descE.fel S.model h :=
+  ⟨Fin.forall_fin_two.2 ⟨trivial, trivial⟩, fun _ => Fin.forall_fin_one.2 trivial⟩
+
+theorem fel_sigmaB_descE : (Term.sigma .b descE).fel S.model h := by
+  simp [Term.fel, locals_descE, forallOver, fel_descE]
+
+theorem fel_sigmaW_descE : (Term.sigma .w descE).fel S.model h := by
+  simp [Term.fel, locals_descE, forallOver, fel_descE]
+
+theorem fel_base : base.fel S.model h := by
+  simp only [base, Term.fel, locals_access, List.filter_nil, forallOver]
+  exact fun _ => Fin.forall_fin_two.2 ⟨trivial, trivial⟩
+
+theorem fel_modal (q : Pred) : (modal q descE).fel S.model h :=
+  Fin.forall_fin_two.2 ⟨fel_base S h, fel_sigmaW_descE S h⟩
+
+theorem sat_access : access.sat S.model h ↔ ∃ w u, h .w = world w ∧ h .u = world u ∧ S.acc w u :=
+  Iff.rfl
+
+theorem sat_descE (X : Set (Atom W E)) :
+    descE.sat S.model (Function.update h .b X) ↔
+      ∃ w e, h .w = world w ∧ X = {Sum.inr e} ∧ S.desc w e := by
+  show distr S.desc {a | a ∈ Function.update h .b X .w} {a | a ∈ Function.update h .b X .b} ∧
+    (∃ a, {a' | a' ∈ Function.update h .b X .b} = {a}) ↔ _
+  simp only [Set.ofPred_mem_eq, Function.update_self,
+    Function.update_of_ne (show Var.w ≠ Var.b by decide), distr]
   constructor
-  · exact Set.mem_univ _
-  · refine ⟨SWorld.wolfIn, ?_, ?_, ?_⟩
-    · simp [sWorlds]
-    · trivial
-    · unfold existsLabeled atom Discourse.mapInfo
-      constructor
-      · refine ⟨g₀_stone, SEntity.wolf, ?_, ?_, ?_⟩
-        · left; exact Set.mem_univ _
-        · rfl
-        · rfl
-      · exact ⟨rfl, rfl, rfl⟩
+  · rintro ⟨⟨w, hw, -, hall⟩, a, rfl⟩
+    obtain ⟨e, rfl, he⟩ := hall a rfl
+    exact ⟨w, e, hw, rfl, he⟩
+  · rintro ⟨w, e, hw, rfl, he⟩
+    exact ⟨⟨w, hw, ⟨_, rfl⟩, fun a ha => ⟨e, ha, he⟩⟩, _, rfl⟩
 
-private theorem g_wolf_in_retrieve :
-    (g_wolf, SWorld.actual) ∈ (retrieveDef αWolf (stoneSentence1 stone_d₀)).info := by
-  unfold retrieveDef
-  simp only [stoneSentence1, might, modalExpand, existsLabeled, atom,
-             Discourse.mapInfo, LabelStore.register, LabelStore.lookup, αWolf,
-             vWolf, isWolf]
-  refine ⟨g_wolf_in_sentence1, ?_, ?_⟩
-  · decide   -- (g_wolf.indiv vWolf actual).isSome
-  · rfl      -- isWolf g_wolf actual  (= g_wolf.indiv vWolf actual = some wolf)
-
-/--
-End-to-end test: Stone's discourse is consistent on a concrete model.
-
-After "A wolf might come. It would eat you first.", the discourse state
-is non-empty: g_wolf (with vWolf ↦ wolf) at actual survives the pipeline.
--/
-theorem stone_discourse_consistent :
-    (stoneDiscourse stone_d₀).info.Nonempty := by
-  refine ⟨(g_wolf, .actual), ?_⟩
-  unfold stoneDiscourse conj stoneSentence2 would must modalExpand
-  dsimp only
+theorem mem_sigmaB_descE (hw : h .w = world w₀) (a : Atom W E) :
+    (Term.sigma .b descE).mem S.model h a ↔ ∃ e, a = Sum.inr e ∧ S.desc w₀ e := by
+  simp only [Term.mem, locals_descE, List.filter_cons, List.filter_nil, decide_eq_true_eq, ne_eq,
+    not_true_eq_false, reduceIte, closeOver, sat_descE, hw, world_inj]
   constructor
-  · exact g_wolf_in_retrieve
-  · intro w₁ _hw₁ hacc
-    unfold atom Discourse.mapInfo
-    constructor
-    · right; exact ⟨SWorld.actual, g_wolf_in_retrieve, hacc⟩
-    · intro h
-      have h1 : g_wolf.indiv vWolf w₁ = .some .wolf := rfl
-      rw [h1] at h; exact absurd h (by decide)
-
-/-- Negative test: unbound wolf variable is rejected. -/
-theorem stone_discourse_rejects_unbound :
-    (g₀_stone, SWorld.actual) ∉ (stoneSentence1 stone_d₀).info := by
-  unfold stoneSentence1 might modalExpand
-  dsimp only
-  intro ⟨_, w₁, _, _, hmem⟩
-  unfold existsLabeled atom Discourse.mapInfo at hmem
-  obtain ⟨_, hpred⟩ := hmem
-  dsimp only at hpred
-  simp [isWolf, g₀_stone, vWolf] at hpred
-
-end Stone
-
-
--- ============================================================
--- Bathroom Sentences (paper §3.4, item 92b)
--- ============================================================
-
-section Bathroom
-
-/-- [partee-1972]'s bathroom sentence world model. -/
-inductive BWorld where
-  | bath | noBath
-  deriving DecidableEq, Repr, Inhabited
-
-inductive BEntity where
-  | bathroom
-  deriving DecidableEq, Repr, Inhabited
-
-def αBath : FLabel := ⟨1⟩
-def vBath : IVar := ⟨1⟩
-
-def isBathroom (g : Assignment BWorld BEntity) (w : BWorld) : Prop :=
-  g.indiv vBath w = .some .bathroom
-
-def isUpstairs (g : Assignment BWorld BEntity) (w : BWorld) : Prop :=
-  g.indiv vBath w = .some .bathroom ∧ w = .bath
-
-/--
-"Either there's no bathroom, or it's upstairs." (paper item 92b)
-
-PIP analysis: ¬∃^αBath x.bathroom(x) ∨ upstairs(DEF_αBath{x})
-
-Label αBath is registered under negation and floated to the second disjunct.
--/
-def bathroomSentence : PUpdate BWorld BEntity :=
-  disj
-    (negation
-      (existsLabeled αBath vBath {.bathroom}
-        isBathroom
-        (atom isBathroom)))
-    (conj
-      (retrieveDef αBath)
-      (atom isUpstairs))
-
-/-- The bathroom label survives negation — core PIP mechanism. -/
-theorem bathroom_label_survives_negation (d : Discourse BWorld BEntity) :
-    let firstDisjunct := negation
-      (existsLabeled αBath vBath {.bathroom}
-        isBathroom
-        (atom isBathroom))
-    (firstDisjunct d).labels.registered αBath = true := by
-  simp only [negation, existsLabeled, atom, Discourse.mapInfo,
-             LabelStore.registered, Option.isSome, LabelStore.register,
-             αBath]
-  rfl
-
-private def g₀ : Assignment BWorld BEntity :=
-  { indiv := λ _ _w => .star, prop := λ _ => ∅ }
-
-private def bath_d₀ : Discourse BWorld BEntity :=
-  { info := Set.univ, labels := LabelStore.empty }
-
-/-- End-to-end: the bathroom sentence is consistent. -/
-theorem bathroom_sentence_consistent :
-    (bathroomSentence bath_d₀).info.Nonempty := by
-  refine ⟨(g₀, .noBath), ?_⟩
-  apply Set.mem_union_left
-  refine ⟨Set.mem_univ _, ?_⟩
-  intro ⟨_, hpred⟩
-  simp [isBathroom, g₀, vBath] at hpred
-
-private def g_bath : Assignment BWorld BEntity :=
-  g₀.updateIndivConst vBath (.some .bathroom)
-
-/-- Negative test: bathroom at noBath world is rejected. -/
-theorem bathroom_rejects_nonupstairs :
-    (g_bath, BWorld.noBath) ∉ (bathroomSentence bath_d₀).info := by
-  intro hmem
-  unfold bathroomSentence disj at hmem
-  dsimp only at hmem
-  rcases hmem with h | h
-  · unfold negation at h
-    dsimp only at h
-    obtain ⟨_, hneg⟩ := h
-    apply hneg
-    unfold existsLabeled atom Discourse.mapInfo
-    exact ⟨⟨g₀, .bathroom, Set.mem_univ _, rfl, rfl⟩, rfl⟩
-  · unfold conj at h
-    simp only [retrieveDef, negation, existsLabeled, atom, Discourse.mapInfo,
-               LabelStore.register, LabelStore.lookup, αBath, vBath,
-               isBathroom] at h
-    obtain ⟨_, hpred⟩ := h
-    exact absurd hpred (by unfold isUpstairs g_bath vBath; decide)
-
-end Bathroom
-
-
--- ============================================================
--- Paycheck Pronouns (paper §2.6.4)
--- ============================================================
-
-section Paycheck
-
-/--
-"John spent his paycheck. Bill saved it." (paper items 66–67)
-
-"it" carries descriptive content "paycheck-of(x, possessor)" which is
-re-evaluated when the possessor variable is rebound to Bill.
-
-Value-based: "it" → John's paycheck → wrong referent
-Description-based: "it" → "the paycheck of [current subject]" → Bill's paycheck
--/
-inductive PEntity where
-  | john | bill | johnsPaycheck | billsPaycheck
-  deriving DecidableEq, Repr, Inhabited
-
-def αPaycheck : FLabel := ⟨2⟩
-def vPaycheck : IVar := ⟨2⟩
-def vPossessor : IVar := ⟨3⟩
-
-inductive PWorld where
-  | w0
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Relational paycheck predicate: depends on both paycheck and possessor. -/
-def isPaycheckOf (g : Assignment PWorld PEntity) (w : PWorld) : Prop :=
-  match g.indiv vPaycheck w, g.indiv vPossessor w with
-  | .some .johnsPaycheck, .some .john => True
-  | .some .billsPaycheck, .some .bill => True
-  | _, _ => False
-
-/-- Re-evaluation yields Bill's paycheck when possessor = Bill. -/
-theorem paycheck_needs_descriptions :
-    let g : Assignment PWorld PEntity :=
-      { indiv := λ v _w =>
-          if v == vPaycheck then .some .billsPaycheck
-          else if v == vPossessor then .some .bill
-          else .star
-        prop := λ _ => ∅ }
-    isPaycheckOf g .w0 := by trivial
-
-end Paycheck
-
-
--- ============================================================
--- Modal Subordination Data (from [roberts-1989])
--- ============================================================
-
-/-- A modal subordination datum. -/
-structure ModalSubDatum where
-  sentence1 : String
-  sentence2 : String
-  modal1 : String
-  modal2 : String
-  anaphor : String
-  antecedent : String
-  felicitous : Bool
-  source : String := ""
-  deriving Repr
-
-def wolfMightWould : ModalSubDatum := {
-  sentence1 := "A wolf might come in."
-  sentence2 := "It would eat you first."
-  modal1 := "might", modal2 := "would"
-  anaphor := "it", antecedent := "a wolf"
-  felicitous := true
-  source := "Roberts (1989)"
-}
-
-def wolfMightCould : ModalSubDatum := {
-  sentence1 := "A wolf might come in."
-  sentence2 := "It could eat you first."
-  modal1 := "might", modal2 := "could"
-  anaphor := "it", antecedent := "a wolf"
-  felicitous := true
-  source := "Roberts (1989)"
-}
-
-def burglarMightWould : ModalSubDatum := {
-  sentence1 := "A burglar might break in."
-  sentence2 := "He would steal the jewelry."
-  modal1 := "might", modal2 := "would"
-  anaphor := "he", antecedent := "a burglar"
-  felicitous := true
-  source := "Roberts (1989)"
-}
-
-def wolfMightIndicative : ModalSubDatum := {
-  sentence1 := "A wolf might come in."
-  sentence2 := "It eats you first."
-  modal1 := "might", modal2 := "indicative"
-  anaphor := "it", antecedent := "a wolf"
-  felicitous := false
-  source := "Roberts (1989)"
-}
-
-def wolfMightWill : ModalSubDatum := {
-  sentence1 := "A wolf might come in."
-  sentence2 := "It will eat you first."
-  modal1 := "might", modal2 := "will"
-  anaphor := "it", antecedent := "a wolf"
-  felicitous := false
-  source := "Roberts (1989)"
-}
-
-def wolfCouldWould : ModalSubDatum := {
-  sentence1 := "A wolf could come in."
-  sentence2 := "It would eat you first."
-  modal1 := "could", modal2 := "would"
-  anaphor := "it", antecedent := "a wolf"
-  felicitous := true
-  source := "Roberts (1989)"
-}
-
-def modalSubData : List ModalSubDatum := [
-  wolfMightWould, wolfMightCould, burglarMightWould,
-  wolfMightIndicative, wolfMightWill, wolfCouldWould
-]
-
-def felicitousModalSub : List ModalSubDatum :=
-  modalSubData.filter (·.felicitous)
-
-
--- ============================================================
--- Bridge 1: Modal Subordination
--- ============================================================
-
-/--
-Modal continuation type: whether a modal inherits its accessibility
-relation from prior discourse context.
-
-PIP predicts modal subordination is felicitous iff the second modal
-*subordinates* — i.e., it inherits the accessibility relation established
-by the first modal (paper §2.6.3). "Would" is analyzed as `must` with
-the inherited R; "could" as `might` with the inherited R.
-
-Modals that establish their own accessibility relation (epistemic "must",
-future "will", indicative mood) cannot access entities introduced under
-a prior modal's scope.
--/
-inductive ModalContinuation where
-  | subordinating   -- inherits accessibility (would, could)
-  | independent     -- establishes own accessibility (indicative, will, must)
-  deriving DecidableEq, Repr
-
-/-- Classify an English modal by whether it subordinates. -/
-def classifyModal2 : String → ModalContinuation
-  | "would" => .subordinating
-  | "could" => .subordinating
-  | _ => .independent
-
-/--
-PIP predicts modal subordination felicity iff the second modal
-subordinates (inherits the accessibility relation from the first).
--/
-def pipPredictsModalSub (datum : ModalSubDatum) : Bool :=
-  classifyModal2 datum.modal2 == .subordinating
-
-theorem pip_wolf_might_would :
-    pipPredictsModalSub wolfMightWould = true := by decide
-
-theorem pip_wolf_might_could :
-    pipPredictsModalSub wolfMightCould = true := by decide
-
-theorem pip_wolf_indicative_fails :
-    pipPredictsModalSub wolfMightIndicative = false := by decide
-
-theorem pip_wolf_will_fails :
-    pipPredictsModalSub wolfMightWill = false := by decide
-
-theorem pip_modal_sub_felicitous_agreement :
-    felicitousModalSub.all
-      (λ d => pipPredictsModalSub d == d.felicitous) = true := by
-  decide
-
-/-- External/local binding modes under modals (paper §2.1). -/
-theorem modal_sub_binding_modes :
-    (modalBindings ⟨99⟩ ⟨0⟩ αWolf)[1]? =
-      some ⟨⟨0⟩, .local, some αWolf⟩ ∧
-    (modalBindings ⟨99⟩ ⟨0⟩ αWolf)[0]? =
-      some ⟨⟨99⟩, .external, none⟩ := by
-  exact ⟨rfl, rfl⟩
-
-
--- ============================================================
--- Bridge 2: Bathroom Sentences
--- ============================================================
-
-/-- Label survival is the core mechanism for bathroom sentences. -/
-theorem bathroom_mechanism :
-    ∀ d : Discourse BWorld BEntity,
-    (negation
-      (existsLabeled αBath vBath {.bathroom}
-        isBathroom
-        (atom isBathroom)) d).labels.registered αBath = true := by
-  intro d
-  simp only [negation, existsLabeled, atom, Discourse.mapInfo,
-             LabelStore.registered, Option.isSome, LabelStore.register, αBath]
-  rfl
-
-/-- Full bathroom sentence preserves labels through disj + negation. -/
-theorem bathroom_full_sentence_label_available :
-    ∀ d : Discourse BWorld BEntity,
-    (bathroomSentence d).labels.registered αBath = true := by
-  intro d
-  simp only [bathroomSentence, disj, negation, existsLabeled, atom,
-             conj, retrieveDef, Discourse.mapInfo,
-             LabelStore.registered, Option.isSome, LabelStore.register,
-             LabelStore.lookup, αBath, vBath, isBathroom, isUpstairs]
-  rfl
-
-
--- ============================================================
--- Intensional Anaphora: Might Blocks (paper §3.1)
--- ============================================================
-
-section IntensionalBurger
-
-/--
-"Andrea might be eating a cheeseburger. #It is large." (paper item 79)
-
-The burger description is world-dependent: BURGER_w([b]) holds only
-at worlds where Andrea is eating a burger. At worlds where she isn't,
-Σb(BURGER_w(b)) = ∅, failing the existential presupposition SINGLE(ΣbE).
-
-Felicity condition (paper item 83):
-  ∀w(MIGHT_w(ΣwE) → SINGLE(ΣbE))
-fails because some context-set worlds have no burger.
--/
-inductive IBWorld where
-  | actual | burgerW
-  deriving DecidableEq, Repr, Inhabited
-
-inductive IBEntity where
-  | burger
-  deriving DecidableEq, Repr, Inhabited
-
-def ibWorlds : List IBWorld := [.actual, .burgerW]
-def αBurger : FLabel := ⟨10⟩
-def vBurger : IVar := ⟨10⟩
-
-def ibAccess : IBWorld → IBWorld → Prop
-  | .actual, .actual => True
-  | .actual, .burgerW => True
-  | _, _ => False
-
-/-- World-dependent predicate: burger exists only at burgerW. -/
-def isBurgerAt (g : Assignment IBWorld IBEntity) (w : IBWorld) : Prop :=
-  g.indiv vBurger w = .some .burger ∧ w = .burgerW
-
-def burgerSentence : PUpdate IBWorld IBEntity :=
-  might ibAccess ibWorlds
-    (existsLabeled αBurger vBurger {.burger}
-      isBurgerAt (atom isBurgerAt))
-
-theorem burger_label_registered (d : Discourse IBWorld IBEntity) :
-    (burgerSentence d).labels.registered αBurger = true := by
-  simp only [burgerSentence, might, modalExpand, existsLabeled, atom,
-             Discourse.mapInfo, LabelStore.registered, Option.isSome,
-             LabelStore.register, αBurger]
-  rfl
-
-/-- The burger description fails at actual — presupposition failure. -/
-theorem burger_desc_fails_at_actual :
-    ∀ g : Assignment IBWorld IBEntity,
-    ¬ isBurgerAt g .actual := by
-  intro g h; exact absurd h.2 (by decide)
-
-instance : Fintype IBWorld where
-  elems := {.actual, .burgerW}
-  complete := λ w => by cases w <;> decide
-
-/--
-Might blocks anaphora NOT because of non-reflexive access, but because the
-burger **description** is world-dependent: `¬ isBurgerAt g .actual`
-for all g (burger_desc_fails_at_actual). Even with a reflexive modal base,
-the description Σb(BURGER_w([b])) is empty at .actual — no burger there.
-
-The accessibility IS reflexive at .actual (ibAccess .actual .actual),
-confirming that the blocking mechanism is about description content, not
-accessibility structure.
--/
-theorem burger_desc_world_dependent :
-    ¬ isBurgerAt
-      { indiv := λ _ _ => .some .burger, prop := λ _ => ∅ }
-      .actual ∧
-    ibAccess .actual .actual :=
-  ⟨fun h => absurd h.2 (by decide), trivial⟩
-
-end IntensionalBurger
-
-
--- ============================================================
--- Intensional Anaphora: Must Allows (paper §3.3)
--- ============================================================
-
-section IntensionalAnimal
-
-/--
-"There must be some sort of animal in the shed. It's making quite
-a racket!" (paper item 88)
-
-The animal description is world-INdependent: ANIMAL_w([x]) ∧ SINGLE(x)
-holds at ALL accessible worlds (realistic modal base includes actual).
-
-Felicity condition (paper item 90):
-  ∀w(MUST_w(ΣwX) → SINGLE(ΣxX))
-succeeds because must guarantees X at every accessible world including w.
--/
-inductive IAWorld where
-  | actual | shedW
-  deriving DecidableEq, Repr, Inhabited
-
-inductive IAEntity where
-  | animal
-  deriving DecidableEq, Repr, Inhabited
-
-def iaWorlds : List IAWorld := [.actual, .shedW]
-def αAnimal : FLabel := ⟨11⟩
-def vAnimal : IVar := ⟨11⟩
-
-/-- Realistic epistemic: actual accessible from itself. -/
-def iaAccess : IAWorld → IAWorld → Prop
-  | .actual, .actual => True
-  | .actual, .shedW => True
-  | _, _ => False
-
-/-- World-INdependent predicate: holds at ALL worlds. -/
-def isAnimalInShed (g : Assignment IAWorld IAEntity) (w : IAWorld) : Prop :=
-  g.indiv vAnimal w = .some .animal
-
-def animalSentence : PUpdate IAWorld IAEntity :=
-  must iaAccess iaWorlds
-    (existsLabeled αAnimal vAnimal {.animal}
-      isAnimalInShed (atom isAnimalInShed))
-
-theorem animal_label_registered (d : Discourse IAWorld IAEntity) :
-    (animalSentence d).labels.registered αAnimal = true := by
-  simp only [animalSentence, must, modalExpand, existsLabeled, atom,
-             Discourse.mapInfo, LabelStore.registered, Option.isSome,
-             LabelStore.register, αAnimal]
-  rfl
-
-theorem animal_desc_succeeds :
-    ∀ (g : Assignment IAWorld IAEntity) (w : IAWorld),
-    g.indiv vAnimal w = .some .animal → isAnimalInShed g w := by
-  intro g w h; exact h
-
-instance : Fintype IAWorld where
-  elems := {.actual, .shedW}
-  complete := λ w => by cases w <;> decide
-
-/--
-Must allows anaphora via Kratzer's realistic modal base.
-
-The animal accessibility relation is reflexive at .actual (the evaluation world),
-so `must_realistic_at` (derived from the T axiom) guarantees that the
-description predicate holds at .actual. This is the Kripke-semantic
-grounding of why must enables intensional anaphora.
--/
-theorem animal_must_realistic :
-    iaAccess .actual .actual := trivial
-
-end IntensionalAnimal
-
-
--- ============================================================
--- Must with Multiple Animals (paper §3.3, items 106–107)
--- ============================================================
-
-section MultiAnimal
-
-/--
-The paper's deeper argument about must (items 106–107): in different
-accessible worlds, *different* animals could be in the shed. The
-summation across assignments gives MULTIPLE animals, not a single one.
-
-Must still allows anaphora because:
-1. The accessibility relation is realistic (actual ∈ β_w*)
-2. The animal AT the actual world is singular (SINGLE)
-
-The summation Σx ANIMAL_w*([x]) — evaluated at the discourse world w* —
-gives the singleton {cat}. The summation across ALL worlds would give
-{cat, dog, raccoon}, but the world variable in ΣxX is bound by the
-discourse-level Σw, fixing it to w*.
-
-This enriched model shows why Stone/Brasoveanu's system incorrectly
-predicts plurality: it would sum across all accessible worlds, getting
-{cat, dog, raccoon} — failing SINGLE.
--/
-inductive MAWorld where
-  | actual | shedW1 | shedW2
-  deriving DecidableEq, Repr, Inhabited
-
-inductive MAEntity where
-  | cat | dog | raccoon
-  deriving DecidableEq, Repr, Inhabited
-
-def maWorlds : List MAWorld := [.actual, .shedW1, .shedW2]
-def αMA : FLabel := ⟨12⟩
-def vMA : IVar := ⟨12⟩
-
-/-- Realistic epistemic: actual accessible from itself, plus two alternatives. -/
-def maAccess : MAWorld → MAWorld → Prop
-  | .actual, _ => True
-  | _, _ => False
-
-/-- World-dependent predicate: different animal in each world. -/
-def isAnimalInShedMA (g : Assignment MAWorld MAEntity) (w : MAWorld) : Prop :=
-  match g.indiv vMA w, w with
-  | .some .cat, .actual => True
-  | .some .dog, .shedW1 => True
-  | .some .raccoon, .shedW2 => True
-  | _, _ => False
-
-/-- At the actual world, only one entity satisfies the description. -/
-private def maG (e : MAEntity) : Assignment MAWorld MAEntity :=
-  { indiv := λ v _w => if v == vMA then .some e else .star
-    prop := λ _ => ∅ }
-
-/-- At actual, only cat satisfies the description (SINGLE). -/
-theorem ma_single_at_actual :
-    isAnimalInShedMA (maG .cat) .actual ∧
-    ¬ isAnimalInShedMA (maG .dog) .actual ∧
-    ¬ isAnimalInShedMA (maG .raccoon) .actual :=
-  ⟨trivial, id, id⟩
-
-/-- Different entities satisfy the description at different worlds. -/
-theorem ma_different_animals_per_world :
-    isAnimalInShedMA
-      { indiv := λ v _w => if v == vMA then .some .cat else .star
-        prop := λ _ => ∅ } .actual ∧
-    isAnimalInShedMA
-      { indiv := λ v _w => if v == vMA then .some .dog else .star
-        prop := λ _ => ∅ } .shedW1 ∧
-    isAnimalInShedMA
-      { indiv := λ v _w => if v == vMA then .some .raccoon else .star
-        prop := λ _ => ∅ } .shedW2 :=
-  ⟨trivial, trivial, trivial⟩
-
-/-- Cross-world summation yields PLURAL — Stone/Brasoveanu would incorrectly
-    predict plurality here since they sum across all accessible worlds.
-    Different animals satisfy the description at different worlds: cat at
-    actual, dog at shedW1. -/
-theorem ma_cross_world_plural :
-    isAnimalInShedMA (maG .cat) .actual ∧
-    isAnimalInShedMA (maG .dog) .shedW1 ∧
-    MAEntity.cat ≠ MAEntity.dog :=
-  ⟨trivial, trivial, by decide⟩
-
-end MultiAnimal
-
-
--- ============================================================
--- Possible Candidates (paper §3.2, items 85–87)
--- ============================================================
-
-section PossibleCandidates
-
-/--
-"There may already be a winner in the mayoral race. #She is a woman." (paper item 85)
-
-This is PIP's strongest argument against Stone/Brasoveanu's "in" predicate.
-The candidates (alice, bob) are **real people who exist in the actual world**.
-A Stone/Brasoveanu-style presupposition requiring only that the referent
-"exist in the world of evaluation" would wrongly predict felicity.
-
-PIP correctly blocks anaphora because the *description* WINNER_w([x]) is
-world-dependent: in worlds where the tabulation isn't complete, there is
-no winner, so Σx WINNER_w([x]) = ∅, failing SINGLE (paper item 87):
-
-  ∀w(MIGHT_w(Σw WINNER_w([x])) → SINGLE(Σx WINNER_w([x])))
--/
-inductive PCWorld where
-  | actual | aliceWins | bobWins
-  deriving DecidableEq, Repr, Inhabited
-
-inductive PCEntity where
-  | alice | bob
-  deriving DecidableEq, Repr, Inhabited
-
-def pcWorlds : List PCWorld := [.actual, .aliceWins, .bobWins]
-def αWinner : FLabel := ⟨20⟩
-def vWinner : IVar := ⟨20⟩
-
-/-- Epistemic: speaker considers all outcomes possible. -/
-def pcAccess : PCWorld → PCWorld → Prop
-  | .actual, _ => True
-  | _, _ => False
-
-/-- World-dependent predicate: winner only at resolution worlds. -/
-def isWinner (g : Assignment PCWorld PCEntity) (w : PCWorld) : Prop :=
-  match g.indiv vWinner w, w with
-  | .some .alice, .aliceWins => True
-  | .some .bob, .bobWins => True
-  | _, _ => False
-
-/-- "There may already be a winner." -/
-def candidateSentence : PUpdate PCWorld PCEntity :=
-  might pcAccess pcWorlds
-    (existsLabeled αWinner vWinner {.alice, .bob}
-      isWinner (atom isWinner))
-
-/-- The winner description is empty at the actual world — no winner declared yet. -/
-theorem winner_desc_empty_at_actual :
-    ∀ g : Assignment PCWorld PCEntity,
-    ¬ isWinner g .actual := by
-  intro g; simp [isWinner]
-
-/--
-Contrast with Stone/Brasoveanu: the entities EXIST in the actual world
-(alice and bob are real candidates), but the description WINNER is empty there.
-The "in" predicate would say alice/bob exist → felicitous. PIP says the
-DESCRIPTION yields nothing at actual → infelicitous.
--/
-theorem candidates_exist_but_description_fails :
-    ({.alice, .bob} : Set PCEntity).Nonempty ∧
-    (∀ g : Assignment PCWorld PCEntity, ¬ isWinner g .actual) :=
-  ⟨⟨.alice, Set.mem_insert _ _⟩, winner_desc_empty_at_actual⟩
-
-/-- The label is registered (the mechanism works), but the description
-    cannot be satisfied at the actual world. -/
-theorem candidate_label_registered (d : Discourse PCWorld PCEntity) :
-    (candidateSentence d).labels.registered αWinner = true := by
-  simp only [candidateSentence, might, modalExpand, existsLabeled, atom,
-             Discourse.mapInfo, LabelStore.registered, Option.isSome,
-             LabelStore.register, αWinner]
-  rfl
-
-end PossibleCandidates
-
-
--- ============================================================
--- Bridge 4: Intensional Anaphora Contrast
--- ============================================================
-
-/--
-The paper's core contribution (§3): might blocks anaphora, must allows it.
-
-The mechanism is the same for both (label + retrieveDef). The difference:
-- must guarantees the description holds at the evaluation world (realistic base)
-- might only guarantees SOME accessible world
-
-Since the pronoun's existential presupposition (paper item 9) requires
-the description to hold at the evaluation world, might fails and must succeeds.
--/
-theorem pip_intensional_anaphora_contrast :
-    (∀ g : Assignment IBWorld IBEntity, ¬ isBurgerAt g .actual) ∧
-    (∀ (g : Assignment IAWorld IAEntity) (w : IAWorld),
-     g.indiv vAnimal w = .some .animal → isAnimalInShed g w) :=
-  ⟨burger_desc_fails_at_actual, animal_desc_succeeds⟩
-
-/-- Labels are registered in BOTH cases — the asymmetry is about
-    world-dependence of the description, not label availability. -/
-theorem labels_registered_in_both_cases :
-    (∀ d : Discourse IBWorld IBEntity,
-      (burgerSentence d).labels.registered αBurger = true) ∧
-    (∀ d : Discourse IAWorld IAEntity,
-      (animalSentence d).labels.registered αAnimal = true) :=
-  ⟨burger_label_registered, animal_label_registered⟩
-
-/-- Static felicity operator F distinguishes might from must. -/
-theorem felicity_might_blocks :
-    ¬ (Felicity.singlePresup (W := IBWorld) (λ w => w = .burgerW)).felicitous .actual := by
-  intro h; exact absurd h.2 (by decide)
-
-theorem felicity_must_allows :
-    (Felicity.singlePresup (W := IAWorld) (λ _ => True)).felicitous .actual := by
-  exact ⟨trivial, trivial⟩
-
-
--- ============================================================
--- Unified Account
--- ============================================================
-
-/--
-PIP provides a unified account via TWO mechanisms:
-
-1. **Label monotonicity**: labels survive all operators
-   → modal subordination, bathroom sentences, donkey anaphora
-
-2. **World-dependent descriptions + existential presupposition**:
-   pronouns presuppose their description holds at the evaluation world
-   → might blocks anaphora, must allows it
-
-No stipulated accommodation rules, no "in" predicate (contra
-[stone-1999] / [brasoveanu-2010]), no special accessibility conditions.
-
-Evidence: all 5 phenomena are verified by the theorems above:
-- `stone_discourse_consistent` + `stone_discourse_rejects_unbound`
-- `bathroom_sentence_consistent` + `bathroom_rejects_nonupstairs`
-- `paycheck_needs_descriptions`
-- `burger_desc_fails_at_actual` + `animal_desc_succeeds`
-- `pip_intensional_anaphora_contrast`
--/
-theorem label_monotonicity_is_uniform :
-    -- Labels survive negation (bathroom mechanism)
-    (∀ d : Discourse BWorld BEntity,
-      (negation
-        (existsLabeled αBath vBath {.bathroom}
-          isBathroom
-          (atom isBathroom)) d).labels.registered αBath = true) ∧
-    -- Labels survive might (burger case)
-    (∀ d : Discourse IBWorld IBEntity,
-      (burgerSentence d).labels.registered αBurger = true) ∧
-    -- Labels survive must (animal case)
-    (∀ d : Discourse IAWorld IAEntity,
-      (animalSentence d).labels.registered αAnimal = true) ∧
-    -- Labels survive full discourse (Stone's puzzle)
-    (∀ d : Discourse SWorld SEntity,
-      (stoneDiscourse d).labels.registered αWolf = true) :=
-  ⟨bathroom_mechanism, burger_label_registered,
-   animal_label_registered, stone_discourse_label_available⟩
-
-
--- ============================================================
--- Bridge 5: Grounding in Kripke Semantics
--- ============================================================
-
-/--
-The might/must asymmetry is grounded in descriptions, not accessibility.
-
-Both modal bases are reflexive at .actual. The difference:
-- Must (animal): the description `isAnimalInShed` is world-INdependent
-  (holds at all worlds) → SINGLE succeeds at every context-set world.
-- Might (burger): the description `isBurgerAt` is world-dependent
-  (holds only at .burgerW) → SINGLE fails at .actual.
-
-The T axiom is necessary but not sufficient: reflexivity guarantees the
-description is checked at the evaluation world, but the description
-itself must hold there.
--/
-theorem intensional_anaphora_is_T_axiom :
-    -- Must's accessibility is reflexive at actual
-    iaAccess .actual .actual ∧
-    -- Might's accessibility is ALSO reflexive at actual
-    ibAccess .actual .actual ∧
-    -- But the burger description fails at actual (world-dependent)
-    (∀ g : Assignment IBWorld IBEntity, ¬ isBurgerAt g .actual) :=
-  ⟨animal_must_realistic, trivial, burger_desc_fails_at_actual⟩
-
-
--- ============================================================
--- Bridge 6: Cross-Sentential Anaphora
--- ============================================================
-
-/--
-PIP predicts the standard cross-sentential anaphora pattern:
-
-- **Indefinite persistence** (Karttunen 1969): ∃^α introduces a label that
-  persists through sequential conjunction → pronoun resolves via DEF_α.
-- **Standard negation blocks** (Heim 1982): negation filters the info state,
-  and the CONJUNCTION version ("John didn't see a bird. It was singing.")
-  fails because sequential conjunction makes the second sentence evaluate
-  in a context where no bird-assignments survive.
-- **Double negation enables** (Elliott & Sudo 2025): ¬¬∃^α x.φ registers α
-  in the body; label monotonicity through both negations preserves it.
-
-The difference between standard negation blocking and double negation
-enabling is exactly PIP's label monotonicity: labels survive negation
-(`labels_survive_negation`), but the info state does not survive single
-negation in sequential discourse.
--/
-theorem pip_cross_sentential_predictions :
-    -- Indefinites persist: label + conjunction → felicitous
-    Heim1982.Examples.indefinite_persists.judgment = .acceptable ∧
-    -- Standard negation blocks (in sequential discourse)
-    Heim1982.Examples.standard_negation_blocks.judgment = .unacceptable ∧
-    -- Double negation enables (labels survive both negations)
-    ElliottSudo2025.Examples.double_negation.judgment = .acceptable :=
-  ⟨rfl, rfl, rfl⟩
-
-/--
-PIP predicts that universals and negative quantifiers block
-cross-sentential anaphora: ∀x.φ = ¬∃x.¬φ does not introduce a
-labeled existential, so no DEF_α is available.
--/
-theorem pip_quantifier_blocking :
-    Heim1982.Examples.universal_blocks.judgment = .unacceptable ∧
-    Heim1982.Examples.negative_blocks.judgment = .unacceptable ∧
-    Heim1982.Examples.most_blocks.judgment = .unacceptable :=
-  ⟨rfl, rfl, rfl⟩
-
-
--- ============================================================
--- Bridge 7: DPL Comparison — Why PIP Succeeds Where DPL Fails
--- ============================================================
-
-section DPLComparison
-
-open DynamicSemantics (existsAt existsAt_iff)
-open DynamicSemantics (Update)
-open DynamicSemantics.Update (neg test)
-
-/-!
-### PIP vs DPL: The Architectural Difference
-
-DPL negation is a **test**: `⟦¬φ⟧(g, h) iff g = h ∧ ¬∃k. φ(g, k)`.
-The output assignment equals the input — no bindings are exported through
-negation. This is why `¬¬∃xφ ≠ ∃xφ` in DPL (`dpl_dne_fails_anaphora`
-below): double negation doesn't recover the binding.
-
-PIP negation propagates **labels** from the body: `(negation φ d).labels =
-(φ d).labels`. The info state is complemented, but the label registry
-survives. This is exactly what enables bathroom sentences and double-negation
-anaphora.
-
-The following theorems make this architectural difference explicit.
-
-**Substrate names**: DPL relations are `Update (Assignment E)` from
-`Semantics/Dynamic/`. The DPL operator aliases are
-substrate operations: `DPL.Rel.neg φ` is `test (neg φ)`,
-`DPL.Rel.exists_ x φ` is `existsAt x φ`. -/
-
-/--
-DPL negation resets the output assignment — it cannot export bindings.
-
-This is the key structural property of DPL that blocks cross-negation
-anaphora: after `¬φ` (`test (neg φ)`), the output assignment equals the
-input, so any variables bound inside φ are inaccessible.
--/
-theorem dpl_neg_is_test :
-    ∀ (E : Type*) (φ : Update (Assignment E)) (g h : Assignment E),
-    test (neg φ) g h → g = h :=
-  λ _ _ _ _ h => h.1
-
-/--
-PIP negation preserves labels — it CAN export descriptive content.
-
-This is the fundamental advantage of PIP over DPL: even though the info
-state is complemented (like DPL's test), the label registry propagates
-outward. The pronoun resolves via DEF_α (label lookup), not via assignment
-binding.
--/
-theorem pip_neg_preserves_labels :
-    ∀ (d : Discourse BWorld BEntity) (φ : PUpdate BWorld BEntity)
-      (α : FLabel) (desc : Description BWorld BEntity),
-    (φ d).labels.lookup α = some desc →
-    (negation φ d).labels.lookup α = some desc :=
-  λ d φ α desc h => labels_survive_negation d α φ desc h
-
-/--
-DPL double negation does not recover anaphora.
-
-For `Nontrivial E`, there exist `x : Nat` and `φ : Update (Assignment E)` such
-that `test (neg (test (neg (existsAt x φ))))` ≠ `existsAt x φ`. The
-substrate-name restatement of [groenendijk-stokhof-1991]'s observation
-that DPL negation collapses positive update information.
-
-`private` until promoted to
-`Studies/GroenendijkStokhof1991.lean`, the canonical home
-for DPL theorems in substrate form. -/
-private theorem dpl_dne_fails_anaphora {E : Type*} [Nontrivial E] :
-    ∃ (x : Nat) (φ : Update (Assignment E)),
-      test (neg (test (neg (existsAt x φ)))) ≠ existsAt x φ := by
-  obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
-  refine ⟨0, fun g h => g = h, fun heq => hne ?_⟩
-  let g₀ : Assignment E := fun _ => e₁
-  have hrhs : existsAt 0 (fun (g h : Assignment E) => g = h) g₀ (Function.update g₀ 0 e₂) :=
-    (existsAt_iff _ _ _ _).mpr ⟨e₂, rfl⟩
-  rw [← heq] at hrhs
-  calc e₁
-      = g₀ 0 := rfl
-    _ = (Function.update g₀ 0 e₂) 0 := congr_fun hrhs.1 0
-    _ = e₂ := Function.update_self 0 e₂ g₀
-
-/--
-The contrast: DPL negation blocks anaphora (test), PIP negation allows it
-(labels survive). This is the architectural reason bathroom sentences are
-infelicitous in DPL but felicitous in PIP.
-
-Concretely:
-- `dpl_dne_fails_anaphora` (above): ¬¬∃x.φ ≠ ∃x.φ in DPL (double negation
-  doesn't recover binding)
-- `bathroom_mechanism`: labels survive through negation in PIP (the
-  bathroom sentence works because αBath is registered despite negation)
--/
-theorem pip_solves_dpl_negation_problem :
-    -- DPL: ¬¬∃xφ ≠ ∃xφ (double negation fails for anaphora)
-    (∃ (x : Nat) (φ : Update (Assignment Nat)),
-      test (neg (test (neg (existsAt x φ)))) ≠ existsAt x φ) ∧
-    -- PIP: labels survive negation (bathroom sentences work)
-    (∀ d : Discourse BWorld BEntity,
-      (negation
-        (existsLabeled αBath vBath {.bathroom}
-          isBathroom
-          (atom isBathroom)) d).labels.registered αBath = true) :=
-  ⟨dpl_dne_fails_anaphora, bathroom_mechanism⟩
-
-end DPLComparison
-
-
--- ============================================================
--- Bridge 8: Presupposition Projection
--- ============================================================
-
-/-!
-Presupposition projection bridges are in `PIP.Bridges`:
-- `pip_felicity_agrees_with_andFilter` — F(φ ∧ ψ) ↔ andFilter
-- `pip_felicity_agrees_with_neg` — F(¬φ) ↔ PartialProp.neg
-- `pip_felicity_agrees_with_impFilter` — F(φ → ψ) ↔ impFilter
-- `pip_felicity_agrees_with_orFilter` — F(φ ∨ ψ) decomposition
--/
-
-
--- ============================================================
--- Donkey Anaphora (paper §2.6.2, items 53–56)
--- ============================================================
-
-section Donkey
-
-/-!
-### PIP Donkey Derivation
-
-"Every farmer who owns a donkey beats it." (paper items 53–56)
-
-PIP analysis: ∀x(farmer(x) ∧ ∃^αD y(donkey(y) ∧ owns(x,y)) →
-              beats(x, DEF_αD{y}))
-
-The label αD for the donkey is registered inside the restrictor's
-existential. Because ∀ = ¬∃¬ and labels survive both negations,
-αD is available in the nuclear scope for DEF_αD retrieval.
-
-Key property: formula label subordination. The label αD is subordinated
-to the restrictor — its descriptive content is "donkey(y) ∧ owns(x,y)".
-When the pronoun "it" (= DEF_αD{y}) is resolved, it finds the unique
-donkey owned by the farmer under discussion.
--/
-
-inductive DWorld where
-  | w0
-  deriving DecidableEq, Repr, Inhabited
-
-inductive DEntity where
-  | farmer1 | farmer2 | donkey1 | donkey2
-  deriving DecidableEq, Repr, Inhabited
-
-def dWorlds : List DWorld := [.w0]
-def αDonkey : FLabel := ⟨30⟩
-def vFarmer : IVar := ⟨30⟩
-def vDonkey : IVar := ⟨31⟩
-
-def isFarmer (g : Assignment DWorld DEntity) (w : DWorld) : Prop :=
-  match g.indiv vFarmer w with
-  | .some .farmer1 | .some .farmer2 => True
-  | _ => False
-
-def isDonkey (g : Assignment DWorld DEntity) (w : DWorld) : Prop :=
-  match g.indiv vDonkey w with
-  | .some .donkey1 | .some .donkey2 => True
-  | _ => False
-
-/-- Ownership: farmer1 owns donkey1, farmer2 owns donkey2. -/
-def owns (g : Assignment DWorld DEntity) (w : DWorld) : Prop :=
-  match g.indiv vFarmer w, g.indiv vDonkey w with
-  | .some .farmer1, .some .donkey1 => True
-  | .some .farmer2, .some .donkey2 => True
-  | _, _ => False
-
-/-- Beating: every farmer who owns a donkey beats it. -/
-def beats (g : Assignment DWorld DEntity) (w : DWorld) : Prop :=
-  match g.indiv vFarmer w, g.indiv vDonkey w with
-  | .some .farmer1, .some .donkey1 => True
-  | .some .farmer2, .some .donkey2 => True
-  | _, _ => False
-
-/--
-"Every farmer who owns a donkey beats it."
-
-PIP formula: ∀x(farmer(x) ∧ ∃^αD y(donkey(y) ∧ owns(x,y)) →
-             beats(x, DEF_αD))
-
-Dynamic encoding: forall_ = ¬∃¬, with labeled existential for the donkey.
--/
-def donkeySentence : PUpdate DWorld DEntity :=
-  forall_ vFarmer {.farmer1, .farmer2}
-    (conj
-      (atom (λ g w => isFarmer g w))
-      (conj
-        (existsLabeled αDonkey vDonkey {.donkey1, .donkey2}
-          isDonkey
-          (atom (λ g w => isDonkey g w ∧ owns g w)))
-        (conj
-          (retrieveDef αDonkey)
-          (atom beats))))
-
-instance : Fintype DWorld where
-  elems := {.w0}
-  complete := λ w => by cases w <;> decide
-
-/-- The donkey label is registered through the forall (¬∃¬). -/
-theorem donkey_label_registered (d : Discourse DWorld DEntity) :
-    (donkeySentence d).labels.registered αDonkey = true := by
-  simp only [donkeySentence, forall_, negation, exists_, existsLabeled, atom,
-             conj, retrieveDef, Discourse.mapInfo,
-             LabelStore.registered, Option.isSome, LabelStore.register,
-             LabelStore.lookup, αDonkey]
-  rfl
-
-end Donkey
-
-
--- ============================================================
--- Hob-Nob (paper §3.5, items 91–93)
--- ============================================================
-
-section HobNob
-
-/-!
-### Cross-Attitude Anaphora: Hob-Nob
-
-"Hob thinks a witch blighted his mare. Nob wonders whether
-she (the same witch) killed his cow." (Geach 1967)
-
-PIP analysis (paper items 91–93): The label αWitch is registered
-under Hob's belief attitude. Nob's wonder attitude retrieves the
-same label. Label persistence across attitude operators is the
-same mechanism as modal subordination.
-
-Key property: labels are part of the discourse state, not the
-information state. Since attitudes (like modals) affect only the
-info state while preserving labels, cross-attitude anaphora works
-by the same mechanism as cross-modal anaphora.
--/
-
-inductive HNWorld where
-  | actual | hobBelief | nobWonder
-  deriving DecidableEq, Repr, Inhabited
-
-inductive HNEntity where
-  | witch
-  deriving DecidableEq, Repr, Inhabited
-
-def hnWorlds : List HNWorld := [.actual, .hobBelief, .nobWonder]
-def αWitch : FLabel := ⟨40⟩
-def vWitch : IVar := ⟨40⟩
-
-/-- Hob's doxastic accessibility: Hob believes from actual to hobBelief. -/
-def hobAccess : HNWorld → HNWorld → Prop
-  | .actual, .hobBelief => True
-  | _, _ => False
-
-/-- Nob's bouletic accessibility: Nob wonders from actual to nobWonder. -/
-def nobAccess : HNWorld → HNWorld → Prop
-  | .actual, .nobWonder => True
-  | _, _ => False
-
-def isWitch (g : Assignment HNWorld HNEntity) (w : HNWorld) : Prop :=
-  g.indiv vWitch w = .some .witch
-
-/-- Hob's belief: "a witch blighted his mare" -/
-def hobBelief : PUpdate HNWorld HNEntity :=
-  must hobAccess hnWorlds
-    (existsLabeled αWitch vWitch {.witch}
-      isWitch
-      (atom isWitch))
-
-/-- Nob's wonder: "she killed his cow" — retrieves αWitch from Hob's belief. -/
-def nobWonder : PUpdate HNWorld HNEntity :=
-  conj
-    (retrieveDef αWitch)
-    (might nobAccess hnWorlds
-      (atom (λ g w => g.indiv vWitch w ≠ .star)))
-
-/-- The full Hob-Nob discourse. -/
-def hobNobDiscourse : PUpdate HNWorld HNEntity :=
-  conj hobBelief nobWonder
-
-/-- The witch label survives from Hob's belief to Nob's wonder. -/
-theorem hobnob_label_persists (d : Discourse HNWorld HNEntity) :
-    (hobBelief d).labels.registered αWitch = true := by
-  simp only [hobBelief, must, modalExpand, existsLabeled, atom,
-             Discourse.mapInfo, LabelStore.registered, Option.isSome,
-             LabelStore.register, αWitch]
-  rfl
-
-/-- After the full discourse, αWitch is still available. -/
-theorem hobnob_full_label_available (d : Discourse HNWorld HNEntity) :
-    (hobNobDiscourse d).labels.registered αWitch = true := by
-  simp only [hobNobDiscourse, conj, nobWonder, hobBelief, must, might,
-             modalExpand, existsLabeled, atom, retrieveDef,
-             Discourse.mapInfo, LabelStore.registered, Option.isSome,
-             LabelStore.register, LabelStore.lookup, αWitch, vWitch, isWitch]
-  rfl
-
-end HobNob
-
-
--- ============================================================
--- Semantic Framework Comparison
--- ============================================================
-
-/-!
-### DPL vs ICDRT vs PIP: Coverage Comparison
-
-The three frameworks have different coverage profiles for anaphora
-phenomena. PIP's descriptive content mechanism handles all cases
-uniformly; DPL and ICDRT each miss some.
-
-| Phenomenon | DPL | ICDRT | PIP |
-|---|---|---|---|
-| Cross-sentential | ✓ | ✓ | ✓ |
-| Negation blocks | ✓ | ✓ | ✓ |
-| Donkey anaphora | ✓ | ✓ | ✓ |
-| Double negation | ✗ | ✓ | ✓ |
-| Bathroom sentences | ✗ | ✓ | ✓ |
-| Modal subordination | ✗ | ✓ | ✓ |
-| Paycheck pronouns | ✗ | ✗ | ✓ |
-| Intensional anaphora | ✗ | ✗ | ✓ |
--/
-
-/-- Coverage datum for framework comparison. -/
-structure CoverageDatum where
-  phenomenon : String
-  dpl : Bool
-  icdrt : Bool
-  pip : Bool
-  deriving Repr
-
-def coverageData : List CoverageDatum := [
-  ⟨"Cross-sentential", true, true, true⟩,
-  ⟨"Negation blocks", true, true, true⟩,
-  ⟨"Donkey anaphora", true, true, true⟩,
-  ⟨"Double negation", false, true, true⟩,
-  ⟨"Bathroom sentences", false, true, true⟩,
-  ⟨"Modal subordination", false, true, true⟩,
-  ⟨"Paycheck pronouns", false, false, true⟩,
-  ⟨"Intensional anaphora", false, false, true⟩
-]
-
-/-- PIP covers all phenomena (all pip fields are true). -/
-theorem pip_covers_all :
-    coverageData.all (·.pip) = true := by decide
-
-/-- DPL misses 5 phenomena. -/
-theorem dpl_misses_five :
-    (coverageData.filter (! ·.dpl)).length = 5 := by decide
-
-/-- ICDRT misses 2 phenomena (paycheck + intensional). -/
-theorem icdrt_misses_two :
-    (coverageData.filter (! ·.icdrt)).length = 2 := by decide
-
-/-- PIP strictly extends ICDRT: everything ICDRT covers, PIP covers too. -/
-theorem pip_extends_icdrt :
-    coverageData.all (λ d => !d.icdrt || d.pip) = true := by decide
-
-/-- PIP strictly extends DPL. -/
-theorem pip_extends_dpl :
-    coverageData.all (λ d => !d.dpl || d.pip) = true := by decide
-
+  · rintro ⟨d, ⟨_, e, rfl, rfl, he⟩, ha⟩
+    exact ⟨e, ha, he⟩
+  · rintro ⟨e, rfl, he⟩
+    exact ⟨_, ⟨w₀, e, rfl, rfl, he⟩, rfl⟩
+
+theorem mem_sigmaW_descE (a : Atom W E) :
+    (Term.sigma .w descE).mem S.model h a ↔ ∃ w e, a = Sum.inl w ∧ S.desc w e := by
+  simp only [Term.mem, locals_descE, List.filter_cons, List.filter_nil, decide_eq_true_eq, ne_eq,
+    reduceCtorEq, not_false_eq_true, reduceIte, closeOver, sat_descE, Function.update_self]
+  constructor
+  · rintro ⟨d, ⟨X, w, e, rfl, rfl, he⟩, ha⟩
+    exact ⟨w, e, ha, he⟩
+  · rintro ⟨w, e, rfl, he⟩
+    exact ⟨world w, ⟨{Sum.inr e}, w, e, rfl, rfl, he⟩, rfl⟩
+
+theorem mem_base (a : Atom W E) :
+    base.mem S.model h a ↔ ∃ w u, h .w = world w ∧ a = Sum.inl u ∧ S.acc w u := by
+  simp only [base, Term.mem, locals_access, List.filter_nil, closeOver, sat_access,
+    Function.update_self, Function.update_of_ne (show Var.w ≠ Var.u by decide)]
+  constructor
+  · rintro ⟨d, ⟨w, u, hw, rfl, hacc⟩, ha⟩
+    exact ⟨w, u, hw, ha, hacc⟩
+  · rintro ⟨w, u, hw, rfl, hacc⟩
+    exact ⟨world u, ⟨w, u, hw, rfl, hacc⟩, rfl⟩
+
+theorem exists_eq_singleton_iff (P : E → Prop) :
+    (∃ a : Atom W E, {x | ∃ e, x = Sum.inr e ∧ P e} = {a}) ↔ ∃! e, P e := by
+  simp only [Set.eq_singleton_iff_unique_mem, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨a, ⟨e, rfl, he⟩, hu⟩
+    exact ⟨e, he, fun e' he' => Sum.inr_injective (hu _ ⟨e', rfl, he'⟩)⟩
+  · rintro ⟨e, he, hu⟩
+    exact ⟨_, ⟨e, rfl, he⟩, fun x ⟨e', hx, he'⟩ => hx ▸ congrArg Sum.inr (hu e' he')⟩
+
+/-- `single(ΣbE)` at `w₀`: exactly one satisfier of the description there. -/
+theorem sat_single_sigmaB (hw : h .w = world w₀) :
+    (Formula.atom .single ![Term.sigma .b descE]).sat S.model h ↔ ∃! e, S.desc w₀ e := by
+  show (∃ a, {x | (Term.sigma .b descE).mem S.model h x} = {a}) ↔ _
+  simp only [mem_sigmaB_descE S h hw, exists_eq_singleton_iff]
+
+theorem fel_pronoun_iff (hw : h .w = world w₀) :
+    (pronoun descE).fel S.model h ↔ ∃! e, S.desc w₀ e := by
+  show (Term.sigma .b descE).fel S.model h ∧ (∀ i, (![Term.sigma .b descE] i).fel S.model h) ∧
+    (Formula.atom .single ![Term.sigma .b descE]).sat S.model h ↔ _
+  simp only [Fin.forall_fin_one, Matrix.cons_val_zero, fel_sigmaB_descE, sat_single_sigmaB S h hw,
+    true_and]
+
+theorem fel_continuation_iff (hw : h .w = world w₀) :
+    (continuation descE).fel S.model h ↔ ∃! e, S.desc w₀ e := by
+  show (∀ i, (![Term.var Var.w, pronoun descE] i).fel S.model h) ↔ _
+  simp only [Fin.forall_fin_two, Matrix.cons_val_zero, Matrix.cons_val_one, Term.fel,
+    fel_pronoun_iff S h hw, true_and]
+
+/-- A modal discourse is felicitous at `w₀` iff the modal claim there implies
+a unique satisfier of the antecedent description at `w₀`. -/
+theorem fel_discourse_iff (q : Pred) (hw : h .w = world w₀) :
+    (discourse q descE).fel S.model h ↔ ((modal q descE).sat S.model h → ∃! e, S.desc w₀ e) := by
+  show ((modal q descE).fel S.model h ∧ ((modal q descE).sat S.model h → True)) ∧
+    ((modal q descE).sat S.model h ∧ True → (continuation descE).fel S.model h) ↔ _
+  simp only [fel_modal, fel_continuation_iff S h hw, implies_true, and_true, true_and]
+
+/-- `might_w(ΣwE)` at `w₀`: some accessible world has a satisfier. -/
+theorem sat_modal_some (hw : h .w = world w₀) :
+    (modal .some descE).sat S.model h ↔ ∃ u e, S.acc w₀ u ∧ S.desc u e := by
+  show ({a | base.mem S.model h a} ∩ {a | (Term.sigma .w descE).mem S.model h a}).Nonempty ↔ _
+  simp only [Set.Nonempty, Set.mem_inter_iff, Set.mem_ofPred_eq, mem_base, mem_sigmaW_descE, hw,
+    world_inj]
+  constructor
+  · rintro ⟨_, ⟨_, u, rfl, rfl, hacc⟩, w, e, ⟨⟩, he⟩
+    exact ⟨u, e, hacc, he⟩
+  · rintro ⟨u, e, hacc, he⟩
+    exact ⟨_, ⟨_, u, rfl, rfl, hacc⟩, u, e, rfl, he⟩
+
+/-- `must_w(ΣwE)` at `w₀`: every accessible world has a satisfier. -/
+theorem sat_modal_every (hw : h .w = world w₀) :
+    (modal .every descE).sat S.model h ↔ ∀ u, S.acc w₀ u → ∃ e, S.desc u e := by
+  show {a | base.mem S.model h a} ⊆ {a | (Term.sigma .w descE).mem S.model h a} ↔ _
+  simp only [Set.subset_def, Set.mem_ofPred_eq, mem_base, mem_sigmaW_descE, hw, world_inj]
+  constructor
+  · intro H u hu
+    obtain ⟨w, e, hw', he⟩ := H _ ⟨_, u, rfl, rfl, hu⟩
+    cases Sum.inl.inj hw'
+    exact ⟨e, he⟩
+  · rintro H _ ⟨_, u, rfl, rfl, hu⟩
+    obtain ⟨e, he⟩ := H u hu
+    exact ⟨u, e, rfl, he⟩
+
+/-- (83): with `might`, the discourse is felicitous at `w₀` iff, whenever a
+world with a satisfier is accessible from `w₀`, `w₀` itself has a unique
+satisfier. -/
+theorem fel_discourseMight_iff (hw : h .w = world w₀) :
+    discourseMight.expandSelf.fel S.model h ↔
+      ((∃ u e, S.acc w₀ u ∧ S.desc u e) → ∃! e, S.desc w₀ e) := by
+  rw [discourseMight, expandSelf_discourse, fel_discourse_iff S h _ hw, sat_modal_some S h hw]
+
+/-- (90): with `must`, the discourse is felicitous at `w₀` iff, whenever every
+world accessible from `w₀` has a satisfier, `w₀` has a unique one. -/
+theorem fel_discourseMust_iff (hw : h .w = world w₀) :
+    discourseMust.expandSelf.fel S.model h ↔
+      ((∀ u, S.acc w₀ u → ∃ e, S.desc u e) → ∃! e, S.desc w₀ e) := by
+  rw [discourseMust, expandSelf_discourse, fel_discourse_iff S h _ hw, sat_modal_every S h hw]
+
+/-- (88)–(90): a realistic modal base and the scalar implicature that a
+satisfier is unique make the `must` discourse felicitous at every world. -/
+theorem fel_discourseMust_of_realistic (hr : ∀ w, S.acc w w)
+    (hu : ∀ w, (∃ e, S.desc w e) → ∃! e, S.desc w e) (hw : h .w = world w₀) :
+    discourseMust.expandSelf.fel S.model h :=
+  (fel_discourseMust_iff S h hw).2 fun H => hu _ (H _ (hr _))
+
+/-- (78): the unembedded discourse (74) is felicitous under every assignment,
+the assertion `single(b)` satisfying the pronoun's presupposition. -/
+theorem fel_plain : plain.fel S.model h := by
+  refine ⟨fel_descE S h, fun hd => ?_⟩
+  show ∀ i, (![Term.var Var.w, Term.presup (.var .b) (.atom .single ![.var .b])] i).fel S.model h
+  exact Fin.forall_fin_two.2 ⟨trivial, trivial, Fin.forall_fin_one.2 trivial, hd.2⟩
+
+/-- (97): the bathroom disjunction is felicitous at `w₀` iff a bathroom there,
+if any, is unique. -/
+theorem fel_bathroom_iff (hw : h .w = world w₀) :
+    bathroom.expandSelf.fel S.model h ↔ ((∃ e, S.desc w₀ e) → ∃! e, S.desc w₀ e) := by
+  rw [expandSelf_bathroom]
+  show ((Formula.neg (.exists_ .b descE)).disj (continuation descE)).fel S.model h ∧ (_ → True) ↔ _
+  rw [Formula.fel_disj, fel_continuation_iff S h hw]
+  show ((∀ d, descE.fel S.model (Function.update h .b d)) ∧
+    (¬¬(∃ d, descE.sat S.model (Function.update h .b d)) → _)) ∧ _ ↔ _
+  simp only [fel_descE, implies_true, true_and, and_true, not_not, sat_descE, hw, world_inj]
+  constructor
+  · exact fun H ⟨e, he⟩ => H ⟨_, w₀, e, rfl, rfl, he⟩
+  · rintro H ⟨_, _, e, rfl, rfl, he⟩
+    exact H ⟨e, he⟩
+
+/-! ### Possible burgers -/
+
+/-- (79): at `false` Andrea is fasting and at `true` she is eating a
+cheeseburger, and for all anyone knows at either world, either is actual. -/
+def burger : Scenario Bool Unit where
+  acc _ _ := True
+  desc w _ := w = true
+  cont _ _ := True
+
+/-- (79) is infelicitous at the world where Andrea is fasting but might be
+eating a cheeseburger: `ΣbE` is empty there. -/
+theorem not_fel_burger (h : Var → Set (Atom Bool Unit)) (hw : h .w = world false) :
+    ¬ discourseMight.expandSelf.fel burger.model h := by
+  rw [fel_discourseMight_iff burger h hw]
+  intro H
+  obtain ⟨_, h1⟩ := (H ⟨true, (), trivial, rfl⟩).exists
+  exact Bool.false_ne_true h1
 
 end KeshetAbney2024

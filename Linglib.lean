@@ -165,6 +165,7 @@ import Linglib.Logic.Modal.FirstOrder.Correspondence
 import Linglib.Core.ModelTheory.Lindstrom
 import Linglib.Core.ModelTheory.QuantifierRank
 import Linglib.Core.ModelTheory.TotalPreorder
+import Linglib.Logic.PIP.Basic
 import Linglib.Logic.Team.BSML.Bisimulation
 import Linglib.Logic.Team.BSML.Bridge
 import Linglib.Logic.Team.BSML.Characteristic
@@ -2338,12 +2339,6 @@ import Linglib.Studies.Kennedy2015PMF
 import Linglib.Studies.KennedyLevin2008
 import Linglib.Studies.Kenstowicz1987
 import Linglib.Studies.KeshetAbney2024
-import Linglib.Studies.KeshetAbney2024.Basic
-import Linglib.Studies.KeshetAbney2024.Bridges
-import Linglib.Studies.KeshetAbney2024.Composition
-import Linglib.Studies.KeshetAbney2024.Connectives
-import Linglib.Studies.KeshetAbney2024.Expr
-import Linglib.Studies.KeshetAbney2024.Felicity
 import Linglib.Studies.Khoo2015
 import Linglib.Studies.Kim2024
 import Linglib.Studies.Kim2024_UPH
@@ -2938,3 +2933,4 @@ import Linglib.Data.Examples.RomeroHan2004
 import Linglib.Data.Examples.Cacchioli2026
 import Linglib.Data.Examples.Franke2011
 import Linglib.Data.Examples.Ginzburg2012
+import Linglib.Data.Examples.KeshetAbney2024
