@@ -16,6 +16,7 @@ prediction relation they induce.
   context.
 * `Coherent`: equivalent rules carry the same exponent.
 * `Realizes`: some Elsewhere winner carries the given exponent.
+* `Realizes.of_realizes`: no ABA pattern across nested contexts.
 -/
 
 namespace Morphology.Exponence
@@ -66,5 +67,24 @@ theorem Realizes.eq {ψ : E} (hv : Coherent v)
   obtain ⟨r, hr, rfl⟩ := hφ
   obtain ⟨s, hs, rfl⟩ := hψ
   exact hr.exponent_eq hv hs (hcmp hr hs)
+
+/-! ### Containment -/
+
+/-- A winner at a context that applies at a smaller context, in the sense that everything
+applicable there is applicable at the larger, is a winner at the smaller. -/
+theorem IsElsewhereWinner.of_applies {c' : Ctx} (h : ∀ s : R, Applies s c' → Applies s c)
+    (hr : IsElsewhereWinner v c r) (hc' : Applies r c') : IsElsewhereWinner v c' r :=
+  hr.mono (fun s hs => ⟨hs.1, h s hs.2⟩) ⟨hr.1.1, hc'⟩
+
+/-- No ABA across nested contexts: with one item per exponent, an exponent realized at the
+smallest and the largest of three nested contexts is realized at the middle one. -/
+theorem Realizes.of_realizes {c₁ c₂ : Ctx} (hinj : (v.map exponent).Nodup)
+    (h₁ : ∀ s : R, Applies s c₁ → Applies s c₂) (h₂ : ∀ s : R, Applies s c₂ → Applies s c)
+    (hr₁ : Realizes v c₁ φ) (hr : Realizes v c φ) : Realizes v c₂ φ := by
+  obtain ⟨t, ht, rfl⟩ := hr
+  obtain ⟨u, hu, hut⟩ := hr₁
+  have e := List.inj_on_of_nodup_map hinj hu.1.1 ht.1.1 hut
+  subst e
+  exact ⟨_, ht.of_applies h₂ (h₁ _ hu.1.2), rfl⟩
 
 end Morphology.Exponence

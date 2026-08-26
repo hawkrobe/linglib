@@ -863,6 +863,7 @@ import Linglib.Fragments.Greek.Grevena.Possession
 import Linglib.Fragments.Greek.Smyrna.Possession
 import Linglib.Fragments.Greek.StandardModern.Complementizers
 import Linglib.Fragments.Greek.StandardModern.Declension
+import Linglib.Fragments.Greek.StandardModern.Gender
 import Linglib.Fragments.Greek.StandardModern.Modals
 import Linglib.Fragments.Greek.StandardModern.MoodChoice
 import Linglib.Fragments.Greek.StandardModern.Negation
@@ -909,6 +910,7 @@ import Linglib.Fragments.Hungarian.Predicates
 import Linglib.Fragments.Hungarian.Reciprocals
 import Linglib.Fragments.Hungarian.VowelHarmony
 import Linglib.Fragments.Icelandic.Case
+import Linglib.Fragments.Icelandic.Gender
 import Linglib.Fragments.Icelandic.Nominalizations
 import Linglib.Fragments.Icelandic.Predicates
 import Linglib.Fragments.Icelandic.Reciprocals
@@ -1147,6 +1149,7 @@ import Linglib.Fragments.Slavic.Russian.TemporalDeictic
 import Linglib.Fragments.Slavic.Russian.Verbs
 import Linglib.Fragments.Slavic.Russian.WordOrder
 import Linglib.Fragments.Slavic.Serbian.Case
+import Linglib.Fragments.Slavic.Serbian.Gender
 import Linglib.Fragments.Slavic.Serbian.QuestionParticles
 import Linglib.Fragments.Slavic.Serbian.TemporalConnectives
 import Linglib.Fragments.Slavic.Slovak.Case
@@ -2839,6 +2842,7 @@ import Linglib.Syntax.MereologicalSyntax.Interpretation
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Agree.Checking
 import Linglib.Syntax.Minimalist.Agree.Consistency
+import Linglib.Syntax.Minimalist.Agree.Coordination
 import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Economy
@@ -2954,3 +2958,4 @@ import Linglib.Data.Examples.AbramskySadrzadeh2014
 import Linglib.Data.Examples.AckemaNeeleman2018
 import Linglib.Data.Examples.AckermanMalouf2013
 import Linglib.Data.Examples.Adamson2024
+import Linglib.Data.Examples.AdamsonAnagnostopoulou2025
