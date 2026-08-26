@@ -3,14 +3,15 @@ import Mathlib.Logic.Function.Basic
 import Linglib.Logic.PIP.Syntax
 
 /-!
-# PIP: truth
+# Semantics of PIP
 
-Pluralities are sets of atoms. A term denotes a plurality — a variable its
-assignment, `⋃{x : φ}` and `Σxφ` the union of the values of `x` over the
-assignments agreeing with the current one outside the bound variables (for
-summation, also outside the local variables of `φ`) that satisfy `φ` — and a
-formula is true or false classically, with presuppositions and label
-definitions transparent and an unexpanded label false. A discourse
+This file defines the value of a term and the truth of a formula of PIP in a
+model, relative to an assignment of pluralities to variables. Pluralities are
+sets of atoms. A variable denotes its assignment; set abstraction `⋃{x : φ}` and
+summation `Σxφ` denote the union of the values of `x` over the assignments that
+agree with the current one outside the bound variables (for summation, also
+outside the local variables of `φ`) and satisfy `φ`. Presuppositions and label
+definitions do not affect truth, and an unexpanded label is false. A discourse
 `φ₁, …, φₙ` means `Σw(φ₁ ∧ … ∧ φₙ)` and is true iff that plurality of worlds is
 nonempty.
 

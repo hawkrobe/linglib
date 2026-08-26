@@ -1,16 +1,17 @@
 import Linglib.Logic.PIP.Semantics
 
 /-!
-# PIP: felicity
+# Felicity of PIP formulas
 
-Truth and felicity are independent: `φ|ψ` is true iff `φ` is, and felicitous
-iff `φ` and `ψ` are and `ψ` is true. The felicity operator `F` is defined on the
-presupposition operator and the primitive connectives, with asymmetric
-conjunction — the first conjunct may satisfy the presuppositions of the second
-— and universally over the values bound by quantification, abstraction and
-summation. The PIP-value of a formula bundles its truth, its felicity, its local
-variables and its label definitions; equality of PIP-values is
-intersubstitutability.
+This file defines the felicity operator `F` on the terms and formulas of PIP.
+A presupposition `φ|ψ` is felicitous iff `φ` and `ψ` are and `ψ` is true; a
+conjunction `φ ∧ ψ` iff `φ` is and, whenever `φ` is true, `ψ` is; a quantifier,
+abstraction or summation iff its body is for every value of the variables it
+binds; the other connectives and relations iff their parts are. Felicity is
+independent of truth. The PIP-value of a formula records its truth, its
+felicity, its local variables and its label definitions, and two formulas are
+intersubstitutable iff they have the same PIP-value in every model under every
+assignment.
 
 ## Main definitions
 
