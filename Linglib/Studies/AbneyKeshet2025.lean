@@ -1,6 +1,3 @@
-import Linglib.Studies.KeshetAbney2024.Composition
-import Linglib.Studies.KeshetAbney2024.Bridges
-import Linglib.Studies.KeshetAbney2024
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
@@ -19,6 +16,10 @@ This file verifies these operations on finite models and demonstrates the
 paper's predictions about quantificational subordination, strong donkey
 anaphora, modal subordination, and the exists/sigma bridge.
 
+The formula language and set operations it evaluates are a provisional
+fragment kept local to this file (§0); the paper's formal PIP is
+`Logic/PIP/Basic.lean`, onto which this study is to be rebased.
+
 ## Worked Examples
 
 1. **Sigma evaluation** — Σx(farmer(x)) = {alice, bob} on a finite model
@@ -34,8 +35,94 @@ anaphora, modal subordination, and the exists/sigma bridge.
 
 namespace AbneyKeshet2025
 
-open KeshetAbney2024.PIP
-open KeshetAbney2024.PIP.Bridges (single plural)
+-- ============================================================
+-- §0: Provisional formula fragment and set operations
+-- ============================================================
+
+/-- A finite domain of individuals. -/
+class FiniteDomain (D : Type*) where
+  elements : List D
+  complete : ∀ d : D, d ∈ elements
+
+/-- A propositional-plus-quantifier formula fragment over worlds `W` and
+individuals `D`, with bodies of quantifiers given as functions. -/
+inductive PIPExprF (W : Type*) (D : Type*) where
+  | pred (p : W → Prop)
+  | conj (φ ψ : PIPExprF W D)
+  | neg (φ : PIPExprF W D)
+  | disj (φ ψ : PIPExprF W D)
+  | exists_ (body : D → PIPExprF W D)
+  | forall_ (body : D → PIPExprF W D)
+
+variable {W D : Type*}
+
+/-- Classical truth. -/
+def PIPExprF.truth : PIPExprF W D → (W → Prop)
+  | .pred p => p
+  | .conj φ ψ => λ w => φ.truth w ∧ ψ.truth w
+  | .neg φ => λ w => ¬ φ.truth w
+  | .disj φ ψ => λ w => φ.truth w ∨ ψ.truth w
+  | .exists_ body => λ w => ∃ d, (body d).truth w
+  | .forall_ body => λ w => ∀ d, (body d).truth w
+
+/-- Sigma evaluation: the individuals satisfying the body at a world. -/
+def sigmaEval (body : D → PIPExprF W D) (w : W) : Set D := { d | (body d).truth w }
+
+/-- ∃xφ is true iff the sigma set is nonempty. -/
+theorem exists_iff_sigma_nonempty (body : D → PIPExprF W D) (w : W) :
+    (PIPExprF.exists_ body).truth w ↔ (sigmaEval body w).Nonempty :=
+  Iff.rfl
+
+/-- Σx(φ ∧ ψ) = Σxφ ∩ Σxψ. -/
+theorem sigmaEval_conj (φ ψ : D → PIPExprF W D) (w : W) :
+    sigmaEval (λ d => PIPExprF.conj (φ d) (ψ d)) w = sigmaEval φ w ∩ sigmaEval ψ w := by
+  ext d
+  simp only [sigmaEval, Set.mem_ofPred_eq, Set.mem_inter_iff, PIPExprF.truth]
+
+/-- Σx(φ ∨ ψ) = Σxφ ∪ Σxψ. -/
+theorem sigmaEval_disj (φ ψ : D → PIPExprF W D) (w : W) :
+    sigmaEval (λ d => PIPExprF.disj (φ d) (ψ d)) w = sigmaEval φ w ∪ sigmaEval ψ w := by
+  ext d
+  simp only [sigmaEval, Set.mem_ofPred_eq, Set.mem_union, PIPExprF.truth]
+
+/-- Σx(φ ∧ ψ) ⊆ Σxφ. -/
+theorem sigma_subordination (φ ψ : D → PIPExprF W D) (w : W) :
+    sigmaEval (λ d => PIPExprF.conj (φ d) (ψ d)) w ⊆ sigmaEval φ w := by
+  rw [sigmaEval_conj]
+  exact Set.inter_subset_left
+
+variable {α : Type*}
+
+/-- EVERY(R, S) = R ⊆ S. -/
+def setEvery (R S : Set α) : Prop := R ⊆ S
+
+/-- SOME(R, S) = (R ∩ S).Nonempty. -/
+def setSome (R S : Set α) : Prop := (R ∩ S).Nonempty
+
+/-- SINGLE(τ): a singleton. -/
+def single (s : Set α) : Prop := ∃ a, s = {a}
+
+/-- PLURAL(τ): at least two members. -/
+def plural (s : Set α) : Prop := ∃ a b, a ≠ b ∧ a ∈ s ∧ b ∈ s
+
+/-- MUST(β, W₁, W₂) = β ∩ W₁ ⊆ W₂. -/
+def mustBase (β W₁ W₂ : Set W) : Prop := β ∩ W₁ ⊆ W₂
+
+/-- MIGHT(β, W₁, W₂) = (β ∩ W₁ ∩ W₂).Nonempty. -/
+def mightBase (β W₁ W₂ : Set W) : Prop := (β ∩ W₁ ∩ W₂).Nonempty
+
+/-- Modal duality: ¬MUST(β, W₁, W₂) ↔ MIGHT(β, W₁, W₂ᶜ). -/
+theorem modal_duality (β W₁ W₂ : Set W) : ¬mustBase β W₁ W₂ ↔ mightBase β W₁ W₂ᶜ := by
+  simp only [mustBase, mightBase, Set.not_subset, Set.Nonempty, Set.mem_inter_iff,
+    Set.mem_compl_iff, and_assoc]
+
+/-- FX (↑f): conjoin a thematic-role predicate with a formula. -/
+def fxApply (f : D → W → Prop) (φ : W → Prop) (x : D) : W → Prop :=
+  λ w => f x w ∧ φ w
+
+/-- Iterated FX accumulates assertions. -/
+theorem fxApply_twice (f g : D → W → Prop) (φ : W → Prop) (x : D) (w : W) :
+    fxApply g (fxApply f φ x) x w = (g x w ∧ f x w ∧ φ w) := rfl
 
 
 -- ============================================================
@@ -79,24 +166,24 @@ def donkeyBody : Ent → PIPExprF W1 Ent
 
 /-- Alice is a farmer (in the sigma set). -/
 theorem sigma_farmer_alice : Ent.alice ∈ sigmaEval farmerBody W1.w0 := by
-  simp [sigmaEval, farmerBody, donkeyBody, PIPExprF.truth]
+  simp [sigmaEval, farmerBody, PIPExprF.truth]
 
 /-- Bob is a farmer. -/
 theorem sigma_farmer_bob : Ent.bob ∈ sigmaEval farmerBody W1.w0 := by
-  simp [sigmaEval, farmerBody, donkeyBody, PIPExprF.truth]
+  simp [sigmaEval, farmerBody, PIPExprF.truth]
 
 /-- Spot is not a farmer. -/
-theorem sigma_farmer_not_spot : Ent.spot ∉ sigmaEval farmerBody W1.w0 := by simp [sigmaEval, farmerBody, donkeyBody, PIPExprF.truth]
+theorem sigma_farmer_not_spot : Ent.spot ∉ sigmaEval farmerBody W1.w0 := by simp [sigmaEval, farmerBody, PIPExprF.truth]
 
 /-- Rex is not a farmer. -/
-theorem sigma_farmer_not_rex : Ent.rex ∉ sigmaEval farmerBody W1.w0 := by simp [sigmaEval, farmerBody, donkeyBody, PIPExprF.truth]
+theorem sigma_farmer_not_rex : Ent.rex ∉ sigmaEval farmerBody W1.w0 := by simp [sigmaEval, farmerBody, PIPExprF.truth]
 
 /-- Spot is a donkey. -/
 theorem sigma_donkey_spot : Ent.spot ∈ sigmaEval donkeyBody W1.w0 := by
-  simp [sigmaEval, farmerBody, donkeyBody, PIPExprF.truth]
+  simp [sigmaEval, donkeyBody, PIPExprF.truth]
 
 /-- Alice is not a donkey. -/
-theorem sigma_donkey_not_alice : Ent.alice ∉ sigmaEval donkeyBody W1.w0 := by simp [sigmaEval, farmerBody, donkeyBody, PIPExprF.truth]
+theorem sigma_donkey_not_alice : Ent.alice ∉ sigmaEval donkeyBody W1.w0 := by simp [sigmaEval, donkeyBody, PIPExprF.truth]
 
 end SigmaFinite
 
@@ -142,16 +229,13 @@ def boughtDonkeyBody : Ent → PIPExprF W1 Ent
 EVERY(Σf farmer, Σf (farmer ∧ boughtDonkey)) — via `setEvery`.
 
 "Every farmer bought a donkey" modeled as: the set of farmers is a
-subset of the set of farmer-buyers. This connects to the GQ bridge
-in `Bridges.lean` via `setEvery_eq_every_sem`.
+subset of the set of farmer-buyers.
 -/
 theorem every_farmer_bought_donkey :
     setEvery
       (sigmaEval farmerBody W1.w0)
       (sigmaEval (λ d => PIPExprF.conj (farmerBody d) (boughtDonkeyBody d)) W1.w0) := by
   intro d hd
-  -- d ∈ sigmaEval farmerBody means (farmerBody d).truth w0 holds
-  -- For alice and bob, boughtDonkeyBody also returns true
   cases d with
   | alice => exact ⟨trivial, trivial⟩
   | bob => exact ⟨trivial, trivial⟩
@@ -240,10 +324,8 @@ Strong donkey anaphora via summation pronouns (paper's §4.3 analysis):
 "Every farmer who bought a donkey vaccinated **them**."
 
 The pronoun "them" is a summation pronoun: its denotation is the
-sigma set of all farmer-buyers, not a single witness. As noted in
-`PIP.Composition`, summation pronoun denotation IS `sigmaEval` — the
-distinction from simple pronouns is presuppositional (PL vs SG),
-handled by `PIP.Bridges.plural`.
+sigma set of all farmer-buyers, not a single witness; the distinction
+from simple pronouns is presuppositional (PL vs SG).
 -/
 
 /-- Both alice and bob are in the sigma set — exhaustive, not a single witness. -/
@@ -319,11 +401,6 @@ The pronoun "it" is a summation pronoun whose antecedent formula
 bound by a *different* quantifier at the pronoun's use site vs its
 antecedent's. The sigma set `ΣdD` varies with `x`: when x = alice,
 it denotes alice's diorama(s); when x = bob, bob's diorama(s).
-
-This is the defining property of paycheck pronouns. PIP handles them
-via summation pronouns with formula labels that contain free variables.
-Dynamic logics struggle with this because they only store individuals
-already quantified over, not formulas with free variables.
 -/
 
 /-- Diorama predicate: d1 and d2 are dioramas. -/
