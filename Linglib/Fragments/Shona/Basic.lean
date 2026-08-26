@@ -1,5 +1,6 @@
 import Linglib.Features.Gender.Basic
 import Linglib.Fragments.Bantu.Params
+import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Shona: Basic Types
@@ -149,5 +150,36 @@ def Gender.status : Gender → GenderStatus
 def Gender.toGender : Gender → _root_.Gender
   | .genderA => .animate
   | _ => .inanimate
+
+/-! ### Noun-class parameters -/
+
+/-- Gender is realized by agreement inside the head-modifier NP; the clause is a further scope. -/
+def classifierLocus : Classifier.Scope := .headModifierNP
+
+def classifierConstituent : Classifier.Constituent := .headNoun
+
+/-- The kind of device, read off its locus and the constituent it characterizes. -/
+abbrev classifierKind : Option Classifier.Kind :=
+  Classifier.kind classifierLocus classifierConstituent
+
+/-- Every environment the device operates in. -/
+def classifierScopes : List Classifier.Scope := [.headModifierNP, .predicateArgument]
+
+/-- Semantic core with morphological residue. -/
+def classifierAssignment : Classifier.Assignment := .mixed
+
+/-- Class prefixes on the noun and its agreement targets. -/
+def classifierRealizations : List Classifier.Realization := [.prefix]
+
+def classifierAgreement : Bool := true
+
+def classifierObligatory : Bool := true
+
+/-- A default agreement class. -/
+def classifierDefault : Bool := true
+
+def classifierSemantics : List Classifier.Parameter := [.humanness, .animacy]
+
+def obligatoryNumber : Bool := true
 
 end Shona

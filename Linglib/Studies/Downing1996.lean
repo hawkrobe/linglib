@@ -1,7 +1,5 @@
-import Linglib.Features.NounCategorization.Basic
-import Linglib.Fragments.Japanese.Classifier
+import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Fragments.Japanese.Nouns
-import Linglib.Fragments.Japanese.ClassifierSystem
 import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
@@ -75,7 +73,6 @@ numbers should be regarded as a placeholder until reconfirmed.
 
 namespace Downing1996
 
-open Japanese (Classifier)
 
 -- ============================================================================
 -- § 1. Shape Dimensionality (Downing 1996, UNVERIFIED location)
@@ -83,8 +80,8 @@ open Japanese (Classifier)
 
 /-- Shape-based classifiers in the Japanese inventory decompose into
     three dimensionality classes (Downing 1996, UNVERIFIED location). -/
-def shapeClassifiers : List Classifier :=
-  Classifier.all.filter fun c => decide (Classifier.Encodes c .shape)
+def shapeClassifiers : List Japanese.Classifier :=
+  Japanese.Classifier.all.filter fun c => decide (Japanese.Classifier.Encodes c .shape)
 
 /-- At least 5 classifiers in the inventory encode shape. -/
 theorem shape_classifier_count :
@@ -105,11 +102,11 @@ theorem all_dimensions_in_inventory :
     human (nin/mei) > large animal (tou) > small animal (hiki) > inanimate (tsu).
     Each level is distinguished by a distinct classifier. -/
 theorem animacy_hierarchy_witnessed :
-    Classifier.Encodes .nin .humanness ∧
-    Classifier.Encodes .mei .humanness ∧
-    Classifier.Encodes .tou .animacy ∧
-    Classifier.Encodes .hiki .animacy ∧
-    Classifier.IsDefault .tsu := by decide
+    Japanese.Classifier.Encodes .nin .humanness ∧
+    Japanese.Classifier.Encodes .mei .humanness ∧
+    Japanese.Classifier.Encodes .tou .animacy ∧
+    Japanese.Classifier.Encodes .hiki .animacy ∧
+    Japanese.Classifier.IsDefault .tsu := by decide
 
 /-- The human classifier has a formal register variant (名 mei) marking
     formality/register of the speech act, unlike the neutral 人 nin.
@@ -117,10 +114,10 @@ theorem animacy_hierarchy_witnessed :
     `socialStatus` (honorific status of the referent — kin, age, social
     rank). -/
 theorem human_has_register_variant :
-    Classifier.Encodes .nin .humanness ∧
-    Classifier.Encodes .mei .humanness ∧
-    Classifier.Encodes .mei .register ∧
-    ¬ Classifier.Encodes .nin .register := by decide
+    Japanese.Classifier.Encodes .nin .humanness ∧
+    Japanese.Classifier.Encodes .mei .humanness ∧
+    Japanese.Classifier.Encodes .mei .register ∧
+    ¬ Japanese.Classifier.Encodes .nin .register := by decide
 
 -- ============================================================================
 -- § 3. Anaphoric Use Data (Downing 1996, UNVERIFIED location)
@@ -129,7 +126,7 @@ theorem human_has_register_variant :
 /-- Distribution of classifiers in anaphoric examples
     (Downing 1996, UNVERIFIED location). -/
 structure AnaphoricDistribution where
-  classifier : Classifier
+  classifier : Japanese.Classifier
   count : Nat
   deriving Repr
 
@@ -196,7 +193,7 @@ theorem one_absent_from_anaphoric :
     Witnessed by: Japanese is [+arg, -pred] AND has numeral classifiers. -/
 theorem argOnly_has_classifiers :
     Japanese.Nouns.japaneseMapping = .argOnly ∧
-    Japanese.classifierType = .numeralClassifier := by
+    Japanese.classifierKind = some .numeralClassifier := by
   exact ⟨rfl, rfl⟩
 
 /-- In [chierchia-1998]'s framework, [+arg, -pred] languages have no
@@ -205,7 +202,7 @@ theorem argOnly_has_classifiers :
 theorem no_blocking_needs_classifiers :
     Japanese.Nouns.japaneseBlocking.iotaBlocked = false ∧
     Japanese.Nouns.japaneseBlocking.existsBlocked = false ∧
-    Japanese.classifierType = .numeralClassifier := by
+    Japanese.classifierKind = some .numeralClassifier := by
   exact ⟨rfl, rfl, rfl⟩
 
 /-- Non-default classifiers encode at least one semantic parameter,
@@ -214,9 +211,10 @@ theorem no_blocking_needs_classifiers :
     that enumerates without individuating. Delegates to the structural
     theorem in `Japanese.Classifier`. -/
 theorem classifiers_carry_individuation_info :
-    ∀ c : Classifier, ¬ Classifier.IsDefault c → ¬ Classifier.IsMensural c →
+    ∀ c : Japanese.Classifier,
+      ¬ Japanese.Classifier.IsDefault c → ¬ Japanese.Classifier.IsMensural c →
       c.encodes ≠ [] :=
-  Classifier.specific_classifiers_have_semantics
+  Japanese.Classifier.specific_classifiers_have_semantics
 
 -- ============================================================================
 -- § 5. Semantic Supplementation (Hypothesis 2)
@@ -254,7 +252,7 @@ inductive MorphemeCategoryRelation where
 /-- A witness pairing a classifier with its morpheme (UNVERIFIED location: Table 5.2)-category
     relation and the independent meaning of the morpheme. -/
 structure MorphemeRelationWitness where
-  classifier : Classifier
+  classifier : Japanese.Classifier
   relation : MorphemeCategoryRelation
   independentMeaning : String
   deriving Repr
@@ -291,8 +289,8 @@ theorem four_relation_types_attested :
 /-- All witnesses reference classifiers in our inventory.
     Trivial since `Classifier.mem_all` says every constructor is in `all`. -/
 theorem witnesses_in_inventory :
-    ∀ w ∈ table5_2_witnesses, w.classifier ∈ Classifier.all :=
-  fun w _ => Classifier.mem_all w.classifier
+    ∀ w ∈ table5_2_witnesses, w.classifier ∈ Japanese.Classifier.all :=
+  fun w _ => Japanese.Classifier.mem_all w.classifier
 
 -- ============================================================================
 -- § 6. Classifier System Composition
@@ -301,15 +299,17 @@ theorem witnesses_in_inventory :
 /-- The Japanese classifier inventory includes both sortal and mensural
     classifiers, with sortal classifiers dominating. -/
 theorem sortal_dominance :
-    (Classifier.all.filter (fun c => ¬ decide (Classifier.IsMensural c))).length >
-    (Classifier.all.filter (fun c => decide (Classifier.IsMensural c))).length := by
+    (Japanese.Classifier.all.filter (fun c => ¬ decide (Japanese.Classifier.IsMensural c))).length >
+    (Japanese.Classifier.all.filter
+      (fun c => decide (Japanese.Classifier.IsMensural c))).length := by
   decide
 
 /-- Function-based classifiers are the largest semantic group,
     confirming Downing's observation that the system concentrates on
     interactionally significant categories. -/
 theorem function_classifiers_numerous :
-    (Classifier.all.filter (fun c => decide (Classifier.Encodes c .function))).length ≥ 8 := by
+    (Japanese.Classifier.all.filter
+      (fun c => decide (Japanese.Classifier.Encodes c .function))).length ≥ 8 := by
   decide
 
 -- ============================================================================
@@ -317,35 +317,35 @@ theorem function_classifiers_numerous :
 -- ============================================================================
 
 /-- The core inventory (UNVERIFIED location: Table 1.1) has exactly 27 classifiers. -/
-theorem core_inventory_complete : Classifier.core.length = 27 := by decide
+theorem core_inventory_complete : Japanese.Classifier.core.length = 27 := by decide
 
 /-- Every core classifier is in the full inventory.
     Trivial by construction: `all := core ++ extended ++ sudoAdditions`. -/
 theorem full_inventory_includes_core :
-    ∀ c ∈ Classifier.core, c ∈ Classifier.all :=
-  fun c _ => Classifier.mem_all c
+    ∀ c ∈ Japanese.Classifier.core, c ∈ Japanese.Classifier.all :=
+  fun c _ => Japanese.Classifier.mem_all c
 
 /-- The core inventory distinguishes two homophonous ken classifiers:
     軒 `kenBuilding` and 件 `kenIncident` — different kanji, different
     semantic domains. -/
 theorem two_ken_classifiers :
-    Classifier.kenBuilding.form = "軒" ∧ Classifier.kenIncident.form = "件" ∧
-    Classifier.Encodes .kenBuilding .function ∧
-    Classifier.Encodes .kenIncident .function := by decide
+    Japanese.Classifier.kenBuilding.form = "軒" ∧ Japanese.Classifier.kenIncident.form = "件" ∧
+    Japanese.Classifier.Encodes .kenBuilding .function ∧
+    Japanese.Classifier.Encodes .kenIncident .function := by decide
 
 /-- Two building classifiers exist: 軒 `kenBuilding` (functional capacity —
     home/shop) and 棟 `mune` (roofed structure). -/
 theorem two_building_classifiers :
-    Classifier.kenBuilding.gloss = "building" ∧
-    Classifier.mune.gloss = "building.roof" :=
+    Japanese.Classifier.kenBuilding.gloss = "building" ∧
+    Japanese.Classifier.mune.gloss = "building.roof" :=
   ⟨rfl, rfl⟩
 
 /-- Two maritime classifiers exist: 隻 seki (large boats) and
     艘 soo (small boats), paralleling the animacy size split
     (頭 tou / 匹 hiki). -/
 theorem maritime_size_split :
-    Classifier.seki.gloss = "large.boat" ∧
-    Classifier.soo.gloss = "small.boat" :=
+    Japanese.Classifier.seki.gloss = "large.boat" ∧
+    Japanese.Classifier.soo.gloss = "small.boat" :=
   ⟨rfl, rfl⟩
 
 -- ============================================================================
@@ -357,7 +357,7 @@ theorem maritime_size_split :
     (first 50 uses from each of five works of fiction + 250 forms
     from transcribed conversations and oral narrative). -/
 structure FrequencyEntry where
-  classifier : Classifier
+  classifier : Japanese.Classifier
   count : Nat
   deriving Repr
 

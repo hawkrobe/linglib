@@ -1,4 +1,4 @@
-import Linglib.Features.NounCategorization.Basic
+import Linglib.Syntax.Category.Classifier.Basic
 import Linglib.Features.Prominence
 import Linglib.Studies.Aikhenvald2000
 
@@ -40,7 +40,7 @@ amplification ([griffiths-kalish-2007], [kirby-et-al-2007],
 
 ## Formalization
 
-The typological observation (§1) connects to existing `NounCategorization`
+The typological observation (§1) connects to existing `Classifier`
 infrastructure. Predictive power is formalized via Table 6's conditional
 entropy data from the experimental stimuli. The connection to
 `Features.Prominence.AnimacyLevel` — the Silverstein hierarchy —
@@ -51,16 +51,16 @@ and noun classification.
 
 namespace PrasertsonSmithCulbertson2026
 
-open NounCategorization
+open Classifier
 
 -- ============================================================================
 -- §1: The Animacy–Colour Asymmetry (derived from typological data)
 -- ============================================================================
 
 /-- Whether a semantic parameter is attested in any system in our typology.
-    Derived from `allSystems` data rather than stipulated. -/
-def isAttestedInTypology (p : SemanticParameter) : Bool :=
-  Aikhenvald2000.allSystems.any (λ sys =>
+    Derived from `allDevices` data rather than stipulated. -/
+def isAttestedInTypology (p : Parameter) : Bool :=
+  Aikhenvald2000.allDevices.any (λ sys =>
     sys.semantics.any (· == p))
 
 /-- Animacy is attested in the typological data. -/
@@ -328,7 +328,7 @@ theorem exp3b_no_animacy_advantage :
 
     This theorem connects the prominence hierarchy to the noun categorization
     typology: the levels of `AnimacyLevel` correspond to the
-    `SemanticParameter.animacy` / `.humanness` distinction. -/
+    `Classifier.Parameter.animacy` / `.humanness` distinction. -/
 theorem prominence_encodes_categorization_parameters :
     -- The prominence hierarchy distinguishes human vs animate vs inanimate
     Features.Prominence.AnimacyLevel.human.rank >

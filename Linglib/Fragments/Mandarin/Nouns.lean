@@ -1,5 +1,4 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.NounCategorization.Basic
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Semantics.Genericity.NominalMappingParameter
 
@@ -11,7 +10,7 @@ Mandarin-specific noun entries. Mandarin is [+arg, -pred]:
 all nouns are kind-denoting by default, no number morphology, no articles,
 classifiers required for counting, bare nouns freely occur as arguments.
 
-Classifiers are now typed `ClassifierEntry` values from the classifier
+Classifiers are now typed `Classifier` values from the classifier
 lexicon (`Mandarin.Classifiers`), replacing the previous
 unstructured `Option String` representation. This enables verification
 of Aikhenvald's semantic generalizations about classifier selection.
@@ -19,19 +18,18 @@ of Aikhenvald's semantic generalizations about classifier selection.
 
 namespace Mandarin.Nouns
 
-open NounCategorization (ClassifierEntry)
 open Mandarin.Classifiers
 open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
 
 /-- A lexical entry for a Mandarin noun.
 
-    The `classifier` field points to a typed `ClassifierEntry` from the
+    The `classifier` field points to a typed `Classifier` from the
     classifier lexicon, carrying semantic information about why that
     classifier is selected (animacy, shape, function, etc.). -/
 structure NounEntry where
   form : String
   pinyin : String := ""
-  classifier : Option ClassifierEntry := some ge
+  classifier : Option Classifier := some ge
   proper : Bool := false
   deriving Repr, BEq
 
@@ -41,10 +39,10 @@ structure NP where
   isBare : Bool
   demonstrative : Option String := none
   numeral : Option Nat := none
-  classifierOverride : Option ClassifierEntry := none
+  classifierOverride : Option Classifier := none
   deriving Repr, BEq
 
-def NP.classifier (np : NP) : Option ClassifierEntry :=
+def NP.classifier (np : NP) : Option Classifier :=
   np.classifierOverride <|> np.noun.classifier
 
 /-- The form string of the classifier (for display). -/

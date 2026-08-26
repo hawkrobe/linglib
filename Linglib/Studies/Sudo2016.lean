@@ -2,7 +2,7 @@ import Mathlib.Data.Set.Card
 import Mathlib.Data.Nat.Basic
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Core.Order.Comparison
-import Linglib.Fragments.Japanese.Classifier
+import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Studies.Aikhenvald2000
 import Linglib.Studies.Chierchia1998
 
@@ -587,12 +587,12 @@ theorem nin_ne_hiki :
 
 Per-language strategy assignments live in study files (not as metadata on
 `System`). Sudo's view is now a first-class constructor
-of `ClassifierStrategy` (`.sudoBlocking`), so the disagreement with
+of `Classifier.Strategy` (`.sudoBlocking`), so the disagreement with
 [chierchia-1998] reduces to a single decidable inequality. -/
 
 /-- Sudo's strategy assignment for Japanese: classifier blocks the silent
     ∪-operator on numerals (Sudo §3, eqs. 15–16). -/
-def japaneseStrategy : NounCategorization.ClassifierStrategy := .sudoBlocking
+def japaneseStrategy : Classifier.Strategy := .sudoBlocking
 
 /-- Sudo and Chierchia disagree about which strategy Japanese exhibits:
     Chierchia's analysis assigns `.forNoun` (CLF atomizes a kind-denoting
