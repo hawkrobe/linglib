@@ -14,7 +14,8 @@ schema, and the per-language paradigm record. Graduated from the dissolved
 
 * `ClassifierType` — [aikhenvald-2000]'s noun-categorization device types.
 * `SemanticParameter`, `ShapeDimension` — the semantic axes ([allan-1977], [downing-1996]).
-* `CategorizationScope`, `AssignmentPrinciple`, `SurfaceRealization`, `GrammaticalCategory`.
+* `CategorizationScope`, `AssignmentPrinciple`, `SurfaceRealization`; `ClassifierType.locus`, the
+  defining scope of each type (Table 15.1).
 * `ClassifierEntry` — per-classifier lexical schema.
 * `ClassifierStrategy` — competing composition frameworks (theory-laden; consumed by
   `Semantics/Classifier`, where the cross-paper disagreement is proved as theorems).
@@ -34,16 +35,11 @@ namespace NounCategorization
 -- § 1. Classifier Types ([aikhenvald-2000])
 -- ════════════════════════════════════════════════════
 
-/-- The 9 focal classifier types on the noun-categorization continuum.
-
-    [aikhenvald-2000] establishes these as "focal points" distinguished
-    by morphosyntactic locus, scope, and grammatical function.
-    Real systems are gradient — a language's system may sit between types.
-
-    UNVERIFIED: The 9-type taxonomy is Aikhenvald's specific carve-up;
-    other typologists (Allan 1977, Craig 1986, Grinevald 2000, Senft 2000)
-    differ. The `nounClass` cell here is also more fine-grained per
-    Corbett 1991 — see file docstring "Out of scope". -/
+/-- The nine focal classifier types on the noun-categorization continuum,
+    [aikhenvald-2000]'s Table 15.1: "focal points" individuated by
+    morphosyntactic locus and scope rather than discrete types, so a
+    language's system may sit between them (§1.5, §15.2). The `nounClass`
+    cell collapses [corbett-1991]'s finer gender structure. -/
 inductive ClassifierType where
   /-- Noun class / gender: closed agreement system, realized outside the noun
       on modifiers (head-modifier NP) or predicate (pred-arg agreement).
@@ -81,10 +77,9 @@ inductive ClassifierType where
 
 /-- Universal semantic parameters employed in noun categorization.
 
-    [aikhenvald-2000] identifies three large classes: animacy,
-    physical properties, and function. These parameters are found across
-    ALL types of noun categorization device, though different types show
-    different preferences. -/
+    [aikhenvald-2000] §11.1.1 groups them into three large classes —
+    animacy, physical properties, and function — found across all types of
+    noun categorization device with type-specific preferences (Table 11.13). -/
 inductive SemanticParameter where
   -- (A) Animacy hierarchy — near-universal, the semantic "core"
   | animacy          -- animate vs. inanimate
@@ -105,8 +100,8 @@ inductive SemanticParameter where
   | register         -- formality/register of the speech act (formal/written vs casual);
                      -- distinct from socialStatus, which tracks the referent's status.
                      -- Japanese 名 mei and Mandarin 位 wèi index register, not referent status.
-  -- Perceptual (salient but unattested in noun categorization)
-  | colour           -- perceptually salient but no attested classifier system uses it
+  -- Perceptual: salient but never a basis for noun categorization ([aikhenvald-2000] §11.2.1)
+  | colour
   deriving DecidableEq, Repr
 
 /-- Dimensionality sub-classification for shape-based classifiers.
@@ -137,6 +132,18 @@ inductive CategorizationScope where
   | adpositionalNP     -- Adpositional NP (locative classifiers)
   | attributiveNP      -- Attributive NP (deictic classifiers)
   deriving DecidableEq, Repr
+
+/-- The defining morphosyntactic scope of each classifier type ([aikhenvald-2000] Table 15.1):
+noun classes inside a head-modifier NP (clause scope is a further option), numeral
+classifiers in the numeral NP, and so on. -/
+def ClassifierType.locus : ClassifierType → CategorizationScope
+  | .nounClass => .headModifierNP
+  | .nounClassifier => .noun
+  | .numeralClassifier => .numeralNP
+  | .relationalClassifier | .possessedClassifier | .possessorClassifier => .possessiveNP
+  | .verbalClassifier => .clause
+  | .locativeClassifier => .adpositionalNP
+  | .deicticClassifier => .attributiveNP
 
 /-- Principles governing noun-to-class/classifier assignment. -/
 inductive AssignmentPrinciple where
@@ -235,18 +242,15 @@ inductive ClassifierStrategy where
 -- § 6. System — paradigm record
 -- ════════════════════════════════════════════════════
 
-/-- A noun categorization system in a language.
-
-    Captures [aikhenvald-2000]'s 7 definitional properties (A–G):
-    (A) morphosyntactic locus → `scopes`
-    (B) scope/domain → `classifierType` + `scopes`
-    (C) assignment principles → `assignment`
+/-- A noun categorization system in a language, recording
+    [aikhenvald-2000]'s definitional parameters (A)–(G) of §1.5 — the
+    contingent parameters (H)–(K) are not fields:
+    (A) morphosyntactic locus and (B) scope → `classifierType`, `scopes`
+    (C) principles of assignment → `assignment`
     (D) surface realization → `realizations`
     (E) agreement → `hasAgreement`
-    (F) markedness → `hasUnmarkedDefault`
-    (G) grammaticalization → `isObligatory`
-
-    UNVERIFIED: A–G enumeration cited from memory. -/
+    (F) markedness relations → `hasUnmarkedDefault`
+    (G) degree of grammaticalization → `isObligatory`. -/
 structure System where
   /-- Language family (e.g., "Indo-European", "Sino-Tibetan", "Bantu"). -/
   family : String
@@ -316,45 +320,6 @@ abbrev HasObligatoryNumber (s : System) : Prop :=
 abbrev PluralClfCooccur (s : System) : Prop :=
   s.pluralClfCooccur = true
 
-/-- [dixon-1982]'s noun-class vs. classifier divide.
-    Noun classes: small, closed, grammaticalized, agreement.
-    Classifiers: large, open, lexical, no agreement. -/
-def isNounClassType (t : ClassifierType) : Bool :=
-  t == .nounClass
-
-/-- All non-noun-class types are "classifier" types in the broad sense. -/
-def isClassifierType (t : ClassifierType) : Bool :=
-  !isNounClassType t
-
 end System
-
--- ════════════════════════════════════════════════════
--- § 8. Grammatical-Category Interactions (Aikhenvald)
--- ════════════════════════════════════════════════════
-
-/-- Grammatical categories that interact with classifier types
-    ([aikhenvald-2000]). -/
-inductive GrammaticalCategory where
-  | definiteness | number | case_ | tenseAspect | possession
-  deriving DecidableEq, Repr
-
-/-- Whether a classifier type typically interacts with a grammatical category
-    ([aikhenvald-2000]). -/
-def interacts : ClassifierType → GrammaticalCategory → Bool
-  | .nounClass, .definiteness => true
-  | .nounClass, .number => true
-  | .nounClass, .case_ => true
-  | .nounClass, .tenseAspect => true
-  | .nounClass, .possession => true
-  | .numeralClassifier, .definiteness => true
-  | .numeralClassifier, .number => true
-  | .numeralClassifier, .possession => false
-  | .numeralClassifier, .case_ => false
-  | .numeralClassifier, .tenseAspect => false
-  | .verbalClassifier, .tenseAspect => true
-  | .verbalClassifier, .number => true
-  | .relationalClassifier, .possession => true
-  | .possessedClassifier, .possession => true
-  | _, _ => false
 
 end NounCategorization

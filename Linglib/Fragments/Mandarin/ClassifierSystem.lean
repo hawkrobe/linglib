@@ -44,7 +44,7 @@ def classifierSystem : NounCategorization.System :=
   , hasAgreement := false
   , inventorySize := Classifiers.allClassifiers.length
   , isObligatory := true
-  , hasUnmarkedDefault := true  -- 个 gè is default per L&T 1981 p. 112
+  , hasUnmarkedDefault := Classifiers.allClassifiers.any (·.isDefault)  -- 个 gè, L&T 1981 p. 112
   , preferredSemantics := collectSemantics Classifiers.allClassifiers
   , source := "[li-thompson-1981] §4.2.1 pp. 104–112; [aikhenvald-2000] (schema)" }
 

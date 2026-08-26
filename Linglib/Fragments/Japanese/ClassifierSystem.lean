@@ -25,7 +25,7 @@ def classifierSystem : NounCategorization.System :=
   , hasAgreement := false
   , inventorySize := Classifier.all.length
   , isObligatory := true
-  , hasUnmarkedDefault := true  -- つ tsu is default
+  , hasUnmarkedDefault := Classifier.defaultClassifier?.isSome  -- つ tsu
   , preferredSemantics := Classifier.allEncodedParams
   , source := "[aikhenvald-2000]; [downing-1996]" }
 

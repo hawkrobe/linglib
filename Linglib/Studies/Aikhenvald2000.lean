@@ -1,4 +1,3 @@
-import Linglib.Features.NounCategorization.Basic
 import Linglib.Fragments.Romance.French.ClassifierSystem
 import Linglib.Fragments.Italian.ClassifierSystem
 import Linglib.Fragments.Mandarin.ClassifierSystem
@@ -6,259 +5,120 @@ import Linglib.Fragments.Japanese.ClassifierSystem
 import Linglib.Fragments.Xhosa.ClassifierSystem
 import Linglib.Fragments.Shona.ClassifierSystem
 import Linglib.Fragments.Swahili.ClassifierSystem
-import Linglib.Fragments.Armenian.ClassifierSystem
-import Linglib.Fragments.Mandarin.Classifiers
-import Linglib.Fragments.Japanese.Classifier
 
 /-!
-# Aikhenvald (2000): Classifiers — A Typology of Noun Categorization Devices
-[aikhenvald-2000] [greenberg-1972] [dixon-1982]
+# A typology of noun categorization devices
 
-Aikhenvald, Alexandra Y. (2000). *Classifiers: A Typology of Noun
-Categorization Devices*. Oxford Studies in Typology and Linguistic Theory.
-Oxford University Press.
+Aikhenvald's typology individuates classifier types by their morphosyntactic locus and
+scope, the definitional parameters (A)–(G) of the book's first chapter, and then reads the
+contingent parameters — interaction with other categories, preferred semantics, evolution,
+acquisition — as correlates of the types so established. The types are focal points on a
+continuum rather than discrete classes, and most generalizations are tendencies with listed
+exceptions. Here the book's summary claims are stated over the `NounCategorization.System`
+records of seven Fragments — the French and Italian gender systems, the Xhosa, Shona and
+Swahili noun-class systems, and the Mandarin and Japanese numeral-classifier systems
+(`allSystems`) — and checked on that sample; none is a universal over the record type.
 
-Cross-linguistic typology of noun categorization systems following
-Aikhenvald's 7-property schema (A–G, §1.5). The schema
-(`System`) lives in `Typology/ClassifierSystem.lean`;
-per-language data in `Fragments/{Lang}/ClassifierSystem.lean`.
+Agreement by a constituent outside the noun is the definitional property of a noun class
+system, a closed obligatory grammatical system (`nounClass_agreement_obligatory`), and noun
+classes are never expressed by free lexemes (`nounClass_bound`), whereas free-form numeral
+classifiers are non-agreeing (`free_numeralClassifier_no_agreement`). Each type's defining
+scope appears among the system's scopes (`locus_mem_scopes`), and every type other than noun
+class assigns classifiers on purely semantic grounds (`classifier_assignment_semantic`). Both
+numeral-classifier systems in the sample have a generic classifier, Mandarin *ge* and Japanese
+*tsu*, read off their inventories (`numeralClassifier_general`), and the choice of a specific
+classifier is semantically motivated (`classifier_choice_semantic`). Animacy, humanness or sex
+is basic to noun classes and numeral classifiers alike, shape is typical of numeral
+classifiers, and colour is never a basis for categorization (`animacy_basic`,
+`numeralClassifier_shape`, `colour_never`); the absence of compulsory number in
+numeral-classifier languages, Greenberg's association that the book records together with
+its Dravidian, Nivkh, Algonquian, Tucano, Arawak and Ejagham exceptions, holds in the sample
+(`numeralClassifier_no_obligatory_number`). Western Armenian, whose numerals combine with
+bare nouns, is not classified as a classifier language by the book and is left to
+`BaleKhanjian2014`.
 
-This file aggregates the 7 currently-formalized systems
-(French/Italian/Mandarin/Japanese/Xhosa/Shona/Swahili) and verifies
-typological properties from [aikhenvald-2000] (Tables 10.17, 15.1,
-15.2) and [greenberg-1972]'s classifier-number complementarity *over
-that sample*. None of the theorems below are universals over the abstract
-`System` type — they are sample-restricted empirical
-claims; adding a counterexample language to the sample is the right way to
-falsify them.
+## References
 
-Western Armenian is intentionally *excluded* from the main `allSystems`
-sample: it is non-obligatory with no unmarked default, and the
-Aikhenvald-style sample-restricted findings (`sample_all_obligatory`,
-`sample_all_have_default`) are about the obligatory-classifier subspace.
-Armenian appears separately in `optionalClassifierSystems`.
-
-Chierchia-anchored claims about Mandarin/Japanese type-shift blocking are
-in `Studies/NMP.lean` (chronologically older paper, separate
-study file). The Greenberg classifier-number complementarity claim
-appears here (Aikhenvald §15 cites Greenberg) and is refined in
-`Studies/LittleMoroneyRoyer2022.lean` (CLF-for-N vs CLF-for-NUM split).
+* [aikhenvald-2000]
+* [greenberg-1972]
+* [li-thompson-1981]
+* [downing-1996]
 -/
 
 namespace Aikhenvald2000
 
 open NounCategorization
-open NounCategorization.System
 
--- ============================================================================
--- §0: Per-language convenience aliases
--- ============================================================================
+abbrev french := French.classifierSystem
+abbrev italian := Italian.classifierSystem
+abbrev mandarin := Mandarin.classifierSystem
+abbrev japanese := Japanese.classifierSystem
+abbrev xhosa := Xhosa.classifierSystem
+abbrev shona := Shona.classifierSystem
+abbrev swahili := Swahili.classifierSystem
 
-abbrev french          := French.classifierSystem
-abbrev italian         := Italian.classifierSystem
-abbrev mandarin        := Mandarin.classifierSystem
-abbrev japanese        := Japanese.classifierSystem
-abbrev xhosa           := Xhosa.classifierSystem
-abbrev shona           := Shona.classifierSystem
-abbrev swahili         := Swahili.classifierSystem
-abbrev westernArmenian := Armenian.classifierSystem
+/-- The sample: two gender systems, three Bantu noun-class systems, two numeral-classifier
+systems. -/
+def allSystems : List System := [french, italian, mandarin, japanese, xhosa, shona, swahili]
 
--- ============================================================================
--- §1: The cross-linguistic sample
--- ============================================================================
+/-! ### Definitional properties -/
 
-/-- The seven obligatory-classifier systems formalized so far. -/
-def allSystems : List System :=
-  [french, italian, mandarin, japanese, xhosa, shona, swahili]
+/-- A noun class system is defined by agreement outside the noun and is a closed obligatory
+grammatical system. -/
+theorem nounClass_agreement_obligatory :
+    ∀ s ∈ allSystems, s.classifierType = .nounClass → s.HasAgreement ∧ s.IsObligatory := by
+  decide
 
-/-- Languages whose Fragment is in `allSystems` are all obligatory. -/
-theorem sample_all_obligatory :
-    ∀ s ∈ allSystems, s.IsObligatory := by decide
+/-- Noun classes are realized with affixes or clitics, never with free lexemes. -/
+theorem nounClass_bound :
+    ∀ s ∈ allSystems, s.classifierType = .nounClass → .freeForm ∉ s.realizations := by decide
 
-/-- Languages in the sample all have an unmarked default classifier/class. -/
-theorem sample_all_have_default :
-    ∀ s ∈ allSystems, s.HasUnmarkedDefault := by decide
+/-- Numeral classifiers expressed as free morphemes do not participate in agreement. -/
+theorem free_numeralClassifier_no_agreement :
+    ∀ s ∈ allSystems, s.classifierType = .numeralClassifier → .freeForm ∈ s.realizations →
+      ¬ s.HasAgreement := by decide
 
--- ============================================================================
--- §2: Per-language sanity checks
--- ============================================================================
+/-- Each system operates in the scope that defines its type. -/
+theorem locus_mem_scopes : ∀ s ∈ allSystems, s.classifierType.locus ∈ s.scopes := by decide
 
-theorem french_is_noun_class :
-    isNounClassType French.classifierSystem.classifierType = true := rfl
+/-- Every classifier type other than noun class is assigned on purely semantic grounds; noun
+class assignment may be only partially semantic. -/
+theorem classifier_assignment_semantic :
+    ∀ s ∈ allSystems, s.classifierType ≠ .nounClass → s.assignment = .semantic := by decide
 
-theorem mandarin_is_classifier :
-    isClassifierType Mandarin.classifierSystem.classifierType = true := rfl
+/-- Both numeral-classifier systems have a generic classifier that can replace the specific
+ones, Mandarin *ge* and Japanese *tsu*, the analogue of a functionally unmarked noun class. -/
+theorem numeralClassifier_general :
+    ∀ s ∈ allSystems, s.classifierType = .numeralClassifier → s.HasUnmarkedDefault := by decide
 
-theorem japanese_is_classifier :
-    isClassifierType Japanese.classifierSystem.classifierType = true := rfl
+/-- The choice of a specific numeral classifier is semantic: every non-generic sortal classifier
+encodes some semantic parameter. -/
+theorem classifier_choice_semantic :
+    (Mandarin.Classifiers.allClassifiers.filter (!·.isDefault)).all (·.semantics ≠ []) ∧
+    ∀ c : Japanese.Classifier, ¬ Japanese.Classifier.IsDefault c →
+      ¬ Japanese.Classifier.IsMensural c → c.encodes ≠ [] :=
+  ⟨by decide, Japanese.Classifier.specific_classifiers_have_semantics⟩
 
-theorem mandarin_inventory_from_fragment :
-    Mandarin.classifierSystem.inventorySize = 15 := by decide
+/-! ### Preferred semantics -/
 
-theorem japanese_inventory_from_fragment :
-    Japanese.classifierSystem.inventorySize = 36 := by decide
+/-- Animacy, humanness or sex is basic to noun classes and numeral classifiers. -/
+theorem animacy_basic :
+    ∀ s ∈ allSystems, s.classifierType = .nounClass ∨ s.classifierType = .numeralClassifier →
+      ∃ p ∈ s.preferredSemantics, p = .animacy ∨ p = .humanness ∨ p = .sex := by decide
 
-theorem classifier_systems_have_default :
-    Mandarin.classifierSystem.HasUnmarkedDefault ∧
-    Japanese.classifierSystem.HasUnmarkedDefault := by decide
+/-- Physical properties such as shape are typical of numeral classifiers. -/
+theorem numeralClassifier_shape :
+    ∀ s ∈ allSystems, s.classifierType = .numeralClassifier → .shape ∈ s.preferredSemantics := by
+  decide
 
--- ============================================================================
--- §3: Aikhenvald Table 15.1 (sample-restricted)
--- ============================================================================
+/-- Colour is never a basis for noun categorization. -/
+theorem colour_never : ∀ s ∈ allSystems, .colour ∉ s.preferredSemantics := by decide
 
-/-- [aikhenvald-2000] Table 15.1, sample-restricted: classifier-type
-    systems lack agreement; noun-class systems have agreement. -/
-theorem sample_classifier_no_agreement_nounclass_agreement :
-    (∀ s ∈ allSystems, isClassifierType s.classifierType = true → ¬ s.HasAgreement) ∧
-    (∀ s ∈ allSystems, isNounClassType s.classifierType = true → s.HasAgreement) := by
-  refine ⟨?_, ?_⟩ <;> decide
+/-! ### Classifiers and number -/
 
-/-- French has agreement; Mandarin and Japanese do not (Table 15.1). -/
-theorem fr_mandarin_jp_agreement_split :
-    French.classifierSystem.HasAgreement ∧
-    ¬ Mandarin.classifierSystem.HasAgreement ∧
-    ¬ Japanese.classifierSystem.HasAgreement := by decide
-
-/-- Numeral classifier systems have purely semantic assignment; the
-    noun-class system has mixed assignment ([aikhenvald-2000] Table 15.2). -/
-theorem fr_mandarin_jp_assignment_split :
-    Mandarin.classifierSystem.assignment = .semantic ∧
-    Japanese.classifierSystem.assignment = .semantic ∧
-    French.classifierSystem.assignment = .mixed :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- East Asian classifier systems prefer physical properties (shape) —
-    partial witness for Aikhenvald's cross-linguistic generalization. -/
-theorem mandarin_japanese_prefer_shape :
-    Mandarin.classifierSystem.preferredSemantics.any (· == .shape) = true ∧
-    Japanese.classifierSystem.preferredSemantics.any (· == .shape) = true := by
-  refine ⟨?_, ?_⟩ <;> decide
-
-/-- Animacy is attested in both Mandarin and Japanese classifiers. -/
-theorem mandarin_japanese_have_animacy :
-    Mandarin.classifierSystem.preferredSemantics.any (· == .animacy) = true ∧
-    Japanese.classifierSystem.preferredSemantics.any (· == .animacy) = true := by
-  refine ⟨?_, ?_⟩ <;> decide
-
-/-- Mandarin/Japanese classifier inventories exceed French's noun-class
-    inventory. [aikhenvald-2000] Table 15.1 generalization. -/
-theorem fr_inventory_smaller_than_clf_inventories :
-    French.classifierSystem.inventorySize <
-      Mandarin.classifierSystem.inventorySize ∧
-    French.classifierSystem.inventorySize <
-      Japanese.classifierSystem.inventorySize := by
-  refine ⟨?_, ?_⟩ <;> decide
-
--- ============================================================================
--- §4: Scope claims (sample-restricted)
--- ============================================================================
-
-/-- Numeral classifiers operate inside numeral/quantifier NPs. -/
-theorem mandarin_japanese_scope_numeralNP :
-    Mandarin.classifierSystem.scopes.any (· == .numeralNP) = true ∧
-    Japanese.classifierSystem.scopes.any (· == .numeralNP) = true := by
-  refine ⟨?_, ?_⟩ <;> decide
-
-/-- French (the noun-class member of the sample) operates in
-    head-modifier and predicate-argument scopes. -/
-theorem french_scope_agreement :
-    French.classifierSystem.scopes.any (· == .headModifierNP) = true ∧
-    French.classifierSystem.scopes.any (· == .predicateArgument) = true := by
-  refine ⟨?_, ?_⟩ <;> decide
-
--- ============================================================================
--- §5: Interaction with grammatical categories (Aikhenvald Table 10.17)
--- ============================================================================
-
-/-- [aikhenvald-2000] Table 10.17: noun classes interact with more
-    grammatical categories than numeral classifiers. Verified against the
-    framework-agnostic `interacts` table in `NounCategorization.NounCategorization`. -/
-theorem noun_class_more_interactions :
-    let cats := [GrammaticalCategory.definiteness, .number, .case_, .tenseAspect, .possession]
-    let ncInteractions := cats.filter (interacts .nounClass)
-    let clInteractions := cats.filter (interacts .numeralClassifier)
-    ncInteractions.length > clInteractions.length := by decide
-
--- ============================================================================
--- §6: Greenberg's classifier-number complementarity (sample-restricted)
--- ============================================================================
-
-/-- [greenberg-1972]: numeral classifiers and obligatory number
-    marking are in complementary distribution. Holds in the sample.
-    Aikhenvald §15 endorses Greenberg's generalization;
-    [little-moroney-royer-2022] §3.4 refines it (CLF-for-N languages
-    obey it, CLF-for-NUM languages — Ch'ol, Mi'gmaq — falsify it). -/
-theorem sample_greenberg_complementarity :
-    (∀ s ∈ allSystems, isClassifierType s.classifierType = true → ¬ s.HasObligatoryNumber) ∧
-    (∀ s ∈ allSystems, isNounClassType s.classifierType = true → s.HasObligatoryNumber) := by
-  refine ⟨?_, ?_⟩ <;> decide
-
--- ============================================================================
--- §7: Default classifier facts
--- ============================================================================
-
-/-- Mandarin and Japanese both have a semantically bleached default
-    classifier (Mandarin 个 ge, Japanese つ tsu). -/
-theorem mandarin_japanese_have_default_clf :
-    Mandarin.Classifiers.defaultClassifier.isDefault = true ∧
-    Japanese.Classifier.defaultClassifier? = some .tsu :=
-  ⟨rfl, Japanese.Classifier.default_eq_tsu⟩
-
-/-- Non-default classifiers always carry at least one semantic parameter. -/
-theorem specific_classifiers_motivated :
-    (Mandarin.Classifiers.allClassifiers.filter (!·.isDefault)).all
-      (·.semantics.length > 0) = true ∧
-    ∀ c : Japanese.Classifier,
-      ¬Japanese.Classifier.IsDefault c →
-      ¬Japanese.Classifier.IsMensural c →
-      c.encodes ≠ [] := by
-  refine ⟨?_, ?_⟩
-  · decide
-  · exact Japanese.Classifier.specific_classifiers_have_semantics
-
--- ============================================================================
--- §8: Bantu noun-class systems (sample = Xhosa, Shona, Swahili)
--- ============================================================================
-
-theorem xhosa_is_noun_class :
-    isNounClassType Xhosa.classifierSystem.classifierType = true := rfl
-
-theorem shona_is_noun_class :
-    isNounClassType Shona.classifierSystem.classifierType = true := rfl
-
-theorem swahili_is_noun_class :
-    isNounClassType Swahili.classifierSystem.classifierType = true := rfl
-
-theorem xhosa_has_agreement :
-    Xhosa.classifierSystem.HasAgreement := by decide
-
-/-- The three sampled Bantu languages have inventories in the
-    [aikhenvald-2000] Table 15.1 noun-class range (≤ 20). -/
-theorem sample_bantu_inventory_within_aikhenvald_range :
-    Xhosa.classifierSystem.inventorySize ≤ 20 ∧
-    Shona.classifierSystem.inventorySize ≤ 20 ∧
-    Swahili.classifierSystem.inventorySize ≤ 20 := by decide
-
-theorem bantu_have_prefix_realization :
-    Xhosa.classifierSystem.realizations.any (· == .prefix) = true ∧
-    Shona.classifierSystem.realizations.any (· == .prefix) = true ∧
-    Swahili.classifierSystem.realizations.any (· == .prefix) = true := by decide
-
--- ============================================================================
--- §9: Optional-classifier systems
--- ============================================================================
-
-/-- Languages with non-obligatory classifier systems (per WALS Ch 55
-    `optional`). Western Armenian is the worked example
-    ([bale-khanjian-2014]). Kept *separate* from `allSystems` because
-    the sample-restricted findings above are over obligatory systems —
-    Armenian is precisely the kind of language those generalizations
-    don't cover. -/
-def optionalClassifierSystems : List System :=
-  [Armenian.classifierSystem]
-
-theorem westernArmenian_not_obligatory :
-    ¬ Armenian.classifierSystem.IsObligatory ∧
-    ¬ Armenian.classifierSystem.HasUnmarkedDefault := by decide
+/-- Numeral-classifier languages usually lack compulsory number marking. -/
+theorem numeralClassifier_no_obligatory_number :
+    ∀ s ∈ allSystems, s.classifierType = .numeralClassifier → ¬ s.HasObligatoryNumber := by
+  decide
 
 end Aikhenvald2000
