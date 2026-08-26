@@ -1,435 +1,677 @@
-import Linglib.Semantics.Dynamic.State
+import Mathlib.CategoryTheory.Sites.IsSheafFor
+import Mathlib.ModelTheory.Basic
 import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FinCases
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Data.Fintype.Sigma
+import Mathlib.Data.Finsupp.Basic
+import Mathlib.Algebra.BigOperators.Finsupp.Basic
+import Mathlib.Tactic.DeriveFintype
+import Mathlib.Tactic.NormNum
+import Linglib.Data.Examples.AbramskySadrzadeh2014
 
 /-!
-# [abramsky-sadrzadeh-2014]: Semantic Unification, sheaf-theoretically
+# Semantic unification as sheaf gluing
 
-[abramsky-sadrzadeh-2014] present a presheaf of basic DRSs over
-vocabulary–variable contexts and cast anaphora resolution as sheaf
-*gluing*: local literal-theories over parts of a discourse unify into a
-global theory when a cover — the choice of which referents to merge —
-admits a section restricting onto each part. The paper's Proposition 1
-asserts that gluings are unique when they exist.
+Abramsky and Sadrzadeh model basic Discourse Representation Structures as a presheaf on a
+category of contexts — a finite vocabulary of relation symbols with a finite set of variables —
+and read anaphora resolution as sheaf gluing: the local theories of the parts of a discourse glue
+along a cover (the choice of which discourse referents to identify) exactly when some global theory
+restricts to each of them. `presheaf` is that functor, `Theory.restrict` its action on context
+morphisms, and `Cover.IsGluing` the gluing condition for a jointly surjective family of context
+morphisms, whose presieve is `Cover.presieve`.
 
-The formalization confirms the framework and sharpens the proposition.
-Uniqueness holds for covers in which every literal of the glued context
-factors through a single cover map (`isGluing_unique_of_factors`) — as
-in all the paper's examples, where one map carries each semantic unit.
-Without that hypothesis it fails: a binary literal whose arguments are
-hit by *different* cover maps is invisible to every restriction, so two
-theories differing by such a mixed literal glue the same family
-(`exists_isGluing_ne` — a two-singleton cover of a two-variable
-context). Existence can also fail, as the paper's negative-literal
-example shows: merging *it* with *John* forces `Man` and `¬Man` on one
-referent (`noGluing_merged`).
+The paper's Proposition 1 says gluings are unique when they exist, its proof building the candidate
+`Cover.pushforward`. Uniqueness holds when every literal of the glued context factors through a
+cover map (`Cover.IsGluing.unique`, `Cover.isSeparatedFor_of_factors`), as in the first example
+(`snores_unique`), but fails on the paper's own second example, where `John(b)` is invisible to
+every restriction and may be added to the listed gluing (`isGluing_beats_insert`,
+`not_isSeparatedFor_beats`). What is unique is the least gluing: every gluing contains the
+pushforward (`Cover.IsGluing.pushforward_subset`), which glues whenever the vocabularies are
+pairwise disjoint and the cover maps injective (`Cover.isGluing_glue`). The two obstructions
+otherwise both occur in the paper: overlapping vocabularies in the discussion example
+(`not_exists_isGluing_overlap`) and inconsistency when *it* is merged with *John*
+(`not_exists_isGluing_merged`); the four linguistic examples are decided by kernel computation
+(`isGluing_snores`, `isGluing_beats`, `isGluing_grey`, `isGluing_broke`).
 
-The closing section reads the substrate's information states
-(`Semantics/Dynamic/State.lean`) through the paper's contextuality
-frame: three pairwise-compatible anticorrelation states on a triangle of
-bases admit no gluing at all (`no_gluing_triangle`) — local consistency
-without a global section, in the model-theoretic fibers. Together with
-the substrate's `exists_ne_of_restrict_eq` (non-uniqueness from
-correlation), this locates the two sheaf-condition failures that
-separate model-theoretic information from the paper's syntactic
-theories.
+The probabilistic half composes the presheaf with the distribution functor `distribution R` of a
+semiring `R`, whose gluing is `Cover.IsGluing (presheaf 𝓛 V ⋙ distribution R)`. The bananas
+discourse instantiates the paper's ranking of covers by corpus frequencies: pushing the covering
+distribution forward along the gluing map (`gluingDistribution`) makes *ripe bananas, cheeky
+monkeys* the most likely resolution (`gluingDistribution_ripe`).
 
-## Main results
+## References
 
-- `Theory.restrict_restrict`: functoriality of the paper's `F`.
-- `subset_of_isGluing`: the pushforward union is the least gluing.
-- `isGluing_unique_of_factors`: Proposition 1, under the factorization
-  hypothesis its proof uses.
-- `exists_isGluing_ne`: uniqueness fails without it.
-- `noGluing_merged`: the paper's consistency-violation example.
-- `no_gluing_triangle`: contextuality in the `State` fibers.
+* [abramsky-sadrzadeh-2014]
+* [kamp-reyle-1993]
+* [geach-1962]
 -/
 
 namespace AbramskySadrzadeh2014
 
-/-! ### Literals and theories -/
+open CategoryTheory FirstOrder
 
-/-- A relational signature: symbols with arities. -/
-structure Signature where
-  /-- The relation symbols. -/
-  Rel : Type
-  /-- The arity of each symbol. -/
-  ar : Rel → ℕ
+universe u v w r
 
-variable {σ : Signature}
+section General
 
-/-- A literal: a signed atomic formula, variables drawn from `ℕ`. -/
-structure Literal (σ : Signature) where
+/-! ### Contexts and the presheaf of basic DRS -/
+
+/-- A context `(L, X)`: a finite vocabulary of relation symbols and a finite set of variables. -/
+structure Context (𝓛 : Language.{u, v}) (V : Type w) where
+  /-- The vocabulary. -/
+  vocab : Finset (Σ n, 𝓛.Relations n)
+  /-- The variables. -/
+  vars : Finset V
+
+variable {𝓛 : Language.{u, v}} {V : Type w}
+
+/-- A context morphism: an inclusion of vocabularies together with a map of variables. -/
+structure Context.Hom (c c' : Context 𝓛 V) where
+  /-- The vocabulary inclusion. -/
+  incl : c.vocab ⊆ c'.vocab
+  /-- The variable map. -/
+  map : c.vars → c'.vars
+
+instance : Category (Context 𝓛 V) where
+  Hom := Context.Hom
+  id c := ⟨subset_rfl, id⟩
+  comp f g := ⟨f.incl.trans g.incl, g.map ∘ f.map⟩
+
+/-- A literal over a context: a signed atomic formula `±A(x̄)`. -/
+structure Literal (c : Context 𝓛 V) where
   /-- The relation symbol. -/
-  rel : σ.Rel
+  rel : c.vocab
   /-- The argument variables. -/
-  args : Fin (σ.ar rel) → ℕ
+  args : Fin rel.1.1 → c.vars
   /-- The sign. -/
   pos : Bool
 
-/-- Substitution along a variable map. -/
-def Literal.map (f : ℕ → ℕ) (l : Literal σ) : Literal σ :=
-  ⟨l.rel, f ∘ l.args, l.pos⟩
+namespace Literal
 
-@[simp] theorem Literal.map_id (l : Literal σ) : l.map id = l := rfl
+variable {c c' c'' : Context 𝓛 V}
 
-theorem Literal.map_map (f g : ℕ → ℕ) (l : Literal σ) :
-    (l.map f).map g = l.map (g ∘ f) := rfl
+/-- Literals as dependent triples. -/
+def equivSigma (c : Context 𝓛 V) : Literal c ≃ Σ r : c.vocab, (Fin r.1.1 → c.vars) × Bool where
+  toFun l := ⟨l.rel, l.args, l.pos⟩
+  invFun l := ⟨l.1, l.2.1, l.2.2⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+/-- Substitution along a context morphism. -/
+def map (f : c ⟶ c') (l : Literal c) : Literal c' :=
+  ⟨⟨l.rel.1, f.incl l.rel.2⟩, f.map ∘ l.args, l.pos⟩
+
+@[simp] theorem map_id (l : Literal c) : l.map (𝟙 c) = l := rfl
+
+@[simp] theorem map_comp (f : c ⟶ c') (g : c' ⟶ c'') (l : Literal c) :
+    l.map (f ≫ g) = (l.map f).map g := rfl
+
+theorem map_injective {f : c ⟶ c'} (hf : Function.Injective f.map) :
+    Function.Injective (map f) := by
+  rintro ⟨⟨r, hr⟩, a, p⟩ ⟨⟨r', hr'⟩, a', p'⟩ h
+  obtain ⟨h₁, h₂, rfl⟩ := Literal.mk.inj h
+  obtain rfl := Subtype.mk.inj h₁
+  cases funext fun i => hf (congrFun (eq_of_heq h₂) i)
+  rfl
 
 /-- The complementary literal. -/
-def Literal.neg (l : Literal σ) : Literal σ := ⟨l.rel, l.args, !l.pos⟩
+def neg (l : Literal c) : Literal c := ⟨l.rel, l.args, !l.pos⟩
 
-@[simp] theorem Literal.neg_map (f : ℕ → ℕ) (l : Literal σ) :
-    (l.map f).neg = l.neg.map f := rfl
+@[simp] theorem neg_neg (l : Literal c) : l.neg.neg = l := by cases l; simp [neg]
 
-/-- The literal draws its symbol from `L` and its variables from `X`. -/
-def Literal.Over (L : Finset σ.Rel) (X : Finset ℕ) (l : Literal σ) : Prop :=
-  l.rel ∈ L ∧ ∀ i, l.args i ∈ X
+@[simp] theorem neg_map (f : c ⟶ c') (l : Literal c) : (l.map f).neg = l.neg.map f := rfl
 
-/-- The paper's fibers `F(L, X)`: consistent theories of literals over
-the context. The paper takes deductive closures of consistent *finite*
-sets; for literal-only theories closure adds nothing and finiteness is
-not load-bearing — the paper's own "could be finessed if necessary". -/
-@[ext] structure Theory (σ : Signature) (L : Finset σ.Rel) (X : Finset ℕ) where
+end Literal
+
+/-- A consistent finite set of literals over a context — the paper's `F(L, X)`, whose deductive
+closure adds no literals. -/
+@[ext] structure Theory (c : Context 𝓛 V) where
   /-- The literals held true. -/
-  lits : Set (Literal σ)
-  /-- Every literal is over the context. -/
-  over : ∀ l ∈ lits, l.Over L X
+  lits : Finset (Literal c)
   /-- No literal occurs with both signs. -/
   consistent : ∀ l ∈ lits, l.neg ∉ lits
 
-variable {L L' : Finset σ.Rel} {X X' : Finset ℕ}
+namespace Theory
 
-instance : Membership (Literal σ) (Theory σ L X) := ⟨fun s l => l ∈ s.lits⟩
+variable {c c' : Context 𝓛 V}
 
-/-- Restriction along a context morphism (the paper's `F(ι, f)`), by
-substitution-preimage: `F(f)(s) ⊨ ±A(x̄) ⟺ s ⊨ ±A(f(x̄))`. -/
-def Theory.restrict (f : ℕ → ℕ) (s : Theory σ L' X') (L : Finset σ.Rel)
-    (X : Finset ℕ) : Theory σ L X where
-  lits := {l | l.Over L X ∧ l.map f ∈ s.lits}
-  over _ hl := hl.1
-  consistent l hl hneg := s.consistent (l.map f) hl.2 hneg.2
+instance : Bot (Theory c) := ⟨⟨∅, by simp⟩⟩
 
-@[simp] theorem Theory.mem_restrict {f : ℕ → ℕ} {s : Theory σ L' X'}
-    {l : Literal σ} :
-    l ∈ s.restrict f L X ↔ l.Over L X ∧ l.map f ∈ s.lits := Iff.rfl
+@[simp] theorem lits_bot : (⊥ : Theory c).lits = ∅ := rfl
 
-/-- Functoriality of restriction, along composable context morphisms. -/
-theorem Theory.restrict_restrict {L'' : Finset σ.Rel} {X'' : Finset ℕ}
-    {f g : ℕ → ℕ} (hL : L ⊆ L') (hf : ∀ x ∈ X, f x ∈ X')
-    (s : Theory σ L'' X'') :
-    (s.restrict g L' X').restrict f L X = s.restrict (g ∘ f) L X := by
-  ext l
-  constructor
-  · rintro ⟨h1, -, h3⟩
-    exact ⟨h1, h3⟩
-  · rintro ⟨h1, h3⟩
-    exact ⟨h1, ⟨⟨hL h1.1, fun i => hf _ (h1.2 i)⟩, h3⟩⟩
+end Theory
+
+variable [DecidableEq V] [∀ n, DecidableEq (𝓛.Relations n)]
+
+-- Compared through non-dependent data, which kernel `decide` evaluates on enumerated literals.
+instance (c : Context 𝓛 V) : DecidableEq (Literal c) := fun l l' =>
+  decidable_of_iff (l.rel.1 = l'.rel.1 ∧ List.ofFn l.args = List.ofFn l'.args ∧ l.pos = l'.pos) (by
+    constructor
+    · rintro ⟨h₁, h₂, h₃⟩
+      obtain ⟨⟨r, hr⟩, a, p⟩ := l
+      obtain ⟨⟨r', hr'⟩, a', p'⟩ := l'
+      obtain rfl : r = r' := h₁
+      obtain rfl := List.ofFn_injective h₂
+      obtain rfl := h₃
+      rfl
+    · rintro rfl; exact ⟨rfl, rfl, rfl⟩)
+
+instance (c : Context 𝓛 V) : Fintype (Literal c) := Fintype.ofEquiv _ (Literal.equivSigma c).symm
+
+namespace Theory
+
+variable {c c' : Context 𝓛 V}
+
+instance : DecidableEq (Theory c) := fun _ _ => decidable_of_iff _ Theory.ext_iff.symm
+
+/-- Restriction along a context morphism: `F(f)(s) ⊢ ±A(x̄) ⟺ s ⊢ ±A(f(x̄))`. -/
+def restrict (f : c ⟶ c') (s : Theory c') : Theory c where
+  lits := Finset.univ.filter fun l => l.map f ∈ s.lits
+  consistent _ hl hn := s.consistent _ (Finset.mem_filter.1 hl).2 (Finset.mem_filter.1 hn).2
+
+@[simp] theorem mem_restrict {f : c ⟶ c'} {s : Theory c'} {l : Literal c} :
+    l ∈ (s.restrict f).lits ↔ l.map f ∈ s.lits := by simp [restrict]
+
+end Theory
+
+variable (𝓛 V) in
+/-- The presheaf of basic DRS: theories at each context, restriction along context morphisms. -/
+def presheaf : (Context 𝓛 V)ᵒᵖ ⥤ Type (max v w) where
+  obj c := Theory c.unop
+  map f := TypeCat.ofHom fun s => s.restrict f.unop
+
+@[simp] theorem presheaf_obj (c : (Context 𝓛 V)ᵒᵖ) : (presheaf 𝓛 V).obj c = Theory c.unop := rfl
+
+@[simp] theorem presheaf_map {c c' : (Context 𝓛 V)ᵒᵖ} (f : c ⟶ c') (s : Theory c.unop) :
+    (presheaf 𝓛 V).map f s = s.restrict f.unop := rfl
 
 /-! ### Covers and gluing -/
 
-variable {ι : Type*}
+/-- A cover of a context: a jointly surjective family of context morphisms into it
+(`⋃ Im fᵢ = X` and `L = ⋃ Lᵢ`). -/
+structure Cover (c : Context 𝓛 V) (ι : Type*) where
+  /-- The covering contexts. -/
+  part : ι → Context 𝓛 V
+  /-- The covering morphisms. -/
+  map : ∀ i, part i ⟶ c
+  exists_map_eq : ∀ x : c.vars, ∃ i y, (map i).map y = x
+  exists_mem_vocab : ∀ r ∈ c.vocab, ∃ i, r ∈ (part i).vocab
 
-/-- The paper's covers: jointly surjective families of context
-morphisms into `(L, X)`. -/
-structure Cover (σ : Signature) (L : Finset σ.Rel) (X : Finset ℕ)
-    (ι : Type*) where
-  /-- The component vocabularies. -/
-  Lpart : ι → Finset σ.Rel
-  /-- The component variable contexts. -/
-  Xpart : ι → Finset ℕ
-  /-- The component variable maps. -/
-  map : ι → ℕ → ℕ
-  /-- Joint surjectivity on variables. -/
-  jointlySurj : ∀ x ∈ X, ∃ i, ∃ y ∈ Xpart i, map i y = x
+namespace Cover
 
-/-- `s` glues the family `F` over the cover: it restricts onto every
-member (`F(fᵢ)(s) = sᵢ`). -/
-def IsGluing (c : Cover σ L X ι)
-    (F : ∀ i, Theory σ (c.Lpart i) (c.Xpart i)) (s : Theory σ L X) : Prop :=
-  ∀ i, s.restrict (c.map i) (c.Lpart i) (c.Xpart i) = F i
+variable {c : Context 𝓛 V} {ι : Type*} (C : Cover c ι)
 
-/-- Any gluing contains every pushed-forward literal: the union of
-pushforwards is the least gluing — the candidate of the paper's
-Proposition 1. -/
-theorem subset_of_isGluing {c : Cover σ L X ι}
-    {F : ∀ i, Theory σ (c.Lpart i) (c.Xpart i)} {s : Theory σ L X}
-    (hs : IsGluing c F s) (i : ι) {l : Literal σ} (hl : l ∈ F i) :
-    l.map (c.map i) ∈ s.lits := by
-  rw [← hs i] at hl
-  exact hl.2
+/-- The presieve of the covering morphisms. -/
+abbrev presieve : Presieve c := Presieve.ofArrows C.part C.map
 
-/-- **Proposition 1, with its implicit hypothesis**: gluings are unique
-provided every literal over the glued context factors through a single
-cover map — as in all the paper's examples. Membership of a factoring
-literal is decided by the restriction it factors through. -/
-theorem isGluing_unique_of_factors {c : Cover σ L X ι}
-    {F : ∀ i, Theory σ (c.Lpart i) (c.Xpart i)} {s s' : Theory σ L X}
-    (hFac : ∀ m : Literal σ, m.Over L X →
-      ∃ i, ∃ l : Literal σ, l.Over (c.Lpart i) (c.Xpart i) ∧
-        l.map (c.map i) = m)
-    (hs : IsGluing c F s) (hs' : IsGluing c F s') : s = s' := by
-  have key : ∀ (t t' : Theory σ L X), IsGluing c F t → IsGluing c F t' →
-      t.lits ⊆ t'.lits := by
-    intro t t' ht ht' m hm
-    obtain ⟨i, l, hlover, hlm⟩ := hFac m (t.over m hm)
-    have hlF : l ∈ F i := by
-      rw [← ht i]
-      exact ⟨hlover, hlm ▸ hm⟩
-    have := subset_of_isGluing ht' i hlF
-    rwa [hlm] at this
-  exact Theory.ext (Set.Subset.antisymm (key s s' hs hs') (key s' s hs' hs))
+/-- `s` glues the family `x` over the cover: `P(fᵢ)(s) = xᵢ` for every `i`. -/
+def IsGluing (P : (Context 𝓛 V)ᵒᵖ ⥤ Type*) (x : ∀ i, P.obj (Opposite.op (C.part i)))
+    (s : P.obj (Opposite.op c)) : Prop :=
+  ∀ i, P.map (C.map i).op s = x i
 
-/-! ### Uniqueness fails without factorization -/
+variable {C} {x : ∀ i, Theory (C.part i)} {s s' : Theory c}
 
-/-- One binary relation symbol. -/
-private abbrev sigB : Signature := ⟨Unit, fun _ => 2⟩
+instance [Fintype ι] : Decidable (C.IsGluing (presheaf 𝓛 V) x s) :=
+  inferInstanceAs (Decidable (∀ i, s.restrict (C.map i) = x i))
 
-/-- The empty theory. -/
-private def emptyTheory (L : Finset sigB.Rel) (X : Finset ℕ) :
-    Theory sigB L X :=
-  ⟨∅, fun _ h => h.elim, fun _ h => h.elim⟩
+/-- The paper's candidate gluing `{±A(fᵢ(x̄)) | ±A(x̄) ∈ sᵢ}`. -/
+def pushforward [Fintype ι] (C : Cover c ι) (x : ∀ i, Theory (C.part i)) : Finset (Literal c) :=
+  Finset.univ.biUnion fun i => (x i).lits.image (Literal.map (C.map i))
 
-/-- The two-singleton cover of the two-variable context: each map hits
-one variable. -/
-private def twoCover : Cover sigB {()} {0, 1} Bool where
-  Lpart _ := {()}
-  Xpart _ := {0}
-  map b := fun _ => if b then 1 else 0
-  jointlySurj x hx := by
-    rcases Finset.mem_insert.mp hx with rfl | hx
-    · exact ⟨false, 0, by simp, rfl⟩
-    · exact ⟨true, 0, by simp, (Finset.mem_singleton.mp hx).symm⟩
+@[simp] theorem mem_pushforward [Fintype ι] {l : Literal c} :
+    l ∈ C.pushforward x ↔ ∃ i, ∃ m ∈ (x i).lits, m.map (C.map i) = l := by
+  simp [pushforward]
 
-/-- The mixed literal `A(0, 1)`: its two arguments are hit by different
-cover maps. -/
-private abbrev mixed : Literal sigB := ⟨(), ![0, 1], true⟩
+theorem IsGluing.pushforward_subset [Fintype ι] (hs : C.IsGluing (presheaf 𝓛 V) x s) :
+    C.pushforward x ⊆ s.lits := by
+  intro l hl
+  obtain ⟨i, m, hm, rfl⟩ := mem_pushforward.1 hl
+  rw [← hs i] at hm
+  exact Theory.mem_restrict.1 hm
 
-private def mixedTheory : Theory sigB {()} {0, 1} where
-  lits := {mixed}
-  over l hl := by
-    rw [Set.mem_singleton_iff] at hl
-    subst hl
-    refine ⟨Finset.mem_singleton_self _, fun i => ?_⟩
-    have h2 : ∀ i : Fin 2, (![0, 1] : Fin 2 → ℕ) i ∈ ({0, 1} : Finset ℕ) := by
-      decide
-    exact h2 i
-  consistent l hl hneg := by
-    rw [Set.mem_singleton_iff] at hl hneg
-    subst hl
-    simp [Literal.neg] at hneg
+/-- Every literal over the glued context is the image of a literal over some part. -/
+def Factors (C : Cover c ι) : Prop :=
+  ∀ l : Literal c, ∃ i, ∃ m : Literal (C.part i), m.map (C.map i) = l
 
-/-- The binary argument tuple of a `sigB`-literal. -/
-private def bargs (m : Literal sigB) : Fin 2 → ℕ := m.args
+instance [Fintype ι] : Decidable C.Factors :=
+  inferInstanceAs (Decidable (∀ l : Literal c, ∃ i, ∃ m : Literal (C.part i), m.map (C.map i) = l))
 
-/-- No literal over a single variable substitutes to the mixed literal:
-its constant image cannot produce two distinct arguments. -/
-private theorem not_map_eq_mixed (b : Bool) (l : Literal sigB)
-    (hover : l.Over ({()} : Finset sigB.Rel) {0}) : l.map (twoCover.map b) ≠ mixed := by
-  intro h
-  have h0 := congrFun (congrArg bargs h) 0
-  have h1 := congrFun (congrArg bargs h) 1
-  simp only [bargs, Literal.map, Function.comp] at h0 h1
-  rw [Finset.mem_singleton.mp (hover.2 0)] at h0
-  rw [Finset.mem_singleton.mp (hover.2 1)] at h1
-  rcases b <;> simp [twoCover] at h0 h1
+theorem IsGluing.lits_eq_pushforward [Fintype ι] (hC : C.Factors)
+    (hs : C.IsGluing (presheaf 𝓛 V) x s) : s.lits = C.pushforward x :=
+  subset_antisymm (fun l hl => by
+      obtain ⟨i, m, rfl⟩ := hC l
+      exact mem_pushforward.2 ⟨i, m, by rw [← hs i]; exact Theory.mem_restrict.2 hl, rfl⟩)
+    hs.pushforward_subset
 
-/-- **Uniqueness fails without factorization**: the empty theories on
-the two-singleton cover are glued both by the empty theory and by the
-mixed-literal theory. Proposition 1's uniqueness claim needs the
-factorization hypothesis. -/
-theorem exists_isGluing_ne :
-    ∃ s s' : Theory sigB {()} {0, 1},
-      IsGluing twoCover (fun _ => emptyTheory {()} {0}) s ∧
-      IsGluing twoCover (fun _ => emptyTheory {()} {0}) s' ∧ s ≠ s' := by
-  refine ⟨emptyTheory _ _, mixedTheory, fun b => ?_, fun b => ?_, ?_⟩
-  · ext l
-    simp [Theory.restrict, emptyTheory]
-  · ext l
-    simp only [mixedTheory]
+/-- Proposition 1, for covers through which every literal factors. -/
+theorem IsGluing.unique [Fintype ι] (hC : C.Factors) (hs : C.IsGluing (presheaf 𝓛 V) x s)
+    (hs' : C.IsGluing (presheaf 𝓛 V) x s') : s = s' :=
+  Theory.ext ((hs.lits_eq_pushforward hC).trans (hs'.lits_eq_pushforward hC).symm)
+
+/-- Proposition 1 in sheaf-theoretic terms: the presheaf is separated for a factoring cover. -/
+theorem isSeparatedFor_of_factors [Fintype ι] (hC : C.Factors) :
+    C.presieve.IsSeparatedFor (presheaf 𝓛 V) := fun x _ _ h h' =>
+  IsGluing.unique hC (x := fun i => x _ (.mk i))
+    ((Presieve.FamilyOfElements.isAmalgamation_iff_ofArrows _ _ x _).1 h)
+    ((Presieve.FamilyOfElements.isAmalgamation_iff_ofArrows _ _ x _).1 h')
+
+omit [DecidableEq V] [∀ n, DecidableEq (𝓛.Relations n)] in
+theorem eq_of_map_eq (hdisj : Pairwise fun i j => Disjoint (C.part i).vocab (C.part j).vocab)
+    {i j : ι} {m : Literal (C.part i)} {m' : Literal (C.part j)}
+    (h : m.map (C.map i) = m'.map (C.map j)) : i = j :=
+  by_contra fun hij => Finset.disjoint_left.1 (hdisj hij) m.rel.2
+    (by rw [show m.rel.1 = m'.rel.1 from congrArg (fun l : Literal c => l.rel.1) h]; exact m'.rel.2)
+
+/-- With pairwise disjoint vocabularies and injective cover maps the pushforward is consistent. -/
+def glue [Fintype ι] (C : Cover c ι)
+    (hdisj : Pairwise fun i j => Disjoint (C.part i).vocab (C.part j).vocab)
+    (hinj : ∀ i, Function.Injective (C.map i).map) (x : ∀ i, Theory (C.part i)) : Theory c where
+  lits := C.pushforward x
+  consistent _ hl hn := by
+    obtain ⟨i, m, hm, rfl⟩ := mem_pushforward.1 hl
+    obtain ⟨j, m', hm', h⟩ := mem_pushforward.1 hn
+    rw [Literal.neg_map] at h
+    obtain rfl : i = j := (C.eq_of_map_eq hdisj h).symm
+    exact (x i).consistent m hm (Literal.map_injective (hinj i) h ▸ hm')
+
+/-- Under disjoint vocabularies and injective cover maps the pushforward glues: the only
+obstruction to gluing is consistency, and it does not arise. -/
+theorem isGluing_glue [Fintype ι]
+    (hdisj : Pairwise fun i j => Disjoint (C.part i).vocab (C.part j).vocab)
+    (hinj : ∀ i, Function.Injective (C.map i).map) (x : ∀ i, Theory (C.part i)) :
+    C.IsGluing (presheaf 𝓛 V) x (C.glue hdisj hinj x) := fun i =>
+  Theory.ext (Finset.ext fun l => by
+    simp only [presheaf_map, Quiver.Hom.unop_op, Theory.mem_restrict, glue, mem_pushforward]
     constructor
-    · rintro ⟨hover, hmap⟩
-      exact absurd hmap (not_map_eq_mixed b l hover)
-    · intro h
-      exact absurd h (by simp [emptyTheory])
-  · intro h
-    have hmem : mixed ∈ (emptyTheory {()} ({0, 1} : Finset ℕ)).lits := by
-      rw [h]
-      exact rfl
-    exact hmem
+    · rintro ⟨j, m, hm, h⟩
+      obtain rfl : i = j := (C.eq_of_map_eq hdisj h).symm
+      exact Literal.map_injective (hinj i) h ▸ hm
+    · exact fun hl => ⟨i, l, hl, rfl⟩)
 
-/-! ### Existence fails on inconsistency: the paper's example 3 -/
+end Cover
 
-/-- Unary symbols for the paper's negative-literal example. -/
-private inductive R3 | john | man | donkey
+/-! ### The distribution functor -/
+
+/-- Finitely supported `R`-weightings of `S` summing to `1` — the paper's `D_R(S)`. -/
+def Distribution (R : Type r) [AddCommMonoid R] [One R] (S : Type u) : Type (max u r) :=
+  {d : S →₀ R // d.sum (fun _ m => m) = 1}
+
+namespace Distribution
+
+variable {R : Type r} [AddCommMonoid R] [One R] {S T : Type u}
+
+/-- The image distribution along a map. -/
+noncomputable def map (f : S → T) (d : Distribution R S) : Distribution R T :=
+  ⟨Finsupp.mapDomain f d.1, by
+    rw [Finsupp.sum_mapDomain_index (fun _ => rfl) (fun _ _ _ => rfl)]; exact d.2⟩
+
+@[simp] theorem map_id (d : Distribution R S) : map id d = d := Subtype.ext Finsupp.mapDomain_id
+
+theorem map_comp {U : Type u} (f : S → T) (g : T → U) (d : Distribution R S) :
+    map (g ∘ f) d = map g (map f d) :=
+  Subtype.ext Finsupp.mapDomain_comp
+
+/-- The distribution proportional to a weighting with nonzero total. -/
+noncomputable def ofWeights {ι : Type u} [Fintype ι] (w : ι → ℕ) (h : ∑ i, w i ≠ 0) :
+    Distribution ℚ ι :=
+  ⟨Finsupp.equivFunOnFinite.symm fun i => (w i : ℚ) / ∑ i, w i, by
+    rw [Finsupp.sum_fintype _ _ fun _ => rfl]
+    simp only [Finsupp.coe_equivFunOnFinite_symm, div_eq_mul_inv, ← Finset.sum_mul, ← Nat.cast_sum]
+    exact mul_inv_cancel₀ (Nat.cast_ne_zero.2 h)⟩
+
+end Distribution
+
+variable (R : Type r) [AddCommMonoid R] [One R] in
+/-- The distribution functor `D_R`. -/
+noncomputable def distribution : Type u ⥤ Type (max u r) where
+  obj := Distribution R
+  map f := TypeCat.ofHom (Distribution.map f)
+  map_id _ := congrArg TypeCat.ofHom (funext fun d => by rw [hom_id]; exact Distribution.map_id d)
+  map_comp f g := congrArg TypeCat.ofHom (funext fun d => by
+    rw [hom_comp]; exact Distribution.map_comp f g d)
+
+end General
+
+/-! ### The paper's examples -/
+
+/-- Relation symbols of the paper's examples, by arity. -/
+inductive Rel : ℕ → Type
+  | R : Rel 1
+  | S : Rel 1
+  | john : Rel 1
+  | man : Rel 1
+  | sleeps : Rel 1
+  | snores : Rel 1
+  | donkey : Rel 1
+  | grey : Rel 1
+  | cup : Rel 1
+  | plate : Rel 1
+  | banana : Rel 1
+  | monkey : Rel 1
+  | ripe : Rel 1
+  | cheeky : Rel 1
+  | owns : Rel 2
+  | beats : Rel 2
+  | broke : Rel 2
+  | putOn : Rel 3
+  | gave : Rel 3
   deriving DecidableEq
 
-private abbrev sigU : Signature := ⟨R3, fun _ => 1⟩
+/-- The relational language of the examples. -/
+abbrev lang : Language := ⟨fun _ => Empty, Rel⟩
 
-/-- `{John(x), Man(x)}`. -/
-private def johnSection : Theory sigU {R3.john, R3.man} {0} where
-  lits := {⟨R3.john, fun _ => 0, true⟩, ⟨R3.man, fun _ => 0, true⟩}
-  over l hl := by
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hl
-    rcases hl with rfl | rfl <;>
-      exact ⟨by simp, fun _ => Finset.mem_singleton_self 0⟩
-  consistent l hl hneg := by
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hl hneg
-    rcases hl with rfl | rfl <;> rcases hneg with h | h <;>
-      simp [Literal.neg] at h
+/-- Variables of the paper's examples. -/
+inductive Var | x | y | z | u | v | w | a | b
+  deriving DecidableEq
 
-/-- `{donkey(y), ¬Man(y)}` — the pronoun *it* does not refer to men. -/
-private def donkeySection : Theory sigU {R3.donkey, R3.man} {0} where
-  lits := {⟨R3.donkey, fun _ => 0, true⟩, ⟨R3.man, fun _ => 0, false⟩}
-  over l hl := by
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hl
-    rcases hl with rfl | rfl <;>
-      exact ⟨by simp, fun _ => Finset.mem_singleton_self 0⟩
-  consistent l hl hneg := by
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hl hneg
-    rcases hl with rfl | rfl <;> rcases hneg with h | h <;>
-      simp [Literal.neg] at h
+/-- The literal `A(x̄)`, or `¬A(x̄)` for `pos := false`. -/
+def lit {c : Context lang Var} {n : ℕ} (r : Rel n) (args : Fin n → Var) (pos : Bool := true)
+    (hr : ⟨n, r⟩ ∈ c.vocab := by decide +kernel) (h : ∀ i, args i ∈ c.vars := by decide +kernel) :
+    Literal c :=
+  ⟨⟨⟨n, r⟩, hr⟩, fun i => ⟨args i, h i⟩, pos⟩
 
-/-- The cover that merges the two referents. -/
-private def mergedCover :
-    Cover sigU {R3.john, R3.man, R3.donkey} {5} Bool where
-  Lpart b := if b then {R3.donkey, R3.man} else {R3.john, R3.man}
-  Xpart _ := {0}
-  map _ := fun _ => 5
-  jointlySurj _ hx :=
-    ⟨false, 0, Finset.mem_singleton_self 0, (Finset.mem_singleton.mp hx).symm⟩
+/-- The context morphism acting as `f` on variables. -/
+def hom {c c' : Context lang Var} (f : Var → Var)
+    (hf : ∀ t ∈ c.vars, f t ∈ c'.vars := by decide +kernel)
+    (hL : c.vocab ⊆ c'.vocab := by decide +kernel) : c ⟶ c' :=
+  ⟨hL, fun t => ⟨f t, hf t t.2⟩⟩
 
-private def mergedFamily : ∀ b : Bool,
-    Theory sigU (mergedCover.Lpart b) (mergedCover.Xpart b)
-  | true => donkeySection
-  | false => johnSection
+/-! #### Example 1: *John sleeps. He snores.* -/
 
-/-- **Existence fails on inconsistency** (the paper's example 3): the
-cover merging *it* with *John* has no gluing — it would hold both
-`Man` and `¬Man` of the merged referent. "A cover which merged x and y
-would not have a gluing, since the consistency condition would be
-violated." -/
-theorem noGluing_merged : ¬ ∃ s, IsGluing mergedCover mergedFamily s := by
+/-- The glued context of the first example. -/
+abbrev snoresCtx : Context lang Var := ⟨{⟨1, .john⟩, ⟨1, .sleeps⟩, ⟨1, .snores⟩}, {.z}⟩
+
+/-- The cover `{x} ↦ z ↤ {y}` merging *he* with *John*. -/
+def snoresCover : Cover snoresCtx (Fin 2) where
+  part := ![⟨{⟨1, .john⟩, ⟨1, .sleeps⟩}, {.x}⟩, ⟨{⟨1, .snores⟩}, {.y}⟩]
+  map
+    | 0 => hom fun _ => .z
+    | 1 => hom fun _ => .z
+  exists_map_eq := by decide +kernel
+  exists_mem_vocab := by decide +kernel
+
+/-- `s₁ = {John(x), sleeps(x)}`, `s₂ = {snores(y)}`. -/
+def snoresSections : ∀ i, Theory (snoresCover.part i)
+  | 0 => ⟨{lit .john (fun _ => .x), lit .sleeps (fun _ => .x)}, by decide +kernel⟩
+  | 1 => ⟨{lit .snores (fun _ => .y)}, by decide +kernel⟩
+
+/-- `s = {John(z), sleeps(z), snores(z)}`. -/
+def snoresGluing : Theory snoresCtx :=
+  ⟨{lit .john (fun _ => .z), lit .sleeps (fun _ => .z), lit .snores (fun _ => .z)},
+    by decide +kernel⟩
+
+theorem isGluing_snores : snoresCover.IsGluing (presheaf lang Var) snoresSections snoresGluing := by
+  decide +kernel
+
+/-- Every literal over `{z}` factors through the cover, so the gluing is unique. -/
+theorem snores_unique {s : Theory snoresCtx}
+    (hs : snoresCover.IsGluing (presheaf lang Var) snoresSections s) : s = snoresGluing :=
+  hs.unique (by decide +kernel) isGluing_snores
+
+/-! #### Example 2: *John beats his donkey.* -/
+
+/-- The glued context of the second example. -/
+abbrev beatsCtx : Context lang Var :=
+  ⟨{⟨1, .john⟩, ⟨1, .donkey⟩, ⟨2, .owns⟩, ⟨2, .beats⟩}, {.a, .b}⟩
+
+/-- The cover `x ↦ a`, `y ↦ b`, `u ↦ a, v ↦ b`. -/
+def beatsCover : Cover beatsCtx (Fin 3) where
+  part := ![⟨{⟨1, .john⟩}, {.x}⟩, ⟨{⟨1, .donkey⟩}, {.y}⟩, ⟨{⟨2, .owns⟩, ⟨2, .beats⟩}, {.u, .v}⟩]
+  map
+    | 0 => hom fun _ => .a
+    | 1 => hom fun _ => .b
+    | 2 => hom fun | .u => .a | _ => .b
+  exists_map_eq := by decide +kernel
+  exists_mem_vocab := by decide +kernel
+
+/-- `s₁ = {John(x)}`, `s₂ = {donkey(y)}`, `s₃ = {owns(u, v), beats(u, v)}`. -/
+def beatsSections : ∀ i, Theory (beatsCover.part i)
+  | 0 => ⟨{lit .john (fun _ => .x)}, by decide +kernel⟩
+  | 1 => ⟨{lit .donkey (fun _ => .y)}, by decide +kernel⟩
+  | 2 => ⟨{lit .owns ![.u, .v], lit .beats ![.u, .v]}, by decide +kernel⟩
+
+/-- `s = {John(a), donkey(b), owns(a, b), beats(a, b)}`. -/
+def beatsGluing : Theory beatsCtx :=
+  ⟨{lit .john (fun _ => .a), lit .donkey (fun _ => .b), lit .owns ![.a, .b], lit .beats ![.a, .b]},
+    by decide +kernel⟩
+
+theorem isGluing_beats : beatsCover.IsGluing (presheaf lang Var) beatsSections beatsGluing := by
+  decide +kernel
+
+/-- `s ∪ {John(b)}`: `John(b)` factors through no cover map, so adding it changes no
+restriction and the listed gluing is not unique. -/
+def beatsGluing' : Theory beatsCtx :=
+  ⟨insert (lit .john (fun _ => .b)) beatsGluing.lits, by decide +kernel⟩
+
+theorem isGluing_beats_insert :
+    beatsCover.IsGluing (presheaf lang Var) beatsSections beatsGluing' := by
+  decide +kernel
+
+theorem not_isSeparatedFor_beats : ¬ beatsCover.presieve.IsSeparatedFor (presheaf lang Var) :=
+  fun h => absurd (h.ext (t₁ := beatsGluing) (t₂ := beatsGluing') fun _ _ ⟨i⟩ =>
+    (isGluing_beats i).trans (isGluing_beats_insert i).symm)
+    (show beatsGluing ≠ beatsGluing' by decide +kernel)
+
+/-! #### Example 3: *John owns a donkey. It is grey.* -/
+
+/-- The glued context of the third example. -/
+abbrev greyCtx : Context lang Var := ⟨{⟨1, .john⟩, ⟨1, .man⟩, ⟨1, .donkey⟩, ⟨1, .grey⟩}, {.a, .b}⟩
+
+/-- The covering contexts of the third example. -/
+def greyParts : Fin 3 → Context lang Var :=
+  ![⟨{⟨1, .john⟩, ⟨1, .man⟩}, {.x}⟩, ⟨{⟨1, .donkey⟩, ⟨1, .man⟩}, {.y}⟩, ⟨{⟨1, .grey⟩}, {.z}⟩]
+
+/-- `s₁ = {John(x), Man(x)}`, `s₂ = {donkey(y), ¬Man(y)}`, `s₃ = {grey(z)}`. -/
+def greySections : ∀ i, Theory (greyParts i)
+  | 0 => ⟨{lit .john (fun _ => .x), lit .man (fun _ => .x)}, by decide +kernel⟩
+  | 1 => ⟨{lit .donkey (fun _ => .y), lit .man (fun _ => .y) false}, by decide +kernel⟩
+  | 2 => ⟨{lit .grey (fun _ => .z)}, by decide +kernel⟩
+
+/-- The cover merging *it* with *John*: `x ↦ a`, `y ↦ a`, `z ↦ b`. -/
+def mergedCover : Cover greyCtx (Fin 3) where
+  part := greyParts
+  map
+    | 0 => hom fun _ => .a
+    | 1 => hom fun _ => .a
+    | 2 => hom fun _ => .b
+  exists_map_eq := by decide +kernel
+  exists_mem_vocab := by decide +kernel
+
+/-- Merging `x` and `y` forces `Man` and `¬Man` of one referent. -/
+theorem not_exists_isGluing_merged :
+    ¬ ∃ s, mergedCover.IsGluing (presheaf lang Var) greySections s := by
   rintro ⟨s, hs⟩
-  have hMan : (⟨R3.man, fun _ => 0, true⟩ : Literal sigU).map (fun _ => 5) ∈
-      s.lits :=
-    subset_of_isGluing hs false (Set.mem_insert_of_mem _ rfl)
-  have hNeg : (⟨R3.man, fun _ => 0, false⟩ : Literal sigU).map (fun _ => 5) ∈
-      s.lits :=
-    subset_of_isGluing hs true (Set.mem_insert_of_mem _ rfl)
-  exact s.consistent _ hMan hNeg
+  exact s.consistent _
+    (hs.pushforward_subset
+      (Cover.mem_pushforward.2 ⟨0, lit .man (fun _ => .x), by decide +kernel, rfl⟩))
+    (hs.pushforward_subset
+      (Cover.mem_pushforward.2 ⟨1, lit .man (fun _ => .y) false, by decide +kernel, rfl⟩))
 
-/-! ### Contextuality in the model-theoretic fibers -/
+/-- The cover merging *it* with the donkey: `x ↦ a`, `y ↦ b`, `z ↦ b`. -/
+def greyCover : Cover greyCtx (Fin 3) where
+  part := greyParts
+  map
+    | 0 => hom fun _ => .a
+    | 1 => hom fun _ => .b
+    | 2 => hom fun _ => .b
+  exists_map_eq := by decide +kernel
+  exists_mem_vocab := by decide +kernel
 
-open DynamicSemantics
+/-- `s = {John(a), Man(a), donkey(b), ¬Man(b), grey(b)}`. -/
+def greyGluing : Theory greyCtx :=
+  ⟨{lit .john (fun _ => .a), lit .man (fun _ => .a), lit .donkey (fun _ => .b),
+    lit .man (fun _ => .b) false, lit .grey (fun _ => .b)}, by decide +kernel⟩
 
-/-- The anticorrelation state on two referents: points defining exactly
-`{i, j}`, with distinct values. -/
-private def anti (i j : Fin 3) : State Unit (Fin 3) Bool :=
-  {p | p.domain = ({i, j} : Set (Fin 3)) ∧
-    p.assignment i ≠ p.assignment j}
+theorem isGluing_grey : greyCover.IsGluing (presheaf lang Var) greySections greyGluing := by
+  decide +kernel
 
-/-- A two-referent point. -/
-private def pt2 (i j : Fin 3) (a b : Bool) :
-    Possibility Unit (Fin 3) (Part Bool) :=
-  ⟨(), fun v => if v = i then Part.some a else if v = j then Part.some b else ⊥⟩
+/-! #### Example 4: *John put the cup on the plate. He broke it.* -/
 
-private theorem pt2_mem_anti {i j : Fin 3} (hij : i ≠ j) (a b : Bool)
-    (hab : a ≠ b) : pt2 i j a b ∈ anti i j := by
-  refine ⟨?_, ?_⟩
-  · ext v
-    simp only [Possibility.mem_domain, pt2]
-    by_cases hvi : v = i
-    · simp [hvi, Part.some_dom]
-    · by_cases hvj : v = j
-      · simp [hvj, hij.symm, Part.some_dom]
-      · simp only [if_neg hvi, if_neg hvj]
-        exact iff_of_false (fun h => h) (by simp [hvi, hvj])
-  · simp only [pt2, if_neg hij.symm]
-    exact fun h => hab (Part.some_inj.mp (by simpa using h))
+/-- The glued context of the fourth example. -/
+abbrev brokeCtx : Context lang Var :=
+  ⟨{⟨1, .john⟩, ⟨1, .cup⟩, ⟨1, .plate⟩, ⟨3, .putOn⟩, ⟨2, .broke⟩}, {.x, .y, .z}⟩
 
-/-- Adjacent anticorrelation states are consistent: their Def. 26 merge
-is inhabited — the pair glues. -/
-private theorem merge_anti_nonempty {i j k : Fin 3} (hij : i ≠ j)
-    (hjk : j ≠ k) (hik : i ≠ k) :
-    (anti i j * anti j k).Nonempty := by
-  refine ⟨(pt2 i j false true).union (pt2 j k true false), State.mem_mul.mpr
-    ⟨pt2 i j false true, pt2_mem_anti hij false true (by simp),
-      pt2 j k true false, pt2_mem_anti hjk true false (by simp), ?_, rfl⟩⟩
-  refine Possibility.compat_iff.mpr ⟨rfl, fun v e e' he he' => ?_⟩
-  simp only [pt2] at he he'
-  split at he
-  · rename_i hvi
-    subst hvi
-    rw [if_neg hij, if_neg hik] at he'
-    exact absurd he' (Part.notMem_none e')
-  · split at he
-    · rename_i hvi hvj
-      subst hvj
-      rw [if_pos rfl] at he'
-      obtain rfl := Part.mem_some_iff.mp he
-      obtain rfl := Part.mem_some_iff.mp he'
-      rfl
-    · exact absurd he (Part.notMem_none e)
+/-- The covering contexts of the fourth example. -/
+def brokeParts : Fin 2 → Context lang Var :=
+  ![⟨{⟨1, .john⟩, ⟨1, .cup⟩, ⟨1, .plate⟩, ⟨3, .putOn⟩}, {.x, .y, .z}⟩, ⟨{⟨2, .broke⟩}, {.u, .v}⟩]
 
-/-- **Contextuality in the states** ([abramsky-sadrzadeh-2014]'s frame,
-model-theoretically): the three anticorrelation constraints are pairwise
-consistent — each pair merges (`merge_anti_nonempty`) — but no state
-restricts onto all three: Boolean anticorrelation cannot hold on three
-referents at once. Local consistency without a global section. -/
-theorem no_gluing_triangle :
-    ¬ ∃ S : State Unit (Fin 3) Bool,
-      S.restrict {0, 1} = anti 0 1 ∧ S.restrict {1, 2} = anti 1 2 ∧
-      S.restrict {0, 2} = anti 0 2 := by
-  rintro ⟨S, h01, h12, h02⟩
-  -- the target states are inhabited, so S is
-  have hne : S.Nonempty := by
-    rcases Set.eq_empty_or_nonempty S with rfl | h
-    · have hpt : pt2 0 1 false true ∈ anti 0 1 :=
-        pt2_mem_anti (by decide) false true (by simp)
-      rw [← h01] at hpt
-      obtain ⟨q, hq, -⟩ := hpt
-      exact hq.elim
-    · exact h
-  obtain ⟨r, hr⟩ := hne
-  -- r's restrictions land in each anticorrelation state
-  have key : ∀ (i j : Fin 3), S.restrict {i, j} = anti i j →
-      ∃ a b : Bool, a ∈ r.assignment i ∧ b ∈ r.assignment j ∧
-        a ≠ b := by
-    intro i j hS
-    have hmem : r.restrict {i, j} ∈ anti i j := by
-      rw [← hS]
-      exact ⟨r, hr, rfl⟩
-    obtain ⟨hdom, hne⟩ := hmem
-    rw [Possibility.domain_restrict] at hdom
-    have hi : (r.assignment i).Dom := by
-      have : i ∈ ({i, j} : Set (Fin 3)) ∩
-          Possibility.domain r := by
-        rw [hdom]
-        simp
-      exact this.2
-    have hj : (r.assignment j).Dom := by
-      have : j ∈ ({i, j} : Set (Fin 3)) ∩
-          Possibility.domain r := by
-        rw [hdom]
-        simp
-      exact this.2
-    obtain ⟨a, ha⟩ := Part.dom_iff_mem.mp hi
-    obtain ⟨b, hb⟩ := Part.dom_iff_mem.mp hj
-    refine ⟨a, b, ha, hb, fun hab => ?_⟩
-    subst hab
-    apply hne
-    have hri : (r.restrict {i, j}).assignment i = Part.some a :=
-      Part.eq_some_iff.mpr ⟨⟨by simp, hi⟩, Part.get_eq_of_mem ha _⟩
-    have hrj : (r.restrict {i, j}).assignment j = Part.some a :=
-      Part.eq_some_iff.mpr ⟨⟨by simp, hj⟩, Part.get_eq_of_mem hb _⟩
-    rw [hri, hrj]
-  obtain ⟨a, b, ha, hb, hab⟩ := key 0 1 h01
-  obtain ⟨b', c, hb', hc, hbc⟩ := key 1 2 h12
-  obtain ⟨a', c', ha', hc', hac⟩ := key 0 2 h02
-  obtain rfl := Part.mem_unique hb hb'
-  obtain rfl := Part.mem_unique ha ha'
-  obtain rfl := Part.mem_unique hc hc'
-  cases a <;> cases b <;> cases c <;> simp_all
+/-- `s₁ = {John(x), Cup(y), Plate(z), PutOn(x, y, z)}`, `s₂ = {Broke(u, v)}`. -/
+def brokeSections : ∀ i, Theory (brokeParts i)
+  | 0 => ⟨{lit .john (fun _ => .x), lit .cup (fun _ => .y), lit .plate (fun _ => .z),
+      lit .putOn ![.x, .y, .z]}, by decide +kernel⟩
+  | 1 => ⟨{lit .broke ![.u, .v]}, by decide +kernel⟩
+
+/-- The two plausible antecedents of *it*. -/
+inductive Broken | cup | plate
+  deriving DecidableEq, Fintype
+
+/-- The referent of each antecedent. -/
+def Broken.var : Broken → Var
+  | cup => .y
+  | plate => .z
+
+theorem Broken.var_mem (b : Broken) : b.var ∈ brokeCtx.vars := by cases b <;> decide +kernel
+
+/-- The cover extending the identity on `{x, y, z}` by `u ↦ x` and `v ↦` the chosen antecedent. -/
+def brokeCover (b : Broken) : Cover brokeCtx (Fin 2) where
+  part := brokeParts
+  map
+    | 0 => hom id
+    | 1 => hom (fun | .u => .x | _ => b.var) fun t _ => by cases t <;> cases b <;> decide +kernel
+  exists_map_eq := by cases b <;> decide +kernel
+  exists_mem_vocab := by decide +kernel
+
+/-- `{John(x), Cup(y), Plate(z), PutOn(x, y, z), Broke(x, ·)}` with the chosen antecedent. -/
+def brokeGluing (b : Broken) : Theory brokeCtx :=
+  ⟨{lit .john (fun _ => .x), lit .cup (fun _ => .y), lit .plate (fun _ => .z),
+    lit .putOn ![.x, .y, .z],
+    lit .broke ![.x, b.var] (h := Fin.forall_fin_two.2 ⟨by cases b <;> decide +kernel, b.var_mem⟩)},
+    by cases b <;> decide +kernel⟩
+
+/-- Either choice of antecedent yields a gluing. -/
+theorem isGluing_broke :
+    ∀ b, (brokeCover b).IsGluing (presheaf lang Var) brokeSections (brokeGluing b) := by
+  decide +kernel
+
+/-! #### The discussion example: overlapping vocabularies -/
+
+/-- The glued context of the discussion example. -/
+abbrev overlapCtx : Context lang Var := ⟨{⟨1, .R⟩, ⟨1, .S⟩}, {.z, .w}⟩
+
+/-- The cover `x ↦ z, u ↦ w` and `y ↦ z, v ↦ w`, both parts carrying the whole vocabulary. -/
+def overlapCover : Cover overlapCtx (Fin 2) where
+  part := ![⟨{⟨1, .R⟩, ⟨1, .S⟩}, {.x, .u}⟩, ⟨{⟨1, .R⟩, ⟨1, .S⟩}, {.y, .v}⟩]
+  map
+    | 0 => hom fun | .x => .z | _ => .w
+    | 1 => hom fun | .y => .z | _ => .w
+  exists_map_eq := by decide +kernel
+  exists_mem_vocab := by decide +kernel
+
+/-- `s₁ = {R(x), S(u)}`, `s₂ = {S(y), R(v)}`. -/
+def overlapSections : ∀ i, Theory (overlapCover.part i)
+  | 0 => ⟨{lit .R (fun _ => .x), lit .S (fun _ => .u)}, by decide +kernel⟩
+  | 1 => ⟨{lit .S (fun _ => .y), lit .R (fun _ => .v)}, by decide +kernel⟩
+
+/-- The sections are consistent but do not glue: `S(z)` restricts to `S(x) ∉ s₁`. -/
+theorem not_exists_isGluing_overlap :
+    ¬ ∃ s, overlapCover.IsGluing (presheaf lang Var) overlapSections s := by
+  rintro ⟨s, hs⟩
+  have h : lit .S (fun _ => .z) ∈ s.lits :=
+    hs.pushforward_subset
+      (Cover.mem_pushforward.2 ⟨1, lit .S (fun _ => .y), by decide +kernel, rfl⟩)
+  have h' : lit .S (fun _ => .x) ∈ (overlapSections 0).lits := by
+    rw [← hs 0]; exact Theory.mem_restrict.2 h
+  exact absurd h' (by decide +kernel)
+
+/-! #### Probabilistic anaphora: *John gave the bananas to the monkeys. They were ripe. They were
+cheeky.* -/
+
+/-- The glued context of the bananas discourse. -/
+abbrev ripeCtx : Context lang Var :=
+  ⟨{⟨1, .john⟩, ⟨1, .banana⟩, ⟨1, .monkey⟩, ⟨3, .gave⟩, ⟨1, .ripe⟩, ⟨1, .cheeky⟩}, {.x, .y, .z}⟩
+
+/-- The covering contexts of the bananas discourse. -/
+def ripeParts : Fin 3 → Context lang Var :=
+  ![⟨{⟨1, .john⟩, ⟨1, .banana⟩, ⟨1, .monkey⟩, ⟨3, .gave⟩}, {.x, .y, .z}⟩,
+    ⟨{⟨1, .ripe⟩}, {.u}⟩, ⟨{⟨1, .cheeky⟩}, {.v}⟩]
+
+/-- `s₁ = {John(x), Banana(y), Monkey(z), Gave(x, y, z)}`, `s₂ = {Ripe(u)}`, `s₃ = {Cheeky(v)}`. -/
+def ripeSections : ∀ i, Theory (ripeParts i)
+  | 0 => ⟨{lit .john (fun _ => .x), lit .banana (fun _ => .y), lit .monkey (fun _ => .z),
+      lit .gave ![.x, .y, .z]}, by decide +kernel⟩
+  | 1 => ⟨{lit .ripe (fun _ => .u)}, by decide +kernel⟩
+  | 2 => ⟨{lit .cheeky (fun _ => .v)}, by decide +kernel⟩
+
+/-- The antecedents available to each *they*. -/
+inductive Antecedent | banana | monkey
+  deriving DecidableEq, Fintype
+
+/-- The referent of each antecedent. -/
+def Antecedent.var : Antecedent → Var
+  | banana => .y
+  | monkey => .z
+
+theorem Antecedent.var_mem (a : Antecedent) : a.var ∈ ripeCtx.vars := by
+  cases a <;> decide +kernel
+
+/-- The covering `c` extending the identity on `{x, y, z}` by `u ↦ c.1` and `v ↦ c.2`. -/
+def ripeCover (c : Antecedent × Antecedent) : Cover ripeCtx (Fin 3) where
+  part := ripeParts
+  map
+    | 0 => hom id
+    | 1 => hom (fun _ => c.1.var) fun _ _ => c.1.var_mem
+    | 2 => hom (fun _ => c.2.var) fun _ _ => c.2.var_mem
+  exists_map_eq := by obtain ⟨a, b⟩ := c; cases a <;> cases b <;> decide +kernel
+  exists_mem_vocab := by decide +kernel
+
+/-- The candidate global section `t_c` induced by the covering `c`. -/
+def ripeGluing (c : Antecedent × Antecedent) : Theory ripeCtx :=
+  ⟨{lit .john (fun _ => .x), lit .banana (fun _ => .y), lit .monkey (fun _ => .z),
+    lit .gave ![.x, .y, .z], lit .ripe (fun _ => c.1.var) (h := fun _ => c.1.var_mem),
+    lit .cheeky (fun _ => c.2.var) (h := fun _ => c.2.var_mem)},
+    by obtain ⟨a, b⟩ := c; cases a <;> cases b <;> decide +kernel⟩
+
+theorem isGluing_ripe :
+    ∀ c, (ripeCover c).IsGluing (presheaf lang Var) ripeSections (ripeGluing c) := by
+  decide +kernel
+
+theorem ripeGluing_injective : Function.Injective ripeGluing := by decide +kernel
+
+/-- British News corpus frequencies of *ripe banana* and *ripe monkey*. -/
+def ripeFrequency : Antecedent → ℕ
+  | .banana => 14
+  | .monkey => 0
+
+/-- British News corpus frequencies of *cheeky banana* and *cheeky monkey*. -/
+def cheekyFrequency : Antecedent → ℕ
+  | .banana => 0
+  | .monkey => 10
+
+/-- Each covering weighted by the summed frequencies of its mergings, normalised. -/
+noncomputable def coveringDistribution : Distribution ℚ (Antecedent × Antecedent) :=
+  Distribution.ofWeights (fun c => ripeFrequency c.1 + cheekyFrequency c.2) (by decide)
+
+/-- The distribution `d` over global sections: the covering distribution pushed forward along
+`c ↦ t_c`. -/
+noncomputable def gluingDistribution : Distribution ℚ (Theory ripeCtx) :=
+  (distribution ℚ).map (TypeCat.ofHom ripeGluing) coveringDistribution
+
+theorem coveringDistribution_apply (c : Antecedent × Antecedent) :
+    coveringDistribution.1 c = (ripeFrequency c.1 + cheekyFrequency c.2 : ℚ) / 48 := by
+  simp [coveringDistribution, Distribution.ofWeights,
+    show ∑ c : Antecedent × Antecedent, (ripeFrequency c.1 + cheekyFrequency c.2) = 48 from rfl]
+
+theorem gluingDistribution_apply (c : Antecedent × Antecedent) :
+    gluingDistribution.1 (ripeGluing c) = (ripeFrequency c.1 + cheekyFrequency c.2 : ℚ) / 48 := by
+  rw [← coveringDistribution_apply]
+  exact Finsupp.mapDomain_apply ripeGluing_injective _ _
+
+/-- *Ripe bananas, cheeky monkeys* (`t₂`) is the most likely resolution, with probability `1/2`. -/
+theorem gluingDistribution_ripe :
+    gluingDistribution.1 (ripeGluing (.banana, .monkey)) = 1 / 2 ∧
+      ∀ c, gluingDistribution.1 (ripeGluing c) ≤ 1 / 2 := by
+  simp only [gluingDistribution_apply]
+  exact ⟨by norm_num [ripeFrequency, cheekyFrequency],
+    fun ⟨a, b⟩ => by cases a <;> cases b <;> norm_num [ripeFrequency, cheekyFrequency]⟩
 
 end AbramskySadrzadeh2014
