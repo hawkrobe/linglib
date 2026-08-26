@@ -15,6 +15,6 @@ is not discussed in [aikhenvald-2004].
 
 namespace Finnish.Evidentiality
 
-def evidentials : List Semantics.Evidential.Entry := []
+def evidentials : List Evidential := []
 
 end Finnish.Evidentiality

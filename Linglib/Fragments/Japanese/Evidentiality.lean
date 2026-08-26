@@ -17,6 +17,6 @@ language as indirect-only.
 
 namespace Japanese.Evidentiality
 
-def evidentials : List Semantics.Evidential.Entry := []
+def evidentials : List Evidential := []
 
 end Japanese.Evidentiality

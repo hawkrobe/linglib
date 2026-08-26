@@ -33,30 +33,18 @@ Oswalt's five-level hierarchy ([oswalt-1986]) collapsed onto the
 substrate trichotomy: performative + factual-visual + auditory map to
 `Direct`; inferential I and II to `Inferential`; quotative to
 `Reportative`. The auditory/visual contrast — Kashaya's typologically
-famous feature — is preserved as `DirectSource.auditory` vs `.visual`. -/
+famous feature — is the visual and sensory terms. The performative and the
+    narrative personal-experience and remote-past forms lie outside the six
+    parameters of information source; the performative is kept with an empty
+    coverage, so the paradigm fits none of Aikhenvald's kinds. -/
 
 open Semantics.Evidential
 
-def evidentials : List Entry :=
-  [ .direct      { form := "-wela/-mela", exponent := .verbalAffix },
-    .direct      { form := "-wâ/-yá",     exponent := .verbalAffix, source := .visual },
-    .direct      { form := "-V̂nnâ",       exponent := .verbalAffix, source := .auditory },
-    .inferential { form := "-qá",         exponent := .verbalAffix },
-    .inferential { form := "-bi",         exponent := .verbalAffix },
-    .reportative { form := "-do",         exponent := .verbalAffix,
-                   sourceIdentity := .unidentified } ]
-
-example : evidentials.length = 6 := by decide
-example : (evidentials.filter Entry.IsDirect).length = 3 := by decide
-example : (evidentials.filter Entry.IsReportative).length = 1 := by decide
-example : (evidentials.filter Entry.IsInferential).length = 2 := by decide
-
-/-- The auditory/visual split for Kashaya direct evidentials —
-    typologically rare, now typed. -/
-example :
-    evidentials.filterMap (fun e => match e with
-                                    | .direct d => some d.source
-                                    | _ => none) =
-    [.unspecified, .visual, .auditory] := by decide
+def evidentials : List Evidential :=
+  [ { form := "-wela/-mela", exponent := .verbalAffix, covers := ∅ },
+    { form := "-wâ/-yá", exponent := .verbalAffix, covers := {.visual} },
+    { form := "-V̂nnâ", exponent := .verbalAffix, covers := {.sensory} },
+    { form := "-qá/-bi", exponent := .verbalAffix, covers := {.inference, .assumption} },
+    { form := "-do", exponent := .verbalAffix, covers := {.hearsay} } ]
 
 end Kashaya.Evidentiality

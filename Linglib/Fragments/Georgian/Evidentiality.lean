@@ -18,6 +18,6 @@ evidentiality proper. WALS codes the language as having direct and indirect evid
 namespace Georgian.Evidentiality
 
 /-- No evidentials proper; the perfect is an evidentiality strategy. -/
-def evidentials : List Semantics.Evidential.Entry := []
+def evidentials : List Evidential := []
 
 end Georgian.Evidentiality

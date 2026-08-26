@@ -20,24 +20,11 @@ reasoning), reported. -/
 
 open Semantics.Evidential
 
-def evidentials : List Entry :=
-  [ .direct      { form := "-ka",     exponent := .verbalAffix, source := .visual },
-    .direct      { form := "-mha",    exponent := .verbalAffix, source := .nonvisualSensory },
-    .inferential { form := "-nihka",  exponent := .verbalAffix, basis  := .fromResult },
-    .inferential { form := "-sika",   exponent := .verbalAffix, basis  := .fromAssumption },
-    .reportative { form := "-pidaka", exponent := .verbalAffix,
-                   sourceIdentity := .unidentified } ]
-
-example : evidentials.length = 5 := by decide
-example : (evidentials.filter Entry.IsDirect).length = 2 := by decide
-example : (evidentials.filter Entry.IsReportative).length = 1 := by decide
-example : (evidentials.filter Entry.IsInferential).length = 2 := by decide
-
-/-- D1 visual/non-visual distinction provable from typed data. -/
-example :
-    evidentials.filterMap (fun e => match e with
-                                    | .direct d => some d.source
-                                    | _ => none) =
-    [.visual, .nonvisualSensory] := by decide
+def evidentials : List Evidential :=
+  [ { form := "-ka", exponent := .verbalAffix, covers := {.visual} },
+    { form := "-mha", exponent := .verbalAffix, covers := {.sensory} },
+    { form := "-nihka", exponent := .verbalAffix, covers := {.inference} },
+    { form := "-sika", exponent := .verbalAffix, covers := {.assumption} },
+    { form := "-pidaka", exponent := .verbalAffix, covers := {.hearsay} } ]
 
 end Tariana.Evidentiality

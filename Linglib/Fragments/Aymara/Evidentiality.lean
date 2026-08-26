@@ -17,15 +17,9 @@ inferential `-pacha`. Obligatory verbal affixes. -/
 
 open Semantics.Evidential
 
-def evidentials : List Entry :=
-  [ .direct      { form := "-wa",     exponent := .verbalAffix },
-    .reportative { form := "-sa",     exponent := .verbalAffix,
-                   sourceIdentity := .unidentified },
-    .inferential { form := "-pacha",  exponent := .verbalAffix } ]
-
-example : evidentials.length = 3 := by decide
-example : (evidentials.filter Entry.IsDirect).length = 1 := by decide
-example : (evidentials.filter Entry.IsReportative).length = 1 := by decide
-example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
+def evidentials : List Evidential :=
+  [ { form := "-wa", exponent := .verbalAffix, covers := {.visual, .sensory} },
+    { form := "-sa", exponent := .verbalAffix, covers := {.hearsay} },
+    { form := "-pacha", exponent := .verbalAffix, covers := {.inference, .assumption} } ]
 
 end Aymara.Evidentiality

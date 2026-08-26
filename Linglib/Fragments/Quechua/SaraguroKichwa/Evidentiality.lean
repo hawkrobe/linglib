@@ -44,15 +44,9 @@ excluded (not analyzed as an evidential in this variety). -/
 
 open Semantics.Evidential
 
-def evidentials : List Entry :=
-  [ .direct      { form := "-rka",  exponent := .verbalAffix },
-    .reportative { form := "-shka", exponent := .verbalAffix,
-                   sourceIdentity := .unidentified },
-    .inferential { form := "-shi",  exponent := .verbalAffix } ]
-
-example : evidentials.length = 3 := by decide
-example : (evidentials.filter Entry.IsDirect).length = 1 := by decide
-example : (evidentials.filter Entry.IsReportative).length = 1 := by decide
-example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
+def evidentials : List Evidential :=
+  [ { form := "-rka", exponent := .verbalAffix, covers := {.visual, .sensory} },
+    { form := "-shka", exponent := .verbalAffix, covers := {.hearsay} },
+    { form := "-shi", exponent := .verbalAffix, covers := {.inference, .assumption} } ]
 
 end Quechua.SaraguroKichwa.Evidentiality

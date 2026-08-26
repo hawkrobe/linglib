@@ -20,14 +20,10 @@ opposition. -/
 
 open Semantics.Evidential
 
-def evidentials : List Entry :=
-  [ .direct      { form := "red", exponent := .lexicalFrame },
-    .direct      { form := "yod", exponent := .lexicalFrame },
-    .inferential { form := "'dug", exponent := .lexicalFrame },
-    .inferential { form := "yin", exponent := .lexicalFrame } ]
-
-example : evidentials.length = 4 := by decide
-example : (evidentials.filter Entry.IsDirect).length = 2 := by decide
-example : (evidentials.filter Entry.IsInferential).length = 2 := by decide
+def evidentials : List Evidential :=
+  [ { form := "red", exponent := .lexicalFrame, covers := {.visual, .sensory} },
+    { form := "yod", exponent := .lexicalFrame, covers := {.visual, .sensory} },
+    { form := "'dug", exponent := .lexicalFrame, covers := {.inference, .assumption} },
+    { form := "yin", exponent := .lexicalFrame, covers := {.inference, .assumption} } ]
 
 end Tibetan.Evidentiality

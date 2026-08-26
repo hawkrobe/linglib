@@ -15,6 +15,6 @@ German has no grammatical evidentials: the reportative use of the present condit
 
 namespace German.Evidentiality
 
-def evidentials : List Semantics.Evidential.Entry := []
+def evidentials : List Evidential := []
 
 end German.Evidentiality
