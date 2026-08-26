@@ -1,23 +1,20 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# Korean Evidentiality
-[de-haan-2013] [aikhenvald-2004]
+# Korean evidentiality
 
-WALS [de-haan-2013] F77A: `indirectOnly` (de Haan counts *-deo-*
-retrospective as grammatical evidential). [aikhenvald-2004] treats it
-as not classified as grammatical evidential; Studies-side override.
+Korean has no grammatical evidentials: the retrospective mood is not a primarily evidential
+form, and reported and inferential meanings are carried by sentence-final constructions, so
+the inventory is empty. WALS codes the language as indirect-only.
+
+## References
+
+* [aikhenvald-2004], §7.2
+* [de-haan-2013]
 -/
 
 namespace Korean.Evidentiality
 
-/-! ### Typed evidential inventory (Aikhenvald-strict view)
-
-No grammatical evidentials per [aikhenvald-2004]. WALS divergence
-(retrospective `-deo-`) is documented in `Studies/Aikhenvald2004.lean`. -/
-
 def evidentials : List Semantics.Evidential.Entry := []
-
-example : evidentials.length = 0 := by decide
 
 end Korean.Evidentiality

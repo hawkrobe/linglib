@@ -1,24 +1,21 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# French Evidentiality
-[de-haan-2013] [aikhenvald-2004]
+# French evidentiality
 
-WALS [de-haan-2013] F77A: `indirectOnly` (de Haan codes the conditional
-as a grammatical reportative). [aikhenvald-2004]'s stricter criterion
-treats French as having no grammatical evidentials; Studies-side override
-in `Studies/Aikhenvald2004.lean`.
+French has no grammatical evidentials: the conditional's reportative use (the journalistic
+conditional) is one of the best-known evidentiality strategies, a non-evidential category with
+an evidential extension, so the inventory is empty. WALS, counting the conditional as a
+grammatical reportative, codes the language as indirect-only.
+
+## References
+
+* [aikhenvald-2004], §4.1
+* [de-haan-2013]
 -/
 
 namespace French.Evidentiality
 
-/-! ### Typed evidential inventory (Aikhenvald-strict view)
-
-No grammatical evidentials per [aikhenvald-2004]. WALS divergence
-(conditional reportative use) is documented in `Studies/Aikhenvald2004.lean`. -/
-
 def evidentials : List Semantics.Evidential.Entry := []
-
-example : evidentials.length = 0 := by decide
 
 end French.Evidentiality

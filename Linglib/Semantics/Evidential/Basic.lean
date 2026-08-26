@@ -44,6 +44,9 @@ inductive Entry.Cell where
   | reported
   /-- Hearsay from a specifically identified source. -/
   | quotative
+  /-- Everything but firsthand evidence under one term: inference, assumption and hearsay
+  (the marked term of A1 and A2 systems). -/
+  | nonfirsthand
   deriving DecidableEq, BEq, Repr, Inhabited
 
 /-- Project a typed `Entry` to its Aikhenvald paradigm cell. -/
@@ -58,21 +61,25 @@ def Entry.cell : Entry → Entry.Cell
   | .reportative ⟨_, _, .unspecified⟩      => .reported
   | .reportative ⟨_, _, .unidentified⟩     => .reported
   | .reportative ⟨_, _, .identified⟩       => .quotative
+  | .nonfirsthand _                        => .nonfirsthand
 
 /-! ### Coarse source and perspective -/
 
-/-- Collapse an Aikhenvald cell to its [willett-1988] coarse source. -/
-def Entry.Cell.toCoarseSource : Entry.Cell → CoarseSource
-  | .firsthand | .visual | .nonvisualSensory | .auditory => .direct
-  | .inferred | .assumed => .inference
-  | .reported | .quotative => .hearsay
+/-- Collapse an Aikhenvald cell to its [willett-1988] coarse source; a
+    non-firsthand term spans inference and hearsay and has none. -/
+def Entry.Cell.toCoarseSource : Entry.Cell → Option CoarseSource
+  | .firsthand | .visual | .nonvisualSensory | .auditory => some .direct
+  | .inferred | .assumed => some .inference
+  | .reported | .quotative => some .hearsay
+  | .nonfirsthand => none
 
-/-- The coarse source of an entry: the three `Entry` kinds are exactly the
-    [willett-1988] tripartition. -/
-def Entry.toCoarseSource : Entry → CoarseSource
-  | .direct _      => .direct
-  | .reportative _ => .hearsay
-  | .inferential _ => .inference
+/-- The coarse source of an entry: the three coarse `Entry` kinds are exactly
+    the [willett-1988] tripartition; a non-firsthand term has none. -/
+def Entry.toCoarseSource : Entry → Option CoarseSource
+  | .direct _       => some .direct
+  | .reportative _  => some .hearsay
+  | .inferential _  => some .inference
+  | .nonfirsthand _ => none
 
 /-- The taxonomy tower commutes: collapsing an entry's Aikhenvald cell
     gives its coarse source. -/
@@ -82,19 +89,26 @@ theorem Entry.cell_toCoarseSource (e : Entry) :
   | direct d => obtain ⟨_, _, s⟩ := d; cases s <;> rfl
   | reportative d => obtain ⟨_, _, s⟩ := d; cases s <;> rfl
   | inferential d => obtain ⟨_, _, s⟩ := d; cases s <;> rfl
+  | nonfirsthand _ => rfl
 
-/-- Inventory entries declare their coarse source; the evidential
-    perspective derives via the canonical source mapping. -/
+/-- Inventory entries declare their coarse source. -/
 instance : HasCoarseSource Entry where
-  toCoarseSource e := some e.toCoarseSource
+  toCoarseSource := Entry.toCoarseSource
 
-/-- Every inventory entry is nonfuture: all three coarse sources are
-    causally downstream of the described event (T ≤ A) under the
-    canonical mapping. -/
+/-- The perspective of an entry: through the canonical source mapping, with a
+    non-firsthand term retrospective like the inference and hearsay it spans. -/
+instance : HasEvidentialPerspective Entry where
+  toEvidentialPerspective
+    | .nonfirsthand _ => some .retrospective
+    | e => e.toCoarseSource.bind CoarseSource.toEvidentialPerspective
+
+/-- Every inventory entry is nonfuture: every source is causally downstream
+    of the described event (T ≤ A) under the canonical mapping. -/
 theorem Entry.isNonfuture (e : Entry) : IsNonfuture e := by
   cases e with
   | direct _ => exact .inr rfl
   | reportative _ => exact .inl rfl
   | inferential _ => exact .inl rfl
+  | nonfirsthand _ => exact .inl rfl
 
 end Semantics.Evidential

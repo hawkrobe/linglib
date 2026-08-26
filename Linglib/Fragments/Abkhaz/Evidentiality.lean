@@ -1,31 +1,25 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# Abkhaz Evidentiality
-[de-haan-2013] [aikhenvald-2004]
+# Abkhaz evidentiality
 
-WALS [de-haan-2013] F77A: `indirectOnly` (verbal-affix coding).
-[aikhenvald-2004] analyzes Abkhaz as 2-way direct/indirect (fused with
-TAM). Studies-side override.
+Abkhaz has a two-choice system of Aikhenvald's type A2: a dedicated, tense-neutral
+non-firsthand affix (*-zaap'* with present, aorist, perfect and one future; *-zaarən* with
+imperfect, past indefinite, pluperfect and one future conditional) covering inference from
+results and verbal report, restricted to declarative main clauses.
+
+## References
+
+* [aikhenvald-2004], §2.1
+* [de-haan-2013]
 -/
 
 namespace Abkhaz.Evidentiality
 
-/-! ### Typed evidential inventory
-
-Abkhaz's 2-way direct/indirect contrast per [aikhenvald-2004]: the
-finite-verb form (direct) vs the nonfinite + copula construction
-(indirect, covering inference and report). Fused with TAM. -/
-
 open Semantics.Evidential
 
+/-- The non-firsthand affixes *-zaap'* and *-zaarən*. -/
 def evidentials : List Entry :=
-  [ .direct      { form := "finite verb",       exponent := .tamFusion },
-    .inferential { form := "nonfinite + copula", exponent := .tamFusion } ]
-
-example : evidentials.length = 2 := by decide
-example : (evidentials.filter Entry.IsDirect).length = 1 := by decide
-example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
-example : (evidentials.filter Entry.IsReportative).length = 0 := by decide
+  [ .nonfirsthand { form := "-zaap'/-zaarən", exponent := .verbalAffix } ]
 
 end Abkhaz.Evidentiality

@@ -1,24 +1,20 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# German Evidentiality
-[de-haan-2013] [aikhenvald-2004]
+# German evidentiality
 
-WALS [de-haan-2013] F77A: `indirectOnly` (de Haan counts modal verbs
-*sollen* / *wollen* as grammatical reportatives). [aikhenvald-2004]'s
-stricter criterion treats German as having no grammatical evidentials;
-Studies-side override in `Studies/Aikhenvald2004.lean`.
+German has no grammatical evidentials: the reportative use of the present conditional
+(Konjunktiv I) in reported speech is an evidentiality strategy, as are the modal verbs
+*sollen* and *wollen*, so the inventory is empty. WALS codes the language as indirect-only.
+
+## References
+
+* [aikhenvald-2004], §4.8
+* [de-haan-2013]
 -/
 
 namespace German.Evidentiality
 
-/-! ### Typed evidential inventory (Aikhenvald-strict view)
-
-No grammatical evidentials per [aikhenvald-2004]. WALS divergence
-(modal verbs *sollen*/*wollen*) is documented in `Studies/Aikhenvald2004.lean`. -/
-
 def evidentials : List Semantics.Evidential.Entry := []
-
-example : evidentials.length = 0 := by decide
 
 end German.Evidentiality

@@ -9,10 +9,8 @@ Five-term system: visual, nonvisual, apparent (inferential), secondhand
 classic description. Vaupés multilingual area.
 
 WALS [de-haan-2013] F77A codes Tuyuca as `directAndIndirect`, lumping
-the 5-term system into the canonical 2-way bucket. [aikhenvald-2004]'s
-richer typology distinguishes 3-or-more systems; the local `EvidentialSystem`
-enum's `threeOrMore` value is the per-Aikhenvald override (Studies-side).
-The `markers` field below preserves the full 5-term inventory.
+the 5-term system into the canonical 2-way bucket; [aikhenvald-2004]
+classes it as the five-choice type D1 (`Studies/Aikhenvald2004.lean`).
 -/
 
 namespace Tuyuca.Evidentiality
