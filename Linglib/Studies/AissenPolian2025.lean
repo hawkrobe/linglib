@@ -5,39 +5,17 @@ import Linglib.Data.Examples.AissenPolian2025
 /-!
 # Possessor extraction and categorical subject in Tseltalan
 
-Tsotsil and Tseltal question a possessor either by pied-piping the whole possessive or by
-stranding the possessum, and the two options are not equivalent: a pied-piped possessum is
-specific and a stranded one non-specific. Aissen and Polian argue that stranding never involves
-Ā-subextraction. Nominal opacity, a selective-opacity horizon in Keine's sense, makes every
-phrase in the extended projection of N⁰ invisible to the wh-probe on C⁰, so an extracted
-possessor is always an external possessor: it first A-moves to Spec,TP or Spec,ApplP under an
-[EPP:D] probe and only then Ā-moves. The A-step is governed by Attract Closest over DPs. A
-specific possessive projects a D layer that is the closer goal, which is why only non-specific
-possessives strand; an agent, a specific unergative subject, a specific theme c-commanding a
-locative PP, or a thematic applied object occupying Spec,ApplP likewise stops the possessor
-short, which is why the possessor of O extracts only in the raising applicative and the
-possessor of a locative PP only under a non-specific co-argument. The phrase that reaches
-Spec,TP is the grammatical subject, interpreted as the subject of a categorical judgment — the
-ψ-subject — and a clause with no DP for T⁰ to attract is thetic.
+Aissen and Polian argue that a Tseltalan possessor never Ā-subextracts: nominal opacity, a
+Keine horizon at N⁰ for the wh-probe on C⁰, forces an extracted possessor to A-move first to
+Spec,TP or Spec,ApplP, where Attract Closest over DPs decides whether it can — a specific
+possessive's D layer, an agent, a specific subject or theme, or an occupied Spec,ApplP stops
+it. Hence only non-specific possessums strand, and the possessor that reaches Spec,TP is the
+ψ-subject of a categorical judgment.
 
-Both mechanisms are derived here on the paper's own structures. The probes are Keine profiles:
-nominal opacity is the wh-probe on C⁰ with horizon N (`nominalOpacity`), and
-`Invisible` reads that horizon off `behindHorizonIn`, so the possessor is invisible in a DP,
-a PossP and a PP (`psr_invisible_dp`, `psr_invisible_possP`, `psr_invisible_pp`) while the D
-head is not (`dHead_visible`) and the D-probes, having no horizon, see through
-(`dProbe_sees_through`). Attract Closest is `isClosestGoalIn` over D-bearing leaves: the
-possessor of a non-specific S_O is T⁰'s closest goal (`unacc_possP_psr_closest`), the D layer
-shields it in a specific possessive (`unacc_dp_dHead_closest`), the agent intervenes in a
-transitive (`trans_agt_closest`), a specific unergative subject or theme intervenes for a
-possessor inside a locative PP while a non-specific one does not (`unerg_specific_blocks`,
-`unerg_nonspecific_psr_closest`, `theme_specific_blocks`, `theme_nonspecific_psr_closest`),
-and an experiencer PP merged above the theme leaves both as goals (`experiencer_both_closest`).
-The judgment type is read off the same search (`judgment`): the existential pivot yields a
-thetic clause (`existential_thetic`). The paper's examples are the rows, and the summary
-generalizations hold over them: stranding succeeds exactly with a non-specific possessum and
-no intervener (`stranding_iff`), pied-piping only with a specific one (`piedPiping_specific`),
-and pied-piping is out where possessor and possessum form no constituent
-(`psi_no_piedPiping`).
+Nominal opacity is the profile `nominalOpacity` read through `Invisible`, Attract Closest is
+`isClosestGoalIn` over D-bearing leaves on the paper's structures, `judgment` reads the
+judgment type off the same search, and the paper's examples are the rows, over which
+`stranding_iff`, `piedPiping_specific` and `psi_no_piedPiping` hold.
 
 ## References
 
