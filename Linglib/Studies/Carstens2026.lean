@@ -47,35 +47,59 @@ Linguistic Theory* 44:20.
 
 Resolution uses `resolve` — the single compositional
 endpoint — via `statusToBundle` which bridges Bantu `GenderStatus` to
-`AnnotatedFeatures SemanticCore`. Study-level theorems verify the mechanism's
+`Bundle SemanticCore`. Study-level theorems verify the mechanism's
 predictions against [carstens-2026]'s empirical data.
 -/
 
 namespace Carstens2026
 
 open Bantu
-open AdamsonAnagnostopoulou2025 (AnnotatedFeature AnnotatedFeatures percolateI
-  intersectFeatures resolve SelectionGrammar selectFeature resolveN resolveN_binary
-  satisfiesMRH FeatureOrder)
+open Minimalist.Coordination (Annotated Bundle percolate conversion resolve resolveN
+  resolveN_binary MismatchResolutionOn)
 open _root_.Minimalist (Interpretability)
+
+/-- When multiple i-features survive (stacked nPs), the language selects which one
+    determines the agreement class (§5.1). -/
+inductive SelectionGrammar where
+  /-- The outermost (highest) nP layer wins — the first surviving feature. -/
+  | highestWins
+  /-- The most specific semantic match wins. -/
+  | bestSemanticMatch
+  deriving DecidableEq, Repr
+
+/-- Select the determining feature from a non-empty intersection; `specificity` ranks
+    features (higher = more specific). -/
+def selectFeature {F : Type}
+    (grammar : SelectionGrammar) (specificity : F → Nat)
+    (features : List F) : Option F :=
+  match grammar with
+  | .highestWins => features.head?
+  | .bestSemanticMatch =>
+    features.foldl (init := none) fun acc f =>
+      match acc with
+      | none => some f
+      | some best =>
+        match Nat.blt (specificity best) (specificity f) with
+        | true => some f
+        | false => some best
 
 -- ============================================================================
 -- Preamble: Fragment → Theory Bridge
 -- ============================================================================
 
 /-- A single interpretable nP layer bearing `SemanticCore` c. -/
-def nP (c : SemanticCore) : AnnotatedFeatures SemanticCore := [⟨c, .interpretable⟩]
+def nP (c : SemanticCore) : Bundle SemanticCore := [⟨c, .interpretable⟩]
 
 /-- An uninterpretable nP layer (no features to percolate). -/
-def nP_u : AnnotatedFeatures SemanticCore := []
+def nP_u : Bundle SemanticCore := []
 
 /-- Stack an outer gender layer on an inner core (outer ++ inner). -/
-def nPStack (outer inner : AnnotatedFeatures SemanticCore) := outer ++ inner
+def nPStack (outer inner : Bundle SemanticCore) := outer ++ inner
 
 /-- Convert `GenderStatus` to a feature bundle for `resolve`.
     Interpretable genders produce a singleton i-feature bundle;
     uninterpretable genders produce an empty bundle. -/
-def statusToBundle (s : GenderStatus) : AnnotatedFeatures SemanticCore :=
+def statusToBundle (s : GenderStatus) : Bundle SemanticCore :=
   match s with
   | .interpretable c => nP c
   | .uninterpretable => nP_u
@@ -605,14 +629,14 @@ def TwoGrammarFeature.specificity (f : TwoGrammarFeature) : Nat :=
     Outer: class 1, arbitrary i[entity] from gender A.
     Inner: class 7, core i[inanimate] from gender D.
     [carstens-2026] (78)a, (79)a, (80)a. -/
-def trainFeatures : AnnotatedFeatures TwoGrammarFeature :=
+def trainFeatures : Bundle TwoGrammarFeature :=
   [⟨⟨1, false⟩, .interpretable⟩, ⟨⟨7, true⟩, .interpretable⟩]
 
 /-- Feature bundle for diviner.7: [n₇(arbitrary) [n₁(core human) √DIVINER]].
     Outer: class 7, arbitrary i[entity] from gender D.
     Inner: class 1, core i[human] from gender A.
     [carstens-2026] (78)b, (79)b, (80)b. -/
-def divinerFeatures : AnnotatedFeatures TwoGrammarFeature :=
+def divinerFeatures : Bundle TwoGrammarFeature :=
   [⟨⟨7, false⟩, .interpretable⟩, ⟨⟨1, true⟩, .interpretable⟩]
 
 /-- Intersection for train.1a & machine.1a: both layers survive.
@@ -696,9 +720,9 @@ the per-dimension operations are the canonical `Features/` ones, called directly
 
 /-- A conjunct DP's φ-bundle. -/
 structure PhiBundle (G : Type) where
-  person : AnnotatedFeature Person
-  number : AnnotatedFeature Number
-  gender : AnnotatedFeatures G
+  person : Annotated Person
+  number : Annotated Number
+  gender : Bundle G
 
 /-- Resolved φ-features for a conjoined DP (`&P`). -/
 structure PhiResolved (G : Type) where
@@ -707,13 +731,13 @@ structure PhiResolved (G : Type) where
   gender : Option (List G)
 
 /-- Percolate an annotated feature: its value iff interpretable. -/
-private def percolate {F : Type} (a : AnnotatedFeature F) : Option F :=
+private def percolate {F : Type} (a : Annotated F) : Option F :=
   if a.interp == .interpretable then some a.value else none
 
 /-- Resolve two annotated features under a dimension operation `op`; both must be
     interpretable to proceed. -/
 private def resolveAnnotated {F : Type} (op : F → F → Option F)
-    (a b : AnnotatedFeature F) : Option F :=
+    (a b : Annotated F) : Option F :=
   match percolate a, percolate b with
   | some x, some y => op x y
   | _, _ => none
@@ -721,7 +745,7 @@ private def resolveAnnotated {F : Type} (op : F → F → Option F)
 /-- Resolve all φ-features for two conjoined DPs, each dimension independently:
     number by `Number.resolveIn` (coarsened to `system`), person by `Person.resolve`,
     gender by percolation+intersection (`resolve`). -/
-def resolveCoordinate {G : Type} [BEq G]
+def resolveCoordinate {G : Type} [DecidableEq G]
     (system : List Number) (dp1 dp2 : PhiBundle G) : PhiResolved G :=
   { person := resolveAnnotated (fun p q => some (Person.resolve p q).coarsen)
                 dp1.person dp2.person
@@ -796,7 +820,7 @@ theorem xhosa_uninterpretable_coordinate :
     percolation-and-intersection mechanism. Both studies use the same
     `resolve` function, instantiated with different
     feature types:
-    - A&A: `GenderNode` (privative geometry nodes — CLASS, MASC, FEM, etc.)
+    - A&A: `Node` (privative geometry nodes — CLASS, MASC, FEM, etc.)
     - Carstens: `SemanticCore` (entity flavors — human, animal, inanimate)
 
     The bridge below proves this is not just a narrative claim but a
@@ -814,7 +838,7 @@ theorem bantu_aa_self_matching_consistent :
       (resolve (statusToBundle (.interpretable c)) (statusToBundle (.interpretable c))).isSome
       = true) ∧
     -- A&A: singleton i-features self-match
-    (∀ f : GenderNode,
+    (∀ f : Node,
       (resolve [⟨f, .interpretable⟩] [⟨f, .interpretable⟩]).isSome = true) := by
   constructor
   · intro c; cases c <;> decide
@@ -834,25 +858,22 @@ theorem bantu_aa_self_matching_consistent :
 /-- Bantu does not satisfy MRH: the full inventory includes
     uninterpretable genders that yield empty intersections. -/
 theorem bantu_fails_mrh :
-    satisfiesMRH [statusToBundle (.interpretable .human),
+    ¬ MismatchResolutionOn [statusToBundle (.interpretable .human),
                   statusToBundle (.interpretable .inanimate),
                   statusToBundle (.interpretable .animal),
-                  statusToBundle .uninterpretable]
-    = false := by decide
+                  statusToBundle .uninterpretable] := by decide
 
 /-- Restricted to interpretable-only, MRH still fails:
     mismatched cores (human ≠ inanimate) yield empty intersection. -/
 theorem bantu_interpretable_fails_mrh :
-    satisfiesMRH [statusToBundle (.interpretable .human),
+    ¬ MismatchResolutionOn [statusToBundle (.interpretable .human),
                   statusToBundle (.interpretable .inanimate),
-                  statusToBundle (.interpretable .animal)]
-    = false := by decide
+                  statusToBundle (.interpretable .animal)] := by decide
 
 /-- But uniform cores satisfy MRH trivially (self-matching). -/
 theorem bantu_uniform_satisfies_mrh (c : SemanticCore) :
-    satisfiesMRH [statusToBundle (.interpretable c),
-                  statusToBundle (.interpretable c)]
-    = true := by
+    MismatchResolutionOn [statusToBundle (.interpretable c),
+                  statusToBundle (.interpretable c)] := by
   cases c <;> decide
 
 -- ============================================================================

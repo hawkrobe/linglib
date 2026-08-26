@@ -449,9 +449,9 @@ def FeatureBundle.toGramFeatures (fb : FeatureBundle) : List GramFeature :=
     - –Interpretable, unvalued: φ-features on T/v, Case on nouns
 
     `AgreeSOT.lean` uses `Interpretability` directly for tense features.
-    `GenderResolution.lean`'s `AnnotatedFeature.interp` uses `Interpretability`
-    directly; `CoordinateResolution.lean`, `AdamsonAnagnostopoulou2025.lean`,
-    and `Carstens2026.lean` all use it via `open _root_.Minimalist`. -/
+    `Agree/Coordination.lean`'s `Coordination.Annotated.interp` uses
+    `Interpretability` directly; `AdamsonAnagnostopoulou2025.lean` and
+    `Carstens2026.lean` use it via `open _root_.Minimalist`. -/
 inductive Interpretability where
   | interpretable    -- +Interp: contributes to LF, survives
   | uninterpretable  -- –Interp: must be checked and deleted

@@ -1,944 +1,380 @@
-import Linglib.Syntax.Minimalist.Features
-import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+import Linglib.Syntax.Minimalist.Agree.Coordination
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Features.Gender.Basic
+import Linglib.Fragments.Greek.StandardModern.Gender
+import Linglib.Fragments.Icelandic.Gender
+import Linglib.Fragments.Slavic.Serbian.Gender
+import Linglib.Data.Examples.AdamsonAnagnostopoulou2025
 
 /-!
-# Adamson & Anagnostopoulou 2025 [adamson-anagnostopoulou-2025]
+# Gender features and coordination resolution
 
-Gender Features and Coordination Resolution in Greek and Other
-Three-Gendered Languages: Implications for the Crosslinguistic
-Representation of Gender. *Linguistic Inquiry* (Early Access).
+Adamson and Anagnostopoulou derive the resolution of gender on coordinated nominals in Greek,
+Icelandic, and Bosnian/Croatian/Serbian from three components and no default insertion: a
+language-particular geometry of privative gender features, a dual-feature system in which
+interpretable features go to LF and uninterpretable ones to PF, and the universal mechanism of
+percolation and conversion (`Minimalist.Coordination.resolve`). A system (`System`) fixes the
+geometry, the node each referent type and each grammatical gender contributes, and the vocabulary
+of inflectional exponents; every derivation is then a computation. In Greek, where FEM entails
+MASC, mismatched humans keep MASC and resolve masculine while inanimates, whose only
+interpretable feature is CLASS, resolve neuter (`Greek.human_mismatch`, `Greek.inanimate_mismatch`),
+and the fixed-gender nouns *megalofiia* and *thima* resolve by their referents
+(`Greek.genius_sister`, `Greek.victim_mother`). Uninterpretable features are realized set by set:
+uniform inanimates converge on their shared exponent (`Greek.inanimate_uniform`), mismatched
+ones do not (`Greek.inanimate_clash`), and a human coordinated with an inanimate is grammatical
+exactly when the human's interpretable features and the inanimate's uninterpretable ones receive
+the same exponent (`Greek.human_inanimate_match`, `Greek.human_inanimate_crash`,
+`Greek.victim_painting`). Neuter is the least specified gender, so it realizes clausal subjects
+(`Greek.clausal`), and the vocabulary's containment rules out a neuter–feminine syncretism that
+excludes the masculine (`Greek.no_aba`, from `Morphology.Exponence.Realizes.of_realizes`).
 
-## Core result
+Icelandic differs only in its geometry, with MASC meaning male and FEM independent of it, so
+mismatched humans resolve neuter (`Icelandic.human_mismatch`) while fixed-gender *skáld* still
+resolves by its referent (`Icelandic.poet_jon`). In Bosnian/Croatian/Serbian MASC sits under
+INDIV, ANIM under MASC, and neuter is mass; a plural coordination bears GRP and hence INDIV, so
+every coordination realizes masculine, even of two neuters (`BCS.human_mismatch`,
+`BCS.inanimate_mismatch`, `BCS.neuter_pair`). All three geometries satisfy mismatch resolution
+(`mismatchResolution`), and Table 2 follows from the geometries alone (`table2`).
 
-Cross-linguistic variation in coordination resolution (Table 2) is
-derived from three interacting components, without stipulated defaults:
+## References
 
-1. **Feature geometry**: language-specific hierarchies of privative
-   gender features. In Greek, FEM is a dependent of MASC (= animate),
-   so a feminine nominal also bears MASC. In Icelandic, MASC (= male)
-   and FEM are independent under CLASS — neither entails the other.
-
-2. **Dual-feature system**: interpretable features (iFs → LF) vs
-   uninterpretable features (uFs → PF), linked by a redundancy
-   rule that copies iFs to empty uF slots at Transfer.
-
-3. **Percolation + conversion**: universal coordination resolution.
-   iFs percolate from conjuncts to &P; shared iFs survive intersection
-   (conversion); the Subset Principle selects the inflectional exponent.
-
-**Table 2** — resolution patterns derived from geometry:
-
-| Language  | Humans | Inanimates |
-|-----------|--------|------------|
-| Greek     | MASC   | NEUT       |
-| Icelandic | NEUT   | NEUT       |
-| BCS       | MASC   | MASC       |
-
-## Y-model architecture
-
-The derivation follows the Minimalist Y-model:
-
-- **Narrow syntax**: nominals bear both iFs and uFs; percolation
-  collects features at &P.
-- **Transfer**: conversion intersects iFs; redundancy rule copies
-  resolved iFs to empty uF slots.
-- **PF**: Vocabulary Insertion (Subset Principle) maps uF sets to
-  inflectional exponents.
-- **LF**: Lexical Complementarity restricts feature interpretation
-  (e.g., iMASC restricted to ⟦MASC⟧ − ⟦FEM⟧).
-
-## Formalization
-
-Resolution uses `resolve` — the single compositional
-endpoint — instantiated with `GenderNode` as the feature type. Each
-prediction is a verified theorem.
+* [adamson-anagnostopoulou-2025]
+* [smith-2015]
+* [harley-ritter-2002]
+* [kramer-2015]
+* [halle-1997]
+* [harbour-2016]
+* [bobaljik-2012]
+* [corbett-1991]
 -/
 
 namespace AdamsonAnagnostopoulou2025
 
-open _root_.Minimalist (Interpretability)
-
--- ============================================================================
--- § 0: The Resolution Mechanism (percolation + intersection)
--- ============================================================================
-
-/-! [adamson-anagnostopoulou-2025]'s gender-resolution mechanism: i(nterpretable)
-features percolate from each conjunct to the coordination; the shared i-features (the
-intersection) form its gender, an empty intersection being a language-specific default.
-Parameterized over the feature type, so it applies across language families. (Formerly
-`Syntax/Minimalist/Agreement/GenderResolution.lean` — relocated here as paper-specific
-apparatus; MCB's core models Merge, not φ-agreement.) -/
-
-/-- A gender feature annotated with interpretability ([kramer-2015]: gender on a
-    categorizing head n is interpretable (natural) or uninterpretable (arbitrary); only
-    i-features enter the resolution calculus). -/
-structure AnnotatedFeature (F : Type) where
-  value : F
-  interp : Interpretability
-  deriving DecidableEq, Repr
-
-/-- A conjunct's annotated feature list, ordered outermost (highest nP) to innermost. -/
-abbrev AnnotatedFeatures (F : Type) := List (AnnotatedFeature F)
-
-/-- Percolation: extract the interpretable feature values; u-features are excluded. -/
-def percolateI {F : Type} (fs : AnnotatedFeatures F) : List F :=
-  (fs.filter (·.interp == .interpretable)).map (·.value)
-
-/-- Intersection of two percolated feature lists (order from the first). -/
-def intersectFeatures {F : Type} [BEq F] (xs ys : List F) : List F :=
-  xs.filter (ys.contains ·)
-
-/-- Resolve gender for two conjoined DPs: percolate, intersect, `some` if the
-    intersection is non-empty (matching agreement) else `none` (language-specific
-    default). The compositional endpoint; language-specific resolutions project from it. -/
-def resolve {F : Type} [BEq F]
-    (fs1 fs2 : AnnotatedFeatures F) : Option (List F) :=
-  match intersectFeatures (percolateI fs1) (percolateI fs2) with
-  | [] => none
-  | xs => some xs
-
-/-- When multiple i-features survive (stacked nPs), the language selects which one
-    determines the agreement class ([carstens-2026] §5.1). -/
-inductive SelectionGrammar where
-  /-- The outermost (highest) nP layer wins — the first surviving feature. -/
-  | highestWins
-  /-- The most specific semantic match wins. -/
-  | bestSemanticMatch
-  deriving DecidableEq, Repr
-
-/-- Select the determining feature from a non-empty intersection; `specificity` ranks
-    features (higher = more specific). -/
-def selectFeature {F : Type}
-    (grammar : SelectionGrammar) (specificity : F → Nat)
-    (features : List F) : Option F :=
-  match grammar with
-  | .highestWins => features.head?
-  | .bestSemanticMatch =>
-    features.foldl (init := none) fun acc f =>
-      match acc with
-      | none => some f
-      | some best =>
-        match Nat.blt (specificity best) (specificity f) with
-        | true => some f
-        | false => some best
-
-/-- N-ary resolution: iterated intersection over all conjuncts' percolated features. -/
-def resolveN {F : Type} [BEq F] (bundles : List (AnnotatedFeatures F)) : Option (List F) :=
-  match bundles.map percolateI with
-  | [] => none
-  | first :: rest =>
-    match rest.foldl intersectFeatures first with
-    | [] => none
-    | xs => some xs
-
-/-- N-ary resolution subsumes binary. -/
-theorem resolveN_binary {F : Type} [BEq F] (fs1 fs2 : AnnotatedFeatures F) :
-    resolveN [fs1, fs2] = resolve fs1 fs2 := by
-  simp only [resolveN, resolve, List.map_cons, List.map_nil, List.foldl_cons, List.foldl_nil]
-
-/-- A set of bundles **satisfies MRH** (Mismatch Resolution Hypothesis) if resolution
-    succeeds for every pair — no empty intersection, no default insertion needed
-    ([adamson-anagnostopoulou-2025]: Greek satisfies MRH; Bantu does not). -/
-def satisfiesMRH {F : Type} [BEq F] (bundles : List (AnnotatedFeatures F)) : Bool :=
-  bundles.all fun fs1 =>
-    bundles.all fun fs2 =>
-      (resolve fs1 fs2).isSome
-
-/-- A feature geometry: the nodes and, per node, its full i-feature bundle (itself plus
-    everything it entails). Cross-linguistic variation in resolution follows from
-    differences in geometry ([adamson-anagnostopoulou-2025]). -/
-structure FeatureOrder (F : Type) [BEq F] where
-  nodes : List F
-  bundle : F → AnnotatedFeatures F
-
-/-- `f₁` entails `f₂` iff every i-feature in `f₂`'s bundle is in `f₁`'s. -/
-def FeatureOrder.entails {F : Type} [BEq F]
-    (order : FeatureOrder F) (f₁ f₂ : F) : Bool :=
-  (percolateI (order.bundle f₂)).all ((percolateI (order.bundle f₁)).contains ·)
-
-/-- A feature order satisfies MRH if all its bundles produce non-empty intersections. -/
-def FeatureOrder.satisfiesMRH' {F : Type} [BEq F] (order : FeatureOrder F) : Bool :=
-  satisfiesMRH (order.nodes.map order.bundle)
-
--- ============================================================================
--- § 1: Gender Feature Nodes
--- ============================================================================
-
-/-- Privative feature nodes in the gender geometry (§2.2).
-
-    [adamson-anagnostopoulou-2025] modifies [harley-ritter-2002]:
-    features are organized in language-specific hierarchies where more
-    specific features entail broader features. The same labels appear
-    across languages, but their geometric arrangement — and hence their
-    semantic content — varies.
-
-    Language-specific geometries:
-    - **Greek** (17): CLASS > MASC > FEM (linear chain)
-    - **Icelandic** (63): CLASS > {MASC, FEM} (independent siblings)
-    - **BCS** (74): CLASS > INDIV > {GRP, MASC > ANIM > FEM} -/
-inductive GenderNode where
-  | cls    -- entity (organizing node CLASS; all languages)
-  | masc   -- animate (Greek) / male (Icelandic)
-  | fem    -- female/woman
-  | indiv  -- individuation (BCS: dominates GRP and MASC)
-  | grp    -- group/plural (BCS: under INDIV)
-  | anim   -- animate (BCS: under MASC)
-  deriving DecidableEq, Repr
-
-/-- Partial bridge from privative geometry nodes to DM gender dimensions.
-    `.cls`, `.indiv`, and `.grp` are structural organizing nodes with no
-    counterpart in the DM `Gender.Dimension` type (which tracks only
-    semantic gender dimensions). -/
-def GenderNode.toGenderDimension : GenderNode → Option Gender.Dimension
-  | .masc => some .masc
-  | .fem  => some .fem
-  | .anim => some .anim
-  | _     => none  -- cls, indiv, grp: structural nodes, not gender dimensions
-
-open GenderNode
-
--- ============================================================================
--- § 2: Vocabulary Schemas (Subset Principle)
--- ============================================================================
-
-/-- Inflection class for three-gendered languages. -/
-inductive Infl where | fem | masc | neut
-  deriving DecidableEq, Repr
-
-/-- Bridge from VI inflection class to cross-linguistic surface gender. -/
-def Infl.toGender : Infl → Gender
-  | .fem  => .feminine
-  | .masc => .masculine
-  | .neut => .neuter
-
-/-- Greek vocabulary item schema (21).
-
-    | uF specification | Exponent             |
-    |------------------|----------------------|
-    | {FEM, MASC}      | "feminine inflection" |
-    | {MASC}           | "masculine inflection"|
-    | ∅                | "neuter inflection"  |
-
-    The Subset Principle selects the most specific matching item. -/
-def greekVI (fs : List GenderNode) : Infl :=
-  if fs.contains fem && fs.contains masc then .fem
-  else if fs.contains masc then .masc
-  else .neut
-
-/-- Icelandic vocabulary schema — identical to Greek.
-    The geometry difference, not the vocabulary, drives the divergent
-    resolution patterns. -/
-abbrev icelandicVI := @greekVI
-
-/-- BCS vocabulary item schema (75).
-
-    | uF specification        | Exponent              |
-    |-------------------------|-----------------------|
-    | {FEM, ANIM, MASC, INDIV}| "F inflection"        |
-    | {ANIM, MASC, INDIV}     | "M animate inflection" |
-    | {INDIV}                 | "M inanimate inflection"|
-    | ∅                       | "N inflection"        |
-
-    Simplified: FEM ∧ ANIM → F; INDIV present → M; else → N. -/
-def bcsVI (fs : List GenderNode) : Infl :=
-  if fs.contains fem && fs.contains anim then .fem
-  else if fs.contains indiv then .masc
-  else .neut
-
--- ============================================================================
--- § 3: Greek — Noun Data
--- ============================================================================
-
-/-! ### Greek feature geometry (17)
-
-    CLASS > MASC > FEM (linear chain).
-    Feature interpretations (18):
-    - CLASS: λx. x is an entity
-    - MASC: λx. x is animate
-    - FEM: λx. x is a woman
-
-    Having FEM entails MASC; having MASC entails CLASS.
-    Lexical Complementarity (19) restricts: iMASC picks out ⟦MASC⟧ − ⟦FEM⟧
-    (animate non-women); iFEM picks out women; iCLASS picks out entities. -/
-
-/-- Human feminine (*gineka* 'woman'): iFs = {CLASS, MASC, FEM}.
-    Conceptual gender — all features interpretable. -/
-private abbrev gkHF : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨fem, .interpretable⟩]
-
-/-- Human masculine (*andras* 'man'): iFs = {CLASS, MASC}. -/
-private abbrev gkHM : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩]
-
-/-- Inanimate feminine (*karekla* 'chair'): iCLASS + uMASC, uFEM.
-    Only CLASS is interpretable; MASC and FEM are arbitrary. -/
-private abbrev gkIF : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩, ⟨masc, .uninterpretable⟩, ⟨fem, .uninterpretable⟩]
-
-/-- Inanimate masculine (*pinakas* 'blackboard'): iCLASS + uMASC. -/
-private abbrev gkIM : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩, ⟨masc, .uninterpretable⟩]
-
-/-- Inanimate neuter (*piruni* 'fork'): iCLASS only. -/
-private abbrev gkIN : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩]
-
--- ============================================================================
--- § 4: Greek — Resolution Predictions
--- ============================================================================
-
-/-- (25) Uniform humans resolve to their shared gender. -/
-theorem gk_uniform_fem :
-    resolve gkHF gkHF = some [cls, masc, fem] := by decide
-
-theorem gk_uniform_masc :
-    resolve gkHM gkHM = some [cls, masc] := by decide
-
-/-- (22a) Mismatched humans → {CLASS, MASC} → masculine plural.
-    Intersection: {CLASS,MASC,FEM} ∩ {CLASS,MASC} = {CLASS,MASC}.
-    FEM is eliminated because only one conjunct bears it. -/
-theorem gk_human_mismatch :
-    resolve gkHF gkHM = some [cls, masc] := by decide
-
-theorem gk_human_mismatch_vi :
-    greekVI [cls, masc] = .masc := by decide
-
-/-- (22b, 40a-c) All inanimate mismatch combinations → {CLASS} → neuter.
-    Percolation extracts only iCLASS from each conjunct (uFs excluded).
-    This is NOT default insertion — it is the result of intersecting
-    the iF sets, which contain only iCLASS for all inanimates. -/
-theorem gk_inanim_MF :
-    resolve gkIM gkIF = some [cls] := by decide
-
-theorem gk_inanim_NF :
-    resolve gkIN gkIF = some [cls] := by decide
-
-theorem gk_inanim_NM :
-    resolve gkIN gkIM = some [cls] := by decide
-
-theorem gk_inanim_mismatch_vi :
-    greekVI [cls] = .neut := by decide
-
-/-- Mismatch Resolution Hypothesis (24): no default feature insertion.
-    All resolution outcomes have non-empty intersection (matching). -/
-theorem gk_no_default_human :
-    (resolve gkHF gkHM).isSome = true := by decide
-
-theorem gk_no_default_inanim :
-    (resolve gkIM gkIF).isSome = true := by decide
-
--- ============================================================================
--- § 5: Greek — Fixed-Gender Humans
--- ============================================================================
-
-/-! ### Fixed-gender human nominals (§3.2)
-
-    *megalofiia* 'genius' is **grammatically** feminine (uFs) but its
-    **conceptual** gender (iFs) tracks the referent. Resolution operates
-    on iFs — crucial evidence for the Mismatch Resolution Hypothesis.
-
-    *thima* 'victim' is grammatically neuter (uF = {CLASS}) but
-    conceptually masculine/feminine depending on referent. -/
-
-/-- *megalofiia* 'genius' referring to a man.
-    uF = {CLASS, MASC, FEM} (arbitrary feminine), iF = {CLASS, MASC}. -/
-private abbrev gkFixedFemMale : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩,
-   ⟨cls, .uninterpretable⟩, ⟨masc, .uninterpretable⟩, ⟨fem, .uninterpretable⟩]
-
-/-- *thima* 'victim' referring to a woman.
-    uF = {CLASS} (arbitrary neuter), iF = {CLASS, MASC, FEM}. -/
-private abbrev gkFixedNeutFemale : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨fem, .interpretable⟩, ⟨cls, .uninterpretable⟩]
-
-/-- (36) *megalofiia* (male referent) + sister → masculine (M♂ + F♀ = M).
-    Despite both being grammatically feminine, iF resolution
-    yields {CLASS,MASC} ∩ {CLASS,MASC,FEM} = {CLASS,MASC} → MASC. -/
-theorem gk_fixed_genius_sister :
-    resolve gkFixedFemMale gkHF = some [cls, masc] := by decide
-
-theorem gk_fixed_genius_sister_vi :
-    (resolve gkFixedFemMale gkHF).map greekVI = some .masc := by decide
-
-/-- (37) *thima* (female referent) + her mother → feminine (N♀ + F♀ = F).
-    Neuter noun's iFs are feminine (referent is female):
-    {CLASS,MASC,FEM} ∩ {CLASS,MASC,FEM} = {CLASS,MASC,FEM} → FEM. -/
-theorem gk_fixed_victim_mother :
-    resolve gkFixedNeutFemale gkHF = some [cls, masc, fem] := by
-  decide
-
-theorem gk_fixed_victim_mother_vi :
-    (resolve gkFixedNeutFemale gkHF).map greekVI = some .fem := by
-  decide
-
--- ============================================================================
--- § 6: Greek — [H + I] Coordination
--- ============================================================================
-
-/-! ### Humans + Inanimates (§3.5)
-
-    When a human (percolating iFs) and an inanimate (percolating uFs)
-    are coordinated, PF realization succeeds only if the features map
-    to the same inflection class. Otherwise: PF crash → ineffability.
-
-    Y-model significance: the crash happens at **PF**, not in narrow
-    syntax. [H + I] coordination is syntactically well-formed; the
-    problem is exponence of the resolved features. -/
-
-/-- PF convergence test for [H + I] coordination.
-    The human's iFs (→ uFs via redundancy rule at Transfer) must
-    map to the same inflection as the inanimate's uFs. -/
-def gkHIConverges (humanIFs inanimUFs : List GenderNode) : Bool :=
-  greekVI humanIFs == greekVI inanimUFs
-
-/-- (54a) M♂ + M■ → grammatical: both map to MASC.
-    *kleftis* 'thief' (M) + *pinakas* 'painting' (M). -/
-theorem gk_hi_matched_masc :
-    gkHIConverges [cls, masc] [cls, masc] = true := by decide
-
-/-- (54b) F♀ + F■ → grammatical: both map to FEM.
-    *gineka* 'woman' (F) + *ombrela* 'umbrella' (F). -/
-theorem gk_hi_matched_fem :
-    gkHIConverges [cls, masc, fem] [cls, masc, fem] = true := by
-  decide
-
-/-- (47) M♂ + N■ → ineffable: MASC ≠ NEUT → PF crash.
-    *kleftis* 'thief' (M♂) + *daxtilidi* 'ring' (N■).
-    Human iFs → MASC; inanimate uFs → NEUT. No single exponent. -/
-theorem gk_hi_crash :
-    gkHIConverges [cls, masc] [cls] = false := by decide
-
-/-- (56) Fixed-gender F♂ + M■ → grammatical: iFs match.
-    *megalofiia* 'genius' (iF = M♂) + *pinakas* 'painting' (uF = M■).
-    Human's iFs = {CLASS,MASC} → MASC; inanimate's uFs = {CLASS,MASC} → MASC.
-    PF converges despite different grammatical genders. -/
-theorem gk_hi_fixed_converge :
-    gkHIConverges [cls, masc] [cls, masc] = true := by decide
-
--- ============================================================================
--- § 7: Greek — Fixed-Gender + Inanimate [H + I]
--- ============================================================================
-
-/-! ### Fixed-gender humans + inanimates (§3.5)
-
-    The paper's strongest evidence for the iF-based analysis. When a
-    **fixed-gender human** is coordinated with an inanimate, the PF
-    convergence depends on the human's **iFs** (conceptual gender),
-    not their **uFs** (grammatical gender). -/
-
-/-- (57a) *thima* (N♀ victim, male referent) + *pinakas* (M■) → MASC.
-    iFs of victim (male) = {CLASS, MASC}; uFs of painting = {CLASS, MASC}.
-    VI match: MASC = MASC → PF converges. -/
-theorem gk_hi_fixed_victim_male :
-    gkHIConverges [cls, masc] [cls, masc] = true := by decide
-
-/-- (57b) *thima* (N♀ victim, female referent) + *fotografia* (F■) → FEM.
-    iFs of victim (female) = {CLASS, MASC, FEM};
-    uFs of picture = {CLASS, MASC, FEM}.
-    VI match: FEM = FEM → PF converges. -/
-theorem gk_hi_fixed_victim_female :
-    gkHIConverges [cls, masc, fem] [cls, masc, fem] = true := by
-  decide
-
-/-- (57a corollary) *thima* (N♀, male ref) + *fotografia* (F■) → PF crash.
-    iFs of victim (male) = {CLASS, MASC} → VI → MASC.
-    uFs of picture = {CLASS, MASC, FEM} → VI → FEM.
-    MASC ≠ FEM → crash. -/
-theorem gk_hi_fixed_victim_male_fem_crash :
-    gkHIConverges [cls, masc] [cls, masc, fem] = false := by decide
-
--- ============================================================================
--- § 8: Greek — Inanimate Uniform Patterns
--- ============================================================================
-
-/-! ### Uniform inanimate coordination (38a-c)
-
-    When two inanimates share the same grammatical gender, resolved
-    agreement matches that gender. Under the paper's analysis, this
-    obtains when inanimates percolate **uFs** (the alternative
-    derivation in (39)): the &P has a singleton uF set, and PF
-    realization succeeds with the shared exponent. -/
-
-/-- (38a) F■ + F■ = F: *fusta* 'skirt' + *bluza* 'T-shirt'. -/
-theorem gk_uniform_inanim_fem :
-    greekVI [cls, masc, fem] = .fem := by decide
-
-/-- (38b) M■ + M■ = M: *anaptiras* 'lighter' + *fakos* 'torch'. -/
-theorem gk_uniform_inanim_masc :
-    greekVI [cls, masc] = .masc := by decide
-
-/-- (38c) N■ + N■ = N: *piruni* 'fork' + *kutali* 'spoon'. -/
-theorem gk_uniform_inanim_neut :
-    greekVI [cls] = .neut := by decide
-
--- ============================================================================
--- § 9: Greek — Clausal Subjects
--- ============================================================================
-
-/-- (2a, 58) Clausal subjects lack gender features entirely.
-    No features to percolate → no vocabulary item matches → neuter
-    (the elsewhere exponent, least specified). -/
-theorem gk_clausal_default : greekVI [] = .neut := by decide
-
--- ============================================================================
--- § 10: Icelandic
--- ============================================================================
-
-/-! ### Icelandic feature geometry (63)
-
-    ```
-    (i/u)CLASS
-       / \
-    MASC   FEM    ← independent (no entailment)
-    ```
-
-    Unlike Greek, FEM is NOT a dependent of MASC. The crucial difference:
-    MASC means 'male' (not 'animate'), so gender-mixed groups are excluded
-    from both MASC (not all male) and FEM (not all female).
-    Lexical Complementarity: no restriction between MASC and FEM
-    (neither is a subset of the other). -/
-
-/-- Icelandic human feminine: iFs = {CLASS, FEM}.
-    No iMASC — FEM is independent of MASC in this geometry. -/
-private abbrev isHF : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩, ⟨fem, .interpretable⟩]
-
-/-- Icelandic human masculine: iFs = {CLASS, MASC}. -/
-private abbrev isHM : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩]
-
-/-- Icelandic inanimate feminine (*skeið* 'spoon'): iCLASS + uFEM.
-    Only CLASS is interpretable; FEM is arbitrary. -/
-private abbrev isIF : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩, ⟨fem, .uninterpretable⟩]
-
-/-- Icelandic inanimate masculine (*stóll* 'chair'): iCLASS + uMASC. -/
-private abbrev isIM : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩, ⟨masc, .uninterpretable⟩]
-
-/-- Icelandic inanimate neuter (*epli* 'apple'): iCLASS only. -/
-private abbrev isIN : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩]
-
-/-- (60) Mismatched humans → {CLASS} → neuter.
-    {CLASS,MASC} ∩ {CLASS,FEM} = {CLASS}. Because MASC and FEM are
-    independent siblings, only CLASS survives intersection. -/
-theorem is_human_mismatch :
-    resolve isHM isHF = some [cls] := by decide
-
-theorem is_human_mismatch_vi :
-    icelandicVI [cls] = .neut := by decide
-
-/-- (59) Mismatched inanimates → {CLASS} → neuter.
-    *frægð* 'fame' (F) + *frami* 'success' (M) → neuter plural.
-    All Icelandic inanimates share iFs = {iCLASS} regardless of
-    grammatical gender — uFs (uFEM, uMASC) are excluded from resolution. -/
-theorem is_inanim_mismatch :
-    resolve isIF isIM = some [cls] := by decide
-
-/-- The geometry contrast: same labels, different geometry, different outcome.
-    Greek {CLASS,MASC,FEM} ∩ {CLASS,MASC} = some {CLASS,MASC}.
-    Icelandic {CLASS,FEM} ∩ {CLASS,MASC} = some {CLASS}.
-    Same mechanism, different input → different result. -/
-theorem geometry_drives_variation :
-    resolve gkHF gkHM ≠ resolve isHF isHM := by
-  decide
-
--- ============================================================================
--- § 11: BCS (Bosnian/Croatian/Serbian)
--- ============================================================================
-
-/-! ### BCS feature geometry (74)
-
-    ```
-    CLASS
-      |
-    INDIV
-     / \
-    GRP  MASC
-          |
-        ANIM
-          |
-        FEM
-    ```
-
-    Key differences from Greek and Icelandic:
-    1. MASC is under INDIV (not directly under CLASS)
-    2. Neuter ≈ mass (no INDIV) → can't be counted or coordinated as count
-    3. All coordinatable nominals have INDIV → resolved features include
-       at least {INDIV} → vocabulary maps to masculine
-
-    Vocabulary consequence: masculine is the "default" for coordination
-    not by stipulation but because INDIV (required for plural) maps to
-    masculine via the Subset Principle. -/
-
-/-- BCS human feminine: iFs = {CLASS, INDIV, MASC, ANIM, FEM}. -/
-private abbrev bcsHF : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩, ⟨indiv, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨anim, .interpretable⟩, ⟨fem, .interpretable⟩]
-
-/-- BCS human masculine: iFs = {CLASS, INDIV, MASC, ANIM}. -/
-private abbrev bcsHM : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩, ⟨indiv, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨anim, .interpretable⟩]
-
-/-- BCS inanimate masculine (*pesak* 'sand'): iFs = {CLASS, INDIV, MASC}.
-    MASC without ANIM → inanimate interpretation. -/
-private abbrev bcsIM : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩, ⟨indiv, .interpretable⟩, ⟨masc, .interpretable⟩]
-
-/-- BCS inanimate feminine (*knjiga* 'book'): iFs = {CLASS, INDIV, MASC},
-    uFs include ANIM + FEM (arbitrary feminine). -/
-private abbrev bcsIF : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩, ⟨indiv, .interpretable⟩, ⟨masc, .interpretable⟩,
-   ⟨anim, .uninterpretable⟩, ⟨fem, .uninterpretable⟩]
-
-/-- BCS neuter noun (*mleko* 'milk'): iFs = {CLASS} only.
-    Neuter = mass in BCS: no INDIV. This is why neuter nouns cannot
-    form count plurals — they lack the individuation feature. -/
-private abbrev bcsN : AnnotatedFeatures GenderNode :=
-  [⟨cls, .interpretable⟩]
-
-/-- (68) Mismatched humans → {CLASS, INDIV, MASC, ANIM} → masculine.
-    {CLASS,INDIV,MASC,ANIM,FEM} ∩ {CLASS,INDIV,MASC,ANIM}
-    = {CLASS,INDIV,MASC,ANIM}. -/
-theorem bcs_human_mismatch :
-    resolve bcsHF bcsHM =
-    some [cls, indiv, masc, anim] := by decide
-
-theorem bcs_human_mismatch_vi :
-    bcsVI [cls, indiv, masc, anim] = .masc := by decide
-
-/-- Mismatched M + F inanimates → {CLASS, INDIV, MASC} → masculine.
-    Both conjuncts share {CLASS, INDIV, MASC} as iFs;
-    ANIM + FEM on the feminine noun are uFs, excluded from resolution. -/
-theorem bcs_inanim_MF :
-    resolve bcsIM bcsIF = some [cls, indiv, masc] := by decide
-
-/-- (69) Mismatched N + F inanimates → masculine.
-    *znanje* 'knowledge' (N) + *intuicija* 'intuition' (F).
-    Neuter is mass (iFs = {CLASS}); feminine inanimate has iFs =
-    {CLASS, INDIV, MASC}. Intersection = {CLASS}. But coordination
-    introduces GRP (entailing INDIV), so the &P bears {CLASS, INDIV}
-    at minimum → Subset Principle yields masculine.
-
-    NB: The formalization models this by checking that the gender
-    resolution itself yields {CLASS}, and the coordinate structure's
-    INDIV (from GRP/plural) independently ensures masculine VI. -/
-theorem bcs_inanim_NF_resolved :
-    resolve bcsN bcsIF = some [cls] := by decide
-
-/-- After coordination introduces INDIV, the combined features
-    ({CLASS} from resolution + {INDIV} from GRP) map to masculine. -/
-theorem bcs_inanim_NF_vi :
-    bcsVI [cls, indiv] = .masc := by decide
-
-theorem bcs_inanim_mismatch_vi :
-    bcsVI [cls, indiv, masc] = .masc := by decide
-
-/-- (70) Even matched neuters → masculine when coordinated.
-    *selo* 'village' (N) + *brdo* 'hill' (N).
-    Individual neuter DPs are mass (iFs = {CLASS}). Resolution:
-    {CLASS} ∩ {CLASS} = {CLASS}. But coordination introduces GRP
-    (entailing INDIV). The combined {CLASS, INDIV} at &P maps to
-    masculine via VI — INDIV is present → masculine. -/
-theorem bcs_neut_resolved :
-    resolve bcsN bcsN = some [cls] := by decide
-
-theorem bcs_neut_coord_masc :
-    bcsVI [cls, indiv] = .masc := by decide
-
--- ============================================================================
--- § 12: Cross-Linguistic Summary (Table 2)
--- ============================================================================
-
-/-- Table 2 verified: all six cells derived from geometry + intersection. -/
-theorem table2_greek_humans :
-    (resolve gkHF gkHM).map greekVI = some .masc := by decide
-
-theorem table2_greek_inanimates :
-    (resolve gkIM gkIF).map greekVI = some .neut := by decide
-
-theorem table2_icelandic_humans :
-    (resolve isHM isHF).map icelandicVI = some .neut := by decide
-
-theorem table2_icelandic_inanimates :
-    (resolve isIF isIM).map icelandicVI = some .neut := by decide
-
-theorem table2_bcs_humans :
-    (resolve bcsHF bcsHM).map bcsVI = some .masc := by decide
-
-theorem table2_bcs_inanimates :
-    (resolve bcsIM bcsIF).map bcsVI = some .masc := by decide
-
--- ============================================================================
--- § 13: Redundancy Rule
--- ============================================================================
-
-/-- Redundancy rule (13): copy iF values to empty uF slots at Transfer.
-    If uFs are already filled (arbitrary gender), the rule does not apply.
-
-    Y-model: this operation occurs at **Transfer**, the boundary between
-    narrow syntax and the PF/LF interfaces. -/
-def redundancyRule (iFs uFs : List GenderNode) : List GenderNode :=
-  if uFs.isEmpty then iFs else uFs
-
-/-- Human feminine: uFs empty → redundancy fills from iFs. -/
-theorem redundancy_human :
-    redundancyRule [cls, masc, fem] [] = [cls, masc, fem] := by
-  decide
-
-/-- Arbitrary feminine: uFs already filled → preserved. -/
-theorem redundancy_arbitrary :
-    redundancyRule [cls] [cls, masc, fem] = [cls, masc, fem] := by
-  decide
-
--- ============================================================================
--- § 14: ABA Syncretism Prediction
--- ============================================================================
-
-/-! The implicational feature hierarchy (CLASS > MASC > FEM) predicts
-    the absence of ABA syncretism patterns (fn. 19). Neuter and feminine
-    can never be syncretic to the exclusion of masculine — since the
-    masculine feature set {MASC} is a proper subset of feminine {FEM,MASC}
-    and a proper superset of neuter ∅, any syncretism of N and F would
-    also include M. -/
-
-/-- Greek inflection: M is always "between" N and F in feature specificity.
-    This rules out N = F ≠ M syncretism patterns. -/
-theorem no_aba_syncretism :
-    ¬(greekVI [] = greekVI [cls, masc, fem] ∧
-      greekVI [] ≠ greekVI [cls, masc]) := by decide
-
--- ============================================================================
--- § 15: Feature Geometry Functions
--- ============================================================================
-
-/-! ### Geometry → outcome
-
-    The paper's central thesis: cross-linguistic variation in resolution
-    follows from differences in feature geometry, not from different
-    resolution mechanisms or stipulated defaults. Same labels, same
-    mechanism, different geometry → different outcome.
-
-    We formalize each language's geometry as a function from a base
-    gender node to the full set of entailed iFs, then prove that
-    resolution outcomes follow from geometry alone. -/
-
-/-- Greek geometry (17): CLASS > MASC > FEM (linear chain).
-    FEM entails MASC entails CLASS. -/
-def greekGeometry : GenderNode → AnnotatedFeatures GenderNode
-  | .fem  => [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨fem, .interpretable⟩]
-  | .masc => [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩]
-  | .cls  => [⟨cls, .interpretable⟩]
-  | _     => []
-
-/-- Icelandic geometry (63): CLASS > {MASC, FEM} (independent siblings).
-    Neither FEM nor MASC entails the other. -/
-def icelandicGeometry : GenderNode → AnnotatedFeatures GenderNode
-  | .fem  => [⟨cls, .interpretable⟩, ⟨fem, .interpretable⟩]
-  | .masc => [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩]
-  | .cls  => [⟨cls, .interpretable⟩]
-  | _     => []
-
-/-- The linear chain geometry guarantees that mismatched human
-    resolution retains MASC — because both conjuncts bear iMASC
-    (FEM entails MASC). -/
-theorem greek_geometry_human_mismatch :
-    resolve (greekGeometry .fem) (greekGeometry .masc) =
-    some [cls, masc] := by decide
-
-/-- The independent geometry means human mismatch loses both
-    MASC and FEM — only CLASS survives intersection. -/
-theorem icelandic_geometry_human_mismatch :
-    resolve (icelandicGeometry .fem) (icelandicGeometry .masc) =
-    some [cls] := by decide
-
-/-- Geometry determines resolution outcome: same mechanism + same
-    feature labels → different VI output, entirely from geometry. -/
-theorem geometry_determines_resolution :
-    (resolve (greekGeometry .fem) (greekGeometry .masc)).map greekVI = some .masc ∧
-    (resolve (icelandicGeometry .fem) (icelandicGeometry .masc)).map icelandicVI = some .neut := by
-  constructor <;> decide
-
-/-- The geometry functions reconstruct the noun data: Greek nouns
-    are exactly the geometry applied to their most specific iF. -/
-theorem greek_geometry_faithful_fem : greekGeometry .fem = gkHF := by decide
-theorem greek_geometry_faithful_masc : greekGeometry .masc = gkHM := by decide
-theorem icelandic_geometry_faithful_fem : icelandicGeometry .fem = isHF := by decide
-theorem icelandic_geometry_faithful_masc : icelandicGeometry .masc = isHM := by decide
-
-/-- Entailment asymmetry: in the linear chain (Greek), FEM's iFs
-    are a superset of MASC's iFs. In the independent geometry
-    (Icelandic), neither is a superset of the other.
-    This is WHY the intersection outcomes differ. -/
-theorem greek_fem_entails_masc :
-    (percolateI (greekGeometry .masc)).all
-      ((percolateI (greekGeometry .fem)).contains ·) = true := by decide
-
-theorem icelandic_fem_not_entails_masc :
-    (percolateI (icelandicGeometry .masc)).all
-      ((percolateI (icelandicGeometry .fem)).contains ·) = false := by decide
-
--- ============================================================================
--- § 16: Subset Principle — Formal Vocabulary Items
--- ============================================================================
-
-/-! ### Vocabulary as VocabularyItem items
-
-    The ad-hoc `greekVI` function above implements the Subset Principle
-    procedurally. Here we define the same vocabulary as `VocabularyItem` items
-    ([halle-marantz-1993]) and prove that `subsetPrinciple` selects
-    the same exponents. This connects the gender resolution mechanism to
-    the formal DM vocabulary insertion framework. -/
-
-open DistributedMorphology (VocabularyItem subsetPrinciple)
+open Minimalist.Coordination DistributedMorphology Morphology.Exponence
 open scoped DistributedMorphology.VocabularyItem
 
-/-- Greek vocabulary items as `VocabularyItem` entries (schema 21).
-    Most specific first: {FEM,MASC} → F, {MASC} → M, {} → N. -/
-def greekVocabItems : List (VocabularyItem GenderNode Infl) :=
-  [ [fem, masc] ⟷ .fem,
-    [masc] ⟷ .masc,
-    [] ⟷ .neut ]
+/-- The privative gender nodes of the three geometries. -/
+inductive Node where
+  | cls
+  | masc
+  | fem
+  | indiv
+  | grp
+  | anim
+  deriving DecidableEq, Repr
 
-/-- BCS vocabulary items as `VocabularyItem` entries (schema 75).
-    {FEM,ANIM} → F, {INDIV} → M, {} → N. -/
-def bcsVocabItems : List (VocabularyItem GenderNode Infl) :=
-  [ [fem, anim] ⟷ .fem,
-    [indiv] ⟷ .masc,
-    [] ⟷ .neut ]
+/-- What a nominal refers to: a man, a woman, an individuated inanimate, or a mass. -/
+inductive Referent where
+  | man
+  | woman
+  | thing
+  | mass
+  deriving DecidableEq, Repr
 
-/-- Subset Principle agrees with ad-hoc `greekVI` for human mismatch. -/
-theorem sp_greek_human_mismatch :
-    subsetPrinciple greekVocabItems [cls, masc] = some .masc := by decide
+/-- A three-gender system: its geometry, the node a referent contributes as interpretable
+gender and a grammatical gender contributes as uninterpretable gender, and its vocabulary. -/
+structure System where
+  geometry : Geometry Node
+  iNode : Referent → Node
+  uNode : Gender → Bool → Node
+  vocabulary : List (VocabularyItem Node Gender)
 
-/-- Subset Principle agrees with `greekVI` for inanimate mismatch. -/
-theorem sp_greek_inanim_mismatch :
-    subsetPrinciple greekVocabItems [cls] = some .neut := by decide
+namespace System
 
-/-- Subset Principle agrees with `greekVI` for uniform feminine. -/
-theorem sp_greek_uniform_fem :
-    subsetPrinciple greekVocabItems [cls, masc, fem] = some .fem := by decide
+variable (L : System)
 
-/-- Subset Principle agrees with `bcsVI` for human mismatch. -/
-theorem sp_bcs_human_mismatch :
-    subsetPrinciple bcsVocabItems [cls, indiv, masc, anim] = some .masc := by
+/-- The interpretable features of a nominal with referent `r`. -/
+def conceptual (r : Referent) : Bundle Node := interpretable (L.geometry.above (L.iNode r))
+
+/-- The uninterpretable features of a nominal of grammatical gender `g`. -/
+def arbitrary (g : Gender) (human : Bool := false) : Bundle Node :=
+  uninterpretable (L.geometry.above (L.uNode g human))
+
+/-- The exponent of a feature set under the Subset Principle. -/
+def realize (fs : List Node) : Option Gender := subsetPrinciple L.vocabulary fs
+
+/-- Resolution through conversion: percolated interpretable features are intersected and the
+single result realized. -/
+def converted (a b : Bundle Node) : Option Gender := (resolve a b).bind L.realize
+
+/-- Resolution through uninterpretable features: each conjunct's set is realized, converging on
+one exponent or crashing. -/
+def formal (a b : Bundle Node) : Option Gender := realizeAll L.realize [percolateU a, percolateU b]
+
+/-- A human's interpretable features beside an inanimate's uninterpretable ones: the former fill
+the empty uninterpretable slot at Transfer, and both sets are realized. -/
+def mixed (human inan : Bundle Node) : Option Gender :=
+  realizeAll L.realize [redundancy (percolate human) (percolateU human), percolateU inan]
+
+end System
+
+/-- The three-way vocabulary shared by Greek and Icelandic. -/
+def threeWay : List (VocabularyItem Node Gender) :=
+  [[.fem, .masc] ⟷ .feminine, [.masc] ⟷ .masculine, [] ⟷ .neuter]
+
+/-! ### Greek -/
+
+namespace Greek
+
+open _root_.Greek.StandardModern.Gender
+
+/-- CLASS > MASC > FEM. -/
+def system : System where
+  geometry :=
+    { nodes := [.cls, .masc, .fem]
+      above
+        | .fem => [.fem, .masc, .cls]
+        | .masc => [.masc, .cls]
+        | .cls => [.cls]
+        | _ => [] }
+  iNode
+    | .man => .masc
+    | .woman => .fem
+    | _ => .cls
+  uNode g _ :=
+    match g with
+    | .masculine => .masc
+    | .feminine => .fem
+    | _ => .cls
+  vocabulary := threeWay
+
+/-- An inanimate's bundle: interpretable CLASS beside its arbitrary gender. -/
+def inanimate (n : Noun) : Bundle Node := system.conceptual .thing ++ system.arbitrary n.gender
+
+theorem fem_entails_masc : system.geometry.Entails .fem .masc := by decide
+
+/-- Uniform humans resolve to their shared gender. -/
+theorem human_uniform :
+    system.converted (system.conceptual .woman) (system.conceptual .woman) = some .feminine ∧
+      system.converted (system.conceptual .man) (system.conceptual .man) = some .masculine := by
   decide
 
-/-- Same vocabulary + different geometry → different outcome.
-    Greek and Icelandic share the vocabulary (both use `greekVocabItems`),
-    but the Subset Principle yields different results because the geometry
-    produces different intersections. -/
-theorem sp_same_vocab_different_geometry :
-    subsetPrinciple greekVocabItems [cls, masc] = some .masc ∧
-    subsetPrinciple greekVocabItems [cls] = some .neut := by
-  constructor <;> decide
+/-- *O andras ke i gineka ine eksipni*: FEM is lost, MASC kept. -/
+theorem human_mismatch :
+    system.converted (system.conceptual .man) (system.conceptual .woman) = some .masculine := by
+  decide
 
--- ============================================================================
--- § 17: Feature Geometry as FeatureOrder
--- ============================================================================
+/-- *I gineka ke to koritsi ine eksipnes*: the neuter *koritsi* resolves by its referent. -/
+theorem woman_girl :
+    koritsi.gender = .neuter ∧
+      system.converted (system.conceptual .woman) (system.conceptual .woman) = some .feminine := by
+  decide
 
-/-! ### FeatureOrder instances
+/-- *I megalofiia ke i adherfi tu ine charumeni*: two grammatically feminine nouns resolve
+masculine because the genius is a man. -/
+theorem genius_sister :
+    megalofiia.gender = .feminine ∧
+      system.converted (system.conceptual .man) (system.conceptual .woman) = some .masculine := by
+  decide
 
-    The `FeatureOrder` structure packages a feature geometry — its nodes
-    and the bundle function that maps each node to its full set of
-    entailed features. This formalizes the paper's central insight that
-    cross-linguistic variation is geometry variation. -/
+/-- *To thima ke i mitera tis ine charumenes*: the neuter *thima* resolves feminine for a woman. -/
+theorem victim_mother :
+    thima.gender = .neuter ∧
+      system.converted (system.conceptual .woman) (system.conceptual .woman) = some .feminine := by
+  decide
 
-/-- Greek feature order: CLASS > MASC > FEM (linear chain). -/
-def greekOrder : FeatureOrder GenderNode :=
-  { nodes := [cls, masc, fem]
-    bundle := greekGeometry }
+/-- Uniform inanimates realize their shared arbitrary gender. -/
+theorem inanimate_uniform :
+    system.formal (inanimate fusta) (inanimate bluza) = some .feminine ∧
+      system.formal (inanimate anaptiras) (inanimate fakos) = some .masculine ∧
+      system.formal (inanimate piruni) (inanimate kutali) = some .neuter := by
+  decide
 
-/-- Icelandic feature order: CLASS > {MASC, FEM} (independent siblings). -/
-def icelandicOrder : FeatureOrder GenderNode :=
-  { nodes := [cls, masc, fem]
-    bundle := icelandicGeometry }
+/-- Mismatched inanimates resolve neuter through their interpretable CLASS. -/
+theorem inanimate_mismatch :
+    system.converted (inanimate pinakas) (inanimate karekla) = some .neuter ∧
+      system.converted (inanimate scholio) (inanimate ekklisia) = some .neuter ∧
+      system.converted (inanimate balkoni) (inanimate dhiadhromos) = some .neuter := by
+  decide
 
-/-- Greek entailment: FEM entails MASC (FEM's bundle ⊇ MASC's bundle). -/
-theorem greek_order_fem_entails_masc :
-    greekOrder.entails fem masc = true := by decide
+/-- Percolating their uninterpretable features instead clashes at PF. -/
+theorem inanimate_clash :
+    system.formal (inanimate pinakas) (inanimate karekla) = none ∧
+      system.formal (inanimate scholio) (inanimate ekklisia) = none := by
+  decide
 
-/-- Icelandic: FEM does NOT entail MASC (independent siblings). -/
-theorem icelandic_order_fem_not_entails_masc :
-    icelandicOrder.entails fem masc = false := by decide
+/-- Uniform inanimates may also percolate CLASS and resolve neuter. -/
+theorem inanimate_uniform_neuter :
+    system.converted (inanimate fusta) (inanimate bluza) = some .neuter := by
+  decide
 
-/-- Greek: MASC entails CLASS. -/
-theorem greek_order_masc_entails_cls :
-    greekOrder.entails masc cls = true := by decide
+/-- Closest conjunct agreement is with uninterpretable features: feminine for *megalofiia*
+whatever its referent, masculine for *pinakas*. -/
+theorem closest_conjunct :
+    system.realize (percolateU (system.arbitrary megalofiia.gender)) = some .feminine ∧
+      system.realize (percolateU (inanimate pinakas)) = some .masculine := by
+  decide
 
-/-- Greek: CLASS does NOT entail MASC (entailment is asymmetric). -/
-theorem greek_order_cls_not_entails_masc :
-    greekOrder.entails cls masc = false := by decide
+/-- *O kleftis ke to daxtilidi*: the thief's MASC and the ring's CLASS clash at PF; the paper
+excludes the remaining, all-interpretable option at LF. -/
+theorem human_inanimate_crash :
+    system.mixed (system.conceptual .man) (inanimate daxtilidi) = none ∧
+      resolve (system.conceptual .man) (inanimate daxtilidi) = some [.cls] := by
+  decide
 
--- ============================================================================
--- § 18: Mismatch Resolution Hypothesis — Geometry Property
--- ============================================================================
+/-- Matched humans and inanimates converge: *o kleftis ke o pinakas*, *i gineka ke i ombrela*. -/
+theorem human_inanimate_match :
+    system.mixed (system.conceptual .man) (inanimate pinakas) = some .masculine ∧
+      system.mixed (system.conceptual .woman) (inanimate ombrela) = some .feminine := by
+  decide
 
-/-! ### MRH as a property of geometries
+/-- The fixed-gender *thima* and *megalofiia* match an inanimate by their referents. -/
+theorem victim_painting :
+    system.mixed (system.conceptual .man) (inanimate pinakas) = some .masculine ∧
+      system.mixed (system.conceptual .woman) (inanimate fotografia) = some .feminine ∧
+      system.mixed (system.conceptual .man) (inanimate fotografia) = none := by
+  decide
 
-    [adamson-anagnostopoulou-2025]'s Mismatch Resolution Hypothesis:
-    Greek satisfies MRH because ALL pairwise resolution outcomes produce
-    non-empty intersections — no default insertion is ever needed.
+/-- Clausal subjects bear no gender features and are realized neuter. -/
+theorem clausal : system.realize [] = some .neuter := by decide
 
-    We verify this via the `satisfiesMRH` predicate from
-    the §0 resolution mechanism, instantiated with the geometry-derived bundles. -/
+/-- No neuter–feminine syncretism to the exclusion of masculine, for any vocabulary with one
+item per exponent over the Greek feature sets. -/
+theorem no_aba (v : List (VocabularyItem Node Gender)) (hinj : (v.map exponent).Nodup) {φ : Gender}
+    (hn : Realizes v (Neighborhood.ofBundle [.cls]) φ)
+    (hf : Realizes v (Neighborhood.ofBundle [.fem, .masc, .cls]) φ) :
+    Realizes v (Neighborhood.ofBundle [.masc, .cls]) φ :=
+  Realizes.of_realizes hinj (fun _ h => List.Subset.trans h (by decide))
+    (fun _ h => List.Subset.trans h (by decide)) hn hf
 
-/-- Greek satisfies MRH: all pairwise resolutions succeed. -/
-theorem greek_satisfies_mrh :
-    greekOrder.satisfiesMRH' = true := by decide
+end Greek
 
-/-- Icelandic satisfies MRH: all pairwise resolutions succeed.
-    Despite different outcomes (neuter for humans instead of masculine),
-    no resolution yields an empty intersection. -/
-theorem icelandic_satisfies_mrh :
-    icelandicOrder.satisfiesMRH' = true := by decide
+/-! ### Icelandic -/
 
-/-- Both satisfy MRH — this is the paper's "no default insertion"
-    claim: the difference between Greek and Icelandic is the
-    *content* of the intersection, not whether it exists. -/
-theorem both_satisfy_mrh :
-    greekOrder.satisfiesMRH' = true ∧ icelandicOrder.satisfiesMRH' = true := by
-  constructor <;> decide
+namespace Icelandic
 
--- ============================================================================
--- § 19: N-ary Coordination
--- ============================================================================
+open _root_.Icelandic.Gender
 
-/-! ### Three or more conjuncts
+/-- CLASS above independent MASC and FEM. -/
+def system : System where
+  geometry :=
+    { nodes := [.cls, .masc, .fem]
+      above
+        | .fem => [.fem, .cls]
+        | .masc => [.masc, .cls]
+        | .cls => [.cls]
+        | _ => [] }
+  iNode
+    | .man => .masc
+    | .woman => .fem
+    | _ => .cls
+  uNode g _ :=
+    match g with
+    | .masculine => .masc
+    | .feminine => .fem
+    | _ => .cls
+  vocabulary := threeWay
 
-    `resolveN` extends binary resolution to n-ary coordination via
-    iterated intersection. The predictions are the same: gender-matching
-    agreement emerges iff all conjuncts share a feature (after percolation). -/
+def inanimate (n : Noun) : Bundle Node := system.conceptual .thing ++ system.arbitrary n.gender
 
-/-- Greek: three human feminines → {CLASS,MASC,FEM}. -/
-theorem gk_ternary_uniform_fem :
-    resolveN [gkHF, gkHF, gkHF] = some [cls, masc, fem] := by decide
+theorem fem_not_entails_masc : ¬ system.geometry.Entails .fem .masc := by decide
 
-/-- Greek: three mismatched humans → {CLASS,MASC} (FEM eliminated).
-    FEM + MASC + FEM: FEM present in first and third but not second. -/
-theorem gk_ternary_human_mismatch :
-    resolveN [gkHF, gkHM, gkHF] = some [cls, masc] := by decide
+/-- *Maðurinn og konan eru þreytt*: only CLASS survives. -/
+theorem human_mismatch :
+    system.converted (system.conceptual .man) (system.conceptual .woman) = some .neuter := by
+  decide
 
-/-- Greek: three inanimates → {CLASS} → neuter. -/
-theorem gk_ternary_inanim :
-    resolveN [gkIF, gkIM, gkIN] = some [cls] := by decide
+/-- *Skáldið og Jón eru frægir*: the neuter *skáld* resolves masculine for a man. -/
+theorem poet_jon :
+    skald.gender = .neuter ∧
+      system.converted (system.conceptual .man) (system.conceptual .man) = some .masculine := by
+  decide
 
-/-- Icelandic: three mismatched humans → {CLASS} → neuter.
-    Because MASC and FEM are independent, any mismatch loses both. -/
-theorem is_ternary_human_mismatch :
-    resolveN [isHF, isHM, isHF] = some [cls] := by decide
+/-- *Frægð og frami eru tvíeggjuð*. -/
+theorem inanimate_mismatch :
+    system.converted (inanimate fraegd) (inanimate frami) = some .neuter ∧
+      system.formal (inanimate fraegd) (inanimate frami) = none := by
+  decide
 
-/-- BCS: three mismatched humans → {CLASS,INDIV,MASC,ANIM} → masculine.
-    INDIV guarantees masculine even with mismatched FEM. -/
-theorem bcs_ternary_human_mismatch :
-    resolveN [bcsHF, bcsHM, bcsHF]
-    = some [cls, indiv, masc, anim] := by decide
+end Icelandic
 
-/-- N-ary subsumes binary: resolveN [fs1, fs2] = resolve fs1 fs2. -/
-theorem nary_subsumes_binary_greek :
-    resolveN [gkHF, gkHM] = resolve gkHF gkHM := by
-  exact resolveN_binary gkHF gkHM
+/-! ### Bosnian/Croatian/Serbian -/
+
+namespace BCS
+
+open _root_.Serbian.Gender
+
+/-- CLASS > INDIV > {GRP, MASC > ANIM > FEM}. -/
+def system : System where
+  geometry :=
+    { nodes := [.cls, .indiv, .grp, .masc, .anim, .fem]
+      above
+        | .fem => [.fem, .anim, .masc, .indiv, .cls]
+        | .anim => [.anim, .masc, .indiv, .cls]
+        | .masc => [.masc, .indiv, .cls]
+        | .grp => [.grp, .indiv, .cls]
+        | .indiv => [.indiv, .cls]
+        | .cls => [.cls] }
+  iNode
+    | .man => .anim
+    | .woman => .fem
+    | .thing => .masc
+    | .mass => .cls
+  uNode g human :=
+    match g, human with
+    | .masculine, true => .anim
+    | .masculine, false => .masc
+    | .feminine, _ => .fem
+    | _, _ => .cls
+  vocabulary :=
+    [[.fem, .anim, .masc, .indiv] ⟷ .feminine, [.anim, .masc, .indiv] ⟷ .masculine,
+      [.indiv] ⟷ .masculine, [] ⟷ .neuter]
+
+/-- A plural coordination bears GRP, and with it INDIV. -/
+def group (vs : List Node) : List Node := vs ++ system.geometry.above .grp
+
+/-- Resolution of a plural coordination: conversion, then GRP, then realization. -/
+def coordinated (a b : Bundle Node) : Option Gender :=
+  (resolve a b).bind fun vs => system.realize (group vs)
+
+def inanimate (n : Noun) : Bundle Node :=
+  system.conceptual (if n.gender = .neuter then .mass else .thing) ++ system.arbitrary n.gender
+
+/-- *Muškarac i žena su sretni*. -/
+theorem human_mismatch :
+    coordinated (system.conceptual .man) (system.conceptual .woman) = some .masculine := by
+  decide
+
+/-- Uniform women still resolve feminine. -/
+theorem women :
+    coordinated (system.conceptual .woman) (system.conceptual .woman) = some .feminine := by
+  decide
+
+/-- *Znanje i intuicija su saradivali*: INDIV from the coordination's GRP realizes masculine. -/
+theorem inanimate_mismatch :
+    coordinated (inanimate znanje) (inanimate intuicija) = some .masculine := by
+  decide
+
+/-- *Naše selo i celo jedno brdo su izgoreli*: two neuters resolve masculine. -/
+theorem neuter_pair : coordinated (inanimate selo) (inanimate brdo) = some .masculine := by decide
+
+/-- Neuter alone is mass: without GRP it stays neuter. -/
+theorem neuter_mass : system.realize (system.geometry.above .cls) = some .neuter := by decide
+
+end BCS
+
+/-! ### The geometries -/
+
+/-- All three geometries satisfy mismatch resolution: no pair of nodes needs a default. -/
+theorem mismatchResolution :
+    Greek.system.geometry.MismatchResolution ∧ Icelandic.system.geometry.MismatchResolution ∧
+      BCS.system.geometry.MismatchResolution := by
+  decide
+
+/-- Table 2: the resolution of mismatched humans and mismatched inanimates in the three
+languages. -/
+theorem table2 :
+    Greek.system.converted (Greek.system.conceptual .man) (Greek.system.conceptual .woman) =
+        some .masculine ∧
+      Greek.system.converted (Greek.system.conceptual .thing) (Greek.system.conceptual .thing) =
+        some .neuter ∧
+      Icelandic.system.converted (Icelandic.system.conceptual .man)
+        (Icelandic.system.conceptual .woman) = some .neuter ∧
+      Icelandic.system.converted (Icelandic.system.conceptual .thing)
+        (Icelandic.system.conceptual .thing) = some .neuter ∧
+      BCS.coordinated (BCS.system.conceptual .man) (BCS.system.conceptual .woman) =
+        some .masculine ∧
+      BCS.coordinated (BCS.system.conceptual .thing) (BCS.system.conceptual .thing) =
+        some .masculine := by
+  decide
 
 end AdamsonAnagnostopoulou2025

@@ -1,0 +1,674 @@
+[
+  {
+    "id": "adamsonanagnostopoulou2025_22a",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(22a)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "O andras ke i gineka ine eksipni.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The man and the woman are intelligent.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "O andras ke i gineka ine eksipna.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "human M + human F"],
+      ["resolved", "M"]
+    ],
+    "comment": "Mismatched humans resolve masculine plural.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_22b",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(22b)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "O pinakas ke i karekla ine vromika.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The blackboard and the chair are dirty.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "O pinakas ke i karekla ine vromiki.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "inanimate M + inanimate F"],
+      ["resolved", "N"]
+    ],
+    "comment": "Mismatched inanimates resolve neuter plural.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_25a",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(25a)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "I Maria ke i Giota ine eksipnes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Maria and Giota are intelligent.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "human F + human F"],
+      ["resolved", "F"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_25b",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(25b)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "O Petros ke o Kostas ine eksipni.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Petros and Kostas are intelligent.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "human M + human M"],
+      ["resolved", "M"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_35",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(35)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "I gineka ke to koritsi ine eksipnes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The woman and the girl are intelligent.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I gineka ke to koritsi ine eksipni.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "human F + fixed-gender N (female)"],
+      ["resolved", "F"]
+    ],
+    "comment": "Anagnostopoulou 2017:26; the neuter koritsi resolves by its referent.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_36",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(36)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "I megalofiia ke i adherfi tu ine charumeni.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The genius and his sister are happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I megalofiia ke i adherfi tu ine charumenes.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "fixed-gender F (male) + human F"],
+      ["resolved", "M"]
+    ],
+    "comment": "Two grammatically feminine conjuncts resolve masculine because the genius is a man.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_37",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(37)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "To thima ke i mitera tis ine charumenes pu kerdhisan.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The victim and her mother are happy that they won.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "To thima ke i mitera tis ine charumeni pu kerdhisan.", "judgment": "ungrammatical"},
+      {"form": "To thima ke i mitera tis ine charumena pu kerdhisan.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "fixed-gender N (female) + human F"],
+      ["resolved", "F"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_38a",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(38a)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "I fusta ke i bluza ine vromikes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The skirt and the T-shirt are dirty.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "inanimate F + inanimate F"],
+      ["resolved", "F"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_38b",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(38b)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "O anaptiras ke o fakos ine vromiki.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The lighter and the torch are dirty.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "inanimate M + inanimate M"],
+      ["resolved", "M"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_38c",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(38c)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "To piruni ke to kutali ine vromika.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The fork and the spoon are dirty.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "inanimate N + inanimate N"],
+      ["resolved", "N"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_40b",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(40b)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "To scholio ke i ekklisia ine vromika.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The school and the church are dirty.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "To scholio ke i ekklisia ine vromiki.", "judgment": "ungrammatical"},
+      {"form": "To scholio ke i ekklisia ine vromikes.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "inanimate N + inanimate F"],
+      ["resolved", "N"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_40c",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(40c)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "To balkoni ke o dhiadhromos ine vromika.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The balcony and the corridor are dirty.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "To balkoni ke o dhiadhromos ine vromiki.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "inanimate N + inanimate M"],
+      ["resolved", "N"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_43",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(43)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "I fusta ke i bluza ine vromika.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The skirt and the T-shirt are dirty.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "inanimate F + inanimate F"],
+      ["resolved", "N"]
+    ],
+    "comment": "Accepted by some speakers: uniform inanimates percolating interpretable CLASS.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_45",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(45)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Ksafnika egine aorati i megalofiia ke o filos tu.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The genius and his friend became invisible.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [
+      {"form": "Ksafnika egine aoratos i megalofiia ke o filos tu.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["agreement", "closest conjunct"],
+      ["value", "uF"]
+    ],
+    "comment": "Closest conjunct agreement takes the uninterpretable feminine of megalofiia, not its interpretable masculine.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_46",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(46)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Ine vromikos o pinakas ke i karekla.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The blackboard and the chair are dirty.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ine vromiko o pinakas ke i karekla.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["agreement", "closest conjunct"],
+      ["value", "uF"]
+    ],
+    "comment": "Closest conjunct agreement takes the inanimate's uninterpretable masculine, not its interpretable CLASS.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_47",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(47)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "O kleftis ke to daxtilidi ine afanti.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The thief and the ring are gone.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "O kleftis ke to daxtilidi ine afanta.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "human M + inanimate N"],
+      ["resolved", "ineffable"]
+    ],
+    "comment": "Ineffable: no exponent realizes the thief's MASC and the ring's CLASS together.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_48b",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(48b)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "O kleftis ke to daxtilidi eksafanistikan.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The thief and the ring disappeared.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "human M + inanimate N"],
+      ["agreement", "verb, no gender"]
+    ],
+    "comment": "Grammatical when nothing agrees in gender with the coordination.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_50",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(50)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "O Giorgos ke to pukamiso tu ine sexy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Giorgos and his shirt are sexy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "O Giorgos ke to pukamiso tu ine elkistiki.", "judgment": "ungrammatical"},
+      {"form": "O Giorgos ke to pukamiso tu ine elkistikes.", "judgment": "ungrammatical"},
+      {"form": "O Giorgos ke to pukamiso tu ine elkistika.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "human M + inanimate N"],
+      ["predicate", "uninflected"]
+    ],
+    "comment": "An uninflected loanword adjective escapes the PF clash.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_54a",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(54a)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "O kleftis ke o pinakas ine afanti.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The thief and the painting are gone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "human M + inanimate M"],
+      ["resolved", "M"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_54b",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(54b)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "I gineka ke i ombrela ine afantes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The woman and the umbrella are gone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "human F + inanimate F"],
+      ["resolved", "F"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_56",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(56)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "I megalofiia ke o pinakas tu ine afanti.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The genius and his painting are gone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I megalofiia ke o pinakas tu ine afantes.", "judgment": "ungrammatical"},
+      {"form": "I megalofiia ke o pinakas tu ine afanta.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "fixed-gender F (male) + inanimate M"],
+      ["resolved", "M"]
+    ],
+    "comment": "The genius's interpretable MASC matches the painting's uninterpretable MASC.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_57a",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(57a)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "To thima ke o pinakas tu ine afanti.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The victim and his painting are gone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "To thima ke o pinakas tu ine afantes.", "judgment": "ungrammatical"},
+      {"form": "To thima ke o pinakas tu ine afanta.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "fixed-gender N (male) + inanimate M"],
+      ["resolved", "M"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_57b",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(57b)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "To thima ke i fotografia tis ine afantes.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The victim and her picture are gone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "To thima ke i fotografia tis ine afanti.", "judgment": "ungrammatical"},
+      {"form": "To thima ke i fotografia tis ine afanta.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "fixed-gender N (female) + inanimate F"],
+      ["resolved", "F"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_58",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(58)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Oti tha vreksi ke oti tha chionisi ine to idhio pithana.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "That it will rain and that it will snow are equally possible.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "clause + clause"],
+      ["resolved", "N"]
+    ],
+    "comment": "Clausal conjuncts carry no gender; the predicate is neuter.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_59",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(59)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Frægð og frami eru tvíeggjuð.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Fame and success are double-edged.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "inanimate F + inanimate M"],
+      ["resolved", "N"]
+    ],
+    "comment": "Thorvaldsdóttir 2019:2.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_60",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(60)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Maðurinn og konan eru þreytt.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The man and the woman are tired.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Maðurinn og konan eru þreyttir.", "judgment": "ungrammatical"},
+      {"form": "Maðurinn og konan eru þreyttar.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "human M + human F"],
+      ["resolved", "N"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_61",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(61)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Skáldið og Jón eru frægir.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The poet (a man) and Jón are famous.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Skáldið og Jón eru fræg.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "fixed-gender N (male) + human M"],
+      ["resolved", "M"]
+    ],
+    "comment": "Wechsler 2008:573; the neuter skáld resolves by its referent.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_68",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(68)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Muškarac i žena su sretni.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The man and the woman are happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "human M + human F"],
+      ["resolved", "M"]
+    ],
+    "comment": "Motschenbacher and Weikert 2015:75.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_69",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(69)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Znanje i intuicija su kod njega saradivali.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Knowledge and intuition have worked together in him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "inanimate N + inanimate F"],
+      ["resolved", "M"]
+    ],
+    "comment": "Corbett 1983:187.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adamsonanagnostopoulou2025_70",
+    "source": {"bibkey": "adamson-anagnostopoulou-2025", "paperLabel": "(70)"},
+    "reportedIn": null,
+    "language": "serb1264",
+    "primaryText": "Naše selo i celo jedno brdo su izgoreli.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Our village and one whole hill were burned in the fire.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Naše selo i celo jedno brdo su izgorela.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["conjuncts", "inanimate N + inanimate N"],
+      ["resolved", "M"]
+    ],
+    "comment": "Despić 2016:3; two neuters resolve masculine.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
