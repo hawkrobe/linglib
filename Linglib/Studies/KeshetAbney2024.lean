@@ -131,7 +131,7 @@ inductive Modal
 
 /-- A modal applied to its base and its prejacent. -/
 def Modal.apply : Modal → Tm → Tm → Fm
-  | .might, β, ψ => .some_ β ψ
+  | .might, β, ψ => Formula.some_ β ψ
   | .must, β, ψ => .subset β ψ
 
 /-- `cont_w(Σbφ | single(Σbφ))`: the continuation (82b), with the summation pronoun
@@ -156,28 +156,30 @@ def plain : Fm := .conj descE (.atom .cont (.var .w) ![.presup (.var .b) (.sg (.
 /-- (95): "Either there's no bathroom in this house or it's in a funny place.",
 `(¬∃bX ∨ cont_w(ΣbX | single(ΣbX))) ∧ X ≡ desc_w([b]) ∧ single(b)`. -/
 def bathroom : Fm :=
-  .conj (.disj (.neg (.exists_ .b (.label .X))) (continuation (.label .X))) (.labelDef .X descE)
+  .conj (Formula.disj (.neg (.exists_ .b (.label .X))) (continuation (.label .X)))
+    (.labelDef .X descE)
 
 /-! ### Label expansion -/
 
 theorem expandSelf_discourseMight : discourseMight.expandSelf = discourse .might descE := by
   rw [Formula.expandSelf, show discourseMight.defs = [(.E, descE)] from rfl, Formula.expand]
   simp only [List.foldl_cons, List.foldl_nil, discourseMight, discourse, Modal.apply, Formula.some_,
-    continuation, Term.sgPronoun, descE, access, base, Formula.substLabels, Term.substLabels,
+    continuation, Term.sgPronoun, descE, access, base, Expr.substLabels, Expr.substLabels,
     assignment, Matrix.comp_vecCons, Matrix.comp_vecEmpty, reduceIte, Option.getD_some]
 
 theorem expandSelf_discourseMust : discourseMust.expandSelf = discourse .must descE := by
   rw [Formula.expandSelf, show discourseMust.defs = [(.E, descE)] from rfl, Formula.expand]
   simp only [List.foldl_cons, List.foldl_nil, discourseMust, discourse, Modal.apply,
-    continuation, Term.sgPronoun, descE, access, base, Formula.substLabels, Term.substLabels,
+    continuation, Term.sgPronoun, descE, access, base, Expr.substLabels, Expr.substLabels,
     assignment, Matrix.comp_vecCons, Matrix.comp_vecEmpty, reduceIte, Option.getD_some]
 
 theorem expandSelf_bathroom :
     bathroom.expandSelf =
-      .conj (.disj (.neg (.exists_ .b descE)) (continuation descE)) (.labelDef .X descE) := by
+      .conj (Formula.disj (.neg (.exists_ .b descE)) (continuation descE))
+        (.labelDef .X descE) := by
   rw [Formula.expandSelf, show bathroom.defs = [(.X, descE)] from rfl, Formula.expand]
   simp only [List.foldl_cons, List.foldl_nil, bathroom, Formula.disj, continuation, Term.sgPronoun,
-    descE, Formula.substLabels, Term.substLabels, assignment, Matrix.comp_vecCons,
+    descE, Expr.substLabels, Expr.substLabels, assignment, Matrix.comp_vecCons,
     Matrix.comp_vecEmpty, reduceIte, Option.getD_some]
 
 /-! ### Values and felicity at a world of evaluation -/
@@ -187,10 +189,10 @@ variable (S : Scenario W E) (h : Var → Set (Atom W E)) {w₀ : W}
 theorem locals_descE : descE.locals = [.b] := rfl
 
 theorem felicitous_descE : descE.Felicitous S.model h :=
-  Formula.felicitous_of_presupFree _ _ _ (by decide)
+  Expr.felicitous_of_presupFree _ _ (by decide) _
 
 theorem felicitous_access : access.Felicitous S.model h :=
-  Formula.felicitous_of_presupFree _ _ _ (by decide)
+  Expr.felicitous_of_presupFree _ _ (by decide) _
 
 theorem realize_descE :
     descE.Realize S.model h ↔ ∃ w e, h .w = world w ∧ h .b = {Sum.inr e} ∧ S.desc w e := by
@@ -207,7 +209,7 @@ theorem realize_descE :
 
 /-- `ΣbE` at `w₀`: the satisfiers of the description there. -/
 theorem realize_sigmaB_descE (hw : h .w = world w₀) :
-    (Term.sigma .b descE).realize S.model h = {a | ∃ e, a = Sum.inr e ∧ S.desc w₀ e} := by
+    Term.realize S.model h (.sigma .b descE) = {a | ∃ e, a = Sum.inr e ∧ S.desc w₀ e} := by
   ext a
   rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
   simp only [realize_descE]
@@ -224,7 +226,7 @@ theorem realize_sigmaB_descE (hw : h .w = world w₀) :
 
 /-- `ΣwE`: the worlds with a satisfier of the description. -/
 theorem realize_sigmaW_descE :
-    (Term.sigma .w descE).realize S.model h = {a | ∃ w e, a = Sum.inl w ∧ S.desc w e} := by
+    Term.realize S.model h (.sigma .w descE) = {a | ∃ w e, a = Sum.inl w ∧ S.desc w e} := by
   ext a
   rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
   simp only [realize_descE]
@@ -334,11 +336,11 @@ the assertion `single(b)` satisfying the pronoun's presupposition. -/
 theorem felicitous_plain : plain.Felicitous S.model h :=
   ⟨felicitous_descE S h, fun hd => ⟨trivial, Fin.forall_fin_one.2 ⟨trivial, trivial, hd.2⟩⟩⟩
 
-theorem felicitous_exists_descE : (Formula.exists_ .b descE).Felicitous S.model h :=
+theorem felicitous_exists_descE : (Expr.exists_ .b descE).Felicitous S.model h :=
   fun g' _ => felicitous_descE S g'
 
 theorem realize_exists_descE (hw : h .w = world w₀) :
-    (Formula.exists_ .b descE).Realize S.model h ↔ ∃ e, S.desc w₀ e := by
+    Formula.Realize S.model h (.exists_ .b descE) ↔ ∃ e, S.desc w₀ e := by
   rw [Formula.realize_exists]
   simp only [realize_descE]
   constructor
