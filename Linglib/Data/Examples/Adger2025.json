@@ -1,0 +1,1102 @@
+[
+  {
+    "id": "adger2025_ch433",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 4 (33)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We asked who Anson wrote the book.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "configuration",
+        "lowering"
+      ],
+      [
+        "mover",
+        "who"
+      ],
+      [
+        "target",
+        "embedded C"
+      ]
+    ],
+    "comment": "A wh-expression subjoined downward to the embedded C from the applied-argument position of ask.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch436a",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 4 (36a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Whose nostril did the doctor look very far into?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "configuration",
+        "subextraction from PP"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch436b",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 4 (36b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How far did the doctor look into your nostril?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "configuration",
+        "subextraction from PP"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch437a",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 4 (37a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which cat did you say fell into the pond?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "configuration",
+        "extraction from clausal complement"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch437b",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 4 (37b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which poem did you say that Anson wrote?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "configuration",
+        "extraction from clausal complement"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch443",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 4 (43)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "(Guess) who you said fell?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "configuration",
+        "successive-cyclic extraction"
+      ],
+      [
+        "mover",
+        "who"
+      ],
+      [
+        "intermediate",
+        "embedded C[uWh]"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch448a",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 4 (48a)"
+    },
+    "reportedIn": null,
+    "language": "scot1245",
+    "primaryText": "Thuirt Daibhidh gum buail Calum an cat.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "David said Calum will hit the cat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "gum"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch448b",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 4 (48b)"
+    },
+    "reportedIn": null,
+    "language": "scot1245",
+    "primaryText": "An cat a thuirt Daibhidh a bhuaileas Calum.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The cat that David said Calum will hit.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "a (relative) at both clauses"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch448c",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 4 (48c)"
+    },
+    "reportedIn": null,
+    "language": "scot1245",
+    "primaryText": "An cat a thuirt Daibhidh gum buail Calum.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The cat that David said Calum will hit.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "complementizer",
+        "gum in the extraction path"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch454",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 4 (54)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Who left did you say?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "configuration",
+        "clausal pied-piping"
+      ]
+    ],
+    "comment": "Intended as clausal pied-piping of the embedded question, available in Basque but not English.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch630",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (30)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which display table do booksellers usually recommend a book on?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "locative PP as matching relative"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch631",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (31)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Who did you buy a statue of?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "indefinite"
+      ],
+      [
+        "D 2-part",
+        "free"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch634",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (34)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Who did you buy the statue of?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "D 2-part",
+        "Det"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch635a",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (35a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Who did you buy that statue of?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "demonstrative"
+      ],
+      [
+        "D 2-part",
+        "Dem"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch635b",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (35b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Who did you buy Anson's statue of?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "prenominal possessor"
+      ],
+      [
+        "D 2-part",
+        "possessor"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch635c",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (35c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Who did you buy a statue of of Anson's?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "postnominal possessive"
+      ],
+      [
+        "D 2-part",
+        "free"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch636a",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (36a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Of whom did you buy a statue?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "indefinite"
+      ],
+      [
+        "pied-piping",
+        "of"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch636b",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (36b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Of whom did you buy the statue?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ],
+      [
+        "pied-piping",
+        "of"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch636c",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (36c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Of whom did you buy that statue?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "demonstrative"
+      ],
+      [
+        "pied-piping",
+        "of"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch636d",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (36d)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Of whom did you buy Anson's statue?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "prenominal possessor"
+      ],
+      [
+        "pied-piping",
+        "of"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch640a",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (40a)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Worüber hat der Fritz ein Buch gelesen?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "What has Fritz read a book about?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "indefinite"
+      ]
+    ],
+    "comment": "From Müller et al. 2022.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch640b",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (40b)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Worüber hat der Fritz das Buch gelesen?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "What has Fritz read the book about?",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "definite"
+      ]
+    ],
+    "comment": "Marked ?*.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch640c",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (40c)"
+    },
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Worüber hat die Maria Fritzens Buch gelesen?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "What has Maria read Fritz's book about?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "prenominal possessor"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch641a",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (41a)"
+    },
+    "reportedIn": null,
+    "language": "west2369",
+    "primaryText": "Kimea diruz ye she'r az ki xund?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Who did Kimea read a poem by?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "indefinite"
+      ],
+      [
+        "wh",
+        "in situ, matrix scope"
+      ]
+    ],
+    "comment": "From Karimi 1999.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch641b",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (41b)"
+    },
+    "reportedIn": null,
+    "language": "west2369",
+    "primaryText": "Kimea in she'r az ki ro xund?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Who did Kimea read this poem by?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "demonstrative"
+      ],
+      [
+        "wh",
+        "in situ, matrix scope"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch642a",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (42a)"
+    },
+    "reportedIn": null,
+    "language": "mand1415",
+    "primaryText": "Ni faxian-le shei-de diaoxiang?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Who did you find a statue of?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "indefinite"
+      ],
+      [
+        "wh",
+        "in situ, matrix scope"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch642b",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (42b)"
+    },
+    "reportedIn": null,
+    "language": "mand1415",
+    "primaryText": "Ni faxian-le na-ge shei-de diaoxiang?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You found that statue of who?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "demonstrative"
+      ],
+      [
+        "wh",
+        "in situ, echo question only"
+      ]
+    ],
+    "comment": "Only the echo-question reading; no matrix-scope information question.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch643a",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (43a)"
+    },
+    "reportedIn": null,
+    "language": "mand1415",
+    "primaryText": "Shei mai-de shu zui hao?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The book that who bought is best?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "indefinite relative"
+      ],
+      [
+        "wh",
+        "in situ, matrix scope"
+      ]
+    ],
+    "comment": "From Huang 1982.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch643b",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (43b)"
+    },
+    "reportedIn": null,
+    "language": "mand1415",
+    "primaryText": "Shei mai-de nei ben shu zui hao?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "That book that who bought is best?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "demonstrative relative"
+      ],
+      [
+        "wh",
+        "in situ, matrix scope"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch644a",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (44a)"
+    },
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "John-wa dare-ga kaita hon-o yonda no?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John read a book that who wrote?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "indefinite relative"
+      ],
+      [
+        "wh",
+        "in situ, matrix scope"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch644b",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 6 (44b)"
+    },
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "John-wa dare-ga kaita sono hon-o yonda no?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John read that book that who wrote?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nominal",
+        "demonstrative relative"
+      ],
+      [
+        "wh",
+        "in situ, matrix scope"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch759a",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 7 (59a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "What were pictures of seen around the globe?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "subject",
+        "indefinite or weak definite"
+      ],
+      [
+        "D 2-part",
+        "free"
+      ]
+    ],
+    "comment": "Subextraction from a subject, collected by Chaves 2021.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch759b",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 7 (59b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's the kind of policy statement that jokes about are a dime a dozen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "subject",
+        "indefinite or weak definite"
+      ],
+      [
+        "D 2-part",
+        "free"
+      ]
+    ],
+    "comment": "Subextraction from a subject, collected by Chaves 2021.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch759c",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 7 (59c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "There are certain topics that jokes about are completely unacceptable.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "subject",
+        "indefinite or weak definite"
+      ],
+      [
+        "D 2-part",
+        "free"
+      ]
+    ],
+    "comment": "Subextraction from a subject, collected by Chaves 2021.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch759d",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 7 (59d)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which car did some pictures of cause a scandal?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "subject",
+        "indefinite or weak definite"
+      ],
+      [
+        "D 2-part",
+        "free"
+      ]
+    ],
+    "comment": "Subextraction from a subject, collected by Chaves 2021.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch759e",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 7 (59e)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "What did the attempt to find end in failure?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "subject",
+        "indefinite or weak definite"
+      ],
+      [
+        "D 2-part",
+        "free"
+      ]
+    ],
+    "comment": "Subextraction from a subject, collected by Chaves 2021.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch759f",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 7 (59f)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which president would the impeachment of cause more outrage?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "subject",
+        "indefinite or weak definite"
+      ],
+      [
+        "D 2-part",
+        "free"
+      ]
+    ],
+    "comment": "Subextraction from a subject, collected by Chaves 2021.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "adger2025_ch759g",
+    "source": {
+      "bibkey": "adger-2025",
+      "paperLabel": "ch. 7 (59g)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I have a question that the probability of you knowing the answer to is zero.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "subject",
+        "indefinite or weak definite"
+      ],
+      [
+        "D 2-part",
+        "free"
+      ]
+    ],
+    "comment": "Subextraction from a subject, collected by Chaves 2021.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]

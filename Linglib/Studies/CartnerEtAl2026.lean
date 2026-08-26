@@ -1,5 +1,4 @@
 import Linglib.Studies.Ross1967
-import Linglib.Studies.Adger2025
 import Linglib.Features.Givenness
 import Linglib.Semantics.Focus.Marking
 import Linglib.Semantics.Focus.ExtractionClash
@@ -513,33 +512,5 @@ theorem argument_chain :
   · native_decide
   · native_decide
   · native_decide
-
--- ============================================================================
--- §X. Cross-framework convergence with [adger-2025]
--- ============================================================================
-
-/-! Cartner et al.'s super-additive design (cross-constructional invariance
-of subject-island costs) and Adger's Angular Locality (graph-theoretic
-cross-dimensional path failure) reach the same `IslandSource.syntactic`
-verdict for subject islands from incompatible foundations:
-
-- **Cartner et al.**: `subjectIslandSource = .syntactic` because the
-  invariance pattern is what an abstract syntactic constraint on movement
-  would predict (and what a constructional-IS account would falsify).
-- **Adger AL**: `Adger2025.adgerSubjectIslandSource = .syntactic` because
-  sub-extraction from within `g_subject_island` traverses a cross-
-  dimensional path (`SynGraph.subject_island_blocks`).
-
-Convergence by `rfl` — both files independently classify subject-island
-sources as syntactic; the agreement is type-level. The mechanisms remain
-incompatible (graph-theoretic parthood across dimensions vs construction-
-invariance over filler-gap dependencies); the convergent verdict is what
-makes the agreement informative. -/
-
-/-- **Convergence with [adger-2025]**: both Cartner et al. (cross-
-    constructional invariance) and Adger AL (cross-dimensional path
-    failure) classify subject-island sources as syntactic. -/
-theorem subject_island_source_converges_with_adger :
-    subjectIslandSource = Adger2025.adgerSubjectIslandSource := rfl
 
 end CartnerEtAl2026
