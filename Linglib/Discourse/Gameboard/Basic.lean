@@ -80,7 +80,7 @@ def DGB.addFact {P Fact QContent : Type*} {Cont : Type}
 
 /-- Record a move in the DGB's MOVES list. -/
 def DGB.recordMove {P Fact QContent : Type*} {Cont : Type}
-    (dgb : DGB P Fact QContent Cont) (m : IllocMove Fact QContent) :
+    (dgb : DGB P Fact QContent Cont) (m : LocProp Cont) :
     DGB P Fact QContent Cont :=
   { dgb with moves := dgb.moves ++ [m] }
 
