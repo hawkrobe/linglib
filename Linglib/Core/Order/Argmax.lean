@@ -64,6 +64,40 @@ theorem argmin_nonempty (hs : s.Nonempty) : (s.argmin f).Nonempty := by
 theorem argmin_eq_argmax_toDual : s.argmin f = s.argmax (OrderDual.toDual ∘ f) :=
   rfl
 
+/-- Scores that order `s` the same way have the same argmax. -/
+theorem argmax_congr {f' : α → γ} (h : ∀ a ∈ s, ∀ b ∈ s, f a ≤ f b ↔ f' a ≤ f' b) :
+    s.argmax f = s.argmax f' := by
+  ext a; simp only [mem_argmax]
+  exact and_congr_right λ ha => forall₂_congr λ b hb => h b hb a ha
+
+/-- Scores that order `s` oppositely swap argmin and argmax. -/
+theorem argmin_eq_argmax_of_le_iff {f' : α → γ}
+    (h : ∀ a ∈ s, ∀ b ∈ s, f a ≤ f b ↔ f' b ≤ f' a) : s.argmin f = s.argmax f' := by
+  ext a; simp only [mem_argmin, mem_argmax]
+  exact and_congr_right λ ha => forall₂_congr λ b hb => h a ha b hb
+
+/-- A score that is constant on `s` has all of `s` as argmax. -/
+theorem argmax_eq_self_of_forall_le (h : ∀ a ∈ s, ∀ b ∈ s, f b ≤ f a) : s.argmax f = s :=
+  filter_true_of_mem h
+
+/-- The argmax of a score that is positive on a nonempty `t ⊆ s` and zero on
+the rest of `s` is the argmax over `t`. -/
+theorem argmax_eq_argmax_of_support [Zero β] {t : Finset α} (hts : t ⊆ s) (hne : t.Nonempty)
+    (hpos : ∀ a ∈ t, 0 < f a) (hzero : ∀ a ∈ s, a ∉ t → f a = 0) : s.argmax f = t.argmax f := by
+  obtain ⟨a₀, ha₀⟩ := hne
+  ext a; simp only [mem_argmax]
+  constructor
+  · rintro ⟨ha, hmax⟩
+    have hat : a ∈ t := by
+      by_contra hat
+      exact absurd (hmax a₀ (hts ha₀)) (not_le.mpr ((hzero a ha hat).symm ▸ hpos a₀ ha₀))
+    exact ⟨hat, λ b hb => hmax b (hts hb)⟩
+  · rintro ⟨hat, hmax⟩
+    refine ⟨hts hat, λ b hb => ?_⟩
+    by_cases hbt : b ∈ t
+    · exact hmax b hbt
+    · exact (hzero b hb hbt).symm ▸ (hpos a hat).le
+
 /-- The argmax set is invariant under strictly monotone rescaling of the
 score — inverse-temperature changes do not move the argmax. -/
 theorem argmax_comp_strictMono {g : β → γ} (hg : StrictMono g) :
