@@ -1,3 +1,4 @@
+import Linglib.Core.Probability.Uniform
 import Linglib.Pragmatics.SignalingGame.Basic
 
 /-!
@@ -65,8 +66,11 @@ theorem mem_trueStates {m : M} {t : T} : t ∈ G.trueStates m ↔ G.meaning m t 
 /-- The literal listener: uniform over the extension of the message — the
 level-0 receiver of [franke-2011] (eq. (73)) in its Bayesian heavy-system
 rendering. -/
-def literal (m : M) (t : T) : ℚ :=
-  if G.meaning m t then ((G.trueStates m).card : ℚ)⁻¹ else 0
+def literal [DecidableEq T] (m : M) : T → ℚ := (G.trueStates m).uniform
+
+theorem literal_apply [DecidableEq T] (m : M) (t : T) :
+    G.literal m t = if G.meaning m t then ((G.trueStates m).card : ℚ)⁻¹ else 0 := by
+  simp only [literal, Finset.uniform_apply, mem_trueStates]
 
 end Extension
 
