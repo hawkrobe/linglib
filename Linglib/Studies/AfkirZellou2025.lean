@@ -1,478 +1,130 @@
-import Linglib.Core.Optimization.System
-import Mathlib.Tactic.NormNum
-import Linglib.Core.Optimization.Decoder
-import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Phonology.Segmental.Basic
 import Linglib.Fragments.Tarifit.Inventory
+import Linglib.Data.Examples.AfkirZellou2025
 
 /-!
-# Afkir & Zellou (2025): The Phonetics of Tarifit
-[afkir-zellou-2025]
+# Schwa variation in Tarifit CCəC words
 
-*The Phonetics of Tarifit: Variation and Change in a Moroccan Amazigh
-Language.* Cambridge Elements in Phonetics.
+Tarifit triconsonantal verbs in the simple imperative carry a prosodic-template schwa between
+the second and third root consonants, and Afkir and Zellou find two further phonetic variants:
+a shorter, coarticulating intrusive schwa inside the initial cluster ([Cə̆CəC], about a quarter of
+productions), and vowelless forms ([CCC], about five percent), neither of them sensitive to
+speaking style. The two schwas are independent processes, the template schwa a targeted segment
+whose deletion shortens the word and the intrusive schwa a targetless vocoid. Their distribution
+over the thirty-eight target words is tabulated by word, and this file states those tables'
+generalizations over the pooled rows, with each word's sonority profile computed from the
+fragment's consonant classes (`word?`, `intrusion?`, `vowelless?`).
 
-## Key empirical findings
+Two hypotheses about the intrusive schwa are set against each other: repair, on which
+insertion should be most frequent in the dispreferred falling-sonority clusters, and the
+syllable-planning account of Georgian, on which a vocoid is tolerated only where it boosts the
+planned sonority peak, hence in rising clusters. The data side with the second: every rising
+cluster shows intrusion at least variably unless its second consonant is voiceless
+(`intrusion_of_rising`), the words that never or rarely show intrusion are non-rising or have a
+voiceless second consonant (`nonRising_or_voiceless_of_never_rarely`), and the paper's three
+flagged exceptions are the only non-rising words with a voiceless second consonant that vary
+(`variably_exceptions`). The near-categorical class is exactly the words with medial /r/
+(`almostExclusively_iff_c2_r`); it is not the rising class, since on the paper's scale the
+pharyngeal outranks the tap and /ʕrəm/ falls.
+Vowellessness tracks low sonority: the often-vowelless words have voiceless second and third
+consonants, except the flagged /ħkəm/ (`voiceless_of_often_vowelless`), and the never-vowelless
+words all carry a voiced consonant there (`voiced_of_never_vowelless`). The regression
+estimates, the acoustic measurements, and the perception result that an intrusive vowel aids
+discrimination only in falling clusters are reported in the paper without a formal counterpart
+here.
 
-1. **Two independent schwa processes**: prosodic template schwa (C2əC3,
-   morphological) vs intrusive schwa (C1ǎC2, articulatory). They differ
-   in phonetic quality, duration, and conditioning environment.
+## References
 
-2. **Sonority-conditioned variation**: the C1–C2 sonority profile
-   determines whether intrusive schwa is likely:
-   - **Rising** sonority (C1 < C2): intrusive schwa is almost exclusively
-     present (>90% of productions for words with /r/ as C2)
-   - **Falling/plateauing** (C1 ≥ C2): intrusive schwa is never or rarely
-     present
-
-3. **Gradient vowelless production**: ~5% of tokens surface without any
-   schwa (CCC). This is more accessible for words with low C2/C3
-   sonority (voiceless obstruents).
-
-4. **Sonority granularity matters**: the 8-level Parker scale — splitting
-   obstruents by voicing — correctly predicts the gradient pattern, while
-   the coarser 6-level Clements scale collapses critical contrasts.
-
-5. **Perception**: intrusive schwa boosts auditory discrimination of
-   minimal pairs only for falling-sonority clusters (§5.3.1, Figure 28),
-   consistent with *SONO-PEAK: intrusive schwa in falling onsets creates
-   a new sonority peak that alters perceived syllable structure.
-
-## Formal reconstruction
-
-**Note**: the paper uses mixed effects logistic regression for its
-statistical analyses, not OT or Harmonic Grammar. The MaxEnt model
-below is our own formal reconstruction of the paper's empirical
-generalizations, designed to make the sonority-conditioned predictions
-verifiable by `norm_num` over the rational weighted sums. The five constraints and their weights
-are chosen to capture the paper's main findings about rising/falling/
-plateauing onset clusters and gradient vowelless accessibility.
-
-**Limitation**: the model correctly predicts whether faithful or intrusive
-wins for each sonority profile, and correctly ranks words by *relative*
-vowelless accessibility. However, it overpenalizes vowelless for words
-with high-sonority C3 (e.g. /ħkəm/, /sχəf/), predicting intrusive >
-vowelless when empirically vowelless > intrusive for those items. The
-paper notes these as partly idiosyncratic (Table 7).
+* [afkir-zellou-2025]
+* [parker-2002]
+* [hall-2006]
 -/
 
 namespace AfkirZellou2025
 
-open Core.Optimization Constraints OptimalityTheory
-open Phonology
-open Tarifit.Inventory
-open Core.Optimization Constraints OptimalityTheory
+open Tarifit Data.Examples
 
--- ============================================================================
--- § 1: Surface Forms and Candidates
--- ============================================================================
-
-/-- The three possible surface realizations of a CCəC word. -/
-inductive SurfaceForm where
-  /-- CCəC: template schwa preserved, no intrusive schwa. -/
-  | faithful
-  /-- CǎCəC: intrusive schwa inserted between C1 and C2. -/
-  | intrusive
-  /-- CCC: vowelless — no schwa at all. -/
-  | vowelless
+/-- Rate of the intrusive C1ə̆C2 schwa across a word's productions. -/
+inductive Intrusion
+  | never
+  | rarely
+  | variably
+  | almostExclusively
   deriving DecidableEq, Repr
 
-/-- A candidate pairs a word's consonant profile with a surface form. -/
-structure TarifitCandidate where
-  c1 : Sonority.Class
-  c2 : Sonority.Class
-  c3 : Sonority.Class
-  surface : SurfaceForm
+/-- Rate of vowelless production of a word. -/
+inductive Vowelless
+  | never
+  | rarely
+  | often
   deriving DecidableEq, Repr
 
-/-- Build a candidate from a word and surface form. -/
-def mkCandidate (w : TriconWord) (sf : SurfaceForm) : TarifitCandidate :=
-  { c1 := w.c1, c2 := w.c2, c3 := w.c3, surface := sf }
+/-- The target word a row reports, by its transcription. -/
+def word? (e : LinguisticExample) : Option TriconWord := words.find? (·.ipa == e.primaryText)
 
--- ============================================================================
--- § 2: MaxEnt Constraints
--- ============================================================================
+/-- The row's intrusion category. -/
+def intrusion? (e : LinguisticExample) : Option Intrusion :=
+  match e.feature? "intrusion" with
+  | some "never" => some .never
+  | some "rarely" => some .rarely
+  | some "variably" => some .variably
+  | some "almost exclusively" => some .almostExclusively
+  | _ => none
 
-/-- MAX-V (faithfulness): penalizes deletion of template schwa.
-    Violated once by vowelless production. (Weight 3 in `tarifitW`.) -/
-def maxV : Constraint TarifitCandidate :=
-  Constraint.binary (fun c => c.surface = .vowelless)
+/-- The row's vowelless category. -/
+def vowelless? (e : LinguisticExample) : Option Vowelless :=
+  match e.feature? "vowelless" with
+  | some "never" => some .never
+  | some "rarely" => some .rarely
+  | some "often" => some .often
+  | _ => none
 
-/-- *SONO-CC (markedness): penalizes vowelless clusters proportional to
-    consonant sonority. Higher-sonority consonants in a bare CC cluster
-    are more marked because they expect a vocalic nucleus.
-    Violation count = c2.parkerRank + c3.parkerRank.
-    Models the regression finding that lower C2/C3 sonority predicts
-    more vowelless production ([afkir-zellou-2025] Figure 19). (Weight 1.) -/
-def sonoCC : Constraint TarifitCandidate :=
-  fun c => match c.surface with
-    | .vowelless => c.c2.parkerRank + c.c3.parkerRank
-    | _ => 0
+/-- Every row names a target word and carries both categories. -/
+theorem rows_complete :
+    ∀ e ∈ Examples.all, (word? e).isSome ∧ (intrusion? e).isSome ∧ (vowelless? e).isSome := by
+  decide
 
-/-- DEP-V (faithfulness): penalizes insertion of intrusive schwa.
-    Violated once by intrusive production. (Weight 2 in `tarifitW`.) -/
-def depV : Constraint TarifitCandidate :=
-  Constraint.binary (fun c => c.surface = .intrusive)
+/-! ### The intrusive schwa -/
 
-/-- *SONO-PEAK (markedness): penalizes intrusive schwa in falling-sonority
-    environments. The penalty is proportional to the sonority drop
-    (c1.son - c2.son), modeling the articulatory implausibility of a
-    vocalic gesture between a more-sonorous C1 and less-sonorous C2.
-    Zero violations for rising or plateauing onsets (Nat subtraction).
-    Captures the regression finding (est. = 0.8, p < 0.001) that
-    rising sonority predicts C1ǎC2 presence ([afkir-zellou-2025]
-    Figure 21). (Weight 2 in `tarifitW`.) -/
-def sonoPeak : Constraint TarifitCandidate :=
-  fun c => match c.surface with
-    | .intrusive => c.c1.parkerRank - c.c2.parkerRank
-    | _ => 0
+/-- Intrusion is near-categorical exactly in the words whose second consonant is /r/. -/
+theorem almostExclusively_iff_c2_r :
+    ∀ e ∈ Examples.all, ∀ w ∈ word? e,
+      intrusion? e = some .almostExclusively ↔ w.c2 = .r := by
+  decide
 
-/-- *COMPLEX-ONSET (markedness): penalizes complex onsets with rising
-    sonority in the faithful parse. The penalty is proportional to the
-    sonority rise (c2.son - c1.son), modeling the pressure to break up
-    clusters where C2 is much more sonorous than C1.
-    Zero violations for falling or plateauing onsets (Nat subtraction).
-    (Weight 1 in `tarifitW`.) -/
-def complexOnset : Constraint TarifitCandidate :=
-  fun c => match c.surface with
-    | .faithful => c.c2.parkerRank - c.c1.parkerRank
-    | _ => 0
+/-- A rising cluster shows intrusion at least variably unless its second consonant is
+voiceless. -/
+theorem intrusion_of_rising :
+    ∀ e ∈ Examples.all, ∀ w ∈ word? e, w.Rising →
+      intrusion? e = some .variably ∨ intrusion? e = some .almostExclusively ∨
+        w.c2.Voiceless := by
+  decide
 
-/-- The MaxEnt constraint set for Tarifit schwa variation. -/
-def tarifitCon : CON TarifitCandidate 5 :=
-  ![maxV, sonoCC, depV, sonoPeak, complexOnset]
+/-- Words that never or rarely show intrusion have a non-rising cluster or a voiceless second
+consonant. -/
+theorem nonRising_or_voiceless_of_never_rarely :
+    ∀ e ∈ Examples.all, (intrusion? e = some .never ∨ intrusion? e = some .rarely) →
+      ∀ w ∈ word? e, ¬ w.Rising ∨ w.c2.Voiceless := by
+  decide
 
-/-- The constraint weights: MAX-V 3, *SONO-CC 1, DEP-V 2, *SONO-PEAK 2,
-    *COMPLEX-ONSET 1 — chosen to capture the paper's rising/falling/plateauing
-    onset findings and gradient vowelless accessibility. -/
-def tarifitW : Fin 5 → ℝ :=
-  ![3, 1, 2, 2, 1]
+/-- Variable intrusion goes with a rising cluster or a voiced second consonant, except for the
+three words the paper flags. -/
+theorem variably_exceptions :
+    ∀ e ∈ Examples.all, intrusion? e = some .variably →
+      ∀ w ∈ word? e, w.Rising ∨ ¬ w.c2.Voiceless ∨ w ∈ [nqeb, nqer, qtes] := by
+  decide
 
--- ============================================================================
--- § 3: Rising Onset — Intrusive Schwa Preferred
--- ============================================================================
+/-! ### Vowelless production -/
 
-/-- /qrəβ/ (VLS–liquid, rise=5): intrusive > faithful > vowelless.
-    Table 9 "almost exclusively" C1ǎC2 ([afkir-zellou-2025]). -/
-theorem qreb_intrusive_gt_faithful :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_qreb .intrusive) (mkCandidate w_qreb .faithful) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_qreb, Sonority.Class.parkerRank]
-  norm_num
+/-- Often-vowelless words have voiceless second and third consonants, except /ħkəm/. -/
+theorem voiceless_of_often_vowelless :
+    ∀ e ∈ Examples.all, vowelless? e = some .often →
+      ∀ w ∈ word? e, (w.c2.Voiceless ∧ w.c3.Voiceless) ∨ w = hkem := by
+  decide
 
-theorem qreb_faithful_gt_vowelless :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_qreb .faithful) (mkCandidate w_qreb .vowelless) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_qreb, Sonority.Class.parkerRank]
-  norm_num
-
-/-- /qməʕ/ (VLS–nasal, rise=4): intrusive > faithful.
-    Table 9 "variably" C1ǎC2 ([afkir-zellou-2025]). -/
-theorem qmes_intrusive_gt_faithful :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_qmes .intrusive) (mkCandidate w_qmes .faithful) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_qmes, Sonority.Class.parkerRank]
-  norm_num
-
-/-- /srəm/ (VLF–liquid, rise=3): intrusive > faithful.
-    Table 9 "almost exclusively" C1ǎC2 ([afkir-zellou-2025]). -/
-theorem srem_intrusive_gt_faithful :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_srem .intrusive) (mkCandidate w_srem .faithful) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_srem, Sonority.Class.parkerRank]
-  norm_num
-
--- ============================================================================
--- § 4: Falling Onset — Faithful Preferred, Intrusive Disfavored
--- ============================================================================
-
-/-- /ntəf/ (nasal–VLS, fall=4): faithful > vowelless > intrusive.
-    Table 9 "never" C1ǎC2, Table 7 "often vowelless"
-    ([afkir-zellou-2025]). -/
-theorem ntef_faithful_gt_vowelless :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_ntef .faithful) (mkCandidate w_ntef .vowelless) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_ntef, Sonority.Class.parkerRank]
-  norm_num
-
-theorem ntef_vowelless_gt_intrusive :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_ntef .vowelless) (mkCandidate w_ntef .intrusive) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_ntef, Sonority.Class.parkerRank]
-  norm_num
-
-/-- /nqəβ/ (nasal–VLS, fall=4): faithful > vowelless.
-    Table 9 "variably" C1ǎC2 — one of the few exceptions to the
-    falling=never pattern ([afkir-zellou-2025] Table 9 note). -/
-theorem nqeb_faithful_gt_vowelless :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_nqeb .faithful) (mkCandidate w_nqeb .vowelless) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_nqeb, Sonority.Class.parkerRank]
-  norm_num
-
-/-- /ħkəm/ (VLF–VLS, fall=2): faithful > intrusive > vowelless (model).
-    Table 9 "never" C1ǎC2; Table 7 "often vowelless" (13–20%)
-    ([afkir-zellou-2025]). The model correctly predicts faithful
-    as winner but overpenalizes vowelless via *SONO-CC (C3=nasal, son=5);
-    empirically vowelless > intrusive, noted as idiosyncratic in Table 7. -/
-theorem hkem_faithful_gt_intrusive :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_hkem .faithful) (mkCandidate w_hkem .intrusive) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_hkem, Sonority.Class.parkerRank]
-  norm_num
-
-theorem hkem_faithful_gt_vowelless :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_hkem .faithful) (mkCandidate w_hkem .vowelless) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_hkem, Sonority.Class.parkerRank]
-  norm_num
-
--- ============================================================================
--- § 5: Plateauing Onset — Faithful Preferred
--- ============================================================================
-
-/-- /sχəf/ (VLF–VLF, plateau): faithful > intrusive > vowelless (model).
-    Table 9 "never" C1ǎC2; Table 7 "often vowelless" (13–20%)
-    ([afkir-zellou-2025]). Like /ħkəm/, the model correctly blocks
-    intrusive but overpenalizes vowelless; empirically this is one of the
-    most frequently vowelless words. -/
-theorem skhef_faithful_gt_intrusive :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_skhef .faithful) (mkCandidate w_skhef .intrusive) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_skhef,
-    Sonority.Class.parkerRank]
-  norm_num
-
-theorem skhef_faithful_gt_vowelless :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_skhef .faithful) (mkCandidate w_skhef .vowelless) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_skhef,
-    Sonority.Class.parkerRank]
-  norm_num
-
-/-- /sfən/ (VLF–VLF, plateau): faithful > intrusive > vowelless.
-    Table 9 "never" C1ǎC2 ([afkir-zellou-2025]).
-    Unlike /sχəf/, /sfən/ is not listed as frequently vowelless. -/
-theorem sfen_faithful_gt_intrusive :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_sfen .faithful) (mkCandidate w_sfen .intrusive) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_sfen, Sonority.Class.parkerRank]
-  norm_num
-
-theorem sfen_faithful_gt_vowelless :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_sfen .faithful) (mkCandidate w_sfen .vowelless) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_sfen, Sonority.Class.parkerRank]
-  norm_num
-
--- ============================================================================
--- § 6: Gradient Vowelless Accessibility
--- ============================================================================
-
-/-- Low-sonority clusters make vowelless production more accessible:
-    /ntəf/ (C2=VLS, C3=VLF) has higher vowelless harmony than
-    /qrəβ/ (C2=liquid, C3=VDF), because *SONO-CC penalizes
-    high-sonority clusters more heavily.
-    Captures the regression result (C2 est. = -0.7, C3 est. = -1.4)
-    that lower C2/C3 sonority predicts more vowelless production
-    ([afkir-zellou-2025] Figure 19). -/
-theorem vowelless_more_accessible_low_sonority :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_ntef .vowelless) (mkCandidate w_qreb .vowelless) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_qreb, w_ntef,
-    Sonority.Class.parkerRank]
-  norm_num
-
-/-- Among vowelless candidates, all-obstruent clusters have the highest
-    harmony (least penalized). Consistent with Table 7: /sχəf/ and /skəf/
-    are the most frequently vowelless words ([afkir-zellou-2025]). -/
-theorem vowelless_obstruent_gt_sonorant :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_skhef .vowelless) (mkCandidate w_srem .vowelless) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_srem, w_skhef,
-    Sonority.Class.parkerRank]
-  norm_num
-
-/-- /sχəf/ (all VLF) has higher vowelless harmony than /sfən/ (VLF–VLF–N),
-    because C3=nasal(5) is more sonorous than C3=VLF(3). -/
-theorem vowelless_all_obstruent_gt_mixed :
-    harmonyDominates tarifitCon tarifitW
-      (mkCandidate w_skhef .vowelless) (mkCandidate w_sfen .vowelless) := by
-  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero,
-    Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV,
-    sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_skhef, w_sfen,
-    Sonority.Class.parkerRank]
-  norm_num
-
--- ============================================================================
--- § 7: Structural Properties
--- ============================================================================
-
-/-- Falling/plateauing onset: faithful incurs zero constraint violations.
-    *COMPLEX-ONSET only penalizes rising sonority (c2.son - c1.son = 0
-    for falling/plateauing), and faithful violates no faithfulness
-    constraint. -/
-theorem falling_faithful_zero :
-    harmonyScore tarifitCon tarifitW (mkCandidate w_ntef .faithful) = 0 := by
-  simp only [harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero, Matrix.cons_val_zero,
-    Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, mkCandidate, w_ntef, Sonority.Class.parkerRank]
-  norm_num
-
-theorem plateauing_faithful_zero :
-    harmonyScore tarifitCon tarifitW (mkCandidate w_skhef .faithful) = 0 := by
-  simp only [harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero, Matrix.cons_val_zero,
-    Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, mkCandidate, w_skhef, Sonority.Class.parkerRank]
-  norm_num
-
-/-- Rising onset intrusive: harmony = -2 (only DEP-V violation).
-    *SONO-PEAK contributes 0 for rising onsets (Nat subtraction). -/
-theorem rising_intrusive_base_cost :
-    harmonyScore tarifitCon tarifitW (mkCandidate w_qreb .intrusive) = -2 := by
-  simp only [harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero, Matrix.cons_val_zero,
-    Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, mkCandidate, w_qreb, Sonority.Class.parkerRank]
-  norm_num
-
-/-- Falling onset intrusive: additional *SONO-PEAK penalty.
-    /ntəf/ intrusive: DEP-V (-2) + *SONO-PEAK 4 × (-2) = -10. -/
-theorem falling_intrusive_penalized :
-    harmonyScore tarifitCon tarifitW (mkCandidate w_ntef .intrusive) = -10 := by
-  simp only [harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero, Matrix.cons_val_zero,
-    Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, mkCandidate, w_ntef, Sonority.Class.parkerRank]
-  norm_num
-
-/-- Rising onset faithful: *COMPLEX-ONSET penalty proportional to rise.
-    /qrəβ/ faithful: *COMPLEX-ONSET (6-1=5) × (-1) = -5. -/
-theorem rising_faithful_penalized :
-    harmonyScore tarifitCon tarifitW (mkCandidate w_qreb .faithful) = -5 := by
-  simp only [harmonyScore_eq_neg_sum, Fin.sum_univ_succ, Fin.sum_univ_zero, Matrix.cons_val_zero,
-    Matrix.cons_val_succ, tarifitCon, tarifitW, maxV, sonoCC, depV, sonoPeak, complexOnset,
-    Constraint.binary, mkCandidate, w_qreb, Sonority.Class.parkerRank]
-  norm_num
-
--- ============================================================================
--- § 8: Constraint Independence — Two Schwa Processes
--- ============================================================================
-
--- The paper's central theoretical claim (§4.2.8) is that prosodic
--- template schwa (C2əC3) and intrusive schwa (C1ǎC2) are independent
--- processes: C1ǎC2 presence does not predict C2əC3 presence or duration
--- (logistic regression p = 0.1; linear regression p = 0.8). Our
--- constraint system structurally mirrors this: intrusive and vowelless
--- candidates violate completely disjoint constraint subsets.
-
-/-- Intrusive candidates never violate MAX-V, *SONO-CC, or *COMPLEX-ONSET.
-    Their harmony depends only on DEP-V and *SONO-PEAK. -/
-theorem intrusive_disjoint (c : TarifitCandidate) (h : c.surface = .intrusive) :
-    maxV c = 0 ∧ sonoCC c = 0 ∧ complexOnset c = 0 := by
-  rcases c with ⟨c1, c2, c3, sf⟩; subst h; exact ⟨rfl, rfl, rfl⟩
-
-/-- Vowelless candidates never violate DEP-V, *SONO-PEAK, or *COMPLEX-ONSET.
-    Their harmony depends only on MAX-V and *SONO-CC. -/
-theorem vowelless_disjoint (c : TarifitCandidate) (h : c.surface = .vowelless) :
-    depV c = 0 ∧ sonoPeak c = 0 ∧ complexOnset c = 0 := by
-  rcases c with ⟨c1, c2, c3, sf⟩; subst h; exact ⟨rfl, rfl, rfl⟩
-
-/-- Faithful candidates never violate MAX-V, DEP-V, *SONO-CC, or *SONO-PEAK.
-    Their harmony depends only on *COMPLEX-ONSET. -/
-theorem faithful_disjoint (c : TarifitCandidate) (h : c.surface = .faithful) :
-    maxV c = 0 ∧ depV c = 0 ∧ sonoCC c = 0 ∧
-    sonoPeak c = 0 := by
-  rcases c with ⟨c1, c2, c3, sf⟩; subst h; exact ⟨rfl, rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 9: Generic ConstraintSystem Predictions
--- ============================================================================
-
-/-! [afkir-zellou-2025]'s MaxEnt grammar realised through the
-generic `ConstraintSystem` API in `Core.Optimization.System`. The same
-softmax decoder used for English onset phonotactics
-(`HayesWilson2008.onsetSystem`) and AAVE t/d-deletion
-(`CoetzeePater2011.aaveSystem`) scores Tarifit surface forms here. -/
-
-section PredictAPI
-
-open Constraints Core.Optimization Constraints OptimalityTheory
-
-instance : Fintype SurfaceForm where
-  elems := {.faithful, .intrusive, .vowelless}
-  complete := fun x => by cases x <;> simp
-
-/-- The Tarifit MaxEnt grammar as a per-word `ConstraintSystem` over
-    the three surface candidates (faithful, intrusive, vowelless),
-    decoded by softmax at temperature 1. -/
-noncomputable def tarifitSystem (w : TriconWord) : ConstraintSystem SurfaceForm ℝ where
-  candidates := Finset.univ
-  score := fun sf => harmonyScore tarifitCon tarifitW (mkCandidate w sf)
-  decoder := softmaxDecoder 1
-
-/-- Rising onset /qrəβ/: intrusive schwa (harmony −2) is softmax-preferred
-    over faithful (harmony −5). The system predicts the empirical
-    "almost exclusively C1ǎC2" pattern (Table 9). -/
-theorem tarifitSystem_qreb_intrusive_gt_faithful :
-    (tarifitSystem w_qreb).predict SurfaceForm.faithful <
-    (tarifitSystem w_qreb).predict SurfaceForm.intrusive :=
-  ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
-    (Finset.mem_univ _) (Finset.mem_univ _)
-    (qreb_intrusive_gt_faithful)
-
-/-- Falling onset /ntəf/: faithful is softmax-preferred over intrusive,
-    because *SONO-PEAK heavily penalises a schwa between a more-sonorous
-    C1 (nasal) and a less-sonorous C2 (VLS). -/
-theorem tarifitSystem_ntef_faithful_gt_intrusive :
-    (tarifitSystem w_ntef).predict SurfaceForm.intrusive <
-    (tarifitSystem w_ntef).predict SurfaceForm.faithful :=
-  ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
-    (Finset.mem_univ _) (Finset.mem_univ _)
-    (show harmonyDominates tarifitCon tarifitW (mkCandidate w_ntef SurfaceForm.faithful)
-        (mkCandidate w_ntef SurfaceForm.intrusive) by
-      simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_succ,
-        Fin.sum_univ_zero, Matrix.cons_val_zero, Matrix.cons_val_succ, tarifitCon, tarifitW,
-        maxV, sonoCC, depV, sonoPeak, complexOnset, Constraint.binary, mkCandidate, w_ntef,
-        Sonority.Class.parkerRank]
-      norm_num)
-
-/-- The softmax decoder is a probability decoder, so the per-word system's
-    predictions sum to 1 across the three surface forms. -/
-theorem tarifitSystem_isProb (w : TriconWord) :
-    ∑ sf : SurfaceForm, (tarifitSystem w).predict sf = 1 :=
-  ConstraintSystem.predict_softmax_isProb _ rfl
-    ⟨SurfaceForm.faithful, Finset.mem_univ _⟩
-
-end PredictAPI
+/-- Never-vowelless words have a voiced second or third consonant. -/
+theorem voiced_of_never_vowelless :
+    ∀ e ∈ Examples.all, vowelless? e = some .never →
+      ∀ w ∈ word? e, ¬ w.c2.Voiceless ∨ ¬ w.c3.Voiceless := by
+  decide
 
 end AfkirZellou2025

@@ -2960,3 +2960,4 @@ import Linglib.Data.Examples.AckermanMalouf2013
 import Linglib.Data.Examples.Adamson2024
 import Linglib.Data.Examples.AdamsonAnagnostopoulou2025
 import Linglib.Data.Examples.Adger2025
+import Linglib.Data.Examples.AfkirZellou2025
