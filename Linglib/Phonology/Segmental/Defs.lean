@@ -307,8 +307,8 @@ def ofSegment (s : Segment) : Sonority :=
 
     Crucially [parker-2002] ranks voiced stops above voiceless fricatives
     (`vds = 3 > vlf = 2`) — his intensity-based default universal, reversible in
-    particular languages. The finer granularity is needed for sonority-conditioned
-    gradient phenomena such as Tarifit intrusive vowels ([afkir-zellou-2025]). -/
+    particular languages. It is the scale on which sonority-conditioned variation
+    such as Tarifit intrusive vowels is stated ([afkir-zellou-2025]). -/
 inductive Class where
   | vls    -- voiceless stops: [−son, −cont, −voice]
   | vds    -- voiced stops: [−son, −cont, +voice]
@@ -325,6 +325,16 @@ inductive Class where
 def Class.parkerRank : Class → Nat
   | .vls => 1 | .vlf => 2 | .vds => 3 | .vdf => 4
   | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
+
+/-- The voiceless obstruent classes. -/
+def Class.Voiceless : Class → Prop
+  | .vls | .vlf => True
+  | _ => False
+
+instance : DecidablePred Class.Voiceless := fun c =>
+  match c with
+  | .vls | .vlf => isTrue trivial
+  | .vds | .vdf | .nasal | .liquid | .glide | .vowel => isFalse fun h => h
 
 /-- Classify a segment on the Parker 8-level scale: as `Sonority.ofSegment`, but
     additionally splitting obstruents by [±voice] ([parker-2002]). -/
