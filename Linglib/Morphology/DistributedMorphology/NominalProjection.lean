@@ -25,6 +25,8 @@ number likewise ([adamson-2024]).
 * `ExternalFeature` — features attached above nP, clausal ones outside
   the nominal spine altogether (`⊤`)
 * `PossessionGenderMechanism` — possessee gender vs inherited gender
+* `inheritedGender` — valuation of an unvalued n by a possessor, through
+  the GLH
 
 ## Main statements
 
@@ -208,5 +210,17 @@ def PossessionGenderMechanism.possessorPosition :
     PossessionGenderMechanism → Position
   | .possesseeGender => .specN
   | .inheritedGender => .specN
+
+/-- The gender an unvalued n acquires by probing a possessor at `pos`:
+the possessor's, when the GLH lets the probe reach it, and none
+otherwise ([adamson-2024]'s probe on n). -/
+def inheritedGender {G : Type*} (pos : Position) (possessor : G) : Option G :=
+  if genderLocalityHypothesis pos then some possessor else none
+
+@[simp] theorem inheritedGender_inalienable {G : Type*} (g : G) :
+    inheritedGender PossessionType.inalienable.possessorPosition g = some g := rfl
+
+@[simp] theorem inheritedGender_alienable {G : Type*} (g : G) :
+    inheritedGender PossessionType.alienable.possessorPosition g = none := rfl
 
 end DistributedMorphology

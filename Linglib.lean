@@ -750,6 +750,7 @@ import Linglib.Fragments.Cantonese.Particles
 import Linglib.Fragments.Cantonese.Predicates
 import Linglib.Fragments.Cantonese.ResultativeComplements
 import Linglib.Fragments.Chichewa.Reciprocals
+import Linglib.Fragments.CoastalMarind.Gender
 import Linglib.Fragments.Danish.V2
 import Linglib.Fragments.Dargwa.Agreement
 import Linglib.Fragments.Dargwa.Case
@@ -1242,6 +1243,7 @@ import Linglib.Fragments.Xhosa.Basic
 import Linglib.Fragments.Xhosa.ClassifierSystem
 import Linglib.Fragments.Yakut.Case
 import Linglib.Fragments.Yakut.Indefinites
+import Linglib.Fragments.Yanyuwa.Gender
 import Linglib.Fragments.Yoruba.Comparison
 import Linglib.Fragments.Yoruba.Coordination
 import Linglib.Fragments.Yoruba.FocusParticles
@@ -2951,3 +2953,4 @@ import Linglib.Data.Examples.AbneyKeshet2025
 import Linglib.Data.Examples.AbramskySadrzadeh2014
 import Linglib.Data.Examples.AckemaNeeleman2018
 import Linglib.Data.Examples.AckermanMalouf2013
+import Linglib.Data.Examples.Adamson2024
