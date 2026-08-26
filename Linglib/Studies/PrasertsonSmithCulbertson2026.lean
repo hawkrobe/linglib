@@ -61,24 +61,24 @@ open NounCategorization
     Derived from `allSystems` data rather than stipulated. -/
 def isAttestedInTypology (p : SemanticParameter) : Bool :=
   Aikhenvald2000.allSystems.any (λ sys =>
-    sys.preferredSemantics.any (· == p))
+    sys.semantics.any (· == p))
 
 /-- Animacy is attested in the typological data. -/
-theorem animacy_attested : isAttestedInTypology .animacy = true := by native_decide
+theorem animacy_attested : isAttestedInTypology .animacy = true := by decide
 
 /-- Humanness is attested in the typological data. -/
-theorem humanness_attested : isAttestedInTypology .humanness = true := by native_decide
+theorem humanness_attested : isAttestedInTypology .humanness = true := by decide
 
 /-- Shape is attested in the typological data. -/
-theorem shape_attested : isAttestedInTypology .shape = true := by native_decide
+theorem shape_attested : isAttestedInTypology .shape = true := by decide
 
 /-- Colour is NOT attested in any system in our typology. -/
-theorem colour_not_attested : isAttestedInTypology .colour = false := by native_decide
+theorem colour_not_attested : isAttestedInTypology .colour = false := by decide
 
 /-- The central asymmetry: animacy is attested, colour is not. -/
 theorem animacy_colour_asymmetry :
     isAttestedInTypology .animacy = true ∧
-    isAttestedInTypology .colour = false := ⟨by native_decide, by native_decide⟩
+    isAttestedInTypology .colour = false := ⟨by decide, by decide⟩
 
 -- ============================================================================
 -- §2: Predictive Power — Conditional Entropy (Table 6)

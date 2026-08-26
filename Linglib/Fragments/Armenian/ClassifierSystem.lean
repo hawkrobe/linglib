@@ -1,43 +1,49 @@
 import Linglib.Features.NounCategorization.Basic
 
 /-!
-# Western Armenian noun-categorization system
-[bale-khanjian-2014] [bale-khanjian-2008]
+# Western Armenian noun-categorization parameters
 
-Classifier-system data for Western Armenian (ISO `hyw`). WALS Ch 55 has
-no direct `hyw` entry; the related `arz`/`hye` entries are Iranian
-Armenian, not Western Armenian. Non-obligatory status follows directly
-from [bale-khanjian-2014]'s data: numerals combine with bare nouns
-(eq. 10a *yergu dəgha vaze-ts* "two boys ran") and also with the plural
-form (eq. 10b *yergu dəgha-ner vaze-ts-in*, same meaning). Plural nouns
-are additionally *incompatible* with classifiers (footnote 3, citing
-[borer-2005] and [bale-khanjian-2008]).
+Western Armenian numerals combine directly with bare nouns (*yergu dəgha vaze-ts* 'two boys
+ran') as well as with plural nouns, so its classifiers are non-obligatory; plural nouns are
+incompatible with classifiers. The numeral-classifier type is retained so that cross-language
+consumers can filter on it, although with no obligatory classifier and an empty inventory the
+language arguably has no classifier system in Aikhenvald's sense.
 
-The Aikhenvald `numeralClassifier` category is a misfit for Western
-Armenian: with `isObligatory := false` and an essentially empty
-inventory, WA arguably has no classifier system in Aikhenvald's sense
-at all. The `.numeralClassifier` tag is retained pragmatically so cross-
-language theorems can filter on `classifierType`.
+## References
+
+* [bale-khanjian-2014], (10) and fn. 3
+* [bale-khanjian-2008]
 -/
 
 namespace Armenian
 
-/-- Western Armenian noun-categorization system: non-obligatory per
-    [bale-khanjian-2014] eq. 10. Empty inventory; plurals are
-    incompatible with classifiers. -/
-def classifierSystem : NounCategorization.System :=
-  { family := "Indo-European"
-  , classifierType := .numeralClassifier  -- Aikhenvald misfit, see docstring
-  , scopes := [.numeralNP]
-  , assignment := .semantic
-  , realizations := [.freeForm]
-  , hasAgreement := false
-  , inventorySize := 0
-  , isObligatory := false  -- KEY: numerals combine with bare nouns (BK 2014 eq. 10a)
-  , hasUnmarkedDefault := false
-  , preferredSemantics := []
-  , hasObligatoryNumber := false  -- general-number singular per BK 2014
-  , pluralClfCooccur := false  -- plurals incompatible with CLs (BK 2014 fn 3)
-  , source := "[bale-khanjian-2014] eq. 10; [bale-khanjian-2008]" }
+open NounCategorization
+
+/-- Retained as a numeral-classifier type for filtering; see the module docstring. -/
+def classifierType : ClassifierType := .numeralClassifier
+
+/-- Classifiers, when present, occur in the numeral phrase. -/
+def classifierScopes : List CategorizationScope := [.numeralNP]
+
+/-- Classifier choice is semantic. -/
+def classifierAssignment : AssignmentPrinciple := .semantic
+
+/-- Free morphemes. -/
+def classifierRealizations : List SurfaceRealization := [.freeForm]
+
+def classifierAgreement : Bool := false
+
+/-- Numerals combine with bare nouns. -/
+def classifierObligatory : Bool := false
+
+/-- Whether the inventory has a general classifier. -/
+def classifierDefault : Bool := false
+
+def classifierSemantics : List SemanticParameter := []
+
+def obligatoryNumber : Bool := false
+
+/-- Whether classifiers and plural marking co-occur. -/
+def pluralClassifierCooccur : Bool := false
 
 end Armenian

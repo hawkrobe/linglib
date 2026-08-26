@@ -67,9 +67,9 @@ that block the silent ∪-operator — is not present in Western Armenian.
 Sudo's `.sudoBlocking` strategy doesn't apply; the language sits in a
 different typological cell.
 
-The Western Armenian classifier system is recorded in
-`Fragments/Armenian/Typology.lean` with `isObligatory := false` and
-`pluralClfCooccur := false` (per footnote 3, plurals are incompatible
+The Western Armenian classifier parameters are recorded in
+`Fragments/Armenian/ClassifierSystem.lean`: `classifierObligatory := false` and
+`pluralClassifierCooccur := false` (per footnote 3, plurals are incompatible
 with classifiers).
 
 ## What is formalized
@@ -348,7 +348,7 @@ theorem definiteness_asymmetry :
     show *why* the input shape is wrong: Western Armenian numerals
     combine directly with bare nouns (eq. 10a), so there is no overt
     classifier morpheme that the silent ∪-operator would be blocked by.
-    Western Armenian's `classifierSystem` carries `isObligatory := false`,
+    Western Armenian's Fragment records `classifierObligatory := false`,
     structurally failing the input shape that obligatory-CL frameworks
     like [chierchia-1998] and [sudo-2016] presuppose.
 
@@ -356,6 +356,6 @@ theorem definiteness_asymmetry :
     rather than BK 2014 → Sudo 2016 (which would violate the chronology
     rule — study files may reference older papers, not newer ones). -/
 theorem western_armenian_lacks_obligatory_classifier_input :
-    ¬ Armenian.classifierSystem.IsObligatory := by decide
+    Armenian.classifierObligatory = false := rfl
 
 end BaleKhanjian2014

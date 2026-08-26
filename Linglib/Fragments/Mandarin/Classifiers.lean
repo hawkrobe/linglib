@@ -165,13 +165,13 @@ def lookup (form : String) : Option ClassifierEntry :=
 theorem ge_is_default : ge.isDefault = true := rfl
 
 /-- 只 encodes animacy. -/
-theorem zhi_encodes_animacy : zhi.encodes .animacy = true := by decide
+theorem zhi_encodes_animacy : zhi.Encodes .animacy := by decide
 
 /-- 位 encodes humanness. -/
-theorem wei_encodes_humanness : wei.encodes .humanness = true := by decide
+theorem wei_encodes_humanness : wei.Encodes .humanness := by decide
 
 /-- 本 encodes shape. -/
-theorem ben_encodes_shape : ben.encodes .shape = true := by decide
+theorem ben_encodes_shape : ben.Encodes .shape := by decide
 
 /-- All non-default classifiers have at least one semantic parameter. -/
 theorem specific_classifiers_have_semantics :

@@ -206,8 +206,7 @@ end
 /-- [borer-2005]'s classifier–plural complementarity holds in Shan, where
 both occupy one projection, and lifts in Ch'ol ((30), §3.4). -/
 theorem plural_cooccurrence :
-    Chol.classifierSystem.PluralClfCooccur ∧ ¬ Shan.classifierSystem.PluralClfCooccur := by
-  decide
+    Chol.pluralClassifierCooccur = true ∧ Shan.pluralClassifierCooccur = false := ⟨rfl, rfl⟩
 
 /-! ### Against a uniform classifier semantics -/
 

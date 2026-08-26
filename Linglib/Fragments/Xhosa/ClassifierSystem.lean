@@ -1,29 +1,43 @@
 import Linglib.Features.NounCategorization.Basic
 
 /-!
-# Xhosa noun-categorization system
-[carstens-2026] [taraldsen-et-al-2018]
+# Xhosa noun-categorization parameters
 
-Classifier-system metadata for Xhosa (ISO `xho`): Bantu noun-class
-system with 11 classes and pervasive concord.
+Xhosa has a Bantu noun-class system with prefixal realization and pervasive concord inside
+the noun phrase and on the verb; class 2 *ba-* and class 8 *zi-* serve as default agreement
+classes, and singular/plural class pairs make number obligatory.
+
+## References
+
+* [carstens-2026]
+* [taraldsen-et-al-2018]
 -/
 
 namespace Xhosa
 
-/-- Xhosa Bantu noun-class system: 11-class inventory, prefix
-    realization, agreement-rich. -/
-def classifierSystem : NounCategorization.System :=
-  { family := "Bantu"
-  , classifierType := .nounClass
-  , scopes := [.headModifierNP, .predicateArgument]
-  , assignment := .mixed
-  , realizations := [.prefix]
-  , hasAgreement := true
-  , inventorySize := 11  -- cl1-cl10 + cl15
-  , isObligatory := true
-  , hasUnmarkedDefault := true  -- class 2 ba- / class 8 zi- as defaults
-  , preferredSemantics := [.humanness, .animacy]
-  , hasObligatoryNumber := true  -- singular/plural class pairs (e.g. cl1/cl2)
-  , source := "[carstens-2026]; [taraldsen-et-al-2018]" }
+open NounCategorization
+
+/-- Gender is a noun-class system. -/
+def classifierType : ClassifierType := .nounClass
+
+/-- Agreement inside the head-modifier NP and with the predicate. -/
+def classifierScopes : List CategorizationScope := [.headModifierNP, .predicateArgument]
+
+/-- Semantic core with morphological residue. -/
+def classifierAssignment : AssignmentPrinciple := .mixed
+
+/-- Class prefixes on the noun and its agreement targets. -/
+def classifierRealizations : List SurfaceRealization := [.prefix]
+
+def classifierAgreement : Bool := true
+
+def classifierObligatory : Bool := true
+
+/-- A default agreement class. -/
+def classifierDefault : Bool := true
+
+def classifierSemantics : List SemanticParameter := [.humanness, .animacy]
+
+def obligatoryNumber : Bool := true
 
 end Xhosa
