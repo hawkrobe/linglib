@@ -14,7 +14,7 @@
     ],
     "glossedTokens": [],
     "translation": "A boy entered a club. Music went on. He danced.",
-    "context": "One referent; the final verb is unmodified.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -36,7 +36,7 @@
         "DANCE"
       ]
     ],
-    "comment": "Accepted by all three signers (3/3)."
+    "comment": "Accepted by all three signers (3/3). One referent; the final verb is unmodified."
   },
   {
     "id": "ahnkocabdavidson2026_ex10a",
@@ -54,7 +54,7 @@
     ],
     "glossedTokens": [],
     "translation": "Intended: A boy entered a club. Music went on. He saw a girl reading. He danced.",
-    "context": "Two referents, no loci established, unmodified verb.",
+    "context": "",
     "judgment": "questionable",
     "alternatives": [],
     "readings": [],
@@ -76,7 +76,7 @@
         "DANCE"
       ]
     ],
-    "comment": "Accepted by one of three signers (1/3)."
+    "comment": "Accepted by one of three signers (1/3). Two referents, no loci established, unmodified verb."
   },
   {
     "id": "ahnkocabdavidson2026_ex10b",
@@ -94,7 +94,7 @@
     ],
     "glossedTokens": [],
     "translation": "A boy entered a club. Music went on. He saw a girl reading. He danced.",
-    "context": "Two referents established in loci; the verb is signed at the agent's locus.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -116,7 +116,7 @@
         "DANCE"
       ]
     ],
-    "comment": "3/3."
+    "comment": "3/3. Two referents established in loci; the verb is signed at the agent's locus."
   },
   {
     "id": "ahnkocabdavidson2026_ex11a",
@@ -132,7 +132,7 @@
     ],
     "glossedTokens": [],
     "translation": "Intended: Sue and Mary were hanging out. Then she pushed her.",
-    "context": "No loci and no context making the agent salient.",
+    "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
@@ -154,7 +154,7 @@
         "PUSH"
       ]
     ],
-    "comment": "Rejected by all three signers (0/3)."
+    "comment": "Rejected by all three signers (0/3). No loci and no context making the agent salient."
   },
   {
     "id": "ahnkocabdavidson2026_ex11b",
@@ -170,7 +170,7 @@
     ],
     "glossedTokens": [],
     "translation": "Sue and Mary were hanging out. Then she pushed her.",
-    "context": "Loci marked and the verb moves between them.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -192,7 +192,7 @@
         "PUSH"
       ]
     ],
-    "comment": "3/3."
+    "comment": "3/3. Loci marked and the verb moves between them."
   },
   {
     "id": "ahnkocabdavidson2026_ex11c",
@@ -210,7 +210,7 @@
     ],
     "glossedTokens": [],
     "translation": "Sue was hanging out with Mary. Mary said something bad. Sue got angry. She pushed her.",
-    "context": "The surrounding context renders the agent salient; the same unmodified verb as in (11a).",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -232,7 +232,7 @@
         "PUSH"
       ]
     ],
-    "comment": "3/3: context suffices."
+    "comment": "3/3: context suffices. The surrounding context renders the agent salient; the same unmodified verb as in (11a)."
   },
   {
     "id": "ahnkocabdavidson2026_ex18",
@@ -249,7 +249,7 @@
     ],
     "glossedTokens": [],
     "translation": "A boy entered a club. Music went on. He danced.",
-    "context": "One referent; a null argument and a bare noun are both accepted.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [
       {
@@ -276,7 +276,7 @@
         "DANCE"
       ]
     ],
-    "comment": "3/3 for both the null argument and the bare noun."
+    "comment": "3/3 for both the null argument and the bare noun. One referent; a null argument and a bare noun are both accepted."
   },
   {
     "id": "ahnkocabdavidson2026_ex19",
@@ -293,7 +293,7 @@
     ],
     "glossedTokens": [],
     "translation": "A boy entered a club. Music went on. He danced.",
-    "context": "One referent with locus marking.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -315,7 +315,7 @@
         "DANCE"
       ]
     ],
-    "comment": "3/3, but considered redundant and dispreferred relative to the null argument."
+    "comment": "3/3, but considered redundant and dispreferred relative to the null argument. One referent with locus marking."
   },
   {
     "id": "ahnkocabdavidson2026_ex20",
@@ -333,7 +333,7 @@
     ],
     "glossedTokens": [],
     "translation": "A boy entered a club. Music went on. He saw a girl reading. He danced.",
-    "context": "Two referents; the bare noun BOY disambiguates without a locus, the null argument does not.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [
       {
@@ -360,7 +360,7 @@
         "DANCE"
       ]
     ],
-    "comment": "Bare noun accepted 3/3; the null-argument version was rejected by two of three signers."
+    "comment": "Bare noun accepted 3/3; the null-argument version was rejected by two of three signers. Two referents; the bare noun BOY disambiguates without a locus, the null argument does not."
   },
   {
     "id": "ahnkocabdavidson2026_ex20null",
@@ -378,7 +378,7 @@
     ],
     "glossedTokens": [],
     "translation": "Intended: A boy entered a club. Music went on. He saw a girl reading. He danced.",
-    "context": "Two referents, null argument, no loci.",
+    "context": "",
     "judgment": "questionable",
     "alternatives": [],
     "readings": [],
@@ -400,7 +400,7 @@
         "DANCE"
       ]
     ],
-    "comment": "Rejected by two of three signers."
+    "comment": "Rejected by two of three signers. Two referents, null argument, no loci."
   },
   {
     "id": "ahnkocabdavidson2026_ex21",
@@ -418,7 +418,7 @@
     ],
     "glossedTokens": [],
     "translation": "A boy entered a club. Music went on. He saw a girl reading. He danced.",
-    "context": "Two referents established in different loci.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -440,7 +440,7 @@
         "DANCE"
       ]
     ],
-    "comment": "3/3, with no dispreference for marking the loci."
+    "comment": "3/3, with no dispreference for marking the loci. Two referents established in different loci."
   },
   {
     "id": "ahnkocabdavidson2026_a1_1_one_noLocus",
@@ -456,7 +456,7 @@
     ],
     "glossedTokens": [],
     "translation": "A boy sat in class. When class finished, he danced.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -494,7 +494,7 @@
     ],
     "glossedTokens": [],
     "translation": "A boy sat in class. When class finished, he danced.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -533,7 +533,7 @@
     ],
     "glossedTokens": [],
     "translation": "A boy sat in class. A girl read. When class finished, he danced.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -572,7 +572,7 @@
     ],
     "glossedTokens": [],
     "translation": "A boy sat in class. A girl read. When class finished, he danced.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -611,7 +611,7 @@
     ],
     "glossedTokens": [],
     "translation": "Linda went to the beach. She walked near the water. She fell.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -650,7 +650,7 @@
     ],
     "glossedTokens": [],
     "translation": "Linda went to the beach. She walked near the water. She fell.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -689,7 +689,7 @@
     ],
     "glossedTokens": [],
     "translation": "Linda went to the beach. Will walked near the water. She fell.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -728,7 +728,7 @@
     ],
     "glossedTokens": [],
     "translation": "Linda went to the beach. Will walked near the water. She fell.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -767,7 +767,7 @@
     ],
     "glossedTokens": [],
     "translation": "A girl went to the mall. She walked. She jumped.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -806,7 +806,7 @@
     ],
     "glossedTokens": [],
     "translation": "A girl went to the mall. She walked. She jumped.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -845,7 +845,7 @@
     ],
     "glossedTokens": [],
     "translation": "A girl went to the mall. A boy walked. She jumped.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -884,7 +884,7 @@
     ],
     "glossedTokens": [],
     "translation": "A girl went to the mall. A boy walked. She jumped.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -922,7 +922,7 @@
     ],
     "glossedTokens": [],
     "translation": "A doctor went to the park. The doctor drank water. (The final verb is missing from the printed appendix line.)",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -961,7 +961,7 @@
     ],
     "glossedTokens": [],
     "translation": "A doctor went to the park. She drank water. She ran.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1000,7 +1000,7 @@
     ],
     "glossedTokens": [],
     "translation": "A doctor went to the park. A police officer drank water. She ran.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -1039,7 +1039,7 @@
     ],
     "glossedTokens": [],
     "translation": "A doctor went to the park. A police officer drank water. She ran.",
-    "context": "Stimulus varying the number of referents.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1078,7 +1078,7 @@
     ],
     "glossedTokens": [],
     "translation": "Lisa went to the park. Donna needed help moving a couch. Tomorrow she will visit her.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -1117,7 +1117,7 @@
     ],
     "glossedTokens": [],
     "translation": "Lisa went to the park. Donna read. Tomorrow she will visit her.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -1156,7 +1156,7 @@
     ],
     "glossedTokens": [],
     "translation": "Lisa went to the park. Donna needed help moving a couch. Tomorrow she will visit her.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1195,7 +1195,7 @@
     ],
     "glossedTokens": [],
     "translation": "Lisa went to the park. Donna read. Tomorrow she will visit her.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1234,7 +1234,7 @@
     ],
     "glossedTokens": [],
     "translation": "Sue went to school. Mary said something bad. She yelled at her.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -1273,7 +1273,7 @@
     ],
     "glossedTokens": [],
     "translation": "Sue went to school. Mary said something bad. She yelled at her.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1312,7 +1312,7 @@
     ],
     "glossedTokens": [],
     "translation": "Sue went to school. Mary read. She yelled at her.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -1351,7 +1351,7 @@
     ],
     "glossedTokens": [],
     "translation": "Sue went to school. Mary read. She yelled at her.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1390,7 +1390,7 @@
     ],
     "glossedTokens": [],
     "translation": "James and David went to work. David needed help lifting a heavy box. He helped him.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -1429,7 +1429,7 @@
     ],
     "glossedTokens": [],
     "translation": "James and David went to work. David needed help lifting a heavy box. He helped him.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1467,7 +1467,7 @@
     ],
     "glossedTokens": [],
     "translation": "James and David went to work. He helped him.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -1505,7 +1505,7 @@
     ],
     "glossedTokens": [],
     "translation": "James and David went to work. He helped him.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1545,7 +1545,7 @@
     ],
     "glossedTokens": [],
     "translation": "A girl went traveling. The girl was lost, and a woman was sitting. She asked her for directions.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -1585,7 +1585,7 @@
     ],
     "glossedTokens": [],
     "translation": "A girl went traveling. The girl was lost, and a woman was sitting. She asked her for directions.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1625,7 +1625,7 @@
     ],
     "glossedTokens": [],
     "translation": "A girl went traveling. The girl was reading, and a woman was sitting. She asked her for directions.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -1665,7 +1665,7 @@
     ],
     "glossedTokens": [],
     "translation": "A girl went traveling. The girl was reading, and a woman was sitting. She asked her for directions.",
-    "context": "Stimulus varying narrative support.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1704,7 +1704,7 @@
     ],
     "glossedTokens": [],
     "translation": "Jane visited the park. She saw a tree. She punched it.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1743,7 +1743,7 @@
     ],
     "glossedTokens": [],
     "translation": "Jane visited the park. She saw a tree. She punched it.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1782,7 +1782,7 @@
     ],
     "glossedTokens": [],
     "translation": "Jane visited the park. She saw Ana. She punched her.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -1821,7 +1821,7 @@
     ],
     "glossedTokens": [],
     "translation": "Jane visited the park. She saw Ana. She punched her.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1860,7 +1860,7 @@
     ],
     "glossedTokens": [],
     "translation": "John sat in class. He saw a cabinet. When class finished, he kicked it.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1899,7 +1899,7 @@
     ],
     "glossedTokens": [],
     "translation": "John sat in class. He saw a cabinet. When class finished, he kicked it.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1938,7 +1938,7 @@
     ],
     "glossedTokens": [],
     "translation": "John sat in class. He saw Bill. When class finished, he kicked him.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -1977,7 +1977,7 @@
     ],
     "glossedTokens": [],
     "translation": "John sat in class. He saw Bill. When class finished, he kicked him.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -2016,7 +2016,7 @@
     ],
     "glossedTokens": [],
     "translation": "Mike entered the living room. He saw a TV. He pushed it.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -2055,7 +2055,7 @@
     ],
     "glossedTokens": [],
     "translation": "Mike entered the living room. He saw a TV. He pushed it.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -2094,7 +2094,7 @@
     ],
     "glossedTokens": [],
     "translation": "Mike entered the living room. He saw Bob. He pushed him.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -2133,7 +2133,7 @@
     ],
     "glossedTokens": [],
     "translation": "Mike entered the living room. He saw Bob. He pushed him.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -2172,7 +2172,7 @@
     ],
     "glossedTokens": [],
     "translation": "A boy entered a store. He saw a flower. He took a picture of it.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -2211,7 +2211,7 @@
     ],
     "glossedTokens": [],
     "translation": "A boy entered a store. He saw a flower. He took a picture of it.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -2250,7 +2250,7 @@
     ],
     "glossedTokens": [],
     "translation": "A boy entered a store. He saw a man. He took a picture of him.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -2289,7 +2289,7 @@
     ],
     "glossedTokens": [],
     "translation": "A boy entered a store. He saw a man. He took a picture of him.",
-    "context": "Stimulus varying the animacy of the competing referent.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
