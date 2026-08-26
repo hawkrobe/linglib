@@ -16,10 +16,10 @@ of world predicates uses this rather than reinventing it.
 
 ## What this does NOT subsume
 
-- **`Franke2011.strongestAt`** (`Studies/Franke2011/ScalarGames.lean`) —
-  expresses "m is the strongest true message at s" as a unary predicate
-  on messages, not the binary asymmetric-entailment relation; its proofs
-  are built around the unary form.
+- **`Franke2011.senderStep`** (`Studies/Franke2011.lean`) — the light
+  IBR system counts interpretations per message rather than comparing
+  messages by asymmetric entailment; its argmin form is what the
+  `decide`-run game predictions rely on.
 
 - **`Magri2014.innerExcludable`** (`Studies/Magri2014.lean`) —
   combines (a) a hand-wired `entails : Role → Role → Bool` on a

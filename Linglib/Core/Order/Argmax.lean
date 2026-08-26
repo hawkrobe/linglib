@@ -17,6 +17,7 @@ Option α`; the set-valued form is the natural companion of `Finset.max'` and
 ## Main definitions
 
 * `Finset.argmax s f` — the score-maximal elements of `s`.
+* `Finset.argmin s f` — the score-minimal elements of `s`.
 
 ## Main statements
 
@@ -44,6 +45,24 @@ theorem argmax_subset : s.argmax f ⊆ s :=
 theorem argmax_nonempty (hs : s.Nonempty) : (s.argmax f).Nonempty := by
   obtain ⟨a, ha, hmax⟩ := s.exists_max_image f hs
   exact ⟨a, mem_argmax.mpr ⟨ha, hmax⟩⟩
+
+/-- The elements of `s` at which `f` attains its minimum over `s`. -/
+def argmin (s : Finset α) (f : α → β) : Finset α :=
+  s.filter fun a => ∀ b ∈ s, f a ≤ f b
+
+@[simp]
+theorem mem_argmin : a ∈ s.argmin f ↔ a ∈ s ∧ ∀ b ∈ s, f a ≤ f b :=
+  mem_filter
+
+theorem argmin_subset : s.argmin f ⊆ s :=
+  filter_subset _ _
+
+theorem argmin_nonempty (hs : s.Nonempty) : (s.argmin f).Nonempty := by
+  obtain ⟨a, ha, hmin⟩ := s.exists_min_image f hs
+  exact ⟨a, mem_argmin.mpr ⟨ha, hmin⟩⟩
+
+theorem argmin_eq_argmax_toDual : s.argmin f = s.argmax (OrderDual.toDual ∘ f) :=
+  rfl
 
 /-- The argmax set is invariant under strictly monotone rescaling of the
 score — inverse-temperature changes do not move the argmax. -/

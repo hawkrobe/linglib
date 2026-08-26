@@ -2152,6 +2152,7 @@ import Linglib.Studies.Fitting2021
 import Linglib.Studies.Flemming2021
 import Linglib.Studies.Fortuny2024
 import Linglib.Studies.Fox2007
+import Linglib.Studies.Franke2011
 import Linglib.Studies.Fox2018
 import Linglib.Studies.FoxHackl2006
 import Linglib.Studies.FoxHackl2006Numerals
@@ -2161,11 +2162,6 @@ import Linglib.Studies.FoxSpector2018
 import Linglib.Studies.Francescotti1995
 import Linglib.Studies.FrancikClark1985
 import Linglib.Studies.FrankGoodman2012
-import Linglib.Studies.Franke2011.Basic
-import Linglib.Studies.Franke2011.Convergence
-import Linglib.Studies.Franke2011.IBR
-import Linglib.Studies.Franke2011.RSABridge
-import Linglib.Studies.Franke2011.ScalarGames
 import Linglib.Studies.FrankeBergen2020
 import Linglib.Studies.FrischPierrehumbertBroe2004
 import Linglib.Studies.Funakoshi2016
@@ -2948,3 +2944,4 @@ import Linglib.Data.Examples.Bobaljik2000
 import Linglib.Data.Examples.Rett2015
 import Linglib.Data.Examples.RomeroHan2004
 import Linglib.Data.Examples.Cacchioli2026
+import Linglib.Data.Examples.Franke2011
