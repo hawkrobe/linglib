@@ -1,227 +1,145 @@
 import Linglib.Semantics.Exhaustification.FreeChoice
-import Mathlib.Data.Set.Basic
+import Linglib.Semantics.Focus.Interpretation
+import Linglib.Data.Examples.Ahn2015
 
 /-!
-# Ahn (2015): The Semantics of Additive *Either*
-[ahn-2015]
+# The semantics of additive *either*
 
-Proceedings of Sinn und Bedeutung 19, pp. 20–35.
+Ahn takes *too* and additive *either* to be two-place predicates over the host proposition and a
+silent propositional anaphor `q`, presupposed to be a distinct focus alternative of the host, and
+lets them assert a conjunction and a disjunction respectively (`too`, `either`, `Antecedent`).
+Negation then scopes over the assertion: *Mary didn't buy them too* asserts `¬(q ∧ p)`, which
+with the discourse-given `q` is `¬p` (`not_too_of_antecedent`), while *John didn't leave either*
+asserts `¬(q ∨ p)`, so both the host and the antecedent are denied (`either_compl`). Since the
+additive component is asserted rather than presupposed, denying it with an anaphoric *as well*
+is consistent where denying an existential is not (`abrusan_contrast`).
 
-## Key Proposal
+The distribution of *either* follows from the disjunction under the exhaustification account of
+polarity items: the alternatives of a disjunction are the disjuncts and their conjunction, and
+the naive exhaustifier `exhO` negates every alternative the prejacent fails to entail. In a
+positive context that leaves the disjunction without either disjunct, a contradiction
+(`either_positive_contradiction`); under negation the negated disjunction entails every
+alternative, so exhaustification is vacuous (`either_negative_vacuous`), and likewise in any
+downward-entailing context (`either_vacuous_in_de`), which is why the account overgenerates to
+all such contexts and leaves the strong-NPI restriction to negation open. *Too* entails all of
+its alternatives, so it is exhaustified vacuously everywhere and is no polarity item
+(`too_entails_alts`). The paper's judgments are its rows: *either* is acceptable exactly in a
+negative host whose antecedent is not positive, and *too* fails only for want of an antecedent
+(`either_iff_negative`, `too_any_polarity`).
 
-*Too* and *either* are two-place predicates taking the host proposition p
-and a silent propositional anaphor q as arguments:
-- ⟦**too**⟧(q)(p) = q ⊓ p (meet in the Boolean algebra of propositions)
-- ⟦**either**⟧(q)(p) = q ⊔ p (join)
+## References
 
-The propositional anaphor q must be a distinct focus alternative of p
-([rooth-1985]), capturing three properties shared by both particles:
-1. **Antecedent Requirement**: q must be salient in discourse
-2. **Focus Sensitivity**: q must be a focus alternative of p
-3. **Distinctness**: q must be distinct from p
-
-This replaces the traditional fully presuppositional account
-([heim-1992], Rullmann 2003) with an assertive one. The key
-advantage is that it handles cases where *too*'s additive meaning does
-not seem fully presupposed (e.g., "I don't know if Mary is in the
-elevator, but if John is in the elevator too, we will go over the weight
-limit").
-
-## NPI Distribution via Boolean Algebra
-
-`Set World` is a `BooleanAlgebra` (via Mathlib's pointwise instances),
-and the entire NPI asymmetry falls out of the ⊓/⊔ duality:
-
-- **⊓ entails its components** (`inf_le_left`, `inf_le_right`), so
-  exhaustification of *too* is always vacuous — not an NPI.
-- **⊔ does not entail its components**, so exhaustification of *either*
-  negates them. In positive contexts this yields ⊥ (`inf_compl_eq_bot`
-  via De Morgan). In negative contexts, complementation reverses the
-  ordering (`compl_le_compl`), making all alternatives entailed — vacuous.
-
-The ∨/∧ scale parallels ∃/∀: *either* (⊔, weak) is an NPI for exactly
-the same structural reason as *any* (∃, weak). The bridge theorem
-`either_npi_via_chierchia` instantiates [chierchia-2013]'s SI–NPI
-generalization.
-
-Note: the full NPI derivation uses the naive exhaustification operator
-O_ALT (which negates ALL non-entailed alternatives including domain
-alternatives), not the more conservative exh_IE (which only negates
-innocently excludable alternatives). Under exh_IE, the domain
-alternatives q and p are not both innocently excludable (negating both
-is inconsistent with q ∨ p), so exh_IE yields exclusive disjunction
-rather than contradiction. The NPI result requires Chierchia's assumption
-that NPIs obligatorily activate domain alternatives exhaustified by O_ALT.
+* [ahn-2015]
+* [rullmann-2003]
+* [heim-1992]
+* [kripke-2009]
+* [rooth-1992]
+* [chierchia-2013]
+* [sauerland-2004]
 -/
 
 namespace Ahn2015
 
-open Exhaustification
+open Data.Examples Focus.Interpretation
 
-variable {World : Type*}
+variable {World : Type*} (q p : Set World)
 
--- ═══════════════════════════════════════════════════════════════════════════
--- Core Semantic Proposal: too = ⊓, either = ⊔
--- ═══════════════════════════════════════════════════════════════════════════
+/-! ### Too and either -/
 
-/-- ⟦**too**⟧(q)(p) = q ⊓ p — meet in the Boolean algebra of propositions. -/
-abbrev tooDenotation (q p : Set World) : Set World := q ⊓ p
+/-- The presupposition shared by *too* and *either*: the anaphor is a focus alternative of the
+host distinct from it. -/
+def Antecedent (C : PropFocusValue World) : Prop := q ∈ C ∧ q ≠ p
 
-/-- ⟦**either**⟧(q)(p) = q ⊔ p — join in the Boolean algebra of propositions. -/
-abbrev eitherDenotation (q p : Set World) : Set World := q ⊔ p
+/-- `too q p = q ⊓ p`: the additive meaning is asserted as a conjunction with the anaphor. -/
+abbrev too : Set World := q ⊓ p
 
--- ═══════════════════════════════════════════════════════════════════════════
--- De Morgan: negation-scope interactions
--- ═══════════════════════════════════════════════════════════════════════════
+/-- `either q p = q ⊔ p`: the disjunctive counterpart. -/
+abbrev either : Set World := q ⊔ p
 
-/-- ¬(q ⊓ p) = qᶜ ⊔ pᶜ — De Morgan for *too*. -/
-theorem too_demorgan (q p : Set World) : (tooDenotation q p)ᶜ = qᶜ ⊔ pᶜ := compl_inf
+/-- Negation above *too* denies the conjunction. -/
+theorem too_compl : (too q p)ᶜ = qᶜ ⊔ pᶜ := compl_inf
 
-/-- ¬(q ⊔ p) = qᶜ ⊓ pᶜ — De Morgan for *either*. -/
-theorem either_demorgan (q p : Set World) : (eitherDenotation q p)ᶜ = qᶜ ⊓ pᶜ := compl_sup
+/-- With the antecedent settled true, negated *too* denies the host. -/
+theorem not_too_of_antecedent {w : World} (hq : w ∈ q) : w ∈ (too q p)ᶜ ↔ w ∉ p := by
+  simp [hq]
 
--- ═══════════════════════════════════════════════════════════════════════════
--- NPI asymmetry: ⊓ entails components, ⊔ does not
--- ═══════════════════════════════════════════════════════════════════════════
+/-- Negation above *either* denies both the host and the antecedent. -/
+theorem either_compl : (either q p)ᶜ = qᶜ ⊓ pᶜ := compl_sup
 
-/-- *Too* entails all alternatives — exhaustification always vacuous (not NPI).
-    q ⊓ p ≤ q, q ⊓ p ≤ p, q ⊓ p ≤ q ⊔ p. -/
-theorem too_entails_all_alts (q p : Set World) :
-    tooDenotation q p ≤ q ∧ tooDenotation q p ≤ p
-      ∧ tooDenotation q p ≤ eitherDenotation q p :=
-  ⟨inf_le_left, inf_le_right, inf_le_left.trans le_sup_left⟩
+/-- Denying an existential the host entails is contradictory, denying the anaphoric conjunction
+is not: it denies the antecedent. -/
+theorem abrusan_contrast {e : Set World} (he : p ≤ e) :
+    p ⊓ eᶜ = ⊥ ∧ p ⊓ (too q p)ᶜ = p ⊓ qᶜ := by
+  refine ⟨?_, ?_⟩
+  · exact le_bot_iff.1 (inf_le_inf_right _ he |>.trans (by rw [inf_compl_eq_bot]))
+  · rw [too_compl, inf_sup_left, inf_compl_eq_bot, sup_bot_eq, inf_comm]
 
-/-- *Either* in positive context: O_ALT(q ⊔ p) = (q ⊔ p) ⊓ qᶜ ⊓ pᶜ = ⊥.
-    By De Morgan, qᶜ ⊓ pᶜ = (q ⊔ p)ᶜ, so this is a ⊓ aᶜ = ⊥. -/
-theorem either_positive_contradiction (q p : Set World) :
-    eitherDenotation q p ⊓ qᶜ ⊓ pᶜ = ⊥ := by
-  rw [inf_assoc, ← compl_sup, inf_compl_eq_bot]
+/-! ### Exhaustification -/
 
-/-- *Either* under negation: all alternatives entailed (vacuous).
-    (q ⊔ p)ᶜ ≤ qᶜ ⊓ pᶜ ⊓ (q ⊓ p)ᶜ by `compl_le_compl`. -/
-theorem either_negative_vacuous (q p : Set World) :
-    (eitherDenotation q p)ᶜ ≤ qᶜ ⊓ pᶜ ⊓ (q ⊓ p)ᶜ :=
-  le_inf (le_inf (compl_le_compl le_sup_left) (compl_le_compl le_sup_right))
-    (compl_le_compl (inf_le_left.trans le_sup_left))
+/-- The naive exhaustifier: the prejacent with every alternative it does not entail negated. -/
+def exhO (alts : Set (Set World)) (φ : Set World) : Set World :=
+  φ ⊓ ⨅ a ∈ {a ∈ alts | ¬ φ ≤ a}, aᶜ
 
--- ═══════════════════════════════════════════════════════════════════════════
--- Bridge: [chierchia-2013] SI–NPI Generalization
--- ═══════════════════════════════════════════════════════════════════════════
+theorem exhO_le_compl {alts : Set (Set World)} {φ a : Set World} (ha : a ∈ alts)
+    (hna : ¬ φ ≤ a) : exhO alts φ ≤ aᶜ :=
+  inf_le_right.trans (iInf₂_le a ⟨ha, hna⟩)
 
-/-- *Either*'s NPI behavior as an instance of [chierchia-2013]'s
-    SI–NPI generalization: for any antitone (DE) context C,
-    C(q ⊔ p) ∧ ¬C(q ⊓ p) is vacuous. -/
-theorem either_npi_via_chierchia (C : FreeChoice.Ctx World)
-    (hDE : Antitone C) (q p : Set World) :
-    FreeChoice.siVacuous C (eitherDenotation q p) (q ⊓ p) :=
-  FreeChoice.si_vacuous_in_de C hDE _ _
-    (inf_le_left.trans le_sup_left : q ⊓ p ≤ q ⊔ p)
+/-- When the prejacent entails every alternative, exhaustification is vacuous. -/
+theorem exhO_eq_self {alts : Set (Set World)} {φ : Set World} (h : ∀ a ∈ alts, φ ≤ a) :
+    exhO alts φ = φ := by
+  have : {a ∈ alts | ¬ φ ≤ a} = ∅ := Set.eq_empty_of_forall_notMem fun a ⟨ha, hna⟩ => hna (h a ha)
+  simp [exhO, this]
 
--- ═══════════════════════════════════════════════════════════════════════════
--- Data
--- ═══════════════════════════════════════════════════════════════════════════
+/-- The alternatives of a disjunction: the disjuncts and their conjunction. -/
+def disjAlts : Set (Set World) := {q ⊔ p, q, p, q ⊓ p}
 
-/-- An additive-particle example as Ahn discusses it: an antecedent/prejacent
-    pair, the particle, and the felicity verdict. -/
-structure Datum where
-  sentence : String
-  antecedent : String
-  prejacent : String
-  particle : String
-  resolvedQuestion : Option String
-  felicitous : Bool
-  notes : String := ""
-  source : String := "Ahn (2015)"
-  deriving DecidableEq, Repr
+/-- *Too* entails every alternative of the conjunction, so exhaustification is vacuous. -/
+theorem too_entails_alts : exhO {q ⊓ p, q, p, q ⊔ p} (too q p) = too q p :=
+  exhO_eq_self fun a ha => by
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+    rcases ha with rfl | rfl | rfl | rfl
+    exacts [le_rfl, inf_le_left, inf_le_right, inf_le_left.trans le_sup_left]
 
-/-- "either" with parallel negation — licensed (negative context). -/
-def eitherBasic : Datum :=
-  { sentence := "John didn't come. Mary didn't come either."
-  , antecedent := "John didn't come"
-  , prejacent := "Mary didn't come"
-  , particle := "either"
-  , resolvedQuestion := some "Who didn't come?"
-  , felicitous := true
-  , notes := "Negative context: ¬(q ∨ p) → exhaustification vacuous" }
+/-- In a positive context *either* is exhaustified to a contradiction, provided neither disjunct
+is entailed by the disjunction. -/
+theorem either_positive_contradiction (hq : ¬ either q p ≤ q) (hp : ¬ either q p ≤ p) :
+    exhO (disjAlts q p) (either q p) = ⊥ := by
+  refine le_bot_iff.1 ?_
+  calc exhO (disjAlts q p) (either q p) ≤ either q p ⊓ qᶜ ⊓ pᶜ :=
+        le_inf (le_inf inf_le_left (exhO_le_compl (by simp [disjAlts]) hq))
+          (exhO_le_compl (by simp [disjAlts]) hp)
+    _ = ⊥ := by rw [inf_assoc, ← compl_sup, inf_compl_eq_bot]
 
-/-- Verb focus with "either" — licensed. -/
-def eitherVerb : Datum :=
-  { sentence := "John doesn't sing. He doesn't dance either."
-  , antecedent := "John doesn't sing"
-  , prejacent := "John doesn't dance"
-  , particle := "either"
-  , resolvedQuestion := some "What doesn't John do?"
-  , felicitous := true
-  , notes := "Negative context with verb focus" }
+/-- Under negation the negated disjunction entails every negated alternative, so
+exhaustification is vacuous. -/
+theorem either_negative_vacuous :
+    exhO ((disjAlts q p).image compl) (either q p)ᶜ = (either q p)ᶜ :=
+  exhO_eq_self fun a ⟨b, hb, hba⟩ => by
+    subst hba
+    simp only [disjAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hb
+    rcases hb with rfl | rfl | rfl | rfl
+    exacts [le_rfl, compl_le_compl le_sup_left, compl_le_compl le_sup_right,
+      compl_le_compl (inf_le_left.trans le_sup_left)]
 
-/-- "either" in positive context — ungrammatical (Ahn's (41)). -/
-def eitherPositiveUngrammatical : Datum :=
-  { sentence := "*John left either."
-  , antecedent := "Mary left"
-  , prejacent := "John left"
-  , particle := "either"
-  , resolvedQuestion := some "Who left?"
-  , felicitous := false
-  , notes := "Positive context: O_ALT(q ∨ p) = ⊥ (see either_positive_contradiction)" }
+/-- In any downward-entailing context the scalar alternative of the disjunction is entailed, so
+exhaustification is vacuous there too: the account licenses *either* beyond negation. -/
+theorem either_vacuous_in_de (C : Exhaustification.FreeChoice.Ctx World) (hDE : Antitone C) :
+    Exhaustification.FreeChoice.siVacuous C (either q p) (q ⊓ p) :=
+  Exhaustification.FreeChoice.si_vacuous_in_de C hDE _ _ (inf_le_left.trans le_sup_left)
 
-/-- "too" under negation — grammatical (Ahn's (24)–(25)). -/
-def tooUnderNegation : Datum :=
-  { sentence := "Sue bought some books. Mary didn't buy them too."
-  , antecedent := "Sue bought some books"
-  , prejacent := "Mary bought them"
-  , particle := "too"
-  , resolvedQuestion := some "Who bought the books?"
-  , felicitous := true
-  , notes := "Negation scopes over too: ¬(q ⊓ p) = qᶜ ⊔ pᶜ (see too_demorgan)" }
+/-! ### The data -/
 
-/-- "almost" does not license "either" (Ahn's (45)).
-    Rullmann's licensing condition wrongly predicts *almost* licenses
-    *either*. The exhaustification account correctly rules it out. -/
-def almostDoesNotLicenseEither : Datum :=
-  { sentence := "*The paper is almost finished either."
-  , antecedent := ""
-  , prejacent := "The paper is finished"
-  , particle := "either"
-  , resolvedQuestion := none
-  , felicitous := false
-  , notes := "Almost is DE but exhaustification still contradicts (Ahn's advantage over Rullmann)" }
+/-- *Either* is acceptable exactly in a negative host whose antecedent is not positive. -/
+theorem either_iff_negative :
+    ∀ e ∈ Examples.all, e.feature? "particle" = some "either" →
+      (e.judgment = .acceptable ↔
+        e.feature? "polarity" = some "negative" ∧ e.feature? "antecedent" ≠ some "positive") := by
+  decide
 
-/-- Rullmann's problem case: *either* blocked after positive antecedent (Ahn's (5)). -/
-def rullmannProblem : Datum :=
-  { sentence := "John washed the dishes. *He shouldn't do the laundry either."
-  , antecedent := "John washed the dishes"
-  , prejacent := "He does the laundry"
-  , particle := "either"
-  , resolvedQuestion := some "What should he do?"
-  , felicitous := false
-  , notes := "Positive antecedent incompatible with either"
-  , source := "Ahn (2015), Rullmann (2003)" }
-
-/-- Negative antecedent with parallel structure — basic "either" (Ahn's (32)). -/
-def eitherNegAntecedent : Datum :=
-  { sentence := "Bill didn't leave. John didn't leave either."
-  , antecedent := "Bill didn't leave"
-  , prejacent := "John didn't leave"
-  , particle := "either"
-  , resolvedQuestion := some "Who didn't leave?"
-  , felicitous := true
-  , notes := "¬⟦either⟧(q)(p) = ¬(q ⊔ p) = qᶜ ⊓ pᶜ" }
-
-/-- Non-presuppositional "too" — the elevator example (Ahn's intro).
-    Under the conjunctive account, *too* asserts q ⊓ p, and the whole
-    assertion is entailed, so q need not be presupposed. -/
-def elevatorToo : Datum :=
-  { sentence := "I don't know if Mary is in the elevator. But if John is in the elevator too, we will go over the weight limit."
-  , antecedent := "Mary is in the elevator"
-  , prejacent := "John is in the elevator"
-  , particle := "too"
-  , resolvedQuestion := some "Will we go over the weight limit?"
-  , felicitous := true
-  , notes := "Additive meaning not fully presupposed — motivates conjunctive account" }
-
-def examples : List Datum :=
-  [ eitherBasic, eitherVerb, eitherPositiveUngrammatical
-  , tooUnderNegation, almostDoesNotLicenseEither, rullmannProblem
-  , eitherNegAntecedent, elevatorToo ]
+/-- *Too* occurs in both polarities; its infelicity needs a missing antecedent. -/
+theorem too_any_polarity :
+    ∀ e ∈ Examples.all, e.feature? "particle" = some "too" → e.judgment = .unacceptable →
+      e.feature? "polarity" = some "positive" ∧ (e.context ≠ "") := by
+  decide
 
 end Ahn2015
