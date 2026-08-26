@@ -1,13 +1,16 @@
 [
   {
     "id": "heim1982_indefinite_persists",
-    "source": {"bibkey": "karttunen-1976", "paperLabel": "UNVERIFIED indefinite establishes a discourse referent"},
-    "reportedIn": {"bibkey": "heim-1982", "paperLabel": "UNVERIFIED Ch I"},
+    "source": {"bibkey": "heim-1982", "paperLabel": "Ch. I (9)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "A man walked in. He sat down.",
-    "discourseSegments": ["A man walked in.", "He sat down."],
+    "primaryText": "A dog came in. It lay down under the table.",
+    "discourseSegments": [
+      "A dog came in.",
+      "It lay down under the table."
+    ],
     "glossedTokens": [],
-    "translation": "A man walked in. He sat down.",
+    "translation": "A dog came in. It lay down under the table.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -16,18 +19,23 @@
       ["antecedent_type", "indefinite"],
       ["context", "none"]
     ],
-    "comment": "Migrated from Phenomena/Anaphora/CrossSentential.lean indefinitePersists. The classic discourse-referent example: the indefinite 'a man' licenses cross-sentential 'he'. Karttunen's 'Discourse Referents' first circulated as a 1969 COLING paper; the canonical incollection version is Karttunen 1976. Discussed throughout Heim 1982."
+    "comment": "Strawson's challenge to Russell's analysis of indefinites (Ch. I §1.1): the pronoun is read as bound by the same variable as the indefinite.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
     "id": "heim1982_universal_blocks",
-    "source": {"bibkey": "karttunen-1976", "paperLabel": "UNVERIFIED universal quantifier blocks discourse reference"},
-    "reportedIn": {"bibkey": "heim-1982", "paperLabel": "UNVERIFIED Ch I"},
+    "source": {"bibkey": "heim-1982", "paperLabel": "Ch. I (16)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Every man walked in. He sat down.",
-    "discourseSegments": ["Every man walked in.", "He sat down."],
+    "primaryText": "Every dog came in. It lay down under the table.",
+    "discourseSegments": [
+      "Every dog came in.",
+      "It lay down under the table."
+    ],
     "glossedTokens": [],
-    "translation": "Every man walked in. He sat down.",
-    "context": "",
+    "translation": "Every dog came in. It lay down under the table.",
+    "context": "No referent for 'it' fixed independently of the preceding sentence.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -35,18 +43,23 @@
       ["antecedent_type", "universal"],
       ["context", "none"]
     ],
-    "comment": "Migrated from Phenomena/Anaphora/CrossSentential.lean universalBlocks. A universally quantified antecedent does not introduce an accessible discourse referent for cross-sentential 'he'. Karttunen 1969 COLING origin; canonical version Karttunen 1976. Discussed throughout Heim 1982."
+    "comment": "Neither (16) nor (17) permits a reading where 'it' is bound by the quantified NP of the preceding sentence: an unembedded sentence is a scope island.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
     "id": "heim1982_negative_blocks",
-    "source": {"bibkey": "karttunen-1976", "paperLabel": "UNVERIFIED negative quantifier blocks discourse reference"},
-    "reportedIn": {"bibkey": "heim-1982", "paperLabel": "UNVERIFIED Ch I"},
+    "source": {"bibkey": "heim-1982", "paperLabel": "Ch. I (17)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "No man walked in. He sat down.",
-    "discourseSegments": ["No man walked in.", "He sat down."],
+    "primaryText": "No dog came in. It lay down under the table.",
+    "discourseSegments": [
+      "No dog came in.",
+      "It lay down under the table."
+    ],
     "glossedTokens": [],
-    "translation": "No man walked in. He sat down.",
-    "context": "",
+    "translation": "No dog came in. It lay down under the table.",
+    "context": "No referent for 'it' fixed independently of the preceding sentence.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -54,14 +67,20 @@
       ["antecedent_type", "negative_quant"],
       ["context", "none"]
     ],
-    "comment": "Migrated from Phenomena/Anaphora/CrossSentential.lean negativeBlocks. A negative quantifier does not introduce an accessible discourse referent. Karttunen 1969 COLING origin; canonical version Karttunen 1976. Discussed throughout Heim 1982."
+    "comment": "See (16).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
     "id": "heim1982_most_blocks",
-    "source": {"bibkey": "heim-1982", "paperLabel": "UNVERIFIED proportional quantifier blocks discourse reference"},
+    "source": {"bibkey": "heim-1982", "paperLabel": ""},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Most men walked in. He sat down.",
-    "discourseSegments": ["Most men walked in.", "He sat down."],
+    "discourseSegments": [
+      "Most men walked in.",
+      "He sat down."
+    ],
     "glossedTokens": [],
     "translation": "Most men walked in. He sat down.",
     "context": "",
@@ -72,14 +91,20 @@
       ["antecedent_type", "proportional_quant"],
       ["context", "none"]
     ],
-    "comment": "Migrated from Phenomena/Anaphora/CrossSentential.lean mostBlocks. Proportional quantifiers pattern with universals in not introducing an accessible discourse referent."
+    "comment": "Not among the dissertation's examples; its 'most' data concern the proportion problem (Ch. I (32)–(33)). Retained for KeshetAbney2024.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
     "id": "heim1982_conditional_antecedent",
-    "source": {"bibkey": "heim-1982", "paperLabel": "UNVERIFIED indefinite in if-clause does not persist"},
+    "source": {"bibkey": "heim-1982", "paperLabel": ""},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If a man walks in, he sits down. He orders coffee.",
-    "discourseSegments": ["If a man walks in, he sits down.", "He orders coffee."],
+    "discourseSegments": [
+      "If a man walks in, he sits down.",
+      "He orders coffee."
+    ],
     "glossedTokens": [],
     "translation": "If a man walks in, he sits down. He orders coffee.",
     "context": "",
@@ -90,14 +115,20 @@
       ["antecedent_type", "indefinite"],
       ["context", "conditional_antecedent"]
     ],
-    "comment": "Migrated from Phenomena/Anaphora/CrossSentential.lean conditionalAntecedent. The indefinite inside the if-clause binds 'he' within the conditional but does not persist into subsequent discourse."
+    "comment": "Not among the dissertation's examples; the prediction follows from rule (III) leaving the domain of the file unchanged.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
     "id": "heim1982_standard_negation_blocks",
-    "source": {"bibkey": "heim-1982", "paperLabel": "UNVERIFIED negation blocks discourse reference"},
+    "source": {"bibkey": "heim-1982", "paperLabel": ""},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "John didn't see a bird. It was singing.",
-    "discourseSegments": ["John didn't see a bird.", "It was singing."],
+    "discourseSegments": [
+      "John didn't see a bird.",
+      "It was singing."
+    ],
     "glossedTokens": [],
     "translation": "John didn't see a bird. It was singing.",
     "context": "",
@@ -108,17 +139,162 @@
       ["antecedent_type", "indefinite"],
       ["context", "negation"]
     ],
-    "comment": "Migrated from Phenomena/Anaphora/CrossSentential.lean standardNegationBlocks. An indefinite under single negation does not introduce an accessible discourse referent."
+    "comment": "Not among the dissertation's examples; the prediction follows from rule (IV) leaving the domain of the file unchanged. Retained for KeshetAbney2024.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
     "id": "heim1982_definite_reference",
-    "source": {"bibkey": "heim-1982", "paperLabel": "UNVERIFIED definites introduce accessible referents"},
+    "source": {"bibkey": "heim-1982", "paperLabel": "Ch. III (2) of §5.1"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "The man walked in. He sat down.",
-    "discourseSegments": ["The man walked in.", "He sat down."],
+    "primaryText": "There is a cat behind you. The cat is hungry.",
+    "discourseSegments": [
+      "There is a cat behind you.",
+      "The cat is hungry."
+    ],
     "glossedTokens": [],
-    "translation": "The man walked in. He sat down.",
+    "translation": "There is a cat behind you. The cat is hungry.",
     "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent_type", "indefinite"],
+      ["context", "none"]
+    ],
+    "comment": "The first sentence adds a card with the entry 'is a cat'; the definite is then licensed by both the Novelty-Familiarity and the Descriptive-Content Condition (§5.1).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1982_conditional_donkey",
+    "source": {"bibkey": "heim-1982", "paperLabel": "Ch. I (2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If a man owns a donkey, he beats it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If a man owns a donkey, he beats it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["donkey_configuration", "conditional"]
+    ],
+    "comment": "The indefinites in the antecedent are read with universal force.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1982_relative_donkey",
+    "source": {"bibkey": "heim-1982", "paperLabel": "Ch. I (3)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every man who owns a donkey beats it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every man who owns a donkey beats it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["donkey_configuration", "relative_clause"]
+    ],
+    "comment": "'every' binds the variable of 'a donkey' inside its restrictive term.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1982_soldier_gun",
+    "source": {"bibkey": "heim-1982", "paperLabel": "Ch. II (6)/(6a) of §5.2"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every soldier has a gun. He will shoot.",
+    "discourseSegments": [
+      "Every soldier has a gun.",
+      "He will shoot."
+    ],
+    "glossedTokens": [],
+    "translation": "Every soldier has a gun. He will shoot.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "Someone has a gun. He will shoot.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent_type", "universal"],
+      ["context", "none"]
+    ],
+    "comment": "A scope constraint, not a coindexing constraint: it distinguishes universals from indefinites and names (Ch. II §5.2).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1982_cat_door",
+    "source": {"bibkey": "heim-1982", "paperLabel": "Ch. II (3) of §3.3"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A cat was at the door. It wanted to be fed.",
+    "discourseSegments": [
+      "A cat was at the door.",
+      "It wanted to be fed."
+    ],
+    "glossedTokens": [],
+    "translation": "A cat was at the door. It wanted to be fed.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent_type", "indefinite"],
+      ["context", "none"]
+    ],
+    "comment": "Text-level truth comes out right, but the Ch. II truth definition assigns no truth value to the second sentence on its own — the motivation for evaluating sentences against files (Ch. III §3.2).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1982_woman_dog",
+    "source": {"bibkey": "heim-1982", "paperLabel": "Ch. III (5) of §2.5"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A woman was bitten by a dog. She hit him.",
+    "discourseSegments": [
+      "A woman was bitten by a dog.",
+      "She hit him."
+    ],
+    "glossedTokens": [],
+    "translation": "A woman was bitten by a dog. She hit him.",
+    "context": "Uttered against a file in whose domain neither 1 nor 2 occurs.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent_type", "indefinite"],
+      ["context", "none"]
+    ],
+    "comment": "The text requires 1, 2 novel in the initial file although its second sentence, Ch. III (4), requires them familiar: felicity conditions project step by step (§2.5).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1982_woman_dog_definite",
+    "source": {"bibkey": "heim-1982", "paperLabel": "Ch. III (4) of §3.2"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She is a woman. He is a dog. She was bitten by him.",
+    "discourseSegments": [
+      "She is a woman.",
+      "He is a dog.",
+      "She was bitten by him."
+    ],
+    "glossedTokens": [],
+    "translation": "She is a woman. He is a dog. She was bitten by him.",
+    "context": "Uttered against a true file in whose domain both 1 and 2 occur.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -126,27 +302,95 @@
       ["antecedent_type", "definite"],
       ["context", "none"]
     ],
-    "comment": "Migrated from Phenomena/Anaphora/CrossSentential.lean definiteReference. Definites also support cross-sentential anaphora; under the Novelty-Familiarity Condition they require a familiar index."
+    "comment": "Same satisfaction conditions as 'A woman was bitten by a dog', but under criterion (C) the individuals must fit cards 1 and 2 (§3.2).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   },
   {
-    "id": "heim1982_conditional_donkey",
-    "source": {"bibkey": "heim-1982", "paperLabel": "UNVERIFIED conditional donkey sentence"},
+    "id": "heim1982_pretzel",
+    "source": {"bibkey": "heim-1982", "paperLabel": "Ch. III (2) of §4.1"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "If a farmer owns a donkey, he beats it.",
+    "primaryText": "Everyone bought a pretzel and ate it.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "If a farmer owns a donkey, he beats it.",
+    "translation": "Everyone bought a pretzel and ate it.",
+    "context": "Uttered when an empty file obtains.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent_type", "indefinite"],
+      ["context", "nuclear_scope"]
+    ],
+    "comment": "Felicitous although 'it₂' needs card 2: the card is introduced by 'a pretzel₂' in an intermediate file, so quantified file change must proceed in steps (§4.1).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1982_flea_collar",
+    "source": {"bibkey": "heim-1982", "paperLabel": "Ch. III (7) of §4.3"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If a cat is well cared for, it always has a flea collar.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If a cat is well cared for, it always has a flea collar.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent_type", "indefinite"],
+      ["context", "nuclear_scope"]
+    ],
+    "comment": "'a flea collar' has narrow-scope existential force without a construal rule of Existential Closure: rule (III) existentially closes the nuclear scope (§4.3).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1982_dog_bite",
+    "source": {"bibkey": "heim-1982", "paperLabel": "Ch. III (3) of §5.2"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Watch out, the dog will bite you.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Watch out, the dog will bite you.",
+    "context": "Said to the addressee walking up a driveway: no previous discourse, no dog in sight, no reason to believe a dog lives there.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent_type", "definite"],
+      ["context", "accommodation"]
+    ],
+    "comment": "Hawkins's immediate situation use; a novel definite rendered felicitous by accommodating a card 'is a dog somewhere close by' (§5.2).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "heim1982_king_of_france",
+    "source": {"bibkey": "heim-1982", "paperLabel": "Ch. III (10) of §5.2"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary didn't have lunch with the king of France (because France doesn't have a king).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Mary didn't have lunch with the king of France (because France doesn't have a king).",
+    "context": "The because-clause denies that France has a king.",
+    "judgment": "acceptable",
+    "alternatives": [],
     "readings": [
-      {"name": "strong/universal", "judgment": "acceptable"},
-      {"name": "weak/existential", "judgment": "acceptable"},
-      {"name": "bound", "judgment": "acceptable"}
+      {"name": "narrow scope (local accommodation)", "judgment": "acceptable"},
+      {"name": "existence implied (global accommodation)", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["donkey_configuration", "conditional"]
+      ["antecedent_type", "definite"],
+      ["context", "negation"]
     ],
-    "comment": "Migrated from Phenomena/Anaphora/DonkeyAnaphora.lean conditionalDonkey. The conditional variant of the Geach donkey sentence; the indefinites in the antecedent acquire universal force over the conditional."
+    "comment": "Accommodation inside the auxiliary file of the negation yields the narrow-scope reading; accommodating the initial file instead implies a king of France and is the preferred option without the because-clause (§5.2).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   }
 ]

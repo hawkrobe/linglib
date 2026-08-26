@@ -212,6 +212,16 @@ The worldly content of a state — Def. 0.23(v)'s proposition,
 def Familiar (s : State W V M) (x : V) : Prop :=
   ∀ p ∈ s, (p.assignment x).Dom
 
+/-- A referent is *novel* at a state: defined at no point. -/
+def Novel (s : State W V M) (x : V) : Prop :=
+  ∀ p ∈ s, ¬(p.assignment x).Dom
+
+theorem Familiar.mono {s s' : State W V M} {x : V} (h : Familiar s' x) (hs : s ⊆ s') :
+    Familiar s x := fun p hp => h p (hs hp)
+
+theorem Novel.mono {s s' : State W V M} {x : V} (h : Novel s' x) (hs : s ⊆ s') :
+    Novel s x := fun p hp => h p (hs hp)
+
 /-! ### The uniform stratum -/
 
 /-- The state is uniform at `X`: every point defines exactly the
@@ -359,6 +369,28 @@ theorem familiar_randomAssign (s : State W V M) (x : V) :
     Familiar (s.randomAssign x) x := by
   rintro p ⟨q, -, m, rfl⟩
   simp
+
+/-- Random assignment keeps the other referents familiar. -/
+theorem Familiar.randomAssign {s : State W V M} {y : V} (h : Familiar s y) (x : V) :
+    Familiar (s.randomAssign x) y := by
+  rintro p ⟨q, hq, m, rfl⟩
+  by_cases hyx : y = x
+  · subst hyx; simp
+  · simpa [Possibility.update, Function.update_of_ne hyx] using h q hq
+
+/-- Random assignment keeps the other referents novel. -/
+theorem Novel.randomAssign {s : State W V M} {y : V} (h : Novel s y) {x : V} (hyx : y ≠ x) :
+    Novel (s.randomAssign x) y := by
+  rintro p ⟨q, hq, m, rfl⟩
+  simpa [Possibility.update, Function.update_of_ne hyx] using h q hq
+
+/-- Every point of a random assignment extends a point of the state when the
+referent was novel. -/
+theorem le_randomAssign {s : State W V M} {x : V} (h : Novel s x) : s ≤ s.randomAssign x :=
+  le_def.mpr fun q ⟨p, hp, m, hq⟩ => ⟨p, hp, hq ▸ ⟨rfl, fun v => by
+    by_cases hv : v = x
+    · subst hv; rw [Part.eq_none_iff'.mpr (h p hp)]; exact fun _ h => (Part.notMem_none _ h).elim
+    · simp [Possibility.update, Function.update_of_ne hv]⟩⟩
 
 end State
 

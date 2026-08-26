@@ -91,6 +91,29 @@ theorem le_ofState (A : State W V M) {F F' : State W V M}
   obtain rfl := Part.mem_some_iff.mp h
   exact State.left_le_mul
 
+/-- Merge keeps a familiar card familiar. -/
+theorem familiar_ofState {A F F' : State W V M} {x : V} (hx : State.Familiar F x)
+    (h : F' ∈ ofState A F) : State.Familiar F' x := by
+  obtain rfl := Part.mem_some_iff.mp h
+  intro r hr
+  obtain ⟨p, hp, q, -, -, rfl⟩ := State.mem_mul.mp hr
+  exact Possibility.mem_domain.mp (Possibility.domain_mono Possibility.le_union_left
+    (Possibility.mem_domain.mpr (hx p hp)))
+
+/-- Merge with a state at which a card is novel keeps it novel. -/
+theorem novel_ofState {A F F' : State W V M} {x : V} (hA : State.Novel A x)
+    (hx : State.Novel F x) (h : F' ∈ ofState A F) : State.Novel F' x := by
+  obtain rfl := Part.mem_some_iff.mp h
+  intro r hr
+  obtain ⟨p, hp, q, hq, -, rfl⟩ := State.mem_mul.mp hr
+  simpa [Part.or_dom] using not_or.mpr ⟨hx p hp, hA q hq⟩
+
+/-- Merging the absurd state yields the absurd state. -/
+theorem ofState_empty (A : State W V M) : ofState A ∅ = Part.some ∅ := by
+  refine congrArg Part.some (Set.eq_empty_iff_forall_notMem.mpr fun r hr => ?_)
+  obtain ⟨p, hp, -⟩ := State.mem_mul.mp hr
+  exact Set.notMem_empty p hp
+
 /-- Atomic predicate on the world: merge with the empty-domain
 proposition state. -/
 def atomW (pred : W → Prop) : FCP W V M :=
