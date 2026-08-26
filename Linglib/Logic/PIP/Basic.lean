@@ -1,10 +1,9 @@
+import Mathlib.Data.Fin.VecNotation
 import Mathlib.Data.Set.Lattice
 import Mathlib.Logic.Function.Basic
 
 /-!
 # PIP — Plural Intensional Presuppositional predicate calculus
-
-[keshet-abney-2024] [abney-keshet-2025]
 
 PIP is first-order predicate calculus with set abstraction and equality,
 whose domain consists of pluralities (sets of atoms, worlds among them),
@@ -18,7 +17,7 @@ felicity operator `F` — defined on the presupposition operator and the
 primitive connectives, with Karttunen's asymmetric conjunction — holds of
 its closure. Truth and felicity are independent: `φ|ψ` is true iff `φ` is.
 
-The syntax is the formal one of [abney-keshet-2025] (§2.4); the semantics
+The syntax is the formal one of the second paper below; the semantics
 composes its translation `T_A` into set theory with evaluation, so `Σxφ`
 denotes the union of the values of `x` under existential closure of the
 other local variables of `φ`.
@@ -26,29 +25,41 @@ other local variables of `φ`.
 ## Main definitions
 
 * `Term`, `Formula` — the mutual syntax; `Term.locals`, `Formula.locals` the
-  local variables.
+  local variables; `Term.subst`, `Formula.subst` substitution for a variable.
 * `Model` — atoms and the interpretation of predicates over pluralities.
 * `Term.mem`, `Term.val`, `Formula.sat` — value and truth relative to a model
   and an assignment, with `closeOver` the existential closure over a list of
   variables.
-* `Term.fel`, `Formula.fel` — the felicity operator `F`.
+* `Term.fel`, `Formula.fel` — the felicity operator `F`; `Term.PresupFree`,
+  `Formula.PresupFree` — expressions without presuppositions.
 * `Formula.substLabel`, `Formula.expand`, `Formula.defs`,
   `Formula.expandSelf` — label assignment and expansion; `Formula.disj`,
   `Formula.impl`, `Formula.forall_` — the defined connectives.
+* `Formula.value` — the PIP-value of a formula (truth, felicity, local
+  variables, label definitions), whose equality is intersubstitutability.
 * `Term.elim`, `Formula.elim` — the translation eliminating the PIP
   constructs.
+* `Atom`, `world`, `distr`, `distr₂` — intensional models whose atoms are
+  worlds and entities, with distributive lexical predicates.
 
 ## Main statements
 
 * `Formula.sat_elim` — the PIP constructs are eliminable: the translation
   preserves truth.
-* `Formula.fel_disj`, `Formula.fel_impl`, `Formula.fel_forall` — the derived
-  felicity clauses.
+* `Formula.fel_disj`, `Formula.fel_impl`, `Formula.fel_iff`,
+  `Formula.fel_forall` — the derived felicity clauses.
+* `Formula.fel_of_presupFree` — every infelicity traces to a presupposition.
 * `Formula.sat_exists_iff_abs_nonempty` — `∃xφ` is true iff `⋃{x : φ}` is
   nonempty, when `φ` is false of the null plurality.
 * `Term.fel_sigma_conj`, `Term.fel_sigma_conj_of_fel` — felicity of a
   discourse extended by a sentence reduces to the earlier discourse strictly
   implying the new sentence's felicity.
+
+## References
+
+* [keshet-abney-2024]
+* [abney-keshet-2025]
+* [karttunen-1974]
 -/
 
 namespace PIP
@@ -91,6 +102,18 @@ def Formula.impl (φ ψ : Formula V L P) : Formula V L P := .neg (.conj φ (.neg
 /-- Universal quantification, as `¬∃x¬φ`. -/
 def Formula.forall_ (x : V) (φ : Formula V L P) : Formula V L P := .neg (.exists_ x (.neg φ))
 
+/-- Biconditional, as `(φ → ψ) ∧ (ψ → φ)`. -/
+def Formula.iff_ (φ ψ : Formula V L P) : Formula V L P := (φ.impl ψ).conj (ψ.impl φ)
+
+/-! ### Vector arguments -/
+
+theorem vecCons_map {α β : Type*} {n : ℕ} (f : α → β) (a : α) (v : Fin n → α) :
+    (fun i => f (Matrix.vecCons a v i)) = Matrix.vecCons (f a) fun i => f (v i) :=
+  Fin.comp_cons f a v
+
+theorem vecEmpty_map {α β : Type*} (f : α → β) : (fun i => f (![] i)) = (![] : Fin 0 → β) :=
+  funext fun i => i.elim0
+
 section Locals
 
 variable [DecidableEq V]
@@ -118,6 +141,90 @@ def Formula.locals : Formula V L P → List V
 end
 
 end Locals
+
+/-! ### Substitution -/
+
+section Subst
+
+variable [DecidableEq V]
+
+/-- Bracket a variable: `[x]` for `x`; other terms are unchanged. -/
+def Term.bracket : Term V L P → Term V L P
+  | .var x => .bvar x
+  | t => t
+
+mutual
+/-- Substitute `t` for the variable `x`, the β-reduction of `λx`: a bracketed
+occurrence `[x]` becomes the bracketed substitute, binders of `x` are skipped,
+and no capture check is made. -/
+def Term.subst (x : V) (t : Term V L P) : Term V L P → Term V L P
+  | .var y => if y = x then t else .var y
+  | .bvar y => if y = x then t.bracket else .bvar y
+  | .abs y φ => .abs y (if y = x then φ else Formula.subst x t φ)
+  | .sigma y φ => .sigma y (if y = x then φ else Formula.subst x t φ)
+  | .presup s ψ => .presup (Term.subst x t s) (Formula.subst x t ψ)
+/-- Substitute `t` for the variable `x`. -/
+def Formula.subst (x : V) (t : Term V L P) : Formula V L P → Formula V L P
+  | .top => .top
+  | .atom p ts => .atom p fun i => Term.subst x t (ts i)
+  | .eq s u => .eq (Term.subst x t s) (Term.subst x t u)
+  | .neg φ => .neg (Formula.subst x t φ)
+  | .conj φ ψ => .conj (Formula.subst x t φ) (Formula.subst x t ψ)
+  | .exists_ y φ => .exists_ y (if y = x then φ else Formula.subst x t φ)
+  | .presup φ ψ => .presup (Formula.subst x t φ) (Formula.subst x t ψ)
+  | .labelDef X φ => .labelDef X (Formula.subst x t φ)
+  | .label X => .label X
+end
+
+end Subst
+
+/-! ### Expressions without presuppositions -/
+
+mutual
+/-- A term with no presupposition operator and no label use. -/
+def Term.PresupFree : Term V L P → Prop
+  | .var _ => True
+  | .bvar _ => True
+  | .abs _ φ => φ.PresupFree
+  | .sigma _ φ => φ.PresupFree
+  | .presup _ _ => False
+/-- A formula with no presupposition operator and no label use. -/
+def Formula.PresupFree : Formula V L P → Prop
+  | .top => True
+  | .atom _ ts => ∀ i ∈ List.finRange _, (ts i).PresupFree
+  | .eq s t => s.PresupFree ∧ t.PresupFree
+  | .neg φ => φ.PresupFree
+  | .conj φ ψ => φ.PresupFree ∧ ψ.PresupFree
+  | .exists_ _ φ => φ.PresupFree
+  | .presup _ _ => False
+  | .labelDef _ φ => φ.PresupFree
+  | .label _ => False
+end
+
+mutual
+/-- Decidability of `Term.PresupFree`. -/
+def Term.decPresupFree : (t : Term V L P) → Decidable t.PresupFree
+  | .var _ => isTrue trivial
+  | .bvar _ => isTrue trivial
+  | .abs _ φ => φ.decPresupFree
+  | .sigma _ φ => φ.decPresupFree
+  | .presup _ _ => isFalse id
+/-- Decidability of `Formula.PresupFree`. -/
+def Formula.decPresupFree : (φ : Formula V L P) → Decidable φ.PresupFree
+  | .top => isTrue trivial
+  | .atom _ ts => @List.decidableBAll _ _ (fun i => (ts i).decPresupFree) _
+  | .eq s t => @instDecidableAnd _ _ s.decPresupFree t.decPresupFree
+  | .neg φ => φ.decPresupFree
+  | .conj φ ψ => @instDecidableAnd _ _ φ.decPresupFree ψ.decPresupFree
+  | .exists_ _ φ => φ.decPresupFree
+  | .presup _ _ => isFalse id
+  | .labelDef _ φ => φ.decPresupFree
+  | .label _ => isFalse id
+end
+
+instance (t : Term V L P) : Decidable t.PresupFree := t.decPresupFree
+
+instance (φ : Formula V L P) : Decidable φ.PresupFree := φ.decPresupFree
 
 /-! ### Semantics -/
 
@@ -155,6 +262,12 @@ theorem forallOver_and {xs : List V} {g : V → Set α} {A B : (V → Set α) �
   induction xs generalizing g with
   | nil => exact Iff.rfl
   | cons x xs ih => simp only [forallOver, ih, forall_and]
+
+theorem forallOver_of_forall {xs : List V} {g : V → Set α} {Q : (V → Set α) → Prop}
+    (h : ∀ h, Q h) : forallOver xs g Q := by
+  induction xs generalizing g with
+  | nil => exact h g
+  | cons x xs ih => exact fun _ => ih
 
 mutual
 /-- Membership in the value of a term: a variable's assignment, the union of
@@ -211,6 +324,67 @@ end
 
 variable (M : Model P α) (g : V → Set α)
 
+theorem Term.fel_abs_of_forall {x : V} {φ : Formula V L P} (h : ∀ g, φ.fel M g) :
+    (Term.abs x φ).fel M g := fun _ => h _
+
+theorem Term.fel_sigma_of_forall {x : V} {φ : Formula V L P} (h : ∀ g, φ.fel M g) :
+    (Term.sigma x φ).fel M g := fun _ => forallOver_of_forall h
+
+mutual
+/-- A term without presuppositions is felicitous. -/
+theorem Term.fel_of_presupFree : ∀ (g : V → Set α) (t : Term V L P), t.PresupFree → t.fel M g
+  | _, .var _, _ => trivial
+  | _, .bvar _, _ => trivial
+  | _, .abs _ φ, h => fun _ => Formula.fel_of_presupFree _ φ h
+  | _, .sigma _ φ, h => fun _ => forallOver_of_forall fun g' => Formula.fel_of_presupFree g' φ h
+  | _, .presup _ _, h => h.elim
+/-- Every infelicity traces to a presupposition: a formula without presuppositions is
+felicitous. -/
+theorem Formula.fel_of_presupFree : ∀ (g : V → Set α) (φ : Formula V L P), φ.PresupFree → φ.fel M g
+  | _, .top, _ => trivial
+  | g, .atom _ ts, h => fun i => Term.fel_of_presupFree g (ts i) (h i (List.mem_finRange i))
+  | g, .eq s t, h => ⟨Term.fel_of_presupFree g s h.1, Term.fel_of_presupFree g t h.2⟩
+  | g, .neg φ, h => Formula.fel_of_presupFree g φ h
+  | g, .conj φ ψ, h =>
+      ⟨Formula.fel_of_presupFree g φ h.1, fun _ => Formula.fel_of_presupFree g ψ h.2⟩
+  | _, .exists_ _ φ, h => fun _ => Formula.fel_of_presupFree _ φ h
+  | _, .presup _ _, h => h.elim
+  | _, .labelDef _ _, _ => trivial
+  | _, .label _, h => h.elim
+end
+
+theorem Formula.sat_atom {n : ℕ} (p : P) (ts : Fin n → Term V L P) :
+    (Formula.atom p ts).sat M g ↔ M.I p fun i => (ts i).val M g := Iff.rfl
+
+theorem Formula.sat_eq (s t : Term V L P) : (Formula.eq s t).sat M g ↔ s.val M g = t.val M g :=
+  Iff.rfl
+
+theorem Formula.sat_neg (φ : Formula V L P) : (Formula.neg φ).sat M g ↔ ¬ φ.sat M g := Iff.rfl
+
+theorem Formula.sat_conj (φ ψ : Formula V L P) :
+    (Formula.conj φ ψ).sat M g ↔ φ.sat M g ∧ ψ.sat M g := Iff.rfl
+
+theorem Formula.sat_labelDef (X : L) (φ : Formula V L P) : (Formula.labelDef X φ).sat M g :=
+  trivial
+
+theorem Term.fel_var (x : V) : (Term.var x : Term V L P).fel M g := trivial
+
+theorem Term.fel_bvar (x : V) : (Term.bvar x : Term V L P).fel M g := trivial
+
+theorem Formula.fel_atom {n : ℕ} (p : P) (ts : Fin n → Term V L P) :
+    (Formula.atom p ts).fel M g ↔ ∀ i, (ts i).fel M g := Iff.rfl
+
+theorem Formula.fel_labelDef (X : L) (φ : Formula V L P) : (Formula.labelDef X φ).fel M g :=
+  trivial
+
+theorem Formula.fel_eq (s t : Term V L P) :
+    (Formula.eq s t).fel M g ↔ s.fel M g ∧ t.fel M g := Iff.rfl
+
+theorem Formula.fel_neg (φ : Formula V L P) : (Formula.neg φ).fel M g ↔ φ.fel M g := Iff.rfl
+
+theorem Formula.fel_conj (φ ψ : Formula V L P) :
+    (Formula.conj φ ψ).fel M g ↔ φ.fel M g ∧ (φ.sat M g → ψ.fel M g) := Iff.rfl
+
 @[simp] theorem Term.val_var (x : V) : (Term.var x : Term V L P).val M g = g x := rfl
 
 @[simp] theorem Term.val_bvar (x : V) : (Term.bvar x : Term V L P).val M g = g x := rfl
@@ -234,6 +408,12 @@ theorem Formula.sat_forall (x : V) (φ : Formula V L P) :
     (Formula.forall_ x φ).sat M g ↔ ∀ d, φ.sat M (Function.update g x d) :=
   show ¬(∃ d, ¬φ.sat M (Function.update g x d)) ↔ _ from not_exists_not
 
+theorem Formula.sat_iff (φ ψ : Formula V L P) :
+    (φ.iff_ ψ).sat M g ↔ (φ.sat M g ↔ ψ.sat M g) := by
+  show (φ.impl ψ).sat M g ∧ (ψ.impl φ).sat M g ↔ _
+  rw [Formula.sat_impl, Formula.sat_impl]
+  exact iff_iff_implies_and_implies.symm
+
 /-- `F(φ ∨ ψ)` iff `Fφ ∧ (¬φ → Fψ)`. -/
 theorem Formula.fel_disj (φ ψ : Formula V L P) :
     (φ.disj ψ).fel M g ↔ φ.fel M g ∧ (¬ φ.sat M g → ψ.fel M g) :=
@@ -248,6 +428,20 @@ theorem Formula.fel_impl (φ ψ : Formula V L P) :
 theorem Formula.fel_forall (x : V) (φ : Formula V L P) :
     (Formula.forall_ x φ).fel M g ↔ ∀ d, φ.fel M (Function.update g x d) :=
   show (∀ d, φ.fel M (Function.update g x d)) ↔ _ from Iff.rfl
+
+/-- `F(φ ↔ ψ)` iff `Fφ ∧ Fψ`. -/
+theorem Formula.fel_iff (φ ψ : Formula V L P) :
+    (φ.iff_ ψ).fel M g ↔ φ.fel M g ∧ ψ.fel M g := by
+  show (φ.impl ψ).fel M g ∧ ((φ.impl ψ).sat M g → (ψ.impl φ).fel M g) ↔ _
+  rw [Formula.fel_impl, Formula.fel_impl, Formula.sat_impl]
+  constructor
+  · rintro ⟨⟨hφ, h₁⟩, h₂⟩
+    refine ⟨hφ, ?_⟩
+    by_cases hp : φ.sat M g
+    · exact h₁ hp
+    · exact (h₂ fun h => absurd h hp).1
+  · rintro ⟨hφ, hψ⟩
+    exact ⟨⟨hφ, fun _ => hψ⟩, fun _ => ⟨hψ, fun _ => hφ⟩⟩
 
 /-- `∃xφ` is true iff `⋃{x : φ}` is nonempty, provided `φ` is false of the
 null plurality — the standing assumption that predicates are false of the
@@ -342,6 +536,15 @@ def Formula.expandSelf (φ : Formula V L P) : Formula V L P := φ.expand φ.defs
 
 end Labels
 
+/-! ### Meanings -/
+
+/-- The PIP-value of a formula: its truth, its felicity, its local variables and
+its label definitions. Two formulas are intersubstitutable iff they have the
+same value in every model under every assignment; truth-equivalent formulas
+need not be. -/
+def Formula.value (φ : Formula V L P) : Prop × Prop × List V × List (L × Formula V L P) :=
+  (φ.sat M g, φ.fel M g, φ.locals, φ.defs)
+
 /-! ### Eliminability -/
 
 /-- Existential closure over a list of variables, as syntax. -/
@@ -414,5 +617,39 @@ theorem Formula.sat_elim : ∀ (g : V → Set α) (φ : Formula V L P), φ.elim.
 end
 
 end Semantics
+
+/-! ### Intensional models -/
+
+/-- The atoms of an intensional model: worlds and entities. -/
+abbrev Atom (W E : Type*) := W ⊕ E
+
+variable {W E : Type*}
+
+/-- A world as a singleton plurality. -/
+def world (w : W) : Set (Atom W E) := {Sum.inl w}
+
+theorem world_inj {w w' : W} : (world w : Set (Atom W E)) = world w' ↔ w = w' :=
+  Set.singleton_eq_singleton_iff.trans Sum.inl_injective.eq_iff
+
+/-- A distributive one-place predicate at a world: true of a nonempty plurality
+of entities each satisfying `R` there, and false of anything else. -/
+def distr (R : W → E → Prop) (Wp X : Set (Atom W E)) : Prop :=
+  ∃ w, Wp = world w ∧ X.Nonempty ∧ ∀ a ∈ X, ∃ e, a = Sum.inr e ∧ R w e
+
+/-- A distributive two-place predicate at a world. -/
+def distr₂ (R : W → E → E → Prop) (Wp X Y : Set (Atom W E)) : Prop :=
+  ∃ w, Wp = world w ∧ X.Nonempty ∧ Y.Nonempty ∧
+    ∀ a ∈ X, ∀ b ∈ Y, ∃ e e', a = Sum.inr e ∧ b = Sum.inr e' ∧ R w e e'
+
+/-- A plurality of entities is a singleton iff exactly one entity satisfies its
+description. -/
+theorem exists_eq_singleton_iff (Q : E → Prop) :
+    (∃ a : Atom W E, {x | ∃ e, x = Sum.inr e ∧ Q e} = {a}) ↔ ∃! e, Q e := by
+  simp only [Set.eq_singleton_iff_unique_mem, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨a, ⟨e, rfl, he⟩, hu⟩
+    exact ⟨e, he, fun e' he' => Sum.inr_injective (hu _ ⟨e', rfl, he'⟩)⟩
+  · rintro ⟨e, he, hu⟩
+    exact ⟨_, ⟨e, rfl, he⟩, fun x ⟨e', hx, he'⟩ => hx ▸ congrArg Sum.inr (hu e' he')⟩
 
 end PIP

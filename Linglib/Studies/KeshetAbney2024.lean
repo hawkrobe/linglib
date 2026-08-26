@@ -1,11 +1,8 @@
-import Mathlib.Data.Fin.VecNotation
 import Linglib.Logic.PIP.Basic
 import Linglib.Data.Examples.KeshetAbney2024
 
 /-!
 # Keshet & Abney (2024): Intensional Anaphora
-
-[keshet-abney-2024] [stone-1999] [brasoveanu-2010]
 
 A pronoun presupposes that its antecedent description has a non-empty
 extension (9). In PIP (`Logic/PIP/Basic.lean`) the antecedent description of a
@@ -17,9 +14,8 @@ pronoun's description is evaluated at the discourse world, and felicity (83)
 demands `single(ΣbE)` in every world where Andrea *might* be eating one —
 including the worlds where she is not. With `must` (88)–(90) the realistic
 modal base guarantees the description at the world of evaluation, and the
-pronoun is fine; with a value-based presupposition of existence
-([stone-1999], [brasoveanu-2010]) the mayoral candidates of (85), who all
-exist, would wrongly license "she". This file states the paper's
+pronoun is fine; with a value-based presupposition of existence the mayoral
+candidates of (85), who all exist, would wrongly license "she". This file states the paper's
 discourses over `PIP` and proves the felicity conditions it derives from
 them, at the level of a scenario (accessibility, antecedent description,
 continuation) and on its models.
@@ -55,6 +51,12 @@ assignment sending `w` to it.
 * `fel_plain` — (78): the unembedded discourse (74) is felicitous.
 * `fel_bathroom_iff` — (97): the bathroom disjunction is felicitous iff a
   bathroom, if there is one, is unique.
+
+## References
+
+* [keshet-abney-2024]
+* [stone-1999]
+* [brasoveanu-2010]
 -/
 
 namespace KeshetAbney2024
@@ -89,21 +91,7 @@ inductive Pred
 
 /-! ### Scenarios -/
 
-/-- The atoms of an intensional model: worlds and entities. -/
-abbrev Atom (W E : Type) := W ⊕ E
-
 variable {W E : Type}
-
-/-- A world as a singleton plurality. -/
-def world (w : W) : Set (Atom W E) := {Sum.inl w}
-
-theorem world_inj {w w' : W} : (world w : Set (Atom W E)) = world w' ↔ w = w' :=
-  Set.singleton_eq_singleton_iff.trans Sum.inl_injective.eq_iff
-
-/-- A distributive predicate at a world: true of a nonempty plurality of
-entities each satisfying `R` there. -/
-def distr (R : W → E → Prop) (Wp X : Set (Atom W E)) : Prop :=
-  ∃ w, Wp = world w ∧ X.Nonempty ∧ ∀ a ∈ X, ∃ e, a = Sum.inr e ∧ R w e
 
 /-- A scenario: accessibility between worlds, the antecedent description and
 the continuation's predicate, each relative to a world. -/
@@ -172,13 +160,6 @@ def bathroom : Formula Var Lab Pred :=
   .conj (.disj (.neg (.exists_ .b (.label .X))) (continuation (.label .X))) (.labelDef .X descE)
 
 /-! ### Label expansion -/
-
-theorem vecCons_map {α β : Type*} {n : ℕ} (f : α → β) (a : α) (v : Fin n → α) :
-    (fun i => f (Matrix.vecCons a v i)) = Matrix.vecCons (f a) fun i => f (v i) :=
-  Fin.comp_cons f a v
-
-theorem vecEmpty_map {α β : Type*} (f : α → β) : (fun i => f (![] i)) = (![] : Fin 0 → β) :=
-  funext fun i => i.elim0
 
 theorem substLabel_descE (Y : Lab) (ψ : Formula Var Lab Pred) :
     Formula.substLabel Y ψ descE = descE := by
@@ -271,15 +252,6 @@ theorem mem_base (a : Atom W E) :
     exact ⟨w, u, hw, ha, hacc⟩
   · rintro ⟨w, u, hw, rfl, hacc⟩
     exact ⟨world u, ⟨w, u, hw, rfl, hacc⟩, rfl⟩
-
-theorem exists_eq_singleton_iff (P : E → Prop) :
-    (∃ a : Atom W E, {x | ∃ e, x = Sum.inr e ∧ P e} = {a}) ↔ ∃! e, P e := by
-  simp only [Set.eq_singleton_iff_unique_mem, Set.mem_ofPred_eq]
-  constructor
-  · rintro ⟨a, ⟨e, rfl, he⟩, hu⟩
-    exact ⟨e, he, fun e' he' => Sum.inr_injective (hu _ ⟨e', rfl, he'⟩)⟩
-  · rintro ⟨e, he, hu⟩
-    exact ⟨_, ⟨e, rfl, he⟩, fun x ⟨e', hx, he'⟩ => hx ▸ congrArg Sum.inr (hu e' he')⟩
 
 /-- `single(ΣbE)` at `w₀`: exactly one satisfier of the description there. -/
 theorem sat_single_sigmaB (hw : h .w = world w₀) :
