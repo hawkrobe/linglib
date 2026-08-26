@@ -260,7 +260,7 @@ def lookup (s : String) : Option Classifier :=
 
 /-- The list of all semantic parameters encoded by some classifier in the
     inventory (with duplicates removed). Used by
-    `Fragments/Japanese/ClassifierSystem` to compute `preferredSemantics`. -/
+    `Fragments/Japanese/ClassifierSystem` to compute `classifierSemantics`. -/
 def allEncodedParams : List SemanticParameter :=
   (all.flatMap encodes).eraseDups
 

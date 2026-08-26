@@ -1,5 +1,8 @@
 import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Studies.Aikhenvald2000
+import Linglib.Fragments.Romance.French.ClassifierSystem
+import Linglib.Fragments.Italian.ClassifierSystem
+import Linglib.Fragments.Mandarin.ClassifierSystem
+import Linglib.Fragments.Japanese.ClassifierSystem
 import Linglib.Fragments.Romance.French.Nouns
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Japanese.Nouns
@@ -9,8 +12,8 @@ import Linglib.Fragments.Italian.Nouns
 Noun Categorization × [chierchia-1998] Nominal Mapping Parameter
 [chierchia-1998]
 
-Connects the cross-linguistic noun categorization typology in
-`Aikhenvald2000` to the Nominal Mapping
+Connects the noun categorization types the Fragments record (in
+Aikhenvald's typology) to the Nominal Mapping
 Parameter from `Semantics.Kinds.NMP`.
 
 ## Predictions verified
@@ -33,8 +36,8 @@ book', Mandarin).
 The NMP-to-classifier bridge is accurate at Aikhenvald's morphosyntactic
 level but does not distinguish between CLF-for-NUM and CLF-for-N within
 the numeral classifier type. Both Ch'ol (CLF-for-NUM) and Shan (CLF-for-N)
-are `numeralClassifier` in Aikhenvald's typology. The `ClassifierStrategy`
-field on `NounCategorizationSystem` captures this finer distinction.
+are `numeralClassifier` in Aikhenvald's typology. `ClassifierStrategy`
+captures this finer distinction.
 
 ## Known gaps
 
@@ -45,7 +48,6 @@ namespace NMP
 
 open NounCategorization
 open Semantics.Kinds.NMP (NominalMapping)
-open Aikhenvald2000 (mandarin japanese french italian)
 
 /-- Map NominalMapping to the expected classifier type.
     [+arg, -pred] languages have numeral classifiers.
@@ -86,22 +88,22 @@ theorem argAndPred_no_system :
 
 /-- Mandarin's actual classifier type matches the Chierchia prediction. -/
 theorem mandarin_chierchia_consistent :
-    some mandarin.classifierType =
+    some Mandarin.classifierType =
       nominalMappingToClassifierType Mandarin.Nouns.mandarinMapping := rfl
 
 /-- Japanese's actual classifier type matches the Chierchia prediction. -/
 theorem japanese_chierchia_consistent :
-    some japanese.classifierType =
+    some Japanese.classifierType =
       nominalMappingToClassifierType Japanese.Nouns.japaneseMapping := rfl
 
 /-- French's actual classifier type matches the Chierchia prediction. -/
 theorem french_chierchia_consistent :
-    some french.classifierType =
+    some French.classifierType =
       nominalMappingToClassifierType French.Nouns.frenchMapping := rfl
 
 /-- Italian's actual classifier type matches the Chierchia prediction. -/
 theorem italian_chierchia_consistent :
-    some italian.classifierType =
+    some Italian.classifierType =
       nominalMappingToClassifierType Italian.Nouns.italianMapping := rfl
 
 /-- French and Italian agree on Chierchia mapping: both are predOnly. -/
@@ -117,8 +119,8 @@ atomizes the noun denotation. The NMP determines that nouns denote kinds
 numeral. This commits Chierchia's framework to a `.forNoun` strategy for
 every [+arg, -pred] language with classifiers.
 
-Per-language assignments live here (in this study file) rather than on
-`NounCategorizationSystem`, where they would silently endorse Chierchia's
+Per-language assignments live here (in this study file) rather than in the
+Fragments, where they would silently endorse Chierchia's
 framework over alternatives like [sudo-2016]'s `.sudoBlocking`. -/
 
 /-- Chierchia's strategy assignment for Japanese: CLF atomizes a kind-denoting

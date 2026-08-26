@@ -604,16 +604,10 @@ theorem sudo_disagrees_with_chierchia_on_japanese :
 /-! ## §8: Framework-applicability
 
 Sudo's blocking-principle account (eqs. 10/15/16) presupposes that the
-target language has *obligatory overt classifiers in the lexicon* —
-that is what blocks the silent ∪-operator.
-`System.IsObligatory` is the input-shape requirement;
-Sudo's framework applies iff it holds. Languages where numerals combine
-with bare nouns (no obligatory CL) do not provide the right input. -/
-
-/-- Sudo's framework applies to a language with classifier system `cs`
-    iff `cs.IsObligatory` — the lexical input that Sudo's silent
-    ∪-operator gets blocked by. -/
-abbrev frameworkApplies (cs : NounCategorization.System) : Prop :=
-  cs.IsObligatory
+target language has *obligatory overt classifiers in the lexicon* — that is
+what blocks the silent ∪-operator — so it applies to a language exactly when
+its Fragment records `classifierObligatory := true`; languages where numerals
+combine with bare nouns (`Armenian.classifierObligatory = false`) do not
+provide the right input. -/
 
 end Sudo2016

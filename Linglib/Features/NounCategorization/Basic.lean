@@ -7,7 +7,7 @@ Theory-neutral cross-linguistic typology of noun-categorization devices, followi
 [aikhenvald-2000] *Classifiers: A Typology of Noun Categorization Devices*: the
 device-type continuum (`ClassifierType`, with `nounClass` = gender at its agreement
 pole), the semantic parameters classifiers employ, the per-classifier lexical
-schema, and the per-language paradigm record. Graduated from the dissolved
+schema. Graduated from the dissolved
 `Typology/` drawer as a sibling of `Features/Gender`.
 
 ## Main definitions
@@ -17,16 +17,20 @@ schema, and the per-language paradigm record. Graduated from the dissolved
 * `CategorizationScope`, `AssignmentPrinciple`, `SurfaceRealization`; `ClassifierType.locus`, the
   defining scope of each type (Table 15.1).
 * `ClassifierEntry` — per-classifier lexical schema.
+
+Per-language values of Aikhenvald's parameters are field-by-field definitions in each
+Fragment's `ClassifierSystem.lean` (`classifierType`, `classifierScopes`, `classifierAssignment`,
+`classifierRealizations`, `classifierAgreement`, `classifierObligatory`, `classifierDefault`,
+`classifierSemantics`, `obligatoryNumber`); the assembled record is study-local
+(`Aikhenvald2000.Parameters`).
 * `ClassifierStrategy` — competing composition frameworks (theory-laden; consumed by
   `Semantics/Classifier`, where the cross-paper disagreement is proved as theorems).
-* `System` — Aikhenvald's per-language paradigm record (Bool property fields + `Prop` API).
 
 ## Implementation notes
 
 The `nounClass` cell collapses what [corbett-1991] separates (target/controller
 gender, gender vs. classifier); the per-language gender structure lives in
-`Features/Gender`, and a noun-class `System`'s `inventorySize`/`hasAgreement` should
-derive from a `Gender.System` rather than being stipulated (follow-on).
+`Features/Gender`.
 -/
 
 namespace NounCategorization
@@ -194,7 +198,8 @@ def ClassifierEntry.encodes (c : ClassifierEntry) (p : SemanticParameter) : Bool
   c.semantics.any (· == p)
 
 /-- Collect all distinct semantic parameters attested across a classifier inventory.
-    Used to derive `preferredSemantics` from fragment data rather than hand-listing. -/
+    Used to derive a Fragment's `classifierSemantics` from its inventory rather than
+    hand-listing. -/
 def collectSemantics (cls : List ClassifierEntry) : List SemanticParameter :=
   let all := cls.foldl (λ acc c => acc ++ c.semantics) []
   all.eraseDups
@@ -237,89 +242,5 @@ inductive ClassifierStrategy where
   | forNoun
   | sudoBlocking
   deriving DecidableEq, Repr
-
--- ════════════════════════════════════════════════════
--- § 6. System — paradigm record
--- ════════════════════════════════════════════════════
-
-/-- A noun categorization system in a language, recording
-    [aikhenvald-2000]'s definitional parameters (A)–(G) of §1.5 — the
-    contingent parameters (H)–(K) are not fields:
-    (A) morphosyntactic locus and (B) scope → `classifierType`, `scopes`
-    (C) principles of assignment → `assignment`
-    (D) surface realization → `realizations`
-    (E) agreement → `hasAgreement`
-    (F) markedness relations → `hasUnmarkedDefault`
-    (G) degree of grammaticalization → `isObligatory`. -/
-structure System where
-  /-- Language family (e.g., "Indo-European", "Sino-Tibetan", "Bantu"). -/
-  family : String
-  /-- Aikhenvald classifier type. -/
-  classifierType : ClassifierType
-  /-- Morphosyntactic scopes this system operates in (A, B). -/
-  scopes : List CategorizationScope
-  /-- How nouns are assigned to classes/classifiers (C). -/
-  assignment : AssignmentPrinciple
-  /-- Morphological realization types used (D). -/
-  realizations : List SurfaceRealization
-  /-- Does the system involve agreement? (E) — definitional for noun classes.
-      Stored as `Bool` so the struct stays decidable as a whole; the
-      user-facing predicate is `HasAgreement : Prop`. -/
-  hasAgreement : Bool
-  /-- Inventory size (number of classes or classifiers). -/
-  inventorySize : Nat
-  /-- Is realization obligatory or optional? (G). User-facing predicate:
-      `IsObligatory : Prop`. -/
-  isObligatory : Bool
-  /-- Is there a formally/functionally unmarked default? (F). User-facing
-      predicate: `HasUnmarkedDefault : Prop`. -/
-  hasUnmarkedDefault : Bool := false
-  /-- Preferred semantic parameters (Aikhenvald §11.2). -/
-  preferredSemantics : List SemanticParameter := []
-  /-- Does the language have obligatory grammatical number marking?
-      User-facing predicate: `HasObligatoryNumber : Prop`. -/
-  hasObligatoryNumber : Bool := false
-  /-- Can classifiers and plural marking co-occur? Predicted by CLF-for-NUM
-      ([little-moroney-royer-2022]: CLF and PL are in different
-      projections) but not by CLF-for-N (same projection, complementary
-      distribution per [borer-2005]). User-facing predicate:
-      `PluralClfCooccur : Prop`. -/
-  pluralClfCooccur : Bool := false
-  /-- Citation backing the hand-coded values. -/
-  source : String := ""
-  deriving Repr, DecidableEq
-
-namespace System
-
-/-! ## Prop API for the boolean property fields
-
-The struct's `hasAgreement`/`isObligatory`/`hasUnmarkedDefault`/
-`hasObligatoryNumber`/`pluralClfCooccur` fields are stored as `Bool` so
-the struct itself stays decidably equal. The user-facing predicates are
-the `Prop` versions defined here, each with a `Decidable` instance via
-the underlying `Bool`. Theorem statements should prefer the `Prop` form
-(`s.HasAgreement` rather than `s.hasAgreement = true`); `decide` works
-for either since the Bool projection reduces structurally for concrete
-fragment values. -/
-
-/-- The system involves agreement (E). -/
-abbrev HasAgreement (s : System) : Prop := s.hasAgreement = true
-
-/-- Realization is obligatory (G). -/
-abbrev IsObligatory (s : System) : Prop := s.isObligatory = true
-
-/-- The system has a formally/functionally unmarked default (F). -/
-abbrev HasUnmarkedDefault (s : System) : Prop :=
-  s.hasUnmarkedDefault = true
-
-/-- The language has obligatory grammatical number marking. -/
-abbrev HasObligatoryNumber (s : System) : Prop :=
-  s.hasObligatoryNumber = true
-
-/-- Classifiers and plural marking can co-occur. -/
-abbrev PluralClfCooccur (s : System) : Prop :=
-  s.pluralClfCooccur = true
-
-end System
 
 end NounCategorization

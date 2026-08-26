@@ -2,31 +2,44 @@ import Linglib.Features.NounCategorization.Basic
 import Linglib.Fragments.Japanese.Classifier
 
 /-!
-# Japanese noun-categorization system
-[aikhenvald-2000] [downing-1996]
+# Japanese noun-categorization parameters
 
-Classifier-system metadata for Japanese (ISO `jpn`). The lexical
-classifier inventory itself lives in `Fragments/Japanese/Classifier.lean`;
-this file aggregates that inventory into the typological-system summary
-(`System`).
+Japanese classifiers are numeral classifiers suffixed to numerals, chosen on semantic grounds,
+with *tsu* as the general classifier. The lexical inventory is
+`Fragments/Japanese/Classifier.lean`; the semantic parameters and the general classifier are
+read off it.
+
+## References
+
+* [downing-1996]
+* [aikhenvald-2000]
 -/
 
 namespace Japanese
 
-/-- Japanese numeral classifier system: obligatory CL suffixing on
-    numerals; default つ tsu; preferred semantics derived from the
-    lexical inventory. -/
-def classifierSystem : NounCategorization.System :=
-  { family := "Japonic"
-  , classifierType := .numeralClassifier
-  , scopes := [.numeralNP]
-  , assignment := .semantic
-  , realizations := [.suffix]  -- classifiers suffix to numerals
-  , hasAgreement := false
-  , inventorySize := Classifier.all.length
-  , isObligatory := true
-  , hasUnmarkedDefault := Classifier.defaultClassifier?.isSome  -- つ tsu
-  , preferredSemantics := Classifier.allEncodedParams
-  , source := "[aikhenvald-2000]; [downing-1996]" }
+open NounCategorization
+
+/-- Classifiers are numeral classifiers. -/
+def classifierType : ClassifierType := .numeralClassifier
+
+/-- Classifiers occur in the numeral phrase. -/
+def classifierScopes : List CategorizationScope := [.numeralNP]
+
+/-- Classifier choice is semantic. -/
+def classifierAssignment : AssignmentPrinciple := .semantic
+
+/-- Suffixes on numerals. -/
+def classifierRealizations : List SurfaceRealization := [.suffix]
+
+def classifierAgreement : Bool := false
+
+def classifierObligatory : Bool := true
+
+/-- Whether the inventory has a general classifier. -/
+def classifierDefault : Bool := Classifier.defaultClassifier?.isSome
+
+def classifierSemantics : List SemanticParameter := Classifier.allEncodedParams
+
+def obligatoryNumber : Bool := false
 
 end Japanese
