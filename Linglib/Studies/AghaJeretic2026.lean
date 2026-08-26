@@ -1,382 +1,242 @@
 import Linglib.Semantics.Modality.Directive
-import Linglib.Fragments.English.Auxiliaries
-import Linglib.Studies.Rubinstein2014
 import Linglib.Semantics.Homogeneity.Decided
-import Mathlib.Data.Fin.Basic
+import Linglib.Semantics.Exhaustification.Operators.Decidable
+import Linglib.Studies.Rubinstein2014
+import Linglib.Data.Examples.AghaJeretic2026
 
 /-!
-# Modal Force and its Realization across Languages
-[agha-jeretic-2026]
+# Modal force and its realization across languages
 
-A handbook chapter surveying modal force phenomena:
-- §1: Possibility vs necessity (standard ∀/∃ over possible worlds)
-- §2: Weak necessity modals (ought, should) — three competing analyses:
-  (1) domain restriction ([von-fintel-iatridou-2008], `Directive.lean`),
-  (2) non-quantificational ([agha-jeretic-2022], `AghaJeretic2022.lean`),
-  (3) comparative semantics ([rubinstein-2014], `Rubinstein2014.lean`)
-- §3: Variable force modals — four cross-linguistic patterns
-- §4: Covert variable force (conditionals, generics, imperatives)
+Necessity and possibility modals are universal and existential quantifiers over the best worlds,
+but two classes of modals fall outside the binary. Weak necessity modals such as *should* are
+weaker than *must*: a strong necessity modal conjoined with the negation of another over the
+same domain is contradictory, and the conjunction of two is trivial, while *should φ but you
+don't have to* is consistent and *should φ, and in fact you must* is informative
+(`sameDomain_contradiction`, `restricted_consistent`). The chapter surveys three analyses:
+domain restriction by a secondary ordering source, comparative meaning with a negotiable
+ordering source, and non-quantificational plural predication over worlds. Under domain
+restriction the modal neg-raises only over a subsingleton domain (`vfiWeak_negRaises_iff`),
+whereas the scope facts of the chapter's rows show *should* never below negation, *must* below
+it only when the negation is in a higher clause, and *have to* always below it
+(`weak_never_narrow`, `must_narrow_iff_higher`, `haveTo_always_narrow`); on *must* under higher
+negation the chapter's judgment contradicts the one Rubinstein reports (`must_higherNeg_conflict`).
 
-## Key Claims Formalized
+Polarity-sensitive variable force modals are possibility modals whose necessity readings arise
+from what they project: Nez Perce *o'qa* projects no alternatives, so necessity is a special case
+of possibility in upward-entailing contexts only; Siona *ba'iji* projects subdomain alternatives
+with no scalemate, so obligatory exhaustification yields necessity unembedded; Swedish *får* has
+a prunable scalemate, so both readings are available; Kinande *anga*'s domain carries a secondary
+ordering source and its scalemate *paswa* blocks strong necessity, so exhaustification yields
+weak necessity. `Projection` records these four settings and `available` states the readings
+each licenses in each environment, matching the chapter's table row by row
+(`projection_matches_table`); every profile leaves only possibility under clausemate negation,
+where no clause boundary hosts the exhaustifier (`clausemateNegation_possibility`). The
+exhaustification step itself is Bar-Lev and Fox's operator: over the subdomain alternatives of a
+possibility modal on a two-world domain, `exhIEII` entails the prejacent at both worlds
+(`exh_subdomain_necessity`). The determiner–modal generalization for infinitival relatives is
+stated over its rows (`strong_determiner_should`); the discourse-sensitive modals, the overt
+exhaustifiers, collapse variable force, and the covert modals of the final section are surveyed
+without a formal counterpart here.
 
-1. **Entailment asymmetry** (§2.1): Strong necessity modals (must, have to)
-   are mutually entailing (□₁φ ∧ ¬□₂φ is contradictory), but weak necessity
-   modals (ought, should) are consistently weaker (□wφ ∧ ¬□φ is felicitous).
+## References
 
-2. **Strength ordering**: □φ → □wφ → ◇φ (strong necessity entails weak
-   necessity entails possibility).
-
-3. **Variable force typology** (§3.2): Four patterns of polarity-sensitive
-   variable force modals, distinguished by which readings are available in
-   which environments.
-
-4. **Exhaustification analysis** (§3.2): Polarity-sensitive variable force
-   modals are underlyingly ◇, with necessity readings derived via EXH.
-
-## Connection to [agha-jeretic-2022]
-
-The paper's own prior work proposes that weak necessity modals are
-non-quantificational (plural predication over worlds), explaining
-neg-raising asymmetries between *should* and *must*.
+* [agha-jeretic-2026]
+* [agha-jeretic-2022]
+* [von-fintel-iatridou-2008]
+* [rubinstein-2014]
+* [deal-2011]
+* [bar-lev-fox-2020]
+* [vander-klok-hohaus-2020]
 -/
 
 namespace AghaJeretic2026
 
-open Modality (ModalForce ModalFlavor ForceFlavor ModalItem)
-open Modality.Kratzer
-open Modality.Directive
+open Modality.Kratzer Modality.Directive Data.Examples
 open Semantics.Homogeneity (negRaising_iff_subsingleton)
-open English.Auxiliaries
-
-abbrev World := Fin 4
-
--- ============================================================================
--- §1. Entailment Asymmetry (§2.1)
--- ============================================================================
-
-/-! ## Entailment tests from §2.1
-
-Strong necessity modals are mutually entailing: "must" ≈ "have to" ≈
-"be required to". But weak necessity modals are strictly weaker:
-"should φ" does not entail "must φ".
-
-We verify this structurally via `ModalForce.atLeastAsStrong`. -/
-
-/-- Strong necessity entails strong necessity (mutual entailment among
-    "must", "have to", "be required to" — paper ex. 6-7). -/
-theorem strong_entails_strong :
-    ModalForce.necessity.atLeastAsStrong .necessity = true := rfl
-
-/-- Strong necessity entails weak necessity
-    ("must φ" → "ought φ" — paper's key asymmetry). -/
-theorem strong_entails_weak_force :
-    ModalForce.necessity.atLeastAsStrong .weakNecessity = true := rfl
-
-/-- Weak necessity does NOT entail strong necessity
-    ("ought φ" ↛ "must φ" — paper ex. 8-9, 13). -/
-theorem weak_not_entails_strong_force :
-    ModalForce.weakNecessity.atLeastAsStrong .necessity = false := rfl
-
-/-- Weak necessity entails possibility
-    ("ought φ" → "can φ"). -/
-theorem weak_entails_possibility :
-    ModalForce.weakNecessity.atLeastAsStrong .possibility = true := rfl
-
-/-- Possibility does NOT entail weak necessity
-    ("can φ" ↛ "ought φ"). -/
-theorem possibility_not_entails_weak :
-    ModalForce.possibility.atLeastAsStrong .weakNecessity = false := rfl
-
--- ============================================================================
--- §2. English Modal Force Classification
--- ============================================================================
-
-/-! Verify that the English fragment correctly classifies modals by force,
-matching the paper's §2.1 categorization. -/
-
-/-- "must" is strong necessity (paper ex. 6-7, 11). -/
-theorem must_is_strong_necessity :
-    must.modality.any (·.force == .necessity) = true := by native_decide
-
-/-- "should" is weak necessity (paper ex. 8-9, 12-13). -/
-theorem should_is_weak_necessity :
-    should.modality.any (·.force == .weakNecessity) = true := by native_decide
-
-/-- "ought" is weak necessity (paper ex. 8-9, 12-13). -/
-theorem ought_is_weak_necessity :
-    ought.modality.any (·.force == .weakNecessity) = true := by native_decide
-
-/-- "may" is possibility (paper §1). -/
-theorem may_is_possibility :
-    may.modality.any (·.force == .possibility) = true := by native_decide
-
-/-- "might" is possibility (paper §1). -/
-theorem might_is_possibility :
-    might.modality.any (·.force == .possibility) = true := by native_decide
-
-/-- "must" is NOT classified as weak necessity. -/
-theorem must_not_weak :
-    must.modality.any (·.force == .weakNecessity) = false := by native_decide
-
-/-- "should" is NOT classified as strong necessity. -/
-theorem should_not_strong :
-    should.modality.any (·.force == .necessity) = false := by native_decide
-
--- ============================================================================
--- §3. Kratzer-Theoretic Entailment (Directive.lean bridge)
--- ============================================================================
-
-/-! The von Fintel & Iatridou (2008) analysis, surveyed in §2.2.1:
-weak necessity = ∀ over a refined best-world set. We verify the
-entailment chain via the proven theorems in `Directive.lean`. -/
-
-/-- Re-export: strong necessity entails weak necessity (Directive.lean). -/
-theorem must_entails_ought_kratzer :
-    ∀ (f : Modality.Kratzer.ModalBase World)
-      (g g' : Modality.Kratzer.OrderingSource World)
-      (p : World → Prop) (_ : DecidablePred p)
-      (w : World),
-    strongNecessity f g p w →
-    weakNecessity f g g' p w :=
-  fun f g g' p _ w => strong_entails_weak f g g' p w
-
-/-- Re-export: the converse fails (Directive.lean). -/
-theorem ought_not_entails_must_kratzer :
-    ¬(∀ (W : Type)
-        (f : Modality.Kratzer.ModalBase W)
-        (g g' : Modality.Kratzer.OrderingSource W)
-        (p : W → Prop) (w : W),
-      weakNecessity f g g' p w →
-      strongNecessity f g p w) :=
-  weak_not_entails_strong
-
--- ============================================================================
--- §4. Variable Force Typology (§3.2)
--- ============================================================================
-
-/-! ## Polarity-sensitive variable force modals
-
-The paper identifies four patterns (table on p. 26) of how force varies
-across three environments: unembedded, clausemate negation, and other
-downward-entailing (DE) contexts.
-
-Key: ◇ = possibility available, □ = necessity available, □w = weak necessity.
-
-| Pattern | Language     | Modal   | Unembedded | Cl. Neg | Other DE |
-|---------|-------------|---------|------------|---------|----------|
-| 1       | Nez Perce   | o'qa    | ◇,□        | ◇       | ◇        |
-| 2       | Siona       | ba'iji  | □          | ◇       | ◇,□      |
-| 3       | Swedish     | får     | ◇,□        | ◇       | ◇,□      |
-| 4       | Kinande     | anga    | ◇,□w       | ◇       | ◇,□w     |
-
-All four patterns share: under clausemate negation, only ◇ is available.
--/
-
-/-- The three syntactic environments relevant for variable force. -/
-inductive ModalEnvironment where
-  | unembedded
-  | clausemateNegation
-  | otherDE  -- other downward-entailing contexts (conditionals, etc.)
-  deriving DecidableEq, Repr
-
-/-- A variable force pattern: which forces are available in each environment. -/
-structure VariableForcePattern where
-  language : String
-  modal : String
-  unembedded : List ModalForce
-  clausemateNeg : List ModalForce
-  otherDE : List ModalForce
-  deriving Repr
-
-/-- Pattern 1: Nez Perce *o'qa* (Deal 2011).
-    Underlying ◇ modal, necessity via entailment in upward-entailing contexts.
-    No scalar alternative → no "not have to" implicature → ◇ subsumes □. -/
-def pattern1_nezPerce : VariableForcePattern where
-  language := "Nez Perce"
-  modal := "o'qa"
-  unembedded := [.possibility, .necessity]
-  clausemateNeg := [.possibility]
-  otherDE := [.possibility]
-
-/-- Pattern 2: Ecuadorian Siona *ba'iji* (Jeretič 2021a,b).
-    Underlying ◇, necessity via obligatory scaleless implicature (EXH).
-    Unembedded: EXH obligatory → only □. Under negation: only ◇.
-    Other DE: EXH optional → ◇ or □. -/
-def pattern2_siona : VariableForcePattern where
-  language := "Siona"
-  modal := "ba'iji"
-  unembedded := [.necessity]
-  clausemateNeg := [.possibility]
-  otherDE := [.possibility, .necessity]
-
-/-- Pattern 3: Swedish *får* (Jeretič 2021a).
-    Underlying ◇ with optional scalar/scaleless implicature.
-    Both readings available unembedded. Under negation: only ◇. -/
-def pattern3_swedish : VariableForcePattern where
-  language := "Swedish"
-  modal := "får"
-  unembedded := [.possibility, .necessity]
-  clausemateNeg := [.possibility]
-  otherDE := [.possibility, .necessity]
-
-/-- Pattern 4: Kinande *anga* (Newkirk 2022a,b).
-    Underlying ◇, can reach □w but never full □ (blocked by *paswa*).
-    The secondary ordering source yields weak, not strong, necessity. -/
-def pattern4_kinande : VariableForcePattern where
-  language := "Kinande"
-  modal := "anga"
-  unembedded := [.possibility, .weakNecessity]
-  clausemateNeg := [.possibility]
-  otherDE := [.possibility, .weakNecessity]
-
-def variableForcePatterns : List VariableForcePattern :=
-  [pattern1_nezPerce, pattern2_siona, pattern3_swedish, pattern4_kinande]
-
-/-- **Universal generalization**: under clausemate negation, all four
-    variable force modals have only a possibility reading. -/
-theorem all_clausemate_neg_is_possibility :
-    variableForcePatterns.all
-      (fun p => p.clausemateNeg == [.possibility]) = true := by native_decide
-
-/-- All four patterns have possibility available in every environment. -/
-theorem all_have_possibility_everywhere :
-    variableForcePatterns.all (fun p =>
-      p.unembedded.any (· == .possibility) ||
-      -- Pattern 2 (Siona) lacks ◇ unembedded (only □) — this is the one exception
-      p.unembedded == [.necessity]) = true := by native_decide
-
-/-- Four patterns, four languages. -/
-theorem four_patterns : variableForcePatterns.length = 4 := rfl
-
--- ============================================================================
--- §5. Exhaustification Analysis (§3.2, eq. 50)
--- ============================================================================
-
-/-! ## EXH-based strengthening
-
-The paper formalizes the exhaustification analysis for Siona *ba'iji*:
-  ⟦ba'iji_M p⟧ = ∃w ∈ M. p(w)             — underlying possibility
-  Alt(ba'iji_M p) = {∃w ∈ M'. p(w) | M' ⊆ M}  — subdomain alternatives
-  ⟦EXH ba'iji_M p⟧ ≡ ∀w ∈ M. p(w)          — strengthened to necessity
-
-We model this as: EXH over subdomain alternatives of ◇ yields □. -/
-
-/-- Exhaustification of a possibility modal over subdomain alternatives
-    yields necessity: negating all proper-subdomain existentials forces
-    the prejacent to hold at every world in the domain. -/
-def exhStrengthens (domain : List Bool) : Bool :=
-  -- Original: ∃w ∈ M. p(w) — at least one world satisfies p
-  let possibility := domain.any id
-  -- After EXH: ∀w ∈ M. p(w) — all worlds satisfy p
-  let strengthened := domain.all id
-  -- EXH strengthens possibility to necessity when the domain is non-empty
-  -- and the original possibility holds
-  possibility && strengthened
-
-/-- EXH strengthening works: if all worlds satisfy p, exhaustification
-    of ◇ over subdomain alternatives yields □. -/
-theorem exh_all_true : exhStrengthens [true, true, true] = true := rfl
-
-/-- EXH fails when not all worlds satisfy p: ◇ holds but □ doesn't,
-    so the exhaustified reading (= □) is false. -/
-theorem exh_mixed_false : exhStrengthens [true, false, true] = false := rfl
-
-/-- Empty domain: both ◇ and □ vacuously fail. -/
-theorem exh_empty : exhStrengthens [] = false := rfl
-
--- ============================================================================
--- §6. Neg-Raising Asymmetry (§2.2.3, Agha & Jeretič 2022)
--- ============================================================================
-
-/-! ## Non-quantificational analysis
-
-[agha-jeretic-2022] observe that weak necessity modals are scopeless
-with respect to negation (like plural predication), while strong necessity
-modals (some of them) are neg-raisers:
-
-- "should not go" = only □ > ¬ (wide scope)
-- "must not go" = □ > ¬ (wide scope), but also available: ¬ > □ via neg-raising
-- "have to not go" = only □ > ¬ (wide scope, no neg-raising)
-
-Under higher-clause negation:
-- "doesn't think Bill should go" = ✓ □ > ¬; * ¬ > □
-- "doesn't think Bill must go" = * □ > ¬; ✓ ¬ > □
-
-The weak necessity modal *should* never takes scope below negation,
-while the strong necessity modal *must* does (via neg-raising). -/
-
-/-- Neg-raising availability for a modal operator. -/
-structure NegRaisingProfile where
-  modal : String
-  clausemateNeg_wideScope : Bool  -- □ > ¬ available
-  higherNeg_narrowScope : Bool    -- ¬ > □ available (neg-raising)
-  deriving Repr, BEq
-
-def shouldProfile : NegRaisingProfile where
-  modal := "should"
-  clausemateNeg_wideScope := true   -- "should not go" ✓
-  higherNeg_narrowScope := false    -- "doesn't think should go" → only □ > ¬
-
-def mustProfile : NegRaisingProfile where
-  modal := "must"
-  clausemateNeg_wideScope := true   -- "must not go" ✓
-  higherNeg_narrowScope := true     -- "doesn't think must go" → ¬ > □ (neg-raising)
-
-def haveToProfile : NegRaisingProfile where
-  modal := "have to"
-  clausemateNeg_wideScope := true   -- "doesn't have to go" = ¬ > □ BUT via scope, not neg-raising
-  higherNeg_narrowScope := false    -- "doesn't think has to go" → only ¬ > □ (no neg-raising)
-
-/-- Weak necessity modals do not neg-raise; some strong necessity modals do.
-    This asymmetry motivates the non-quantificational analysis. -/
-theorem should_no_neg_raising : shouldProfile.higherNeg_narrowScope = false := rfl
-theorem must_neg_raises : mustProfile.higherNeg_narrowScope = true := rfl
-
-/-! ### Comparison with the comparative-semantics analysis ([rubinstein-2014])
-
-The third analysis of weak necessity (§2) is [rubinstein-2014]'s: weak necessity
-modals and evaluative comparatives form a natural class with comparative (Kratzer
-ordering-source) semantics tied to negotiable ideals. Both accounts agree on the
-core datum — "I don't think you should go" has a lower-negation reading, "I don't
-think you have to go" does not — but disagree on the **mechanism** and on *must*:
-
-- **[rubinstein-2014]**: *should* genuinely neg-raises (pragmatic O→E strengthening,
-  [horn-1978]); strong necessity modals (*must*, *have to*) do NOT neg-raise.
-- **[agha-jeretic-2026]** / [agha-jeretic-2022]: *should*'s apparent neg-raising is
-  **scopelessness** (homogeneity), not true neg-raising; *must* genuinely neg-raises.
-
-The classifications are directly opposed on *must*. -/
-
-/-- The two analyses assign opposite neg-raising status to *must*: A&J classify it
-    as a neg-raiser (`mustProfile`), whereas [rubinstein-2014]'s stimulus (ex 31b)
-    records *must*'s lower-negation reading as unacceptable. The contradiction is
-    made explicit rather than left implicit (linglib's interconnection thesis). -/
-theorem must_negRaising_diverges_from_rubinstein :
-    mustProfile.higherNeg_narrowScope = true ∧
-    Rubinstein2014.Examples.nr_must.readings.lookup "lowerNeg"
-      = some Features.Judgment.unacceptable :=
-  ⟨rfl, by decide⟩
-
-/-! ### The three competing analyses share one neg-raising logic
-
-VFI's domain-restriction *ought* (`Directive.weakNecessity`) is `∀` over the
-refined best-world set `bestWorlds f (g ∪ g') w`, so the shared lemma applies to
-it exactly as to Rubinstein's `BEST(favored, negotiable)` and A&J's gap domain.
-All three rival analyses of weak necessity predict neg-raising via the *same*
-condition — the domain is a subsingleton — and differ only in how each constructs
-that domain. -/
-
-/-- **Domain-restriction (von Fintel & Iatridou) wired to the shared lemma.** VFI
-    weak necessity neg-raises at `(f, g, g', w)` iff its nested best-world domain
-    `bestAmong (bestWorlds f g w) (g' w)` is a subsingleton — the same
-    `Homogeneity.negRaising_iff_subsingleton` characterization as Rubinstein's
-    `BEST(favored, negotiable)` and A&J's gap domain. -/
-theorem vfiWeak_negRaises_iff {W : Type*} (f : ModalBase W) (g g' : OrderingSource W)
-    (w : W) :
-    (∀ p : W → Prop, ¬ weakNecessity f g g' p w →
-        weakNecessity f g g' (fun w' => ¬ p w') w) ↔
+open Exhaustification Exhaustification.Innocent
+
+/-! ### Weak and strong necessity -/
+
+variable {W : Type*}
+
+/-- Two universal modals over one domain cannot be affirmed and denied together. -/
+theorem sameDomain_contradiction (D : Set W) (p : W → Prop) :
+    ¬ ((∀ w ∈ D, p w) ∧ ¬ ∀ w ∈ D, p w) := fun h => h.2 h.1
+
+/-- A universal modal over a proper subdomain can be affirmed while the one over the full
+domain is denied. -/
+theorem restricted_consistent {D' D : Finset W} (h : D' ⊂ D) :
+    ∃ p : W → Prop, (∀ w ∈ D', p w) ∧ ¬ ∀ w ∈ D, p w :=
+  let ⟨w, hw, hw'⟩ := Finset.exists_of_ssubset h
+  ⟨(· ∈ D'), fun _ hw => hw, fun hall => hw' (hall w hw)⟩
+
+/-- Domain-restriction weak necessity neg-raises at a world exactly when its nested best-world
+domain is a subsingleton. -/
+theorem vfiWeak_negRaises_iff (f : ModalBase W) (g g' : OrderingSource W) (w : W) :
+    (∀ p : W → Prop, ¬ weakNecessity f g g' p w → weakNecessity f g g' (fun w' => ¬ p w') w) ↔
       (bestAmong (bestWorlds f g w) (g' w)).Subsingleton := by
   simp only [weakNecessity]
   exact negRaising_iff_subsingleton _
+
+/-! ### Scope under negation -/
+
+/-- A weak necessity modal never takes scope below negation. -/
+theorem weak_never_narrow :
+    ∀ e ∈ Examples.all, e.feature? "force" = some "weak" → (e.feature? "negation").isSome →
+      e.readings.lookup "wide" = some .acceptable ∧
+        e.readings.lookup "narrow" = some .unacceptable := by
+  decide
+
+/-- *Must* takes scope below negation exactly when the negation is in a higher clause. -/
+theorem must_narrow_iff_higher :
+    ∀ e ∈ Examples.all, e.feature? "modal" = some "must" →
+      (e.readings.lookup "narrow" = some .acceptable ↔ e.feature? "negation" = some "higher") := by
+  decide
+
+/-- *Have to* takes scope below negation wherever the negation is. -/
+theorem haveTo_always_narrow :
+    ∀ e ∈ Examples.all, e.feature? "modal" = some "have to" →
+      e.readings.lookup "narrow" = some .acceptable ∧
+        e.readings.lookup "wide" = some .unacceptable := by
+  decide
+
+/-- The chapter reads *must* below a higher-clause negation, where Rubinstein's row records the
+lower-negation reading as unacceptable. -/
+theorem must_higherNeg_conflict :
+    Examples.ex_19b.readings.lookup "narrow" = some .acceptable ∧
+      Rubinstein2014.Examples.nr_must.readings.lookup "lowerNeg" = some .unacceptable := by
+  decide
+
+/-! ### Polarity-sensitive variable force -/
+
+/-- The environments the typology distinguishes. -/
+inductive Environment
+  | unembedded
+  | clausemateNegation
+  | otherDE
+  deriving DecidableEq, Repr
+
+/-- The readings a variable force modal may have. -/
+inductive Reading
+  | possibility
+  | necessity
+  | weakNecessity
+  deriving DecidableEq, Repr, Fintype
+
+/-- What a possibility modal projects: subdomain alternatives, a strong-necessity scalemate,
+whether that scalemate can be pruned, and whether its domain is restricted by a secondary
+ordering source. -/
+structure Projection where
+  subdomain : Bool
+  scalemate : Bool
+  prunable : Bool
+  secondaryOrdering : Bool
+  deriving DecidableEq, Repr
+
+/-- The readings a projection licenses in an environment: unembedded, obligatory
+exhaustification of subdomain alternatives removes the possibility reading unless a scalemate
+supplies it, and strengthens to strong or weak necessity according to the domain; under
+clausemate negation there is no clause boundary for the exhaustifier and the necessity reading
+is no special case of possibility; in other downward-entailing contexts exhaustification is
+optional. -/
+def available (π : Projection) : Environment → Reading → Prop
+  | .unembedded, .possibility => ¬ π.subdomain ∨ π.scalemate
+  | .unembedded, .necessity =>
+      (¬ π.subdomain ∧ ¬ π.scalemate) ∨
+        (π.subdomain ∧ (¬ π.scalemate ∨ π.prunable) ∧ ¬ π.secondaryOrdering)
+  | .unembedded, .weakNecessity => π.subdomain ∧ π.secondaryOrdering
+  | .clausemateNegation, r => r = .possibility
+  | .otherDE, .possibility => True
+  | .otherDE, .necessity => π.subdomain ∧ ¬ π.secondaryOrdering
+  | .otherDE, .weakNecessity => π.subdomain ∧ π.secondaryOrdering
+
+instance (π : Projection) (env : Environment) (r : Reading) : Decidable (available π env r) := by
+  unfold available; cases env <;> cases r <;> infer_instance
+
+/-- Nez Perce *o'qa* projects nothing. -/
+def oqa : Projection := ⟨false, false, false, false⟩
+
+/-- Siona *ba'iji* projects subdomain alternatives and has no scalemate. -/
+def baiji : Projection := ⟨true, false, false, false⟩
+
+/-- Swedish *får* projects subdomain alternatives and a prunable scalemate, *behöva*. -/
+def far : Projection := ⟨true, true, true, false⟩
+
+/-- Kinande *anga* projects subdomain alternatives, has the scalemate *paswa*, and quantifies
+over a doubly restricted domain. -/
+def anga : Projection := ⟨true, true, false, true⟩
+
+/-- Under clausemate negation every projection leaves only the possibility reading. -/
+theorem clausemateNegation_possibility (π : Projection) (r : Reading) :
+    available π .clausemateNegation r ↔ r = .possibility := Iff.rfl
+
+/-- The projection a table row concerns. -/
+def projection? (e : LinguisticExample) : Option Projection :=
+  match e.feature? "modal" with
+  | some "o'qa" => some oqa
+  | some "ba'iji" => some baiji
+  | some "får" => some far
+  | some "anga" => some anga
+  | _ => none
+
+/-- The environment a table row concerns. -/
+def environment? (e : LinguisticExample) : Option Environment :=
+  match e.feature? "environment" with
+  | some "unembedded" => some .unembedded
+  | some "clausemate negation" => some .clausemateNegation
+  | some "other DE" => some .otherDE
+  | _ => none
+
+/-- The reading a row names. -/
+def readingName : Reading → String
+  | .possibility => "possibility"
+  | .necessity => "necessity"
+  | .weakNecessity => "weak necessity"
+
+/-- The projections license exactly the readings the chapter's table records. -/
+theorem projection_matches_table :
+    ∀ e ∈ Examples.all, e.feature? "modal" ≠ none → ∀ π ∈ projection? e, ∀ env ∈ environment? e,
+      ∀ r, (e.readings.lookup (readingName r)).getD .unacceptable = .acceptable ↔
+        available π env r := by
+  decide
+
+/-! ### Exhaustification of subdomain alternatives -/
+
+/-- A state of a two-world modal domain: whether the prejacent holds at each world. -/
+abbrev Domain := Bool × Bool
+
+/-- The prejacent holds at the first world. -/
+def atFirst : Finset Domain := Finset.univ.filter (·.1 = true)
+
+/-- The prejacent holds at the second world. -/
+def atSecond : Finset Domain := Finset.univ.filter (·.2 = true)
+
+/-- The possibility modal: the prejacent holds somewhere in the domain. -/
+def somewhere : Finset Domain := Finset.univ.filter fun s => s.1 = true ∨ s.2 = true
+
+/-- The subdomain alternatives of the possibility modal, with no scalemate. -/
+def subdomainAlts : Finset (Finset Domain) := {atFirst, atSecond, somewhere}
+
+/-- Exhaustifying the possibility modal over its subdomain alternatives yields necessity: the
+prejacent holds at both worlds. -/
+theorem exh_subdomain_necessity (s : Domain)
+    (h : exhIEII (asSetOfSets subdomainAlts) ↑somewhere s) :
+    s ∈ atFirst ∧ s ∈ atSecond := by
+  have hcell : cell (asSetOfSets subdomainAlts) ↑somewhere (true, true) :=
+    (mem_cellFinset_iff subdomainAlts somewhere _).1 (by decide)
+  exact ⟨exhIEII_implies_cell_witnessed_alt _ _ (mem_asSetOfSets.2 ⟨atFirst, by decide, rfl⟩)
+      (true, true) hcell (Finset.mem_coe.2 (by decide : (true, true) ∈ atFirst)) s h,
+    exhIEII_implies_cell_witnessed_alt _ _ (mem_asSetOfSets.2 ⟨atSecond, by decide, rfl⟩)
+      (true, true) hcell (Finset.mem_coe.2 (by decide : (true, true) ∈ atSecond)) s h⟩
+
+/-! ### Covert modality -/
+
+/-- In infinitival relatives a strong determiner forces the *should* reading and excludes the
+*could* reading, where a weak determiner allows both. -/
+theorem strong_determiner_should :
+    ∀ e ∈ Examples.all, e.feature? "construction" = some "infinitival relative" →
+      e.readings.lookup "should" = some .acceptable ∧
+        (e.readings.lookup "could" = some .acceptable ↔ e.feature? "determiner" = some "weak") := by
+  decide
 
 end AghaJeretic2026
