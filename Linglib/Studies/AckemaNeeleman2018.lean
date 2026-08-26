@@ -1,211 +1,214 @@
+import Linglib.Syntax.Minimalist.Phi.PersonSpace
+import Linglib.Morphology.Exponence.Select
 import Linglib.Features.Person.Decomposition
+import Linglib.Data.Examples.AckemaNeeleman2018
 
 /-!
-# Ackema & Neeleman (2018): Features of Person
-[ackema-neeleman-2018] [harbour-2016] [cysouw-2009]
+# Features of person
 
-Formalizes the person-feature system of Ch 2 ("Person Features: Deriving the
-Inventory of Persons"): two privative features `PROX` and `DIST`, interpreted as
-*functions* on a nested person space, derive exactly the attested inventory of
-persons (three singular, four plural) and the inclusive/exclusive distinction —
-with no negative features and without generating nonattested persons.
+Ackema and Neeleman derive the inventory of persons from two privative features acting as
+functions on a nested person space (`Minimalist.Phi.PersonSpace`): `DIST` selects the others
+layer for the third person, `PROX` then `DIST` the addressee layer for the second, `PROX` twice the
+innermost set for the first, and a single `PROX` the set of speaker and addressee for the
+inclusive (`eval_third`, `eval_second`, `eval_first`, `eval_inclusive`). The reverse order is
+incoherent and `PROX` cannot apply to the innermost set (`eval_incoherent`), so with number added
+above person the seven attested pronouns are the structures the system generates; they map onto
+Cysouw's categories with the inclusive undivided (`toCategory_inventory`), the inclusive has no
+singular because `Sᵢ₊ᵤ` has two obligatory members (`inclusive_not_singular`), and every
+number-blind spell-out rule treats the exclusive exactly as the first singular while one mentioning
+two `PROX` separates them from the inclusive (`applies_exclusive_iff_first`,
+`exists_applies_first_not_inclusive`).
 
-## Opt-in, bridged to the neutral inventory
+Third person is a default without being featureless: `DIST` alone can deliver the empty set, so
+only third person pronouns can be expletives (`exists_third_empty`, `first_second_nonempty`), and
+plural is undefined on the empty set, so expletives are singular (`expletive_singular`); the
+featureless pronoun denotes the whole space, whose two obligatory members keep it from being a
+dummy and force number to apply above person (`whole_space_nontrivial`). Spell-out is governed by
+Maximal Encoding — the applicable rule mentioning the most features wins (`realize`, through
+`Morphology.Exponence.selectBy`): Dutch's strong subject pronouns realize the paradigm with one
+form for both readings of the first plural (`dutch_paradigm`), whereas a vocabulary with a rule
+mentioning two `PROX` splits the exclusive from the inclusive (`clusive_split`).
 
-This is a *framework-specific* (DM/Minimalist) account and is **not** machinery
-the pronoun object or its consumers are committed to. A&N's PROX/DIST geometry
-is one of several competing decompositions (cf. [harbour-2016]'s
-`Studies/Harbour2016.lean`); the widely-adopted, framework-neutral
-representation is person + number + clusivity, encapsulated typologically by
-[cysouw-2009]'s `Person.Category`. The deliverable here is
-therefore `specToCategory`: a *converter* from an A&N feature structure to that
-neutral inventory. A consumer that wants the feature geometry imports it;
-everyone else uses the neutral category.
+## References
 
-## The person space (§2.2, (4))
-
-A nested family of sets of atoms `S_i ⊂ S_{i+u} ⊂ S_{i+u+o}`, where `S_i` has the
-speaker (`i`) as obligatory member, `S_{i+u}` adds an addressee (`u`), and
-`S_{i+u+o} = PRS` (the full input) adds others (`o`). `DIST` delivers a *layer*
-(a difference), which is unstructured and terminal.
-
-## The features as functions (§2.2, (6))
-
-* `PROX S = Pred S` — discards the outermost layer.
-* `DIST S = S − Pred S` — selects the outermost layer.
-
-applied to `PRS`, with later-applied features dominated by earlier-applied ones
-(the geometry of §2.2 (9)/(11)). Both require a *layered* input — on `S_i` and
-on a layer they are undefined, which is what bounds the inventory.
-
-## Main results
-
-* `eval_third`/`eval_second`/`eval_first`/`eval_incl` — the canonical structures
-  `[DIST]`, `[PROX,DIST]`, `[PROX,PROX]`, `[PROX]` derive 3/2/1/inclusive.
-* `excl_eq_first_singular` — first-person *exclusive* and first-person singular
-  share the structure `[PROX,PROX]`, deriving [cysouw-2009]'s homophony
-  observation; inclusive (`[PROX]`) is distinct.
-* `reverse_order_incoherent` / `output_bounded` — `DIST` then `PROX` is
-  incoherent and the output space is finite, so no nonattested person is
-  generated.
-* `specToCategory` + `inventory_distinct` — the converter to the neutral
-  `Person.Category`, faithful on the seven attested persons.
+* [ackema-neeleman-2018]
+* [cysouw-2009]
+* [harbour-2016]
+* [bobaljik-2008]
 -/
 
 namespace AckemaNeeleman2018
 
+open Minimalist.Phi Minimalist.Phi.PersonSpace Morphology.Exponence
 open Person (Category)
 
-/-! ### The person space and the two features -/
+variable {α : Type*}
 
-/-- A privative person feature (§2.2), interpreted below as a function on the
-    nested person space. The names reflect the speaker/addressee proximity
-    intuition; the content is the function semantics in `PFeature.apply`. -/
-inductive PFeature where
-  | prox
-  | dist
-  deriving DecidableEq, Repr
+/-! ### The inventory of persons -/
 
-/-- A point in the person space (§2.2, (4)): a nested *level*
-    (`S_i ⊂ S_{i+u} ⊂ S_{i+u+o}`) or a *layer* that `DIST` selects. Levels are
-    layered (have a predecessor, so further features can apply); layers are
-    unstructured and terminal. -/
-inductive PSet where
-  /-- `S_i`: speaker (and any associates) obligatory. -/
-  | si
-  /-- `S_{i+u}`: additionally an addressee obligatory. -/
-  | siu
-  /-- `S_{i+u+o} = PRS`: the full input set. -/
-  | siuo
-  /-- `S_{i+u} − S_i`: the addressee layer (the output of `DIST` on `S_{i+u}`). -/
-  | uLayer
-  /-- `S_{i+u+o} − S_{i+u}`: the others layer (the output of `DIST` on `PRS`). -/
-  | oLayer
-  deriving DecidableEq, Repr
+/-- Third person `[DIST]`. -/
+def third : Spec := [.dist]
 
-/-- `Pred` (§2.2, (5)): the predecessor in the nesting. Defined only on the two
-    non-minimal levels; `none` for `S_i` (minimal) and for layers (unstructured). -/
-def PSet.pred : PSet → Option PSet
-  | .siuo => some .siu
-  | .siu  => some .si
-  | _     => none
+/-- Second person `[PROX–DIST]`. -/
+def second : Spec := [.prox, .dist]
 
-/-- Apply a person feature (§2.2, (6)). `PROX` discards the outermost layer
-    (`= Pred`); `DIST` selects it (`= S − Pred S`). Both require a layered input,
-    so both are `none` on `S_i` and on a layer. -/
-def PFeature.apply (f : PFeature) (s : PSet) : Option PSet :=
-  match f with
-  | .prox => s.pred
-  | .dist =>
-    match s with
-    | .siuo => some .oLayer
-    | .siu  => some .uLayer
-    | _     => none
+/-- First person `[PROX–PROX]`. -/
+def first : Spec := [.prox, .prox]
 
-/-- A person feature structure: the sequence of features, host (applied first)
-    at the head — the geometry of §2.2 (9)/(11). -/
-abbrev PSpec := List PFeature
+/-- First person inclusive `[PROX]`. -/
+def inclusive : Spec := [.prox]
 
-/-- Evaluate a feature structure on `PRS = S_{i+u+o}`. Host-first: `[PROX, DIST]`
-    is `DIST (PROX PRS)`. `none` if any application is incoherent — i.e. the
-    structure is not generable by the system. -/
-def PSpec.eval (fs : PSpec) : Option PSet :=
-  fs.foldl (fun acc f => acc.bind f.apply) (some .siuo)
+theorem eval_third : third.eval = some .others := rfl
 
-/-! ### The canonical structures and their derivations (§2.2) -/
+theorem eval_second : second.eval = some .addressees := rfl
 
-/-- Third person: `[DIST]` selects the others layer. -/
-def third : PSpec := [.dist]
-/-- Second person: `[PROX, DIST]` selects the addressee layer. -/
-def second : PSpec := [.prox, .dist]
-/-- First person (singular / exclusive): `[PROX, PROX]` reaches `S_i`, whose
-    only obligatory member is the speaker. -/
-def first : PSpec := [.prox, .prox]
-/-- First person inclusive: `[PROX]` reaches `S_{i+u}` (speaker + addressee);
-    singular-incompatible, so attested only in the plural. -/
-def incl : PSpec := [.prox]
-
-theorem eval_third : third.eval = some .oLayer := rfl
-theorem eval_second : second.eval = some .uLayer := rfl
 theorem eval_first : first.eval = some .si := rfl
-theorem eval_incl : incl.eval = some .siu := rfl
 
-/-! ### Clusivity is derived (§2.2)
+theorem eval_inclusive : inclusive.eval = some .siu := rfl
 
-First-person exclusive and first-person singular share the *same* feature
-structure `[PROX, PROX]`; the inclusive has a distinct structure `[PROX]`. This
-derives [cysouw-2009]'s observation that the exclusive is regularly
-homophonous with the first-person singular while the inclusive is hardly ever. -/
+/-- `DIST` before `PROX` is incoherent, and `PROX` cannot apply to `Sᵢ`. -/
+theorem eval_incoherent :
+    Spec.eval [.dist, .prox] = none ∧ Spec.eval [.prox, .prox, .prox] = none :=
+  ⟨rfl, rfl⟩
 
-/-- First-person exclusive *is* the first-person singular structure. -/
-theorem excl_eq_first_singular : first = first := rfl
+/-- `[PROX]` has no singular reading: `Sᵢ₊ᵤ` has two obligatory members. -/
+theorem inclusive_not_singular (S : PersonSpace α) : ¬ (S.denote .siu).Subsingleton :=
+  S.nontrivial_denote_siu.not_subsingleton
 
-/-- The inclusive output contains the addressee (`S_{i+u}`); the exclusive output
-    does not (`S_i`). Clusivity is read off the output set, not stipulated. -/
-theorem incl_excl_distinct :
-    incl.eval = some .siu ∧ first.eval = some .si := ⟨rfl, rfl⟩
+/-- A pronoun: a person structure under a number node, plural or not. -/
+structure Pronoun where
+  /-- The person feature structure. -/
+  person : Spec
+  /-- Whether the number node carries `PL`. -/
+  plural : Bool
+  deriving DecidableEq
 
-/-! ### No nonattested persons (§2.2, p. 28–29)
+/-- The seven attested pronouns: three singular, four plural. -/
+def inventory : List Pronoun :=
+  [⟨first, false⟩, ⟨second, false⟩, ⟨third, false⟩, ⟨inclusive, true⟩, ⟨first, true⟩,
+    ⟨second, true⟩, ⟨third, true⟩]
 
-The opposite order of application is incoherent (`DIST` delivers an unstructured
-layer, to which `PROX`/`DIST` cannot apply), and the output space is finite — so
-the system generates exactly the attested structures and no others. -/
+/-- The typological category of a pronoun: Cysouw's inventory with the inclusive undivided,
+its minimal/augmented split being a matter of number. -/
+def Pronoun.toCategory (p : Pronoun) : Option Category :=
+  p.person.eval.bind fun r =>
+    match r, p.plural with
+    | .si, false => some .s1
+    | .si, true => some .excl
+    | .siu, true => some .augIncl
+    | .addressees, false => some .s2
+    | .addressees, true => some .secondGrp
+    | .others, false => some .s3
+    | .others, true => some .thirdGrp
+    | _, _ => none
 
-/-- `DIST` then `PROX` is incoherent, and `PROX` cannot iterate past `S_i`. -/
-theorem reverse_order_incoherent :
-    PSpec.eval [.dist, .prox] = none ∧
-    PSpec.eval [.prox, .prox, .prox] = none := ⟨rfl, rfl⟩
+/-- The inventory realizes every category but the minimal inclusive. -/
+theorem toCategory_inventory :
+    ∀ c ∈ Category.all, c ≠ .minIncl ↔ ∃ p ∈ inventory, p.toCategory = some c := by
+  decide
 
-/-- Every evaluation lands in the finite output space: `none`, the bare input
-    `S_{i+u+o}`, or one of the four attested person sets. There is no room for a
-    fourth singular person or any nonattested category. -/
-theorem output_bounded (fs : PSpec) :
-    fs.eval = none ∨ fs.eval = some .siuo ∨ fs.eval = some .si ∨
-    fs.eval = some .siu ∨ fs.eval = some .uLayer ∨ fs.eval = some .oLayer := by
-  rcases h : fs.eval with _ | s
-  · exact .inl rfl
-  · cases s <;> simp
+theorem toCategory_inclusive_singular : (⟨inclusive, false⟩ : Pronoun).toCategory = none := rfl
 
-/-! ### Bridge to the neutral inventory ([cysouw-2009] `Category`) -/
+/-! ### Third person as default -/
 
-/-- Map an output set together with its number (`plural`) to the neutral
-    [cysouw-2009] person category. `S_i` is first-singular / exclusive
-    depending on number; `S_{i+u}` is the (augmented) inclusive — A&N's basic
-    system does not split minimal vs augmented inclusive, which is a number
-    matter (their ch. 3), so it maps to `.augIncl`. `none` for the
-    singular-incompatible inclusive and for the bare input. -/
-def outputToCategory : PSet → Bool → Option Category
-  | .si,     false => some .s1
-  | .si,     true  => some .excl
-  | .siu,    true  => some .augIncl
-  | .uLayer, false => some .s2
-  | .uLayer, true  => some .secondGrp
-  | .oLayer, false => some .s3
-  | .oLayer, true  => some .thirdGrp
-  | _,       _     => none
+/-- `DIST` may deliver the empty set: expletives are third person. -/
+theorem exists_third_empty : ∃ S : PersonSpace Bool, S.denote .others = ∅ :=
+  exists_denote_others_eq_empty Bool.false_ne_true
 
-/-- Converter from an A&N feature structure (plus number) to the neutral
-    [cysouw-2009] `Category`. This is the opt-in bridge: the pronoun object
-    and its consumers stay on the neutral category; this is how a consumer that
-    has reasoned in A&N's geometry rejoins them. -/
-def specToCategory (fs : PSpec) (plural : Bool) : Option Category :=
-  (fs.eval).bind (outputToCategory · plural)
+/-- First and second person never denote the empty set. -/
+theorem first_second_nonempty (S : PersonSpace α) :
+    (S.denote .si).Nonempty ∧ (S.denote .addressees).Nonempty :=
+  ⟨S.denote_nonempty (by decide), S.denote_nonempty (by decide)⟩
 
-/-- The seven attested persons map onto seven distinct neutral categories,
-    covering all of [cysouw-2009]'s inventory except `.minIncl` (the
-    minimal inclusive — a number refinement A&N defer to their ch. 3). -/
-theorem inventory_distinct :
-    specToCategory first false = some .s1 ∧
-    specToCategory second false = some .s2 ∧
-    specToCategory third false = some .s3 ∧
-    specToCategory first true = some .excl ∧
-    specToCategory incl true = some .augIncl ∧
-    specToCategory second true = some .secondGrp ∧
-    specToCategory third true = some .thirdGrp := by
-  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+/-- Expletives are singular: plural is undefined on the empty set. -/
+theorem expletive_singular (S : PersonSpace α) (h : S.denote .others = ∅) :
+    ¬ S.PluralDefined .others :=
+  S.not_pluralDefined_of_eq_empty h
 
-/-- The singular-incompatible inclusive (`[PROX]` with no number) has no
-    category — A&N's reason the inclusive surfaces only in the plural. -/
-theorem incl_singular_undefined : specToCategory incl false = none := rfl
+theorem eval_nil : Spec.eval [] = some .siuo := rfl
+
+/-- The featureless pronoun denotes the whole space, which has two obligatory members: it cannot
+be a dummy, and number applied before person would always find a plurality, so plural is
+undefined there. -/
+theorem whole_space_nontrivial (S : PersonSpace α) :
+    (S.denote .siuo).Nontrivial ∧ ¬ S.PluralDefined .siuo :=
+  ⟨S.nontrivial_denote_siuo, S.not_pluralDefined_siuo⟩
+
+/-! ### Spell-out and Maximal Encoding -/
+
+/-- A spell-out rule: the person features it mentions, with multiplicity, whether it mentions
+`PL`, and its form. -/
+structure SpellOut (E : Type*) where
+  /-- The person features mentioned. -/
+  features : List Feature
+  /-- Whether `PL` is mentioned. -/
+  plural : Bool
+  /-- The form inserted. -/
+  form : E
+
+variable {E : Type*}
+
+/-- A rule applies to a pronoun whose structure contains every feature it mentions. -/
+instance : Rule (SpellOut E) Pronoun E where
+  exponent r := r.form
+  Applies r p := (∀ f, r.features.count f ≤ p.person.count f) ∧ (r.plural = true → p.plural = true)
+
+instance : DecidableRel (Applies : SpellOut E → Pronoun → Prop) := fun _ _ =>
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Every number-blind rule applies to the exclusive exactly when it applies to the first
+singular: the two share their person structure. -/
+theorem applies_exclusive_iff_first (r : SpellOut E) (h : r.plural = false) :
+    Applies r (⟨first, true⟩ : Pronoun) ↔ Applies r ⟨first, false⟩ := by
+  simp [Applies, h]
+
+/-- A rule mentioning two `PROX` applies to the first singular but not to the inclusive. -/
+theorem exists_applies_first_not_inclusive (e : E) :
+    ∃ r : SpellOut E, Applies r (⟨first, false⟩ : Pronoun) ∧ ¬ Applies r ⟨inclusive, true⟩ :=
+  ⟨⟨[.prox, .prox], false, e⟩, ⟨fun _ => le_rfl, fun h => Bool.noConfusion h⟩, fun ⟨h, _⟩ =>
+    absurd (h .prox) (show ¬ ([Feature.prox, .prox].count .prox ≤ inclusive.count .prox) by decide)⟩
+
+/-- Maximal Encoding: the applicable rule mentioning the most features is used. -/
+def realize (v : List (SpellOut E)) (p : Pronoun) : Option E :=
+  Morphology.Exponence.realize (fun r => r.features.length + r.plural.toNat) v p
+
+/-- The Dutch strong subject pronouns. -/
+inductive DutchForm
+  | ik
+  | jij
+  | hij
+  | wij
+  | jullie
+  | zij
+  deriving DecidableEq
+
+/-- The Dutch spell-out rules: no rule mentions two `PROX`. -/
+def dutch : List (SpellOut DutchForm) :=
+  [⟨[.prox], false, .ik⟩, ⟨[.prox, .dist], false, .jij⟩, ⟨[.dist], false, .hij⟩,
+    ⟨[.prox], true, .wij⟩, ⟨[.prox, .dist], true, .jullie⟩, ⟨[.dist], true, .zij⟩]
+
+/-- The Dutch paradigm: the more specific rule blocks the less specific one, and one form
+realizes both the inclusive and the exclusive. -/
+theorem dutch_paradigm :
+    inventory.map (realize dutch) =
+      [some .ik, some .jij, some .hij, some .wij, some .wij, some .jullie, some .zij] := by
+  decide
+
+/-- A vocabulary distinguishing the readings of the first plural. -/
+inductive ClusiveForm
+  | exclusive
+  | inclusive
+  deriving DecidableEq
+
+/-- Rules mentioning two and one `PROX` under `PL`. -/
+def clusive : List (SpellOut ClusiveForm) :=
+  [⟨[.prox, .prox], true, .exclusive⟩, ⟨[.prox], true, .inclusive⟩]
+
+/-- The rule mentioning two `PROX` blocks the other on the exclusive and cannot apply to the
+inclusive. -/
+theorem clusive_split :
+    realize clusive ⟨first, true⟩ = some .exclusive ∧
+      realize clusive ⟨inclusive, true⟩ = some .inclusive := by
+  decide
 
 end AckemaNeeleman2018
