@@ -25,9 +25,9 @@ def ex_22a : LinguisticExample :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("short answer", .acceptable), ("clausal confirmation", .acceptable), ("intended content", .acceptable)]
+    readings := [("short answer: Does Bo admire Bo?", .acceptable), ("clausal confirmation: Are you asking who Bo (of all people) admires?", .acceptable), ("intended content: Who do you mean 'Bo'?", .acceptable)]
     paperFeatures := [("speaker", "addressee")]
-    comment := "Reading 1 (short answer): 'Does Bo admire Bo?'; reading 2 (clausal confirmation): 'Are you asking who Bo (of all people) admires?'; reading 2 (intended content): 'Who do you mean Bo?'. Against Equal Access to Context: only the addressee has the two clarification readings."
+    comment := "Against Equal Access to Context: only the addressee has the two clarification-request readings."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -43,9 +43,9 @@ def ex_22b : LinguisticExample :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("short answer", .acceptable), ("self-correction", .acceptable)]
+    readings := [("short answer: Does Bo admire Bo?", .acceptable), ("self-correction: Did I say 'Bo'?", .acceptable)]
     paperFeatures := [("speaker", "original speaker")]
-    comment := "Reading 1 (short answer): 'Does Bo admire Bo?'; reading 2 (self-correction): 'Did I say Bo?'. Only the original speaker has the self-correction reading."
+    comment := "Only the original speaker has the self-correction reading."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -61,9 +61,9 @@ def ex_23a : LinguisticExample :=
     context := "A keeps the turn."
     judgment := .acceptable
     alternatives := []
-    readings := [("why own a parakeet", .acceptable)]
+    readings := [("Why own a parakeet?", .acceptable), ("Why are you asking which members of this audience own a parakeet?", .unacceptable)]
     paperFeatures := [("turn", "kept")]
-    comment := "The Turn-Taking Puzzle: 'Why?' = 'Why own a parakeet?'; the resolution of bare 'why' depends on who holds the turn."
+    comment := "The Turn-Taking Puzzle: the resolution of bare 'why' depends on who holds the turn."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -79,9 +79,9 @@ def ex_23b : LinguisticExample :=
     context := "B takes the turn."
     judgment := .acceptable
     alternatives := []
-    readings := [("why are you asking", .acceptable)]
+    readings := [("Why are you asking which members of this audience own a parakeet?", .acceptable), ("Why own a parakeet?", .unacceptable)]
     paperFeatures := [("turn", "taken")]
-    comment := "'Why?' = 'Why are you asking which members of this audience own a parakeet?'; the reading available to B is unavailable to A in (23a), and vice versa."
+    comment := "The reading available to B is unavailable to A in (23a), and vice versa."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
