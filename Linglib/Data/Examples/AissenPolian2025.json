@@ -1,0 +1,1455 @@
+[
+  {
+    "id": "aissenpolian2025_ex1",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(1)"},
+    "language": "tzel1254",
+    "primaryText": "Bejk'aj x-nich'an te Xun=e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bejk'aj", "CP.be.born"], ["x-nich'an", "A3-child.of.male"], ["te", "DET"],
+      ["Xun=e", "Juan=ENC"]
+    ],
+    "translation": "Juan's child was born. / Juan had a child born.",
+    "context": "Declarative with a possessed theme, Oxchuc Tseltal.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "lexicalUnaccusative"]
+    ],
+    "comment": "Non-wh possessors follow the possessum."
+  },
+  {
+    "id": "aissenpolian2025_ex2a",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(2a)"},
+    "language": "tzel1254",
+    "primaryText": "[Mach'a x-nich'an] bejk'aj?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["x-nich'an", "A3-child.of.male"], ["bejk'aj", "CP.be.born"]
+    ],
+    "translation": "Whose child was born?",
+    "context": "Pied-piping: the question is about a particular child whose existence is presupposed.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "piedPiping"],
+      ["possessorOf", "S_O"],
+      ["possessum", "specific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "lexicalUnaccusative"]
+    ],
+    "comment": "Pied-piping with inversion: the wh-possessor precedes the possessum."
+  },
+  {
+    "id": "aissenpolian2025_ex2b",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(2b)"},
+    "language": "tzel1254",
+    "primaryText": "Mach'a bejk'aj x-nich'an?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["bejk'aj", "CP.be.born"], ["x-nich'an", "A3-child.of.male"]
+    ],
+    "translation": "Who had a child born?",
+    "context": "Stranding: no child is presupposed to exist.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "S_O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "lexicalUnaccusative"],
+      ["table4", "T-none-unaccusative"]
+    ],
+    "comment": "Table 4, first row: T°'s D-probe reaches the possessor of a non-specific S_O."
+  },
+  {
+    "id": "aissenpolian2025_ex4",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(4)"},
+    "language": "tzel1254",
+    "primaryText": "Mach'a x-bajt s-karo?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["x-bajt", "ICP-go"], ["s-karo", "A3-car"]
+    ],
+    "translation": "Who can provide a car? (lit. who goes his car?)",
+    "context": "A group of men planning a community work project ask how they will get to the site; no particular car is presupposed, and 'nobody' is a felicitous answer.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "S_O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["table4", "T-none-unaccusative"]
+    ],
+    "comment": "Naturally produced stranding question, Tenejapa Tseltal text."
+  },
+  {
+    "id": "aissenpolian2025_ex5",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(5)"},
+    "language": "tzel1254",
+    "primaryText": "[Mach'a x-wakax] la s-mil-ik?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["x-wakax", "A3-cow"], ["la", "CP"], ["s-mil-ik", "A3-kill-PL"]
+    ],
+    "translation": "Whose cow did they kill?",
+    "context": "In a kitchen where meat that was obviously not purchased is being cooked; the cow is contextually salient and a 'nobody' answer is nonsensical.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "piedPiping"],
+      ["possessorOf", "O"],
+      ["possessum", "specific"],
+      ["clause", "transitive"],
+      ["intervener", "none"]
+    ],
+    "comment": "Naturally produced pied-piping question, Oxchuc Tseltal text."
+  },
+  {
+    "id": "aissenpolian2025_ex20a",
+    "source": {"bibkey": "little-2020b", "paperLabel": "(11)"},
+    "reportedIn": {"bibkey": "aissen-polian-2025", "paperLabel": "(20a)"},
+    "language": "chol1282",
+    "primaryText": "[Majki i-wakax] ta' yajl-i?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Majki", "who"], ["i-wakax", "A3-cow"], ["ta'", "PFV"], ["yajl-i", "fall-INTR"]
+    ],
+    "translation": "Whose cow fell?",
+    "context": "Ch'ol possessive S_O.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "piedPiping"],
+      ["possessorOf", "S_O"],
+      ["possessum", "specific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"]
+    ],
+    "comment": "Little's Ch'ol data, cited as parallel to Tseltalan."
+  },
+  {
+    "id": "aissenpolian2025_ex20b",
+    "source": {"bibkey": "little-2020b", "paperLabel": "(11)"},
+    "reportedIn": {"bibkey": "aissen-polian-2025", "paperLabel": "(20b)"},
+    "language": "chol1282",
+    "primaryText": "Majki ta' yajl-i [i-wakax]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Majki", "who"], ["ta'", "PFV"], ["yajl-i", "fall-INTR"], ["i-wakax", "A3-cow"]
+    ],
+    "translation": "Whose cow fell?",
+    "context": "Ch'ol possessive S_O, stranded.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "S_O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["table4", "T-none-unaccusative"]
+    ],
+    "comment": "Little's Ch'ol data; Table 4 first row."
+  },
+  {
+    "id": "aissenpolian2025_ex22a",
+    "source": {"bibkey": "little-2020b", "paperLabel": "(13)"},
+    "reportedIn": {"bibkey": "aissen-polian-2025", "paperLabel": "(22a)"},
+    "language": "chol1282",
+    "primaryText": "[Majki i-chich] ta' a-k'el-e?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Majki", "who"], ["i-chich", "A3-sister"], ["ta'", "PFV"], ["a-k'el-e", "A2-see-TR"]
+    ],
+    "translation": "Whose sister did you see?",
+    "context": "Ch'ol possessive O in a monotransitive clause.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "piedPiping"],
+      ["possessorOf", "O"],
+      ["possessum", "specific"],
+      ["clause", "transitive"],
+      ["intervener", "none"]
+    ],
+    "comment": "Table 2: Psr-O extracts only with pied-piping."
+  },
+  {
+    "id": "aissenpolian2025_ex22b",
+    "source": {"bibkey": "little-2020b", "paperLabel": "(13)"},
+    "reportedIn": {"bibkey": "aissen-polian-2025", "paperLabel": "(22b)"},
+    "language": "chol1282",
+    "primaryText": "Majki ta' a-k'el-e [i-chich]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Majki", "who"], ["ta'", "PFV"], ["a-k'el-e", "A2-see-TR"], ["i-chich", "A3-sister"]
+    ],
+    "translation": "Intended: Whose sister did you see?",
+    "context": "Ch'ol possessive O, stranded.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "O"],
+      ["possessum", "specific"],
+      ["clause", "transitive"],
+      ["intervener", "A"],
+      ["table4", "T-A-transitive"]
+    ],
+    "comment": "Table 2 and Table 4: the agent intervenes and no external position is available."
+  },
+  {
+    "id": "aissenpolian2025_ex26b",
+    "source": {"bibkey": "little-2020b", "paperLabel": "fn. 10"},
+    "reportedIn": {"bibkey": "aissen-polian-2025", "paperLabel": "(26b)"},
+    "language": "chol1282",
+    "primaryText": "Majki ta' a-k'el-be [i-chich]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Majki", "who"], ["ta'", "PFV"], ["a-k'el-be", "A2-see-APPL"], ["i-chich", "A3-sister"]
+    ],
+    "translation": "Whose sister did you see?",
+    "context": "Ch'ol ditransitive applicative with the possessor as applied object.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "ditransitiveRaising"],
+      ["intervener", "none"],
+      ["probe", "Appl"],
+      ["table4", "Appl-none-ditransitive"]
+    ],
+    "comment": "The possessor extracts as applied object: external possession."
+  },
+  {
+    "id": "aissenpolian2025_ex23a",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(23a)"},
+    "language": "tzot1259",
+    "primaryText": "[Much'u s-tseb] av-il ta ch'ivit?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["s-tseb", "A3-girl"], ["av-il", "A2-see"], ["ta", "P"],
+      ["ch'ivit", "market"]
+    ],
+    "translation": "Whose daughter did you see in the market?",
+    "context": "Possessive O in a monotransitive clause.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "piedPiping"],
+      ["possessorOf", "O"],
+      ["possessum", "specific"],
+      ["clause", "transitive"],
+      ["intervener", "none"]
+    ],
+    "comment": "Table 2: pied-piping of Psr-O."
+  },
+  {
+    "id": "aissenpolian2025_ex23b",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(23b)"},
+    "language": "tzot1259",
+    "primaryText": "Much'u av-il [s-tseb] ta ch'ivit?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["av-il", "A2-see"], ["s-tseb", "A3-girl"], ["ta", "P"],
+      ["ch'ivit", "market"]
+    ],
+    "translation": "Intended: Whose daughter did you see in the market?",
+    "context": "Possessive O, stranded.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "O"],
+      ["possessum", "specific"],
+      ["clause", "transitive"],
+      ["intervener", "A"],
+      ["table4", "T-A-transitive"]
+    ],
+    "comment": "Table 4: Psr-O cannot reach Spec,TP past the agent, and nominal opacity blocks subextraction."
+  },
+  {
+    "id": "aissenpolian2025_ex24",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(24)"},
+    "language": "tzot1259",
+    "primaryText": "I-j-man tal [s-lok'obbail [li Nwéva York xchi'uk li k'elob osil=e]].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I-j-man", "CP-A1-buy"], ["tal", "DIR"], ["s-lok'obbail", "A3-representation"],
+      ["li", "DET"], ["Nwéva", "New"], ["York", "York"], ["xchi'uk", "and"], ["li", "DET"],
+      ["k'elob", "lookout"], ["osil=e", "ground=ENC"]
+    ],
+    "translation": "I bought pictures of NY and the observation tower.",
+    "context": "Text description of a visit to the Empire State Building; nothing in the context implies the existence of pictures.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "transitive"],
+      ["construction", "lexicalTransitive"],
+      ["possessum", "nonSpecific"]
+    ],
+    "comment": "A non-specific possessive O with an overt possessor, against Little's obligatory object shift."
+  },
+  {
+    "id": "aissenpolian2025_ex25",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(25)"},
+    "language": "tzot1259",
+    "primaryText": "K'usi a-man tal [s-lok'obbail]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["K'usi", "what"], ["a-man", "A2-buy"], ["tal", "DIR"],
+      ["s-lok'obbail", "A3-representation"]
+    ],
+    "translation": "Intended: What did you buy pictures/a picture of?",
+    "context": "Stranding from a non-specific possessive O.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "transitive"],
+      ["intervener", "A"],
+      ["table4", "T-A-transitive"]
+    ],
+    "comment": "Extraction of Psr-O is blocked whether O is specific or not: nominal opacity plus no external position."
+  },
+  {
+    "id": "aissenpolian2025_ex27",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(27)"},
+    "language": "tzot1259",
+    "primaryText": "K'usi a-man-be tal [s-lok'obbail]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["K'usi", "what"], ["a-man-be", "A2-buy-APPL"], ["tal", "DIR"],
+      ["s-lok'obbail", "A3-representation"]
+    ],
+    "translation": "What did you buy a picture of?",
+    "context": "The applicative suffix makes (25) grammatical.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "ditransitiveRaising"],
+      ["intervener", "none"],
+      ["probe", "Appl"],
+      ["table4", "Appl-none-ditransitive"]
+    ],
+    "comment": "Psr-O extracts as applied object via Appl°'s [EPP:D]."
+  },
+  {
+    "id": "aissenpolian2025_ex28b",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(28b)"},
+    "language": "tzel1254",
+    "primaryText": "Mach'a la a-man-bey tal [s-lok'ombail]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["la", "CP"], ["a-man-bey", "A2-buy-APPL"], ["tal", "DIR"],
+      ["s-lok'ombail", "A3-representation"]
+    ],
+    "translation": "Who did you buy a picture of?",
+    "context": "Tenango Tseltal applicative.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "ditransitiveRaising"],
+      ["intervener", "none"],
+      ["probe", "Appl"],
+      ["table4", "Appl-none-ditransitive"]
+    ],
+    "comment": "Extraction of Psr-O only from the applicative construction."
+  },
+  {
+    "id": "aissenpolian2025_ex28c",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(28c)"},
+    "language": "tzel1254",
+    "primaryText": "Mach'a la a-man tal [s-lok'ombail]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["la", "CP"], ["a-man", "A2-buy"], ["tal", "DIR"],
+      ["s-lok'ombail", "A3-representation"]
+    ],
+    "translation": "Intended: Who did you buy a picture of?",
+    "context": "Tenango Tseltal monotransitive.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "transitive"],
+      ["intervener", "A"],
+      ["table4", "T-A-transitive"]
+    ],
+    "comment": "No applicative, no external position."
+  },
+  {
+    "id": "aissenpolian2025_ex30",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(30)"},
+    "language": "tzot1259",
+    "primaryText": "Much'u ch-av-al-b-on [s-lo'iltael]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["ch-av-al-b-on", "ICP-A2-say-APPL-B1SG"], ["s-lo'iltael", "A3-talk"]
+    ],
+    "translation": "Intended: Who will you tell me gossip about?",
+    "context": "Ditransitive with a first-person thematic applied object filling Spec,ApplP.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "ditransitiveThematic"],
+      ["intervener", "goal"],
+      ["probe", "Appl"],
+      ["table4", "Appl-goal-ditransitive"]
+    ],
+    "comment": "Table 4, last row: the external position is occupied and subextraction is blocked by nominal opacity."
+  },
+  {
+    "id": "aissenpolian2025_ex31",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(31)"},
+    "language": "tzel1254",
+    "primaryText": "Bin ya aw-ak'-b-on [s-tojol]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bin", "what"], ["ya", "ICP"], ["aw-ak'-b-on", "A2-give-APPL-B1SG"],
+      ["s-tojol", "A3-payment"]
+    ],
+    "translation": "Intended: What are you giving me money for?",
+    "context": "Tenango Tseltal ditransitive with a thematic applied object.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "ditransitiveThematic"],
+      ["intervener", "goal"],
+      ["probe", "Appl"],
+      ["table4", "Appl-goal-ditransitive"]
+    ],
+    "comment": "Table 4, last row."
+  },
+  {
+    "id": "aissenpolian2025_ex32",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(32)"},
+    "language": "tzot1259",
+    "primaryText": "I te l-i-k'elan-b-otikotik [s-lok'obbail li jch'ulme'tik=e].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I", "and"], ["te", "then"], ["l-i-k'elan-b-otikotik", "CP-B1-present-APPL.PASS-B1EXCL"],
+      ["s-lok'obbail", "A3-representation"], ["li", "DET"],
+      ["jch'ulme'tik=e", "our.holy.mother=ENC"]
+    ],
+    "translation": "And then we were given a picture of the Virgin.",
+    "context": "Text: initial mention of the picture; Spec,ApplP is filled by the first-person goal.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "ditransitiveThematic"],
+      ["construction", "lexicalTransitive"],
+      ["possessum", "nonSpecific"]
+    ],
+    "comment": "A non-specific possessive O whose possessor cannot raise, against obligatory object shift."
+  },
+  {
+    "id": "aissenpolian2025_ex35",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(35)"},
+    "language": "tzot1259",
+    "primaryText": "Oy j-librotak.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oy", "EXIS"], ["j-librotak", "A1-books"]
+    ],
+    "translation": "I had books.",
+    "context": "Predicative possession on the existential construction.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "predicativePossession"]
+    ],
+    "comment": "No Set B on the predicate: the agreement-determining argument is the third-person possessive; the clause is about its possessor."
+  },
+  {
+    "id": "aissenpolian2025_ex36",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(36)"},
+    "language": "tzot1259",
+    "primaryText": "Kap-em j-jol.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kap-em", "mixed.up-PRF"], ["j-jol", "A1-head"]
+    ],
+    "translation": "I am angry. (lit. my head is mixed up)",
+    "context": "Experiential collocation.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "experientialCollocation"]
+    ],
+    "comment": "The possessor of the body-part noun is the experiencer."
+  },
+  {
+    "id": "aissenpolian2025_ex37",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(37)"},
+    "language": "tzel1254",
+    "primaryText": "Ch'ay j-tak'in.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ch'ay", "lost.INTR"], ["j-tak'in", "A1-money"]
+    ],
+    "translation": "I lost some (non-specific) money.",
+    "context": "Lexical unaccusative with a non-specific possessive S_O.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "lexicalUnaccusative"],
+      ["possessum", "nonSpecific"]
+    ],
+    "comment": "Tenejapa Tseltal."
+  },
+  {
+    "id": "aissenpolian2025_ex43",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(43)"},
+    "language": "tzel1254",
+    "primaryText": "May-uk j-kerem.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["May-uk", "NEG+EXIS-IRR"], ["j-kerem", "A1-boy"]
+    ],
+    "translation": "I don't have a boy.",
+    "context": "Predicative possession under negation: the possessum takes narrow scope.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "predicativePossession"],
+      ["possessum", "nonSpecific"]
+    ],
+    "comment": "The possessive itself cannot be ψ-subject; its specific possessor raises to Spec,TP."
+  },
+  {
+    "id": "aissenpolian2025_ex45a",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(45a)"},
+    "language": "tzot1259",
+    "primaryText": "Oy [s-na] ta Jobel li Xun=e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oy", "EXIS"], ["s-na", "A3-house"], ["ta", "in"], ["Jobel", "SC"], ["li", "DET"],
+      ["Xun=e", "Juan=ENC"]
+    ],
+    "translation": "Juan has a house in San Cristobal.",
+    "context": "Preferred order: the locative separates possessum and possessor.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "predicativePossession"]
+    ],
+    "comment": "Word-order evidence that the possessor has raised past the locative."
+  },
+  {
+    "id": "aissenpolian2025_ex45b",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(45b)"},
+    "language": "tzot1259",
+    "primaryText": "Oy [s-na] li Xun ta Jobel=e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oy", "EXIS"], ["s-na", "A3-house"], ["li", "DET"], ["Xun", "Juan"], ["ta", "in"],
+      ["Jobel=e", "SC=ENC"]
+    ],
+    "translation": "Intended: Juan has a house in San Cristobal.",
+    "context": "Locative after the possessor.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "predicativePossession"]
+    ],
+    "comment": "Degraded: the locative is too high."
+  },
+  {
+    "id": "aissenpolian2025_ex46",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(46)"},
+    "language": "tzot1259",
+    "primaryText": "Te oy ta Jobel [s-na li Xun=e].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Te", "there"], ["oy", "EXIS"], ["ta", "in"], ["Jobel", "SC"], ["s-na", "A3-house"],
+      ["li", "DET"], ["Xun=e", "Juan=ENC"]
+    ],
+    "translation": "Juan's house is in San Cristobal. (not: Juan has a house in San Cristobal)",
+    "context": "The whole possessive follows the PP and is definite.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "locativeCopula"],
+      ["possessum", "specific"]
+    ],
+    "comment": "The entire DP raises to Spec,TP as ψ-subject: a locative copula clause, not predicative possession."
+  },
+  {
+    "id": "aissenpolian2025_ex47",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(47)"},
+    "language": "tzot1259",
+    "primaryText": "[Oy s-vix] [oy y-ixlel] ti vinik un=e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Oy", "EXIS"], ["s-vix", "A3-older.sis"], ["oy", "EXIS"], ["y-ixlel", "A3-younger.sis"],
+      ["ti", "DET"], ["vinik", "man"], ["un=e", "PAR=ENC"]
+    ],
+    "translation": "The man has an older sister and a younger sister.",
+    "context": "Coordinated existentials with one sentence-final possessor and no prosodic break.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "predicativePossession"]
+    ],
+    "comment": "Across-the-board A-movement of the possessor from coordinated VPs."
+  },
+  {
+    "id": "aissenpolian2025_ex48a",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(48a)"},
+    "language": "tzot1259",
+    "primaryText": "Much'u oy [x-chitom]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["oy", "EXIS"], ["x-chitom", "A3-pig"]
+    ],
+    "translation": "Who has a pig/pigs?",
+    "context": "Predicative possession.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "S_O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "predicativePossession"],
+      ["table4", "T-none-unaccusative"]
+    ],
+    "comment": "The only way to interrogate the possessor in predicative possession."
+  },
+  {
+    "id": "aissenpolian2025_ex48b",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(48b)"},
+    "language": "tzot1259",
+    "primaryText": "[Much'u x-chitom] oy?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["x-chitom", "A3-pig"], ["oy", "EXIS"]
+    ],
+    "translation": "Intended: Who has a pig/pigs?",
+    "context": "Predicative possession, pied-piped.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "piedPiping"],
+      ["possessorOf", "S_O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "predicativePossession"]
+    ],
+    "comment": "Possessor and possessum do not form a constituent, and a PossP cannot be wh-moved."
+  },
+  {
+    "id": "aissenpolian2025_ex49a",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(49a)"},
+    "language": "tzel1254",
+    "primaryText": "Mach'a ay [s-tak'in]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["ay", "EXIS"], ["s-tak'in", "A3-money"]
+    ],
+    "translation": "Who has money?",
+    "context": "Tenejapa Tseltal predicative possession.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "S_O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "predicativePossession"],
+      ["table4", "T-none-unaccusative"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "aissenpolian2025_ex49b",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(49b)"},
+    "language": "tzel1254",
+    "primaryText": "[Mach'a s-tak'in] ay?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["s-tak'in", "A3-money"], ["ay", "EXIS"]
+    ],
+    "translation": "Intended: Who has money?",
+    "context": "Tenejapa Tseltal, pied-piped.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "piedPiping"],
+      ["possessorOf", "S_O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "predicativePossession"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "aissenpolian2025_ex50a",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(50a)"},
+    "language": "tzot1259",
+    "primaryText": "Kap-em s-jol li ants=e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kap-em", "mixed.up-PRF"], ["s-jol", "A3-head"], ["li", "DET"], ["ants=e", "woman=ENC"]
+    ],
+    "translation": "The woman is angry. (lit. the woman's head is mixed up)",
+    "context": "Experiential collocation kap -jol.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "experientialCollocation"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "aissenpolian2025_ex51",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(51)"},
+    "language": "tzot1259",
+    "primaryText": "Kap-em-on j-jol.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kap-em-on", "mixed.up-PRF-B1SG"], ["j-jol", "A1-head"]
+    ],
+    "translation": "Intended: I am angry.",
+    "context": "Experiencer indexed on the verb.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "experientialCollocation"]
+    ],
+    "comment": "The possessor-experiencer cannot be indexed on the verb."
+  },
+  {
+    "id": "aissenpolian2025_ex55a",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(55a)"},
+    "language": "tzot1259",
+    "primaryText": "Much'u kap-em [s-jol]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["kap-em", "mix.up-PRF"], ["s-jol", "A3-head"]
+    ],
+    "translation": "Who is angry?",
+    "context": "Experiential collocation.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "S_O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "experientialCollocation"],
+      ["table4", "T-none-unaccusative"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "aissenpolian2025_ex55b",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(55b)"},
+    "language": "tzot1259",
+    "primaryText": "[Much'u s-jol] kap-em?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["s-jol", "A3-head"], ["kap-em", "mix.up-PRF"]
+    ],
+    "translation": "Intended: Who is angry?",
+    "context": "Experiential collocation, pied-piped.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "piedPiping"],
+      ["possessorOf", "S_O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "experientialCollocation"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "aissenpolian2025_ex57b",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(57b)"},
+    "language": "tzot1259",
+    "primaryText": "Much'u i-yul [x-ch'ulel] ta ak'ubaltik?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["i-yul", "CP-arrive"], ["x-ch'ulel", "A3-soul"], ["ta", "P"],
+      ["ak'ubaltik", "night"]
+    ],
+    "translation": "Who woke up in the night? (not: Whose soul arrived in the night?)",
+    "context": "yul -ch'ulel is ambiguous between the idiom 'x awakes' and the literal 'x's soul arrives'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "x woke up", "judgment": "acceptable"},
+      {"name": "x's soul arrived", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "S_O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "experientialCollocation"],
+      ["table4", "T-none-unaccusative"]
+    ],
+    "comment": "Stranding forces the idiomatic reading."
+  },
+  {
+    "id": "aissenpolian2025_ex58b",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(58b)"},
+    "language": "tzot1259",
+    "primaryText": "[Much'u x-ch'ulel] i-yul ta ak'ubaltik?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["x-ch'ulel", "A3-soul"], ["i-yul", "CP-arrive"], ["ta", "P"],
+      ["ak'ubaltik", "night"]
+    ],
+    "translation": "Whose soul arrived in the night? (not: Who woke up?)",
+    "context": "The same string with pied-piping.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "whose soul arrived", "judgment": "acceptable"},
+      {"name": "who woke up", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["strategy", "piedPiping"],
+      ["possessorOf", "S_O"],
+      ["possessum", "specific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "lexicalUnaccusative"]
+    ],
+    "comment": "Pied-piping forces the literal reading: the specific DP raises as ψ-subject."
+  },
+  {
+    "id": "aissenpolian2025_ex59",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(59)"},
+    "language": "tzel1254",
+    "primaryText": "Ch'ay s-tak'in te x-Mal=e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ch'ay", "lost.INTR"], ["s-tak'in", "A3-money"], ["te", "DET"],
+      ["x-Mal=e", "CLF-Maria=ENC"]
+    ],
+    "translation": "Maria's money was lost. / Maria lost some (non-specific) money.",
+    "context": "Ambiguous between a definite and a non-specific possessum; intransitive under both.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Maria's money was lost", "judgment": "acceptable"},
+      {"name": "Maria lost some money", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "lexicalUnaccusative"]
+    ],
+    "comment": "Under the definite reading the DP raises to Spec,TP; under the non-specific reading its possessor does."
+  },
+  {
+    "id": "aissenpolian2025_ex60",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(60)"},
+    "language": "tzel1254",
+    "primaryText": "Ch'ay ajk'ube s-tak'in te x-Mal=e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ch'ay", "lost.INTR"], ["ajk'ube", "yesterday"], ["s-tak'in", "A3-money"], ["te", "DET"],
+      ["x-Mal=e", "CLF-Maria=ENC"]
+    ],
+    "translation": "Maria's money was lost yesterday.",
+    "context": "The whole possessive follows the adverb.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "lexicalUnaccusative"],
+      ["possessum", "specific"]
+    ],
+    "comment": "Definite only: the entire possessive raised to Spec,TP."
+  },
+  {
+    "id": "aissenpolian2025_ex61",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(61)"},
+    "language": "tzel1254",
+    "primaryText": "Ch'ay s-tak'in ajk'ube te x-Mal=e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ch'ay", "lost.INTR"], ["s-tak'in", "A3-money"], ["ajk'ube", "yesterday"], ["te", "DET"],
+      ["x-Mal=e", "CLF-Maria=ENC"]
+    ],
+    "translation": "Maria lost some money yesterday.",
+    "context": "The adverb separates possessum and possessor.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "lexicalUnaccusative"],
+      ["possessum", "nonSpecific"]
+    ],
+    "comment": "Non-specific only: the possessor alone raised to Spec,TP."
+  },
+  {
+    "id": "aissenpolian2025_ex62a",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(62a)"},
+    "language": "tzel1254",
+    "primaryText": "[Mach'a s-tak'in] ch'ay?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["s-tak'in", "A3-money"], ["ch'ay", "lost.INTR"]
+    ],
+    "translation": "Whose money was lost?",
+    "context": "About some specific money known to have been lost.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "piedPiping"],
+      ["possessorOf", "S_O"],
+      ["possessum", "specific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "lexicalUnaccusative"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "aissenpolian2025_ex62b",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(62b)"},
+    "language": "tzel1254",
+    "primaryText": "Mach'a ch'ay [s-tak'in]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["ch'ay", "lost.INTR"], ["s-tak'in", "A3-money"]
+    ],
+    "translation": "Who lost some money?",
+    "context": "Who lost some non-specific money.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "S_O"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "lexicalUnaccusative"],
+      ["table4", "T-none-unaccusative"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "aissenpolian2025_ex65",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(65)"},
+    "language": "tzot1259",
+    "primaryText": "[Much'u ta s-na] ch-av-ikta komel a-bolsa?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["ta", "P"], ["s-na", "A3-house"], ["ch-av-ikta", "ICP-A2-leave"],
+      ["komel", "DIR"], ["a-bolsa", "A2-bag"]
+    ],
+    "translation": "At whose house will you leave your bag?",
+    "context": "Psr-OP pied-piped with the PP.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "piedPiping"],
+      ["possessorOf", "OP"],
+      ["possessum", "specific"],
+      ["clause", "transitive"],
+      ["intervener", "none"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "aissenpolian2025_ex66",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(66)"},
+    "language": "tzel1254",
+    "primaryText": "[Mach'a (ta) s-nah] ya x-'a'tej-at?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["ta", "P"], ["s-nah", "A3-house"], ["ya", "ICP"],
+      ["x-'a'tej-at", "ICP-work-B2"]
+    ],
+    "translation": "In whose house do you work?",
+    "context": "Petalcingo Tseltal unergative with a locative PP.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "piedPiping"],
+      ["possessorOf", "OP"],
+      ["possessum", "specific"],
+      ["clause", "unergative"],
+      ["intervener", "none"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "aissenpolian2025_ex67",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(67)"},
+    "language": "tzot1259",
+    "primaryText": "Much'u ch-av-ikta komel a-bolsa [ta s-na]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["ch-av-ikta", "ICP-A2-leave"], ["komel", "DIR"], ["a-bolsa", "A2-bag"],
+      ["ta", "P"], ["s-na", "A3-house"]
+    ],
+    "translation": "Intended: At whose house will you leave your bag?",
+    "context": "Transitive clause with a specific external argument.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "OP"],
+      ["possessum", "nonSpecific"],
+      ["clause", "transitive"],
+      ["intervener", "A"],
+      ["table4", "T-A-transitive-OP"]
+    ],
+    "comment": "The second-person A is closer to T° than the possessor; PP islandhood follows from nominal opacity."
+  },
+  {
+    "id": "aissenpolian2025_ex68",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(68)"},
+    "language": "tzel1254",
+    "primaryText": "Mach'a ya x-'a'tej-at [ta s-nah]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["ya", "ICP"], ["x-'a'tej-at", "ICP-work-B2"], ["ta", "P"],
+      ["s-nah", "A3-house"]
+    ],
+    "translation": "Intended: Whose house do you work in?",
+    "context": "Unergative with a specific (second-person) S_A.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "OP"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unergative"],
+      ["intervener", "S_A"],
+      ["table4", "T-SA-unergative"]
+    ],
+    "comment": "Table 4: the specific S_A intervenes."
+  },
+  {
+    "id": "aissenpolian2025_ex69",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(69)"},
+    "language": "tzel1254",
+    "primaryText": "Mach'a x-'a'tej alaletik ta s-nah?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["x-'a'tej", "ICP-work"], ["alaletik", "children"], ["ta", "P"],
+      ["s-nah", "A3-house"]
+    ],
+    "translation": "Who has a house that children (habitually) work in?",
+    "context": "Unergative with a non-specific S_A.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "OP"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unergative"],
+      ["intervener", "none"],
+      ["table4", "T-SA-unergative"]
+    ],
+    "comment": "Table 4: a non-specific S_A is not a DP and does not stop T°'s probe."
+  },
+  {
+    "id": "aissenpolian2025_ex70",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(70)"},
+    "language": "tzot1259",
+    "primaryText": "Buch'i i-s-mil li Xun=e?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Buch'i", "who"], ["i-s-mil", "CP-A3-kill"], ["li", "DET"], ["Xun=e", "Juan=ENC"]
+    ],
+    "translation": "Who killed Juan? / Who did Juan kill?",
+    "context": "Ambiguous transitive question.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "who killed Juan", "judgment": "acceptable"},
+      {"name": "who did Juan kill", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "transitive"]
+    ],
+    "comment": "A's extract freely and an intervening A does not block Ā-movement of O: the intervention effects on possessors are effects on A-movement."
+  },
+  {
+    "id": "aissenpolian2025_ex74",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(74)"},
+    "language": "tzel1254",
+    "primaryText": "Och wakax ta s-na te j-Xun=e.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Och", "CP.enter"], ["wakax", "cow"], ["ta", "in"], ["s-na", "A3-house"], ["te", "DET"],
+      ["j-Xun=e", "M-Juan=ENC"]
+    ],
+    "translation": "A cow entered Juan's house. ~ Juan had a cow enter his house.",
+    "context": "Path verb with a non-specific theme and a locative PP.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "unaccusative"],
+      ["construction", "pathVerb"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "aissenpolian2025_ex75a",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(75a)"},
+    "language": "tzel1254",
+    "primaryText": "Mach'a och wakax [ta s-na]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["och", "CP.enter"], ["wakax", "cow"], ["ta", "P"], ["s-na", "A3-house"]
+    ],
+    "translation": "Who had a cow enter his house?",
+    "context": "Path verb, non-specific theme.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "OP"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "pathVerb"],
+      ["table4", "T-SO-unaccusative"]
+    ],
+    "comment": "T°'s probe passes the NP theme and finds the possessor."
+  },
+  {
+    "id": "aissenpolian2025_ex75b",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(75b)"},
+    "language": "tzel1254",
+    "primaryText": "Mach'a och-at [ta s-na]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["och-at", "CP.enter-B2SG"], ["ta", "P"], ["s-na", "A3-house"]
+    ],
+    "translation": "Intended: Whose house did you enter?",
+    "context": "Path verb, specific (second-person) theme.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "OP"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "S_O"],
+      ["construction", "pathVerb"],
+      ["table4", "T-SO-unaccusative"]
+    ],
+    "comment": "The DP theme is the closest goal and raises instead."
+  },
+  {
+    "id": "aissenpolian2025_ex77b",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(77b)"},
+    "language": "tzot1259",
+    "primaryText": "Much'u oy ixim [ta s-na]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["oy", "EXIS"], ["ixim", "corn"], ["ta", "P"], ["s-na", "A3-house"]
+    ],
+    "translation": "Who has corn in his/her house?",
+    "context": "Locative existential with a non-specific theme.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "OP"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "locativeExistential"],
+      ["table4", "T-none-locativeExistential"]
+    ],
+    "comment": "Haviland's example."
+  },
+  {
+    "id": "aissenpolian2025_ex78a",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(78a)"},
+    "language": "tzel1254",
+    "primaryText": "Mach'a ay-at [ta s-nah]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["ay-at", "EXIS-B2"], ["ta", "P"], ["s-nah", "A3-house"]
+    ],
+    "translation": "Intended: Whose house are you in?",
+    "context": "Locative copula with a specific theme, Petalcingo Tseltal.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "OP"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "S_O"],
+      ["construction", "locativeCopula"],
+      ["table4", "T-SO-locativeCopula"]
+    ],
+    "comment": "The DP theme c-commands the PP and stops the probe; pied-piping is grammatical."
+  },
+  {
+    "id": "aissenpolian2025_ex78b",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(78b)"},
+    "language": "tzot1259",
+    "primaryText": "Much'u oy-ot [ta s-na]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["oy-ot", "EXIS-B2"], ["ta", "P"], ["s-na", "A3-house"]
+    ],
+    "translation": "Intended: Whose house are you in?",
+    "context": "Locative copula with a specific theme.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "OP"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "S_O"],
+      ["construction", "locativeCopula"],
+      ["table4", "T-SO-locativeCopula"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "aissenpolian2025_ex81",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(81)"},
+    "language": "tzel1254",
+    "primaryText": "Mach'u k'ux-at [ta y-o'tan]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'u", "who"], ["k'ux-at", "painful-B2"], ["ta", "P"], ["y-o'tan", "A3-heart"]
+    ],
+    "translation": "Who loves you? (lit. who are you painful in their heart?)",
+    "context": "Two-argument experiential collocation with a specific (second-person) theme.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "OP"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "twoArgExperiential"],
+      ["table4", "T-none-experiential"]
+    ],
+    "comment": "The experiencer PP is merged above the theme, so the theme does not c-command the possessor; pied-piping is ungrammatical."
+  },
+  {
+    "id": "aissenpolian2025_ex82",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(82)"},
+    "language": "tzot1259",
+    "primaryText": "Much'u i-yul [ta s-jol] [(ta) s-man-el kantela]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["i-yul", "CP-arrive"], ["ta", "P"], ["s-jol", "A3-head"], ["ta", "P"],
+      ["s-man-el", "A3-buy-NMLZ"], ["kantela", "candle"]
+    ],
+    "translation": "Who remembered to buy candles?",
+    "context": "Two-argument experiential collocation yul ta -jol.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "OP"],
+      ["possessum", "nonSpecific"],
+      ["clause", "unaccusative"],
+      ["intervener", "none"],
+      ["construction", "twoArgExperiential"],
+      ["table4", "T-none-experiential"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "aissenpolian2025_ex85a",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(85a)"},
+    "language": "tzot1259",
+    "primaryText": "[Much'u x-ch'amal] i-y-elk'an chij?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["x-ch'amal", "A3-child.of.male"], ["i-y-elk'an", "CP-A3-steal"],
+      ["chij", "sheep"]
+    ],
+    "translation": "Whose child stole sheep?",
+    "context": "Possessive A.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "piedPiping"],
+      ["possessorOf", "A"],
+      ["possessum", "specific"],
+      ["clause", "transitive"],
+      ["intervener", "none"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "aissenpolian2025_ex85b",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(85b)"},
+    "language": "tzot1259",
+    "primaryText": "Much'u i-y-elk'an chij x-ch'amal?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Much'u", "who"], ["i-y-elk'an", "CP-A3-steal"], ["chij", "sheep"],
+      ["x-ch'amal", "A3-child.of.male"]
+    ],
+    "translation": "Intended: Whose child stole sheep?",
+    "context": "Possessive A, stranded; the A is specific.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "A"],
+      ["possessum", "specific"],
+      ["clause", "transitive"],
+      ["intervener", "none"]
+    ],
+    "comment": "A specific A is a DP: its possessor cannot reach Spec,TP."
+  },
+  {
+    "id": "aissenpolian2025_ex86",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(86)"},
+    "language": "tzel1254",
+    "primaryText": "Mach'a la s-wilunta-on [x-ch'akul]?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mach'a", "who"], ["la", "CP"], ["s-wilunta-on", "A3-fly.onto-B1"],
+      ["x-ch'akul", "A3-flea"]
+    ],
+    "translation": "Whose fleas landed on me? / Who passed me their fleas?",
+    "context": "Transitive with a non-specific possessive A whose possessor is a plausible ψ-subject.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "stranding"],
+      ["possessorOf", "A"],
+      ["possessum", "nonSpecific"],
+      ["clause", "transitive"],
+      ["intervener", "none"]
+    ],
+    "comment": "Psr-A extracts when the A is non-specific and its possessor is a good ψ-subject."
+  },
+  {
+    "id": "aissenpolian2025_ex87",
+    "source": {"bibkey": "aissen-polian-2025", "paperLabel": "(87)"},
+    "language": "tzel1254",
+    "primaryText": "La s-wilunta-on [x-ch'akul] ajk'ube [te ts'i'=e].",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["La", "CP"], ["s-wilunta-on", "A3-fly.onto-B1"], ["x-ch'akul", "A3-flea"],
+      ["ajk'ube", "last.night"], ["te", "DET"], ["ts'i'=e", "dog=ENC"]
+    ],
+    "translation": "The dog's fleas landed on me last night.",
+    "context": "Possessor and possessum separated by an adverb.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "transitive"],
+      ["construction", "lexicalTransitive"],
+      ["possessum", "nonSpecific"]
+    ],
+    "comment": "Psr-A externalizes to Spec,TP."
+  }
+]
