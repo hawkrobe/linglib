@@ -175,6 +175,18 @@ structure PersonalPronoun extends Pronoun where
   referentialPerson : Option Person := none
   deriving Repr, BEq, DecidableEq
 
+namespace PersonalPronoun
+
+/-- The person a pronoun contributes to interpretation: `referentialPerson` where it is set,
+    otherwise the agreement `person`. -/
+def interpretablePerson (p : PersonalPronoun) : Option Person := p.referentialPerson.or p.person
+
+@[simp] theorem interpretablePerson_of_referentialPerson_none {p : PersonalPronoun}
+    (h : p.referentialPerson = none) : p.interpretablePerson = p.person := by
+  simp [interpretablePerson, h]
+
+end PersonalPronoun
+
 namespace Pronoun
 
 open Features.Register (Level)

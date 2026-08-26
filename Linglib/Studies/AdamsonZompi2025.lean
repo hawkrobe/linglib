@@ -1,737 +1,191 @@
-import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Agreement.PersonCaseConstraint
-import Linglib.Syntax.Minimalist.Features
+import Linglib.Features.Person.Resolve
 import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Spanish.Pronouns
-import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.German.Pronouns
-import Linglib.Features.Person.Decomposition
 import Linglib.Studies.Deal2024
+import Linglib.Studies.CoonKeine2021
+import Linglib.Data.Examples.AdamsonZompi2025
 
 /-!
-# Adamson & Zompì (2025): Polite Pronouns and the PCC
-[adamson-zompi-2025]
+# Polite pronouns and the person-case constraint
 
-Polite Pronouns and the PCC. *Linguistic Inquiry*, Early Access.
+The Italian polite pronoun LEI is formally the third person feminine singular — it takes third
+person verbal agreement, binds the reflexive *si*, orders as a third person clitic and triggers
+obligatory feminine participle agreement — yet it refers to the addressee, and in a ditransitive
+clitic cluster it patterns with the second person: LEI as dative over a third person accusative is
+fine, while a third person dative over accusative LEI is rejected exactly as a second person
+accusative is. Adamson and Zompì give polite pronouns two person values, an uninterpretable one
+read by agreement and an interpretable one read at LF, and argue that the person-case constraint
+reads the interpretable one. The file states a person restriction over a person valuation of
+pronoun entries (`Licit`); the agreement valuation `Morphosyntactic` and the LF valuation
+`Syntacticosemantic` read the fragments' `person` and `interpretablePerson`. The two coincide on
+ordinary pronouns (`morphosyntactic_iff_of_ordinary`), and every agreement-keyed restriction
+treats LEI as *lei* while every interpretation-keyed one treats it as *tu*
+(`morphosyntactic_lei_formal`, `syntacticosemantic_lei_formal`). On the Weak and Strong
+P-Constraint grammars the interpretable valuation bans a third person dative over accusative LEI
+where the agreement valuation licenses it (`lei_accusative`), as do the interaction–satisfaction
+and feature-gluttony accounts run over agreement person (`deal_licenses_lei`,
+`gluttony_licenses_lei`). The Fancy Constraint of *faire*-infinitive causatives gives the same
+cells with the causee as applied argument (`fancy_constraint`); imposters, which carry no
+interpretable second person, sit in the licit third-over-third cell; and coordination resolves LEI
+to second person on its interpretable value and to third on its agreement value, as an imposter
+resolves on both (`resolved_person`).
 
-## Summary
+The prediction for other languages is that a third person addressee-referring pronoun in a
+PCC language shows the effect, as Spanish USTED and German SIE do (`usted_accusative`,
+`sie_accusative`); number is irrelevant, since `Licit` reads person alone. The German
+assumed-identity restriction, which syncretism ameliorates, is instead an exponence effect on
+agreement features, and there SIE behaves as third person plural: against a third plural subject it
+does not glutton the person probe where second plural *ihr* does, and a singular subject gluttons
+the number probe against it (`assumed_identity`). Left open, as in the paper, is the rejection by
+some Weak-PCC speakers of a first person dative over accusative LEI, which the Weak grammar
+licenses (`first_dative_lei`). The Person Licensing Condition, the clitic logophoric restriction,
+and the rival representations of polite pronouns by impoverishment or by unmarked-value
+recruitment are discussed by the paper without a formal counterpart here.
 
-The Person-Case Constraint (PCC) bans certain person combinations in
-ditransitive clitic clusters. All Italian speakers reject 3>1 and 3>2
-IO>DO clitic combinations (Weak PCC); some additionally reject 1>2 and
-2>1 (Strong PCC). PCC effects are restricted to clitic clusters —
-stressed/tonic pronouns are always licit (§2, (5)).
+## References
 
-The polite pronoun LEI is **formally** third person — it triggers 3sg
-verbal agreement (§3, (8)), patterns with 3sg.f clitics in ordering
-(§3, (11c)), binds 3rd person reflexives (§3, (10)), and triggers
-obligatory feminine participle agreement (§3, (14)). Yet LEI triggers
-PCC effects like a **second person** pronoun: `*Glie La hanno affidata`
-(3.DAT LEI.ACC) is ungrammatical (§4.1, (17)), paralleling `*Glie ti
-hanno affidata` (3.DAT 2.ACC), not the licit `Glie la hanno affidata`
-(3.DAT 3.F.ACC).
-
-Three independent lines of evidence converge:
-1. **PCC** (§4.1): LEI in DO position triggers PCC effects like 2nd person
-2. **Fancy Constraint** (§4.2): LEI triggers person hierarchy effects in
-   *faire infinitif* causatives like 2nd person
-3. **Resolved agreement** (§4.3, (30)): LEI in coordination triggers 2PL
-   resolved agreement, unlike imposters which trigger 3PL ((31)-(32))
-
-This falsifies morphosyntactic accounts ([deal-2024],
-[coon-keine-2021], [bejar-rezac-2009]), which predict LEI
-should behave like 3rd person for PCC purposes. The data supports a
-syntacticosemantic account such as [pancheva-zubizarreta-2018],
-where the PCC reads *interpretable* person features.
-
-The same pattern obtains cross-linguistically: Spanish USTED (§6.1) and
-German SIE (§6.2) also trigger PCC effects despite 3rd person agreement.
-Imposters (e.g., *Vostro Onore*) do NOT trigger PCC effects (§4.3),
-confirming the effect depends on syntacticosemantic person features,
-not addressee reference per se.
+* [adamson-zompi-2025]
+* [pancheva-zubizarreta-2018]
+* [deal-2024]
+* [coon-keine-2021]
+* [bejar-rezac-2003]
+* [rezac-2011]
+* [ackema-neeleman-2018]
+* [wang-r-2023]
+* [charnavel-mateu-2015]
+* [adamson-anagnostopoulou-2025]
+* [postal-1989]
 -/
 
 namespace AdamsonZompi2025
 
-open Minimalist (DecomposedPerson decomposePerson)
-open PCC (Grammar IsLicit weakGrammar strongGrammar
-  IsInherentlyProximate)
+open PCC Italian.Pronouns
 
--- ============================================================================
--- § 1: Dual Person Features
--- ============================================================================
+/-! ### Person restrictions over a person valuation -/
 
-/-- A nominal's person features split into two layers.
+/-- `R` licenses the dative–accusative pair `dat`, `acc` under the person valuation `person`. -/
+def Licit (R : Person → Person → Prop) (person : PersonalPronoun → Option Person)
+    (dat acc : PersonalPronoun) : Prop :=
+  ∃ p q, person dat = some p ∧ person acc = some q ∧ R p q
 
-    [adamson-zompi-2025] argue that polite pronouns carry two distinct
-    sets of φ-features (following [smith-2017], [anagnostopoulou-2017a],
-    among others):
+instance (R : Person → Person → Prop) [DecidableRel R]
+    (person : PersonalPronoun → Option Person) (dat acc : PersonalPronoun) :
+    Decidable (Licit R person dat acc) := by
+  unfold Licit; infer_instance
 
-    - **`agreementPerson`** (uninterpretable): governs verbal agreement,
-      clitic allomorphy, reflexive binding, clitic ordering, participle
-      agreement. For LEI, this is 3rd person.
-    - **`interpretablePerson`** (interpretable): governs the PCC, Fancy
-      Constraint, resolved agreement in coordination. For LEI, this is
-      2nd person.
+/-- The morphosyntactic prediction: `R` reads agreement person. -/
+abbrev Morphosyntactic (R : Person → Person → Prop) := Licit R (·.person)
 
-    For ordinary (non-polite) pronouns, both layers coincide. -/
-structure DualPersonFeatures where
-  agreementPerson : Person
-  interpretablePerson : Person
-  deriving DecidableEq, Repr
+/-- The syntacticosemantic prediction: `R` reads interpretable person. -/
+abbrev Syntacticosemantic (R : Person → Person → Prop) :=
+  Licit R PersonalPronoun.interpretablePerson
 
-/-- Ordinary pronoun: both layers are the same person. -/
-def DualPersonFeatures.ordinary (p : Person) : DualPersonFeatures :=
-  ⟨p, p⟩
+variable {R : Person → Person → Prop} {dat acc : PersonalPronoun}
 
--- ============================================================================
--- § 2: Italian Pronouns with Dual Features
--- ============================================================================
+/-- The two predictions coincide on pronouns whose referential person is not set. -/
+theorem morphosyntactic_iff_of_ordinary (hd : dat.referentialPerson = none)
+    (ha : acc.referentialPerson = none) :
+    Morphosyntactic R dat acc ↔ Syntacticosemantic R dat acc := by
+  simp [Licit, hd, ha]
 
-/-- *io* — 1sg: agreement 1st, interpretable 1st. -/
-def pro1 : DualPersonFeatures := .ordinary .first
+/-- Every restriction reading agreement person treats LEI as *lei*. -/
+theorem morphosyntactic_lei_formal :
+    (Morphosyntactic R dat lei_formal ↔ Morphosyntactic R dat lei) ∧
+      (Morphosyntactic R lei_formal acc ↔ Morphosyntactic R lei acc) :=
+  ⟨Iff.rfl, Iff.rfl⟩
 
-/-- *tu* — 2sg familiar: agreement 2nd, interpretable 2nd. -/
-def pro2 : DualPersonFeatures := .ordinary .second
+/-- Every restriction reading interpretable person treats LEI as *tu*. -/
+theorem syntacticosemantic_lei_formal :
+    (Syntacticosemantic R dat lei_formal ↔ Syntacticosemantic R dat tu) ∧
+      (Syntacticosemantic R lei_formal acc ↔ Syntacticosemantic R tu acc) :=
+  ⟨Iff.rfl, Iff.rfl⟩
 
-/-- *lui/lei* — 3sg: agreement 3rd, interpretable 3rd. -/
-def pro3 : DualPersonFeatures := .ordinary .third
+/-! ### Italian -/
 
-/-- *Lei* (polite) — agreement 3rd, interpretable 2nd.
+/-- The Italian grammars: Weak for most speakers, Strong for those rejecting 1>2 and 2>1. -/
+def grammars : List Grammar := [weakGrammar, strongGrammar]
 
-    Morphological evidence for 3rd person agreement features (§3):
-    - Morphologically identical to 3sg.f pronominal series (Table 1)
-    - Triggers 3sg verbal agreement, not 2sg ((7)–(8))
-    - Patterns with 3sg.f clitics in ordering: follows locative, like
-      3sg.f `la` and unlike 2sg `ti` which precedes locative ((11))
-    - Binds 3rd person reflexive `si`, not 2nd person `ti` ((9)–(10))
-    - Triggers obligatory feminine participle agreement matching formal
-      (not conceptual) gender, like 3sg.f accusative clitics ((13)–(14)) -/
-def lei : DualPersonFeatures := ⟨.third, .second⟩
-
-/-- Imposters (e.g., *Vostro Onore* 'Your Honor', *il signor Duca*):
-    agreement 3rd, interpretable 3rd.
-
-    Like LEI, imposters are grammatically 3rd person and are used to
-    refer to addressees. Unlike LEI, imposters do not trigger PCC effects
-    (§4.3, (27)–(29)), Fancy Constraint effects ((28)–(29)), or 2nd person
-    resolved agreement in coordination ((31)–(32)). Their relationship to
-    addressee reference is pragmatic, not encoded in interpretable person
-    features. -/
-def imposter : DualPersonFeatures := .ordinary .third
-
--- ============================================================================
--- § 3: The PCC — Strong and Weak Variants
--- ============================================================================
-
-/-- The **Weak PCC**: a 3rd person IO clitic cannot co-occur with a 1st or
-    2nd person DO clitic.
-
-    All Italian speakers have at least the Weak PCC (§2, p. 4–5).
-    The constraint bans 3>1 and 3>2 but allows 1>2, 2>1, and all
-    combinations where IO is 1st/2nd or DO is 3rd.
-
-    Note: the person values here are the values the PCC *reads* — the
-    central question of the paper is whether these are agreement person
-    or interpretable person. "3rd person" is `[−participant]` (non-SAP),
-    which over the full inventory includes the impersonal. -/
-def weakPCC (ioPerson doPerson : Person) : Bool :=
-  !(!decide ioPerson.IsSAP && decide doPerson.IsSAP)
-
-/-- The **Strong PCC**: in a ditransitive clitic cluster, the DO must be
-    3rd person. Some Italian speakers have the Strong PCC (§2, p. 5),
-    which additionally bans 1>2 and 2>1.
-
-    The Strong PCC entails the Weak PCC: anything banned under the Weak
-    PCC is also banned under the Strong PCC. -/
-def strongPCC (_ioPerson doPerson : Person) : Bool :=
-  !decide doPerson.IsSAP
-
-/-- Strong PCC entails Weak PCC. -/
-theorem strong_entails_weak (io do_ : Person) :
-    strongPCC io do_ = true → weakPCC io do_ = true := by
-  cases io <;> cases do_ <;> decide
-
--- Weak PCC judgments
-theorem weak_3_3 : weakPCC .third .third = true := rfl
-theorem weak_2_3 : weakPCC .second .third = true := rfl
-theorem weak_1_3 : weakPCC .first .third = true := rfl
-theorem weak_3_2 : weakPCC .third .second = false := rfl
-theorem weak_3_1 : weakPCC .third .first = false := rfl
-/-- Weak PCC allows 1>2 and 2>1 (unlike Strong PCC). -/
-theorem weak_allows_participant_pairs :
-    weakPCC .first .second = true ∧ weakPCC .second .first = true := ⟨rfl, rfl⟩
-
--- Strong PCC judgments
-theorem strong_3_2 : strongPCC .third .second = false := rfl
-theorem strong_1_2 : strongPCC .first .second = false := rfl
-
--- ============================================================================
--- § 4: Empirical Data — Italian Clitic Combinations (§2, §4.1)
--- ============================================================================
-
-/-- Acceptability judgments for Italian ditransitive clitic clusters.
-
-    Person values are **interpretable** person — the paper's claim is that
-    PCC effects track this layer, not agreement person. For non-polite
-    pronouns the distinction is vacuous; for LEI it is crucial.
-
-    PCC effects are restricted to clitic clusters: when one argument is a
-    stressed (tonic) pronoun, person restrictions vanish (§2, (5)):
-    - `Gli hanno affidato te` (3.DAT entrusted 2SG.STRESS) = ✓
-    - `Ti hanno affidato a lui` (2.ACC entrusted to 3SG.STRESS) = ✓
-    Similarly for LEI: `Gli hanno affidato Lei` (stressed) is licit (§4.1,
-    (21)), and `La hanno affidata a lui` is licit ((21b)). -/
-structure CliticJudgment where
-  label : String
-  ok : Bool
-  ioPerson : Person
-  doPerson : Person
-  deriving Repr
-
--- Standard PCC data (§2, (1)–(3))
-/-- (2a) Te la hanno affidata — 2.DAT > 3.F.ACC = ✓ -/
-def dat2_acc3 : CliticJudgment := ⟨"2.DAT > 3.F.ACC", true, .second, .third⟩
-/-- (2b) Glie la hanno affidata — 3.DAT > 3.F.ACC = ✓ -/
-def dat3_acc3 : CliticJudgment := ⟨"3.DAT > 3.F.ACC", true, .third, .third⟩
-/-- (3a) *Gli(e)/Le ti/te hanno affidato/affidata — 3.DAT > 2.ACC = ✗ -/
-def dat3_acc2 : CliticJudgment := ⟨"3.DAT > 2.ACC", false, .third, .second⟩
-/-- (3b) *Ti/Te gli(e)/le hanno affidato/affidata — same combination,
-    reversed clitic order, still ✗. PCC is about person combination, not
-    linear order. -/
-def acc2_dat3 : CliticJudgment := ⟨"2.ACC > 3.DAT (reordered)", false, .third, .second⟩
-
--- LEI and the PCC (§4.1, (16)–(19))
-/-- (16) Glie la hanno affidata — LEI.DAT > 3.F.ACC = ✓
-    LEI as dative with 3rd person accusative: not a PCC violation because
-    the interpretively-2nd-person argument is the IO, not the DO.
-    (The clitic form `glie` is ambiguous between regular 3.DAT and LEI.DAT;
-    both readings yield a grammatical sentence.) -/
-def leiDat_acc3 : CliticJudgment := ⟨"LEI.DAT > 3.F.ACC", true, .second, .third⟩
-/-- (17) *Glie La hanno affidata — 3.DAT > LEI.ACC = ✗
-    The paper's central data point. LEI as accusative clitic with a 3rd
-    person dative triggers PCC, just like 2nd person accusative `ti`.
-    Note: this is string-identical to the licit `Glie la hanno affidata`
-    (3.DAT > 3.F.ACC), differing only in whether the accusative is
-    polite LEI or ordinary 3sg.f ((17) fn. 9). -/
-def dat3_leiAcc : CliticJudgment := ⟨"3.DAT > LEI.ACC", false, .third, .second⟩
-/-- (19a) Glie la hanno raccomandata — LEI.DAT > 3.F.ACC = ✓
-    Same pattern with *raccomandare* 'recommend'. -/
-def leiDat_acc3_racc : CliticJudgment := ⟨"LEI.DAT > 3.F.ACC (racc.)", true, .second, .third⟩
-/-- (19b) *Glie La hanno raccomandata — 3.DAT > LEI.ACC = ✗ -/
-def dat3_leiAcc_racc : CliticJudgment := ⟨"3.DAT > LEI.ACC (racc.)", false, .third, .second⟩
-
-def italianData : List CliticJudgment :=
-  [dat2_acc3, dat3_acc3, dat3_acc2, acc2_dat3,
-   leiDat_acc3, dat3_leiAcc, leiDat_acc3_racc, dat3_leiAcc_racc]
-
--- ============================================================================
--- § 5: Predictions — Morphosyntactic vs. Syntacticosemantic
--- ============================================================================
-
-/-- Morphosyntactic prediction: the PCC reads **agreement** person.
-
-    Under morphosyntactic accounts ([deal-2024], [coon-keine-2021],
-    [bejar-rezac-2009]), LEI's agreement features (3rd person) determine
-    PCC behavior. Since 3>3 is licit, `3.DAT > LEI.ACC` should be licit. -/
-def morphosyntacticPrediction (d : DualPersonFeatures) : Bool :=
-  weakPCC .third d.agreementPerson
-
-/-- Syntacticosemantic prediction: the PCC reads **interpretable** person.
-
-    Under a syntacticosemantic account ([pancheva-zubizarreta-2018]),
-    LEI's interpretable features (2nd person) determine PCC behavior.
-    Since 3>2 is illicit, `3.DAT > LEI.ACC` should be illicit. -/
-def syntacticosemanticPrediction (d : DualPersonFeatures) : Bool :=
-  weakPCC .third d.interpretablePerson
-
-/-- Morphosyntactic account WRONGLY predicts 3.DAT > LEI.ACC is licit. -/
-theorem morphosyntactic_wrong_for_lei :
-    morphosyntacticPrediction lei = true := rfl
-
-/-- Syntacticosemantic account CORRECTLY predicts 3.DAT > LEI.ACC is illicit. -/
-theorem syntacticosemantic_correct_for_lei :
-    syntacticosemanticPrediction lei = false := rfl
-
-/-- The syntacticosemantic prediction matches the actual judgment. -/
-theorem lei_prediction_matches_data :
-    syntacticosemanticPrediction lei = dat3_leiAcc.ok := rfl
-
-/-- The morphosyntactic prediction does NOT match the actual judgment. -/
-theorem lei_morphosyntactic_mismatch :
-    morphosyntacticPrediction lei ≠ dat3_leiAcc.ok := by decide
-
-/-- LEI triggers effects under BOTH PCC variants. The Strong PCC is
-    strictly stronger, so if the Weak PCC bans a combination, the Strong
-    PCC does too. The LEI data doesn't depend on which variant a speaker has. -/
-theorem lei_banned_under_both_variants :
-    weakPCC .third lei.interpretablePerson = false ∧
-    strongPCC .third lei.interpretablePerson = false := ⟨rfl, rfl⟩
-
-/-- For ordinary pronouns (no mismatch), both accounts agree. -/
-theorem ordinary_accounts_agree (p : Person) :
-    morphosyntacticPrediction (.ordinary p) =
-    syntacticosemanticPrediction (.ordinary p) := rfl
-
--- ============================================================================
--- § 6: Fancy Constraint — Independent Evidence (§4.2)
--- ============================================================================
-
-/-- The Fancy Constraint ([postal-1989]): in analytic causative
-    constructions (*faire infinitif*), a person hierarchy effect obtains
-    between the accusative clitic causee and 1st/2nd person arguments.
-
-    In Italian, the *faire infinitif* construction shows: a 3rd person
-    accusative causee is licit ((24) `Micol la fa pettinare a Carlo`),
-    but a 1st/2nd person causee triggers a hierarchy effect ((24)
-    `*Micol ti fa pettinare a Carlo`). Crucially, this is NOT a
-    ditransitive clitic cluster — it involves a causative verb — so it
-    constitutes independent evidence for the same person-sensitivity.
-
-    LEI patterns with 2nd person, not 3rd:
-    - (25) `*Signor Biagi, Micol La fa pettinare a Carlo` = ✗ (LEI as causee)
-    - (26) `Micol fa pettinare {te / Lei} a Carlo` = ✓ (stressed: no effect)
-
-    We model the Fancy Constraint as reading the same interpretable person
-    features as the PCC. -/
-def fancyConstraint (causeePerson : Person) : Bool :=
-  -- Causee must be 3rd person (non-participant) when co-occurring
-  -- with another argument
-  causeePerson == .third
-
-/-- 3sg.f causee is licit: `Micol la fa pettinare a Carlo` (24). -/
-theorem fancy_3f_ok : fancyConstraint .third = true := rfl
-
-/-- 2sg causee is illicit: `*Micol ti fa pettinare a Carlo` (24). -/
-theorem fancy_2_bad : fancyConstraint .second = false := rfl
-
-/-- LEI causee: interpretable 2nd → illicit, like `ti` ((25)). -/
-theorem fancy_lei_bad : fancyConstraint lei.interpretablePerson = false := rfl
-
-/-- LEI causee: agreement 3rd → morphosyntactic account wrongly predicts
-    licit, like `la`. -/
-theorem fancy_lei_morphosyntactic_wrong :
-    fancyConstraint lei.agreementPerson = true := rfl
-
-/-- PCC and Fancy Constraint agree for LEI: both read interpretable
-    person, both ban LEI. -/
-theorem pcc_fancy_converge :
-    syntacticosemanticPrediction lei = false ∧
-    fancyConstraint lei.interpretablePerson = false := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 7: Imposters — No PCC Effect (§4.3)
--- ============================================================================
-
-/-- Both accounts predict no PCC effect for imposters, matching the
-    data ((27)–(29)). -/
-theorem imposter_no_pcc_either_account :
-    morphosyntacticPrediction imposter = true ∧
-    syntacticosemanticPrediction imposter = true := ⟨rfl, rfl⟩
-
-/-- The contrast between LEI and imposters: LEI triggers PCC, imposters
-    don't. Both refer to addressees, but only LEI encodes this in
-    interpretable person features. -/
-theorem lei_imposter_contrast :
-    syntacticosemanticPrediction lei ≠ syntacticosemanticPrediction imposter := by
+/-- Second over third and third over third are licit and third over second is not, on either
+valuation and either grammar. -/
+theorem baseline : ∀ g ∈ grammars,
+    Syntacticosemantic (IsLicit g) tu lei ∧ Syntacticosemantic (IsLicit g) lui lei ∧
+      ¬ Syntacticosemantic (IsLicit g) lui tu := by
   decide
 
-/-- Resolved agreement in coordination (§4.3, (30)–(32)).
+/-- LEI as dative over a third person accusative is licit on both valuations. -/
+theorem lei_dative : ∀ g ∈ grammars,
+    Morphosyntactic (IsLicit g) lei_formal lei ∧
+      Syntacticosemantic (IsLicit g) lei_formal lei := by
+  decide
 
-    When LEI is coordinated with a 3sg nominal, resolved agreement is
-    obligatorily 2PL ((30) `Lei e l'ambasciatore... vi incontrerete`),
-    consistent with LEI's interpretable 2nd person features. When an
-    imposter (*Vostro Onore*, *il signor Duca*) is coordinated with a
-    3sg nominal, resolved agreement is 3PL ((31)–(32)), consistent with
-    interpretable 3rd person features.
+/-- A third person dative over accusative LEI is licensed on agreement person and banned on
+interpretable person. -/
+theorem lei_accusative : ∀ g ∈ grammars,
+    Morphosyntactic (IsLicit g) lui lei_formal ∧
+      ¬ Syntacticosemantic (IsLicit g) lui lei_formal := by
+  decide
 
-    This is a third line of evidence, independent of both the PCC and
-    the Fancy Constraint, showing that LEI's interpretable person surfaces
-    in the grammar. -/
-inductive ResolvedNumber where
-  | pl2  -- 2nd person plural (vi incontrerete)
-  | pl3  -- 3rd person plural (si incontreranno)
-  deriving DecidableEq, Repr
+/-- The interaction–satisfaction grammars, read over agreement person, license accusative LEI. -/
+theorem deal_licenses_lei : ∀ g ∈ [Deal2024.weak, Deal2024.strong],
+    Morphosyntactic (Deal2024.isLicit g · · = true) lui lei_formal := by
+  decide
 
-def resolvedAgreement (d : DualPersonFeatures) : ResolvedNumber :=
-  if decide d.interpretablePerson.IsSAP then .pl2 else .pl3
+/-- Feature gluttony, read over agreement person, licenses accusative LEI: a third person dative
+and a third person accusative do not glutton the Weak probe. -/
+theorem gluttony_licenses_lei :
+    Morphosyntactic (λ p q => ¬ CoonKeine2021.pccViolation CoonKeine2021.weakProbe false p q)
+      lui lei_formal := by
+  decide
 
-/-- LEI + 3sg → 2PL resolved agreement ((30)). -/
-theorem lei_resolved_2pl : resolvedAgreement lei = .pl2 := rfl
+/-- The Fancy Constraint with a third person causee as applied argument: a third person
+accusative is licit, second person and LEI are not. -/
+theorem fancy_constraint :
+    Syntacticosemantic (IsLicit weakGrammar) lui lei ∧
+      ¬ Syntacticosemantic (IsLicit weakGrammar) lui tu ∧
+      ¬ Syntacticosemantic (IsLicit weakGrammar) lui lei_formal := by
+  decide
 
-/-- Imposter + 3sg → 3PL resolved agreement ((31)–(32)). -/
-theorem imposter_resolved_3pl : resolvedAgreement imposter = .pl3 := rfl
-
-/-- All three lines of evidence (PCC, Fancy Constraint, resolved agreement)
-    converge: LEI patterns with 2nd person, imposters pattern with 3rd. -/
-theorem three_lines_converge :
-    -- PCC: LEI banned, imposter not
-    syntacticosemanticPrediction lei = false ∧
-    syntacticosemanticPrediction imposter = true ∧
-    -- Fancy Constraint: LEI banned, imposter not
-    fancyConstraint lei.interpretablePerson = false ∧
-    fancyConstraint imposter.interpretablePerson = true ∧
-    -- Resolved agreement: LEI → 2PL, imposter → 3PL
-    resolvedAgreement lei = .pl2 ∧
-    resolvedAgreement imposter = .pl3 := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 8: Integration with Phi.Geometry — [±participant] Drives the PCC
--- ============================================================================
-
-/-- The PCC's sensitivity to interpretable person is equivalent to
-    sensitivity to [+participant] in [preminger-2014]'s decomposition.
-
-    The Weak PCC bans 3rd person IO with [+participant] DO. LEI has
-    interpretable [+participant] (2nd person = [+participant, −author]). -/
-theorem lei_interpretable_is_participant :
-    (decomposePerson lei.interpretablePerson).hasParticipant = true := rfl
-
-/-- LEI's agreement features lack [participant] (3rd = [−participant]). -/
-theorem lei_agreement_not_participant :
-    (decomposePerson lei.agreementPerson).hasParticipant = false := rfl
-
-/-- The Weak PCC reduces to: if IO is [−participant], then DO must be
-    [−participant]. Equivalently: ¬(IO lacks [participant] ∧ DO has
-    [participant]). -/
-def pccViaParticipant (ioPerson doPerson : Person) : Bool :=
-  !(!((decomposePerson ioPerson).hasParticipant) &&
-     (decomposePerson doPerson).hasParticipant)
-
-/-- `pccViaParticipant` is extensionally equivalent to `weakPCC`. -/
-theorem pcc_participant_equivalence (io do_ : Person) :
-    weakPCC io do_ = pccViaParticipant io do_ := by
-  cases io <;> cases do_ <;> rfl
-
--- ============================================================================
--- § 9: Integration with P&Z's P-Constraint
--- ============================================================================
-
-/-- The P-Constraint ([pancheva-zubizarreta-2018]) derives PCC effects
-    from point-of-view encoding. `PCC.IsLicit`
-    (`Syntax/Agreement/PersonCaseConstraint.lean`) evaluates the
-    constraint over interpretable person values.
-
-    The Weak PCC (P-Uniqueness inactive) produces the same judgments as
-    our `weakPCC` function. -/
-theorem pconstraint_matches_weakPCC (io do_ : Person) :
-    IsLicit weakGrammar io do_ ↔ weakPCC io do_ = true := by
-  cases io <;> cases do_ <;> decide
-
-/-- The Strong PCC (P-Uniqueness active) produces the same judgments as
-    our `strongPCC` function. -/
-theorem pconstraint_matches_strongPCC (io do_ : Person) :
-    IsLicit strongGrammar io do_ ↔ strongPCC io do_ = true := by
-  cases io <;> cases do_ <;> decide
-
-/-- LEI is inherently [+PROXIMATE] by virtue of interpretable 2nd person.
-    This is what triggers PCC effects under P&Z's account. -/
-theorem lei_is_proximate :
-    IsInherentlyProximate lei.interpretablePerson := by decide
-
-/-- The P-Constraint correctly predicts LEI triggers PCC (Weak grammar). -/
-theorem pconstraint_bans_lei :
-    ¬ IsLicit weakGrammar .third lei.interpretablePerson := by decide
-
-/-- The P-Constraint correctly predicts imposters do NOT trigger PCC. -/
-theorem pconstraint_allows_imposter :
-    IsLicit weakGrammar .third imposter.interpretablePerson := by decide
-
--- ============================================================================
--- § 10: Integration with Agree — Why Morphosyntactic Accounts Fail
--- ============================================================================
-
-/- Morphosyntactic accounts derive PCC effects from the mechanics of Agree.
-   The key mechanism: a probe (on Appl or v) searches for φ-features and
-   its interaction with multiple goals (IO and DO) produces PCC effects.
-
-   All such accounts evaluate the **agreement** features of the goals:
-
-   - [deal-2024] Interaction/Satisfaction: a probe with satisfaction
-     condition [PART(ICIPANT)] is satisfied by the DO's [+participant],
-     then bleeds Agree with the IO.
-   - [coon-keine-2021] Feature Gluttony: an articulated probe copies
-     features from both goals; crash if the feature sets conflict.
-   - [bejar-rezac-2009] Person Licensing: a π-probe seeks [participant]
-     on the DO, licensing it. Blocked by the closer IO.
-
-   For LEI, agreement person is 3rd = [−participant]. So all three accounts
-   predict the probe treats LEI like any 3rd person argument — no PCC
-   effect. This is wrong.
-
-   We demonstrate this using the library's own `FeatureBundle.hasValuedFeature`: a probe seeking [participant] via φ-features will not
-   find it on a DP whose valued person is 3rd. -/
-
-/-- A feature bundle for a 3rd person DP (LEI's agreement features).
-    The probe sees [Person:3rd]. -/
-private def lei_agreement_bundle : Minimalist.FeatureBundle :=
-  .ofGramFeatures [.valued (.phi (.person .third))]
-
-/-- A feature bundle for a 2nd person DP (LEI's interpretable features).
-    The probe sees [Person:2nd]. -/
-private def lei_interpretable_bundle : Minimalist.FeatureBundle :=
-  .ofGramFeatures [.valued (.phi (.person .second))]
-
-/-- A probe seeking person features finds them on both bundles — the
-    probe can Agree with either. The issue is WHICH person value it sees. -/
-theorem probe_finds_person_on_both :
-    lei_agreement_bundle.hasValuedFeature .person = true ∧
-    lei_interpretable_bundle.hasValuedFeature .person = true :=
+/-- Coordinated with a third person, LEI resolves to second person on its interpretable value and
+to third on its agreement value. -/
+theorem resolved_person :
+    lei_formal.interpretablePerson.map (Person.resolve · .third) = some .second ∧
+      lei_formal.person.map (Person.resolve · .third) = some .third :=
   ⟨rfl, rfl⟩
 
-/-- Under morphosyntactic accounts, the probe sees LEI's agreement bundle
-    and finds [Person:3rd] — no [participant] feature. The probe treats
-    LEI as a non-participant, predicting no PCC effect. -/
-theorem morphosyntactic_probe_misses_participant :
-    (decomposePerson .third).hasParticipant = false := rfl
+/-- A first person dative over accusative LEI is licit on the Weak grammar and banned on the Strong
+one, exactly as over *ti*; some Weak speakers nonetheless reject it. -/
+theorem first_dative_lei :
+    Syntacticosemantic (IsLicit weakGrammar) io lei_formal ∧
+      ¬ Syntacticosemantic (IsLicit strongGrammar) io lei_formal := by
+  decide
 
-/-- Under the syntacticosemantic account, the PCC reads LEI's interpretable
-    bundle and finds [Person:2nd] — [+participant]. PCC effect predicted. -/
-theorem syntacticosemantic_finds_participant :
-    (decomposePerson .second).hasParticipant = true := rfl
+/-! ### Spanish and German -/
 
--- ============================================================================
--- § 10a: Direct Test of Deal's isLicit on LEI
--- ============================================================================
+/-- USTED as dative over a third person accusative is licit; a third person dative over
+accusative USTED is not. -/
+theorem usted_accusative :
+    Syntacticosemantic (IsLicit weakGrammar) Spanish.Pronouns.usted Spanish.Pronouns.el ∧
+      ¬ Syntacticosemantic (IsLicit weakGrammar) Spanish.Pronouns.el Spanish.Pronouns.usted := by
+  decide
 
-open Deal2024 (isLicit) in
-/-- [deal-2024]'s `isLicit` directly demonstrates the morphosyntactic
-    failure. Under the Weak PCC (Italian), the probe reads agreement person:
+/-- A third person dative over accusative SIE is banned where over third plural *sie* it is
+licit. -/
+theorem sie_accusative :
+    Syntacticosemantic (IsLicit weakGrammar) German.Pronouns.er German.Pronouns.sie_pl ∧
+      ¬ Syntacticosemantic (IsLicit weakGrammar) German.Pronouns.er
+          German.Pronouns.sie_polite := by
+  decide
 
-    - `isLicit weak .third lei.agreementPerson` = `isLicit weak 3 3` = **true**
-      (wrongly predicts ⟨3.DAT, LEI.ACC⟩ is licit)
-    - `isLicit weak .third lei.interpretablePerson` = `isLicit weak 3 2` = **false**
-      (correctly predicts illicit)
-
-    This is a formal, end-to-end test: [deal-2024]'s own licitness
-    function, applied to LEI's agreement features, gives the wrong answer. -/
-theorem deal_weak_wrong_for_lei :
-    isLicit Deal2024.weak .third lei.agreementPerson = true ∧
-    isLicit Deal2024.weak .third lei.interpretablePerson = false := ⟨rfl, rfl⟩
-
-open Deal2024 (isLicit) in
-/-- The same failure obtains under the Strong PCC variant: Deal's model
-    reads agreement-3P as ⟨3,3⟩ (licit) rather than interpretable-2P as
-    ⟨3,2⟩ (illicit). -/
-theorem deal_strong_wrong_for_lei :
-    isLicit Deal2024.strong .third lei.agreementPerson = true ∧
-    isLicit Deal2024.strong .third lei.interpretablePerson = false := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 11: Consistency with Italian Clitic Paradigm
--- ============================================================================
-
-/-- LEI's agreement features match the 3sg.f clitic `la` in person.
-
-    The fragment entry `la_cl` has `.third` person, matching LEI's
-    agreement layer — confirming the paper's morphological evidence
-    that LEI is formally 3sg.f (§3, Table 1). -/
-theorem lei_matches_la_cl_person :
-    lei.agreementPerson = .third ∧
-    Italian.Pronouns.la_cl.person = .third := ⟨rfl, rfl⟩
-
-/-- LEI's agreement person (3rd) differs from 2sg clitic `ti` (2nd). -/
-theorem lei_differs_from_ti :
-    lei.agreementPerson = .third ∧
-    Italian.Pronouns.ti_acc.person = .second := ⟨rfl, rfl⟩
-
-/-- LEI binds 3rd person reflexive `si`, not 2nd person `ti` (§3, (9)–(10)). -/
-theorem lei_reflexive_is_3p :
-    Italian.Pronouns.si_refl.person = .third ∧
-    Italian.Pronouns.ti_refl.person = .second := ⟨rfl, rfl⟩
-
-/-- The fragment's `lei_formal` encodes dual person features:
-    `person` = 3rd (agreement), `referentialPerson` = 2nd (interpretable).
-    This directly mirrors our `DualPersonFeatures` structure. -/
-theorem fragment_lei_dual_person :
-    Italian.Pronouns.lei_formal.person = some .third ∧
-    Italian.Pronouns.lei_formal.referentialPerson = some .second := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 12: All Data Points Match Syntacticosemantic Predictions
--- ============================================================================
-
-/-- Every Italian judgment matches the Weak PCC evaluated over
-    interpretable person. Since `weakPCC` checks both IO and DO person,
-    this verifies the full constraint, not just DO. -/
-theorem all_data_match_syntacticosemantic :
-    italianData.all (λ j => (weakPCC j.ioPerson j.doPerson) == j.ok) = true := by
-  native_decide
-
--- ============================================================================
--- § 13: Cross-Linguistic Extension — Spanish USTED (§6.1)
--- ============================================================================
-
-/-- Spanish USTED: agreement 3rd, interpretable 2nd.
-
-    Like Italian LEI, USTED triggers 3sg verbal agreement but refers to
-    an addressee. [rezac-2011] observes PCC effects with USTED:
-    the accusative clitic `la` is grammatical in a 3>3 configuration
-    if its referent is 3rd person, but ungrammatical if interpreted as
-    polite USTED (§6.1, (43)). The paper's own consultants confirm the
-    same contrast with *encomendar* 'entrust' ((44)). -/
-def usted : DualPersonFeatures := ⟨.third, .second⟩
-
-/-- USTED triggers PCC effects under the syntacticosemantic account. -/
-theorem usted_pcc : syntacticosemanticPrediction usted = false := rfl
-
-/-- Morphosyntactic account wrongly predicts no PCC effect. -/
-theorem usted_morphosyntactic_wrong : morphosyntacticPrediction usted = true := rfl
-
-/-- Italian LEI and Spanish USTED have the same dual-feature structure:
-    both are agreement-3rd, interpretable-2nd. -/
-theorem lei_usted_isomorphic : lei = usted := rfl
-
-/-- The Spanish fragment's `usted` entry encodes the same dual-person
-    structure, grounding the study's USTED in fragment data. -/
-theorem spanish_fragment_usted_dual :
-    Spanish.Pronouns.usted.person = some .third ∧
-    Spanish.Pronouns.usted.referentialPerson = some .second := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 14: Cross-Linguistic Extension — German SIE (§6.2)
--- ============================================================================
-
-/-- German polite SIE: agreement 3rd (plural), interpretable 2nd.
-
-    SIE triggers 3pl verbal agreement ((45)) and binds 3rd person reflexive
-    *sich* (not 2sg *dich* or 2pl *euch*). In the limited PCC environments
-    available in German (Wackernagel clusters), SIE patterns with 2nd person
-    in triggering person hierarchy effects ((47)–(48)). -/
-def sie : DualPersonFeatures := ⟨.third, .second⟩
-
-/-- SIE triggers PCC effects under the syntacticosemantic account. -/
-theorem sie_pcc : syntacticosemanticPrediction sie = false := rfl
-
-/-- The German fragment's `sie_polite` entry encodes the same dual-person
-    structure, grounding the study's SIE in fragment data. -/
-theorem german_fragment_sie_dual :
-    German.Pronouns.sie_polite.person = some .third ∧
-    German.Pronouns.sie_polite.referentialPerson = some .second := ⟨rfl, rfl⟩
-
-/-- German assumed-identity copular constructions (§6.2, (49)–(53)) exhibit
-    a DIFFERENT person hierarchy effect — one ameliorated by syncretism of
-    verbal forms and therefore attributed to exponence/morphology, not to the
-    syntax-semantics interface.
-
-    The paper's key modularity argument: PCC effects (syntacticosemantic
-    source) are sensitive to interpretable person, so polite pronouns
-    trigger them. Assumed-identity effects (exponence-based source) are
-    sensitive to formal features, so polite pronouns do NOT trigger them. -/
-def assumedIdentityEffect (formalPerson : Person) (copulaForm3rd : Bool) : Bool :=
-  -- Exponence-based: reads formal/agreement person.
-  -- Effect is ameliorated when copula form is syncretic between
-  -- 1st/3rd person (past tense *war*), supporting an exponence account.
-  formalPerson != .third && !copulaForm3rd
-
-/-- SIE does NOT trigger assumed-identity effects (agreement 3rd). -/
-theorem sie_no_assumed_identity :
-    assumedIdentityEffect sie.agreementPerson false = false := rfl
-
-/-- SIE DOES trigger PCC effects (interpretable 2nd). -/
-theorem sie_triggers_pcc :
-    syntacticosemanticPrediction sie = false := rfl
-
-/-- The modularity contrast: PCC reads interpretable person (SIE triggers),
-    exponence reads agreement person (SIE doesn't trigger). -/
-theorem modularity_contrast :
-    syntacticosemanticPrediction sie = false ∧
-    assumedIdentityEffect sie.agreementPerson false = false := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 15: The PCC + Politeness Prediction (§6, (40))
--- ============================================================================
-
-/-- The paper's cross-linguistic prediction (40):
-
-    "If a language displays PCC effects in ditransitives for second person
-    arguments and has a third person addressee-referring polite pronoun,
-    this pronoun should also give rise to PCC effects."
-
-    Formalized: for any pronoun with interpretable 2nd person, the
-    syntacticosemantic account predicts a PCC effect in DO position. -/
-theorem pcc_politeness_prediction (pol : DualPersonFeatures)
-    (h_int : pol.interpretablePerson = .second) :
-    syntacticosemanticPrediction pol = false := by
-  unfold syntacticosemanticPrediction weakPCC; rw [h_int]; rfl
-
-/-- The morphosyntactic account wrongly predicts NO PCC effect for
-    any polite pronoun with 3rd person agreement features. -/
-theorem morphosyntactic_misses_polite (pol : DualPersonFeatures)
-    (h_agr : pol.agreementPerson = .third) :
-    morphosyntacticPrediction pol = true := by
-  unfold morphosyntacticPrediction weakPCC; rw [h_agr]; rfl
-
-/-- All three cross-linguistic polite pronouns (LEI, USTED, SIE) are
-    correctly predicted by the syntacticosemantic account. -/
-theorem all_polite_pronouns_predicted :
-    syntacticosemanticPrediction lei = false ∧
-    syntacticosemanticPrediction usted = false ∧
-    syntacticosemanticPrediction sie = false := ⟨rfl, rfl, rfl⟩
-
-/-- All three fragment entries encode dual person features, and the study's
-    DualPersonFeatures values match them. -/
-theorem all_fragments_grounded :
-    Italian.Pronouns.lei_formal.referentialPerson = some .second ∧
-    Spanish.Pronouns.usted.referentialPerson = some .second ∧
-    German.Pronouns.sie_polite.referentialPerson = some .second := ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 16: Person Category Bridge — Unifying Person Decompositions
--- ============================================================================
-
-open Person in
-/-- The [±participant] decomposition in `Core/Person/Category.lean`
-    (operating on `Category`) is the same decomposition as
-    `Phi.Geometry.decomposePerson` (operating on `Person`).
-
-    This theorem bridges the two: for all singular Categories,
-    `toFeatures.hasParticipant` equals `decomposePerson.hasParticipant`. -/
-theorem person_geometry_matches_core_features :
-    (Category.s1.toFeatures).hasParticipant =
-      (decomposePerson .first).hasParticipant ∧
-    (Category.s2.toFeatures).hasParticipant =
-      (decomposePerson .second).hasParticipant ∧
-    (Category.s3.toFeatures).hasParticipant =
-      (decomposePerson .third).hasParticipant := ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 17: Summary — What the Mismatch Tells Us
--- ============================================================================
-
-/-- Cross-linguistic number validation: the fragment entries record the
-    **agreement** number of each polite pronoun, matching §3 (Italian),
-    §6.1 (Spanish), §6.2 (German).
-
-    Italian LEI and Spanish USTED trigger 3**sg** agreement.
-    German SIE triggers 3**pl** agreement — the key typological outlier
-    (§6.2, (45)). SIE's formal plurality is why it doubles as a 2PL form
-    and why it can address multiple addressees, unlike LEI/USTED. -/
-theorem cross_linguistic_number :
-    -- LEI is formally singular (§3, (8): "3sg verbal agreement")
-    Italian.Pronouns.lei_formal.number = some .singular ∧
-    -- USTED is formally singular
-    Spanish.Pronouns.usted.number = some .singular ∧
-    -- SIE is formally PLURAL — the typological outlier (§6.2, (45))
-    German.Pronouns.sie_polite.number = some .plural := ⟨rfl, rfl, rfl⟩
-
-/-- Despite different agreement numbers, all three polite pronouns trigger
-    PCC effects identically — confirming that the PCC reads *person*
-    features (specifically interpretable person), not number. -/
-theorem number_irrelevant_to_pcc :
-    -- Different numbers...
-    Italian.Pronouns.lei_formal.number ≠
-    German.Pronouns.sie_polite.number ∧
-    -- ...same PCC prediction
-    syntacticosemanticPrediction lei = syntacticosemanticPrediction sie := by
-  exact ⟨by decide, rfl⟩
-
-/-- Only mismatch pronouns distinguish the two accounts. For any pronoun
-    where agreement and interpretable person coincide, both accounts make
-    the same prediction. Polite pronouns are the crucial test case. -/
-theorem mismatch_is_crucial (d : DualPersonFeatures)
-    (h : d.agreementPerson = d.interpretablePerson) :
-    morphosyntacticPrediction d = syntacticosemanticPrediction d := by
-  simp only [morphosyntacticPrediction, syntacticosemanticPrediction, h]
+open CoonKeine2021 in
+/-- Assumed identity under a third plural subject: SIE, entering with its agreement person, does
+not glutton the person probe where second plural *ihr* does; a singular subject gluttons the
+number probe against plural SIE. -/
+theorem assumed_identity :
+    (∀ p ∈ German.Pronouns.sie_polite.person, ¬ Gluttonous weakProbe [dpPl .third, dpPl p]) ∧
+      (∀ p ∈ German.Pronouns.ihr.person, Gluttonous weakProbe [dpPl .third, dpPl p]) ∧
+      GluttonousOn numBears numProbe [dp .third, dpPl .third] :=
+  ⟨by decide, by decide, no_number_case_constraint.2.2.1⟩
 
 end AdamsonZompi2025
