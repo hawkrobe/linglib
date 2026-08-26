@@ -186,8 +186,6 @@ theorem expandSelf_bathroom :
 
 variable (S : Scenario W E) (h : Var → Set (Atom W E)) {w₀ : W}
 
-theorem locals_descE : descE.locals = [.b] := rfl
-
 theorem felicitous_descE : descE.Felicitous S.model h :=
   Expr.felicitous_of_presupFree _ _ (by decide) _
 
@@ -210,77 +208,62 @@ theorem realize_descE :
 /-- `ΣbE` at `w₀`: the satisfiers of the description there. -/
 theorem realize_sigmaB_descE (hw : h .w = world w₀) :
     Term.realize S.model h (.sigma .b descE) = {a | ∃ e, a = Sum.inr e ∧ S.desc w₀ e} := by
-  ext a
-  rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
-  simp only [realize_descE]
-  constructor
-  · rintro ⟨g', hg, ha, w, e, hw', hb, he⟩
-    rw [hg (by decide), hw, world_inj] at hw'
-    subst hw'
-    rw [hb] at ha
-    exact ⟨e, ha, he⟩
-  · rintro ⟨e, rfl, he⟩
-    refine ⟨Function.update h .b {Sum.inr e}, fun y hy => Function.update_of_ne hy.2 _ _,
-      by simp, w₀, e, ?_, by simp, he⟩
-    rw [Function.update_of_ne (by decide), hw]
+  rw [Term.realize_sigma_eq S.model h (B := fun X => ∃ e, X = {Sum.inr e} ∧ S.desc w₀ e)
+    fun g' hg => by
+      have hgw : g' .w = h .w := hg (by decide)
+      rw [realize_descE, hgw, hw]
+      simp only [world_inj, exists_and_left, exists_eq_left']]
+  exact Set.ext fun a => exists_mem_singleton_iff
 
 /-- `ΣwE`: the worlds with a satisfier of the description. -/
 theorem realize_sigmaW_descE :
     Term.realize S.model h (.sigma .w descE) = {a | ∃ w e, a = Sum.inl w ∧ S.desc w e} := by
+  rw [Term.realize_sigma_world_eq S.model h (y := .b) (by decide)
+    (B := fun X w => ∃ e, X = {Sum.inr e} ∧ S.desc w e)
+    (fun g' _ => (realize_descE S g').trans (exists_congr fun _ => exists_and_left)) (by decide)]
   ext a
-  rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
-  simp only [realize_descE]
-  constructor
-  · rintro ⟨g', -, ha, w, e, hw', -, he⟩
-    rw [hw'] at ha
-    exact ⟨w, e, ha, he⟩
-  · rintro ⟨w, e, rfl, he⟩
-    refine ⟨Function.update (Function.update h .w (world w)) .b {Sum.inr e}, fun y hy => ?_,
-      by simp [world], w, e, by simp, by simp, he⟩
-    simp only [Set.mem_ofPred_eq, locals_descE, List.mem_singleton] at hy
-    rw [Function.update_of_ne hy.1, Function.update_of_ne hy.2]
+  simp only [Set.mem_ofPred_eq, exists_singleton_iff, exists_and_left]
 
 /-- The modal base: the worlds accessible from the world of `w`. -/
-theorem realize_base :
-    base.realize S.model h = {a | ∃ w u, h .w = world w ∧ a = Sum.inl u ∧ S.acc w u} := by
+theorem realize_base (hw : h .w = world w₀) :
+    base.realize S.model h = {a | ∃ u, a = Sum.inl u ∧ S.acc w₀ u} := by
+  rw [base, Term.realize_sigma_eq S.model h
+    (B := fun X => X.Nonempty ∧ ∀ a ∈ X, ∃ u, a = Sum.inl u ∧ S.acc w₀ u) fun g' hg => by
+      have hgw : g' .w = h .w := hg (by decide)
+      simp only [access, Formula.realize_atom, Matrix.comp_vecCons, Matrix.comp_vecEmpty,
+        Term.realize_var, Scenario.model, Model.intensional_apply₁, Matrix.cons_val_zero, hgw, hw,
+        world_inj, exists_eq_left']]
   ext a
-  rw [base, Term.mem_realize_sigma, Set.mem_ofPred_eq]
-  simp only [access, Formula.realize_atom, Matrix.comp_vecCons, Matrix.comp_vecEmpty,
-    Term.realize_var, Scenario.model, Model.intensional_apply₁, Matrix.cons_val_zero]
   constructor
-  · rintro ⟨g', hg, ha, w, hw, -, hall⟩
-    obtain ⟨u, rfl, hacc⟩ := hall a ha
-    exact ⟨w, u, (hg (by decide)).symm.trans hw, rfl, hacc⟩
-  · rintro ⟨w, u, hw, rfl, hacc⟩
-    refine ⟨Function.update h .u (world u), fun y hy => Function.update_of_ne hy.2 _ _,
-      by simp [world], w, by rw [Function.update_of_ne (by decide), hw],
-      ⟨Sum.inl u, by simp [world]⟩, fun a ha => by simp only [world] at ha; exact ⟨u, ha, hacc⟩⟩
+  · rintro ⟨X, ha, -, H⟩
+    exact H a ha
+  · rintro ⟨u, rfl, hacc⟩
+    exact ⟨world u, rfl, ⟨_, rfl⟩, fun b hb => ⟨u, hb, hacc⟩⟩
 
 /-- `might_w(ΣwE)` at `w₀`: some accessible world has a satisfier. -/
 theorem realize_might (hw : h .w = world w₀) :
     (Modal.apply .might base (.sigma .w descE)).Realize S.model h ↔
       ∃ u e, S.acc w₀ u ∧ S.desc u e := by
-  rw [Modal.apply, Formula.realize_some, realize_base, realize_sigmaW_descE]
+  rw [Modal.apply, Formula.realize_some, realize_base S h hw, realize_sigmaW_descE]
   constructor
-  · rintro ⟨_, ⟨w, u, hw', rfl, hacc⟩, w', e, ⟨⟩, he⟩
-    obtain rfl := world_inj.1 (hw.symm.trans hw')
+  · rintro ⟨_, ⟨u, rfl, hacc⟩, w', e, ⟨⟩, he⟩
     exact ⟨u, e, hacc, he⟩
   · rintro ⟨u, e, hacc, he⟩
-    exact ⟨_, ⟨w₀, u, hw, rfl, hacc⟩, u, e, rfl, he⟩
+    exact ⟨_, ⟨u, rfl, hacc⟩, u, e, rfl, he⟩
 
 /-- `must_w(ΣwE)` at `w₀`: every accessible world has a satisfier. -/
 theorem realize_must (hw : h .w = world w₀) :
     (Modal.apply .must base (.sigma .w descE)).Realize S.model h ↔
       ∀ u, S.acc w₀ u → ∃ e, S.desc u e := by
-  rw [Modal.apply, Formula.realize_subset, realize_base, realize_sigmaW_descE, Set.subset_def]
+  rw [Modal.apply, Formula.realize_subset, realize_base S h hw, realize_sigmaW_descE,
+    Set.subset_def]
   simp only [Set.mem_ofPred_eq]
   constructor
   · intro H u hu
-    obtain ⟨w', e, hw', he⟩ := H _ ⟨w₀, u, hw, rfl, hu⟩
+    obtain ⟨w', e, hw', he⟩ := H _ ⟨u, rfl, hu⟩
     cases Sum.inl.inj hw'
     exact ⟨e, he⟩
-  · rintro H _ ⟨w, u, hw', rfl, hu⟩
-    obtain rfl := world_inj.1 (hw.symm.trans hw')
+  · rintro H _ ⟨u, rfl, hu⟩
     obtain ⟨e, he⟩ := H u hu
     exact ⟨u, e, rfl, he⟩
 
