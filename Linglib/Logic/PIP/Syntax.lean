@@ -2,22 +2,20 @@ import Mathlib.Data.Fin.VecNotation
 import Mathlib.Data.List.FinRange
 
 /-!
-# PIP — Plural Intensional Presuppositional predicate calculus: syntax
+# Syntax of PIP
 
-PIP is first-order predicate calculus with set abstraction, equality and the
-set-theoretic relations `⊆`, `∈`, `∩`, `∅` and the cardinality predicates `SG`,
-`PL`, whose domain consists of pluralities (sets of atoms, worlds among them),
-supplemented by five eliminable constructs: bracketed *local* variables `[x]`
-slated for unselective closure, summation `Σxφ`, formula labels `X ≡ φ` and
-their uses `X`, world arguments on predicates, and presuppositions `φ|ψ`.
-Relation symbols are indexed by arity and take a world as a distinguished
-argument; summation and abstraction bind by name.
+This file defines the terms and formulas of PIP, a plural intensional
+presuppositional predicate calculus: first-order predicate calculus with set
+abstraction, equality, the set-theoretic relations `⊆`, `∈`, `∩`, `∅` and the
+cardinality predicates `SG` and `PL`, extended by bracketed *local* variables
+`[x]`, summation `Σxφ`, formula labels `X ≡ φ` with their uses `X`, world
+arguments on relation symbols, and presuppositions `φ|ψ`. Relation symbols are
+indexed by arity and take a world as a distinguished argument.
 
-This file defines the syntax: terms and formulas, the defined connectives, the
-local variables of an expression, substitution, presupposition-free
-expressions, formula labels and their expansion, and the translation
-eliminating the PIP constructs. Truth is `Semantics.lean`, felicity
-`Felicity.lean`.
+It also defines the local variables of an expression, substitution for a
+variable, the presupposition-free expressions, the expansion of formula labels
+by their definitions, and the translation eliminating the PIP constructs.
+Truth is defined in `Semantics.lean` and felicity in `Felicity.lean`.
 
 ## Main definitions
 

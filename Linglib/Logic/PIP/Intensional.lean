@@ -1,13 +1,13 @@
 import Linglib.Logic.PIP.Semantics
 
 /-!
-# PIP: intensional models
+# Intensional models of PIP
 
-Models whose atoms are worlds and entities: a world is the singleton plurality
-of its atom, and a family of world-relative relations on atoms is lifted to
-relation symbols distributively — a symbol holds of a world and nonempty
-pluralities iff it holds at that world of every tuple of their members, and of
-nothing whose world argument is not a world.
+This file defines the models of PIP whose atoms are worlds and entities. A
+world is the singleton plurality of its atom, and a family of world-relative
+relations on atoms is lifted distributively to relation symbols: a symbol holds
+of a world and nonempty pluralities iff it holds at that world of every tuple
+of their members, and it holds of nothing whose world argument is not a world.
 
 ## Main definitions
 
