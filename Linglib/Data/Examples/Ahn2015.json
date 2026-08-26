@@ -1,0 +1,632 @@
+[
+  {
+    "id": "ahn2015_1",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(1)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John came to the party too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "too"
+      ],
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "focus",
+        "John"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_2",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(2)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John didn't come to the party either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "either"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "focus",
+        "John"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_3",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(3)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We're going to Philly either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "either"
+      ],
+      [
+        "polarity",
+        "positive"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_5_too",
+    "source": {
+      "bibkey": "rullmann-2003",
+      "paperLabel": "(5)"
+    },
+    "reportedIn": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1293",
+    "primaryText": "John washed the dishes. He shouldn't do the laundry too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "too"
+      ],
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "antecedent",
+        "positive"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_5_either",
+    "source": {
+      "bibkey": "rullmann-2003",
+      "paperLabel": "(5)"
+    },
+    "reportedIn": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(5)"
+    },
+    "language": "stan1293",
+    "primaryText": "John washed the dishes. He shouldn't do the laundry either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "either"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "antecedent",
+        "positive"
+      ]
+    ],
+    "comment": "A negative host with a positive antecedent: the anaphor's antecedent must be false.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_9",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(9)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John didn't leave either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "either"
+      ],
+      [
+        "polarity",
+        "negative"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_10",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(10)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John left either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "either"
+      ],
+      [
+        "polarity",
+        "positive"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_11",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(11a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The paper is almost finished either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "either"
+      ],
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "operator",
+        "almost"
+      ]
+    ],
+    "comment": "Rullmann's licensing condition wrongly predicts almost, which implies the host is false, to license either.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_12",
+    "source": {
+      "bibkey": "kripke-2009",
+      "paperLabel": "(12)"
+    },
+    "reportedIn": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(12)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is having dinner in New York tonight too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Uttered out of the blue; it is common knowledge that many people dine in New York every night.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "too"
+      ],
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "focus",
+        "John"
+      ]
+    ],
+    "comment": "An existential presupposition would be satisfied, yet too is infelicitous without a salient antecedent.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_15",
+    "source": {
+      "bibkey": "kripke-2009",
+      "paperLabel": "(15)"
+    },
+    "reportedIn": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(15)"
+    },
+    "language": "stan1293",
+    "primaryText": "If John is coming to the party, the boss will come too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "too"
+      ],
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "distinctness",
+        "John and the boss must be distinct"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_23",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(23)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John didn't visit Boston. Bill didn't visit Boston too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "too"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "scope",
+        "negation below too"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_24",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(24)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue bought some books. (But) Mary didn't buy them too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "too"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "scope",
+        "negation above too"
+      ]
+    ],
+    "comment": "Asserts ¬(q ∧ p); with q true from the discourse, ¬p follows.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_26a",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(26a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary went to the shop, but it is not the case that somebody went there.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "none"
+      ],
+      [
+        "test",
+        "Abrusán entailment"
+      ]
+    ],
+    "comment": "From Abrusán 2014.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_26b",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(26b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary went to the shop, but it is not the case that somebody went there as well.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "as well"
+      ],
+      [
+        "test",
+        "Abrusán entailment"
+      ]
+    ],
+    "comment": "From Abrusán 2014.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_29",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(29)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I don't know if Mary is in the elevator. But if John is in the elevator too, we will go over the weight limit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "too"
+      ],
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "antecedent",
+        "not presupposed"
+      ]
+    ],
+    "comment": "The additive meaning is not presupposed: the question at hand is the conjunction.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_32",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(32)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John didn't leave either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Discourse antecedent or context entailing that Bill didn't leave.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "either"
+      ],
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "focus",
+        "John"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_41",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(41)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John left either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "either"
+      ],
+      [
+        "polarity",
+        "positive"
+      ]
+    ],
+    "comment": "O over the alternatives of the disjunction yields a contradiction.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_43",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(43)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John didn't leave either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "either"
+      ],
+      [
+        "polarity",
+        "negative"
+      ]
+    ],
+    "comment": "Under negation the disjunction entails every alternative; exhaustification is vacuous.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "ahn2015_45",
+    "source": {
+      "bibkey": "ahn-2015",
+      "paperLabel": "(45)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The paper is almost finished either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "particle",
+        "either"
+      ],
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "operator",
+        "almost"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
