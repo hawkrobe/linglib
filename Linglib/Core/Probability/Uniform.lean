@@ -7,11 +7,11 @@ import Linglib.Core.Order.Argmax
 # The uniform vector on a finset
 
 `Finset.uniform s` is the indicator of `s` scaled to a probability vector:
-`(#s)⁻¹` on `s`, `0` off it, and the zero vector when `s` is empty. It is the
-computable, `Finset`-indexed companion of mathlib's `PMF.uniformOfFinset` for
-exact (ℚ-valued) probability vectors — `uniform_eq_indicator` connects it to
-`Set.indicator` — and its inner products are mathlib's `Finset.expect`:
-`∑ a, s.uniform a * f a = 𝔼 a ∈ s, f a`.
+`(#s)⁻¹` on `s`, `0` off it, and the zero vector when `s` is empty — the
+exact (ℚ-valued) uniform distribution as a plain function, for consumers that
+compute with probability vectors rather than measures. `uniform_eq_indicator`
+connects it to `Set.indicator`, and its inner products are mathlib's
+`Finset.expect`: `∑ a, s.uniform a * f a = 𝔼 a ∈ s, f a`.
 
 ## Main definitions
 
@@ -41,7 +41,8 @@ def uniform (s : Finset α) : α → K := λ a => if a ∈ s then (s.card : K)�
 
 theorem uniform_apply : s.uniform a = if a ∈ s then (s.card : K)⁻¹ else 0 := rfl
 
-theorem uniform_eq_indicator : (s.uniform : α → K) = (s : Set α).indicator λ _ => (s.card : K)⁻¹ := by
+theorem uniform_eq_indicator :
+    (s.uniform : α → K) = (s : Set α).indicator λ _ => (s.card : K)⁻¹ := by
   funext a; simp [uniform_apply, Set.indicator_apply]
 
 @[simp] theorem uniform_of_mem (h : a ∈ s) : s.uniform a = (s.card : K)⁻¹ := if_pos h
