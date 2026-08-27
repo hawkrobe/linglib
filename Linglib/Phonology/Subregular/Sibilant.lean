@@ -13,8 +13,8 @@ class (`[s, z, ts, …]`), a *posterior* (postalveolar) class (`[ʃ, ʒ, tʃ, �
 membership predicate the subregular harmony grammars project on.
 
 Substrate only: a study of a particular system supplies its own forbidden-pair relation
-over this alphabet — symmetric (`TSLGrammar.agree`) or asymmetric
-(`TSLGrammar.ofForbiddenPairs`) — and keeps its language-specific data and citations.
+over this alphabet — symmetric (`TierStrictlyLocalGrammar.agree`) or asymmetric
+(`TierStrictlyLocalGrammar.ofForbiddenPairs`) — and keeps its language-specific data and citations.
 -/
 
 namespace Subregular

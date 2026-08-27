@@ -12,19 +12,19 @@ import Linglib.Core.Data.List.Chain
 
 A tier-based strictly 2-local schema [heinz-rawal-tanner-2011]: for a
 *forbidden-pair* relation `R : α → α → Prop` and tier predicate `p`,
-`TSLGrammar.ofForbiddenPairs R p` bans any string whose tier projection has an
+`TierStrictlyLocalGrammar.ofForbiddenPairs R p` bans any string whose tier projection has an
 adjacent pair `(a, b)` with `R a b`. The canonical instance is the OCP
 [mccarthy-1986] (`R := (· = ·)`); OCP-Feature and single-tier harmony (with `p`
 carrying blocking/transparency [mcmullin-2016]) are other choices of `R`.
 
 ## Main definitions
 
-* `Subregular.TSLGrammar.ofForbiddenPairs R p`: the TSL_2 grammar above.
+* `Subregular.TierStrictlyLocalGrammar.ofForbiddenPairs R p`: the TSL_2 grammar above.
 * `Subregular.countAdjacent R xs`: count of `R`-related adjacent pairs in `xs`.
 
 ## Main results
 
-* `Subregular.mem_ofForbiddenPairs_lang_iff_filter_isChain`: membership reduces
+* `Subregular.mem_ofForbiddenPairs_language_iff_filter_isChain`: membership reduces
   to an `IsChain (¬ R · ·)` check on the tier-projected string.
 
 ## Implementation notes
@@ -82,18 +82,20 @@ lemma forbiddenPairFree_iff_isChain (xs : Augmented α) :
 
 /-- The TSL_2 grammar banning tier-adjacent pairs satisfying `R`: tier `p`,
 permitting everything but `forbiddenPairs R`. -/
-def TSLGrammar.ofForbiddenPairs (p : α → Prop) [DecidablePred p] : TSLGrammar 2 α where
+def TierStrictlyLocalGrammar.ofForbiddenPairs (p : α → Prop) [DecidablePred p] :
+    TierStrictlyLocalGrammar 2 α where
   tier := p
   permitted := (forbiddenPairs R)ᶜ
 
 /-- Membership in `ofForbiddenPairs R p` reduces to an `IsChain (¬ R · ·)` check
 on the tier-projected string — the characterization all forbidden-pair
 constraints inherit. -/
-lemma mem_ofForbiddenPairs_lang_iff_filter_isChain (p : α → Prop) [DecidablePred p] (w : List α) :
-    w ∈ (TSLGrammar.ofForbiddenPairs R p).lang ↔
+lemma mem_ofForbiddenPairs_language_iff_filter_isChain (p : α → Prop) [DecidablePred p]
+    (w : List α) :
+    w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language ↔
       (w.filter (fun x => decide (p x))).IsChain (fun a b => ¬ R a b) := by
-  rw [TSLGrammar.mem_lang]
-  simp only [TSLGrammar.ofForbiddenPairs, Set.mem_compl_iff]
+  rw [TierStrictlyLocalGrammar.mem_language]
+  simp only [TierStrictlyLocalGrammar.ofForbiddenPairs, Set.mem_compl_iff]
   rw [forbiddenPairFree_iff_isChain,
       CleanPair.isBoundaryVacuous.isChain_boundary_two_iff,
       tierProject_eq_filter, List.isChain_map]
@@ -122,40 +124,41 @@ lemma countAdjacent_eq_zero_iff_isChain [DecidableRel R] (xs : List α) :
 
 /-! ### API around `ofForbiddenPairs` -/
 
-/-- Membership in `(ofForbiddenPairs R p).lang` is decidable, via the `IsChain`
+/-- Membership in `(ofForbiddenPairs R p).language` is decidable, via the `IsChain`
 characterization. -/
-instance decidableMemOfForbiddenPairsLang [DecidableRel R] (p : α → Prop) [DecidablePred p] (w : List α) :
-    Decidable (w ∈ (TSLGrammar.ofForbiddenPairs R p).lang) :=
-  decidable_of_iff _ (mem_ofForbiddenPairs_lang_iff_filter_isChain R p w).symm
+instance decidableMemOfForbiddenPairsLang [DecidableRel R] (p : α → Prop) [DecidablePred p]
+    (w : List α) :
+    Decidable (w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language) :=
+  decidable_of_iff _ (mem_ofForbiddenPairs_language_iff_filter_isChain R p w).symm
 
 /-- The empty string is in every forbidden-pair language. -/
 @[simp] lemma nil_mem_ofForbiddenPairs_lang (p : α → Prop) [DecidablePred p] :
-    ([] : List α) ∈ (TSLGrammar.ofForbiddenPairs R p).lang :=
-  (mem_ofForbiddenPairs_lang_iff_filter_isChain R p []).mpr List.isChain_nil
+    ([] : List α) ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language :=
+  (mem_ofForbiddenPairs_language_iff_filter_isChain R p []).mpr List.isChain_nil
 
 /-- Forbidding more pairs shrinks the language: `R ≤ R'` gives
-`lang R' ≤ lang R`. -/
-lemma lang_antitone_R {R R' : α → α → Prop} (h : ∀ a b, R a b → R' a b)
+`language R' ≤ lang R`. -/
+lemma language_antitone_R {R R' : α → α → Prop} (h : ∀ a b, R a b → R' a b)
     (p : α → Prop) [DecidablePred p] :
-    (TSLGrammar.ofForbiddenPairs R' p).lang ≤
-      (TSLGrammar.ofForbiddenPairs R p).lang := fun w hw =>
-  (mem_ofForbiddenPairs_lang_iff_filter_isChain R p w).mpr <|
-    ((mem_ofForbiddenPairs_lang_iff_filter_isChain R' p w).mp hw).imp
+    (TierStrictlyLocalGrammar.ofForbiddenPairs R' p).language ≤
+      (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language := fun w hw =>
+  (mem_ofForbiddenPairs_language_iff_filter_isChain R p w).mpr <|
+    ((mem_ofForbiddenPairs_language_iff_filter_isChain R' p w).mp hw).imp
       fun _ _ hR' hR => hR' (h _ _ hR)
 
 /-- If no pair is forbidden (`R = ⊥`), the language is universal. -/
 @[simp] lemma lang_R_bot (p : α → Prop) [DecidablePred p] :
-    (TSLGrammar.ofForbiddenPairs (fun _ _ : α => False) p).lang = Set.univ := by
+    (TierStrictlyLocalGrammar.ofForbiddenPairs (fun _ _ : α => False) p).language = Set.univ := by
   ext w
-  rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
   exact ⟨fun _ => Set.mem_univ _, fun _ =>
     (List.isChain_top _).imp (fun _ _ _ h => h.elim)⟩
 
 /-- If no symbol is on the tier (`p = ⊥`), the language is universal. -/
 @[simp] lemma lang_p_bot :
-    (TSLGrammar.ofForbiddenPairs R (fun _ : α => False)).lang = Set.univ := by
+    (TierStrictlyLocalGrammar.ofForbiddenPairs R (fun _ : α => False)).language = Set.univ := by
   ext w
-  rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
   refine ⟨fun _ => Set.mem_univ _, fun _ => ?_⟩
   rw [show w.filter (fun x => decide ((fun _ : α => False) x)) = [] from
         List.filter_eq_nil_iff.mpr (fun _ _ h => by
@@ -166,32 +169,32 @@ lemma lang_antitone_R {R R' : α → α → Prop} (h : ∀ a b, R a b → R' a b
 adjacent symbols of the raw string are `R`-related. (Not `@[simp]`: the RHS is
 no simpler than the LHS.) -/
 lemma lang_p_top :
-    (TSLGrammar.ofForbiddenPairs R (fun _ : α => True)).lang =
+    (TierStrictlyLocalGrammar.ofForbiddenPairs R (fun _ : α => True)).language =
       { w | w.IsChain (fun a b => ¬ R a b) } := by
   ext w
-  rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
   have hfilter : w.filter (fun x => decide ((fun _ : α => True) x)) = w := by
     rw [List.filter_eq_self]; intros; simp only [decide_true]
   rw [hfilter]; rfl
 
 /-- Forbidding `R₁ ∨ R₂` on one tier is conjunctive membership in the two
 languages. (Cross-tier composition needs MTSL, not this constructor.) -/
-lemma mem_lang_R_sup_iff (R₁ R₂ : α → α → Prop) (p : α → Prop) [DecidablePred p] (w : List α) :
-    w ∈ (TSLGrammar.ofForbiddenPairs (fun a b => R₁ a b ∨ R₂ a b) p).lang ↔
-      w ∈ (TSLGrammar.ofForbiddenPairs R₁ p).lang ∧
-        w ∈ (TSLGrammar.ofForbiddenPairs R₂ p).lang := by
-  simp only [mem_ofForbiddenPairs_lang_iff_filter_isChain, not_or, List.isChain_and_iff]
+lemma mem_language_R_sup_iff (R₁ R₂ : α → α → Prop) (p : α → Prop) [DecidablePred p] (w : List α) :
+    w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs (fun a b => R₁ a b ∨ R₂ a b) p).language ↔
+      w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R₁ p).language ∧
+        w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R₂ p).language := by
+  simp only [mem_ofForbiddenPairs_language_iff_filter_isChain, not_or, List.isChain_and_iff]
 
-/-- Lattice form of `mem_lang_R_sup_iff`: `lang (R₁ ∨ R₂) = lang R₁ ⊓ lang R₂`. -/
+/-- Lattice form of `mem_language_R_sup_iff`: `language (R₁ ∨ R₂) = lang R₁ ⊓ lang R₂`. -/
 lemma lang_R_sup_eq_inf (R₁ R₂ : α → α → Prop) (p : α → Prop) [DecidablePred p] :
-    (TSLGrammar.ofForbiddenPairs (fun a b => R₁ a b ∨ R₂ a b) p).lang =
-      (TSLGrammar.ofForbiddenPairs R₁ p).lang ⊓
-        (TSLGrammar.ofForbiddenPairs R₂ p).lang :=
-  Set.ext fun w => mem_lang_R_sup_iff R₁ R₂ p w
+    (TierStrictlyLocalGrammar.ofForbiddenPairs (fun a b => R₁ a b ∨ R₂ a b) p).language =
+      (TierStrictlyLocalGrammar.ofForbiddenPairs R₁ p).language ⊓
+        (TierStrictlyLocalGrammar.ofForbiddenPairs R₂ p).language :=
+  Set.ext fun w => mem_language_R_sup_iff R₁ R₂ p w
 
 /-! ### Design boundary: non-monotonicity in the tier predicate
 
-`(ofForbiddenPairs R p).lang` is **neither monotone nor antitone** in the tier
+`(ofForbiddenPairs R p).language` is **neither monotone nor antitone** in the tier
 predicate `p` (`lang_p_not_monotone`/`lang_p_not_antitone` below): which segments
 project is a substantive commitment, not just a monotone refinement. -/
 
@@ -207,22 +210,22 @@ private instance : DecidablePred Pₛ
   | .t => isFalse not_false
 private instance : DecidablePred Pₛₜ := fun _ => isTrue trivial
 
-/-- `(ofForbiddenPairs R p).lang` is not monotone in `p`: for `Pₛ ≤ Pₛₜ`,
+/-- `(ofForbiddenPairs R p).language` is not monotone in `p`: for `Pₛ ≤ Pₛₜ`,
 `[s, t, t] ∈ lang Pₛ` (tier filter `[s]` is a chain) but `∉ lang Pₛₜ` (filter
 `[s, t, t]` has the OCP-violating `t, t`). -/
 private theorem lang_p_not_monotone :
     (∀ a, Pₛ a → Pₛₜ a) ∧
-      [TwoSym.s, .t, .t] ∈ (TSLGrammar.ofForbiddenPairs (· = ·) Pₛ).lang ∧
-      [TwoSym.s, .t, .t] ∉ (TSLGrammar.ofForbiddenPairs (· = ·) Pₛₜ).lang :=
+      [TwoSym.s, .t, .t] ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) Pₛ).language ∧
+      [TwoSym.s, .t, .t] ∉ (TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) Pₛₜ).language :=
   ⟨fun _ _ => trivial, by decide, by decide⟩
 
-/-- `(ofForbiddenPairs R p).lang` is not antitone in `p`: for `Pₛ ≤ Pₛₜ`,
+/-- `(ofForbiddenPairs R p).language` is not antitone in `p`: for `Pₛ ≤ Pₛₜ`,
 `[s, t, s] ∉ lang Pₛ` (tier filter `[s, s]` violates OCP) but `∈ lang Pₛₜ`
 (filter `[s, t, s]` is a chain — the `t` separates the `s`s). -/
 private theorem lang_p_not_antitone :
     (∀ a, Pₛ a → Pₛₜ a) ∧
-      [TwoSym.s, .t, .s] ∉ (TSLGrammar.ofForbiddenPairs (· = ·) Pₛ).lang ∧
-      [TwoSym.s, .t, .s] ∈ (TSLGrammar.ofForbiddenPairs (· = ·) Pₛₜ).lang :=
+      [TwoSym.s, .t, .s] ∉ (TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) Pₛ).language ∧
+      [TwoSym.s, .t, .s] ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) Pₛₜ).language :=
   ⟨fun _ _ => trivial, by decide, by decide⟩
 
 end Subregular

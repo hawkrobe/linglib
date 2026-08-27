@@ -91,10 +91,10 @@ omit [Finite γ] in
 /-- The `SL` grammar forbidding the single factor `d.map some` generates the avoidance language:
 its forbidden window can only complete on an all-`some` occurrence of `d`. -/
 private theorem ofForbidden_language_eq (d : List γ) :
-    (SLGrammar.ofForbidden {d.map some}).language d.length
+    (StrictlyLocalGrammar.ofForbidden {d.map some}).language d.length
       = ({y : List γ | ¬ d <:+: y} : Language γ) := by
   ext y
-  simp only [SLGrammar.mem_ofForbidden_language, Set.mem_singleton_iff]
+  simp only [StrictlyLocalGrammar.mem_ofForbidden_language, Set.mem_singleton_iff]
   refine ⟨fun h hc => ?_, fun h f hf heq => ?_⟩
   · exact h (d.map some)
       (List.mem_kFactors.mpr ⟨(mapSome_infix_boundary_iff _ _ d).mpr hc, by simp⟩) rfl

@@ -314,8 +314,8 @@ theorem consTier_apply_eq_tierProject (xs : List LatSeg) :
     forbid adjacent identical symbols. Lambert's [lambert-2022]
     TSL_k schema, instantiated with `IsCons` as the tier predicate and
     the OCP forbidden 2-factor `[some x, some x]`. -/
-def latinTSLGrammar : Subregular.TSLGrammar 2 LatSeg :=
-  Subregular.TSLGrammar.ocp LatSeg.IsCons
+def latinTSLGrammar : Subregular.TierStrictlyLocalGrammar 2 LatSeg :=
+  Subregular.TierStrictlyLocalGrammar.ocp LatSeg.IsCons
 
 -- ============================================================================
 -- § 9: OCP-on-Tier Bridge and OT Tableau ([goldsmith-1976])
@@ -331,13 +331,13 @@ def latinOCP : Constraints.Constraint (List LatSeg) :=
   Constraints.mkOCPOnTier LatSeg.consTier id
 
 /-- The OCP-on-tier evaluation of `latinOCP` on a candidate is zero iff
-    that candidate is in `latinTSLGrammar.lang`. Specialization of
-    `Subregular.mkOCPOnTier_zero_iff_in_ocp_lang` to the Latin
+    that candidate is in `latinTSLGrammar.language`. Specialization of
+    `Subregular.mkOCPOnTier_zero_iff_in_ocp_language` to the Latin
     grammar. The two perspectives — markedness constraint with zero
     violations and TSL_2 grammar membership — coincide. -/
 theorem latinOCP_zero_iff_in_TSL (c : List LatSeg) :
-    latinOCP c = 0 ↔ c ∈ latinTSLGrammar.lang :=
-  Subregular.mkOCPOnTier_zero_iff_in_ocp_lang
+    latinOCP c = 0 ↔ c ∈ latinTSLGrammar.language :=
+  Subregular.mkOCPOnTier_zero_iff_in_ocp_language
     LatSeg.IsCons id c
 
 /-! The OT analysis uses a minimal two-constraint inventory:
@@ -374,10 +374,10 @@ def latCands (ur : List LatSeg) : List (List LatSeg) :=
 
 -- ---- TSL_2 membership witnesses (the empirical payoff of the bridge) ------
 
-/-- Membership in `latinTSLGrammar.lang` is decidable: the bridge to the
+/-- Membership in `latinTSLGrammar.language` is decidable: the bridge to the
     integer-valued OCP score (`latinOCP_zero_iff_in_TSL`) transports the
     `Decidable (latinOCP c = 0)` instance to language membership. -/
-instance (c : List LatSeg) : Decidable (c ∈ latinTSLGrammar.lang) :=
+instance (c : List LatSeg) : Decidable (c ∈ latinTSLGrammar.language) :=
   decidable_of_iff _ (latinOCP_zero_iff_in_TSL c)
 
 /-- The empirically expected TSL_2 membership table for the Belth Latin
@@ -397,7 +397,7 @@ def latinTSLExpected : List (List LatSeg × Bool) :=
     on every row of `latinTSLExpected`: the empirical payoff of the
     `latinOCP_zero_iff_in_TSL` bridge in one shot. -/
 theorem latinTSL_correct :
-    ∀ p ∈ latinTSLExpected, (p.1 ∈ latinTSLGrammar.lang) = p.2 := by decide
+    ∀ p ∈ latinTSLExpected, (p.1 ∈ latinTSLGrammar.language) = p.2 := by decide
 
 /-- *popularis*: OCP fires once on `[p,o,p,u,l,a,l,i,s]` (the tier-adjacent
     `(l, l)`). Only \*r-once on the [r]-candidate — but OCP outranks, so
@@ -566,7 +566,7 @@ suffices to demonstrate the schema, the empirical-limit pattern
 /-- **TSL_2 witness**: Latin liquid dissimilation is tier-strictly-local
 at window-size 2. -/
 theorem latinTSLGrammar_lang_isTSL2 :
-    Language.IsTierStrictlyLocal 2 latinTSLGrammar.lang :=
+    Language.IsTierStrictlyLocal 2 latinTSLGrammar.language :=
   ⟨latinTSLGrammar, rfl⟩
 
 /-- **BTSL_2 corollary** (via `IsTierStrictlyLocal.toIsBTSL` in
@@ -574,7 +574,7 @@ theorem latinTSLGrammar_lang_isTSL2 :
 is in the multitier closure of strictly local languages, hence consumed
 by the [lambert-2026] BTC framework. -/
 theorem latinTSLGrammar_lang_isBTSL2 :
-    Language.IsBTSL 2 latinTSLGrammar.lang :=
+    Language.IsBTSL 2 latinTSLGrammar.language :=
   latinTSLGrammar_lang_isTSL2.toIsBTSL
 
 end Belth2026

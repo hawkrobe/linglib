@@ -18,10 +18,10 @@ permitted `k`-factors, and `w ∈ L` iff every `k`-factor of `boundary k w` lies
 
 ## Main definitions
 
-* `SLGrammar α`: a grammar is just a set of permitted factors over
+* `StrictlyLocalGrammar α`: a grammar is just a set of permitted factors over
   `Augmented α`; the locality width `k` is supplied to `language`, not baked in.
-* `SLGrammar.language k`: the `Language α` it generates at width `k`.
-* `SLGrammar.ofForbidden`: the grammar of a forbidden-factor set (its
+* `StrictlyLocalGrammar.language k`: the `Language α` it generates at width `k`.
+* `StrictlyLocalGrammar.ofForbidden`: the grammar of a forbidden-factor set (its
   complement).
 * `Language.IsStrictlyLocal L k`: `L` is strictly `k`-local.
 * `Language.SuffixSubstitutionClosed L k`: members sharing a length-`(k − 1)` window
@@ -40,22 +40,22 @@ variable {α : Type*}
 /-- A **strictly-local grammar** over `α`: a set of *permitted* factors over the
 boundary-augmented alphabet `Option α` (`none` the boundary). The locality width
 `k` is supplied to `language`, not baked into the carrier. -/
-abbrev SLGrammar (α : Type*) := Set (Augmented α)
+abbrev StrictlyLocalGrammar (α : Type*) := Set (Augmented α)
 
-namespace SLGrammar
+namespace StrictlyLocalGrammar
 
 /-- The language generated at width `k`: strings whose boundary-augmented form has
 every `k`-factor permitted. -/
-def language (k : ℕ) (G : SLGrammar α) : Language α :=
+def language (k : ℕ) (G : StrictlyLocalGrammar α) : Language α :=
   {w | ∀ f ∈ List.kFactors k (boundary k w), f ∈ G}
 
-@[simp] lemma mem_language (k : ℕ) (G : SLGrammar α) (w : List α) :
+@[simp] lemma mem_language (k : ℕ) (G : StrictlyLocalGrammar α) (w : List α) :
     w ∈ G.language k ↔ ∀ f ∈ List.kFactors k (boundary k w), f ∈ G :=
   Iff.rfl
 
 /-- The grammar of a **forbidden**-factor set is its complement: a string is
 accepted iff none of its `k`-factors are forbidden. -/
-def ofForbidden (forbidden : Set (Augmented α)) : SLGrammar α := forbiddenᶜ
+def ofForbidden (forbidden : Set (Augmented α)) : StrictlyLocalGrammar α := forbiddenᶜ
 
 @[simp] lemma mem_ofForbidden_language (forbidden : Set (Augmented α)) (k : ℕ)
     (w : List α) :
@@ -65,7 +65,7 @@ def ofForbidden (forbidden : Set (Augmented α)) : SLGrammar α := forbiddenᶜ
 
 /-- Membership in an SL language, position-indexed: every window over
 `[1 - k, w.length)` is permitted. -/
-theorem mem_language_iff_window {k : ℕ} {G : SLGrammar α} {w : List α} (hk : 1 ≤ k) :
+theorem mem_language_iff_window {k : ℕ} {G : StrictlyLocalGrammar α} {w : List α} (hk : 1 ≤ k) :
     w ∈ G.language k ↔ ∀ i : ℤ, 1 - k ≤ i → i < w.length → List.window k w i ∈ G := by
   rw [mem_language]
   constructor
@@ -102,18 +102,18 @@ theorem one_le_sum_count_of_not_mem_ofForbidden_language
   Nat.one_le_iff_ne_zero.mpr fun h0 =>
     h ((mem_ofForbidden_language_iff_sum_count_eq_zero F k w).mpr h0)
 
-end SLGrammar
+end StrictlyLocalGrammar
 
 namespace Language
 
 variable {α : Type*}
 
 
-/-- A language `L` is **strictly `k`-local** iff some `SLGrammar α` generates it at
+/-- A language `L` is **strictly `k`-local** iff some `StrictlyLocalGrammar α` generates it at
 width `k`. Witness-style, mirroring `Language.IsRegular`/`Language.IsContextFree`
 ("L is regular iff some DFA accepts L"). -/
 def IsStrictlyLocal (L : Language α) (k : ℕ) : Prop :=
-  ∃ G : SLGrammar α, G.language k = L
+  ∃ G : StrictlyLocalGrammar α, G.language k = L
 
 /-! ### Suffix substitution closure -/
 
@@ -167,7 +167,7 @@ theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk
     (h : L.SuffixSubstitutionClosed k) : L.IsStrictlyLocal k := by
   refine ⟨{f | ∃ z ∈ L, f ∈ List.kFactors k (boundary k z)}, ?_⟩
   ext w
-  rw [SLGrammar.mem_language_iff_window (by omega)]
+  rw [StrictlyLocalGrammar.mem_language_iff_window (by omega)]
   refine ⟨fun hw => ?_, fun hw i h1 h2 =>
     ⟨w, hw, (mem_kFactors_boundary_iff (by omega)).mpr ⟨i, h1, h2, rfl⟩⟩⟩
   have hwin : ∀ i : ℤ, 1 - (k : ℤ) ≤ i → i < w.length →

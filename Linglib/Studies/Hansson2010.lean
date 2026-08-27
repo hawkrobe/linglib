@@ -116,7 +116,7 @@ the root /s/.
 The surface generalization: **no two sibilants of differing place
 (anterior vs posterior) may co-occur within the harmonic domain**.
 Equivalently, every tier-adjacent pair of sibilants must *agree* in
-place — the TSL_2 instance of `TSLGrammar.agree`.
+place — the TSL_2 instance of `TierStrictlyLocalGrammar.agree`.
 -/
 
 namespace Phonology.Studies.Hansson2010
@@ -167,9 +167,9 @@ instance : DecidablePred NSeg.onTier :=
 language: project to the sibilant tier (anterior + posterior sibilants),
 forbid any tier-adjacent disagreeing pair. Symmetric forbidden-pair
 relation = `(· ≠ ·)` restricted to on-tier elements, so the grammar is
-exactly the AGREE specialization `TSLGrammar.agree NSeg.onTier`. -/
-@[reducible] def navajoSibilantHarmony : TSLGrammar 2 NSeg :=
-  TSLGrammar.agree NSeg.onTier
+exactly the AGREE specialization `TierStrictlyLocalGrammar.agree NSeg.onTier`. -/
+@[reducible] def navajoSibilantHarmony : TierStrictlyLocalGrammar 2 NSeg :=
+  TierStrictlyLocalGrammar.agree NSeg.onTier
 
 -- ============================================================================
 -- § 3: Concrete data — pre-harmony vs post-harmony surface forms
@@ -203,12 +203,12 @@ tier projection is empty. -/
 
 /-- **Navajo sibilant harmony stringset is TSL_2** (Hansson 2010 §2.4.1.1).
 Explicit `IsTierStrictlyLocal 2` typing of the implicit complexity claim
-made by the `navajoSibilantHarmony : TSLGrammar 2 NSeg` grammar — the
+made by the `navajoSibilantHarmony : TierStrictlyLocalGrammar 2 NSeg` grammar — the
 co-extensiveness of "the surface phonotactic" and "TSL_2 stringset" was
 asserted in the file docstring; this theorem types that assertion. -/
 theorem navajoSibilantHarmony_lang_isTSL2 :
     Language.IsTierStrictlyLocal 2
-      navajoSibilantHarmony.lang :=
+      navajoSibilantHarmony.language :=
   ⟨navajoSibilantHarmony, rfl⟩
 
 /-- **BTSL_2 corollary** (via the PR-4 bridge `IsTierStrictlyLocal.toIsBTSL`
@@ -216,30 +216,30 @@ in `Subregular.Multitier`): the Navajo sibilant harmony
 stringset lies in the multitier (Boolean) closure of strictly local languages —
 immediate from the TSL_2 result. -/
 theorem navajoSibilantHarmony_lang_isBTSL2 :
-    Language.IsBTSL 2 navajoSibilantHarmony.lang :=
+    Language.IsBTSL 2 navajoSibilantHarmony.language :=
   navajoSibilantHarmony_lang_isTSL2.toIsBTSL
 
 /-- The pre-harmony underlying form is **rejected**: it contains a
 tier-adjacent disagreeing-sibilant pair. -/
-theorem preSiDze_violates : preSiDze ∉ navajoSibilantHarmony.lang := by
-  unfold navajoSibilantHarmony TSLGrammar.agree; decide
+theorem preSiDze_violates : preSiDze ∉ navajoSibilantHarmony.language := by
+  unfold navajoSibilantHarmony TierStrictlyLocalGrammar.agree; decide
 
 /-- The post-harmony surface form is **accepted**: every tier-adjacent
 sibilant pair agrees in place. -/
-theorem postShiDze_legal : postShiDze ∈ navajoSibilantHarmony.lang := by
-  unfold navajoSibilantHarmony TSLGrammar.agree; decide
+theorem postShiDze_legal : postShiDze ∈ navajoSibilantHarmony.language := by
+  unfold navajoSibilantHarmony TierStrictlyLocalGrammar.agree; decide
 
 /-- A form with only anterior sibilants is **accepted** — the AGREE
 constraint forbids disagreement, not co-occurrence. -/
 theorem controlOnlyAnterior_legal :
-    controlOnlyAnterior ∈ navajoSibilantHarmony.lang := by
-  unfold navajoSibilantHarmony TSLGrammar.agree; decide
+    controlOnlyAnterior ∈ navajoSibilantHarmony.language := by
+  unfold navajoSibilantHarmony TierStrictlyLocalGrammar.agree; decide
 
 /-- Forms with no sibilants are vacuously accepted — the tier projection
 is empty, so there are no tier-adjacent pairs to check. -/
 theorem controlNoSibilants_legal :
-    controlNoSibilants ∈ navajoSibilantHarmony.lang := by
-  unfold navajoSibilantHarmony TSLGrammar.agree; decide
+    controlNoSibilants ∈ navajoSibilantHarmony.language := by
+  unfold navajoSibilantHarmony TierStrictlyLocalGrammar.agree; decide
 
 -- ============================================================================
 -- § 5: OT-side bridge — markedness constraint co-extensive with the language
@@ -261,7 +261,7 @@ characterizations of the same Navajo phonotactic coincide — making the
 co-extensiveness of the two analyses true by construction rather than a
 separately-proved equivalence. -/
 theorem navajoAgree_zero_iff_in_TSL (c : List NSeg) :
-    navajoAgree c = 0 ↔ c ∈ navajoSibilantHarmony.lang :=
-  mkAgreeOnTier_zero_iff_in_agree_lang NSeg.onTier id c
+    navajoAgree c = 0 ↔ c ∈ navajoSibilantHarmony.language :=
+  mkAgreeOnTier_zero_iff_in_agree_language NSeg.onTier id c
 
 end Phonology.Studies.Hansson2010

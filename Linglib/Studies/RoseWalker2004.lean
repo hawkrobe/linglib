@@ -49,9 +49,9 @@ argument is upstream of the surface filter formalised in this file.
 
 Kikongo nasal harmony is *asymmetric*: the forbidden tier-adjacent pair
 is `(nasal, voiced-stop)`, not the reverse. This is a strict instance of
-the generic `TSLGrammar.ofForbiddenPairs` constructor and does **not**
-factor through either `TSLGrammar.ocp` (`R := (· = ·)`) or
-`TSLGrammar.agree` (`R := (· ≠ ·)`); the AGREE specialization captures
+the generic `TierStrictlyLocalGrammar.ofForbiddenPairs` constructor and does **not**
+factor through either `TierStrictlyLocalGrammar.ocp` (`R := (· = ·)`) or
+`TierStrictlyLocalGrammar.agree` (`R := (· ≠ ·)`); the AGREE specialization captures
 *symmetric* harmony (e.g. Navajo sibilant harmony in `Hansson2010.lean`).
 The asymmetry here tracks the morphological geometry (stem→suffix
 direction), not a feature-symmetric agreement relation.
@@ -151,8 +151,8 @@ instance : DecidableRel KSeg.forbidNasalStop
 /-- The Kikongo nasal-harmony grammar as a tier-based strictly 2-local
 language: project to the harmonizing-class tier (nasals + voiced stops),
 forbid `nasalC`-then-`voicedStop` adjacency on the tier. -/
-@[reducible] def kikongoNasalHarmony : TSLGrammar 2 KSeg :=
-  TSLGrammar.ofForbiddenPairs KSeg.forbidNasalStop KSeg.onTier
+@[reducible] def kikongoNasalHarmony : TierStrictlyLocalGrammar 2 KSeg :=
+  TierStrictlyLocalGrammar.ofForbiddenPairs KSeg.forbidNasalStop KSeg.onTier
 
 -- ============================================================================
 -- § 3: Concrete data — pre-harmony vs post-harmony surface forms
@@ -183,18 +183,18 @@ licit because no preceding tier element is `nasalC`. -/
 /-- The pre-harmony underlying form is **rejected**: it contains a
 tier-adjacent `nasalC`-`voicedStop` pair. -/
 theorem preHarmonyNasalStop_violates :
-    preHarmonyNasalStop ∉ kikongoNasalHarmony.lang := by decide
+    preHarmonyNasalStop ∉ kikongoNasalHarmony.language := by decide
 
 /-- The post-harmony surface form is **accepted**: every tier-adjacent
 pair is licit. -/
 theorem postHarmonyNasalNasal_legal :
-    postHarmonyNasalNasal ∈ kikongoNasalHarmony.lang := by decide
+    postHarmonyNasalNasal ∈ kikongoNasalHarmony.language := by decide
 
 /-- Forms with no nasal trigger are **accepted** even if they contain
 voiced stops — the constraint is conditional on a preceding tier-
 adjacent nasal. -/
 theorem controlNoTrigger_legal :
-    controlNoTrigger ∈ kikongoNasalHarmony.lang := by decide
+    controlNoTrigger ∈ kikongoNasalHarmony.language := by decide
 
 -- ============================================================================
 -- § 5: OT-side bridge — markedness constraint co-extensive with the language
@@ -220,21 +220,21 @@ characterizations of the same Kikongo phonotactic coincide — making the
 co-extensiveness of the two analyses true by construction rather than a
 separately-proved equivalence. -/
 theorem kikongoAgree_zero_iff_in_TSL (c : List KSeg) :
-    kikongoAgree c = 0 ↔ c ∈ kikongoNasalHarmony.lang :=
-  mkForbidPairsOnTier_zero_iff_in_lang
+    kikongoAgree c = 0 ↔ c ∈ kikongoNasalHarmony.language :=
+  mkForbidPairsOnTier_zero_iff_in_language
     KSeg.forbidNasalStop KSeg.onTier id c
 
 /-- **TSL_2 witness**: Kikongo nasal harmony is tier-strictly-local at
 window-size 2. -/
 theorem kikongoNasalHarmony_lang_isTSL2 :
-    IsTierStrictlyLocal 2 kikongoNasalHarmony.lang :=
+    IsTierStrictlyLocal 2 kikongoNasalHarmony.language :=
   ⟨kikongoNasalHarmony, rfl⟩
 
 /-- **BTSL_2 corollary** (via `IsTierStrictlyLocal.toIsBTSL` in
 `Subregular.Multitier`): Kikongo nasal harmony is in
 the multitier closure of strictly local languages, hence consumed by
 the [lambert-2026] BTC framework. -/
-theorem kikongoNasalHarmony_lang_isBTSL2 : IsBTSL 2 kikongoNasalHarmony.lang :=
+theorem kikongoNasalHarmony_lang_isBTSL2 : IsBTSL 2 kikongoNasalHarmony.language :=
   kikongoNasalHarmony_lang_isTSL2.toIsBTSL
 
 end Phonology.Studies.RoseWalker2004
