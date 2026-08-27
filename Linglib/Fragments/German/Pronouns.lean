@@ -20,10 +20,10 @@ refer to either a singular or plural addressee.
 ## Person hierarchy effects
 
 SIE triggers PCC effects in German's limited PCC environments (Wackernagel
-clusters, [anagnostopoulou-2008]), patterning with 2nd person ((47)–(48)).
-In contrast, SIE does NOT trigger the exponence-based person hierarchy effect
-in assumed-identity copular constructions ([keine-et-al-2019],
-[coon-keine-2021]), patterning with 3rd person ((52)–(53)).
+clusters), patterning with 2nd person, but not the exponence-based person
+hierarchy effect in assumed-identity copular constructions, where it patterns
+with 3rd person ([adamson-zompi-2025], whose study file carries both sets of
+examples).
 -/
 
 namespace German.Pronouns
