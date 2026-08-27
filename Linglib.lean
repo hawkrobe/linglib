@@ -2976,3 +2976,4 @@ import Linglib.Data.Examples.AlonsoOvalleRoyer2024
 import Linglib.Semantics.Modality.Anchor
 import Linglib.Semantics.Modality.IndefiniteDenotation
 import Linglib.Syntax.Category.Determiner.ModalIndefinite
+import Linglib.Data.Examples.Alsop2024

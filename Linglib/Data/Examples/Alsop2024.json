@@ -1,0 +1,520 @@
+[
+  {
+    "id": "alsop2024_1a",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(1a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may read any book.",
+    "glossedTokens": [],
+    "translation": "You may read any book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "exclusiveness", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["logicalForm", "∀x ∈ De [book(x) → ◇read(you,x)]"]
+    ],
+    "comment": "(2) You may read just Book A is the exclusiveness reading; Menéndez-Benito and Dayal take it to be entailed, Alsop to be a robust implicature.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_3",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(3)"},
+    "reportedIn": {"bibkey": "szabolcsi-2019", "paperLabel": null},
+    "language": "stan1293",
+    "primaryText": "Any bishop may meet a bishop.",
+    "glossedTokens": [],
+    "translation": "Any bishop may meet a bishop.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "exclusiveness", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate", "symmetric"],
+      ["state", "only2"]
+    ],
+    "comment": "(4) Bishop A may be the only bishop who meets a bishop can never be true, so the Viability Constraint wrongly predicts infelicity.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_5a",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(5a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Jane didn't buy any shirts.",
+    "glossedTokens": [],
+    "translation": "Jane didn't buy any shirts.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["any", "npi"],
+      ["environment", "negation"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_5b",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(5b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Tom thanked every guest who brought any drinks.",
+    "glossedTokens": [],
+    "translation": "Tom thanked every guest who brought any drinks.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["any", "npi"],
+      ["environment", "restrictorOfEvery"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_6a",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(6a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Carrie read any book.",
+    "glossedTokens": [],
+    "translation": "Carrie read any book.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["any", "fci"],
+      ["environment", "episodic"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_6b",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(6b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Carrie may read any book.",
+    "glossedTokens": [],
+    "translation": "Carrie may read any book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["any", "fci"],
+      ["environment", "possibilityModal"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_6c",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(6c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Carrie must read any book.",
+    "glossedTokens": [],
+    "translation": "Carrie must read any book.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["any", "fci"],
+      ["environment", "necessityModal"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_17",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(17)"},
+    "reportedIn": {"bibkey": "menendez-benito-2010", "paperLabel": null},
+    "language": "stan1293",
+    "primaryText": "In Canasta, you can take any of the cards in the discard pile when you have two cards that match its top card.",
+    "glossedTokens": [],
+    "translation": "In Canasta, you can take any of the cards in the discard pile when you have two cards that match its top card.",
+    "context": "(16) The Canasta scenario: when a player has two cards that match the top card of the discard pile, she has two options: take all the cards in the discard pile, or take no card from it. Those are her only two options.",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [
+      {"name": "literal", "judgment": "acceptable"},
+      {"name": "exclusiveness", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["state", "only2"]
+    ],
+    "comment": "Menéndez-Benito judges it unambiguously false; the dialogue (18) — A: Is it true that in Canasta, you can take any of the cards in the discard pile when you have two cards that match its top card? B: Technically yes…but if you take one card from the discard pile, you must take all of them — shows it literally true.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_19",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(19)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Annie: Can I take any of these cats? Shelter employee: Technically yes…but they're siblings, so if you take one, you're required to take them all.",
+    "glossedTokens": [],
+    "translation": "Annie: Can I take any of these cats? Shelter employee: Technically yes…but they're siblings, so if you take one, you're required to take them all.",
+    "context": "The local animal shelter has a strict policy of not separating animals from their siblings. Annie goes to the shelter to adopt a cat, and walks into one room with three cats inside.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "literal", "judgment": "acceptable"},
+      {"name": "exclusiveness", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["state", "only2"]
+    ],
+    "comment": "Judged less natural but acceptable, true and non-contradictory by the author and three further speakers (fn. 6).",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_20a",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(20a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Any bishop may gather with other bishops.",
+    "glossedTokens": [],
+    "translation": "Any bishop may gather with other bishops.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "exclusiveness", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate", "symmetric"],
+      ["state", "only2"]
+    ],
+    "comment": "Does not implicate that Bishop A may be the only bishop who gathers with other bishops.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_20b",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(20b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Any bishop may converse with another bishop.",
+    "glossedTokens": [],
+    "translation": "Any bishop may converse with another bishop.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "exclusiveness", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate", "symmetric"],
+      ["state", "only2"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_20c",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(20c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Any bishop may pair up with another bishop.",
+    "glossedTokens": [],
+    "translation": "Any bishop may pair up with another bishop.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "exclusiveness", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate", "symmetric"],
+      ["state", "only2"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_21b",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(21b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We may take any class.",
+    "glossedTokens": [],
+    "translation": "We may take any class.",
+    "context": "You are a graduate student only required to take one class per semester. You ask: What classes are we allowed to take in our first year?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "exclusiveness", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "Implicates that we may take Semantics without taking another class.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_22b",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(22b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We may take any class.",
+    "glossedTokens": [],
+    "translation": "We may take any class.",
+    "context": "You are an undergraduate student required to take four classes per semester. You ask: What classes are we allowed to take in our first year?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "exclusiveness", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["state", "only2"]
+    ],
+    "comment": "The undergraduate's certainty about the courseload blocks the exclusiveness implicature; only the Only 2 state remains.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_23",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(23)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt any cat here… But if you adopt a cat, you also have to adopt its siblings.",
+    "glossedTokens": [],
+    "translation": "You may adopt any cat here… But if you adopt a cat, you also have to adopt its siblings.",
+    "context": "Annie goes to the shelter to adopt a cat; the shelter employee speaks.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "exclusiveness", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["implicature", "cancelled"],
+      ["state", "only2"]
+    ],
+    "comment": "The expectation that each cat can be adopted on its own is felicitously denied after the fact.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_24a",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(24a)"},
+    "reportedIn": {"bibkey": "dayal-2013", "paperLabel": null},
+    "language": "stan1293",
+    "primaryText": "Bill may read any of these books.",
+    "glossedTokens": [],
+    "translation": "Bill may read any of these books.",
+    "context": "Out of the blue.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "not every", "judgment": "questionable"}
+    ],
+    "paperFeatures": [
+      ["prior", "uniform"]
+    ],
+    "comment": "Dayal: Bill is unambiguously permitted to read all the books at once; Alsop: out of the blue this is left open.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_25b",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(25b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We may take any class.",
+    "glossedTokens": [],
+    "translation": "We may take any class.",
+    "context": "You are a part-time student who is forbidden from taking more than one class in a semester. Your university offers hundreds of classes each semester. You ask: What classes are we allowed to take in our first year?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "not two", "judgment": "acceptable"},
+      {"name": "not three", "judgment": "acceptable"},
+      {"name": "not every", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["state", "only1"]
+    ],
+    "comment": "The listener's prior knowledge, not the utterance, rules out taking more than one class.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_26a",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(26a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Anyone and everyone is welcome to come.",
+    "glossedTokens": [],
+    "translation": "Anyone and everyone is welcome to come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "anyAndEvery"]
+    ],
+    "comment": "The second conjunct adds that there is no limit to the number of individuals who may come.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_26b",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(26b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We welcome any and all questions.",
+    "glossedTokens": [],
+    "translation": "We welcome any and all questions.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "anyAndEvery"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_27a",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(27a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We reserve the right to refuse to serve anyone.",
+    "glossedTokens": [],
+    "translation": "We reserve the right to refuse to serve anyone.",
+    "context": "A restaurant sign.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "We reserve the right to refuse to serve anyone and everyone.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "(27b) is infelicitous: the conjoined universal rules in the scenario of refusing everyone, which world knowledge rules out.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_28",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(28)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may have any of these souvenirs… In fact, you may even have all of them.",
+    "glossedTokens": [],
+    "translation": "You may have any of these souvenirs… In fact, you may even have all of them.",
+    "context": "You are one of three siblings. Your mother returns from a business trip with three souvenirs and presents them to just you first.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "not every", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["implicature", "cancelled"]
+    ],
+    "comment": "The not two and not every implicatures are robust from the prior but felicitously denied.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_31_mayS",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(31)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may take Semantics.",
+    "glossedTokens": [],
+    "translation": "You may take Semantics.",
+    "context": "The toy example: the domain of classes is {Semantics, Phonology}; the QUD is which classes the listener may take.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["utterance", "mayS"],
+      ["parses", "3"]
+    ],
+    "comment": "Parses (32a–c).",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_31_mayP",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(31)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may take Phonology.",
+    "glossedTokens": [],
+    "translation": "You may take Phonology.",
+    "context": "The toy example: the domain of classes is {Semantics, Phonology}; the QUD is which classes the listener may take.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["utterance", "mayP"],
+      ["parses", "3"]
+    ],
+    "comment": "Parses (33a–c).",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_31_mayAny",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(31)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may take any class.",
+    "glossedTokens": [],
+    "translation": "You may take any class.",
+    "context": "The toy example: the domain of classes is {Semantics, Phonology}; the QUD is which classes the listener may take.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "exclusiveness", "judgment": "acceptable"},
+      {"name": "not every", "judgment": "questionable"}
+    ],
+    "paperFeatures": [
+      ["utterance", "mayAny"],
+      ["parses", "2"],
+      ["prior", "uniform"]
+    ],
+    "comment": "Parses (34a) (Szabolcsi) and (34b) (Dayal); (42a) the exclusiveness implicature, (43a) the not every implicature, absent at a uniform prior.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_31_mayEvery",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(31)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may take every class.",
+    "glossedTokens": [],
+    "translation": "You may take every class.",
+    "context": "The toy example: the domain of classes is {Semantics, Phonology}; the QUD is which classes the listener may take.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["utterance", "mayEvery"],
+      ["parses", "4"]
+    ],
+    "comment": "Parses (35a–d), with both scopes of the universal.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alsop2024_44",
+    "source": {"bibkey": "alsop-2024", "paperLabel": "(44)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Chris: Can I choose any of those chores? Grandmother: Technically yes—in fact, you must do all of them.",
+    "glossedTokens": [],
+    "translation": "Chris: Can I choose any of those chores? Grandmother: Technically yes—in fact, you must do all of them.",
+    "context": "Chris spends the summer at his grandmother's house; on his first day she shows him a list of chores she has written down.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "literal", "judgment": "acceptable"},
+      {"name": "exclusiveness", "judgment": "unacceptable"},
+      {"name": "may but not must", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["revisedViabilityConstraint", "cancelled"]
+    ],
+    "comment": "Denies the scalar implicature the Revised Viability Constraint requires; outside the model.",
+    "lgrConformance": "NONE"
+  }
+]

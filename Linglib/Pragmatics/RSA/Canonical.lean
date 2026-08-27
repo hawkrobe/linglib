@@ -226,52 +226,53 @@ end Listener
 
 /-! ### Pair-choice pragmatic listener
 
-When the speaker chooses an (utterance, latent) *pair* — the latent an output
-of the speaker rather than part of its state ([franke-bergen-2020]) — one
-speaker per world normalizes over pairs, and the listener recovers the joint
-(world, latent) from the utterance alone via `PMF.emissionPosterior`. -/
+When the speaker chooses an *action* — an utterance together with an intended
+parse — of which the listener observes only the utterance
+([franke-bergen-2020]'s Global Intentions), one speaker per world normalizes
+over actions, and the listener recovers the joint (world, action) from the
+observed utterance via `PMF.emissionPosterior`. -/
 
 section IntentListener
 
-variable {W Lat U : Type*} [Fintype W] [Fintype Lat] [Fintype U] [DecidableEq U]
+variable {W A U : Type*}
 
-/-- The **pair-choice pragmatic listener**: the posterior over `world × latent`
-given the observed utterance component of a jointly chosen (utterance, latent)
-action. -/
-noncomputable def L1Intent (S : W → PMF (U × Lat)) (prior : PMF W) (u : U)
-    (h : PMF.marginal (fun w => (S w).fst) prior u ≠ 0) : PMF (W × Lat) :=
-  PMF.emissionPosterior S prior u h
+/-- A single world `w` where an action `a` observed as `u` has positive speaker
+mass makes the utterance marginal non-zero — the positivity discharge for
+`L1Intent` at a uniform prior. -/
+theorem L1Intent_uniform_marginal_ne_zero [Fintype W] [Nonempty W] (obs : A → U)
+    (S : W → PMF A) {w : W} {a : A} {u : U} (h : S w a ≠ 0) (ha : obs a = u) :
+    PMF.marginal (fun w => (S w).map obs) (PMF.uniformOfFintype W) u ≠ 0 :=
+  PMF.emission_marginal_ne_zero obs S (PMF.uniformOfFintype W) u
+    (((PMF.uniformOfFintype W).mem_support_iff w).mp (PMF.mem_support_uniformOfFintype _)) h ha
 
-/-- At a uniform world prior, `L1Intent` world preference reduces to pooled
-speaker sums over the latent. -/
+variable [DecidableEq U]
+
+/-- The **pair-choice pragmatic listener**: the posterior over `world × action`
+given the observed utterance `obs a` of a jointly chosen action `a`. -/
+noncomputable def L1Intent (obs : A → U) (S : W → PMF A) (prior : PMF W) (u : U)
+    (h : PMF.marginal (fun w => (S w).map obs) prior u ≠ 0) : PMF (W × A) :=
+  PMF.emissionPosterior obs S prior u h
+
+/-- Event comparison for `L1Intent` reduces to prior-weighted speaker sums over
+the actions observed as `u`. -/
 @[rsa]
-theorem L1Intent_uniform_world_prefers_iff [DecidableEq W] [Nonempty W]
-    (S : W → PMF (U × Lat)) (u : U)
-    (h : PMF.marginal (fun w => (S w).fst) (PMF.uniformOfFintype W) u ≠ 0) (w₁ w₂ : W) :
-    (L1Intent S (PMF.uniformOfFintype W) u h).fst w₁
-        < (L1Intent S (PMF.uniformOfFintype W) u h).fst w₂
-      ↔ (∑ l : Lat, S w₁ (u, l)) < ∑ l : Lat, S w₂ (u, l) :=
-  PMF.emissionPosterior_uniform_fst_lt_iff S u h w₁ w₂
+theorem L1Intent_event_lt_iff (obs : A → U) (S : W → PMF A) (prior : PMF W) (u : U)
+    (h : PMF.marginal (fun w => (S w).map obs) prior u ≠ 0) (E₁ E₂ : Finset (W × A)) :
+    (L1Intent obs S prior u h).toOuterMeasure ↑E₁ < (L1Intent obs S prior u h).toOuterMeasure ↑E₂
+      ↔ (∑ x ∈ E₁ with obs x.2 = u, prior x.1 * S x.1 x.2)
+          < ∑ x ∈ E₂ with obs x.2 = u, prior x.1 * S x.1 x.2 :=
+  PMF.emissionPosterior_toOuterMeasure_lt_iff obs S prior u h E₁ E₂
 
-/-- At a uniform world prior, `L1Intent` latent preference reduces to pooled
-speaker sums over worlds. -/
+/-- At a uniform world prior, `L1Intent` event comparison reduces to bare speaker
+sums over the actions observed as `u`. -/
 @[rsa]
-theorem L1Intent_uniform_latent_prefers_iff [DecidableEq Lat] [Nonempty W]
-    (S : W → PMF (U × Lat)) (u : U)
-    (h : PMF.marginal (fun w => (S w).fst) (PMF.uniformOfFintype W) u ≠ 0) (l₁ l₂ : Lat) :
-    (L1Intent S (PMF.uniformOfFintype W) u h).snd l₁
-        < (L1Intent S (PMF.uniformOfFintype W) u h).snd l₂
-      ↔ (∑ w : W, S w (u, l₁)) < ∑ w : W, S w (u, l₂) :=
-  PMF.emissionPosterior_uniform_snd_lt_iff S u h l₁ l₂
-
-/-- A single world `w` where the pair `(u, l)` has positive speaker mass makes
-the utterance marginal non-zero — the positivity discharge for `L1Intent` at a
-uniform prior. -/
-theorem L1Intent_uniform_marginal_ne_zero [Nonempty W] (S : W → PMF (U × Lat))
-    {w : W} {u : U} {l : Lat} (h : S w (u, l) ≠ 0) :
-    PMF.marginal (fun w => (S w).fst) (PMF.uniformOfFintype W) u ≠ 0 :=
-  PMF.emission_marginal_ne_zero S (PMF.uniformOfFintype W)
-    (((PMF.uniformOfFintype W).mem_support_iff w).mp (PMF.mem_support_uniformOfFintype _)) h
+theorem L1Intent_uniform_event_lt_iff [Fintype W] [Nonempty W] (obs : A → U) (S : W → PMF A)
+    (u : U) (h : PMF.marginal (fun w => (S w).map obs) (PMF.uniformOfFintype W) u ≠ 0)
+    (E₁ E₂ : Finset (W × A)) :
+    (L1Intent obs S (PMF.uniformOfFintype W) u h).toOuterMeasure ↑E₁
+        < (L1Intent obs S (PMF.uniformOfFintype W) u h).toOuterMeasure ↑E₂
+      ↔ (∑ x ∈ E₁ with obs x.2 = u, S x.1 x.2) < ∑ x ∈ E₂ with obs x.2 = u, S x.1 x.2 :=
+  PMF.emissionPosterior_uniform_toOuterMeasure_lt_iff obs S u h E₁ E₂
 
 end IntentListener
 
