@@ -71,6 +71,29 @@ theorem literalListener_apply_singleton [Fintype W] [MeasurableSingletonClass W]
     withDensity_apply _ (.singleton w), lintegral_singleton, withDensity_apply _ MeasurableSet.univ,
     Measure.restrict_univ, lintegral_fintype, ENNReal.div_eq_inv_mul]
 
+theorem literalListener_indicator_apply_singleton [DiscreteMeasurableSpace W] (μ : Measure W)
+    (sem : U → Set W) {u : U} {w : W} (h : w ∈ sem u) :
+    literalListener μ (fun u => (sem u).indicator 1) u {w} = (μ (sem u))⁻¹ * μ {w} := by
+  rw [literalListener_indicator, Kernel.ofFunOfCountable_apply, cond_apply .of_discrete,
+    Set.inter_eq_self_of_subset_right (Set.singleton_subset_iff.mpr h)]
+
+theorem literalListener_indicator_apply_singleton_of_notMem [DiscreteMeasurableSpace W]
+    (μ : Measure W) (sem : U → Set W) {u : U} {w : W} (h : w ∉ sem u) :
+    literalListener μ (fun u => (sem u).indicator 1) u {w} = 0 := by
+  rw [literalListener_indicator, Kernel.ofFunOfCountable_apply, cond_apply .of_discrete,
+    Set.inter_comm, Set.singleton_inter_eq_empty.mpr h, measure_empty, mul_zero]
+
+/-- On a finite-mass extension the literal listener is a subprobability at members. -/
+theorem literalListener_indicator_apply_singleton_le_one [DiscreteMeasurableSpace W]
+    (μ : Measure W) (sem : U → Set W) {u : U} (hfin : μ (sem u) ≠ ∞) {w : W} (h : w ∈ sem u) :
+    literalListener μ (fun u => (sem u).indicator 1) u {w} ≤ 1 := by
+  rw [literalListener_indicator_apply_singleton μ sem h]
+  rcases eq_or_ne (μ (sem u)) 0 with h0 | h0
+  · rw [measure_mono_null (Set.singleton_subset_iff.mpr h) h0, mul_zero]
+    exact zero_le_one
+  · rw [ENNReal.inv_mul_le_iff h0 hfin, mul_one]
+    exact measure_mono (Set.singleton_subset_iff.mpr h)
+
 end LiteralListener
 
 variable [Countable W] [MeasurableSingletonClass W] [Fintype U] [MeasurableSingletonClass U]
@@ -122,6 +145,24 @@ theorem speaker_apply_singleton_ne_zero {α : ℝ} (hα : 0 ≤ α) {cost : U �
   exact ⟨mul_ne_zero (weight_rpow_ne_zero hα h) (hc0 u),
     ENNReal.sum_ne_top.mpr fun u' _ =>
       ENNReal.mul_ne_top (weight_rpow_ne_top hα (hle u')) (hctop u')⟩
+
+/-- A state with a unique applicable utterance produces it with certainty. -/
+theorem speaker_apply_singleton_eq_one {α : ℝ} (hα : 0 < α) {cost : U → ℝ≥0∞} {u : U}
+    (hc0 : cost u ≠ 0) (hctop : cost u ≠ ∞) {L : Kernel U W} {w : W} (h : L u {w} ≠ 0)
+    (hle : L u {w} ≤ 1) (hother : ∀ u' ≠ u, L u' {w} = 0) : speaker α cost L w {u} = 1 := by
+  rw [speaker_apply_singleton, Finset.sum_eq_single u
+    (fun u' _ hu' => by rw [hother u' hu', ENNReal.zero_rpow_of_pos hα, zero_mul])
+    (fun hu => absurd (Finset.mem_univ u) hu)]
+  exact ENNReal.div_self (mul_ne_zero (weight_rpow_ne_zero hα.le h) hc0)
+    (ENNReal.mul_ne_top (weight_rpow_ne_top hα.le hle) hctop)
+
+omit [MeasurableSingletonClass U] in
+/-- Speaker shares are at most one. -/
+theorem speaker_real_singleton_le_one (α : ℝ) (cost : U → ℝ≥0∞) (L : Kernel U W) (w : W)
+    (u : U) : (speaker α cost L w).real {u} ≤ 1 := by
+  rw [measureReal_def, ← ENNReal.toReal_one]
+  exact ENNReal.toReal_mono ENNReal.one_ne_top
+    ((measure_mono (Set.subset_univ _)).trans (Kernel.ofWeights_apply_univ_le_one _ w))
 
 /-! #### Pragmatic listeners -/
 
@@ -288,6 +329,23 @@ noncomputable def familyListener (L : Λ → Kernel U W) (α : ℝ) (cost : U �
   (familySpeaker L α cost)†μ
 
 variable {μ : Measure (W × Λ)} [IsFiniteMeasure μ]
+
+/-- Exact Bayes for the family listener at a positive-mass utterance. -/
+theorem familyListener_apply_singleton (L : Λ → Kernel U W) (α : ℝ) (cost : U → ℝ≥0∞) {u : U}
+    (hu : (familySpeaker L α cost ∘ₘ μ) {u} ≠ 0) (p : W × Λ) :
+    familyListener L α cost μ u {p}
+      = μ {p} * speaker α cost (L p.2) p.1 {u} / (familySpeaker L α cost ∘ₘ μ) {u} := by
+  rw [familyListener, posterior_apply_singleton _ _ hu, familySpeaker_apply]
+
+/-- Event comparison for the family listener reduces to prior-weighted member speaker
+sums. -/
+theorem familyListener_real_lt_iff (L : Λ → Kernel U W) (α : ℝ) (cost : U → ℝ≥0∞) {u : U}
+    (hu : (familySpeaker L α cost ∘ₘ μ) {u} ≠ 0) (E₁ E₂ : Finset (W × Λ)) :
+    (familyListener L α cost μ u).real ↑E₁ < (familyListener L α cost μ u).real ↑E₂
+      ↔ (∑ p ∈ E₁, μ.real {p} * (speaker α cost (L p.2) p.1).real {u})
+        < ∑ p ∈ E₂, μ.real {p} * (speaker α cost (L p.2) p.1).real {u} := by
+  rw [familyListener, posterior_real_finset_lt_iff _ _ hu]
+  simp_rw [familySpeaker_apply]
 
 /-- State-marginal preference for a latent family at equal priors: the latent pools,
 leaving summed member speaker shares. -/

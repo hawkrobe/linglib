@@ -14,8 +14,8 @@ over these multisets (`Linglib.Pragmatics.RSA.Uniform`), so preference certifica
 ## Main definitions
 
 * `RSA.profile`, `RSA.fiberProfile`, `RSA.restProfile` — extension-size multisets.
-* `RSA.pooledDivPowSum` — the ℕ-cleared production mass of a choice pooled over its true
-  states.
+* `RSA.pooledDivPowSum`, `RSA.familyDivPowSum` — ℕ-cleared posterior masses for the
+  evaluation registers.
 
 ## Main results
 
@@ -123,5 +123,22 @@ theorem pooledDivPowSum_eq_sum (D k : ℕ) (c : C) :
           (D / (sem c).card) ^ k * ∏ t' ∈ Finset.univ.erase t, (profile sem t').divPowSum D k
         else 0 := by
   rw [pooledDivPowSum, Finset.mul_sum, Finset.sum_ite_mem, Finset.univ_inter]
+
+/-- The ℕ-cleared posterior mass of an event of (state, latent) pairs given `c` for a
+family of extensions: per pair, its common-denominator speaker weight times the product of
+the other pairs' cleared partition sums. Family evaluation-register hypotheses compare
+these. -/
+def familyDivPowSum {Λ : Type*} [Fintype Λ] [DecidableEq Λ] (sem : Λ → C → Finset T)
+    (D k : ℕ) (c : C) (E : Finset (T × Λ)) : ℕ :=
+  ∑ p ∈ E, (if p.1 ∈ sem p.2 c then (D / (sem p.2 c).card) ^ k else 0)
+    * ∏ q ∈ Finset.univ.erase p, (profile (sem q.2) q.1).divPowSum D k
+
+theorem familyDivPowSum_eq_sum {Λ : Type*} [Fintype Λ] [DecidableEq Λ] (sem : Λ → C → Finset T)
+    (D k : ℕ) (c : C) (E : Finset (T × Λ)) :
+    familyDivPowSum sem D k c E
+      = ∑ p, if p ∈ E then (if p.1 ∈ sem p.2 c then (D / (sem p.2 c).card) ^ k else 0)
+          * ∏ q ∈ Finset.univ.erase p, (profile (sem q.2) q.1).divPowSum D k
+        else 0 := by
+  rw [familyDivPowSum, Finset.sum_ite_mem, Finset.univ_inter]
 
 end RSA
