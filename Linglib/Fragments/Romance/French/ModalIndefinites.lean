@@ -1,29 +1,23 @@
-import Linglib.Features.ModalIndefinite
+import Linglib.Syntax.Category.Determiner.ModalIndefinite
 
 /-!
-# French Modal Indefinite Fragment
+# French modal indefinites
 
-Lexical entry for French modal indefinite *n'importe quel*
-([jayez-tovena-2006]).
+Lexical entry for *n'importe quel* ([jayez-tovena-2006]).
 -/
 
 namespace French.ModalIndefinites
 
-open Features.ModalIndefinite
-
-/-- *n'importe quel*: at-issue, random choice only, not upper-bounded.
-    Literally "no matter which"; conveys indiscriminacy
-    ([jayez-tovena-2006]). -/
-def nimporteQuelEntry : ModalIndefiniteEntry where
+/-- *n'importe quel* ("no matter which"): at-issue random choice, not upper-bounded
+([jayez-tovena-2006]). -/
+def nimporteQuel : ModalIndefinite where
   form := "n'importe quel"
   status := .atIssue
-  flavors := [.circumstantial]
+  flavors := {.circumstantial}
   upperBounded := false
-  hasUnremarkableReading := false
-  canBePredicate := false
   anchorConstraint := some .unrestricted
 
 /-- The French modal indefinite paradigm. -/
-def paradigm : List ModalIndefiniteEntry := [nimporteQuelEntry]
+def paradigm : List ModalIndefinite := [nimporteQuel]
 
 end French.ModalIndefinites
