@@ -1,84 +1,644 @@
 [
   {
-    "id": "alstottaravind2026_before_stative",
-    "source": {"bibkey": "rett-2020", "paperLabel": "UNVERIFIED"},
-    "reportedIn": {"bibkey": "alstott-aravind-2026", "paperLabel": "UNVERIFIED"},
+    "id": "alstottaravind2026_1a",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "(1a)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John left before she was president.",
-    "discourseSegments": [],
+    "primaryText": "Emma was happy after Hector was happy.",
     "glossedTokens": [],
-    "translation": "John left before she was president.",
-    "context": "*Before* with a stative embedded clause: the default before-start reading (ME precedes the onset of EE) is the only salient one; no coercion operator is involved.",
+    "translation": "Emma was happy after Hector was happy.",
+    "context": "Hector was happy from 6pm to 8pm; Emma was happy 5–5:30pm (Scenario A), 6:30–7pm (Scenario B), or 8–8:30pm (Scenario C).",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "before-start (default)", "judgment": "acceptable"}
+      {"name": "after-start", "judgment": "acceptable"},
+      {"name": "after-finish", "judgment": "acceptable"}
     ],
-    "paperFeatures": {"connective": "before", "clause": "embedded", "vendler_class": "state", "default_reading": "before-start"},
-    "comment": "Schematic illustration of Rett 2020's telicity-sensitive default readings for *before*/*after*; sentence not verified verbatim against either paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "paperFeatures": [
+      ["construction", "after"],
+      ["telicity", "atelic"]
+    ],
+    "comment": "True in Scenarios B and C.",
+    "lgrConformance": "NONE"
   },
   {
-    "id": "alstottaravind2026_before_accomplishment",
-    "source": {"bibkey": "rett-2020", "paperLabel": "UNVERIFIED"},
-    "reportedIn": {"bibkey": "alstott-aravind-2026", "paperLabel": "UNVERIFIED Exp. 2"},
+    "id": "alstottaravind2026_1b",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "(1b)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John left before she climbed the mountain.",
-    "discourseSegments": [],
+    "primaryText": "Emma was happy before Hector was happy.",
     "glossedTokens": [],
-    "translation": "John left before she climbed the mountain.",
-    "context": "*Before* with a telic (accomplishment) embedded clause: before-start is the default; the before-finish reading requires the covert COMPLET operator and incurs a processing cost (Alstott & Aravind 2026, Exp. 2).",
+    "translation": "Emma was happy before Hector was happy.",
+    "context": "Hector was happy from 6pm to 8pm; Emma was happy 5–5:30pm (Scenario A), 6:30–7pm (Scenario B), or 8–8:30pm (Scenario C).",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "before-start (default)", "judgment": "acceptable"},
-      {"name": "before-finish (COMPLET)", "judgment": "acceptable"}
+      {"name": "before-start", "judgment": "acceptable"},
+      {"name": "before-finish", "judgment": "unacceptable"}
     ],
-    "paperFeatures": {"connective": "before", "clause": "embedded", "vendler_class": "accomplishment", "default_reading": "before-start", "coercion": "COMPLET", "coerced_reading": "before-finish"},
-    "comment": "Schematic illustration of Rett 2020's telicity-sensitive default readings for *before*/*after*; the COMPLET condition is the one tested in Alstott & Aravind 2026 Exp. 2. Sentence not verified verbatim against either paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "paperFeatures": [
+      ["construction", "before"],
+      ["telicity", "atelic"]
+    ],
+    "comment": "True only in Scenario A.",
+    "lgrConformance": "NONE"
   },
   {
-    "id": "alstottaravind2026_after_stative",
-    "source": {"bibkey": "rett-2020", "paperLabel": "UNVERIFIED"},
-    "reportedIn": {"bibkey": "alstott-aravind-2026", "paperLabel": "UNVERIFIED Exp. 4"},
+    "id": "alstottaravind2026_2a",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "(2a)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John left after she was surprised.",
-    "discourseSegments": [],
+    "primaryText": "Emma was nervous before Jackson climbed the mountain.",
     "glossedTokens": [],
-    "translation": "John left after she was surprised.",
-    "context": "*After* with a stative (atelic) embedded clause: after-finish is the default; the after-start reading requires the covert INCHOAT operator and incurs a processing cost (Alstott & Aravind 2026, Exp. 4).",
+    "translation": "Emma was nervous before Jackson climbed the mountain.",
+    "context": "Jackson climbed a mountain from 9am to 9pm; Emma was nervous 5am–8pm (Scenario A), 12–3pm (Scenario B), or 10pm–1am (Scenario C).",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "after-finish (default)", "judgment": "acceptable"},
-      {"name": "after-start (INCHOAT)", "judgment": "acceptable"}
+      {"name": "before-start", "judgment": "acceptable"},
+      {"name": "before-finish", "judgment": "acceptable"}
     ],
-    "paperFeatures": {"connective": "after", "clause": "embedded", "vendler_class": "state", "default_reading": "after-finish", "coercion": "INCHOAT", "coerced_reading": "after-start"},
-    "comment": "Schematic illustration of Rett 2020's telicity-sensitive default readings for *before*/*after*; the INCHOAT condition is the one tested in Alstott & Aravind 2026 Exp. 4. Sentence not verified verbatim against either paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "paperFeatures": [
+      ["construction", "before"],
+      ["telicity", "telic"]
+    ],
+    "comment": "True in Scenarios A and B.",
+    "lgrConformance": "NONE"
   },
   {
-    "id": "alstottaravind2026_after_accomplishment",
-    "source": {"bibkey": "rett-2020", "paperLabel": "UNVERIFIED"},
-    "reportedIn": {"bibkey": "alstott-aravind-2026", "paperLabel": "UNVERIFIED"},
+    "id": "alstottaravind2026_2b",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "(2b)"},
+    "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John left after she climbed the mountain.",
-    "discourseSegments": [],
+    "primaryText": "Emma was nervous after Jackson climbed the mountain.",
     "glossedTokens": [],
-    "translation": "John left after she climbed the mountain.",
-    "context": "*After* with a telic (accomplishment) embedded clause: the default after-finish reading (ME follows the telos of EE) is the only salient one; no coercion operator is involved.",
+    "translation": "Emma was nervous after Jackson climbed the mountain.",
+    "context": "Jackson climbed a mountain from 9am to 9pm; Emma was nervous 5am–8pm (Scenario A), 12–3pm (Scenario B), or 10pm–1am (Scenario C).",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "after-finish (default)", "judgment": "acceptable"}
+      {"name": "after-start", "judgment": "unacceptable"},
+      {"name": "after-finish", "judgment": "acceptable"}
     ],
-    "paperFeatures": {"connective": "after", "clause": "embedded", "vendler_class": "accomplishment", "default_reading": "after-finish"},
-    "comment": "Schematic illustration of Rett 2020's telicity-sensitive default readings for *before*/*after*; sentence not verified verbatim against either paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "paperFeatures": [
+      ["construction", "after"],
+      ["telicity", "telic"]
+    ],
+    "comment": "True only in Scenario C.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_3a",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Within an hour, Hector was happy.",
+    "glossedTokens": [],
+    "translation": "Within an hour, Hector was happy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "change of state", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "within"],
+      ["telicity", "atelic"]
+    ],
+    "comment": "Read as 'within an hour Hector became happy'; Rett attributes the reading to INCHOAT, §8.2 to a scalar implicature over shorter spans.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_3b",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "(3b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Jackson climbed the mountain at 7pm sharp.",
+    "glossedTokens": [],
+    "translation": "Jackson climbed the mountain at 7pm sharp.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "completive", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "at"],
+      ["telicity", "telic"]
+    ],
+    "comment": "Read as 'Jackson finished climbing the mountain at 7pm sharp'; Rett attributes the reading to COMPLET.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp1a_coercion",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 1 (a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Within fifteen minutes Jessica was mad in office hours.",
+    "glossedTokens": [],
+    "translation": "Within fifteen minutes Jessica was mad in office hours.",
+    "context": "(27a) Alex read one of his own articles to Jessica in full; by the fifteen-minute mark, Jessica voiced her annoyance.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "1a"],
+      ["trial", "aspectualCoercion"],
+      ["construction", "within"],
+      ["telicity", "atelic"],
+      ["rtCost", "no"],
+      ["naturalness", "null"]
+    ],
+    "comment": "No slowdown at verb or verb+1 relative to (b); the replication failure of Brennan & Pylkkänen (2010).",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp1a_control",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 1 (b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "For fifteen minutes Jessica was mad in office hours.",
+    "glossedTokens": [],
+    "translation": "For fifteen minutes Jessica was mad in office hours.",
+    "context": "(27b) Alex read his article during the first fifteen minutes, which annoyed Jessica the whole time.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "1a"],
+      ["trial", "aspectualControl"],
+      ["construction", "for"],
+      ["telicity", "atelic"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp1a_complement",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 1 (c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Alex continued his article despite Jessica's protest.",
+    "glossedTokens": [],
+    "translation": "Alex continued his article despite Jessica's protest.",
+    "context": "(27a) or (27b).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "1a"],
+      ["trial", "complementCoercion"],
+      ["construction", "complement"],
+      ["rtCost", "yes"],
+      ["region", "noun+1"],
+      ["naturalness", "lower"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp1a_complementControl",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 1 (d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Alex read his article despite Jessica's protest.",
+    "glossedTokens": [],
+    "translation": "Alex read his article despite Jessica's protest.",
+    "context": "(27a) or (27b).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "1a"],
+      ["trial", "complementControl"],
+      ["construction", "complement"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp1b_coercion",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 2 (a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At 9pm sharp Hector built the humble tent.",
+    "glossedTokens": [],
+    "translation": "At 9pm sharp Hector built the humble tent.",
+    "context": "(28) Hector started building the tent at 8:55pm, and the tent was fully set up at 9pm.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "1b"],
+      ["trial", "aspectualCoercion"],
+      ["construction", "at"],
+      ["telicity", "telic"],
+      ["rtCost", "yes"],
+      ["region", "verb+1"],
+      ["naturalness", "lower"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp1b_control",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 2 (b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "In five minutes Hector built the humble tent.",
+    "glossedTokens": [],
+    "translation": "In five minutes Hector built the humble tent.",
+    "context": "(28) Hector started building the tent at 8:55pm, and the tent was fully set up five minutes after Emma made the bet.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "1b"],
+      ["trial", "aspectualControl"],
+      ["construction", "in"],
+      ["telicity", "telic"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp1b_complement",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 2 (c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Hector finished the tent in front of Emma.",
+    "glossedTokens": [],
+    "translation": "Hector finished the tent in front of Emma.",
+    "context": "(28), both endings.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "1b"],
+      ["trial", "complementCoercion"],
+      ["construction", "complement"],
+      ["rtCost", "yes"],
+      ["region", "noun+1"],
+      ["naturalness", "lower"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp1b_complementControl",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 2 (d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Hector built the tent in front of Emma.",
+    "glossedTokens": [],
+    "translation": "Hector built the tent in front of Emma.",
+    "context": "(28), both endings.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "1b"],
+      ["trial", "complementControl"],
+      ["construction", "complement"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp2_noCoercion",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 3 (a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Emma was irritable before Hector built the tent in the woods.",
+    "glossedTokens": [],
+    "translation": "Emma was irritable before Hector built the tent in the woods.",
+    "context": "(29a) Hector pulled out the camping equipment at 4pm and the tent was fully up by 4:30pm; Emma had become irritable when the wind started (2pm) and regained her composure at 4:30pm.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "2"],
+      ["trial", "aspectualControl"],
+      ["construction", "before"],
+      ["telicity", "telic"],
+      ["context", "beforeStart"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp2_completive",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 3 (b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Emma was irritable before Hector built the tent in the woods.",
+    "glossedTokens": [],
+    "translation": "Emma was irritable before Hector built the tent in the woods.",
+    "context": "(29b) Same as (29a), but Emma became irritable when Hector had to start over at 4:15pm and regained her composure at 4:30pm.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "2"],
+      ["trial", "aspectualCoercion"],
+      ["construction", "before"],
+      ["telicity", "telic"],
+      ["context", "beforeFinish"],
+      ["rtCost", "yes"],
+      ["region", "verb+2"],
+      ["preregistered", "no"],
+      ["naturalness", "lower"]
+    ],
+    "comment": "Null at the pre-registered verb and verb+1 regions; the slowdown is at verb+2 (exploratory).",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp2_complement",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 3 (c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Emma was irritable before Hector finished the tent in the woods.",
+    "glossedTokens": [],
+    "translation": "Emma was irritable before Hector finished the tent in the woods.",
+    "context": "(29b).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "2"],
+      ["trial", "complementCoercion"],
+      ["construction", "complement"],
+      ["rtCost", "yes"],
+      ["region", "noun"],
+      ["naturalness", "lower"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp3_coercion",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 4 (a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Within fifteen minutes Jessica tolerated the unhelpful professor.",
+    "glossedTokens": [],
+    "translation": "Within fifteen minutes Jessica tolerated the unhelpful professor.",
+    "context": "(30a) Jessica voiced her annoyance at first, but by the fifteen-minute mark had given up and decided to tolerate Alex.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "3"],
+      ["trial", "aspectualCoercion"],
+      ["construction", "within"],
+      ["telicity", "atelic"],
+      ["rtCost", "no"],
+      ["naturalness", "null"]
+    ],
+    "comment": "Subject-experiencer verbs, as in Brennan & Pylkkänen (2010); still no slowdown.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp3_control",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 4 (b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "For fifteen minutes Jessica tolerated the unhelpful professor.",
+    "glossedTokens": [],
+    "translation": "For fifteen minutes Jessica tolerated the unhelpful professor.",
+    "context": "(30b) Jessica tolerated Alex during the first fifteen minutes, then snapped.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "3"],
+      ["trial", "aspectualControl"],
+      ["construction", "for"],
+      ["telicity", "atelic"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp3_complement",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 4 (c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Alex continued his article despite Jessica's protest.",
+    "glossedTokens": [],
+    "translation": "Alex continued his article despite Jessica's protest.",
+    "context": "(30a) or (30b).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "3"],
+      ["trial", "complementCoercion"],
+      ["construction", "complement"],
+      ["rtCost", "yes"],
+      ["region", "noun+1"],
+      ["naturalness", "lower"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp4_coercion",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 5 (a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Dave was regretful after Lara feared the large dog.",
+    "glossedTokens": [],
+    "translation": "Dave was regretful after Lara feared the large dog.",
+    "context": "(31a) Lara felt fear towards the dog 10–10:15am; Dave felt regretful from 10:05 until Lara regained her composure at 10:15.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "4"],
+      ["trial", "aspectualCoercion"],
+      ["construction", "after"],
+      ["telicity", "atelic"],
+      ["context", "afterStart"],
+      ["rtCost", "yes"],
+      ["region", "verb+2"],
+      ["preregistered", "no"],
+      ["naturalness", "lower"]
+    ],
+    "comment": "Null at verb and verb+1; slowdown at verb+2 (exploratory).",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp4_control",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 5 (b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Dave was regretful after Lara feared the large dog.",
+    "glossedTokens": [],
+    "translation": "Dave was regretful after Lara feared the large dog.",
+    "context": "(31b) Same as (31a), but Dave's regret lasted for many days.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "4"],
+      ["trial", "aspectualControl"],
+      ["construction", "after"],
+      ["telicity", "atelic"],
+      ["context", "afterFinish"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp4_complement",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 5 (c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Dave was regretful after Lara enjoyed a cigarette outside the building.",
+    "glossedTokens": [],
+    "translation": "Dave was regretful after Lara enjoyed a cigarette outside the building.",
+    "context": "(31c) Lara smoked a cigarette outside 9:50–9:55am; Dave passed by at 9:56, smelled the smoke, and felt regretful.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "4"],
+      ["trial", "complementCoercion"],
+      ["construction", "complement"],
+      ["rtCost", "no"],
+      ["naturalness", "lower"]
+    ],
+    "comment": "The complement-coercion slowdown was diffuse and not significant at the pre-registered noun and noun+1 regions.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_exp4_complementControl",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "Table 5 (d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Dave was regretful after Lara smoked a cigarette outside the building.",
+    "glossedTokens": [],
+    "translation": "Dave was regretful after Lara smoked a cigarette outside the building.",
+    "context": "(31c).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["experiment", "4"],
+      ["trial", "complementControl"],
+      ["construction", "complement"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_32a",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "(32a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Within an hour, Ben was sick.",
+    "glossedTokens": [],
+    "translation": "Within an hour, Ben was sick.",
+    "context": "Ben was exposed to a virus at 6pm.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "became sick during 6–7pm", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "within"],
+      ["telicity", "atelic"]
+    ],
+    "comment": "Asserts that Ben was sick at some point in [6pm, 7pm]; with the negation of (35a) it entails that Ben became sick in that interval.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_35a",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "(35a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Within forty-five minutes, Ben was sick.",
+    "glossedTokens": [],
+    "translation": "Within forty-five minutes, Ben was sick.",
+    "context": "Ben was exposed to a virus at 6pm.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "within"],
+      ["telicity", "atelic"],
+      ["alternativeOf", "(32a)"]
+    ],
+    "comment": "The stronger alternative whose negation (32a) implicates.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_36a",
+    "source": {"bibkey": "alstott-aravind-2026", "paperLabel": "(36a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Within half an hour, Hector ate the burrito.",
+    "glossedTokens": [],
+    "translation": "Within half an hour, Hector ate the burrito.",
+    "context": "Hector bought a burrito at 6pm.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "within"],
+      ["telicity", "telic"]
+    ],
+    "comment": "Asserts a complete eating event in [6pm, 6:30pm] and implicates none in a shorter span.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alstottaravind2026_17a",
+    "source": {"bibkey": "rett-2020", "paperLabel": "(12a)"},
+    "reportedIn": {"bibkey": "alstott-aravind-2026", "paperLabel": "(17a)"},
+    "language": "taga1270",
+    "primaryText": "Um-alis siya bago niya w<in>alisan ang sahig",
+    "glossedTokens": [
+      ["Um-alis", "PFV.NEUT-leave"], ["siya", "3SG"], ["bago", "before"], ["niya", "3SG"],
+      ["w<in>alisan", "<PFV.NEUT>-sweep"], ["ang", "DET"], ["sahig", "floor"]
+    ],
+    "translation": "She left before he swept the floor.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "before-start", "judgment": "acceptable"},
+      {"name": "before-finish", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["aspect", "pfv.neut"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "alstottaravind2026_17b",
+    "source": {"bibkey": "rett-2020", "paperLabel": "(12b)"},
+    "reportedIn": {"bibkey": "alstott-aravind-2026", "paperLabel": "(17b)"},
+    "language": "taga1270",
+    "primaryText": "Um-alis siya bago niya na-walisan ang sahig",
+    "glossedTokens": [
+      ["Um-alis", "PFV.NEUT-leave"], ["siya", "3SG"], ["bago", "before"], ["niya", "3SG"],
+      ["na-walisan", "AIA-sweep"], ["ang", "DET"], ["sahig", "floor"]
+    ],
+    "translation": "She left before he swept the floor.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "before-finish", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["aspect", "aia"]
+    ],
+    "comment": "The ability-and-involuntary-action perfective marks the before-finish reading overtly.",
+    "lgrConformance": "WORD_ALIGNED"
   }
 ]

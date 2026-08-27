@@ -1,4 +1,6 @@
 import Linglib.Studies.Heinamaki1974
+import Linglib.Features.Aktionsart
+import Linglib.Data.Examples.Karttunen1974
 
 /-!
 # Karttunen (1974): *Until*
@@ -70,5 +72,38 @@ theorem notUntil_iff_when_of_presupposition (a b : Time)
   simp only [notUntil, Anscombe.before, when_, presupposition, mem_timeTrace_pure,
     exists_eq_left, forall_eq] at hp ⊢
   exact ⟨hp.resolve_left, fun h => by subst h; exact lt_irrefl _⟩
+
+/-! ### The durative selectional restriction -/
+
+open Features Data.Examples
+
+/-- Durative *until* selects a durative, atelic main clause — the classes with the
+subinterval property. -/
+def SatisfiesDurativeRestriction (c : VendlerClass) : Prop :=
+  c.telicity = .atelic ∧ c.duration = .durative
+
+instance : DecidablePred SatisfiesDurativeRestriction := fun _ =>
+  inferInstanceAs (Decidable (_ ∧ _))
+
+theorem satisfiesDurativeRestriction_iff (c : VendlerClass) :
+    SatisfiesDurativeRestriction c ↔ c = .state ∨ c = .activity := by
+  cases c <;> decide
+
+/-- The Vendler class a row records. -/
+def vendlerOf (row : LinguisticExample) : Option VendlerClass :=
+  match row.feature? "vendler_class" with
+  | some "state" => some .state
+  | some "activity" => some .activity
+  | some "achievement" => some .achievement
+  | some "accomplishment" => some .accomplishment
+  | some "semelfactive" => some .semelfactive
+  | _ => none
+
+/-- Each *until* row is acceptable exactly when its main clause satisfies the durative
+restriction. -/
+theorem until_acceptable_iff_durative :
+    ∀ row ∈ Examples.all, ∀ c ∈ vendlerOf row,
+      (row.judgment = .acceptable ↔ SatisfiesDurativeRestriction c) := by
+  decide +kernel
 
 end Karttunen1974
