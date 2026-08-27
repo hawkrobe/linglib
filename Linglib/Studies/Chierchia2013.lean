@@ -510,8 +510,7 @@ def forcedReadingExamples : List ForcedReadingExample :=
 ## Universal Free Choice Items
 
 Universal FCIs like English "any" and Italian "qualunque" contrast with
-existential FCIs (irgendein, yek-i, vreun) handled in
-[alonso-ovalle-moghiseh-2025]:
+existential FCIs (irgendein, yek-i, vreun):
 
 | FCI Type | Base Force | Examples | Morphological Hints |
 |----------|------------|----------|---------------------|
@@ -624,7 +623,7 @@ base meaning but universal surface force due to obligatory exhaustification.
 Existential FCIs (German *irgendein*, Farsi *yek-i*, Romanian *vreun*)
 retain narrow existential force. The flavor is a Chierchia-tradition
 typological dimension consumed by paper-specific studies (e.g.,
-[chierchia-2006], [alonso-ovalle-moghiseh-2025]).
+[chierchia-2006]).
 -/
 inductive FCIFlavor where
   /-- Existential FCIs: *irgendein*, *yek-i*, *vreun* -/

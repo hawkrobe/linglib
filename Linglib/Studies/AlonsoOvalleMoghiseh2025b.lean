@@ -40,11 +40,11 @@ answers only. This divergence is derived from four assumptions:
 ## Connection to *yek-i* DPs
 
 Farsi interrogative forms (`chi`, `che`) are homophonous with indefinites
-([alonso-ovalle-moghiseh-2025], §5). The interrogative and indefinite
+([alonso-ovalle-moghiseh-2025a], §5). The interrogative and indefinite
 share the same domain-building mechanism (⊓ ∪ ⊔ over GQs), but
 interrogatives compose with ANS while indefinites compose with existential
 closure. See `Farsi.Determiners` and
-`Studies.AlonsoOvalleMoghiseh2025` for the indefinite paradigm.
+`Studies.AlonsoOvalleMoghiseh2025a` for the indefinite paradigm.
 -/
 
 namespace AlonsoOvalleMoghiseh2025b
