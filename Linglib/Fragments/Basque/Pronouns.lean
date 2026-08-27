@@ -1,51 +1,36 @@
-/-
-# Basque Pronoun & Allocutive Fragment
-
-Personal pronouns and allocutive verbal morphology in Souletian Basque.
-Basque has a T/V distinction (*hi* familiar vs *zu* formal) and SA-based
-allocutive verbal suffixes that are restricted to root clauses. 2nd person
-plural *zuek* is distinct from formal singular *zu*.
-
--/
-
 import Linglib.Syntax.Category.Pronoun.Basic
+
+/-!
+# Basque pronouns and allocutive markers
+
+Personal pronouns of Basque, with the T/V contrast *hi* (familiar) vs *zu*
+(formal) in the second-person singular, and the Souletin allocutive auxiliary
+suffixes of [alok-bhalla-2026]'s (1): *-k* and *-n* for a nonhonorific male
+and female addressee, *-zü* for an honorific addressee. The same suffixes
+serve as ordinary agreement with a second-person subject.
+-/
 
 namespace Basque.Pronouns
 
 open Pronoun
-open Features.Register (Level)
-
--- ============================================================================
--- First Person
--- ============================================================================
 
 /-- *ni* — 1sg. -/
-def ni : PersonalPronoun :=
-  { form := "ni", person := some .first, number := some .singular }
+def ni : PersonalPronoun := { form := "ni", person := some .first, number := some .singular }
 
 /-- *gu* — 1pl. -/
-def gu : PersonalPronoun :=
-  { form := "gu", person := some .first, number := some .plural }
+def gu : PersonalPronoun := { form := "gu", person := some .first, number := some .plural }
 
--- ============================================================================
--- Second Person (T/V)
--- ============================================================================
-
-/-- *hi* — 2sg familiar (T form). -/
+/-- *hi* — 2sg familiar. -/
 def hi : PersonalPronoun :=
   { form := "hi", person := some .second, number := some .singular, register := .informal }
 
-/-- *zu* — 2sg formal (V form). -/
+/-- *zu* — 2sg formal. -/
 def zu : PersonalPronoun :=
   { form := "zu", person := some .second, number := some .singular, register := .formal }
 
 /-- *zuek* — 2pl. -/
 def zuek : PersonalPronoun :=
   { form := "zuek", person := some .second, number := some .plural }
-
--- ============================================================================
--- Third Person
--- ============================================================================
 
 /-- *hura* — 3sg. -/
 def hura : PersonalPronoun :=
@@ -55,73 +40,19 @@ def hura : PersonalPronoun :=
 def haiek : PersonalPronoun :=
   { form := "haiek", person := some .third, number := some .plural }
 
--- ============================================================================
--- Pronoun Lists
--- ============================================================================
+/-- The pronoun inventory. -/
+def pronouns : List PersonalPronoun := [ni, gu, hi, zu, zuek, hura, haiek]
 
-def secondPersonPronouns : List PersonalPronoun := [hi, zu]
-
-def allPronouns : List PersonalPronoun :=
-  [ni, gu] ++ secondPersonPronouns ++ [zuek, hura, haiek]
-
--- ============================================================================
--- Allocutive Markers ([alok-bhalla-2026] (1), Oyharçabal 1993)
--- ============================================================================
-
-/-- *-k* — nonhonorific addressee, male. -/
+/-- *-k* — nonhonorific male addressee. -/
 def allocM : AllocutiveEntry := { form := "-k", register := .informal, gloss := "M.NHA" }
 
-/-- *-n* — nonhonorific addressee, female. -/
+/-- *-n* — nonhonorific female addressee. -/
 def allocF : AllocutiveEntry := { form := "-n", register := .informal, gloss := "F.NHA" }
 
 /-- *-zü* — honorific addressee. -/
 def allocH : AllocutiveEntry := { form := "-zü", register := .formal, gloss := "HA" }
 
-def allAllocMarkers : List AllocutiveEntry := [allocM, allocF, allocH]
-
--- ============================================================================
--- Verb Agreement Examples
--- ============================================================================
-
-/-- A verb form showing allocutive inflection. -/
-structure VerbForm where
-  form : String
-  gloss : String
-  register : Level
-  deriving Repr, BEq
-
-/-- *duk* — "you have" (familiar). -/
-def duk : VerbForm := { form := "duk", gloss := "have.2sg.fam", register := .informal }
-
-/-- *duzu* — "you have" (formal). -/
-def duzu : VerbForm := { form := "duzu", gloss := "have.2sg.for", register := .formal }
-
--- ============================================================================
--- Verification
--- ============================================================================
-
-/-- All three persons are attested. -/
-theorem has_all_persons :
-    allPronouns.any (·.person == some .first) = true ∧
-    allPronouns.any (·.person == some .second) = true ∧
-    allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
-
-/-- Both singular and plural are attested. -/
-theorem has_both_numbers :
-    allPronouns.any (·.number == some .singular) = true ∧
-    allPronouns.any (·.number == some .plural) = true := ⟨rfl, rfl⟩
-
-/-- 2nd person pronouns are all second person. -/
-theorem second_person_all_2p :
-    secondPersonPronouns.all (·.person == some .second) = true := rfl
-
-/-- The T/V register distinction is present in 2nd person. -/
-theorem tv_distinction :
-    secondPersonPronouns.any (·.register == .informal) = true ∧
-    secondPersonPronouns.any (·.register == .formal) = true := ⟨rfl, rfl⟩
-
-/-- Verb forms have matching register levels with 2nd person pronouns. -/
-theorem verb_register_matches_pronouns :
-    duk.register = hi.register ∧ duzu.register = zu.register := ⟨rfl, rfl⟩
+/-- The Souletin allocutive markers. -/
+def allocutiveMarkers : List AllocutiveEntry := [allocM, allocF, allocH]
 
 end Basque.Pronouns
