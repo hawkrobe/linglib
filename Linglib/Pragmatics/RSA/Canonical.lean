@@ -1,6 +1,5 @@
 import Linglib.Core.Probability.Softmax
 import Linglib.Core.Probability.JointPosterior
-import Linglib.Core.Probability.EmissionPosterior
 import Linglib.Pragmatics.RSA.Operators
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 
@@ -34,9 +33,6 @@ comparison of utilities / conditional-joint sums.
 * `RSA.Canonical.S1` — pragmatic speaker, `PMF.softmax` of a viable utility.
 * `RSA.Canonical.rsaUtility` — the standard informativity utility `α·(log L0 − cost)`.
 * `RSA.Canonical.L1` — pragmatic listener, joint `PMF.posterior` over `world × latent`.
-* `RSA.Canonical.L1Intent` — pair-choice pragmatic listener: the speaker chooses an
-  (utterance, latent) pair, the listener observes only the utterance
-  (`PMF.emissionPosterior`).
 * `RSA.Canonical.ratS1` — the propositional-model speaker as an exact rational.
 
 ## Main statements
@@ -223,58 +219,6 @@ theorem L1_uniform_latent_prefers_iff [DecidableEq Lat] [Nonempty (W × Lat)]
     (ENNReal.inv_ne_top.mpr (Nat.cast_ne_zero.mpr Fintype.card_ne_zero))
 
 end Listener
-
-/-! ### Pair-choice pragmatic listener
-
-When the speaker chooses an *action* — an utterance together with an intended
-parse — of which the listener observes only the utterance
-([franke-bergen-2020]'s Global Intentions), one speaker per world normalizes
-over actions, and the listener recovers the joint (world, action) from the
-observed utterance via `PMF.emissionPosterior`. -/
-
-section IntentListener
-
-variable {W A U : Type*}
-
-/-- A single world `w` where an action `a` observed as `u` has positive speaker
-mass makes the utterance marginal non-zero — the positivity discharge for
-`L1Intent` at a uniform prior. -/
-theorem L1Intent_uniform_marginal_ne_zero [Fintype W] [Nonempty W] (obs : A → U)
-    (S : W → PMF A) {w : W} {a : A} {u : U} (h : S w a ≠ 0) (ha : obs a = u) :
-    PMF.marginal (fun w => (S w).map obs) (PMF.uniformOfFintype W) u ≠ 0 :=
-  PMF.emission_marginal_ne_zero obs S (PMF.uniformOfFintype W) u
-    (((PMF.uniformOfFintype W).mem_support_iff w).mp (PMF.mem_support_uniformOfFintype _)) h ha
-
-variable [DecidableEq U]
-
-/-- The **pair-choice pragmatic listener**: the posterior over `world × action`
-given the observed utterance `obs a` of a jointly chosen action `a`. -/
-noncomputable def L1Intent (obs : A → U) (S : W → PMF A) (prior : PMF W) (u : U)
-    (h : PMF.marginal (fun w => (S w).map obs) prior u ≠ 0) : PMF (W × A) :=
-  PMF.emissionPosterior obs S prior u h
-
-/-- Event comparison for `L1Intent` reduces to prior-weighted speaker sums over
-the actions observed as `u`. -/
-@[rsa]
-theorem L1Intent_event_lt_iff (obs : A → U) (S : W → PMF A) (prior : PMF W) (u : U)
-    (h : PMF.marginal (fun w => (S w).map obs) prior u ≠ 0) (E₁ E₂ : Finset (W × A)) :
-    (L1Intent obs S prior u h).toOuterMeasure ↑E₁ < (L1Intent obs S prior u h).toOuterMeasure ↑E₂
-      ↔ (∑ x ∈ E₁ with obs x.2 = u, prior x.1 * S x.1 x.2)
-          < ∑ x ∈ E₂ with obs x.2 = u, prior x.1 * S x.1 x.2 :=
-  PMF.emissionPosterior_toOuterMeasure_lt_iff obs S prior u h E₁ E₂
-
-/-- At a uniform world prior, `L1Intent` event comparison reduces to bare speaker
-sums over the actions observed as `u`. -/
-@[rsa]
-theorem L1Intent_uniform_event_lt_iff [Fintype W] [Nonempty W] (obs : A → U) (S : W → PMF A)
-    (u : U) (h : PMF.marginal (fun w => (S w).map obs) (PMF.uniformOfFintype W) u ≠ 0)
-    (E₁ E₂ : Finset (W × A)) :
-    (L1Intent obs S (PMF.uniformOfFintype W) u h).toOuterMeasure ↑E₁
-        < (L1Intent obs S (PMF.uniformOfFintype W) u h).toOuterMeasure ↑E₂
-      ↔ (∑ x ∈ E₁ with obs x.2 = u, S x.1 x.2) < ∑ x ∈ E₂ with obs x.2 = u, S x.1 x.2 :=
-  PMF.emissionPosterior_uniform_toOuterMeasure_lt_iff obs S u h E₁ E₂
-
-end IntentListener
 
 /-! ### Power-utility informativity speakers
 
