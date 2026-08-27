@@ -35,7 +35,7 @@ relation), inheriting the possessor's intrinsic presupposition. So:
 namespace Possessive
 
 open Semantics.Reference (NominalDenot)
-open Semantics.Definiteness (russellIota)
+open Definiteness
 
 variable {Ctx : Type*} {W E : Type}
 

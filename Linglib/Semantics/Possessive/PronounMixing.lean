@@ -29,7 +29,7 @@ i.e. *derived*, not stipulated.
 namespace Possessive
 
 open Semantics.Reference (NominalDenot)
-open Semantics.Definiteness (russellIota)
+open Definiteness
 open Intensional.Variables (interpPronoun)
 
 variable {E : Type} [PartialOrder E]

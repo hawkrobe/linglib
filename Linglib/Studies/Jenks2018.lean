@@ -32,7 +32,7 @@ is not formalized here. The post-Jenks Shan refutation lives in
 
 namespace Jenks2018
 
-open Semantics.Definiteness
+open Definiteness
 open Semantics.Kinds
 open Intensional
 open Intensional.Variables

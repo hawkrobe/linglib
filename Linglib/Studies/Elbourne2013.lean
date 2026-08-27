@@ -64,10 +64,10 @@ open Intensional (Index)
 open Semantics.Presupposition (PartialProp)
 open Semantics.Presupposition.PartialProp (presupOfReferent presupOfReferent_presup
   presupOfReferent_assertion_some presupOfReferent_assertion_none)
-open Semantics.Definiteness (russellIotaList)
-open Semantics.Definiteness (DefPresupType)
+open Definiteness
+open Definiteness
 open Intensional (SitVarStatus ReferentialMode)
-open Semantics.Definiteness (qforceToPresupType)
+open Definiteness
 open Semantics.Reference.Donnellan (UseMode definiteNominal)
 
 
