@@ -59,7 +59,7 @@ deletion or contain multiple symbols for insertion-on-trigger).
 The `k` parameter is purely a type-level annotation — it constrains the
 *intended semantics* of `windowOutput`'s first argument (the caller in
 `apply` always supplies a window of length at most `k - 1`) but is not
-enforced by the type. This mirrors `SLGrammar k α` from
+enforced by the type. This mirrors `StrictlyLocalGrammar k α` from
 `StrictlyLocal.lean`, where the `permitted` factor set is similarly
 unconstrained at the type level. -/
 structure ISLRule (k : ℕ) (α β : Type*) where

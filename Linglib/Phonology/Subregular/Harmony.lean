@@ -251,7 +251,7 @@ end Subregular.Harmony
 
 namespace Phonology.Harmony
 
-open Subregular TSLGrammar
+open Subregular TierStrictlyLocalGrammar
 
 variable {α V : Type*}
 
@@ -260,7 +260,8 @@ strictly local grammars lack and the blocking strictly piecewise grammars lack
 ([aksenova-rawski-graf-heinz-2024]; for the latter,
 `McMullin2016.blockingLang_not_isStrictlyPiecewise`). -/
 theorem Pattern.harmonic_iff_mem_tsl (p : Pattern α V) (w : List α) :
-    p.Harmonic w ↔ w ∈ (ofForbiddenPairs (¬ p.Compatible · ·) p.OnTier).lang := by
-  simp only [mem_ofForbiddenPairs_lang_iff_filter_isChain, Pattern.Harmonic, Pattern.tier, not_not]
+    p.Harmonic w ↔ w ∈ (ofForbiddenPairs (¬ p.Compatible · ·) p.OnTier).language := by
+  simp only [mem_ofForbiddenPairs_language_iff_filter_isChain, Pattern.Harmonic, Pattern.tier,
+    not_not]
 
 end Phonology.Harmony

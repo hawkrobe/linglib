@@ -23,7 +23,8 @@ Both halves are formalised here.
 * **Transparent harmony: the classes coincide.** Navajo sibilant harmony — the
   [hansson-2010] case study formalised as TSL_2 in `Studies/Hansson2010.lean` — is the
   same stringset as an SP_2 grammar. This is not an artefact of the toy alphabet:
-  *every* AGREE language is SP_2 (`Subregular.TSLGrammar.agree_lang_eq_sp`), because
+  *every* AGREE language is SP_2 (`Subregular.TierStrictlyLocalGrammar.agree_language_eq_sp`),
+  because
   equality is transitive, so constraining tier-adjacent pairs already constrains pairs
   at arbitrary distance.
 * **Opaque harmony: they come apart.** A blocking pattern is TSL_2 but SP at no width,
@@ -46,25 +47,25 @@ open Subregular Phonology.Studies.Hansson2010
 language `Studies/Hansson2010.lean` builds as TSL_2, not a parallel SP stipulation, so
 the two classifications are of one stringset by construction. -/
 theorem navajoSibilantHarmony_lang_isSP2 :
-    navajoSibilantHarmony.lang.IsStrictlyPiecewise 2 :=
-  TSLGrammar.agree_lang_isStrictlyPiecewise NSeg.onTier
+    navajoSibilantHarmony.language.IsStrictlyPiecewise 2 :=
+  TierStrictlyLocalGrammar.agree_language_isStrictlyPiecewise NSeg.onTier
 
 /-- The tier-based and subsequence-based grammars for Navajo generate the same
-language — the instance at `NSeg.onTier` of `TSLGrammar.agree_lang_eq_sp`. -/
-theorem navajoSibilantHarmony_lang_eq_sp :
-    navajoSibilantHarmony.lang = (SPGrammar.agree NSeg.onTier).language 2 :=
-  TSLGrammar.agree_lang_eq_sp NSeg.onTier
+language — the instance at `NSeg.onTier` of `TierStrictlyLocalGrammar.agree_language_eq_sp`. -/
+theorem navajoSibilantHarmony_language_eq_sp :
+    navajoSibilantHarmony.language = (StrictlyPiecewiseGrammar.agree NSeg.onTier).language 2 :=
+  TierStrictlyLocalGrammar.agree_language_eq_sp NSeg.onTier
 
 /-- [hansson-2010]'s minimal pair under the SP_2 description: the pre-harmony
 /si-dʒéːʔ/ is rejected and the surface [ʃidʒéːʔ] accepted. Both transfer along the
 equality of languages rather than being recomputed. -/
 theorem preSiDze_violates_sp :
-    preSiDze ∉ (SPGrammar.agree NSeg.onTier).language 2 :=
-  navajoSibilantHarmony_lang_eq_sp ▸ preSiDze_violates
+    preSiDze ∉ (StrictlyPiecewiseGrammar.agree NSeg.onTier).language 2 :=
+  navajoSibilantHarmony_language_eq_sp ▸ preSiDze_violates
 
 theorem postShiDze_legal_sp :
-    postShiDze ∈ (SPGrammar.agree NSeg.onTier).language 2 :=
-  navajoSibilantHarmony_lang_eq_sp ▸ postShiDze_legal
+    postShiDze ∈ (StrictlyPiecewiseGrammar.agree NSeg.onTier).language 2 :=
+  navajoSibilantHarmony_language_eq_sp ▸ postShiDze_legal
 
 /-! ### Opaque harmony: blocking is strictly piecewise at no width -/
 
@@ -100,7 +101,7 @@ instance : DecidableRel BSeg.Mixed :=
 /-- The schematic blocking language: harmony across transparent material, halted by a
 blocker. -/
 def blockingLang : Language BSeg :=
-  (TSLGrammar.ofForbiddenPairs BSeg.Mixed BSeg.onTier).lang
+  (TierStrictlyLocalGrammar.ofForbiddenPairs BSeg.Mixed BSeg.onTier).language
 
 theorem blockingLang_isTSL2 : Language.IsTierStrictlyLocal 2 blockingLang :=
   ⟨_, rfl⟩

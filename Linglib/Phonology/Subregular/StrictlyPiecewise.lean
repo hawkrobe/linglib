@@ -19,9 +19,11 @@ it is sublist-closed.
 
 ## Main definitions
 
-* `SPGrammar α`: a set of permitted subsequences; the width `k` is supplied to `language`,
+* `StrictlyPiecewiseGrammar α`: a set of permitted subsequences; the width `k` is supplied to
+  `language`,
   not baked into the carrier.
-* `SPGrammar.language k`: the `Language α` it generates: every subsequence of `w` of length
+* `StrictlyPiecewiseGrammar.language k`: the `Language α` it generates: every subsequence of `w`
+  of length
   at most `k` must be permitted.
 * `Language.IsStrictlyPiecewise L k`: `L` is a fixed point of the width-`k` test with itself
   as grammar; `isStrictlyPiecewise_iff` recovers the ∃-grammar form.
@@ -49,29 +51,29 @@ open List
 [rogers-heinz-et-al-2010]. Unlike SL grammars no boundary alphabet is used — subsequences
 are insensitive to position. The width `k` is supplied to `language`, not baked into the
 carrier. -/
-abbrev SPGrammar (α : Type*) := Set (List α)
+abbrev StrictlyPiecewiseGrammar (α : Type*) := Set (List α)
 
-namespace SPGrammar
+namespace StrictlyPiecewiseGrammar
 
 variable {α : Type*}
 
 /-- The language generated at width `k`: strings whose every subsequence of length at
 most `k` is permitted. -/
-def language (k : ℕ) (G : SPGrammar α) : Language α :=
+def language (k : ℕ) (G : StrictlyPiecewiseGrammar α) : Language α :=
   {w | ∀ s, s.length ≤ k → s <+ w → s ∈ G}
 
-@[simp] lemma mem_language (k : ℕ) (G : SPGrammar α) (w : List α) :
+@[simp] lemma mem_language (k : ℕ) (G : StrictlyPiecewiseGrammar α) (w : List α) :
     w ∈ G.language k ↔ ∀ s, s.length ≤ k → s <+ w → s ∈ G :=
   Iff.rfl
 
 /-- SP languages are **subsequence-closed**: deleting symbols cannot create a subsequence
 that was not already there. -/
-theorem mem_language_of_sublist {k : ℕ} {G : SPGrammar α} {v w : List α}
+theorem mem_language_of_sublist {k : ℕ} {G : StrictlyPiecewiseGrammar α} {v w : List α}
     (hvw : v <+ w) (hw : w ∈ G.language k) : v ∈ G.language k :=
   fun s hlen hs => hw s hlen (hs.trans hvw)
 
 /-- Conjoining grammars conjoins their languages. -/
-theorem language_inter (k : ℕ) (G₁ G₂ : SPGrammar α) :
+theorem language_inter (k : ℕ) (G₁ G₂ : StrictlyPiecewiseGrammar α) :
     (G₁ ∩ G₂).language k = G₁.language k ⊓ G₂.language k := by
   ext w
   exact ⟨fun h => ⟨fun s hl hs => (h s hl hs).1, fun s hl hs => (h s hl hs).2⟩,
@@ -79,18 +81,19 @@ theorem language_inter (k : ℕ) (G₁ G₂ : SPGrammar α) :
 
 /-- SP membership reduces to a check against `List.sublistsLen` — a `decide`-friendly
 characterisation used by the decidable-membership instance below. -/
-theorem mem_language_iff_forall_mem_sublistsLen (k : ℕ) (G : SPGrammar α) (w : List α) :
+theorem mem_language_iff_forall_mem_sublistsLen (k : ℕ) (G : StrictlyPiecewiseGrammar α)
+    (w : List α) :
     w ∈ G.language k ↔ ∀ j ≤ k, ∀ s ∈ w.sublistsLen j, s ∈ G := by
   refine ⟨fun h j hj s hs => ?_, fun h s hlen hs => h s.length hlen s ?_⟩
   · obtain ⟨hsub, rfl⟩ := List.mem_sublistsLen.mp hs
     exact h s hj hsub
   · exact List.mem_sublistsLen.mpr ⟨hs, rfl⟩
 
-instance decidableMemLanguage (k : ℕ) (G : SPGrammar α)
+instance decidableMemLanguage (k : ℕ) (G : StrictlyPiecewiseGrammar α)
     [DecidablePred (· ∈ G)] (w : List α) : Decidable (w ∈ G.language k) :=
   decidable_of_iff' _ (mem_language_iff_forall_mem_sublistsLen k G w)
 
-end SPGrammar
+end StrictlyPiecewiseGrammar
 
 namespace Language
 
@@ -102,22 +105,22 @@ open List
 `L` itself as the permitted set recovers `L` — the canonical-grammar fixed point;
 `isStrictlyPiecewise_iff` recovers the ∃-grammar form. -/
 def IsStrictlyPiecewise (L : Language α) (k : ℕ) : Prop :=
-  SPGrammar.language k L = L
+  StrictlyPiecewiseGrammar.language k L = L
 
 /-- Some grammar generates `L` at width `k` iff `L` is its own grammar. -/
 theorem isStrictlyPiecewise_iff :
-    L.IsStrictlyPiecewise k ↔ ∃ G : SPGrammar α, G.language k = L := by
+    L.IsStrictlyPiecewise k ↔ ∃ G : StrictlyPiecewiseGrammar α, G.language k = L := by
   refine ⟨fun h => ⟨L, h⟩, ?_⟩
   rintro ⟨G, rfl⟩
-  show SPGrammar.language k _ = _
+  show StrictlyPiecewiseGrammar.language k _ = _
   exact le_antisymm (fun w hw s hlen hs => hw s hlen hs s hlen (Sublist.refl s))
-    fun w hw s hlen hs => SPGrammar.mem_language_of_sublist hs hw
+    fun w hw s hlen hs => StrictlyPiecewiseGrammar.mem_language_of_sublist hs hw
 
 /-- SP languages are subsequence-closed. -/
 theorem IsStrictlyPiecewise.mem_of_sublist (h : L.IsStrictlyPiecewise k) {v w : List α}
     (hvw : v <+ w) (hw : w ∈ L) : v ∈ L := by
   rw [← h] at hw ⊢
-  exact SPGrammar.mem_language_of_sublist hvw hw
+  exact StrictlyPiecewiseGrammar.mem_language_of_sublist hvw hw
 
 /-- A nonempty SP language contains the empty word. -/
 theorem IsStrictlyPiecewise.nil_mem (h : L.IsStrictlyPiecewise k) {w : List α}

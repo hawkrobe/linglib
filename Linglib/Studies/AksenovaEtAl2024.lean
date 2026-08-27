@@ -14,7 +14,7 @@ configuration-dependent blocking (Yakut's low vowels) both mere bigram bans; Kik
 vowel and nasal harmonies need two tiers, which are disjoint. Of the four relations two
 tier alphabets can stand in, only same, embedded, and disjoint are attested.
 
-This file states each printed grammar (Tables 34.2–34.7) as a `TSLGrammar.ofForbiddenPairs`
+This file states each printed grammar (Tables 34.2–34.7) as a `TierStrictlyLocalGrammar.ofForbiddenPairs`
 over the paper's tier alphabet, reads the paper's forms into that alphabet, and checks the
 forms and their starred counterparts against it (`lokaa_rows`, `kirghiz_rows`, `buryat_rows`,
 `yakut_rows`, `kikongo_rows`). The `Pattern`
@@ -59,14 +59,14 @@ def lokaaBanned (x y : LokaaV) : Prop := x.tense ≠ y.tense
 
 instance : DecidableRel lokaaBanned := fun x y => by unfold lokaaBanned; infer_instance
 
-def lokaa : TSLGrammar 2 LokaaV := TSLGrammar.ofForbiddenPairs lokaaBanned fun _ => True
+def lokaa : TierStrictlyLocalGrammar 2 LokaaV := TierStrictlyLocalGrammar.ofForbiddenPairs lokaaBanned fun _ => True
 
 /-- The (3) forms are accepted and their starred counterparts rejected. -/
 theorem lokaa_rows :
     ∀ row ∈ Examples.all, row.language = "loka1252" →
-      tierOf LokaaV.ofChar row.primaryText ∈ lokaa.lang ∧
-        ∀ alt ∈ row.alternatives, tierOf LokaaV.ofChar alt.1 ∉ lokaa.lang := by
-  simp only [lokaa, mem_ofForbiddenPairs_lang_iff_filter_isChain]; decide
+      tierOf LokaaV.ofChar row.primaryText ∈ lokaa.language ∧
+        ∀ alt ∈ row.alternatives, tierOf LokaaV.ofChar alt.1 ∉ lokaa.language := by
+  simp only [lokaa, mem_ofForbiddenPairs_language_iff_filter_isChain]; decide
 
 /-! ### Kirghiz ((5), Table 34.3): fronting and rounding on one tier -/
 
@@ -96,13 +96,13 @@ def kirghizBanned (x y : KirghizV) : Prop := x.front ≠ y.front ∨ x.round ≠
 
 instance : DecidableRel kirghizBanned := fun x y => by unfold kirghizBanned; infer_instance
 
-def kirghiz : TSLGrammar 2 KirghizV := TSLGrammar.ofForbiddenPairs kirghizBanned fun _ => True
+def kirghiz : TierStrictlyLocalGrammar 2 KirghizV := TierStrictlyLocalGrammar.ofForbiddenPairs kirghizBanned fun _ => True
 
 theorem kirghiz_rows :
     ∀ row ∈ Examples.all, row.language = "kirg1245" →
-      tierOf KirghizV.ofChar row.primaryText ∈ kirghiz.lang ∧
-        ∀ alt ∈ row.alternatives, tierOf KirghizV.ofChar alt.1 ∉ kirghiz.lang := by
-  simp only [kirghiz, mem_ofForbiddenPairs_lang_iff_filter_isChain]; decide
+      tierOf KirghizV.ofChar row.primaryText ∈ kirghiz.language ∧
+        ∀ alt ∈ row.alternatives, tierOf KirghizV.ofChar alt.1 ∉ kirghiz.language := by
+  simp only [kirghiz, mem_ofForbiddenPairs_language_iff_filter_isChain]; decide
 
 /-- Kirghiz frontness harmony: every vowel participates. -/
 def kirghizFront : Pattern KirghizV Bool :=
@@ -151,15 +151,15 @@ def buryatBanned (x y : BuryatV) : Prop :=
 
 instance : DecidableRel buryatBanned := fun x y => by unfold buryatBanned; infer_instance
 
-def buryat : TSLGrammar 2 BuryatV := TSLGrammar.ofForbiddenPairs buryatBanned fun _ => True
+def buryat : TierStrictlyLocalGrammar 2 BuryatV := TierStrictlyLocalGrammar.ofForbiddenPairs buryatBanned fun _ => True
 
 /-- The (9) forms are accepted — `ɔr-ʊːl-aːd` because the high causative blocks rounding —
 and their starred counterparts rejected. -/
 theorem buryat_rows :
     ∀ row ∈ Examples.all, row.language = "russ1264" →
-      tierOf BuryatV.ofChar row.primaryText ∈ buryat.lang ∧
-        ∀ alt ∈ row.alternatives, tierOf BuryatV.ofChar alt.1 ∉ buryat.lang := by
-  simp only [buryat, mem_ofForbiddenPairs_lang_iff_filter_isChain]; decide
+      tierOf BuryatV.ofChar row.primaryText ∈ buryat.language ∧
+        ∀ alt ∈ row.alternatives, tierOf BuryatV.ofChar alt.1 ∉ buryat.language := by
+  simp only [buryat, mem_ofForbiddenPairs_language_iff_filter_isChain]; decide
 
 /-- Blocking is directional: `*ʊɔ` is banned but `ɔʊ` licensed. -/
 theorem buryat_asymmetric : buryatBanned .uh .oh ∧ ¬ buryatBanned .oh .uh := by decide
@@ -220,13 +220,13 @@ def yakutBanned (x y : YakutV) : Prop :=
 
 instance : DecidableRel yakutBanned := fun x y => by unfold yakutBanned; infer_instance
 
-def yakut : TSLGrammar 2 YakutV := TSLGrammar.ofForbiddenPairs yakutBanned fun _ => True
+def yakut : TierStrictlyLocalGrammar 2 YakutV := TierStrictlyLocalGrammar.ofForbiddenPairs yakutBanned fun _ => True
 
 theorem yakut_rows :
     ∀ row ∈ Examples.all, row.language = "yaku1245" →
-      tierOf YakutV.ofChar row.primaryText ∈ yakut.lang ∧
-        ∀ alt ∈ row.alternatives, tierOf YakutV.ofChar alt.1 ∉ yakut.lang := by
-  simp only [yakut, mem_ofForbiddenPairs_lang_iff_filter_isChain]; decide
+      tierOf YakutV.ofChar row.primaryText ∈ yakut.language ∧
+        ∀ alt ∈ row.alternatives, tierOf YakutV.ofChar alt.1 ∉ yakut.language := by
+  simp only [yakut, mem_ofForbiddenPairs_language_iff_filter_isChain]; decide
 
 /-- Low vowels harmonize but block: rounding passes from `o` to `u`, not from `u` to `o`. -/
 theorem yakut_asymmetric : yakutBanned .u .o ∧ ¬ yakutBanned .o .u := by decide
@@ -271,19 +271,19 @@ abbrev kikongoVowelTier (s : KikongoSeg) : Prop := s.isVowel = true
 abbrev kikongoNasalTier (s : KikongoSeg) : Prop := s.isVowel = false
 
 /-- `H_v`: tier-adjacent vowels disagreeing in height. -/
-def kikongoVowel : TSLGrammar 2 KikongoSeg :=
-  TSLGrammar.ofForbiddenPairs (fun x y => x.high ≠ y.high) kikongoVowelTier
+def kikongoVowel : TierStrictlyLocalGrammar 2 KikongoSeg :=
+  TierStrictlyLocalGrammar.ofForbiddenPairs (fun x y => x.high ≠ y.high) kikongoVowelTier
 
 /-- `H_n`: `d` or `l` after a nasal. -/
-def kikongoNasal : TSLGrammar 2 KikongoSeg :=
-  TSLGrammar.ofForbiddenPairs (fun x y => x.isNasal ∧ ¬ y.isNasal) kikongoNasalTier
+def kikongoNasal : TierStrictlyLocalGrammar 2 KikongoSeg :=
+  TierStrictlyLocalGrammar.ofForbiddenPairs (fun x y => x.isNasal ∧ ¬ y.isNasal) kikongoNasalTier
 
 /-- Every (16) and (18) form passes both grammars on its own tier. -/
 theorem kikongo_rows :
     ∀ row ∈ Examples.all, row.language = "koon1247" →
-      KikongoSeg.parse row.primaryText.toList ∈ kikongoVowel.lang ∧
-        KikongoSeg.parse row.primaryText.toList ∈ kikongoNasal.lang := by
-  simp only [kikongoVowel, kikongoNasal, mem_ofForbiddenPairs_lang_iff_filter_isChain]; decide
+      KikongoSeg.parse row.primaryText.toList ∈ kikongoVowel.language ∧
+        KikongoSeg.parse row.primaryText.toList ∈ kikongoNasal.language := by
+  simp only [kikongoVowel, kikongoNasal, mem_ofForbiddenPairs_language_iff_filter_isChain]; decide
 
 /-! ### The tier-relation typology (§34.3.4, Table 34.8)
 

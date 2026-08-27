@@ -15,7 +15,7 @@ makes the bound visible:
 
 1. **Existing bridges, in zero-set form**: every `mkForbidPairsOnTier`
    constraint has a TSL_2 zero-set (`mkForbidPairsOnTier_zeroSet_eq`).
-   Restatement of `mkForbidPairsOnTier_zero_iff_in_lang` in `Language α`
+   Restatement of `mkForbidPairsOnTier_zero_iff_in_language` in `Language α`
    form so it composes with mathlib's `Language.IsRegular`.
 
 2. **Supraregular counterexample**: there is a `Constraint (List AB)`
@@ -65,16 +65,16 @@ variable {α : Type}
 /-- **Zero-set bridge** (forbidden-pair on tier): the zero-set of a
 forbidden-pair markedness constraint *is* the language of the
 corresponding TSL_2 grammar. Restatement of
-`mkForbidPairsOnTier_zero_iff_in_lang` (with `extract := id`) in
+`mkForbidPairsOnTier_zero_iff_in_language` (with `extract := id`) in
 `Language α` form so downstream regularity arguments can use the
 zero-set side directly. -/
 theorem mkForbidPairsOnTier_zeroSet_eq
     (R : α → α → Prop) [DecidableRel R]
     (p : α → Prop) [DecidablePred p] :
     (mkForbidPairsOnTier R (TierProjection.byClass p) (id : List α → List α)).zeroSet =
-      (TSLGrammar.ofForbiddenPairs R p).lang := by
+      (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language := by
   ext w
-  exact mkForbidPairsOnTier_zero_iff_in_lang R p id w
+  exact mkForbidPairsOnTier_zero_iff_in_language R p id w
 
 -- ============================================================================
 -- § 3. Supraregular counterexample: `{ aⁿ bⁿ | n ≥ 0 }`

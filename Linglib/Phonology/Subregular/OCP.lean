@@ -15,7 +15,7 @@ The OCP [goldsmith-1976] [mccarthy-1986] is the identity-relation
 instance of the generic forbidden-pair markedness constructor
 `mkForbidPairsOnTier` (see `ForbidPairs.lean`): the forbidden 2-factor is
 `[some x, some x]`, and the corresponding TSL_2 grammar is
-`TSLGrammar.ofForbiddenPairs (· = ·) p`.
+`TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) p`.
 
 Mathematically, the unprojected (single-tier, full-alphabet) case is the
 linguistic instance of the classical theory of *square-free words*
@@ -27,8 +27,8 @@ length, which is itself a phonological prediction.
 
 Everything in this file is a one-line specialization of the generic
 forbidden-pair infrastructure to `R := (· = ·)`. The OCP-specific names
-(`ocpForbidden`, `OCPCleanPair`, `TSLGrammar.ocp`,
-`mkOCPOnTier_zero_iff_in_ocp_lang`) are kept as the canonical entry
+(`ocpForbidden`, `OCPCleanPair`, `TierStrictlyLocalGrammar.ocp`,
+`mkOCPOnTier_zero_iff_in_ocp_language`) are kept as the canonical entry
 points downstream consumers reference.
 
 ## The subregular face of the OCP
@@ -60,10 +60,10 @@ def ocpForbidden (α : Type) [DecidableEq α] : Set (Augmented α) :=
 
 /-- The TSL_2 grammar capturing "no two adjacent identical symbols on the
 tier defined by `p`". The identity-relation specialization of
-`TSLGrammar.ofForbiddenPairs`. -/
-def TSLGrammar.ocp [DecidableEq α] (p : α → Prop) [DecidablePred p] :
-    TSLGrammar 2 α :=
-  TSLGrammar.ofForbiddenPairs (α := α) (· = ·) p
+`TierStrictlyLocalGrammar.ofForbiddenPairs`. -/
+def TierStrictlyLocalGrammar.ocp [DecidableEq α] (p : α → Prop) [DecidablePred p] :
+    TierStrictlyLocalGrammar 2 α :=
+  TierStrictlyLocalGrammar.ofForbiddenPairs (α := α) (· = ·) p
 
 /-- The OCP relation on `Option α`: two augmented symbols are *OCP-clean as
 a pair* iff they are not both `some` of the same value. The identity-relation
@@ -116,27 +116,27 @@ theorem mkOCP_zero_iff_isClean {C : Type} [DecidableEq α]
   rw [countAdjacent_eq_zero_iff_isChain (· = ·)]
 
 /-- **Bridge** (full TSL_2 language form): a candidate's OCP score is zero iff
-its raw string is in the language of the TSL_2 grammar `TSLGrammar.ocp p`.
+its raw string is in the language of the TSL_2 grammar `TierStrictlyLocalGrammar.ocp p`.
 The two perspectives on the OCP — optimality-theoretic constraint and
 subregular-complexity class — are co-extensive. Identity-relation
-specialization of `mkForbidPairsOnTier_zero_iff_in_lang`. -/
-theorem mkOCPOnTier_zero_iff_in_ocp_lang [DecidableEq α] {C : Type}
+specialization of `mkForbidPairsOnTier_zero_iff_in_language`. -/
+theorem mkOCPOnTier_zero_iff_in_ocp_language [DecidableEq α] {C : Type}
     (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
     (mkOCPOnTier (TierProjection.byClass p) extract) c = 0 ↔
-      extract c ∈ (TSLGrammar.ocp p).lang :=
-  mkForbidPairsOnTier_zero_iff_in_lang (· = ·) p extract c
+      extract c ∈ (TierStrictlyLocalGrammar.ocp p).language :=
+  mkForbidPairsOnTier_zero_iff_in_language (· = ·) p extract c
 
 /-- **Zero-set bridge** (OCP on tier): the `Language α`-form restatement
-of `mkOCPOnTier_zero_iff_in_ocp_lang` (with `extract := id`). The OCP
+of `mkOCPOnTier_zero_iff_in_ocp_language` (with `extract := id`). The OCP
 markedness constraint's zero-set *is* the corresponding OCP-TSL_2
 language. Sibling of `mkForbidPairsOnTier_zeroSet_eq` in OTBound.lean. -/
 theorem mkOCPOnTier_zeroSet_eq [DecidableEq α]
     (p : α → Prop) [DecidablePred p] :
     (mkOCPOnTier (TierProjection.byClass p) (id : List α → List α)).zeroSet =
-      (TSLGrammar.ocp p).lang := by
+      (TierStrictlyLocalGrammar.ocp p).language := by
   ext w
-  exact mkOCPOnTier_zero_iff_in_ocp_lang p id w
+  exact mkOCPOnTier_zero_iff_in_ocp_language p id w
 
 /-! ### The repair is subregular -/
 

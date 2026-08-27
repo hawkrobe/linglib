@@ -49,13 +49,14 @@ regular.
 
 The SL and SP scanners share scaffolding *names* (`scanDFA`, `scanHom`, `evalFrom_none`,
 `isStarFree_of_language_succ`, …). Since `private` is module-scoped, each class's scaffolding is
-walled off in its own namespace — `SLGrammar` and `SPGrammar` — so the colliding names
+walled off in its own namespace — `StrictlyLocalGrammar` and `StrictlyPiecewiseGrammar` — so the
+colliding names
 become distinct full names.
 -/
 
 open List
 
-namespace SLGrammar
+namespace StrictlyLocalGrammar
 
 variable {α : Type*}
 
@@ -65,7 +66,7 @@ abbrev Win (α : Type*) (n : ℕ) := { w : List (Option α) // w.length ≤ n }
 instance [Finite α] (n : ℕ) : Finite (Win α n) :=
   (List.finite_length_le (Option α) n).to_subtype
 
-variable (G : SLGrammar α) (n : ℕ)
+variable (G : StrictlyLocalGrammar α) (n : ℕ)
 
 open Classical in
 /-- Scanner step over window length `n` (locality width `k = n+1`). Dead `none` is
@@ -286,7 +287,7 @@ private lemma alive_iff_mem_language (w : List α) :
     (scanDFA G n).evalFrom (some (startWin n)) (w.map Option.some ++ List.replicate n none) ≠ none
       ↔ w ∈ G.language (n + 1) := by
   rw [Ne, evalFrom_eq_none_iff]
-  simp only [startWin, List.reverse_replicate, SLGrammar.mem_language, IsForbiddenWindow,
+  simp only [startWin, List.reverse_replicate, StrictlyLocalGrammar.mem_language, IsForbiddenWindow,
     not_exists, not_and, not_not]
   rw [show List.replicate n none ++ (w.map Option.some ++ List.replicate n none)
         = boundary (n + 1) w by simp [boundary]]
@@ -306,9 +307,9 @@ private theorem isStarFree_of_language_succ (L : Language α) [Finite α]
     (fun w => ?_)
   rw [← hL, Set.mem_ofPred_eq, scanHom_unop_apply, ← DFA.evalFrom_of_append, alive_iff_mem_language]
 
-end SLGrammar
+end StrictlyLocalGrammar
 
-namespace SPGrammar
+namespace StrictlyPiecewiseGrammar
 
 variable {α : Type*}
 
@@ -321,7 +322,7 @@ instance [Finite α] (n : ℕ) : Finite (Sub α n) :=
 /-- A **subsequence profile**: the set of bounded subsequences seen so far. -/
 abbrev Profile (α : Type*) (n : ℕ) := Set (Sub α n)
 
-variable (G : SPGrammar α) (n : ℕ)
+variable (G : StrictlyPiecewiseGrammar α) (n : ℕ)
 
 open Classical in
 /-- Scanner step over profiles of subsequences up to length `n` (width `k = n+1`). Dead
@@ -578,7 +579,7 @@ Needs `ε ∈ G`: the empty subsequence is not recorded by any step. -/
 private lemma alive_iff_mem_language (h0 : ([] : List α) ∈ G) (w : List α) :
     (scanDFA G n).evalFrom (some (profOf n [])) w ≠ none ↔ w ∈ G.language (n + 1) := by
   rw [Ne, evalFrom_eq_none_iff G n [] w (not_bad_nil G n h0), List.nil_append,
-    SPGrammar.mem_language]
+    StrictlyPiecewiseGrammar.mem_language]
   simp only [Bad, not_exists, not_and, not_not]
   exact ⟨fun h f hlen hf => h f hf hlen, fun h f hf hlen => h f hlen hf⟩
 
@@ -597,7 +598,7 @@ private theorem isStarFree_of_language_succ (L : Language α) [Finite α]
     rw [← hL]
     exact iff_of_false (fun h => h0 (h [] (Nat.zero_le _) (List.nil_sublist w))) (by simp)
 
-end SPGrammar
+end StrictlyPiecewiseGrammar
 
 namespace Language
 
@@ -617,12 +618,13 @@ theorem IsStrictlyLocal.isStarFree {L : Language α} {k : ℕ} (h : L.IsStrictly
     refine Language.IsStarFree.of_recognizes (M := PUnit.{1}) Monoid.IsAperiodic.of_subsingleton 1
       (if ([] : Augmented α) ∈ G then Set.univ else ∅) (fun w => ?_)
     rw [← hG]
-    simp only [SLGrammar.mem_language, List.mem_kFactors, List.length_eq_zero_iff, and_imp]
+    simp only [StrictlyLocalGrammar.mem_language, List.mem_kFactors, List.length_eq_zero_iff,
+      and_imp]
     by_cases hg : ([] : Augmented α) ∈ G
     · simpa [hg] using fun f _ (hf : f = []) => hf ▸ hg
     · simp only [hg, if_false, Set.mem_empty_iff_false, iff_false, not_forall]
       exact ⟨[], List.nil_infix, rfl, hg⟩
-  · exact SLGrammar.isStarFree_of_language_succ G n L hG
+  · exact StrictlyLocalGrammar.isStarFree_of_language_succ G n L hG
 
 /-- **Strictly piecewise languages are star-free** ([heinz-rogers-2010]
 [mcnaughton-papert-1971]). Over a finite alphabet, the subsequence scanner remembering the
@@ -636,12 +638,12 @@ theorem IsStrictlyPiecewise.isStarFree {L : Language α} {k : ℕ} (h : L.IsStri
   · -- `k = 0`: membership is the constant `[] ∈ G`, recognized by the trivial monoid.
     refine Language.IsStarFree.of_recognizes (M := PUnit.{1}) Monoid.IsAperiodic.of_subsingleton 1
       (if ([] : List α) ∈ G then Set.univ else ∅) (fun w => ?_)
-    rw [← hG, SPGrammar.mem_language]
+    rw [← hG, StrictlyPiecewiseGrammar.mem_language]
     by_cases hg : ([] : List α) ∈ G
     · simp only [hg, if_pos, Set.mem_univ, iff_true]
       exact fun s (hs : s.length ≤ 0) _ => List.length_eq_zero_iff.mp (Nat.le_zero.mp hs) ▸ hg
     · simp only [hg, if_neg, not_false_iff, Set.mem_empty_iff_false, iff_false, not_forall]
       exact ⟨[], le_rfl, List.nil_sublist _, hg⟩
-  · exact SPGrammar.isStarFree_of_language_succ G n L hG
+  · exact StrictlyPiecewiseGrammar.isStarFree_of_language_succ G n L hG
 
 end Language

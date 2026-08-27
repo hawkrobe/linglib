@@ -108,7 +108,7 @@ namespace Lambert2026
 open Subregular
 open Language
 open List  -- for the `<+` (List.Sublist) infix used throughout the subsequence proofs
--- `Sibilant` and `TSLGrammar.agree` now live in the shared `Subregular` namespace (opened above)
+-- `Sibilant` and `TierStrictlyLocalGrammar.agree` live in the shared `Subregular` namespace
 
 /-! ### Sandwich-word helpers
 
@@ -673,7 +673,7 @@ theorem karanga_shona_verb_stem_isBTLI :
 Both asymmetric directions plus the symmetric foil, over the shared
 `Subregular.Sibilant` substrate. Lambert's classification draws the
 symmetric-vs-asymmetric comparison: the symmetric grammar is the [hansson-2010]
-Navajo profile (`TSLGrammar.agree`, disagreement forbidden in both directions),
+Navajo profile (`TierStrictlyLocalGrammar.agree`, disagreement forbidden in both directions),
 the anterior-first asymmetric grammar the [cook-1978] Tsuut'ina profile. -/
 
 /-- Forbidden-pair relation: anterior immediately preceding posterior on the tier
@@ -691,8 +691,8 @@ instance : DecidableRel antPostForbidden
 
 /-- Tsuut'ina-style asymmetric harmony: anterior-before-posterior forbidden on the
 tier, the reverse permitted. -/
-def asymmetricHarmonyAntFirst : TSLGrammar 2 Sibilant :=
-  TSLGrammar.ofForbiddenPairs antPostForbidden Sibilant.onTier
+def asymmetricHarmonyAntFirst : TierStrictlyLocalGrammar 2 Sibilant :=
+  TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden Sibilant.onTier
 
 /-- Dual forbidden-pair relation: posterior immediately preceding anterior. -/
 def postAntForbidden : Sibilant → Sibilant → Prop
@@ -708,27 +708,27 @@ instance : DecidableRel postAntForbidden
 
 /-- Posterior-first asymmetric harmony grammar (the mirror of
 `asymmetricHarmonyAntFirst`). -/
-def asymmetricHarmonyPostFirst : TSLGrammar 2 Sibilant :=
-  TSLGrammar.ofForbiddenPairs postAntForbidden Sibilant.onTier
+def asymmetricHarmonyPostFirst : TierStrictlyLocalGrammar 2 Sibilant :=
+  TierStrictlyLocalGrammar.ofForbiddenPairs postAntForbidden Sibilant.onTier
 
 /-- Symmetric sibilant harmony: any tier-adjacent disagreement forbidden — the
 [hansson-2010] Navajo profile, the foil for the asymmetric comparison. -/
-def symmetricHarmony : TSLGrammar 2 Sibilant :=
-  TSLGrammar.agree Sibilant.onTier
+def symmetricHarmony : TierStrictlyLocalGrammar 2 Sibilant :=
+  TierStrictlyLocalGrammar.agree Sibilant.onTier
 
 /-- The symmetric language is contained in the anterior-first asymmetric language:
 forbidding disagreement in both directions rules out everything the one-direction
 constraint does, and more. -/
 theorem symmetricHarmony_lang_subset_asymAntFirst :
-    symmetricHarmony.lang ≤ asymmetricHarmonyAntFirst.lang :=
-  lang_antitone_R (R := antPostForbidden) (R' := (· ≠ ·))
+    symmetricHarmony.language ≤ asymmetricHarmonyAntFirst.language :=
+  language_antitone_R (R := antPostForbidden) (R' := (· ≠ ·))
     (fun a b h => by cases a <;> cases b <;> simp_all [antPostForbidden])
     Sibilant.onTier
 
 /-- Dual inclusion against the posterior-first asymmetric language. -/
 theorem symmetricHarmony_lang_subset_asymPostFirst :
-    symmetricHarmony.lang ≤ asymmetricHarmonyPostFirst.lang :=
-  lang_antitone_R (R := postAntForbidden) (R' := (· ≠ ·))
+    symmetricHarmony.language ≤ asymmetricHarmonyPostFirst.language :=
+  language_antitone_R (R := postAntForbidden) (R' := (· ≠ ·))
     (fun a b h => by cases a <;> cases b <;> simp_all [postAntForbidden])
     Sibilant.onTier
 
@@ -739,13 +739,13 @@ abbrev TsuutinaSeg := Sibilant
 /-- The TSL_2 grammar for Tsuut'ina asymmetric sibilant harmony ([cook-1978];
 Lambert's asymmetric classification): anterior preceding posterior on the
 sibilant tier is forbidden, the reverse permitted. -/
-def tsuutinaTSLGrammar : TSLGrammar 2 TsuutinaSeg :=
+def tsuutinaTSLGrammar : TierStrictlyLocalGrammar 2 TsuutinaSeg :=
   asymmetricHarmonyAntFirst
 
 /-- The Tsuut'ina asymmetric sibilant harmony language. Defined as the
 language of the TSL_2 witness so that the membership theorem is
 definitional. -/
-def tsuutinaLang : Language TsuutinaSeg := tsuutinaTSLGrammar.lang
+def tsuutinaLang : Language TsuutinaSeg := tsuutinaTSLGrammar.language
 
 /-- **Tsuut'ina asymmetric harmony ∈ TSL_2**. Definitional witness: the
 TSL_2 grammar `tsuutinaTSLGrammar`. -/
@@ -842,9 +842,9 @@ that string the only adjacency types are `(posterior, posterior)`,
 none of which equal the forbidden `(anterior, posterior)`. -/
 private lemma tsuutinaAccepted_mem (k : ℕ) :
     tsuutinaAccepted k ∈ tsuutinaLang := by
-  show tsuutinaAccepted k ∈ (TSLGrammar.ofForbiddenPairs antPostForbidden
-                              Sibilant.onTier).lang
-  rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  show tsuutinaAccepted k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
+                              Sibilant.onTier).language
+  rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
   -- Filter to sibilants: identity since no neutrals in the witness.
   have h_filter : (tsuutinaAccepted k).filter
                     (fun x => decide (Sibilant.onTier x)) =
@@ -875,9 +875,9 @@ internal `[anterior, posterior]` is precisely the forbidden adjacency
 on the sibilant tier. -/
 private lemma tsuutinaRejected_notMem (k : ℕ) :
     tsuutinaRejected k ∉ tsuutinaLang := by
-  show ¬ (tsuutinaRejected k ∈ (TSLGrammar.ofForbiddenPairs antPostForbidden
-                                  Sibilant.onTier).lang)
-  rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  show ¬ (tsuutinaRejected k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
+                                  Sibilant.onTier).language)
+  rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
   -- Filter is identity (no neutrals).
   have h_filter : (tsuutinaRejected k).filter
                     (fun x => decide (Sibilant.onTier x)) =

@@ -40,7 +40,7 @@ tier projection.
 
 `IsTierBased`/`IsBTC.Indist` quantify over `Bool` tiers `T : α → Bool`, avoiding an
 `∃ T, ∃ _ : DecidablePred T, …` witness; the `Prop`-with-`[DecidablePred]` form used by
-`tierProject`/`TSLGrammar` converts via `T x ↔ tier x = true`.
+`tierProject`/`TierStrictlyLocalGrammar` converts via `T x ↔ tier x = true`.
 -/
 
 namespace Language
@@ -59,7 +59,7 @@ Boolean tier predicate `T : α → Bool` and some `L' : Language α` with
 
 The Bool tier shape is the existence-friendly form (no instance
 quantifier issues). For the Prop+DecidablePred form used by
-`tierProject` and `TSLGrammar`, convert via `T x ↔ tier x = true`. -/
+`tierProject` and `TierStrictlyLocalGrammar`, convert via `T x ↔ tier x = true`. -/
 def IsTierBased (𝒞 : Language α → Prop) (L : Language α) : Prop :=
   ∃ T : α → Bool, ∃ L' : Language α,
     L = { w | w.filter T ∈ L' } ∧ 𝒞 L'
@@ -165,14 +165,14 @@ theorem IsBTK.toIsBTLI (h : IsBTK k L) : IsBTLI k L :=
 /-! ## TSL ⊆ multitier SL -/
 
 /-- **TSL_k → BTSL_k**: every tier-based strictly local language is in the
-multitier closure of strictly local languages. A `TSLGrammar` witness presents
+multitier closure of strictly local languages. A `TierStrictlyLocalGrammar` witness presents
 its language as the preimage of an SL language under the tier projection, hence
 `IsTierBased (Language.IsStrictlyLocal · k)`, hence in the closure via
 `IsBTC.base`. -/
 theorem IsTierStrictlyLocal.toIsBTSL (h : IsTierStrictlyLocal k L) : IsBTSL k L := by
   apply IsBTC.base
   obtain ⟨G, rfl⟩ := h
-  refine ⟨fun x => decide (G.tier x), SLGrammar.language k G.permitted, ?_, ⟨_, rfl⟩⟩
+  refine ⟨fun x => decide (G.tier x), StrictlyLocalGrammar.language k G.permitted, ?_, ⟨_, rfl⟩⟩
   ext w
   show (∀ f ∈ List.kFactors k (boundary k (tierProject G.tier w)), f ∈ G.permitted) ↔
        ∀ f ∈ List.kFactors k (boundary k (List.filter _ w)), f ∈ G.permitted

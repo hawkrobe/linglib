@@ -9,10 +9,10 @@ import Linglib.Core.Data.List.Factors
 The interfaces by which linguistic objects feed the discriminative lexicon
 ([heitmeier-chuang-baayen-2026] ch. 4-5). A `Linearizable` type yields a
 symbol string; its cues are the `k`-factors of the boundary-augmented
-string — the same windowing as subregular locality (`SLGrammar`)
+string — the same windowing as subregular locality (`StrictlyLocalGrammar`)
 — and its form vector is the binary cue indicator (Box 4.2: the `C` matrix
 holds only 1s and 0s, not counts; the count refinement is where strict
-locality's unit margin lives, `SLGrammar`). A `SemanticPrimitives`
+locality's unit margin lives, `StrictlyLocalGrammar`). A `SemanticPrimitives`
 type yields a multiset of atomic semantic primitives — a lexeme plus
 inflectional-function tags (the book's term, ch. 5) — and `conceptualize`
 builds its meaning vector as the sum of primitive embeddings: the book's

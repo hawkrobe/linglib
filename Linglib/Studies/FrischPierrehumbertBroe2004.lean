@@ -135,21 +135,21 @@ def categoricalAtThreshold (sim : ℚ) : ℚ :=
 /-- The TSL₂ grammar over `Consonant` forbidding tier-adjacent labial pairs of
 similarity at least `t` — [heinz-rawal-tanner-2011]'s forbidden-pair schema
 instantiated with FPB's metric. -/
-def thresholdedTSL : Subregular.TSLGrammar 2 Consonant :=
-  Subregular.TSLGrammar.ofForbiddenPairs
+def thresholdedTSL : Subregular.TierStrictlyLocalGrammar 2 Consonant :=
+  Subregular.TierStrictlyLocalGrammar.ofForbiddenPairs
     (λ x y => similarity xs x y ≥ t) Consonant.IsLabial
 
 /-- **TSL₂ witness**: the threshold grammar's stringset is tier-based
 strictly 2-local. -/
 theorem thresholdedTSL_lang_isTSL2 :
-    Language.IsTierStrictlyLocal 2 (thresholdedTSL xs t).lang :=
-  (thresholdedTSL xs t).isTierStrictlyLocal_lang
+    Language.IsTierStrictlyLocal 2 (thresholdedTSL xs t).language :=
+  (thresholdedTSL xs t).isTierStrictlyLocal_language
 
 /-- **BTSL₂ corollary**: the threshold grammar's stringset is in the
 multitier closure of strictly local languages, hence consumed by the
 [lambert-2026] BTC framework. -/
 theorem thresholdedTSL_lang_isBTSL2 :
-    Language.IsBTSL 2 (thresholdedTSL xs t).lang :=
+    Language.IsBTSL 2 (thresholdedTSL xs t).language :=
   (thresholdedTSL_lang_isTSL2 xs t).toIsBTSL
 
 /-- The threshold grammar accepts a labial pair iff its similarity is
@@ -157,9 +157,9 @@ strictly below the threshold — the precise sense in which any
 similarity-threshold TSL₂ grammar collapses to the two-valued
 `categoricalAtThreshold` prediction. -/
 theorem thresholdedTSL_pair_iff {x y : Consonant} (hx : x.IsLabial) (hy : y.IsLabial) :
-    [x, y] ∈ (thresholdedTSL xs t).lang ↔ similarity xs x y < t := by
+    [x, y] ∈ (thresholdedTSL xs t).language ↔ similarity xs x y < t := by
   unfold thresholdedTSL
-  rw [Subregular.mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  rw [Subregular.mem_ofForbiddenPairs_language_iff_filter_isChain]
   simp only [List.filter_cons, decide_eq_true hx, decide_eq_true hy, ↓reduceIte,
     List.filter_nil, List.isChain_cons_cons, List.isChain_singleton, and_true, not_le]
 

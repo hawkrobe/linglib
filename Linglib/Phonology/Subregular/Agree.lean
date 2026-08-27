@@ -21,9 +21,9 @@ The duality is structural, not metaphorical: the OCP penalizes adjacent
 *identical* tier elements (the "no double" rule, forcing dissimilation);
 AGREE penalizes adjacent *distinct* tier elements (the "no different"
 rule, forcing assimilation/harmony). Consonant harmony, vowel harmony,
-and tone spreading factor through `TSLGrammar.agree`; dissimilation,
-anti-geminate, and Meeussen's rule factor through `TSLGrammar.ocp`. The
-generic `TSLGrammar.ofForbiddenPairs` subsumes both — and asymmetric
+and tone spreading factor through `TierStrictlyLocalGrammar.agree`; dissimilation,
+anti-geminate, and Meeussen's rule factor through `TierStrictlyLocalGrammar.ocp`. The
+generic `TierStrictlyLocalGrammar.ofForbiddenPairs` subsumes both — and asymmetric
 patterns that are neither pure agreement nor pure dissimilation
 (directional harmony driven by morphological geometry, e.g. Kikongo nasal
 harmony in `Studies/RoseWalker2004.lean`) instantiate
@@ -31,12 +31,12 @@ the generic constructor directly with their own asymmetric `R`.
 
 Everything here is a one-line specialization of the generic
 forbidden-pair infrastructure to `R := (· ≠ ·)`. The AGREE-specific names
-(`agreeForbidden`, `AgreeCleanPair`, `TSLGrammar.agree`,
-`mkAgreeOnTier_zero_iff_in_agree_lang`) are the canonical entry points
+(`agreeForbidden`, `AgreeCleanPair`, `TierStrictlyLocalGrammar.agree`,
+`mkAgreeOnTier_zero_iff_in_agree_language`) are the canonical entry points
 downstream consumers reference.
 
-Unlike the OCP, AGREE is *also* strictly piecewise: `SPGrammar.agree` and
-`TSLGrammar.agree_lang_eq_sp` show the tier projection is dispensable
+Unlike the OCP, AGREE is *also* strictly piecewise: `StrictlyPiecewiseGrammar.agree` and
+`TierStrictlyLocalGrammar.agree_language_eq_sp` show the tier projection is dispensable
 here, because equality is transitive.
 -/
 
@@ -57,10 +57,10 @@ def agreeForbidden (α : Type) [DecidableEq α] : Set (Augmented α) :=
 
 /-- The TSL_2 grammar capturing "no two adjacent distinct symbols on the
 tier defined by `p`" — equivalently, every tier-adjacent pair agrees.
-The inequality-relation specialization of `TSLGrammar.ofForbiddenPairs`. -/
-def TSLGrammar.agree [DecidableEq α] (p : α → Prop) [DecidablePred p] :
-    TSLGrammar 2 α :=
-  TSLGrammar.ofForbiddenPairs (α := α) (· ≠ ·) p
+The inequality-relation specialization of `TierStrictlyLocalGrammar.ofForbiddenPairs`. -/
+def TierStrictlyLocalGrammar.agree [DecidableEq α] (p : α → Prop) [DecidablePred p] :
+    TierStrictlyLocalGrammar 2 α :=
+  TierStrictlyLocalGrammar.ofForbiddenPairs (α := α) (· ≠ ·) p
 
 /-- The AGREE relation on `Option α`: two augmented symbols are *AGREE-clean
 as a pair* iff they are not both `some` of distinct values. The
@@ -93,18 +93,18 @@ theorem mkAgreeOnTier_zero_iff_isChain [DecidableEq α] {C : Type}
 
 /-- **Bridge** (full TSL_2 language form): a candidate's AGREE score is zero
 iff its raw string is in the language of the TSL_2 grammar
-`TSLGrammar.agree p`. The two perspectives on AGREE — optimality-theoretic
+`TierStrictlyLocalGrammar.agree p`. The two perspectives on AGREE — optimality-theoretic
 constraint and subregular-complexity class — are co-extensive.
-Inequality-relation specialization of `mkForbidPairsOnTier_zero_iff_in_lang`. -/
-theorem mkAgreeOnTier_zero_iff_in_agree_lang [DecidableEq α] {C : Type}
+Inequality-relation specialization of `mkForbidPairsOnTier_zero_iff_in_language`. -/
+theorem mkAgreeOnTier_zero_iff_in_agree_language [DecidableEq α] {C : Type}
     (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
     (mkAgreeOnTier (TierProjection.byClass p) extract) c = 0 ↔
-      extract c ∈ (TSLGrammar.agree p).lang :=
-  mkForbidPairsOnTier_zero_iff_in_lang (· ≠ ·) p extract c
+      extract c ∈ (TierStrictlyLocalGrammar.agree p).language :=
+  mkForbidPairsOnTier_zero_iff_in_language (· ≠ ·) p extract c
 
 /-- **Zero-set bridge** (AGREE on tier): the `Language α`-form
-restatement of `mkAgreeOnTier_zero_iff_in_agree_lang` (with
+restatement of `mkAgreeOnTier_zero_iff_in_agree_language` (with
 `extract := id`). The AGREE markedness constraint's zero-set *is* the
 corresponding AGREE-TSL_2 language. Sibling of
 `mkForbidPairsOnTier_zeroSet_eq` in OTBound.lean and
@@ -112,9 +112,9 @@ corresponding AGREE-TSL_2 language. Sibling of
 theorem mkAgreeOnTier_zeroSet_eq [DecidableEq α]
     (p : α → Prop) [DecidablePred p] :
     (mkAgreeOnTier (TierProjection.byClass p) (id : List α → List α)).zeroSet =
-      (TSLGrammar.agree p).lang := by
+      (TierStrictlyLocalGrammar.agree p).language := by
   ext w
-  exact mkAgreeOnTier_zero_iff_in_agree_lang p id w
+  exact mkAgreeOnTier_zero_iff_in_agree_language p id w
 
 /-! ### AGREE is also strictly piecewise
 
@@ -129,17 +129,17 @@ section Piecewise
 
 open List
 
-/-- The SP_2 grammar dual of `TSLGrammar.agree p`: permit every subsequence except a
+/-- The SP_2 grammar dual of `TierStrictlyLocalGrammar.agree p`: permit every subsequence except a
 pair of disagreeing on-tier symbols. Shorter subsequences are permitted outright. -/
-def SPGrammar.agree {α : Type*} (p : α → Prop) : SPGrammar α :=
+def StrictlyPiecewiseGrammar.agree {α : Type*} (p : α → Prop) : StrictlyPiecewiseGrammar α :=
   {s | ∀ a b, s = [a, b] → p a → p b → a = b}
 
 /-- Membership in the AGREE language is agreement of *all* pairs of on-tier symbols,
 not just the tier-adjacent ones. -/
 theorem mem_agree_lang_iff_forall_sublist_pair [DecidableEq α] (p : α → Prop)
     [DecidablePred p] (w : List α) :
-    w ∈ (TSLGrammar.agree p).lang ↔ ∀ a b, [a, b] <+ w → p a → p b → a = b := by
-  rw [TSLGrammar.agree, mem_ofForbiddenPairs_lang_iff_filter_isChain]
+    w ∈ (TierStrictlyLocalGrammar.agree p).language ↔ ∀ a b, [a, b] <+ w → p a → p b → a = b := by
+  rw [TierStrictlyLocalGrammar.agree, mem_ofForbiddenPairs_language_iff_filter_isChain]
   simp only [ne_eq, not_not]
   rw [List.isChain_iff_pairwise, List.pairwise_iff_forall_sublist]
   refine ⟨fun h a b hab ha hb => h (by simpa [ha, hb] using hab.filter fun x => decide (p x)),
@@ -150,16 +150,18 @@ theorem mem_agree_lang_iff_forall_sublist_pair [DecidableEq α] (p : α → Prop
 
 /-- **AGREE-TSL_2 = AGREE-SP_2**: the tier-based and subsequence-based descriptions of
 agreement generate the same language, for any tier predicate. -/
-theorem TSLGrammar.agree_lang_eq_sp [DecidableEq α] (p : α → Prop) [DecidablePred p] :
-    (TSLGrammar.agree p).lang = (SPGrammar.agree p).language 2 :=
+theorem TierStrictlyLocalGrammar.agree_language_eq_sp [DecidableEq α] (p : α → Prop)
+    [DecidablePred p] :
+    (TierStrictlyLocalGrammar.agree p).language = (StrictlyPiecewiseGrammar.agree p).language 2 :=
   Set.ext fun w => (mem_agree_lang_iff_forall_sublist_pair p w).trans
     ⟨fun h s _ hs a b hab ha hb => h a b (hab ▸ hs) ha hb,
       fun h a b hab => h [a, b] (by simp) hab a b rfl⟩
 
 /-- Every AGREE language is strictly 2-piecewise. -/
-theorem TSLGrammar.agree_lang_isStrictlyPiecewise [DecidableEq α] (p : α → Prop)
-    [DecidablePred p] : ((TSLGrammar.agree p).lang).IsStrictlyPiecewise 2 :=
-  Language.isStrictlyPiecewise_iff.mpr ⟨SPGrammar.agree p, (TSLGrammar.agree_lang_eq_sp p).symm⟩
+theorem TierStrictlyLocalGrammar.agree_language_isStrictlyPiecewise [DecidableEq α] (p : α → Prop)
+    [DecidablePred p] : ((TierStrictlyLocalGrammar.agree p).language).IsStrictlyPiecewise 2 :=
+  Language.isStrictlyPiecewise_iff.mpr
+    ⟨StrictlyPiecewiseGrammar.agree p, (TierStrictlyLocalGrammar.agree_language_eq_sp p).symm⟩
 
 end Piecewise
 
