@@ -1410,7 +1410,7 @@ import Linglib.Pragmatics.InformationTheory.ChannelCapacity
 import Linglib.Pragmatics.NeoGricean.Basic
 import Linglib.Pragmatics.RSA.Atoms
 import Linglib.Pragmatics.RSA.Basic
-import Linglib.Pragmatics.RSA.Classical
+import Linglib.Pragmatics.RSA.Uniform
 import Linglib.Pragmatics.RSA.Profile
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Pragmatics.RSA.CombinedUtility

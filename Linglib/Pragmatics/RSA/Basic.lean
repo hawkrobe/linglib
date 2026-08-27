@@ -11,8 +11,8 @@ reweighted by a graded meaning, the speaker is the best response in power-weight
 listeners are mathlib's posterior kernels `κ†μ` — of the speaker, or of the deterministic
 observation kernel over the joint of prior and speaker when the listener hears only the form
 of the speaker's choice. Rationality, cost, meaning, and prior are arguments, so findings
-quantify over them. The finite Boolean specialization with its decision procedure is
-`Linglib.Pragmatics.RSA.Classical`.
+quantify over them. The uniform-prior Boolean specialization with its decision procedure is
+`Linglib.Pragmatics.RSA.Uniform`.
 
 ## Main definitions
 

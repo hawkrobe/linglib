@@ -1,4 +1,4 @@
-import Linglib.Pragmatics.RSA.Classical
+import Linglib.Pragmatics.RSA.Uniform
 import Linglib.Data.Examples.Alsop2024
 
 /-!
@@ -120,12 +120,12 @@ theorem literallyTrue_iff (s : State) : LiterallyTrue s ↔ meaning .anyA s := b
 
 /-- The speaker's joint choice of utterance and parse (37)–(38) at a uniform prior:
 `S1(u,p|s) ∝ L0(s|u,p)^α` at equal costs. -/
-noncomputable abbrev speaker (α : ℝ) : Kernel State Parse := classicalSpeaker sem α
+noncomputable abbrev speaker (α : ℝ) : Kernel State Parse := uniformSpeaker sem α
 
 /-- The pragmatic listener (40) at a uniform prior: the joint posterior over state and
 intended parse given the utterance; `.fst` is its state marginal (41). -/
 noncomputable abbrev listener (α : ℝ) : Kernel Utterance (State × Parse) :=
-  classicalJointListener sem Parse.utt α
+  uniformJointListener sem Parse.utt α
 
 /-- The model at an arbitrary state prior, which enters the literal listener (36) and the
 pragmatic listener (40) alike — the setting of Tables 5–9. -/
@@ -143,28 +143,28 @@ weak parse (34a) at every rationality: the weak parse is true in five states, th
 two. At `α = 100` the ratio is `(5/2)^100`, the paper's "almost 100% of the time". -/
 theorem speaker_prefers_strong_parse {α : ℝ} (hα : 0 < α) {s : State} (hs : meaning .anyB s) :
     (speaker α s).real {.anyA} < (speaker α s).real {.anyB} :=
-  classicalSpeaker_real_singleton_lt_of_card_lt sem hα
+  uniformSpeaker_real_singleton_lt_of_card_lt sem hα
     (mem_sem.mpr (by revert s hs; decide)) (mem_sem.mpr hs) (by decide)
 
 /-- Hearing *may any*, the listener assigns no posterior to Only S under any parse. -/
 theorem mayAny_rules_out_onlyS {α : ℝ} (hα : 0 < α) (p : Parse) :
     listener α .mayAny {(.onlyS, p)} = 0 := by
-  rw [listener, classicalJointListener, jointListener_apply_singleton _ _ _ _ _
-    (map_comp_classicalSpeaker_ne_zero sem Parse.utt hα.le (o := .mayAny) (c := .anyB) rfl
+  rw [listener, uniformJointListener, jointListener_apply_singleton _ _ _ _ _
+    (map_comp_uniformSpeaker_ne_zero sem Parse.utt hα.le (o := .mayAny) (c := .anyB) rfl
       (mem_sem.mpr (Or.inl rfl : meaning .anyB .only1)))]
   split_ifs with h
-  · rw [classicalSpeaker_apply_singleton_eq_zero sem hα (by revert h; cases p <;> decide),
+  · rw [uniformSpeaker_apply_singleton_eq_zero sem hα (by revert h; cases p <;> decide),
       mul_zero, ENNReal.zero_div]
   · exact ENNReal.zero_div
 
 /-- Hearing *may every*, the listener assigns no posterior to Only S under any parse. -/
 theorem mayEvery_rules_out_onlyS {α : ℝ} (hα : 0 < α) (p : Parse) :
     listener α .mayEvery {(.onlyS, p)} = 0 := by
-  rw [listener, classicalJointListener, jointListener_apply_singleton _ _ _ _ _
-    (map_comp_classicalSpeaker_ne_zero sem Parse.utt hα.le (o := .mayEvery) (c := .evD) rfl
+  rw [listener, uniformJointListener, jointListener_apply_singleton _ _ _ _ _
+    (map_comp_uniformSpeaker_ne_zero sem Parse.utt hα.le (o := .mayEvery) (c := .evD) rfl
       (mem_sem.mpr (rfl : meaning .evD .only2)))]
   split_ifs with h
-  · rw [classicalSpeaker_apply_singleton_eq_zero sem hα (by revert h; cases p <;> decide),
+  · rw [uniformSpeaker_apply_singleton_eq_zero sem hα (by revert h; cases p <;> decide),
       mul_zero, ENNReal.zero_div]
   · exact ENNReal.zero_div
 
@@ -177,21 +177,21 @@ theorem exclusiveness_derived {α : ℝ} (hα : 0 < α) :
       (listener α .mayAny).fst.real {s} < (listener α .mayAny).fst.real {s'} := by
   intro s hs s' hs'
   fin_cases hs <;> fin_cases hs' <;>
-    exact classicalJointListener_fst_real_lt_of_prodMul_strictDominates sem Parse.utt
+    exact uniformJointListener_fst_real_lt_of_prodMul_strictDominates sem Parse.utt
       expressible hα (by decide +kernel)
 
 /-- Hearing *may any* at the paper's α = 100, the listener infers the strong parse (34b) over
 the weak parse (34a): the speaker's near-categorical parse preference, pooled over states. -/
 theorem listener_infers_strong_parse :
     (listener 100 .mayAny).snd.real {.anyA} < (listener 100 .mayAny).snd.real {.anyB} :=
-  classicalJointListener_snd_real_lt_of_divPowSum sem Parse.utt expressible (k := 100) (D := 60)
+  uniformJointListener_snd_real_lt_of_divPowSum sem Parse.utt expressible (k := 100) (D := 60)
     (by decide +kernel) rfl rfl (by decide +kernel)
 
 /-- Hearing *may S*, the listener prefers Only S to S or 2 at every rationality (Table 3:
 0.67 vs 0.33): the doubly exhaustified parse (32c) is available only at Only S. -/
 theorem literal_s_communicates_onlyS {α : ℝ} (hα : 0 < α) :
     (listener α .mayS).fst.real {.sOr2} < (listener α .mayS).fst.real {.onlyS} :=
-  classicalJointListener_fst_real_lt_of_prodMul_strictDominates sem Parse.utt expressible hα
+  uniformJointListener_fst_real_lt_of_prodMul_strictDominates sem Parse.utt expressible hα
     (by decide +kernel)
 
 /-- Hearing *may any* at a uniform prior, Only 1 is strictly likelier than Any # at every
@@ -201,7 +201,7 @@ Table 3 reports 0.50/0.50 (at α = 100 the difference is ≈ 2·10⁻³¹); the 
 drives the *not every* implicature under an Only-1-favouring prior (Table 6). -/
 theorem only1_over_anyNum {α : ℝ} (hα : 0 < α) :
     (listener α .mayAny).fst.real {.anyNum} < (listener α .mayAny).fst.real {.only1} :=
-  classicalJointListener_fst_real_lt_of_prodMul_strictDominates sem Parse.utt expressible hα
+  uniformJointListener_fst_real_lt_of_prodMul_strictDominates sem Parse.utt expressible hα
     (by decide +kernel)
 
 /-! ### The paper's scenarios -/

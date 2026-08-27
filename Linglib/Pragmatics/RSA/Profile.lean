@@ -7,8 +7,8 @@ import Mathlib.Data.Fintype.BigOperators
 The combinatorial shadow of a finite Boolean RSA model: for a meaning `sem : C → Finset T`
 assigning each choice its extension, the profile of a state is the multiset of extension
 sizes of the choices true there, and the fibre profile keeps the choices heard as a given
-form under `obs : C → O`. The classical speaker's masses are ratios of inverse-power sums
-over these multisets (`Linglib.Pragmatics.RSA.Classical`), so preference certificates are
+form under `obs : C → O`. The uniform-prior speaker's masses are ratios of inverse-power sums
+over these multisets (`Linglib.Pragmatics.RSA.Uniform`), so preference certificates are
 `Multiset.StrictDominates` facts and pinned-rationality comparisons are ℕ inequalities.
 
 ## Main definitions
