@@ -1,40 +1,71 @@
-/-
-Copyright (c) 2026 Robert Hawkins. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Robert Hawkins
--/
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Phonology.Harmony.Basic
+import Linglib.Phonology.Subregular.Harmony
+import Linglib.Data.Examples.AksenovaEtAl2024
 
 /-!
 # Aksënova, Rawski, Graf & Heinz 2024: the computational power of harmonic forms
 
-[aksenova-rawski-graf-heinz-2024] §34.3.1 works out three double vowel
-harmonies with their TSL grammars printed (Tables 34.3–34.5); a single tier
-always suffices. This study transcribes the grammars featurally and
-stress-tests `Phonology.Harmony.Pattern`: Kirghiz is the conjunction of two
-patterns on one tier (`kirghiz_two_patterns`); Buryat's asymmetric blocking
-defeats every symmetric relation (`buryat_not_symmetric`) — the finding that
-forced blocker imposition into `Pattern.Compatible` — and with imposition is
-expressible (`buryat_expressible`, certified on the (9) forms); Yakut's
-harmonizing blockers show the same asymmetry (`yakut_asymmetric`); whether its
-configuration-dependent grammar is a conjunction of patterns is left open.
+Vowel-harmony phonotactics are tier-based strictly 2-local: project the harmonizing
+segments on a tier and ban the disagreeing bigrams. Lokaa ATR harmony needs the tier
+because no strictly local window bounds the transparent material; Kirghiz, Buryat, and Yakut
+double harmonies each fit on a single tier, with blocking (Buryat's high vowels) and
+configuration-dependent blocking (Yakut's low vowels) both mere bigram bans; Kikongo's
+vowel and nasal harmonies need two tiers, which are disjoint. Of the four relations two
+tier alphabets can stand in, only same, embedded, and disjoint are attested.
 
-Constructor names ASCII-ize the IPA: `ih` = ɨ, `oe` = ö, `ue` = ü, `oh` = ɔ,
-`uh` = ʊ. The §34.3.4 tier-relation typology is formalized as a classifier
-computed from patterns' tiers (`tierRelation`); the vowel-language rows of
-Table 34.8 check out as single-tier (`kirghiz_same_tier`, `buryat_same_tier`).
-TODO: the embedded/disjoint rows (Imdlawn Tashlhiyt sibilants, Kikongo) need
-their consonant alphabets.
+This file states each printed grammar (Tables 34.2–34.7) as a `TSLGrammar.ofForbiddenPairs`
+over the paper's tier alphabet and checks the paper's forms and starred forms against it
+(`lokaa_rows`, `kirghiz_rows`, `buryat_rows`, `yakut_rows`, `kikongo_rows`). The `Pattern`
+theorems say which grammars segment-level participation reproduces: Kirghiz and Buryat are
+conjunctions of two patterns (`kirghiz_two_patterns`, `buryat_expressible`), Buryat's blocking
+is asymmetric (`buryat_not_symmetric`), and Yakut's is left open. `tierRelation` computes the
+§34.3.4 typology (`kikongo_disjoint_tiers`).
+
+## References
+
+* [aksenova-rawski-graf-heinz-2024]
 -/
 
 namespace AksenovaEtAl2024
 
-open Phonology.Harmony
+open Phonology.Harmony Subregular
 
-/-! ### Kirghiz ((5), Table 34.3): double harmony, one tier, two patterns -/
+/-- The tier string a row records, read symbol by symbol. -/
+def tierOf {V : Type} (ofChar : Char → Option V) (s : String) : List V := s.toList.filterMap ofChar
 
-/-- The Kirghiz vowel tier `T = {a, ɨ, e, i, o, ö, u, ü}`. -/
+/-! ### Lokaa (Table 34.2): ATR agreement on the tier of non-high vowels -/
+
+/-- The Lokaa tier `T = {ɛ, e, o, ə, ɔ, a}`; `eh` = ɛ, `oh` = ɔ. -/
+inductive LokaaV where
+  | eh | e | o | schwa | oh | a
+  deriving DecidableEq, Fintype, Repr
+
+def LokaaV.tense : LokaaV → Bool
+  | .e | .o | .schwa => true
+  | .eh | .oh | .a => false
+
+def LokaaV.ofChar : Char → Option LokaaV
+  | 'ɛ' => some .eh | 'e' => some .e | 'o' => some .o | 'ə' => some .schwa | 'ɔ' => some .oh
+  | 'a' => some .a | _ => none
+
+/-- `H_ATR`: tier-adjacent vowels disagreeing in tenseness. -/
+def lokaaBanned (x y : LokaaV) : Prop := x.tense ≠ y.tense
+
+instance : DecidableRel lokaaBanned := fun x y => by unfold lokaaBanned; infer_instance
+
+def lokaa : TSLGrammar 2 LokaaV := TSLGrammar.ofForbiddenPairs lokaaBanned fun _ => True
+
+/-- The (3) forms are accepted and their starred counterparts rejected. -/
+theorem lokaa_rows :
+    ∀ row ∈ Examples.all, row.feature? "language" = some "lokaa" →
+      (row.judgment = .acceptable ↔
+        tierOf LokaaV.ofChar ((row.feature? "tier").getD "") ∈ lokaa.lang) := by
+  simp only [lokaa, mem_ofForbiddenPairs_lang_iff_filter_isChain]; decide
+
+/-! ### Kirghiz ((5), Table 34.3): fronting and rounding on one tier -/
+
+/-- The Kirghiz tier `T = {a, ɨ, e, i, o, ö, u, ü}`; `ih` = ɨ, `oe` = ö, `ue` = ü. -/
 inductive KirghizV where
   | a | ih | e | i | o | oe | u | ue
   deriving DecidableEq, Fintype, Repr
@@ -49,38 +80,41 @@ def round : KirghizV → Bool
   | .o | .oe | .u | .ue => true
   | .a | .ih | .e | .i => false
 
+def ofChar : Char → Option KirghizV
+  | 'a' => some .a | 'ɨ' => some .ih | 'e' => some .e | 'i' => some .i | 'o' => some .o
+  | 'ö' => some .oe | 'u' => some .u | 'ü' => some .ue | _ => none
+
 end KirghizV
 
-/-- `kirghizBanned x y`: the tier bigram `xy` disagrees in fronting or in
-    rounding (Table 34.3). -/
-def kirghizBanned (x y : KirghizV) : Prop :=
-  x.front ≠ y.front ∨ x.round ≠ y.round
+/-- `H_front ∪ H_round`: the bigram disagrees in fronting or in rounding. -/
+def kirghizBanned (x y : KirghizV) : Prop := x.front ≠ y.front ∨ x.round ≠ y.round
 
-instance : DecidableRel kirghizBanned := fun x y => by
-  unfold kirghizBanned; infer_instance
+instance : DecidableRel kirghizBanned := fun x y => by unfold kirghizBanned; infer_instance
 
-/-- `kirghizFront` is Kirghiz frontness harmony: every vowel participates. -/
+def kirghiz : TSLGrammar 2 KirghizV := TSLGrammar.ofForbiddenPairs kirghizBanned fun _ => True
+
+theorem kirghiz_rows :
+    ∀ row ∈ Examples.all, row.feature? "language" = some "kirghiz" →
+      (row.judgment = .acceptable ↔
+        tierOf KirghizV.ofChar ((row.feature? "tier").getD "") ∈ kirghiz.lang) := by
+  simp only [kirghiz, mem_ofForbiddenPairs_lang_iff_filter_isChain]; decide
+
+/-- Kirghiz frontness harmony: every vowel participates. -/
 def kirghizFront : Pattern KirghizV Bool :=
   { value := fun v => some v.front, participation := fun _ => .participating }
 
-/-- `kirghizRound` is Kirghiz rounding harmony, on the same tier. -/
+/-- Kirghiz rounding harmony, on the same tier. -/
 def kirghizRound : Pattern KirghizV Bool :=
   { value := fun v => some v.round, participation := fun _ => .participating }
 
-/-- Kirghiz double harmony fits a single tier: the printed grammar is the
-    conjunction of the two patterns' compatibilities. -/
+/-- The printed grammar is the conjunction of the two patterns' compatibilities. -/
 theorem kirghiz_two_patterns (x y : KirghizV) :
-    kirghizBanned x y ↔
-      ¬ (kirghizFront.Compatible x y ∧ kirghizRound.Compatible x y) := by
+    kirghizBanned x y ↔ ¬ (kirghizFront.Compatible x y ∧ kirghizRound.Compatible x y) := by
   revert x y; decide
 
-/-- `*ai` and `*oe` are banned; `üö` is licensed (Table 34.3). -/
-example : kirghizBanned .a .i ∧ kirghizBanned .o .e ∧
-    ¬ kirghizBanned .ue .oe := by decide
+/-! ### Buryat ((9), Table 34.4): high vowels block rounding -/
 
-/-! ### Buryat ((9), Table 34.4): asymmetric blocking defeats symmetry -/
-
-/-- The Buryat vowel tier `T = {a, e, ɔ, o, ʊ, u}` (transparent /i/ excluded). -/
+/-- The Buryat tier `T = {a, e, ɔ, o, ʊ, u}` (transparent /i/ excluded); `oh` = ɔ, `uh` = ʊ. -/
 inductive BuryatV where
   | a | e | oh | o | uh | u
   deriving DecidableEq, Fintype, Repr
@@ -99,69 +133,57 @@ def round : BuryatV → Bool
   | .oh | .o | .uh | .u => true
   | .a | .e => false
 
+def ofChar : Char → Option BuryatV
+  | 'a' => some .a | 'e' => some .e | 'ɔ' => some .oh | 'o' => some .o | 'ʊ' => some .uh
+  | 'u' => some .u | _ => none
+
 end BuryatV
 
-/-- `buryatBanned x y`: the bigram disagrees in ATR; or disagrees in rounding
-    between non-high vowels; or places a rounded non-high vowel after a high
-    vowel (Table 34.4). -/
+/-- `H_ATR ∪ H_r1 ∪ H_r2`: the bigram disagrees in ATR; or its non-high vowels disagree in
+rounding; or a rounded non-high vowel follows a high vowel. -/
 def buryatBanned (x y : BuryatV) : Prop :=
-  x.tense ≠ y.tense ∨
-    (¬ x.high ∧ ¬ y.high ∧ x.round ≠ y.round) ∨
-    (x.high ∧ ¬ y.high ∧ y.round)
+  x.tense ≠ y.tense ∨ (¬ x.high ∧ ¬ y.high ∧ x.round ≠ y.round) ∨ (x.high ∧ ¬ y.high ∧ y.round)
 
-instance : DecidableRel buryatBanned := fun x y => by
-  unfold buryatBanned; infer_instance
+instance : DecidableRel buryatBanned := fun x y => by unfold buryatBanned; infer_instance
 
-/-- Buryat blocking is directional: `*ʊɔ` is banned but `ɔʊ` is licensed
-    ((9b)). -/
-theorem buryat_asymmetric : buryatBanned .uh .oh ∧ ¬ buryatBanned .oh .uh := by
-  decide
+def buryat : TSLGrammar 2 BuryatV := TSLGrammar.ofForbiddenPairs buryatBanned fun _ => True
+
+/-- The (9) forms are accepted — `ɔr-ʊːl-aːd` because the high causative blocks rounding —
+and their starred counterparts rejected. -/
+theorem buryat_rows :
+    ∀ row ∈ Examples.all, row.feature? "language" = some "buryat" →
+      (row.judgment = .acceptable ↔
+        tierOf BuryatV.ofChar ((row.feature? "tier").getD "") ∈ buryat.lang) := by
+  simp only [buryat, mem_ofForbiddenPairs_lang_iff_filter_isChain]; decide
+
+/-- Blocking is directional: `*ʊɔ` is banned but `ɔʊ` licensed. -/
+theorem buryat_asymmetric : buryatBanned .uh .oh ∧ ¬ buryatBanned .oh .uh := by decide
 
 /-- No symmetric adjacency relation renders Buryat's grammar. -/
-theorem buryat_not_symmetric (R : BuryatV → BuryatV → Prop)
-    (hsymm : ∀ x y, R x y ↔ R y x) : ¬ ∀ x y, R x y ↔ buryatBanned x y := by
-  intro h
-  exact buryat_asymmetric.2 ((h _ _).mp ((hsymm _ _).mp ((h _ _).mpr
-    buryat_asymmetric.1)))
+theorem buryat_not_symmetric (R : BuryatV → BuryatV → Prop) (hsymm : ∀ x y, R x y ↔ R y x) :
+    ¬ ∀ x y, R x y ↔ buryatBanned x y := fun h =>
+  buryat_asymmetric.2 ((h _ _).mp ((hsymm _ _).mp ((h _ _).mpr buryat_asymmetric.1)))
 
-/-- `buryatATR` is Buryat ATR harmony: every tier vowel participates. -/
+/-- Buryat ATR harmony: every tier vowel participates. -/
 def buryatATR : Pattern BuryatV Bool :=
   { value := fun v => some v.tense, participation := fun _ => .participating }
 
-/-- `buryatRound` is Buryat rounding harmony: high vowels are opaque blockers
-    transmitting unroundedness to what follows. -/
+/-- Buryat rounding harmony: high vowels are opaque, imposing unroundedness on what follows. -/
 def buryatRound : Pattern BuryatV Bool :=
   { value := fun v => some (if v.high then false else v.round)
     participation := fun v => if v.high then .opaque else .participating }
 
-/-- With imposition, Buryat is expressible: the printed grammar is exactly
-    the conjunction of the ATR pattern and the rounding pattern. -/
+/-- With opaque blockers the printed grammar is the conjunction of the two patterns. -/
 theorem buryat_expressible (x y : BuryatV) :
-    buryatBanned x y ↔
-      ¬ (buryatATR.Compatible x y ∧ buryatRound.Compatible x y) := by
+    buryatBanned x y ↔ ¬ (buryatATR.Compatible x y ∧ buryatRound.Compatible x y) := by
   revert x y; decide
-
-/-- `buryatWellFormed w` says the skeleton `w` is harmonic for both Buryat
-    patterns. -/
-def buryatWellFormed (w : List BuryatV) : Prop :=
-  buryatATR.Harmonic w ∧ buryatRound.Harmonic w
-
-instance (w : List BuryatV) : Decidable (buryatWellFormed w) := by
-  unfold buryatWellFormed; infer_instance
-
-/-- The (9) forms as vowel skeletons: the attested `ɔr-ɔːd` and `ɔr-ʊːl-aːd`
-    are accepted — the latter because the high causative transmits unroundedness
-    to the perfective — and the starred `*ɔr-aːd` and `*ɔr-ʊːl-ɔːd` rejected. -/
-example : buryatWellFormed [.oh, .oh] ∧ ¬ buryatWellFormed [.oh, .a] ∧
-    buryatWellFormed [.oh, .uh, .a] ∧ ¬ buryatWellFormed [.oh, .uh, .oh] := by
-  decide
 
 /-! ### Yakut ((14), Table 34.5): harmonizing blockers -/
 
-/-- The Yakut vowel tier `T = {a, ɨ, e, i, o, ö, u, ü}`. -/
+/-- The Yakut tier `T = {a, ɨ, e, i, o, ö, u, ü}`. -/
 inductive YakutV where
   | a | ih | e | i | o | oe | u | ue
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 namespace YakutV
 
@@ -177,35 +199,84 @@ def high : YakutV → Bool
   | .ih | .i | .u | .ue => true
   | .a | .e | .o | .oe => false
 
+def ofChar : Char → Option YakutV
+  | 'a' => some .a | 'ɨ' => some .ih | 'e' => some .e | 'i' => some .i | 'o' => some .o
+  | 'ö' => some .oe | 'u' => some .u | 'ü' => some .ue | _ => none
+
 end YakutV
 
-/-- `yakutBanned x y`: the bigram disagrees in fronting; or disagrees in
-    rounding between high vowels; or places a rounded non-high vowel after a
-    high vowel; or disagrees in rounding after a non-high vowel (Table 34.5). -/
+/-- `H_front ∪ H_r1 ∪ H_r2 ∪ H_r3`: the bigram disagrees in fronting; or its high vowels
+disagree in rounding; or a rounded non-high vowel follows a high vowel; or a non-high vowel
+is followed by a vowel disagreeing in rounding. (The printed `H_r2` lists `*üö` twice and
+omits `*üo`, which `H_front` bans anyway.) -/
 def yakutBanned (x y : YakutV) : Prop :=
-  x.front ≠ y.front ∨
-    (x.high ∧ y.high ∧ x.round ≠ y.round) ∨
-    (x.high ∧ ¬ y.high ∧ y.round) ∨
+  x.front ≠ y.front ∨ (x.high ∧ y.high ∧ x.round ≠ y.round) ∨ (x.high ∧ ¬ y.high ∧ y.round) ∨
     (¬ x.high ∧ x.round ≠ y.round)
 
-instance : DecidableRel yakutBanned := fun x y => by
-  unfold yakutBanned; infer_instance
+instance : DecidableRel yakutBanned := fun x y => by unfold yakutBanned; infer_instance
 
-/-- Yakut's low vowels are harmonizing blockers ((14g)): rounding spreads
-    from `o` to `u` but not from `u` to `o` — the icy-target configuration. -/
+def yakut : TSLGrammar 2 YakutV := TSLGrammar.ofForbiddenPairs yakutBanned fun _ => True
+
+theorem yakut_rows :
+    ∀ row ∈ Examples.all, row.feature? "language" = some "yakut" →
+      (row.judgment = .acceptable ↔
+        tierOf YakutV.ofChar ((row.feature? "tier").getD "") ∈ yakut.lang) := by
+  simp only [yakut, mem_ofForbiddenPairs_lang_iff_filter_isChain]; decide
+
+/-- Low vowels harmonize but block: rounding passes from `o` to `u`, not from `u` to `o`. -/
 theorem yakut_asymmetric : yakutBanned .u .o ∧ ¬ yakutBanned .o .u := by decide
 
-/-- `oɣo-lor` and `murum-u` are licensed; `*tünnük-lör` is banned ((14)). -/
-example : ¬ yakutBanned .o .o ∧ ¬ yakutBanned .u .u ∧
-    yakutBanned .ue .oe := by decide
+/-! ### Kikongo ((16), (18), Tables 34.6–34.7): two disjoint tiers -/
+
+/-- The Kikongo tier symbols: the vowels `T_v = {e, o, i, u}` and `T_n = {n, m, d, l}`. -/
+inductive KikongoSeg where
+  | e | o | i | u | n | m | d | l
+  deriving DecidableEq, Fintype, Repr
+
+namespace KikongoSeg
+
+def isVowel : KikongoSeg → Bool
+  | .e | .o | .i | .u => true
+  | _ => false
+
+def high : KikongoSeg → Bool
+  | .i | .u => true
+  | _ => false
+
+def isNasal : KikongoSeg → Bool
+  | .n | .m => true
+  | _ => false
+
+def ofChar : Char → Option KikongoSeg
+  | 'e' => some .e | 'o' => some .o | 'i' => some .i | 'u' => some .u | 'n' => some .n
+  | 'm' => some .m | 'd' => some .d | 'l' => some .l | _ => none
+
+end KikongoSeg
+
+/-- The vowel tier `T_v` and the nasal tier `T_n`. -/
+abbrev kikongoVowelTier (s : KikongoSeg) : Prop := s.isVowel = true
+abbrev kikongoNasalTier (s : KikongoSeg) : Prop := s.isVowel = false
+
+/-- `H_v`: tier-adjacent vowels disagreeing in height. -/
+def kikongoVowel : TSLGrammar 2 KikongoSeg :=
+  TSLGrammar.ofForbiddenPairs (fun x y => x.high ≠ y.high) kikongoVowelTier
+
+/-- `H_n`: `d` or `l` after a nasal. -/
+def kikongoNasal : TSLGrammar 2 KikongoSeg :=
+  TSLGrammar.ofForbiddenPairs (fun x y => x.isNasal ∧ ¬ y.isNasal) kikongoNasalTier
+
+/-- Every (16) and (18) form passes both grammars on its own tier. -/
+theorem kikongo_rows :
+    ∀ row ∈ Examples.all, row.feature? "language" = some "kikongo" →
+      tierOf KikongoSeg.ofChar ((row.feature? "tier").getD "") ∈ kikongoVowel.lang ∧
+        tierOf KikongoSeg.ofChar ((row.feature? "tier").getD "") ∈ kikongoNasal.lang := by
+  simp only [kikongoVowel, kikongoNasal, mem_ofForbiddenPairs_lang_iff_filter_isChain]; decide
 
 /-! ### The tier-relation typology (§34.3.4, Table 34.8)
 
-Of the four logical relations between two tier alphabets, only three are
-attested: same, embedded, and disjoint. Partially overlapping tiers are
-unattested — a typological tendency (the chapter reports it excludes 95% of the
-possible tier organizations for a ten-element alphabet), stated per row, never
-as a theorem. -/
+Two tier alphabets are the same, embedded, disjoint, or partially overlapping; the last is
+unattested, a tendency the chapter reports would exclude 95% of the possible tier
+organizations of a ten-element alphabet. -/
 
 /-- The four logical relations between two tier alphabets (Figure 34.2). -/
 inductive TierRelation where
@@ -215,24 +286,24 @@ inductive TierRelation where
   | overlapping
   deriving DecidableEq, Repr
 
-open Phonology.Harmony in
-/-- `tierRelation p q` classifies the relation between two patterns' tier
-    alphabets, computed from their participation functions. -/
-def tierRelation {α : Type} {V W : Type} [Fintype α] [DecidableEq α]
-    (p : Pattern α V) (q : Pattern α W) : TierRelation :=
-  let T₁ := Finset.univ.filter fun s => decide (p.OnTier s)
-  let T₂ := Finset.univ.filter fun s => decide (q.OnTier s)
+/-- The relation between two tiers over a finite alphabet. -/
+def tierRelation {α : Type} [Fintype α] [DecidableEq α] (p q : α → Prop) [DecidablePred p]
+    [DecidablePred q] : TierRelation :=
+  let T₁ := Finset.univ.filter fun s => decide (p s)
+  let T₂ := Finset.univ.filter fun s => decide (q s)
   if T₁ = T₂ then .same
   else if T₁ ⊆ T₂ ∨ T₂ ⊆ T₁ then .embedded
   else if Disjoint T₁ T₂ then .disjoint
   else .overlapping
 
-/-- Kirghiz's two harmonies share one tier — Table 34.8's S row. -/
-theorem kirghiz_same_tier : tierRelation kirghizFront kirghizRound = .same := by
+/-- Kirghiz and Buryat double harmonies are single-tier — Table 34.8's S rows. -/
+theorem kirghiz_same_tier : tierRelation kirghizFront.OnTier kirghizRound.OnTier = .same := by
   decide
 
-/-- Buryat's two harmonies share one tier — Table 34.8's S row. -/
-theorem buryat_same_tier : tierRelation buryatATR buryatRound = .same := by
+theorem buryat_same_tier : tierRelation buryatATR.OnTier buryatRound.OnTier = .same := by decide
+
+/-- Kikongo's vowel and nasal tiers are disjoint — Table 34.8's D row. -/
+theorem kikongo_disjoint_tiers : tierRelation kikongoVowelTier kikongoNasalTier = .disjoint := by
   decide
 
 end AksenovaEtAl2024
