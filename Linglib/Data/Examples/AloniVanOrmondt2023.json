@@ -1,0 +1,805 @@
+[
+  {
+    "id": "alonivanormondt2023_3a",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(3a)"},
+    "language": "stan1293",
+    "primaryText": "I have at least three children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have at least three children.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "3"],
+      ["inference", "ignorance"]
+    ],
+    "comment": "Blok (2019); odd because the speaker knows how many children she has.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_3b",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(3b)"},
+    "language": "stan1293",
+    "primaryText": "I have more than two children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have more than two children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "comparative"],
+      ["numeral", "2"],
+      ["inference", "none"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_4a",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(4a)"},
+    "language": "stan1293",
+    "primaryText": "A hexagon has at most 10 sides.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A hexagon has at most 10 sides.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "10"],
+      ["inference", "ignorance"]
+    ],
+    "comment": "Nouwen (2010b).",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_4b",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(4b)"},
+    "language": "stan1293",
+    "primaryText": "A hexagon has fewer than 11 sides.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A hexagon has fewer than 11 sides.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "comparative"],
+      ["numeral", "11"],
+      ["inference", "none"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_5",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(5)"},
+    "language": "stan1293",
+    "primaryText": "The band has three players.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The band has three players.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "bare"],
+      ["numeral", "3"],
+      ["inference", "exact"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_6",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(6)"},
+    "language": "stan1293",
+    "primaryText": "The band has at least three players.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The band has at least three players.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "3"],
+      ["inference", "ignorance"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_7",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(7)"},
+    "language": "stan1293",
+    "primaryText": "The band has more than two players.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The band has more than two players.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "comparative"],
+      ["numeral", "2"],
+      ["inference", "none"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_10",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(10)"},
+    "language": "stan1293",
+    "primaryText": "Klaus married Paul or John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Klaus married Paul or John.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "The speaker does not know who", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["inference", "ignorance"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_11",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(11)"},
+    "language": "stan1293",
+    "primaryText": "Klaus has three or four children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Klaus has three or four children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "The speaker does not know how many", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["inference", "ignorance"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_12",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(12)"},
+    "language": "stan1293",
+    "primaryText": "I married Paul or John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I married Paul or John.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["inference", "ignorance"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_13",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(13)"},
+    "language": "stan1293",
+    "primaryText": "I have three or four children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I have three or four children.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["inference", "ignorance"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_18",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(18)"},
+    "language": "stan1293",
+    "primaryText": "Klaus married with Paul or John",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Klaus married with Paul or John",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "It is possible that Klaus married Paul and it is possible that Klaus married John", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["inference", "ignorance"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_19",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(19)"},
+    "language": "stan1293",
+    "primaryText": "The band has at least three players",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The band has at least three players",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "It is possible that the band has exactly three players and it is possible that it has more", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "3"],
+      ["inference", "ignorance"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_20",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(20)"},
+    "language": "stan1293",
+    "primaryText": "Everyone read at least three books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Everyone read at least three books.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "3"],
+      ["embedding", "universal"],
+      ["inference", "obviation"]
+    ],
+    "comment": "Felicitous with full knowledge: no ignorance inference.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_21",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(21)"},
+    "language": "stan1293",
+    "primaryText": "Paprika is required to read at least three books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Paprika is required to read at least three books.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Authoritative: it has to be the case that Paprika reads three or more books", "judgment": "acceptable"},
+      {"name": "Epistemic: three or more is such that Paprika has to read that many", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "3"],
+      ["embedding", "necessity"],
+      ["inference", "obviation"]
+    ],
+    "comment": "Büring (2008): the authoritative reading carries no ignorance inference, the epistemic reading does.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_22",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(22)"},
+    "language": "stan1293",
+    "primaryText": "The password must be at least five characters long.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The password must be at least five characters long.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "5"],
+      ["embedding", "necessity"],
+      ["inference", "obviation"],
+      ["reading", "authoritative"]
+    ],
+    "comment": "Büring (2008).",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_23",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(23)"},
+    "language": "stan1293",
+    "primaryText": "To become a member of this club, you have to pay at least $200,000.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "To become a member of this club, you have to pay at least $200,000.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "200000"],
+      ["embedding", "necessity"],
+      ["inference", "ignorance"],
+      ["reading", "epistemic"]
+    ],
+    "comment": "Büring (2008).",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_24a",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(24a)"},
+    "language": "stan1293",
+    "primaryText": "Paprika read two or three books",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Paprika read two or three books",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["inference", "ignorance"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_25a",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(25a)"},
+    "language": "stan1293",
+    "primaryText": "Everyone read two or three books",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Everyone read two or three books",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["embedding", "universal"],
+      ["inference", "obviation"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_26",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(26)"},
+    "language": "stan1293",
+    "primaryText": "Paprika is required to read two or three books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Paprika is required to read two or three books.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Authoritative", "judgment": "acceptable"},
+      {"name": "Epistemic", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["embedding", "necessity"],
+      ["inference", "obviation"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_27",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(27)"},
+    "language": "stan1293",
+    "primaryText": "Every woman in my family has two or three children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every woman in my family has two or three children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Some woman has two and some woman has three children", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["embedding", "universal"],
+      ["inference", "distribution"],
+      ["knowledge", "full"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_28",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(28)"},
+    "language": "stan1293",
+    "primaryText": "Every woman in my family has two or three children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every woman in my family has two or three children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Some woman might have two and some woman might have three children", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["embedding", "universal"],
+      ["inference", "distributionEpi"],
+      ["knowledge", "partial"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_29",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(29)"},
+    "language": "stan1293",
+    "primaryText": "Every woman in my family has at least three children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every woman in my family has at least three children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Full knowledge: some woman has three and some woman has more than three children", "judgment": "acceptable"},
+      {"name": "Partial information: some woman might have three and some woman might have more", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "3"],
+      ["embedding", "universal"],
+      ["inference", "distribution"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_30a",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(30a)"},
+    "language": "stan1293",
+    "primaryText": "To pass this course you are required to give a presentation or write a short paper",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "To pass this course you are required to give a presentation or write a short paper",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "You are allowed to give a presentation and you are allowed to write a short paper", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["embedding", "necessity"],
+      ["inference", "boxFreeChoice"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_31a",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(31a)"},
+    "language": "stan1293",
+    "primaryText": "To pass the course, you're required to read at least three books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "To pass the course, you're required to read at least three books.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "You are allowed to read three books and you are allowed to read more", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "3"],
+      ["embedding", "necessity"],
+      ["inference", "boxFreeChoice"],
+      ["reading", "authoritative"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_34",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(34)"},
+    "language": "stan1293",
+    "primaryText": "Every brother of mine has been married to a woman or a man.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every brother of mine has been married to a woman or a man.",
+    "context": "All brothers have been married to a woman, and one of them married first a woman and then a man.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Some brother has been married to a woman and some brother has been married to a man", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["embedding", "universal"],
+      ["inference", "distribution"]
+    ],
+    "comment": "Crnič et al. (2015): the distributive inference obtains without the negated universal inference.",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_35a",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(35a)"},
+    "language": "stan1293",
+    "primaryText": "You may have coffee or tea",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You may have coffee or tea",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "You may have coffee and you may have tea", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["embedding", "possibility"],
+      ["inference", "diamondFreeChoice"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_39a",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(39a)"},
+    "language": "stan1293",
+    "primaryText": "Some woman in my family has two or three children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Some woman in my family has two or three children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Some woman has two and some woman has three", "judgment": "unacceptable"},
+      {"name": "Some woman in my family might have two children and might have three children", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["embedding", "existential"],
+      ["inference", "ignorance"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_40a",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(40a)"},
+    "language": "stan1293",
+    "primaryText": "Klaus didn't marry John or Bill",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Klaus didn't marry John or Bill",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Klaus did not marry either of the two", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["embedding", "negation"],
+      ["inference", "negation"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_41",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(41)"},
+    "language": "stan1293",
+    "primaryText": "Klaus doesn't have at least three children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Klaus doesn't have at least three children.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "3"],
+      ["embedding", "negation"],
+      ["inference", "negation"]
+    ],
+    "comment": "Blocked by the simpler (42).",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_42",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(42)"},
+    "language": "stan1293",
+    "primaryText": "Klaus has less than three children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Klaus has less than three children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "comparative"],
+      ["numeral", "3"],
+      ["inference", "none"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_45a",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(45a)"},
+    "language": "stan1293",
+    "primaryText": "The band has at least three players.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The band has at least three players.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "3"],
+      ["translation", "three ∨ more"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_46a",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(46a)"},
+    "language": "stan1293",
+    "primaryText": "The band has at most three players.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The band has at most three players.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "3"],
+      ["translation", "three ∨ less"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_47a",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(47a)"},
+    "language": "stan1293",
+    "primaryText": "The band has more than two players.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The band has more than two players.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "comparative"],
+      ["numeral", "2"],
+      ["translation", "more-than-two"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_48a",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(48a)"},
+    "language": "stan1293",
+    "primaryText": "The band has less than two players.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The band has less than two players.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "comparative"],
+      ["numeral", "2"],
+      ["translation", "less-than-two"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_63a",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(63a)"},
+    "language": "stan1293",
+    "primaryText": "All of the boys may go to the beach or to the cinema.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "All of the boys may go to the beach or to the cinema.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "All of the boys may go to the beach and all of the boys may go to the cinema", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "disjunction"],
+      ["embedding", "universalPossibility"],
+      ["inference", "universalFreeChoice"]
+    ],
+    "comment": "Chemla (2009).",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_64",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(64)"},
+    "language": "stan1293",
+    "primaryText": "John does not have at least three children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John does not have at least three children.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "3"],
+      ["embedding", "negation"],
+      ["inference", "negation"]
+    ],
+    "comment": "",
+    "lgrConformance": "NONE"
+  },
+  {
+    "id": "alonivanormondt2023_65",
+    "source": {"bibkey": "aloni-vanormondt-2023", "paperLabel": "(65)"},
+    "language": "stan1293",
+    "primaryText": "Every candidate who has at least 2 degrees will be invited for the interview.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Every candidate who has at least 2 degrees will be invited for the interview.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "superlative"],
+      ["numeral", "2"],
+      ["embedding", "restrictor"]
+    ],
+    "comment": "Felicitous in a downward-entailing restrictor; left to future work.",
+    "lgrConformance": "NONE"
+  }
+]
