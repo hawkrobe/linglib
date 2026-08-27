@@ -1906,7 +1906,6 @@ import Linglib.Studies.AlonsoOvalleMoghiseh2025b
 import Linglib.Studies.AlonsoOvalleRoyer2024
 import Linglib.Studies.Alsop2024
 import Linglib.Studies.AlstottAravind2026
-import Linglib.Studies.AlstottAravind2026TemporalConnectives
 import Linglib.Studies.Amato2025
 import Linglib.Studies.AnandHacquard2013
 import Linglib.Studies.AnandHardtMcCloskey2021
