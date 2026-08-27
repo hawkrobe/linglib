@@ -1,594 +1,269 @@
+import Mathlib.Data.Fintype.Powerset
 import Linglib.Semantics.Quantification.Generators
+import Linglib.Studies.AlonsoOvalleMenendezBenito2010
+import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
 
 /-!
-# Alonso-Ovalle & Moghiseh (2025): Number Marking in *What* Interrogatives
-[alonso-ovalle-moghiseh-2025b]
+# Alonso-Ovalle & Moghiseh (2025): number marking in Farsi *what* interrogatives
 
-Luis Alonso-Ovalle and Esmail Moghiseh. Number marking in interrogative
-phrases: *What* interrogatives in Farsi. In: *Proceedings of Sinn und
-Bedeutung 29*, pp. 1–16.
+Farsi singular *what* interrogatives, bare (*chi*) and complex (*che ketab-i*), allow both
+singular and plural answers (20), (23); with the differential object marker *-ro* only the
+bare ones do (26)–(27). The paper derives this from three assumptions: interrogatives range
+over the conjunctions and disjunctions of nonempty subdomains (29), built with the
+`Quantification.conjGQ`/`disjGQ` generators (`hamblin`, `mem_conjProp`); singular marking on
+bare interrogatives is a default over atoms and pluralities (37), while SING on complex
+interrogatives keeps atoms only (42) (`neutral`, `atoms`); and *-ro* restricts the subset
+selection function to singletons (52), the `IsSingleton` functions of
+[alonso-ovalle-menendez-benito-2010], which collapses ⊓ and ⊔ to individual answers
+(`hamblinRo`, `hamblinRo_neutral`). Dayal's answerhood operator (8) presupposes a maximally
+strong true answer (`Resolvable`); a plural answer is available iff the presupposition holds
+in a world where two atoms were bought (`farsi`, (40)/(45)/(53)/(55)).
 
-## Overview
+The background pattern of §2 — English bare vs. singular and plural complex interrogatives
+under Dayal's atoms-only domains and the presuppositional exhaustifier (15) — is
+`dayal_english`, and the generalized-quantifier answer to the Spanish bare-interrogative
+problem (19) is `spanish_gq`. Questions with *must* (30)–(36) are answerable by free
+choice disjunctions only when the interrogative ranges over disjunctions, which *-ro*
+removes (`modal_gq`, (58)–(63)); collective predicates need pluralities in the domain
+(`collective`, (56)–(57)). The paper's answer judgments are checked in `rows_agree`.
 
-Farsi *what* interrogatives display a distinctive number-marking pattern:
-singular *what* CIs (`che ketab-i`, "what book") allow both singular and
-plural answers, unlike English where singular CIs restrict to singular
-answers only. This divergence is derived from four assumptions:
+## References
 
-1. Interrogatives range over generalized quantifiers — conjunctions (⊓)
-   and disjunctions (⊔) built from non-empty subsets of an entity domain
-   ([xiang-2016], [elliott-nicolae-sauerland-2022]).
-2. Singular marking on bare interrogatives is a morphological default
-   with no semantic import ([maldonado-2020]).
-3. Singular marking on complex interrogatives has semantic import: SING
-   restricts the domain to atoms ([scontras-2022]).
-4. Differential object marker *-ro* restricts the subset selection
-   function to singletons, signaling specificity ([karimi-2003]).
-
-## Predictions
-
-| Type | ±ro | Sg | Pl | Ex. |
-|------|-----|----|----|-----|
-| SBI  | −   | ✓  | ✓  | 20  |
-| PBI  | −   | ✗  | ✓  | 21  |
-| SCI  | −   | ✓  | ✓  | 23  |
-| PCI  | −   | ✗  | ✓  | 25  |
-| SBI  | +   | ✓  | ✓  | 26  |
-| SCI  | +   | ✓  | ✗  | 27  |
-| PCI  | +   | ✗  | ✓  | 28  |
-
-## Connection to *yek-i* DPs
-
-Farsi interrogative forms (`chi`, `che`) are homophonous with indefinites
-([alonso-ovalle-moghiseh-2025a], §5). The interrogative and indefinite
-share the same domain-building mechanism (⊓ ∪ ⊔ over GQs), but
-interrogatives compose with ANS while indefinites compose with existential
-closure. See `Farsi.Determiners` and
-`Studies.AlonsoOvalleMoghiseh2025a` for the indefinite paradigm.
+* [alonso-ovalle-moghiseh-2025b]
+* [dayal-1996]
+* [dayal-2016]
+* [hamblin-1973b]
+* [maldonado-2020]
+* [elliott-nicolae-sauerland-2022]
+* [alonso-ovalle-rouillard-2023]
+* [scontras-2022]
+* [alonso-ovalle-menendez-benito-2010]
 -/
 
 namespace AlonsoOvalleMoghiseh2025b
 
-open Quantification (Quantifier conjGQ disjGQ conjGQs disjGQs nonemptySubsets
-  conjGQ_iff_forall disjGQ_iff_exists conjGQ_le_individual individual_le_disjGQ
-  conjGQ_le_disjGQ' individual)
-
--- ============================================================================
--- § 1. Model
--- ============================================================================
-
-/-- Entity domain: two atomic individuals and their mereological join.
-    `t12 = t1 ⊕ t2` in the sense of [link-1983]. -/
-inductive Entity where | t1 | t2 | t12
-  deriving DecidableEq, BEq, Repr
-
-/-- Evaluation worlds: what did Roya buy? -/
-inductive World where | w1 | w2 | w12
-  deriving DecidableEq, BEq, Repr
-
-def allEntities : List Entity := [.t1, .t2, .t12]
-def allWorlds : List World := [.w1, .w2, .w12]
-
-/-- Mereological atom predicate. Corresponds to `[+atomic]` in
-    [harbour-2014] (`Number.Features`) and `Mereology.Atom`. -/
-def isAtom : Entity → Prop
-  | .t1 | .t2 => True
-  | .t12 => False
-
-instance : DecidablePred isAtom := fun x => by unfold isAtom; cases x <;> infer_instance
-
-/-- Distributive predicate: `bought(e, roya, w)`.
-    Distributivity: `bought t12 w = bought t1 w ∧ bought t2 w`. -/
-def bought : Entity → World → Bool
-  | .t1,  .w1  | .t1,  .w12 => true
-  | .t2,  .w2  | .t2,  .w12 => true
-  | .t12, .w12 => true
-  | _,    _    => false
-
-/-- Distributivity holds for the join entity at all worlds. -/
-theorem bought_distributive (w : World) :
-    bought .t12 w = (bought .t1 w && bought .t2 w) := by cases w <;> rfl
-
--- ============================================================================
--- § 2. Hamblin Sets, ANS, EXH_P
--- ============================================================================
-
-/-! The GQ generators `conjGQs`/`disjGQs` and their underlying lattice
-    operations (`conjGQ`/`disjGQ`) are imported from
-    `Quantification.Generators`, where they are defined as
-    iterated meets/joins of Montagovian individual quantifiers.
-
-    - `conjGQ X P = X.all P` — universal quantification over X
-    - `disjGQ X P = X.any P` — existential quantification over X
-    - `conjGQs dom` — all ⊓(X) for ∅ ≠ X ⊆ dom ([xiang-2016])
-    - `disjGQs dom` — all ⊔(X) for ∅ ≠ X ⊆ dom -/
-
-/-- Hamblin set: propositions from applying each GQ in ⊓(dom) ∪ ⊔(dom)
-    to the VP `bought`. Implements eq. (29) for the buy predicate.
-
-    ⟦Q⟧(dom) = {λw. Q(λe. bought(e, w)) | Q ∈ ⊓(dom) ∪ ⊔(dom)}
-
-    Since `Quantifier Entity = (Entity → Prop) → Prop`, we use the propositional
-    characterization `conjGQ_iff_forall` / `disjGQ_iff_exists` to compute
-    a Bool result from the Bool predicate `bought`. -/
-def hamblinSet (dom : List Entity) : List (World → Bool) :=
-  (nonemptySubsets dom).map (λ X w => X.all (λ e => bought e w)) ++
-  (nonemptySubsets dom).map (λ X w => X.any (λ e => bought e w))
-
-/-- Hamblin set with *-ro*: restricted to singleton subsets (eq. 52).
-    *-ro* imposes |f(P)| = 1, so each entity contributes exactly one
-    proposition, eliminating conjunctive and disjunctive GQs.
-
-    Also serves as the individual-level Hamblin set for EXH_P
-    competition: the singular alternative ranges over individual GQs
-    (singletons), which is exactly what *-ro* does. The coincidence
-    is structural — both operations restrict to |X| = 1. -/
-def hamblinSetRo (dom : List Entity) : List (World → Bool) :=
-  dom.map (λ e => λ w => bought e w)
-
-/-- Propositional entailment over the finite world set. -/
-def entails (p q : World → Bool) : Bool :=
-  allWorlds.all (λ w => !p w || q w)
-
-/-- Dayal's Exhaustivity Presupposition: does ANS find a strongest true
-    answer at `w`? ([dayal-1996], eq. 8)
-
-    EP(H, w) = ∃p ∈ H. p(w) ∧ ∀q ∈ H. q(w) → p ⊆ q
-
-    Corresponds to `dayalEP` in
-    `Semantics.Questions.Exhaustivity`. -/
-def epHolds (hamblin : List (World → Bool)) (w : World) : Bool :=
-  let trueProps := hamblin.filter (· w)
-  trueProps.any (λ p => trueProps.all (λ q => entails p q))
-
-/-- EXH_P anti-uniqueness ([marty-2017], [elliott-sauerland-2019],
-    eq. 15). For plural interrogatives competing with singular alternatives:
-    the question is felicitous at `w` only if more than one individual-level
-    proposition in the singular alternative's Hamblin set is true.
-
-    Connects to `pexIEII` in
-    `Semantics.Exhaustification.Presuppositional`. -/
-def exhPAntiUniq (singularIndivH : List (World → Bool)) (w : World) : Bool :=
-  (singularIndivH.filter (· w)).length > 1
-
--- ============================================================================
--- § 4. Interrogative Domains
--- ============================================================================
-
-/-- BI domain: atoms + pluralities. Singular marking on BIs is a default
-    with no semantic import (§4, assumption 2). -/
-def biDomain : List Entity := allEntities
-
-/-- CI domain: atoms only. ⟦SING⟧ = λP.λx: ATOM(x). P(x) (eq. 42,
-    [scontras-2022]). Implements the semantic content of singular
-    marking on CIs. -/
-def ciDomain : List Entity := allEntities.filter (fun e => decide (isAtom e))
-
-
--- ============================================================================
--- § 5. Entailment Structure
--- ============================================================================
-
-/-! The model's predictions derive from three structural facts about
-    propositional entailment under the `bought` predicate:
-
-    1. **Conjunction strength**: ⊓({t1,t2}) yields B(t1) ∧ B(t2), which
-       entails both B(t1) and B(t2). This creates strongest answers at
-       plural worlds — the mechanism behind Farsi SCIs accepting plurals.
-
-    2. **Atomic independence**: B(t1) and B(t2) are logically independent.
-       Without conjunction GQs, no strongest answer exists at plural worlds.
-
-    3. **Singleton absorption**: At singular worlds (one atom bought),
-       the unique true atomic proposition entails every true disjunction
-       (by disjunction introduction), so EP always holds.
-
-    The entailment facts in (1) and (3) are derived from the lattice
-    structure of GQ generators in `Quantification.Generators`:
-    - `conjGQ_le_individual`: ⊓(X) ≤ individual(a) for a ∈ X
-    - `individual_le_disjGQ`: individual(a) ≤ ⊔(X) for a ∈ X
-    - `conjGQ_le_disjGQ'`: ⊓(X) ≤ ⊔(X) for non-empty X
-
-    The bridge `npq_le_entails` lifts Quantifier lattice `≤` to the study's
-    propositional `entails`, connecting the abstract lattice structure
-    to the concrete model. -/
-
-/-- Quantifier lattice ordering lifts to propositional entailment via `bought`.
-    If Q₁ ≤ Q₂ in the Quantifier lattice, and p₁/p₂ are the propositions
-    obtained by applying Q₁/Q₂ to `bought` at each world, then p₁
-    entails p₂.
-
-    This is the key bridge connecting the lattice-theoretic GQ
-    infrastructure to the study's propositional entailment relation. -/
-private theorem npq_le_entails {Q₁ Q₂ : Quantifier Entity}
-    {p₁ p₂ : World → Bool}
-    (hp₁ : ∀ w, p₁ w = true ↔ Q₁ (λ e => bought e w = true))
-    (hp₂ : ∀ w, p₂ w = true ↔ Q₂ (λ e => bought e w = true))
-    (h : Q₁ ≤ Q₂) :
-    entails p₁ p₂ = true := by
-  simp only [entails, allWorlds, List.all_eq_true]
-  intro w _
-  rcases Bool.eq_false_or_eq_true (p₁ w) with hp1 | hp1
-  · have hQ₁ := (hp₁ w).mp hp1
-    have hQ₂ := h _ hQ₁
-    have hp2 := (hp₂ w).mpr hQ₂
-    rw [hp1, hp2]; rfl
-  · rw [hp1]; rfl
-
-/-- B(t1)∧B(t2) = ⊓({t1,t2})(bought): the conjunction proposition is
-    the conjGQ of atoms applied to the buy predicate. -/
-private theorem conj_eq_conjGQ_iff (w : World) :
-    (bought .t1 w && bought .t2 w) = true ↔
-    conjGQ [.t1, .t2] (λ e => bought e w = true) := by
-  cases w <;> simp [conjGQ_iff_forall]
-
-/-- B(t1)∨B(t2) = ⊔({t1,t2})(bought): the disjunction proposition is
-    the disjGQ of atoms applied to the buy predicate. -/
-private theorem disj_t1t2_eq_disjGQ_iff (w : World) :
-    (bought .t1 w || bought .t2 w) = true ↔
-    disjGQ [.t1, .t2] (λ e => bought e w = true) := by
-  cases w <;> simp [disjGQ_iff_exists]
-
-/-- B(t1)∨B(t12) = ⊔({t1,t12})(bought). -/
-private theorem disj_t1t12_eq_disjGQ_iff (w : World) :
-    (bought .t1 w || bought .t12 w) = true ↔
-    disjGQ [.t1, .t12] (λ e => bought e w = true) := by
-  cases w <;> simp [disjGQ_iff_exists]
-
-/-- B(t1) and B(t2) are logically independent.
-    - w1 witnesses B(t1) ⊬ B(t2): Roya bought t1 but not t2
-    - w2 witnesses B(t2) ⊬ B(t1): Roya bought t2 but not t1
-    This is why EP fails for individual-only Hamblin sets at w12:
-    neither individual proposition can serve as the strongest true answer. -/
-theorem atoms_independent :
-    entails (bought .t1) (bought .t2) = false ∧
-    entails (bought .t2) (bought .t1) = false :=
-  ⟨rfl, rfl⟩
-
-/-- B(t1) ∧ B(t2) entails each atom individually (conjunction elimination).
-    Structural proof: ⊓({t1,t2}) ≤ individual(tᵢ) in the Quantifier lattice
-    (`conjGQ_le_individual`), lifted to propositional entailment via
-    `npq_le_entails`. -/
-theorem conj_entails_atoms :
-    entails (λ w => bought .t1 w && bought .t2 w) (bought .t1) = true ∧
-    entails (λ w => bought .t1 w && bought .t2 w) (bought .t2) = true :=
-  ⟨npq_le_entails conj_eq_conjGQ_iff (fun _ => Iff.rfl)
-    (conjGQ_le_individual .t1 _ (List.mem_cons_self ..)),
-   npq_le_entails conj_eq_conjGQ_iff (fun _ => Iff.rfl)
-    (conjGQ_le_individual .t2 _ (List.mem_cons.mpr (Or.inr (List.mem_cons_self ..))))⟩
-
-/-- B(t1) entails any disjunction containing it (disjunction introduction).
-    Structural proof: individual(t1) ≤ ⊔(X) for t1 ∈ X in the Quantifier lattice
-    (`individual_le_disjGQ`), lifted to propositional entailment. -/
-theorem atom_entails_containing_disj :
-    entails (bought .t1) (λ w => bought .t1 w || bought .t2 w) = true ∧
-    entails (bought .t1) (λ w => bought .t1 w || bought .t12 w) = true :=
-  ⟨npq_le_entails (fun _ => Iff.rfl) disj_t1t2_eq_disjGQ_iff
-    (individual_le_disjGQ .t1 _ (List.mem_cons_self ..)),
-   npq_le_entails (fun _ => Iff.rfl) disj_t1t12_eq_disjGQ_iff
-    (individual_le_disjGQ .t1 _ (List.mem_cons_self ..))⟩
-
-/-- The conjunction also entails the disjunction of its conjuncts.
-    Structural proof: ⊓(X) ≤ ⊔(X) for non-empty X (`conjGQ_le_disjGQ'`),
-    lifted to propositional entailment.
-    Combined with `conj_entails_atoms`, this makes ⊓({t1,t2}) the strongest
-    element in any Hamblin set built from {t1, t2}. -/
-theorem conj_entails_disj :
-    entails (λ w => bought .t1 w && bought .t2 w)
-            (λ w => bought .t1 w || bought .t2 w) = true :=
-  npq_le_entails conj_eq_conjGQ_iff disj_t1t2_eq_disjGQ_iff
-    (conjGQ_le_disjGQ' (by decide))
-
-/-- EP holds at w12 for GQ-ranging over atoms: ⊓({t1,t2}) = B(t1) ∧ B(t2)
-    is true at w12 and entails every other proposition in the Hamblin set
-    (by `conj_entails_atoms` and `conj_entails_disj`). -/
-theorem ep_gq_atoms_w12 :
-    epHolds (hamblinSet ciDomain) .w12 = true := by decide
-
-/-- EP fails at w12 for individual-ranging over atoms: the Hamblin set
-    is {B(t1), B(t2)}, both true at w12, but independent by
-    `atoms_independent`. Neither can be strongest → no ANS → EP fails.
-    This is the English SCI pattern. -/
-theorem ep_indiv_atoms_w12 :
-    epHolds (hamblinSetRo ciDomain) .w12 = false := rfl
-
-/-- At w1 (only t1 bought), EP holds for any Hamblin set containing B(t1).
-    B(t1) is the unique true atomic proposition, and it entails every true
-    disjunction via `atom_entails_containing_disj`. The proof covers both
-    the full GQ Hamblin set and the individual Hamblin set. -/
-theorem ep_at_singular_world :
-    epHolds (hamblinSet biDomain) .w1 = true ∧
-    epHolds (hamblinSet ciDomain) .w1 = true ∧
-    epHolds (hamblinSetRo biDomain) .w1 = true ∧
-    epHolds (hamblinSetRo ciDomain) .w1 = true := by
-  exact ⟨by decide, by decide, rfl, rfl⟩
-
-/-- At w12 (both atoms bought), EP holds for GQ-ranging over the full
-    domain: ⊓({t1,t2,t12}) = B(t1) ∧ B(t2) ∧ B(t12) is the strongest
-    true proposition (entails all others by conjunction elimination). -/
-theorem ep_gq_full_w12 :
-    epHolds (hamblinSet biDomain) .w12 = true := by decide
-
-/-- Anti-uniqueness at w1: only one individual proposition true (B(t1)),
-    so the count is 1, not > 1. Plural marking's presupposition fails →
-    singular answer blocked for all PL-marked interrogatives at w1. -/
-theorem antiUniq_w1 :
-    exhPAntiUniq (hamblinSetRo biDomain) .w1 = false ∧
-    exhPAntiUniq (hamblinSetRo ciDomain) .w1 = false :=
-  ⟨rfl, rfl⟩
-
-/-- Anti-uniqueness at w12: both B(t1) and B(t2) true (count = 2 > 1).
-    Plural marking's presupposition holds → plural answers allowed. -/
-theorem antiUniq_w12 :
-    exhPAntiUniq (hamblinSetRo biDomain) .w12 = true ∧
-    exhPAntiUniq (hamblinSetRo ciDomain) .w12 = true :=
-  ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 6. Interrogative Types
--- ============================================================================
-
-/-- The seven interrogative configurations from the Farsi paradigm. -/
-inductive IntType where
-  | sbi | pbi | sci | pci | sbiRo | sciRo | pciRo
-  deriving DecidableEq, BEq, Repr
-
-/-- Predicted singular answer availability.
-    For base types, singular = EP holds at w1 (a world where one atom bought).
-    For plural types, additionally requires EXH_P anti-uniqueness. -/
-def predictSg : IntType → Bool
-  | .sbi   => epHolds (hamblinSet biDomain) .w1
-  | .sci   => epHolds (hamblinSet ciDomain) .w1
-  | .pbi   => epHolds (hamblinSet biDomain) .w1 && exhPAntiUniq (hamblinSetRo biDomain) .w1
-  | .pci   => epHolds (hamblinSet biDomain) .w1 && exhPAntiUniq (hamblinSetRo ciDomain) .w1
-  | .sbiRo => epHolds (hamblinSetRo biDomain) .w1
-  | .sciRo => epHolds (hamblinSetRo ciDomain) .w1
-  | .pciRo => epHolds (hamblinSetRo biDomain) .w1 && exhPAntiUniq (hamblinSetRo ciDomain) .w1
-
-/-- Predicted plural answer availability.
-    Plural = EP holds at w12 (a world where both atoms bought). -/
-def predictPl : IntType → Bool
-  | .sbi   => epHolds (hamblinSet biDomain) .w12
-  | .sci   => epHolds (hamblinSet ciDomain) .w12
-  | .pbi   => epHolds (hamblinSet biDomain) .w12 && exhPAntiUniq (hamblinSetRo biDomain) .w12
-  | .pci   => epHolds (hamblinSet biDomain) .w12 && exhPAntiUniq (hamblinSetRo ciDomain) .w12
-  | .sbiRo => epHolds (hamblinSetRo biDomain) .w12
-  | .sciRo => epHolds (hamblinSetRo ciDomain) .w12
-  | .pciRo => epHolds (hamblinSetRo biDomain) .w12 && exhPAntiUniq (hamblinSetRo ciDomain) .w12
-
--- ============================================================================
--- § 7. Core Predictions
--- ============================================================================
-
-/-! Each prediction derives from the structural lemmas in § 5. The proofs
-    explicitly chain the relevant structural facts via `simp only`.
-
-    ### Bare Interrogatives
-
-    BIs range over GQs from the FULL entity domain (atoms + pluralities).
-    Singular marking on BIs is a morphological default (no semantic import). -/
-
-/-- SBI (`chi`, what.SG): allows singular answers. (ex. 20a)
-    EP holds at w1 by `ep_at_singular_world`: B(t1) is the strongest
-    true answer in the full GQ Hamblin set. -/
-theorem sbi_singular : predictSg .sbi = true := by
-  show epHolds (hamblinSet biDomain) .w1 = true
-  exact ep_at_singular_world.1
-
-/-- SBI: allows plural answers. (ex. 20b)
-    EP holds at w12 by `ep_gq_full_w12`: ⊓({t1,t2,t12}) produces a
-    conjunction proposition that entails all others. -/
-theorem sbi_plural : predictPl .sbi = true := by
-  show epHolds (hamblinSet biDomain) .w12 = true
-  exact ep_gq_full_w12
-
-/-- PBI (`chi-a`, what.PL): blocks singular via EXH_P. (ex. 21a)
-    EP itself holds at w1 (`ep_at_singular_world`), but EXH_P
-    anti-uniqueness fails: only B(t1) is true among individual
-    propositions at w1 (`antiUniq_w1`), so count = 1, not > 1. -/
-theorem pbi_blocks_singular : predictSg .pbi = false := by
-  show (epHolds (hamblinSet biDomain) .w1 && exhPAntiUniq (hamblinSetRo biDomain) .w1) = false
-  simp only [ep_at_singular_world.1, antiUniq_w1.1, Bool.true_and]
-
-/-- PBI: allows plural. (ex. 21b)
-    EP holds at w12 (`ep_gq_full_w12`) and anti-uniqueness holds
-    (`antiUniq_w12`): both B(t1) and B(t2) true → count = 2 > 1. -/
-theorem pbi_plural : predictPl .pbi = true := by
-  show (epHolds (hamblinSet biDomain) .w12 && exhPAntiUniq (hamblinSetRo biDomain) .w12) = true
-  simp only [ep_gq_full_w12, antiUniq_w12.1, Bool.true_and]
-
-/-! ### Complex Interrogatives
-
-    CIs range over GQs from the ATOM domain ({t1, t2}).
-    SING restricts the domain to atoms — this is the semantic content
-    of singular marking on CIs, unlike BIs where it's vacuous. -/
-
-/-- SCI (`che ketab-i`, what book.SG.INDEF): allows singular. (ex. 23a)
-    EP holds at w1 by `ep_at_singular_world`. -/
-theorem sci_singular : predictSg .sci = true := by
-  show epHolds (hamblinSet ciDomain) .w1 = true
-  exact ep_at_singular_world.2.1
-
-/-- SCI: allows plural answers — the key Farsi innovation. (ex. 23b)
-    Unlike English SCIs (individual-ranging → independent propositions →
-    EP fails at plural worlds by `atoms_independent`), Farsi SCIs range
-    over GQs. The conjunction GQ ⊓({t1, t2}) produces B(t1) ∧ B(t2),
-    which entails both atomic propositions (`conj_entails_atoms`) and
-    the disjunction (`conj_entails_disj`) → EP holds by
-    `ep_gq_atoms_w12`. -/
-theorem sci_plural : predictPl .sci = true := by
-  show epHolds (hamblinSet ciDomain) .w12 = true
-  exact ep_gq_atoms_w12
-
-/-- PCI (`che ketab-a-i`, what book.PL.INDEF): blocks singular. (ex. 25a)
-    EP holds but anti-uniqueness fails at w1 (`antiUniq_w1`). -/
-theorem pci_blocks_singular : predictSg .pci = false := by
-  show (epHolds (hamblinSet biDomain) .w1 && exhPAntiUniq (hamblinSetRo ciDomain) .w1) = false
-  simp only [ep_at_singular_world.1, antiUniq_w1.2, Bool.true_and]
-
-/-- PCI: allows plural. (ex. 25b)
-    EP holds at w12 and anti-uniqueness holds (`antiUniq_w12`). -/
-theorem pci_plural : predictPl .pci = true := by
-  show (epHolds (hamblinSet biDomain) .w12 && exhPAntiUniq (hamblinSetRo ciDomain) .w12) = true
-  simp only [ep_gq_full_w12, antiUniq_w12.2, Bool.true_and]
-
-/-! ### With Differential Object Marker *-ro*
-
-    *-ro* restricts the selection function to singletons, eliminating
-    conjunctive and disjunctive GQs. The Hamblin set reduces to
-    individual propositions {B(e) | e ∈ dom}. -/
-
-/-- SBI + *-ro* (`chi ro`): allows singular. (ex. 26a)
-    EP holds at w1 by `ep_at_singular_world`. -/
-theorem sbi_ro_singular : predictSg .sbiRo = true := by
-  show epHolds (hamblinSetRo biDomain) .w1 = true
-  exact ep_at_singular_world.2.2.1
-
-/-- SBI + *-ro*: allows plural. (ex. 26b)
-    BI domain includes t12, so the Hamblin set is {B(t1), B(t2), B(t12)}.
-    B(t12) = B(t1) ∧ B(t2) by distributivity (`bought_distributive`),
-    so at w12 it entails both → EP holds. -/
-theorem sbi_ro_plural : predictPl .sbiRo = true := rfl
-
-/-- SCI + *-ro* (`che ketab-i ro`): allows singular. (ex. 27a)
-    EP holds at w1 by `ep_at_singular_world`. -/
-theorem sci_ro_singular : predictSg .sciRo = true := by
-  show epHolds (hamblinSetRo ciDomain) .w1 = true
-  exact ep_at_singular_world.2.2.2
-
-/-- SCI + *-ro*: blocks plural. (ex. 27b)
-    SING restricts domain to atoms {t1, t2}. *-ro* restricts to
-    singletons, giving Hamblin = {B(t1), B(t2)}.
-    At w12: both true but neither entails the other
-    (`atoms_independent`) → EP fails (`ep_indiv_atoms_w12`).
-    This recovers the English SCI pattern, only with *-ro*. -/
-theorem sci_ro_blocks_plural : predictPl .sciRo = false := by
-  show epHolds (hamblinSetRo ciDomain) .w12 = false
-  exact ep_indiv_atoms_w12
-
-/-- PCI + *-ro* (`che ketab-a-i ro`): blocks singular. (ex. 28a)
-    EP holds at w1 but anti-uniqueness fails (`antiUniq_w1`). -/
-theorem pci_ro_blocks_singular : predictSg .pciRo = false := by
-  show (epHolds (hamblinSetRo biDomain) .w1 && exhPAntiUniq (hamblinSetRo ciDomain) .w1) = false
-  simp only [ep_at_singular_world.2.2.1, antiUniq_w1.2, Bool.true_and]
-
-/-- PCI + *-ro*: allows plural. (ex. 28b)
-    EP holds at w12 (BI domain includes t12, giving strongest answer)
-    and anti-uniqueness holds (`antiUniq_w12`). -/
-theorem pci_ro_plural : predictPl .pciRo = true := by
-  show (epHolds (hamblinSetRo biDomain) .w12 && exhPAntiUniq (hamblinSetRo ciDomain) .w12) = true
-  have hEP : epHolds (hamblinSetRo biDomain) .w12 = true := rfl
-  simp only [hEP, antiUniq_w12.2, Bool.true_and]
-
-/-- All 14 predictions verified in aggregate. Each case is proved
-    individually above via structural lemmas; this theorem confirms
-    they compose correctly into the full paradigm table. -/
-theorem full_paradigm :
-    [predictSg .sbi, !predictSg .pbi, predictSg .sci, !predictSg .pci,
-     predictSg .sbiRo, predictSg .sciRo, !predictSg .pciRo,
-     predictPl .sbi, predictPl .pbi, predictPl .sci, predictPl .pci,
-     predictPl .sbiRo, !predictPl .sciRo, predictPl .pciRo].all id = true := by
-  simp only [sbi_singular, pbi_blocks_singular, sci_singular, pci_blocks_singular,
-             sbi_ro_singular, sci_ro_singular, pci_ro_blocks_singular,
-             sbi_plural, pbi_plural, sci_plural, pci_plural,
-             sbi_ro_plural, sci_ro_blocks_plural, pci_ro_plural,
-             Bool.not_false, List.all, id, Bool.and_self]
-
--- ============================================================================
--- § 8. Bridge Theorems
--- ============================================================================
-
-/-- CI domain = atom filter of all entities. Connects SING (eq. 42) to
-    `Number.singular` ([+atomic]). -/
-theorem ciDomain_is_atoms : ciDomain = allEntities.filter (fun e => decide (isAtom e)) := rfl
-
-/-- The Farsi/English SCI divergence in one theorem.
-    Both use atoms-only domain (SING). The difference: Farsi ranges over
-    GQs (`hamblinSet`), English over individuals (`hamblinSetRo`). Only
-    GQ-ranging allows plural answers at w12.
-
-    Farsi side: ⊓({t1,t2}) creates B(t1)∧B(t2), which entails both
-    B(t1) and B(t2) (`conj_entails_atoms`) → strongest answer → EP holds.
-    English side: {B(t1), B(t2)} are independent (`atoms_independent`)
-    → no strongest answer → EP fails. -/
-theorem farsi_vs_english :
-    epHolds (hamblinSet ciDomain) .w12 = true ∧
-    epHolds (hamblinSetRo ciDomain) .w12 = false :=
-  ⟨ep_gq_atoms_w12, ep_indiv_atoms_w12⟩
-
-/-- *-ro* eliminates disjunctive propositions from the Hamblin set,
-    blocking free choice interpretations (§4, eqs. 62–63).
-
-    Full Hamblin set includes ⊔({t1,t2}) = B(t1) ∨ B(t2), which
-    enables free choice readings. *-ro* restricts to singletons,
-    so only B(t1), B(t2), B(t12) remain — no disjunctions. -/
-theorem ro_eliminates_disjunction :
-    let disj := λ w => bought .t1 w || bought .t2 w
-    -- Present in full Hamblin set
-    (hamblinSet biDomain).any
-      (λ p => allWorlds.all (λ w => p w == disj w)) = true ∧
-    -- Absent from -ro Hamblin set
-    (hamblinSetRo biDomain).any
-      (λ p => allWorlds.all (λ w => p w == disj w)) = false :=
-  ⟨by decide, rfl⟩
-
-/-- The Hamblin set decomposes into conjGQ and disjGQ applications.
-    Each proposition in `hamblinSet dom` is `conjGQ X (bought · w)` or
-    `disjGQ X (bought · w)` for some non-empty X ⊆ dom. This connects
-    the study's concrete Hamblin set to the lattice-theoretic GQ
-    generators in `Quantification.Generators`. -/
-theorem hamblinSet_decomposition (dom : List Entity) (w : World) :
-    ∀ p ∈ hamblinSet dom, ∃ X ∈ nonemptySubsets dom,
-      (p w = true ↔ conjGQ X (λ e => bought e w = true)) ∨
-      (p w = true ↔ disjGQ X (λ e => bought e w = true)) := by
-  intro p hp
-  simp only [hamblinSet, List.mem_append, List.mem_map] at hp
-  rcases hp with ⟨X, hX, rfl⟩ | ⟨X, hX, rfl⟩
-  · refine ⟨X, hX, Or.inl ?_⟩
-    simp [List.all_eq_true, conjGQ_iff_forall]
-  · refine ⟨X, hX, Or.inr ?_⟩
-    simp [List.any_eq_true, disjGQ_iff_exists]
-
-/-- B(t12) is extensionally equivalent to B(t1) ∧ B(t2): the mereological
-    join's predicate equals the conjunction of its parts.
-    This follows from distributivity (`bought_distributive`) and is how
-    plural answers arise even from the BI individual Hamblin set:
-    the -ro Hamblin set over biDomain includes B(t12), which is the
-    conjunction proposition in disguise. -/
-theorem plurality_via_gq :
-    let bt12 := λ w => bought .t12 w
-    let conjt1t2 := λ w => bought .t1 w && bought .t2 w
-    allWorlds.all (λ w => bt12 w == conjt1t2 w) = true := by
-  simp only [allWorlds, List.all, bought_distributive, beq_self_eq_true, Bool.and_self]
-
--- ============================================================================
--- § 9. Empirical Data
--- ============================================================================
-
-/-- Farsi interrogative datum with acceptability judgment. -/
-structure Datum where
-  farsi : String
-  gloss : String
-  intType : IntType
-  singularOk : Bool
-  pluralOk : Bool
-  exNum : String
-  deriving Repr
-
-def data : List Datum :=
-  [ ⟨"Roya diruz chi xarid?",             "what.SG",                .sbi,   true,  true,  "20"⟩
-  , ⟨"Roya diruz chi-a xarid?",           "what.PL",                .pbi,   false, true,  "21"⟩
-  , ⟨"Roya diruz che ketab-i xarid?",     "what book.SG.INDEF",     .sci,   true,  true,  "23"⟩
-  , ⟨"Roya diruz che ketab-a-i xarid?",   "what book.PL.INDEF",     .pci,   false, true,  "25"⟩
-  , ⟨"Roya diruz chi ro xarid?",          "what.SG ACC",            .sbiRo, true,  true,  "26"⟩
-  , ⟨"Roya diruz che ketab-i ro xarid?",  "what book.SG.INDEF ACC", .sciRo, true,  false, "27"⟩
-  , ⟨"Roya diruz che ketab-a-i ro xarid?","what book.PL.INDEF ACC", .pciRo, false, true,  "28"⟩ ]
-
-/-- Every datum's acceptability judgment matches the model's prediction.
-    Each per-datum check is verified structurally in § 7; this aggregates
-    them as a single data consistency check. -/
-theorem data_consistent :
-    data.all (λ d => d.singularOk == predictSg d.intType &&
-                     d.pluralOk == predictPl d.intType) = true := by decide
+open Quantification Data.Examples Finset
+
+/-! ### Entities, worlds, and answers -/
+
+/-- The atomic things; an entity is a nonempty sum of atoms and a world records which atoms
+Roya bought. -/
+abbrev Atom := Fin 2
+
+abbrev Entity := Finset Atom
+
+abbrev World := Finset Atom
+
+/-- Distributive *bought*: every atom of the entity was bought. -/
+def bought (e : Entity) (w : World) : Prop := e ⊆ w
+
+instance (e : Entity) : DecidablePred (bought e) := fun w => inferInstanceAs (Decidable (e ⊆ w))
+
+theorem bought_union (e₁ e₂ : Entity) (w : World) :
+    bought (e₁ ∪ e₂) w ↔ bought e₁ w ∧ bought e₂ w := Finset.union_subset_iff
+
+/-- The number-neutral root (37): atoms and pluralities. -/
+def neutral : Finset Entity := univ.filter (·.Nonempty)
+
+/-- SING (42): the atoms. -/
+def atoms : Finset Entity := univ.filter (·.card = 1)
+
+/-! ### Hamblin sets over generalized quantifiers (29) -/
+
+variable {W : Type*} [Fintype W] [DecidableEq W] (P : Entity → W → Prop)
+  [∀ e, DecidablePred (P e)]
+
+/-- The proposition that the conjunction ⊓X holds of `P`. -/
+def conjProp (X : Finset Entity) : Finset W := univ.filter fun w => ∀ e ∈ X, P e w
+
+/-- The proposition that the disjunction ⊔X holds of `P`. -/
+def disjProp (X : Finset Entity) : Finset W := univ.filter fun w => ∃ e ∈ X, P e w
+
+omit [DecidableEq W] in
+theorem mem_conjProp (X : Finset Entity) (w : W) :
+    w ∈ conjProp P X ↔ conjGQ X.toList (P · w) := by
+  simp [conjProp, conjGQ_iff_forall]
+
+omit [DecidableEq W] in
+theorem mem_disjProp (X : Finset Entity) (w : W) :
+    w ∈ disjProp P X ↔ disjGQ X.toList (P · w) := by
+  simp [disjProp, disjGQ_iff_exists]
+
+/-- The Hamblin set (29): ⊓ and ⊔ over every nonempty subdomain of `D`, applied to `P`. -/
+def hamblin (D : Finset Entity) : Finset (Finset W) :=
+  (D.powerset.filter (·.Nonempty)).image (conjProp P) ∪
+    (D.powerset.filter (·.Nonempty)).image (disjProp P)
+
+/-- With *-ro* (52) the selection function returns a singleton, so the Hamblin set is the
+union of the Hamblin sets over the singleton subdomains. -/
+def hamblinRo (D : Finset Entity) : Finset (Finset W) := D.biUnion fun e => hamblin P {e}
+
+/-- Dayal's exhaustivity presupposition (8): some true member of the Hamblin set entails
+every true member. -/
+def Resolvable (H : Finset (Finset W)) (w : W) : Prop :=
+  ∃ p ∈ H, w ∈ p ∧ ∀ q ∈ H, w ∈ q → p ⊆ q
+
+instance (H : Finset (Finset W)) (w : W) : Decidable (Resolvable H w) :=
+  inferInstanceAs (Decidable (∃ p ∈ H, _ ∧ ∀ q ∈ H, _ → _))
+
+/-- The worlds where the question's presupposition holds. -/
+def dom (H : Finset (Finset W)) : Finset W := univ.filter (Resolvable H)
+
+/-- EXHp (15): `φ` is defined and every alternative `ψ` with a stronger presupposition is
+undefined. -/
+def ExhP (φ ψ : Finset (Finset W)) (w : W) : Prop :=
+  Resolvable φ w ∧ (dom ψ ⊂ dom φ → ¬ Resolvable ψ w)
+
+instance (φ ψ : Finset (Finset W)) (w : W) : Decidable (ExhP φ ψ w) :=
+  inferInstanceAs (Decidable (_ ∧ (_ → _)))
+
+/-! ### The predictions -/
+
+/-- The worlds a singular and a plural answer describe. -/
+abbrev one : World := {0}
+abbrev two : World := {0, 1}
+
+/-- (53)/(55): over a singleton subdomain ⊓ and ⊔ collapse, so the *-ro* Hamblin sets contain
+the individual answers only — with the plurality for the neutral domain. -/
+theorem hamblinRo_neutral :
+    hamblinRo bought neutral = (neutral.image fun e => univ.filter (bought e)) ∧
+      hamblinRo bought atoms = atoms.image fun e => univ.filter (bought e) := by decide
+
+/-- §2: English bare interrogatives (9)–(11) allow both answers, singular complex ones
+(12)–(13) only a singular answer, and plural complex ones (14)–(15), whose singular
+alternative has the stronger presupposition, only a plural one. -/
+theorem dayal_english :
+    (Resolvable (hamblinRo bought neutral) one ∧ Resolvable (hamblinRo bought neutral) two) ∧
+      (Resolvable (hamblinRo bought atoms) one ∧ ¬ Resolvable (hamblinRo bought atoms) two) ∧
+      dom (hamblinRo bought atoms) ⊂ dom (hamblinRo bought neutral) ∧
+      (¬ ExhP (hamblinRo bought neutral) (hamblinRo bought atoms) one ∧
+        ExhP (hamblinRo bought neutral) (hamblinRo bought atoms) two) := by decide
+
+/-- (19): over atoms alone a Spanish singular bare interrogative wrongly presupposes
+uniqueness; ranging over their conjunctions and disjunctions admits the plural answer. -/
+theorem spanish_gq :
+    ¬ Resolvable (hamblinRo bought atoms) two ∧ Resolvable (hamblin bought atoms) two := by
+  decide
+
+/-- (40), (45): singular bare and complex interrogatives allow both answers; (53): so does
+the *-ro* bare interrogative, through the plurality; (55): the *-ro* complex interrogative
+allows only the singular answer. -/
+theorem farsi :
+    (Resolvable (hamblin bought neutral) one ∧ Resolvable (hamblin bought neutral) two) ∧
+      (Resolvable (hamblin bought atoms) one ∧ Resolvable (hamblin bought atoms) two) ∧
+      (Resolvable (hamblinRo bought neutral) one ∧ Resolvable (hamblinRo bought neutral) two) ∧
+      (Resolvable (hamblinRo bought atoms) one ∧ ¬ Resolvable (hamblinRo bought atoms) two) := by
+  decide
+
+/-! ### Questions with *must* (30)–(36) and collective predicates (56)–(57) -/
+
+/-- A deontic world: the nonempty set of permitted buy-worlds. -/
+abbrev Base := {A : Finset World // A.Nonempty}
+
+instance : Fintype Base := Subtype.fintype fun A : Finset World => A.Nonempty
+
+/-- *Must* over a proposition about buy-worlds: it holds in every permitted world. -/
+def box (p : Finset World) : Finset Base := univ.filter fun A => ∀ v ∈ A.1, v ∈ p
+
+theorem mem_box {p : Finset World} {A : Base} : A ∈ box p ↔ A.1 ⊆ p := by
+  simp [box, Finset.subset_iff]
+
+theorem box_subset_iff {p q : Finset World} : box p ⊆ box q ↔ p ⊆ q := by
+  refine ⟨fun h v hv => ?_, fun h A hA => mem_box.2 ((mem_box.1 hA).trans h)⟩
+  have := h (mem_box.2 (Finset.singleton_subset_iff.2 hv) :
+    (⟨{v}, Finset.singleton_nonempty v⟩ : Base) ∈ box p)
+  exact Finset.singleton_subset_iff.1 (mem_box.1 this)
+
+/-- Resolvability of the modalized question at the permitted worlds `A`, stated on the
+buy-world Hamblin set. -/
+def ResolvableAt (H : Finset (Finset World)) (A : Finset World) : Prop :=
+  ∃ p ∈ H, A ⊆ p ∧ ∀ q ∈ H, A ⊆ q → p ⊆ q
+
+instance (H : Finset (Finset World)) (A : Finset World) : Decidable (ResolvableAt H A) :=
+  inferInstanceAs (Decidable (∃ p ∈ H, _ ∧ ∀ q ∈ H, _ → _))
+
+/-- The question with *must* is resolvable at a deontic world iff its buy-world Hamblin set
+is resolvable at the permitted worlds. -/
+theorem resolvable_image_box (H : Finset (Finset World)) (A : Base) :
+    Resolvable (H.image box) A ↔ ResolvableAt H A.1 := by
+  constructor
+  · rintro ⟨_, hP, hA, hmax⟩
+    obtain ⟨p, hp, rfl⟩ := Finset.mem_image.1 hP
+    refine ⟨p, hp, mem_box.1 hA, fun q hq hAq => ?_⟩
+    exact box_subset_iff.1 (hmax _ (Finset.mem_image_of_mem _ hq) (mem_box.2 hAq))
+  · rintro ⟨p, hp, hA, hmax⟩
+    refine ⟨box p, Finset.mem_image_of_mem _ hp, mem_box.2 hA, fun Q hQ hAQ => ?_⟩
+    obtain ⟨q, hq, rfl⟩ := Finset.mem_image.1 hQ
+    exact box_subset_iff.2 (hmax q hq (mem_box.1 hAQ))
+
+/-- (59): Forood must buy one of two things, and either is permitted. -/
+def freeChoice : Base := ⟨{{0}, {1}}, by decide⟩
+
+/-- (35)–(36) vs. (32)–(33): with the interrogative binding into the scope of *must* (34),
+only □(b₁ ∨ b₂) is true in the free-choice scenario, so the presupposition holds iff the
+interrogative ranges over disjunctions — which *-ro* removes, (62)–(63). -/
+theorem modal_gq :
+    (Resolvable ((hamblin bought neutral).image box) freeChoice ∧
+        Resolvable ((hamblin bought atoms).image box) freeChoice) ∧
+      (¬ Resolvable ((hamblinRo bought neutral).image box) freeChoice ∧
+        ¬ Resolvable ((hamblinRo bought atoms).image box) freeChoice) := by
+  simp only [resolvable_image_box]; decide
+
+/-- *Mixed together*: a collective predicate, true of a plurality that was bought. -/
+def mixed (e : Entity) (w : World) : Prop := 2 ≤ e.card ∧ e ⊆ w
+
+instance (e : Entity) : DecidablePred (mixed e) :=
+  fun w => inferInstanceAs (Decidable (2 ≤ e.card ∧ e ⊆ w))
+
+/-- (56)–(57): a collective predicate has a true answer over the neutral domain, with or
+without *-ro*, and none over the atoms. -/
+theorem collective :
+    (Resolvable (hamblin mixed neutral) two ∧ Resolvable (hamblinRo mixed neutral) two) ∧
+      (¬ Resolvable (hamblin mixed atoms) two ∧ ¬ Resolvable (hamblinRo mixed atoms) two) := by
+  decide
+
+/-! ### The paper's answer judgments -/
+
+/-- The Hamblin set a row's `type`, `ro`, and `language` features name, for the
+interrogatives the paper derives. -/
+def hamblinOf (row : LinguisticExample) : Option (Finset (Finset World)) :=
+  match row.feature? "language", row.feature? "type", row.feature? "ro" with
+  | some "English", some "BI", _ => some (hamblinRo bought neutral)
+  | some "English", some "SCI", _ => some (hamblinRo bought atoms)
+  | some "Spanish", some "SBI", _ => some (hamblin bought atoms)
+  | none, some "SBI", some "no" => some (hamblin bought neutral)
+  | none, some "SCI", some "no" => some (hamblin bought atoms)
+  | none, some "SBI", some "yes" => some (hamblinRo bought neutral)
+  | none, some "SCI", some "yes" => some (hamblinRo bought atoms)
+  | _, _, _ => none
+
+/-- Whether a singular and a plural answer are predicted: the English plural complex
+interrogative goes through EXHp against its singular alternative, the others through ANS. -/
+def predicted (row : LinguisticExample) : Option (Bool × Bool) :=
+  match row.feature? "language", row.feature? "type" with
+  | some "English", some "PCI" =>
+    some (decide (ExhP (hamblinRo bought neutral) (hamblinRo bought atoms) one),
+      decide (ExhP (hamblinRo bought neutral) (hamblinRo bought atoms) two))
+  | _, _ => (hamblinOf row).map fun H => (decide (Resolvable H one), decide (Resolvable H two))
+
+/-- A row's answer judgments, read off its `singular answer`/`plural answer` readings. -/
+def observed (row : LinguisticExample) : Bool × Bool :=
+  (row.readings.any fun r => "singular".toList <+: r.1.toList ∧ r.2 = .acceptable,
+    row.readings.any fun r => "plural".toList <+: r.1.toList ∧ r.2 = .acceptable)
+
+/-- Every derived interrogative's answers are those the paper reports. -/
+theorem rows_agree :
+    ∀ row ∈ Examples.all, ∀ b, predicted row = some b →
+      (row.readings.any fun r => "singular".toList <+: r.1.toList) = true → observed row = b := by
+  decide +kernel
+
+example : (Examples.all.filter fun row => (predicted row).isSome).length = 16 := by decide +kernel
+
+/-- (60)–(63): the embedded questions are felicitous in (59) iff their interrogative ranges
+over disjunctions (`resolvable_image_box` relates this to the modalized question). -/
+theorem scenario_rows :
+    ∀ row ∈ Examples.all, row.feature? "scenario" = some "freeChoice59" →
+      (hamblinOf row).map (fun H => decide (ResolvableAt H freeChoice.1)) =
+        some (row.feature? "verdict" == some "true") := by decide +kernel
 
 end AlonsoOvalleMoghiseh2025b
