@@ -806,7 +806,8 @@
       ["suffixKind", "case"],
       ["prwd", "none"],
       ["weight", "none"],
-      ["n", "am"]
+      ["n", "am"],
+      ["form", "short"]
     ],
     "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -835,7 +836,8 @@
       ["suffixKind", "case"],
       ["prwd", "internal"],
       ["weight", "light"],
-      ["n", "āni"]
+      ["n", "āni"],
+      ["form", "long"]
     ],
     "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -864,7 +866,8 @@
       ["suffixKind", "case"],
       ["prwd", "none"],
       ["weight", "none"],
-      ["n", "am"]
+      ["n", "am"],
+      ["form", "short"]
     ],
     "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -893,7 +896,8 @@
       ["suffixKind", "case"],
       ["prwd", "internal"],
       ["weight", "light"],
-      ["n", "āni"]
+      ["n", "āni"],
+      ["form", "long"]
     ],
     "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -922,7 +926,8 @@
       ["suffixKind", "postposition"],
       ["prwd", "external"],
       ["weight", "heavy"],
-      ["n", "am"]
+      ["n", "am"],
+      ["form", "short"]
     ],
     "comment": "Weak paradigm of samudram 'ocean' (Krishnamurti & Gwynn 1985).",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -951,7 +956,8 @@
       ["suffixKind", "agreement"],
       ["prwd", "internal"],
       ["weight", "light"],
-      ["n", "āni"]
+      ["n", "āni"],
+      ["form", "long"]
     ],
     "comment": "Predicate nominal with nominal agreement suffix (author's data).",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -980,7 +986,8 @@
       ["suffixKind", "agreement"],
       ["prwd", "internal"],
       ["weight", "light"],
-      ["n", "āni"]
+      ["n", "āni"],
+      ["form", "long"]
     ],
     "comment": "Predicate nominal with nominal agreement suffix (author's data).",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1009,7 +1016,8 @@
       ["suffixKind", "agreement"],
       ["prwd", "none"],
       ["weight", "none"],
-      ["n", "am"]
+      ["n", "am"],
+      ["form", "short"]
     ],
     "comment": "Predicate nominal with nominal agreement suffix (author's data).",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1038,7 +1046,8 @@
       ["suffixKind", "agreement"],
       ["prwd", "internal"],
       ["weight", "light"],
-      ["n", "āni"]
+      ["n", "āni"],
+      ["form", "long"]
     ],
     "comment": "Adnominal pronoun construction: nominative subject with the long form.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1067,7 +1076,8 @@
       ["suffixKind", "quantifier"],
       ["prwd", "internal"],
       ["weight", "heavy"],
-      ["n", "am"]
+      ["n", "am"],
+      ["form", "short"]
     ],
     "comment": "Postposed quantifier antaṭi 'whole' intervenes between n and ACC.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1096,7 +1106,8 @@
       ["suffixKind", "postposition"],
       ["prwd", "external"],
       ["weight", "light"],
-      ["n", "am"]
+      ["n", "am"],
+      ["form", "short"]
     ],
     "comment": "Postposition with a light initial syllable, outside the prosodic word.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1125,7 +1136,8 @@
       ["suffixKind", "postposition"],
       ["prwd", "external"],
       ["weight", "light"],
-      ["n", "am"]
+      ["n", "am"],
+      ["form", "short"]
     ],
     "comment": "Postposition with a light initial syllable, outside the prosodic word.",
     "lgrConformance": "MORPHEME_ALIGNED"
@@ -1302,6 +1314,412 @@
       ["n", "ā"]
     ],
     "comment": "Plural weak paradigm: n surfaces as -ā throughout.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_bet_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
+    "language": "telu1262",
+    "primaryText": "pand-em-ø",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["pand-em-ø", "bet-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "pandem"],
+      ["root", "bet"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "em"],
+      ["form", "short"]
+    ],
+    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_bet_acc",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
+    "language": "telu1262",
+    "primaryText": "pand-ǣni-ni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["pand-ǣni-ni", "bet-n-ACC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "pandem"],
+      ["root", "bet"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "acc"],
+      ["suffix", "ni"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ǣni"],
+      ["form", "long"]
+    ],
+    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_bet_gen",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
+    "language": "telu1262",
+    "primaryText": "pand-em-ø",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["pand-em-ø", "bet-n-GEN"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "pandem"],
+      ["root", "bet"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "gen"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "em"],
+      ["form", "short"]
+    ],
+    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_bet_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
+    "language": "telu1262",
+    "primaryText": "pand-ǣni-ki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["pand-ǣni-ki", "bet-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "pandem"],
+      ["root", "bet"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "ǣni"],
+      ["form", "long"]
+    ],
+    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_bet_p",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(6)"},
+    "language": "telu1262",
+    "primaryText": "pand-em-lō",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["pand-em-lō", "bet-n-in"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "pandem"],
+      ["root", "bet"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "p"],
+      ["suffix", "lō"],
+      ["suffixKind", "postposition"],
+      ["prwd", "external"],
+      ["weight", "heavy"],
+      ["n", "em"],
+      ["form", "short"]
+    ],
+    "comment": "The -em subclass (Krishnamurti & Gwynn 1985): root-final /y/ fronts the /a/ of -am at the Stem level.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_wife_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
+    "language": "telu1262",
+    "primaryText": "peḷḷ-ām-ø",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["peḷḷ-ām-ø", "wife-n-NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "peḷḷām"],
+      ["root", "wife"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "nom"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "ām"],
+      ["form", "short"]
+    ],
+    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_wife_acc",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
+    "language": "telu1262",
+    "primaryText": "peḷḷ-āni-ni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["peḷḷ-āni-ni", "wife-n-ACC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "peḷḷām"],
+      ["root", "wife"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "acc"],
+      ["suffix", "ni"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "āni"],
+      ["form", "long"]
+    ],
+    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_wife_gen",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
+    "language": "telu1262",
+    "primaryText": "peḷḷ-ām-ø",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["peḷḷ-ām-ø", "wife-n-GEN"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "peḷḷām"],
+      ["root", "wife"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "gen"],
+      ["suffix", "ø"],
+      ["suffixKind", "case"],
+      ["prwd", "none"],
+      ["weight", "none"],
+      ["n", "ām"],
+      ["form", "short"]
+    ],
+    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_wife_dat",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
+    "language": "telu1262",
+    "primaryText": "peḷḷ-āni-ki",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["peḷḷ-āni-ki", "wife-n-DAT"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "peḷḷām"],
+      ["root", "wife"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "dat"],
+      ["suffix", "ki"],
+      ["suffixKind", "case"],
+      ["prwd", "internal"],
+      ["weight", "light"],
+      ["n", "āni"],
+      ["form", "long"]
+    ],
+    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_wife_p",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(7)"},
+    "language": "telu1262",
+    "primaryText": "peḷḷ-ām-lō",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["peḷḷ-ām-lō", "wife-n-in"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "peḷḷām"],
+      ["root", "wife"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "p"],
+      ["suffix", "lō"],
+      ["suffixKind", "postposition"],
+      ["prwd", "external"],
+      ["weight", "heavy"],
+      ["n", "ām"],
+      ["form", "short"]
+    ],
+    "comment": "The -ām subclass (Krishnamurti & Gwynn 1985): the root's long /ā/ absorbs the /a/ of -am at the Stem level.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_those_all_acc",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(33)"},
+    "language": "telu1262",
+    "primaryText": "nēnu vāṭ-anniṭi-ni cūs-ā-nu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nēnu vāṭ-anniṭi-ni cūs-ā-nu", "1SG.NOM 3PL.NONHUM.OBL-all-ACC see-PST-1SG"]
+    ],
+    "translation": "I saw them all.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "avi"],
+      ["class", "strong"],
+      ["number", "pl"],
+      ["case", "acc"],
+      ["stem", "obl"],
+      ["intervener", "quantifier"]
+    ],
+    "comment": "Elicited: the strong oblique is triggered across the intervening quantifier.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_ocean_whole_acc_sentence",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(34)"},
+    "language": "telu1262",
+    "primaryText": "nēnu samudram-antaṭi-ni cūs-ā-nu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nēnu samudram-antaṭi-ni cūs-ā-nu", "1SG.NOM ocean.NOM-whole-ACC see-PST-1SG"]
+    ],
+    "translation": "I saw all of the ocean.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "samudram"],
+      ["root", "ocean"],
+      ["class", "weak"],
+      ["number", "sg"],
+      ["case", "acc"],
+      ["suffix", "antaṭi"],
+      ["suffixKind", "quantifier"],
+      ["prwd", "internal"],
+      ["weight", "heavy"],
+      ["n", "am"],
+      ["form", "short"],
+      ["intervener", "quantifier"]
+    ],
+    "comment": "Elicited: the weak long form is not triggered across the quantifier; the heavy initial syllable of antaṭi conditions the short form.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_those_all_nom",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(35)"},
+    "language": "telu1262",
+    "primaryText": "av-anni bāgun-nā-yi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["av-anni bāgun-nā-yi", "3PL.NONHUM-all.NOM be.good-PST-3PL.NONHUM"]
+    ],
+    "translation": "All of those are good.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "avi"],
+      ["class", "strong"],
+      ["number", "pl"],
+      ["case", "nom"],
+      ["stem", "nom"],
+      ["intervener", "quantifier"]
+    ],
+    "comment": "Elicited.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "aitha2026_those_all_nom_obl",
+    "source": {"bibkey": "aitha-2026", "paperLabel": "(36)"},
+    "language": "telu1262",
+    "primaryText": "vāṭ-anni bāgun-nā-yi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["vāṭ-anni bāgun-nā-yi", "3PL.NONHUM.OBL-all.NOM be.good-PST-3PL.NONHUM"]
+    ],
+    "translation": "All of those are good.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "avi"],
+      ["class", "strong"],
+      ["number", "pl"],
+      ["case", "nom"],
+      ["stem", "obl"],
+      ["intervener", "quantifier"]
+    ],
+    "comment": "Elicited: the oblique is not licensed when the overall case is nominative.",
     "lgrConformance": "MORPHEME_ALIGNED"
   }
 ]
