@@ -22,7 +22,7 @@ The IL substrate operationalizes this in two parallel pieces:
 - **`SitAssignment W := Nat → W`** in `Intensional.Variables`
   is the situation-pronoun assignment, parallel to the entity
   assignment.
-- **`Description.unique R sIdx`** in `Semantics.Definiteness.Description`
+- **`Description.unique R sIdx`** in `Definiteness.Description`
   carries a `situationIdx : Nat` recording *which* situation pronoun
   the description is bound to.
 
@@ -51,8 +51,8 @@ namespace Hanink2021
 
 open Intensional
 open Intensional.Variables
-open Semantics.Definiteness
-open Semantics.Definiteness (DescriptionKind)
+open Definiteness
+open Definiteness
 
 -- ════════════════════════════════════════════════════════════════
 -- §1: A two-room frame for the resource-situation diagnostic
@@ -157,7 +157,7 @@ theorem same_description_different_referents :
 /-- The index argument to `.unique` does not select among situations at
     the interpretation layer — the restrictor `R` already takes the full
     situation assignment, and the index records *which* pronoun is
-    bound. (`Semantics.Definiteness.interpret_unique_index_irrelevant` makes this
+    bound. (`Definiteness.interpret_unique_index_irrelevant` makes this
     explicit.) The Hanink claim is recovered via the restrictor calling
     `interpSitPronoun sIdx`, not via the interpreter inspecting `sIdx`. -/
 theorem unique_index_does_not_alter_referent_directly :

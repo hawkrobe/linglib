@@ -15,7 +15,7 @@ as `NominalDenot`s — the determiner half of the API whose pronoun half is
 | | pronoun | determiner |
 |---|---|---|
 | lexical record | `PersonalPronoun` | `Article`, `DemonstrativeDeterminer` |
-| selector | `interpPronoun` (`g ↦ g i`) | `Semantics.Definiteness.interpret` |
+| selector | `interpPronoun` (`g ↦ g i`) | `Definiteness.interpret` |
 | intrinsic presupposition | φ-features (`phiPresup`) | deixis (`deixisPresup`) |
 
 The selector is the canonical `Description` interpretation — determiner-as-object
@@ -57,7 +57,7 @@ world coordinate is trivial (`PUnit`), matching the static case of
 individual denotation — it has no `NominalDenot`) remains deferred.
 -/
 
-namespace Semantics.Definiteness
+namespace Definiteness
 
 open Semantics.Reference (NominalDenot)
 open Intensional.Variables
@@ -272,4 +272,4 @@ theorem Possessive.toDefinite_existsUnique
 
 end DescriptionUnification
 
-end Semantics.Definiteness
+end Definiteness

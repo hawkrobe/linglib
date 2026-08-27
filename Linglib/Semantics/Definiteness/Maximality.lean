@@ -50,7 +50,7 @@ predicate's domain.
   presupposition failure at the propositional level.
 -/
 
-namespace Semantics.Definiteness
+namespace Definiteness
 
 /-! ### Coppock–Beaver factorization -/
 
@@ -240,4 +240,4 @@ theorem uniqueness_implies_homogeneous_classical
       rw [hxe] at hSx; exact hS hSx
   · left; intro x hx; exact (h ⟨x, hx⟩).elim
 
-end Semantics.Definiteness
+end Definiteness

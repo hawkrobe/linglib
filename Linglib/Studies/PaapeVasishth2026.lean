@@ -589,11 +589,11 @@ The argument chain:
 
 section UniquenessBridge
 
-open Semantics.Definiteness (modifierNecessary)
+open Definiteness
 open Semantics.Presupposition (PartialProp)
 open Semantics.Presupposition.PartialProp (presupOfReferent presupOfReferent_presup
   presupOfReferent_assertion_some presupOfReferent_assertion_none)
-open Semantics.Definiteness (russellIotaList)
+open Definiteness
 
 /-- Toy discourse entity for the uniqueness worked example. -/
 inductive DiscEntity where

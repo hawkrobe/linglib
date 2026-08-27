@@ -57,11 +57,11 @@ unified `Denot E W` machinery rather than ad-hoc `E → Bool` predicates.
 
 - **No semantic interpretation here.** This file only declares the type and
   its Frame-free `kind` projection (classification predicates live on
-  `Semantics.Definiteness.DescriptionKind`). The interpretation function lives
+  `Definiteness.DescriptionKind`). The interpretation function lives
   in `Semantics/Definiteness/Interpret.lean`.
 -/
 
-namespace Semantics.Definiteness
+namespace Definiteness
 
 open Intensional
 open Intensional.Variables
@@ -119,7 +119,7 @@ namespace Description
 variable {E W : Type}
 
 /-- The Frame-free kind of a description: its constructor with payload erased
-    (`Semantics.Definiteness.DescriptionKind`). Inventory questions
+    (`Definiteness.DescriptionKind`). Inventory questions
     (`Determiner.Inventory.Realizes`, marking typology) depend only on this. -/
 def kind : Description E W → DescriptionKind
   | .bare _           => .bare
@@ -155,4 +155,4 @@ theorem kind_ofPresupType
 
 end Description
 
-end Semantics.Definiteness
+end Definiteness

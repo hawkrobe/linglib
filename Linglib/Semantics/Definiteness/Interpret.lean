@@ -30,7 +30,7 @@ and discourse index (the deictic feature is for presupposition checking,
 not referent selection).
 -/
 
-namespace Semantics.Definiteness
+namespace Definiteness
 
 open Intensional
 open Intensional.Variables
@@ -225,4 +225,4 @@ theorem interpret_anaphoric_eq_unique_of_existsUnique
   rw [interpret_unique_eq_some_of_existsUnique R sIdx g gs (g i) hSat hUniq,
       interpret_anaphoric, if_pos hSat]
 
-end Semantics.Definiteness
+end Definiteness

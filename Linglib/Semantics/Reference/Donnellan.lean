@@ -49,7 +49,7 @@ open Intensional.Intension (rigid IsRigid rigid_isRigid)
 open Semantics.Presupposition (PartialProp)
 open Semantics.Presupposition.PartialProp (presupOfReferent)
 open Semantics.Reference.Basic
-open Semantics.Definiteness (russellIotaList)
+open Definiteness
 
 /-! ## Use Modes -/
 

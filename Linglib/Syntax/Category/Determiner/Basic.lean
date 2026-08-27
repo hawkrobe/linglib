@@ -49,9 +49,7 @@ denotation (`Semantics/Quantification`) is supplied externally by its consumers.
 This file stays the Frame-free lexical/typological layer.
 -/
 
-open Semantics.Definiteness
-  (DefPresupType DefiniteUseType DefMarkingStrategy Definiteness ArticleType
-   DescriptionKind useTypeToPresupType strategyToArticleType)
+open Definiteness
 
 namespace Determiner
 

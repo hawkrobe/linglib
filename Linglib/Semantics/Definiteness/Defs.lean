@@ -18,7 +18,7 @@ denotational layer lives in `Semantics/Definiteness/Basic.lean` and
 `Semantics/Definiteness/Description.lean`.
 -/
 
-namespace Semantics.Definiteness
+namespace Definiteness
 
 /-! ### The core binary distinction -/
 
@@ -39,7 +39,7 @@ def demonstrativePresupType : DefPresupType := .familiarity
 /-! ### Description kinds -/
 
 /-- The kinds of nominal description an inventory can realize — the Frame-free
-skeleton of `Semantics.Definiteness.Description` (one case per constructor,
+skeleton of `Definiteness.Description` (one case per constructor,
 payload erased). Inventory questions (realization, marking typology) depend
 only on this kind, so they are stated over it rather than over the
 entity/index-parameterized `Description`. -/
@@ -55,7 +55,7 @@ inductive DescriptionKind where
 /-- The description kind realizing a [schwarz-2009] article strength: the weak
 article (uniqueness) realizes `unique`, the strong article (familiarity)
 realizes `anaphoric`. The Frame-free counterpart of
-`Semantics.Definiteness.Description.ofPresupType`. -/
+`Definiteness.Description.ofPresupType`. -/
 def DefPresupType.toKind : DefPresupType → DescriptionKind
   | .uniqueness  => .unique
   | .familiarity => .anaphoric
@@ -221,6 +221,8 @@ inductive WeakArticleStrategy where
 
 /-! ### The indefinite–definite contrast -/
 
+end Definiteness
+
 /-- The fundamental semantic contrast between indefinite and definite:
 
 - **Indefinite** (some/a): existential quantification, no presupposition
@@ -234,6 +236,8 @@ inductive Definiteness where
   | indefinite  -- ∃: introduces new dref, no presupposition
   | definite    -- ι/familiar: retrieves existing dref, presupposes availability
   deriving DecidableEq, Repr
+
+namespace Definiteness
 
 /-- Definiteness is a binary contrast. -/
 theorem definite_indefinite_exhaustive :
@@ -295,4 +299,4 @@ theorem strategy_finer_than_articleType :
     DefMarkingStrategy.generallyMarked ≠ .markedAnaphoric :=
   ⟨rfl, by decide⟩
 
-end Semantics.Definiteness
+end Definiteness

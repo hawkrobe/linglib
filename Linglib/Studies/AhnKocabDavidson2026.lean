@@ -34,7 +34,7 @@ hypothesis over the consultant data and the experimental stimuli.
 namespace AhnKocabDavidson2026
 
 open Pragmatics.Expressives (TwoDimProp)
-open Semantics.Definiteness
+open Definiteness
 
 variable {E L W : Type*}
 

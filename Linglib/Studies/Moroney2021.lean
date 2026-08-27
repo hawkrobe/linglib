@@ -41,7 +41,7 @@ and refers to it if it is close (`demDenotation`, her (147)–(148)).
 
 namespace Moroney2021
 
-open Semantics.Definiteness (russellIotaList)
+open Definiteness
 open Semantics.Kinds
 open Features.Deixis (Feature)
 open Mereology (CUM)
