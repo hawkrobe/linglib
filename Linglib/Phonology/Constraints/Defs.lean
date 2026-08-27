@@ -62,6 +62,18 @@ theorem Constraint.binary_eq_one_iff (P : C → Prop) [DecidablePred P] (c : C) 
     Constraint.binary P c = 1 ↔ P c := by
   simp [Constraint.binary]
 
+/-- The anti-faithfulness constraint `¬F` of a constraint `F` ([alderete-2001]): satisfied
+exactly when `F` is violated at least once, so it demands one violation and no more. -/
+def Constraint.antifaithful (F : Constraint C) : Constraint C := Constraint.binary (F · = 0)
+
+theorem Constraint.antifaithful_eq_zero_iff (F : Constraint C) (c : C) :
+    F.antifaithful c = 0 ↔ 0 < F c := by
+  simp [Constraint.antifaithful, Constraint.binary, Nat.pos_iff_ne_zero]
+
+theorem Constraint.antifaithful_eq_one_iff (F : Constraint C) (c : C) :
+    F.antifaithful c = 1 ↔ F c = 0 := by
+  simp [Constraint.antifaithful, Constraint.binary]
+
 /-- Pull a constraint back along `f : C → D`: evaluate the `D`-constraint on the
 image. Lets a specific carrier reuse a constraint defined on a more general one. -/
 def Constraint.comap (f : C → D) (con : Constraint D) : Constraint C := con ∘ f

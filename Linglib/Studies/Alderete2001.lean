@@ -1,126 +1,200 @@
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Tableau
+import Linglib.Data.Examples.Alderete2001
 
 /-!
-# Antifaithfulness — Alderete 2001
-[alderete-2001] [alderete-1999]
+# Alderete 2001: dominance effects as transderivational anti-faithfulness
 
-Antifaithfulness is the *polarity flip* of faithfulness: rather than penalising
-positions where corresponding elements *differ*, it penalises positions where
-they *agree*. The same correspondence diagram is used — the difference is purely
-in the sign of the comparator. Introduced in [alderete-1999] and developed as
-transderivational anti-faithfulness in [alderete-2001].
+For every faithfulness constraint F there is an anti-faithfulness constraint ¬F, satisfied
+exactly when F is violated at least once. Ranked above F on a base–derivative correspondence
+that only some affixes subcategorize for, ¬F forces one alternation in the shared stem and no
+more: ¬IDENT[voice] gives the Luo plural's voicing exchange, ¬MAX(Accent) the accent deletion
+of Japanese dominant affixes — accented or not — and ¬NOFLOP(Tone) the dragging-to-falling
+mutation of Limburg Dutch. Because ¬F reads the base–derivative relation, only an accent of
+the base can satisfy it (strict base mutation), and what replaces the deleted structure is
+decided by the rest of the grammar (grammar-dependence).
 
-## Empirical motivation
+This file defines the transderivational diagram `tct`, the accent constraints on it, and the
+paper's tableaux: `luo_exchange` (11), `dominant_accented` (21), `recessive` (22),
+`dominant_unaccented` (23), `dragging_mutates` (52), `falling_stays` (53).
+`strict_base_mutation` is (27) as a theorem about `Constraint.antifaithful`; the row theorems
+`dominant_rows` and `recessive_rows` read (1), (17), (18) off the data.
 
-Antifaithfulness derives **paradigmatic contrast effects**:
+## References
 
-- Lexical-class alternations where two related stems must phonologically
-  *differ* (e.g. English transitive/intransitive ablaut: `rise`/`raise`,
-  `lie`/`lay`).
-- Anti-homophony: morphologically-related forms surfacing with distinct
-  phonologies even when default markedness would predict identity.
-
-Standard faithfulness alone cannot derive these — under faithfulness the most
-harmonic outcome is *identity* between related forms. Antifaith (¬OO-Ident) flips
-the polarity, so the most harmonic outcome is *difference*. Ranked above
-OO-Ident-style preservation but below markedness, it forces a minimal contrast
-that satisfies markedness.
-
-## Relation to the paradigm-uniformity family
-
-Optimal Paradigms ([mccarthy-2005], `Studies/McCarthy2005.lean`) and TCT
-([benua-1997], `Studies/Benua1997.lean`) both posit OO-Faith constraints that
-*prefer identity*; Lexical Conservatism ([steriade-1997], `Studies/Steriade1997.lean`)
-is an attestation-anchored variant. Antifaithfulness is the opposite-polarity
-sibling: the same correspondence diagrams and edges, the opposite comparator.
-
-## Main definitions
-
-* `antifaithViol` — the ¬IDENT violation count (agreeing corresponding pairs).
-* `antifaith_plus_ident_eq_edge_card` — ¬IDENT and IDENT partition the edge.
-* `identity_antifaith_max` — the identity correspondence is maximally
-  antifaith-violating.
-
-## Modeling note
-
-`antifaithViol` here is the *gradient* count of every agreeing pair, so the most
-harmonic outcome under ¬IDENT alone is **total** dissimilation. Alderete's ¬F is,
-strictly, the logical negation of F (satisfied iff F is violated *at least
-once*), which under TETU-of-dominance yields **minimal** differentiation — a
-single change. A categorical-indicator variant (`1` iff `identViol = 0`) would
-capture that minimal-contrast reading; the gradient count is kept here because it
-composes with the `Correspondence.identViol` partition theorem below, and the two agree on
-the qualitative claim (identity is dispreferred). Refining to the categorical
-reading is left as a `TODO`.
+* [alderete-2001]
+* [alderete-1999]
+* [benua-1997]
+* [mccarthy-prince-1995]
 -/
 
 namespace Alderete2001
 
-open Constraints OptimalityTheory
+open Constraints OptimalityTheory Correspondence
 
-variable {Role : Type*} {α : Type*}
+/-! ### Transderivational correspondence -/
 
-/-! ### Antifaithfulness violation count -/
-
-/-- **¬IDENT** (antifaithfulness): the polarity-flipped sibling of
-    `Correspondence.identViol`. Counts pairs `(i, j) ∈ edge r₁ r₂` where the corresponding
-    elements *agree*. Under `¬IDENT-OO ≫ OO-Ident`, paradigmatically related
-    forms are pushed apart rather than together. -/
-def antifaithViol [DecidableEq α] (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
-  ((c.edge r₁ r₂).filter fun p =>
-    (c.form r₁)[p.1] = (c.form r₂)[p.2]).card
-
-/-! ### Polarity duality with IDENT -/
-
-/-- **Polarity duality**: IDENT and antifaith partition the edge. Every
-    correspondence pair contributes to exactly one of the two violation counts,
-    so together they sum to the edge cardinality. This is the formal content of
-    "antifaith is the polarity flip of faith": shared correspondence diagram,
-    opposite subset counted as a violation. -/
-theorem antifaith_plus_ident_eq_edge_card [DecidableEq α]
-    (c : Correspondence Role α) (r₁ r₂ : Role) :
-    antifaithViol c r₁ r₂ + Correspondence.identViol c r₁ r₂ = (c.edge r₁ r₂).card :=
-  Finset.card_filter_add_card_filter_not
-    (s := c.edge r₁ r₂)
-    (fun p => (c.form r₁)[p.1] = (c.form r₂)[p.2])
-
-/-! ### Identity correspondence is maximally antifaith-violating -/
-
-/-- The identity correspondence — input = output, all pairs identical — achieves
-    *maximum* antifaith violations: every paired position counts. -/
-theorem identity_antifaith_max [DecidableEq α] (s : List α) :
-    antifaithViol (Correspondence.identity s) .lhs .rhs = s.length := by
-  have hAdd := antifaith_plus_ident_eq_edge_card (Correspondence.identity s) .lhs .rhs
-  rw [Correspondence.identViol_identity, Nat.add_zero] at hAdd
-  rw [hAdd]
-  simp only [Correspondence.identity, Correspondence.parallel_edge_lhs_rhs]
-  exact (Correspondence.card_diagonal s.length s.length).trans (min_self s.length)
-
-/-! ### Worked example: English ablaut contrast -/
-
-/-- A minimal segmental alphabet for the `rise`/`raise` ablaut contrast. -/
-inductive Seg where
-  | r | a | e | z
+/-- The roles of a transderivational diagram: the input, its base, and the derivative. -/
+inductive Role where
+  | input
+  | base
+  | output
   deriving DecidableEq, Repr
 
-/-- `rise` ≈ [r a z]. -/
-def rise : List Seg := [.r, .a, .z]
+variable {α : Type*}
 
-/-- `raise` ≈ [r e z], differing from `rise` only at the vowel. -/
-def raise : List Seg := [.r, .e, .z]
+/-- The diagram of (8): the input and the base each correspond diagonally to the derivative. -/
+def tct (input base output : List α) : Correspondence Role α :=
+  diagram (fun | .input => input | .base => base | .output => output)
+    fun r₁ r₂ => r₁ ≠ .output ∧ r₂ = .output
 
-/-- The transitive/intransitive ablaut pair agrees at two of three positions
-    (the `r` and the `z`), so ¬IDENT-OO scores **2** violations: the contrast is
-    *not* yet maximal, which is exactly what an antifaith-driven minimal contrast
-    looks like — distinct, but only as distinct as markedness forces. -/
-example : antifaithViol (Correspondence.parallel rise raise) .lhs .rhs = 2 := by
+/-- Satisfying `¬F` for `F` the loss of `P` along some correspondence means some correspondent
+of that relation loses `P`: anti-faithfulness on a base–derivative relation can only be met by
+mutating the base ((27)). -/
+theorem strict_base_mutation (P : α → Prop) [DecidablePred P] (c : Correspondence Role α)
+    (r₁ r₂ : Role) (h : Constraint.antifaithful (maxViolFeature P c r₁ r₂ |> fun n _ => n) () = 0) :
+    ∃ p ∈ c.edge r₁ r₂, P (c.form r₁)[p.1] ∧ ¬ P (c.form r₂)[p.2] :=
+  (maxViolFeature_pos_iff P c r₁ r₂).1 ((Constraint.antifaithful_eq_zero_iff _ _).1 h)
+
+/-! ### Luo: voicing exchange ((6), (11)) -/
+
+/-- A Luo segment with its voicing where contrastive. -/
+structure Seg where
+  sym : Char
+  voice : Option Bool
+  deriving DecidableEq, Repr
+
+def b : Seg := ⟨'b', some true⟩
+def p : Seg := ⟨'p', some false⟩
+def t : Seg := ⟨'t', some false⟩
+def d : Seg := ⟨'d', some true⟩
+def a : Seg := ⟨'a', none⟩
+def e : Seg := ⟨'e', none⟩
+
+/-- OO-IDENT[voice] between a base and a candidate derivative (10a). -/
+def ooIdentVoice (base : List Seg) : Constraint (List Seg) := fun out =>
+  identViolFeature Seg.voice (parallel base out) .lhs .rhs
+
+/-- (11a): under `¬OO-IDENT[voice] ≫ OO-IDENT[voice]` the plural of *bat* is *bed-e* — the
+faithful *bet-e* violates the anti-faithfulness constraint, and the total reversal *ped-e*
+satisfies it only with a gratuitous second violation of faithfulness. -/
+theorem luo_exchange :
+    (Tableau.ofRanking [[b, e, t, e], [b, e, d, e], [p, e, d, e]]
+      [(ooIdentVoice [b, a, t]).antifaithful, ooIdentVoice [b, a, t]]).optimal =
+      {[b, e, d, e]} := by
   decide
 
-/-- The paired forms differ at exactly one position, so OO-IDENT scores **1**:
-    `rise`/`raise` are a *minimal* paradigmatic contrast. -/
-example : Correspondence.identViol (Correspondence.parallel rise raise) .lhs .rhs = 1 := by
+/-! ### Japanese: dominance effects ((17), (18), (21)–(23)) -/
+
+/-- A syllable with its accent. -/
+structure Syl where
+  form : String
+  accent : Bool
+  deriving DecidableEq, Repr
+
+/-- `s` accented, `s'` unaccented. -/
+def acc (s : String) : Syl := ⟨s, true⟩
+def un (s : String) : Syl := ⟨s, false⟩
+
+/-- MAX(Accent) (14a) from role `r₁` to the derivative. -/
+def maxAccent (input base : List Syl) (r₁ : Role) : Constraint (List Syl) := fun out =>
+  maxViolFeature (·.accent = true) (tct input base out) r₁ .output
+
+/-- DEP(Accent) (14b) from the input to the derivative. -/
+def depAccent (input base : List Syl) : Constraint (List Syl) := fun out =>
+  depViolFeature (·.accent = true) (tct input base out) .input .output
+
+/-- CULMINATIVITY (15a): the word bears an accent. -/
+def culmin : Constraint (List Syl) := Constraint.binary fun out => out.all (!·.accent)
+
+/-- (21): the dominant accented suffix *-ppó* under `¬OO-MAX ≫ OO-MAX ≫ IO-MAX` deletes the base
+accent and keeps its own: *ada-ppó-i*. -/
+theorem dominant_accented :
+    (Tableau.ofRanking
+      [[un "a", acc "da", un "ppo", un "i"], [un "a", un "da", un "ppo", un "i"],
+        [un "a", un "da", acc "ppo", un "i"]]
+      [(maxAccent [un "a", acc "da", acc "ppo", un "i"] [un "a", acc "da"] .base).antifaithful,
+        maxAccent [un "a", acc "da", acc "ppo", un "i"] [un "a", acc "da"] .base,
+        maxAccent [un "a", acc "da", acc "ppo", un "i"] [un "a", acc "da"] .input]).optimal =
+      {[un "a", un "da", acc "ppo", un "i"]} := by
+  decide
+
+/-- (22): the recessive suffix *-tára*, with `OO-MAX ≫ ¬OO-MAX`, leaves the base accent:
+*yón-dara*. -/
+theorem recessive :
+    (Tableau.ofRanking [[un "yon", acc "da", un "ra"], [acc "yon", un "da", un "ra"]]
+      [maxAccent [acc "yom", acc "ta", un "ra"] [acc "yon", un "da"] .base,
+        (maxAccent [acc "yom", acc "ta", un "ra"] [acc "yon", un "da"] .base).antifaithful])
+      |>.optimal = {[acc "yon", un "da", un "ra"]} := by
+  decide
+
+/-- (23): the dominant unaccented suffix *-kko* deletes the base accent, and with
+`IO-DEP(Accent) ≫ CULMIN` nothing replaces it: *koobe-kko*, unaccented like any accentless word. -/
+theorem dominant_unaccented :
+    (Tableau.ofRanking
+      [[acc "koo", un "be", un "kko"], [un "koo", acc "be", un "kko"],
+        [un "koo", un "be", un "kko"]]
+      [(maxAccent [acc "koo", un "be", un "kko"] [acc "koo", un "be"] .base).antifaithful,
+        depAccent [acc "koo", un "be", un "kko"] [acc "koo", un "be"], culmin]).optimal =
+      {[un "koo", un "be", un "kko"]} := by
+  decide
+
+/-! ### Limburg Dutch: dragging tone mutation ((42), (52)–(53))
+
+A tonic syllable is its two moras' H links: the dragging tone is doubly linked, the falling
+tone linked on the first mora only, and a rising tone — linked on the second only — is
+unattested. -/
+
+/-- ALIGN-L(H, σ) (44): a linked H must be linked to the first mora. -/
+def alignL : Constraint (List Bool) := Constraint.binary fun t => t.head? = some false ∧ t.any id
+
+/-- NOFLOP(Tone) between a base and a candidate: links of the base lost in the derivative. -/
+def noFlop (base : List Bool) : Constraint (List Bool) := fun out =>
+  maxViolFeature (· = true) (parallel base out) .lhs .rhs
+
+/-- NOSPREAD(Tone): links inserted in the derivative. -/
+def noSpread (base : List Bool) : Constraint (List Bool) := fun out =>
+  depViolFeature (· = true) (parallel base out) .lhs .rhs
+
+/-- (52): under `ALIGN-L ≫ ¬OO-NOFLOP ≫ OO-NOFLOP` the dragging tone of *káál* loses its second
+link — *káal-ə* — rather than its first, which would leave a rising tone. -/
+theorem dragging_mutates :
+    (Tableau.ofRanking [[true, false], [true, true], [false, true]]
+      [alignL, (noFlop [true, true]).antifaithful, noFlop [true, true]]).optimal =
+      {[true, false]} := by
+  decide
+
+/-- (53): a falling-tone base cannot mutate — losing its only link leaves the rising tone
+ALIGN-L bans, and spreading it violates NOSPREAD — so *stúur-ə* stays faithful. -/
+theorem falling_stays :
+    (Tableau.ofRanking [[true, false], [true, true], [false, true]]
+      [alignL, (noFlop [true, false]).antifaithful, noSpread [true, false]]).optimal =
+      {[true, false]} := by
+  decide
+
+/-! ### The data -/
+
+open Data.Examples Examples
+
+/-- A form's characters with the accent mark removed. -/
+def stripAccent (s : String) : List Char :=
+  s.toList.filterMap fun c =>
+    match c with
+    | 'á' => some 'a' | 'é' => some 'e' | 'í' => some 'i' | 'ó' => some 'o' | 'ú' => some 'u'
+    | '́' => none
+    | c => some c
+
+/-- (17), (18): with a dominant affix the derivative begins with the base de-accented. -/
+theorem dominant_rows :
+    ∀ row ∈ Examples.all, row.feature? "affixClass" = some "dominant" →
+      stripAccent ((row.feature? "base").getD "") <+: row.primaryText.toList := by
+  decide
+
+/-- (1): with a recessive affix the derivative begins with the base as it is. -/
+theorem recessive_rows :
+    ∀ row ∈ Examples.all, row.feature? "affixClass" = some "recessive" →
+      ((row.feature? "base").getD "").toList <+: row.primaryText.toList := by
   decide
 
 end Alderete2001
