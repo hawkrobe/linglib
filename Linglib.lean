@@ -2970,3 +2970,4 @@ import Linglib.Data.Examples.AlexeyenkoZeijlstra2025
 import Linglib.Data.Examples.Allotey2021
 import Linglib.Data.Examples.AlokBhalla2026
 import Linglib.Data.Examples.AloniVanOrmondt2023
+import Linglib.Data.Examples.AlonsoOvalle2009

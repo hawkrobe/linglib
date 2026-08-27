@@ -264,6 +264,17 @@ def distList {α : Type*} (l : List α) (P : α → Prop) [DecidablePred P] : Tr
   else if ∃ a ∈ l, P a then .indet
   else .false
 
+/-- `distList l P = .false` iff `l` is nonempty and no element satisfies `P`. -/
+theorem distList_eq_false_iff {α : Type*} (l : List α) (P : α → Prop) [DecidablePred P] :
+    distList l P = .false ↔ l ≠ [] ∧ ∀ a ∈ l, ¬ P a := by
+  unfold distList
+  split_ifs with h₁ h₂
+  · exact ⟨nofun, fun ⟨hne, hno⟩ =>
+      let ⟨a, ha⟩ := List.exists_mem_of_ne_nil l hne; hno a ha (h₁ a ha)⟩
+  · exact ⟨nofun, fun ⟨_, hno⟩ => let ⟨a, ha, hPa⟩ := h₂; hno a ha hPa⟩
+  · exact ⟨fun _ => ⟨fun hnil => h₁ (by simp [hnil]), fun a ha hPa => h₂ ⟨a, ha, hPa⟩⟩,
+      fun _ => rfl⟩
+
 /-- `dist s P = .true` iff every element of `s` satisfies `P`. -/
 theorem dist_eq_true_iff {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P] :
     dist s P = .true ↔ ∀ a ∈ s, P a := by

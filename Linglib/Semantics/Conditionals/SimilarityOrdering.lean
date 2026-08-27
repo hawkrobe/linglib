@@ -59,6 +59,13 @@ def ofBool (f : W → W → W → Bool)
   closer_trans := htrans
   decClose w₀ w₁ w₂ := inferInstanceAs (Decidable (f w₀ w₁ w₂ = true))
 
+/-- The ordering by a distance `d w₀ w` from each center `w₀`. -/
+def ofRank (d : W → W → ℕ) : SimilarityOrdering W where
+  closer w₀ w₁ w₂ := d w₀ w₁ ≤ d w₀ w₂
+  closer_refl _ _ := le_rfl
+  closer_trans _ _ _ _ := le_trans
+  decClose _ _ _ := inferInstance
+
 /-! ## Centering -/
 
 /-- A **strongly centered** similarity ordering: every world is strictly
