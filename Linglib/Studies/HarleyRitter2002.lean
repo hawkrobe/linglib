@@ -137,13 +137,13 @@ theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSom
 def rows : List Row := Examples.all.filterMap Row.ofExample
 
 /-- A language's pronouns. -/
-def Lang.rows (l : Lang) : List Row := HarleyRitter2002.rows.filter (·.language = l)
+def Lang.rows (l : Lang) : List Row := HarleyRitter2002.rows.filter (·.lang = l)
 
 /-- The geometry of a row's cell in its language. -/
-def Row.cell (r : Row) : Option (Finset Node) := Phi.Geometry.cell r.language.active r.person r.number
+def Row.cell (r : Row) : Option (Finset Node) := Phi.Geometry.cell r.lang.active r.person r.number
 
 /-- Every attested cell is licensed by its language's inventory. -/
-theorem licenses_rows : ∀ r ∈ rows, Licenses r.language.active r.person r.number := by decide
+theorem licenses_rows : ∀ r ∈ rows, Licenses r.lang.active r.person r.number := by decide
 
 /-- The inventory is read off the paradigm (§2.4, §3): Addressee is active iff
 there is a second person, Speaker iff an inclusive, Minimal iff a dual,

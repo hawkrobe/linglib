@@ -119,12 +119,12 @@ namespace LanguageVariety
 
 /-- Language varieties are preordered by family inclusion. -/
 instance : Preorder (LanguageVariety.{u}) where
-  le 𝒱 𝒲 := ∀ (α : Type u) (L : Language α), 𝒱.language L → 𝒲.language L
+  le 𝒱 𝒲 := ∀ (α : Type u) (L : Language α), 𝒱.lang L → 𝒲.lang L
   le_refl _ := fun _ _ h => h
   le_trans _ _ _ h1 h2 := fun α L h => h2 α L (h1 α L h)
 
 theorem le_def {𝒱 𝒲 : LanguageVariety.{u}} :
-    𝒱 ≤ 𝒲 ↔ ∀ (α : Type u) (L : Language α), 𝒱.language L → 𝒲.language L := Iff.rfl
+    𝒱 ≤ 𝒲 ↔ ∀ (α : Type u) (L : Language α), 𝒱.lang L → 𝒲.lang L := Iff.rfl
 
 end LanguageVariety
 
@@ -142,10 +142,10 @@ def varietyToLang (V : Pseudovariety.{u}) : LanguageVariety.{u} where
 syntactic monoids of the languages in `𝒱`. -/
 def langToVariety (𝒱 : LanguageVariety.{u}) : Pseudovariety.{u} :=
   Pseudovariety.generated (fun (M : Type u) _ => ∃ (α : Type u) (L : Language α),
-    𝒱.language L ∧ Nonempty (M ≃* L.SyntacticMonoid))
+    𝒱.lang L ∧ Nonempty (M ≃* L.SyntacticMonoid))
 
 @[simp] theorem mem_varietyToLang (V : Pseudovariety.{u}) {α : Type u} (L : Language α) :
-    (varietyToLang V).language L ↔ V.langs L := Iff.rfl
+    (varietyToLang V).lang L ↔ V.langs L := Iff.rfl
 
 /-- **The Eilenberg Galois connection.** `langToVariety` is left adjoint to `varietyToLang`:
 `langToVariety 𝒱 ≤ V ↔ 𝒱 ≤ varietyToLang V`. This is the formal half of the variety theorem; the
