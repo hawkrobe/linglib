@@ -64,7 +64,7 @@ Three empirical signatures:
 
 | Substrate | Provides |
 |-----------|----------|
-| `Semantics/Presupposition/ContentLayer` | `BiLayered W` ⟨A, N⟩ pair (the composition rules I–III are defined here) |
+| `Semantics/Presupposition/ContentLayer` | `BiLayered W` ⟨A, N⟩ pair (rules I–III defined below) |
 | `Semantics/Highlighting` | `HighlightingContext`, `Highlighted`, `AddressesQUD` |
 | `Discourse/EvidentialIllocution` | `assert`, `present`, `EvidentialAct`, `raisedPropositions` |
 | `Semantics/Evidential/Source` | `CoarseSource` (`direct`, `hearsay`, `inference`) |
