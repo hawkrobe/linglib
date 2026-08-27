@@ -1,4 +1,4 @@
-import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Uniform
 import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Mathlib.Data.List.ProdSigma
@@ -20,7 +20,7 @@ of the speaker (eq. 11) and a latent the listener marginalizes
 ([bergen-levy-goodman-2016], [potts-etal-2016]); the LI (§3.3) and GI (§3.4)
 speakers instead *choose* an (utterance, parse) pair (eqs. 18a/21a), over the
 4 matrix-free parses resp. all 8 — one softmax over pairs per world, heard
-through the `RSA.Scenario` observation map.
+through the observation map of `RSA.jointListener`.
 
 We show that GI corrects the SS interpretation vanilla gets wrong
 (`vanilla_ss_prefers_wNA` vs `gi_ss_prefers_wNS`), and that its parse
@@ -43,18 +43,18 @@ embedded enrichments (`li_ss_outer_exh`, `li_ss_prefers_wNS`,
 * `ss_m_parse_pref` vs `perParse_ss_prefers_o` — the architectural headline:
   pooled (utterance, parse) choice peaks at M (α = 5), per-parse
   normalization prefers O for every rationality. With
-  `RSA.Scenario.pool_L0` (identical weights), the pair locates GI's win
+  `RSA.familySpeaker_apply` (identical weights), the pair locates GI's win
   purely in the position of the latent parameter (p. e86).
 * `moi_ss_ne_innocent_exclusion` — the paper's matrix operator (eq. A2) is
   not Fox-style innocent exclusion ([fox-2007]).
 
 ## Implementation notes
 
-One reading family (`readings`) generates every model: vanilla is its
+One reading family (`ext`) generates every model: vanilla is its
 literal member, GI and LI pool (utterance, parse) pairs into the choice
-space (`RSA.Scenario.pool`, eqs. 18a/21a), and LU — like the rejected
+space (`RSA.uniformJointListener` over pairs, eqs. 18a/21a), and LU — like the rejected
 per-parse architecture — fixes the latent as a speaker argument
-(`RSA.Scenario.familySpeaker`, eq. 11). Sentential alternatives (A3a) range
+(`RSA.familySpeaker`, eq. 11). Sentential alternatives (A3a) range
 over a fourth quantifier `notAll` that is never an utterance — the paper's
 grammatical-vs-utterance alternatives distinction (its comparison with
 [gotzner-romoli-2018]'s alternative set favors this one by a Bayes factor of
@@ -377,19 +377,19 @@ theorem exists_true : ∀ (w : World) (p : Parse), ∃ u, exhMeaning p u w := by
 
 /-! ### The reading family and the pooled models
 
-Each parse yields a scenario (`readings`); the paper's models are combinators
-applied to this single family. Vanilla (§3.1) is the literal member. GI
-(eq. 21a) and LI (eq. 18a) pool (utterance, parse) pairs into one choice
-space — the speaker *chooses* the parse — while LU (eq. 11) fixes the lexicon
-as a speaker argument (`RSA.Scenario.familySpeaker`). By
-`RSA.Scenario.pool_L0` the weights agree, so the models differ *only* in the
-position of the latent parameter (p. e86); `ss_m_parse_pref` against
-`perParse_ss_prefers_o` below turns that difference into diverging
-predictions. Rationality is a parameter of the derived kernels, and findings
-quantify over it wherever the paper's argument does. -/
+Each parse yields an extension per utterance (`ext`); the paper's models are
+the uniform-prior pipeline applied to this single family. Vanilla (§3.1) is the
+literal member. GI (eq. 21a) and LI (eq. 18a) pool (utterance, parse) pairs
+into one choice space heard as the utterance — the speaker *chooses* the
+parse — while LU (eq. 11) fixes the lexicon as a speaker argument
+(`RSA.familySpeaker`). The weights agree (`RSA.familySpeaker_apply`), so the
+models differ *only* in the position of the latent parameter (p. e86);
+`ss_m_parse_pref` against `perParse_ss_prefers_o` below turns that
+difference into diverging predictions. Rationality is a parameter of the
+derived kernels, and findings quantify over it wherever the paper's argument
+does. -/
 
-/-- The extension of an utterance under a parse, as a `Finset` — the
-`RSA.Scenario` semantic field. -/
+/-- The extension of an utterance under a parse. -/
 def ext (p : Parse) (u : Utterance) : Finset World :=
   Finset.univ.filter (exhMeaning p u)
 
@@ -397,16 +397,9 @@ def ext (p : Parse) (u : Utterance) : Finset World :=
     w ∈ ext p u ↔ exhMeaning p u w := by
   simp [ext]
 
-/-- One scenario per parse: utterances read under it. -/
-@[simps] def readings (p : Parse) : RSA.Scenario World Utterance Utterance where
-  sem := ext p
-  obs := id
-
-/-- The vanilla scenario (§3.1): the literal member of the family. -/
-abbrev vanilla : RSA.Scenario World Utterance Utterance := readings ∅
-
-/-- The GI scenario (eq. 21a): pair choice over the full reading family. -/
-def gi : RSA.Scenario World (Utterance × Parse) Utterance := .pool readings
+/-- The GI choice space (eq. 21a): (utterance, parse) pairs over the full reading
+family, heard as the utterance. -/
+def giSem (cl : Utterance × Parse) : Finset World := ext cl.2 cl.1
 
 /-- LI parse: lit, I, O, or OI — matrix-EXH parses are unavailable. -/
 inductive LIParse where
@@ -427,27 +420,33 @@ def LIParse.toParse : LIParse → Parse
 /-- LI cannot access matrix EXH: no LI parse includes M. -/
 theorem li_excludes_matrix : ∀ l : LIParse, .matrix ∉ l.toParse := by decide +kernel
 
-/-- The LI scenario (eq. 18a): pair choice over the matrix-free parses. -/
-def li : RSA.Scenario World (Utterance × LIParse) Utterance :=
-  .pool fun l => readings l.toParse
+/-- The LI choice space (eq. 18a): pairs over the matrix-free parses. -/
+def liSem (cl : Utterance × LIParse) : Finset World := ext cl.2.toParse cl.1
 
-instance : vanilla.Expressible := ⟨fun w => (exists_true w ∅).imp fun _ h => mem_ext.mpr h⟩
-instance : gi.Expressible :=
-  ⟨fun w => (exists_true w ∅).elim fun u h => ⟨(u, ∅), mem_ext.mpr h⟩⟩
-instance : li.Expressible :=
-  ⟨fun w => (exists_true w ∅).elim fun u h => ⟨(u, .lit), mem_ext.mpr h⟩⟩
+theorem vanilla_expressible : ∀ w, ∃ u, w ∈ ext ∅ u := fun w =>
+  (exists_true w ∅).imp fun _ h => mem_ext.mpr h
 
-noncomputable def prior : Measure World := uniformOn Set.univ
+theorem gi_expressible : ∀ w, ∃ c, w ∈ giSem c := fun w =>
+  (exists_true w ∅).elim fun u h => ⟨(u, ∅), mem_ext.mpr h⟩
 
-instance : IsProbabilityMeasure prior :=
-  inferInstanceAs (IsProbabilityMeasure (uniformOn _))
+theorem li_expressible : ∀ w, ∃ c, w ∈ liSem c := fun w =>
+  (exists_true w ∅).elim fun u h => ⟨(u, .lit), mem_ext.mpr h⟩
 
-theorem prior_singleton_eq (w w' : World) : prior {w} = prior {w'} := by
-  simp [prior, uniformOn_univ]
+/-- The vanilla listener (§3.1): the literal reading only. -/
+noncomputable abbrev vanillaListener (α : ℝ) : Kernel Utterance World :=
+  (RSA.uniformJointListener (ext ∅) id α).fst
 
-theorem prior_singleton_ne_zero (w : World) : prior {w} ≠ 0 := by
-  rw [prior, uniformOn_univ, Measure.count_singleton]
-  simp
+/-- The GI listener (eq. 21b), marginalized to worlds. -/
+noncomputable abbrev giListener (α : ℝ) : Kernel Utterance World :=
+  (RSA.uniformJointListener giSem Prod.fst α).fst
+
+/-- The GI parse posterior (eq. 22). -/
+noncomputable abbrev giParsePosterior (α : ℝ) : Kernel Utterance (Utterance × Parse) :=
+  (RSA.uniformJointListener giSem Prod.fst α).snd
+
+/-- The LI listener (eq. 18b), marginalized to worlds. -/
+noncomputable abbrev liListener (α : ℝ) : Kernel Utterance World :=
+  (RSA.uniformJointListener liSem Prod.fst α).fst
 
 /-! ### Lexical uncertainty: the latent as a speaker argument -/
 
@@ -469,8 +468,9 @@ def LULex.toParse : LULex → Parse
 /-- LU cannot access matrix EXH: neither lexicon includes M. -/
 theorem lu_excludes_matrix : ∀ l : LULex, .matrix ∉ l.toParse := by decide +kernel
 
-/-- The LU speaker family (eq. 11): one member of `readings` per lexicon. -/
-def luFam (l : LULex) : RSA.Scenario World Utterance Utterance := readings l.toParse
+/-- The LU speaker family (eq. 11): one uniform literal listener per lexicon. -/
+noncomputable abbrev luFam (l : LULex) : Kernel Utterance World :=
+  RSA.uniformListener (ext l.toParse)
 
 /-- LU's joint prior: the lexicon is drawn with the world. -/
 noncomputable def luPrior : Measure (World × LULex) := uniformOn Set.univ
@@ -480,7 +480,7 @@ instance : IsProbabilityMeasure luPrior :=
 
 /-- LU listener (eqs. 12–13): Bayesian inverse over the joint state. -/
 noncomputable def luListener (α : ℝ) : Kernel Utterance (World × LULex) :=
-  RSA.Scenario.familyListener luFam α luPrior
+  RSA.familyListener luFam α 1 luPrior
 
 theorem luPrior_singleton_eq (p q : World × LULex) : luPrior {p} = luPrior {q} := by
   simp [luPrior, uniformOn_univ]
@@ -510,8 +510,11 @@ theorem perParsePrior_singleton_ne_zero (s : World × Parse) :
 
 /-- Listener of the rejected architecture: the Bayesian inverse of the
 per-parse speaker over the joint (world, parse) state. -/
+noncomputable abbrev perParseFam (p : Parse) : Kernel Utterance World :=
+  RSA.uniformListener (ext p)
+
 noncomputable def perParseListener (α : ℝ) : Kernel Utterance (World × Parse) :=
-  RSA.Scenario.familyListener readings α perParsePrior
+  RSA.familyListener perParseFam α 1 perParsePrior
 
 /-! ## The findings -/
 
@@ -521,33 +524,32 @@ noncomputable def perParseListener (α : ℝ) : Kernel Utterance (World × Parse
 listener favors the world where no alien drank all of its water over the one
 where some did (inner exhaustification). -/
 theorem ss_inner_exh :
-    (gi.listener 5 prior .ss).real {wNSA} < (gi.listener 5 prior .ss).real {wNS} :=
-  gi.listener_real_lt_of_divPowSum (k := 5) (D := 12)
-    (prior_singleton_eq wNSA wNS) (prior_singleton_ne_zero wNS)
-    (by decide +kernel) (by decide +kernel) (by decide +kernel)
+    (giListener 5 .ss).real {wNSA} < (giListener 5 .ss).real {wNS} :=
+  RSA.uniformJointListener_fst_real_lt_of_divPowSum giSem Prod.fst gi_expressible (k := 5)
+    (D := 12) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 /-- Hearing "some of the aliens drank some of their water", the pooled
 listener favors a world where some alien drank nothing (outer
 exhaustification). -/
 theorem ss_outer_exh {α : ℝ} (hα : 0 < α) :
-    (gi.listener α prior .ss).real {wS} < (gi.listener α prior .ss).real {wNS} :=
-  gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wS wNS)
-    (prior_singleton_ne_zero wNS) (by decide +kernel)
+    (giListener α .ss).real {wS} < (giListener α .ss).real {wNS} :=
+  RSA.uniformJointListener_fst_real_lt_of_prodMul_strictDominates giSem Prod.fst gi_expressible hα
+    (by decide +kernel)
 
 /-- Hearing "all of the aliens drank all of their water", the pooled
 listener favors the unique world where every alien did just that. -/
 theorem aa_identifies {α : ℝ} (hα : 0 < α) :
-    (gi.listener α prior .aa).real {wSA} < (gi.listener α prior .aa).real {wA} :=
-  gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wSA wA)
-    (prior_singleton_ne_zero wA) (by decide +kernel)
+    (giListener α .aa).real {wSA} < (giListener α .aa).real {wA} :=
+  RSA.uniformJointListener_fst_real_lt_of_prodMul_strictDominates giSem Prod.fst gi_expressible hα
+    (by decide +kernel)
 
 /-- Hearing "all of the aliens drank some of their water", the pooled
 listener favors the world where every alien drank some but not all (inner
 exhaustification). -/
 theorem as_inner_exh {α : ℝ} (hα : 0 < α) :
-    (gi.listener α prior .as).real {wA} < (gi.listener α prior .as).real {wS} :=
-  gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wA wS)
-    (prior_singleton_ne_zero wS) (by decide +kernel)
+    (giListener α .as).real {wA} < (giListener α .as).real {wS} :=
+  RSA.uniformJointListener_fst_real_lt_of_prodMul_strictDominates giSem Prod.fst gi_expressible hα
+    (by decide +kernel)
 
 /-! ### The model comparison -/
 
@@ -555,62 +557,63 @@ theorem as_inner_exh {α : ℝ} (hα : 0 < α) :
 literal-semantics listener favors all-drinkers over some-but-not-all
 drinkers — opposite to the attested preference. -/
 theorem vanilla_ss_prefers_wNA {α : ℝ} (hα : 0 < α) :
-    (vanilla.listener α prior .ss).real {wNS} < (vanilla.listener α prior .ss).real {wNA} :=
-  vanilla.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNS wNA)
-    (prior_singleton_ne_zero wNA) (by decide +kernel)
+    (vanillaListener α .ss).real {wNS} < (vanillaListener α .ss).real {wNA} :=
+  RSA.uniformJointListener_fst_real_lt_of_prodMul_strictDominates (ext ∅) id vanilla_expressible
+    hα (by decide +kernel)
 
 /-- Hearing "some of the aliens drank some of their water", the pooled
 listener favors some-but-not-all drinkers over all-drinkers, as attested. -/
 theorem gi_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
-    (gi.listener α prior .ss).real {wNA} < (gi.listener α prior .ss).real {wNS} :=
-  gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNA wNS)
-    (prior_singleton_ne_zero wNS) (by decide +kernel)
+    (giListener α .ss).real {wNA} < (giListener α .ss).real {wNS} :=
+  RSA.uniformJointListener_fst_real_lt_of_prodMul_strictDominates giSem Prod.fst gi_expressible hα
+    (by decide +kernel)
 
 /-- Hearing "some of the aliens drank some of their water", the matrix-free
 pooled listener still favors a world where some alien drank nothing (outer
 exhaustification). -/
 theorem li_ss_outer_exh {α : ℝ} (hα : 0 < α) :
-    (li.listener α prior .ss).real {wS} < (li.listener α prior .ss).real {wNS} :=
-  li.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wS wNS)
-    (prior_singleton_ne_zero wNS) (by decide +kernel)
+    (liListener α .ss).real {wS} < (liListener α .ss).real {wNS} :=
+  RSA.uniformJointListener_fst_real_lt_of_prodMul_strictDominates liSem Prod.fst li_expressible hα
+    (by decide +kernel)
 
 /-- Hearing "some of the aliens drank some of their water", the matrix-free
 pooled listener favors some-but-not-all drinkers over all-drinkers. -/
 theorem li_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
-    (li.listener α prior .ss).real {wNA} < (li.listener α prior .ss).real {wNS} :=
-  li.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNA wNS)
-    (prior_singleton_ne_zero wNS) (by decide +kernel)
+    (liListener α .ss).real {wNA} < (liListener α .ss).real {wNS} :=
+  RSA.uniformJointListener_fst_real_lt_of_prodMul_strictDominates liSem Prod.fst li_expressible hα
+    (by decide +kernel)
 
 /-- Hearing "some of the aliens drank some of their water", the
 lexical-uncertainty listener favors some-but-not-all drinkers over
 all-drinkers. -/
 theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (luListener α .ss).fst.real {wNA} < (luListener α .ss).fst.real {wNS} := by
-  rw [luListener, RSA.Scenario.familyListener_fst_real_lt_iff luFam hα.le
-      luPrior_singleton_eq luPrior_singleton_ne_zero
-      (by decide +kernel : wNS ∈ (luFam .lit).sem .ss)]
-  calc (∑ l : LULex, ((luFam l).speaker α wNA).real {.ss})
-      = ((luFam .lit).speaker α wNA).real {.ss} :=
+  rw [luListener, RSA.familyListener_fst_real_lt_iff luFam luPrior_singleton_eq
+      luPrior_singleton_ne_zero (RSA.uniformSpeaker_apply_singleton_ne_zero
+        (ext LULex.lit.toParse) hα.le (by decide +kernel : wNS ∈ ext LULex.lit.toParse .ss))]
+  calc (∑ l : LULex, (RSA.speaker α 1 (luFam l) wNA).real {.ss})
+      = (RSA.uniformSpeaker (ext LULex.lit.toParse) α wNA).real {.ss} :=
         Fintype.sum_eq_single LULex.lit fun
           | .lit, hl => absurd rfl hl
-          | .oi, _ => (luFam .oi).speaker_real_singleton_eq_zero hα
-              (by decide +kernel : wNA ∉ (luFam .oi).sem .ss)
-    _ < ((luFam .oi).speaker α wNS).real {.ss} := by
-        rw [(luFam .oi).speaker_real_singleton_of_profile_replicate hα
-          (by decide +kernel : (luFam .oi).profile wNS = Multiset.replicate 3 3)
-          (by decide +kernel : wNS ∈ (luFam .oi).sem .ss)]
-        have hsum := (luFam .lit).sum_speaker_real_singleton_le_one α wNA {.ss, .sn, .sa}
+          | .oi, _ => RSA.uniformSpeaker_real_singleton_eq_zero (ext LULex.oi.toParse) hα
+              (by decide +kernel : wNA ∉ ext LULex.oi.toParse .ss)
+    _ < (RSA.uniformSpeaker (ext LULex.oi.toParse) α wNS).real {.ss} := by
+        rw [RSA.uniformSpeaker_real_singleton_of_profile_replicate (ext LULex.oi.toParse) hα
+          (by decide +kernel : RSA.profile (ext LULex.oi.toParse) wNS = Multiset.replicate 3 3)
+          (by decide +kernel : wNS ∈ ext LULex.oi.toParse .ss)]
+        have hsum := RSA.sum_uniformSpeaker_real_singleton_le_one (ext LULex.lit.toParse) α wNA
+          {.ss, .sn, .sa}
         rw [Finset.sum_insert (by decide), Finset.sum_pair (by decide)] at hsum
-        have hsn := (luFam .lit).speaker_real_singleton_lt_of_card_lt hα
-          (by decide +kernel : wNA ∈ (luFam .lit).sem .ss)
-          (by decide +kernel : wNA ∈ (luFam .lit).sem .sn) (by decide +kernel)
-        have hsa := (luFam .lit).speaker_real_singleton_lt_of_card_lt hα
-          (by decide +kernel : wNA ∈ (luFam .lit).sem .ss)
-          (by decide +kernel : wNA ∈ (luFam .lit).sem .sa) (by decide +kernel)
+        have hsn := RSA.uniformSpeaker_real_singleton_lt_of_card_lt (ext LULex.lit.toParse) hα
+          (by decide +kernel : wNA ∈ ext LULex.lit.toParse .ss)
+          (by decide +kernel : wNA ∈ ext LULex.lit.toParse .sn) (by decide +kernel)
+        have hsa := RSA.uniformSpeaker_real_singleton_lt_of_card_lt (ext LULex.lit.toParse) hα
+          (by decide +kernel : wNA ∈ ext LULex.lit.toParse .ss)
+          (by decide +kernel : wNA ∈ ext LULex.lit.toParse .sa) (by decide +kernel)
         linarith
-    _ ≤ ∑ l : LULex, ((luFam l).speaker α wNS).real {.ss} :=
+    _ ≤ ∑ l : LULex, (RSA.speaker α 1 (luFam l) wNS).real {.ss} :=
         Finset.single_le_sum
-          (fun l _ => measureReal_nonneg (μ := (luFam l).speaker α wNS))
+          (fun l _ => measureReal_nonneg (μ := RSA.speaker α 1 (luFam l) wNS))
           (Finset.mem_univ LULex.oi)
 
 /-! ### The position of the latent parameter -/
@@ -619,10 +622,10 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
 listener's parse posterior peaks at exhaustification of the whole
 sentence. -/
 theorem ss_m_parse_pref : ∀ p : Parse, p ≠ pM →
-    (gi.choicePosterior 5 prior .ss).real {(.ss, p)}
-      < (gi.choicePosterior 5 prior .ss).real {(.ss, pM)} := fun p _ =>
-  gi.choicePosterior_real_lt_of_divPowSum (k := 5) (D := 12) (by decide +kernel)
-    prior_singleton_eq prior_singleton_ne_zero rfl rfl (by revert p; decide +kernel)
+    (giParsePosterior 5 .ss).real {(.ss, p)} < (giParsePosterior 5 .ss).real {(.ss, pM)} :=
+  fun p _ =>
+  RSA.uniformJointListener_snd_real_lt_of_divPowSum giSem Prod.fst gi_expressible (k := 5)
+    (D := 12) (by decide +kernel) rfl rfl (by revert p; decide +kernel)
 
 /-- Hearing "some of the aliens drank some of their water", the per-parse
 listener favors exhaustifying the outer quantifier over exhaustifying the
@@ -630,29 +633,28 @@ whole sentence. -/
 theorem perParse_ss_prefers_o {α : ℝ} (hα : 0 < α) :
     (perParseListener α .ss).snd.real {pM} < (perParseListener α .ss).snd.real {pO} := by
   have hOprof : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),
-      (readings pO).profile w = Multiset.replicate 3 3 := by decide +kernel
-  have hOmem : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),
-      w ∈ (readings pO).sem .ss := by decide +kernel
-  rw [perParseListener, RSA.Scenario.familyListener_snd_real_lt_iff readings hα.le
+      RSA.profile (ext pO) w = Multiset.replicate 3 3 := by decide +kernel
+  have hOmem : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World), w ∈ ext pO .ss := by decide +kernel
+  rw [perParseListener, RSA.familyListener_snd_real_lt_iff perParseFam
       perParsePrior_singleton_eq perParsePrior_singleton_ne_zero
-      (mem_ext.mpr ((m_ss_singleton wNS).mpr rfl))]
-  calc (∑ w : World, ((readings pM).speaker α w).real {.ss})
-      = ((readings pM).speaker α wNS).real {.ss} :=
+      (RSA.uniformSpeaker_apply_singleton_ne_zero (ext pM) hα.le
+        (mem_ext.mpr ((m_ss_singleton wNS).mpr rfl)))]
+  calc (∑ w : World, (RSA.uniformSpeaker (ext pM) α w).real {.ss})
+      = (RSA.uniformSpeaker (ext pM) α wNS).real {.ss} :=
         Fintype.sum_eq_single wNS fun w hw =>
-          (readings pM).speaker_real_singleton_eq_zero hα fun hmem =>
+          RSA.uniformSpeaker_real_singleton_eq_zero (ext pM) hα fun hmem =>
             hw ((m_ss_singleton w).mp (mem_ext.mp hmem))
     _ < 1 :=
-        (readings pM).speaker_real_singleton_lt_one hα.le
-          (nofun : Utterance.sn ≠ Utterance.ss)
-          (by decide +kernel : wNS ∈ (readings pM).sem .sn)
+        RSA.uniformSpeaker_real_singleton_lt_one (ext pM) hα.le
+          (nofun : Utterance.sn ≠ Utterance.ss) (by decide +kernel : wNS ∈ ext pM .sn)
     _ = ∑ w ∈ ({wNS, wNA, wNSA} : Finset World),
-          ((readings pO).speaker α w).real {.ss} := by
+          (RSA.uniformSpeaker (ext pO) α w).real {.ss} := by
         rw [Finset.sum_eq_card_nsmul fun w hw =>
-            (readings pO).speaker_real_singleton_of_profile_replicate hα
+            RSA.uniformSpeaker_real_singleton_of_profile_replicate (ext pO) hα
               (hOprof w hw) (hOmem w hw),
           show ({wNS, wNA, wNSA} : Finset World).card = 3 from by decide +kernel]
         norm_num
-    _ ≤ ∑ w : World, ((readings pO).speaker α w).real {.ss} :=
+    _ ≤ ∑ w : World, (RSA.uniformSpeaker (ext pO) α w).real {.ss} :=
         Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
           fun w _ _ => measureReal_nonneg
 

@@ -111,6 +111,7 @@ import Linglib.Core.Data.List.Perm
 import Linglib.Core.Data.List.Sublist
 import Linglib.Core.Data.List.TakeDrop
 import Linglib.Core.Data.Multiset.Antidiagonal
+import Linglib.Core.Data.Multiset.Dominates
 import Linglib.Core.Data.Multiset.FilterMap
 import Linglib.Core.Data.Multiset.Powerset
 import Linglib.Core.Data.Multiset.Rel
@@ -287,7 +288,6 @@ import Linglib.Core.Probability.Decision.Duality
 import Linglib.Core.Probability.Decision.ExperimentDesign
 import Linglib.Core.Probability.DirichletMultinomial
 import Linglib.Core.Probability.ENNRealArith
-import Linglib.Core.Probability.EmissionPosterior
 import Linglib.Core.Probability.Entropy
 import Linglib.Core.Probability.Eval
 import Linglib.Core.Probability.EvalLemmas
@@ -297,6 +297,9 @@ import Linglib.Core.Probability.GibbsVariational
 import Linglib.Core.Probability.Gumbel
 import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.JointPosterior
+import Linglib.Core.Probability.Kernel.OfWeights
+import Linglib.Core.Probability.Kernel.Posterior
+import Linglib.Core.Probability.UniformOn
 import Linglib.Core.Probability.LikelihoodRatio
 import Linglib.Core.Probability.LogitChoice
 import Linglib.Core.Probability.Marginal
@@ -1407,9 +1410,10 @@ import Linglib.Pragmatics.InformationTheory.ChannelCapacity
 import Linglib.Pragmatics.NeoGricean.Basic
 import Linglib.Pragmatics.RSA.Atoms
 import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Uniform
+import Linglib.Pragmatics.RSA.Profile
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Pragmatics.RSA.CombinedUtility
-import Linglib.Pragmatics.RSA.Dominates
 import Linglib.Pragmatics.RSA.Gibbs
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.LexicalUncertainty
