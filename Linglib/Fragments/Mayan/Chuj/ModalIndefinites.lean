@@ -11,11 +11,7 @@ position and the predicate's volitionality ([alonso-ovalle-royer-2024],
 §3.4): as an external argument it contributes epistemic modality only;
 as an internal argument (object or passive subject) or adjunct of a
 volitional predicate it contributes either epistemic or random-choice
-modality. Voice morphology ([coon-2019], voice heads in
-`Studies/Coon2019.lean`) bears on this only by fixing where the DP
-sits and whether an agent's decision subevent exists — the derivation
-is formalized in `Studies/AlonsoOvalleRoyer2024.lean` (`rcAvailable`,
-`predictedMIFlavors`).
+modality. The derivation lives in `Studies/AlonsoOvalleRoyer2024.lean`.
 -/
 
 namespace Chuj.ModalIndefinites
