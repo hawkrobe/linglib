@@ -1,120 +1,102 @@
 import Linglib.Core.Probability.JointPosterior
 
 /-!
-# Emission posterior: inferring a partially observed joint action
+# Emission posterior: inferring a partially observed emission
 
-For a kernel `κ : α → PMF (β × γ)` emitting a pair of which only the first
-component is observed, `PMF.emissionPosterior κ μ b` is the Bayesian posterior
-over `α × γ` — state together with unobserved component — given observation
-`b`: the normalization of `(a, g) ↦ μ a · κ a (b, g)`.
+For a kernel `κ : α → PMF β` whose emission is observed only through a map
+`f : β → o`, `PMF.emissionPosterior f κ μ b` is the Bayesian posterior over
+`α × β` — state together with the emission itself — given the observation `b`:
+the normalization of `(a, x) ↦ μ a · κ a x` over the fibre `f x = b`. Observing
+the first component of a pair-valued emission is the case `f := Prod.fst`, and
+at `f := id` the state marginal is `PMF.posterior`.
 
 This is the dual of `JointPosterior.lean`: there the *state* is a product and
-the observation is total; here the *emission* is a product and the observation
-is partial, which no `PMF`-valued kernel into `β` can express (the slice
-`(a, g) ↦ κ a (b, g)` sums to the `γ`-marginal, not to `1`). At `γ := Unit`
-the construction collapses to `PMF.posterior`.
+the observation is total; here the emission is partially observed, which no
+`PMF`-valued kernel into `o` can express (the fibre slice sums to the
+`f`-marginal, not to `1`).
 
 ## Main definitions
 
-* `PMF.emissionPosterior` — posterior over `α × γ` from observing the first
-  component of a jointly emitted pair.
+* `PMF.emissionPosterior` — posterior over `α × β` from observing an emission
+  through `f`.
 
 ## Main results
 
-* `emissionPosterior_fst_lt_iff` / `emissionPosterior_snd_lt_iff` — marginal
-  comparisons reduce to prior-weighted emission sums.
-* `emissionPosterior_uniform_fst_lt_iff` / `_uniform_snd_lt_iff` — at a
-  uniform prior, to bare emission sums.
+* `emissionPosterior_toOuterMeasure_lt_iff` — event comparisons reduce to
+  prior-weighted emission sums over the observed fibre.
+* `emissionPosterior_uniform_toOuterMeasure_lt_iff` — at a uniform prior, to
+  bare fibre sums.
 -/
 
 namespace PMF
 
 open scoped ENNReal
 
-variable {α β γ : Type*} [Fintype β] [Fintype γ] [DecidableEq β]
+variable {α β o : Type*} (f : β → o) (κ : α → PMF β) (μ : PMF α) (b : o)
 
-/-- The total score of an emission posterior is the observation marginal of
-the `fst`-projected kernel. -/
-theorem tsum_emission_score_eq (κ : α → PMF (β × γ)) (μ : PMF α) (b : β) :
-    (∑' x : α × γ, μ x.1 * κ x.1 (b, x.2)) = marginal (fun a => (κ a).fst) μ b := by
+/-- A single witness `(a, x)` on the fibre with `μ a ≠ 0` and `κ a x ≠ 0` makes the
+observation marginal non-zero. -/
+theorem emission_marginal_ne_zero {a : α} {x : β} (hμ : μ a ≠ 0) (hκ : κ a x ≠ 0)
+    (hx : f x = b) : marginal (fun a => (κ a).map f) μ b ≠ 0 :=
+  marginal_ne_zero _ μ b hμ <| (PMF.mem_support_iff _ _).mp <|
+    (PMF.mem_support_map_iff _ _ _).mpr ⟨x, (PMF.mem_support_iff _ _).mpr hκ, hx⟩
+
+variable [DecidableEq o]
+
+/-- The total score of an emission posterior is the observation marginal of the
+`f`-pushed kernel. -/
+theorem tsum_emission_score_eq :
+    (∑' x : α × β, if f x.2 = b then μ x.1 * κ x.1 x.2 else 0)
+      = marginal (fun a => (κ a).map f) μ b := by
   rw [ENNReal.tsum_prod']
-  show (∑' a, ∑' g, μ a * κ a (b, g)) = (μ.bind fun a => (κ a).fst) b
+  show _ = (μ.bind fun a => (κ a).map f) b
   rw [PMF.bind_apply]
-  exact tsum_congr fun a => by rw [ENNReal.tsum_mul_left, tsum_fintype, ← fst_apply]
+  refine tsum_congr fun a => ?_
+  rw [PMF.map_apply, ← ENNReal.tsum_mul_left]
+  refine tsum_congr fun x => ?_
+  by_cases h : f x = b
+  · simp [h]
+  · simp [h, Ne.symm h]
 
-/-- The conditional distribution over state and unobserved emission component
-`(a, g)`, given that the kernel `κ` emitted a pair with observed first
-component `b`. -/
-noncomputable def emissionPosterior (κ : α → PMF (β × γ)) (μ : PMF α) (b : β)
-    (h : marginal (fun a => (κ a).fst) μ b ≠ 0) : PMF (α × γ) :=
-  PMF.normalize (fun x => μ x.1 * κ x.1 (b, x.2))
+/-- The conditional distribution over state and emission `(a, x)`, given that the
+emission was observed as `b` through `f`. -/
+noncomputable def emissionPosterior (h : marginal (fun a => (κ a).map f) μ b ≠ 0) :
+    PMF (α × β) :=
+  PMF.normalize (fun x => if f x.2 = b then μ x.1 * κ x.1 x.2 else 0)
     (by rw [tsum_emission_score_eq]; exact h)
     (by rw [tsum_emission_score_eq]; exact marginal_ne_top _ μ b)
 
-theorem emissionPosterior_apply (κ : α → PMF (β × γ)) (μ : PMF α) (b : β)
-    (h : marginal (fun a => (κ a).fst) μ b ≠ 0) (x : α × γ) :
-    emissionPosterior κ μ b h x
-      = μ x.1 * κ x.1 (b, x.2) * (marginal (fun a => (κ a).fst) μ b)⁻¹ := by
+theorem emissionPosterior_apply (h : marginal (fun a => (κ a).map f) μ b ≠ 0) (x : α × β) :
+    emissionPosterior f κ μ b h x
+      = (if f x.2 = b then μ x.1 * κ x.1 x.2 else 0)
+          * (marginal (fun a => (κ a).map f) μ b)⁻¹ := by
   rw [emissionPosterior, PMF.normalize_apply, tsum_emission_score_eq]
 
-/-- A single witness `(a, g)` with `μ a ≠ 0` and `κ a (b, g) ≠ 0` makes the
-observation marginal non-zero. -/
-theorem emission_marginal_ne_zero (κ : α → PMF (β × γ)) (μ : PMF α) {a : α} {b : β}
-    {g : γ} (hμ : μ a ≠ 0) (hκ : κ a (b, g) ≠ 0) :
-    marginal (fun a => (κ a).fst) μ b ≠ 0 :=
-  marginal_ne_zero _ μ b hμ (fst_apply_ne_zero (x := (b, g)) hκ)
-
-variable [Fintype α]
-
-/-- Comparing state marginals of the emission posterior reduces to comparing
-prior-weighted emission sums; the observation marginal cancels. -/
-theorem emissionPosterior_fst_lt_iff [DecidableEq α] (κ : α → PMF (β × γ))
-    (μ : PMF α) (b : β) (h : marginal (fun a => (κ a).fst) μ b ≠ 0) (a₁ a₂ : α) :
-    (emissionPosterior κ μ b h).fst a₁ < (emissionPosterior κ μ b h).fst a₂
-      ↔ (∑ g : γ, μ a₁ * κ a₁ (b, g)) < ∑ g : γ, μ a₂ * κ a₂ (b, g) := by
-  rw [fst_apply, fst_apply]
+/-- Comparing event masses of the emission posterior reduces to comparing
+prior-weighted emission sums over the observed fibre; the observation marginal
+cancels. -/
+theorem emissionPosterior_toOuterMeasure_lt_iff (h : marginal (fun a => (κ a).map f) μ b ≠ 0)
+    (E₁ E₂ : Finset (α × β)) :
+    (emissionPosterior f κ μ b h).toOuterMeasure ↑E₁
+        < (emissionPosterior f κ μ b h).toOuterMeasure ↑E₂
+      ↔ (∑ x ∈ E₁ with f x.2 = b, μ x.1 * κ x.1 x.2)
+          < ∑ x ∈ E₂ with f x.2 = b, μ x.1 * κ x.1 x.2 := by
+  rw [PMF.toOuterMeasure_apply_finset, PMF.toOuterMeasure_apply_finset]
   simp_rw [emissionPosterior_apply]
-  rw [← Finset.sum_mul, ← Finset.sum_mul]
+  rw [← Finset.sum_mul, ← Finset.sum_mul, Finset.sum_filter, Finset.sum_filter]
   exact ENNReal.mul_lt_mul_iff_left
     (ENNReal.inv_ne_zero.mpr (marginal_ne_top _ μ b))
     (ENNReal.inv_ne_top.mpr h)
 
-/-- Companion of `emissionPosterior_fst_lt_iff` for the unobserved component. -/
-theorem emissionPosterior_snd_lt_iff [DecidableEq γ] (κ : α → PMF (β × γ))
-    (μ : PMF α) (b : β) (h : marginal (fun a => (κ a).fst) μ b ≠ 0) (g₁ g₂ : γ) :
-    (emissionPosterior κ μ b h).snd g₁ < (emissionPosterior κ μ b h).snd g₂
-      ↔ (∑ a : α, μ a * κ a (b, g₁)) < ∑ a : α, μ a * κ a (b, g₂) := by
-  rw [snd_apply, snd_apply]
-  simp_rw [emissionPosterior_apply]
-  rw [← Finset.sum_mul, ← Finset.sum_mul]
-  exact ENNReal.mul_lt_mul_iff_left
-    (ENNReal.inv_ne_zero.mpr (marginal_ne_top _ μ b))
-    (ENNReal.inv_ne_top.mpr h)
-
-/-- At a uniform prior the prior cancels: state comparison reduces to bare
-emission sums over the unobserved component. -/
-theorem emissionPosterior_uniform_fst_lt_iff [DecidableEq α] [Nonempty α]
-    (κ : α → PMF (β × γ)) (b : β)
-    (h : marginal (fun a => (κ a).fst) (PMF.uniformOfFintype α) b ≠ 0) (a₁ a₂ : α) :
-    (emissionPosterior κ (PMF.uniformOfFintype α) b h).fst a₁
-        < (emissionPosterior κ (PMF.uniformOfFintype α) b h).fst a₂
-      ↔ (∑ g : γ, κ a₁ (b, g)) < ∑ g : γ, κ a₂ (b, g) := by
-  rw [emissionPosterior_fst_lt_iff]
-  simp only [PMF.uniformOfFintype_apply]
-  rw [← Finset.mul_sum, ← Finset.mul_sum]
-  exact ENNReal.mul_lt_mul_iff_right
-    (ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _))
-    (ENNReal.inv_ne_top.mpr (Nat.cast_ne_zero.mpr Fintype.card_ne_zero))
-
-/-- At a uniform prior the prior cancels: emission-component comparison reduces
-to bare emission sums over states. -/
-theorem emissionPosterior_uniform_snd_lt_iff [DecidableEq γ] [Nonempty α]
-    (κ : α → PMF (β × γ)) (b : β)
-    (h : marginal (fun a => (κ a).fst) (PMF.uniformOfFintype α) b ≠ 0) (g₁ g₂ : γ) :
-    (emissionPosterior κ (PMF.uniformOfFintype α) b h).snd g₁
-        < (emissionPosterior κ (PMF.uniformOfFintype α) b h).snd g₂
-      ↔ (∑ a : α, κ a (b, g₁)) < ∑ a : α, κ a (b, g₂) := by
-  rw [emissionPosterior_snd_lt_iff]
+/-- At a uniform prior the prior cancels: event comparison reduces to bare
+emission sums over the observed fibre. -/
+theorem emissionPosterior_uniform_toOuterMeasure_lt_iff [Fintype α] [Nonempty α]
+    (h : marginal (fun a => (κ a).map f) (PMF.uniformOfFintype α) b ≠ 0)
+    (E₁ E₂ : Finset (α × β)) :
+    (emissionPosterior f κ (PMF.uniformOfFintype α) b h).toOuterMeasure ↑E₁
+        < (emissionPosterior f κ (PMF.uniformOfFintype α) b h).toOuterMeasure ↑E₂
+      ↔ (∑ x ∈ E₁ with f x.2 = b, κ x.1 x.2) < ∑ x ∈ E₂ with f x.2 = b, κ x.1 x.2 := by
+  rw [emissionPosterior_toOuterMeasure_lt_iff]
   simp only [PMF.uniformOfFintype_apply]
   rw [← Finset.mul_sum, ← Finset.mul_sum]
   exact ENNReal.mul_lt_mul_iff_right
